@@ -632,7 +632,7 @@ def main():
     sep2 = section2_zero_point(o)
     leak, leak_rows = section3_area_leak(nuc, o)
     unit, muls, curve = section4_background(nuc)
-    sat_rows = section5_saturation(nuc)
+    sat_rows, sat_j = section5_saturation(nuc)
     fus, truth4 = section6_fusion()
     dev_i, dev_a = section7_mixture()
     section8_gaps()
@@ -659,7 +659,8 @@ def main():
     print("  ・面積の漏れ 傾き %+.2f(PSF 0.6px)→ %+.2f(1.5px)" % (leak[0.2][0], leak[0.5][0]))
     print("  ・背景 5 倍で DNA 指数 %.3f(引けば %.3f / 環状背景 %.3f)"
           % (curve["raw"][-1], curve["sub"][-1], curve["ap"][-1]))
-    print("  ・飽和 %.1f %% で DNA 指数 %.3f" % (sat_rows[-1][1], sat_rows[-1][2]))
+    print("  ・飽和 %.1f %% で DNA 指数 %.3f / ★飽和 %.1f %% では %.3f(真値に見えるが打ち消し)"
+          % (sat_rows[-1][1], sat_rows[-1][2], sat_rows[sat_j][1], sat_rows[sat_j][2]))
     print("  ・融合 %d/%d で 4n 割合 %.3f(真値 %.3f)→ solidity で落として %.3f"
           % (fus[0.80][1], fus[0.80][0], fus[0.80][2], truth4, fus[0.80][5]))
     print("  ・混合比の最大偏差 積分 %.3f / 面積 %.3f" % (dev_i, dev_a))
@@ -674,6 +675,9 @@ def main():
     assert abs(curve["sub"][-1] - curve["raw"][0]) < 1e-9, curve
     assert abs(curve["ap"][-1] - 2.0) < abs(curve["sub"][-1] - 2.0), curve
     assert sat_rows[-1][2] < 1.95, sat_rows
+    # ★逆向きの 2 つの失敗が打ち消して「真値ぴったり」に化ける行が実在する
+    assert abs(sat_rows[sat_j][2] - 2.0) < 0.02 < abs(sat_rows[0][2] - 2.0), sat_rows
+    assert sat_rows[sat_j][1] > 2.0, sat_rows
     assert fus[0.80][2] > truth4 + 0.05 and abs(fus[0.80][5] - truth4) < 0.08, fus
     assert dev_i < 0.06 < dev_a, (dev_i, dev_a)
     assert len(leak_rows) == 4
