@@ -247,7 +247,7 @@ def band_speeds(lab: np.ndarray, ids, dt: float = 1.0, x_ref: int = X_REF) -> di
 
 def match_speeds(sp: dict, vehicles, tol: float = 12.0) -> dict:
     """帯と実車を**通過時刻**で突き合わせ、速度の相対誤差 [%] を返す。"""
-    ef, ea, used = [], [], 0
+    ef, ei, ea, used = [], [], [], 0
     for v in vehicles:
         d = np.abs(sp["cross"] - v["cross"])
         if d.size == 0 or not np.isfinite(d).any():
@@ -256,12 +256,11 @@ def match_speeds(sp: dict, vehicles, tol: float = 12.0) -> dict:
         if not np.isfinite(d[k]) or d[k] > tol:
             continue
         used += 1
-        if np.isfinite(sp["fit"][k]):
-            ef.append(100 * abs(sp["fit"][k] - v["v"]) / v["v"])
-        if np.isfinite(sp["angle"][k]):
-            ea.append(100 * abs(sp["angle"][k] - v["v"]) / v["v"])
-    return {"n": used, "fit": float(np.mean(ef)) if ef else np.nan,
-            "angle": float(np.mean(ea)) if ea else np.nan}
+        for key, acc in (("fit", ef), ("fit_inner", ei), ("angle", ea)):
+            if np.isfinite(sp[key][k]):
+                acc.append(100 * abs(sp[key][k] - v["v"]) / v["v"])
+    m = (lambda a: float(np.mean(a)) if a else np.nan)
+    return {"n": used, "fit": m(ef), "fit_inner": m(ei), "angle": m(ea)}
 
 
 def virtual_loop(mask: np.ndarray, row: int, x_ref: int = X_REF) -> int:
