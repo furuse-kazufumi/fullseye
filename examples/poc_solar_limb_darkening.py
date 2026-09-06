@@ -526,14 +526,17 @@ def section_figures(us: dict, sl: dict, spot: dict) -> None:
                    title="太陽面 R=%.0f px / シーイング σ=%.1f px" % (R_TRUE, SEEING),
                    ncols=2, signed=[False, False, True, False])
 
+    uu = np.asarray(us["u"], float)
     pu = np.asarray(us["pred"], float)
+    ok = np.isfinite(pu)
     figs.save_plot("bias_vs_u",
-                   [("50 % 法", np.asarray(us["u"]), np.asarray(us["level"])),
-                    ("幾何の予測(u>0.5)", np.asarray(us["u"]), pu),
-                    ("勾配最大", np.asarray(us["u"]), np.asarray(us["grad"])),
-                    ("誤差ゼロ", np.asarray(us["u"]), np.zeros(len(us["u"])))],
+                   [("50 % 法(σ=2)", uu, np.asarray(us["level"])),
+                    ("同 ぼけ σ=0(対照群)", uu, np.asarray(us["sharp"])),
+                    ("幾何の予測(u>0.5)", uu[ok], pu[ok]),
+                    ("勾配最大", uu, np.asarray(us["grad"])),
+                    ("誤差ゼロ", uu, np.zeros(uu.size))],
                    xlabel="周辺減光係数 u", ylabel="半径の誤差 [px]",
-                   title="u=0.5 で機構が入れ替わる(比例ではない)")
+                   title="u>0.5 で幾何項が点火する(比例ではない)")
 
     figs.save_plot("seeing_cancel",
                    [("u=0.6", np.asarray(sl["levels"]), np.asarray(sl["change"])),
