@@ -563,23 +563,9 @@ def section10_figures(truth: np.ndarray, state: dict, t_mc: np.ndarray) -> None:
                    ["真値 T", "線形補間", "差"], ncols=3,
                    signed=[False, False, True],
                    title="到達時刻面(源 2 つ、合流線あり)",
-                   caption="差は上下 99 %% 分位(±%.4f ms)で切った。残りは合流線の"
-                           "折れ目に集中する。" % lim)
-    with np.errstate(divide="ignore"):
-        gy, gx = np.gradient(lin)
-        c = 1.0 / np.maximum(np.hypot(gy, gx), 1e-12)
-    figs.save_table("speed_summary",
-                    ["領域", "画素数", "速度 中央値 px/ms", "真値との差 %", "最大 px/ms"],
-                    [[lab, "%d" % int(s.sum()), "%.4f" % np.median(c[s]),
-                      "%+.2f" % (100 * (np.median(c[s]) / C_TRUE - 1)),
-                      "%.3g" % c[s].max()]
-                     for lab, s in [("合流線 < 2 px", m & (np.abs(_MERGE) < 2)),
-                                    ("2 - 8 px", m & (np.abs(_MERGE) >= 2)
-                                     & (np.abs(_MERGE) < 8)),
-                                    ("8 px 以上", m & (np.abs(_MERGE) >= 8))]],
-                    title="伝播速度の推定(真値 %.1f px/ms)" % C_TRUE,
-                    caption="等値面から出した到達時刻面の勾配の逆数。"
-                            "合流線の帯だけ最大値が 12 桁飛ぶ。")
+                   caption="差は上下 99 %% 分位(±%.4f ms)で切った。同心円の縞は"
+                           "**フレーム格子に同期した系統誤差**(サブピクセルの"
+                           "peak locking と同じ型)。" % lim)
     assert t_mc is not None
 
 
