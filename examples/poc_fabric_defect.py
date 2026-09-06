@@ -223,35 +223,58 @@ def det_fold(img: np.ndarray, period: float = PERIOD) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 周期の推定 —— FFT の粗い値を位相限定相関で磨く                                #
 # --------------------------------------------------------------------------- #
-def _poc_shift_x(a: np.ndarray, b: np.ndarray) -> float:
-    """位相限定相関 —— ``a`` を ``b`` に重ねる x 方向のずれ(サブピクセル)。"""
-    fa, fb = np.fft.fft2(a), np.fft.fft2(b)
+def poc_1d(pa: np.ndarray, pb: np.ndarray) -> np.ndarray:
+    """1-D の位相限定相関(振幅を捨てて位相だけで相関を取る)。"""
+    fa = np.fft.rfft(pa - pa.mean())
+    fb = np.fft.rfft(pb - pb.mean())
     r = fa * np.conj(fb)
     r /= np.abs(r) + 1e-12
-    surf = np.real(np.fft.ifft2(r))
-    iy, ix = np.unravel_index(int(np.argmax(surf)), surf.shape)
-    w = surf.shape[1]
-    c, lo, hi = surf[iy, ix], surf[iy, (ix - 1) % w], surf[iy, (ix + 1) % w]
-    den = lo - 2 * c + hi
-    sub = 0.5 * (lo - hi) / den if abs(den) > 1e-12 else 0.0
-    s = ix + np.clip(sub, -1.0, 1.0)
-    return float(s - w if s > w / 2 else s)
+    return np.fft.irfft(r, n=pa.size)
 
 
-def estimate_period(img: np.ndarray, baseline: int = 200) -> dict:
-    """FFT のピーク(粗)-> 位相限定相関(精)で周期を出す。"""
-    spec = np.abs(np.fft.fftshift(np.fft.fft2(img - img.mean())))
-    h, w = img.shape
-    row = spec[h // 2, w // 2 + 1:]          # DC の右側だけを見る
-    m1 = int(np.argmax(row)) + 1             # 基本波のビン
-    coarse = w / m1
-    a = img[:, 0:w - baseline]
-    b = img[:, baseline:w]
-    s = _poc_shift_x(a, b)                   # b を a に重ねるずれ
-    k = round(baseline / coarse)
-    fine = (baseline + s) / k if k else coarse
-    return {"coarse": float(coarse), "fine": float(fine), "bin": m1,
-            "shift": s, "k": int(k)}
+def poc_peak_table(img: np.ndarray, baseline: int = 96, top: int = 5):
+    """POC のピーク上位 ``top`` 個。**周期信号ではどれも同じ高さになる**。"""
+    p = img.mean(axis=0)
+    a, b = p[:p.size - baseline], p[baseline:]
+    surf = poc_1d(a, b)
+    n = surf.size
+    lag = np.arange(n)
+    lag = np.where(lag > n // 2, lag - n, lag)
+    order = np.argsort(-surf)
+    picked = []
+    for i in order:
+        if all(abs(int(lag[i]) - s) >= 3 for s, _ in picked):
+            picked.append((int(lag[i]), float(surf[i])))
+        if len(picked) >= top:
+            break
+    return picked
+
+
+def estimate_period(img: np.ndarray, margin: int = 24) -> dict:
+    """FFT のピーク(粗)-> **復調した位相の傾き**(精)で周期を出す。
+
+    位相限定相関の**ピーク位置**では周期は決まらない —— 周期信号は自分自身と
+    「周期の整数倍」ずらしても一致するので、ピークが等高で並ぶ(3 節で実測)。
+    決められるのは位相の**傾き**のほう: 粗い周波数 f0 で復調すると、残った
+    位相の傾きが周波数の誤差そのものになる。
+    """
+    from scipy.ndimage import gaussian_filter1d
+
+    p = img.mean(axis=0)
+    p = p - p.mean()
+    spec = np.abs(np.fft.rfft(p))
+    m1 = int(np.argmax(spec[1:])) + 1
+    f0 = m1 / p.size
+    x = np.arange(p.size, dtype=np.float64)
+    z = p * np.exp(-2j * np.pi * f0 * x)
+    s = 1.0 / f0                                   # 1 周期ぶんで平滑化
+    z = gaussian_filter1d(z.real, s) + 1j * gaussian_filter1d(z.imag, s)
+    ph = np.unwrap(np.angle(z))
+    sl = slice(margin, p.size - margin)            # 復調の過渡を落とす
+    slope = float(np.polyfit(x[sl], ph[sl], 1)[0])
+    f = f0 + slope / (2.0 * np.pi)
+    return {"coarse": float(1.0 / f0), "fine": float(1.0 / f), "bin": m1,
+            "slope": slope, "span": int(p.size - 2 * margin)}
 
 
 # --------------------------------------------------------------------------- #
