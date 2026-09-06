@@ -40,12 +40,16 @@ download bunny --yes``)で原典(Stanford 3D Scanning Repository)から取得し
 """
 from __future__ import annotations
 
+import sys
 import time
+from pathlib import Path
 
 import numpy as np
 from scipy.spatial import cKDTree
 
-import fullseye as fs
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
 
 # --- 成功の定義(この PoC 全体で使う唯一の判定)-----------------------------
 # 回転誤差 < 3 度 かつ 重心移動誤差 < 直径の 1 %。
