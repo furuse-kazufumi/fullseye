@@ -277,10 +277,13 @@ def _convex_area(mask: np.ndarray) -> float:
     grid = np.stack([gr.ravel(), gc.ravel()], 1).astype(np.float64)
     a = hull
     b = np.roll(hull, -1, axis=0)
-    e = b - a                            # 各辺のベクトル(包は反時計回り)
+    e = b - a                            # 各辺のベクトル
+    # ★符号に注意: 頂点は (row, col) の順で並んでいるので、``_monotone_chain``
+    #   が返す向きは (row を x と見た) 反時計回り = 画面では時計回り。内側は
+    #   外積が**非負**の側になる(``<= 0`` と書いて全物体 solidity 0 を出した)。
     cross = (e[None, :, 0] * (grid[:, None, 1] - a[None, :, 1])
              - e[None, :, 1] * (grid[:, None, 0] - a[None, :, 0]))
-    return float(np.all(cross <= 1e-9, axis=1).sum())
+    return float(np.all(cross >= -1e-9, axis=1).sum())
 
 
 def _monotone_chain(pts: np.ndarray) -> np.ndarray:

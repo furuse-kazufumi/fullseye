@@ -424,12 +424,12 @@ def main():
         # 表の AUC だけだと「左端(低偽陽性率)でどう振る舞うか」が消える。
         # 運用で効くのはそこなので、曲線そのものを残す。
         figs.save_plot("roc_tampered",
-                       [("%s AUC %.3f" % (n, res_pos[n][0]), *roc_points(fn, base))
+                       [("%s %.3f" % (n, res_pos[n][0]), *roc_points(fn, base))
                         for n, fn in DETECTORS],
                        xlabel="偽陽性率", ylabel="検出率", xlim=(0.0, 1.0), ylim=(0.0, 1.0),
                        title="画素ごとの ROC(改竄あり %d 枚)" % n_img,
-                       caption="乱数が対角線に乗ることで測り方に偏りが無いと言える。"
-                               "ゴーストA は乱数と重なる。")
+                       caption="凡例の数字は AUC。乱数が対角線に乗ることで測り方に"
+                               "偏りが無いと言える。ゴーストA は乱数と重なる。")
 
     print("\n=== 3. ゼロ点のスコア分布(改竄していない画像、偽マスクの内と外)===")
     print("  " + pad("検出器", W_LABEL, right=False) + pad("偽マスク内 平均", 18)
