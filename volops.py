@@ -557,6 +557,19 @@ def vol_gradient_magnitude(vol):
     Each ``g*`` is a ``scipy.ndimage.sobel`` derivative along one axis. The
     response localises at intensity boundaries (a step edge lights up on the
     interface and is ~0 in flat regions). Returns a ``(D, H, W)`` float64 volume.
+
+    計算: ``scipy.ndimage.sobel`` を axis 0 (z), 1 (y), 2 (x) の順に掛け、
+    ``sqrt(gz**2 + gy**2 + gx**2)`` を返す。Sobel は微分 [-1,0,1] と平滑 [1,2,1] の
+    分離カーネルなので、単位ステップ(0→1)に対する応答は 1 ではなく最大 ~8×... の
+    定数倍になる(scipy の既定重み・境界 ``mode='reflect'``)。値は正規化しない
+    (``[0, 1]`` には収まらない)。spacing は受けず、voxel 単位の差分(異方 voxel でも
+    軸ごとに補正しない)。
+
+    検証(``ValueError``): 3-D でない / NaN・Inf を含む / voxel 数が ``MAX_VOXELS``
+    (``1 << 27``)を超える。
+
+    使いどころ: ``vol_watershed`` の地形(landscape)入力、``vol_local_maxima`` で
+    界面の峰を拾う、``vol_stretch`` で ``[0, 1]`` に正規化して表示。
     """
     v = _require_volume(vol)
     _check_voxels(v, MAX_VOXELS, "vol_gradient_magnitude", "MAX_VOXELS")
