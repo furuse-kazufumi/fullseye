@@ -77,7 +77,7 @@ LAY_AMP = 0.25          # 加工目の振幅(rms は AMP/√2 = 0.1768)
 WAV_LAMBDA = 256.0      # うねりの波長(粗さではない)
 WAV_AMP = 0.60
 
-TILT_X, TILT_Y = 0.015, -0.008     # 取り付けの傾き(rad 相当の勾配)
+TILT_X, TILT_Y = 0.050, -0.025     # 取り付けの傾き(rad 相当の勾配)
 
 SCRATCH_DEPTH = 3.0     # 孤立した傷の深さ
 SCRATCH_HW = 4.0        # 傷の半値半幅 µm
