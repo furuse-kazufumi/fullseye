@@ -712,15 +712,25 @@ def main():
         print("  " + pad(name, 22, right=False)
               + "".join(pad(f"{res[s][name]['bias']:+.2f}±{res[s][name]['scatter']:.2f}", 16)
                         for s in range(len(STAGES))))
-    print("  → 固定閾値は**段階によらず同じ向きに**ずれる(偏り)。大津は段階ごとに")
-    print("     閾値が動くので偏りは小さいが、**シーンの構成に閾値が引きずられる** ——")
-    print("     被覆率が数 % だと 2 山の仮定が成り立たず、上の 2 節のとおり破綻する。")
-    print("     どちらが良いかは『同じ畑を時系列で追う』(固定が有利、偏りは差分で消える)")
-    print("     のか『別々の畑を 1 枚ずつ測る』(大津が有利)のかで逆になる。")
+    soil_exg = ((2 * RHO["soil_dry"][B_GREEN] - RHO["soil_dry"][B_RED]
+                 - RHO["soil_dry"][B_BLUE])
+                / (RHO["soil_dry"][:3].sum()))
+    print("  → 固定閾値はどの段階でも **同じ符号**にずれる。ただし『符号が同じ = 時系列の")
+    print("     差分で消える』ではない —— ExG > 0 は発芽 +49.8 → 繁茂 +13.9 と 36 pp も")
+    print("     動くので、差を取っても残る。")
+    print(f"  → ExG > 0 が壊れる理由ははっきりしている。乾いた土の ExG は構成上"
+          f" {soil_exg:+.3f} で、")
+    print("     **閾値 0 がちょうどクラスの境目に載っている**。雑音と影で土の半分が 0 を")
+    print("     またぐので、植生がほとんど無い発芽期では土の半分が植生になる。")
+    print("     **境目に置いた固定閾値は最悪の選択**で、これは教科書に載っている値である。")
+    print("  → この場面では大津のほうが偏りも段階変動も小さい。固定閾値が有利になるのは")
+    print("     『シーンの構成が変わっても閾値を動かしたくない』場合だが、それは閾値が")
+    print("     **正しい位置にあるとき**の話。NDVI > 0.4 は境目(混合 f=0.5 で NDVI 0.52)")
+    print("     から少し外れているぶん、ExG > 0 より遥かにましに収まっている。")
 
     print("\n=== 11. 崖 (e) 照度(曇り / 晴れ)===")
     ill_methods = sh_methods
-    print("  " + pad("条件", 22, right=False) + pad("倍率", 8) + pad("影", 7)
+    print("  " + pad("条件", 34, right=False) + pad("倍率", 8) + pad("影", 7)
           + "".join(pad(n.split("(")[0], 15) for n, _ in ill_methods))
     ill_rows = {}
     # 実際の曇りは「暗くなる」と「影が消える」が同時に起きる。それでは何が効いたのか
@@ -735,7 +745,7 @@ def main():
                   for k in range(2)]
             r = run(sc, ill_methods)
             ill_rows[(label, s)] = r
-            print("  " + pad(f"{label} / {STAGES[s][0]}", 24, right=False)
+            print("  " + pad(f"{label} / {STAGES[s][0]}", 34, right=False)
                   + pad(f"{gain:.2f}", 8) + pad(f"{sv:.1f}", 7)
                   + "".join(pad(f"{r[n]['bias']:+.1f}", 15) for n, _ in ill_methods))
     print("  → 対照行(倍率だけ 0.45)で大きく壊れるのは **アンミックス2 だけ**。端成分を")
