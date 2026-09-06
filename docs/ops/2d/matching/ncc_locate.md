@@ -5,7 +5,7 @@ category: matching
 in: image
 out: match
 halcon: find_ncc_model
-examples: [gallery2d_contour_measure]
+examples: [gallery2d_contour_measure, poc_template_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_contour_measure](../../../../examples/gallery2d_contour_measure.py) — `py -3.11 examples/gallery2d_contour_measure.py`
+- [poc_template_tracking](../../../../examples/poc_template_tracking.py) — `py -3.11 examples/poc_template_tracking.py`
 
 ## 型が繋がる次の op(`match` を入力に取れる)
 

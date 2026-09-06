@@ -5,7 +5,7 @@ category: region
 in: region
 out: image
 halcon: distance_transform
-examples: [gallery2d_region]
+examples: [gallery2d_region, poc_cell_counting]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ distance transformation of a region.）に相当。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
+- [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

@@ -1372,9 +1372,13 @@ def main():
     two[25:35, 25:35] = 1.0
     c = np.asarray(fs.apply(two, "circularity"))
     assert c.size == 1 or float(c.min()) == float(c.max()), c.shape
-    #      (d) 2 次元ラベリングが fs / fs.ledger に無い
-    assert not hasattr(fs, "label_components_2d")
+    #      (d) 2 次元 watershed はモジュールには在るが facade に公開されていない
+    assert hasattr(fsseg, "watersheds_marker"), "モジュール側からも消えた"
+    assert not hasattr(fs, "watersheds_marker"), "公開された(この節を書き換えること)"
     assert not hasattr(fs.ledger, "watersheds_marker")
+    #      (e) 2 次元のラベリング / region props は 3 次元にしか無い
+    assert hasattr(fs.ledger, "vol_label") and hasattr(fs.ledger, "vol_region_props")
+    assert not hasattr(fs.ledger, "label"), "2 次元ラベリングが生えた(良い変化)"
 
     print("\nPASS")
 

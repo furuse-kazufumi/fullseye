@@ -109,13 +109,11 @@ _PENDING_EXPOSURE = {
     "pipeline3d": 6,
     "watershed3d": 3,
     "mesh_decimate": 1,
-    "metrology": 8,
     "sample_data": 7,       # CLI からは届くが Python API からは届かない
     # --- 2026-09-06 に見つけた 4 件。テストが 100% 通っているのに不可視だった。
-    #     fourierdesc と imagemorph は opsshape2d 台帳に載せて解消(この行を消した)。
-    #     残る 2 つは次の回で。measuring1d は metrology と組にして 1-D 測定の台帳へ、
-    #     scale は op ではなく実行の道具なので facade へ出すのが筋。
-    "measuring1d": 6,
+    #     fourierdesc と imagemorph は opsshape2d 台帳へ、measuring1d は metrology と
+    #     組にして opsmeasure1d 台帳へ載せて解消(いずれも行を消した)。
+    #     残るは scale —— op ではなく実行の道具なので facade へ出すのが筋。
     "scale": 6,
 }
 

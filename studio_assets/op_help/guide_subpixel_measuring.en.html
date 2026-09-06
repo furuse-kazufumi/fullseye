@@ -1,0 +1,87 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">This guide is available in Japanese only (it is human-written prose, so nothing here is machine-substituted).</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">サブピクセル計測(測定線と計測モデル) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>画像のどこを、どの向きに見るかを先に決めてから測る</b>層です。14 op / 3 カテゴリ:</p>
+<p style="margin:2px 0 2px 12px">• <b>caliper(6)</b> — <code style="color:#22d3bf">gen_measure_rectangle2</code> / <code style="color:#22d3bf">gen_measure_arc</code> /</p>
+<p><code style="color:#22d3bf">translate_measure</code> / <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code> /</p>
+<p><code style="color:#22d3bf">fuzzy_measure_pairing</code>: 測定線に沿ってエッジをサブピクセルで取り、対にして幅を出す。</p>
+<p style="margin:2px 0 2px 12px">• <b>model(6)</b> — <code style="color:#22d3bf">create_metrology_model</code> と <code style="color:#22d3bf">add_metrology_object_*</code> 5 本:</p>
+<p>直線・円・矩形・楕円をモデルに登録する。</p>
+<p style="margin:2px 0 2px 12px">• <b>apply(2)</b> — <code style="color:#22d3bf">align_metrology_model</code> / <code style="color:#22d3bf">apply_metrology_model</code>:</p>
+<p>モデルを画像へ当てて、当てはめ結果をまとめて返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ台帳に載せたか —— 見えていなかったから、ただし測ってから</h3>
+<p>2026-09-06、この 2 モジュールが<b>公開経路のどこからも呼べない</b>ことが分かりました</p>
+<p>(<code style="color:#22d3bf">fs.</code> / <code style="color:#22d3bf">fs.ledger.</code> / <code style="color:#22d3bf">fs.op.</code> のいずれからも <b>0/14</b>)。</p>
+<p>同じ日に、同じく埋もれていた <code style="color:#22d3bf">mosaic</code> を実測したところ <code style="color:#22d3bf">bundle_adjust_mosaic</code> が</p>
+<p>36 枚中 30 枚を単位行列で返す(束調整ではない)ことが分かったので、</p>
+<p><b>出す前に実地で測る</b>方針を取りました(<code style="color:#22d3bf">examples/poc_dimensional_inspection.py</code>)。</p>
+<p>結果は <b>14/14 が動作</b>。ゼロ点(大津の整数幅)比 <b>41 倍</b>で、スロット幅</p>
+<p>50.50 px の偏りは −0.5000 → <b>−0.0113 px</b>、合成不確かさ u_c = 0.0196 px</p>
+<p>= 0.245 µm。<code style="color:#22d3bf">mosaic</code> とは違い、これは出す価値がありました。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">全体の流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[&quot;gen_measure_rectangle2&lt;br/&gt;直線の測定線&quot;] --&gt; C[&quot;measure_pos&lt;br/&gt;サブピクセルのエッジ位置&quot;]
+    B[&quot;gen_measure_arc&lt;br/&gt;円弧の測定線&quot;] --&gt; C
+    A --&gt; D[&quot;measure_pairs&lt;br/&gt;対にして幅を出す&quot;]
+    B --&gt; D
+    D --&gt; E[&quot;fuzzy_measure_pairing&lt;br/&gt;想定幅に近い対を優先&quot;]
+    A --&gt; F[&quot;translate_measure&lt;br/&gt;測定線を平行移動&quot;]
+    G[&quot;create_metrology_model&quot;] --&gt; H[&quot;add_metrology_object_*&lt;br/&gt;直線 円 矩形 楕円&quot;]
+    H --&gt; I[&quot;align_metrology_model&lt;br/&gt;位置合わせ&quot;]
+    I --&gt; J[&quot;apply_metrology_model&lt;br/&gt;まとめて当てはめ&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">いちばん短い例</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import measuring1d as M
+
+img = np.zeros((64, 128)); img[:, 40:80] = 1.0        # 真値 40.0 px の帯
+meas = M.gen_measure_rectangle2(row=32.0, col=64.0, phi=0.0,
+                                length1=50.0, length2=3.0, shape=img.shape)
+pairs = M.measure_pairs(img, meas, sigma=1.0, threshold=0.1)
+print(pairs[0][&quot;width&quot;])       # 40.0000</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴 5 つ(どれも実測つき)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. 斜めの測定線に cos 補正は入っていない</h3>
+<p>測定線が輪郭に対して斜めだと、測定値 / 真値がちょうど 1/cos になります</p>
+<p>(70 度で 2.9105 対 2.9238)。<b>呼ぶ側が cos を掛けてください</b>。掛ければ</p>
+<p>60 度まで 0.04 px 以内、70 度で −0.139 px 残ります。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. エッジが近いと幅は必ず大きく出る。しかも失敗を返さない</h3>
+<p>壊れるのは「ぼけ」そのものではなく <b>エッジ間距離 / PSF 幅</b>です:</p>
+<p>| w / σ | 幅の偏り |</p>
+<p>|---|---|</p>
+<p>| 3.09 | 0.05 px を超え始める |</p>
+<p>| 2.06 | <b>+2.43 px</b> |</p>
+<p>| 1.58 | それでも「対が見つかった」と 100 % 答える |</p>
+<p>対が互いを押し広げるので<b>必ず大きい側</b>へ偏ります。<code style="color:#22d3bf">measure_pairs</code> は</p>
+<p>信頼度を返さないので、危険域かどうかは呼ぶ側が見張るしかありません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. 縁の定義を宣言しないと 16 px 動く</h3>
+<p>面取りや丸みのある実際の縁では「どこがエッジか」が定義依存です。実測:</p>
+<p>| 縁の形 | 測定値 |</p>
+<p>|---|---|</p>
+<p>| 面取り 5 px | 90.35(底面幅側) |</p>
+<p>| 面取り 6 px | <b>78.61(上面幅側)</b> |</p>
+<p>| 丸み 8 px | 上面幅 74.50 / 底面幅 90.50 / 50 % 交差 87.55 |</p>
+<p>面取りが PSF に対して分解できた瞬間、答えが<b>黙って 11.7 px 飛びます</b>。</p>
+<p>定義の違いで <b>16 px = 200 µm</b> —— サブピクセルの 3 桁上です。</p>
+<p><b>丸い縁は必ず小さく出ます</b>。直径誤差 ≈ −σ²/ρ で、実測 / 予測は 1.24 / 1.09</p>
+<p>/ 1.02(ρ=8、σ=0.8/1.2/2.0)、0.94(ρ=16)。円弧キャリパーの −0.311 px は</p>
+<p>この光学側の偏りで説明でき、<b>道具自体はほぼ偏りません</b>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4. <code style="color:#22d3bf">measure_pairs</code> は極性の順序を問わない</h3>
+<p>docstring は「立ち上がり→立ち下がり」と読めますが、実装は**極性が交互なら</p>
+<p>順序を問いません**。円弧測定では「立ち下がり→立ち上がり」= 暗い穴を対に</p>
+<p>します。<b>明るい構造の幅を期待して呼ぶと暗い構造の幅が返ることがあります</b>。</p>
+<p>選ぶ引数(<code style="color:#22d3bf">transition</code>)がまだありません。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">5. <code style="color:#22d3bf">metrology</code> の矩形は往復しない</h3>
+<p><code style="color:#22d3bf">add</code> は (phi, l1, l2) を受けますが、<code style="color:#22d3bf">apply</code> は l1 ≥ l2 に正規化して返します。</p>
+<p>l1 &lt; l2 で入れると phi が 90 度回ります(実測: 入力 phi=0 / l1=25.25 /</p>
+<p>l2=55.00 → 出力 phi=−90.00 / l1=55.020 / l2=25.256)。</p>
+<p>矩形の当てはめは<b>最小面積外接矩形</b>(凸包の極値点のみ)なので、60 点中</p>
+<p>1 点を 1.5 px 外へ動かすだけで幅が <b>+1.50 px</b> 動きます(最小二乗なら</p>
+<p>0.050 px)。ただし rms が 0.022 → 0.734 に上がるので、**rms を必ずゲートに</p>
+<p>してください**。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">窓の置き方が精度より効く</h3>
+<p>外形幅を測る列がボルト穴を踏むと 220.45 → <b>186.75</b>(−33.75 px)。</p>
+<p>エラーも警告も出ません。サブピクセルの議論より前に、測定線がどこを通るかです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">examples/poc_dimensional_inspection.py</code> —— この族を実地評価した PoC。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/roughness/guides/surface_roughness.md</code> —— 面の粗さ(こちらは寸法)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">docs/ops/profile/guides/profile_metrology.md</code> —— 1-D 断面の形状計測。</p>

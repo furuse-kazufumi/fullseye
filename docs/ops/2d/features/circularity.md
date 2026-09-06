@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: circularity
-examples: [draw_annotate, gallery2d_features]
+examples: [draw_annotate, gallery2d_features, poc_cell_counting]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ region.）に相当。
 
 - [draw_annotate](../../../../examples/draw_annotate.py) — `py -3.11 examples/draw_annotate.py`
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 
