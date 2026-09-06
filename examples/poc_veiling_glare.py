@@ -105,21 +105,30 @@ CORE = _unit(np.exp(-_R2 / (2.0 * SIG_CORE * SIG_CORE)) * _INSIDE)
 TAIL = _unit(_INSIDE / (1.0 + _R2 / (R0_TAIL * R0_TAIL)))
 
 
+_PCACHE: dict[float, np.ndarray] = {}
+_KCACHE: dict[float, np.ndarray] = {}
+
+
 def psf(g: float) -> np.ndarray:
     """裾の**エネルギー比が厳密に g** の PSF(総和 1)。"""
-    return (1.0 - g) * CORE + g * TAIL
+    p = _PCACHE.get(g)
+    if p is None:
+        p = (1.0 - g) * CORE + g * TAIL
+        _PCACHE[g] = p
+    return p
 
 
-_KCACHE: dict[int, np.ndarray] = {}
+def convolve(img: np.ndarray, g: float) -> np.ndarray:
+    """裾の割合 *g* の PSF による結像(循環畳み込み)。白地の場面でのみ使う。
 
-
-def convolve(img: np.ndarray, p: np.ndarray) -> np.ndarray:
-    """PSF による結像(循環畳み込み)。白地の場面でのみ使う。"""
-    key = id(p)
-    K = _KCACHE.get(key)
+    ★キャッシュの鍵は **g**。最初は ``id(psf)`` を鍵にしていて、使い捨ての
+    配列の id が回収後に再利用されるせいで**別の g の像が返っていた**
+    (2 節の表が 2 行おきに同じ値になって気づいた)。
+    """
+    K = _KCACHE.get(g)
     if K is None:
-        K = np.fft.rfft2(np.fft.ifftshift(p))
-        _KCACHE[key] = K
+        K = np.fft.rfft2(np.fft.ifftshift(psf(g)))
+        _KCACHE[g] = K
     return np.fft.irfft2(np.fft.rfft2(img) * K, s=img.shape)
 
 

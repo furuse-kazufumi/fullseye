@@ -676,9 +676,13 @@ def main():
                            dist_step=st)["table"])
     print(f"  ppf_model のハッシュ鍵の一致率: 既定の dist_step {100 * len(ka & kb) / len(ka):.0f} % / "
           f"回転不変な dist_step を渡すと {100 * len(ka2 & kb2) / len(ka2):.0f} %")
-    print(f"    → 既定の dist_step は**軸平行境界箱の対角/20**。同じ物体でも向きで変わる"
-          f"(対角 {diameter(a_d):.3f} → {diameter(b_d):.3f})ので、距離の量子化が")
-    print("       ずれる。明示的に渡せば鍵は完全一致する。")
+    print("    → ★2026-09-06 に**塞がった**。以前の既定は**軸平行境界箱の対角/20** で、")
+    print(f"       同じ物体でも向きで対角が {diameter(a_d):.3f} → {diameter(b_d):.3f} と変わり、")
+    print("       距離の量子化がずれて鍵の一致率が 58 % まで落ちていた。いまは既定が")
+    print("       **凸包の頂点どうしの最大距離**(真の直径 = 回転不変)なので、")
+    print("       軸平行の対角が上のように動いても鍵は完全一致する。")
+    print("       ※ 軸平行の対角そのものは今も向きで変わる —— 直ったのは「何を")
+    print("          直径と呼ぶか」であって、境界箱の性質ではない。")
     TR_D = 14
     print(f"  端から端まで(find_surface_pose、{TR_D} 試行/セル):")
     print(f"  {'初期回転ずれ':>12}{'既定':>10}{'向き揃え + 不変 step':>24}")
@@ -751,12 +755,12 @@ def main():
     print(f"     ★ただし残りがある: ファサードの estimate_normals はいまも {100 * flip_signed:.0f} % の点で")
     print(f"     符号が回転で変わり、それを fpfh に**明示的に渡すと max|Δ| {d_user:.2e} に")
     print("     壊れる**。「引数を使わないほうが正しい」形が残っているのが現在の穴。")
-    print("  2. **ppf_model の既定 dist_step が回転不変でない**(5-d)。軸平行境界箱の")
-    print(f"     対角/20 なので、同じ物体でも向きで {diameter(a_d):.3f} → {diameter(b_d):.3f} と")
-    print(f"     変わり、ハッシュ鍵の一致率が {100 * len(ka & kb) / len(ka):.0f} % に落ちる。"
-          "dist_step を明示すれば 100 %。")
-    print("     モデルは 1 度作って多数の場面に使い回す設計なので、ここが向き依存だと")
-    print("     「別の向きで撮った場面だけ当たらない」という再現しにくい壊れ方になる。")
+    print("  2. **(塞がった / 2026-09-06)ppf_model の既定 dist_step は回転不変になった**")
+    print(f"     (5-d)。ハッシュ鍵の一致率は {100 * len(ka & kb) / len(ka):.0f} %。以前の既定は軸平行境界箱の")
+    print("     対角/20 で、同じ物体でも向きで変わるため一致率が 58 % まで落ちていた。")
+    print("     いまは凸包の頂点どうしの最大距離(= 真の直径)を使う。モデルは 1 度作って")
+    print("     多数の場面に使い回す設計なので、ここが向き依存だと「別の向きで撮った")
+    print("     場面だけ当たらない」という再現しにくい壊れ方になっていた。")
     print("  3. 向きの揃った法線を作る op は repo にある(normals_orient.orient_normals /")
     print("     estimate_oriented_normals、実測で回転同変)。だが **fullseye ファサードに")
     print("     出ておらず**、fpfh も ppf_model もそれを呼ばない。道具はあるが配線が無い。")
@@ -840,7 +844,10 @@ def main():
     assert d_user > 1.0, \
         f"estimate_normals を渡しても不変になった(穴が塞がった? {d_user:.2e})"
     assert len(ka2 & kb2) == len(ka2) == len(kb2), "dist_step を固定しても鍵が一致しない"
-    assert len(ka & kb) < 0.9 * len(ka), "既定 dist_step が回転不変になっている(穴が塞がった?)"
+    # ★2026-09-06 に穴 2 が塞がった。以前は `< 0.9 * len(ka)`(壊れていることを
+    #   固定)だった。いまは**既定のままで完全一致する**ことを固定する。
+    assert len(ka & kb) == len(ka) == len(kb),         "既定 dist_step が回転不変でなくなった(鍵の一致率 %.0f %%)" % (
+            100 * len(ka & kb) / len(ka))
     # (m) surface_match(refine=False) の rmse は nan(型は float のまま静かに比較を裏切る)
     nan_out = fs.surface_match(fs.ppf_model(a_d[:120], angle_bins=24), a_d[:150],
                                refine=False, ref_fraction=0.25, topk=3)
