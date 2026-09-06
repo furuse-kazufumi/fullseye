@@ -345,6 +345,17 @@ def main():
     print(f"  polarization_stokes S0 {st[0]:.6f} / 閉形式の全輻度平均 "
           f"{s0_true:.6f}(差 {abs(st[0] - s0_true):.2e})")
     print(f"  S3 = {st[3]:.1f} —— 直線検光子だけでは円偏光は見えない(仕様どおり)。")
+    if figs.enabled():
+        # 図: 入射角 70 度(偏りが常時載る条件)での分離の現物。残差が鏡面ローブ
+        #     の形をしていることが、誤差 = R_p * E * lobe の目で見える証拠。
+        d70, s70 = separate(f70)
+        figs.save_grid("separation",
+                       [f70[0], diffuse, d70, d70 - diffuse],
+                       ["撮影 0 度", "真の拡散", "op の拡散", "op − 真"],
+                       title="入射角 70 度での分離(右下が R_p * E の偏り)",
+                       signed=[False, False, False, True],
+                       caption="残差はローブと同じ形。鏡面は消えているが、"
+                               "拡散が R_p * E だけ持ち上がっている(所見 a)。")
     print(f"  → 場面全体の偏光度は {math.hypot(st[1], st[2]) / st[0]:.4f} で、")
     print(f"     画素最大 {dolp.max():.4f} の 1/6 しかない。**空間平均は鏡面を")
     print("     薄める** —— ここを取り違えると「偏光が使えない場面」と誤判定する。")
