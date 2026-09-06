@@ -553,8 +553,10 @@ def main():
     assert len_break_null is not None and len_break_null < 8.0, "長さの破綻点が出ていない"
     # (4) 核を推定した場合: 雑音が軽ければ既知に肉薄し、重ければ壊れる
     assert ok_est >= 3, f"4 件中 {ok_est} 件しか推定が当たっていない"
-    assert est_noise[40.0][2] - est_noise[15.0][2] > 1.0, \
-        "SNR 15 dB でも推定核の復元が落ちない = 雑音の効きが出ていない"
+    assert est_noise[40.0][3] - est_noise[40.0][2] < 1.0, \
+        "SNR 40 dB で推定核が既知に肉薄しない"
+    assert est_noise[15.0][2] < est_noise[15.0][4], \
+        "SNR 15 dB で推定が外れてもゼロ点を割らない = 二段構えが出ていない"
     # (5) 核はどれも総和 1・非負(前向きモデルが明るさを変えないこと)
     for name, k in kernels.items():
         assert abs(float(k.sum()) - 1.0) < 1e-12, f"{name} の総和が 1 でない"
