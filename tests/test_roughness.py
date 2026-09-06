@@ -156,7 +156,9 @@ def test_surface_params_on_a_sinusoid_matches_closed_form():
     z = _sine(256, 1.0, lam, amp)
     d = R.surface_params(z, 1.0)
     assert d["Sq"] == pytest.approx(amp / math.sqrt(2.0), rel=1e-12)
-    assert d["Sa"] == pytest.approx(2.0 * amp / math.pi, rel=1e-12)
+    # Sa だけは離散和が 2A/π に**収束するだけ**(整数周期でも厳密には合わない。
+    # 32 標本/周期で -0.32 %)。ここを 1e-12 で縛ると実装ではなく期待値が間違う。
+    assert d["Sa"] == pytest.approx(2.0 * amp / math.pi, rel=5e-3)
     assert d["Sp"] == pytest.approx(amp, rel=1e-12)
     assert d["Sv"] == pytest.approx(amp, rel=1e-12)
     assert d["Sz"] == pytest.approx(2.0 * amp, rel=1e-12)
