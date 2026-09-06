@@ -271,6 +271,13 @@ def main():
     print(f"  → 全体では {ratios['全体']:.2f} 倍にしかならない。PSNR の圧勝とは別の話。")
     print(f"     テクスチャのある所だけなら {ratios['テクスチャ有']:.2f} 倍、"
           f"無テクスチャでは {ratios['無テクスチャ']:.2f} 倍 —— **ゼロ点に負けている**。")
+    # 絵(2 節)と深度(3 節)が別物であることは、誤差地図の**左下の四角**に出る。
+    figs.save_grid("depth_map", [depth, dmap, err],
+                   ["真値の深度 [mm]", "融合が出した深度 [mm]", "誤差(推定 - 真値)"],
+                   title="同じ融合が出したもう一つの答え", ncols=3,
+                   signed=[False, False, True],
+                   caption="左下の無テクスチャの四角だけ、誤差が掃引全域にばらけた乱数"
+                           "になっている(段差帯のハローも見える)。")
 
     print("\n=== 4. 無テクスチャ領域は何を返すか ===")
     hist = np.bincount(kmap[flat].ravel(), minlength=n_frames)
