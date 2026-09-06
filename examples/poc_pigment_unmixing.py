@@ -209,7 +209,8 @@ def build_scene():
                              (34, 96, 5, 11), (68, 100, 4, 5)):
         flake |= (((yy - cy) / ry) ** 2 + ((xx - cx) / rx) ** 2) <= 1.0
     thick = np.where(flake, 0.0, thick)
-    return {"ink": ink, "conc": conc, "thick": thick, "flake": flake, "field": field}
+    return {"ink": ink, "conc": conc, "thick": thick, "flake": flake,
+            "field": field, "lake": lake}
 
 
 def render_spectra(scene, tau=1.0, fade=1.0, swap=None, extra_conc=None):
