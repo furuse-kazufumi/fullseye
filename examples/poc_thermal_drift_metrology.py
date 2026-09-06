@@ -548,14 +548,23 @@ def section8_tool_gaps():
     print("      という非自明な条件が付くので、op にして docstring に書く価値がある。")
 
     # (c) undistort_points は歪み中心を K から取る —— 主点と分けられない
+    import inspect as _insp
+    sig = _insp.signature(fs.undistort_points)
+    assert not any("center" in p for p in sig.parameters), sig
     k_shift = fs.intrinsic_matrix(F0, F0, CX0 + 10.0, CY0)
-    p = np.array([[CX0 + 800.0, CY0]])
-    a = np.asarray(fs.undistort_points(p, K_CAL, DIST, iters=40))
-    b = np.asarray(fs.undistort_points(p, k_shift, DIST, iters=40))
-    assert abs(a[0, 0] - b[0, 0]) > 1.0, (a, b)
-    print("  (c) ★`undistort_points` は**歪みの中心を K の主点と同一視**している。")
-    print("      主点を 10 px ずらすだけで、同じ画素の復元結果が %.2f px 動く。"
-          % abs(a[0, 0] - b[0, 0]))
+    seg = np.array([[CX0 + 700.0, CY0], [CX0 + 900.0, CY0]])
+    a = np.asarray(fs.undistort_points(seg, K_CAL, DIST, iters=40))
+    b = np.asarray(fs.undistort_points(seg, k_shift, DIST, iters=40))
+    la = float(np.hypot(*(a[1] - a[0])))
+    lb = float(np.hypot(*(b[1] - b[0])))
+    assert abs(lb / la - 1.0) > 1e-4, (la, lb)
+    print("  (c) ★`undistort_points` は**歪みの中心を K の主点と同一視**している")
+    print("      (引数に 'center' が無い: %s)。主点を 10 px ずらすだけで、"
+          % str(sig).replace(" -> 'np.ndarray'", ""))
+    print("      半径 800 px にある 200 px の線分の復元長さが %.4f → %.4f px、"
+          % (la, lb))
+    print("      **%.0f ppm(この視野で %.1f µm)**動く。" % (1e6 * (lb / la - 1),
+                                                            1e3 * (lb - la) * MM_PER_PX))
     print("      実際のレンズでは**歪み中心と主点は別物**(前者は光軸、後者は")
     print("      投影中心で、偏心があると数十 px 離れる)。分けられないと、")
     print("      4 節で見た「主点ドリフト → 半径比例の寸法誤差」を校正で吸収できない。")
