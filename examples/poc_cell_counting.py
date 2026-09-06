@@ -939,7 +939,12 @@ def main():
               f"誤り合計の最小 {tot_min:.1f} 件より多く、")
         print(f"    1 対 1 対応は {r['one2one']:.0f} / {r['n_gt']:.0f} 個"
               f"(最大 {o2o_max:.0f} 個)。")
-    worst = max((MID, DENSE), key=lambda p: cancel[p][1]["split"] + cancel[p][1]["merge"])
+    # 「計数が合っている」= 偏りが真値の 3 % 未満の行だけを候補にする(そうしないと
+    # 単に誤りが多いだけの行が選ばれ、この節の主張が成り立たない)。
+    ok = [p for p in (MID, DENSE)
+          if abs(cancel[p][1]["bias"]) < 0.03 * cancel[p][1]["n_gt"]]
+    worst = max(ok or [MID, DENSE],
+                key=lambda p: cancel[p][1]["split"] + cancel[p][1]["merge"])
     cw = cancel[worst][1]
     print(f"  → ★いちばん危ないのは pack {worst:.2f} / 間隔 {cancel[worst][0]} の行:")
     print(f"     **個数の偏りは {cw['bias']:+.1f} 個**(真値 {cw['n_gt']:.0f} 個の"
