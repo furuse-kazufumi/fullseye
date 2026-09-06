@@ -575,7 +575,8 @@ def main():
         degenerate[label] = (margin, ang)
         e_txt = f"{e[0]:.1f} x {e[1]:.1f} x {e[2]:.1f}"
         s_txt = f"{sc[0]:.2f} / {sc[1]:.2f} / {sc[2]:.2f}"
-        deg_rows.append([label.split("(")[0], s_txt, "%.3f" % margin, "%.1f 度" % ang])
+        deg_rows.append([("頭蓋", "頭蓋 幅 0.82 倍", "回転体 x=z")[len(deg_rows)],
+                         s_txt, "%.3f" % margin, "%.1f 度" % ang])
         print(f"  {label:<22}{e_txt:>26}{s_txt:>26}"
               f"{margin:>9.3f}{axis:>4d}{ang:>10.2f}")
     print("     回転体では y 軸を含む面がどれも真の対称面なので、正中面を選ぶ根拠がデータに無い。")
