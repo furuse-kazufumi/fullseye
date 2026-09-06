@@ -140,10 +140,10 @@ def synth_cube(depth_map, blur=True, netd=0.0, illum=None, seed=0):
 #: 深さが窓端の 2 値に張り付く(実測、2026-09-06)。次数は 4〜11 を掃いて 8 で
 #: 決めた(4〜5 では 1.5 mm 以深が端に張り付き、8 以上は 9/11 と同じ答え)。
 _TSR_EDGE = 0.12            # ln t 範囲の上下 12 % を捨てる
-_TSR_NSAMP = 64             # 対数等間隔に再標本化する点数
+_TSR_NSAMP = 128            # 対数等間隔に再標本化する点数
 
 
-def tsr_depth(ts, cube, order=8):
+def tsr_depth(ts, cube, order=9):
     """TSR(Thermographic Signal Reconstruction)で画素ごとの深さを出す。
 
     ln T を ln t の多項式で当てはめ(雑音を落とす)、**2 階微分が最大になる
@@ -170,8 +170,16 @@ def tsr_depth(ts, cube, order=8):
     lo = int(_TSR_EDGE * _TSR_NSAMP)
     hi = _TSR_NSAMP - lo
     ip = np.argmax(d2[:, lo:hi], axis=1) + lo
-    tpk = np.exp(lt[ip])
-    peak = d2[np.arange(d2.shape[0]), ip]
+    # ★格子の刻みで t* を丸めると、深さが階段状に量子化される(64 点だと 5 % 刻み)。
+    #   放物線を 3 点に当てて ln t のサブ格子位置まで出す。
+    r = np.arange(d2.shape[0])
+    ipc = np.clip(ip, 1, _TSR_NSAMP - 2)
+    ym, y0, yp = d2[r, ipc - 1], d2[r, ipc], d2[r, ipc + 1]
+    den = ym - 2.0 * y0 + yp
+    dlt = np.where(np.abs(den) > 1e-30, 0.5 * (ym - yp) / np.where(den == 0, 1.0, den), 0.0)
+    step = lt[1] - lt[0]
+    tpk = np.exp(lt[ipc] + np.clip(dlt, -1.0, 1.0) * step)
+    peak = d2[r, ip]
     return (np.sqrt(np.pi * ALPHA * tpk).reshape(cube.shape[1:]),
             peak.reshape(cube.shape[1:]))
 
