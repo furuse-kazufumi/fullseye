@@ -171,6 +171,20 @@ assert np.isfinite(v).all()</pre>
 <p>&gt; ★ ここで一度失敗しています。最初は<b>独立な画像対を並べたもの</b>を「列」として渡し、平均 0.73 px に対して変動の RMS が 4.05 px という数字を得ました。隣り合う 2 枚に対応関係が無いので、流れではなく<b>列の作り方</b>を測っていたのです。<code style="color:#22d3bf">piv_synth_sequence</code> は同じ粒子を追い続けます。</p>
 <p>&gt;</p>
 <p>&gt; もう一つ。乱れを<b>粒子ごとに独立</b>に振ると、窓の中で平均されて粒子数の平方根ぶん小さくなり、仕込み 0.3 に対して 0.15 しか出ませんでした。これは PIV の性質であって誤りではありませんが、時間統計の検証には使えないので、<code style="color:#22d3bf">jitter</code> は<b>コマごとに場全体を揺らす</b>形にしてあります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実データに当てたときに起きたこと(2026-09-06)</h3>
+<p>公開データ(SPLEEN 高速タービン翼列 PIV、Zenodo 10256759、CC BY 4.0、27 MB、MATLAB v5 の <code style="color:#22d3bf">.mat</code> なので <code style="color:#22d3bf">scipy.io.loadmat</code> がそのまま読む)で場の op を回した記録。</p>
+<p>一致したもの:</p>
+<p style="margin:2px 0 2px 12px">• 流れ角 —— 同梱の <code style="color:#22d3bf">beta</code> と <code style="color:#22d3bf">atan2(V_tan, V_axi)</code> の差が中央値 <b>0.0006 度</b>(座標系の解釈が正しい確認)。</p>
+<p style="margin:2px 0 2px 12px">• 音速 —— <code style="color:#22d3bf">V_mag_2D / Mach_2D</code> = 327.2 m/s。</p>
+<p style="margin:2px 0 2px 12px">• 速さ —— 自前の <code style="color:#22d3bf">piv_flow_magnitude</code> と同梱値の差が中央値 <b>0.067 m/s</b>(約 296 m/s に対して相対 <b>2e-4</b>)。</p>
+<p><b>ここで一度、失敗した報告をしました。</b> 最初に出した数字は「最大差 200 m/s、相対 0.81」でした。事実ですが、分布はこうです:</p>
+<p>| 差の絶対値 | 50 % | 90 % | 99 % | 最大 |</p>
+<p>|---|---:|---:|---:|---:|</p>
+<p>| [m/s] | 0.067 | 1.099 | 15.864 | 200.144 |</p>
+<p>中央値と最大で <b>3 桁半</b>違います。最大値を見出しにすると「合っていない」に、中央値を見出しにすると「合っている」に見える —— どちらも本当なので、<b>両方出す</b>のが正しい報告です。</p>
+<p>食い違いの原因は実装ではなく<b>比べている量の違い</b>でした。<code style="color:#22d3bf">V_mag_2D</code> は <code style="color:#22d3bf">|平均速度|</code> ではなく **<code style="color:#22d3bf">平均した速さ</code>** で、イェンセンの不等式から前者以上になります。裏づけ: 差と <code style="color:#22d3bf">(STD_Vaxi² + STD_Vtan²) / (2|V|)</code> の相関 <b>r = 0.879</b>、差が 20 m/s を超える点の乱流強度は中央値 <b>42 %</b>(全体 2.2 %)—— つまり<b>後流の中</b>に集中していました。</p>
+<p>&gt; 公開された場と突き合わせるときは、<b>量の定義を先に一致させること</b>。名前(<code style="color:#22d3bf">V_mag_2D</code>)は平均の取り方を書いていません。</p>
+<p>もう一つ実データで効いた事実: 欠測が <b>67.5 %</b> ありました(翼の影と視野外)。<code style="color:#22d3bf">nan</code> を 0 で埋めて微分すると、翼の輪郭に沿って<b>偽の勾配</b>が立ちます。この族の場の op は <code style="color:#22d3bf">nan</code> を伝播させるので、埋めるかどうかは呼ぶ側の判断です。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">次にどこへ繋がるか</h3>
 <p style="margin:2px 0 2px 12px">• <b>公開データ</b> —— 合成で閉じたら RSPID(合成粒子画像 + 真値)、円柱後流の時間分解 PIV(ストローハル数 0.2 前後という独立検算が効く)、タービン翼列。RAD コーパス <code style="color:#22d3bf">fullseye_poc_datasets_corpus_v2</code> のノート 060-064 に URL の実測結果とライセンスの注意がある。</p>
 <p style="margin:2px 0 2px 12px">• <b>航空・流体</b> —— 渦度から Q 基準・λ2 へ(速度勾配テンソルの不変量)。同コーパスのノート 036。</p>

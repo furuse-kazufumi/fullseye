@@ -1633,6 +1633,17 @@ TYPE_CHECKS = {
     "flow_dense": lambda v: not _is_seq(v) and len(_shape(v)) == 4 \
     and _shape(v)[0] == 3,
 
+    # flow2d = **平面**の密な変位場 (2, h, w)、成分 (dy, dx) [px/frame]。
+    # flow_dense((3,D,H,W) の 3-D シーンフロー)とは別の型 —— あちらの述語は
+    # ndim==4 を要求するので 2-D は該当せず、名前を借りると台帳が
+    # 「3 成分を返す」と宣言しながら 2 成分を返すことになる(2026-09-06、
+    # pivops 新設時)。述語を書き忘れていたことは
+    # test_every_catalog_out_type_has_a_predicate が捕まえた —— 述語が無いと
+    # 「宣言 out=flow2d の op が何を返しても TYPEMISS にならない」ので、
+    # 検査面を増やしたつもりで増えていない状態になる。
+    "flow2d": lambda v: not _is_seq(v) and len(_shape(v)) == 3 \
+    and _shape(v)[0] == 2,
+
     # frame = frenet_frame の **(T, N, B) 各 (Npts,3) 単位ベクトル**。
     # 3 本が同じ点数で揃っていることが標構の意味そのもの(1 本でも欠けたら
     # 曲線上の直交系にならない)
