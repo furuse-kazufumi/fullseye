@@ -84,8 +84,12 @@ def _links(path: Path) -> list:
     return out
 
 
-def _reachable() -> set:
-    seen = {INDEX.resolve()}
+def _index_path(lang: str) -> Path:
+    return DOCS / ("README.md" if not lang else "README.%s.md" % lang)
+
+
+def _reachable(root: Path = INDEX) -> set:
+    seen = {root.resolve()}
     q = deque(seen)
     while q:
         cur = q.popleft()
