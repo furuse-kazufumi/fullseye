@@ -758,27 +758,33 @@ def main():
     print(f"  大型集団 8 個の線寸法だけを振る(他は同じ)。pack {BASE_PACK:.2f} 固定。")
     print("  ★**集団ごとに分けて数える** —— 全体に混ぜると、大型の過分割と小型の")
     print("     過統合が打ち消し合って『どちらも問題なし』に見えてしまう。")
-    print("  " + pad("大きさ比", 10, right=False) + pad("面積比", 10)
-          + "".join(pad(f"h={h}", 15) for h in HS_SIZE) + pad("形の事前知識", 18))
-    print("  " + pad("", 10, right=False) + pad("", 10)
-          + "".join(pad("大型割れ/小型統合", 15) for _ in HS_SIZE)
-          + pad("大型割れ/小型統合", 18))
+    print("  " + pad("大きさ比", 8, right=False) + pad("面積比", 8)
+          + pad("指定可能な最小 h", 18)
+          + "".join(pad(f"h={h}", 17) for h in HS_SIZE) + pad("形の事前知識", 18))
+    print("  " + pad("", 8, right=False) + pad("", 8) + pad("[px]", 18)
+          + "".join(pad("大型割/小型割/小型統合", 17) for _ in HS_SIZE)
+          + pad("大型割/小型割/統合", 18))
     size_tab = {}
     for r in RATIOS:
         scs = [make_scene(s, pack=BASE_PACK, size_ratio=r) for s in SEEDS]
         fgs = [foreground(s["img"]) for s in scs]
+        # ★指定できる最小の h は 0.05 x max(距離変換)。画像の中に大きい細胞が
+        #   1 つあるだけで、**画像全体の h の下限が上がる**(op の仕様による結合)。
+        hmin = float(np.mean([0.05 * edt(fg).max() for fg in fgs]))
+        size_tab[(r, "hmin")] = hmin
 
         def by_class(preds, scs=scs):
-            """(大型細胞の過分割件数, 小型細胞に掛かった過統合件数) の平均。"""
-            bs, sm = [], []
+            """(大型の過分割, 小型の過分割, 小型に掛かった過統合) の平均件数。"""
+            bs, ss, sm = [], [], []
             for s, pred in zip(scs, preds):
                 ev = evaluate(s, pred)
                 big = s["kind"] == KIND_LARGE
                 bs.append(float(np.maximum(ev["per_gt"][big] - 1, 0).sum()))
+                ss.append(float(np.maximum(ev["per_gt"][~big] - 1, 0).sum()))
                 own = ev["owner_of_pred"]
                 small_pred = (own >= 0) & ~big[np.clip(own, 0, None)]
                 sm.append(float(np.maximum(ev["per_pred"][small_pred] - 1, 0).sum()))
-            return float(np.mean(bs)), float(np.mean(sm))
+            return (float(np.mean(bs)), float(np.mean(ss)), float(np.mean(sm)))
 
         cells = []
         for h in HS_SIZE:
@@ -786,34 +792,46 @@ def main():
                 preds = [m_ws_all(s["img"], fg) for s, fg in zip(scs, fgs)]
             else:
                 preds = [m_ws_h(s["img"], fg, h_px=h) for s, fg in zip(scs, fgs)]
-            b, m = by_class(preds)
-            size_tab[(r, h)] = (b, m)
-            cells.append(pad(f"{b:.1f} / {m:.1f}", 15))
-        b, m = by_class([m_shape(s["img"], fg, h_px=H_DEF) for s, fg in zip(scs, fgs)])
-        size_tab[(r, "shape")] = (b, m)
+            v = by_class(preds)
+            size_tab[(r, h)] = v
+            cells.append(pad("%.1f/%.1f/%.1f" % v, 17))
+        v = by_class([m_shape(s["img"], fg, h_px=H_DEF) for s, fg in zip(scs, fgs)])
+        size_tab[(r, "shape")] = v
         size_tab[(r, "n_big")] = int((scs[0]["kind"] == KIND_LARGE).sum())
-        print("  " + pad(f"{r:.1f}x", 10, right=False) + pad(f"{r * r:.1f}x", 10)
-              + "".join(cells) + pad(f"{b:.1f} / {m:.1f}", 18))
-    print(f"  (大型は {size_tab[(1.0, 'n_big')]} 個。「大型割れ」はそのうち何件が"
-          "2 つ以上に割られたか)")
-    print("  " + pad("大きさ比", 12, right=False) + pad("大型に最適な h", 18)
-          + pad("小型に最適な h", 18) + pad("差", 8))
+        n_small = int((scs[0]["kind"] != KIND_LARGE).sum())
+        size_tab[(r, "n_small")] = n_small
+        print("  " + pad(f"{r:.1f}x", 8, right=False) + pad(f"{r * r:.1f}x", 8)
+              + pad(f"{hmin:.2f}", 18) + "".join(cells) + pad("%.1f/%.1f/%.1f" % v, 18))
+    print(f"  (大型 {size_tab[(1.0, 'n_big')]} 個 / 小型 {size_tab[(1.0, 'n_small')]} 個。"
+          "「割」= 2 つ以上に割られた件数、「統合」= まとめられた件数)")
+    print("  それぞれの集団に最適な h と、**その h を選んだときに他方が払う代償**:")
+    print("  " + pad("大きさ比", 10, right=False) + pad("小型に最適な h", 18)
+          + pad("そのとき大型が割れる", 24) + pad("大型に最適な h", 18)
+          + pad("そのとき小型が統合", 22))
     for r in RATIOS:
-        hb = max(HS_SIZE, key=lambda h: -size_tab[(r, h)][0])
-        hs = max(HS_SIZE, key=lambda h: -size_tab[(r, h)][1])
+        hs = min(HS_SIZE, key=lambda h: size_tab[(r, h)][1] + size_tab[(r, h)][2])
+        hb = min(HS_SIZE, key=lambda h: size_tab[(r, h)][0])
         size_tab[(r, "argh")] = (hb, hs)
-        print("  " + pad(f"{r:.1f}x", 12, right=False) + pad(f"{hb:.1f}", 18)
-              + pad(f"{hs:.1f}", 18) + pad(f"{hb - hs:+.1f}", 8))
-    print("  → 大型細胞は **h を大きくするほど** 割れなくなり、小型細胞は"
-          " **h を小さくするほど**")
-    print("     くっつかなくなる。**要求が真逆**なので、単一の h では両方は救えない。")
-    print("     大きさ比を上げるほど大型の過分割が増え、要求の差が広がる —— これが")
-    print("     ノブの調整では直らないことの根拠で、スケール空間(細胞の大きさごとに")
-    print("     h を変える)が要る。")
-    print("  → 形の事前知識(面積から個数を推して、その数まで割る)は **もっと悪い**。")
-    print("     大型細胞 1 個の面積が『1 個ぶん』の何倍もあるので、面積から推した")
-    print("     個数が最初から間違っており、**わざわざその数まで割りにいく**。")
-    print("     自己校正した『1 個ぶんの面積』が単峰であることを暗黙に前提している。")
+        print("  " + pad(f"{r:.1f}x", 10, right=False) + pad(f"{hs:.1f}", 18)
+              + pad(f"{size_tab[(r, hs)][0]:.1f} / {size_tab[(r, 'n_big')]}", 24)
+              + pad(f"{hb:.1f}", 18)
+              + pad(f"{size_tab[(r, hb)][2]:.1f} 件", 22))
+    print("  → **要求が真逆**。小型は h を小さくしたい(くっつかせたくない)、大型は")
+    print("     h を大きくしたい(割られたくない)。大きさ比が 1 倍なら代償は小さいが、")
+    print(f"     3 倍では小型に最適な h を選んだ時点で大型 {size_tab[(1.0, 'n_big')]} 個中"
+          f" {size_tab[(3.0, size_tab[(3.0, 'argh')][1])][0]:.1f} 個が割れる。")
+    print("     大きい物体ほど距離変換の尾根が長く、尾根の上の小さな凹凸を種として")
+    print("     拾いやすい —— **過分割は大きさに比例して増える**。")
+    print("  → ★もっと厄介なのは 3 列目。**指定できる最小の h が大きさ比とともに上がる**")
+    print(f"     ({size_tab[(1.0, 'hmin')]:.2f} → {size_tab[(3.0, 'hmin')]:.2f} 画素)。"
+          "``xsk2_h_maxima`` の h は正規化画像に対する")
+    print("     比なので、**画像の中に大きい細胞が 1 つ入っただけで、小さい細胞の側で")
+    print("     使える h の下限まで上がってしまう**。スケールの結合が op の仕様に")
+    print("     埋め込まれている = 手法の問題ではなく道具の問題。")
+    print("  → 形の事前知識(面積から個数を推して、その数まで割る)は、大型細胞を")
+    print("     『k 個ぶんの面積がある』と読んで割りにいく。実際には上の h の下限が")
+    print("     効いて種が増えず、**割りたくても割れない**ので過分割は増えないが、")
+    print("     『1 個ぶんの面積』が単峰であることを暗黙に前提している点は変わらない。")
 
     print("\n=== 6. 崖 (c) 種の間引き量 h —— 過分割と過統合のトレードオフ ===")
     HS = (0.0, 0.4, 0.75, 1.1, 1.5, 2.0, 2.7, 3.6, 5.0)
