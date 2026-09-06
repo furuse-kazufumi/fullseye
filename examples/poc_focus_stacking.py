@@ -414,7 +414,7 @@ def main():
     assert rms(err[band]) > 2.0 * rms(err[plain]), "段差帯が悪化していない —— 段差が効いていない"
     # 6. 穴 (b): fs.op の微分はフレームごとに 1.0 へ正規化される
     for name in ("laplace", "sobel_amp"):
-        assert abs(float(np.max(fs.op[name](stack[0]))) - 1.0) < 1e-12, \
+        assert abs(float(np.max(fs.apply(stack[0], name))) - 1.0) < 1e-12, \
             f"fs.op.{name} が最大 1.0 に正規化されていない —— 穴 (b) が直った?"
     assert max(scale) / min(scale) > 1.2, "正規化係数がフレーム間で振れていない"
     # 7. 穴 (c): 非正規化の合焦指標は 1.0 で飽和する
