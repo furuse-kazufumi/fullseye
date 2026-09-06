@@ -25,7 +25,7 @@
 
 | 문서 | 내용 |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | 521개 연산자 전체 카탈로그(31개 카테고리, sort 별 정리, HALCON／OpenCV／scikit-image／MATLAB의 대응 API 포함) |
+| [OPERATORS.md](OPERATORS.md) | 521개 연산자 전체 카탈로그(31개 카테고리, sort별 정리, HALCON／OpenCV／scikit-image／MATLAB의 대응 API 포함) |
 | [EXAMPLES.md](EXAMPLES.md) | 연산자별 예제 코드(다른 라이브러리에서의 동등한 호출 포함) |
 | [OP_INDEX.json](OP_INDEX.json) | 기계가 읽을 수 있는 연산자 색인(`imgevolve.py index`로 다시 생성) |
 | [ADDING_OPS.md](ADDING_OPS.md) | 새 연산자를 추가하는 방법(진화·codegen·카탈로그·색인이 자동으로 따라옵니다) |

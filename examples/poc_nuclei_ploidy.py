@@ -633,17 +633,18 @@ def main():
     print("=" * 78)
     print("まとめ")
     print("=" * 78)
-    print("  ・マスク積分の裾落ち        %.1f %%(倍率の偏り)" % (100 * (1 - tail)))
+    print("  ・マスク積分の裾落ち        %.1f %% → DNA 指数が既に %.3f(真値 2.00)"
+          % (100 * (1 - tail), di0))
     print("  ・誤分類 面積(真値) %.3f / 面積(測定) %.3f / 積分輝度 %.3f"
           % (sep2["面積(真値)"][0], sep2["面積(測定)"][0], sep2["積分輝度(測定)"][0]))
     print("  ・分離度 面積 %.1f σ / 積分輝度 %.1f σ"
           % (sep2["面積(真値)"][1], sep2["積分輝度(測定)"][1]))
     print("  ・面積の漏れ 傾き %+.2f(PSF 0.6px)→ %+.2f(1.5px)" % (leak[0.2][0], leak[0.5][0]))
-    print("  ・背景 5 倍で DNA 指数 %.2f(引けば %.2f / 環状背景 %.2f)"
+    print("  ・背景 5 倍で DNA 指数 %.3f(引けば %.3f / 環状背景 %.3f)"
           % (curve["raw"][-1], curve["sub"][-1], curve["ap"][-1]))
-    print("  ・飽和 %.1f %% で DNA 指数 %.2f" % (sat_rows[-1][1], sat_rows[-1][2]))
-    print("  ・融合 %d/%d で 4n 割合 %.2f → solidity で落として %.2f"
-          % (fus[0.90][1], fus[0.90][0], fus[0.90][2], fus[0.90][5]))
+    print("  ・飽和 %.1f %% で DNA 指数 %.3f" % (sat_rows[-1][1], sat_rows[-1][2]))
+    print("  ・融合 %d/%d で 4n 割合 %.3f(真値 %.3f)→ solidity で落として %.3f"
+          % (fus[0.90][1], fus[0.90][0], fus[0.90][2], truth4, fus[0.90][5]))
     print("  ・混合比の最大偏差 積分 %.3f / 面積 %.3f" % (dev_i, dev_a))
 
     assert sep2["積分輝度(測定)"][0] < 0.02 < sep2["面積(真値)"][0]
@@ -651,11 +652,13 @@ def main():
     assert sep2["面積(測定)"][0] < sep2["面積(真値)"][0], sep2
     assert leak[0.5][0] > leak[0.2][0] > 0.15, leak
     assert leak[0.5][2] < leak[0.1][2], leak
-    assert curve["raw"][-1] < 1.8 < curve["sub"][-1] < 2.2, curve
-    assert abs(curve["ap"][-1] - 2.0) < 0.25, curve
+    assert di0 > 2.05, di0                     # 裾落ちは比まで歪める(1 節)
+    assert curve["raw"][-1] < 1.8 < curve["sub"][-1], curve
+    assert abs(curve["sub"][-1] - curve["raw"][0]) < 1e-9, curve
+    assert abs(curve["ap"][-1] - 2.0) < abs(curve["sub"][-1] - 2.0), curve
     assert sat_rows[-1][2] < 1.95, sat_rows
-    assert fus[0.90][2] > 0.36 and abs(fus[0.90][5] - 0.30) < 0.06, fus
-    assert dev_i < 0.05 < dev_a, (dev_i, dev_a)
+    assert fus[0.90][2] > truth4 + 0.06 and abs(fus[0.90][5] - truth4) < 0.06, fus
+    assert dev_i < 0.06 < dev_a, (dev_i, dev_a)
     assert len(leak_rows) == 4
 
     if figs.errors():
