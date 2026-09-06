@@ -1018,6 +1018,8 @@ def main():
     # (13) NDVI 線形換算は原理どおり上振れし、**混合画素だけで見ると全体より大きい**
     assert lin_bias > 0.0, lin_bias
     assert lin_bias > 100.0 * abs(float((lin - tcat).mean())), lin_bias
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
