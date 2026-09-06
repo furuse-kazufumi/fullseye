@@ -429,10 +429,13 @@ def main():
           f"アンシャープ(神託 a={uns_ab[0]}, b={uns_ab[1]}) {p_uns40:.2f} dB")
     print(f"  {'角度ずれ [度]':>13}{'PSNR':>9}{'対 何もしない':>15}{'対 アンシャープ':>17}")
     ang_x, ang_y = [], []
+    ang_img = {}                          # 図用。掃引の途中の復元像をそのまま使い回す
     for d in (0.0, 1.0, 2.0, 3.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0,
               16.0, 18.0, 20.0, 25.0, 30.0, 45.0):
-        p, _, _ = wiener_best(obs40, psf_line(15, 20.0 + d), gt)
+        p, _nsr, est = wiener_best(obs40, psf_line(15, 20.0 + d), gt)
         ang_x.append(d); ang_y.append(p)
+        if d in (0.0, 20.0):
+            ang_img[d] = est
         print(f"  {d:>13.0f}{p:>9.2f}{p - p_null40:>15.2f}{p - p_uns40:>17.2f}")
     ang_break_uns = crossing(ang_x, ang_y, p_uns40)
     ang_break_null = crossing(ang_x, ang_y, p_null40)
