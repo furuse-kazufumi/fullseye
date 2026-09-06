@@ -458,28 +458,30 @@ def section5_step(rows0, cols0):
     print("  粒子数 200 に固定してステップ σ だけを振る。密度掃引と同じ曲線に")
     print("  乗るなら、支配しているのは密度でもステップ幅でもなく**その比**。")
     print()
-    header = "  %8s %10s %10s %10s %10s" % ("σ px", "σ/最近接", "誤り率%", "D 比", "D真値")
+    header = ("  %7s %9s | %8s %9s | %8s %9s"
+              % ("σ px", "σ/最近接", "曖昧%", "D比 真値位置", "欠測%", "D比 検出位置"))
     print(header)
     print("  " + "-" * (len(header) - 2))
-    rec = {"ratio": [], "bad": [], "d": []}
+    rec = {"ratio": [], "amb": [], "d_tru": [], "d_det": []}
     for sg in [0.4, 0.8, 1.2, 1.8, 2.4]:
         rows, cols = simulate(200, sigma_step=sg, seed=SEED + 7)
         movie = make_movie(rows, cols, seed=3)
-        pos, ident, _ = build_positions(rows, cols, movie, use_detection=True)
         pts = np.stack([rows[0], cols[0]], 1)
         nnd = float(np.median(cKDTree(pts).query(pts, k=2)[0][:, 1]))
-        disp, bad = step_displacements(pos, ident, link_nn)
-        d, _, _ = estimate(disp)
+        posd, idd, backd = build_positions(rows, cols, movie, use_detection=True)
+        post, idt, backt = build_positions(rows, cols, movie, use_detection=False)
+        dd, bd = step_displacements(posd, idd, link_nn, truth_index=backd)
+        dv, bt = step_displacements(post, idt, link_nn, truth_index=backt)
+        a, _, _ = estimate(dd)
+        c, _, _ = estimate(dv)
         d_ref = sg * sg / 2.0
-        print("  %8.1f %10.2f %10.1f %10.3f %10.4f"
-              % (sg, sg / nnd, 100 * bad, d / d_ref, d_ref))
+        print("  %7.1f %9.2f | %8.1f %9.3f | %8.1f %9.3f"
+              % (sg, sg / nnd, 100 * bt["amb"], c / d_ref,
+                 100 * bd["miss"], a / d_ref))
         rec["ratio"].append(sg / nnd)
-        rec["bad"].append(100 * bad)
-        rec["d"].append(d / d_ref)
-    print()
-    print("  → 比が 0.1 を超えたあたりから誤り率が立ち上がり、0.25 で 4 割。")
-    print("     **撮影の設計に直せる**: 「時間刻みを縮めて σ を小さくする」か")
-    print("     「濃度を薄めて最近接距離を伸ばす」か、どちらでも同じだけ効く。")
+        rec["amb"].append(100 * bt["amb"])
+        rec["d_tru"].append(c / d_ref)
+        rec["d_det"].append(a / d_ref)
     return rec
 
 
