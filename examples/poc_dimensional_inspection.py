@@ -485,7 +485,7 @@ def section_dimensions(img):
     sub("(b2) 外形の平行 2 辺(左半分 220.50 px / 右半分 190.50 px)")
     print(f"  {'測る量':<22}{'真値':>9}{'M':>10}{'誤差[px]':>10}{'誤差[um]':>10}")
     outer_err = []
-    for c, truth in ((200.0, OUTER_W_LEFT), (380.0, OUTER_W_LEFT), (520.0, OUTER_W_RIGHT)):
+    for c, truth in ((250.0, OUTER_W_LEFT), (380.0, OUTER_W_LEFT), (560.0, OUTER_W_RIGHT)):
         ms = m1.gen_measure_rectangle2((R_TOP + R_BOT) / 2, c, math.pi / 2, 140, 1, img.shape)
         pr = m1.measure_pairs(img, ms, sigma=1.0, threshold=0.2)
         w = pr[0]["width"] if pr else float("nan")
