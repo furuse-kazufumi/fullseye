@@ -605,10 +605,17 @@ def main():
     r = M.motion_magnify(noisy, 10.0, *BAND, FPS)
     assert r["motion_snr_change_db"] <= 1e-9
     assert r["image_snr_change_db"] <= 1e-9
-    # 13) 帯域外の運動は拡大されない
-    off = make_clip([(0.5, 12.0, 0.0)])[0]
-    g = amp_rms(read_dx_oracle(M.motion_magnify(off, 20.0, *BAND, FPS)["video"])) / 0.5
+    # 13) 帯域外の運動は拡大されない —— ただしそれもビンに乗っている場合だけ。
+    #     11.1 Hz は 30 ビン目ちょうどなので素通し(利得 1.0)。同じ振幅を
+    #     12.0 Hz(32.43 ビン)に置くと漏れて 1.074 倍に増幅されてしまう。
+    on_bin_out = make_clip([(0.5, 11.1, 0.0)])[0]
+    g = amp_rms(read_dx_oracle(
+        M.motion_magnify(on_bin_out, 20.0, *BAND, FPS)["video"])) / 0.5
     assert abs(g - 1.0) < 1e-9, g
+    off_bin_out = make_clip([(0.5, 12.0, 0.0)])[0]
+    g_off = amp_rms(read_dx_oracle(
+        M.motion_magnify(off_bin_out, 20.0, *BAND, FPS)["video"])) / 0.5
+    assert g_off > 1.05, g_off
     # 14) fail-closed: 帯域が Nyquist を超えたら拒否される
     try:
         M.displacement_series(v, 3.0, 100.0, FPS)
