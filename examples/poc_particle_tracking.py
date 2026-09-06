@@ -218,18 +218,26 @@ def estimate(disp):
 
 def step_displacements(movie_pos, ident, linker, use_truth_link=False,
                        truth_index=None):
-    """フレーム間の 1 歩の変位を全部集める。``(k, 2)`` と、リンク誤り率。
+    """フレーム間の 1 歩の変位を全部集める。``(disp, rate)`` を返す。
+
+    ``rate`` は誤り率の内訳 ``dict``。**1 本にまとめない** —— 誤リンクには
+    向きの違う 2 種類があり、まとめると打ち消し合って消えるため:
+
+    ``"amb"``   曖昧による誤り。正解(同じ粒子の検出)が次フレームに
+                **在るのに**別の点を選んだ。近い相手を選ぶので変位は**短く**なる。
+    ``"miss"``  欠測による誤り。正解が次フレームに**無い**(融合・視野外)。
+                やむを得ず遠い他人を掴むので変位は**長く**なる。
 
     ``use_truth_link=True`` は**対照群** —— 同じ粒子の検出どうしを真値で
     結ぶ(リンク誤りが定義上ゼロ)。
     """
-    disp, n_link, n_bad = [], 0, 0
+    disp, n_link, n_amb, n_miss = [], 0, 0, 0
     for t in range(len(movie_pos) - 1):
         pa, pb = movie_pos[t], movie_pos[t + 1]
         ia, ib = ident[t], ident[t + 1]
+        back = truth_index[t + 1]
         if use_truth_link:
             # 真値リンク: 粒子番号 → 検出番号 の逆引きで対を作る
-            back = truth_index[t + 1]
             for i in range(pa.shape[0]):
                 p = ia[i]
                 if p < 0:
@@ -247,10 +255,17 @@ def step_displacements(movie_pos, ident, linker, use_truth_link=False,
                 continue
             disp.append(pb[j] - pa[i])
             n_link += 1
-            if ia[i] >= 0 and ib[j] != ia[i]:
-                n_bad += 1
+            p = int(ia[i])
+            if p < 0 or ib[j] == p:
+                continue
+            if back.get(p, -1) >= 0:
+                n_amb += 1                 # 正解が在ったのに取り違えた
+            else:
+                n_miss += 1                # 正解が消えていた
     d = np.asarray(disp) if disp else np.zeros((0, 2))
-    return d, (n_bad / n_link if n_link else float("nan"))
+    z = float(n_link) or float("nan")
+    return d, {"all": (n_amb + n_miss) / z, "amb": n_amb / z, "miss": n_miss / z,
+               "n": n_link}
 
 
 def build_positions(rows, cols, movie, use_detection: bool):
