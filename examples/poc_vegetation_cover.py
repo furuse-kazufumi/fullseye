@@ -540,6 +540,19 @@ def main():
     print("     前提のこの場面では逆に大きく下振れする: 同じ画素で"
           f" {100 * float(((lin[mid] ** 2) - tcat[mid]).mean()):+.2f} pp。")
     print("     2 乗形が想定しているのは葉面積指数に対する飽和で、面積混合ではない。")
+    # ★対角線に載っているかどうかが「分数のまま答えられるか」そのもの。
+    #   二値手法の線は階段になり、混合画素の帯で対角線から大きく離れる。
+    _tx = np.array([tcat[idx == i].mean() for i in range(len(lbls))])
+    _ser = [("真値", _tx, _tx)]
+    for _nm in ("大津・緑(ゼロ点)", "ExG + 大津", "NDVI 線形換算", "アンミックス3(+影)"):
+        _v = np.concatenate([m.ravel() for m, _ in allmaps[_nm]])
+        _ser.append((_nm, _tx, np.array([_v[idx == i].mean() for i in range(len(lbls))])))
+    figs.save_plot("mixed_pixel_response", _ser,
+                   xlabel="真値 f(画素に入った葉の面積率)", ylabel="手法の平均応答",
+                   title="混合画素で分数のまま答えられるか",
+                   xlim=(0.0, 1.0), ylim=(0.0, 1.0),
+                   caption="対角線に載っていれば分数で答えられている。二値手法は"
+                           "0 か 1 しか返せないので、途中で対角線を離れる。")
 
     print("\n=== 6. 崖 (a) 影の強さ —— 何が先に壊れるか ===")
     sh_methods = (("大津・緑(ゼロ点)", m_otsu_green), ("ExG + 大津", m_exg_otsu),
