@@ -433,11 +433,12 @@ def main():
     print("     一定倍率でずれるのは、面に相関があって**独立な標本の数が点数 M"
           "より少ない**から。log の中の M を実効値に直せば合う —— つまり"
           "「Sz は領域の対数でしか増えない」という形は正しい。")
-    print(f"     結果として、領域を {512 * 512 // (32 * 32)} 倍(32²→512²)に"
-          f"広げても Sz は {szs.mean() / np.array([0.0]) if False else 0:.0f}"[:0]
-          + f"     結果として、領域を 256 倍(32²→512²)に広げても Sz は "
-          f"{100 * (mono_preview(rough_without) - 1):.0f}% しか増えない"
-          "(が、確実に増える。頭打ちにはならない)。")
+    sz_small = float(np.mean([rough_without[i:i + 32, j:j + 32].ptp()
+                              for i in range(0, N, 32) for j in range(0, N, 32)]))
+    sz_full = float(rough_without.ptp())
+    print(f"     結果として、領域を 256 倍(32²→512²)に広げても Sz は "
+          f"{100 * (sz_full / sz_small - 1):.0f}% しか増えない —— "
+          "が、確実に増える。**頭打ちにならないので『真の Sz』は存在しない。**")
     w = 64
     wins = [rough_with[i:i + w, j:j + w] for i in range(0, N, w) for j in range(0, N, w)]
     szs = np.array([float(v.max() - v.min()) for v in wins])
