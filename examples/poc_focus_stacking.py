@@ -298,16 +298,20 @@ def main():
 
     print("\n=== 7. ★ 唯一の非正規化な合焦指標は 1.0 で飽和する ===")
     sharp = 0.1 + 0.8 * (np.random.default_rng(3).random((SIZE, SIZE)) > 0.5)
-    print(f"  {'ぼけ半径 [px]':>14}{'xcv2_lap_var':>14}")
-    prev, ties = None, 0
-    for sigma in (0.0, 0.5, 1.0, 1.5, 2.0, 3.0):
-        b = fs.op.gauss_filter(sharp, a=0.0) if sigma == 0 else _blur(sharp, sigma)
-        v = float(fs.op.xcv2_lap_var(b))
-        ties += 1 if (prev is not None and v == prev == 1.0) else 0
-        prev = v
-        print(f"  {sigma:>14.1f}{v:>14.6f}")
-    print("  → 鮮鋭な側が全部 1.000000 で並ぶ(``min(1.0, 分散 * 20)`` のクリップ)。")
-    print("     オートフォーカスで順位が要るのはまさにこの側なので、そこで使えない。")
+    stack_hc = focal_stack(sharp, depth, focus_mm)
+    af = np.array([float(fs.op.xcv2_lap_var(s)) for s in stack_hc])
+    ref = np.array([float(np.var(-4.0 * s + np.roll(s, 1, 0) + np.roll(s, -1, 0)
+                                 + np.roll(s, 1, 1) + np.roll(s, -1, 1))) for s in stack_hc])
+    n_tied = int((af >= 1.0).sum())
+    print("  高コントラストの被写体で 15 枚を掃引し、フレームごとの合焦指標を見る:")
+    print(f"  {'合焦距離 [mm]':>14}{'xcv2_lap_var':>14}{'クリップ前の分散':>18}")
+    for f_mm, v, rv in zip(focus_mm, af, ref):
+        mark = "  <- 同点" if v >= 1.0 else ""
+        print(f"  {f_mm:>14.2f}{v:>14.6f}{rv:>18.6f}{mark}")
+    print(f"  → 15 枚のうち {n_tied} 枚が厳密に 1.000000 で並ぶ"
+          "(``min(1.0, 分散 * 20)`` のクリップ)。")
+    print(f"     クリップ前の分散なら最良は {focus_mm[int(np.argmax(ref))]:.2f} mm と一意に決まる。")
+    print("     オートフォーカスで順位が要るのはまさに鮮鋭な側なので、そこで使えない。")
 
     print("\n=== 8. フレーム間隔を粗くすると ===")
     print(f"  {'枚数':>5}{'間隔 [mm]':>11}{'量子化下限':>12}{'それ以外RMS':>13}"
