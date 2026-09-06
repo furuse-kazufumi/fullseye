@@ -159,6 +159,13 @@ def mesh_area(mesh) -> float:
 
     Returns:
         表面積(非負の float)。
+
+    Raises:
+        ValueError: mesh が (vertices, faces) の 2 要素でない、形状不正、非有限座標、非整数・範囲外の
+            index、空、または 3 頂点のどれかが同じ index の三角形があるとき。
+
+    注意: ``face_normals`` と違い、座標がほぼ一直線に並んだ退化三角形(面積 0)は拒否せず 0 として
+    加算する。重複面や表裏 2 枚張りの面はそのまま 2 回数えられる。単位は座標の単位の 2 乗。
     """
     V, F = _as_mesh(mesh)
     cr = _face_cross(V, F)
