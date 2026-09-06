@@ -1660,7 +1660,26 @@ def mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375
     synthetic-relief weight ``1 − gate`` of the source model). The peak displacement at a
     vertex is at most ``Σ_k A_k`` (tests pin it). Unlike :func:`mesh_displace_fbm` (one
     amplitude, octave ratio 2, no band limit) every octave's amplitude is explicit.
-    Deterministic under ``seed``. Fail-closed on shapes / non-finite / negative values."""
+    Deterministic under ``seed``. Fail-closed on shapes / non-finite / negative values.
+
+    手順: (1) :func:`displacement_band_weights` で ``gate (K,N)`` を作る、(2) ``weights`` が
+    あれば掛ける、(3) オクターブ ``k`` ごとに seed 固定の value noise
+    ``n_k(x) ∈ [-1,1]``(波長 ``λ_k``、格子オフセットはオクターブ番号で変える)を評価し
+    ``Σ_k A_k · gate_k · n_k`` を法線方向の変位にする、(4) 面積重み付き頂点法線に沿って
+    頂点を動かす。返り値 ``(V' (N,3) float64, F のコピー)``。
+
+    - ``wavelengths`` / ``amplitudes``: 同じ長さ(1〜32 個)の正の列。メッシュ単位。
+      個数不一致・空・33 個以上・負の振幅・``amplitudes=None`` は ``ValueError``。振幅 0 の
+      オクターブは評価を飛ばす。
+    - ``nyquist`` / ``fade`` / ``local_edge``: 帯域ゲートの設定(``displacement_band_weights``
+      と同じ)。
+    - ``weights``: ``(N,)`` なら全オクターブ共通、``(K,N)`` ならオクターブ別の係数。値は
+      [0, 1] に限り、範囲外・形不一致は ``ValueError``。
+    - ``seed``: 同じ seed なら ``bump_normals_fbm`` と同じ格子を共有する(幾何で担えない
+      オクターブを陰影側へ連続して渡せる)。
+
+    ``mesh_displace_fbm`` との違いは、振幅をオクターブごとに明示すること、頂点ごとに
+    辺長で帯域を切ること。粗いメッシュに短波長を与えても折り返さず、単に無視される。"""
     Vv, Ff = _mesh_check(V, F)
     lam, amp = _check_spectrum(wavelengths, amplitudes)
     gate = displacement_band_weights(Vv, Ff, lam, nyquist=nyquist, fade=fade,

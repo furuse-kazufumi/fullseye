@@ -284,7 +284,21 @@ def rgb_to_xyz(rgb):
 
 
 def xyz_to_lab(xyz, white=D65_WHITE):
-    """CIE XYZ → CIE 1976 L\\*a\\*b\\*。既定の白色点は D65 2°。"""
+    """CIE XYZ → CIE 1976 L\\*a\\*b\\*。既定の白色点は D65 2°。
+
+    式: ``t = XYZ / white`` として ``f(t) = cbrt(t)``(``t > (6/29)^3``)、
+    それ以外は ``t / (3 (6/29)^2) + 4/29``。``L = 116 f(Y) - 16``、
+    ``a = 500 (f(X) - f(Y))``、``b = 200 (f(Y) - f(Z))``。
+
+    - ``xyz``: 最後の軸が 3 の任意の形。``rgb_to_xyz`` の出力と同じ、Y = 1 が白の尺度。
+    - ``white``: 白色点 ``(Xn, Yn, Zn)`` の 3 つの正の数。既定 ``D65_WHITE`` =
+      ``(0.95047, 1.0, 1.08883)``。別の光源(D50 など)で撮った XYZ ならここを変える。
+    - 返り値: 入力と同じ形の float64。``L`` は白で 100、黒で 0。``a``/``b`` は符号つき。
+    - 失敗(``MetricContractError``): 最後の軸が 3 でない / ``white`` が 3 要素でない、
+      または 0 以下を含む。XYZ の値域は検査しない(負や 1 超もそのまま計算する)。
+
+    ``delta_e_76`` / ``delta_e_2000`` はこの Lab を入力にする。
+    """
     xyz = np.asarray(xyz, dtype=np.float64)
     if xyz.shape[-1] != 3:
         raise MetricContractError(f"xyz must have 3 channels in the last axis, got shape {xyz.shape}")
