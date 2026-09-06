@@ -244,9 +244,17 @@ def edges_50(prof, det_sigma=1.0, min_amp=0.10, plateau=None):
     sm = gaussian_filter1d(prof, det_sigma, mode="nearest") if det_sigma > 0 else prof
     ag = np.abs(np.gradient(sm))
     m = int(math.ceil(2.5 * (plateau if plateau else det_sigma))) + 2
+    # 非極大抑制。これが無いと雑音で 1 本のエッジが 2 本に割れ、対の相手が
+    # ずれて幅が数 px 縮む(最初の実装で実際に起きた: SNR 350 でも -1.4 px)。
+    nms = max(1, int(round(2.0 * max(det_sigma, 1.0))))
+    gate = 0.15 * float(ag.max()) if n else 0.0
     out = []
     for i in range(1, n - 1):
         if not (ag[i] >= ag[i - 1] and ag[i] > ag[i + 1]):
+            continue
+        if ag[i] < gate:
+            continue
+        if ag[i] < ag[max(0, i - nms):min(n, i + nms + 1)].max():
             continue
         lo, hi = max(0, i - m), min(n - 1, i + m)
         a = float(np.mean(sm[max(0, lo - 1):lo + 2]))
