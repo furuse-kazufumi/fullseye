@@ -96,6 +96,7 @@ import time
 import numpy as np
 from scipy import ndimage
 
+import examplefig as figs
 import fullseye as fs
 import calib          # 平面ホモグラフィ(ファサードには出ていない。穴 C)
 
