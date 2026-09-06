@@ -23,7 +23,19 @@
 <p>because **this operator always returns a peak frequency, including when</p>
 <p>there is nothing there**:</p>
 <p>`<code style="color:#22d3bf">peak_prominence</code>`</p>
-<p>the peak divided by the median of the magnitude spectrum.</p>
+<p>the peak divided by the median of the <b>whole</b> magnitude spectrum.</p>
+<p><b>Band-width dependent, and it inverts in a narrow band</b> — see</p>
+<p>`<code style="color:#22d3bf">local_prominence</code><code style="color:#22d3bf"> below and the table in :func:</code>_local_prominence`.</p>
+<p>`<code style="color:#22d3bf">local_prominence</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">local_noise_floor</code>`</p>
+<p>the peak divided by the median of its own neighbourhood (±50 Hz,</p>
+<p>excluding ±5 Hz of the peak itself), and that median. Use this one to</p>
+<p>decide whether a peak is real: measured over both a 2000-4000 Hz and a</p>
+<p>2900-3100 Hz demodulation band, pure noise and a constant signal stay</p>
+<p>at 2.2-3.3 while a real 107 Hz defect reaches 1558 (wide) and 33.9</p>
+<p>(narrow). `<code style="color:#22d3bf">peak_prominence</code>` puts pure noise at <b>11375</b> in the</p>
+<p>narrow band, above the real defect&#x27;s 9434 — the ordering is reversed,</p>
+<p>which is why the number below the table in this docstring (&quot;white</p>
+<p>noise 365&quot;) only holds at that one band width.</p>
 <p>`<code style="color:#22d3bf">band_fraction</code>`</p>
 <p>the RMS of the band-passed signal divided by the RMS of the input — how</p>
 <p>much of the record actually lives in the demodulation band.</p>

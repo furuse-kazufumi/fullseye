@@ -179,11 +179,23 @@ class TestReconstruction:
         sino = tg.ellipse_sinogram(N, DISC, ANG180)
         rec = tg.filtered_backprojection(sino, ANG180, size=N)
         m = disc_mask()
-        assert rec[m].mean() == pytest.approx(0.9954, abs=2e-3)
+        assert rec[m].mean() == pytest.approx(1.0011, abs=2e-3)
         assert rec[m].std() < 0.005
 
     def test_fbp_converges_with_the_detector_not_the_views(self):
-        """0.9954 at 363 bins, 0.9997 at 727 — and the same at 180/360/720 views."""
+        """**No longer converges — it is already there.** 1.0011 at both 363 and
+        727 bins, bit-identical, and the same at 180/360 views.
+
+        This test used to read 0.9954 at 363 bins and 0.9997 at 727, and the
+        gap was written up as the detector count being the thing that matters.
+        It was not: the ramp's DC bin was zero, so the filter subtracted
+        ``sum(P) / n_pad`` from every projection, and 727 bins simply pad to
+        2048 instead of 1024. Building the ramp from the Ram-Lak spatial kernel
+        (2026-09-06, :func:`tomography._ramlak_spectrum`) removes the term and
+        the detector count stops mattering to the absolute level. Keep both
+        detector counts here: if they ever separate again, the DC handling has
+        regressed.
+        """
         m = disc_mask()
         coarse = {}
         for n_det in (363, 727):
@@ -192,14 +204,24 @@ class TestReconstruction:
                 rec = tg.filtered_backprojection(
                     tg.ellipse_sinogram(N, DISC, a, n_det), a, size=N)
                 coarse[(n_det, n_v)] = rec[m].mean()
-        assert coarse[(363, 180)] == pytest.approx(0.9954, abs=2e-3)
-        assert coarse[(727, 180)] == pytest.approx(0.9997, abs=2e-3)
+        assert coarse[(363, 180)] == pytest.approx(1.0011, abs=2e-3)
+        assert coarse[(727, 180)] == pytest.approx(1.0011, abs=2e-3)
+        # 検出器数で絶対値が動かないこと自体が主張(以前は 0.9954 対 0.9997)。
+        assert coarse[(363, 180)] == pytest.approx(coarse[(727, 180)], abs=1e-6)
         # the view count changes nothing here
         assert coarse[(363, 180)] == pytest.approx(coarse[(363, 360)], abs=1e-6)
         assert coarse[(727, 180)] == pytest.approx(coarse[(727, 360)], abs=1e-6)
 
     def test_zero_padding_matters(self):
-        """Without the 2x pad the ramp wraps and puts a 4 % cup in the interior."""
+        """Without the 2x pad the reconstruction is **29x too bright**.
+
+        It used to be a 4 % cup. With the zero-DC ``|f|`` ramp the unpadded
+        filter still removed each projection's mean, which hid most of the
+        wrap-around; the Ram-Lak ramp keeps the DC term, so an unpadded
+        circular convolution now carries the sinogram's full offset into the
+        picture. The pad went from "removes a subtle cup" to "the difference
+        between a CT number and a number", which is the honest description.
+        """
         sino = tg.ellipse_sinogram(N, DISC, ANG180)
         padded = tg.filtered_backprojection(sino, ANG180, size=N)
         n_det = sino.shape[1]
@@ -208,8 +230,8 @@ class TestReconstruction:
                                   n=n_det, axis=1)
         unpadded = tg._backproject(unpadded_q, np.deg2rad(ANG180), N) * (np.pi / 180)
         m = disc_mask()
-        droop = 1.0 - unpadded[m].mean() / padded[m].mean()
-        assert droop == pytest.approx(0.0405, abs=5e-3)
+        ratio = unpadded[m].mean() / padded[m].mean()
+        assert ratio == pytest.approx(29.05, rel=0.02)
 
     def test_unfiltered_backprojection_has_no_absolute_scale(self):
         """Raw it is off by ~100x; affinely rescaled it is 6.8x worse than FBP."""
@@ -886,9 +908,11 @@ class TestAdversarialRegressions:
             rec = tg.filtered_backprojection(tg.ellipse_sinogram(128, SL_CT, a), a,
                                              size=128)
             means[(span, n_v)] = rec[skull].mean() / truth[skull].mean()
-        assert means[(180.0, 180)] == pytest.approx(0.974, abs=0.02)
+        # 0.974 だった —— 残っていた 2.6 % は DC ビンの取りこぼしで、
+        # Ram-Lak ramp(2026-09-06)で消えた。倍化していないことが主張の本体。
+        assert means[(180.0, 180)] == pytest.approx(0.9998, abs=0.01)
         for key, val in means.items():
-            assert val == pytest.approx(0.974, abs=0.02), key
+            assert val == pytest.approx(0.9998, abs=0.01), key
 
     def test_radians_passed_as_degrees_are_refused(self):
         """Measured before the fix: a finite slice with values 39x too small.

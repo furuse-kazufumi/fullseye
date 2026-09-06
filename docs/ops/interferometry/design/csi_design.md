@@ -44,7 +44,30 @@ Returned dict:
     is the number that makes phase-shifting ambiguous above ``lambda/4``.
   * ``max_z_step_um`` — ``lambda/4``. The Nyquist ceiling on the scan step;
     :func:`csi_peak_position` and :func:`csi_height_map` refuse at or above
-    it.
+    it. **It is a rejection bound, not an operating point** — the accuracy
+    is already gone well before the refusal. Measured on a tilted plane
+    (lambda 0.6 um, bandwidth 0.12 um, ceiling 0.15 um, **no noise at all**,
+    so every number below is method error):
+
+    ==========  ===========  ===========
+    step [um]   bias [nm]    RMSE [nm]
+    ==========  ===========  ===========
+    0.0375            0.09         0.22
+    0.0750 (rec)      0.09         0.26
+    0.1000           -0.07         0.39
+    0.1200            0.39         2.90
+    0.1400           -4.75       134.64
+    0.1499           -1.89        18.38
+    ==========  ===========  ===========
+
+    A step of 0.14 um is accepted and returns heights that are wrong by
+    **500x** the recommended step's error, with a worst pixel at 198 nm.
+    Note also that the last two rows are **not monotone**: 0.1499 is better
+    than 0.1400. The error near the ceiling is an aliasing beat between the
+    fringe period and the step, not a smooth degradation, so "just under the
+    limit" cannot be made safe by nudging the step. Use
+    ``recommended_z_step_um``; the bias only stays in the 0.1 nm range up to
+    about ``lambda/6``.
   * ``recommended_z_step_um`` — ``lambda/step_divisor`` (default lambda/8, the
     usual 90-degree-per-plane choice), reported only if it is below the
     ceiling.

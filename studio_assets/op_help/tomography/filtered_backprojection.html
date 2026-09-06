@@ -8,9 +8,11 @@
 <p>optional apodisation window), then back-project. This is the discretised</p>
 <p>inverse Radon transform, and with enough samples it is exact: reconstructing a</p>
 <p>uniform disc of density 1.0 from its <b>analytic</b> sinogram returns an interior</p>
-<p>mean of <b>0.9954</b> with 363 detector bins and <b>0.9997</b> with 727, converging</p>
-<p>on the truth as the *detector* is refined and not as the view count is (180,</p>
-<p>360 and 720 views give the same 0.9954 to six figures). That absolute value is</p>
+<p>mean of <b>1.0011</b>, and — since 2026-09-06 — the same 1.0011 at 363 and at</p>
+<p>727 detector bins, and at 180, 360 and 720 views. The old text here read</p>
+<p>0.9954 at 363 bins &quot;converging as the detector is refined&quot;; that was not</p>
+<p>convergence but the ramp&#x27;s missing DC bin, whose size is set by the FFT pad</p>
+<p>length (:func:<code style="color:#22d3bf">_ramlak_spectrum</code>). The absolute value is</p>
 <p>what pins the ordinary-versus-angular frequency convention in the ramp: the</p>
 <p>other convention, equally defensible and printed in the same textbooks, would</p>
 <p>return `<code style="color:#22d3bf">2*pi</code>` times this, and a CT slice has no absolute grey level for</p>

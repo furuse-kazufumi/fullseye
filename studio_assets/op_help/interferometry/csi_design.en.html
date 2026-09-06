@@ -27,7 +27,28 @@
 <p>is the number that makes phase-shifting ambiguous above `<code style="color:#22d3bf">lambda/4</code>`.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">max_z_step_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">lambda/4</code>`. The Nyquist ceiling on the scan step;</p>
 <p>:func:<code style="color:#22d3bf">csi_peak_position</code> and :func:<code style="color:#22d3bf">csi_height_map</code> refuse at or above</p>
-<p>it.</p>
+<p>it. <b>It is a rejection bound, not an operating point</b> — the accuracy</p>
+<p>is already gone well before the refusal. Measured on a tilted plane</p>
+<p>(lambda 0.6 um, bandwidth 0.12 um, ceiling 0.15 um, <b>no noise at all</b>,</p>
+<p>so every number below is method error):</p>
+<p>==========  ===========  ===========</p>
+<p>step [um]   bias [nm]    RMSE [nm]</p>
+<p>==========  ===========  ===========</p>
+<p>0.0375            0.09         0.22</p>
+<p>0.0750 (rec)      0.09         0.26</p>
+<p>0.1000           -0.07         0.39</p>
+<p>0.1200            0.39         2.90</p>
+<p>0.1400           -4.75       134.64</p>
+<p>0.1499           -1.89        18.38</p>
+<p>==========  ===========  ===========</p>
+<p>A step of 0.14 um is accepted and returns heights that are wrong by</p>
+<p><b>500x</b> the recommended step&#x27;s error, with a worst pixel at 198 nm.</p>
+<p>Note also that the last two rows are <b>not monotone</b>: 0.1499 is better</p>
+<p>than 0.1400. The error near the ceiling is an aliasing beat between the</p>
+<p>fringe period and the step, not a smooth degradation, so &quot;just under the</p>
+<p>limit&quot; cannot be made safe by nudging the step. Use</p>
+<p>`<code style="color:#22d3bf">recommended_z_step_um</code>`; the bias only stays in the 0.1 nm range up to</p>
+<p>about `<code style="color:#22d3bf">lambda/6</code>`.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">recommended_z_step_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">lambda/step_divisor</code>` (default lambda/8, the</p>
 <p>usual 90-degree-per-plane choice), reported only if it is below the</p>
 <p>ceiling.</p>

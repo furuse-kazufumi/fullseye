@@ -43,6 +43,19 @@
 <p><b>回転は受けない</b> —— 回転が入ると軸が分離せず重なり面積が閉形式で書けなく</p>
 <p>なるので、先に :func:<code style="color:#22d3bf">align_frames</code> で戻すこと(そこで補間の誤差を払う、</p>
 <p>という取引が見えている方が正直)。</p>
+<p>★ <b>入力の画素は出力のどこへ行くか</b>(この規約が書かれていなかった)。</p>
+<p>画素の<b>中心</b>どうしの対応で::</p>
+<p>out = in * scale + (scale - 1) / 2</p>
+<p>`<code style="color:#22d3bf">scale=2</code><code style="color:#22d3bf"> なら入力 (8, 8) の星は出力 (16.5, 16.5) に立つ。入力画素 </code><code style="color:#22d3bf">in</code>`</p>
+<p>が占める区間 `<code style="color:#22d3bf">[in, in+1)</code><code style="color:#22d3bf"> が出力の </code><code style="color:#22d3bf">[in*scale, (in+1)*scale)</code>` へ写り、</p>
+<p>その中心が上式になる —— 単なる `<code style="color:#22d3bf">in*scale</code>` ではない。半画素を落とすと</p>
+<p>`<code style="color:#22d3bf">scale=4</code>` で 1.5 出力画素、入力に直して 0.375 画素の系統ずれになり、</p>
+<p>位置合わせ後の測光や二重星の間隔がその分だけ静かに狂う。</p>
+<p>実測(24x24、単一画素の星、`<code style="color:#22d3bf">pixfrac=1</code><code style="color:#22d3bf">、重心で測定): </code><code style="color:#22d3bf">scale</code>` が</p>
+<p>2 / 3 / 4 のとき上式との差は <b>厳密に 0</b>。`<code style="color:#22d3bf">scale=2.5</code>` では 0.05 出力画素</p>
+<p>ずれるが、これは式の誤りではなく<b>端の出力画素が部分的にしか覆われない</b></p>
+<p>ためで、添字の重心が連続量の重心とずれる分である(整数倍ならこの端数が</p>
+<p>出ない)。位置を厳密に扱いたいときは整数の `<code style="color:#22d3bf">scale</code>` を使うこと。</p>
 <p>Returns `<code style="color:#22d3bf">(sci, wht)</code>`:</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sci</code><code style="color:#22d3bf"> —— </code><code style="color:#22d3bf">(round(H*scale), round(W*scale))</code>` float64、**総フラックス</p>
 <p>単位**(入力と同じ電子)。格子の外へ出たしずくの分だけ総和が減るので、</p>

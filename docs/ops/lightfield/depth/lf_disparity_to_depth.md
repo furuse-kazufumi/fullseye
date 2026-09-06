@@ -4,7 +4,7 @@ dim: lightfield
 category: depth
 in: image2d
 out: depth
-examples: [lightfield_depth]
+examples: [lightfield_depth, poc_lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ and ``|slope| < min_slope`` anywhere when *far_depth* is ``None``.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
+- [poc_lightfield_depth](../../../../examples/poc_lightfield_depth.py) — `py -3.11 examples/poc_lightfield_depth.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 

@@ -23,9 +23,11 @@ Filter each projection along the detector axis with the ramp ``|f|`` (times an
 optional apodisation window), then back-project. This is the discretised
 inverse Radon transform, and with enough samples it is exact: reconstructing a
 uniform disc of density 1.0 from its **analytic** sinogram returns an interior
-mean of **0.9954** with 363 detector bins and **0.9997** with 727, converging
-on the truth as the *detector* is refined and not as the view count is (180,
-360 and 720 views give the same 0.9954 to six figures). That absolute value is
+mean of **1.0011**, and — since 2026-09-06 — the same 1.0011 at 363 and at
+727 detector bins, and at 180, 360 and 720 views. The old text here read
+0.9954 at 363 bins "converging as the detector is refined"; that was not
+convergence but the ramp's missing DC bin, whose size is set by the FFT pad
+length (:func:`_ramlak_spectrum`). The absolute value is
 what pins the ordinary-versus-angular frequency convention in the ramp: the
 other convention, equally defensible and printed in the same textbooks, would
 return ``2*pi`` times this, and a CT slice has no absolute grey level for

@@ -4,7 +4,7 @@ dim: lightfield
 category: depth
 in: lightfield
 out: image2d
-examples: [lightfield_depth]
+examples: [lightfield_depth, poc_lightfield_depth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ needs ``U >= 2`` **and** ``W >= 2``, the vertical needs ``V >= 2`` and
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
+- [poc_lightfield_depth](../../../../examples/poc_lightfield_depth.py) — `py -3.11 examples/poc_lightfield_depth.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

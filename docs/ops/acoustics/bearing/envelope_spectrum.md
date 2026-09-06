@@ -42,7 +42,19 @@ because **this operator always returns a peak frequency, including when
 there is nothing there**:
 
 ``peak_prominence``
-    the peak divided by the median of the magnitude spectrum.
+    the peak divided by the median of the **whole** magnitude spectrum.
+    **Band-width dependent, and it inverts in a narrow band** — see
+    ``local_prominence`` below and the table in :func:`_local_prominence`.
+``local_prominence`` / ``local_noise_floor``
+    the peak divided by the median of its own neighbourhood (±50 Hz,
+    excluding ±5 Hz of the peak itself), and that median. Use this one to
+    decide whether a peak is real: measured over both a 2000-4000 Hz and a
+    2900-3100 Hz demodulation band, pure noise and a constant signal stay
+    at 2.2-3.3 while a real 107 Hz defect reaches 1558 (wide) and 33.9
+    (narrow). ``peak_prominence`` puts pure noise at **11375** in the
+    narrow band, above the real defect's 9434 — the ordering is reversed,
+    which is why the number below the table in this docstring ("white
+    noise 365") only holds at that one band width.
 ``band_fraction``
     the RMS of the band-passed signal divided by the RMS of the input — how
     much of the record actually lives in the demodulation band.

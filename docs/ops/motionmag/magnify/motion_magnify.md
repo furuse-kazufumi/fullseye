@@ -4,7 +4,7 @@ dim: motionmag
 category: magnify
 in: video
 out: table
-examples: [motion_magnification, quaternion_monogenic]
+examples: [motion_magnification, poc_motion_magnification, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -105,6 +105,7 @@ inherent to phase-based processing, not a tuning fault.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [motion_magnification](../../../../examples/motion_magnification.py) — `py -3.11 examples/motion_magnification.py`
+- [poc_motion_magnification](../../../../examples/poc_motion_magnification.py) — `py -3.11 examples/poc_motion_magnification.py`
 - [quaternion_monogenic](../../../../examples/quaternion_monogenic.py) — `py -3.11 examples/quaternion_monogenic.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

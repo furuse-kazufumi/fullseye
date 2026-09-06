@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [astro_stacking, blas_thread_budget, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, machined_metal_and_materials, perception_pipeline, photon_timeresolved, piv_flow_from_particles, poc_astro_photometry, poc_bearing_diagnosis, poc_dtof_ranging, quickstart, representation_roundtrip, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, consumer_onocollo, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, machined_metal_and_materials, perception_pipeline, photon_timeresolved, piv_flow_from_particles, poc_astro_photometry, poc_bearing_diagnosis, poc_dtof_ranging, poc_lightfield_depth, quickstart, representation_roundtrip, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ version: 0.1.9  # fullseye lib version this note was generated for
 - [poc_astro_photometry](../../../../examples/poc_astro_photometry.py) — `py -3.11 examples/poc_astro_photometry.py`
 - [poc_bearing_diagnosis](../../../../examples/poc_bearing_diagnosis.py) — `py -3.11 examples/poc_bearing_diagnosis.py`
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
+- [poc_lightfield_depth](../../../../examples/poc_lightfield_depth.py) — `py -3.11 examples/poc_lightfield_depth.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`

@@ -716,8 +716,12 @@ def _filter_projections(sino: np.ndarray, kind: str, cutoff: float) -> np.ndarra
     pad the circular convolution wraps the ramp's long negative tails around the
     detector axis, which puts a smooth cup across the reconstruction that looks
     exactly like beam hardening — measured on a uniform disc as a **4.05 %**
-    depression of the interior mean (0.9551 unpadded against 0.9954 padded, on a
-    true density of 1.0) that the pad removes.
+    depression of the interior mean that the pad removes. Since the ramp gained
+    its true DC term (:func:`_ramlak_spectrum`, 2026-09-06) the pad matters far
+    more than a cup: the unpadded filter no longer removes each projection's
+    mean, so on the same uniform disc the unpadded reconstruction comes back
+    **29.05x** the padded one. What used to look like a subtle 4 % artefact is
+    the difference between a density and a meaningless number.
     """
     n_det = sino.shape[1]
     n_pad = 1
@@ -1240,9 +1244,11 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
     optional apodisation window), then back-project. This is the discretised
     inverse Radon transform, and with enough samples it is exact: reconstructing a
     uniform disc of density 1.0 from its **analytic** sinogram returns an interior
-    mean of **0.9954** with 363 detector bins and **0.9997** with 727, converging
-    on the truth as the *detector* is refined and not as the view count is (180,
-    360 and 720 views give the same 0.9954 to six figures). That absolute value is
+    mean of **1.0011**, and — since 2026-09-06 — the same 1.0011 at 363 and at
+    727 detector bins, and at 180, 360 and 720 views. The old text here read
+    0.9954 at 363 bins "converging as the detector is refined"; that was not
+    convergence but the ramp's missing DC bin, whose size is set by the FFT pad
+    length (:func:`_ramlak_spectrum`). The absolute value is
     what pins the ordinary-versus-angular frequency convention in the ramp: the
     other convention, equally defensible and printed in the same textbooks, would
     return ``2*pi`` times this, and a CT slice has no absolute grey level for

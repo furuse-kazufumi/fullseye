@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(79 例)
+### 2-D 画像/信号/幾何(83 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -38,6 +38,18 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **diagnostics**
 - **転がり軸受の異常診断(どこまで雑音に埋もれた欠陥を拾えるか)** — 欠陥周波数の閉形式を真値に、SNR を振って検出限界を測る。生スペクトルというゼロ点に対し包絡線解析が **17.5 dB** 稼ぐ。帯域選択の窓長を誤ると共振を外すことも数字で示す。 `py -3.11 examples/poc_bearing_diagnosis.py`
+
+**ranging**
+- **光子計数 dToF の距離精度(理論限界に乗るか、どこで崩れるか)** — 距離を先に決めて光子到着ヒストグラムを合成し、測り返す。ゲート重心は CRB の 1.003-1.068 倍、傾き -0.506(理論 -0.500)で 1/√N に乗る。ピーク位置というゼロ点に 4.80 倍。背景 SBR 0.008 で RMSE が 2 桁飛ぶのに**中央値はほとんど動かない**(3.8 % の試行だけが誤ロックする)ことまで出す。 `py -3.11 examples/poc_dtof_ranging.py`
+
+**depth**
+- **ライトフィールドの深度(81 視点は 2 眼に勝てるのか)** — 既知の深度から合成ライトフィールドを作り、EPI 傾き・焦点度・2 眼を並べる。定数ゼロ点に 22 倍だが、**2 眼には既定設定だと 3.0 倍負ける**(cubic 補間にして初めて 1.6 倍勝つ)。圧勝するのは鏡面ハイライトの場面だけ、という切り分けまで数字で置く。 `py -3.11 examples/poc_lightfield_depth.py`
+
+**separation**
+- **偏光による鏡面分離(分けた「拡散」は本当に拡散か)** — 拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。返る拡散は常に真値より **R_p·E** だけ高いという閉形式の偏りを実測 (差 3.5e-18)。ブリュースター角が最良なのは R_p が消えるからで、**最適角は評価指標で動く**。飽和だけが例外を出さずに壊す。 `py -3.11 examples/poc_polarization_specular.py`
+
+**vibration**
+- **モーション拡大の振幅精度(拡大は測るための道具か)** — 既知の振幅 0.02-0.5 px を拡大して測り返す。拡大率は α=200 まで厳密(実測/期待 = 1.00000000)。だが**測るなら拡大は要らない** —— 生映像の位相相関と誤差比 1.14 で引き分ける。崩れるのは拡大率ではなく入力振幅で、境界は位相の巻きではなく J0 の第 1 零点 3.0619 px。 `py -3.11 examples/poc_motion_magnification.py`
 
 **flow**
 - **粒子画像 2 枚から流れを測る(PIV。真値を自分で作って誤差を出す)** — 既知の渦を撒いた粒子画像対を合成し、窓ごとの相互相関で変位場を出す。零方向への偏りと補正、多段、既知の系統誤差(ピークロッキング)、非圧縮の発散 0 による独立検算まで。**外れ値検定がここでは害になる**ことも隠さず印字する。 `py -3.11 examples/piv_flow_from_particles.py`
@@ -1369,7 +1381,7 @@ _計 882 ops / 47 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_bearing_diagnosis`, `poc_dtof_ranging`, `quickstart`, `representation_roundtrip`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_bearing_diagnosis`, `poc_dtof_ranging`, `poc_lightfield_depth`, `quickstart`, `representation_roundtrip`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `poc_astro_photometry`, `representation_roundtrip`, `vision_layout_from_catalog`
