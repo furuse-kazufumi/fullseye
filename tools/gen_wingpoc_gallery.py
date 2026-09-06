@@ -51,6 +51,7 @@ OUT_ARTICLE = {"ja": os.path.join(_ROOT, "docs", "articles", "fullseye_poc_museu
                "en": os.path.join(_ROOT, "docs", "articles", "fullseye_poc_museum_qiita_en.md")}
 
 _LOCAL = re.compile(r"[A-Za-z]:\\\\|/c/dev/|/Users/|AppData")
+_SCENE = re.compile(r"scene|input|overlay|montage|frame|before|after|mask|image|map|panel|track|recon|render|stack|field|labels|segment|view")
 
 
 class BuildError(SystemExit):
