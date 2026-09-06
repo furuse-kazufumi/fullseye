@@ -925,12 +925,15 @@ def main():
         "画像ごとに渡しても ch ごとに正規化された —— 穴 (c) の内容が変わった"
     assert angular_error(est_perch, e_g) > 3.0 * angular_error(est_whole, e_g), \
         "ch ごとの正規化で灰色エッジが悪化しない —— 穴 (c) が直った?"
-    # 画像ごとに渡した結果は「自前 Sobel(正規化なし)」と角度が一致する。
-    # = 全体を 1 個で割る正規化は角度に何も足さない。差はカーネルだけ。
-    assert abs(angular_error(est_whole, e_g) - angular_error(est_sob, e_g)) < 0.5, \
-        "画像ごとの正規化が角度を変えた —— 全体 1 個で割るという前提が崩れた"
     assert angular_error(est_perch, e_g) > 0.7 * angular_error(np.ones(3), e_g), \
         "ch ごとに正規化してもゼロ点まで退化しない —— 穴 (c) の内容が変わった"
+    # 画像ごと渡すと色軸が空間軸として扱われ、恒等的に 0 のチャンネルに値が漏れる
+    assert probe[..., 1].max() == 0.0, "検査用画像の G が 0 でない(検査が壊れた)"
+    assert leak_max[1] > 0.3, \
+        f"色軸を跨いだ漏れが消えた({leak_max[1]:.4f})—— 穴 (c) が直った?"
+    assert leak_max[2] == 0.0, "2 つ離れた B まで漏れた —— 漏れの機構が変わった"
+    assert angular_error(est_whole, e_g) > 2.0 * angular_error(est_sob, e_g), \
+        "画像ごとに渡しても自前 Sobel と同じ —— 漏れの影響が消えた"
 
     # 13. 穴 (a)(b): 該当 op が本当に無いことを台帳で確かめる
     catalog = set(fs.ledger) | set(fs.op)
