@@ -422,13 +422,18 @@ def section6_countermeasures(floors):
     for name, u, p, note in rows:
         print("  %-34s %10s %10s  %s" % (name, u, p, note))
     print()
-    print("  雑音の床(1σ、300 回): %.3f µm。上の系統誤差がこれを下回れば"
-          % (1e3 * floors[1200.0]))
-    print("  「実質的に消えた」と言ってよい。")
+    print("  雑音の床(%d 枚平均 1σ): %.3f µm(%.0f ppm)。上の系統誤差がこれを"
+          % (N_AVG, 1e3 * floors[1200.0], 1e6 * floors[1200.0] / SIDE_MM))
+    print("  下回れば「実質的に消えた」と言ってよい。")
     print()
     print("  → B1 と B2 の差が要点。**基準物はワークと同じ半径に置かないと**")
-    print("     主点ドリフトぶんが残る(中央固定の治具では %s ppm)。"
+    print("     主点ドリフトぶんが残る(中央固定の治具では %s ppm、ゼロ点の半分しか"
           % rows[3][2])
+    print("     取れていない)。同じ半径に置けば %s ppm まで落ちるが、**0 にはならない**"
+          % rows[2][2])
+    print("     —— 歪みは半径方向と接線方向で倍率が違うので、直線の基準物では")
+    print("     正方形の 4 辺を同時には合わせられない。残差 %s µm は上の床より小さい。"
+          % rows[2][1])
     print("     C は温度センサの誤差にほぼ比例して残る(1 K で %s ppm、3 K で %s ppm)。"
           % (rows[5][2], rows[6][2]))
     figs.save_table("countermeasures", ["手法", "誤差 µm", "誤差 ppm", "備考"], rows,
