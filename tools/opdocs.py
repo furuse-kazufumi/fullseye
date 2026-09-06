@@ -521,10 +521,17 @@ def _records():
                 sig = "(...)"
             ins = info["in"]
             ins = " × ".join(ins) if isinstance(ins, (list, tuple)) else str(ins)
+            # ★2026-09-07: ``OPS3D[...]["doc"]`` は登録時に **docstring の 1 行目だけ**
+            # を切り出したもの(ops3d._build)。ノートの「使い方」にそれを使うと、
+            # 実装が何段落書いていても 1 行に化ける —— 「使い方が 1 行の op 494 本」
+            # の 3-D ぶんはこの切り詰めが原因だった(docstring 自体は長い op が多数)。
+            # 台帳 dim と同じく関数の docstring を丸ごと読む。
+            _fdoc = getattr(fn, "__doc__", None) or ""
+            _fdoc = inspect.cleandoc(_fdoc).strip() if _fdoc else ""
             recs.append({
                 "dim": "3d", "name": name, "category": info["category"],
                 "in": ins, "out": info["out"],
-                "halcon": "", "doc": (info.get("doc") or "").strip(),
+                "halcon": "", "doc": _fdoc or (info.get("doc") or "").strip(),
                 "module": info.get("module", "ops3d"), "sig": sig,
                 "examples": sorted(idx3d.get(name, [])),
                 "family": None, "gpu": bool(info.get("gpu")),
@@ -614,7 +621,8 @@ def _figure_lines(rec, path, lang):
     out = []
     if m["status"] == "ok":
         rel = _rel(path, os.path.join(FIG_DIR, m["fig"]))
-        out.append("![%s: 入力 → 出力](%s)" % (rec["name"], rel))
+        # alt は英語のみ(図の中の文字と同じ規則。6 言語のページで 1 つの図を共有する)。
+        out.append("![%s: input → output](%s)" % (rec["name"], rel))
         out.append("")
         out.append(T("*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*", lang))
     elif m["status"] == "unreachable":

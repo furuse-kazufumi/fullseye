@@ -1836,6 +1836,23 @@ def rounded_rect(img, rect, radius=8, color="neutral", width=2, fill=False,
     ------
     ValueError
         矩形が画像の外、radius が負か辺の半分を超える、alpha が [0,1] の外。
+
+    描画: 画素中心から「角を丸めた矩形」までの距離で内側判定し、``fill=False``
+    なら外周から ``max(1, width)`` px 幅の帯だけを載せる(距離判定の 1 段階、
+    アンチエイリアスは無し)。合成は ``out = m*color + (1-m)*img`` に ``alpha`` を
+    掛けたもの。
+
+    - ``img``: ``(H, W)`` / ``(H, W, 1|3|4)``。float64 に変換し ``[0, 1]`` にクリップした
+      **複製**を返す(入力は変えない)。NaN/Inf は ``ValueError``。
+    - ``rect``: ``(x, y, w, h)``、x = 列・y = 行。丸めて整数化し、``w, h > 0``、
+      画像内に完全に収まること(はみ出しは切り詰めず ``ValueError``)。
+      占める画素は ``x .. x+w-1``、``y .. y+h-1``。
+    - ``radius``: 角の半径 [px]、``0 <= radius <= min(w, h)/2``。0 で普通の矩形。
+    - ``color``: ``palette`` の役割名(``"neutral"`` 等、``scheme`` で解決)か
+      ``[0, 1]`` の RGB。グレー画像には RGB の平均を使う。
+    - 返り値: 入力と同形の float64。
+
+    ``text_box`` の下敷きや ``annotate_legend`` の囲みと同じ見た目を手で組むときに。
     """
     a = _prep(img)
     x, y, w, h = _rect(rect)
