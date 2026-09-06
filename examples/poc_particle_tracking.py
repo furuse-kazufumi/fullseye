@@ -262,7 +262,7 @@ def build_positions(rows, cols, movie, use_detection: bool):
             k = identify(p, rows[t], cols[t])
         else:
             p = np.stack([rows[t], cols[t]], axis=1)
-            k = np.arange(p.shape[0], np.int64)
+            k = np.arange(p.shape[0], dtype=np.int64)
         pos.append(p)
         ident.append(k)
         b = {}
