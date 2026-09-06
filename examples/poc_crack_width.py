@@ -437,12 +437,13 @@ def section_crossover() -> dict:
                        if bpix.size else np.nan)
         bin_mean_rms.append(float(np.sqrt(np.mean((np.asarray(bm) - w_true) ** 2)))
                             if bm else np.nan)
+        bin_bias.append((float(np.mean(bm)) - w_true) if bm else np.nan)
         miss.append(float(np.mean(ms)))
         print("   %.2f    %8.4f   %8.4f    %8s   %8s   %+8.4f   %.0f %%" % (
             s, int_rms[-1], int_mean_rms[-1],
             "-" if not np.isfinite(bin_rms[-1]) else "%.4f" % bin_rms[-1],
             "-" if not np.isfinite(bin_mean_rms[-1]) else "%.4f" % bin_mean_rms[-1],
-            (float(np.mean(bm)) - w_true) if bm else np.nan, 100 * miss[-1]))
+            bin_bias[-1], 100 * miss[-1]))
 
     cross = [s for s, a, b in zip(sigmas, int_rms, bin_rms)
              if np.isfinite(b) and a > b]
