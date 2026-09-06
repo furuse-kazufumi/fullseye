@@ -93,7 +93,8 @@ FG_THRESHOLD = 0.10
 # 場面を作る                                                                    #
 # --------------------------------------------------------------------------- #
 def make_vehicles(seed: int = 3, n_far: int = 4, n_near: int = 6,
-                  headway: float | None = None, truck_p: float = 0.30) -> list[dict]:
+                  headway: float | None = None, n_truck: int = 2,
+                  same_speed: bool = False) -> list[dict]:
     """車の一覧。**計数列を跨ぐ時刻を先に決めて**初期位置を逆算する。
 
     ``headway`` を渡すと車線ごとに等間隔(フレーム)で流す(車間の掃引用)。
