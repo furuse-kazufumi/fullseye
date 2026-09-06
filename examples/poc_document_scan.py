@@ -314,6 +314,21 @@ def corners_by_response(img, mask=None, radius=25):
 # ─────────────────────────────────────────────────────────────────────────────
 # 補正と計測
 # ─────────────────────────────────────────────────────────────────────────────
+def bg_divide(x, k):
+    """局所平均で割って地を平らにする。
+
+    ★ 窓 ``k`` は自前の積分画像で作っている —— ``fs.op`` の局所窓 op は
+    ``mean_image``/``gray_tophat`` が 9 px、``var_threshold`` が 15 px までしか
+    届かず、書類の照明ムラ(この PoC で必要なのは 61 px)に手が出ない(穴 (d))。
+    """
+    pad = k // 2
+    xp = np.pad(x, pad, mode="reflect")
+    cs = np.cumsum(np.cumsum(xp, axis=0), axis=1)
+    cs = np.pad(cs, ((1, 0), (1, 0)))
+    s = (cs[k:, k:] - cs[:-k, k:] - cs[k:, :-k] + cs[:-k, :-k]) / (k * k)
+    return np.clip(x / np.maximum(s, 1e-6) * 0.9, 0.0, 1.0)
+
+
 def rectify(cam, H):
     """H(書類 (x,y) → 画像 (u,v))を使って書類の枠へ戻す。"""
     rr, cc = np.mgrid[0:DOC_H, 0:DOC_W].astype(float)
