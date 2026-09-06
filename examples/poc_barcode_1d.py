@@ -263,18 +263,24 @@ def m4_subpixel(img):
     微分の極大をサブピクセルへ精緻化した位置を run の境界に使う。
     振幅のしきい値は**行のコントラストに比例**させる(固定値だと
     低コントラストの条件でエッジを全部落としてしまう)。
+
+    ★``sigma`` を 1 つに決められなかった。1 モジュール 3 px の周期構造では
+    エッジ**本数**が sigma に非単調に依存する(9 章 (d) に実測表)ので、
+    0.4 / 0.6 / 0.8 / 1.2 を順に試して **%d 本ちょうど**になった最初のものを
+    採る。どれも本数が合わなければ「読めません」と答える。
     """
     h, w = img.shape
     prof = img[CENTER_ROW]
     rng_amp = float(np.percentile(prof, 95) - np.percentile(prof, 5))
     handle = fs.ledger.gen_measure_rectangle2(float(CENTER_ROW), (w - 1) / 2.0,
                                               0.0, (w - 1) / 2.0, 1, (h, w))
-    edges = fs.ledger.measure_pos(img, handle, sigma=1.0,
-                                  threshold=max(0.25 * rng_amp, 0.03))
-    if len(edges) != N_RUN + 1 or edges[0]["polarity"] != "negative":
-        return None
-    pos = np.array([e["pos"] for e in edges], np.float64)
-    return decode_runs(np.diff(pos))
+    for sigma in CALIPER_SIGMAS:
+        edges = fs.ledger.measure_pos(img, handle, sigma=sigma,
+                                      threshold=max(0.25 * rng_amp, 0.03))
+        if len(edges) == N_RUN + 1 and edges[0]["polarity"] == "negative":
+            pos = np.array([e["pos"] for e in edges], np.float64)
+            return decode_runs(np.diff(pos))
+    return None
 
 
 def m5_lenient(img):
