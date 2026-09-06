@@ -288,6 +288,18 @@ def main() -> bool:
     print("     いちばん再構成できない帯域である。**画としては同じ、量としては 4 倍違う。**")
     print("     真値との RMSE だけを見ていると、この故障は一生見えない。")
 
+    # 3〜5 節は同じ再構成を 3 つの物差しで測っている。並べないと
+    # 「RMSE は 1.3 % しか動かないのに質量は 4 倍違う」が見えない。
+    figs.save_table(
+        "fidelity_table",
+        ["投影数", "FBP RMSE", "零点B RMSE", "FBP 相関", "一様域 std", "総質量誤差"],
+        [["%d" % r["views"], "%.4f" % r["fbp"], "%.4f" % r["bp"],
+          "%.4f" % r["corr_fbp"], "%.5f" % r["streak_fbp"], "%+.2f %%" % (100 * r["mass"])]
+         for r in rows_out],
+        title="投影数スイープ —— 3 つの物差しは同じ順序に並ばない",
+        caption="RMSE で見ると 12 本は空白画像 %.4f より悪い。相関とストリークは"
+                "別のことを言う。" % blank_rmse)
+
     print()
     print("=" * 78)
     print("6) 疎な投影での処方箋 ―― ramp と hann")
