@@ -719,34 +719,41 @@ def main():
     print("     わけでもない。")
 
     print("\n=== 12. 道具の穴 —— 大津が 3 つあり、同じ入力に違う答えを返す ===")
-    cube0 = scenes[2][0][0]
-    print("  " + pad("入力", 26, right=False) + pad("値域", 20)
+    cube_lo = scenes[0][0][0]                     # 発芽期 = ExG の半分が負になる場面
+    cube_hi2 = scenes[2][0][0]
+    print("  " + pad("入力", 30, right=False) + pad("値域", 22)
           + pad("otsu", 11) + pad("sk_otsu", 11) + pad("cv_otsu", 11))
     otsu_frac = {}
-    for label, arr in (("緑チャネル", cube0[:, :, B_GREEN]), ("ExG", exg(cube0)),
-                       ("NDVI", ndvi(cube0)),
-                       ("NDVI を 0-1 へ線形写像", 0.5 * (ndvi(cube0) + 1.0))):
+    probes = (("緑チャネル(発芽期)", cube_lo[:, :, B_GREEN]),
+              ("緑チャネル x4095(生カウント)", 4095.0 * cube_lo[:, :, B_GREEN]),
+              ("ExG(発芽期・負が半分)", exg(cube_lo)),
+              ("NDVI(繁茂期)", ndvi(cube_hi2)),
+              ("NDVI を 0-1 へ線形写像", 0.5 * (ndvi(cube_hi2) + 1.0)))
+    for label, arr in probes:
         row = []
         for op in ("otsu", "sk_otsu", "cv_otsu"):
             v = float(fs.apply(np.asarray(arr, np.float64), op).mean())
             row.append(v)
             otsu_frac[(label, op)] = v
-        print("  " + pad(label, 26, right=False)
-              + pad(f"[{arr.min():+.3f}, {arr.max():+.3f}]", 20)
+        print("  " + pad(label, 30, right=False)
+              + pad(f"[{arr.min():+.3g}, {arr.max():+.3g}]", 22)
               + "".join(pad(f"{x:.4f}", 11) for x in row))
-    print("  (数字は『閾値より上』と判定された画素の割合。真値の被覆率は"
+    print("  (数字は『閾値より上』と判定された画素の割合。真値の被覆率は 発芽期"
+          f" {100 * float(scenes[0][0][1].mean()):.1f} % / 繁茂期"
           f" {100 * float(scenes[2][0][1].mean()):.1f} %)")
-    print("  → ``otsu`` は [0,1] に切り詰めてから 256 ビンで数えるので、**負の値が")
-    print("     全部いちばん下のビンに潰れる**。NDVI(影の土は負)や ExG では、そこが")
-    print("     そのまま誤りになる。``cv_otsu`` は同じ切り詰めに加えて 8 ビット量子化。")
-    print("     ``sk_otsu`` だけがアフィン変換に不変(= 大津本来の性質)。同じ名前で")
-    print("     3 つ並んでいて、いちばん短い名前がいちばん罠が多い。")
+    print("  → 1 行目と 2 行目は **同じ画像を 4095 倍しただけ**。大津の閾値はアフィン")
+    print("     変換に等変なので、この 2 行は一致しなければならない。``sk_otsu`` は")
+    print("     一致するが、``otsu`` と ``cv_otsu`` は [0,1] に切り詰めてから数えるので")
+    print("     **全画素が上側に落ちる**(判定が 100 %)。12 bit の生カウントを渡すと")
+    print("     そうなる、という警告もログも出ない。ExG の行では負側が 1 ビンに潰れる。")
+    print("     ``cv_otsu`` は切り詰めに加えて 8 ビット量子化まで入る。")
+    print("     ★同じ働きの op が 3 つ並んでいて、**いちばん短い名前がいちばん罠が多い**。")
     aff = {}
     for op in ("otsu", "sk_otsu", "cv_otsu"):
-        a = float(fs.apply(ndvi(cube0), op).mean())
-        b = float(fs.apply(0.5 * (ndvi(cube0) + 1.0), op).mean())
+        a = float(fs.apply(np.asarray(cube_lo[:, :, B_GREEN], np.float64), op).mean())
+        b = float(fs.apply(4095.0 * cube_lo[:, :, B_GREEN], op).mean())
         aff[op] = abs(a - b)
-        print(f"     {op:>8}: NDVI と、それを [0,1] へ線形写像したもので判定が"
+        print(f"     {op:>8}: 反射率と生カウント(x4095)で判定が"
               f" {100 * abs(a - b):.2f} pp 違う(大津なら 0 のはず)")
 
     print("\n=== 13. 速度(この機械での実測、96x96 の 1 枚あたり)===")
