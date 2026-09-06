@@ -368,6 +368,7 @@ def main():
     print(f"  {'点数':>7}{'点間隔':>9}{'点対点 rms':>12}{'点対面 rms':>12}"
           f"{'平滑 rms':>11}{'平滑 p99':>10}{'平滑 |max|':>11}")
     floors = {}
+    floor_rows = []                          # (点間隔, 点対点, 点対面, 平滑)—— 図の材料
     for n in (2000, 5000, N_MAIN, 30000):
         P = posed_cloud(V, F, n, 1, R_pose, t_pose)
         spacing = float(np.median(cKDTree(P).query(P, k=2)[0][:, 1]))
