@@ -427,23 +427,32 @@ def section_period() -> dict:
     for lag, val in peaks:
         print("      ずれ %+4d px   高さ %.4f" % (lag, val))
     gaps = np.diff([lag for lag, _ in peaks])
-    print("      ★ピークの間隔 %s px。POC が返すのは**基線を周期で割った余り**"
-          % ", ".join(str(int(g)) for g in gaps))
-    print("      であって周期そのものではない —— 周期に直すには何周期ぶんか"
-          "(k)を別に知る必要がある。")
+    print("      ★ピークの間隔 %s px(平均 %.1f)—— 真の周期 %.1f px の格子に"
+          "乗っている。" % (", ".join(str(int(g)) for g in gaps),
+                            float(np.mean(gaps)), PERIOD_EST))
+    print("      POC が返すのは**基線を周期で割った余り**であって周期そのもの"
+          "ではない。周期に直すには何周期ぶんか(k)を別に知る必要がある。")
 
     est = estimate_period(sc["img"])
-    pc = period_from_poc(sc["img"], 96, est["coarse"])
     print("\n  (b) 3 通りで周期を出して比べる(真値 %.5f px):" % PERIOD_EST)
     print("      FFT のピーク  %d ビン        -> %.5f px  (誤差 %+.5f)"
           % (est["bin"], est["coarse"], est["coarse"] - PERIOD_EST))
-    print("      POC(サブピクセル) ずれ %+.3f px, k=%d -> %.5f px  (誤差 %+.5f)"
-          % (pc["lag"], pc["k"], pc["period"], pc["period"] - PERIOD_EST))
     print("      位相の傾き   %+.6f rad/px  -> %.5f px  (誤差 %+.5f)"
           % (est["slope"], est["fine"], est["fine"] - PERIOD_EST))
-    print("      ★POC も使えるが、k を 1 つ取り違えると推定は %.3f px 飛ぶ"
-          "(誤差の %.0f 倍)。" % (pc["jump"],
-                                   pc["jump"] / max(abs(pc["period"] - PERIOD_EST), 1e-9)))
+    print("\n      POC(サブピクセル補間つき)を基線を変えて:")
+    print("       基線 [px]   ずれ      k    周期       誤差      k を 1 つ誤ると")
+    pc = None
+    for b in (48, 96, 152, 200):
+        e = period_from_poc(sc["img"], b, est["coarse"])
+        pc = e if b == 200 else pc
+        print("        %4d    %+7.3f  %3d  %8.5f  %+9.5f      %.3f px"
+              % (b, e["lag"], e["k"], e["period"],
+                 e["period"] - PERIOD_EST, e["jump"]))
+    print("      ★POC は基線を伸ばすほど良くなる(余りの誤差が k で割られる)。"
+          "基線 200 px で誤差 %+.5f px。" % (pc["period"] - PERIOD_EST))
+    print("      ただし k を 1 つ取り違えると %.3f px 飛ぶ —— **誤差の %.0f 倍**。"
+          "粗い推定が要る手法の宿命。"
+          % (pc["jump"], pc["jump"] / max(abs(pc["period"] - PERIOD_EST), 1e-9)))
     print("      位相勾配は k を要らない(粗い周波数で復調して残りを測るだけ)ので"
           "\n      その飛びが原理的に起きない。FFT の %.0f 倍の精度。"
           % (abs(est["coarse"] - PERIOD_EST) / max(abs(est["fine"] - PERIOD_EST), 1e-12)))
