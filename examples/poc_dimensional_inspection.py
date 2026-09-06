@@ -408,12 +408,11 @@ def section_zero_point(img):
         recs.append(wz - SLOT_W)
         print(f"  {'スロット幅 row=' + str(int(r)):<22}{SLOT_W:11.2f}{wz:11.0f}"
               f"{wz - SLOT_W:+11.2f}{um(wz - SLOT_W):+11.1f}")
-    # 外形幅(列方向に数える)
+    # 外形幅(列方向に数える)。穴・スロットを避けた列を選ぶ
     mask = np.asarray(fs.op.otsu(img), float) > 0.5
-    for c in (200, 380):
+    for c, truth in ((250, OUTER_W_LEFT), (380, OUTER_W_LEFT), (560, OUTER_W_RIGHT)):
         col = mask[:, c]
         ln = int(col.sum())
-        truth = OUTER_W_LEFT
         recs.append(ln - truth)
         print(f"  {'外形幅 col=' + str(c):<22}{truth:11.2f}{ln:11.0f}"
               f"{ln - truth:+11.2f}{um(ln - truth):+11.1f}")
