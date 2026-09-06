@@ -741,7 +741,8 @@ def section_murray(tree: dict, r: dict) -> dict:
                     ("真値 n=3", [offs[i] for i in ok], [3.0] * len(ok))],
                    xlabel="径を測る位置(分岐からの距離 [px]、14 = 枝の中点)",
                    ylabel="Murray の指数 n",
-                   title="測る位置を変えても 3 に戻らない(主因は量子化)")
+                   title="分岐から 6 px 離せば指数は 3 に戻る(解けない点は除外)",
+                   caption="分岐から 2 px の点は 1 つも解けなかったので図から外した")
     return {"off": offs, "fit": fits, "med": meds, "n_truth": n_truth,
             "n_quant": n_quant, "n_off": n_off, "n_prop": n_prop}
 
