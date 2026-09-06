@@ -486,6 +486,17 @@ def main():
     print(f"  → **薄い霞では除霞が害になる**。利得が負に転じるのは beta <= "
           f"{max(r[0] for r in cross) if cross else float('nan'):.4f}"
           f"(視程 {3.912 / max(r[0] for r in cross):.0f} m 以上)。")
+    _b = np.array([r[0] for r in beta_rows])
+    figs.save_plot("haze_density",
+                   [("暗チャネル除霞の利得", _b,
+                     np.array([r[4] - r[3] for r in beta_rows])),
+                    ("オラクル(真の A と t)の利得", _b,
+                     np.array([r[5] - r[3] for r in beta_rows])),
+                    ("利得 0(ここを下回ると害)", _b, np.zeros(_b.size))],
+                   xlabel="消散係数 beta [1/m]", ylabel="PSNR の利得 [dB]",
+                   title="薄い霞では除霞が害になる",
+                   caption="左端(視程が長い side)で実線が 0 を割る。"
+                           "オラクルでも薄霞では稼げない。")
     print("     絶対誤差 |dt| は beta とともに**減る**が、これは t が 0 に潰れるだけの見かけ。")
     print("     光学的深さで測ると単調に増えていて、そちらが実際の難しさに対応する。")
 
