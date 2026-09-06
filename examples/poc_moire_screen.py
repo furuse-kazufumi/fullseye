@@ -386,44 +386,59 @@ def section5_separability():
     print("5) ★★分離限界 —— うなりがムラに近づくとどこで壊れるか")
     print("=" * 78)
     print("  基本波のうなり δ を %.5f(= ムラの周波数)へ近づける。" % F_MURA)
-    print("  ノッチ半径 %.5f、平滑化 σ=8 px。" % (4.0 / L))
+    print("  平滑化 σ=8 px / ノッチ(素、半径 4/%d)/ ノッチ(窓長合わせ、半径 2/Lc)。"
+          % L)
+    print("  ★2 次元で見ると、うなりは (δ, 0) 方向、ムラは 30 度方向にある。")
+    print("    分離できるかを決めるのは**ベクトルの距離**であって、周波数の差ではない。")
     print()
     rho = 4.0 / L
-    print("  %8s %10s %10s %12s %12s %12s"
-          % ("δ", "うなり周期", "|δ-f_m|", "平滑化 誤差", "ノッチ 誤差", "ノッチが"))
-    print("  " + "-" * 70)
+    mj = F_MURA * np.cos(PHI_MURA)
+    mi = F_MURA * np.sin(PHI_MURA)
+    print("  %8s %8s %9s %9s %11s %11s %11s"
+          % ("δ", "周期 px", "δ·L", "2D 距離", "平滑化", "ノッチ 素", "ノッチ 合"))
+    print("  " + "-" * 74)
     deltas = (0.25, 0.12, 0.06, 0.03, 0.015, 0.0078125, 0.004, 0.002)
-    sm_err, nt_err = [], []
+    sm_err, nt_err, nm_err = [], [], []
     for d in deltas:
         k = 3.0 + d
         both = render(k=k)
         freqs = [(fj, fi) for _m, fj, fi, _p, _a in beat_frequencies(k)]
         e_sm = mura_amplitude(smooth(both, 8.0)) / A_MURA - 1
         e_nt = mura_amplitude(notch(both, freqs, rho)) / A_MURA - 1
+        out, lc = notch_matched(both, freqs, d)
+        e_nm = mura_amplitude(out) / A_MURA - 1
         sm_err.append(100 * e_sm)
         nt_err.append(100 * e_nt)
-        gap = abs(d - F_MURA)
-        print("  %8.4f %10.1f %10.5f %+11.1f %% %+11.1f %% %12s"
-              % (d, 1 / d, gap, 100 * e_sm, 100 * e_nt,
-                 "ムラも消す" if gap <= rho else "分離できる"))
+        nm_err.append(100 * e_nm)
+        dist = float(np.hypot(d - mj, 0.0 - mi))
+        print("  %8.4f %8.1f %9.2f %9.5f %+10.1f %% %+10.1f %% %+10.1f %%"
+              % (d, 1 / d, d * L, dist, 100 * e_sm, 100 * e_nt, 100 * e_nm))
     print()
-    print("  → **ノッチの境界は |δ - f_m| < ノッチ半径 %.5f**。" % rho)
-    print("     これは「撮る前に計算できる量」だけで書けている(δ は倍率から、")
-    print("     ノッチ半径は解析窓の長さ %d px から)。" % L)
-    print("     平滑化のほうは δ が小さいほど単調に悪くなる —— モアレが低周波に")
-    print("     来てしまうと、低域通過はムラと区別できない。")
+    print("  → 3 つの境界がそれぞれ**別の原因**で立っている:")
+    print("     (1) 平滑化: δ が f_m の数倍以内になると、低域通過はモアレとムラを")
+    print("         区別できない(δ<=0.03 で誤差 +50 %% 超)。**光学の限界**。")
+    print("     (2) ノッチ(素): δ·L が整数のとき(δ=0.25 → 128.00)だけ効く。")
+    print("         非整数ビンでは漏れの裾が残る。**解析窓の長さの問題**で、")
+    print("         窓長を合わせれば消える(右の列)。撮り直しは要らない。")
+    print("     (3) ノッチ(窓長合わせ): 2 次元距離がノッチ半径 2/Lc ≈ %.5f を"
+          % (2.0 / matched_length(0.0078125)))
+    print("         下回ると、ムラごと落ちる。δ=f_m でも**向きが 30 度違う**ので")
+    print("         距離 %.5f が残り、かろうじて分離できている(誤差 %+.1f %%)。"
+          % (float(np.hypot(F_MURA - mj, mi)), nm_err[5]))
+    print("     ★どれも撮る前に計算できる量(倍率・窓長・ムラの向き)で決まっている。")
     if figs.enabled():
         xs = np.array(deltas)
         figs.save_plot("separability",
                        [("平滑化 σ=8", xs, np.array(sm_err)),
-                        ("ノッチ", xs, np.array(nt_err)),
+                        ("ノッチ 素", xs, np.array(nt_err)),
+                        ("ノッチ 窓長合わせ", xs, np.array(nm_err)),
                         ("誤差ゼロ", xs, np.zeros(xs.size)),
                         ("ムラの周波数", np.full(2, F_MURA), np.array([-120.0, 120.0]))],
                        xlabel="うなり δ [cyc/px]", ylabel="ムラ振幅の誤差 [%]",
-                       title="うなりがムラに近づくと分離できない",
+                       title="3 つの手法は別々の理由で壊れる",
                        ylim=(-120, 120),
-                       caption="縦線がムラの周波数。ノッチはその近傍でムラごと消し、"
-                               "平滑化は δ が小さいほど漏れが増える。")
+                       caption="縦線がムラの周波数。素のノッチはビン位置で、"
+                               "平滑化は δ の小ささで壊れる。")
     return deltas, sm_err, nt_err
 
 
