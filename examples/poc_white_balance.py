@@ -86,6 +86,7 @@ from __future__ import annotations
 
 import math
 import time
+import warnings
 
 import numpy as np
 
@@ -795,6 +796,32 @@ def main():
     print("     正規化なし)と比べて誤差が 4 倍。差は正規化ではなく **漏れ**")
     print("     (正規化は全体を 1 個のスカラで割るだけなので、角度には効かない)。")
     print("     利用者から見ると、この op には**正しい呼び方が無い**。")
+    print()
+    print("  ★同じ性質を持つ op はいくつあるか(1 件だけ直しても意味が無いので数える)。")
+    print("  同じ検査画像(R にだけ縦エッジ、G と B は恒等的に 0)を渡した結果:")
+    print(f"  {'op':<16}{'G への漏れ':>12}{'B への漏れ':>12}   判定")
+    leak_family = {}
+    for name in ("sobel_amp", "laplace", "prewitt_amp", "gauss_filter",
+                 "mean_image", "roberts"):
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            out = np.asarray(getattr(fs.op, name)(probe))
+        if out.ndim != 3 or out.shape[-1] != 3:
+            leak_family[name] = None
+            print(f"  {name:<16}{'—':>12}{'—':>12}   出力が {out.shape} に潰れた")
+            continue
+        g, b = float(out[..., 1].max()), float(out[..., 2].max())
+        leak_family[name] = (g, b)
+        note = ("漏れる" if g > 1e-9 else "漏れない")
+        if caught:
+            note += f" / 警告 {caught[0].category.__name__}(fallback へ降格)"
+        print(f"  {name:<16}{g:>12.4f}{b:>12.4f}   {note}")
+    print("  → **1 件の不具合ではなく族の性質**。近傍を平滑する op はどれも色軸を")
+    print("     跨ぐ。B まで漏れるのは平滑幅が 2 チャンネル以上ある op(gauss_filter,")
+    print("     mean_image)で、微分系は隣の 1 本だけに漏れる。roberts は 3 次元で")
+    print("     内部例外を起こし、**黙って fallback へ降格**する(警告は 1 回だけ)。")
+    print("     直すなら 1 件ではなく「3 次元入力をどう扱うか」を族の規約として")
+    print("     決める必要がある(色軸として扱う / 明示的に断る、のどちらか)。")
 
     # ------------------------------------------------------------------ #
     print("\n=== 13. 速度(この機械での実測)===")
