@@ -1083,6 +1083,10 @@ def main():
             cells.append(pad(f"{r['bias']:+.0f}/{r['split']:.0f}/"
                              f"{r['merge']:.0f}/{r['spurious']:.0f}", 26))
         noise_tab[(label, "fg")] = fgr
+        _z = noise_tab[(label, METHODS[0][0])]
+        noise_rows.append([label, "%.1f %%" % (100 * fgr), "%+.1f" % _z["bias"],
+                           "%.1f" % _z["split"], "%.1f" % _z["merge"],
+                           "%.1f" % _z["spurious"]])
         print("  " + pad(label, 24, right=False) + pad(f"{100 * fgr:.1f} %", 9)
               + "".join(cells))
     print(f"  (真値の前景率 = 細胞が占める画素の割合 {100 * truth_fg:.1f} %)")
