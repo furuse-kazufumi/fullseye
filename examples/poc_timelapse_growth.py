@@ -508,6 +508,17 @@ def section6_connectivity():
         same = fam[NEAR_MISS[0]] == fam[NEAR_MISS[1]]
         got[conn] = (n, same)
         print("  %10d %10d %20s" % (conn, n, "★同じ家族(誤り)" if same else "別の家族"))
+    print()
+    print("  → ★★**18 と 26 は接していない 2 つを 1 個の家族にした**。")
+    print("     この配置は接近方向を 45 度に取ってある —— 面近傍(6)だけなら")
+    print("     隙間 %.2f 長さ単位は渡れないが、斜めの近傍は sqrt(2) 画素まで"
+          % gap_at(*NEAR_MISS, T - 1))
+    print("     届くので渡れてしまう。**既定値は 26** なので、何も指定せずに")
+    print("     `vol_label` を呼ぶとこの誤りを踏む。")
+    print("  → 逆に、菌糸のように斜めでも繋がる対象なら 26 が正しい。")
+    print("     **道具の既定ではなく対象の物理が決める** —— `vol_label` が")
+    print("     `connectivity` を引数に出しているのは正しい設計だが、")
+    print("     既定を 26 にしているぶん、黙って使うと寛容側へ倒れる。")
     return got
 
 
