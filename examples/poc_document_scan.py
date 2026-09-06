@@ -644,11 +644,25 @@ def main():
         return corner_rms(e, q), landmark_error(calib.vector_to_hom_mat2d(src, e), Ht)[0], c, Ht
 
     print(f"  {'傾き [度]':>10}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}   紙の占有")
+    tilt_ok, tilt_cr, tilt_lr = [], [], []
     for tilt in (5.0, 25.0, 45.0, 60.0, 64.0, 66.0, 70.0):
         cr, lr, c, _ = run_case(tilt=tilt)
         occ = 100 * page_mask(c).mean()
         s = f"{cr:>14.2f}{lr:>14.3f}" if cr is not None else f"{'検出できず':>28}"
         print(f"  {tilt:>10.0f}{s}   {occ:>5.1f} %")
+        if cr is not None:
+            tilt_ok.append(tilt)
+            tilt_cr.append(cr)
+            tilt_lr.append(lr)
+    # 線が途切れた所が崖。値そのものより「どこで消えるか」を見る図。
+    figs.save_plot("tilt_cliff",
+                   [("4 隅 RMS", np.array(tilt_ok), np.array(tilt_cr)),
+                    ("格子 RMS", np.array(tilt_ok), np.array(tilt_lr))],
+                   xlabel="板の傾き [度]", ylabel="誤差 [px]",
+                   title="傾きそのものには負けない —— 崖は 65 度前後",
+                   caption="60 度でも 2 px 台。線が %.0f 度で途切れるのは角度の"
+                           "せいではなく、奥の辺が短くなって直線を当てる点が"
+                           "足りなくなるため。" % max(tilt_ok))
     print("  → 傾きそのものにはほとんど負けない(60 度でも 2 px 台)。崖は 65 度前後で、")
     print("     理由は角度ではなく**奥の辺が短くなりすぎて直線を当てる点が足りなくなる**")
     print("     こと(1 辺 12 点未満で棄却)。紙の占有が 3 割を切るあたりが目安。")
