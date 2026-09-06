@@ -23,7 +23,21 @@ from scipy.ndimage import gaussian_filter1d, map_coordinates
 
 
 def create_metrology_model() -> dict:
-    """空の計測モデルを作る(create_metrology_model)。"""
+    """空の計測モデルを作る(create_metrology_model)。
+
+    返り値は ``{"objects": []}`` の dict(``metrologymodel`` 型)。ここに
+    ``add_metrology_object_line_measure`` / ``..._circle_measure`` /
+    ``..._rectangle2_measure`` / ``..._ellipse_measure`` / ``..._generic`` で
+    参照形状を積み、``apply_metrology_model(model, image)`` で一括計測する。
+
+    - 引数は無い。画像サイズや座標系はモデルに持たず、``apply`` 時の画像で決まる。
+    - 各 ``add_*`` は **この dict をその場で書き換え**、追加した位置(0 始まり)を
+      返す。``apply_metrology_model`` の結果 list はこの順に並ぶ。
+    - ``align_metrology_model`` は書き換えず、平行移動した新しいモデルを返す。
+
+    座標は (row, col) [px]、角度 ``phi`` は col 軸から row 軸(画像下向き)へ測った
+    ラジアン。この規約はモデル全体で共通。
+    """
     return {"objects": []}
 
 

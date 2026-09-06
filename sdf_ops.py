@@ -47,7 +47,24 @@ def sdf_union(a, b):
     """2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。
 
     ゼロ等値面は両形状の境界の和集合に厳密一致。外側では厳密な SDF(最近表面までの距離)、
-    内側は保守的下界。``a``/``b`` はブロードキャスト整合すればよい。"""
+    内側は保守的下界。``a``/``b`` はブロードキャスト整合すればよい。
+
+    計算: ``np.minimum(np.asarray(a, float64), np.asarray(b, float64))``。それ以外の
+    検査はしない — shape がブロードキャストできなければ numpy の ``ValueError``、
+    NaN は要素ごとに伝播する(``np.minimum`` は NaN を返す)。``±inf`` は厳密に伝播
+    (``min(a, +inf) = a``:``esdf`` の「全自由なら +inf」契約と相互運用できる)。
+
+    入力: 同一グリッド上で評価した 2 つの SDF(``sphere_sdf`` / ``box_sdf`` /
+    ``esdf`` の出力など、内側負・外側正)。形は ``grid_coords`` の
+    ``(nx, ny, nz)`` でも ``(N,)`` の点列でもよい。距離の単位は入力と同じ。
+
+    返り値: ブロードキャスト後の shape の float64。ゼロ交差(``<= 0``)が A∪B の
+    占有。
+
+    注意: 内側の値は「どちらか近い方の表面までの距離」の下界であり、重なり領域では
+    真の距離より小さめ(絶対値が大きめ)に出る。CSG の標準的性質で、等値面抽出
+    (marching cubes)や ``sdf_offset`` の膨張には影響しない。継ぎ目を丸めたい場合は
+    ``sdf_smooth_union``。"""
     a = np.asarray(a, np.float64)
     b = np.asarray(b, np.float64)
     return np.minimum(a, b)
