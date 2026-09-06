@@ -671,6 +671,17 @@ def main():
                 if a > best:
                     best, d = a, cand
         zero_strong.append((best, pr_at(d, pf, nf, thresh_at_fpr(d[nf], 0.01))[0]))
+    # MNF が PCA に負けた理由を推測で済ませない。spec_mnf は雑音共分散を
+    # 「横隣との差」から見積もるが、下絵は 1–2 画素幅の線なので、その差にいちばん
+    # 効いているのは下絵そのもの。つまり **本命の信号を雑音として白色化している**。
+    cube0 = det0["_cube"]
+    dh = np.diff(cube0, axis=1) * 0.5
+    on_line = (ink[:, :-1] >= 0.6) | (ink[:, 1:] >= 0.6)
+    e_line = float((dh[on_line] ** 2).mean())
+    e_off = float((dh[~on_line] ** 2).mean())
+    print("   MNF が使う横差分のエネルギー: 下絵の上 %.3e / それ以外 %.3e = %.1f 倍。"
+          % (e_line, e_off, e_line / max(e_off, 1e-30)))
+    print("   spec_mnf の雑音推定は横差分なので、細い線は雑音として白色化されてしまう。")
     print("   ゼロ点をさらに強くする(面ごとに主成分分析からやり直す): "
           + " / ".join("%s AUC %.3f 再現率 %.3f" % (field_names[f], zero_strong[f][0],
                                                     zero_strong[f][1]) for f in range(3)))
