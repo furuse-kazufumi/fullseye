@@ -496,36 +496,30 @@ def section6_msd(rows0, cols0):
     print()
     lags = np.arange(1, 9)
     curves = {}
-    for n_part, tag in [(50, "疎 50"), (400, "密 400")]:
+    for n_part in (50, 400):
         rows, cols = simulate(n_part, seed=SEED + n_part)
         movie = make_movie(rows, cols, seed=n_part)
-        pos, ident, back = build_positions(rows, cols, movie, use_detection=True)
-        for mode in ("nn", "true"):
-            tr = _chain(pos, ident, back, mode)
-            curves[(tag, mode)] = _msd(tr, lags)
-    print("  %6s |" % "τ", end="")
-    for key in curves:
-        print(" %14s" % ("%s/%s" % key), end="")
-    print()
-    print("  " + "-" * (9 + 15 * len(curves)))
+        posd, idd, backd = build_positions(rows, cols, movie, use_detection=True)
+        post, idt, backt = build_positions(rows, cols, movie, use_detection=False)
+        curves["%d 検出+NN" % n_part] = _msd(_chain(posd, idd, backd, "nn"), lags)
+        curves["%d 真値+NN" % n_part] = _msd(_chain(post, idt, backt, "nn"), lags)
+        if n_part == 400:
+            curves["400 真リンク"] = _msd(_chain(posd, idd, backd, "true"), lags)
+    keys = list(curves)
+    print("  %5s |" % "τ", end="")
+    for key in keys:
+        print(" %13s" % key, end="")
+    print(" %13s" % "真値 4Dτ")
+    print("  " + "-" * (8 + 14 * (len(keys) + 1)))
     for k, lag in enumerate(lags):
-        print("  %6d |" % lag, end="")
-        for key in curves:
-            print(" %14.3f" % curves[key][k], end="")
-        print()
-    print("  %6s |" % "真値", end="")
-    for _ in curves:
-        print(" %14s" % "4Dτ", end="")
+        print("  %5d |" % lag, end="")
+        for key in keys:
+            print(" %13.3f" % curves[key][k], end="")
+        print(" %13.3f" % (4 * D_TRUE * lag))
     print()
-    print()
-    for key in curves:
+    for key in keys:
         ratio = curves[key] / (4 * D_TRUE * lags)
-        print("  %s/%s: 真値比 τ=1 で %.3f、τ=8 で %.3f"
-              % (key[0], key[1], ratio[0], ratio[-1]))
-    print()
-    print("  → ★密 + NN リンクでは τ が伸びるほど比が落ちる。誤リンクは 1 歩ごとに")
-    print("     独立に起きるので、長い遅れほど『別の粒子へ乗り移った』履歴が積もる。")
-    print("     短い遅れで D を出して長い遅れへ外挿すると**二重に間違える**。")
+        print("  %-14s 真値比 τ=1 で %.3f、τ=8 で %.3f" % (key, ratio[0], ratio[-1]))
     return lags, curves
 
 
