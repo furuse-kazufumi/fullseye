@@ -842,7 +842,23 @@ def image_entropy(a, bins=64, data_range=None):
 
 
 def joint_entropy(a, b, bins=64, data_range=None):
-    """同時エントロピー H(A, B) [bit]。"""
+    """同時エントロピー H(A, B) [bit]。
+
+    式: ``-sum(p log2 p)`` を ``joint_histogram(a, b, bins, data_range)`` の全セル
+    (``p > 0`` のみ)について取る。
+
+    - ``a``, ``b``: 同じ形、有限。dtype と ``data_range`` の扱いは ``joint_histogram``
+      と同じ(float は ``[0, 1]`` 以外なら明示必須)。
+    - ``bins``: 2 以上の整数。**値はビン数に依存する** ―― 上限は ``2 log2(bins)``
+      (既定 64 で 12 bit)。他所の数値と比べるときは ``bins`` と ``data_range`` を揃える。
+    - 返り値: Python の ``float``、単位 bit、``0`` 以上。2 枚とも一様なら 0。
+      ``H(A) + H(B) - H(A, B)`` が相互情報量(``mutual_information``)。
+    - 失敗(``MetricContractError``): 形が違う / 空 / 非有限 / ``bins < 2`` /
+      ``data_range`` を推定できない。
+
+    位置合わせ(レジストレーション)の目的関数として、``mutual_information`` /
+    ``normalized_mutual_information`` と併せて使う。
+    """
     return _entropy(joint_histogram(a, b, bins=bins, data_range=data_range))
 
 
