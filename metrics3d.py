@@ -165,7 +165,25 @@ def rmse_correspondence(a, b):
 def normal_consistency(points_a, normals_a, points_b, normals_b):
     """最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。
 
-    Raises ValueError: 点群が空 or (N,3) でない/法線が点と 1 対 1 でない場合。"""
+    Raises ValueError: 点群が空 or (N,3) でない/法線が点と 1 対 1 でない場合。
+
+    計算: ``points_a`` の各点について ``points_b`` の最近傍(``cKDTree``、``k=1``)を
+    取り、その点の法線 ``nb`` と自分の法線 ``na`` を単位化(ノルム + 1e-12 で割る)
+    して ``|na · nb|`` を平均する。絶対値を取るので法線の向き(表裏)の不一致は
+    無視される。**非対称**(``a`` → ``b`` の一方向のみ。逆向きが要るなら引数を入れ替えて
+    もう一度呼ぶ)。
+
+    引数: ``points_a`` ``(N, 3)``、``normals_a`` ``(N, 3)``、``points_b`` ``(M, 3)``、
+    ``normals_b`` ``(M, 3)``。4 つとも空でない ``(*, 3)`` であること、法線の行数が
+    対応する点群の行数と一致することを検査する(違反は ``ValueError``)。ゼロ法線は
+    ``1e-12`` で割られてほぼ 0 の寄与になる(エラーにしない)。
+
+    返り値: Python ``float``、``[0, 1]``。1 = 全対応で法線が平行。乱雑な法線対なら
+    3-D では期待値 0.5 程度になる(cos の絶対値の平均)。
+
+    注意: 位置の近さは見ない(遠い最近傍でも法線だけ比べる)。位置と合わせて評価する
+    なら ``chamfer_distance`` / ``fscore`` と併用する。法線の推定は
+    ``pointcloud`` 側の法線 op(PCA 近傍)や ``register_fpfh`` の前処理と同じもの。"""
     from scipy.spatial import cKDTree
     pa = _require_cloud(points_a, "points_a")
     pb = _require_cloud(points_b, "points_b")

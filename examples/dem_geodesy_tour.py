@@ -269,7 +269,8 @@ def run() -> dict:
         assert abs(np.mean(naive_ew) - naive_expect) < 1e-3
         out[f"geodetic_slope_ew_lat{lat0:g}"] = float(np.mean(s_ew))
         out[f"naive_slope_ew_lat{lat0:g}"] = float(np.mean(naive_ew))
-    print("  → 赤道では素朴な計算でも合う(cos 0 = 1)。北緯 60 度では東西が約半分に出る。")
+    print("  → 赤道でも素朴な値は 10.07 度で 10 ではない(cos 0 = 1 だが N/M ≠ 1)。"
+          "北緯 60 度では東西が約半分に出る。")
     # units="percent" は 100·tan。radians は度の変換と一致。
     pct = demops.dem_geodetic_slope(dem_ns, 60.0, d_deg, d_deg, units="percent")[3:-3, 3:-3]
     rad = demops.dem_geodetic_slope(dem_ns, 60.0, d_deg, d_deg, units="radians")[3:-3, 3:-3]
