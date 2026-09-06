@@ -706,7 +706,7 @@ def section9_findings(rec_density, got_peaks):
   (6) ★★時空間の 3-D 局所極大は per-frame 検出の代わりにならない
       (min_distance=1 で真値の %.0f %%)。等方近傍は時間軸に合わない。
 """ % (rec_density["d_det_nn"][-1], rec_density["d_tru_nn"][-1],
-       rec_density["drift_det_nn"][-1], 100 * got_peaks[1] / (T * 100.0)))
+       rec_density["drift_det_nn"][-1], 100 * got_peaks[1][2]))
 
 
 def section10_tool_gaps():
