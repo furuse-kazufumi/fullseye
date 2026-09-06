@@ -621,21 +621,44 @@ def section_cliff_blur():
         print(f"  {ps:7.2f}{w_true / ps:7.2f} | {mb:+9.4f}{mp:11.4f}"
               f"{nfound / len(phases):7.0%} | {fb:+9.4f}{fp:11.4f}")
 
-    # 崖の境界: |偏り| が 0.05 px を超える最初の w/sigma
+    # 崖の境界: sigma を大きくしていって |偏り| が最初に 0.05 px を超える w/sigma
     thr = 0.05
     edge_ratio = None
     for ps, ratio, mb, mp, det, fb, fp in rows:
-        if np.isfinite(mb) and abs(mb) > thr:
+        if edge_ratio is None and np.isfinite(mb) and abs(mb) > thr:
             edge_ratio = ratio
     print(f"\n  -> ``measuring1d`` の幅の偏りが {thr} px を超えるのは "
-          f"w/sigma <= {edge_ratio:.2f} から。")
-    print("     つまり **PSF 幅の 3 倍より近いエッジ同士は、互いを引き寄せる**。")
-    print("     周期誤差(S 字)は逆にぼけるほど小さくなる —— ぼけは敵ではない。")
+          f"w/sigma = {edge_ratio:.2f} を切ってから。")
+    print("     つまり **PSF 幅の 3〜4 倍より近いエッジ同士は、互いを引き寄せる**")
+    print("     (幅は必ず大きく出る側 = 対の外へ押し合う。符号が一定なのが厄介で、")
+    print("      繰り返し測っても消えない)。")
+    print("     周期誤差(S 字)は逆にぼけるほど小さい —— ぼけは敵ではない。")
+    print("     50% 交差(F)のほうが早く壊れるのは、**平坦部が要る**から。")
+    print("     平坦部が消えても F は『測れなかった』とは言わず、無意味な数を返す。")
+
+    sub("★整数幅だと周期誤差が消える —— 崖の測り方そのものの罠")
+    print("  2 つのエッジの小数部が同じ(= 幅が整数)なら、S 字誤差は左右で同符号に")
+    print("  なって **差し引きゼロ**になる。真値を整数に取ると『偏りも周期誤差も無い』")
+    print("  という嘘の結論が出る。実測:")
+    print(f"  {'真の幅':>8}{'PSF s':>7}{'M 偏り':>10}{'M 周期誤差':>12}")
+    for wt in (12.00, 12.25, 12.37, 12.50):
+        v = []
+        for ph in phases:
+            a = 40.0 + ph
+            im2 = bar_image(120, a, a + wt, 1.0, height=24)
+            ms = m1.gen_measure_rectangle2(12, 59.5, 0.0, 45, 1, im2.shape)
+            pr = m1.measure_pairs(im2, ms, sigma=1.0, threshold=0.15)
+            if pr:
+                v.append(pr[0]["width"] - wt)
+        print(f"  {wt:8.2f}{1.0:7.2f}{np.mean(v):+10.5f}{np.ptp(v):12.5f}")
+    print("  -> 幅 12.00 では周期誤差 0、12.50 で最大。**検査の真値を『きりの良い数』に")
+    print("     置いた瞬間、測定系の弱点が見えなくなる。**")
 
     sub("同じ崖を逆から: PSF sigma = 1.5 固定で、エッジ間距離を詰める")
     print(f"  {'w':>7}{'w/s':>7} | {'M 偏り':>9}{'検出率':>7} | {'F 偏り':>9}")
     lost_at = None
-    for w in (24.0, 16.0, 12.0, 9.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0):
+    usable_at = None
+    for w in (24.37, 16.37, 12.37, 9.37, 7.37, 6.37, 5.37, 4.37, 3.37, 2.37):
         mv, fv, nfound = [], [], 0
         for ph in phases:
             a = 40.0 + ph
