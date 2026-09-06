@@ -456,8 +456,13 @@ def ber(bits_true, bits_read):
 
 # ============================================================================ #
 def main():
-    bits, functional = build_symbol()
+    bits, functional, struct = build_symbol()
     n = N_MODULES
+
+    def detect(im, m):
+        """自力検出で読む(構造の自己採点つき)。"""
+        return read(im, n, m, functional=functional, struct=struct)
+
     dark_frac = float(bits.mean())
 
     print("=== 1. 符号 —— 真値は自分で埋めたビット行列そのもの ===")
@@ -470,7 +475,7 @@ def main():
     print("\n=== 2. 理想像とゼロ点 ===")
     img0, H0 = capture(bits, module_px=8)
     b_known, _ = read(img0, n, 8, H_true=H0)
-    b_det, why = read(img0, n, 8)
+    b_det, why = detect(img0, 8)
     naive = (ndimage.zoom(img0, n / img0.shape[0], order=1)[:n, :n] < 0.5).astype(np.uint8)
     print(f"  {'読み方':<26}{'BER':>10}{'正解モジュール':>14}")
     for label, b in (("幾何既知 + 大域 otsu", b_known),
@@ -492,7 +497,7 @@ def main():
     for br in (0.0, 0.15, 0.30, 0.40, 0.50, 0.60, 0.75, 1.00):
         im, H = capture(bits, module_px=8, blur_ratio=br)
         bk, _ = read(im, n, 8, H_true=H)
-        bd, why = read(im, n, 8)
+        bd, why = detect(im, 8)
         im2, H2 = capture(bits, module_px=8, blur_ratio=br, noise=0.02, seed=7)
         bk2, _ = read(im2, n, 8, H_true=H2)
         bd2, why2 = read(im2, n, 8)
@@ -507,7 +512,7 @@ def main():
     for tilt in (0.0, 15.0, 30.0, 45.0, 55.0, 65.0, 72.0):
         im, H = capture(bits, module_px=8, tilt_deg=tilt, noise=0.01, seed=3)
         bk, _ = read(im, n, 8, H_true=H)
-        bd, why = read(im, n, 8)
+        bd, why = detect(im, 8)
         q = _apply_h(H, [[0, 0], [n, 0], [n, n], [0, n]])
         wide = 0.5 * (np.linalg.norm(q[1] - q[0]) + np.linalg.norm(q[2] - q[3])) / n
         print(f"  {tilt:>10.0f}{math.cos(math.radians(tilt)):>10.3f}{wide:>20.2f}"
@@ -540,7 +545,7 @@ def main():
         for s in (11, 12, 13):
             im, H = capture(bits, module_px=8, noise=nz, seed=s)
             bk, _ = read(im, n, 8, H_true=H)
-            bd, _ = read(im, n, 8)
+            bd, _ = detect(im, 8)
             es.append(ber(bits, bk)); ed.append(ber(bits, bd)); okc += bd is not None
         sn = float("inf") if nz == 0 else 1.0 / nz
         print(f"  {nz:>8.2f}{sn:>8.1f}{np.mean(es):>10.4f}{np.mean(ed):>10.4f}"
@@ -556,7 +561,7 @@ def main():
         for at in ("center", "finder"):
             im, H = capture(bits, module_px=8, occl_mod=k, occl_at=at, noise=0.01, seed=9)
             bk, _ = read(im, n, 8, H_true=H)
-            bd, why = read(im, n, 8)
+            bd, why = detect(im, 8)
             rows.append((ber(bits, bk), "ok" if bd is not None else why[:9]))
         print(f"  {k:>11d}{k * k / (n * n):>10.3f}{rows[0][0]:>10.4f}{rows[0][1]:>11}"
               f"{rows[1][0]:>9.4f}{rows[1][1]:>11}")
@@ -574,7 +579,7 @@ def main():
             im, H = capture(bits, module_px=m, blur_ratio=0.25, noise=0.02, seed=s)
             bk, _ = read(im, n, m, H_true=H)
             t0 = time.perf_counter()
-            bd, _ = read(im, n, m)
+            bd, _ = detect(im, m)
             ts.append(1e3 * (time.perf_counter() - t0))
             es.append(ber(bits, bk)); ed.append(ber(bits, bd)); okc += bd is not None
         print(f"  {m:>8d}{(n + 2 * QUIET) * m:>11d}{np.mean(es):>10.4f}"
@@ -600,7 +605,7 @@ def main():
         d = binarize(im, "otsu", m)
         t0 = time.perf_counter(); estimate_homography(d, n)
         t_loc = 1e3 * (time.perf_counter() - t0)
-        t0 = time.perf_counter(); read(im, n, m)
+        t0 = time.perf_counter(); detect(im, m)
         t_all = 1e3 * (time.perf_counter() - t0)
         print(f"  m={m:>2} ({side}x{side})  二値化 {t_bin:>6.1f} ms / "
               f"定位 {t_loc:>7.1f} ms / 全体 {t_all:>7.1f} ms")
@@ -611,7 +616,7 @@ def main():
     img0, H0 = capture(bits, module_px=8)
     bk, _ = read(img0, n, 8, H_true=H0)
     assert ber(bits, bk) == 0.0, "理想像を幾何既知で読んで BER が 0 でない"
-    bd, why = read(img0, n, 8)
+    bd, why = detect(img0, 8)
     assert bd is not None and ber(bits, bd) == 0.0, f"理想像の自力検出が失敗: {why}"
     # ゼロ点はランダム推測の線に張り付く
     assert ber(bits, np.zeros_like(bits)) > 0.35, "全部 0 のゼロ点が甘すぎる"
@@ -637,12 +642,12 @@ def main():
         "sigma 4 px の局所しきい値が 8 px モジュールを読めてしまった(穴 A の再確認を)"
     # 遮蔽: 位置検出パターンを一辺 6 モジュール隠すと定位が死ぬ
     im, H = capture(bits, module_px=8, occl_mod=6, occl_at="finder", noise=0.01, seed=9)
-    assert read(im, n, 8)[0] is None, "位置検出パターンを潰しても定位できた"
+    assert detect(im, 8)[0] is None, "位置検出パターンを潰しても定位できた"
     # モジュール寸法の下限
     im, H = capture(bits, module_px=6, blur_ratio=0.25, noise=0.02, seed=21)
-    assert ber(bits, read(im, n, 6)[0]) == 0.0, "1 モジュール 6 px で読めない"
+    assert ber(bits, detect(im, 6)[0]) == 0.0, "1 モジュール 6 px で読めない"
     im, H = capture(bits, module_px=2, blur_ratio=0.25, noise=0.02, seed=21)
-    b2, _ = read(im, n, 2)
+    b2, _ = detect(im, 2)
     assert b2 is None or ber(bits, b2) > 0.0, "1 モジュール 2 px で完璧に読めた(合成を疑う)"
     # 構造の真値そのもの
     assert bits[3, 3] == 1 and bits[0, 0] == 1 and bits[1, 1] == 0, "位置検出パターンが違う"
