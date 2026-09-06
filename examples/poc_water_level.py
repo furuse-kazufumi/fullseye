@@ -552,15 +552,20 @@ def section_tool_gaps() -> None:
     print("      呼び手が毎回 z=0 を足している。fit_line(2-D TLS)には")
     print("      ロバスト版が無い。")
 
-    # (d) サブピクセルのエッジ位置を返す口が無い(threshold_sub_pix は輪郭を返す)
-    for name in ("edge_subpixel", "subpixel_edge", "measure_pos"):
-        assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
-    print("  (d) 1 次元プロファイルの**サブピクセル・エッジ位置**を返す口が無い")
-    print("      (HALCON の measure_pos に当たるもの)。この PoC は線形内挿を自前で。")
+    # (d) キャリパーは在った(★「無い」と書きかけて 3 層引いて見つけた)
+    assert hasattr(fs.ledger, "measure_pos") and hasattr(fs.ledger, "gen_measure_rectangle2")
+    assert not hasattr(fs, "measure_pos"), "ファサードに出た(この節を書き換えること)"
+    print("  (d) ★サブピクセル・エッジは**在った**(ledger.measure_pos + ")
+    print("      gen_measure_rectangle2 = HALCON のキャリパー)。この PoC は最初")
+    print("      「無い」と書きかけて自前の線形内挿を使っていた —— 3 層引いて")
+    print("      見つけたので差し替えた。ただし**測定線を束ねて 1 本の直線に")
+    print("      当てる口**(fit_line_measure に当たるもの)は無く、呼び手が")
+    print("      列ごとに measure_pos を呼んで自分で束ねている。")
 
     # (e) 台帳にあるのにファサードに出ていない
     assert hasattr(fs.ledger, "warp_by_plane") and not hasattr(fs, "warp_by_plane")
-    print("  (e) warp_by_plane / ransac_line は fullseye.ledger からしか呼べない。")
+    print("  (e) warp_by_plane / ransac_line / measure_pos は fullseye.ledger から")
+    print("      しか呼べない(1 行ファサードの規約とは食い違っている)。")
 
 
 # --------------------------------------------------------------------------- #
