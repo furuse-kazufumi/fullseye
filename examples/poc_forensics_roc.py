@@ -95,14 +95,18 @@ from __future__ import annotations
 
 import hashlib
 import io
+import sys
 import time
 import unicodedata
+from pathlib import Path
 
 import numpy as np
 from scipy import ndimage
 from scipy.stats import rankdata
 
-import imgforensics as F
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import imgforensics as F                                         # noqa: E402
 
 try:
     from PIL import Image
