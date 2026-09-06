@@ -789,12 +789,17 @@ def section8_figures(rows, cols, movie, rec_density, rec_step, lags, curves):
                            "上げ、曖昧は近い相手を選んで D を下げる。"
                            "上限距離のゲート 1 行で上向きの暴走が 1/2.6 に。")
     # 4) MSD
-    series = [("真値 4Dτ", lags, 4 * D_TRUE * lags)]
-    for key in curves:
-        series.append((key, lags, curves[key]))
-    figs.save_plot("msd", series, xlabel="遅れ τ [frame]", ylabel="MSD [px²]",
-                   title="MSD —— 誤リンクの害は τ とともに増える",
-                   caption="密 400 個の NN リンクだけが τ とともに真値から離れる。")
+    # ★生の MSD を重ねると 4Dτ の直線が全部を支配して差が見えない。
+    #   **真値で割った比**にすると、1.0 からの離れ方(= 壊れ方)が形で読める。
+    series = [(k, lags, curves[k] / (4 * D_TRUE * lags))
+              for k in curves if "真リンク" not in k]
+    series.append(("真値 1.0", lags, np.ones_like(lags, float)))
+    figs.save_plot("msd", series, xlabel="遅れ τ [frame]",
+                   ylabel="MSD / (4 D τ)",
+                   title="MSD の τ 依存は「壊れ方の指紋」",
+                   caption="真値で割った比。欠測が主な系列(検出+NN)は上へ外れ、"
+                           "曖昧だけの系列(真値+NN)は 1 をわずかに下回りつつ "
+                           "τ とともに下がる。**外れる向きで形が違う。**")
     # 5) 表(Excel へ持ち出せる)
     rows_tbl = []
     for k, npart in enumerate(rec_density["n"]):
