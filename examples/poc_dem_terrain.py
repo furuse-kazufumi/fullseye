@@ -143,8 +143,15 @@ def main():
         a = demops.dem_flow_accumulation(z2, cell, nodata=policy)
         top = float(np.nanmax(a))
         print(f"  {policy:>10}{top:>14.0f}{100 * top / a.size:>9.1f}%")
+        acc_maps.append(np.log10(np.nan_to_num(np.asarray(a, float), nan=0.0) + 1.0))
+        acc_names.append("集水量 log10(1+A) —— %s" % policy)
     print("  → 中央値などで**埋める**選択肢は置いていない。埋めると存在しない平原が")
     print("     でき、例外も出さずに水を通すため(どこが地形でどこが穴埋めか消える)。")
+    # 「答えが変わる」を数字 2 つでなく形で見せる。outlet は欠測へ水を吸い込み、
+    # barrier は欠測を避けて縁へ回す —— 流路の形そのものが別物になる。
+    figs.save_grid("nodata_policies", acc_maps, acc_names, ncols=3,
+                   title="欠測(水面)の扱いで流路が変わる",
+                   caption="同じ地形・同じ op。違うのは欠測の方針だけ。")
 
     print("\n=== 6. 日当たり —— 向きで陰影と天空率が変わる ===")
     print(f"  {'斜面の向き':>10}{'陰影(南東光源)':>16}{'天空率':>10}")
