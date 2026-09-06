@@ -368,7 +368,75 @@ def capabilities() -> dict:
             "acquire": acquire.capabilities(),
             "device": device.capabilities()}
 
+class _OpNamespace:
+    """進化する 2-D op(``ops.REGISTRY``、882 個)を**属性で**呼ぶ入口。
+
+        import fullseye as fs
+        out = fs.op.gray_erosion(img)          # = fs.apply(img, "gray_erosion")
+        out = fs.op.gray_erosion(img, a=0.8)   # つまみは a / b の 2 つだけ
+
+    なぜ要るか —— この 882 op は 2026-09-06 の実測で **``dir(fullseye)`` の 1092 名前
+    と 3 つしか重ならず**(``lowpass`` / ``highpass`` / ``fill_holes``)、しかもその
+    3 つは**別物**である(``fs.fill_holes`` は網の穴埋め、``fs.op.fill_holes`` は
+    2-D 領域の穴埋め)。つまり補完で探すと 3-D 側しか見つからず、形態学も
+    エッジも閾値も、名前の文字列を知らないと一生たどり着けなかった。
+    ここを別の名前空間にしたのは、1092 名前に 882 名前を混ぜると**この 3 組が
+    静かに上書きし合う**ため —— 混ぜると例外ではなく、もっともらしく違う結果が出る。
+
+    引数は :func:`fullseye.apply` にそのまま渡る(``a``, ``b``, ``coerce``,
+    ``device``, ``on_error``, ``template``, ``fast``)。宣言型・プリセット・入力の
+    自動生成が要るのは台帳側の op で、そちらは ``fullseye.op_run`` を使う。
+    """
+
+    __slots__ = ()
+
+    @staticmethod
+    def _names():
+        return sorted(o.name for o in REGISTRY)
+
+    def __dir__(self):
+        return self._names()
+
+    def __getattr__(self, name):
+        if name.startswith("_"):
+            raise AttributeError(name)
+        op = find_op(name)
+        if op is None:
+            raise AttributeError(
+                "fullseye.op: '%s' という 2-D op は無い。"
+                "探すなら fullseye.op_find('%s')、台帳側の op なら fullseye.%s"
+                % (name, name, name))
+
+        def _call(image, **kw):
+            return apply(image, name, **kw)
+
+        _call.__name__ = name
+        _call.__qualname__ = "fullseye.op." + name
+        _call.__doc__ = "%s\n\n(%s: %s -> %s。fullseye.apply(image, %r) と同じ)" % (
+            op.doc or "", op.category, op.in_sort, op.out_sort, name)
+        return _call
+
+    def __getitem__(self, name):
+        return getattr(self, name)
+
+    def __contains__(self, name):
+        return find_op(name) is not None
+
+    def __iter__(self):
+        return iter(self._names())
+
+    def __len__(self):
+        return len(REGISTRY)
+
+    def __repr__(self):
+        return "<fullseye.op: %d 個の 2-D op(fs.op.<名前>(image) で呼ぶ)>" % len(REGISTRY)
+
+
+#: 2-D op の属性アクセス入口(:class:`_OpNamespace`)。
+op = _OpNamespace()
+
 __all__ = [
+    "op",
     "orient2d", "orient3d", "incircle", "insphere",
     "orient2d_exact", "orient3d_exact", "incircle_exact", "insphere_exact",
     "point_in_polygon", "point_in_convex_polygon", "is_convex_polygon",
