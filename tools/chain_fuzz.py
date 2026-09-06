@@ -1387,6 +1387,12 @@ TYPE_CHECKS = {
     # 述語をここで厳しくしないと、群の平均に濃度場を渡す連鎖が例外なしに通る。
     "shapeset": lambda v: isinstance(v, np.ndarray) and v.ndim == 3                           and v.shape[2] == 3 and v.shape[0] >= 2,
     "shapemodel": lambda v: isinstance(v, dict)                             and {"mean", "components", "variance", "n_points"} <= set(v),
+    # efdmodel は elliptic_fourier の返す辞書。table(list/dict)にも当たるので
+    # 鍵で見る —— 述語を緩くすると Zernike の係数表を reconstruct に渡す連鎖が
+    # 「通ってしまう」のではなく KeyError で毎回落ち、族の 4 op が永久に
+    # 未実行になる(嘘を防ぐためでなく、実際に走らせるための型)。
+    "efdmodel": lambda v: isinstance(v, dict)
+                          and {"a0", "c0", "coeffs", "n_harmonics"} <= set(v),
     "points": _is_pts,
     "normals": _is_pts,
     "keypoints": lambda v: _is_pts(v) or (isinstance(v, np.ndarray) and v.ndim == 2),

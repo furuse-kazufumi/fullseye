@@ -885,6 +885,8 @@ def main():
     assert one_refused, "1 材質だけでも拒否されなかった"
     assert noisy_rows[0.05] > 10.0 * max(noisy_rows[0.002], 1e-6), \
         "二色性の光源推定が雑音で悪化していない"
+    assert noisy_rows[0.05] > angular_error(max_rgb(hi), e_d), \
+        "σ=0.05 でも二色性 op が統計手法に勝っている —— 所見が崩れた"
 
     # 11. 対角モデルの床: 真値で割っても色は合わない
     assert max(v[1] for v in floor_rows.values()) > 2.0, \
