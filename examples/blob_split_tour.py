@@ -25,7 +25,11 @@
    谷に沿って数列ぶん食い込む**(大円板にしか属さない画素まで小円板側へ)。段ごとの膨張で
    両領域に触れた画素を max 番号に与える tie の偏りで、種番号を入れ替えると向きも逆になる。
    実装は直さず報告し、例は 10 % 未満で通す。
-4. ``h=8``(小さい山の高さ 16 − くびれ 10 = 6 より大)では融合塊は割れない(3 領域)。
+4. h を上げたときの融合: 教科書の h-maxima なら低い山のそびえ(16 − くびれ 10.07 = 5.93)を
+   h が超えると種が 1 つになるが、★実測(honest): ``blob_seeds`` は残差 > 0 判定なので
+   残差 = min(h, そびえ) > 0 が常に真で h=6 / 8 でも種は 2 つのまま。1 つになるのは
+   「高い山 − くびれ(22 − 10.07 = 11.93)」を h が超えたとき(h=12.5 で 3 領域)。
+   参照する山が逆なので、大きい塊についた小さいこぶを h で消す用途には効かない(報告のみ)。
 
 【読み方】各節の印字は「真値 / 実測 / 差」。PASS 行が出れば全部通っている。
 """
@@ -145,14 +149,28 @@ def run() -> dict:
     assert mismatch < 0.10 * pair_area                  # 観測 5 % 台。ゼロではないことを隠さない
     assert invaded > 0 and invaded_sw > 0               # 落ちたら偏りが直っている(報告を更新)
 
-    # 4) h を上げると割れない(割りすぎ↔割り残しのつまみ)—— くびれの高さ差より大きい h
-    seeds_hi = B.blob_seeds(dist, h=8.0)
+    # 4) h を上げると割れない(割りすぎ↔割り残しのつまみ)
+    # ★実測(honest): 教科書の h-maxima なら「低いほうの山のそびえ(16 - くびれ 10.07 = 5.93)」
+    # を h が超えた時点で種が 1 つに融合する。blob_seeds は残差 > 0 を種にするので、残差 =
+    # min(h, そびえ) > 0 が常に成り立ち、低い山の種は h では消えない。融合するのは
+    # 「高いほうの山 - くびれ(22 - 10.07 = 11.93)」を h が超えたとき —— 参照する山が逆。
+    for h_try in (6.0, 8.0):
+        s_try = B.blob_seeds(dist, h=h_try)
+        s_try[bar] = 0
+        s_try[~mask] = 0
+        n_try = int(len(np.unique(s_try[(d1 | d2) & (s_try > 0)])))
+        print(f"4) h={h_try:g}(そびえ 5.93 より大): 融合塊の種 {n_try} 個 —— 教科書なら 1 個。"
+              f"blob_seeds は残差 > 0 判定なので 2 個のまま(報告のみ)")
+        assert n_try == 2
+    h_hi = 12.5                                         # 22 - 10.07 = 11.93 より大 → ようやく 1 個
+    seeds_hi = B.blob_seeds(dist, h=h_hi)
     seeds_hi[bar] = 0                                   # 棒の種は上と同じ理由で外す
     seeds_hi[~mask] = 0                                 # 背景の縁に出た種も外す
     split_hi = B.blob_split(lab, seeds_hi, dist)
-    print(f"4) h=8(小さい山の高さ 16 - くびれ 10 = 6 より大): 種 {int(seeds_hi.max())} 個、"
+    n_pair_hi = int(len(np.unique(seeds_hi[(d1 | d2) & (seeds_hi > 0)])))
+    print(f"   h={h_hi:g}(高い山 - くびれ 11.93 より大): 融合塊の種 {n_pair_hi} 個、"
           f"領域 {int(split_hi.max())} 個(融合塊は割れない)、2 中心は同じラベル {split_hi[C1] == split_hi[C2]}")
-    assert int(split_hi.max()) == 3 and split_hi[C1] == split_hi[C2]
+    assert n_pair_hi == 1 and int(split_hi.max()) == 3 and split_hi[C1] == split_hi[C2]
 
     return {"components_before": n0, "center_distances": vals[:3], "bar_max_distance": vals[3],
             "n_seeds_raw": n_seeds, "bar_seed_px": bar_seed_px, "seed_closed_form_exact": seed_exact,
