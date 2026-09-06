@@ -42,7 +42,23 @@ def create_metrology_model() -> dict:
 
 
 def add_metrology_object_line_measure(model, row1, col1, row2, col2, n: int = 25) -> int:
-    """直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。"""
+    """直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。
+
+    参照線分 ``(row1, col1) → (row2, col2)`` [px] を ``model["objects"]`` に積む
+    (dict をその場で更新)。``apply_metrology_model`` はこの線分上に ``n`` 点を
+    等間隔(両端を含む)に置き、各点から **線分の法線方向** に短い測定線を張って
+    サブピクセルのエッジを探し、得た点に ``fit_line`` を掛け直す。
+
+    - ``n``: サンプル点数(既定 25)。多いほどフィットは安定するが計測時間は比例。
+    - 端点が一致する(長さ ``< 1e-9``)線分は積めるが、``apply`` 時にサンプル 0 個
+      → フィット失敗として ``params=None``、``rms=inf`` で返る(例外にはならない)。
+    - 引数の型・範囲はここでは検証しない(画像外の座標も積める。``apply`` 時に
+      最近傍で外挿されるだけで例外は出ない)。
+    - 返り値: 追加したオブジェクトの index(0 始まり)。``apply`` の結果 list の
+      同じ位置に ``type="line"`` の結果(``row1/col1/row2/col2/angle_deg``)が入る。
+
+    ``align_metrology_model`` で平行移動するときは両端点が一緒に動く。
+    """
     model["objects"].append({"type": "line", "p": (row1, col1, row2, col2), "n": n})
     return len(model["objects"]) - 1
 

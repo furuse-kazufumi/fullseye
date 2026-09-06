@@ -410,10 +410,41 @@ BRIDGES = (
 CATEGORY = "bridge"
 
 
+#: 失敗時(既定の fail-soft)に返す「中身は無いが sort として妥当な値」。
+#: ``backends_typed._EMPTY_OF`` と同じ考え方で、そこに無い sort だけここで足す。
+#: ``backend_safe.fallback`` は新設 sort を知らないので、任せると **入力画像が
+#: そのまま返って sort の嘘になる**(実測 2026-09-07: points 宣言で (H,W) が返る)。
+_EMPTY_OF = {
+    "points": lambda: np.zeros((1, 3), np.float64),
+    "keypoints": lambda: np.zeros((0, 2), np.float64),
+    "signal": lambda: np.zeros(2, np.float64),
+    "counts": lambda: np.zeros(2, np.int64),
+    "matrix": lambda: np.zeros((2, 2), np.float64),
+    "video": lambda: np.zeros((2, 2, 2), np.float64),
+    "volume": lambda: np.zeros((2, 2, 2), np.float64),
+    "lightfield": lambda: np.zeros((1, 1, 2, 2), np.float64),
+    "rgbimage": lambda: np.zeros((2, 2, 3), np.float64),
+    "cimage": lambda: np.zeros((2, 2), np.complex128),
+    "beatcube": lambda: np.zeros((1, 2, 2), np.complex128),
+}
+
+#: 複素数を返す sort。``backend_safe.sanitize`` は複素出力の **実部だけ** を
+#: 返す(実 sort 向けの規約)ので、この 2 sort は ``finish`` で素通しにする。
+#: 有限性は各実装が入口検証(有限な入力・有界な演算)で保証する。
+_COMPLEX_SORTS = frozenset({"cimage", "beatcube"})
+
+
+def _keep(out, v):
+    return out
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
     """``ops.py`` の登録規約。category は ``bridge``、in_sort は image。"""
     out = []
     for name, out_sort, fn in BRIDGES:
-        out.append(Op(name, CATEGORY, "", IMAGE, out_sort,
-                      guard(fn, out_sort, name=name)))
+        empty = _EMPTY_OF[out_sort]
+        g = guard(fn, out_sort, name=name,
+                  on_fail=lambda v, _e=empty: _e(),
+                  finish=_keep if out_sort in _COMPLEX_SORTS else None)
+        out.append(Op(name, CATEGORY, "", IMAGE, out_sort, g))
     return out
