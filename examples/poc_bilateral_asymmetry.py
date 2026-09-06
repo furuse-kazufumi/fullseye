@@ -389,6 +389,16 @@ def main():
     print(f"  位置合わせ側も効く: 同じ {N_MAIN} 点で ICP を点対点にすると床は {rms_pp:.4f} mm"
           f"(点対面の {rms_pp / floor_rms:.0f} 倍)。")
     print("     測る距離と合わせる距離は別物で、**両方**接平面にして初めて床まで届く。")
+    # 「床は距離の取り方で 2 桁動く」を対数軸で。3 本が**平行に下がらない**ことが要点
+    # (点対点だけが点間隔に張り付いている)。
+    _sp = np.array([r[0] for r in floor_rows])
+    figs.save_plot("floor_vs_spacing",
+                   [("点対点", _sp, np.log10([r[1] for r in floor_rows])),
+                    ("点対面", _sp, np.log10([r[2] for r in floor_rows])),
+                    ("点対面 + 近傍平滑", _sp, np.log10([r[3] for r in floor_rows]))],
+                   xlabel="点間隔 [mm]", ylabel="log10 床 rms [mm]",
+                   title="検査の床は距離の取り方で 2 桁動く",
+                   caption="完全対称な標本を測った残差。点対点は点間隔がそのまま床になる。")
 
     print("\n=== 3. ゼロ点 —— 鏡映しない / 位置合わせしない ===")
     amp_probe = 1.6
