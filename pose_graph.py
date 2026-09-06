@@ -39,7 +39,18 @@ def _compose(Ra, ta, Rb, tb):
 
 
 def relative_pose(pose_i, pose_j):
-    """T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。"""
+    """T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。
+
+    姿勢の規約は world←body(``p_world = R p_body + t``)。``T_i⁻¹ = (R_iᵀ, -R_iᵀ t_i)`` と ``T_j`` を
+    合成して ``R_ij = R_iᵀ R_j``、``t_ij = R_iᵀ (t_j - t_i)`` を求め、回転は回転ベクトル(軸 × 角
+    [rad]、scipy の ``as_rotvec``)に戻して返す。これは「フレーム i から見たフレーム j の姿勢」で、
+    ``optimize_pose_graph`` に渡すエッジ ``(i, j, rvec_ij, t_ij)`` の計測値をこの規約で作ればそのまま
+    整合する(GT 姿勢からの合成エッジ生成にも使う)。
+
+    - ``pose_i`` / ``pose_j``: 長さ 6 の ``[rvec(3) | t(3)]``。形状検証はしない(``pose[:3]`` /
+      ``pose[3:]`` でスライスするだけ)。
+    - 単位は並進が座標の単位、回転が rad。返る ``rvec_ij`` の角度は [0, π] に折り畳まれる。
+    """
     Ri, ti = rvec_to_R(pose_i[:3]), np.asarray(pose_i[3:], float)
     Rj, tj = rvec_to_R(pose_j[:3]), np.asarray(pose_j[3:], float)
     Rii, tii = _invert(Ri, ti)
