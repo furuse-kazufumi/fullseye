@@ -111,15 +111,20 @@ def test_project_point_hom_mat3d_matches_project_3d_point_row_col():
 # --------------------------------------------------------------------------- #
 # 退化検出の門は「歪みが無ければ」働く(2026-09-06、PoC が出した宿題)
 # --------------------------------------------------------------------------- #
-def _flat_views(tilt_rad=0.0, n=6, k1=0.0):
-    """正面平行(または微小傾き)ばかりの視点。``k1`` で樽型歪みを入れる。"""
+def _flat_views(tilt_rad=0.0, n=6, k1=0.0, offset=0.0, z0=300.0):
+    """正面平行(または微小傾き)ばかりの視点。
+
+    ``k1``     樽型歪み。``offset`` 視点間の横方向の移動[mm]。実際の校正では
+    板を動かすので両方が同時に起きる。
+    """
     xy = _target()
     world = np.column_stack([xy, np.zeros(len(xy))])
     out = []
     for i in range(n):
-        R = _rotm(tilt_rad * np.cos(2 * np.pi * i / n),
-                  tilt_rad * np.sin(2 * np.pi * i / n), 2 * np.pi * i / n)
-        p = world @ R.T + np.array([0.0, 0.0, 400.0 + 15.0 * i])
+        a = 2.0 * np.pi * i / n
+        R = _rotm(tilt_rad * np.cos(a), tilt_rad * np.sin(a), a)
+        t = np.array([offset * np.cos(a), offset * np.sin(a), z0 + 15.0 * i])
+        p = world @ R.T + t
         xn = p[:, :2] / p[:, 2:3]
         if k1:
             r2 = (xn ** 2).sum(1, keepdims=True)
@@ -131,24 +136,33 @@ def _flat_views(tilt_rad=0.0, n=6, k1=0.0):
 
 
 def test_degenerate_views_are_refused_when_there_is_no_distortion():
-    xy, views = _flat_views(tilt_rad=0.0)
+    for offset in (0.0, 40.0):
+        xy, views = _flat_views(tilt_rad=0.0, offset=offset)
+        with pytest.raises(ValueError, match="degenerate calibration views"):
+            calib.camera_calibration(xy, views)
+
+
+def test_degenerate_views_are_refused_when_the_board_does_not_move():
+    xy, views = _flat_views(tilt_rad=0.0, k1=-0.18, offset=0.0)
     with pytest.raises(ValueError, match="degenerate calibration views"):
         calib.camera_calibration(xy, views)
 
 
-def test_lens_distortion_blinds_the_degeneracy_check():
-    """**歪みがあると退化門は鳴らない。** 直せないので、代わりに数字と文言で渡す。
+def test_distortion_plus_a_moving_board_blinds_the_degeneracy_check():
+    """**歪みと横移動が揃うと退化門は鳴らない。** 実際の校正はまさにその形。
 
-    平面ホモグラフィのモデルが歪みで合わなくなり、零空間の比が傾きに依らず
-    2e-06 前後に張り付く(2026-09-06 実測: 0 度 1.92e-06 / 0.2 度 2.01e-06、
-    傾き 2 度でも 4.42e-06 で 2.3 倍しか違わない = 線が引けない)。
-    しきい値を動かす「修正」を入れたらこの門が落ちる。
+    2026-09-06 に PoC が出した宿題を、条件を切り分けて確かめたもの。歪みだけ、
+    あるいは横移動だけなら門は設計どおり働く(上の 2 本)。両方あると平面
+    ホモグラフィのモデルが視点ごとに違う向きにずれ、零空間の比が持ち上がって
+    しきい値に届かなくなる。しきい値を動かす「修正」では直らない —— 歪みあり
+    では完全退化 1.92e-06 と傾き 2 度 4.42e-06 の差が 2.3 倍しかない。
+    代わりに (1) 比を返し (2) 実際に止める門に原因を言わせる、とした。
     """
-    xy, views = _flat_views(tilt_rad=0.0, k1=-0.18)
+    xy, views = _flat_views(tilt_rad=0.0, k1=-0.18, offset=40.0)
     with pytest.raises(ValueError) as exc:
         calib.camera_calibration(xy, views)
     msg = str(exc.value)
-    assert "degenerate calibration views" not in msg, "歪みありで退化門が鳴った"
+    assert "degenerate calibration views" not in msg, "この配置で退化門が鳴った"
     assert "tilted" in msg, "止めた側の門が傾き不足を名指ししていない"
     assert "rank ratio" in msg
 

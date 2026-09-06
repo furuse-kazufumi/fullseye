@@ -636,10 +636,14 @@ def main():
     # (f) 重なり低下で PCA 初期値は劣化する
     assert over[1.0][1] > over[0.5][1], "重なり低下で PCA+ICP が劣化しない"
     # (g) 対称形状で「収束したのに間違っている」が実際に出る
-    conv_s, bad_s = sym["球"]
-    assert conv_s >= 8, f"球で ICP が収束すらしていない (conv={conv_s})"
-    assert bad_s >= conv_s // 2, f"球で偽の成功が出ていない (bad={bad_s}/{conv_s})"
-    assert sym["非対称当て金"][1] == 0, "非対称形状で偽の成功が出た"
+    for mode in ("局所: ICP を恒等から", "大域: PCA + ICP"):
+        conv_s, bad_s = sym[(mode, "球")]
+        assert conv_s >= N_S // 2, f"{mode}: 球で収束すらしていない (conv={conv_s})"
+        assert bad_s >= conv_s // 2, f"{mode}: 球で偽の成功が出ていない ({bad_s}/{conv_s})"
+        assert sym[(mode, "非対称当て金")][1] == 0, f"{mode}: 非対称形状で偽の成功が出た"
+    # 素の直方体は局所なら嘘をつかず、大域に替えると嘘をつく(嘘の原因は形だけではない)
+    assert sym[("局所: ICP を恒等から", "素の直方体")][1] == 0, "局所 ICP が直方体で嘘をついた"
+    assert sym[("大域: PCA + ICP", "素の直方体")][1] > 0, "大域手法が直方体で嘘をつかない"
     # (h) 円柱は軸だけ決まる = 自由度ごとに結論が違う
     assert med(axis_err) < 5.0 < med(full_err), "円柱の軸と全体の分離が出ていない"
     # (i) 雑音が増えれば精度は落ちる(単調)
