@@ -581,9 +581,9 @@ def section7_strict(truth: dict) -> None:
     print("  判定は量ごと —— その量を出すのに要る区間だけを見る。")
     print()
     print("  %6s %7s | %-26s | %-26s"
-          % ("角度", "影の率", "0 埋め(UC左/UC右/脚左/脚右)", "答えない(同じ順)"))
+          % ("角度", "影の列", "0 埋め(UC左/UC右/脚左/脚右)", "答えない(同じ順)"))
     print("  " + "-" * 74)
-    for a in [30.0, 40.0, 50.0, 60.0]:
+    for a in [25.0, 30.0, 40.0, 50.0, 60.0]:
         img, lit = render(laser_deg=a, seed=16)
         v = est_parabola(img)
         ok = np.isfinite(v)
