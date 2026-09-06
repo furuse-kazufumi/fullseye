@@ -105,14 +105,15 @@ def _defect_field(name: str, n: int = N):
         band = (yy >= d["r0"]) & (yy <= d["r1"])
         field = d["amp"] * prof * band
         mask = (np.abs(xx - d["col"]) <= d["half"]) & band
-    elif d["kind"] == "spot":
-        r2 = (yy - d["row"]) ** 2 + (xx - d["col"]) ** 2
-        field = d["amp"] * np.exp(-r2 / (2 * d["sigma"] ** 2))
-        mask = r2 <= (2.0 * d["sigma"]) ** 2
     else:
+        # 斑点もムラも同じガウス。違うのは σ(空間スケール)と、マスク半径。
+        # ★マスク半径は σ の倍率で個別に決めてある —— **面積を揃えるため**。
+        #   面積が桁で違うと「まとめた AUC は面積の大きいほうの AUC」に
+        #   なってしまい、この PoC が測りたい「まとめると隠れる」が
+        #   「面積が大きいほうが勝つ」という別の話にすり替わる。
         r2 = (yy - d["row"]) ** 2 + (xx - d["col"]) ** 2
         field = d["amp"] * np.exp(-r2 / (2 * d["sigma"] ** 2))
-        mask = r2 <= (1.0 * d["sigma"]) ** 2
+        mask = r2 <= (d["rmask"] * d["sigma"]) ** 2
     return field, mask
 
 
