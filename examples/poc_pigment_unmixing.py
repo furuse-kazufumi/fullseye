@@ -981,8 +981,10 @@ def main():
     assert ne[0] > ne[-1] and ne[-1] < 0.3, \
         "雑音で落ちない: %r" % (["%.3f" % v for v in ne],)
     se = [cliff_e[s]["scatter"] for s in (0.0, 0.001, 0.004, 0.01, 0.03, 0.1)]
-    assert all(b >= a - 1e-9 for a, b in zip(se, se[1:])) and se[-1] > 10 * se[0], \
+    # sigma=0 でも散らばりは 0 にならない —— 層のモデル不整合が床を作っている。
+    assert all(b >= a - 1e-9 for a, b in zip(se, se[1:])) and se[-1] > 5.0 * se[0], \
         "雑音で存在量の散らばりが増えない: %r" % (["%.4f" % v for v in se],)
+    assert se[0] > 0.01, "雑音ゼロで散らばりが消えた(モデル不整合の床が無い)"
     # 9. 物理の両端(KM の極限)が閉形式に一致
     for key in LAYER_KEYS:
         r_inf, s550, _n = PIGMENTS[key]
