@@ -182,29 +182,32 @@ def render(level: float, refl: float = 0.0, wave_amp: float = 0.0,
 def _detect_cols() -> np.ndarray:
     ug = w2i(X_GAUGE, 1.0)[0][0]
     ur = w2i(X_REF, 1.0)[0][0]
-    cols = np.arange(40, W_PIX - 40)
+    cols = np.arange(40, W_PIX - 40, 3)
     keep = (np.abs(cols - ug) > 26) & (np.abs(cols - ur) > 30)
     return cols[keep]
 
 
 def detect_waterline(img: np.ndarray) -> np.ndarray:
-    """列ごとの水面線の (row, col)。しきい値は画像の分位点から決める(真値を見ない)。"""
+    """列ごとの水面線の (row, col)。**fullseye のキャリパー**で拾う。
+
+    ``fs.ledger.gen_measure_rectangle2`` で列ごとに鉛直な測定矩形を立て、
+    ``fs.ledger.measure_pos`` の**負極性エッジ**(下へ向かって暗くなる = 壁 -> 水)の
+    うち上から最初のものを採る。振幅のしきい値は画像の分位点から決める
+    (真値を見ない)。目地(振幅 0.10)は落ち、壁 -> 水(0.42)は残る。
+    """
     lo, hi = np.percentile(img, [15.0, 85.0])
-    thr = 0.5 * (lo + hi)
-    k = np.ones(5) / 5.0
+    thr = max(0.30 * float(hi - lo), 1e-3)
+    n = H_PIX - 8
     pts = []
     for c in _detect_cols():
-        col = np.convolve(img[:, c], k, mode="same")
-        below = col < thr
-        # 上から見て「明 -> 暗」に変わる最初の行(壁 -> 水)
-        idx = np.nonzero(below[1:] & ~below[:-1])[0]
-        idx = idx[idx > 8]
-        if idx.size == 0:
+        m = fs.ledger.gen_measure_rectangle2(H_PIX / 2.0, float(c), np.pi / 2.0,
+                                             n / 2.0, 3, (H_PIX, W_PIX))
+        edges = fs.ledger.measure_pos(img, m, sigma=1.2, threshold=thr,
+                                      transition="negative")
+        edges = [e for e in edges if e["row"] > 8.0]
+        if not edges:
             continue
-        r = int(idx[0])
-        a, b = col[r], col[r + 1]
-        frac = 0.0 if abs(a - b) < 1e-9 else (a - thr) / (a - b)
-        pts.append((r + float(np.clip(frac, 0.0, 1.0)), float(c)))
+        pts.append((float(edges[0]["row"]), float(c)))
     return np.asarray(pts, np.float64)
 
 
