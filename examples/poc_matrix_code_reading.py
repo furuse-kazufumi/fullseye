@@ -85,8 +85,11 @@ QUIET = 4             # 余白(明)のモジュール数
 def build_symbol(n=N_MODULES, seed=0):
     """N x N のビット行列を作る。1 = 暗モジュール。
 
-    戻り値 ``(bits, functional)``。``functional`` が True の場所は構造(位置検出/
-    分離帯/タイミング/位置合わせ)で、残りがデータ領域(乱数)。
+    戻り値 ``(bits, functional, struct)``。``functional`` が True の場所は構造
+    (位置検出/分離帯/タイミング/位置合わせ)で、残りがデータ領域(乱数)。
+    ``struct`` は構造だけを載せた行列で、**格子数だけで決まりデータには依らない**
+    —— つまり読む側も知っている情報なので、定位が合っているかの自己採点に使える
+    (真値を覗くことにはならない)。
     """
     rng = np.random.default_rng(seed)
     bits = np.zeros((n, n), np.uint8)
@@ -126,9 +129,10 @@ def build_symbol(n=N_MODULES, seed=0):
             bits[ar + dr, ac + dc] = 1 if ring in (0, 2) else 0
             functional[ar + dr, ac + dc] = True
 
+    struct = bits.copy()                       # 構造だけ(データを載せる前)
     data = rng.integers(0, 2, size=(n, n)).astype(np.uint8)
     bits = np.where(functional, bits, data).astype(np.uint8)
-    return bits, functional
+    return bits, functional, struct
 
 
 def _apply_h(H, pts):
@@ -413,15 +417,35 @@ def sample_modules(dark, H, n):
     return (out.reshape(n, n) > 0.5).astype(np.uint8)
 
 
-def read(img, n, module_px, mode="otsu", H_true=None, step=1):
-    """画像 -> ビット行列。``H_true`` を渡すと幾何は既知(標本化だけを測る)。"""
+def struct_score(read_bits, functional, struct):
+    """読んだ行列が「構造どおりか」を自己採点する(データ部は見ない)。
+
+    格子数だけで決まる構造(位置検出/分離帯/タイミング/位置合わせ)は読む側も
+    知っているので、真値を覗かずに定位の当否を判定できる。実際の復号器も同じ
+    ことをしていて、これが無いと**定位が外れたときに自信満々の出鱈目**が返る。
+    """
+    return float(np.mean(read_bits[functional] == struct[functional]))
+
+
+def read(img, n, module_px, mode="otsu", H_true=None, step=1,
+         functional=None, struct=None, min_struct=0.85):
+    """画像 -> ビット行列。``H_true`` を渡すと幾何は既知(標本化だけを測る)。
+
+    自力検出のときは構造の自己採点が ``min_struct`` 未満なら **None を返して
+    落ちる** —— 出鱈目を返すより読めなかったと言う方が下流には親切。
+    """
     dark = binarize(img, mode, module_px)
     if H_true is not None:
         return sample_modules(dark, H_true, n), "既知"
     H, why = estimate_homography(dark, n, step)
     if H is None:
         return None, why
-    return sample_modules(dark, H, n), "ok"
+    got = sample_modules(dark, H, n)
+    if functional is not None:
+        sc = struct_score(got, functional, struct)
+        if sc < min_struct:
+            return None, f"構造 {sc:.2f}"
+    return got, "ok"
 
 
 def ber(bits_true, bits_read):
