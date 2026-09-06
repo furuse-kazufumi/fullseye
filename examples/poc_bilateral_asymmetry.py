@@ -377,6 +377,7 @@ def main():
         p2p = float(np.sqrt(np.mean(cKDTree(aligned).query(P)[0] ** 2)))
         floors[n] = (float(np.sqrt(np.mean(sm ** 2))), float(np.abs(sm).max()), spacing)
         p99 = float(np.percentile(np.abs(sm), 99))
+        floor_rows.append((spacing, p2p, float(np.sqrt(np.mean(raw ** 2))), floors[n][0]))
         print(f"  {n:>7d}{spacing:>9.3f}{p2p:>12.4f}{float(np.sqrt(np.mean(raw ** 2))):>12.4f}"
               f"{floors[n][0]:>11.4f}{p99:>10.4f}{floors[n][1]:>11.4f}")
     print("  → 点対点は**点間隔がそのまま床**(rms / 点間隔 が 4 段とも 1.2 前後で一定。下の assert)。")
