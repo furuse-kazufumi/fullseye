@@ -19,9 +19,12 @@ EXTEND: 実際の顕微鏡 Z スタックに差し替えるには、``focal_stac
    (f = 焦点距離、N = F 値、z_f = 合焦距離、z = 被写体距離)。これを画素ピッチで
    割って画素数にする。この式は ``fullseye.ledger.defocus_blur`` の中身そのもので、
    PoC は式を写経せずその op を呼ぶ。
-2. ★**絵と深度は別物** —— 全焦点画像は 35.89 dB(ゼロ点 20.98 dB)まで行くのに、
-   同じ融合が出した深度はテクスチャのある所ですら 0.42 mm ずれ、無テクスチャ
-   領域では **掃引全域にほぼ一様な乱数**を返す。絵が綺麗でも深度は嘘をつく。
+2. ★**絵と深度は別物** —— 全焦点画像は 35.89 dB(ゼロ点 = 中央の 1 枚 20.98 dB)
+   まで行くのに、**同じ融合が出した深度**はテクスチャのある所で 0.42 mm ずれ、
+   無テクスチャ領域では **掃引全域にほぼ一様な乱数**を返す。領域ごとに
+   「その領域では一つの深度と答え続ける」ゼロ点と比べると、テクスチャのある所
+   では 7.11 倍勝つのに、無テクスチャでは **0.13 倍 = ゼロ点に 8 倍負ける**。
+   絵の PSNR だけ見ていると、この負けは一切見えない。
 3. ★**信頼度の作り方を間違えると、嘘の上に嘘が乗る** —— 焦点評価のピーク突出度
    ``(最大 - 中央値) / 最大`` は、無テクスチャ領域で **0.9923** と、有テクスチャ
    領域の 0.9630 より**高く**出た。相対量は絶対水準がゼロ近傍では意味を失う。
@@ -219,7 +222,7 @@ def main():
         print(f"  合焦距離 200 mm、そこから {dz:>4.1f} mm 外れた面の錯乱円 = {coc:.4f} mm"
               f" = {coc / CAMERA['pixel_mm']:>5.2f} px")
     print(f"  領域の内訳: 無テクスチャ {int(flat.sum())} px / 段差帯 {int(band.sum())} px"
-          f" / それ以外 {int(plain.sum())} px")
+          f" / テクスチャ有 {int(plain.sum())} px")
 
     print("\n=== 2. 全焦点画像 —— 絵としての忠実度 ===")
     fm0 = measure_stack(stack, fm_laplacian)
@@ -276,7 +279,7 @@ def main():
     print(f"     残った画素の全体 RMS {rms(err[keep]):.3f} mm(棄却前 {rms(err):.3f} mm)。")
 
     print("\n=== 5. 焦点評価関数を比べる ===")
-    print(f"  {'焦点評価':<18}{'全体RMS':>9}{'それ以外':>10}{'段差帯':>9}"
+    print(f"  {'焦点評価':<18}{'全体RMS':>9}{'テクスチャ有':>12}{'段差帯':>9}"
           f"{'無テクスチャ σ':>14}{'AIF PSNR':>10}")
     per_measure = {}
     for label, fn in MEASURES:
@@ -284,7 +287,7 @@ def main():
         fu, dm, _pk, _k = fuse(stack, fm, focus_mm)
         e = dm - depth
         per_measure[label] = (rms(e), rms(e[plain]), psnr(fu, tex))
-        print(f"  {label:<18}{rms(e):>9.3f}{rms(e[plain]):>10.3f}{rms(e[band]):>9.3f}"
+        print(f"  {label:<18}{rms(e):>9.3f}{rms(e[plain]):>12.3f}{rms(e[band]):>9.3f}"
               f"{dm[flat].std():>14.3f}{psnr(fu, tex):>10.2f}")
     print("  → 段差帯ではラプラシアンが一番悪い(二階微分はハローを一番強く拾う)。")
     print(f"     無テクスチャの散らばりはどの評価でも 3.2-3.7 mm。掃引幅 "
@@ -302,11 +305,11 @@ def main():
     stack_hi = focal_stack(tex_hi, depth, focus_mm)
     scale_hi = [float(np.max(_laplacian(s))) for s in stack_hi]
     print(f"  鏡面ハイライトを 3x3 px 足すと 最大 / 最小 = {max(scale_hi) / min(scale_hi):.3f} まで開く。")
-    print(f"  {'焦点評価':<18}{'それ以外RMS':>13}")
+    print(f"  {'焦点評価':<18}{'テクスチャ有RMS':>15}")
     for label, fn in (("ラプラシアン分散", fm_laplacian), ("fs.op.laplace", fm_op_laplace)):
         fm = measure_stack(stack_hi, fn)
         _fu, dm, _pk, _k = fuse(stack_hi, fm, focus_mm)
-        print(f"  {label:<18}{rms((dm - depth)[plain]):>13.3f}")
+        print(f"  {label:<18}{rms((dm - depth)[plain]):>15.3f}")
     print("  → 正規化した側だけが悪化する。例外は出ず、割ったことも API から見えない。")
 
     print("\n=== 7. ★ 唯一の非正規化な合焦指標は 1.0 で飽和する ===")
@@ -327,7 +330,7 @@ def main():
     print("     オートフォーカスで順位が要るのはまさに鮮鋭な側なので、そこで使えない。")
 
     print("\n=== 8. フレーム間隔を粗くすると ===")
-    print(f"  {'枚数':>5}{'間隔 [mm]':>11}{'量子化下限':>12}{'それ以外RMS':>13}"
+    print(f"  {'枚数':>5}{'間隔 [mm]':>11}{'量子化下限':>12}{'テクスチャ有RMS':>15}"
           f"{'全体RMS':>10}{'AIF PSNR':>10}")
     for nf in (5, 9, 17, 33):
         fmm = np.linspace(depth.min(), depth.max(), nf)
@@ -335,19 +338,19 @@ def main():
         fu, dm, _pk, _k = fuse(st, measure_stack(st, fm_laplacian), fmm)
         e = dm - depth
         step = fmm[1] - fmm[0]
-        print(f"  {nf:>5}{step:>11.3f}{step / np.sqrt(12):>12.3f}{rms(e[plain]):>13.3f}"
+        print(f"  {nf:>5}{step:>11.3f}{step / np.sqrt(12):>12.3f}{rms(e[plain]):>15.3f}"
               f"{rms(e):>10.3f}{psnr(fu, tex):>10.2f}")
     print("  → 量子化下限は 8 倍下がるのに RMS は 9 枚から先ほぼ動かない。")
     print("     つまり残りは標本化ではなく、焦点評価そのものが持っている誤差。")
 
     print("\n=== 9. 雑音 ===")
-    print(f"  {'雑音 σ':>8}{'それ以外RMS':>13}{'全体RMS':>10}{'無テクスチャ σ':>15}{'AIF PSNR':>10}")
+    print(f"  {'雑音 σ':>8}{'テクスチャ有RMS':>15}{'全体RMS':>10}{'無テクスチャ σ':>15}{'AIF PSNR':>10}")
     for s in (0.0, 0.005, 0.02, 0.05):
         g = np.random.default_rng(11)
         st = stack if s == 0.0 else stack + g.normal(0.0, s, stack.shape)
         fu, dm, _pk, _k = fuse(st, measure_stack(st, fm_laplacian), focus_mm)
         e = dm - depth
-        print(f"  {s:>8.3f}{rms(e[plain]):>13.3f}{rms(e):>10.3f}{dm[flat].std():>15.3f}"
+        print(f"  {s:>8.3f}{rms(e[plain]):>15.3f}{rms(e):>10.3f}{dm[flat].std():>15.3f}"
               f"{psnr(fu, tex):>10.2f}")
     print("  → σ 0.02 までは深度がほとんど動かない(局所窓の平均が効く)。")
     print("     σ 0.05 で 4 倍に崩れる。絵の PSNR は同じところでもっと早く落ちている。")

@@ -475,17 +475,18 @@ def main():
     if H_hough is not None:
         cases.append(("推定(方向つき Hough)", H_hough))
     cases.append(("理想(真の 4 隅を手で与える)", H_ideal))
-    print(f"  {'補正':<28}{'格子 RMS [px]':>14}{'最悪 [px]':>11}{'罫線の曲がり':>13}{'行高 std/平均':>14}")
+    print(f"  {'補正':<28}{'格子 RMS [px]':>14}{'最悪 [px]':>11}{'罫線の曲がり':>13}"
+          f"{'行高 std/平均':>14}{'行間 std/平均':>14}")
     ref_lo = ref_hi = None
     results = {}
     for name, H in cases:
         rms, mx = landmark_error(H, H_true)
         rect = rectify(cam, H)
         bend = rule_bend(rect)
-        hs = band_heights(rect)
-        cv = (np.std(hs) / np.mean(hs)) if len(hs) >= 3 else float("nan")
-        results[name] = (rms, bend, cv, len(hs))
-        print(f"  {name:<28}{rms:>14.3f}{mx:>11.3f}{bend:>13.2f}{cv:>14.3f}"
+        hs, cs = band_metrics(rect)
+        cv_h, cv_s = cv_of(hs), cv_of(np.diff(cs))
+        results[name] = (rms, bend, cv_h, cv_s, len(hs))
+        print(f"  {name:<28}{rms:>14.3f}{mx:>11.3f}{bend:>13.2f}{cv_h:>14.4f}{cv_s:>14.4f}"
               f"   (行 {len(hs)} 本)")
         if name.startswith("何もしない"):
             ref_lo = rms
