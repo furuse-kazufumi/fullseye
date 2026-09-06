@@ -1,0 +1,80 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">speckle_quality — PIV <code style="color:#22d3bf">solid</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code> (or <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>撮ったスペックルが DIC に向いているかを 4 つの数字で返す。</p>
+<p><code style="color:#22d3bf">pivops</code> にも <code style="color:#22d3bf">fullseye</code> にも無い(`<code style="color:#22d3bf">speckle_filter</code>` は SAR の斑点雑音</p>
+<p><b>除去</b>で別物)。撮影の場で「この模様で測れるか」を判定するための口。</p>
+<p>引数</p>
+<p>img  スペックル画像(2 次元)。輝度の規格は問わないが、`<code style="color:#22d3bf">coverage</code>` は</p>
+<p>画像内の最小・最大を基準にした相対しきい値で数える。</p>
+<p>戻り値は `<code style="color:#22d3bf">dict</code>`:</p>
+<p>`<code style="color:#22d3bf">mig</code><code style="color:#22d3bf">                     平均輝度勾配 </code><code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>`。</p>
+<p>Pan らの DIC 品質指標。変位の分散の下限が</p>
+<p>`<code style="color:#22d3bf">σ_noise / (mig √N)</code>` で決まるので、これが</p>
+<p>小さいと何をしても測れない。</p>
+<p>`<code style="color:#22d3bf">grad_rms</code><code style="color:#22d3bf">                x 方向だけの </code><code style="color:#22d3bf">sqrt(mean(Ix²))</code>`。</p>
+<p>`<code style="color:#22d3bf">coverage</code><code style="color:#22d3bf">                </code><code style="color:#22d3bf">0.2*(max-min) + min</code>` を超える画素の割合。</p>
+<p>`<code style="color:#22d3bf">mean_blob_diameter_px</code>`   斑点の平均直径 [px] の<b>推定値</b>(下記)。</p>
+<p>★ `<code style="color:#22d3bf">mean_blob_diameter_px</code>` は推定であって測定ではない</p>
+<p>平均を引いた画像の自己相関の動径平均が 0.5 に落ちる半径 `<code style="color:#22d3bf">R½</code>` を線形</p>
+<p>内挿で求め、`<code style="color:#22d3bf">diameter = √2 · R½</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">√2</code><code style="color:#22d3bf"> の根拠: 1σ 半径 </code><code style="color:#22d3bf">r</code>` の</p>
+<p>ガウス斑点をランダムに撒いた場の自己相関は 1σ が `<code style="color:#22d3bf">r√2</code>` のガウスなので</p>
+<p>`<code style="color:#22d3bf">R½ = 2r√(ln2)</code><code style="color:#22d3bf">、斑点の FWHM は </code><code style="color:#22d3bf">2r√(2ln2)</code><code style="color:#22d3bf">、比がちょうど </code><code style="color:#22d3bf">√2</code>`。</p>
+<p>つまり<b>斑点がガウスで位置が無相関という仮定の上でだけ</b> FWHM に一致する。</p>
+<p>実測(左: 解析スペックル、1σ 半径を振り被覆率が揃うよう個数を調整。</p>
+<p>右: <code style="color:#22d3bf">piv_synth_particles</code>、`<code style="color:#22d3bf">diameter_px</code>` は 2σ なので FWHM は</p>
+<p>`<code style="color:#22d3bf">1.1774 × diameter_px</code>`):</p>
+<p>1σ r   FWHM   推定   比   |  d_px   FWHM   推定   比    cov     mig</p>
+<p>0.6    1.41   1.36  0.97  |   1.5   1.77   1.80  1.02  0.043  0.1351</p>
+<p>1.0    2.35   2.39  1.01  |   2.5   2.94   2.93  1.00  0.106  0.1676</p>
+<p>1.6    3.77   3.77  1.00  |   4.0   4.71   4.69  1.00  0.159  0.1775</p>
+<p>2.5    5.89   5.77  0.98  |   6.0   7.06   7.01  0.99  0.286  0.1764</p>
+<p>4.0    9.42   9.18  0.97  |</p>
+<p><b>ガウス斑点なら 3 % 以内</b>。実物のスペックル(印刷・スプレー)は</p>
+<p>ガウスではないので、この表は換算の算数が合っていることの確認であって、</p>
+<p>実写での精度ではない。<b>何に偏るか</b>:</p>
+<p style="margin:2px 0 2px 12px">• 斑点の形がガウスでないと `<code style="color:#22d3bf">√2</code>` の換算そのものがずれる。</p>
+<p style="margin:2px 0 2px 12px">• 低周波のむら(照明勾配)があると自己相関の裾が持ち上がり<b>過大</b>に出る。</p>
+<p>先に高域通過を掛けること。</p>
+<p style="margin:2px 0 2px 12px">• 自己相関は循環相関(FFT)なので、周期性のある背景があると乱れる。</p>
+<p style="margin:2px 0 2px 12px">• 環の代表半径は<b>環内の半径の平均</b>を使う。ビン番号を使うと半径 1 の環に</p>
+<p>対角の √2 が混ざり、1σ=0.6 px で径が <b>0.80 倍</b>(2 割過小)に出た。</p>
+<p>★ MIG は下限を切る指標であって、最大化する目的関数ではない</p>
+<p>上の左表で `<code style="color:#22d3bf">mig</code>` は斑点が細かいほど大きい(1σ=4.0 の 0.0384 に対し</p>
+<p>1σ=0.6 で 0.1127、2.9 倍)。だが直径 1.4 px のスペックルは標本化が</p>
+<p>足りず、<code style="color:#22d3bf">examples/poc_dic_strain.py</code> の 9 節の実測では偏りも散らばりも</p>
+<p>最悪になる。<b>MIG を最大化すると測れないスペックルを選ぶ。</b></p>
+<p>右表の粒子像では `<code style="color:#22d3bf">d=4.0</code><code style="color:#22d3bf"> で頭打ちになり </code><code style="color:#22d3bf">d=6.0</code>` でわずかに下がる ——</p>
+<p>同じ指標が入力の作り方で単調にも非単調にもなるので、</p>
+<p><b>絶対値ではなく同じ撮り方どうしの比較に使うこと。</b></p>
+<p>★ `<code style="color:#22d3bf">coverage</code>` のしきい値は Otsu ではない</p>
+<p>`<code style="color:#22d3bf">0.2*(max-min) + min</code>` の固定しきい値。Otsu は 2 峰の分布を仮定するが、</p>
+<p>スペックルの輝度分布は斑点の重なりで単峰になることが多く、Otsu だと</p>
+<p><b>しきい値が画像ごとに動いて比較できなくなる</b>。固定なら少なくとも</p>
+<p>同じ規格の画像どうしは比べられる。</p>
+<p>★ MIG は単位を持つ</p>
+<p>「輝度 / px」。8 bit 整数のまま渡すか [0, 1] に規格化してから渡すかで</p>
+<p>255 倍違う。<b>同じ規格の画像どうしでしか比べられない。</b></p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む。</p>
+<p style="margin:2px 0 2px 12px">• 画像が完全に一様(`<code style="color:#22d3bf">max == min</code>`)—— 斑点が 1 つも無い。</p>
+<p style="margin:2px 0 2px 12px">• 自己相関が 0.5 を切らない(視野より斑点が大きい)—— このときだけ</p>
+<p>`<code style="color:#22d3bf">mean_blob_diameter_px</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">nan</code>`。他の 3 つは返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">solid</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:strain_from_displacement">strain_from_displacement</a> · <a style="color:#22d3bf" href="oppiv:correlation_quality">correlation_quality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dic.py — PIV operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

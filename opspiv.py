@@ -1,7 +1,8 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """opspiv —— 粒子画像流速測定(PIV)op の統一レジストリ。
 
-実体は ``pivops.py``(23 op / 6 カテゴリ)。台帳の役目は 3 つ:
+実体は ``pivops.py``(23 op)と ``dic.py``(3 op)—— 計 26 op / 7 カテゴリ。
+台帳の役目は 3 つ:
 docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型と素の返りを橋渡しする。
 
 使い方::
@@ -10,9 +11,10 @@ docs/ops へノートを出す・連鎖ファザーに食わせる・宣言型�
     opspiv.list_ops("estimate")
     flow = opspiv.call("piv_cross_correlate", a, b, window=32)
 """
+import dic
 import pivops
 
-_MOD = {"pivops": pivops}
+_MOD = {"pivops": pivops, "dic": dic}
 
 # --------------------------------------------------------------------------
 # 型語彙: **新語を 1 つだけ足した**。その判断の記録。
@@ -96,6 +98,21 @@ _CATALOG = {
         ("piv_flow_to_rgbimage", "pivops", ["flow2d"], "rgb"),
         ("piv_line_integral_convolution", "pivops", ["flow2d"], "image2d"),
     ],
+    # 固体側 —— DIC(デジタル画像相関)。**流体の PIV と同じ相関器を使うが、
+    # 出す量が違う**。2026-09-06 に実測して足した 3 本(`dic.py`):
+    #   * `piv_strain_rate` は剛体回転 2 度で **+1218 µε** を返す(真値 0)。
+    #     docstring の「剛体回転では 0」は**線形化した流体の回転**でしか
+    #     成り立たず、DIC が測る有限回転では成り立たない。
+    #   * `piv_velocity_gradient` は `np.gradient`(2 点差分)なので、
+    #     同じ流れ場・500 µε で散らばりが **136.9 µε**。窓最小二乗なら 12.4 µε。
+    #   * `info["peak_ratio"]` は貼り替えた 60x60 の領域を分離できない
+    #     (内 1.184 / 外 1.329)。ZNCC 係数なら 0.100 / 0.999 で、
+    #     `zncc >= 0.8` で切ると RMS が 1.9122 → 0.0036 px(**537 倍**)。
+    "solid": [
+        ("strain_from_displacement", "dic", ["image2d", "image2d"], "image2d"),
+        ("correlation_quality", "dic", ["image2d", "image2d", "flow2d"], "image2d"),
+        ("speckle_quality", "dic", ["image2d"], "table"),
+    ],
     # 評価 —— 真値との突き合わせと系統誤差
     "assess": [
         ("piv_sample_at_windows", "pivops", ["flow2d"], "flow2d"),
@@ -137,6 +154,8 @@ RESULT_ADAPTERS = {
     "piv_multipass": _first,         # (flow, info)         -> flow2d
     "piv_deform_pass": _first,       # (flow, info)         -> flow2d
     "piv_ensemble_correlate": _first,  # (flow, info)       -> flow2d
+    # (exx, eyy, exy) -> image2d。捨てる 2 本は `fullseye.ledger.<名前>.raw` で取れる。
+    "strain_from_displacement": _first,
 }
 
 

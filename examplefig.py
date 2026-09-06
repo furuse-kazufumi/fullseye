@@ -100,7 +100,10 @@ def _to_rgb8(v, signed: bool):
         lut = np.asarray(fs.diverging_lut(256))
         idx = np.clip(((a / m) * 0.5 + 0.5) * 255.0, 0, 255).astype(np.int32)
         return (np.clip(lut[idx], 0, 1) * 255).astype(np.uint8)
-    return np.asarray(fs.colorize_depth(a), np.uint8)[..., :3]
+    # ★`colorize_depth` は **float [0,1]** を返す。`np.asarray(..., np.uint8)` で
+    #   受けると 0.x が全部 0 に切り捨てられて真っ黒になる(2026-09-06 に踏んだ)。
+    rgb = np.asarray(fs.colorize_depth(a), np.float64)[..., :3]
+    return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
 
 
 def save(name: str, image, caption: str = "", signed: bool = False) -> Path | None:
@@ -119,7 +122,7 @@ def save(name: str, image, caption: str = "", signed: bool = False) -> Path | No
 
         rgb = _to_rgb8(image, signed)
         path = d / ("%02d_%s.png" % (len(_manifest) + 1, name))
-        fs.write_image(str(path), rgb)
+        fs.write_image(str(path), rgb)     # uint8 はそのまま画素値(api.write_image)
         _manifest.append({"file": path.name, "name": name, "caption": caption,
                           "shape": list(np.shape(image))})
         (d / "figures.json").write_text(
@@ -206,7 +209,8 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
         img = np.asarray(fs.grid_lines(img, ax, xticks=xt, yticks=yt, alpha=0.25))
         img = np.asarray(fs.axes_frame(img, ax, width=1))
         img = np.asarray(fs.ticks(img, ax, xticks=xt, yticks=yt, tick_len=5, font_size=10))
-        colours = ("reference", "emphasis", "accent", "neutral", "caution")
+        # 役名は annotate の配色表にあるものだけ("accent" は無い)。
+        colours = ("reference", "emphasis", "right", "wrong", "neutral")
         legend = []
         for k, (label, x, y) in enumerate(series):
             c = colours[k % len(colours)]
@@ -231,10 +235,21 @@ def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str 
 
 def save_table(name: str, header, rows, title: str = "", caption: str = "",
                col_w=110, row_h=24) -> Path | None:
-    """数表を**画像として**書く。桁を揃えて等幅に並べる。
+    """数表を**画像として**書き、**同じ内容を CSV/TSV でも置く**。
 
     「表も Fullseye で作れる」——`text_box` を格子状に置くだけ。値の整形は
     呼び手の責任(``rows`` は文字列の列で渡す)。
+
+    ★2026-09-06、ユーザー「表は Excel にコピーできるといいね」。図は見るため
+    のもので、**数字は持ち出せないと使えない**。そこで同じ名前で
+
+    * ``NN_<name>.csv`` —— UTF-8 **BOM つき**。Excel はこれが無いと日本語を
+      cp932 と誤読して文字化けする(BOM を付けるのはそのためだけ)。
+    * ``NN_<name>.tsv`` —— Studio の「Excel 用にコピー」がこれを貼る。
+      Excel は**タブ区切りのクリップボードをセルに展開する**ので、
+      CSV より貼り付けが素直(カンマを含む値でも壊れない)。
+
+    を書き、``figures.json`` の項目に ``csv`` / ``tsv`` を入れる。
     """
     if target_dir() is None:
         return None
@@ -257,7 +272,29 @@ def save_table(name: str, header, rows, title: str = "", caption: str = "",
                                              (14 + col_w * j, y0 + row_h * (i + 1)),
                                              anchor="lt", font_size=11,
                                              box_alpha=0.0, border=0))
-        return save(name, img, caption)
+        path = save(name, img, caption)
+        if path is not None:
+            _write_table_data(path, header, rows)
+        return path
     except Exception as exc:                            # noqa: BLE001
         _errors.append("%s(table): %s: %s" % (name, type(exc).__name__, exc))
         return None
+
+
+def _write_table_data(png_path: Path, header, rows) -> None:
+    """図と同じ名前で CSV(BOM つき)と TSV を置き、manifest に書き足す。"""
+    import csv as _csv
+    import io as _io
+
+    stem = png_path.with_suffix("")
+    cells = [list(map(str, header))] + [list(map(str, r)) for r in rows]
+    buf = _io.StringIO()
+    _csv.writer(buf, lineterminator=chr(10)).writerows(cells)
+    # Excel は BOM が無いと UTF-8 を cp932 と誤読する。ここだけ utf-8-sig。
+    stem.with_suffix(".csv").write_text(buf.getvalue(), encoding="utf-8-sig")
+    tsv = chr(10).join(chr(9).join(c.replace(chr(9), " ") for c in row) for row in cells)
+    stem.with_suffix(".tsv").write_text(tsv + chr(10), encoding="utf-8")
+    _manifest[-1]["csv"] = stem.with_suffix(".csv").name
+    _manifest[-1]["tsv"] = stem.with_suffix(".tsv").name
+    (png_path.parent / "figures.json").write_text(
+        json.dumps(_manifest, ensure_ascii=False, indent=1), encoding="utf-8")

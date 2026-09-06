@@ -42,7 +42,7 @@ Q 基準と同じく「せん断と渦を区別する」量だが、こちらは
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[piv_cross_correlate](../estimate/piv_cross_correlate.md) · [piv_multipass](../estimate/piv_multipass.md) · [piv_deform_pass](../estimate/piv_deform_pass.md)
+[piv_cross_correlate](../estimate/piv_cross_correlate.md) · [piv_multipass](../estimate/piv_multipass.md) · [piv_deform_pass](../estimate/piv_deform_pass.md) · [strain_from_displacement](../solid/strain_from_displacement.md) · [correlation_quality](../solid/correlation_quality.md) · [speckle_quality](../solid/speckle_quality.md)
 
 ## 同カテゴリ(`field`)
 

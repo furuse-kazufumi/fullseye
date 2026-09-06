@@ -3,12 +3,13 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">粒子画像流速測定(画像対から密な変位を測る) — 使い方ガイド</h2>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p><b>2 枚の画像から、どこがどれだけ動いたかを測る</b>層です。入力はトレーサ粒子を写した画像対、出力は窓ごとの変位ベクトル場 <code style="color:#22d3bf">(2, h, w)</code>(成分 <code style="color:#22d3bf">(dy, dx)</code>、単位は画素/フレーム)。流体計測(PIV)が本来の用途ですが、原理は相互相関なので、模様があるものなら粒子でなくても動きが取れます。</p>
-<p>23 op / 6 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opspiv.py</code>、実体は <code style="color:#22d3bf">pivops.py</code>):</p>
+<p>26 op / 7 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opspiv.py</code>、実体は <code style="color:#22d3bf">pivops.py</code> と <code style="color:#22d3bf">dic.py</code>):</p>
 <p style="margin:2px 0 2px 12px">• <b>synth(3)</b> — <code style="color:#22d3bf">piv_synth_particles</code> / <code style="color:#22d3bf">piv_synth_pair</code> / <code style="color:#22d3bf">piv_synth_sequence</code>: 既知の変位場を持つ画像対と画像列を作る。<b>この族の全テストの真値の供給源</b>。</p>
 <p style="margin:2px 0 2px 12px">• <b>estimate(4)</b> — <code style="color:#22d3bf">piv_cross_correlate</code> / <code style="color:#22d3bf">piv_multipass</code> / <code style="color:#22d3bf">piv_deform_pass</code> / <code style="color:#22d3bf">piv_ensemble_correlate</code>: 本体。窓ごとの FFT 相互相関、粗→細の多段、窓変形、相関の合算。</p>
 <p style="margin:2px 0 2px 12px">• <b>validate(2)</b> — <code style="color:#22d3bf">piv_outlier_mask</code> / <code style="color:#22d3bf">piv_replace_outliers</code>: 正規化中央値検定と穴埋め。</p>
 <p style="margin:2px 0 2px 12px">• <b>field(8)</b> — <code style="color:#22d3bf">piv_vorticity</code> / <code style="color:#22d3bf">piv_divergence</code> / <code style="color:#22d3bf">piv_flow_magnitude</code> / <code style="color:#22d3bf">piv_to_velocity</code> / <code style="color:#22d3bf">piv_velocity_gradient</code> / <code style="color:#22d3bf">piv_q_criterion</code> / <code style="color:#22d3bf">piv_swirling_strength</code> / <code style="color:#22d3bf">piv_strain_rate</code>: 場の微分・不変量・単位変換。</p>
 <p style="margin:2px 0 2px 12px">• <b>visualise(2)</b> — <code style="color:#22d3bf">piv_flow_to_rgbimage</code> / <code style="color:#22d3bf">piv_line_integral_convolution</code>: 出口。これが無いと <code style="color:#22d3bf">flow2d</code> は「作れるが見られない」型になる。</p>
+<p style="margin:2px 0 2px 12px">• <b>solid(3)</b> — <code style="color:#22d3bf">strain_from_displacement</code> / <code style="color:#22d3bf">correlation_quality</code> / <code style="color:#22d3bf">speckle_quality</code>: <b>固体側(DIC、デジタル画像相関)</b>。同じ相関器を使うが、出す量が違う(下の節)。</p>
 <p style="margin:2px 0 2px 12px">• <b>assess(4)</b> — <code style="color:#22d3bf">piv_sample_at_windows</code> / <code style="color:#22d3bf">piv_error_stats</code> / <code style="color:#22d3bf">piv_peak_locking</code> / <code style="color:#22d3bf">piv_time_statistics</code>: 真値との突き合わせ、系統誤差、時間統計。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ足したか —— 在庫を数えた結果</h3>
 <p>2026-09-06 に型付きカタログ全体(900 op)を走査したところ、<b>画像対から密な変位を出す op が 1 つも無い</b>ことが分かりました。近いものはあります:</p>
@@ -185,6 +186,53 @@ assert np.isfinite(v).all()</pre>
 <p>食い違いの原因は実装ではなく<b>比べている量の違い</b>でした。<code style="color:#22d3bf">V_mag_2D</code> は <code style="color:#22d3bf">|平均速度|</code> ではなく **<code style="color:#22d3bf">平均した速さ</code>** で、イェンセンの不等式から前者以上になります。裏づけ: 差と <code style="color:#22d3bf">(STD_Vaxi² + STD_Vtan²) / (2|V|)</code> の相関 <b>r = 0.879</b>、差が 20 m/s を超える点の乱流強度は中央値 <b>42 %</b>(全体 2.2 %)—— つまり<b>後流の中</b>に集中していました。</p>
 <p>&gt; 公開された場と突き合わせるときは、<b>量の定義を先に一致させること</b>。名前(<code style="color:#22d3bf">V_mag_2D</code>)は平均の取り方を書いていません。</p>
 <p>もう一つ実データで効いた事実: 欠測が <b>67.5 %</b> ありました(翼の影と視野外)。<code style="color:#22d3bf">nan</code> を 0 で埋めて微分すると、翼の輪郭に沿って<b>偽の勾配</b>が立ちます。この族の場の op は <code style="color:#22d3bf">nan</code> を伝播させるので、埋めるかどうかは呼ぶ側の判断です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">固体を測る(DIC)—— 同じ相関器、違う出口</h3>
+<p>流体の PIV と固体の DIC は<b>同じ窓相関</b>を使います。違うのは出す量で、流体は</p>
+<p>速度と渦度、固体は<b>ひずみ</b>。ここを混ぜると静かに間違うので、2026-09-06 に</p>
+<p><code style="color:#22d3bf">examples/poc_dic_strain.py</code> で実測してから 3 op だけ足しました。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0"><code style="color:#22d3bf">piv_strain_rate</code> を固体に使ってはいけない</h3>
+<p>docstring には「剛体回転では 0 になる」と書いてあり、<b>流体としては正しい</b> ——</p>
+<p>線形化した回転 <code style="color:#22d3bf">u = -ωy, v = ωx</code> では確かに 0 です。ところが DIC が測るのは</p>
+<p><b>有限回転</b>で、そちらでは</p>
+<p>| θ | <code style="color:#22d3bf">piv_strain_rate</code> | 真のひずみ |</p>
+<p>|---|---|---|</p>
+<p>| 0.5° | +76 µε | 0 |</p>
+<p>| 1.0° | +305 µε | 0 |</p>
+<p>| 2.0° | <b>+1218 µε</b> | 0 |</p>
+<p>鋼の降伏ひずみが約 2000 µε なので、2 度傾いただけで<b>降伏の 6 割</b>に相当する</p>
+<p>嘘のひずみが出ます。<code style="color:#22d3bf">strain_from_displacement(u, v, window, method)</code> は</p>
+<p><code style="color:#22d3bf">method</code> を必須にしてあり、</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;infinitesimal&quot;</code> = <code style="color:#22d3bf">∂u/∂x</code>(教科書の微小ひずみ)。回転で <code style="color:#22d3bf">cosθ-1</code> を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;green&quot;</code> = Green-Lagrange <code style="color:#22d3bf">∂u/∂x + ½((∂u/∂x)² + (∂v/∂x)²)</code>。**剛体回転で</p>
+<p>代数的に厳密 0**(0.5〜5° で 5.3e-14 〜 6.5e-13)。</p>
+<p><b>既定は置きません</b>。実測では Green の補正項が勾配の推定誤差を拾うので、</p>
+<p>勾配の散らばりが大きい推定器では<b>補正が過剰になって悪化する</b>ことがあります</p>
+<p>(PoC の 6 節に表があります)。どちらを使うかは呼び手が決めるべき分岐です。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">微分は窓最小二乗で</h3>
+<p><code style="color:#22d3bf">piv_velocity_gradient</code> は <code style="color:#22d3bf">np.gradient</code>(2 点差分)です。同じ流れ場・500 µε で</p>
+<p>| 方法 | 平均 | 散らばり |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">piv_velocity_gradient</code> | 500.0 µε | 136.9 µε |</p>
+<p>| <code style="color:#22d3bf">strain_from_displacement</code>(窓 9) | 500.0 µε | <b>12.4 µε</b> |</p>
+<p>平均は同じで散らばりが <b>11 倍</b>違います。領域平均で使うなら差は出ませんが、</p>
+<p>1 点の値を見るなら効きます。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">品質で切る —— <code style="color:#22d3bf">peak_ratio</code> では足りない</h3>
+<p><code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> は相関ピークの鋭さですが、</p>
+<p><b>対応が無くなった領域を分離できません</b>。60×60 の領域を別の絵に貼り替えた</p>
+<p>実測で、内 1.184 / 外 1.329 —— 分布が重なります。ZNCC 係数なら 0.100 / 0.999。</p>
+<p>| 切り方 | 変位の RMS |</p>
+<p>|---|---|</p>
+<p>| 切らない | 1.9122 px |</p>
+<p>| <code style="color:#22d3bf">peak_ratio &gt;= 1.2</code> | 1.0952 px(1.7 倍) |</p>
+<p>| <code style="color:#22d3bf">correlation_quality &gt;= 0.8</code> | <b>0.0036 px(537 倍、82.8 % を残す)</b> |</p>
+<p><code style="color:#22d3bf">correlation_quality(ref, cur, flow, info)</code> は<b>相関器ではありません</b> ——</p>
+<p>既にある変位場を採点するだけなので、<code style="color:#22d3bf">piv_cross_correlate</code> でも</p>
+<p><code style="color:#22d3bf">optical_flow_lk</code> でも <code style="color:#22d3bf">demons_register</code> の結果でも使えます。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">撮る前にスペックルを測る</h3>
+<p><code style="color:#22d3bf">speckle_quality(img)</code> は平均輝度勾配(MIG)・被覆率・平均斑点径を返します。</p>
+<p>PoC の 9 節のとおり、<b>同じ推定器でも斑点の粒径で偏りが 20 倍変わります</b></p>
+<p>(1σ 0.6 px で 0.0113 px、1σ 4.0 px で 0.0005 px)。撮ってから気づくと撮り直しです。</p>
+<p><code style="color:#22d3bf">speckle_filter</code> は SAR の<b>デスペックル</b>で、これとは別物です。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">次にどこへ繋がるか</h3>
 <p style="margin:2px 0 2px 12px">• <b>公開データ</b> —— 合成で閉じたら RSPID(合成粒子画像 + 真値)、円柱後流の時間分解 PIV(ストローハル数 0.2 前後という独立検算が効く)、タービン翼列。RAD コーパス <code style="color:#22d3bf">fullseye_poc_datasets_corpus_v2</code> のノート 060-064 に URL の実測結果とライセンスの注意がある。</p>
 <p style="margin:2px 0 2px 12px">• <b>航空・流体</b> —— 渦度から Q 基準・λ2 へ(速度勾配テンソルの不変量)。同コーパスのノート 036。</p>

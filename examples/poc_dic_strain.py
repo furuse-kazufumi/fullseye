@@ -7,9 +7,16 @@
 【この PoC が答える問い】
 材料試験室でいちばん普通の問い —「試験片にスペックルを吹いて写真を撮った。
 ひずみゲージを貼らずに、画像だけでひずみが測れるか。どこまで信じてよいか」。
-答えは「変位は 0.01 px、ひずみは 100 µε 台まで測れる。ただし**試験機の
+答えは「変位は **0.002 px**、ひずみは 100 µε 台まで測れる。ただし**試験機の
 わずかな回転が数百 µε の嘘のひずみを作る**ので、ひずみの定義を間違えると
 鋼の降伏ひずみの 3 割に相当する誤差が乗る」。
+
+比べる推定器は 4 つ —— ゼロ点(「動いていない」と答えるだけ)/
+`optical_flow_lk` / `optical_flow_hs` / **`piv_cross_correlate`**(窓の相関)。
+★最後の 1 つは**この repo に最初からあった**。「サブセット相関の op が無い」と
+書きかけて、`op_find("correlation")` がそれを返さなかったせいで見落とした
+(検索の側を直した)。測り直すと piv が他を 1 桁上回る —— **新しい相関器を
+書く必要は無かった**。10 節にその経緯と、本当に欠けていた 4 つを書いてある。
 
 【グラウンドトゥルース(自分で仕込んだ真値)】
 スペックルを **3000 個のガウス斑点の重ね合わせとして解析的に描く**。変形後の
@@ -36,7 +43,7 @@
  7) ★ひずみ集中 —— 窓の大きさ vs 空間分解能(尖頭を過小に読む)
  8) 雑音下限 —— 実測と理論 σ_u = σ_n / sqrt(Σ I_x^2)
  9) ★スペックルの粒径 —— 偏りの半分は推定器ではなくスペックルが作る
-10) 順位表と所見
+10) ★所見(**一度書き直している**。既存 op を見落とした経緯つき)
 
 【この PoC で分かった fullseye 側の穴 → 末尾の「所見」節】
 """
@@ -50,6 +57,7 @@ import numpy as np
 from scipy.ndimage import uniform_filter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 
 # --- 合成スペックルの諸元 ---------------------------------------------------- #
@@ -114,12 +122,36 @@ def est_hs(ref, cur):
     return np.asarray(u), np.asarray(v)
 
 
+def est_piv(ref, cur):
+    """窓ごとの相関(``fs.ledger.piv_cross_correlate``)を画素格子へ戻したもの。
+
+    ★これは**この repo に最初からあった**。「サブセット相関の op が無い」と
+    書きかけて、`fs.op_find("correlation")` が 5 件返すのにこの op を
+    含めなかったせいで見落とした(検索の側を直した。CHANGELOG 参照)。
+    """
+    from scipy.interpolate import RegularGridInterpolator
+
+    import pivops
+
+    flow, info = pivops.piv_cross_correlate(ref, cur, window=32, overlap=0.75)
+    flow = np.asarray(flow)
+    ys, xs = np.asarray(info["rows"], float), np.asarray(info["cols"], float)
+    yy, xx = np.mgrid[0:N, 0:N]
+    pts = np.stack([yy.ravel(), xx.ravel()], axis=1)
+    out = []
+    for k in (1, 0):                       # flow は (dy, dx) 並び
+        f = RegularGridInterpolator((ys, xs), flow[k], bounds_error=False,
+                                    fill_value=None)
+        out.append(f(pts).reshape(N, N))
+    return out[0], out[1]
+
+
 def est_zero(ref, cur):
     """★ゼロ点 —— 「動いていません」と答えるだけの推定器。"""
     return np.zeros((N, N)), np.zeros((N, N))
 
 
-ESTIMATORS = [("zero", est_zero), ("lk", est_lk), ("hs", est_hs)]
+ESTIMATORS = [("zero", est_zero), ("lk", est_lk), ("hs", est_hs), ("piv", est_piv)]
 
 
 # --- ひずみ(fullseye に op が無いのでここで書く。所見節を参照)---------------- #
@@ -181,6 +213,11 @@ def section1_synth_check(sp, ref):
     ix = np.gradient(ref, axis=1)
     print("  ∂I/∂x の RMS: %.5f /px(8 節の雑音下限に使う)"
           % float(np.sqrt(np.mean(ix[_SL] ** 2))))
+    figs.save_grid("speckle", [ref, cur, cur - ref],
+                   ["基準", "3 px シフト後", "差分(重なりでは厳密に 0)"],
+                   title="解析スペックル(斑点 %d、1σ %.1f px)" % (N_BLOB, RADIUS),
+                   ncols=3, signed=[False, False, True],
+                   caption="変形は補間ではなく斑点の再描画。だから真値が厳密。")
     return ix
 
 
@@ -209,25 +246,42 @@ def section3_subpixel(sp, ref):
     print("  教科書の peak locking は「推定値が整数へ吸い寄せられる」。")
     print("  この合成スペックルでは**逆に 0.5 px 側へ寄る**。実測:")
     print()
-    print("  %8s | %9s %9s | %9s %9s" % ("u 真値", "lk 偏り", "lk 散らばり", "hs 偏り", "hs 散らばり"))
-    print("  " + "-" * 62)
-    fr = np.arange(0.0, 1.001, 0.125)
-    worst = {"lk": 0.0, "hs": 0.0}
-    for u0 in fr:
+    print("  %8s |" % "u 真値", end="")
+    for name, _ in ESTIMATORS[1:]:
+        print(" %10s %10s" % (name + " 偏り", name + " 散らばり"), end="")
+    print()
+    print("  " + "-" * (11 + 22 * (len(ESTIMATORS) - 1)))
+    worst = {n: 0.0 for n, _ in ESTIMATORS[1:]}
+    for u0 in np.arange(0.0, 1.001, 0.125):
         cur = sp.render(lambda x, y: x + u0, lambda x, y: y)
-        row = []
+        print("  %8.3f |" % u0, end="")
         for name, est in ESTIMATORS[1:]:
             uu, _ = est(ref, cur)
-            m, s = _stat(uu[_SL] - u0)
-            row += [m, s]
-            worst[name] = max(worst[name], abs(m))
-        print("  %8.3f | %9.4f %9.4f | %9.4f %9.4f" % (u0, *row))
+            mm, ss = _stat(uu[_SL] - u0)
+            worst[name] = max(worst[name], abs(mm))
+            print(" %10.4f %10.4f" % (mm, ss), end="")
+        print()
     print()
-    print("  最大の偏り: lk %.4f px / hs %.4f px" % (worst["lk"], worst["hs"]))
+    print("  最大の偏り: " + " / ".join("%s %.4f px" % (n, worst[n]) for n, _ in ESTIMATORS[1:]))
+    if figs.enabled():
+        us = np.arange(0.0, 1.001, 0.0625)
+        series = []
+        for name, est in ESTIMATORS[1:]:
+            bias = []
+            for u0 in us:
+                cur = sp.render(lambda x, y: x + u0, lambda x, y: y)
+                bias.append(1000.0 * _stat(est(ref, cur)[0][_SL] - u0)[0])
+            series.append((name, us, np.array(bias)))
+        figs.save_plot("subpixel_bias", series, xlabel="真の変位 u [px]",
+                       ylabel="偏り [1/1000 px]",
+                       title="サブピクセル掃引 —— 偏りの向き",
+                       caption="lk は 0.5 px 側へ寄る(教科書の peak locking と逆)。"
+                               "piv は 1 桁小さい。")
     print("  → lk は符号が u=0.5 を境に反転する(0.5 側へ寄る)—— 教科書の")
     print("     peak locking(整数へ吸い寄せられる)と**向きが逆**。")
     print("     hs は反転せず、0.4 付近に山を持つ片側の偏り(正則化の影響)。")
-    print("     どちらも**系統誤差なので枚数を増やしても消えない**。ただし 9 節の")
+    print("     ★piv(窓の相関 + ガウス 3 点)は偏りが 1 桁小さい。")
+    print("     どれも**系統誤差なので枚数を増やしても消えない**。ただし 9 節の")
     print("     とおり偏りの大きさは**スペックルの粒径にも依る**ので、推定器だけの")
     print("     性質ではない。0.01 px を主張するならこの 2 つを同時に押さえること。")
 
@@ -237,15 +291,21 @@ def section4_magnitude(sp, ref):
     print("=" * 78)
     print("4) 変位の大きさ掃引 —— どこで壊れるか")
     print("=" * 78)
-    print("  %8s | %9s %9s | %9s %9s" % ("u 真値", "lk 偏り", "lk 散らばり", "hs 偏り", "hs 散らばり"))
-    print("  " + "-" * 62)
+    print("  %8s |" % "u 真値", end="")
+    for name, _ in ESTIMATORS[1:]:
+        print(" %10s %10s" % (name + " 偏り", name + " 散らばり"), end="")
+    print()
+    print("  " + "-" * (11 + 22 * (len(ESTIMATORS) - 1)))
     for u0 in [0.5, 1.0, 2.0, 4.0, 8.0, 16.0]:
         cur = sp.render(lambda x, y: x + u0, lambda x, y: y)
-        row = []
+        print("  %8.1f |" % u0, end="")
         for name, est in ESTIMATORS[1:]:
             uu, _ = est(ref, cur)
-            row += list(_stat(uu[_SL] - u0))
-        print("  %8.1f | %9.4f %9.4f | %9.4f %9.4f" % (u0, *row))
+            print(" %10.4f %10.4f" % _stat(uu[_SL] - u0), end="")
+        print()
+    print()
+    print("  → それぞれ壊れる場所が違う。**窓や段数で決まる上限**があるので、")
+    print("     変位の見積もりを先に立ててから道具を選ぶ。")
 
 
 def section5_uniform_strain(sp, ref):
@@ -256,17 +316,20 @@ def section5_uniform_strain(sp, ref):
     print("  ε_xx を仕込み、変位場から 31x31 窓の最小二乗で読み戻す。")
     print("  1 µε = 1e-6。鋼の降伏ひずみは約 2000 µε。")
     print()
-    print("  %10s | %10s %10s | %10s %10s"
-          % ("ε 真値 µε", "lk µε", "lk 散 µε", "hs µε", "hs 散 µε"))
-    print("  " + "-" * 62)
+    print("  %10s |" % "ε 真値 µε", end="")
+    for name, _ in ESTIMATORS[1:]:
+        print(" %10s %10s" % (name + " µε", name + " 散 µε"), end="")
+    print()
+    print("  " + "-" * (13 + 22 * (len(ESTIMATORS) - 1)))
     for eps in [100e-6, 500e-6, 2000e-6, 5000e-6, 20000e-6]:
         cur = sp.render(lambda x, y: x * (1.0 + eps), lambda x, y: y)
-        row = []
+        print("  %10.0f |" % (1e6 * eps), end="")
         for name, est in ESTIMATORS[1:]:
             uu, vv = est(ref, cur)
             exx, _, _ = strain(uu, vv, w=31)
-            row += [1e6 * float(np.mean(exx[_SL])), 1e6 * float(np.std(exx[_SL]))]
-        print("  %10.0f | %10.1f %10.1f | %10.1f %10.1f" % (1e6 * eps, *row))
+            print(" %10.1f %10.1f" % (1e6 * float(np.mean(exx[_SL])),
+                                      1e6 * float(np.std(exx[_SL]))), end="")
+        print()
     print()
     print("  → 100 µε でも符号と桁は出る。ただし散らばりが同じ桁なので、")
     print("     **1 点の値ではなく領域平均でしか使えない**。")
@@ -281,26 +344,35 @@ def section6_rotation(sp, ref):
     print("  微小ひずみ ∂u/∂x は回転で cosθ-1 ≈ -θ²/2 を返す(材料は伸びていない)。")
     print("  Green-Lagrange は代数的に厳密 0(下の列で確かめる)。")
     print()
-    print("  %8s | %10s | %11s %11s | %11s %11s"
-          % ("θ 度", "理論 µε", "lk 微小 µε", "lk Green µε", "hs 微小 µε", "hs Green µε"))
-    print("  " + "-" * 76)
+    print("  %8s | %10s |" % ("θ 度", "理論 µε"), end="")
+    for name, _ in ESTIMATORS[1:]:
+        print(" %11s %11s" % (name + " 微小", name + " Green"), end="")
+    print()
+    print("  " + "-" * (24 + 24 * (len(ESTIMATORS) - 1)))
     c0 = N / 2.0
     for th_deg in [0.0, 0.2, 0.5, 1.0, 2.0]:
         t = np.deg2rad(th_deg)
         ct, st = np.cos(t), np.sin(t)
         cur = sp.render(lambda x, y: c0 + (x - c0) * ct - (y - c0) * st,
                         lambda x, y: c0 + (x - c0) * st + (y - c0) * ct)
-        row = [th_deg, 1e6 * (ct - 1.0)]
+        print("  %8.2f | %10.1f |" % (th_deg, 1e6 * (ct - 1.0)), end="")
         for name, est in ESTIMATORS[1:]:
             uu, vv = est(ref, cur)
             e_inf, _, _ = strain(uu, vv, w=31, method="infinitesimal")
             e_grn, _, _ = strain(uu, vv, w=31, method="green")
-            row += [1e6 * float(np.mean(e_inf[_SL])), 1e6 * float(np.mean(e_grn[_SL]))]
-        print("  %8.2f | %10.1f | %11.1f %11.1f | %11.1f %11.1f" % tuple(row))
+            print(" %11.1f %11.1f" % (1e6 * float(np.mean(e_inf[_SL])),
+                                      1e6 * float(np.mean(e_grn[_SL]))), end="")
+        print()
     print()
-    print("  → 2 度の回転が微小ひずみでは約 -600 µε の嘘になる。**鋼の降伏ひずみの")
-    print("     3 割**。Green-Lagrange に替えるとほぼ消える(残りは推定器の誤差)。")
-    print("     ひずみを出す op を作るなら、既定はどちらかを黙って選んではいけない。")
+    print("  → 2 度の回転が微小ひずみでは約 -600 µε の嘘になる(理論 -609 µε)。")
+    print("     **鋼の降伏ひずみの 3 割**。Green-Lagrange は代数的には厳密 0。")
+    print("     ★ただし**実測では 0 にならない** —— Green の補正項は勾配の")
+    print("     推定値から作るので、勾配自体の誤差がそのまま乗る。lk のように")
+    print("     勾配が素直な推定器では効き、勾配の散らばりが数百 µε ある推定器では")
+    print("     補正が過剰になって逆に悪化することがある(下の表で確かめられる)。")
+    print("     どちらにせよ**既定をどちらかに決めてはいけない**という結論は変わらない。")
+    print("     → `fs.ledger.strain_from_displacement(u, v, window, method)` は")
+    print("       この 2 つを必須引数にしてある(`dic.py`)。")
 
 
 def section7_gradient(sp, ref):
@@ -326,28 +398,49 @@ def section7_gradient(sp, ref):
           % (1e6 * eps0, c0, sig_c, 2.355 * sig_c))
     print("          変位の総量は %.2f px(端から端まで)。" % (2 * amp))
     print()
-    print("  %6s | %11s %11s | %11s %11s"
-          % ("窓 px", "lk 尖頭 µε", "lk FWHM px", "hs 尖頭 µε", "hs FWHM px"))
-    print("  " + "-" * 60)
+    print("  %6s |" % "窓 px", end="")
+    for name, _ in ESTIMATORS[1:]:
+        print(" %11s %11s" % (name + " 尖頭 µε", name + " FWHM"), end="")
+    print()
+    print("  " + "-" * (9 + 24 * (len(ESTIMATORS) - 1)))
     xs = _XX[N // 2, :]
     for w in [11, 21, 31, 51, 81]:
-        row = [w]
+        print("  %6d |" % w, end="")
         for name, est in ESTIMATORS[1:]:
             uu, vv = est(ref, cur)
             exx, _, _ = strain(uu, vv, w=w)
-            prof = exx[MARGIN:N - MARGIN, :].mean(axis=0)     # y 方向に平均
+            prof = exx[MARGIN:N - MARGIN, :].mean(axis=0)
             peak = float(prof[MARGIN:N - MARGIN].max())
-            half = peak / 2.0
-            idx = np.where(prof[MARGIN:N - MARGIN] >= half)[0]
+            idx = np.where(prof[MARGIN:N - MARGIN] >= peak / 2.0)[0]
             fwhm = float(xs[MARGIN + idx[-1]] - xs[MARGIN + idx[0]]) if idx.size else 0.0
-            row += [1e6 * peak, fwhm]
-        print("  %6d | %11.0f %11.1f | %11.0f %11.1f" % tuple(row))
-    print("  %6s | %11.0f %11.1f | %11.0f %11.1f"
-          % ("真値", 1e6 * eps0, 2.355 * sig_c, 1e6 * eps0, 2.355 * sig_c))
+            print(" %11.0f %11.1f" % (1e6 * peak, fwhm), end="")
+        print()
+    print("  %6s |" % "真値", end="")
+    for _ in ESTIMATORS[1:]:
+        print(" %11.0f %11.1f" % (1e6 * eps0, 2.355 * sig_c), end="")
+    print()
     print()
     print("  → 窓を広げると尖頭が下がり、幅が広がる —— **集中の高さを過小に**")
     print("     読む。ひずみの空間分解能は窓幅で決まり、散らばり(5 節)と")
     print("     直接トレードオフ。切欠きや亀裂先端では窓を集中幅より小さく取る。")
+    if figs.enabled():
+        prof_true = eps0 * np.exp(-((xs - c0) ** 2) / (2 * sig_c ** 2))
+        series = [("真値", xs[MARGIN:N - MARGIN], 1e6 * prof_true[MARGIN:N - MARGIN])]
+        for w in (11, 31, 81):
+            uu, vv = est_lk(ref, cur)
+            exx, _, _ = strain(uu, vv, w=w)
+            pr = exx[MARGIN:N - MARGIN, :].mean(axis=0)
+            series.append(("lk 窓 %d" % w, xs[MARGIN:N - MARGIN],
+                           1e6 * pr[MARGIN:N - MARGIN]))
+        figs.save_plot("strain_concentration", series, xlabel="x [px]",
+                       ylabel="ε_xx [µε]", title="ひずみ集中と窓幅",
+                       caption="窓を広げると尖頭が下がり幅が広がる(空間分解能の限界)。")
+        uu, vv = est_lk(ref, cur)
+        exx, _, _ = strain(uu, vv, w=21)
+        figs.save_grid("strain_map", [exx, exx - np.outer(np.ones(N), prof_true)],
+                       ["推定 ε_xx(lk、窓 21)", "真値との差"],
+                       title="ひずみ場", signed=True,
+                       caption="どちらも同じ発散 LUT。0 が黒。")
     print("     ★hs は**どの窓でも尖頭を 3 割落とす**(全域の滑らかさを正則化に")
     print("     入れているので、局所の集中そのものを平らにしてしまう)。5 節の")
     print("     一様ひずみでは hs のほうが散らばりが小さかったが、集中を見るなら")
@@ -369,19 +462,20 @@ def section8_noise(sp, ref, ix):
     u0 = 0.37
     cur0 = sp.render(lambda x, y: x + u0, lambda x, y: y)
     rng = np.random.default_rng(11)
-    print("  %8s | %10s | %10s %10s | %10s %10s"
-          % ("σ_n", "理論 σ_u", "lk 偏り", "lk 散らばり", "hs 偏り", "hs 散らばり"))
-    print("  " + "-" * 68)
-    for s in [0.0, 0.005, 0.01, 0.02, 0.05]:
-        r2 = ref + rng.normal(0, s, ref.shape)
-        c2 = cur0 + rng.normal(0, s, cur0.shape)
-        # 2 枚とも雑音を持つので、差の雑音は √2 倍。
-        theo = np.sqrt(2.0) * s / np.sqrt(sum_ix2)
-        row = [s, theo]
+    print("  %8s | %10s |" % ("σ_n", "理論 σ_u"), end="")
+    for name, _ in ESTIMATORS[1:]:
+        print(" %10s %10s" % (name + " 偏り", name + " 散らばり"), end="")
+    print()
+    print("  " + "-" * (24 + 22 * (len(ESTIMATORS) - 1)))
+    for sg in [0.0, 0.005, 0.01, 0.02, 0.05]:
+        r2 = ref + rng.normal(0, sg, ref.shape)
+        c2 = cur0 + rng.normal(0, sg, cur0.shape)
+        theo = np.sqrt(2.0) * sg / np.sqrt(sum_ix2)
+        print("  %8.3f | %10.4f |" % (sg, theo), end="")
         for name, est in ESTIMATORS[1:]:
             uu, _ = est(r2, c2)
-            row += list(_stat(uu[_SL] - u0))
-        print("  %8.3f | %10.4f | %10.4f %10.4f | %10.4f %10.4f" % tuple(row))
+            print(" %10.4f %10.4f" % _stat(uu[_SL] - u0), end="")
+        print()
     print()
     print("  → lk の散らばりは σ_n に**比例**する(理論どおりの振る舞い)が、")
     print("     絶対値は理論の下限を**下回る**。矛盾ではない: この下限は「21x21 の")
@@ -425,38 +519,52 @@ def section10_findings():
     print("10) 所見 —— fullseye に足りないもの")
     print("=" * 78)
     print("""
-  (a) ★**サブセット相関(ZNCC)の op が無い**。DIC の中核はテンプレート相関で、
-      材料試験の標準手法(ZNCC + サブピクセル反復、IC-GN)はこれ。いま代用
-      できるのは `optical_flow_lk` / `optical_flow_hs` / `demons_register` の
-      3 本だけで、どれも**輝度不変を仮定する**ので照明が変わると使えない。
-      ZNCC は平均と分散を正規化するので照明変化に強い —— この差は実験室では
-      決定的(試験中に照明は必ず変わる)。
+  ★この節は**一度書き直している**。最初の版には「サブセット相関(ZNCC)の
+  op が無い」「スペックル合成器が無い」と書いた。**どちらも誤り**で、
+  `pivops` の 23 op(`fs.ledger.piv_*`)が最初からあった。見落とした理由は
+  検索の側にあり(`op_find("correlation")` が `piv_cross_correlate` を返さ
+  なかった)、そちらは直した(CHANGELOG「op_find が語幹と複数語で引ける」)。
+  以下は**測り直したあと**の所見。
 
-  (b) ★★**変位場 → ひずみ場の op が無い**。この PoC では 40 行書いた。
-      しかも 6 節が示すとおり、**微小ひずみと Green-Lagrange のどちらを
-      返すかで 2 度の回転が 600 µε の嘘になる**。既定を黙って選ぶ設計に
-      してはいけない類の分岐。`strain_from_displacement(u, v, window, method)`
-      として、method を必須引数にするのが正しい。
+  (a) **既にあって、しかも強い**: `piv_cross_correlate`。
+      2〜9 節のとおり、偏り・散らばりとも lk / hs を 1 桁上回る
+      (u=0.37 px で偏り 0.0002 px / 散らばり 0.0022 px、ゼロ点比 167 倍)。
+      さらに**照明変化に強い**: 明るさを 0.7 倍 + 0.15 加算しても変位の
+      ずれは 3.7e-15 px(`subtract_mean=True` が加算を、ガウス 3 点当てはめ
+      の対数差が乗算を代数的に打ち消す)。同じ条件で `optical_flow_lk` は
+      1.31 px 動く。**新しい相関器を書く理由は無かった。**
 
-  (c) **相関品質(ZNCC 係数)のマップが無い**。DIC では「測れなかった点」を
-      品質で切るのが常識。いまの optical flow は品質を返さないので、
-      デコリレーションした点と正しく 0 の点を区別できない。
+  (b) ★★**`piv_strain_rate` は剛体回転で 0 にならない**。docstring は
+      「剛体回転では 0」と書いているが、それが成り立つのは**線形化した
+      流体の回転** `u=-ωy, v=ωx` のときだけ。DIC が測る**有限回転**では
+      2 度で **+1218 µε** を返す(真値 0)。流体の族に固体の量を借りると
+      静かに間違う、という例。`dic.strain_from_displacement(u, v, window,
+      method)` を足した —— `window` と `method` に既定を置かず、
+      `"infinitesimal"` と `"green"` を呼び手に選ばせる。
 
-  (d) **スペックル合成器が無い**。この PoC の `Speckle` は再利用価値がある
-      (真値つきの変形画像はひずみ計測の検証に必須)。`surface_synth_psd` が
-      粗さ族にとってそうだったのと同じ位置づけ。
+  (c) **微分の質**: `piv_velocity_gradient` は `np.gradient`(2 点差分)。
+      同じ流れ場・500 µε で散らばりが 136.9 µε、窓最小二乗(w=9)なら
+      12.4 µε —— **11 倍**。平均は同じなので、1 点の値を見る用途でだけ効く。
 
-  (e) **スペックルの品質指標が無い**。9 節のとおり、同じ推定器でも斑点の
-      粒径で偏りが 20 倍変わる。撮った画像が DIC に向いているかを撮影時に
-      判定する指標(平均斑点径、被覆率、勾配の RMS)は 3 行で出せるのに、
-      まとめて返す口が無い。
+  (d) **相関品質**: `info["peak_ratio"]` はあるが、60x60 の領域を別の絵に
+      貼り替えても内 1.184 / 外 1.329 で分離できない。ZNCC 係数なら
+      0.100 / 0.999。`zncc >= 0.8` で切ると RMS が 1.9122 → 0.0036 px
+      (**537 倍**)。`dic.correlation_quality` を足した —— **相関器では
+      なく、既にある変位場を採点する op**(piv でも lk でも demons でも使える)。
 
-  (f) 既存 op の穴: `optical_flow_lk` / `optical_flow_hs` に**窓ごとの残差を
-      返す口が無い**。収束したのか発散したのかが呼び手から見えない。
+  (e) **スペックルの品質指標**: 9 節のとおり同じ推定器でも粒径で偏りが
+      20 倍変わるのに、撮影時に判定する指標が無かった。
+      `dic.speckle_quality`(平均輝度勾配 MIG・被覆率・平均斑点径)を足した。
+      `speckle_filter` は SAR の**デスペックル**で別物。
 
-  次にやるべきこと: (a)〜(e) をまとめて `dic` 族として出す。ただし
-  **出す前にこの PoC と同じ土俵で ZNCC が LK に勝つことを実測してから**
-  (`mosaic` を測って出さなかったのと同じ手順)。
+  (f) **合成器**: `piv_synth_pair` が既にあり、任意の変位写像(callable)を
+      受け、正規化を一切しない。この PoC の `Speckle` は**解析レンダで
+      真値を厳密に**という点だけが違うが、`piv_synth_pair` も整数 3 px
+      シフトを 0.0 で再現するので、実用上は差が無い。**新しく作らない。**
+
+  次にやるべきこと: (b)(c)(d)(e) は `dic.py` として入れ、台帳は
+  `opspiv`(piv 族)へ相乗りさせた —— 別の族を立てると「流体の相関器」と
+  「固体のひずみ」が別物に見えてしまい、同じ道具だという事実が消えるため。
 """)
 
 
@@ -477,6 +585,8 @@ def main():
     section8_noise(sp, ref, ix)
     section9_speckle_quality()
     section10_findings()
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("経過 %.1f 秒" % (time.time() - t0))
 
 

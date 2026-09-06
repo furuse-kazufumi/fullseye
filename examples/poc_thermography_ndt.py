@@ -50,6 +50,7 @@ import numpy as np
 from scipy.ndimage import gaussian_filter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 
 # --- 材料と撮影の諸元 -------------------------------------------------------- #
@@ -302,6 +303,18 @@ def section3_depth_table(masks, d_hat):
             print(" %10.2f (%+4.0f%%)" % (e, 100 * (e / d_mm - 1)), end="")
         print()
     print()
+    figs.save_table("depth_table",
+                    ["深さ mm"] + ["直径 %.0f mm" % d for d in DIAMS_MM],
+                    [["%.1f" % d] + ["%.2f (%+.0f%%)"
+                                     % (1e3 * float(np.median(d_hat[masks[(d, dia)]])),
+                                        100 * (1e3 * float(np.median(d_hat[masks[(d, dia)]])) / d - 1))
+                                    for dia in DIAMS_MM]
+                     for d in DEPTHS_MM],
+                    title="TSR の推定深さ(括弧は誤差)",
+                    caption="右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。")
+    figs.save_grid("depth_map", [d_hat * 1e3],
+                   ["TSR 推定深さ [mm]"], title="深さマップ", ncols=1,
+                   caption="欠陥 16 個。直径 2 mm の列(いちばん左)が壊れているのが見える。")
     print("  → 直径が深さの 4 倍以上あるところ(右下三角)は数 % で当たる。")
     print("     左上へ行くほど**深く見えすぎる**: 横から健全部の熱が回り込み、")
     print("     冷え方が板厚のそれに近づくため。誤差は必ず**過大側**に出る。")
@@ -379,6 +392,16 @@ def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
             cells.append("%+8.0f%% " % (100 * (e / d - 1)))
         print("  %8.1f | %s" % (tmax, "".join(cells)))
     print()
+    if figs.enabled():
+        ts_lin = np.logspace(np.log10(ts[0]), np.log10(ts[-1]), 60)
+        ser = []
+        for d_mm in DEPTHS_MM + [3.0]:
+            th = d_mm * 1e-3
+            curve = (_q_over_rhoc() / th) * plate_temperature(ts_lin, th)
+            ser.append(("%.1f mm" % d_mm, np.log10(ts_lin), np.log10(curve)))
+        figs.save_plot("tsr_curves", ser, xlabel="log10 t [s]", ylabel="log10 ΔT [K]",
+                       title="厚さごとの冷却曲線(log-log)",
+                       caption="早期の勾配は -1/2。膝の位置 t* が深さを決める。")
     print("  → ★**窓を 4 秒に切ると 8 個すべてが ±15 % に入る**(25 秒窓では")
     print("     +59 %〜+612 %)。つまりさきほどの『縦横比の限界』は物理の限界では")
     print("     なく、**当てはめる時間窓の選び方**だった。")
@@ -589,6 +612,8 @@ def main():
     section6_noise(depth_map, masks)
     section7_illumination(depth_map, masks, sound)
     section8_findings()
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("経過 %.1f 秒" % (time.time() - t0))
 
 

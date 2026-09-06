@@ -1411,6 +1411,22 @@ def mueller_apply(mueller, stokes):
 
     Returns a ``(4,)`` float64 Stokes vector.
 
+    ## 画像として通す(2026-09-06 追加)
+
+    ``mueller`` を ``(..., 4, 4)``、``stokes`` を ``(..., 4)`` にすると
+    **画素ごとに違う行列**を通せる。両者は numpy の規則で broadcast するので、
+    ``(H, W, 4, 4)`` と ``(4,)`` の組(素子だけが場所で変わる)や、
+    ``(4, 4)`` と ``(H, W, 4)`` の組(光だけが場所で変わる)も書ける。
+
+    足した理由は実測。``examples/poc_photoelasticity.py`` は画素ごとに
+    位相差の変わる位相子を通す必要があり、**この口が無いために (H,W,4,4) を
+    自分で組む羽目になっていた**。行列そのものは正しい(暗視野円偏光系を
+    組んで教科書の ``I = sin²(δ/2)`` と 125 通りで最大差 2.2e-16)ので、
+    足りなかったのは形だけだった。
+
+    実現可能性の検査は**画素ごとに**行い、破っている画素があれば
+    その数と最悪値を挙げて拒否する(1 点でも通さない = fail-closed)。
+
     Ground truth it reproduces exactly: unpolarised ``[1,0,0,0]`` through an
     ideal polariser gives ``S0 = 0.5`` with degree of polarisation 1; through
     two polarisers at relative angle theta, ``0.5*cos^2(theta)`` (Malus, to
@@ -1421,6 +1437,9 @@ def mueller_apply(mueller, stokes):
     vector is unphysical, or the product overflows float64.
     """
     m = _as_float_array(mueller, "mueller")
+    s_raw = _as_float_array(stokes, "stokes")
+    if m.ndim > 2 or s_raw.ndim > 1:
+        return _mueller_apply_field(m, s_raw)
     if m.ndim != 2 or m.shape != (4, 4):
         raise ValueError("mueller_apply: mueller must be a (4, 4) matrix, got "
                          "shape %r — build one with mueller_element"
@@ -1430,6 +1449,39 @@ def mueller_apply(mueller, stokes):
     if not np.isfinite(out).all():
         raise ValueError("mueller_apply: the result overflowed float64 (matrix "
                          "norm %g, S0 %g)" % (float(np.abs(m).max()), float(s[0])))
+    return np.ascontiguousarray(out, dtype=np.float64)
+
+
+def _mueller_apply_field(m, s):
+    """``mueller_apply`` の場版 —— ``(...,4,4) x (...,4) -> (...,4)``。"""
+    if m.ndim < 2 or m.shape[-2:] != (4, 4):
+        raise ValueError("mueller_apply: mueller must end in (4, 4), got shape %r"
+                         % (tuple(m.shape),))
+    if s.ndim < 1 or s.shape[-1] != 4:
+        raise ValueError("mueller_apply: stokes must end in (4,), got shape %r"
+                         % (tuple(s.shape),))
+    try:
+        np.broadcast_shapes(m.shape[:-2], s.shape[:-1])
+    except ValueError:
+        raise ValueError(
+            "mueller_apply: the leading shapes do not broadcast — mueller %r vs "
+            "stokes %r" % (tuple(m.shape[:-2]), tuple(s.shape[:-1]))) from None
+    s0 = s[..., 0]
+    pol = np.sqrt(s[..., 1] ** 2 + s[..., 2] ** 2 + s[..., 3] ** 2)
+    bad = (s0 < 0) | (pol > s0 * (1.0 + 1e-9) + 1e-12)
+    n_bad = int(np.count_nonzero(bad))
+    if n_bad:
+        worst = float(np.max(np.where(bad, pol - s0, -np.inf)))
+        raise ValueError(
+            "mueller_apply: %d of %d Stokes vectors are unphysical "
+            "(S0 < 0, or degree of polarisation > 1 by up to %.3g). A Mueller "
+            "matrix applied to an impossible state returns a plausible-looking "
+            "number that means nothing, so the whole field is refused."
+            % (n_bad, int(s0.size), worst))
+    out = np.einsum("...ij,...j->...i", m, s)
+    if not np.isfinite(out).all():
+        raise ValueError("mueller_apply: the result overflowed float64 "
+                         "(matrix norm %g)" % float(np.abs(m).max()))
     return np.ascontiguousarray(out, dtype=np.float64)
 
 

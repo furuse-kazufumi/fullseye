@@ -48,6 +48,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 
 # --- 試験片と光学系の諸元 ---------------------------------------------------- #
@@ -103,10 +104,12 @@ def polariscope_matrices(analyser_deg):
 
 
 def _retarder_stack(delta, theta):
-    """画素ごとの位相子 Mueller を (H, W, 4, 4) で作る(**ここが穴**、所見参照)。
+    """画素ごとの位相子 Mueller を (H, W, 4, 4) で作る。
 
-    ``fs.mueller_element`` はスカラー 1 枚ぶんしか作らず、``fs.mueller_apply``
-    は (4,) の Stokes 1 本しか通さない。画像にするには自分で組む必要がある。
+    ``fs.mueller_element`` は 1 枚ぶん(スカラーの δ と θ)しか作らないので、
+    画素ごとに変わる位相子はここで閉形式から組む。**組んだあとは
+    ``fs.mueller_apply`` がそのまま (H,W,4,4) x (4,) を通す**
+    (2026-09-06 に broadcast 対応。この PoC が掘り当てた穴)。
     """
     c2, s2 = np.cos(2 * theta), np.sin(2 * theta)
     cd, sd = np.cos(delta), np.sin(delta)
@@ -127,9 +130,8 @@ def _retarder_stack(delta, theta):
 def polariscope_image(delta, theta, analyser_deg=90.0):
     """ポラリスコープの強度画像。"""
     s_in, post = polariscope_matrices(analyser_deg)
-    m = _retarder_stack(delta, theta)
-    s = np.einsum("...ij,j->...i", m, s_in)
-    return np.einsum("ij,...j->...i", post, s)[..., 0]
+    s = fs.mueller_apply(_retarder_stack(delta, theta), s_in)
+    return np.asarray(fs.mueller_apply(post, s))[..., 0]
 
 
 def plane_polariscope(delta, theta, pol_deg=0.0):
@@ -213,6 +215,15 @@ def section3_dark_field(dsig, theta, delta, naive, m):
     print("  ゼロ点 %.4f MPa に対して %.2f 倍。"
           % (float(np.mean(np.abs(naive - dsig[m]))),
              float(np.mean(np.abs(naive - dsig[m]))) / max(e, 1e-12)))
+    bright = polariscope_image(delta, theta, analyser_deg=0.0)
+    plane = plane_polariscope(delta, theta, 0.0)
+    figs.save_grid("polariscope",
+                   [np.where(IN_DISC, img, 0.0), np.where(IN_DISC, bright, 0.0),
+                    np.where(IN_DISC, plane, 0.0), np.where(IN_DISC, dsig, 0.0)],
+                   ["暗視野(円偏光)", "明視野(円偏光)",
+                    "平面偏光(等傾線が混ざる)", "主応力差 σ1-σ2 [MPa](真値)"],
+                   title="円板の直径圧縮 —— ポラリスコープ像と真値",
+                   caption="偏光系は fullseye の mueller_element / mueller_apply で組んだ。")
     print("  → 整数の縞しか読まないと **fσ/h = %.3f MPa の刻み**でしか答えられない。"
           % (F_SIGMA / H_MM))
     print("     縞が 2 本しか出ていない試験片では、これは実質「3 段階」の分解能。")
@@ -229,8 +240,8 @@ def emerging_stokes(delta, theta):
     になる。**偏光計で測れるのはこの 3 成分だけ**で、ここから (δ, θ) を
     復元するのが位相シフト光弾性のすべて。
     """
-    m = _retarder_stack(delta, theta)
-    return np.einsum("...ij,j->...i", m, np.array([1.0, 0.0, 0.0, 1.0]))
+    return np.asarray(fs.mueller_apply(_retarder_stack(delta, theta),
+                                       np.array([1.0, 0.0, 0.0, 1.0])))
 
 
 def section4_phase_shift(dsig, theta, delta, m):
@@ -326,6 +337,16 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
         print("  %-34s %11.1f %%  (評価画素 %d)"
               % (label, 100 * float(np.mean(ok[valid])), valid.sum()))
     print()
+    figs.save_grid("unwrap",
+                   [np.where(IN_DISC, wrapped, np.nan),
+                    np.where(IN_DISC, np.hypot(s1, s2), np.nan),
+                    np.where(IN_DISC, px_per_fringe, np.nan),
+                    np.where(IN_DISC, n_true, np.nan)],
+                   ["巻いたままの δ [rad]", "変調度 |sinδ|(小さい所で壊れる)",
+                    "1 縞あたりの画素数(2 未満で壊れる)", "縞次数 N(真値)"],
+                   title="巻き戻しが壊れる場所は撮る前に分かる",
+                   signed=[True, False, False, False],
+                   caption="左下 2 枚が「壊れる予報」。どちらもマスクで外せる。")
     print("  → ★壊れる場所は 2 つあり、**どちらも撮る前に分かる**:")
     print("     (1) 縞が細かすぎる(1 縞 2 画素未満)—— 標本化定理。荷重点の近く。")
     print("     (2) 変調が落ちる —— δ が 2π の整数倍に近い帯と、主応力差が")
@@ -373,13 +394,15 @@ def section7_findings():
     print("7) 所見 —— fullseye に足りないもの")
     print("=" * 78)
     print("""
-  (a) ★**Mueller / Stokes が画像に効かない**。`mueller_element` は 4x4 を
-      1 枚、`mueller_apply` は (4,) の Stokes を 1 本しか通さない。画素ごとに
-      位相差が変わる系(光弾性はまさにそれ)を組むには、この PoC の
-      `_retarder_stack` のように **(H,W,4,4) を自分で書く**しかない。
-      `mueller_apply` が (…,4,4) x (…,4) の broadcasting を受ければ済む話で、
-      実装は `np.einsum("...ij,...j->...i", m, s)` の 1 行。
-      **1 節で確かめたとおり既存の 4x4 は正しい**ので、足りないのは形だけ。
+  (a) ✔**直した**: `mueller_apply` が画像に効かなかった。4x4 と 4 ベクトル
+      1 組しか通らず、画素ごとに位相差が変わる系(光弾性はまさにそれ)を
+      組むには (H,W,4,4) の掛け算を呼び手が手書きするしかなかった。
+      **1 節で確かめたとおり 4x4 そのものは正しい**(125 通りで最大差 2.2e-16)
+      ので、足りないのは形だけ —— broadcast を通した(2026-09-06)。
+      この PoC はいま `fs.mueller_apply` をそのまま呼んでいる。
+      残る穴は `mueller_element` が (H,W) の δ / θ を受けないことで、
+      位相子の 4x4 を組む式は依然としてここに手書きしてある
+      (`_retarder_stack`)。これは族を足すときに一緒に片付ける。
 
   (b) ★**光弾性の族が無い**(`op_find` で "photoelastic" / "光弾性" /
       "birefringence" / "retardation" いずれも 0 件。3 層すべて確認)。
@@ -423,6 +446,8 @@ def main():
     section5_wrapping(dsig, delta, d_hat, k1, k2, k3)
     section6_noise(dsig, theta, delta, m)
     section7_findings()
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("経過 %.1f 秒" % (time.time() - t0))
 
 

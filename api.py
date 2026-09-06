@@ -1994,13 +1994,28 @@ def read_image(path: str, sort: str = "image"):
 
 
 def write_image(path: str, v) -> None:
-    """Save a float64 image/region array to *path* (needs opencv-python)."""
+    """Save an image/region array to *path* (needs opencv-python).
+
+    float は **[0,1]** として 255 倍する。整数型(``uint8`` / ``uint16``)は
+    **そのまま画素値**として扱う。
+
+    ★2026-09-06 に踏んだ不具合: 以前は型を見ずに ``v * 255`` していたので、
+    **``uint8`` を渡すと numpy の弱いスカラー昇格(NEP 50)で ``uint8`` のまま
+    掛け算が回り、255 を超えた値が折り返して真っ黒に近い絵**が保存されていた。
+    例外も警告も出ないので、書いた本人が画像を開くまで気づけない。
+    """
     import cv2
     v = np.asarray(v)
-    if v.ndim == 3 and v.shape[-1] == 3:
-        out = np.clip(v * 255, 0, 255).astype(np.uint8)[:, :, ::-1]
+    if v.dtype == np.uint8:
+        out = v
+    elif v.dtype == np.uint16:
+        out = (v >> 8).astype(np.uint8)
+    elif np.issubdtype(v.dtype, np.integer):
+        out = np.clip(v, 0, 255).astype(np.uint8)
     else:
         out = np.clip(np.asarray(v, np.float64) * 255, 0, 255).astype(np.uint8)
+    if out.ndim == 3 and out.shape[-1] == 3:
+        out = out[:, :, ::-1]
     cv2.imwrite(path, out)
 
 

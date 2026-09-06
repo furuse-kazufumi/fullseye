@@ -4,7 +4,7 @@ dim: optics
 category: polarization
 in: matrix × stokes
 out: stokes
-examples: [optics_imaging]
+examples: [optics_imaging, poc_photoelasticity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -32,6 +32,22 @@ re-checked, deliberately: an unphysical output is real evidence that
 the bug — inspect it with :func:`stokes_analyze`, which will say so.
 
 Returns a ``(4,)`` float64 Stokes vector.
+
+## 画像として通す(2026-09-06 追加)
+
+``mueller`` を ``(..., 4, 4)``、``stokes`` を ``(..., 4)`` にすると
+**画素ごとに違う行列**を通せる。両者は numpy の規則で broadcast するので、
+``(H, W, 4, 4)`` と ``(4,)`` の組(素子だけが場所で変わる)や、
+``(4, 4)`` と ``(H, W, 4)`` の組(光だけが場所で変わる)も書ける。
+
+足した理由は実測。``examples/poc_photoelasticity.py`` は画素ごとに
+位相差の変わる位相子を通す必要があり、**この口が無いために (H,W,4,4) を
+自分で組む羽目になっていた**。行列そのものは正しい(暗視野円偏光系を
+組んで教科書の ``I = sin²(δ/2)`` と 125 通りで最大差 2.2e-16)ので、
+足りなかったのは形だけだった。
+
+実現可能性の検査は**画素ごとに**行い、破っている画素があれば
+その数と最悪値を挙げて拒否する(1 点でも通さない = fail-closed)。
 
 Ground truth it reproduces exactly: unpolarised ``[1,0,0,0]`` through an
 ideal polariser gives ``S0 = 0.5`` with degree of polarisation 1; through
@@ -67,6 +83,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [poc_photoelasticity](../../../../examples/poc_photoelasticity.py) — `py -3.11 examples/poc_photoelasticity.py`
 
 ## 型が繋がる次の op(`stokes` を入力に取れる)
 

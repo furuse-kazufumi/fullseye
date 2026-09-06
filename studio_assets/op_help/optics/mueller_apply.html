@@ -15,6 +15,18 @@
 <p>*mueller* is not a physical Mueller matrix, and swallowing it would hide</p>
 <p>the bug — inspect it with :func:<code style="color:#22d3bf">stokes_analyze</code>, which will say so.</p>
 <p>Returns a `<code style="color:#22d3bf">(4,)</code>` float64 Stokes vector.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">画像として通す(2026-09-06 追加)</h3>
+<p>`<code style="color:#22d3bf">mueller</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">(..., 4, 4)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stokes</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">(..., 4)</code>` にすると</p>
+<p><b>画素ごとに違う行列</b>を通せる。両者は numpy の規則で broadcast するので、</p>
+<p>`<code style="color:#22d3bf">(H, W, 4, 4)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(4,)</code>` の組(素子だけが場所で変わる)や、</p>
+<p>`<code style="color:#22d3bf">(4, 4)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(H, W, 4)</code>` の組(光だけが場所で変わる)も書ける。</p>
+<p>足した理由は実測。`<code style="color:#22d3bf">examples/poc_photoelasticity.py</code>` は画素ごとに</p>
+<p>位相差の変わる位相子を通す必要があり、**この口が無いために (H,W,4,4) を</p>
+<p>自分で組む羽目になっていた**。行列そのものは正しい(暗視野円偏光系を</p>
+<p>組んで教科書の `<code style="color:#22d3bf">I = sin²(δ/2)</code>` と 125 通りで最大差 2.2e-16)ので、</p>
+<p>足りなかったのは形だけだった。</p>
+<p>実現可能性の検査は<b>画素ごとに</b>行い、破っている画素があれば</p>
+<p>その数と最悪値を挙げて拒否する(1 点でも通さない = fail-closed)。</p>
 <p>Ground truth it reproduces exactly: unpolarised `<code style="color:#22d3bf">[1,0,0,0]</code>` through an</p>
 <p>ideal polariser gives `<code style="color:#22d3bf">S0 = 0.5</code>` with degree of polarisation 1; through</p>
 <p>two polarisers at relative angle theta, `<code style="color:#22d3bf">0.5*cos^2(theta)</code>` (Malus, to</p>
@@ -39,6 +51,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_photoelasticity">poc_photoelasticity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_photoelasticity.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">stokes</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opoptics:stokes_analyze">stokes_analyze</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polarization</code>)</h3>

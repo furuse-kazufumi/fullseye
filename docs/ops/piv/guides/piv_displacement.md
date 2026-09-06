@@ -13,13 +13,14 @@ version: 0.1.0
 
 **2 枚の画像から、どこがどれだけ動いたかを測る**層です。入力はトレーサ粒子を写した画像対、出力は窓ごとの変位ベクトル場 `(2, h, w)`(成分 `(dy, dx)`、単位は画素/フレーム)。流体計測(PIV)が本来の用途ですが、原理は相互相関なので、模様があるものなら粒子でなくても動きが取れます。
 
-23 op / 6 カテゴリ(numpy と scipy のみ。台帳は `opspiv.py`、実体は `pivops.py`):
+26 op / 7 カテゴリ(numpy と scipy のみ。台帳は `opspiv.py`、実体は `pivops.py` と `dic.py`):
 
 - **synth(3)** — `piv_synth_particles` / `piv_synth_pair` / `piv_synth_sequence`: 既知の変位場を持つ画像対と画像列を作る。**この族の全テストの真値の供給源**。
 - **estimate(4)** — `piv_cross_correlate` / `piv_multipass` / `piv_deform_pass` / `piv_ensemble_correlate`: 本体。窓ごとの FFT 相互相関、粗→細の多段、窓変形、相関の合算。
 - **validate(2)** — `piv_outlier_mask` / `piv_replace_outliers`: 正規化中央値検定と穴埋め。
 - **field(8)** — `piv_vorticity` / `piv_divergence` / `piv_flow_magnitude` / `piv_to_velocity` / `piv_velocity_gradient` / `piv_q_criterion` / `piv_swirling_strength` / `piv_strain_rate`: 場の微分・不変量・単位変換。
 - **visualise(2)** — `piv_flow_to_rgbimage` / `piv_line_integral_convolution`: 出口。これが無いと `flow2d` は「作れるが見られない」型になる。
+- **solid(3)** — `strain_from_displacement` / `correlation_quality` / `speckle_quality`: **固体側(DIC、デジタル画像相関)**。同じ相関器を使うが、出す量が違う(下の節)。
 - **assess(4)** — `piv_sample_at_windows` / `piv_error_stats` / `piv_peak_locking` / `piv_time_statistics`: 真値との突き合わせ、系統誤差、時間統計。
 
 ## なぜ足したか —— 在庫を数えた結果
@@ -262,6 +263,71 @@ assert np.isfinite(v).all()
 > 公開された場と突き合わせるときは、**量の定義を先に一致させること**。名前(`V_mag_2D`)は平均の取り方を書いていません。
 
 もう一つ実データで効いた事実: 欠測が **67.5 %** ありました(翼の影と視野外)。`nan` を 0 で埋めて微分すると、翼の輪郭に沿って**偽の勾配**が立ちます。この族の場の op は `nan` を伝播させるので、埋めるかどうかは呼ぶ側の判断です。
+
+## 固体を測る(DIC)—— 同じ相関器、違う出口
+
+流体の PIV と固体の DIC は**同じ窓相関**を使います。違うのは出す量で、流体は
+速度と渦度、固体は**ひずみ**。ここを混ぜると静かに間違うので、2026-09-06 に
+`examples/poc_dic_strain.py` で実測してから 3 op だけ足しました。
+
+### `piv_strain_rate` を固体に使ってはいけない
+
+docstring には「剛体回転では 0 になる」と書いてあり、**流体としては正しい** ——
+線形化した回転 `u = -ωy, v = ωx` では確かに 0 です。ところが DIC が測るのは
+**有限回転**で、そちらでは
+
+| θ | `piv_strain_rate` | 真のひずみ |
+|---|---|---|
+| 0.5° | +76 µε | 0 |
+| 1.0° | +305 µε | 0 |
+| 2.0° | **+1218 µε** | 0 |
+
+鋼の降伏ひずみが約 2000 µε なので、2 度傾いただけで**降伏の 6 割**に相当する
+嘘のひずみが出ます。`strain_from_displacement(u, v, window, method)` は
+`method` を必須にしてあり、
+
+- `"infinitesimal"` = `∂u/∂x`(教科書の微小ひずみ)。回転で `cosθ-1` を返す。
+- `"green"` = Green-Lagrange `∂u/∂x + ½((∂u/∂x)² + (∂v/∂x)²)`。**剛体回転で
+  代数的に厳密 0**(0.5〜5° で 5.3e-14 〜 6.5e-13)。
+
+**既定は置きません**。実測では Green の補正項が勾配の推定誤差を拾うので、
+勾配の散らばりが大きい推定器では**補正が過剰になって悪化する**ことがあります
+(PoC の 6 節に表があります)。どちらを使うかは呼び手が決めるべき分岐です。
+
+### 微分は窓最小二乗で
+
+`piv_velocity_gradient` は `np.gradient`(2 点差分)です。同じ流れ場・500 µε で
+
+| 方法 | 平均 | 散らばり |
+|---|---|---|
+| `piv_velocity_gradient` | 500.0 µε | 136.9 µε |
+| `strain_from_displacement`(窓 9) | 500.0 µε | **12.4 µε** |
+
+平均は同じで散らばりが **11 倍**違います。領域平均で使うなら差は出ませんが、
+1 点の値を見るなら効きます。
+
+### 品質で切る —— `peak_ratio` では足りない
+
+`piv_cross_correlate` の `info["peak_ratio"]` は相関ピークの鋭さですが、
+**対応が無くなった領域を分離できません**。60×60 の領域を別の絵に貼り替えた
+実測で、内 1.184 / 外 1.329 —— 分布が重なります。ZNCC 係数なら 0.100 / 0.999。
+
+| 切り方 | 変位の RMS |
+|---|---|
+| 切らない | 1.9122 px |
+| `peak_ratio >= 1.2` | 1.0952 px(1.7 倍) |
+| `correlation_quality >= 0.8` | **0.0036 px(537 倍、82.8 % を残す)** |
+
+`correlation_quality(ref, cur, flow, info)` は**相関器ではありません** ——
+既にある変位場を採点するだけなので、`piv_cross_correlate` でも
+`optical_flow_lk` でも `demons_register` の結果でも使えます。
+
+### 撮る前にスペックルを測る
+
+`speckle_quality(img)` は平均輝度勾配(MIG)・被覆率・平均斑点径を返します。
+PoC の 9 節のとおり、**同じ推定器でも斑点の粒径で偏りが 20 倍変わります**
+(1σ 0.6 px で 0.0113 px、1σ 4.0 px で 0.0005 px)。撮ってから気づくと撮り直しです。
+`speckle_filter` は SAR の**デスペックル**で、これとは別物です。
 
 ## 次にどこへ繋がるか
 

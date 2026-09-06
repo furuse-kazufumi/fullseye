@@ -14,7 +14,9 @@ from __future__ import annotations
 import inspect
 import json
 import math
+import shutil
 import os
+import tempfile
 import re
 import sys
 
@@ -165,6 +167,152 @@ def _atomic_write_text(path, text):
         except OSError:
             pass
         raise
+
+
+def _figures_tab(QtWidgets, QtCore, QtGui):
+    """例が吐いた図(``FULLSEYE_FIGURE_DIR``)を縦に並べ、**持ち出せる**ようにする。
+
+    ★2026-09-06、ユーザー 3 連の指摘でこうなった:
+
+    1. 「Studio 上で動くような PoC になってる?」—— それまでギャラリーの Run は
+       **テキストだけ**を見せていた。画像処理の IDE で走らせているのに絵が
+       1 枚も出ない。例の側は `examplefig` が環境変数のあるときだけ PNG を
+       書くので(無ければ完全に無処理)、ここではそれを拾って並べる。
+    2. 「表は Excel にコピーできるといいね」—— 見えても数字を持ち出せないと
+       使えない。表の図には TSV が並んで置いてあるので、**タブ区切りのまま
+       クリップボードへ**置く。Excel はタブ区切りをセルに展開するので、
+       貼るだけで表になる。CSV ファイルを保存する口も付ける。
+    3. 「画像にはクリップボードにコピーする機能があるといいね(Windows)」——
+       ``QClipboard.setPixmap`` は Windows で CF_BITMAP / CF_DIB を置くので、
+       Word・Excel・PowerPoint・ペイントにそのまま貼れる。
+
+    図を出さない例では「この例は図を出しません」と出す —— **空白のまま
+    黙らない**(壊れているのか未対応なのかが利用者から見分けられなくなる)。
+    """
+    area = QtWidgets.QScrollArea()
+    area.setWidgetResizable(True)
+    inner = QtWidgets.QWidget()
+    lay = QtWidgets.QVBoxLayout(inner)
+    lay.setAlignment(QtCore.Qt.AlignTop)
+    area.setWidget(inner)
+
+    def _copy_pixmap(pm):
+        QtWidgets.QApplication.clipboard().setPixmap(pm)
+
+    def _copy_text(path):
+        try:
+            with open(path, encoding="utf-8") as fh:
+                QtWidgets.QApplication.clipboard().setText(fh.read())
+        except OSError:
+            pass
+
+    def _save_as(parent, src, filt):
+        dst, _ = QtWidgets.QFileDialog.getSaveFileName(
+            parent, "Save", os.path.basename(src), filt)
+        if dst:
+            try:
+                shutil.copyfile(src, dst)
+            except OSError:
+                pass
+
+    def _figure_menu(widget, pos, pm, ent, figdir):
+        """図の右クリックメニュー。ボタン列と同じ操作を並べる。"""
+        m = QtWidgets.QMenu(widget)
+        m.addAction("画像をコピー", lambda: _copy_pixmap(pm))
+        m.addAction("PNG を保存…",
+                    lambda: _save_as(area, os.path.join(figdir, ent.get("file", "")),
+                                     "PNG (*.png)"))
+        if ent.get("tsv"):
+            m.addSeparator()
+            m.addAction("Excel 用にコピー(タブ区切り)",
+                        lambda: _copy_text(os.path.join(figdir, ent["tsv"])))
+        if ent.get("csv"):
+            m.addAction("CSV を保存…",
+                        lambda: _save_as(area, os.path.join(figdir, ent["csv"]),
+                                         "CSV (*.csv)"))
+        m.addSeparator()
+        m.addAction("説明をコピー",
+                    lambda: QtWidgets.QApplication.clipboard().setText(
+                        "%s — %s" % (ent.get("name", ""), ent.get("caption", ""))))
+        m.exec(widget.mapToGlobal(pos))
+
+    def show(figdir):
+        while lay.count():
+            it = lay.takeAt(0)
+            w = it.widget()
+            if w is not None:
+                w.deleteLater()
+        man = []
+        try:
+            with open(os.path.join(figdir, "figures.json"), encoding="utf-8") as fh:
+                man = json.load(fh)
+        except Exception:                                # noqa: BLE001
+            man = []
+        if not man:
+            lbl = QtWidgets.QLabel(
+                "この例は図を出しません(examplefig.save を呼んでいない)。"
+                "テキストの結果は Output タブにあります。")
+            lbl.setProperty("muted", True)
+            lay.addWidget(lbl)
+            return 0
+        for ent in man:
+            cap = QtWidgets.QLabel("%s — %s" % (ent.get("name", ""), ent.get("caption", "")))
+            cap.setWordWrap(True)
+            cap.setProperty("muted", True)
+            lay.addWidget(cap)
+
+            png = os.path.join(figdir, ent.get("file", ""))
+            pic = QtWidgets.QLabel()
+            pm = QtGui.QPixmap(png)
+            if pm.isNull():
+                pic.setText("(読めない: %s)" % ent.get("file", ""))
+                lay.addWidget(pic)
+                continue
+            shown = pm.scaledToWidth(900, QtCore.Qt.SmoothTransformation)                 if pm.width() > 900 else pm
+            pic.setPixmap(shown)
+            # ★図そのものを右クリック(ユーザー 2026-09-06:「図で表示したものを
+            #   右クリックしてクリップボードにコピーできるといいね」)。この repo の
+            #   Studio UI 規約 —— **表示系は右クリックからも一通りできること**。
+            #   下のボタン列と同じことができる(どちらか一方にしない)。
+            pic.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+            pic.setToolTip("右クリックでコピー / 保存")
+            pic.customContextMenuRequested.connect(
+                lambda pos, w=pic, q=pm, e=ent: _figure_menu(w, pos, q, e, figdir))
+            lay.addWidget(pic)
+
+            row = QtWidgets.QHBoxLayout()
+            b_img = QtWidgets.QPushButton("画像をコピー")
+            b_img.setToolTip("元の解像度のまま クリップボードへ(Word / Excel / "
+                             "PowerPoint にそのまま貼れる)")
+            b_img.clicked.connect(lambda _=False, q=pm: _copy_pixmap(q))
+            row.addWidget(b_img)
+            b_png = QtWidgets.QPushButton("PNG を保存…")
+            b_png.clicked.connect(
+                lambda _=False, srcp=png: _save_as(area, srcp, "PNG (*.png)"))
+            row.addWidget(b_png)
+            tsv = ent.get("tsv")
+            if tsv:
+                b_tsv = QtWidgets.QPushButton("Excel 用にコピー")
+                b_tsv.setToolTip("タブ区切りでクリップボードへ。Excel に貼ると"
+                                 "セルへ展開される")
+                b_tsv.setProperty("accent", True)
+                b_tsv.clicked.connect(
+                    lambda _=False, t=os.path.join(figdir, tsv): _copy_text(t))
+                row.addWidget(b_tsv)
+            csv_name = ent.get("csv")
+            if csv_name:
+                b_csv = QtWidgets.QPushButton("CSV を保存…")
+                b_csv.clicked.connect(
+                    lambda _=False, srcp=os.path.join(figdir, csv_name):
+                    _save_as(area, srcp, "CSV (*.csv)"))
+                row.addWidget(b_csv)
+            row.addStretch(1)
+            holder = QtWidgets.QWidget()
+            holder.setLayout(row)
+            lay.addWidget(holder)
+        return len(man)
+
+    return area, show
 
 
 def _example_code_or_error(EX, key):
@@ -5878,7 +6026,9 @@ def build_window(model=None):
         out = QtWidgets.QPlainTextEdit(); out.setReadOnly(True)
         out.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
         out.setPlaceholderText("press Run to execute this example and see its ground-truth output here")
+        figs_area, figs_show = _figures_tab(QtWidgets, QtCore, QtGui)
         tabs.addTab(code, "Code"); tabs.addTab(out, "Output")
+        tabs.addTab(figs_area, "Figures")
         status = QtWidgets.QLabel("ready"); status.setProperty("hint", True)
         b_run = QtWidgets.QPushButton("Run"); b_run.setProperty("accent", True)
         b_copy = QtWidgets.QPushButton("Copy code")
@@ -5953,6 +6103,12 @@ def build_window(model=None):
             env = QtCore.QProcessEnvironment.systemEnvironment()
             env.insert("PYTHONPATH", repo_root + os.pathsep + env.value("PYTHONPATH"))
             env.insert("PYTHONUTF8", "1")
+            # ★図の受け皿。例は `examplefig` 経由でここへ PNG を書く。環境変数を
+            #   渡さない実行(CLI)では 1 枚も書かれないので、ギャラリーから
+            #   走らせたときだけ絵が出る(例の数値と速度は変わらない)。
+            figdir = tempfile.mkdtemp(prefix="fullseye_figs_")
+            env.insert("FULLSEYE_FIGURE_DIR", figdir)
+            dlg._figdir = figdir
             proc.setProcessEnvironment(env)
             def on_out():
                 out.moveCursor(QtGui.QTextCursor.End)
@@ -5961,7 +6117,11 @@ def build_window(model=None):
             def on_done(code_, _st=None):
                 on_out()
                 ok = (code_ == 0)
-                status.setText("PASS ✓" if ok else "FAIL (exit %d)" % code_)
+                n_fig = figs_show(getattr(dlg, "_figdir", ""))
+                status.setText(("PASS ✓" if ok else "FAIL (exit %d)" % code_)
+                               + ("   図 %d 枚" % n_fig if n_fig else ""))
+                if n_fig:
+                    tabs.setCurrentWidget(figs_area)
                 dlg._proc = None
                 b_run.setEnabled(True); b_run.setText("Run")
             proc.readyRead.connect(on_out)
@@ -6026,7 +6186,9 @@ def build_window(model=None):
         out = QtWidgets.QPlainTextEdit(); out.setReadOnly(True)
         out.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
         out.setPlaceholderText("press Run to execute this example and see its ground-truth output here")
+        figs_area, figs_show = _figures_tab(QtWidgets, QtCore, QtGui)
         tabs.addTab(code, "Code"); tabs.addTab(out, "Output")
+        tabs.addTab(figs_area, "Figures")
         status = QtWidgets.QLabel("ready"); status.setProperty("hint", True)
         b_run = QtWidgets.QPushButton("Run"); b_run.setProperty("accent", True)
         b_copy = QtWidgets.QPushButton("Copy code")
@@ -6097,6 +6259,12 @@ def build_window(model=None):
             env = QtCore.QProcessEnvironment.systemEnvironment()
             env.insert("PYTHONPATH", repo_root + os.pathsep + env.value("PYTHONPATH"))
             env.insert("PYTHONUTF8", "1")
+            # ★図の受け皿。例は `examplefig` 経由でここへ PNG を書く。環境変数を
+            #   渡さない実行(CLI)では 1 枚も書かれないので、ギャラリーから
+            #   走らせたときだけ絵が出る(例の数値と速度は変わらない)。
+            figdir = tempfile.mkdtemp(prefix="fullseye_figs_")
+            env.insert("FULLSEYE_FIGURE_DIR", figdir)
+            dlg._figdir = figdir
             proc.setProcessEnvironment(env)
             def on_out():
                 out.moveCursor(QtGui.QTextCursor.End)
@@ -6104,7 +6272,11 @@ def build_window(model=None):
                 out.moveCursor(QtGui.QTextCursor.End)
             def on_done(code_, _st=None):
                 on_out(); ok = (code_ == 0)
-                status.setText("PASS ✓" if ok else "FAIL (exit %d)" % code_)
+                n_fig = figs_show(getattr(dlg, "_figdir", ""))
+                status.setText(("PASS ✓" if ok else "FAIL (exit %d)" % code_)
+                               + ("   図 %d 枚" % n_fig if n_fig else ""))
+                if n_fig:
+                    tabs.setCurrentWidget(figs_area)
                 dlg._proc = None; b_run.setEnabled(True); b_run.setText("Run")
             proc.readyRead.connect(on_out); proc.finished.connect(on_done)
             dlg._proc = proc; b_run.setEnabled(False); b_run.setText("running…")

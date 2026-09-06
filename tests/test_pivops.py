@@ -582,9 +582,21 @@ def test_the_derived_field_ops_also_refuse_a_one_by_one_grid():
 # =========================================================================
 
 def test_the_ledger_lists_every_op_and_finds_its_implementation():
+    """``pivops`` の全 op が台帳にあり、実体が見つかること。
+
+    ★2026-09-06 に台帳が ``pivops`` **だけ**ではなくなった。固体側(DIC)の
+    3 op(`dic.py`)を同じ台帳へ相乗りさせている —— 別の族を立てると
+    「流体の相関器」と「固体のひずみ」が別物に見え、**同じ道具だという事実が
+    消える**ため。だから「等しい」ではなく「含む」を見て、余りは
+    **宣言済みのモジュール由来に限る**ことを別に確かめる。
+    """
     import opspiv
     public = {n for n in P.__all__ if callable(getattr(P, n))}
-    assert set(opspiv.OPSPIV) == public
+    assert public <= set(opspiv.OPSPIV), (
+        "pivops の op が台帳から漏れている: %s" % sorted(public - set(opspiv.OPSPIV)))
+    extra = set(opspiv.OPSPIV) - public
+    assert {opspiv.OPSPIV[n]["module"] for n in extra} <= {"dic"}, (
+        "台帳に素性の分からない op がある: %s" % sorted(extra))
     assert opspiv.missing() == []
 
 
@@ -606,7 +618,11 @@ def test_the_fuzzer_can_build_arguments_for_every_piv_op():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if os.path.join(root, "tools") not in _sys.path:
         _sys.path.insert(0, os.path.join(root, "tools"))
-    from typed_catalog import PARAM_HINTS
+    # ★名前レベルの `PARAM_HINTS` だけを見ると門が**ファザーより狭くなる**。
+    #   `chain_fuzz._bind_args` は op 名で狙い撃つ `OP_PARAM_HINTS` も見るので、
+    #   ここでも両方を見る(2026-09-06: dic の window / method を
+    #   OP_PARAM_HINTS に置いたら、実際には束縛できているのにここだけ落ちた)。
+    from typed_catalog import OP_PARAM_HINTS, PARAM_HINTS
 
     import opspiv
     unbindable = []
@@ -619,7 +635,9 @@ def test_the_fuzzer_can_build_arguments_for_every_piv_op():
                  inspect.Parameter.KEYWORD_ONLY)
         params = [p for p in sig.parameters.values() if p.kind in kinds]
         for p in params[len(meta["in"]):]:
-            if p.default is inspect.Parameter.empty and p.name not in PARAM_HINTS:
+            if (p.default is inspect.Parameter.empty
+                    and p.name not in PARAM_HINTS
+                    and (name, p.name) not in OP_PARAM_HINTS):
                 unbindable.append(f"{name}.{p.name}")
     assert not unbindable, f"ファザーが束縛できない必須引数: {unbindable}"
 

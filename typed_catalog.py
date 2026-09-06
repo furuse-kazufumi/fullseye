@@ -194,6 +194,11 @@ PARAM_HINTS = {
 
 
 OP_PARAM_HINTS = {
+    # dic.strain_from_displacement は **window と method に既定を置かない**
+    # (置くと 2 度の剛体回転で 600 µε の嘘が黙って出る。`dic.py` の注記)。
+    # 束縛しないとファザーからは永久に未実行になるので、ここで名指しする。
+    ("strain_from_displacement", "window"): lambda rng: 9,
+    ("strain_from_displacement", "method"): lambda rng: "green",
     # optscene.observe_surface は既定 (256, 256) x supersample 2 で **117 秒**
     # かかる(2026-09-06 実測。32:0.25 / 64:0.69 / 128:2.40 / 256:19.1 秒
     # (supersample 1)、supersample 2 で更に 6 倍)。ファザーの仕事は型と契約の

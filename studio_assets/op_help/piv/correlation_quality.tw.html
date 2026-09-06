@@ -1,0 +1,80 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">correlation_quality — PIV <code style="color:#22d3bf">solid</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d × flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import dic; dic.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;correlation_quality&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>与えられた変位場が<b>どれだけ合っているか</b>を点ごとに返す ZNCC マップ。</p>
+<p>引数</p>
+<p>ref     基準画像。</p>
+<p>cur     変形後画像。`<code style="color:#22d3bf">ref</code>` と同じ形。</p>
+<p>flow    <code style="color:#22d3bf">pivops</code> の `<code style="color:#22d3bf">flow2d</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(2, h, w)</code><code style="color:#22d3bf">、成分は </code><code style="color:#22d3bf">(dy, dx)</code>` [px]。</p>
+<p>`<code style="color:#22d3bf">info</code><code style="color:#22d3bf"> を渡さないなら </code><code style="color:#22d3bf">(2, H, W)</code>` の<b>全画素</b>の場。</p>
+<p>info    <code style="color:#22d3bf">piv_cross_correlate</code> が返した dict。渡すと窓格子の `<code style="color:#22d3bf">flow</code>` を</p>
+<p>画素へ双一次で広げてから測る。</p>
+<p>subset  相関を取る正方サブセットの一辺 [px]。<b>奇数</b>。</p>
+<p>戻り値は入力画像と同じ形の float 配列。値は `<code style="color:#22d3bf">[-1, 1]</code>` の ZNCC で、</p>
+<p><b>測れなかった点は NaN</b>(サブセットが画像からはみ出す縁、変形後の</p>
+<p>標本点が画像の外へ出る点、分散の無いサブセット)。</p>
+<p>★ これは相関器ではない —— <b>既にある変位場の採点係</b></p>
+<p><code style="color:#22d3bf">piv_cross_correlate</code> も <code style="color:#22d3bf">optical_flow_lk</code> も <code style="color:#22d3bf">demons_register</code> も、</p>
+<p>出した変位が正しいかは返さない。ここは `<code style="color:#22d3bf">cur</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">flow</code>` で基準側へ</p>
+<p>引き戻し(双一次)、`<code style="color:#22d3bf">ref</code><code style="color:#22d3bf"> との ZNCC を </code><code style="color:#22d3bf">subset</code>` の箱で測るだけ。</p>
+<p><b>どの推定器の出力でも同じ口で採点できる</b>のが要点で、相関器を</p>
+<p>もう 1 つ増やさずに品質だけを足せる。</p>
+<p>平均と標準偏差の両方を割り引くので、<b>ゲインとオフセットには不変</b>。</p>
+<p>露出が変わった対でも「合っているか」だけを見る。</p>
+<p>★★ 既存の `<code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code>` では足りない場面がある(実測)</p>
+<p>`<code style="color:#22d3bf">peak_ratio</code>`(第 1 ピーク / 第 2 ピーク)は PIV の標準的な SN 比で、</p>
+<p><b>相関面に競合する峰が立つ</b>種類の失敗を捕まえる。捕まえないのは</p>
+<p>「その場所が別物になった」種類の失敗。u=0.37 px の対のうち 60x60 画素</p>
+<p>だけを無関係な模様に差し替えた実測:</p>
+<p>指標                    差し替え領域   健全領域   区別</p>
+<p>peak_ratio                 1.207        1.304    7.5 % 差(重なる)</p>
+<p>correlation_quality        0.1101       0.9993   9 倍差</p>
+<p>品質で切って変位誤差 RMS がどう変わるか:</p>
+<p>門                  残る割合   誤差 RMS [px]</p>
+<p>なし                 100.0 %      1.8110</p>
+<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584 倍改善</p>
+<p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5 倍</p>
+<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← 6 割捨てて<b>悪化</b></p>
+<p><b>両方見るのが正しい。</b> peak_ratio は競合ピークを、ZNCC は</p>
+<p>デコリレーションを見る。片方だけでは穴が開く。</p>
+<p>★★ 落とし穴 —— <b>品質が高いことは精度が高いことではない</b></p>
+<p>ZNCC はサブピクセルの誤差にほとんど反応しない。真の変位 0.37 px の対に</p>
+<p>わざと誤差を入れた場を採点した実測(斑点の直径 3.8 px):</p>
+<p>変位の誤差 [px]   0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
+<p>zncc 中央値      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
+<p><b>0.05 px 間違えても 0.9992</b> —— 完全に合っている 0.99945 との差は</p>
+<p>2.5e-4 しかない。この指標が測れるのは「斑点の大きさに比べて大きな</p>
+<p>ずれ・欠測・別物への置き換え」であって、0.01 px の精度ではない。</p>
+<p>一様な雑音で全点が等しく劣化した場合(σ=0.15)も、門で切って残るのは</p>
+<p>21.8 % で誤差 RMS は 0.1736 → 0.1292 の 1.34 倍改善にとどまる ——</p>
+<p><b>効くのは失敗が局所的なときだけ。</b></p>
+<p>★ 引き戻しはサブセットごとの平行移動ではなく<b>場そのもの</b></p>
+<p>普通の DIC はサブセットを剛体的にずらして相関を取るが、ここは画素ごとの</p>
+<p>`<code style="color:#22d3bf">flow</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">cur</code><code style="color:#22d3bf"> を歪めてから箱で相関を取る。</code><code style="color:#22d3bf">flow</code>` が滑らかなら</p>
+<p>両者は一致し、そうでないなら<b>こちらのほうが正しい</b>(サブセット内の</p>
+<p>変形も込みで残差を見るため)。費用も O(N) で済む(256² で 0.003 秒)。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ref</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cur</code>` が 2 次元でない、形が違う、NaN・Inf を含む。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">flow</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">(2, h, w)</code>` でない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">info</code><code style="color:#22d3bf"> 無しで </code><code style="color:#22d3bf">flow</code>` が画像と違う形(直し方つきで拒否)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">info</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code><code style="color:#22d3bf"> が無い、格子と </code><code style="color:#22d3bf">flow</code>` の形が食い違う、</p>
+<p>格子がどちらかの軸で 2 未満。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">subset</code>` が偶数・3 未満・画像より大きい。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a> · <a style="color:#22d3bf" href="oppiv:piv_deform_pass">piv_deform_pass</a> · <a style="color:#22d3bf" href="oppiv:strain_from_displacement">strain_from_displacement</a> · <a style="color:#22d3bf" href="oppiv:speckle_quality">speckle_quality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">solid</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:strain_from_displacement">strain_from_displacement</a> · <a style="color:#22d3bf" href="oppiv:speckle_quality">speckle_quality</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dic.py — PIV 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

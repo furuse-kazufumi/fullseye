@@ -1,4 +1,4 @@
-# PIV operator help — 23 ops in 6 categories
+# PIV operator help — 26 ops in 7 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/piv/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### field (8)
 
 [piv_divergence](field/piv_divergence.md) · [piv_flow_magnitude](field/piv_flow_magnitude.md) · [piv_q_criterion](field/piv_q_criterion.md) · [piv_strain_rate](field/piv_strain_rate.md) · [piv_swirling_strength](field/piv_swirling_strength.md) · [piv_to_velocity](field/piv_to_velocity.md) · [piv_velocity_gradient](field/piv_velocity_gradient.md) · [piv_vorticity](field/piv_vorticity.md)
+
+### solid (3)
+
+[correlation_quality](solid/correlation_quality.md) · [speckle_quality](solid/speckle_quality.md) · [strain_from_displacement](solid/strain_from_displacement.md)
 
 ### synth (3)
 

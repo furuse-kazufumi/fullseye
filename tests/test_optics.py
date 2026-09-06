@@ -838,3 +838,79 @@ class TestAdversarialRegressions:
         waist = O.gaussian_beam(100.0, 1.064, 0.0)
         assert np.isinf(waist["wavefront_radius_mm"])
         assert waist["curvature_per_mm"] == 0.0     # the finite companion
+
+
+# --------------------------------------------------------------------------- #
+# Mueller を画像として通す(2026-09-06)                                          #
+# --------------------------------------------------------------------------- #
+# `examples/poc_photoelasticity.py` は画素ごとに位相差の変わる位相子を通す必要が
+# あり、その口が無いために (H,W,4,4) の掛け算を PoC の側で手書きしていた。
+# 4x4 そのものは正しい(暗視野円偏光系が教科書の I=sin²(δ/2) と 2.2e-16 で一致)
+# ので、足りなかったのは形だけ。以下はその形の門。
+def _retarder_field(delta, theta):
+    """画素ごとの位相子 Mueller ``(H, W, 4, 4)``(教科書の閉形式)。"""
+    c2, s2 = np.cos(2 * theta), np.sin(2 * theta)
+    cd, sd = np.cos(delta), np.sin(delta)
+    m = np.zeros(np.shape(delta) + (4, 4))
+    m[..., 0, 0] = 1.0
+    m[..., 1, 1] = c2 * c2 + s2 * s2 * cd
+    m[..., 1, 2] = c2 * s2 * (1.0 - cd)
+    m[..., 1, 3] = -s2 * sd
+    m[..., 2, 1] = m[..., 1, 2]
+    m[..., 2, 2] = s2 * s2 + c2 * c2 * cd
+    m[..., 2, 3] = c2 * sd
+    m[..., 3, 1] = s2 * sd
+    m[..., 3, 2] = -c2 * sd
+    m[..., 3, 3] = cd
+    return m
+
+
+def test_mueller_apply_broadcasts_over_an_image_of_matrices():
+    """``(H,W,4,4)`` x ``(4,)`` —— 画素ごとに違う素子を通せること。"""
+    d = np.linspace(0.0, 2 * np.pi, 5 * 7).reshape(5, 7)
+    th = np.linspace(0.0, np.pi / 2, 5 * 7).reshape(5, 7)
+    out = O.mueller_apply(_retarder_field(d, th), np.array([1.0, 0.0, 0.0, 1.0]))
+    assert out.shape == (5, 7, 4)
+    # 円偏光を入れると S3 = cos δ、(S1,S2) = sinδ·(-sin2θ, cos2θ)。閉形式と一致。
+    assert np.allclose(out[..., 3], np.cos(d), atol=1e-12)
+    assert np.allclose(out[..., 1], -np.sin(2 * th) * np.sin(d), atol=1e-12)
+    assert np.allclose(out[..., 2], np.cos(2 * th) * np.sin(d), atol=1e-12)
+
+
+def test_mueller_apply_broadcasts_over_an_image_of_stokes_vectors():
+    """``(4,4)`` x ``(H,W,4)`` —— 素子は 1 つ、光が場所で変わる側。"""
+    m = np.asarray(O.mueller_element("polarizer", 0.0))
+    s = np.zeros((3, 4, 4))
+    s[..., 0] = 1.0
+    out = O.mueller_apply(m, s)
+    assert out.shape == (3, 4, 4)
+    assert np.allclose(out[..., 0], 0.5)          # 無偏光は半分になる
+
+
+def test_mueller_apply_field_matches_the_scalar_path_pixel_by_pixel():
+    """場の道と 1 本ずつの道が**同じ数**を返すこと(近道が別実装にならない)。"""
+    d = np.linspace(0.2, 5.0, 6)
+    th = np.linspace(0.0, 1.2, 6)
+    field = O.mueller_apply(_retarder_field(d, th), np.array([1.0, 0.0, 0.0, 1.0]))
+    for k in range(6):
+        one = O.mueller_apply(_retarder_field(d[k:k + 1], th[k:k + 1])[0],
+                              np.array([1.0, 0.0, 0.0, 1.0]))
+        assert np.allclose(field[k], one, atol=0, rtol=0), k
+
+
+def test_mueller_apply_field_refuses_an_unphysical_pixel():
+    """1 画素でも実現不可能なら**場ごと拒否**(fail-closed)。"""
+    m = np.broadcast_to(np.eye(4), (2, 3, 4, 4)).copy()
+    s = np.zeros((2, 3, 4))
+    s[..., 0] = 1.0
+    s[1, 2, 1] = 2.0                               # 偏光度 2 —— ありえない
+    with pytest.raises(ValueError, match="unphysical"):
+        O.mueller_apply(m, s)
+
+
+def test_mueller_apply_field_rejects_shapes_that_do_not_broadcast():
+    m = np.broadcast_to(np.eye(4), (2, 3, 4, 4)).copy()
+    s = np.zeros((5, 7, 4))
+    s[..., 0] = 1.0
+    with pytest.raises(ValueError, match="broadcast"):
+        O.mueller_apply(m, s)
