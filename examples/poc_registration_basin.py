@@ -451,7 +451,9 @@ def main():
     print("     RANSAC は **自信を持って間違った** 対応集合を選ぶ。")
 
     # ---- 5-a. 重なり率 -----------------------------------------------------
-    print("\n=== 5-a. 重なり率を下げる(部分ビュー。初期ずれ 30 度 / 直径の 10 %)===")
+    TR5 = 10
+    print(f"\n=== 5-a. 重なり率を下げる(部分ビュー。初期ずれ 30 度 / 直径の 10 %、"
+          f"{TR5} 試行/セル)===")
     print(f"  {'重なり':>8}{'点対点 ICP':>12}{'PCA + ICP':>12}{'ICP trim=0.4':>16}"
           f"{'FPFH+RANSAC':>14}{'PPF':>8}")
     OVER = (1.0, 0.9, 0.75, 0.6, 0.5)
@@ -461,7 +463,7 @@ def main():
         for label, method in (("icp", m_icp), ("pca", m_pca_icp), ("trim", m_trim),
                               ("feat", m_feature), ("ppf", m_ppf)):
             rng_o = np.random.default_rng(9001)
-            TR, n_ok = 8, 0
+            TR, n_ok = TR5, 0
             for _ in range(TR):
                 u = rng_o.normal(size=3)
                 u /= np.linalg.norm(u)
