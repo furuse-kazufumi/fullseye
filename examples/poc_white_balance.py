@@ -575,6 +575,7 @@ def main():
              ("白パッチ無し", dict(keep=NO_WHITE)),
              ("淡彩のみ", dict(keep=PALE_ONLY)),
              ("有彩色 60 %", dict(bias_frac=0.6)),
+             ("有彩色 60 % + 白なし", dict(bias_frac=0.6, keep=NO_WHITE)),
              ("飽和(露出 3.0)", dict(exposure=3.0)),
              ("雑音 σ=0.03", dict(noise=0.03)))
     best_p = {}

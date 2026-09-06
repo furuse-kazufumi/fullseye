@@ -725,6 +725,10 @@ def main():
     assert all(x < y for x, y in zip(preds, preds[1:])), "予測増幅率が距離で単調でない"
     assert all(x <= y for x, y in zip(meas[:2], meas[1:3])), "実測増幅率が近中遠で単調でない"
     assert all(m <= p * 1.10 for m, p in zip(meas, preds)), "実測が理論上限を超えている"
+    # 雑音を足すと PSNR が「上がる」—— t の負バイアスを偶然打ち消すため。
+    assert p_noisy_dcp > scores["暗チャネル p=15"][0], "雑音で PSNR が上がる現象が消えた"
+    assert bias_clean < bias_noisy < 0.0, \
+        f"雑音が t の負バイアスを縮めていない {bias_clean:+.4f} → {bias_noisy:+.4f}"
 
     # (10) 大気光の推定は「色」としては当たる —— 律速が t である根拠の裏取り。
     assert angle_deg(a_dcp, A_TRUE) < 1.5, "暗チャネル法の大気光が色として外れている"
