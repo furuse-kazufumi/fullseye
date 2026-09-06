@@ -797,18 +797,32 @@ def section10_tool_gaps() -> None:
     h, w = prof_img.shape
     hd = fs.ledger.gen_measure_rectangle2(float(CENTER_ROW), (w - 1) / 2.0, 0.0,
                                           (w - 1) / 2.0, 1, (h, w))
-    counts = [(sg, len(fs.ledger.measure_pos(prof_img, hd, sigma=sg, threshold=0.03)))
-              for sg in (0.0, 0.3, 0.4, 0.6, 0.8, 1.0, 1.5)]
-    got = dict(counts)
-    assert got[0.0] == 0 and got[1.0] != N_RUN + 1 and got[0.6] == N_RUN + 1, counts
+    rng_d = np.random.default_rng(1)
+    clean = [render(make_message(rng_d), phase=rng_d.uniform(0, MODULE_PX))
+             for _ in range(TRIALS)]
+    got = {}
+    for sg in (0.0, 0.3, 0.4, 0.6, 0.8, 1.0, 1.2, 1.5):
+        cnt = []
+        for im in clean:
+            hh, ww = im.shape
+            hdl = fs.ledger.gen_measure_rectangle2(float(CENTER_ROW), (ww - 1) / 2.0,
+                                                   0.0, (ww - 1) / 2.0, 1, (hh, ww))
+            cnt.append(len(fs.ledger.measure_pos(im, hdl, sigma=sg, threshold=0.03)))
+        got[sg] = (sum(c == N_RUN + 1 for c in cnt), min(cnt), max(cnt))
+    assert got[0.4][0] == TRIALS and got[1.0][0] < TRIALS \
+        and got[1.5][0] == TRIALS, got
     print("  (d) ★**`measure_pos` のエッジ本数が sigma に非単調に依存する**。")
-    print("      同じ無傷の 1 枚(真値 %d 本)で: %s"
-          % (N_RUN + 1, " / ".join("σ=%.1f→%d 本" % c for c in counts)))
-    print("      σ=0 で **0 本**(平滑無しだと勾配の台地が厳密な極大にならない)、")
-    print("      σ=1.0 で 11 本落ちる。1 モジュール 3 px の周期構造では隣の")
-    print("      勾配ローブが重なり、どちらか一方が極大でなくなる —— どの σ が")
-    print("      当たるかは**サブピクセル位相しだい**。だから手法 5 は σ を")
-    print("      %s の順に試している。例外は出ず、本数が静かに減る。"
+    print("      無傷 %d 枚(真値 %d 本)で、ちょうど %d 本になった枚数:"
+          % (TRIALS, N_RUN + 1, N_RUN + 1))
+    print("      " + " / ".join("σ=%.1f:%d 枚" % (k, v[0]) for k, v in got.items()))
+    print("      σ=0.4 と 0.6 は全数、**0.8〜1.2 は %d 枚しか通らず**、1.5 でまた"
+          % got[1.0][0])
+    print("      全数に戻る。落ちる枚数では本数が %d 本まで減る(例外は出ない)。"
+          % got[1.0][1])
+    print("      1 モジュール %g px の周期構造では隣の勾配ローブが重なり、"
+          % MODULE_PX)
+    print("      片方が厳密な極大でなくなる —— どの σ が当たるかは**サブピクセル")
+    print("      位相しだい**。だから手法 5 は σ を %s の順に試している。"
           % str(CALIPER_SIGMAS))
 
     # (e) polarity の表現が 2 通りある(文字列 と ±1)。
