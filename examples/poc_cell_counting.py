@@ -1450,6 +1450,8 @@ def main():
     assert hasattr(fs.ledger, "vol_label") and hasattr(fs.ledger, "vol_region_props")
     assert not hasattr(fs.ledger, "label"), "2 次元ラベリングが生えた(良い変化)"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 

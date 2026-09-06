@@ -468,6 +468,14 @@ def main():
         print(f"    {d0:>11.3f}{K_X*d0:>10.4f}{fid:>14.2e}"
               f"{f['reference_coherence']:>18.5f}{meas:>12.6f}"
               f"{rel(meas, d0):>12.2e}{flag}")
+    d_axis = sorted(fid_by_d)
+    figs.save_plot("amplitude_cliff",
+                   [("忠実度誤差", d_axis,
+                     [np.log10(max(fid_by_d[d], 1e-16)) for d in d_axis])],
+                   xlabel="入力振幅 d [px]", ylabel="log10 忠実度誤差",
+                   title="崖は入力振幅にある(拡大率ではない)",
+                   caption="3.05 px までは機械精度、3.10 px で崩壊。境界 2.4048/k = "
+                           "%.4f px は J0 の第 1 零点。" % (2.4048 / K_X))
     print(f"    → 3.05 px は機械精度、3.10 px で崩壊。境界 = 2.4048/k = "
           f"{2.4048/K_X:.4f} px。")
     print("       これは位相の巻き pi/k = 4.00 px ではなく、時間平均の位相基準")
