@@ -715,10 +715,18 @@ def main() -> None:
           "同じ大きさの規約差。" % PX_MM)
     print("  * 積分法は 0.05 mm(0.25 px)まで連続。弱点は照明の傾斜ではなく"
           "**ベースラインの次数**(1 次だと %+.4f mm の下駄)。" % cross["e1"][-1])
-    print("  * テーパ試験: 積分法は全 %d 点、2 値化は %d 点でしか値が出ない。"
-          % (taper["n"], taper["n_got"]))
+    print("  * テーパ試験: 積分法は全 %d 点、2 値化は %d 点でしか値が出ない"
+          "(設計限界 0.20 mm 未満の %d 点では %d 点)。"
+          % (taper["n"], taper["n_got"], taper["n_below"], taper["n_below_got"]))
+    print("  * 畳むと結論が反転する: 点ごとでは 2 値化が勝ち、経路平均では"
+          "積分法が勝つ(σ=0.07 で %.4f/%.4f vs %.4f/%.4f mm)。"
+          % (cross["int_rms"][3], cross["bin_rms"][3],
+             cross["int_mean_rms"][3], cross["bin_mean_rms"][3]))
     print("  * 最大幅は測点 N とともに増える(%d 点 %+.4f -> %d 点 %+.4f mm)。"
           "予測は σ_w·a_N。" % (mx["n"][0], mx["meas"][0], mx["n"][-1], mx["meas"][-1]))
+    lost = [r for r in det["rows"] if r[3] > 0]
+    print("  * 経路の検出は測定より易しい。外れたのは %d/%d 条件で、"
+          "いずれも幅ではなくざらつきが原因。" % (len(lost), len(det["rows"])))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
