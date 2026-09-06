@@ -247,16 +247,49 @@ def test_the_machine_readable_index_is_current():
 
 
 def test_the_rag_guide_note_count_is_current():
-    """`AI_RAG_GUIDE.md` の「ノート N 枚」が実数と一致すること。
+    """`AI_RAG_GUIDE.md` の「ノート N 枚」が索引と**同じ数**であること。
 
-    「約 1000 枚」と書いたまま 1,843 枚まで放置されていた。RAG の規模を
-    見誤らせる数字なので、実測に合わせて数え直す。
+    「約 1000 枚」と書いたまま 1,842 枚まで放置されていた。直すときに
+    **ファイルを数えて 1,843 と書いてしまい**、索引(1,842)と食い違う数を
+    同時に公開しかけた(Codex の敵対的レビューが検出、2026-09-06)。差の
+    1 本は `docs/ops/SAMPLES.md` —— op ノートではない。数える対象は
+    「台帳の記録」であって「`docs/ops` の md ファイル」ではない。
     """
-    n = len([p for p in (DOCS / "ops").rglob("*.md")
-             if p.name != "INDEX.md" and "guides" not in p.parts])
+    sys.path.insert(0, str(ROOT / "tools"))
+    sys.path.insert(0, str(ROOT))
+    import gen_docs_index_ops as G
+
+    n = len(G._records())
     s = (DOCS / "AI_RAG_GUIDE.md").read_text(encoding="utf-8")
-    assert "{:,}".format(n) in s or str(n) in s, (
+    assert "{:,}".format(n) in s, (
         "docs/AI_RAG_GUIDE.md のノート枚数が古い(いまは %s 枚)" % "{:,}".format(n))
+
+
+def test_the_note_files_on_disk_match_the_ledger_exactly():
+    """★ファイルと台帳が**双方向に**一致すること。
+
+    片側しか見ないと、消えた op のノートが「権威ある文書」として検索に
+    残り続ける(RAG は在ると答える)。逆に、記録はあるのにファイルが無ければ
+    リンク切れになる。既知の例外は 1 つだけ、明示して数える。
+    """
+    sys.path.insert(0, str(ROOT / "tools"))
+    sys.path.insert(0, str(ROOT))
+    import gen_docs_index_ops as G
+    import opdocs as OD
+
+    #: op ノートではないが `docs/ops/` に置いてある文書。増やすなら理由を書く。
+    NOT_A_NOTE = {"SAMPLES.md"}
+
+    want = {Path(OD._op_path(r)).resolve() for r in G._records()}
+    have = {p.resolve() for p in (DOCS / "ops").rglob("*.md")
+            if p.name != "INDEX.md" and "guides" not in p.parts
+            and p.name not in NOT_A_NOTE}
+    extra = sorted(str(p.relative_to(ROOT)) for p in have - want)
+    gone = sorted(str(p.relative_to(ROOT)) for p in want - have)
+    assert not extra, ("台帳に無いノートが残っている(消えた op の説明が検索に"
+                       "残る): %s" % extra[:20])
+    assert not gone, ("台帳にあるのにノートが無い: %s —— "
+                      "`py -3.11 tools/opdocs.py all`" % gone[:20])
 
 
 def test_the_docmap_lists_every_top_level_document():
