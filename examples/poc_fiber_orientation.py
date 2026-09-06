@@ -632,9 +632,11 @@ def section_border() -> dict:
           % (m_all["R"], m_in["R"], abs(m_all["R"] - m_in["R"])))
     print("     縁だけを取り出しても配向度 %.4f・平均 %.1f 度で、"
           "偽ピークは見えない。" % (edge["R"], edge["mean_deg"]))
-    print("     理由は面積比: 縁 1〜2 画素の帯は視野の %.1f %% しかなく、"
-          "24 px の帯(%.0f %%)に薄まる。"
-          % (100 * 4 * 2 / N_PIX, 100 * (1 - (N_PIX - 48) ** 2 / N_PIX ** 2)))
+    band = 100 * (1.0 - ((N_PIX - 4) / N_PIX) ** 2)
+    print("     理由は面積比と重み: 勾配が縁を見るのは外周 2 px の帯 = 視野の "
+          "%.1f %% だけで、\n     しかもそこは平坦なのでエネルギー重みが小さい。"
+          "捨てた 24 px の帯(%.0f %%)の大半は普通の繊維だった。"
+          % (band, 100 * (1 - ((N_PIX - 48) / N_PIX) ** 2)))
     return {"all": m_all, "inner": m_in, "edge": edge, "truth": truth}
 
 
