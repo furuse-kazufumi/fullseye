@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;box_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>軸對齊長方體的<b>精確</b>符號距離場(內負外正)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Inigo Quilez の box SDF: `<code style="color:#22d3bf">q = |p-center| - half_extents</code>` とし、</p>
+<p>`<code style="color:#22d3bf">outside = |max(q,0)|</code>` (角/辺/面の外はユークリッド距離),</p>
+<p>`<code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code>` (内側は最近面までの負値),</p>
+<p>`<code style="color:#22d3bf">sdf = outside + inside</code>`。</p>
+<p>`<code style="color:#22d3bf">half_extents</code>` は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は</p>
+<p>垂直距離)、内側も最近面までの厳密負距離を与える。</p>
+<p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

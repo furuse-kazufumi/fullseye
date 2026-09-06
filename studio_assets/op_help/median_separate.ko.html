@@ -3,8 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;median_separate&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">median_separate</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/median_separate.png" alt="median_separate: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/median_separate.png" alt="median_separate: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median_separate.a.jpg">median_separate: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/median_separate.inputs.jpg">median_separate: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구현은 `<code style="color:#22d3bf">median_image</code><code style="color:#22d3bf">와 동일하다(</code><code style="color:#22d3bf">kind: &quot;median&quot;</code><code style="color:#22d3bf">, 정사각형 창의 2차원 미디언). HALCON의 </code><code style="color:#22d3bf">median_separate</code>`(Separated median filtering with rectangle masks.)는 행 방향·열 방향으로 분리한 1차원 미디언을 2패스로 적용하는 고속 근사 연산자이지만, 이 대역에서는 구분하지 않고 통상의 2차원 미디언을 반환한다(결과는 비슷한 경우가 많지만 엄밀히는 다른 알고리즘이다 -- 근사의 한계).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

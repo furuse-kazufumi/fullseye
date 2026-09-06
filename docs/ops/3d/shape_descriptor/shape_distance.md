@@ -19,6 +19,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 2 つの記述子間の距離。小さいほど同形状。
 
+Parameters
+----------
+desc_a, desc_b : array_like
+    describe() などが返す同じ長さのベクトル。
+metric : {"l1", "jsd"}
+    - "l1" : L1(マンハッタン)距離。連結記述子(部分分布の並び)に素直で既定。
+    - "jsd": Jensen-Shannon 距離(全体を 1 つの分布とみなし総和 1 に正規化してから
+             JS ダイバージェンスの平方根)。0〜1 に収まる有界指標。
+
+Returns
+-------
+float
+    非負の距離。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

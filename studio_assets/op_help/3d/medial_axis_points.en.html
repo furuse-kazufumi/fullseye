@@ -4,6 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import medial; medial.medial_axis_points(vol, min_radius=0.0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;medial_axis_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turn the medial voxels into a point set with their local radius (= that point&#x27;s EDT value). Returns (points, radius).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>太い部分は面状、細い部分は線状に分布する medial 点を (M,3) の座標(z,y,x)と、それぞれの</p>
+<p>局所半径 (M,) として返す。半径最大の点は形状の最も「内側」= 中心を指す。</p>
+<p>Args:</p>
+<p>vol: バイナリ voxel(bool / 0-1 の 3D)。</p>
+<p>min_radius: この半径以下の点を除外(ノイズ抑制)。</p>
+<p>Returns:</p>
+<p>points (float64, (M,3)): medial voxel 座標(z, y, x)。</p>
+<p>radius (float64, (M,)): 各点の EDT 値(= 局所内接半径)。</p>
+<p>手順: `<code style="color:#22d3bf">distance_ridge(vol, min_radius)</code><code style="color:#22d3bf"> で得た </code><code style="color:#22d3bf">ridge_mask</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">np.argwhere</code>`</p>
+<p>(配列 index、行は z-major の辞書順で決定的)と、その位置の `<code style="color:#22d3bf">edt</code>` 値を返す。</p>
+<p>座標は voxel index で spacing は掛けない(物理座標が要るなら呼び手で</p>
+<p>`<code style="color:#22d3bf">points * (sz, sy, sx)</code>`、半径も同様に等方 spacing を掛ける)。</p>
+<p>引数と検証: `<code style="color:#22d3bf">vol</code>` は 3-D(非ゼロ = 前景)。3-D でない・空・NaN/Inf は</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">min_radius &lt; 0</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">radius</code>` は</p>
+<p>`<code style="color:#22d3bf">&gt; min_radius</code><code style="color:#22d3bf"> の点だけ(境界 voxel は EDT が 1 以下なので </code><code style="color:#22d3bf">min_radius=1</code>` で</p>
+<p>外殻ノイズをほぼ落とせる)。</p>
+<p>端の挙動: 前景が無い、または全点が `<code style="color:#22d3bf">min_radius</code><code style="color:#22d3bf"> 以下なら </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(0, 3)</code>`、</p>
+<p>`<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(0,)</code>` の空配列(エラーにしない)。</p>
+<p>使いどころ: `<code style="color:#22d3bf">medial_match</code><code style="color:#22d3bf"> の半径分布、点群 op(</code><code style="color:#22d3bf">smallest_sphere3</code>` /</p>
+<p>`<code style="color:#22d3bf">fit_line3</code><code style="color:#22d3bf"> 等)への橋渡し、</code><code style="color:#22d3bf">np.argmax(radius)</code>` で最大内接球の中心を取る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,6 +5,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kugeldetektion (der 3-D-Lift des 2-D-Hough-Kreises). Stimmt für jeden Radius r über das Zentrum = p + sgn·r·n ab.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>薄い境界面の各 voxel が法線 n に沿って中心へ投票(符号は明/暗どちらの球でも拾えるよう両方試す)。</p>
+<p>半径ごとの中心ピーク投票の最大 = 検出球。votes-vs-radius を放物線補間で sub-voxel 半径。</p>
+<p>産業: ボール・球状部品・点群中の球面。返り値 (votes, radius, center(3,))。</p>
+<p>手順: `<code style="color:#22d3bf">(vol &gt; iso)</code><code style="color:#22d3bf"> の 1 voxel 厚の境界面 voxel </code><code style="color:#22d3bf">p</code><code style="color:#22d3bf"> とその単位法線 </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">sobel3d</code>`、</p>
+<p>`<code style="color:#22d3bf">mc</code><code style="color:#22d3bf"> は生出力への閾値)から、半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> ごとに </code><code style="color:#22d3bf">c = round(p ± r·n)</code>` へ投票し(± は明球・</p>
+<p>暗球の両方を試し、多い方を採る)、volume 内に落ちた票の最大値をその r のスコアにする。全 r で</p>
+<p>最大のものが検出球。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radii</code><code style="color:#22d3bf">: 試す半径(voxel 単位)の列。None なら </code><code style="color:#22d3bf">range(4, 16)</code><code style="color:#22d3bf">(4〜15)。</code><code style="color:#22d3bf">subvoxel=True</code>`</p>
+<p>は最良 r の <b>両隣 r±1 が radii に含まれるとき</b>だけ votes の放物線補間で半径を ±1 以内に</p>
+<p>精緻化する(端の r や飛び飛びの radii では整数のまま)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値 `<code style="color:#22d3bf">(votes, radius, center)</code>`: votes は票数(境界 voxel 数が上限)、radius は float、</p>
+<p>center は <b>整数 (z,y,x) の tuple</b>(中心は精緻化しない)。</p>
+<p style="margin:2px 0 2px 12px">• 境界 voxel が 10 未満なら <b>None</b>。`<code style="color:#22d3bf">radii</code>` が空だと TypeError で落ちる。</p>
+<p style="margin:2px 0 2px 12px">• 1 個しか返さない。複数球は検出した球の voxel を消して再実行するか、点群なら</p>
+<p>`<code style="color:#22d3bf">ransac_sphere</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_sphere_3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

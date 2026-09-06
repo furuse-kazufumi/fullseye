@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.mesh_to_points(vertices, faces, samples=20000, seed=0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mesh_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>mesh(정점+면) → 표면 점군(면적 가중 균일 샘플링). mesh→point cloud 변환.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>手順: 三角形 `<code style="color:#22d3bf">tri = vertices[faces]</code><code style="color:#22d3bf"> の面積 </code><code style="color:#22d3bf">0.5·|(b−a)×(c−a)|</code><code style="color:#22d3bf"> を確率にして </code><code style="color:#22d3bf">samples</code>`</p>
+<p>個の面を復元抽出し、各面で `<code style="color:#22d3bf">u, v ~ U(0,1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">u + v &gt; 1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">(1−u, 1−v)</code>` に折り返す</p>
+<p>(一様 barycentric)。点 `<code style="color:#22d3bf">= a + u(b−a) + v(c−a)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">default_rng</code>` を固定するので</p>
+<p>同じ引数なら同じ点群。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">vertices</code><code style="color:#22d3bf"> (V,3) float、</code><code style="color:#22d3bf">faces</code>` (F,3) int(0 始まりの頂点 index)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値 `<code style="color:#22d3bf">(samples, 3)</code><code style="color:#22d3bf"> float64。面の数に関係なくちょうど </code><code style="color:#22d3bf">samples</code>` 点。</p>
+<p style="margin:2px 0 2px 12px">• 全面が退化(面積和 0)なら確率が NaN になり `<code style="color:#22d3bf">rng.choice</code>` が ValueError。</p>
+<p style="margin:2px 0 2px 12px">• 法線は付かない(`<code style="color:#22d3bf">estimate_point_normals</code>` で付ける)。面積重みなので大きな面ほど点が多く、</p>
+<p>頂点密度には依存しない。</p>
+<p>後段: `<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">icp_point2point_3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">match_pca</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

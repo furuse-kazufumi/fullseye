@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import photometric; photometric.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;photometric_stereo&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lambertian photometric stereo: recover normals and albedo from N images taken under known light directions. → (normals HxWx3, albedo HxW).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>I_n = albedo * max(N·L_n, 0)。各画素で g = albedo*N を最小二乗 g = pinv(L) @ I で解き、</p>
+<p>albedo=|g|, normal=g/|g|。N&gt;=3 必要。albedo~0 や mask 外の画素は normal=(0,0,1)。</p>
+<p>normalize=True で光源ベクトルを単位方向に正規化(render_lambertian と同一規約 = アルベド絶対値が正しく出る)。</p>
+<p>強度重み付き光源を使うなら normalize=False にし、合成側も生ベクトルで揃えること。</p>
+<p>lit_only(2026-09-04 追加): <b>付着影(attached shadow)を外して解く</b>。モデルの</p>
+<p>max(·, 0) は非線形なので、N·L &lt; 0 の観測(真の値は 0)を線形最小二乗にそのまま入れると</p>
+<p>解が偏る ―― 実測: 影も AO も無い球で中央値 <b>9°</b>、点灯している光源だけで解くと</p>
+<p><b>0.000°</b>。既定は False(従来の挙動を変えない)。True にすると画素ごとに</p>
+<p><code style="color:#22d3bf">I &gt; lit_thresh</code> の光源だけを使って解き直す。<b>同じ点灯パターンの画素をまとめて</b></p>
+<p>1 回の疑似逆行列で処理するので、追加コストは光源数ぶんのパターン数に比例する程度</p>
+<p>(6 灯なら最大 64 群)。点灯光源が 3 未満の画素は全光源の解に戻す(fail-open:</p>
+<p>解けない画素を NaN にするより、偏っていても値がある方が下流の積分が壊れない)。</p>
+<p>lit_thresh: 「点灯している」とみなす輝度の下限。撮影ノイズより上に置く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

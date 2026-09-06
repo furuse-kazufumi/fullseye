@@ -6,6 +6,17 @@
 <p>정반사 d − 2(d·n)n. `<code style="color:#22d3bf">glassmirror.refract_rays</code>` 의 짝(반사 쪽이 없었습니다).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>入射・法線ともに (..., 3)。法線の向き(表裏)には依存しない。返り値は単位ベクトル。</p>
+<p>手順: `<code style="color:#22d3bf">directions</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">normals</code>` をそれぞれ単位化してから</p>
+<p>`<code style="color:#22d3bf">r = d - 2 (d·n) n</code><code style="color:#22d3bf"> を取り、もう一度単位化する。</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">-n</code>` にしても</p>
+<p>`<code style="color:#22d3bf">(d·n) n</code><code style="color:#22d3bf"> は変わらないので、法線の符号を気にせず </code><code style="color:#22d3bf">trace_rays(...)[&quot;normal&quot;]</code>`</p>
+<p>をそのまま渡せる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">directions</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">normals</code>`: 最後の軸が 3、有限。形が違えば numpy の規則で</p>
+<p>ブロードキャスト(1 本の法線を全光線に、など)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(`<code style="color:#22d3bf">ValueError</code>`): 最後の軸が 3 でない / 非有限 / <b>長さ 0 のベクトル</b>を含む</p>
+<p>(交差しなかった光線の法線 0 を混ぜると落ちる ―― `<code style="color:#22d3bf">index &gt;= 0</code>` で絞ってから)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: ブロードキャスト後の形の float64 単位ベクトル。</p>
+<p>`<code style="color:#22d3bf">trace_rays</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">reflect_rays</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">trace_rays</code>` で鏡面の 2 次反射を追える。</p>
+<p>屈折側は `<code style="color:#22d3bf">refract_rays</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

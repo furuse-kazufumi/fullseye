@@ -404,10 +404,10 @@ def test_the_index_renders_as_a_page_without_local_paths():
 # ★生成物が「中身か」を見る —— 一致だけ見る門は、両方が空でも緑になる            #
 # --------------------------------------------------------------------------- #
 #: 2026-09-06 の実測。**下回ったら落ちる**(上げるのは自由)。
-_NOTES_FLOOR = 1842            # op ノートの本数
-_WITH_EXAMPLE_FLOOR = 1637     # 実行できる例が 1 本以上あるノート
-_WITH_USAGE_FLOOR = 1348       # 使い方が 120 字以上あるノート
-_GUIDES_FLOOR = 48             # 族ガイド
+_NOTES_FLOOR = 1854            # op ノートの本数
+_WITH_EXAMPLE_FLOOR = 1825     # 実行できる例が 1 本以上あるノート
+_WITH_USAGE_FLOOR = 1854       # 使い方が 120 字以上あるノート
+_GUIDES_FLOOR = 49             # 族ガイド
 _GUIDE_BYTES_FLOOR = 2000      # いちばん短い族ガイドの下限
 
 

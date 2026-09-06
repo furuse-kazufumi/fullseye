@@ -19,6 +19,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。
 
+子午面での点-母線直交距離 ``a·sinα − ρ·cosα``(``a``=軸成分, ``ρ``=半径,
+``α``=半角)を ``scipy.optimize.least_squares`` で最小化する。初期値は PCA 軸 +
+半径 ρ の軸成分 t に対する線形回帰(``ρ = m·t + b`` の傾き m=tanα, 切片ゼロ点=頂点)。
+軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。
+
+Args:
+    points: (N,3) 点群(最低 6 点)。
+
+Returns:
+    dict: ``{"apex": (3,), "axis": (3,) 単位軸(開く向き), "half_angle": float [rad],
+    "residual": float 点-面距離の RMS}``。
+
+Raises:
+    ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

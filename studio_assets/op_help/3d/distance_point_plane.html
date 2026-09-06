@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.distance_point_plane(p, plane_pt, n)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;distance_point_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点-平面距離(符号なし)。</p>
+<p>`<code style="color:#22d3bf">|(p − plane_pt)·n̂|</code><code style="color:#22d3bf"> を float で返す(</code><code style="color:#22d3bf">n</code>` は内部で単位化)。符号は捨てるので、面のどちら側か</p>
+<p>が要るなら `<code style="color:#22d3bf">(p − plane_pt) @ n̂</code><code style="color:#22d3bf"> を直接計算する。</code><code style="color:#22d3bf">p</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">plane_pt</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code>` は数値の 2 または</p>
+<p>3 ベクトル、次元の混在は ValueError。2-D では `<code style="color:#22d3bf">n</code>` を直線の法線として点-直線距離になる。</p>
+<p>零ベクトルの `<code style="color:#22d3bf">n</code>` は 0 を返す。単位は入力座標の単位。</p>
+<p>用途: `<code style="color:#22d3bf">fit_plane_3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hough_plane_3d</code><code style="color:#22d3bf"> の面からの高さ、</code><code style="color:#22d3bf">surface_form_error</code>` の点群版</p>
+<p>(残差を 1 点ずつ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

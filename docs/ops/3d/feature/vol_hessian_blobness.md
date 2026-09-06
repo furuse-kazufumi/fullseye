@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Blob-like (spherical) response from the Hessian eigenvalues at one *scale*.
 
+A bright blob has all three eigenvalues negative and comparable in magnitude;
+the response is the geometric mean of their magnitudes,
+``(|l1| |l2| |l3|)**(1/3)``, gated to voxels where the three share the sign of
+a blob of the requested polarity (all negative for bright, all positive for
+dark). Normalised to ``[0, 1]``. Complements the line filters — a Frangi-style
+``Rb`` term rejects blobs, this one keeps them. Reference: the second-order
+(Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

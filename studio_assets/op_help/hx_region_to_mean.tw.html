@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_region_to_mean&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">region_to_mean</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_region_to_mean.png" alt="hx_region_to_mean: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_region_to_mean.png" alt="hx_region_to_mean: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_region_to_mean.a.jpg">hx_region_to_mean: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_region_to_mean.inputs.jpg">hx_region_to_mean: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每個連通區域塗成其平均灰階(image -&gt; image)。以閾值 a 分前景/背景後 label 化。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">v &gt; a</code><code style="color:#22d3bf"> を前景とし </code><code style="color:#22d3bf">ndimage.label</code><code style="color:#22d3bf">(4 近傍)で連結成分に分け、各成分の画素を </code><code style="color:#22d3bf">ndimage.mean</code>` で求めた</p>
+<p>成分内の平均 gray 値で塗りつぶす。背景(`<code style="color:#22d3bf">v &lt;= a</code>`)は背景画素全体の平均 1 値で塗る(背景が無ければ 0.0)。</p>
+<p>出力は入力と同形の float 画像で、値域は入力の範囲内(正規化しない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → 前景/背景を分けるしきい値。a=0 なら 0 より大きい画素がすべて前景。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>結果は成分ごとに一定値になるので、後段の `<code style="color:#22d3bf">threshold</code>` で「平均が明るい部品だけ」を選ぶような使い方ができる。</p>
+<p>4 近傍ラベルなので斜め接触する塊は別々の平均になる。入力の検証は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

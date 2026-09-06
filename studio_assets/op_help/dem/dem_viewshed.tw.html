@@ -6,6 +6,22 @@
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>1 点からの可視領域(1 = 見える)。視線が地形に遮られるかを判定する。</p>
 <p>`<code style="color:#22d3bf">observer_rc</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(row, col)</code>`。観測点自身は常に可視。</p>
+<p>手順: 目の高さ `<code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>`。各セルへの視線を</p>
+<p>`<code style="color:#22d3bf">ceil(hypot(H, W))</code><code style="color:#22d3bf"> 等分し、途中の地形の仰角 </code><code style="color:#22d3bf">(z_mid - eye) / d_mid</code>` が</p>
+<p>目標の仰角 `<code style="color:#22d3bf">(z + target_height_m - eye) / d</code>` を上回るセルがあれば遮蔽(0)。</p>
+<p>途中の点は最近傍セルに丸めるので、斜めの視線は格子誤差を含む。</p>
+<p><b>地球の曲率と大気屈折は入れない</b>(数 km 超では別途補正する)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">dem</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> [m]、3x3 以上、番兵値は拒否(</code><code style="color:#22d3bf">dem_slope</code>` と同じ契約)。</p>
+<p>`<code style="color:#22d3bf">nan</code>` セルは比較が偽になるため<b>遮蔽にも被遮蔽にもならず 1 のまま</b>残る。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cell_size</code>`: [m]、正。距離判定に使う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">observer_rc</code><code style="color:#22d3bf">: 格子内の </code><code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf"> 整数。外や pair でないものは </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">observer_height_m</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">target_height_m</code>`: 地面からの高さ [m]。既定は目の高さ</p>
+<p>1.7 m と地表 0 m。鉄塔からの可視域なら `<code style="color:#22d3bf">observer_height_m</code>` を上げる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">max_distance_m</code>`: これより遠いセルは 0(省略時は無制限)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code>` float64 の 1 / 0。観測点は常に 1。</p>
+<p style="margin:2px 0 2px 12px">• 計算量: 格子全体 × `<code style="color:#22d3bf">ceil(hypot(H, W))</code>` 回のベクトル演算。</p>
+<p>`<code style="color:#22d3bf">dem_horizon_angle</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dem_sky_view_factor</code>` は逆に「各セルから空がどれだけ</p>
+<p>見えるか」を出す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
@@ -13,7 +29,7 @@
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
-<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:dem_terrain_analysis_tour">dem_terrain_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/dem_terrain_analysis_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
 <p>—</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">visibility</code>)</h3>

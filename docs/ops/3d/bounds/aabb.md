@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Axis-aligned bounding box. Returns ``(min (3,), max (3,))``.
 
+点群の各軸の最小値と最大値をそのまま返す(``P.min(0)``, ``P.max(0)``)。返り値は 2 つの (3,)
+float64 配列で、順に ``(xmin, ymin, zmin)`` と ``(xmax, ymax, zmax)``(軸の並びは入力の列順)。
+箱の大きさは ``max - min``、中心は ``(min + max) / 2``。単位は座標の単位。
+
+- ``points``: (N,3) 以外の形状は ``ValueError``、空の点群も ``ValueError``(fail-closed)。
+- NaN を含む点があると ``min`` / ``max`` が NaN になる(非有限の検査はしない)。
+
+用途: voxel 化(``occupancy_grid`` / ``points_to_voxel`` の ``bounds``)の領域決め、
+``obb``(PCA で向きを合わせた箱)との比較。軸に沿わない細長い物体では AABB は大きく余るので、
+把持幅の推定には ``obb`` の ``extents`` を使う。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

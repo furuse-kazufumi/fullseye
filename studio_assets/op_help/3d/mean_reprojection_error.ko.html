@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mean_reprojection_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>재투영 RMS 오차(픽셀).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>全観測 k について `<code style="color:#22d3bf">project(points[obs_pt[k]], cameras[obs_cam[k]])</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">obs_uv[k]</code>` の差</p>
+<p>(du, dv) を取り、`<code style="color:#22d3bf">sqrt(mean_k(du² + dv²))</code>` = 観測ごとの再投影距離の 2 乗平均平方根を float で</p>
+<p>返す(実装は `<code style="color:#22d3bf">r.reshape(-1,2)**2 * 2</code><code style="color:#22d3bf"> の平均の平方根で、同じ量)。単位は </code><code style="color:#22d3bf">obs_uv</code>` と K に</p>
+<p>従うピクセル。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cameras</code><code style="color:#22d3bf">: (nc,6) の </code><code style="color:#22d3bf">[rvec(3) | t(3)]</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">X_cam = R X + t</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (m,3) の 3D 点。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">obs_cam</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">obs_pt</code><code style="color:#22d3bf">: 各観測のカメラ添字・点添字(int)。</code><code style="color:#22d3bf">obs_uv</code>`: (K,2) の観測画素。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">K</code>`: 全カメラ共通の (3,3) 内部行列。</p>
+<p>`<code style="color:#22d3bf">bundle_adjust</code><code style="color:#22d3bf"> の返り値 </code><code style="color:#22d3bf">rmse</code>` と同じ計算で、最適化前後の比較に使う。観測が 0 件だと空の</p>
+<p>平均で NaN になる(長さの検証は `<code style="color:#22d3bf">bundle_adjust</code>` 側にあり、この関数単体では行わない)。</p>
+<p>カメラ後方の点も `<code style="color:#22d3bf">project</code>` がそのまま射影するので、可視性は呼び出し側で保証する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xg_eccentricity&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">eccentricity_points_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/xg_eccentricity.png" alt="xg_eccentricity: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/xg_eccentricity.png" alt="xg_eccentricity: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_eccentricity.chain.jpg">xg_eccentricity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由点集协方差求离心率 sqrt(1 - λ_min/λ_max)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>輪郭辞書 `<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>` の全輪郭の点を 1 つの点集合にまとめ、その</p>
+<p>(row, col) 座標の母共分散行列の固有値 `<code style="color:#22d3bf">λ_min &lt;= λ_max</code>` から離心率</p>
+<p>`<code style="color:#22d3bf">e = sqrt(1 - λ_min/λ_max)</code>` を返す。閉輪郭の重複した終点(先頭と同じ点)は</p>
+<p>数えない。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は `<code style="color:#22d3bf">numpy.float64</code>` で [0, 1]。真円・正方形など等方な点配置で 0、</p>
+<p>一直線上の点(`<code style="color:#22d3bf">λ_min = 0</code><code style="color:#22d3bf">)で 1。点が 2 個未満、または </code><code style="color:#22d3bf">λ_max &lt;= 1e-12</code>`</p>
+<p>(全点同一)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、</p>
+<p>個々の輪郭の形ではなく配置の広がりも混ざる(輪郭ごとに評価したいなら先に</p>
+<p>`<code style="color:#22d3bf">select_contours_xld</code>` などで 1 本に絞る)。輪郭点の密度に依存する(点が</p>
+<p>密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは</p>
+<p>`<code style="color:#22d3bf">xg_elliptic_axis</code><code style="color:#22d3bf">、主軸の向きは </code><code style="color:#22d3bf">xg_orientation</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_bandfilter&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gen_bandfilter</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_gen_bandfilter.png" alt="hx_gen_bandfilter: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_gen_bandfilter.png" alt="hx_gen_bandfilter: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.a.jpg">hx_gen_bandfilter: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.b.jpg">hx_gen_bandfilter: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.inputs.jpg">hx_gen_bandfilter: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>An ideal band-filter image (an annulus in frequency, centre radius a and width b). A different operator from gen_bandpass.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">hx_gen_lowpass</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf"> 済の正規化周波数半径 </code><code style="color:#22d3bf">r</code>`(中心=DC)に対し</p>
+<p>`<code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code><code style="color:#22d3bf"> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 </code><code style="color:#22d3bf">v</code>` は</p>
+<p>形状の取得にのみ使う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 円環の中心半径 </code><code style="color:#22d3bf">c = 0.05 + 0.4*a</code>`(0.05〜0.45)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 半幅 </code><code style="color:#22d3bf">half = 0.03 + 0.15*b</code><code style="color:#22d3bf">(0.03〜0.18)。内半径 </code><code style="color:#22d3bf">c - half</code>` が負になる組み合わせ(小さい a と</p>
+<p>大きい b)では DC を含む円板になり、実質ローパスになる。</p>
+<p>`<code style="color:#22d3bf">hx_gen_bandpass</code>` が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数</p>
+<p>(縞の周期 `<code style="color:#22d3bf">1/c</code><code style="color:#22d3bf"> 画素)だけを抜き出すマスクを作り、</code><code style="color:#22d3bf">fft_generic</code>` などの中心=DC スペクトルと画素積で使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

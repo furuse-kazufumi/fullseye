@@ -3,8 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_size&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">zoom_image_size</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/zoom_image_size.png" alt="zoom_image_size: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/zoom_image_size.png" alt="zoom_image_size: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_image_size.a.jpg">zoom_image_size: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_image_size.b.jpg">zoom_image_size: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_image_size.inputs.jpg">zoom_image_size: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>목표 크기(높이 `<code style="color:#22d3bf">H*(0.5+a)</code><code style="color:#22d3bf">, 너비 </code><code style="color:#22d3bf">W*(0.5+b)</code><code style="color:#22d3bf">)로 리샘플링하는 줌이다. </code><code style="color:#22d3bf">zoom_image_factor</code><code style="color:#22d3bf">가 두 개의 배율을 취하는 것과 달리, 이것은 높이와 너비의 **크기** 자체를 독립적으로 지정한다 —— HALCON의 의미론상으로는 다른 것이다. 다만 이 파이프라인의 </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf">는 &quot;입력과 동일한 캔버스 크기로 반환된다&quot;는 계약을 가지므로, 리샘플링 결과는 원본 해상도 캔버스의 좌상단에 배치하고 여백은 0, 넘치는 부분은 잘라낸다(이미지가 실제로 축소/확대되었음은 눈으로 알 수 있지만, 배열의 shape 자체는 바뀌지 않는다). HALCON의 </code><code style="color:#22d3bf">zoom_image_size</code>`(Zoom an image to a given size.)에 해당한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

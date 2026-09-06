@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_boundary(points, alpha)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_boundary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>alpha shapes による<b>境界点インデックス</b>を返す(点群 → 境界点)。</p>
+<p>Delaunay 四面体分割の外接球半径 &lt; 1/alpha の四面体の表面三角形(境界面)を集め、その頂点</p>
+<p>集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。</p>
+<p>alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>alpha : float</p>
+<p>正の実数。半径しきい値は 1/alpha。`<code style="color:#22d3bf">estimate_alpha</code>` で目安を得られる。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>boundary_point_indices : numpy.ndarray (K,) int64</p>
+<p>points に対する境界点の index(昇順・重複なし)。境界が無ければ空配列。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

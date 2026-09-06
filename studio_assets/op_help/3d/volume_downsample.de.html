@@ -4,6 +4,37 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Block-Pooling eines `<code style="color:#22d3bf">(D, H, W)</code>`-Volumens um einen ganzzahligen *factor* je Achse (Datenreduktion).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Large CT / laminography / simulation volumes must be thinned before the</p>
+<p>heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see</p>
+<p>`<code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>`). This is the volume analogue of the point-cloud</p>
+<p>`<code style="color:#22d3bf">voxel_grid_downsample</code><code style="color:#22d3bf"> and the mesh </code><code style="color:#22d3bf">decimate_qem</code>` — the third leg of</p>
+<p>Fullseye&#x27;s *間引き* (decimation) family, one per 3-D data sort.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>factor : int or (fz, fy, fx)</p>
+<p>Block size per axis, each `<code style="color:#22d3bf">&gt;= 1</code>`. The output shape is</p>
+<p>`<code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>`; a trailing partial block that cannot fill a</p>
+<p>full factor is dropped (deterministic, no edge bias).</p>
+<p>mode : {&#x27;mean&#x27;, &#x27;max&#x27;, &#x27;stride&#x27;}</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&#x27;mean&#x27;</code>` — average-pool. Band-limits before subsampling (the</p>
+<p>anti-aliasing choice); the right default for grey CT / MRI.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&#x27;max&#x27;</code>`  — max-pool. Preserves thin bright structures (bone, vessel,</p>
+<p>defect voxels) that averaging would wash out.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&#x27;stride&#x27;</code><code style="color:#22d3bf"> — plain subsample </code><code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code>` (fastest,</p>
+<p>but aliases — no pre-filter).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D//fz, H//fy, W//fx), float64</p>
+<p>The downsampled volume. Spacing scales by the same factor: an input</p>
+<p>spacing `<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> mm becomes </code><code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code>` mm.</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D input, a factor component `<code style="color:#22d3bf">&lt; 1</code>` or larger than its axis, or an</p>
+<p>unknown *mode* (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

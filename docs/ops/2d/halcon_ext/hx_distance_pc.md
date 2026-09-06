@@ -17,13 +17,36 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_distance_pc", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `distance_pc`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_distance_pc: 入力 → 出力](../../_fig/hx_distance_pc.png)
+![hx_distance_pc: input → output](../../_fig/hx_distance_pc.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_distance_pc: knob a sweep](../../_fig/hx_distance_pc.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_distance_pc: knob b sweep](../../_fig/hx_distance_pc.b.jpg)
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_distance_pc: stages](../../_fig/hx_distance_pc.chain.jpg)
 
 ## 使い方
 
 クエリ点(正規化 a,b)から contour までの最小距離を返す(feature)。
+
+正規化座標 ``(a, b)`` のクエリ点 ``q = (a*H, b*W)`` から、全 contour の頂点までのユークリッド距離の最小値を
+``max(H, W)`` で割って 1 で頭打ちした ``np.float64`` で返す。
+
+- ``a`` → クエリ点の行(0〜1)。
+- ``b`` → クエリ点の列(0〜1)。
+- contour の点が無ければ 0.0(点が contour 上にある場合と区別できない)。
+
+距離は頂点までであって線分までではないので、点の間隔が粗い contour では真の距離より最大で「点間隔の半分」程度
+大きく出る。細かい contour(``edges_sub_pix`` の 1 画素刻み)ではほぼ一致する。region までの距離は
+``hx_distance_pr``、水平線からの距離は ``hx_distance_sc``、点を含む contour の選択は ``hx_select_xld_point``。
 
 ## 詳しい使い方ガイド
 

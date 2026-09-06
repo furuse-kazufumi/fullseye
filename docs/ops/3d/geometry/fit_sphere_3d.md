@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。
 
+``|p|² = 2c·p + (r² − |c|²)`` を ``[2p, 1]`` の線形最小二乗(``lstsq``)で解く代数フィット
+(幾何距離の最小化ではないので、球の一部しか見えていない・ノイズが大きいと半径が偏る)。
+``(N,3)`` で 4 点未満は ValueError。``radius`` は ``sqrt(max(s + |c|², 0))`` で負は 0 に clamp。
+点が同一平面上・共線だと ``lstsq`` の最小ノルム解が黙って返る(検証は無い。残差も返さないので
+``|p − c| − r`` で確かめる)。
+幾何距離で追い込むなら本 op の結果を初期値にして非線形最小二乗、外れ値には ``ransac_sphere``。
+voxel からの検出は ``hough_sphere_3d``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

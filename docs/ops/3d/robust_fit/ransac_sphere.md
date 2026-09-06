@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 外れ値に頑健な RANSAC 球適合。
 
+4 点をサンプル → 線形法(代数フィット)で球中心・半径 → |‖p-c‖ - r| < ``thresh`` の
+inlier を最大化 → 最終 inlier で最小二乗リフィット。配管ボール/球面計測用。
+
+Args:
+    points: (N,3) 点群。
+    thresh: inlier とみなす |距離-r| のしきい値。
+    iters: RANSAC 反復数。
+    seed: 乱数シード(決定論)。
+
+Returns:
+    (params, inlier_mask, info)。params = {"center": (3,), "radius": float}。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

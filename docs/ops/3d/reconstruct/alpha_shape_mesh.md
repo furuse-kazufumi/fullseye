@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 alpha shapes による**表面三角形メッシュ**(点群 → (vertices, faces))。
 
+``alpha_shape_boundary`` と同じ境界三角形を、使用頂点だけに詰め直したメッシュとして返す。
+voxel を介さず点群から直接張る表面。凹み/穴を保持できるのが marching cubes 系との差別化。
+
+Parameters
+----------
+points : array_like (N,3)
+alpha : float
+    正の実数(半径しきい値 1/alpha)。
+
+Returns
+-------
+vertices : numpy.ndarray (V,3) float64
+    境界に使われた入力点(詰め直し済み)。
+faces : numpy.ndarray (F,3) int64
+    vertices を参照する三角形インデックス。境界が無ければ (0,3)/(0,3)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

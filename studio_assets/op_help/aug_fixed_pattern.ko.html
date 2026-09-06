@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aug_fixed_pattern — 2D <code style="color:#22d3bf">augmentation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_fixed_pattern&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p><img src="fig/aug_fixed_pattern.png" alt="aug_fixed_pattern: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/aug_fixed_pattern.png" alt="aug_fixed_pattern: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.a.jpg">aug_fixed_pattern: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.b.jpg">aug_fixed_pattern: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.inputs.jpg">aug_fixed_pattern: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>고정 패턴 노이즈(FPN / 광응답 불균일성). 읽기 노이즈와 달리 이 패턴은 프레임 전반에 걸쳐 정적(STATIC)이다: 열별 오프셋과 행별 오프셋으로 구성되며, 각각 한 번만 뽑혀서 유지된다. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">는 진폭 </code><code style="color:#22d3bf">0.02 + 0.2*a</code><code style="color:#22d3bf">를 설정하고, </code><code style="color:#22d3bf">b</code>`는 어떤 고정 패턴을 사용할지 선택한다(생성기는 b만으로 시드되므로, a를 스윕해도 하나의 패턴의 강도만 바뀐다). CMOS의 열-병렬 ADC에서와 마찬가지로 열 방향 FPN이 지배적이다(가중치 2/3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

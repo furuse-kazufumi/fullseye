@@ -2,16 +2,37 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_render_point_depth — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_render_point_depth&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*无图: 该算子以 <code style="color:#22d3bf">points</code> 为输入。从图像开始的 Studio 程序无法到达该类型，请参见下方的可运行示例。*</p>
+<p><img src="fig/tb_render_point_depth.png" alt="tb_render_point_depth: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*输出以类 viridis 伪彩色显示(深紫 = 小，黄 = 大)，便于读取距离、相位、方向、深度这类“量的场”。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_render_point_depth.chain.jpg">tb_render_point_depth: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_render_point_depth.inputs.jpg">tb_render_point_depth: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点云 → 深度图像（z-buffer，每个像素取最近点的深度）。用于观测合成/外观检测的示例。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">project_points(points, K, R, t)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(u, v, z)</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">round</code><code style="color:#22d3bf"> した画素 </code>`(row=v,</p>
+<p>col=u)`<code style="color:#22d3bf"> が </code><code style="color:#22d3bf">size=(H, W)</code><code style="color:#22d3bf"> 内かつ </code><code style="color:#22d3bf">z &gt; 0</code>` の点だけを、遠い順に書いて近い点で上書きする</p>
+<p>(同一画素は最小 z が残る)。点が無い画素は <b>0</b>(`<code style="color:#22d3bf">tsdf_from_depth</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">depth_to_points</code>` が</p>
+<p>無効値として扱う規約)。返り値 `<code style="color:#22d3bf">(H, W)</code>` float64、単位は点の座標の単位。</p>
+<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(`<code style="color:#22d3bf">mesh_to_points</code>` で密にしてから)。splat</p>
+<p>半径は無い。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> は numpy (3,3)、</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">t</code>` は省略可。</p>
+<p>後段: `<code style="color:#22d3bf">depth_to_points</code><code style="color:#22d3bf"> で戻す、</code><code style="color:#22d3bf">normals_from_depth</code><code style="color:#22d3bf"> で法線、</code><code style="color:#22d3bf">tsdf_from_depth</code>`。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">render_point_depth</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_render_point_depth 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_render_point_depth%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_render_point_depth%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
-<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<p>下面的示例调用的是底层账本算子 <code style="color:#22d3bf">render_point_depth</code>。此桥接算子只是把同一实现适配为 <code style="color:#22d3bf">fn(v, a, b)</code> 约定，行为完全相同(只是调用形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">typed</code>)</h3>

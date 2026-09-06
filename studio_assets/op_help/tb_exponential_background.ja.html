@@ -2,16 +2,42 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_exponential_background — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_exponential_background&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p>*図なし: この op は <code style="color:#22d3bf">video</code> を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*</p>
+<p><img src="fig/tb_exponential_background.png" alt="tb_exponential_background: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_background.a.jpg">tb_exponential_background: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_background.chain.jpg">tb_exponential_background: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_background.inputs.jpg">tb_exponential_background: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>動き</b>(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):</p>
+<p><img src="fig/tb_exponential_background.gif" alt="tb_exponential_background: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>フレームごとの再帰的な背景更新 `<code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">video</code>`）。</p>
-<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Typed bridge of the videostream op `<code style="color:#22d3bf">exponential_background</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> (default 0.05); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<p>最初のフレームで `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> を初期化し、以後 </code><code style="color:#22d3bf">bg += α (frame - bg)</code>` を画素ごとに</p>
+<p>繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム `<code style="color:#22d3bf">t</code>` の</p>
+<p>出力はその時点の `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> の写しで、</code><code style="color:#22d3bf">t = 0</code>` は入力の先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code>` 配列か 2-D フレームの list。整数 dtype は最大値で</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に正規化、float は </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> にクリップ。NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。時定数はおよそ </code><code style="color:#22d3bf">1/α</code>` フレーム(0.05 → 約 20 枚)。</p>
+<p>0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。</p>
+<p>**物体が止まると `<code style="color:#22d3bf">1/α</code>` 枚ほどで背景に吸収される**(選択的更新は無い)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float64、</code><code style="color:#22d3bf">[0, 1]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(形・dtype・</code><code style="color:#22d3bf">alpha</code>` の範囲)。</p>
+<p>前景マスクまで欲しいなら同じモデルの `<code style="color:#22d3bf">exponential_foreground</code>`。画素ごとの</p>
+<p>雑音に閾値を合わせたいなら `<code style="color:#22d3bf">running_gaussian_background</code>`。</p>
+<p>2-D 進化レジストリへ橋渡しした videostream の op `<code style="color:#22d3bf">exponential_background</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">(既定 0.05)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_video 0.50 0.50
+tb_exponential_background 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_video%200.50%200.50%0Atb_exponential_background%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_video%200.50%200.50%0Atb_exponential_background%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p>次の例は元の台帳 op <code style="color:#22d3bf">exponential_background</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">video</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_temporal_bandpass">tb_temporal_bandpass</a> · <a style="color:#22d3bf" href="op:tb_temporal_band_power">tb_temporal_band_power</a> · <a style="color:#22d3bf" href="op:tb_temporal_median_window">tb_temporal_median_window</a> · <a style="color:#22d3bf" href="op:tb_moving_average_window">tb_moving_average_window</a> · <a style="color:#22d3bf" href="op:tb_background_subtraction_window">tb_background_subtraction_window</a> · <a style="color:#22d3bf" href="op:tb_frame_difference_causal">tb_frame_difference_causal</a> · <a style="color:#22d3bf" href="op:tb_exponential_foreground">tb_exponential_foreground</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>

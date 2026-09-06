@@ -2,19 +2,39 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_jitter — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_jitter&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*Keine Abbildung: dieser Op nimmt <code style="color:#22d3bf">points</code> als Eingabe. Ein Studio-Programm, das bei einem Bild beginnt, erreicht diesen Typ nicht — siehe die lauffähigen Beispiele unten.*</p>
+<p><img src="fig/tb_jitter.png" alt="tb_jitter: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_jitter.chain.jpg">tb_jitter: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_jitter.inputs.jpg">tb_jitter: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fügt jedem Punkt isotropes Gaußsches Rauschen `<code style="color:#22d3bf">N(0, sigma)</code>` hinzu (Nachbildung von Sensor-Positionsrauschen).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> はワールド単位の標準偏差(ユーザ指定パラメータ)。</code><code style="color:#22d3bf">clip</code>` を与えると</p>
 <p>各成分の変位を `<code style="color:#22d3bf">[-clip, clip]</code>` に切り詰める(外れ変位の抑制)。大 N ではノイズの</p>
 <p>平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 `<code style="color:#22d3bf">(N,3)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sigma &lt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">sigma == 0</code>` または空入力は入力のコピーを返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">clip</code><code style="color:#22d3bf"> は与えるなら </code><code style="color:#22d3bf">&gt; 0</code><code style="color:#22d3bf">(それ以外は </code><code style="color:#22d3bf">ValueError</code>`)。切り詰めは成分ごとなので</p>
+<p>変位ベクトルの長さは最大 `<code style="color:#22d3bf">√3·clip</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で決定論的(</code><code style="color:#22d3bf">np.random.default_rng(seed)</code>`)。同 seed・同形状なら同じノイズ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は `<code style="color:#22d3bf">(N,3)</code>` の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`)。返り値は float64。</p>
+<p style="margin:2px 0 2px 12px">• 位置合わせ(`<code style="color:#22d3bf">register_fpfh</code><code style="color:#22d3bf"> 等)のノイズ耐性を測るとき、</code><code style="color:#22d3bf">sigma</code>` を点間隔</p>
+<p>(`<code style="color:#22d3bf">voxel_grid_downsample</code>` の格子幅など)に対する比で決めると条件を比較しやすい。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">jitter</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
+<p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_jitter 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_jitter%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_jitter%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
-<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">jitter</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:augment_pointcloud">augment_pointcloud</a> — <code style="color:#22d3bf">py -3.11 examples_3d/augment_pointcloud.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">typed</code>)</h3>

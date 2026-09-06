@@ -3,10 +3,23 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_dist_rect2_points&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">dist_rectangle2_contour_points_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_dist_rect2_points.png" alt="hx_dist_rect2_points: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_dist_rect2_points.png" alt="hx_dist_rect2_points: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_rect2_points.chain.jpg">hx_dist_rect2_points: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>contour 各點到最小面積有向矩形中心的正規化距離的平均(feature)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>全 contour の点をまとめ、点の重心からの各点のユークリッド距離の平均を `<code style="color:#22d3bf">max(H, W)</code>` で割って 1 で頭打ちした</p>
+<p>`<code style="color:#22d3bf">np.float64</code>` を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0。</p>
+<p>注意: 名前は最小面積外接矩形の中心からの距離だが、現実装は矩形を求めず点群の重心を中心にしている。</p>
+<p>点が偏っている場合(弧が欠けた輪郭など)は矩形中心と重心がずれるため、名前どおりの値にはならない。</p>
+<p>実質は「重心からの平均半径」で、`<code style="color:#22d3bf">hx_moments_any_xld</code>`(二乗平均)の 1 乗版にあたる。矩形そのものは</p>
+<p>`<code style="color:#22d3bf">hx_smallest_rect2_xld</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_fit_rectangle2_contour</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

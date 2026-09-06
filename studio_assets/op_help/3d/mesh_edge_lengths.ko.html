@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import render3d; render3d.mesh_edge_lengths(V, F, *, per: &#x27;str&#x27; = &#x27;vertex&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mesh_edge_lengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각형 메시의 국소 엣지 길이 → 정점별 `<code style="color:#22d3bf">(N,)</code>`(접속 엣지의 평균).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> per face (mean of its 3 edges) or </code><code style="color:#22d3bf">(E,)</code>` per unique edge.</p>
+<p>This is the resolution map of the mesh in its own units: the shortest wavelength a</p>
+<p>region can carry as *geometry* is about twice the local edge (Nyquist), which is what</p>
+<p>:func:<code style="color:#22d3bf">mesh_subdivide</code> (`<code style="color:#22d3bf">target_edge</code><code style="color:#22d3bf">) and :func:</code>displacement_band_weights` use.</p>
+<p>Deterministic; fail-closed on degenerate meshes / unknown `<code style="color:#22d3bf">per</code>`.</p>
+<p>無向の一意な辺 `<code style="color:#22d3bf">(E,2)</code>` を取り、各辺の長さ(メッシュ単位、float64)を集計する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">per=&#x27;vertex&#x27;</code><code style="color:#22d3bf">: 頂点に接する辺長の平均 </code><code style="color:#22d3bf">(N,)</code>`。どの面にも属さない孤立頂点は</p>
+<p>辺を持たないので、無言で <b>全辺の平均値</b> が入る(ゼロにはならない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">per=&#x27;face&#x27;</code><code style="color:#22d3bf">: 面の 3 辺の平均 </code><code style="color:#22d3bf">(M,)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">per=&#x27;edge&#x27;</code><code style="color:#22d3bf">: 一意辺そのものの長さ </code><code style="color:#22d3bf">(E,)</code><code style="color:#22d3bf">。辺の並びは </code><code style="color:#22d3bf">np.unique</code>` の辞書順</p>
+<p>(頂点 index の小さい順)で、`<code style="color:#22d3bf">F</code>` の順とは対応しない。</p>
+<p>`<code style="color:#22d3bf">per</code><code style="color:#22d3bf"> が上記 3 つ以外、頂点/面が空、face index 範囲外、非有限座標は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p>`<code style="color:#22d3bf">displacement_band_weights</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">local_edge</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">mesh_subdivide</code>` の</p>
+<p>`<code style="color:#22d3bf">target_edge</code>` を決める(例: 中央値の半分)ために使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -9,7 +9,7 @@
 
 *Sechs Akte, ausschließlich echte Operator-Ausgaben: Kantenorientierung, Blob-Auswahl, Subpixel-Messung, SDF zu Mesh, LiDAR-Clustering, Objektiv-Defokus.*
 
-**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **885** Operatoren (gezählt in der Registry), bietet für **979/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 47 Kategorien ab.
+**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **897** Operatoren (gezählt in der Registry), bietet für **979/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
 
 > **Fangen Sie hier an → [GETTING_STARTED.md](GETTING_STARTED.md) (in 5 Minuten lauffähig)**
 
@@ -52,15 +52,15 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**1,842 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **48 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**1,854 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 885/885, typisiertes Ledger 958/1002, Fassade `fullseye.<name>` 501/1091 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 897/897, typisiertes Ledger 958/1002, Fassade `fullseye.<name>` 501/1091 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 1842 Notizen verweisen **1637** auf mindestens ein lauffähiges Beispiel (205 ohne), **1348** haben einen Nutzungsabschnitt ab 120 Zeichen (494 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1842.
+**Gemessener Inhalt**: von 1854 Notizen verweisen **1825** auf mindestens ein lauffähiges Beispiel (29 ohne), **1854** haben einen Nutzungsabschnitt ab 120 Zeichen (0 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1854.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
-| `2d` | 885 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 897 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 347 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 124 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 46 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -113,7 +113,7 @@ Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständi
 
 | Dokument | Inhalt |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | Katalog aller 885 Operatoren (47 Kategorien, nach sort gegliedert, mit den entsprechenden APIs von HALCON/OpenCV/scikit-image/MATLAB) |
+| [OPERATORS.md](OPERATORS.md) | Katalog aller 897 Operatoren (48 Kategorien, nach sort gegliedert, mit den entsprechenden APIs von HALCON/OpenCV/scikit-image/MATLAB) |
 | [EXAMPLES.md](EXAMPLES.md) | Beispielcode je Operator, samt dem äquivalenten Aufruf in anderen Bibliotheken |
 | [OP_INDEX.json](OP_INDEX.json) | Maschinenlesbarer Operatorindex (neu erzeugen mit `imgevolve.py index`) |
 | [ADDING_OPS.md](ADDING_OPS.md) | Wie man einen neuen Operator hinzufügt (Evolution, Codegen, Katalog und Index ziehen automatisch nach) |
@@ -190,7 +190,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 71
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 1,842 Operator-Notizen und 48 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 1,854 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

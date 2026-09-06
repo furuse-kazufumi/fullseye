@@ -7,6 +7,22 @@
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>行和が `<code style="color:#22d3bf">1/n</code><code style="color:#22d3bf">、列和が </code><code style="color:#22d3bf">1/m</code>` になる ―― これは<b>構成上厳密</b>で、</p>
 <p>数値誤差以外でずれることはない(テストで固定)。</p>
+<p>手順: `<code style="color:#22d3bf">u</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> 個)と </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">m</code>` 個)をそれぞれ昇順に並べ、小さいほうから</p>
+<p>順に質量 `<code style="color:#22d3bf">min(残り u, 残り v)</code>` を割り当てる(単調な結合)。各標本の質量は</p>
+<p>等しく `<code style="color:#22d3bf">1/n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">1/m</code>`(重み付きは受けない)。1 次元では<b>距離の凸関数</b>を</p>
+<p>コストとする限りこの単調結合が最適解なので、`<code style="color:#22d3bf">wasserstein_1d</code>` と同じ</p>
+<p>輸送を「どの標本がどこへ行くか」の行列として得られる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">u_values</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v_values</code><code style="color:#22d3bf">: 1 次元に潰す(</code><code style="color:#22d3bf">ravel</code>`)。長さは違ってよい。</p>
+<p>空なら `<code style="color:#22d3bf">MetricContractError</code>`。<b>有限性は検査しない</b>(NaN はソートで末尾に</p>
+<p>回り、黙って結合される)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(n, m)</code><code style="color:#22d3bf"> の float64(</code><code style="color:#22d3bf">transport_plan</code><code style="color:#22d3bf"> 型)。</code><code style="color:#22d3bf">plan[i, j]</code>` は入力の</p>
+<p>元の並びで `<code style="color:#22d3bf">u[i]</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">v[j]</code><code style="color:#22d3bf"> へ運ぶ質量。非零要素は高々 </code><code style="color:#22d3bf">n + m - 1</code>`。</p>
+<p>`<code style="color:#22d3bf">n == m</code><code style="color:#22d3bf"> なら置換行列 / </code><code style="color:#22d3bf">n</code>`(一対一対応)。</p>
+<p style="margin:2px 0 2px 12px">• 計算量は `<code style="color:#22d3bf">O((n + m) log)</code><code style="color:#22d3bf"> のソート + </code><code style="color:#22d3bf">O(n + m)</code>` の走査だが、返す行列は</p>
+<p>`<code style="color:#22d3bf">n × m</code>` の密行列なので画素数規模の標本には向かない(その場合は</p>
+<p>`<code style="color:#22d3bf">histogram_match</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">sinkhorn</code>`)。</p>
+<p>`<code style="color:#22d3bf">apply_transport(plan, v)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">u</code>` 側の各標本の行き先の値(重心)を、</p>
+<p>`<code style="color:#22d3bf">transport_cost(plan, cost)</code>` で総コストを取る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -4,7 +4,7 @@ dim: shape2d
 category: descriptor
 in: table
 out: pairs
-examples: []
+examples: [shape2d_morph_descriptor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -34,7 +34,7 @@ XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [shape2d_morph_descriptor_tour](../../../../examples/shape2d_morph_descriptor_tour.py) — `py -3.11 examples/shape2d_morph_descriptor_tour.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

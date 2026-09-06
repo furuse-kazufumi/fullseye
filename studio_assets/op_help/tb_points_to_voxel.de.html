@@ -2,17 +2,47 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_points_to_voxel — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_points_to_voxel&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*Keine Abbildung: dieser Op nimmt <code style="color:#22d3bf">points</code> als Eingabe. Ein Studio-Programm, das bei einem Bild beginnt, erreicht diesen Typ nicht — siehe die lauffähigen Beispiele unten.*</p>
+<p><img src="fig/tb_points_to_voxel.png" alt="tb_points_to_voxel: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_points_to_voxel.chain.jpg">tb_points_to_voxel: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_points_to_voxel.inputs.jpg">tb_points_to_voxel: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Bewegung</b> (GIF: Bilder / Ansichten / Schnitte nacheinander. Die stehende Abbildung ist die vollständige; das GIF ist ergänzend):</p>
+<p><img src="fig/tb_points_to_voxel.gif" alt="tb_points_to_voxel: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktwolke (N,3) → Dichte-Voxel (size³). Splatting per scatter_add, optional mit Gauß-Glättung.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。</p>
+<p>手順: 各点を `<code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code>` で整数格子に落とし、その voxel に</p>
+<p>1 を加算する(値 = その voxel に落ちた点の個数)。`<code style="color:#22d3bf">smooth &gt; 0</code><code style="color:#22d3bf"> なら σ=</code><code style="color:#22d3bf">smooth</code>`(voxel 単位)</p>
+<p>の gaussian を 3 軸分離 conv で掛ける(半径 `<code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>`、端は replicate)。</p>
+<p>出力の軸順は <b>点の列の順そのまま</b>(`<code style="color:#22d3bf">points[:, 0]</code>` → 軸 0)で、(depth,row,col) への</p>
+<p>並べ替えはしない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(lo, hi)</code>` の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに</p>
+<p>格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・</p>
+<p>`<code style="color:#22d3bf">hi &lt;= lo</code><code style="color:#22d3bf"> の軸があると ValueError(tsdf 系の </code><code style="color:#22d3bf">((xmin,xmax),...)</code>` 流儀は長さ 2 として拒否)。</p>
+<p style="margin:2px 0 2px 12px">• 範囲外の点は捨てずに <b>端の voxel へ clip される</b>(端に偽の密度が溜まる)。切り落としたい</p>
+<p>なら事前に点群側で除く。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">size</code><code style="color:#22d3bf">: 一辺の voxel 数。</code><code style="color:#22d3bf">hi − lo</code>` が 0 の軸は 1e-9 に置換されるだけで警告しない。</p>
+<p style="margin:2px 0 2px 12px">• 空の点群で bounds=None は numpy の min が例外を出す。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(size, size, size)</code>` float64 numpy(device で計算しても CPU に戻す)。値は個数</p>
+<p>(平滑後は個数の重み分布)で正規化はしない。</p>
+<p>後段: `<code style="color:#22d3bf">match_points_ncc</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">signed_distance_field</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">voxel_to_mesh</code>` の入力に。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
+<p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_points_to_voxel 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_points_to_voxel%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_points_to_voxel%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
-<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">points_to_voxel</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sh_descriptor_retrieval">sh_descriptor_retrieval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sh_descriptor_retrieval.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_desc_pose">shape_desc_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_desc_pose.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">volume</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">typed</code>)</h3>

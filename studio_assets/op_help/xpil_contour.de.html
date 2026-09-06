@@ -2,12 +2,19 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xpil_contour — 2D <code style="color:#22d3bf">edges</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_contour&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/xpil_contour.png" alt="xpil_contour: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/xpil_contour.png" alt="xpil_contour: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xpil_contour.inputs.jpg">xpil_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pillows Konturextraktionsfilter. Nutzt den festen Kernel von `<code style="color:#22d3bf">PIL.ImageFilter.CONTOUR</code>`, um einen Effekt zu erzeugen, der nur Umrisslinien als schwarze Linien auf weißem Hintergrund übrig lässt (ein Federzeichnungs-/Strichzeichnungseffekt).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>a, b は未使用（固定カーネル）。</p>
+<p>カーネルは 3x3 の `<code style="color:#22d3bf">[-1,-1,-1; -1,8,-1; -1,-1,-1]</code><code style="color:#22d3bf">（scale 1、offset 255）で、出力は </code><code style="color:#22d3bf">255 + (8*中心 - 8 近傍の和)</code><code style="color:#22d3bf"> を 0〜255 に飽和させたもの。平坦部は255（白）、周囲より暗い画素は暗く、周囲より明るい画素は 255 で飽和する。つまり段差の「暗い側」に 1 画素幅の黒線が乗り、明るい側は白のまま（</code><code style="color:#22d3bf">xpil_find_edges</code>` は同じカーネルで offset 0 なので両側が明るく出る）。</p>
+<p>入力は [0,1] に clip して `<code style="color:#22d3bf">*255</code><code style="color:#22d3bf"> の切り捨てで 8 ビットの L 画像にし、出力を </code><code style="color:#22d3bf">/255</code><code style="color:#22d3bf"> で [0,1] に戻す（1/255 の量子化が入る）。画像の最外周1 画素は Pillow がフィルタせず入力値のまま返す。0 サイズの画像はValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ノイズにも反応するので、前段に </code><code style="color:#22d3bf">xpil_smooth_more</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">median</code><code style="color:#22d3bf"> を置くと線が整理される。線を領域として使うなら </code><code style="color:#22d3bf">invert</code><code style="color:#22d3bf"> で黒線側を明るくしてから </code><code style="color:#22d3bf">threshold</code>` に繋ぐ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

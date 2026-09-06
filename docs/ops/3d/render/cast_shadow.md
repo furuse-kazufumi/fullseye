@@ -19,6 +19,28 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 メッシュのキャスト影 / ソフトシャドウを計算し、可視性マップ (H,W) ∈ [0,1] を返す。
 
+``1=完全に照らされる`` / ``0=完全な影``。受光面が無い背景画素は ``1.0``。
+
+引数:
+  * ``V, F``        頂点 (N,3) と三角形 (M,3)。空メッシュは影を落とせないので拒否。
+  * ``light``       (3,) ベクトル。``directional=True`` なら平行光の方向(シーン→光源)、
+                    ``False`` なら点光源のワールド位置。
+  * ``pose``/``intrinsics`` カメラ。省略時は ``render3d.auto_view`` で補完。
+  * ``penumbra``    面光源の**角半径(度)**。0 でハード影、増やすほど半影が広がる。
+  * ``samples``     半影サンプル数(``penumbra>0`` のときのみ使用、Fibonacci ディスク)。
+  * ``shadow_res``  shadow map の一辺解像度。
+  * ``bias``        影判定の深度バイアス(ワールド単位)。``None`` なら texel サイズと
+                    傾斜から自動設定(acne / peter-panning を抑制)。
+  * ``pcf``         shadow map を引くときに混ぜる近傍の**半径 [texel]**。
+                    ``0``(既定)は最近傍 1 点 = 従来どおり。``1`` なら 3x3 の
+                    **判定を平均**する(深度を平均するのではない —— 深度の平均は
+                    手前と奥をならして存在しない面を作る)。境目が texel に
+                    量子化されて階段になるのを、shadow map を上げずに緩和する。
+
+手法は shadow mapping(Williams 1978): 光源から ``render_mesh`` で深度を取り、カメラ側の
+受光面点を光源空間へ射影して深度比較する。fail-closed: 退化メッシュ・不正光源・非正の
+サイズ/解像度は ``ValueError``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

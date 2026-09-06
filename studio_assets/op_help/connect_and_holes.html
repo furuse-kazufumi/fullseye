@@ -3,8 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;connect_and_holes&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">connect_and_holes</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/connect_and_holes.png" alt="connect_and_holes: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/connect_and_holes.png" alt="connect_and_holes: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/connect_and_holes.chain.jpg">connect_and_holes: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>領域の連結成分数を数える（8 連結、`<code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_region_feat</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">count</code>` 分岐）。a, b は未使用。</p>
 <p>HALCON の `<code style="color:#22d3bf">connect_and_holes</code><code style="color:#22d3bf">（連結成分数と穴の数の 2 つを同時に返す演算）のうち**連結成分数だけ**を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（</code><code style="color:#22d3bf">area_holes</code>` が穴の面積比を別途計算する）。</p>

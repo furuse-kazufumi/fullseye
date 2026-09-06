@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 センサの対角 [mm]。レンズのイメージサークルと比べて**覆えるか**を見る。
 
+式: ``hypot(width * pixel_um, height * pixel_um) / 1000``。有効画素数 × 画素ピッチ
+から出す実寸で、「2/3 型」のような形式名は使わない(形式名は対角の呼称に
+過ぎず、同じ呼称でも実寸が違う)。
+
+- ``sensor``: ``sensor_spec`` の結果(``kind == "sensor"``)。それ以外の dict や
+  カタログの生エントリは ``ValueError``。
+- 返り値: float [mm]。例: 2048 × 1536 画素・3.45 µm なら 8.83 mm。
+  ラインセンサ(高さ 1)なら幅そのものに近い値になる。
+
+レンズ側の ``image_circle_mm`` と直接比べるのが ``covers_sensor``
+(1 % の許容差つき)。``lens_spec`` / ``vision_layout`` で視野を決める前の検算に。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

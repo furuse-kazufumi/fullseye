@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.fit_rigid(pts_from, pts_to)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_rigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -&gt; pts_to[i])。</p>
+<p>行 i どうしが対応する (N, 3) 2 点集合から、`<code style="color:#22d3bf">|| (R·p + t) - q ||</code>` を最小化する</p>
+<p>proper rotation(det = +1, 反射なし)と並進を返す。:func:<code style="color:#22d3bf">registration.kabsch</code> の</p>
+<p>薄いラッパで、入力検証を付す(N &gt;= 3 で回転が一意)。</p>
+<p>Args:</p>
+<p>pts_from: (N, 3) 変換元(対応順)。</p>
+<p>pts_to: (N, 3) 変換先(対応順)。</p>
+<p>Returns:</p>
+<p>(R, t): (3, 3) 回転行列, (3,) 並進ベクトル。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不一致 / (N, 3) でない / N &lt; 3 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

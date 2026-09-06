@@ -3,10 +3,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;it_bit_mask&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">bit_mask</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/it_bit_mask.png" alt="it_bit_mask: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/it_bit_mask.png" alt="it_bit_mask: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.a.jpg">it_bit_mask: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.inputs.jpg">it_bit_mask: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>bit_mask: Logisches UND des 8-Bit-Bildes mit der konstanten Bitmaske round(a*255). `<code style="color:#22d3bf">b</code>` wird ignoriert.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>入力を [0,1] の 2 次元 float64 に揃えたあと `<code style="color:#22d3bf">round(x*255)</code>` で 0〜255 の</p>
+<p>8 ビット整数に量子化し、定数マスク `<code style="color:#22d3bf">m = round(a*255) &amp; 0xFF</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` は</p>
+<p>[0,1] に clip)と画素ごとにビット AND を取って、`<code style="color:#22d3bf">/255</code>` で [0,1] に戻す。</p>
+<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> でマスク 255(量子化以外は恒等)、</code><code style="color:#22d3bf">a=0</code>` でマスク 0(全零)、</p>
+<p>`<code style="color:#22d3bf">a=0.5</code>` で 128(最上位ビットだけ残す=0.5 以上か否かの 2 値化と同じ)。</p>
+<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64、値は `<code style="color:#22d3bf">k/255</code><code style="color:#22d3bf"> の離散値。</code><code style="color:#22d3bf">a</code>` はビット</p>
+<p>パターンとして効くので単調ではない: 0.5(=128)は最上位ビット、0.25 付近</p>
+<p>(=64)は上から 2 番目のビットだけを残し、それぞれ独立した縞状の階調平面</p>
+<p>(bit plane)が出る。「上位 n ビットを残す」なら `<code style="color:#22d3bf">a = (256 - 2**(8-n))/255</code>`</p>
+<p>に選ぶ(n=2 で 192/255 ≈ 0.753)。カラー(3 次元)入力はチャネル平均で 2 次元に</p>
+<p>落とされる。例外時は fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
+<p>ビットシフトは `<code style="color:#22d3bf">it_bit_lshift</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">it_bit_rshift</code>`、階調数の削減は</p>
+<p>`<code style="color:#22d3bf">it_convert_image_type</code>`。透かし・ステガノグラフィの解析や量子化ノイズの</p>
+<p>可視化(下位ビット平面の抽出)に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

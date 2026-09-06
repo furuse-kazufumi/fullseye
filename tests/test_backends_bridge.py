@@ -94,6 +94,10 @@ def test_specific_shapes_follow_the_docstrings():
     assert cnt.dtype == np.int64 and cnt.min() >= 0
     rgb = fs.apply(img, "img_to_rgb", 0.0, 0.0, on_error="raise")
     assert np.allclose(rgb[..., 0], img) and np.allclose(rgb[..., 1], img), "彩度 0 はグレー"
+    red = fs.apply(img, "img_to_rgb", 0.0, 1.0, on_error="raise")
+    dark = img < BB.SPECULAR_KNEE
+    assert np.allclose(red[dark, 1], 0.0) and np.allclose(red[dark, 2], 0.0), "膝より暗い画素は純色"
+    assert np.allclose(red[img >= 0.99], img[img >= 0.99, None]), "最明部は白(鏡面)"
     kp = fs.apply(img, "img_to_keypoints", 0.5, 0.9, on_error="raise")
     assert kp.ndim == 2 and kp.shape[1] == 2
     assert np.all(kp[:, 0] < 48) and np.all(kp[:, 1] < 48)

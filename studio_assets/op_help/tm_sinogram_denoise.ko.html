@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tm_sinogram_denoise — 2D <code style="color:#22d3bf">tomography</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tm_sinogram_denoise&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p><img src="fig/tm_sinogram_denoise.png" alt="tm_sinogram_denoise: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/tm_sinogram_denoise.png" alt="tm_sinogram_denoise: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_sinogram_denoise.a.jpg">tm_sinogram_denoise: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_sinogram_denoise.b.jpg">tm_sinogram_denoise: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_sinogram_denoise.inputs.jpg">tm_sinogram_denoise: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>입력 사이노그램을 각도 방향(행)을 따라 평활화(smoothing)한다. 인접한 투영 각도들은 거의 동일한 물체를 관측하므로, 각도 방향의 평활화는 사인 곡선 궤적을 보존하면서 각도별 검출기 노이즈를 억제하는 진정한 일관성 사전(prior)이다. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">는 각도 축의 가우시안 sigma(</code><code style="color:#22d3bf">a*4</code><code style="color:#22d3bf">)를 설정하고, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">는 완만한 검출기 축 sigma(</code><code style="color:#22d3bf">b*1.5</code>`)를 추가한다. 출력은 동일한 형태의 사이노그램으로 [0,1] 범위를 유지한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

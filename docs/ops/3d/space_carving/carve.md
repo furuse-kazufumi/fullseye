@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 bounds を res^3 voxel に離散化し、全シルエット内に射影される voxel を残す(空間彫刻)。
 
+各 voxel 中心を全カメラ ``m`` に ``X_cam = R_m X + t_m`` で射影し、depth>0・画像内・
+``silhouettes[m]`` が前景、を **すべて** 満たす voxel だけ keep する(視錐の共通部分)。
+シルエット/カメラは長さ M のリスト。
+
+Parameters
+----------
+silhouettes : list of (H, W) bool array  各カメラの前景マスク(M 個)。
+Ks, Rs, ts : list  各カメラの内部パラメータ・回転・並進(各 M 個)。
+bounds : ((xmin,xmax),(ymin,ymax),(zmin,zmax))  彫刻する直方体領域。
+res : int  各軸の voxel 分割数(voxel 総数 = res^3)。
+
+Returns
+-------
+(res, res, res) bool ndarray  占有 voxel。indexing='ij' で軸は (x, y, z)。
+    ``vox[i,j,k]`` の中心は ``(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

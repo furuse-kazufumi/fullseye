@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import meshrepair; meshrepair.decimate_qem(V, F, target_faces, protect=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;decimate_qem&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Quadric-error-metric edge-collapse decimation toward *target_faces*.</p>
+<p>*protect* (optional, (nv,) bool): vertices that must survive untouched —</p>
+<p>no edge incident to a protected vertex is collapsed, so the faces around a</p>
+<p>crater rim, a boulder or any region you flagged keep their exact geometry</p>
+<p>(`<code style="color:#22d3bf">meshres.mesh_decimate_preserving</code>` derives the mask from the detail map</p>
+<p>and reports what the rest of the reduction lost).</p>
+<p>Garland &amp; Heckbert 1997: each vertex carries the sum of the squared-distance</p>
+<p>quadrics of its incident face planes; the cheapest edge is collapsed to the</p>
+<p>position minimising that quadric (a midpoint/endpoint fallback when the 3x3</p>
+<p>system is singular, e.g. on a flat face), quadrics are accumulated onto the</p>
+<p>surviving vertex, and incident edge costs are re-queued. Collapses that would</p>
+<p>flip a face normal or land on a non-manifold edge are skipped, so the result</p>
+<p>stays a sane surface.</p>
+<p>Honest scope: this is a <b>practical</b> QEM, not production-grade. It has no</p>
+<p>boundary-preservation term, no attribute (colour/UV) quadrics and no</p>
+<p>aggressive validity recovery, so on awkward meshes a few non-ideal collapses</p>
+<p>can survive and the collapse may stop a little short of *target_faces* when</p>
+<p>every remaining candidate is blocked by the flip/manifold guard. Good enough</p>
+<p>for a cheap collision proxy; not a replacement for a dedicated remesher.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

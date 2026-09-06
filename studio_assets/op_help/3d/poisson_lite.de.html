@@ -4,6 +4,40 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktmenge (N,3) → ein Oberflächennetz (vertices(V,3), faces(F,3)) — eine leichtgewichtige Screened-Poisson-Näherung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。</p>
+<p>出力頂点は入力点群と同じ<b>世界座標</b>(bbox から逆写像)。bounds は点群 bbox(+σ 依存の padding)。</p>
+<p>2 モード:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normals is None</code><code style="color:#22d3bf">: **占有(occupancy)** をガウス平滑・[0,1] 正規化し、</code><code style="color:#22d3bf">iso</code>` で二値化した</p>
+<p>表面バンドの内部を `<code style="color:#22d3bf">binary_fill_holes</code><code style="color:#22d3bf"> で充填してから再平滑し、単一の外殻を </code><code style="color:#22d3bf">iso</code>` で抜く。</p>
+<p>占有(unsigned)場は内外対称で、平滑した薄殻の等値面は内スロープ・外スロープの二か所を通り</p>
+<p><b>同心二重殻</b>になってしまう。内部充填で内外対称性を破ることで、<b>閉じた</b>表面サンプルからは</p>
+<p>(格子/σ に対し十分密なら)単一殻が得られる。開いた曲面は充填されず薄い面のまま。疎すぎる/σ が</p>
+<p>小さいと隙間から充填が漏れ二重殻へ縮退しうる(厳密な内外判定が要るなら `<code style="color:#22d3bf">normals</code>` 指定を使う)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> 指定: 向き付き点の **winding number** で内外指標場を作りガウス平滑、</code><code style="color:#22d3bf">iso</code>`</p>
+<p>(既定 0.5)で表面抜き。表面のみサンプルでも内部を埋めて閉曲面を得られる。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>入力点群。</p>
+<p>size : int</p>
+<p>voxel 格子の一辺(既定 64)。大きいほど精細だが O(size³)。</p>
+<p>sigma : float</p>
+<p>ガウス平滑の標準偏差(voxel 単位、既定 1.0)。padding は ⌈3σ⌉+2 voxel を自動確保。</p>
+<p>iso : float</p>
+<p>等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。</p>
+<p>normals : array_like (N,3) or None</p>
+<p>点法線。与えると winding number モード、None なら占有モード。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>vertices : numpy.ndarray (V,3) float64</p>
+<p>世界座標の頂点。</p>
+<p>faces : numpy.ndarray (F,3) int64</p>
+<p>三角形の頂点インデックス(vertices を参照)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>点数不足(&lt;4)、size が小さすぎる、占有/指標場が薄く iso が場の値域外、など。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

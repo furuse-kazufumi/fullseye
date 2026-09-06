@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.voxel_to_mips(vol)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mips&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D → maximum-intensity projections along the three orthogonal directions. The entry point for applying 2-D methods (e.g. accel&#x27;s 2-D NCC).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>入力 `<code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf"> に対し </code><code style="color:#22d3bf">[max(axis=0), max(axis=1), max(axis=2)]</code>` の list を返す。形は</p>
+<p>それぞれ `<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf">(軸 0=D を潰す)、</code><code style="color:#22d3bf">(D,W)</code><code style="color:#22d3bf">(軸 1=H を潰す)、</code><code style="color:#22d3bf">(D,H)</code>`(軸 2=W を潰す)、</p>
+<p>dtype float64。値は入力の最大値そのまま(正規化しない)。負の値も max なので通り、</p>
+<p>密度 0 の背景は 0 のまま。</p>
+<p>形の検証は無い(2-D は `<code style="color:#22d3bf">axis=2</code>` で失敗し、4-D 以上は動いてしまう)ので、呼び手で次元を確かめる。</p>
+<p>`<code style="color:#22d3bf">match_mip_2d</code>` はこの 3 枚に 2D NCC を掛けて 3D 位置を冗長推定する。任意視点の投影は</p>
+<p>`<code style="color:#22d3bf">render_volume_projection</code>`(mode=&quot;mip&quot;)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

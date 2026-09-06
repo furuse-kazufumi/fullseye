@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_noise_ceiling.png",
+  "name": "noise_ceiling",
+  "caption": "核が完全に分かっていても、SNR 20 dB では取り分が 2 dB を切る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_deblur.png",
+  "name": "deblur",
+  "caption": "4 枚目は「復元した」形をしているが、ゼロ点(観測そのもの)より悪い。絵の見た目では区別できない。",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "03_kernel_error.png",
+  "name": "kernel_error",
+  "caption": "交点が現場で効く数字。2 本のゼロ点を横線で置いてある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_rotational.png",
+  "name": "rotational",
+  "caption": "核を作った右側だけが正。反対側・直交側・中心は負 —— 同じ 1 枚の核が場所によって害になる。",
+  "shape": [
+   349,
+   808,
+   3
+  ]
+ }
+]

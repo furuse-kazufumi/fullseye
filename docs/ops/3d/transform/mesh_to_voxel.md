@@ -21,6 +21,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。
 
+三角形上の一様点は barycentric(sqrt トリック)。占有 voxel が要るなら閾値化する。
+
+手順: 各三角形の面積に比例して ``samples`` 個の面を選び(``default_rng(0)`` の固定 seed
+→ 毎回同じ点)、面内一様な barycentric 点を作って ``points_to_voxel`` に渡す(``smooth``
+既定 0.8 voxel)。``faces`` は (F,3) の頂点 index、``vertices`` は (V,3)。
+退化面(面積 0)しか無い mesh は確率が NaN になり ``rng.choice`` が ValueError を出す。
+``bounds=None`` ならサンプル点の min/max(mesh の bbox とほぼ一致するが、サンプル次第で
+僅かに内側)。``bounds`` の検証・範囲外 clip は ``points_to_voxel`` と同じ。
+返り値 ``(size, size, size)`` float64 の点密度(占有ではない。占有が要るなら閾値で
+2 値化)。軸順は頂点座標の列順。seed を変えたい・点群も欲しいときは ``mesh_to_points`` で
+点群を作ってから ``points_to_voxel`` へ。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

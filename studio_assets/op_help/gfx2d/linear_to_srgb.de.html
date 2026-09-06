@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.linear_to_srgb(img)</code> (oder <code style="color:#22d3bf">opsgfx2d.get(&quot;linear_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lineares Licht zurück in die sRGB-Kodierung. Die exakte Umkehrung von :func:<code style="color:#22d3bf">srgb_to_linear</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>式(IEC 61966-2-1): `<code style="color:#22d3bf">c &lt;= 0.0031308</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">12.92 c</code>`、それ以外は</p>
+<p>`<code style="color:#22d3bf">1.055 c^(1/2.4) - 0.055</code>`。チャネルごと・画素ごとに独立。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">img</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(H, W, 1)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(H, W, 3)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(H, W, 4)</code>` の float。</p>
+<p>値は `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">(許容 1e-9)でなければ </code><code style="color:#22d3bf">ValueError</code>` ―― 線形光の HDR 値</p>
+<p>(1 超)は先に露光を掛けて収めること。整数配列は最大値が 1 以下のときだけ</p>
+<p>通る(0〜255 のバッファは拒否)。bool は 0/1 として通る。NaN/Inf、複素数、</p>
+<p>マスク配列は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">(H, W, 4)</code>` のアルファ(4 チャネル目)は<b>変換しない</b>(被覆率は元々線形)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 同形の float64 の複製、`<code style="color:#22d3bf">[0, 1]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf"> の 1 色や </code><code style="color:#22d3bf">(N, 3)</code>` の色表はこの op では受けない(画像 API)。</p>
+<p>任意の形に掛けたいときは `<code style="color:#22d3bf">imgmetrics</code>` 側の同名関数がここへ委譲している。</p>
+<p>`<code style="color:#22d3bf">radial_light</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">light_mask</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bloom</code>` など線形光で計算した結果を、</p>
+<p>ファイルに書く・画面に出す直前に 1 回だけ掛ける。二度掛けると中間調が</p>
+<p>浮く(例外は出ない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

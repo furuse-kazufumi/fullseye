@@ -2,16 +2,37 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_arc_length — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_arc_length&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*Keine Abbildung: dieser Op nimmt <code style="color:#22d3bf">points</code> als Eingabe. Ein Studio-Programm, das bei einem Bild beginnt, erreicht diesen Typ nicht — siehe die lauffähigen Beispiele unten.*</p>
+<p><img src="fig/tb_arc_length.png" alt="tb_arc_length: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_arc_length.chain.jpg">tb_arc_length: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kumulative Bogenlänge und Gesamtlänge einer Kurve. → (cumulative (N,), total float).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>順序付き点列 `<code style="color:#22d3bf">curve</code>` (N,3) を index 順に折れ線とみなし、隣接点間のユークリッド距離</p>
+<p>を累積する。`<code style="color:#22d3bf">cumulative[0]=0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">cumulative[i]</code>` = 先頭から i 番目までの折れ線長、</p>
+<p>`<code style="color:#22d3bf">total = cumulative[-1]</code>`。単位は座標と同じ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は `<code style="color:#22d3bf">float</code>` に変換されるだけで形状検証は無い(列数が 3 以外でも計算は通る)。</p>
+<p style="margin:2px 0 2px 12px">• N=1 では `<code style="color:#22d3bf">cumulative=[0.0]</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">total=0.0</code>`。閉曲線でも終点→始点の区間は数えない</p>
+<p>(閉じたい場合は先頭点を末尾に複製してから渡す)。</p>
+<p style="margin:2px 0 2px 12px">• 重複点(距離 0 の区間)はそのまま 0 として累積されるので `<code style="color:#22d3bf">cumulative</code>` は単調非減少</p>
+<p>だが狭義増加ではない。</p>
+<p>`<code style="color:#22d3bf">resample_uniform</code>` はこの累積弧長をパラメータに線形補間する。曲率の弧長積分など</p>
+<p>`<code style="color:#22d3bf">curvature_torsion</code>` と組み合わせるときの ds はこの差分から取る。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">arc_length</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
+<p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_arc_length 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_arc_length%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_arc_length%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
-<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">arc_length</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:space_curve">space_curve</a> — <code style="color:#22d3bf">py -3.11 examples_3d/space_curve.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:torus_knot_curve">torus_knot_curve</a> — <code style="color:#22d3bf">py -3.11 examples_3d/torus_knot_curve.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">typed</code>)</h3>

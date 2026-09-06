@@ -4,6 +4,33 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_arrow(img, p0, p1, pose, K, depth=None, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_arrow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回图像(image2d):画出从 3-D `<code style="color:#22d3bf">p0</code><code style="color:#22d3bf"> 到 </code><code style="color:#22d3bf">p1</code>` 的投影箭头。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">depth</code>` を渡し<b>両端とも隠れている</b>なら破線で描く(矢じりは半透明)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>端点がカメラの後ろ / 一致 / 両端とも画像の外、姿勢・K の不正。</p>
+<p>手順: `<code style="color:#22d3bf">img</code><code style="color:#22d3bf"> を float64 </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> の複製にし(</code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(H, W, C)</code>`、C は</p>
+<p>1/3/4。非有限・空は `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">p0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p1</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">annotate3d_project</code>` と</p>
+<p>同じ射影で画素にして、`<code style="color:#22d3bf">annotate.arrow</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">p0</code><code style="color:#22d3bf"> の画素から </code><code style="color:#22d3bf">p1</code>` の画素へ</p>
+<p>矢印を描く。矢じりは `<code style="color:#22d3bf">p1</code>` 側。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">p0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p1</code><code style="color:#22d3bf">: object 座標 </code><code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf">(有限)。</code><code style="color:#22d3bf">pose</code>` は 4x4 object→camera か</p>
+<p>`<code style="color:#22d3bf">(R, t)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">K</code>` は 3x3(-Z を見る render3d 慣習)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> 前方距離画像(</code><code style="color:#22d3bf">render3d.render_mesh</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">depth</code>`)。</p>
+<p>画像と同じ形でなければ `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">color</code><code style="color:#22d3bf">: 役割名(</code><code style="color:#22d3bf">&quot;emphasis&quot;</code><code style="color:#22d3bf"> など、</code><code style="color:#22d3bf">scheme</code>` のパレットで解決)か RGB。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 線幅 [px]、1 以上の整数(</code><code style="color:#22d3bf">1.5</code>` は拒否)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">head_len</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">head_width</code>`: 矢じりの長さ・幅 [px]。隠れ描画では矢印長の</p>
+<p>80 % を超えないよう縮める。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">occlusion_tol</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1)</code>`。</p>
+<p>返り値: 描画済みの新しい画像(float64、入力と同じ形。入力は変更しない)。</p>
+<p>エラーになる条件(実装どおり): どちらかの端点が `<code style="color:#22d3bf">z &lt;= 1e-9</code>`(カメラ面上/後ろ)/</p>
+<p>2 点が同じ画素に射影される(視線上に並ぶ、長さ 1e-9 px 未満)/ 姿勢・`<code style="color:#22d3bf">K</code>` の不正。</p>
+<p><b>画像の外に出た端点はエラーにしない</b>(`<code style="color:#22d3bf">annotate.arrow</code>` が枠外まで線を引く</p>
+<p>だけ。片方が枠内なら見た目は途中で切れる)。</p>
+<p>使いどころ: `<code style="color:#22d3bf">render3d.render_mesh</code>` の画像に「この頂点がこれ」を示す。長さを</p>
+<p>数値で示すなら `<code style="color:#22d3bf">annotate3d_measure</code><code style="color:#22d3bf">、文字を添えるなら </code><code style="color:#22d3bf">annotate3d_label</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

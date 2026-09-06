@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">img_to_monogenic — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;img_to_monogenic&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/img_to_monogenic.png" alt="img_to_monogenic: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_monogenic.a.jpg">img_to_monogenic: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_monogenic.b.jpg">img_to_monogenic: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_monogenic.inputs.jpg">img_to_monogenic: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>產生影像的單尺度單演訊號(四元數場 (H,W,4)，sort `<code style="color:#22d3bf">qimage</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>台帳の `<code style="color:#22d3bf">monogenic_signal</code>`(Felsberg &amp; Sommer 2001)そのもの: 対数放射状の</p>
+<p>raised-cosine 帯域通過を掛け、その Riesz 対と組にして四元数</p>
+<p>`<code style="color:#22d3bf">(帯域通過像, R1, R2, 0)</code><code style="color:#22d3bf"> に詰める。</code><code style="color:#22d3bf">tb_monogenic_amplitude</code>` /</p>
+<p>`<code style="color:#22d3bf">tb_monogenic_phase</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_monogenic_orientation</code>` は **この形の qimage</p>
+<p>だけ** を受け付ける(色の四元数 `<code style="color:#22d3bf">tb_rgb_to_quaternion</code>` を渡すと</p>
+<p>「モノジェニック信号ではない」と拒否する)ので、その族の入口はこちら。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 中心波長 </code><code style="color:#22d3bf">wavelength_px = 8 * (0.25 + 1.75 * a)</code>` 画素</p>
+<p>(a=0.5 で 9 px。小さいほど細かい構造に応答)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 帯域幅 </code><code style="color:#22d3bf">bandwidth_octaves = 1.0 * (0.25 + 1.75 * b)</code>` オクターブ</p>
+<p>(b=0.5 で 1.125)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W, 4)</code>` float64。値域は入力に依存し [0,1] に収まらない</p>
+<p>(Riesz 対は符号つき)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_monogenic 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_monogenic%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_monogenic%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">qimage</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_quaternion_to_rgb">tb_quaternion_to_rgb</a> · <a style="color:#22d3bf" href="op:tb_quat_norm">tb_quat_norm</a> · <a style="color:#22d3bf" href="op:tb_quat_conjugate_image">tb_quat_conjugate_image</a> · <a style="color:#22d3bf" href="op:tb_quat_normalize_image">tb_quat_normalize_image</a> · <a style="color:#22d3bf" href="op:tb_monogenic_amplitude">tb_monogenic_amplitude</a> · <a style="color:#22d3bf" href="op:tb_monogenic_phase">tb_monogenic_phase</a> · <a style="color:#22d3bf" href="op:tb_monogenic_orientation">tb_monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_counts">img_to_counts</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_video">img_to_video</a> · <a style="color:#22d3bf" href="op:img_to_volume">img_to_volume</a> · <a style="color:#22d3bf" href="op:img_to_lightfield">img_to_lightfield</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xg_eccentricity&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">eccentricity_points_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/xg_eccentricity.png" alt="xg_eccentricity: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/xg_eccentricity.png" alt="xg_eccentricity: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_eccentricity.chain.jpg">xg_eccentricity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>輪郭辞書 `<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>` の全輪郭の点を 1 つの点集合にまとめ、その</p>
+<p>(row, col) 座標の母共分散行列の固有値 `<code style="color:#22d3bf">λ_min &lt;= λ_max</code>` から離心率</p>
+<p>`<code style="color:#22d3bf">e = sqrt(1 - λ_min/λ_max)</code>` を返す。閉輪郭の重複した終点(先頭と同じ点)は</p>
+<p>数えない。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は `<code style="color:#22d3bf">numpy.float64</code>` で [0, 1]。真円・正方形など等方な点配置で 0、</p>
+<p>一直線上の点(`<code style="color:#22d3bf">λ_min = 0</code><code style="color:#22d3bf">)で 1。点が 2 個未満、または </code><code style="color:#22d3bf">λ_max &lt;= 1e-12</code>`</p>
+<p>(全点同一)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、</p>
+<p>個々の輪郭の形ではなく配置の広がりも混ざる(輪郭ごとに評価したいなら先に</p>
+<p>`<code style="color:#22d3bf">select_contours_xld</code>` などで 1 本に絞る)。輪郭点の密度に依存する(点が</p>
+<p>密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは</p>
+<p>`<code style="color:#22d3bf">xg_elliptic_axis</code><code style="color:#22d3bf">、主軸の向きは </code><code style="color:#22d3bf">xg_orientation</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

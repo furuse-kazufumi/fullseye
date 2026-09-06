@@ -82,16 +82,28 @@ def _rel(knob: float) -> float:
 # --------------------------------------------------------------------------- #
 # points / keypoints                                                           #
 # --------------------------------------------------------------------------- #
+#: 点群の箱の一辺。typed bridge が点群 op に束縛した値(``tools/chain_fuzz`` の
+#: 種 ``rng.random((160, 3)) * 10``、``bounds=((0,10),)*3``、``radius=2.0`` …)は
+#: **一辺 10 の箱**を前提にしている。画素座標(0〜127)のまま渡すと、半径系の op は
+#: 近傍が空、占有格子は箱の外で全 0 になる(2026-09-07 実測: ``tb_radius_outlier_removal``
+#: が空、``tb_occupancy_grid`` が全 0)。入口はその尺度に合わせる。
+POINTS_BOX = 10.0
+
+
 def img_to_points(v, a, b):
     """画像を高さ場として読み、(x, y, z) の点群 (N,3) にする。
 
-    各画素 ``(row, col)`` を 1 点 ``(x, y, z) = (col, row, value * H * s)`` に写す
-    (``H`` は画像の高さ、単位はすべて画素)。列の規約は ``camera.depth_to_points``
-    と同じ **(x, y, z)** —— ``reprconv`` の ``(z, y, x)`` とは逆なので、その族へ
-    渡すときは ``tb_points_zyx_to_keypoints_uv`` 等の入口で読み替えること。
+    各画素 ``(row, col)`` を 1 点 ``(x, y, z) = (col * 10/W, row * 10/H, value * 10 * s)``
+    に写す —— 画像の幅・高さを **一辺 10 の箱** に正規化した座標(``POINTS_BOX``)。
+    点群 op の橋渡し(``tb_*``)が束縛している半径・境界箱・格子解像度はこの尺度
+    (連鎖ファザーの種 ``[0,10)^3``)を前提にしているので、画素座標のまま渡すと
+    半径系 op の近傍が空になり占有格子が全 0 になる(実測)。画素に戻すなら
+    ``x * W / 10``、``y * H / 10``。列の規約は ``camera.depth_to_points`` と同じ
+    **(x, y, z)** —— ``reprconv`` の ``(z, y, x)`` とは逆なので、その族へ渡すときは
+    ``tb_points_zyx_to_keypoints_uv`` 等の入口で読み替えること。
 
     - ``a`` → 高さの倍率 ``s = 0.25 + 1.75 * a``(a=0.5 で 1.125。値域 [0,1] の画像なら
-      z の範囲は x, y と同じ桁になり、点群 op が「平面」でなく「地形」を見る)。
+      z の範囲は x, y と同じ桁 [0, 11.25] になり、点群 op が「平面」でなく「地形」を見る)。
     - ``b`` → 間引きの歩幅 ``stride = 1 + int(b * 3)``(b=0.5 で 2。128×128 なら
       4,096 点。b=0 で全画素、b=1 で 1/16)。
     - 返り値: ``(N, 3)`` float64、``N = ceil(H/stride) * ceil(W/stride)``。空にはならない。
@@ -106,8 +118,10 @@ def img_to_points(v, a, b):
     stride = 1 + int(np.clip(b, 0.0, 1.0) * 3)
     sub = img[::stride, ::stride]
     yy, xx = np.mgrid[0:h:stride, 0:w:stride].astype(np.float64)
-    z = sub * h * _rel(a)
-    return np.stack([xx.ravel(), yy.ravel(), z.ravel()], axis=1)
+    x = xx * (POINTS_BOX / max(w, 1))
+    y = yy * (POINTS_BOX / max(h, 1))
+    z = sub * POINTS_BOX * _rel(a)
+    return np.stack([x.ravel(), y.ravel(), z.ravel()], axis=1)
 
 
 def img_to_keypoints(v, a, b):
@@ -306,18 +320,30 @@ def _hue_rgb(h: float) -> np.ndarray:
     return np.asarray(table[i % 6], np.float64)
 
 
+#: 二色性反射モデルの「鏡面」の膝。この明るさを超えた分は白(無彩色)へ戻す。
+SPECULAR_KNEE = 0.75
+
+
 def img_to_rgb(v, a, b):
     """グレー画像に色相・彩度を与え、(H,W,3) の RGB 画像(sort ``rgbimage``)にする。
 
-    ``rgb = gray * ((1 - sat) + sat * chroma)``、``chroma = HSV(hue, 1, 1)``。
-    彩度 0 なら 3 チャンネル同値のグレー、1 なら単色の着色。**輝度(値)は
-    どのチャンネルも入力以下**なので値域は [0,1] に留まる。
+    二色性反射モデル(拡散 = 着色、鏡面 = 白)の形で作る:
+    ``mix = (1 - sat) + sat * chroma``、``chroma = HSV(hue, 1, 1)``、
+    ``spec = clip((gray - 0.75) / 0.25, 0, 1) ** 2``、
+    ``rgb = gray * (mix * (1 - spec) + spec)``。
+    つまり暗〜中間の画素は色相で着色され、**明るさ 0.75 を超える画素ほど白(無彩色)に
+    戻る**。彩度 0 なら 3 チャンネル同値のグレー(``spec`` に依らず入力そのもの)。
+    どのチャンネルも入力以下なので値域は [0,1] に留まる。
 
     - ``a`` → 色相 ``hue = a``(0 で赤、1/3 で緑、2/3 で青、1 で赤に戻る)。
-    - ``b`` → 彩度 ``sat = b``(b=0.5 で半分だけ着色。反射モデルの族
-      ``tb_specular_diffuse_split`` は「拡散 = 着色、鏡面 = 白」で分けるので、
-      **明るい飽和部が鏡面として抜ける**)。
+    - ``b`` → 彩度 ``sat = b``(b=0.5 で半分だけ着色)。
     - 返り値: ``(H, W, 3)`` float64。
+    - 鏡面の膝 ``SPECULAR_KNEE = 0.75`` は固定(ノブにしていない)。
+
+    なぜ鏡面を入れるか(2026-09-07 実測): 単純な着色 ``gray * mix`` だと明るい部分も
+    同じ色相の飽和色になり、``tb_specular_coefficient_map`` / ``tb_specular_diffuse_split`` /
+    ``tb_specular_free_transform`` が見る「無彩色のハイライト」が 1 画素も無く、
+    鏡面係数が全 0 の真っ黒な図になった。合成の入力側が族の前提(二色性)を満たす。
 
     使いどころ: ``tb_rgb_to_quaternion``(→ qimage、四元数の色 op の入口)、
     ``tb_specular_free_transform`` / ``tb_wetness`` / ``tb_sensor_capture``。
@@ -326,7 +352,9 @@ def img_to_rgb(v, a, b):
     img = _image2d(v)
     sat = float(np.clip(b, 0.0, 1.0))
     chroma = _hue_rgb(float(np.clip(a, 0.0, 1.0)))
-    return img[..., None] * ((1.0 - sat) + sat * chroma[None, None, :])
+    mix = (1.0 - sat) + sat * chroma[None, None, :]
+    spec = np.clip((img - SPECULAR_KNEE) / (1.0 - SPECULAR_KNEE), 0.0, 1.0) ** 2
+    return img[..., None] * (mix * (1.0 - spec)[..., None] + spec[..., None])
 
 
 def img_to_cimage(v, a, b):

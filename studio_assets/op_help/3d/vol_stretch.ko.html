@@ -4,6 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volgray; volgray.vol_stretch(vol, p_low=1.0, p_high=99.0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_stretch&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>백분위수로 대비를 `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> 로 신장(강건판 </code><code style="color:#22d3bf">scale_image_max</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Computes the *p_low*-th and *p_high*-th intensity percentiles and maps</p>
+<p>`<code style="color:#22d3bf">[P(p_low), P(p_high)]</code><code style="color:#22d3bf"> linearly onto </code><code style="color:#22d3bf">[0, 1]</code>`, clipping outside — so a</p>
+<p>handful of hot/cold outlier voxels (a metal artefact, a dead detector</p>
+<p>element) no longer dictates the display range, unlike a plain min/max</p>
+<p>normalisation. The defaults (1 % / 99 %) are the usual display-stretch</p>
+<p>choice.</p>
+<p>If the two percentile values coincide (a constant — or near-constant —</p>
+<p>volume), the input is <b>returned unchanged</b> rather than divided by zero</p>
+<p>(see the module docstring&#x27;s flat-volume note).</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>p_low, p_high : float</p>
+<p>Percentiles in `<code style="color:#22d3bf">[0, 100]</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">p_low &lt; p_high</code>` (fail-closed).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D, H, W), float64</p>
+<p>The stretched volume in `<code style="color:#22d3bf">[0, 1]</code>` (degenerate percentiles: the input</p>
+<p>itself).</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D / non-finite input, percentiles out of `<code style="color:#22d3bf">[0, 100]</code>`, or</p>
+<p>`<code style="color:#22d3bf">p_low &gt;= p_high</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

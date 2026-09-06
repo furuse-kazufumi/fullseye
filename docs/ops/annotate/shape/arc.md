@@ -24,6 +24,24 @@ Raises
 ValueError
     radius が非正、角度が非有限、start == end、alpha が [0,1] の外。
 
+描画: 中心からの距離 ``d`` が ``|d - radius| <= max(0.6, width/2)`` で、かつ
+画素の方位角が ``start_deg`` から時計回りに ``(end_deg - start_deg) mod 360`` の
+範囲にある画素を塗る(アンチエイリアス無し)。方位角は ``atan2(y - cy, x - cx)``
+で、0 度 = 右(+x)、90 度 = 下(+y)、時計回りが正。
+
+- ``center``: ``(x, y)``、x = 列・y = 行。画像外でもよい(はみ出しは切れるだけ)。
+- ``radius``: 正 [px]。
+- ``start_deg``, ``end_deg``: 度。``start`` から時計回りに ``end`` まで描く。
+  差が 360 の倍数(``end - start`` が 0 でなく 360 など)は全周。
+  ``start == end`` は「長さ 0」なので ``ValueError``。
+- ``width``: 線幅 [px]。``max(0.6, width/2)`` を半幅にするので 1 px 未満でも
+  途切れない。
+- ``img`` / ``color`` / ``alpha`` / ``scheme`` の扱いは ``rounded_rect`` と同じ
+  (float64 複製、``[0, 1]``、役割名か RGB)。
+- 返り値: 入力と同形の float64。
+
+角度を書き込む学術図の作法は ``annotate_angle`` が引き出し文字まで面倒を見る。
+
 ## 詳しい使い方ガイド
 
 - [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)

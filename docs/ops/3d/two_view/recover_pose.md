@@ -19,6 +19,24 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。
 
+t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。
+
+fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の**退化配置**で、Sampson 残差 ~0 の
+まま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で
+明示拒否する(ホモグラフィ分解を使うこと)。`planar_tol` はスケール不変な平面度しきい値
+(`_planar_degeneracy_ratio` の戻り値がこれ未満なら退化と判定)。
+
+手順:
+- 入口検査(8 点以上、点数一致、(N,2) かつ有限)。
+- 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが ``planar_tol``(既定 1e-2)未満なら ``ValueError``。H が特異なら比 0 として同じく拒否。
+- ``essential_8point`` → 4 候補 ``(R, ±t)`` へ分解 → 各候補で ``triangulate`` し、両カメラで深度 > 0 の点数が最大の候補を採る(同数なら先の候補)。
+
+返り値: ``R`` (3,3)、``t`` (3,) 単位ベクトル、``points3d`` (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で ``X2 = R X1 + t``。``points3d`` は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。
+
+- ``K2`` 省略時は ``K1`` を両画像に使う。
+- 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。
+- 決定論的。GT 検証は ``pose_error``、残差は ``sampson_distance``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

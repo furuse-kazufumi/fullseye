@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對應集合的內點率 = ‖T·source[i] − target[i]‖ &lt; thresh 的比例。→ [0,1]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">target</code>` は <b>index 対応</b>(source[i] が target[i] に対応)の</p>
+<p>同数点群(FPFH 等の putative correspondence を想定)。thresh に単調非減少。</p>
+<p>形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

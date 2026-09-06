@@ -19,6 +19,33 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 CT window/level (HU windowing) — the radiologist's daily linear remap.
 
+Maps the intensity window ``[center - width/2, center + width/2]`` linearly
+onto *out_range* ``(lo, hi)``; voxels below the window saturate at ``lo``,
+voxels above at ``hi`` (clipped, by design — that is what a CT window
+*does*). A bone window and a soft-tissue window on the same Hounsfield
+volume make entirely different structures visible. HALCON analogue:
+``scale_image`` (the linear part), plus the clip.
+
+Parameters
+----------
+vol : array_like, shape (D, H, W)
+    Input volume (coerced to float64; NaN/Inf rejected). Hounsfield units
+    or any other physical scale — *center* / *width* live on the same scale.
+center, width : float
+    Window centre and full width. ``width`` must be ``> 0`` (fail-closed).
+out_range : (float, float)
+    Output ``(lo, hi)`` with ``lo < hi``. Default ``(0.0, 1.0)``.
+
+Returns
+-------
+ndarray, shape (D, H, W), float64
+    The windowed volume, everywhere inside ``[lo, hi]``.
+
+Raises
+------
+ValueError
+    Non-3-D / non-finite input, ``width <= 0``, or a malformed *out_range*.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

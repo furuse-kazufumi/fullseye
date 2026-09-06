@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import imgmetrics; imgmetrics.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>(或 <code style="color:#22d3bf">opsimgmetrics.get(&quot;xyz_to_lab&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CIE XYZ → CIE 1976 L\*a\*b\*。預設白點為 D65 2°。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>式: `<code style="color:#22d3bf">t = XYZ / white</code><code style="color:#22d3bf"> として </code><code style="color:#22d3bf">f(t) = cbrt(t)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">t &gt; (6/29)^3</code>`)、</p>
+<p>それ以外は `<code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">L = 116 f(Y) - 16</code>`、</p>
+<p>`<code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">xyz</code><code style="color:#22d3bf">: 最後の軸が 3 の任意の形。</code><code style="color:#22d3bf">rgb_to_xyz</code>` の出力と同じ、Y = 1 が白の尺度。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">white</code><code style="color:#22d3bf">: 白色点 </code><code style="color:#22d3bf">(Xn, Yn, Zn)</code><code style="color:#22d3bf"> の 3 つの正の数。既定 </code><code style="color:#22d3bf">D65_WHITE</code>` =</p>
+<p>`<code style="color:#22d3bf">(0.95047, 1.0, 1.08883)</code>`。別の光源(D50 など)で撮った XYZ ならここを変える。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。`<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> は白で 100、黒で 0。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` は符号つき。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(`<code style="color:#22d3bf">MetricContractError</code><code style="color:#22d3bf">): 最後の軸が 3 でない / </code><code style="color:#22d3bf">white</code>` が 3 要素でない、</p>
+<p>または 0 以下を含む。XYZ の値域は検査しない(負や 1 超もそのまま計算する)。</p>
+<p>`<code style="color:#22d3bf">delta_e_76</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">delta_e_2000</code>` はこの Lab を入力にする。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

@@ -2,15 +2,41 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_farthest_point_sampling — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_farthest_point_sampling&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p>*図なし: この op は <code style="color:#22d3bf">points</code> を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*</p>
+<p><img src="fig/tb_farthest_point_sampling.png" alt="tb_farthest_point_sampling: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_farthest_point_sampling.a.jpg">tb_farthest_point_sampling: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_farthest_point_sampling.chain.jpg">tb_farthest_point_sampling: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_farthest_point_sampling.inputs.jpg">tb_farthest_point_sampling: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。</p>
+<p>`<code style="color:#22d3bf">start</code>` を最初の代表点にし、「既に選んだ点集合への測地距離が最大の点」を 1 つずつ追加する</p>
+<p>貪欲法(FPS)。距離は `<code style="color:#22d3bf">knn_graph(points, k)</code>` の無向 kNN グラフ上の Dijkstra で測り、既選択</p>
+<p>集合への距離は各代表点の単源距離の要素ごと最小 `<code style="color:#22d3bf">mind</code>` として保持、代表点を 1 つ足すたびに</p>
+<p>`<code style="color:#22d3bf">mind = min(mind, d_new)</code>` で更新する。代表点 1 つにつき Dijkstra 1 回なので計算量は n 回分の</p>
+<p>単源最短路。乱数は使わず決定的。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">: (N,3) 点群。</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">: 欲しい点数。</code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> を超えると </code><code style="color:#22d3bf">N</code>` に、負なら 0 に丸める</p>
+<p>(0 なら空配列)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: kNN グラフの近傍数(既定 8)。</code><code style="color:#22d3bf">start</code><code style="color:#22d3bf">: 最初の代表点(</code><code style="color:#22d3bf">start % N</code>` で範囲内に折り返す)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は選んだ順の添字列(先頭が `<code style="color:#22d3bf">start</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">points[idx]</code>` で代表点群になる。</p>
+<p>罠: グラフが複数の連結成分に分かれていると、不達の点は距離 `<code style="color:#22d3bf">inf</code>` なので未到達の成分が先に</p>
+<p>選ばれる(argmax が `<code style="color:#22d3bf">inf</code>` を拾う)。「離れた塊から先に取る」挙動になるので、成分ごとに</p>
+<p>均等に間引きたいなら `<code style="color:#22d3bf">euclidean_cluster</code>` 等で分けてから使う。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">farthest_point_sampling</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf">(既定 8)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_farthest_point_sampling 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_farthest_point_sampling%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_farthest_point_sampling%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p>次の例は元の台帳 op <code style="color:#22d3bf">farthest_point_sampling</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geodesic_distance">geodesic_distance</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geodesic_distance.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pointcloud_downsampling">pointcloud_downsampling</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pointcloud_downsampling.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>

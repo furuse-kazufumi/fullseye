@@ -7,7 +7,7 @@
 
 *実際のオペレータ出力だけで作った 6 幕(エッジと方位 / 連結成分の選別 / サブピクセル計測 / SDF からのメッシュ化 / 点群クラスタリング / レンズのデフォーカス)。*
 
-**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **885**（レジストリ）、実 HALCON オペレータ **979/2313** を genuine 実装、47 カテゴリをカバーします。
+**Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **897**（レジストリ）、実 HALCON オペレータ **979/2313** を genuine 実装、48 カテゴリをカバーします。
 
 > **まずはここから → [GETTING_STARTED.md](GETTING_STARTED.md)（5 分で動かす）**
 
@@ -50,15 +50,15 @@
 
 ## オペレータを探す
 
-**1,842 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **48 本の族ガイド**があります。次元ごとの入口:
+**1,854 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **49 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 885/885、型つき台帳 958/1002、1 行ファサード `fullseye.<名前>` 501/1091。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 897/897、型つき台帳 958/1002、1 行ファサード `fullseye.<名前>` 501/1091。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 1842 本のうち、実行できる例が付いているのは **1637 本**(205 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1348 本**(494 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1842 本すべてにある。
+**ノートの中身の実測**: 1854 本のうち、実行できる例が付いているのは **1825 本**(29 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1854 本**(0 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1854 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
-| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 885 | [INDEX](ops/2d/INDEX.md) |
+| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 897 | [INDEX](ops/2d/INDEX.md) |
 | `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 347 | [INDEX](ops/3d/INDEX.md) |
 | `optics` — レンズ・収差・光線追跡・照明設計 | 124 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
 | `annotate` — 図注(軸・凡例・注記) | 46 | [INDEX](ops/annotate/INDEX.md) · [ガイド](ops/annotate/guides/figure_annotation.md) |
@@ -111,7 +111,7 @@
 
 | ドキュメント | 内容 |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | 全 885 オペレータのカタログ（47 カテゴリ、sort 別、HALCON/OpenCV/scikit-image/MATLAB の対応 API） |
+| [OPERATORS.md](OPERATORS.md) | 全 897 オペレータのカタログ（48 カテゴリ、sort 別、HALCON/OpenCV/scikit-image/MATLAB の対応 API） |
 | [EXAMPLES.md](EXAMPLES.md) | オペレータ別のサンプルコード（他ライブラリとの等価呼び出し付き） |
 | [OP_INDEX.json](OP_INDEX.json) | 機械可読なオペレータ索引（`imgevolve.py index` で再生成） |
 | [ADDING_OPS.md](ADDING_OPS.md) | 新しいオペレータの追加方法（進化・codegen・カタログ・索引が自動追従） |
@@ -188,7 +188,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 71 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,842 本と族ガイド 48 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,854 本と族ガイド 49 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

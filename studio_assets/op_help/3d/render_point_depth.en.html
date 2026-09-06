@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.render_point_depth(points, K, size, R=None, t=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;render_point_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Point set → a depth image (z-buffer; each pixel takes the depth of its nearest point). For synthesising observations and inspection samples.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">project_points(points, K, R, t)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(u, v, z)</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">round</code><code style="color:#22d3bf"> した画素 </code>`(row=v,</p>
+<p>col=u)`<code style="color:#22d3bf"> が </code><code style="color:#22d3bf">size=(H, W)</code><code style="color:#22d3bf"> 内かつ </code><code style="color:#22d3bf">z &gt; 0</code>` の点だけを、遠い順に書いて近い点で上書きする</p>
+<p>(同一画素は最小 z が残る)。点が無い画素は <b>0</b>(`<code style="color:#22d3bf">tsdf_from_depth</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">depth_to_points</code>` が</p>
+<p>無効値として扱う規約)。返り値 `<code style="color:#22d3bf">(H, W)</code>` float64、単位は点の座標の単位。</p>
+<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(`<code style="color:#22d3bf">mesh_to_points</code>` で密にしてから)。splat</p>
+<p>半径は無い。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> は numpy (3,3)、</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">t</code>` は省略可。</p>
+<p>後段: `<code style="color:#22d3bf">depth_to_points</code><code style="color:#22d3bf"> で戻す、</code><code style="color:#22d3bf">normals_from_depth</code><code style="color:#22d3bf"> で法線、</code><code style="color:#22d3bf">tsdf_from_depth</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

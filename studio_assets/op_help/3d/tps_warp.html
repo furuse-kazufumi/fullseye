@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>TPS モデルで点群を変形する。</p>
+<p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。</p>
+<p>引数:</p>
+<p>model: `<code style="color:#22d3bf">tps_fit</code>` が返した dict。</p>
+<p>points: (M,3)(または長さ3の1次元)。変形したい点群。</p>
+<p>返り値:</p>
+<p>(M,3) 変形後の点群(入力が1次元なら (3,) を返す)。</p>
+<p>例外:</p>
+<p>ValueError: model の形式不正、または points の形状不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

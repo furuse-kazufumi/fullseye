@@ -2,16 +2,44 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_exponential_foreground — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_exponential_foreground&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p>*図なし: この op は <code style="color:#22d3bf">video</code> を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*</p>
+<p><img src="fig/tb_exponential_foreground.png" alt="tb_exponential_foreground: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_foreground.a.jpg">tb_exponential_foreground: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_foreground.b.jpg">tb_exponential_foreground: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_foreground.chain.jpg">tb_exponential_foreground: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_foreground.inputs.jpg">tb_exponential_foreground: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>動き</b>(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):</p>
+<p><img src="fig/tb_exponential_foreground.gif" alt="tb_exponential_foreground: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>前景マスク `<code style="color:#22d3bf">|frame − exponential background| &gt; threshold</code><code style="color:#22d3bf"> → 0/1 の </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">video</code>`）。</p>
-<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Typed bridge of the videostream op `<code style="color:#22d3bf">exponential_foreground</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> (default 0.05) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">threshold</code>` (default 0.1).</p>
+<p>`<code style="color:#22d3bf">exponential_background</code><code style="color:#22d3bf"> と同じ指数移動平均 </code><code style="color:#22d3bf">bg += α (frame - bg)</code>` を回し、</p>
+<p>各フレームで <b>更新後の</b> `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> との差 </code><code style="color:#22d3bf">|frame - bg| &gt; threshold</code>` を 1 にする。</p>
+<p>先頭フレームは `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> の初期化に使われ差が 0 なので、</code><code style="color:#22d3bf">t = 0</code>` は全画素 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code>` 配列か 2-D フレームの list。整数 dtype は最大値で</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に正規化、float はクリップ。NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code>`。大きいほど背景が速く追従し、止まった物体は</p>
+<p>約 `<code style="color:#22d3bf">1/α</code><code style="color:#22d3bf"> 枚で消える。1 だと </code><code style="color:#22d3bf">bg == frame</code>` になり常に全画素 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code>` の強度単位。<b>全画素共通の絶対閾</b>なので、暗部の</p>
+<p>雑音と明部の雑音を同じ閾で切ることになる。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code>` float64 の 0 / 1。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>画素ごとの分散で閾を決めたいなら `<code style="color:#22d3bf">running_gaussian_foreground</code>`。ゴーストの</p>
+<p>無い動き検出なら `<code style="color:#22d3bf">three_frame_difference</code>`。</p>
+<p>2-D 進化レジストリへ橋渡しした videostream の op `<code style="color:#22d3bf">exponential_foreground</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">(既定 0.05)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">threshold</code>`(既定 0.1)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_video 0.50 0.50
+tb_exponential_foreground 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_video%200.50%200.50%0Atb_exponential_foreground%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_video%200.50%200.50%0Atb_exponential_foreground%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p>次の例は元の台帳 op <code style="color:#22d3bf">exponential_foreground</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">video</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_temporal_bandpass">tb_temporal_bandpass</a> · <a style="color:#22d3bf" href="op:tb_temporal_band_power">tb_temporal_band_power</a> · <a style="color:#22d3bf" href="op:tb_temporal_median_window">tb_temporal_median_window</a> · <a style="color:#22d3bf" href="op:tb_moving_average_window">tb_moving_average_window</a> · <a style="color:#22d3bf" href="op:tb_background_subtraction_window">tb_background_subtraction_window</a> · <a style="color:#22d3bf" href="op:tb_frame_difference_causal">tb_frame_difference_causal</a> · <a style="color:#22d3bf" href="op:tb_exponential_background">tb_exponential_background</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>

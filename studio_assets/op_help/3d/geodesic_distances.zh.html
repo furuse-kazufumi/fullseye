@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从 source 到全部点的测地距离(kNN 图上 Dijkstra)。→ (N,) float(不可达为 inf)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">knn_graph(points, k)</code>` で作った k 近傍グラフ(辺の重み = 点間の Euclid 距離 = 弦長)を</p>
+<p>`<code style="color:#22d3bf">directed=False</code><code style="color:#22d3bf"> で無向化し、</code><code style="color:#22d3bf">scipy.sparse.csgraph.dijkstra</code>` で単一始点最短路を解く。</p>
+<p>`<code style="color:#22d3bf">d[i]</code><code style="color:#22d3bf"> は source から点 i までのグラフ上の経路長で </code><code style="color:#22d3bf">d[source] = 0</code>`、source と繋がっていない</p>
+<p>連結成分の点は `<code style="color:#22d3bf">inf</code>`。単位は座標の単位そのまま。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (N,3) の点群(float64 に変換)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">source</code>`: 始点の添字(0..N-1 の整数。範囲外は scipy 側で例外)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: 近傍数(既定 8)。小さいとグラフが分断されて </code><code style="color:#22d3bf">inf</code>` が増え、大きいと離れた面どうしを</p>
+<p>直結する「近道」が生まれて曲面に沿わない距離になる(薄い板の表裏、折り返した面など)。</p>
+<p>精度: 辺が弦長なので弧をわずかに過小評価する一方、経路のジグザグが過大評価を生む(モジュール</p>
+<p>docstring の Bernstein らの挟み込み評価を参照)。三角メッシュがあるなら近傍数に依存しない</p>
+<p>`<code style="color:#22d3bf">geodesic_mesh</code><code style="color:#22d3bf"> を使う。この距離で均等に間引くには </code><code style="color:#22d3bf">farthest_point_sampling</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

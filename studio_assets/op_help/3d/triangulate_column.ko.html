@@ -4,6 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;triangulate_column&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 카메라 화소의 「프로젝터 컬럼 번호」로부터 깊이 Z 를 삼각측량(구조광의 최종 단).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>構造化光スキャナの幾何そのもの: カメラ画素 (u,v) は 1 本の視線を張り、投影機のコラム</p>
+<p>番号 u_p は 1 枚の平面(投影機中心とそのコラムを含む平面)を張る。視線と平面の交点が</p>
+<p>表面の 3D 点で、そのカメラ系 Z が深度になる。<b>閉じた式</b>なので反復も最適化も要らない。</p>
+<p>column: (H, W) の投影機コラム番号(<b>サブピクセル実数</b>)。位相から出した値をそのまま</p>
+<p>渡せる。NaN = 未確定画素(出力も NaN)。</p>
+<p>k_cam:  カメラ内部行列 3x3(fx, fy, cx, cy[, skew])。画素中心は整数座標</p>
+<p>(<code style="color:#22d3bf">render3d.render_mesh</code> / <code style="color:#22d3bf">camera.depth_to_points</code> と同じ約束)。</p>
+<p>k_proj: 投影機内部行列 3x3。使うのは第 0 行(コラム方向)と第 2 行だけ。</p>
+<p>rot:    3x3 回転。カメラ系 → 投影機系(X_proj = rot·X_cam + trans)。</p>
+<p>trans:  長さ 3 の並進(同上、単位はシーンと同じ)。<b>ゼロベクトルは禁止</b></p>
+<p>(基線 0 = カメラと投影機が同一点。平面と視線が交わらず深度が定義できない)。</p>
+<p>返り値: (H, W) float64 の深度マップ(カメラ前方の Z、<code style="color:#22d3bf">render_mesh</code> の depth と同じ量)。</p>
+<p>交点が後方(Z&lt;=0)や視線が平面と平行な画素は NaN。</p>
+<p>導出: X_cam = Z·d(d = K_cam⁻¹[u,v,1])。投影機側のコラム条件は</p>
+<p>(K_proj[0] − u_p·K_proj[2])·X_proj = 0。X_proj = rot·X_cam + trans を代入して</p>
+<p>Z について解くと Z = −(a·trans) / (a·(rot·d))、a = K_proj[0] − u_p·K_proj[2]。</p>
+<p>Raises: 形状・行列不正、基線ゼロ、特異なカメラ行列で ValueError。</p>
+<p>来歴(公開文献): 光線と平面の交点による構造化光三角測量 — Hartley &amp; Zisserman,</p>
+<p>*Multiple View Geometry* 2nd ed. §12(射影幾何の交わり)/ Salvi et al.,</p>
+<p>*Pattern Recognition* 43 2010(構造化光パターンの分類と復号)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

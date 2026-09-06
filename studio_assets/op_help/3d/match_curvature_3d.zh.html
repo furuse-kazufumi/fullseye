@@ -5,6 +5,21 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率(shape index)匹配。voxel × 曲率列(线→面提升的核心)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>scene/template を <b>curvedness で重み付けした shape-index 場</b>へ変換 → 既存 3D NCC で定位。</p>
+<p>強度でなく <b>局所曲面形状</b>で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を</p>
+<p>区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。</p>
+<p>手順: 両 volume で `<code style="color:#22d3bf">curvature_maps</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">S × curvedness × mask</code>` の重み付き shape-index 場</p>
+<p>`<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> を作り、テンプレ側は </code><code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code>` の bbox を切り出して</p>
+<p>`<code style="color:#22d3bf">accel_match.ncc_locate_3d</code><code style="color:#22d3bf"> に渡す。返り値 </code><code style="color:#22d3bf">[NCC, z, y, x]</code>` float64、NCC ∈ [−1, 1]。</p>
+<p style="margin:2px 0 2px 12px">• <b>位置は切り出した bbox テンプレの中心</b>が scene に載る座標。元テンプレ volume の中心とは</p>
+<p>bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mc</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">curvature_maps</code>` の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて</p>
+<p>曲率ノイズを抑える。</p>
+<p style="margin:2px 0 2px 12px">• テンプレの曲率場が全 0(平坦・`<code style="color:#22d3bf">mc</code><code style="color:#22d3bf"> が高すぎ)なら </code><code style="color:#22d3bf">[0,0,0,0]</code>` を返す。</p>
+<p style="margin:2px 0 2px 12px">• 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に `<code style="color:#22d3bf">points_to_voxel</code>` の</p>
+<p>`<code style="color:#22d3bf">smooth</code>` 等で滑らかにする。</p>
+<p>`<code style="color:#22d3bf">subvoxel=True</code>` で NCC ピークの ±2 近傍重心に精緻化。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

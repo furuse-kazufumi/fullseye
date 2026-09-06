@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volops; volops.vol_distance_transform(vol_binary, spacing=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_distance_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Exact Euclidean distance transform of a binary volume.</p>
+<p>Each foreground (non-zero) voxel is labelled with its Euclidean distance to</p>
+<p>the nearest background voxel, via `<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>`.</p>
+<p>Pass *spacing* `<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> (e.g. </code><code style="color:#22d3bf">VolumeMeta.spacing_mm</code>`, or the</p>
+<p>`<code style="color:#22d3bf">VolumeMeta</code>` itself) to make the distance <b>anisotropy-aware</b> — millimetres</p>
+<p>rather than voxels; otherwise unit spacing is assumed. A non-`<code style="color:#22d3bf">{0, 1}</code>` input</p>
+<p>is thresholded at `<code style="color:#22d3bf">&gt; 0.5</code>`.</p>
+<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code>` float64 distance field (0 on the background).</p>
+<p>Reference: Felzenszwalb &amp; Huttenlocher, Theory of Computing 2012.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

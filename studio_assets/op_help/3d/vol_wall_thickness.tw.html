@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>沿探針 `<code style="color:#22d3bf">p0 -&gt; p1</code>` 的壁厚 —— 工業 CT 的經典計量。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>measurement itself.</p>
+<p>Runs :func:<code style="color:#22d3bf">vol_edge_probe</code> (all polarities) and pairs consecutive</p>
+<p>opposite-polarity edges *rising -&gt; falling* in probe order: each pair is</p>
+<p>one traversal of bright material (entry surface -&gt; exit surface), and its</p>
+<p>thickness is the difference of the two edges&#x27; `<code style="color:#22d3bf">t_mm</code>` (physical units —</p>
+<p>mm with a spacing, voxels without). A probe crossing both walls of a pipe</p>
+<p>therefore yields two thicknesses.</p>
+<p>Edges that do not complete a rising -&gt; falling pair (a probe starting or</p>
+<p>ending inside material, consecutive same-polarity edges) are <b>ignored</b>,</p>
+<p>not paired creatively — the count of returned thicknesses can be smaller</p>
+<p>than `<code style="color:#22d3bf">len(edges) // 2</code>`. Dark walls on a bright background need an</p>
+<p>inverted volume (the pairing convention is bright material).</p>
+<p>Returns a list of float thicknesses, in probe order (possibly empty).</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on the same malformed inputs as</p>
+<p>:func:<code style="color:#22d3bf">vol_edge_probe</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

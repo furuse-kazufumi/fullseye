@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;unwrap_phase_2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。</p>
+<p>wrapped: wrapped_phase の出力(2D)。NaN を含んでよい(無効画素として扱う)。</p>
+<p>mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。</p>
+<p>NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。</p>
+<p>返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。</p>
+<p>手順: 無効画素(`<code style="color:#22d3bf">wrapped</code><code style="color:#22d3bf"> の非有限 ∪ </code><code style="color:#22d3bf">mask == False</code>`)が無ければ</p>
+<p>`<code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code>` をそのまま呼ぶ。あれば無効画素を 0 で</p>
+<p>埋めた `<code style="color:#22d3bf">numpy.ma</code>` の masked array として渡し(skimage は masked 画素を展開から</p>
+<p>除外する)、出力の無効画素を NaN に戻す。</p>
+<p>検証: scikit-image が import できない環境では `<code style="color:#22d3bf">RuntimeError</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">ImportError</code>`</p>
+<p>ではない)。`<code style="color:#22d3bf">wrapped</code><code style="color:#22d3bf"> が 2-D でない、</code><code style="color:#22d3bf">mask</code>` の形が違う、<b>全画素が無効</b></p>
+<p>(アンラップする画素が無い)は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>前提(Itoh の条件): 隣接する有効画素の真の位相差が `<code style="color:#22d3bf">π</code>` 未満。急な段差・深い穴・</p>
+<p>オクルージョン境界では 2π の飛びを誤り、その先の領域全体が `<code style="color:#22d3bf">2πm</code>` ずれる。</p>
+<p>マスクで島に分かれた領域どうしの相対次数は決まらない(島ごとに独立な</p>
+<p>オフセット)。絶対性が要るときは `<code style="color:#22d3bf">graycode_decode</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">absolute_phase</code>` の</p>
+<p>画素独立な次数確定を使う。</p>
+<p>使いどころ: `<code style="color:#22d3bf">wrapped_phase</code><code style="color:#22d3bf"> → 本 op → </code><code style="color:#22d3bf">phase_to_height</code>`(同モジュールの</p>
+<p>関数、`<code style="color:#22d3bf">height = k (phase - ref_phase)</code>`)。参照面を同じ手順で展開して引けば</p>
+<p>大域オフセットは相殺される。`<code style="color:#22d3bf">decode_fringe</code>` はこの連鎖を 1 回で行う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

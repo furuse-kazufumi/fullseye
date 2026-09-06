@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。
 
+``n = d̂1 × d̂2`` を取り、``|n| < 1e-9``(平行)なら ``distance_point_line(p2, p1, d1)``、それ
+以外は ``|(p2 − p1)·n̂|``(共通垂線の長さ)を float で返す。交わる直線では 0。
+``p1, d1, p2, d2`` は数値の 2 または 3 ベクトル、次元の混在は ValueError。
+2-D の非平行な直線は交わるので距離 0 のはずだが、``np.cross`` がスカラーになるため ``@`` が
+失敗する(2-D は平行な場合しか通らない)。3-D で使うこと。単位は入力座標の単位。
+用途: 2 本の軸(``fit_line_3d``)の同軸度、穴ピッチ。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

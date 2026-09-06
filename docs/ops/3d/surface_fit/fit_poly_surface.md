@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。
 
+基底 ``{x^i·y^j : i + j <= degree}``(項数 ``(degree+1)(degree+2)/2``。degree=1 で 3 項の平面、
+2 で 6 項の 2 次曲面)を ``lstsq`` で当てる。``x, y, z`` は同じ要素数なら形は問わない(内部で
+ravel。格子なら ``np.mgrid`` の出力をそのまま)。
+返り値 dict: ``coef`` (T,) 係数、``powers`` は各係数の ``(i, j)``(項 ``x**i * y**j``)、
+``degree``、``rms`` は残差 RMS、``pv`` は残差の peak-to-valley(max − min)。単位は z。
+- 点数が項数より少ないと最小ノルム解が黙って返る。x, y の桁が大きいと高次で条件が悪くなる
+(座標を中心化・正規化してから)。NaN の検証は無い。
+後段: ``eval_poly_surface(model, x, y)`` で任意点を評価。格子の高さ場なら ``surface_form_error``
+/ ``background_flatten`` がこれを内部で呼ぶ。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。
 
+``I = ambient + (1 − ambient)·clip(n·L̂, 0, 1)`` を ``(H, W)`` float64、値域 **[0, 1]** で返す。
+``light`` は内部で単位化する(零ベクトルは 0 除算で NaN)が、**法線は単位化しない**(単位法線を
+渡す。``estimate_point_normals`` / ``normals_from_depth`` の出力は単位)。法線の成分順と
+``light`` の成分順は揃える(既定 ``(0,0,1)`` は第 3 成分=カメラ向きを正面光とする規約)。
+光源と反対を向く面は ``ambient`` の値になる。最後の軸を法線とみなすので ``(N,3)`` の点ごとの
+法線でも動く。鏡面ハイライトは無い(``fresnel_reflectance`` / ``reflect`` で別途)。
+用途: ``photometric_stereo`` の検算(法線 → 画像の順方向)、外観検査の合成サンプル。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

@@ -2,10 +2,36 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dc_rpca_lowrank — 2D <code style="color:#22d3bf">decomposition</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dc_rpca_lowrank&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/dc_rpca_lowrank.png" alt="dc_rpca_lowrank: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/dc_rpca_lowrank.png" alt="dc_rpca_lowrank: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_lowrank.a.jpg">dc_rpca_lowrank: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_lowrank.inputs.jpg">dc_rpca_lowrank: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Low-Rank-(Hintergrund-)Anteil der Robust-PCA.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>画像行列 `<code style="color:#22d3bf">M</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">M = L + S</code><code style="color:#22d3bf">(低ランク </code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> + スパース </code><code style="color:#22d3bf">S</code>`)に分解する</p>
+<p>Principal Component Pursuit を inexact ALM(Lin/Chen/Ma 2010)で解き、`<code style="color:#22d3bf">L</code>`</p>
+<p>を返す。スパース項の重みは `<code style="color:#22d3bf">λ = (0.5 + 1.5*a) / sqrt(max(m, n))</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">m, n</code>`</p>
+<p>は分解時の行列寸法)で、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が大きいほど </code><code style="color:#22d3bf">S</code><code style="color:#22d3bf"> が疎になり、その分 </code><code style="color:#22d3bf">L</code>` に</p>
+<p>残る成分(ランク)が増える。`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> では </code><code style="color:#22d3bf">λ</code>` が小さく、ほとんどの変動が</p>
+<p>`<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> に吸われて </code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> はのっぺりする。</code><code style="color:#22d3bf">b</code>` は未使用。反復は最大 60 回、</p>
+<p>収束判定は `<code style="color:#22d3bf">||M - L - S||_F &lt;= 1e-7 * ||M||_F</code>`。</p>
+<p>長辺が 64 を超える画像は 64 に縮小して分解し、`<code style="color:#22d3bf">L</code>` だけを線形補間で元の</p>
+<p>大きさに戻す(低ランク部は縮小に耐えるため)。入力は [0,1] の 2 次元 float64</p>
+<p>に揃え(3 次元はチャネル平均)、返り値も同形・[0,1] に clip。全零画像は入力を</p>
+<p>そのまま返す。BLAS のスレッド数は分解中だけ `<code style="color:#22d3bf">fsthreads</code>` で絞る(小行列の</p>
+<p>SVD ではスレッドが多いほど遅いため)。例外時は fail-soft で入力のクリップ版が</p>
+<p>返り、台帳に記録される。</p>
+<p>「行や列にわたって繰り返す構造」(縞、グラデーション、周期パターン)を背景と</p>
+<p>みなす分解なので、単一の 2 次元画像でも織物・シート・ディスプレイ画素などの</p>
+<p>周期背景から孤立欠陥を分離するのに向く。自然画像のような非周期背景では</p>
+<p>`<code style="color:#22d3bf">L</code>` は単なる低ランク近似で、意味のある背景にならない。対になる欠陥側は</p>
+<p>`<code style="color:#22d3bf">dc_rpca_sparse</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">L + (S - 0.5) == 入力</code>`)。エッジ保存の平滑で構造を</p>
+<p>取りたいなら `<code style="color:#22d3bf">dc_structure_texture</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">Leitfaden zur Familie gallery2d_texture_freq</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

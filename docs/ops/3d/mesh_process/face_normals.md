@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 三角形メッシュの**面法線**(各三角形の単位法線ベクトル)。→ (M,3)。
 
+法線 = 正規化した cross(v1−v0, v2−v0)。向きは **faces の巻き順(winding)** から一貫して
+決まる(PCA のような符号未定さは無い)。閉じたメッシュを外向き巻きで作れば全法線が外向き。
+
+Args:
+    mesh: (vertices (N,3), faces (M,3)) のタプル。
+
+Returns:
+    (M,3) の単位面法線。
+
+Raises:
+    ValueError: 形状不正・範囲外 index、または退化(ゼロ面積)三角形で法線が定義できないとき。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

@@ -19,6 +19,36 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 フィット済み曲面 tck を評価(bisplev)。散布点(既定)または格子の 2 モード。
 
+Parameters
+----------
+tck : list
+    fit_bspline_surface が返した ``[tx, ty, c, kx, ky]``。
+x, y : array_like
+    grid=False(既定): 同一 shape の散布/対応点。各 (x[i], y[i]) で評価し
+    入力と同じ shape の z を返す(計測=各サンプル位置での曲面高さ)。
+    grid=True: x, y を昇順の 1 次元軸として扱い、テンソル格子
+    (len(x), len(y)) 上で評価(密な可視化・再サンプリング用)。
+grid : bool
+    評価モード。曲面残差など点対応の比較には False。
+
+Returns
+-------
+z : numpy.ndarray
+    grid=False なら x と同 shape、grid=True なら (len(x), len(y))。
+
+Raises
+------
+ValueError
+    tck が曲面モデル([tx,ty,c,kx,ky])でない(曲線 tck / 多項式 dict を含む)、
+    または x, y の shape 不一致・空。
+
+補足:
+- grid=True では x, y を内部で昇順に並べ替えて ``bisplev`` を呼び、結果を **入力の順序** に戻して返す。したがって ``out[i, j]`` は常に ``(x[i], y[j])`` の値で、軸を降順で渡しても壊れない。
+- grid=False は点ごとに ``bisplev`` を呼ぶ Python ループなので点数に比例して遅い。大量点の評価は可能なら grid=True に寄せる。
+- 節点範囲(フィットに使った x, y の範囲)の外側は外挿になり、その値は保証しない。
+- 返り値は float64。grid=False なら x と同じ shape(スカラーを渡せば 0 次元配列)。
+- 典型: ``fit_bspline_surface`` → 本 op(再サンプリング・可視化)。残差評価は ``surface_residual`` がこれを内部で呼ぶ。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

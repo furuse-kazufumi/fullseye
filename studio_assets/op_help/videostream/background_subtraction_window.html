@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import videostream; videostream.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsvideostream.get(&quot;background_subtraction_window&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Causal window-median background → per-frame 0/1 foreground masks `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>フレーム `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> ごとに、直近 </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf"> 枚(</code><code style="color:#22d3bf">max(0, t-window+1) .. t</code>`、**そのフレーム</p>
+<p>自身を含む**)の画素ごとの中央値を背景 `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> とし、</code><code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code>`</p>
+<p>を 1、それ以外を 0 にする。未来のフレームは見ない(因果的)ので、先頭では</p>
+<p>枚数が足りないぶん窓が短い。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code>` の配列、または同形・同 dtype の 2-D フレームの list。</p>
+<p>uint8/uint16 は dtype の最大値で `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に、float はそのまま </code><code style="color:#22d3bf">[0, 1]</code>` に</p>
+<p>クリップ。カラー `<code style="color:#22d3bf">(T, H, W, C)</code><code style="color:#22d3bf"> は受けない。NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">window</code>`: 1〜4096 の int(bool 不可)。1 だと背景 = 自分なので全画素 0。</p>
+<p>偶数枚のときの中央値は中間 2 値の平均。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> の強度単位(uint8 なら </code><code style="color:#22d3bf">/255</code>` 換算)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code>` float64 の 0 / 1。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(形・dtype・範囲・非有限)。</p>
+<p>ゆっくり動く物体は `<code style="color:#22d3bf">window</code>` 枚以内に背景へ溶けるので、その場合は</p>
+<p>`<code style="color:#22d3bf">running_gaussian_foreground</code><code style="color:#22d3bf">(選択的更新)か </code><code style="color:#22d3bf">exponential_foreground</code>` を。</p>
+<p>背景そのものが要るなら `<code style="color:#22d3bf">temporal_median_window</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

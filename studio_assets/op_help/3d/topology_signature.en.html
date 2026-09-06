@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import medial; medial.topology_signature(skeleton)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;topology_signature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build a topology descriptor from the 26-neighbourhood degrees of a skeleton. Returns the counts of end points, junctions, ordinary points and isolated points.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各骨格 voxel について 26 近傍にある骨格 voxel 数(次数)を数え、</p>
+<p>次数 1  = 端点(endpoint)</p>
+<p>次数 2  = 通常点(骨格の途中)</p>
+<p>次数&gt;=3 = 分岐点(branch)</p>
+<p>次数 0  = 孤立点(isolated)</p>
+<p>に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。</p>
+<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散</p>
+<p>骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
+<p>Args:</p>
+<p>skeleton: 骨格 voxel(bool / 0-1 の 3D)。</p>
+<p>Returns:</p>
+<p>dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),</p>
+<p>degree_hist(次数 -&gt; 個数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

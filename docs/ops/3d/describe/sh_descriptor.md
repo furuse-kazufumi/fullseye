@@ -21,6 +21,24 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 球面調和記述子。同心球 shell の SH 帯域エネルギー ‖f_l(r)‖ を (半径 × 周波数) で返す。
 
+2D 閉輪郭を 1D Fourier 記述子で表す **線→面リフト**: 3D 閉曲面は SH で表し、帯域エネルギーは
+回転で m を帯域内に混ぜるだけ=**回転不変**(Kazhdan 2003)。全 shell を grid_sample で取り、
+固定 SH 基底との内積 → 帯域二乗和。retrieval/verification 用の大域シグネチャ。返り値 (nradii,L+1)。
+
+honest 開示(2026-08-30 レビュー実測): 球面求積は一様 θ×φ グリッド和(Gauss-Legendre
+でない)ため、値は**厳密な SH 帯域エネルギーの近似**(既定 32×64 で l=4 自己内積が
+理論値の ~0.62 倍、解像度↑で 1 に収束)。match_sh_descriptor は L2 正規化+コサイン
+類似度なので**同一 ntheta/nphi 同士の比較には影響しない**が、絶対値を物理量として
+使う・異なる解像度設定間で比較するのは不可。
+
+引数: ``vol`` は **立方体**(N,N,N)前提。中心 ``c = (N−1)/2`` と座標の正規化に軸 0 の長さ N
+だけを使うので、非立方体だと軸 1,2 のサンプル位置が歪む(検証は無い)。shell 半径は
+``0.2·rmax`` 〜 ``rmax = N/2 − 1`` を ``nradii`` 等分(voxel 単位)、各 shell を
+``ntheta × nphi`` の (θ,φ) 格子で trilinear サンプルする。``L`` は最大次数。
+返り値 ``(nradii, L+1)`` float32 numpy、``[i, l]`` が i 番目の shell の次数 l のエネルギー
+(非負)。物体は volume の中心に置く(中心がずれると回転不変性が崩れる。``moment_axes`` の
+重心で先に中心合わせを)。scipy の ``sph_harm_y``/``sph_harm`` を呼び出し時 import。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

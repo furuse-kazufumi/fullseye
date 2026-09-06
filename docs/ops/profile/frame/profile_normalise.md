@@ -4,7 +4,7 @@ dim: profile
 category: frame
 in: pairs
 out: pairs
-examples: []
+examples: [profile_frame_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -21,6 +21,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 **スケールは弦長でしか変えない**(形を歪めない)。返りは正規化した輪郭。
 
+手順: ``profile_chord_frame`` で前縁 ``le``・後縁 ``te``(開いた後縁は隙間の
+中点)・弦長 ``chord``・弦の向き ``angle_deg`` を求め、
+``((contour - le) @ R(-angle).T) / chord`` を返す。回転・並進・一様スケールの
+相似変換だけで、点の数と順序は保つ(再標本化しない)。
+
+- ``contour``: ``(N, 2)`` の **(x, y)**、8 点以上、有限。``(row, col)`` を渡すと
+  弦は見つかるが上下が入れ替わる(例外は出ない)。閉じているかはここでは
+  検査しない(``profile_sides`` 以降が検査する)。
+- 返り値: ``(N, 2)`` float64。前縁が ``(0, 0)``、後縁が ``(1, 0)`` 付近、
+  ``x`` は ``[0, 1]`` の弦比。``y`` の符号(上面が正か負か)は入力の周回方向
+  で決まり、反転はしない。
+- 失敗: ``ValueError``(形、点数不足、非有限、弦長が 0 = 全点一致)。
+
+前縁・後縁の判定は「最遠点対のうち、少し内側で断面が太いほう = 前縁」なので、
+前後で太さが同じ対称な断面(楕円など)では前後が入れ替わることがある。
+``profile_sides`` / ``profile_thickness`` / ``profile_camber`` は内部でこれを呼ぶ。
+
 ## 詳しい使い方ガイド
 
 - [profile_metrology ファミリ ガイド](../guides/profile_metrology.md)
@@ -33,7 +50,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [profile_frame_tour](../../../../examples/profile_frame_tour.py) — `py -3.11 examples/profile_frame_tour.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

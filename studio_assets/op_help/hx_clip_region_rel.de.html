@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_clip_region_rel&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">clip_region_rel</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/hx_clip_region_rel.png" alt="hx_clip_region_rel: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/hx_clip_region_rel.png" alt="hx_clip_region_rel: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_region_rel.a.jpg">hx_clip_region_rel: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_region_rel.chain.jpg">hx_clip_region_rel: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_region_rel.inputs.jpg">hx_clip_region_rel: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Beschneidet eine Region relativ zu ihrer Bounding Box (schneidet an jeder Seite den Anteil a ab).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> の region の外接矩形 </code><code style="color:#22d3bf">[y0, y1] × [x0, x1]</code><code style="color:#22d3bf"> を求め、その高さ・幅の </code><code style="color:#22d3bf">0.5*a</code>` ずつを上下左右から</p>
+<p>削った内側の矩形に含まれる画素だけを残して 0/1 の float 配列で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 各辺から削る割合 </code><code style="color:#22d3bf">my = int((y1-y0)*0.5*a)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mx = int((x1-x0)*0.5*a)</code>`。a=0 で無変化、a=1 で</p>
+<p>外接矩形の中心線付近(1 行・1 列程度)しか残らない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• region が空なら空のまま返す。</p>
+<p>削るのは外接矩形に対する相対量なので、region の大きさが違っても「周辺 x% を落とす」意味が保たれる。外接矩形は</p>
+<p>region 全体で 1 つ(成分ごとではない)ため、離れた小成分が並ぶ場合は端の成分がまるごと消えることがある。</p>
+<p>画像基準の中央矩形で切るなら `<code style="color:#22d3bf">hx_rectangle1_domain</code>` との論理積を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

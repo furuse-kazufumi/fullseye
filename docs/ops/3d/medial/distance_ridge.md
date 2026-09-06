@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。
 
+各前景 voxel の EDT を計算し、**26 近傍の局所極大**(自分の EDT が周囲 26 voxel の最大以上)を
+medial とみなす。この基準は物体の局所次元に応じて自然に次元を出し分ける:
+    塊(球)  -> EDT が単峰 -> 点状の medial(中心 1 点)。
+    管(円柱)-> 軸方向に平坦・半径方向に単峰 -> 線状の medial(軸線)。
+    板(スラブ)-> 面内で平坦・厚み方向に単峰 -> 面状の medial(中心面)。
+境界 voxel は内側の隣が必ず大きいため極大にならず、外殻は自然に除かれる。平坦な尾根
+(軸/面)は同値の隣接を許容(>=)することで連続した線/面として残る。
+
+Args:
+    vol: バイナリ voxel(bool / 0-1 の 3D)。
+    min_radius: この EDT 値以下の弱い尾根を捨てる閾値(既定 0 = 捨てない)。ノイズ抑制用。
+
+Returns:
+    ridge_mask (bool 3D): medial voxel。
+    edt (float64 3D): 各 voxel の背景までのユークリッド距離(= 局所半径)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

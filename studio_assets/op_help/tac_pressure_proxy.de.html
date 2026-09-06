@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_pressure_proxy — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_pressure_proxy&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tac_pressure_proxy.png" alt="tac_pressure_proxy: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/tac_pressure_proxy.png" alt="tac_pressure_proxy: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_pressure_proxy.a.jpg">tac_pressure_proxy: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_pressure_proxy.b.jpg">tac_pressure_proxy: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_pressure_proxy.inputs.jpg">tac_pressure_proxy: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kontaktdruck-Näherungskarte: Die gleichgerichtete Abweichung vom Pseudo-Referenz-Hintergrund `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf"> wird auf den Bereich hoher Abweichung (Kontakt) begrenzt -- ein relatives Gate bei </code><code style="color:#22d3bf">0.15 * max(dev)</code><code style="color:#22d3bf"> plus eine absolute Untergrenze von 0,005 --, mit der Empfindlichkeitsverstärkung verstärkt und gaußgeglättet; dies ist der Standard-Ersatzwert „Eindrucktiefe ist monoton zur Normalkraft“, der verwendet wird, wenn ein taktiles Pad keinen Kraftsensor besitzt. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = Empfindlichkeit (Verstärkung 1..10-fach), </code><code style="color:#22d3bf">b</code>` = Glättungsradius (Sigma 0,5..4,5). Ausgabe auf [0,1] begrenzt, HxW; ein flacher Frame ergibt eine durchweg nullwertige Druckkarte (kein Kontakt, keine Kraft).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 エッジ mask を (M,3) の座標点群にする(下流の chamfer / Hough 用)。
 
+Parameters
+----------
+edge_mask : (D,H,W) bool
+
+Returns
+-------
+pts : (M,3) float64
+    エッジ voxel の座標(axis0, axis1, axis2) = (z, y, x)。M = エッジ voxel 数。
+    エッジが無ければ shape (0,3) を返す。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

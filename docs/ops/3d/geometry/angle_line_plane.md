@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 直線(方向 d)と平面(法線 n)のなす角(度)。
 
+``90 − arccos(|d̂·n̂|)`` を度で返す(float)。値は **[0, 90]**、0 = 直線が平面に平行、90 = 垂直。
+``d``, ``n`` は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトル
+は 0 が返る。
+用途: 穴軸と基準面の直角度、``intersect_line_plane`` の前の平行判定(0 に近いと交点が遠くへ
+飛ぶ)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

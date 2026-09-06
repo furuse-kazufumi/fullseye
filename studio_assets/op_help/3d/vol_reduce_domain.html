@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_reduce_domain(vol, domain)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_reduce_domain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Restrict a volume to a *domain* mask (HALCON `<code style="color:#22d3bf">reduce_domain</code>`, voxel-wise).</p>
+<p>Every voxel outside the foreground of *domain* is set to `<code style="color:#22d3bf">0</code>` — the same</p>
+<p>&quot;outside the domain is undefined -&gt; 0&quot; convention the 2-D `<code style="color:#22d3bf">it_crop_domain</code>`</p>
+<p>op uses (a plain numpy array cannot carry a separate domain channel, so the</p>
+<p>restriction is materialised). A non-`<code style="color:#22d3bf">{0, 1}</code>` *domain* is thresholded at</p>
+<p>`<code style="color:#22d3bf">&gt; 0.5</code>`. Use it to silence everything a downstream operator must not see</p>
+<p>(metal artefacts, the scanner bed, a neighbouring part); combine with</p>
+<p>:func:<code style="color:#22d3bf">vol_crop_domain</code> when you also want the *memory* of the volume</p>
+<p>reduced, not just its values.</p>
+<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume of the same shape.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

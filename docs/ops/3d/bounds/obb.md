@@ -19,6 +19,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Oriented bounding box by PCA.
 
+Returns ``{center, axes (3,3 columns = box axes), extents (3, half-widths),
+corners (8,3)}``. The tight-fitting box a manipulator uses to reason about an
+object's size and grasp width once it has been segmented out.
+
+手順: 重心 ``c`` を引いた点群の SVD(``full_matrices=False``)で主軸 ``axes``(列 = 特異値の降順、
+第 1 列が最も広がる方向)を取り、点を主軸座標に写して各軸の min/max から半幅 ``extents`` と
+箱中心 ``center``(重心とは一般に異なる)を求める。``corners`` は ``center + (±extents) @ axes.T``
+の 8 点で、符号の組合せは ``meshgrid([-1,1],[-1,1],[-1,1])`` の順。
+
+- ``points``: (N,3) 以外は ``ValueError``、2 点未満も ``ValueError``。
+- PCA の主軸は「最小体積の箱」を保証しない(点の分布に沿うだけ)。主軸の符号は SVD の任意性で
+  決まり、点の分布が等方に近い(特異値が縮退する)と軸の向きは不安定になる。
+- ``extents`` は半幅なので辺長は ``2 * extents``。単位は座標の単位。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import pose_graph; pose_graph.relative_pose(pose_i, pose_j)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;relative_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>T_i⁻¹ ∘ T_j = i←j 의 상대 자세. pose_* = [rvec|t] (6,). → (rvec_ij (3,), t_ij (3,)).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>姿勢の規約は world←body(`<code style="color:#22d3bf">p_world = R p_body + t</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">T_i⁻¹ = (R_iᵀ, -R_iᵀ t_i)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">T_j</code>` を</p>
+<p>合成して `<code style="color:#22d3bf">R_ij = R_iᵀ R_j</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t_ij = R_iᵀ (t_j - t_i)</code>` を求め、回転は回転ベクトル(軸 × 角</p>
+<p>[rad]、scipy の `<code style="color:#22d3bf">as_rotvec</code>`)に戻して返す。これは「フレーム i から見たフレーム j の姿勢」で、</p>
+<p>`<code style="color:#22d3bf">optimize_pose_graph</code><code style="color:#22d3bf"> に渡すエッジ </code><code style="color:#22d3bf">(i, j, rvec_ij, t_ij)</code>` の計測値をこの規約で作ればそのまま</p>
+<p>整合する(GT 姿勢からの合成エッジ生成にも使う)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pose_i</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pose_j</code><code style="color:#22d3bf">: 長さ 6 の </code><code style="color:#22d3bf">[rvec(3) | t(3)]</code><code style="color:#22d3bf">。形状検証はしない(</code><code style="color:#22d3bf">pose[:3]</code>` /</p>
+<p>`<code style="color:#22d3bf">pose[3:]</code>` でスライスするだけ)。</p>
+<p style="margin:2px 0 2px 12px">• 単位は並進が座標の単位、回転が rad。返る `<code style="color:#22d3bf">rvec_ij</code>` の角度は [0, π] に折り畳まれる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

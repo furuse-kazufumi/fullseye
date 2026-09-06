@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photometric; photometric.surface_normals(z)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;surface_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Höhenfeld z (HxW) → Einheitsnormalen (H,W,3). n ∝ (−dz/dx, −dz/dy, 1). Die Vorwärtsumwandlung Tiefe → Normale.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">np.gradient</code><code style="color:#22d3bf"> の中心差分(端は片側差分)で行方向の </code><code style="color:#22d3bf">dz/dy</code><code style="color:#22d3bf"> と列方向の </code><code style="color:#22d3bf">dz/dx</code>` を</p>
+<p>取り、`<code style="color:#22d3bf">n = (-dz/dx, -dz/dy, 1)</code><code style="color:#22d3bf"> を長さ 1 に正規化する(</code><code style="color:#22d3bf">+1e-12</code>` で零割を避ける)。</p>
+<p>格子間隔を 1 画素とみなすので、`<code style="color:#22d3bf">z</code>` の単位が画素と異なる(mm 等)場合は事前に</p>
+<p>`<code style="color:#22d3bf">z / 画素ピッチ</code>` へ換算しないと傾きが実際より強く/弱く出る。法線の z 成分は常に正</p>
+<p>(カメラ向き)。返り値は float32 の `<code style="color:#22d3bf">(H,W,3)</code>`、第 3 軸は (x, y, z) 成分で x は列方向、</p>
+<p>y は行方向。入力検証は無く、2-D 以外を渡すと `<code style="color:#22d3bf">np.gradient</code>` の展開で失敗する。</p>
+<p>`<code style="color:#22d3bf">integrate_normals</code><code style="color:#22d3bf"> の逆変換にあたり、</code><code style="color:#22d3bf">photometric_stereo</code>` の出力と同じ法線規約</p>
+<p>なので、そのまま `<code style="color:#22d3bf">render_lambertian</code>` に渡して陰影画像を合成できる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 障害物を ``radius``(world 単位)膨張した占有格子 bool(= ESDF<=radius を占有)。
 
+planner の安全マージン: 点ロボットが膨張格子上で衝突回避すれば、半径 radius の実
+ロボットが障害物から離隔を保つ(configuration-space obstacle)。ESDF は外で正の
+最近占有距離なので、``ESDF<=radius`` は「占有(負)∪ 障害物から radius 以内の自由」を
+捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。
+
+Raises ValueError for radius<0 or voxel_size<=0 (both validated up-front, before
+the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size
+slips through unchecked when esdf is never reached).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

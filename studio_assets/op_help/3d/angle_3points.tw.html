@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三點所成角(頂點 b,度)。∠ABC。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">arccos(û·v̂)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">u = a − b</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v = c − b</code>`)を度で返す(float)。値は <b>[0, 180]</b> で符号は</p>
+<p>無い(2-D でも回転の向きは区別しない)。引数は数値の 2 または 3 ベクトル、次元の混在は</p>
+<p>ValueError。`<code style="color:#22d3bf">a == b</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">c == b</code>` だと零ベクトルの内積 0 で 90 が返る(例外は出ない)。</p>
+<p>内積は [−1,1] に clip するので数値誤差で NaN にはならない。</p>
+<p>用途: 曲げ角・関節角の計測、`<code style="color:#22d3bf">fit_line_3d</code>` で得た 2 直線の交点まわりの角度。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

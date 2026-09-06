@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import meshres; meshres.pc_thinning_report(points, thinned, k=8, radius=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;pc_thinning_report&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>What a point-cloud thinning removed, and whether it touched the rare points (`<code style="color:#22d3bf">table</code>`).</p>
+<p>`<code style="color:#22d3bf">removed</code><code style="color:#22d3bf"> count and fraction; </code><code style="color:#22d3bf">removed_spacing</code>` percentiles of the</p>
+<p>local spacing (:func:<code style="color:#22d3bf">pc_density</code>) of the removed points versus</p>
+<p>`<code style="color:#22d3bf">kept_spacing</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">isolated_removed</code>` counts removed points whose</p>
+<p>nearest-neighbour distance exceeded *radius* (default: the 95th percentile</p>
+<p>of nearest-neighbour distances) — a thinning that removed such points has</p>
+<p>discarded exactly the rare, isolated observations a survey exists to find</p>
+<p>(:func:<code style="color:#22d3bf">pc_poisson_disk</code> with the same radius removes none of them, by</p>
+<p>construction); `<code style="color:#22d3bf">max_gap</code>` is the largest distance from any removed point</p>
+<p>to the kept cloud (the biggest hole the thinning made).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

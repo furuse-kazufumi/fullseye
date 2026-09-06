@@ -5,6 +5,15 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。</p>
+<p>近似(等方 splat + 平滑): 厳密な異方共分散ラスタライズは重いので、まず means を opacity 重み</p>
+<p>で splat → scale 平均ぶん gaussian 平滑。マッチングの coarse alignment には十分。</p>
+<p>引数: `<code style="color:#22d3bf">means</code><code style="color:#22d3bf"> (N,3) 中心、</code><code style="color:#22d3bf">opacities</code>` は長さ N に reshape されて splat の重みになる</p>
+<p>(`<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> が 1 を足すところに opacity を足す)。</code><code style="color:#22d3bf">scales</code>` は形を問わず</p>
+<p><b>平均値 1 つ</b>にまとめ、`<code style="color:#22d3bf">σ = mean(scales)/mean(hi − lo)·size</code>`(world 長 → voxel 長)を</p>
+<p>平滑幅にする(下限 0.5 voxel。`<code style="color:#22d3bf">scales</code>` が空なら σ=1)。異方性・回転は無視される。</p>
+<p>`<code style="color:#22d3bf">bounds=(lo, hi)</code><code style="color:#22d3bf"> は必須(None 不可。</code><code style="color:#22d3bf">_lo_hi</code>` で検証し不正なら ValueError)。範囲外の</p>
+<p>中心は端 voxel に clip される。返り値 `<code style="color:#22d3bf">(size, size, size)</code><code style="color:#22d3bf"> float64、軸順は </code><code style="color:#22d3bf">means</code>` の列順。</p>
+<p>opacity の総和はほぼ保存されるが正規化はしない。点群に落とすなら `<code style="color:#22d3bf">gaussians_to_points</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

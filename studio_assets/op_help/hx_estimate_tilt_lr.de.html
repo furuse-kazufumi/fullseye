@@ -3,10 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_tilt_lr&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">estimate_tilt_lr</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/hx_estimate_tilt_lr.png" alt="hx_estimate_tilt_lr: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/hx_estimate_tilt_lr.png" alt="hx_estimate_tilt_lr: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lee-Rosenfeld: der Azimut-Tilt der Lichtquelle = atan2(&lt;Ey&gt;, &lt;Ex&gt;) (die mittlere Gradientenrichtung). Auf [0,1] normiert.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Sobel 勾配 `<code style="color:#22d3bf">Ex</code><code style="color:#22d3bf">(列方向)・</code><code style="color:#22d3bf">Ey</code><code style="color:#22d3bf">(行方向)を画像全体で平均し、</code><code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code>` を</p>
+<p>`<code style="color:#22d3bf">(tilt / 2π) mod 1</code><code style="color:#22d3bf"> で [0,1) に写した </code><code style="color:#22d3bf">np.float64</code>` を返す。Lambertian 面で光源方位(tilt)が平均勾配の方向に</p>
+<p>現れるという Lee-Rosenfeld の推定。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 0 が +列方向、0.25 が +行方向(画像では下)、以下その向きに回る。平均勾配がほぼ 0 だと `<code style="color:#22d3bf">arctan2(0, 0) = 0</code>` で</p>
+<p>0 に落ちる。</p>
+<p>勾配の生の平均を使うので、コントラストの強い部分の方向に引きずられる。表面の反射率や形状がランダムで、照明の</p>
+<p>傾きだけが全体の勾配の偏りを作る、という前提が要る。局所コントラストの影響を抑えた版は `<code style="color:#22d3bf">hx_estimate_tilt_zc</code>`。</p>
+<p>角度値は周期量なので 0 と 1 付近は同じ方向(差を取るときは注意)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

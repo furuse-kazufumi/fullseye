@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_bandpass(vol, low, high, spacing=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_bandpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우스 대역통과 `<code style="color:#22d3bf">lowpass(high) - lowpass(low)</code>`: 그 사이의 구조를 남깁니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>between the two scales (`<code style="color:#22d3bf">low &lt; high</code>` required, both in cycles/voxel or</p>
+<p>cycles/mm with *spacing*). Typical use: isolate one texture scale, or a</p>
+<p>periodic artefact band before subtracting it.</p>
+<p>伝達関数は `<code style="color:#22d3bf">exp(-|f|^2 / (2 high^2)) - exp(-|f|^2 / (2 low^2))</code>`。DC では</p>
+<p>`<code style="color:#22d3bf">1 - 1 = 0</code><code style="color:#22d3bf"> なので平均輝度は落ち、</code><code style="color:#22d3bf">low</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">high</code>` の間に山を持つ Gaussian 差分</p>
+<p>(DoG 型)の帯域だけが残る。山の高さは 1 に届かない(2 つの Gaussian の差なので、</p>
+<p>`<code style="color:#22d3bf">low</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">high</code><code style="color:#22d3bf"> が近いほど通過量は小さい)。返り値は入力と同じ </code><code style="color:#22d3bf">(D, H, W)</code>` の</p>
+<p>float64、符号付き。</p>
+<p>引数: `<code style="color:#22d3bf">low &lt; high</code><code style="color:#22d3bf"> が必須(両方とも正の有限値)。単位は </code><code style="color:#22d3bf">spacing=None</code>` で</p>
+<p>cycles/voxel、`<code style="color:#22d3bf">spacing</code>` 指定で cycles/mm。周期(voxel または mm)で考えるなら</p>
+<p>`<code style="color:#22d3bf">1/high</code><code style="color:#22d3bf"> が最小構造サイズ、</code><code style="color:#22d3bf">1/low</code>` が最大構造サイズ。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): 3-D でない / NaN・Inf / </code><code style="color:#22d3bf">MAX_VOXELS</code><code style="color:#22d3bf"> 超 / </code><code style="color:#22d3bf">low</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">high</code>`</p>
+<p>が非正・非有限・2 乗がアンダーフロー / `<code style="color:#22d3bf">low &gt;= high</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">spacing</code>` 不正。</p>
+<p>使いどころ: 1 つのテクスチャスケールの抽出、周期的な縞・リングアーティファクト帯</p>
+<p>を取り出して入力から引く。`<code style="color:#22d3bf">vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)</code>`</p>
+<p>と同値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

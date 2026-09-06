@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_stream_network&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>集水量が閾値を超えたセルを河道とみなす二値マスク。</p>
+<p>手順: `<code style="color:#22d3bf">dem_flow_accumulation(dem, cell_size, fill, nodata)</code>` で各セルの集水</p>
+<p>セル数(自セルを 1 と数える)を取り、`<code style="color:#22d3bf">acc &gt;= threshold_cells</code>` を 1、それ以外を 0</p>
+<p>にする。欠測セルは `<code style="color:#22d3bf">nan</code>` のまま。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">threshold_cells</code><code style="color:#22d3bf">: 河道とみなす集水セル数。正の有限値(</code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p>面積で決めたいなら `<code style="color:#22d3bf">面積 [m^2] / cell_size^2</code>` に換算して渡す(この op は</p>
+<p>セル数しか受けない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">fill=True</code><code style="color:#22d3bf">(既定): 先に priority-flood(</code><code style="color:#22d3bf">dem_fill_sinks</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">epsilon=1e-6</code>`)で</p>
+<p>窪地を埋める。埋めないと窪地で流れが止まり、下流の集水量が小さく出て河道が</p>
+<p>途切れる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nodata</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;error&quot;</code><code style="color:#22d3bf">(既定、</code><code style="color:#22d3bf">nan</code><code style="color:#22d3bf"> があれば拒否)/ </code><code style="color:#22d3bf">&quot;outlet&quot;</code>`(欠測 = 流出口、</p>
+<p>水域向き)/ `<code style="color:#22d3bf">&quot;barrier&quot;</code>`(欠測 = 壁)。定数で穴埋めする選択肢は無い。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">dem</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cell_size</code><code style="color:#22d3bf"> の契約は </code><code style="color:#22d3bf">dem_slope</code>` と同じ(3x3 以上、番兵値拒否、[m])。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64 の 0 / 1(欠測は </code><code style="color:#22d3bf">nan</code>`)。bool ではないので</p>
+<p>`<code style="color:#22d3bf">blob_label</code><code style="color:#22d3bf"> 等に渡すなら </code><code style="color:#22d3bf">== 1</code>` で二値化する。</p>
+<p style="margin:2px 0 2px 12px">• 計算量: 集水量のトポロジカル走査がセル数ぶんの Python ループ。</p>
+<p>D8 流向(`<code style="color:#22d3bf">dem_flow_direction</code>`)に基づくので、平坦な埋立地では流れが一箇所に</p>
+<p>集まりやすい ―― 閾値を下げすぎると格子状の偽河道が出る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -11,7 +28,7 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:dem_terrain_analysis_tour">dem_terrain_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/dem_terrain_analysis_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
 <p>—</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">hydrology</code>)</h3>

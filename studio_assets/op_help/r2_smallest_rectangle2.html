@@ -3,10 +3,30 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;r2_smallest_rectangle2&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">smallest_rectangle2</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/r2_smallest_rectangle2.png" alt="r2_smallest_rectangle2: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/r2_smallest_rectangle2.png" alt="r2_smallest_rectangle2: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_smallest_rectangle2.chain.jpg">r2_smallest_rectangle2: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_smallest_rectangle2.inputs.jpg">r2_smallest_rectangle2: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Minimum-area ORIENTED bounding rectangle as a mask (rotating calipers).</p>
+<p>領域の全前景画素を含む最小面積の回転矩形をマスクとして描く。前景座標の凸包を</p>
+<p>取り、凸包の各辺に平行な向きで外接矩形を作って面積最小のものを選ぶ</p>
+<p>(rotating calipers。最小面積矩形は凸包のいずれかの辺に接するという性質を使う)。</p>
+<p>内部表現は中心 `<code style="color:#22d3bf">(cy, cx)</code><code style="color:#22d3bf">、長辺 </code><code style="color:#22d3bf">long_len</code><code style="color:#22d3bf">、短辺 </code><code style="color:#22d3bf">short_len</code>`、長辺の向き</p>
+<p>`<code style="color:#22d3bf">angle</code>`(画像座標 x=col, y=row で測ったラジアン)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は長辺だけを </code><code style="color:#22d3bf">1 + 0.3*a</code><code style="color:#22d3bf"> 倍に伸ばす(</code><code style="color:#22d3bf">a=0</code>` で最小矩形そのもの、</p>
+<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> で長辺 1.3 倍。短辺は変えない)。</code><code style="color:#22d3bf">b</code>` は未使用。描画は中心からの</p>
+<p>射影 `<code style="color:#22d3bf">|pu| &lt;= long/2 + 0.5</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">|pv| &lt;= short/2 + 0.5</code>` で、画素の広がりぶん</p>
+<p>0.5 画素の余白を足すため出力は入力領域を必ず含む。</p>
+<p>返り値は入力と同形の float64 0/1 マスク、前景が無ければ全零。角度や辺長の</p>
+<p>数値は返さない。複数の連結成分があれば全体で 1 つの矩形。前景が 1 画素や</p>
+<p>一直線上の場合は退化(点・線分)し、描画は 1 画素幅程度の細い帯になる。</p>
+<p>軸並行でよければ `<code style="color:#22d3bf">r2_smallest_rectangle1</code>` の方が軽い。細長い部品の向きを</p>
+<p>見る前処理や、`<code style="color:#22d3bf">r2_inner_rectangle1</code>` との面積比で矩形らしさを見る用途に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

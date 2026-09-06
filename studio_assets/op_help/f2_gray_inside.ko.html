@@ -3,8 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;f2_gray_inside&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">gray_inside</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/f2_gray_inside.png" alt="f2_gray_inside: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/f2_gray_inside.png" alt="f2_gray_inside: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_gray_inside.a.jpg">f2_gray_inside: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_gray_inside.inputs.jpg">f2_gray_inside: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이스케일 홀 채우기: 각 픽셀에 대해 이미지 경계까지의 어떤 경로에서든 도달 가능한 최소 그레이 값을 구한다 —— 이는 경계에 고정된 마커로부터의 침식에 의한 이미지의 형태학적 재구성과 같다. 더 밝은 벽으로 둘러싸인 어두운 분지는 벽 높이까지 끌어올려지고, 경계에 연결된 영역은 어둡게 유지된다. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">는 최대 채움 깊이 h(0 = 없음, 1 = 전체)를 설정하고, </code><code style="color:#22d3bf">b</code>`는 무시된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_label(vol_binary, connectivity=26)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D connected-component labelling with a selectable neighbourhood.</p>
+<p>*connectivity* chooses the structuring element: `<code style="color:#22d3bf">6</code>` (face neighbours only),</p>
+<p>`<code style="color:#22d3bf">18</code><code style="color:#22d3bf"> (faces + edges), or </code><code style="color:#22d3bf">26</code>` (faces + edges + corners — the default,</p>
+<p>`<code style="color:#22d3bf">ndimage.generate_binary_structure(3, 3)</code><code style="color:#22d3bf">). A non-</code><code style="color:#22d3bf">{0, 1}</code>` input is</p>
+<p>thresholded at `<code style="color:#22d3bf">&gt; 0.5</code>`.</p>
+<p>Returns `<code style="color:#22d3bf">(labels, n)</code><code style="color:#22d3bf"> — an </code><code style="color:#22d3bf">int32</code><code style="color:#22d3bf"> volume whose voxels are </code><code style="color:#22d3bf">0</code>`</p>
+<p>(background) or a component id in `<code style="color:#22d3bf">1..n</code><code style="color:#22d3bf">, and the component count </code><code style="color:#22d3bf">n</code>`.</p>
+<p>The neighbourhood genuinely matters: two blobs meeting only at a corner are</p>
+<p>*two* components under 6-connectivity but *one* under 26.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

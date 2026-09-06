@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import match3d; match3d.plane_from_3points(a, b, c)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;plane_from_3points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3 点 → 平面(通过点, 单位法线)。三个坐标即可确定平面(2D/3D 通用)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>返り値 `<code style="color:#22d3bf">(a, n)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は 1 点目、</code><code style="color:#22d3bf">n = (b−a)×(c−a)</code>` を単位化したもの(向きは a→b→c の</p>
+<p>右ねじ)。引数は数値の 2 または 3 ベクトル(それ以外・次元の混在は ValueError)。3 点が同一</p>
+<p>直線上なら `<code style="color:#22d3bf">n</code>` は零ベクトルのまま返る(例外は出ない)。</p>
+<p>2 次元の点を渡すと `<code style="color:#22d3bf">np.cross</code><code style="color:#22d3bf"> がスカラー(符号つき面積の 2 倍)を返すので、</code><code style="color:#22d3bf">n</code>` はベクトルで</p>
+<p>なく ±1 のスカラーになる。2-D で線の法線が欲しい場合は `<code style="color:#22d3bf">line_from_2points</code>` の方向を 90°</p>
+<p>回して使うこと。</p>
+<p>後段: `<code style="color:#22d3bf">distance_point_plane</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">intersect_line_plane</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">intersect_planes</code>` /</p>
+<p>`<code style="color:#22d3bf">angle_between_planes</code><code style="color:#22d3bf"> にこの </code><code style="color:#22d3bf">(a, n)</code><code style="color:#22d3bf"> を渡す。点群からは </code><code style="color:#22d3bf">fit_plane_3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从任意视点把 voxel 投影为 2D(mode=xray=衰减积分 / mip=最大值)。用于 DRR(X 光)与世界模型观测。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>view 方向へ volume を grid_sample で回して軸投影。voxel_to_mips の任意視点版。</p>
+<p>回転は `<code style="color:#22d3bf">affine_grid</code><code style="color:#22d3bf">(座標順 x=W, y=H, z=D)で volume 中心まわり: </code><code style="color:#22d3bf">azimuth</code>` は H 軸まわり</p>
+<p>(W と D を混ぜる)、`<code style="color:#22d3bf">elevation</code><code style="color:#22d3bf"> は W 軸まわり(H と D を混ぜる)、いずれも度、</code><code style="color:#22d3bf">Rx @ Ry</code>` の順。</p>
+<p>回転後の volume を <b>軸 0(D)方向に潰す</b>ので、視線は回転後の D 軸。`<code style="color:#22d3bf">mode=&quot;mip&quot;</code>` は最大値、</p>
+<p>それ以外はすべて総和(`<code style="color:#22d3bf">&quot;xray&quot;</code>` は Beer-Lambert の指数ではなく <b>単純な積算</b>。減衰像にするなら</p>
+<p>`<code style="color:#22d3bf">exp(−Σ)</code><code style="color:#22d3bf"> を呼び手で)。返り値 </code><code style="color:#22d3bf">(H, W)</code>` float32 numpy。</p>
+<p>volume 外は 0 で埋まるので、回転で隅が欠けると総和が下がる(立方体に近い volume で、物体を</p>
+<p>中心に置く)。`<code style="color:#22d3bf">azimuth=elevation=0</code><code style="color:#22d3bf"> の mip は </code><code style="color:#22d3bf">voxel_to_mips()[0]</code>` と同じ向き。</p>
+<p>用途: DRR の合成、`<code style="color:#22d3bf">ncc_locate</code><code style="color:#22d3bf"> 用の 2-D テンプレ生成、</code><code style="color:#22d3bf">match_mip_2d</code>` の任意視点化。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

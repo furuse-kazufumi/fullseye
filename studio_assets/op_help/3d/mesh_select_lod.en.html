@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use=&#x27;max_error&#x27;)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;mesh_select_lod&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The coarsest LOD level whose geometric error projects below *pixel_tolerance* (`<code style="color:#22d3bf">table</code>`).</p>
+<p>Screen-space error `<code style="color:#22d3bf">e_px = error × focal_px / distance</code>` (pinhole, mesh</p>
+<p>units for *distance*). Returns ``{&quot;level&quot;, &quot;error_px&quot;, &quot;n_faces&quot;,</p>
+<p>&quot;candidates&quot;: [e_px per level]}`<code style="color:#22d3bf">; </code><code style="color:#22d3bf">use</code><code style="color:#22d3bf"> picks </code><code style="color:#22d3bf">&quot;max_error&quot;</code>` (safe) or</p>
+<p>`<code style="color:#22d3bf">&quot;rms_error&quot;</code>`. Level 0 (the input) is chosen when nothing else fits.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

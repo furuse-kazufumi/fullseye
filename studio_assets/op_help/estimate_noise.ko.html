@@ -3,8 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;estimate_noise&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">estimate_noise</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/estimate_noise.png" alt="estimate_noise: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/estimate_noise.png" alt="estimate_noise: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가산성 잡음의 표준편차 σ를 로버스트하게 추정한다(`<code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf">: 라플라시안 응답의 MAD를 정규분포 환산치로 바꾸고, 5점 라플라시안 커널의 잡음 이득 </code><code style="color:#22d3bf">sqrt(20)</code><code style="color:#22d3bf">으로 나눈다). 에지에서 비롯된 이상치에는 둔감하고 평탄한 부분의 잡음만 포착하도록 설계됨(2026-09-02에 구 구현의 &quot;σ가 단위를 갖지 않고 σ≈0.08 이상에서 1.0에 들러붙는&quot; 결함을 수정함, 자세한 내용은 </code><code style="color:#22d3bf">_noise_sigma</code><code style="color:#22d3bf">의 docstring 참고). HALCON의 </code><code style="color:#22d3bf">estimate_noise</code>`(Estimate the image noise from a single image.)에 해당.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

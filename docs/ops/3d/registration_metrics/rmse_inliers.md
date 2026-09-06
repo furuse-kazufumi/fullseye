@@ -19,6 +19,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 inlier 対応(残差 < thresh)上の RMSE と inlier 数。→ (rmse, n_inliers)。
 
+``source[i]↔target[i]`` の index 対応が前提(:func:`inlier_ratio` と同じ)。
+inlier が 0 個なら RMSE は未定義 → ``(nan, 0)`` を返す(honest; 捏造しない)。
+形状不一致・非 (N,3) は ValueError(fail-closed)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

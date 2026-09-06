@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import medial; medial.skeleton_junctions3d(vol)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_junctions3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以体素掩码返回 3D 骨架的分叉点(joint,26 邻域中骨架 voxel 不少于 3 个)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>骨格でない入力(interior を持つ塊)は skeletonize_vol で細線化してから測る。</p>
+<p>2D の <code style="color:#22d3bf">junctions_skeleton</code> の 3D 版。血管・多孔質・ネットワーク状構造の</p>
+<p>グラフ化(node 抽出)に使う。分岐次数の集計だけ欲しい場合は</p>
+<p>topology_signature が dict で返す。</p>
+<p>注意(honest): 26 近傍次数は分岐近傍の対角隣接で過大に出うる(離散骨格の</p>
+<p>既知の性質)。分岐 *個数* を数えるときはこのマスクを連結成分でまとめること。</p>
+<p>手順: `<code style="color:#22d3bf">_ensure_skeleton</code>` — 入力を bool 化し、6 近傍(面隣接)がすべて前景の</p>
+<p>interior voxel が 1 つでもあれば「骨格ではない」とみなして `<code style="color:#22d3bf">skeletonize_vol</code>`</p>
+<p>(skimage Lee 法)を先に掛ける。その後、3x3x3 の全 1 カーネル(中心 0)の畳み込み</p>
+<p>(`<code style="color:#22d3bf">mode=&quot;constant&quot;</code>`、外側は 0)で各 voxel の 26 近傍にある骨格 voxel 数(次数)を</p>
+<p>数え、`<code style="color:#22d3bf">skel &amp; (次数 &gt;= 3)</code>` を返す。</p>
+<p>返り値: 入力と同形の bool 配列。前景が無ければ全 False。骨格 voxel 以外は</p>
+<p>必ず False。座標は `<code style="color:#22d3bf">np.argwhere</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(z, y, x)</code>` 順に取れる。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code>`): 3-D でない・空配列・float で NaN/Inf を含む入力。</p>
+<p>scikit-image が無い環境で細線化が必要になると `<code style="color:#22d3bf">ImportError</code>`。</p>
+<p>注意: 既に骨格の入力でも interior 判定は毎回走る(細い骨格なら細線化は</p>
+<p>skip される)。個数を数えるなら `<code style="color:#22d3bf">vol_label(mask, 26)</code>` の成分数を使う。</p>
+<p>枝に分けるのは `<code style="color:#22d3bf">skeleton_branches3d</code><code style="color:#22d3bf">、端点は </code><code style="color:#22d3bf">skeleton_endpoints3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

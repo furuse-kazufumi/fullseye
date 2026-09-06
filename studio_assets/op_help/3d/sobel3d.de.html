@@ -5,6 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der 3-D-Gradient (gz, gy, gx). Separierbares conv3d aus Ableitung [-1,0,1] × Glätter [1,2,1].</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>vol は numpy でも torch tensor(GPU 上でも可)でも受ける(scene_flow 等の device 常駐用)。</p>
+<p>返り値は <b>torch tensor 3 本</b>(numpy ではない)、各 `<code style="color:#22d3bf">(1,1,D,H,W)</code><code style="color:#22d3bf"> float32、</code><code style="color:#22d3bf">device</code>` 上。</p>
+<p>`<code style="color:#22d3bf">gz</code><code style="color:#22d3bf"> は軸 0 方向、</code><code style="color:#22d3bf">gy</code><code style="color:#22d3bf"> は軸 1、</code><code style="color:#22d3bf">gx</code>` は軸 2 の微分(入力が (D,H,W) なら (depth,row,col)</p>
+<p>順)。numpy に戻すなら `<code style="color:#22d3bf">g[0, 0].cpu().numpy()</code>`。</p>
+<p>利得: 微分 [-1,0,1] (傾き 1 で 2)× 他 2 軸の平滑 [1,2,1] (各 4)で <b>真の勾配の 32 倍</b>が出る</p>
+<p>(正規化しない)。真の値が要るなら 32 で割る(`<code style="color:#22d3bf">curvature_maps</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scene_flow_lk</code>` は内部で</p>
+<p>割っている。`<code style="color:#22d3bf">hessian3d</code>` は利得 1 なので混ぜるときに注意)。</p>
+<p>端は replicate padding(境界で偽のエッジを作らない)。tensor 入力が 3-D なら batch 次元を</p>
+<p>足し、5-D ならそのまま使う。dtype は float32 に落とす。</p>
+<p>後段: `<code style="color:#22d3bf">curvature_maps</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">match_shape_3d</code><code style="color:#22d3bf"> の単位勾配、</code><code style="color:#22d3bf">hough_plane_3d</code>` の法線。</p>
+<p>方向の要らないエッジ強度なら `<code style="color:#22d3bf">morph_gradient3d</code>` も代替。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

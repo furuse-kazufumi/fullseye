@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import segment3d; segment3d.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;euclidean_cluster&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按半径 tol 的邻接图连通成分做距离聚类(−1=噪声)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>互いに `<code style="color:#22d3bf">tol</code>` 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が</p>
+<p>別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち</p>
+<p>`<code style="color:#22d3bf">min_size</code>` 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,...</p>
+<p>(決定論)。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>tol: 同一クラスタとみなす近接半径(距離、要 &gt; 0)。</p>
+<p>min_size: これ未満の連結成分はノイズ(-1)。</p>
+<p>Returns:</p>
+<p>labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

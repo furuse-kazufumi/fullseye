@@ -78,6 +78,24 @@ def points_to_voxel(points, size, bounds=None, device="cpu", smooth=0.0):
     """点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。
 
     bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。
+
+    手順: 各点を ``idx = floor((p − lo)/(hi − lo)·(size − 1))`` で整数格子に落とし、その voxel に
+    1 を加算する(値 = その voxel に落ちた点の個数)。``smooth > 0`` なら σ=``smooth``(voxel 単位)
+    の gaussian を 3 軸分離 conv で掛ける(半径 ``max(1, int(4σ + 0.5))``、端は replicate)。
+    出力の軸順は **点の列の順そのまま**(``points[:, 0]`` → 軸 0)で、(depth,row,col) への
+    並べ替えはしない。
+
+    - ``bounds``: ``(lo, hi)`` の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに
+    格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・
+    ``hi <= lo`` の軸があると ValueError(tsdf 系の ``((xmin,xmax),...)`` 流儀は長さ 2 として拒否)。
+    - 範囲外の点は捨てずに **端の voxel へ clip される**(端に偽の密度が溜まる)。切り落としたい
+    なら事前に点群側で除く。
+    - ``size``: 一辺の voxel 数。``hi − lo`` が 0 の軸は 1e-9 に置換されるだけで警告しない。
+    - 空の点群で bounds=None は numpy の min が例外を出す。
+    - 返り値: ``(size, size, size)`` float64 numpy(device で計算しても CPU に戻す)。値は個数
+    (平滑後は個数の重み分布)で正規化はしない。
+
+    後段: ``match_points_ncc`` / ``signed_distance_field`` / ``voxel_to_mesh`` の入力に。
     """
     P = np.asarray(points, np.float64)
     if bounds is None:
@@ -101,6 +119,14 @@ def gaussians_to_voxel(means, scales, opacities, size, bounds, device="cpu"):
 
     近似(等方 splat + 平滑): 厳密な異方共分散ラスタライズは重いので、まず means を opacity 重み
     で splat → scale 平均ぶん gaussian 平滑。マッチングの coarse alignment には十分。
+
+    引数: ``means`` (N,3) 中心、``opacities`` は長さ N に reshape されて splat の重みになる
+    (``points_to_voxel`` が 1 を足すところに opacity を足す)。``scales`` は形を問わず
+    **平均値 1 つ**にまとめ、``σ = mean(scales)/mean(hi − lo)·size``(world 長 → voxel 長)を
+    平滑幅にする(下限 0.5 voxel。``scales`` が空なら σ=1)。異方性・回転は無視される。
+    ``bounds=(lo, hi)`` は必須(None 不可。``_lo_hi`` で検証し不正なら ValueError)。範囲外の
+    中心は端 voxel に clip される。返り値 ``(size, size, size)`` float64、軸順は ``means`` の列順。
+    opacity の総和はほぼ保存されるが正規化はしない。点群に落とすなら ``gaussians_to_points``。
     """
     P = np.asarray(means, np.float64)
     op = np.asarray(opacities, np.float64).reshape(-1)
@@ -122,6 +148,16 @@ def mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000,
     """mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。
 
     三角形上の一様点は barycentric(sqrt トリック)。占有 voxel が要るなら閾値化する。
+
+    手順: 各三角形の面積に比例して ``samples`` 個の面を選び(``default_rng(0)`` の固定 seed
+    → 毎回同じ点)、面内一様な barycentric 点を作って ``points_to_voxel`` に渡す(``smooth``
+    既定 0.8 voxel)。``faces`` は (F,3) の頂点 index、``vertices`` は (V,3)。
+    退化面(面積 0)しか無い mesh は確率が NaN になり ``rng.choice`` が ValueError を出す。
+    ``bounds=None`` ならサンプル点の min/max(mesh の bbox とほぼ一致するが、サンプル次第で
+    僅かに内側)。``bounds`` の検証・範囲外 clip は ``points_to_voxel`` と同じ。
+    返り値 ``(size, size, size)`` float64 の点密度(占有ではない。占有が要るなら閾値で
+    2 値化)。軸順は頂点座標の列順。seed を変えたい・点群も欲しいときは ``mesh_to_points`` で
+    点群を作ってから ``points_to_voxel`` へ。
     """
     V = np.asarray(vertices, np.float64)
     Fc = np.asarray(faces, np.int64)
@@ -140,7 +176,21 @@ def mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000,
 
 
 def depth_to_points(depth, fx, fy, cx, cy, stride=1):
-    """深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。"""
+    """深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。
+
+    画素 (行 v, 列 u) の深度 z から ``X = (u − cx)·z/fx``、``Y = (v − cy)·z/fy``、``Z = z`` を作る。
+    返り値は ``(N,3)`` float64、列は **(X, Y, Z) のカメラ座標**(深度と同じ単位)。z が 0 以下の
+    画素は捨てるので N は画素数以下(無効深度は 0 で表す規約)。
+
+    - ``fx, fy, cx, cy``: 画素単位の焦点距離と主点。``project_points`` の K と同じ規約。
+    - ``stride``: 行・列とも ``stride`` 画素おきに間引く。u, v は間引き後の index に ``stride``
+    を掛けた **元画像の画素座標**で計算するので、間引いても幾何は変わらない。
+    - 入力検証は無い(2-D でなければ添字で失敗)。NaN 深度は ``z > 0`` が偽で捨てられる。
+    - 点は行優先の順に並ぶが、行・列の情報は残らない。格子構造を保ちたいなら
+    ``depth_to_organized_points``。
+    後段: ``points_to_voxel`` / ``estimate_point_normals`` / ``icp_point2plane``。
+    逆写像は ``project_points``、TSDF 化は ``tsdf_from_depth``。
+    """
     d = np.asarray(depth, np.float64)[::stride, ::stride]
     vv, uu = np.mgrid[0:d.shape[0], 0:d.shape[1]]
     z = d.reshape(-1)
@@ -151,7 +201,16 @@ def depth_to_points(depth, fx, fy, cx, cy, stride=1):
 
 
 def voxel_to_mips(vol):
-    """3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。"""
+    """3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。
+
+    入力 ``(D,H,W)`` に対し ``[max(axis=0), max(axis=1), max(axis=2)]`` の list を返す。形は
+    それぞれ ``(H,W)``(軸 0=D を潰す)、``(D,W)``(軸 1=H を潰す)、``(D,H)``(軸 2=W を潰す)、
+    dtype float64。値は入力の最大値そのまま(正規化しない)。負の値も max なので通り、
+    密度 0 の背景は 0 のまま。
+    形の検証は無い(2-D は ``axis=2`` で失敗し、4-D 以上は動いてしまう)ので、呼び手で次元を確かめる。
+    ``match_mip_2d`` はこの 3 枚に 2D NCC を掛けて 3D 位置を冗長推定する。任意視点の投影は
+    ``render_volume_projection``(mode="mip")。
+    """
     v = np.asarray(vol, np.float64)
     return [v.max(axis=0), v.max(axis=1), v.max(axis=2)]
 
@@ -178,6 +237,17 @@ def sobel3d(vol, device="cpu"):
     """3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。
 
     vol は numpy でも torch tensor(GPU 上でも可)でも受ける(scene_flow 等の device 常駐用)。
+
+    返り値は **torch tensor 3 本**(numpy ではない)、各 ``(1,1,D,H,W)`` float32、``device`` 上。
+    ``gz`` は軸 0 方向、``gy`` は軸 1、``gx`` は軸 2 の微分(入力が (D,H,W) なら (depth,row,col)
+    順)。numpy に戻すなら ``g[0, 0].cpu().numpy()``。
+    利得: 微分 [-1,0,1](傾き 1 で 2)× 他 2 軸の平滑 [1,2,1](各 4)で **真の勾配の 32 倍**が出る
+    (正規化しない)。真の値が要るなら 32 で割る(``curvature_maps`` / ``scene_flow_lk`` は内部で
+    割っている。``hessian3d`` は利得 1 なので混ぜるときに注意)。
+    端は replicate padding(境界で偽のエッジを作らない)。tensor 入力が 3-D なら batch 次元を
+    足し、5-D ならそのまま使う。dtype は float32 に落とす。
+    後段: ``curvature_maps`` / ``match_shape_3d`` の単位勾配、``hough_plane_3d`` の法線。
+    方向の要らないエッジ強度なら ``morph_gradient3d`` も代替。
     """
     if torch.is_tensor(vol):
         t = vol.to(device=device, dtype=torch.float32)
@@ -208,6 +278,16 @@ def match_phase_3d(a, b, device="cpu"):
 
     Reddy & Chatterji の 3D 版。相互パワースペクトルの逆 FFT のピーク = 平行移動。テンプレート
     不要・全 volume・O(N log N)。回転/スケールは別途(PCA / log-polar)。
+
+    引数: ``a``, ``b`` は同形の 3-D 配列(違えば ValueError)。float32 に落として FFT する。
+    返り値: int の tuple ``(dz, dy, dx)``、各軸 ``(−N/2, N/2]`` に折り返し済み。意味は
+    ``np.roll(b, (dz,dy,dx), axis=(0,1,2)) ≈ a``(b をこれだけ動かすと a に重なる)。
+    - 循環相関なので、はみ出した部分は反対側から回り込む(窓掛けはしない)。シフトが volume の
+    半分を超えると符号が反転して見える。
+    - 位相のみ(``R/|R|``)なので振幅・コントラスト差に不変だが、ノイズが白色化されてピークが
+    埋もれることがある。全 0 の volume は 0 になり index 0 を返す。
+    - 整数精度。サブボクセルは ``refine_translation_lk`` / ``refine_peak_newton`` へ。
+    - 回転・スケールがあると効かない(``match_logpolar_z`` → 回転補正 → 本 op の順)。
     """
     _va, _vb = np.asarray(a), np.asarray(b)
     if _va.shape != _vb.shape:
@@ -237,6 +317,19 @@ def match_shape_3d(vol, template, device="cpu", mc=0.05, subvoxel=True):
 
     テンプレとシーンの **単位勾配ベクトルの内積和**(Steger 流)。強度/コントラストに不変で、
     エッジ/形状で一致を測る。score(pos)=Σ<û_scene(pos+dt), û_model(dt)>/n を 3 成分の conv3d で。
+
+    手順: 両 volume に ``sobel3d`` → 大きさ ``mc`` 超の voxel だけ単位ベクトル化(以下は 0)。
+    テンプレの単位勾配 3 成分をカーネルに、シーンの単位勾配と成分ごとに conv3d して和を取り、
+    テンプレの有効 voxel 数 ``n`` で割る。score は **[−1, 1]**、1 で完全一致(勾配の向きが全て
+    揃う)、コントラスト反転で −1。
+    - ``mc``: ``sobel3d`` の **生出力(真の勾配の 32 倍)** に対する閾値。小さいほど平坦部の
+    ノイズ勾配が投票に入る。
+    - 位置: 返り値 ``[score, z, y, x]``(float64 配列)の座標は **テンプレ中心 voxel(index T//2)**
+    が scene のどこに載るか。テンプレが完全に収まる位置以外は 0 に落とすので、テンプレが scene
+    より大きいと全 0 のまま index (0,0,0) が返る(例外は出ない)。
+    - ``subvoxel=True`` で argmax の ±2 近傍の正スコア重心に精緻化(``accel_match._subvoxel_com``)。
+    後段: ``refine_translation_lk``(corner 規約なので T//2 を引く)/ ``refine_lm``。回転には
+    不変でない(``match_logpolar_z`` で先に回転を合わせる)。
     """
     sz, sy, sx, _ = _unit_grad3d(vol, device, mc)           # 単位勾配(シーン)
     tz, ty, tx, tm = _unit_grad3d(np.asarray(template, np.float64), device, mc)
@@ -263,6 +356,15 @@ def moment_axes(points, weights=None):
     """点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。
 
     返り値 (centroid(3,), axes(3,3) 列=主軸, eigvals(3,))。固有値降順。回転の正準化に使う。
+
+    定義: ``w`` を総和 1 に正規化し、重心 ``c = Σ w p``、散布行列 ``C = Σ w (p−c)(p−c)ᵀ``
+    (共分散。慣性テンソル ``tr(C)I − C`` と固有ベクトルは共通で固有値の順序が逆)を ``eigh`` で
+    分解する。``axes[:, i]`` が i 番目に大きい固有値の主軸(降順)。固有値は分散(長さ²)。
+    - 固有ベクトルの符号は任意で、``axes`` は左手系(det=−1)になり得る(``match_pca`` は第 3 軸を
+    反転して右手系にしている)。
+    - ``weights`` は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は失敗する(検証は無い)。
+    - 主軸が縮退(球など)なら軸の向きは不定。
+    後段: ``match_pca``、``obb``(有向 bbox)、正準姿勢への回転。
     """
     P = np.asarray(points, np.float64)
     w = np.ones(len(P)) if weights is None else np.asarray(weights, np.float64)
@@ -282,6 +384,12 @@ def match_pca(pts_scene, pts_model):
     **回転**をここで担う(符号の 4 通り曖昧性は最小二乗で解消。この残差は両雲の点が
     同じ並び順で対応している前提の粗い基準 — 無対応の実測雲では ICP 等で後段精密化を)。
     返り値 (R(3,3), t(3,))。
+
+    返り値の意味: ``pts_scene ≈ (R @ pts_model.T).T + t``(``t = c_scene − R·c_model``)。R は
+    必ず ``det=+1`` の回転(反射は出さない)。残差は点を index 順に対応させて測るので、無対応の
+    雲では 4 候補の選択が当てにならない(その場合は ``icp_point2point_3d`` に ``init_R/init_t``
+    として渡して精緻化する)。主軸が縮退している(球・円柱など固有値が等しい)雲では軸が不定で
+    結果は安定しない。点数は両雲で違ってよい。入力は (N,3)(検証は ``moment_axes`` 任せで無い)。
     """
     cs, As, _ = moment_axes(pts_scene)
     cm, Am, _ = moment_axes(pts_model)
@@ -318,6 +426,18 @@ def match_mip_2d(scene_vol, model_vol, device="cpu"):
 
     3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を
     冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。
+
+    手順: ``voxel_to_mips`` で scene・model とも 3 枚の MIP を作り、各投影で model MIP の
+    ``> 5%·max`` の bbox を切り出してテンプレにし、``accel_match.ncc_locate_batch``(2D NCC、
+    テンプレ中心規約)で位置を取る。軸 0 を潰した投影は (y,x)、軸 1 は (z,x)、軸 2 は (z,y) を
+    与えるので各座標は 2 枚から得られ、その平均を返す。
+    返り値 ``(3,)`` float64 の ``[z, y, x]``(整数 NCC 位置の平均なので .5 刻み)。score は返さない。
+    - 位置は **切り出した bbox テンプレの中心**が scene MIP のどこに載るか。model volume の
+    中心ではない。
+    - model MIP が全 0 の投影は飛ばし、ある座標が 1 枚からも得られなければ 0.0 になる(例外は
+    出ない)。
+    - MIP は重なりで奥行き情報を失うので、複数物体・クラッタには弱い。
+    後段: この粗位置を ``refine_translation_lk`` / ``refine_lm`` に渡す。
     """
     sm = voxel_to_mips(scene_vol)
     mm = voxel_to_mips(model_vol)
@@ -352,6 +472,17 @@ def match_chamfer_3d(scene, template, device="cpu", thr=0.3, edt="scipy"):
     エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。相関(conv3d)は常に GPU。距離場は
     edt="scipy"(CPU、既定)か edt="jfa"(`edt_jfa`、全 GPU で CPU 往復なし。scipy と厳密一致)。
     返り値 [chamfer 距離, d, h, w]。
+
+    手順: 両 volume で ``|∇| > thr·max|∇|`` の voxel をエッジにする(``thr`` は各 volume の最大
+    勾配に対する **相対比**、勾配は ``sobel3d``)。scene エッジの距離変換 DT を作り、テンプレの
+    エッジ 2 値 volume をカーネルに conv3d した値をエッジ数 ``n`` で割る。
+    返り値 ``[距離, z, y, x]`` の距離は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの
+    平均距離(voxel 単位)」で 0 が完全一致。位置は **テンプレ中心 (T//2)** の scene 座標で
+    **整数**(subvoxel 精緻化は無い。要るなら ``refine_translation_lk`` へ。corner 規約なので
+    T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 で埋めて除外する。
+    テンプレにエッジが無い(``thr`` が高すぎる等)と score が全 0 になり index (0,0,0) が返る。
+    scene にエッジが無い場合の距離場は意味を持たない(``thr`` を下げる)。
+    ``edt="jfa"`` は ``edt_jfa`` を使い ``device`` 上で完結、それ以外は scipy(CPU)。
     """
     se = _edges3d(scene, device, thr).detach().cpu().numpy() > 0.5
     te = _edges3d(template, device, thr).detach().cpu().numpy() > 0.5
@@ -378,7 +509,21 @@ def match_chamfer_3d(scene, template, device="cpu", thr=0.3, edt="scipy"):
 
 
 def match_points_ncc(pts_scene, pts_model, size, bounds, device="cpu", smooth=0.8):
-    """点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。"""
+    """点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。
+
+    手順: ``pts_scene`` と ``pts_model`` を **同じ** ``bounds=(lo,hi)`` と ``size`` で
+    ``points_to_voxel``(σ=``smooth`` voxel の平滑つき)に通し、model 側は ``> 5%·max`` の bbox を
+    切り出してテンプレにし、``accel_match.ncc_locate_3d`` で NCC 定位する。
+    返り値 ``[NCC, z, y, x]`` float64(NCC ∈ [−1,1]、位置は voxel index、±2 近傍重心で
+    サブボクセル)。
+    - 位置は **切り出した bbox テンプレの中心**が scene voxel のどこに載るか。world 座標に戻すには
+    ``lo + idx/(size−1)·(hi−lo)``(``points_to_voxel`` の格子)。
+    - ``bounds`` は必須(``_lo_hi`` で検証、不正は ValueError)。両雲を含む範囲にしないと範囲外の
+    点が端 voxel に clip される。
+    - model の voxel が全 0 なら ``[0,0,0,0]``。
+    - 並進のみ。回転・スケールは ``match_pca`` / ``match_logpolar_z`` で先に合わせる。
+    後段: ``icp_point2point_3d`` の ``init_t``、``refine_translation_lk``。
+    """
     vs = points_to_voxel(pts_scene, size, bounds, device, smooth)
     vm_full = points_to_voxel(pts_model, size, bounds, device, smooth)
     nz = np.argwhere(vm_full > vm_full.max() * 0.05)
@@ -449,6 +594,15 @@ def match_logpolar_z(a, b, device="cpu", project="mip", nt=360, nr=192):
     |FFT| の 180° 対称により ±45°/±90° 近傍は別名化して外し得る。スケールは中央ローブ偏りで
     ~10% 過小に出る。full-whitening はこの投影の非シフト DC プラトーでゼロロックするため、
     plain 相関 + rho-Hann 窓 + 放物線サブピクセルを用いる。
+
+    引数: ``a``, ``b`` は 3-D volume(同形でなくてもよいが、投影の縦横比が違うと log-polar の
+    対応が崩れる)。``project="mip"`` で軸 0 の最大値投影、それ以外は軸 0 の総和投影。``nt``/``nr``
+    は log-polar の角度・半径サンプル数(角度分解能 180°/nt)。
+    返り値 ``(angle_deg, scale)``: ``b`` が ``a`` を軸 0 まわりに ``angle_deg`` 回して ``scale``
+    倍したものと推定する(``b ≈ zoom(rotate(a, angle_deg, axes=(1,2)), scale)``、回転の向きは
+    ``scipy.ndimage.rotate`` と同じ)。角度は ±90° の範囲で別名化する。
+    後段: ``refine_rotation_z(scene=b, template=a, init_angle_deg=angle_deg)`` で追い込み →
+    ``match_phase_3d`` で並進。
     """
     v_a = np.asarray(a, np.float64)
     v_b = np.asarray(b, np.float64)
@@ -497,6 +651,14 @@ def edt_jfa(seed_bool, device="cpu"):
     速いが、GPU-JFA は N≥96 で追い抜く(RTX5090 実測 96→2.6× / 128→4.7×)。全 voxel 並列で
     GPU 常駐でき、chamfer を CPU 往復なしの全 GPU パイプラインにするのが本質。末尾の step=1 を
     2 パス(JFA+2)にして大 N の近似誤差も消す。返り値 距離場 (D,H,W) の torch tensor。
+
+    引数 ``seed_bool`` は ``(D,H,W)`` の bool(True=seed、距離 0)。返り値は **torch float32
+    tensor** ``(D,H,W)``(``device`` 上、numpy ではない。台帳経由 ``fs.ledger.edt_jfa`` では
+    numpy に変換される)。距離は voxel 中心間のユークリッド距離(voxel 単位)。
+    seed が 1 つも無いと全 voxel が 1e6 に飽和する(例外は出ない)。26 方向 × log2(max(D,H,W))
+    段のジャンプなので、メモリは ``(3,D,H,W)`` float32 が数枚分。
+    用途: ``signed_distance_field``(両側)、``match_chamfer_3d(edt="jfa")``。CPU 版は
+    ``scipy.ndimage.distance_transform_edt(~seed)`` と同じ値。
     """
     _INF = 1e9
     s = torch.as_tensor(np.asarray(seed_bool, bool), device=device)
@@ -558,6 +720,19 @@ def match_hough_3d(scene, template, device="cpu", ndir=26, mc=0.05,
     欠けたエッジはピークを下げるだけ(**遮蔽・クラッタに頑健**)。shape-based(連続内積の単一解)
     と違い **投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス** を取れるのが差別化。
     返り値 (topk,4) の [votes, d, h, w](votes 降順)。
+
+    手順: 両 volume の単位勾配(``mc`` は ``sobel3d`` の生出力への閾値)を ``ndir`` 本の参照方向の
+    うち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの
+    2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は **[0, 1]**、1 で
+    全エッジが一致。
+    - ``ndir``: 26 以下は 26 近傍方向のリストの先頭 ``ndir`` 本(26 未満は方向が偏る)、27 以上は
+    fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。
+    - 返り値 ``(topk, 4)`` の各行 ``[votes, z, y, x]``、votes 降順。座標は **テンプレ中心 (T//2)**
+    の scene 座標、``subvoxel=True`` なら ±2 近傍重心。
+    - ``nms``: ピークを取るたびに ``±nms`` voxel の立方体を −1 で潰してから次を探す。近接する
+    複数インスタンスは ``nms`` を小さく。
+    - テンプレにエッジが無ければ全 0 の ``(topk,4)``。テンプレが完全に収まらない位置は 0。
+    後段: 各ピークを ``refine_translation_lk`` / ``refine_peak_newton`` で精緻化。
     """
     sz, sy, sx, sm = _unit_grad3d(scene, device, mc)
     tz, ty, tx, tm = _unit_grad3d(np.asarray(template, np.float64), device, mc)
@@ -606,7 +781,16 @@ def match_hough_3d(scene, template, device="cpu", ndir=26, mc=0.05,
 # 線→面リフト: 曲面曲率(主曲率 κ1,κ2 / shape index)= 2 次の曲面固有量
 # ═══════════════════════════════════════════════════════════════════════════
 def hessian3d(vol, device="cpu"):
-    """3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。"""
+    """3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。
+
+    カーネル: 2 階 [1,−2,1](利得 1)、1 階 [−0.5,0,0.5](利得 1)、残りの軸は [1,2,1]/4 の平滑
+    (利得 1)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の
+    平滑」。**単位は 1/voxel² の真の値**(``sobel3d`` の 32 倍利得とは違う)。端は replicate。
+    返り値は **list の torch tensor 6 本**、各 ``(D,H,W)`` float32、``device`` 上、順は
+    (zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば ``.cpu().numpy()``。入力は
+    numpy 相当(float32 に変換)。
+    用途: ``curvature_maps`` の主曲率(``sobel3d`` と組で使う)、blob/管状構造の検出。
+    """
     t = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
     d2 = torch.tensor([1.0, -2.0, 1.0], device=device)
     d1 = torch.tensor([-0.5, 0.0, 0.5], device=device)
@@ -669,6 +853,18 @@ def match_curvature_3d(scene, template, device="cpu", mc=6.25e-4, subvoxel=True)
     scene/template を **curvedness で重み付けした shape-index 場**へ変換 → 既存 3D NCC で定位。
     強度でなく **局所曲面形状**で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を
     区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。
+
+    手順: 両 volume で ``curvature_maps`` → ``S × curvedness × mask`` の重み付き shape-index 場
+    ``w`` を作り、テンプレ側は ``|w| > 0.1·max|w|`` の bbox を切り出して
+    ``accel_match.ncc_locate_3d`` に渡す。返り値 ``[NCC, z, y, x]`` float64、NCC ∈ [−1, 1]。
+    - **位置は切り出した bbox テンプレの中心**が scene に載る座標。元テンプレ volume の中心とは
+    bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。
+    - ``mc``: ``curvature_maps`` の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて
+    曲率ノイズを抑える。
+    - テンプレの曲率場が全 0(平坦・``mc`` が高すぎ)なら ``[0,0,0,0]`` を返す。
+    - 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に ``points_to_voxel`` の
+    ``smooth`` 等で滑らかにする。
+    ``subvoxel=True`` で NCC ピークの ±2 近傍重心に精緻化。
     """
     Ss, Cs, Ms, _ = curvature_maps(scene, device, mc)
     St, Ct, Mt, _ = curvature_maps(template, device, mc)
@@ -698,6 +894,20 @@ def hough_plane_3d(vol, device="cpu", ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0
 
     薄い境界面の各 voxel が自分の法線方向ビンと d=n·p に投票 → ピーク=支配平面。法線は勝ちビン内
     の実法線平均で精緻化、d は投影のモード。点群/voxel の地面・壁の抽出に。返り値 (n(3,), d, inliers, total)。
+
+    手順: ``(vol > iso)`` の 1 voxel 厚の境界面(占有 voxel のうち 3³ erosion で消えるもの)を取り、
+    その voxel の単位勾配(``sobel3d``、``mc`` は生出力への閾値)を法線 ``n`` にする。``n`` は軸 0
+    成分が非負になるよう半球へ畳み、``d = n·p``(``p`` は整数 voxel index ``(z,y,x)``)。``ndir``
+    本の参照方向(26 以下は 26 近傍、それ以上は fibonacci 球)と ``nd`` 個の d ビンに投票し、
+    最多ビンの実法線平均で n を、その n への射影ヒストグラムのモード近傍の中央値で d を精緻化する。
+    返り値 ``(n(3,), d, inliers, total)``: ``n`` は **(z,y,x) 順**の単位法線(numpy float32)、
+    平面は ``n·(z,y,x) = d``(voxel 単位)。``inliers`` は ``|n·p − d| < tol`` の境界 voxel 数、
+    ``total`` は境界 voxel の総数(inliers/total が支配平面の占める割合)。
+    - 境界 voxel が 10 未満なら **None を返す**(例外ではない)。
+    - 密度 voxel は ``iso`` で 2 値化される(個数密度なら 0.5 で「1 点以上」)。
+    - 1 枚しか返さない。複数平面はインライアを除いて再実行するか、点群なら ``plane_segmentation``
+    / ``ransac_plane``。
+    後段: ``distance_point_plane`` / ``angle_between_planes`` で計測。
     """
     gz, gy, gx, _ = _unit_grad3d(vol, device, mc)
     gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
@@ -738,6 +948,19 @@ def hough_sphere_3d(vol, device="cpu", radii=None, mc=0.0, iso=0.5, subvoxel=Tru
     薄い境界面の各 voxel が法線 n に沿って中心へ投票(符号は明/暗どちらの球でも拾えるよう両方試す)。
     半径ごとの中心ピーク投票の最大 = 検出球。votes-vs-radius を放物線補間で sub-voxel 半径。
     産業: ボール・球状部品・点群中の球面。返り値 (votes, radius, center(3,))。
+
+    手順: ``(vol > iso)`` の 1 voxel 厚の境界面 voxel ``p`` とその単位法線 ``n``(``sobel3d``、
+    ``mc`` は生出力への閾値)から、半径 ``r`` ごとに ``c = round(p ± r·n)`` へ投票し(± は明球・
+    暗球の両方を試し、多い方を採る)、volume 内に落ちた票の最大値をその r のスコアにする。全 r で
+    最大のものが検出球。
+    - ``radii``: 試す半径(voxel 単位)の列。None なら ``range(4, 16)``(4〜15)。``subvoxel=True``
+    は最良 r の **両隣 r±1 が radii に含まれるとき**だけ votes の放物線補間で半径を ±1 以内に
+    精緻化する(端の r や飛び飛びの radii では整数のまま)。
+    - 返り値 ``(votes, radius, center)``: votes は票数(境界 voxel 数が上限)、radius は float、
+    center は **整数 (z,y,x) の tuple**(中心は精緻化しない)。
+    - 境界 voxel が 10 未満なら **None**。``radii`` が空だと TypeError で落ちる。
+    - 1 個しか返さない。複数球は検出した球の voxel を消して再実行するか、点群なら
+    ``ransac_sphere`` / ``fit_sphere_3d``。
     """
     gz, gy, gx, _ = _unit_grad3d(vol, device, mc)
     gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
@@ -811,6 +1034,14 @@ def sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device="cpu"):
     理論値の ~0.62 倍、解像度↑で 1 に収束)。match_sh_descriptor は L2 正規化+コサイン
     類似度なので**同一 ntheta/nphi 同士の比較には影響しない**が、絶対値を物理量として
     使う・異なる解像度設定間で比較するのは不可。
+
+    引数: ``vol`` は **立方体**(N,N,N)前提。中心 ``c = (N−1)/2`` と座標の正規化に軸 0 の長さ N
+    だけを使うので、非立方体だと軸 1,2 のサンプル位置が歪む(検証は無い)。shell 半径は
+    ``0.2·rmax`` 〜 ``rmax = N/2 − 1`` を ``nradii`` 等分(voxel 単位)、各 shell を
+    ``ntheta × nphi`` の (θ,φ) 格子で trilinear サンプルする。``L`` は最大次数。
+    返り値 ``(nradii, L+1)`` float32 numpy、``[i, l]`` が i 番目の shell の次数 l のエネルギー
+    (非負)。物体は volume の中心に置く(中心がずれると回転不変性が崩れる。``moment_axes`` の
+    重心で先に中心合わせを)。scipy の ``sph_harm_y``/``sph_harm`` を呼び出し時 import。
     """
     v = np.asarray(vol, np.float64)
     N = v.shape[0]
@@ -839,7 +1070,18 @@ def sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device="cpu"):
 
 
 def match_sh_descriptor(a, b, L=8, nradii=12, device="cpu"):
-    """SH 記述子同士のコサイン類似度(回転不変な形状照合)。1 に近いほど同形状。voxel × SH 列。"""
+    """SH 記述子同士のコサイン類似度(回転不変な形状照合)。1 に近いほど同形状。voxel × SH 列。
+
+    ``sh_descriptor(a, L, nradii)`` と ``sh_descriptor(b, L, nradii)`` を平坦化して L2 正規化し、
+    内積を float で返す。帯域エネルギーは非負なので値は **[0, 1]**(負にならない)。どちらかの
+    記述子が全 0(空 volume)なら 0。
+    - ``a``, ``b`` は立方体 volume(``sh_descriptor`` の前提)。形が違ってもよいが、shell 半径が
+    各 N で決まるので **スケールが違う物体は別物**として低く出る(スケール不変ではない)。
+    中心ずれにも弱い(重心で中心合わせしてから)。
+    - 回転には不変(帯域エネルギー)。ただし鏡像も同じ値になる。
+    - ``ntheta``/``nphi`` は既定(32×64)固定。同じ設定同士の比較にだけ意味がある。
+    - 位置は返さない。「どこにあるか」は ``match_shape_3d`` 等、「同じ形か」は本 op。
+    """
     da = sh_descriptor(a, L, nradii, device=device).reshape(-1)
     db = sh_descriptor(b, L, nradii, device=device).reshape(-1)
     da = da / (np.linalg.norm(da) + 1e-9)
@@ -1679,6 +1921,16 @@ def scene_flow_lk(vol0, vol1, device="cpu", win=3, levels=3, iters=3, reg=1e-3):
 
     実測: 一様並進 [1.5,-2,1] を中央領域平均で誤差 0.044 voxel、拡大場で外向き発散を正しく検出。
     grad_scale=32 は sobel3d(deriv[-1,0,1]×smooth[1,2,1]²)の実測スケール。GPU 対応(全 conv3d)。
+
+    引数: ``vol0``, ``vol1`` は同形の 3-D(違えば ValueError。NaN/Inf や float32 桁あふれも
+    ValueError)。``win`` は窓の半幅(窓は一辺 ``2·win+1``)、``levels`` はピラミッド段数(各段
+    ``avg_pool3d`` で 2 倍縮小。大変位ほど段数を増やす)、``iters`` は各段の warp 反復、``reg`` は
+    構造テンソル対角への正則化(平坦部の 0 除算回避。大きいほど平坦部の flow が 0 に寄る)。
+    1 反復の更新は各軸 ±2 voxel に clamp される。
+    返り値 ``(3, D, H, W)`` float32 numpy、``flow[0]``=dz, ``flow[1]``=dy, ``flow[2]``=dx
+    (voxel 単位)。``vol1(x) ≈ vol0(x − d)``、すなわち vol0 の構造が ``+d`` 動いて vol1 になる。
+    端は border 補間で埋まるので端 1〜2 voxel の値は信用しない。剛体運動の R,t が欲しいなら
+    点群にして ``icp_point2point_3d`` / ``fit_rigid`` へ。
     """
     _va, _vb = np.asarray(vol0), np.asarray(vol1)
     if _va.shape != _vb.shape:
@@ -1732,6 +1984,16 @@ def signed_distance_field(vol, device="cpu", iso=0.5):
 
     SDF はマッチングに優れた表現(滑らか・勾配=法線・0 等値面=表面)。inside/outside の
     ユークリッド距離差で作る。GPU native。voxel↔SDF↔occupancy を相互変換できる。
+
+    定義: ``occ = vol > iso`` として ``d_out = edt_jfa(occ)``(各 voxel から最寄りの占有 voxel
+    までの距離、占有内では 0)、``d_in = edt_jfa(~occ)``(最寄りの非占有 voxel まで)、
+    ``sdf = d_out − d_in``。外側は +距離、内側は −距離(voxel 単位、ユークリッド)。
+    voxel 中心同士の距離なので **0 になる voxel は無く**、境界の占有 voxel は −1、隣接する
+    非占有 voxel は +1(0 等値面は voxel の間)。
+    ``iso`` は密度→占有の閾値(既定 0.5。個数密度なら「1 点以上」)。全占有・全空の volume は
+    seed の無い側の距離が 1e6 に飽和し、全占有では −1e6、全空では +1e6 になる(例外は出ない)。
+    返り値 ``(D,H,W)`` float32 numpy。
+    後段: ``sdf_to_occupancy`` で戻す、``voxel_to_mesh(sdf, iso=0.0)`` で面、``sobel3d`` で法線場。
     """
     occ = np.asarray(vol) > iso
     d_out = edt_jfa(occ, device)                            # 外側→最近表面
@@ -1741,7 +2003,16 @@ def signed_distance_field(vol, device="cpu", iso=0.5):
 
 
 def sdf_to_occupancy(sdf, iso=0.0):
-    """SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。"""
+    """SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。
+
+    ``(sdf <= iso).astype(float64)`` だけの op。``signed_distance_field`` の規約(内側 <0)なら
+    ``iso=0.0`` で内側=1、外側=0。**等号を含む**ので、ちょうど ``iso`` の voxel は内側に入る。
+    ``iso`` を正にすると外側へ ``iso`` voxel ぶん膨らんだ占有、負にすると縮んだ占有になる
+    (SDF が真の距離なら等方 dilation/erosion と同じ)。``tsdf_from_depth`` の出力(表面手前 +・
+    奥 −・未観測 +1)にも同じ ``iso=0.0`` で使えるが、未観測領域は 0 側(外)になる。
+    入力の形は問わず、返り値は同形の float64(0.0 / 1.0)。NaN は比較が偽なので 0 になる
+    (警告なし)。
+    """
     return (np.asarray(sdf) <= iso).astype(np.float64)
 
 
@@ -1754,6 +2025,13 @@ def estimate_point_normals(points, k=16, viewpoint=None):
     可視面はセンサ側を向くのが物理的に正しい。`pointcloud.estimate_normals` と同規約)。
     旧版(〜2026-08-30)は viewpoint 指定でも「視点から遠ざける」符号で、単一視点
     スキャンという本来用途で全点が裏返っていた。返り値 normals (N,3)。
+
+    手順: ``cKDTree`` で各点の ``k`` 近傍(自分自身を含む。``k > N`` なら N に切り詰め)を取り、
+    その共分散の最小固有ベクトルを法線にする。返り値 ``(N,3)`` float64 の単位ベクトル。
+    ``viewpoint`` は 3 次元の座標(センサ位置)。点数が 3 未満・近傍が同一直線上だと法線は
+    不定のまま返る(検証は無い)。``k`` が小さいとノイズに弱く、大きいと角が丸まる。
+    後段: ``icp_point2plane`` の ``dst_normals``、``render_shaded`` 用の法線、``normals_to_egi``。
+    ``pointcloud.estimate_normals``(台帳 ``estimate_normals``)と同じ規約。
     """
     from scipy.spatial import cKDTree
     P = np.asarray(points, np.float64)
@@ -1776,7 +2054,20 @@ def estimate_point_normals(points, k=16, viewpoint=None):
 
 
 def mesh_to_points(vertices, faces, samples=20000, seed=0):
-    """mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。"""
+    """mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。
+
+    手順: 三角形 ``tri = vertices[faces]`` の面積 ``0.5·|(b−a)×(c−a)|`` を確率にして ``samples``
+    個の面を復元抽出し、各面で ``u, v ~ U(0,1)``、``u + v > 1`` なら ``(1−u, 1−v)`` に折り返す
+    (一様 barycentric)。点 ``= a + u(b−a) + v(c−a)``。``seed`` で ``default_rng`` を固定するので
+    同じ引数なら同じ点群。
+
+    - ``vertices`` (V,3) float、``faces`` (F,3) int(0 始まりの頂点 index)。
+    - 返り値 ``(samples, 3)`` float64。面の数に関係なくちょうど ``samples`` 点。
+    - 全面が退化(面積和 0)なら確率が NaN になり ``rng.choice`` が ValueError。
+    - 法線は付かない(``estimate_point_normals`` で付ける)。面積重みなので大きな面ほど点が多く、
+    頂点密度には依存しない。
+    後段: ``points_to_voxel`` / ``icp_point2point_3d`` / ``match_pca``。
+    """
     V = np.asarray(vertices, np.float64); Fc = np.asarray(faces, np.int64)
     tri = V[Fc]
     areas = 0.5 * np.linalg.norm(np.cross(tri[:, 1] - tri[:, 0],
@@ -1790,7 +2081,19 @@ def mesh_to_points(vertices, faces, samples=20000, seed=0):
 
 
 def voxel_to_mesh(vol, iso=0.5):
-    """voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。"""
+    """voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。
+
+    ``skimage.measure.marching_cubes(vol, level=iso)`` の薄い包み(spacing 指定なし = 1 voxel
+    単位)。``verts`` (V,3) float は **voxel index 座標**で、列は入力の軸順(``vol`` が (D,H,W)
+    なら (z,y,x))。``faces`` (F,3) int は verts への index、``normals`` (V,3) は skimage が
+    勾配から与える頂点法線。4 番目の返り値(values)は捨てる。
+
+    - ``iso``: 等値面のレベル。**入力の値域の外だと skimage が ValueError** を出す(全 0 の
+    volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。
+    - 境界に接する等値面は開いたまま(端で閉じない)。
+    - skimage は呼び出し時 import(未導入なら ImportError)。
+    後段: ``mesh_to_points`` で点群化、``mesh_area`` / ``mesh_edge_stats`` で計測。
+    """
     from skimage import measure
     v, f, n, _ = measure.marching_cubes(np.asarray(vol, np.float64), level=iso)
     return v, f, n
@@ -1801,6 +2104,20 @@ def tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0):
 
     各 voxel を画像へ投影し、視線上の観測深度との符号付き切詰め距離 [-1,1] を格納
     (表面手前 +・奥 −・表面 0)。KinectFusion 系の基本表現。
+
+    格子: ``bounds=(lo, hi)`` は **(X, Y, Z) のカメラ座標**(``depth_to_points`` と同じ)で、
+    None なら深度を逆投影した点群の min−2 / max+2(深度の単位)。出力は ``(size,size,size)``
+    float32 で **軸順は (Z, Y, X)**、voxel 中心 ``= lo + (i + 0.5)/size·(hi − lo)``。
+    bounds の並び (x,y,z) と配列の軸 (z,y,x) が逆なことに注意。
+
+    値: 各 voxel 中心を ``u = X·fx/Z + cx``、``v = Y·fy/Z + cy`` で画素へ丸め、その画素の観測深度
+    ``d`` から ``clip((d − Z)/trunc, −1, 1)``(``trunc`` は深度と同じ単位)。画像外に落ちる
+    voxel・観測深度が 0 以下・Z が 0 以下の voxel は **+1(未観測=自由)** にする(端画素へ
+    clip して観測済みに見せかけない)。深度 0 が無効値の規約。
+
+    - 深度が全て 0 で bounds=None だと点群が空になり numpy の min で例外。
+    - 1 視点の TSDF なので視線の裏側は −1 で埋まる(閉じた物体にはならない)。
+    後段: ``voxel_to_mesh(tsdf, iso=0.0)`` で面を取る。占有にするなら ``sdf_to_occupancy``。
     """
     d = np.asarray(depth, np.float64); H, W = d.shape
     pts = depth_to_points(d, fx, fy, cx, cy)
@@ -1871,38 +2188,96 @@ def morph_dilate3d(vol, r=1, device="cpu", se="cube"):
     """3D グレースケール dilation(SE 半径 r の局所 max)。明領域を膨張。
 
     se="cube"(既定、torch 経路で GPU 可)/ "ball"(等方 SE、scipy 経路)。
+
+    SE は一辺 ``2r+1`` の立方体(cube)か ``z²+y²+x² <= r²`` の球(ball)。``r=0`` は恒等。
+    境界の外は −∞ 扱い(画像内の値だけで max を取る。torch の ``max_pool3d`` の implicit
+    padding と scipy の ``cval=-inf`` で同じ結果)。cube は torch があれば ``max_pool3d``
+    (``device`` 有効)、ball または torch 不在なら ``scipy.ndimage.grey_dilation``(``device`` は
+    無視)。入力は float32 に変換され、返り値 ``(D,H,W)`` float32 numpy。``se`` がその 2 つ以外なら
+    ValueError。2 値 volume(0/1)ならそのまま 2 値 dilation になる。``se="ball"`` は r が
+    大きいと footprint 走査で遅い。
+    後段: ``morph_erode3d`` と組で ``morph_open3d`` / ``morph_close3d`` / ``morph_gradient3d``。
     """
     return _gray_morph3d(vol, r, device, se, "dil")
 
 
 def morph_erode3d(vol, r=1, device="cpu", se="cube"):
-    """3D グレースケール erosion(SE の局所 min)。明領域を収縮。se は dilate と同じ。"""
+    """3D グレースケール erosion(SE の局所 min)。明領域を収縮。se は dilate と同じ。
+
+    一辺 ``2r+1`` の cube か半径 r の ball の中で最小値を取る。境界の外は +∞ 扱い(画像内の
+    値だけで min。torch 経路は ``-max_pool3d(-v)``、scipy 経路は ``cval=+inf``)ので、端で 0 に
+    落ちることはない。``r=0`` は恒等。``se`` が "cube"/"ball" 以外なら ValueError。``device`` は
+    cube+torch のときだけ効く。返り値 ``(D,H,W)`` float32 numpy。
+    2 値 volume では「SE が丸ごと入る voxel だけ残す」= 細い構造・薄い殻の除去。
+    後段: ``morph_dilate3d`` と組で opening/closing、``vol − erosion`` で内側境界。
+    """
     return _gray_morph3d(vol, r, device, se, "ero")
 
 
 def morph_open3d(vol, r=1, device="cpu", se="cube"):
-    """3D opening = erosion → dilation。SE より小さい**明構造(棘・粒)**を除く。"""
+    """3D opening = erosion → dilation。SE より小さい**明構造(棘・粒)**を除く。
+
+    ``morph_dilate3d(morph_erode3d(vol, r, ...), r, ...)`` と同じ SE を 2 回。出力は入力以下
+    (``open <= vol``)で、SE(一辺 ``2r+1`` の cube か半径 r の ball)が入り切らない明るい突起・
+    孤立点・細いブリッジが消え、大きな構造の形は保たれる(等冪: 2 回掛けても同じ)。
+    ``r`` は voxel 単位、``se`` は "cube"/"ball"(他は ValueError)、``device`` は cube+torch の
+    ときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+    用途: ``vol − open`` が ``morph_tophat3d``(小さな明構造の抽出)。点密度 voxel の孤立ノイズ
+    点除去、2 値占有の細線除去。
+    """
     return morph_dilate3d(morph_erode3d(vol, r, device, se), r, device, se)
 
 
 def morph_close3d(vol, r=1, device="cpu", se="cube"):
-    """3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。"""
+    """3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。
+
+    ``morph_erode3d(morph_dilate3d(vol, r, ...), r, ...)``。出力は入力以上(``close >= vol``)で、
+    SE(一辺 ``2r+1`` の cube か半径 r の ball)より小さい暗い穴・亀裂・面の隙間が周囲の
+    明るさで埋まり、大きな暗領域は残る(等冪)。境界外は dilation で −∞、erosion で +∞ 扱い
+    なので端が勝手に埋まることはない。``se`` は "cube"/"ball"(他は ValueError)、``device`` は
+    cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+    用途: ``close − vol`` が ``morph_blackhat3d``(小さな暗構造の抽出)。点群 splat の表面の
+    穴埋め、``signed_distance_field`` 前の占有の穴埋め。
+    """
     return morph_erode3d(morph_dilate3d(vol, r, device, se), r, device, se)
 
 
 def morph_gradient3d(vol, r=1, device="cpu", se="cube"):
-    """3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。"""
+    """3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。
+
+    同じ SE(一辺 ``2r+1`` の cube か半径 r の ball)での局所 max − 局所 min。値は常に 0 以上、
+    一様な領域で 0、明暗の境界で段差の大きさ(``r`` が大きいほど境界が太い。``r=1`` で 2 voxel
+    幅)。方向情報は無い(方向が要るなら ``sobel3d``)。``sobel3d`` と違い利得の補正が要らず、
+    2 値 volume では「境界 voxel = 1」の殻がそのまま出る。``se`` は "cube"/"ball"(他は
+    ValueError)、``device`` は cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+    用途: ``match_chamfer_3d`` 用のエッジ源、``hough_plane_3d`` に渡す前の表面抽出の代替。
+    """
     return (morph_dilate3d(vol, r, device, se)
             - morph_erode3d(vol, r, device, se))
 
 
 def morph_tophat3d(vol, r=1, device="cpu", se="cube"):
-    """3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。"""
+    """3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。
+
+    ``vol(float32) − morph_open3d(vol, r, ...)``。値は 0 以上で、SE(一辺 ``2r+1`` の cube か
+    半径 r の ball)に入り切らない明るい突起・粒・細線だけがその高さで残り、それより大きな
+    明領域と滑らかな背景は 0 になる。背景の緩い明るさムラも除けるので、閾値化の前処理に。
+    ``r`` は「残したい構造の半径」より大きく取る。``se`` は "cube"/"ball"(他は ValueError)、
+    ``device`` は cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+    暗い構造を取るなら ``morph_blackhat3d``。
+    """
     return np.asarray(vol, np.float32) - morph_open3d(vol, r, device, se)
 
 
 def morph_blackhat3d(vol, r=1, device="cpu", se="cube"):
-    """3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。"""
+    """3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。
+
+    ``morph_close3d(vol, r, ...) − vol(float32)``。値は 0 以上で、SE(一辺 ``2r+1`` の cube か
+    半径 r の ball)より小さい暗い穴・亀裂・隙間だけがその深さで残り、大きな暗領域と背景は
+    0 になる。占有 voxel なら「SE で埋まる空洞 = 1」。``r`` は検出したい穴の半径より大きく取る。
+    ``se`` は "cube"/"ball"(他は ValueError)、``device`` は cube+torch のときだけ有効。
+    返り値 ``(D,H,W)`` float32 numpy。明るい構造を取るなら ``morph_tophat3d``。
+    """
     return morph_close3d(vol, r, device, se) - np.asarray(vol, np.float32)
 
 
@@ -1964,56 +2339,125 @@ def _pts(points, op, min_pts, name="points"):
 
 
 def line_from_2points(a, b):
-    """2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。"""
+    """2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。
+
+    返り値 ``(a, u)``: ``a`` は入力の 1 点目(float 配列)、``u = (b − a)/|b − a|``。引数は数値の
+    2 または 3 ベクトル(それ以外・次元の混在は ValueError)。``a == b`` のときは方向が零ベクトルの
+    まま返る(例外は出ない。呼び手で ``|u| > 0`` を確かめる)。座標の並び順は問わない(入力の
+    順のまま返る)ので、(x,y,z) でも (z,y,x) でも一貫していればよい。
+    後段: ``distance_point_line`` / ``distance_line_line`` / ``intersect_line_plane`` /
+    ``angle_between_lines`` にこの ``(a, u)`` を渡す。点群から直線を取るなら ``fit_line_3d``。
+    """
     a, b = _vecs("line_from_2points", a=a, b=b)
     return a, _u(b - a)
 
 
 def plane_from_3points(a, b, c):
-    """3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。"""
+    """3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。
+
+    返り値 ``(a, n)``: ``a`` は 1 点目、``n = (b−a)×(c−a)`` を単位化したもの(向きは a→b→c の
+    右ねじ)。引数は数値の 2 または 3 ベクトル(それ以外・次元の混在は ValueError)。3 点が同一
+    直線上なら ``n`` は零ベクトルのまま返る(例外は出ない)。
+    2 次元の点を渡すと ``np.cross`` がスカラー(符号つき面積の 2 倍)を返すので、``n`` はベクトルで
+    なく ±1 のスカラーになる。2-D で線の法線が欲しい場合は ``line_from_2points`` の方向を 90°
+    回して使うこと。
+    後段: ``distance_point_plane`` / ``intersect_line_plane`` / ``intersect_planes`` /
+    ``angle_between_planes`` にこの ``(a, n)`` を渡す。点群からは ``fit_plane_3d``。
+    """
     a, b, c = _vecs("plane_from_3points", a=a, b=b, c=c)
     return a, _u(np.cross(b - a, c - a))
 
 
 def angle_3points(a, b, c):
-    """3 点のなす角(頂点 b、度)。∠ABC。"""
+    """3 点のなす角(頂点 b、度)。∠ABC。
+
+    ``arccos(û·v̂)``(``u = a − b``, ``v = c − b``)を度で返す(float)。値は **[0, 180]** で符号は
+    無い(2-D でも回転の向きは区別しない)。引数は数値の 2 または 3 ベクトル、次元の混在は
+    ValueError。``a == b`` か ``c == b`` だと零ベクトルの内積 0 で 90 が返る(例外は出ない)。
+    内積は [−1,1] に clip するので数値誤差で NaN にはならない。
+    用途: 曲げ角・関節角の計測、``fit_line_3d`` で得た 2 直線の交点まわりの角度。
+    """
     a, b, c = _vecs("angle_3points", a=a, b=b, c=c)
     return float(np.degrees(np.arccos(np.clip(_u(a - b) @ _u(c - b), -1, 1))))
 
 
 def angle_between_lines(d1, d2):
-    """2 直線方向のなす鋭角(度)。"""
+    """2 直線方向のなす鋭角(度)。
+
+    ``arccos(|d̂1·d̂2|)`` を度で返す(float)。絶対値を取るので **[0, 90]**(向きの前後を区別しない。
+    鈍角側が要るなら ``180 −`` する)。``d1``, ``d2`` は方向ベクトル(長さは問わない、内部で単位化)、
+    数値の 2 または 3 ベクトルで次元の混在は ValueError。零ベクトルは 90 が返る。
+    用途: ``fit_line_3d`` / ``line_from_2points`` の方向同士の平行度・直角度チェック(0 に近いほど
+    平行、90 に近いほど直交)。
+    """
     d1, d2 = _vecs("angle_between_lines", d1=d1, d2=d2)
     return float(np.degrees(np.arccos(np.clip(abs(_u(d1) @ _u(d2)), -1, 1))))
 
 
 def angle_between_planes(n1, n2):
-    """2 平面の二面角(法線 n1,n2、度)。"""
+    """2 平面の二面角(法線 n1,n2、度)。
+
+    法線同士の角 ``arccos(|n̂1·n̂2|)`` を度で返す(float)。絶対値を取るので **[0, 90]** の鋭角側
+    (法線の向きに依らない。鈍角側が要るなら ``180 −``)。0 = 平行、90 = 直交。``n1``, ``n2`` は
+    数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトルは 90 が返る。
+    用途: ``fit_plane_3d`` / ``hough_plane_3d`` で取った 2 面の平行度・直角度、``intersect_planes``
+    の前の平行判定。
+    """
     n1, n2 = _vecs("angle_between_planes", n1=n1, n2=n2)
     return float(np.degrees(np.arccos(np.clip(abs(_u(n1) @ _u(n2)), -1, 1))))
 
 
 def angle_line_plane(d, n):
-    """直線(方向 d)と平面(法線 n)のなす角(度)。"""
+    """直線(方向 d)と平面(法線 n)のなす角(度)。
+
+    ``90 − arccos(|d̂·n̂|)`` を度で返す(float)。値は **[0, 90]**、0 = 直線が平面に平行、90 = 垂直。
+    ``d``, ``n`` は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトル
+    は 0 が返る。
+    用途: 穴軸と基準面の直角度、``intersect_line_plane`` の前の平行判定(0 に近いと交点が遠くへ
+    飛ぶ)。
+    """
     d, n = _vecs("angle_line_plane", d=d, n=n)
     return float(90.0 - np.degrees(np.arccos(np.clip(abs(_u(d) @ _u(n)), -1, 1))))
 
 
 def distance_point_plane(p, plane_pt, n):
-    """点-平面距離(符号なし)。"""
+    """点-平面距離(符号なし)。
+
+    ``|(p − plane_pt)·n̂|`` を float で返す(``n`` は内部で単位化)。符号は捨てるので、面のどちら側か
+    が要るなら ``(p − plane_pt) @ n̂`` を直接計算する。``p``, ``plane_pt``, ``n`` は数値の 2 または
+    3 ベクトル、次元の混在は ValueError。2-D では ``n`` を直線の法線として点-直線距離になる。
+    零ベクトルの ``n`` は 0 を返す。単位は入力座標の単位。
+    用途: ``fit_plane_3d`` / ``hough_plane_3d`` の面からの高さ、``surface_form_error`` の点群版
+    (残差を 1 点ずつ)。
+    """
     p, plane_pt, n = _vecs("distance_point_plane", p=p, plane_pt=plane_pt, n=n)
     return float(abs((p - plane_pt) @ _u(n)))
 
 
 def distance_point_line(p, line_pt, d):
-    """点-直線距離。"""
+    """点-直線距離。
+
+    ``w = p − line_pt`` の、方向 ``d̂`` に直交する成分の長さ ``|w − (w·d̂)d̂|`` を float で返す
+    (``d`` は内部で単位化。2-D/3-D 共通)。``p``, ``line_pt``, ``d`` は数値の 2 または 3 ベクトル、
+    次元の混在は ValueError。``d`` が零ベクトルなら ``|w|`` がそのまま返る。単位は入力座標の単位。
+    用途: ``fit_line_3d`` の軸からの偏心、``line_from_2points`` の線に対する点群のばらつき
+    (1 点ずつ)。
+    """
     p, line_pt, d = _vecs("distance_point_line", p=p, line_pt=line_pt, d=d)
     d = _u(d); w = p - line_pt
     return float(np.linalg.norm(w - (w @ d) * d))
 
 
 def distance_line_line(p1, d1, p2, d2):
-    """2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。"""
+    """2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。
+
+    ``n = d̂1 × d̂2`` を取り、``|n| < 1e-9``(平行)なら ``distance_point_line(p2, p1, d1)``、それ
+    以外は ``|(p2 − p1)·n̂|``(共通垂線の長さ)を float で返す。交わる直線では 0。
+    ``p1, d1, p2, d2`` は数値の 2 または 3 ベクトル、次元の混在は ValueError。
+    2-D の非平行な直線は交わるので距離 0 のはずだが、``np.cross`` がスカラーになるため ``@`` が
+    失敗する(2-D は平行な場合しか通らない)。3-D で使うこと。単位は入力座標の単位。
+    用途: 2 本の軸(``fit_line_3d``)の同軸度、穴ピッチ。
+    """
     p1, d1, p2, d2 = _vecs("distance_line_line", p1=p1, d1=d1, p2=p2, d2=d2)
     d1 = _u(d1); d2 = _u(d2); n = np.cross(d1, d2); ln = np.linalg.norm(n)
     if ln < 1e-9:
@@ -2022,7 +2466,14 @@ def distance_line_line(p1, d1, p2, d2):
 
 
 def intersect_line_plane(line_pt, d, plane_pt, n):
-    """直線 ∩ 平面 → 点(平行なら None)。"""
+    """直線 ∩ 平面 → 点(平行なら None)。
+
+    ``t = ((plane_pt − line_pt)·n̂)/(d·n̂)`` で ``line_pt + t·d`` を返す(float 配列)。``d`` は単位化
+    しない(``t`` は ``d`` の長さ単位)。``|d·n̂| < 1e-9`` なら **None**(例外ではない。返り値を使う
+    前に None チェック)。面に含まれる直線(距離 0 かつ平行)も None。引数は数値の 2 または 3
+    ベクトル、次元の混在は ValueError。2-D では ``n`` を直線の法線として線と線の交点になる。
+    用途: 視線(``depth_to_points`` の点 − 原点)と ``fit_plane_3d`` の面との交点、レイと基準面。
+    """
     line_pt, d, plane_pt, n = _vecs("intersect_line_plane",
                                     line_pt=line_pt, d=d, plane_pt=plane_pt, n=n)
     n = _u(n); dn = d @ n
@@ -2033,7 +2484,16 @@ def intersect_line_plane(line_pt, d, plane_pt, n):
 
 
 def intersect_planes(p1, n1, p2, n2):
-    """平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。"""
+    """平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。
+
+    方向 ``d = n̂1 × n̂2`` を単位化し、``n̂1·p = n̂1·p1``、``n̂2·p = n̂2·p2``、``d·p = 0`` の 3×3 を
+    解いて通過点 ``p`` を求める(``d·p = 0`` なので **原点に最も近い点**)。返り値 ``(p(3,), d(3,))``。
+    ``|n1 × n2| < 1e-9``(平行・同一面)なら **None**。
+    引数は数値 3 ベクトル(``np.cross`` と 3×3 の solve を使うので **3-D 専用**。2-D を渡すと
+    配列構築で失敗する)。次元の混在は ValueError。
+    用途: ``fit_plane_3d`` した 2 面の稜線、箱のエッジの抽出 → ``distance_point_line`` でエッジ
+    からの距離。
+    """
     p1, n1, p2, n2 = _vecs("intersect_planes", p1=p1, n1=n1, p2=p2, n2=n2)
     n1 = _u(n1); n2 = _u(n2); d = np.cross(n1, n2); ld = np.linalg.norm(d)
     if ld < 1e-9:
@@ -2044,14 +2504,33 @@ def intersect_planes(p1, n1, p2, n2):
 
 
 def fit_line_3d(points):
-    """点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。"""
+    """点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。
+
+    ``(N,3)`` の点群(数値・列数 3 でなければ ValueError、2 点未満も ValueError)の重心 ``c`` と
+    散布行列 ``(P−c)ᵀ(P−c)`` の最大固有値の固有ベクトルを返す(直交距離の二乗和を最小化する直線。
+    z=f(x) 型の回帰ではない)。``direction`` は単位ベクトルで **符号は任意**(``eigh`` 次第。向きを
+    揃えるなら ``(P[-1] − P[0]) @ direction`` の符号で反転)。
+    2 点だけなら 2 点を通る直線。点が平面状に広がっていると最大軸は「最も長い方向」になるだけで
+    直線とは限らない(残差は返さないので ``distance_point_line`` で確かめる)。外れ値に弱い
+    (ロバストには ``ransac_line``)。3-D 専用(2-D 点は ValueError)。
+    """
     P = _pts(points, "fit_line_3d", 2); c = P.mean(0)
     _, v = np.linalg.eigh((P - c).T @ (P - c))
     return c, v[:, -1]
 
 
 def fit_plane_3d(points):
-    """点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。"""
+    """点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。
+
+    ``(N,3)`` の点群(列数 3 でない・3 点未満は ValueError)の重心 ``c`` と散布行列の最小固有値の
+    固有ベクトルを法線にする(直交距離の二乗和を最小化。``resid = sqrt(λ_min/N)`` = 面からの直交
+    距離の RMS)。``normal`` は単位ベクトルで **符号は任意**(外向きにするなら視点や重心との関係で
+    反転する)。3 点なら厳密に通る面で resid=0(BLAS の負の丸めは 0 に clamp)。
+    点が直線状(2 番目の固有値も 0)だと法線は不定。外れ値に弱い(``ransac_plane`` /
+    ``plane_segmentation`` で先にインライアを取る)。3-D 専用。
+    後段: ``distance_point_plane`` / ``angle_between_planes`` / ``intersect_planes``、高さ場の
+    平面度なら ``surface_form_error(degree=1)``。
+    """
     P = _pts(points, "fit_plane_3d", 3); c = P.mean(0)
     w, v = np.linalg.eigh((P - c).T @ (P - c))
     # 完全平面では最小固有値が BLAS により -1e-16 側に落ちることがある(sqrt→nan)。
@@ -2061,7 +2540,16 @@ def fit_plane_3d(points):
 
 
 def fit_sphere_3d(points):
-    """点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。"""
+    """点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。
+
+    ``|p|² = 2c·p + (r² − |c|²)`` を ``[2p, 1]`` の線形最小二乗(``lstsq``)で解く代数フィット
+    (幾何距離の最小化ではないので、球の一部しか見えていない・ノイズが大きいと半径が偏る)。
+    ``(N,3)`` で 4 点未満は ValueError。``radius`` は ``sqrt(max(s + |c|², 0))`` で負は 0 に clamp。
+    点が同一平面上・共線だと ``lstsq`` の最小ノルム解が黙って返る(検証は無い。残差も返さないので
+    ``|p − c| − r`` で確かめる)。
+    幾何距離で追い込むなら本 op の結果を初期値にして非線形最小二乗、外れ値には ``ransac_sphere``。
+    voxel からの検出は ``hough_sphere_3d``。
+    """
     P = _pts(points, "fit_sphere_3d", 4)
     A = np.hstack([2 * P, np.ones((len(P), 1))]); b = (P ** 2).sum(1)
     sol, *_ = np.linalg.lstsq(A, b, rcond=None)
@@ -2070,7 +2558,16 @@ def fit_sphere_3d(points):
 
 
 def fit_circle_3d(points):
-    """点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。"""
+    """点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。
+
+    ``fit_plane_3d`` で面 ``(c, n)`` を取り、面内の正規直交基底 ``(e1, e2)`` に点を射影して 2-D の
+    代数円フィット(``|q|² = 2·cc·q + k`` の ``lstsq``)を解き、中心を 3-D に戻す。``(N,3)`` で
+    3 点未満は ValueError(3 点なら面は厳密、円は 3 点を通る)。
+    ``center`` は面上の 3-D 点、``radius`` は float(負の根は 0 に clamp)、``normal`` は面の単位法線
+    (符号任意)。円弧の一部だけ・面から外れた点が多いと半径が偏る(代数フィットの性質。面内残差は
+    返さない)。
+    用途: 穴・フランジ・リングの中心と径、``distance_point_line`` で軸からの偏心。
+    """
     P = _pts(points, "fit_circle_3d", 3); c, n, _ = fit_plane_3d(P)
     e1 = _u(np.cross(n, [1, 0, 0]) if abs(n[0]) < 0.9 else np.cross(n, [0, 1, 0]))
     e2 = np.cross(n, e1)
@@ -2095,7 +2592,18 @@ def _poly_terms(x, y, degree):
 
 
 def fit_poly_surface(x, y, z, degree=2):
-    """散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。"""
+    """散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。
+
+    基底 ``{x^i·y^j : i + j <= degree}``(項数 ``(degree+1)(degree+2)/2``。degree=1 で 3 項の平面、
+    2 で 6 項の 2 次曲面)を ``lstsq`` で当てる。``x, y, z`` は同じ要素数なら形は問わない(内部で
+    ravel。格子なら ``np.mgrid`` の出力をそのまま)。
+    返り値 dict: ``coef`` (T,) 係数、``powers`` は各係数の ``(i, j)``(項 ``x**i * y**j``)、
+    ``degree``、``rms`` は残差 RMS、``pv`` は残差の peak-to-valley(max − min)。単位は z。
+    - 点数が項数より少ないと最小ノルム解が黙って返る。x, y の桁が大きいと高次で条件が悪くなる
+    (座標を中心化・正規化してから)。NaN の検証は無い。
+    後段: ``eval_poly_surface(model, x, y)`` で任意点を評価。格子の高さ場なら ``surface_form_error``
+    / ``background_flatten`` がこれを内部で呼ぶ。
+    """
     A, powers = _poly_terms(x, y, degree); zz = np.asarray(z, float).ravel()
     coef, *_ = np.linalg.lstsq(A, zz, rcond=None)
     resid = zz - A @ coef
@@ -2129,7 +2637,17 @@ def eval_poly_surface(model, x, y):
 
 
 def surface_form_error(height, degree=1):
-    """高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。"""
+    """高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。
+
+    ``(H,W)`` の高さ場に ``x = 列 index``、``y = 行 index`` で ``fit_poly_surface(degree)`` を当て、
+    ``residual = height − fit`` を返す。``degree=1`` は最小二乗平面(平面度=pv)、``degree=2`` は
+    2 次曲面(球面の近似。真の球ではない)。
+    返り値 ``(residual (H,W) float64, rms, pv)``、単位は高さの単位(横方向は画素単位なので傾き
+    係数は「高さ/画素」)。NaN があると lstsq が失敗する(欠損は先に埋める)。2-D 以外の入力は
+    形の unpack で失敗する。
+    用途: 平面度・うねりの評価。``background_flatten`` は同じ計算の「画像版」。点群の平面度は
+    ``fit_plane_3d`` の resid。
+    """
     H, W = np.asarray(height).shape; yy, xx = np.mgrid[0:H, 0:W]
     m = fit_poly_surface(xx, yy, height, degree)
     r = np.asarray(height, float) - eval_poly_surface(m, xx, yy)
@@ -2137,7 +2655,15 @@ def surface_form_error(height, degree=1):
 
 
 def background_flatten(image, degree=2):
-    """画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。"""
+    """画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。
+
+    ``(H,W)`` 画像に ``x = 列``、``y = 行`` で ``fit_poly_surface(degree)``(既定 2 次)を当て、
+    ``image − fit`` を float64 で返す。出力は平均がほぼ 0 で **負の値を含む**(表示・閾値化には
+    ``min`` を引くか定数を足す)。前景が広いと前景もフィットに引かれて削られる(前景を除いた点で
+    ``fit_poly_surface`` → ``eval_poly_surface`` で減算する方が安全)。
+    グレースケール 2-D のみ(3-D は失敗)。NaN があると lstsq が失敗する。
+    用途: 閾値化の前処理、``polar_unwrap`` した円環画像の照明補正。
+    """
     H, W = np.asarray(image).shape; yy, xx = np.mgrid[0:H, 0:W]
     m = fit_poly_surface(xx, yy, image, degree)
     return np.asarray(image, float) - eval_poly_surface(m, xx, yy)
@@ -2155,6 +2681,13 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
     周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。
 
     Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。
+
+    引数: ``center=(cy, cx)`` は **(行, 列)** の順(既定は画像中心 ``((H−1)/2, (W−1)/2)``)。
+    ``r_in``〜``r_out``(画素、既定 ``min(H,W)/2 − 1``)を ``nr`` 等分、角度を ``ntheta`` 等分。
+    出力 ``(ntheta, nr)`` float32: 行 k の角度 ``θ = k·2π/ntheta``、列 j の半径
+    ``r = r_in + j·(r_out − r_in)/(nr−1)``、サンプル点は ``(cy + r sinθ, cx + r cosθ)``(θ=0 が
+    +列方向、θ が増えると +行方向へ回る)。画像外は 0 で埋まる(bilinear)。
+    後段: 行方向(θ)の直線探索・``ncc_locate``、θ 方向の 1-D 相関で回転角。
     """
     img = _f32_finite(image, "polar_unwrap: image")
     if img.ndim != 2:
@@ -2183,7 +2716,16 @@ def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, d
 
     θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。
 
-    Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。"""
+    Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。
+
+    引数: ``vol`` は ``(D,H,W)``、``center=(cy, cx)`` は各 z スライス内の **(行, 列)**(既定は
+    スライス中心)。``r_in``〜``r_out``(voxel、既定 ``min(H,W)/2 − 1``)を ``nr`` 等分、角度を
+    ``ntheta`` 等分。出力 ``(D, ntheta, nr)`` float32: 軸 0 は z(高さ、入力と同じ)、行 k の角度
+    ``θ = k·2π/ntheta``、列 j の半径。サンプル点は ``(z, cy + r sinθ, cx + r cosθ)``、volume 外は 0。
+    D, H, W が 1 の軸は正規化で 0 除算になる(``polar_unwrap`` と違い検査は無い)。
+    後段: ``[:, :, j]`` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・
+    ``ncc_locate`` が使える。
+    """
     v = _f32_finite(vol, "cylinder_unwrap: vol"); D, H, W = v.shape
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
@@ -2267,7 +2809,14 @@ def _uo(v):
 
 
 def reflect(d, n):
-    """入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。"""
+    """入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。
+
+    ``d``, ``n`` は内部で単位化する(長さは問わない)ので、返り値 ``r`` も単位ベクトル。最後の軸を
+    ベクトルとみなすので ``(3,)`` でも ``(N,3)`` のバッチでも動く(2-D の ``(2,)`` も可)。``n`` の
+    向きは問わない(``n`` と ``−n`` で同じ ``r``)。``d`` は「面へ向かう」向き(光線の進行方向)で
+    渡す。零ベクトルは 1e-12 で割って 0 のまま返る(例外は出ない)。
+    用途: ``normal_from_reflection`` の逆問題、鏡面レンダの視線追跡(``refract`` と対)。
+    """
     d = _uo(d); n = _uo(n)
     return d - 2 * np.sum(d * n, -1, keepdims=True) * n
 
@@ -2278,6 +2827,11 @@ def refract(d, n, eta1=1.0, eta2=1.5):
     透明体を通る光線の曲がりを厳密に。全反射(TIR)なら None。ガラス/レンズ/水中の像歪み計算に。
     契約は単一ベクトル。(N,3) バッチも通るが、**1 本でも TIR ならバッチ全体が None**
     (per-ray マスクはしない)— バッチで使うなら呼び出し側で 1 本ずつ回すこと。
+
+    ``d``, ``n`` は最後の軸をベクトルとして単位化する。``n`` は入射側(``d·n < 0`` になる向き)で
+    渡すこと。逆向きに渡すと ``cos θi`` が負になり、例外なく誤った方向が返る。返り値は単位ベクトル
+    (``eta·d + (eta·cosθi − cosθt)·n``、``eta = eta1/eta2``)。``eta1 == eta2`` なら ``d`` がそのまま
+    返る。角度で扱うなら ``snell_angle``、反射率は ``fresnel_reflectance(cos_i, eta1, eta2)``。
     """
     d = _uo(d); n = _uo(n); eta = eta1 / eta2
     cosi = -np.sum(d * n, -1, keepdims=True)
@@ -2292,6 +2846,12 @@ def fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5):
     """Fresnel 反射率(無偏光=s/p 平均)。透明体界面で反射/透過に分かれる割合。
 
     垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。
+
+    ``cos_i`` は入射角の余弦(実数スカラー。配列・None は ValueError)。符号は捨てる(``|cos_i|``)。
+    ``eta1`` は入射側、``eta2`` は透過側の屈折率。s 偏光 ``rs`` と p 偏光 ``rp`` の平均を float で
+    返す(**[0, 1]**)。Brewster 角では ``rp = 0`` になるが平均は 0 にならない。``cos_i = 0``(かすめ
+    入射)で 1.0。透過率は ``1 −`` 反射率(吸収なし)。
+    用途: ``refract`` で曲げた光線の重み、透明体の輝度予測。
     """
     try:
         cos_i = float(cos_i)
@@ -2311,6 +2871,13 @@ def normal_from_reflection(incident, reflected):
     """入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。
 
     既知パターンの反射を観測 → 面法線 → 積分して鏡面形状。鏡面(反射)物体の形状計測の要。
+
+    ``incident``(面へ向かう入射方向)と ``reflected``(面から出る反射方向)を単位化し、
+    ``n = unit(r − d)`` を **``n·d <= 0``(入射に逆らう=入射側外向き)** になるよう符号を決めて
+    返す(単位ベクトル)。``r == d`` なら零ベクトル。最後の軸をベクトルとするので ``(N,3)``
+    バッチも通る(符号判定は全体の内積和で 1 回だけ行う)。
+    用途: 既知パターンの反射像から画素ごとに法線を作り(法線マップ)、``integrate_normals`` で
+    高さに積分、``render_shaded`` で見た目を再現、``reflect`` で検算。
     """
     d = _uo(incident); r = _uo(reflected); n = _uo(r - d)
     if np.sum(n * d) > 0:                                # 入射側(外向き)へ向ける
@@ -2319,7 +2886,14 @@ def normal_from_reflection(incident, reflected):
 
 
 def snell_angle(theta_i_deg, eta1=1.0, eta2=1.5):
-    """入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。"""
+    """入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。
+
+    ``θt = arcsin((eta1/eta2)·sin θi)`` を度で返す(float)。``theta_i_deg`` は実数スカラー(配列・
+    None は ValueError)。符号は保たれる(負の入射角は負の屈折角)。``|(eta1/eta2) sin θi| > 1`` なら
+    ``nan``(全反射。``eta1 > eta2`` のときだけ起きる)。臨界角は ``degrees(arcsin(eta2/eta1))``。
+    ``eta1 == eta2`` なら入射角そのまま。
+    ベクトルで曲げるなら ``refract``、反射率は ``fresnel_reflectance(cos(radians(θi)))``。
+    """
     try:
         theta_i_deg = float(theta_i_deg)
     except (TypeError, ValueError):
@@ -2337,6 +2911,14 @@ def project_points(points, K, R=None, t=None):
     """3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。
 
     K=カメラ内部行列 [[fx,0,cx],[0,fy,cy],[0,0,1]]。R,t で外部姿勢。世界モデルの観測写像。
+
+    ``P_cam = R @ P + t``(``R`` (3,3)、``t`` (3,)。None は恒等・零)を ``u = fx·X/Z + cx``、
+    ``v = fy·Y/Z + cy`` で投影する。返り値 ``(uv (N,2), depth (N,))``: ``uv[:,0] = u``(列)、
+    ``uv[:,1] = v``(行)、``depth`` はカメラ座標の Z(clip 前の生値で、負もそのまま)。
+    ``K`` は ``K[0,0]`` 等で添字するので numpy 配列(nested list は不可)。
+    Z は ``1e-6`` 以上に clip してから割るので、**カメラ後方の点も捨てず**巨大な u,v になる
+    (``depth > 0`` で呼び手が除く)。画像外の点も返す(``render_point_depth`` が範囲で切る)。
+    ``depth_to_points`` の逆で、``depth_to_points(render_point_depth(...))`` が往復になる。
     """
     P = np.asarray(points, float)
     if R is not None:
@@ -2350,7 +2932,17 @@ def project_points(points, K, R=None, t=None):
 
 
 def render_point_depth(points, K, size, R=None, t=None):
-    """点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。"""
+    """点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。
+
+    ``project_points(points, K, R, t)`` で ``(u, v, z)`` を取り、``round`` した画素 ``(row=v,
+    col=u)`` が ``size=(H, W)`` 内かつ ``z > 0`` の点だけを、遠い順に書いて近い点で上書きする
+    (同一画素は最小 z が残る)。点が無い画素は **0**(``tsdf_from_depth`` / ``depth_to_points`` が
+    無効値として扱う規約)。返り値 ``(H, W)`` float64、単位は点の座標の単位。
+    - 1 点 = 1 画素なので疎な点群は穴だらけになる(``mesh_to_points`` で密にしてから)。splat
+    半径は無い。
+    - ``K`` は numpy (3,3)、``R``/``t`` は省略可。
+    後段: ``depth_to_points`` で戻す、``normals_from_depth`` で法線、``tsdf_from_depth``。
+    """
     H, W = size
     uv, z = project_points(points, K, R, t)
     ui = np.round(uv[:, 0]).astype(int); vi = np.round(uv[:, 1]).astype(int)
@@ -2367,6 +2959,15 @@ def render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray", devic
     """voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。
 
     view 方向へ volume を grid_sample で回して軸投影。voxel_to_mips の任意視点版。
+
+    回転は ``affine_grid``(座標順 x=W, y=H, z=D)で volume 中心まわり: ``azimuth`` は H 軸まわり
+    (W と D を混ぜる)、``elevation`` は W 軸まわり(H と D を混ぜる)、いずれも度、``Rx @ Ry`` の順。
+    回転後の volume を **軸 0(D)方向に潰す**ので、視線は回転後の D 軸。``mode="mip"`` は最大値、
+    それ以外はすべて総和(``"xray"`` は Beer-Lambert の指数ではなく **単純な積算**。減衰像にするなら
+    ``exp(−Σ)`` を呼び手で)。返り値 ``(H, W)`` float32 numpy。
+    volume 外は 0 で埋まるので、回転で隅が欠けると総和が下がる(立方体に近い volume で、物体を
+    中心に置く)。``azimuth=elevation=0`` の mip は ``voxel_to_mips()[0]`` と同じ向き。
+    用途: DRR の合成、``ncc_locate`` 用の 2-D テンプレ生成、``match_mip_2d`` の任意視点化。
     """
     v = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
     az = np.radians(azimuth); el = np.radians(elevation)
@@ -2383,7 +2984,16 @@ def render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray", devic
 
 
 def render_shaded(normals_img, light=(0, 0, 1), ambient=0.1):
-    """法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。"""
+    """法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。
+
+    ``I = ambient + (1 − ambient)·clip(n·L̂, 0, 1)`` を ``(H, W)`` float64、値域 **[0, 1]** で返す。
+    ``light`` は内部で単位化する(零ベクトルは 0 除算で NaN)が、**法線は単位化しない**(単位法線を
+    渡す。``estimate_point_normals`` / ``normals_from_depth`` の出力は単位)。法線の成分順と
+    ``light`` の成分順は揃える(既定 ``(0,0,1)`` は第 3 成分=カメラ向きを正面光とする規約)。
+    光源と反対を向く面は ``ambient`` の値になる。最後の軸を法線とみなすので ``(N,3)`` の点ごとの
+    法線でも動く。鏡面ハイライトは無い(``fresnel_reflectance`` / ``reflect`` で別途)。
+    用途: ``photometric_stereo`` の検算(法線 → 画像の順方向)、外観検査の合成サンプル。
+    """
     n = np.asarray(normals_img, float); L = np.asarray(light, float)
     L = L / np.linalg.norm(L)
     ndl = np.clip((n * L).sum(-1), 0, 1)

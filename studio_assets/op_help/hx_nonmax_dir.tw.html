@@ -3,10 +3,31 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_nonmax_dir&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">nonmax_suppression_dir</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_nonmax_dir.png" alt="hx_nonmax_dir: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_nonmax_dir.png" alt="hx_nonmax_dir: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_nonmax_dir.a.jpg">hx_nonmax_dir: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_nonmax_dir.inputs.jpg">hx_nonmax_dir: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>沿梯度方向的非極大值抑制(Canny 的 NMS 階段)。把邊緣細化到 1 像素。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Sobel で `<code style="color:#22d3bf">gx</code><code style="color:#22d3bf">(列方向)・</code><code style="color:#22d3bf">gy</code><code style="color:#22d3bf">(行方向)を取り、振幅 </code><code style="color:#22d3bf">hypot(gx, gy)</code><code style="color:#22d3bf"> と方向 </code><code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code>` を</p>
+<p>求める。方向を 45° 刻みの 4 区分に量子化し、各画素をその区分に対応する 2 つの隣接画素と比べて</p>
+<p>`<code style="color:#22d3bf">mag &gt;= 両隣</code><code style="color:#22d3bf"> の画素だけ残す(それ以外は 0)。残った振幅を min-max で [0,1] に正規化し、</code><code style="color:#22d3bf">a*0.3</code>` 未満を 0 に落とす。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 弱エッジのしきい値 </code><code style="color:#22d3bf">a*0.3</code>`(正規化後の値に対して。a=0 でしきい値なし)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>注意点:</p>
+<p style="margin:2px 0 2px 12px">• 隣接比較は `<code style="color:#22d3bf">np.roll</code>` なので画像端では反対側の画素と比較される(端 1 画素は信用しない)。</p>
+<p style="margin:2px 0 2px 12px">• 比較が `<code style="color:#22d3bf">&gt;=</code>` のため、同じ振幅が並ぶ理想的なステップエッジは 2 画素幅で残る(1 画素にはならない)。</p>
+<p style="margin:2px 0 2px 12px">• 現状の実装では 45° と 135° の区分で比較する隣接画素の対が入れ替わっており、斜めのエッジは勾配方向でなく</p>
+<p>エッジに沿った方向で比較される。そのため水平・垂直エッジは細線化されるが、斜めエッジはほとんど細線化されない</p>
+<p>(ぼかした対角ステップエッジで 1400 画素前後がそのまま残る実測)。斜めエッジの細線化が要る場合は `<code style="color:#22d3bf">canny</code>` や</p>
+<p>`<code style="color:#22d3bf">skeleton</code>` を検討する。</p>
+<p>`<code style="color:#22d3bf">sobel_amp</code><code style="color:#22d3bf"> のような振幅画像ではなく元の gray 画像を渡す(内部で微分する)。後段は </code><code style="color:#22d3bf">hx_close_edges</code>` /</p>
+<p>`<code style="color:#22d3bf">hx_detect_edge_segments</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">threshold</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

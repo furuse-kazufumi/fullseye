@@ -3,10 +3,31 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;r2_inner_rectangle1&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">inner_rectangle1</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/r2_inner_rectangle1.png" alt="r2_inner_rectangle1: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/r2_inner_rectangle1.png" alt="r2_inner_rectangle1: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_inner_rectangle1.a.jpg">r2_inner_rectangle1: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_inner_rectangle1.chain.jpg">r2_inner_rectangle1: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_inner_rectangle1.inputs.jpg">r2_inner_rectangle1: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>最大的軸對齊內接矩形(a 收縮所畫矩形;a=0 為精確)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>領域に内接する軸並行矩形のうち面積最大のものをマスクとして描く。前景マスク</p>
+<p>(`<code style="color:#22d3bf">&gt; 0.5</code>`)に対し、行ごとに各列の連続前景高さを積み、単調スタックで最大</p>
+<p>長方形を求めるヒストグラム法(O(H*W))で厳密解を得る。同面積の候補が複数</p>
+<p>あるときは走査順で最初に見つかったものを採る。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は描く矩形を内側へ縮める割合で、</code><code style="color:#22d3bf">f = 0.3*a</code>` として高さを</p>
+<p>`<code style="color:#22d3bf">round(hh*f/2)</code><code style="color:#22d3bf"> 行ずつ、幅を </code><code style="color:#22d3bf">round(ww*f/2)</code><code style="color:#22d3bf"> 列ずつ両側から削る。</code><code style="color:#22d3bf">a=0</code>` で</p>
+<p>厳密な最大内接矩形、`<code style="color:#22d3bf">a=1</code>` で各辺が約 15% ずつ縮む(面積ではおよそ半分)。</p>
+<p>縮めすぎて辺が潰れる場合は中央の 1 行 / 1 列に丸める。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。矩形は画素境界に</p>
+<p>そろうため `<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> の出力は必ず領域に含まれる(</code><code style="color:#22d3bf">r2_inner_circle</code>` と異なり</p>
+<p>はみ出さない)。孔のある領域では孔を避けた矩形になるので、孔を無視したい</p>
+<p>ときは前段に `<code style="color:#22d3bf">fill_up</code>`。回転した矩形は扱えない(軸並行のみ)。外接側の</p>
+<p>軸並行矩形は `<code style="color:#22d3bf">r2_smallest_rectangle1</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

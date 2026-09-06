@@ -4,6 +4,34 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;register_nonrigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用非刚体 ICP 把 `<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> 靠向 </code><code style="color:#22d3bf">dst</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各反復で「現在の変形後 src」から `<code style="color:#22d3bf">dst</code>` への最近傍対応を張り直し、その対応を</p>
+<p>制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を</p>
+<p>変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。</p>
+<p>実装上の要点(頑健性):</p>
+<p style="margin:2px 0 2px 12px">• <b>スケール不変</b>: λ は dst の重心まわり RMS 半径に対する相対値として扱う</p>
+<p>(内部で λ_eff = λ·scale)。座標が 100 倍でも同じ λ が同じ挙動を与える。</p>
+<p style="margin:2px 0 2px 12px">• <b>発散ガード</b>: 対応が曖昧だと単純な NN 反復は正のフィードバックで発散し得る。</p>
+<p>反復ごとの対応 RMS を監視し、<b>最良反復</b>(最小 RMS)の変形とモデルを返す。</p>
+<p>これにより悪い λ でも「初期より悪い」結果を返さない。</p>
+<p style="margin:2px 0 2px 12px">• λ が大きいほど剛(変形が小さい)。既定 λ=1.0 は保守的(ほぼ剛)なので、</p>
+<p>大きな非線形変形を回復させたい場合は λ を小さく(例 0.01〜0.05)する。</p>
+<p>引数:</p>
+<p>src: (N,3) 移動側点群。</p>
+<p>dst: (M,3) 固定側(参照)点群。</p>
+<p>iters: 最大反復回数。</p>
+<p>lam: TPS 正則化 λ(スケール相対)。大きいほど変形が滑らか(外れ対応に頑健、</p>
+<p>当てはめは緩い)。小さいほど密着(細かい変形を回復)。</p>
+<p>k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると</p>
+<p>`<code style="color:#22d3bf">dst</code>` 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。</p>
+<p>返り値:</p>
+<p>warped_src: (N,3) 最良反復での変形後 src。</p>
+<p>model: 対応する TPS モデル(制御中心 = 元 src、原座標系でそのまま</p>
+<p>`<code style="color:#22d3bf">tps_warp</code>` に渡せる)。1回も当てはめできなければ None。</p>
+<p>info: dict。&quot;rms&quot;(最良の対応 RMS)、&quot;rms_init&quot;(初期=恒等時の対応 RMS)、</p>
+<p>&quot;rms_history&quot;(list)、&quot;iters&quot;(実反復数)、&quot;best_iter&quot;、&quot;converged&quot;(bool)。</p>
+<p>例外:</p>
+<p>ValueError: 形状不正、点数不足、k_smooth 不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

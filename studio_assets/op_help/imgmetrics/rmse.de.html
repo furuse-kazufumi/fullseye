@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.rmse(a, b)</code> (oder <code style="color:#22d3bf">opsimgmetrics.get(&quot;rmse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wurzel des mittleren quadratischen Fehlers (in denselben Einheiten wie die Pixelwerte).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>式: `<code style="color:#22d3bf">sqrt(mse(a, b))</code><code style="color:#22d3bf">。検証と失敗条件は </code><code style="color:#22d3bf">mse</code>` と同じ ―― 同じ形 / 空でない /</p>
+<p>有限、を満たさなければ `<code style="color:#22d3bf">MetricContractError</code>`。次元と dtype は問わない。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: Python の `<code style="color:#22d3bf">float</code><code style="color:#22d3bf">。入力が </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> の float なら値も </code><code style="color:#22d3bf">[0, 1]</code>`、uint8</p>
+<p>なら 0〜255 の尺度。「平均して何階調ずれているか」と読める。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">data_range</code>` に依らない生の量なので、尺度の違う 2 組の rmse を並べても</p>
+<p>比較にならない。正規化した指標が要るなら `<code style="color:#22d3bf">psnr</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">ssim</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 深度・CT・再投影など「画素値 = 物理量」の場面では、その物理単位そのものになる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

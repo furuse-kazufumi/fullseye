@@ -19,6 +19,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 スーパー2次曲面の表面点を (eta, omega) パラメトリックにサンプリング。
 
+``x = a1 * sgn|cos eta|^eps1 * sgn|cos omega|^eps2`` などの符号付きべきで
+全 8 象限を張る(eta in [-pi/2, pi/2], omega in [-pi, pi])。生成点は
+厳密に ``F = 1`` を満たす(cos^2+sin^2=1 が指数を打ち消すため)。
+
+Parameters
+----------
+a, eps : inside_outside と同じ
+n_u : omega(経度)方向サンプル数
+n_v : eta(緯度)方向サンプル数
+R, t : 姿勢(body→world: X_world = R @ X_body + t)
+
+Returns
+-------
+np.ndarray, shape (n_u*n_v, 3)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

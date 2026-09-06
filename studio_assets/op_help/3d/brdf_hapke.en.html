@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import render_shade; render_shade.brdf_hapke(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: &#x27;float&#x27; = 0.42, g: &#x27;float&#x27; = -0.35, B0: &#x27;float&#x27; = 0.87, h: &#x27;float&#x27; = 0.01, roughness_deg: &#x27;float&#x27; = 26.0) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;brdf_hapke&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Shade a normal map with the Hapke reflectance law (opposition effect + multiple scattering + macroscopic roughness θ̄) and return I/F `<code style="color:#22d3bf">(H, W)</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>既定値はイトカワの S 型典型値(Kitazato et al. 2008): w=0.42, g=−0.35, B0=0.87,</p>
+<p>h=0.01, θ̄=26°。位相角は `<code style="color:#22d3bf">light</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">view</code>` から一定値として求める(平行光・正射影近似)。</p>
+<p>fail-closed: 各パラメータの範囲外・法線形状不正は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>:func:<code style="color:#22d3bf">brdf_shade</code> の `<code style="color:#22d3bf">model=&#x27;hapke&#x27;</code><code style="color:#22d3bf"> の薄い包みで、各画素の </code><code style="color:#22d3bf">μ0 = clip(N·L,0,1)</code>`、</p>
+<p>`<code style="color:#22d3bf">μ = clip(N·V,0,1)</code><code style="color:#22d3bf"> と、画面全体で一定の位相角 </code><code style="color:#22d3bf">g = arccos(L·V)</code>`(ラジアン)を</p>
+<p>:func:<code style="color:#22d3bf">hapke_reflectance</code> に渡し、`<code style="color:#22d3bf">I/F = π·r</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">r</code>` は</p>
+<p>`<code style="color:#22d3bf">(w/4π)·μ0e/(μ0e+μe)·[(1+B(g))P(g) + H(μ0e)H(μe) − 1]·S</code>` で、多重散乱項 H は常に有効。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf">: float </code><code style="color:#22d3bf">(H, W, 3)</code>`、長さ 0 = 背景(出力 0)。単位化は内部で行う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">view</code><code style="color:#22d3bf">: 面→光源、面→視点の方向(内部で単位化、ゼロ長は </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">w</code><code style="color:#22d3bf">: 単一散乱アルベド </code><code style="color:#22d3bf">(0, 1]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">g</code><code style="color:#22d3bf">: Henyey-Greenstein の非対称パラメータ、</code><code style="color:#22d3bf">(−1, 1)</code>` の開区間。負で後方散乱。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">B0</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">h</code><code style="color:#22d3bf">: 対向効果(opposition surge)の振幅と角幅。</code><code style="color:#22d3bf">B0 &gt; 0</code><code style="color:#22d3bf"> なのに </code><code style="color:#22d3bf">h == 0</code>` は</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">B0 = 0</code>` で対向効果なし。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">roughness_deg</code>`: 巨視的粗さ θ̄ を <b>度</b> で与える(内部で rad に変換)。0 で粗さ補正なし</p>
+<p>(μ0e=μ0, μe=μ, S=1)。負・非有限は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>返り値は float64 `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の I/F で、</code><code style="color:#22d3bf">[0,1]</code>` に正規化しない(負値は 0 に切る)。</p>
+<p>影(他の面による遮蔽)は含まないので、必要なら `<code style="color:#22d3bf">cast_shadow</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shadow_raycast</code>` の</p>
+<p>可視性マップを掛ける(`<code style="color:#22d3bf">render_regolith</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">shadow_raycast</code>` と組み合わせる)。</p>
+<p>μ0 か μ が 0 以下の画素は 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -5,6 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>3-D-euklidische Distanztransformation per Jump-Flooding-Algorithmus (GPU). Jedes Voxel → Abstand zum nächsten Seed.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>実測で scipy EDT と厳密一致(max|err|=0、N≤160・JFA+2)。scipy(C 実装)は小さい N では</p>
+<p>速いが、GPU-JFA は N≥96 で追い抜く(RTX5090 実測 96→2.6× / 128→4.7×)。全 voxel 並列で</p>
+<p>GPU 常駐でき、chamfer を CPU 往復なしの全 GPU パイプラインにするのが本質。末尾の step=1 を</p>
+<p>2 パス(JFA+2)にして大 N の近似誤差も消す。返り値 距離場 (D,H,W) の torch tensor。</p>
+<p>引数 `<code style="color:#22d3bf">seed_bool</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(D,H,W)</code>` の bool(True=seed、距離 0)。返り値は **torch float32</p>
+<p>tensor** `<code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">device</code><code style="color:#22d3bf"> 上、numpy ではない。台帳経由 </code><code style="color:#22d3bf">fs.ledger.edt_jfa</code>` では</p>
+<p>numpy に変換される)。距離は voxel 中心間のユークリッド距離(voxel 単位)。</p>
+<p>seed が 1 つも無いと全 voxel が 1e6 に飽和する(例外は出ない)。26 方向 × log2(max(D,H,W))</p>
+<p>段のジャンプなので、メモリは `<code style="color:#22d3bf">(3,D,H,W)</code>` float32 が数枚分。</p>
+<p>用途: `<code style="color:#22d3bf">signed_distance_field</code><code style="color:#22d3bf">(両側)、</code><code style="color:#22d3bf">match_chamfer_3d(edt=&quot;jfa&quot;)</code>`。CPU 版は</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt(~seed)</code>` と同じ値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

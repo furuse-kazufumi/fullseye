@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import regionprops3d; regionprops3d.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;filter_by_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>min_voxels 미만의 연결 성분을 제거한 bool 마스크를 돌려줍니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like</p>
+<p>bool または 0/1 の 3D 配列。</p>
+<p>min_voxels : int</p>
+<p>この閾値「未満」(&lt; min_voxels)の成分を落とす。閾値 &quot;以上&quot; は残す。</p>
+<p>connectivity : int</p>
+<p>6 / 18 / 26。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray(bool)</p>
+<p>条件を満たす成分のみ True。前景無しや全成分除去なら全 False。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">min_voxels</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">int()</code>` で丸めてから比較する。1 以下ならすべての成分が残る。</p>
+<p style="margin:2px 0 2px 12px">• 内部で `<code style="color:#22d3bf">label_components</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">bincount</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">counts &gt;= min_voxels</code><code style="color:#22d3bf"> のラベルを残す。ラベルの再番号付けは行わず bool マスクだけ返すので、番号が要るなら結果をもう一度 </code><code style="color:#22d3bf">label_components</code>` に通す。</p>
+<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順 (z, y, x)。</p>
+<p style="margin:2px 0 2px 12px">• Raises `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 3 次元でない入力、</code><code style="color:#22d3bf">connectivity</code>` が 6/18/26 以外。</p>
+<p style="margin:2px 0 2px 12px">• ボクセル数はスペーシング未補正なので、実寸で閾値を切るなら voxel 体積で割ってから渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

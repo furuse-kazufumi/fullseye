@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>최근접 플로를 이웃 평균으로 국소 평활한 정칙화 플로 (N, 3) 를 돌려줍니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>:func:<code style="color:#22d3bf">nearest_neighbor_flow</code> の生フロー(最近傍対応ゆえノイズが乗る)を、</p>
+<p>`<code style="color:#22d3bf">pts0</code>` 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。</p>
+<p>ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 =</p>
+<p>フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は</p>
+<p>僅かに縮む(honest な平滑化バイアス)。</p>
+<p>Args:</p>
+<p>pts0: (N, 3) 時刻 0 の点群。</p>
+<p>pts1: (M, 3) 時刻 1 の点群。</p>
+<p>k: 平均に使う近傍数(自身含む)。</p>
+<p>n_iter: 平滑化反復回数。</p>
+<p>Returns:</p>
+<p>(N, 3) 平滑化変位ベクトル場。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正、または pts0 非空なのに pts1 が空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

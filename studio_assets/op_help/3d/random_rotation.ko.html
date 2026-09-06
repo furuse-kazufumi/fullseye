@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.random_rotation(points, seed: &#x27;int&#x27; = 0, max_angle: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;random_rotation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>무작위 회전을 적용하고 `<code style="color:#22d3bf">(rotated, R)</code>` 을 돌려줍니다(시점 변화 모사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> は正規直交・</code><code style="color:#22d3bf">det=+1</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">rotated = points @ R.T</code><code style="color:#22d3bf"> = 各点に </code><code style="color:#22d3bf">R</code>` を左作用、</p>
+<p>逆変換は `<code style="color:#22d3bf">rotated @ R</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">max_angle=None</code>` なら Shoemake 法で一様ランダム回転、</p>
+<p>`<code style="color:#22d3bf">max_angle</code><code style="color:#22d3bf"> 指定(ラジアン, 期待 </code><code style="color:#22d3bf">[0, π]</code><code style="color:#22d3bf">)なら軸を球面一様・角を </code><code style="color:#22d3bf">[0, max_angle]</code>`</p>
+<p>一様に取り、回転角を制限する(`<code style="color:#22d3bf">arccos((tr R -1)/2) ≤ max_angle</code>` を厳密に保証)。</p>
+<p>`<code style="color:#22d3bf">max_angle &lt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">max_angle=0</code>` は単位行列。単位はラジアン(度で</p>
+<p>渡すと桁違いに大きくなる)。`<code style="color:#22d3bf">max_angle=None</code>` の一様回転は上限 π までの大きな回転も</p>
+<p>普通に出るので、視点変化の範囲を絞りたいときは `<code style="color:#22d3bf">max_angle</code>` を使う。回転は原点まわり</p>
+<p>で、雲が原点から離れていれば重心も動く。`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> の規約 </code><code style="color:#22d3bf">rotated = points @ R.T</code>` は</p>
+<p>`<code style="color:#22d3bf">register_fpfh</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">register_shot</code><code style="color:#22d3bf"> が返す </code><code style="color:#22d3bf">dst ≈ src @ R.T + t</code>` と同じ向きなので、</p>
+<p>推定結果との角度誤差は `<code style="color:#22d3bf">arccos((tr(R_est·Rᵀ)-1)/2)</code><code style="color:#22d3bf"> で測れる。</code><code style="color:#22d3bf">seed</code>` で決定論的</p>
+<p>(同 seed なら同じ `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">)。返り値は float64 の </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(3,3)</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

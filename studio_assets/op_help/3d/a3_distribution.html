@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import descriptors3d; descriptors3d.a3_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;a3_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ランダムな 3 点 (A, B, C) が頂点 B で作る角の分布(Osada 2002 の A3)。</p>
+<p>角度は回転・平行移動・スケールのすべてに不変(スケールしても角は変わらない)ため、</p>
+<p>D2 と相補的な<b>無次元</b>の形状特徴になる。レンジ [0, π] 固定の正規化ヒストグラム</p>
+<p>(bins,) を返す(総和 1)。空間的に重なった点(ゼロ長ベクトル)は角が未定義なので</p>
+<p>除外する。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>点群。N &gt;= 3 が必要。</p>
+<p>bins, samples, seed :</p>
+<p>d2_distribution と同義。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (bins,)</p>
+<p>正規化角度ヒストグラム(ラジアン、[0, π])。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

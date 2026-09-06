@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_lowpass&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">gen_lowpass</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_gen_lowpass.png" alt="hx_gen_lowpass: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_gen_lowpass.png" alt="hx_gen_lowpass: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_lowpass.a.jpg">hx_gen_lowpass: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_lowpass.inputs.jpg">hx_gen_lowpass: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>理想低通滤波图像(频域中心圆盘掩码,截止半径 a)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>入力 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> は形を決めるためだけに使い、</code><code style="color:#22d3bf">np.fft.fftfreq</code>` で各軸の正規化周波数(-0.5〜0.5)を作って</p>
+<p>`<code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf"> した半径 </code><code style="color:#22d3bf">r = sqrt(fy^2 + fx^2)</code><code style="color:#22d3bf">(中心=DC、四隅で約 0.707)に対し </code><code style="color:#22d3bf">r &lt;= cutoff</code>` を 1 とする</p>
+<p>0/1 の float 画像(周波数領域マスク)を返す。画像そのものにフィルタを掛けるのではない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 遮断半径 </code><code style="color:#22d3bf">cutoff = 0.05 + 0.45*a</code>`(0.05〜0.5。a=1 で軸方向のナイキスト周波数まで通す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>DC が中央に来る配置(`<code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf"> 済)なので、</code><code style="color:#22d3bf">fft_generic</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fft_image</code>` のような「中心が低周波」の</p>
+<p>スペクトル画像と画素どうしで掛け合わせる用途に合う。自前で `<code style="color:#22d3bf">np.fft.fft2</code>` の結果に掛けるときは</p>
+<p>`<code style="color:#22d3bf">ifftshift</code><code style="color:#22d3bf"> で戻してから使う。兄弟 op に </code><code style="color:#22d3bf">hx_gen_highpass</code><code style="color:#22d3bf">(補集合)/ </code><code style="color:#22d3bf">hx_gen_bandpass</code>` /</p>
+<p>`<code style="color:#22d3bf">hx_gen_bandfilter</code>`(円環)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

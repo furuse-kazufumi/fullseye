@@ -2,10 +2,29 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xg_crop_contours — 2D <code style="color:#22d3bf">xldgeom</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xg_crop_contours&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p><img src="fig/xg_crop_contours.png" alt="xg_crop_contours: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/xg_crop_contours.png" alt="xg_crop_contours: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.a.jpg">xg_crop_contours: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.chain.jpg">xg_crop_contours: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.inputs.jpg">xg_crop_contours: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Keep only contour points inside the central a-fraction window of the shape.</p>
+<p>画像中心に置いた、高さ `<code style="color:#22d3bf">a*H</code><code style="color:#22d3bf">、幅 </code><code style="color:#22d3bf">a*W</code>` の矩形窓の内側にある輪郭点だけを</p>
+<p>残す(`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は [0,1] に clip、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用)。窓は行 </code><code style="color:#22d3bf">[(0.5-a/2)H, (0.5+a/2)H]</code>`、</p>
+<p>列 `<code style="color:#22d3bf">[(0.5-a/2)W, (0.5+a/2)W]</code><code style="color:#22d3bf"> の閉区間。</code><code style="color:#22d3bf">H, W</code><code style="color:#22d3bf"> は辞書の </code><code style="color:#22d3bf">shape</code>` から取り、</p>
+<p>無ければ全点の最大座標+1 で代用する。</p>
+<p>返り値は `<code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [...]}</code>`。窓内に 1 点も残らない輪郭は捨て、</p>
+<p>`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> では中心線上に正確に乗る点しか残らないためほぼ空、</code><code style="color:#22d3bf">a=1</code>` で全点が</p>
+<p>残る。</p>
+<p>注意: 窓に切られた輪郭は分割されない。残った点をそのまま 1 本の折れ線として</p>
+<p>繋ぐので、輪郭が窓を出入りするたびに「窓の縁を飛び越える辺」が生まれ、</p>
+<p>`<code style="color:#22d3bf">xg_area_center</code>` の面積や折れ線長が実際より大きく出る。切り口を正しく</p>
+<p>扱いたいなら、領域の段階で `<code style="color:#22d3bf">r3_clip_region</code>` を掛けてから輪郭を取り直す。</p>
+<p>座標は (row, col)。長さで輪郭ごと選別するのは `<code style="color:#22d3bf">xg_clip_contours</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

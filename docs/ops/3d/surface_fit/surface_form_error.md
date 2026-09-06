@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。
 
+``(H,W)`` の高さ場に ``x = 列 index``、``y = 行 index`` で ``fit_poly_surface(degree)`` を当て、
+``residual = height − fit`` を返す。``degree=1`` は最小二乗平面(平面度=pv)、``degree=2`` は
+2 次曲面(球面の近似。真の球ではない)。
+返り値 ``(residual (H,W) float64, rms, pv)``、単位は高さの単位(横方向は画素単位なので傾き
+係数は「高さ/画素」)。NaN があると lstsq が失敗する(欠損は先に埋める)。2-D 以外の入力は
+形の unpack で失敗する。
+用途: 平面度・うねりの評価。``background_flatten`` は同じ計算の「画像版」。点群の平面度は
+``fit_plane_3d`` の resid。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

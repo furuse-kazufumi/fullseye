@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import range_image; range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;depth_to_organized_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>An organized depth image → grid-aligned 3-D points (H,W,3).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>fx,fy 指定で透視逆投影 P=((u-cx)/fx*d, (v-cy)/fy*d, d)。未指定は正射(P=(x,y,depth), 格子間隔1)。</p>
+<p>`<code style="color:#22d3bf">u</code><code style="color:#22d3bf"> は列番号 (0..W-1)、</code><code style="color:#22d3bf">v</code><code style="color:#22d3bf"> は行番号 (0..H-1)。</code><code style="color:#22d3bf">fx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fy</code>` は画素単位の焦点距離、</p>
+<p>`<code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cy</code><code style="color:#22d3bf"> は主点で、省略時は画像中心 </code><code style="color:#22d3bf">((W-1)/2, (H-1)/2)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">fx</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">fy</code>` の</p>
+<p>どちらか一方でも None なら正射モードになり、`<code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cy</code>` は無視される。正射モードでは</p>
+<p>x, y が画素座標そのままなので、深度の単位(mm 等)と x, y の単位(画素)が混在する点に</p>
+<p>注意。透視モードでは 3 成分とも深度と同じ単位になる。深度 0 や NaN はそのまま伝播する</p>
+<p>(0 の画素は x=y=0 の原点に集まる)ため、無効画素の除外は呼び出し側で行う。返り値は</p>
+<p>float64 の `<code style="color:#22d3bf">(H,W,3)</code>`、第 3 軸は (x, y, z) で x は右、y は下、z は奥行き(画像座標系)。</p>
+<p>入力検証は無く、2-D 以外は `<code style="color:#22d3bf">d.shape</code><code style="color:#22d3bf"> の展開で失敗する。</code><code style="color:#22d3bf">normals_from_depth</code>` は</p>
+<p>この関数の出力を内部で使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>

@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_cooc_feature&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">cooc_feature_image</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_cooc_feature.png" alt="hx_cooc_feature: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_cooc_feature.png" alt="hx_cooc_feature: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_cooc_feature.a.jpg">hx_cooc_feature: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_cooc_feature.b.jpg">hx_cooc_feature: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>量化后构建距离 d 的水平共生矩阵,返回 Haralick 对比度(a=距离,b 选角度)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>入力 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf">([0,1] 画像)を </code><code style="color:#22d3bf">int(v*8)</code><code style="color:#22d3bf"> で 8 階調に量子化し(clip で 0〜7)、距離 </code><code style="color:#22d3bf">d</code>` だけ離れた画素対の</p>
+<p>出現回数を 8×8 の共起行列にして転置を足し(対称化)、総和で割って確率にする。返すのは Haralick の</p>
+<p>contrast `<code style="color:#22d3bf">sum p(i,j)*(i-j)^2</code><code style="color:#22d3bf"> を最大値 </code><code style="color:#22d3bf">(8-1)^2 = 49</code><code style="color:#22d3bf"> で割った </code><code style="color:#22d3bf">np.float64</code>`(値域 [0,1])。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 距離 </code><code style="color:#22d3bf">d = 1 + int(a*3)</code>`(1〜4 画素)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 方向。</code><code style="color:#22d3bf">b &lt; 0.5</code><code style="color:#22d3bf"> で水平(同じ行で </code><code style="color:#22d3bf">d</code><code style="color:#22d3bf"> 列右)、</code><code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf"> で垂直(同じ列で </code><code style="color:#22d3bf">d</code>` 行下)。斜め方向は無い。</p>
+<p style="margin:2px 0 2px 12px">• 画像の幅(または高さ)が `<code style="color:#22d3bf">d</code>` 以下で画素対が 1 つも作れないと総和 0 とみなして 0.0 を返す(例外は出さない)。</p>
+<p>値が大きいほど隣接画素の階調差が大きい(粗い/コントラストの高いテクスチャ)。8 階調のため微妙な濃淡差は同じ</p>
+<p>階調に潰れる。16 階調の `<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> 実装 </code><code style="color:#22d3bf">cooc_feature_matrix</code>` とは階調数・正規化が異なり数値は一致しない。</p>
+<p>前段に `<code style="color:#22d3bf">hx_gabor</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">mean_image</code>` など画像 op、後段は feature として比較・しきい値に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

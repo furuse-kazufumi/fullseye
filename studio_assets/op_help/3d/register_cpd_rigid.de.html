@@ -4,6 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt Rotation und Translation per EM mit der starren Variante von Coherent Point Drift (CPD).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf">(移動側 Y, M点)を </code><code style="color:#22d3bf">dst</code>`(固定側 X, N点)へ剛体変換で合わせる。CPD は</p>
+<p>dst を、src を中心に置いた等方ガウス混合の重心と見なし、E ステップで軟対応</p>
+<p>(posterior)を、M ステップで最尤の剛体変換と分散を更新する。ICP と違い対応を</p>
+<p>ハードに決めないため、初期ずれ・部分的外れ値に頑健。スケールは 1 固定(純剛体)。</p>
+<p>参考: Myronenko &amp; Song, &quot;Point Set Registration: Coherent Point Drift&quot;, 2010。</p>
+<p>引数:</p>
+<p>src: (M,3) 移動側点群。</p>
+<p>dst: (N,3) 固定側点群。</p>
+<p>iters: 最大 EM 反復回数。</p>
+<p>w: 外れ値(一様分布)混合比 0≤w&lt;1。0 で外れ無し。</p>
+<p>tol: 分散 σ² の相対変化がこの値未満で収束打ち切り。</p>
+<p>返り値:</p>
+<p>R: (3,3) 回転(`<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>`)。</p>
+<p>t: (3,) 並進。</p>
+<p>info: dict。&quot;sigma2&quot;(最終分散)、&quot;iters&quot;、&quot;converged&quot;、&quot;rmse&quot;</p>
+<p>(変換後 src の最近傍 RMSE)。</p>
+<p>例外:</p>
+<p>ValueError: 形状不正、点数不足、w 範囲外、または `<code style="color:#22d3bf">N*M</code>` が</p>
+<p>`<code style="color:#22d3bf">CPD_MAX_PAIRS</code>`(25M)超(密な (N,M) 責務行列を毎反復組むため。</p>
+<p>両点群を間引いてから渡す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

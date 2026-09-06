@@ -4,6 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None, black_ridges=False)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_frangi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D Frangi vesselness — multiscale tubular-structure enhancement.</p>
+<p>For every `<code style="color:#22d3bf">sigma</code>` in *scales* the gamma-normalised Hessian is formed, its</p>
+<p>three eigenvalues `<code style="color:#22d3bf">|l1| &lt;= |l2| &lt;= |l3|</code>` are taken, and the Frangi response</p>
+<p>V = (1 - exp(-Ra<b>2 / 2 alpha</b>2)) * exp(-Rb<b>2 / 2 beta</b>2)</p>
+<p style="margin:2px 0 2px 12px">• (1 - exp(-S<b>2 / 2 c</b>2))</p>
+<p>is evaluated, where `<code style="color:#22d3bf">Ra = |l2|/|l3|</code><code style="color:#22d3bf"> (plate vs. line), </code><code style="color:#22d3bf">Rb = |l1|/sqrt|l2 l3|</code>`</p>
+<p>(blob deviation) and `<code style="color:#22d3bf">S = sqrt(l1**2 + l2**2 + l3**2)</code>` (structure strength).</p>
+<p>The response is set to 0 where the contrast polarity is wrong (bright tube:</p>
+<p>`<code style="color:#22d3bf">l2 &gt; 0</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">l3 &gt; 0</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">black_ridges=True</code>` flips this). The maximum over</p>
+<p>scales is taken and the volume is normalised to `<code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>scales : sequence of float — Gaussian sigmas, in <b>voxels</b>, to bracket the</p>
+<p>vessel *radii* of interest (see the module &quot;scale-dependent&quot; limitation).</p>
+<p>alpha, beta : sensitivities of the plate- and blob-suppression terms (Frangi&#x27;s</p>
+<p>defaults 0.5).</p>
+<p>c : half the maximum Hessian norm `<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> at each scale when </code><code style="color:#22d3bf">None</code>` (Frangi&#x27;s</p>
+<p>adaptive suggestion); otherwise a fixed structure-strength scale.</p>
+<p>black_ridges : `<code style="color:#22d3bf">False</code>` (default) enhances *bright* tubes on a dark</p>
+<p>background; `<code style="color:#22d3bf">True</code>` enhances *dark* tubes on a bright background.</p>
+<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> float64 volume in </code><code style="color:#22d3bf">[0, 1]</code>`. Reference: Frangi et al.,</p>
+<p>MICCAI 1998.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

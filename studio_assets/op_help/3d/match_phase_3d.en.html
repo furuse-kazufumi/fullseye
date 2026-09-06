@@ -5,6 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D phase correlation (FFT). Returns the integer shift (dz, dy, dx) that aligns b to a.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>Reddy &amp; Chatterji の 3D 版。相互パワースペクトルの逆 FFT のピーク = 平行移動。テンプレート</p>
+<p>不要・全 volume・O(N log N)。回転/スケールは別途(PCA / log-polar)。</p>
+<p>引数: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は同形の 3-D 配列(違えば ValueError)。float32 に落として FFT する。</p>
+<p>返り値: int の tuple `<code style="color:#22d3bf">(dz, dy, dx)</code><code style="color:#22d3bf">、各軸 </code><code style="color:#22d3bf">(−N/2, N/2]</code>` に折り返し済み。意味は</p>
+<p>`<code style="color:#22d3bf">np.roll(b, (dz,dy,dx), axis=(0,1,2)) ≈ a</code>`(b をこれだけ動かすと a に重なる)。</p>
+<p style="margin:2px 0 2px 12px">• 循環相関なので、はみ出した部分は反対側から回り込む(窓掛けはしない)。シフトが volume の</p>
+<p>半分を超えると符号が反転して見える。</p>
+<p style="margin:2px 0 2px 12px">• 位相のみ(`<code style="color:#22d3bf">R/|R|</code>`)なので振幅・コントラスト差に不変だが、ノイズが白色化されてピークが</p>
+<p>埋もれることがある。全 0 の volume は 0 になり index 0 を返す。</p>
+<p style="margin:2px 0 2px 12px">• 整数精度。サブボクセルは `<code style="color:#22d3bf">refine_translation_lk</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">refine_peak_newton</code>` へ。</p>
+<p style="margin:2px 0 2px 12px">• 回転・スケールがあると効かない(`<code style="color:#22d3bf">match_logpolar_z</code>` → 回転補正 → 本 op の順)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

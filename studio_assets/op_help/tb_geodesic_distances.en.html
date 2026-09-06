@@ -2,16 +2,40 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_geodesic_distances — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_geodesic_distances&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*No figure: this op takes <code style="color:#22d3bf">points</code> as input. A Studio program starting from an image cannot reach that type — see the runnable examples below for how it is used.*</p>
+<p><img src="fig/tb_geodesic_distances.png" alt="tb_geodesic_distances: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_geodesic_distances.a.jpg">tb_geodesic_distances: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_geodesic_distances.chain.jpg">tb_geodesic_distances: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_geodesic_distances.inputs.jpg">tb_geodesic_distances: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodesic distances from <code style="color:#22d3bf">source</code> to all points (Dijkstra on a kNN graph). → (N,) float (unreachable points are inf).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">knn_graph(points, k)</code>` で作った k 近傍グラフ(辺の重み = 点間の Euclid 距離 = 弦長)を</p>
+<p>`<code style="color:#22d3bf">directed=False</code><code style="color:#22d3bf"> で無向化し、</code><code style="color:#22d3bf">scipy.sparse.csgraph.dijkstra</code>` で単一始点最短路を解く。</p>
+<p>`<code style="color:#22d3bf">d[i]</code><code style="color:#22d3bf"> は source から点 i までのグラフ上の経路長で </code><code style="color:#22d3bf">d[source] = 0</code>`、source と繋がっていない</p>
+<p>連結成分の点は `<code style="color:#22d3bf">inf</code>`。単位は座標の単位そのまま。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (N,3) の点群(float64 に変換)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">source</code>`: 始点の添字(0..N-1 の整数。範囲外は scipy 側で例外)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: 近傍数(既定 8)。小さいとグラフが分断されて </code><code style="color:#22d3bf">inf</code>` が増え、大きいと離れた面どうしを</p>
+<p>直結する「近道」が生まれて曲面に沿わない距離になる(薄い板の表裏、折り返した面など)。</p>
+<p>精度: 辺が弦長なので弧をわずかに過小評価する一方、経路のジグザグが過大評価を生む(モジュール</p>
+<p>docstring の Bernstein らの挟み込み評価を参照)。三角メッシュがあるなら近傍数に依存しない</p>
+<p>`<code style="color:#22d3bf">geodesic_mesh</code><code style="color:#22d3bf"> を使う。この距離で均等に間引くには </code><code style="color:#22d3bf">farthest_point_sampling</code>`。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">geodesic_distances</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf">(既定 8)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_geodesic_distances 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_geodesic_distances%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_geodesic_distances%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p>The examples below call the underlying ledger op <code style="color:#22d3bf">geodesic_distances</code>. This bridge op is the same implementation adapted to the <code style="color:#22d3bf">fn(v, a, b)</code> convention, so the behaviour carries over unchanged (only the call form differs).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geodesic_distance">geodesic_distance</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geodesic_distance.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">signal</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">typed</code>)</h3>

@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;mean_reprojection_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>重投影 RMS 誤差(像素)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>全観測 k について `<code style="color:#22d3bf">project(points[obs_pt[k]], cameras[obs_cam[k]])</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">obs_uv[k]</code>` の差</p>
+<p>(du, dv) を取り、`<code style="color:#22d3bf">sqrt(mean_k(du² + dv²))</code>` = 観測ごとの再投影距離の 2 乗平均平方根を float で</p>
+<p>返す(実装は `<code style="color:#22d3bf">r.reshape(-1,2)**2 * 2</code><code style="color:#22d3bf"> の平均の平方根で、同じ量)。単位は </code><code style="color:#22d3bf">obs_uv</code>` と K に</p>
+<p>従うピクセル。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cameras</code><code style="color:#22d3bf">: (nc,6) の </code><code style="color:#22d3bf">[rvec(3) | t(3)]</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">X_cam = R X + t</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (m,3) の 3D 点。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">obs_cam</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">obs_pt</code><code style="color:#22d3bf">: 各観測のカメラ添字・点添字(int)。</code><code style="color:#22d3bf">obs_uv</code>`: (K,2) の観測画素。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">K</code>`: 全カメラ共通の (3,3) 内部行列。</p>
+<p>`<code style="color:#22d3bf">bundle_adjust</code><code style="color:#22d3bf"> の返り値 </code><code style="color:#22d3bf">rmse</code>` と同じ計算で、最適化前後の比較に使う。観測が 0 件だと空の</p>
+<p>平均で NaN になる(長さの検証は `<code style="color:#22d3bf">bundle_adjust</code>` 側にあり、この関数単体では行わない)。</p>
+<p>カメラ後方の点も `<code style="color:#22d3bf">project</code>` がそのまま射影するので、可視性は呼び出し側で保証する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

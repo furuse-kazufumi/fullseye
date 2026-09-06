@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_shade_height_field&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">shade_height_field</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_shade_height_field.png" alt="hx_shade_height_field: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_shade_height_field.png" alt="hx_shade_height_field: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*输出以类 viridis 伪彩色显示(深紫 = 小，黄 = 大)，便于读取距离、相位、方向、深度这类“量的场”。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.a.jpg">hx_shade_height_field: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.b.jpg">hx_shade_height_field: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.inputs.jpg">hx_shade_height_field: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Lambert 着色渲染高度场 v(法线×光源)。光源方位 a・仰角 b。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> を高さ場(gray 値 = 高さ、画素間隔 1)とみなし、</code><code style="color:#22d3bf">np.gradient</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(gy, gx)</code>` から法線</p>
+<p>`<code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code><code style="color:#22d3bf"> を作り、方向 </code><code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code>` の</p>
+<p>平行光との内積 `<code style="color:#22d3bf">n·l</code>` を 0 で下から clip し、min-max で [0,1] に正規化して返す(Lambertian 陰影)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 光源の方位角 </code><code style="color:#22d3bf">az = a*2*pi</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">lx = cos(az)</code><code style="color:#22d3bf"> が列方向、</code><code style="color:#22d3bf">ly = sin(az)</code>` が行方向の成分)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 光源の仰角 </code><code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>`(約 18°〜81°。1 で真上に近い)。</p>
+<p>注意: 高さのスケール係数が無く、[0,1] の値を数百画素にわたって微分するため勾配はごく小さい。そのままでは</p>
+<p>陰影の差がほとんど無いが、最後の min-max 正規化で見える化している。したがって出力の絶対的な明るさに意味は</p>
+<p>無く、入力が平坦だと全画素 0 になる。深度画像や `<code style="color:#22d3bf">hx_fit_surface2</code>` で推定した背景面の凹凸を目で確かめる用途向け。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

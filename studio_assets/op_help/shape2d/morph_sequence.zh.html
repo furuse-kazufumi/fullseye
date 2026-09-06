@@ -6,6 +6,21 @@
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>alpha を 0→1 に n 段で振ったモーフ列(A から B へ滑らかに変わる各フレーム)。</p>
 <p>返り値: 長さ n の list。先頭が A、末尾が B に一致する。</p>
+<p>`<code style="color:#22d3bf">alpha = linspace(0, 1, n)</code><code style="color:#22d3bf"> の各値で </code>`morph(imgA, imgB, ptsA, ptsB, alpha,</p>
+<p>method, lam, with_corners)`` を呼ぶだけ。各フレームは (1) 中間点</p>
+<p>`<code style="color:#22d3bf">(1-α) ptsA + α ptsB</code>` を作り、(2) A と B をそれぞれそこへワープし、</p>
+<p>(3) `<code style="color:#22d3bf">α</code>` でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、</p>
+<p>コストは `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> に比例する(</code><code style="color:#22d3bf">n=7</code>` で 14 回)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">imgA</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">imgB</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W[, C])</code><code style="color:#22d3bf">、同じ形、</code><code style="color:#22d3bf">[0, 1]</code>`。NaN/Inf は無言で</p>
+<p>0 / 1 に置換される。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ptsA</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ptsB</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(K, 2)</code>` の <b>(x, y)</b>、同数・同順の対応点。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">: 2 以上(1 以下は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">int</code>` に切られる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">method</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;affine&quot;</code><code style="color:#22d3bf">(Delaunay 区分アフィン、速い)/ </code><code style="color:#22d3bf">&quot;tps&quot;</code>`(薄板スプライン、</p>
+<p>滑らか)。それ以外は `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">lam</code>` は TPS の平滑化係数(0 で厳密補間)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">with_corners</code><code style="color:#22d3bf">: True で </code><code style="color:#22d3bf">add_frame_corners</code>` を両点群に足し、枠の外側の</p>
+<p>穴を防ぐ。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: float64 配列 `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> 枚の list(</code><code style="color:#22d3bf">images</code><code style="color:#22d3bf"> 型)。</code><code style="color:#22d3bf">[0, 1]</code>` にクリップ済み。</p>
+<p>1 枚だけ欲しい(例: `<code style="color:#22d3bf">α = 0.5</code><code style="color:#22d3bf"> の中間顔)なら </code><code style="color:#22d3bf">morph</code>` を直接。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

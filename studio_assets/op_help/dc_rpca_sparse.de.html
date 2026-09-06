@@ -2,10 +2,33 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dc_rpca_sparse — 2D <code style="color:#22d3bf">decomposition</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dc_rpca_sparse&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/dc_rpca_sparse.png" alt="dc_rpca_sparse: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/dc_rpca_sparse.png" alt="dc_rpca_sparse: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.a.jpg">dc_rpca_sparse: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.inputs.jpg">dc_rpca_sparse: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Sparse-(Defekt-/Anomalie-)Residuum der Robust-PCA = Eingabe - Low-Rank, bei 0,5 zentriert.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">dc_rpca_lowrank</code><code style="color:#22d3bf"> と同じ inexact ALM の PCP 分解 </code><code style="color:#22d3bf">M = L + S</code>` を行い、</p>
+<p>スパース項 `<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> を 0.5 を中心に置いて返す(</code><code style="color:#22d3bf">clip(S + 0.5, 0, 1)</code>`)。背景と</p>
+<p>同じ画素は 0.5、背景より明るい孤立点は 0.5 より上、暗い点は下に出る符号つき</p>
+<p>残差で、飽和しない範囲で `<code style="color:#22d3bf">dc_rpca_lowrank + (この出力 - 0.5) == 入力</code>`。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はスパース重み </code><code style="color:#22d3bf">λ = (0.5 + 1.5*a)/sqrt(max(m, n))</code>` で、大きいほど</p>
+<p>`<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> が疎(小さな残差は 0 に丸められ、はっきりした欠陥だけ残る)、</code><code style="color:#22d3bf">a=0</code>`</p>
+<p>ではほぼ全画素に残差が出る。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>長辺 64 超の画像は縮小して `<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> を解き、</code><code style="color:#22d3bf">S</code>` は元解像度で</p>
+<p>`<code style="color:#22d3bf">S = soft(M0 - L_up, λ/μ_final)</code><code style="color:#22d3bf"> として作り直す(縮小した </code><code style="color:#22d3bf">S</code>` を拡大</p>
+<p>すると 1 画素欠陥がにじんで振幅を失うため)。入力は [0,1] の 2 次元に揃え、</p>
+<p>返り値は同形 float64、[0,1]。全零画像では `<code style="color:#22d3bf">S = 0</code>` で一様 0.5。例外時は</p>
+<p>fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
+<p>後段では `<code style="color:#22d3bf">|出力 - 0.5|</code><code style="color:#22d3bf"> が欠陥の強さなので、</code><code style="color:#22d3bf">threshold</code>` 系の op で 0.5 から</p>
+<p>離れた画素を拾う(明側・暗側のどちらを拾うかはしきい値の向きで決まる)。周期</p>
+<p>背景(織物・格子・ディスプレイ)上の点欠陥・傷の検出向けで、非周期背景では</p>
+<p>残差に背景の凹凸がそのまま混ざる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">Leitfaden zur Familie gallery2d_texture_freq</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

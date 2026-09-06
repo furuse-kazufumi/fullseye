@@ -5,6 +5,21 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡률(shape index) 매칭. voxel × 곡률 열(선→면 리프트의 본진).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>scene/template を <b>curvedness で重み付けした shape-index 場</b>へ変換 → 既存 3D NCC で定位。</p>
+<p>強度でなく <b>局所曲面形状</b>で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を</p>
+<p>区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。</p>
+<p>手順: 両 volume で `<code style="color:#22d3bf">curvature_maps</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">S × curvedness × mask</code>` の重み付き shape-index 場</p>
+<p>`<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> を作り、テンプレ側は </code><code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code>` の bbox を切り出して</p>
+<p>`<code style="color:#22d3bf">accel_match.ncc_locate_3d</code><code style="color:#22d3bf"> に渡す。返り値 </code><code style="color:#22d3bf">[NCC, z, y, x]</code>` float64、NCC ∈ [−1, 1]。</p>
+<p style="margin:2px 0 2px 12px">• <b>位置は切り出した bbox テンプレの中心</b>が scene に載る座標。元テンプレ volume の中心とは</p>
+<p>bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mc</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">curvature_maps</code>` の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて</p>
+<p>曲率ノイズを抑える。</p>
+<p style="margin:2px 0 2px 12px">• テンプレの曲率場が全 0(平坦・`<code style="color:#22d3bf">mc</code><code style="color:#22d3bf"> が高すぎ)なら </code><code style="color:#22d3bf">[0,0,0,0]</code>` を返す。</p>
+<p style="margin:2px 0 2px 12px">• 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に `<code style="color:#22d3bf">points_to_voxel</code>` の</p>
+<p>`<code style="color:#22d3bf">smooth</code>` 等で滑らかにする。</p>
+<p>`<code style="color:#22d3bf">subvoxel=True</code>` で NCC ピークの ±2 近傍重心に精緻化。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

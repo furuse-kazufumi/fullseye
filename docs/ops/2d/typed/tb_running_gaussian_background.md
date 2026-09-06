@@ -15,22 +15,73 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `video` → `video`
 - **呼び出し**: `fullseye.apply(img, "tb_running_gaussian_background", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-*図なし: この op は `video` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+![tb_running_gaussian_background: input → output](../../_fig/tb_running_gaussian_background.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![tb_running_gaussian_background: knob a sweep](../../_fig/tb_running_gaussian_background.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![tb_running_gaussian_background: knob b sweep](../../_fig/tb_running_gaussian_background.b.jpg)
+
+**段階**(前置きの op → この op。左から順):
+
+![tb_running_gaussian_background: stages](../../_fig/tb_running_gaussian_background.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![tb_running_gaussian_background: other inputs](../../_fig/tb_running_gaussian_background.inputs.jpg)
+
+**動き**(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):
+
+![tb_running_gaussian_background: animation](../../_fig/tb_running_gaussian_background.gif)
 
 ## 使い方
 
 Adaptive single-Gaussian background (the running mean) per frame → ``(T, H, W)`` (``video``).
 
-Typed bridge of the videostream op ``running_gaussian_background`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``alpha`` (default 0.02) and ``b`` drives ``k`` (default 2.5).
+    画素ごとに平均 ``mean`` と分散 ``var`` を持つ単一ガウス背景(Wren の Pfinder)を
+    回し、各フレーム後の ``mean`` を返す。前景判定は
+    ``(frame - mean)^2 > k^2 var``。``selective=True``(既定)では前景と判定した画素の
+    ``mean`` / ``var`` を**更新しない**ので、ゆっくり動く物体が背景に溶けない。
+    更新式は ``mean += α diff``、``var += α (diff^2 - var)``、``var`` の下限は 1e-4。
+
+    - ``video``: ``(T, H, W)`` 配列か 2-D フレームの list。整数は最大値で ``[0, 1]``
+      に正規化、float はクリップ。NaN/Inf は ``ValueError``。
+    - ``alpha``: ``[0, 1]`` の学習率。既定 0.02(時定数およそ 50 枚)。
+    - ``k``: ``[0, 100]``。前景とみなす標準偏差の倍数。既定 2.5。
+    - ``var_init``: ``[1e-9, 1]``。先頭フレームでの分散の初期値(``[0, 1]`` 強度の 2 乗)。
+      小さすぎると 2 枚目から全画素が前景になり、``selective`` で更新が止まる。
+    - ``selective``: 前景画素の更新を止めるか。``False`` なら全画素を常に更新。
+    - 返り値: ``(T, H, W)`` float64。``t = 0`` は先頭フレームそのもの。
+    - 失敗: ``ValueError``(形・dtype・各範囲)。
+
+    同じモデルの前景マスクは ``running_gaussian_foreground``(同じ引数で対にすると
+    フレームごとに整合する)。
+
+2-D 進化レジストリへ橋渡しした videostream の op ``running_gaussian_background``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``alpha``(既定 0.02)、``b`` が ``k``(既定 2.5)を振る。
 
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
 
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+img_to_video 0.50 0.50
+tb_running_gaussian_background 0.50 0.50
+```
+
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+次の例は元の台帳 op `running_gaussian_background` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`video` を入力に取れる)
 

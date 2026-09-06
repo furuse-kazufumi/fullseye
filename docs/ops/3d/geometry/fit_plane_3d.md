@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。
 
+``(N,3)`` の点群(列数 3 でない・3 点未満は ValueError)の重心 ``c`` と散布行列の最小固有値の
+固有ベクトルを法線にする(直交距離の二乗和を最小化。``resid = sqrt(λ_min/N)`` = 面からの直交
+距離の RMS)。``normal`` は単位ベクトルで **符号は任意**(外向きにするなら視点や重心との関係で
+反転する)。3 点なら厳密に通る面で resid=0(BLAS の負の丸めは 0 に clamp)。
+点が直線状(2 番目の固有値も 0)だと法線は不定。外れ値に弱い(``ransac_plane`` /
+``plane_segmentation`` で先にインライアを取る)。3-D 専用。
+後段: ``distance_point_plane`` / ``angle_between_planes`` / ``intersect_planes``、高さ場の
+平面度なら ``surface_form_error(degree=1)``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

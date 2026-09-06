@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import measure3d; measure3d.fit_box3(points) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;fit_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 PCA 擬合有向長方體(快速、抗噪;與 `<code style="color:#22d3bf">obb</code>` 同一構造)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">pcseg.obb</code><code style="color:#22d3bf"> but with the </code><code style="color:#22d3bf">measure</code>`-style dict). Axes are the principal</p>
+<p>directions of the point spread; extents come from the projected span. Returns</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">axes</code>` (3, 3 — unit ROW vectors, depth/row/col</p>
+<p>components), sorted half-extents `<code style="color:#22d3bf">l1 &gt;= l2 &gt;= l3</code><code style="color:#22d3bf">, full </code><code style="color:#22d3bf">size</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">volume</code>`,</p>
+<p>`<code style="color:#22d3bf">corners</code>` (8, 3), and the RMS point-to-box-surface distance. For the true</p>
+<p>minimum-volume box use `<code style="color:#22d3bf">smallest_box3</code><code style="color:#22d3bf">. Raises </code><code style="color:#22d3bf">ValueError</code>` on &lt; 4 points</p>
+<p>or a degenerate (flat) set.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Principal curvatures of a level set → the shape index S (Koenderink) and curvedness. Closed form (Kindlmann 2003).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>2D 輪郭の曲率(スカラー 1 個)の <b>線→面リフト</b>: 曲面は主曲率 κ1,κ2 の 2 個を持つ。</p>
+<p>mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³、Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian)。</p>
+<p>S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] は <b>強度・回転に不変な局所曲面型</b>(cup−1/rut/saddle0/</p>
+<p>ridge+.5/cap+1)。外向き法線規約で明凸 blob=cap(+1)。返り値 (S, curvedness, mask, |g|)、全 torch。</p>
+<p>単位系: sobel3d の分離 conv 利得 32(deriv[-1,0,1]×平滑[1,2,1]²)をここで割り戻すので、</p>
+<p>κ1,κ2/curvedness は <b>真の 1/voxel 単位</b>(半径 R の球殻で curvedness=1/R)、|g| と</p>
+<p>mask 閾値 mc は <b>voxel あたりの真の勾配単位</b>。旧版(〜2026-08-29)は割り戻しを忘れ</p>
+<p>curvedness が 1/32 倍・mc が生 sobel3d 単位だった(shape index S は比なので影響なし)。</p>
+<p>旧 mc 値を使っていた場合は 1/32 して渡すこと(既定値 0.02→6.25e-4 も等価変換済み)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

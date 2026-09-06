@@ -21,6 +21,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 曲率(shape index)マッチング。voxel × 曲率列(線→面リフトの本丸)。
 
+scene/template を **curvedness で重み付けした shape-index 場**へ変換 → 既存 3D NCC で定位。
+強度でなく **局所曲面形状**で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を
+区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。
+
+手順: 両 volume で ``curvature_maps`` → ``S × curvedness × mask`` の重み付き shape-index 場
+``w`` を作り、テンプレ側は ``|w| > 0.1·max|w|`` の bbox を切り出して
+``accel_match.ncc_locate_3d`` に渡す。返り値 ``[NCC, z, y, x]`` float64、NCC ∈ [−1, 1]。
+- **位置は切り出した bbox テンプレの中心**が scene に載る座標。元テンプレ volume の中心とは
+bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。
+- ``mc``: ``curvature_maps`` の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて
+曲率ノイズを抑える。
+- テンプレの曲率場が全 0(平坦・``mc`` が高すぎ)なら ``[0,0,0,0]`` を返す。
+- 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に ``points_to_voxel`` の
+``smooth`` 等で滑らかにする。
+``subvoxel=True`` で NCC ピークの ±2 近傍重心に精緻化。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import medial; medial.skeleton_prune3d(vol, length=1)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;skeleton_prune3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Beschneidet die Härchen (kurzen Äste) eines 3-D-Skeletts. Endpunktentfernung length-mal wiederholt = Äste der Länge &lt;= length verschwinden.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>2D の <code style="color:#22d3bf">pruning</code> の 3D 版。孤立 voxel は端点扱いで消える。</p>
+<p>手順: `<code style="color:#22d3bf">_ensure_skeleton</code><code style="color:#22d3bf"> で bool 化(interior voxel があれば </code><code style="color:#22d3bf">skeletonize_vol</code>`</p>
+<p>で細線化)し、次を `<code style="color:#22d3bf">length</code><code style="color:#22d3bf"> 回繰り返す — 26 近傍次数 </code><code style="color:#22d3bf">&lt;= 1</code>` の voxel(端点と</p>
+<p>孤立点)をすべて同時に取り除く。骨格が空になるか端点が無くなれば(閉ループ</p>
+<p>だけになれば)途中で止まる。</p>
+<p>引数: `<code style="color:#22d3bf">length</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">int(length)</code>` にして負なら 0 に丸める(0 なら細線化した</p>
+<p>骨格をそのまま返す)。1 回の反復で各枝の先端 1 voxel が消えるので、</p>
+<p>長さ `<code style="color:#22d3bf">&lt;= length</code>` voxel の枝(ヒゲ)は根元まで消える。</p>
+<p>返り値: 入力と同形の bool 配列。</p>
+<p>注意(挙動として知っておくこと):</p>
+<p style="margin:2px 0 2px 12px">• **長い枝も先端から `<code style="color:#22d3bf">length</code>` voxel 短くなる**(ヒゲだけを選んで消す処理では</p>
+<p>ない)。主枝の端点位置が要るなら、刈った後の端点は元より `<code style="color:#22d3bf">length</code>` 内側に</p>
+<p>ある。</p>
+<p style="margin:2px 0 2px 12px">• 2 分岐の間の短い枝は両端が分岐点(次数 &gt;= 3)なので消えない。</p>
+<p style="margin:2px 0 2px 12px">• 孤立 voxel は 1 回目で消える。</p>
+<p style="margin:2px 0 2px 12px">• 反復のたびに次数を数え直すので、コストは `<code style="color:#22d3bf">length</code>` に比例する。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code>`): 3-D でない・空配列・NaN/Inf を含む入力。細線化が必要で</p>
+<p>scikit-image が無ければ `<code style="color:#22d3bf">ImportError</code><code style="color:#22d3bf">。後段は </code><code style="color:#22d3bf">skeleton_endpoints3d</code>` /</p>
+<p>`<code style="color:#22d3bf">skeleton_junctions3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">skeleton_branches3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">topology_signature</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

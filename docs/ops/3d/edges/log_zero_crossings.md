@@ -19,6 +19,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Laplacian-of-Gaussian のゼロ交差エッジ。
 
+Parameters
+----------
+vol : (D,H,W) array
+    グレー voxel。
+sigma : float
+    LoG の標準偏差(> 0)。
+rel_thresh : float
+    平坦部の数値ノイズによる偽交差を抑える相対閾値。交差ペアの LoG 差 |a-b| が
+    rel_thresh * max|L| を超える場合のみ採用する。
+
+Returns
+-------
+edge_mask : (D,H,W) bool
+    符号が変化する隣接ペアのうち |LoG| が小さい側(ゼロにより近い側)を立てた mask。
+
+Notes
+-----
+各軸方向に二種類のゼロ交差を検出する:
+(1) 格子間交差 — 隣接ペア (a,b) の符号積 a*b < 0(両側とも非ゼロで符号反転)。厚みを
+    抑えるためペアのうち |LoG| が小さい側 1 voxel に割り当てる。
+(2) 格子整列交差 — 中央 voxel が厳密ゼロ(L==0)で両隣が異符号(符号がその voxel で
+    ゼロを通過)する場合。SDF 風の格子に整列した面で LoG がちょうど格子点上で 0 に
+    なる真のエッジは a*b が常に 0 となり (1) では取りこぼすため、当該 voxel を交差
+    として立てる。定数ゼロ領域は両隣も 0 で Lm*Lp==0 となり除外される(誤検出しない)。
+いずれも平坦部の数値ノイズは相対閾値(rel_thresh * max|L|)で抑制する。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -21,6 +21,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D opening = erosion → dilation。SE より小さい**明構造(棘・粒)**を除く。
 
+``morph_dilate3d(morph_erode3d(vol, r, ...), r, ...)`` と同じ SE を 2 回。出力は入力以下
+(``open <= vol``)で、SE(一辺 ``2r+1`` の cube か半径 r の ball)が入り切らない明るい突起・
+孤立点・細いブリッジが消え、大きな構造の形は保たれる(等冪: 2 回掛けても同じ)。
+``r`` は voxel 単位、``se`` は "cube"/"ball"(他は ValueError)、``device`` は cube+torch の
+ときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+用途: ``vol − open`` が ``morph_tophat3d``(小さな明構造の抽出)。点密度 voxel の孤立ノイズ
+点除去、2 値占有の細線除去。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

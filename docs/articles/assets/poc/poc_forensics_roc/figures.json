@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_score_maps.png",
+  "name": "score_maps",
+  "caption": "ゴーストA は全画素が同じ値 = 何も言っていない(AUC ちょうど 0.500)。ELA と ゴーストV は貼付部が立つ。",
+  "shape": [
+   647,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "02_roc_tampered.png",
+  "name": "roc_tampered",
+  "caption": "凡例の数字は AUC。乱数が対角線に乗ることで測り方に偏りが無いと言える。ゴーストA は乱数と重なる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_roc_postprocess.png",
+  "name": "roc_postprocess",
+  "caption": "凡例の数字は AUC。対角線が乱数。q60 再圧縮とぼかしでは曲線が下側へ回り、符号が逆に読める状態になる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_breaking_conditions.png",
+  "name": "breaking_conditions",
+  "caption": "保存ボタン 1 回(q60 再圧縮)で ゴーストV は乱数以下。『平坦な帯』の行は実体が場所への偏り。",
+  "shape": [
+   272,
+   749,
+   3
+  ],
+  "csv": "04_breaking_conditions.csv",
+  "tsv": "04_breaking_conditions.tsv"
+ }
+]

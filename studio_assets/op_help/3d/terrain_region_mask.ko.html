@@ -4,6 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import render3d; render3d.terrain_region_mask(V, F, *, smooth_fraction: &#x27;float&#x27; = 0.3, method: &#x27;str&#x27; = &#x27;neck&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;terrain_region_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>면별 지형 가중 (M,) 을 [0,1] 로: 0 = 매끄러운 레골리스 「바다」, 1 = 거친 고지.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">method=&#x27;neck&#x27;</code>` (default, Itokawa-motivated): the sea is the band of faces around the</p>
+<p>narrowest cross-section along the principal (long) axis — MUSES-C Regio sits in the neck</p>
+<p>between head and body — widened until it covers `<code style="color:#22d3bf">smooth_fraction</code>` of the surface area.</p>
+<p>`<code style="color:#22d3bf">method=&#x27;noise&#x27;</code>`: low-frequency seeded fBm thresholded at the area-weighted</p>
+<p>`<code style="color:#22d3bf">smooth_fraction</code><code style="color:#22d3bf"> quantile (generic patches). </code><code style="color:#22d3bf">method=&#x27;slope&#x27;</code>`: faces are ranked by</p>
+<p>local slope (angle between face normal and the smoothed neighbourhood normal); the</p>
+<p>flattest `<code style="color:#22d3bf">smooth_fraction</code>` of the area is sea. Deterministic; fail-closed on bad input.</p>
+<p>返り値は面ごとの float64 `<code style="color:#22d3bf">(M,)</code>` で値は 0 か 1 の二値(中間値は出ない)。手順は</p>
+<p>`<code style="color:#22d3bf">method</code>` ごとにスコアを 1 つ作り、スコアの小さい面から面積を累積して全面積の</p>
+<p>`<code style="color:#22d3bf">smooth_fraction</code>` に達するまでを「海」(0)にする。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&#x27;neck&#x27;</code>`: 面重心の面積重み付き主軸(SVD 第 1 成分)に沿って、主軸座標の 20〜80 %</p>
+<p>区間を 24 ビンに切り、各ビンの半径 90 percentile が最小のビン中心を「くびれ」とし、</p>
+<p>くびれ面からの距離をスコアにする。8 面未満のビンは無視。`<code style="color:#22d3bf">seed</code>` は使わない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&#x27;noise&#x27;</code><code style="color:#22d3bf">: 面重心での :func:</code>fbm_noise`(波長 = 境界箱対角 / 3、2 オクターブ、</p>
+<p>`<code style="color:#22d3bf">seed</code>`)をスコアにする。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&#x27;slope&#x27;</code>`: 面法線と「3 頂点の頂点法線平均」のなす角(ラジアン)をスコアにする。</p>
+<p>`<code style="color:#22d3bf">seed</code>` は使わない。</p>
+<p>`<code style="color:#22d3bf">smooth_fraction</code><code style="color:#22d3bf"> は [0, 1] (範囲外・非有限は </code><code style="color:#22d3bf">ValueError</code>`)。0 なら全面 1、1 なら</p>
+<p>全面 0 を即返す。`<code style="color:#22d3bf">method</code><code style="color:#22d3bf"> が上記以外なら </code><code style="color:#22d3bf">ValueError</code>`。得た重みは</p>
+<p>`<code style="color:#22d3bf">mesh_scatter_boulders</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sample_boulders</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">region_weights</code>` に渡して海に岩を</p>
+<p>置かないようにする用途。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

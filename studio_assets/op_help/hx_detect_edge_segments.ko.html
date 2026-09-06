@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_detect_edge_segments&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">detect_edge_segments</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/hx_detect_edge_segments.png" alt="hx_detect_edge_segments: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/hx_detect_edge_segments.png" alt="hx_detect_edge_segments: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.a.jpg">hx_detect_edge_segments: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.b.jpg">hx_detect_edge_segments: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.inputs.jpg">hx_detect_edge_segments: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직선적인 에지 조각을 검출: NMS 로 세선화 → 연결 성분 중 PCA 로 길쭉한(직선상) 것만 남김.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">hx_nonmax_dir(v, a, 0)</code><code style="color:#22d3bf"> で細線化したエッジ(</code><code style="color:#22d3bf">&gt; 0</code>`)を 8 近傍で連結成分に分け、各成分の画素座標の共分散</p>
+<p>固有値比 `<code style="color:#22d3bf">λmax/λmin</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">min_ratio</code>` 以上のもの(細長い=直線状)だけを 1 とする 0/1 の float region を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 細線化段の弱エッジしきい値(</code><code style="color:#22d3bf">hx_nonmax_dir</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> と同じ。正規化振幅 </code><code style="color:#22d3bf">a*0.3</code>` 未満を捨てる)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 細長さのしきい値 </code><code style="color:#22d3bf">min_ratio = 3 + b*12</code>`(3〜15)。大きいほど真っ直ぐな断片だけ残る。</p>
+<p style="margin:2px 0 2px 12px">• 画素数 5 未満の成分は無条件に捨てる。`<code style="color:#22d3bf">λmin</code>` がほぼ 0(完全な直線)なら比を無限大として採用する。</p>
+<p>注意: 直線性の判定は「点群の広がりが 1 軸に偏っているか」であり、曲線でも十分細長ければ通る。細線化段が斜め</p>
+<p>エッジをほとんど細線化しない(`<code style="color:#22d3bf">hx_nonmax_dir</code>` の注記参照)ため、斜めのエッジは幅を持った塊になり固有値比が</p>
+<p>下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら</p>
+<p>`<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hough_line_trans</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

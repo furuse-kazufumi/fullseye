@@ -19,6 +19,11 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). Returns the
 
+``min`` / ``max`` corners and ``center`` in ``(depth, row, col)``, the full
+``size`` (depth, row, col edge lengths), and the enclosed ``volume``. This is
+the honest null baseline that ``smallest_box3`` beats on any rotated object.
+Raises ``ValueError`` on empty input.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

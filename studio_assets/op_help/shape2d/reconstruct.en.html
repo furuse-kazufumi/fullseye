@@ -7,6 +7,22 @@
 <p>EFD 係数から輪郭を再構成する((M,2))。</p>
 <p>n_harmonics を係数数より小さくすると <b>高調波を打ち切って平滑化</b> される</p>
 <p>(低次だけ残すほど丸くなる)。</p>
+<p>式: `<code style="color:#22d3bf">t = linspace(0, 1, n_points, endpoint=False)</code>` について</p>
+<p>`<code style="color:#22d3bf">x(t) = a0 + Σ a_n cos(2πnt) + b_n sin(2πnt)</code>`、</p>
+<p>`<code style="color:#22d3bf">y(t) = c0 + Σ c_n cos(2πnt) + d_n sin(2πnt)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">n = 1..N</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">model</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">elliptic_fourier</code><code style="color:#22d3bf"> の返り値(</code><code style="color:#22d3bf">coeffs</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 4)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">a0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">c0</code>`)。</p>
+<p>`<code style="color:#22d3bf">normalize</code>` を通した係数を渡せば正準ポーズ(第 1 高調波で整列)の輪郭が</p>
+<p>出る。dict の検証はしない(キー欠落は `<code style="color:#22d3bf">KeyError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_points</code><code style="color:#22d3bf">: 出力点数 </code><code style="color:#22d3bf">M</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">int</code>` に切る)。等<b>パラメータ</b>間隔で、弧長</p>
+<p>等間隔ではない。`<code style="color:#22d3bf">endpoint=False</code>` なので<b>末尾点は先頭点と一致しない</b></p>
+<p>(閉じた多角形にするなら先頭点を末尾に足す)。0 なら空の `<code style="color:#22d3bf">(0, 2)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_harmonics</code><code style="color:#22d3bf">: 使う高調波数。</code><code style="color:#22d3bf">None</code><code style="color:#22d3bf"> で全部、</code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> より大きい値は </code><code style="color:#22d3bf">N</code>` に</p>
+<p>切り詰め、0 以下なら DC だけ(全点が中心 `<code style="color:#22d3bf">(a0, c0)</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(M, 2)</code><code style="color:#22d3bf"> float64。座標の並び(</code><code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">(row, col)</code>`)は</p>
+<p>`<code style="color:#22d3bf">elliptic_fourier</code><code style="color:#22d3bf"> に渡した並びをそのまま引き継ぐ。</code><code style="color:#22d3bf">t = 0</code>` は元輪郭の</p>
+<p>始点に対応する。</p>
+<p>輪郭を係数化せずに滑らかにするだけなら `<code style="color:#22d3bf">fourier_smooth</code>`。係数どうしの</p>
+<p>比較は `<code style="color:#22d3bf">invariants</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">descriptor_distance</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 メッシュへ直接レイを飛ばして太陽光の可視性 (H,W) ∈ [0,1] を返す(shadow map 不使用)。
 
+``1=完全に照らされる`` / ``0=完全な影``。背景画素は 1.0。``light`` は平行光の方向
+(シーン→太陽)。``angular_diameter_deg`` は光源の視直径(太陽 = 0.53°)で、0 なら
+ハード影、正なら角半径の円盤内へ ``samples`` 方向をばらまいて平均する ―― 半影の幅は
+「遮蔽物までの距離 × tan(視直径/2)」の幾何どおり(小惑星スケールでは数 cm = 硬い影)。
+法線が光に背く画素(自己陰)は 0。``bias`` はレイ原点を法線方向へ浮かせる量(既定 =
+シーン対角 × 1e-5、自己交差の回避)。``grid`` は光源空間の 2-D 格子の一辺セル数
+(既定 ``None`` = 面数から :func:`auto_grid`。結果は格子に依らず同じ、速度だけ変わる)。
+
+honest: 交差は Möller-Trumbore(両面)、加速は 2-D binning(平行光専用。点光源は
+``cast_shadow`` を使う)。透明・多重反射・カラー影は扱わない。
+fail-closed: 退化メッシュ・不正光源・非正サイズ・負の視直径/サンプル数は ``ValueError``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

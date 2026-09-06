@@ -62,7 +62,7 @@ def test_coverage_gallery_runs(gallery):
 #: 「100 %」は母集団が 3 層のうち 2 層しか無いために成り立っていた。
 #: 経緯と族別の内訳 = docs/KNOWN_ISSUES.md §38。
 _LEDGER_COVERED_FLOOR = 349
-_REGISTRY_COVERED_FLOOR = 737
+_REGISTRY_COVERED_FLOOR = 749
 
 
 def _covered_names():

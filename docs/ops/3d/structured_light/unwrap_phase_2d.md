@@ -19,6 +19,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 wrapped phase を skimage.restoration.unwrap_phase で連続位相に展開する。
 
+wrapped: wrapped_phase の出力(2D)。NaN を含んでよい(無効画素として扱う)。
+mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。
+         NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。
+
+返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。
+
+手順: 無効画素(``wrapped`` の非有限 ∪ ``mask == False``)が無ければ
+``skimage.restoration.unwrap_phase(arr)`` をそのまま呼ぶ。あれば無効画素を 0 で
+埋めた ``numpy.ma`` の masked array として渡し(skimage は masked 画素を展開から
+除外する)、出力の無効画素を NaN に戻す。
+
+検証: scikit-image が import できない環境では ``RuntimeError``(``ImportError``
+ではない)。``wrapped`` が 2-D でない、``mask`` の形が違う、**全画素が無効**
+(アンラップする画素が無い)は ``ValueError``。
+
+前提(Itoh の条件): 隣接する有効画素の真の位相差が ``π`` 未満。急な段差・深い穴・
+オクルージョン境界では 2π の飛びを誤り、その先の領域全体が ``2πm`` ずれる。
+マスクで島に分かれた領域どうしの相対次数は決まらない(島ごとに独立な
+オフセット)。絶対性が要るときは ``graycode_decode`` → ``absolute_phase`` の
+画素独立な次数確定を使う。
+
+使いどころ: ``wrapped_phase`` → 本 op → ``phase_to_height``(同モジュールの
+関数、``height = k (phase - ref_phase)``)。参照面を同じ手順で展開して引けば
+大域オフセットは相殺される。``decode_fringe`` はこの連鎖を 1 回で行う。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

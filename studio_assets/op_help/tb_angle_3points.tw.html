@@ -2,16 +2,22 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_angle_3points — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_angle_3points&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*無圖: 該運算子以 <code style="color:#22d3bf">points</code> 為輸入。從影像開始的 Studio 程式無法到達該型別，請參見下方的可執行範例。*</p>
+<p>*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— 3 点(頂点 b と両端)を取る op で、(N,3) の点群は定義域の外。用法見下方可執行範例。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三點所成的角（頂點為 b，單位為度）。∠ABC。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">arccos(û·v̂)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">u = a − b</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v = c − b</code>`)を度で返す(float)。値は <b>[0, 180]</b> で符号は</p>
+<p>無い(2-D でも回転の向きは区別しない)。引数は数値の 2 または 3 ベクトル、次元の混在は</p>
+<p>ValueError。`<code style="color:#22d3bf">a == b</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">c == b</code>` だと零ベクトルの内積 0 で 90 が返る(例外は出ない)。</p>
+<p>内積は [−1,1] に clip するので数値誤差で NaN にはならない。</p>
+<p>用途: 曲げ角・関節角の計測、`<code style="color:#22d3bf">fit_line_3d</code>` で得た 2 直線の交点まわりの角度。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">angle_3points</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
-<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">angle_3points</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geometry_metrology">geometry_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geometry_metrology.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">typed</code>)</h3>

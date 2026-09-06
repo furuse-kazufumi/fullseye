@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.voxel_to_mips(vol)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mips&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D → 正交三方向的最大值投影(MIP)。套用 2D 方法(如 accel 的 2D NCC)的入口。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>入力 `<code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf"> に対し </code><code style="color:#22d3bf">[max(axis=0), max(axis=1), max(axis=2)]</code>` の list を返す。形は</p>
+<p>それぞれ `<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf">(軸 0=D を潰す)、</code><code style="color:#22d3bf">(D,W)</code><code style="color:#22d3bf">(軸 1=H を潰す)、</code><code style="color:#22d3bf">(D,H)</code>`(軸 2=W を潰す)、</p>
+<p>dtype float64。値は入力の最大値そのまま(正規化しない)。負の値も max なので通り、</p>
+<p>密度 0 の背景は 0 のまま。</p>
+<p>形の検証は無い(2-D は `<code style="color:#22d3bf">axis=2</code>` で失敗し、4-D 以上は動いてしまう)ので、呼び手で次元を確かめる。</p>
+<p>`<code style="color:#22d3bf">match_mip_2d</code>` はこの 3 枚に 2D NCC を掛けて 3D 位置を冗長推定する。任意視点の投影は</p>
+<p>`<code style="color:#22d3bf">render_volume_projection</code>`(mode=&quot;mip&quot;)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

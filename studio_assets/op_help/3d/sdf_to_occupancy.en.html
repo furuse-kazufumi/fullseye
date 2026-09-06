@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.sdf_to_occupancy(sdf, iso=0.0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;sdf_to_occupancy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>SDF → an occupancy voxel volume (at or below iso = inside = 1). The way back from an SDF to voxels.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">(sdf &lt;= iso).astype(float64)</code><code style="color:#22d3bf"> だけの op。</code><code style="color:#22d3bf">signed_distance_field</code>` の規約(内側 &lt;0)なら</p>
+<p>`<code style="color:#22d3bf">iso=0.0</code><code style="color:#22d3bf"> で内側=1、外側=0。**等号を含む**ので、ちょうど </code><code style="color:#22d3bf">iso</code>` の voxel は内側に入る。</p>
+<p>`<code style="color:#22d3bf">iso</code><code style="color:#22d3bf"> を正にすると外側へ </code><code style="color:#22d3bf">iso</code>` voxel ぶん膨らんだ占有、負にすると縮んだ占有になる</p>
+<p>(SDF が真の距離なら等方 dilation/erosion と同じ)。`<code style="color:#22d3bf">tsdf_from_depth</code>` の出力(表面手前 +・</p>
+<p>奥 −・未観測 +1)にも同じ `<code style="color:#22d3bf">iso=0.0</code>` で使えるが、未観測領域は 0 側(外)になる。</p>
+<p>入力の形は問わず、返り値は同形の float64(0.0 / 1.0)。NaN は比較が偽なので 0 になる</p>
+<p>(警告なし)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

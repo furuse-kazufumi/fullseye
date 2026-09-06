@@ -21,6 +21,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。
 
+``morph_close3d(vol, r, ...) − vol(float32)``。値は 0 以上で、SE(一辺 ``2r+1`` の cube か
+半径 r の ball)より小さい暗い穴・亀裂・隙間だけがその深さで残り、大きな暗領域と背景は
+0 になる。占有 voxel なら「SE で埋まる空洞 = 1」。``r`` は検出したい穴の半径より大きく取る。
+``se`` は "cube"/"ball"(他は ValueError)、``device`` は cube+torch のときだけ有効。
+返り値 ``(D,H,W)`` float32 numpy。明るい構造を取るなら ``morph_tophat3d``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

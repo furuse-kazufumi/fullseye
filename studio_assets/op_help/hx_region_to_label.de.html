@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_region_to_label&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">region_to_label</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/hx_region_to_label.png" alt="hx_region_to_label: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/hx_region_to_label.png" alt="hx_region_to_label: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_region_to_label.a.jpg">hx_region_to_label: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_region_to_label.inputs.jpg">hx_region_to_label: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt die Zusammenhangskomponenten der bei a geschwellten Region in ein Labelbild um (normiert).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">v &gt; a</code><code style="color:#22d3bf"> を前景として </code><code style="color:#22d3bf">ndimage.label</code><code style="color:#22d3bf">(8 近傍)で連結成分にラベル付けし、ラベル番号 </code><code style="color:#22d3bf">1..n</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">n</code>` で割った</p>
+<p>float 画像を返す。背景は 0、成分は `<code style="color:#22d3bf">1/n, 2/n, ..., 1</code>` の等間隔の値になる。成分が無ければ全 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → 二値化しきい値(region を渡すときは 0.5 にする)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>ラベル番号は走査順(左上から)で振られるため、同じ成分でも画像内の他の成分数 `<code style="color:#22d3bf">n</code>` が変わると値が変わる。</p>
+<p>値で成分を識別する用途にのみ向き、値の大小に意味は無い。成分ごとの統計が欲しければ `<code style="color:#22d3bf">hx_region_to_mean</code>`</p>
+<p>(平均 gray 値で塗る)を使う。ラベル画像から 1 成分だけを取り出すには `<code style="color:#22d3bf">threshold</code>` 系で値域を切る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

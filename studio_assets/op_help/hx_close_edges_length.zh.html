@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_close_edges_length&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">close_edges_length</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_close_edges_length.png" alt="hx_close_edges_length: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_close_edges_length.png" alt="hx_close_edges_length: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_close_edges_length.a.jpg">hx_close_edges_length: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_close_edges_length.b.jpg">hx_close_edges_length: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_close_edges_length.inputs.jpg">hx_close_edges_length: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 close_edges 之上,再去掉长度(像素数)低于阈值的短边缘碎片。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">v &gt; a</code><code style="color:#22d3bf"> で二値化 → 3×3(8 近傍)構造要素で 1 回 </code><code style="color:#22d3bf">binary_closing</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">ndimage.label</code>`(既定の 4 近傍連結)で</p>
+<p>連結成分にし、画素数が `<code style="color:#22d3bf">min_len</code>` 未満の成分を落として 0/1 の float 画像で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → 二値化しきい値。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 残す最小画素数 </code><code style="color:#22d3bf">min_len = 2 + int(b*20)</code>`(2〜22)。</p>
+<p style="margin:2px 0 2px 12px">• 成分が 1 つも無ければクロージング結果をそのまま返す。</p>
+<p>注意: クロージングの構造要素は固定 3×3 で、`<code style="color:#22d3bf">hx_close_edges</code>` のような幅の調整は無い。ラベリングが 4 近傍のため</p>
+<p>斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。`<code style="color:#22d3bf">binary_closing</code>` は画像外を</p>
+<p>0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Outlier-robust RANSAC cylinder fitting (point normals are required).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>円筒表面の法線は軸に直交するので、2 点の法線の外積で軸方向を推定 → 軸に直交な平面へ</p>
+<p>全点を投影 → その平面内で円をフィット → |投影距離 - r| &lt; `<code style="color:#22d3bf">thresh</code>` の inlier を</p>
+<p>最大化。最終 inlier ではより頑健に軸を再推定(法線群の SVD の最小特異方向 = 軸)し、</p>
+<p>投影円を最小二乗リフィットする。法線が無ければ呼び出し側で estimate してから渡す。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>normals: (N,3) 各点の(単位)法線。</p>
+<p>thresh: inlier とみなす |投影距離-r| のしきい値。</p>
+<p>iters: RANSAC 反復数。</p>
+<p>seed: 乱数シード(決定論)。</p>
+<p>Returns:</p>
+<p>(params, inlier_mask, info)。params = {&quot;axis&quot;: (3,) 単位軸, &quot;point&quot;: (3,) 軸上の一点,</p>
+<p>&quot;radius&quot;: float}。info には inlier 数 `<code style="color:#22d3bf">n_inliers</code><code style="color:#22d3bf"> / 比 </code><code style="color:#22d3bf">inlier_ratio</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">iters</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import optscene; optscene.scene_box(center_mm, half_size_mm, material=None) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;scene_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>축 평행 직육면체 부품(AABB). `<code style="color:#22d3bf">half_size_mm</code>` 는 각 축의 반 크기 [mm].</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>辺が x / y / z 軸に平行な箱で、回転は持たない(斜めに置く手段は無い)。</p>
+<p>占める範囲は各軸で `<code style="color:#22d3bf">center ± half</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center_mm</code>`: 長さ 3 の有限値 [mm]。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">half_size_mm</code><code style="color:#22d3bf">: 長さ 3、**全軸とも正**。1 つでも 0 以下なら </code><code style="color:#22d3bf">ValueError</code>`</p>
+<p>(厚さ 0 の板は `<code style="color:#22d3bf">scene_plane</code>` の有限板で表す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">material</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_material</code>` の結果。省略時は lambert、albedo 0.6。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;box&quot;, &quot;c&quot;: (3,), &quot;h&quot;: (3,), &quot;material&quot;}</code>` の dict。</p>
+<p>交差はスラブ法(各軸の入口/出口の max/min)。`<code style="color:#22d3bf">scene_difference</code>` の</p>
+<p>`<code style="color:#22d3bf">solid</code><code style="color:#22d3bf"> にも </code><code style="color:#22d3bf">cavity</code>` にも使える(角穴、ポケット)。薄い箱をステージに</p>
+<p>置けば「有限で厚みのある台」になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

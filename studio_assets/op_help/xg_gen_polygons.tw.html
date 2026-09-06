@@ -3,10 +3,30 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xg_gen_polygons&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">gen_polygons_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/xg_gen_polygons.png" alt="xg_gen_polygons: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/xg_gen_polygons.png" alt="xg_gen_polygons: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.a.jpg">xg_gen_polygons: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.chain.jpg">xg_gen_polygons: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.inputs.jpg">xg_gen_polygons: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Douglas-Peucker 折線簡化;eps = a × contour 外接矩形對角線。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各輪郭を Ramer-Douglas-Peucker 法で間引いて頂点数の少ない折れ線(多角形)に</p>
+<p>する。始点と終点は必ず残し、区間の弦から最も離れた点の距離が `<code style="color:#22d3bf">eps</code>` を</p>
+<p>超えればその点を採用して再帰的に分割する。`<code style="color:#22d3bf">eps</code>` は輪郭ごとに、その輪郭の</p>
+<p>bbox の対角長 `<code style="color:#22d3bf">hypot(Δrow, Δcol)</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">a</code>`([0,1] に clip)を掛けた値。</p>
+<p>`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">eps=0</code><code style="color:#22d3bf">(弦上に完全に乗る点だけ落ちる)、</code><code style="color:#22d3bf">a</code>` を上げるほど粗く</p>
+<p>なり、`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> では両端の 2 点だけになる。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は `<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>` の輪郭辞書。点が 3 個未満の輪郭はコピーのまま。</p>
+<p>閉輪郭(先頭=末尾)は始点と終点が同じ点なので、`<code style="color:#22d3bf">a</code>` が大きいと 2 点(同一点)に</p>
+<p>退化し、面積や向きの特徴量が 0 になる。閉輪郭の形を保ちたい場合は `<code style="color:#22d3bf">a</code>` を</p>
+<p>小さめにする(実測では半径 5〜8 の楕円 101 点が `<code style="color:#22d3bf">a=0.05</code>` で 9 点)。</p>
+<p>間引きは元の点の部分集合を返し、新しい点は作らない。後段の `<code style="color:#22d3bf">xg_area_center</code>`</p>
+<p>や `<code style="color:#22d3bf">xg_regress_contours</code>` の計算量を減らす前処理、折れ線の角(頂点)検出に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

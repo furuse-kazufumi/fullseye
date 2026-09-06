@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import shapestats; shapestats.shape_explained_variance(model)</code> (または <code style="color:#22d3bf">opsshapestat.get(&quot;shape_explained_variance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>各主成分の寄与率(合計 1)。→ `<code style="color:#22d3bf">(k,)</code>`。</p>
+<p>式: `<code style="color:#22d3bf">variance / total_variance</code><code style="color:#22d3bf">。分母は </code><code style="color:#22d3bf">model[&quot;total_variance&quot;]</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">shape_pca</code>`</p>
+<p>が<b>全</b>特異値から計算した総分散)で、無ければ `<code style="color:#22d3bf">variance.sum()</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">model</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">shape_pca</code><code style="color:#22d3bf"> の返り値。必須キーが無ければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(k,)</code><code style="color:#22d3bf"> float64、各要素は </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">shape_pca(n_components=0)</code>`</p>
+<p>(全成分)なら合計は 1。**`<code style="color:#22d3bf">n_components</code>` で打ち切ったモデルでは合計が 1 未満**</p>
+<p>になる(切り捨てた成分の分だけ足りない)―― 「上位 k 本でどれだけ説明できるか」</p>
+<p>を読むにはむしろその方が正しい。</p>
+<p style="margin:2px 0 2px 12px">• 総分散が 0(全個体が同じ形)なら全要素 0 を返す(0 除算にしない)。</p>
+<p>`<code style="color:#22d3bf">shape_pca</code><code style="color:#22d3bf"> の分散は標本分散(</code><code style="color:#22d3bf">K-1</code>` で割る)なので、個体数が少ないと</p>
+<p>固有値の絶対値は膨らむが、比であるこの量は影響を受けにくい。累積和</p>
+<p>(`<code style="color:#22d3bf">cumsum</code><code style="color:#22d3bf">)で「99 % に何本要るか」を決め、</code><code style="color:#22d3bf">shape_mahalanobis</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">cumulative</code>`</p>
+<p>や `<code style="color:#22d3bf">shape_synthesize</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">n_modes</code>` に渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -11,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shapestat_landmark_tour">shapestat_landmark_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shapestat_landmark_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">model</code>)</h3>

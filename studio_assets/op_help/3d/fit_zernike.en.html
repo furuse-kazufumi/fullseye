@@ -5,6 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A disc image → Zernike coefficients (the <b>polar-coordinate surface fit</b> of optics and wavefront metrology). Returns {(n,m): coef}.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/</p>
+<p>coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。</p>
+<p>honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では</p>
+<p>理論上直交のモード間に<b>最大 ~10% のクロストーク</b>が残る(例: 純 (2,0) defocus 入力で</p>
+<p>係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が</p>
+<p>要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。</p>
+<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

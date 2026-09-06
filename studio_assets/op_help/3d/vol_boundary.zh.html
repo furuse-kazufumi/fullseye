@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import volops; volops.vol_boundary(vol_binary, connectivity=6, side=&#x27;inner&#x27;)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_boundary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>二值体的边界壳(3-D 版 `<code style="color:#22d3bf">region_boundary</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">side=&#x27;inner&#x27;</code>` keeps the foreground voxels that touch background:</p>
+<p>`<code style="color:#22d3bf">mask &amp; ~erode(mask)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">side=&#x27;outer&#x27;</code>` keeps the background voxels that</p>
+<p>touch foreground: `<code style="color:#22d3bf">dilate(mask) &amp; ~mask</code>`. *connectivity* (6/18/26) decides</p>
+<p>which neighbours count as &quot;touching&quot; — 6 uses face neighbours only (the</p>
+<p>thinnest shell); 26 also counts a diagonal background contact, so shells at</p>
+<p>convex corners come out thicker. The volume border counts as background</p>
+<p>for the *inner* shell (a mask reaching the border has a boundary there —</p>
+<p>the same convention as the surface-area estimate in</p>
+<p>:func:<code style="color:#22d3bf">vol_region_props</code>); the *outer* shell can only occupy voxels that</p>
+<p>exist, so a mask filling the whole volume has an empty outer boundary.</p>
+<p>A solid region&#x27;s interior drops out entirely: the shell of a solid ball of</p>
+<p>radius `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> voxels is roughly a </code><code style="color:#22d3bf">3/r</code>` fraction of it (surface over</p>
+<p>volume), so the saving grows with size — which is exactly why boundary</p>
+<p>representations (and :func:<code style="color:#22d3bf">vol_boundary_points</code>) are the memory-frugal way</p>
+<p>to hand a shape to the point-cloud / metrology operators.</p>
+<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> float64 </code><code style="color:#22d3bf">{0, 1}</code>` volume (chainable into</p>
+<p>:func:<code style="color:#22d3bf">vol_label</code>, :func:<code style="color:#22d3bf">vol_boundary_points</code>, ...).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

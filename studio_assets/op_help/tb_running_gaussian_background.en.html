@@ -2,15 +2,48 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_running_gaussian_background — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_running_gaussian_background&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*No figure: this op takes <code style="color:#22d3bf">video</code> as input. A Studio program starting from an image cannot reach that type — see the runnable examples below for how it is used.*</p>
+<p><img src="fig/tb_running_gaussian_background.png" alt="tb_running_gaussian_background: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_running_gaussian_background.a.jpg">tb_running_gaussian_background: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_running_gaussian_background.b.jpg">tb_running_gaussian_background: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_running_gaussian_background.chain.jpg">tb_running_gaussian_background: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_running_gaussian_background.inputs.jpg">tb_running_gaussian_background: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Motion</b> (GIF: frames / views / slices in turn. The still figure is the complete one; the GIF is supplementary):</p>
+<p><img src="fig/tb_running_gaussian_background.gif" alt="tb_running_gaussian_background: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adaptive single-Gaussian background (the running mean) per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
-<p>Typed bridge of the videostream op `<code style="color:#22d3bf">running_gaussian_background</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> (default 0.02) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">k</code>` (default 2.5).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>画素ごとに平均 `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> と分散 </code><code style="color:#22d3bf">var</code>` を持つ単一ガウス背景(Wren の Pfinder)を</p>
+<p>回し、各フレーム後の `<code style="color:#22d3bf">mean</code>` を返す。前景判定は</p>
+<p>`<code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">selective=True</code>`(既定)では前景と判定した画素の</p>
+<p>`<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">var</code>` を<b>更新しない</b>ので、ゆっくり動く物体が背景に溶けない。</p>
+<p>更新式は `<code style="color:#22d3bf">mean += α diff</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">var += α (diff^2 - var)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">var</code>` の下限は 1e-4。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> 配列か 2-D フレームの list。整数は最大値で </code><code style="color:#22d3bf">[0, 1]</code>`</p>
+<p>に正規化、float はクリップ。NaN/Inf は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code>` の学習率。既定 0.02(時定数およそ 50 枚)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 100]</code>`。前景とみなす標準偏差の倍数。既定 2.5。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">var_init</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[1e-9, 1]</code><code style="color:#22d3bf">。先頭フレームでの分散の初期値(</code><code style="color:#22d3bf">[0, 1]</code>` 強度の 2 乗)。</p>
+<p>小さすぎると 2 枚目から全画素が前景になり、`<code style="color:#22d3bf">selective</code>` で更新が止まる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">selective</code><code style="color:#22d3bf">: 前景画素の更新を止めるか。</code><code style="color:#22d3bf">False</code>` なら全画素を常に更新。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">t = 0</code>` は先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(形・dtype・各範囲)。</p>
+<p>同じモデルの前景マスクは `<code style="color:#22d3bf">running_gaussian_foreground</code>`(同じ引数で対にすると</p>
+<p>フレームごとに整合する)。</p>
+<p>2-D 進化レジストリへ橋渡しした videostream の op `<code style="color:#22d3bf">running_gaussian_background</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">(既定 0.02)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">k</code>`(既定 2.5)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_video 0.50 0.50
+tb_running_gaussian_background 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_video%200.50%200.50%0Atb_running_gaussian_background%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_video%200.50%200.50%0Atb_running_gaussian_background%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p>The examples below call the underlying ledger op <code style="color:#22d3bf">running_gaussian_background</code>. This bridge op is the same implementation adapted to the <code style="color:#22d3bf">fn(v, a, b)</code> convention, so the behaviour carries over unchanged (only the call form differs).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">video</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_temporal_bandpass">tb_temporal_bandpass</a> · <a style="color:#22d3bf" href="op:tb_temporal_band_power">tb_temporal_band_power</a> · <a style="color:#22d3bf" href="op:tb_temporal_median_window">tb_temporal_median_window</a> · <a style="color:#22d3bf" href="op:tb_moving_average_window">tb_moving_average_window</a> · <a style="color:#22d3bf" href="op:tb_background_subtraction_window">tb_background_subtraction_window</a> · <a style="color:#22d3bf" href="op:tb_frame_difference_causal">tb_frame_difference_causal</a> · <a style="color:#22d3bf" href="op:tb_exponential_background">tb_exponential_background</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">typed</code>)</h3>

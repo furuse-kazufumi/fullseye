@@ -5,6 +5,20 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>MIP projection → 2-D NCC (structure = voxel → 2-D, method = NCC, transform = orthogonal MIP).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を</p>
+<p>冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。</p>
+<p>手順: `<code style="color:#22d3bf">voxel_to_mips</code>` で scene・model とも 3 枚の MIP を作り、各投影で model MIP の</p>
+<p>`<code style="color:#22d3bf">&gt; 5%·max</code><code style="color:#22d3bf"> の bbox を切り出してテンプレにし、</code><code style="color:#22d3bf">accel_match.ncc_locate_batch</code>`(2D NCC、</p>
+<p>テンプレ中心規約)で位置を取る。軸 0 を潰した投影は (y,x)、軸 1 は (z,x)、軸 2 は (z,y) を</p>
+<p>与えるので各座標は 2 枚から得られ、その平均を返す。</p>
+<p>返り値 `<code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf"> float64 の </code><code style="color:#22d3bf">[z, y, x]</code>`(整数 NCC 位置の平均なので .5 刻み)。score は返さない。</p>
+<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene MIP のどこに載るか。model volume の</p>
+<p>中心ではない。</p>
+<p style="margin:2px 0 2px 12px">• model MIP が全 0 の投影は飛ばし、ある座標が 1 枚からも得られなければ 0.0 になる(例外は</p>
+<p>出ない)。</p>
+<p style="margin:2px 0 2px 12px">• MIP は重なりで奥行き情報を失うので、複数物体・クラッタには弱い。</p>
+<p>後段: この粗位置を `<code style="color:#22d3bf">refine_translation_lk</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">refine_lm</code>` に渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

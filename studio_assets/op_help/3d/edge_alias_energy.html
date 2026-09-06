@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。</p>
+<p>ラスタライズのエイリアスは階段状の鋭い角(高い 2 階微分)として現れる。ラプラシアンは</p>
+<p>高周波を強調するため、その二乗平均平方根(RMS)は境界の階段度を単調に捉える — SSAA で</p>
+<p>エッジが滑らかな勾配になれば、ラプラシアンの高周波エネルギーは減る(low-pass は高周波を</p>
+<p>減衰させ、ラプラシアンはそれを増幅するので、平滑化されたエッジほど本量は小さい)。</p>
+<p>平坦な内部・背景はラプラシアン ≈ 0 で寄与しないため、実質エッジ帯の量になる。カラー画像は</p>
+<p>チャンネル平均。同一形状・同一コントラストの画像どうしを比較するための相対指標。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

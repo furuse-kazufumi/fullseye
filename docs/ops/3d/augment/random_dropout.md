@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。
 
+残す点数は ``round((1-ratio)*N)``。``kept_idx`` は元配列への昇順インデックスで、
+``kept == points[kept_idx]`` が厳密に成り立つ。オクルージョン/疎な視点による
+点欠損を学習で再現する。``0 <= ratio <= 1`` を要求。
+
+``ratio`` が [0,1] の外なら ``ValueError``。``ratio=1`` は空 ``(0,3)`` と空インデックス、
+``ratio=0`` は全点(順序は元のまま)。残す点数は Python の ``round``(偶数丸め)で決まる
+ので ``.5`` 端では偶数側に寄る。``seed`` で ``permutation`` が決まり決定論的。返り値は
+``(kept float64 (M,3), kept_idx int64 (M,))``。除去は空間的に一様なので、局所的な
+欠損(遮蔽)を模すには ``cutout`` を使う。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -2,10 +2,29 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xg_clip_contours — 2D <code style="color:#22d3bf">xldgeom</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xg_clip_contours&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/xg_clip_contours.png" alt="xg_clip_contours: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/xg_clip_contours.png" alt="xg_clip_contours: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_clip_contours.a.jpg">xg_clip_contours: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_clip_contours.chain.jpg">xg_clip_contours: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_clip_contours.inputs.jpg">xg_clip_contours: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>丢弃折线长度低于 a × 最长的 contour(a 在 [0,1])。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各輪郭の折れ線長(隣接点間のユークリッド距離の和)を求め、最長の輪郭の長さ</p>
+<p>`<code style="color:#22d3bf">L_max</code><code style="color:#22d3bf"> に対して </code><code style="color:#22d3bf">length &gt;= a * L_max</code><code style="color:#22d3bf"> を満たす輪郭だけ残す。</code><code style="color:#22d3bf">a</code>` は</p>
+<p>[0,1] に clip され、`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で全輪郭を残し、</code><code style="color:#22d3bf">a=1</code>` で最長の輪郭(同長なら</p>
+<p>複数)だけ残す。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同じ `<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>` 形式の輪郭辞書(点配列はコピー)。</p>
+<p>輪郭が無ければ `<code style="color:#22d3bf">cs</code><code style="color:#22d3bf"> は空。</code><code style="color:#22d3bf">L_max &lt;= 1e-12</code>`(全輪郭が 1 点)なら全輪郭を</p>
+<p>そのまま返す。しきい値が画像サイズでなく「最長輪郭に対する相対値」なので、</p>
+<p>最長の輪郭が変わると選別基準も動く(点数の絶対値で選ぶなら</p>
+<p>`<code style="color:#22d3bf">select_contours_xld</code>`)。名前から想像される矩形での切り取りではなく、</p>
+<p>長さによる選別である(矩形で切るのは `<code style="color:#22d3bf">xg_crop_contours</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_clip_contours</code>`)。</p>
+<p>閉輪郭の重複終点も長さに含むが、0 長の辺なので影響しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

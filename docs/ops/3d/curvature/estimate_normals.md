@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。
 
+手順(各点、Python ループ): ``cKDTree`` で自身を含む k+1 近傍(k は N-1 に切り詰め)を取り、クエリ点を原点にした近傍座標の散布行列 ``local.T @ local`` の最小固有ベクトルを法線にする(単位長)。向きは「近傍重心との内積が正なら反転」= 近傍重心から離れる側に揃える。
+
+- 近傍が 5 点未満の点は固定値 ``(0, 0, 1)`` を返す(推定していない)。
+- 向き付けは局所ヒューリスティクスで、閉じた凸形状なら外向きだが、開いた面・薄板・凹部では隣接点どうしで向きが食い違い得る(大域一貫性は保証しない)。大域的に揃えるには ``orient_normals`` に通すか、最初から ``estimate_oriented_normals`` を使う。organized 深度画像なら ``normals_from_depth`` が視点向きで速い。
+- 返り値は float64 (N,3)。``k`` 既定 25。決定論的。
+- 内部は ``principal_curvatures`` と同じ計算を通る(法線推定にも二次曲面フィットまで走る)ので、点数が多いと遅い。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

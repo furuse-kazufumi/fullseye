@@ -19,6 +19,27 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。
 
+両 volume は同一 shape が必須。異形状は numpy broadcasting で見かけ上一致し
+誤った IoU(例: (10,1,10) vs (1,10,10) → 1.0)を静かに返すので、fail-closed で
+shape 不一致は ValueError で拒否する。
+
+計算: 両 volume を ``>= iso`` で二値化し(``iso`` 既定 0.5、等号を含む)、
+``|A∩B| / |A∪B|``。和集合が空(両方とも占有ゼロ)なら ``1.0`` を返す
+(「どちらも空」は一致とみなす。エラーにしない)。
+
+引数: ``vol_a``, ``vol_b`` は同じ shape の配列(3-D に限らず、次元数は検査しない。
+bool / 0-1 / 密度 grid のいずれでもよい)。``iso`` は占有とみなす閾値で、
+``fuse_to_voxel`` や ``points_to_voxel`` の密度 grid(値は点数)に使うなら
+``iso=1`` 以上を明示する。NaN は ``>=`` で False(非占有)になる。
+
+返り値: Python ``float``、``[0, 1]``。1 = 完全一致、0 = 重なりなし。
+
+注意: 同じ格子(``bounds`` と ``size``)に載っていないと比較にならない —
+``fuse_to_voxel`` / ``points_to_voxel`` には同じ ``bounds`` を渡す。薄い殻同士は
+1 voxel ずれるだけで IoU が大きく落ちるので、表面の評価には
+``chamfer_distance`` / ``fscore`` の方が向く。体積が小さい対象は Dice
+(``voxel_dice``、同モジュールの関数)の方が慣習として使われる。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

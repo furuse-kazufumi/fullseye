@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우스 저역통과: `<code style="color:#22d3bf">1/cutoff</code>` 보다 거친 구조를 남깁니다(복셀 단위 또는 실치수).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>mm with *spacing*), attenuates finer detail smoothly. Transfer</p>
+<p>`<code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code>` — the DC level (mean intensity) passes</p>
+<p>unchanged. Typical use: extract the illumination/thickness drift.</p>
+<p>手順: `<code style="color:#22d3bf">np.fft.rfftn</code><code style="color:#22d3bf"> で実 FFT → 各周波数 bin の大きさ </code><code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code>`</p>
+<p>に伝達関数 `<code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code><code style="color:#22d3bf"> を掛ける → </code><code style="color:#22d3bf">irfftn</code>` で戻す。入力と同じ</p>
+<p>`<code style="color:#22d3bf">(D, H, W)</code>` の float64 を返す(spacing を渡しても shape は変わらない)。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cutoff</code><code style="color:#22d3bf">: 正の有限値。</code><code style="color:#22d3bf">spacing=None</code>` なら <b>cycles/voxel</b>(Nyquist = 0.5)、</p>
+<p>`<code style="color:#22d3bf">spacing=(sz, sy, sx)</code><code style="color:#22d3bf">(mm、または </code><code style="color:#22d3bf">spacing_mm</code><code style="color:#22d3bf"> を持つ </code><code style="color:#22d3bf">volio.VolumeMeta</code>`)を</p>
+<p>渡すと <b>cycles/mm</b>。異方 voxel では軸ごとに `<code style="color:#22d3bf">fftfreq(n, d=spacing)</code>` で物理</p>
+<p>周波数に直すので、同じ物理構造が同じ扱いになる。</p>
+<p style="margin:2px 0 2px 12px">• 減衰は Gaussian で、`<code style="color:#22d3bf">|f| = cutoff</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">exp(-1/2) ≈ 0.61</code>`(brick-wall では</p>
+<p>ない。リンギングは出ない)。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): 3-D でない / NaN・Inf / voxel 数が </code><code style="color:#22d3bf">MAX_VOXELS</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">1 &lt;&lt; 27</code>`)</p>
+<p>超 / `<code style="color:#22d3bf">cutoff</code><code style="color:#22d3bf"> が非正・非有限・2 乗がアンダーフローするほど小さい / </code><code style="color:#22d3bf">spacing</code>` が</p>
+<p>長さ 3 でない・非正。</p>
+<p>注意: FFT は volume を周期的とみなす。向かい合う面の輝度差が大きいと wrap を</p>
+<p>またいで漏れる(窓掛けは黙ってしない)。`<code style="color:#22d3bf">vol_fft_highpass</code>` は厳密にこの補集合</p>
+<p>`<code style="color:#22d3bf">1 - lowpass</code>` で、両者の和は入力に一致する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -5,6 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die sechs unabhängigen Komponenten der 3-D-Hesse-Matrix (fzz, fyy, fxx, fzy, fzx, fyx). Separierbares conv3d (zweite/erste Ordnung × Glättung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>カーネル: 2 階 [1,−2,1] (利得 1)、1 階 [−0.5,0,0.5] (利得 1)、残りの軸は [1,2,1]/4 の平滑</p>
+<p>(利得 1)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の</p>
+<p>平滑」。<b>単位は 1/voxel² の真の値</b>(`<code style="color:#22d3bf">sobel3d</code>` の 32 倍利得とは違う)。端は replicate。</p>
+<p>返り値は <b>list の torch tensor 6 本</b>、各 `<code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf"> float32、</code><code style="color:#22d3bf">device</code>` 上、順は</p>
+<p>(zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば `<code style="color:#22d3bf">.cpu().numpy()</code>`。入力は</p>
+<p>numpy 相当(float32 に変換)。</p>
+<p>用途: `<code style="color:#22d3bf">curvature_maps</code><code style="color:#22d3bf"> の主曲率(</code><code style="color:#22d3bf">sobel3d</code>` と組で使う)、blob/管状構造の検出。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

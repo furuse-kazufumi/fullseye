@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_radial_distort_contour&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">change_radial_distortion_contours_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_radial_distort_contour.png" alt="hx_radial_distort_contour: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_radial_distort_contour.png" alt="hx_radial_distort_contour: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.a.jpg">hx_radial_distort_contour: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.chain.jpg">hx_radial_distort_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對 contour 施加徑向畸變 r&#x27; = r(1 + k r^2)(k 由 (a−0.5) 給出:桶形/枕形)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各 contour の点を画像中心 `<code style="color:#22d3bf">(H/2, W/2)</code><code style="color:#22d3bf"> からの相対座標 </code><code style="color:#22d3bf">d</code><code style="color:#22d3bf"> にし、正規化半径 </code><code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code>` に</p>
+<p>対して `<code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code>` と伸縮させた contour を返す(放射歪みモデルの 1 次項)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 歪み係数 </code><code style="color:#22d3bf">k = (a - 0.5) * 1.5</code><code style="color:#22d3bf">(-0.75〜+0.75)。</code><code style="color:#22d3bf">k &lt; 0</code><code style="color:#22d3bf"> で点が中心に寄る(樽型)、</code><code style="color:#22d3bf">k &gt; 0</code>` で</p>
+<p>外へ広がる(糸巻き型)、a=0.5 で無変化。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>半径は画像長辺の半分で正規化しているので、画像の隅で `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> が 1 前後になり、</code><code style="color:#22d3bf">k = ±0.75</code>` なら隅の点は</p>
+<p>1.75 倍/0.25 倍まで動く。逆変換は無い(`<code style="color:#22d3bf">k</code>` の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour</p>
+<p>計測(`<code style="color:#22d3bf">hx_fit_circle_contour</code>` 等)で試す、あるいは合成的にデータを増やす用途。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

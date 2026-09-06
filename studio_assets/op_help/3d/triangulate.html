@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import twoview; twoview.triangulate(pts1, pts2, P1, P2)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;triangulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。</p>
+<p>**無限遠点は `<code style="color:#22d3bf">NaN</code><code style="color:#22d3bf"> で返す**(</code><code style="color:#22d3bf">±inf</code>` にはしない)。同次座標の第 4 成分が 0 =</p>
+<p>2 本の視線が平行で、その対応は有限の 3-D 点を決めない。以前はそのまま割って</p>
+<p>`<code style="color:#22d3bf">±inf</code><code style="color:#22d3bf"> を出していたが、それだと下流の cheirality 判定 </code><code style="color:#22d3bf">depth &gt; 0</code>` が</p>
+<p>**`<code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> を「カメラ前方」として数える**(</code><code style="color:#22d3bf">inf &gt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">True</code>`)。</p>
+<p>:func:<code style="color:#22d3bf">recover_pose</code> は 4 つの (R, t) 候補のうち前方点が最多のものを選ぶので、</p>
+<p>無限遠点が票を持つと候補選択が静かに歪む。`<code style="color:#22d3bf">NaN</code><code style="color:#22d3bf"> なら比較が </code><code style="color:#22d3bf">False</code>` になり、</p>
+<p>数えられずに済む(2026-09-02、chain_fuzz が到達して発覚)。</p>
+<p>ほぼ平行だが厳密には平行でない対応は、<b>大きな有限値</b>として返る。これは</p>
+<p>NaN では拾えないので、呼び手側で距離の妥当性を見る必要がある。</p>
+<p>Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">P1</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">P2</code><code style="color:#22d3bf"> は (3,4) の射影行列(</code><code style="color:#22d3bf">K[R|t]</code><code style="color:#22d3bf">)。対応点はその P と同じ画素座標系の (N,2)。cam1 を基準にするなら </code><code style="color:#22d3bf">P1 = K1[I|0]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 各点ごとに 4×4 の係数行列を SVD する Python ループ(点数に比例)。返り値は float64 (N,3)。</p>
+<p style="margin:2px 0 2px 12px">• 深度の正負(cheirality)は検査しない。前後判定が要るなら結果の z と `<code style="color:#22d3bf">R X + t</code><code style="color:#22d3bf"> の z を見る(</code><code style="color:#22d3bf">recover_pose</code>` が内部で行う)。</p>
+<p style="margin:2px 0 2px 12px">• 解の単位は P の並進 t と同じ。`<code style="color:#22d3bf">recover_pose</code>` 由来の P なら |t|=1 のスケール。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的。(N,2) でない・非有限・点数不一致は `<code style="color:#22d3bf">ValueError</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

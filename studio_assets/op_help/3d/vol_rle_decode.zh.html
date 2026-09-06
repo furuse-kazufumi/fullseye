@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import volregion; volregion.vol_rle_decode(region) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 `<code style="color:#22d3bf">VolRLE</code><code style="color:#22d3bf"> 解码回稠密 </code><code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> float64 </code><code style="color:#22d3bf">{0, 1}</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>volume. Exact inverse of :func:<code style="color:#22d3bf">vol_rle_encode</code> (bit-identical round trip).</p>
+<p>The region is validated first, so a corrupted RLE raises `<code style="color:#22d3bf">ValueError</code>`</p>
+<p>instead of writing out of bounds.</p>
+<p>手順: `<code style="color:#22d3bf">(D*H, W+1)</code><code style="color:#22d3bf"> の int8 累積バッファに各 run の </code><code style="color:#22d3bf">start</code><code style="color:#22d3bf"> へ +1、</code><code style="color:#22d3bf">end</code>` へ</p>
+<p>-1 を加算(`<code style="color:#22d3bf">np.add.at</code><code style="color:#22d3bf">)し、x 方向の累積和が </code><code style="color:#22d3bf">&gt; 0</code>` の位置を前景にする。</p>
+<p>重なる run が渡されても加算で打ち消し合わない(count &gt; 0 なら前景)。</p>
+<p>返り値: `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> の float64、値は </code><code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">1.0</code><code style="color:#22d3bf"> のみ。</code><code style="color:#22d3bf">shape</code>` は</p>
+<p>`<code style="color:#22d3bf">region.shape</code>` から取るので、元 volume は不要。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">VolRLE</code><code style="color:#22d3bf"> 以外 / </code><code style="color:#22d3bf">shape</code>` が長さ 3 でない・空・</p>
+<p>`<code style="color:#22d3bf">MAX_VOXELS</code><code style="color:#22d3bf"> 超 / </code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">starts</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">ends</code>` の長さ不一致 / 整数 dtype でない /</p>
+<p>row id が `<code style="color:#22d3bf">0..D*H-1</code><code style="color:#22d3bf"> の外 / </code><code style="color:#22d3bf">start &lt; 0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">end &gt; W</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">end &lt;= start</code>` の run。</p>
+<p>手作りや外部から読んだ RLE も、割り当ての前にすべて検査する。</p>
+<p>使いどころ: run 上でできない処理(フィルタ・モルフォロジー・`<code style="color:#22d3bf">vol_label</code>` など)の</p>
+<p>直前だけ decode し、結果を `<code style="color:#22d3bf">vol_rle_encode</code>` で戻す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

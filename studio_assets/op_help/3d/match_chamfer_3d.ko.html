@@ -5,6 +5,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>chamfer / 거리장 매칭(부분·가림에 강건). voxel × chamfer 열.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>シーンのエッジの EDT(各 voxel から最近エッジまでの距離)に、テンプレのエッジ点を載せて</p>
+<p>距離和を最小化。score(pos)=Σ_{template edge} DT_scene(pos+edge)/n。<b>低いほど良い一致</b>。</p>
+<p>エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。相関(conv3d)は常に GPU。距離場は</p>
+<p>edt=&quot;scipy&quot;(CPU、既定)か edt=&quot;jfa&quot;(<code style="color:#22d3bf">edt_jfa</code>、全 GPU で CPU 往復なし。scipy と厳密一致)。</p>
+<p>返り値 [chamfer 距離, d, h, w]。</p>
+<p>手順: 両 volume で `<code style="color:#22d3bf">|∇| &gt; thr·max|∇|</code><code style="color:#22d3bf"> の voxel をエッジにする(</code><code style="color:#22d3bf">thr</code>` は各 volume の最大</p>
+<p>勾配に対する <b>相対比</b>、勾配は `<code style="color:#22d3bf">sobel3d</code>`)。scene エッジの距離変換 DT を作り、テンプレの</p>
+<p>エッジ 2 値 volume をカーネルに conv3d した値をエッジ数 `<code style="color:#22d3bf">n</code>` で割る。</p>
+<p>返り値 `<code style="color:#22d3bf">[距離, z, y, x]</code>` の距離は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの</p>
+<p>平均距離(voxel 単位)」で 0 が完全一致。位置は <b>テンプレ中心 (T//2)</b> の scene 座標で</p>
+<p><b>整数</b>(subvoxel 精緻化は無い。要るなら `<code style="color:#22d3bf">refine_translation_lk</code>` へ。corner 規約なので</p>
+<p>T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 で埋めて除外する。</p>
+<p>テンプレにエッジが無い(`<code style="color:#22d3bf">thr</code>` が高すぎる等)と score が全 0 になり index (0,0,0) が返る。</p>
+<p>scene にエッジが無い場合の距離場は意味を持たない(`<code style="color:#22d3bf">thr</code>` を下げる)。</p>
+<p>`<code style="color:#22d3bf">edt=&quot;jfa&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">edt_jfa</code><code style="color:#22d3bf"> を使い </code><code style="color:#22d3bf">device</code>` 上で完結、それ以外は scipy(CPU)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

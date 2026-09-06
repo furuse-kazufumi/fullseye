@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对点群拟合圆环面,返回 `<code style="color:#22d3bf">{center, axis, R, r, residual}</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>点-トーラス距離 `<code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">=軸成分, </code><code style="color:#22d3bf">ρ</code>`=軸からの半径,</p>
+<p>`<code style="color:#22d3bf">R</code><code style="color:#22d3bf">=主半径, </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">=管半径)を </code><code style="color:#22d3bf">scipy.optimize.least_squares</code>` で最小化する。</p>
+<p>初期値は PCA 軸(仲間外れ固有ベクトル)+ `<code style="color:#22d3bf">R0=mean(ρ)</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">r0=mean(管中心円までの距離)</code>`。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群(最低 7 点)。</p>
+<p>Returns:</p>
+<p>dict: ``{&quot;center&quot;: (3,), &quot;axis&quot;: (3,) 単位軸, &quot;R&quot;: float 主半径,</p>
+<p>&quot;r&quot;: float 管半径, &quot;residual&quot;: float 点-面距離の RMS}``。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正/点数不足 fail-closed。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

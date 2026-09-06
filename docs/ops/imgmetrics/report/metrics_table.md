@@ -22,6 +22,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 数値だけの表を作れないようにしてあるのがこの op の主旨。``contract`` の
 各項目が ``条件: <名前>`` として同じ表に入る。
 
+- ``report``: ``compare_images`` または ``measure_with`` の返り値(``contract``
+  キーを持つ dict)。それ以外は ``MetricContractError``。
+- ``order``: 先頭に並べる指標名の並び(省略時はキーの辞書順)。``report`` に無い
+  名前は黙って飛ばし、``"contract"`` は指標として並べない。
+- 返り値: ``(名前, 値)`` タプルの list。指標行のあと、``contract`` の各項目を
+  ``"条件: data_range"`` のようにキーの辞書順で追加する。値は変換しない
+  (``None`` や ``inf`` もそのまま)。
+
+図注や Markdown の表に落とす直前に置く。**条件行を削ってから貼らない**こと
+―― ``data_range`` が違う 2 つの PSNR を並べると 48 dB の見かけの差が出る。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code> (または <code style="color:#22d3bf">opsmeasure1d.get(&quot;fuzzy_measure_pairing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。</p>
+<p>手順: `<code style="color:#22d3bf">measure_pairs(image, measure, sigma, threshold)</code>` で極性の異なる隣接</p>
+<p>エッジの対を取り、各対に ``fuzzy_score = exp(-((width - pair_size) /</p>
+<p>(0.5 pair_size))^2)`` を付けて <b>スコア降順に並べ替える</b>。想定幅ちょうどで 1、</p>
+<p>幅が `<code style="color:#22d3bf">±0.5 pair_size</code><code style="color:#22d3bf"> ずれると </code><code style="color:#22d3bf">e^-1</code>` ≈ 0.37。先頭要素が最も合う対。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">image</code>`: 2-D float(グレー値の単位は入力のまま)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">measure</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">gen_measure_rectangle2</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">gen_measure_arc</code>` の dict。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">: プロファイルの平滑化 σ [サンプル]。</code><code style="color:#22d3bf">threshold</code>`: 採用するエッジの</p>
+<p>最小 |グレー差|(画像の単位)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pair_size</code><code style="color:#22d3bf">: 想定幅 [px]。</code><code style="color:#22d3bf">None</code>` なら並べ替えもスコア付けもせず</p>
+<p>`<code style="color:#22d3bf">measure_pairs</code>` の結果(測定線に沿った順)をそのまま返す。0 や負は検証</p>
+<p>しない(0 だと分母が 1e-9 になり全対のスコアがほぼ 0 か 1 に潰れる)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 対の dict の list(`<code style="color:#22d3bf">table</code><code style="color:#22d3bf"> 型)。各 dict は </code><code style="color:#22d3bf">first</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">second</code>`</p>
+<p>(サンプル index)、`<code style="color:#22d3bf">width</code><code style="color:#22d3bf"> [px]、</code><code style="color:#22d3bf">first_point</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">second_point</code>`</p>
+<p>(`<code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">first_amplitude</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">second_amplitude</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fuzzy_score</code>`。</p>
+<p>対が 1 つも無ければ空 list(例外にはしない)。</p>
+<p>幅の下限・上限で切りたい場合はこの結果を `<code style="color:#22d3bf">width</code>` で自分でフィルタする</p>
+<p>(この op は順位付けだけで、閾での除外はしない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

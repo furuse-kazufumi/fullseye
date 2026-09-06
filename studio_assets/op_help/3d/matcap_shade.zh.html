@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>MatCap:把视空间法线映射到 lit-sphere 贴图,转移材质外观。→ `<code style="color:#22d3bf">(H, W[, C])</code>`。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>視空間の単位法線 `<code style="color:#22d3bf">(nx, ny)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">[-1,1]</code>`)をテクスチャ座標に写像し</p>
+<p>(`<code style="color:#22d3bf">u = (nx+1)/2</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v = (1−ny)/2</code><code style="color:#22d3bf">、行方向で y を反転)、</code><code style="color:#22d3bf">matcap</code>` 画像を</p>
+<p><b>双線形補間</b> で引く。ライト計算をせず、球にライティングして撮った 1 枚の素材見えを</p>
+<p>任意形状へそのまま貼れる(金属・粘土・トゥーンなど)。</p>
+<p>`<code style="color:#22d3bf">matcap</code>` は正方に近い lit-sphere テクスチャ:</p>
+<p style="margin:2px 0 2px 12px">• グレースケール `<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf">      → 出力 </code><code style="color:#22d3bf">(H, W)</code>`</p>
+<p style="margin:2px 0 2px 12px">• カラー `<code style="color:#22d3bf">(h, w, C)</code><code style="color:#22d3bf">(C 任意)  → 出力 </code><code style="color:#22d3bf">(H, W, C)</code>`</p>
+<p>背景(長さ 0 の法線)は 0。テクスチャ座標は端でクランプ(球外縁の法線 `<code style="color:#22d3bf">|(nx,ny)|→1</code>` は</p>
+<p>テクスチャ縁を指す)。</p>
+<p>fail-closed: 形状不正・非有限・小さすぎる(`<code style="color:#22d3bf">h,w &lt; 2</code><code style="color:#22d3bf">)テクスチャは </code><code style="color:#22d3bf">ValueError</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

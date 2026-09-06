@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。
 
+返り値 ``(a, n)``: ``a`` は 1 点目、``n = (b−a)×(c−a)`` を単位化したもの(向きは a→b→c の
+右ねじ)。引数は数値の 2 または 3 ベクトル(それ以外・次元の混在は ValueError)。3 点が同一
+直線上なら ``n`` は零ベクトルのまま返る(例外は出ない)。
+2 次元の点を渡すと ``np.cross`` がスカラー(符号つき面積の 2 倍)を返すので、``n`` はベクトルで
+なく ±1 のスカラーになる。2-D で線の法線が欲しい場合は ``line_from_2points`` の方向を 90°
+回して使うこと。
+後段: ``distance_point_plane`` / ``intersect_line_plane`` / ``intersect_planes`` /
+``angle_between_planes`` にこの ``(a, n)`` を渡す。点群からは ``fit_plane_3d``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

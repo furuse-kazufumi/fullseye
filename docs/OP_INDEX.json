@@ -1,9 +1,9 @@
 {
- "n_ops": 902,
+ "n_ops": 914,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 873
+  "registry": 885
  },
  "sorts": [
   "any",
@@ -2734,6 +2734,102 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_beatcube",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "beatcube",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_cimage",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "cimage",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_counts",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "counts",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_keypoints",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "keypoints",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_lightfield",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "lightfield",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_matrix",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "matrix",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_monogenic",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "qimage",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_points",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "points",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_rgb",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "rgbimage",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_signal",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "signal",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_video",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "video",
+   "category": "bridge",
+   "tier": "registry"
+  },
+  {
+   "name": "img_to_volume",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "volume",
+   "category": "bridge",
    "tier": "registry"
   },
   {

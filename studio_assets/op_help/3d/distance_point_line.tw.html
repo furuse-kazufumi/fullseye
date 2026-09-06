@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.distance_point_line(p, line_pt, d)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;distance_point_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點-直線距離。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">w = p − line_pt</code><code style="color:#22d3bf"> の、方向 </code><code style="color:#22d3bf">d̂</code><code style="color:#22d3bf"> に直交する成分の長さ </code><code style="color:#22d3bf">|w − (w·d̂)d̂|</code>` を float で返す</p>
+<p>(`<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> は内部で単位化。2-D/3-D 共通)。</code><code style="color:#22d3bf">p</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">line_pt</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">d</code>` は数値の 2 または 3 ベクトル、</p>
+<p>次元の混在は ValueError。`<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> が零ベクトルなら </code><code style="color:#22d3bf">|w|</code>` がそのまま返る。単位は入力座標の単位。</p>
+<p>用途: `<code style="color:#22d3bf">fit_line_3d</code><code style="color:#22d3bf"> の軸からの偏心、</code><code style="color:#22d3bf">line_from_2points</code>` の線に対する点群のばらつき</p>
+<p>(1 点ずつ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

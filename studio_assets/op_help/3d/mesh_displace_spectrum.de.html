@@ -4,6 +4,35 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import render3d; render3d.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: &#x27;int&#x27; = 0, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0, weights=None, local_edge=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;mesh_displace_spectrum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verschiebt Vertices entlang ihrer Normalen mit einem <b>angegebenen Amplitudenspektrum</b>, bandbegrenzt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>per vertex → `<code style="color:#22d3bf">(V, F)</code>`.</p>
+<p>`<code style="color:#22d3bf">displacement_i = Σ_k A_k · n_k(x_i) · gate_k(i) · w_k(i)</code>` with one seeded value-noise</p>
+<p>octave `<code style="color:#22d3bf">n_k ∈ [−1, 1]</code><code style="color:#22d3bf"> per </code><code style="color:#22d3bf">(wavelength_k, amplitude_k)</code>` pair (mesh units — the</p>
+<p>Itokawa STL is in km, so the default is 3 m at 60 m falling as `<code style="color:#22d3bf">A ∝ λ^0.77</code>` to</p>
+<p>0.35 m at 3.75 m), `<code style="color:#22d3bf">gate</code><code style="color:#22d3bf"> = :func:</code>displacement_band_weights` on *this* mesh</p>
+<p>(an octave shorter than `<code style="color:#22d3bf">nyquist × local edge</code>` is not applied — it would alias into</p>
+<p>facet noise; route it to :func:<code style="color:#22d3bf">bump_normals_fbm</code> instead) and `<code style="color:#22d3bf">weights</code>` = optional</p>
+<p>`<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> per-vertex or </code><code style="color:#22d3bf">(K, N)</code>` per-octave-per-vertex factor in [0,1] (e.g. the</p>
+<p>synthetic-relief weight `<code style="color:#22d3bf">1 − gate</code>` of the source model). The peak displacement at a</p>
+<p>vertex is at most `<code style="color:#22d3bf">Σ_k A_k</code><code style="color:#22d3bf"> (tests pin it). Unlike :func:</code>mesh_displace_fbm` (one</p>
+<p>amplitude, octave ratio 2, no band limit) every octave&#x27;s amplitude is explicit.</p>
+<p>Deterministic under `<code style="color:#22d3bf">seed</code>`. Fail-closed on shapes / non-finite / negative values.</p>
+<p>手順: (1) :func:<code style="color:#22d3bf">displacement_band_weights</code> で `<code style="color:#22d3bf">gate (K,N)</code><code style="color:#22d3bf"> を作る、(2) </code><code style="color:#22d3bf">weights</code>` が</p>
+<p>あれば掛ける、(3) オクターブ `<code style="color:#22d3bf">k</code>` ごとに seed 固定の value noise</p>
+<p>`<code style="color:#22d3bf">n_k(x) ∈ [-1,1]</code><code style="color:#22d3bf">(波長 </code><code style="color:#22d3bf">λ_k</code>`、格子オフセットはオクターブ番号で変える)を評価し</p>
+<p>`<code style="color:#22d3bf">Σ_k A_k · gate_k · n_k</code>` を法線方向の変位にする、(4) 面積重み付き頂点法線に沿って</p>
+<p>頂点を動かす。返り値 `<code style="color:#22d3bf">(V&#x27; (N,3) float64, F のコピー)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">wavelengths</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">amplitudes</code>`: 同じ長さ(1〜32 個)の正の列。メッシュ単位。</p>
+<p>個数不一致・空・33 個以上・負の振幅・`<code style="color:#22d3bf">amplitudes=None</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code>`。振幅 0 の</p>
+<p>オクターブは評価を飛ばす。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nyquist</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fade</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">local_edge</code><code style="color:#22d3bf">: 帯域ゲートの設定(</code><code style="color:#22d3bf">displacement_band_weights</code>`</p>
+<p>と同じ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">weights</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> なら全オクターブ共通、</code><code style="color:#22d3bf">(K,N)</code>` ならオクターブ別の係数。値は</p>
+<p>[0, 1] に限り、範囲外・形不一致は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf">: 同じ seed なら </code><code style="color:#22d3bf">bump_normals_fbm</code>` と同じ格子を共有する(幾何で担えない</p>
+<p>オクターブを陰影側へ連続して渡せる)。</p>
+<p>`<code style="color:#22d3bf">mesh_displace_fbm</code>` との違いは、振幅をオクターブごとに明示すること、頂点ごとに</p>
+<p>辺長で帯域を切ること。粗いメッシュに短波長を与えても折り返さず、単に無視される。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

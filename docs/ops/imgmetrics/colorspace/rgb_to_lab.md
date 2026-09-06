@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 sRGB → CIE L\*a\*b\*(D65)。ΔE を測る前段。
 
+``xyz_to_lab(rgb_to_xyz(rgb), white)`` の合成。検証と失敗条件はその 2 つに従う:
+
+- ``rgb``: 最後の軸が 3。整数 dtype は dtype の最大値で ``[0, 1]`` に正規化、
+  float は ``[0, 1]`` に収まっていることを要求(外れると ``MetricContractError``)。
+  線形 RGB ではなく **ガンマ付きの sRGB** を渡すこと。
+- ``white``: Lab の白色点。sRGB の行列は D65 固定なので、通常は既定のまま。
+- 返り値: 入力と同じ形の float64。``L`` は ``[0, 100]``、白 ``(1, 1, 1)`` で
+  ``(100, 0, 0)`` 付近。
+
+画像 2 枚の色差なら ``delta_e_map`` が変換から色差まで一度にやる。
+``lab_to_rgb`` で戻せるが、色域外は切り詰められる。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

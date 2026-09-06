@@ -7,6 +7,20 @@
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>値は設計値であって実測の Ra ではない ―― そこは正直に。粗さの<b>順序</b></p>
 <p>(鏡面研磨 &lt; ヘアライン &lt; 交差目 &lt; 梨地)が意味を持つ量。</p>
+<p>引数は無い。返り値は `<code style="color:#22d3bf">{仕上げ名: {&quot;alpha_x&quot;, &quot;alpha_y&quot;, &quot;grain&quot;}}</code>` の dict で、</p>
+<p>キーは `<code style="color:#22d3bf">FINISHES</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">linear</code><code style="color:#22d3bf">(ヘアライン)/ </code><code style="color:#22d3bf">circular</code>`(旋盤の同心目)/</p>
+<p>`<code style="color:#22d3bf">radial</code><code style="color:#22d3bf">(放射目)/ </code><code style="color:#22d3bf">crosshatch</code><code style="color:#22d3bf">(交差目)/ </code><code style="color:#22d3bf">random</code>`(梨地・ブラスト)の 5 つ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha_x</code>`: 筋方向の異方性ローブ幅(無次元、Ward 型 BRDF の α)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha_y</code><code style="color:#22d3bf">: 筋と直交する方向のローブ幅。</code><code style="color:#22d3bf">alpha_x &gt; alpha_y</code>` が「筋に沿って</p>
+<p>ハイライトが伸びる」異方性で、`<code style="color:#22d3bf">random</code>` だけ等方(両方 0.16)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">grain</code>`: 微小凹凸(法線の乱れ)の強さ、無次元。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は内部表の<b>複製</b>なので、書き換えても以後の `<code style="color:#22d3bf">scene_material</code>` /</p>
+<p>`<code style="color:#22d3bf">finish_shade</code>` には影響しない。</p>
+<p>`<code style="color:#22d3bf">scene_material(kind=&quot;conductor&quot;, finish=...)</code><code style="color:#22d3bf"> はここから </code><code style="color:#22d3bf">alpha_x</code>` /</p>
+<p>`<code style="color:#22d3bf">alpha_y</code><code style="color:#22d3bf"> を引いて材質に埋め、</code><code style="color:#22d3bf">micro_normals</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tangent_field</code>` /</p>
+<p>`<code style="color:#22d3bf">finish_shade</code>` が同じ名前で筋の向きとローブを作る。手元の Ra を反映したい</p>
+<p>ときは、この表を参考に `<code style="color:#22d3bf">scene_material</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">roughness_um</code>` を別途与える</p>
+<p>(そちらは Rq [µm] で鏡面割合が決まる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

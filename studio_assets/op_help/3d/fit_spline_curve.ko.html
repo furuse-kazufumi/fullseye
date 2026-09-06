@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;fit_spline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>순서 있는 3D 점열을 B 스플라인으로 매끄럽게 하고 재표본화. → (M,3). 잡음 있는 궤적/에지의 평활화에.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>scipy.interpolate.splprep/splev。smooth=0 は補間、&gt;0 で平滑。n=出力点数(既定=入力数)。</p>
+<p>`<code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code>` でパラメトリック B スプライン(パラメータ u∈[0,1]、</p>
+<p>scipy 既定の弦長パラメータ化)を当て、`<code style="color:#22d3bf">u = linspace(0, 1, n)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">splev</code>` 評価した</p>
+<p>(n,3) float64 を返す。u 等間隔なので出力点は弧長で厳密に等間隔ではない(弧長等間隔が</p>
+<p>要るなら結果を `<code style="color:#22d3bf">resample_uniform</code>` に通す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">smooth</code>`: scipy の平滑化条件 s。残差二乗和が s 以下になる最少ノットで当てる。</p>
+<p>0 なら全点を通る補間、大きいほど滑らか(単位は座標の二乗)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: スプライン次数(既定 3)。点数 N が k 以下だと </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code>`: 出力点数。None で入力点数。</p>
+<p style="margin:2px 0 2px 12px">• 入力は index 順に並んだ (N,3) を前提とし、形状検証は点数以外に無い。</p>
+<p>ノイズのあるエッジ点列や軌跡を平滑してから `<code style="color:#22d3bf">curvature_torsion</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">frenet_frame</code>` に</p>
+<p>渡す前段として使う。tck を持ち回りたい場合は `<code style="color:#22d3bf">fit_bspline_curve</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">eval_bspline_curve</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

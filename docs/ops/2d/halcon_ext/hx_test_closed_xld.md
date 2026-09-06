@@ -17,13 +17,34 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_test_closed_xld", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `test_closed_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_test_closed_xld: 入力 → 出力](../../_fig/hx_test_closed_xld.png)
+![hx_test_closed_xld: input → output](../../_fig/hx_test_closed_xld.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_test_closed_xld: knob a sweep](../../_fig/hx_test_closed_xld.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_test_closed_xld: stages](../../_fig/hx_test_closed_xld.chain.jpg)
 
 ## 使い方
 
 閉じている contour の割合を返す(端点間距離が閾値未満=閉、feature)。
+
+contour dict の各 contour について、点数が 3 以上かつ始点と終点のユークリッド距離が ``tol`` 以下なら
+「閉じている」と数え、閉じた contour の本数を全 contour 数で割った割合を ``np.float64`` で返す。
+
+- ``a`` → 許容距離 ``tol = 1 + a*4``(1〜5 画素)。
+- ``b`` は未使用。
+- contour が無ければ 0.0。
+
+始点=終点を重複させて閉じる ``close_contours_xld`` の出力は距離 0 なので必ず閉と判定される。
+``hx_clip_end_points`` や ``hx_clip_contours`` で端を落とした後は開いた扱いになる。個々の contour がどれかは
+返さない(割合のみ)。
 
 ## 詳しい使い方ガイド
 

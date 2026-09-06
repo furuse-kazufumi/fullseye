@@ -4,6 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volgray; volgray.vol_gamma(vol, gamma)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_gamma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ボリューム自身の値域でのガンマ(べき則)補正(HALCON `<code style="color:#22d3bf">pow_image</code>`)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Normalises `<code style="color:#22d3bf">[min, max]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">, applies </code><code style="color:#22d3bf">t**gamma</code>`, and maps the</p>
+<p>result back to the original `<code style="color:#22d3bf">[min, max]</code>` — so the volume&#x27;s extremes are</p>
+<p>fixed points and only the mid-tones move: `<code style="color:#22d3bf">gamma &gt; 1</code>` darkens them,</p>
+<p>`<code style="color:#22d3bf">gamma &lt; 1</code><code style="color:#22d3bf"> brightens them, </code><code style="color:#22d3bf">gamma == 1</code>` is the identity. The transform</p>
+<p>is strictly monotone, so intensity *ordering* is always preserved.</p>
+<p>A <b>constant volume is returned unchanged</b> (no range to normalise —</p>
+<p>see the module docstring&#x27;s flat-volume note).</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>gamma : float</p>
+<p>Exponent, `<code style="color:#22d3bf">&gt; 0</code><code style="color:#22d3bf"> (fail-closed: </code><code style="color:#22d3bf">gamma &lt;= 0</code>` is not a monotone</p>
+<p>intensity map).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D, H, W), float64</p>
+<p>The gamma-corrected volume, same `<code style="color:#22d3bf">[min, max]</code>` range as the input.</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D / non-finite input, or `<code style="color:#22d3bf">gamma &lt;= 0</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

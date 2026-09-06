@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_recon_sweep.png",
+  "name": "recon_sweep",
+  "caption": "12 本の FBP は RMSE では空白画像より悪いが、相関 0.61 で構造は残っている。零点 B はぼけるだけでストリークが出ない。",
+  "shape": [
+   647,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "02_fidelity_table.png",
+  "name": "fidelity_table",
+  "caption": "RMSE で見ると 12 本は空白画像 0.2420 より悪い。相関とストリークは別のことを言う。",
+  "shape": [
+   200,
+   463,
+   3
+  ],
+  "csv": "02_fidelity_table.csv",
+  "tsv": "02_fidelity_table.tsv"
+ },
+ {
+  "file": "03_rmse_vs_views.png",
+  "name": "rmse_vs_views",
+  "caption": "零点 A = 空白画像、零点 B = 無フィルタ逆投影(どちらも水平・ほぼ水平)。24 本までは FBP の勝ちで、12 本では両方に負ける —— ランプは測っていない高周波を増幅するため。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D Canny エッジ検出(非最大抑制 + ヒステリシス)。
 
+Parameters
+----------
+vol : (D,H,W) array
+    グレー voxel。
+low, high : float
+    ヒステリシスの下限 / 上限閾値(勾配の大きさに対して)。0 <= low <= high, high > 0。
+sigma : float
+    平滑の標準偏差。
+
+Returns
+-------
+edge_mask : (D,H,W) bool
+    1 voxel に細線化されたエッジ。
+
+Notes
+-----
+(1) gradient3d で平滑勾配を得る → (2) 勾配方向に沿った NMS(三線形補間)で局所最大を残し
+→ (3) high 閾値を種に low 閾値で 26 連結を伸長。閾値は絶対値なので、対象に応じて
+gmag.max() のスケールで与えるとロバスト。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

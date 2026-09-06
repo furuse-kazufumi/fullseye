@@ -5,6 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>各主成分の寄与率(合計 1)。→ `<code style="color:#22d3bf">(k,)</code>`。</p>
+<p>式: `<code style="color:#22d3bf">variance / total_variance</code><code style="color:#22d3bf">。分母は </code><code style="color:#22d3bf">model[&quot;total_variance&quot;]</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">shape_pca</code>`</p>
+<p>が<b>全</b>特異値から計算した総分散)で、無ければ `<code style="color:#22d3bf">variance.sum()</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">model</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">shape_pca</code><code style="color:#22d3bf"> の返り値。必須キーが無ければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(k,)</code><code style="color:#22d3bf"> float64、各要素は </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">shape_pca(n_components=0)</code>`</p>
+<p>(全成分)なら合計は 1。**`<code style="color:#22d3bf">n_components</code>` で打ち切ったモデルでは合計が 1 未満**</p>
+<p>になる(切り捨てた成分の分だけ足りない)―― 「上位 k 本でどれだけ説明できるか」</p>
+<p>を読むにはむしろその方が正しい。</p>
+<p style="margin:2px 0 2px 12px">• 総分散が 0(全個体が同じ形)なら全要素 0 を返す(0 除算にしない)。</p>
+<p>`<code style="color:#22d3bf">shape_pca</code><code style="color:#22d3bf"> の分散は標本分散(</code><code style="color:#22d3bf">K-1</code>` で割る)なので、個体数が少ないと</p>
+<p>固有値の絶対値は膨らむが、比であるこの量は影響を受けにくい。累積和</p>
+<p>(`<code style="color:#22d3bf">cumsum</code><code style="color:#22d3bf">)で「99 % に何本要るか」を決め、</code><code style="color:#22d3bf">shape_mahalanobis</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">cumulative</code>`</p>
+<p>や `<code style="color:#22d3bf">shape_synthesize</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">n_modes</code>` に渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
@@ -12,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
-<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shapestat_landmark_tour">shapestat_landmark_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shapestat_landmark_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">signal</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">model</code>)</h3>

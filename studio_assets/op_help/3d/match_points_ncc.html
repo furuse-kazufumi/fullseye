@@ -5,6 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。</p>
+<p>手順: `<code style="color:#22d3bf">pts_scene</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">pts_model</code><code style="color:#22d3bf"> を **同じ** </code><code style="color:#22d3bf">bounds=(lo,hi)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">size</code>` で</p>
+<p>`<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf">(σ=</code><code style="color:#22d3bf">smooth</code><code style="color:#22d3bf"> voxel の平滑つき)に通し、model 側は </code><code style="color:#22d3bf">&gt; 5%·max</code>` の bbox を</p>
+<p>切り出してテンプレにし、`<code style="color:#22d3bf">accel_match.ncc_locate_3d</code>` で NCC 定位する。</p>
+<p>返り値 `<code style="color:#22d3bf">[NCC, z, y, x]</code>` float64(NCC ∈ [−1,1]、位置は voxel index、±2 近傍重心で</p>
+<p>サブボクセル)。</p>
+<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene voxel のどこに載るか。world 座標に戻すには</p>
+<p>`<code style="color:#22d3bf">lo + idx/(size−1)·(hi−lo)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">points_to_voxel</code>` の格子)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf"> は必須(</code><code style="color:#22d3bf">_lo_hi</code>` で検証、不正は ValueError)。両雲を含む範囲にしないと範囲外の</p>
+<p>点が端 voxel に clip される。</p>
+<p style="margin:2px 0 2px 12px">• model の voxel が全 0 なら `<code style="color:#22d3bf">[0,0,0,0]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 並進のみ。回転・スケールは `<code style="color:#22d3bf">match_pca</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">match_logpolar_z</code>` で先に合わせる。</p>
+<p>後段: `<code style="color:#22d3bf">icp_point2point_3d</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">init_t</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">refine_translation_lk</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

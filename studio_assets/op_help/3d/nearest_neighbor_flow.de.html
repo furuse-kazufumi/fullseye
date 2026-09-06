@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.nearest_neighbor_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;nearest_neighbor_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das 3-D-Verschiebungsvektorfeld (N, 3) von jedem Punkt in pts0 zu seinem nächsten Nachbarn in pts1.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">pts0</code><code style="color:#22d3bf"> の各点 p について </code><code style="color:#22d3bf">pts1</code>` 中の最近傍 q を cKDTree で求め、変位</p>
+<p>`<code style="color:#22d3bf">q - p</code>` を返す。要素数は N != M でよい。変位が局所点間隔より十分小さい</p>
+<p>とき(小さな運動)にのみ「点 i の真の対応先」を当てる — 大変位では最近傍が</p>
+<p>別点に張り付く(honest な限界、正則化には :func:<code style="color:#22d3bf">smooth_flow</code> を併用)。</p>
+<p>Args:</p>
+<p>pts0: (N, 3) 時刻 0 の点群。</p>
+<p>pts1: (M, 3) 時刻 1 の点群。</p>
+<p>Returns:</p>
+<p>(N, 3) 変位ベクトル場(pts0 と同じ行順)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正、または pts0 が非空なのに pts1 が空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

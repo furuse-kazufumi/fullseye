@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。
 
+互いに ``tol`` 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が
+別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち
+``min_size`` 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,...
+(決定論)。
+
+Args:
+    points: (N,3) 点群。
+    tol: 同一クラスタとみなす近接半径(距離、要 > 0)。
+    min_size: これ未満の連結成分はノイズ(-1)。
+
+Returns:
+    labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

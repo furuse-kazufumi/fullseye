@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import measure3d; measure3d.smallest_sphere3(points) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;smallest_sphere3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Minimum enclosing sphere of `<code style="color:#22d3bf">(depth, row, col)</code>` points (Welzl&#x27;s exact</p>
+<p>algorithm on the convex hull). Returns `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code>`) and radius</p>
+<p>`<code style="color:#22d3bf">r</code>` — the smallest sphere that contains every point. This is the 3-D</p>
+<p>`<code style="color:#22d3bf">smallest_circle</code>`; its radius is strictly below the AABB-diagonal sphere on</p>
+<p>any non-spherical set, and equals the true radius for points on a sphere.</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on empty input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

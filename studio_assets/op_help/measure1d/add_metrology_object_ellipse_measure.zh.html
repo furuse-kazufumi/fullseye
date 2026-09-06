@@ -6,6 +6,20 @@
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。</p>
 <p>`<code style="color:#22d3bf">phi</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">ra</code>` 軸の向き(col 軸から、ラジアン)。</p>
+<p>参照楕円(中心 `<code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf"> [px]、</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf"> 方向の半径 </code><code style="color:#22d3bf">ra</code>`、直交方向の半径</p>
+<p>`<code style="color:#22d3bf">rb</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">model[&quot;objects&quot;]</code>` に積む(dict をその場で更新)。</p>
+<p>`<code style="color:#22d3bf">apply_metrology_model</code><code style="color:#22d3bf"> はパラメータ角 </code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">n</code>` 等分した点を置き</p>
+<p>(弧長等分ではないので、扁平な楕円では長軸端が密になる)、各点で楕円の</p>
+<p>外向き法線 `<code style="color:#22d3bf">∇F</code>` に沿ってエッジを測り、楕円フィットで出し直す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">phi</code>`: col 軸(x)から row 軸(画像下向き)へ測ったラジアン</p>
+<p>(矩形の `<code style="color:#22d3bf">phi</code>` と同じ規約)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ra</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rb</code>`: 半径 [px]。0 を入れると法線計算で 0 除算になるので避ける</p>
+<p>(ここでは検証しない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code>`: サンプル数(既定 40)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">apply</code><code style="color:#22d3bf"> 結果の </code><code style="color:#22d3bf">params</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">row / col / phi / ra / rb</code><code style="color:#22d3bf"> で **</code><code style="color:#22d3bf">ra &gt;= rb</code>`</p>
+<p>(長軸が `<code style="color:#22d3bf">ra</code><code style="color:#22d3bf">)** に正規化され、</code><code style="color:#22d3bf">rms</code>` は代数残差ではなく中心からの</p>
+<p>半径方向の幾何残差 [px]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

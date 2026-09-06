@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aug_motion_blur — 2D <code style="color:#22d3bf">augmentation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_motion_blur&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/aug_motion_blur.png" alt="aug_motion_blur: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/aug_motion_blur.png" alt="aug_motion_blur: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_motion_blur.a.jpg">aug_motion_blur: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_motion_blur.b.jpg">aug_motion_blur: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_motion_blur.inputs.jpg">aug_motion_blur: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lineare Bewegungsunschärfe: Faltung mit einem normalisierten LINIEN-(Box-)Kernel, der Punktverwaschungsfunktion einer Kamera-/Szenenschwenkung mit konstanter Geschwindigkeit während der Belichtung. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt die Schlierenlänge </code><code style="color:#22d3bf">L = 3 + 20*a</code><code style="color:#22d3bf"> px fest (auf ungerade erzwungen und begrenzt, damit der Kernel das Bild nie überschreitet), </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> legt den Schlierenwinkel </code><code style="color:#22d3bf">b*180</code><code style="color:#22d3bf"> Grad fest. Die Randbehandlung erfolgt per </code><code style="color:#22d3bf">reflect</code>`, sodass der Bildrand nicht dunkler wird. Energieerhaltend (Kernel summiert sich zu 1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

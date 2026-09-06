@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 형태학적 기울기 = dilation − erosion. <b>경계/표면</b>을 추출(sobel 대신의 에지 원천).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>同じ SE(一辺 `<code style="color:#22d3bf">2r+1</code>` の cube か半径 r の ball)での局所 max − 局所 min。値は常に 0 以上、</p>
+<p>一様な領域で 0、明暗の境界で段差の大きさ(`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> が大きいほど境界が太い。</code><code style="color:#22d3bf">r=1</code>` で 2 voxel</p>
+<p>幅)。方向情報は無い(方向が要るなら `<code style="color:#22d3bf">sobel3d</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">sobel3d</code>` と違い利得の補正が要らず、</p>
+<p>2 値 volume では「境界 voxel = 1」の殻がそのまま出る。`<code style="color:#22d3bf">se</code>` は &quot;cube&quot;/&quot;ball&quot;(他は</p>
+<p>ValueError)、`<code style="color:#22d3bf">device</code><code style="color:#22d3bf"> は cube+torch のときだけ有効。返り値 </code><code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>用途: `<code style="color:#22d3bf">match_chamfer_3d</code><code style="color:#22d3bf"> 用のエッジ源、</code><code style="color:#22d3bf">hough_plane_3d</code>` に渡す前の表面抽出の代替。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

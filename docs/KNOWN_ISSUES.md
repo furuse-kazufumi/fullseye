@@ -954,3 +954,166 @@ $env:PYTHONPATH = $S; py -3.11 -m pytest tests/test_op_figures.py tests/test_doc
 旧 numpy(py3.10 に入る版)の `std` は加算順が違い、同じ値の配列でも厳密ゼロに
 ならない。主張は「一定」なので `np.ptp(...) == 0.0`(max − min。総和を経ないので
 厳密)に替えた。**float の `== 0.0` は総和を経た量には使わない。**
+
+## §41 残っていた穴を埋めた回(2026-09-07): 入口 op・使い方 494 本・例ゼロ 205 本・空の図
+
+§39/§40 の末尾に「残っている本当の穴」として書いた 4 件をすべて処理した。数字は
+すべて `py -3.11 tools/gen_docs_index_ops.py` と `tests/` の門が数え直したもの。
+
+### 1. 161 op に図と Studio プログラムが付いた(入口 op `img_to_*`、category `bridge`)
+
+**原因**: 2-D レジストリには points / signal / video / volume / lightfield / cimage /
+counts / beatcube / matrix / keypoints / qimage / rgbimage を**受ける** op が 161 本
+あるのに、画像からそれらを**作る**登録 op が 1 本も無かった。typed bridge
+(`backends_typed`)が入口 op を既定から外していたのは正しい理由による ——
+`in_sort=image` の op を足すと image の候補リストが伸び、既存のゲノムが別の op に
+写る(`docs/WAVE0_STABLE_SLOTS.md` §1)。
+
+**解**: `backends_bridge.py` の 12 op を category `bridge` で `REGISTRY` に載せ、
+`ops._candidates` が **その category を候補から除く**(`ops._NOT_A_CANDIDATE`)。
+進化には見えず、名前で引く経路(`fullseye.apply` / Studio / 図 / 索引)には見える。
+候補リストの不変は `tests/test_wave0.py`、橋の契約は `tests/test_backends_bridge.py`、
+例は `examples/gallery2d_bridge.py`(閉形式で検算)、ガイドは
+`docs/ops/2d/guides/gallery2d_bridge.md`。
+
+**入口の尺度で 1 度やり直した**: 最初は点群を画素座標(0〜127)で作ったところ、
+`tb_alpha_shape_boundary` / `tb_iss_keypoints` / `tb_radius_outlier_removal` が
+**空**を返し、`tb_occupancy_grid` / `tb_euclidean_cluster` が**全 0** を返した。
+typed bridge が点群 op に束縛した半径 2.0・境界箱 0〜10・格子解像度は連鎖ファザーの
+種 `[0,10)^3` を前提にしている。入口をその尺度(`backends_bridge.POINTS_BOX = 10`)に
+揃えて解消。**尺度の規約は台帳のどこにも書かれていなかった**(束縛値から逆算した)。
+
+| 図の判定(897 op) | 本数 |
+|---|---|
+| 図あり(実際に走らせて描いた) | **892** |
+| 型が届かない | **0**(§40 の 161 → 0) |
+| 定義域が合わない(`gen_op_figures.DOMAIN_MISMATCH`、理由つき) | 4 |
+| 走ったが返り値が空(`empty`) | 1(`tb_zero_crossings_funct_1d`: 非負のプロファイルに零交差は無い) |
+| 落ちた | 0 |
+
+定義域が合わない 4 本: `tb_angle_3points`(ちょうど 3 点が要る)/ `tb_indices_to_labels`
+(整数の添字が要る)/ `tb_keypoints_to_image2d`(束縛した raster が 64×64 固定)/
+`tb_cx_apply_transfer_function`(束縛した H が 32×32 固定)。後ろ 2 本は typed bridge の
+束縛が入力の大きさに追随しないためで、ヒント表を入力依存にできれば通る。
+`tests/test_op_figures.py::test_domain_mismatch_ledger_is_still_true` が「本当にまだ
+拒否される」ことを走らせて確かめる(免除台帳が腐らないように)。
+
+### 2. ★「out が真っ黒」—— 走ったことと意味のある出力が出たことを分けていなかった
+
+ユーザー指摘(2026-09-07)。生成器は `fs.apply` が例外を投げなければ「図あり」に数え、
+**空配列を黒い板として描いていた**。判定 `empty` を足し、空は図にせずノートに理由を
+書く。`tests/test_op_figures.py::test_empty_verdicts_are_really_empty_and_ok_verdicts_are_not`
+が「empty は本当に空、ok は空でない」を実行で確かめる。
+ユーザーの次の問い「同じ状態は他にないか」に答えるため、892 枚の **out パネルを
+数値で走査**した(一様 = 標準偏差 0、低コントラスト = 値域 0.1 未満):
+
+| | 本数 | 処置 |
+|---|---|---|
+| out が一様 | 8 | 6 本は op の答えとして正しい定数(`hx_full_domain` / `hx_get_domain` = 全域、`hx_gen_empty_region` = 空、`hx_gen_image_proto` = 一定値、`r2_smallest_circle` = 領域が画像全体、`r3_select_region_point` = 点を含む領域が無い)。**2 本は入力側の欠陥**: `tb_geodesic_distances` は距離に inf が混じり折れ線が描けなかった → 非有限を除いて描く。`tb_specular_coefficient_map` は `img_to_rgb` が白いハイライトを作らず鏡面が全 0 → 入口を二色性反射(明部 0.75 超を白へ)に変更 |
+| out の値域が 0.1 未満 | 1(周波数系) | min–max で伸ばし、キャプションを `out (stretched)` にして伸ばした事実を明示(`gen_op_figures.STRETCH_BELOW`) |
+| out が値の札(スカラ特徴量) | 127 | 図にならないのが正しい |
+
+`ncc_locate` / `shape_locate` はテンプレ未設定で 0 の match を返す(札)。
+
+図の見せ方も sort ごとに変えた(`gen_op_figures._panel_for`): 点群は上から見た散布
+(明るさ = z)、1-D 列は折れ線、体積は z 方向の MIP、動画は中央フレーム、
+ライトフィールドは中央視点、複素画像は振幅、四元数画像はベクトル部を RGB に、
+キーポイントは元画像への重ね描き。`array(4096, 3)` と書いた札では op が何をしたか
+伝わらなかった。
+
+### 2b. 図の第 2 波 —— 1 枚に纏めない(ユーザー指示 5 件を同日に反映)
+
+| 指示 | 実装 |
+|---|---|
+| 「1 枚に纏める必要はない。段階的なもの・条件が複数あるものは分けて出す」 | `<op>.a.jpg` / `<op>.b.jpg`(つまみを 0.1 / 0.5 / 0.9 に振った 3 枚。**出力が変わる op だけ**。変わらなければ「つまみ a は出力を変えない(実測)」とノートに書く —— これは効かないつまみの台帳でもある)、`<op>.chain.jpg`(前置き op → この op の段階図) |
+| 「物によっては疑似カラーのほうが分かりやすい」 | 距離・位相・向き・深度・曲率・スペクトル … **量の場**の出力に viridis 風の疑似カラー(`gen_op_figures.PSEUDOCOLOR` の名前規則、キャプション `out (viridis)`)。フィルタ系はグレーのまま |
+| 「複雑なものはアニメーション GIF でも」 | 出力が動画 / ライトフィールド / 体積の op に `<op>.gif`(フレーム / 視点 / スライス)。静止画が完成形、GIF は補助(Studio の QTextBrowser は 1 コマ目) |
+| 「高品質を求められるものは、いくつかの画像を試した結果が有っても良い」 | `<op>.inputs.jpg`: 合成シーン / 写真(skimage `camera`)/ 硬貨(`coins`)/ 生成画像 4 枚(部品・基板・ラベル・豆)の上段 = 入力、下段 = 出力 |
+| 「モノクロとカラーの両方に対応している op もある」 | `inputs` 図の最終列にカラー写真(`astronaut`)。**色を跨がない op(§34 の 89 本以外)だけ**に掛け、跨ぐ op にはその旨をノートに書く(`color_ok`) |
+| 「外部の画像生成 AI にテスト用の入力画像を作ってもらっても良い」 | `tools/gen_ai_inputs.py`。OpenAI は残高切れ(429)だったので Gemini `gemini-2.5-flash-image` で 4 枚生成。来歴(モデル・日時・プロンプト・SHA-256)は `docs/ops/_fig/inputs/PROVENANCE.json`。生成は人が走らせたときだけ(CI からは呼ばない) |
+
+配り方: 主図 PNG と GIF は wheel(Studio ヘルプ)に同梱、JPEG(段階図・複数入力、128 px 等倍・品質 92)は docs サイトだけに置き、Studio ヘルプからはリンク(全 op ぶんを同梱すると PyPI の 100 MB 上限を超える。ユーザー指示「縮小し過ぎ。容量なら JPEG で」)。スカラを返す op には複数入力の図を作らない。主図も 32 色パレットをやめて可逆 PNG に(「極力は高品質な部分を見せたい」)。
+
+門: `tests/test_op_figures.py::test_extra_figures_exist_and_are_counted`(床: 段階図 600 組・GIF 30 本・複数入力 600 本)、`::test_dead_knobs_are_really_dead`(「効かない」と記録したつまみが本当に効かないか抜き取り)。
+
+### 3. 使い方が 1 行だった 494 本 → 0 本
+
+2 つの原因が重なっていた。
+
+- **3-D 台帳の切り詰め**(構造的): `ops3d._build` は `fn.__doc__` の **1 行目だけ**を
+  `doc` に入れ、`tools/opdocs.py` の 3-D 経路がそれを「使い方」に使っていた。
+  他の台帳 dim は `inspect.cleandoc(fn.__doc__)` 全文を使う。494 本のうち 3-D の
+  多数は **docstring 自体は最初から長かった**(例: `vol_rle_intersect` 629 字、
+  `annotate3d_project` 1,564 字)。opdocs の 3-D 経路を全文に変更。
+- **本当に 1 行だった op**: 2-D backend 87 本(`hx_*` 62 本など)と台帳 60 本、3-D の
+  一部。実装を読んで日本語の本文(引数の写像式・返り値の形・fail-closed 条件・罠・
+  前後の op)を足した。**1 行目は 1 バイトも変えていない**(6 言語の要約対訳表が
+  1 行目の指紋をキーにしているため)。
+
+いまの実測(`_note_substance`): **使い方 120 字未満 = 0 本**。床 `_WITH_USAGE_FLOOR`
+を 1,348 → 1,854 に上げた。
+
+### 4. 例ゼロ 205 本 → 1 本(`identity`)
+
+- **台帳 7 族 58 本**: 例スクリプトを 9 本足した(`dem_geodesy_tour` /
+  `dem_terrain_analysis_tour` / `piv_field_analysis_tour` / `profile_frame_tour` /
+  `shapestat_landmark_tour` / `shape2d_morph_descriptor_tour` / `blob_split_tour` /
+  `annotate_paper_tour` / `gallery2d_bridge`)。どれも合成データに真値を埋めて `assert`
+  で検算し、60 秒未満、`examples2d.EXAMPLES` に登録。
+- **橋渡し op 147 本(`tb_*`)**: 例は台帳名(`arc_length`)で書かれ、`tb_arc_length` は
+  同じ実装を `fn(v, a, b)` に合わせただけ。ノートが台帳側の例を**継承**し、
+  「元の台帳 op の例(呼び出し形だけ違う)」と明記する(`opdocs._records` の
+  `examples_inherited`)。例索引そのもの(`examples:` frontmatter)は触っていない ——
+  そこは「実際に `tb_` 名で呼んだ例」を数える門が別にある。
+- `identity` は例を書く意味が無いので残す(理由は §39)。
+
+### 5. docstring の読み合わせで見つかった不具合(直したもの / 記録だけのもの)
+
+**直した(実測で確認)**:
+
+- `imgmetrics._INT_RANGES`: `int8 → 255`、`int16 → 65535` と書かれていた(符号付きの
+  最大値は 127 / 32767)。int16 画像の PSNR が 6 dB ずれる。修正 + テスト。
+- `backends_typed.OP_KNOB_RANGE`: `tb_wetness` の `wet` は既定 1.0 で定義域 [0,1] なのに
+  相対スケール(既定の 1/4〜2 倍)で `a > 0.43` なら 1.125 になり**必ず失敗**していた。
+  定義域が分かっている引数は絶対範囲で写す表を足した。
+- `hx_disparity_to_xyz`: `a`, `b` を変えても出力が完全一致(`f*baseline` が定数倍で
+  最後の正規化に打ち消される)—— **未修正**、ノブが死んでいることを記録。
+
+**報告のみ(Agent の読み合わせ。一次情報で私が確認したのは上の 3 件だけ。残りは
+ファイル:行の指摘を残す。採用するときは 1 件ずつ実コードで検証すること)**:
+
+- `backends_halcon_ext.py:265` `_nonmax_suppression_dir` の 45°/135° 隣接対が逆の疑い
+  (斜めエッジが細線化されない)。`:850,:1007` 楕円距離の半軸が境界点群では √2 倍ずれる。
+  `:915` `polar_trans_contour_xld_inv` が順変換の逆になっていない(往復誤差 60 px)。
+- `backends_regions2.py:279` `r2_inner_circle` が距離変換の「背景画素中心まで」の
+  距離を使うため描いた円板が領域をはみ出す。`_as_mask` が (H,W,3) を (H,3W) に潰す。
+- `match3d.py`: `plane_from_3points` / `distance_line_line` / `intersect_planes` が
+  2-D 入力で壊れる(`_vecs` は 2-D を通す)。`cylinder_unwrap` に 2×2 未満の検査が無い。
+  `hough_sphere_3d(radii=[])` が生 TypeError。`refract` が法線の向きを検査しない。
+- `metrics3d.py:59` `hausdorff_distance` だけ `_require_cloud` を通らない(空点群で
+  numpy の生エラー)。`bundle3d.project` が `Z <= 0` を弾かない。`pose_graph.mean_edge_error`
+  が添字を検証しない。`symmetry3d.reflect_points` が零法線を `+1e-12` で吸収。
+  `mesh_props.mesh_area` が退化三角形を拒否しない(モジュール docstring と矛盾)。
+- `demops.dem_viewshed` が NaN セルを可視 1 のまま返す。`measuring1d.gen_measure_arc`
+  が `radius=0` を検証しない。`pivops._flow` / `colortransport.transport_plan_1d` が
+  有限性を検査しない。`blob2d.blob_seeds` が h-maxima でなく h-dome(残差 > 0)を種にする
+  (低い塊にも種が立ち、docstring の「h を大きくすると種が減る」と一致しない)。
+  `blob_split` の割れ目が番号の大きい種の側へ食い込む(幾何でなく番号順の偏り)。
+- `range_image.bearing_angle_image` の未知 `direction` が黙って列方向に落ちる。
+  `photometric.normals_to_gradients` の `nz==0` で勾配が 1e12。`twoview.sampson_distance`
+  は二乗値を返す(名前は距離)。`pnp3d._project` が深度 ≤ 0 を割る。
+  `regionprops3d._as_binary_3d` が NaN を前景にする。
+- `volregion.py:370` の docstring に非 raw の `\ ` がある(py3.12+ で SyntaxWarning)。
+- 既存の numpydoc 形式(`Parameters` + 深い字下げ)の docstring は、ノートで Markdown の
+  コードブロックに化ける可能性がある(edges3d / recon3d / descriptors3d ほか)。
+
+### 6. 残っている穴(この回でも埋めていない)
+
+- `points` sort の列規約が 2 つ混在(カメラ系 (x, y, z) と `reprconv` の (z, y, x))。
+  入口 op は (x, y, z) を採り docstring に書いたが、統一は未着手。
+- typed bridge の束縛値(raster 64×64、H 32×32、半径 2.0 …)が入力の大きさに追随しない。
+  `DOMAIN_MISMATCH` の 2 本と、点群の尺度規約(`POINTS_BOX`)はその現れ。
+- `<img alt>` は英語にした(`input → output`)。図の中の文字も英語のみ。
+- 手書きヘルプ 3 本(`gaussian` / `otsu` / `sobel_mag`)に呼び出し形を足した
+  (`fs.apply` / `fs.op.<name>` / Studio の 1 行)。
+

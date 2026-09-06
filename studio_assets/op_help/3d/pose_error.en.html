@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import metrics3d; metrics3d.pose_error(R_est, t_est, R_gt, t_gt)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;pose_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Pose error = (rotation angle [deg], translation norm). For comparing a registration result against ground truth. → (rot_deg, trans_err).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>計算:</p>
+<p style="margin:2px 0 2px 12px">• 回転: `<code style="color:#22d3bf">dR = R_est.T @ R_gt</code><code style="color:#22d3bf"> の回転角 </code><code style="color:#22d3bf">arccos((trace(dR) - 1) / 2)</code>` を度に</p>
+<p>直す(`<code style="color:#22d3bf">cos</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[-1, 1]</code>` にクリップして丸め誤差で NaN にしない)。値域</p>
+<p>`<code style="color:#22d3bf">[0, 180]</code><code style="color:#22d3bf"> 度。</code><code style="color:#22d3bf">R_est == R_gt</code>` なら 0。</p>
+<p style="margin:2px 0 2px 12px">• 並進: `<code style="color:#22d3bf">|t_est - t_gt|</code>`(ユークリッドノルム、座標と同じ単位)。</p>
+<p>引数: `<code style="color:#22d3bf">R_est</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">R_gt</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(3, 3)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t_est</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">t_gt</code>` は長さ 3。float に</p>
+<p>変換するだけで <b>形・直交性の検査はしない</b> — `<code style="color:#22d3bf">R</code>` が回転行列でない(反射・</p>
+<p>スケール入り)と `<code style="color:#22d3bf">trace</code><code style="color:#22d3bf"> の式は意味を失い、</code><code style="color:#22d3bf">(3, 3)</code>` 以外は行列積の</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf"> か無意味な値になる。</code><code style="color:#22d3bf">register_fpfh</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">icp_point2point_3d</code>` /</p>
+<p>`<code style="color:#22d3bf">register_cross</code><code style="color:#22d3bf"> の返り値 </code><code style="color:#22d3bf">(R, t)</code><code style="color:#22d3bf"> と GT の </code><code style="color:#22d3bf">(R, t)</code>` を、同じ慣習</p>
+<p>(`<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>`)で渡すこと。</p>
+<p>返り値: `<code style="color:#22d3bf">(rot_deg, trans_err)</code><code style="color:#22d3bf"> の 2 つの </code><code style="color:#22d3bf">float</code>`。</p>
+<p>注意: 並進誤差は回転誤差と結合している(原点から遠い対象では小さな回転誤差が</p>
+<p>大きな並進誤差として現れる)。点群上の実効誤差を見るなら、変換後の雲同士を</p>
+<p>`<code style="color:#22d3bf">rmse_correspondence</code><code style="color:#22d3bf">(対応既知)か </code><code style="color:#22d3bf">chamfer_distance</code>` で比べる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>

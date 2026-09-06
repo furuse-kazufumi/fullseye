@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_region_props(labels, spacing=None, surface=&#x27;auto&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_region_props&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Per-component quantitative descriptors from a label volume.</p>
+<p>*labels* is the `<code style="color:#22d3bf">int</code><code style="color:#22d3bf"> volume returned by :func:</code>vol_label` (or any integer</p>
+<p>labelling; voxels `<code style="color:#22d3bf">&lt;= 0</code><code style="color:#22d3bf"> are background). Pass *spacing* </code><code style="color:#22d3bf">(sz, sy, sx)</code>` (or</p>
+<p>a :class:<code style="color:#22d3bf">volio.VolumeMeta</code>) to report physical volume in mm**3 and physical</p>
+<p>surface area in mm**2. *surface* selects the surface-area estimator:</p>
+<p>`<code style="color:#22d3bf">&quot;auto&quot;</code><code style="color:#22d3bf"> (marching cubes when </code><code style="color:#22d3bf">scikit-image</code>` is importable, else exposed</p>
+<p>faces), `<code style="color:#22d3bf">&quot;marching&quot;</code><code style="color:#22d3bf"> (require marching cubes), or </code><code style="color:#22d3bf">&quot;faces&quot;</code>` (always the</p>
+<p>face count).</p>
+<p>Returns a `<code style="color:#22d3bf">list[dict]</code><code style="color:#22d3bf"> (one per label </code><code style="color:#22d3bf">1..n</code>`, in ascending label order),</p>
+<p>each with:</p>
+<p>`<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> id · </code><code style="color:#22d3bf">voxel_count</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">volume</code>` (voxels, or mm**3 with spacing) ·</p>
+<p>`<code style="color:#22d3bf">centroid</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> in voxel-index coordinates · </code><code style="color:#22d3bf">bbox</code>`</p>
+<p>`<code style="color:#22d3bf">(z0, z1, y0, y1, x0, x1)</code><code style="color:#22d3bf"> with **exclusive** upper bounds (slice </code><code style="color:#22d3bf">stop</code>`) ·</p>
+<p>`<code style="color:#22d3bf">surface_area</code><code style="color:#22d3bf"> (voxel-face units, or mm**2 with spacing) · </code><code style="color:#22d3bf">sphericity</code>`</p>
+<p>(Wadell, ~1 for a sphere, lower for a slab; approximate — see module note).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

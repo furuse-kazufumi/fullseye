@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3-D local-maxima (peak) detection.
 
+A voxel is a peak if it equals the maximum over a cubic neighbourhood of
+half-width ``min_distance`` (side ``2*min_distance + 1``) **and** that
+neighbourhood is not flat (its max strictly exceeds its min, so a constant
+region yields no peaks). Pass *threshold* to additionally require
+``vol >= threshold`` (drop weak peaks in noise).
+
+Returns an ``(N, 3)`` int array of ``(z, y, x)`` peak coordinates. Uses only
+``scipy.ndimage.maximum_filter`` / ``minimum_filter`` (no skimage).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

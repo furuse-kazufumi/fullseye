@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_lowlands&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">lowlands</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_lowlands.png" alt="hx_lowlands: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_lowlands.png" alt="hx_lowlands: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_lowlands.a.jpg">hx_lowlands: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_lowlands.inputs.jpg">hx_lowlands: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测灰度的洼地(局部极小的平坦域):与邻域最小值相等的像素 region。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">ndimage.minimum_filter</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">size</code><code style="color:#22d3bf"> 角の正方形窓、鏡映境界)で局所最小 </code><code style="color:#22d3bf">mn</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">v &lt;= mn + 1e-6</code>` かつ</p>
+<p>`<code style="color:#22d3bf">v &lt; 画像平均</code>` の画素を 1 とする 0/1 の float region を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 窓の一辺 </code><code style="color:#22d3bf">size = 3 + int(a*6)</code>`(3〜9 画素)。大きいほど広い範囲で最小である必要があり、点が減る。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>平坦な窪みは窓内の全画素が最小値に等しいため、領域ごと(1 点ではなく面で)拾われる。逆に画像全体が平坦だと</p>
+<p>`<code style="color:#22d3bf">v &lt; mean</code>` を満たす画素が無く空になる。「平均より暗い」条件のため、明るい面の中の浅い窪みは拾えない。</p>
+<p>雑音があると小さな極小が大量に出るので、前段に `<code style="color:#22d3bf">hx_mean_shape</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">gauss_filter</code>` を置く。反対の隆起は</p>
+<p>画像を反転して同じ op を掛ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

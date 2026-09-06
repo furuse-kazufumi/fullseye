@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;esdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>占据栅格 → 欧氏符号距离场(ESDF)(外=+ 到最近占据,内=− 到最近自由)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>` を自由側(外)と占有側(内)に別々にかけ、</p>
+<p>`<code style="color:#22d3bf">d_out - d_in</code><code style="color:#22d3bf"> で符号を付ける。</code><code style="color:#22d3bf">voxel_size</code>` はボクセル辺長(等方スカラ or 異方</p>
+<p>長さ3。EDT の `<code style="color:#22d3bf">sampling</code>` に渡す)で、返る距離は world 単位。全自由なら +inf、全占有</p>
+<p>なら -inf(honest: 最近対辺が存在しない)。ゼロ交差は占有/自由ボクセル<b>中心の中間</b>に</p>
+<p>落ちるため、境界セル中心の |ESDF| は約 1 ボクセル(下流テストの許容根拠)。</p>
+<p>Raises ValueError for voxel_size&lt;=0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 直線 ∩ 平面 → 点(平行なら None)。
 
+``t = ((plane_pt − line_pt)·n̂)/(d·n̂)`` で ``line_pt + t·d`` を返す(float 配列)。``d`` は単位化
+しない(``t`` は ``d`` の長さ単位)。``|d·n̂| < 1e-9`` なら **None**(例外ではない。返り値を使う
+前に None チェック)。面に含まれる直線(距離 0 かつ平行)も None。引数は数値の 2 または 3
+ベクトル、次元の混在は ValueError。2-D では ``n`` を直線の法線として線と線の交点になる。
+用途: 視線(``depth_to_points`` の点 − 原点)と ``fit_plane_3d`` の面との交点、レイと基準面。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

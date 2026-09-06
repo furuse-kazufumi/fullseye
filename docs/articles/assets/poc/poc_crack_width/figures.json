@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_width_sweep.png",
+  "name": "width_sweep",
+  "caption": "2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm (0.25 px)まで直線 y=x に乗る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   849,
+   788,
+   3
+  ]
+ },
+ {
+  "file": "03_crossover.png",
+  "name": "crossover",
+  "caption": "点ごとでは 2 値化が下に見えるが、経路平均に直すと積分法の散らばりは消え、2 値化の偏りは残る。同じ場面・同じ画像から出した 4 本。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_max_vs_mean.png",
+  "name": "max_vs_mean",
+  "caption": "真の幅は 0.60 mm 固定。N は同じ場面を何点で測るか。",
+  "shape": [
+   224,
+   427,
+   3
+  ],
+  "csv": "04_max_vs_mean.csv",
+  "tsv": "04_max_vs_mean.tsv"
+ }
+]

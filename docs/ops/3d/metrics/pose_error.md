@@ -19,6 +19,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。
 
+計算:
+- 回転: ``dR = R_est.T @ R_gt`` の回転角 ``arccos((trace(dR) - 1) / 2)`` を度に
+  直す(``cos`` は ``[-1, 1]`` にクリップして丸め誤差で NaN にしない)。値域
+  ``[0, 180]`` 度。``R_est == R_gt`` なら 0。
+- 並進: ``|t_est - t_gt|``(ユークリッドノルム、座標と同じ単位)。
+
+引数: ``R_est``, ``R_gt`` は ``(3, 3)``、``t_est``, ``t_gt`` は長さ 3。float に
+変換するだけで **形・直交性の検査はしない** — ``R`` が回転行列でない(反射・
+スケール入り)と ``trace`` の式は意味を失い、``(3, 3)`` 以外は行列積の
+``ValueError`` か無意味な値になる。``register_fpfh`` / ``icp_point2point_3d`` /
+``register_cross`` の返り値 ``(R, t)`` と GT の ``(R, t)`` を、同じ慣習
+(``dst ≈ src @ R.T + t``)で渡すこと。
+
+返り値: ``(rot_deg, trans_err)`` の 2 つの ``float``。
+
+注意: 並進誤差は回転誤差と結合している(原点から遠い対象では小さな回転誤差が
+大きな並進誤差として現れる)。点群上の実効誤差を見るなら、変換後の雲同士を
+``rmse_correspondence``(対応既知)か ``chamfer_distance`` で比べる。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

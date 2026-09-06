@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把體素的圓柱面展開為 (height×θ×r)(圓柱零件/管道的內外壁檢測)。軸 = z(D 軸)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。</p>
+<p>Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。</p>
+<p>引数: `<code style="color:#22d3bf">vol</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">center=(cy, cx)</code>` は各 z スライス内の <b>(行, 列)</b>(既定は</p>
+<p>スライス中心)。`<code style="color:#22d3bf">r_in</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">r_out</code><code style="color:#22d3bf">(voxel、既定 </code><code style="color:#22d3bf">min(H,W)/2 − 1</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">nr</code>` 等分、角度を</p>
+<p>`<code style="color:#22d3bf">ntheta</code><code style="color:#22d3bf"> 等分。出力 </code><code style="color:#22d3bf">(D, ntheta, nr)</code>` float32: 軸 0 は z(高さ、入力と同じ)、行 k の角度</p>
+<p>`<code style="color:#22d3bf">θ = k·2π/ntheta</code><code style="color:#22d3bf">、列 j の半径。サンプル点は </code><code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code>`、volume 外は 0。</p>
+<p>D, H, W が 1 の軸は正規化で 0 除算になる(`<code style="color:#22d3bf">polar_unwrap</code>` と違い検査は無い)。</p>
+<p>後段: `<code style="color:#22d3bf">[:, :, j]</code>` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・</p>
+<p>`<code style="color:#22d3bf">ncc_locate</code>` が使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

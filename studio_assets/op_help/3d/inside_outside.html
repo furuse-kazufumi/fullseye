@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import superquadric; superquadric.inside_outside(points, a, eps, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;inside_outside&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スーパー2次曲面の内外関数 F(表面=1, 内部&lt;1, 外部&gt;1)。</p>
+<p>`<code style="color:#22d3bf">F(X) = (|x/a1|^(2/eps2) + |y/a2|^(2/eps2))^(eps2/eps1) + |z/a3|^(2/eps1)</code>`。</p>
+<p>`<code style="color:#22d3bf">R, t</code><code style="color:#22d3bf"> で姿勢(</code><code style="color:#22d3bf">X_body = R.T @ (X - t)</code>`)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>a : (a1,a2,a3) 半径(すべて正)</p>
+<p>eps : (eps1,eps2) 形状指数(&gt; 0)</p>
+<p>R : (3,3) 回転(列 = body 軸の world 表現)、既定 = 単位</p>
+<p>t : (3,) 平行移動(body 中心の world 位置)、既定 = 原点</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (N,)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

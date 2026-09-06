@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import plane_sweep; plane_sweep.warp_by_plane(img: &#x27;np.ndarray&#x27;, H: &#x27;np.ndarray&#x27;, order: &#x27;int&#x27; = 1, cval: &#x27;float&#x27; = nan) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;warp_by_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。</p>
+<p>H は出力(ref)画素 → 入力(src)画素の写像。視野外は cval(既定 NaN)。</p>
+<p>出力画素 (x=列, y=行) ごとに `<code style="color:#22d3bf">q = H @ (x, y, 1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">(sx, sy) = (q0/q2, q1/q2)</code>` を求め、</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.map_coordinates</code>` で入力画像の (行 sy, 列 sx) を補間して埋める(逆ワープなので</p>
+<p>穴が空かない)。出力の形は入力と同じ (h,w)。同モジュールの `<code style="color:#22d3bf">plane_homography</code>` が返す H</p>
+<p>(ref 画素 → src 画素)をそのまま渡すと「src を ref 視点へ持ってきた画像」になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">img</code><code style="color:#22d3bf">: (H,W) の 2-D グレースケール(float に変換)。空・非 2-D は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">H</code><code style="color:#22d3bf">: (3,3) 以外は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">order</code><code style="color:#22d3bf">: 補間次数(既定 1 = bilinear)。</code><code style="color:#22d3bf">prefilter=False</code>` で呼ぶため、2 以上を指定しても</p>
+<p>スプライン前処理を省いた近似(平滑化寄り)になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cval</code><code style="color:#22d3bf">: 入力の範囲外に写った画素、および </code><code style="color:#22d3bf">|q2| &lt; 1e-12</code>`(無限遠に飛ぶ画素)に入れる値。</p>
+<p>既定 NaN なので、後段で `<code style="color:#22d3bf">np.isfinite</code>` により「対応が取れなかった画素」を区別できる。</p>
+<p>`<code style="color:#22d3bf">plane_sweep_depth</code><code style="color:#22d3bf"> は候補深度ごとにこの関数で src をワープし、</code><code style="color:#22d3bf">|I_ref - warp(I_src)|</code>` を</p>
+<p>photo-consistency コストにしている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

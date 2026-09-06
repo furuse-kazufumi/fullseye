@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。
 
+poses_init (N,6)=[rvec|t] の初期推定(ドリフトあり)、edges の相対姿勢制約を満たすよう最適化。
+fix_first=True で先頭ノードを固定し gauge を除く。
+
+- ``edges``: ``(i, j, rvec_ij, t_ij[, w_rot, w_trans])`` のリスト。``(rvec_ij, t_ij)`` は「i から
+  見た j」= ``T_i⁻¹ ∘ T_j`` の計測値(``relative_pose`` と同じ規約)。オドメトリ (i, i+1) と
+  ループ閉じ(離れた i, j)を同じ形で混ぜてよい。重みは残差に ``sqrt(w)`` を掛ける(省略時 1)。
+- 各エッジの残差は ``measured⁻¹ ∘ predicted`` を回転ベクトル + 並進の 6 次元にしたもので、
+  ``scipy.optimize.least_squares(method="lm")`` で最小化する(``max_nfev = max_iter × パラメータ数``)。
+- 返り値: ``poses`` (N,6)(``fix_first`` なら先頭は初期値のまま)、``rmse`` =
+  ``mean_edge_error(poses, edges)``、``cost`` = 最終コスト(残差 2 乗和の 1/2)。
+
+fail-closed: ノード数 < 2、エッジ 0 本、エッジの添字が ``[0, N)`` を外れる(負の添字の黙った
+折り返しも拒否)場合は ``ValueError``。``fix_first=False`` にすると gauge が残り解は一意でない
+(LM は初期値近くの 1 つを返す)。回転は rad、並進は座標の単位で、両者を同じ残差ベクトルに
+並べるため単位が大きく違うときは重みで揃える。3D 点も観測画素も使わない(それらを含めて
+最適化するのは ``bundle_adjust``)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

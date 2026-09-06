@@ -2,16 +2,44 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_iss_keypoints — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_iss_keypoints&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*无图: 该算子以 <code style="color:#22d3bf">points</code> 为输入。从图像开始的 Studio 程序无法到达该类型，请参见下方的可运行示例。*</p>
+<p><img src="fig/tb_iss_keypoints.png" alt="tb_iss_keypoints: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iss_keypoints.a.jpg">tb_iss_keypoints: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iss_keypoints.b.jpg">tb_iss_keypoints: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iss_keypoints.chain.jpg">tb_iss_keypoints: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iss_keypoints.inputs.jpg">tb_iss_keypoints: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ISS（Intrinsic Shape Signatures，相当于 3D 版 Harris）关键点检测。以局部协方差的最小特征值 λ3 作为 saliency，仅将特征值 distinct（方向 well-defined）的点作为候选，再用 NMS 稀疏地选取。旋转不变。返回值 = 点的索引数组。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (N,3)。</code><code style="color:#22d3bf">radius</code>`: saliency 用の近傍球半径(点群と同じ単位)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nms_radius</code><code style="color:#22d3bf">: 非最大抑制の距離。None なら </code><code style="color:#22d3bf">0.6*radius</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">gamma21</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">gamma32</code>`: 固有値比 λ2/λ1、λ3/λ2 の上限(既定 0.99)。両方ともこれ</p>
+<p>未満の点だけが候補(比が 1 に近い=等方で向きが決まらない点を除く)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">max_kp</code><code style="color:#22d3bf">: 返す上限。</code><code style="color:#22d3bf">min_neighbors</code>`: 近傍がこれ未満の点は候補にしない(既定 8)。</p>
+<p>手順: 各点で `<code style="color:#22d3bf">radius</code>` 内の近傍を集め、注目点を原点とした 2 次モーメント行列</p>
+<p>`<code style="color:#22d3bf">(qᵀq)/n</code>` の固有値 λ1≥λ2≥λ3 を求める(λ1 が 1e-12 以下なら除外)。λ3 を saliency と</p>
+<p>して降順に走査し、採用済みの点から `<code style="color:#22d3bf">nms_radius</code>` 未満にあるものを捨てる貪欲 NMS。</p>
+<p>返り値は int64 の点インデックス配列(saliency 降順)。候補が無ければ長さ 0。</p>
+<p>注意: 近傍は注目点で中心化する(重心ではない)ため、平面上の点でも λ3 は厳密には 0 に</p>
+<p>ならない。全点で近傍探索する Python ループなので、数万点を超える雲は</p>
+<p>`<code style="color:#22d3bf">voxel_grid_downsample</code><code style="color:#22d3bf"> で間引いてから使う。</code><code style="color:#22d3bf">shot_descriptor</code>` のキーポイント入力に</p>
+<p>直結し、`<code style="color:#22d3bf">register_shot</code><code style="color:#22d3bf"> は内部で </code><code style="color:#22d3bf">radius</code>` の 0.6 倍・NMS 0.3 倍で呼ぶ。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">iss_keypoints</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gamma21</code><code style="color:#22d3bf">(既定 0.99)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gamma32</code>`(既定 0.99)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_iss_keypoints 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_iss_keypoints%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_iss_keypoints%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
-<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<p>下面的示例调用的是底层账本算子 <code style="color:#22d3bf">iss_keypoints</code>。此桥接算子只是把同一实现适配为 <code style="color:#22d3bf">fn(v, a, b)</code> 约定，行为完全相同(只是调用形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:feature_register">feature_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/feature_register.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">typed</code>)</h3>

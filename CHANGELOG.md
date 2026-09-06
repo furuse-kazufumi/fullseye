@@ -5,6 +5,34 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## 0.1.11 — unreleased
+
+**索引・ヘルプに残っていた穴を全部埋めた回。** 詳細は `docs/KNOWN_ISSUES.md` §41。
+
+- **入口 op 12 本(`img_to_*`、category `bridge`、`backends_bridge.py`)**: 1 枚の画像から
+  点群・1-D 信号・光子列・行列・動画・体積・ライトフィールド・RGB・複素場・ビート
+  立方体・キーポイント・モノジェニック信号を作る。これで**型が届かなかった 161 op** に
+  図と Studio の `sample:` プログラムが付いた(図あり 724 → **892 / 897**)。
+  進化の候補リストには入らない(`ops._NOT_A_CANDIDATE`)ので既存ゲノムの写像は不変
+  (`docs/WAVE0_STABLE_SLOTS.md` §4)。
+- **図の判定に `empty`(走ったが空)と `domain`(定義域が合わない)を追加**。空配列を
+  黒い板として「図あり」に数えていた(ユーザー指摘「out が真っ黒」)。sort ごとの
+  見せ方(散布・折れ線・MIP・中央フレーム・中央視点・振幅)も追加。
+- **使い方が 1 行だった op ノート 494 本 → 0 本**。3-D 台帳が docstring の 1 行目しか
+  ノートに渡していなかった構造バグを直し、本当に 1 行だった op には実装を読んだ本文を
+  足した(1 行目は不変 = 6 言語の要約訳は保たれる)。
+- **例ゼロのノート 205 本 → 1 本**(`identity`)。台帳 7 族に例スクリプト 9 本(真値つき、
+  `examples2d.EXAMPLES` 登録)、橋渡し `tb_*` 147 本は元 op の例を継承して明記。
+- **図の第 2 波**: つまみの段階図(a / b を 0.1 / 0.5 / 0.9 に振る。効かないつまみは
+  そう書く)、前置き op の段階図、量の場の疑似カラー(viridis)、動画 / ライトフィールド /
+  体積の GIF、複数入力(合成 / 写真 / 硬貨 / 生成画像 4 枚 / カラー)での結果。
+  生成画像は `tools/gen_ai_inputs.py`(来歴 `docs/ops/_fig/inputs/PROVENANCE.json`)。
+- 手書きヘルプ 3 本に呼び出し形、`<img alt>` を英語に。
+- 修正: `imgmetrics` の int8/int16 `data_range`(255/65535 → 127/32767、PSNR 6 dB ずれ)、
+  `tb_wetness` がノブの半分以上で必ず失敗していた(定義域つき引数の絶対範囲表
+  `backends_typed.OP_KNOB_RANGE`)。
+- 記録のみ: docstring の読み合わせで挙がった不具合の疑い約 30 件(§41 の 5)。
+
 ## 0.1.10 — 2026-09-06
 
 **PoC シリーズが道具の穴を掘り当てた回。** 真値を作れる実問題を **53 本**解いて、

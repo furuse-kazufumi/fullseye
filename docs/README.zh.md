@@ -9,7 +9,7 @@
 
 *六幕，全部是真实算子输出：边缘方向 / 连通域筛选 / 亚像素测量 / SDF 转网格 / 点云聚类 / 镜头离焦。*
 
-**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **885** 个（以注册表计数），其中 **979/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 47 个类别。
+**Fullseye**（工作代号 imgevolve）是一套 HALCON/HDevelop 级别的实用工具：由 numpy 原生的图像处理算子库、HDevelop 风格的可视化流水线设计环境（Fullseye Studio）以及执行运行时（FullseyeEngine）三者组成。算子约 **897** 个（以注册表计数），其中 **979/2313** 个真实 HALCON 算子做到了 genuine（真正等效）实现，覆盖 48 个类别。
 
 > **先从这里开始 → [GETTING_STARTED.md](GETTING_STARTED.md)（5 分钟跑起来）**
 
@@ -52,15 +52,15 @@
 
 ## 查找算子
 
-共有 **1,842 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **48 篇族指南**。按维度的入口:
+共有 **1,854 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
 
-**实测覆盖**: 演化算子 885/885、类型化台账 958/1002、单行门面 `fullseye.<名称>` 501/1091 —— **门面侧仅覆盖一半**。
+**实测覆盖**: 演化算子 897/897、类型化台账 958/1002、单行门面 `fullseye.<名称>` 501/1091 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 1842 篇中，附有可运行示例的 **1637** 篇(205 篇没有)，用法说明 120 字以上的 **1348** 篇(494 篇仅一行)。结构(调用形式、类型、可衔接算子)1842 篇全有。
+**内容实测**: 1854 篇中，附有可运行示例的 **1825** 篇(29 篇没有)，用法说明 120 字以上的 **1854** 篇(0 篇仅一行)。结构(调用形式、类型、可衔接算子)1854 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
-| `2d` | 885 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 897 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 347 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 124 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 46 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -113,7 +113,7 @@
 
 | 文档 | 内容 |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | 全部 885 个算子的目录（47 个类别，按 sort 分组，并列出 HALCON／OpenCV／scikit-image／MATLAB 的对应 API） |
+| [OPERATORS.md](OPERATORS.md) | 全部 897 个算子的目录（48 个类别，按 sort 分组，并列出 HALCON／OpenCV／scikit-image／MATLAB 的对应 API） |
 | [EXAMPLES.md](EXAMPLES.md) | 逐个算子的示例代码（附其他库中的等价调用） |
 | [OP_INDEX.json](OP_INDEX.json) | 机器可读的算子索引（用 `imgevolve.py index` 重新生成） |
 | [ADDING_OPS.md](ADDING_OPS.md) | 如何新增算子（演化、codegen、目录与索引都会自动跟进） |
@@ -190,7 +190,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 文档地图 — 共 71 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 1,842 篇算子说明与 48 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 1,854 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 

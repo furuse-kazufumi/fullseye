@@ -6,6 +6,19 @@
 <p>各点から見た<b>発光点の可視率</b> [0, 1] (= 落ち影)。</p>
 <p>点ごとに全発光点への遮蔽を判定して平均する。バックライトのように部品の裏に</p>
 <p>光源がある配置では 0 になり、シルエットが立つ。返り値 (M,)。</p>
+<p>手順: 各点 `<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> から各発光点 </code><code style="color:#22d3bf">e</code><code style="color:#22d3bf"> へ向かう単位方向 </code><code style="color:#22d3bf">d</code>` を取り、</p>
+<p>`<code style="color:#22d3bf">p + 1e-4 d</code>`(自分の面に再衝突しないための 0.1 µm のオフセット)から光線を撃つ。</p>
+<p>どれかのプリミティブに `<code style="color:#22d3bf">e</code>` より手前で当たれば「遮られた」。可視率 =</p>
+<p>遮られなかった発光点の数 / 発光点の総数。<b>幾何的な遮蔽だけ</b>で、発光点の</p>
+<p>向き(`<code style="color:#22d3bf">directions</code>`)・強度・cos 則・距離減衰は入れない(それらは</p>
+<p>`<code style="color:#22d3bf">render_optscene</code>` の陰影側が持つ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">scene</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_*</code><code style="color:#22d3bf"> の dict、またはその list。空なら </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(M, 3)</code><code style="color:#22d3bf"> [mm]、有限。面上の点を渡すなら </code><code style="color:#22d3bf">trace_rays(...)[&quot;point&quot;]</code>`。</p>
+<p>面の裏側に発光点がある点は自分の部品に遮られて 0 になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">light_spec</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">light_source</code><code style="color:#22d3bf"> の結果(</code><code style="color:#22d3bf">emitters</code>` と</p>
+<p>`<code style="color:#22d3bf">directions</code><code style="color:#22d3bf"> を持つ dict)。無ければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> の float64、</code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。発光点 </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> 個なら </code><code style="color:#22d3bf">1/n</code>` 刻み。</p>
+<p style="margin:2px 0 2px 12px">• 計算量は 点数 × 発光点数 × プリミティブ数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

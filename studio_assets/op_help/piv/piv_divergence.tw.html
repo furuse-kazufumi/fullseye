@@ -5,6 +5,23 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>発散 `<code style="color:#22d3bf">d(dy)/dy + d(dx)/dx</code>`。<b>非圧縮なら 0</b> —— 独立な検算に使える。</p>
+<p>式: `<code style="color:#22d3bf">gradient(flow[0], spacing, axis=0) + gradient(flow[1], spacing, axis=1)</code>`</p>
+<p>(`<code style="color:#22d3bf">numpy.gradient</code>`: 内部は中央差分、格子の端は片側差分)。</p>
+<p>`<code style="color:#22d3bf">flow[0]</code><code style="color:#22d3bf"> が行方向の変位 </code><code style="color:#22d3bf">dy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">flow[1]</code><code style="color:#22d3bf"> が列方向の変位 </code><code style="color:#22d3bf">dx</code>`、</p>
+<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> = 列、</code><code style="color:#22d3bf">y</code>` = 行。行が下向きでも発散の符号は座標の向きに依らない</p>
+<p>(渦度 `<code style="color:#22d3bf">piv_vorticity</code>` とは違い、反転しない)。正 = 湧き出し、負 = 吸い込み。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">flow</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(2, h, w)</code><code style="color:#22d3bf">、成分 </code><code style="color:#22d3bf">(dy, dx)</code><code style="color:#22d3bf"> [px/frame] (</code><code style="color:#22d3bf">piv_cross_correlate</code>` /</p>
+<p>`<code style="color:#22d3bf">piv_multipass</code><code style="color:#22d3bf"> の返り値)。</code><code style="color:#22d3bf">h, w &gt;= 2</code>` でないと微分できないので</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`(窓が大きすぎて 1 本しかベクトルが無い場合)。</p>
+<p><b>有限性は検査しない</b> ―― `<code style="color:#22d3bf">piv_replace_outliers(method=&quot;nan&quot;)</code>` の NaN は</p>
+<p>隣接 2 セルへ広がる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">spacing</code><code style="color:#22d3bf">: ベクトル間隔 [px]、正の有限値。</code><code style="color:#22d3bf">info[&quot;step&quot;]</code>` を渡す</p>
+<p>(既定 1.0 のままだと単位が「1/ベクトル間隔」になる)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf"> float64、単位 1/frame(</code><code style="color:#22d3bf">spacing</code>` が px のとき)。</p>
+<p>`<code style="color:#22d3bf">piv_to_velocity</code><code style="color:#22d3bf"> で m/s にした場と </code><code style="color:#22d3bf">spacing</code>` を m にすれば 1/s。</p>
+<p>2-D PIV で平面外の速度成分があると非零になるので、「非圧縮なのに発散が</p>
+<p>大きい」は面外流か外れ値(`<code style="color:#22d3bf">piv_outlier_mask</code>`)の指標。</p>
+<p>`<code style="color:#22d3bf">piv_velocity_gradient</code>` は 4 成分すべてを返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

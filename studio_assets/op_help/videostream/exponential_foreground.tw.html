@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import videostream; videostream.exponential_foreground(video, alpha: &#x27;float&#x27; = 0.05, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_foreground&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>前景遮罩 `<code style="color:#22d3bf">|frame − 指數背景| &gt; threshold</code><code style="color:#22d3bf"> → 0/1 </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">exponential_background</code><code style="color:#22d3bf"> と同じ指数移動平均 </code><code style="color:#22d3bf">bg += α (frame - bg)</code>` を回し、</p>
+<p>各フレームで <b>更新後の</b> `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> との差 </code><code style="color:#22d3bf">|frame - bg| &gt; threshold</code>` を 1 にする。</p>
+<p>先頭フレームは `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> の初期化に使われ差が 0 なので、</code><code style="color:#22d3bf">t = 0</code>` は全画素 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code>` 配列か 2-D フレームの list。整数 dtype は最大値で</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に正規化、float はクリップ。NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code>`。大きいほど背景が速く追従し、止まった物体は</p>
+<p>約 `<code style="color:#22d3bf">1/α</code><code style="color:#22d3bf"> 枚で消える。1 だと </code><code style="color:#22d3bf">bg == frame</code>` になり常に全画素 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code>` の強度単位。<b>全画素共通の絶対閾</b>なので、暗部の</p>
+<p>雑音と明部の雑音を同じ閾で切ることになる。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code>` float64 の 0 / 1。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>画素ごとの分散で閾を決めたいなら `<code style="color:#22d3bf">running_gaussian_foreground</code>`。ゴーストの</p>
+<p>無い動き検出なら `<code style="color:#22d3bf">three_frame_difference</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

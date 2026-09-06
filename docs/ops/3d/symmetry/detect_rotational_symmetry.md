@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 PCA 主軸を候補軸として最良の回転対称(軸 × order)を選ぶ。
 
+→ dict{axis_point, axis_dir, order, score, table, margin}。
+score が小さいほど対称。
+
+★ ``margin``(2 位との差)を必ず併読すること。理由は
+:func:`detect_reflection_symmetry` と同じ —— 候補が団子なら選択はくじ引きで、
+そのとき先に潰れるのは score ではなく margin である。回転対称は候補が
+3 軸 x order なので**同じ軸の別 order が 2 位に来る**ことも多く、その場合の
+margin の小ささは「order が決まらない」を意味する(軸は決まっている)。
+``table`` に全候補が入っているので、軸だけ固定して order を見直せる。
+
+★ 候補は PCA の 3 軸だけ。真の対称軸が主軸のどれとも一致しない形では
+見つからず、しかも黙って最良を返す。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

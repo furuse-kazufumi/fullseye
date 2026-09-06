@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_select_xld_point&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">select_xld_point</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/hx_select_xld_point.png" alt="hx_select_xld_point: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/hx_select_xld_point.png" alt="hx_select_xld_point: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_select_xld_point.b.jpg">hx_select_xld_point: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_select_xld_point.chain.jpg">hx_select_xld_point: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_select_xld_point.inputs.jpg">hx_select_xld_point: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>クエリ点(正規化 a,b)を外接矩形に含む contour のみ選ぶ(filter)。</p>
+<p>正規化座標 `<code style="color:#22d3bf">(a, b)</code><code style="color:#22d3bf"> のクエリ点 </code><code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code>` が、contour の外接軸並行矩形</p>
+<p>`<code style="color:#22d3bf">[min row, max row] × [min col, max col]</code>` に入る contour だけを残して返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → クエリ点の行(0〜1 を高さに写す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` → クエリ点の列(0〜1 を幅に写す)。</p>
+<p>判定は外接矩形であって contour の内側(多角形の内外)ではないので、L 字や環状の contour では contour の外の</p>
+<p>点でも選ばれる。厳密な内外判定が要るなら `<code style="color:#22d3bf">contours_to_region</code><code style="color:#22d3bf"> で region 化して </code><code style="color:#22d3bf">hx_test_region_point</code>`。</p>
+<p>点に最も近い contour までの距離は `<code style="color:#22d3bf">hx_distance_pc</code>`。該当が無ければ空の contour 集合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

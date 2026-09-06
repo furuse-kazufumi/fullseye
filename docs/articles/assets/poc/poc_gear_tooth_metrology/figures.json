@@ -1,0 +1,64 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   541,
+   926,
+   3
+  ]
+ },
+ {
+  "file": "02_profile.png",
+  "name": "profile",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_spectrum.png",
+  "name": "spectrum",
+  "caption": "歯の次数 24/48/72 は 2.6 mm あるので 0.35 mm で切った",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_missing.png",
+  "name": "missing",
+  "caption": "",
+  "shape": [
+   541,
+   1384,
+   3
+  ]
+ },
+ {
+  "file": "05_illumination.png",
+  "name": "illumination",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_summary.png",
+  "name": "summary",
+  "caption": "",
+  "shape": [
+   248,
+   422,
+   3
+  ],
+  "csv": "06_summary.csv",
+  "tsv": "06_summary.tsv"
+ }
+]

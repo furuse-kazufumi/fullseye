@@ -19,6 +19,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。
 
+``grid`` は最終軸が 3 の座標配列 (..., 3)(``grid_coords`` の出力や (N,3) 点群)。
+``center`` は長さ3、``R>=0`` は半径。返り値の shape は ``grid.shape[:-1]``。厳密な SDF
+(勾配ノルム 1)。``sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)``。
+
+Raises ValueError for R<0 or malformed grid/center。
+
+計算: ``np.linalg.norm(grid - center, axis=-1) - R``。座標の単位はそのまま距離の
+単位になる(``grid_coords`` の world 座標を渡せば world 単位)。座標の成分順は
+``grid`` の最終軸の順(``grid_coords`` なら ``(x, y, z)``)で、``center`` も同じ順。
+
+引数と検証(``ValueError``):
+- ``grid``: 最終軸が 3 の float 配列 ``(..., 3)``(1-D の ``(3,)`` も可。0-D や
+  最終軸が 3 以外は拒否)。
+- ``center``: 要素数 3(``reshape(3)`` できなければ numpy の ``ValueError``)。
+- ``R``: ``float()`` できるスカラ。回転行列などを渡した場合も ``ValueError``
+  (この引数は半径であって姿勢ではない)。``R < 0`` は拒否、``R = 0`` は
+  中心からの距離場そのもの。
+
+返り値: ``grid.shape[:-1]`` の float64(``grid_coords`` の出力なら
+``(nx, ny, nz)``)。中心で ``-R``、表面で 0、外側で正。
+
+使いどころ: ``grid_coords`` で格子 → ``sphere_sdf`` / ``box_sdf`` → ``sdf_union`` /
+``sdf_subtract`` で CSG → ``<= 0`` を占有として marching cubes(``voxel_to_mesh``
+に ``-sdf`` を渡し ``iso=0`` 相当で等値面)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

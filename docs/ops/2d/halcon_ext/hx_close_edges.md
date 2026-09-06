@@ -17,13 +17,39 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_close_edges", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `close_edges`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_close_edges: 入力 → 出力](../../_fig/hx_close_edges.png)
+![hx_close_edges: input → output](../../_fig/hx_close_edges.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_close_edges: knob a sweep](../../_fig/hx_close_edges.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_close_edges: knob b sweep](../../_fig/hx_close_edges.b.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_close_edges: other inputs](../../_fig/hx_close_edges.inputs.jpg)
+
+*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*
 
 ## 使い方
 
 エッジ振幅画像の隙間を閉じる: しきい値 a で二値化 → morphological closing(半径 b)。
+
+``v > a`` で二値化した後、``scipy.ndimage.binary_closing`` を 3×3 全結合(8 近傍)構造要素の ``it`` 回反復
+= ``(2*it+1)`` 角の正方形で 1 回クロージング(膨張→収縮)し、0/1 の float 画像で返す。
+
+- ``a`` → 二値化しきい値(エッジ振幅画像を想定。a=0 では 0 より大きい画素がすべて前景)。
+- ``b`` → 構造要素の反復回数 ``it = 1 + int(b*3)``(1〜4、正方形の辺は 3〜9 画素)。閉じられる隙間はおおむね
+``2*it`` 画素以下。
+
+注意: ``binary_closing`` は画像外を 0 として収縮するため、画像端から ``it`` 画素の帯は必ず 0 になる
+(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を
+膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。``hx_nonmax_dir`` や ``sobel_amp`` の
+後に置き、つながったエッジは ``hx_region_to_label`` や ``hx_detect_edge_segments`` へ渡す。
 
 ## 詳しい使い方ガイド
 

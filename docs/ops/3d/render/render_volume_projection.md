@@ -21,6 +21,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。
 
+view 方向へ volume を grid_sample で回して軸投影。voxel_to_mips の任意視点版。
+
+回転は ``affine_grid``(座標順 x=W, y=H, z=D)で volume 中心まわり: ``azimuth`` は H 軸まわり
+(W と D を混ぜる)、``elevation`` は W 軸まわり(H と D を混ぜる)、いずれも度、``Rx @ Ry`` の順。
+回転後の volume を **軸 0(D)方向に潰す**ので、視線は回転後の D 軸。``mode="mip"`` は最大値、
+それ以外はすべて総和(``"xray"`` は Beer-Lambert の指数ではなく **単純な積算**。減衰像にするなら
+``exp(−Σ)`` を呼び手で)。返り値 ``(H, W)`` float32 numpy。
+volume 外は 0 で埋まるので、回転で隅が欠けると総和が下がる(立方体に近い volume で、物体を
+中心に置く)。``azimuth=elevation=0`` の mip は ``voxel_to_mips()[0]`` と同じ向き。
+用途: DRR の合成、``ncc_locate`` 用の 2-D テンプレ生成、``match_mip_2d`` の任意視点化。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

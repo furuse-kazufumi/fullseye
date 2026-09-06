@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">img_to_counts — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">counts</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;img_to_counts&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/img_to_counts.png" alt="img_to_counts: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_counts.a.jpg">img_to_counts: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_counts.b.jpg">img_to_counts: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_counts.inputs.jpg">img_to_counts: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Read one row (or column) of the image as expected photon numbers and draw a Poisson-sampled 1-D count series.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">expected = profile * n_max</code>` を期待値とする Poisson 乱数(固定 seed 20260907)。</p>
+<p>光子計数の族(`<code style="color:#22d3bf">tb_counts_to_countrate</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_spad_deadtime_apply</code>` /</p>
+<p>`<code style="color:#22d3bf">tb_tcspc_background_subtract</code>` …)が受ける <b>非負整数の 1-D 列</b> の合成器で、</p>
+<p>`<code style="color:#22d3bf">tcspc_simulate</code>` と同じく「期待値が既知」なのが検算の根拠になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 行/列の位置(</code><code style="color:#22d3bf">img_to_signal</code><code style="color:#22d3bf"> と同じ規則。</code><code style="color:#22d3bf">b</code>` が向きも決める)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">b &lt; 0.5</code><code style="color:#22d3bf"> で行、</code><code style="color:#22d3bf">b ≥ 0.5</code>` で列。加えて <b>1 画素あたりの最大光子数</b></p>
+<p>`<code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code>`(b=0 で 10、b=0.5 で 100、b=1 で 1,000)。</p>
+<p>少ないほど散布雑音が目立つ。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 1-D `<code style="color:#22d3bf">int64</code>`、非負。長さは行なら W、列なら H。</p>
+<p style="margin:2px 0 2px 12px">• 決定的(seed 固定)。同じ入力・同じノブなら同じ列。</p>
+<p>注意: 期待値 0 の画素はカウント 0 になる(Poisson(0) は常に 0)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_counts 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">counts</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_spad_deadtime_apply">tb_spad_deadtime_apply</a> · <a style="color:#22d3bf" href="op:tb_spad_deadtime_correct">tb_spad_deadtime_correct</a> · <a style="color:#22d3bf" href="op:tb_tcspc_coates_correct">tb_tcspc_coates_correct</a> · <a style="color:#22d3bf" href="op:tb_tcspc_irf_convolve">tb_tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="op:tb_tcspc_background_subtract">tb_tcspc_background_subtract</a> · <a style="color:#22d3bf" href="op:tb_dtof_depth">tb_dtof_depth</a> · <a style="color:#22d3bf" href="op:tb_countrate_to_counts">tb_countrate_to_counts</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_video">img_to_video</a> · <a style="color:#22d3bf" href="op:img_to_volume">img_to_volume</a> · <a style="color:#22d3bf" href="op:img_to_lightfield">img_to_lightfield</a> · <a style="color:#22d3bf" href="op:img_to_rgb">img_to_rgb</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

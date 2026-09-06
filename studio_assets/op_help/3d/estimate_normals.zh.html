@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import curvature3d; curvature3d.estimate_normals(points, k=25)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;estimate_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>统一朝外(远离邻域重心)的点云法线。→ (N,3)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>手順(各点、Python ループ): `<code style="color:#22d3bf">cKDTree</code><code style="color:#22d3bf"> で自身を含む k+1 近傍(k は N-1 に切り詰め)を取り、クエリ点を原点にした近傍座標の散布行列 </code><code style="color:#22d3bf">local.T @ local</code>` の最小固有ベクトルを法線にする(単位長)。向きは「近傍重心との内積が正なら反転」= 近傍重心から離れる側に揃える。</p>
+<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は固定値 `<code style="color:#22d3bf">(0, 0, 1)</code>` を返す(推定していない)。</p>
+<p style="margin:2px 0 2px 12px">• 向き付けは局所ヒューリスティクスで、閉じた凸形状なら外向きだが、開いた面・薄板・凹部では隣接点どうしで向きが食い違い得る(大域一貫性は保証しない)。大域的に揃えるには `<code style="color:#22d3bf">orient_normals</code><code style="color:#22d3bf"> に通すか、最初から </code><code style="color:#22d3bf">estimate_oriented_normals</code><code style="color:#22d3bf"> を使う。organized 深度画像なら </code><code style="color:#22d3bf">normals_from_depth</code>` が視点向きで速い。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64 (N,3)。`<code style="color:#22d3bf">k</code>` 既定 25。決定論的。</p>
+<p style="margin:2px 0 2px 12px">• 内部は `<code style="color:#22d3bf">principal_curvatures</code>` と同じ計算を通る(法線推定にも二次曲面フィットまで走る)ので、点数が多いと遅い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

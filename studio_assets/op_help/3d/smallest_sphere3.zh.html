@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import measure3d; measure3d.smallest_sphere3(points) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;smallest_sphere3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>`<code style="color:#22d3bf">(depth, row, col)</code>` 点的最小包围球(Welzl 精确解)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>algorithm on the convex hull). Returns `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code>`) and radius</p>
+<p>`<code style="color:#22d3bf">r</code>` — the smallest sphere that contains every point. This is the 3-D</p>
+<p>`<code style="color:#22d3bf">smallest_circle</code>`; its radius is strictly below the AABB-diagonal sphere on</p>
+<p>any non-spherical set, and equals the true radius for points on a sphere.</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on empty input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

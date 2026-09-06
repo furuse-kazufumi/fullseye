@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_union(a, b)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;sdf_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 SDF 의 합집합 A∪B = 요소별 min(a, b)(어느 한쪽이 음이면 안쪽).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>ゼロ等値面は両形状の境界の和集合に厳密一致。外側では厳密な SDF(最近表面までの距離)、</p>
+<p>内側は保守的下界。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` はブロードキャスト整合すればよい。</p>
+<p>計算: `<code style="color:#22d3bf">np.minimum(np.asarray(a, float64), np.asarray(b, float64))</code>`。それ以外の</p>
+<p>検査はしない — shape がブロードキャストできなければ numpy の `<code style="color:#22d3bf">ValueError</code>`、</p>
+<p>NaN は要素ごとに伝播する(`<code style="color:#22d3bf">np.minimum</code><code style="color:#22d3bf"> は NaN を返す)。</code><code style="color:#22d3bf">±inf</code>` は厳密に伝播</p>
+<p>(`<code style="color:#22d3bf">min(a, +inf) = a</code><code style="color:#22d3bf">:</code><code style="color:#22d3bf">esdf</code>` の「全自由なら +inf」契約と相互運用できる)。</p>
+<p>入力: 同一グリッド上で評価した 2 つの SDF(`<code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">box_sdf</code>` /</p>
+<p>`<code style="color:#22d3bf">esdf</code><code style="color:#22d3bf"> の出力など、内側負・外側正)。形は </code><code style="color:#22d3bf">grid_coords</code>` の</p>
+<p>`<code style="color:#22d3bf">(nx, ny, nz)</code><code style="color:#22d3bf"> でも </code><code style="color:#22d3bf">(N,)</code>` の点列でもよい。距離の単位は入力と同じ。</p>
+<p>返り値: ブロードキャスト後の shape の float64。ゼロ交差(`<code style="color:#22d3bf">&lt;= 0</code>`)が A∪B の</p>
+<p>占有。</p>
+<p>注意: 内側の値は「どちらか近い方の表面までの距離」の下界であり、重なり領域では</p>
+<p>真の距離より小さめ(絶対値が大きめ)に出る。CSG の標準的性質で、等値面抽出</p>
+<p>(marching cubes)や `<code style="color:#22d3bf">sdf_offset</code>` の膨張には影響しない。継ぎ目を丸めたい場合は</p>
+<p>`<code style="color:#22d3bf">sdf_smooth_union</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

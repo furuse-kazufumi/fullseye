@@ -17,13 +17,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_fit_rectangle2_contour", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fit_rectangle2_contour_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_fit_rectangle2_contour: 入力 → 出力](../../_fig/hx_fit_rectangle2_contour.png)
+![hx_fit_rectangle2_contour: input → output](../../_fig/hx_fit_rectangle2_contour.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_fit_rectangle2_contour: stages](../../_fig/hx_fit_rectangle2_contour.chain.jpg)
 
 ## 使い方
 
 最小面積外接矩形を当て、そのアスペクト比(短辺/長辺)を返す(feature)。
+
+全 contour の点をまとめ、0°〜84° を 6° 刻みで回転させたときの軸並行外接矩形の面積が最小になる角度を探し、
+その矩形の短辺/長辺を ``np.float64`` で返す(``hx_smallest_rect2_xld`` と同じ探索)。
+
+- ``a``, ``b`` は未使用。
+- 点が 3 個未満なら 0.0。長辺が 1e-9 未満(全点一致)でも 0.0。
+
+角度は 15 通りの離散探索なので、真の最小面積矩形とは最大 3° ずれる(細長い形ほどアスペクト比への影響は小さい)。
+矩形の中心・角度・辺長は返さない。1 に近いほど正方形、0 に近いほど細長い。回転を伴わない外接矩形の面積比は
+``hx_smallest_rect1_xld``、region 版(回転キャリパー)は ``r2_smallest_rectangle2``。
 
 ## 詳しい使い方ガイド
 

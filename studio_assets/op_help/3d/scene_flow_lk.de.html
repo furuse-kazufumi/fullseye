@@ -5,6 +5,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lucas-Kanade-Szenenfluss (die 3-D-Version des 2-D-optischen Flusses). Ein Bewegungsfeld d = (dz, dy, dx) je Voxel.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>テンプレ照合と違い <b>密な運動/変形</b>を推定する。明るさ一定 ∇I·d + I_t = 0 を窓内最小二乗で</p>
+<p>per-voxel に解く(3x3 構造テンソル A=Σ∇I∇Iᵀ, b=-Σ∇I·I_t を窓和 conv3d で)。pyramid + warp の</p>
+<p>coarse-to-fine で大変位に対応(各 level で I1 を現 flow で戻し残差を反復補正=Gauss-Newton)。</p>
+<p>vol1(x) ≈ vol0(x - d)。返り値 flow (3,D,H,W)。並進・拡大(発散)・回転(渦)場を捉える。</p>
+<p>実測: 一様並進 [1.5,-2,1] を中央領域平均で誤差 0.044 voxel、拡大場で外向き発散を正しく検出。</p>
+<p>grad_scale=32 は sobel3d(deriv[-1,0,1]×smooth[1,2,1]²)の実測スケール。GPU 対応(全 conv3d)。</p>
+<p>引数: `<code style="color:#22d3bf">vol0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">vol1</code>` は同形の 3-D(違えば ValueError。NaN/Inf や float32 桁あふれも</p>
+<p>ValueError)。`<code style="color:#22d3bf">win</code><code style="color:#22d3bf"> は窓の半幅(窓は一辺 </code><code style="color:#22d3bf">2·win+1</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">levels</code>` はピラミッド段数(各段</p>
+<p>`<code style="color:#22d3bf">avg_pool3d</code><code style="color:#22d3bf"> で 2 倍縮小。大変位ほど段数を増やす)、</code><code style="color:#22d3bf">iters</code><code style="color:#22d3bf"> は各段の warp 反復、</code><code style="color:#22d3bf">reg</code>` は</p>
+<p>構造テンソル対角への正則化(平坦部の 0 除算回避。大きいほど平坦部の flow が 0 に寄る)。</p>
+<p>1 反復の更新は各軸 ±2 voxel に clamp される。</p>
+<p>返り値 `<code style="color:#22d3bf">(3, D, H, W)</code><code style="color:#22d3bf"> float32 numpy、</code><code style="color:#22d3bf">flow[0]</code><code style="color:#22d3bf">=dz, </code><code style="color:#22d3bf">flow[1]</code><code style="color:#22d3bf">=dy, </code><code style="color:#22d3bf">flow[2]</code>`=dx</p>
+<p>(voxel 単位)。`<code style="color:#22d3bf">vol1(x) ≈ vol0(x − d)</code><code style="color:#22d3bf">、すなわち vol0 の構造が </code><code style="color:#22d3bf">+d</code>` 動いて vol1 になる。</p>
+<p>端は border 補間で埋まるので端 1〜2 voxel の値は信用しない。剛体運動の R,t が欲しいなら</p>
+<p>点群にして `<code style="color:#22d3bf">icp_point2point_3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_rigid</code>` へ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

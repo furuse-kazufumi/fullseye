@@ -4,6 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import render3d; render3d.mesh_displace_fbm(V, F, amplitude: &#x27;float&#x27;, *, scale=None, octaves: &#x27;int&#x27; = 4, lacunarity: &#x27;float&#x27; = 2.0, gain: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;mesh_displace_fbm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用帶 seed 的 fBm 雜訊沿法線位移頂點,使網格變粗糙 → `<code style="color:#22d3bf">(V, F)</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">amplitude</code>` is the peak displacement <b>in the mesh&#x27;s own units</b> (the Itokawa STL is in</p>
+<p>km, so 0.003 = 3 m); every vertex moves by at most `<code style="color:#22d3bf">amplitude</code>` (|fBm| ≤ 1, asserted by</p>
+<p>tests). `<code style="color:#22d3bf">scale</code>` is the base wavelength (default = bounding-box diagonal / 12);</p>
+<p>`<code style="color:#22d3bf">octaves</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">lacunarity</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">gain</code>` shape the spectrum (multifractal ridges come from the</p>
+<p>default 4 octaves). Deterministic for a given `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">amplitude=0</code>` returns the input</p>
+<p>unchanged. Face normals of the displaced mesh carry the matching shading perturbation</p>
+<p>(no separate bump map is faked). Fail-closed on degenerate meshes / non-finite arguments.</p>
+<p>各頂点 `<code style="color:#22d3bf">x_i</code><code style="color:#22d3bf"> を面積重み付き頂点法線 </code><code style="color:#22d3bf">n_i</code><code style="color:#22d3bf"> に沿って </code><code style="color:#22d3bf">x_i + amplitude · fBm(x_i) · n_i</code>`</p>
+<p>へ動かす。`<code style="color:#22d3bf">fBm</code><code style="color:#22d3bf"> は :func:</code>fbm_noise<code style="color:#22d3bf">(seed 固定の格子 value noise、</code><code style="color:#22d3bf">octaves</code>` 段を</p>
+<p>`<code style="color:#22d3bf">lacunarity</code><code style="color:#22d3bf"> 倍の周波数・</code><code style="color:#22d3bf">gain</code><code style="color:#22d3bf"> 倍の振幅で重ね、振幅和で割って </code><code style="color:#22d3bf">[-1, 1]</code>`)。</p>
+<p>面配列 `<code style="color:#22d3bf">F</code><code style="color:#22d3bf"> は変えず、返り値は </code><code style="color:#22d3bf">(V&#x27; (N,3) float64, F のコピー)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">amplitude</code><code style="color:#22d3bf">: メッシュ単位の最大変位(0 以上)。負・非有限は </code><code style="color:#22d3bf">ValueError</code>`、0 なら</p>
+<p>入力のコピーをそのまま返す(ノイズ計算をしない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">scale</code><code style="color:#22d3bf">: ノイズの基本波長(メッシュ単位)。</code><code style="color:#22d3bf">None</code>` = 境界箱対角 / 12。0 以下は</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">octaves</code><code style="color:#22d3bf"> ∈ [1, 16]、</code><code style="color:#22d3bf">lacunarity</code><code style="color:#22d3bf"> &gt; 0、</code><code style="color:#22d3bf">gain</code><code style="color:#22d3bf"> ∈ (0, 1] の範囲外は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 法線は面の巻き順から作るので外向きに一貫したメッシュを仮定する。面積ゼロで法線が</p>
+<p>決まらない頂点は +Z へ動く(`<code style="color:#22d3bf">_vertex_normals</code>` の代替値)。</p>
+<p>波長ごとに振幅を指定したい・粗いメッシュで折り返しを避けたい場合は</p>
+<p>`<code style="color:#22d3bf">mesh_displace_spectrum</code>`(帯域制限あり)を使う。粗さを幾何に入れず陰影だけに載せるなら</p>
+<p>`<code style="color:#22d3bf">bump_normals_fbm</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

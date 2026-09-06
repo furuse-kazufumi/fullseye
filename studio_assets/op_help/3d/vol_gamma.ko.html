@@ -4,6 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volgray; volgray.vol_gamma(vol, gamma)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_gamma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>볼륨 자신의 값역에서의 감마(멱법칙) 보정(HALCON `<code style="color:#22d3bf">pow_image</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Normalises `<code style="color:#22d3bf">[min, max]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">, applies </code><code style="color:#22d3bf">t**gamma</code>`, and maps the</p>
+<p>result back to the original `<code style="color:#22d3bf">[min, max]</code>` — so the volume&#x27;s extremes are</p>
+<p>fixed points and only the mid-tones move: `<code style="color:#22d3bf">gamma &gt; 1</code>` darkens them,</p>
+<p>`<code style="color:#22d3bf">gamma &lt; 1</code><code style="color:#22d3bf"> brightens them, </code><code style="color:#22d3bf">gamma == 1</code>` is the identity. The transform</p>
+<p>is strictly monotone, so intensity *ordering* is always preserved.</p>
+<p>A <b>constant volume is returned unchanged</b> (no range to normalise —</p>
+<p>see the module docstring&#x27;s flat-volume note).</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>gamma : float</p>
+<p>Exponent, `<code style="color:#22d3bf">&gt; 0</code><code style="color:#22d3bf"> (fail-closed: </code><code style="color:#22d3bf">gamma &lt;= 0</code>` is not a monotone</p>
+<p>intensity map).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D, H, W), float64</p>
+<p>The gamma-corrected volume, same `<code style="color:#22d3bf">[min, max]</code>` range as the input.</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D / non-finite input, or `<code style="color:#22d3bf">gamma &lt;= 0</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

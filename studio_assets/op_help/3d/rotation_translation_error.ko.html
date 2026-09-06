@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.rotation_translation_error(gt, est)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;rotation_translation_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 4×4 변환 사이의 상대 회전 오차(측지각[도], RRE)와 상대 병진 오차(RTE).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>RRE = 角度(gt_R^T · est_R) = arccos((tr−1)/2) を度で。任意軸まわりの角 θ の</p>
+<p>回転差なら RRE=θ。RTE = ‖gt_t − est_t‖。→ (rre_deg, rte)。</p>
+<p>非 4×4 は ValueError(fail-closed)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">gt</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">est</code><code style="color:#22d3bf">: 4×4 同次変換(左上 3×3 が回転、右列が並進)。非有限を含むと </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">rre_deg</code><code style="color:#22d3bf"> は [0, 180] の度(cos は [-1,1] にクリップしてから arccos)。</code><code style="color:#22d3bf">rte</code>` は並進列の差の</p>
+<p>ノルムで座標の単位。並進列は回転の原点に依存するので、同じ姿勢誤差でも原点が物体から遠い</p>
+<p>ほど RTE は大きく出る(比較は同じフレーム規約の変換どうしで行う)。</p>
+<p style="margin:2px 0 2px 12px">• 回転行列が直交でなくても検査しないので、`<code style="color:#22d3bf">gicp</code>` 等の出力 (R,t) を同モジュールの</p>
+<p>`<code style="color:#22d3bf">make_transform</code><code style="color:#22d3bf"> で組んだ正しい変換を渡す。</code><code style="color:#22d3bf">inlier_ratio</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">registration_recall</code>` が点群上の残差で測るのに対し、</p>
+<p>こちらは変換パラメータそのものの差を測る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -19,6 +19,24 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order.
 
+The bridge from the voxel world to the point-cloud world at minimal memory:
+only the *surface* voxels of the mask become points (inner boundary, see
+:func:`vol_boundary`), so a solid object of a million voxels typically
+yields a few tens of thousands of points — ready for ``fit_sphere3`` /
+``smallest_box3`` / ``register_fpfh`` and friends without ever materialising
+the full grid as points.
+
+Coordinates are ``(index + origin) * spacing`` per axis: pass *spacing*
+``(sz, sy, sx)`` (or a :class:`volio.VolumeMeta`) for physical millimetre
+coordinates, and pass the offset returned by :func:`vol_crop_domain` as
+*origin* so points from a cropped volume land in the uncropped frame
+(*origin* is in **voxel units** — it is added to the index *before* the
+spacing multiply; it must be finite, and may be fractional for a subvoxel
+shift). An empty mask returns an empty ``(0, 3)`` array (a valid question
+with a valid empty answer — unlike a crop, which needs a box to exist).
+
+Returns an ``(N, 3)`` float64 array, rows ordered z-major (deterministic).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

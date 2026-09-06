@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Near-minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``).
 
+Found by multi-start local refinement: seed the orientation from every convex-
+hull face normal (the O'Rourke *case a* candidates — a box face flush with a
+hull face), from the PCA axes, and from a fixed set of deterministic random
+frames, then polish each by coordinate descent and keep the least-volume result.
+This is **exact for box-like objects** (a rotated cuboid is recovered to machine
+precision) and, unlike a PCA box (``fit_box3`` / ``pcseg.obb``), reaches the true
+minimum on shapes whose optimum has no face flush with a hull face — e.g. a
+regular tetrahedron, where the PCA / hull-face box is ~2x too large.
+
+Honest limit: this is not a *proof* of global minimality for every convex shape.
+The exact guarantee needs O'Rourke's full *case b* (two box faces each flush with
+a hull **edge**), which is not enumerated here; local refinement drives seeds into
+that regime instead. Empirically the result is at or below a dense brute-force
+rotation search, but a pathological shape could leave a small gap.
+
+Returns ``center`` (``cd/cr/cc``), ``axes`` (3, 3 — unit ROW vectors), sorted
+half-extents ``l1 >= l2 >= l3``, full ``size``, ``volume``, and ``corners``
+(8, 3). Deterministic (fixed random seeds). Raises ``ValueError`` on < 4 points
+or a coplanar/degenerate set (no 3-D hull).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

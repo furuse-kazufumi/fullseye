@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。
 
+``bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))``、``res`` は各軸のボクセル数(スカラ=立方
+or 長さ3)。voxel ``i`` の中心は world ``lo + (i+0.5)/res * span``(``occupancy.query_distance``
+の ``c=(q-lo)/span*res-0.5`` と整合 = 中心アライン)。返り値は
+``coords`` shape ``(nx,ny,nz,3)`` と ``extent=(xmin,xmax,ymin,ymax,zmin,zmax)``。
+
+こうして作った座標に ``sphere_sdf``/``box_sdf`` を評価し CSG 合成すれば、``recon3d`` の
+marching cubes や ``occupancy`` のゼロ交差抽出へそのまま渡せる。
+
+Raises ValueError for degenerate bounds or res<=0。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

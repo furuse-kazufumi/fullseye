@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_dist_ellipse_contour&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">dist_ellipse_contour_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_dist_ellipse_contour.png" alt="hx_dist_ellipse_contour: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_dist_ellipse_contour.png" alt="hx_dist_ellipse_contour: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_ellipse_contour.chain.jpg">hx_dist_ellipse_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>contour 点到拟合椭圆边界的平均距离(越小越接近椭圆;feature)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>全 contour の点をまとめ、重心と座標共分散の固有分解から主軸系に移し、半軸を `<code style="color:#22d3bf">2*sqrt(λ)</code>`(各主軸の 2σ)とする</p>
+<p>楕円を当てて、各点の正規化半径 `<code style="color:#22d3bf">rad = sqrt((u/ax0)^2 + (v/ax1)^2)</code><code style="color:#22d3bf"> と 1 との差 </code><code style="color:#22d3bf">|rad - 1|</code>` の平均を 1 で</p>
+<p>頭打ちした `<code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 4 個未満なら 0.0。固有値は `<code style="color:#22d3bf">1e-9</code>` で下から clip。</p>
+<p>注意: 値は画素距離ではなく楕円の正規化座標での差(無次元)。また半軸 2σ は「一様に塗られた楕円」に合う値で、</p>
+<p>境界だけの点群では `<code style="color:#22d3bf">σ = 半軸/sqrt(2)</code>` になるため、完全な楕円輪郭でも 0 にならず約 0.29 の下駄が乗る(実測</p>
+<p>0.2938)。比較用の相対指標として使い、絶対値で「楕円かどうか」を切らない。最大値版は `<code style="color:#22d3bf">hx_dist_ellipse_points</code>`、</p>
+<p>軸比は `<code style="color:#22d3bf">hx_fit_ellipse_contour</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

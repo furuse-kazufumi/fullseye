@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.elastic_deform(points, sigma: &#x27;float&#x27;, alpha: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;elastic_deform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>滑らかな乱数変位場で弾性変形(相関距離 `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">, RMS 振幅 </code><code style="color:#22d3bf">alpha</code>`)。</p>
+<p>各点に独立ガウス乱数ベクトルを置き、空間ガウス重み `<code style="color:#22d3bf">exp(-d²/2σ²)</code>` で平滑化した</p>
+<p>変位場を生成する(近接点は coherent に動く)。場は RMS を 1 に正規化してから</p>
+<p>`<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> 倍するので、変位の RMS ノルムはちょうど </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> になる(</code><code style="color:#22d3bf">σ→∞</code>` で場は</p>
+<p>定数=剛体並進, `<code style="color:#22d3bf">σ→0</code>` で各点独立)。非剛体な物体変形/柔軟物の学習に。</p>
+<p>注意(honest): 近傍探索は `<code style="color:#22d3bf">cKDTree.query_pairs(r=3σ)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">σ</code>` が雲の直径に近いほど</p>
+<p>ペア数は O(N²) に近づくため、大規模雲では `<code style="color:#22d3bf">σ</code>` を局所スケールに保つこと。</p>
+<p>`<code style="color:#22d3bf">sigma &lt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">sigma == 0</code>` または 1 点だけの雲では平滑化せず各点</p>
+<p>独立の変位になる。`<code style="color:#22d3bf">alpha</code>` は検証しない(0 なら無変位、負なら場が反転するだけ)。</p>
+<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で決定論的。返り値は float64 </code><code style="color:#22d3bf">(N,3)</code>` で点数・順序は保たれる(変形前後の</p>
+<p>対応が添字で分かるので、非剛体位置合わせの誤差を直接測れる)。空入力は空を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

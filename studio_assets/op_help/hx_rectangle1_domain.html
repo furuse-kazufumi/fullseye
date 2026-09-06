@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_rectangle1_domain&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">rectangle1_domain</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/hx_rectangle1_domain.png" alt="hx_rectangle1_domain: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/hx_rectangle1_domain.png" alt="hx_rectangle1_domain: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_rectangle1_domain.a.jpg">hx_rectangle1_domain: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_rectangle1_domain.b.jpg">hx_rectangle1_domain: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_rectangle1_domain.inputs.jpg">hx_rectangle1_domain: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像の定義域を軸並行矩形に縮小(中央の a×b の割合)region。</p>
+<p>入力 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> と同じ形状で、画像中央に置いた高さ </code><code style="color:#22d3bf">hh</code><code style="color:#22d3bf">・幅 </code><code style="color:#22d3bf">ww</code>` の軸並行矩形を 1 とする 0/1 の float 配列</p>
+<p>(region)を返す。入力の中身は見ない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 高さの割合 </code><code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>`(20%〜90%)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 幅の割合 </code><code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>`(20%〜90%)。</p>
+<p style="margin:2px 0 2px 12px">• 左上は `<code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code>` で、中央からのずれは整数切り捨てぶんだけ。</p>
+<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ `<code style="color:#22d3bf">hx_full_domain</code>`、</p>
+<p>既存 region の周辺を削るなら `<code style="color:#22d3bf">hx_clip_region_rel</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

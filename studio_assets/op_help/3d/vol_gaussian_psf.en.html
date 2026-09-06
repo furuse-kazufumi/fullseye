@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_gaussian_psf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> in voxels; the kernel spans </code><code style="color:#22d3bf">+-truncate*sigma</code>` per axis</p>
+<p>(odd size, centre at the middle voxel). The convenient companion to</p>
+<p>:func:<code style="color:#22d3bf">vol_richardson_lucy</code> when the instrument PSF is well approximated</p>
+<p>as Gaussian. Kernels above `<code style="color:#22d3bf">PSF_MAX_ELEMENTS</code>` (~256^3) raise</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` — a PSF that large is an input mistake, not an instrument.</p>
+<p>形: 各軸の半径 `<code style="color:#22d3bf">r = ceil(truncate * sigma)</code><code style="color:#22d3bf">、辺長 </code><code style="color:#22d3bf">2r + 1</code>`(奇数)の</p>
+<p>`<code style="color:#22d3bf">(2rz+1, 2ry+1, 2rx+1)</code><code style="color:#22d3bf"> float64 配列。軸順は </code><code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">sigma</code>` を</p>
+<p>`<code style="color:#22d3bf">(sz, sy, sx)</code>` で渡すとその順に対応する(異方 PSF)。3 本の 1-D Gaussian</p>
+<p>`<code style="color:#22d3bf">exp(-x^2 / (2 sigma^2))</code>` の外積を全体和で割るので、合計はちょうど 1、中心</p>
+<p>voxel が最大値。単位は voxel(mm の PSF 幅は spacing で割ってから渡す)。</p>
+<p>引数と検証(`<code style="color:#22d3bf">ValueError</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sigma</code>`: 正の有限スカラ、または長さ 3 の正の有限値。2 乗が 0 に</p>
+<p>アンダーフローするほど小さい値(~1.5e-154 未満)は 0/0 になるので拒否。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">truncate</code>`: 正の有限値(既定 4.0 = 片側 4σ で打ち切り)。</p>
+<p style="margin:2px 0 2px 12px">• 要素数 `<code style="color:#22d3bf">prod(2r+1)</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">PSF_MAX_ELEMENTS</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">2**24</code>`)を超えると拒否</p>
+<p>(σ≈300 で 64 GB を確保しかけた実測が動機)。</p>
+<p>使いどころ: `<code style="color:#22d3bf">vol_richardson_lucy(vol, psf)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">psf</code>`。RL 側でも合計 1 に</p>
+<p>再正規化するので、ここで作ったカーネルをそのまま渡してよい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

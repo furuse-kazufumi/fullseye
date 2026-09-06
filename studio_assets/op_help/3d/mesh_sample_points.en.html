@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_sample_points(V, F, spacing=None, n=None, method=&#x27;poisson&#x27;, seed=0, oversample=6)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;mesh_sample_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Surface samples at a stated spacing — area-weighted random or Poisson-disk (`<code style="color:#22d3bf">points</code>`).</p>
+<p>`<code style="color:#22d3bf">method=&quot;area&quot;</code>` draws *n* points with probability ∝ face area (uniform</p>
+<p>per unit area, but with the clumps of any random sample). `<code style="color:#22d3bf">method=&quot;poisson&quot;</code>`</p>
+<p>draws `<code style="color:#22d3bf">oversample × A/spacing²</code>` area-weighted candidates and keeps them</p>
+<p>greedily so that no two samples are closer than *spacing* (blue noise —</p>
+<p>the spacing is a guarantee, the count ≈ 0.7·A/spacing²). Give *spacing*</p>
+<p>(mesh units) for Poisson, *n* for area sampling; deterministic per *seed*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

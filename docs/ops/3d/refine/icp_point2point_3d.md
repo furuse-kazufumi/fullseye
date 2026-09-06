@@ -19,6 +19,34 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群を point-to-point ICP(Kabsch/SVD)で精緻化する。
 
+粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た
+初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で
+位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム
+(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくても
+サブボクセル精度へ収束させる。
+
+部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と
+絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した
+対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。
+
+引数:
+    src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。
+    dst: (M,3) 固定側(参照)点群。
+    iters: 最大反復回数。
+    init_R: (3,3) 初期回転。None なら単位行列。
+    init_t: (3,) 初期並進。None なら零ベクトル。
+    tol: RMSE の相対改善がこの値を下回れば収束打ち切り。
+    max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。
+    trim_ratio: 0<r<=1。各反復で最近傍距離の小さい上位 r 割の対応のみ
+        採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。
+    device: torch デバイス("cpu" 等)。SVD をこのデバイス上で解く。
+
+返り値:
+    R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。
+    t: (3,) torch.Tensor。並進。
+    info: dict。"rmse"(採用対応上の最終RMSE), "iters"(実反復数),
+          "converged"(bool), "inliers"(採用対応数), "rmse_history"(list)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

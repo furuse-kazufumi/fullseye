@@ -4,7 +4,7 @@ dim: profile
 category: measure
 in: pairs
 out: table
-examples: []
+examples: [profile_frame_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -41,7 +41,7 @@ Returns:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [profile_frame_tour](../../../../examples/profile_frame_tour.py) — `py -3.11 examples/profile_frame_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

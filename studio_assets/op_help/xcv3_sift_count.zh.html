@@ -2,8 +2,10 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xcv3_sift_count — 2D <code style="color:#22d3bf">features</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_sift_count&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/xcv3_sift_count.png" alt="xcv3_sift_count: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/xcv3_sift_count.png" alt="xcv3_sift_count: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SIFT 特征点数(OpenCV `<code style="color:#22d3bf">cv2.SIFT_create().detect</code>`)。将图像中检测到的尺度不变特征点(SIFT keypoints)的数量作为 feature 返回——可作为纹理复杂度/可用于匹配的特征点丰富程度的指标。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

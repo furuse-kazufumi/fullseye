@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import spherical_proj; spherical_proj.project_spherical(points, h_res: &#x27;int&#x27; = 1024, v_res: &#x27;int&#x27; = 64, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;project_spherical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>回転式 LiDAR の球面レンジ画像へ投影 (v_res, h_res)。空セル=0, 近い点優先(最小 range)。</p>
+<p>各点を方位角(列)× 仰角(行)ビンへ落とし、センサ原点からの range(slant distance)を書く。</p>
+<p>v_fov=(v_min,v_max)[度] の仰角帯の外側、原点上(r=0)、非有限座標の点は落とす(honest drop)。</p>
+<p>空/全 drop の場合は全ゼロ画像を返す(=何も見えていない、honest)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">: (N,3)、センサ原点基準で x=前, y=左, z=上。非 (N,3) は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">h_res</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v_res</code><code style="color:#22d3bf">: 列数(方位角 360° の等分)・行数(仰角帯の等分)。正でなければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">v_fov</code><code style="color:#22d3bf">: (v_min, v_max) [度]。</code><code style="color:#22d3bf">v_min &lt; v_max</code><code style="color:#22d3bf"> でなければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p>列は `<code style="color:#22d3bf">floor((atan2(y,x) + π) / 2π · h_res)</code><code style="color:#22d3bf"> で、列 0 が真後ろ(-x)、</code><code style="color:#22d3bf">h_res//2</code>` が正面(+x)、</p>
+<p>反時計回りに増える。行は `<code style="color:#22d3bf">(v_res-1) - floor((θ - v_min)/(v_max - v_min) · v_res)</code>`(θ は仰角</p>
+<p>[度])で、行 0 が帯の上端(θ=v_max)。画素値は slant range `<code style="color:#22d3bf">sqrt(x²+y²+z²)</code>`(座標の単位)。</p>
+<p>同じセルに複数点が落ちたら `<code style="color:#22d3bf">np.minimum.at</code>` で最小 range を残す(奥の点は失われる)。</p>
+<p>逆変換は `<code style="color:#22d3bf">unproject_spherical</code><code style="color:#22d3bf">(同じ </code><code style="color:#22d3bf">v_fov</code>` を渡す)。高さで層を切る変種が</p>
+<p>`<code style="color:#22d3bf">project_cylindrical</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

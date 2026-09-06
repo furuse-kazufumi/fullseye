@@ -3,8 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gen_gabor&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gen_gabor</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/gen_gabor.png" alt="gen_gabor: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/gen_gabor.png" alt="gen_gabor: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*The output is shown in a viridis-like pseudo-colour (dark purple = low, yellow = high) so that a field of quantities — distance, phase, orientation, depth — can be read.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.a.jpg">gen_gabor: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.b.jpg">gen_gabor: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.inputs.jpg">gen_gabor: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the absolute value of the convolution response from a single Gabor kernel (orientation `<code style="color:#22d3bf">theta=pi*a</code><code style="color:#22d3bf">, frequency </code><code style="color:#22d3bf">0.1+0.3*b</code><code style="color:#22d3bf">), normalized by the kernel&#x27;s L1 norm. A real-part-only kernel with the DC component removed (mean subtracted), acting as a band-pass texture filter that responds selectively to stripe patterns of the specified direction and frequency. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">gen_gabor</code>` (Generate a Gabor filter) -- a simplified version using only a real kernel with no imaginary part / phase.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

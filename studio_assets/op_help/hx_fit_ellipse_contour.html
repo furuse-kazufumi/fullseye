@@ -3,10 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_ellipse_contour&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">fit_ellipse_contour_xld</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/hx_fit_ellipse_contour.png" alt="hx_fit_ellipse_contour: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/hx_fit_ellipse_contour.png" alt="hx_fit_ellipse_contour: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_ellipse_contour.chain.jpg">hx_fit_ellipse_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 次モーメントから楕円を当て、軸比(短/長=真円で 1、細長いほど 0)を返す。</p>
+<p>全 contour の点をまとめて座標共分散行列の固有値 `<code style="color:#22d3bf">λmin, λmax</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">sqrt(λmin/λmax)</code>`(主軸方向の標準偏差</p>
+<p>の比 = 慣性楕円の短軸/長軸)を `<code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満、または `<code style="color:#22d3bf">λmax &lt;= 1e-9</code>`(全点一致)なら 0.0。負の固有値は 0 に clip する。</p>
+<p>1 に近いほど等方(真円)、0 に近いほど細長い。楕円境界を当てはめる代数的フィットではなく点群の 2 次モーメント</p>
+<p>なので、点の密度の偏りや欠けた弧では軸比が変わる。楕円の傾き・中心は返さない(`<code style="color:#22d3bf">orientation_xld</code>` /</p>
+<p>`<code style="color:#22d3bf">area_center_xld</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf"> 版は </code><code style="color:#22d3bf">elliptic_axis_xld</code><code style="color:#22d3bf">。楕円からの逸脱量は </code><code style="color:#22d3bf">hx_dist_ellipse_contour</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

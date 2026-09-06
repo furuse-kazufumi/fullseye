@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。
 
+``np.gradient`` の中心差分(端は片側差分)で行方向の ``dz/dy`` と列方向の ``dz/dx`` を
+取り、``n = (-dz/dx, -dz/dy, 1)`` を長さ 1 に正規化する(``+1e-12`` で零割を避ける)。
+格子間隔を 1 画素とみなすので、``z`` の単位が画素と異なる(mm 等)場合は事前に
+``z / 画素ピッチ`` へ換算しないと傾きが実際より強く/弱く出る。法線の z 成分は常に正
+(カメラ向き)。返り値は float32 の ``(H,W,3)``、第 3 軸は (x, y, z) 成分で x は列方向、
+y は行方向。入力検証は無く、2-D 以外を渡すと ``np.gradient`` の展開で失敗する。
+``integrate_normals`` の逆変換にあたり、``photometric_stereo`` の出力と同じ法線規約
+なので、そのまま ``render_lambertian`` に渡して陰影画像を合成できる。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

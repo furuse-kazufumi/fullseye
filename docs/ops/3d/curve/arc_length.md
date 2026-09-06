@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 曲線の累積弧長と全長。→ (cumulative (N,), total float)。
 
+順序付き点列 ``curve`` (N,3) を index 順に折れ線とみなし、隣接点間のユークリッド距離
+を累積する。``cumulative[0]=0``、``cumulative[i]`` = 先頭から i 番目までの折れ線長、
+``total = cumulative[-1]``。単位は座標と同じ。
+
+- 入力は ``float`` に変換されるだけで形状検証は無い(列数が 3 以外でも計算は通る)。
+- N=1 では ``cumulative=[0.0]``・``total=0.0``。閉曲線でも終点→始点の区間は数えない
+  (閉じたい場合は先頭点を末尾に複製してから渡す)。
+- 重複点(距離 0 の区間)はそのまま 0 として累積されるので ``cumulative`` は単調非減少
+  だが狭義増加ではない。
+
+``resample_uniform`` はこの累積弧長をパラメータに線形補間する。曲率の弧長積分など
+``curvature_torsion`` と組み合わせるときの ds はこの差分から取る。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

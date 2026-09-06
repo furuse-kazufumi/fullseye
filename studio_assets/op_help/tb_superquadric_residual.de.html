@@ -2,16 +2,40 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_superquadric_residual — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_superquadric_residual&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*Keine Abbildung: dieser Op nimmt <code style="color:#22d3bf">points</code> als Eingabe. Ein Studio-Programm, das bei einem Bild beginnt, erreicht diesen Typ nicht — siehe die lauffähigen Beispiele unten.*</p>
+<p><img src="fig/tb_superquadric_residual.png" alt="tb_superquadric_residual: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_superquadric_residual.chain.jpg">tb_superquadric_residual: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Volumenkorrigiertes Gross-Boult-Residuum: mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 ).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code>` で各点の内外関数 F を求め、点ごとの残差</p>
+<p>`<code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code><code style="color:#22d3bf"> の 2 乗平均を float で返す。表面上の点は </code><code style="color:#22d3bf">F=1</code>` なので</p>
+<p>残差 0、内側は負・外側は正の残差になる(2 乗するので符号は消える)。`<code style="color:#22d3bf">fit_superquadric</code>` が</p>
+<p>最小化しているのと同じ量で、返り dict の `<code style="color:#22d3bf">residual</code>` もこの値。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (N,3) にリシェイプできる点群(world 座標)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">: 半径 (a1,a2,a3)。</code><code style="color:#22d3bf">eps</code><code style="color:#22d3bf">: 形状指数 (eps1,eps2)(F の計算には両方、外側の </code><code style="color:#22d3bf">F**eps1</code>` には</p>
+<p>`<code style="color:#22d3bf">eps1</code>` だけを使う)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf">: 姿勢(</code><code style="color:#22d3bf">X_body = R.T @ (X - t)</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">None</code>` なら単位回転 / 原点。</p>
+<p>数値保護: F は [0, 1e12] にクリップし、`<code style="color:#22d3bf">a1*a2*a3</code>` は 1e-12 以上に持ち上げてから sqrt を取る</p>
+<p>(退化パラメータで inf/NaN にならないため。表面近傍の値には影響しない)。</p>
+<p>次元: `<code style="color:#22d3bf">sqrt(a1 a2 a3)</code><code style="color:#22d3bf"> は長さの 3/2 乗、</code><code style="color:#22d3bf">F^eps1 - 1</code>` は無次元なので、返り値は長さの 3 乗の</p>
+<p>次元を持ち点群のスケールに依存する。大きさの違う物体どうしの比較には向かない。真の点-表面</p>
+<p>ユークリッド距離ではなく半径距離近似であること、外れ値に無防備なことはモジュール docstring</p>
+<p>のとおり。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">superquadric_residual</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
+<p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_superquadric_residual 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_superquadric_residual%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_superquadric_residual%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
-<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">superquadric_residual</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:superquadric_fit">superquadric_fit</a> — <code style="color:#22d3bf">py -3.11 examples_3d/superquadric_fit.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">typed</code>)</h3>

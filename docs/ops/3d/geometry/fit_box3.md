@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Oriented box fit by PCA (fast, noise-tolerant; the same construction as
 
+``pcseg.obb`` but with the ``measure``-style dict). Axes are the principal
+directions of the point spread; extents come from the projected span. Returns
+``center`` (``cd/cr/cc``), ``axes`` (3, 3 — unit ROW vectors, depth/row/col
+components), sorted half-extents ``l1 >= l2 >= l3``, full ``size``, ``volume``,
+``corners`` (8, 3), and the RMS point-to-box-surface distance. For the true
+minimum-volume box use ``smallest_box3``. Raises ``ValueError`` on < 4 points
+or a degenerate (flat) set.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -9,6 +9,22 @@
 <p>------</p>
 <p>ValueError</p>
 <p>mask の形が画像と違う、真の画素が無い、alpha が [0,1] の外。</p>
+<p>手順: `<code style="color:#22d3bf">layout</code><code style="color:#22d3bf"> が無ければ </code><code style="color:#22d3bf">annotate_outline_layout(mask)</code>` で境界ループ</p>
+<p>(画素の辺に沿う `<code style="color:#22d3bf">(x, y)</code>` の閉多角形、外周と穴の両方、成分ごと)と重心を</p>
+<p>求め、各ループを距離被覆率のアンチエイリアス折れ線で載せる。`<code style="color:#22d3bf">label</code>` が</p>
+<p>あれば重心 + `<code style="color:#22d3bf">label_offset</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">text_box</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">anchor=&quot;cm&quot;</code>`、下敷き付き)を置く。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">img</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(H, W, 1|3|4)</code><code style="color:#22d3bf">、float64 複製・</code><code style="color:#22d3bf">[0, 1]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">、画像と同じ形(</code><code style="color:#22d3bf">[row, col]</code><code style="color:#22d3bf"> 添字)。bool 以外は </code><code style="color:#22d3bf">&gt; 0.5</code>`</p>
+<p>で二値化、非有限は `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。真の画素が無ければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 線幅 [px]、0.5 以上。</code><code style="color:#22d3bf">dash=(on, off)</code><code style="color:#22d3bf"> [px] で破線(</code><code style="color:#22d3bf">on &gt; 0</code>`、</p>
+<p>`<code style="color:#22d3bf">off &gt;= 0</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">box_alpha</code>` は文字の下敷きの不透明度。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">label_offset</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(dx, dy)</code>` [px]。重心が輪郭の外に落ちる形(三日月など)は</p>
+<p>ここでずらす。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">layout</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">annotate_outline_layout</code>` の返り値を渡すと再計算せず同じ配置を</p>
+<p>別の絵に使い回せる(`<code style="color:#22d3bf">contours</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">centroid</code>` を読む)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
+<p>塗りで示すなら `<code style="color:#22d3bf">overlay_mask</code><code style="color:#22d3bf">、複数領域に番号を振るなら </code><code style="color:#22d3bf">annotate_markers</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

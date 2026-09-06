@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.normal_from_reflection(incident, reflected)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;normal_from_reflection&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由入射+反射恢復鏡面法線(deflectometry)。n ∝ (r − d),朝與入射相反的方向。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>既知パターンの反射を観測 → 面法線 → 積分して鏡面形状。鏡面(反射)物体の形状計測の要。</p>
+<p>`<code style="color:#22d3bf">incident</code><code style="color:#22d3bf">(面へ向かう入射方向)と </code><code style="color:#22d3bf">reflected</code>`(面から出る反射方向)を単位化し、</p>
+<p>`<code style="color:#22d3bf">n = unit(r − d)</code><code style="color:#22d3bf"> を **</code><code style="color:#22d3bf">n·d &lt;= 0</code>`(入射に逆らう=入射側外向き)** になるよう符号を決めて</p>
+<p>返す(単位ベクトル)。`<code style="color:#22d3bf">r == d</code><code style="color:#22d3bf"> なら零ベクトル。最後の軸をベクトルとするので </code><code style="color:#22d3bf">(N,3)</code>`</p>
+<p>バッチも通る(符号判定は全体の内積和で 1 回だけ行う)。</p>
+<p>用途: 既知パターンの反射像から画素ごとに法線を作り(法線マップ)、`<code style="color:#22d3bf">integrate_normals</code>` で</p>
+<p>高さに積分、`<code style="color:#22d3bf">render_shaded</code><code style="color:#22d3bf"> で見た目を再現、</code><code style="color:#22d3bf">reflect</code>` で検算。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

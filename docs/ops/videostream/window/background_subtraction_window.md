@@ -19,6 +19,24 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Causal window-median background → per-frame 0/1 foreground masks ``(T, H, W)`` (``video``).
 
+フレーム ``t`` ごとに、直近 ``window`` 枚(``max(0, t-window+1) .. t``、**そのフレーム
+自身を含む**)の画素ごとの中央値を背景 ``bg`` とし、``|frame_t - bg| > threshold``
+を 1、それ以外を 0 にする。未来のフレームは見ない(因果的)ので、先頭では
+枚数が足りないぶん窓が短い。
+
+- ``video``: ``(T, H, W)`` の配列、または同形・同 dtype の 2-D フレームの list。
+  uint8/uint16 は dtype の最大値で ``[0, 1]`` に、float はそのまま ``[0, 1]`` に
+  クリップ。カラー ``(T, H, W, C)`` は受けない。NaN/Inf は ``ValueError``。
+- ``window``: 1〜4096 の int(bool 不可)。1 だと背景 = 自分なので全画素 0。
+  偶数枚のときの中央値は中間 2 値の平均。
+- ``threshold``: ``[0, 1]`` の強度単位(uint8 なら ``/255`` 換算)。
+- 返り値: ``(T, H, W)`` float64 の 0 / 1。
+- 失敗: ``ValueError``(形・dtype・範囲・非有限)。
+
+ゆっくり動く物体は ``window`` 枚以内に背景へ溶けるので、その場合は
+``running_gaussian_foreground``(選択的更新)か ``exponential_foreground`` を。
+背景そのものが要るなら ``temporal_median_window``。
+
 ## 詳しい使い方ガイド
 
 - [video_streaming ファミリ ガイド](../guides/video_streaming.md)

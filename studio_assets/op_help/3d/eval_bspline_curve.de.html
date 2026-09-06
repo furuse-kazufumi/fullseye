@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.eval_bspline_curve(tck, n=200)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;eval_bspline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet die Kurve tck an n gleichmäßig verteilten Punkten über dem Parameter u∈[0,1] aus (splev).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>tck : tuple</p>
+<p>fit_bspline_curve が返した `<code style="color:#22d3bf">(t, c, k)</code>`。</p>
+<p>n : int</p>
+<p>評価点数(既定 200)。2 以上。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>numpy.ndarray, shape (n, D)</p>
+<p>曲線上の点列。D は fit 時の入力次元(3D 入力なら (n, 3))。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• u は `<code style="color:#22d3bf">linspace(0, 1, n)</code><code style="color:#22d3bf"> なので **パラメータ等間隔** であって弧長等間隔ではない。点の密度は元の点列の疎密に依存する。弧長で等間隔にしたければ本 op の出力を </code><code style="color:#22d3bf">resample_uniform</code>` に通す。</p>
+<p style="margin:2px 0 2px 12px">• 両端点 u=0, u=1 を含む。</p>
+<p style="margin:2px 0 2px 12px">• Raises `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: tck が曲線モデル </code><code style="color:#22d3bf">(t, c, k)</code>` でない(曲面 tck / 多項式 dict を名指しで拒否)、または n &lt; 2。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64 の `<code style="color:#22d3bf">(n, D)</code>`。決定論的。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

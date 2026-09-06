@@ -19,6 +19,30 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 巻き込み位相を、粗いが絶対的な位相推定で「次数確定」して絶対位相にする。
 
+Φ = wrapped + 2π·round((coarse − wrapped) / 2π)
+
+wrapped: wrapped_phase の出力 (-π,π] の 2D 配列(高精度・絶対次数なし)。
+coarse:  同形の 2D 配列。**絶対だが粗い**位相推定 [rad]。Gray code で復号した投影機
+         コラム番号を位相に直したもの(2π·freq·col/width)が典型。NaN 可(出力も NaN)。
+
+返り値: 絶対位相 [rad] (2D float64)。無効画素(どちらかが NaN)は NaN。
+
+なぜ必要か(空間アンラップとの違い): `unwrap_phase_2d` は隣接画素を辿って 2π 跳びを
+繋ぐので、(a) 大域オフセット +2πm が残り、(b) オクルージョンで切れた島の間では次数が
+伝播できない。本 op は画素ごとに独立に次数を決めるため、**島に分かれた場面でも絶対**で、
+伝播も要らない。その代わり coarse の誤差が半周期(π)未満であることが要件。
+
+要件(fail-closed): |coarse − Φ_true| < π。これを破ると round が隣の次数を選び、
+その画素だけ 2π ぶん(= 縞 1 本ぶんの奥行き)静かにずれる。Gray code の粗さ(±0.5 コラム)
+を位相に直した量が半周期を超えないよう、縞本数 freq を選ぶこと
+(例: 投影機幅 512 px・freq 24 → 1 周期 21.3 px、Gray の ±0.5 px は余裕で内側)。
+
+Raises: 形状不一致・2D でない・wrapped が (-π,π] を大きく外れる場合に ValueError。
+
+来歴(公開文献): Gray code と位相シフトを併用して絶対位相を得る合成法 —
+Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(総説)。
+Gray code そのものの投影は Inokuchi et al., *ICPR* 1984。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

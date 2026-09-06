@@ -4,6 +4,30 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volgray; volgray.vol_window_level(vol, center, width, out_range=(0.0, 1.0))</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_window_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CT のウィンドウ/レベル(HU ウィンドウ処理)—— 放射線科医が毎日使う線形リマップ。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Maps the intensity window `<code style="color:#22d3bf">[center - width/2, center + width/2]</code>` linearly</p>
+<p>onto *out_range* `<code style="color:#22d3bf">(lo, hi)</code><code style="color:#22d3bf">; voxels below the window saturate at </code><code style="color:#22d3bf">lo</code>`,</p>
+<p>voxels above at `<code style="color:#22d3bf">hi</code>` (clipped, by design — that is what a CT window</p>
+<p>*does*). A bone window and a soft-tissue window on the same Hounsfield</p>
+<p>volume make entirely different structures visible. HALCON analogue:</p>
+<p>`<code style="color:#22d3bf">scale_image</code>` (the linear part), plus the clip.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected). Hounsfield units</p>
+<p>or any other physical scale — *center* / *width* live on the same scale.</p>
+<p>center, width : float</p>
+<p>Window centre and full width. `<code style="color:#22d3bf">width</code><code style="color:#22d3bf"> must be </code><code style="color:#22d3bf">&gt; 0</code>` (fail-closed).</p>
+<p>out_range : (float, float)</p>
+<p>Output `<code style="color:#22d3bf">(lo, hi)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">lo &lt; hi</code><code style="color:#22d3bf">. Default </code><code style="color:#22d3bf">(0.0, 1.0)</code>`.</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D, H, W), float64</p>
+<p>The windowed volume, everywhere inside `<code style="color:#22d3bf">[lo, hi]</code>`.</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D / non-finite input, `<code style="color:#22d3bf">width &lt;= 0</code>`, or a malformed *out_range*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

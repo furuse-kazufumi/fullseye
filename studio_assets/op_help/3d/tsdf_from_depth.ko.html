@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;tsdf_from_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>깊이 맵(2.5D) → TSDF volume(RGB-D 재구성의 표준 표현). depth→TSDF 변환.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>各 voxel を画像へ投影し、視線上の観測深度との符号付き切詰め距離 [-1,1] を格納</p>
+<p>(表面手前 +・奥 −・表面 0)。KinectFusion 系の基本表現。</p>
+<p>格子: `<code style="color:#22d3bf">bounds=(lo, hi)</code><code style="color:#22d3bf"> は **(X, Y, Z) のカメラ座標**(</code><code style="color:#22d3bf">depth_to_points</code>` と同じ)で、</p>
+<p>None なら深度を逆投影した点群の min−2 / max+2(深度の単位)。出力は `<code style="color:#22d3bf">(size,size,size)</code>`</p>
+<p>float32 で <b>軸順は (Z, Y, X)</b>、voxel 中心 `<code style="color:#22d3bf">= lo + (i + 0.5)/size·(hi − lo)</code>`。</p>
+<p>bounds の並び (x,y,z) と配列の軸 (z,y,x) が逆なことに注意。</p>
+<p>値: 各 voxel 中心を `<code style="color:#22d3bf">u = X·fx/Z + cx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">v = Y·fy/Z + cy</code>` で画素へ丸め、その画素の観測深度</p>
+<p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">clip((d − Z)/trunc, −1, 1)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">trunc</code>` は深度と同じ単位)。画像外に落ちる</p>
+<p>voxel・観測深度が 0 以下・Z が 0 以下の voxel は <b>+1(未観測=自由)</b> にする(端画素へ</p>
+<p>clip して観測済みに見せかけない)。深度 0 が無効値の規約。</p>
+<p style="margin:2px 0 2px 12px">• 深度が全て 0 で bounds=None だと点群が空になり numpy の min で例外。</p>
+<p style="margin:2px 0 2px 12px">• 1 視点の TSDF なので視線の裏側は −1 で埋まる(閉じた物体にはならない)。</p>
+<p>後段: `<code style="color:#22d3bf">voxel_to_mesh(tsdf, iso=0.0)</code><code style="color:#22d3bf"> で面を取る。占有にするなら </code><code style="color:#22d3bf">sdf_to_occupancy</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

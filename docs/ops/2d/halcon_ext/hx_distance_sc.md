@@ -17,13 +17,33 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_distance_sc", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `distance_sc`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_distance_sc: 入力 → 出力](../../_fig/hx_distance_sc.png)
+![hx_distance_sc: input → output](../../_fig/hx_distance_sc.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_distance_sc: knob a sweep](../../_fig/hx_distance_sc.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_distance_sc: stages](../../_fig/hx_distance_sc.chain.jpg)
 
 ## 使い方
 
 水平線分(行 a*H)から contour までの最小距離(feature)。
+
+行 ``a*H`` の水平線から、全 contour の頂点までの縦方向の距離 ``|row - a*H|`` の最小値を ``max(H, 1)`` で割って
+1 で頭打ちした ``np.float64`` で返す。列は見ないので、線分は画像の幅いっぱいに伸びる水平線として扱う。
+
+- ``a`` → 水平線の行位置(0 で最上行、1 で最下行の 1 つ下)。
+- ``b`` は未使用。
+- contour の点が無ければ 0.0(線上に点がある場合と区別できない)。
+
+距離は頂点までなので、隣接 2 頂点の間で線を横切る contour でも 0 にはならず「近い方の頂点の行差」になる。
+点から contour までの距離は ``hx_distance_pc``、点から region までは ``hx_distance_pr``。
 
 ## 詳しい使い方ガイド
 

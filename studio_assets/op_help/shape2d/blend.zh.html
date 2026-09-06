@@ -5,6 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>クロスディゾルブ (1-alpha)·a + alpha·b(a,b は同 shape・[0,1])。</p>
+<p>画素ごとの線形補間。対応点でのワープは<b>しない</b>ので、目や輪郭がずれた</p>
+<p>2 枚では二重像になる ―― 特徴を 1 つに重ねたいなら `<code style="color:#22d3bf">morph</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">(H, W, C)</code>`、同じ形。float64 に変換する。</p>
+<p><b>NaN は 0、+Inf は 1、-Inf は 0 に無言で置き換える</b>(例外は出ない)。</p>
+<p>値域の検査はせず、結果を `<code style="color:#22d3bf">[0, 1]</code>` にクリップするだけなので、0〜255 の</p>
+<p>画像を渡すと白飛びした絵が返る。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: 合成比。</code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に**無言でクリップ**(0 で </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">、1 で </code><code style="color:#22d3bf">b</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64、`<code style="color:#22d3bf">[0, 1]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(次元が 2/3 でない、空、形の不一致)。</p>
+<p>`<code style="color:#22d3bf">morph_sequence</code>` の各フレームは、ワープ後の 2 枚をこれと同じ式で混ぜている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

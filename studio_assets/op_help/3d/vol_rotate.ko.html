@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volxform; volxform.vol_rotate(vol, angle_deg, axes=(1, 2), order=1, reshape=False, mode=&#x27;constant&#x27;, cval=0.0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_rotate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>축 쌍이 이루는 평면 안에서 볼륨을 회전(`<code style="color:#22d3bf">scipy.ndimage.rotate</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>*axes* names the rotation plane and must be exactly one of `<code style="color:#22d3bf">(0, 1)</code>`</p>
+<p>(z-y plane, turning about the x-axis), `<code style="color:#22d3bf">(0, 2)</code>` (z-x, about y) or</p>
+<p>`<code style="color:#22d3bf">(1, 2)</code>` (y-x, about z — the axial-slice rotation; the default). Any</p>
+<p>other pair — including a reversed one like `<code style="color:#22d3bf">(2, 1)</code>` — raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`, so the direction convention below is never silently</p>
+<p>flipped.</p>
+<p><b>Direction (pinned)</b>: a positive *angle_deg* rotates **from the first</p>
+<p>axis of** *axes* <b>toward the second</b> — the same convention as</p>
+<p>`<code style="color:#22d3bf">np.rot90</code><code style="color:#22d3bf">. Concretely, </code>`vol_rotate(v, 90, axes=a, reshape=False,</p>
+<p>order=0)`<code style="color:#22d3bf"> equals </code><code style="color:#22d3bf">np.rot90(v, 1, axes=a)</code>` bit-for-bit when the in-plane</p>
+<p>shape is square (the test pins this).</p>
+<p>`<code style="color:#22d3bf">reshape=False</code>` (default) keeps the input shape (in-plane corners that</p>
+<p>leave the frame are lost, entering ones are filled with *cval* per *mode*);</p>
+<p>`<code style="color:#22d3bf">reshape=True</code>` grows the in-plane shape to contain the whole rotated</p>
+<p>frame — the grown output is cap-checked against `<code style="color:#22d3bf">MAX_VOXELS</code>` *before*</p>
+<p>the call. *order* is the spline degree (exact integer 0..5; &gt;1 overshoots</p>
+<p>— module notes).</p>
+<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume (same shape unless *reshape*).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

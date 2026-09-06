@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_floor_vs_spacing.png",
+  "name": "floor_vs_spacing",
+  "caption": "完全対称な標本を測った残差。点対点は点間隔がそのまま床になる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_gain_vs_amplitude.png",
+  "name": "gain_vs_amplitude",
+  "caption": "真値の線は利得 1.0。残差最適面は 46 % を系統的に取りこぼす。ランドマーク面は利得 1.03 だが床が 16 倍高い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_deviation_map.png",
+  "name": "deviation_map",
+  "caption": "どちらも患部 + とその鏡像 - の二重ローブ。右は面が引きずられてローブが薄くなり、46 % が消えている。",
+  "shape": [
+   243,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "04_degenerate_margin.png",
+  "name": "degenerate_margin",
+  "caption": "margin < 0.1 で採用を止めれば、66〜88 度の外しは弾ける。op はこの値を返さない。",
+  "shape": [
+   152,
+   624,
+   3
+  ],
+  "csv": "04_degenerate_margin.csv",
+  "tsv": "04_degenerate_margin.tsv"
+ }
+]

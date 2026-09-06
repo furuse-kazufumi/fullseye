@@ -21,6 +21,35 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。
 
+粗いマッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)が返す整数ピーク idx を、局所の
+2 次モデル f(x)≈f0+gᵀΔ+½ΔᵀHΔ の停留点 Δ=-H⁻¹g へ反復更新して連続座標へ収束させる。
+軸別の放物線サブピクセルと違い **全 3x3 Hessian(交差曲率 fzy,fzx,fyx を含む)** を使うため、
+回転した(相互曲率のある)異方性ピークでも座標軸間の結合バイアスを除去できる。
+
+各反復: 現在位置まわりの 27 近傍を trilinear で取得 → 中心差分で勾配 g と 6 成分 Hessian H を
+組み、Δ=solve(H,-g)。各成分を ±1 voxel にクリップ(信頼領域)して位置を更新、|Δ|<tol で収束。
+ガウス山では中心差分勾配の零点が真のピークに一致するため停留点へ収束する(単一ステップでは
+2 次モデル誤差が残り ±0.05voxel を割れないが、反復で ~0.02voxel まで収束)。H が負定値でない
+(=極大でない)real な相関面では上昇方向へ退避(勾配上昇ステップ)して発散を防ぐ。
+
+Parameters
+----------
+score : array_like または torch.Tensor
+    3D スコア/相関 volume (D,H,W)。値が大きいほどピーク。
+idx : tuple[int,int,int]
+    整数ピーク座標 (z,y,x)(通常 argmax の unravel 結果)。
+device : str
+    "cpu" / "cuda"。torch 演算の device。
+max_iter : int
+    最大反復回数(既定 12)。
+tol : float
+    収束判定(更新量 L2 ノルム、既定 1e-4)。
+
+Returns
+-------
+numpy.ndarray
+    [score_peak, z, y, x] (精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

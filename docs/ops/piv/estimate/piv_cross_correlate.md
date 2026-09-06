@@ -4,7 +4,7 @@ dim: piv
 category: estimate
 in: image2d × image2d
 out: flow2d
-examples: [piv_flow_from_particles, poc_dic_strain, poc_strain_history, poc_superresolution_limits]
+examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_dic_strain, poc_strain_history, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -73,6 +73,7 @@ Returns:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [piv_field_analysis_tour](../../../../examples/piv_field_analysis_tour.py) — `py -3.11 examples/piv_field_analysis_tour.py`
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
 - [poc_dic_strain](../../../../examples/poc_dic_strain.py) — `py -3.11 examples/poc_dic_strain.py`
 - [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`

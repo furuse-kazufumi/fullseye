@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_split_long_edges(V, F, max_edge, max_passes=20)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mesh_split_long_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>*max_edge* 보다 긴 엣지를 없어질 때까지 이등분 —— 적응적 세분(`<code style="color:#22d3bf">mesh</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Each pass splits every over-long edge at its midpoint and re-triangulates</p>
+<p>each affected face by the number of split edges (1 → 2, 2 → 3, 3 → 4</p>
+<p>triangles), so there are never T-junctions and faces that are already fine</p>
+<p>are untouched: the refinement lands exactly where the mesh is coarse.</p>
+<p>Stops after *max_passes* (`<code style="color:#22d3bf">ValueError</code>` if edges still exceed the target</p>
+<p>then). Vertex positions are not moved — the shape is preserved exactly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

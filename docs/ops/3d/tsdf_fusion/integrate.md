@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。
 
+各 voxel 中心を (K,R,t) で射影(``X_cam = R X + t``, ``u = fx*X/Z+cx``)し、対応画素の
+観測深度 ``d_meas`` と voxel のカメラ深度 ``d_voxel = Z_cam`` を比較。
+``sdf = min(1, (d_meas - d_voxel)/trunc)`` を、以下すべてを満たす voxel にのみ適用:
+画像内・``d_meas>0`` かつ有限・``(d_meas - d_voxel) >= -trunc``(表面より trunc 以上奥=
+遮蔽領域は観測不能として **更新しない**)。この valid 集合では sdf ∈ [-1,1]。
+更新: ``tsdf = (w*tsdf + sdf)/(w+1)``、``weight = w+1``(1 フレーム重み 1)。
+
+bounds を渡すと voxel 中心を world で解釈し (K,R,t) は world→camera。bounds=None(既定)
+では voxel 中心を grid-index フレーム((i+0.5,...))で解釈し (K,R,t) は grid→camera とする
+(``fuse`` は bounds を渡すので world 座標で融合される)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

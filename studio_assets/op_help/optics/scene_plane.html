@@ -5,6 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>z = `<code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf"> の水平面(ステージ/コンベア)。</code><code style="color:#22d3bf">half_size_mm</code>` で有限の板にできる。</p>
 <p>有限板は (hx, hy) の半サイズ [mm]。省略すると無限平面(背景として使う)。</p>
+<p>座標系は右手系 [mm] で z が上。平面は `<code style="color:#22d3bf">z = z_mm</code>` に水平に置かれ、有限板は</p>
+<p><b>中心が常に x = y = 0</b>(`<code style="color:#22d3bf">|x| &lt;= hx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">|y| &lt;= hy</code>` の外は光線が素通り)。</p>
+<p>横にずらす引数は無いので、部品のほうを動かして配置する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf">: 高さ [mm]。有限であること(NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">material</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_material</code>` の結果。省略時は lambert、albedo 0.2(暗い灰)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">half_size_mm</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(hx, hy)</code><code style="color:#22d3bf"> [mm]、両方とも正。長さ 2 でなければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;plane&quot;, &quot;z&quot;, &quot;half&quot;, &quot;material&quot;}</code>` の dict。他の</p>
+<p>`<code style="color:#22d3bf">scene_*</code><code style="color:#22d3bf"> と list にまとめて </code><code style="color:#22d3bf">trace_rays</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">render_optscene</code>` /</p>
+<p>`<code style="color:#22d3bf">optscene_mask</code>` へ渡す。</p>
+<p>体積を囲まないので `<code style="color:#22d3bf">scene_difference</code>` の引数にはできない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

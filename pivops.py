@@ -771,7 +771,7 @@ def piv_divergence(flow, spacing=1.0):
     ``x`` = 列、``y`` = 行。行が下向きでも発散の符号は座標の向きに依らない
     (渦度 ``piv_vorticity`` とは違い、反転しない)。正 = 湧き出し、負 = 吸い込み。
 
-    - ``flow``: ``(2, h, w)``、成分 ``(dy, dx)`` [px/frame](``piv_cross_correlate`` /
+    - ``flow``: ``(2, h, w)``、成分 ``(dy, dx)`` [px/frame] (``piv_cross_correlate`` /
       ``piv_multipass`` の返り値)。``h, w >= 2`` でないと微分できないので
       ``ValueError``(窓が大きすぎて 1 本しかベクトルが無い場合)。
       **有限性は検査しない** ―― ``piv_replace_outliers(method="nan")`` の NaN は

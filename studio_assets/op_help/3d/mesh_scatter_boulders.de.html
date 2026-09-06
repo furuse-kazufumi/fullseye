@@ -4,6 +4,45 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import render3d; render3d.mesh_scatter_boulders(V, F, *, density: &#x27;float&#x27;, d_min: &#x27;float&#x27;, d_max=None, exponent: &#x27;float&#x27; = 3.1, seed: &#x27;int&#x27; = 0, region_weights=None, aspect=(1.0, 0.7, 0.5), embed: &#x27;float&#x27; = 0.35, subdiv: &#x27;int&#x27; = 1, shape: &#x27;str&#x27; = &#x27;ellipsoid&#x27;, orientation: &#x27;str&#x27; = &#x27;normal&#x27;, burial=(0.3, 0.6), max_count=None, hull_points=None, return_info: &#x27;bool&#x27; = False)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;mesh_scatter_boulders&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verstreut halb eingesunkene Felsblöcke auf einem Mesh (Potenzgesetz-Größen, geseedet) → `<code style="color:#22d3bf">(V, F)</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>(or `<code style="color:#22d3bf">(V, F, info)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">return_info=True</code>`).</p>
+<p>`<code style="color:#22d3bf">shape=&#x27;ellipsoid&#x27;</code>` (default, unchanged behaviour): icosphere ellipsoids with semi-axes</p>
+<p>`<code style="color:#22d3bf">D/2 × aspect</code>` (1 : 0.7 : 0.5, shortest axis along the local surface normal), spun about</p>
+<p>the normal and sunk by `<code style="color:#22d3bf">embed</code>` (0 = resting, 1 = centre on the surface).</p>
+<p>`<code style="color:#22d3bf">shape=&#x27;hull&#x27;</code>`: <b>angular blocks</b> — the convex hull of seeded random points on an</p>
+<p>ellipsoid of the same aspect with 20 % radial jitter (flat facets, sharp edges, the</p>
+<p>look of Itokawa&#x27;s boulders), `<code style="color:#22d3bf">hull_points</code>` per block (default size-dependent:</p>
+<p>`<code style="color:#22d3bf">10 + 8·log2(D/d_min)</code><code style="color:#22d3bf">, 10..40). </code><code style="color:#22d3bf">orientation=&#x27;random&#x27;</code>` gives each block a uniform</p>
+<p>random rotation instead of aligning its short axis with the normal. For hulls the sink</p>
+<p>is the size-dependent `<code style="color:#22d3bf">burial</code><code style="color:#22d3bf"> fraction from :func:</code>sample_boulders` (30–60 % of the</p>
+<p>block&#x27;s height below the surface by default; `<code style="color:#22d3bf">embed</code><code style="color:#22d3bf"> is ignored). </code><code style="color:#22d3bf">max_count</code>` caps</p>
+<p>the expected number by raising `<code style="color:#22d3bf">d_min</code>` along the same law (see</p>
+<p>:func:<code style="color:#22d3bf">sample_boulders</code>; `<code style="color:#22d3bf">info[&#x27;d_min_effective&#x27;]</code>` reports it).</p>
+<p>Placement and sizes come from :func:<code style="color:#22d3bf">sample_boulders</code> (Poisson process,</p>
+<p>N(&gt;D) ∝ D^-exponent); boulders sit on the mesh *as passed* — pass the displaced /</p>
+<p>subdivided terrain so they rest on the final surface. `<code style="color:#22d3bf">region_weights</code>` from</p>
+<p>:func:<code style="color:#22d3bf">terrain_region_mask</code> keeps the seas smooth. The boulders are appended as real</p>
+<p>geometry, so they self-shadow, cast shadows and occlude through the same rasteriser /</p>
+<p>ray-cast path as the terrain. `<code style="color:#22d3bf">info</code><code style="color:#22d3bf"> = the sample dict plus </code><code style="color:#22d3bf">faces_per_boulder</code>`</p>
+<p>and `<code style="color:#22d3bf">n_boulders</code><code style="color:#22d3bf">. Deterministic under </code><code style="color:#22d3bf">seed</code>`. Fail-closed.</p>
+<p>手順: :func:<code style="color:#22d3bf">sample_boulders</code> で位置(面上の一様点)・面法線・直径 `<code style="color:#22d3bf">D</code>` を引き、岩ごとに</p>
+<p>小さなメッシュを作って入力メッシュの後ろに連結する(頂点は末尾に追加、面 index は</p>
+<p>オフセット済み)。入力の頂点・面はそのまま残るので、`<code style="color:#22d3bf">info[&#x27;faces_per_boulder&#x27;]</code>` と</p>
+<p>元の面数から岩の面だけを切り出せる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">density</code><code style="color:#22d3bf">: 単位面積(メッシュ単位²)あたりの </code><code style="color:#22d3bf">D ≥ d_min</code>` の岩の期待個数。</p>
+<p>実個数はポアソン分布で決まり 0 個もあり得る(そのときは入力のコピーを返す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">d_min</code><code style="color:#22d3bf"> &lt; </code><code style="color:#22d3bf">d_max</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">None</code><code style="color:#22d3bf"> = 10·d_min)、</code><code style="color:#22d3bf">exponent</code><code style="color:#22d3bf"> &gt; 0、</code><code style="color:#22d3bf">aspect</code>` は正の 3 要素、</p>
+<p>`<code style="color:#22d3bf">embed</code><code style="color:#22d3bf"> ∈ [0, 1]、</code><code style="color:#22d3bf">subdiv</code><code style="color:#22d3bf"> ∈ [0, 3] (楕円体の icosphere 細分)、</code><code style="color:#22d3bf">hull_points</code>` は</p>
+<p>[6, 200]。いずれも範囲外は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shape=&#x27;ellipsoid&#x27;</code><code style="color:#22d3bf">: 半軸 </code><code style="color:#22d3bf">D/2·aspect</code>` の楕円体を最短軸が法線に沿う向きで置き、</p>
+<p>中心を法線方向に `<code style="color:#22d3bf">semi_z·(1 − embed)</code>` 浮かせる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shape=&#x27;hull&#x27;</code><code style="color:#22d3bf">: 楕円体上の乱数点の凸包。法線方向の高さ範囲のうち </code><code style="color:#22d3bf">burial</code>`</p>
+<p>(0.3〜0.6 既定、小さい岩ほど深い)の割合が面の下に沈む。`<code style="color:#22d3bf">embed</code>` は無視。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">orientation=&#x27;random&#x27;</code><code style="color:#22d3bf"> は一様ランダム回転(4 元数)。</code><code style="color:#22d3bf">&#x27;normal&#x27;</code>` は法線まわりに</p>
+<p>ランダム回転。回転の乱数は `<code style="color:#22d3bf">seed + 1</code>` の generator を使う。</p>
+<p>岩は実ジオメトリなので `<code style="color:#22d3bf">ambient_occlusion</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cast_shadow</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shadow_raycast</code>` の</p>
+<p>レイに普通に当たる。置く面は渡したメッシュそのものなので、`<code style="color:#22d3bf">mesh_displace_spectrum</code>` や</p>
+<p>`<code style="color:#22d3bf">mesh_subdivide</code>` の <b>後</b> に呼ぶこと(先に呼ぶと岩が地面から浮く/埋まる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

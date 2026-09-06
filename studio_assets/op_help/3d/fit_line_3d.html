@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.fit_line_3d(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_line_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。</p>
+<p>`<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> の点群(数値・列数 3 でなければ ValueError、2 点未満も ValueError)の重心 </code><code style="color:#22d3bf">c</code>` と</p>
+<p>散布行列 `<code style="color:#22d3bf">(P−c)ᵀ(P−c)</code>` の最大固有値の固有ベクトルを返す(直交距離の二乗和を最小化する直線。</p>
+<p>z=f(x) 型の回帰ではない)。`<code style="color:#22d3bf">direction</code><code style="color:#22d3bf"> は単位ベクトルで **符号は任意**(</code><code style="color:#22d3bf">eigh</code>` 次第。向きを</p>
+<p>揃えるなら `<code style="color:#22d3bf">(P[-1] − P[0]) @ direction</code>` の符号で反転)。</p>
+<p>2 点だけなら 2 点を通る直線。点が平面状に広がっていると最大軸は「最も長い方向」になるだけで</p>
+<p>直線とは限らない(残差は返さないので `<code style="color:#22d3bf">distance_point_line</code>` で確かめる)。外れ値に弱い</p>
+<p>(ロバストには `<code style="color:#22d3bf">ransac_line</code>`)。3-D 専用(2-D 点は ValueError)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

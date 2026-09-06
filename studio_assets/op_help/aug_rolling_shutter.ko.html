@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aug_rolling_shutter — 2D <code style="color:#22d3bf">augmentation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_rolling_shutter&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p><img src="fig/aug_rolling_shutter.png" alt="aug_rolling_shutter: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/aug_rolling_shutter.png" alt="aug_rolling_shutter: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_rolling_shutter.a.jpg">aug_rolling_shutter: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_rolling_shutter.b.jpg">aug_rolling_shutter: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_rolling_shutter.inputs.jpg">aug_rolling_shutter: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>롤링 셔터(rolling-shutter) 왜곡. CMOS 롤링 셔터는 각 행(row)을 순차적으로 노출하므로, 장면(또는 카메라)이 수평으로 패닝하면 각 행이 행 인덱스에 선형 비례하는 만큼 이동한다 -- 순수한 수평 전단(shear)이다. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 는 최대 이동량 </code><code style="color:#22d3bf">0.25*W*a</code><code style="color:#22d3bf"> 픽셀을 설정하며(전단은 중앙 행이 움직이지 않도록 중심이 맞춰져 있다), </code><code style="color:#22d3bf">b</code>` 는 패닝 방향을 설정한다(b &lt; 0.5 이면 행 인덱스가 커질수록 오른쪽으로, 그렇지 않으면 왼쪽으로 이동). 반사 경계 조건으로 양선형(bilinear) 리샘플링한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

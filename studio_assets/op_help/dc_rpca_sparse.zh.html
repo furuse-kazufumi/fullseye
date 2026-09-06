@@ -2,10 +2,33 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dc_rpca_sparse — 2D <code style="color:#22d3bf">decomposition</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_rpca_sparse&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/dc_rpca_sparse.png" alt="dc_rpca_sparse: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/dc_rpca_sparse.png" alt="dc_rpca_sparse: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.a.jpg">dc_rpca_sparse: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.inputs.jpg">dc_rpca_sparse: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>鲁棒 PCA 的稀疏（缺陷／异常）残差 = 输入 - 低秩，位于 0.5。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">dc_rpca_lowrank</code><code style="color:#22d3bf"> と同じ inexact ALM の PCP 分解 </code><code style="color:#22d3bf">M = L + S</code>` を行い、</p>
+<p>スパース項 `<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> を 0.5 を中心に置いて返す(</code><code style="color:#22d3bf">clip(S + 0.5, 0, 1)</code>`)。背景と</p>
+<p>同じ画素は 0.5、背景より明るい孤立点は 0.5 より上、暗い点は下に出る符号つき</p>
+<p>残差で、飽和しない範囲で `<code style="color:#22d3bf">dc_rpca_lowrank + (この出力 - 0.5) == 入力</code>`。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はスパース重み </code><code style="color:#22d3bf">λ = (0.5 + 1.5*a)/sqrt(max(m, n))</code>` で、大きいほど</p>
+<p>`<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> が疎(小さな残差は 0 に丸められ、はっきりした欠陥だけ残る)、</code><code style="color:#22d3bf">a=0</code>`</p>
+<p>ではほぼ全画素に残差が出る。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>長辺 64 超の画像は縮小して `<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> を解き、</code><code style="color:#22d3bf">S</code>` は元解像度で</p>
+<p>`<code style="color:#22d3bf">S = soft(M0 - L_up, λ/μ_final)</code><code style="color:#22d3bf"> として作り直す(縮小した </code><code style="color:#22d3bf">S</code>` を拡大</p>
+<p>すると 1 画素欠陥がにじんで振幅を失うため)。入力は [0,1] の 2 次元に揃え、</p>
+<p>返り値は同形 float64、[0,1]。全零画像では `<code style="color:#22d3bf">S = 0</code>` で一様 0.5。例外時は</p>
+<p>fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
+<p>後段では `<code style="color:#22d3bf">|出力 - 0.5|</code><code style="color:#22d3bf"> が欠陥の強さなので、</code><code style="color:#22d3bf">threshold</code>` 系の op で 0.5 から</p>
+<p>離れた画素を拾う(明側・暗側のどちらを拾うかはしきい値の向きで決まる)。周期</p>
+<p>背景(織物・格子・ディスプレイ)上の点欠陥・傷の検出向けで、非周期背景では</p>
+<p>残差に背景の凹凸がそのまま混ざる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

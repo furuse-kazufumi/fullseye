@@ -4,6 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対応集合の inlier 率 = ‖T·source[i] − target[i]‖ &lt; thresh の割合。→ [0,1]。</p>
+<p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">target</code>` は <b>index 対応</b>(source[i] が target[i] に対応)の</p>
+<p>同数点群(FPFH 等の putative correspondence を想定)。thresh に単調非減少。</p>
+<p>形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

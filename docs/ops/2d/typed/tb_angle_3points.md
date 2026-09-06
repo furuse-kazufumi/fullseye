@@ -15,11 +15,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `points` → `feature`
 - **呼び出し**: `fullseye.apply(img, "tb_angle_3points", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-*図なし: この op は `points` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— 3 点(頂点 b と両端)を取る op で、(N,3) の点群は定義域の外。下の「実行できる例」で使い方を見ること。*
 
 ## 使い方
 
 3 点のなす角(頂点 b、度)。∠ABC。
+
+    ``arccos(û·v̂)``(``u = a − b``, ``v = c − b``)を度で返す(float)。値は **[0, 180]** で符号は
+    無い(2-D でも回転の向きは区別しない)。引数は数値の 2 または 3 ベクトル、次元の混在は
+    ValueError。``a == b`` か ``c == b`` だと零ベクトルの内積 0 で 90 が返る(例外は出ない)。
+    内積は [−1,1] に clip するので数値誤差で NaN にはならない。
+    用途: 曲げ角・関節角の計測、``fit_line_3d`` で得た 2 直線の交点まわりの角度。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``angle_3points``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
@@ -30,7 +36,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+次の例は元の台帳 op `angle_3points` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [geometry_metrology](../../../../examples_3d/geometry_metrology.py) — `py -3.11 examples_3d/geometry_metrology.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

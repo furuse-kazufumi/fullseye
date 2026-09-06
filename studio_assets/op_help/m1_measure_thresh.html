@@ -3,8 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_thresh&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">measure_thresh</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/m1_measure_thresh.png" alt="m1_measure_thresh: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/m1_measure_thresh.png" alt="m1_measure_thresh: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_thresh.a.jpg">m1_measure_thresh: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_thresh.b.jpg">m1_measure_thresh: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>中心を通るキャリパー線上で、輝度プロファイルが指定レベルを横切った回数を数える（HALCON `<code style="color:#22d3bf">measure_thresh</code>` に相当: 矩形/円弧に沿って特定のグレー値を持つ点を抽出する）。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は線の向き（</code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf">）、</code><code style="color:#22d3bf">b</code>` はグレー値のしきい値レベル（0〜1、そのまま）。生のプロファイル（平滑化なし）がこのレベルをまたぐ回数を feature（整数値）として返す。線が画像に掛からない場合は 0.0。</p>

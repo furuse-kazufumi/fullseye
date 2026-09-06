@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import twoview; twoview.fundamental_8point(pts1, pts2)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;fundamental_8point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt die Fundamentalmatrix F mit dem normalisierten Acht-Punkt-Algorithmus (Rang 2 erzwungen). → F (3,3). Mindestens acht Punkte nötig.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。</p>
+<p>手順: 両画像の点を Hartley 正規化(重心を原点、平均距離 √2)→ 9 列の係数行列の最小特異ベクトルを F とする → 特異値の 3 番目を 0 にして rank-2 に強制 → `<code style="color:#22d3bf">T2ᵀ F T1</code><code style="color:#22d3bf"> で逆正規化 → </code><code style="color:#22d3bf">F[2,2]</code>` で割って正規化(それがほぼ 0 なら Frobenius ノルムで割る)。</p>
+<p style="margin:2px 0 2px 12px">• 対応点は画素座標 (x, y) の (N,2)。規約は `<code style="color:#22d3bf">x2ᵀ F x1 = 0</code>`(x1 が pts1、x2 が pts2)。</p>
+<p style="margin:2px 0 2px 12px">• F はスケール不定(定数倍しても同じ幾何)で符号も一意ではない。</p>
+<p style="margin:2px 0 2px 12px">• 全点を等しく使う最小二乗で、外れ値には無防備。誤対応が混じる対応は本 op の前に除くか、`<code style="color:#22d3bf">sampson_distance</code>` で残差を見て選別してから再フィットする。</p>
+<p style="margin:2px 0 2px 12px">• 平面シーンや純回転では対応点が 1 つのホモグラフィで説明でき F は一意に決まらない(それでも何かは返る)。この退化は `<code style="color:#22d3bf">recover_pose</code>` が入口で検出して拒否する。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的。後段は `<code style="color:#22d3bf">essential_8point</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">recover_pose</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sampson_distance</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

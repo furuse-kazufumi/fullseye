@@ -3,8 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;height_width_ratio&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">height_width_ratio</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/height_width_ratio.png" alt="height_width_ratio: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/height_width_ratio.png" alt="height_width_ratio: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>外接矩形的纵横比 `<code style="color:#22d3bf">min(1, 高度/宽度)</code><code style="color:#22d3bf">。仅当高度不超过宽度时才返回正确的比值,而在高度超过宽度(纵长)的区域中会饱和为 1.0(实现上的不对称——这是只能表达&quot;横向扁平程度&quot;、而非真正长宽比的近似)。作为 HALCON 的 </code><code style="color:#22d3bf">height_width_ratio</code>`(Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.)的代替。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

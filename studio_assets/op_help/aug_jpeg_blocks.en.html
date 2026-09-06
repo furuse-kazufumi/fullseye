@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aug_jpeg_blocks — 2D <code style="color:#22d3bf">augmentation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_jpeg_blocks&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/aug_jpeg_blocks.png" alt="aug_jpeg_blocks: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/aug_jpeg_blocks.png" alt="aug_jpeg_blocks: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.a.jpg">aug_jpeg_blocks: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.b.jpg">aug_jpeg_blocks: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.inputs.jpg">aug_jpeg_blocks: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>JPEG blocking / ringing artefacts. The image (scaled to 0..255) is cut into 8x8 blocks, each transformed with an orthonormal 2-D DCT-II (`<code style="color:#22d3bf">scipy.fft.dctn</code><code style="color:#22d3bf">), quantised with the STANDARD JPEG Annex-K luminance table scaled by </code><code style="color:#22d3bf">(1 + 40*a)/16</code><code style="color:#22d3bf"> (a=0 -&gt; near-lossless, a=1 -&gt; heavy quantisation), then reconstructed with the inverse DCT. </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> shifts the 8x8 block grid phase by </code><code style="color:#22d3bf">int(7*b)</code>` px in both axes, i.e. moves where the block seams fall. Images that are not a multiple of 8 are edge-replicate padded and cropped back to HxW (so 4x4 inputs are handled).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

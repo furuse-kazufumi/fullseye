@@ -3,10 +3,33 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;r2_inner_circle&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">inner_circle</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/r2_inner_circle.png" alt="r2_inner_circle: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/r2_inner_circle.png" alt="r2_inner_circle: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_inner_circle.a.jpg">r2_inner_circle: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_inner_circle.chain.jpg">r2_inner_circle: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_inner_circle.inputs.jpg">r2_inner_circle: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把最大内接圆画成掩码(a 缩放所画半径;a=0.5 为精确)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>領域の最大内接円をマスクとして描く。入力を `<code style="color:#22d3bf">&gt; 0.5</code>` で前景マスクに直し、</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>` で各前景画素から最近傍の背景画素</p>
+<p>までの距離を取り、その最大値 `<code style="color:#22d3bf">r0</code><code style="color:#22d3bf"> を与える画素を中心 </code><code style="color:#22d3bf">(cy, cx)</code>` とする</p>
+<p>(最大値が複数あれば行優先で最初の画素)。描く半径は</p>
+<p>`<code style="color:#22d3bf">r = r0 * (0.6 + 0.8*a)</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で 0.6 倍、</code><code style="color:#22d3bf">a=0.5</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">r0</code>` そのまま、</p>
+<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> で 1.4 倍(</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は [0,1] に clip、非有限なら 0.5)。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64 0/1 マスク(円板 `<code style="color:#22d3bf">(y-cy)^2+(x-cx)^2 &lt;= r^2</code>`)。</p>
+<p>前景が無ければ全零。座標は (row, col)。</p>
+<p>注意: `<code style="color:#22d3bf">r0</code><code style="color:#22d3bf"> は「背景画素の中心までの距離」なので、</code><code style="color:#22d3bf">a=0.5</code>` でも描いた円板は</p>
+<p>領域の縁を 1 画素程度はみ出すことがある(10x20 の矩形で 2 画素、半径 7 の</p>
+<p>円板で 12 画素の外側画素を実測)。厳密に内側へ収めたいなら `<code style="color:#22d3bf">a</code>` を少し</p>
+<p>下げる。領域が複数の連結成分からなる場合も内接円は 1 つだけ(最も太い成分の</p>
+<p>もの)。3 次元配列 (H,W,C) は (H, W*C) に平坦化されるのでカラー画像は渡さない。</p>
+<p>前段に `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">select_largest</code>`、対になる外接円は</p>
+<p>`<code style="color:#22d3bf">r2_smallest_circle</code>`(両者の半径比が真円度の粗い指標になる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

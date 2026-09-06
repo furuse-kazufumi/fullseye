@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;surface_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>산포 데이터와 곡면 tck 의 잔차 통계를 돌려줍니다(형상 오차=적합으로부터의 이탈).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>各サンプル位置で曲面高さを評価し、観測 z との差の RMS / 最大絶対値 / PV</p>
+<p>(peak-to-valley = 最大 - 最小)を計測する。検査ではこれが自由曲面からの</p>
+<p>ずれ量(打痕・うねり・欠肉)の定量指標になる。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>`<code style="color:#22d3bf">{&quot;rms&quot;: float, &quot;max&quot;: float, &quot;pv&quot;: float}</code>`。max は最大絶対残差、</p>
+<p>pv は符号付き残差の最大 - 最小(片側だけの凸/凹も捉える)。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 残差の符号は `<code style="color:#22d3bf">resid = z - zhat</code><code style="color:#22d3bf">(観測 − 曲面)。正 = 曲面より高い(盛り上がり)、負 = 低い(欠肉)。</code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> は絶対値なので向きは分からず、向きが要るなら </code><code style="color:#22d3bf">eval_bspline_surface</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">zhat</code>` を取り自分で差を取る。</p>
+<p style="margin:2px 0 2px 12px">• x, y, z は任意 shape を受け、内部で `<code style="color:#22d3bf">eval_bspline_surface(tck, x, y, grid=False)</code><code style="color:#22d3bf"> を通す(tck の種類検査もそこで行われ、曲線 tck や多項式 dict は </code><code style="color:#22d3bf">ValueError</code>`)。z と x の要素数が違うと numpy の形状エラーになる(専用の検査は無く、z が 1 要素だと黙って broadcast される)。</p>
+<p style="margin:2px 0 2px 12px">• 単位は z と同じ。`<code style="color:#22d3bf">rms</code><code style="color:#22d3bf"> は全点の二乗平均平方根なので局所的な打痕は平均で薄まる。局所欠陥は </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">pv</code>` で見る。</p>
+<p style="margin:2px 0 2px 12px">• 典型: `<code style="color:#22d3bf">fit_bspline_surface</code>` → 本 op。フィットに使った点で評価すると smooth が小さいほど残差は 0 に近づく(過適合の指標にもなる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

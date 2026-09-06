@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import fringe; fringe.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;graycode_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gray code 位图像序列 → 整数条纹级次图(绝对级次)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>bit_images: 長さ K のシーケンス(各 2D 画像、明=1 / 暗=0)。<b>MSB first</b>(bit_images[0] が</p>
+<p>最上位ビット)。thresh で二値化する。</p>
+<p>thresh:     二値化しきい値(画素値 &gt;= thresh を 1)。</p>
+<p>処理: 各ビット面を二値化 → MSB first で Gray 値を組み立て → Gray→binary 変換</p>
+<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1)))で絶対次数(整数)を返す。</p>
+<p>返り値: dtype int64 の 2D 次数マップ(値域 0..2**K-1)。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">None</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(K, H, W)</code><code style="color:#22d3bf"> に変換できない / </code><code style="color:#22d3bf">K &lt; 1</code>` /</p>
+<p>`<code style="color:#22d3bf">K &gt; 62</code><code style="color:#22d3bf">(int64 に収まらない) / NaN・Inf を含む。</code><code style="color:#22d3bf">thresh</code>` は検査しない</p>
+<p>(画素値と同じスケールで与える。`<code style="color:#22d3bf">[0, 1]</code>` 画像なら 0.5 が既定)。</p>
+<p>二値化は固定閾値 `<code style="color:#22d3bf">&gt;= thresh</code>` のみ — 反転パターン(ネガ画像)との比較や</p>
+<p>局所閾値は行わない。影・低反射で暗く出た画素は 0 ビットとして復号され、</p>
+<p>エラーにならず誤った次数になるので、`<code style="color:#22d3bf">modulation</code>` などで作った信頼マスクを</p>
+<p>呼び手が別に持つこと。</p>
+<p>次数の意味: Gray 符号は隣接コードが 1 ビットしか違わないので、境界画素の</p>
+<p>二値化誤りは次数を ±1 しかずらさない(binary 符号なら大きく飛ぶ)。返る整数を</p>
+<p>投影機コラム番号や縞の絶対次数として、`<code style="color:#22d3bf">absolute_phase</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">coarse</code>`</p>
+<p>(`<code style="color:#22d3bf">2π * 次数</code><code style="color:#22d3bf"> を位相に換算)や </code><code style="color:#22d3bf">triangulate_column</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">column</code>` に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

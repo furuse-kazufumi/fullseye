@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_sato(vol, scales=(1, 2, 3), black_ridges=False)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_sato&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D Sato の管状度 —— 固有値 2 つで済む簡素な線状フィルタ。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Per scale, from eigenvalues in algebraic order `<code style="color:#22d3bf">e1 &gt;= e2 &gt;= e3</code>` a bright</p>
+<p>curvilinear (tube) structure has `<code style="color:#22d3bf">e2, e3 &lt; 0</code>` and the tubeness is</p>
+<p>`<code style="color:#22d3bf">sqrt(e2 * e3)</code><code style="color:#22d3bf"> there (0 elsewhere); </code><code style="color:#22d3bf">black_ridges=True</code>` uses the two most</p>
+<p>*positive* eigenvalues for dark tubes. The maximum over scales is normalised</p>
+<p>to `<code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p>Cheaper and less selective than :func:<code style="color:#22d3bf">vol_frangi</code> (it does not explicitly</p>
+<p>suppress plate- or blob-like structure), but a robust, well-cited tube</p>
+<p>detector. Reference: Sato et al., Medical Image Analysis 1998.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

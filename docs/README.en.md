@@ -9,7 +9,7 @@
 
 *Six acts, all real operator output: edge orientation, blob selection, sub-pixel calipers, SDF to mesh, LiDAR clustering, lens defocus.*
 
-**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **885** operators (as counted in the registry), provides genuine implementations of **979/2313** actual HALCON operators, and spans 47 categories.
+**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **897** operators (as counted in the registry), provides genuine implementations of **979/2313** actual HALCON operators, and spans 48 categories.
 
 > **Start here → [GETTING_STARTED.md](GETTING_STARTED.md) (up and running in 5 minutes)**
 
@@ -52,15 +52,15 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**1,842 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **48 family guides**. Entry points by dimension:
+**1,854 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **49 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 885/885, typed ledger 958/1002, one-line facade `fullseye.<name>` 501/1091 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 897/897, typed ledger 958/1002, one-line facade `fullseye.<name>` 501/1091 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 1842 notes, **1637** link at least one runnable example (205 have none) and **1348** have a usage section of 120+ characters (494 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 1842.
+**Measured substance**: of 1854 notes, **1825** link at least one runnable example (29 have none) and **1854** have a usage section of 120+ characters (0 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 1854.
 
 | dimension | ops | entry |
 |---|---:|---|
-| `2d` | 885 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 897 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 347 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 124 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 46 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -113,7 +113,7 @@ Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-li
 
 | Document | Contents |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | Catalogue of all 885 operators (47 categories, grouped by sort, with the matching HALCON/OpenCV/scikit-image/MATLAB APIs) |
+| [OPERATORS.md](OPERATORS.md) | Catalogue of all 897 operators (48 categories, grouped by sort, with the matching HALCON/OpenCV/scikit-image/MATLAB APIs) |
 | [EXAMPLES.md](EXAMPLES.md) | Sample code for each operator, with the equivalent call in other libraries |
 | [OP_INDEX.json](OP_INDEX.json) | Machine-readable operator index (regenerate it with `imgevolve.py index`) |
 | [ADDING_OPS.md](ADDING_OPS.md) | How to add a new operator (evolution, codegen, catalogue and index all follow automatically) |
@@ -190,7 +190,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Document map — all 71
 
-The complete map, so that **no document is unreachable from this index** (the 1,842 per-op notes and 48 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 1,854 per-op notes and 49 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 

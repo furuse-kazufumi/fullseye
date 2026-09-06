@@ -9,6 +9,21 @@
 <p>------</p>
 <p>ValueError</p>
 <p>半径が非正、非有限、alpha が [0,1] の外。</p>
+<p>描画: 画素を `<code style="color:#22d3bf">angle_deg</code><code style="color:#22d3bf"> だけ回した局所座標 </code><code style="color:#22d3bf">(u, v)</code>` に写し、</p>
+<p>`<code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code><code style="color:#22d3bf"> で判定する。</code><code style="color:#22d3bf">fill=True</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">q &lt;= 1</code>`、</p>
+<p>`<code style="color:#22d3bf">fill=False</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code>` の帯</p>
+<p>(アンチエイリアス無し)。帯の幅を<b>短軸で正規化</b>しているので、扁平な楕円では</p>
+<p>長軸の端ほど線が太く見える(近似)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(x, y)</code>`、x = 列・y = 行。画像外でもよい。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radii</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(ra, rb)</code><code style="color:#22d3bf"> [px]。</code><code style="color:#22d3bf">ra</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">angle_deg</code><code style="color:#22d3bf"> 方向、</code><code style="color:#22d3bf">rb</code>` がその直交方向。</p>
+<p>両方とも正。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">angle_deg</code>`: 回転角 [度]。x 軸から時計回り(画面座標、y が下向き)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 線幅 [px] (</code><code style="color:#22d3bf">fill=False</code>` のとき)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">img</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">color</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scheme</code><code style="color:#22d3bf"> の扱いは </code><code style="color:#22d3bf">rounded_rect</code>` と同じ</p>
+<p>(float64 複製、`<code style="color:#22d3bf">[0, 1]</code>`、役割名か RGB)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
+<p>`<code style="color:#22d3bf">ra == rb</code><code style="color:#22d3bf"> なら円。計測結果(楕円フィットの </code><code style="color:#22d3bf">row, col, phi, ra, rb</code>`)を</p>
+<p>重ねるときは `<code style="color:#22d3bf">center=(col, row)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">angle_deg=degrees(phi)</code>` に読み替える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

@@ -3,10 +3,32 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;it_bit_mask&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">bit_mask</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/it_bit_mask.png" alt="it_bit_mask: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/it_bit_mask.png" alt="it_bit_mask: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.a.jpg">it_bit_mask: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.inputs.jpg">it_bit_mask: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>bit_mask:將 8 位元影像與常數位元遮罩 round(a*255) 做邏輯 AND 運算。`<code style="color:#22d3bf">b</code>` 被忽略。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>入力を [0,1] の 2 次元 float64 に揃えたあと `<code style="color:#22d3bf">round(x*255)</code>` で 0〜255 の</p>
+<p>8 ビット整数に量子化し、定数マスク `<code style="color:#22d3bf">m = round(a*255) &amp; 0xFF</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` は</p>
+<p>[0,1] に clip)と画素ごとにビット AND を取って、`<code style="color:#22d3bf">/255</code>` で [0,1] に戻す。</p>
+<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> でマスク 255(量子化以外は恒等)、</code><code style="color:#22d3bf">a=0</code>` でマスク 0(全零)、</p>
+<p>`<code style="color:#22d3bf">a=0.5</code>` で 128(最上位ビットだけ残す=0.5 以上か否かの 2 値化と同じ)。</p>
+<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64、値は `<code style="color:#22d3bf">k/255</code><code style="color:#22d3bf"> の離散値。</code><code style="color:#22d3bf">a</code>` はビット</p>
+<p>パターンとして効くので単調ではない: 0.5(=128)は最上位ビット、0.25 付近</p>
+<p>(=64)は上から 2 番目のビットだけを残し、それぞれ独立した縞状の階調平面</p>
+<p>(bit plane)が出る。「上位 n ビットを残す」なら `<code style="color:#22d3bf">a = (256 - 2**(8-n))/255</code>`</p>
+<p>に選ぶ(n=2 で 192/255 ≈ 0.753)。カラー(3 次元)入力はチャネル平均で 2 次元に</p>
+<p>落とされる。例外時は fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
+<p>ビットシフトは `<code style="color:#22d3bf">it_bit_lshift</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">it_bit_rshift</code>`、階調数の削減は</p>
+<p>`<code style="color:#22d3bf">it_convert_image_type</code>`。透かし・ステガノグラフィの解析や量子化ノイズの</p>
+<p>可視化(下位ビット平面の抽出)に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

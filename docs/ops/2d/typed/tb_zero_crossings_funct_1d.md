@@ -15,7 +15,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `signal` → `signal`
 - **呼び出し**: `fullseye.apply(img, "tb_zero_crossings_funct_1d", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-*図なし: この op は `signal` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+*図なし: 走ったが返り値が空だった(合成入力ではこの op の答えが無い —— 零交差や外れ値が無い、など)。空を図にはしない。下の「Studio で試す」のプログラムは走るので、自分の画像で試すこと。*
 
 ## 使い方
 

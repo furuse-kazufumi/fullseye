@@ -19,6 +19,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Incremental isotropic remeshing to a uniform *target_edge* (``mesh``).
 
+Botsch & Kobbelt, *A Remeshing Approach to Multiresolution Modeling*
+(SGP 2004): per iteration (1) split edges longer than 4/3·L, (2) collapse
+edges shorter than 4/5·L into their midpoint when the link condition
+holds, no incident edge would exceed 4/3·L and no face flips, (3) flip
+edges that bring the four valences closer to 6, (4) relax each vertex
+toward its neighbours' centroid in the tangent plane (*relax* ∈ [0,1]),
+(5) project the result back onto the **input** surface (closest point on
+the original triangles, *project*=True) so the shape is not smoothed
+away. Boundary vertices are pinned. The result is a triangle mesh whose
+edge lengths cluster around L regardless of how the input was sampled —
+the fix for "coarse and dense regions treated alike". Measured on a
+pole-clustered UV sphere: edge p95/p5 from 5.6 to < 1.5, area within 2 %,
+closed manifold preserved (``tests/test_meshres.py``).
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

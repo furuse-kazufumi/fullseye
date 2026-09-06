@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.random_rotation(points, seed: &#x27;int&#x27; = 0, max_angle: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;random_rotation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Apply a random rotation and return `<code style="color:#22d3bf">(rotated, R)</code>` (mimicking a change of viewpoint).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> は正規直交・</code><code style="color:#22d3bf">det=+1</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">rotated = points @ R.T</code><code style="color:#22d3bf"> = 各点に </code><code style="color:#22d3bf">R</code>` を左作用、</p>
+<p>逆変換は `<code style="color:#22d3bf">rotated @ R</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">max_angle=None</code>` なら Shoemake 法で一様ランダム回転、</p>
+<p>`<code style="color:#22d3bf">max_angle</code><code style="color:#22d3bf"> 指定(ラジアン, 期待 </code><code style="color:#22d3bf">[0, π]</code><code style="color:#22d3bf">)なら軸を球面一様・角を </code><code style="color:#22d3bf">[0, max_angle]</code>`</p>
+<p>一様に取り、回転角を制限する(`<code style="color:#22d3bf">arccos((tr R -1)/2) ≤ max_angle</code>` を厳密に保証)。</p>
+<p>`<code style="color:#22d3bf">max_angle &lt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">max_angle=0</code>` は単位行列。単位はラジアン(度で</p>
+<p>渡すと桁違いに大きくなる)。`<code style="color:#22d3bf">max_angle=None</code>` の一様回転は上限 π までの大きな回転も</p>
+<p>普通に出るので、視点変化の範囲を絞りたいときは `<code style="color:#22d3bf">max_angle</code>` を使う。回転は原点まわり</p>
+<p>で、雲が原点から離れていれば重心も動く。`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> の規約 </code><code style="color:#22d3bf">rotated = points @ R.T</code>` は</p>
+<p>`<code style="color:#22d3bf">register_fpfh</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">register_shot</code><code style="color:#22d3bf"> が返す </code><code style="color:#22d3bf">dst ≈ src @ R.T + t</code>` と同じ向きなので、</p>
+<p>推定結果との角度誤差は `<code style="color:#22d3bf">arccos((tr(R_est·Rᵀ)-1)/2)</code><code style="color:#22d3bf"> で測れる。</code><code style="color:#22d3bf">seed</code>` で決定論的</p>
+<p>(同 seed なら同じ `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">)。返り値は float64 の </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(3,3)</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

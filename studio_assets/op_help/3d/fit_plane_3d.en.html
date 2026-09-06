@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.fit_plane_3d(points)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;fit_plane_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Point set → a least-squares plane (through the centroid, normal = the smallest principal axis, plus the RMS residual). Returns (point, normal, resid).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> の点群(列数 3 でない・3 点未満は ValueError)の重心 </code><code style="color:#22d3bf">c</code>` と散布行列の最小固有値の</p>
+<p>固有ベクトルを法線にする(直交距離の二乗和を最小化。`<code style="color:#22d3bf">resid = sqrt(λ_min/N)</code>` = 面からの直交</p>
+<p>距離の RMS)。`<code style="color:#22d3bf">normal</code>` は単位ベクトルで <b>符号は任意</b>(外向きにするなら視点や重心との関係で</p>
+<p>反転する)。3 点なら厳密に通る面で resid=0(BLAS の負の丸めは 0 に clamp)。</p>
+<p>点が直線状(2 番目の固有値も 0)だと法線は不定。外れ値に弱い(`<code style="color:#22d3bf">ransac_plane</code>` /</p>
+<p>`<code style="color:#22d3bf">plane_segmentation</code>` で先にインライアを取る)。3-D 専用。</p>
+<p>後段: `<code style="color:#22d3bf">distance_point_plane</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angle_between_planes</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">intersect_planes</code>`、高さ場の</p>
+<p>平面度なら `<code style="color:#22d3bf">surface_form_error(degree=1)</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

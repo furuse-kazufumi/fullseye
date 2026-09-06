@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_smooth_union(a, b, k)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;sdf_smooth_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>滑らかに丸めた和集合(polynomial smooth-min)。`<code style="color:#22d3bf">k&gt;0</code>` で継ぎ目を半径 ~k で丸める。</p>
+<p>Inigo Quilez の二次多項式 smin:</p>
+<p>`<code style="color:#22d3bf">h = clip(0.5 + 0.5*(b-a)/k, 0, 1)</code><code style="color:#22d3bf">,  </code><code style="color:#22d3bf">smin = mix(b,a,h) - k*h*(1-h)</code>`。</p>
+<p>性質: (1) 対称 `<code style="color:#22d3bf">smin(a,b)=smin(b,a)</code><code style="color:#22d3bf">、(2) </code><code style="color:#22d3bf">smin &lt;= min(a,b)</code>`(継ぎ目でくぼむ)、</p>
+<p>(3) <b>k→0 で min(a,b) に一致</b>(= 硬い `<code style="color:#22d3bf">sdf_union</code>`)、(4) 1 次同次</p>
+<p>`<code style="color:#22d3bf">smin(s*a,s*b,s*k)=s*smin(a,b,k)</code>`(スケール整合)。</p>
+<p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> は距離次元の丸め半径。硬い min が欲しければ </code><code style="color:#22d3bf">sdf_union</code>` を使う。</p>
+<p>`<code style="color:#22d3bf">±inf</code><code style="color:#22d3bf"> を含む入力(</code><code style="color:#22d3bf">esdf</code>` の「全自由なら +inf」契約との相互運用)では、</p>
+<p>ブレンド帯 `<code style="color:#22d3bf">|a-b|&lt;k</code><code style="color:#22d3bf"> が退化するため厳密に </code><code style="color:#22d3bf">min(a,b)</code>` を返す。</p>
+<p>Raises ValueError for k&lt;=0(0 除算を避けるため fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

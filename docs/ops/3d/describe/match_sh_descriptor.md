@@ -21,6 +21,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 SH 記述子同士のコサイン類似度(回転不変な形状照合)。1 に近いほど同形状。voxel × SH 列。
 
+``sh_descriptor(a, L, nradii)`` と ``sh_descriptor(b, L, nradii)`` を平坦化して L2 正規化し、
+内積を float で返す。帯域エネルギーは非負なので値は **[0, 1]**(負にならない)。どちらかの
+記述子が全 0(空 volume)なら 0。
+- ``a``, ``b`` は立方体 volume(``sh_descriptor`` の前提)。形が違ってもよいが、shell 半径が
+各 N で決まるので **スケールが違う物体は別物**として低く出る(スケール不変ではない)。
+中心ずれにも弱い(重心で中心合わせしてから)。
+- 回転には不変(帯域エネルギー)。ただし鏡像も同じ値になる。
+- ``ntheta``/``nphi`` は既定(32×64)固定。同じ設定同士の比較にだけ意味がある。
+- 位置は返さない。「どこにあるか」は ``match_shape_3d`` 等、「同じ形か」は本 op。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

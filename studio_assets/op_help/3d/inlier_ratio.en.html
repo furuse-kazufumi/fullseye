@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The inlier ratio of a correspondence set = the fraction with ‖T·source[i] − target[i]‖ &lt; thresh. → [0,1].</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">target</code>` は <b>index 対応</b>(source[i] が target[i] に対応)の</p>
+<p>同数点群(FPFH 等の putative correspondence を想定)。thresh に単調非減少。</p>
+<p>形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

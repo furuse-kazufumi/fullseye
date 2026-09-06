@@ -3,8 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">match</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;ncc_locate&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">find_ncc_model</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/ncc_locate.png" alt="ncc_locate: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/ncc_locate.png" alt="ncc_locate: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正規化相互相関（NCC）によるテンプレートマッチングで最良位置を探す。HALCON の `<code style="color:#22d3bf">find_ncc_model</code>`（Find the best matches of an NCC model in an image.）に相当。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用——テンプレートは引数ではなく </code><code style="color:#22d3bf">set_match_template</code><code style="color:#22d3bf"> でスレッドローカルな </code><code style="color:#22d3bf">_MATCH_CTX</code><code style="color:#22d3bf"> に事前登録しておく（マッチング系 op 共通の作法、</code><code style="color:#22d3bf">_MatchCtx</code><code style="color:#22d3bf"> の docstring 参照）。</code><code style="color:#22d3bf">_ncc_map</code><code style="color:#22d3bf">（NCC 相関マップ、Lewis 1995 の定義で </code><code style="color:#22d3bf">[-1,1]</code><code style="color:#22d3bf">）を計算し、その最大値の位置を </code><code style="color:#22d3bf">[相関値, y, x]</code><code style="color:#22d3bf"> で返す。テンプレート未設定、または入力が 2 次元画像でない場合は </code><code style="color:#22d3bf">[0,0,0]</code><code style="color:#22d3bf">（no-match）を返す——fail-closed。回転・スケール変化には非対応（</code><code style="color:#22d3bf">_shape_locate</code>` は回転を扱う）。</p>

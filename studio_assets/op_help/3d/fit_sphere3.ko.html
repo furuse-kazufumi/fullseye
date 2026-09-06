@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_sphere3(points) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>`<code style="color:#22d3bf">(depth, row, col)</code>` 점에 대수적(Kåsa) 최소제곱 구 적합.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>solve `<code style="color:#22d3bf">|P|^2 = 2 P·c + (r^2 - |c|^2)</code>` in the least-squares sense — exact for</p>
+<p>points on a sphere, a standard robust estimator under moderate noise. Returns</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), radius </code><code style="color:#22d3bf">r</code>`, and the RMS radial residual. Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 4 points or a coplanar set (no finite sphere).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

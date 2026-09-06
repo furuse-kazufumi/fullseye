@@ -4,6 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_bbox(img, bounds, pose, K, depth=None, color=&#x27;emphasis&#x27;, width=1.5, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_bbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): the 12 edges of the axis-aligned 3-D box `<code style="color:#22d3bf">((xmin,ymin,zmin),(xmax,ymax,zmax))</code>`, projected.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">depth</code>` を渡すと、<b>両端が隠れている辺</b>を破線にする。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>bounds の形 / min &gt; max、角がカメラの後ろ。</p>
+<p>手順: `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf"> から 8 つの角 </code><code style="color:#22d3bf">(x_i, y_j, z_k)</code>`(i, j, k ∈ {min, max})を作り、</p>
+<p>まとめて射影(`<code style="color:#22d3bf">annotate3d_project</code>` と同じ慣習)。12 辺を</p>
+<p>`<code style="color:#22d3bf">annotate._aa_polyline</code><code style="color:#22d3bf"> で描く。辺の両端が </code><code style="color:#22d3bf">hidden</code>` なら破線、片端だけなら</p>
+<p>実線。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">((xmin, ymin, zmin), (xmax, ymax, zmax))</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(2, 3)</code>`(object</p>
+<p>座標、有限、各軸で `<code style="color:#22d3bf">max &gt;= min</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">max == min</code>` の潰れた箱は許す)。点群なら</p>
+<p>`<code style="color:#22d3bf">points.min(0)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">points.max(0)</code><code style="color:#22d3bf">、メッシュなら </code><code style="color:#22d3bf">V</code>` から作る。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 線幅 [px]、</code><code style="color:#22d3bf">&gt;= 0.5</code><code style="color:#22d3bf"> の実数。</code><code style="color:#22d3bf">color</code>`: 役割名か RGB。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth</code><code style="color:#22d3bf">: 前方距離画像(</code><code style="color:#22d3bf">render3d.render_mesh</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">depth</code>`)。</p>
+<p>`<code style="color:#22d3bf">occlusion_tol</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1)</code>`。</p>
+<p>返り値: 描画済みの新しい画像(float64 `<code style="color:#22d3bf">[0, 1]</code>`、入力は変更しない)。</p>
+<p>エラーになる条件: `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">(2, 3)</code><code style="color:#22d3bf"> でない・非有限・</code><code style="color:#22d3bf">max &lt; min</code>` の軸が</p>
+<p>ある / <b>8 角のいずれかが</b> `<code style="color:#22d3bf">z &lt;= 1e-9</code>`(カメラ面上か後ろ。箱が視点を囲む場合は</p>
+<p>描けない) / 姿勢・`<code style="color:#22d3bf">K</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">depth</code>` の不正。角が画像の外に出るのはエラーに</p>
+<p>しない(線は枠外まで引かれ、見た目は切れる)。</p>
+<p>注意: 軸平行(世界座標に沿った)箱のみ。回転した箱(`<code style="color:#22d3bf">smallest_box3</code>` の</p>
+<p>`<code style="color:#22d3bf">corners</code><code style="color:#22d3bf">)を描くには、8 角を自分で射影(</code><code style="color:#22d3bf">annotate3d_project</code>`)して 2-D の</p>
+<p>`<code style="color:#22d3bf">annotate</code>` 線描画で結ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

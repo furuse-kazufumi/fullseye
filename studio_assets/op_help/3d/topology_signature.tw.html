@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import medial; medial.topology_signature(skeleton)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;topology_signature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由骨架的 26 鄰域度數構造拓撲描述子。回傳端點/分叉點/普通點/孤立點的個數。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各骨格 voxel について 26 近傍にある骨格 voxel 数(次数)を数え、</p>
+<p>次数 1  = 端点(endpoint)</p>
+<p>次数 2  = 通常点(骨格の途中)</p>
+<p>次数&gt;=3 = 分岐点(branch)</p>
+<p>次数 0  = 孤立点(isolated)</p>
+<p>に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。</p>
+<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散</p>
+<p>骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
+<p>Args:</p>
+<p>skeleton: 骨格 voxel(bool / 0-1 の 3D)。</p>
+<p>Returns:</p>
+<p>dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),</p>
+<p>degree_hist(次数 -&gt; 個数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;inflate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>障害物を `<code style="color:#22d3bf">radius</code>`(world 単位)膨張した占有格子 bool(= ESDF&lt;=radius を占有)。</p>
+<p>planner の安全マージン: 点ロボットが膨張格子上で衝突回避すれば、半径 radius の実</p>
+<p>ロボットが障害物から離隔を保つ(configuration-space obstacle)。ESDF は外で正の</p>
+<p>最近占有距離なので、`<code style="color:#22d3bf">ESDF&lt;=radius</code>` は「占有(負)∪ 障害物から radius 以内の自由」を</p>
+<p>捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。</p>
+<p>Raises ValueError for radius&lt;0 or voxel_size&lt;=0 (both validated up-front, before</p>
+<p>the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size</p>
+<p>slips through unchecked when esdf is never reached).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

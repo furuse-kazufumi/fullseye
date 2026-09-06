@@ -2,10 +2,30 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xg_crop_contours — 2D <code style="color:#22d3bf">xldgeom</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xg_crop_contours&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/xg_crop_contours.png" alt="xg_crop_contours: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/xg_crop_contours.png" alt="xg_crop_contours: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.a.jpg">xg_crop_contours: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.chain.jpg">xg_crop_contours: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.inputs.jpg">xg_crop_contours: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält nur die Konturpunkte innerhalb des zentralen a-Anteils der Form.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>画像中心に置いた、高さ `<code style="color:#22d3bf">a*H</code><code style="color:#22d3bf">、幅 </code><code style="color:#22d3bf">a*W</code>` の矩形窓の内側にある輪郭点だけを</p>
+<p>残す(`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は [0,1] に clip、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用)。窓は行 </code><code style="color:#22d3bf">[(0.5-a/2)H, (0.5+a/2)H]</code>`、</p>
+<p>列 `<code style="color:#22d3bf">[(0.5-a/2)W, (0.5+a/2)W]</code><code style="color:#22d3bf"> の閉区間。</code><code style="color:#22d3bf">H, W</code><code style="color:#22d3bf"> は辞書の </code><code style="color:#22d3bf">shape</code>` から取り、</p>
+<p>無ければ全点の最大座標+1 で代用する。</p>
+<p>返り値は `<code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [...]}</code>`。窓内に 1 点も残らない輪郭は捨て、</p>
+<p>`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> では中心線上に正確に乗る点しか残らないためほぼ空、</code><code style="color:#22d3bf">a=1</code>` で全点が</p>
+<p>残る。</p>
+<p>注意: 窓に切られた輪郭は分割されない。残った点をそのまま 1 本の折れ線として</p>
+<p>繋ぐので、輪郭が窓を出入りするたびに「窓の縁を飛び越える辺」が生まれ、</p>
+<p>`<code style="color:#22d3bf">xg_area_center</code>` の面積や折れ線長が実際より大きく出る。切り口を正しく</p>
+<p>扱いたいなら、領域の段階で `<code style="color:#22d3bf">r3_clip_region</code>` を掛けてから輪郭を取り直す。</p>
+<p>座標は (row, col)。長さで輪郭ごと選別するのは `<code style="color:#22d3bf">xg_clip_contours</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

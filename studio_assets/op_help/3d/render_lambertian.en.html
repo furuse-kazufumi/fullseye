@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;render_lambertian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normals + albedo + light direction → a Lambertian image (inspection-sample generation / GT verification / the forward model of inverse rendering). → HxW.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">I = albedo * (max(n·L, 0) + ambient)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">light</code>` は (3,) の光源方向ベクトルで内部で</p>
+<p>単位長に正規化する(長さは強度として効かない)。`<code style="color:#22d3bf">n·L &lt; 0</code>` の画素は 0 にクリップ</p>
+<p>される(付着影)。`<code style="color:#22d3bf">ambient</code>` は法線に依らず一様に足す定数で、アルベドは掛かる</p>
+<p>(既定 0)。`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(H,W,3)</code><code style="color:#22d3bf"> の法線(単位長を仮定し正規化しない)、</code><code style="color:#22d3bf">albedo</code>`</p>
+<p>は `<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf"> またはブロードキャスト可能な配列・スカラ。返り値は float32 の </code><code style="color:#22d3bf">(H,W)</code>`。</p>
+<p>上限は `<code style="color:#22d3bf">albedo * (1 + ambient)</code>` で、[0,1] へのクリップはしない。入力検証は無い。</p>
+<p>`<code style="color:#22d3bf">photometric_stereo</code><code style="color:#22d3bf"> の順方向モデルそのもの(光源正規化の規約は </code><code style="color:#22d3bf">normalize=True</code>`</p>
+<p>に対応)なので、復元した法線・アルベドから再合成して元画像と比べる往復検証に使える。</p>
+<p>鏡面・相互反射・投影影(cast shadow)は含まない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

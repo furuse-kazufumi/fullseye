@@ -19,6 +19,33 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 General affine resampling (``scipy.ndimage.affine_transform``).
 
+**Convention (pinned — read this before writing a matrix)**: this is
+scipy's **pull** (output -> input) resampler. For every output voxel at
+integer coordinate ``o = (z, y, x)`` the result is the input interpolated
+at ``matrix @ o + offset``::
+
+    out[o] = vol[ matrix @ o + offset ]        # (z, y, x) order, voxels
+
+Consequences: ``matrix = 2*I`` makes the object appear **half** size (each
+output step strides two input voxels); ``offset = (1, 2, 3)`` moves the
+object by ``(-1, -2, -3)``. To *push* content through a forward transform
+``T`` (the pose from a registration), pass the **inverse** of ``T``. The
+test suite machine-pins this direction.
+
+*matrix* is either a ``(3, 3)`` linear part (with *offset* a separate
+length-3 translation) or a ``(4, 4)`` homogeneous matrix
+``[[A, t], [0, 0, 0, 1]]`` — then ``A`` / ``t`` are taken from the matrix,
+the bottom row must be exactly ``(0, 0, 0, 1)``, and *offset* must stay at
+its zero default (a second translation would be ambiguous). Any other
+shape raises ``ValueError``.
+
+*output_shape* defaults to the input shape; an explicit one is cap-checked
+against ``MAX_VOXELS`` before allocation. *order* is the spline degree
+(exact integer 0..5). Voxels whose source coordinate falls outside the
+input are filled per *mode*/*cval*.
+
+Returns a float64 volume of *output_shape*.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

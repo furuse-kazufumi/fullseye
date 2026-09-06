@@ -19,6 +19,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3-D Frangi vesselness — multiscale tubular-structure enhancement.
 
+For every ``sigma`` in *scales* the gamma-normalised Hessian is formed, its
+three eigenvalues ``|l1| <= |l2| <= |l3|`` are taken, and the Frangi response
+
+    V = (1 - exp(-Ra**2 / 2 alpha**2)) * exp(-Rb**2 / 2 beta**2)
+          * (1 - exp(-S**2 / 2 c**2))
+
+is evaluated, where ``Ra = |l2|/|l3|`` (plate vs. line), ``Rb = |l1|/sqrt|l2 l3|``
+(blob deviation) and ``S = sqrt(l1**2 + l2**2 + l3**2)`` (structure strength).
+The response is set to 0 where the contrast polarity is wrong (bright tube:
+``l2 > 0`` or ``l3 > 0``; ``black_ridges=True`` flips this). The maximum over
+scales is taken and the volume is normalised to ``[0, 1]``.
+
+Parameters
+----------
+scales : sequence of float — Gaussian sigmas, in **voxels**, to bracket the
+    vessel *radii* of interest (see the module "scale-dependent" limitation).
+alpha, beta : sensitivities of the plate- and blob-suppression terms (Frangi's
+    defaults 0.5).
+c : half the maximum Hessian norm ``S`` at each scale when ``None`` (Frangi's
+    adaptive suggestion); otherwise a fixed structure-strength scale.
+black_ridges : ``False`` (default) enhances *bright* tubes on a dark
+    background; ``True`` enhances *dark* tubes on a bright background.
+
+Returns a ``(D, H, W)`` float64 volume in ``[0, 1]``. Reference: Frangi et al.,
+MICCAI 1998.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -22,6 +22,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ``oem_of`` に元の「メーカー 型番」を書いておくと、OEM で名前が違うだけの同一品を
 後から突き合わせられる。返り値は登録した鍵(「メーカー 型番」)。
 
+登録先はプロセス内のカタログ(``light_catalog`` が返す表)で、**ファイルには
+保存されない** ―― 次の起動では消える。同じ鍵を二度登録すると黙って上書きする。
+
+- ``maker``, ``model``: どちらも空でない文字列。空なら ``ValueError``(型番だけ
+  では OEM 品を特定できないため両方必須)。
+- ``kind``: ring / dome / bar / coaxial / backlight(器具の形)。
+- ``radius_mm``, ``height_mm``, ``size_mm``: 正の有限値 [mm]。``radius_mm`` は
+  発光面の半径、``height_mm`` はワークからの高さ、``size_mm`` は器具の実体の
+  差し渡し(鏡面に映る大きさ)。
+- ``source``: led / halogen / laser。``wavelength_nm`` は正、``bandwidth_nm`` は
+  ここでは float 化するだけ(負を入れると ``light_spec`` で拒否される)。
+- ``oem_of``: 元品の鍵、または ``None``。存在確認はしない。
+- 返り値: ``"<maker> <model>"`` の鍵。``light_spec(model=鍵)`` で諸元を引ける。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

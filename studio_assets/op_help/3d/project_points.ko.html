@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.project_points(points, K, R=None, t=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;project_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 점군 (N,3) → 이미지 좌표 (u,v) 와 깊이. 핀홀(depth_to_points 의 순방향).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>K=カメラ内部行列 [[fx,0,cx],[0,fy,cy],[0,0,1]]。R,t で外部姿勢。世界モデルの観測写像。</p>
+<p>`<code style="color:#22d3bf">P_cam = R @ P + t</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf"> (3,3)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (3,)。None は恒等・零)を </code><code style="color:#22d3bf">u = fx·X/Z + cx</code>`、</p>
+<p>`<code style="color:#22d3bf">v = fy·Y/Z + cy</code><code style="color:#22d3bf"> で投影する。返り値 </code><code style="color:#22d3bf">(uv (N,2), depth (N,))</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">uv[:,0] = u</code>`(列)、</p>
+<p>`<code style="color:#22d3bf">uv[:,1] = v</code><code style="color:#22d3bf">(行)、</code><code style="color:#22d3bf">depth</code>` はカメラ座標の Z(clip 前の生値で、負もそのまま)。</p>
+<p>`<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">K[0,0]</code>` 等で添字するので numpy 配列(nested list は不可)。</p>
+<p>Z は `<code style="color:#22d3bf">1e-6</code>` 以上に clip してから割るので、<b>カメラ後方の点も捨てず</b>巨大な u,v になる</p>
+<p>(`<code style="color:#22d3bf">depth &gt; 0</code><code style="color:#22d3bf"> で呼び手が除く)。画像外の点も返す(</code><code style="color:#22d3bf">render_point_depth</code>` が範囲で切る)。</p>
+<p>`<code style="color:#22d3bf">depth_to_points</code><code style="color:#22d3bf"> の逆で、</code><code style="color:#22d3bf">depth_to_points(render_point_depth(...))</code>` が往復になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,6 +4,45 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import feat_spin; feat_spin.register_spin(src, dst, device=&#x27;cpu&#x27;, n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;register_spin&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。</p>
+<p>2 点群 `<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> (N,3), </code><code style="color:#22d3bf">dst</code>` (M,3) を、初期姿勢の事前情報なしに位置合わせする。</p>
+<p>各点の法線(局所 PCA、重心から外向きに符号統一 = 剛体変換で不変)を軸として近傍点を</p>
+<p>(α=軸からの距離, β=軸方向の高さ) の 2D ヒストグラムへ「回転(spin)」蓄積した</p>
+<p>Spin Image 記述子(Johnson &amp; Hebert 1997)を keypoint ごとに作り、記述子空間の</p>
+<p>最近傍でマッチ(Lowe ratio test で選別)、RANSAC(3 点最小標本 + Kabsch)で</p>
+<p>外れ値に頑健な剛体変換を推定する。密マッチ(NCC/位相相関/Hough)や PCA 主軸整列と</p>
+<p>違い、<b>大回転 + 部分重なり</b>でも局所特徴の対応から姿勢を復元できるため、ICP の</p>
+<p>前段(coarse init 供給)に使える。返す姿勢は `<code style="color:#22d3bf">dst ~= src @ R.T + t</code>`</p>
+<p>(= `<code style="color:#22d3bf">R @ src_i + t</code><code style="color:#22d3bf">)の規約に従う(</code><code style="color:#22d3bf">icp_point2point_3d</code>` と同一)。</p>
+<p>引数:</p>
+<p>src: (N,3) 移動側点群(numpy.ndarray か torch.Tensor)。</p>
+<p>dst: (M,3) 固定側(参照)点群。</p>
+<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/最終姿勢をこの上で解く。</p>
+<p>n_keypoints: 各点群から抽出する keypoint 数(等間隔サブサンプル)。</p>
+<p>normal_k: 法線推定に使う近傍点数(局所 PCA)。</p>
+<p>support_radius: Spin Image の支持半径。None なら各点群個別の bbox 対角(大きい方)</p>
+<p>の 0.30 倍(未知並進で汚れないよう和集合でなく個別に測る)。</p>
+<p>n_alpha, n_beta: Spin Image の (α, β) ビン数(記述子は n_alpha*n_beta 次元)。</p>
+<p>support_angle_deg: 支持角しきい値(度)。keypoint 法線とこの角度以内の法線を持つ</p>
+<p>支持点のみ蓄積(遮蔽・裏面に頑健)。&gt;=90 で無効。</p>
+<p>lowe_ratio: Lowe 比率テストしきい値(d1 &lt; ratio*d2 の対応のみ採用)。</p>
+<p>ransac_iters: RANSAC 反復数。</p>
+<p>inlier_thr: RANSAC のインライア距離しきい値。None なら bbox 対角の 0.04 倍。</p>
+<p>min_inliers: 有効姿勢とみなす最小インライア数(`<code style="color:#22d3bf">ok</code>` 判定)。</p>
+<p>seed: RANSAC 乱数シード。</p>
+<p>返り値:</p>
+<p>R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。</p>
+<p>t: (3,) torch.Tensor。並進。</p>
+<p>info: dict。&quot;n_matches&quot;(ratio test 通過対応数), &quot;inliers&quot;(RANSAC最終),</p>
+<p>&quot;inlier_ratio&quot;, &quot;rmse&quot;(インライア上 RMSE), &quot;support_radius&quot;,</p>
+<p>&quot;inlier_thr&quot;, &quot;ok&quot;(min_inliers 以上か)。</p>
+<p>注意:</p>
+<p style="margin:2px 0 2px 12px">• 記述子は法線符号に依存する。重心から外向きの符号統一は、法線が概ね放射状で</p>
+<p>n·(p-重心) の符号が安定な形状(lumpy な閉曲面等)で有効。薄板・管状など</p>
+<p>n·(p-重心)≈0 の領域が多い形状では 2 雲間で符号が反転しうる。</p>
+<p style="margin:2px 0 2px 12px">• 平面・球など曲率が空間的に一様な部位は記述子が縮退し ratio test で対応が消える</p>
+<p>(無特徴形状には不向き)。overlap が概ね 60% を切ると成功率が急落し、失敗時は</p>
+<p>幾何整合だが誤りの解に RANSAC がロックして壊滅的な誤差になりうる(`<code style="color:#22d3bf">ok</code>` /</p>
+<p>`<code style="color:#22d3bf">inlier_ratio</code>` ゲートの併用を推奨)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

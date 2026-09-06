@@ -3,10 +3,23 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_circle_contour&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">fit_circle_contour_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_fit_circle_contour.png" alt="hx_fit_circle_contour: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_fit_circle_contour.png" alt="hx_fit_circle_contour: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_circle_contour.chain.jpg">hx_fit_circle_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Kåsa 代数法对 contour 点拟合圆,返回拟合残差(RMS)(越小越接近圆)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>全 contour の点をまとめ、Kåsa の代数法(`<code style="color:#22d3bf">[x, y, 1]·sol = x^2 + y^2</code>` を最小二乗で解き、中心</p>
+<p>`<code style="color:#22d3bf">(sol0/2, sol1/2)</code><code style="color:#22d3bf">、半径 </code><code style="color:#22d3bf">sqrt(sol2 + cx^2 + cy^2)</code>`)で円を当て、各点の中心からの距離と半径の差の RMS を</p>
+<p>`<code style="color:#22d3bf">max(H, W)</code><code style="color:#22d3bf"> で割って 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` で返す。円のパラメータ自体は返さない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0(完全な円と区別できない)。半径の根号の中が負になれば半径 0 として扱う。</p>
+<p>代数法は幾何学的な距離の最小化ではないので、円弧が短い(角度範囲が狭い)点群や外れ値では半径が偏る。</p>
+<p>ほぼ直線上の点群では最小ノルム解の半径が非常に大きくなり、残差は小さく出る(直線が「大きな円」に見える)。</p>
+<p>円らしさの判定には `<code style="color:#22d3bf">hx_regress_contours</code><code style="color:#22d3bf"> と併用して直線を除く。包含円の半径は </code><code style="color:#22d3bf">hx_smallest_circle_xld</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

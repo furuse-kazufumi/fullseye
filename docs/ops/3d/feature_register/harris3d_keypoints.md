@@ -21,6 +21,40 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。
 
+voxel 密度場の 3D 勾配 g=(gz,gy,gx) から、各ボクセルで局所構造テンソル
+M=Σ_w w·g gᵀ(3x3 対称、gaussian 窓 sigma_i で積和)を組み、コーナー性を
+測る。応答が周囲で極大かつ閾値超のボクセルを keypoint とする(初期姿勢
+推定なしに検出できるため、大回転+部分重なりの対応付けや ICP の coarse
+init 供給に使える)。
+
+コーナー性の指標:
+  - "mineig"(既定): 3x3 対称行列の最小固有値(Shi-Tomasi 流)。3 方向すべて
+    に構造がある(=角)ほど最小固有値が大きい。閉形式(三角関数法)で算出。
+    k 調整不要で頑健(実測 mean repeatability 85%、min 72.5%)。
+  - "harris": R = det(M) - k·tr(M)³。3D では固有値 3 個なので tr の 3 乗で
+    無次元化。★注意: 密度 voxel の角では det/tr³ 比が経験的に ~0.01 しか
+    ないため、2D 標準の k=0.04〜0.06 では全応答が負になり検出 0 になる。
+    3D では k≈0.005 が必要(実測 k=0.005 で mean 89.6%)。
+
+引数:
+    vol: (D,H,W) 密度 voxel(numpy / torch)。points_to_voxel の出力を想定。
+    device: torch デバイス("cpu" 等)。全演算をこのデバイス上で行う。
+    k: Harris の感度係数(response="harris" 時のみ有効)。3D 密度場では
+        0.005 前後(2D 慣習の 0.04〜0.06 は 3D では強すぎ検出 0 になる)。
+    nms: 非最大抑制の立方体窓の一辺(奇数、標準 3 = 3x3x3 近傍)。
+    topn: 応答降順で返す keypoint の最大数。
+    sigma_i: 構造テンソルの積分窓(gaussian)の標準偏差(voxel)。
+    response: "mineig"(既定, 頑健)か "harris"。
+    rel_thresh: 応答の閾値 = rel_thresh × 有効領域の最大応答(雑音抑制)。
+    border: 端から border ボクセル以内は検出しない(勾配の端効果を除去)。
+
+返り値:
+    keypoints: (M,3) float64。keypoint の voxel 座標 (z,y,x)(sobel3d と
+        同じ軸順)。応答降順、最大 topn 個。
+    responses: (M,) float64。対応する応答値(降順)。
+
+依存: sobel3d(3D 勾配)、_gauss3d(積分窓平滑)。いずれも device 上で動作。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

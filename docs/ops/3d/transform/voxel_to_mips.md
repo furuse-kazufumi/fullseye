@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。
 
+入力 ``(D,H,W)`` に対し ``[max(axis=0), max(axis=1), max(axis=2)]`` の list を返す。形は
+それぞれ ``(H,W)``(軸 0=D を潰す)、``(D,W)``(軸 1=H を潰す)、``(D,H)``(軸 2=W を潰す)、
+dtype float64。値は入力の最大値そのまま(正規化しない)。負の値も max なので通り、
+密度 0 の背景は 0 のまま。
+形の検証は無い(2-D は ``axis=2`` で失敗し、4-D 以上は動いてしまう)ので、呼び手で次元を確かめる。
+``match_mip_2d`` はこの 3 枚に 2D NCC を掛けて 3D 位置を冗長推定する。任意視点の投影は
+``render_volume_projection``(mode="mip")。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

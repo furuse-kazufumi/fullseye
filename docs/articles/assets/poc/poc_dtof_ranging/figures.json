@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_histograms.png",
+  "name": "histograms",
+  "caption": "背景は 256 ビン全体に一様に乗るので、総量では信号の山に勝つ。窓全体の重心が窓の中心へ引かれるのがこれ。ゲートは山の周り ±7 ビンだけを残す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_methods.png",
+  "name": "methods",
+  "caption": "背景が無ければ素の重心で足りる。背景が入ると 2 桁崩れ、docstring が勧める背景減算でも戻らない。",
+  "shape": [
+   152,
+   618,
+   3
+  ],
+  "csv": "02_methods.csv",
+  "tsv": "02_methods.tsv"
+ },
+ {
+  "file": "03_crb_scaling.png",
+  "name": "crb_scaling",
+  "caption": "ゲート重心は CRB に寄り添って落ちる。ピーク位置は 5.6 mm で床に当たる(ビン量子化バイアス)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_pileup.png",
+  "name": "pileup",
+  "caption": "素の推定は μ にほぼ比例して手前へずれる(5 光子/サイクルで -34.5 mm)。Coates は残差 -0.024 mm まで戻す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

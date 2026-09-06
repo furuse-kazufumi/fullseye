@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;tps_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由控制点对应拟合 3D Thin-Plate-Spline。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>移動側の制御点 `<code style="color:#22d3bf">src_ctrl</code><code style="color:#22d3bf"> を固定側 </code><code style="color:#22d3bf">dst_ctrl</code>` へ写す TPS 係数を、鞍点系</p>
+<p>を最小二乗(`<code style="color:#22d3bf">numpy.linalg.lstsq</code>`)で解いて求める。λ=0 なら制御点上で厳密に</p>
+<p>内挿(`<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>`)、λ&gt;0 で平滑化する。</p>
+<p>引数:</p>
+<p>src_ctrl: (K,3) 制御点(変形の始点、TPS のカーネル中心 p_i)。</p>
+<p>dst_ctrl: (K,3) 対応する目標点(変形の終点 v_i)。</p>
+<p>lam: 正則化係数 λ≥0。カーネル行列 K の対角へ λ を加える。大きいほど</p>
+<p>変形は滑らか(制御点への当てはめは緩む)。</p>
+<p>返り値:</p>
+<p>model: dict。キーは</p>
+<p>&quot;ctrl&quot; (K,3) カーネル中心 p_i、</p>
+<p>&quot;w&quot;    (K,3) 非線形(曲げ)係数、</p>
+<p>&quot;a&quot;    (4,3) アフィン係数([平行移動; 線形部]、a[0]=c, a[1:4]=Aᵀ)、</p>
+<p>&quot;lam&quot;  使用した λ。</p>
+<p>例外:</p>
+<p>ValueError: 形状不一致、制御点数不足、非有限値、または制御点数が</p>
+<p>`<code style="color:#22d3bf">TPS_MAX_CTRL</code>`(10,000)超(密な (K+4)² 系は O(K³) のため。</p>
+<p>対応点を間引いてから渡す — TPS は疎な制御点で滑らかな変形を</p>
+<p>表現するのが本来の使い方)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

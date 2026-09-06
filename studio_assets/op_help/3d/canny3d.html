@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import edges3d; edges3d.canny3d(vol, low: &#x27;float&#x27;, high: &#x27;float&#x27;, sigma: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;canny3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D Canny エッジ検出(非最大抑制 + ヒステリシス)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : (D,H,W) array</p>
+<p>グレー voxel。</p>
+<p>low, high : float</p>
+<p>ヒステリシスの下限 / 上限閾値(勾配の大きさに対して)。0 &lt;= low &lt;= high, high &gt; 0。</p>
+<p>sigma : float</p>
+<p>平滑の標準偏差。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>edge_mask : (D,H,W) bool</p>
+<p>1 voxel に細線化されたエッジ。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>(1) gradient3d で平滑勾配を得る → (2) 勾配方向に沿った NMS(三線形補間)で局所最大を残し</p>
+<p>→ (3) high 閾値を種に low 閾値で 26 連結を伸長。閾値は絶対値なので、対象に応じて</p>
+<p>gmag.max() のスケールで与えるとロバスト。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

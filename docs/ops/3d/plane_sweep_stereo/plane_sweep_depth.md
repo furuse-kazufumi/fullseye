@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。
 
+各深度平面で src を ref へワープし、photo-consistency 最小の候補深度を画素ごとに選ぶ
+(winner-take-all)。全候補で視野外の画素は NaN。fail-closed(空/非 2D/shape 不一致/非正深度)。
+
+- ``img_ref`` / ``img_src``: 同形状の (H,W) グレースケール float。基準カメラは ``[I|0]``、source は
+  ``P_src = K [R|t]``(``X_src = R X_ref + t``)。
+- ``K``: 共通の (3,3) 内部行列(特異なら ``ValueError``)。
+- ``depth_candidates``: 基準カメラ座標での正の有限な深度列(D 個)。返る深度は必ずこの中の
+  どれかで、量子化誤差は候補間隔程度。候補は近距離を細かく(逆深度で等間隔)取るのが常道。
+- ``window``: コストの box 集約サイズ(既定 1 = 画素ごとの絶対差)。2 以上で窓内 SAD を有効画素数で
+  正規化した値になり、テクスチャの乏しい領域で安定するが段差はぼける。1 未満は ``ValueError``。
+- ``normal``: 掃引平面の法線(既定 (0,0,1) = フロント平行)。
+
+返り値は (H,W) float。全候補で src の視野外に写った画素(コスト ∞)は NaN。輝度が一定の領域では
+全候補のコストが同点になり ``argmin`` が先頭候補を返すので、信頼度の無い深度が混じる。
+コスト体 (D,H,W) そのものが要るときは同モジュールの ``cost_volume`` を使う。得られた深度は
+``depth_to_points`` で点群化できる。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

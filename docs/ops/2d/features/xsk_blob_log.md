@@ -15,9 +15,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `image` → `feature`
 - **呼び出し**: `fullseye.apply(img, "xsk_blob_log", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-![xsk_blob_log: 入力 → 出力](../../_fig/xsk_blob_log.png)
+![xsk_blob_log: input → output](../../_fig/xsk_blob_log.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![xsk_blob_log: knob a sweep](../../_fig/xsk_blob_log.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![xsk_blob_log: knob b sweep](../../_fig/xsk_blob_log.b.jpg)
 
 ## 使い方
 

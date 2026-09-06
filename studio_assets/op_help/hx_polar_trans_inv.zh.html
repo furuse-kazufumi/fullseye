@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_polar_trans_inv&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">polar_trans_contour_xld_inv</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_polar_trans_inv.png" alt="hx_polar_trans_inv: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_polar_trans_inv.png" alt="hx_polar_trans_inv: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_polar_trans_inv.chain.jpg">hx_polar_trans_inv: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_polar_trans_inv.inputs.jpg">hx_polar_trans_inv: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 contour 点视为 (radius, angle) 并逆变换回直角坐标(polar_trans 的逆)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各 contour の点を `<code style="color:#22d3bf">(row, col) = (半径 rad, 角度)</code><code style="color:#22d3bf"> とみなし、</code><code style="color:#22d3bf">ang = col / W * 2*pi</code>` として</p>
+<p>`<code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">cy, cx = H/2, W/2</code>`)の直交座標に戻した contour を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 半径は行の値をそのまま画素距離として使い、角度は列を画像幅で 0〜2π に写す。</p>
+<p>注意: 順変換 `<code style="color:#22d3bf">polar_trans_contour_xld</code><code style="color:#22d3bf"> は行を </code><code style="color:#22d3bf">r / max(H, W) * H</code><code style="color:#22d3bf">、列を </code><code style="color:#22d3bf">(θ + π) / 2π * W</code>` として</p>
+<p>出力するため、この op はその厳密な逆にはなっていない。角度に π のずれ(点が中心対称の位置に写る)、非正方画像では</p>
+<p>半径に `<code style="color:#22d3bf">max(H, W)/H</code>` 倍のずれが出る(往復で半径の 2 倍の誤差が出る実測)。順変換との往復を期待するときは</p>
+<p>この差を織り込むか、この op を「列=角度・行=半径の一般的な極座標表現から直交へ」の変換として単独で使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

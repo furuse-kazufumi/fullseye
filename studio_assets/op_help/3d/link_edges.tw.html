@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import edges3d; edges3d.link_edges(edge_mask)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;link_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 26 鄰域把邊緣 mask 標記為連通成分。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>edge_mask : (D,H,W) bool</p>
+<p>Returns</p>
+<p>-------</p>
+<p>labels : (D,H,W) int</p>
+<p>各 voxel の成分ラベル(背景 = 0、成分 = 1..n)。</p>
+<p>n : int</p>
+<p>連結成分数。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、</p>
+<p>下流の Hough / chamfer で成分単位に扱えるようにする。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

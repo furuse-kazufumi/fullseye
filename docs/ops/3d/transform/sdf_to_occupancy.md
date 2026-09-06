@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。
 
+``(sdf <= iso).astype(float64)`` だけの op。``signed_distance_field`` の規約(内側 <0)なら
+``iso=0.0`` で内側=1、外側=0。**等号を含む**ので、ちょうど ``iso`` の voxel は内側に入る。
+``iso`` を正にすると外側へ ``iso`` voxel ぶん膨らんだ占有、負にすると縮んだ占有になる
+(SDF が真の距離なら等方 dilation/erosion と同じ)。``tsdf_from_depth`` の出力(表面手前 +・
+奥 −・未観測 +1)にも同じ ``iso=0.0`` で使えるが、未観測領域は 0 側(外)になる。
+入力の形は問わず、返り値は同形の float64(0.0 / 1.0)。NaN は比較が偽なので 0 になる
+(警告なし)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

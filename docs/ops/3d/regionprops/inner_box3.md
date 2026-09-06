@@ -19,6 +19,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の
 
+3-D 版)。
+
+厳密解: どの深さ区間 [z0, z1] についても、ボックスはスライス z0..z1 の **論理積**
+(全スライスで前景のボクセル)の内側に無ければならない。その積の中の最大内接 2-D 長方形
+(ヒストグラム法 = ``inner_rectangle1`` と同じコア)× 区間長 が候補ボックスで、全区間に
+ついての最大が厳密な最大内接ボックスになる。O(D^2 * H * W)。
+
+Returns
+-------
+dict
+    (depth,row,col) 軸順で ``min`` / ``max`` 隅、``center`` (+ ``cd/cr/cc``)、
+    全幅 ``size``、ボクセル数の ``volume``。
+
+Raises
+------
+ValueError
+    非 3-D 入力、または前景ゼロの領域(内接ボックス無し)。
+
+補足:
+- ``min`` / ``max`` は **両端を含む** ボクセル添字(float 配列)。``size = max - min + 1``、``volume = prod(size)``。``center`` は ``(min + max) / 2`` で .5 が付き得る。2-D 側の登録名は ``r2_inner_rectangle1``。
+- 深さ区間ごとに Python ループで最大長方形を探す O(D²·H·W)。積が空になった時点でその z0 の探索は打ち切る。大きなボリュームでは遅い。
+- 同体積の候補が複数あるときは先に見つかったもの(z0 が小さく、その中で z1 が小さい)を返す。
+- 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順は (depth, row, col)。
+- 典型: ``largest_component`` で対象を 1 つに絞ってから呼ぶ(複数成分が混ざると最大成分のボックスとは限らない)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

@@ -4,6 +4,35 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>순서 있는 점열 (M,D) 에 B 스플라인 곡선을 적합(splprep, 매개변수).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>シーム/エッジ/計測プローブ軌跡など「並び順が意味を持つ」点列を滑らかな</p>
+<p>パラメトリック曲線 r(u), u∈[0,1] として復元する。z=f(x,y) と違い多価</p>
+<p>(折り返し・ループ)な形も表せる。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (M, D)</p>
+<p>順序付き頂点。D=3 が典型(3D 曲線)だが 2D 以上を許容。</p>
+<p>smooth : float</p>
+<p>平滑化係数 s。0.0 で全点通過(補間)、大きいほど滑らか。</p>
+<p>k : int</p>
+<p>次数(既定 3=三次)。点数が k+1 未満なら自動で下げる。</p>
+<p>nest : int or None</p>
+<p>節点数の上限(splprep へそのまま渡す)。None で自動。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>tck : tuple</p>
+<p>`<code style="color:#22d3bf">(t, c, k)</code>`。eval_bspline_curve に渡す。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>点数が 2 未満、次元不整合、非有限値、または重複/縮退で splprep が</p>
+<p>曲線を返せない場合。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 既定 `<code style="color:#22d3bf">smooth=0.0</code><code style="color:#22d3bf"> は補間(全点通過)。曲面側の既定(点数からの自動値)と違うので、ノイズ点列は明示的に </code><code style="color:#22d3bf">smooth</code><code style="color:#22d3bf"> を与える。パラメータ u は </code><code style="color:#22d3bf">splprep</code>` の既定(弦長に比例して [0,1] に正規化)。</p>
+<p style="margin:2px 0 2px 12px">• 次数 k は `<code style="color:#22d3bf">k &gt;= m</code><code style="color:#22d3bf"> のとき </code><code style="color:#22d3bf">m-1</code>` に無言で下げる(2 点なら直線)。</p>
+<p style="margin:2px 0 2px 12px">• 連続する重複点があると `<code style="color:#22d3bf">splprep</code><code style="color:#22d3bf"> が失敗し </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf"> になる。前段で重複を除くか </code><code style="color:#22d3bf">resample_uniform</code>` で等間隔化する。</p>
+<p style="margin:2px 0 2px 12px">• 返す tck は `<code style="color:#22d3bf">[t, c, k]</code><code style="color:#22d3bf"> の list(c は D 本の係数配列のリスト)。</code><code style="color:#22d3bf">eval_bspline_curve</code>` に渡す。閉曲線としては扱わない(端点は開いたまま)。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的(乱数なし)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

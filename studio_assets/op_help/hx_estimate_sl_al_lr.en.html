@@ -3,10 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_sl_al_lr&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">estimate_sl_al_lr</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_estimate_sl_al_lr.png" alt="hx_estimate_sl_al_lr: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_estimate_sl_al_lr.png" alt="hx_estimate_sl_al_lr: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lee-Rosenfeld: estimate the light source&#x27;s slant (zenith angle, 0 = head-on to pi/2 = grazing). Normalised to [0,1].</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>画像の平均輝度 `<code style="color:#22d3bf">&lt;I&gt;</code><code style="color:#22d3bf"> を反射率 1 の Lambertian 面の関係 </code><code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code>` に当てはめ、</p>
+<p>`<code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> で割った </code><code style="color:#22d3bf">np.float64</code>`(0〜1)で返す。0 が正面光(平均 1.0)、1 が真横</p>
+<p>(平均 0)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 平均は [0,1] に clip してから `<code style="color:#22d3bf">arccos</code>` に渡すので範囲外にはならない。</p>
+<p>実質「平均輝度が低いほど slant が大きい」という 1 対 1 の写像で、反射率は 1 と仮定している(暗い素材も</p>
+<p>斜光と区別できない)。勾配で補正する版は `<code style="color:#22d3bf">hx_estimate_sl_al_zc</code><code style="color:#22d3bf">、反射率の代理値は </code><code style="color:#22d3bf">hx_estimate_al_am</code>`。</p>
+<p>`<code style="color:#22d3bf">hx_shade_height_field</code><code style="color:#22d3bf"> の仰角 </code><code style="color:#22d3bf">b</code>` と組み合わせて陰影を再現する際の目安に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

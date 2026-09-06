@@ -4,6 +4,38 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volgray; volgray.vol_equalize(vol, nbins=256, mask=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_equalize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>볼륨의 히스토그램 평활화(HALCON `<code style="color:#22d3bf">equ_histo_image</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Builds an *nbins*-bin histogram over the volume&#x27;s `<code style="color:#22d3bf">[min, max]</code>` range,</p>
+<p>takes its cumulative distribution as a monotone LUT, and maps every voxel</p>
+<p>through it — the output lives in `<code style="color:#22d3bf">(0, 1]</code>` and its histogram is</p>
+<p>(approximately) flat. With *mask* (thresholded at `<code style="color:#22d3bf">&gt; 0.5</code>`, the volops</p>
+<p>convention) the **histogram is computed from the masked voxels only while</p>
+<p>the LUT is applied to the whole volume** — exactly the HALCON</p>
+<p>`<code style="color:#22d3bf">reduce_domain</code><code style="color:#22d3bf"> + </code><code style="color:#22d3bf">equ_histo_image</code>` domain behaviour, and the right</p>
+<p>tool when a dominant background (e.g. air around a CT subject) would</p>
+<p>otherwise swallow the whole dynamic range.</p>
+<p>A <b>constant volume is returned unchanged</b> — normalising a flat volume</p>
+<p>would amplify floating-point dust into full-scale garbage (fail-honest,</p>
+<p>not fail-loud; see the module docstring).</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>nbins : int</p>
+<p>Histogram bins, `<code style="color:#22d3bf">&gt;= 2</code>`. More bins = finer LUT (the mapping is</p>
+<p>piecewise-constant per bin — an approximation, documented above).</p>
+<p>mask : array_like, shape (D, H, W), optional</p>
+<p>Histogram domain. Must match *vol*&#x27;s shape and select at least one</p>
+<p>voxel (an empty domain has no histogram — fail-closed).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D, H, W), float64</p>
+<p>The equalised volume in `<code style="color:#22d3bf">[0, 1]</code>` (constant input: the input itself).</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D / non-finite input, `<code style="color:#22d3bf">nbins &lt; 2</code>`, a mask shape mismatch, or</p>
+<p>an empty mask.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

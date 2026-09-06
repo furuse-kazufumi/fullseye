@@ -21,6 +21,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。
 
+``vol(float32) − morph_open3d(vol, r, ...)``。値は 0 以上で、SE(一辺 ``2r+1`` の cube か
+半径 r の ball)に入り切らない明るい突起・粒・細線だけがその高さで残り、それより大きな
+明領域と滑らかな背景は 0 になる。背景の緩い明るさムラも除けるので、閾値化の前処理に。
+``r`` は「残したい構造の半径」より大きく取る。``se`` は "cube"/"ball"(他は ValueError)、
+``device`` は cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+暗い構造を取るなら ``morph_blackhat3d``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

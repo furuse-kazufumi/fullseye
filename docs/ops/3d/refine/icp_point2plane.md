@@ -19,6 +19,36 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。
 
+粗マッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)の初期姿勢を
+表面点群の点-面距離最小化で締め上げる精緻化手法。各反復で src 各点の dst
+最近傍を対応付け、**点-面残差** ``r_i = n_i·(R·p_i + t - q_i)`` を最小化する。
+R を小角近似 ``R ≈ I + [ω]×`` で線形化すると各対応のヤコビアンは
+``J_i = [p_i×n_i | n_i]``(スカラー三重積 ``n·(ω×p)=ω·(p×n)`` より)、
+定数項 ``b_i = -n_i·(p_i - q_i)``。正規方程式 ``(JᵀJ)x = Jᵀb`` を 6×6 で
+解いて増分 ``x=[ω|t]`` を得、Rodrigues で回転に戻して累積する。点-面は
+接平面内の滑りを許すため、point-to-point より少ない反復で表面にタイトに
+収束する(Low 2004)。
+
+実測(波打つ表面 N=2025, CPU float64): 初期6°/並進0.06 を 4 反復で euclid
+RMSE 1.7e-16・回転誤差 0° に回復(point-to-point は 17 反復で RMSE 4e-2・
+回転 1.9° 停滞)。初期角 3〜20° でも 4〜5 反復で機械精度。
+
+引数:
+    src (N,3): 動かす側の点群(粗マッチ後の初期姿勢)。
+    dst (M,3): 参照側の点群(固定)。
+    dst_normals (M,3): dst の単位法線(未正規化でも内部で正規化)。
+                       未知なら pointcloud.estimate_normals(dst) 等で事前推定。
+    iters: 最大反復数。
+    tol: RMSE 変化がこの値未満で収束打ち切り。
+    init ((R0,t0)): 初期姿勢(粗マッチの R,t を渡す)。None なら単位。
+    trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる
+                       Trimmed ICP(部分重なり・外れ値に頑健)。
+    device: "cpu"/"cuda" 等。torch device 文字列(device 非依存)。
+
+返り値:
+    R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),
+    n_iter(実反復数)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

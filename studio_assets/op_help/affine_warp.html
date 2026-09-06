@@ -3,8 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;affine_warp&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">affine_trans_image</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/affine_warp.png" alt="affine_warp: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/affine_warp.png" alt="affine_warp: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/affine_warp.a.jpg">affine_warp: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/affine_warp.b.jpg">affine_warp: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/affine_warp.inputs.jpg">affine_warp: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>任意のアフィン変換（回転+せん断）を画像に適用する。HALCON の `<code style="color:#22d3bf">affine_trans_image</code>`（Apply an arbitrary affine 2D transformation to images.）に相当。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が回転角を </code><code style="color:#22d3bf">-20°〜+20°</code><code style="color:#22d3bf"> に、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> がせん断量を </code><code style="color:#22d3bf">-0.2〜+0.2</code><code style="color:#22d3bf"> に振る。回転中心は画像の中心、境界は </code><code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">（鏡映）で埋め、結果を </code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> に clip する。平行移動・拡大縮小は含まない（</code><code style="color:#22d3bf">_rescale_img</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">_rotate_img</code>` が別 op として存在）。</p>

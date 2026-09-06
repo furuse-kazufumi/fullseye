@@ -21,6 +21,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。
 
+近似(等方 splat + 平滑): 厳密な異方共分散ラスタライズは重いので、まず means を opacity 重み
+で splat → scale 平均ぶん gaussian 平滑。マッチングの coarse alignment には十分。
+
+引数: ``means`` (N,3) 中心、``opacities`` は長さ N に reshape されて splat の重みになる
+(``points_to_voxel`` が 1 を足すところに opacity を足す)。``scales`` は形を問わず
+**平均値 1 つ**にまとめ、``σ = mean(scales)/mean(hi − lo)·size``(world 長 → voxel 長)を
+平滑幅にする(下限 0.5 voxel。``scales`` が空なら σ=1)。異方性・回転は無視される。
+``bounds=(lo, hi)`` は必須(None 不可。``_lo_hi`` で検証し不正なら ValueError)。範囲外の
+中心は端 voxel に clip される。返り値 ``(size, size, size)`` float64、軸順は ``means`` の列順。
+opacity の総和はほぼ保存されるが正規化はしない。点群に落とすなら ``gaussians_to_points``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

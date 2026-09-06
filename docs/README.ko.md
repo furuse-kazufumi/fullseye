@@ -9,7 +9,7 @@
 
 *여섯 장면 모두 실제 연산자 출력입니다: 에지 방향 / 연결 성분 선별 / 서브픽셀 계측 / SDF에서 메시로 / 포인트 클라우드 클러스터링 / 렌즈 디포커스.*
 
-**Fullseye**(작업명 imgevolve)는 HALCON/HDevelop 급의 실용 도구입니다. numpy 네이티브 이미지 처리 연산자 라이브러리에, HDevelop 스타일의 비주얼 파이프라인 설계 환경(Fullseye Studio)과 실행 런타임(FullseyeEngine)을 갖추고 있습니다. 연산자는 약 **885**개(레지스트리 기준), 실제 HALCON 연산자 **979/2313**개를 genuine(이름만이 아니라 진짜로 같은 동작을 하는) 구현으로 제공하며, 47개 카테고리를 아우릅니다.
+**Fullseye**(작업명 imgevolve)는 HALCON/HDevelop 급의 실용 도구입니다. numpy 네이티브 이미지 처리 연산자 라이브러리에, HDevelop 스타일의 비주얼 파이프라인 설계 환경(Fullseye Studio)과 실행 런타임(FullseyeEngine)을 갖추고 있습니다. 연산자는 약 **897**개(레지스트리 기준), 실제 HALCON 연산자 **979/2313**개를 genuine(이름만이 아니라 진짜로 같은 동작을 하는) 구현으로 제공하며, 48개 카테고리를 아우릅니다.
 
 > **여기서 시작하세요 → [GETTING_STARTED.md](GETTING_STARTED.md) (5분이면 돌려볼 수 있습니다)**
 
@@ -52,15 +52,15 @@
 
 ## 연산자 찾기
 
-**1,842개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **48개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**1,854개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **49개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 885/885, 타입 台帳 958/1002, 한 줄 파사드 `fullseye.<이름>` 501/1091 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 897/897, 타입 台帳 958/1002, 한 줄 파사드 `fullseye.<이름>` 501/1091 — **파사드는 아직 절반**.
 
-**내용 실측**: 1842건 중 실행 가능한 예제가 붙은 것은 **1637**건(205건은 없음), 사용법이 120자 이상인 것은 **1348**건(494건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 1842건 모두.
+**내용 실측**: 1854건 중 실행 가능한 예제가 붙은 것은 **1825**건(29건은 없음), 사용법이 120자 이상인 것은 **1854**건(0건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 1854건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
-| `2d` | 885 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 897 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 347 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 124 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 46 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
@@ -113,7 +113,7 @@
 
 | 문서 | 내용 |
 |---|---|
-| [OPERATORS.md](OPERATORS.md) | 885개 연산자 전체 카탈로그(47개 카테고리, sort별 정리, HALCON／OpenCV／scikit-image／MATLAB의 대응 API 포함) |
+| [OPERATORS.md](OPERATORS.md) | 897개 연산자 전체 카탈로그(48개 카테고리, sort별 정리, HALCON／OpenCV／scikit-image／MATLAB의 대응 API 포함) |
 | [EXAMPLES.md](EXAMPLES.md) | 연산자별 예제 코드(다른 라이브러리에서의 동등한 호출 포함) |
 | [OP_INDEX.json](OP_INDEX.json) | 기계가 읽을 수 있는 연산자 색인(`imgevolve.py index`로 다시 생성) |
 | [ADDING_OPS.md](ADDING_OPS.md) | 새 연산자를 추가하는 방법(진화·codegen·카탈로그·색인이 자동으로 따라옵니다) |
@@ -190,7 +190,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 71건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 1,842건과 패밀리 가이드 48건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 1,854건과 패밀리 가이드 49건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

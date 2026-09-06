@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>3-D-morphologischer Gradient = Dilatation − Erosion. Extrahiert <b>Ränder und Oberflächen</b> (eine Kantenquelle anstelle von Sobel).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>同じ SE(一辺 `<code style="color:#22d3bf">2r+1</code>` の cube か半径 r の ball)での局所 max − 局所 min。値は常に 0 以上、</p>
+<p>一様な領域で 0、明暗の境界で段差の大きさ(`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> が大きいほど境界が太い。</code><code style="color:#22d3bf">r=1</code>` で 2 voxel</p>
+<p>幅)。方向情報は無い(方向が要るなら `<code style="color:#22d3bf">sobel3d</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">sobel3d</code>` と違い利得の補正が要らず、</p>
+<p>2 値 volume では「境界 voxel = 1」の殻がそのまま出る。`<code style="color:#22d3bf">se</code>` は &quot;cube&quot;/&quot;ball&quot;(他は</p>
+<p>ValueError)、`<code style="color:#22d3bf">device</code><code style="color:#22d3bf"> は cube+torch のときだけ有効。返り値 </code><code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>用途: `<code style="color:#22d3bf">match_chamfer_3d</code><code style="color:#22d3bf"> 用のエッジ源、</code><code style="color:#22d3bf">hough_plane_3d</code>` に渡す前の表面抽出の代替。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

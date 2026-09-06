@@ -6,6 +6,18 @@
 <p>第 `<code style="color:#22d3bf">index</code>` 個基元可見像素的 <b>真值遮罩</b> (H, W),bool。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>画素完全(アンチエイリアスしない)。検出結果との IoU をそのまま測れる。</p>
+<p>手順: `<code style="color:#22d3bf">camera_rays(camera)</code><code style="color:#22d3bf"> で全画素の光線を作り、</code><code style="color:#22d3bf">trace_rays</code>` で最初の</p>
+<p>交点を取り、`<code style="color:#22d3bf">hit[&quot;index&quot;] == index</code>` の画素を True にする。手前の別部品に</p>
+<p>隠れた部分は False(<b>見えている</b>画素だけ)。光線は画素中心 1 本なので、</p>
+<p>境界の画素は「中心がその部品に落ちるか」で決まる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">scene</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_*</code><code style="color:#22d3bf"> の dict、または list。</code><code style="color:#22d3bf">index</code>` は list 内の位置</p>
+<p>(0 始まり)。範囲 `<code style="color:#22d3bf">[0, len(scene))</code><code style="color:#22d3bf"> の外は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p>`<code style="color:#22d3bf">scene_difference</code>` は 1 個として数える。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">camera</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">optical_camera</code><code style="color:#22d3bf"> の結果(</code><code style="color:#22d3bf">K</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">eye</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">width</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">height</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code>` の bool。どの光線も当たらなければ全 False(例外にはしない)。</p>
+<p>`<code style="color:#22d3bf">render_optscene</code>` の画像と同じカメラで作れば画素が一対一に対応する。</p>
+<p>深度の真値は `<code style="color:#22d3bf">optscene_depth</code><code style="color:#22d3bf">、欠陥の真値は </code><code style="color:#22d3bf">optscene_defect_mask</code>`、</p>
+<p>部品ごとのインスタンス列は `<code style="color:#22d3bf">optscene_instances</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

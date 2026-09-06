@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_cx_apply_transfer_function — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_apply_transfer_function&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*No figure: this op takes <code style="color:#22d3bf">cimage</code> as input. A Studio program starting from an image cannot reach that type — see the runnable examples below for how it is used.*</p>
+<p>*No figure: the type is reachable, but the generic synthetic input is outside this op&#x27;s domain — 橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない. See the runnable examples below for usage.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Multiply a <b>centred</b> spectrum by a filter `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> -&gt; </code><code style="color:#22d3bf">(H, W)</code>` complex128.</p>
 <p>The honest primitive under `<code style="color:#22d3bf">ops.lowpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ops.highpass</code>`, but</p>

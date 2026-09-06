@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_expand_region&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">expand_region</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_expand_region.png" alt="hx_expand_region: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_expand_region.png" alt="hx_expand_region: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_expand_region.a.jpg">hx_expand_region: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_expand_region.chain.jpg">hx_expand_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_expand_region.inputs.jpg">hx_expand_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>填补区域之间的缝隙(region -&gt; region):用膨胀让二值区域连通起来。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> を region とみなし、4 近傍の十字構造要素を </code><code style="color:#22d3bf">it</code><code style="color:#22d3bf"> 回反復した菱形(マンハッタン距離 </code><code style="color:#22d3bf">it</code>` 以内)で</p>
+<p>`<code style="color:#22d3bf">binary_dilation</code>` を 1 回掛け、0/1 の float 配列で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 膨張半径 </code><code style="color:#22d3bf">it = 1 + int(a*4)</code><code style="color:#22d3bf">(1〜5 画素)。互いの距離が </code><code style="color:#22d3bf">2*it</code>` 画素以下の領域どうしがつながる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>隙間を埋めて連結を促す op で、領域は必ず太る(元の面積には戻らない)。元の大きさを保ちたいときは後段で</p>
+<p>`<code style="color:#22d3bf">hx_erosion1</code><code style="color:#22d3bf"> を同程度の半径で掛けるか、初めから </code><code style="color:#22d3bf">hx_closing</code>` を使う。画像外は 0 扱い(膨張は端で止まる)。</p>
+<p>空の region は空のまま返る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

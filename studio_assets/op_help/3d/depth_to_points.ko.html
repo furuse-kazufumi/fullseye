@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>깊이 맵(2.5D) → 포인트 클라우드(핀홀 역투영). depth 행을 모든 기법에 잇습니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>画素 (行 v, 列 u) の深度 z から `<code style="color:#22d3bf">X = (u − cx)·z/fx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">Y = (v − cy)·z/fy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">Z = z</code>` を作る。</p>
+<p>返り値は `<code style="color:#22d3bf">(N,3)</code>` float64、列は <b>(X, Y, Z) のカメラ座標</b>(深度と同じ単位)。z が 0 以下の</p>
+<p>画素は捨てるので N は画素数以下(無効深度は 0 で表す規約)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">fx, fy, cx, cy</code><code style="color:#22d3bf">: 画素単位の焦点距離と主点。</code><code style="color:#22d3bf">project_points</code>` の K と同じ規約。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">stride</code><code style="color:#22d3bf">: 行・列とも </code><code style="color:#22d3bf">stride</code><code style="color:#22d3bf"> 画素おきに間引く。u, v は間引き後の index に </code><code style="color:#22d3bf">stride</code>`</p>
+<p>を掛けた <b>元画像の画素座標</b>で計算するので、間引いても幾何は変わらない。</p>
+<p style="margin:2px 0 2px 12px">• 入力検証は無い(2-D でなければ添字で失敗)。NaN 深度は `<code style="color:#22d3bf">z &gt; 0</code>` が偽で捨てられる。</p>
+<p style="margin:2px 0 2px 12px">• 点は行優先の順に並ぶが、行・列の情報は残らない。格子構造を保ちたいなら</p>
+<p>`<code style="color:#22d3bf">depth_to_organized_points</code>`。</p>
+<p>後段: `<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">estimate_point_normals</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">icp_point2plane</code>`。</p>
+<p>逆写像は `<code style="color:#22d3bf">project_points</code><code style="color:#22d3bf">、TSDF 化は </code><code style="color:#22d3bf">tsdf_from_depth</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

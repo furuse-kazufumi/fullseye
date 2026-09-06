@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">sg_normalized_cut_2 — 2D <code style="color:#22d3bf">segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sg_normalized_cut_2&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p><img src="fig/sg_normalized_cut_2.png" alt="sg_normalized_cut_2: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/sg_normalized_cut_2.png" alt="sg_normalized_cut_2: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sg_normalized_cut_2.a.jpg">sg_normalized_cut_2: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sg_normalized_cut_2.b.jpg">sg_normalized_cut_2: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sg_normalized_cut_2.inputs.jpg">sg_normalized_cut_2: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>輝度グラフの正規化カット（スペクトラル 2 分割、Shi &amp; Malik）で画像を明暗 2 領域に分ける（HALCON に対応オペレータなし）。</p>
 <p>計算量を抑えるため画像を `<code style="color:#22d3bf">sdim = round(10+b*14)</code><code style="color:#22d3bf"> 程度まで間引いてから、輝度差と距離で重みを決めたアフィニティグラフを作り、一般化固有値問題 </code><code style="color:#22d3bf">(D-W)y = lambda*D*y</code><code style="color:#22d3bf"> の第 2 固有ベクトル（Fiedler ベクトル）を中央値でしきい値化して 2 群に分ける。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）は輝度方向の帯域幅</code><code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code><code style="color:#22d3bf"> を振り、</code><code style="color:#22d3bf">b</code>`（0〜1）は間引きの解像度を振る。明るい方の群を最近傍で元解像度に拡大して region として返す。</p>

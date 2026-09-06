@@ -7,6 +7,19 @@
 <p>形をモデルの座標(主成分スコア)へ。→ `<code style="color:#22d3bf">(k,)</code>`。</p>
 <p>`<code style="color:#22d3bf">align=True</code>` なら先に平均形状へ Procrustes で合わせる。合わせずに投影すると</p>
 <p>位置と向きの違いがスコアに漏れ、<b>同じ形なのに別の個体に見える</b>。</p>
+<p>式: `<code style="color:#22d3bf">scores = components @ (shape - mean).ravel()</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">components</code>` は</p>
+<p>`<code style="color:#22d3bf">(k, N*3)</code><code style="color:#22d3bf"> の正規直交行、</code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">align=True</code>` のときは</p>
+<p>`<code style="color:#22d3bf">procrustes_align(shape, mean)</code>`(スケール込み・鏡像なし)を先に掛ける。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">model</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">shape_pca</code><code style="color:#22d3bf"> の返り値(</code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">components</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">variance</code>` /</p>
+<p>`<code style="color:#22d3bf">n_points</code><code style="color:#22d3bf"> を持つ dict)。欠けていれば </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">N == model[&quot;n_points&quot;]</code>`、有限。点の並びは学習に使った</p>
+<p>ランドマークと同じ順であること(対応が違っても例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">align</code><code style="color:#22d3bf">: 既定 True。</code><code style="color:#22d3bf">shape_pca(align=False)</code>` で作ったモデル(大きさを形質に</p>
+<p>含める)に投影するときは、ここも `<code style="color:#22d3bf">False</code>` にしないとスケールが消える。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(k,)</code><code style="color:#22d3bf"> float64。各成分の単位は座標と同じ。</code><code style="color:#22d3bf">sqrt(variance)</code>` で割れば</p>
+<p>標準偏差単位(何 σ 外れているか)になる。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(モデルの形式、点数の不一致、非有限)。</p>
+<p>逆写像は `<code style="color:#22d3bf">shape_reconstruct</code><code style="color:#22d3bf">、外れ具合の 1 数値は </code><code style="color:#22d3bf">shape_mahalanobis</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
@@ -14,7 +27,7 @@
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shapestat_landmark_tour">shapestat_landmark_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shapestat_landmark_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">signal</code> as input)</h3>
 <p><a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">model</code>)</h3>

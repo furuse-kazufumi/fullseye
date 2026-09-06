@@ -17,13 +17,27 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_estimate_sl_al_zc", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `estimate_sl_al_zc`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_estimate_sl_al_zc: 入力 → 出力](../../_fig/hx_estimate_sl_al_zc.png)
+![hx_estimate_sl_al_zc: input → output](../../_fig/hx_estimate_sl_al_zc.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
 
 ## 使い方
 
 Zheng-Chellappa: slant を勾配エネルギーで補正して推定。
+
+``hx_estimate_sl_al_lr`` と同じ ``arccos(<I>)`` の slant に、Sobel 勾配振幅の平均 ``e``(1 で頭打ち)による係数
+``(1 + min(e, 1))`` を掛けて、``pi/2`` で割り 1 で頭打ちした ``np.float64`` を返す。「勾配が強い=斜光=slant 大」
+という向きの補正。
+
+- ``a``, ``b`` は未使用。
+
+補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも
+増えるので、照明以外の要因で slant が過大に出る。前段に ``gauss_filter`` を置くと雑音分の勾配は減る。
+反射率の推定は ``hx_estimate_al_am``、方位は ``hx_estimate_tilt_zc``。
 
 ## 詳しい使い方ガイド
 

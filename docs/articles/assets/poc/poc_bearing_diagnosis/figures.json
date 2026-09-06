@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_envelope_vs_raw.png",
+  "name": "envelope_vs_raw",
+  "caption": "雑音の床は同じ高さ。包絡線だけが BPFO とその高調波に峰を立てる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_detection_sweep.png",
+  "name": "detection_sweep",
+  "caption": "どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、崖が悪い SNR 側へ動くだけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_sk_bands.png",
+  "name": "sk_bands",
+  "caption": "win=32 は毎回共振を含み、win=256 は毎回外す。枠長を衝撃間隔より短く取るかどうかで決まる。",
+  "shape": [
+   368,
+   564,
+   3
+  ],
+  "csv": "03_sk_bands.csv",
+  "tsv": "03_sk_bands.tsv"
+ }
+]

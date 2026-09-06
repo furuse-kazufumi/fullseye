@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 平均二乗誤差の平方根(画素値と同じ単位)。
 
+式: ``sqrt(mse(a, b))``。検証と失敗条件は ``mse`` と同じ ―― 同じ形 / 空でない /
+有限、を満たさなければ ``MetricContractError``。次元と dtype は問わない。
+
+- 返り値: Python の ``float``。入力が ``[0, 1]`` の float なら値も ``[0, 1]``、uint8
+  なら 0〜255 の尺度。「平均して何階調ずれているか」と読める。
+- ``data_range`` に依らない生の量なので、尺度の違う 2 組の rmse を並べても
+  比較にならない。正規化した指標が要るなら ``psnr`` か ``ssim``。
+- 深度・CT・再投影など「画素値 = 物理量」の場面では、その物理単位そのものになる。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

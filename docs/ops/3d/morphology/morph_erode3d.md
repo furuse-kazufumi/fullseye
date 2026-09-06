@@ -21,6 +21,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D グレースケール erosion(SE の局所 min)。明領域を収縮。se は dilate と同じ。
 
+一辺 ``2r+1`` の cube か半径 r の ball の中で最小値を取る。境界の外は +∞ 扱い(画像内の
+値だけで min。torch 経路は ``-max_pool3d(-v)``、scipy 経路は ``cval=+inf``)ので、端で 0 に
+落ちることはない。``r=0`` は恒等。``se`` が "cube"/"ball" 以外なら ValueError。``device`` は
+cube+torch のときだけ効く。返り値 ``(D,H,W)`` float32 numpy。
+2 値 volume では「SE が丸ごと入る voxel だけ残す」= 細い構造・薄い殻の除去。
+後段: ``morph_dilate3d`` と組で opening/closing、``vol − erosion`` で内側境界。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

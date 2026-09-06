@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0))</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_boundary_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>境界シェルを `<code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> 順の </code><code style="color:#22d3bf">(N, 3)</code>` 点群として。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The bridge from the voxel world to the point-cloud world at minimal memory:</p>
+<p>only the *surface* voxels of the mask become points (inner boundary, see</p>
+<p>:func:<code style="color:#22d3bf">vol_boundary</code>), so a solid object of a million voxels typically</p>
+<p>yields a few tens of thousands of points — ready for `<code style="color:#22d3bf">fit_sphere3</code>` /</p>
+<p>`<code style="color:#22d3bf">smallest_box3</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">register_fpfh</code>` and friends without ever materialising</p>
+<p>the full grid as points.</p>
+<p>Coordinates are `<code style="color:#22d3bf">(index + origin) * spacing</code>` per axis: pass *spacing*</p>
+<p>`<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> (or a :class:</code>volio.VolumeMeta`) for physical millimetre</p>
+<p>coordinates, and pass the offset returned by :func:<code style="color:#22d3bf">vol_crop_domain</code> as</p>
+<p>*origin* so points from a cropped volume land in the uncropped frame</p>
+<p>(*origin* is in <b>voxel units</b> — it is added to the index *before* the</p>
+<p>spacing multiply; it must be finite, and may be fractional for a subvoxel</p>
+<p>shift). An empty mask returns an empty `<code style="color:#22d3bf">(0, 3)</code>` array (a valid question</p>
+<p>with a valid empty answer — unlike a crop, which needs a box to exist).</p>
+<p>Returns an `<code style="color:#22d3bf">(N, 3)</code>` float64 array, rows ordered z-major (deterministic).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

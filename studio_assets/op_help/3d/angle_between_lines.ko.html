@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.angle_between_lines(d1, d2)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;angle_between_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 직선 방향이 이루는 예각(도).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">arccos(|d̂1·d̂2|)</code>` を度で返す(float)。絶対値を取るので <b>[0, 90]</b>(向きの前後を区別しない。</p>
+<p>鈍角側が要るなら `<code style="color:#22d3bf">180 −</code><code style="color:#22d3bf"> する)。</code><code style="color:#22d3bf">d1</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">d2</code>` は方向ベクトル(長さは問わない、内部で単位化)、</p>
+<p>数値の 2 または 3 ベクトルで次元の混在は ValueError。零ベクトルは 90 が返る。</p>
+<p>用途: `<code style="color:#22d3bf">fit_line_3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">line_from_2points</code>` の方向同士の平行度・直角度チェック(0 に近いほど</p>
+<p>平行、90 に近いほど直交)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_polar_trans_inv&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">polar_trans_contour_xld_inv</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_polar_trans_inv.png" alt="hx_polar_trans_inv: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_polar_trans_inv.png" alt="hx_polar_trans_inv: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_polar_trans_inv.chain.jpg">hx_polar_trans_inv: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_polar_trans_inv.inputs.jpg">hx_polar_trans_inv: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Take the contour points as (radius, angle) and transform them back to Cartesian coordinates (the inverse of polar_trans).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各 contour の点を `<code style="color:#22d3bf">(row, col) = (半径 rad, 角度)</code><code style="color:#22d3bf"> とみなし、</code><code style="color:#22d3bf">ang = col / W * 2*pi</code>` として</p>
+<p>`<code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">cy, cx = H/2, W/2</code>`)の直交座標に戻した contour を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 半径は行の値をそのまま画素距離として使い、角度は列を画像幅で 0〜2π に写す。</p>
+<p>注意: 順変換 `<code style="color:#22d3bf">polar_trans_contour_xld</code><code style="color:#22d3bf"> は行を </code><code style="color:#22d3bf">r / max(H, W) * H</code><code style="color:#22d3bf">、列を </code><code style="color:#22d3bf">(θ + π) / 2π * W</code>` として</p>
+<p>出力するため、この op はその厳密な逆にはなっていない。角度に π のずれ(点が中心対称の位置に写る)、非正方画像では</p>
+<p>半径に `<code style="color:#22d3bf">max(H, W)/H</code>` 倍のずれが出る(往復で半径の 2 倍の誤差が出る実測)。順変換との往復を期待するときは</p>
+<p>この差を織り込むか、この op を「列=角度・行=半径の一般的な極座標表現から直交へ」の変換として単独で使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

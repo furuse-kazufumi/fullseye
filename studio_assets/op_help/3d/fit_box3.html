@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_box3(points) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Oriented box fit by PCA (fast, noise-tolerant; the same construction as</p>
+<p>`<code style="color:#22d3bf">pcseg.obb</code><code style="color:#22d3bf"> but with the </code><code style="color:#22d3bf">measure</code>`-style dict). Axes are the principal</p>
+<p>directions of the point spread; extents come from the projected span. Returns</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">axes</code>` (3, 3 — unit ROW vectors, depth/row/col</p>
+<p>components), sorted half-extents `<code style="color:#22d3bf">l1 &gt;= l2 &gt;= l3</code><code style="color:#22d3bf">, full </code><code style="color:#22d3bf">size</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">volume</code>`,</p>
+<p>`<code style="color:#22d3bf">corners</code>` (8, 3), and the RMS point-to-box-surface distance. For the true</p>
+<p>minimum-volume box use `<code style="color:#22d3bf">smallest_box3</code><code style="color:#22d3bf">. Raises </code><code style="color:#22d3bf">ValueError</code>` on &lt; 4 points</p>
+<p>or a degenerate (flat) set.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

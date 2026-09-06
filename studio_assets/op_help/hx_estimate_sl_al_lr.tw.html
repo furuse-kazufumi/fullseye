@@ -3,10 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_sl_al_lr&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">estimate_sl_al_lr</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_estimate_sl_al_lr.png" alt="hx_estimate_sl_al_lr: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_estimate_sl_al_lr.png" alt="hx_estimate_sl_al_lr: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Lee-Rosenfeld:估計光源的 slant(天頂角,0=正面 ~ pi/2=側向)。正規化到 [0,1]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>画像の平均輝度 `<code style="color:#22d3bf">&lt;I&gt;</code><code style="color:#22d3bf"> を反射率 1 の Lambertian 面の関係 </code><code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code>` に当てはめ、</p>
+<p>`<code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> で割った </code><code style="color:#22d3bf">np.float64</code>`(0〜1)で返す。0 が正面光(平均 1.0)、1 が真横</p>
+<p>(平均 0)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 平均は [0,1] に clip してから `<code style="color:#22d3bf">arccos</code>` に渡すので範囲外にはならない。</p>
+<p>実質「平均輝度が低いほど slant が大きい」という 1 対 1 の写像で、反射率は 1 と仮定している(暗い素材も</p>
+<p>斜光と区別できない)。勾配で補正する版は `<code style="color:#22d3bf">hx_estimate_sl_al_zc</code><code style="color:#22d3bf">、反射率の代理値は </code><code style="color:#22d3bf">hx_estimate_al_am</code>`。</p>
+<p>`<code style="color:#22d3bf">hx_shade_height_field</code><code style="color:#22d3bf"> の仰角 </code><code style="color:#22d3bf">b</code>` と組み合わせて陰影を再現する際の目安に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

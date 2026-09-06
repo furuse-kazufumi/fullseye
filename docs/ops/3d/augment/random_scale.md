@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 一様スケール ``s ~ U(lo, hi)`` を原点まわりに適用し ``(scaled, s)`` を返す。
 
+``scaled = points * s``。bbox 対角長はちょうど ``s`` 倍になる(``s > 0`` なので
+``max``/``min`` が共に ``s`` 倍 → 対角 ``‖max-min‖`` も ``s`` 倍)。物体スケールの
+ばらつき(距離/センサ倍率)を学習に注入する。``0 < lo <= hi`` を要求(fail-closed)。
+
+``lo <= 0`` または ``hi < lo`` は ``ValueError``(``lo == hi`` は許され常に ``s = lo``)。
+原点まわりの拡大なので、雲が原点から離れていれば重心も ``s`` 倍の位置へ動く(位置と
+大きさが同時に変わる)。大きさだけ変えたいなら事前に重心を原点へ寄せる。``s`` は
+Python float、返り値の点群は float64。``seed`` で決定論的。空入力は空を返す。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

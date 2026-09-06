@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 球の部品。``center_mm`` は (x, y, z) [mm]、``radius_mm`` > 0。
 
+- ``center_mm``: 長さ 3 の有限値 [mm]。右手系、z が上(``scene_plane`` と同じ)。
+- ``radius_mm``: 正の有限値 [mm]。0 や負、NaN は ``ValueError``。
+- ``material``: ``scene_material`` の結果。省略時は lambert、albedo 0.6。
+- 返り値: ``{"kind": "sphere", "c": (3,) 配列, "r": float, "material"}`` の dict。
+
+光線との交差は 2 次方程式の閉形式で、外から当たれば手前の交点、内側から
+(屈折の射出側)なら奥の交点を取る。単体で置くほか、``scene_difference`` の
+``solid`` / ``cavity`` としても使える(球の空洞、球面座ぐり)。
+``optscene_mask`` の ``index`` はこの dict をシーン list に入れた位置。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

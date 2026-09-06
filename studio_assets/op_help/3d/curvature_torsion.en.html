@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import curve3d; curve3d.curvature_torsion(curve)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;curvature_torsion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The curvature κ and torsion τ at each point (a reparameterisation-invariant closed form). → (kappa (N,), tau (N,)).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は</p>
+<p><b>相対化</b>する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、</p>
+<p>κ/τ を破壊するため、代表スケール L=median‖r&#x27;‖(座標スケール s に線形)で各分母と同次元に</p>
+<p>正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。</p>
+<p>計算は順序付き点列 (N,3) を index パラメータで `<code style="color:#22d3bf">np.gradient</code>` 3 回(中心差分、両端は</p>
+<p>片側差分)した r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27; から</p>
+<p style="margin:2px 0 2px 12px">• κ = ‖r&#x27;×r&#x27;&#x27;‖ / ‖r&#x27;‖³</p>
+<p style="margin:2px 0 2px 12px">• τ = (r&#x27;×r&#x27;&#x27;)·r&#x27;&#x27;&#x27; / ‖r&#x27;×r&#x27;&#x27;‖²</p>
+<p>で求める。単位は κ・τ とも 1/座標単位。τ の符号は右手系の螺旋</p>
+<p>(a cosθ, a sinθ, bθ), b&gt;0 で正。直線区間(‖r&#x27;×r&#x27;&#x27;‖≈0)では κ≈0、τ は分母が eps だけに</p>
+<p>なるため値は信頼できない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ValueError</code>`: 全点が重なり median‖r&#x27;‖ が 0 または非有限のとき。</p>
+<p style="margin:2px 0 2px 12px">• 点間隔が急に変わる箇所は数値微分が乱れるので、先に `<code style="color:#22d3bf">resample_uniform</code>` で等間隔化</p>
+<p>するか `<code style="color:#22d3bf">fit_spline_curve</code>` で平滑化してから渡す。両端 2 点は片側差分で精度が落ちる。</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 は `<code style="color:#22d3bf">np.gradient</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">ValueError</code>`。形状 (N,3) の検証はしていない。</p>
+<p>標構(T,N,B)が要るなら `<code style="color:#22d3bf">frenet_frame</code><code style="color:#22d3bf">、弧長 ds は </code><code style="color:#22d3bf">arc_length</code>` から取る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

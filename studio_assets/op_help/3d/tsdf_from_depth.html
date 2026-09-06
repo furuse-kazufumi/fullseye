@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;tsdf_from_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。</p>
+<p>各 voxel を画像へ投影し、視線上の観測深度との符号付き切詰め距離 [-1,1] を格納</p>
+<p>(表面手前 +・奥 −・表面 0)。KinectFusion 系の基本表現。</p>
+<p>格子: `<code style="color:#22d3bf">bounds=(lo, hi)</code><code style="color:#22d3bf"> は **(X, Y, Z) のカメラ座標**(</code><code style="color:#22d3bf">depth_to_points</code>` と同じ)で、</p>
+<p>None なら深度を逆投影した点群の min−2 / max+2(深度の単位)。出力は `<code style="color:#22d3bf">(size,size,size)</code>`</p>
+<p>float32 で <b>軸順は (Z, Y, X)</b>、voxel 中心 `<code style="color:#22d3bf">= lo + (i + 0.5)/size·(hi − lo)</code>`。</p>
+<p>bounds の並び (x,y,z) と配列の軸 (z,y,x) が逆なことに注意。</p>
+<p>値: 各 voxel 中心を `<code style="color:#22d3bf">u = X·fx/Z + cx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">v = Y·fy/Z + cy</code>` で画素へ丸め、その画素の観測深度</p>
+<p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">clip((d − Z)/trunc, −1, 1)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">trunc</code>` は深度と同じ単位)。画像外に落ちる</p>
+<p>voxel・観測深度が 0 以下・Z が 0 以下の voxel は <b>+1(未観測=自由)</b> にする(端画素へ</p>
+<p>clip して観測済みに見せかけない)。深度 0 が無効値の規約。</p>
+<p style="margin:2px 0 2px 12px">• 深度が全て 0 で bounds=None だと点群が空になり numpy の min で例外。</p>
+<p style="margin:2px 0 2px 12px">• 1 視点の TSDF なので視線の裏側は −1 で埋まる(閉じた物体にはならない)。</p>
+<p>後段: `<code style="color:#22d3bf">voxel_to_mesh(tsdf, iso=0.0)</code><code style="color:#22d3bf"> で面を取る。占有にするなら </code><code style="color:#22d3bf">sdf_to_occupancy</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

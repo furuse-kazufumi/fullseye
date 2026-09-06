@@ -19,6 +19,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``).
 
+**This is the memory lever of the domain family**: a 512**3 CT scan whose
+part of interest fits in 128**3 costs 64x less memory and compute once
+cropped — and the Hessian operators (:func:`vol_frangi` / :func:`vol_sato`),
+capped at ``MAX_EIGEN_VOXELS``, often become *possible* only after this
+step. Gray values inside the box are kept verbatim (the box, not the mask,
+defines the crop — pair with :func:`vol_reduce_domain` first if voxels
+outside the mask but inside the box must read 0).
+
+*domain* defaults to the volume's own **non-zero support** (``vol != 0`` —
+a gray volume is cropped to wherever it has any signal; note this differs
+from the ``> 0.5`` convention used when an explicit binary *domain* is
+passed). *margin* is forwarded to :func:`vol_bounding_box`.
+
+Returns ``(cropped, offset)`` — the ``(d, h, w)`` float64 sub-volume and the
+``(z0, y0, x0)`` voxel offset of its origin in the input frame. Keep the
+offset: :func:`vol_uncrop` maps results back, and
+:func:`vol_boundary_points` accepts it as *origin* so point coordinates stay
+in the uncropped frame. An empty domain raises ``ValueError`` (fail-closed).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ランダムな 3 点 (A, B, C) が頂点 B で作る角の分布(Osada 2002 の A3)。
 
+角度は回転・平行移動・スケールのすべてに不変(スケールしても角は変わらない)ため、
+D2 と相補的な**無次元**の形状特徴になる。レンジ [0, π] 固定の正規化ヒストグラム
+(bins,) を返す(総和 1)。空間的に重なった点(ゼロ長ベクトル)は角が未定義なので
+除外する。
+
+Parameters
+----------
+points : array_like, shape (N, 3)
+    点群。N >= 3 が必要。
+bins, samples, seed :
+    d2_distribution と同義。
+
+Returns
+-------
+np.ndarray, shape (bins,)
+    正規化角度ヒストグラム(ラジアン、[0, π])。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

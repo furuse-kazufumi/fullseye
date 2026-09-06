@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Surface samples at a stated spacing — area-weighted random or Poisson-disk (``points``).
 
+``method="area"`` draws *n* points with probability ∝ face area (uniform
+per unit area, but with the clumps of any random sample). ``method="poisson"``
+draws ``oversample × A/spacing²`` area-weighted candidates and keeps them
+greedily so that no two samples are closer than *spacing* (blue noise —
+the spacing is a guarantee, the count ≈ 0.7·A/spacing²). Give *spacing*
+(mesh units) for Poisson, *n* for area sampling; deterministic per *seed*.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

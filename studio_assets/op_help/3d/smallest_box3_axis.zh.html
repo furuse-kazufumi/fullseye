@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import measure3d; measure3d.smallest_box3_axis(points) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;smallest_box3_axis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>轴对齐包围盒(3-D 版 `<code style="color:#22d3bf">smallest_rectangle1</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> corners and </code><code style="color:#22d3bf">center</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">(depth, row, col)</code>`, the full</p>
+<p>`<code style="color:#22d3bf">size</code><code style="color:#22d3bf"> (depth, row, col edge lengths), and the enclosed </code><code style="color:#22d3bf">volume</code>`. This is</p>
+<p>the honest null baseline that `<code style="color:#22d3bf">smallest_box3</code>` beats on any rotated object.</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on empty input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

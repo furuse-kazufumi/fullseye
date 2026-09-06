@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;tonemap_aces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 ACES filmic 近似(Narkowicz 2015)把 HDR 壓縮到 `<code style="color:#22d3bf">[0, 1]</code>` 的 LDR。→ float64。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">x = hdr * exposure</code><code style="color:#22d3bf"> に対し </code><code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code>` を適用する。</p>
+<p>フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の</p>
+<p>「見栄え」を出す。`<code style="color:#22d3bf">x &lt; ~7.24</code>` の範囲では狭義単調増加・出力 &lt; 1(それ以上は 1 に</p>
+<p>飽和しクリップ)。カラー `<code style="color:#22d3bf">(H, W, C)</code>` はチャンネル独立に写像する。</p>
+<p>Args:</p>
+<p>hdr: HDR 画像。`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">(H, W, C)</code>`、放射輝度 &gt;= 0。</p>
+<p>exposure: 写像前に掛ける露出スケール(正)。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>` の float64 LDR 画像(入力と同形状)。</p>
+<p>Raises:</p>
+<p>ValueError: 空/非有限/負の放射輝度、非正の exposition(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

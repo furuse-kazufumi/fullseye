@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import medial; medial.skeleton_branches3d(vol, min_length=0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_branches3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 3D 骨架在分叉点处切成枝(线段)。2D <code style="color:#22d3bf">r2_split_skeleton_lines</code> 的 3D 版。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>分岐点 voxel を除いた残りが枝。min_length &gt; 0 なら、26 連結成分の voxel 数が</p>
+<p>それ未満の断片を除去する。</p>
+<p>手順: `<code style="color:#22d3bf">_ensure_skeleton</code><code style="color:#22d3bf"> で bool 化(interior voxel があれば </code><code style="color:#22d3bf">skeletonize_vol</code>`</p>
+<p>で細線化)→ 26 近傍次数 `<code style="color:#22d3bf">&gt;= 3</code><code style="color:#22d3bf"> の voxel(分岐点)を取り除く → </code><code style="color:#22d3bf">min_length &gt; 0</code>`</p>
+<p>なら `<code style="color:#22d3bf">scipy.ndimage.label</code>`(3x3x3 全 1 構造 = 26 連結)で成分に分け、voxel 数が</p>
+<p>`<code style="color:#22d3bf">min_length</code>` 未満の成分を落とす。</p>
+<p>返り値: 入力と同形の bool 配列(枝 voxel = True)。<b>枝ごとのラベルは返さない</b></p>
+<p>— 枝を個別に扱うには返り値を `<code style="color:#22d3bf">vol_label(branches, 26)</code>` に通す(成分数 = 枝数)。</p>
+<p>分岐点 voxel そのものは結果に含まれないので、枝の両端は分岐点の 1 voxel 手前で</p>
+<p>終わる。</p>
+<p>引数と検証: `<code style="color:#22d3bf">min_length</code><code style="color:#22d3bf"> は voxel 数(</code><code style="color:#22d3bf">int()</code>` で切り捨て。0 なら除去しない)。</p>
+<p>入力が 3-D でない・空・NaN/Inf は `<code style="color:#22d3bf">ValueError</code>`。細線化が必要で</p>
+<p>scikit-image が無ければ `<code style="color:#22d3bf">ImportError</code>`。前景が無ければ全 False。</p>
+<p>注意: 26 近傍次数は分岐の対角隣接で 3 以上になりやすく、分岐点が数 voxel の</p>
+<p>塊として除かれるため、枝が実際より短く出ることがある。閉ループだけの骨格は</p>
+<p>分岐点が無く、全体が 1 本の枝として残る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

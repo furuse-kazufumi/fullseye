@@ -3,8 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;texture_laws&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">texture_laws</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/texture_laws.png" alt="texture_laws: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/texture_laws.png" alt="texture_laws: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*The output is shown in a viridis-like pseudo-colour (dark purple = low, yellow = high) so that a field of quantities — distance, phase, orientation, depth — can be read.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/texture_laws.a.jpg">texture_laws: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/texture_laws.inputs.jpg">texture_laws: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The implementation is the local variance (the variance version of `<code style="color:#22d3bf">deviation_image</code><code style="color:#22d3bf">, i.e. </code><code style="color:#22d3bf">E[x^2]-E[x]^2</code><code style="color:#22d3bf"> within the window). The true Laws&#x27; texture filter is a bank of 25 convolutions built from 1D kernel pairs such as L5/E5/S5/W5/R5 (capturing energy/edges/waves/spots/ripples), but this substitute uses a single local variance instead of the full kernel bank (a limitation of the approximation -- direction- and frequency-specific information is lost). A stand-in for HALCON&#x27;s </code><code style="color:#22d3bf">texture_laws</code>` (Filter an image using a Laws texture filter).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

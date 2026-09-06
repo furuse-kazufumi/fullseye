@@ -21,6 +21,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D 位相相関(FFT)。b を a に合わせる整数シフト (dz,dy,dx) を返す。
 
+Reddy & Chatterji の 3D 版。相互パワースペクトルの逆 FFT のピーク = 平行移動。テンプレート
+不要・全 volume・O(N log N)。回転/スケールは別途(PCA / log-polar)。
+
+引数: ``a``, ``b`` は同形の 3-D 配列(違えば ValueError)。float32 に落として FFT する。
+返り値: int の tuple ``(dz, dy, dx)``、各軸 ``(−N/2, N/2]`` に折り返し済み。意味は
+``np.roll(b, (dz,dy,dx), axis=(0,1,2)) ≈ a``(b をこれだけ動かすと a に重なる)。
+- 循環相関なので、はみ出した部分は反対側から回り込む(窓掛けはしない)。シフトが volume の
+半分を超えると符号が反転して見える。
+- 位相のみ(``R/|R|``)なので振幅・コントラスト差に不変だが、ノイズが白色化されてピークが
+埋もれることがある。全 0 の volume は 0 になり index 0 を返す。
+- 整数精度。サブボクセルは ``refine_translation_lk`` / ``refine_peak_newton`` へ。
+- 回転・スケールがあると効かない(``match_logpolar_z`` → 回転補正 → 本 op の順)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

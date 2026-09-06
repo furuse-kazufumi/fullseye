@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_crop_domain(vol, domain=None, margin=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_crop_domain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Crop a volume to the tight bounding box of a domain (HALCON `<code style="color:#22d3bf">crop_domain</code>`).</p>
+<p><b>This is the memory lever of the domain family</b>: a 512**3 CT scan whose</p>
+<p>part of interest fits in 128**3 costs 64x less memory and compute once</p>
+<p>cropped — and the Hessian operators (:func:<code style="color:#22d3bf">vol_frangi</code> / :func:<code style="color:#22d3bf">vol_sato</code>),</p>
+<p>capped at `<code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>`, often become *possible* only after this</p>
+<p>step. Gray values inside the box are kept verbatim (the box, not the mask,</p>
+<p>defines the crop — pair with :func:<code style="color:#22d3bf">vol_reduce_domain</code> first if voxels</p>
+<p>outside the mask but inside the box must read 0).</p>
+<p>*domain* defaults to the volume&#x27;s own <b>non-zero support</b> (`<code style="color:#22d3bf">vol != 0</code>` —</p>
+<p>a gray volume is cropped to wherever it has any signal; note this differs</p>
+<p>from the `<code style="color:#22d3bf">&gt; 0.5</code>` convention used when an explicit binary *domain* is</p>
+<p>passed). *margin* is forwarded to :func:<code style="color:#22d3bf">vol_bounding_box</code>.</p>
+<p>Returns `<code style="color:#22d3bf">(cropped, offset)</code><code style="color:#22d3bf"> — the </code><code style="color:#22d3bf">(d, h, w)</code>` float64 sub-volume and the</p>
+<p>`<code style="color:#22d3bf">(z0, y0, x0)</code>` voxel offset of its origin in the input frame. Keep the</p>
+<p>offset: :func:<code style="color:#22d3bf">vol_uncrop</code> maps results back, and</p>
+<p>:func:<code style="color:#22d3bf">vol_boundary_points</code> accepts it as *origin* so point coordinates stay</p>
+<p>in the uncropped frame. An empty domain raises `<code style="color:#22d3bf">ValueError</code>` (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

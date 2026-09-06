@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import render_ssaa; render_ssaa.supersample_mesh(V, F, pose=None, intrinsics=None, size=256, ss: &#x27;int&#x27; = 3, light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, shade: &#x27;Optional[Callable[[dict], np.ndarray]]&#x27; = None, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;supersample_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>メッシュを SSAA でアンチエイリアス描画 -&gt; float 画像 `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> (or </code><code style="color:#22d3bf">(H, W, C)</code>`)。</p>
+<p>`<code style="color:#22d3bf">render_mesh</code><code style="color:#22d3bf"> を **目標サイズの </code><code style="color:#22d3bf">ss</code><code style="color:#22d3bf"> 倍**で呼び、陰影を付けてから </code><code style="color:#22d3bf">ss×ss</code>` 面積平均で</p>
+<p>目標 `<code style="color:#22d3bf">size</code><code style="color:#22d3bf"> へ縮小する。</code><code style="color:#22d3bf">ss=1</code><code style="color:#22d3bf"> は縮小なし = </code><code style="color:#22d3bf">render_mesh</code>` 生の(エイリアスありの)</p>
+<p>ベースライン。</p>
+<p>*pose* は 4x4 object-&gt;camera 行列(解像度非依存、そのまま使う)。*intrinsics* `<code style="color:#22d3bf">K</code>` は</p>
+<p>**目標 `<code style="color:#22d3bf">size</code><code style="color:#22d3bf"> 用**の 3x3 ピンホール行列で、高解像レンダリングのため内部で </code>`fx, fy,</p>
+<p>cx, cy`<code style="color:#22d3bf"> を </code><code style="color:#22d3bf">ss</code><code style="color:#22d3bf"> 倍にスケールする(出力は目標 </code><code style="color:#22d3bf">size</code>` なので K の意味は目標基準)。</p>
+<p>どちらも `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">render_mesh</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">auto_view</code><code style="color:#22d3bf"> で自動フレーミングする(</code><code style="color:#22d3bf">auto_view</code>`</p>
+<p>のフレーミングは解像度不変なので `<code style="color:#22d3bf">ss</code>` を変えても構図は同じ)。</p>
+<p>*shade* は `<code style="color:#22d3bf">shade(view_dict) -&gt; (H*ss, W*ss[, C])</code><code style="color:#22d3bf"> の callable で、高解像 </code><code style="color:#22d3bf">render_mesh</code>`</p>
+<p>出力(`<code style="color:#22d3bf">depth</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">silhouette</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">normals</code><code style="color:#22d3bf">)を陰影画像へ写す。</code><code style="color:#22d3bf">None</code>` のとき既定の</p>
+<p>Lambertian(*light* をカメラ空間の光源, *ambient* を環境光として法線から陰影, 背景 0)。</p>
+<p>*filter* は縮小重み(`<code style="color:#22d3bf">&quot;box&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;gauss&quot;</code><code style="color:#22d3bf">, :func:</code>antialias` 参照)。</p>
+<p>Fail-closed: `<code style="color:#22d3bf">ss</code><code style="color:#22d3bf"> は 1 以上の整数、</code><code style="color:#22d3bf">size</code><code style="color:#22d3bf"> は正、</code><code style="color:#22d3bf">size*ss</code>` の総画素は</p>
+<p>`<code style="color:#22d3bf">render3d.MAX_PIXELS</code><code style="color:#22d3bf"> 以下。メッシュ・カメラの妥当性は </code><code style="color:#22d3bf">render_mesh</code>` が検査する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

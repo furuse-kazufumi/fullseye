@@ -4,7 +4,7 @@ dim: blob
 category: split
 in: mask
 out: image2d
-examples: []
+examples: [blob_split_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -43,7 +43,7 @@ Examples
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

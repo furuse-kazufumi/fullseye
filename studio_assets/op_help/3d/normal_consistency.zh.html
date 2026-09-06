@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import metrics3d; metrics3d.normal_consistency(points_a, normals_a, points_b, normals_b)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;normal_consistency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>最近邻对应下的法线一致度 = mean|cos(na, nb)|(忽略朝向)。→ [0,1]。1=完全一致。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Raises ValueError: 点群が空 or (N,3) でない/法線が点と 1 対 1 でない場合。</p>
+<p>計算: `<code style="color:#22d3bf">points_a</code><code style="color:#22d3bf"> の各点について </code><code style="color:#22d3bf">points_b</code><code style="color:#22d3bf"> の最近傍(</code><code style="color:#22d3bf">cKDTree</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">k=1</code>`)を</p>
+<p>取り、その点の法線 `<code style="color:#22d3bf">nb</code><code style="color:#22d3bf"> と自分の法線 </code><code style="color:#22d3bf">na</code>` を単位化(ノルム + 1e-12 で割る)</p>
+<p>して `<code style="color:#22d3bf">|na · nb|</code>` を平均する。絶対値を取るので法線の向き(表裏)の不一致は</p>
+<p>無視される。<b>非対称</b>(`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">b</code>` の一方向のみ。逆向きが要るなら引数を入れ替えて</p>
+<p>もう一度呼ぶ)。</p>
+<p>引数: `<code style="color:#22d3bf">points_a</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">normals_a</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">points_b</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(M, 3)</code>`、</p>
+<p>`<code style="color:#22d3bf">normals_b</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(M, 3)</code><code style="color:#22d3bf">。4 つとも空でない </code><code style="color:#22d3bf">(*, 3)</code>` であること、法線の行数が</p>
+<p>対応する点群の行数と一致することを検査する(違反は `<code style="color:#22d3bf">ValueError</code>`)。ゼロ法線は</p>
+<p>`<code style="color:#22d3bf">1e-12</code>` で割られてほぼ 0 の寄与になる(エラーにしない)。</p>
+<p>返り値: Python `<code style="color:#22d3bf">float</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">[0, 1]</code>`。1 = 全対応で法線が平行。乱雑な法線対なら</p>
+<p>3-D では期待値 0.5 程度になる(cos の絶対値の平均)。</p>
+<p>注意: 位置の近さは見ない(遠い最近傍でも法線だけ比べる)。位置と合わせて評価する</p>
+<p>なら `<code style="color:#22d3bf">chamfer_distance</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fscore</code>` と併用する。法線が無い雲は</p>
+<p>`<code style="color:#22d3bf">estimate_point_normals</code>`(局所 PCA)で作ってから渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>

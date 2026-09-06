@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。
 
+1) SPFH: 各点 p と近傍 k 点の対に (α,φ,θ) を求め、各特徴を n_bins ビンでヒストグラム化。
+2) FPFH(p) = SPFH(p) + (1/k)Σ_j (1/d_pj) SPFH(j): 近傍 SPFH を距離重みで合成。
+3 サブヒストグラムを各々 L1 正規化して連結(既定 33 次元)。角特徴は剛体不変。
+
+引数: points (N,3), normals (N,3), k(FPFH 近傍数), n_bins(1特徴あたりのビン数)。
+返り値: (N, 3*n_bins) の記述子行列。
+Raises ValueError: points/normals が (N,3) でない・行数不一致・非有限・N<4
+(k-NN が k>=3 を要求するため)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

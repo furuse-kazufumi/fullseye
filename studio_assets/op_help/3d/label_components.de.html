@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import regionprops3d; regionprops3d.label_components(vol, connectivity: &#x27;int&#x27; = 26)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;label_components&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Labelt ein 3-D-Binärvolumen in Zusammenhangskomponenten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like</p>
+<p>bool または 0/1 の 3D 配列。</p>
+<p>connectivity : int</p>
+<p>6(面) / 18(面+辺) / 26(面+辺+角)のいずれか。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>labels : ndarray(int)</p>
+<p>vol と同形状。背景 0、各連結成分に 1..n のラベル。</p>
+<p>n : int</p>
+<p>連結成分数。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 入力は `<code style="color:#22d3bf">astype(bool)</code>` で二値化する。0 以外はすべて前景で、float の NaN も True(前景)になる点に注意。</p>
+<p style="margin:2px 0 2px 12px">• 軸順は (z, y, x) = numpy の配列軸順。`<code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> の dtype は </code><code style="color:#22d3bf">scipy.ndimage.label</code>` の返す整数型(通常 int32)。前景が無い/空配列なら int32 のゼロ配列と 0 を返す。</p>
+<p style="margin:2px 0 2px 12px">• ラベル番号の付与順は scipy の走査順で、体積順ではない。</p>
+<p style="margin:2px 0 2px 12px">• Raises `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 3 次元でない入力、</code><code style="color:#22d3bf">connectivity</code>` が 6/18/26 以外。</p>
+<p style="margin:2px 0 2px 12px">• 接触している物体は 1 成分に融合する。分離が要るなら前段で `<code style="color:#22d3bf">morph_erode3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">morph_open3d</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">vol_watershed</code>` で切る。</p>
+<p style="margin:2px 0 2px 12px">• 後段: `<code style="color:#22d3bf">region_props</code><code style="color:#22d3bf">(計測)、</code><code style="color:#22d3bf">largest_component</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">filter_by_volume</code><code style="color:#22d3bf">(選別)、</code><code style="color:#22d3bf">vol_select_labels</code><code style="color:#22d3bf">(特徴でふるい)、</code><code style="color:#22d3bf">vol_colorize_labels</code>`(可視化)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

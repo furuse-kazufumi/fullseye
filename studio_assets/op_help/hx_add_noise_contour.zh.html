@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_add_noise_contour&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">add_noise_white_contour_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_add_noise_contour.png" alt="hx_add_noise_contour: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_add_noise_contour.png" alt="hx_add_noise_contour: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_add_noise_contour.a.jpg">hx_add_noise_contour: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_add_noise_contour.chain.jpg">hx_add_noise_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_add_noise_contour.inputs.jpg">hx_add_noise_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>给 contour 点加白高斯噪声(std 由 a 给出,固定 seed 因而确定)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各 contour の全点座標 (row, col) に、平均 0・標準偏差 `<code style="color:#22d3bf">std</code>` のガウス雑音を独立に加えて返す。乱数は</p>
+<p>`<code style="color:#22d3bf">np.random.default_rng(12345)</code>` を呼ぶたびに作り直すので、同じ入力なら常に同じ雑音が出る(決定的)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 標準偏差 </code><code style="color:#22d3bf">std = a*3</code>`(0〜3 画素。a=0 なら無変化)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>雑音列は contour の順番と点数に依存するため、前段で点の順序や本数が変わると同じ `<code style="color:#22d3bf">a</code>` でも雑音の当たり方が</p>
+<p>変わる。ロバスト性の検証(`<code style="color:#22d3bf">hx_fit_circle_contour</code><code style="color:#22d3bf"> の残差がどれだけ増えるか等)や、</code><code style="color:#22d3bf">smooth_contours_xld</code>` の</p>
+<p>効果確認に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

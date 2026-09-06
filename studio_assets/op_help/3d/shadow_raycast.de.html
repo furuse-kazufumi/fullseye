@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import render_shadow; render_shadow.shadow_raycast(V, F, light, *, pose=None, intrinsics=None, width: &#x27;int&#x27; = 256, height: &#x27;int&#x27; = 256, angular_diameter_deg: &#x27;float&#x27; = 0.0, samples: &#x27;int&#x27; = 1, grid=None, bias=None) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;shadow_raycast&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schießt Strahlen direkt auf das Mesh und liefert die Sonnenlichtsichtbarkeit (H,W) ∈ [0,1] (ohne Shadow Map).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">1=完全に照らされる</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">0=完全な影</code><code style="color:#22d3bf">。背景画素は 1.0。</code><code style="color:#22d3bf">light</code>` は平行光の方向</p>
+<p>(シーン→太陽)。`<code style="color:#22d3bf">angular_diameter_deg</code>` は光源の視直径(太陽 = 0.53°)で、0 なら</p>
+<p>ハード影、正なら角半径の円盤内へ `<code style="color:#22d3bf">samples</code>` 方向をばらまいて平均する ―― 半影の幅は</p>
+<p>「遮蔽物までの距離 × tan(視直径/2)」の幾何どおり(小惑星スケールでは数 cm = 硬い影)。</p>
+<p>法線が光に背く画素(自己陰)は 0。`<code style="color:#22d3bf">bias</code>` はレイ原点を法線方向へ浮かせる量(既定 =</p>
+<p>シーン対角 × 1e-5、自己交差の回避)。`<code style="color:#22d3bf">grid</code>` は光源空間の 2-D 格子の一辺セル数</p>
+<p>(既定 `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> = 面数から :func:</code>auto_grid`。結果は格子に依らず同じ、速度だけ変わる)。</p>
+<p>honest: 交差は Möller-Trumbore(両面)、加速は 2-D binning(平行光専用。点光源は</p>
+<p>`<code style="color:#22d3bf">cast_shadow</code>` を使う)。透明・多重反射・カラー影は扱わない。</p>
+<p>fail-closed: 退化メッシュ・不正光源・非正サイズ・負の視直径/サンプル数は `<code style="color:#22d3bf">ValueError</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

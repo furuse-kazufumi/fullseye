@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点-直線距離。
 
+``w = p − line_pt`` の、方向 ``d̂`` に直交する成分の長さ ``|w − (w·d̂)d̂|`` を float で返す
+(``d`` は内部で単位化。2-D/3-D 共通)。``p``, ``line_pt``, ``d`` は数値の 2 または 3 ベクトル、
+次元の混在は ValueError。``d`` が零ベクトルなら ``|w|`` がそのまま返る。単位は入力座標の単位。
+用途: ``fit_line_3d`` の軸からの偏心、``line_from_2points`` の線に対する点群のばらつき
+(1 点ずつ)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -21,6 +21,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。
 
+``morph_erode3d(morph_dilate3d(vol, r, ...), r, ...)``。出力は入力以上(``close >= vol``)で、
+SE(一辺 ``2r+1`` の cube か半径 r の ball)より小さい暗い穴・亀裂・面の隙間が周囲の
+明るさで埋まり、大きな暗領域は残る(等冪)。境界外は dilation で −∞、erosion で +∞ 扱い
+なので端が勝手に埋まることはない。``se`` は "cube"/"ball"(他は ValueError)、``device`` は
+cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+用途: ``close − vol`` が ``morph_blackhat3d``(小さな暗構造の抽出)。点群 splat の表面の
+穴埋め、``signed_distance_field`` 前の占有の穴埋め。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

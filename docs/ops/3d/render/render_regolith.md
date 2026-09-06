@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 小惑星のレゴリスを物理ベース(Hapke + 太陽視直径のレイキャスト影 + 環境光ゼロ)で描く → RGB ``(size,size,3)``。
 
+:func:`render_beauty` の合成:
+  * 反射則 = Hapke(``w, g, B0, h, roughness_deg``; 既定はイトカワの S 型典型値)。
+  * 影 = ``render_shadow.shadow_raycast``(視直径 ``sun_angular_diameter_deg``、既定 0.53° =
+    太陽。半影は幾何どおり数 cm なので事実上ハード影)。地面(台座)は置かない。
+  * 環境光 0(宇宙に空光は無い)。影の底は地形の一回反射近似 ``self_illumination`` だけ。
+  * トーン = 線形(AMICA の 8bit 画像に合わせ、露出 × クリップ)。``exposure='auto'`` は
+    物体画素の 99.5 パーセンタイルが 0.95 に来る露出(決定的)。``exposure='median'`` は
+    **照らされた面の中央値**(物体画素のうち 99.5 % 点の 30 % 以上の画素の中央値)が
+    ``exposure_target``(既定 0.45)に来る露出 —— 2026-09-03 の hero が「露出過多で
+    白いジャガイモ」になった対策(99.5 % 点合わせは縁まで明るい Lommel-Seeliger 面で
+    中央値が 0.7 超まで上がる)。クリップ率は呼び手が測る(hero は < 0.5 % を要求)。
+  * ``smooth_normals=True``: 頂点法線の Phong 補間で陰影を滑らかにする(幾何・影は不変)。
+  * ``albedo_variation``: アルベドの空間むら(既定 12 %、Saito et al. 2006 の明暗地形)。
+  * ``bump``: :func:`render_beauty` の ``bump``(サブファセット起伏の陰影法線摂動)。
+``tint`` は平均 1 に正規化した色味。fail-closed: 引数は下位 op が検証、``exposure`` は
+``'auto'`` / ``'median'`` か正の数。決定的(乱数なし)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

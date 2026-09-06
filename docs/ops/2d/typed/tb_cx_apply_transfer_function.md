@@ -15,7 +15,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `cimage` → `cimage`
 - **呼び出し**: `fullseye.apply(img, "tb_cx_apply_transfer_function", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-*図なし: この op は `cimage` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— 橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない。下の「実行できる例」で使い方を見ること。*
 
 ## 使い方
 

@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_union(a, b)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Union of two RLE regions, computed on the runs (no decode). Cost scales</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>with the run counts, not the voxel counts — merging two 512**3 masks never</p>
+<p>touches 512**3 anything. Regions must share the same volume shape.</p>
+<p>手順(`<code style="color:#22d3bf">_rle_boolean</code><code style="color:#22d3bf"> 共通): 両 region の run を、平面行ごとに </code><code style="color:#22d3bf">W + 1</code>` の</p>
+<p>stride を取った 1 本の整数直線に写し(+1 の隙間で隣の行の run が結合しない)、</p>
+<p>各 run の start/end をイベントとして並べ、区間ごとの被覆状態 `<code style="color:#22d3bf">(a の内側, b の内側)</code>`</p>
+<p>を掃引して `<code style="color:#22d3bf">ia | ib</code>` が真の区間を最大長の run にまとめ直す。計算量は run 数</p>
+<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> に対して O(n log n)(</code><code style="color:#22d3bf">np.unique</code>` のソート)。</p>
+<p>返り値: 同じ `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf"> の新しい </code><code style="color:#22d3bf">VolRLE</code>`(run は行順・x 昇順、隣接・重複する run は</p>
+<p>1 本に併合済み)。両方が空なら run 0 本の region。</p>
+<p>`<code style="color:#22d3bf">vol_rle_decode(union) == decode(a) | decode(b)</code>` が voxel 単位で成り立つ。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): どちらかが </code><code style="color:#22d3bf">VolRLE</code>` でない・整合性検査に失敗 /</p>
+<p>`<code style="color:#22d3bf">a.shape != b.shape</code>`(別の volume に住む region は合成できない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

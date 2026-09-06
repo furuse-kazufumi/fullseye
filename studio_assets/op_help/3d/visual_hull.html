@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import visualhull; visualhull.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;visual_hull&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>多視点シルエットの visual hull を voxel 占有として返す(:func:<code style="color:#22d3bf">carve</code> の別名)。</p>
+<p>引数・返り値・例外は `<code style="color:#22d3bf">carve</code><code style="color:#22d3bf"> と完全に同じ(内部でそのまま </code><code style="color:#22d3bf">carve</code>` を呼ぶだけ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">silhouettes</code>`: 各カメラの前景マスク (H,W) bool を M 個並べたリスト(サイズはカメラごとに</p>
+<p>異なってよい)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">Ks</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">Rs</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">ts</code>`: 各カメラの内部行列 (3,3)・回転 (3,3)・並進 (3,)。射影規約は</p>
+<p>`<code style="color:#22d3bf">X_cam = R @ X_world + t</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">pixel = (K @ X_cam)[:2] / Z</code>`(OpenCV 流)。画素は最近傍に丸める。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">((xmin,xmax),(ymin,ymax),(zmin,zmax))</code>` の彫刻領域(各軸 max &gt; min 必須)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">res</code><code style="color:#22d3bf">: 各軸の voxel 分割数(正の整数)。voxel 総数 </code><code style="color:#22d3bf">res**3</code>`。</p>
+<p>返り値は (res,res,res) bool。`<code style="color:#22d3bf">indexing=&#x27;ij&#x27;</code><code style="color:#22d3bf"> で軸は (x,y,z)、</code><code style="color:#22d3bf">vox[i,j,k]</code>` の中心は</p>
+<p>`<code style="color:#22d3bf">(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)</code>`。voxel が残る条件は、全カメラで「カメラ前方</p>
+<p>(Z&gt;0)・画像内・その画素がシルエット前景」を満たすこと(AND)。1 台でも外れれば削られる。</p>
+<p>fail-closed: リスト長の不一致、カメラ 0 台、`<code style="color:#22d3bf">res &lt;= 0</code><code style="color:#22d3bf">、退化 bounds はすべて </code><code style="color:#22d3bf">ValueError</code>`</p>
+<p>(0 台のときに「全 voxel 占有」を復元結果と偽って返さない)。</p>
+<p>注意: visual hull は物体の上位集合で、どのカメラからも見えない凹みは埋まったまま残る。</p>
+<p>シルエットは `<code style="color:#22d3bf">synthesize_silhouette</code>` のように 1 画素太らせた被覆マスクにしておくと、離散化</p>
+<p>誤差で物体 voxel を削り落とす取りこぼしを避けられる。結果は `<code style="color:#22d3bf">voxel_to_mesh</code>` でメッシュ化、</p>
+<p>`<code style="color:#22d3bf">esdf</code>` の占有入力にもそのまま使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

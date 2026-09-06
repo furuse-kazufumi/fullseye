@@ -19,6 +19,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 三角形メッシュの**頂点法線**(面積重み付きで集約した単位法線)。→ (N,3)。
 
+各三角形の外積ベクトル(=面法線×2·面積)を、その 3 頂点へ散布加算し、頂点ごとに正規化する。
+大きい(重要な)面ほど寄与が大きい面積重み付き平均になり、向きは面の巻き順から一貫する。
+``normals_orient.estimate_normals``(点群 PCA・符号未定)と違い、追加の向き付け工程は不要。
+
+Args:
+    mesh: (vertices (N,3), faces (M,3)) のタプル。
+
+Returns:
+    (N,3) の単位頂点法線。
+
+Raises:
+    ValueError: 形状不正・範囲外 index、または法線が定義できない頂点(入射面が無い/
+        寄与が相殺してゼロ)があるとき。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

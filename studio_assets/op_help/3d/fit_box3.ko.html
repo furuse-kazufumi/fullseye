@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_box3(points) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;fit_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PCA 에 의한 유향 직육면체 적합(빠르고 잡음에 강함. `<code style="color:#22d3bf">obb</code>` 와 같은 작도).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">pcseg.obb</code><code style="color:#22d3bf"> but with the </code><code style="color:#22d3bf">measure</code>`-style dict). Axes are the principal</p>
+<p>directions of the point spread; extents come from the projected span. Returns</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">axes</code>` (3, 3 — unit ROW vectors, depth/row/col</p>
+<p>components), sorted half-extents `<code style="color:#22d3bf">l1 &gt;= l2 &gt;= l3</code><code style="color:#22d3bf">, full </code><code style="color:#22d3bf">size</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">volume</code>`,</p>
+<p>`<code style="color:#22d3bf">corners</code>` (8, 3), and the RMS point-to-box-surface distance. For the true</p>
+<p>minimum-volume box use `<code style="color:#22d3bf">smallest_box3</code><code style="color:#22d3bf">. Raises </code><code style="color:#22d3bf">ValueError</code>` on &lt; 4 points</p>
+<p>or a degenerate (flat) set.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

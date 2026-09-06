@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Bisect edges longer than *max_edge* until none remains — adaptive refinement (``mesh``).
 
+Each pass splits every over-long edge at its midpoint and re-triangulates
+each affected face by the number of split edges (1 → 2, 2 → 3, 3 → 4
+triangles), so there are never T-junctions and faces that are already fine
+are untouched: the refinement lands exactly where the mesh is coarse.
+Stops after *max_passes* (``ValueError`` if edges still exceed the target
+then). Vertex positions are not moved — the shape is preserved exactly.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

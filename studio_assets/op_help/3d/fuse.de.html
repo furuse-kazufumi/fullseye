@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.fuse(depths: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence&#x27;, Rs: &#x27;Sequence&#x27;, ts: &#x27;Sequence&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;, trunc: &#x27;float&#x27;) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;fuse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fusioniert eine Tiefenserie mit new_volume + integrate zu einem TSDF-Volumen. Liefert (tsdf, weight).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>各フレームの (K,R,t) は world→camera。多視点で同じ表面を観測すると重みが積算され、</p>
+<p>単フレームでは見えない(自己遮蔽の)面が別視点で埋まる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depths</code>`: (H,W) 深度画像のリスト(カメラ Z 深度。0 以下・非有限の画素は未観測扱い)。</p>
+<p>サイズはフレームごとに異なってよい。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">Ks</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">Rs</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ts</code><code style="color:#22d3bf">: 各フレームの (3,3) 内部行列・(3,3) 回転・(3,) 並進(</code><code style="color:#22d3bf">X_cam = R X + t</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">((xmin,xmax),(ymin,ymax),(zmin,zmax))</code>` の world 領域(各軸 max &gt; min)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">res</code><code style="color:#22d3bf">: 一辺の voxel 数(正の int)。volume は </code><code style="color:#22d3bf">res×res×res</code><code style="color:#22d3bf">、軸順は (x,y,z) の </code><code style="color:#22d3bf">indexing=&#x27;ij&#x27;</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">trunc</code>`: 切り詰め距離(world 単位、正の有限値)。voxel サイズの数倍が目安で、小さすぎると</p>
+<p>表面の両側に観測が乗らず、大きすぎると薄い構造の表裏が混ざる。</p>
+<p>返り値: `<code style="color:#22d3bf">tsdf</code><code style="color:#22d3bf"> (res,res,res) float32(未観測 +1.0、表面手前が正・奥が負、[-1,1])と </code><code style="color:#22d3bf">weight</code>`</p>
+<p>(res,res,res) float32(観測回数)。表面点は `<code style="color:#22d3bf">extract_surface_points(tsdf, weight, bounds, res)</code>`</p>
+<p>で取り出す。fail-closed: フレーム 0 枚、リスト長の不一致、退化 bounds、非正の `<code style="color:#22d3bf">res</code>` /</p>
+<p>`<code style="color:#22d3bf">trunc</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。統合の詳細(遮蔽領域を更新しない規則)は </code><code style="color:#22d3bf">integrate</code>` を参照。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

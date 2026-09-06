@@ -19,6 +19,33 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Gamma (power-law) correction on the volume's own range (HALCON ``pow_image``).
 
+Normalises ``[min, max]`` to ``[0, 1]``, applies ``t**gamma``, and maps the
+result back to the original ``[min, max]`` — so the volume's extremes are
+fixed points and only the mid-tones move: ``gamma > 1`` darkens them,
+``gamma < 1`` brightens them, ``gamma == 1`` is the identity. The transform
+is strictly monotone, so intensity *ordering* is always preserved.
+
+A **constant volume is returned unchanged** (no range to normalise —
+see the module docstring's flat-volume note).
+
+Parameters
+----------
+vol : array_like, shape (D, H, W)
+    Input volume (coerced to float64; NaN/Inf rejected).
+gamma : float
+    Exponent, ``> 0`` (fail-closed: ``gamma <= 0`` is not a monotone
+    intensity map).
+
+Returns
+-------
+ndarray, shape (D, H, W), float64
+    The gamma-corrected volume, same ``[min, max]`` range as the input.
+
+Raises
+------
+ValueError
+    Non-3-D / non-finite input, or ``gamma <= 0``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

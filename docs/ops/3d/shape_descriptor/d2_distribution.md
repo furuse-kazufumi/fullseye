@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。
 
+N 点から `samples` 組の相異なる点対 (i, j) を乱択し、その距離を集計する。
+距離は**平均距離で割って正規化**するため、回転・平行移動・**スケール**に不変。
+固定レンジ [0, _D2_MAX] の正規化ヒストグラム (bins,) を返す(総和 1)。
+
+Parameters
+----------
+points : array_like, shape (N, 3)
+    点群。N >= 2 が必要。
+bins : int
+    ヒストグラムの bin 数。
+samples : int
+    乱択する点対の数。多いほど分散が下がる(サンプリング誤差 ~ 1/sqrt(samples))。
+seed : int
+    乱数シード。同 seed・同点群なら決定論的に同一。
+
+Returns
+-------
+np.ndarray, shape (bins,)
+    正規化距離ヒストグラム。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

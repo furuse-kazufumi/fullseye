@@ -3,10 +3,30 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xg_gen_polygons&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">gen_polygons_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/xg_gen_polygons.png" alt="xg_gen_polygons: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/xg_gen_polygons.png" alt="xg_gen_polygons: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.a.jpg">xg_gen_polygons: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.chain.jpg">xg_gen_polygons: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.inputs.jpg">xg_gen_polygons: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Douglas-Peucker polyline simplification; eps = a * contour bbox diagonal.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各輪郭を Ramer-Douglas-Peucker 法で間引いて頂点数の少ない折れ線(多角形)に</p>
+<p>する。始点と終点は必ず残し、区間の弦から最も離れた点の距離が `<code style="color:#22d3bf">eps</code>` を</p>
+<p>超えればその点を採用して再帰的に分割する。`<code style="color:#22d3bf">eps</code>` は輪郭ごとに、その輪郭の</p>
+<p>bbox の対角長 `<code style="color:#22d3bf">hypot(Δrow, Δcol)</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">a</code>`([0,1] に clip)を掛けた値。</p>
+<p>`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">eps=0</code><code style="color:#22d3bf">(弦上に完全に乗る点だけ落ちる)、</code><code style="color:#22d3bf">a</code>` を上げるほど粗く</p>
+<p>なり、`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> では両端の 2 点だけになる。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は `<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>` の輪郭辞書。点が 3 個未満の輪郭はコピーのまま。</p>
+<p>閉輪郭(先頭=末尾)は始点と終点が同じ点なので、`<code style="color:#22d3bf">a</code>` が大きいと 2 点(同一点)に</p>
+<p>退化し、面積や向きの特徴量が 0 になる。閉輪郭の形を保ちたい場合は `<code style="color:#22d3bf">a</code>` を</p>
+<p>小さめにする(実測では半径 5〜8 の楕円 101 点が `<code style="color:#22d3bf">a=0.05</code>` で 9 点)。</p>
+<p>間引きは元の点の部分集合を返し、新しい点は作らない。後段の `<code style="color:#22d3bf">xg_area_center</code>`</p>
+<p>や `<code style="color:#22d3bf">xg_regress_contours</code>` の計算量を減らす前処理、折れ線の角(頂点)検出に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

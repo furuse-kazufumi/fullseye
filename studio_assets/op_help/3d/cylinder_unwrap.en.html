@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Unwrap the cylindrical surface of a voxel volume into (height × θ × r) — for inspecting the inner and outer walls of cylindrical parts and pipes. The axis is z (the D axis).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。</p>
+<p>Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。</p>
+<p>引数: `<code style="color:#22d3bf">vol</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">center=(cy, cx)</code>` は各 z スライス内の <b>(行, 列)</b>(既定は</p>
+<p>スライス中心)。`<code style="color:#22d3bf">r_in</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">r_out</code><code style="color:#22d3bf">(voxel、既定 </code><code style="color:#22d3bf">min(H,W)/2 − 1</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">nr</code>` 等分、角度を</p>
+<p>`<code style="color:#22d3bf">ntheta</code><code style="color:#22d3bf"> 等分。出力 </code><code style="color:#22d3bf">(D, ntheta, nr)</code>` float32: 軸 0 は z(高さ、入力と同じ)、行 k の角度</p>
+<p>`<code style="color:#22d3bf">θ = k·2π/ntheta</code><code style="color:#22d3bf">、列 j の半径。サンプル点は </code><code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code>`、volume 外は 0。</p>
+<p>D, H, W が 1 の軸は正規化で 0 除算になる(`<code style="color:#22d3bf">polar_unwrap</code>` と違い検査は無い)。</p>
+<p>後段: `<code style="color:#22d3bf">[:, :, j]</code>` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・</p>
+<p>`<code style="color:#22d3bf">ncc_locate</code>` が使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

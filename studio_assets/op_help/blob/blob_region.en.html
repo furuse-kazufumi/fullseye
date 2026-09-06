@@ -5,6 +5,20 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>物体 1 個を二値領域(bool)として抜く。`<code style="color:#22d3bf">index</code>` は <b>1 起点</b>。</p>
+<p>`<code style="color:#22d3bf">labels == index</code><code style="color:#22d3bf"> を返すだけの選択 op。番号は </code><code style="color:#22d3bf">blob_label</code>` が付けた 1..n の</p>
+<p>連番で、0 は背景。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">: 2-D の整数ラベル画像(</code><code style="color:#22d3bf">blob_label</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">blob_select</code>` /</p>
+<p>`<code style="color:#22d3bf">blob_split</code>` の出力)。<b>bool マスクは拒否</b>(「複数物体を 1 個として測る」</p>
+<p>事故を防ぐため、先に `<code style="color:#22d3bf">blob_label</code>` を掛けるよう促す)。float も拒否</p>
+<p>(`<code style="color:#22d3bf">0.999</code><code style="color:#22d3bf"> がどの物体か決められない)。負の番号があれば </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">index</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">1 &lt;= index &lt;= labels.max()</code>` の int。0(背景)や範囲外は</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">blob_features</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">label</code><code style="color:#22d3bf"> 列、</code><code style="color:#22d3bf">blob_select_largest</code>` の</p>
+<p>結果(1 から振り直される)と同じ番号体系。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code>` の bool。空になることはない(番号は必ず存在する</p>
+<p>―― ただし `<code style="color:#22d3bf">blob_select</code>` で番号を振り直していない自作ラベルに欠番があれば</p>
+<p>全 False が返りうる)。</p>
+<p>抜いた領域は `<code style="color:#22d3bf">blob_distance</code><code style="color:#22d3bf">(距離変換)や </code><code style="color:#22d3bf">blob_overlay</code>` の重ね描き、</p>
+<p>`<code style="color:#22d3bf">annotate_outline</code>` の輪郭描画にそのまま渡せる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -688,6 +688,55 @@ EXAMPLES = [
      "summary": "絵の見た目でなく光線の量で答え合わせをする。交点 z、法線の向き、"
                 "反射の法則 |d·n+r·n|<1e-14、遮蔽で可視率が落ちること、"
                 "環境光の違いを固定してから studio 描画する(optscene)。"},
+    # -- 2026-09-07: 入口 op と、例ゼロだった台帳 7 族の穴埋め ------------------------- #
+    {"id": "gallery2d_bridge", "task": "family_coverage", "data": "synthetic",
+     "name": "入口 op(img_to_*、category=bridge)を総なめ", "summary":
+         "1 枚の画像から点群・1-D 信号・動画・体積・ライトフィールド・複素場・光子列・"
+         "ビート立方体・行列・キーポイント・モノジェニック信号を作る 12 op を、型契約・"
+         "有限性・決定性・ノブの効きに加え op ごとの閉形式(z = 値×10×s、フレームの変位、"
+         "距離ビン …)で検証する。"},
+    {"id": "dem_geodesy_tour", "task": "terrain", "data": "synthetic",
+     "name": "地心座標と地球の丸み(測地⇄ECEF・地心格子・曲率落ち・緯度で変わるセル寸法)",
+     "summary": "赤道・極・楕円体方程式・法線移動で ECEF を検算し、3700 点の往復誤差を高さ別に印字する"
+                "(楕円体面 2e-9 m、20 km で 4e-6 m —— docstring の 1e-7 m は地表付近の値)。"
+                "地心緯度と測地緯度の差 0.19 度、曲率落ちの表、Web メルカトル分解能、"
+                "等角度格子の東西傾斜が北緯 60 度で素朴計算だと半分になることを閉形式と突き合わせる。"},
+    {"id": "dem_terrain_analysis_tour", "task": "terrain", "data": "synthetic",
+     "name": "地形解析ツアー(粗さ・TPI・D8 流向・河道・地平線仰角・可視領域)",
+     "summary": "平面・柱・円錐・V 字谷・壁という答えを数えられる地形で 6 op を通す。TRI=√(3/4)|∇z|·cell、"
+                "谷底の集水量 W(i+1) と河道マスクのセル単位一致、壁の仰角 atan(H/d)、"
+                "壁の影の長さ e·d0/(e-H)。欠測の outlet 方針は「他に下る先が無いときだけ欠測へ」と実測。"},
+    {"id": "piv_field_analysis_tour", "task": "flow", "data": "synthetic",
+     "name": "PIV の派生 op を一巡する(場の量・可視化・採点・アンサンブル・時間統計を閉形式で検算)",
+     "summary": "剛体回転・膨張・せん断の線形場で Q 基準/渦回転強度/ひずみ速度/渦度を厳密に検算し、"
+                "Lamb–Oseen 渦で窓変形が多段より誤差を下げることと、Q の面積が閾値で 4 倍変わることを出す。"
+                "ZNCC 採点は壊した窓だけ落ち、アンサンブル相関は外れ本数を 52 %→5 % に減らし、"
+                "時間統計の RMS を独立な経路で突き合わせ、centroid のピークロッキングと 4 方向の色を固定する。"
+                "**RMS だけでは差が見えない**ことも隠さず印字する。"},
+    {"id": "profile_frame_tour", "task": "metrology", "data": "synthetic",
+     "name": "断面輪郭の枠を作る(正規化・等弧長の取り直し・上下面の分離・位置合わせを閉形式で検算)",
+     "summary": "既知の相似変換を掛けた翼型が正規化で機械精度で戻ること、粗密 2 万倍の円が等弧長で一様な角度刻みに"
+                "なること、NACA 0012 の上下面が閉形式の ±y_t に 6e-6 で乗ること、7 度・並進の剛体変換を chord/rigid が"
+                "取り戻しつつ**2 % の拡大は吸収しない**ことを出す。開いた曲線の拒否も確かめる。"},
+    {"id": "shapestat_landmark_tour", "task": "shape_statistics", "data": "synthetic",
+     "name": "形態統計(Procrustes / GPA / 形態 PCA / 左右非対称 / 面距離)を真値つきで一巡",
+     "summary": "既知の 2 変形モードを持つ合成ランドマーク群で、相似変換の復元(1e-9)・GPA 平均の一致・"
+                "PCA 往復・Mahalanobis 閉形式・正中面の復元・±0.2 の符号つき面距離を検算し、"
+                "align=True が大きさを食う点と、面の再当てはめが非対称量を縮める点を印字する。"},
+    {"id": "shape2d_morph_descriptor_tour", "task": "shape_descriptors", "data": "synthetic",
+     "name": "XLD 輪郭 → 不変記述子 → 対応点ワープ(区分アフィン / TPS)を真値つきで一巡",
+     "summary": "from_xld で (row,col) 点列を取り、invariants の回転/拡大/移動/始点不変を 1e-9 で確かめ、"
+                "add_frame_corners + 2 種のワープで恒等・平行移動・1 点の着地・面積比 1.25^2 を検算する。"
+                "(row,col) のまま渡す座標順の事故が例外なく黙って外れることも示す。"},
+    {"id": "blob_split_tour", "task": "blob_analysis", "data": "synthetic",
+     "name": "融合した 2 円板を距離変換 → h-maxima の種 → 分水嶺で割る(閉形式で検算)",
+     "summary": "blob_distance の中心値=半径、blob_seeds の種を h-maxima 閉形式と画素単位で照合、"
+                "blob_split の 4 領域・前景保存を確かめる。h より低い塊にも種が立つ点と、"
+                "割れ目が番号の大きい種の側へ食い込む偏りを隠さず印字する。"},
+    {"id": "annotate_paper_tour", "task": "drawing", "data": "synthetic",
+     "name": "経路に沿う文字の配置表とパネル文字 (a)(b) を閉形式で検算",
+     "summary": "annotate_text_path_layout の弧長・位置・傾き・used を閉形式と突き合わせ(L 字経路で 0/90 度)、"
+                "annotate_panel_label の板の縁が margin に乗ること・text_box と画素同一であることを確かめる。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the

@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_circle3(points) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;fit_circle3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D circle fit to `<code style="color:#22d3bf">(depth, row, col)</code>` points: fit the supporting plane,</p>
+<p>then fit a 2-D circle in that plane (algebraic least squares). Returns</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), radius </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">, a unit plane </code><code style="color:#22d3bf">normal</code>` (depth, row,</p>
+<p>col), and the RMS residual (in-plane radial + out-of-plane, combined). Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 3 points or a collinear set.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

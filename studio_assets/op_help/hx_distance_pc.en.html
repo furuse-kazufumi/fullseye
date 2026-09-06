@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_distance_pc&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">distance_pc</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_distance_pc.png" alt="hx_distance_pc: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_distance_pc.png" alt="hx_distance_pc: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.a.jpg">hx_distance_pc: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.b.jpg">hx_distance_pc: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.chain.jpg">hx_distance_pc: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The minimum distance from the query point (normalised a, b) to the contour (a feature).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>正規化座標 `<code style="color:#22d3bf">(a, b)</code><code style="color:#22d3bf"> のクエリ点 </code><code style="color:#22d3bf">q = (a*H, b*W)</code>` から、全 contour の頂点までのユークリッド距離の最小値を</p>
+<p>`<code style="color:#22d3bf">max(H, W)</code><code style="color:#22d3bf"> で割って 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → クエリ点の行(0〜1)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` → クエリ点の列(0〜1)。</p>
+<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(点が contour 上にある場合と区別できない)。</p>
+<p>距離は頂点までであって線分までではないので、点の間隔が粗い contour では真の距離より最大で「点間隔の半分」程度</p>
+<p>大きく出る。細かい contour(`<code style="color:#22d3bf">edges_sub_pix</code>` の 1 画素刻み)ではほぼ一致する。region までの距離は</p>
+<p>`<code style="color:#22d3bf">hx_distance_pr</code><code style="color:#22d3bf">、水平線からの距離は </code><code style="color:#22d3bf">hx_distance_sc</code><code style="color:#22d3bf">、点を含む contour の選択は </code><code style="color:#22d3bf">hx_select_xld_point</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

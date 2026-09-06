@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import descriptors3d; descriptors3d.describe(points, bins: &#x27;int&#x27; = 64, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;describe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>D2 + A3 + extent 를 이은 대역 형상 기술자.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>長さ 2*bins + 3 の 1 次元 float64 ベクトル。並びは [d2(bins), a3(bins), extent(3)]。</p>
+<p>各部分ブロックはそれぞれ総和 1 に正規化済みなので、L1 距離での比較時に 3 指標が</p>
+<p>おおよそ等しい重みで効く。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>点群。N &gt;= 3 が必要。</p>
+<p>bins : int</p>
+<p>D2 / A3 それぞれの bin 数。</p>
+<p>seed : int</p>
+<p>D2 / A3 の乱択シード(両者に同一 seed を渡す)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (2*bins + 3,)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,7 +4,7 @@ dim: profile
 category: synth
 in: 
 out: pairs
-examples: [profile_shape_inspection]
+examples: [profile_frame_tour, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ Returns:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [profile_frame_tour](../../../../examples/profile_frame_tour.py) — `py -3.11 examples/profile_frame_tour.py`
 - [profile_shape_inspection](../../../../examples/profile_shape_inspection.py) — `py -3.11 examples/profile_shape_inspection.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)

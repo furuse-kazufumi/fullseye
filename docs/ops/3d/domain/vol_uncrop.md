@@ -19,6 +19,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Paste a cropped sub-volume back into the full frame (inverse of
 
+:func:`vol_crop_domain`).
+
+*part* is placed at voxel *offset* ``(z0, y0, x0)`` inside a new
+``(D, H, W)`` float64 volume of the given *shape*, everything else set to
+*fill* (the 2-D ``full_domain`` restoration, made explicit — the cropped
+result must land at exactly the coordinates it came from). The part must fit
+entirely inside *shape* at *offset*; anything else raises ``ValueError``
+rather than silently clipping data. *offset* and *shape* must be whole
+voxel counts (a fractional value is rejected, never truncated — a silent
+``int(1.5) -> 1`` would shift the data one voxel with no warning), and
+*fill* must be a finite number: every operator in this module refuses
+NaN/Inf voxels, so a non-finite fill would produce a volume nothing
+downstream will accept.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

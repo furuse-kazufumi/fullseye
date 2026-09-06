@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。
 
+Raises ValueError: points_2d が (N,2) でない / 点数不一致 / 非有限。
+
+計算: 各 3D 点を ``x = K (R X + t)`` で投影して ``u = x0/x2``, ``v = x1/x2`` を取り、観測 2D 点とのユークリッド距離 d_i [px] の RMS ``sqrt(mean(d_i²))`` を返す。
+
+- ``points_3d`` (N,3)、``points_2d`` (N,2)(画素座標、``project_points`` と同じ規約)、``K`` (3,3)、``R`` (3,3)、``t`` (3,)。R, t は world → camera(``Xc = R X + t``)。
+- 深度 ``x2`` が負の点(カメラ後方)もそのまま割って投影するので、誤った姿勢では前後反転した点が「近く」に見えることがある。``x2 = 0`` は除算で inf/NaN になり検査しない。
+- 単位は画素。対応が正しく K が合っていれば画素ノイズ程度(サブピクセル)。
+- 典型: ``dlt_pose`` / ``pnp_ransac`` の結果を評価する。``pnp_ransac`` の ``info["rms"]`` は同じ量(inlier 集合上)。GT 姿勢との比較は ``pose_error``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

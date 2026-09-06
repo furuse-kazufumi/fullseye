@@ -21,6 +21,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。
 
+円周方向に並ぶ特徴を「縦」に伸ばして通常の 2D 手法(直線探索/相関)を適用できる。grid_sample。
+θ 軸は endpoint 無し(行 k の角度 = k·2π/ntheta)= 0° と 360° を重複サンプルしない
+周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。
+
+Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。
+
+引数: ``center=(cy, cx)`` は **(行, 列)** の順(既定は画像中心 ``((H−1)/2, (W−1)/2)``)。
+``r_in``〜``r_out``(画素、既定 ``min(H,W)/2 − 1``)を ``nr`` 等分、角度を ``ntheta`` 等分。
+出力 ``(ntheta, nr)`` float32: 行 k の角度 ``θ = k·2π/ntheta``、列 j の半径
+``r = r_in + j·(r_out − r_in)/(nr−1)``、サンプル点は ``(cy + r sinθ, cx + r cosθ)``(θ=0 が
++列方向、θ が増えると +行方向へ回る)。画像外は 0 で埋まる(bilinear)。
+後段: 行方向(θ)の直線探索・``ncc_locate``、θ 方向の 1-D 相関で回転角。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

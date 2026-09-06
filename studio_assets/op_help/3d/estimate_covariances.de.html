@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gicp; gicp.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;estimate_covariances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Plane-to-Plane-Kovarianzen (N,3,3): die lokale Kovarianz jedes Punktes mit auf (ε,1,1) gesetzten Eigenwerten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>k 近傍(自身を含む)の標本共分散を固有分解し、固有値を **接平面内は 1・</p>
+<p>表面法線方向(最小固有値方向)は ε** に置き換えて再構成する。共分散の</p>
+<p>大きさは近傍の広がりに依らず一定(ε,1,1)で、スケール不変な「面的な</p>
+<p>確からしさ」モデルになる(GICP の中核)。</p>
+<p>引数:</p>
+<p>points (N,3): 点群。</p>
+<p>k: 近傍数(自身を含む)。共分散推定は k≥4 程度が安定。</p>
+<p>epsilon: 法線方向に割り当てる小分散(0&lt;ε&lt;1)。小さいほど接平面へ</p>
+<p>強く拘束する。スケール不変(次元なし比)。</p>
+<p>返り値:</p>
+<p>(N,3,3) 対称正定値共分散の束。各共分散の固有値は {ε,1,1}、ε に</p>
+<p>対応する固有ベクトルが局所表面法線方向。</p>
+<p>例外:</p>
+<p>ValueError: points が (N,3) でない / N&lt;3(法線が定まらず縮退)/</p>
+<p>epsilon が (0,1) 外(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

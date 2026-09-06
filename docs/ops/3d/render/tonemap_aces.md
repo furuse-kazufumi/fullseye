@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。
 
+``x = hdr * exposure`` に対し ``f(x) = x(a x + b) / (x(c x + d) + e)`` を適用する。
+フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の
+「見栄え」を出す。``x < ~7.24`` の範囲では狭義単調増加・出力 < 1(それ以上は 1 に
+飽和しクリップ)。カラー ``(H, W, C)`` はチャンネル独立に写像する。
+
+Args:
+    hdr: HDR 画像。``(H, W)`` or ``(H, W, C)``、放射輝度 >= 0。
+    exposure: 写像前に掛ける露出スケール(正)。
+Returns:
+    ``[0, 1]`` の float64 LDR 画像(入力と同形状)。
+Raises:
+    ValueError: 空/非有限/負の放射輝度、非正の exposition(fail-closed)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

@@ -5,6 +5,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Plane detection (the 3-D lift of the 2-D Hough line). Uses the gradient as the normal and votes into (normal n, distance d) space.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>薄い境界面の各 voxel が自分の法線方向ビンと d=n·p に投票 → ピーク=支配平面。法線は勝ちビン内</p>
+<p>の実法線平均で精緻化、d は投影のモード。点群/voxel の地面・壁の抽出に。返り値 (n(3,), d, inliers, total)。</p>
+<p>手順: `<code style="color:#22d3bf">(vol &gt; iso)</code>` の 1 voxel 厚の境界面(占有 voxel のうち 3³ erosion で消えるもの)を取り、</p>
+<p>その voxel の単位勾配(`<code style="color:#22d3bf">sobel3d</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mc</code><code style="color:#22d3bf"> は生出力への閾値)を法線 </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> にする。</code><code style="color:#22d3bf">n</code>` は軸 0</p>
+<p>成分が非負になるよう半球へ畳み、`<code style="color:#22d3bf">d = n·p</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">p</code><code style="color:#22d3bf"> は整数 voxel index </code><code style="color:#22d3bf">(z,y,x)</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">ndir</code>`</p>
+<p>本の参照方向(26 以下は 26 近傍、それ以上は fibonacci 球)と `<code style="color:#22d3bf">nd</code>` 個の d ビンに投票し、</p>
+<p>最多ビンの実法線平均で n を、その n への射影ヒストグラムのモード近傍の中央値で d を精緻化する。</p>
+<p>返り値 `<code style="color:#22d3bf">(n(3,), d, inliers, total)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">n</code>` は <b>(z,y,x) 順</b>の単位法線(numpy float32)、</p>
+<p>平面は `<code style="color:#22d3bf">n·(z,y,x) = d</code><code style="color:#22d3bf">(voxel 単位)。</code><code style="color:#22d3bf">inliers</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">|n·p − d| &lt; tol</code>` の境界 voxel 数、</p>
+<p>`<code style="color:#22d3bf">total</code>` は境界 voxel の総数(inliers/total が支配平面の占める割合)。</p>
+<p style="margin:2px 0 2px 12px">• 境界 voxel が 10 未満なら <b>None を返す</b>(例外ではない)。</p>
+<p style="margin:2px 0 2px 12px">• 密度 voxel は `<code style="color:#22d3bf">iso</code>` で 2 値化される(個数密度なら 0.5 で「1 点以上」)。</p>
+<p style="margin:2px 0 2px 12px">• 1 枚しか返さない。複数平面はインライアを除いて再実行するか、点群なら `<code style="color:#22d3bf">plane_segmentation</code>`</p>
+<p>/ `<code style="color:#22d3bf">ransac_plane</code>`。</p>
+<p>後段: `<code style="color:#22d3bf">distance_point_plane</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angle_between_planes</code>` で計測。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_rectangle1_domain&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">rectangle1_domain</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_rectangle1_domain.png" alt="hx_rectangle1_domain: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_rectangle1_domain.png" alt="hx_rectangle1_domain: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_rectangle1_domain.a.jpg">hx_rectangle1_domain: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_rectangle1_domain.b.jpg">hx_rectangle1_domain: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_rectangle1_domain.inputs.jpg">hx_rectangle1_domain: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Shrink the image&#x27;s domain to an axis-aligned rectangle (the central a×b fraction), as a region.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>入力 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> と同じ形状で、画像中央に置いた高さ </code><code style="color:#22d3bf">hh</code><code style="color:#22d3bf">・幅 </code><code style="color:#22d3bf">ww</code>` の軸並行矩形を 1 とする 0/1 の float 配列</p>
+<p>(region)を返す。入力の中身は見ない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 高さの割合 </code><code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>`(20%〜90%)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 幅の割合 </code><code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>`(20%〜90%)。</p>
+<p style="margin:2px 0 2px 12px">• 左上は `<code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code>` で、中央からのずれは整数切り捨てぶんだけ。</p>
+<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ `<code style="color:#22d3bf">hx_full_domain</code>`、</p>
+<p>既存 region の周辺を削るなら `<code style="color:#22d3bf">hx_clip_region_rel</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

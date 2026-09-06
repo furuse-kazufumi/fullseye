@@ -7,6 +7,18 @@
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>`<code style="color:#22d3bf">oem_of</code>` に元の「メーカー 型番」を書いておくと、OEM で名前が違うだけの同一品を</p>
 <p>後から突き合わせられる。返り値は登録した鍵(「メーカー 型番」)。</p>
+<p>登録先はプロセス内のカタログ(`<code style="color:#22d3bf">light_catalog</code>` が返す表)で、**ファイルには</p>
+<p>保存されない** ―― 次の起動では消える。同じ鍵を二度登録すると黙って上書きする。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">maker</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">model</code><code style="color:#22d3bf">: どちらも空でない文字列。空なら </code><code style="color:#22d3bf">ValueError</code>`(型番だけ</p>
+<p>では OEM 品を特定できないため両方必須)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">kind</code>`: ring / dome / bar / coaxial / backlight(器具の形)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius_mm</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">height_mm</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">size_mm</code><code style="color:#22d3bf">: 正の有限値 [mm]。</code><code style="color:#22d3bf">radius_mm</code>` は</p>
+<p>発光面の半径、`<code style="color:#22d3bf">height_mm</code><code style="color:#22d3bf"> はワークからの高さ、</code><code style="color:#22d3bf">size_mm</code>` は器具の実体の</p>
+<p>差し渡し(鏡面に映る大きさ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">source</code><code style="color:#22d3bf">: led / halogen / laser。</code><code style="color:#22d3bf">wavelength_nm</code><code style="color:#22d3bf"> は正、</code><code style="color:#22d3bf">bandwidth_nm</code>` は</p>
+<p>ここでは float 化するだけ(負を入れると `<code style="color:#22d3bf">light_spec</code>` で拒否される)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">oem_of</code><code style="color:#22d3bf">: 元品の鍵、または </code><code style="color:#22d3bf">None</code>`。存在確認はしない。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">&quot;&lt;maker&gt; &lt;model&gt;&quot;</code><code style="color:#22d3bf"> の鍵。</code><code style="color:#22d3bf">light_spec(model=鍵)</code>` で諸元を引ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_split_skeleton_region&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">split_skeleton_region</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_split_skeleton_region.png" alt="hx_split_skeleton_region: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_split_skeleton_region.png" alt="hx_split_skeleton_region: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.chain.jpg">hx_split_skeleton_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.inputs.jpg">hx_split_skeleton_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在分叉点处分割 1 像素宽骨架:去掉 junction(邻域&gt;=3)后取连通成分。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> の骨格画素ごとに 8 近傍の骨格画素数 </code><code style="color:#22d3bf">nb</code><code style="color:#22d3bf"> を数え、</code><code style="color:#22d3bf">nb &gt;= 3</code>` の画素(分岐点)を取り除いた</p>
+<p>0/1 の float 配列を返す。分岐点を抜くことで骨格が枝ごとの連結成分に分かれる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>前提は 1 画素幅の骨格(`<code style="color:#22d3bf">skeleton</code><code style="color:#22d3bf"> の出力)。太い線や塊を渡すと内部の画素はすべて </code><code style="color:#22d3bf">nb &gt;= 3</code>` となり</p>
+<p>ほぼ全部が消える。分岐点そのものは出力に含まれない(分岐の位置が要るなら `<code style="color:#22d3bf">junctions_skeleton</code>`)。</p>
+<p>分かれた枝を個別に扱うには後段で `<code style="color:#22d3bf">hx_region_to_label</code>` を掛ける。分岐点の隣接画素は除かないので、</p>
+<p>多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に `<code style="color:#22d3bf">r2_split_skeleton_lines</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

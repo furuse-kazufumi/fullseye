@@ -19,6 +19,48 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。
 
+2 点群 ``src`` (N,3), ``dst`` (M,3) を、初期姿勢の事前情報なしに位置合わせする。
+各点の法線(局所 PCA、重心から外向きに符号統一 = 剛体変換で不変)を軸として近傍点を
+(α=軸からの距離, β=軸方向の高さ) の 2D ヒストグラムへ「回転(spin)」蓄積した
+Spin Image 記述子(Johnson & Hebert 1997)を keypoint ごとに作り、記述子空間の
+最近傍でマッチ(Lowe ratio test で選別)、RANSAC(3 点最小標本 + Kabsch)で
+外れ値に頑健な剛体変換を推定する。密マッチ(NCC/位相相関/Hough)や PCA 主軸整列と
+違い、**大回転 + 部分重なり**でも局所特徴の対応から姿勢を復元できるため、ICP の
+前段(coarse init 供給)に使える。返す姿勢は ``dst ~= src @ R.T + t``
+(= ``R @ src_i + t``)の規約に従う(``icp_point2point_3d`` と同一)。
+
+引数:
+    src: (N,3) 移動側点群(numpy.ndarray か torch.Tensor)。
+    dst: (M,3) 固定側(参照)点群。
+    device: torch デバイス("cpu" 等)。SVD/最終姿勢をこの上で解く。
+    n_keypoints: 各点群から抽出する keypoint 数(等間隔サブサンプル)。
+    normal_k: 法線推定に使う近傍点数(局所 PCA)。
+    support_radius: Spin Image の支持半径。None なら各点群個別の bbox 対角(大きい方)
+        の 0.30 倍(未知並進で汚れないよう和集合でなく個別に測る)。
+    n_alpha, n_beta: Spin Image の (α, β) ビン数(記述子は n_alpha*n_beta 次元)。
+    support_angle_deg: 支持角しきい値(度)。keypoint 法線とこの角度以内の法線を持つ
+        支持点のみ蓄積(遮蔽・裏面に頑健)。>=90 で無効。
+    lowe_ratio: Lowe 比率テストしきい値(d1 < ratio*d2 の対応のみ採用)。
+    ransac_iters: RANSAC 反復数。
+    inlier_thr: RANSAC のインライア距離しきい値。None なら bbox 対角の 0.04 倍。
+    min_inliers: 有効姿勢とみなす最小インライア数(``ok`` 判定)。
+    seed: RANSAC 乱数シード。
+返り値:
+    R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。
+    t: (3,) torch.Tensor。並進。
+    info: dict。"n_matches"(ratio test 通過対応数), "inliers"(RANSAC最終),
+          "inlier_ratio", "rmse"(インライア上 RMSE), "support_radius",
+          "inlier_thr", "ok"(min_inliers 以上か)。
+
+注意:
+    - 記述子は法線符号に依存する。重心から外向きの符号統一は、法線が概ね放射状で
+      n·(p-重心) の符号が安定な形状(lumpy な閉曲面等)で有効。薄板・管状など
+      n·(p-重心)≈0 の領域が多い形状では 2 雲間で符号が反転しうる。
+    - 平面・球など曲率が空間的に一様な部位は記述子が縮退し ratio test で対応が消える
+      (無特徴形状には不向き)。overlap が概ね 60% を切ると成功率が急落し、失敗時は
+      幾何整合だが誤りの解に RANSAC がロックして壊滅的な誤差になりうる(``ok`` /
+      ``inlier_ratio`` ゲートの併用を推奨)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

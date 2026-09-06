@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_stack_scaling.png",
+  "name": "stack_scaling",
+  "caption": "中央値の実測と 1/√N の外挿がほぼ重なる。段 0 の床 0.0126 % にはまだ遠い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_cosmic_ray.png",
+  "name": "cosmic_ray",
+  "caption": "単純平均だけが 5.9 % 残る。κ-σ は汚染なしと区別できないところまで戻すが、棄却率はほとんど動かない。",
+  "shape": [
+   200,
+   365,
+   3
+  ],
+  "csv": "02_cosmic_ray.csv",
+  "tsv": "02_cosmic_ray.tsv"
+ },
+ {
+  "file": "03_aperture_tradeoff.png",
+  "name": "aperture_tradeoff",
+  "caption": "開口を広く取れるなら、ぼけたフレームも同じ明るさを持っている(r=12 では 3 本が重なる)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_lucky_frames.png",
+  "name": "lucky_frames",
+  "caption": "悪いほうは星が広がっている。混合の合成は芯の周りに裾が残る。",
+  "shape": [
+   583,
+   478,
+   3
+  ]
+ }
+]

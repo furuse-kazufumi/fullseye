@@ -19,6 +19,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ガウス平滑後の中心差分勾配を計算する。
 
+Parameters
+----------
+vol : (D,H,W) array
+    グレー voxel。
+sigma : float
+    ガウス平滑の標準偏差(voxel 単位)。0 で平滑なし(生の中心差分)。
+
+Returns
+-------
+gmag : (D,H,W) float64
+    勾配の大きさ ||∇I||。
+gvec : (D,H,W,3) float64
+    勾配ベクトル。成分は (∂/∂axis0, ∂/∂axis1, ∂/∂axis2) = (depth, height, width)。
+
+Notes
+-----
+平滑には scipy.ndimage.gaussian_filter(mode="nearest")、微分には np.gradient(spacing=1)
+を用いる。np.gradient は内部が中心差分、境界のみ片側差分。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

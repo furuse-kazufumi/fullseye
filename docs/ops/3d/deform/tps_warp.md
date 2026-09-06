@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 TPS モデルで点群を変形する。
 
+f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。
+
+引数:
+    model: ``tps_fit`` が返した dict。
+    points: (M,3)(または長さ3の1次元)。変形したい点群。
+
+返り値:
+    (M,3) 変形後の点群(入力が1次元なら (3,) を返す)。
+
+例外:
+    ValueError: model の形式不正、または points の形状不正。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

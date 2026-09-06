@@ -6,6 +6,16 @@
 <p>Eine horizontale Ebene bei z = `<code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf"> (Tisch/Förderband). Mit </code><code style="color:#22d3bf">half_size_mm</code>` wird sie zu einer endlichen Platte.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>有限板は (hx, hy) の半サイズ [mm]。省略すると無限平面(背景として使う)。</p>
+<p>座標系は右手系 [mm] で z が上。平面は `<code style="color:#22d3bf">z = z_mm</code>` に水平に置かれ、有限板は</p>
+<p><b>中心が常に x = y = 0</b>(`<code style="color:#22d3bf">|x| &lt;= hx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">|y| &lt;= hy</code>` の外は光線が素通り)。</p>
+<p>横にずらす引数は無いので、部品のほうを動かして配置する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf">: 高さ [mm]。有限であること(NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">material</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_material</code>` の結果。省略時は lambert、albedo 0.2(暗い灰)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">half_size_mm</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(hx, hy)</code><code style="color:#22d3bf"> [mm]、両方とも正。長さ 2 でなければ </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;plane&quot;, &quot;z&quot;, &quot;half&quot;, &quot;material&quot;}</code>` の dict。他の</p>
+<p>`<code style="color:#22d3bf">scene_*</code><code style="color:#22d3bf"> と list にまとめて </code><code style="color:#22d3bf">trace_rays</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">render_optscene</code>` /</p>
+<p>`<code style="color:#22d3bf">optscene_mask</code>` へ渡す。</p>
+<p>体積を囲まないので `<code style="color:#22d3bf">scene_difference</code>` の引数にはできない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

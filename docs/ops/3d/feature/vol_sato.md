@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3-D Sato tubeness — the simpler two-eigenvalue line filter.
 
+Per scale, from eigenvalues in algebraic order ``e1 >= e2 >= e3`` a bright
+curvilinear (tube) structure has ``e2, e3 < 0`` and the tubeness is
+``sqrt(e2 * e3)`` there (0 elsewhere); ``black_ridges=True`` uses the two most
+*positive* eigenvalues for dark tubes. The maximum over scales is normalised
+to ``[0, 1]``.
+
+Cheaper and less selective than :func:`vol_frangi` (it does not explicitly
+suppress plate- or blob-like structure), but a robust, well-cited tube
+detector. Reference: Sato et al., Medical Image Analysis 1998.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 外れ値に頑健な RANSAC 平面適合。
 
+3 点をサンプル → 平面法線(2 辺の外積)→ 点-平面距離 |n·(p-p0)| < ``thresh`` の
+inlier を最大化 → 最終 inlier で最小二乗リフィット(法線=共分散の最小主軸)。
+
+Args:
+    points: (N,3) 点群。
+    thresh: inlier とみなす点-平面距離のしきい値。
+    iters: RANSAC 反復数。
+    seed: 乱数シード(決定論)。
+
+Returns:
+    (params, inlier_mask, info)。params = {"normal": (3,), "d": float, "point": (3,)}
+    で平面は ``normal·x + d = 0``。inlier_mask=(N,) bool。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

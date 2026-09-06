@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import meshres; meshres.pc_lod_chain(points, spacing, levels=3, seed=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;pc_lod_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>間隔を倍々にした Poisson ディスクの段列(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>Level 0 is the input; level *k* keeps no two points closer than</p>
+<p>`<code style="color:#22d3bf">spacing × 2^(k−1)</code><code style="color:#22d3bf">. Returns </code><code style="color:#22d3bf">levels</code><code style="color:#22d3bf"> (list of clouds), </code><code style="color:#22d3bf">spacings</code>`,</p>
+<p>`<code style="color:#22d3bf">counts</code>`.</p>
+<p>手順: level 0 = 入力点群(検証後の float64 コピー)。level `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">(1..</code><code style="color:#22d3bf">levels</code>`)は</p>
+<p><b>直前の level</b> に `<code style="color:#22d3bf">pc_poisson_disk(prev, spacing * 2**(k-1), seed=seed + k - 1)</code>`</p>
+<p>を掛けたもの(累積的に間引くので、粗い level の点は必ず細かい level にも含まれる</p>
+<p>= 入れ子)。点は動かさない(格子平均のような重心移動はしない)。</p>
+<p>引数: `<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">(有限、</code><code style="color:#22d3bf">MAX_POINTS</code><code style="color:#22d3bf"> 以下)、</code><code style="color:#22d3bf">spacing &gt; 0</code>`(level 1</p>
+<p>の最小点間距離、座標と同じ単位)、`<code style="color:#22d3bf">levels</code><code style="color:#22d3bf"> は 1..16 の整数、</code><code style="color:#22d3bf">seed</code>` は</p>
+<p>Poisson-disk の訪問順の乱数種(固定なら決定的)。</p>
+<p>返り値(dict): `<code style="color:#22d3bf">levels</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">levels + 1</code><code style="color:#22d3bf"> 個の </code><code style="color:#22d3bf">(n_k, 3)</code>` 配列のリスト)、</p>
+<p>`<code style="color:#22d3bf">spacings</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">[0.0, spacing, 2*spacing, ...]</code><code style="color:#22d3bf">、level 0 は 0)、</code><code style="color:#22d3bf">counts</code>`</p>
+<p>(各 level の点数)、`<code style="color:#22d3bf">n_levels</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">levels + 1</code>`)。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): 点群の形・非有限・点数超過 / </code><code style="color:#22d3bf">spacing</code>` が非正 /</p>
+<p>`<code style="color:#22d3bf">levels</code>` が整数でない・範囲外。</p>
+<p>注意: 各 level の点数は `<code style="color:#22d3bf">~ 面積 / spacing_k^2</code>` の目安で 4 分の 1 ずつ減るが、</p>
+<p>疎な領域(元の点間隔が `<code style="color:#22d3bf">spacing_k</code>` より大きい)は間引かれず残る。何を落としたかは</p>
+<p>`<code style="color:#22d3bf">pc_thinning_report(points, levels[k])</code>` で数える。メッシュの LOD は</p>
+<p>`<code style="color:#22d3bf">mesh_lod_chain</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

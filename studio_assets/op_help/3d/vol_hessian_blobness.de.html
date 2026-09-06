@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volops; volops.vol_hessian_blobness(vol, scale, black_ridges=False)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_hessian_blobness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Blob-artige (kugelförmige) Antwort aus den Hesse-Eigenwerten bei einer *scale*.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>A bright blob has all three eigenvalues negative and comparable in magnitude;</p>
+<p>the response is the geometric mean of their magnitudes,</p>
+<p>`<code style="color:#22d3bf">(|l1| |l2| |l3|)**(1/3)</code>`, gated to voxels where the three share the sign of</p>
+<p>a blob of the requested polarity (all negative for bright, all positive for</p>
+<p>dark). Normalised to `<code style="color:#22d3bf">[0, 1]</code>`. Complements the line filters — a Frangi-style</p>
+<p>`<code style="color:#22d3bf">Rb</code>` term rejects blobs, this one keeps them. Reference: the second-order</p>
+<p>(Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

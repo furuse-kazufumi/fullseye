@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.angle_line_plane(d, n)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;angle_line_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Winkel zwischen einer Geraden (Richtung d) und einer Ebene (Normale n), in Grad.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">90 − arccos(|d̂·n̂|)</code>` を度で返す(float)。値は <b>[0, 90]</b>、0 = 直線が平面に平行、90 = 垂直。</p>
+<p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code>` は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトル</p>
+<p>は 0 が返る。</p>
+<p>用途: 穴軸と基準面の直角度、`<code style="color:#22d3bf">intersect_line_plane</code>` の前の平行判定(0 に近いと交点が遠くへ</p>
+<p>飛ぶ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

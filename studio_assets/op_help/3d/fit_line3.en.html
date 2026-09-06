@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_line3(points) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;fit_line3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Total-least-squares 3-D line fit to `<code style="color:#22d3bf">(depth, row, col)</code>` points — the</p>
+<p>largest principal axis through the centroid (orthogonal regression, isotropic</p>
+<p>in all three axes). Returns the centroid `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (with </code><code style="color:#22d3bf">cd/cr/cc</code>`), a unit</p>
+<p>`<code style="color:#22d3bf">direction</code>` (depth, row, col), and the RMS orthogonal residual. Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 2 points or a coincident cluster with no defined</p>
+<p>direction.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

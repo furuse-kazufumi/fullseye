@@ -19,6 +19,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 球面レンジ画像 → 3D 点 (M, 3)。range>0 のセルのみをビン中心角で逆投影。
 
+:func:`project_spherical` の逆。行/列からビン**中心**の (elevation, azimuth) を復元し、
+格納 range を slant distance として球面 → 直交座標へ戻す。空(全 0)なら (0, 3) を返す。
+
+- ``range_img``: (v_res, h_res) の 2-D 配列(非 2-D・サイズ 0 は ``ValueError``)。``range > 0`` の
+  セルだけを点にする(0 = 空セル、負値も無視)。
+- ``v_fov``: 投影時と同じ (v_min, v_max) [度]。違う値を渡すと仰角がずれた点群になる(整合性は
+  検査できない)。
+
+列 c → 方位角 ``az = (c + 0.5) / h_res · 2π - π``、行 r → 仰角 ``el = v_min + ((v_res-1-r) + 0.5)
+/ v_res · (v_max - v_min)``(度 → rad)とし、``x = r cos(el) cos(az)``、``y = r cos(el) sin(az)``、
+``z = r sin(el)``。点の並びは ``np.nonzero`` の行優先順(行 0 から)。ビン中心へ戻すので元の点とは
+最大でおよそ「半セル角 × range」ずれ、投影で捨てられた(同セルの奥・FOV 外の)点は戻らない。
+往復すると点数は一般に減る。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

@@ -3,8 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">color</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;rgb1_to_gray&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">rgb1_to_gray</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/rgb1_to_gray.png" alt="rgb1_to_gray: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/rgb1_to_gray.png" alt="rgb1_to_gray: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rgb1_to_gray.chain.jpg">rgb1_to_gray: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rgb1_to_gray.inputs.jpg">rgb1_to_gray: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Converts an RGB image to luminance (grayscale). Both HALCON&#x27;s `<code style="color:#22d3bf">rgb1_to_gray</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">rgb3_to_gray</code>` (convert an RGB image to a grayscale image) are mapped to this single implementation.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

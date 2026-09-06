@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.cutout(points, extent: &#x27;Union[float, np.ndarray]&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;cutout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>공간의 축 평행 상자 영역을 제거하고 `<code style="color:#22d3bf">(kept, kept_idx)</code>` 를 돌려줍니다(국소 결손 모사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>既存の点を 1 つ一様サンプルして中心とし、辺長 `<code style="color:#22d3bf">extent</code>`(スカラ=立方体, または</p>
+<p>`<code style="color:#22d3bf">(3,)</code>`=各軸辺長)のボックス内の点をすべて除去する。中心点自身が必ず入るため</p>
+<p>最低 1 点は除去される。除去点は必ず辺長 `<code style="color:#22d3bf">extent</code>` のボックスに収まる(空間的に</p>
+<p>局所的 = ランダム散布とは判別可能)。`<code style="color:#22d3bf">kept == points[kept_idx]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">extent &gt; 0</code>`。</p>
+<p>`<code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> に正でない値や </code><code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf"> 以外の形を渡すと </code><code style="color:#22d3bf">ValueError</code>`。空入力は空と空</p>
+<p>インデックスを返す。中心は `<code style="color:#22d3bf">rng.integers(n)</code><code style="color:#22d3bf"> で選ぶ点なので、</code><code style="color:#22d3bf">seed</code>` が同じでも点の</p>
+<p>並びが変わると別の場所が抜ける。ボックス判定は `<code style="color:#22d3bf">|P - center| &lt;= extent/2</code>` の閉区間。</p>
+<p>除去点数は密度次第で、`<code style="color:#22d3bf">extent</code>` を雲の大きさより大きくすると全点が消える。返り値は</p>
+<p>`<code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>`、順序は元のまま。一様な欠損は</p>
+<p>`<code style="color:#22d3bf">random_dropout</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

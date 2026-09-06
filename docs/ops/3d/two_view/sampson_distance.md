@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。
 
+Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。
+
+計算: 同次座標 x1=(u1,v1,1)、x2=(u2,v2,1) で ``(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)``。
+
+- **単位は画素の 2 乗**(距離の 2 乗)。画素で閾値を切るなら ``sqrt`` を取るか、閾値側を 2 乗する。
+- F は ``fundamental_8point`` の規約 ``x2ᵀ F x1 = 0``(pts1 → x1、pts2 → x2)。順序を入れ替えるなら F を転置する。
+- 分母に 1e-12 を足しているので F=0 でも例外にはならず 0 を返す(F の検査は行わない)。
+- 返り値は float64 (N,)。決定論的。(N,2) でない・非有限・点数不一致は ``ValueError``。
+- 典型: ``fundamental_8point`` の当てはまり確認、誤対応(大きい値)の選別、``recover_pose`` 前の前処理。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

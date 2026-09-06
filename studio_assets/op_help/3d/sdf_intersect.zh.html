@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_intersect(a, b)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;sdf_intersect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个 SDF 的交集 A∩B = 逐元素 max(a, b)(只有两者都在内侧才在内侧)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>ゼロ等値面は両境界の共通部分。外側で厳密 SDF、内側は保守的下界。</p>
+<p>計算: `<code style="color:#22d3bf">np.maximum(np.asarray(a, float64), np.asarray(b, float64))</code>`。要素ごとの</p>
+<p>max なので、ある点が A∩B の内側(負)になるのは `<code style="color:#22d3bf">a &lt; 0</code><code style="color:#22d3bf"> かつ </code><code style="color:#22d3bf">b &lt; 0</code>` のときだけ。</p>
+<p>shape はブロードキャスト整合していればよく(不整合なら numpy の `<code style="color:#22d3bf">ValueError</code>`)、</p>
+<p>それ以外の検査はしない。NaN は伝播、`<code style="color:#22d3bf">±inf</code><code style="color:#22d3bf"> は厳密に伝播(</code><code style="color:#22d3bf">max(a, -inf) = a</code>`)。</p>
+<p>入力: 同一グリッド上で評価した 2 つの SDF(`<code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">box_sdf</code>` /</p>
+<p>`<code style="color:#22d3bf">esdf</code>` の出力など、内側負・外側正)。距離の単位は入力と同じ。</p>
+<p>返り値: ブロードキャスト後の shape の float64。`<code style="color:#22d3bf">&lt;= 0</code>` が A∩B の占有。</p>
+<p>注意:</p>
+<p style="margin:2px 0 2px 12px">• <b>外側の値は真の距離より小さく出うる</b>: 交差の外側で、点が A の外かつ B の外の</p>
+<p>とき `<code style="color:#22d3bf">max(a, b)</code>` は「遠い方の表面まで」の距離で、A∩B の表面はそれより遠い</p>
+<p>ことがある(下界)。ゼロ等値面は厳密。</p>
+<p style="margin:2px 0 2px 12px">• 共通部分が無ければ全要素が正(占有 0)になり、エラーにはならない。</p>
+<p style="margin:2px 0 2px 12px">• 箱で球を切る・2 つの箱で角柱を作る、といった CSG の「切り出し」に使う。</p>
+<p>A から B を抜くのは `<code style="color:#22d3bf">sdf_subtract</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

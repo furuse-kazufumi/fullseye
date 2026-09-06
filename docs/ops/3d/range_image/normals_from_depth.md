@@ -19,6 +19,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。
 
+fx,fy 指定で透視、未指定で正射。orient_to_camera=True で法線をカメラ(原点)向きに符号統一。
+
+法線は隣接画素の外積で出すため両軸に近傍が要る。H<2 or W<2 は第2の接線方向が無く
+法線が定義できない(その軸の勾配を 0 とみなすと cross(dPx,0)=[0,0,0] の縮退法線を
+静かに返してしまう)。fail-closed で明示的に ValueError 拒否する。
+
+計算は ``depth_to_organized_points`` で 3-D 点 ``P`` を作り、``np.gradient`` の列方向
+差分 ``dPx`` と行方向差分 ``dPy`` の外積 ``dPx × dPy`` を単位長にする(端は片側差分)。
+``orient_to_camera=True`` では ``n·(-P) < 0`` の画素を反転し、法線が原点(カメラ)を向く
+よう揃える。正射モード(``fx`` か ``fy`` が None)では ``P=(u,v,d)`` なので原点は画像
+左上の深度 0 の位置になり、「カメラ向き」の意味が透視モードと異なる点に注意。``cx``・
+``cy`` 省略時は画像中心。深度の段差(遮蔽エッジ)をまたぐ画素では外積が段差の向きを
+拾って法線が壊れるので、``occlusion_edges`` で境界画素を除いてから使う。深度 0 / NaN の
+画素は検証せず、法線も不定になる。返り値は float32 の ``(H,W,3)``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

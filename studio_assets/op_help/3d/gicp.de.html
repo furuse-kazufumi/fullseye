@@ -4,6 +4,34 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import gicp; gicp.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;gicp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt die Starrkörpertransformation (R,t) mit Generalized-ICP (kovarianzgewichtetes Mahalanobis-ICP).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>各反復で source→target の最近傍対応を張り、残差 `<code style="color:#22d3bf">d_i = R·s_i + t - q_i</code>` を</p>
+<p>重み `<code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code>` で測るマハラノビス</p>
+<p>コスト `<code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code><code style="color:#22d3bf"> を、小角線形化 </code><code style="color:#22d3bf">R ← (I+[ω]×)R</code>` の Gauss-Newton で</p>
+<p>最小化する。各対応のヤコビアン `<code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>`(3×6)から</p>
+<p>正規方程式 `<code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>`(6×6)を解いて増分</p>
+<p>`<code style="color:#22d3bf">x=[ω|τ]</code>` を得、Rodrigues で回転に戻して累積する。</p>
+<p>共分散は plane-to-plane(`<code style="color:#22d3bf">estimate_covariances</code>`)。point-to-plane が target の</p>
+<p>法線方向へ残差を射影する(rank-1)のに対し、GICP は source・target 双方の</p>
+<p>full 3×3 共分散を合成した重みを使うため、平面的・ノイズを含む点群で頑健。</p>
+<p>ICP はローカル最適化なので <b>近い初期化を前提</b>(粗マッチや `<code style="color:#22d3bf">init</code>` を渡す)。</p>
+<p>引数:</p>
+<p>source (N,3): 動かす側の点群。</p>
+<p>target (M,3): 参照側(固定)の点群。</p>
+<p>max_iter: 最大反復数。</p>
+<p>k: 共分散推定の近傍数。</p>
+<p>epsilon: plane-to-plane の法線方向小分散(0&lt;ε&lt;1)。</p>
+<p>tol: 収束閾値。増分並進 ‖τ‖ が `<code style="color:#22d3bf">tol×(target のRMS半径)</code>` 未満かつ</p>
+<p>増分回転 ‖ω‖(rad)が `<code style="color:#22d3bf">tol</code>` 未満で打ち切り(スケール相対)。</p>
+<p>init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。</p>
+<p>返り値:</p>
+<p>dict:</p>
+<p>&quot;R&quot; (3,3) ndarray  — target ≈ R·source + t を満たす回転。</p>
+<p>&quot;t&quot; (3,) ndarray   — 並進。</p>
+<p>&quot;rmse&quot; float       — 最終対応上のユークリッド RMSE(採用点)。</p>
+<p>&quot;iterations&quot; int   — 実反復数。</p>
+<p>例外:</p>
+<p>ValueError: 入力形状不正 / 点数不足 / 数値発散(非有限)= fail-closed。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

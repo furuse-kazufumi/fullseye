@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Insert points where the local spacing exceeds *spacing*, on the local PCA plane (``points``).
 
+For every point whose distance to its *k*-th neighbour exceeds *spacing*,
+the segments to those neighbours longer than *spacing* are subdivided at
+*spacing* intervals; the new points are projected onto the plane fitted
+(PCA) to the point's neighbourhood so they follow the surface rather than
+cut chords across it. The original points are kept; the result is then a
+cloud whose spacing is ≤ target almost everywhere (pass it to
+:func:`pc_poisson_disk` to remove the duplicates a shared edge creates —
+:func:`pc_density_equalize` does both).
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

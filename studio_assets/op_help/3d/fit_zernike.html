@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円板画像 → Zernike 係数(光学/波面計測の<b>極座標曲面近似</b>)。返り値 {(n,m): coef}。</p>
+<p>直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/</p>
+<p>coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。</p>
+<p>honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では</p>
+<p>理論上直交のモード間に<b>最大 ~10% のクロストーク</b>が残る(例: 純 (2,0) defocus 入力で</p>
+<p>係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が</p>
+<p>要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。</p>
+<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

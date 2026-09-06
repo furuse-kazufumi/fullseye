@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tiefenkarte (2,5-D) → Punktwolke (Lochkamera-Rückprojektion). Sie verbindet die Tiefenzeile mit allen Verfahren.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>画素 (行 v, 列 u) の深度 z から `<code style="color:#22d3bf">X = (u − cx)·z/fx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">Y = (v − cy)·z/fy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">Z = z</code>` を作る。</p>
+<p>返り値は `<code style="color:#22d3bf">(N,3)</code>` float64、列は <b>(X, Y, Z) のカメラ座標</b>(深度と同じ単位)。z が 0 以下の</p>
+<p>画素は捨てるので N は画素数以下(無効深度は 0 で表す規約)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">fx, fy, cx, cy</code><code style="color:#22d3bf">: 画素単位の焦点距離と主点。</code><code style="color:#22d3bf">project_points</code>` の K と同じ規約。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">stride</code><code style="color:#22d3bf">: 行・列とも </code><code style="color:#22d3bf">stride</code><code style="color:#22d3bf"> 画素おきに間引く。u, v は間引き後の index に </code><code style="color:#22d3bf">stride</code>`</p>
+<p>を掛けた <b>元画像の画素座標</b>で計算するので、間引いても幾何は変わらない。</p>
+<p style="margin:2px 0 2px 12px">• 入力検証は無い(2-D でなければ添字で失敗)。NaN 深度は `<code style="color:#22d3bf">z &gt; 0</code>` が偽で捨てられる。</p>
+<p style="margin:2px 0 2px 12px">• 点は行優先の順に並ぶが、行・列の情報は残らない。格子構造を保ちたいなら</p>
+<p>`<code style="color:#22d3bf">depth_to_organized_points</code>`。</p>
+<p>後段: `<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">estimate_point_normals</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">icp_point2plane</code>`。</p>
+<p>逆写像は `<code style="color:#22d3bf">project_points</code><code style="color:#22d3bf">、TSDF 化は </code><code style="color:#22d3bf">tsdf_from_depth</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

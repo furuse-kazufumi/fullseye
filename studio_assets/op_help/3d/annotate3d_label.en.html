@@ -4,6 +4,33 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_label(img, text, anchor, pose, K, depth=None, offset=(26.0, -22.0), color=&#x27;emphasis&#x27;, width=1.5, cap_size=3.0, font_size=12, pad=4, box_alpha=0.72, text_color=None, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): text with a leader line attached to a 3-D anchor.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>文字はアンカーの画素から `<code style="color:#22d3bf">offset</code><code style="color:#22d3bf"> [px] ずらした位置(</code><code style="color:#22d3bf">offset[0]</code>` の符号で</p>
+<p>左右のアンカーを選ぶ)。`<code style="color:#22d3bf">depth</code>` で隠れていると分かれば<b>破線 + 白抜きの印</b>。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>アンカーがカメラの後ろ / 画像の外、文字が収まらない、姿勢・K の不正。</p>
+<p>手順: `<code style="color:#22d3bf">anchor</code><code style="color:#22d3bf">(object 座標 </code><code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">annotate3d_project</code>` と同じ射影で</p>
+<p>画素 `<code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> にし、</code><code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">(x + offset[0], y + offset[1])</code>` へ</p>
+<p>引き出し線(`<code style="color:#22d3bf">annotate._aa_polyline</code><code style="color:#22d3bf">、幅 </code><code style="color:#22d3bf">width</code>`)を引き、アンカー側に半径</p>
+<p>`<code style="color:#22d3bf">cap_size</code><code style="color:#22d3bf"> の点を打ち、線の先に </code><code style="color:#22d3bf">annotate.text_box</code>` で文字を置く。</p>
+<p>文字箱の付け根(anchor)は `<code style="color:#22d3bf">offset[0] &gt; 0</code><code style="color:#22d3bf"> なら左中、</code><code style="color:#22d3bf">&lt; 0</code>` なら右中、</p>
+<p>`<code style="color:#22d3bf">== 0</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">offset[1] &lt; 0</code>` で下中央・それ以外で上中央。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">offset</code><code style="color:#22d3bf">: 画素単位 </code><code style="color:#22d3bf">(dx, dy)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">dy</code>` は下向き正 = 行方向)。既定</p>
+<p>`<code style="color:#22d3bf">(26, -22)</code>` は右上へ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 線幅 [px]、</code><code style="color:#22d3bf">&gt;= 0.5</code><code style="color:#22d3bf"> の実数。</code><code style="color:#22d3bf">cap_size</code>`: 点の半径 [px]、0 で</p>
+<p>打たない。`<code style="color:#22d3bf">pad</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">font_size</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">box_alpha</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">text_color</code>` /</p>
+<p>`<code style="color:#22d3bf">font_path</code><code style="color:#22d3bf">: 文字箱の見た目(</code><code style="color:#22d3bf">font_size</code>` 未満 9 までは自動縮小)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth</code>`: 前方距離画像。隠れていれば線を破線、点を白抜き(ring)にする。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">color</code><code style="color:#22d3bf">: 役割名か RGB。</code><code style="color:#22d3bf">occlusion_tol</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1)</code>`。</p>
+<p>返り値: 描画済みの新しい画像(float64 `<code style="color:#22d3bf">[0, 1]</code>`、入力は変更しない)。</p>
+<p>エラーになる条件(実装どおり): アンカーが `<code style="color:#22d3bf">z &lt;= 1e-9</code>` / アンカーの画素が</p>
+<p>`<code style="color:#22d3bf">[0, W-1] x [0, H-1]</code><code style="color:#22d3bf"> の外 / 姿勢・</code><code style="color:#22d3bf">K</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">depth</code>` の不正 / 文字箱が縮小しても</p>
+<p>画像に収まらない(`<code style="color:#22d3bf">text_box</code><code style="color:#22d3bf"> 側)。</code><code style="color:#22d3bf">offset</code>` の先が枠外でも線は引く。</p>
+<p>使いどころ: 図中の部位名・番号付け。複数の点を一括でラベル付けするときは</p>
+<p>`<code style="color:#22d3bf">annotate3d_project</code><code style="color:#22d3bf"> で可視判定を先に取り、</code><code style="color:#22d3bf">visible</code>` の点だけ呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

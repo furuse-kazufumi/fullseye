@@ -3,10 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_sl_al_zc&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">estimate_sl_al_zc</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/hx_estimate_sl_al_zc.png" alt="hx_estimate_sl_al_zc: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/hx_estimate_sl_al_zc.png" alt="hx_estimate_sl_al_zc: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zheng-Chellappa: schätzt den Slant, korrigiert über die Gradientenenergie.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">hx_estimate_sl_al_lr</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">arccos(&lt;I&gt;)</code><code style="color:#22d3bf"> の slant に、Sobel 勾配振幅の平均 </code><code style="color:#22d3bf">e</code>`(1 で頭打ち)による係数</p>
+<p>`<code style="color:#22d3bf">(1 + min(e, 1))</code><code style="color:#22d3bf"> を掛けて、</code><code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> で割り 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` を返す。「勾配が強い=斜光=slant 大」</p>
+<p>という向きの補正。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも</p>
+<p>増えるので、照明以外の要因で slant が過大に出る。前段に `<code style="color:#22d3bf">gauss_filter</code>` を置くと雑音分の勾配は減る。</p>
+<p>反射率の推定は `<code style="color:#22d3bf">hx_estimate_al_am</code><code style="color:#22d3bf">、方位は </code><code style="color:#22d3bf">hx_estimate_tilt_zc</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

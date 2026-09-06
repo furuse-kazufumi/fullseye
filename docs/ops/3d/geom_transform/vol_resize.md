@@ -19,6 +19,50 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Resample a volume to a new grid (``scipy.ndimage.zoom``, cell semantics).
 
+Exactly **one** of *factor* / *shape* selects the target grid:
+
+* ``factor`` — a positive scalar or ``(fz, fy, fx)``; the output shape is
+  ``round(dim * f)`` per axis (scipy's rule, each ``>= 1``).
+* ``shape`` — the exact output ``(D', H', W')`` (positive integers).
+
+Sampling uses ``grid_mode=True`` (cell semantics): a voxel is a *cell*, so
+an integer upscale ``f`` maps input voxel ``i`` exactly onto the output
+block ``[f*i, f*(i+1))`` (exact at ``order=0``), and the volume's physical
+extent is preserved by the recomputed spacing — not the endpoint-aligned
+convention of scipy's ``grid_mode=False`` default.
+
+*mode* / *cval* set how samples that fall outside the input cells (the outer
+half-voxel shell of every upscale at ``order >= 1``) are filled. The default
+``"nearest"`` extends the border voxel, so **a constant volume resizes to
+the same constant** and a ramp keeps its end values. Until 2026-09-03 the
+call was hard-wired to ``"grid-constant"`` with ``cval=0``, which blended
+the outer shell toward 0 — an upscale x2 of an all-ones volume came back
+with ``min = 0.42`` on its faces, an artefact that then leaked into every
+downstream measurement. Other accepted modes: ``"reflect"``, ``"mirror"``,
+``"grid-mirror"``, ``"grid-wrap"``, and ``"grid-constant"`` (with *cval*)
+when a zero-padded border is genuinely wanted. ``"constant"`` / ``"wrap"``
+are rejected with a hint (scipy needs the ``grid-`` variants here).
+
+**The return shape depends on** *spacing*:
+
+* ``spacing=None`` (default) — returns the resampled ``(D', H', W')``
+  float64 volume alone.
+* *spacing* given (``(sz, sy, sx)`` or a ``VolumeMeta``) — returns a
+  **2-tuple** ``(out, new_spacing)`` where
+  ``new_spacing = (sz * D/D', sy * H/H', sx * W/W')``, so
+  ``out.shape * new_spacing == vol.shape * spacing`` per axis: the physical
+  size in millimetres is invariant. Keep the new spacing — every
+  spacing-aware operator downstream needs it.
+
+*order* is the spline degree (exact integer 0..5; 0 = nearest — the choice
+for masks / labels, 1 = trilinear — the grey-value default; >1 can
+overshoot, see the module notes). Shrinking aliases (no band-limiting) —
+mean-pool with :func:`volops.volume_downsample` first for large reductions.
+
+Raises ``ValueError`` when both or neither of *factor* / *shape* are given,
+or when the **output** would exceed ``MAX_VOXELS`` (checked before any
+allocation — a huge factor cannot balloon memory).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

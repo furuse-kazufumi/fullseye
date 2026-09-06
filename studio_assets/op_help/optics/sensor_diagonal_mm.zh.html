@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;sensor_diagonal_mm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>传感器对角线 [mm]。与镜头像圈比较,看<b>能否覆盖</b>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>式: `<code style="color:#22d3bf">hypot(width * pixel_um, height * pixel_um) / 1000</code>`。有効画素数 × 画素ピッチ</p>
+<p>から出す実寸で、「2/3 型」のような形式名は使わない(形式名は対角の呼称に</p>
+<p>過ぎず、同じ呼称でも実寸が違う)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sensor</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">sensor_spec</code><code style="color:#22d3bf"> の結果(</code><code style="color:#22d3bf">kind == &quot;sensor&quot;</code>`)。それ以外の dict や</p>
+<p>カタログの生エントリは `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: float [mm]。例: 2048 × 1536 画素・3.45 µm なら 8.83 mm。</p>
+<p>ラインセンサ(高さ 1)なら幅そのものに近い値になる。</p>
+<p>レンズ側の `<code style="color:#22d3bf">image_circle_mm</code><code style="color:#22d3bf"> と直接比べるのが </code><code style="color:#22d3bf">covers_sensor</code>`</p>
+<p>(1 % の許容差つき)。`<code style="color:#22d3bf">lens_spec</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vision_layout</code>` で視野を決める前の検算に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

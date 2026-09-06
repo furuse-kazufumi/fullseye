@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import curve3d; curve3d.arc_length(curve)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;arc_length&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡선의 누적 호 길이와 전체 길이. → (cumulative (N,), total float).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>順序付き点列 `<code style="color:#22d3bf">curve</code>` (N,3) を index 順に折れ線とみなし、隣接点間のユークリッド距離</p>
+<p>を累積する。`<code style="color:#22d3bf">cumulative[0]=0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">cumulative[i]</code>` = 先頭から i 番目までの折れ線長、</p>
+<p>`<code style="color:#22d3bf">total = cumulative[-1]</code>`。単位は座標と同じ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は `<code style="color:#22d3bf">float</code>` に変換されるだけで形状検証は無い(列数が 3 以外でも計算は通る)。</p>
+<p style="margin:2px 0 2px 12px">• N=1 では `<code style="color:#22d3bf">cumulative=[0.0]</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">total=0.0</code>`。閉曲線でも終点→始点の区間は数えない</p>
+<p>(閉じたい場合は先頭点を末尾に複製してから渡す)。</p>
+<p style="margin:2px 0 2px 12px">• 重複点(距離 0 の区間)はそのまま 0 として累積されるので `<code style="color:#22d3bf">cumulative</code>` は単調非減少</p>
+<p>だが狭義増加ではない。</p>
+<p>`<code style="color:#22d3bf">resample_uniform</code>` はこの累積弧長をパラメータに線形補間する。曲率の弧長積分など</p>
+<p>`<code style="color:#22d3bf">curvature_torsion</code>` と組み合わせるときの ds はこの差分から取る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

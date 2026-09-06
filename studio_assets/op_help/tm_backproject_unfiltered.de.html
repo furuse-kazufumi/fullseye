@@ -2,8 +2,13 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tm_backproject_unfiltered — 2D <code style="color:#22d3bf">tomography</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tm_backproject_unfiltered&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tm_backproject_unfiltered.png" alt="tm_backproject_unfiltered: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/tm_backproject_unfiltered.png" alt="tm_backproject_unfiltered: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_backproject_unfiltered.inputs.jpg">tm_backproject_unfiltered: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Einfache (UN-gefilterte) Rückprojektion des Eingabesinogramms — die klassische unscharfe Rekonstruktion. Es wird kein Rampenfilter angewendet, sodass hohe Frequenzen unterdrückt werden und sich jeder Punkt zu einer 1/r-Unschärfe ausbreitet: Dies zeigt bewusst, warum der Filter der FBP notwendig ist. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> werden nicht verwendet (dies ist die feste, naive Baseline). Verwendet </code><code style="color:#22d3bf">skimage.transform.iradon</code><code style="color:#22d3bf"> mit </code><code style="color:#22d3bf">filter_name=None</code>`, falls verfügbar, andernfalls die einfache Rückprojektion in NumPy. Ausgabe wird wieder auf HxW angepasst.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

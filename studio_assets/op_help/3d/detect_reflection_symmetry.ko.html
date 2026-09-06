@@ -4,6 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PCA 주축을 법선으로 하는 후보 평면(무게중심 통과) 가운데 최적의 반사 대칭면을 고릅니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>→ dict{plane_point, plane_normal, score, all_scores, margin}。</p>
+<p>score が小さいほど対称。</p>
+<p>★ **`<code style="color:#22d3bf">score</code><code style="color:#22d3bf"> だけで採否を決めない。</code><code style="color:#22d3bf">margin</code>` を見ること**(2026-09-06 追加)。</p>
+<p>`<code style="color:#22d3bf">margin</code>` は 2 位と 1 位の score の差で、<b>候補が団子なら答えはくじ引き</b></p>
+<p>である、という警告になる。実測(1500 点):</p>
+<p>==================  ========  ========  =========</p>
+<p>形状                best      2 位      margin</p>
+<p>==================  ========  ========  =========</p>
+<p>箱(鏡映面が 3 枚)     0.9397    0.9499     0.0102</p>
+<p>角柱つきの箱          0.9876    0.9918     0.0043</p>
+<p>球                    1.0490    1.0551     0.0062</p>
+<p>一様乱数の立方体      1.0608    1.3435     0.2828</p>
+<p>==================  ========  ========  =========</p>
+<p>対称面が複数ある形ほど margin は小さい —— これは不具合ではなく、そういう形</p>
+<p>だという情報である。点群位置合わせの PoC が同じ構造を測っていて、PCA の</p>
+<p>候補は<b>素の直方体で 83 % が反転した象限を掴む</b>が、そのとき先に潰れるのは</p>
+<p>残差ではなく候補どうしの margin だった(0.42 → 0.066 → 0.039)。**残差でなく</p>
+<p>margin で採否を見る**、が両方に共通する結論。</p>
+<p>★ **`<code style="color:#22d3bf">score</code>` は 0 に近づかない。** 厳密に対称な形でも点の間隔が床を作る</p>
+<p>(上の表で箱が 0.94)。「0 に近いか」ではなく「同じ形を鏡映せずに測った値」や</p>
+<p>「点間隔」と比べること。</p>
+<p>★ <b>候補は PCA の 3 軸だけ</b>。真の対称面が主軸のどれとも一致しない形では</p>
+<p>見つからず、しかも黙って 3 つのうち最良を返す。密に振った候補が要るなら</p>
+<p>`<code style="color:#22d3bf">reflection_symmetry_score</code>` を直接掃引すること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

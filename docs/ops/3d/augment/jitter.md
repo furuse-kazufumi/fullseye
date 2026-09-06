@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 各点に等方ガウスノイズ ``N(0, sigma)`` を付加(センサ位置ノイズの模倣)。
 
+``sigma`` はワールド単位の標準偏差(ユーザ指定パラメータ)。``clip`` を与えると
+各成分の変位を ``[-clip, clip]`` に切り詰める(外れ変位の抑制)。大 N ではノイズの
+平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 ``(N,3)``。
+
+- ``sigma < 0`` は ``ValueError``。``sigma == 0`` または空入力は入力のコピーを返す。
+- ``clip`` は与えるなら ``> 0``(それ以外は ``ValueError``)。切り詰めは成分ごとなので
+変位ベクトルの長さは最大 ``√3·clip``。
+- ``seed`` で決定論的(``np.random.default_rng(seed)``)。同 seed・同形状なら同じノイズ。
+- 入力は ``(N,3)`` の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は
+``ValueError``)。返り値は float64。
+- 位置合わせ(``register_fpfh`` 等)のノイズ耐性を測るとき、``sigma`` を点間隔
+(``voxel_grid_downsample`` の格子幅など)に対する比で決めると条件を比較しやすい。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

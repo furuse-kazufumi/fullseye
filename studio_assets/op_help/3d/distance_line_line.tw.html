@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩直線間距離(含歪斜/skew)。平行時退化為點-線距離。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">n = d̂1 × d̂2</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">|n| &lt; 1e-9</code><code style="color:#22d3bf">(平行)なら </code><code style="color:#22d3bf">distance_point_line(p2, p1, d1)</code>`、それ</p>
+<p>以外は `<code style="color:#22d3bf">|(p2 − p1)·n̂|</code>`(共通垂線の長さ)を float で返す。交わる直線では 0。</p>
+<p>`<code style="color:#22d3bf">p1, d1, p2, d2</code>` は数値の 2 または 3 ベクトル、次元の混在は ValueError。</p>
+<p>2-D の非平行な直線は交わるので距離 0 のはずだが、`<code style="color:#22d3bf">np.cross</code><code style="color:#22d3bf"> がスカラーになるため </code><code style="color:#22d3bf">@</code>` が</p>
+<p>失敗する(2-D は平行な場合しか通らない)。3-D で使うこと。単位は入力座標の単位。</p>
+<p>用途: 2 本の軸(`<code style="color:#22d3bf">fit_line_3d</code>`)の同軸度、穴ピッチ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

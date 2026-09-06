@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles.
 
+Thin wrapper over :class:`scipy.spatial.ConvexHull` (Qhull): interior points
+are dropped, faces are triangulated, and each triangle is wound so its normal
+points away from the hull centroid (outward, positive signed volume) — so the
+result feeds straight into :func:`inertia_tensor` or a MuJoCo convex collider.
+Needs at least 4 non-coplanar points.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

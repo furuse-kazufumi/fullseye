@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import sdf_ops; sdf_ops.grid_coords(bounds, res)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;grid_coords&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>建構用於 CSG 求值的體素中心座標網格(與 occupancy 相同的格點慣例)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">res</code>` は各軸のボクセル数(スカラ=立方</p>
+<p>or 長さ3)。voxel `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> の中心は world </code><code style="color:#22d3bf">lo + (i+0.5)/res * span</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">occupancy.query_distance</code>`</p>
+<p>の `<code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code>` と整合 = 中心アライン)。返り値は</p>
+<p>`<code style="color:#22d3bf">coords</code><code style="color:#22d3bf"> shape </code><code style="color:#22d3bf">(nx,ny,nz,3)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>`。</p>
+<p>こうして作った座標に `<code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf"> を評価し CSG 合成すれば、</code><code style="color:#22d3bf">recon3d</code>` の</p>
+<p>marching cubes や `<code style="color:#22d3bf">occupancy</code>` のゼロ交差抽出へそのまま渡せる。</p>
+<p>Raises ValueError for degenerate bounds or res&lt;=0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_sphere3(points) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Algebraic (Kåsa) least-squares sphere fit to `<code style="color:#22d3bf">(depth, row, col)</code>` points:</p>
+<p>solve `<code style="color:#22d3bf">|P|^2 = 2 P·c + (r^2 - |c|^2)</code>` in the least-squares sense — exact for</p>
+<p>points on a sphere, a standard robust estimator under moderate noise. Returns</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), radius </code><code style="color:#22d3bf">r</code>`, and the RMS radial residual. Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 4 points or a coplanar set (no finite sphere).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

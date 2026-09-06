@@ -5,6 +5,32 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 3D Newton 把 score/相关体的整数峰精化到亚体素(迭代优化)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>粗いマッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)が返す整数ピーク idx を、局所の</p>
+<p>2 次モデル f(x)≈f0+gᵀΔ+½ΔᵀHΔ の停留点 Δ=-H⁻¹g へ反復更新して連続座標へ収束させる。</p>
+<p>軸別の放物線サブピクセルと違い <b>全 3x3 Hessian(交差曲率 fzy,fzx,fyx を含む)</b> を使うため、</p>
+<p>回転した(相互曲率のある)異方性ピークでも座標軸間の結合バイアスを除去できる。</p>
+<p>各反復: 現在位置まわりの 27 近傍を trilinear で取得 → 中心差分で勾配 g と 6 成分 Hessian H を</p>
+<p>組み、Δ=solve(H,-g)。各成分を ±1 voxel にクリップ(信頼領域)して位置を更新、|Δ|&lt;tol で収束。</p>
+<p>ガウス山では中心差分勾配の零点が真のピークに一致するため停留点へ収束する(単一ステップでは</p>
+<p>2 次モデル誤差が残り ±0.05voxel を割れないが、反復で ~0.02voxel まで収束)。H が負定値でない</p>
+<p>(=極大でない)real な相関面では上昇方向へ退避(勾配上昇ステップ)して発散を防ぐ。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>score : array_like または torch.Tensor</p>
+<p>3D スコア/相関 volume (D,H,W)。値が大きいほどピーク。</p>
+<p>idx : tuple[int,int,int]</p>
+<p>整数ピーク座標 (z,y,x)(通常 argmax の unravel 結果)。</p>
+<p>device : str</p>
+<p>&quot;cpu&quot; / &quot;cuda&quot;。torch 演算の device。</p>
+<p>max_iter : int</p>
+<p>最大反復回数(既定 12)。</p>
+<p>tol : float</p>
+<p>収束判定(更新量 L2 ノルム、既定 1e-4)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>numpy.ndarray</p>
+<p>[score_peak, z, y, x] (精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

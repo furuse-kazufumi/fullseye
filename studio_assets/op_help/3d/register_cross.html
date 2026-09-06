@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fuse3d; fuse3d.register_cross(src, src_kind, dst, dst_kind, method=&#x27;fpfh&#x27;, samples=15000, **kw)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;register_cross&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。</p>
+<p>例: register_cross((verts,faces),&quot;mesh&quot;, scan_pts,&quot;points&quot;) で CAD↔スキャン整合。返り値 (R, t)。</p>
+<p>手順: `<code style="color:#22d3bf">to_points(src, src_kind, samples, **kw)</code><code style="color:#22d3bf"> と </code>`to_points(dst, dst_kind,</p>
+<p>samples, **kw)`<code style="color:#22d3bf"> で両者を点群にし、</code><code style="color:#22d3bf">method</code>` で登録器を選ぶ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;fpfh&quot;</code><code style="color:#22d3bf">(既定): </code><code style="color:#22d3bf">feat_fpfh.register_fpfh(ps, pd)</code>` を既定パラメータで呼ぶ</p>
+<p>(FPFH 記述子 + RANSAC、初期姿勢不要、大回転・部分重なりに対応)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;icp&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">match3d.icp_point2point_3d(ps, pd, iters=50)</code>`(最近傍対応 +</p>
+<p>Kabsch)。初期姿勢の引数は渡さないので、`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">dst</code>` に近い(粗く</p>
+<p>合っている)ことが前提。</p>
+<p style="margin:2px 0 2px 12px">• それ以外は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>返り値: `<code style="color:#22d3bf">(R, t)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">R</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(3, 3)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(3,)</code>` の numpy 配列(torch tensor</p>
+<p>は CPU の numpy に変換して返す)。慣習は `<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>`。</p>
+<p>注意:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">**kw</code><code style="color:#22d3bf"> は **両方の** </code><code style="color:#22d3bf">to_points</code><code style="color:#22d3bf"> に同じものが渡る(</code><code style="color:#22d3bf">&quot;depth&quot;</code><code style="color:#22d3bf"> の </code>`fx, fy, cx,</p>
+<p>cy`<code style="color:#22d3bf"> や </code><code style="color:#22d3bf">&quot;voxel&quot;</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">iso</code>` を片側だけに与えることはできない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">samples</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;mesh&quot;</code>` のサンプル数(既定 15000)。点群の個数・形は検査しない。</p>
+<p style="margin:2px 0 2px 12px">• 座標系の違い(`<code style="color:#22d3bf">to_points</code><code style="color:#22d3bf"> 参照: voxel は </code><code style="color:#22d3bf">(z, y, x)</code>` index、depth はカメラ</p>
+<p>`<code style="color:#22d3bf">(x, y, z)</code>`)は吸収しない。</p>
+<p style="margin:2px 0 2px 12px">• 精度を締めるには fpfh の結果を初期値に `<code style="color:#22d3bf">icp_point2point_3d</code>` を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

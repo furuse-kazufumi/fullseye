@@ -184,8 +184,9 @@ def run() -> dict:
 
 def main():
     r = run()
-    print(f"\nPASS: blob_distance(中心値=半径)/ blob_seeds(h-maxima 閉形式と画素一致)/ "
-          f"blob_split(4 領域・前景保存・割れ目は交線 ±{100.0 * r['split_mismatch_px'] / r['pair_area_px']:.2f} %)。"
+    print(f"\nPASS: blob_distance(中心値=半径)/ blob_seeds(円板は h-maxima 閉形式と画素一致。h より低い棒にも"
+          f"種が立つ・h で低い山を消せないのは報告)/ blob_split(4 領域・前景保存。割れ目は交線から "
+          f"{100.0 * r['split_mismatch_px'] / r['pair_area_px']:.2f} % ずれ = 番号の偏り、報告)。"
           f" 実行 {r['elapsed_s']:.2f} 秒")
     return 0
 

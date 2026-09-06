@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3DGS(비등방 가우시안) → 밀도 voxel. 각 가우시안을 means 에 opacity 로 놓고 평균 scale 로 평활.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>近似(等方 splat + 平滑): 厳密な異方共分散ラスタライズは重いので、まず means を opacity 重み</p>
+<p>で splat → scale 平均ぶん gaussian 平滑。マッチングの coarse alignment には十分。</p>
+<p>引数: `<code style="color:#22d3bf">means</code><code style="color:#22d3bf"> (N,3) 中心、</code><code style="color:#22d3bf">opacities</code>` は長さ N に reshape されて splat の重みになる</p>
+<p>(`<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> が 1 を足すところに opacity を足す)。</code><code style="color:#22d3bf">scales</code>` は形を問わず</p>
+<p><b>平均値 1 つ</b>にまとめ、`<code style="color:#22d3bf">σ = mean(scales)/mean(hi − lo)·size</code>`(world 長 → voxel 長)を</p>
+<p>平滑幅にする(下限 0.5 voxel。`<code style="color:#22d3bf">scales</code>` が空なら σ=1)。異方性・回転は無視される。</p>
+<p>`<code style="color:#22d3bf">bounds=(lo, hi)</code><code style="color:#22d3bf"> は必須(None 不可。</code><code style="color:#22d3bf">_lo_hi</code>` で検証し不正なら ValueError)。範囲外の</p>
+<p>中心は端 voxel に clip される。返り値 `<code style="color:#22d3bf">(size, size, size)</code><code style="color:#22d3bf"> float64、軸順は </code><code style="color:#22d3bf">means</code>` の列順。</p>
+<p>opacity の総和はほぼ保存されるが正規化はしない。点群に落とすなら `<code style="color:#22d3bf">gaussians_to_points</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

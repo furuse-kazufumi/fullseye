@@ -6,6 +6,21 @@
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>傾斜角。`<code style="color:#22d3bf">units</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;degrees&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;radians&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;percent&quot;</code>`。</p>
 <p>平面なら閉形式 `<code style="color:#22d3bf">atan(|grad|)</code>` と一致する(実測 1e-13 以下)。</p>
+<p>手順: 3x3 近傍から `<code style="color:#22d3bf">dz/dx</code><code style="color:#22d3bf">(東向き)と </code><code style="color:#22d3bf">dz/dy</code>`(北向き = 行が減る向き)を</p>
+<p>取り、`<code style="color:#22d3bf">g = hypot(dz/dx, dz/dy)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">&quot;degrees&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">atan(g)</code>` を度で、</p>
+<p>`<code style="color:#22d3bf">&quot;radians&quot;</code><code style="color:#22d3bf"> はラジアン、</code><code style="color:#22d3bf">&quot;percent&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">100 g</code>`(45 度 = 100 %)。</p>
+<p>縁は端の値を複製して埋める(`<code style="color:#22d3bf">pad mode=&quot;edge&quot;</code>`)ので、外周 1 セルは内側より</p>
+<p>緩めに出る。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">dem</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の標高 [m]、3x3 以上、実数、</code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> 不可。欠測は </code><code style="color:#22d3bf">nan</code>` で</p>
+<p>渡す ―― `<code style="color:#22d3bf">-9999</code><code style="color:#22d3bf"> のような番兵値がそのまま入っている(</code><code style="color:#22d3bf">&lt;= -9000</code>` があり</p>
+<p>`<code style="color:#22d3bf">nan</code><code style="color:#22d3bf"> が無い)と拒否する。</code><code style="color:#22d3bf">nan</code>` は 3x3 の範囲に伝播する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cell_size</code>`: セル辺長 [m]、正の有限値。bool / 文字列は拒否。緯度経度格子は</p>
+<p>先に `<code style="color:#22d3bf">dem_geodetic_slope</code>` 側を使う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">method</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;horn&quot;</code><code style="color:#22d3bf">(Horn 1981 の 3x3 重み付き差分、既定)/ </code><code style="color:#22d3bf">&quot;central&quot;</code>`</p>
+<p>(Zevenbergen–Thorne の中央差分)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">degrees</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[0, 90)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 失敗はすべて `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(形・番兵値・</code><code style="color:#22d3bf">cell_size</code>`・選択肢)。</p>
+<p>`<code style="color:#22d3bf">dem_aspect</code><code style="color:#22d3bf"> と対で使う。</code><code style="color:#22d3bf">dem_hillshade</code>` はこの 2 つから陰影を作る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
@@ -13,6 +28,7 @@
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:dem_geodesy_tour">dem_geodesy_tour</a> — <code style="color:#22d3bf">py -3.11 examples/dem_geodesy_tour.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dem_terrain">poc_dem_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dem_terrain.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
 <p>—</p>

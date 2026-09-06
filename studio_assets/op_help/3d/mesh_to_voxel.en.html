@@ -5,6 +5,17 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Mesh (vertices + faces) → a density voxel volume. Uniform sampling on the faces → splat (it connects the mesh row to every method).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>三角形上の一様点は barycentric(sqrt トリック)。占有 voxel が要るなら閾値化する。</p>
+<p>手順: 各三角形の面積に比例して `<code style="color:#22d3bf">samples</code><code style="color:#22d3bf"> 個の面を選び(</code><code style="color:#22d3bf">default_rng(0)</code>` の固定 seed</p>
+<p>→ 毎回同じ点)、面内一様な barycentric 点を作って `<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> に渡す(</code><code style="color:#22d3bf">smooth</code>`</p>
+<p>既定 0.8 voxel)。`<code style="color:#22d3bf">faces</code><code style="color:#22d3bf"> は (F,3) の頂点 index、</code><code style="color:#22d3bf">vertices</code>` は (V,3)。</p>
+<p>退化面(面積 0)しか無い mesh は確率が NaN になり `<code style="color:#22d3bf">rng.choice</code>` が ValueError を出す。</p>
+<p>`<code style="color:#22d3bf">bounds=None</code>` ならサンプル点の min/max(mesh の bbox とほぼ一致するが、サンプル次第で</p>
+<p>僅かに内側)。`<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf"> の検証・範囲外 clip は </code><code style="color:#22d3bf">points_to_voxel</code>` と同じ。</p>
+<p>返り値 `<code style="color:#22d3bf">(size, size, size)</code>` float64 の点密度(占有ではない。占有が要るなら閾値で</p>
+<p>2 値化)。軸順は頂点座標の列順。seed を変えたい・点群も欲しいときは `<code style="color:#22d3bf">mesh_to_points</code>` で</p>
+<p>点群を作ってから `<code style="color:#22d3bf">points_to_voxel</code>` へ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

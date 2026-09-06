@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))</code>(或 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_lab&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>sRGB → CIE L\*a\*b\*(D65)。测 ΔE 之前的一步。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">xyz_to_lab(rgb_to_xyz(rgb), white)</code>` の合成。検証と失敗条件はその 2 つに従う:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf">: 最後の軸が 3。整数 dtype は dtype の最大値で </code><code style="color:#22d3bf">[0, 1]</code>` に正規化、</p>
+<p>float は `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に収まっていることを要求(外れると </code><code style="color:#22d3bf">MetricContractError</code>`)。</p>
+<p>線形 RGB ではなく <b>ガンマ付きの sRGB</b> を渡すこと。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">white</code>`: Lab の白色点。sRGB の行列は D65 固定なので、通常は既定のまま。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。`<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[0, 100]</code><code style="color:#22d3bf">、白 </code><code style="color:#22d3bf">(1, 1, 1)</code>` で</p>
+<p>`<code style="color:#22d3bf">(100, 0, 0)</code>` 付近。</p>
+<p>画像 2 枚の色差なら `<code style="color:#22d3bf">delta_e_map</code>` が変換から色差まで一度にやる。</p>
+<p>`<code style="color:#22d3bf">lab_to_rgb</code>` で戻せるが、色域外は切り詰められる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

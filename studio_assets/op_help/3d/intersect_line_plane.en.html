@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.intersect_line_plane(line_pt, d, plane_pt, n)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;intersect_line_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Line ∩ plane → a point (None when they are parallel).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">t = ((plane_pt − line_pt)·n̂)/(d·n̂)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">line_pt + t·d</code><code style="color:#22d3bf"> を返す(float 配列)。</code><code style="color:#22d3bf">d</code>` は単位化</p>
+<p>しない(`<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">d</code><code style="color:#22d3bf"> の長さ単位)。</code><code style="color:#22d3bf">|d·n̂| &lt; 1e-9</code>` なら <b>None</b>(例外ではない。返り値を使う</p>
+<p>前に None チェック)。面に含まれる直線(距離 0 かつ平行)も None。引数は数値の 2 または 3</p>
+<p>ベクトル、次元の混在は ValueError。2-D では `<code style="color:#22d3bf">n</code>` を直線の法線として線と線の交点になる。</p>
+<p>用途: 視線(`<code style="color:#22d3bf">depth_to_points</code><code style="color:#22d3bf"> の点 − 原点)と </code><code style="color:#22d3bf">fit_plane_3d</code>` の面との交点、レイと基準面。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

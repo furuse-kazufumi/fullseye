@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;iss_keypoints&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>ISS-Keypoint-Detektion (Intrinsic Shape Signatures, das 3-D-Harris-Pendant).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが</p>
+<p>well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (N,3)。</code><code style="color:#22d3bf">radius</code>`: saliency 用の近傍球半径(点群と同じ単位)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nms_radius</code><code style="color:#22d3bf">: 非最大抑制の距離。None なら </code><code style="color:#22d3bf">0.6*radius</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">gamma21</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">gamma32</code>`: 固有値比 λ2/λ1、λ3/λ2 の上限(既定 0.99)。両方ともこれ</p>
+<p>未満の点だけが候補(比が 1 に近い=等方で向きが決まらない点を除く)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">max_kp</code><code style="color:#22d3bf">: 返す上限。</code><code style="color:#22d3bf">min_neighbors</code>`: 近傍がこれ未満の点は候補にしない(既定 8)。</p>
+<p>手順: 各点で `<code style="color:#22d3bf">radius</code>` 内の近傍を集め、注目点を原点とした 2 次モーメント行列</p>
+<p>`<code style="color:#22d3bf">(qᵀq)/n</code>` の固有値 λ1≥λ2≥λ3 を求める(λ1 が 1e-12 以下なら除外)。λ3 を saliency と</p>
+<p>して降順に走査し、採用済みの点から `<code style="color:#22d3bf">nms_radius</code>` 未満にあるものを捨てる貪欲 NMS。</p>
+<p>返り値は int64 の点インデックス配列(saliency 降順)。候補が無ければ長さ 0。</p>
+<p>注意: 近傍は注目点で中心化する(重心ではない)ため、平面上の点でも λ3 は厳密には 0 に</p>
+<p>ならない。全点で近傍探索する Python ループなので、数万点を超える雲は</p>
+<p>`<code style="color:#22d3bf">voxel_grid_downsample</code><code style="color:#22d3bf"> で間引いてから使う。</code><code style="color:#22d3bf">shot_descriptor</code>` のキーポイント入力に</p>
+<p>直結し、`<code style="color:#22d3bf">register_shot</code><code style="color:#22d3bf"> は内部で </code><code style="color:#22d3bf">radius</code>` の 0.6 倍・NMS 0.3 倍で呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_spectrogram — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_spectrogram&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*无图: 该算子以 <code style="color:#22d3bf">signal</code> 为输入。从图像开始的 Studio 程序无法到达该类型，请参见下方的可运行示例。*</p>
+<p>*无图: 已运行但失败 —— ValueError: max_width must be positive (got: -3)*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>STFT 幅度谱图 -&gt; `<code style="color:#22d3bf">(freqs, times, S)</code><code style="color:#22d3bf">,其中 </code><code style="color:#22d3bf">S</code><code style="color:#22d3bf"> 的形状为 </code><code style="color:#22d3bf">(n_freqs, n_frames)</code><code style="color:#22d3bf">。使用汉宁窗(Hann window);*hop* 默认值为 </code><code style="color:#22d3bf">win//2</code>`。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

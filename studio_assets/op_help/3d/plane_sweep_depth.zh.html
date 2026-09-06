@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;plane_sweep_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 plane-sweep stereo 估计稠密深度图。→ (H,W) depth。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各深度平面で src を ref へワープし、photo-consistency 最小の候補深度を画素ごとに選ぶ</p>
+<p>(winner-take-all)。全候補で視野外の画素は NaN。fail-closed(空/非 2D/shape 不一致/非正深度)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">img_ref</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">img_src</code><code style="color:#22d3bf">: 同形状の (H,W) グレースケール float。基準カメラは </code><code style="color:#22d3bf">[I|0]</code>`、source は</p>
+<p>`<code style="color:#22d3bf">P_src = K [R|t]</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">X_src = R X_ref + t</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">K</code><code style="color:#22d3bf">: 共通の (3,3) 内部行列(特異なら </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth_candidates</code>`: 基準カメラ座標での正の有限な深度列(D 個)。返る深度は必ずこの中の</p>
+<p>どれかで、量子化誤差は候補間隔程度。候補は近距離を細かく(逆深度で等間隔)取るのが常道。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">window</code>`: コストの box 集約サイズ(既定 1 = 画素ごとの絶対差)。2 以上で窓内 SAD を有効画素数で</p>
+<p>正規化した値になり、テクスチャの乏しい領域で安定するが段差はぼける。1 未満は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normal</code>`: 掃引平面の法線(既定 (0,0,1) = フロント平行)。</p>
+<p>返り値は (H,W) float。全候補で src の視野外に写った画素(コスト ∞)は NaN。輝度が一定の領域では</p>
+<p>全候補のコストが同点になり `<code style="color:#22d3bf">argmin</code>` が先頭候補を返すので、信頼度の無い深度が混じる。</p>
+<p>コスト体 (D,H,W) そのものが要るときは同モジュールの `<code style="color:#22d3bf">cost_volume</code>` を使う。得られた深度は</p>
+<p>`<code style="color:#22d3bf">depth_to_points</code>` で点群化できる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

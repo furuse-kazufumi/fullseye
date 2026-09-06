@@ -330,6 +330,76 @@
    "tw": "*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— %s。用法見下方可執行範例。*",
    "ko": "*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— %s. 사용법은 아래 실행 가능한 예제를 볼 것.*",
    "de": "*Keine Abbildung: der Typ ist erreichbar, aber die generische synthetische Eingabe liegt außerhalb des Definitionsbereichs dieses Ops — %s. Zur Verwendung siehe die lauffähigen Beispiele unten.*"
+  },
+  "*図なし: 走ったが返り値が空だった(合成入力ではこの op の答えが無い —— 零交差や外れ値が無い、など)。空を図にはしない。下の「Studio で試す」のプログラムは走るので、自分の画像で試すこと。*": {
+   "en": "*No figure: the op ran but returned an empty result (on the synthetic input this op has no answer — no zero crossings, no outliers, and so on). An empty result is not drawn as a figure. The program under “Try in Studio” does run, so try it on your own image.*",
+   "zh": "*无图: 算子运行了，但返回为空(在合成输入上此算子没有答案 —— 没有过零点、没有离群点等)。空结果不画成图。下方“在 Studio 中试试”的程序可以运行，请用自己的图像试。*",
+   "tw": "*無圖: 運算子執行了，但回傳為空(在合成輸入上此運算子沒有答案 —— 沒有過零點、沒有離群點等)。空結果不畫成圖。下方「在 Studio 試試」的程式可以執行，請用自己的影像試。*",
+   "ko": "*그림 없음: op는 실행됐지만 빈 결과를 반환했다(합성 입력에서는 이 op의 답이 없음 —— 영점 교차나 이상치가 없는 등). 빈 결과는 그림으로 그리지 않는다. 아래 “Studio에서 시험”의 프로그램은 실행되므로 자신의 영상으로 시험할 것.*",
+   "de": "*Keine Abbildung: der Op lief, gab aber ein leeres Ergebnis zurück (auf der synthetischen Eingabe hat dieser Op keine Antwort — keine Nulldurchgänge, keine Ausreißer usw.). Ein leeres Ergebnis wird nicht als Abbildung gezeichnet. Das Programm unter „In Studio ausprobieren“ läuft, also mit dem eigenen Bild probieren.*"
+  },
+  "次の例は元の台帳 op `%s` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。": {
+   "en": "The examples below call the underlying ledger op `%s`. This bridge op is the same implementation adapted to the `fn(v, a, b)` convention, so the behaviour carries over unchanged (only the call form differs).",
+   "zh": "下面的示例调用的是底层账本算子 `%s`。此桥接算子只是把同一实现适配为 `fn(v, a, b)` 约定，行为完全相同(只是调用形式不同)。",
+   "tw": "下面的範例呼叫的是底層帳本運算子 `%s`。此橋接運算子只是把同一實作適配為 `fn(v, a, b)` 慣例，行為完全相同(只是呼叫形式不同)。",
+   "ko": "아래 예제는 원래의 대장 op `%s`를 호출한다. 이 브리지 op는 같은 구현을 `fn(v, a, b)` 규약에 맞춘 것뿐이므로 동작은 그대로 적용된다(호출 형식만 다름).",
+   "de": "Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op `%s` auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention `fn(v, a, b)`; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich)."
+  },
+  "*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*": {
+   "en": "*The output is shown in a viridis-like pseudo-colour (dark purple = low, yellow = high) so that a field of quantities — distance, phase, orientation, depth — can be read.*",
+   "zh": "*输出以类 viridis 伪彩色显示(深紫 = 小，黄 = 大)，便于读取距离、相位、方向、深度这类“量的场”。*",
+   "tw": "*輸出以類 viridis 偽彩色顯示(深紫 = 小，黃 = 大)，便於讀取距離、相位、方向、深度這類「量的場」。*",
+   "ko": "*출력은 viridis 풍의 의사 컬러(짙은 보라 = 작음, 노랑 = 큼)로 표시한다. 거리·위상·방향·깊이 같은 「양의 장」을 읽기 위해.*",
+   "de": "*Die Ausgabe ist in einer viridis-artigen Falschfarbe dargestellt (dunkles Violett = klein, Gelb = groß), damit ein Feld von Größen — Abstand, Phase, Orientierung, Tiefe — lesbar ist.*"
+  },
+  "**つまみ %s を振る**(0.1 / 0.5 / 0.9、もう一方は既定):": {
+   "en": "**Sweeping knob %s** (0.1 / 0.5 / 0.9, the other knob at its default):",
+   "zh": "**扫描旋钮 %s**(0.1 / 0.5 / 0.9，另一旋钮取默认):",
+   "tw": "**掃描旋鈕 %s**(0.1 / 0.5 / 0.9，另一旋鈕取預設):",
+   "ko": "**노브 %s 를 훑기**(0.1 / 0.5 / 0.9, 다른 노브는 기본값):",
+   "de": "**Regler %s durchfahren** (0,1 / 0,5 / 0,9, der andere Regler auf Standard):"
+  },
+  "*つまみ %s は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*": {
+   "en": "*Knob %s does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*",
+   "zh": "*旋钮 %s 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*",
+   "tw": "*旋鈕 %s 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*",
+   "ko": "*노브 %s 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*",
+   "de": "*Regler %s ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*"
+  },
+  "**段階**(前置きの op → この op。左から順):": {
+   "en": "**Stages** (the ops that come before → this op, left to right):",
+   "zh": "**阶段**(前置算子 → 本算子，从左到右):",
+   "tw": "**階段**(前置運算子 → 本運算子，由左至右):",
+   "ko": "**단계**(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):",
+   "de": "**Stufen** (die vorangehenden Ops → dieser Op, von links nach rechts):"
+  },
+  "**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):": {
+   "en": "**On other images** (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):",
+   "zh": "**换别的图像**(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):",
+   "tw": "**換別的影像**(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):",
+   "ko": "**다른 영상에서도**(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):",
+   "de": "**Auf anderen Bildern** (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):"
+  },
+  "*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*": {
+   "en": "*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*",
+   "zh": "*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*",
+   "tw": "*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*",
+   "ko": "*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*",
+   "de": "*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*"
+  },
+  "*カラー (H,W,3) の入力は載せていない: この op は色チャネルを 3 本目の空間軸として扱う(色を跨ぐ)ため。チャネルごとに分けて呼ぶこと。*": {
+   "en": "*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*",
+   "zh": "*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*",
+   "tw": "*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*",
+   "ko": "*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*",
+   "de": "*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*"
+  },
+  "**動き**(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):": {
+   "en": "**Motion** (GIF: frames / views / slices in turn. The still figure is the complete one; the GIF is supplementary):",
+   "zh": "**动态**(GIF: 依次显示帧 / 视点 / 切片。静态图是完整版，GIF 为辅助):",
+   "tw": "**動態**(GIF: 依序顯示影格 / 視點 / 切片。靜態圖是完整版，GIF 為輔助):",
+   "ko": "**움직임**(GIF: 프레임 / 시점 / 슬라이스를 차례로. 정지 그림이 완성형이고 GIF는 보조):",
+   "de": "**Bewegung** (GIF: Bilder / Ansichten / Schnitte nacheinander. Die stehende Abbildung ist die vollständige; das GIF ist ergänzend):"
   }
  }
 }

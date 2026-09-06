@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。
 
+面積 = Σ 0.5·|cross(v1−v0, v2−v0)|。頂点数に定数を掛ける素朴な近似ではなく、実際の面の
+大きさを積算するので、メッシュのスケール・形状に正しく追随する。
+
+Args:
+    mesh: (vertices (N,3), faces (M,3)) のタプル。
+
+Returns:
+    表面積(非負の float)。
+
+Raises:
+    ValueError: mesh が (vertices, faces) の 2 要素でない、形状不正、非有限座標、非整数・
+    範囲外の index、空、または 3 頂点のどれかが同じ index の三角形があるとき。
+
+注意: ``face_normals`` と違い、座標がほぼ一直線に並んだ退化三角形(面積 0)は拒否せず 0 として
+加算する。重複面や表裏 2 枚張りの面はそのまま 2 回数えられる。単位は座標の単位の 2 乗。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

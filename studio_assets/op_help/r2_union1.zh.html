@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;r2_union1&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">union1</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/r2_union1.png" alt="r2_union1: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/r2_union1.png" alt="r2_union1: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_union1.chain.jpg">r2_union1: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_union1.inputs.jpg">r2_union1: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把所有连通成分并成一张掩码(标签的 OR)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>前景マスク(`<code style="color:#22d3bf">&gt; 0.5</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">scipy.ndimage.label</code>` で連結成分にラベル付けし、</p>
+<p>`<code style="color:#22d3bf">label &gt; 0</code>` を 1.0 に戻して 1 枚のマスクとして返す。全成分の和集合なので、</p>
+<p>結果は「入力を 0/1 に正規化したもの」と同じになる(値の 2 値化と非有限値の</p>
+<p>除去が実際の効果)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。0.5 以下の</p>
+<p>グレー値や NaN/Inf はすべて背景になる。複数のラベル値を持つラベル画像を</p>
+<p>受けた場合もラベル番号の区別は消え、単一の前景マスクになる(ラベルごとに</p>
+<p>取り出したいなら `<code style="color:#22d3bf">r3_label_to_region</code>`)。パイプライン上は「領域を 1 個の</p>
+<p>オブジェクトとして扱う」ことを明示する位置づけで、成分単位の選別</p>
+<p>(`<code style="color:#22d3bf">select_shape</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">r2_sort_region</code>`)はこの op より前に置く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

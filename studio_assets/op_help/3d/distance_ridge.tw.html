@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import medial; medial.distance_ridge(vol, min_radius=0.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;distance_ridge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 EDT 的脊(距離場的局部極大)提取為中軸。回傳 (ridge_mask, edt)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各前景 voxel の EDT を計算し、<b>26 近傍の局所極大</b>(自分の EDT が周囲 26 voxel の最大以上)を</p>
+<p>medial とみなす。この基準は物体の局所次元に応じて自然に次元を出し分ける:</p>
+<p>塊(球)  -&gt; EDT が単峰 -&gt; 点状の medial(中心 1 点)。</p>
+<p>管(円柱)-&gt; 軸方向に平坦・半径方向に単峰 -&gt; 線状の medial(軸線)。</p>
+<p>板(スラブ)-&gt; 面内で平坦・厚み方向に単峰 -&gt; 面状の medial(中心面)。</p>
+<p>境界 voxel は内側の隣が必ず大きいため極大にならず、外殻は自然に除かれる。平坦な尾根</p>
+<p>(軸/面)は同値の隣接を許容(&gt;=)することで連続した線/面として残る。</p>
+<p>Args:</p>
+<p>vol: バイナリ voxel(bool / 0-1 の 3D)。</p>
+<p>min_radius: この EDT 値以下の弱い尾根を捨てる閾値(既定 0 = 捨てない)。ノイズ抑制用。</p>
+<p>Returns:</p>
+<p>ridge_mask (bool 3D): medial voxel。</p>
+<p>edt (float64 3D): 各 voxel の背景までのユークリッド距離(= 局所半径)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

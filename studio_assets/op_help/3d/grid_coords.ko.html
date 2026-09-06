@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.grid_coords(bounds, res)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;grid_coords&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>CSG 평가용 복셀 중심 좌표 격자를 만듭니다(occupancy 와 같은 격자 규약).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">res</code>` は各軸のボクセル数(スカラ=立方</p>
+<p>or 長さ3)。voxel `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> の中心は world </code><code style="color:#22d3bf">lo + (i+0.5)/res * span</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">occupancy.query_distance</code>`</p>
+<p>の `<code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code>` と整合 = 中心アライン)。返り値は</p>
+<p>`<code style="color:#22d3bf">coords</code><code style="color:#22d3bf"> shape </code><code style="color:#22d3bf">(nx,ny,nz,3)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>`。</p>
+<p>こうして作った座標に `<code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf"> を評価し CSG 合成すれば、</code><code style="color:#22d3bf">recon3d</code>` の</p>
+<p>marching cubes や `<code style="color:#22d3bf">occupancy</code>` のゼロ交差抽出へそのまま渡せる。</p>
+<p>Raises ValueError for degenerate bounds or res&lt;=0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

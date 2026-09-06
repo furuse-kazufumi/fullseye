@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.plane_from_3points(a, b, c)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;plane_from_3points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。</p>
+<p>返り値 `<code style="color:#22d3bf">(a, n)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は 1 点目、</code><code style="color:#22d3bf">n = (b−a)×(c−a)</code>` を単位化したもの(向きは a→b→c の</p>
+<p>右ねじ)。引数は数値の 2 または 3 ベクトル(それ以外・次元の混在は ValueError)。3 点が同一</p>
+<p>直線上なら `<code style="color:#22d3bf">n</code>` は零ベクトルのまま返る(例外は出ない)。</p>
+<p>2 次元の点を渡すと `<code style="color:#22d3bf">np.cross</code><code style="color:#22d3bf"> がスカラー(符号つき面積の 2 倍)を返すので、</code><code style="color:#22d3bf">n</code>` はベクトルで</p>
+<p>なく ±1 のスカラーになる。2-D で線の法線が欲しい場合は `<code style="color:#22d3bf">line_from_2points</code>` の方向を 90°</p>
+<p>回して使うこと。</p>
+<p>後段: `<code style="color:#22d3bf">distance_point_plane</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">intersect_line_plane</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">intersect_planes</code>` /</p>
+<p>`<code style="color:#22d3bf">angle_between_planes</code><code style="color:#22d3bf"> にこの </code><code style="color:#22d3bf">(a, n)</code><code style="color:#22d3bf"> を渡す。点群からは </code><code style="color:#22d3bf">fit_plane_3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

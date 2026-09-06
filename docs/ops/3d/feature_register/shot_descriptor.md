@@ -19,6 +19,27 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を
 
+径2×仰角2×方位8=32 空間セルに分割、各セルで「LRF z 軸と近傍点法線の
+cos角」を n_cos=11 ビンのヒストグラムに quadrilinear 補間で蓄積 → 32×11=352
+次元を L2 正規化。返り値 (Kp,352)。LRF 不能な点は零ベクトル。
+
+Raises ValueError: normals の行数が points と一致しない場合(別点群の法線を
+混ぜると近傍 index が範囲を越え生 IndexError になる — compute_fpfh と同クラス)。
+
+引数: ``points`` (N,3)、``normals`` (N,3) 単位法線、``kp_idx`` はキーポイントの点
+インデックス(``iss_keypoints`` の出力)、``tree`` は ``points`` から作った
+``scipy.spatial.cKDTree``(呼び出し側で用意する)、``radius`` は支持半径(LRF 推定と
+近傍集めの両方に使う)。``n_azim``・``n_elev``・``n_rad``・``n_cos`` を変えると次元は
+``n_azim*n_elev*n_rad*n_cos`` になる。
+手順: LRF は距離重み ``max(radius-d, 0)`` 付き共分散の固有ベクトル(x=最大、z=最小
+固有値)を近傍多数派の符号に揃えて右手系化する。近傍が 5 点未満、または LRF が縮退した
+キーポイントは零ベクトルのまま(マッチング側で除外される)。各近傍点は径・仰角
+(``arccos(qz/r)/π``)・法線 cos 角をビン中心 0.5 基準で線形補間、方位は円環で wrap
+して蓄積し、最後に行ごと L2 正規化する。返り値は float64 ``(len(kp_idx), 次元)``。
+2 雲を比較するときは両側で同じ ``radius`` と同じ法線符号則を使うこと(法線の向きが
+反転すると cos 角ヒストグラムが裏返る)。``register_shot`` がこの関数を両雲に適用し、
+マッチングと RANSAC まで行う。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

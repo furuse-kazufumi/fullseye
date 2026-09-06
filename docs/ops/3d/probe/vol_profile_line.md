@@ -19,6 +19,33 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Gray-value profile along the straight probe ``p0 -> p1``.
 
+The segment between the two ``(z, y, x)`` voxel-space points (fractional
+coordinates allowed) is sampled at ``n`` evenly-spaced positions with
+spline interpolation of the given ``order`` (``scipy.ndimage.map_coordinates``;
+1 = trilinear, the default). ``n`` defaults to one sample per unit of
+*index-space* length (~1 voxel-step resolution regardless of spacing).
+
+Parameters
+----------
+vol : (D, H, W) array — the volume (float64, finite; fail-closed otherwise).
+p0, p1 : (z, y, x) — probe start / end, inside the volume on every axis.
+n : int, optional — sample count (>= 2). Default ``ceil(index_length) + 1``.
+spacing : (sz, sy, sx) or volio.VolumeMeta, optional — voxel size in mm.
+order : int in [0, 5] — interpolation spline order (1 = trilinear).
+
+Returns
+-------
+(t_mm, values) : two float64 arrays of length ``n``. ``t_mm[i]`` is the
+*physical* distance of sample ``i`` from ``p0`` — the cumulative Euclidean
+norm of the differences of the physical sample coordinates
+(``index * spacing``), exact under anisotropic spacing; in plain voxel
+units when ``spacing`` is None. ``values[i]`` is the interpolated gray
+value.
+
+Raises ``ValueError`` on a malformed volume, an endpoint outside the
+volume, coincident endpoints (``p0 == p1``: no probe direction), ``n < 2``
+or an invalid ``order`` / ``spacing``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

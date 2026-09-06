@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_line3(points) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_line3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Total-least-squares 3-D line fit to `<code style="color:#22d3bf">(depth, row, col)</code>` points — the</p>
+<p>largest principal axis through the centroid (orthogonal regression, isotropic</p>
+<p>in all three axes). Returns the centroid `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (with </code><code style="color:#22d3bf">cd/cr/cc</code>`), a unit</p>
+<p>`<code style="color:#22d3bf">direction</code>` (depth, row, col), and the RMS orthogonal residual. Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 2 points or a coincident cluster with no defined</p>
+<p>direction.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

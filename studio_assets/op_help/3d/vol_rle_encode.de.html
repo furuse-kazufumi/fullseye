@@ -4,6 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_encode(vol_binary) -&gt; &#x27;VolRLE&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_encode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Codiert ein Binärvolumen als x-Runs (die 3-D-HALCON-Regionendarstellung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>A non-`<code style="color:#22d3bf">{0, 1}</code><code style="color:#22d3bf"> input is thresholded at </code><code style="color:#22d3bf">&gt; 0.5</code><code style="color:#22d3bf"> (the :mod:</code>volops`</p>
+<p>convention). NaN / Inf are rejected. An empty mask encodes to zero runs —</p>
+<p>a valid region that decodes back to all-background.</p>
+<p>Memory: proportional to the number of runs (~surface complexity per plane</p>
+<p>row), not to the voxel count — measured 1/145 of the dense bool mask on a</p>
+<p>realistic 384**3 part.</p>
+<p>何を作るか: `<code style="color:#22d3bf">(D, H, W)</code>` のバイナリ volume を、x 軸(最終軸)方向の連続前景区間</p>
+<p>(run)の列に変換する。`<code style="color:#22d3bf">VolRLE</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf">(平面行 id </code><code style="color:#22d3bf">z*H + y</code>`、int32、昇順)、</p>
+<p>`<code style="color:#22d3bf">starts</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ends</code><code style="color:#22d3bf">(run の x 範囲 </code><code style="color:#22d3bf">[start, end)</code><code style="color:#22d3bf">、end は排他的)、</code><code style="color:#22d3bf">shape</code>`</p>
+<p>(元の `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf">)を持つ frozen dataclass。run </code><code style="color:#22d3bf">i</code>` は</p>
+<p>`<code style="color:#22d3bf">vol[z, y, starts[i]:ends[i]]</code>` を表す。</p>
+<p>引数と検証(fail-closed):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">vol_binary</code>`: 3-D 配列。bool ならそのまま、それ以外は float64 に変換して</p>
+<p>NaN/Inf があれば `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&gt; 0.5</code>` で二値化する。</p>
+<p style="margin:2px 0 2px 12px">• 3-D でない、または voxel 数が `<code style="color:#22d3bf">MAX_VOXELS</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">1 &lt;&lt; 27</code>` ≈ 1.34 億)を超えると</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 空マスクは run 数 0 の `<code style="color:#22d3bf">VolRLE</code>` になる(エラーではない)。</p>
+<p>注意: 軸順は `<code style="color:#22d3bf">[z, y, x]</code>`(depth, row, col)。run は x 方向にしか走らないので、</p>
+<p>x 方向に細かく途切れる形状(縞・ノイズ)ほど run 数が増え、圧縮の利点は減る。</p>
+<p>`<code style="color:#22d3bf">vol_rle_volume</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vol_rle_bbox</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vol_rle_centroid</code>` は decode せずに</p>
+<p>run 上で答える。集合演算は `<code style="color:#22d3bf">vol_rle_union</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vol_rle_intersect</code>` /</p>
+<p>`<code style="color:#22d3bf">vol_rle_difference</code><code style="color:#22d3bf">、密配列へ戻すのは </code><code style="color:#22d3bf">vol_rle_decode</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

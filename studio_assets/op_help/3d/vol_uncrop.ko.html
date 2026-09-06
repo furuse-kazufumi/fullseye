@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volops; volops.vol_uncrop(part, offset, shape, fill=0.0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_uncrop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>잘라낸 부분 볼륨을 원래 틀에 되붙입니다(`<code style="color:#22d3bf">vol_crop_domain</code>` 의 역).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>:func:<code style="color:#22d3bf">vol_crop_domain</code>).</p>
+<p>*part* is placed at voxel *offset* `<code style="color:#22d3bf">(z0, y0, x0)</code>` inside a new</p>
+<p>`<code style="color:#22d3bf">(D, H, W)</code>` float64 volume of the given *shape*, everything else set to</p>
+<p>*fill* (the 2-D `<code style="color:#22d3bf">full_domain</code>` restoration, made explicit — the cropped</p>
+<p>result must land at exactly the coordinates it came from). The part must fit</p>
+<p>entirely inside *shape* at *offset*; anything else raises `<code style="color:#22d3bf">ValueError</code>`</p>
+<p>rather than silently clipping data. *offset* and *shape* must be whole</p>
+<p>voxel counts (a fractional value is rejected, never truncated — a silent</p>
+<p>`<code style="color:#22d3bf">int(1.5) -&gt; 1</code>` would shift the data one voxel with no warning), and</p>
+<p>*fill* must be a finite number: every operator in this module refuses</p>
+<p>NaN/Inf voxels, so a non-finite fill would produce a volume nothing</p>
+<p>downstream will accept.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

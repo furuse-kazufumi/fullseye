@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_slot_bias.png",
+  "name": "slot_bias",
+  "caption": "ゼロ点(整数幅)だけ偏りが 1 桁大きい。偏りは合否に、散らばりは繰り返し精度に効く。",
+  "shape": [
+   176,
+   468,
+   3
+  ],
+  "csv": "01_slot_bias.csv",
+  "tsv": "01_slot_bias.tsv"
+ },
+ {
+  "file": "02_blur_cliff.png",
+  "name": "blur_cliff",
+  "caption": "偏りはどちらも正(対が互いを押し広げる)。符号が一定なので繰り返し測っても消えない。下端 -4 は表示の打ち切り(|偏り| < 1e-4 px)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_noise_bias_spread.png",
+  "name": "noise_bias_spread",
+  "caption": "偏りは SNR 140 まで動かず、増えるのは散らばりだけ。SNR 7 で崩壊しても成功率は 100 % のまま。",
+  "shape": [
+   248,
+   556,
+   3
+  ],
+  "csv": "03_noise_bias_spread.csv",
+  "tsv": "03_noise_bias_spread.tsv"
+ },
+ {
+  "file": "04_edge_definition.png",
+  "name": "edge_definition",
+  "caption": "3 本の縦線は 16.0 px = 200 um 離れている。サブピクセルの 0.01 px より 3 桁大きい。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

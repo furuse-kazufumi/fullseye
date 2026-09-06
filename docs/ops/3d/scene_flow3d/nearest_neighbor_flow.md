@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 各点 pts0 から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す。
 
+``pts0`` の各点 p について ``pts1`` 中の最近傍 q を cKDTree で求め、変位
+``q - p`` を返す。要素数は N != M でよい。変位が局所点間隔より十分小さい
+とき(小さな運動)にのみ「点 i の真の対応先」を当てる — 大変位では最近傍が
+別点に張り付く(honest な限界、正則化には :func:`smooth_flow` を併用)。
+
+Args:
+    pts0: (N, 3) 時刻 0 の点群。
+    pts1: (M, 3) 時刻 1 の点群。
+Returns:
+    (N, 3) 変位ベクトル場(pts0 と同じ行順)。
+Raises:
+    ValueError: 形状不正、または pts0 が非空なのに pts1 が空。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

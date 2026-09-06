@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(127 例)
+### 2-D 画像/信号/幾何(136 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -25,6 +25,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **terrain**
 - **地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)** — 平面・円錐・ガウス丘という解析曲面で傾斜と曲率を検算し、離散化の誤差と式の誤りを2 次収束で区別する。欠測(水面)の扱いで集水量がどう変わるかを 3 通り並べ、日当たりを向き別に出す。**この PoC が天空率の 18 倍の遅さを暴いた**。 `py -3.11 examples/poc_dem_terrain.py`
+- **地心座標と地球の丸み(測地⇄ECEF・地心格子・曲率落ち・緯度で変わるセル寸法)** — 赤道・極・楕円体方程式・法線移動で ECEF を検算し、3700 点の往復誤差を高さ別に印字する(楕円体面 2e-9 m、20 km で 4e-6 m —— docstring の 1e-7 m は地表付近の値)。地心緯度と測地緯度の差 0.19 度、曲率落ちの表、Web メルカトル分解能、等角度格子の東西傾斜が北緯 60 度で素朴計算だと半分になることを閉形式と突き合わせる。 `py -3.11 examples/dem_geodesy_tour.py`
+- **地形解析ツアー(粗さ・TPI・D8 流向・河道・地平線仰角・可視領域)** — 平面・柱・円錐・V 字谷・壁という答えを数えられる地形で 6 op を通す。TRI=√(3/4)|∇z|·cell、谷底の集水量 W(i+1) と河道マスクのセル単位一致、壁の仰角 atan(H/d)、壁の影の長さ e·d0/(e-H)。欠測の outlet 方針は「他に下る先が無いときだけ欠測へ」と実測。 `py -3.11 examples/dem_terrain_analysis_tour.py`
 
 **metrology**
 - **白色干渉によるナノメートルの段差計測(どこまで測れるか)** — 既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。 `py -3.11 examples/poc_interferometry_step.py`
@@ -42,6 +44,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **創傷面積の経時変化(較正の誤差は面積に 2 乗で効く)** — ★★ゼロ点(1 枚目だけで較正)で撮影距離 Z/Z0 を 0.90 → 1.10 と振ると面積誤差は**+23.58 % → -17.36 %**。閉形式 (Z0/Z)²-1 との差は最大 0.278 pp(= ラスタライズの床)だが、線形近似の -2ε は 3.58 pp 外れる —— **「2ε」は 1 次項であって法則ではない**。★★治癒定数 k の推定が壊れる: 距離が 1.2 %/day 漂うと真値 0.1200 に対し 0.1424(**+18.7 %**)。★ゼロ点は**散らばりがいちばん小さい**ので、ばらつきでは気づけない。★標識を創面の外へ回す(外挿 → 内挿)だけで平均 |誤差| が 1.11 % → 0.10 %。 `py -3.11 examples/poc_wound_area_tracking.py`
 - **光弾性(縞から応力。壊れるのは応力が大きい所ではない)** — 円板の直径圧縮は閉形式の応力場を持ち、偏光系は fullseye の `mueller_element` で組める(教科書の I=sin²(δ/2) と 125 通りで最大差 2.2e-16、水平直径の力の積分は誤差 0.000 %)。位相シフトで δ は復元できるが **(δ,θ) ↔ (-δ,θ+90°) の二義性で 2.7 % の画素は符号が反転**する。巻き戻しが壊れる場所は 2 つ(1 縞 2 画素未満・変調が落ちる等方点)で、どちらも撮る前に予測できてマスクで外せる。 `py -3.11 examples/poc_photoelasticity.py`
 - **断面形状の検査(翼型・羽根。既知の欠陥を入れて検出できる大きさを出す)** — NACA 4 桁の閉形式を設計形状にして、厚み・キャンバー・前縁半径を測る。既知の量の欠陥を注入して測り返し、検査の床(同じ形どうしの偏差)と検出限界を数字で示す。**位置合わせが前縁の欠陥を後縁へ移す**ことも隠さず印字する。 `py -3.11 examples/profile_shape_inspection.py`
+- **断面輪郭の枠を作る(正規化・等弧長の取り直し・上下面の分離・位置合わせを閉形式で検算)** — 既知の相似変換を掛けた翼型が正規化で機械精度で戻ること、粗密 2 万倍の円が等弧長で一様な角度刻みになること、NACA 0012 の上下面が閉形式の ±y_t に 6e-6 で乗ること、7 度・並進の剛体変換を chord/rigid が取り戻しつつ**2 % の拡大は吸収しない**ことを出す。開いた曲線の拒否も確かめる。 `py -3.11 examples/profile_frame_tour.py`
 
 **photometry**
 - **天体スタックの測光精度(何枚重ねるとどこまで正確に測れるか)** — 合成星野の既知フラックスを真値に、枚数を振って測光誤差が 1/√N で下がるかを測る。宇宙線汚染で単純平均 +5.89 % に対し κ-σ +0.30 %。**選別は雑音を √2 払って系統誤差を買う取引**であることも数字で示す。 `py -3.11 examples/poc_astro_photometry.py`
@@ -128,9 +131,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **粒子追跡を (行, 列, 時刻) の体積として測る(誤リンクの向きは 1 種類ではない)** — ★★粒子 400 個で曖昧 0.1 %・欠測 24.5 %。位置を真値にして欠測だけ消すと拡散係数の比が3.429 → 0.925 —— **同じ「誤り率」でも D が 3.7 倍動く**。誤り率を 1 本の数字にまとめた時点で、検出を増やすのかリンクを厳しくするのかが決まらなくなる。★★1 歩は 1.7 px しか無いのに欠測誤リンクの飛距離は最近接距離(4〜21 px)で決まるので、曖昧が D を 7 % 下げるあいだに欠測は **240 % 上げる**。 `py -3.11 examples/poc_particle_tracking.py`
 - **(x, y, t) で数える(通過台数とオクルージョン、そして L/V という 1 つの定数)** — ★**疎な自由流ではスリット法は仮想ループ(1-D)に勝てない** —— どちらも 10/10 で同点。同じ計数列の情報しか使っていないので当然で、2-D にした見返りは台数ではなく**速度(誤差 0.02 % 以下)**と、壊れ方が絵で見えること。★★同じスリット画像から2 通りの数え方が出て**壊れ方が逆向き**: 帯を全部数えるとフレーム間隔で千切れて過大(Δt=16 で 10 → 49)、計数線と交わる帯だけなら過大は起きず見逃しだけになる。 `py -3.11 examples/poc_traffic_counting.py`
 - **粒子画像 2 枚から流れを測る(PIV。真値を自分で作って誤差を出す)** — 既知の渦を撒いた粒子画像対を合成し、窓ごとの相互相関で変位場を出す。零方向への偏りと補正、多段、既知の系統誤差(ピークロッキング)、非圧縮の発散 0 による独立検算まで。**外れ値検定がここでは害になる**ことも隠さず印字する。 `py -3.11 examples/piv_flow_from_particles.py`
+- **PIV の派生 op を一巡する(場の量・可視化・採点・アンサンブル・時間統計を閉形式で検算)** — 剛体回転・膨張・せん断の線形場で Q 基準/渦回転強度/ひずみ速度/渦度を厳密に検算し、Lamb–Oseen 渦で窓変形が多段より誤差を下げることと、Q の面積が閾値で 4 倍変わることを出す。ZNCC 採点は壊した窓だけ落ち、アンサンブル相関は外れ本数を 52 %→5 % に減らし、時間統計の RMS を独立な経路で突き合わせ、centroid のピークロッキングと 4 方向の色を固定する。**RMS だけでは差が見えない**ことも隠さず印字する。 `py -3.11 examples/piv_field_analysis_tour.py`
 
 **shape_descriptors**
 - **輪郭の楕円フーリエ記述子(平滑化・不変マッチング)** — 閉輪郭をフーリエ級数で表し、高調波打ち切りで平滑化、回転/拡大/移動/始点に不変な記述子で形状検索する(EFD, Kuhl-Giardina)。 `py -3.11 examples/contour_fourier.py`
+- **XLD 輪郭 → 不変記述子 → 対応点ワープ(区分アフィン / TPS)を真値つきで一巡** — from_xld で (row,col) 点列を取り、invariants の回転/拡大/移動/始点不変を 1e-9 で確かめ、add_frame_corners + 2 種のワープで恒等・平行移動・1 点の着地・面積比 1.25^2 を検算する。(row,col) のまま渡す座標順の事故が例外なく黙って外れることも示す。 `py -3.11 examples/shape2d_morph_descriptor_tour.py`
 
 **drawing**
 - **画像にマーカー/線/円/輪郭を直接描く(ラスタ描画)** — 作業者が指定した対応点を画像そのものに焼き込むラスタ描画op(imagedraw)。描いた既知シーンを検出器が回収し結果を描き返す(描画→検出→注釈)。 `py -3.11 examples/draw_annotate.py`
@@ -138,6 +143,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **図注(annotate)op を一枚の図で全部使い真値と突き合わせる** — 文字下敷き/矢印/凡例/カラーバー/目盛り/拡大差し込みの annotate 全 op を 1 枚の図に載せ、配置と画素値を GT と照合する。 `py -3.11 examples/annotate_gallery.py`
 - **学術図の図注: 引き出し線・寸法・角度・輪郭・スケールバー・差し込みを 1 枚に組む** — annotate の paper 族(引き出し線の衝突回避/番号+凡例/寸法線/角度/切りのよいスケールバー/方位/隅の拡大/マスク輪郭/経路文字/色分け+カラーバー/パネル文字)で 4 パネルの論文図を組み、layout の閉形式(肘・寸法値・角度・バー長・輪郭面積・セル矩形)と描画結果を突き合わせる。 `py -3.11 examples/paper_figure.py`
 - **リアルタイム 2-D グラフィックス(gfx2d)で 1 枚の画面を組み立てる** — 背景/タイル/スプライト/パーティクル/光/影/ポスト処理を合成し、ストレート α と乗算済み α の取り違え(この族が黙って間違う唯一の場所)を同じ絵の上で数値化する。 `py -3.11 examples/gfx2d_scene.py`
+- **経路に沿う文字の配置表とパネル文字 (a)(b) を閉形式で検算** — annotate_text_path_layout の弧長・位置・傾き・used を閉形式と突き合わせ(L 字経路で 0/90 度)、annotate_panel_label の板の縁が margin に乗ること・text_box と画素同一であることを確かめる。 `py -3.11 examples/annotate_paper_tour.py`
 
 **signal_processing**
 - **点列の多項式近似・フーリエ・ローパス/ハイパス** — 計測1D列をトレンド抽出(多項式)・周波数分析(FFT)・平滑化(ローパス)・細部抽出(ハイパス)する(signal1d)。各処理に beat-the-null のGT付き。 `py -3.11 examples/signal_filter.py`
@@ -161,6 +167,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **色・芸術・拡張(sim2real)op 族を総なめ** — 色空間変換/芸術効果/augmentation など色・拡張族の全 op を GT 検証。 `py -3.11 examples/gallery2d_color_artistic.py`
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
+- **入口 op(img_to_*、category=bridge)を総なめ** — 1 枚の画像から点群・1-D 信号・動画・体積・ライトフィールド・複素場・光子列・ビート立方体・行列・キーポイント・モノジェニック信号を作る 12 op を、型契約・有限性・決定性・ノブの効きに加え op ごとの閉形式(z = 値×10×s、フレームの変位、距離ビン …)で検証する。 `py -3.11 examples/gallery2d_bridge.py`
 
 **workflow**
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
@@ -215,6 +222,12 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **optics_layout**
 - **型番から検査セルを組み、撮る前に成立するかを数字で決める** — カタログのセンサー/レンズ/照明を選び、①レンズがセンサーを覆うか②必要な寸法を分解できるか③そのフレームレートを伝送路が運べるか④実際に撮ったらどう写るか、を閉じた式で確かめる(optscene)。 `py -3.11 examples/vision_layout_from_catalog.py`
 - **光線を追ってレンダラを検算する(交点・法線・反射・遮蔽)** — 絵の見た目でなく光線の量で答え合わせをする。交点 z、法線の向き、反射の法則 |d·n+r·n|<1e-14、遮蔽で可視率が落ちること、環境光の違いを固定してから studio 描画する(optscene)。 `py -3.11 examples/studio_raytrace_scene.py`
+
+**shape_statistics**
+- **形態統計(Procrustes / GPA / 形態 PCA / 左右非対称 / 面距離)を真値つきで一巡** — 既知の 2 変形モードを持つ合成ランドマーク群で、相似変換の復元(1e-9)・GPA 平均の一致・PCA 往復・Mahalanobis 閉形式・正中面の復元・±0.2 の符号つき面距離を検算し、align=True が大きさを食う点と、面の再当てはめが非対称量を縮める点を印字する。 `py -3.11 examples/shapestat_landmark_tour.py`
+
+**blob_analysis**
+- **融合した 2 円板を距離変換 → h-maxima の種 → 分水嶺で割る(閉形式で検算)** — blob_distance の中心値=半径、blob_seeds の種を h-maxima 閉形式と画素単位で照合、blob_split の 4 領域・前景保存を確かめる。h より低い塊にも種が立つ点と、割れ目が番号の大きい種の側へ食い込む偏りを隠さず印字する。 `py -3.11 examples/blob_split_tour.py`
 
 ### 3-D 点群/体積/曲面(117 例)
 
@@ -923,7 +936,7 @@ _計 347 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 885 ops / 47 categories。_
+_計 897 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -987,6 +1000,20 @@ _計 885 ops / 47 categories。_
 
 ### barcode(1)
 - `decode_barcode` (halcon: `find_bar_code`) `image → feature` · 例: `gallery2d_physics_alife_3d`, `poc_barcode_1d`
+
+### bridge(12)
+- `img_to_points` `image → points` · 例: `gallery2d_bridge`
+- `img_to_keypoints` `image → keypoints` · 例: `gallery2d_bridge`
+- `img_to_signal` `image → signal` · 例: `gallery2d_bridge`
+- `img_to_counts` `image → counts` · 例: `gallery2d_bridge`
+- `img_to_matrix` `image → matrix` · 例: `gallery2d_bridge`
+- `img_to_video` `image → video` · 例: `gallery2d_bridge`
+- `img_to_volume` `image → volume` · 例: `gallery2d_bridge`
+- `img_to_lightfield` `image → lightfield` · 例: `gallery2d_bridge`
+- `img_to_rgb` `image → rgbimage` · 例: `gallery2d_bridge`
+- `img_to_cimage` `image → cimage` · 例: `gallery2d_bridge`
+- `img_to_beatcube` `image → beatcube` · 例: `gallery2d_bridge`
+- `img_to_monogenic` `image → qimage` · 例: `gallery2d_bridge`
 
 ### classification(1)
 - `classify_shape` `region → feature` · 例: `gallery2d_features`

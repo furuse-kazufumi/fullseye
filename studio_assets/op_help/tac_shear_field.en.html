@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_shear_field — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_shear_field&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tac_shear_field.png" alt="tac_shear_field: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/tac_shear_field.png" alt="tac_shear_field: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_shear_field.a.jpg">tac_shear_field: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_shear_field.b.jpg">tac_shear_field: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_shear_field.inputs.jpg">tac_shear_field: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>In-plane shear proxy from the 2-D structure tensor (Foerstner / Bigun-Granlund orientation coherence). The tensor `<code style="color:#22d3bf">J = G_sigma(grad v * grad v^T)</code><code style="color:#22d3bf"> has eigenvalues l1 &gt;= l2, and the coherence </code><code style="color:#22d3bf">(l1-l2)/(l1+l2) = sqrt((J11-J22)^2 + 4*J12^2) / (J11+J22)</code><code style="color:#22d3bf"> is 1 where the gel texture is stretched into a single dominant orientation (as it is under tangential/shear load) and 0 where it is isotropic. The result is additionally weighted by the tensor trace (gradient energy) so that texture-free, un-contacted gel stays dark instead of amplifying noise orientation. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = tensor integration sigma (0.6..4.6), </code><code style="color:#22d3bf">b</code>` = output gain (0.5..2.5). Output clipped to [0,1], HxW; a constant frame has zero gradient energy and yields an all-zero shear field.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

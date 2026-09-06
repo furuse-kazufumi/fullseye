@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact
 
+algorithm on the convex hull). Returns ``center`` (``cd/cr/cc``) and radius
+``r`` — the smallest sphere that contains every point. This is the 3-D
+``smallest_circle``; its radius is strictly below the AABB-diagonal sphere on
+any non-spherical set, and equals the true radius for points on a sphere.
+Raises ``ValueError`` on empty input.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

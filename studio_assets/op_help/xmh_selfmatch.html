@@ -2,8 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xmh_selfmatch — 2D <code style="color:#22d3bf">self-similarity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_selfmatch&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p><img src="fig/xmh_selfmatch.png" alt="xmh_selfmatch: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/xmh_selfmatch.png" alt="xmh_selfmatch: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_selfmatch.a.jpg">xmh_selfmatch: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_selfmatch.inputs.jpg">xmh_selfmatch: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*カラー (H,W,3) の入力は載せていない: この op は色チャネルを 3 本目の空間軸として扱う(色を跨ぐ)ため。チャネルごとに分けて呼ぶこと。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>自己相似マップ(`<code style="color:#22d3bf">mahotas.template_match</code>` による自己テンプレートマッチング)。画像中心から切り出した小さなパッチを画像全体に対してテンプレートマッチングし、パッチに似た場所ほど 1 に近い値になるよう正規化して返す。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はパッチの半径(3+8 px 相当)を振る —— 大きくするほど広い範囲の類似度になる。</code><code style="color:#22d3bf">b</code>` は未使用。周期的なテクスチャや繰り返しパターンの検出に使える。</p>

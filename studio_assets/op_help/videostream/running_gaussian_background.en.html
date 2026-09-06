@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import videostream; videostream.running_gaussian_background(video, alpha: &#x27;float&#x27; = 0.02, k: &#x27;float&#x27; = 2.5, var_init: &#x27;float&#x27; = 0.01, selective: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsvideostream.get(&quot;running_gaussian_background&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adaptive single-Gaussian background (the running mean) per frame → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>画素ごとに平均 `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> と分散 </code><code style="color:#22d3bf">var</code>` を持つ単一ガウス背景(Wren の Pfinder)を</p>
+<p>回し、各フレーム後の `<code style="color:#22d3bf">mean</code>` を返す。前景判定は</p>
+<p>`<code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">selective=True</code>`(既定)では前景と判定した画素の</p>
+<p>`<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">var</code>` を<b>更新しない</b>ので、ゆっくり動く物体が背景に溶けない。</p>
+<p>更新式は `<code style="color:#22d3bf">mean += α diff</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">var += α (diff^2 - var)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">var</code>` の下限は 1e-4。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> 配列か 2-D フレームの list。整数は最大値で </code><code style="color:#22d3bf">[0, 1]</code>`</p>
+<p>に正規化、float はクリップ。NaN/Inf は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code>` の学習率。既定 0.02(時定数およそ 50 枚)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 100]</code>`。前景とみなす標準偏差の倍数。既定 2.5。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">var_init</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[1e-9, 1]</code><code style="color:#22d3bf">。先頭フレームでの分散の初期値(</code><code style="color:#22d3bf">[0, 1]</code>` 強度の 2 乗)。</p>
+<p>小さすぎると 2 枚目から全画素が前景になり、`<code style="color:#22d3bf">selective</code>` で更新が止まる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">selective</code><code style="color:#22d3bf">: 前景画素の更新を止めるか。</code><code style="color:#22d3bf">False</code>` なら全画素を常に更新。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">t = 0</code>` は先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(形・dtype・各範囲)。</p>
+<p>同じモデルの前景マスクは `<code style="color:#22d3bf">running_gaussian_foreground</code>`(同じ引数で対にすると</p>
+<p>フレームごとに整合する)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

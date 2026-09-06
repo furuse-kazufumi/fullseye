@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.scene_box(center_mm, half_size_mm, material=None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;scene_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>轴对齐长方体零件(AABB)。`<code style="color:#22d3bf">half_size_mm</code>` 是各轴的半尺寸 [mm]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>辺が x / y / z 軸に平行な箱で、回転は持たない(斜めに置く手段は無い)。</p>
+<p>占める範囲は各軸で `<code style="color:#22d3bf">center ± half</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center_mm</code>`: 長さ 3 の有限値 [mm]。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">half_size_mm</code><code style="color:#22d3bf">: 長さ 3、**全軸とも正**。1 つでも 0 以下なら </code><code style="color:#22d3bf">ValueError</code>`</p>
+<p>(厚さ 0 の板は `<code style="color:#22d3bf">scene_plane</code>` の有限板で表す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">material</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_material</code>` の結果。省略時は lambert、albedo 0.6。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;box&quot;, &quot;c&quot;: (3,), &quot;h&quot;: (3,), &quot;material&quot;}</code>` の dict。</p>
+<p>交差はスラブ法(各軸の入口/出口の max/min)。`<code style="color:#22d3bf">scene_difference</code>` の</p>
+<p>`<code style="color:#22d3bf">solid</code><code style="color:#22d3bf"> にも </code><code style="color:#22d3bf">cavity</code>` にも使える(角穴、ポケット)。薄い箱をステージに</p>
+<p>置けば「有限で厚みのある台」になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群にスーパー2次曲面を least_squares で当てはめ dict{a,eps,R,t,residual} を返す。
 
+初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。
+``a`` は正、``eps`` は [0.1, 2.0] にクリップして最適化する。
+
+Returns
+-------
+dict: {'a': (3,), 'eps': (2,), 'R': (3,3), 't': (3,), 'residual': float}
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

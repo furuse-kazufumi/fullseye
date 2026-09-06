@@ -5,6 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 相位相关(FFT)。返回把 b 对齐到 a 的整数位移 (dz,dy,dx)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Reddy &amp; Chatterji の 3D 版。相互パワースペクトルの逆 FFT のピーク = 平行移動。テンプレート</p>
+<p>不要・全 volume・O(N log N)。回転/スケールは別途(PCA / log-polar)。</p>
+<p>引数: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は同形の 3-D 配列(違えば ValueError)。float32 に落として FFT する。</p>
+<p>返り値: int の tuple `<code style="color:#22d3bf">(dz, dy, dx)</code><code style="color:#22d3bf">、各軸 </code><code style="color:#22d3bf">(−N/2, N/2]</code>` に折り返し済み。意味は</p>
+<p>`<code style="color:#22d3bf">np.roll(b, (dz,dy,dx), axis=(0,1,2)) ≈ a</code>`(b をこれだけ動かすと a に重なる)。</p>
+<p style="margin:2px 0 2px 12px">• 循環相関なので、はみ出した部分は反対側から回り込む(窓掛けはしない)。シフトが volume の</p>
+<p>半分を超えると符号が反転して見える。</p>
+<p style="margin:2px 0 2px 12px">• 位相のみ(`<code style="color:#22d3bf">R/|R|</code>`)なので振幅・コントラスト差に不変だが、ノイズが白色化されてピークが</p>
+<p>埋もれることがある。全 0 の volume は 0 になり index 0 を返す。</p>
+<p style="margin:2px 0 2px 12px">• 整数精度。サブボクセルは `<code style="color:#22d3bf">refine_translation_lk</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">refine_peak_newton</code>` へ。</p>
+<p style="margin:2px 0 2px 12px">• 回転・スケールがあると効かない(`<code style="color:#22d3bf">match_logpolar_z</code>` → 回転補正 → 本 op の順)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

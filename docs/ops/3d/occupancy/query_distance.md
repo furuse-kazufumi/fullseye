@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。
 
+``bounds``/``res`` は ESDF を作った格子と同じもの。world→連続ボクセル座標は
+``c=(q-lo)/span*res-0.5``(voxel i の中心が c=i)。三線形補間はボクセル中心 8 近傍を
+重み付け(格子外はエッジにクランプ=最近端の値で外挿)。planner がノード/経路上の任意点で
+離隔を問い合わせる用途。返り値は ESDF と同じ world 単位。
+
+Raises ValueError for res<=0, degenerate bounds, non-(M,3) query, or unknown mode.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

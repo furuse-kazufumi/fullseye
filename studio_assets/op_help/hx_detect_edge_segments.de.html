@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_detect_edge_segments&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">detect_edge_segments</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/hx_detect_edge_segments.png" alt="hx_detect_edge_segments: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/hx_detect_edge_segments.png" alt="hx_detect_edge_segments: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.a.jpg">hx_detect_edge_segments: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.b.jpg">hx_detect_edge_segments: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.inputs.jpg">hx_detect_edge_segments: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Detektiert gerade Kantenfragmente: mit NMS ausdünnen, dann die Komponenten behalten, die die PCA als langgestreckt (linienhaft) ausweist.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">hx_nonmax_dir(v, a, 0)</code><code style="color:#22d3bf"> で細線化したエッジ(</code><code style="color:#22d3bf">&gt; 0</code>`)を 8 近傍で連結成分に分け、各成分の画素座標の共分散</p>
+<p>固有値比 `<code style="color:#22d3bf">λmax/λmin</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">min_ratio</code>` 以上のもの(細長い=直線状)だけを 1 とする 0/1 の float region を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 細線化段の弱エッジしきい値(</code><code style="color:#22d3bf">hx_nonmax_dir</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> と同じ。正規化振幅 </code><code style="color:#22d3bf">a*0.3</code>` 未満を捨てる)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 細長さのしきい値 </code><code style="color:#22d3bf">min_ratio = 3 + b*12</code>`(3〜15)。大きいほど真っ直ぐな断片だけ残る。</p>
+<p style="margin:2px 0 2px 12px">• 画素数 5 未満の成分は無条件に捨てる。`<code style="color:#22d3bf">λmin</code>` がほぼ 0(完全な直線)なら比を無限大として採用する。</p>
+<p>注意: 直線性の判定は「点群の広がりが 1 軸に偏っているか」であり、曲線でも十分細長ければ通る。細線化段が斜め</p>
+<p>エッジをほとんど細線化しない(`<code style="color:#22d3bf">hx_nonmax_dir</code>` の注記参照)ため、斜めのエッジは幅を持った塊になり固有値比が</p>
+<p>下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら</p>
+<p>`<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hough_line_trans</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

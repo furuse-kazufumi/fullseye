@@ -2,11 +2,18 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xpil_contour — 2D <code style="color:#22d3bf">edges</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_contour&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p><img src="fig/xpil_contour.png" alt="xpil_contour: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/xpil_contour.png" alt="xpil_contour: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xpil_contour.inputs.jpg">xpil_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Pillow の輪郭抽出フィルタ。`<code style="color:#22d3bf">PIL.ImageFilter.CONTOUR</code>` の固定カーネルで輪郭線だけを白背景に黒線で残すような効果を作る（ペン画・線画調のエフェクト）。</p>
 <p>a, b は未使用（固定カーネル）。</p>
+<p>カーネルは 3x3 の `<code style="color:#22d3bf">[-1,-1,-1; -1,8,-1; -1,-1,-1]</code><code style="color:#22d3bf">（scale 1、offset 255）で、出力は </code><code style="color:#22d3bf">255 + (8*中心 - 8 近傍の和)</code><code style="color:#22d3bf"> を 0〜255 に飽和させたもの。平坦部は255（白）、周囲より暗い画素は暗く、周囲より明るい画素は 255 で飽和する。つまり段差の「暗い側」に 1 画素幅の黒線が乗り、明るい側は白のまま（</code><code style="color:#22d3bf">xpil_find_edges</code>` は同じカーネルで offset 0 なので両側が明るく出る）。</p>
+<p>入力は [0,1] に clip して `<code style="color:#22d3bf">*255</code><code style="color:#22d3bf"> の切り捨てで 8 ビットの L 画像にし、出力を </code><code style="color:#22d3bf">/255</code><code style="color:#22d3bf"> で [0,1] に戻す（1/255 の量子化が入る）。画像の最外周1 画素は Pillow がフィルタせず入力値のまま返す。0 サイズの画像はValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ノイズにも反応するので、前段に </code><code style="color:#22d3bf">xpil_smooth_more</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">median</code><code style="color:#22d3bf"> を置くと線が整理される。線を領域として使うなら </code><code style="color:#22d3bf">invert</code><code style="color:#22d3bf"> で黒線側を明るくしてから </code><code style="color:#22d3bf">threshold</code>` に繋ぐ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -4,6 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volgray; volgray.vol_stretch(vol, p_low=1.0, p_high=99.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_stretch&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按分位數把對比度拉伸到 `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">(穩健版 </code><code style="color:#22d3bf">scale_image_max</code>`)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Computes the *p_low*-th and *p_high*-th intensity percentiles and maps</p>
+<p>`<code style="color:#22d3bf">[P(p_low), P(p_high)]</code><code style="color:#22d3bf"> linearly onto </code><code style="color:#22d3bf">[0, 1]</code>`, clipping outside — so a</p>
+<p>handful of hot/cold outlier voxels (a metal artefact, a dead detector</p>
+<p>element) no longer dictates the display range, unlike a plain min/max</p>
+<p>normalisation. The defaults (1 % / 99 %) are the usual display-stretch</p>
+<p>choice.</p>
+<p>If the two percentile values coincide (a constant — or near-constant —</p>
+<p>volume), the input is <b>returned unchanged</b> rather than divided by zero</p>
+<p>(see the module docstring&#x27;s flat-volume note).</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>p_low, p_high : float</p>
+<p>Percentiles in `<code style="color:#22d3bf">[0, 100]</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">p_low &lt; p_high</code>` (fail-closed).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D, H, W), float64</p>
+<p>The stretched volume in `<code style="color:#22d3bf">[0, 1]</code>` (degenerate percentiles: the input</p>
+<p>itself).</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D / non-finite input, percentiles out of `<code style="color:#22d3bf">[0, 100]</code>`, or</p>
+<p>`<code style="color:#22d3bf">p_low &gt;= p_high</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

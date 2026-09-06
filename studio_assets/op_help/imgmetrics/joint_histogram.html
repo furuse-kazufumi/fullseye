@@ -6,6 +6,19 @@
 <p>2 枚の同時ヒストグラム(正規化した同時確率)。</p>
 <p>ビン幅は `<code style="color:#22d3bf">data_range</code>` から決める ―― 画像ごとに min/max で伸縮させると、</p>
 <p><b>一様に暗い絵と一様に明るい絵の相互情報量が同じになる</b>ので。</p>
+<p>手順: 2 枚を平坦化し、両方に <b>同じ</b> ビン境界 `<code style="color:#22d3bf">[lo, lo + data_range]</code>`</p>
+<p>(`<code style="color:#22d3bf">lo</code><code style="color:#22d3bf"> = 2 枚の最小値の小さいほう、</code><code style="color:#22d3bf">bins</code><code style="color:#22d3bf"> 等分)で </code><code style="color:#22d3bf">numpy.histogram2d</code>` を取り、</p>
+<p>総数で割って同時確率にする。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>`: 同じ形(次元は問わない)、有限。dtype は同じでなければ</p>
+<p>`<code style="color:#22d3bf">data_range</code>` を明示する(混在 dtype からの推定は拒否)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bins</code>`: 2 以上の整数。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">data_range</code><code style="color:#22d3bf">: 整数 dtype は自動(uint8 = 255 など)、float は </code><code style="color:#22d3bf">[0, 1]</code>` の</p>
+<p>ときだけ 1.0、それ以外は明示必須。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(bins, bins)</code><code style="color:#22d3bf"> の float64、和は 1。行が </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> のビン、列が </code><code style="color:#22d3bf">b</code>` のビン。</p>
+<p>`<code style="color:#22d3bf">lo + data_range</code>` を超える値はビンに入らない(数えられない)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(`<code style="color:#22d3bf">MetricContractError</code><code style="color:#22d3bf">): 形が違う / 空 / 非有限 / </code><code style="color:#22d3bf">bins &lt; 2</code>` /</p>
+<p>範囲に入る標本が 0。</p>
+<p>`<code style="color:#22d3bf">joint_entropy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mutual_information</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">image_entropy</code>` はこの表から計算する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

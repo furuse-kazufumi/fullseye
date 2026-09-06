@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import meshres; meshres.pc_poisson_disk(points, radius, seed=0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;pc_poisson_disk&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>블루 노이즈 솎기: 어느 두 점도 *radius* 보다 가깝지 않도록 탐욕적으로 남깁니다(`<code style="color:#22d3bf">points</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Points are visited in a seeded random order; a point is kept if no kept</p>
+<p>point lies within *radius* (cKDTree ball query). Dense regions are thinned</p>
+<p>to the radius, sparse regions (spacing already &gt; radius) are kept whole —</p>
+<p>unlike a voxel grid, which also moves points to cell centroids.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;region_growing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Grow regions by normal similarity and give the connected smooth regions the same label (the variant without a curvature gate).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が</p>
+<p>`<code style="color:#22d3bf">angle_thresh_deg</code>` 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので</p>
+<p>同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。</p>
+<p>法線は符号不定(PCA 由来)なので `<code style="color:#22d3bf">|n_p·n_q|</code>` で判定(表裏を同一視)。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>normals: (N,3) 単位法線。None なら :func:<code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
+<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
+<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>Returns:</p>
+<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。**min_region_size 未満の</p>
+<p>小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)** = 統一契約(-1=ノイズ)に従う。</p>
+<p>空入力は shape (0,) を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_detail_map(V, F)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;mesh_detail_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Per-vertex coarseness and detail of a mesh (`<code style="color:#22d3bf">table</code>`).</p>
+<p>`<code style="color:#22d3bf">coarseness</code>` (nv,) — mean incident edge length, mapped linearly from the</p>
+<p>5th percentile (0) to the 95th (1) and clipped; `<code style="color:#22d3bf">edge_length</code>` (nv,) the</p>
+<p>raw value. `<code style="color:#22d3bf">detail</code>` (nv,) — mean angle (radians) between the normals of</p>
+<p>the faces around the vertex divided by the mean incident edge length: a</p>
+<p>curvature proxy in 1/unit that is high where the *data* already carries</p>
+<p>relief, independent of how densely it is sampled. `<code style="color:#22d3bf">relief_weight</code>` (nv,)</p>
+<p>= `<code style="color:#22d3bf">coarseness × (1 − detail_norm)</code>` — 1 where the mesh is coarse and</p>
+<p>smooth (add synthetic detail), 0 where it is fine or already rough — the</p>
+<p>weight :func:<code style="color:#22d3bf">render3d.mesh_displace_fbm</code>-style steps should multiply</p>
+<p>their amplitude by. Also `<code style="color:#22d3bf">stats</code>` for each map.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

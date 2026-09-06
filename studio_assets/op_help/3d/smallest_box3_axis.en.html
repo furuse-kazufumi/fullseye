@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import measure3d; measure3d.smallest_box3_axis(points) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;smallest_box3_axis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Axis-aligned bounding box (the 3-D `<code style="color:#22d3bf">smallest_rectangle1</code>`). Returns the</p>
+<p>`<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> corners and </code><code style="color:#22d3bf">center</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">(depth, row, col)</code>`, the full</p>
+<p>`<code style="color:#22d3bf">size</code><code style="color:#22d3bf"> (depth, row, col edge lengths), and the enclosed </code><code style="color:#22d3bf">volume</code>`. This is</p>
+<p>the honest null baseline that `<code style="color:#22d3bf">smallest_box3</code>` beats on any rotated object.</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on empty input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

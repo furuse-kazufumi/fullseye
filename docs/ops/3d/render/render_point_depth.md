@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。
 
+``project_points(points, K, R, t)`` で ``(u, v, z)`` を取り、``round`` した画素 ``(row=v,
+col=u)`` が ``size=(H, W)`` 内かつ ``z > 0`` の点だけを、遠い順に書いて近い点で上書きする
+(同一画素は最小 z が残る)。点が無い画素は **0**(``tsdf_from_depth`` / ``depth_to_points`` が
+無効値として扱う規約)。返り値 ``(H, W)`` float64、単位は点の座標の単位。
+- 1 点 = 1 画素なので疎な点群は穴だらけになる(``mesh_to_points`` で密にしてから)。splat
+半径は無い。
+- ``K`` は numpy (3,3)、``R``/``t`` は省略可。
+後段: ``depth_to_points`` で戻す、``normals_from_depth`` で法線、``tsdf_from_depth``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

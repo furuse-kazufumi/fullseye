@@ -3,10 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_ellipse_contour&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">fit_ellipse_contour_xld</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/hx_fit_ellipse_contour.png" alt="hx_fit_ellipse_contour: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/hx_fit_ellipse_contour.png" alt="hx_fit_ellipse_contour: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_ellipse_contour.chain.jpg">hx_fit_ellipse_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2 차 모멘트로 타원을 맞추고 축비(단/장 = 정원이면 1, 길쭉할수록 0)를 돌려줍니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>全 contour の点をまとめて座標共分散行列の固有値 `<code style="color:#22d3bf">λmin, λmax</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">sqrt(λmin/λmax)</code>`(主軸方向の標準偏差</p>
+<p>の比 = 慣性楕円の短軸/長軸)を `<code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満、または `<code style="color:#22d3bf">λmax &lt;= 1e-9</code>`(全点一致)なら 0.0。負の固有値は 0 に clip する。</p>
+<p>1 に近いほど等方(真円)、0 に近いほど細長い。楕円境界を当てはめる代数的フィットではなく点群の 2 次モーメント</p>
+<p>なので、点の密度の偏りや欠けた弧では軸比が変わる。楕円の傾き・中心は返さない(`<code style="color:#22d3bf">orientation_xld</code>` /</p>
+<p>`<code style="color:#22d3bf">area_center_xld</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf"> 版は </code><code style="color:#22d3bf">elliptic_axis_xld</code><code style="color:#22d3bf">。楕円からの逸脱量は </code><code style="color:#22d3bf">hx_dist_ellipse_contour</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

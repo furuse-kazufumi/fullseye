@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Restrict a volume to a *domain* mask (HALCON ``reduce_domain``, voxel-wise).
 
+Every voxel outside the foreground of *domain* is set to ``0`` — the same
+"outside the domain is undefined -> 0" convention the 2-D ``it_crop_domain``
+op uses (a plain numpy array cannot carry a separate domain channel, so the
+restriction is materialised). A non-``{0, 1}`` *domain* is thresholded at
+``> 0.5``. Use it to silence everything a downstream operator must not see
+(metal artefacts, the scanner bed, a neighbouring part); combine with
+:func:`vol_crop_domain` when you also want the *memory* of the volume
+reduced, not just its values.
+
+Returns a ``(D, H, W)`` float64 volume of the same shape.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

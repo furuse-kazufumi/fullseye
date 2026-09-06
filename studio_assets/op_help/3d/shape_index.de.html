@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Koenderinks Formindex s∈[-1,1] (konvexe Kugel +1, Zylinder +0,5, Sattel 0, konkave Kugel −1). → (N,).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>umbilic/平面判定は<b>曲率スケール相対</b>(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は</p>
+<p>符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。</p>
+<p>normals(向き付き参照法線, (N,3))未指定時は開面の凹/凸符号が不定(凸マグニチュードで報告)。</p>
+<p>向き付き法線を渡すと大域向きに整合し正しい符号(凹球=cup → -1)を出す。</p>
+<p>計算(各点、`<code style="color:#22d3bf">principal_curvatures</code>` と同じフィット):</p>
+<p style="margin:2px 0 2px 12px">• 平面判定: curvedness `<code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code>` が、全点の curvedness の中央値 × 1e-3 未満なら s = 0。中央値が 0(曲率信号なし)なら全点 0。</p>
+<p style="margin:2px 0 2px 12px">• 臍点判定: `<code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code><code style="color:#22d3bf"> なら s = </code><code style="color:#22d3bf">sign(k1 + k2)</code>`(厳密に ±1)。</p>
+<p style="margin:2px 0 2px 12px">• それ以外: `<code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>`。</p>
+<p style="margin:2px 0 2px 12px">• しきい値は絶対値でなく <b>データ全体の曲率スケール相対</b> なので、同じ形でも他の点との混在具合で平面扱いになる点が変わる。単一の点群を分類する前提で使う。</p>
+<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は k1 = k2 = 0 → 平面(0)。`<code style="color:#22d3bf">k</code>` は N-1 に切り詰め。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> は (N,3) で有限かつ非ゼロ行(</code><code style="color:#22d3bf">ValueError</code>`)。未指定では開いた面の符号は不定(凸側)。</p>
+<p style="margin:2px 0 2px 12px">• 曲がりの強さは含まない。強さも要るなら `<code style="color:#22d3bf">principal_curvatures</code><code style="color:#22d3bf"> の 2 本を </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> に並べて </code><code style="color:#22d3bf">curvature_to_shape_index</code>` に通す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

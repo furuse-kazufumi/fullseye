@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_auc_by_type.png",
+  "name": "auc_by_type",
+  "caption": "",
+  "shape": [
+   176,
+   454,
+   3
+  ],
+  "csv": "01_auc_by_type.csv",
+  "tsv": "01_auc_by_type.tsv"
+ },
+ {
+  "file": "02_roc_by_type.png",
+  "name": "roc_by_type",
+  "caption": "対角線に乗っている系列が盲点。まとめた系列にはその情報が残っていない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_period_error.png",
+  "name": "period_error",
+  "caption": "欠陥の無い地だけで測った残差。ノッチは高次の高調波から漏れ始める。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_scene.png",
+  "name": "scene",
+  "caption": "スコア 2 枚は 99.5 %% 分位で切ってある。ゼロ点は地の格子がそのまま出る。",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ }
+]

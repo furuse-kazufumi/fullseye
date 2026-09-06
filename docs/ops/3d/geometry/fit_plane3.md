@@ -19,6 +19,11 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Least-squares 3-D plane fit to ``(depth, row, col)`` points — the plane
 
+through the centroid whose normal is the smallest principal axis (minimises the
+sum of squared point-to-plane distances). Returns ``center`` (``cd/cr/cc``), a
+unit ``normal`` (depth, row, col), and the RMS point-to-plane residual. Raises
+``ValueError`` on < 3 points or a collinear set (the normal is undefined).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

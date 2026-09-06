@@ -5,6 +5,21 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>3-D-formbasiertes (gradientenorientiertes) Matching = die Voxelversion des 2-D-shapematch_gpu („Konturabgleich“).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>テンプレとシーンの <b>単位勾配ベクトルの内積和</b>(Steger 流)。強度/コントラストに不変で、</p>
+<p>エッジ/形状で一致を測る。score(pos)=Σ&lt;û_scene(pos+dt), û_model(dt)&gt;/n を 3 成分の conv3d で。</p>
+<p>手順: 両 volume に `<code style="color:#22d3bf">sobel3d</code><code style="color:#22d3bf"> → 大きさ </code><code style="color:#22d3bf">mc</code>` 超の voxel だけ単位ベクトル化(以下は 0)。</p>
+<p>テンプレの単位勾配 3 成分をカーネルに、シーンの単位勾配と成分ごとに conv3d して和を取り、</p>
+<p>テンプレの有効 voxel 数 `<code style="color:#22d3bf">n</code>` で割る。score は <b>[−1, 1]</b>、1 で完全一致(勾配の向きが全て</p>
+<p>揃う)、コントラスト反転で −1。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mc</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">sobel3d</code>` の <b>生出力(真の勾配の 32 倍)</b> に対する閾値。小さいほど平坦部の</p>
+<p>ノイズ勾配が投票に入る。</p>
+<p style="margin:2px 0 2px 12px">• 位置: 返り値 `<code style="color:#22d3bf">[score, z, y, x]</code>`(float64 配列)の座標は <b>テンプレ中心 voxel(index T//2)</b></p>
+<p>が scene のどこに載るか。テンプレが完全に収まる位置以外は 0 に落とすので、テンプレが scene</p>
+<p>より大きいと全 0 のまま index (0,0,0) が返る(例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">subvoxel=True</code><code style="color:#22d3bf"> で argmax の ±2 近傍の正スコア重心に精緻化(</code><code style="color:#22d3bf">accel_match._subvoxel_com</code>`)。</p>
+<p>後段: `<code style="color:#22d3bf">refine_translation_lk</code><code style="color:#22d3bf">(corner 規約なので T//2 を引く)/ </code><code style="color:#22d3bf">refine_lm</code>`。回転には</p>
+<p>不変でない(`<code style="color:#22d3bf">match_logpolar_z</code>` で先に回転を合わせる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

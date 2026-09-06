@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。
 
+Inigo Quilez の二次多項式 smin:
+    ``h = clip(0.5 + 0.5*(b-a)/k, 0, 1)``,  ``smin = mix(b,a,h) - k*h*(1-h)``。
+性質: (1) 対称 ``smin(a,b)=smin(b,a)``、(2) ``smin <= min(a,b)``(継ぎ目でくぼむ)、
+(3) **k→0 で min(a,b) に一致**(= 硬い ``sdf_union``)、(4) 1 次同次
+``smin(s*a,s*b,s*k)=s*smin(a,b,k)``(スケール整合)。
+
+``k`` は距離次元の丸め半径。硬い min が欲しければ ``sdf_union`` を使う。
+``±inf`` を含む入力(``esdf`` の「全自由なら +inf」契約との相互運用)では、
+ブレンド帯 ``|a-b|<k`` が退化するため厳密に ``min(a,b)`` を返す。
+Raises ValueError for k<=0(0 除算を避けるため fail-closed)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

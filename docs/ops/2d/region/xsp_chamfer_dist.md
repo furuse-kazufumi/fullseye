@@ -15,9 +15,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `region` → `image`
 - **呼び出し**: `fullseye.apply(img, "xsp_chamfer_dist", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-![xsp_chamfer_dist: 入力 → 出力](../../_fig/xsp_chamfer_dist.png)
+![xsp_chamfer_dist: input → output](../../_fig/xsp_chamfer_dist.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![xsp_chamfer_dist: stages](../../_fig/xsp_chamfer_dist.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![xsp_chamfer_dist: other inputs](../../_fig/xsp_chamfer_dist.inputs.jpg)
 
 ## 使い方
 

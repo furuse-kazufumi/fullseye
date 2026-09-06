@@ -19,6 +19,24 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 メッシュを SSAA でアンチエイリアス描画 -> float 画像 ``(H, W)`` (or ``(H, W, C)``)。
 
+``render_mesh`` を **目標サイズの ``ss`` 倍**で呼び、陰影を付けてから ``ss×ss`` 面積平均で
+目標 ``size`` へ縮小する。``ss=1`` は縮小なし = ``render_mesh`` 生の(エイリアスありの)
+ベースライン。
+
+*pose* は 4x4 object->camera 行列(解像度非依存、そのまま使う)。*intrinsics* ``K`` は
+**目標 ``size`` 用**の 3x3 ピンホール行列で、高解像レンダリングのため内部で ``fx, fy,
+cx, cy`` を ``ss`` 倍にスケールする(出力は目標 ``size`` なので K の意味は目標基準)。
+どちらも ``None`` なら ``render_mesh`` が ``auto_view`` で自動フレーミングする(``auto_view``
+のフレーミングは解像度不変なので ``ss`` を変えても構図は同じ)。
+
+*shade* は ``shade(view_dict) -> (H*ss, W*ss[, C])`` の callable で、高解像 ``render_mesh``
+出力(``depth`` / ``silhouette`` / ``normals``)を陰影画像へ写す。``None`` のとき既定の
+Lambertian(*light* をカメラ空間の光源, *ambient* を環境光として法線から陰影, 背景 0)。
+*filter* は縮小重み(``"box"`` / ``"gauss"``, :func:`antialias` 参照)。
+
+Fail-closed: ``ss`` は 1 以上の整数、``size`` は正、``size*ss`` の総画素は
+``render3d.MAX_PIXELS`` 以下。メッシュ・カメラの妥当性は ``render_mesh`` が検査する。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

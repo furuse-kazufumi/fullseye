@@ -19,6 +19,27 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 min_voxels 未満の連結成分を除去した bool マスクを返す。
 
+Parameters
+----------
+vol : array_like
+    bool または 0/1 の 3D 配列。
+min_voxels : int
+    この閾値「未満」(< min_voxels)の成分を落とす。閾値 "以上" は残す。
+connectivity : int
+    6 / 18 / 26。
+
+Returns
+-------
+ndarray(bool)
+    条件を満たす成分のみ True。前景無しや全成分除去なら全 False。
+
+補足:
+- ``min_voxels`` は ``int()`` で丸めてから比較する。1 以下ならすべての成分が残る。
+- 内部で ``label_components`` → ``bincount`` → ``counts >= min_voxels`` のラベルを残す。ラベルの再番号付けは行わず bool マスクだけ返すので、番号が要るなら結果をもう一度 ``label_components`` に通す。
+- 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順 (z, y, x)。
+- Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
+- ボクセル数はスペーシング未補正なので、実寸で閾値を切るなら voxel 体積で割ってから渡す。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

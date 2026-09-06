@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;box_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>軸平行直方体の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>Inigo Quilez の box SDF: `<code style="color:#22d3bf">q = |p-center| - half_extents</code>` とし、</p>
+<p>`<code style="color:#22d3bf">outside = |max(q,0)|</code>` (角/辺/面の外はユークリッド距離),</p>
+<p>`<code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code>` (内側は最近面までの負値),</p>
+<p>`<code style="color:#22d3bf">sdf = outside + inside</code>`。</p>
+<p>`<code style="color:#22d3bf">half_extents</code>` は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は</p>
+<p>垂直距離)、内側も最近面までの厳密負距離を与える。</p>
+<p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

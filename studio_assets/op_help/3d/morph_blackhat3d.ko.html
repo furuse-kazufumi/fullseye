@@ -5,6 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D black-hat = closing − vol. SE 보다 작은 <b>어두운 구조/구멍</b>을 추출.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">morph_close3d(vol, r, ...) − vol(float32)</code><code style="color:#22d3bf">。値は 0 以上で、SE(一辺 </code><code style="color:#22d3bf">2r+1</code>` の cube か</p>
+<p>半径 r の ball)より小さい暗い穴・亀裂・隙間だけがその深さで残り、大きな暗領域と背景は</p>
+<p>0 になる。占有 voxel なら「SE で埋まる空洞 = 1」。`<code style="color:#22d3bf">r</code>` は検出したい穴の半径より大きく取る。</p>
+<p>`<code style="color:#22d3bf">se</code><code style="color:#22d3bf"> は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、</code><code style="color:#22d3bf">device</code>` は cube+torch のときだけ有効。</p>
+<p>返り値 `<code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf"> float32 numpy。明るい構造を取るなら </code><code style="color:#22d3bf">morph_tophat3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

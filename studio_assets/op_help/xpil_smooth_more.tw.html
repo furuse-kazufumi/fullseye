@@ -2,12 +2,19 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xpil_smooth_more — 2D <code style="color:#22d3bf">smoothing</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_smooth_more&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/xpil_smooth_more.png" alt="xpil_smooth_more: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/xpil_smooth_more.png" alt="xpil_smooth_more: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xpil_smooth_more.inputs.jpg">xpil_smooth_more: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Pillow 的平滑濾鏡（加強版）。使用 `<code style="color:#22d3bf">PIL.ImageFilter.SMOOTH_MORE</code><code style="color:#22d3bf"> 的固定卷積核，比 </code><code style="color:#22d3bf">SMOOTH</code>` 模糊得更強。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>a, b は未使用（固定カーネル）。</p>
+<p>カーネルは 5x5 の重み付き平均（中心 44、その 8 近傍が 5、最外周 16 画素が1、合計 100 で割る）。中心の重みが大きいので同じ 5x5 の一様平均よりぼけは弱く、インパルスは中心 44% + 隣接 8 画素 5% ずつに広がる程度（実測: 255 のインパルス → 中心 112、隣接 13、外周 0）。3x3 の `<code style="color:#22d3bf">SMOOTH</code>`（中心 5、近傍 1、合計 13）よりは広く効く。</p>
+<p>入力は [0,1] に clip して `<code style="color:#22d3bf">*255</code><code style="color:#22d3bf"> の切り捨てで 8 ビット L 画像にし、出力を </code><code style="color:#22d3bf">/255</code><code style="color:#22d3bf"> で戻す（1/255 の量子化が入る）。画像の最外周 2 画素はPillow がフィルタせず入力値のまま。0 サイズの画像は ValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ぼかし量を可変にしたいなら </code><code style="color:#22d3bf">gaussian</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">median</code><code style="color:#22d3bf"> を使う。エッジ検出（</code><code style="color:#22d3bf">xpil_contour</code><code style="color:#22d3bf"> /</code><code style="color:#22d3bf">xpil_find_edges</code><code style="color:#22d3bf">）や </code><code style="color:#22d3bf">threshold</code>` の前のノイズ落としに。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

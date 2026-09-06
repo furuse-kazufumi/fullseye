@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_speckle.png",
+  "name": "speckle",
+  "caption": "変形は補間ではなく斑点の再描画。だから真値が厳密。",
+  "shape": [
+   349,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "02_subpixel_bias.png",
+  "name": "subpixel_bias",
+  "caption": "lk は 0.5 px 側へ寄る(教科書の peak locking と逆)。piv は 1 桁小さい。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_strain_concentration.png",
+  "name": "strain_concentration",
+  "caption": "窓を広げると尖頭が下がり幅が広がる(空間分解能の限界)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_strain_map.png",
+  "name": "strain_map",
+  "caption": "どちらも同じ発散 LUT。0 が黒。",
+  "shape": [
+   349,
+   542,
+   3
+  ]
+ }
+]

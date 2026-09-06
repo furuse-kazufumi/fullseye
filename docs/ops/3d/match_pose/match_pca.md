@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。
 
+両雲の主軸を合わせる粗い剛体変換(回転 R + 並進 t)を返す。NCC/位相相関が扱えない
+**回転**をここで担う(符号の 4 通り曖昧性は最小二乗で解消。この残差は両雲の点が
+同じ並び順で対応している前提の粗い基準 — 無対応の実測雲では ICP 等で後段精密化を)。
+返り値 (R(3,3), t(3,))。
+
+返り値の意味: ``pts_scene ≈ (R @ pts_model.T).T + t``(``t = c_scene − R·c_model``)。R は
+必ず ``det=+1`` の回転(反射は出さない)。残差は点を index 順に対応させて測るので、無対応の
+雲では 4 候補の選択が当てにならない(その場合は ``icp_point2point_3d`` に ``init_R/init_t``
+として渡して精緻化する)。主軸が縮退している(球・円柱など固有値が等しい)雲では軸が不定で
+結果は安定しない。点数は両雲で違ってよい。入力は (N,3)(検証は ``moment_axes`` 任せで無い)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

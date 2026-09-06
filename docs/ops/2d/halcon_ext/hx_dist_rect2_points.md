@@ -17,13 +17,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_dist_rect2_points", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `dist_rectangle2_contour_points_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_dist_rect2_points: 入力 → 出力](../../_fig/hx_dist_rect2_points.png)
+![hx_dist_rect2_points: input → output](../../_fig/hx_dist_rect2_points.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_dist_rect2_points: stages](../../_fig/hx_dist_rect2_points.chain.jpg)
 
 ## 使い方
 
 contour 各点の最小面積外接矩形の中心からの正規化距離の平均(feature)。
+
+全 contour の点をまとめ、点の重心からの各点のユークリッド距離の平均を ``max(H, W)`` で割って 1 で頭打ちした
+``np.float64`` を返す。
+
+- ``a``, ``b`` は未使用。
+- 点が 3 個未満なら 0.0。
+
+注意: 名前は最小面積外接矩形の中心からの距離だが、現実装は矩形を求めず点群の重心を中心にしている。
+点が偏っている場合(弧が欠けた輪郭など)は矩形中心と重心がずれるため、名前どおりの値にはならない。
+実質は「重心からの平均半径」で、``hx_moments_any_xld``(二乗平均)の 1 乗版にあたる。矩形そのものは
+``hx_smallest_rect2_xld`` / ``hx_fit_rectangle2_contour``。
 
 ## 詳しい使い方ガイド
 

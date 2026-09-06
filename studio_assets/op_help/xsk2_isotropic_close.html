@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xsk2_isotropic_close — 2D <code style="color:#22d3bf">region</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_isotropic_close&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p><img src="fig/xsk2_isotropic_close.png" alt="xsk2_isotropic_close: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/xsk2_isotropic_close.png" alt="xsk2_isotropic_close: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_isotropic_close.a.jpg">xsk2_isotropic_close: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_isotropic_close.chain.jpg">xsk2_isotropic_close: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_isotropic_close.inputs.jpg">xsk2_isotropic_close: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>等方閉じ（isotropic closing）。二値領域に対して`<code style="color:#22d3bf">skimage.morphology.isotropic_closing</code><code style="color:#22d3bf"> を掛ける（</code>region<code style="color:#22d3bf"> → </code>region`専用で、通常のモルフォロジー closing と違い距離変換ベースで等方的に働く）。</p>
 <p>a が半径（`<code style="color:#22d3bf">1 + a*4</code>`、範囲 1〜5）を振る。b は未使用。小さな穴やくびれを埋めて領域を滑らかにする。</p>

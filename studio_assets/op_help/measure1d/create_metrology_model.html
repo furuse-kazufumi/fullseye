@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import metrology; metrology.create_metrology_model() -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsmeasure1d.get(&quot;create_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>空の計測モデルを作る(create_metrology_model)。</p>
+<p>返り値は `<code style="color:#22d3bf">{&quot;objects&quot;: []}</code><code style="color:#22d3bf"> の dict(</code><code style="color:#22d3bf">metrologymodel</code>` 型)。ここに</p>
+<p>`<code style="color:#22d3bf">add_metrology_object_line_measure</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">..._circle_measure</code>` /</p>
+<p>`<code style="color:#22d3bf">..._rectangle2_measure</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">..._ellipse_measure</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">..._generic</code>` で</p>
+<p>参照形状を積み、`<code style="color:#22d3bf">apply_metrology_model(model, image)</code>` で一括計測する。</p>
+<p style="margin:2px 0 2px 12px">• 引数は無い。画像サイズや座標系はモデルに持たず、`<code style="color:#22d3bf">apply</code>` 時の画像で決まる。</p>
+<p style="margin:2px 0 2px 12px">• 各 `<code style="color:#22d3bf">add_*</code>` は <b>この dict をその場で書き換え</b>、追加した位置(0 始まり)を</p>
+<p>返す。`<code style="color:#22d3bf">apply_metrology_model</code>` の結果 list はこの順に並ぶ。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">align_metrology_model</code>` は書き換えず、平行移動した新しいモデルを返す。</p>
+<p>座標は (row, col) [px]、角度 `<code style="color:#22d3bf">phi</code>` は col 軸から row 軸(画像下向き)へ測った</p>
+<p>ラジアン。この規約はモデル全体で共通。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -2,8 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">iv_gradient_inpaint — 2D <code style="color:#22d3bf">restoration</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;iv_gradient_inpaint&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/iv_gradient_inpaint.png" alt="iv_gradient_inpaint: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/iv_gradient_inpaint.png" alt="iv_gradient_inpaint: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/iv_gradient_inpaint.a.jpg">iv_gradient_inpaint: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/iv_gradient_inpaint.inputs.jpg">iv_gradient_inpaint: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對中央被遮罩視窗進行調和（拉普拉斯）影像修復（inpainting）。以 `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 決定邊長比例的居中視窗，其內部被捨棄，並透過求解 nabla^2 u = 0（Dirichlet 邊界條件等於周圍已知像素）來重新填補（Jacobi 鬆弛法 = 反覆以每個被遮罩像素的 4 鄰域平均值取代該像素）。復原出的內部是該空洞的最平滑（最小梯度）填補結果。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定視窗大小；</code><code style="color:#22d3bf">b</code>` 被忽略。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

@@ -21,6 +21,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。
 
+vol は numpy でも torch tensor(GPU 上でも可)でも受ける(scene_flow 等の device 常駐用)。
+
+返り値は **torch tensor 3 本**(numpy ではない)、各 ``(1,1,D,H,W)`` float32、``device`` 上。
+``gz`` は軸 0 方向、``gy`` は軸 1、``gx`` は軸 2 の微分(入力が (D,H,W) なら (depth,row,col)
+順)。numpy に戻すなら ``g[0, 0].cpu().numpy()``。
+利得: 微分 [-1,0,1] (傾き 1 で 2)× 他 2 軸の平滑 [1,2,1] (各 4)で **真の勾配の 32 倍**が出る
+(正規化しない)。真の値が要るなら 32 で割る(``curvature_maps`` / ``scene_flow_lk`` は内部で
+割っている。``hessian3d`` は利得 1 なので混ぜるときに注意)。
+端は replicate padding(境界で偽のエッジを作らない)。tensor 入力が 3-D なら batch 次元を
+足し、5-D ならそのまま使う。dtype は float32 に落とす。
+後段: ``curvature_maps`` / ``match_shape_3d`` の単位勾配、``hough_plane_3d`` の法線。
+方向の要らないエッジ強度なら ``morph_gradient3d`` も代替。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

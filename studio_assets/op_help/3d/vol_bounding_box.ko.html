@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volops; volops.vol_bounding_box(domain, margin=0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_bounding_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>마스크 전경의 밀착 축 평행 경계 상자(복셀 인덱스).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Returns `<code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>` with <b>exclusive</b> upper bounds, i.e.</p>
+<p>`<code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code>` is the smallest sub-volume containing every</p>
+<p>foreground voxel. *margin* (an int `<code style="color:#22d3bf">&gt;= 0</code>`) grows the box by that many</p>
+<p>voxels per side, clipped to the volume — headroom for operators with a</p>
+<p>spatial footprint (a Gaussian of sigma s needs ~`<code style="color:#22d3bf">3*s</code>` voxels of context).</p>
+<p>A non-`<code style="color:#22d3bf">{0, 1}</code><code style="color:#22d3bf"> input is thresholded at </code><code style="color:#22d3bf">&gt; 0.5</code>`.</p>
+<p>An <b>empty</b> mask raises `<code style="color:#22d3bf">ValueError</code>` (fail-closed): there is no box, and</p>
+<p>silently returning the full volume would defeat the point of cropping.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

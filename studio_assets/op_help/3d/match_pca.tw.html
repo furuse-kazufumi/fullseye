@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.match_pca(pts_scene, pts_model)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;match_pca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>PCA 姿態匹配(結構=point cloud × 方法=主軸對齊)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>両雲の主軸を合わせる粗い剛体変換(回転 R + 並進 t)を返す。NCC/位相相関が扱えない</p>
+<p><b>回転</b>をここで担う(符号の 4 通り曖昧性は最小二乗で解消。この残差は両雲の点が</p>
+<p>同じ並び順で対応している前提の粗い基準 — 無対応の実測雲では ICP 等で後段精密化を)。</p>
+<p>返り値 (R(3,3), t(3,))。</p>
+<p>返り値の意味: `<code style="color:#22d3bf">pts_scene ≈ (R @ pts_model.T).T + t</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">t = c_scene − R·c_model</code>`)。R は</p>
+<p>必ず `<code style="color:#22d3bf">det=+1</code>` の回転(反射は出さない)。残差は点を index 順に対応させて測るので、無対応の</p>
+<p>雲では 4 候補の選択が当てにならない(その場合は `<code style="color:#22d3bf">icp_point2point_3d</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">init_R/init_t</code>`</p>
+<p>として渡して精緻化する)。主軸が縮退している(球・円柱など固有値が等しい)雲では軸が不定で</p>
+<p>結果は安定しない。点数は両雲で違ってよい。入力は (N,3)(検証は `<code style="color:#22d3bf">moment_axes</code>` 任せで無い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

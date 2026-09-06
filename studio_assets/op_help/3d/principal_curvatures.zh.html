@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;principal_curvatures&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>各点的主曲率 (k1&gt;=k2)。→ (k1 (N,), k2 (N,))。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュード(開面の凹/凸符号は不定)。</p>
+<p>向き付き法線を渡すと大域向きに整合し正しい符号(凹=負, 凸=正)。</p>
+<p>手順(各点、Python ループ):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cKDTree</code><code style="color:#22d3bf"> で自身を含む k+1 近傍を取る(k は N-1 に切り詰め)。近傍が 5 点未満なら </code><code style="color:#22d3bf">k1 = k2 = 0</code>` を返す(5 係数の二次曲面が組めないため)。</p>
+<p style="margin:2px 0 2px 12px">• 近傍座標をクエリ点原点に平行移動し、`<code style="color:#22d3bf">local.T @ local</code><code style="color:#22d3bf"> の最小固有ベクトルを法線とする(向きは </code><code style="color:#22d3bf">normals</code>` があればそれに整合、無ければ近傍重心から離れる側)。</p>
+<p style="margin:2px 0 2px 12px">• 接線基底 (t1, t2) に射影し `<code style="color:#22d3bf">w = d·u + e·v + a·u² + b·uv + c·v²</code><code style="color:#22d3bf"> を最小二乗フィット → 第一/第二基本形式から shape operator の固有値を取り、凸を正にして </code><code style="color:#22d3bf">k1 &gt;= k2</code>` に並べる。</p>
+<p style="margin:2px 0 2px 12px">• 単位は 1/長さ(点群の単位に依存)。半径 R の球なら `<code style="color:#22d3bf">k1 = k2 = 1/R</code><code style="color:#22d3bf">、円柱は </code><code style="color:#22d3bf">(1/R, 0)</code>`、平面は 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code>` は近傍点数(既定 25)。大きいほど平滑で曲率は低め、小さいほどノイズを拾う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> は (N,3) で有限かつ非ゼロ行が必須(</code><code style="color:#22d3bf">ValueError</code>`)。決定論的。</p>
+<p style="margin:2px 0 2px 12px">• 後段: `<code style="color:#22d3bf">mean_curvature</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">gaussian_curvature</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shape_index</code><code style="color:#22d3bf">(いずれも内部で同じ計算を繰り返す)。shape index と曲がりの対が要るなら 2 本を </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> に並べて </code><code style="color:#22d3bf">curvature_to_shape_index</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

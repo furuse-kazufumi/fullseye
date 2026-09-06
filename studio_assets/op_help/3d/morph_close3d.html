@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D closing = dilation → erosion。SE より小さい<b>暗構造(隙間・空洞)</b>を埋める。</p>
+<p>`<code style="color:#22d3bf">morph_erode3d(morph_dilate3d(vol, r, ...), r, ...)</code><code style="color:#22d3bf">。出力は入力以上(</code><code style="color:#22d3bf">close &gt;= vol</code>`)で、</p>
+<p>SE(一辺 `<code style="color:#22d3bf">2r+1</code>` の cube か半径 r の ball)より小さい暗い穴・亀裂・面の隙間が周囲の</p>
+<p>明るさで埋まり、大きな暗領域は残る(等冪)。境界外は dilation で −∞、erosion で +∞ 扱い</p>
+<p>なので端が勝手に埋まることはない。`<code style="color:#22d3bf">se</code><code style="color:#22d3bf"> は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、</code><code style="color:#22d3bf">device</code>` は</p>
+<p>cube+torch のときだけ有効。返り値 `<code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>用途: `<code style="color:#22d3bf">close − vol</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">morph_blackhat3d</code>`(小さな暗構造の抽出)。点群 splat の表面の</p>
+<p>穴埋め、`<code style="color:#22d3bf">signed_distance_field</code>` 前の占有の穴埋め。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

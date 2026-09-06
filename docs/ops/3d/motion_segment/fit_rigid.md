@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -> pts_to[i])。
 
+行 i どうしが対応する (N, 3) 2 点集合から、``|| (R·p + t) - q ||`` を最小化する
+proper rotation(det = +1, 反射なし)と並進を返す。:func:`registration.kabsch` の
+薄いラッパで、入力検証を付す(N >= 3 で回転が一意)。
+
+Args:
+    pts_from: (N, 3) 変換元(対応順)。
+    pts_to: (N, 3) 変換先(対応順)。
+Returns:
+    (R, t): (3, 3) 回転行列, (3,) 並進ベクトル。
+Raises:
+    ValueError: 形状不一致 / (N, 3) でない / N < 3 / 非有限。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

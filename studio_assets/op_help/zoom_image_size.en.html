@@ -3,8 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_size&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">zoom_image_size</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/zoom_image_size.png" alt="zoom_image_size: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/zoom_image_size.png" alt="zoom_image_size: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_image_size.a.jpg">zoom_image_size: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_image_size.b.jpg">zoom_image_size: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_image_size.inputs.jpg">zoom_image_size: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A zoom that resamples to a target size (height `<code style="color:#22d3bf">H*(0.5+a)</code><code style="color:#22d3bf">, width </code><code style="color:#22d3bf">W*(0.5+b)</code><code style="color:#22d3bf">). Whereas </code><code style="color:#22d3bf">zoom_image_factor</code><code style="color:#22d3bf"> takes two scale factors, this one specifies the **size** itself independently for height and width -- a different semantics from HALCON&#x27;s. However, since this pipeline&#x27;s </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf"> contract requires &quot;returned at the same canvas size as the input,&quot; the resampled result is placed at the top-left of a canvas at the original resolution, padded with 0, and any overflow is cropped (the image visibly appears shrunk/enlarged, but the array&#x27;s shape itself does not change). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">zoom_image_size</code>` (Zoom an image to a given size).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

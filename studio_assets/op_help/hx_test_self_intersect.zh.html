@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_test_self_intersect&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">test_self_intersection_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_test_self_intersect.png" alt="hx_test_self_intersect: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_test_self_intersect.png" alt="hx_test_self_intersect: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_self_intersect.chain.jpg">hx_test_self_intersect: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>自相交 contour 的比例(feature)。判定非相邻的线段对。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各 contour(点数 4 以上)について、隣接しない線分の全対 `<code style="color:#22d3bf">(i, i+1)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(j, j+1)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">j &gt;= i+2</code>`)を</p>
+<p>向き付き面積の符号(ccw 判定)で交差判定し、1 対でも交差する contour の本数を全 contour 数で割った割合を</p>
+<p>`<code style="color:#22d3bf">np.float64</code>` で返す。始点と終点が一致(距離 1e-6 未満)する閉曲線では、最初の線分と最後の線分の対は隣接扱いで</p>
+<p>除外する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• contour が無ければ 0.0。点数 3 以下の contour は交差なしとして数える。</p>
+<p>判定は真に交差する場合のみで、端点が相手の線分上に乗る接触や同一直線上の重なりは検出しない(不等号が厳密)。</p>
+<p>計算量は contour ごとに線分数の 2 乗で、点の多い contour では遅い(`<code style="color:#22d3bf">hx_split_contours</code>` や</p>
+<p>`<code style="color:#22d3bf">smooth_contours_xld</code><code style="color:#22d3bf"> で点を減らしてから)。</code><code style="color:#22d3bf">hx_gen_parallel_contour</code>` で内側にずらした輪郭の破綻検出に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

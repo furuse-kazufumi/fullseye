@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import regionprops3d; regionprops3d.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;largest_component&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert die bool-Maske der größten (voxelreichsten) Zusammenhangskomponente.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>前景が無い場合は全 False マスク(vol と同形状)。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 内部で `<code style="color:#22d3bf">label_components</code><code style="color:#22d3bf"> を呼び、</code><code style="color:#22d3bf">bincount</code>` でラベルごとのボクセル数を数えて最大を選ぶ。<b>同数のときは番号の小さいラベル</b>(scipy の走査順で先)が勝つ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として `<code style="color:#22d3bf">bool</code>` 化する(NaN も前景)。軸順は (z, y, x)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。</p>
+<p style="margin:2px 0 2px 12px">• Raises `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 3 次元でない入力、</code><code style="color:#22d3bf">connectivity</code>` が 6/18/26 以外。</p>
+<p style="margin:2px 0 2px 12px">• 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら `<code style="color:#22d3bf">filter_by_volume</code><code style="color:#22d3bf">、特徴で選ぶなら </code><code style="color:#22d3bf">vol_select_labels</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

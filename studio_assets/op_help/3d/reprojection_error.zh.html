@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;reprojection_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>重投影误差(RMS 像素)。评估位姿的拟合程度。→ scalar。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Raises ValueError: points_2d が (N,2) でない / 点数不一致 / 非有限。</p>
+<p>計算: 各 3D 点を `<code style="color:#22d3bf">x = K (R X + t)</code><code style="color:#22d3bf"> で投影して </code><code style="color:#22d3bf">u = x0/x2</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v = x1/x2</code><code style="color:#22d3bf"> を取り、観測 2D 点とのユークリッド距離 d_i [px] の RMS </code><code style="color:#22d3bf">sqrt(mean(d_i²))</code>` を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points_3d</code><code style="color:#22d3bf"> (N,3)、</code><code style="color:#22d3bf">points_2d</code><code style="color:#22d3bf"> (N,2)(画素座標、</code><code style="color:#22d3bf">project_points</code><code style="color:#22d3bf"> と同じ規約)、</code><code style="color:#22d3bf">K</code><code style="color:#22d3bf"> (3,3)、</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf"> (3,3)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (3,)。R, t は world → camera(</code><code style="color:#22d3bf">Xc = R X + t</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 深度 `<code style="color:#22d3bf">x2</code><code style="color:#22d3bf"> が負の点(カメラ後方)もそのまま割って投影するので、誤った姿勢では前後反転した点が「近く」に見えることがある。</code><code style="color:#22d3bf">x2 = 0</code>` は除算で inf/NaN になり検査しない。</p>
+<p style="margin:2px 0 2px 12px">• 単位は画素。対応が正しく K が合っていれば画素ノイズ程度(サブピクセル)。</p>
+<p style="margin:2px 0 2px 12px">• 典型: `<code style="color:#22d3bf">dlt_pose</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pnp_ransac</code><code style="color:#22d3bf"> の結果を評価する。</code><code style="color:#22d3bf">pnp_ransac</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">info[&quot;rms&quot;]</code><code style="color:#22d3bf"> は同じ量(inlier 集合上)。GT 姿勢との比較は </code><code style="color:#22d3bf">pose_error</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

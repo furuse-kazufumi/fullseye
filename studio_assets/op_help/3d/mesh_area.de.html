@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Oberfläche</b> eines Dreiecksnetzes (die Summe aller Dreiecksflächen). → float.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>面積 = Σ 0.5·|cross(v1−v0, v2−v0)|。頂点数に定数を掛ける素朴な近似ではなく、実際の面の</p>
+<p>大きさを積算するので、メッシュのスケール・形状に正しく追随する。</p>
+<p>Args:</p>
+<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>Returns:</p>
+<p>表面積(非負の float)。</p>
+<p>Raises:</p>
+<p>ValueError: mesh が (vertices, faces) の 2 要素でない、形状不正、非有限座標、非整数・</p>
+<p>範囲外の index、空、または 3 頂点のどれかが同じ index の三角形があるとき。</p>
+<p>注意: `<code style="color:#22d3bf">face_normals</code>` と違い、座標がほぼ一直線に並んだ退化三角形(面積 0)は拒否せず 0 として</p>
+<p>加算する。重複面や表裏 2 枚張りの面はそのまま 2 回数えられる。単位は座標の単位の 2 乗。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

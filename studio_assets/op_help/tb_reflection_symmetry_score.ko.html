@@ -2,16 +2,38 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_reflection_symmetry_score — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_reflection_symmetry_score&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p>*그림 없음: 이 연산자는 <code style="color:#22d3bf">points</code>를 입력으로 받습니다. 이미지에서 시작하는 Studio 프로그램으로는 그 타입에 닿지 않으므로 아래의 실행 가능한 예제를 보세요.*</p>
+<p><img src="fig/tb_reflection_symmetry_score.png" alt="tb_reflection_symmetry_score: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_reflection_symmetry_score.chain.jpg">tb_reflection_symmetry_score: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반사 대칭 점수 = chamfer(반사, 원본) / 중앙값 최근접 이웃 간격(값이 작을수록 대칭, 스케일 불변). → float.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">reflect_points</code><code style="color:#22d3bf"> で点群を平面で鏡映し、元の点群との対称 Chamfer 距離(</code><code style="color:#22d3bf">chamfer_distance</code>`:</p>
+<p>双方向の最近傍距離の平均の平均)を、元の点群の最近傍間隔の中央値で割る。「鏡像が元の点から</p>
+<p>点間隔の何倍ずれているか」という無次元量なので、座標を定数倍しても値は変わらない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">: (N,3) 点群。</code><code style="color:#22d3bf">plane_point</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">plane_normal</code>`: 候補平面(法線は内部で正規化)。</p>
+<p style="margin:2px 0 2px 12px">• fail-closed: 点群が空・(N,3) でない(`<code style="color:#22d3bf">chamfer_distance</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">ValueError</code>`)、全点が一致して</p>
+<p>間隔が定義できない(`<code style="color:#22d3bf">ValueError</code>`)。重複点で中央値間隔が 0 になる場合だけ、重心からの RMS</p>
+<p>半径 × 1e-12 を床にする。</p>
+<p>読み方の注意: 厳密に対称な形でも、鏡像の点が元のサンプル点にぴったり重なるわけではないので</p>
+<p>スコアは 0 にならず、点間隔程度が床になる(実測値は `<code style="color:#22d3bf">detect_reflection_symmetry</code>` の表を参照)。</p>
+<p>閾値で採否を決めるより、複数候補を掃引して最小値と 2 位との差(`<code style="color:#22d3bf">margin</code>`)を見る。PCA の</p>
+<p>3 軸以外の候補面を試したいときは、この関数を平面パラメータで直接掃引する。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">reflection_symmetry_score</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
+<p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_reflection_symmetry_score 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_reflection_symmetry_score%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_reflection_symmetry_score%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
-<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<p>아래 예제는 원래의 대장 op <code style="color:#22d3bf">reflection_symmetry_score</code>를 호출한다. 이 브리지 op는 같은 구현을 <code style="color:#22d3bf">fn(v, a, b)</code> 규약에 맞춘 것뿐이므로 동작은 그대로 적용된다(호출 형식만 다름).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:dl_mesh_symmetry">dl_mesh_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/dl_mesh_symmetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:reflection_symmetry">reflection_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/reflection_symmetry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">feature</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">typed</code>)</h3>

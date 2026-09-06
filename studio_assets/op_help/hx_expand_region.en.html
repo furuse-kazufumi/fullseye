@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_expand_region&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">expand_region</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_expand_region.png" alt="hx_expand_region: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_expand_region.png" alt="hx_expand_region: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_expand_region.a.jpg">hx_expand_region: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_expand_region.chain.jpg">hx_expand_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_expand_region.inputs.jpg">hx_expand_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fill the gaps between regions (region -&gt; region): dilate the binary region to encourage them to connect.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> を region とみなし、4 近傍の十字構造要素を </code><code style="color:#22d3bf">it</code><code style="color:#22d3bf"> 回反復した菱形(マンハッタン距離 </code><code style="color:#22d3bf">it</code>` 以内)で</p>
+<p>`<code style="color:#22d3bf">binary_dilation</code>` を 1 回掛け、0/1 の float 配列で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 膨張半径 </code><code style="color:#22d3bf">it = 1 + int(a*4)</code><code style="color:#22d3bf">(1〜5 画素)。互いの距離が </code><code style="color:#22d3bf">2*it</code>` 画素以下の領域どうしがつながる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>隙間を埋めて連結を促す op で、領域は必ず太る(元の面積には戻らない)。元の大きさを保ちたいときは後段で</p>
+<p>`<code style="color:#22d3bf">hx_erosion1</code><code style="color:#22d3bf"> を同程度の半径で掛けるか、初めから </code><code style="color:#22d3bf">hx_closing</code>` を使う。画像外は 0 扱い(膨張は端で止まる)。</p>
+<p>空の region は空のまま返る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

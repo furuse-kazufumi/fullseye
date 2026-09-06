@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_decimate_preserving(V, F, target_faces, protect_quantile=0.8, max_error=None, samples=4000, seed=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;mesh_decimate_preserving&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Decimation that keeps the detailed regions and reports what it lost (`<code style="color:#22d3bf">table</code>`).</p>
+<p>Vertices whose :func:<code style="color:#22d3bf">mesh_detail_map</code> `<code style="color:#22d3bf">detail</code>` is in the top</p>
+<p>`<code style="color:#22d3bf">1 − protect_quantile</code><code style="color:#22d3bf"> are **protected**: :func:</code>meshrepair.decimate_qem`</p>
+<p>never collapses an edge that touches them, so a crater rim, a boulder or</p>
+<p>an outlier ridge keeps its exact geometry while the smooth remainder is</p>
+<p>reduced toward *target_faces*. The result carries the</p>
+<p>:func:<code style="color:#22d3bf">mesh_reduction_report</code>; when *max_error* (mesh units) is given and</p>
+<p>the measured `<code style="color:#22d3bf">detail_max_error</code>` exceeds it, the op <b>refuses</b></p>
+<p>(`<code style="color:#22d3bf">ValueError</code>`) instead of returning a mesh that has already lost the</p>
+<p>features you protect. Returns ``{&quot;V&quot;, &quot;F&quot;, &quot;report&quot;, &quot;protected_vertices&quot;,</p>
+<p>&quot;protected_mask&quot;, &quot;detail_threshold&quot;}``.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

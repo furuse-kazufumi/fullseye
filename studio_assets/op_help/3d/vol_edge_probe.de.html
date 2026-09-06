@@ -4,6 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volprobe; volprobe.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity=&#x27;all&#x27;)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_edge_probe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kanten entlang der Sonde `<code style="color:#22d3bf">p0 -&gt; p1</code>` subsample-genau bestimmen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The profile (default sampling of :func:<code style="color:#22d3bf">vol_profile_line</code>) is smoothed</p>
+<p>with a 1-D Gaussian of `<code style="color:#22d3bf">sigma</code>` <b>samples</b>, differentiated with respect</p>
+<p>to the physical abscissa `<code style="color:#22d3bf">t_mm</code>`, and local extrema of the derivative</p>
+<p>magnitude are taken as edges. Each is refined to sub-sample precision by a</p>
+<p>3-point parabolic fit; plateau twins closer than 1.5 samples are merged.</p>
+<p>`<code style="color:#22d3bf">threshold</code>` is an <b>absolute</b> derivative amplitude in intensity per</p>
+<p>physical distance unit (per mm when `<code style="color:#22d3bf">spacing</code>` is given, per voxel</p>
+<p>otherwise) — edges with `<code style="color:#22d3bf">|d gray / d t| &lt; threshold</code>` at the peak are</p>
+<p>discarded. It is *not* relative to the profile&#x27;s own maximum: choose it</p>
+<p>for your data&#x27;s intensity range and spacing.</p>
+<p>`<code style="color:#22d3bf">polarity</code><code style="color:#22d3bf"> selects </code><code style="color:#22d3bf">&quot;positive&quot;</code>` (rising, dark -&gt; bright along the</p>
+<p>probe), `<code style="color:#22d3bf">&quot;negative&quot;</code><code style="color:#22d3bf"> (falling) or </code><code style="color:#22d3bf">&quot;all&quot;</code>`.</p>
+<p>Returns a list of dicts ordered by distance, each::</p>
+<p>{&quot;t_mm&quot;:      physical distance of the edge from p0,</p>
+<p>&quot;position&quot;:  (z, y, x) interpolated voxel coordinate of the edge,</p>
+<p>&quot;amplitude&quot;: |d gray / d t| at the peak (intensity / distance unit),</p>
+<p>&quot;polarity&quot;:  +1 rising, -1 falling}</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on the same malformed inputs as</p>
+<p>:func:<code style="color:#22d3bf">vol_profile_line</code>, a negative / non-finite `<code style="color:#22d3bf">sigma</code>` or</p>
+<p>`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">, or an unknown </code><code style="color:#22d3bf">polarity</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

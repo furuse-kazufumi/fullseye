@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Marker-controlled 3-D watershed segmentation (**optional — scikit-image**).
 
+Floods the volume from the labelled *markers* (an int volume, ``0`` = unset),
+optionally restricted to *mask*. Delegates to
+``skimage.segmentation.watershed`` — treat *vol* as a landscape (e.g. a
+gradient magnitude, or the negated distance transform for splitting touching
+blobs). Returns an ``int32`` ``(D, H, W)`` label volume.
+
+Raises ``ImportError`` with a clear ``pip install scikit-image`` message when
+the optional dependency is absent; the rest of this module needs only
+numpy + scipy.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

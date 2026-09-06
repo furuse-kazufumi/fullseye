@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.scene_sphere(center_mm, radius_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;scene_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>球体零件。`<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> 为 (x, y, z) [mm],</code><code style="color:#22d3bf">radius_mm</code>` &gt; 0。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf">: 長さ 3 の有限値 [mm]。右手系、z が上(</code><code style="color:#22d3bf">scene_plane</code>` と同じ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius_mm</code><code style="color:#22d3bf">: 正の有限値 [mm]。0 や負、NaN は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">material</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_material</code>` の結果。省略時は lambert、albedo 0.6。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;sphere&quot;, &quot;c&quot;: (3,) 配列, &quot;r&quot;: float, &quot;material&quot;}</code>` の dict。</p>
+<p>光線との交差は 2 次方程式の閉形式で、外から当たれば手前の交点、内側から</p>
+<p>(屈折の射出側)なら奥の交点を取る。単体で置くほか、`<code style="color:#22d3bf">scene_difference</code>` の</p>
+<p>`<code style="color:#22d3bf">solid</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cavity</code>` としても使える(球の空洞、球面座ぐり)。</p>
+<p>`<code style="color:#22d3bf">optscene_mask</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">index</code>` はこの dict をシーン list に入れた位置。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

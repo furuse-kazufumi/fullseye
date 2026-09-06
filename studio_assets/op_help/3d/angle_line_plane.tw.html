@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.angle_line_plane(d, n)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;angle_line_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>直線(方向 d)與平面(法線 n)之間的角(度)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">90 − arccos(|d̂·n̂|)</code>` を度で返す(float)。値は <b>[0, 90]</b>、0 = 直線が平面に平行、90 = 垂直。</p>
+<p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code>` は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトル</p>
+<p>は 0 が返る。</p>
+<p>用途: 穴軸と基準面の直角度、`<code style="color:#22d3bf">intersect_line_plane</code>` の前の平行判定(0 に近いと交点が遠くへ</p>
+<p>飛ぶ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

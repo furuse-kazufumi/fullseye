@@ -2,10 +2,29 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xg_clip_contours — 2D <code style="color:#22d3bf">xldgeom</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xg_clip_contours&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/xg_clip_contours.png" alt="xg_clip_contours: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/xg_clip_contours.png" alt="xg_clip_contours: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_clip_contours.a.jpg">xg_clip_contours: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_clip_contours.chain.jpg">xg_clip_contours: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_clip_contours.inputs.jpg">xg_clip_contours: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Drop contours whose polyline length is below a * max-length (a in [0,1]).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各輪郭の折れ線長(隣接点間のユークリッド距離の和)を求め、最長の輪郭の長さ</p>
+<p>`<code style="color:#22d3bf">L_max</code><code style="color:#22d3bf"> に対して </code><code style="color:#22d3bf">length &gt;= a * L_max</code><code style="color:#22d3bf"> を満たす輪郭だけ残す。</code><code style="color:#22d3bf">a</code>` は</p>
+<p>[0,1] に clip され、`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で全輪郭を残し、</code><code style="color:#22d3bf">a=1</code>` で最長の輪郭(同長なら</p>
+<p>複数)だけ残す。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同じ `<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>` 形式の輪郭辞書(点配列はコピー)。</p>
+<p>輪郭が無ければ `<code style="color:#22d3bf">cs</code><code style="color:#22d3bf"> は空。</code><code style="color:#22d3bf">L_max &lt;= 1e-12</code>`(全輪郭が 1 点)なら全輪郭を</p>
+<p>そのまま返す。しきい値が画像サイズでなく「最長輪郭に対する相対値」なので、</p>
+<p>最長の輪郭が変わると選別基準も動く(点数の絶対値で選ぶなら</p>
+<p>`<code style="color:#22d3bf">select_contours_xld</code>`)。名前から想像される矩形での切り取りではなく、</p>
+<p>長さによる選別である(矩形で切るのは `<code style="color:#22d3bf">xg_crop_contours</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_clip_contours</code>`)。</p>
+<p>閉輪郭の重複終点も長さに含むが、0 長の辺なので影響しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

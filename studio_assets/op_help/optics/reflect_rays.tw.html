@@ -6,6 +6,17 @@
 <p>鏡面反射 d − 2(d·n)n。`<code style="color:#22d3bf">glassmirror.refract_rays</code>` 的夥伴(此前缺反射側)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>入射・法線ともに (..., 3)。法線の向き(表裏)には依存しない。返り値は単位ベクトル。</p>
+<p>手順: `<code style="color:#22d3bf">directions</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">normals</code>` をそれぞれ単位化してから</p>
+<p>`<code style="color:#22d3bf">r = d - 2 (d·n) n</code><code style="color:#22d3bf"> を取り、もう一度単位化する。</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">-n</code>` にしても</p>
+<p>`<code style="color:#22d3bf">(d·n) n</code><code style="color:#22d3bf"> は変わらないので、法線の符号を気にせず </code><code style="color:#22d3bf">trace_rays(...)[&quot;normal&quot;]</code>`</p>
+<p>をそのまま渡せる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">directions</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">normals</code>`: 最後の軸が 3、有限。形が違えば numpy の規則で</p>
+<p>ブロードキャスト(1 本の法線を全光線に、など)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(`<code style="color:#22d3bf">ValueError</code>`): 最後の軸が 3 でない / 非有限 / <b>長さ 0 のベクトル</b>を含む</p>
+<p>(交差しなかった光線の法線 0 を混ぜると落ちる ―― `<code style="color:#22d3bf">index &gt;= 0</code>` で絞ってから)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: ブロードキャスト後の形の float64 単位ベクトル。</p>
+<p>`<code style="color:#22d3bf">trace_rays</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">reflect_rays</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">trace_rays</code>` で鏡面の 2 次反射を追える。</p>
+<p>屈折側は `<code style="color:#22d3bf">refract_rays</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

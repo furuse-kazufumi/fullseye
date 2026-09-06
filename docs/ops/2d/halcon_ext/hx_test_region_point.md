@@ -17,13 +17,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_test_region_point", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `test_region_point`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_test_region_point: 入力 → 出力](../../_fig/hx_test_region_point.png)
+![hx_test_region_point: input → output](../../_fig/hx_test_region_point.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_test_region_point: knob b sweep](../../_fig/hx_test_region_point.b.jpg)
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_test_region_point: stages](../../_fig/hx_test_region_point.chain.jpg)
 
 ## 使い方
 
 region が点(正規化 a=行, b=列)を含むか(1/0、test_region_point)。
+
+``v > 0.5`` の region が、正規化座標 ``(a, b)`` の画素を含むかを 1.0/0.0 の ``np.float64`` で返す。
+
+- ``a`` → 行 ``r = min(int(a*h), h-1)``(0 で先頭行、1 で最終行)。
+- ``b`` → 列 ``c = min(int(b*w), w-1)``。
+
+座標は (行, 列) 順で、切り捨てで画素に丸める。1 画素の判定なので region の縁ぎりぎりでは不安定になる。
+点の周辺で判定したいときは先に ``hx_dilation1`` で region を太らせる。複数点の包含率は
+``hx_test_region_points``、点から region までの距離は ``hx_distance_pr``。
 
 ## 詳しい使い方ガイド
 

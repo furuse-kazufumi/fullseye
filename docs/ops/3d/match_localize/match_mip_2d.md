@@ -21,6 +21,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 MIP 投影 → 2D NCC(構造=voxel → 2D × 手法=NCC、変換=直交 MIP)。
 
+3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を
+冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。
+
+手順: ``voxel_to_mips`` で scene・model とも 3 枚の MIP を作り、各投影で model MIP の
+``> 5%·max`` の bbox を切り出してテンプレにし、``accel_match.ncc_locate_batch``(2D NCC、
+テンプレ中心規約)で位置を取る。軸 0 を潰した投影は (y,x)、軸 1 は (z,x)、軸 2 は (z,y) を
+与えるので各座標は 2 枚から得られ、その平均を返す。
+返り値 ``(3,)`` float64 の ``[z, y, x]``(整数 NCC 位置の平均なので .5 刻み)。score は返さない。
+- 位置は **切り出した bbox テンプレの中心**が scene MIP のどこに載るか。model volume の
+中心ではない。
+- model MIP が全 0 の投影は飛ばし、ある座標が 1 枚からも得られなければ 0.0 になる(例外は
+出ない)。
+- MIP は重なりで奥行き情報を失うので、複数物体・クラッタには弱い。
+後段: この粗位置を ``refine_translation_lk`` / ``refine_lm`` に渡す。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

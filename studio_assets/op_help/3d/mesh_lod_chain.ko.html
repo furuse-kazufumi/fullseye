@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_lod_chain(V, F, fractions=(0.5, 0.25, 0.125), samples=2000, seed=0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mesh_lod_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>간략화 레벨 열과 각 단계의 실측 기하 오차(`<code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Level *k* is :func:<code style="color:#22d3bf">meshrepair.decimate_qem</code> to `<code style="color:#22d3bf">fractions[k] × nf</code>`</p>
+<p>faces, applied cumulatively. `<code style="color:#22d3bf">error</code>` per level is the RMS and maximum</p>
+<p>distance of *samples* area-weighted points of the <b>original</b> surface to</p>
+<p>the level&#x27;s surface (the number a screen-space LOD rule needs). Returns</p>
+<p>`<code style="color:#22d3bf">levels</code><code style="color:#22d3bf"> (list of </code>`{&quot;V&quot;, &quot;F&quot;, &quot;n_faces&quot;, &quot;mean_edge&quot;, &quot;rms_error&quot;,</p>
+<p>&quot;max_error&quot;}``), level 0 being the input (error 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

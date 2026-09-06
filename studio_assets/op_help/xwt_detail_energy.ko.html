@@ -2,8 +2,10 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xwt_detail_energy — 2D <code style="color:#22d3bf">features</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_detail_energy&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p><img src="fig/xwt_detail_energy.png" alt="xwt_detail_energy: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/xwt_detail_energy.png" alt="xwt_detail_energy: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>웨이블릿 상세 성분의 에너지 비율. `<code style="color:#22d3bf">db2</code>`로 3단계 분해하여, 모든 상세 계수(각 단계의 수평/수직/대각)의 제곱평균 합을, 여기에 근사 성분의 제곱평균을 더한 전체 에너지로 나눈 값을 반환한다 -- 고주파(텍스처/노이즈/엣지)가 이미지 전체에서 차지하는 비율을 나타내는 지표로, 값의 범위는 대략 [0,1)이다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

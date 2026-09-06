@@ -21,6 +21,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D グレースケール dilation(SE 半径 r の局所 max)。明領域を膨張。
 
+se="cube"(既定、torch 経路で GPU 可)/ "ball"(等方 SE、scipy 経路)。
+
+SE は一辺 ``2r+1`` の立方体(cube)か ``z²+y²+x² <= r²`` の球(ball)。``r=0`` は恒等。
+境界の外は −∞ 扱い(画像内の値だけで max を取る。torch の ``max_pool3d`` の implicit
+padding と scipy の ``cval=-inf`` で同じ結果)。cube は torch があれば ``max_pool3d``
+(``device`` 有効)、ball または torch 不在なら ``scipy.ndimage.grey_dilation``(``device`` は
+無視)。入力は float32 に変換され、返り値 ``(D,H,W)`` float32 numpy。``se`` がその 2 つ以外なら
+ValueError。2 値 volume(0/1)ならそのまま 2 値 dilation になる。``se="ball"`` は r が
+大きいと footprint 走査で遅い。
+後段: ``morph_erode3d`` と組で ``morph_open3d`` / ``morph_close3d`` / ``morph_gradient3d``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

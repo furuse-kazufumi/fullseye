@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。
 
+``skimage.measure.marching_cubes(vol, level=iso)`` の薄い包み(spacing 指定なし = 1 voxel
+単位)。``verts`` (V,3) float は **voxel index 座標**で、列は入力の軸順(``vol`` が (D,H,W)
+なら (z,y,x))。``faces`` (F,3) int は verts への index、``normals`` (V,3) は skimage が
+勾配から与える頂点法線。4 番目の返り値(values)は捨てる。
+
+- ``iso``: 等値面のレベル。**入力の値域の外だと skimage が ValueError** を出す(全 0 の
+volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。
+- 境界に接する等値面は開いたまま(端で閉じない)。
+- skimage は呼び出し時 import(未導入なら ImportError)。
+後段: ``mesh_to_points`` で点群化、``mesh_area`` / ``mesh_edge_stats`` で計測。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_bbox(region)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_bbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Enge Bounding Box `<code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>` (obere Grenzen exklusiv).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>computed on the runs (no decode; measured ~1000x faster than scanning the</p>
+<p>dense mask). Matches `<code style="color:#22d3bf">volops.vol_bounding_box</code>` of the decoded mask</p>
+<p>exactly. An empty region raises `<code style="color:#22d3bf">ValueError</code>` (same fail-closed rule).</p>
+<p>計算: `<code style="color:#22d3bf">z = rows // H</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y = rows % H</code><code style="color:#22d3bf"> を復元し、</code>`(z.min, y.min, starts.min,</p>
+<p>z.max+1, y.max+1, ends.max)`<code style="color:#22d3bf"> を返す。6 要素の </code><code style="color:#22d3bf">int</code>` タプルで、軸順は</p>
+<p>`<code style="color:#22d3bf">(z, y, x)</code>` = (depth, row, col)。上限は排他的なので</p>
+<p>`<code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code>` がそのまま最小の外接部分 volume になる。</p>
+<p>座標は voxel index(spacing は掛けない)。</p>
+<p>検証: `<code style="color:#22d3bf">VolRLE</code><code style="color:#22d3bf"> の整合性検査(</code><code style="color:#22d3bf">_require_rle</code>`)に加え、run が 1 本もない region は</p>
+<p>「箱が定義できない」として `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">margin</code>` 引数は無い</p>
+<p>(余白が要るなら `<code style="color:#22d3bf">vol_bounding_box</code>` を decode 後に使う)。</p>
+<p>使いどころ: `<code style="color:#22d3bf">vol_rle_components</code><code style="color:#22d3bf"> の各成分の箱を取り、</code><code style="color:#22d3bf">vol_crop_domain</code>` 相当の</p>
+<p>ROI 切り出しを密配列を作らずに決める。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

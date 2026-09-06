@@ -1094,7 +1094,12 @@ def test_every_operator_has_a_help_page_in_every_language():
 
 #: 2026-09-06 の実測。ヘルプ本文の翻訳が届いているページ数の**床**。
 #: 下回ったら落ちる(上げるのは自由)。en が多いのは原文が英語の op が多いため。
-_HELP_TRANSLATED_FLOOR = {"en": 906, "zh": 535, "tw": 535, "ko": 535, "de": 535}
+#: 2026-09-07 に床を**下げた**(en 906 → 510、他 535 → 92)。訳を消したのではない ——
+#: 3-D 台帳の「使い方」が docstring の 1 行目だけだったのを全文に直し(KNOWN_ISSUES §41)、
+#: 本文が 1 行だった 494 op に日本語の本文を足した結果、「要約 1 行 = ページ全文 = 訳済み」
+#: だったページが「要約は訳済み・本文は原文」に変わった。ページの中身は増え、訳の量は
+#: 1 文字も減っていない。本文の翻訳は別件(6 言語 × 1,344 本)。
+_HELP_TRANSLATED_FLOOR = {"en": 510, "zh": 92, "tw": 92, "ko": 92, "de": 92}
 
 
 def test_the_help_translation_coverage_does_not_regress():

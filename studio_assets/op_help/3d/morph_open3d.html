@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D opening = erosion → dilation。SE より小さい<b>明構造(棘・粒)</b>を除く。</p>
+<p>`<code style="color:#22d3bf">morph_dilate3d(morph_erode3d(vol, r, ...), r, ...)</code>` と同じ SE を 2 回。出力は入力以下</p>
+<p>(`<code style="color:#22d3bf">open &lt;= vol</code><code style="color:#22d3bf">)で、SE(一辺 </code><code style="color:#22d3bf">2r+1</code>` の cube か半径 r の ball)が入り切らない明るい突起・</p>
+<p>孤立点・細いブリッジが消え、大きな構造の形は保たれる(等冪: 2 回掛けても同じ)。</p>
+<p>`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> は voxel 単位、</code><code style="color:#22d3bf">se</code><code style="color:#22d3bf"> は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、</code><code style="color:#22d3bf">device</code>` は cube+torch の</p>
+<p>ときだけ有効。返り値 `<code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>用途: `<code style="color:#22d3bf">vol − open</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">morph_tophat3d</code>`(小さな明構造の抽出)。点密度 voxel の孤立ノイズ</p>
+<p>点除去、2 値占有の細線除去。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

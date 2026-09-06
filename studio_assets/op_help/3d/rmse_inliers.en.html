@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.rmse_inliers(source, target, transform, thresh: &#x27;float&#x27;)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;rmse_inliers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The RMSE over the inlier correspondences (residual &lt; thresh) and the inlier count. → (rmse, n_inliers).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">source[i]↔target[i]</code><code style="color:#22d3bf"> の index 対応が前提(:func:</code>inlier_ratio` と同じ)。</p>
+<p>inlier が 0 個なら RMSE は未定義 → `<code style="color:#22d3bf">(nan, 0)</code>` を返す(honest; 捏造しない)。</p>
+<p>形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

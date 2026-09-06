@@ -17,13 +17,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_regress_contours", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `regress_contours_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_regress_contours: 入力 → 出力](../../_fig/hx_regress_contours.png)
+![hx_regress_contours: input → output](../../_fig/hx_regress_contours.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_regress_contours: stages](../../_fig/hx_regress_contours.chain.jpg)
 
 ## 使い方
 
 各 contour に回帰直線を当て、平均残差(直線からのズレ)を返す(feature)。小=直線的。
+
+点数 3 以上の各 contour について、点の重心を通る全最小二乗直線(座標共分散の最小固有ベクトルを法線とする)を
+当て、点から直線までの距離の RMS を求める。全 contour の RMS を平均し ``max(H, W)`` で割って 1 で頭打ちした
+``np.float64`` を返す。
+
+- ``a``, ``b`` は未使用。
+- 有効な contour が無ければ 0.0(「完全な直線」と区別できない)。
+
+小さいほど直線的。直線そのものの傾きや位置は返さない(当てはめ結果が要るなら ``fit_line_contours``)。
+折れ線としての角の数を見たいなら ``hx_split_contours`` で分割してから線分数を数える。点数 2 以下の contour は
+評価から外れる。1 本の contour だけを対象にした同種の指標は ``xg_regress_contours``。
 
 ## 詳しい使い方ガイド
 

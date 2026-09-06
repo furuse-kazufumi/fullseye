@@ -4,6 +4,30 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群を point-to-point ICP(Kabsch/SVD)で精緻化する。</p>
+<p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た</p>
+<p>初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で</p>
+<p>位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム</p>
+<p>(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくても</p>
+<p>サブボクセル精度へ収束させる。</p>
+<p>部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と</p>
+<p>絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した</p>
+<p>対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。</p>
+<p>引数:</p>
+<p>src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。</p>
+<p>dst: (M,3) 固定側(参照)点群。</p>
+<p>iters: 最大反復回数。</p>
+<p>init_R: (3,3) 初期回転。None なら単位行列。</p>
+<p>init_t: (3,) 初期並進。None なら零ベクトル。</p>
+<p>tol: RMSE の相対改善がこの値を下回れば収束打ち切り。</p>
+<p>max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。</p>
+<p>trim_ratio: 0&lt;r&lt;=1。各反復で最近傍距離の小さい上位 r 割の対応のみ</p>
+<p>採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。</p>
+<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD をこのデバイス上で解く。</p>
+<p>返り値:</p>
+<p>R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。</p>
+<p>t: (3,) torch.Tensor。並進。</p>
+<p>info: dict。&quot;rmse&quot;(採用対応上の最終RMSE), &quot;iters&quot;(実反復数),</p>
+<p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用対応数), &quot;rmse_history&quot;(list)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ランダム回転を適用し ``(rotated, R)`` を返す(視点変化の模倣)。
 
+``R`` は正規直交・``det=+1``(``rotated = points @ R.T`` = 各点に ``R`` を左作用、
+逆変換は ``rotated @ R``)。``max_angle=None`` なら Shoemake 法で一様ランダム回転、
+``max_angle`` 指定(ラジアン, 期待 ``[0, π]``)なら軸を球面一様・角を ``[0, max_angle]``
+一様に取り、回転角を制限する(``arccos((tr R -1)/2) ≤ max_angle`` を厳密に保証)。
+
+``max_angle < 0`` は ``ValueError``、``max_angle=0`` は単位行列。単位はラジアン(度で
+渡すと桁違いに大きくなる)。``max_angle=None`` の一様回転は上限 π までの大きな回転も
+普通に出るので、視点変化の範囲を絞りたいときは ``max_angle`` を使う。回転は原点まわり
+で、雲が原点から離れていれば重心も動く。``R`` の規約 ``rotated = points @ R.T`` は
+``register_fpfh``・``register_shot`` が返す ``dst ≈ src @ R.T + t`` と同じ向きなので、
+推定結果との角度誤差は ``arccos((tr(R_est·Rᵀ)-1)/2)`` で測れる。``seed`` で決定論的
+(同 seed なら同じ ``R``)。返り値は float64 の ``(N,3)`` と ``(3,3)``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

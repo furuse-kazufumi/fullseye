@@ -4,6 +4,40 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import render3d; render3d.bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001), amplitudes=(0.0002, 0.00012), *, seed: &#x27;int&#x27; = 0, rotation=None, step=None, local_edge=None, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;bump_normals_fbm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Perturb a normal map with the *gradient* of a seeded multi-octave height field</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>(sub-facet relief the geometry cannot afford to displace) → unit normals `<code style="color:#22d3bf">(H, W, 3)</code>`.</p>
+<p>`<code style="color:#22d3bf">h(x) = Σ_k A_k n_k(x)</code><code style="color:#22d3bf"> is the same value-noise field :func:</code>mesh_displace_spectrum`</p>
+<p>would displace with (same `<code style="color:#22d3bf">seed</code>` ⇒ same lattice), so passing the octaves that the</p>
+<p>displacement&#x27;s band gate rejected makes the shading continue the *same* amplitude</p>
+<p>spectrum below the facet size (no fake sandpaper: an octave of amplitude `<code style="color:#22d3bf">A</code>` at</p>
+<p>wavelength `<code style="color:#22d3bf">λ</code><code style="color:#22d3bf"> tilts the normal by about </code><code style="color:#22d3bf">2πA/λ</code>` at most). The bumped normal is</p>
+<p>`<code style="color:#22d3bf">normalize(n − ∇_t h)</code>` (first-order shading normal of a height field over the</p>
+<p>surface; `<code style="color:#22d3bf">∇_t</code><code style="color:#22d3bf"> = tangential gradient by central differences with </code><code style="color:#22d3bf">step</code>` =</p>
+<p>`<code style="color:#22d3bf">min(λ)/64</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">positions</code><code style="color:#22d3bf"> are world coordinates </code><code style="color:#22d3bf">(H, W, 3)</code>` (NaN = background,</p>
+<p>left untouched); if `<code style="color:#22d3bf">rotation</code><code style="color:#22d3bf"> (3×3, world → normal frame, e.g. </code><code style="color:#22d3bf">pose[:3,:3]</code>`)</p>
+<p>is given the normals are taken in that frame.</p>
+<p>`<code style="color:#22d3bf">local_edge</code><code style="color:#22d3bf"> (optional </code><code style="color:#22d3bf">(H, W)</code>` map of the mesh&#x27;s local edge length under each</p>
+<p>pixel) makes the bump the exact <b>complement</b> of the displacement&#x27;s band gate: octave</p>
+<p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> is bumped with weight </code><code style="color:#22d3bf">1 − gate_k</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">gate_k</code>` is</p>
+<p>:func:<code style="color:#22d3bf">displacement_band_weights</code>&#x27;s rule with the same `<code style="color:#22d3bf">nyquist</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fade</code>` — so an</p>
+<p>octave the geometry carried at a pixel is not added twice, and one it could not carry</p>
+<p>is fully supplied by the bump. Without it every octave is bumped at full amplitude.</p>
+<p>Deterministic; fail-closed.</p>
+<p>入出力はともに `<code style="color:#22d3bf">(H, W, 3)</code><code style="color:#22d3bf"> 画像。</code><code style="color:#22d3bf">positions</code>` に NaN を含む画素、または法線の長さが</p>
+<p>`<code style="color:#22d3bf">1e-12</code><code style="color:#22d3bf"> 以下の画素は背景として **元の値のまま** 残す(</code><code style="color:#22d3bf">render3d.render_mesh</code>` の空画素)。</p>
+<p>有効画素が一つも無ければ入力のコピーを返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">wavelengths</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">amplitudes</code><code style="color:#22d3bf">: メッシュ(= </code><code style="color:#22d3bf">positions</code>`)の単位で同じ長さ(1〜32)の</p>
+<p>正の列。不一致・負は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">rotation</code><code style="color:#22d3bf">: 3×3(world → 法線の座標系)。与えると法線を </code><code style="color:#22d3bf">N @ R</code>` で world に戻して</p>
+<p>勾配を取り、`<code style="color:#22d3bf">@ R.T</code><code style="color:#22d3bf"> で元の系に戻す。</code><code style="color:#22d3bf">render_mesh</code>` の法線はカメラ空間なので</p>
+<p>`<code style="color:#22d3bf">pose[:3,:3]</code><code style="color:#22d3bf"> を渡す。非有限・形不正は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">step</code><code style="color:#22d3bf">: 中心差分の刻み(既定 </code><code style="color:#22d3bf">min(wavelengths)/64</code><code style="color:#22d3bf">)。0 以下は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">local_edge</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W)</code>` の辺長マップ。形が法線と違う、または有効画素の下に非正・</p>
+<p>非有限があると `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p>高さ場を 3 軸の中心差分で微分するので評価は 1 画素あたり 6 回。法線の傾きは</p>
+<p>`<code style="color:#22d3bf">max |∇h| ≈ 2π A_k / λ_k</code>` 程度なので、振幅が波長に近づくほど法線が大きく寝る</p>
+<p>(既定は A/λ = 0.1 前後)。結果は `<code style="color:#22d3bf">phong_shade</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">brdf_hapke</code>` 等の</p>
+<p>法線マップ入力へそのまま渡せる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

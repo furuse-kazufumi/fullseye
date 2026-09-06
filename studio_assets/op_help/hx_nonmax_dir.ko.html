@@ -3,10 +3,31 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_nonmax_dir&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">nonmax_suppression_dir</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/hx_nonmax_dir.png" alt="hx_nonmax_dir: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/hx_nonmax_dir.png" alt="hx_nonmax_dir: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_nonmax_dir.a.jpg">hx_nonmax_dir: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_nonmax_dir.inputs.jpg">hx_nonmax_dir: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기울기 방향을 따른 비최대 억제(Canny 의 NMS 단계). 에지를 1 화소로 세선화합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Sobel で `<code style="color:#22d3bf">gx</code><code style="color:#22d3bf">(列方向)・</code><code style="color:#22d3bf">gy</code><code style="color:#22d3bf">(行方向)を取り、振幅 </code><code style="color:#22d3bf">hypot(gx, gy)</code><code style="color:#22d3bf"> と方向 </code><code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code>` を</p>
+<p>求める。方向を 45° 刻みの 4 区分に量子化し、各画素をその区分に対応する 2 つの隣接画素と比べて</p>
+<p>`<code style="color:#22d3bf">mag &gt;= 両隣</code><code style="color:#22d3bf"> の画素だけ残す(それ以外は 0)。残った振幅を min-max で [0,1] に正規化し、</code><code style="color:#22d3bf">a*0.3</code>` 未満を 0 に落とす。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 弱エッジのしきい値 </code><code style="color:#22d3bf">a*0.3</code>`(正規化後の値に対して。a=0 でしきい値なし)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>注意点:</p>
+<p style="margin:2px 0 2px 12px">• 隣接比較は `<code style="color:#22d3bf">np.roll</code>` なので画像端では反対側の画素と比較される(端 1 画素は信用しない)。</p>
+<p style="margin:2px 0 2px 12px">• 比較が `<code style="color:#22d3bf">&gt;=</code>` のため、同じ振幅が並ぶ理想的なステップエッジは 2 画素幅で残る(1 画素にはならない)。</p>
+<p style="margin:2px 0 2px 12px">• 現状の実装では 45° と 135° の区分で比較する隣接画素の対が入れ替わっており、斜めのエッジは勾配方向でなく</p>
+<p>エッジに沿った方向で比較される。そのため水平・垂直エッジは細線化されるが、斜めエッジはほとんど細線化されない</p>
+<p>(ぼかした対角ステップエッジで 1400 画素前後がそのまま残る実測)。斜めエッジの細線化が要る場合は `<code style="color:#22d3bf">canny</code>` や</p>
+<p>`<code style="color:#22d3bf">skeleton</code>` を検討する。</p>
+<p>`<code style="color:#22d3bf">sobel_amp</code><code style="color:#22d3bf"> のような振幅画像ではなく元の gray 画像を渡す(内部で微分する)。後段は </code><code style="color:#22d3bf">hx_close_edges</code>` /</p>
+<p>`<code style="color:#22d3bf">hx_detect_edge_segments</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">threshold</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

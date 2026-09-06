@@ -7,6 +7,21 @@
 <p>後縁の開き(翼弦比)。上面と下面の後縁端の距離。</p>
 <p>NACA 4 桁の既定係数(-0.1015)は後縁を<b>わずかに開く</b>ので、0 にならないのが</p>
 <p>正しい。閉じる係数(-0.1036)なら 0 に近づく。</p>
+<p>手順: `<code style="color:#22d3bf">profile_sides(contour, n)</code><code style="color:#22d3bf">(弦長 1 に正規化し、弦を </code><code style="color:#22d3bf">n</code>` 等分した各</p>
+<p>位置で上面・下面を線形補間)を取り、**`<code style="color:#22d3bf">x = 1</code>` 側から見て上下両方が取れた</p>
+<p>最初の位置**の `<code style="color:#22d3bf">upper - lower</code>` を返す。単位は弦長比(無次元)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">contour</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(N, 2)</code>` の <b>(x, y)</b>、8 点以上、有限、<b>閉じた断面</b>であること</p>
+<p>(端点間の隙間が全体の 20 % を超えると「閉じていない」として `<code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code>`: 弦の分割数、5 以上(既定 201)。<b>粗いと後縁から手前の位置で測る</b>ことに</p>
+<p>なり、テーパした後縁では実際の隙間より大きく出る。細かいほど後縁に寄る。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: float(弦長比)。実測(`<code style="color:#22d3bf">n=201</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">profile_synth_naca4(&quot;2412&quot;)</code>` で</p>
+<p>0.0039、`<code style="color:#22d3bf">closed_te=True</code>` でも 0.0015 ―― 閉じた後縁でも 0 にならないのは、</p>
+<p>上下両方が取れる最後の位置が後縁のわずかに手前で、そこにはまだ厚みが</p>
+<p>あるため。符号は上面の `<code style="color:#22d3bf">y</code>` が下面より大きい限り正。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(形、閉じていない、上下が取れる位置が 1 つも無い、</p>
+<p>上下面が一致して厚み 0)。</p>
+<p>`<code style="color:#22d3bf">profile_thickness</code>` の末尾の値と同じ量を「後縁の 1 点だけ」で返すもの。</p>
+<p>`<code style="color:#22d3bf">profile_synth_naca4(closed_te=True)</code>` で作った真値と比べれば検算になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

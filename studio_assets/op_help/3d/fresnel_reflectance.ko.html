@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;fresnel_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>프레넬 반사율(무편광=s/p 평균). 투명체 계면에서 반사/투과로 나뉘는 비율.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。</p>
+<p>`<code style="color:#22d3bf">cos_i</code><code style="color:#22d3bf"> は入射角の余弦(実数スカラー。配列・None は ValueError)。符号は捨てる(</code><code style="color:#22d3bf">|cos_i|</code>`)。</p>
+<p>`<code style="color:#22d3bf">eta1</code><code style="color:#22d3bf"> は入射側、</code><code style="color:#22d3bf">eta2</code><code style="color:#22d3bf"> は透過側の屈折率。s 偏光 </code><code style="color:#22d3bf">rs</code><code style="color:#22d3bf"> と p 偏光 </code><code style="color:#22d3bf">rp</code>` の平均を float で</p>
+<p>返す(<b>[0, 1]</b>)。Brewster 角では `<code style="color:#22d3bf">rp = 0</code><code style="color:#22d3bf"> になるが平均は 0 にならない。</code><code style="color:#22d3bf">cos_i = 0</code>`(かすめ</p>
+<p>入射)で 1.0。透過率は `<code style="color:#22d3bf">1 −</code>` 反射率(吸収なし)。</p>
+<p>用途: `<code style="color:#22d3bf">refract</code>` で曲げた光線の重み、透明体の輝度予測。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

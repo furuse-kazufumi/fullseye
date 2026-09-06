@@ -21,6 +21,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。
 
+同じ SE(一辺 ``2r+1`` の cube か半径 r の ball)での局所 max − 局所 min。値は常に 0 以上、
+一様な領域で 0、明暗の境界で段差の大きさ(``r`` が大きいほど境界が太い。``r=1`` で 2 voxel
+幅)。方向情報は無い(方向が要るなら ``sobel3d``)。``sobel3d`` と違い利得の補正が要らず、
+2 値 volume では「境界 voxel = 1」の殻がそのまま出る。``se`` は "cube"/"ball"(他は
+ValueError)、``device`` は cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
+用途: ``match_chamfer_3d`` 用のエッジ源、``hough_plane_3d`` に渡す前の表面抽出の代替。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

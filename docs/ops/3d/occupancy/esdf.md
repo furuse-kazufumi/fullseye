@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 占有格子 → Euclidean 符号付き距離場 (ESDF)(外=+ 最近占有まで, 内=- 最近自由まで)。
 
+``scipy.ndimage.distance_transform_edt`` を自由側(外)と占有側(内)に別々にかけ、
+``d_out - d_in`` で符号を付ける。``voxel_size`` はボクセル辺長(等方スカラ or 異方
+長さ3。EDT の ``sampling`` に渡す)で、返る距離は world 単位。全自由なら +inf、全占有
+なら -inf(honest: 最近対辺が存在しない)。ゼロ交差は占有/自由ボクセル**中心の中間**に
+落ちるため、境界セル中心の |ESDF| は約 1 ボクセル(下流テストの許容根拠)。
+
+Raises ValueError for voxel_size<=0.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

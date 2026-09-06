@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;reflect_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把點群關於平面(點 plane_point、法線 plane_normal)鏡像。→ (N,3)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各点 p の平面からの符号付き距離 `<code style="color:#22d3bf">d = (p - plane_point) · n</code>`(n は正規化した法線)を取り、</p>
+<p>`<code style="color:#22d3bf">p&#x27; = p - 2 d n</code>` を返す(Householder 鏡映)。平面上の点は動かず、平面の両側の点が入れ替わる。</p>
+<p>点の並び順は保たれるので `<code style="color:#22d3bf">p&#x27;[i]</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">p[i]</code>` の鏡像。座標の単位はそのまま。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (N,3) の配列(float に変換)。形状検証はしない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">plane_point</code><code style="color:#22d3bf">: 平面上の 1 点 (3,)。</code><code style="color:#22d3bf">plane_normal</code>`: 法線 (3,)(長さは任意、内部で正規化。</p>
+<p>符号は結果に影響しない)。</p>
+<p>注意: 法線はノルムに 1e-12 を足して割るため、ゼロベクトルを渡しても例外にならず点群がほぼ</p>
+<p>そのまま返る(fail-closed ではない)。`<code style="color:#22d3bf">reflection_symmetry_score</code>` /</p>
+<p>`<code style="color:#22d3bf">detect_reflection_symmetry</code>` の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の</p>
+<p>点群に連結する)形状補完にも使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;region_growing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按法線相似度做區域成長,給連通的平滑區域同一標籤(無曲率閘的變體)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が</p>
+<p>`<code style="color:#22d3bf">angle_thresh_deg</code>` 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので</p>
+<p>同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。</p>
+<p>法線は符号不定(PCA 由来)なので `<code style="color:#22d3bf">|n_p·n_q|</code>` で判定(表裏を同一視)。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>normals: (N,3) 単位法線。None なら :func:<code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
+<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
+<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>Returns:</p>
+<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。**min_region_size 未満の</p>
+<p>小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)** = 統一契約(-1=ノイズ)に従う。</p>
+<p>空入力は shape (0,) を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

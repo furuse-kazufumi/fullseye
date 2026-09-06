@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: &#x27;float&#x27;, *, corr_thresh: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;registration_recall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。</p>
+<p>GT 変換 `<code style="color:#22d3bf">gt_transform</code>` で source を target フレームへ写し、target 側の最近傍</p>
+<p>(距離 &lt; `<code style="color:#22d3bf">corr_thresh</code>`、既定は thresh)を GT 対応(=重なり)として張る。その</p>
+<p>対応を <b>推定変換</b> `<code style="color:#22d3bf">est_transform</code><code style="color:#22d3bf"> で写した RMSE が </code><code style="color:#22d3bf">thresh</code>` を切れば成功。</p>
+<p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">target</code>` は index 対応でなくてよい(対応は GT から張るため target の</p>
+<p>並びに依存しない)。GT 重なりが 1 点も無ければ成否は未定義 → `<code style="color:#22d3bf">nan</code>`(honest)。</p>
+<p>データセット全体の Registration Recall はこの per-pair 指標(重なり有ペア上)の平均。</p>
+<p>形状不正は ValueError(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

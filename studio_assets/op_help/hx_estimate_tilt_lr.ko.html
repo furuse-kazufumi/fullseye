@@ -3,10 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_tilt_lr&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">estimate_tilt_lr</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/hx_estimate_tilt_lr.png" alt="hx_estimate_tilt_lr: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/hx_estimate_tilt_lr.png" alt="hx_estimate_tilt_lr: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Lee-Rosenfeld: 광원 방위각 tilt = atan2(&lt;Ey&gt;, &lt;Ex&gt;)(평균 기울기 방향). [0,1] 정규화.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Sobel 勾配 `<code style="color:#22d3bf">Ex</code><code style="color:#22d3bf">(列方向)・</code><code style="color:#22d3bf">Ey</code><code style="color:#22d3bf">(行方向)を画像全体で平均し、</code><code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code>` を</p>
+<p>`<code style="color:#22d3bf">(tilt / 2π) mod 1</code><code style="color:#22d3bf"> で [0,1) に写した </code><code style="color:#22d3bf">np.float64</code>` を返す。Lambertian 面で光源方位(tilt)が平均勾配の方向に</p>
+<p>現れるという Lee-Rosenfeld の推定。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 0 が +列方向、0.25 が +行方向(画像では下)、以下その向きに回る。平均勾配がほぼ 0 だと `<code style="color:#22d3bf">arctan2(0, 0) = 0</code>` で</p>
+<p>0 に落ちる。</p>
+<p>勾配の生の平均を使うので、コントラストの強い部分の方向に引きずられる。表面の反射率や形状がランダムで、照明の</p>
+<p>傾きだけが全体の勾配の偏りを作る、という前提が要る。局所コントラストの影響を抑えた版は `<code style="color:#22d3bf">hx_estimate_tilt_zc</code>`。</p>
+<p>角度値は周期量なので 0 と 1 付近は同じ方向(差を取るときは注意)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

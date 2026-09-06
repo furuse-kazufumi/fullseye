@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SDF のゼロ等値面を距離 `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> だけ法線方向へ動かす = </code><code style="color:#22d3bf">sdf - r</code>`(r&gt;0 膨張, r&lt;0 収縮)。</p>
+<p>新しいゼロ集合は旧 `<code style="color:#22d3bf">sdf == r</code><code style="color:#22d3bf"> の等値面。全点で距離が一様に </code><code style="color:#22d3bf">r</code>` シフトするので、距離場</p>
+<p>としての性質(勾配ノルム 1)は保たれる。プリミティブの厚み付け(丸めた殻)や配管の</p>
+<p>クリアランス確保に使う。</p>
+<p>計算: `<code style="color:#22d3bf">np.asarray(sdf, float64) - float(r)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">r</code>` はスカラのみ(配列を渡すと</p>
+<p>`<code style="color:#22d3bf">float()</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">TypeError</code><code style="color:#22d3bf">)。単位は </code><code style="color:#22d3bf">sdf</code><code style="color:#22d3bf"> の距離単位と同じ。</code><code style="color:#22d3bf">r = 0</code>` は恒等。</p>
+<p>shape・NaN・inf の検査はしない(`<code style="color:#22d3bf">inf - r = inf</code>` で契約どおり伝播)。</p>
+<p>幾何的意味: 厳密な SDF に対しては Minkowski 和(`<code style="color:#22d3bf">r &gt; 0</code><code style="color:#22d3bf"> で半径 </code><code style="color:#22d3bf">r</code>` の球で</p>
+<p>膨張、`<code style="color:#22d3bf">r &lt; 0</code><code style="color:#22d3bf"> で収縮)に一致する。</code><code style="color:#22d3bf">sphere_sdf(g, c, R)</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">r</code>` を掛けると</p>
+<p>`<code style="color:#22d3bf">sphere_sdf(g, c, R + r)</code><code style="color:#22d3bf"> と厳密に等しい。</code><code style="color:#22d3bf">box_sdf</code>` の膨張では角が丸くなる</p>
+<p>(ユークリッド膨張なので、箱が大きくなるのではなく角 R = r の丸箱になる)。</p>
+<p>注意:</p>
+<p style="margin:2px 0 2px 12px">• 収縮(`<code style="color:#22d3bf">r &lt; 0</code><code style="color:#22d3bf">)で </code><code style="color:#22d3bf">|r|</code>` が最小内接半径を超えると形は消える(全要素が正)。</p>
+<p>エラーにはならない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sdf_union</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sdf_intersect</code>` の<b>内側</b>は真の距離の下界なので、合成後に</p>
+<p>`<code style="color:#22d3bf">r &lt; 0</code>` で収縮すると、重なり領域で実際より多く削れることがある。</p>
+<p style="margin:2px 0 2px 12px">• 厚さ `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> の殻: </code><code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

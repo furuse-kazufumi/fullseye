@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。
 
+既存の点を 1 つ一様サンプルして中心とし、辺長 ``extent``(スカラ=立方体, または
+``(3,)``=各軸辺長)のボックス内の点をすべて除去する。中心点自身が必ず入るため
+最低 1 点は除去される。除去点は必ず辺長 ``extent`` のボックスに収まる(空間的に
+局所的 = ランダム散布とは判別可能)。``kept == points[kept_idx]``、``extent > 0``。
+
+``extent`` に正でない値や ``(3,)`` 以外の形を渡すと ``ValueError``。空入力は空と空
+インデックスを返す。中心は ``rng.integers(n)`` で選ぶ点なので、``seed`` が同じでも点の
+並びが変わると別の場所が抜ける。ボックス判定は ``|P - center| <= extent/2`` の閉区間。
+除去点数は密度次第で、``extent`` を雲の大きさより大きくすると全点が消える。返り値は
+``(kept float64 (M,3), kept_idx int64 (M,))``、順序は元のまま。一様な欠損は
+``random_dropout``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

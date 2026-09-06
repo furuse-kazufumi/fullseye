@@ -249,7 +249,7 @@ py-modules = [
                    # op ごとの「入力 → 出力」の図(2026-09-06)。ヘルプ HTML が
                    # `fig/<op>.png` で参照する。宣言を忘れると wheel では図だけ
                    # 空白になる ―― HTML と同じ事故の型なのでここに並べて置く。
-                   "op_help/fig/*.png",
+                   "op_help/fig/*.png", "op_help/fig/*.gif",
                    "sample_images/*.png", "sample_images/*.json",
                    "sample_thumbs/*.png", "sample_thumbs/*.json",
                    # `sample_sources_ai/`(AI 生成の記事用素材 26 枚)は **同梱しない**。

@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。
 
+各サンプル位置で曲面高さを評価し、観測 z との差の RMS / 最大絶対値 / PV
+(peak-to-valley = 最大 - 最小)を計測する。検査ではこれが自由曲面からの
+ずれ量(打痕・うねり・欠肉)の定量指標になる。
+
+Returns
+-------
+dict
+    ``{"rms": float, "max": float, "pv": float}``。max は最大絶対残差、
+    pv は符号付き残差の最大 - 最小(片側だけの凸/凹も捉える)。
+
+補足:
+- 残差の符号は ``resid = z - zhat``(観測 − 曲面)。正 = 曲面より高い(盛り上がり)、負 = 低い(欠肉)。``max`` は絶対値なので向きは分からず、向きが要るなら ``eval_bspline_surface`` で ``zhat`` を取り自分で差を取る。
+- x, y, z は任意 shape を受け、内部で ``eval_bspline_surface(tck, x, y, grid=False)`` を通す(tck の種類検査もそこで行われ、曲線 tck や多項式 dict は ``ValueError``)。z と x の要素数が違うと numpy の形状エラーになる(専用の検査は無く、z が 1 要素だと黙って broadcast される)。
+- 単位は z と同じ。``rms`` は全点の二乗平均平方根なので局所的な打痕は平均で薄まる。局所欠陥は ``max`` か ``pv`` で見る。
+- 典型: ``fit_bspline_surface`` → 本 op。フィットに使った点で評価すると smooth が小さいほど残差は 0 に近づく(過適合の指標にもなる)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

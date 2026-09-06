@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 外れ値に頑健な RANSAC 直線適合。
 
+2 点をサンプル → 直線(通過点 + 方向)→ 点-直線距離 ‖(p-p0)×d‖ < ``thresh`` の
+inlier を最大化 → 最終 inlier で最小二乗リフィット(方向=共分散の最大主軸)。
+
+Args:
+    points: (N,3) 点群。
+    thresh: inlier とみなす点-直線距離のしきい値。
+    iters: RANSAC 反復数。
+    seed: 乱数シード(決定論)。
+
+Returns:
+    (params, inlier_mask, info)。params = {"point": (3,), "direction": (3,)}(単位方向)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

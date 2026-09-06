@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;occlusion_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测深度不连续(前景/背景边界 = 遮挡边缘)。→ bool HxW。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>遮蔽エッジは深度の<b>不連続(step)</b>であって傾斜(slope)ではない。一様な傾斜面は</p>
+<p>連続で遮蔽を含まないため flag してはならない。一階勾配(=深度/画素)は傾斜そのもので、</p>
+<p>段差か斜面かを区別できない(かつ絶対深度の割合と比較するのは次元不整合)。</p>
+<p>そこで軸ごとの<b>二階差分(離散ラプラシアン相当)</b> `<code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code>` を使う。</p>
+<p>一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。</p>
+<p>これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>

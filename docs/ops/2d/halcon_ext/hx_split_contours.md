@@ -17,13 +17,38 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_split_contours", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `split_contours_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_split_contours: 入力 → 出力](../../_fig/hx_split_contours.png)
+![hx_split_contours: input → output](../../_fig/hx_split_contours.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_split_contours: knob a sweep](../../_fig/hx_split_contours.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_split_contours: stages](../../_fig/hx_split_contours.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_split_contours: other inputs](../../_fig/hx_split_contours.inputs.jpg)
 
 ## 使い方
 
 各 contour を支配点(RDP)で線分に分割する(許容 eps は a)。
+
+各 contour(点数 3 以上)に Ramer-Douglas-Peucker を掛けて支配点の index を求め、隣り合う支配点の間の部分列
+``c[s:e+1]`` を新しい contour として並べる(隣り合う線分は端点を共有する)。点数 2 以下の contour はそのまま通す。
+
+- ``a`` → 許容距離 ``eps = 0.5 + a*5``(0.5〜5.5 画素)。この距離以内の折れは無視されるので、大きいほど線分が
+長く少なくなる。
+- ``b`` は未使用。
+
+出力は「線分ごとの contour」であって折れ線の頂点だけではない(元の点は全部残る)。閉じた contour(始点=終点)は
+始点から最も遠い点で最初に分割される。線分の本数が角の数の目安になり、``hx_regress_contours`` を後段に置くと
+各線分の直線性が測れる。
 
 ## 詳しい使い方ガイド
 

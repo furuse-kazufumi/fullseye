@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import pcseg; pcseg.obb(points) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;obb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 PCA 求有向包圍盒。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Returns ``{center, axes (3,3 columns = box axes), extents (3, half-widths),</p>
+<p>corners (8,3)}``. The tight-fitting box a manipulator uses to reason about an</p>
+<p>object&#x27;s size and grasp width once it has been segmented out.</p>
+<p>手順: 重心 `<code style="color:#22d3bf">c</code><code style="color:#22d3bf"> を引いた点群の SVD(</code><code style="color:#22d3bf">full_matrices=False</code><code style="color:#22d3bf">)で主軸 </code><code style="color:#22d3bf">axes</code>`(列 = 特異値の降順、</p>
+<p>第 1 列が最も広がる方向)を取り、点を主軸座標に写して各軸の min/max から半幅 `<code style="color:#22d3bf">extents</code>` と</p>
+<p>箱中心 `<code style="color:#22d3bf">center</code><code style="color:#22d3bf">(重心とは一般に異なる)を求める。</code><code style="color:#22d3bf">corners</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">center + (±extents) @ axes.T</code>`</p>
+<p>の 8 点で、符号の組合せは `<code style="color:#22d3bf">meshgrid([-1,1],[-1,1],[-1,1])</code>` の順。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">: (N,3) 以外は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、2 点未満も </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• PCA の主軸は「最小体積の箱」を保証しない(点の分布に沿うだけ)。主軸の符号は SVD の任意性で</p>
+<p>決まり、点の分布が等方に近い(特異値が縮退する)と軸の向きは不安定になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">extents</code><code style="color:#22d3bf"> は半幅なので辺長は </code><code style="color:#22d3bf">2 * extents</code>`。単位は座標の単位。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

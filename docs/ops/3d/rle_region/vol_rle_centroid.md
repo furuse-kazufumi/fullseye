@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Centroid ``(z, y, x)`` of the region, computed on the runs (no decode).
 
+Each run contributes ``n`` voxels at its row's ``(z, y)`` and mean x
+``(start + end - 1) / 2`` — the exact arithmetic mean of the member voxel
+indices, so it matches the dense centroid to floating-point accuracy.
+Pass *spacing* ``(sz, sy, sx)`` for physical coordinates. An empty region
+raises ``ValueError``.
+
+返り値: ``(z, y, x)`` の 3 つの ``float``(depth, row, col 順)。``spacing`` 無しなら
+voxel index 単位(index の算術平均そのもの)、``spacing`` を渡すと各成分に
+``(sz, sy, sx)`` を掛けた物理座標(mm など、spacing と同じ単位)。``spacing`` は
+長さ 3 の正の有限値、または ``spacing_mm`` 属性を持つ ``volio.VolumeMeta``。
+
+検証(``ValueError``): ``VolRLE`` の整合性検査 / run が 0 本 / ``spacing`` が
+長さ 3 でない・非正・非有限。
+
+注意: 質量中心ではなく voxel の幾何重心(全 voxel 等重み)。gray 値で重み付けした
+重心が欲しい場合は ``vol_rle_decode`` してから自分で計算する。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

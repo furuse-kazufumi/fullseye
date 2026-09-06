@@ -17,13 +17,37 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_gen_circle_sector", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `gen_circle_sector`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_gen_circle_sector: 入力 → 出力](../../_fig/hx_gen_circle_sector.png)
+![hx_gen_circle_sector: input → output](../../_fig/hx_gen_circle_sector.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_gen_circle_sector: knob a sweep](../../_fig/hx_gen_circle_sector.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_gen_circle_sector: knob b sweep](../../_fig/hx_gen_circle_sector.b.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_gen_circle_sector: other inputs](../../_fig/hx_gen_circle_sector.inputs.jpg)
+
+*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*
 
 ## 使い方
 
 円のセクタ region(開始角 b*2pi、掃引 a*2pi)。
+
+画像中心 ``((h-1)/2, (w-1)/2)``・半径 ``r = 0.42*min(h, w)``(固定)の円板のうち、開始角から掃引角ぶんの扇形を
+1 とする 0/1 の float region を返す。角度は ``arctan2(row-cy, col-cx)`` で測る(0 が +列方向。行が下向きに
+増える画像座標では画面上で時計回りに増える)。
+
+- ``a`` → 掃引角 ``sweep = 0.1 + a*(2*pi - 0.1)``(約 5.7°〜360°。a=1 で完全な円板)。
+- ``b`` → 開始角 ``start = b*2*pi``。
+
+扇形の判定は ``(ang - start) mod 2*pi <= sweep`` なので 360° をまたいでも途切れない。半径は固定で、変えたいときは
+``hx_gen_circle`` / ``hx_gen_disc_se`` を重ねる。楕円版は ``hx_gen_ellipse_sector``。入力画像の中身は見ない。
 
 ## 詳しい使い方ガイド
 

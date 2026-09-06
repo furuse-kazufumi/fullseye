@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。
 
+既知パターンの反射を観測 → 面法線 → 積分して鏡面形状。鏡面(反射)物体の形状計測の要。
+
+``incident``(面へ向かう入射方向)と ``reflected``(面から出る反射方向)を単位化し、
+``n = unit(r − d)`` を **``n·d <= 0``(入射に逆らう=入射側外向き)** になるよう符号を決めて
+返す(単位ベクトル)。``r == d`` なら零ベクトル。最後の軸をベクトルとするので ``(N,3)``
+バッチも通る(符号判定は全体の内積和で 1 回だけ行う)。
+用途: 既知パターンの反射像から画素ごとに法線を作り(法線マップ)、``integrate_normals`` で
+高さに積分、``render_shaded`` で見た目を再現、``reflect`` で検算。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

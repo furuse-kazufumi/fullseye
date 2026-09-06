@@ -5,6 +5,19 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SSIM の<b>マップ</b>(平均を取る前)。どこが似ていないかを絵で見るため。</p>
 <p>`<code style="color:#22d3bf">channel_axis</code>` を指定するとチャネルごとに計算し、その平均マップを返す。</p>
+<p>計算: 局所平均 `<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> と分散・共分散を、幅 </code><code style="color:#22d3bf">win_size</code><code style="color:#22d3bf"> に切った σ = </code><code style="color:#22d3bf">sigma</code>` の</p>
+<p>ガウシアン窓(境界は鏡像)で取り、画素ごとに</p>
+<p>`<code style="color:#22d3bf">((2 mu_a mu_b + C1)(2 s_ab + C2)) / ((mu_a^2 + mu_b^2 + C1)(s_a + s_b + C2))</code>`。</p>
+<p>`<code style="color:#22d3bf">C1 = (K1 dr)^2</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">C2 = (K2 dr)^2</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">dr</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">data_range</code>`。分散は母分散</p>
+<p>(`<code style="color:#22d3bf">n/(n-1)</code><code style="color:#22d3bf"> 補正なし)。この平均が </code><code style="color:#22d3bf">ssim</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">data_range</code><code style="color:#22d3bf">: 整数 dtype は自動、float は </code><code style="color:#22d3bf">[0, 1]</code>` のときだけ 1.0 と推定し、</p>
+<p>それ以外は明示必須(`<code style="color:#22d3bf">data_range_of</code><code style="color:#22d3bf"> の契約、外れると </code><code style="color:#22d3bf">MetricContractError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">win_size</code>`: 3 以上の奇数。各空間軸はこれ以上の長さが必要。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">crop_border=True</code><code style="color:#22d3bf">(既定)は窓半径 </code><code style="color:#22d3bf">(win_size-1)//2</code>` ぶんの縁を落とすので、</p>
+<p>返り値は `<code style="color:#22d3bf">(H - 2p, W - 2p)</code>`。落とした後に何も残らない小画像は例外。</p>
+<p>`<code style="color:#22d3bf">False</code>` なら入力と同形だが、縁は鏡像埋めの影響を含む。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: float64 マップ。1 が局所的に一致、負にもなりうる(構造が反転)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: 形の不一致 / 空 / 非有限 / `<code style="color:#22d3bf">sigma &lt;= 0</code><code style="color:#22d3bf"> / 偶数か 3 未満の </code><code style="color:#22d3bf">win_size</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

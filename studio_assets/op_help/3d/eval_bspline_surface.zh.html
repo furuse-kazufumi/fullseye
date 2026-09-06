@@ -4,6 +4,33 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import bspline_surf; bspline_surf.eval_bspline_surface(tck, x, y, grid=False)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;eval_bspline_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>评估已拟合的曲面 tck(bisplev)。两种模式:散点(默认)或网格。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>tck : list</p>
+<p>fit_bspline_surface が返した `<code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>`。</p>
+<p>x, y : array_like</p>
+<p>grid=False(既定): 同一 shape の散布/対応点。各 (x[i], y[i]) で評価し</p>
+<p>入力と同じ shape の z を返す(計測=各サンプル位置での曲面高さ)。</p>
+<p>grid=True: x, y を昇順の 1 次元軸として扱い、テンソル格子</p>
+<p>(len(x), len(y)) 上で評価(密な可視化・再サンプリング用)。</p>
+<p>grid : bool</p>
+<p>評価モード。曲面残差など点対応の比較には False。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>z : numpy.ndarray</p>
+<p>grid=False なら x と同 shape、grid=True なら (len(x), len(y))。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>tck が曲面モデル([tx,ty,c,kx,ky])でない(曲線 tck / 多項式 dict を含む)、</p>
+<p>または x, y の shape 不一致・空。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• grid=True では x, y を内部で昇順に並べ替えて `<code style="color:#22d3bf">bisplev</code><code style="color:#22d3bf"> を呼び、結果を **入力の順序** に戻して返す。したがって </code><code style="color:#22d3bf">out[i, j]</code><code style="color:#22d3bf"> は常に </code><code style="color:#22d3bf">(x[i], y[j])</code>` の値で、軸を降順で渡しても壊れない。</p>
+<p style="margin:2px 0 2px 12px">• grid=False は点ごとに `<code style="color:#22d3bf">bisplev</code>` を呼ぶ Python ループなので点数に比例して遅い。大量点の評価は可能なら grid=True に寄せる。</p>
+<p style="margin:2px 0 2px 12px">• 節点範囲(フィットに使った x, y の範囲)の外側は外挿になり、その値は保証しない。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64。grid=False なら x と同じ shape(スカラーを渡せば 0 次元配列)。</p>
+<p style="margin:2px 0 2px 12px">• 典型: `<code style="color:#22d3bf">fit_bspline_surface</code><code style="color:#22d3bf"> → 本 op(再サンプリング・可視化)。残差評価は </code><code style="color:#22d3bf">surface_residual</code>` がこれを内部で呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

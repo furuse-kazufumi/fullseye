@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Per-vertex coarseness and detail of a mesh (``table``).
 
+``coarseness`` (nv,) — mean incident edge length, mapped linearly from the
+5th percentile (0) to the 95th (1) and clipped; ``edge_length`` (nv,) the
+raw value. ``detail`` (nv,) — mean angle (radians) between the normals of
+the faces around the vertex divided by the mean incident edge length: a
+curvature proxy in 1/unit that is high where the *data* already carries
+relief, independent of how densely it is sampled. ``relief_weight`` (nv,)
+= ``coarseness × (1 − detail_norm)`` — 1 where the mesh is coarse and
+smooth (add synthetic detail), 0 where it is fine or already rough — the
+weight :func:`render3d.mesh_displace_fbm`-style steps should multiply
+their amplitude by. Also ``stats`` for each map.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

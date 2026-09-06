@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群を平面(点 plane_point・法線 plane_normal)で鏡映。→ (N,3)。
 
+各点 p の平面からの符号付き距離 ``d = (p - plane_point) · n``(n は正規化した法線)を取り、
+``p' = p - 2 d n`` を返す(Householder 鏡映)。平面上の点は動かず、平面の両側の点が入れ替わる。
+点の並び順は保たれるので ``p'[i]`` は ``p[i]`` の鏡像。座標の単位はそのまま。
+
+- ``points``: (N,3) の配列(float に変換)。形状検証はしない。
+- ``plane_point``: 平面上の 1 点 (3,)。``plane_normal``: 法線 (3,)(長さは任意、内部で正規化。
+  符号は結果に影響しない)。
+
+注意: 法線はノルムに 1e-12 を足して割るため、ゼロベクトルを渡しても例外にならず点群がほぼ
+そのまま返る(fail-closed ではない)。``reflection_symmetry_score`` /
+``detect_reflection_symmetry`` の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の
+点群に連結する)形状補完にも使える。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

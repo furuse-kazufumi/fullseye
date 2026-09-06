@@ -4,7 +4,7 @@ dim: dem
 category: geodesy
 in: points
 out: points
-examples: []
+examples: [dem_geodesy_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -39,7 +39,7 @@ Bowring (1976) の閉形式に近い解法。往復(測地→ECEF→測地)の�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [dem_geodesy_tour](../../../../examples/dem_geodesy_tour.py) — `py -3.11 examples/dem_geodesy_tour.py`
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 

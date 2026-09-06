@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_components(vol_binary, connectivity=26)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_components&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이진 볼륨을 성분별 `<code style="color:#22d3bf">VolRLE</code>` 영역으로 나눕니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>*The* use case run-length regions exist for: holding every component of a</p>
+<p>segmentation as its own region at run-proportional cost, instead of one</p>
+<p>dense label volume or N dense masks. Uses the key structural fact that a</p>
+<p>run is x-connected, so a component label is constant along each run — the</p>
+<p>volume is labelled once (dense, same 6/18/26 semantics as</p>
+<p>`<code style="color:#22d3bf">volops.vol_label</code>`) and then each *run* is assigned by its first voxel&#x27;s</p>
+<p>label; no per-component dense mask is ever built.</p>
+<p>Returns a list of `<code style="color:#22d3bf">VolRLE</code>` ordered by label id (1..n). An empty mask</p>
+<p>returns an empty list.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

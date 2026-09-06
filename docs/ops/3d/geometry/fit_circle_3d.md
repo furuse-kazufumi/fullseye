@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。
 
+``fit_plane_3d`` で面 ``(c, n)`` を取り、面内の正規直交基底 ``(e1, e2)`` に点を射影して 2-D の
+代数円フィット(``|q|² = 2·cc·q + k`` の ``lstsq``)を解き、中心を 3-D に戻す。``(N,3)`` で
+3 点未満は ValueError(3 点なら面は厳密、円は 3 点を通る)。
+``center`` は面上の 3-D 点、``radius`` は float(負の根は 0 に clamp)、``normal`` は面の単位法線
+(符号任意)。円弧の一部だけ・面から外れた点が多いと半径が偏る(代数フィットの性質。面内残差は
+返さない)。
+用途: 穴・フランジ・リングの中心と径、``distance_point_line`` で軸からの偏心。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -17,13 +17,37 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_expand_region", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `expand_region`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_expand_region: 入力 → 出力](../../_fig/hx_expand_region.png)
+![hx_expand_region: input → output](../../_fig/hx_expand_region.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_expand_region: knob a sweep](../../_fig/hx_expand_region.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_expand_region: stages](../../_fig/hx_expand_region.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_expand_region: other inputs](../../_fig/hx_expand_region.inputs.jpg)
 
 ## 使い方
 
 領域間の隙間を埋める(region -> region): 二値領域を dilation で膨張して連結を促す。
+
+``v > 0.5`` を region とみなし、4 近傍の十字構造要素を ``it`` 回反復した菱形(マンハッタン距離 ``it`` 以内)で
+``binary_dilation`` を 1 回掛け、0/1 の float 配列で返す。
+
+- ``a`` → 膨張半径 ``it = 1 + int(a*4)``(1〜5 画素)。互いの距離が ``2*it`` 画素以下の領域どうしがつながる。
+- ``b`` は未使用。
+
+隙間を埋めて連結を促す op で、領域は必ず太る(元の面積には戻らない)。元の大きさを保ちたいときは後段で
+``hx_erosion1`` を同程度の半径で掛けるか、初めから ``hx_closing`` を使う。画像外は 0 扱い(膨張は端で止まる)。
+空の region は空のまま返る。
 
 ## 詳しい使い方ガイド
 

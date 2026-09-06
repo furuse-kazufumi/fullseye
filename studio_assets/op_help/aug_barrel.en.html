@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aug_barrel — 2D <code style="color:#22d3bf">augmentation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_barrel&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/aug_barrel.png" alt="aug_barrel: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/aug_barrel.png" alt="aug_barrel: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_barrel.a.jpg">aug_barrel: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_barrel.b.jpg">aug_barrel: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_barrel.inputs.jpg">aug_barrel: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Radial lens distortion using the standard polynomial model `<code style="color:#22d3bf">r_src = r*(1 + k*r^2)</code><code style="color:#22d3bf"> on normalised radius </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> (1 = image corner): BARREL (straight lines bow outwards) when </code><code style="color:#22d3bf">b &lt; 0.5</code><code style="color:#22d3bf">, PINCUSHION when </code><code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">k = 0.6*a</code><code style="color:#22d3bf"> (a=0 -&gt; undistorted). The destination grid is inverse-mapped and resampled bilinearly with </code><code style="color:#22d3bf">ndimage.map_coordinates</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`), so no pixel is left undefined. Output keeps HxW.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

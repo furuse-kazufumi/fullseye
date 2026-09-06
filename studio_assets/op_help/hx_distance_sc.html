@@ -3,10 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_distance_sc&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">distance_sc</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/hx_distance_sc.png" alt="hx_distance_sc: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/hx_distance_sc.png" alt="hx_distance_sc: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_sc.a.jpg">hx_distance_sc: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_sc.chain.jpg">hx_distance_sc: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>水平線分(行 a*H)から contour までの最小距離(feature)。</p>
+<p>行 `<code style="color:#22d3bf">a*H</code><code style="color:#22d3bf"> の水平線から、全 contour の頂点までの縦方向の距離 </code><code style="color:#22d3bf">|row - a*H|</code><code style="color:#22d3bf"> の最小値を </code><code style="color:#22d3bf">max(H, 1)</code>` で割って</p>
+<p>1 で頭打ちした `<code style="color:#22d3bf">np.float64</code>` で返す。列は見ないので、線分は画像の幅いっぱいに伸びる水平線として扱う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → 水平線の行位置(0 で最上行、1 で最下行の 1 つ下)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(線上に点がある場合と区別できない)。</p>
+<p>距離は頂点までなので、隣接 2 頂点の間で線を横切る contour でも 0 にはならず「近い方の頂点の行差」になる。</p>
+<p>点から contour までの距離は `<code style="color:#22d3bf">hx_distance_pc</code><code style="color:#22d3bf">、点から region までは </code><code style="color:#22d3bf">hx_distance_pr</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

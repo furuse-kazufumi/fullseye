@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_detect_edge_segments&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">detect_edge_segments</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_detect_edge_segments.png" alt="hx_detect_edge_segments: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_detect_edge_segments.png" alt="hx_detect_edge_segments: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.a.jpg">hx_detect_edge_segments: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.b.jpg">hx_detect_edge_segments: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_detect_edge_segments.inputs.jpg">hx_detect_edge_segments: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>偵測直線狀邊緣碎片:用 NMS 細化 → 在連通成分中保留 PCA 判定為細長(直線狀)的。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">hx_nonmax_dir(v, a, 0)</code><code style="color:#22d3bf"> で細線化したエッジ(</code><code style="color:#22d3bf">&gt; 0</code>`)を 8 近傍で連結成分に分け、各成分の画素座標の共分散</p>
+<p>固有値比 `<code style="color:#22d3bf">λmax/λmin</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">min_ratio</code>` 以上のもの(細長い=直線状)だけを 1 とする 0/1 の float region を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 細線化段の弱エッジしきい値(</code><code style="color:#22d3bf">hx_nonmax_dir</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> と同じ。正規化振幅 </code><code style="color:#22d3bf">a*0.3</code>` 未満を捨てる)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 細長さのしきい値 </code><code style="color:#22d3bf">min_ratio = 3 + b*12</code>`(3〜15)。大きいほど真っ直ぐな断片だけ残る。</p>
+<p style="margin:2px 0 2px 12px">• 画素数 5 未満の成分は無条件に捨てる。`<code style="color:#22d3bf">λmin</code>` がほぼ 0(完全な直線)なら比を無限大として採用する。</p>
+<p>注意: 直線性の判定は「点群の広がりが 1 軸に偏っているか」であり、曲線でも十分細長ければ通る。細線化段が斜め</p>
+<p>エッジをほとんど細線化しない(`<code style="color:#22d3bf">hx_nonmax_dir</code>` の注記参照)ため、斜めのエッジは幅を持った塊になり固有値比が</p>
+<p>下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら</p>
+<p>`<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hough_line_trans</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

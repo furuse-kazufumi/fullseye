@@ -1,0 +1,62 @@
+{
+ "part": {
+  "gray": "part.png",
+  "color": "part.color.png",
+  "sha256_original": "45600817dad239b5f59b4fbb9804a4449e0d431bb697a192138aef6b4d46361a",
+  "size_saved": [
+   256,
+   256
+  ],
+  "model": "gemini-2.5-flash-image",
+  "requested_size": "model default",
+  "quality": "default",
+  "prompt": "Top-down photograph of a machined aluminium part on a dark inspection table, one visible scratch and a small dent on the flat face, even diffuse lighting, sharp focus, no text, industrial machine-vision style",
+  "generated_at": "2026-09-06T21:52:07+00:00",
+  "license_note": "Generated with an image model (see 'model') by the repository author; used as a synthetic test input. Not a photograph of a real product."
+ },
+ "pcb": {
+  "gray": "pcb.png",
+  "color": "pcb.color.png",
+  "sha256_original": "9019ead9757e981e3ddd6a77950f29c901126e2c6bdb5d3552747d9a80a6f62e",
+  "size_saved": [
+   256,
+   256
+  ],
+  "model": "gemini-2.5-flash-image",
+  "requested_size": "model default",
+  "quality": "default",
+  "prompt": "Close-up photograph of a green printed circuit board with SMD components, solder joints and silkscreen markings, straight-on view, even lighting, sharp focus, no watermark",
+  "generated_at": "2026-09-06T21:52:17+00:00",
+  "license_note": "Generated with an image model (see 'model') by the repository author; used as a synthetic test input. Not a photograph of a real product."
+ },
+ "label": {
+  "gray": "label.png",
+  "color": "label.color.png",
+  "sha256_original": "6fe19c248820e543b045c7b214ef12d73b77767fb765c2e4cfb24950225acae0",
+  "size_saved": [
+   256,
+   256
+  ],
+  "model": "gemini-2.5-flash-image",
+  "requested_size": "model default",
+  "quality": "default",
+  "prompt": "Photograph of a printed product label with black alphanumeric text and a 1-D barcode on white paper, slightly tilted, even lighting, sharp focus",
+  "generated_at": "2026-09-06T21:52:25+00:00",
+  "license_note": "Generated with an image model (see 'model') by the repository author; used as a synthetic test input. Not a photograph of a real product."
+ },
+ "beans": {
+  "gray": "beans.png",
+  "color": "beans.color.png",
+  "sha256_original": "0ff7feff40a6d20a9a3b0b4172cfd83a3d008cf6959451d13e9c99c2e0ca0613",
+  "size_saved": [
+   256,
+   256
+  ],
+  "model": "gemini-2.5-flash-image",
+  "requested_size": "model default",
+  "quality": "default",
+  "prompt": "Top-down photograph of dried coffee beans spread on a light grey conveyor belt, some beans touching, a few defective dark beans, even lighting, sharp focus",
+  "generated_at": "2026-09-06T21:52:37+00:00",
+  "license_note": "Generated with an image model (see 'model') by the repository author; used as a synthetic test input. Not a photograph of a real product."
+ }
+}

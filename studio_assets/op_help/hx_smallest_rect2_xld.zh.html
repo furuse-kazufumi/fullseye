@@ -3,10 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_smallest_rect2_xld&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">smallest_rectangle2_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_smallest_rect2_xld.png" alt="hx_smallest_rect2_xld: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_smallest_rect2_xld.png" alt="hx_smallest_rect2_xld: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_rect2_xld.chain.jpg">hx_smallest_rect2_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>最小面积有向矩形的面积比(矩形面积 / 图像面积;feature)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>全 contour の点をまとめ、0°〜84° を 6° 刻みで回転させて軸並行外接矩形の面積を計算し、その最小値を画像面積</p>
+<p>`<code style="color:#22d3bf">H*W</code><code style="color:#22d3bf"> で割って 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0。各辺には `<code style="color:#22d3bf">1e-9</code>` が足してあり、点が同一直線上でも面積は厳密には 0 でなく極小値。</p>
+<p>角度探索が 6° 刻みなので真の最小面積より最大で数 % 大きく出ることがある。全 contour を 1 つの矩形で包むため、</p>
+<p>離れた contour が複数あると間の空白も含む。アスペクト比は `<code style="color:#22d3bf">hx_fit_rectangle2_contour</code>`、軸並行版は</p>
+<p>`<code style="color:#22d3bf">hx_smallest_rect1_xld</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

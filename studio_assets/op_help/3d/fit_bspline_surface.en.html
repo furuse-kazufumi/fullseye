@@ -4,6 +4,33 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Least-squares fit a bicubic (default) B-spline surface to scattered (x, y, z) (bisplrep).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>x, y, z : array_like</p>
+<p>同数の散布サンプル座標と高さ。任意形状で与えてよく内部で 1 次元化する。</p>
+<p>kx, ky : int</p>
+<p>x/y 方向の B スプライン次数(1=線形, 3=三次)。点数が (kx+1)*(ky+1) に</p>
+<p>満たない場合は自動で下げる(縮退回避)。</p>
+<p>smooth : float or None</p>
+<p>平滑化係数 s。None は点数ベースの自動値(`<code style="color:#22d3bf">_auto_surface_smooth</code>`)。</p>
+<p>0.0 で全点通過(補間寄り=過適合しやすい)、大きいほど滑らか。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>tck : list</p>
+<p>`<code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>`。eval_bspline_surface / surface_residual に渡す。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>点数が線形曲面にすら足りない(m&lt;4)、x/y/z の長さ不一致、非有限値、</p>
+<p>あるいは共線・重複による FITPACK 縮退で近似が得られない場合。</p>
+<p>補足(実装の裏取り):</p>
+<p style="margin:2px 0 2px 12px">• 座標系は自由: x, y は任意の平面座標(row/col でも実寸でも可)、z は高さ。3 配列は `<code style="color:#22d3bf">ravel</code>` で 1 次元化するので格子入力でも散布入力でも同じに扱う。</p>
+<p style="margin:2px 0 2px 12px">• 次数の自動降格は `<code style="color:#22d3bf">(kx+1)*(ky+1) &gt; m</code><code style="color:#22d3bf"> の間、大きい方(同点なら kx)を 1 ずつ下げ、両方 1 になったら止まる。降格は例外でなく無言で行われるので、実際の次数は返り値 </code><code style="color:#22d3bf">tck[3]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">tck[4]</code>` で確認できる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">smooth=None</code><code style="color:#22d3bf"> の自動値は </code><code style="color:#22d3bf">max(0, m - sqrt(2m))</code><code style="color:#22d3bf">(FITPACK の推奨)。z のノイズ分散が 1 相当という前提の式なので、z の単位が小さく残差二乗和が小さいデータでは過平滑になりやすい。その場合は明示的に小さい </code><code style="color:#22d3bf">smooth</code>` を渡す。</p>
+<p style="margin:2px 0 2px 12px">• FITPACK の警告(反復打ち切り等)は握り潰して tck を返す。例外はすべて `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf"> に翻訳し、係数が空のときも </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的(乱数なし)。</p>
+<p style="margin:2px 0 2px 12px">• 後段は `<code style="color:#22d3bf">eval_bspline_surface</code><code style="color:#22d3bf">(評価)と </code><code style="color:#22d3bf">surface_residual</code><code style="color:#22d3bf">(逸脱量)。大域的な低次のうねりだけで良ければ </code><code style="color:#22d3bf">fit_poly_surface</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">eval_poly_surface</code>` があるが、tck と多項式 dict は互換でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -19,6 +19,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Intersection of two RLE regions on the runs (no decode).
 
+``vol_rle_union`` と同じ掃引エンジン(``_rle_boolean``)で、区間ごとの被覆状態が
+``ia & ib``(両方の内側)の区間だけを run として残す。計算量は run 数に対して
+O(n log n) で、voxel 数には依存しない。
+
+返り値: 同じ ``shape`` の新しい ``VolRLE``。共通部分が無ければ run 0 本の region
+(エラーではない。空かどうかは ``len(region) == 0`` か ``vol_rle_volume`` で見る)。
+``vol_rle_decode(result) == decode(a) & decode(b)`` が voxel 単位で成り立つ。
+
+検証(``ValueError``): どちらかが ``VolRLE`` でない・run 配列の整合性検査に失敗 /
+``a.shape != b.shape``。
+
+使いどころ: ROI(``vol_rle_encode`` した domain マスク)と成分(``vol_rle_components``)
+の重なり判定、2 つの閾値結果の共通領域、``vol_rle_volume`` と組み合わせた
+IoU 計算(``|a∩b| / |a∪b|``)を密配列なしで行う。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vertex_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Vertexnormalen</b> eines Dreiecksnetzes (flächengewichtet aggregierte Einheitsnormalen). → (N,3).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>各三角形の外積ベクトル(=面法線×2·面積)を、その 3 頂点へ散布加算し、頂点ごとに正規化する。</p>
+<p>大きい(重要な)面ほど寄与が大きい面積重み付き平均になり、向きは面の巻き順から一貫する。</p>
+<p>`<code style="color:#22d3bf">normals_orient.estimate_normals</code>`(点群 PCA・符号未定)と違い、追加の向き付け工程は不要。</p>
+<p>Args:</p>
+<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>Returns:</p>
+<p>(N,3) の単位頂点法線。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正・範囲外 index、または法線が定義できない頂点(入射面が無い/</p>
+<p>寄与が相殺してゼロ)があるとき。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

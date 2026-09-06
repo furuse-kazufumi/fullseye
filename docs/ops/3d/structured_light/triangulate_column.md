@@ -19,6 +19,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 各カメラ画素の「投影機コラム番号」から深度 Z を三角測量する(構造化光の最終段)。
 
+構造化光スキャナの幾何そのもの: カメラ画素 (u,v) は 1 本の視線を張り、投影機のコラム
+番号 u_p は 1 枚の平面(投影機中心とそのコラムを含む平面)を張る。視線と平面の交点が
+表面の 3D 点で、そのカメラ系 Z が深度になる。**閉じた式**なので反復も最適化も要らない。
+
+column: (H, W) の投影機コラム番号(**サブピクセル実数**)。位相から出した値をそのまま
+        渡せる。NaN = 未確定画素(出力も NaN)。
+k_cam:  カメラ内部行列 3x3(fx, fy, cx, cy[, skew])。画素中心は整数座標
+        (`render3d.render_mesh` / `camera.depth_to_points` と同じ約束)。
+k_proj: 投影機内部行列 3x3。使うのは第 0 行(コラム方向)と第 2 行だけ。
+rot:    3x3 回転。カメラ系 → 投影機系(X_proj = rot·X_cam + trans)。
+trans:  長さ 3 の並進(同上、単位はシーンと同じ)。**ゼロベクトルは禁止**
+        (基線 0 = カメラと投影機が同一点。平面と視線が交わらず深度が定義できない)。
+
+返り値: (H, W) float64 の深度マップ(カメラ前方の Z、`render_mesh` の depth と同じ量)。
+        交点が後方(Z<=0)や視線が平面と平行な画素は NaN。
+
+導出: X_cam = Z·d(d = K_cam⁻¹[u,v,1])。投影機側のコラム条件は
+(K_proj[0] − u_p·K_proj[2])·X_proj = 0。X_proj = rot·X_cam + trans を代入して
+Z について解くと Z = −(a·trans) / (a·(rot·d))、a = K_proj[0] − u_p·K_proj[2]。
+
+Raises: 形状・行列不正、基線ゼロ、特異なカメラ行列で ValueError。
+
+来歴(公開文献): 光線と平面の交点による構造化光三角測量 — Hartley & Zisserman,
+*Multiple View Geometry* 2nd ed. §12(射影幾何の交わり)/ Salvi et al.,
+*Pattern Recognition* 43 2010(構造化光パターンの分類と復号)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

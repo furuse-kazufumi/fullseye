@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_distance_pc&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">distance_pc</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/hx_distance_pc.png" alt="hx_distance_pc: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/hx_distance_pc.png" alt="hx_distance_pc: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.a.jpg">hx_distance_pc: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.b.jpg">hx_distance_pc: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.chain.jpg">hx_distance_pc: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>クエリ点(正規化 a,b)から contour までの最小距離を返す(feature)。</p>
+<p>正規化座標 `<code style="color:#22d3bf">(a, b)</code><code style="color:#22d3bf"> のクエリ点 </code><code style="color:#22d3bf">q = (a*H, b*W)</code>` から、全 contour の頂点までのユークリッド距離の最小値を</p>
+<p>`<code style="color:#22d3bf">max(H, W)</code><code style="color:#22d3bf"> で割って 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → クエリ点の行(0〜1)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` → クエリ点の列(0〜1)。</p>
+<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(点が contour 上にある場合と区別できない)。</p>
+<p>距離は頂点までであって線分までではないので、点の間隔が粗い contour では真の距離より最大で「点間隔の半分」程度</p>
+<p>大きく出る。細かい contour(`<code style="color:#22d3bf">edges_sub_pix</code>` の 1 画素刻み)ではほぼ一致する。region までの距離は</p>
+<p>`<code style="color:#22d3bf">hx_distance_pr</code><code style="color:#22d3bf">、水平線からの距離は </code><code style="color:#22d3bf">hx_distance_sc</code><code style="color:#22d3bf">、点を含む contour の選択は </code><code style="color:#22d3bf">hx_select_xld_point</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

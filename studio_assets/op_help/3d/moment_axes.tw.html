@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群/加權點的 <b>重心 + 主軸</b>(慣性張量的特徵向量)。姿態估計的基礎。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>返り値 (centroid(3,), axes(3,3) 列=主軸, eigvals(3,))。固有値降順。回転の正準化に使う。</p>
+<p>定義: `<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> を総和 1 に正規化し、重心 </code><code style="color:#22d3bf">c = Σ w p</code><code style="color:#22d3bf">、散布行列 </code><code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code>`</p>
+<p>(共分散。慣性テンソル `<code style="color:#22d3bf">tr(C)I − C</code><code style="color:#22d3bf"> と固有ベクトルは共通で固有値の順序が逆)を </code><code style="color:#22d3bf">eigh</code>` で</p>
+<p>分解する。`<code style="color:#22d3bf">axes[:, i]</code>` が i 番目に大きい固有値の主軸(降順)。固有値は分散(長さ²)。</p>
+<p style="margin:2px 0 2px 12px">• 固有ベクトルの符号は任意で、`<code style="color:#22d3bf">axes</code><code style="color:#22d3bf"> は左手系(det=−1)になり得る(</code><code style="color:#22d3bf">match_pca</code>` は第 3 軸を</p>
+<p>反転して右手系にしている)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">weights</code>` は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は失敗する(検証は無い)。</p>
+<p style="margin:2px 0 2px 12px">• 主軸が縮退(球など)なら軸の向きは不定。</p>
+<p>後段: `<code style="color:#22d3bf">match_pca</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">obb</code>`(有向 bbox)、正準姿勢への回転。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

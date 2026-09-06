@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>領域のボクセル数を run 上で数える(復号しない)。</p>
+<p>~300x faster than summing the dense mask.</p>
+<p>計算: `<code style="color:#22d3bf">sum(ends - starts)</code>`(差は int64 で取るので run 数が多くても溢れない)。</p>
+<p>返り値は Python の `<code style="color:#22d3bf">int</code>`(voxel 個数、単位は voxel。物理体積 mm^3 が欲しければ</p>
+<p>`<code style="color:#22d3bf">spacing</code><code style="color:#22d3bf"> の積 </code><code style="color:#22d3bf">sz*sy*sx</code>` を自分で掛ける — この op は spacing を受けない)。</p>
+<p>入力は `<code style="color:#22d3bf">_require_rle</code><code style="color:#22d3bf"> で検証してから使う(</code><code style="color:#22d3bf">VolRLE</code>` 以外、shape・run 配列の</p>
+<p>不整合、範囲外の run は `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">)。空の region は </code><code style="color:#22d3bf">0</code>` を返す(エラーに</p>
+<p>しない)。`<code style="color:#22d3bf">vol_rle_decode</code><code style="color:#22d3bf"> してから </code><code style="color:#22d3bf">sum()</code>` するのと同じ値を、密配列を作らずに</p>
+<p>返すのが目的。`<code style="color:#22d3bf">vol_rle_components</code>` の各成分にかければ成分ごとの体積になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

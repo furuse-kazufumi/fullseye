@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pcl_augment; pcl_augment.cutout(points, extent: &#x27;Union[float, np.ndarray]&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;cutout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>去除空间中一个轴对齐盒区域,返回 `<code style="color:#22d3bf">(kept, kept_idx)</code>`(模拟局部缺失)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>既存の点を 1 つ一様サンプルして中心とし、辺長 `<code style="color:#22d3bf">extent</code>`(スカラ=立方体, または</p>
+<p>`<code style="color:#22d3bf">(3,)</code>`=各軸辺長)のボックス内の点をすべて除去する。中心点自身が必ず入るため</p>
+<p>最低 1 点は除去される。除去点は必ず辺長 `<code style="color:#22d3bf">extent</code>` のボックスに収まる(空間的に</p>
+<p>局所的 = ランダム散布とは判別可能)。`<code style="color:#22d3bf">kept == points[kept_idx]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">extent &gt; 0</code>`。</p>
+<p>`<code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> に正でない値や </code><code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf"> 以外の形を渡すと </code><code style="color:#22d3bf">ValueError</code>`。空入力は空と空</p>
+<p>インデックスを返す。中心は `<code style="color:#22d3bf">rng.integers(n)</code><code style="color:#22d3bf"> で選ぶ点なので、</code><code style="color:#22d3bf">seed</code>` が同じでも点の</p>
+<p>並びが変わると別の場所が抜ける。ボックス判定は `<code style="color:#22d3bf">|P - center| &lt;= extent/2</code>` の閉区間。</p>
+<p>除去点数は密度次第で、`<code style="color:#22d3bf">extent</code>` を雲の大きさより大きくすると全点が消える。返り値は</p>
+<p>`<code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>`、順序は元のまま。一様な欠損は</p>
+<p>`<code style="color:#22d3bf">random_dropout</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

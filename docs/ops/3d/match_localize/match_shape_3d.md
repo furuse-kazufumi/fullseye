@@ -21,6 +21,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。
 
+テンプレとシーンの **単位勾配ベクトルの内積和**(Steger 流)。強度/コントラストに不変で、
+エッジ/形状で一致を測る。score(pos)=Σ<û_scene(pos+dt), û_model(dt)>/n を 3 成分の conv3d で。
+
+手順: 両 volume に ``sobel3d`` → 大きさ ``mc`` 超の voxel だけ単位ベクトル化(以下は 0)。
+テンプレの単位勾配 3 成分をカーネルに、シーンの単位勾配と成分ごとに conv3d して和を取り、
+テンプレの有効 voxel 数 ``n`` で割る。score は **[−1, 1]**、1 で完全一致(勾配の向きが全て
+揃う)、コントラスト反転で −1。
+- ``mc``: ``sobel3d`` の **生出力(真の勾配の 32 倍)** に対する閾値。小さいほど平坦部の
+ノイズ勾配が投票に入る。
+- 位置: 返り値 ``[score, z, y, x]``(float64 配列)の座標は **テンプレ中心 voxel(index T//2)**
+が scene のどこに載るか。テンプレが完全に収まる位置以外は 0 に落とすので、テンプレが scene
+より大きいと全 0 のまま index (0,0,0) が返る(例外は出ない)。
+- ``subvoxel=True`` で argmax の ±2 近傍の正スコア重心に精緻化(``accel_match._subvoxel_com``)。
+後段: ``refine_translation_lk``(corner 規約なので T//2 を引く)/ ``refine_lm``。回転には
+不変でない(``match_logpolar_z`` で先に回転を合わせる)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

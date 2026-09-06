@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;medial_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于 medial(拓扑 + 半径分布)对两个体素形状的粗匹配得分。返回 [0,1]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>骨格の位相記述子(端点/分岐/通常/孤立の割合)の距離と、medial 半径分布(内接半径の</p>
+<p>ヒストグラム)の距離を重み付き合成し、類似度 = 1 - 距離 として返す。1 に近いほど似ている。</p>
+<p>平行移動・回転(90 度)に対して概ね不変で、位相ベースの初期照合(粗いふるい)に使う。</p>
+<p>Args:</p>
+<p>vol_a, vol_b: バイナリ voxel(bool / 0-1 の 3D)。</p>
+<p>w_topology: 位相距離の重み(既定 0.6)。</p>
+<p>w_radius: 半径分布距離の重み(既定 0.4)。</p>
+<p>n_bins: 半径ヒストグラムの bin 数。</p>
+<p>Returns:</p>
+<p>float: 類似スコア [0,1] (大きいほど類似)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

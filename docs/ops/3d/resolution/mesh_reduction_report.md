@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 What a reduction (decimation, remesh, voxelisation) lost, in numbers (``table``).
 
+Samples *samples* area-weighted points of the **original** surface, measures
+their distance to the reduced surface (``rms_error``, ``max_error``, and
+``p99_error``), and does the same for the subset of original points that
+lie in the top ``1 − detail_quantile`` of :func:`mesh_detail_map`'s
+``detail`` (``detail_rms_error`` / ``detail_max_error``): the
+high-curvature places — a crater rim, a boulder, an outlier ridge — are
+exactly where a discovery hides and where a quadric decimation flattens
+first. Also ``face_ratio``, ``area_change`` and ``volume_change``
+(signed, closed meshes). A reduction whose ``detail_max_error`` is larger
+than the feature you are looking for has already lost it.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

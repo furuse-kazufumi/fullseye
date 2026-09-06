@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import mesh_props; mesh_props.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;face_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>三角形メッシュの<b>面法線</b>(各三角形の単位法線ベクトル)。→ (M,3)。</p>
+<p>法線 = 正規化した cross(v1−v0, v2−v0)。向きは <b>faces の巻き順(winding)</b> から一貫して</p>
+<p>決まる(PCA のような符号未定さは無い)。閉じたメッシュを外向き巻きで作れば全法線が外向き。</p>
+<p>Args:</p>
+<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>Returns:</p>
+<p>(M,3) の単位面法線。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正・範囲外 index、または退化(ゼロ面積)三角形で法線が定義できないとき。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

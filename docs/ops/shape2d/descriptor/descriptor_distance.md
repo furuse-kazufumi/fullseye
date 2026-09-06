@@ -4,7 +4,7 @@ dim: shape2d
 category: descriptor
 in: efdmodel × efdmodel
 out: measurement
-examples: [contour_fourier]
+examples: [contour_fourier, shape2d_morph_descriptor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ m1, m2 は :func:`elliptic_fourier` の出力 dict。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [contour_fourier](../../../../examples/contour_fourier.py) — `py -3.11 examples/contour_fourier.py`
+- [shape2d_morph_descriptor_tour](../../../../examples/shape2d_morph_descriptor_tour.py) — `py -3.11 examples/shape2d_morph_descriptor_tour.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

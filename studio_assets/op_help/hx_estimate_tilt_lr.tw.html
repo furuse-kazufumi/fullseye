@@ -3,10 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_tilt_lr&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">estimate_tilt_lr</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_estimate_tilt_lr.png" alt="hx_estimate_tilt_lr: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_estimate_tilt_lr.png" alt="hx_estimate_tilt_lr: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Lee-Rosenfeld:光源方位角 tilt = atan2(&lt;Ey&gt;, &lt;Ex&gt;)(平均梯度方向)。正規化到 [0,1]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Sobel 勾配 `<code style="color:#22d3bf">Ex</code><code style="color:#22d3bf">(列方向)・</code><code style="color:#22d3bf">Ey</code><code style="color:#22d3bf">(行方向)を画像全体で平均し、</code><code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code>` を</p>
+<p>`<code style="color:#22d3bf">(tilt / 2π) mod 1</code><code style="color:#22d3bf"> で [0,1) に写した </code><code style="color:#22d3bf">np.float64</code>` を返す。Lambertian 面で光源方位(tilt)が平均勾配の方向に</p>
+<p>現れるという Lee-Rosenfeld の推定。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 0 が +列方向、0.25 が +行方向(画像では下)、以下その向きに回る。平均勾配がほぼ 0 だと `<code style="color:#22d3bf">arctan2(0, 0) = 0</code>` で</p>
+<p>0 に落ちる。</p>
+<p>勾配の生の平均を使うので、コントラストの強い部分の方向に引きずられる。表面の反射率や形状がランダムで、照明の</p>
+<p>傾きだけが全体の勾配の偏りを作る、という前提が要る。局所コントラストの影響を抑えた版は `<code style="color:#22d3bf">hx_estimate_tilt_zc</code>`。</p>
+<p>角度値は周期量なので 0 と 1 付近は同じ方向(差を取るときは注意)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

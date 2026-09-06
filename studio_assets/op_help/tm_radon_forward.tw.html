@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tm_radon_forward — 2D <code style="color:#22d3bf">tomography</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_radon_forward&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tm_radon_forward.png" alt="tm_radon_forward: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/tm_radon_forward.png" alt="tm_radon_forward: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_radon_forward.a.jpg">tm_radon_forward: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_radon_forward.b.jpg">tm_radon_forward: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_radon_forward.inputs.jpg">tm_radon_forward: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>正向 Radon 投影：將 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> 視為切片影像，沿平行射線對其積分以建立正弦圖（列 = 角度，欄 = 偵測器），再重新擬合回原始的 HxW。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定擷取的角度數量（</code><code style="color:#22d3bf">n = round(H*a)</code><code style="color:#22d3bf">，限制在 8..360 —— 稀疏視角旋鈕）；</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 設定角度跨度（</code><code style="color:#22d3bf">span = 180*min(1, 0.5+b)</code><code style="color:#22d3bf"> 度：b &lt; 0.5 為有限角度 CT，b &gt;= 0.5 —— 包含預設值 b = 0.5 —— 為 </code><code style="color:#22d3bf">tm_fbp_reconstruct</code><code style="color:#22d3bf">／</code><code style="color:#22d3bf">tm_sart_reconstruct</code><code style="color:#22d3bf">／</code><code style="color:#22d3bf">tm_backproject_unfiltered</code><code style="color:#22d3bf"> 所假設的完整 [0,180) 跨度，因此在預設旋鈕下，正向 -&gt; 反向的自然鏈路可以來回一致）。若可用則使用 </code><code style="color:#22d3bf">skimage.transform.radon</code>`，否則使用 NumPy 的旋轉求和 Radon 轉換。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

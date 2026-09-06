@@ -19,6 +19,20 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 円計測オブジェクトを追加(add_metrology_object_circle_measure)。
 
+参照円(中心 ``(row, col)``、半径 ``radius`` [px])を ``model["objects"]`` に積む
+(dict をその場で更新)。``apply_metrology_model`` は円周を ``n`` 等分した角度に
+点を置き、各点で **半径方向**(外向き法線)に測定線を張ってサブピクセルの
+エッジを取り、最小二乗の円フィットで中心と半径を出し直す。
+
+- ``radius``: 参照半径 [px]。実物とのずれは ``apply`` の ``measure_length``
+  (既定 ±6 px)以内に収まっている必要がある ―― それより外のエッジは見つからない。
+- ``n``: 円周のサンプル数(既定 40)。半径が大きい円ほど増やす。
+- 引数はここでは検証しない(0 以下の半径も積めるが意味を持たない)。
+- 返り値: 追加位置の index(0 始まり)。``apply`` 結果の ``params`` は
+  ``row / col / radius``、``rms`` は円からの半径方向残差 [px]。
+
+穴径・ピン径の検査、円形部品の中心出しに使う。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

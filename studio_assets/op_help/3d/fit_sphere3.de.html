@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_sphere3(points) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Algebraische (Kåsa-)Kleinste-Quadrate-Kugelanpassung an `<code style="color:#22d3bf">(depth, row, col)</code>`-Punkte.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>solve `<code style="color:#22d3bf">|P|^2 = 2 P·c + (r^2 - |c|^2)</code>` in the least-squares sense — exact for</p>
+<p>points on a sphere, a standard robust estimator under moderate noise. Returns</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), radius </code><code style="color:#22d3bf">r</code>`, and the RMS radial residual. Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 4 points or a coplanar set (no finite sphere).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

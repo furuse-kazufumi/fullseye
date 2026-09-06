@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;extract_surface_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 TSDF 零交叉提取表面點 (M,3)(無需 marching cubes,線性插值)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>観測済み(weight&gt;0)の隣接 voxel 対で TSDF 符号が変わる辺を、その 2 中心の間で</p>
+<p>`<code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code>` により線形補間して交点(表面点)を出す。両端とも weight&gt;0 の</p>
+<p>辺のみ採用(未観測の初期値 1.0 との偽の交差を作らない=honest)。x/y/z 3 軸の全辺を走査。</p>
+<p>交差が無ければ空 (0,3) を返す(詐称せず honest な空返し)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

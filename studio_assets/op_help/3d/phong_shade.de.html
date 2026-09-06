@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import render_shade; render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;phong_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schattiert eine Normalenkarte mit dem Phong-Reflexionsmodell (Ambient + Diffus + <b>Spekular</b>). → `<code style="color:#22d3bf">(H, W)</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>各前景画素で単位法線 `<code style="color:#22d3bf">N</code><code style="color:#22d3bf"> に対し、光源方向 </code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">N</code>` で鏡面反射した理想反射方向</p>
+<p>`<code style="color:#22d3bf">R = 2(N·L)N − L</code><code style="color:#22d3bf"> を求め、視線 </code><code style="color:#22d3bf">V</code>` との一致で鏡面項を作る::</p>
+<p>I = ambient + diffuse * max(N·L, 0) + specular * max(R·V, 0)^shininess</p>
+<p>鏡面項は光の当たる面(`<code style="color:#22d3bf">N·L &gt; 0</code><code style="color:#22d3bf">)にのみ乗る。</code><code style="color:#22d3bf">render_lambertian</code>` に鏡面ローブを</p>
+<p>足したもので、ハイライトのピークは拡散最大(`<code style="color:#22d3bf">N=L</code>`)ではなく <b>半角方向</b></p>
+<p>`<code style="color:#22d3bf">N = normalize(L+V)</code><code style="color:#22d3bf"> に立つ(このとき </code><code style="color:#22d3bf">R=V</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">R·V=1</code>`)。</p>
+<p>背景(長さ 0 の法線 = `<code style="color:#22d3bf">render3d.render_mesh</code><code style="color:#22d3bf"> の空画素)は 0。</code><code style="color:#22d3bf">clip=True</code>` で出力を</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> にクリップ(表示向き)、</code><code style="color:#22d3bf">clip=False</code><code style="color:#22d3bf"> で生の加算強度を返す(</code><code style="color:#22d3bf">argmax</code>` で</p>
+<p>ハイライト位置を厳密に取りたいときはこちら — 飽和で頂点が同点にならない)。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf">  : float </code><code style="color:#22d3bf">(H, W, 3)</code>` 法線マップ(視空間、視点向き。長さ 0 = 背景)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">view</code><code style="color:#22d3bf">     : 面→視点の方向(既定 </code><code style="color:#22d3bf">(0,0,1)</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">render3d</code>` の視点)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code>`    : 面→光源の方向。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ambient/diffuse/specular</code>` : 各項の係数(有限・非負)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shininess</code>`: 鏡面ローブの鋭さ(&gt; 0。大きいほど鋭い/小さいほど広い)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">clip</code><code style="color:#22d3bf">     : </code><code style="color:#22d3bf">[0,1]</code>` にクリップするか。</p>
+<p>fail-closed: 形状不正・非有限・ゼロ長方向・非正の `<code style="color:#22d3bf">shininess</code><code style="color:#22d3bf">・負係数は </code><code style="color:#22d3bf">ValueError</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

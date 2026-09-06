@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.random_dropout(points, ratio: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;random_dropout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Randomly remove a `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> fraction of the points and return </code><code style="color:#22d3bf">(kept, kept_idx)</code>` (mimicking dropout).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>残す点数は `<code style="color:#22d3bf">round((1-ratio)*N)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">kept_idx</code>` は元配列への昇順インデックスで、</p>
+<p>`<code style="color:#22d3bf">kept == points[kept_idx]</code>` が厳密に成り立つ。オクルージョン/疎な視点による</p>
+<p>点欠損を学習で再現する。`<code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code>` を要求。</p>
+<p>`<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> が [0,1] の外なら </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">ratio=1</code><code style="color:#22d3bf"> は空 </code><code style="color:#22d3bf">(0,3)</code>` と空インデックス、</p>
+<p>`<code style="color:#22d3bf">ratio=0</code><code style="color:#22d3bf"> は全点(順序は元のまま)。残す点数は Python の </code><code style="color:#22d3bf">round</code>`(偶数丸め)で決まる</p>
+<p>ので `<code style="color:#22d3bf">.5</code><code style="color:#22d3bf"> 端では偶数側に寄る。</code><code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">permutation</code>` が決まり決定論的。返り値は</p>
+<p>`<code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>`。除去は空間的に一様なので、局所的な</p>
+<p>欠損(遮蔽)を模すには `<code style="color:#22d3bf">cutout</code>` を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

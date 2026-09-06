@@ -17,13 +17,40 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_shade_height_field", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `shade_height_field`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_shade_height_field: 入力 → 出力](../../_fig/hx_shade_height_field.png)
+![hx_shade_height_field: input → output](../../_fig/hx_shade_height_field.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_shade_height_field: knob a sweep](../../_fig/hx_shade_height_field.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_shade_height_field: knob b sweep](../../_fig/hx_shade_height_field.b.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_shade_height_field: other inputs](../../_fig/hx_shade_height_field.inputs.jpg)
+
+*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*
 
 ## 使い方
 
 高さ場 v を Lambertian 陰影で描画(法線×光源)。方位 a・仰角 b の光源。
+
+``v`` を高さ場(gray 値 = 高さ、画素間隔 1)とみなし、``np.gradient`` の ``(gy, gx)`` から法線
+``n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)`` を作り、方向 ``l = (cos(el)cos(az), cos(el)sin(az), sin(el))`` の
+平行光との内積 ``n·l`` を 0 で下から clip し、min-max で [0,1] に正規化して返す(Lambertian 陰影)。
+
+- ``a`` → 光源の方位角 ``az = a*2*pi``(``lx = cos(az)`` が列方向、``ly = sin(az)`` が行方向の成分)。
+- ``b`` → 光源の仰角 ``el = (0.2 + 0.7*b) * pi/2``(約 18°〜81°。1 で真上に近い)。
+
+注意: 高さのスケール係数が無く、[0,1] の値を数百画素にわたって微分するため勾配はごく小さい。そのままでは
+陰影の差がほとんど無いが、最後の min-max 正規化で見える化している。したがって出力の絶対的な明るさに意味は
+無く、入力が平坦だと全画素 0 になる。深度画像や ``hx_fit_surface2`` で推定した背景面の凹凸を目で確かめる用途向け。
 
 ## 詳しい使い方ガイド
 

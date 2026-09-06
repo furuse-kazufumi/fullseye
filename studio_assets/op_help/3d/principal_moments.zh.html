@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import moments3d; moments3d.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;principal_moments&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>惯性张量的特征值(主惯性矩,降序排列,旋转不变)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>慣性テンソルは対称なので固有値は実。点群を回転 R で回すと I → R I Rᵀ と</p>
+<p>相似変換され、固有値は不変(厳密)。返り値は降順にそろえるので座標系や</p>
+<p>回転に依らず一致する。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (3,)</p>
+<p>降順の主慣性モーメント λ1 &gt;= λ2 &gt;= λ3 &gt;= 0。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">inertia_tensor</code><code style="color:#22d3bf"> の固有値で、共分散の固有値 c_i とは </code><code style="color:#22d3bf">λ_i = (c_1 + c_2 + c_3) - c_i</code>` の関係。細長い棒では最小固有値(棒の軸まわり)が 0 に近づき、球では 3 つが等しい。</p>
+<p style="margin:2px 0 2px 12px">• 単位は長さ²。並進と回転には不変だが <b>スケールには不変でない</b>(s 倍で s² 倍)。スケール不変が要るなら `<code style="color:#22d3bf">moment_invariants</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら全て 0)。形状不正・非有限は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 主軸ベクトル(固有ベクトル)が要るなら `<code style="color:#22d3bf">moment_axes</code>`。決定論的。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

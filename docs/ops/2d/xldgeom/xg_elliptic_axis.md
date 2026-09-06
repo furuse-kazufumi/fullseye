@@ -17,13 +17,33 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "xg_elliptic_axis", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `elliptic_axis_points_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![xg_elliptic_axis: 入力 → 出力](../../_fig/xg_elliptic_axis.png)
+![xg_elliptic_axis: input → output](../../_fig/xg_elliptic_axis.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![xg_elliptic_axis: stages](../../_fig/xg_elliptic_axis.chain.jpg)
 
 ## 使い方
 
 Major/minor axis ratio sqrt(lambda_max/lambda_min) of the point set.
+
+全輪郭の点(閉輪郭の重複終点は除く)の (row, col) 共分散行列の固有値から、
+等価楕円の長軸/短軸比 ``sqrt(λ_max/λ_min)`` を返す。``a``, ``b`` は未使用。
+
+返り値は ``numpy.float64`` で 1 以上。等方な点配置で 1、細長いほど大きい。
+``λ_min <= 1e-12``(全点が一直線)では ``λ_max > 1e-12`` なら 1e6、そうで
+なければ 1.0。それ以外でも上限 1e6 で打ち切る。点が 2 個未満なら 1.0。
+非有限になった場合も 1.0 に落とす。[0,1] に正規化されていない量なので、
+他の特徴量と並べる際はスケールに注意(1e6 の外れ値が出うる)。
+``xg_eccentricity`` は同じ固有値を [0,1] に写した版で、こちらは比を直接
+見たいときに使う。軸ではなく外接矩形の縦横比なら ``xg_height_width_ratio``
+(こちらは向きに依存する)。
 
 ## 詳しい使い方ガイド
 

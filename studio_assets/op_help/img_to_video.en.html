@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">img_to_video — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;img_to_video&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/img_to_video.png" alt="img_to_video: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_video.a.jpg">img_to_video: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_video.b.jpg">img_to_video: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_video.inputs.jpg">img_to_video: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<p><b>Motion</b> (GIF: frames / views / slices in turn. The still figure is the complete one; the GIF is supplementary):</p>
+<p><img src="fig/img_to_video.gif" alt="img_to_video: animation"></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Turn the image into a T-frame video (T,H,W) translated at constant speed.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>フレーム `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> は入力を </code><code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code>` だけ動かしたもの</p>
+<p>(`<code style="color:#22d3bf">scipy.ndimage.shift</code>`、線形補間、縁は最近傍で延長)。**変位が閉形式で</p>
+<p>分かる**ので、動画の族(`<code style="color:#22d3bf">tb_frame_difference_causal</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_motion_energy_image</code>` /</p>
+<p>`<code style="color:#22d3bf">tb_background_subtraction_window</code>` …)の検算に使える。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 1 フレームあたりの歩幅 </code><code style="color:#22d3bf">step = 4 * a</code>` 画素(a=0.5 で 2 px/frame)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 移動方向 </code><code style="color:#22d3bf">θ = 2π * b</code>`(b=0 で +x、b=0.25 で +y(下)、b=0.5 で −x)。</p>
+<p style="margin:2px 0 2px 12px">• フレーム数 `<code style="color:#22d3bf">T = VIDEO_FRAMES</code>`(8)。フレーム 0 は入力そのもの。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code>` float64、値域は入力と同じ([0,1] なら [0,1] のまま。</p>
+<p>線形補間は値域を広げない)。</p>
+<p>注意: 動くのは<b>画面全体</b>(カメラのパン)であって、物体だけではない。</p>
+<p>背景差分の族は「動かない背景」を仮定するので、全体パンでは前景が全画素に出る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_video 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_video%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_video%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">video</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_temporal_bandpass">tb_temporal_bandpass</a> · <a style="color:#22d3bf" href="op:tb_temporal_band_power">tb_temporal_band_power</a> · <a style="color:#22d3bf" href="op:tb_temporal_median_window">tb_temporal_median_window</a> · <a style="color:#22d3bf" href="op:tb_moving_average_window">tb_moving_average_window</a> · <a style="color:#22d3bf" href="op:tb_background_subtraction_window">tb_background_subtraction_window</a> · <a style="color:#22d3bf" href="op:tb_frame_difference_causal">tb_frame_difference_causal</a> · <a style="color:#22d3bf" href="op:tb_exponential_background">tb_exponential_background</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_counts">img_to_counts</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_volume">img_to_volume</a> · <a style="color:#22d3bf" href="op:img_to_lightfield">img_to_lightfield</a> · <a style="color:#22d3bf" href="op:img_to_rgb">img_to_rgb</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

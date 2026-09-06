@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import measure3d; measure3d.fit_plane3(points) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;fit_plane3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對 `<code style="color:#22d3bf">(depth, row, col)</code>` 點做最小平方 3-D 平面擬合。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>through the centroid whose normal is the smallest principal axis (minimises the</p>
+<p>sum of squared point-to-plane distances). Returns `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code>`), a</p>
+<p>unit `<code style="color:#22d3bf">normal</code>` (depth, row, col), and the RMS point-to-plane residual. Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 3 points or a collinear set (the normal is undefined).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

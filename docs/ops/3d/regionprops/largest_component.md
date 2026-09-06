@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 最大(最多ボクセル)連結成分の bool マスクを返す。
 
+前景が無い場合は全 False マスク(vol と同形状)。
+
+補足:
+- 内部で ``label_components`` を呼び、``bincount`` でラベルごとのボクセル数を数えて最大を選ぶ。**同数のときは番号の小さいラベル**(scipy の走査順で先)が勝つ。
+- 入力は 0 以外を前景として ``bool`` 化する(NaN も前景)。軸順は (z, y, x)。
+- 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。
+- Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
+- 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら ``filter_by_volume``、特徴で選ぶなら ``vol_select_labels``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

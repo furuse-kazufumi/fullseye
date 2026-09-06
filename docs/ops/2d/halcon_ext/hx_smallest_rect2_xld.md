@@ -17,13 +17,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_smallest_rect2_xld", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `smallest_rectangle2_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_smallest_rect2_xld: 入力 → 出力](../../_fig/hx_smallest_rect2_xld.png)
+![hx_smallest_rect2_xld: input → output](../../_fig/hx_smallest_rect2_xld.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_smallest_rect2_xld: stages](../../_fig/hx_smallest_rect2_xld.chain.jpg)
 
 ## 使い方
 
 最小面積外接矩形の面積比(矩形面積 / 画像面積)を返す(feature)。
+
+全 contour の点をまとめ、0°〜84° を 6° 刻みで回転させて軸並行外接矩形の面積を計算し、その最小値を画像面積
+``H*W`` で割って 1 で頭打ちした ``np.float64`` で返す。
+
+- ``a``, ``b`` は未使用。
+- 点が 3 個未満なら 0.0。各辺には ``1e-9`` が足してあり、点が同一直線上でも面積は厳密には 0 でなく極小値。
+
+角度探索が 6° 刻みなので真の最小面積より最大で数 % 大きく出ることがある。全 contour を 1 つの矩形で包むため、
+離れた contour が複数あると間の空白も含む。アスペクト比は ``hx_fit_rectangle2_contour``、軸並行版は
+``hx_smallest_rect1_xld``。
 
 ## 詳しい使い方ガイド
 

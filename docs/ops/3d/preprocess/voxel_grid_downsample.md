@@ -19,6 +19,27 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。
 
+空間を一辺 ``voxel_size`` の立方体セルに区切り、同じセルに落ちた点をその重心
+1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。
+出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。
+
+Parameters
+----------
+points : array_like, shape (N, 3)
+    入力点群。
+voxel_size : float
+    セルの一辺(> 0)。大きいほど強く間引く。
+
+Returns
+-------
+ndarray, shape (M, 3)
+    各占有セルの重心(M <= N)。すべて入力の軸並行 bounding box 内に収まる。
+
+Notes
+-----
+``voxel_size <= 0`` は ValueError。空入力は空 (0,3) を返す(graceful)。
+重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

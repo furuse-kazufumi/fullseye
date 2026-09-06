@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 model を (x,y) で評価 → z(x の shape で返す)。
 
+*model* は :func:`fit_poly_surface` の返り(dict)。**fail-closed**: B スプライン
+曲面/曲線の tck(FITPACK の list)を渡すと、以前は ``model["degree"]`` が
+``TypeError: list indices must be integers...`` で落ちていた(2026-09-01 実測 7 回)。
+多項式モデルと B スプラインモデルは中身が違うので、ここで明示的に拒否する
+(ops3d 台帳側でも poly_surface / bspline_surface と型を分けてある)。
+
+Raises ValueError: model が多項式モデル dict でない / 必須キー欠落。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

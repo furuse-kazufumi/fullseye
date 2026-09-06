@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import range_image; range_image.bearing_angle_image(depth, direction=&#x27;down&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;bearing_angle_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>bearing-angle 画像: 走査方向に沿った視線と局所面のなす角(range image の古典記述子)。→ HxW(度)。</p>
+<p>隣接深度差から局所傾斜角 atan2(Δdepth, step) を計算。斜面の向きに敏感で照明不変。</p>
+<p>direction ∈ {down,up,right,left}。</p>
+<p>`<code style="color:#22d3bf">direction</code>` が &quot;down&quot;/&quot;up&quot; なら行方向(axis=0)、&quot;right&quot;/&quot;left&quot; なら列方向(axis=1)の</p>
+<p>`<code style="color:#22d3bf">np.gradient</code>`(中心差分、端は片側差分)で隣接深度差 Δd を取り、&quot;up&quot;/&quot;left&quot; では符号を</p>
+<p>反転する。角度は `<code style="color:#22d3bf">degrees(atan2(Δd, 1))</code>` なので値域は (-90, 90) 度、平坦面で 0、走査</p>
+<p>方向に遠ざかる面で正。格子間隔を 1 としているため、深度の単位が画素と違う(mm 等)場合</p>
+<p>は幾何学的な入射角そのものではなく「深度単位あたりの傾き」の角になる。上記 4 語以外の</p>
+<p>`<code style="color:#22d3bf">direction</code>` は列方向・符号そのままとして扱われ、エラーにはならない。返り値は float32</p>
+<p>の `<code style="color:#22d3bf">(H,W)</code>`。深度の段差では ±90 度近くまで振れるので遮蔽の目安にもなるが、段差と斜面</p>
+<p>を区別するには `<code style="color:#22d3bf">occlusion_edges</code>` を使う。入力検証は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>

@@ -17,13 +17,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "xg_height_width_ratio", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `height_width_ratio_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![xg_height_width_ratio: 入力 → 出力](../../_fig/xg_height_width_ratio.png)
+![xg_height_width_ratio: input → output](../../_fig/xg_height_width_ratio.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![xg_height_width_ratio: stages](../../_fig/xg_height_width_ratio.chain.jpg)
 
 ## 使い方
 
 Axis-aligned bounding-box height/width ratio of the point set.
+
+全輪郭の点(閉輪郭の重複終点は除く)をまとめ、行方向の広がり
+``h = max(row) - min(row)`` と列方向の広がり ``w = max(col) - min(col)`` の比
+``h / w`` を返す。``a``, ``b`` は未使用。
+
+返り値は ``numpy.float64``。点が無ければ 0.0。``w < 1e-12``(全点が同じ列=
+縦一直線)では ``h > 1e-12`` なら 1e6、そうでなければ 0.0。上限は 1e6。
+軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。
+回転不変な細長さは ``xg_elliptic_axis`` / ``xg_eccentricity`` を使う。
+``h``, ``w`` は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。
+複数輪郭があれば全体を囲む 1 つの bbox の比になる。
 
 ## 詳しい使い方ガイド
 

@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_intersect(a, b)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_intersect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Intersection of two RLE regions on the runs (no decode).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">vol_rle_union</code><code style="color:#22d3bf"> と同じ掃引エンジン(</code><code style="color:#22d3bf">_rle_boolean</code>`)で、区間ごとの被覆状態が</p>
+<p>`<code style="color:#22d3bf">ia &amp; ib</code>`(両方の内側)の区間だけを run として残す。計算量は run 数に対して</p>
+<p>O(n log n) で、voxel 数には依存しない。</p>
+<p>返り値: 同じ `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf"> の新しい </code><code style="color:#22d3bf">VolRLE</code>`。共通部分が無ければ run 0 本の region</p>
+<p>(エラーではない。空かどうかは `<code style="color:#22d3bf">len(region) == 0</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">vol_rle_volume</code>` で見る)。</p>
+<p>`<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; decode(b)</code>` が voxel 単位で成り立つ。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): どちらかが </code><code style="color:#22d3bf">VolRLE</code>` でない・run 配列の整合性検査に失敗 /</p>
+<p>`<code style="color:#22d3bf">a.shape != b.shape</code>`。</p>
+<p>使いどころ: ROI(`<code style="color:#22d3bf">vol_rle_encode</code><code style="color:#22d3bf"> した domain マスク)と成分(</code><code style="color:#22d3bf">vol_rle_components</code>`)</p>
+<p>の重なり判定、2 つの閾値結果の共通領域、`<code style="color:#22d3bf">vol_rle_volume</code>` と組み合わせた</p>
+<p>IoU 計算(`<code style="color:#22d3bf">|a∩b| / |a∪b|</code>`)を密配列なしで行う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

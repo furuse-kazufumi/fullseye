@@ -6,6 +6,20 @@
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>弦長 1・前縁が原点・弦が +x になるよう回転と並進で正規化する。</p>
 <p><b>スケールは弦長でしか変えない</b>(形を歪めない)。返りは正規化した輪郭。</p>
+<p>手順: `<code style="color:#22d3bf">profile_chord_frame</code><code style="color:#22d3bf"> で前縁 </code><code style="color:#22d3bf">le</code><code style="color:#22d3bf">・後縁 </code><code style="color:#22d3bf">te</code>`(開いた後縁は隙間の</p>
+<p>中点)・弦長 `<code style="color:#22d3bf">chord</code><code style="color:#22d3bf">・弦の向き </code><code style="color:#22d3bf">angle_deg</code>` を求め、</p>
+<p>`<code style="color:#22d3bf">((contour - le) @ R(-angle).T) / chord</code>` を返す。回転・並進・一様スケールの</p>
+<p>相似変換だけで、点の数と順序は保つ(再標本化しない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">contour</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(N, 2)</code><code style="color:#22d3bf"> の **(x, y)**、8 点以上、有限。</code><code style="color:#22d3bf">(row, col)</code>` を渡すと</p>
+<p>弦は見つかるが上下が入れ替わる(例外は出ない)。閉じているかはここでは</p>
+<p>検査しない(`<code style="color:#22d3bf">profile_sides</code>` 以降が検査する)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(N, 2)</code><code style="color:#22d3bf"> float64。前縁が </code><code style="color:#22d3bf">(0, 0)</code><code style="color:#22d3bf">、後縁が </code><code style="color:#22d3bf">(1, 0)</code>` 付近、</p>
+<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> の弦比。</code><code style="color:#22d3bf">y</code>` の符号(上面が正か負か)は入力の周回方向</p>
+<p>で決まり、反転はしない。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(形、点数不足、非有限、弦長が 0 = 全点一致)。</p>
+<p>前縁・後縁の判定は「最遠点対のうち、少し内側で断面が太いほう = 前縁」なので、</p>
+<p>前後で太さが同じ対称な断面(楕円など)では前後が入れ替わることがある。</p>
+<p>`<code style="color:#22d3bf">profile_sides</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">profile_thickness</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">profile_camber</code>` は内部でこれを呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">Leitfaden zur Familie profile_metrology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -13,7 +27,7 @@
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
-<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_frame_tour">profile_frame_tour</a> — <code style="color:#22d3bf">py -3.11 examples/profile_frame_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">pairs</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="opprofile:profile_perturb">profile_perturb</a> · <a style="color:#22d3bf" href="opprofile:profile_chord_frame">profile_chord_frame</a> · <a style="color:#22d3bf" href="opprofile:profile_resample">profile_resample</a> · <a style="color:#22d3bf" href="opprofile:profile_sides">profile_sides</a> · <a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_camber">profile_camber</a> · <a style="color:#22d3bf" href="opprofile:profile_leading_edge_radius">profile_leading_edge_radius</a> · <a style="color:#22d3bf" href="opprofile:profile_trailing_edge_gap">profile_trailing_edge_gap</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">frame</code>)</h3>

@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;fresnel_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fresnel-Reflexionsgrad (unpolarisiert = das s/p-Mittel). Der Anteil, der sich an einer transparenten Grenzfläche in Reflexion und Transmission teilt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。</p>
+<p>`<code style="color:#22d3bf">cos_i</code><code style="color:#22d3bf"> は入射角の余弦(実数スカラー。配列・None は ValueError)。符号は捨てる(</code><code style="color:#22d3bf">|cos_i|</code>`)。</p>
+<p>`<code style="color:#22d3bf">eta1</code><code style="color:#22d3bf"> は入射側、</code><code style="color:#22d3bf">eta2</code><code style="color:#22d3bf"> は透過側の屈折率。s 偏光 </code><code style="color:#22d3bf">rs</code><code style="color:#22d3bf"> と p 偏光 </code><code style="color:#22d3bf">rp</code>` の平均を float で</p>
+<p>返す(<b>[0, 1]</b>)。Brewster 角では `<code style="color:#22d3bf">rp = 0</code><code style="color:#22d3bf"> になるが平均は 0 にならない。</code><code style="color:#22d3bf">cos_i = 0</code>`(かすめ</p>
+<p>入射)で 1.0。透過率は `<code style="color:#22d3bf">1 −</code>` 反射率(吸収なし)。</p>
+<p>用途: `<code style="color:#22d3bf">refract</code>` で曲げた光線の重み、透明体の輝度予測。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

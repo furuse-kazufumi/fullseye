@@ -19,6 +19,28 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D 二値ボリュームを連結成分にラベリングする。
 
+Parameters
+----------
+vol : array_like
+    bool または 0/1 の 3D 配列。
+connectivity : int
+    6(面) / 18(面+辺) / 26(面+辺+角)のいずれか。
+
+Returns
+-------
+labels : ndarray(int)
+    vol と同形状。背景 0、各連結成分に 1..n のラベル。
+n : int
+    連結成分数。
+
+補足:
+- 入力は ``astype(bool)`` で二値化する。0 以外はすべて前景で、float の NaN も True(前景)になる点に注意。
+- 軸順は (z, y, x) = numpy の配列軸順。``labels`` の dtype は ``scipy.ndimage.label`` の返す整数型(通常 int32)。前景が無い/空配列なら int32 のゼロ配列と 0 を返す。
+- ラベル番号の付与順は scipy の走査順で、体積順ではない。
+- Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
+- 接触している物体は 1 成分に融合する。分離が要るなら前段で ``morph_erode3d`` / ``morph_open3d`` や ``vol_watershed`` で切る。
+- 後段: ``region_props``(計測)、``largest_component`` / ``filter_by_volume``(選別)、``vol_select_labels``(特徴でふるい)、``vol_colorize_labels``(可視化)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Exact Euclidean distance transform of a binary volume.
 
+Each foreground (non-zero) voxel is labelled with its Euclidean distance to
+the nearest background voxel, via ``scipy.ndimage.distance_transform_edt``.
+Pass *spacing* ``(sz, sy, sx)`` (e.g. ``VolumeMeta.spacing_mm``, or the
+``VolumeMeta`` itself) to make the distance **anisotropy-aware** — millimetres
+rather than voxels; otherwise unit spacing is assumed. A non-``{0, 1}`` input
+is thresholded at ``> 0.5``.
+
+Returns a ``(D, H, W)`` float64 distance field (0 on the background).
+Reference: Felzenszwalb & Huttenlocher, Theory of Computing 2012.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -3,10 +3,29 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;r2_partition_rectangle&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">partition_rectangle</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/r2_partition_rectangle.png" alt="r2_partition_rectangle: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/r2_partition_rectangle.png" alt="r2_partition_rectangle: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.a.jpg">r2_partition_rectangle: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.chain.jpg">r2_partition_rectangle: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.inputs.jpg">r2_partition_rectangle: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Split the region bbox into an NxN grid; keep cells overlapping the region.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>領域の外接軸並行矩形を `<code style="color:#22d3bf">N x N</code>` の格子に等分し、領域と 1 画素でも重なる</p>
+<p>セルを丸ごと 1.0 で塗ったマスクを返す。`<code style="color:#22d3bf">N = 2 + int(a*4)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">a=0</code>` → 2、</p>
+<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> → 6 分割(</code><code style="color:#22d3bf">a</code>` は [0,1] に clip)。セル境界は</p>
+<p>`<code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code>` を整数化したもので、bbox がセル数より</p>
+<p>小さいと幅 0 のセルが生じ、そのセルはスキップされる。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は「領域を</p>
+<p>覆うセルの和」なので入力領域を必ず含み、bbox の外は塗られない。中身が凸で</p>
+<p>bbox いっぱいに詰まった領域では全セルが該当し、`<code style="color:#22d3bf">a</code>` を変えても出力は bbox</p>
+<p>そのものになる。孔や凹みが大きい領域で初めて格子の粗さが見える。用途は</p>
+<p>粗いタイル分割(局所処理の窓決め)や占有パターンの粗視化。隣接セルは</p>
+<p>つながって 1 つの塊になるため、セル単位で分けて扱う用途には向かない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

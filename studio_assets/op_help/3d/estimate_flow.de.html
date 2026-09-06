@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;estimate_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das 3-D-Verschiebungsvektorfeld (N, 3) von jedem Punkt in pts0 zu seinem nächsten Nachbarn in pts1 (Nächste-Nachbar-Fluss).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">pts0</code><code style="color:#22d3bf"> の各点 p について </code><code style="color:#22d3bf">pts1</code><code style="color:#22d3bf"> 中の最近傍 q を cKDTree で求め、変位 </code><code style="color:#22d3bf">q - p</code>`</p>
+<p>を返す。要素数は N != M でよい。変位が局所点間隔より十分小さい小運動でのみ「点 i の</p>
+<p>真の対応先」を当てる(honest な最近傍の限界)。segment_rigid_motions が inlier 判定に</p>
+<p>使う <b>観測フロー</b> を与える。</p>
+<p>Args:</p>
+<p>pts0: (N, 3) 時刻 0 の点群。</p>
+<p>pts1: (M, 3) 時刻 1 の点群。</p>
+<p>Returns:</p>
+<p>(N, 3) 変位ベクトル場(pts0 と同じ行順)。空 pts0 は (0, 3) を返す。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正、または pts0 が非空なのに pts1 が空(最近傍が存在しない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import videostream; videostream.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_background&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Recursive background `<code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code><code style="color:#22d3bf"> per frame → </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
+<p>最初のフレームで `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> を初期化し、以後 </code><code style="color:#22d3bf">bg += α (frame - bg)</code>` を画素ごとに</p>
+<p>繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム `<code style="color:#22d3bf">t</code>` の</p>
+<p>出力はその時点の `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> の写しで、</code><code style="color:#22d3bf">t = 0</code>` は入力の先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code>` 配列か 2-D フレームの list。整数 dtype は最大値で</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に正規化、float は </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> にクリップ。NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。時定数はおよそ </code><code style="color:#22d3bf">1/α</code>` フレーム(0.05 → 約 20 枚)。</p>
+<p>0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。</p>
+<p>**物体が止まると `<code style="color:#22d3bf">1/α</code>` 枚ほどで背景に吸収される**(選択的更新は無い)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float64、</code><code style="color:#22d3bf">[0, 1]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(形・dtype・</code><code style="color:#22d3bf">alpha</code>` の範囲)。</p>
+<p>前景マスクまで欲しいなら同じモデルの `<code style="color:#22d3bf">exponential_foreground</code>`。画素ごとの</p>
+<p>雑音に閾値を合わせたいなら `<code style="color:#22d3bf">running_gaussian_background</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。
 
+各骨格 voxel について 26 近傍にある骨格 voxel 数(次数)を数え、
+    次数 1  = 端点(endpoint)
+    次数 2  = 通常点(骨格の途中)
+    次数>=3 = 分岐点(branch)
+    次数 0  = 孤立点(isolated)
+に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。
+
+注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散
+骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。
+
+Args:
+    skeleton: 骨格 voxel(bool / 0-1 の 3D)。
+
+Returns:
+    dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),
+          degree_hist(次数 -> 個数)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

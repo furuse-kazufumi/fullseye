@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_dilation2&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">dilation2</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/hx_dilation2.png" alt="hx_dilation2: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/hx_dilation2.png" alt="hx_dilation2: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.a.jpg">hx_dilation2: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.b.jpg">hx_dilation2: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.chain.jpg">hx_dilation2: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.inputs.jpg">hx_dilation2: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기준점이 있는 dilation: 팽창 후 기준점만큼 오프셋(b 로 평행이동).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> を region とし、半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> の円板構造要素で </code><code style="color:#22d3bf">binary_dilation</code><code style="color:#22d3bf"> した後、結果を列方向に </code><code style="color:#22d3bf">sh</code>` 画素</p>
+<p>`<code style="color:#22d3bf">np.roll</code>` で平行移動して 0/1 の float 配列で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 円板半径 </code><code style="color:#22d3bf">r = 1 + int(a*4)</code>`(1〜5 画素)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 列方向のずらし量 </code><code style="color:#22d3bf">sh = int((b-0.5)*6)</code><code style="color:#22d3bf">。値は -3〜3 で、小数点以下は 0 方向に切り捨てるため </code><code style="color:#22d3bf">b</code>` が</p>
+<p>およそ 1/3〜2/3 の範囲では 0(ずらし無し)になる。負で左、正で右。</p>
+<p>行方向のずらしは無い(参照点を横にずらす形だけを再現)。`<code style="color:#22d3bf">np.roll</code>` なので端からはみ出た分は反対側に現れる</p>
+<p>(端に接する region を扱うときは注意)。単純な膨張だけなら `<code style="color:#22d3bf">hx_dilation1</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pcl_augment; pcl_augment.random_dropout(points, ratio: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;random_dropout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>随机移除 `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> 比例的点,返回 </code><code style="color:#22d3bf">(kept, kept_idx)</code>`(模拟缺失)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>残す点数は `<code style="color:#22d3bf">round((1-ratio)*N)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">kept_idx</code>` は元配列への昇順インデックスで、</p>
+<p>`<code style="color:#22d3bf">kept == points[kept_idx]</code>` が厳密に成り立つ。オクルージョン/疎な視点による</p>
+<p>点欠損を学習で再現する。`<code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code>` を要求。</p>
+<p>`<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> が [0,1] の外なら </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">ratio=1</code><code style="color:#22d3bf"> は空 </code><code style="color:#22d3bf">(0,3)</code>` と空インデックス、</p>
+<p>`<code style="color:#22d3bf">ratio=0</code><code style="color:#22d3bf"> は全点(順序は元のまま)。残す点数は Python の </code><code style="color:#22d3bf">round</code>`(偶数丸め)で決まる</p>
+<p>ので `<code style="color:#22d3bf">.5</code><code style="color:#22d3bf"> 端では偶数側に寄る。</code><code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">permutation</code>` が決まり決定論的。返り値は</p>
+<p>`<code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>`。除去は空間的に一様なので、局所的な</p>
+<p>欠損(遮蔽)を模すには `<code style="color:#22d3bf">cutout</code>` を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

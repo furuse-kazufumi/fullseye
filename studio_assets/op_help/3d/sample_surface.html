@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import superquadric; superquadric.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;sample_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スーパー2次曲面の表面点を (eta, omega) パラメトリックにサンプリング。</p>
+<p>`<code style="color:#22d3bf">x = a1 * sgn|cos eta|^eps1 * sgn|cos omega|^eps2</code>` などの符号付きべきで</p>
+<p>全 8 象限を張る(eta in [-pi/2, pi/2], omega in [-pi, pi])。生成点は</p>
+<p>厳密に `<code style="color:#22d3bf">F = 1</code>` を満たす(cos^2+sin^2=1 が指数を打ち消すため)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>a, eps : inside_outside と同じ</p>
+<p>n_u : omega(経度)方向サンプル数</p>
+<p>n_v : eta(緯度)方向サンプル数</p>
+<p>R, t : 姿勢(body→world: X_world = R @ X_body + t)</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (n_u*n_v, 3)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

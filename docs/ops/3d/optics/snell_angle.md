@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。
 
+``θt = arcsin((eta1/eta2)·sin θi)`` を度で返す(float)。``theta_i_deg`` は実数スカラー(配列・
+None は ValueError)。符号は保たれる(負の入射角は負の屈折角)。``|(eta1/eta2) sin θi| > 1`` なら
+``nan``(全反射。``eta1 > eta2`` のときだけ起きる)。臨界角は ``degrees(arcsin(eta2/eta1))``。
+``eta1 == eta2`` なら入射角そのまま。
+ベクトルで曲げるなら ``refract``、反射率は ``fresnel_reflectance(cos(radians(θi)))``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

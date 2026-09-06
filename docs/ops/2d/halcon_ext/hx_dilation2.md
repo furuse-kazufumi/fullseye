@@ -17,13 +17,39 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_dilation2", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `dilation2`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_dilation2: 入力 → 出力](../../_fig/hx_dilation2.png)
+![hx_dilation2: input → output](../../_fig/hx_dilation2.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_dilation2: knob a sweep](../../_fig/hx_dilation2.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_dilation2: knob b sweep](../../_fig/hx_dilation2.b.jpg)
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_dilation2: stages](../../_fig/hx_dilation2.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_dilation2: other inputs](../../_fig/hx_dilation2.inputs.jpg)
 
 ## 使い方
 
 参照点つき dilation: 膨張後に参照点オフセット(b で並進)。
+
+``v > 0.5`` を region とし、半径 ``r`` の円板構造要素で ``binary_dilation`` した後、結果を列方向に ``sh`` 画素
+``np.roll`` で平行移動して 0/1 の float 配列で返す。
+
+- ``a`` → 円板半径 ``r = 1 + int(a*4)``(1〜5 画素)。
+- ``b`` → 列方向のずらし量 ``sh = int((b-0.5)*6)``。値は -3〜3 で、小数点以下は 0 方向に切り捨てるため ``b`` が
+およそ 1/3〜2/3 の範囲では 0(ずらし無し)になる。負で左、正で右。
+
+行方向のずらしは無い(参照点を横にずらす形だけを再現)。``np.roll`` なので端からはみ出た分は反対側に現れる
+(端に接する region を扱うときは注意)。単純な膨張だけなら ``hx_dilation1``。
 
 ## 詳しい使い方ガイド
 

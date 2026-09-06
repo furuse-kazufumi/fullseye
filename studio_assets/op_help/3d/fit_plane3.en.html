@@ -4,6 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_plane3(points) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;fit_plane3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Least-squares 3-D plane fit to `<code style="color:#22d3bf">(depth, row, col)</code>` points — the plane</p>
+<p>through the centroid whose normal is the smallest principal axis (minimises the</p>
+<p>sum of squared point-to-plane distances). Returns `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code>`), a</p>
+<p>unit `<code style="color:#22d3bf">normal</code>` (depth, row, col), and the RMS point-to-plane residual. Raises</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` on &lt; 3 points or a collinear set (the normal is undefined).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

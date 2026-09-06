@@ -4,7 +4,7 @@ dim: annotate
 category: plot
 in: image2d × axes
 out: image2d
-examples: [annotate_gallery]
+examples: [annotate_gallery, annotate_paper_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [annotate_paper_tour](../../../../examples/annotate_paper_tour.py) — `py -3.11 examples/annotate_paper_tour.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

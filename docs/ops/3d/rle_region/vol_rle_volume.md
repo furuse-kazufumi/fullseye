@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Voxel count of the region, computed on the runs (no decode). Measured
 
+~300x faster than summing the dense mask.
+
+計算: ``sum(ends - starts)``(差は int64 で取るので run 数が多くても溢れない)。
+返り値は Python の ``int``(voxel 個数、単位は voxel。物理体積 mm^3 が欲しければ
+``spacing`` の積 ``sz*sy*sx`` を自分で掛ける — この op は spacing を受けない)。
+
+入力は ``_require_rle`` で検証してから使う(``VolRLE`` 以外、shape・run 配列の
+不整合、範囲外の run は ``ValueError``)。空の region は ``0`` を返す(エラーに
+しない)。``vol_rle_decode`` してから ``sum()`` するのと同じ値を、密配列を作らずに
+返すのが目的。``vol_rle_components`` の各成分にかければ成分ごとの体積になる。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

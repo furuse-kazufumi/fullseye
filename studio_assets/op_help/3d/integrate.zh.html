@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用投影式 TSDF 把一张深度整合进 volume(原地,加权滑动平均)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各 voxel 中心を (K,R,t) で射影(`<code style="color:#22d3bf">X_cam = R X + t</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">u = fx*X/Z+cx</code>`)し、対応画素の</p>
+<p>観測深度 `<code style="color:#22d3bf">d_meas</code><code style="color:#22d3bf"> と voxel のカメラ深度 </code><code style="color:#22d3bf">d_voxel = Z_cam</code>` を比較。</p>
+<p>`<code style="color:#22d3bf">sdf = min(1, (d_meas - d_voxel)/trunc)</code>` を、以下すべてを満たす voxel にのみ適用:</p>
+<p>画像内・`<code style="color:#22d3bf">d_meas&gt;0</code><code style="color:#22d3bf"> かつ有限・</code><code style="color:#22d3bf">(d_meas - d_voxel) &gt;= -trunc</code>`(表面より trunc 以上奥=</p>
+<p>遮蔽領域は観測不能として <b>更新しない</b>)。この valid 集合では sdf ∈ [-1,1]。</p>
+<p>更新: `<code style="color:#22d3bf">tsdf = (w*tsdf + sdf)/(w+1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">weight = w+1</code>`(1 フレーム重み 1)。</p>
+<p>bounds を渡すと voxel 中心を world で解釈し (K,R,t) は world→camera。bounds=None(既定)</p>
+<p>では voxel 中心を grid-index フレーム((i+0.5,...))で解釈し (K,R,t) は grid→camera とする</p>
+<p>(`<code style="color:#22d3bf">fuse</code>` は bounds を渡すので world 座標で融合される)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

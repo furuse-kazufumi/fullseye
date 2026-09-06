@@ -19,6 +19,11 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。
 
+range 重みは深度自身の差で作る。無効画素(非有限 or sentinel=invalid)は近傍として寄与せず、
+中心が無効なら元値のまま(穴埋めは :func:`fill_holes` の役目)。spatial_sigma は画素単位、
+range_sigma は深度値の単位(段差 > range_sigma なら段差を跨がず、ノイズ std < range_sigma
+ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

@@ -5,6 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D white top-hat = vol − opening。SE より小さい <b>明構造</b>を抽出(keypoint 前処理)。</p>
+<p>`<code style="color:#22d3bf">vol(float32) − morph_open3d(vol, r, ...)</code><code style="color:#22d3bf">。値は 0 以上で、SE(一辺 </code><code style="color:#22d3bf">2r+1</code>` の cube か</p>
+<p>半径 r の ball)に入り切らない明るい突起・粒・細線だけがその高さで残り、それより大きな</p>
+<p>明領域と滑らかな背景は 0 になる。背景の緩い明るさムラも除けるので、閾値化の前処理に。</p>
+<p>`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> は「残したい構造の半径」より大きく取る。</code><code style="color:#22d3bf">se</code>` は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、</p>
+<p>`<code style="color:#22d3bf">device</code><code style="color:#22d3bf"> は cube+torch のときだけ有効。返り値 </code><code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>暗い構造を取るなら `<code style="color:#22d3bf">morph_blackhat3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

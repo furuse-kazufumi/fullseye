@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 sRGB(``(..., 3)``)→ CIE XYZ。伝達関数を外してから行列を掛ける。
 
+手順: ``srgb_to_linear`` で整数 dtype を ``[0, 1]`` に正規化しつつ伝達関数を
+外し(IEC 61966-2-1)、線形 RGB に sRGB(D65)→XYZ の 3x3 行列を掛ける。
+白 ``(1, 1, 1)`` は ``(0.9505, 1.0, 1.0890)`` に写る(Y を 1 に正規化した尺度)。
+
+- 入力: 最後の軸が 3 なら形は任意(``(3,)`` の 1 色、``(N, 3)`` の色表、
+  ``(H, W, 3)`` の画像)。整数 dtype(uint8/uint16 など)は dtype の最大値で割る。
+  float は ``[0, 1]`` に収まっていなければ ``MetricContractError``(``ValueError``
+  の部分型)。ガンマを外した線形値を渡すと二重にガンマを外すので注意。
+- 返り値: 入力と同じ形の float64。
+- 失敗: 最後の軸が 3 でない / float が ``[0, 1]`` の外 / 非有限。
+
+次に ``xyz_to_lab`` を繋ぐのが常道(まとめて ``rgb_to_lab``)。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

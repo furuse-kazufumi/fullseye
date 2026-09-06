@@ -19,6 +19,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。
 
+``src``(移動側 Y, M点)を ``dst``(固定側 X, N点)へ剛体変換で合わせる。CPD は
+dst を、src を中心に置いた等方ガウス混合の重心と見なし、E ステップで軟対応
+(posterior)を、M ステップで最尤の剛体変換と分散を更新する。ICP と違い対応を
+ハードに決めないため、初期ずれ・部分的外れ値に頑健。スケールは 1 固定(純剛体)。
+
+参考: Myronenko & Song, "Point Set Registration: Coherent Point Drift", 2010。
+
+引数:
+    src: (M,3) 移動側点群。
+    dst: (N,3) 固定側点群。
+    iters: 最大 EM 反復回数。
+    w: 外れ値(一様分布)混合比 0≤w<1。0 で外れ無し。
+    tol: 分散 σ² の相対変化がこの値未満で収束打ち切り。
+
+返り値:
+    R: (3,3) 回転(``dst ≈ src @ R.T + t``)。
+    t: (3,) 並進。
+    info: dict。"sigma2"(最終分散)、"iters"、"converged"、"rmse"
+          (変換後 src の最近傍 RMSE)。
+
+例外:
+    ValueError: 形状不正、点数不足、w 範囲外、または ``N*M`` が
+        ``CPD_MAX_PAIRS``(25M)超(密な (N,M) 責務行列を毎反復組むため。
+        両点群を間引いてから渡す)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -2,8 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_height_from_shading — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_height_from_shading&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tac_height_from_shading.png" alt="tac_height_from_shading: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/tac_height_from_shading.png" alt="tac_height_from_shading: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*输出以类 viridis 伪彩色显示(深紫 = 小，黄 = 大)，便于读取距离、相位、方向、深度这类“量的场”。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_height_from_shading.a.jpg">tac_height_from_shading: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_height_from_shading.b.jpg">tac_height_from_shading: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_height_from_shading.inputs.jpg">tac_height_from_shading: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对明暗梯度做泊松积分(Poisson integration)以求高度/浮雕图——这正是 GelSight 深度重建(以及光度立体视,photometric stereo)中的积分阶段:图像梯度被解读为表面斜率 `<code style="color:#22d3bf">p = gain*gx</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">q = gain*gy</code><code style="color:#22d3bf">,并以频谱方法求解泊松方程 </code><code style="color:#22d3bf">lap(h) = div(p,q)</code><code style="color:#22d3bf">,即 </code><code style="color:#22d3bf">h_hat = div_hat / lap_hat</code><code style="color:#22d3bf">,其中离散拉普拉斯算子的符号为 </code><code style="color:#22d3bf">2cos(2*pi*u/W)+2cos(2*pi*v/H)-4</code><code style="color:#22d3bf">,(不确定的)直流(DC)分量被固定为零。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 梯度增益(0.25~4.25 倍),</code><code style="color:#22d3bf">b</code>` = 梯度场的预平滑 sigma(0~3)。输出经最小-最大归一化到 [0,1] 并重整回 HxW;常数帧积分后得到平坦(全零)的浮雕。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

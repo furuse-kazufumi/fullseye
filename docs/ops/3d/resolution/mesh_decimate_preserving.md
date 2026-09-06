@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Decimation that keeps the detailed regions and reports what it lost (``table``).
 
+Vertices whose :func:`mesh_detail_map` ``detail`` is in the top
+``1 − protect_quantile`` are **protected**: :func:`meshrepair.decimate_qem`
+never collapses an edge that touches them, so a crater rim, a boulder or
+an outlier ridge keeps its exact geometry while the smooth remainder is
+reduced toward *target_faces*. The result carries the
+:func:`mesh_reduction_report`; when *max_error* (mesh units) is given and
+the measured ``detail_max_error`` exceeds it, the op **refuses**
+(``ValueError``) instead of returning a mesh that has already lost the
+features you protect. Returns ``{"V", "F", "report", "protected_vertices",
+"protected_mask", "detail_threshold"}``.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import edges3d; edges3d.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;gradient3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ガウス平滑後の中心差分勾配を計算する。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : (D,H,W) array</p>
+<p>グレー voxel。</p>
+<p>sigma : float</p>
+<p>ガウス平滑の標準偏差(voxel 単位)。0 で平滑なし(生の中心差分)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>gmag : (D,H,W) float64</p>
+<p>勾配の大きさ ||∇I||。</p>
+<p>gvec : (D,H,W,3) float64</p>
+<p>勾配ベクトル。成分は (∂/∂axis0, ∂/∂axis1, ∂/∂axis2) = (depth, height, width)。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>平滑には scipy.ndimage.gaussian_filter(mode=&quot;nearest&quot;)、微分には np.gradient(spacing=1)</p>
+<p>を用いる。np.gradient は内部が中心差分、境界のみ片側差分。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

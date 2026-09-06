@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;inflate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把障碍膨胀 `<code style="color:#22d3bf">radius</code>`(世界单位)后的占据栅格 bool(即 ESDF&lt;=radius 视为占据)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>planner の安全マージン: 点ロボットが膨張格子上で衝突回避すれば、半径 radius の実</p>
+<p>ロボットが障害物から離隔を保つ(configuration-space obstacle)。ESDF は外で正の</p>
+<p>最近占有距離なので、`<code style="color:#22d3bf">ESDF&lt;=radius</code>` は「占有(負)∪ 障害物から radius 以内の自由」を</p>
+<p>捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。</p>
+<p>Raises ValueError for radius&lt;0 or voxel_size&lt;=0 (both validated up-front, before</p>
+<p>the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size</p>
+<p>slips through unchecked when esdf is never reached).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

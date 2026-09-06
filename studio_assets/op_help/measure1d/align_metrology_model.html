@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsmeasure1d.get(&quot;align_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。</p>
+<p>全オブジェクトの位置に `<code style="color:#22d3bf">(drow, dcol)</code>` [px] を足した <b>新しいモデル</b> を返す</p>
+<p>(入力の dict は書き換えない)。`<code style="color:#22d3bf">line</code><code style="color:#22d3bf"> は両端点 </code><code style="color:#22d3bf">(row1, col1)</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">(row2, col2)</code>`</p>
+<p>が動き、`<code style="color:#22d3bf">circle</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rect</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ellipse</code><code style="color:#22d3bf"> は中心 </code><code style="color:#22d3bf">(row, col)</code>` が動く。半径・</p>
+<p>半辺長・`<code style="color:#22d3bf">phi</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n</code>` は変えない ―― <b>回転とスケールは扱わない</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">drow</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">dcol</code>`: 変位 [px]。既定 0(写しを作るだけになる)。</p>
+<p style="margin:2px 0 2px 12px">• 型は検証しない。`<code style="color:#22d3bf">add_metrology_object_generic</code>` で積んだ未知型は</p>
+<p>`<code style="color:#22d3bf">params[0]</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">params[1]</code>` を row/col とみなして動かす。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">metrologymodel</code>` 型)。</p>
+<p>典型例: 形状マッチングや基準マークの検出で得た位置ずれをここで</p>
+<p>モデルに反映し、`<code style="color:#22d3bf">apply_metrology_model</code>` を掛ける。傾いたワークには使えない</p>
+<p>(参照形状の法線が実物の法線からずれ、探索半幅 `<code style="color:#22d3bf">measure_length</code>` の外に出る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

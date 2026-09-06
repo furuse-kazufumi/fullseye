@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;compute_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Berechnet den FPFH-Deskriptor (N, 3*n_bins) (Rusu 2009).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>1) SPFH: 各点 p と近傍 k 点の対に (α,φ,θ) を求め、各特徴を n_bins ビンでヒストグラム化。</p>
+<p>2) FPFH(p) = SPFH(p) + (1/k)Σ_j (1/d_pj) SPFH(j): 近傍 SPFH を距離重みで合成。</p>
+<p>3 サブヒストグラムを各々 L1 正規化して連結(既定 33 次元)。角特徴は剛体不変。</p>
+<p>引数: points (N,3), normals (N,3), k(FPFH 近傍数), n_bins(1特徴あたりのビン数)。</p>
+<p>返り値: (N, 3*n_bins) の記述子行列。</p>
+<p>Raises ValueError: points/normals が (N,3) でない・行数不一致・非有限・N&lt;4</p>
+<p>(k-NN が k&gt;=3 を要求するため)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

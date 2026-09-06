@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xg_elliptic_axis&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">elliptic_axis_points_xld</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/xg_elliptic_axis.png" alt="xg_elliptic_axis: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/xg_elliptic_axis.png" alt="xg_elliptic_axis: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_elliptic_axis.chain.jpg">xg_elliptic_axis: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verhältnis von Haupt- zu Nebenachse sqrt(λ_max/λ_min) der Punktmenge.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>全輪郭の点(閉輪郭の重複終点は除く)の (row, col) 共分散行列の固有値から、</p>
+<p>等価楕円の長軸/短軸比 `<code style="color:#22d3bf">sqrt(λ_max/λ_min)</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は `<code style="color:#22d3bf">numpy.float64</code>` で 1 以上。等方な点配置で 1、細長いほど大きい。</p>
+<p>`<code style="color:#22d3bf">λ_min &lt;= 1e-12</code><code style="color:#22d3bf">(全点が一直線)では </code><code style="color:#22d3bf">λ_max &gt; 1e-12</code>` なら 1e6、そうで</p>
+<p>なければ 1.0。それ以外でも上限 1e6 で打ち切る。点が 2 個未満なら 1.0。</p>
+<p>非有限になった場合も 1.0 に落とす。[0,1] に正規化されていない量なので、</p>
+<p>他の特徴量と並べる際はスケールに注意(1e6 の外れ値が出うる)。</p>
+<p>`<code style="color:#22d3bf">xg_eccentricity</code>` は同じ固有値を [0,1] に写した版で、こちらは比を直接</p>
+<p>見たいときに使う。軸ではなく外接矩形の縦横比なら `<code style="color:#22d3bf">xg_height_width_ratio</code>`</p>
+<p>(こちらは向きに依存する)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

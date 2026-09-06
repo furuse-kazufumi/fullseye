@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verformt eine Punktmenge mit einem TPS-Modell.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。</p>
+<p>引数:</p>
+<p>model: `<code style="color:#22d3bf">tps_fit</code>` が返した dict。</p>
+<p>points: (M,3)(または長さ3の1次元)。変形したい点群。</p>
+<p>返り値:</p>
+<p>(M,3) 変形後の点群(入力が1次元なら (3,) を返す)。</p>
+<p>例外:</p>
+<p>ValueError: model の形式不正、または points の形状不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

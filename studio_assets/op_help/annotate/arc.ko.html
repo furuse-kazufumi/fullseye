@@ -9,6 +9,21 @@
 <p>------</p>
 <p>ValueError</p>
 <p>radius が非正、角度が非有限、start == end、alpha が [0,1] の外。</p>
+<p>描画: 中心からの距離 `<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">|d - radius| &lt;= max(0.6, width/2)</code>` で、かつ</p>
+<p>画素の方位角が `<code style="color:#22d3bf">start_deg</code><code style="color:#22d3bf"> から時計回りに </code><code style="color:#22d3bf">(end_deg - start_deg) mod 360</code>` の</p>
+<p>範囲にある画素を塗る(アンチエイリアス無し)。方位角は `<code style="color:#22d3bf">atan2(y - cy, x - cx)</code>`</p>
+<p>で、0 度 = 右(+x)、90 度 = 下(+y)、時計回りが正。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(x, y)</code>`、x = 列・y = 行。画像外でもよい(はみ出しは切れるだけ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius</code>`: 正 [px]。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">start_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">end_deg</code><code style="color:#22d3bf">: 度。</code><code style="color:#22d3bf">start</code><code style="color:#22d3bf"> から時計回りに </code><code style="color:#22d3bf">end</code>` まで描く。</p>
+<p>差が 360 の倍数(`<code style="color:#22d3bf">end - start</code>` が 0 でなく 360 など)は全周。</p>
+<p>`<code style="color:#22d3bf">start == end</code><code style="color:#22d3bf"> は「長さ 0」なので </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 線幅 [px]。</code><code style="color:#22d3bf">max(0.6, width/2)</code>` を半幅にするので 1 px 未満でも</p>
+<p>途切れない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">img</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">color</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scheme</code><code style="color:#22d3bf"> の扱いは </code><code style="color:#22d3bf">rounded_rect</code>` と同じ</p>
+<p>(float64 複製、`<code style="color:#22d3bf">[0, 1]</code>`、役割名か RGB)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
+<p>角度を書き込む学術図の作法は `<code style="color:#22d3bf">annotate_angle</code>` が引き出し文字まで面倒を見る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

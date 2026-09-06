@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import match3d; match3d.surface_form_error(height, degree=1)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;surface_form_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高度场 grid → 相对理想曲面(多项式)的残差=形状误差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf"> の高さ場に </code><code style="color:#22d3bf">x = 列 index</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y = 行 index</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">fit_poly_surface(degree)</code>` を当て、</p>
+<p>`<code style="color:#22d3bf">residual = height − fit</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">degree=1</code><code style="color:#22d3bf"> は最小二乗平面(平面度=pv)、</code><code style="color:#22d3bf">degree=2</code>` は</p>
+<p>2 次曲面(球面の近似。真の球ではない)。</p>
+<p>返り値 `<code style="color:#22d3bf">(residual (H,W) float64, rms, pv)</code>`、単位は高さの単位(横方向は画素単位なので傾き</p>
+<p>係数は「高さ/画素」)。NaN があると lstsq が失敗する(欠損は先に埋める)。2-D 以外の入力は</p>
+<p>形の unpack で失敗する。</p>
+<p>用途: 平面度・うねりの評価。`<code style="color:#22d3bf">background_flatten</code>` は同じ計算の「画像版」。点群の平面度は</p>
+<p>`<code style="color:#22d3bf">fit_plane_3d</code>` の resid。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

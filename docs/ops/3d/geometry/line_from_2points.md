@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。
 
+返り値 ``(a, u)``: ``a`` は入力の 1 点目(float 配列)、``u = (b − a)/|b − a|``。引数は数値の
+2 または 3 ベクトル(それ以外・次元の混在は ValueError)。``a == b`` のときは方向が零ベクトルの
+まま返る(例外は出ない。呼び手で ``|u| > 0`` を確かめる)。座標の並び順は問わない(入力の
+順のまま返る)ので、(x,y,z) でも (z,y,x) でも一貫していればよい。
+後段: ``distance_point_line`` / ``distance_line_line`` / ``intersect_line_plane`` /
+``angle_between_lines`` にこの ``(a, u)`` を渡す。点群から直線を取るなら ``fit_line_3d``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

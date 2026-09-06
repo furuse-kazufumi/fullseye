@@ -19,6 +19,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Recursive background ``bg ← (1−α)·bg + α·frame`` per frame → ``(T, H, W)`` (``video``).
 
+最初のフレームで ``bg`` を初期化し、以後 ``bg += α (frame - bg)`` を画素ごとに
+繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム ``t`` の
+出力はその時点の ``bg`` の写しで、``t = 0`` は入力の先頭フレームそのもの。
+
+- ``video``: ``(T, H, W)`` 配列か 2-D フレームの list。整数 dtype は最大値で
+  ``[0, 1]`` に正規化、float は ``[0, 1]`` にクリップ。NaN/Inf は ``ValueError``。
+- ``alpha``: ``[0, 1]``。時定数はおよそ ``1/α`` フレーム(0.05 → 約 20 枚)。
+  0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。
+  **物体が止まると ``1/α`` 枚ほどで背景に吸収される**(選択的更新は無い)。
+- 返り値: ``(T, H, W)`` float64、``[0, 1]``。
+- 失敗: ``ValueError``(形・dtype・``alpha`` の範囲)。
+
+前景マスクまで欲しいなら同じモデルの ``exponential_foreground``。画素ごとの
+雑音に閾値を合わせたいなら ``running_gaussian_background``。
+
 ## 詳しい使い方ガイド
 
 - [video_streaming ファミリ ガイド](../guides/video_streaming.md)

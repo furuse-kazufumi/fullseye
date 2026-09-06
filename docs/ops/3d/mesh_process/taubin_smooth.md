@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Taubin λ|μ フィルタによる **非収縮** 平滑化。→ (verts, faces)。
 
+各反復で「正の ``lam`` で寄せる段」→「負の ``mu`` で押し戻す段」を続けて掛ける。
+``|mu| > lam`` とすることで低周波(全体形状)を通し高周波(ノイズ)だけを減衰させる
+帯域通過フィルタになり、Laplacian の収縮アーティファクトを打ち消す(球の平均半径が
+ほぼ保たれる)。既定 ``lam=0.33, mu=-0.34`` は Taubin (1995) の推奨に近い。
+
+Args:
+    mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。
+    iters: λ|μ ペアの反復回数(正の整数)。
+    lam: 寄せ段の係数、``0 < lam < 1``。
+    mu: 押し戻し段の係数、``mu < 0`` かつ ``|mu| > lam``(収縮を打ち消す条件)。
+
+Returns:
+    (verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。
+
+Raises:
+    ValueError: メッシュ形状不正・面範囲外・iters/lam/mu が不正(fail-closed)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

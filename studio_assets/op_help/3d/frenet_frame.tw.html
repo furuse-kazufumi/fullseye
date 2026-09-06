@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import curve3d; curve3d.frenet_frame(curve)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;frenet_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>各點的 Frenet 標架(切線 T,主法線 N,副法線 B)。→ (T, N, B),各為 (Npts,3) 單位向量。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>順序付き点列 (N,3) を index パラメータで `<code style="color:#22d3bf">np.gradient</code>`(内部は中心差分、両端は</p>
+<p>片側差分)して r&#x27;, r&#x27;&#x27; を取り、</p>
+<p style="margin:2px 0 2px 12px">• T = r&#x27; / ‖r&#x27;‖</p>
+<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; の T 直交成分 = 曲率中心へ向く向き)</p>
+<p style="margin:2px 0 2px 12px">• B = T × N</p>
+<p>を各点で計算する。r&#x27;&#x27; の T 直交成分の向きは再パラメータ化に不変なので、点間隔が</p>
+<p>滑らかに変わる限り index パラメータで正しい向きが出る。</p>
+<p style="margin:2px 0 2px 12px">• 分母には絶対値 1e-12 を足すだけで、正規化しきれない箇所は単位長にならない。直線区間</p>
+<p>(r&#x27;&#x27; ∥ T または 0)では N・B がほぼゼロベクトルになり、変曲点の前後で N の向きが</p>
+<p>反転する。「単位ベクトル」の保証はそこでは成り立たない。</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 の点列は `<code style="color:#22d3bf">np.gradient</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">ValueError</code>` を出す。形状検証はそれ以外に無い。</p>
+<p style="margin:2px 0 2px 12px">• 両端 2 点は片側差分なので精度が落ちる。等間隔化(`<code style="color:#22d3bf">resample_uniform</code>`)や平滑</p>
+<p>(`<code style="color:#22d3bf">fit_spline_curve</code>`)を先に掛けると安定する。</p>
+<p>曲率・捩率の数値そのものは `<code style="color:#22d3bf">curvature_torsion</code><code style="color:#22d3bf">、弧長は </code><code style="color:#22d3bf">arc_length</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

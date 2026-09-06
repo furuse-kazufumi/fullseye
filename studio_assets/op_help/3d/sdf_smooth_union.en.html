@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_smooth_union(a, b, k)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;sdf_smooth_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A smoothly rounded union (polynomial smooth-min). `<code style="color:#22d3bf">k&gt;0</code>` rounds the seam with a radius of about k.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>Inigo Quilez の二次多項式 smin:</p>
+<p>`<code style="color:#22d3bf">h = clip(0.5 + 0.5*(b-a)/k, 0, 1)</code><code style="color:#22d3bf">,  </code><code style="color:#22d3bf">smin = mix(b,a,h) - k*h*(1-h)</code>`。</p>
+<p>性質: (1) 対称 `<code style="color:#22d3bf">smin(a,b)=smin(b,a)</code><code style="color:#22d3bf">、(2) </code><code style="color:#22d3bf">smin &lt;= min(a,b)</code>`(継ぎ目でくぼむ)、</p>
+<p>(3) <b>k→0 で min(a,b) に一致</b>(= 硬い `<code style="color:#22d3bf">sdf_union</code>`)、(4) 1 次同次</p>
+<p>`<code style="color:#22d3bf">smin(s*a,s*b,s*k)=s*smin(a,b,k)</code>`(スケール整合)。</p>
+<p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> は距離次元の丸め半径。硬い min が欲しければ </code><code style="color:#22d3bf">sdf_union</code>` を使う。</p>
+<p>`<code style="color:#22d3bf">±inf</code><code style="color:#22d3bf"> を含む入力(</code><code style="color:#22d3bf">esdf</code>` の「全自由なら +inf」契約との相互運用)では、</p>
+<p>ブレンド帯 `<code style="color:#22d3bf">|a-b|&lt;k</code><code style="color:#22d3bf"> が退化するため厳密に </code><code style="color:#22d3bf">min(a,b)</code>` を返す。</p>
+<p>Raises ValueError for k&lt;=0(0 除算を避けるため fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

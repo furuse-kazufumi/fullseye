@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sphere_sdf(grid, center, R)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;sphere_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구의 부호 거리장: `<code style="color:#22d3bf">|p - center| - R</code>`(안쪽 음·바깥쪽 양).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">grid</code><code style="color:#22d3bf"> は最終軸が 3 の座標配列 (..., 3)(</code><code style="color:#22d3bf">grid_coords</code>` の出力や (N,3) 点群)。</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> は長さ3、</code><code style="color:#22d3bf">R&gt;=0</code><code style="color:#22d3bf"> は半径。返り値の shape は </code><code style="color:#22d3bf">grid.shape[:-1]</code>`。厳密な SDF</p>
+<p>(勾配ノルム 1)。`<code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>`。</p>
+<p>Raises ValueError for R&lt;0 or malformed grid/center。</p>
+<p>計算: `<code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>`。座標の単位はそのまま距離の</p>
+<p>単位になる(`<code style="color:#22d3bf">grid_coords</code>` の world 座標を渡せば world 単位)。座標の成分順は</p>
+<p>`<code style="color:#22d3bf">grid</code><code style="color:#22d3bf"> の最終軸の順(</code><code style="color:#22d3bf">grid_coords</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">(x, y, z)</code><code style="color:#22d3bf">)で、</code><code style="color:#22d3bf">center</code>` も同じ順。</p>
+<p>引数と検証(`<code style="color:#22d3bf">ValueError</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">grid</code><code style="color:#22d3bf">: 最終軸が 3 の float 配列 </code><code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf">(1-D の </code><code style="color:#22d3bf">(3,)</code>` も可。0-D や</p>
+<p>最終軸が 3 以外は拒否)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center</code><code style="color:#22d3bf">: 要素数 3(</code><code style="color:#22d3bf">reshape(3)</code><code style="color:#22d3bf"> できなければ numpy の </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">float()</code><code style="color:#22d3bf"> できるスカラ。回転行列などを渡した場合も </code><code style="color:#22d3bf">ValueError</code>`</p>
+<p>(この引数は半径であって姿勢ではない)。`<code style="color:#22d3bf">R &lt; 0</code><code style="color:#22d3bf"> は拒否、</code><code style="color:#22d3bf">R = 0</code>` は</p>
+<p>中心からの距離場そのもの。</p>
+<p>返り値: `<code style="color:#22d3bf">grid.shape[:-1]</code><code style="color:#22d3bf"> の float64(</code><code style="color:#22d3bf">grid_coords</code>` の出力なら</p>
+<p>`<code style="color:#22d3bf">(nx, ny, nz)</code><code style="color:#22d3bf">)。中心で </code><code style="color:#22d3bf">-R</code>`、表面で 0、外側で正。</p>
+<p>使いどころ: `<code style="color:#22d3bf">grid_coords</code><code style="color:#22d3bf"> で格子 → </code><code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">sdf_union</code>` /</p>
+<p>`<code style="color:#22d3bf">sdf_subtract</code><code style="color:#22d3bf"> で CSG → </code><code style="color:#22d3bf">&lt;= 0</code><code style="color:#22d3bf"> を占有として marching cubes(</code><code style="color:#22d3bf">voxel_to_mesh</code>`</p>
+<p>に `<code style="color:#22d3bf">-sdf</code><code style="color:#22d3bf"> を渡し </code><code style="color:#22d3bf">iso=0</code>` 相当で等値面)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

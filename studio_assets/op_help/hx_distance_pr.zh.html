@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_distance_pr&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">distance_pr</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_distance_pr.png" alt="hx_distance_pr: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_distance_pr.png" alt="hx_distance_pr: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pr.a.jpg">hx_distance_pr: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pr.b.jpg">hx_distance_pr: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pr.chain.jpg">hx_distance_pr: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从查询点(归一化 a,b)到 region 的最小距离(feature),用距离变换。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> の region の補集合にユークリッド距離変換(</code><code style="color:#22d3bf">distance_transform_edt</code><code style="color:#22d3bf">)を掛け、正規化座標 </code><code style="color:#22d3bf">(a, b)</code>`</p>
+<p>の画素での値(その画素から最も近い region 画素までの距離)を `<code style="color:#22d3bf">max(H, W)</code>` で割って 1 で頭打ちした</p>
+<p>`<code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 行 </code><code style="color:#22d3bf">min(int(a*H), H-1)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 列 </code><code style="color:#22d3bf">min(int(b*W), W-1)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• region が空なら 1.0(「最大距離」の意味。`<code style="color:#22d3bf">hx_distance_pc</code>` の空=0 とは逆なので注意)。</p>
+<p>クエリ点が region の内側なら 0。距離変換は画像全体に対して計算するので 1 点の問い合わせとしては重いが、</p>
+<p>値は厳密な画素間距離(`<code style="color:#22d3bf">hx_distance_pc</code>` のような頂点近似ではない)。含むかどうかだけなら</p>
+<p>`<code style="color:#22d3bf">hx_test_region_point</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

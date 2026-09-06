@@ -17,13 +17,30 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_smallest_rect1_xld", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `smallest_rectangle1_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_smallest_rect1_xld: 入力 → 出力](../../_fig/hx_smallest_rect1_xld.png)
+![hx_smallest_rect1_xld: input → output](../../_fig/hx_smallest_rect1_xld.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_smallest_rect1_xld: stages](../../_fig/hx_smallest_rect1_xld.chain.jpg)
 
 ## 使い方
 
 全 contour 点の外接軸並行矩形の面積比を返す(feature)。
+
+contour dict の全点をまとめ、行方向・列方向それぞれの ``max - min``(外接軸並行矩形の高さ・幅)の積を
+画像面積 ``H*W`` で割った値を ``np.float64`` で返す。
+
+- ``a``, ``b`` は未使用。
+- 点が無ければ 0.0。1 点だけ、または全点が同一行/列でも幅が 0 になり 0.0(``+1`` の画素補正はしない)。
+
+全 contour をまとめた 1 つの矩形なので、離れた contour が 2 つあると間の空白も面積に入る。向きを持つ
+最小面積矩形は ``hx_smallest_rect2_xld``、region に対する軸並行外接矩形は ``smallest_rectangle1``。
 
 ## 詳しい使い方ガイド
 

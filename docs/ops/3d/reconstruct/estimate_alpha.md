@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。
 
+各点の最近傍距離の中央値 ``m`` を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで
+許す)となるよう ``alpha = 1/(2m)`` を返す。これで表面付近の素性の良い四面体は残しつつ、
+大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。
+
+Parameters
+----------
+points : array_like (N,3)
+
+Returns
+-------
+alpha : float
+    正の有限値。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

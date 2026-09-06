@@ -19,6 +19,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。
 
+Raises ValueError: どちらかが空 or (N,3) でない場合(空の平均 = 無言 NaN)。
+
+計算: ``scipy.spatial.cKDTree`` で ``a`` の各点から ``b`` への最近傍距離 ``d_ab``
+(``(Na,)``)と ``b`` から ``a`` への ``d_ba`` を取り、``0.5 * (mean(d_ab) + mean(d_ba))``。
+``squared=True`` なら各距離を 2 乗してから平均する(単位が距離^2 になる。
+勾配ベースの最適化で使う形)。既定は生の距離(単位 = 座標の単位)。
+
+入力: ``a``, ``b`` は ``(N, 3)`` / ``(M, 3)`` の点群(点数は違ってよい、対応は
+不要)。float に変換する。座標系・スケールは両者で揃えておくこと(登録前の
+2 雲を比べると単に姿勢の差を測ることになる)。
+
+返り値: Python ``float``。同一点群なら 0。値域は ``[0, inf)`` で正規化はしない
+(雲の大きさに比例するので、比較するときは bbox 対角などで割る)。
+
+注意: 平均なので外れ値の影響は Hausdorff より小さいが、点密度の偏りには敏感
+(密な側の平均が支配的)。密度を揃えるには ``pc_poisson_disk`` /
+``voxel_grid_downsample`` を先に掛ける。閾値ベースの評価は ``fscore``、最悪値は
+``hausdorff_distance``、対応既知なら ``rmse_correspondence``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

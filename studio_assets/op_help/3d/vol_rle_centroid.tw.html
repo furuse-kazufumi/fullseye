@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volregion; volregion.vol_rle_centroid(region, spacing=None)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_centroid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 run 上計算區域的重心 `<code style="color:#22d3bf">(z, y, x)</code>`(不解碼)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Each run contributes `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> voxels at its row&#x27;s </code><code style="color:#22d3bf">(z, y)</code>` and mean x</p>
+<p>`<code style="color:#22d3bf">(start + end - 1) / 2</code>` — the exact arithmetic mean of the member voxel</p>
+<p>indices, so it matches the dense centroid to floating-point accuracy.</p>
+<p>Pass *spacing* `<code style="color:#22d3bf">(sz, sy, sx)</code>` for physical coordinates. An empty region</p>
+<p>raises `<code style="color:#22d3bf">ValueError</code>`.</p>
+<p>返り値: `<code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> の 3 つの </code><code style="color:#22d3bf">float</code><code style="color:#22d3bf">(depth, row, col 順)。</code><code style="color:#22d3bf">spacing</code>` 無しなら</p>
+<p>voxel index 単位(index の算術平均そのもの)、`<code style="color:#22d3bf">spacing</code>` を渡すと各成分に</p>
+<p>`<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> を掛けた物理座標(mm など、spacing と同じ単位)。</code><code style="color:#22d3bf">spacing</code>` は</p>
+<p>長さ 3 の正の有限値、または `<code style="color:#22d3bf">spacing_mm</code><code style="color:#22d3bf"> 属性を持つ </code><code style="color:#22d3bf">volio.VolumeMeta</code>`。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">VolRLE</code><code style="color:#22d3bf"> の整合性検査 / run が 0 本 / </code><code style="color:#22d3bf">spacing</code>` が</p>
+<p>長さ 3 でない・非正・非有限。</p>
+<p>注意: 質量中心ではなく voxel の幾何重心(全 voxel 等重み)。gray 値で重み付けした</p>
+<p>重心が欲しい場合は `<code style="color:#22d3bf">vol_rle_decode</code>` してから自分で計算する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_jacobian.png",
+  "name": "jacobian",
+  "caption": "画素数比は天頂で 0.81、地平線側で 1.17。重みを掛けると 1 に張り付く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_rbr_threshold.png",
+  "name": "rbr_threshold",
+  "caption": "偽陽性は実測と閉形式が重なる。しきい値を上げると薄い雲が消える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_mask_sweep.png",
+  "name": "mask_sweep",
+  "caption": "真値はマスクの内側で定義しなおしている。重みつきだけが真値に張り付く。",
+  "shape": [
+   200,
+   433,
+   3
+  ],
+  "csv": "03_mask_sweep.csv",
+  "tsv": "03_mask_sweep.tsv"
+ },
+ {
+  "file": "04_allsky.png",
+  "name": "allsky",
+  "caption": "4 枚目が sinθ/θ。天頂で 1、地平線で 0.64 —— 画素の重みはここまで違う。",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ }
+]

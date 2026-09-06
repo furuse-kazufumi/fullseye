@@ -19,6 +19,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。
 
+恒等変換から出発し、毎反復で現姿勢の点群から ``pts1`` への最近傍対応を取り、
+:func:`registration.kabsch` で閉形式に (R, t) を求めて累積する。対応 index が
+前反復と一致(= 収束)するか ``max_iter`` で停止する。収束判定は index の
+安定性のみに依存するため**スケール不変**(絶対 epsilon を使わない)。
+
+Args:
+    pts0: (N, 3) 時刻 0 の点群(N >= 3、回転を一意に決めるため)。
+    pts1: (M, 3) 時刻 1 の点群(M >= 1、N と一致不要)。
+    max_iter: ICP 反復上限。
+Returns:
+    dict: ``{"R": (3,3) 回転, "t": (3,) 並進, "rmse": 整合後の点-最近傍
+    RMS 距離}``。R は真の回転(det=+1)。rmse は実測値(詐称なし)。
+Raises:
+    ValueError: 形状不正、pts0 < 3 点、または pts1 が空。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

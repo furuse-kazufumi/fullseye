@@ -21,6 +21,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。
 
+GHT を **向きビンごとの相関の総和** として GPU ネイティブに定式化:
+accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、
+欠けたエッジはピークを下げるだけ(**遮蔽・クラッタに頑健**)。shape-based(連続内積の単一解)
+と違い **投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス** を取れるのが差別化。
+返り値 (topk,4) の [votes, d, h, w] (votes 降順)。
+
+手順: 両 volume の単位勾配(``mc`` は ``sobel3d`` の生出力への閾値)を ``ndir`` 本の参照方向の
+うち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの
+2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は **[0, 1]**、1 で
+全エッジが一致。
+- ``ndir``: 26 以下は 26 近傍方向のリストの先頭 ``ndir`` 本(26 未満は方向が偏る)、27 以上は
+fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。
+- 返り値 ``(topk, 4)`` の各行 ``[votes, z, y, x]``、votes 降順。座標は **テンプレ中心 (T//2)**
+の scene 座標、``subvoxel=True`` なら ±2 近傍重心。
+- ``nms``: ピークを取るたびに ``±nms`` voxel の立方体を −1 で潰してから次を探す。近接する
+複数インスタンスは ``nms`` を小さく。
+- テンプレにエッジが無ければ全 0 の ``(topk,4)``。テンプレが完全に収まらない位置は 0。
+後段: 各ピークを ``refine_translation_lk`` / ``refine_peak_newton`` で精緻化。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

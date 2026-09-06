@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Tight axis-aligned bounding box of a mask's foreground, in voxel indices.
 
+Returns ``(z0, y0, x0, z1, y1, x1)`` with **exclusive** upper bounds, i.e.
+``vol[z0:z1, y0:y1, x0:x1]`` is the smallest sub-volume containing every
+foreground voxel. *margin* (an int ``>= 0``) grows the box by that many
+voxels per side, clipped to the volume — headroom for operators with a
+spatial footprint (a Gaussian of sigma s needs ~``3*s`` voxels of context).
+A non-``{0, 1}`` input is thresholded at ``> 0.5``.
+
+An **empty** mask raises ``ValueError`` (fail-closed): there is no box, and
+silently returning the full volume would defeat the point of cropping.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

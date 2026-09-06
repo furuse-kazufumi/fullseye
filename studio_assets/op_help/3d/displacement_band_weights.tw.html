@@ -4,6 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import render3d; render3d.displacement_band_weights(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), *, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0, local_edge=None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;displacement_band_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>逐倍頻、逐頂點的頻帶閘 `<code style="color:#22d3bf">(K, N)</code>`,取值 [0,1]:網格能承載該頻帶處為 1。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>wavelength as geometry, 0 where it would alias.</p>
+<p>A vertex with local edge length `<code style="color:#22d3bf">e</code><code style="color:#22d3bf"> (mean incident edge, :func:</code>mesh_edge_lengths`,</p>
+<p>or `<code style="color:#22d3bf">local_edge</code><code style="color:#22d3bf"> (N,) if given) carries wavelength </code><code style="color:#22d3bf">λ</code><code style="color:#22d3bf"> only when </code><code style="color:#22d3bf">λ ≥ nyquist·e</code>`;</p>
+<p>the gate rises linearly from 0 at `<code style="color:#22d3bf">λ = nyquist·e</code><code style="color:#22d3bf"> to 1 at </code><code style="color:#22d3bf">λ = (nyquist+fade)·e</code>`</p>
+<p>(`<code style="color:#22d3bf">fade=0</code>` → hard cut). Used two ways by the Itokawa pipeline: (i) on the *rendered*</p>
+<p>mesh to decide which octaves may be displaced (the rest go to bump normals); (ii) on</p>
+<p>the *source* model to measure which wavelengths the real data already carries — the</p>
+<p>complement `<code style="color:#22d3bf">1 − gate</code>` is the synthetic-relief weight (0 where the data are fine,</p>
+<p>1 where they are coarse), so dense regions are not double-textured. Deterministic.</p>
+<p>計算は `<code style="color:#22d3bf">ratio = λ_k / e_i</code><code style="color:#22d3bf"> に対し、</code><code style="color:#22d3bf">fade == 0</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">gate = (ratio ≥ nyquist)</code>` の</p>
+<p>二値、それ以外は `<code style="color:#22d3bf">gate = clip((ratio − nyquist) / fade, 0, 1)</code>`。返り値は float64</p>
+<p>`<code style="color:#22d3bf">(K, N)</code>`(K = 波長数、N = 頂点数)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">wavelengths</code><code style="color:#22d3bf">: メッシュ単位の波長列(空・非正・非有限は </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p>`<code style="color:#22d3bf">mesh_displace_spectrum</code>` と同じ列を渡す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nyquist</code>`: 「幾何として担える」と見なす波長/辺長比の下限(既定 2 = 1 波長に</p>
+<p>2 辺)。0 以下は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">fade</code><code style="color:#22d3bf">: 遷移幅(辺長の倍数)。0 で硬い閾値。負は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">local_edge</code><code style="color:#22d3bf">: 頂点ごとの辺長 </code><code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> を自分で与える場合(</code><code style="color:#22d3bf">mesh_edge_lengths</code>` の</p>
+<p>`<code style="color:#22d3bf">per=&#x27;vertex&#x27;</code><code style="color:#22d3bf"> 相当)。長さ不一致・非正・非有限は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">None</code>` なら</p>
+<p>内部で :func:<code style="color:#22d3bf">mesh_edge_lengths</code> を呼ぶ。</p>
+<p>`<code style="color:#22d3bf">mesh_displace_spectrum</code>` は内部でこの関数を呼ぶので、通常は直接呼ぶ必要はない。直接</p>
+<p>使うのは、元データが既に担っている波長を測って `<code style="color:#22d3bf">1 − gate</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">weights</code>` として渡す</p>
+<p>(細かい所に合成起伏を二重に載せない)ときと、`<code style="color:#22d3bf">bump_normals_fbm</code>` へ回す残りを</p>
+<p>決めるとき。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

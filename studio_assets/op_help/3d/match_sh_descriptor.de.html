@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Kosinusähnlichkeit zweier SH-Deskriptoren (rotationsinvarianter Formabgleich). Näher an 1 heißt ähnlichere Form. Die Spalte Voxel × SH.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code>` を平坦化して L2 正規化し、</p>
+<p>内積を float で返す。帯域エネルギーは非負なので値は <b>[0, 1]</b>(負にならない)。どちらかの</p>
+<p>記述子が全 0(空 volume)なら 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は立方体 volume(</code><code style="color:#22d3bf">sh_descriptor</code>` の前提)。形が違ってもよいが、shell 半径が</p>
+<p>各 N で決まるので <b>スケールが違う物体は別物</b>として低く出る(スケール不変ではない)。</p>
+<p>中心ずれにも弱い(重心で中心合わせしてから)。</p>
+<p style="margin:2px 0 2px 12px">• 回転には不変(帯域エネルギー)。ただし鏡像も同じ値になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ntheta</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">nphi</code>` は既定(32×64)固定。同じ設定同士の比較にだけ意味がある。</p>
+<p style="margin:2px 0 2px 12px">• 位置は返さない。「どこにあるか」は `<code style="color:#22d3bf">match_shape_3d</code>` 等、「同じ形か」は本 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

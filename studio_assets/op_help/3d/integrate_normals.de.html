@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photometric; photometric.integrate_normals(normals, mask=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;integrate_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalenfeld → Höhenfeld z per Frankot-Chellappa-Integration. → z, HxW (ein konstanter Offset bleibt frei; auf Mittelwert null bezogen).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>手順: 法線 `<code style="color:#22d3bf">(H,W,3)</code><code style="color:#22d3bf"> を勾配 </code><code style="color:#22d3bf">p = -nx/nz</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">q = -ny/nz</code><code style="color:#22d3bf"> に直し(</code><code style="color:#22d3bf">|nz| &lt; 1e-6</code>` の</p>
+<p>画素は nz を ±1e-6 に置き換えて零割を避ける)、FFT 領域で最小二乗解</p>
+<p>`<code style="color:#22d3bf">Z(wx,wy) = (-j·wx·P - j·wy·Q) / (wx² + wy²)</code>` を求め(直流成分は 0)、逆変換して</p>
+<p>平均を 0 に引く。`<code style="color:#22d3bf">mask</code>` (bool HxW) を与えると mask 外の勾配を 0 にしてから積分する</p>
+<p>(その領域は平坦として扱われる)。返り値は float64 の `<code style="color:#22d3bf">(H,W)</code>`。</p>
+<p>注意点:</p>
+<p style="margin:2px 0 2px 12px">• 周期境界を仮定するため、画像の上下・左右がつながるように端が歪む。</p>
+<p style="margin:2px 0 2px 12px">• 絶対高さは決まらない(平均 0)。格子間隔 1 画素で積分するので `<code style="color:#22d3bf">z</code>` も画素単位の</p>
+<p>高さになり、実寸には画素ピッチを掛ける。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nz ≈ 0</code>`(輪郭付近・視線に平行な面)は勾配が発散し、波打ちを周囲へ広げる。</p>
+<p>`<code style="color:#22d3bf">mask</code>` で除くか法線を事前に平滑する。</p>
+<p>入力検証は無い(`<code style="color:#22d3bf">(H,W,3)</code><code style="color:#22d3bf"> 以外は内部の添字で失敗)。</code><code style="color:#22d3bf">surface_normals</code>` が逆変換で、</p>
+<p>`<code style="color:#22d3bf">photometric_stereo</code>` の法線をここへ渡すと形状(高さ場)が得られる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

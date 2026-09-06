@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_crop_contours&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">crop_contours_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_crop_contours.png" alt="hx_crop_contours: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_crop_contours.png" alt="hx_crop_contours: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_crop_contours.a.jpg">hx_crop_contours: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_crop_contours.b.jpg">hx_crop_contours: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_crop_contours.chain.jpg">hx_crop_contours: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_crop_contours.inputs.jpg">hx_crop_contours: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 contour 裁到中央 a×b 比例的矩形内(只保留范围内的点)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>各 contour の点のうち、画像中心 `<code style="color:#22d3bf">(H/2, W/2)</code><code style="color:#22d3bf"> からの距離が行方向 </code><code style="color:#22d3bf">hh</code><code style="color:#22d3bf"> 以内かつ列方向 </code><code style="color:#22d3bf">ww</code>` 以内のものだけを</p>
+<p>残し、1 点も残らない contour は捨てて返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 残す高さの半分 </code><code style="color:#22d3bf">hh = (0.3 + 0.6*a) * H/2</code>`(全体の 30%〜90%)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 残す幅の半分 </code><code style="color:#22d3bf">ww = (0.3 + 0.6*b) * W/2</code>`(全体の 30%〜90%)。a=b=1 でも周辺 5% は落ちる。</p>
+<p>点を間引くだけで分割しないので、矩形の外を回って戻る contour は残った点どうしがつながる(ジャンプ)。</p>
+<p>矩形外を完全に無視したい場合は後段で `<code style="color:#22d3bf">hx_split_contours</code><code style="color:#22d3bf">。余白を画像端から指定する版は </code><code style="color:#22d3bf">hx_clip_contours</code>`、</p>
+<p>1 つのノブで正方形窓にする版は `<code style="color:#22d3bf">xg_crop_contours</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

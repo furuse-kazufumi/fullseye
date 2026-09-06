@@ -21,6 +21,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。
 
+手順: ``pts_scene`` と ``pts_model`` を **同じ** ``bounds=(lo,hi)`` と ``size`` で
+``points_to_voxel``(σ=``smooth`` voxel の平滑つき)に通し、model 側は ``> 5%·max`` の bbox を
+切り出してテンプレにし、``accel_match.ncc_locate_3d`` で NCC 定位する。
+返り値 ``[NCC, z, y, x]`` float64(NCC ∈ [−1,1]、位置は voxel index、±2 近傍重心で
+サブボクセル)。
+- 位置は **切り出した bbox テンプレの中心**が scene voxel のどこに載るか。world 座標に戻すには
+``lo + idx/(size−1)·(hi−lo)``(``points_to_voxel`` の格子)。
+- ``bounds`` は必須(``_lo_hi`` で検証、不正は ValueError)。両雲を含む範囲にしないと範囲外の
+点が端 voxel に clip される。
+- model の voxel が全 0 なら ``[0,0,0,0]``。
+- 並進のみ。回転・スケールは ``match_pca`` / ``match_logpolar_z`` で先に合わせる。
+後段: ``icp_point2point_3d`` の ``init_t``、``refine_translation_lk``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

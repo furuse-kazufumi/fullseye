@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.fit_circle_3d(points)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;fit_circle_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 → 3D 원(평면 적합 → 면 안에서 2D 원 적합). 반환값 (center, radius, normal).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">fit_plane_3d</code><code style="color:#22d3bf"> で面 </code><code style="color:#22d3bf">(c, n)</code><code style="color:#22d3bf"> を取り、面内の正規直交基底 </code><code style="color:#22d3bf">(e1, e2)</code>` に点を射影して 2-D の</p>
+<p>代数円フィット(`<code style="color:#22d3bf">|q|² = 2·cc·q + k</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">lstsq</code><code style="color:#22d3bf">)を解き、中心を 3-D に戻す。</code><code style="color:#22d3bf">(N,3)</code>` で</p>
+<p>3 点未満は ValueError(3 点なら面は厳密、円は 3 点を通る)。</p>
+<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> は面上の 3-D 点、</code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> は float(負の根は 0 に clamp)、</code><code style="color:#22d3bf">normal</code>` は面の単位法線</p>
+<p>(符号任意)。円弧の一部だけ・面から外れた点が多いと半径が偏る(代数フィットの性質。面内残差は</p>
+<p>返さない)。</p>
+<p>用途: 穴・フランジ・リングの中心と径、`<code style="color:#22d3bf">distance_point_line</code>` で軸からの偏心。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

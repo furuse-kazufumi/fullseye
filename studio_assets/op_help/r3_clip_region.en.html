@@ -3,12 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;r3_clip_region&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">clip_region</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/r3_clip_region.png" alt="r3_clip_region: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/r3_clip_region.png" alt="r3_clip_region: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_clip_region.a.jpg">r3_clip_region: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_clip_region.b.jpg">r3_clip_region: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_clip_region.chain.jpg">r3_clip_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_clip_region.inputs.jpg">r3_clip_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Clips the region with a rectangular window centred on the image (equivalent to HALCON `<code style="color:#22d3bf">clip_region</code>`).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は残す高さの割合（0〜1）、</code><code style="color:#22d3bf">b</code>` は残す幅の割合（0〜1）。窓は画像の中心に置かれ、窓の外側の領域画素はすべて消される。</p>
+<p>窓の大きさは `<code style="color:#22d3bf">wh = max(1, round(a*H))</code><code style="color:#22d3bf"> 行 × </code><code style="color:#22d3bf">ww = max(1, round(b*W))</code><code style="color:#22d3bf"> 列で、左上を </code><code style="color:#22d3bf">((H-wh)//2, (W-ww)//2)</code><code style="color:#22d3bf"> に置く（端数は上・左に寄る）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は [0,1] に clip、非有限なら 0.5。</code><code style="color:#22d3bf">a=b=1</code><code style="color:#22d3bf"> で入力そのまま、</code><code style="color:#22d3bf">a=b=0</code><code style="color:#22d3bf"> でも中央の 1 画素は残る（全零にはならない）。入力は </code><code style="color:#22d3bf">&gt; 0.5</code>` で前景マスクに直すため、グレー値や NaN は背景扱い。</p>
+<p>返り値は入力と同形の float64 0/1 マスク。窓は領域の外接矩形ではなく画像全体を基準にする点に注意（領域が画像の隅にあると `<code style="color:#22d3bf">a=b=0.5</code><code style="color:#22d3bf"> で丸ごと消えることがある）。領域基準で相対クリップしたいなら </code><code style="color:#22d3bf">hx_clip_region_rel</code><code style="color:#22d3bf">。窓の外を消すのであって窓自体を前景にはしない（領域が無い所は 0 のまま）。画像側で同じ中央窓を切るのは </code><code style="color:#22d3bf">it_crop_domain</code><code style="color:#22d3bf">（こちらは </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 1 つで縦横同じ割合）、輪郭の点を窓で残すのは </code><code style="color:#22d3bf">xg_crop_contours</code>`。例外時は0 マスクに落ち、backend_safe の台帳に記録される（strict モードでは再送出）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

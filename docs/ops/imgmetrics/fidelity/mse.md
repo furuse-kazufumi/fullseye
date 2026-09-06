@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 平均二乗誤差。``data_range`` に依らない生の量。
 
+式: ``mean((a - b)^2)``(全要素、float64 で計算)。
+
+- ``a``, ``b``: 同じ形なら次元は問わない(2-D グレー、``(H, W, 3)``、3-D 体積)。
+  dtype も問わないが **画素値の尺度をそのまま引き継ぐ** ―― uint8 の 2 枚と、
+  それを ``/255`` した float の 2 枚では値が ``255^2`` 倍違う。尺度を揃えて比べたい
+  なら ``psnr``(``data_range`` で正規化)を使う。
+- 返り値: Python の ``float``。0 が完全一致、上限は ``data_range^2``。
+- 失敗(``MetricContractError``): 形が違う / 空 / NaN・Inf を含む(黙って伝播させない)。
+
+平方根が要るなら ``rmse``。まとめて測るなら ``compare_images``。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

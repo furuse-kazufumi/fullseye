@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_union_adjacent&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">union_adjacent_contours_xld</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/hx_union_adjacent.png" alt="hx_union_adjacent: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/hx_union_adjacent.png" alt="hx_union_adjacent: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_union_adjacent.a.jpg">hx_union_adjacent: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_union_adjacent.chain.jpg">hx_union_adjacent: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_union_adjacent.inputs.jpg">hx_union_adjacent: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>端点が近い(閾値 a)contour を貪欲に連結する。</p>
+<p>contour のリストを走査し、`<code style="color:#22d3bf">cs[i]</code><code style="color:#22d3bf"> の終点と </code><code style="color:#22d3bf">cs[j]</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">j &gt; i</code><code style="color:#22d3bf">)の始点の距離が </code><code style="color:#22d3bf">tol</code><code style="color:#22d3bf"> 以下なら </code><code style="color:#22d3bf">cs[j]</code>` を</p>
+<p>`<code style="color:#22d3bf">cs[i]</code>` の後ろにつないで 1 本にする。1 回つなぐたびに先頭から走査をやり直し、つなげる対が無くなるまで繰り返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 許容距離 </code><code style="color:#22d3bf">tol = 1 + a*8</code>`(1〜9 画素)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>判定は「終点→始点」の向きだけで、始点どうし・終点どうしが近い場合に反転してつなぐことはしない(向きの揃った</p>
+<p>contour 列を想定)。貪欲法なので 3 本以上が候補になるときはリスト順で先に見つかった相手とつながる</p>
+<p>(`<code style="color:#22d3bf">hx_sort_contours</code>` で順序を整えると結果が安定する)。つなぎ目の点は重複せず、隙間は直線で飛ぶ。</p>
+<p>計算量は本数の 2 乗×連結回数。つないだ後の閉じ具合は `<code style="color:#22d3bf">hx_test_closed_xld</code>` で確認する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

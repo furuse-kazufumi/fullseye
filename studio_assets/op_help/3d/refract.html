@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.refract(d, n, eta1=1.0, eta2=1.5)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;refract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。</p>
+<p>透明体を通る光線の曲がりを厳密に。全反射(TIR)なら None。ガラス/レンズ/水中の像歪み計算に。</p>
+<p>契約は単一ベクトル。(N,3) バッチも通るが、<b>1 本でも TIR ならバッチ全体が None</b></p>
+<p>(per-ray マスクはしない)— バッチで使うなら呼び出し側で 1 本ずつ回すこと。</p>
+<p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> は最後の軸をベクトルとして単位化する。</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> は入射側(</code><code style="color:#22d3bf">d·n &lt; 0</code>` になる向き)で</p>
+<p>渡すこと。逆向きに渡すと `<code style="color:#22d3bf">cos θi</code>` が負になり、例外なく誤った方向が返る。返り値は単位ベクトル</p>
+<p>(`<code style="color:#22d3bf">eta·d + (eta·cosθi − cosθt)·n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">eta = eta1/eta2</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">eta1 == eta2</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">d</code>` がそのまま</p>
+<p>返る。角度で扱うなら `<code style="color:#22d3bf">snell_angle</code><code style="color:#22d3bf">、反射率は </code><code style="color:#22d3bf">fresnel_reflectance(cos_i, eta1, eta2)</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

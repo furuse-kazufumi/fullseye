@@ -112,8 +112,10 @@ _INT_RANGES = {
     np.dtype(np.uint8): 255.0,
     np.dtype(np.uint16): 65535.0,
     np.dtype(np.uint32): 4294967295.0,
-    np.dtype(np.int8): 255.0,
-    np.dtype(np.int16): 65535.0,
+    # 符号付きは最大値が半分(int8 = 127、int16 = 32767)。2026-09-07 まで 255 / 65535 と
+    # 書かれていて、int16 画像の PSNR が 6 dB ずれていた(docstring 充実の読み合わせで発見)。
+    np.dtype(np.int8): 127.0,
+    np.dtype(np.int16): 32767.0,
 }
 
 

@@ -19,6 +19,17 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Split a binary volume into per-component ``VolRLE`` regions.
 
+*The* use case run-length regions exist for: holding every component of a
+segmentation as its own region at run-proportional cost, instead of one
+dense label volume or N dense masks. Uses the key structural fact that a
+run is x-connected, so a component label is constant along each run — the
+volume is labelled once (dense, same 6/18/26 semantics as
+``volops.vol_label``) and then each *run* is assigned by its first voxel's
+label; no per-component dense mask is ever built.
+
+Returns a list of ``VolRLE`` ordered by label id (1..n). An empty mask
+returns an empty list.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

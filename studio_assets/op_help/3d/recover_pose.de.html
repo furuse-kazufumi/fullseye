@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rekonstruiert die relative Pose (R,t) und die 3-D-Struktur aus Korrespondenzen und K (per Cheiralität eindeutig gemacht). → (R, t_unit, points3d).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。</p>
+<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 の</p>
+<p>まま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で</p>
+<p>明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> はスケール不変な平面度しきい値</p>
+<p>(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> の戻り値がこれ未満なら退化と判定)。</p>
+<p>手順:</p>
+<p style="margin:2px 0 2px 12px">• 入口検査(8 点以上、点数一致、(N,2) かつ有限)。</p>
+<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが `<code style="color:#22d3bf">planar_tol</code><code style="color:#22d3bf">(既定 1e-2)未満なら </code><code style="color:#22d3bf">ValueError</code>`。H が特異なら比 0 として同じく拒否。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">essential_8point</code><code style="color:#22d3bf"> → 4 候補 </code><code style="color:#22d3bf">(R, ±t)</code><code style="color:#22d3bf"> へ分解 → 各候補で </code><code style="color:#22d3bf">triangulate</code>` し、両カメラで深度 &gt; 0 の点数が最大の候補を採る(同数なら先の候補)。</p>
+<p>返り値: `<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> (3,3)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (3,) 単位ベクトル、</code><code style="color:#22d3bf">points3d</code><code style="color:#22d3bf"> (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で </code><code style="color:#22d3bf">X2 = R X1 + t</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">points3d</code>` は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">K2</code><code style="color:#22d3bf"> 省略時は </code><code style="color:#22d3bf">K1</code>` を両画像に使う。</p>
+<p style="margin:2px 0 2px 12px">• 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的。GT 検証は `<code style="color:#22d3bf">pose_error</code><code style="color:#22d3bf">、残差は </code><code style="color:#22d3bf">sampson_distance</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

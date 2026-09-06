@@ -21,6 +21,19 @@ z = ``z_mm`` の水平面(ステージ/コンベア)。``half_size_mm`` で有�
 
 有限板は (hx, hy) の半サイズ [mm]。省略すると無限平面(背景として使う)。
 
+座標系は右手系 [mm] で z が上。平面は ``z = z_mm`` に水平に置かれ、有限板は
+**中心が常に x = y = 0**(``|x| <= hx``、``|y| <= hy`` の外は光線が素通り)。
+横にずらす引数は無いので、部品のほうを動かして配置する。
+
+- ``z_mm``: 高さ [mm]。有限であること(NaN/Inf は ``ValueError``)。
+- ``material``: ``scene_material`` の結果。省略時は lambert、albedo 0.2(暗い灰)。
+- ``half_size_mm``: ``(hx, hy)`` [mm]、両方とも正。長さ 2 でなければ ``ValueError``。
+- 返り値: ``{"kind": "plane", "z", "half", "material"}`` の dict。他の
+  ``scene_*`` と list にまとめて ``trace_rays`` / ``render_optscene`` /
+  ``optscene_mask`` へ渡す。
+
+体積を囲まないので ``scene_difference`` の引数にはできない。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

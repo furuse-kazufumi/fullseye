@@ -19,6 +19,11 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points:
 
+solve ``|P|^2 = 2 P·c + (r^2 - |c|^2)`` in the least-squares sense — exact for
+points on a sphere, a standard robust estimator under moderate noise. Returns
+``center`` (``cd/cr/cc``), radius ``r``, and the RMS radial residual. Raises
+``ValueError`` on < 4 points or a coplanar set (no finite sphere).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

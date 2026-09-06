@@ -4,6 +4,43 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volxform; volxform.vol_resize(vol, factor=None, shape=None, order=1, spacing=None, mode=&#x27;nearest&#x27;, cval=0.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_resize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把體重取樣到新網格(`<code style="color:#22d3bf">scipy.ndimage.zoom</code>`,cell 語義)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Exactly <b>one</b> of *factor* / *shape* selects the target grid:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">factor</code><code style="color:#22d3bf"> — a positive scalar or </code><code style="color:#22d3bf">(fz, fy, fx)</code>`; the output shape is</p>
+<p>`<code style="color:#22d3bf">round(dim * f)</code><code style="color:#22d3bf"> per axis (scipy&#x27;s rule, each </code><code style="color:#22d3bf">&gt;= 1</code>`).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf"> — the exact output </code><code style="color:#22d3bf">(D&#x27;, H&#x27;, W&#x27;)</code>` (positive integers).</p>
+<p>Sampling uses `<code style="color:#22d3bf">grid_mode=True</code>` (cell semantics): a voxel is a *cell*, so</p>
+<p>an integer upscale `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> maps input voxel </code><code style="color:#22d3bf">i</code>` exactly onto the output</p>
+<p>block `<code style="color:#22d3bf">[f*i, f*(i+1))</code><code style="color:#22d3bf"> (exact at </code><code style="color:#22d3bf">order=0</code>`), and the volume&#x27;s physical</p>
+<p>extent is preserved by the recomputed spacing — not the endpoint-aligned</p>
+<p>convention of scipy&#x27;s `<code style="color:#22d3bf">grid_mode=False</code>` default.</p>
+<p>*mode* / *cval* set how samples that fall outside the input cells (the outer</p>
+<p>half-voxel shell of every upscale at `<code style="color:#22d3bf">order &gt;= 1</code>`) are filled. The default</p>
+<p>`<code style="color:#22d3bf">&quot;nearest&quot;</code>` extends the border voxel, so **a constant volume resizes to</p>
+<p>the same constant** and a ramp keeps its end values. Until 2026-09-03 the</p>
+<p>call was hard-wired to `<code style="color:#22d3bf">&quot;grid-constant&quot;</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">cval=0</code>`, which blended</p>
+<p>the outer shell toward 0 — an upscale x2 of an all-ones volume came back</p>
+<p>with `<code style="color:#22d3bf">min = 0.42</code>` on its faces, an artefact that then leaked into every</p>
+<p>downstream measurement. Other accepted modes: `<code style="color:#22d3bf">&quot;reflect&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;mirror&quot;</code>`,</p>
+<p>`<code style="color:#22d3bf">&quot;grid-mirror&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;grid-wrap&quot;</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">&quot;grid-constant&quot;</code>` (with *cval*)</p>
+<p>when a zero-padded border is genuinely wanted. `<code style="color:#22d3bf">&quot;constant&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;wrap&quot;</code>`</p>
+<p>are rejected with a hint (scipy needs the `<code style="color:#22d3bf">grid-</code>` variants here).</p>
+<p><b>The return shape depends on</b> *spacing*:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">spacing=None</code><code style="color:#22d3bf"> (default) — returns the resampled </code><code style="color:#22d3bf">(D&#x27;, H&#x27;, W&#x27;)</code>`</p>
+<p>float64 volume alone.</p>
+<p style="margin:2px 0 2px 12px">• *spacing* given (`<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> or a </code><code style="color:#22d3bf">VolumeMeta</code>`) — returns a</p>
+<p><b>2-tuple</b> `<code style="color:#22d3bf">(out, new_spacing)</code>` where</p>
+<p>`<code style="color:#22d3bf">new_spacing = (sz * D/D&#x27;, sy * H/H&#x27;, sx * W/W&#x27;)</code>`, so</p>
+<p>`<code style="color:#22d3bf">out.shape * new_spacing == vol.shape * spacing</code>` per axis: the physical</p>
+<p>size in millimetres is invariant. Keep the new spacing — every</p>
+<p>spacing-aware operator downstream needs it.</p>
+<p>*order* is the spline degree (exact integer 0..5; 0 = nearest — the choice</p>
+<p>for masks / labels, 1 = trilinear — the grey-value default; &gt;1 can</p>
+<p>overshoot, see the module notes). Shrinking aliases (no band-limiting) —</p>
+<p>mean-pool with :func:<code style="color:#22d3bf">volops.volume_downsample</code> first for large reductions.</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` when both or neither of *factor* / *shape* are given,</p>
+<p>or when the <b>output</b> would exceed `<code style="color:#22d3bf">MAX_VOXELS</code>` (checked before any</p>
+<p>allocation — a huge factor cannot balloon memory).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

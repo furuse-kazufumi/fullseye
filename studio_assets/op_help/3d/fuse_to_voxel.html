@@ -5,6 +5,25 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。</p>
+<p>mesh(topology)+ points(sample)+ depth(観測)等の相補的な構造を 1 表現に。返り値 (voxel, bounds)。</p>
+<p>手順: 各 `<code style="color:#22d3bf">(data, kind, params)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">to_points(data, kind, **params)</code>` で点群にして</p>
+<p>縦に連結し、`<code style="color:#22d3bf">match3d.points_to_voxel</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">size^3</code>` の密度 grid に splat する</p>
+<p>(各点が落ちる cell を +1、`<code style="color:#22d3bf">smooth &gt; 0</code><code style="color:#22d3bf"> なら σ = </code><code style="color:#22d3bf">smooth</code>` voxel の Gaussian で</p>
+<p>平滑)。`<code style="color:#22d3bf">bounds=None</code><code style="color:#22d3bf"> なら連結点群の </code><code style="color:#22d3bf">(min, max)</code>` を格子範囲にする。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">items</code><code style="color:#22d3bf">: 空でない list/tuple で、各要素が長さ 3 の </code><code style="color:#22d3bf">(data, kind, params_dict)</code>`</p>
+<p>(`<code style="color:#22d3bf">params_dict</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">dict</code><code style="color:#22d3bf"> 必須)。</code><code style="color:#22d3bf">to_points</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">samples</code>` を変えたければ</p>
+<p>`<code style="color:#22d3bf">params</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">samples=</code>` を入れる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">size</code>`: 1 軸の voxel 数(立方格子固定)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(lo, hi)</code>` それぞれ長さ 3。複数の雲を同じ格子に載せるとき(比較・</p>
+<p>`<code style="color:#22d3bf">voxel_iou</code>`)は必ず明示する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">device</code><code style="color:#22d3bf">: torch デバイス(</code><code style="color:#22d3bf">&quot;cpu&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;cuda&quot;</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">smooth</code>`: Gaussian σ [voxel]。</p>
+<p>返り値: `<code style="color:#22d3bf">(voxel, bounds)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">voxel</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(size, size, size)</code>` float64 の</p>
+<p><b>点数密度</b>(合計 ≈ 総点数、確率ではない)、`<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf"> は実際に使った </code><code style="color:#22d3bf">(lo, hi)</code>`。</p>
+<p>格子 index は `<code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">floor((p - lo) / span * (size - 1))</code>` で、</p>
+<p>軸 0 が点の x 成分に対応する(voxel の軸順 = 点の成分順)。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">items</code>` が list/tuple でない・空・要素が 3 組でない・</p>
+<p>`<code style="color:#22d3bf">params</code>` が dict でない(生データを直接渡す誤用を入口で止める)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

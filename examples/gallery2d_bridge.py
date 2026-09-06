@@ -26,13 +26,13 @@ Studio / 図)にだけ見える。
   (3) 決定性 : 同じ入力・同じノブで 2 回呼んでビット一致。
   (4) ノブ   : ``img_to_matrix``(純粋なキャスト、a,b 未使用と明記)以外は a, b で出力が変わる。
 加えて、**閉形式で答えが分かる性質**を op ごとに 1 つずつ突き合わせる:
-  - ``img_to_points``   : z = 画素値 × H × (0.25 + 1.75a) が全点で成立、点数 = ceil(H/stride)²
+  - ``img_to_points``   : (x, y) = (col, row) × 10/W, z = 画素値 × 10 × (0.25 + 1.75a) が全点で成立、点数 = ceil(H/stride)²
   - ``img_to_signal``   : b<0.5 で行 round(a(H-1)) と一致、b≥0.5 で列と一致
   - ``img_to_counts``   : 期待値 0 の画素はカウント 0、平均は期待値 profile×n_max に近い(Poisson の大数)
   - ``img_to_video``    : フレーム 0 = 入力、フレーム t の変位が閉形式(位相相関で t·step を取り戻す)
   - ``img_to_volume``   : 各 (y,x) 列で非ゼロの最上段 = floor(clip(img·s·(D−1)))
   - ``img_to_lightfield``: 中央視点 = 入力、傾き a=0 なら全視点が入力と一致
-  - ``img_to_rgb``      : 彩度 0 で 3 ch がグレー、彩度 1・色相 0 で G=B=0
+  - ``img_to_rgb``      : 彩度 0 で 3 ch がグレー、彩度 1・色相 0 で膝(0.75)より暗い画素は G=B=0、最明部は白
   - ``img_to_cimage``   : |field| = 入力、a=0・b=0.5 で虚部 0
   - ``img_to_beatcube`` : 距離–ドップラー地図の最大ビンが「最も明るい極大の列 → 距離ビン」と一致
   - ``img_to_keypoints``: 返った点はすべて局所極大で、しきい値以上
@@ -110,12 +110,14 @@ def run() -> dict:
     checks = {}
     a, b = 0.5, 0.5
     s = 0.25 + 1.75 * a
-    # points: z = value * H * s、点数 = ceil(H/2)^2
+    # points: (x, y) は一辺 10 の箱、z = value * 10 * s、点数 = ceil(H/2)^2
     P = fs.apply(img, "img_to_points", a, b, on_error="raise")
     sub = img[::2, ::2]
+    box = BB.POINTS_BOX
     checks["points"] = (P.shape[0] == sub.size
-                        and np.allclose(P[:, 2], (sub * h * s).ravel())
-                        and np.allclose(P[:, 0], np.tile(np.arange(0, w, 2), sub.shape[0])))
+                        and np.allclose(P[:, 2], (sub * box * s).ravel())
+                        and np.allclose(P[:, 0], np.tile(np.arange(0, w, 2) * box / w, sub.shape[0]))
+                        and P[:, :2].max() < box)
     # signal: 行 / 列
     r = int(round(a * (h - 1)))
     checks["signal"] = (np.array_equal(fs.apply(img, "img_to_signal", a, 0.0, on_error="raise"), img[r, :])
@@ -142,11 +144,13 @@ def run() -> dict:
     L0 = fs.apply(img, "img_to_lightfield", 0.0, b, on_error="raise")
     checks["lightfield"] = np.array_equal(L[2, 2], img) and all(np.allclose(L0[i, j], img)
                                                                  for i in range(5) for j in range(5))
-    # rgb: 彩度 0 → グレー、彩度 1・色相 0 → G=B=0
+    # rgb: 彩度 0 → グレー、彩度 1・色相 0 → 膝より暗い画素は G=B=0、最明部(0.95)は白に戻る
     g = fs.apply(img, "img_to_rgb", 0.3, 0.0, on_error="raise")
     red = fs.apply(img, "img_to_rgb", 0.0, 1.0, on_error="raise")
+    dark = img < BB.SPECULAR_KNEE
     checks["rgb"] = (np.allclose(g[..., 0], img) and np.allclose(g[..., 2], img)
-                     and np.allclose(red[..., 0], img) and np.allclose(red[..., 1:], 0.0))
+                     and np.allclose(red[..., 0], img) and np.allclose(red[dark, 1:], 0.0)
+                     and red[img >= 0.95, 1].min() > 0.5)
     # cimage: |field| = 入力、a=0・b=0.5 で実場
     C = fs.apply(img, "img_to_cimage", 0.0, 0.5, on_error="raise")
     checks["cimage"] = np.allclose(np.abs(C), img) and np.allclose(C.imag, 0.0)

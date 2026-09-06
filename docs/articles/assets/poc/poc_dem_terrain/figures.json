@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_cone.png",
+  "name": "cone",
+  "caption": "方位は北 0 度・東回り。中心で不連続に見えるのは「斜面の向きが決まらない点」で、定義どおり。",
+  "shape": [
+   336,
+   769,
+   3
+  ]
+ },
+ {
+  "file": "02_curvature_convergence.png",
+  "name": "curvature_convergence",
+  "caption": "参照線と平行 = 2 次収束 = 離散化の誤差。式が違えばセルを細かくしても誤差は下げ止まる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_nodata_policies.png",
+  "name": "nodata_policies",
+  "caption": "同じ地形・同じ op。違うのは欠測の方針だけ。",
+  "shape": [
+   295,
+   646,
+   3
+  ]
+ },
+ {
+  "file": "04_hillshade_aspect.png",
+  "name": "hillshade_aspect",
+  "caption": "陰影の平均は 北向き 0.354 / 東向き 0.811 / 南向き 0.811 / 西向き 0.354。南東を向いた面がいちばん明るい。",
+  "shape": [
+   368,
+   264,
+   3
+  ]
+ }
+]

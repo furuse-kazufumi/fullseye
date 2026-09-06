@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。
 
+Inigo Quilez の box SDF: ``q = |p-center| - half_extents`` とし、
+    ``outside = |max(q,0)|`` (角/辺/面の外はユークリッド距離),
+    ``inside  = min(max(q_x,q_y,q_z), 0)`` (内側は最近面までの負値),
+    ``sdf = outside + inside``。
+``half_extents`` は各軸の**半辺長**(中心から面まで)。外側は厳密距離(角では対角、面前は
+垂直距離)、内側も最近面までの厳密負距離を与える。
+
+Raises ValueError for any half_extent<0 or malformed grid/center/half_extents。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

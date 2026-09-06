@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。
 
+座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は
+**相対化**する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、
+κ/τ を破壊するため、代表スケール L=median‖r'‖(座標スケール s に線形)で各分母と同次元に
+正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。
+
+計算は順序付き点列 (N,3) を index パラメータで ``np.gradient`` 3 回(中心差分、両端は
+片側差分)した r', r'', r''' から
+- κ = ‖r'×r''‖ / ‖r'‖³
+- τ = (r'×r'')·r''' / ‖r'×r''‖²
+で求める。単位は κ・τ とも 1/座標単位。τ の符号は右手系の螺旋
+(a cosθ, a sinθ, bθ), b>0 で正。直線区間(‖r'×r''‖≈0)では κ≈0、τ は分母が eps だけに
+なるため値は信頼できない。
+
+- ``ValueError``: 全点が重なり median‖r'‖ が 0 または非有限のとき。
+- 点間隔が急に変わる箇所は数値微分が乱れるので、先に ``resample_uniform`` で等間隔化
+  するか ``fit_spline_curve`` で平滑化してから渡す。両端 2 点は片側差分で精度が落ちる。
+- N<2 は ``np.gradient`` が ``ValueError``。形状 (N,3) の検証はしていない。
+
+標構(T,N,B)が要るなら ``frenet_frame``、弧長 ds は ``arc_length`` から取る。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

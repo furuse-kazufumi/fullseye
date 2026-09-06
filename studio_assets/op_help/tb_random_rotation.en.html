@@ -2,7 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_random_rotation — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_random_rotation&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*No figure: this op takes <code style="color:#22d3bf">points</code> as input. A Studio program starting from an image cannot reach that type — see the runnable examples below for how it is used.*</p>
+<p><img src="fig/tb_random_rotation.png" alt="tb_random_rotation: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_random_rotation.chain.jpg">tb_random_rotation: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_random_rotation.inputs.jpg">tb_random_rotation: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Applies a random rotation and returns `<code style="color:#22d3bf">(rotated, R)</code>` (mimicking viewpoint change).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
@@ -10,12 +17,26 @@
 <p>逆変換は `<code style="color:#22d3bf">rotated @ R</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">max_angle=None</code>` なら Shoemake 法で一様ランダム回転、</p>
 <p>`<code style="color:#22d3bf">max_angle</code><code style="color:#22d3bf"> 指定(ラジアン, 期待 </code><code style="color:#22d3bf">[0, π]</code><code style="color:#22d3bf">)なら軸を球面一様・角を </code><code style="color:#22d3bf">[0, max_angle]</code>`</p>
 <p>一様に取り、回転角を制限する(`<code style="color:#22d3bf">arccos((tr R -1)/2) ≤ max_angle</code>` を厳密に保証)。</p>
+<p>`<code style="color:#22d3bf">max_angle &lt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">max_angle=0</code>` は単位行列。単位はラジアン(度で</p>
+<p>渡すと桁違いに大きくなる)。`<code style="color:#22d3bf">max_angle=None</code>` の一様回転は上限 π までの大きな回転も</p>
+<p>普通に出るので、視点変化の範囲を絞りたいときは `<code style="color:#22d3bf">max_angle</code>` を使う。回転は原点まわり</p>
+<p>で、雲が原点から離れていれば重心も動く。`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> の規約 </code><code style="color:#22d3bf">rotated = points @ R.T</code>` は</p>
+<p>`<code style="color:#22d3bf">register_fpfh</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">register_shot</code><code style="color:#22d3bf"> が返す </code><code style="color:#22d3bf">dst ≈ src @ R.T + t</code>` と同じ向きなので、</p>
+<p>推定結果との角度誤差は `<code style="color:#22d3bf">arccos((tr(R_est·Rᵀ)-1)/2)</code><code style="color:#22d3bf"> で測れる。</code><code style="color:#22d3bf">seed</code>` で決定論的</p>
+<p>(同 seed なら同じ `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">)。返り値は float64 の </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(3,3)</code>`。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">random_rotation</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_random_rotation 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_random_rotation%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_random_rotation%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p>The examples below call the underlying ledger op <code style="color:#22d3bf">random_rotation</code>. This bridge op is the same implementation adapted to the <code style="color:#22d3bf">fn(v, a, b)</code> convention, so the behaviour carries over unchanged (only the call form differs).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:augment_pointcloud">augment_pointcloud</a> — <code style="color:#22d3bf">py -3.11 examples_3d/augment_pointcloud.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sh_descriptor_retrieval">sh_descriptor_retrieval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sh_descriptor_retrieval.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_retrieval">shape_retrieval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_retrieval.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">points</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">typed</code>)</h3>

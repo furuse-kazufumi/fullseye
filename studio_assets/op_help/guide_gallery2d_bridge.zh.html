@@ -1,0 +1,117 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">入口 op（img_to_*、category=bridge） — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>fullseye の 2-D レジストリには、<b>画像以外の「種」を受ける op が 161 本</b>ある —— 点群</p>
+<p>(<code style="color:#22d3bf">points</code>)、1-D 信号(<code style="color:#22d3bf">signal</code>)、動画(<code style="color:#22d3bf">video</code>)、体積(<code style="color:#22d3bf">volume</code>)、4-D ライトフィールド</p>
+<p>(<code style="color:#22d3bf">lightfield</code>)、複素場(<code style="color:#22d3bf">cimage</code>)、光子カウント列(<code style="color:#22d3bf">counts</code>)、FMCW レーダーのビート立方体</p>
+<p>(<code style="color:#22d3bf">beatcube</code>)、行列(<code style="color:#22d3bf">matrix</code>)、像面上の点(<code style="color:#22d3bf">keypoints</code>)、四元数画像(<code style="color:#22d3bf">qimage</code>)、RGB 画像</p>
+<p>(<code style="color:#22d3bf">rgbimage</code>)。ところが 2026-09-06 までは <b>画像からそれらの種を作る登録 op が無かった</b>。</p>
+<p>Studio の「1 枚の画像 + つまみ 2 つ」のプログラムからは一度も呼べず、op ノートには</p>
+<p>「図なし: 型が届かない」としか書けなかった。</p>
+<p><code style="color:#22d3bf">img_to_*</code> はその入口。<b>画像を、各 sort の意味のある値として読み替える</b>:</p>
+<p>| op | 画像をどう読むか | 出力 |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">img_to_points</code> | 高さ場(一辺 10 の箱、z = 値 × 10 × s) | <code style="color:#22d3bf">(N,3)</code> の (x, y, z) |</p>
+<p>| <code style="color:#22d3bf">img_to_keypoints</code> | 局所極大 | <code style="color:#22d3bf">(N,2)</code> の (u, v) = (列, 行) |</p>
+<p>| <code style="color:#22d3bf">img_to_signal</code> | 1 行 / 1 列の濃度プロファイル | 1-D |</p>
+<p>| <code style="color:#22d3bf">img_to_counts</code> | プロファイルを光子の期待値と見て Poisson 標本 | 1-D <code style="color:#22d3bf">int64</code> |</p>
+<p>| <code style="color:#22d3bf">img_to_matrix</code> | そのまま H×W 行列(純粋なキャスト) | <code style="color:#22d3bf">(H,W)</code> |</p>
+<p>| <code style="color:#22d3bf">img_to_video</code> | 一定速度でパンする T フレーム | <code style="color:#22d3bf">(T,H,W)</code> |</p>
+<p>| <code style="color:#22d3bf">img_to_volume</code> | 高さ場を押し出した固体 | <code style="color:#22d3bf">(D,H,W)</code>(z 先頭) |</p>
+<p>| <code style="color:#22d3bf">img_to_lightfield</code> | 前景/背景 2 層に視差 | <code style="color:#22d3bf">(V,U,H,W)</code> |</p>
+<p>| <code style="color:#22d3bf">img_to_rgb</code> | 色相・彩度を与える(明部 0.75 超は白の鏡面に戻す二色性モデル) | <code style="color:#22d3bf">(H,W,3)</code> |</p>
+<p>| <code style="color:#22d3bf">img_to_cimage</code> | 振幅 = 値、位相 = 値に比例 + 傾き | <code style="color:#22d3bf">(H,W)</code> complex |</p>
+<p>| <code style="color:#22d3bf">img_to_beatcube</code> | 明点を標的(距離 = 列、速度 = 行) | <code style="color:#22d3bf">(A,C,S)</code> complex |</p>
+<p>| <code style="color:#22d3bf">img_to_monogenic</code> | 単一スケールのモノジェニック信号 | <code style="color:#22d3bf">(H,W,4)</code> |</p>
+<p><b>進化には見えない</b>のがこの族の要点。<code style="color:#22d3bf">ops._candidates</code> は category <code style="color:#22d3bf">bridge</code> を候補から</p>
+<p>除く —— 入れると image の候補リストが伸び、既存のゲノムが別の op に写ってしまう</p>
+<p>(<code style="color:#22d3bf">docs/WAVE0_STABLE_SLOTS.md</code>)。名前で呼ぶ経路(<code style="color:#22d3bf">fullseye.apply</code> / Studio のプログラム /</p>
+<p>op ごとの図)にだけ見える。</p>
+<p>&gt; 契約の根拠: 検証済みサンプル <code style="color:#22d3bf">examples/gallery2d_bridge.py</code> が全 12 op を叩き、(1) 宣言</p>
+<p>&gt; out_sort の形(<code style="color:#22d3bf">backends_typed._SHAPE_OK</code>)(2) 有限性(3) 決定性(2 回でビット一致)(4) ノブ</p>
+<p>&gt; の効き、に加えて <b>op ごとの閉形式</b>(z = 値×10×s、フレーム t の変位 = t·step、体積の</p>
+<p>&gt; 最上段 = floor(値·s·(D−1))、中央視点 = 入力、|field| = 入力、距離ビン = 2SR/c/f_s·N …)</p>
+<p>&gt; を突き合わせる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン（op の繋がり）</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[image&lt;br/&gt;入力画像]
+    P[points&lt;br/&gt;img_to_points]
+    S[signal&lt;br/&gt;img_to_signal]
+    V[video&lt;br/&gt;img_to_video]
+    VOL[volume&lt;br/&gt;img_to_volume]
+    LF[lightfield&lt;br/&gt;img_to_lightfield]
+    RGB[rgbimage&lt;br/&gt;img_to_rgb]
+    Q[qimage&lt;br/&gt;tb_rgb_to_quaternion]
+    M[qimage&lt;br/&gt;img_to_monogenic]
+    IMG --&gt; P --&gt; P2[tb_estimate_point_normals&lt;br/&gt;tb_alpha_shape_boundary]
+    IMG --&gt; S --&gt; S2[tb_smooth_funct_1d_gauss&lt;br/&gt;tb_bandpass]
+    IMG --&gt; V --&gt; V2[tb_frame_difference_causal&lt;br/&gt;tb_motion_energy_image]
+    IMG --&gt; VOL --&gt; VOL2[vol_erode / vol_dilate&lt;br/&gt;macro_vol_denoise]
+    IMG --&gt; LF --&gt; LF2[tb_lf_epi / tb_lf_refocus&lt;br/&gt;tb_lf_depth_from_focus]
+    IMG --&gt; RGB --&gt; Q --&gt; Q2[tb_qft2 / tb_quat_color_filter]
+    IMG --&gt; M --&gt; M2[tb_monogenic_amplitude&lt;br/&gt;tb_monogenic_phase]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方（op グループ別）</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">A. 幾何の種を作る（points / keypoints）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_points</code>: <code style="color:#22d3bf">a</code> が高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75a</code>、<code style="color:#22d3bf">b</code> が間引き <code style="color:#22d3bf">stride = 1 + int(3b)</code>。列は</p>
+<p><b>(x, y, z) = (列, 行, 高さ)</b> で、座標は画像の幅・高さを <b>一辺 10 の箱</b> に正規化したもの</p>
+<p>(<code style="color:#22d3bf">tb_*</code> の点群 op が束縛している半径 2.0・境界箱 0〜10 と同じ尺度。画素座標のままだと</p>
+<p>半径系 op の近傍が空になり、占有格子が全 0 になる —— 2026-09-07 実測)。<code style="color:#22d3bf">reprconv</code> 系(<code style="color:#22d3bf">tb_points_zyx_to_keypoints_uv</code>)は (z, y, x) を</p>
+<p>期待するので、その族へ渡すときは読み替えが要る(既知の規約混在、<code style="color:#22d3bf">docs/KNOWN_ISSUES.md</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_keypoints</code>: <code style="color:#22d3bf">a</code> が窓 <code style="color:#22d3bf">k = 3 + 2·int(4a)</code>、<code style="color:#22d3bf">b</code> がしきい値。平坦部は全画素が極大に</p>
+<p>なるので、前段に <code style="color:#22d3bf">gaussian</code> を置くと減る。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">B. 1-D の種を作る（signal / counts / matrix）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_signal</code> / <code style="color:#22d3bf">img_to_counts</code>: <code style="color:#22d3bf">a</code> が位置、<code style="color:#22d3bf">b &lt; 0.5</code> で行・<code style="color:#22d3bf">b ≥ 0.5</code> で列。<code style="color:#22d3bf">counts</code> は</p>
+<p>さらに <code style="color:#22d3bf">b</code> が最大光子数 <code style="color:#22d3bf">10^(1+2b)</code> を決める(少ないほど散布雑音が目立つ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_matrix</code> は純粋なキャストで <code style="color:#22d3bf">a, b</code> は未使用。共分散(<code style="color:#22d3bf">tb_stat_covariance</code>)は</p>
+<p>「行 = 標本、列 = 変数」として読まれる。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">C. 時間・空間の種を作る（video / volume / lightfield）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_video</code>: 画面全体がパンする(カメラ移動)。背景差分の族は「動かない背景」を</p>
+<p>仮定するので、全体パンでは前景が全画素に出る —— それ自体が族の性質の実演になる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_volume</code>: z=0 の底面には値 &gt; 0 の画素がすべて乗る(高さ 0 でも底面には乗る)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_lightfield</code>: 傾き <code style="color:#22d3bf">slope = 1.5a</code> 画素/視点、前景は <code style="color:#22d3bf">img ≥ b</code>。深度推定の答えは</p>
+<p>「前景 = slope、背景 = 0」の 2 値。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">D. 色・複素・レーダーの種を作る（rgbimage / qimage / cimage / beatcube）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_rgb</code>: 単一色相の着色 + 明部を白へ戻す鏡面(二色性反射モデル)。鏡面を入れないと</p>
+<p><code style="color:#22d3bf">tb_specular_coefficient_map</code> が全 0 になる(実測)。自然画像の色を再現するものではない。</p>
+<p>四元数の色 op には <code style="color:#22d3bf">tb_rgb_to_quaternion</code> を続ける。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_monogenic</code>: <code style="color:#22d3bf">tb_monogenic_*</code> は <b>この形の qimage だけ</b>受け付ける(色の四元数は</p>
+<p>拒否される)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_cimage</code>: <code style="color:#22d3bf">a = 0, b = 0.5</code> で実場。値 0 の画素は位相が定義できない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_to_beatcube</code>: 台帳の <code style="color:#22d3bf">fmcw_beat_simulate</code> を呼ぶ。既定では距離 0〜37.5 m、速度</p>
+<p>±19.5 m/s が曖昧さの無い範囲で、写像はその内側。4 素子なので <code style="color:#22d3bf">tb_beamform_delay_sum</code> も通る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例（検証済み gallery2d_bridge から）</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下で: py -3.11 this_file.py
+import numpy as np
+import fullseye as fs
+
+img = np.clip(np.random.default_rng(0).random((64, 64)), 0, 1)
+pts = fs.apply(img, &quot;img_to_points&quot;, 0.5, 0.5, on_error=&quot;raise&quot;)     # (1024, 3)
+assert pts.shape == (32 * 32, 3)
+assert np.allclose(pts[:, 2], (img[::2, ::2] * 10 * (0.25 + 1.75 * 0.5)).ravel())
+
+vid = fs.apply(img, &quot;img_to_video&quot;, 0.5, 0.0, on_error=&quot;raise&quot;)      # (8, 64, 64)、2 px/frame で +x
+assert np.array_equal(vid[0], img)
+
+lf = fs.apply(img, &quot;img_to_lightfield&quot;, 0.5, 0.5, on_error=&quot;raise&quot;)  # (5, 5, 64, 64)
+assert np.array_equal(lf[2, 2], img)                                 # 中央視点は入力そのもの
+print(&quot;PASS&quot;)</pre>
+<p>Studio では次のプログラムがそのまま走る(op ノートの <code style="color:#22d3bf">sample:</code> ボタンと同じ):</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_estimate_point_normals 0.50 0.50</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式（必要な op のみ）</h3>
+<p style="margin:2px 0 2px 12px">• 点群: <code style="color:#22d3bf">(x, y, z) = (col · 10/W, row · 10/H, v[row, col] · 10 · s)</code>、<code style="color:#22d3bf">s = 0.25 + 1.75a</code></p>
+<p style="margin:2px 0 2px 12px">• 動画: フレーム <code style="color:#22d3bf">t</code> の変位 <code style="color:#22d3bf">(dy, dx) = t · 4a · (sin 2πb, cos 2πb)</code></p>
+<p style="margin:2px 0 2px 12px">• 体積: <code style="color:#22d3bf">vol[z, y, x] = v[y, x]</code> if <code style="color:#22d3bf">z ≤ v[y, x] · s · (D − 1)</code> else 0、<code style="color:#22d3bf">D = 8 + 2·int(28b)</code></p>
+<p style="margin:2px 0 2px 12px">• ライトフィールド: 視点 <code style="color:#22d3bf">(v, u)</code> の前景のずれ <code style="color:#22d3bf">= slope · (v − v_c, u − u_c)</code>、<code style="color:#22d3bf">slope = 1.5a</code></p>
+<p style="margin:2px 0 2px 12px">• 複素場: <code style="color:#22d3bf">field = v · exp(i(2πa·v + 2π(b − 0.5)·8·x/W))</code></p>
+<p style="margin:2px 0 2px 12px">• ビート立方体: 標的 <code style="color:#22d3bf">t</code> の寄与 <code style="color:#22d3bf">a_t · exp(i(2π f_b n/f_s + 2π f_d m T_c + 2π d k sinθ/λ))</code>、</p>
+<p><code style="color:#22d3bf">f_b = 2SR/c</code>、<code style="color:#22d3bf">f_d = 2v/λ</code>(<code style="color:#22d3bf">rangedoppler.fmcw_beat_simulate</code> の前方モデル)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>合成のみ(<code style="color:#22d3bf">examples/gallery2d_bridge.py</code> の <code style="color:#22d3bf">_image()</code>)。自分の画像で試すなら</p>
+<p><code style="color:#22d3bf">fullseye.read_image</code> の結果をそのまま渡せばよい(値域 [0,1] の 2-D)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献（正典）</h3>
+<p style="margin:2px 0 2px 12px">• Felsberg, M. &amp; Sommer, G. (2001). *The monogenic signal.* IEEE TSP 49(12) —— <code style="color:#22d3bf">img_to_monogenic</code>。</p>
+<p style="margin:2px 0 2px 12px">• Sangwine, S. J. (1996). *Fourier transforms of colour images using quaternion or hypercomplex numbers.* Electronics Letters —— <code style="color:#22d3bf">tb_rgb_to_quaternion</code> が続く色の四元数。</p>
+<p style="margin:2px 0 2px 12px">• Ng, R. (2005). *Fourier slice photography.* SIGGRAPH —— ライトフィールドのリフォーカスの根拠。</p>
+<p style="margin:2px 0 2px 12px">• Richards, M. A. (2014). *Fundamentals of Radar Signal Processing* (2nd ed.) —— FMCW のビート周波数とドップラー。</p>

@@ -4,6 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在以 PCA 主軸為法線(過重心)的候選平面中選出最佳鏡像對稱面。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>→ dict{plane_point, plane_normal, score, all_scores, margin}。</p>
+<p>score が小さいほど対称。</p>
+<p>★ **`<code style="color:#22d3bf">score</code><code style="color:#22d3bf"> だけで採否を決めない。</code><code style="color:#22d3bf">margin</code>` を見ること**(2026-09-06 追加)。</p>
+<p>`<code style="color:#22d3bf">margin</code>` は 2 位と 1 位の score の差で、<b>候補が団子なら答えはくじ引き</b></p>
+<p>である、という警告になる。実測(1500 点):</p>
+<p>==================  ========  ========  =========</p>
+<p>形状                best      2 位      margin</p>
+<p>==================  ========  ========  =========</p>
+<p>箱(鏡映面が 3 枚)     0.9397    0.9499     0.0102</p>
+<p>角柱つきの箱          0.9876    0.9918     0.0043</p>
+<p>球                    1.0490    1.0551     0.0062</p>
+<p>一様乱数の立方体      1.0608    1.3435     0.2828</p>
+<p>==================  ========  ========  =========</p>
+<p>対称面が複数ある形ほど margin は小さい —— これは不具合ではなく、そういう形</p>
+<p>だという情報である。点群位置合わせの PoC が同じ構造を測っていて、PCA の</p>
+<p>候補は<b>素の直方体で 83 % が反転した象限を掴む</b>が、そのとき先に潰れるのは</p>
+<p>残差ではなく候補どうしの margin だった(0.42 → 0.066 → 0.039)。**残差でなく</p>
+<p>margin で採否を見る**、が両方に共通する結論。</p>
+<p>★ **`<code style="color:#22d3bf">score</code>` は 0 に近づかない。** 厳密に対称な形でも点の間隔が床を作る</p>
+<p>(上の表で箱が 0.94)。「0 に近いか」ではなく「同じ形を鏡映せずに測った値」や</p>
+<p>「点間隔」と比べること。</p>
+<p>★ <b>候補は PCA の 3 軸だけ</b>。真の対称面が主軸のどれとも一致しない形では</p>
+<p>見つからず、しかも黙って 3 つのうち最良を返す。密に振った候補が要るなら</p>
+<p>`<code style="color:#22d3bf">reflection_symmetry_score</code>` を直接掃引すること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

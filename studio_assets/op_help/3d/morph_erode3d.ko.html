@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 그레이스케일 erosion(SE 의 국소 min). 밝은 영역을 수축. se 는 dilate 와 동일.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>一辺 `<code style="color:#22d3bf">2r+1</code>` の cube か半径 r の ball の中で最小値を取る。境界の外は +∞ 扱い(画像内の</p>
+<p>値だけで min。torch 経路は `<code style="color:#22d3bf">-max_pool3d(-v)</code><code style="color:#22d3bf">、scipy 経路は </code><code style="color:#22d3bf">cval=+inf</code>`)ので、端で 0 に</p>
+<p>落ちることはない。`<code style="color:#22d3bf">r=0</code><code style="color:#22d3bf"> は恒等。</code><code style="color:#22d3bf">se</code><code style="color:#22d3bf"> が &quot;cube&quot;/&quot;ball&quot; 以外なら ValueError。</code><code style="color:#22d3bf">device</code>` は</p>
+<p>cube+torch のときだけ効く。返り値 `<code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>2 値 volume では「SE が丸ごと入る voxel だけ残す」= 細い構造・薄い殻の除去。</p>
+<p>後段: `<code style="color:#22d3bf">morph_dilate3d</code><code style="color:#22d3bf"> と組で opening/closing、</code><code style="color:#22d3bf">vol − erosion</code>` で内側境界。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

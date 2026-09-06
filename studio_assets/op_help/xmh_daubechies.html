@@ -2,8 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xmh_daubechies — 2D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_daubechies&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p><img src="fig/xmh_daubechies.png" alt="xmh_daubechies: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/xmh_daubechies.png" alt="xmh_daubechies: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_daubechies.a.jpg">xmh_daubechies: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_daubechies.inputs.jpg">xmh_daubechies: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Daubechies ウェーブレット変換(`<code style="color:#22d3bf">mahotas.daubechies</code>`)。xmh_haar と同じ配置(1 段、係数を元画像サイズの配列に詰めて min-max 正規化)で、基底を Daubechies 系に変えたもの。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はウェーブレットの種類を </code><code style="color:#22d3bf">D2</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D4</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D6</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D8</code><code style="color:#22d3bf"> の 4 択で切り替える(タップ数が増えるほど滑らかで長いフィルタになる)。</code><code style="color:#22d3bf">b</code>` は未使用。</p>

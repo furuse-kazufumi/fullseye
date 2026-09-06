@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import bundle3d; bundle3d.project(points, rvec, t, K)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;project&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Projiziert 3-D-Punkte (n,3) mit einer Kamera (rvec, t, K) nach 2-D (n,2) (perspektivische Division).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">X_cam = R(rvec) @ X + t</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">x = K @ X_cam</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">uv = x[:2] / x[2]</code>` を全点まとめて計算する</p>
+<p>(`<code style="color:#22d3bf">project_points</code><code style="color:#22d3bf"> と同じ規約)。</code><code style="color:#22d3bf">rvec</code>` は回転ベクトル(軸 × 角 [rad]、scipy の</p>
+<p>`<code style="color:#22d3bf">Rotation.from_rotvec</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> は (3,) 並進、</code><code style="color:#22d3bf">K</code>` は (3,3) 内部行列。返り値は (n,2) float で</p>
+<p>列 0 が u(横・列方向)、列 1 が v(縦・行方向)、単位は K に従いピクセル。</p>
+<p>注意(検証なし): カメラ後方や像平面上の点(`<code style="color:#22d3bf">Z_cam &lt;= 0</code>`)を弾かず、そのまま除算する。</p>
+<p>`<code style="color:#22d3bf">Z_cam = 0</code>` は 0 割で inf/NaN、負の Z は画像内に見える偽の座標になるので、可視性の判定は</p>
+<p>呼び出し側で行う。形状の検証もしない(`<code style="color:#22d3bf">np.asarray</code>` で float 化するのみ)。</p>
+<p>`<code style="color:#22d3bf">bundle_adjust</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean_reprojection_error</code>` の再投影残差はこの関数で作られる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

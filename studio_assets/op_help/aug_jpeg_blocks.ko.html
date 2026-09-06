@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aug_jpeg_blocks — 2D <code style="color:#22d3bf">augmentation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_jpeg_blocks&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p><img src="fig/aug_jpeg_blocks.png" alt="aug_jpeg_blocks: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/aug_jpeg_blocks.png" alt="aug_jpeg_blocks: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.a.jpg">aug_jpeg_blocks: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.b.jpg">aug_jpeg_blocks: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.inputs.jpg">aug_jpeg_blocks: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>JPEG 블록화(blocking) / 링잉(ringing) 아티팩트. 이미지(0..255로 스케일링)를 8x8 블록으로 자르고, 각 블록에 정규직교 2차원 DCT-II(`<code style="color:#22d3bf">scipy.fft.dctn</code><code style="color:#22d3bf">)를 적용한 뒤, 표준 JPEG Annex-K 휘도 양자화 테이블에 </code><code style="color:#22d3bf">(1 + 40*a)/16</code><code style="color:#22d3bf"> 을 곱한 값으로 양자화하고(a=0이면 거의 무손실, a=1이면 강한 양자화), 역 DCT로 재구성한다. </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 는 8x8 블록 격자의 위상을 양축 모두 </code><code style="color:#22d3bf">int(7*b)</code>` 픽셀만큼 이동시켜, 즉 블록 이음매의 위치를 바꾼다. 8의 배수가 아닌 이미지는 가장자리를 복제하여 패딩한 뒤 다시 HxW 로 잘라낸다(따라서 4x4 입력도 처리 가능하다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

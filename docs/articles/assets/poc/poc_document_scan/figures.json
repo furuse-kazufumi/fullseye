@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_rectify_zero_points.png",
+  "name": "rectify_zero_points",
+  "caption": "題に添えた数字は格子 RMS。アフィン(同名 op の取り違え)は例外を出さず、台形が残ったままそれらしい絵を返す。",
+  "shape": [
+   1575,
+   1110,
+   3
+  ]
+ },
+ {
+  "file": "02_shadow_tradeoff.png",
+  "name": "shadow_tradeoff",
+  "caption": "平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。窓 9 が fs.op で届く上限、窓 61 は自前。図の階調は真値で 217 段。",
+  "shape": [
+   272,
+   1074,
+   3
+  ],
+  "csv": "02_shadow_tradeoff.csv",
+  "tsv": "02_shadow_tradeoff.tsv"
+ },
+ {
+  "file": "03_shadow_removal.png",
+  "name": "shadow_removal",
+  "caption": "下寄りの横長の帯が図の階調。窓 9 は地と一緒にそれも割ってしまう(真の傾斜との相関 0.28)。窓 61 なら 0.72 残る。",
+  "shape": [
+   1255,
+   830,
+   3
+  ]
+ },
+ {
+  "file": "04_tilt_cliff.png",
+  "name": "tilt_cliff",
+  "caption": "60 度でも 2 px 台。線が 64 度で途切れるのは角度のせいではなく、奥の辺が短くなって直線を当てる点が足りなくなるため。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

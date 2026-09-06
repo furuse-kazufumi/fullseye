@@ -4,6 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_measure(img, p0, p1, pose, K, unit=&#x27;&#x27;, depth=None, color=&#x27;emphasis&#x27;, width=1.5, tick=8.0, font_size=12, label_fmt=&#x27;{:.3g}&#x27;, box_alpha=0.6, text_color=None, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert ein Bild (image2d): den Abstand zweier 3-D-Punkte (in Mesh-Einheiten), als projizierte Linie und Wert.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>値は `<code style="color:#22d3bf">|p1 - p0|</code>`(3-D、閉形式)。画素上の長さは短縮しても値は変わらない。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>2 点が一致、端点がカメラの後ろ / 画像の外。</p>
+<p>手順: `<code style="color:#22d3bf">dist = |p1 - p0|</code>`(object 座標のユークリッド距離、単位はメッシュ単位)を</p>
+<p>計算し、`<code style="color:#22d3bf">p0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p1</code><code style="color:#22d3bf"> を射影(</code><code style="color:#22d3bf">annotate3d_project</code>` と同じ慣習)。両端の画素を</p>
+<p>結ぶ線と両端の垂直な目盛(長さ `<code style="color:#22d3bf">tick</code>` px)、両端に半径 3 px の点を描き、線の</p>
+<p>中点から画面上側へ `<code style="color:#22d3bf">tick/2 + 4</code>` px 離した位置に</p>
+<p>`<code style="color:#22d3bf">label_fmt.format(dist) + &quot; &quot; + unit</code>` の文字箱を置く。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">p0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p1</code><code style="color:#22d3bf">: object 座標 </code><code style="color:#22d3bf">(3,)</code>`(有限、一致は拒否)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">unit</code><code style="color:#22d3bf">: 文字列(空なら数値だけ)。</code><code style="color:#22d3bf">label_fmt</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">str.format</code>` 書式(既定</p>
+<p>`<code style="color:#22d3bf">&quot;{:.3g}&quot;</code>`)。単位換算はしない — メッシュが mm ならそのまま mm。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf"> [px] </code><code style="color:#22d3bf">&gt;= 0.5</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">tick</code><code style="color:#22d3bf"> [px] </code><code style="color:#22d3bf">&gt;= 0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">font_size</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">box_alpha</code>` /</p>
+<p>`<code style="color:#22d3bf">text_color</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">font_path</code>`: 文字箱の見た目。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">depth</code>`: 前方距離画像。両端とも隠れていれば線を破線に、隠れた端点の点を</p>
+<p>白抜き(ring)にする。`<code style="color:#22d3bf">occlusion_tol</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1)</code>`。</p>
+<p>返り値: 描画済みの新しい画像(float64 `<code style="color:#22d3bf">[0, 1]</code>`)。</p>
+<p>エラーになる条件: `<code style="color:#22d3bf">|p1 - p0| &lt; 1e-12</code><code style="color:#22d3bf"> / どちらかの端点が </code><code style="color:#22d3bf">z &lt;= 1e-9</code>` /</p>
+<p><b>どちらかの端点が画像の外</b>(`<code style="color:#22d3bf">in_image</code><code style="color:#22d3bf"> を両端に要求) / 姿勢・</code><code style="color:#22d3bf">K</code>`・</p>
+<p>`<code style="color:#22d3bf">depth</code>` の不正 / 文字箱が収まらない。</p>
+<p>使いどころ: `<code style="color:#22d3bf">fit_sphere3</code><code style="color:#22d3bf"> の直径、</code><code style="color:#22d3bf">smallest_box3</code>` の辺、2 つの特徴点間の</p>
+<p>距離を図の上に示す。値そのものは描画前に `<code style="color:#22d3bf">np.linalg.norm(p1 - p0)</code>` と同じ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

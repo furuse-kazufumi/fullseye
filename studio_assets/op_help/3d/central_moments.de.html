@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import moments3d; moments3d.central_moments(points, max_order: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;central_moments&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die auf den Schwerpunkt bezogenen zentralen Momente μ_{pqr} (translationsinvariant; Schlüssel sind (p,q,r)).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>μ_{pqr} = mean( (x-x̄)^p (y-ȳ)^q (z-z̄)^r )。p+q+r &lt;= max_order の全次数を含む。</p>
+<p>重心を引いてから計算するので平行移動に厳密に不変。等質量規約なので</p>
+<p>μ_{000}=1、1 次モーメント μ_{100}=μ_{010}=μ_{001}=0(中心化の帰結)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>点群。</p>
+<p>max_order : int</p>
+<p>含める最大次数 p+q+r(既定 3)。0 以上。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict[tuple[int, int, int], float]</p>
+<p>(p, q, r) -&gt; μ_{pqr}。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 返る dict のキー数は p+q+r &lt;= max_order の全組合せ(`<code style="color:#22d3bf">max_order=3</code>` で 20 個)。値は float(平均なので点数で割ってある)。</p>
+<p style="margin:2px 0 2px 12px">• 単位は長さ^(p+q+r)。並進不変だが回転・スケールには不変でない(回転不変量は `<code style="color:#22d3bf">moment_invariants</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">principal_moments</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 2 次モーメント `<code style="color:#22d3bf">(2,0,0)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">(1,1,0)</code><code style="color:#22d3bf"> などは母共分散(N で割る)そのもので、</code><code style="color:#22d3bf">inertia_tensor</code>` の素材と同じ。</p>
+<p style="margin:2px 0 2px 12px">• 高次は重心から遠い点が支配するので外れ値に弱い。前段で `<code style="color:#22d3bf">statistical_outlier_removal</code>` などを検討する。</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1。`<code style="color:#22d3bf">max_order &lt; 0</code><code style="color:#22d3bf">、形状不正、非有限は </code><code style="color:#22d3bf">ValueError</code>`。決定論的。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

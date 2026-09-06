@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;knn_graph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每点的 k 近邻索引与欧氏距离(不含自身)。→ (idx (N,k) int, dist (N,k) float)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">scipy.spatial.cKDTree</code>` で各点の k+1 近傍を引き、自分自身(距離 0)を除いた k 個を返す。</p>
+<p>`<code style="color:#22d3bf">idx[i, j]</code><code style="color:#22d3bf"> は点 i に j 番目に近い点の添字、</code><code style="color:#22d3bf">dist[i, j]</code>` はその Euclid 距離(座標の単位)で、</p>
+<p>各行は距離の昇順。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (N,3) など任意次元の座標(float64 に変換)。形状の検証はしない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: 近傍数(既定 8)。</code><code style="color:#22d3bf">N-1</code><code style="color:#22d3bf"> を超える値は黙って </code><code style="color:#22d3bf">N-1</code>` に切り詰める。</p>
+<p style="margin:2px 0 2px 12px">• N &lt; 2 のときは例外を出さず、形 (N,0) の空配列を 2 つ返す。</p>
+<p>罠: 座標が重複していると KD-tree が自己を列 0 に返さないことがある。その場合は行ごとに自己の</p>
+<p>位置を探して除き、k+1 個の中に自己が無ければ最遠の 1 つを落とす(結果はやはり k 個)。</p>
+<p>`<code style="color:#22d3bf">geodesic_distances</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">farthest_point_sampling</code>` はこの結果を隣接行列(有向 CSR、</p>
+<p>Dijkstra 側で無向化)にして測地距離の近似に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

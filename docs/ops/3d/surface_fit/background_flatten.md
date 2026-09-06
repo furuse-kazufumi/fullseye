@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。
 
+``(H,W)`` 画像に ``x = 列``、``y = 行`` で ``fit_poly_surface(degree)``(既定 2 次)を当て、
+``image − fit`` を float64 で返す。出力は平均がほぼ 0 で **負の値を含む**(表示・閾値化には
+``min`` を引くか定数を足す)。前景が広いと前景もフィットに引かれて削られる(前景を除いた点で
+``fit_poly_surface`` → ``eval_poly_surface`` で減算する方が安全)。
+グレースケール 2-D のみ(3-D は失敗)。NaN があると lstsq が失敗する。
+用途: 閾値化の前処理、``polar_unwrap`` した円環画像の照明補正。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

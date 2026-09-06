@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import edges3d; edges3d.canny3d(vol, low: &#x27;float&#x27;, high: &#x27;float&#x27;, sigma: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;canny3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D Canny 邊緣偵測(非極大值抑制 + 遲滯閾值)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : (D,H,W) array</p>
+<p>グレー voxel。</p>
+<p>low, high : float</p>
+<p>ヒステリシスの下限 / 上限閾値(勾配の大きさに対して)。0 &lt;= low &lt;= high, high &gt; 0。</p>
+<p>sigma : float</p>
+<p>平滑の標準偏差。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>edge_mask : (D,H,W) bool</p>
+<p>1 voxel に細線化されたエッジ。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>(1) gradient3d で平滑勾配を得る → (2) 勾配方向に沿った NMS(三線形補間)で局所最大を残し</p>
+<p>→ (3) high 閾値を種に low 閾値で 26 連結を伸長。閾値は絶対値なので、対象に応じて</p>
+<p>gmag.max() のスケールで与えるとロバスト。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

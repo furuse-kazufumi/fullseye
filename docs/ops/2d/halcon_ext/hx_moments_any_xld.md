@@ -17,13 +17,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_moments_any_xld", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `moments_any_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_moments_any_xld: 入力 → 出力](../../_fig/hx_moments_any_xld.png)
+![hx_moments_any_xld: input → output](../../_fig/hx_moments_any_xld.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_moments_any_xld: stages](../../_fig/hx_moments_any_xld.chain.jpg)
 
 ## 使い方
 
 全 contour 点の 2 次中心モーメント(広がり)を返す(正規化 feature)。
+
+contour dict の全点をまとめ、重心からの二乗距離の平均 ``mean((row - mean_row)^2 + (col - mean_col)^2)``
+(2 次中心モーメント ``mu20 + mu02`` を点数で割ったもの)を ``max(H, W)^2`` で割り、1 で頭打ちした
+``np.float64`` で返す。
+
+- ``a``, ``b`` は未使用。
+- 点が 2 個未満なら 0.0。
+
+「点群が重心からどれだけ広がっているか」の等方的な指標で、向きや縦横比は含まない。輪郭の点密度に依存するので、
+同じ図形でも点の刻みが不均一だと値が変わる。向き付きの慣性(長軸・短軸)は ``hx_fit_ellipse_contour`` /
+``elliptic_axis_xld``、region の 2 次モーメントは ``moments_region_2nd``。
 
 ## 詳しい使い方ガイド
 

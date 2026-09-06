@@ -6,6 +6,19 @@
 <p>物体の輪郭(1 画素幅、bool)。<b>隣り合う物体の境目も残る</b>。</p>
 <p>内側の縁を取る(自分と違うラベルに隣接する前景画素)ので、輪郭は必ず</p>
 <p>物体の内部にある —— 外側を取ると隣の物体の画素を輪郭だと言うことになる。</p>
+<p>手順: 3x3(8 近傍)のグレー収縮 `<code style="color:#22d3bf">lo</code><code style="color:#22d3bf"> と膨張 </code><code style="color:#22d3bf">hi</code>` をラベル画像に掛け、</p>
+<p>`<code style="color:#22d3bf">(labels &gt; 0) &amp; ((lo != labels) | (hi != labels))</code>`。「近傍に自分と違う番号</p>
+<p>(背景 0 も含む)がある前景画素」= 内側 1 画素幅の縁。収縮だけだと番号の</p>
+<p>小さい物体側の境目が消えるので、膨張も見て対称にしてある。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">: 2-D の整数ラベル画像(</code><code style="color:#22d3bf">blob_label</code>` の出力)。bool / float / 負の</p>
+<p>番号は `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">blob_region</code>` と同じ契約)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code>` の bool。全物体の縁が 1 枚に重なる(物体ごとに分けたいなら</p>
+<p>`<code style="color:#22d3bf">blob_region</code>` で抜いてから掛ける)。</p>
+<p style="margin:2px 0 2px 12px">• 画像の縁に接する物体は、scipy の既定(反射境界)で画像端の外を自分の値と</p>
+<p>みなすため、<b>画像端に沿った辺は縁として出ない</b>。</p>
+<p style="margin:2px 0 2px 12px">• 1 画素幅の細い物体は全画素が縁になる。</p>
+<p>`<code style="color:#22d3bf">blob_features</code>` の周長は別の係数法で測っており、この縁の画素数とは一致しない。</p>
+<p>輪郭を折れ線として使うなら `<code style="color:#22d3bf">annotate_outline_layout</code>` が (x, y) の閉多角形を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volops; volops.vol_bounding_box(domain, margin=0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_bounding_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Enge achsenparallele Bounding Box des Maskenvordergrunds, in Voxelindizes.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Returns `<code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>` with <b>exclusive</b> upper bounds, i.e.</p>
+<p>`<code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code>` is the smallest sub-volume containing every</p>
+<p>foreground voxel. *margin* (an int `<code style="color:#22d3bf">&gt;= 0</code>`) grows the box by that many</p>
+<p>voxels per side, clipped to the volume — headroom for operators with a</p>
+<p>spatial footprint (a Gaussian of sigma s needs ~`<code style="color:#22d3bf">3*s</code>` voxels of context).</p>
+<p>A non-`<code style="color:#22d3bf">{0, 1}</code><code style="color:#22d3bf"> input is thresholded at </code><code style="color:#22d3bf">&gt; 0.5</code>`.</p>
+<p>An <b>empty</b> mask raises `<code style="color:#22d3bf">ValueError</code>` (fail-closed): there is no box, and</p>
+<p>silently returning the full volume would defeat the point of cropping.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

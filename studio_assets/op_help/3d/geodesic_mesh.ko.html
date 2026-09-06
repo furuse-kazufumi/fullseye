@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각 메시의 엣지 그래프에서 Dijkstra 로 source 에서 각 정점까지의 측지 거리. → (V,) float.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>各三角形の 3 辺 (0,1),(1,2),(2,0) を無向辺として集め、(min,max) で一意化してから辺長 = 両端</p>
+<p>頂点の Euclid 距離を重みにした疎グラフを作り、`<code style="color:#22d3bf">dijkstra(directed=False)</code>` で source からの</p>
+<p>最短路長を返す。`<code style="color:#22d3bf">d[source] = 0</code><code style="color:#22d3bf">、source と辺で繋がらない頂点は </code><code style="color:#22d3bf">inf</code>`。単位は頂点座標の単位。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">vertices</code><code style="color:#22d3bf">: (V,3) 頂点座標(float64 に変換)。</code><code style="color:#22d3bf">faces</code>`: (M,3) 頂点添字(int に変換)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">source</code>`: 始点頂点の添字。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">faces</code><code style="color:#22d3bf"> が空のときは全頂点 </code><code style="color:#22d3bf">inf</code>`(source が範囲内ならそこだけ 0)を返し、例外は出さない。</p>
+<p>実装上の要点: `<code style="color:#22d3bf">csr_matrix</code>` は同じ (i,j) を重複して渡すと重みを黙って加算するため、重複面・</p>
+<p>非多様体・巻き順が不揃いなメッシュでも距離が膨らまないよう辺を一意化している。退化辺(i==j)は</p>
+<p>捨てる。距離は辺に沿った折れ線長なので、粗いメッシュでは真の測地距離より長め(辺の走り方に</p>
+<p>依存する異方性)になる。`<code style="color:#22d3bf">voxel_to_mesh</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">convex_hull</code>` が返す (verts, faces) を</p>
+<p>そのまま渡せる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

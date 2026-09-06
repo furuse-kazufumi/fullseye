@@ -4,6 +4,55 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import render_beauty; render_beauty.render_beauty(V, F, *, pose=None, intrinsics=None, size: &#x27;int&#x27; = 512, ss: &#x27;int&#x27; = 2, light: &#x27;Sequence[float]&#x27; = (0.3, 0.4, 1.0), albedo: &#x27;Sequence[float]&#x27; = (0.8, 0.8, 0.85), material: &#x27;str&#x27; = &#x27;plastic&#x27;, matcap=None, ambient: &#x27;float&#x27; = 0.12, ao: &#x27;bool&#x27; = True, ground_shadow: &#x27;bool&#x27; = True, tonemap: &#x27;str&#x27; = &#x27;reinhard&#x27;, background: &#x27;Sequence[float]&#x27; = (0.1, 0.11, 0.13), exposure: &#x27;float&#x27; = 1.0, shininess: &#x27;Optional[float]&#x27; = None, ao_samples: &#x27;int&#x27; = 32, shadow_res: &#x27;int&#x27; = 512, penumbra: &#x27;float&#x27; = 2.5, shadow_samples: &#x27;int&#x27; = 12, shadow_pcf: &#x27;int&#x27; = 1, brdf: &#x27;str&#x27; = &#x27;phong&#x27;, brdf_params=None, shadow_method: &#x27;str&#x27; = &#x27;map&#x27;, sun_angular_diameter_deg: &#x27;float&#x27; = 0.0, self_illumination: &#x27;float&#x27; = 0.0, albedo_variation: &#x27;float&#x27; = 0.0, albedo_scale=None, seed: &#x27;int&#x27; = 0, smooth_normals: &#x27;bool&#x27; = False, bump=None, vertex_normals=None, vertex_albedo=None, surface: &#x27;str&#x27; = &#x27;none&#x27;, surface_params=None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;render_beauty&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把网格以全品质层合成渲染成一张「好看的静态 3D」→ RGB `<code style="color:#22d3bf">(size, size, 3)</code>` float [0,1]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">V, F</code>`        頂点 (N,3) と三角形 (M,3)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pose</code><code style="color:#22d3bf">        4x4 object-&gt;camera(</code><code style="color:#22d3bf">render3d.look_at</code><code style="color:#22d3bf">)。None で </code><code style="color:#22d3bf">auto_view</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">intrinsics</code><code style="color:#22d3bf">  3x3 ピンホール </code><code style="color:#22d3bf">K</code><code style="color:#22d3bf">(**目標 </code><code style="color:#22d3bf">size</code><code style="color:#22d3bf"> 用**、内部で </code><code style="color:#22d3bf">ss</code>` 倍にスケール)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">size</code><code style="color:#22d3bf">        出力の一辺(正方)。</code><code style="color:#22d3bf">ss</code>`  スーパーサンプリング倍率(整数 &gt;= 1)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code>`       <b>ワールド座標</b>の光源方向(シーン→光源)。陰影と接地影で共有。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">albedo</code><code style="color:#22d3bf">      物体の反射色 RGB。</code><code style="color:#22d3bf">material</code><code style="color:#22d3bf">  </code><code style="color:#22d3bf">&#x27;plastic&#x27;</code><code style="color:#22d3bf"> | </code><code style="color:#22d3bf">&#x27;metal&#x27;</code><code style="color:#22d3bf"> | </code><code style="color:#22d3bf">&#x27;matcap&#x27;</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">matcap</code><code style="color:#22d3bf">      </code><code style="color:#22d3bf">material=&#x27;matcap&#x27;</code><code style="color:#22d3bf"> のとき必須の lit-sphere テクスチャ </code><code style="color:#22d3bf">(h,w[,C])</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ambient</code><code style="color:#22d3bf">     環境光係数。</code><code style="color:#22d3bf">ao</code>`  アンビエントオクルージョンを掛けるか。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ground_shadow</code>` 地面平面 + 接地影を焼き込むか。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">tonemap</code><code style="color:#22d3bf">     </code><code style="color:#22d3bf">&#x27;reinhard&#x27;</code><code style="color:#22d3bf"> | </code><code style="color:#22d3bf">&#x27;aces&#x27;</code><code style="color:#22d3bf"> | </code><code style="color:#22d3bf">&#x27;none&#x27;</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">background</code>`  背景色 RGB。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">exposure</code><code style="color:#22d3bf">    トーンマップ前の露出。</code><code style="color:#22d3bf">shininess</code>`  光沢(None でマテリアル既定)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ao_samples</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shadow_res</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">penumbra</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shadow_samples</code>`</p>
+<p>品質・速度のチューニング(接地影のソフトさ等)。</p>
+<p>**`<code style="color:#22d3bf">penumbra</code>` は光源の角半径 [度]** で、半影の幅はおよそ</p>
+<p>「遮蔽物の高さ × tan(penumbra)」。既定の 2.5 度は、地面から</p>
+<p>1 単位の高さの物体で半影が <b>1〜2 画素</b>にしかならない</p>
+<p>(2026-09-02 実測: 320px の絵で半影は 283/102400 画素、</p>
+<p>値の種類は `<code style="color:#22d3bf">shadow_samples+1</code>` の 7 段だけ)。柔らかい影が</p>
+<p>欲しいなら 10 度前後まで上げ、段が見えないよう</p>
+<p>`<code style="color:#22d3bf">shadow_samples</code>` も一緒に増やす。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shadow_pcf</code>`  shadow map を引くときに混ぜる近傍半径 [texel] (既定 1 = 3x3)。</p>
+<p>1 点参照だと影の境目が texel に量子化されて階段になる。</p>
+<p>実測(地面の上だけで測った隣接画素の最大変化):</p>
+<p>既定 2.5 度・12 本・pcf=0 相当で <b>0.667</b>、</p>
+<p>12 度・24 本・pcf=1 で <b>0.176</b>(1/6 を超える段は 123→2)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">brdf</code><code style="color:#22d3bf">        物体の反射則。</code><code style="color:#22d3bf">&#x27;phong&#x27;</code>`(既定 = 従来どおり Lambert 拡散 + cos^n 鏡面)/</p>
+<p>`<code style="color:#22d3bf">&#x27;lambert&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;lommel_seeliger&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;hapke&#x27;</code>`(惑星測光、</p>
+<p>`<code style="color:#22d3bf">render_shade.brdf_shade</code><code style="color:#22d3bf">)。phong 以外では鏡面を切り、</code><code style="color:#22d3bf">albedo</code>` は</p>
+<p>平均 1 に正規化した<b>色味</b>として掛ける(明るさは `<code style="color:#22d3bf">brdf_params</code>` の</p>
+<p>単一散乱アルベド `<code style="color:#22d3bf">w</code>` が決める。二重に掛けない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">brdf_params</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">dict</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">w, g, B0, h, roughness_deg, multiple_scattering</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shadow_method</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">&#x27;map&#x27;</code><code style="color:#22d3bf">(既定 = shadow map + PCF)/ </code><code style="color:#22d3bf">&#x27;raycast&#x27;</code>`</p>
+<p>(`<code style="color:#22d3bf">render_shadow.shadow_raycast</code>`、階段・acne 無し)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sun_angular_diameter_deg</code>` raycast 時の光源視直径(太陽 0.53°)。半影の幅は</p>
+<p>「遮蔽物までの距離 × tan(視直径/2)」= 小惑星では数 cm(硬い影)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">self_illumination</code>` 地形からの一回反射の近似係数(既定 0)。</p>
+<p>`<code style="color:#22d3bf">bounce = 係数 × albedo色 × (1 − AO) × 照らされた面の平均放射輝度</code>`</p>
+<p>―― 遮蔽された半球の分だけ隣の地形が見えており、その地形が平均的な</p>
+<p>明るさで光っているという近似(相互反射の厳密解ではない、要 `<code style="color:#22d3bf">ao=True</code>`)。</p>
+<p>宇宙では環境光が無いので `<code style="color:#22d3bf">ambient=0</code>` とこれで影の底が決まる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bump</code><code style="color:#22d3bf">        </code><code style="color:#22d3bf">dict(wavelengths, amplitudes[, seed, nyquist, fade, complement_edges])</code>`</p>
+<p>→ 物体画素の陰影法線を :func:<code style="color:#22d3bf">render3d.bump_normals_fbm</code>(値ノイズ高さ場の</p>
+<p>勾配)で摂動する。幾何(depth/影/AO)は不変。`<code style="color:#22d3bf">complement_edges=True</code>`</p>
+<p>なら画素直下のメッシュ局所辺長を重心補間して渡し、変位の帯域ゲートの</p>
+<p><b>補集合</b>だけを bump にする(同じ波長を二重に足さない)。</p>
+<p>fail-closed: 形状不正・非有限・空・`<code style="color:#22d3bf">ss&lt;1</code><code style="color:#22d3bf">・不正 </code><code style="color:#22d3bf">material</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">tonemap</code>`・不正な色/光/露出は</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`。決定的(乱数なし)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

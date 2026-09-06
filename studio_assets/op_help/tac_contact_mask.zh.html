@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_contact_mask — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_contact_mask&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tac_contact_mask.png" alt="tac_contact_mask: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/tac_contact_mask.png" alt="tac_contact_mask: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.a.jpg">tac_contact_mask: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.b.jpg">tac_contact_mask: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.inputs.jpg">tac_contact_mask: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过伪参考背景减除来求触觉帧的接触区域:`<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf">,其中 </code><code style="color:#22d3bf">sigma = max(2, min(H,W)/6)</code><code style="color:#22d3bf">(低频包络代替未形变的参考帧),以 </code><code style="color:#22d3bf">thr = 0.005 + 0.145*a</code><code style="color:#22d3bf"> 灰度级阈值化,再经 </code><code style="color:#22d3bf">round(3*b)</code><code style="color:#22d3bf"> 次二值开运算(opening)后接二值闭运算(closing)(3x3、8 连通)清理。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 偏差阈值(灵敏度),</code><code style="color:#22d3bf">b</code>` = 形态学清理强度。返回输入 HxW 大小的二值(BINARY)0/1 float64 区域;完全平坦(常数)的帧在各处偏差均为零,因此得到空掩膜。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

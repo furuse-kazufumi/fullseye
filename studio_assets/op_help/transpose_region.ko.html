@@ -3,8 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;transpose_region&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 대응</b>: <code style="color:#22d3bf">transpose_region</code>(의미·매개변수는 HALCON 레퍼런스가 참고가 됩니다)</p>
-<p><img src="fig/transpose_region.png" alt="transpose_region: 入力 → 出力"></p>
-<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*</p>
+<p><img src="fig/transpose_region.png" alt="transpose_region: input → output"></p>
+<p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
+<p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.chain.jpg">transpose_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.inputs.jpg">transpose_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역(이진 마스크)을 전치한다(`<code style="color:#22d3bf">x.T</code><code style="color:#22d3bf">, 대각선에 대한 반사=행과 열의 교환). 카테고리는 geometry이지만 in/out은 </code><code style="color:#22d3bf">region</code><code style="color:#22d3bf">이다. 기하 변환의 일종으로 </code><code style="color:#22d3bf">_sh_geom</code><code style="color:#22d3bf">으로 구현되어 있지만, 전치는 보간을 수반하지 않으므로 </code><code style="color:#22d3bf">build()</code><code style="color:#22d3bf">의 </code><code style="color:#22d3bf">_rebinarise</code><code style="color:#22d3bf">를 거쳐도 값은 변하지 않는다(이미 {0,1}인 상태 그대로이다). HALCON의 </code><code style="color:#22d3bf">transpose_region</code>`(Reflect a region about a point.)에 해당한다(HALCON의 &quot;점에 대한 반전&quot;과는 엄밀히 다른 변환으로, 행렬의 전치=대각선에 대한 반전이라는 근사이다).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import superquadric; superquadric.inside_outside(points, a, eps, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;inside_outside&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>超二次曲面的內外函數 F(表面=1,內部&lt;1,外部&gt;1)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">F(X) = (|x/a1|^(2/eps2) + |y/a2|^(2/eps2))^(eps2/eps1) + |z/a3|^(2/eps1)</code>`。</p>
+<p>`<code style="color:#22d3bf">R, t</code><code style="color:#22d3bf"> で姿勢(</code><code style="color:#22d3bf">X_body = R.T @ (X - t)</code>`)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>a : (a1,a2,a3) 半径(すべて正)</p>
+<p>eps : (eps1,eps2) 形状指数(&gt; 0)</p>
+<p>R : (3,3) 回転(列 = body 軸の world 表現)、既定 = 単位</p>
+<p>t : (3,) 平行移動(body 中心の world 位置)、既定 = 原点</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (N,)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。
 
+GT 生成用。``points`` (N,3) を ``X_cam = R X + t`` で射影し、depth>0 かつ画像内に
+落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め
+(``fill``, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。
+さらに ``dilate`` 画素だけ膨張させ「pixel が少しでも物体に触れれば前景」という
+被覆(coverage)意味のシルエットにする — これが visual hull の recall(物体 voxel を
+取りこぼさない)を離散化誤差の下でも保証するための保守側の丸め。
+
+Parameters
+----------
+points : (N, 3) array_like  ワールド座標の点群(物体表面/内部のサンプル)。
+K : (3, 3)  内部パラメータ。
+R, t : (3, 3), (3,)  ワールド->カメラの回転・並進。
+size : (H, W)  出力画像サイズ。
+fill : bool  射影像の穴を埋めて solid にする(既定 True)。
+dilate : int  被覆マージンとして膨張させる画素数(既定 1、0 で無効)。
+
+Returns
+-------
+(H, W) bool ndarray  前景 True のシルエット。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

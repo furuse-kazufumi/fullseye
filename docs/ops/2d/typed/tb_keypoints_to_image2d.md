@@ -15,7 +15,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `keypoints` → `image`
 - **呼び出し**: `fullseye.apply(img, "tb_keypoints_to_image2d", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-*図なし: この op は `keypoints` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*
+*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— 橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる。下の「実行できる例」で使い方を見ること。*
 
 ## 使い方
 
@@ -52,7 +52,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+次の例は元の台帳 op `keypoints_to_image2d` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_region_to_mean&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">region_to_mean</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_region_to_mean.png" alt="hx_region_to_mean: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_region_to_mean.png" alt="hx_region_to_mean: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_region_to_mean.a.jpg">hx_region_to_mean: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_region_to_mean.inputs.jpg">hx_region_to_mean: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Paint each connected region with its mean grey value (image -&gt; image). Foreground/background split at threshold a, then labelled.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">v &gt; a</code><code style="color:#22d3bf"> を前景とし </code><code style="color:#22d3bf">ndimage.label</code><code style="color:#22d3bf">(4 近傍)で連結成分に分け、各成分の画素を </code><code style="color:#22d3bf">ndimage.mean</code>` で求めた</p>
+<p>成分内の平均 gray 値で塗りつぶす。背景(`<code style="color:#22d3bf">v &lt;= a</code>`)は背景画素全体の平均 1 値で塗る(背景が無ければ 0.0)。</p>
+<p>出力は入力と同形の float 画像で、値域は入力の範囲内(正規化しない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → 前景/背景を分けるしきい値。a=0 なら 0 より大きい画素がすべて前景。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>結果は成分ごとに一定値になるので、後段の `<code style="color:#22d3bf">threshold</code>` で「平均が明るい部品だけ」を選ぶような使い方ができる。</p>
+<p>4 近傍ラベルなので斜め接触する塊は別々の平均になる。入力の検証は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

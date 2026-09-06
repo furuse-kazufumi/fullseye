@@ -4,6 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>完全内接于二值体素区域的最大轴对齐盒(2-D `<code style="color:#22d3bf">inner_rectangle1</code>` 的 3-D 版)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>3-D 版)。</p>
+<p>厳密解: どの深さ区間 [z0, z1] についても、ボックスはスライス z0..z1 の <b>論理積</b></p>
+<p>(全スライスで前景のボクセル)の内側に無ければならない。その積の中の最大内接 2-D 長方形</p>
+<p>(ヒストグラム法 = `<code style="color:#22d3bf">inner_rectangle1</code>` と同じコア)× 区間長 が候補ボックスで、全区間に</p>
+<p>ついての最大が厳密な最大内接ボックスになる。O(D^2 * H * W)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>(depth,row,col) 軸順で `<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> 隅、</code><code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (+ </code><code style="color:#22d3bf">cd/cr/cc</code>`)、</p>
+<p>全幅 `<code style="color:#22d3bf">size</code><code style="color:#22d3bf">、ボクセル数の </code><code style="color:#22d3bf">volume</code>`。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>非 3-D 入力、または前景ゼロの領域(内接ボックス無し)。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> は **両端を含む** ボクセル添字(float 配列)。</code><code style="color:#22d3bf">size = max - min + 1</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">volume = prod(size)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">center</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(min + max) / 2</code><code style="color:#22d3bf"> で .5 が付き得る。2-D 側の登録名は </code><code style="color:#22d3bf">r2_inner_rectangle1</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 深さ区間ごとに Python ループで最大長方形を探す O(D²·H·W)。積が空になった時点でその z0 の探索は打ち切る。大きなボリュームでは遅い。</p>
+<p style="margin:2px 0 2px 12px">• 同体積の候補が複数あるときは先に見つかったもの(z0 が小さく、その中で z1 が小さい)を返す。</p>
+<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順は (depth, row, col)。</p>
+<p style="margin:2px 0 2px 12px">• 典型: `<code style="color:#22d3bf">largest_component</code>` で対象を 1 つに絞ってから呼ぶ(複数成分が混ざると最大成分のボックスとは限らない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

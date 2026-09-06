@@ -4,6 +4,41 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import moments3d; moments3d.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;moment_invariants&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein gegen Translation, Rotation und Skalierung invarianter Formmerkmalsvektor (im Stil von Sadjadi–Hall, plus radiale Verteilungen höherer Ordnung).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>処方:</p>
+<p>1. 重心中心化(並進を除去)。</p>
+<p>2. RMS 半径 R = sqrt(mean‖p-c‖²) で割ってスケール正規化(R→1)。</p>
+<p>これで正規化後の中心 2 次モーメントは一様スケール s に依らない。</p>
+<p>3. 正規化共分散 C̃ の主不変量(特性多項式の係数)を並べる:</p>
+<p>λ̂1 &gt;= λ̂2 &gt;= λ̂3   … C̃ の固有値(= 正規化した主 2 次モーメント、</p>
+<p>Σλ̂ = 1、回転不変)</p>
+<p>J2 = λ̂1λ̂2 + λ̂1λ̂3 + λ̂2λ̂3   (Sadjadi–Hall 第 2 不変量 = 2×2 主小行列和)</p>
+<p>J3 = λ̂1λ̂2λ̂3               (第 3 不変量 = det C̃)</p>
+<p>4. 正規化 4 次半径モーメント m4 = mean(‖p̂-c‖⁴)(= mean(r⁴)/mean(r²)²)。</p>
+<p>r = 重心からの距離なので回転+並進不変、RMS 正規化済でスケール不変。</p>
+<p>返すベクトルは [λ̂1, λ̂2, λ̂3, J2, J3, m4] (長さ 6)。</p>
+<p>第 1 不変量 J1 = Σλ̂ は正規化で常に 1 になり識別に寄与しないため省く。</p>
+<p>J2,J3 は固有値の対称式(冗長)だが、Sadjadi–Hall の代数不変量シグネチャとの</p>
+<p>互換のため併記する。</p>
+<p>識別性の内訳(honest):</p>
+<p style="margin:2px 0 2px 12px">• λ̂1,λ̂2,λ̂3(と対称式 J2,J3)は <b>2 次モーメント(共分散固有値)のみ</b> に</p>
+<p>由来し、独立自由度は主軸アスペクト比の 2 つだけ。これだけでは 2 次が</p>
+<p>等方な形状(solid cube と solid sphere は共に λ̂≈(1/3,1/3,1/3))を区別</p>
+<p>できない。</p>
+<p style="margin:2px 0 2px 12px">• m4 は <b>半径分布の 4 次モーメント</b> で、2 次では潰れる高次の形状差を</p>
+<p>捉える。一様 solid sphere は m4=75/63≈1.190、一様 solid cube は</p>
+<p>m4=19/15≈1.267 と異なるため、両者を分離できる。</p>
+<p>球なら概ね (1/3, 1/3, 1/3, 1/3, 1/27, 1.190)、</p>
+<p>細長い棒なら (≈1, ≈0, ≈0, ≈0, ≈0, 大) に近づく。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (6,)</p>
+<p>並進・回転・スケール不変な特徴ベクトル。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 2。形状不正・非有限・全点一致(中心化後の広がりが 0)は `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。縮退判定はスケール相対(</code><code style="color:#22d3bf">rms &lt;= 1e-12 × max|centered|</code>`)なので、座標が極小なだけの点群は弾かない。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64 (6,)。`<code style="color:#22d3bf">λ̂</code><code style="color:#22d3bf"> は 0 でクリップ済み、</code><code style="color:#22d3bf">Σλ̂ = 1</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 不変なのは並進・回転・一様スケールのみ。鏡映(反転)にも不変(固有値と半径分布は反転で変わらない)ので鏡像体は区別できない。非一様スケールや点密度の偏り(サンプリングの粗密)は値を変える。</p>
+<p style="margin:2px 0 2px 12px">• 点密度に敏感な用途では前段で `<code style="color:#22d3bf">voxel_grid_downsample</code><code style="color:#22d3bf"> で密度を均す。比較は </code><code style="color:#22d3bf">shape_distance</code>`(台帳 op、同じ長さの記述子ベクトル同士の距離)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import medial; medial.skeleton_endpoints3d(vol)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;skeleton_endpoints3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert die Endpunkte eines 3-D-Skeletts (höchstens ein Skelettvoxel in der 26er-Nachbarschaft) als Voxelmaske.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>孤立 voxel(次数 0)も端点に数える。2D の <code style="color:#22d3bf">r2_endpoints_skeleton</code> の 3D 版。</p>
+<p>手順: `<code style="color:#22d3bf">_ensure_skeleton</code>` で入力を bool 化し、6 近傍がすべて前景の interior voxel</p>
+<p>があれば `<code style="color:#22d3bf">skeletonize_vol</code>` で細線化してから、3x3x3 全 1 カーネル(中心 0、</p>
+<p>`<code style="color:#22d3bf">mode=&quot;constant&quot;</code>` で外側 0)の畳み込みで各 voxel の 26 近傍にある骨格 voxel 数</p>
+<p>(次数)を数え、`<code style="color:#22d3bf">skel &amp; (次数 &lt;= 1)</code>` を返す。volume の縁にある骨格 voxel は、</p>
+<p>外側が 0 扱いなので枝がそこで途切れていれば端点になる。</p>
+<p>返り値: 入力と同形の bool 配列(端点 = True)。前景が無ければ全 False。</p>
+<p>`<code style="color:#22d3bf">np.argwhere</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> 座標に、</code><code style="color:#22d3bf">.sum()</code>` で端点数になる。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code>`): 3-D でない・空配列・float で NaN/Inf を含む入力。</p>
+<p>細線化が必要で scikit-image が無い環境では `<code style="color:#22d3bf">ImportError</code>`。</p>
+<p>注意:</p>
+<p style="margin:2px 0 2px 12px">• 端点は各枝の末端で厳密だが、ヒゲ(細線化が作る短い枝)の先端も端点に数える。</p>
+<p>構造の端だけ欲しければ先に `<code style="color:#22d3bf">skeleton_prune3d</code>` で刈る。</p>
+<p style="margin:2px 0 2px 12px">• 閉ループだけの骨格(輪)は端点 0 個。</p>
+<p style="margin:2px 0 2px 12px">• 数だけ欲しいなら `<code style="color:#22d3bf">topology_signature</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">endpoints</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">isolated</code>` を</p>
+<p>分けて返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -17,9 +17,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "closing_rectangle1", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `closing_rectangle1`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![closing_rectangle1: 入力 → 出力](../../_fig/closing_rectangle1.png)
+![closing_rectangle1: input → output](../../_fig/closing_rectangle1.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![closing_rectangle1: knob a sweep](../../_fig/closing_rectangle1.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![closing_rectangle1: stages](../../_fig/closing_rectangle1.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![closing_rectangle1: other inputs](../../_fig/closing_rectangle1.inputs.jpg)
 
 ## 使い方
 

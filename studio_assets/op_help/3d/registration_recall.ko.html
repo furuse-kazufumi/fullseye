@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: &#x27;float&#x27;, *, corr_thresh: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;registration_recall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3DMatch 류의 per-pair 정합 성패 = 1.0(성공) / 0.0(실패).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>GT 変換 `<code style="color:#22d3bf">gt_transform</code>` で source を target フレームへ写し、target 側の最近傍</p>
+<p>(距離 &lt; `<code style="color:#22d3bf">corr_thresh</code>`、既定は thresh)を GT 対応(=重なり)として張る。その</p>
+<p>対応を <b>推定変換</b> `<code style="color:#22d3bf">est_transform</code><code style="color:#22d3bf"> で写した RMSE が </code><code style="color:#22d3bf">thresh</code>` を切れば成功。</p>
+<p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">target</code>` は index 対応でなくてよい(対応は GT から張るため target の</p>
+<p>並びに依存しない)。GT 重なりが 1 点も無ければ成否は未定義 → `<code style="color:#22d3bf">nan</code>`(honest)。</p>
+<p>データセット全体の Registration Recall はこの per-pair 指標(重なり有ペア上)の平均。</p>
+<p>形状不正は ValueError(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

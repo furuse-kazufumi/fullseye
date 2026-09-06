@@ -3,10 +3,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;it_bit_mask&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">bit_mask</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/it_bit_mask.png" alt="it_bit_mask: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/it_bit_mask.png" alt="it_bit_mask: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.a.jpg">it_bit_mask: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.inputs.jpg">it_bit_mask: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>bit_mask: logical AND of the 8-bit image with the constant bit mask round(a*255). `<code style="color:#22d3bf">b</code>` is ignored.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>入力を [0,1] の 2 次元 float64 に揃えたあと `<code style="color:#22d3bf">round(x*255)</code>` で 0〜255 の</p>
+<p>8 ビット整数に量子化し、定数マスク `<code style="color:#22d3bf">m = round(a*255) &amp; 0xFF</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` は</p>
+<p>[0,1] に clip)と画素ごとにビット AND を取って、`<code style="color:#22d3bf">/255</code>` で [0,1] に戻す。</p>
+<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> でマスク 255(量子化以外は恒等)、</code><code style="color:#22d3bf">a=0</code>` でマスク 0(全零)、</p>
+<p>`<code style="color:#22d3bf">a=0.5</code>` で 128(最上位ビットだけ残す=0.5 以上か否かの 2 値化と同じ)。</p>
+<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64、値は `<code style="color:#22d3bf">k/255</code><code style="color:#22d3bf"> の離散値。</code><code style="color:#22d3bf">a</code>` はビット</p>
+<p>パターンとして効くので単調ではない: 0.5(=128)は最上位ビット、0.25 付近</p>
+<p>(=64)は上から 2 番目のビットだけを残し、それぞれ独立した縞状の階調平面</p>
+<p>(bit plane)が出る。「上位 n ビットを残す」なら `<code style="color:#22d3bf">a = (256 - 2**(8-n))/255</code>`</p>
+<p>に選ぶ(n=2 で 192/255 ≈ 0.753)。カラー(3 次元)入力はチャネル平均で 2 次元に</p>
+<p>落とされる。例外時は fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
+<p>ビットシフトは `<code style="color:#22d3bf">it_bit_lshift</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">it_bit_rshift</code>`、階調数の削減は</p>
+<p>`<code style="color:#22d3bf">it_convert_image_type</code>`。透かし・ステガノグラフィの解析や量子化ノイズの</p>
+<p>可視化(下位ビット平面の抽出)に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

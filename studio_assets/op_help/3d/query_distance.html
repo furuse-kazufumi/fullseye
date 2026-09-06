@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode=&#x27;trilinear&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;query_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>任意 world 座標 (M,3) での ESDF 値 (M,) を返す(`<code style="color:#22d3bf">mode</code>`=&#x27;trilinear&#x27; 補間 or &#x27;nearest&#x27;)。</p>
+<p>`<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">res</code>` は ESDF を作った格子と同じもの。world→連続ボクセル座標は</p>
+<p>`<code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code>`(voxel i の中心が c=i)。三線形補間はボクセル中心 8 近傍を</p>
+<p>重み付け(格子外はエッジにクランプ=最近端の値で外挿)。planner がノード/経路上の任意点で</p>
+<p>離隔を問い合わせる用途。返り値は ESDF と同じ world 単位。</p>
+<p>Raises ValueError for res&lt;=0, degenerate bounds, non-(M,3) query, or unknown mode.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

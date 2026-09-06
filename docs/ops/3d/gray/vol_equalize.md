@@ -19,6 +19,42 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Histogram equalisation of a volume (HALCON ``equ_histo_image``).
 
+Builds an *nbins*-bin histogram over the volume's ``[min, max]`` range,
+takes its cumulative distribution as a monotone LUT, and maps every voxel
+through it — the output lives in ``(0, 1]`` and its histogram is
+(approximately) flat. With *mask* (thresholded at ``> 0.5``, the volops
+convention) the **histogram is computed from the masked voxels only while
+the LUT is applied to the whole volume** — exactly the HALCON
+``reduce_domain`` + ``equ_histo_image`` domain behaviour, and the right
+tool when a dominant background (e.g. air around a CT subject) would
+otherwise swallow the whole dynamic range.
+
+A **constant volume is returned unchanged** — normalising a flat volume
+would amplify floating-point dust into full-scale garbage (fail-honest,
+not fail-loud; see the module docstring).
+
+Parameters
+----------
+vol : array_like, shape (D, H, W)
+    Input volume (coerced to float64; NaN/Inf rejected).
+nbins : int
+    Histogram bins, ``>= 2``. More bins = finer LUT (the mapping is
+    piecewise-constant per bin — an approximation, documented above).
+mask : array_like, shape (D, H, W), optional
+    Histogram domain. Must match *vol*'s shape and select at least one
+    voxel (an empty domain has no histogram — fail-closed).
+
+Returns
+-------
+ndarray, shape (D, H, W), float64
+    The equalised volume in ``[0, 1]`` (constant input: the input itself).
+
+Raises
+------
+ValueError
+    Non-3-D / non-finite input, ``nbins < 2``, a mask shape mismatch, or
+    an empty mask.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -5,6 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CIE L\*a\*b\* → sRGB `<code style="color:#22d3bf">[0, 1]</code>`。<b>色域外は切り詰められる</b>ので</p>
 <p>`<code style="color:#22d3bf">rgb_to_lab</code>` との往復は色域内でしか一致しない(テストで固定)。</p>
+<p>手順: `<code style="color:#22d3bf">fy = (L + 16) / 116</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fx = fy + a / 500</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fz = fy - b / 200</code>` を</p>
+<p>`<code style="color:#22d3bf">xyz_to_lab</code><code style="color:#22d3bf"> の逆関数で XYZ に戻し(</code><code style="color:#22d3bf">white</code>` を掛ける)、XYZ→線形 RGB の</p>
+<p>逆行列を掛けてから sRGB の伝達関数を掛ける。伝達関数の手前で線形 RGB を</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>` に <b>無言でクリップ</b>する ―― ここが「色域外は切り詰め」の実体で、</p>
+<p>例外は出ない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lab</code>`: 最後の軸が 3 の任意の形。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">white</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">rgb_to_lab</code>` で使ったものと同じ白色点を渡す(検証はしない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64、値域 `<code style="color:#22d3bf">[0, 1]</code>` のガンマ付き sRGB。</p>
+<p>8 bit にするなら呼び出し側で 255 倍して丸める。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(`<code style="color:#22d3bf">MetricContractError</code>`): 最後の軸が 3 でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

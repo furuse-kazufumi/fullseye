@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.estimate_point_normals(points, k=16, viewpoint=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;estimate_point_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Point set (N,3) → unit normals (the smallest eigenvector of the local k-neighbourhood covariance = PCA).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>FPFH/SHOT/点-面 ICP が要る法線を raw 点群から生成。向きの規約は 2 面:</p>
+<p><b>viewpoint=None(既定)= 重心から外向き</b>(閉じた物体の全周点群向け)/</p>
+<p><b>viewpoint 指定 = 視点(センサ)向き</b>(Hoppe 1992 / PCL 規約。単一視点スキャンの</p>
+<p>可視面はセンサ側を向くのが物理的に正しい。<code style="color:#22d3bf">pointcloud.estimate_normals</code> と同規約)。</p>
+<p>旧版(〜2026-08-30)は viewpoint 指定でも「視点から遠ざける」符号で、単一視点</p>
+<p>スキャンという本来用途で全点が裏返っていた。返り値 normals (N,3)。</p>
+<p>手順: `<code style="color:#22d3bf">cKDTree</code><code style="color:#22d3bf"> で各点の </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf"> 近傍(自分自身を含む。</code><code style="color:#22d3bf">k &gt; N</code>` なら N に切り詰め)を取り、</p>
+<p>その共分散の最小固有ベクトルを法線にする。返り値 `<code style="color:#22d3bf">(N,3)</code>` float64 の単位ベクトル。</p>
+<p>`<code style="color:#22d3bf">viewpoint</code>` は 3 次元の座標(センサ位置)。点数が 3 未満・近傍が同一直線上だと法線は</p>
+<p>不定のまま返る(検証は無い)。`<code style="color:#22d3bf">k</code>` が小さいとノイズに弱く、大きいと角が丸まる。</p>
+<p>後段: `<code style="color:#22d3bf">icp_point2plane</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">dst_normals</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">render_shaded</code><code style="color:#22d3bf"> 用の法線、</code><code style="color:#22d3bf">normals_to_egi</code>`。</p>
+<p>`<code style="color:#22d3bf">pointcloud.estimate_normals</code><code style="color:#22d3bf">(台帳 </code><code style="color:#22d3bf">estimate_normals</code>`)と同じ規約。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

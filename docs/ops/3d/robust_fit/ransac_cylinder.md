@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 外れ値に頑健な RANSAC 円筒適合(点法線が必要)。
 
+円筒表面の法線は軸に直交するので、2 点の法線の外積で軸方向を推定 → 軸に直交な平面へ
+全点を投影 → その平面内で円をフィット → |投影距離 - r| < ``thresh`` の inlier を
+最大化。最終 inlier ではより頑健に軸を再推定(法線群の SVD の最小特異方向 = 軸)し、
+投影円を最小二乗リフィットする。法線が無ければ呼び出し側で estimate してから渡す。
+
+Args:
+    points: (N,3) 点群。
+    normals: (N,3) 各点の(単位)法線。
+    thresh: inlier とみなす |投影距離-r| のしきい値。
+    iters: RANSAC 反復数。
+    seed: 乱数シード(決定論)。
+
+Returns:
+    (params, inlier_mask, info)。params = {"axis": (3,) 単位軸, "point": (3,) 軸上の一点,
+    "radius": float}。info には inlier 数 ``n_inliers`` / 比 ``inlier_ratio`` / ``iters``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

@@ -3,10 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_al_am&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">estimate_al_am</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_estimate_al_am.png" alt="hx_estimate_al_am: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_estimate_al_am.png" alt="hx_estimate_al_am: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate albedo (reflectance) and ambient light: albedo ~ the luminance range; this op returns the albedo.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>画像の最大値と最小値の差 `<code style="color:#22d3bf">max(v) - min(v)</code><code style="color:#22d3bf"> を [0,1] に clip した </code><code style="color:#22d3bf">np.float64</code>` を返す。</p>
+<p>「反射率(albedo)が高いほど陰影の明暗差が大きい」という関係を、輝度のダイナミックレンジで代用した推定。</p>
+<p>ambient(環境光)は計算せず返さない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>最大・最小の 2 画素だけで決まるため、飽和画素や暗点が 1 つでもあれば 1 に張り付く。雑音に弱いので前段で</p>
+<p>`<code style="color:#22d3bf">hx_mean_shape</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">median_rect</code>` を掛ける。min-max 正規化済みの画像では常に 1 になり意味を持たない。</p>
+<p>slant の推定 `<code style="color:#22d3bf">hx_estimate_sl_al_lr</code>` は反射率 1 を仮定しており、この値で割って補正する用途が想定される。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点-平面距離(符号なし)。
 
+``|(p − plane_pt)·n̂|`` を float で返す(``n`` は内部で単位化)。符号は捨てるので、面のどちら側か
+が要るなら ``(p − plane_pt) @ n̂`` を直接計算する。``p``, ``plane_pt``, ``n`` は数値の 2 または
+3 ベクトル、次元の混在は ValueError。2-D では ``n`` を直線の法線として点-直線距離になる。
+零ベクトルの ``n`` は 0 を返す。単位は入力座標の単位。
+用途: ``fit_plane_3d`` / ``hough_plane_3d`` の面からの高さ、``surface_form_error`` の点群版
+(残差を 1 点ずつ)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

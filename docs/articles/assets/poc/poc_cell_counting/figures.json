@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_scene_dense.png",
+  "name": "scene_dense",
+  "caption": "ゼロ点はコロニーが 1 色の大きな塊になる(過統合)。分水嶺はそこを割るが、代わりに過分割を出す。",
+  "shape": [
+   381,
+   1202,
+   3
+  ]
+ },
+ {
+  "file": "02_h_tradeoff.png",
+  "name": "h_tradeoff",
+  "caption": "誤り合計の谷と |偏り| の谷は同じ場所に来ない。どちらを最適と呼ぶかで答えが変わる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_count_cancellation.png",
+  "name": "count_cancellation",
+  "caption": "偏りが 0 を横切る間隔 6 で分割誤りは 13.3 件残る。個数だけ見ていると最良の設定として通る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_noise_vs_shading.png",
+  "name": "noise_vs_shading",
+  "caption": "真値の前景率 11.6 %。雑音は偽物を、背景ムラは前景率と過統合を動かす —— 直し方が逆。",
+  "shape": [
+   224,
+   744,
+   3
+  ],
+  "csv": "04_noise_vs_shading.csv",
+  "tsv": "04_noise_vs_shading.tsv"
+ }
+]

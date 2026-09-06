@@ -93,3 +93,33 @@ evolution**. Purely additive — `PROBLEMS` and `_synth` are untouched.
 
 **Caveat:** a genuinely disjoint locked/holdout split needs enough distinct pairs;
 a tiny pool cannot yield a clean holdout (train/holdout/locked will overlap).
+
+## 4. Entry bridges are in `REGISTRY` but not in `_candidates` (2026-09-07)
+
+`backends_bridge` registers 12 ops that **make** the new sorts from an image
+(`img_to_points`, `img_to_signal`, `img_to_video`, `img_to_volume`,
+`img_to_lightfield`, `img_to_rgb`, `img_to_cimage`, `img_to_counts`,
+`img_to_beatcube`, `img_to_matrix`, `img_to_keypoints`, `img_to_monogenic`).
+Every one of them has `in_sort == image`, which is exactly the case §1 forbids:
+one more candidate for `image` would shift the index every existing genome maps to.
+
+The rule from §1 is therefore refined, not broken:
+
+- `ops._NOT_A_CANDIDATE = {"bridge"}` — `_candidates(sort)` skips ops whose
+  `category` is in that set. Candidate lists, and so `decode`, stay byte-identical
+  (`tests/test_wave0.py::test_slots_are_registration_order` now states the filter
+  explicitly and asserts no bridge op ever appears in any candidate list).
+- The bridges are still in `REGISTRY`, `RT`, `_BY_NAME` and `SLOTS` (appended after
+  `backends_typed`, so no earlier index moves). That is what the **name path**
+  needs: `fullseye.apply(img, "img_to_points")`, Studio programs, `tools/gen_op_figures.py`,
+  the op index and every note/help page see them like any other op.
+- `pipeline_stages` / `decode_by_names` can carry a bridge op by name if a human
+  wrote it into a pipeline; a genome never selects one.
+
+Why this was worth a rule change: 161 registered ops take a sort that no registered
+op could produce from an image, so the figure/sample machinery (§ docs/KNOWN_ISSUES.md §40)
+could never show what they do. With the bridges, 892 / 897 ops have a real
+input → output figure and a runnable Studio program (4 are domain mismatches,
+1 returns an empty answer on the synthetic input — both recorded with reasons,
+`tests/test_op_figures.py`).
+

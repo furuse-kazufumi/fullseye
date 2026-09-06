@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_gaussian_psf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>归一化(和为 1)的 3-D 高斯 PSF 核。*sigma* 为标量或逐轴。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> in voxels; the kernel spans </code><code style="color:#22d3bf">+-truncate*sigma</code>` per axis</p>
+<p>(odd size, centre at the middle voxel). The convenient companion to</p>
+<p>:func:<code style="color:#22d3bf">vol_richardson_lucy</code> when the instrument PSF is well approximated</p>
+<p>as Gaussian. Kernels above `<code style="color:#22d3bf">PSF_MAX_ELEMENTS</code>` (~256^3) raise</p>
+<p>`<code style="color:#22d3bf">ValueError</code>` — a PSF that large is an input mistake, not an instrument.</p>
+<p>形: 各軸の半径 `<code style="color:#22d3bf">r = ceil(truncate * sigma)</code><code style="color:#22d3bf">、辺長 </code><code style="color:#22d3bf">2r + 1</code>`(奇数)の</p>
+<p>`<code style="color:#22d3bf">(2rz+1, 2ry+1, 2rx+1)</code><code style="color:#22d3bf"> float64 配列。軸順は </code><code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">sigma</code>` を</p>
+<p>`<code style="color:#22d3bf">(sz, sy, sx)</code>` で渡すとその順に対応する(異方 PSF)。3 本の 1-D Gaussian</p>
+<p>`<code style="color:#22d3bf">exp(-x^2 / (2 sigma^2))</code>` の外積を全体和で割るので、合計はちょうど 1、中心</p>
+<p>voxel が最大値。単位は voxel(mm の PSF 幅は spacing で割ってから渡す)。</p>
+<p>引数と検証(`<code style="color:#22d3bf">ValueError</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sigma</code>`: 正の有限スカラ、または長さ 3 の正の有限値。2 乗が 0 に</p>
+<p>アンダーフローするほど小さい値(~1.5e-154 未満)は 0/0 になるので拒否。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">truncate</code>`: 正の有限値(既定 4.0 = 片側 4σ で打ち切り)。</p>
+<p style="margin:2px 0 2px 12px">• 要素数 `<code style="color:#22d3bf">prod(2r+1)</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">PSF_MAX_ELEMENTS</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">2**24</code>`)を超えると拒否</p>
+<p>(σ≈300 で 64 GB を確保しかけた実測が動機)。</p>
+<p>使いどころ: `<code style="color:#22d3bf">vol_richardson_lucy(vol, psf)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">psf</code>`。RL 側でも合計 1 に</p>
+<p>再正規化するので、ここで作ったカーネルをそのまま渡してよい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

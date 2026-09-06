@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import meshres; meshres.pc_density(points, k=8)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;pc_density&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Local spacing per point and the cloud&#x27;s non-uniformity (`<code style="color:#22d3bf">table</code>`).</p>
+<p>`<code style="color:#22d3bf">spacing</code><code style="color:#22d3bf"> (N,) = distance to the *k*-th nearest neighbour; </code><code style="color:#22d3bf">mean_nn</code>`</p>
+<p>(N,) = mean distance to the k neighbours; `<code style="color:#22d3bf">stats</code>` percentiles of both;</p>
+<p>`<code style="color:#22d3bf">nonuniformity</code><code style="color:#22d3bf"> = p95/p5 of </code><code style="color:#22d3bf">spacing</code>` (1 = uniform; a regular grid</p>
+<p>gives exactly 1 and spacing = pitch·√k-shell); `<code style="color:#22d3bf">surface_density</code>` (N,) =</p>
+<p>k / (π·spacing²) assuming a surface-like cloud.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

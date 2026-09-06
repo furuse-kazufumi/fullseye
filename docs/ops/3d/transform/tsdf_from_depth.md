@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。
 
+各 voxel を画像へ投影し、視線上の観測深度との符号付き切詰め距離 [-1,1] を格納
+(表面手前 +・奥 −・表面 0)。KinectFusion 系の基本表現。
+
+格子: ``bounds=(lo, hi)`` は **(X, Y, Z) のカメラ座標**(``depth_to_points`` と同じ)で、
+None なら深度を逆投影した点群の min−2 / max+2(深度の単位)。出力は ``(size,size,size)``
+float32 で **軸順は (Z, Y, X)**、voxel 中心 ``= lo + (i + 0.5)/size·(hi − lo)``。
+bounds の並び (x,y,z) と配列の軸 (z,y,x) が逆なことに注意。
+
+値: 各 voxel 中心を ``u = X·fx/Z + cx``、``v = Y·fy/Z + cy`` で画素へ丸め、その画素の観測深度
+``d`` から ``clip((d − Z)/trunc, −1, 1)``(``trunc`` は深度と同じ単位)。画像外に落ちる
+voxel・観測深度が 0 以下・Z が 0 以下の voxel は **+1(未観測=自由)** にする(端画素へ
+clip して観測済みに見せかけない)。深度 0 が無効値の規約。
+
+- 深度が全て 0 で bounds=None だと点群が空になり numpy の min で例外。
+- 1 視点の TSDF なので視線の裏側は −1 で埋まる(閉じた物体にはならない)。
+後段: ``voxel_to_mesh(tsdf, iso=0.0)`` で面を取る。占有にするなら ``sdf_to_occupancy``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

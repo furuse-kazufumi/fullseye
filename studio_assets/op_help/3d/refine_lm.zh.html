@@ -5,6 +5,29 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Levenberg-Marquardt 做平移(+各向同性缩放/亮度增益)的亚体素精化。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、</p>
+<p>forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
+<p>E(p) = Σ_x [ I(W(x;p)) - g·T(x) ]²</p>
+<p>を最小化する。整数 NCC / Fourier-Mellin / Hough の粗推定を連続座標へ収束させる後段。</p>
+<p>ワープ        W(x;p) = t + s·(x - c_T)   (c_T=テンプレ中心, t=並進, s=等方スケール)</p>
+<p>ヤコビアン    ∂I(W)/∂p は grid_sample を自動微分に通して厳密取得(三線形補間の解析勾配。</p>
+<p>固定点が真の SSD 最小に一致 → sobel 定数倍のバイアスを避け高精度)。</p>
+<p>LM           Δp = -(H + λ·diag(H))⁻¹ b、成功(コスト減)で λ×0.4 減衰・失敗で λ×5 増加。</p>
+<p>引数:</p>
+<p>scene      : シーン volume (D,H,W)。</p>
+<p>template   : テンプレ volume (Td,Th,Tw)。scene より小。</p>
+<p>init_pos   : 粗いテンプレ中心位置 [z,y,x] (voxel。NCC locate の [d,h,w] 等)。</p>
+<p>device     : &quot;cpu&quot; / &quot;cuda&quot;。device 非依存。</p>
+<p>iters      : 最大反復数(通常 4-6 で収束)。</p>
+<p>scale      : True で等方スケール s を同時最適化(4パラメータ)。False なら並進のみ。</p>
+<p>gain       : True で輝度ゲイン g(残差 I(W)-g·T)を追加最適化。明るさ差/ノイズに頑健。</p>
+<p>lam0, tol  : 初期減衰係数 / 収束閾値(ステップノルム・相対コスト減)。</p>
+<p>返り値(dict):</p>
+<p>pos   : 精緻化テンプレ中心 [z,y,x] (連続座標)</p>
+<p>scale : 等方スケール(scale=False なら 1.0)</p>
+<p>gain  : 輝度ゲイン(gain=False なら 1.0)</p>
+<p>cost  : 最終 SSD、rms: 1voxel あたり残差 RMS、iters: 実行反復数</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

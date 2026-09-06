@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。
 
+normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュード(開面の凹/凸符号は不定)。
+向き付き法線を渡すと大域向きに整合し正しい符号(凹=負, 凸=正)。
+
+手順(各点、Python ループ):
+- ``cKDTree`` で自身を含む k+1 近傍を取る(k は N-1 に切り詰め)。近傍が 5 点未満なら ``k1 = k2 = 0`` を返す(5 係数の二次曲面が組めないため)。
+- 近傍座標をクエリ点原点に平行移動し、``local.T @ local`` の最小固有ベクトルを法線とする(向きは ``normals`` があればそれに整合、無ければ近傍重心から離れる側)。
+- 接線基底 (t1, t2) に射影し ``w = d·u + e·v + a·u² + b·uv + c·v²`` を最小二乗フィット → 第一/第二基本形式から shape operator の固有値を取り、凸を正にして ``k1 >= k2`` に並べる。
+
+- 単位は 1/長さ(点群の単位に依存)。半径 R の球なら ``k1 = k2 = 1/R``、円柱は ``(1/R, 0)``、平面は 0。
+- ``k`` は近傍点数(既定 25)。大きいほど平滑で曲率は低め、小さいほどノイズを拾う。
+- ``normals`` は (N,3) で有限かつ非ゼロ行が必須(``ValueError``)。決定論的。
+- 後段: ``mean_curvature`` / ``gaussian_curvature`` / ``shape_index``(いずれも内部で同じ計算を繰り返す)。shape index と曲がりの対が要るなら 2 本を ``(N,2)`` に並べて ``curvature_to_shape_index``。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

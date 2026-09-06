@@ -19,6 +19,28 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Gray code ビット画像列 → 整数フリンジ次数マップ(絶対次数)。
 
+bit_images: 長さ K のシーケンス(各 2D 画像、明=1 / 暗=0)。**MSB first**(bit_images[0] が
+            最上位ビット)。thresh で二値化する。
+thresh:     二値化しきい値(画素値 >= thresh を 1)。
+
+処理: 各ビット面を二値化 → MSB first で Gray 値を組み立て → Gray→binary 変換
+      (binary = gray ^ (gray>>1) ^ ... ^ (gray>>(K-1)))で絶対次数(整数)を返す。
+返り値: dtype int64 の 2D 次数マップ(値域 0..2**K-1)。
+
+検証(``ValueError``): ``None`` / ``(K, H, W)`` に変換できない / ``K < 1`` /
+``K > 62``(int64 に収まらない) / NaN・Inf を含む。``thresh`` は検査しない
+(画素値と同じスケールで与える。``[0, 1]`` 画像なら 0.5 が既定)。
+
+二値化は固定閾値 ``>= thresh`` のみ — 反転パターン(ネガ画像)との比較や
+局所閾値は行わない。影・低反射で暗く出た画素は 0 ビットとして復号され、
+エラーにならず誤った次数になるので、``modulation`` などで作った信頼マスクを
+呼び手が別に持つこと。
+
+次数の意味: Gray 符号は隣接コードが 1 ビットしか違わないので、境界画素の
+二値化誤りは次数を ±1 しかずらさない(binary 符号なら大きく飛ぶ)。返る整数を
+投影機コラム番号や縞の絶対次数として、``absolute_phase`` の ``coarse``
+(``2π * 次数`` を位相に換算)や ``triangulate_column`` の ``column`` に使う。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

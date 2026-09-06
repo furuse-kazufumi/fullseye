@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。
 
+方向 ``d = n̂1 × n̂2`` を単位化し、``n̂1·p = n̂1·p1``、``n̂2·p = n̂2·p2``、``d·p = 0`` の 3×3 を
+解いて通過点 ``p`` を求める(``d·p = 0`` なので **原点に最も近い点**)。返り値 ``(p(3,), d(3,))``。
+``|n1 × n2| < 1e-9``(平行・同一面)なら **None**。
+引数は数値 3 ベクトル(``np.cross`` と 3×3 の solve を使うので **3-D 専用**。2-D を渡すと
+配列構築で失敗する)。次元の混在は ValueError。
+用途: ``fit_plane_3d`` した 2 面の稜線、箱のエッジの抽出 → ``distance_point_line`` でエッジ
+からの距離。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

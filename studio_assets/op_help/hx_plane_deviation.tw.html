@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_plane_deviation&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">plane_deviation</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_plane_deviation.png" alt="hx_plane_deviation: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_plane_deviation.png" alt="hx_plane_deviation: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_plane_deviation.inputs.jpg">hx_plane_deviation: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰階相對一次平面擬合的偏差 |v − plane|(平面度/缺陷檢測)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>座標を [-1,1] に正規化した基底 `<code style="color:#22d3bf">[1, x, y]</code><code style="color:#22d3bf"> で gray 値を最小二乗の平面に当て(</code><code style="color:#22d3bf">hx_fit_surface1</code>` と同じ</p>
+<p>回帰)、残差の絶対値 `<code style="color:#22d3bf">|v - plane|</code>` を [0,1] に clip して返す。正規化はしない(純粋な平面なら丸め誤差程度の</p>
+<p>ほぼ 0 画像になる)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>平面からの偏差が大きい画素=照明の傾きでは説明できない構造(傷・打痕・異物)。出力は符号を捨てているので</p>
+<p>「平面より明るい/暗い」は区別しない。区別が要るなら `<code style="color:#22d3bf">hx_fit_surface1</code>` の結果と元画像を別途引く。</p>
+<p>1 次面なので緩やかに曲がった背景は残差に出る。その場合は `<code style="color:#22d3bf">hx_fit_surface2</code>` 側で背景を推定する。</p>
+<p>後段は `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> で欠陥 region 化、あるいは </code><code style="color:#22d3bf">hx_char_threshold</code>` の前処理として背景差し引き代わりに使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

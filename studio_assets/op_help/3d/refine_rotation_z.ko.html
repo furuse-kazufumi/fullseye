@@ -5,6 +5,29 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>z 축 회전각의 <b>Gauss-Newton 정련</b>(SSD 상의 Lucas-Kanade, 1 매개변수).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Fourier-Mellin 等の粗い z 軸回転推定(±3° 級)を、SSD を回転角 θ だけで最小化して高精度化</p>
+<p>する下流精緻化器。scene ≈ rotate_z(template, θ_true) を仮定し、warp_z(template, θ) が scene に</p>
+<p>一致する θ を求める。返り値の角は match_logpolar_z と同符号(scene = template を θ 回転)。</p>
+<p>定式化: 残差 r(θ)=T_warp(θ)−S を θ で線形化。回転の steepest-descent image(解析ヤコビアン)</p>
+<p>は、中心化格子 (X=W−cx, Y=H−cy) と warp 済みテンプレの空間勾配 (gx,gy) から</p>
+<p>J = ∂T_warp/∂θ = (−gx·Y + gy·X)(rad あたり)。1 パラメータ GN 更新は Δθ = −(JᵀWr)/(JᵀWJ)。</p>
+<p>回転で 0 詰めされた隅は valid マスク W で除外。step は max_step_deg で制限し発散を防ぐ。</p>
+<p>実測(48³ 非対称 volume, CPU, 別補間器 scipy order=3 で scene 生成=inverse crime 回避):</p>
+<p>clean 誤差 ~0.0006°、5% ノイズ 0.009°、10% ノイズ 0.017°(いずれも &lt;0.3°)。捕捉レンジは</p>
+<p>最低 ±10°、収束 3-5 反復・~12ms。粗推定 ±3° をそのまま使う場合(誤差 3°)比で ~5000 倍改善。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>scene : array_like (D,H,W)     基準 volume(この姿勢へ template を合わせる)。</p>
+<p>template : array_like (D,H,W)  回転させて scene に合わせるテンプレ volume。同一格子・同一中心。</p>
+<p>init_angle_deg : float         粗推定角(deg)。Fourier-Mellin 等の初期値。</p>
+<p>device : str                   &quot;cpu&quot; / &quot;cuda&quot;。device 非依存。</p>
+<p>iters : int                    最大反復数。</p>
+<p>tol : float                    |Δθ|(deg)がこれ未満で収束打ち切り。</p>
+<p>max_step_deg : float           1 反復あたりの角ステップ上限(deg、発散防止)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(angle_deg, n_iters) : (float, int)  精緻化角(deg)と実行反復数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

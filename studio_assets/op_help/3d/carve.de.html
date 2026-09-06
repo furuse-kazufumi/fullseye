@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import visualhull; visualhull.carve(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;carve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Diskretisiert `<code style="color:#22d3bf">bounds</code>` in res^3 Voxel und behält jene, die in jede Silhouette projizieren (Space Carving).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>各 voxel 中心を全カメラ `<code style="color:#22d3bf">m</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">X_cam = R_m X + t_m</code>` で射影し、depth&gt;0・画像内・</p>
+<p>`<code style="color:#22d3bf">silhouettes[m]</code>` が前景、を <b>すべて</b> 満たす voxel だけ keep する(視錐の共通部分)。</p>
+<p>シルエット/カメラは長さ M のリスト。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>silhouettes : list of (H, W) bool array  各カメラの前景マスク(M 個)。</p>
+<p>Ks, Rs, ts : list  各カメラの内部パラメータ・回転・並進(各 M 個)。</p>
+<p>bounds : ((xmin,xmax),(ymin,ymax),(zmin,zmax))  彫刻する直方体領域。</p>
+<p>res : int  各軸の voxel 分割数(voxel 総数 = res^3)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(res, res, res) bool ndarray  占有 voxel。indexing=&#x27;ij&#x27; で軸は (x, y, z)。</p>
+<p>`<code style="color:#22d3bf">vox[i,j,k]</code><code style="color:#22d3bf"> の中心は </code><code style="color:#22d3bf">(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

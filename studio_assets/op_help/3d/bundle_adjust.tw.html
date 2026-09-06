@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import bundle3d; bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;bundle_adjust&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以重投影誤差最小同時最佳化相機姿態與 3D 點。→ dict{cameras, points, rmse, cost}。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>cameras (nc,6)=[rvec(3)|t(3)] の初期値、points (m,3) の初期値、観測 obs_cam/obs_pt/obs_uv。</p>
+<p>fix_first=True で先頭カメラを [I|0] 相当(初期値のまま)に固定し gauge を除く。</p>
+<p><b>scale gauge</b>: 再投影誤差は「カメラ 0 の中心を基準にシーン全体を相似拡大」しても</p>
+<p>厳密に変わらないので、それだけでは解の scale が定まらず LM が任意の倍率へ滑る</p>
+<p>(実測 ×0.7〜×213、rmse≈0 のまま)。本関数は **構造のカメラ 0 中心からの RMS 距離</p>
+<p>(`<code style="color:#22d3bf">scale_anchor</code><code style="color:#22d3bf">)を初期値に保つ残差** </code><code style="color:#22d3bf">w·(rms/rms0 − 1)</code>` を 1 本足して固定する。</p>
+<p>再投影コストは scale 方向に勾配ゼロなので、この残差は最適解で厳密に 0 になり、</p>
+<p>返る scale は初期構造のそれと一致する(基線長 `<code style="color:#22d3bf">‖t₁‖</code>` で固定するより、点数で</p>
+<p>平均される分だけ初期摂動の影響が小さい)。初期構造が退化(全点がカメラ 0 中心に</p>
+<p>一致)していれば拘束は掛けない。返り dict の `<code style="color:#22d3bf">scale_anchor</code>` に採用した RMS 距離を載せる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

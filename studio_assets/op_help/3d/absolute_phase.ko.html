@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fringe; fringe.absolute_phase(wrapped, coarse) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;absolute_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>감긴 위상을, 거칠지만 절대적인 위상 추정으로 차수를 확정해 절대 위상으로 만듭니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Φ = wrapped + 2π·round((coarse − wrapped) / 2π)</p>
+<p>wrapped: wrapped_phase の出力 (-π,π] の 2D 配列(高精度・絶対次数なし)。</p>
+<p>coarse:  同形の 2D 配列。<b>絶対だが粗い</b>位相推定 [rad]。Gray code で復号した投影機</p>
+<p>コラム番号を位相に直したもの(2π·freq·col/width)が典型。NaN 可(出力も NaN)。</p>
+<p>返り値: 絶対位相 [rad] (2D float64)。無効画素(どちらかが NaN)は NaN。</p>
+<p>なぜ必要か(空間アンラップとの違い): <code style="color:#22d3bf">unwrap_phase_2d</code> は隣接画素を辿って 2π 跳びを</p>
+<p>繋ぐので、(a) 大域オフセット +2πm が残り、(b) オクルージョンで切れた島の間では次数が</p>
+<p>伝播できない。本 op は画素ごとに独立に次数を決めるため、<b>島に分かれた場面でも絶対</b>で、</p>
+<p>伝播も要らない。その代わり coarse の誤差が半周期(π)未満であることが要件。</p>
+<p>要件(fail-closed): |coarse − Φ_true| &lt; π。これを破ると round が隣の次数を選び、</p>
+<p>その画素だけ 2π ぶん(= 縞 1 本ぶんの奥行き)静かにずれる。Gray code の粗さ(±0.5 コラム)</p>
+<p>を位相に直した量が半周期を超えないよう、縞本数 freq を選ぶこと</p>
+<p>(例: 投影機幅 512 px・freq 24 → 1 周期 21.3 px、Gray の ±0.5 px は余裕で内側)。</p>
+<p>Raises: 形状不一致・2D でない・wrapped が (-π,π] を大きく外れる場合に ValueError。</p>
+<p>来歴(公開文献): Gray code と位相シフトを併用して絶対位相を得る合成法 —</p>
+<p>Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(総説)。</p>
+<p>Gray code そのものの投影は Inokuchi et al., *ICPR* 1984。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

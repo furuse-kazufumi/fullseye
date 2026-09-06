@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。
 
+``render3d.render_mesh`` で depth / silhouette / **三角形 id と透視補正重心座標** を得て
+(ラスタライズと隠面消去はそれに任せ、再発明しない)、物体空間 :func:`vertex_occlusion` の
+頂点 AO を**その画素を覆っている三角形の 3 頂点から重心補間**して焼き込む。物体の外
+(silhouette=0)は ``background``(既定 1.0=完全露出)。*pose* / *intrinsics* 省略時は
+``render3d.auto_view`` が枠取りする。fail-closed 検証は下位関数に従う。
+
+``k`` は **2026-09-02 以降使われない**(後方互換のために残してある)。それまでは
+カメラ空間で最近傍 ``k`` 頂点を引いて逆距離重みで混ぜていたが、頂点が粗い面では
+多角形のセルになり、記事の hero 画像の地面にまだら模様として出ていた。重心補間は
+三角形の中で厳密な線形補間なので頂点密度に依らず連続で、隣接する別の物体の頂点を
+拾ってしまうこともない。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

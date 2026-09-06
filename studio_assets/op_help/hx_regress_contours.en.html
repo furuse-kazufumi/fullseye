@@ -3,10 +3,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_regress_contours&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">regress_contours_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_regress_contours.png" alt="hx_regress_contours: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_regress_contours.png" alt="hx_regress_contours: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_regress_contours.chain.jpg">hx_regress_contours: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fit a regression line to each contour and return the mean residual (the deviation from the line; a feature). Small = line-like.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>点数 3 以上の各 contour について、点の重心を通る全最小二乗直線(座標共分散の最小固有ベクトルを法線とする)を</p>
+<p>当て、点から直線までの距離の RMS を求める。全 contour の RMS を平均し `<code style="color:#22d3bf">max(H, W)</code>` で割って 1 で頭打ちした</p>
+<p>`<code style="color:#22d3bf">np.float64</code>` を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 有効な contour が無ければ 0.0(「完全な直線」と区別できない)。</p>
+<p>小さいほど直線的。直線そのものの傾きや位置は返さない(当てはめ結果が要るなら `<code style="color:#22d3bf">fit_line_contours</code>`)。</p>
+<p>折れ線としての角の数を見たいなら `<code style="color:#22d3bf">hx_split_contours</code>` で分割してから線分数を数える。点数 2 以下の contour は</p>
+<p>評価から外れる。1 本の contour だけを対象にした同種の指標は `<code style="color:#22d3bf">xg_regress_contours</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

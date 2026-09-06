@@ -19,6 +19,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Richardson–Lucy deconvolution of a non-negative volume by a known PSF.
 
+*psf* is a 3-D non-negative kernel (any odd/even size smaller than the
+volume; it is normalised to sum 1 internally so overall intensity is
+preserved). *iterations* trades sharpness against noise amplification —
+5-30 is the practical range (see the module notes on semi-convergence).
+
+Negative voxels are refused (RL is a Poisson model) — except *rounding
+dust*: values no lower than ``-NEGATIVE_DUST_TOL * max|vol|`` (1e-9
+relative; an FFT-blurred observation typically carries -1e-16) are clipped
+to 0 instead of rejected, so the module's own forward model feeds back in.
+
+Returns the deblurred ``(D, H, W)`` float64 volume (non-negative).
+Measured on the test scene (binary sphere pair blurred by a sigma-2
+Gaussian): the RMSE to ground truth falls to 0.81x the blurred
+observation's at 10 iterations and 0.68x at 50 — genuine but *gradual*,
+because the residual is dominated by the spheres' hard edges, which RL
+recovers slowly. What converges fast is the *forward consistency*:
+re-blurring the estimate reproduces the observation almost exactly (that
+is the quantity the RL update actually optimises).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

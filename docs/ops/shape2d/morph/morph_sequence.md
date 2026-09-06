@@ -21,6 +21,24 @@ alpha を 0→1 に n 段で振ったモーフ列(A から B へ滑らかに変�
 
 返り値: 長さ n の list。先頭が A、末尾が B に一致する。
 
+``alpha = linspace(0, 1, n)`` の各値で ``morph(imgA, imgB, ptsA, ptsB, alpha,
+method, lam, with_corners)`` を呼ぶだけ。各フレームは (1) 中間点
+``(1-α) ptsA + α ptsB`` を作り、(2) A と B をそれぞれそこへワープし、
+(3) ``α`` でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、
+コストは ``n`` に比例する(``n=7`` で 14 回)。
+
+- ``imgA``, ``imgB``: ``(H, W[, C])``、同じ形、``[0, 1]``。NaN/Inf は無言で
+  0 / 1 に置換される。
+- ``ptsA``, ``ptsB``: ``(K, 2)`` の **(x, y)**、同数・同順の対応点。
+- ``n``: 2 以上(1 以下は ``ValueError``)。``int`` に切られる。
+- ``method``: ``"affine"``(Delaunay 区分アフィン、速い)/ ``"tps"``(薄板スプライン、
+  滑らか)。それ以外は ``ValueError``。``lam`` は TPS の平滑化係数(0 で厳密補間)。
+- ``with_corners``: True で ``add_frame_corners`` を両点群に足し、枠の外側の
+  穴を防ぐ。
+- 返り値: float64 配列 ``n`` 枚の list(``images`` 型)。``[0, 1]`` にクリップ済み。
+
+1 枚だけ欲しい(例: ``α = 0.5`` の中間顔)なら ``morph`` を直接。
+
 ## 詳しい使い方ガイド
 
 - [shape_description_2d ファミリ ガイド](../guides/shape_description_2d.md)

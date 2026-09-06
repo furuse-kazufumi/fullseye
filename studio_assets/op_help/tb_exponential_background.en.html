@@ -2,15 +2,43 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_exponential_background — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_exponential_background&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*No figure: this op takes <code style="color:#22d3bf">video</code> as input. A Studio program starting from an image cannot reach that type — see the runnable examples below for how it is used.*</p>
+<p><img src="fig/tb_exponential_background.png" alt="tb_exponential_background: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_background.a.jpg">tb_exponential_background: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_background.chain.jpg">tb_exponential_background: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_exponential_background.inputs.jpg">tb_exponential_background: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Motion</b> (GIF: frames / views / slices in turn. The still figure is the complete one; the GIF is supplementary):</p>
+<p><img src="fig/tb_exponential_background.gif" alt="tb_exponential_background: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recursive background `<code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code><code style="color:#22d3bf"> per frame → </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
-<p>Typed bridge of the videostream op `<code style="color:#22d3bf">exponential_background</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> (default 0.05); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>最初のフレームで `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> を初期化し、以後 </code><code style="color:#22d3bf">bg += α (frame - bg)</code>` を画素ごとに</p>
+<p>繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム `<code style="color:#22d3bf">t</code>` の</p>
+<p>出力はその時点の `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> の写しで、</code><code style="color:#22d3bf">t = 0</code>` は入力の先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code>` 配列か 2-D フレームの list。整数 dtype は最大値で</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に正規化、float は </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> にクリップ。NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。時定数はおよそ </code><code style="color:#22d3bf">1/α</code>` フレーム(0.05 → 約 20 枚)。</p>
+<p>0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。</p>
+<p>**物体が止まると `<code style="color:#22d3bf">1/α</code>` 枚ほどで背景に吸収される**(選択的更新は無い)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float64、</code><code style="color:#22d3bf">[0, 1]</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(形・dtype・</code><code style="color:#22d3bf">alpha</code>` の範囲)。</p>
+<p>前景マスクまで欲しいなら同じモデルの `<code style="color:#22d3bf">exponential_foreground</code>`。画素ごとの</p>
+<p>雑音に閾値を合わせたいなら `<code style="color:#22d3bf">running_gaussian_background</code>`。</p>
+<p>2-D 進化レジストリへ橋渡しした videostream の op `<code style="color:#22d3bf">exponential_background</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">(既定 0.05)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_video 0.50 0.50
+tb_exponential_background 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_video%200.50%200.50%0Atb_exponential_background%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_video%200.50%200.50%0Atb_exponential_background%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p>The examples below call the underlying ledger op <code style="color:#22d3bf">exponential_background</code>. This bridge op is the same implementation adapted to the <code style="color:#22d3bf">fn(v, a, b)</code> convention, so the behaviour carries over unchanged (only the call form differs).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">video</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_temporal_bandpass">tb_temporal_bandpass</a> · <a style="color:#22d3bf" href="op:tb_temporal_band_power">tb_temporal_band_power</a> · <a style="color:#22d3bf" href="op:tb_temporal_median_window">tb_temporal_median_window</a> · <a style="color:#22d3bf" href="op:tb_moving_average_window">tb_moving_average_window</a> · <a style="color:#22d3bf" href="op:tb_background_subtraction_window">tb_background_subtraction_window</a> · <a style="color:#22d3bf" href="op:tb_frame_difference_causal">tb_frame_difference_causal</a> · <a style="color:#22d3bf" href="op:tb_exponential_foreground">tb_exponential_foreground</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">typed</code>)</h3>

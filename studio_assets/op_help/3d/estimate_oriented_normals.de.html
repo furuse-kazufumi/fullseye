@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import normals_orient; normals_orient.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;estimate_oriented_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>PCA-Normalenschätzung kombiniert mit Hoppes globaler Orientierung. → orientierte Einheitsnormalen (N,3).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>:func:<code style="color:#22d3bf">estimate_normals</code>(向き未定)→ :func:<code style="color:#22d3bf">orient_normals</code>(MST 伝播)を通す。</p>
+<p>閉曲面なら全点外向き、平面なら全点同一半球にそろう。得た法線を</p>
+<p>`<code style="color:#22d3bf">curvature3d.shape_index</code>` に渡すと凹/凸符号が正しく出る。</p>
+<p>Args:</p>
+<p>points: (N,3) の点群。</p>
+<p>k: PCA 近傍数と kNN グラフ近傍数(共通)。</p>
+<p>seed_dir: 大域基準向き (3,)。None なら重心から外向き。</p>
+<p>Returns:</p>
+<p>(N,3) の大域一貫・向き付き単位法線。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

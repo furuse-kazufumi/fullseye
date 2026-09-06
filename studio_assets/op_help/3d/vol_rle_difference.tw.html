@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import volregion; volregion.vol_rle_difference(a, b)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_difference&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 run 上的差集 `<code style="color:#22d3bf">a \ b</code>`(不解碼)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> に含まれ </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> に含まれない voxel の region。掃引エンジン(</code><code style="color:#22d3bf">_rle_boolean</code>`)</p>
+<p>で区間ごとの被覆状態が `<code style="color:#22d3bf">ia &amp; ~ib</code>` の区間を run として残す。非可換</p>
+<p>(`<code style="color:#22d3bf">vol_rle_difference(a, b) != vol_rle_difference(b, a)</code>`)。計算量は run 数に</p>
+<p>対して O(n log n)。</p>
+<p>返り値: 同じ `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf"> の新しい </code><code style="color:#22d3bf">VolRLE</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">b</code>` に完全に含まれていれば</p>
+<p>run 0 本の region。`<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; ~decode(b)</code>` が</p>
+<p>voxel 単位で成り立つ。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): どちらかが </code><code style="color:#22d3bf">VolRLE</code>` でない・run 配列の整合性検査に失敗 /</p>
+<p>`<code style="color:#22d3bf">a.shape != b.shape</code>`。</p>
+<p>使いどころ: 全体マスクから ROI 外や既知の成分(`<code style="color:#22d3bf">vol_rle_components</code>` の 1 つ)を</p>
+<p>取り除く、`<code style="color:#22d3bf">vol_rle_encode(mask)</code>` と erode 結果の差で殻を作る、といった</p>
+<p>「引き算」を密配列を作らずに行う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

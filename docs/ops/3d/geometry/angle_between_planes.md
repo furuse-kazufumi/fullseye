@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 2 平面の二面角(法線 n1,n2、度)。
 
+法線同士の角 ``arccos(|n̂1·n̂2|)`` を度で返す(float)。絶対値を取るので **[0, 90]** の鋭角側
+(法線の向きに依らない。鈍角側が要るなら ``180 −``)。0 = 平行、90 = 直交。``n1``, ``n2`` は
+数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトルは 90 が返る。
+用途: ``fit_plane_3d`` / ``hough_plane_3d`` で取った 2 面の平行度・直角度、``intersect_planes``
+の前の平行判定。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D greyscale dilation (the local max over a structuring element of radius r). Expands the bright regions.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>se=&quot;cube&quot;(既定、torch 経路で GPU 可)/ &quot;ball&quot;(等方 SE、scipy 経路)。</p>
+<p>SE は一辺 `<code style="color:#22d3bf">2r+1</code><code style="color:#22d3bf"> の立方体(cube)か </code><code style="color:#22d3bf">z²+y²+x² &lt;= r²</code><code style="color:#22d3bf"> の球(ball)。</code><code style="color:#22d3bf">r=0</code>` は恒等。</p>
+<p>境界の外は −∞ 扱い(画像内の値だけで max を取る。torch の `<code style="color:#22d3bf">max_pool3d</code>` の implicit</p>
+<p>padding と scipy の `<code style="color:#22d3bf">cval=-inf</code><code style="color:#22d3bf"> で同じ結果)。cube は torch があれば </code><code style="color:#22d3bf">max_pool3d</code>`</p>
+<p>(`<code style="color:#22d3bf">device</code><code style="color:#22d3bf"> 有効)、ball または torch 不在なら </code><code style="color:#22d3bf">scipy.ndimage.grey_dilation</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">device</code>` は</p>
+<p>無視)。入力は float32 に変換され、返り値 `<code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf"> float32 numpy。</code><code style="color:#22d3bf">se</code>` がその 2 つ以外なら</p>
+<p>ValueError。2 値 volume(0/1)ならそのまま 2 値 dilation になる。`<code style="color:#22d3bf">se=&quot;ball&quot;</code>` は r が</p>
+<p>大きいと footprint 走査で遅い。</p>
+<p>後段: `<code style="color:#22d3bf">morph_erode3d</code><code style="color:#22d3bf"> と組で </code><code style="color:#22d3bf">morph_open3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">morph_close3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">morph_gradient3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

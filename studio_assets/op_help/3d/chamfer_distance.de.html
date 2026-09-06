@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import metrics3d; metrics3d.chamfer_distance(a, b, squared=False)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;chamfer_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die symmetrische Chamfer-Distanz = 0,5*(mean_a min_b + mean_b min_a). → Skalar. Kleiner heißt bessere Übereinstimmung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Raises ValueError: どちらかが空 or (N,3) でない場合(空の平均 = 無言 NaN)。</p>
+<p>計算: `<code style="color:#22d3bf">scipy.spatial.cKDTree</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> の各点から </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> への最近傍距離 </code><code style="color:#22d3bf">d_ab</code>`</p>
+<p>(`<code style="color:#22d3bf">(Na,)</code><code style="color:#22d3bf">)と </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> への </code><code style="color:#22d3bf">d_ba</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">0.5 * (mean(d_ab) + mean(d_ba))</code>`。</p>
+<p>`<code style="color:#22d3bf">squared=True</code>` なら各距離を 2 乗してから平均する(単位が距離^2 になる。</p>
+<p>勾配ベースの最適化で使う形)。既定は生の距離(単位 = 座標の単位)。</p>
+<p>入力: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(M, 3)</code>` の点群(点数は違ってよい、対応は</p>
+<p>不要)。float に変換する。座標系・スケールは両者で揃えておくこと(登録前の</p>
+<p>2 雲を比べると単に姿勢の差を測ることになる)。</p>
+<p>返り値: Python `<code style="color:#22d3bf">float</code><code style="color:#22d3bf">。同一点群なら 0。値域は </code><code style="color:#22d3bf">[0, inf)</code>` で正規化はしない</p>
+<p>(雲の大きさに比例するので、比較するときは bbox 対角などで割る)。</p>
+<p>注意: 平均なので外れ値の影響は Hausdorff より小さいが、点密度の偏りには敏感</p>
+<p>(密な側の平均が支配的)。密度を揃えるには `<code style="color:#22d3bf">pc_poisson_disk</code>` /</p>
+<p>`<code style="color:#22d3bf">voxel_grid_downsample</code><code style="color:#22d3bf"> を先に掛ける。閾値ベースの評価は </code><code style="color:#22d3bf">fscore</code>`、最悪値は</p>
+<p>`<code style="color:#22d3bf">hausdorff_distance</code><code style="color:#22d3bf">、対応既知なら </code><code style="color:#22d3bf">rmse_correspondence</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>

@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;jitter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점에 등방 가우스 잡음 `<code style="color:#22d3bf">N(0, sigma)</code>` 을 더합니다(센서 위치 잡음 모사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> はワールド単位の標準偏差(ユーザ指定パラメータ)。</code><code style="color:#22d3bf">clip</code>` を与えると</p>
+<p>各成分の変位を `<code style="color:#22d3bf">[-clip, clip]</code>` に切り詰める(外れ変位の抑制)。大 N ではノイズの</p>
+<p>平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 `<code style="color:#22d3bf">(N,3)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sigma &lt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">sigma == 0</code>` または空入力は入力のコピーを返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">clip</code><code style="color:#22d3bf"> は与えるなら </code><code style="color:#22d3bf">&gt; 0</code><code style="color:#22d3bf">(それ以外は </code><code style="color:#22d3bf">ValueError</code>`)。切り詰めは成分ごとなので</p>
+<p>変位ベクトルの長さは最大 `<code style="color:#22d3bf">√3·clip</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で決定論的(</code><code style="color:#22d3bf">np.random.default_rng(seed)</code>`)。同 seed・同形状なら同じノイズ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は `<code style="color:#22d3bf">(N,3)</code>` の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は</p>
+<p>`<code style="color:#22d3bf">ValueError</code>`)。返り値は float64。</p>
+<p style="margin:2px 0 2px 12px">• 位置合わせ(`<code style="color:#22d3bf">register_fpfh</code><code style="color:#22d3bf"> 等)のノイズ耐性を測るとき、</code><code style="color:#22d3bf">sigma</code>` を点間隔</p>
+<p>(`<code style="color:#22d3bf">voxel_grid_downsample</code>` の格子幅など)に対する比で決めると条件を比較しやすい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

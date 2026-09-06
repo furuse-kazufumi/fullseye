@@ -21,6 +21,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。
 
+カーネル: 2 階 [1,−2,1] (利得 1)、1 階 [−0.5,0,0.5] (利得 1)、残りの軸は [1,2,1]/4 の平滑
+(利得 1)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の
+平滑」。**単位は 1/voxel² の真の値**(``sobel3d`` の 32 倍利得とは違う)。端は replicate。
+返り値は **list の torch tensor 6 本**、各 ``(D,H,W)`` float32、``device`` 上、順は
+(zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば ``.cpu().numpy()``。入力は
+numpy 相当(float32 に変換)。
+用途: ``curvature_maps`` の主曲率(``sobel3d`` と組で使う)、blob/管状構造の検出。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

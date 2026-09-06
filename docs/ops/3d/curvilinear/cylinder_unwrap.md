@@ -21,6 +21,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。
 
+θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。
+
+Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。
+
+引数: ``vol`` は ``(D,H,W)``、``center=(cy, cx)`` は各 z スライス内の **(行, 列)**(既定は
+スライス中心)。``r_in``〜``r_out``(voxel、既定 ``min(H,W)/2 − 1``)を ``nr`` 等分、角度を
+``ntheta`` 等分。出力 ``(D, ntheta, nr)`` float32: 軸 0 は z(高さ、入力と同じ)、行 k の角度
+``θ = k·2π/ntheta``、列 j の半径。サンプル点は ``(z, cy + r sinθ, cx + r cosθ)``、volume 外は 0。
+D, H, W が 1 の軸は正規化で 0 除算になる(``polar_unwrap`` と違い検査は無い)。
+後段: ``[:, :, j]`` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・
+``ncc_locate`` が使える。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

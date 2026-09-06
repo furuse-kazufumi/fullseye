@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Boundary shell of a binary volume (the 3-D ``region_boundary``).
 
+``side='inner'`` keeps the foreground voxels that touch background:
+``mask & ~erode(mask)``. ``side='outer'`` keeps the background voxels that
+touch foreground: ``dilate(mask) & ~mask``. *connectivity* (6/18/26) decides
+which neighbours count as "touching" — 6 uses face neighbours only (the
+thinnest shell); 26 also counts a diagonal background contact, so shells at
+convex corners come out thicker. The volume border counts as background
+for the *inner* shell (a mask reaching the border has a boundary there —
+the same convention as the surface-area estimate in
+:func:`vol_region_props`); the *outer* shell can only occupy voxels that
+exist, so a mask filling the whole volume has an empty outer boundary.
+
+A solid region's interior drops out entirely: the shell of a solid ball of
+radius ``r`` voxels is roughly a ``3/r`` fraction of it (surface over
+volume), so the saving grows with size — which is exactly why boundary
+representations (and :func:`vol_boundary_points`) are the memory-frugal way
+to hand a shape to the point-cloud / metrology operators.
+
+Returns a ``(D, H, W)`` float64 ``{0, 1}`` volume (chainable into
+:func:`vol_label`, :func:`vol_boundary_points`, ...).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

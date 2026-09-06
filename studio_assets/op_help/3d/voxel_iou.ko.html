@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import metrics3d; metrics3d.voxel_iou(vol_a, vol_b, iso=0.5)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;voxel_iou&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>voxel 점유의 IoU(intersection over union). → [0,1]. 체적 일치도.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>両 volume は同一 shape が必須。異形状は numpy broadcasting で見かけ上一致し</p>
+<p>誤った IoU(例: (10,1,10) vs (1,10,10) → 1.0)を静かに返すので、fail-closed で</p>
+<p>shape 不一致は ValueError で拒否する。</p>
+<p>計算: 両 volume を `<code style="color:#22d3bf">&gt;= iso</code><code style="color:#22d3bf"> で二値化し(</code><code style="color:#22d3bf">iso</code>` 既定 0.5、等号を含む)、</p>
+<p>`<code style="color:#22d3bf">|A∩B| / |A∪B|</code><code style="color:#22d3bf">。和集合が空(両方とも占有ゼロ)なら </code><code style="color:#22d3bf">1.0</code>` を返す</p>
+<p>(「どちらも空」は一致とみなす。エラーにしない)。</p>
+<p>引数: `<code style="color:#22d3bf">vol_a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">vol_b</code>` は同じ shape の配列(3-D に限らず、次元数は検査しない。</p>
+<p>bool / 0-1 / 密度 grid のいずれでもよい)。`<code style="color:#22d3bf">iso</code>` は占有とみなす閾値で、</p>
+<p>`<code style="color:#22d3bf">fuse_to_voxel</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">points_to_voxel</code>` の密度 grid(値は点数)に使うなら</p>
+<p>`<code style="color:#22d3bf">iso=1</code><code style="color:#22d3bf"> 以上を明示する。NaN は </code><code style="color:#22d3bf">&gt;=</code>` で False(非占有)になる。</p>
+<p>返り値: Python `<code style="color:#22d3bf">float</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">[0, 1]</code>`。1 = 完全一致、0 = 重なりなし。</p>
+<p>注意: 同じ格子(`<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">size</code>`)に載っていないと比較にならない —</p>
+<p>`<code style="color:#22d3bf">fuse_to_voxel</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> には同じ </code><code style="color:#22d3bf">bounds</code>` を渡す。薄い殻同士は</p>
+<p>1 voxel ずれるだけで IoU が大きく落ちるので、表面の評価には</p>
+<p>`<code style="color:#22d3bf">chamfer_distance</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fscore</code>` の方が向く。体積が小さい対象は Dice</p>
+<p>(`<code style="color:#22d3bf">voxel_dice</code>`、同モジュールの関数)の方が慣習として使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>

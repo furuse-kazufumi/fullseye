@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.angle_line_plane(d, n)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;angle_line_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>直線(方向 d)と平面(法線 n)のなす角(度)。</p>
+<p>`<code style="color:#22d3bf">90 − arccos(|d̂·n̂|)</code>` を度で返す(float)。値は <b>[0, 90]</b>、0 = 直線が平面に平行、90 = 垂直。</p>
+<p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code>` は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトル</p>
+<p>は 0 が返る。</p>
+<p>用途: 穴軸と基準面の直角度、`<code style="color:#22d3bf">intersect_line_plane</code>` の前の平行判定(0 に近いと交点が遠くへ</p>
+<p>飛ぶ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

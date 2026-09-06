@@ -4,6 +4,35 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。</p>
+<p>初期推定なしに、大回転・部分重なりの 2 点群を対応付けて剛体変換</p>
+<p>(回転 R + 並進 t)を返す。密マッチ(NCC/Hough/PCA)と異なり、ISS</p>
+<p>キーポイントごとに局所参照フレーム(LRF)を張り、球状分割セルの</p>
+<p>法線角度ヒストグラム(SHOT)で記述 → Lowe 比率テスト + 相互最近傍で</p>
+<p>マッチ → RANSAC で外れ値に頑健に姿勢推定する。得た姿勢は ICP の</p>
+<p>粗初期値(coarse init)供給にも使える。</p>
+<p>LRF の符号曖昧性: 距離重み付き共分散の固有ベクトルは符号が定まらない</p>
+<p>ため、各軸(x=最大, z=最小 固有値)を近傍ベクトル (p_i-p) の投影多数派</p>
+<p>へ合わせ(Tombari の符号則)、y=z×x で右手系を構成する。点法線も同則で</p>
+<p>近傍質量から離れる向き(局所外向き)に統一するため回転に共変で部分</p>
+<p>重なりにも安定。両点群に同一則を適用することで記述子の repeatability を担保。</p>
+<p>引数:</p>
+<p>src, dst: (N,3)/(M,3) 点群(numpy か torch)。src を dst へ合わせる。</p>
+<p>radius: SHOT 支持半径。None なら各点群自身の bbox 対角(小さい方)の 0.15 倍</p>
+<p>(結合 bbox は並進で対角が水増しされスケールが狂うため使わない)。</p>
+<p>normal_k: 法線推定の knn 数。</p>
+<p>ratio: Lowe 比率テスト閾値(小さいほど厳格)。</p>
+<p>ransac_iters: RANSAC 反復数。</p>
+<p>inlier_thr: RANSAC インライア距離。None なら bbox 対角の 0.03 倍。</p>
+<p>refine_icp: True なら得た姿勢を初期値に Trimmed ICP(icp_point2point_3d)で精緻化。</p>
+<p>max_kp: キーポイント上限。</p>
+<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/ICP をこの上で解く。</p>
+<p>seed: RANSAC 乱数種。</p>
+<p>返り値:</p>
+<p>R: (3,3) numpy。dst ≈ src @ R.T + t を満たす回転(icp と同規約)。</p>
+<p>t: (3,) numpy。並進。</p>
+<p>info: dict。&quot;n_kp_src&quot;,&quot;n_kp_dst&quot;,&quot;n_matches&quot;,&quot;n_inliers&quot;,&quot;inlier_ratio&quot;,</p>
+<p>&quot;icp_rmse&quot;(refine_icp 時),&quot;ok&quot;(True=推定成功; インライア&lt;4 は</p>
+<p>信頼不可として False + 単位変換を返す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

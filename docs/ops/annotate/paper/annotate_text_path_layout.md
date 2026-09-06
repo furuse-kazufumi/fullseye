@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: text
 out: table
-examples: []
+examples: [annotate_paper_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -49,7 +49,7 @@ ValueError
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [annotate_paper_tour](../../../../examples/annotate_paper_tour.py) — `py -3.11 examples/annotate_paper_tour.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

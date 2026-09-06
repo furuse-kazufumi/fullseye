@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;antialias&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按整數倍 `<code style="color:#22d3bf">ss</code>` 縮小高解析度影像(面積平均抗鋸齒)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">hi_res_image</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(H*ss, W*ss)</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">(H*ss, W*ss, C)</code>` の float 画像。各</p>
+<p>`<code style="color:#22d3bf">ss×ss</code><code style="color:#22d3bf"> ブロックを重み付き平均して </code><code style="color:#22d3bf">(H, W[, C])</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">filter</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;box&quot;</code>`   — 等重み平均(正確な面積平均、SSAA の標準)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;gauss&quot;</code>` — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。</p>
+<p>Fail-closed: `<code style="color:#22d3bf">ss</code><code style="color:#22d3bf"> は 1 以上の整数、入力は 2D / 3D、各辺は </code><code style="color:#22d3bf">ss</code>` で割り切れること。</p>
+<p>非有限値があれば `<code style="color:#22d3bf">ValueError</code>`(平均で NaN が伝播しないよう確保前に拒否)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

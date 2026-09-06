@@ -4,6 +4,38 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;segment_rigid_motions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 점군을 운동이 일치하는 강체마다 분할(반복 RANSAC 에 의한 multi-body 분할).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>まず :func:<code style="color:#22d3bf">estimate_flow</code> で観測フロー(各 pts0 点 -&gt; pts1 最近傍)を取り、</p>
+<p>`<code style="color:#22d3bf">target = pts0 + flow</code>` を対応先として固定する。以後、残り点集合に対して:</p>
+<p>1. 空間的に近い `<code style="color:#22d3bf">k_sample</code>` 点(seed + その最近傍)を種に Kabsch で剛体仮説を立て、</p>
+<p>2. フロー整合 `<code style="color:#22d3bf">|| (R·s + t) - target(s) || &lt; thresh</code>` を満たす inlier を数え、</p>
+<p>3. `<code style="color:#22d3bf">n_iter</code>` 試行で <b>有意性ゲートを満たす</b> 最良仮説を選び(inlier 残差中央値が</p>
+<p>`<code style="color:#22d3bf">thresh</code>` の一定割合未満 = 真の剛体らしく残差が 0 近傍に集中。無相関/ノイズの</p>
+<p>偶然適合は許容球を満たし残差 ≈ 0.6*thresh なので弾かれる)、その inlier で Kabsch</p>
+<p>再フィット(refine)、</p>
+<p>4. inlier 数が `<code style="color:#22d3bf">min_inliers</code>` 以上 <b>かつ</b> refine 後も有意性を保つならそれを 1 剛体</p>
+<p>として確定・除去。満たさなければ body を作らず残余は -1 のまま終了(偽の剛体を捏造</p>
+<p>しない)。</p>
+<p>を `<code style="color:#22d3bf">max_bodies</code>` 個または残り点が閾値を下回るまで繰り返す。どの剛体にも属さない残り点は</p>
+<p>`<code style="color:#22d3bf">labels = -1</code>`(outlier / 未対応、詐称しない)。近傍種サンプリングは空間的に連続な物体を</p>
+<p>まとめて掴むための locality prior で、閾値ではなく相対順位だけを使うためスケール不変。</p>
+<p>Args:</p>
+<p>pts0: (N, 3) 時刻 0 の点群。</p>
+<p>pts1: (M, 3) 時刻 1 の点群(N と一致不要)。</p>
+<p>thresh: フロー整合の inlier 距離しきい値。<b>座標スケール相対</b>で与えること</p>
+<p>(絶対 epsilon をモジュール内に持たないため、呼び手が座標系に合わせる)。</p>
+<p>max_bodies: 抽出する剛体数の上限(&gt;= 1)。</p>
+<p>min_inliers: 1 剛体と認める最小 inlier 数。None なら `<code style="color:#22d3bf">max(3, round(0.1*N))</code>`。</p>
+<p>outlier の塊を偽の剛体にしないための下限。</p>
+<p>n_iter: 剛体 1 個あたりの RANSAC 試行回数。</p>
+<p>k_sample: 1 仮説を作る種サンプルの点数(seed + 最近傍、&gt;= 3)。</p>
+<p>seed: RANSAC 乱数シード(再現性)。</p>
+<p>Returns:</p>
+<p>dict: ``{&quot;labels&quot;: (N,) int(各点の剛体 id、0..K-1 / outlier=-1),</p>
+<p>&quot;motions&quot;: [(R, t), ...] (id 順の剛体変換、K 個)}``。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限 / pts1 空 / thresh &lt;= 0 / max_bodies &lt; 1 /</p>
+<p>k_sample &lt; 3。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

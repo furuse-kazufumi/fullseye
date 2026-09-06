@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 What a point-cloud thinning removed, and whether it touched the rare points (``table``).
 
+``removed`` count and fraction; ``removed_spacing`` percentiles of the
+local spacing (:func:`pc_density`) of the removed points versus
+``kept_spacing``; ``isolated_removed`` counts removed points whose
+nearest-neighbour distance exceeded *radius* (default: the 95th percentile
+of nearest-neighbour distances) — a thinning that removed such points has
+discarded exactly the rare, isolated observations a survey exists to find
+(:func:`pc_poisson_disk` with the same radius removes none of them, by
+construction); ``max_gap`` is the largest distance from any removed point
+to the kept cloud (the biggest hole the thinning made).
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

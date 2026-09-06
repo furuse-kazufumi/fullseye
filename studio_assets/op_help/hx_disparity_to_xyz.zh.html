@@ -3,10 +3,28 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_disparity_to_xyz&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">disparity_image_to_xyz</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_disparity_to_xyz.png" alt="hx_disparity_to_xyz: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_disparity_to_xyz.png" alt="hx_disparity_to_xyz: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*输出以类 viridis 伪彩色显示(深紫 = 小，黄 = 大)，便于读取距离、相位、方向、深度这类“量的场”。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.a.jpg">hx_disparity_to_xyz: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.b.jpg">hx_disparity_to_xyz: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.inputs.jpg">hx_disparity_to_xyz: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由视差图计算深度 Z = f*baseline/disparity(焦距/基线由 a,b 可变)。归一化 Z。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">v</code><code style="color:#22d3bf">(0〜1)を視差 </code><code style="color:#22d3bf">disp = v*63 + 0.5</code><code style="color:#22d3bf"> 画素相当に写し、</code><code style="color:#22d3bf">Z = f * baseline / disp</code>` を計算して min-max で</p>
+<p>[0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 焦点距離 </code><code style="color:#22d3bf">f = 200 + 600*a</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 基線長 </code><code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 視差の下限を 0.5 に置いているのでゼロ除算は起きない。</p>
+<p>注意: `<code style="color:#22d3bf">f * baseline</code><code style="color:#22d3bf"> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` を変えても</p>
+<p>出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(`<code style="color:#22d3bf">v = 1</code>`)が 0、</p>
+<p>視差最小(`<code style="color:#22d3bf">v = 0</code>`)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の</p>
+<p>量子化が粗くなるので、`<code style="color:#22d3bf">v</code>` が小さい領域の値は不安定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

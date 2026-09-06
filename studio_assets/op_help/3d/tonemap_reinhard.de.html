@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;tonemap_reinhard&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Komprimiert HDR mit Reinhard-Tonemapping in `<code style="color:#22d3bf">[0, 1]</code>`-LDR. → float64, in der Form der Eingabe.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>露出を掛けた `<code style="color:#22d3bf">x = hdr * exposure</code>` に対し:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">white is None</code><code style="color:#22d3bf"> … 基本形 </code><code style="color:#22d3bf">x / (1 + x)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">[0, ∞)</code>` を<b>狭義単調増加</b>で</p>
+<p>`<code style="color:#22d3bf">[0, 1)</code>` へ写し、決してクリップしない(全域で階調順序を厳密保存)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">white</code><code style="color:#22d3bf"> 指定 … 拡張形 </code><code style="color:#22d3bf">x (1 + x/white²) / (1 + x)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">white</code>` を正確に 1.0 へ</p>
+<p>写し、`<code style="color:#22d3bf">white</code><code style="color:#22d3bf"> 未満に多くのレンジを割く(</code><code style="color:#22d3bf">white</code>` を超える入力は 1 を超えるので</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>` にクリップする)。</p>
+<p>カラー `<code style="color:#22d3bf">(H, W, C)</code><code style="color:#22d3bf"> はチャンネル独立に写像する。素朴クリップ </code><code style="color:#22d3bf">min(x, 1)</code>` と違い、</p>
+<p>値 &gt; 1 のハイライト域でも単調な階調を保つ。</p>
+<p>Args:</p>
+<p>hdr: HDR 画像。`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> グレースケール or </code><code style="color:#22d3bf">(H, W, C)</code>` カラー、放射輝度 &gt;= 0。</p>
+<p>exposure: 写像前に掛ける露出スケール(正)。</p>
+<p>white: 任意の white-point(正)。None なら基本 Reinhard(推奨・全域単調)。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>` の float64 LDR 画像(入力と同形状)。</p>
+<p>Raises:</p>
+<p>ValueError: 空/非有限/負の放射輝度、非正の exposition/white(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

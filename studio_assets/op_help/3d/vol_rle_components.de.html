@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_components(vol_binary, connectivity=26)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_components&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt ein Binärvolumen in `<code style="color:#22d3bf">VolRLE</code>`-Regionen je Komponente.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>*The* use case run-length regions exist for: holding every component of a</p>
+<p>segmentation as its own region at run-proportional cost, instead of one</p>
+<p>dense label volume or N dense masks. Uses the key structural fact that a</p>
+<p>run is x-connected, so a component label is constant along each run — the</p>
+<p>volume is labelled once (dense, same 6/18/26 semantics as</p>
+<p>`<code style="color:#22d3bf">volops.vol_label</code>`) and then each *run* is assigned by its first voxel&#x27;s</p>
+<p>label; no per-component dense mask is ever built.</p>
+<p>Returns a list of `<code style="color:#22d3bf">VolRLE</code>` ordered by label id (1..n). An empty mask</p>
+<p>returns an empty list.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

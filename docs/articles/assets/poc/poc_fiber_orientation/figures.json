@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   477,
+   798,
+   3
+  ]
+ },
+ {
+  "file": "02_wrap.png",
+  "name": "wrap",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_field.png",
+  "name": "field",
+  "caption": "",
+  "shape": [
+   477,
+   1192,
+   3
+  ]
+ },
+ {
+  "file": "04_histogram.png",
+  "name": "histogram",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_density.png",
+  "name": "density",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_scales.png",
+  "name": "scales",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

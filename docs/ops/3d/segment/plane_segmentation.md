@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。
 
+残り点集合に :func:`ransac_fit.ransac_plane` を掛け、その最大 consensus 平面の
+inlier 数が ``min_inliers`` 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。
+複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が
+``min_inliers`` に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。
+
+Args:
+    points: (N,3) 点群。
+    thresh: 点-平面距離の inlier しきい値(距離、要 > 0)。
+    min_inliers: 平面として採用する最小 inlier 数(要 >= 3)。
+    max_planes: 抽出する平面の最大枚数(要 >= 1)。
+    iters: 各 RANSAC 反復数。
+    seed: 乱数シード(決定論。各平面で seed+平面index を使う)。
+
+Returns:
+    labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、
+    どの平面にも属さない残差点は -1。空入力は shape (0,)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

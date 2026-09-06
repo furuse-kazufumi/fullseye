@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_reproj_vs_truth.png",
+  "name": "reproj_vs_truth",
+  "caption": "RMS は 1.00 倍しか動かないのに fx 誤差は 281 倍動く。配置の良し悪しを映すのは sigma_fx のほう。",
+  "shape": [
+   152,
+   649,
+   3
+  ],
+  "csv": "01_reproj_vs_truth.csv",
+  "tsv": "01_reproj_vs_truth.tsv"
+ },
+ {
+  "file": "02_fx_z_coupling.png",
+  "name": "fx_z_coupling",
+  "caption": "2 本は重なる。画像上の大きさは fx·X/Z なので、同じ比で動く限り画素は 1 つも動かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_frame_fill.png",
+  "name": "frame_fill",
+  "caption": "RMS はどの行も 0.067 px(= 0.05·√2)で動かない。歪みは半径の 2 乗以上でしか効かず、中央にその信号は無い。",
+  "shape": [
+   176,
+   446,
+   3
+  ],
+  "csv": "03_frame_fill.csv",
+  "tsv": "03_frame_fill.tsv"
+ },
+ {
+  "file": "04_noise_amplification.png",
+  "name": "noise_amplification",
+  "caption": "どちらも雑音 0 では真値。伸びる係数だけが違い、悪い配置の増幅率は 3 桁。RMS には差が出ない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

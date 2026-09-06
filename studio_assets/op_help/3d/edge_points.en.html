@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import edges3d; edges3d.edge_points(edge_mask) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;edge_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turn an edge mask into an (M,3) coordinate point set (for downstream chamfer / Hough).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>edge_mask : (D,H,W) bool</p>
+<p>Returns</p>
+<p>-------</p>
+<p>pts : (M,3) float64</p>
+<p>エッジ voxel の座標(axis0, axis1, axis2) = (z, y, x)。M = エッジ voxel 数。</p>
+<p>エッジが無ければ shape (0,3) を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

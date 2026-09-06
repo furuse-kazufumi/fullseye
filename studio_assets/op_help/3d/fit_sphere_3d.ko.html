@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.fit_sphere_3d(points)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 → 최소제곱 구(대수 적합). 반환값 (center, radius). 배관/볼 계측용.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">|p|² = 2c·p + (r² − |c|²)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[2p, 1]</code><code style="color:#22d3bf"> の線形最小二乗(</code><code style="color:#22d3bf">lstsq</code>`)で解く代数フィット</p>
+<p>(幾何距離の最小化ではないので、球の一部しか見えていない・ノイズが大きいと半径が偏る)。</p>
+<p>`<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> で 4 点未満は ValueError。</code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">sqrt(max(s + |c|², 0))</code>` で負は 0 に clamp。</p>
+<p>点が同一平面上・共線だと `<code style="color:#22d3bf">lstsq</code>` の最小ノルム解が黙って返る(検証は無い。残差も返さないので</p>
+<p>`<code style="color:#22d3bf">|p − c| − r</code>` で確かめる)。</p>
+<p>幾何距離で追い込むなら本 op の結果を初期値にして非線形最小二乗、外れ値には `<code style="color:#22d3bf">ransac_sphere</code>`。</p>
+<p>voxel からの検出は `<code style="color:#22d3bf">hough_sphere_3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

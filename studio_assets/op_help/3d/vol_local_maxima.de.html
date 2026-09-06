@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volops; volops.vol_local_maxima(vol, min_distance, threshold=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_local_maxima&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>3-D-Detektion lokaler Maxima (Peaks).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>A voxel is a peak if it equals the maximum over a cubic neighbourhood of</p>
+<p>half-width `<code style="color:#22d3bf">min_distance</code><code style="color:#22d3bf"> (side </code><code style="color:#22d3bf">2*min_distance + 1</code>`) <b>and</b> that</p>
+<p>neighbourhood is not flat (its max strictly exceeds its min, so a constant</p>
+<p>region yields no peaks). Pass *threshold* to additionally require</p>
+<p>`<code style="color:#22d3bf">vol &gt;= threshold</code>` (drop weak peaks in noise).</p>
+<p>Returns an `<code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> int array of </code><code style="color:#22d3bf">(z, y, x)</code>` peak coordinates. Uses only</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.maximum_filter</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">minimum_filter</code>` (no skimage).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

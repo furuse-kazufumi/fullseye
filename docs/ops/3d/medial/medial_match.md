@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 2 つの voxel 形状の medial(位相 + 半径分布)による粗照合スコア。返り値 [0,1]。
 
+骨格の位相記述子(端点/分岐/通常/孤立の割合)の距離と、medial 半径分布(内接半径の
+ヒストグラム)の距離を重み付き合成し、類似度 = 1 - 距離 として返す。1 に近いほど似ている。
+平行移動・回転(90 度)に対して概ね不変で、位相ベースの初期照合(粗いふるい)に使う。
+
+Args:
+    vol_a, vol_b: バイナリ voxel(bool / 0-1 の 3D)。
+    w_topology: 位相距離の重み(既定 0.6)。
+    w_radius: 半径分布距離の重み(既定 0.4)。
+    n_bins: 半径ヒストグラムの bin 数。
+
+Returns:
+    float: 類似スコア [0,1] (大きいほど類似)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import descriptors3d; descriptors3d.describe(points, bins: &#x27;int&#x27; = 64, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;describe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A global shape descriptor concatenating D2 + A3 + extent.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>長さ 2*bins + 3 の 1 次元 float64 ベクトル。並びは [d2(bins), a3(bins), extent(3)]。</p>
+<p>各部分ブロックはそれぞれ総和 1 に正規化済みなので、L1 距離での比較時に 3 指標が</p>
+<p>おおよそ等しい重みで効く。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>点群。N &gt;= 3 が必要。</p>
+<p>bins : int</p>
+<p>D2 / A3 それぞれの bin 数。</p>
+<p>seed : int</p>
+<p>D2 / A3 の乱択シード(両者に同一 seed を渡す)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (2*bins + 3,)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

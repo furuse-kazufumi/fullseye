@@ -4,7 +4,7 @@ dim: shapestat
 category: synth
 in: 
 out: shapeset
-examples: []
+examples: [shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -38,7 +38,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [shapestat_landmark_tour](../../../../examples/shapestat_landmark_tour.py) — `py -3.11 examples/shapestat_landmark_tour.py`
 
 ## 型が繋がる次の op(`shapeset` を入力に取れる)
 

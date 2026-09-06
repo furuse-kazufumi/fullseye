@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_sphere(points, thresh, iters=500, seed=0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;ransac_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Outlier-robust RANSAC sphere fitting.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>4 点をサンプル → 線形法(代数フィット)で球中心・半径 → |‖p-c‖ - r| &lt; `<code style="color:#22d3bf">thresh</code>` の</p>
+<p>inlier を最大化 → 最終 inlier で最小二乗リフィット。配管ボール/球面計測用。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>thresh: inlier とみなす |距離-r| のしきい値。</p>
+<p>iters: RANSAC 反復数。</p>
+<p>seed: 乱数シード(決定論)。</p>
+<p>Returns:</p>
+<p>(params, inlier_mask, info)。params = {&quot;center&quot;: (3,), &quot;radius&quot;: float}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

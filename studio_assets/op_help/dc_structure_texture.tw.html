@@ -2,10 +2,34 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dc_structure_texture — 2D <code style="color:#22d3bf">decomposition</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_structure_texture&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/dc_structure_texture.png" alt="dc_structure_texture: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/dc_structure_texture.png" alt="dc_structure_texture: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*輸出以類 viridis 偽彩色顯示(深紫 = 小，黃 = 大)，便於讀取距離、相位、方向、深度這類「量的場」。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_structure_texture.a.jpg">dc_structure_texture: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_structure_texture.inputs.jpg">dc_structure_texture: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影像的結構／卡通部分（TV-L2，Chambolle）。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>画像を「構造(cartoon)+テクスチャ」に分け、構造側を返す。ROF/TV-L2 モデル</p>
+<p>`<code style="color:#22d3bf">min_u ||u - f||^2 / (2*weight) + TV(u)</code>` を Chambolle(2004)の双対射影法で</p>
+<p>固定 120 反復(`<code style="color:#22d3bf">tau=0.125</code><code style="color:#22d3bf">)解く。</code><code style="color:#22d3bf">weight = 0.02 + 0.28*a</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">a</code>` が</p>
+<p>大きいほど滑らか(平坦な区画が広がり、細かい模様が消える)、`<code style="color:#22d3bf">a=0</code>` でも</p>
+<p>ごく弱い平滑が入る。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>入力は 2 次元 float64・[0,1] に揃える(3 次元はチャネル平均、NaN→0、</p>
+<p>±Inf→1/0)。返り値は入力と同形の float64、[0,1] に clip。飽和しない限り</p>
+<p>`<code style="color:#22d3bf">dc_structure_texture + (dc_texture_residual - 0.5) == 入力</code>` が成り立つ。</p>
+<p>1xN / Nx1 など 2 次元の発散が定義できない極小画像は入力をそのまま返す</p>
+<p>(構造=入力、テクスチャ=0.5)。例外時は fail-soft で入力のクリップ版が返り、</p>
+<p>backend_safe の台帳に記録される(strict モードでは再送出)。</p>
+<p>ガウスぼかしと違ってエッジ(段差)は保ち、模様・ノイズだけを落とす。反復数が</p>
+<p>固定なので大きな画像では収束しきらないことがある(残りはテクスチャ側に出る)。</p>
+<p>テクスチャ側だけが欲しければ `<code style="color:#22d3bf">dc_texture_residual</code>`。周期模様の除去や</p>
+<p>欠陥検出の前処理として使い、後段に `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">dyn_threshold</code>`。</p>
+<p>背景が低ランク(縞・グラデーション)なら `<code style="color:#22d3bf">dc_rpca_lowrank</code>` も候補。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

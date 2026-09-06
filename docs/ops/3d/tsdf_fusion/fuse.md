@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 深度列を new_volume + integrate で 1 つの TSDF volume に融合。返り値 (tsdf, weight)。
 
+各フレームの (K,R,t) は world→camera。多視点で同じ表面を観測すると重みが積算され、
+単フレームでは見えない(自己遮蔽の)面が別視点で埋まる。
+
+- ``depths``: (H,W) 深度画像のリスト(カメラ Z 深度。0 以下・非有限の画素は未観測扱い)。
+  サイズはフレームごとに異なってよい。
+- ``Ks`` / ``Rs`` / ``ts``: 各フレームの (3,3) 内部行列・(3,3) 回転・(3,) 並進(``X_cam = R X + t``)。
+- ``bounds``: ``((xmin,xmax),(ymin,ymax),(zmin,zmax))`` の world 領域(各軸 max > min)。
+- ``res``: 一辺の voxel 数(正の int)。volume は ``res×res×res``、軸順は (x,y,z) の ``indexing='ij'``。
+- ``trunc``: 切り詰め距離(world 単位、正の有限値)。voxel サイズの数倍が目安で、小さすぎると
+  表面の両側に観測が乗らず、大きすぎると薄い構造の表裏が混ざる。
+
+返り値: ``tsdf`` (res,res,res) float32(未観測 +1.0、表面手前が正・奥が負、[-1,1])と ``weight``
+(res,res,res) float32(観測回数)。表面点は ``extract_surface_points(tsdf, weight, bounds, res)``
+で取り出す。fail-closed: フレーム 0 枚、リスト長の不一致、退化 bounds、非正の ``res`` /
+``trunc`` は ``ValueError``。統合の詳細(遮蔽領域を更新しない規則)は ``integrate`` を参照。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

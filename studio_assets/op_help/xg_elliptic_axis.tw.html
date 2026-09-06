@@ -3,10 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xg_elliptic_axis&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">elliptic_axis_points_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/xg_elliptic_axis.png" alt="xg_elliptic_axis: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/xg_elliptic_axis.png" alt="xg_elliptic_axis: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_elliptic_axis.chain.jpg">xg_elliptic_axis: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點集的長軸/短軸比 sqrt(λ_max/λ_min)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>全輪郭の点(閉輪郭の重複終点は除く)の (row, col) 共分散行列の固有値から、</p>
+<p>等価楕円の長軸/短軸比 `<code style="color:#22d3bf">sqrt(λ_max/λ_min)</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は `<code style="color:#22d3bf">numpy.float64</code>` で 1 以上。等方な点配置で 1、細長いほど大きい。</p>
+<p>`<code style="color:#22d3bf">λ_min &lt;= 1e-12</code><code style="color:#22d3bf">(全点が一直線)では </code><code style="color:#22d3bf">λ_max &gt; 1e-12</code>` なら 1e6、そうで</p>
+<p>なければ 1.0。それ以外でも上限 1e6 で打ち切る。点が 2 個未満なら 1.0。</p>
+<p>非有限になった場合も 1.0 に落とす。[0,1] に正規化されていない量なので、</p>
+<p>他の特徴量と並べる際はスケールに注意(1e6 の外れ値が出うる)。</p>
+<p>`<code style="color:#22d3bf">xg_eccentricity</code>` は同じ固有値を [0,1] に写した版で、こちらは比を直接</p>
+<p>見たいときに使う。軸ではなく外接矩形の縦横比なら `<code style="color:#22d3bf">xg_height_width_ratio</code>`</p>
+<p>(こちらは向きに依存する)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

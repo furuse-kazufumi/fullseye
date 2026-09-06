@@ -4,6 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import fringe; fringe.wrapped_phase(images) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;wrapped_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 N 步相移條紋影像序列求 wrapped phase (-π, π]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>標準 N-step 公式 φ = atan2(Σ_n I_n sin(2πn/N), Σ_n I_n cos(2πn/N))。N &gt;= 3 の等間隔位相シフトを</p>
+<p>仮定。返り値は各画素の巻き込み位相(-π,π] の 2D 配列。</p>
+<p>images: 長さ N のシーケンス(各 2D [0,1] 画像)または (N, H, W) 配列。</p>
+<p>計算: 位相シフト量を等間隔 `<code style="color:#22d3bf">δ_n = 2πn/N</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">n = 0..N-1</code>`)とし、</p>
+<p>`<code style="color:#22d3bf">s = Σ_n I_n sin δ_n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">c = Σ_n I_n cos δ_n</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">tensordot</code>` で取って</p>
+<p>`<code style="color:#22d3bf">np.arctan2(s, c)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">I_n = a + b cos(φ - δ_n)</code><code style="color:#22d3bf"> のモデル(</code><code style="color:#22d3bf">synthesize_fringes</code>`</p>
+<p>と同じ符号規約)なら `<code style="color:#22d3bf">φ</code><code style="color:#22d3bf"> が符号反転なしで戻る。平均輝度 </code><code style="color:#22d3bf">a</code>` は消えるので</p>
+<p>バイアスの影響を受けない。</p>
+<p>入力と検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">None</code><code style="color:#22d3bf"> / 3-D </code><code style="color:#22d3bf">(N, H, W)</code>` に変換できない /</p>
+<p>`<code style="color:#22d3bf">N &lt; 3</code><code style="color:#22d3bf"> / NaN・Inf を含む。値域 </code><code style="color:#22d3bf">[0, 1]</code>` は前提であって検査はしない(範囲外</p>
+<p>でも計算は通る)。</p>
+<p>返り値: `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64、値域 </code><code style="color:#22d3bf">(-π, π]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">s = c = 0</code>` の画素(縞が無い・</p>
+<p>変調ゼロ)は `<code style="color:#22d3bf">arctan2(0, 0) = 0</code>` を返し、エラーにも NaN にもならない —</p>
+<p>信頼できる画素を選ぶには `<code style="color:#22d3bf">modulation</code>`(同モジュールの関数)で変調度を見る</p>
+<p>(`<code style="color:#22d3bf">decode_fringe</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">min_modulation</code>` がそれを行う)。</p>
+<p>注意: 位相シフト量が等間隔でない・枚数と順序が合っていない画像列を渡すと、</p>
+<p>エラーにならず「もっともらしく間違った」位相が出る。次段は</p>
+<p>`<code style="color:#22d3bf">unwrap_phase_2d</code><code style="color:#22d3bf">(空間展開)か </code><code style="color:#22d3bf">absolute_phase</code>`(粗い絶対位相で次数確定)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

@@ -5,6 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>occupancy/밀도 voxel → 부호 거리장 SDF(안쪽&lt;0·바깥쪽&gt;0). edt_jfa 를 양쪽에.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>SDF はマッチングに優れた表現(滑らか・勾配=法線・0 等値面=表面)。inside/outside の</p>
+<p>ユークリッド距離差で作る。GPU native。voxel↔SDF↔occupancy を相互変換できる。</p>
+<p>定義: `<code style="color:#22d3bf">occ = vol &gt; iso</code><code style="color:#22d3bf"> として </code><code style="color:#22d3bf">d_out = edt_jfa(occ)</code>`(各 voxel から最寄りの占有 voxel</p>
+<p>までの距離、占有内では 0)、`<code style="color:#22d3bf">d_in = edt_jfa(~occ)</code>`(最寄りの非占有 voxel まで)、</p>
+<p>`<code style="color:#22d3bf">sdf = d_out − d_in</code>`。外側は +距離、内側は −距離(voxel 単位、ユークリッド)。</p>
+<p>voxel 中心同士の距離なので <b>0 になる voxel は無く</b>、境界の占有 voxel は −1、隣接する</p>
+<p>非占有 voxel は +1(0 等値面は voxel の間)。</p>
+<p>`<code style="color:#22d3bf">iso</code>` は密度→占有の閾値(既定 0.5。個数密度なら「1 点以上」)。全占有・全空の volume は</p>
+<p>seed の無い側の距離が 1e6 に飽和し、全占有では −1e6、全空では +1e6 になる(例外は出ない)。</p>
+<p>返り値 `<code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>後段: `<code style="color:#22d3bf">sdf_to_occupancy</code><code style="color:#22d3bf"> で戻す、</code><code style="color:#22d3bf">voxel_to_mesh(sdf, iso=0.0)</code><code style="color:#22d3bf"> で面、</code><code style="color:#22d3bf">sobel3d</code>` で法線場。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Local spacing per point and the cloud's non-uniformity (``table``).
 
+``spacing`` (N,) = distance to the *k*-th nearest neighbour; ``mean_nn``
+(N,) = mean distance to the k neighbours; ``stats`` percentiles of both;
+``nonuniformity`` = p95/p5 of ``spacing`` (1 = uniform; a regular grid
+gives exactly 1 and spacing = pitch·√k-shell); ``surface_density`` (N,) =
+k / (π·spacing²) assuming a surface-like cloud.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

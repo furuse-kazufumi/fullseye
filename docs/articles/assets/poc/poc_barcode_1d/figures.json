@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_misread_split.png",
+  "name": "misread_split",
+  "caption": "同じ画像・同じ二値化で、run 数を検査するかどうかだけが違う。",
+  "shape": [
+   488,
+   528,
+   3
+  ],
+  "csv": "01_misread_split.csv",
+  "tsv": "01_misread_split.tsv"
+ },
+ {
+  "file": "02_smudge_nonmonotone.png",
+  "name": "smudge_nonmonotone",
+  "caption": "小さい汚れは行が「読めてしまう」ので誤った票を投じる。大きい汚れは棄権するので多数決が効く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_collapse.png",
+  "name": "collapse",
+  "caption": "ぼけ 3 本(m=2,3,4 px)は 1 本に重なる。傾きを同じ標準偏差へ換算した曲線は 2 割手前で落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_barcode_damage.png",
+  "name": "barcode_damage",
+  "caption": "(d) は走査線が符号の上下からはみ出す角度。にじんでいないのに読めない。",
+  "shape": [
+   315,
+   554,
+   3
+  ]
+ }
+]

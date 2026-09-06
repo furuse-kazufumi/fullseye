@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 D2 + A3 + extent を連結した大域形状記述子を返す。
 
+長さ 2*bins + 3 の 1 次元 float64 ベクトル。並びは [d2(bins), a3(bins), extent(3)]。
+各部分ブロックはそれぞれ総和 1 に正規化済みなので、L1 距離での比較時に 3 指標が
+おおよそ等しい重みで効く。
+
+Parameters
+----------
+points : array_like, shape (N, 3)
+    点群。N >= 3 が必要。
+bins : int
+    D2 / A3 それぞれの bin 数。
+seed : int
+    D2 / A3 の乱択シード(両者に同一 seed を渡す)。
+
+Returns
+-------
+np.ndarray, shape (2*bins + 3,)
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

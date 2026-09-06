@@ -3,8 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;abs_image&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">abs_image</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/abs_image.png" alt="abs_image: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/abs_image.png" alt="abs_image: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/abs_image.inputs.jpg">abs_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Takes the absolute value of pixel values (`<code style="color:#22d3bf">np.abs</code><code style="color:#22d3bf">). Since fullseye&#x27;s </code><code style="color:#22d3bf">image</code><code style="color:#22d3bf"> already follows the [0,1] contract (non-negative), this acts as an identity mapping that changes nothing for a normal image. It only has an effect when a signed intermediate result, such as a difference image, is passed in directly. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">abs_image</code>` (Calculate the absolute value (modulus) of an image.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3-D Sobel gradient magnitude ``sqrt(gz**2 + gy**2 + gx**2)``.
 
+Each ``g*`` is a ``scipy.ndimage.sobel`` derivative along one axis. The
+response localises at intensity boundaries (a step edge lights up on the
+interface and is ~0 in flat regions). Returns a ``(D, H, W)`` float64 volume.
+
+計算: ``scipy.ndimage.sobel`` を axis 0 (z), 1 (y), 2 (x) の順に掛け、
+``sqrt(gz**2 + gy**2 + gx**2)`` を返す。Sobel は微分 [-1,0,1] と平滑 [1,2,1] の
+分離カーネル(直交 2 軸で各 4 倍)なので、軸に垂直な単位ステップ(0→1)に対する
+応答は 1 ではなく **16**(界面をはさむ 2 voxel で 16.0、平坦部は 0。scipy の既定
+重み・境界 ``mode='reflect'``)。値は正規化しない(``[0, 1]`` には収まらない)。
+spacing は受けず、voxel 単位の差分(異方 voxel でも軸ごとに補正しない)。
+
+検証(``ValueError``): 3-D でない / NaN・Inf を含む / voxel 数が ``MAX_VOXELS``
+(``1 << 27``)を超える。
+
+使いどころ: ``vol_watershed`` の地形(landscape)入力、``vol_local_maxima`` で
+界面の峰を拾う、``vol_stretch`` で ``[0, 1]`` に正規化して表示。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

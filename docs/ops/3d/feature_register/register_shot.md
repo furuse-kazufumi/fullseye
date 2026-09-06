@@ -19,6 +19,39 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。
 
+初期推定なしに、大回転・部分重なりの 2 点群を対応付けて剛体変換
+(回転 R + 並進 t)を返す。密マッチ(NCC/Hough/PCA)と異なり、ISS
+キーポイントごとに局所参照フレーム(LRF)を張り、球状分割セルの
+法線角度ヒストグラム(SHOT)で記述 → Lowe 比率テスト + 相互最近傍で
+マッチ → RANSAC で外れ値に頑健に姿勢推定する。得た姿勢は ICP の
+粗初期値(coarse init)供給にも使える。
+
+LRF の符号曖昧性: 距離重み付き共分散の固有ベクトルは符号が定まらない
+ため、各軸(x=最大, z=最小 固有値)を近傍ベクトル (p_i-p) の投影多数派
+へ合わせ(Tombari の符号則)、y=z×x で右手系を構成する。点法線も同則で
+近傍質量から離れる向き(局所外向き)に統一するため回転に共変で部分
+重なりにも安定。両点群に同一則を適用することで記述子の repeatability を担保。
+
+引数:
+    src, dst: (N,3)/(M,3) 点群(numpy か torch)。src を dst へ合わせる。
+    radius: SHOT 支持半径。None なら各点群自身の bbox 対角(小さい方)の 0.15 倍
+        (結合 bbox は並進で対角が水増しされスケールが狂うため使わない)。
+    normal_k: 法線推定の knn 数。
+    ratio: Lowe 比率テスト閾値(小さいほど厳格)。
+    ransac_iters: RANSAC 反復数。
+    inlier_thr: RANSAC インライア距離。None なら bbox 対角の 0.03 倍。
+    refine_icp: True なら得た姿勢を初期値に Trimmed ICP(icp_point2point_3d)で精緻化。
+    max_kp: キーポイント上限。
+    device: torch デバイス("cpu" 等)。SVD/ICP をこの上で解く。
+    seed: RANSAC 乱数種。
+
+返り値:
+    R: (3,3) numpy。dst ≈ src @ R.T + t を満たす回転(icp と同規約)。
+    t: (3,) numpy。並進。
+    info: dict。"n_kp_src","n_kp_dst","n_matches","n_inliers","inlier_ratio",
+          "icp_rmse"(refine_icp 時),"ok"(True=推定成功; インライア<4 は
+          信頼不可として False + 単位変換を返す)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

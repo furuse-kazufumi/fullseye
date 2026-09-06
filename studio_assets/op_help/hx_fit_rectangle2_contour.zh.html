@@ -3,10 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_rectangle2_contour&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">fit_rectangle2_contour_xld</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_fit_rectangle2_contour.png" alt="hx_fit_rectangle2_contour: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_fit_rectangle2_contour.png" alt="hx_fit_rectangle2_contour: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_rectangle2_contour.chain.jpg">hx_fit_rectangle2_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>拟合最小面积有向矩形,返回其长宽比(短边/长边;feature)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>全 contour の点をまとめ、0°〜84° を 6° 刻みで回転させたときの軸並行外接矩形の面積が最小になる角度を探し、</p>
+<p>その矩形の短辺/長辺を `<code style="color:#22d3bf">np.float64</code><code style="color:#22d3bf"> で返す(</code><code style="color:#22d3bf">hx_smallest_rect2_xld</code>` と同じ探索)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0。長辺が 1e-9 未満(全点一致)でも 0.0。</p>
+<p>角度は 15 通りの離散探索なので、真の最小面積矩形とは最大 3° ずれる(細長い形ほどアスペクト比への影響は小さい)。</p>
+<p>矩形の中心・角度・辺長は返さない。1 に近いほど正方形、0 に近いほど細長い。回転を伴わない外接矩形の面積比は</p>
+<p>`<code style="color:#22d3bf">hx_smallest_rect1_xld</code><code style="color:#22d3bf">、region 版(回転キャリパー)は </code><code style="color:#22d3bf">r2_smallest_rectangle2</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

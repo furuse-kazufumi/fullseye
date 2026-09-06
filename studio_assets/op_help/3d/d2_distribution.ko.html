@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import descriptors3d; descriptors3d.d2_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;d2_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>무작위 두 점 쌍의 유클리드 거리 분포(Osada 2002 의 D2).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>N 点から <code style="color:#22d3bf">samples</code> 組の相異なる点対 (i, j) を乱択し、その距離を集計する。</p>
+<p>距離は<b>平均距離で割って正規化</b>するため、回転・平行移動・<b>スケール</b>に不変。</p>
+<p>固定レンジ [0, _D2_MAX] の正規化ヒストグラム (bins,) を返す(総和 1)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>点群。N &gt;= 2 が必要。</p>
+<p>bins : int</p>
+<p>ヒストグラムの bin 数。</p>
+<p>samples : int</p>
+<p>乱択する点対の数。多いほど分散が下がる(サンプリング誤差 ~ 1/sqrt(samples))。</p>
+<p>seed : int</p>
+<p>乱数シード。同 seed・同点群なら決定論的に同一。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (bins,)</p>
+<p>正規化距離ヒストグラム。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

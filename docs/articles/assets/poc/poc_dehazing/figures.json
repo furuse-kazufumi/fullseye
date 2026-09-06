@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "等化はいちばん派手に見えるが PSNR も SSIM も「何もしない」より悪い。",
+  "shape": [
+   406,
+   350,
+   3
+  ]
+ },
+ {
+  "file": "02_transmission.png",
+  "name": "transmission",
+  "caption": "空では過大評価(明るい側)、近景では過小評価(暗い側)。全体の平均バイアスでは打ち消し合って見えない。",
+  "shape": [
+   213,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "03_bands.png",
+  "name": "bands",
+  "caption": "全体 +4.04 dB の正体。近景は劣化していて、その劣化が中景・遠景の改善に埋もれている。",
+  "shape": [
+   176,
+   458,
+   3
+  ],
+  "csv": "03_bands.csv",
+  "tsv": "03_bands.tsv"
+ },
+ {
+  "file": "04_haze_density.png",
+  "name": "haze_density",
+  "caption": "左端(薄い霞 = 視程が長い側)で利得が 0 を割る。オラクルでもそこでは稼げない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

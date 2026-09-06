@@ -7,6 +7,18 @@
 <p>斜面方位 [度]。<b>北 0 度・東回り</b>。平坦なセルは :data:<code style="color:#22d3bf">ASPECT_FLAT</code>。</p>
 <p>平坦を 0 で返さないのは、0 が「北向き斜面」を意味してしまうため</p>
 <p>—— 区別できない値を返すのは、例外を出さずに間違える典型。</p>
+<p>手順: `<code style="color:#22d3bf">dem_slope</code><code style="color:#22d3bf"> と同じ 3x3 勾配 </code><code style="color:#22d3bf">(dz/dx, dz/dy)</code>` を取り、<b>下り勾配</b>の</p>
+<p>向き `<code style="color:#22d3bf">atan2(-dz/dx, -dz/dy)</code><code style="color:#22d3bf"> を度にして </code><code style="color:#22d3bf">[0, 360)</code>` に折り返す。行 0 が北・</p>
+<p>列が増える向きが東という前提で、北 0 / 東 90 / 南 180 / 西 270。</p>
+<p>行 0 が南の格子(上下反転した配列)を渡すと南北が入れ替わり、<b>例外は出ない</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">dem</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">cell_size</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">method</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">dem_slope</code><code style="color:#22d3bf"> と同じ契約(3x3 以上、</code><code style="color:#22d3bf">nan</code>`</p>
+<p>で欠測、番兵値は拒否、`<code style="color:#22d3bf">cell_size</code>` は正の [m])。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">flat_tol</code><code style="color:#22d3bf">: 勾配の大きさ </code><code style="color:#22d3bf">hypot(dz/dx, dz/dy)</code>` [m/m] がこれ以下なら平坦と</p>
+<p>みなし `<code style="color:#22d3bf">ASPECT_FLAT</code>`(= -1.0)を返す。既定 1e-12 は「数値的に厳密に平坦」だけ。</p>
+<p>整数標高の平地でも微小勾配で方位が付くことがあるので、意味のある閾</p>
+<p>(例 1e-3)を明示するとよい。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">[0, 360)</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">-1.0</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">nan</code><code style="color:#22d3bf"> セルの周りは </code><code style="color:#22d3bf">nan</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 方位のヒストグラムや平均を取るときは `<code style="color:#22d3bf">-1</code><code style="color:#22d3bf"> を先に除く(</code><code style="color:#22d3bf">out &gt;= 0</code>`)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

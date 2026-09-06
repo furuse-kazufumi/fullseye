@@ -4,6 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>去除 k 近鄰平均距離在全域上離群的點(統計離群點去除)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の</p>
+<p>`<code style="color:#22d3bf">mean + std_ratio*std</code>` を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に</p>
+<p>有効で、密な面上の点は残る。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>入力点群。</p>
+<p>k : int</p>
+<p>近傍数(既定 16)。点数が少なければ内部で `<code style="color:#22d3bf">n-1</code>` に丸める。</p>
+<p>std_ratio : float</p>
+<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>filtered : ndarray, shape (M, 3)</p>
+<p>生き残った点(元の順序を保持)。</p>
+<p>keep_mask : ndarray of bool, shape (N,)</p>
+<p>各入力点を残すか(True=残す)。`<code style="color:#22d3bf">points[keep_mask]</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">filtered</code>` に等しい。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import medial; medial.topology_signature(skeleton)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;topology_signature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。</p>
+<p>各骨格 voxel について 26 近傍にある骨格 voxel 数(次数)を数え、</p>
+<p>次数 1  = 端点(endpoint)</p>
+<p>次数 2  = 通常点(骨格の途中)</p>
+<p>次数&gt;=3 = 分岐点(branch)</p>
+<p>次数 0  = 孤立点(isolated)</p>
+<p>に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。</p>
+<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散</p>
+<p>骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
+<p>Args:</p>
+<p>skeleton: 骨格 voxel(bool / 0-1 の 3D)。</p>
+<p>Returns:</p>
+<p>dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),</p>
+<p>degree_hist(次数 -&gt; 個数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

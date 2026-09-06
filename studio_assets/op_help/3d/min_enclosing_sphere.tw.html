@@ -4,6 +4,35 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;min_enclosing_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群 (N,3) → 包含全部點的(近似)最小包圍球 {center(3), radius}。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">fit_sphere_3d</code><code style="color:#22d3bf">(球面フィット)や </code><code style="color:#22d3bf">ransac_sphere</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hough_sphere_3d</code>`(球検出)とは</p>
+<p>異なり、<b>全点を内包する最小の球</b>(minimum enclosing ball, MEB)を解く。2 段構成で</p>
+<p>「全点内包」を厳守しつつ半径を詰める:</p>
+<p>1. <b>Ritter (1990) 初期化</b> — 最遠の点対を粗く取り初期球にし、各点を走査して球外の点が</p>
+<p>あれば「その点と既存球の両方を含む」最小の球へ 1 回膨らませる(膨張式</p>
+<p>`<code style="color:#22d3bf">new_r=(r+d)/2</code><code style="color:#22d3bf"> / 中心を点方向へ </code><code style="color:#22d3bf">(d-r)/(2d)</code>` 進める)。新球が旧球を完全に含むため、</p>
+<p>1 パスで全点内包を保証する。</p>
+<p>2. <b>Bădoiu–Clarkson (2003) core-set 反復による精緻化</b> — 反復 `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> で最遠点 </code><code style="color:#22d3bf">q</code>` へ</p>
+<p>中心を `<code style="color:#22d3bf">1/(i+2)</code>` だけ寄せる。真の最小包含球へ単調収束する(半径過大な Ritter の</p>
+<p>ドリフトを詰める)。最後に半径を「中心からの最大距離」で確定するので、精緻化後も</p>
+<p><b>必ず全点を内包</b>(近似ゆえ半径が過小になり点が漏れることはない、安全側)。</p>
+<p>精緻化した中心が Ritter より外接半径を縮められたときのみ採用する(常に Ritter 以下)。</p>
+<p>真の最小球(厳密解は Welzl の乱択線形時間法)ではなく高速な (1+ε) 近似。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>入力点群(&gt;= 1 点)。</p>
+<p>refine_iters : int</p>
+<p>Bădoiu–Clarkson 精緻化の反復数(既定 1000)。0 で Ritter のみ。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center</code>`: (3,) float64 — 球中心(世界座標)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius</code>`: float — 半径(全点を内包)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>形状不正・非有限・点数 0、または `<code style="color:#22d3bf">refine_iters</code>` が負のとき(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

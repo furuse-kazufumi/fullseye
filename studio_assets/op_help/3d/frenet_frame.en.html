@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import curve3d; curve3d.frenet_frame(curve)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;frenet_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The Frenet frame (tangent T, principal normal N, binormal B) at each point. → (T, N, B), each (Npts,3) unit vectors.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>順序付き点列 (N,3) を index パラメータで `<code style="color:#22d3bf">np.gradient</code>`(内部は中心差分、両端は</p>
+<p>片側差分)して r&#x27;, r&#x27;&#x27; を取り、</p>
+<p style="margin:2px 0 2px 12px">• T = r&#x27; / ‖r&#x27;‖</p>
+<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; の T 直交成分 = 曲率中心へ向く向き)</p>
+<p style="margin:2px 0 2px 12px">• B = T × N</p>
+<p>を各点で計算する。r&#x27;&#x27; の T 直交成分の向きは再パラメータ化に不変なので、点間隔が</p>
+<p>滑らかに変わる限り index パラメータで正しい向きが出る。</p>
+<p style="margin:2px 0 2px 12px">• 分母には絶対値 1e-12 を足すだけで、正規化しきれない箇所は単位長にならない。直線区間</p>
+<p>(r&#x27;&#x27; ∥ T または 0)では N・B がほぼゼロベクトルになり、変曲点の前後で N の向きが</p>
+<p>反転する。「単位ベクトル」の保証はそこでは成り立たない。</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 の点列は `<code style="color:#22d3bf">np.gradient</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">ValueError</code>` を出す。形状検証はそれ以外に無い。</p>
+<p style="margin:2px 0 2px 12px">• 両端 2 点は片側差分なので精度が落ちる。等間隔化(`<code style="color:#22d3bf">resample_uniform</code>`)や平滑</p>
+<p>(`<code style="color:#22d3bf">fit_spline_curve</code>`)を先に掛けると安定する。</p>
+<p>曲率・捩率の数値そのものは `<code style="color:#22d3bf">curvature_torsion</code><code style="color:#22d3bf">、弧長は </code><code style="color:#22d3bf">arc_length</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pnp3d; pnp3d.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;pnp_ransac&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>外れ値に頑健な PnP(RANSAC + 最終 DLT リフィット)。→ (R, t, inlier_mask, info)。</p>
+<p>6 点の最小サンプルで DLT(精密化なし)→ 再投影誤差 &lt; thresh の inlier 最大化 →</p>
+<p>inlier 全体で :func:<code style="color:#22d3bf">pnp_pose</code>(精密化あり)リフィット。</p>
+<p>Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない /</p>
+<p>点数不一致 / 6 点未満 / 非有限。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">thresh</code>`: 再投影誤差のしきい値 [px] (ユークリッド距離、既定 2.0)。これ未満を inlier とする。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">iters</code>`: 反復数(既定 300)。早期終了はせず必ずこの回数回す。各反復は 6 点を非復元抽出し初期姿勢だけを解く(縮退した標本は捨てて次へ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">numpy.random.default_rng(seed)</code>` に渡す。同じ入力と seed なら結果は再現する。</p>
+<p>返り値: `<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> (3,3)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (3,)(規約 </code><code style="color:#22d3bf">Xc = R X + t</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">inlier_mask</code><code style="color:#22d3bf"> bool (N,)、</code><code style="color:#22d3bf">info</code>` dict。</p>
+<p>`<code style="color:#22d3bf">info</code><code style="color:#22d3bf"> のキーは </code><code style="color:#22d3bf">n_inliers</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">inlier_ratio</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">iters</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms</code>`(最終姿勢の再投影 RMS [px]、inlier 集合上)。</p>
+<p style="margin:2px 0 2px 12px">• 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、`<code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code><code style="color:#22d3bf"> が付く。このとき </code><code style="color:#22d3bf">inlier_mask</code><code style="color:#22d3bf"> は fallback 姿勢で数え直した実測値なので、</code><code style="color:#22d3bf">inlier_ratio</code><code style="color:#22d3bf"> が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。</p>
+<p style="margin:2px 0 2px 12px">• 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。</p>
+<p style="margin:2px 0 2px 12px">• Raises `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 形状不正 / 6 点未満 / 点数不一致 / 非有限(</code><code style="color:#22d3bf">dlt_pose</code>` と同じ入口検査)。</p>
+<p style="margin:2px 0 2px 12px">• 評価は `<code style="color:#22d3bf">reprojection_error</code><code style="color:#22d3bf">、GT 比較は </code><code style="color:#22d3bf">pose_error</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

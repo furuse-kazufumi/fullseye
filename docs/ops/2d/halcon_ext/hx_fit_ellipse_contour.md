@@ -17,13 +17,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_fit_ellipse_contour", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `fit_ellipse_contour_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_fit_ellipse_contour: 入力 → 出力](../../_fig/hx_fit_ellipse_contour.png)
+![hx_fit_ellipse_contour: input → output](../../_fig/hx_fit_ellipse_contour.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_fit_ellipse_contour: stages](../../_fig/hx_fit_ellipse_contour.chain.jpg)
 
 ## 使い方
 
 2 次モーメントから楕円を当て、軸比(短/長=真円で 1、細長いほど 0)を返す。
+
+全 contour の点をまとめて座標共分散行列の固有値 ``λmin, λmax`` を取り、``sqrt(λmin/λmax)``(主軸方向の標準偏差
+の比 = 慣性楕円の短軸/長軸)を ``np.float64`` で返す。
+
+- ``a``, ``b`` は未使用。
+- 点が 3 個未満、または ``λmax <= 1e-9``(全点一致)なら 0.0。負の固有値は 0 に clip する。
+
+1 に近いほど等方(真円)、0 に近いほど細長い。楕円境界を当てはめる代数的フィットではなく点群の 2 次モーメント
+なので、点の密度の偏りや欠けた弧では軸比が変わる。楕円の傾き・中心は返さない(``orientation_xld`` /
+``area_center_xld``)。``cv2.fitEllipse`` 版は ``elliptic_axis_xld``。楕円からの逸脱量は ``hx_dist_ellipse_contour``。
 
 ## 詳しい使い方ガイド
 

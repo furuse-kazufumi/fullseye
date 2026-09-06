@@ -15,9 +15,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "xsitk_curv_aniso_diff", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-![xsitk_curv_aniso_diff: 入力 → 出力](../../_fig/xsitk_curv_aniso_diff.png)
+![xsitk_curv_aniso_diff: input → output](../../_fig/xsitk_curv_aniso_diff.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![xsitk_curv_aniso_diff: knob a sweep](../../_fig/xsitk_curv_aniso_diff.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![xsitk_curv_aniso_diff: knob b sweep](../../_fig/xsitk_curv_aniso_diff.b.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![xsitk_curv_aniso_diff: other inputs](../../_fig/xsitk_curv_aniso_diff.inputs.jpg)
+
+*カラー (H,W,3) の入力は載せていない: この op は色チャネルを 3 本目の空間軸として扱う(色を跨ぐ)ため。チャネルごとに分けて呼ぶこと。*
 
 ## 使い方
 

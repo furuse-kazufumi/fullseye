@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;medial_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 つの voxel 形状の medial(位相 + 半径分布)による粗照合スコア。返り値 [0,1]。</p>
+<p>骨格の位相記述子(端点/分岐/通常/孤立の割合)の距離と、medial 半径分布(内接半径の</p>
+<p>ヒストグラム)の距離を重み付き合成し、類似度 = 1 - 距離 として返す。1 に近いほど似ている。</p>
+<p>平行移動・回転(90 度)に対して概ね不変で、位相ベースの初期照合(粗いふるい)に使う。</p>
+<p>Args:</p>
+<p>vol_a, vol_b: バイナリ voxel(bool / 0-1 の 3D)。</p>
+<p>w_topology: 位相距離の重み(既定 0.6)。</p>
+<p>w_radius: 半径分布距離の重み(既定 0.4)。</p>
+<p>n_bins: 半径ヒストグラムの bin 数。</p>
+<p>Returns:</p>
+<p>float: 類似スコア [0,1] (大きいほど類似)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

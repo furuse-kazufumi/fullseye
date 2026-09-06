@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_close_edges&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">close_edges</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/hx_close_edges.png" alt="hx_close_edges: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/hx_close_edges.png" alt="hx_close_edges: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_close_edges.a.jpg">hx_close_edges: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_close_edges.b.jpg">hx_close_edges: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_close_edges.inputs.jpg">hx_close_edges: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>閉合邊緣振幅圖中的缺口:按閾值 a 二值化 → 形態學閉運算(半徑 b)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>`<code style="color:#22d3bf">v &gt; a</code><code style="color:#22d3bf"> で二値化した後、</code><code style="color:#22d3bf">scipy.ndimage.binary_closing</code><code style="color:#22d3bf"> を 3×3 全結合(8 近傍)構造要素の </code><code style="color:#22d3bf">it</code>` 回反復</p>
+<p>= `<code style="color:#22d3bf">(2*it+1)</code>` 角の正方形で 1 回クロージング(膨張→収縮)し、0/1 の float 画像で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → 二値化しきい値(エッジ振幅画像を想定。a=0 では 0 より大きい画素がすべて前景)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 構造要素の反復回数 </code><code style="color:#22d3bf">it = 1 + int(b*3)</code>`(1〜4、正方形の辺は 3〜9 画素)。閉じられる隙間はおおむね</p>
+<p>`<code style="color:#22d3bf">2*it</code>` 画素以下。</p>
+<p>注意: `<code style="color:#22d3bf">binary_closing</code><code style="color:#22d3bf"> は画像外を 0 として収縮するため、画像端から </code><code style="color:#22d3bf">it</code>` 画素の帯は必ず 0 になる</p>
+<p>(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を</p>
+<p>膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。`<code style="color:#22d3bf">hx_nonmax_dir</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">sobel_amp</code>` の</p>
+<p>後に置き、つながったエッジは `<code style="color:#22d3bf">hx_region_to_label</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hx_detect_edge_segments</code>` へ渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

@@ -1,0 +1,11 @@
+[
+ {
+  "file": "01_scene_and_depth.png",
+  "name": "scene_and_depth",
+  "caption": "差が立つのは深度不連続の縁だけ(5-b で距離ごとに数える)。",
+  "shape": [
+   358,
+   222,
+   3
+  ]
+ },

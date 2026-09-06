@@ -5,6 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D closing = dilation → erosion. SE 보다 작은 <b>어두운 구조(틈·공동)</b>를 메웁니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">morph_erode3d(morph_dilate3d(vol, r, ...), r, ...)</code><code style="color:#22d3bf">。出力は入力以上(</code><code style="color:#22d3bf">close &gt;= vol</code>`)で、</p>
+<p>SE(一辺 `<code style="color:#22d3bf">2r+1</code>` の cube か半径 r の ball)より小さい暗い穴・亀裂・面の隙間が周囲の</p>
+<p>明るさで埋まり、大きな暗領域は残る(等冪)。境界外は dilation で −∞、erosion で +∞ 扱い</p>
+<p>なので端が勝手に埋まることはない。`<code style="color:#22d3bf">se</code><code style="color:#22d3bf"> は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、</code><code style="color:#22d3bf">device</code>` は</p>
+<p>cube+torch のときだけ有効。返り値 `<code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>用途: `<code style="color:#22d3bf">close − vol</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">morph_blackhat3d</code>`(小さな暗構造の抽出)。点群 splat の表面の</p>
+<p>穴埋め、`<code style="color:#22d3bf">signed_distance_field</code>` 前の占有の穴埋め。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

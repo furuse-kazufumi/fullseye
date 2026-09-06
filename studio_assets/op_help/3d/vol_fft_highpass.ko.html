@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_highpass(vol, cutoff, spacing=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_highpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우스 고역통과 —— `<code style="color:#22d3bf">1 - lowpass</code>` 의 엄밀한 보(둘의 합이 원본).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>to the input to float precision, proven in tests). Removes the DC level and</p>
+<p>slow drift, keeps edges/texture. Output is signed (mean ~ 0).</p>
+<p>伝達関数は `<code style="color:#22d3bf">1 - exp(-|f|^2 / (2 cutoff^2))</code><code style="color:#22d3bf">。DC(</code><code style="color:#22d3bf">f = 0</code>`)は係数 0 なので平均</p>
+<p>輝度は完全に落ち、`<code style="color:#22d3bf">|f| = cutoff</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">1 - 0.61 ≈ 0.39</code>`、高周波ほど 1 に近づく。</p>
+<p>返り値は入力と同じ `<code style="color:#22d3bf">(D, H, W)</code>` の float64 で <b>符号付き</b>(負の値を含む)。</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> 前提の後段(表示・</code><code style="color:#22d3bf">vol_window_level</code><code style="color:#22d3bf"> 等)に渡すなら </code><code style="color:#22d3bf">vol_stretch</code>` で</p>
+<p>正規化するか、`<code style="color:#22d3bf">vol + highpass</code>` の形で使う。</p>
+<p>引数: `<code style="color:#22d3bf">cutoff</code><code style="color:#22d3bf"> は正の有限値。</code><code style="color:#22d3bf">spacing=None</code><code style="color:#22d3bf"> で cycles/voxel、</code><code style="color:#22d3bf">spacing</code>`</p>
+<p>(`<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">volio.VolumeMeta</code>`)を渡すと cycles/mm。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">vol_fft_lowpass</code>` と同じ(3-D でない / NaN・Inf /</p>
+<p>`<code style="color:#22d3bf">MAX_VOXELS</code>` 超 / cutoff・spacing 不正)。</p>
+<p>使いどころ: 照明むら・厚みドリフト・背景勾配の除去(`<code style="color:#22d3bf">vol_fft_lowpass</code>` の結果を</p>
+<p>引くのと同値)。周期的とみなす FFT の性質上、面どうしの輝度差は wrap で漏れる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

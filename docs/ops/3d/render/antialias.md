@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 高解像画像を整数倍 ``ss`` で縮小(area-average anti-aliasing)。
 
+``hi_res_image`` は ``(H*ss, W*ss)`` または ``(H*ss, W*ss, C)`` の float 画像。各
+``ss×ss`` ブロックを重み付き平均して ``(H, W[, C])`` を返す。``filter``:
+
+  * ``"box"``   — 等重み平均(正確な面積平均、SSAA の標準)。
+  * ``"gauss"`` — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。
+
+Fail-closed: ``ss`` は 1 以上の整数、入力は 2D / 3D、各辺は ``ss`` で割り切れること。
+非有限値があれば ``ValueError``(平均で NaN が伝播しないよう確保前に拒否)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

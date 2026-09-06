@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.snell_angle(theta_i_deg, eta1=1.0, eta2=1.5)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;snell_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Angle of incidence (deg) → angle of refraction (deg). n1 sinθi = n2 sinθt. Beyond the critical angle it is NaN (total internal reflection).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>`<code style="color:#22d3bf">θt = arcsin((eta1/eta2)·sin θi)</code><code style="color:#22d3bf"> を度で返す(float)。</code><code style="color:#22d3bf">theta_i_deg</code>` は実数スカラー(配列・</p>
+<p>None は ValueError)。符号は保たれる(負の入射角は負の屈折角)。`<code style="color:#22d3bf">|(eta1/eta2) sin θi| &gt; 1</code>` なら</p>
+<p>`<code style="color:#22d3bf">nan</code><code style="color:#22d3bf">(全反射。</code><code style="color:#22d3bf">eta1 &gt; eta2</code><code style="color:#22d3bf"> のときだけ起きる)。臨界角は </code><code style="color:#22d3bf">degrees(arcsin(eta2/eta1))</code>`。</p>
+<p>`<code style="color:#22d3bf">eta1 == eta2</code>` なら入射角そのまま。</p>
+<p>ベクトルで曲げるなら `<code style="color:#22d3bf">refract</code><code style="color:#22d3bf">、反射率は </code><code style="color:#22d3bf">fresnel_reflectance(cos(radians(θi)))</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

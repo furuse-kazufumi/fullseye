@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 対応点 + K から本質行列 E を直接。→ E (3,3)。
 
+手順: ``fundamental_8point(pts1, pts2)`` で F を推定し、``E = K2ᵀ F K1`` を作ってから SVD で特異値を (1, 1, 0) に置き換える(本質行列の性質。結果の Frobenius ノルムは √2 に固定される)。
+
+- ``K1`` (3,3) は画像 1 の内部行列、``K2`` を省略すると ``K1`` を両画像に使う(同一カメラの前提)。
+- 対応点は画素座標 (N,2)。検証と例外は ``fundamental_8point`` と同じ(8 点未満・点数不一致・非有限・(N,2) でない入力は ``ValueError``)。
+- E の符号は不定で、(R, t) は 4 候補に分かれる。分解と cheirality による一意化までまとめて行うのが ``recover_pose``。
+- 外れ値に無防備。平面・純回転の退化も本 op では検出しない(``recover_pose`` が検出する)。決定論的。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

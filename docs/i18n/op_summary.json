@@ -13783,6 +13783,102 @@
    "tw": "按 3-D 特徵篩選成分(2-D 斑點篩選的 3-D 版)。",
    "ko": "3-D 특징으로 성분을 거릅니다(2-D 블롭 선별의 3-D 판).",
    "de": "Siebt Komponenten nach 3-D-Merkmalen (das 3-D-Gegenstück zur 2-D-Blob-Auswahl)."
+  },
+  "2d/img_to_points": {
+   "fp": "453016176b5d",
+   "en": "Read the image as a height field and turn it into an (x, y, z) point cloud (N,3).",
+   "zh": "把图像当作高度场，转换为 (x, y, z) 点云 (N,3)。",
+   "tw": "把影像當作高度場，轉換為 (x, y, z) 點雲 (N,3)。",
+   "ko": "영상을 높이장으로 읽어 (x, y, z) 점군 (N,3)으로 만든다.",
+   "de": "Liest das Bild als Höhenfeld und macht daraus eine (x, y, z)-Punktwolke (N,3)."
+  },
+  "2d/img_to_keypoints": {
+   "fp": "18023ad4227c",
+   "en": "Turn the local maxima of the image into image-plane points (u, v) = (col, row), shape (N,2).",
+   "zh": "把图像的局部极大值变成像面点 (u, v) = (列, 行)，形状 (N,2)。",
+   "tw": "把影像的局部極大值變成像面點 (u, v) = (欄, 列)，形狀 (N,2)。",
+   "ko": "영상의 국소 극대를 상면 위의 점 (u, v) = (열, 행) (N,2)으로 만든다.",
+   "de": "Macht aus den lokalen Maxima des Bildes Bildebenen-Punkte (u, v) = (Spalte, Zeile), Form (N,2)."
+  },
+  "2d/img_to_signal": {
+   "fp": "00515dc85917",
+   "en": "Take the intensity profile of one row (or column) of the image as a 1-D signal.",
+   "zh": "取图像一行(或一列)的灰度剖面作为一维信号。",
+   "tw": "取影像一列(或一欄)的灰階剖面作為一維訊號。",
+   "ko": "영상의 한 행(또는 열)의 농도 프로파일을 1-D 신호로 만든다.",
+   "de": "Nimmt das Intensitätsprofil einer Zeile (oder Spalte) des Bildes als 1-D-Signal."
+  },
+  "2d/img_to_counts": {
+   "fp": "0b98fb3f786c",
+   "en": "Read one row (or column) of the image as expected photon numbers and draw a Poisson-sampled 1-D count series.",
+   "zh": "把图像的一行(或一列)当作光子期望值，生成 Poisson 采样的一维计数序列。",
+   "tw": "把影像的一列(或一欄)當作光子期望值，產生 Poisson 取樣的一維計數序列。",
+   "ko": "영상의 한 행(또는 열)을 광자 기댓값으로 읽어 Poisson 표본의 1-D 카운트 열을 만든다.",
+   "de": "Liest eine Zeile (oder Spalte) des Bildes als erwartete Photonenzahlen und zieht eine Poisson-gesampelte 1-D-Zählreihe."
+  },
+  "2d/img_to_matrix": {
+   "fp": "e0d3f3d9c7ea",
+   "en": "Treat the (H,W) image as an H×W numeric matrix (sort ``matrix``) — a pure cast.",
+   "zh": "把 (H,W) 图像直接当作 H×W 数值矩阵(sort ``matrix``)—— 纯粹的类型转换。",
+   "tw": "把 (H,W) 影像直接當作 H×W 數值矩陣(sort ``matrix``)—— 純粹的型別轉換。",
+   "ko": "(H,W) 영상을 그대로 H×W 수치 행렬(sort ``matrix``)로 다룬다 —— 순수한 캐스트.",
+   "de": "Behandelt das (H,W)-Bild als numerische H×W-Matrix (Sort ``matrix``) — ein reiner Cast."
+  },
+  "2d/img_to_video": {
+   "fp": "1fedfc37058e",
+   "en": "Turn the image into a T-frame video (T,H,W) translated at constant speed.",
+   "zh": "把图像变成以恒定速度平移的 T 帧视频 (T,H,W)。",
+   "tw": "把影像變成以恆定速度平移的 T 幀影片 (T,H,W)。",
+   "ko": "영상을 일정 속도로 평행이동시킨 T 프레임 동영상 (T,H,W)으로 만든다.",
+   "de": "Macht aus dem Bild ein T-Bilder-Video (T,H,W), das sich mit konstanter Geschwindigkeit verschiebt."
+  },
+  "2d/img_to_volume": {
+   "fp": "7332eb53f188",
+   "en": "Extrude the image as a height field into a (D,H,W) volume (z first).",
+   "zh": "把图像当作高度场挤出为 (D,H,W) 体数据(z 在前)。",
+   "tw": "把影像當作高度場擠出為 (D,H,W) 體資料(z 在前)。",
+   "ko": "영상을 높이장으로 밀어내어 (D,H,W) 볼륨(z 선두)으로 만든다.",
+   "de": "Extrudiert das Bild als Höhenfeld zu einem (D,H,W)-Volumen (z zuerst)."
+  },
+  "2d/img_to_lightfield": {
+   "fp": "5f17cf6d1b3a",
+   "en": "Split the image into a foreground and a background layer and build a 4-D light field (V,U,H,W) with parallax.",
+   "zh": "把图像分成前景/背景两层，生成带视差的 4-D 光场 (V,U,H,W)。",
+   "tw": "把影像分成前景/背景兩層，產生帶視差的 4-D 光場 (V,U,H,W)。",
+   "ko": "영상을 전경/배경 2층으로 나누어 시차가 있는 4-D 라이트필드 (V,U,H,W)를 만든다.",
+   "de": "Teilt das Bild in Vorder- und Hintergrundschicht und baut ein 4-D-Lichtfeld (V,U,H,W) mit Parallaxe."
+  },
+  "2d/img_to_rgb": {
+   "fp": "eea91bc74a51",
+   "en": "Give a gray image a hue and saturation, producing an (H,W,3) RGB image (sort ``rgbimage``).",
+   "zh": "给灰度图像加上色相和饱和度，生成 (H,W,3) RGB 图像(sort ``rgbimage``)。",
+   "tw": "給灰階影像加上色相與飽和度，產生 (H,W,3) RGB 影像(sort ``rgbimage``)。",
+   "ko": "회색 영상에 색상과 채도를 주어 (H,W,3) RGB 영상(sort ``rgbimage``)으로 만든다.",
+   "de": "Gibt einem Graubild Farbton und Sättigung und erzeugt ein (H,W,3)-RGB-Bild (Sort ``rgbimage``)."
+  },
+  "2d/img_to_cimage": {
+   "fp": "9e3cc87f321e",
+   "en": "Use the image as amplitude and a phase from pixel value plus tilt to build a complex field (H,W) complex128.",
+   "zh": "以图像为振幅、以像素值和倾斜给出相位，生成复数场 (H,W) complex128。",
+   "tw": "以影像為振幅、以像素值和傾斜給出相位，產生複數場 (H,W) complex128。",
+   "ko": "영상을 진폭으로, 화소값과 기울기로 위상을 주어 복소장 (H,W) complex128을 만든다.",
+   "de": "Nutzt das Bild als Amplitude und eine Phase aus Pixelwert plus Neigung, um ein komplexes Feld (H,W) complex128 zu bauen."
+  },
+  "2d/img_to_beatcube": {
+   "fp": "b076f9b6cdfa",
+   "en": "Read the bright spots of the image as FMCW radar targets (range = column, velocity = row) and synthesise the complex beat cube (A,C,S).",
+   "zh": "把图像的亮点当作 FMCW 雷达目标(距离 = 列，速度 = 行)，合成复数拍频立方体 (A,C,S)。",
+   "tw": "把影像的亮點當作 FMCW 雷達目標(距離 = 欄，速度 = 列)，合成複數拍頻立方體 (A,C,S)。",
+   "ko": "영상의 밝은 점을 FMCW 레이더 표적(거리 = 열, 속도 = 행)으로 읽어 복소 비트 큐브 (A,C,S)를 합성한다.",
+   "de": "Liest die hellen Punkte des Bildes als FMCW-Radarziele (Entfernung = Spalte, Geschwindigkeit = Zeile) und synthetisiert den komplexen Beat-Würfel (A,C,S)."
+  },
+  "2d/img_to_monogenic": {
+   "fp": "00229518c394",
+   "en": "Build the single-scale monogenic signal of the image (a quaternion field (H,W,4), sort ``qimage``).",
+   "zh": "生成图像的单尺度单演信号(四元数场 (H,W,4)，sort ``qimage``)。",
+   "tw": "產生影像的單尺度單演訊號(四元數場 (H,W,4)，sort ``qimage``)。",
+   "ko": "영상의 단일 스케일 모노제닉 신호(사원수장 (H,W,4), sort ``qimage``)를 만든다.",
+   "de": "Baut das monogene Signal des Bildes auf einer Skala (Quaternionenfeld (H,W,4), Sort ``qimage``)."
   }
  }
 }

@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tac_contact_mask — 2D <code style="color:#22d3bf">tactile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tac_contact_mask&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tac_contact_mask.png" alt="tac_contact_mask: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/tac_contact_mask.png" alt="tac_contact_mask: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.a.jpg">tac_contact_mask: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.b.jpg">tac_contact_mask: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.inputs.jpg">tac_contact_mask: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過偽參考背景相減求取觸覺影像幀的接觸區域:`<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf">,其中 </code><code style="color:#22d3bf">sigma = max(2, min(H,W)/6)</code><code style="color:#22d3bf">(以低頻包絡取代未變形的參考幀),以 </code><code style="color:#22d3bf">thr = 0.005 + 0.145*a</code><code style="color:#22d3bf"> 灰階閾值進行閾值化,再經 </code><code style="color:#22d3bf">round(3*b)</code><code style="color:#22d3bf"> 次二值開運算(opening)後接二值閉運算(closing)(3x3、8 連通)清理。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 偏差閾值(靈敏度),</code><code style="color:#22d3bf">b</code>` = 形態學清理強度。回傳輸入 HxW 大小的二值(BINARY)0/1 float64 區域;完全平坦(常數)的幀各處偏差皆為零,因此會得到空遮罩。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

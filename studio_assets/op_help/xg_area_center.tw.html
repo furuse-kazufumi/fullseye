@@ -3,10 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;xg_area_center&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">area_center_points_xld</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/xg_area_center.png" alt="xg_area_center: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/xg_area_center.png" alt="xg_area_center: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_area_center.chain.jpg">xg_area_center: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用鞋帶公式求 contour 的多邊形面積(絕對值求和)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>輪郭辞書 `<code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [Nx2 の (row, col) 点列, ...]}</code>` の各輪郭を</p>
+<p>多角形とみなし、靴ひも公式 `<code style="color:#22d3bf">0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|</code>` で面積を</p>
+<p>求めて全輪郭の合計を返す。点が 3 個未満の輪郭は 0 として無視。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は</p>
+<p>未使用。</p>
+<p>返り値は `<code style="color:#22d3bf">numpy.float64</code>`(単位は画素²、正規化なし)。輪郭が無い・辞書で</p>
+<p>ない・非有限値を含む輪郭は読み飛ばされ、合計に寄与しない(空なら 0.0)。</p>
+<p>開いた輪郭でも「最後の点と最初の点を結んで閉じた多角形」の面積になる点に</p>
+<p>注意(直線状の開輪郭では 0、折れ線の開輪郭でも非零になる)。絶対値を取る</p>
+<p>ので点列の向き(時計回り/反時計回り)は結果に影響しない。自己交差する輪郭では</p>
+<p>交差で符号が打ち消しあい、真の面積より小さく出る。名前に反して重心は</p>
+<p>返さない(面積のみ)。同じ点集合の 2 次モーメントは `<code style="color:#22d3bf">xg_moments</code>`、bbox の</p>
+<p>縦横比は `<code style="color:#22d3bf">xg_height_width_ratio</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

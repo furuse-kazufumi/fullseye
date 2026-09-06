@@ -3,10 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_smallest_rect1_xld&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">smallest_rectangle1_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_smallest_rect1_xld.png" alt="hx_smallest_rect1_xld: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_smallest_rect1_xld.png" alt="hx_smallest_rect1_xld: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_rect1_xld.chain.jpg">hx_smallest_rect1_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The area ratio of the axis-aligned bounding box of all contour points (a feature).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>contour dict の全点をまとめ、行方向・列方向それぞれの `<code style="color:#22d3bf">max - min</code>`(外接軸並行矩形の高さ・幅)の積を</p>
+<p>画像面積 `<code style="color:#22d3bf">H*W</code><code style="color:#22d3bf"> で割った値を </code><code style="color:#22d3bf">np.float64</code>` で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が無ければ 0.0。1 点だけ、または全点が同一行/列でも幅が 0 になり 0.0(`<code style="color:#22d3bf">+1</code>` の画素補正はしない)。</p>
+<p>全 contour をまとめた 1 つの矩形なので、離れた contour が 2 つあると間の空白も面積に入る。向きを持つ</p>
+<p>最小面積矩形は `<code style="color:#22d3bf">hx_smallest_rect2_xld</code><code style="color:#22d3bf">、region に対する軸並行外接矩形は </code><code style="color:#22d3bf">smallest_rectangle1</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

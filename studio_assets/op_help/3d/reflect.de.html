@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.reflect(d, n)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;reflect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Spiegelt die Einfallsrichtung d an einer Fläche mit Normale n. r = d − 2(d·n)n.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> は内部で単位化する(長さは問わない)ので、返り値 </code><code style="color:#22d3bf">r</code>` も単位ベクトル。最後の軸を</p>
+<p>ベクトルとみなすので `<code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf"> でも </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> のバッチでも動く(2-D の </code><code style="color:#22d3bf">(2,)</code><code style="color:#22d3bf"> も可)。</code><code style="color:#22d3bf">n</code>` の</p>
+<p>向きは問わない(`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">−n</code><code style="color:#22d3bf"> で同じ </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">d</code>` は「面へ向かう」向き(光線の進行方向)で</p>
+<p>渡す。零ベクトルは 1e-12 で割って 0 のまま返る(例外は出ない)。</p>
+<p>用途: `<code style="color:#22d3bf">normal_from_reflection</code><code style="color:#22d3bf"> の逆問題、鏡面レンダの視線追跡(</code><code style="color:#22d3bf">refract</code>` と対)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

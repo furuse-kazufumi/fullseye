@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 2 直線方向のなす鋭角(度)。
 
+``arccos(|d̂1·d̂2|)`` を度で返す(float)。絶対値を取るので **[0, 90]**(向きの前後を区別しない。
+鈍角側が要るなら ``180 −`` する)。``d1``, ``d2`` は方向ベクトル(長さは問わない、内部で単位化)、
+数値の 2 または 3 ベクトルで次元の混在は ValueError。零ベクトルは 90 が返る。
+用途: ``fit_line_3d`` / ``line_from_2points`` の方向同士の平行度・直角度チェック(0 に近いほど
+平行、90 に近いほど直交)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

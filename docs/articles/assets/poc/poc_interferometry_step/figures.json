@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_interferogram.png",
+  "name": "interferogram",
+  "caption": "包絡線の中心が段差ぶんずれる。包絡線には周期が無いので巻き戻る対象が無い(7 節)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_zstep_sweep.png",
+  "name": "zstep_sweep",
+  "caption": "0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 0.15 µm の手前 0.14 µm で崖。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_noise_sweep.png",
+  "name": "noise_sweep",
+  "caption": "centroid は散らばりが gaussian の 1/3〜1/5 なのに総合誤差では上に来る。差の正体は段差を縮めるゲイン誤差(下の表)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_centroid_gain.png",
+  "name": "centroid_gain",
+  "caption": "4 種の段差でゲインが揃う = オフセットではなく倍率の誤差。再現性を精度と読み替えるとここで嘘をつく。",
+  "shape": [
+   176,
+   542,
+   3
+  ],
+  "csv": "04_centroid_gain.csv",
+  "tsv": "04_centroid_gain.tsv"
+ }
+]

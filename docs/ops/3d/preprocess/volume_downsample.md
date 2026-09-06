@@ -19,6 +19,40 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き).
 
+Large CT / laminography / simulation volumes must be thinned before the
+heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see
+``MAX_EIGEN_VOXELS``). This is the volume analogue of the point-cloud
+``voxel_grid_downsample`` and the mesh ``decimate_qem`` — the third leg of
+Fullseye's *間引き* (decimation) family, one per 3-D data sort.
+
+Parameters
+----------
+vol : array_like, shape (D, H, W)
+    Input volume (coerced to float64; NaN/Inf rejected).
+factor : int or (fz, fy, fx)
+    Block size per axis, each ``>= 1``. The output shape is
+    ``(D//fz, H//fy, W//fx)``; a trailing partial block that cannot fill a
+    full factor is dropped (deterministic, no edge bias).
+mode : {'mean', 'max', 'stride'}
+    * ``'mean'`` — average-pool. Band-limits before subsampling (the
+      anti-aliasing choice); the right default for grey CT / MRI.
+    * ``'max'``  — max-pool. Preserves thin bright structures (bone, vessel,
+      defect voxels) that averaging would wash out.
+    * ``'stride'`` — plain subsample ``vol[::fz, ::fy, ::fx]`` (fastest,
+      but aliases — no pre-filter).
+
+Returns
+-------
+ndarray, shape (D//fz, H//fy, W//fx), float64
+    The downsampled volume. Spacing scales by the same factor: an input
+    spacing ``(sz, sy, sx)`` mm becomes ``(sz*fz, sy*fy, sx*fx)`` mm.
+
+Raises
+------
+ValueError
+    Non-3-D input, a factor component ``< 1`` or larger than its axis, or an
+    unknown *mode* (fail-closed).
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

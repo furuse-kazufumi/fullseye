@@ -2,16 +2,22 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_angle_3points — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_angle_3points&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p>*그림 없음: 이 연산자는 <code style="color:#22d3bf">points</code>를 입력으로 받습니다. 이미지에서 시작하는 Studio 프로그램으로는 그 타입에 닿지 않으므로 아래의 실행 가능한 예제를 보세요.*</p>
+<p>*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— 3 点(頂点 b と両端)を取る op で、(N,3) の点群は定義域の外. 사용법은 아래 실행 가능한 예제를 볼 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>세 점이 이루는 각도(꼭짓점 b, 단위 도). ∠ABC.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">arccos(û·v̂)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">u = a − b</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v = c − b</code>`)を度で返す(float)。値は <b>[0, 180]</b> で符号は</p>
+<p>無い(2-D でも回転の向きは区別しない)。引数は数値の 2 または 3 ベクトル、次元の混在は</p>
+<p>ValueError。`<code style="color:#22d3bf">a == b</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">c == b</code>` だと零ベクトルの内積 0 で 90 が返る(例外は出ない)。</p>
+<p>内積は [−1,1] に clip するので数値誤差で NaN にはならない。</p>
+<p>用途: 曲げ角・関節角の計測、`<code style="color:#22d3bf">fit_line_3d</code>` で得た 2 直線の交点まわりの角度。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">angle_3points</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
-<p style="margin:2px 0 2px 12px">• (아직 없음)</p>
+<p>아래 예제는 원래의 대장 op <code style="color:#22d3bf">angle_3points</code>를 호출한다. 이 브리지 op는 같은 구현을 <code style="color:#22d3bf">fn(v, a, b)</code> 규약에 맞춘 것뿐이므로 동작은 그대로 적용된다(호출 형식만 다름).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geometry_metrology">geometry_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geometry_metrology.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">feature</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">typed</code>)</h3>

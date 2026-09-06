@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Any 3-D structure → a point set (the common representation). It funnels all five structures into one entry point.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>kind: &quot;points&quot;(N,3)/ &quot;mesh&quot;=(vertices,faces)/ &quot;depth&quot;=depth+{fx,fy,cx,cy[,stride]}/</p>
+<p>&quot;voxel&quot;=密度 grid+{iso}/ &quot;3dgs&quot;=means(N,3)。</p>
+<p>`<code style="color:#22d3bf">kind</code>` ごとの変換(実装どおり):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;points&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;3dgs&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">np.asarray(data, float)</code>` を返すだけ(形の検査は</p>
+<p>しない。`<code style="color:#22d3bf">(N, 3)</code>` を渡すのは呼び手の責任)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;mesh&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">data = (vertices, faces)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">match3d.mesh_to_points</code>` で面積重みの</p>
+<p>一様サンプリングを `<code style="color:#22d3bf">samples</code>` 点(既定 20000、seed 固定 = 決定的)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;depth&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">data</code><code style="color:#22d3bf"> は深度マップ </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">kw</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">fx, fy, cx, cy</code>` が</p>
+<p><b>必須</b>(無ければ `<code style="color:#22d3bf">KeyError</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">stride</code>` は任意(既定 1、間引き)。</p>
+<p>`<code style="color:#22d3bf">match3d.depth_to_points</code><code style="color:#22d3bf"> のピンホール逆投影で、</code><code style="color:#22d3bf">depth &gt; 0</code>` の画素だけを</p>
+<p>`<code style="color:#22d3bf">(x, y, z)</code>` 点にする(カメラ座標、x = 列方向、y = 行方向、z = 深度)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;voxel&quot;</code><code style="color:#22d3bf">: 密度 grid </code><code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">kw[&quot;iso&quot;]</code>`(既定 0.5)で閾値し、</p>
+<p>`<code style="color:#22d3bf">np.argwhere</code><code style="color:#22d3bf"> の **整数 index 座標** </code><code style="color:#22d3bf">(z, y, x)</code>` を float にした点群。</p>
+<p>物理座標には直さない(spacing は掛けない)。</p>
+<p>返り値: `<code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> が上記以外なら </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p>`<code style="color:#22d3bf">samples</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;mesh&quot;</code>` 以外では無視される。</p>
+<p>注意: `<code style="color:#22d3bf">&quot;voxel&quot;</code><code style="color:#22d3bf"> の座標は配列 index 順 </code><code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&quot;depth&quot;</code>` はカメラ座標</p>
+<p>`<code style="color:#22d3bf">(x, y, z)</code><code style="color:#22d3bf"> と、種別ごとに軸の意味が違う。異種を </code><code style="color:#22d3bf">register_cross</code>` /</p>
+<p>`<code style="color:#22d3bf">fuse_to_voxel</code>` で混ぜるときは、この差を呼び手が揃えておくこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

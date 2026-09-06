@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import twoview; twoview.sampson_distance(F, pts1, pts2)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;sampson_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>에피폴라 구속의 Sampson 거리(1 차 기하 오차, 대응별). → (N,).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。</p>
+<p>計算: 同次座標 x1=(u1,v1,1)、x2=(u2,v2,1) で `<code style="color:#22d3bf">(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は画素の 2 乗</b>(距離の 2 乗)。画素で閾値を切るなら `<code style="color:#22d3bf">sqrt</code>` を取るか、閾値側を 2 乗する。</p>
+<p style="margin:2px 0 2px 12px">• F は `<code style="color:#22d3bf">fundamental_8point</code><code style="color:#22d3bf"> の規約 </code><code style="color:#22d3bf">x2ᵀ F x1 = 0</code>`(pts1 → x1、pts2 → x2)。順序を入れ替えるなら F を転置する。</p>
+<p style="margin:2px 0 2px 12px">• 分母に 1e-12 を足しているので F=0 でも例外にはならず 0 を返す(F の検査は行わない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64 (N,)。決定論的。(N,2) でない・非有限・点数不一致は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 典型: `<code style="color:#22d3bf">fundamental_8point</code><code style="color:#22d3bf"> の当てはまり確認、誤対応(大きい値)の選別、</code><code style="color:#22d3bf">recover_pose</code>` 前の前処理。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

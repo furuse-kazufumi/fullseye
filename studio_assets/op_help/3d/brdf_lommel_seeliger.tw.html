@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import render_shade; render_shade.brdf_lommel_seeliger(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: &#x27;float&#x27; = 0.42) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;brdf_lommel_seeliger&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Lommel-Seeliger 反射律(邊緣仍亮的風化層)給法線圖著色,回傳 I/F `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>Lambert(`<code style="color:#22d3bf">phong_shade</code>` の拡散項)は縁(μ→0)で 0 になるが、Lommel-Seeliger は</p>
+<p>μ0/(μ0+μ) なので縁でも μ0 のまま明るく、小惑星・月の「平坦な円盤」の見えになる。</p>
+<p>`<code style="color:#22d3bf">w</code>` = 単一散乱アルベド。fail-closed(法線形状・w の範囲)。</p>
+<p>計算は :func:<code style="color:#22d3bf">brdf_shade</code> の `<code style="color:#22d3bf">model=&#x27;lommel_seeliger&#x27;</code>` と同一で、各画素について</p>
+<p>`<code style="color:#22d3bf">μ0 = clip(N·L, 0, 1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">μ = clip(N·V, 0, 1)</code>` を取り、</p>
+<p>`<code style="color:#22d3bf">I/F = π · (w/4π) · μ0/(μ0+μ)</code><code style="color:#22d3bf">(= </code><code style="color:#22d3bf">(w/4)·μ0/(μ0+μ)</code>`)を返す。μ0 か μ が 0 以下の画素</p>
+<p>(光の当たらない面・視線に背く面)は 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf">: float </code><code style="color:#22d3bf">(H, W, 3)</code>`。長さ 0 のベクトルは背景とみなし出力 0</p>
+<p>(`<code style="color:#22d3bf">render3d.render_mesh</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">normals</code>` をそのまま渡せる)。単位化は内部で行う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">view</code>`: 面→光源、面→視点へ向かう方向ベクトル(内部で単位化)。カメラは</p>
+<p>`<code style="color:#22d3bf">-Z</code><code style="color:#22d3bf"> を見る規約なので既定 </code><code style="color:#22d3bf">view=(0,0,1)</code>`。平行光・正射影近似で、方向は画面内で一定。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">w</code><code style="color:#22d3bf">: 単一散乱アルベド、</code><code style="color:#22d3bf">(0, 1]</code><code style="color:#22d3bf"> 以外は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p>返り値は float64 `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の I/F。正射影で </code><code style="color:#22d3bf">light == view</code>`(位相角 0)なら</p>
+<p>μ0 = μ で全前景が `<code style="color:#22d3bf">w/8</code><code style="color:#22d3bf"> の一様値になる。値は </code><code style="color:#22d3bf">[0, w/4)</code><code style="color:#22d3bf"> に収まり </code><code style="color:#22d3bf">[0,1]</code>` へ</p>
+<p>正規化しない。ハイライトを扱いたければ `<code style="color:#22d3bf">phong_shade</code>`、対向効果・粗さまで入れたければ</p>
+<p>`<code style="color:#22d3bf">brdf_hapke</code>` を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

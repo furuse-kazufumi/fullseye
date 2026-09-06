@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。
 
+補足:
+- ``principal_curvatures`` と同じ局所二次曲面フィットで ``k1 * k2`` を返す。符号は法線の向きに依らないため ``normals`` 引数を持たない(向き付けは常に近傍重心ヒューリスティクス)。
+- 単位は 1/長さ²。半径 R の球なら ``1/R²``、円柱・平面は 0、鞍点は負(k1 と k2 が異符号)。
+- ``k`` は近傍点数(既定 25、N-1 に切り詰め)。近傍が 5 点未満の点は 0。
+- 楕円点(K>0)/放物点(K=0)/双曲点(K<0)の分類に使う。凸凹の区別は ``mean_curvature`` か ``shape_index`` に ``normals`` を渡して行う。
+- 入力は (N,3) の点群。決定論的。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

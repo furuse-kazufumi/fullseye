@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 形態學梯度 = dilation − erosion。提取<b>邊界/表面</b>(可替代 sobel 的邊緣源)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>同じ SE(一辺 `<code style="color:#22d3bf">2r+1</code>` の cube か半径 r の ball)での局所 max − 局所 min。値は常に 0 以上、</p>
+<p>一様な領域で 0、明暗の境界で段差の大きさ(`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> が大きいほど境界が太い。</code><code style="color:#22d3bf">r=1</code>` で 2 voxel</p>
+<p>幅)。方向情報は無い(方向が要るなら `<code style="color:#22d3bf">sobel3d</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">sobel3d</code>` と違い利得の補正が要らず、</p>
+<p>2 値 volume では「境界 voxel = 1」の殻がそのまま出る。`<code style="color:#22d3bf">se</code>` は &quot;cube&quot;/&quot;ball&quot;(他は</p>
+<p>ValueError)、`<code style="color:#22d3bf">device</code><code style="color:#22d3bf"> は cube+torch のときだけ有効。返り値 </code><code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>用途: `<code style="color:#22d3bf">match_chamfer_3d</code><code style="color:#22d3bf"> 用のエッジ源、</code><code style="color:#22d3bf">hough_plane_3d</code>` に渡す前の表面抽出の代替。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

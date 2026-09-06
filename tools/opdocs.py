@@ -479,6 +479,24 @@ def _family_map():
     return op_fam, fam_ops, idx2d
 
 
+_PSEUDOLINK = re.compile(r"\]\((?P<t>[^)\n]*)\)")
+
+
+def _defuse_pseudolinks(doc: str) -> str:
+    """docstring 内の「リンクに見える括弧」を無害化する(2026-09-07、3-D 12 本で実測)。
+
+    ``[3,3](利得 1)`` のような書き方は Markdown リンクに読まれ、ノートの「壊れたリンク」
+    門に掛かる。行き先が URL / パスの形(`/`, `.md`, `.py`, `:`, `#`)でなければ
+    ``[3,3] (利得 1)`` に離す。本物のリンクは触らない。
+    """
+    def _fix(m):
+        t = m.group("t")
+        if "/" in t or ".md" in t or ".py" in t or ":" in t or t.startswith("#"):
+            return m.group(0)
+        return "] (" + t + ")"
+    return _PSEUDOLINK.sub(_fix, doc) if doc else doc
+
+
 def _records():
     """Uniform per-op records for both dims. Returns (list, idx2d, op_fam, fam_ops)."""
     import ops
@@ -506,7 +524,7 @@ def _records():
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip(),
+            "doc": _defuse_pseudolinks(inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip()),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),
@@ -528,16 +546,31 @@ def _records():
             # 台帳 dim と同じく関数の docstring を丸ごと読む。
             _fdoc = getattr(fn, "__doc__", None) or ""
             _fdoc = inspect.cleandoc(_fdoc).strip() if _fdoc else ""
+            # 要約は**必ず 1 行目だけ**にする(要約の対訳表は 1 行目の指紋がキー。
+            # 段落が 2 行以上続く docstring をそのまま渡すと要約が伸びて指紋が外れ、
+            # 6 言語の訳が「古い訳」扱いで捨てられる —— 2026-09-07 実測 12 op)。
+            _fl = _fdoc.splitlines()
+            if len(_fl) > 1:
+                _fdoc = _fl[0].strip() + chr(10) + chr(10) + chr(10).join(_fl[1:]).strip()
             recs.append({
                 "dim": "3d", "name": name, "category": info["category"],
                 "in": ins, "out": info["out"],
-                "halcon": "", "doc": _fdoc or (info.get("doc") or "").strip(),
+                "halcon": "", "doc": _defuse_pseudolinks(_fdoc or (info.get("doc") or "").strip()),
                 "module": info.get("module", "ops3d"), "sig": sig,
                 "examples": sorted(idx3d.get(name, [])),
                 "family": None, "gpu": bool(info.get("gpu")),
             })
     except Exception as e:  # ops3d needs torch-soft deps; corpus still builds for 2-D
         print(f"  (3-D registry unavailable: {e})", file=sys.stderr)
+    # ★橋渡し op(``tb_<name>``)は台帳の ``<name>`` と実装が同一で、例は台帳名で
+    # 書かれる。2026-09-06 まで 147 本が「例ゼロ」だったが、それは**同じ実装を
+    # 呼ぶ例が別名で存在する**のを数えていなかっただけ。台帳側の例を継承し、
+    # ノートには「元 op の例」と明記する(嘘にならないように)。
+    _inherit = []
+    for _r in recs:
+        if _r["dim"] == "2d" and _r["category"] == "typed" and not _r["examples"]:
+            _inherit.append(_r)
+    _base_examples = {}
     for _dim, _meta in LEDGER_DIMS.items():
         try:
             ledger = getattr(__import__(_meta["registry"]), _meta["table"])
@@ -554,12 +587,13 @@ def _records():
                 ins = info["in"]
                 ins = " × ".join(ins) if isinstance(ins, (list, tuple)) else str(ins)
                 doc = getattr(fn, "__doc__", None) or ""
+                _base_examples.setdefault(name, sorted(idx.get(name, [])))
                 recs.append({
                     "dim": _dim, "name": name, "category": info["category"],
                     "in": ins, "out": info["out"],
                     # cleandoc: function docstrings carry the 4-space continuation
                     # indent, which Markdown would misread as a code block.
-                    "halcon": "", "doc": inspect.cleandoc(doc).strip() if doc else "",
+                    "halcon": "", "doc": _defuse_pseudolinks(inspect.cleandoc(doc).strip() if doc else ""),
                     "module": info.get("module", _meta["module"]), "sig": sig,
                     "examples": sorted(idx.get(name, [])),
                     # one usage guide per ledger family, named after the coverage
@@ -577,6 +611,15 @@ def _records():
         for r in recs:
             if r["dim"] == dim and cnt[r["name"]] > 1:
                 r["override"] = True
+    # 橋渡し op の例の継承(上のコメント参照)。``examples`` 自体は触らない ——
+    # frontmatter と例索引の一致は別の門が見る。継承分は ``examples_inherited`` に
+    # ``(examples dir, example id, 元 op 名)`` で持ち、ノートは「元 op の例」と明記する。
+    for _r in _inherit:
+        _base = _r["name"][3:]
+        _ex3d = sorted(idx3d.get(_base, [])) if idx3d else []
+        _exl = _base_examples.get(_base, [])
+        _r["examples_inherited"] = ([("examples_3d", e, _base) for e in _ex3d]
+                                    + [("examples", e, _base) for e in _exl])
     return recs, idx2d, op_fam, fam_ops
 
 
@@ -625,10 +668,46 @@ def _figure_lines(rec, path, lang):
         out.append("![%s: input → output](%s)" % (rec["name"], rel))
         out.append("")
         out.append(T("*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*", lang))
+        if m.get("pseudocolor"):
+            out.append("")
+            out.append(T("*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*", lang))
+        extra = m.get("extra") or {}
+        dead = m.get("knob_dead") or []
+        for knob in ("a", "b"):
+            out.append("")
+            if knob in extra:
+                out.append(T("**つまみ %s を振る**(0.1 / 0.5 / 0.9、もう一方は既定):", lang) % knob)
+                out.append("")
+                out.append("![%s: knob %s sweep](%s)" % (rec["name"], knob, _rel(path, os.path.join(FIG_DIR, extra[knob]))))
+            elif knob in dead:
+                out.append(T("*つまみ %s は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*", lang) % knob)
+        if "chain" in extra:
+            out.append("")
+            out.append(T("**段階**(前置きの op → この op。左から順):", lang))
+            out.append("")
+            out.append("![%s: stages](%s)" % (rec["name"], _rel(path, os.path.join(FIG_DIR, extra["chain"]))))
+        if "inputs" in extra:
+            out.append("")
+            out.append(T("**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):", lang))
+            out.append("")
+            out.append("![%s: other inputs](%s)" % (rec["name"], _rel(path, os.path.join(FIG_DIR, extra["inputs"]))))
+            if m.get("color_ok"):
+                out.append("")
+                out.append(T("*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*", lang))
+            elif m.get("in_sort") in ("image", "any") or rec.get("in") in ("image", "any"):
+                out.append("")
+                out.append(T("*カラー (H,W,3) の入力は載せていない: この op は色チャネルを 3 本目の空間軸として扱う(色を跨ぐ)ため。チャネルごとに分けて呼ぶこと。*", lang))
+        if "gif" in extra:
+            out.append("")
+            out.append(T("**動き**(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):", lang))
+            out.append("")
+            out.append("![%s: animation](%s)" % (rec["name"], _rel(path, os.path.join(FIG_DIR, extra["gif"]))))
     elif m["status"] == "unreachable":
         out.append(T("*図なし: この op は `%s` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*", lang) % m["in_sort"])
     elif m["status"] == "domain":
         out.append(T("*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— %s。下の「実行できる例」で使い方を見ること。*", lang) % m.get("reason", ""))
+    elif m["status"] == "empty":
+        out.append(T("*図なし: 走ったが返り値が空だった(合成入力ではこの op の答えが無い —— 零交差や外れ値が無い、など)。空を図にはしない。下の「Studio で試す」のプログラムは走るので、自分の画像で試すこと。*", lang))
     else:
         out.append(T("*図なし: 走らせたが落ちた —— %s*", lang) % m.get("reason", ""))
     out.append("")
@@ -835,6 +914,12 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
     if rec["examples"]:
         exdir = "examples_3d" if dim == "3d" else "examples"
         for e in rec["examples"]:
+            ep = os.path.join(_ROOT, exdir, e + ".py")
+            lines.append(f"- [{e}]({_rel(path, ep)}) — `py -3.11 {exdir}/{e}.py`")
+    elif rec.get("examples_inherited"):
+        _base = rec["examples_inherited"][0][2]
+        lines.append(T("次の例は元の台帳 op `%s` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。", lang) % _base)
+        for exdir, e, _b in rec["examples_inherited"]:
             ep = os.path.join(_ROOT, exdir, e + ".py")
             lines.append(f"- [{e}]({_rel(path, ep)}) — `py -3.11 {exdir}/{e}.py`")
     else:
@@ -1193,7 +1278,15 @@ def md_to_html(md: str) -> str:
             # (studio.py が表示時に絶対 file:// へ直す)。
             alt = st[2:st.index("](")]
             src = st[st.index("](") + 2:].rstrip(")")
-            out.append(f'<p><img src="fig/{_html.escape(os.path.basename(src), quote=True)}" '
+            base_ = os.path.basename(src)
+            if base_.endswith(".jpg"):
+                # 段階図・複数入力(JPEG)は wheel に同梱しない(全 op ぶんで PyPI の
+                # 上限 100 MB を超える)。docs サイトへのリンクにする。
+                url = "https://furuse.work/ops/_fig/" + base_
+                out.append(f'<p>▸ <a style="color:{_TEAL}" href="{url}">{_html.escape(alt)}</a> '
+                           f'<span style="color:#8b91a0;font-size:11px">(docs site)</span></p>')
+                continue
+            out.append(f'<p><img src="fig/{_html.escape(base_, quote=True)}" '
                        f'alt="{_html.escape(alt, quote=True)}"></p>')
             continue
         if st == "---":
@@ -1325,7 +1418,7 @@ def _copy_figures() -> int:
     os.makedirs(dst, exist_ok=True)
     n = 0
     for f in sorted(os.listdir(FIG_DIR)):
-        if f.endswith(".png"):
+        if f.endswith((".png", ".gif")):          # JPEG(段階図・複数入力)は docs だけ
             shutil.copyfile(os.path.join(FIG_DIR, f), os.path.join(dst, f))
             n += 1
     return n

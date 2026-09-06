@@ -19,6 +19,11 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 TSDF ゼロ交差から表面点 (M,3) を抽出(marching cubes 不要、線形補間)。
 
+観測済み(weight>0)の隣接 voxel 対で TSDF 符号が変わる辺を、その 2 中心の間で
+``alpha = t_a/(t_a - t_b)`` により線形補間して交点(表面点)を出す。両端とも weight>0 の
+辺のみ採用(未観測の初期値 1.0 との偽の交差を作らない=honest)。x/y/z 3 軸の全辺を走査。
+交差が無ければ空 (0,3) を返す(詐称せず honest な空返し)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

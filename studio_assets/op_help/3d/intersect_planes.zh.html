@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import match3d; match3d.intersect_planes(p1, n1, p2, n2)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;intersect_planes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平面 ∩ 平面 → 直线(通过点, 方向)。平行时为 None。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>方向 `<code style="color:#22d3bf">d = n̂1 × n̂2</code><code style="color:#22d3bf"> を単位化し、</code><code style="color:#22d3bf">n̂1·p = n̂1·p1</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n̂2·p = n̂2·p2</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">d·p = 0</code>` の 3×3 を</p>
+<p>解いて通過点 `<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> を求める(</code><code style="color:#22d3bf">d·p = 0</code><code style="color:#22d3bf"> なので **原点に最も近い点**)。返り値 </code><code style="color:#22d3bf">(p(3,), d(3,))</code>`。</p>
+<p>`<code style="color:#22d3bf">|n1 × n2| &lt; 1e-9</code>`(平行・同一面)なら <b>None</b>。</p>
+<p>引数は数値 3 ベクトル(`<code style="color:#22d3bf">np.cross</code>` と 3×3 の solve を使うので <b>3-D 専用</b>。2-D を渡すと</p>
+<p>配列構築で失敗する)。次元の混在は ValueError。</p>
+<p>用途: `<code style="color:#22d3bf">fit_plane_3d</code><code style="color:#22d3bf"> した 2 面の稜線、箱のエッジの抽出 → </code><code style="color:#22d3bf">distance_point_line</code>` でエッジ</p>
+<p>からの距離。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

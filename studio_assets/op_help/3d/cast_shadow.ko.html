@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import render_shadow; render_shadow.cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: &#x27;int&#x27; = 256, height: &#x27;int&#x27; = 256, directional: &#x27;bool&#x27; = True, penumbra: &#x27;float&#x27; = 0.0, samples: &#x27;int&#x27; = 16, shadow_res: &#x27;int&#x27; = 512, bias=None, pcf: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;cast_shadow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>메시의 캐스트 그림자 / 소프트 섀도를 계산해 가시성 맵 (H,W) ∈ [0,1] 을 돌려줍니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">1=完全に照らされる</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">0=完全な影</code><code style="color:#22d3bf">。受光面が無い背景画素は </code><code style="color:#22d3bf">1.0</code>`。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">V, F</code>`        頂点 (N,3) と三角形 (M,3)。空メッシュは影を落とせないので拒否。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf">       (3,) ベクトル。</code><code style="color:#22d3bf">directional=True</code>` なら平行光の方向(シーン→光源)、</p>
+<p>`<code style="color:#22d3bf">False</code>` なら点光源のワールド位置。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pose</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">intrinsics</code><code style="color:#22d3bf"> カメラ。省略時は </code><code style="color:#22d3bf">render3d.auto_view</code>` で補完。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">penumbra</code>`    面光源の<b>角半径(度)</b>。0 でハード影、増やすほど半影が広がる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">samples</code><code style="color:#22d3bf">     半影サンプル数(</code><code style="color:#22d3bf">penumbra&gt;0</code>` のときのみ使用、Fibonacci ディスク)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shadow_res</code>`  shadow map の一辺解像度。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bias</code><code style="color:#22d3bf">        影判定の深度バイアス(ワールド単位)。</code><code style="color:#22d3bf">None</code>` なら texel サイズと</p>
+<p>傾斜から自動設定(acne / peter-panning を抑制)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pcf</code>`         shadow map を引くときに混ぜる近傍の<b>半径 [texel]</b>。</p>
+<p>`<code style="color:#22d3bf">0</code><code style="color:#22d3bf">(既定)は最近傍 1 点 = 従来どおり。</code><code style="color:#22d3bf">1</code>` なら 3x3 の</p>
+<p><b>判定を平均</b>する(深度を平均するのではない —— 深度の平均は</p>
+<p>手前と奥をならして存在しない面を作る)。境目が texel に</p>
+<p>量子化されて階段になるのを、shadow map を上げずに緩和する。</p>
+<p>手法は shadow mapping(Williams 1978): 光源から `<code style="color:#22d3bf">render_mesh</code>` で深度を取り、カメラ側の</p>
+<p>受光面点を光源空間へ射影して深度比較する。fail-closed: 退化メッシュ・不正光源・非正の</p>
+<p>サイズ/解像度は `<code style="color:#22d3bf">ValueError</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

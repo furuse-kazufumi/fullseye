@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;fit_spline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Glättet und resampelt eine geordnete 3-D-Punktfolge mit einem B-Spline. → (M,3). Zum Glätten verrauschter Trajektorien und Kanten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>scipy.interpolate.splprep/splev。smooth=0 は補間、&gt;0 で平滑。n=出力点数(既定=入力数)。</p>
+<p>`<code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code>` でパラメトリック B スプライン(パラメータ u∈[0,1]、</p>
+<p>scipy 既定の弦長パラメータ化)を当て、`<code style="color:#22d3bf">u = linspace(0, 1, n)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">splev</code>` 評価した</p>
+<p>(n,3) float64 を返す。u 等間隔なので出力点は弧長で厳密に等間隔ではない(弧長等間隔が</p>
+<p>要るなら結果を `<code style="color:#22d3bf">resample_uniform</code>` に通す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">smooth</code>`: scipy の平滑化条件 s。残差二乗和が s 以下になる最少ノットで当てる。</p>
+<p>0 なら全点を通る補間、大きいほど滑らか(単位は座標の二乗)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: スプライン次数(既定 3)。点数 N が k 以下だと </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code>`: 出力点数。None で入力点数。</p>
+<p style="margin:2px 0 2px 12px">• 入力は index 順に並んだ (N,3) を前提とし、形状検証は点数以外に無い。</p>
+<p>ノイズのあるエッジ点列や軌跡を平滑してから `<code style="color:#22d3bf">curvature_torsion</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">frenet_frame</code>` に</p>
+<p>渡す前段として使う。tck を持ち回りたい場合は `<code style="color:#22d3bf">fit_bspline_curve</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">eval_bspline_curve</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

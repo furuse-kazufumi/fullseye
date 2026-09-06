@@ -5,6 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D white top-hat = vol − opening. SE 보다 작은 <b>밝은 구조</b>를 추출(keypoint 전처리).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">vol(float32) − morph_open3d(vol, r, ...)</code><code style="color:#22d3bf">。値は 0 以上で、SE(一辺 </code><code style="color:#22d3bf">2r+1</code>` の cube か</p>
+<p>半径 r の ball)に入り切らない明るい突起・粒・細線だけがその高さで残り、それより大きな</p>
+<p>明領域と滑らかな背景は 0 になる。背景の緩い明るさムラも除けるので、閾値化の前処理に。</p>
+<p>`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> は「残したい構造の半径」より大きく取る。</code><code style="color:#22d3bf">se</code>` は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、</p>
+<p>`<code style="color:#22d3bf">device</code><code style="color:#22d3bf"> は cube+torch のときだけ有効。返り値 </code><code style="color:#22d3bf">(D,H,W)</code>` float32 numpy。</p>
+<p>暗い構造を取るなら `<code style="color:#22d3bf">morph_blackhat3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

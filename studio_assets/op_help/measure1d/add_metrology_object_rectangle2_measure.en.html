@@ -6,6 +6,19 @@
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>矩形計測オブジェクトを追加(add_metrology_object_rectangle2_measure)。</p>
 <p>`<code style="color:#22d3bf">phi</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">l1</code><code style="color:#22d3bf"> 辺の向き(col 軸から、ラジアン)、</code><code style="color:#22d3bf">l1</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">l2</code>` = 半辺長。</p>
+<p>参照矩形(中心 `<code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf"> [px]、</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf"> 方向の半辺長 </code><code style="color:#22d3bf">l1</code>`、直交方向の</p>
+<p>半辺長 `<code style="color:#22d3bf">l2</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">model[&quot;objects&quot;]</code>` に積む(dict をその場で更新)。</p>
+<p>`<code style="color:#22d3bf">apply_metrology_model</code><code style="color:#22d3bf"> は 4 辺それぞれに </code><code style="color:#22d3bf">max(2, n // 4)</code>` 点を <b>角を避けて</b></p>
+<p>等間隔に置き、各辺の外向き法線に沿ってエッジを測り、矩形フィットで</p>
+<p>中心・向き・半辺長を出し直す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">phi</code>`: col 軸(x)から row 軸(画像下向き)へ測ったラジアン</p>
+<p>(`<code style="color:#22d3bf">gen_measure_rectangle2</code>` と同じ規約)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">l1</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">l2</code>`: 半辺長 [px] (全長ではない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code>`: 総サンプル数の目安(既定 40 → 各辺 10 点)。4 未満でも各辺 2 点は置く。</p>
+<p style="margin:2px 0 2px 12px">• 引数は検証しない。返り値は追加位置の index(0 始まり)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">apply</code><code style="color:#22d3bf"> 結果の </code><code style="color:#22d3bf">params</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">row / col / phi / l1 / l2</code>` で、再フィット後は</p>
+<p>**`<code style="color:#22d3bf">l1 &gt;= l2</code><code style="color:#22d3bf">(長辺が </code><code style="color:#22d3bf">l1</code><code style="color:#22d3bf">)に並び替えられる** ―― 参照で </code><code style="color:#22d3bf">l1 &lt; l2</code>` と与えても</p>
+<p>結果の `<code style="color:#22d3bf">phi</code>` は長辺の向きになる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

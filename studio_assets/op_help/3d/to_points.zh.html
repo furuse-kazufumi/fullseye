@@ -4,6 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>任意 3D 结构 → 点群(共同表示)。把全部 5 种结构统一到一个入口。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>kind: &quot;points&quot;(N,3)/ &quot;mesh&quot;=(vertices,faces)/ &quot;depth&quot;=depth+{fx,fy,cx,cy[,stride]}/</p>
+<p>&quot;voxel&quot;=密度 grid+{iso}/ &quot;3dgs&quot;=means(N,3)。</p>
+<p>`<code style="color:#22d3bf">kind</code>` ごとの変換(実装どおり):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;points&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;3dgs&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">np.asarray(data, float)</code>` を返すだけ(形の検査は</p>
+<p>しない。`<code style="color:#22d3bf">(N, 3)</code>` を渡すのは呼び手の責任)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;mesh&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">data = (vertices, faces)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">match3d.mesh_to_points</code>` で面積重みの</p>
+<p>一様サンプリングを `<code style="color:#22d3bf">samples</code>` 点(既定 20000、seed 固定 = 決定的)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;depth&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">data</code><code style="color:#22d3bf"> は深度マップ </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">kw</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">fx, fy, cx, cy</code>` が</p>
+<p><b>必須</b>(無ければ `<code style="color:#22d3bf">KeyError</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">stride</code>` は任意(既定 1、間引き)。</p>
+<p>`<code style="color:#22d3bf">match3d.depth_to_points</code><code style="color:#22d3bf"> のピンホール逆投影で、</code><code style="color:#22d3bf">depth &gt; 0</code>` の画素だけを</p>
+<p>`<code style="color:#22d3bf">(x, y, z)</code>` 点にする(カメラ座標、x = 列方向、y = 行方向、z = 深度)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;voxel&quot;</code><code style="color:#22d3bf">: 密度 grid </code><code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">kw[&quot;iso&quot;]</code>`(既定 0.5)で閾値し、</p>
+<p>`<code style="color:#22d3bf">np.argwhere</code><code style="color:#22d3bf"> の **整数 index 座標** </code><code style="color:#22d3bf">(z, y, x)</code>` を float にした点群。</p>
+<p>物理座標には直さない(spacing は掛けない)。</p>
+<p>返り値: `<code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> が上記以外なら </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p>`<code style="color:#22d3bf">samples</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;mesh&quot;</code>` 以外では無視される。</p>
+<p>注意: `<code style="color:#22d3bf">&quot;voxel&quot;</code><code style="color:#22d3bf"> の座標は配列 index 順 </code><code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&quot;depth&quot;</code>` はカメラ座標</p>
+<p>`<code style="color:#22d3bf">(x, y, z)</code><code style="color:#22d3bf"> と、種別ごとに軸の意味が違う。異種を </code><code style="color:#22d3bf">register_cross</code>` /</p>
+<p>`<code style="color:#22d3bf">fuse_to_voxel</code>` で混ぜるときは、この差を呼び手が揃えておくこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tm_sart_reconstruct — 2D <code style="color:#22d3bf">tomography</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tm_sart_reconstruct&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/tm_sart_reconstruct.png" alt="tm_sart_reconstruct: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/tm_sart_reconstruct.png" alt="tm_sart_reconstruct: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_sart_reconstruct.a.jpg">tm_sart_reconstruct: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_sart_reconstruct.b.jpg">tm_sart_reconstruct: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tm_sart_reconstruct.inputs.jpg">tm_sart_reconstruct: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>代數重建：對輸入正弦圖（列 = 角度）執行若干輪 SART/SIRT 掃描。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> 設定疊代次數（</code><code style="color:#22d3bf">round(1+a*4)</code><code style="color:#22d3bf"> -&gt; 1..5），</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 設定鬆弛因子（</code><code style="color:#22d3bf">0.05 + b*0.35</code><code style="color:#22d3bf">）。若可用則使用 </code><code style="color:#22d3bf">skimage.transform.iradon_sart</code>`，否則使用自製的 NumPy SIRT 迴圈（投影 -&gt; 殘差 -&gt; 加權反投影）。輸出重新擬合為 HxW。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import symmetry3d; symmetry3d.reflection_symmetry_score(points, plane_point, plane_normal)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;reflection_symmetry_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>反射对称得分 = chamfer(镜像, 原) / 最近邻间距中位数(越小越对称,尺度不变)。→ float。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">reflect_points</code><code style="color:#22d3bf"> で点群を平面で鏡映し、元の点群との対称 Chamfer 距離(</code><code style="color:#22d3bf">chamfer_distance</code>`:</p>
+<p>双方向の最近傍距離の平均の平均)を、元の点群の最近傍間隔の中央値で割る。「鏡像が元の点から</p>
+<p>点間隔の何倍ずれているか」という無次元量なので、座標を定数倍しても値は変わらない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">: (N,3) 点群。</code><code style="color:#22d3bf">plane_point</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">plane_normal</code>`: 候補平面(法線は内部で正規化)。</p>
+<p style="margin:2px 0 2px 12px">• fail-closed: 点群が空・(N,3) でない(`<code style="color:#22d3bf">chamfer_distance</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">ValueError</code>`)、全点が一致して</p>
+<p>間隔が定義できない(`<code style="color:#22d3bf">ValueError</code>`)。重複点で中央値間隔が 0 になる場合だけ、重心からの RMS</p>
+<p>半径 × 1e-12 を床にする。</p>
+<p>読み方の注意: 厳密に対称な形でも、鏡像の点が元のサンプル点にぴったり重なるわけではないので</p>
+<p>スコアは 0 にならず、点間隔程度が床になる(実測値は `<code style="color:#22d3bf">detect_reflection_symmetry</code>` の表を参照)。</p>
+<p>閾値で採否を決めるより、複数候補を掃引して最小値と 2 位との差(`<code style="color:#22d3bf">margin</code>`)を見る。PCA の</p>
+<p>3 軸以外の候補面を試したいときは、この関数を平面パラメータで直接掃引する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

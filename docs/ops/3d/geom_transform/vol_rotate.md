@@ -19,6 +19,28 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Rotate a volume in the plane of an axis pair (``scipy.ndimage.rotate``).
 
+*axes* names the rotation plane and must be exactly one of ``(0, 1)``
+(z-y plane, turning about the x-axis), ``(0, 2)`` (z-x, about y) or
+``(1, 2)`` (y-x, about z — the axial-slice rotation; the default). Any
+other pair — including a reversed one like ``(2, 1)`` — raises
+``ValueError``, so the direction convention below is never silently
+flipped.
+
+**Direction (pinned)**: a positive *angle_deg* rotates **from the first
+axis of** *axes* **toward the second** — the same convention as
+``np.rot90``. Concretely, ``vol_rotate(v, 90, axes=a, reshape=False,
+order=0)`` equals ``np.rot90(v, 1, axes=a)`` bit-for-bit when the in-plane
+shape is square (the test pins this).
+
+``reshape=False`` (default) keeps the input shape (in-plane corners that
+leave the frame are lost, entering ones are filled with *cval* per *mode*);
+``reshape=True`` grows the in-plane shape to contain the whole rotated
+frame — the grown output is cap-checked against ``MAX_VOXELS`` *before*
+the call. *order* is the spline degree (exact integer 0..5; >1 overshoots
+— module notes).
+
+Returns a ``(D, H, W)`` float64 volume (same shape unless *reshape*).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

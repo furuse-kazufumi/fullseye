@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。
 
+露出を掛けた ``x = hdr * exposure`` に対し:
+
+  * ``white is None`` … 基本形 ``x / (1 + x)``。``[0, ∞)`` を**狭義単調増加**で
+    ``[0, 1)`` へ写し、決してクリップしない(全域で階調順序を厳密保存)。
+  * ``white`` 指定 … 拡張形 ``x (1 + x/white²) / (1 + x)``。``white`` を正確に 1.0 へ
+    写し、``white`` 未満に多くのレンジを割く(``white`` を超える入力は 1 を超えるので
+    ``[0, 1]`` にクリップする)。
+
+カラー ``(H, W, C)`` はチャンネル独立に写像する。素朴クリップ ``min(x, 1)`` と違い、
+値 > 1 のハイライト域でも単調な階調を保つ。
+
+Args:
+    hdr: HDR 画像。``(H, W)`` グレースケール or ``(H, W, C)`` カラー、放射輝度 >= 0。
+    exposure: 写像前に掛ける露出スケール(正)。
+    white: 任意の white-point(正)。None なら基本 Reinhard(推奨・全域単調)。
+Returns:
+    ``[0, 1]`` の float64 LDR 画像(入力と同形状)。
+Raises:
+    ValueError: 空/非有限/負の放射輝度、非正の exposition/white(fail-closed)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

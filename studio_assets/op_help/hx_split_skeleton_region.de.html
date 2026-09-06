@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_split_skeleton_region&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">split_skeleton_region</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
-<p><img src="fig/hx_split_skeleton_region.png" alt="hx_split_skeleton_region: 入力 → 出力"></p>
-<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*</p>
+<p><img src="fig/hx_split_skeleton_region.png" alt="hx_split_skeleton_region: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
+<p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.chain.jpg">hx_split_skeleton_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.inputs.jpg">hx_split_skeleton_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trennt ein ein Pixel breites Skelett an seinen Verzweigungspunkten: entfernt die Knoten (&gt;=3 Nachbarn) und nimmt die Komponenten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> の骨格画素ごとに 8 近傍の骨格画素数 </code><code style="color:#22d3bf">nb</code><code style="color:#22d3bf"> を数え、</code><code style="color:#22d3bf">nb &gt;= 3</code>` の画素(分岐点)を取り除いた</p>
+<p>0/1 の float 配列を返す。分岐点を抜くことで骨格が枝ごとの連結成分に分かれる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>前提は 1 画素幅の骨格(`<code style="color:#22d3bf">skeleton</code><code style="color:#22d3bf"> の出力)。太い線や塊を渡すと内部の画素はすべて </code><code style="color:#22d3bf">nb &gt;= 3</code>` となり</p>
+<p>ほぼ全部が消える。分岐点そのものは出力に含まれない(分岐の位置が要るなら `<code style="color:#22d3bf">junctions_skeleton</code>`)。</p>
+<p>分かれた枝を個別に扱うには後段で `<code style="color:#22d3bf">hx_region_to_label</code>` を掛ける。分岐点の隣接画素は除かないので、</p>
+<p>多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に `<code style="color:#22d3bf">r2_split_skeleton_lines</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

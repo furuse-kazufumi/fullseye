@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_edge_stats(V, F)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;mesh_edge_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Perzentile von Kantenlänge und Flächeninhalt samt Ungleichmäßigkeitsverhältnissen (`<code style="color:#22d3bf">table</code>`).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">edge</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">area</code>` hold p5 / median / p95 / max / min / mean;</p>
+<p>`<code style="color:#22d3bf">edge_nonuniformity</code><code style="color:#22d3bf"> = p95/p5 of edge length and </code><code style="color:#22d3bf">area_nonuniformity</code>`</p>
+<p>= p95/p5 of face area (1 = perfectly uniform; the Itokawa 49k model gives</p>
+<p>2.8 / 2.7); `<code style="color:#22d3bf">n_vertices</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_faces</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_edges</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bbox_diagonal</code>`,</p>
+<p>`<code style="color:#22d3bf">boundary_edges</code>` (edges with one face — 0 for a closed surface),</p>
+<p>`<code style="color:#22d3bf">non_manifold_edges</code>` (edges with more than two faces). Use it before</p>
+<p>adding synthetic detail: if the ratio is far from 1, the detail you add at</p>
+<p>a fixed wavelength will alias on the coarse part and resolve on the fine</p>
+<p>part — remesh first (:func:<code style="color:#22d3bf">mesh_isotropic_remesh</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

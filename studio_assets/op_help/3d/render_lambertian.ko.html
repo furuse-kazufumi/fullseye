@@ -4,6 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;render_lambertian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 + 알베도 + 광원 방향 → Lambert 이미지(검사 샘플 생성 / GT 검증 / 역렌더의 순방향). → HxW.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>`<code style="color:#22d3bf">I = albedo * (max(n·L, 0) + ambient)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">light</code>` は (3,) の光源方向ベクトルで内部で</p>
+<p>単位長に正規化する(長さは強度として効かない)。`<code style="color:#22d3bf">n·L &lt; 0</code>` の画素は 0 にクリップ</p>
+<p>される(付着影)。`<code style="color:#22d3bf">ambient</code>` は法線に依らず一様に足す定数で、アルベドは掛かる</p>
+<p>(既定 0)。`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(H,W,3)</code><code style="color:#22d3bf"> の法線(単位長を仮定し正規化しない)、</code><code style="color:#22d3bf">albedo</code>`</p>
+<p>は `<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf"> またはブロードキャスト可能な配列・スカラ。返り値は float32 の </code><code style="color:#22d3bf">(H,W)</code>`。</p>
+<p>上限は `<code style="color:#22d3bf">albedo * (1 + ambient)</code>` で、[0,1] へのクリップはしない。入力検証は無い。</p>
+<p>`<code style="color:#22d3bf">photometric_stereo</code><code style="color:#22d3bf"> の順方向モデルそのもの(光源正規化の規約は </code><code style="color:#22d3bf">normalize=True</code>`</p>
+<p>に対応)なので、復元した法線・アルベドから再合成して元画像と比べる往復検証に使える。</p>
+<p>鏡面・相互反射・投影影(cast shadow)は含まない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

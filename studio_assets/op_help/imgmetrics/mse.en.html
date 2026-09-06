@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.mse(a, b)</code> (or <code style="color:#22d3bf">opsimgmetrics.get(&quot;mse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Mean squared error. A raw quantity that does not depend on `<code style="color:#22d3bf">data_range</code>`.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>式: `<code style="color:#22d3bf">mean((a - b)^2)</code>`(全要素、float64 で計算)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">: 同じ形なら次元は問わない(2-D グレー、</code><code style="color:#22d3bf">(H, W, 3)</code>`、3-D 体積)。</p>
+<p>dtype も問わないが <b>画素値の尺度をそのまま引き継ぐ</b> ―― uint8 の 2 枚と、</p>
+<p>それを `<code style="color:#22d3bf">/255</code><code style="color:#22d3bf"> した float の 2 枚では値が </code><code style="color:#22d3bf">255^2</code>` 倍違う。尺度を揃えて比べたい</p>
+<p>なら `<code style="color:#22d3bf">psnr</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">data_range</code>` で正規化)を使う。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: Python の `<code style="color:#22d3bf">float</code><code style="color:#22d3bf">。0 が完全一致、上限は </code><code style="color:#22d3bf">data_range^2</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(`<code style="color:#22d3bf">MetricContractError</code>`): 形が違う / 空 / NaN・Inf を含む(黙って伝播させない)。</p>
+<p>平方根が要るなら `<code style="color:#22d3bf">rmse</code><code style="color:#22d3bf">。まとめて測るなら </code><code style="color:#22d3bf">compare_images</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

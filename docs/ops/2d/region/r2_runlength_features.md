@@ -17,13 +17,32 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "r2_runlength_features", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `runlength_features`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![r2_runlength_features: 入力 → 出力](../../_fig/r2_runlength_features.png)
+![r2_runlength_features: input → output](../../_fig/r2_runlength_features.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![r2_runlength_features: stages](../../_fig/r2_runlength_features.chain.jpg)
 
 ## 使い方
 
 Region -> feature: mean length of horizontal foreground runs.
+
+前景マスク(``> 0.5``)の各行を左から走査し、連続する前景画素の並び(水平ラン)の
+長さをすべて集めて、その平均(画素数)を 1 つのスカラーで返す。行ごとにゼロ
+埋めした行の差分でランの開始/終了を検出する。``a``, ``b`` は未使用。
+
+返り値は ``numpy.float64``。前景が無ければ 0.0。単位は画素で、画像サイズで
+正規化しない(同じ形状でも解像度が 2 倍なら値も 2 倍になる)。垂直方向のランは
+数えない(縦縞と横縞で値が大きく変わる、向きに依存する特徴量)。細い横線が
+多い領域では値が大きく、点状ノイズが多いと 1 に近づく。ラン長の分散や
+エントロピーは ``r3_runlength_distribution``、短いランの除去は
+``r3_eliminate_runs``。特徴量なので後段に画像 op は繋げない。
 
 ## 詳しい使い方ガイド
 

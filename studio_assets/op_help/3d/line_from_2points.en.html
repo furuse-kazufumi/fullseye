@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.line_from_2points(a, b)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;line_from_2points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Two points → a line (a point on it and a unit direction). Two coordinates fix the line (2-D and 3-D alike).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>返り値 `<code style="color:#22d3bf">(a, u)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は入力の 1 点目(float 配列)、</code><code style="color:#22d3bf">u = (b − a)/|b − a|</code>`。引数は数値の</p>
+<p>2 または 3 ベクトル(それ以外・次元の混在は ValueError)。`<code style="color:#22d3bf">a == b</code>` のときは方向が零ベクトルの</p>
+<p>まま返る(例外は出ない。呼び手で `<code style="color:#22d3bf">|u| &gt; 0</code>` を確かめる)。座標の並び順は問わない(入力の</p>
+<p>順のまま返る)ので、(x,y,z) でも (z,y,x) でも一貫していればよい。</p>
+<p>後段: `<code style="color:#22d3bf">distance_point_line</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">distance_line_line</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">intersect_line_plane</code>` /</p>
+<p>`<code style="color:#22d3bf">angle_between_lines</code><code style="color:#22d3bf"> にこの </code><code style="color:#22d3bf">(a, u)</code><code style="color:#22d3bf"> を渡す。点群から直線を取るなら </code><code style="color:#22d3bf">fit_line_3d</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

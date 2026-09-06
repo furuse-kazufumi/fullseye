@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.angle_between_lines(d1, d2)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;angle_between_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der spitze Winkel zwischen zwei Geradenrichtungen (in Grad).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">arccos(|d̂1·d̂2|)</code>` を度で返す(float)。絶対値を取るので <b>[0, 90]</b>(向きの前後を区別しない。</p>
+<p>鈍角側が要るなら `<code style="color:#22d3bf">180 −</code><code style="color:#22d3bf"> する)。</code><code style="color:#22d3bf">d1</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">d2</code>` は方向ベクトル(長さは問わない、内部で単位化)、</p>
+<p>数値の 2 または 3 ベクトルで次元の混在は ValueError。零ベクトルは 90 が返る。</p>
+<p>用途: `<code style="color:#22d3bf">fit_line_3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">line_from_2points</code>` の方向同士の平行度・直角度チェック(0 に近いほど</p>
+<p>平行、90 に近いほど直交)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

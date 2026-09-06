@@ -19,6 +19,42 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 画像(image2d)を返す: メッシュ単位で ``length`` のバーを面上に置いて射影する。
 
+バーは ``origin`` から ``direction``(正規化)に ``length`` 進む 3-D 線分で、
+**射影後の画素長は視線に対する傾きで縮む**(遠近と短縮を正直に見せる)。
+像面に平行なら画素長は ``f * length / z`` ―― tests が確かめる。
+
+Raises
+------
+ValueError
+    direction がゼロ、length が非正、端点がカメラの後ろ / 画像の外。
+
+手順: ``p1 = origin + direction / |direction| * length`` を作り、``origin`` と
+``p1`` を射影(``annotate3d_project`` と同じ慣習)。両端の画素を結ぶ線と、
+両端に長さ ``tick`` [px] の垂直な目盛を描き(``_bar_with_ticks``)、線の中点から
+画面上側(row が小さい側)へ ``tick/2 + 4`` px 離した位置に
+``label_fmt.format(length) + " " + unit`` の文字箱を置く。
+
+引数:
+- ``origin`` ``(3,)``、``direction`` ``(3,)``(向きだけ使う。長さは無視、ゼロは
+  拒否)、``length``: メッシュ単位の長さ(``> 0``、``1e-300`` 以上)。
+- ``unit``: 文字列(空なら数値だけ)。``label_fmt``: ``str.format`` の書式
+  (既定 ``"{:g}"``)。
+- ``width`` [px] ``>= 0.5``、``tick`` [px] ``>= 0``(0 で目盛なし)、``font_size`` /
+  ``box_alpha`` / ``text_color`` / ``font_path``: 文字箱の見た目。
+- ``depth``: 前方距離画像。**両端とも**隠れていれば線を破線にする。
+- ``color``: 既定 ``"neutral"``(役割名)。``occlusion_tol``: ``[0, 1)``。
+
+返り値: 描画済みの新しい画像(float64 ``[0, 1]``)。
+
+エラーになる条件: ``direction`` のノルムが 1e-12 未満 / ``length <= 0`` /
+どちらかの端点が ``z <= 1e-9`` / **どちらかの端点が画像の外**(この op は
+``in_image`` を両端に要求する — 矢印と違い枠外は拒否) / 姿勢・``K``・``depth``
+の不正 / 文字箱が収まらない。
+
+注意: 画素上の長さは視線に対する傾きで短縮する(像面に平行なら
+``f * length / z`` px)。奥行き方向に置くと短く見えるが、それが正直な射影。
+2 点間の実測値を示すなら ``annotate3d_measure``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

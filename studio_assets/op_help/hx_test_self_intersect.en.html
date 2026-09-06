@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_test_self_intersect&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">test_self_intersection_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_test_self_intersect.png" alt="hx_test_self_intersect: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_test_self_intersect.png" alt="hx_test_self_intersect: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_self_intersect.chain.jpg">hx_test_self_intersect: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The fraction of contours that self-intersect (a feature). Non-adjacent segment pairs are tested.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各 contour(点数 4 以上)について、隣接しない線分の全対 `<code style="color:#22d3bf">(i, i+1)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(j, j+1)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">j &gt;= i+2</code>`)を</p>
+<p>向き付き面積の符号(ccw 判定)で交差判定し、1 対でも交差する contour の本数を全 contour 数で割った割合を</p>
+<p>`<code style="color:#22d3bf">np.float64</code>` で返す。始点と終点が一致(距離 1e-6 未満)する閉曲線では、最初の線分と最後の線分の対は隣接扱いで</p>
+<p>除外する。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p style="margin:2px 0 2px 12px">• contour が無ければ 0.0。点数 3 以下の contour は交差なしとして数える。</p>
+<p>判定は真に交差する場合のみで、端点が相手の線分上に乗る接触や同一直線上の重なりは検出しない(不等号が厳密)。</p>
+<p>計算量は contour ごとに線分数の 2 乗で、点の多い contour では遅い(`<code style="color:#22d3bf">hx_split_contours</code>` や</p>
+<p>`<code style="color:#22d3bf">smooth_contours_xld</code><code style="color:#22d3bf"> で点を減らしてから)。</code><code style="color:#22d3bf">hx_gen_parallel_contour</code>` で内側にずらした輪郭の破綻検出に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

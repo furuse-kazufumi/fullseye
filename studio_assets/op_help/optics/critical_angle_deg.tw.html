@@ -6,6 +6,18 @@
 <p>全反射臨界角 [deg] = asin(n2/n1)。若非 n1 &gt; n2 則 ValueError(不存在)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
+<p>式: `<code style="color:#22d3bf">degrees(asin(n2 / n1))</code>`。入射角(法線からの角)がこれ以上なら屈折光が</p>
+<p>存在せず全反射する。例: N-BK7 相当 `<code style="color:#22d3bf">n1 = 1.5</code><code style="color:#22d3bf"> → 空気 </code><code style="color:#22d3bf">n2 = 1.0</code>` で 41.8 度、</p>
+<p>水 `<code style="color:#22d3bf">n1 = 1.333</code>` → 空気で 48.6 度。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n1</code><code style="color:#22d3bf">: 光が出ていく側(密な媒質)の屈折率、</code><code style="color:#22d3bf">n2</code>`: 入る側(疎な媒質)の屈折率。</p>
+<p>どちらも正の有限スカラ(`<code style="color:#22d3bf">float()</code>` で変換するので配列は受けない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n1 &lt;= n2</code><code style="color:#22d3bf"> は臨界角が存在しないので </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">NaN</code>` や 90 度で</p>
+<p>ごまかさない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: float [deg]、`<code style="color:#22d3bf">(0, 90)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 波長依存は入れない。分散込みで評価するなら硝材の Sellmeier から求めた</p>
+<p>`<code style="color:#22d3bf">n1</code><code style="color:#22d3bf"> を渡す(</code><code style="color:#22d3bf">prism_min_deviation_deg</code>` は内部でそれをやる)。</p>
+<p>`<code style="color:#22d3bf">fresnel_dielectric</code><code style="color:#22d3bf"> に臨界角以上の </code><code style="color:#22d3bf">cos_i</code>` を渡した場合の挙動はそちらを参照。</p>
+<p>Brewster 角(p 偏光の反射が 0 になる角)は `<code style="color:#22d3bf">brewster_angle_deg</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

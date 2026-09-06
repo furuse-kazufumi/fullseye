@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Per-component quantitative descriptors from a label volume.
 
+*labels* is the ``int`` volume returned by :func:`vol_label` (or any integer
+labelling; voxels ``<= 0`` are background). Pass *spacing* ``(sz, sy, sx)`` (or
+a :class:`volio.VolumeMeta`) to report physical volume in mm**3 and physical
+surface area in mm**2. *surface* selects the surface-area estimator:
+``"auto"`` (marching cubes when ``scikit-image`` is importable, else exposed
+faces), ``"marching"`` (require marching cubes), or ``"faces"`` (always the
+face count).
+
+Returns a ``list[dict]`` (one per label ``1..n``, in ascending label order),
+each with:
+
+``label`` id · ``voxel_count`` · ``volume`` (voxels, or mm**3 with spacing) ·
+``centroid`` ``(z, y, x)`` in voxel-index coordinates · ``bbox``
+``(z0, z1, y0, y1, x0, x1)`` with **exclusive** upper bounds (slice ``stop``) ·
+``surface_area`` (voxel-face units, or mm**2 with spacing) · ``sphericity``
+(Wadell, ~1 for a sphere, lower for a slab; approximate — see module note).
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

@@ -19,6 +19,12 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3 点のなす角(頂点 b、度)。∠ABC。
 
+``arccos(û·v̂)``(``u = a − b``, ``v = c − b``)を度で返す(float)。値は **[0, 180]** で符号は
+無い(2-D でも回転の向きは区別しない)。引数は数値の 2 または 3 ベクトル、次元の混在は
+ValueError。``a == b`` か ``c == b`` だと零ベクトルの内積 0 で 90 が返る(例外は出ない)。
+内積は [−1,1] に clip するので数値誤差で NaN にはならない。
+用途: 曲げ角・関節角の計測、``fit_line_3d`` で得た 2 直線の交点まわりの角度。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

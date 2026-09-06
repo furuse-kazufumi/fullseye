@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volrestore; volrestore.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_richardson_lucy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Richardson–Lucy deconvolution of a non-negative volume by a known PSF.</p>
+<p>*psf* is a 3-D non-negative kernel (any odd/even size smaller than the</p>
+<p>volume; it is normalised to sum 1 internally so overall intensity is</p>
+<p>preserved). *iterations* trades sharpness against noise amplification —</p>
+<p>5-30 is the practical range (see the module notes on semi-convergence).</p>
+<p>Negative voxels are refused (RL is a Poisson model) — except *rounding</p>
+<p>dust*: values no lower than `<code style="color:#22d3bf">-NEGATIVE_DUST_TOL * max|vol|</code>` (1e-9</p>
+<p>relative; an FFT-blurred observation typically carries -1e-16) are clipped</p>
+<p>to 0 instead of rejected, so the module&#x27;s own forward model feeds back in.</p>
+<p>Returns the deblurred `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume (non-negative).</p>
+<p>Measured on the test scene (binary sphere pair blurred by a sigma-2</p>
+<p>Gaussian): the RMSE to ground truth falls to 0.81x the blurred</p>
+<p>observation&#x27;s at 10 iterations and 0.68x at 50 — genuine but *gradual*,</p>
+<p>because the residual is dominated by the spheres&#x27; hard edges, which RL</p>
+<p>recovers slowly. What converges fast is the *forward consistency*:</p>
+<p>re-blurring the estimate reproduces the observation almost exactly (that</p>
+<p>is the quantity the RL update actually optimises).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

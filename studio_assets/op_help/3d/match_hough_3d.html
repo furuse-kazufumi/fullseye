@@ -5,6 +5,23 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。</p>
+<p>GHT を <b>向きビンごとの相関の総和</b> として GPU ネイティブに定式化:</p>
+<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、</p>
+<p>欠けたエッジはピークを下げるだけ(<b>遮蔽・クラッタに頑健</b>)。shape-based(連続内積の単一解)</p>
+<p>と違い <b>投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス</b> を取れるのが差別化。</p>
+<p>返り値 (topk,4) の [votes, d, h, w] (votes 降順)。</p>
+<p>手順: 両 volume の単位勾配(`<code style="color:#22d3bf">mc</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">sobel3d</code><code style="color:#22d3bf"> の生出力への閾値)を </code><code style="color:#22d3bf">ndir</code>` 本の参照方向の</p>
+<p>うち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの</p>
+<p>2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は <b>[0, 1]</b>、1 で</p>
+<p>全エッジが一致。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ndir</code><code style="color:#22d3bf">: 26 以下は 26 近傍方向のリストの先頭 </code><code style="color:#22d3bf">ndir</code>` 本(26 未満は方向が偏る)、27 以上は</p>
+<p>fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。</p>
+<p style="margin:2px 0 2px 12px">• 返り値 `<code style="color:#22d3bf">(topk, 4)</code><code style="color:#22d3bf"> の各行 </code><code style="color:#22d3bf">[votes, z, y, x]</code>`、votes 降順。座標は <b>テンプレ中心 (T//2)</b></p>
+<p>の scene 座標、`<code style="color:#22d3bf">subvoxel=True</code>` なら ±2 近傍重心。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nms</code><code style="color:#22d3bf">: ピークを取るたびに </code><code style="color:#22d3bf">±nms</code>` voxel の立方体を −1 で潰してから次を探す。近接する</p>
+<p>複数インスタンスは `<code style="color:#22d3bf">nms</code>` を小さく。</p>
+<p style="margin:2px 0 2px 12px">• テンプレにエッジが無ければ全 0 の `<code style="color:#22d3bf">(topk,4)</code>`。テンプレが完全に収まらない位置は 0。</p>
+<p>後段: 各ピークを `<code style="color:#22d3bf">refine_translation_lk</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">refine_peak_newton</code>` で精緻化。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,6 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volops; volops.vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0))</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_boundary_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Randschale als `<code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">-Punktwolke in </code><code style="color:#22d3bf">(z, y, x)</code>`-Reihenfolge.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The bridge from the voxel world to the point-cloud world at minimal memory:</p>
+<p>only the *surface* voxels of the mask become points (inner boundary, see</p>
+<p>:func:<code style="color:#22d3bf">vol_boundary</code>), so a solid object of a million voxels typically</p>
+<p>yields a few tens of thousands of points — ready for `<code style="color:#22d3bf">fit_sphere3</code>` /</p>
+<p>`<code style="color:#22d3bf">smallest_box3</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">register_fpfh</code>` and friends without ever materialising</p>
+<p>the full grid as points.</p>
+<p>Coordinates are `<code style="color:#22d3bf">(index + origin) * spacing</code>` per axis: pass *spacing*</p>
+<p>`<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> (or a :class:</code>volio.VolumeMeta`) for physical millimetre</p>
+<p>coordinates, and pass the offset returned by :func:<code style="color:#22d3bf">vol_crop_domain</code> as</p>
+<p>*origin* so points from a cropped volume land in the uncropped frame</p>
+<p>(*origin* is in <b>voxel units</b> — it is added to the index *before* the</p>
+<p>spacing multiply; it must be finite, and may be fractional for a subvoxel</p>
+<p>shift). An empty mask returns an empty `<code style="color:#22d3bf">(0, 3)</code>` array (a valid question</p>
+<p>with a valid empty answer — unlike a crop, which needs a box to exist).</p>
+<p>Returns an `<code style="color:#22d3bf">(N, 3)</code>` float64 array, rows ordered z-major (deterministic).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

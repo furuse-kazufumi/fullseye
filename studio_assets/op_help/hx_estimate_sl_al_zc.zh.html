@@ -3,10 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_sl_al_zc&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">estimate_sl_al_zc</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_estimate_sl_al_zc.png" alt="hx_estimate_sl_al_zc: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_estimate_sl_al_zc.png" alt="hx_estimate_sl_al_zc: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Zheng-Chellappa:用梯度能量修正后估计 slant。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">hx_estimate_sl_al_lr</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">arccos(&lt;I&gt;)</code><code style="color:#22d3bf"> の slant に、Sobel 勾配振幅の平均 </code><code style="color:#22d3bf">e</code>`(1 で頭打ち)による係数</p>
+<p>`<code style="color:#22d3bf">(1 + min(e, 1))</code><code style="color:#22d3bf"> を掛けて、</code><code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> で割り 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` を返す。「勾配が強い=斜光=slant 大」</p>
+<p>という向きの補正。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも</p>
+<p>増えるので、照明以外の要因で slant が過大に出る。前段に `<code style="color:#22d3bf">gauss_filter</code>` を置くと雑音分の勾配は減る。</p>
+<p>反射率の推定は `<code style="color:#22d3bf">hx_estimate_al_am</code><code style="color:#22d3bf">、方位は </code><code style="color:#22d3bf">hx_estimate_tilt_zc</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

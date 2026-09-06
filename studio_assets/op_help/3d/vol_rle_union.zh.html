@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import volregion; volregion.vol_rle_union(a, b)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 run 上求两个 RLE 区域的并(不解码)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>with the run counts, not the voxel counts — merging two 512**3 masks never</p>
+<p>touches 512**3 anything. Regions must share the same volume shape.</p>
+<p>手順(`<code style="color:#22d3bf">_rle_boolean</code><code style="color:#22d3bf"> 共通): 両 region の run を、平面行ごとに </code><code style="color:#22d3bf">W + 1</code>` の</p>
+<p>stride を取った 1 本の整数直線に写し(+1 の隙間で隣の行の run が結合しない)、</p>
+<p>各 run の start/end をイベントとして並べ、区間ごとの被覆状態 `<code style="color:#22d3bf">(a の内側, b の内側)</code>`</p>
+<p>を掃引して `<code style="color:#22d3bf">ia | ib</code>` が真の区間を最大長の run にまとめ直す。計算量は run 数</p>
+<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> に対して O(n log n)(</code><code style="color:#22d3bf">np.unique</code>` のソート)。</p>
+<p>返り値: 同じ `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf"> の新しい </code><code style="color:#22d3bf">VolRLE</code>`(run は行順・x 昇順、隣接・重複する run は</p>
+<p>1 本に併合済み)。両方が空なら run 0 本の region。</p>
+<p>`<code style="color:#22d3bf">vol_rle_decode(union) == decode(a) | decode(b)</code>` が voxel 単位で成り立つ。</p>
+<p>検証(`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">): どちらかが </code><code style="color:#22d3bf">VolRLE</code>` でない・整合性検査に失敗 /</p>
+<p>`<code style="color:#22d3bf">a.shape != b.shape</code>`(別の volume に住む region は合成できない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

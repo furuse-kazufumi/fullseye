@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_radial_distort_contour&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON equivalent</b>: <code style="color:#22d3bf">change_radial_distortion_contours_xld</code> (the HALCON reference is a useful guide to its meaning and parameters)</p>
-<p><img src="fig/hx_radial_distort_contour.png" alt="hx_radial_distort_contour: 入力 → 出力"></p>
-<p>*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*</p>
+<p><img src="fig/hx_radial_distort_contour.png" alt="hx_radial_distort_contour: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.a.jpg">hx_radial_distort_contour: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.chain.jpg">hx_radial_distort_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Apply radial distortion r&#x27; = r(1 + k r^2) to a contour (k from (a−0.5): barrel or pincushion).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各 contour の点を画像中心 `<code style="color:#22d3bf">(H/2, W/2)</code><code style="color:#22d3bf"> からの相対座標 </code><code style="color:#22d3bf">d</code><code style="color:#22d3bf"> にし、正規化半径 </code><code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code>` に</p>
+<p>対して `<code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code>` と伸縮させた contour を返す(放射歪みモデルの 1 次項)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 歪み係数 </code><code style="color:#22d3bf">k = (a - 0.5) * 1.5</code><code style="color:#22d3bf">(-0.75〜+0.75)。</code><code style="color:#22d3bf">k &lt; 0</code><code style="color:#22d3bf"> で点が中心に寄る(樽型)、</code><code style="color:#22d3bf">k &gt; 0</code>` で</p>
+<p>外へ広がる(糸巻き型)、a=0.5 で無変化。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>半径は画像長辺の半分で正規化しているので、画像の隅で `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> が 1 前後になり、</code><code style="color:#22d3bf">k = ±0.75</code>` なら隅の点は</p>
+<p>1.75 倍/0.25 倍まで動く。逆変換は無い(`<code style="color:#22d3bf">k</code>` の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour</p>
+<p>計測(`<code style="color:#22d3bf">hx_fit_circle_contour</code>` 等)で試す、あるいは合成的にデータを増やす用途。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

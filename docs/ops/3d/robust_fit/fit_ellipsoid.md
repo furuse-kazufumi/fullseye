@@ -19,6 +19,24 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群に任意姿勢の 3 軸楕円体を代数フィットし ``{center, axes, radii, residual}`` を返す。
 
+一般二次曲面 ``xᵀA x + b·x + c = 0`` を、楕円体を保証する拘束 ``4J − I² = 1`` の下で
+一般化固有問題 ``Sr v1 = λ C v1``(``scipy.linalg.eig``)として解く(Li & Griffiths 2004)。
+各実固有ベクトルを楕円体へ復元し、**正定値(= 実在する楕円体)へ復元でき残差 RMS が最小**
+のものを採用する(復元時の正定値検査そのものが厳密な楕円体判定)。初期値不要・決定論・
+大域解。数値安定化のため点群を
+重心と RMS 半径で無次元化してから解き、パラメータを world 座標へ戻す。
+
+Args:
+    points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。
+
+Returns:
+    dict: ``{"center": (3,), "axes": (3,3) 列=主軸(半径降順), "radii": (3,) 半径(降順),
+    "residual": float Taubin 近似の点-面距離 RMS}``。
+
+Raises:
+    ValueError: 形状不正/点数不足/正定値な楕円体解が得られない(平面状の退化・
+        非楕円面・被覆不足)など fail-closed。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

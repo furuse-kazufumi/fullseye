@@ -4,6 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.grid_coords(bounds, res)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;grid_coords&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。</p>
+<p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">res</code>` は各軸のボクセル数(スカラ=立方</p>
+<p>or 長さ3)。voxel `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> の中心は world </code><code style="color:#22d3bf">lo + (i+0.5)/res * span</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">occupancy.query_distance</code>`</p>
+<p>の `<code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code>` と整合 = 中心アライン)。返り値は</p>
+<p>`<code style="color:#22d3bf">coords</code><code style="color:#22d3bf"> shape </code><code style="color:#22d3bf">(nx,ny,nz,3)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>`。</p>
+<p>こうして作った座標に `<code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf"> を評価し CSG 合成すれば、</code><code style="color:#22d3bf">recon3d</code>` の</p>
+<p>marching cubes や `<code style="color:#22d3bf">occupancy</code>` のゼロ交差抽出へそのまま渡せる。</p>
+<p>Raises ValueError for degenerate bounds or res&lt;=0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

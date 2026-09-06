@@ -5,6 +5,23 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 (N,3) → 밀도 voxel (size³). scatter_add 로 splat, 선택적으로 가우스 평활.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。</p>
+<p>手順: 各点を `<code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code>` で整数格子に落とし、その voxel に</p>
+<p>1 を加算する(値 = その voxel に落ちた点の個数)。`<code style="color:#22d3bf">smooth &gt; 0</code><code style="color:#22d3bf"> なら σ=</code><code style="color:#22d3bf">smooth</code>`(voxel 単位)</p>
+<p>の gaussian を 3 軸分離 conv で掛ける(半径 `<code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>`、端は replicate)。</p>
+<p>出力の軸順は <b>点の列の順そのまま</b>(`<code style="color:#22d3bf">points[:, 0]</code>` → 軸 0)で、(depth,row,col) への</p>
+<p>並べ替えはしない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(lo, hi)</code>` の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに</p>
+<p>格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・</p>
+<p>`<code style="color:#22d3bf">hi &lt;= lo</code><code style="color:#22d3bf"> の軸があると ValueError(tsdf 系の </code><code style="color:#22d3bf">((xmin,xmax),...)</code>` 流儀は長さ 2 として拒否)。</p>
+<p style="margin:2px 0 2px 12px">• 範囲外の点は捨てずに <b>端の voxel へ clip される</b>(端に偽の密度が溜まる)。切り落としたい</p>
+<p>なら事前に点群側で除く。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">size</code><code style="color:#22d3bf">: 一辺の voxel 数。</code><code style="color:#22d3bf">hi − lo</code>` が 0 の軸は 1e-9 に置換されるだけで警告しない。</p>
+<p style="margin:2px 0 2px 12px">• 空の点群で bounds=None は numpy の min が例外を出す。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(size, size, size)</code>` float64 numpy(device で計算しても CPU に戻す)。値は個数</p>
+<p>(平滑後は個数の重み分布)で正規化はしない。</p>
+<p>後段: `<code style="color:#22d3bf">match_points_ncc</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">signed_distance_field</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">voxel_to_mesh</code>` の入力に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

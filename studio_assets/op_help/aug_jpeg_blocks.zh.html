@@ -2,8 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">aug_jpeg_blocks — 2D <code style="color:#22d3bf">augmentation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;aug_jpeg_blocks&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/aug_jpeg_blocks.png" alt="aug_jpeg_blocks: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/aug_jpeg_blocks.png" alt="aug_jpeg_blocks: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.a.jpg">aug_jpeg_blocks: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.b.jpg">aug_jpeg_blocks: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_jpeg_blocks.inputs.jpg">aug_jpeg_blocks: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>JPEG 分块(blocking)/振铃(ringing)伪影。图像(缩放到 0..255)被切分为 8x8 的块,每块经过正交归一化的二维 DCT-II(`<code style="color:#22d3bf">scipy.fft.dctn</code><code style="color:#22d3bf">)变换,用标准 JPEG Annex-K 亮度量化表乘以 </code><code style="color:#22d3bf">(1 + 40*a)/16</code><code style="color:#22d3bf"> 进行量化(a=0 时接近无损,a=1 时量化很重),再用逆 DCT 重建。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> 会在两个轴上将 8x8 分块网格的相位偏移 </code><code style="color:#22d3bf">int(7*b)</code>` 像素,也就是移动分块接缝的位置。不是 8 的倍数的图像会先做边缘复制填充,再裁剪回 HxW(因此可以处理 4x4 的输入)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

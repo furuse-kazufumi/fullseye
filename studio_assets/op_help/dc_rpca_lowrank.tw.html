@@ -2,10 +2,36 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">dc_rpca_lowrank — 2D <code style="color:#22d3bf">decomposition</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_rpca_lowrank&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p><img src="fig/dc_rpca_lowrank.png" alt="dc_rpca_lowrank: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/dc_rpca_lowrank.png" alt="dc_rpca_lowrank: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_lowrank.a.jpg">dc_rpca_lowrank: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_lowrank.inputs.jpg">dc_rpca_lowrank: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>穩健 PCA（Robust-PCA）的低秩（背景）部分。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>画像行列 `<code style="color:#22d3bf">M</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">M = L + S</code><code style="color:#22d3bf">(低ランク </code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> + スパース </code><code style="color:#22d3bf">S</code>`)に分解する</p>
+<p>Principal Component Pursuit を inexact ALM(Lin/Chen/Ma 2010)で解き、`<code style="color:#22d3bf">L</code>`</p>
+<p>を返す。スパース項の重みは `<code style="color:#22d3bf">λ = (0.5 + 1.5*a) / sqrt(max(m, n))</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">m, n</code>`</p>
+<p>は分解時の行列寸法)で、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が大きいほど </code><code style="color:#22d3bf">S</code><code style="color:#22d3bf"> が疎になり、その分 </code><code style="color:#22d3bf">L</code>` に</p>
+<p>残る成分(ランク)が増える。`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> では </code><code style="color:#22d3bf">λ</code>` が小さく、ほとんどの変動が</p>
+<p>`<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> に吸われて </code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> はのっぺりする。</code><code style="color:#22d3bf">b</code>` は未使用。反復は最大 60 回、</p>
+<p>収束判定は `<code style="color:#22d3bf">||M - L - S||_F &lt;= 1e-7 * ||M||_F</code>`。</p>
+<p>長辺が 64 を超える画像は 64 に縮小して分解し、`<code style="color:#22d3bf">L</code>` だけを線形補間で元の</p>
+<p>大きさに戻す(低ランク部は縮小に耐えるため)。入力は [0,1] の 2 次元 float64</p>
+<p>に揃え(3 次元はチャネル平均)、返り値も同形・[0,1] に clip。全零画像は入力を</p>
+<p>そのまま返す。BLAS のスレッド数は分解中だけ `<code style="color:#22d3bf">fsthreads</code>` で絞る(小行列の</p>
+<p>SVD ではスレッドが多いほど遅いため)。例外時は fail-soft で入力のクリップ版が</p>
+<p>返り、台帳に記録される。</p>
+<p>「行や列にわたって繰り返す構造」(縞、グラデーション、周期パターン)を背景と</p>
+<p>みなす分解なので、単一の 2 次元画像でも織物・シート・ディスプレイ画素などの</p>
+<p>周期背景から孤立欠陥を分離するのに向く。自然画像のような非周期背景では</p>
+<p>`<code style="color:#22d3bf">L</code>` は単なる低ランク近似で、意味のある背景にならない。対になる欠陥側は</p>
+<p>`<code style="color:#22d3bf">dc_rpca_sparse</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">L + (S - 0.5) == 入力</code>`)。エッジ保存の平滑で構造を</p>
+<p>取りたいなら `<code style="color:#22d3bf">dc_structure_texture</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

@@ -7,6 +7,18 @@
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>レーザー = 1 本、LED = 狭帯域を数本、ハロゲン = 広帯域を数本。同じ面でも</p>
 <p>波長で鏡面/散乱の配分が変わるので、広帯域は<b>重ね合わせて</b>撮るのが正しい。</p>
+<p>手順: `<code style="color:#22d3bf">light[&quot;wavelength_nm&quot;]</code><code style="color:#22d3bf">(無ければ 550)を中心 </code><code style="color:#22d3bf">λ</code>`、</p>
+<p>`<code style="color:#22d3bf">light[&quot;bandwidth_nm&quot;]</code><code style="color:#22d3bf">(無ければ 0)を全幅 </code><code style="color:#22d3bf">bw</code><code style="color:#22d3bf"> とし、</code><code style="color:#22d3bf">k = max(samples, 1)</code>`</p>
+<p>本を `<code style="color:#22d3bf">λ ± bw/2</code><code style="color:#22d3bf"> に等間隔で置く。重みはガウス型 </code><code style="color:#22d3bf">exp(-0.5 (2x)^2)</code>`</p>
+<p>(`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[-1, 1]</code>` に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。</p>
+<p>`<code style="color:#22d3bf">bw &lt;= 0</code><code style="color:#22d3bf">(レーザー)または </code><code style="color:#22d3bf">k == 1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">λ</code>` 1 本・重み 1。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">light_spec</code>` の結果。キーが無ければ既定値で進み、例外は出さない</p>
+<p>(検証はしない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">samples</code>`: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code>` の 2 本の float64 配列。</p>
+<p>スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。</p>
+<p>`<code style="color:#22d3bf">layout_capture</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">spectral_samples</code>` 本でこれを呼び、波長ごとの結果を</p>
+<p>この重みで足し合わせる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

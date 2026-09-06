@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.render_shaded(normals_img, light=(0, 0, 1), ambient=0.1)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;render_shaded&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalenkarte (H,W,3) + Lichtrichtung → ein Lambert-schattiertes Bild (Erzeugung von Erscheinungsmustern, die Brücke zur Optik).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">I = ambient + (1 − ambient)·clip(n·L̂, 0, 1)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">(H, W)</code>` float64、値域 <b>[0, 1]</b> で返す。</p>
+<p>`<code style="color:#22d3bf">light</code>` は内部で単位化する(零ベクトルは 0 除算で NaN)が、<b>法線は単位化しない</b>(単位法線を</p>
+<p>渡す。`<code style="color:#22d3bf">estimate_point_normals</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">normals_from_depth</code>` の出力は単位)。法線の成分順と</p>
+<p>`<code style="color:#22d3bf">light</code><code style="color:#22d3bf"> の成分順は揃える(既定 </code><code style="color:#22d3bf">(0,0,1)</code>` は第 3 成分=カメラ向きを正面光とする規約)。</p>
+<p>光源と反対を向く面は `<code style="color:#22d3bf">ambient</code><code style="color:#22d3bf"> の値になる。最後の軸を法線とみなすので </code><code style="color:#22d3bf">(N,3)</code>` の点ごとの</p>
+<p>法線でも動く。鏡面ハイライトは無い(`<code style="color:#22d3bf">fresnel_reflectance</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">reflect</code>` で別途)。</p>
+<p>用途: `<code style="color:#22d3bf">photometric_stereo</code>` の検算(法線 → 画像の順方向)、外観検査の合成サンプル。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

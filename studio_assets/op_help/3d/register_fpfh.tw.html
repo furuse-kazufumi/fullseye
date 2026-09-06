@@ -4,6 +4,47 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;register_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 FPFH 描述子 + RANSAC 做 <b>無需初值</b> 的剛體配準 (R,t)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>2D の Harris/SIFT に相当する疎 feature マッチの 3D 版。両雲を FPFH 記述子で表し、</p>
+<p>記述子空間の最近傍で対応を張り(相互最近傍 + Lowe ratio でフィルタ)、RANSAC で</p>
+<p>外れ値に頑健な剛体姿勢を解く。密マッチ(NCC/Hough)や PCA と違い、大回転(50-70°)</p>
+<p>+並進+部分重なりでも初期推定なしに姿勢を出せるのが価値。得た (R,t) は ICP の初期値</p>
+<p>(coarse init)として渡すと表面精度まで締められる(dst ≈ src @ R.T + t の ICP 慣習)。</p>
+<p>パイプライン:</p>
+<p>1) voxel ダウンサンプル(独立サンプリング 2 雲の近傍を共通解像度へ揃える。</p>
+<p>FPFH の対応正答率を大きく左右する必須前処理)。</p>
+<p>2) 法線推定(局所 PCA)。src_normals/dst_normals を渡せばそれを使う。</p>
+<p>3) FPFH 記述子(SPFH→距離重み合成)。</p>
+<p>4) 記述子 NN マッチ(mutual + ratio)。</p>
+<p>5) RANSAC: 3 点サンプル → edge-length 整合プレフィルタ → Kabsch → <b>全点フィットネス</b></p>
+<p>(src 全点を変換し dst 最近傍が閾値内に入る割合)で採点。対応(~100点)だけの</p>
+<p>採点は誤姿勢に固着しやすいため、全点フィットネスで頑健化する。</p>
+<p>6) 最良姿勢の対応インライアで再フィット。</p>
+<p>引数:</p>
+<p>src (N,3), dst (M,3): 位置合わせする 2 点群(numpy/torch)。</p>
+<p>src_normals, dst_normals ((N,3)/(M,3) or None): 事前法線。None なら内部推定</p>
+<p>(ただし voxel_size&gt;0 のときは座標が変わるため常に再推定)。</p>
+<p>voxel_size (float or None): ダウンサンプル辺長。None で dst 解像度×2.5 を自動採用。</p>
+<p>0/None で無効化(生点群のまま。独立サンプリングでは非推奨)。</p>
+<p>normal_k (int): 法線推定の近傍数。</p>
+<p>feature_k (int): FPFH の近傍数(大きいほど記述子が安定・識別的。60 前後を推奨)。</p>
+<p>n_bins (int): 1 特徴あたりのヒストグラムビン数(記述子次元 = 3*n_bins)。</p>
+<p>ransac_iters (int): RANSAC 反復数。</p>
+<p>inlier_thr (float or None): インライア距離閾値。None で(ダウンサンプル後)解像度×3。</p>
+<p>edge_sim (float): 三つ組の辺長比の許容(0&lt;edge_sim&lt;=1、1 に近いほど厳格)。</p>
+<p>mutual (bool): 相互最近傍フィルタ。ratio (float or None): Lowe ratio。</p>
+<p>seed (int): RANSAC 乱数種(restart 時に変える)。device (str): 返り値テンソルの device。</p>
+<p>返り値:</p>
+<p>R (3,3) torch.Tensor(device 上), t (3,) torch.Tensor,</p>
+<p>info dict: {&quot;n_corr&quot;(対応数), &quot;inliers&quot;(インライア数), &quot;inlier_ratio&quot;,</p>
+<p>&quot;fitness&quot;(全点フィットネス=restart 選択の指標), &quot;rmse&quot;(インライア RMSE),</p>
+<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;,&quot;dst_corr&quot;(対応 index)}。</p>
+<p>注意(honest): FPFH は coarse registration であり、独立サンプリング+ノイズ+部分重なり</p>
+<p>の難条件では回転誤差が数度残る(実測: 62°回転・重なり~64%・ノイズ0.5×解像度で</p>
+<p>RANSAC 後 中央値 ~4.4°、~90% が &lt;8°、残り ~10% は 8-9° の境界。ICP で締めると 100%</p>
+<p>が &lt;8°・中央値 ~0.5°)。ノイズが点間隔(解像度)並み以上になると法線・角特徴が</p>
+<p>崩れ記述子が識別力を失う(実測: ノイズ≥1.0×解像度で成功率が低下)。RANSAC は乱択</p>
+<p>なので実運用では数回 restart し info[&quot;fitness&quot;] 最大の結果を採るとよい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

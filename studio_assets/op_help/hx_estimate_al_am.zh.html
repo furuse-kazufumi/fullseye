@@ -3,10 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_al_am&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">estimate_al_am</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_estimate_al_am.png" alt="hx_estimate_al_am: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_estimate_al_am.png" alt="hx_estimate_al_am: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>估计 albedo(反射率)与 ambient(环境光):albedo ~ 亮度范围,这里返回 albedo。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>画像の最大値と最小値の差 `<code style="color:#22d3bf">max(v) - min(v)</code><code style="color:#22d3bf"> を [0,1] に clip した </code><code style="color:#22d3bf">np.float64</code>` を返す。</p>
+<p>「反射率(albedo)が高いほど陰影の明暗差が大きい」という関係を、輝度のダイナミックレンジで代用した推定。</p>
+<p>ambient(環境光)は計算せず返さない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>最大・最小の 2 画素だけで決まるため、飽和画素や暗点が 1 つでもあれば 1 に張り付く。雑音に弱いので前段で</p>
+<p>`<code style="color:#22d3bf">hx_mean_shape</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">median_rect</code>` を掛ける。min-max 正規化済みの画像では常に 1 になり意味を持たない。</p>
+<p>slant の推定 `<code style="color:#22d3bf">hx_estimate_sl_al_lr</code>` は反射率 1 を仮定しており、この値で割って補正する用途が想定される。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

@@ -4,7 +4,7 @@ dim: shape2d
 category: morph
 in: image2d × pairs × pairs
 out: image2d
-examples: []
+examples: [shape2d_morph_descriptor_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -37,7 +37,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [shape2d_morph_descriptor_tour](../../../../examples/shape2d_morph_descriptor_tour.py) — `py -3.11 examples/shape2d_morph_descriptor_tour.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

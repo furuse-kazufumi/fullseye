@@ -20,6 +20,24 @@ version: 0.1.10  # fullseye lib version this note was generated for
 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。
 サンプル数 n = round(|angle_extent|*radius)+1、``spacing`` = 弧長/(n-1)。
 
+弧上のサンプル点は ``row = center_row + radius sin(θ)``、
+``col = center_col + radius cos(θ)``、``θ = angle_start + linspace(0, angle_extent, n)``。
+角度は **ラジアン**で、col 軸(x)から row 軸(画像下向き)へ回る向きが正。
+``angle_extent`` が負なら逆回りに進み、``measure_pos`` の ``pos`` / ``dist`` は
+その進行方向に沿って数える。
+
+- ``radius``: [px]。``n = max(2, round(|angle_extent| * radius) + 1)`` なので、
+  半径や角度幅が小さすぎるとサンプル 2 点・``spacing`` が弧長そのものになる。
+  ``radius = 0`` は ``spacing = 0`` になり後段の微分で破綻する(ここでは検証しない)。
+- ``width``: 幅方向(法線)の平均化幅 [px]。``int`` に切られ、1 以下なら平均なし。
+- ``shape``: 画像の ``(H, W)``。dict に保存されるだけで、範囲外は
+  ``measure_pos`` 側が最近傍で外挿する(例外は出ない)。
+- 返り値: ``{"type": "arc", "rows", "cols", "width", "shape", "spacing", "center",
+  "radius", "angles"}`` の dict(``measurehandle`` 型)。
+
+``measure_pos`` / ``measure_pairs`` / ``fuzzy_measure_pairing`` に渡す。直線なら
+``gen_measure_rectangle2``。位置決め後は ``translate_measure`` で動かす。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

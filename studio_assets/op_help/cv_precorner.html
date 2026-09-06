@@ -3,8 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;cv_precorner&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">corner_response</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/cv_precorner.png" alt="cv_precorner: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/cv_precorner.png" alt="cv_precorner: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cv_precorner.inputs.jpg">cv_precorner: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>コーナー候補検出(preCornerDetect、OpenCV 実装)。1 次・2 次微分を組み合わせた特殊な式でコーナーらしさを符号付きスコア化する —— 本来は `<code style="color:#22d3bf">cv2.cornerSubPix</code>` によるサブピクセル精密化の前段候補検出として使う関数。</p>
 <p>HALCON の <code style="color:#22d3bf">corner_response</code>(Searching corners in images.)に相当(近似)。実装は `<code style="color:#22d3bf">|cv2.preCornerDetect(v, ksize=3)|</code>` を正規化したもの。a, b は未使用 —— ksize(Sobel 開口)は 3 に固定。</p>

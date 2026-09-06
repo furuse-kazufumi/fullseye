@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Fresnel 反射率(無偏光=s/p 平均)。透明体界面で反射/透過に分かれる割合。
 
+垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。
+
+``cos_i`` は入射角の余弦(実数スカラー。配列・None は ValueError)。符号は捨てる(``|cos_i|``)。
+``eta1`` は入射側、``eta2`` は透過側の屈折率。s 偏光 ``rs`` と p 偏光 ``rp`` の平均を float で
+返す(**[0, 1]**)。Brewster 角では ``rp = 0`` になるが平均は 0 にならない。``cos_i = 0``(かすめ
+入射)で 1.0。透過率は ``1 −`` 反射率(吸収なし)。
+用途: ``refract`` で曲げた光線の重み、透明体の輝度予測。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -2,15 +2,39 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_superquadric_residual — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">feature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_superquadric_residual&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p>*図なし: この op は <code style="color:#22d3bf">points</code> を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*</p>
+<p><img src="fig/tb_superquadric_residual.png" alt="tb_superquadric_residual: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_superquadric_residual.chain.jpg">tb_superquadric_residual: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Gross-Boult 体積補正残差 mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。</p>
+<p>`<code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code>` で各点の内外関数 F を求め、点ごとの残差</p>
+<p>`<code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code><code style="color:#22d3bf"> の 2 乗平均を float で返す。表面上の点は </code><code style="color:#22d3bf">F=1</code>` なので</p>
+<p>残差 0、内側は負・外側は正の残差になる(2 乗するので符号は消える)。`<code style="color:#22d3bf">fit_superquadric</code>` が</p>
+<p>最小化しているのと同じ量で、返り dict の `<code style="color:#22d3bf">residual</code>` もこの値。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code>`: (N,3) にリシェイプできる点群(world 座標)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">: 半径 (a1,a2,a3)。</code><code style="color:#22d3bf">eps</code><code style="color:#22d3bf">: 形状指数 (eps1,eps2)(F の計算には両方、外側の </code><code style="color:#22d3bf">F**eps1</code>` には</p>
+<p>`<code style="color:#22d3bf">eps1</code>` だけを使う)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf">: 姿勢(</code><code style="color:#22d3bf">X_body = R.T @ (X - t)</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">None</code>` なら単位回転 / 原点。</p>
+<p>数値保護: F は [0, 1e12] にクリップし、`<code style="color:#22d3bf">a1*a2*a3</code>` は 1e-12 以上に持ち上げてから sqrt を取る</p>
+<p>(退化パラメータで inf/NaN にならないため。表面近傍の値には影響しない)。</p>
+<p>次元: `<code style="color:#22d3bf">sqrt(a1 a2 a3)</code><code style="color:#22d3bf"> は長さの 3/2 乗、</code><code style="color:#22d3bf">F^eps1 - 1</code>` は無次元なので、返り値は長さの 3 乗の</p>
+<p>次元を持ち点群のスケールに依存する。大きさの違う物体どうしの比較には向かない。真の点-表面</p>
+<p>ユークリッド距離ではなく半径距離近似であること、外れ値に無防備なことはモジュール docstring</p>
+<p>のとおり。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">superquadric_residual</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_superquadric_residual 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_superquadric_residual%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_superquadric_residual%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p>次の例は元の台帳 op <code style="color:#22d3bf">superquadric_residual</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:superquadric_fit">superquadric_fit</a> — <code style="color:#22d3bf">py -3.11 examples_3d/superquadric_fit.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>

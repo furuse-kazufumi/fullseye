@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_watershed(vol, markers, mask=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_watershed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>マーカー制御の 3-D watershed 分割(<b>optional —— scikit-image</b>)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Floods the volume from the labelled *markers* (an int volume, `<code style="color:#22d3bf">0</code>` = unset),</p>
+<p>optionally restricted to *mask*. Delegates to</p>
+<p>`<code style="color:#22d3bf">skimage.segmentation.watershed</code>` — treat *vol* as a landscape (e.g. a</p>
+<p>gradient magnitude, or the negated distance transform for splitting touching</p>
+<p>blobs). Returns an `<code style="color:#22d3bf">int32</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(D, H, W)</code>` label volume.</p>
+<p>Raises `<code style="color:#22d3bf">ImportError</code><code style="color:#22d3bf"> with a clear </code><code style="color:#22d3bf">pip install scikit-image</code>` message when</p>
+<p>the optional dependency is absent; the rest of this module needs only</p>
+<p>numpy + scipy.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

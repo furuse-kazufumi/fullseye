@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import spherical_proj; spherical_proj.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;unproject_spherical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Spherical range image → 3-D points (M, 3). Only the cells with range &gt; 0 are back-projected, at their bin-centre angles.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>:func:<code style="color:#22d3bf">project_spherical</code> の逆。行/列からビン<b>中心</b>の (elevation, azimuth) を復元し、</p>
+<p>格納 range を slant distance として球面 → 直交座標へ戻す。空(全 0)なら (0, 3) を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">range_img</code><code style="color:#22d3bf">: (v_res, h_res) の 2-D 配列(非 2-D・サイズ 0 は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">range &gt; 0</code>` の</p>
+<p>セルだけを点にする(0 = 空セル、負値も無視)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">v_fov</code>`: 投影時と同じ (v_min, v_max) [度]。違う値を渡すと仰角がずれた点群になる(整合性は</p>
+<p>検査できない)。</p>
+<p>列 c → 方位角 `<code style="color:#22d3bf">az = (c + 0.5) / h_res · 2π - π</code><code style="color:#22d3bf">、行 r → 仰角 </code>`el = v_min + ((v_res-1-r) + 0.5)</p>
+<p>/ v_res · (v_max - v_min)`<code style="color:#22d3bf">(度 → rad)とし、</code><code style="color:#22d3bf">x = r cos(el) cos(az)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y = r cos(el) sin(az)</code>`、</p>
+<p>`<code style="color:#22d3bf">z = r sin(el)</code><code style="color:#22d3bf">。点の並びは </code><code style="color:#22d3bf">np.nonzero</code>` の行優先順(行 0 から)。ビン中心へ戻すので元の点とは</p>
+<p>最大でおよそ「半セル角 × range」ずれ、投影で捨てられた(同セルの奥・FOV 外の)点は戻らない。</p>
+<p>往復すると点数は一般に減る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

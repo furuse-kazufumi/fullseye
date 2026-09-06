@@ -2,8 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">xsitk_maxentropy_thresh — 2D <code style="color:#22d3bf">extra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_maxentropy_thresh&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p><img src="fig/xsitk_maxentropy_thresh.png" alt="xsitk_maxentropy_thresh: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/xsitk_maxentropy_thresh.png" alt="xsitk_maxentropy_thresh: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsitk_maxentropy_thresh.a.jpg">xsitk_maxentropy_thresh: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsitk_maxentropy_thresh.inputs.jpg">xsitk_maxentropy_thresh: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>最大エントロピー法による二値化(SimpleITK `<code style="color:#22d3bf">MaximumEntropyThreshold</code>`、Kapur の方法)。ヒストグラムを前景/背景の 2 クラスに分けたときのエントロピー和が最大になる閾値を選ぶ大域二値化。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はヒストグラムのビン数(</code><code style="color:#22d3bf">int(64+192*a)</code><code style="color:#22d3bf"> で 64〜256)を振る —— 粗いほど閾値が安定するが微妙な階調差は無視される。</code><code style="color:#22d3bf">b</code>` は未使用。</p>

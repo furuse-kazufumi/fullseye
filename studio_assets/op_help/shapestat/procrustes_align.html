@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import shapestats; shapestats.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (または <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_align&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>*source* を *target* に重ねた点。→ `<code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">(:func:</code>procrustes_fit` の適用)。</p>
+<p>`<code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code>` を求め、</p>
+<p>`<code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code>` を返す。変換は重心合わせ + SVD による回転</p>
+<p>(+ 任意でスケール)の相似変換で、<b>i 番目どうしが対応している</b>ことが前提。</p>
+<p>対応の無い点群を渡しても例外は出ず、意味の無い配置が返る(その場合は</p>
+<p>ICP 系の登録を使う)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">source</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">target</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf">、同じ </code><code style="color:#22d3bf">N</code><code style="color:#22d3bf">、有限。</code><code style="color:#22d3bf">N = 1</code>` でも通る(並進のみ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">scaling=True</code><code style="color:#22d3bf">: 大きさの違いも吸収する。</code><code style="color:#22d3bf">False</code>` なら剛体変換。</p>
+<p>`<code style="color:#22d3bf">source</code>` が全点同一(広がり 0)のときスケールは 1 のまま。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">reflection=False</code><code style="color:#22d3bf">(既定): </code><code style="color:#22d3bf">det(R) = +1</code><code style="color:#22d3bf"> を強制。</code><code style="color:#22d3bf">True</code>` にすると鏡像も</p>
+<p>許す ―― 左右非対称性を測る用途では消えてしまうので通常は既定のまま。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> float64。残差を数値で欲しいなら </code><code style="color:#22d3bf">procrustes_distance</code>`、</p>
+<p>変換行列そのものは `<code style="color:#22d3bf">procrustes_fit</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(形が </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> でない、</code><code style="color:#22d3bf">N</code>` 不一致、非有限)。</p>
+<p>多数の形を同時に揃えるなら `<code style="color:#22d3bf">generalized_procrustes</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -11,7 +25,7 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shapestat_landmark_tour">shapestat_landmark_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shapestat_landmark_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">points</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="opshapestat:shape_perturb">shape_perturb</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_fit">procrustes_fit</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_distance">procrustes_distance</a> · <a style="color:#22d3bf" href="opshapestat:shape_project">shape_project</a> · <a style="color:#22d3bf" href="opshapestat:shape_mahalanobis">shape_mahalanobis</a> · <a style="color:#22d3bf" href="opshapestat:mirror_plane_from_pairs">mirror_plane_from_pairs</a> · <a style="color:#22d3bf" href="opshapestat:landmark_asymmetry">landmark_asymmetry</a> · <a style="color:#22d3bf" href="opshapestat:signed_surface_distance">signed_surface_distance</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">procrustes</code>)</h3>

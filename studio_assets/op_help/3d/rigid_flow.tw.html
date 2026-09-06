@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import scene_flow3d; scene_flow3d.rigid_flow(pts0, pts1, max_iter: &#x27;int&#x27; = 20) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;rigid_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用最近鄰對應 + Kabsch(類 ICP)估計解釋 pts0 -&gt; pts1 的單一剛體運動。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>恒等変換から出発し、毎反復で現姿勢の点群から `<code style="color:#22d3bf">pts1</code>` への最近傍対応を取り、</p>
+<p>:func:<code style="color:#22d3bf">registration.kabsch</code> で閉形式に (R, t) を求めて累積する。対応 index が</p>
+<p>前反復と一致(= 収束)するか `<code style="color:#22d3bf">max_iter</code>` で停止する。収束判定は index の</p>
+<p>安定性のみに依存するため<b>スケール不変</b>(絶対 epsilon を使わない)。</p>
+<p>Args:</p>
+<p>pts0: (N, 3) 時刻 0 の点群(N &gt;= 3、回転を一意に決めるため)。</p>
+<p>pts1: (M, 3) 時刻 1 の点群(M &gt;= 1、N と一致不要)。</p>
+<p>max_iter: ICP 反復上限。</p>
+<p>Returns:</p>
+<p>dict: ``{&quot;R&quot;: (3,3) 回転, &quot;t&quot;: (3,) 並進, &quot;rmse&quot;: 整合後の点-最近傍</p>
+<p>RMS 距離}``。R は真の回転(det=+1)。rmse は実測値(詐称なし)。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正、pts0 &lt; 3 点、または pts1 が空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

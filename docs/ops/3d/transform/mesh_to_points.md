@@ -19,6 +19,18 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。
 
+手順: 三角形 ``tri = vertices[faces]`` の面積 ``0.5·|(b−a)×(c−a)|`` を確率にして ``samples``
+個の面を復元抽出し、各面で ``u, v ~ U(0,1)``、``u + v > 1`` なら ``(1−u, 1−v)`` に折り返す
+(一様 barycentric)。点 ``= a + u(b−a) + v(c−a)``。``seed`` で ``default_rng`` を固定するので
+同じ引数なら同じ点群。
+
+- ``vertices`` (V,3) float、``faces`` (F,3) int(0 始まりの頂点 index)。
+- 返り値 ``(samples, 3)`` float64。面の数に関係なくちょうど ``samples`` 点。
+- 全面が退化(面積和 0)なら確率が NaN になり ``rng.choice`` が ValueError。
+- 法線は付かない(``estimate_point_normals`` で付ける)。面積重みなので大きな面ほど点が多く、
+頂点密度には依存しない。
+後段: ``points_to_voxel`` / ``icp_point2point_3d`` / ``match_pca``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -3,10 +3,29 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;r2_partition_rectangle&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">partition_rectangle</code>(其含義與參數可參考 HALCON 手冊)</p>
-<p><img src="fig/r2_partition_rectangle.png" alt="r2_partition_rectangle: 入力 → 出力"></p>
-<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*</p>
+<p><img src="fig/r2_partition_rectangle.png" alt="r2_partition_rectangle: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.a.jpg">r2_partition_rectangle: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.chain.jpg">r2_partition_rectangle: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.inputs.jpg">r2_partition_rectangle: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把區域外接矩形分成 NxN 網格,保留與區域重疊的儲存格。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>領域の外接軸並行矩形を `<code style="color:#22d3bf">N x N</code>` の格子に等分し、領域と 1 画素でも重なる</p>
+<p>セルを丸ごと 1.0 で塗ったマスクを返す。`<code style="color:#22d3bf">N = 2 + int(a*4)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">a=0</code>` → 2、</p>
+<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> → 6 分割(</code><code style="color:#22d3bf">a</code>` は [0,1] に clip)。セル境界は</p>
+<p>`<code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code>` を整数化したもので、bbox がセル数より</p>
+<p>小さいと幅 0 のセルが生じ、そのセルはスキップされる。`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は「領域を</p>
+<p>覆うセルの和」なので入力領域を必ず含み、bbox の外は塗られない。中身が凸で</p>
+<p>bbox いっぱいに詰まった領域では全セルが該当し、`<code style="color:#22d3bf">a</code>` を変えても出力は bbox</p>
+<p>そのものになる。孔や凹みが大きい領域で初めて格子の粗さが見える。用途は</p>
+<p>粗いタイル分割(局所処理の窓決め)や占有パターンの粗視化。隣接セルは</p>
+<p>つながって 1 つの塊になるため、セル単位で分けて扱う用途には向かない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

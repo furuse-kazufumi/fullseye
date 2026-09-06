@@ -17,13 +17,38 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_radial_distort_contour", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `change_radial_distortion_contours_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_radial_distort_contour: 入力 → 出力](../../_fig/hx_radial_distort_contour.png)
+![hx_radial_distort_contour: input → output](../../_fig/hx_radial_distort_contour.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_radial_distort_contour: knob a sweep](../../_fig/hx_radial_distort_contour.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_radial_distort_contour: stages](../../_fig/hx_radial_distort_contour.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_radial_distort_contour: other inputs](../../_fig/hx_radial_distort_contour.inputs.jpg)
 
 ## 使い方
 
 contour に放射歪み r' = r(1 + k r^2) を適用(k は (a-0.5) で樽/糸巻き)。
+
+各 contour の点を画像中心 ``(H/2, W/2)`` からの相対座標 ``d`` にし、正規化半径 ``r = |d| / (max(H, W)/2)`` に
+対して ``d' = d * (1 + k*r^2)`` と伸縮させた contour を返す(放射歪みモデルの 1 次項)。
+
+- ``a`` → 歪み係数 ``k = (a - 0.5) * 1.5``(-0.75〜+0.75)。``k < 0`` で点が中心に寄る(樽型)、``k > 0`` で
+外へ広がる(糸巻き型)、a=0.5 で無変化。
+- ``b`` は未使用。
+
+半径は画像長辺の半分で正規化しているので、画像の隅で ``r`` が 1 前後になり、``k = ±0.75`` なら隅の点は
+1.75 倍/0.25 倍まで動く。逆変換は無い(``k`` の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour
+計測(``hx_fit_circle_contour`` 等)で試す、あるいは合成的にデータを増やす用途。
 
 ## 詳しい使い方ガイド
 

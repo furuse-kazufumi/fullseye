@@ -4,6 +4,40 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import render3d; render3d.mesh_subdivide(V, F, *, levels: &#x27;int&#x27; = 1, target_edge=None, max_faces: &#x27;int&#x27; = 4000000)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;mesh_subdivide&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>三角形メッシュを細分する → `<code style="color:#22d3bf">(V, F)</code><code style="color:#22d3bf">: 一様な中点細分(</code><code style="color:#22d3bf">levels</code>` 回)。</p>
+<p>×4 faces each) or <b>adaptive tessellation to a target edge length</b> (`<code style="color:#22d3bf">target_edge</code>`:</p>
+<p>median edge = target, edge segments ≤ 1.5×target, in-face Delaunay edges &lt; 2×target).</p>
+<p>The geometry is *unchanged* — every new vertex lies on an old facet, so surface area</p>
+<p>and enclosed volume are preserved exactly (tests pin this) and nothing is ever</p>
+<p>decimated; only the facet size changes, so a later :func:<code style="color:#22d3bf">mesh_displace_spectrum</code> can</p>
+<p>carry short wavelengths without aliasing.</p>
+<p>Adaptive mode cuts each edge into `<code style="color:#22d3bf">n = round(length / target_edge)</code>` (≥ 1) segments</p>
+<p>— a per-*edge* count, hence conforming across neighbours (no T-junctions) — and fills</p>
+<p>each face with a **hexagonal lattice at spacing `<code style="color:#22d3bf">target_edge</code>` in the face plane**,</p>
+<p>triangulated by a per-face 2-D Delaunay (Qhull). The interior therefore has edges</p>
+<p>≈ `<code style="color:#22d3bf">target_edge</code>` *whatever the shape of the source face* (the Gaskell Itokawa faces</p>
+<p>have a median longest/shortest edge ratio of 1.83, so a per-face lattice pattern</p>
+<p>inherits that anisotropy; repeated midpoint bisection additionally leaves a factor-2</p>
+<p>spread `<code style="color:#22d3bf">(target/2, target]</code>`). Measured on the Itokawa model (edge p5/median/p95 =</p>
+<p>2.6/4.7/7.2 m, target 1.5 m): see `<code style="color:#22d3bf">examples_3d/itokawa_regolith_hero.py</code>` — the test</p>
+<p>pins p95/p5 ≤ 1.5 on a graded plane. `<code style="color:#22d3bf">max_faces</code>` (default</p>
+<p>`<code style="color:#22d3bf">MAX_SUBDIVIDE_FACES</code>`) is a memory guard: if the plan would exceed it the call</p>
+<p>raises `<code style="color:#22d3bf">ValueError</code>` (fail-closed) rather than silently under-refining.</p>
+<p>Deterministic. Fail-closed: degenerate mesh, `<code style="color:#22d3bf">levels &lt; 0</code>`, non-positive</p>
+<p>`<code style="color:#22d3bf">target_edge</code><code style="color:#22d3bf"> / caps → </code><code style="color:#22d3bf">ValueError</code>`.</p>
+<p>2 つのモードがあり、`<code style="color:#22d3bf">target_edge</code>` の有無で切り替わる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">target_edge=None</code><code style="color:#22d3bf">(一様): 全辺を中点で割る細分を </code><code style="color:#22d3bf">levels</code>` 回繰り返す(面数は</p>
+<p>1 回ごとに 4 倍)。`<code style="color:#22d3bf">levels=0</code><code style="color:#22d3bf"> は入力をそのまま返す。各回の前に </code><code style="color:#22d3bf">面数×4 &gt; max_faces</code>`</p>
+<p>なら `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">target_edge</code><code style="color:#22d3bf"> 指定(適応): 辺ごとに分割数 </code><code style="color:#22d3bf">n = round(長さ / target_edge)</code>`</p>
+<p>(最小 1)を決め、隣接面で共有するので T 字接合は出ない。分割数は内部上限 64 に</p>
+<p><b>無言でクランプ</b> されるため、`<code style="color:#22d3bf">target_edge</code>` の 64 倍を超える長さの辺は目標に届かない。</p>
+<p>どの辺も分割不要なら入力のコピーを返す。面数の見積り</p>
+<p>`<code style="color:#22d3bf">Σ(3 辺の分割数の和 + 平均分割数²)</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">max_faces</code>` を超えると計算前に</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">levels</code>` はこのモードでは使わない。</p>
+<p>返り値 `<code style="color:#22d3bf">(V (N&#x27;,3) float64, F (M&#x27;,3) int64)</code>`。新頂点は必ず元の面の上に置くので面積と</p>
+<p>体積は変わらない(平滑化ではない)。適応モードは面ごとに 2-D Delaunay(scipy Qhull)を</p>
+<p>使うので、極端に細長い面では品質が落ちる。細分後に `<code style="color:#22d3bf">mesh_edge_lengths</code>` で辺長分布を</p>
+<p>確かめ、`<code style="color:#22d3bf">mesh_displace_spectrum</code>` へ渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

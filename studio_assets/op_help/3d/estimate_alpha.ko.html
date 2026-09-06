@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군의 스케일로부터 권장 alpha 를 돌려줍니다(최근접 거리의 중앙값 기반).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>各点の最近傍距離の中央値 `<code style="color:#22d3bf">m</code>` を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで</p>
+<p>許す)となるよう `<code style="color:#22d3bf">alpha = 1/(2m)</code>` を返す。これで表面付近の素性の良い四面体は残しつつ、</p>
+<p>大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like (N,3)</p>
+<p>Returns</p>
+<p>-------</p>
+<p>alpha : float</p>
+<p>正の有限値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

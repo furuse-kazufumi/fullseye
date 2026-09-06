@@ -6,6 +6,21 @@
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。</p>
 <p>サンプル数 n = round(|angle_extent|*radius)+1、`<code style="color:#22d3bf">spacing</code>` = 弧長/(n-1)。</p>
+<p>弧上のサンプル点は `<code style="color:#22d3bf">row = center_row + radius sin(θ)</code>`、</p>
+<p>`<code style="color:#22d3bf">col = center_col + radius cos(θ)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">θ = angle_start + linspace(0, angle_extent, n)</code>`。</p>
+<p>角度は <b>ラジアン</b>で、col 軸(x)から row 軸(画像下向き)へ回る向きが正。</p>
+<p>`<code style="color:#22d3bf">angle_extent</code><code style="color:#22d3bf"> が負なら逆回りに進み、</code><code style="color:#22d3bf">measure_pos</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">pos</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dist</code>` は</p>
+<p>その進行方向に沿って数える。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">: [px]。</code><code style="color:#22d3bf">n = max(2, round(|angle_extent| * radius) + 1)</code>` なので、</p>
+<p>半径や角度幅が小さすぎるとサンプル 2 点・`<code style="color:#22d3bf">spacing</code>` が弧長そのものになる。</p>
+<p>`<code style="color:#22d3bf">radius = 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">spacing = 0</code>` になり後段の微分で破綻する(ここでは検証しない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 幅方向(法線)の平均化幅 [px]。</code><code style="color:#22d3bf">int</code>` に切られ、1 以下なら平均なし。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf">: 画像の </code><code style="color:#22d3bf">(H, W)</code>`。dict に保存されるだけで、範囲外は</p>
+<p>`<code style="color:#22d3bf">measure_pos</code>` 側が最近傍で外挿する(例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: ``{&quot;type&quot;: &quot;arc&quot;, &quot;rows&quot;, &quot;cols&quot;, &quot;width&quot;, &quot;shape&quot;, &quot;spacing&quot;, &quot;center&quot;,</p>
+<p>&quot;radius&quot;, &quot;angles&quot;}`<code style="color:#22d3bf"> の dict(</code><code style="color:#22d3bf">measurehandle</code>` 型)。</p>
+<p>`<code style="color:#22d3bf">measure_pos</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">measure_pairs</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fuzzy_measure_pairing</code>` に渡す。直線なら</p>
+<p>`<code style="color:#22d3bf">gen_measure_rectangle2</code><code style="color:#22d3bf">。位置決め後は </code><code style="color:#22d3bf">translate_measure</code>` で動かす。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

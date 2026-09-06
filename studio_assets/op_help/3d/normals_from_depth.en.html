@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;normals_from_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Organized depth → oriented unit normals (H,W,3). The cross product of the 3-D points of neighbouring pixels (using the grid structure, O(HW)).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>fx,fy 指定で透視、未指定で正射。orient_to_camera=True で法線をカメラ(原点)向きに符号統一。</p>
+<p>法線は隣接画素の外積で出すため両軸に近傍が要る。H&lt;2 or W&lt;2 は第2の接線方向が無く</p>
+<p>法線が定義できない(その軸の勾配を 0 とみなすと cross(dPx,0)=[0,0,0] の縮退法線を</p>
+<p>静かに返してしまう)。fail-closed で明示的に ValueError 拒否する。</p>
+<p>計算は `<code style="color:#22d3bf">depth_to_organized_points</code><code style="color:#22d3bf"> で 3-D 点 </code><code style="color:#22d3bf">P</code><code style="color:#22d3bf"> を作り、</code><code style="color:#22d3bf">np.gradient</code>` の列方向</p>
+<p>差分 `<code style="color:#22d3bf">dPx</code><code style="color:#22d3bf"> と行方向差分 </code><code style="color:#22d3bf">dPy</code><code style="color:#22d3bf"> の外積 </code><code style="color:#22d3bf">dPx × dPy</code>` を単位長にする(端は片側差分)。</p>
+<p>`<code style="color:#22d3bf">orient_to_camera=True</code><code style="color:#22d3bf"> では </code><code style="color:#22d3bf">n·(-P) &lt; 0</code>` の画素を反転し、法線が原点(カメラ)を向く</p>
+<p>よう揃える。正射モード(`<code style="color:#22d3bf">fx</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">fy</code><code style="color:#22d3bf"> が None)では </code><code style="color:#22d3bf">P=(u,v,d)</code>` なので原点は画像</p>
+<p>左上の深度 0 の位置になり、「カメラ向き」の意味が透視モードと異なる点に注意。`<code style="color:#22d3bf">cx</code>`・</p>
+<p>`<code style="color:#22d3bf">cy</code>` 省略時は画像中心。深度の段差(遮蔽エッジ)をまたぐ画素では外積が段差の向きを</p>
+<p>拾って法線が壊れるので、`<code style="color:#22d3bf">occlusion_edges</code>` で境界画素を除いてから使う。深度 0 / NaN の</p>
+<p>画素は検証せず、法線も不定になる。返り値は float32 の `<code style="color:#22d3bf">(H,W,3)</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>

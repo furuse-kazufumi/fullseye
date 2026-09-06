@@ -5,6 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원판 이미지 → Zernike 계수(광학/파면 계측의 <b>극좌표 곡면 근사</b>). 반환값 {(n,m): coef}.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/</p>
+<p>coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。</p>
+<p>honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では</p>
+<p>理論上直交のモード間に<b>最大 ~10% のクロストーク</b>が残る(例: 純 (2,0) defocus 入力で</p>
+<p>係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が</p>
+<p>要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。</p>
+<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

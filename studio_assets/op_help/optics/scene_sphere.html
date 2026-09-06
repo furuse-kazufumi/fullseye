@@ -4,6 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optscene; optscene.scene_sphere(center_mm, radius_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;scene_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>球の部品。`<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf"> は (x, y, z) [mm]、</code><code style="color:#22d3bf">radius_mm</code>` &gt; 0。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center_mm</code><code style="color:#22d3bf">: 長さ 3 の有限値 [mm]。右手系、z が上(</code><code style="color:#22d3bf">scene_plane</code>` と同じ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius_mm</code><code style="color:#22d3bf">: 正の有限値 [mm]。0 や負、NaN は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">material</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">scene_material</code>` の結果。省略時は lambert、albedo 0.6。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;sphere&quot;, &quot;c&quot;: (3,) 配列, &quot;r&quot;: float, &quot;material&quot;}</code>` の dict。</p>
+<p>光線との交差は 2 次方程式の閉形式で、外から当たれば手前の交点、内側から</p>
+<p>(屈折の射出側)なら奥の交点を取る。単体で置くほか、`<code style="color:#22d3bf">scene_difference</code>` の</p>
+<p>`<code style="color:#22d3bf">solid</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cavity</code>` としても使える(球の空洞、球面座ぐり)。</p>
+<p>`<code style="color:#22d3bf">optscene_mask</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">index</code>` はこの dict をシーン list に入れた位置。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

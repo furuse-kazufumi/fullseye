@@ -2,7 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_sphere_sdf — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_sphere_sdf&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*無圖: 該運算子以 <code style="color:#22d3bf">points</code> 為輸入。從影像開始的 Studio 程式無法到達該型別，請參見下方的可執行範例。*</p>
+<p><img src="fig/tb_sphere_sdf.png" alt="tb_sphere_sdf: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sphere_sdf.chain.jpg">tb_sphere_sdf: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sphere_sdf.inputs.jpg">tb_sphere_sdf: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>動態</b>(GIF: 依序顯示影格 / 視點 / 切片。靜態圖是完整版，GIF 為輔助):</p>
+<p><img src="fig/tb_sphere_sdf.gif" alt="tb_sphere_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>球體的有號距離場: `<code style="color:#22d3bf">|p - center| - R</code>`(內部為負,外部為正)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
@@ -10,12 +19,38 @@
 <p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> は長さ3、</code><code style="color:#22d3bf">R&gt;=0</code><code style="color:#22d3bf"> は半径。返り値の shape は </code><code style="color:#22d3bf">grid.shape[:-1]</code>`。厳密な SDF</p>
 <p>(勾配ノルム 1)。`<code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>`。</p>
 <p>Raises ValueError for R&lt;0 or malformed grid/center。</p>
+<p>計算: `<code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>`。座標の単位はそのまま距離の</p>
+<p>単位になる(`<code style="color:#22d3bf">grid_coords</code>` の world 座標を渡せば world 単位)。座標の成分順は</p>
+<p>`<code style="color:#22d3bf">grid</code><code style="color:#22d3bf"> の最終軸の順(</code><code style="color:#22d3bf">grid_coords</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">(x, y, z)</code><code style="color:#22d3bf">)で、</code><code style="color:#22d3bf">center</code>` も同じ順。</p>
+<p>引数と検証(`<code style="color:#22d3bf">ValueError</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">grid</code><code style="color:#22d3bf">: 最終軸が 3 の float 配列 </code><code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf">(1-D の </code><code style="color:#22d3bf">(3,)</code>` も可。0-D や</p>
+<p>最終軸が 3 以外は拒否)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center</code><code style="color:#22d3bf">: 要素数 3(</code><code style="color:#22d3bf">reshape(3)</code><code style="color:#22d3bf"> できなければ numpy の </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">float()</code><code style="color:#22d3bf"> できるスカラ。回転行列などを渡した場合も </code><code style="color:#22d3bf">ValueError</code>`</p>
+<p>(この引数は半径であって姿勢ではない)。`<code style="color:#22d3bf">R &lt; 0</code><code style="color:#22d3bf"> は拒否、</code><code style="color:#22d3bf">R = 0</code>` は</p>
+<p>中心からの距離場そのもの。</p>
+<p>返り値: `<code style="color:#22d3bf">grid.shape[:-1]</code><code style="color:#22d3bf"> の float64(</code><code style="color:#22d3bf">grid_coords</code>` の出力なら</p>
+<p>`<code style="color:#22d3bf">(nx, ny, nz)</code><code style="color:#22d3bf">)。中心で </code><code style="color:#22d3bf">-R</code>`、表面で 0、外側で正。</p>
+<p>使いどころ: `<code style="color:#22d3bf">grid_coords</code><code style="color:#22d3bf"> で格子 → </code><code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">sdf_union</code>` /</p>
+<p>`<code style="color:#22d3bf">sdf_subtract</code><code style="color:#22d3bf"> で CSG → </code><code style="color:#22d3bf">&lt;= 0</code><code style="color:#22d3bf"> を占有として marching cubes(</code><code style="color:#22d3bf">voxel_to_mesh</code>`</p>
+<p>に `<code style="color:#22d3bf">-sdf</code><code style="color:#22d3bf"> を渡し </code><code style="color:#22d3bf">iso=0</code>` 相当で等値面)。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
+tb_sphere_sdf 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_sphere_sdf%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_sphere_sdf%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
-<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">sphere_sdf</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:annotate3d_figure">annotate3d_figure</a> — <code style="color:#22d3bf">py -3.11 examples_3d/annotate3d_figure.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:gear_metrology">gear_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/gear_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:molecule_atom_count">molecule_atom_count</a> — <code style="color:#22d3bf">py -3.11 examples_3d/molecule_atom_count.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:procedural_hand">procedural_hand</a> — <code style="color:#22d3bf">py -3.11 examples_3d/procedural_hand.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:render_beauty">render_beauty</a> — <code style="color:#22d3bf">py -3.11 examples_3d/render_beauty.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sdf_csg">sdf_csg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sdf_csg.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">volume</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">typed</code>)</h3>

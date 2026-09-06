@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;optimize_pose_graph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상대 자세 제약 + 루프 클로저로부터 전역 자세를 최적화. → dict{poses, rmse, cost}.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>poses_init (N,6)=[rvec|t] の初期推定(ドリフトあり)、edges の相対姿勢制約を満たすよう最適化。</p>
+<p>fix_first=True で先頭ノードを固定し gauge を除く。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">edges</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(i, j, rvec_ij, t_ij[, w_rot, w_trans])</code><code style="color:#22d3bf"> のリスト。</code><code style="color:#22d3bf">(rvec_ij, t_ij)</code>` は「i から</p>
+<p>見た j」= `<code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code><code style="color:#22d3bf"> の計測値(</code><code style="color:#22d3bf">relative_pose</code>` と同じ規約)。オドメトリ (i, i+1) と</p>
+<p>ループ閉じ(離れた i, j)を同じ形で混ぜてよい。重みは残差に `<code style="color:#22d3bf">sqrt(w)</code>` を掛ける(省略時 1)。</p>
+<p style="margin:2px 0 2px 12px">• 各エッジの残差は `<code style="color:#22d3bf">measured⁻¹ ∘ predicted</code>` を回転ベクトル + 並進の 6 次元にしたもので、</p>
+<p>`<code style="color:#22d3bf">scipy.optimize.least_squares(method=&quot;lm&quot;)</code><code style="color:#22d3bf"> で最小化する(</code><code style="color:#22d3bf">max_nfev = max_iter × パラメータ数</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">poses</code><code style="color:#22d3bf"> (N,6)(</code><code style="color:#22d3bf">fix_first</code><code style="color:#22d3bf"> なら先頭は初期値のまま)、</code><code style="color:#22d3bf">rmse</code>` =</p>
+<p>`<code style="color:#22d3bf">mean_edge_error(poses, edges)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">cost</code>` = 最終コスト(残差 2 乗和の 1/2)。</p>
+<p>fail-closed: ノード数 &lt; 2、エッジ 0 本、エッジの添字が `<code style="color:#22d3bf">[0, N)</code>` を外れる(負の添字の黙った</p>
+<p>折り返しも拒否)場合は `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">fix_first=False</code>` にすると gauge が残り解は一意でない</p>
+<p>(LM は初期値近くの 1 つを返す)。回転は rad、並進は座標の単位で、両者を同じ残差ベクトルに</p>
+<p>並べるため単位が大きく違うときは重みで揃える。3D 点も観測画素も使わない(それらを含めて</p>
+<p>最適化するのは `<code style="color:#22d3bf">bundle_adjust</code>`)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

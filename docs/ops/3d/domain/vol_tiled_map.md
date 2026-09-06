@@ -19,6 +19,31 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Apply a shape-preserving volume operator in overlapping z-slabs, so peak
 
+working memory is bounded by the slab — not the volume.
+
+The third leg of the memory family: :func:`vol_crop_domain` shrinks *where*
+you compute, :mod:`volregion` shrinks *what you keep*, and this bounds *how
+much lives in RAM at once*. Each slab ``vol[z0-overlap : z1+overlap]`` is
+run through *fn* and only the core ``[z0:z1)`` of the result is kept, so a
+volume far above an operator's comfortable size streams through in
+constant-memory pieces (measured: peak working set of a Gaussian drops with
+the slab size while the output stays exact — see the test).
+
+**Correctness contract (the honest part)**: the result equals ``fn(vol)``
+exactly only for *local* operators whose spatial footprint along z is at
+most *overlap* voxels on each side (a Gaussian of sigma s with scipy's
+default truncation needs ``overlap >= round(4 * s)``; a morphology with a
+k-voxel structuring element needs ``overlap >= k``). A *global* operator
+(Otsu, normalisation, anything that looks at the whole histogram) is
+silently WRONG under tiling — this function cannot detect that, so it is
+documented instead: do not tile global operators.
+
+Parameters: *fn* is any callable mapping a ``(d, H, W)`` float64 volume to
+an array of the same shape (e.g. ``lambda v: vol_gradient_magnitude(v)``).
+*tile* is the slab thickness (>= 1), *overlap* the per-side context
+(>= 0). A slab result of the wrong shape raises ``ValueError`` immediately
+(fail-closed — a shape-changing fn would silently corrupt the assembly).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

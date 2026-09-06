@@ -4,6 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Wall thicknesses along the probe `<code style="color:#22d3bf">p0 -&gt; p1</code>` — the industrial-CT</p>
+<p>measurement itself.</p>
+<p>Runs :func:<code style="color:#22d3bf">vol_edge_probe</code> (all polarities) and pairs consecutive</p>
+<p>opposite-polarity edges *rising -&gt; falling* in probe order: each pair is</p>
+<p>one traversal of bright material (entry surface -&gt; exit surface), and its</p>
+<p>thickness is the difference of the two edges&#x27; `<code style="color:#22d3bf">t_mm</code>` (physical units —</p>
+<p>mm with a spacing, voxels without). A probe crossing both walls of a pipe</p>
+<p>therefore yields two thicknesses.</p>
+<p>Edges that do not complete a rising -&gt; falling pair (a probe starting or</p>
+<p>ending inside material, consecutive same-polarity edges) are <b>ignored</b>,</p>
+<p>not paired creatively — the count of returned thicknesses can be smaller</p>
+<p>than `<code style="color:#22d3bf">len(edges) // 2</code>`. Dark walls on a bright background need an</p>
+<p>inverted volume (the pairing convention is bright material).</p>
+<p>Returns a list of float thicknesses, in probe order (possibly empty).</p>
+<p>Raises `<code style="color:#22d3bf">ValueError</code>` on the same malformed inputs as</p>
+<p>:func:<code style="color:#22d3bf">vol_edge_probe</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

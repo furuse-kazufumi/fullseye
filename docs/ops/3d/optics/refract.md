@@ -19,6 +19,15 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。
 
+透明体を通る光線の曲がりを厳密に。全反射(TIR)なら None。ガラス/レンズ/水中の像歪み計算に。
+契約は単一ベクトル。(N,3) バッチも通るが、**1 本でも TIR ならバッチ全体が None**
+(per-ray マスクはしない)— バッチで使うなら呼び出し側で 1 本ずつ回すこと。
+
+``d``, ``n`` は最後の軸をベクトルとして単位化する。``n`` は入射側(``d·n < 0`` になる向き)で
+渡すこと。逆向きに渡すと ``cos θi`` が負になり、例外なく誤った方向が返る。返り値は単位ベクトル
+(``eta·d + (eta·cosθi − cosθt)·n``、``eta = eta1/eta2``)。``eta1 == eta2`` なら ``d`` がそのまま
+返る。角度で扱うなら ``snell_angle``、反射率は ``fresnel_reflectance(cos_i, eta1, eta2)``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

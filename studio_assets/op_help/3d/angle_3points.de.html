@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Winkel an drei Punkten (Scheitel b, in Grad). ∠ABC.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">arccos(û·v̂)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">u = a − b</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v = c − b</code>`)を度で返す(float)。値は <b>[0, 180]</b> で符号は</p>
+<p>無い(2-D でも回転の向きは区別しない)。引数は数値の 2 または 3 ベクトル、次元の混在は</p>
+<p>ValueError。`<code style="color:#22d3bf">a == b</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">c == b</code>` だと零ベクトルの内積 0 で 90 が返る(例外は出ない)。</p>
+<p>内積は [−1,1] に clip するので数値誤差で NaN にはならない。</p>
+<p>用途: 曲げ角・関節角の計測、`<code style="color:#22d3bf">fit_line_3d</code>` で得た 2 直線の交点まわりの角度。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

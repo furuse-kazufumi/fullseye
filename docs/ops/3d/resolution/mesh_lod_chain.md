@@ -19,6 +19,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Decimation levels with the measured geometric error of each (``table``).
 
+Level *k* is :func:`meshrepair.decimate_qem` to ``fractions[k] × nf``
+faces, applied cumulatively. ``error`` per level is the RMS and maximum
+distance of *samples* area-weighted points of the **original** surface to
+the level's surface (the number a screen-space LOD rule needs). Returns
+``levels`` (list of ``{"V", "F", "n_faces", "mean_edge", "rms_error",
+"max_error"}``), level 0 being the input (error 0).
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

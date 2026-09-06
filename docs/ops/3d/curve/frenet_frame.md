@@ -19,6 +19,23 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Frenet 標構(接線 T, 主法線 N, 陪法線 B)を各点で。→ (T, N, B) 各 (Npts,3) 単位ベクトル。
 
+順序付き点列 (N,3) を index パラメータで ``np.gradient``(内部は中心差分、両端は
+片側差分)して r', r'' を取り、
+- T = r' / ‖r'‖
+- N = (r'' − (r''·T) T) / ‖…‖(r'' の T 直交成分 = 曲率中心へ向く向き)
+- B = T × N
+を各点で計算する。r'' の T 直交成分の向きは再パラメータ化に不変なので、点間隔が
+滑らかに変わる限り index パラメータで正しい向きが出る。
+
+- 分母には絶対値 1e-12 を足すだけで、正規化しきれない箇所は単位長にならない。直線区間
+  (r'' ∥ T または 0)では N・B がほぼゼロベクトルになり、変曲点の前後で N の向きが
+  反転する。「単位ベクトル」の保証はそこでは成り立たない。
+- N<2 の点列は ``np.gradient`` が ``ValueError`` を出す。形状検証はそれ以外に無い。
+- 両端 2 点は片側差分なので精度が落ちる。等間隔化(``resample_uniform``)や平滑
+  (``fit_spline_curve``)を先に掛けると安定する。
+
+曲率・捩率の数値そのものは ``curvature_torsion``、弧長は ``arc_length``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

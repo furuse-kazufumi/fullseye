@@ -15,13 +15,37 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **データ種**: `region` → `region`
 - **呼び出し**: `fullseye.apply(img, "r2_smallest_rectangle1", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-![r2_smallest_rectangle1: 入力 → 出力](../../_fig/r2_smallest_rectangle1.png)
+![r2_smallest_rectangle1: input → output](../../_fig/r2_smallest_rectangle1.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![r2_smallest_rectangle1: stages](../../_fig/r2_smallest_rectangle1.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![r2_smallest_rectangle1: other inputs](../../_fig/r2_smallest_rectangle1.inputs.jpg)
 
 ## 使い方
 
 Axis-aligned bounding box (smallest_rectangle1).
+
+領域の外接軸並行矩形(bounding box)をマスクとして描く。前景マスク(``> 0.5``)
+の前景画素について行・列の最小/最大 ``ys.min()..ys.max()``、
+``xs.min()..xs.max()`` を取り、その範囲を 1.0 で塗る。``a``, ``b`` は未使用。
+
+返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は必ず入力
+領域を含む。複数の連結成分があれば全成分をまとめて囲む 1 つの矩形になる
+(成分ごとの bbox が欲しければ先に ``r2_sort_region`` や ``select_largest`` で
+1 成分に絞る)。矩形の 4 隅の座標そのものは返さない(マスク表現)。孤立ノイズが
+1 画素あるだけで矩形が大きく広がるので、前段で ``remove_small`` や
+``opening_circle`` を掛けておく。回転を許した最小面積矩形は
+``r2_smallest_rectangle2``、内接側は ``r2_inner_rectangle1``。
 
 ## 詳しい使い方ガイド
 

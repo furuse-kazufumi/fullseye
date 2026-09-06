@@ -5,6 +5,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>chamfer / 距离场匹配(对部分可见与遮挡稳健)。voxel × chamfer 列。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>シーンのエッジの EDT(各 voxel から最近エッジまでの距離)に、テンプレのエッジ点を載せて</p>
+<p>距離和を最小化。score(pos)=Σ_{template edge} DT_scene(pos+edge)/n。<b>低いほど良い一致</b>。</p>
+<p>エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。相関(conv3d)は常に GPU。距離場は</p>
+<p>edt=&quot;scipy&quot;(CPU、既定)か edt=&quot;jfa&quot;(<code style="color:#22d3bf">edt_jfa</code>、全 GPU で CPU 往復なし。scipy と厳密一致)。</p>
+<p>返り値 [chamfer 距離, d, h, w]。</p>
+<p>手順: 両 volume で `<code style="color:#22d3bf">|∇| &gt; thr·max|∇|</code><code style="color:#22d3bf"> の voxel をエッジにする(</code><code style="color:#22d3bf">thr</code>` は各 volume の最大</p>
+<p>勾配に対する <b>相対比</b>、勾配は `<code style="color:#22d3bf">sobel3d</code>`)。scene エッジの距離変換 DT を作り、テンプレの</p>
+<p>エッジ 2 値 volume をカーネルに conv3d した値をエッジ数 `<code style="color:#22d3bf">n</code>` で割る。</p>
+<p>返り値 `<code style="color:#22d3bf">[距離, z, y, x]</code>` の距離は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの</p>
+<p>平均距離(voxel 単位)」で 0 が完全一致。位置は <b>テンプレ中心 (T//2)</b> の scene 座標で</p>
+<p><b>整数</b>(subvoxel 精緻化は無い。要るなら `<code style="color:#22d3bf">refine_translation_lk</code>` へ。corner 規約なので</p>
+<p>T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 で埋めて除外する。</p>
+<p>テンプレにエッジが無い(`<code style="color:#22d3bf">thr</code>` が高すぎる等)と score が全 0 になり index (0,0,0) が返る。</p>
+<p>scene にエッジが無い場合の距離場は意味を持たない(`<code style="color:#22d3bf">thr</code>` を下げる)。</p>
+<p>`<code style="color:#22d3bf">edt=&quot;jfa&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">edt_jfa</code><code style="color:#22d3bf"> を使い </code><code style="color:#22d3bf">device</code>` 上で完結、それ以外は scipy(CPU)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

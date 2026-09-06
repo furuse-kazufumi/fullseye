@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。
 
+``I = albedo * (max(n·L, 0) + ambient)``。``light`` は (3,) の光源方向ベクトルで内部で
+単位長に正規化する(長さは強度として効かない)。``n·L < 0`` の画素は 0 にクリップ
+される(付着影)。``ambient`` は法線に依らず一様に足す定数で、アルベドは掛かる
+(既定 0)。``normals`` は ``(H,W,3)`` の法線(単位長を仮定し正規化しない)、``albedo``
+は ``(H,W)`` またはブロードキャスト可能な配列・スカラ。返り値は float32 の ``(H,W)``。
+上限は ``albedo * (1 + ambient)`` で、[0,1] へのクリップはしない。入力検証は無い。
+``photometric_stereo`` の順方向モデルそのもの(光源正規化の規約は ``normalize=True``
+に対応)なので、復元した法線・アルベドから再合成して元画像と比べる往復検証に使える。
+鏡面・相互反射・投影影(cast shadow)は含まない。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

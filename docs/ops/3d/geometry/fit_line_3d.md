@@ -19,6 +19,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。
 
+``(N,3)`` の点群(数値・列数 3 でなければ ValueError、2 点未満も ValueError)の重心 ``c`` と
+散布行列 ``(P−c)ᵀ(P−c)`` の最大固有値の固有ベクトルを返す(直交距離の二乗和を最小化する直線。
+z=f(x) 型の回帰ではない)。``direction`` は単位ベクトルで **符号は任意**(``eigh`` 次第。向きを
+揃えるなら ``(P[-1] − P[0]) @ direction`` の符号で反転)。
+2 点だけなら 2 点を通る直線。点が平面状に広がっていると最大軸は「最も長い方向」になるだけで
+直線とは限らない(残差は返さないので ``distance_point_line`` で確かめる)。外れ値に弱い
+(ロバストには ``ransac_line``)。3-D 専用(2-D 点は ValueError)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

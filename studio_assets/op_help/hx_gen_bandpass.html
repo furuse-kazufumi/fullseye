@@ -3,10 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_bandpass&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">gen_bandpass</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/hx_gen_bandpass.png" alt="hx_gen_bandpass: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/hx_gen_bandpass.png" alt="hx_gen_bandpass: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandpass.a.jpg">hx_gen_bandpass: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandpass.b.jpg">hx_gen_bandpass: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandpass.inputs.jpg">hx_gen_bandpass: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>理想バンドパス(周波数領域の円環マスク、内半径 a・帯域幅 b)。</p>
+<p>`<code style="color:#22d3bf">hx_gen_lowpass</code><code style="color:#22d3bf"> と同じ正規化周波数半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf"> 済、中心=DC)に対し </code><code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code>` の</p>
+<p>円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 `<code style="color:#22d3bf">v</code>` は形状の取得にのみ使う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 内半径 </code><code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>`(0.05〜0.45)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 帯域幅 </code><code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code><code style="color:#22d3bf">(0.05〜0.35)。外半径は </code><code style="color:#22d3bf">r_lo + 幅</code>` で最大 0.8 だが、半径が</p>
+<p>約 0.707 を超える周波数は存在しないので、大きな a, b では円環の外側が画像外に出て実質ハイパスになる。</p>
+<p>`<code style="color:#22d3bf">hx_gen_bandfilter</code><code style="color:#22d3bf"> は「中心半径と半幅」で同じ円環を指定する別パラメータ化。</code><code style="color:#22d3bf">fft_generic</code>` などの中心=DC</p>
+<p>スペクトルとの画素積で使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -19,6 +19,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 発散 ``d(dy)/dy + d(dx)/dx``。**非圧縮なら 0** —— 独立な検算に使える。
 
+式: ``gradient(flow[0], spacing, axis=0) + gradient(flow[1], spacing, axis=1)``
+(``numpy.gradient``: 内部は中央差分、格子の端は片側差分)。
+``flow[0]`` が行方向の変位 ``dy``、``flow[1]`` が列方向の変位 ``dx``、
+``x`` = 列、``y`` = 行。行が下向きでも発散の符号は座標の向きに依らない
+(渦度 ``piv_vorticity`` とは違い、反転しない)。正 = 湧き出し、負 = 吸い込み。
+
+- ``flow``: ``(2, h, w)``、成分 ``(dy, dx)`` [px/frame] (``piv_cross_correlate`` /
+  ``piv_multipass`` の返り値)。``h, w >= 2`` でないと微分できないので
+  ``ValueError``(窓が大きすぎて 1 本しかベクトルが無い場合)。
+  **有限性は検査しない** ―― ``piv_replace_outliers(method="nan")`` の NaN は
+  隣接 2 セルへ広がる。
+- ``spacing``: ベクトル間隔 [px]、正の有限値。``info["step"]`` を渡す
+  (既定 1.0 のままだと単位が「1/ベクトル間隔」になる)。
+- 返り値: ``(h, w)`` float64、単位 1/frame(``spacing`` が px のとき)。
+  ``piv_to_velocity`` で m/s にした場と ``spacing`` を m にすれば 1/s。
+
+2-D PIV で平面外の速度成分があると非零になるので、「非圧縮なのに発散が
+大きい」は面外流か外れ値(``piv_outlier_mask``)の指標。
+``piv_velocity_gradient`` は 4 成分すべてを返す。
+
 ## 詳しい使い方ガイド
 
 - [piv_displacement ファミリ ガイド](../guides/piv_displacement.md)

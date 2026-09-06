@@ -4,6 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import curvature3d; curvature3d.gaussian_curvature(points, k=25)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;gaussian_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">principal_curvatures</code><code style="color:#22d3bf"> と同じ局所二次曲面フィットで </code><code style="color:#22d3bf">k1 * k2</code><code style="color:#22d3bf"> を返す。符号は法線の向きに依らないため </code><code style="color:#22d3bf">normals</code>` 引数を持たない(向き付けは常に近傍重心ヒューリスティクス)。</p>
+<p style="margin:2px 0 2px 12px">• 単位は 1/長さ²。半径 R の球なら `<code style="color:#22d3bf">1/R²</code>`、円柱・平面は 0、鞍点は負(k1 と k2 が異符号)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code>` は近傍点数(既定 25、N-1 に切り詰め)。近傍が 5 点未満の点は 0。</p>
+<p style="margin:2px 0 2px 12px">• 楕円点(K&gt;0)/放物点(K=0)/双曲点(K&lt;0)の分類に使う。凸凹の区別は `<code style="color:#22d3bf">mean_curvature</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">shape_index</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">normals</code>` を渡して行う。</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3) の点群。決定論的。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

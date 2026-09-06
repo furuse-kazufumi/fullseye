@@ -17,13 +17,34 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "xg_eccentricity", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `eccentricity_points_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![xg_eccentricity: 入力 → 出力](../../_fig/xg_eccentricity.png)
+![xg_eccentricity: input → output](../../_fig/xg_eccentricity.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![xg_eccentricity: stages](../../_fig/xg_eccentricity.chain.jpg)
 
 ## 使い方
 
 Eccentricity sqrt(1 - lambda_min/lambda_max) from the point covariance.
+
+輪郭辞書 ``{"shape", "cs"}`` の全輪郭の点を 1 つの点集合にまとめ、その
+(row, col) 座標の母共分散行列の固有値 ``λ_min <= λ_max`` から離心率
+``e = sqrt(1 - λ_min/λ_max)`` を返す。閉輪郭の重複した終点(先頭と同じ点)は
+数えない。``a``, ``b`` は未使用。
+
+返り値は ``numpy.float64`` で [0, 1]。真円・正方形など等方な点配置で 0、
+一直線上の点(``λ_min = 0``)で 1。点が 2 個未満、または ``λ_max <= 1e-12``
+(全点同一)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、
+個々の輪郭の形ではなく配置の広がりも混ざる(輪郭ごとに評価したいなら先に
+``select_contours_xld`` などで 1 本に絞る)。輪郭点の密度に依存する(点が
+密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは
+``xg_elliptic_axis``、主軸の向きは ``xg_orientation``。
 
 ## 詳しい使い方ガイド
 

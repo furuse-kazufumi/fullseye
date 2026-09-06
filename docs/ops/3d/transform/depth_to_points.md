@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。
 
+画素 (行 v, 列 u) の深度 z から ``X = (u − cx)·z/fx``、``Y = (v − cy)·z/fy``、``Z = z`` を作る。
+返り値は ``(N,3)`` float64、列は **(X, Y, Z) のカメラ座標**(深度と同じ単位)。z が 0 以下の
+画素は捨てるので N は画素数以下(無効深度は 0 で表す規約)。
+
+- ``fx, fy, cx, cy``: 画素単位の焦点距離と主点。``project_points`` の K と同じ規約。
+- ``stride``: 行・列とも ``stride`` 画素おきに間引く。u, v は間引き後の index に ``stride``
+を掛けた **元画像の画素座標**で計算するので、間引いても幾何は変わらない。
+- 入力検証は無い(2-D でなければ添字で失敗)。NaN 深度は ``z > 0`` が偽で捨てられる。
+- 点は行優先の順に並ぶが、行・列の情報は残らない。格子構造を保ちたいなら
+``depth_to_organized_points``。
+後段: ``points_to_voxel`` / ``estimate_point_normals`` / ``icp_point2plane``。
+逆写像は ``project_points``、TSDF 化は ``tsdf_from_depth``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -17,13 +17,35 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_split_skeleton_region", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `split_skeleton_region`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_split_skeleton_region: 入力 → 出力](../../_fig/hx_split_skeleton_region.png)
+![hx_split_skeleton_region: input → output](../../_fig/hx_split_skeleton_region.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_split_skeleton_region: stages](../../_fig/hx_split_skeleton_region.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_split_skeleton_region: other inputs](../../_fig/hx_split_skeleton_region.inputs.jpg)
 
 ## 使い方
 
 1 画素幅 skeleton を分岐点で分割: 近傍数>=3 の junction を除いて連結成分に分ける。
+
+``v > 0.5`` の骨格画素ごとに 8 近傍の骨格画素数 ``nb`` を数え、``nb >= 3`` の画素(分岐点)を取り除いた
+0/1 の float 配列を返す。分岐点を抜くことで骨格が枝ごとの連結成分に分かれる。
+
+- ``a``, ``b`` は未使用。
+
+前提は 1 画素幅の骨格(``skeleton`` の出力)。太い線や塊を渡すと内部の画素はすべて ``nb >= 3`` となり
+ほぼ全部が消える。分岐点そのものは出力に含まれない(分岐の位置が要るなら ``junctions_skeleton``)。
+分かれた枝を個別に扱うには後段で ``hx_region_to_label`` を掛ける。分岐点の隣接画素は除かないので、
+多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に ``r2_split_skeleton_lines``。
 
 ## 詳しい使い方ガイド
 

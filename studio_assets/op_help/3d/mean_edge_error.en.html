@@ -4,6 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import pose_graph; pose_graph.mean_edge_error(poses, edges)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;mean_edge_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The RMS of the edge residuals (how consistent the pose graph is). → scalar.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>各エッジ `<code style="color:#22d3bf">(i, j, rvec_meas, t_meas[, w_rot, w_trans])</code><code style="color:#22d3bf"> について、予測相対姿勢 </code><code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code>` と</p>
+<p>計測 `<code style="color:#22d3bf">(rvec_meas, t_meas)</code><code style="color:#22d3bf"> の食い違い </code><code style="color:#22d3bf">measured⁻¹ ∘ predicted</code>` を回転ベクトル 3 成分 + 並進</p>
+<p>3 成分の 6 次元残差にし(それぞれ `<code style="color:#22d3bf">sqrt(w_rot)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sqrt(w_trans)</code>` を掛ける。重み省略時は 1)、</p>
+<p>全エッジ・全成分をまとめた 2 乗平均平方根を返す。`<code style="color:#22d3bf">optimize_pose_graph</code><code style="color:#22d3bf"> の返り値 </code><code style="color:#22d3bf">rmse</code>` と</p>
+<p>同じ量で、最適化前後の比較に使う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">poses</code><code style="color:#22d3bf">: (N,6) にリシェイプできる </code><code style="color:#22d3bf">[rvec | t]</code>`(world←body)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">edges</code>`: 上記タプルのリスト。空なら 0.0 を返す。</p>
+<p>注意: 回転成分(rad)と並進成分(座標の単位)を同じ配列で平均するため、値の次元は混在する。</p>
+<p>並進のスケールが大きいシーンでは並進項が支配的になるので、単位を揃えたいときは `<code style="color:#22d3bf">w_rot</code>` /</p>
+<p>`<code style="color:#22d3bf">w_trans</code>` で重み付けする。エッジ添字の範囲検証はこの関数では行わない(負の添字は numpy の</p>
+<p>折り返しで別ノードを黙って参照する。`<code style="color:#22d3bf">optimize_pose_graph</code>` は検証する)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

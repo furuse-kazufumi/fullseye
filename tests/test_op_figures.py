@@ -43,7 +43,7 @@ HELP = ROOT / "studio_assets" / "op_help"
 MANIFEST = FIG / "figures.json"
 
 #: 2026-09-06 の実測。**下回ったら落ちる**(上げるのは自由)。
-_OK_FLOOR = 724
+_OK_FLOOR = 892
 
 
 def _manifest() -> dict:
@@ -53,7 +53,7 @@ def _manifest() -> dict:
 
 
 def _by_status(m):
-    out = {"ok": [], "unreachable": [], "failed": [], "domain": []}
+    out = {"ok": [], "unreachable": [], "failed": [], "domain": [], "empty": []}
     for name, r in m["ops"].items():
         out[r["status"]].append(name)
     return out
@@ -119,6 +119,103 @@ def test_unreachable_is_exactly_what_the_type_graph_says():
                          "入口 op を足す" % missing)
 
 
+def test_empty_verdicts_are_really_empty_and_ok_verdicts_are_not():
+    """★「走った」と「意味のある出力」を分ける(2026-09-07、「out が真っ黒」)。
+
+    manifest が empty と言う op は本当に空配列を返し、ok と言う op は空でないこと。
+    """
+    requires_full_registry()
+    sys.path.insert(0, str(ROOT))
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gen_op_figures as G
+    import ops
+    import fullseye as fs
+    import numpy as np
+
+    m = _manifest()
+    st = _by_status(m)
+    base = G.canonical_image()
+
+    def _run(name):
+        op = ops._BY_NAME[name]
+        v = base
+        for nm, ka, kb in G.PREFIX_OP.get(name, G.PREFIX[op.in_sort]):
+            v = fs.apply(v, nm, ka, kb, on_error="raise")
+        return fs.apply(v, name, *G._knobs(op), on_error="raise")
+
+    wrong = [n for n in st["empty"] if not (isinstance(_run(n), np.ndarray) and _run(n).size == 0)]
+    assert not wrong, "empty と記録されているのに空でない: %s —— 図を作り直す" % wrong
+    # ok 側は全数だと 30 秒かかるので、配列を返す op から決定的に 40 本を抜く
+    picks = sorted(st["ok"])[::max(1, len(st["ok"]) // 40)]
+    hollow = [n for n in picks if isinstance(_run(n), np.ndarray) and _run(n).size == 0]
+    assert not hollow, "ok と記録されているのに空を返す: %s" % hollow
+
+
+#: 2026-09-07 の実測。下回ったら落ちる(上げるのは自由)。
+_SWEEP_FLOOR = 600
+_GIF_FLOOR = 30
+_INPUTS_FLOOR = 600
+
+
+def test_extra_figures_exist_and_are_counted():
+    """つまみの段階図・段階(chain)図・GIF が manifest どおりに在り、量が減っていないこと。
+
+    「a は出力を変えない」と記録された op は、本当に 3 点で同一かも抜き取りで確かめる
+    (効かないつまみは liveness の信号でもある)。
+    """
+    m = _manifest()
+    st = _by_status(m)
+    n_sw = n_gif = 0
+    missing = []
+    for n in st["ok"]:
+        r = m["ops"][n]
+        for k, rel in (r.get("extra") or {}).items():
+            if not (FIG / rel).is_file():
+                missing.append(rel)
+            # JPEG(段階図・複数入力)は docs だけ。wheel には主図 PNG と GIF を同梱する
+            if not rel.endswith(".jpg") and not (HELP / "fig" / rel).is_file():
+                missing.append("op_help/fig/" + rel)
+            if k in ("a", "b"):
+                n_sw += 1
+            if k == "gif":
+                n_gif += 1
+                from PIL import Image
+                with Image.open(FIG / rel) as im:
+                    assert getattr(im, "n_frames", 1) > 1, "%s: GIF が 1 コマ" % rel
+    assert not missing, "manifest にあるのに無い図: %s" % missing[:8]
+    assert n_sw >= _SWEEP_FLOOR, "つまみの段階図が %d 組に減った(床 %d)" % (n_sw, _SWEEP_FLOOR)
+    assert n_gif >= _GIF_FLOOR, "GIF が %d 本に減った(床 %d)" % (n_gif, _GIF_FLOOR)
+    n_in = sum(1 for n in st["ok"] if "inputs" in (m["ops"][n].get("extra") or {}))
+    assert n_in >= _INPUTS_FLOOR, "複数入力の図が %d 本に減った(床 %d)" % (n_in, _INPUTS_FLOOR)
+
+
+def test_dead_knobs_are_really_dead():
+    requires_full_registry()
+    sys.path.insert(0, str(ROOT))
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gen_op_figures as G
+    import ops
+    import fullseye as fs
+    import numpy as np
+
+    m = _manifest()
+    base = G.canonical_image()
+    dead = [(n, k) for n, r in m["ops"].items() if r["status"] == "ok" for k in r.get("knob_dead", [])]
+    picks = dead[::max(1, len(dead) // 30)]
+    wrong = []
+    for n, k in picks:
+        op = ops._BY_NAME[n]
+        v = base
+        for nm, ka, kb in G.PREFIX_OP.get(n, G.PREFIX[op.in_sort]):
+            v = fs.apply(v, nm, ka, kb, on_error="raise")
+        ka, kb = G._knobs(op)
+        outs = [fs.apply(v, n, (t if k == "a" else ka), (kb if k == "a" else t), on_error="raise")
+                for t in G.SWEEP]
+        if not all(G._same(outs[0], o) for o in outs[1:]):
+            wrong.append((n, k))
+    assert not wrong, "「効かない」と記録されたつまみが効いている: %s" % wrong[:6]
+
+
 def test_domain_mismatch_ledger_is_still_true():
     """★免除台帳(DOMAIN_MISMATCH)が腐っていないこと。
 
@@ -174,7 +271,7 @@ def test_every_ok_op_note_embeds_its_figure_and_program():
     # optional backend の op で KeyError になる)。2-D のノートは docs/ops/2d/<cat>/<op>.md。
     path_of = {p.stem: p for p in (ROOT / "docs" / "ops" / "2d").rglob("*.md")
                if p.name != "INDEX.md" and "guides" not in p.parts}
-    missing = [n for n in st["ok"] + st["unreachable"] + st["domain"] if n not in path_of]
+    missing = [n for n in st["ok"] + st["unreachable"] + st["domain"] + st["empty"] if n not in path_of]
     assert not missing, "manifest にあるのにノートが無い op: %s" % missing[:8]
     bad = []
     for n in st["ok"]:
@@ -185,7 +282,7 @@ def test_every_ok_op_note_embeds_its_figure_and_program():
             bad.append("%s: Studio プログラムが無い" % n)
         elif m["ops"][n]["program"].splitlines()[-1] not in md:
             bad.append("%s: プログラムの中身が manifest と違う" % n)
-    for n in st["unreachable"] + st["domain"]:
+    for n in st["unreachable"] + st["domain"] + st["empty"]:
         md = Path(path_of[n]).read_text(encoding="utf-8")
         if "図なし" not in md:
             bad.append("%s: 図が無い理由が書かれていない" % n)

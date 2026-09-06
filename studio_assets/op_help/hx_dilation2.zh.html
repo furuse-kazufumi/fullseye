@@ -3,10 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;hx_dilation2&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 对应</b>:<code style="color:#22d3bf">dilation2</code>(其含义与参数可参考 HALCON 手册)</p>
-<p><img src="fig/hx_dilation2.png" alt="hx_dilation2: 入力 → 出力"></p>
-<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*</p>
+<p><img src="fig/hx_dilation2.png" alt="hx_dilation2: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.a.jpg">hx_dilation2: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.b.jpg">hx_dilation2: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.chain.jpg">hx_dilation2: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.inputs.jpg">hx_dilation2: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>带参考点的膨胀:膨胀后按参考点偏移(由 b 平移)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> を region とし、半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> の円板構造要素で </code><code style="color:#22d3bf">binary_dilation</code><code style="color:#22d3bf"> した後、結果を列方向に </code><code style="color:#22d3bf">sh</code>` 画素</p>
+<p>`<code style="color:#22d3bf">np.roll</code>` で平行移動して 0/1 の float 配列で返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 円板半径 </code><code style="color:#22d3bf">r = 1 + int(a*4)</code>`(1〜5 画素)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 列方向のずらし量 </code><code style="color:#22d3bf">sh = int((b-0.5)*6)</code><code style="color:#22d3bf">。値は -3〜3 で、小数点以下は 0 方向に切り捨てるため </code><code style="color:#22d3bf">b</code>` が</p>
+<p>およそ 1/3〜2/3 の範囲では 0(ずらし無し)になる。負で左、正で右。</p>
+<p>行方向のずらしは無い(参照点を横にずらす形だけを再現)。`<code style="color:#22d3bf">np.roll</code>` なので端からはみ出た分は反対側に現れる</p>
+<p>(端に接する region を扱うときは注意)。単純な膨張だけなら `<code style="color:#22d3bf">hx_dilation1</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

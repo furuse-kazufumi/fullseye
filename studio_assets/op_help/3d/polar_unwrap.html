@@ -5,6 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。</p>
+<p>円周方向に並ぶ特徴を「縦」に伸ばして通常の 2D 手法(直線探索/相関)を適用できる。grid_sample。</p>
+<p>θ 軸は endpoint 無し(行 k の角度 = k·2π/ntheta)= 0° と 360° を重複サンプルしない</p>
+<p>周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。</p>
+<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
+<p>引数: `<code style="color:#22d3bf">center=(cy, cx)</code><code style="color:#22d3bf"> は **(行, 列)** の順(既定は画像中心 </code><code style="color:#22d3bf">((H−1)/2, (W−1)/2)</code>`)。</p>
+<p>`<code style="color:#22d3bf">r_in</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">r_out</code><code style="color:#22d3bf">(画素、既定 </code><code style="color:#22d3bf">min(H,W)/2 − 1</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">nr</code><code style="color:#22d3bf"> 等分、角度を </code><code style="color:#22d3bf">ntheta</code>` 等分。</p>
+<p>出力 `<code style="color:#22d3bf">(ntheta, nr)</code><code style="color:#22d3bf"> float32: 行 k の角度 </code><code style="color:#22d3bf">θ = k·2π/ntheta</code>`、列 j の半径</p>
+<p>`<code style="color:#22d3bf">r = r_in + j·(r_out − r_in)/(nr−1)</code><code style="color:#22d3bf">、サンプル点は </code><code style="color:#22d3bf">(cy + r sinθ, cx + r cosθ)</code>`(θ=0 が</p>
+<p>+列方向、θ が増えると +行方向へ回る)。画像外は 0 で埋まる(bilinear)。</p>
+<p>後段: 行方向(θ)の直線探索・`<code style="color:#22d3bf">ncc_locate</code>`、θ 方向の 1-D 相関で回転角。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

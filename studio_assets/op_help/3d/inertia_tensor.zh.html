@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import moments3d; moments3d.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;inertia_tensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群的惯性张量 (3,3)(由中心二阶矩,等质量、总质量 1)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²),</p>
+<p>I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。</p>
+<p>共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。</p>
+<p>重心中心化のため並進不変。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>np.ndarray, shape (3, 3)</p>
+<p>対称な慣性テンソル。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと `<code style="color:#22d3bf">R I Rᵀ</code><code style="color:#22d3bf"> に写り、固有値(</code><code style="color:#22d3bf">principal_moments</code><code style="color:#22d3bf">)が回転不変量、固有ベクトルが主軸(</code><code style="color:#22d3bf">moment_axes</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら零行列)。形状不正・非有限は `<code style="color:#22d3bf">ValueError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 共分散 C とは `<code style="color:#22d3bf">I = tr(C)·E₃ - C</code><code style="color:#22d3bf"> の関係で、C と I の固有ベクトルは同じ、固有値は </code><code style="color:#22d3bf">tr(C) - c_i</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 実体(体積)のモーメントではなく <b>サンプル点</b> のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で `<code style="color:#22d3bf">voxel_grid_downsample</code>`。決定論的。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

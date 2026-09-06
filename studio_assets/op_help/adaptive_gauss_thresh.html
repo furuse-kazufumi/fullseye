@@ -3,8 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;adaptive_gauss_thresh&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">local_threshold</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
-<p><img src="fig/adaptive_gauss_thresh.png" alt="adaptive_gauss_thresh: 入力 → 出力"></p>
-<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*</p>
+<p><img src="fig/adaptive_gauss_thresh.png" alt="adaptive_gauss_thresh: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/adaptive_gauss_thresh.a.jpg">adaptive_gauss_thresh: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/adaptive_gauss_thresh.b.jpg">adaptive_gauss_thresh: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/adaptive_gauss_thresh.inputs.jpg">adaptive_gauss_thresh: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の `<code style="color:#22d3bf">local_threshold</code>`（Segment an image using local thresholding.）に相当。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が基準を作るガウシアンの σ を </code><code style="color:#22d3bf">1.0〜4.0</code><code style="color:#22d3bf"> に、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> がオフセットを </code><code style="color:#22d3bf">-0.15〜+0.15</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">(b-0.5)*0.3</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">v &gt; gaussian_filter(v, σ) + offset</code><code style="color:#22d3bf"> を満たす画素を前景にする。照明ムラがある画像で大域しきい値（</code><code style="color:#22d3bf">_threshold</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">_otsu</code><code style="color:#22d3bf">）より安定する。近い op に </code><code style="color:#22d3bf">_dyn_threshold</code><code style="color:#22d3bf"> があるが、そちらは箱型平均（</code><code style="color:#22d3bf">uniform_filter</code><code style="color:#22d3bf">）を基準にし、オフセット幅も異なる（</code><code style="color:#22d3bf">±0.2</code>`）——同じ「適応的しきい値」でも基準の平滑化方式とパラメータ範囲が違う別実装。</p>

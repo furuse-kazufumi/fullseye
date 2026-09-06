@@ -6,6 +6,18 @@
 <p>Grenzwinkel der Totalreflexion [Grad] = asin(n2/n1). Ohne n1 &gt; n2 ein ValueError (er existiert dann nicht).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
+<p>式: `<code style="color:#22d3bf">degrees(asin(n2 / n1))</code>`。入射角(法線からの角)がこれ以上なら屈折光が</p>
+<p>存在せず全反射する。例: N-BK7 相当 `<code style="color:#22d3bf">n1 = 1.5</code><code style="color:#22d3bf"> → 空気 </code><code style="color:#22d3bf">n2 = 1.0</code>` で 41.8 度、</p>
+<p>水 `<code style="color:#22d3bf">n1 = 1.333</code>` → 空気で 48.6 度。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n1</code><code style="color:#22d3bf">: 光が出ていく側(密な媒質)の屈折率、</code><code style="color:#22d3bf">n2</code>`: 入る側(疎な媒質)の屈折率。</p>
+<p>どちらも正の有限スカラ(`<code style="color:#22d3bf">float()</code>` で変換するので配列は受けない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n1 &lt;= n2</code><code style="color:#22d3bf"> は臨界角が存在しないので </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">NaN</code>` や 90 度で</p>
+<p>ごまかさない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: float [deg]、`<code style="color:#22d3bf">(0, 90)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• 波長依存は入れない。分散込みで評価するなら硝材の Sellmeier から求めた</p>
+<p>`<code style="color:#22d3bf">n1</code><code style="color:#22d3bf"> を渡す(</code><code style="color:#22d3bf">prism_min_deviation_deg</code>` は内部でそれをやる)。</p>
+<p>`<code style="color:#22d3bf">fresnel_dielectric</code><code style="color:#22d3bf"> に臨界角以上の </code><code style="color:#22d3bf">cos_i</code>` を渡した場合の挙動はそちらを参照。</p>
+<p>Brewster 角(p 偏光の反射が 0 になる角)は `<code style="color:#22d3bf">brewster_angle_deg</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

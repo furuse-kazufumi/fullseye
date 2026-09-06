@@ -4,6 +4,30 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import edges3d; edges3d.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;log_zero_crossings&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nulldurchgangskanten des Laplacian of Gaussian.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : (D,H,W) array</p>
+<p>グレー voxel。</p>
+<p>sigma : float</p>
+<p>LoG の標準偏差(&gt; 0)。</p>
+<p>rel_thresh : float</p>
+<p>平坦部の数値ノイズによる偽交差を抑える相対閾値。交差ペアの LoG 差 |a-b| が</p>
+<p>rel_thresh * max|L| を超える場合のみ採用する。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>edge_mask : (D,H,W) bool</p>
+<p>符号が変化する隣接ペアのうち |LoG| が小さい側(ゼロにより近い側)を立てた mask。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>各軸方向に二種類のゼロ交差を検出する:</p>
+<p>(1) 格子間交差 — 隣接ペア (a,b) の符号積 a*b &lt; 0(両側とも非ゼロで符号反転)。厚みを</p>
+<p>抑えるためペアのうち |LoG| が小さい側 1 voxel に割り当てる。</p>
+<p>(2) 格子整列交差 — 中央 voxel が厳密ゼロ(L==0)で両隣が異符号(符号がその voxel で</p>
+<p>ゼロを通過)する場合。SDF 風の格子に整列した面で LoG がちょうど格子点上で 0 に</p>
+<p>なる真のエッジは a*b が常に 0 となり (1) では取りこぼすため、当該 voxel を交差</p>
+<p>として立てる。定数ゼロ領域は両隣も 0 で Lm*Lp==0 となり除外される(誤検出しない)。</p>
+<p>いずれも平坦部の数値ノイズは相対閾値(rel_thresh * max|L|)で抑制する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,6 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Achsenparallele Bounding Box. Liefert `<code style="color:#22d3bf">(min (3,), max (3,))</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>点群の各軸の最小値と最大値をそのまま返す(`<code style="color:#22d3bf">P.min(0)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">P.max(0)</code>`)。返り値は 2 つの (3,)</p>
+<p>float64 配列で、順に `<code style="color:#22d3bf">(xmin, ymin, zmin)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(xmax, ymax, zmax)</code>`(軸の並びは入力の列順)。</p>
+<p>箱の大きさは `<code style="color:#22d3bf">max - min</code><code style="color:#22d3bf">、中心は </code><code style="color:#22d3bf">(min + max) / 2</code>`。単位は座標の単位。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">points</code><code style="color:#22d3bf">: (N,3) 以外の形状は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、空の点群も </code><code style="color:#22d3bf">ValueError</code>`(fail-closed)。</p>
+<p style="margin:2px 0 2px 12px">• NaN を含む点があると `<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code>` が NaN になる(非有限の検査はしない)。</p>
+<p>用途: voxel 化(`<code style="color:#22d3bf">occupancy_grid</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">points_to_voxel</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">bounds</code>`)の領域決め、</p>
+<p>`<code style="color:#22d3bf">obb</code>`(PCA で向きを合わせた箱)との比較。軸に沿わない細長い物体では AABB は大きく余るので、</p>
+<p>把持幅の推定には `<code style="color:#22d3bf">obb</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">extents</code>` を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

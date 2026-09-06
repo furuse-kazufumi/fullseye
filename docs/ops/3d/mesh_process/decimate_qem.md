@@ -19,6 +19,27 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Quadric-error-metric edge-collapse decimation toward *target_faces*.
 
+*protect* (optional, (nv,) bool): vertices that must survive untouched —
+no edge incident to a protected vertex is collapsed, so the faces around a
+crater rim, a boulder or any region you flagged keep their exact geometry
+(``meshres.mesh_decimate_preserving`` derives the mask from the detail map
+and reports what the rest of the reduction lost).
+
+Garland & Heckbert 1997: each vertex carries the sum of the squared-distance
+quadrics of its incident face planes; the cheapest edge is collapsed to the
+position minimising that quadric (a midpoint/endpoint fallback when the 3x3
+system is singular, e.g. on a flat face), quadrics are accumulated onto the
+surviving vertex, and incident edge costs are re-queued. Collapses that would
+flip a face normal or land on a non-manifold edge are skipped, so the result
+stays a sane surface.
+
+Honest scope: this is a **practical** QEM, not production-grade. It has no
+boundary-preservation term, no attribute (colour/UV) quadrics and no
+aggressive validity recovery, so on awkward meshes a few non-ideal collapses
+can survive and the collapse may stop a little short of *target_faces* when
+every remaining candidate is blocked by the flip/manifold guard. Good enough
+for a cheap collision proxy; not a replacement for a dedicated remesher.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

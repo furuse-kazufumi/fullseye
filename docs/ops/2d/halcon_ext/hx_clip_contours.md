@@ -17,13 +17,39 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - **呼び出し**: `fullseye.apply(img, "hx_clip_contours", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `clip_contours_xld`(意味・パラメータは HALCON リファレンスが参考になる)
 
-![hx_clip_contours: 入力 → 出力](../../_fig/hx_clip_contours.png)
+![hx_clip_contours: input → output](../../_fig/hx_clip_contours.png)
 
-*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_clip_contours: knob a sweep](../../_fig/hx_clip_contours.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hx_clip_contours: knob b sweep](../../_fig/hx_clip_contours.b.jpg)
+
+**段階**(前置きの op → この op。左から順):
+
+![hx_clip_contours: stages](../../_fig/hx_clip_contours.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![hx_clip_contours: other inputs](../../_fig/hx_clip_contours.inputs.jpg)
 
 ## 使い方
 
 contour を画像ドメイン(中央 margin a/b を残す矩形)にクリップ(範囲外点を除去)。
+
+contour dict の各 contour について、画像の内側に取った矩形 ``my <= row <= H-1-my``、``mx <= col <= W-1-mx``
+に入る点だけを残し、1 点も残らない contour は捨てて返す。
+
+- ``a`` → 上下の余白 ``my = a*0.4*H``(0〜高さの 40%)。
+- ``b`` → 左右の余白 ``mx = b*0.4*W``(0〜幅の 40%)。a=b=0 なら画像範囲 ``[0, H-1] × [0, W-1]`` でのクリップ。
+
+点を間引くだけで contour は分割しないため、矩形外を通って戻ってくる contour は残った点どうしが直接つながった
+形(ジャンプ)になる。分割が要るなら後段で ``hx_split_contours``。中心からの割合で切る類似 op に
+``hx_crop_contours``(中心基準の幅・高さ指定)。線長で足切りする ``xg_clip_contours`` とは別物。
 
 ## 詳しい使い方ガイド
 

@@ -4,6 +4,38 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volgray; volgray.vol_equalize(vol, nbins=256, mask=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_equalize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ボリュームのヒストグラム平坦化(HALCON `<code style="color:#22d3bf">equ_histo_image</code>`)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Builds an *nbins*-bin histogram over the volume&#x27;s `<code style="color:#22d3bf">[min, max]</code>` range,</p>
+<p>takes its cumulative distribution as a monotone LUT, and maps every voxel</p>
+<p>through it — the output lives in `<code style="color:#22d3bf">(0, 1]</code>` and its histogram is</p>
+<p>(approximately) flat. With *mask* (thresholded at `<code style="color:#22d3bf">&gt; 0.5</code>`, the volops</p>
+<p>convention) the **histogram is computed from the masked voxels only while</p>
+<p>the LUT is applied to the whole volume** — exactly the HALCON</p>
+<p>`<code style="color:#22d3bf">reduce_domain</code><code style="color:#22d3bf"> + </code><code style="color:#22d3bf">equ_histo_image</code>` domain behaviour, and the right</p>
+<p>tool when a dominant background (e.g. air around a CT subject) would</p>
+<p>otherwise swallow the whole dynamic range.</p>
+<p>A <b>constant volume is returned unchanged</b> — normalising a flat volume</p>
+<p>would amplify floating-point dust into full-scale garbage (fail-honest,</p>
+<p>not fail-loud; see the module docstring).</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>nbins : int</p>
+<p>Histogram bins, `<code style="color:#22d3bf">&gt;= 2</code>`. More bins = finer LUT (the mapping is</p>
+<p>piecewise-constant per bin — an approximation, documented above).</p>
+<p>mask : array_like, shape (D, H, W), optional</p>
+<p>Histogram domain. Must match *vol*&#x27;s shape and select at least one</p>
+<p>voxel (an empty domain has no histogram — fail-closed).</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (D, H, W), float64</p>
+<p>The equalised volume in `<code style="color:#22d3bf">[0, 1]</code>` (constant input: the input itself).</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>Non-3-D / non-finite input, `<code style="color:#22d3bf">nbins &lt; 2</code>`, a mask shape mismatch, or</p>
+<p>an empty mask.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -22,6 +22,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ビン幅は ``data_range`` から決める ―― 画像ごとに min/max で伸縮させると、
 **一様に暗い絵と一様に明るい絵の相互情報量が同じになる**ので。
 
+手順: 2 枚を平坦化し、両方に **同じ** ビン境界 ``[lo, lo + data_range]``
+(``lo`` = 2 枚の最小値の小さいほう、``bins`` 等分)で ``numpy.histogram2d`` を取り、
+総数で割って同時確率にする。
+
+- ``a``, ``b``: 同じ形(次元は問わない)、有限。dtype は同じでなければ
+  ``data_range`` を明示する(混在 dtype からの推定は拒否)。
+- ``bins``: 2 以上の整数。
+- ``data_range``: 整数 dtype は自動(uint8 = 255 など)、float は ``[0, 1]`` の
+  ときだけ 1.0、それ以外は明示必須。
+- 返り値: ``(bins, bins)`` の float64、和は 1。行が ``a`` のビン、列が ``b`` のビン。
+  ``lo + data_range`` を超える値はビンに入らない(数えられない)。
+- 失敗(``MetricContractError``): 形が違う / 空 / 非有限 / ``bins < 2`` /
+  範囲に入る標本が 0。
+
+``joint_entropy`` / ``mutual_information`` / ``image_entropy`` はこの表から計算する。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

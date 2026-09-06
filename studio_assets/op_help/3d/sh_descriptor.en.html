@@ -5,6 +5,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The spherical-harmonic descriptor. Returns the SH band energy ‖f_l(r)‖ of concentric shells as (radius × frequency).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>2D 閉輪郭を 1D Fourier 記述子で表す <b>線→面リフト</b>: 3D 閉曲面は SH で表し、帯域エネルギーは</p>
+<p>回転で m を帯域内に混ぜるだけ=<b>回転不変</b>(Kazhdan 2003)。全 shell を grid_sample で取り、</p>
+<p>固定 SH 基底との内積 → 帯域二乗和。retrieval/verification 用の大域シグネチャ。返り値 (nradii,L+1)。</p>
+<p>honest 開示(2026-08-30 レビュー実測): 球面求積は一様 θ×φ グリッド和(Gauss-Legendre</p>
+<p>でない)ため、値は<b>厳密な SH 帯域エネルギーの近似</b>(既定 32×64 で l=4 自己内積が</p>
+<p>理論値の ~0.62 倍、解像度↑で 1 に収束)。match_sh_descriptor は L2 正規化+コサイン</p>
+<p>類似度なので<b>同一 ntheta/nphi 同士の比較には影響しない</b>が、絶対値を物理量として</p>
+<p>使う・異なる解像度設定間で比較するのは不可。</p>
+<p>引数: `<code style="color:#22d3bf">vol</code><code style="color:#22d3bf"> は **立方体**(N,N,N)前提。中心 </code><code style="color:#22d3bf">c = (N−1)/2</code>` と座標の正規化に軸 0 の長さ N</p>
+<p>だけを使うので、非立方体だと軸 1,2 のサンプル位置が歪む(検証は無い)。shell 半径は</p>
+<p>`<code style="color:#22d3bf">0.2·rmax</code><code style="color:#22d3bf"> 〜 </code><code style="color:#22d3bf">rmax = N/2 − 1</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">nradii</code>` 等分(voxel 単位)、各 shell を</p>
+<p>`<code style="color:#22d3bf">ntheta × nphi</code><code style="color:#22d3bf"> の (θ,φ) 格子で trilinear サンプルする。</code><code style="color:#22d3bf">L</code>` は最大次数。</p>
+<p>返り値 `<code style="color:#22d3bf">(nradii, L+1)</code><code style="color:#22d3bf"> float32 numpy、</code><code style="color:#22d3bf">[i, l]</code>` が i 番目の shell の次数 l のエネルギー</p>
+<p>(非負)。物体は volume の中心に置く(中心がずれると回転不変性が崩れる。`<code style="color:#22d3bf">moment_axes</code>` の</p>
+<p>重心で先に中心合わせを)。scipy の `<code style="color:#22d3bf">sph_harm_y</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">sph_harm</code>` を呼び出し時 import。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

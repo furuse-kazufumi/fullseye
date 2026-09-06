@@ -4,6 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import mesh_smooth; mesh_smooth.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;taubin_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Taubin λ|μ 濾波的<b>非收縮</b>平滑。→ (verts, faces)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>各反復で「正の `<code style="color:#22d3bf">lam</code><code style="color:#22d3bf"> で寄せる段」→「負の </code><code style="color:#22d3bf">mu</code>` で押し戻す段」を続けて掛ける。</p>
+<p>`<code style="color:#22d3bf">|mu| &gt; lam</code>` とすることで低周波(全体形状)を通し高周波(ノイズ)だけを減衰させる</p>
+<p>帯域通過フィルタになり、Laplacian の収縮アーティファクトを打ち消す(球の平均半径が</p>
+<p>ほぼ保たれる)。既定 `<code style="color:#22d3bf">lam=0.33, mu=-0.34</code>` は Taubin (1995) の推奨に近い。</p>
+<p>Args:</p>
+<p>mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。</p>
+<p>iters: λ|μ ペアの反復回数(正の整数)。</p>
+<p>lam: 寄せ段の係数、`<code style="color:#22d3bf">0 &lt; lam &lt; 1</code>`。</p>
+<p>mu: 押し戻し段の係数、`<code style="color:#22d3bf">mu &lt; 0</code><code style="color:#22d3bf"> かつ </code><code style="color:#22d3bf">|mu| &gt; lam</code>`(収縮を打ち消す条件)。</p>
+<p>Returns:</p>
+<p>(verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。</p>
+<p>Raises:</p>
+<p>ValueError: メッシュ形状不正・面範囲外・iters/lam/mu が不正(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

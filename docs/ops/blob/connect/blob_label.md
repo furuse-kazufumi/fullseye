@@ -4,7 +4,7 @@ dim: blob
 category: connect
 in: mask
 out: labels2d
-examples: [poc_gear_tooth_metrology, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_sea_ice_concentration, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_wound_area_tracking]
+examples: [blob_split_tour, poc_gear_tooth_metrology, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_sea_ice_concentration, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ Examples
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`

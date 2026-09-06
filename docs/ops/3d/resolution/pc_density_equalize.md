@@ -19,6 +19,11 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Fill the sparse regions, then thin the dense ones: uniform spacing (``points``).
 
+:func:`pc_fill_sparse` followed by :func:`pc_poisson_disk` with radius
+``0.8 × spacing`` (the Poisson radius is a minimum, the k-NN spacing a
+typical value; 0.8 keeps the median spacing at the target). Measured on a
+cloud with a 6× density contrast: p95/p5 of spacing from 4.2 to ≤ 1.6.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

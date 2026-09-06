@@ -5,6 +5,23 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gewinnt <b>Rotation um z und isotrope Skalierung</b> über Log-Polar × Phasenkorrelation (Fourier-Mellin) zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>構造=voxel × 手法=Fourier-Mellin。PCA が点対応を要すのに対し、これはテンプレ/対応不要で</p>
+<p>回転(z 軸)とスケールを同時推定する唯一の列。核心: z 投影(MIP)を取ると z 軸回転=面内回転・</p>
+<p>等方スケール=面内スケールに落ち、確立された 2D Fourier-Mellin(|FFT|→高域強調→log-polar→</p>
+<p>位相相関)が使える。返り値 (angle_deg, scale)。</p>
+<p>honest な限界(<b>coarse 推定器</b>、下流で NCC/ICP 精緻化前提): |回転|≲40° で誤差 ~2-5°。</p>
+<p>|FFT| の 180° 対称により ±45°/±90° 近傍は別名化して外し得る。スケールは中央ローブ偏りで</p>
+<p>~10% 過小に出る。full-whitening はこの投影の非シフト DC プラトーでゼロロックするため、</p>
+<p>plain 相関 + rho-Hann 窓 + 放物線サブピクセルを用いる。</p>
+<p>引数: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は 3-D volume(同形でなくてもよいが、投影の縦横比が違うと log-polar の</p>
+<p>対応が崩れる)。`<code style="color:#22d3bf">project=&quot;mip&quot;</code><code style="color:#22d3bf"> で軸 0 の最大値投影、それ以外は軸 0 の総和投影。</code><code style="color:#22d3bf">nt</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">nr</code>`</p>
+<p>は log-polar の角度・半径サンプル数(角度分解能 180°/nt)。</p>
+<p>返り値 `<code style="color:#22d3bf">(angle_deg, scale)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> を軸 0 まわりに </code><code style="color:#22d3bf">angle_deg</code><code style="color:#22d3bf"> 回して </code><code style="color:#22d3bf">scale</code>`</p>
+<p>倍したものと推定する(`<code style="color:#22d3bf">b ≈ zoom(rotate(a, angle_deg, axes=(1,2)), scale)</code>`、回転の向きは</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.rotate</code>` と同じ)。角度は ±90° の範囲で別名化する。</p>
+<p>後段: `<code style="color:#22d3bf">refine_rotation_z(scene=b, template=a, init_angle_deg=angle_deg)</code>` で追い込み →</p>
+<p>`<code style="color:#22d3bf">match_phase_3d</code>` で並進。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

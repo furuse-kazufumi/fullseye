@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volrestore; volrestore.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_richardson_lucy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>알려진 PSF 로 음이 아닌 볼륨의 Richardson–Lucy 디컨볼루션.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>*psf* is a 3-D non-negative kernel (any odd/even size smaller than the</p>
+<p>volume; it is normalised to sum 1 internally so overall intensity is</p>
+<p>preserved). *iterations* trades sharpness against noise amplification —</p>
+<p>5-30 is the practical range (see the module notes on semi-convergence).</p>
+<p>Negative voxels are refused (RL is a Poisson model) — except *rounding</p>
+<p>dust*: values no lower than `<code style="color:#22d3bf">-NEGATIVE_DUST_TOL * max|vol|</code>` (1e-9</p>
+<p>relative; an FFT-blurred observation typically carries -1e-16) are clipped</p>
+<p>to 0 instead of rejected, so the module&#x27;s own forward model feeds back in.</p>
+<p>Returns the deblurred `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume (non-negative).</p>
+<p>Measured on the test scene (binary sphere pair blurred by a sigma-2</p>
+<p>Gaussian): the RMSE to ground truth falls to 0.81x the blurred</p>
+<p>observation&#x27;s at 10 iterations and 0.68x at 50 — genuine but *gradual*,</p>
+<p>because the residual is dominated by the spheres&#x27; hard edges, which RL</p>
+<p>recovers slowly. What converges fast is the *forward consistency*:</p>
+<p>re-blurring the estimate reproduces the observation almost exactly (that</p>
+<p>is the quantity the RL update actually optimises).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

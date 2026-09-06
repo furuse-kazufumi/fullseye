@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code> (または <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_circle_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>円計測オブジェクトを追加(add_metrology_object_circle_measure)。</p>
+<p>参照円(中心 `<code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf">、半径 </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> [px])を </code><code style="color:#22d3bf">model[&quot;objects&quot;]</code>` に積む</p>
+<p>(dict をその場で更新)。`<code style="color:#22d3bf">apply_metrology_model</code><code style="color:#22d3bf"> は円周を </code><code style="color:#22d3bf">n</code>` 等分した角度に</p>
+<p>点を置き、各点で <b>半径方向</b>(外向き法線)に測定線を張ってサブピクセルの</p>
+<p>エッジを取り、最小二乗の円フィットで中心と半径を出し直す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">: 参照半径 [px]。実物とのずれは </code><code style="color:#22d3bf">apply</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">measure_length</code>`</p>
+<p>(既定 ±6 px)以内に収まっている必要がある ―― それより外のエッジは見つからない。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n</code>`: 円周のサンプル数(既定 40)。半径が大きい円ほど増やす。</p>
+<p style="margin:2px 0 2px 12px">• 引数はここでは検証しない(0 以下の半径も積めるが意味を持たない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。`<code style="color:#22d3bf">apply</code><code style="color:#22d3bf"> 結果の </code><code style="color:#22d3bf">params</code>` は</p>
+<p>`<code style="color:#22d3bf">row / col / radius</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rms</code>` は円からの半径方向残差 [px]。</p>
+<p>穴径・ピン径の検査、円形部品の中心出しに使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

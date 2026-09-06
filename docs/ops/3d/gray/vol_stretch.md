@@ -19,6 +19,36 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Percentile contrast stretch to ``[0, 1]`` (robust ``scale_image_max``).
 
+Computes the *p_low*-th and *p_high*-th intensity percentiles and maps
+``[P(p_low), P(p_high)]`` linearly onto ``[0, 1]``, clipping outside — so a
+handful of hot/cold outlier voxels (a metal artefact, a dead detector
+element) no longer dictates the display range, unlike a plain min/max
+normalisation. The defaults (1 % / 99 %) are the usual display-stretch
+choice.
+
+If the two percentile values coincide (a constant — or near-constant —
+volume), the input is **returned unchanged** rather than divided by zero
+(see the module docstring's flat-volume note).
+
+Parameters
+----------
+vol : array_like, shape (D, H, W)
+    Input volume (coerced to float64; NaN/Inf rejected).
+p_low, p_high : float
+    Percentiles in ``[0, 100]`` with ``p_low < p_high`` (fail-closed).
+
+Returns
+-------
+ndarray, shape (D, H, W), float64
+    The stretched volume in ``[0, 1]`` (degenerate percentiles: the input
+    itself).
+
+Raises
+------
+ValueError
+    Non-3-D / non-finite input, percentiles out of ``[0, 100]``, or
+    ``p_low >= p_high``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

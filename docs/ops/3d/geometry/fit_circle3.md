@@ -19,6 +19,11 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane,
 
+then fit a 2-D circle in that plane (algebraic least squares). Returns
+``center`` (``cd/cr/cc``), radius ``r``, a unit plane ``normal`` (depth, row,
+col), and the RMS residual (in-plane radial + out-of-plane, combined). Raises
+``ValueError`` on < 3 points or a collinear set.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

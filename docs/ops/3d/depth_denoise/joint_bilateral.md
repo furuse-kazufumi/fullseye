@@ -19,6 +19,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。
 
+深度が荒くても清浄な guide(RGB 輝度・別センサ)の鮮鋭なエッジで段差を保存できる。range_sigma は
+**guide 値の単位**。guide が非有限の画素、および depth が無効な画素は寄与しない。guide と depth は
+同一形状必須(fail-closed)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

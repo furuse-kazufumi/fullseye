@@ -19,6 +19,19 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。
 
+``pts0`` の各点 p について ``pts1`` 中の最近傍 q を cKDTree で求め、変位 ``q - p``
+を返す。要素数は N != M でよい。変位が局所点間隔より十分小さい小運動でのみ「点 i の
+真の対応先」を当てる(honest な最近傍の限界)。segment_rigid_motions が inlier 判定に
+使う **観測フロー** を与える。
+
+Args:
+    pts0: (N, 3) 時刻 0 の点群。
+    pts1: (M, 3) 時刻 1 の点群。
+Returns:
+    (N, 3) 変位ベクトル場(pts0 と同じ行順)。空 pts0 は (0, 3) を返す。
+Raises:
+    ValueError: 形状不正、または pts0 が非空なのに pts1 が空(最近傍が存在しない)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

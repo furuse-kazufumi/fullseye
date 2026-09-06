@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import measure3d; measure3d.smallest_box3(points) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;smallest_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>거의 최소 부피의 유향 경계 상자(3-D 판 `<code style="color:#22d3bf">smallest_rectangle2</code>`).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>Found by multi-start local refinement: seed the orientation from every convex-</p>
+<p>hull face normal (the O&#x27;Rourke *case a* candidates — a box face flush with a</p>
+<p>hull face), from the PCA axes, and from a fixed set of deterministic random</p>
+<p>frames, then polish each by coordinate descent and keep the least-volume result.</p>
+<p>This is <b>exact for box-like objects</b> (a rotated cuboid is recovered to machine</p>
+<p>precision) and, unlike a PCA box (`<code style="color:#22d3bf">fit_box3</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pcseg.obb</code>`), reaches the true</p>
+<p>minimum on shapes whose optimum has no face flush with a hull face — e.g. a</p>
+<p>regular tetrahedron, where the PCA / hull-face box is ~2x too large.</p>
+<p>Honest limit: this is not a *proof* of global minimality for every convex shape.</p>
+<p>The exact guarantee needs O&#x27;Rourke&#x27;s full *case b* (two box faces each flush with</p>
+<p>a hull <b>edge</b>), which is not enumerated here; local refinement drives seeds into</p>
+<p>that regime instead. Empirically the result is at or below a dense brute-force</p>
+<p>rotation search, but a pathological shape could leave a small gap.</p>
+<p>Returns `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">cd/cr/cc</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">axes</code>` (3, 3 — unit ROW vectors), sorted</p>
+<p>half-extents `<code style="color:#22d3bf">l1 &gt;= l2 &gt;= l3</code><code style="color:#22d3bf">, full </code><code style="color:#22d3bf">size</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">volume</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">corners</code>`</p>
+<p>(8, 3). Deterministic (fixed random seeds). Raises `<code style="color:#22d3bf">ValueError</code>` on &lt; 4 points</p>
+<p>or a coplanar/degenerate set (no 3-D hull).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

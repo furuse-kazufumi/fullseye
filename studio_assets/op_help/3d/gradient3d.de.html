@@ -4,6 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import edges3d; edges3d.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;gradient3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Berechnet den Zentraldifferenzgradienten nach gaußscher Glättung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>vol : (D,H,W) array</p>
+<p>グレー voxel。</p>
+<p>sigma : float</p>
+<p>ガウス平滑の標準偏差(voxel 単位)。0 で平滑なし(生の中心差分)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>gmag : (D,H,W) float64</p>
+<p>勾配の大きさ ||∇I||。</p>
+<p>gvec : (D,H,W,3) float64</p>
+<p>勾配ベクトル。成分は (∂/∂axis0, ∂/∂axis1, ∂/∂axis2) = (depth, height, width)。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>平滑には scipy.ndimage.gaussian_filter(mode=&quot;nearest&quot;)、微分には np.gradient(spacing=1)</p>
+<p>を用いる。np.gradient は内部が中心差分、境界のみ片側差分。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

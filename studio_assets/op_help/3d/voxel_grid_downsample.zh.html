@@ -4,6 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;voxel_grid_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用边长 voxel_size 的格子抽稀点群,把每个单元聚合为一个重心点(确定性)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>空間を一辺 `<code style="color:#22d3bf">voxel_size</code>` の立方体セルに区切り、同じセルに落ちた点をその重心</p>
+<p>1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。</p>
+<p>出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : array_like, shape (N, 3)</p>
+<p>入力点群。</p>
+<p>voxel_size : float</p>
+<p>セルの一辺(&gt; 0)。大きいほど強く間引く。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>ndarray, shape (M, 3)</p>
+<p>各占有セルの重心(M &lt;= N)。すべて入力の軸並行 bounding box 内に収まる。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>`<code style="color:#22d3bf">voxel_size &lt;= 0</code>` は ValueError。空入力は空 (0,3) を返す(graceful)。</p>
+<p>重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>

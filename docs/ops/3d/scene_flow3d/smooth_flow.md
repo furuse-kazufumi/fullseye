@@ -19,6 +19,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。
 
+:func:`nearest_neighbor_flow` の生フロー(最近傍対応ゆえノイズが乗る)を、
+``pts0`` 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。
+ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 =
+フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は
+僅かに縮む(honest な平滑化バイアス)。
+
+Args:
+    pts0: (N, 3) 時刻 0 の点群。
+    pts1: (M, 3) 時刻 1 の点群。
+    k: 平均に使う近傍数(自身含む)。
+    n_iter: 平滑化反復回数。
+Returns:
+    (N, 3) 平滑化変位ベクトル場。
+Raises:
+    ValueError: 形状不正、または pts0 非空なのに pts1 が空。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

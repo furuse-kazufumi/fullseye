@@ -19,6 +19,21 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。
 
+各反復で全頂点を ``v_i += lam * (mean(隣接 v_j) - v_i)`` と更新する。高周波ノイズを
+確実に減らす一方、閉曲面では平均曲率流と同様に **内側へ収縮(shrinkage)** する
+(球は反復とともに縮む)。収縮を避けたい場合は :func:`taubin_smooth` を使う。
+
+Args:
+    mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。
+    iters: 反復回数(正の整数)。
+    lam: 各段の寄せ率、``0 < lam <= 1``(1 で隣接平均へ全寄せ)。
+
+Returns:
+    (verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。
+
+Raises:
+    ValueError: メッシュ形状不正・面範囲外・iters/lam が不正(fail-closed)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

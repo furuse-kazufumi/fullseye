@@ -19,6 +19,16 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 Edge-length and face-area percentiles with non-uniformity ratios (``table``).
 
+``edge`` / ``area`` hold p5 / median / p95 / max / min / mean;
+``edge_nonuniformity`` = p95/p5 of edge length and ``area_nonuniformity``
+= p95/p5 of face area (1 = perfectly uniform; the Itokawa 49k model gives
+2.8 / 2.7); ``n_vertices``, ``n_faces``, ``n_edges``, ``bbox_diagonal``,
+``boundary_edges`` (edges with one face — 0 for a closed surface),
+``non_manifold_edges`` (edges with more than two faces). Use it before
+adding synthetic detail: if the ratio is far from 1, the detail you add at
+a fixed wavelength will alias on the coarse part and resolve on the fine
+part — remesh first (:func:`mesh_isotropic_remesh`).
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

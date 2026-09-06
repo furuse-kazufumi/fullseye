@@ -4,6 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import edges3d; edges3d.link_edges(edge_mask)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;link_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>エッジ mask を 26 近傍で連結成分ラベリングする。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>edge_mask : (D,H,W) bool</p>
+<p>Returns</p>
+<p>-------</p>
+<p>labels : (D,H,W) int</p>
+<p>各 voxel の成分ラベル(背景 = 0、成分 = 1..n)。</p>
+<p>n : int</p>
+<p>連結成分数。</p>
+<p>Notes</p>
+<p>-----</p>
+<p>26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、</p>
+<p>下流の Hough / chamfer で成分単位に扱えるようにする。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

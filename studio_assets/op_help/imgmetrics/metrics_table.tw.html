@@ -7,6 +7,15 @@
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>数値だけの表を作れないようにしてあるのがこの op の主旨。`<code style="color:#22d3bf">contract</code>` の</p>
 <p>各項目が `<code style="color:#22d3bf">条件: &lt;名前&gt;</code>` として同じ表に入る。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">report</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">compare_images</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">measure_with</code><code style="color:#22d3bf"> の返り値(</code><code style="color:#22d3bf">contract</code>`</p>
+<p>キーを持つ dict)。それ以外は `<code style="color:#22d3bf">MetricContractError</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">order</code><code style="color:#22d3bf">: 先頭に並べる指標名の並び(省略時はキーの辞書順)。</code><code style="color:#22d3bf">report</code>` に無い</p>
+<p>名前は黙って飛ばし、`<code style="color:#22d3bf">&quot;contract&quot;</code>` は指標として並べない。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(名前, 値)</code><code style="color:#22d3bf"> タプルの list。指標行のあと、</code><code style="color:#22d3bf">contract</code>` の各項目を</p>
+<p>`<code style="color:#22d3bf">&quot;条件: data_range&quot;</code>` のようにキーの辞書順で追加する。値は変換しない</p>
+<p>(`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">inf</code>` もそのまま)。</p>
+<p>図注や Markdown の表に落とす直前に置く。<b>条件行を削ってから貼らない</b>こと</p>
+<p>―― `<code style="color:#22d3bf">data_range</code>` が違う 2 つの PSNR を並べると 48 dB の見かけの差が出る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>

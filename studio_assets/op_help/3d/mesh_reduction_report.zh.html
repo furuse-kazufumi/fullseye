@@ -4,6 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;mesh_reduction_report&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一次削减(简化・重网格化・体素化)失去了什么,以数字给出(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Samples *samples* area-weighted points of the <b>original</b> surface, measures</p>
+<p>their distance to the reduced surface (`<code style="color:#22d3bf">rms_error</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_error</code>`, and</p>
+<p>`<code style="color:#22d3bf">p99_error</code>`), and does the same for the subset of original points that</p>
+<p>lie in the top `<code style="color:#22d3bf">1 − detail_quantile</code><code style="color:#22d3bf"> of :func:</code>mesh_detail_map`&#x27;s</p>
+<p>`<code style="color:#22d3bf">detail</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">detail_rms_error</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">detail_max_error</code>`): the</p>
+<p>high-curvature places — a crater rim, a boulder, an outlier ridge — are</p>
+<p>exactly where a discovery hides and where a quadric decimation flattens</p>
+<p>first. Also `<code style="color:#22d3bf">face_ratio</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">area_change</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">volume_change</code>`</p>
+<p>(signed, closed meshes). A reduction whose `<code style="color:#22d3bf">detail_max_error</code>` is larger</p>
+<p>than the feature you are looking for has already lost it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
