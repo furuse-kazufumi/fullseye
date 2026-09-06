@@ -1240,6 +1240,8 @@ def main():
     # (11) 既存の部品(DLT / 点変換 / ワープ)は使えた。
     assert E8 <= ERAW and _chk3 < 1e-9 and _chk4 < 0.05, "既存部品の評価が再現しない"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
