@@ -69,6 +69,7 @@ import fullseye as fs
 import calib
 import fit_transform
 import tools_geom
+import examplefig as figs         # ★fullseye を先に import しないと解決しない
 
 RNG_SEED = 20260906
 
