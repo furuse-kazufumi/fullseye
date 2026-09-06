@@ -217,28 +217,30 @@ def blob_label(region: Any, connectivity: int = 8) -> np.ndarray:
 # 2. 測る                                                                      #
 # --------------------------------------------------------------------------- #
 def _perimeter(mask: np.ndarray) -> float:
-    """Crofton 型の重みづけによる周長[px]。
+    """Crofton の公式(4 方向)による周長[px]。
 
-    境界画素をそのまま数えると斜めの縁を過大に見る(半径 40 px の円板で
-    4 割超)。近傍の並び方で 1 / √2 / (1+√2)/2 を配る古典的な推定
-    (Serra 1982)なら同じ円板で 1 % 未満に収まる。
+    **数え方を 3 つ測ってから選んだ**(2026-09-06 実測、半径 r の円板):
+
+        r     真値      境界画素を数える     Serra の重み     Crofton 4 方向
+        10    62.83     76 (+21.0 %)         65.94 (+4.95 %)  65.20 (+3.77 %)
+        20   125.66    156 (+24.1 %)        131.88 (+4.95 %) 127.71 (+1.63 %)
+        40   251.33    316 (+25.7 %)        263.76 (+4.95 %) 252.75 (+0.56 %)
+
+    素朴に境界画素を数えると 2 割超の過大。Serra の重み(1 / √2 / (1+√2)/2)は
+    **大きさを変えても +4.95 % のまま**で、円板の円形度が 0.908 で頭打ちになる
+    —— 「円らしさ 0.9 以上」で切る使い方が成り立たない。Crofton は大きさとともに
+    真値へ寄り、r=40 で円形度 0.988。
+
+    **正直に書いておく偏り**: 軸に平行な多角形は逆に小さく出る。20x20 の正方形
+    (真値 80)で 74.73(**-6.6 %**)、円形度は π/4 = 0.785 のところ 0.900。
+    角ばった物体の円形度を絶対値で語らないこと(相対比較なら向きは保たれる)。
     """
-    img = np.pad(mask, 1).astype(np.int32)
+    img = np.pad(mask, 1).astype(np.uint8)
     if not img.any():
         return 0.0
-    # ★重みを掛けるのは **縁の画像**(元画像ではない)。元画像に畳み込んで
-    #   前景だけ拾う書き方にすると内部の画素まで符号に混ざり、実測で真値の
-    #   半分(円板 40 px で 132.8 / 251.3)になる。2026-09-06 に踏んだ。
-    eroded = ndimage.binary_erosion(
-        img, structure=ndimage.generate_binary_structure(2, 1), border_value=0)
-    border = img - eroded.astype(np.int32)
-    code = ndimage.convolve(border, _PERIM_KERNEL, mode="constant", cval=0)
-    hist = np.bincount(code.ravel(), minlength=50)
-    w = np.zeros(50, np.float64)
-    w[[5, 7, 15, 17, 25, 27]] = 1.0
-    w[[21, 33]] = math.sqrt(2.0)
-    w[[13, 23]] = (1.0 + math.sqrt(2.0)) / 2.0
-    return float(np.dot(hist[:50], w))
+    code = ndimage.convolve(img, _PERIM_KERNEL, mode="constant", cval=0)
+    hist = np.bincount(code.ravel(), minlength=16)
+    return float(_PERIM_COEF @ hist[:16])
 
 
 def _convex_area(mask: np.ndarray) -> float:

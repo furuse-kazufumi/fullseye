@@ -873,6 +873,9 @@ def main():
     assert ratio > 1.5, f"加工目の異方性が出ていない: {ratio}"
     assert rows[:, 2].max() / rows[:, 2].min() > 1.5, "Rz の断面ばらつきが小さすぎる"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     dt = time.perf_counter() - t_all
     print(f"\n総所要 {dt:.1f} 秒")
     assert dt < 60.0, f"60 秒を超えた: {dt:.1f} 秒"
