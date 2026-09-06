@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(74 例)
+### 2-D 画像/信号/幾何(79 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -23,8 +23,21 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **視覚計測を支える数学 op(mathops)を計測ワークフローで一巡** — 平面フィット→残差統計→共分散楕円の主軸化→較正曲線の多項式フィット(条件数監視)→補間で逆引き。mathops 16 op を実データ風に通し閉形式 GT と照合。 `py -3.11 examples/math_metrology.py`
 - **複素解析 op(mathops tier2)を閉形式の真値と突き合わせる** — 偏角原理で零点数、コーシー積分で内部値復元、等角性・正則性判定を点列として持つ閉曲線から numpy 演算で答える。 `py -3.11 examples/math_complex.py`
 
+**terrain**
+- **地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)** — 平面・円錐・ガウス丘という解析曲面で傾斜と曲率を検算し、離散化の誤差と式の誤りを2 次収束で区別する。欠測(水面)の扱いで集水量がどう変わるかを 3 通り並べ、日当たりを向き別に出す。**この PoC が天空率の 18 倍の遅さを暴いた**。 `py -3.11 examples/poc_dem_terrain.py`
+
 **metrology**
+- **白色干渉によるナノメートルの段差計測(どこまで測れるか)** — 既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。 `py -3.11 examples/poc_interferometry_step.py`
 - **断面形状の検査(翼型・羽根。既知の欠陥を入れて検出できる大きさを出す)** — NACA 4 桁の閉形式を設計形状にして、厚み・キャンバー・前縁半径を測る。既知の量の欠陥を注入して測り返し、検査の床(同じ形どうしの偏差)と検出限界を数字で示す。**位置合わせが前縁の欠陥を後縁へ移す**ことも隠さず印字する。 `py -3.11 examples/profile_shape_inspection.py`
+
+**photometry**
+- **天体スタックの測光精度(何枚重ねるとどこまで正確に測れるか)** — 合成星野の既知フラックスを真値に、枚数を振って測光誤差が 1/√N で下がるかを測る。宇宙線汚染で単純平均 +5.89 % に対し κ-σ +0.30 %。**選別は雑音を √2 払って系統誤差を買う取引**であることも数字で示す。 `py -3.11 examples/poc_astro_photometry.py`
+
+**tomography**
+- **CT 再構成の忠実度(投影数を減らすとどこで壊れるか)** — Shepp-Logan を真値に、投影数 180→12 で FBP の誤差を測る。**フィルタ無し逆投影というゼロ点と 24 本で並び 12 本で逆転する**。投影の質量保存という独立検算つき。 `py -3.11 examples/poc_ct_fidelity.py`
+
+**diagnostics**
+- **転がり軸受の異常診断(どこまで雑音に埋もれた欠陥を拾えるか)** — 欠陥周波数の閉形式を真値に、SNR を振って検出限界を測る。生スペクトルというゼロ点に対し包絡線解析が **17.5 dB** 稼ぐ。帯域選択の窓長を誤ると共振を外すことも数字で示す。 `py -3.11 examples/poc_bearing_diagnosis.py`
 
 **flow**
 - **粒子画像 2 枚から流れを測る(PIV。真値を自分で作って誤差を出す)** — 既知の渦を撒いた粒子画像対を合成し、窓ごとの相互相関で変位場を出す。零方向への偏りと補正、多段、既知の系統誤差(ピークロッキング)、非圧縮の発散 0 による独立検算まで。**外れ値検定がここでは害になる**ことも隠さず印字する。 `py -3.11 examples/piv_flow_from_particles.py`
@@ -832,7 +845,7 @@ _計 347 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 881 ops / 47 categories。_
+_計 882 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1356,10 +1369,10 @@ _計 881 ops / 47 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `piv_flow_from_particles`, `quickstart`, `representation_roundtrip`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `consumer_onocollo`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `machined_metal_and_materials`, `perception_pipeline`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_bearing_diagnosis`, `quickstart`, `representation_roundtrip`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `representation_roundtrip`, `vision_layout_from_catalog`
+- `percentile` (halcon: `rank_image`) `image → image` · 例: `color_transport`, `gallery2d_smoothing_rank`, `image_quality_metrics`, `poc_astro_photometry`, `representation_roundtrip`, `vision_layout_from_catalog`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1549,7 +1562,7 @@ _計 881 ops / 47 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `quickstart`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `poc_interferometry_step`, `quickstart`, `video_streaming`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1655,7 +1668,7 @@ _計 881 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(143)
+### typed(144)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1799,6 +1812,7 @@ _計 881 ops / 47 categories。_
 - `tb_running_gaussian_background` `video → video` · 例: なし
 - `tb_temporal_bilateral` `video → video` · 例: なし
 - `tb_deflicker` `video → video` · 例: なし
+- `tb_dem_ecef_to_geodetic` `points → points` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`

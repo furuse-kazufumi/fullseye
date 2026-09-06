@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_earth_curvature_drop — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">measurement</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)</code> (oder <code style="color:#22d3bf">opsdem.get(&quot;dem_earth_curvature_drop&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>見通し計算の<b>地球曲率落ち</b> [m]。`<code style="color:#22d3bf">(1 - k) d^2 / (2 R)</code>`。</p>
+<p>遠くの地面は地球の丸みぶん下がって見え、大気屈折はそれを一部打ち消します。</p>
+<p>標準大気(`<code style="color:#22d3bf">k = 0.13</code>`)での目安:</p>
+<p>==========  ============  ============</p>
+<p>距離        曲率のみ      屈折込み</p>
+<p>==========  ============  ============</p>
+<p>1 km        0.078 m       0.068 m</p>
+<p>5 km        1.962 m       1.707 m</p>
+<p>10 km       7.848 m       6.828 m</p>
+<p>30 km       70.63 m       61.45 m</p>
+<p>==========  ============  ============</p>
+<p>30 km 先の見通しでは <b>60 m 以上</b>下がるので、平面として扱った可視領域は</p>
+<p>その距離では意味を持ちません。`<code style="color:#22d3bf">refraction</code>` は標準大気の慣行値であって</p>
+<p>定数ではない —— 夜間の逆転層では負にも 0.25 にもなります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

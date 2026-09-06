@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_ecef_to_geodetic — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_ecef_to_geodetic(xyz)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_ecef_to_geodetic&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>ECEF → 測地座標。返りは `<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(緯度[度], 経度[度], 高さ[m])</code>`。</p>
+<p>Bowring (1976) の閉形式に近い解法。往復(測地→ECEF→測地)の誤差は</p>
+<p>実測で緯度・経度が 1e-12 度未満、高さが 1e-7 m 未満。</p>
+<p>地心<b>球</b>座標が欲しいだけなら、`<code style="color:#22d3bf">r = |xyz|</code>` と</p>
+<p>`<code style="color:#22d3bf">geocentric_lat = asin(z/r)</code>` で足りる —— ただしそれは<b>測地緯度ではない</b></p>
+<p>(両者は最大 0.19 度、距離にして約 21 km ずれる)。この op が返すのは</p>
+<p>地図や GPS と同じ<b>測地</b>緯度のほう。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">points</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_earth_curvature_drop">dem_earth_curvature_drop</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

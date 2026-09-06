@@ -4,7 +4,7 @@ dim: dem
 category: hydrology
 in: depth
 out: depth
-examples: []
+examples: [poc_dem_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -40,7 +40,7 @@ version: 0.1.9  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_dem_terrain](../../../../examples/poc_dem_terrain.py) — `py -3.11 examples/poc_dem_terrain.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 

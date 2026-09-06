@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_geocentric_grid — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">coordgrid</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_geocentric_grid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>DEM の各セルを<b>地球中心から見た座標</b>にする。</p>
+<p>`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の標高格子を、北西角が </code><code style="color:#22d3bf">(lat0_deg, lon0_deg)</code>` にある局所平面と</p>
+<p>みなし、各セルを ECEF(既定)または<b>地心球座標</b>へ写す。</p>
+<p>Args:</p>
+<p>dem: `<code style="color:#22d3bf">(H, W)</code>` の標高 [m]。</p>
+<p>lat0_deg / lon0_deg: 格子の<b>北西角</b>の緯度経度 [度]。</p>
+<p>cell_size: セル寸法 [m]。緯度方向・経度方向とも同じとみなす</p>
+<p>(Web メルカトルのタイルはそうなっている。</p>
+<p>:func:<code style="color:#22d3bf">dem_cell_size_webmercator</code> を参照)。</p>
+<p>spherical: `<code style="color:#22d3bf">True</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">(半径 r[m], 地心緯度[度], 経度[度])</code>` を返す。</p>
+<p>`<code style="color:#22d3bf">False</code><code style="color:#22d3bf">(既定)なら ECEF </code><code style="color:#22d3bf">(x, y, z)</code>` [m]。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(H, W, 3)</code>`。</p>
+<p>★ <b>地心緯度は測地緯度ではありません</b>。`<code style="color:#22d3bf">spherical=True</code>` の返りの緯度は</p>
+<p>地球中心から見た角度で、地図の緯度(楕円体の法線が赤道面となす角)とは</p>
+<p>最大 0.19 度違います。地図に戻すときは ECEF 側を</p>
+<p>:func:<code style="color:#22d3bf">dem_ecef_to_geodetic</code> に渡してください。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">coordgrid</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_earth_curvature_drop">dem_earth_curvature_drop</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

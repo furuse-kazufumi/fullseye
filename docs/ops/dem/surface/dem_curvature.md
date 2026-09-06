@@ -4,7 +4,7 @@ dim: dem
 category: surface
 in: depth
 out: image2d
-examples: []
+examples: [poc_dem_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -34,7 +34,7 @@ Zevenbergen & Thorne (1987) の 2 次曲面当てはめ。断面曲率は流下�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_dem_terrain](../../../../examples/poc_dem_terrain.py) — `py -3.11 examples/poc_dem_terrain.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

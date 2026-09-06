@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_earth_curvature_drop — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">measurement</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)</code>(或 <code style="color:#22d3bf">opsdem.get(&quot;dem_earth_curvature_drop&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>見通し計算の<b>地球曲率落ち</b> [m]。`<code style="color:#22d3bf">(1 - k) d^2 / (2 R)</code>`。</p>
+<p>遠くの地面は地球の丸みぶん下がって見え、大気屈折はそれを一部打ち消します。</p>
+<p>標準大気(`<code style="color:#22d3bf">k = 0.13</code>`)での目安:</p>
+<p>==========  ============  ============</p>
+<p>距離        曲率のみ      屈折込み</p>
+<p>==========  ============  ============</p>
+<p>1 km        0.078 m       0.068 m</p>
+<p>5 km        1.962 m       1.707 m</p>
+<p>10 km       7.848 m       6.828 m</p>
+<p>30 km       70.63 m       61.45 m</p>
+<p>==========  ============  ============</p>
+<p>30 km 先の見通しでは <b>60 m 以上</b>下がるので、平面として扱った可視領域は</p>
+<p>その距離では意味を持ちません。`<code style="color:#22d3bf">refraction</code>` は標準大気の慣行値であって</p>
+<p>定数ではない —— 夜間の逆転層では負にも 0.25 にもなります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

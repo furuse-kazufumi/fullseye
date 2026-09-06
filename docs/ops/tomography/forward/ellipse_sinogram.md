@@ -4,7 +4,7 @@ dim: tomography
 category: forward
 in: 
 out: sinogram
-examples: [ct_reconstruction]
+examples: [ct_reconstruction, poc_ct_fidelity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ by a test rather than by a comment.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
+- [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
 
 ## 型が繋がる次の op(`sinogram` を入力に取れる)
 

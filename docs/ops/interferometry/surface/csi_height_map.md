@@ -4,7 +4,7 @@ dim: interferometry
 category: surface
 in: zscan
 out: depth
-examples: [coherence_scanning]
+examples: [coherence_scanning, poc_interferometry_step]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -91,6 +91,7 @@ any invalid pixel.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [coherence_scanning](../../../../examples/coherence_scanning.py) — `py -3.11 examples/coherence_scanning.py`
+- [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)
 

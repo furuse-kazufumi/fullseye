@@ -283,6 +283,7 @@ def main():
     print("\n   ★`centroid` は散らばりが `gaussian` の 1/3〜1/5 なのに、雑音とともに"
           "**段差そのものを縮める**:")
     print("   雑音 | 段差 50 nm | 100 nm | 200 nm | 500 nm |  ゲイン(測定/真値)")
+    gain_at = {}
     for noise in (0.0, 0.01, 0.03, 0.10):
         gains, cells = [], []
         for step in STEPS:

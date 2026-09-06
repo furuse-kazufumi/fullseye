@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_geodetic_to_ecef — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">points</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_to_ecef&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>測地座標(緯度・経度・楕円体高)→ <b>地心直交座標 ECEF</b> [m]。</p>
+<p>地球の中心を原点、赤道面の本初子午線方向を x、東経 90 度を y、北極を z と</p>
+<p>する右手系。地形を「地球中心から見た座標」で扱いたいときの入口。</p>
+<p>球ではなく <b>WGS84 楕円体</b>で計算する —— 球近似は緯度 45 度あたりで</p>
+<p>最大 21 km ずれる(極半径が赤道半径より短いぶん)。</p>
+<p>Args:</p>
+<p>lat_deg / lon_deg: 緯度・経度 [度]。配列可(同じ形)。</p>
+<p>height_m: 楕円体高 [m]。スカラでも配列でも可。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(..., 3)</code>` の ECEF 座標 [m]。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">points</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_earth_curvature_drop">dem_earth_curvature_drop</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

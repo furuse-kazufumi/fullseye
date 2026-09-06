@@ -794,7 +794,7 @@ def dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method="horn",
     Args:
         dem: ``(H, W)``。行 0 が北。
         lat0_deg: **北西角**の緯度 [度]。
-        d_lat_deg / d_lon_deg: 1 セルあたりの緯度・経度の刻み [度](正の値)。
+        d_lat_deg / d_lon_deg: 1 セルあたりの緯度・経度の刻み [度]。正の値。
         method / units: :func:`dem_slope` と同じ。
     """
     a = _dem(dem)

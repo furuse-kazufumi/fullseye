@@ -4,7 +4,7 @@ dim: acoustics
 category: synthesis
 in: 
 out: signal
-examples: [acoustic_condition_monitoring]
+examples: [acoustic_condition_monitoring, poc_bearing_diagnosis]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -70,6 +70,7 @@ back as a plausible signal at the wrong frequency with no error.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
+- [poc_bearing_diagnosis](../../../../examples/poc_bearing_diagnosis.py) — `py -3.11 examples/poc_bearing_diagnosis.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

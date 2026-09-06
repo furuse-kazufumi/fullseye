@@ -4,7 +4,7 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: scalar
-examples: [grasp_pose, image_quality_metrics, physical_ai_perception]
+examples: [grasp_pose, image_quality_metrics, physical_ai_perception, poc_ct_fidelity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.1.9  # fullseye lib version this note was generated for
 - [grasp_pose](../../../../examples/grasp_pose.py) — `py -3.11 examples/grasp_pose.py`
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 - [physical_ai_perception](../../../../examples/physical_ai_perception.py) — `py -3.11 examples/physical_ai_perception.py`
+- [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 

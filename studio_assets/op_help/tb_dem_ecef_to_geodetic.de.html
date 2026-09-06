@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_dem_ecef_to_geodetic — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_dem_ecef_to_geodetic&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>ECEF → 測地座標。返りは `<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(緯度[度], 経度[度], 高さ[m])</code>`。</p>
+<p>Bowring (1976) の閉形式に近い解法。往復(測地→ECEF→測地)の誤差は</p>
+<p>実測で緯度・経度が 1e-12 度未満、高さが 1e-7 m 未満。</p>
+<p>地心<b>球</b>座標が欲しいだけなら、`<code style="color:#22d3bf">r = |xyz|</code>` と</p>
+<p>`<code style="color:#22d3bf">geocentric_lat = asin(z/r)</code>` で足りる —— ただしそれは<b>測地緯度ではない</b></p>
+<p>(両者は最大 0.19 度、距離にして約 21 km ずれる)。この op が返すのは</p>
+<p>地図や GPS と同じ<b>測地</b>緯度のほう。</p>
+<p>2-D 進化レジストリへ橋渡しした dem の op `<code style="color:#22d3bf">dem_ecef_to_geodetic</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

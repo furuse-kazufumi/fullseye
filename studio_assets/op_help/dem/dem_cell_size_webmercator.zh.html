@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_cell_size_webmercator — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">measurement</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)</code>(或 <code style="color:#22d3bf">opsdem.get(&quot;dem_cell_size_webmercator&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Web メルカトルのタイルの地上分解能 [m/px]。<b>緯度で変わる</b>。</p>
+<p>`<code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>`(タイルが 256 px の場合)。</p>
+<p>実測の目安: 東京(北緯 35.68 度)の z=15 で <b>3.880 m</b>、赤道では 4.777 m。</p>
+<p>赤道の値をそのまま使うと東京で傾斜が <b>23 % 過小</b>になります —— これは</p>
+<p>例外を出さずに全部の下流の数字を狂わせるので、この族で最も多い事故です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_earth_curvature_drop">dem_earth_curvature_drop</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

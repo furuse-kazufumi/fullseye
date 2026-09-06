@@ -4,7 +4,7 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: scalar
-examples: [image_quality_metrics]
+examples: [image_quality_metrics, poc_ct_fidelity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.9  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ float
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
+- [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)
 

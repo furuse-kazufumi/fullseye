@@ -1,4 +1,4 @@
-# DEM operator help — 13 ops in 4 categories
+# DEM operator help — 19 ops in 5 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/dem/<category>/<op>.md` を走査。
 
@@ -7,6 +7,10 @@
 - [dem_terrain_analysis](guides/dem_terrain_analysis.md) — 数値標高モデルの解析(傾斜・水の流れ・見通し) — 使い方ガイド
 
 ## カテゴリ
+
+### geodesy (6)
+
+[dem_cell_size_webmercator](geodesy/dem_cell_size_webmercator.md) · [dem_earth_curvature_drop](geodesy/dem_earth_curvature_drop.md) · [dem_ecef_to_geodetic](geodesy/dem_ecef_to_geodetic.md) · [dem_geocentric_grid](geodesy/dem_geocentric_grid.md) · [dem_geodetic_slope](geodesy/dem_geodetic_slope.md) · [dem_geodetic_to_ecef](geodesy/dem_geodetic_to_ecef.md)
 
 ### hydrology (4)
 
