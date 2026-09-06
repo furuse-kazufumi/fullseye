@@ -135,6 +135,25 @@ def transport_plan_1d(u_values, v_values):
 
     行和が ``1/n``、列和が ``1/m`` になる ―― これは**構成上厳密**で、
     数値誤差以外でずれることはない(テストで固定)。
+
+    手順: ``u``(``n`` 個)と ``v``(``m`` 個)をそれぞれ昇順に並べ、小さいほうから
+    順に質量 ``min(残り u, 残り v)`` を割り当てる(単調な結合)。各標本の質量は
+    等しく ``1/n``、``1/m``(重み付きは受けない)。1 次元では**距離の凸関数**を
+    コストとする限りこの単調結合が最適解なので、``wasserstein_1d`` と同じ
+    輸送を「どの標本がどこへ行くか」の行列として得られる。
+
+    - ``u_values``, ``v_values``: 1 次元に潰す(``ravel``)。長さは違ってよい。
+      空なら ``MetricContractError``。**有限性は検査しない**(NaN はソートで末尾に
+      回り、黙って結合される)。
+    - 返り値: ``(n, m)`` の float64(``transport_plan`` 型)。``plan[i, j]`` は入力の
+      元の並びで ``u[i]`` から ``v[j]`` へ運ぶ質量。非零要素は高々 ``n + m - 1``。
+      ``n == m`` なら置換行列 / ``n``(一対一対応)。
+    - 計算量は ``O((n + m) log)`` のソート + ``O(n + m)`` の走査だが、返す行列は
+      ``n × m`` の密行列なので画素数規模の標本には向かない(その場合は
+      ``histogram_match`` か ``sinkhorn``)。
+
+    ``apply_transport(plan, v)`` で ``u`` 側の各標本の行き先の値(重心)を、
+    ``transport_cost(plan, cost)`` で総コストを取る。
     """
     u = np.asarray(u_values, dtype=np.float64).ravel()
     v = np.asarray(v_values, dtype=np.float64).ravel()
