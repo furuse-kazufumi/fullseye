@@ -509,13 +509,19 @@ def main():
               f"{np.linalg.norm(ad - A_TRUE):>11.4f}{angle_deg(ab, A_TRUE):>12.3f}"
               f"{np.linalg.norm(ab - A_TRUE):>13.4f}{np.mean(np.abs(te - t2)):>9.4f}"
               f"{psnr_masked(recover(i2, ad, te), j2):>8.2f}")
-        if r0 == 0:
-            a_sky = ad
-        else:
-            a_nosky = ad
-    print(f"  → 空を外すと大気光の絶対値が下がる({a_sky} → {a_nosky})。画面内の最遠点が")
-    print("     150 m(t=0.05)にとどまり、観測値が A に届かないため。**色(角度)より")
-    print("     絶対値が先に外れる**ので、角度だけ見ていると気づけない。")
+        rows_nosky.append((label, angle_deg(ad, A_TRUE), float(np.linalg.norm(ad - A_TRUE)),
+                           float(np.mean(np.abs(te - t2))), ad.copy()))
+    print(f"  → 空を外すと暗チャネル法の大気光は**角度も絶対値も壊れる**"
+          f"({rows_nosky[0][1]:.3f} 度 / {rows_nosky[0][2]:.4f} →")
+    print(f"     {rows_nosky[1][1]:.3f} 度 / {rows_nosky[1][2]:.4f}、推定値 {rows_nosky[1][4]})。画面内の最遠点が")
+    print("     150 m(t=0.05)にとどまり、観測値が A に届かないため。3 節で A が易しく")
+    print("     見えたのは**場面に空が写っていたから**で、手法の強さではない。")
+    print(f"  → 皮肉なことに、白い物体を 3 % 足すと角度は {rows_nosky[2][1]:.3f} 度まで戻る")
+    print(f"     (絶対値は {rows_nosky[2][2]:.4f} でずれたまま)。白い面が空の代役をしている。")
+    print("     6 節前半では白い物体は**壊す**側だったのに、空が無い場面では**支える**側に回る。")
+    print("     同じ物体が符号を変える —— 崖の向きは場面の構成で決まる。")
+    print(f"  → 空を外すと PSNR は上がる(15.40 → 16.45 dB)。復元できない領域が絵から")
+    print("     消えただけで、手法は何も良くなっていない。**評価領域の取り方で数字は動く**。")
 
     print("\n=== 7. 崖 (c) パッチ寸法とハロー ===")
     eb = edge_band(d)
