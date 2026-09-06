@@ -172,6 +172,13 @@ def test_every_language_index_carries_the_generated_blocks(lang):
     missing = [m for m in MARKERS if m not in s]
     assert not missing, "%s に生成ブロックが無い: %s —— " \
         "`py -3.11 tools/gen_docs_index_ops.py`" % (name, missing)
+    # ★マーカーの重複を許すと、古い表がもう 1 つ残ったまま緑になる。
+    # 生成器は最初の start〜end しか書き換えないので、2 つ目は永久に古いまま
+    # 公開され続ける(Codex の敵対的レビュー、2026-09-06)。
+    dup = [m for m in MARKERS if s.count(m) != 1]
+    assert not dup, "%s にマーカーが 2 回以上ある(古い表が残る): %s" % (name, dup)
+    for a, b in zip(MARKERS[::2], MARKERS[1::2]):
+        assert s.index(a) < s.index(b), "%s の %s が end より後ろにある" % (name, a)
 
 
 def test_the_operator_table_is_not_empty():
