@@ -131,6 +131,7 @@ def main():
     z2 = gaussian_hill(101, cell, amp=-30.0, sigma=60.0)   # 窪地
     z2[45:55, 45:55] = np.nan                              # 中央に水面
     print(f"  {'方針':>10}{'最大集水量':>14}{'全体比':>10}")
+    acc_maps, acc_names = [np.where(np.isnan(z2), np.nan, z2)], ["標高(中央 10x10 が欠測)"]
     for policy in demops.NODATA_POLICIES:
         if policy == "error":
             try:
