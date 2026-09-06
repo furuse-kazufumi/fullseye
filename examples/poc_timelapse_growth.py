@@ -444,7 +444,10 @@ def section5_sampling(base_merge):
             lab, _, fam = spacetime_families(vol, 6)
             es.append(merge_frame_from_volume(lab, fam[i], times, 4) - tc)
         rec["err_stride"][(i, j)] = es
-    print("  ★時間だけを粗くしたときの誤差 [フレーム](画素は 1 のまま):")
+    print("  ★時間だけを粗くしたときの誤差 [フレーム](画素は 1 のまま)。")
+    print("    ★stride 2/4/8 で値が動かないのは**偶然** —— 真の合体が t=6.83 と")
+    print("    30.06 で、どの格子でも次のコマが t=8 と 32 になるから。量子化")
+    print("    誤差は「stride が上限」であって「stride に比例」ではない。")
     print("  %10s" % "stride", end="")
     for s in strides:
         print(" %10d" % s, end="")
