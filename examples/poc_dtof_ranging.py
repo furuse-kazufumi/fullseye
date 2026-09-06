@@ -230,6 +230,21 @@ def main():
     print(f"     {med:.0f}(0.39 光子/ビンでは過半のビンが空)なので、背景減算が")
     print("     恒等写像になっているため —— 処方が黙って何もしていない(穴 (a))。")
     print("     戻すのは時間ゲート。族に op が無い。")
+    # 図: 推定器が見ている生ヒストグラム。背景を入れると信号の山より外側の
+    #     裾のほうが総量で勝つ —— 素の重心が 2 桁崩れる理由が目で分かる。
+    d_axis = C * BIN_PS * 1e-12 * np.arange(BINS) / 2.0
+    h_clean, h_amb = trial(200.0, 0.0, 0), trial(200.0, 6400.0, 0)
+    peak_bin = int(np.argmax(h_clean))
+    figs.save_plot("histograms",
+                   [("背景なし", d_axis, h_clean),
+                    ("背景 6400(SBR 0.031)", d_axis, h_amb),
+                    ("ゲート ±3σ の範囲",
+                     d_axis[[max(0, peak_bin - GATE_R), min(BINS - 1, peak_bin + GATE_R)]],
+                     [float(h_amb.max()), float(h_amb.max())])],
+                   xlabel="距離 [m]", ylabel="光子数 / ビン",
+                   title="TCSPC ヒストグラム(信号 200 光子、真値 2.5 m)",
+                   caption="背景は全ビンに一様に乗る。総量では背景が勝つので、"
+                           "窓全体の重心は窓の中心へ引かれる。")
 
     # ------------------------------------------------------------------ #
     print("\n=== 3. 理論限界 —— σ ∝ 1/√N に乗るか ===")
