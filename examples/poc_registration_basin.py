@@ -509,32 +509,40 @@ def main():
     # ---- 5-c. 対称形状 -----------------------------------------------------
     print("\n=== 5-c. 対称形状 —— 「収束したのに間違っている」 ===")
     print("  見かけ上収束 = 最終残差 rmse が dst の点間隔の 2 倍未満(実務ではここで OK を出す)")
-    print(f"  {'形状':<14}{'残差 rmse/直径':>16}{'回転誤差 中央値[度]':>22}"
-          f"{'見かけ上収束':>14}{'うち姿勢が誤り':>18}")
+    SHAPES = (("非対称当て金", bracket),
+              ("素の直方体", lambda k, r: bracket(k, r, bump=0.0)),
+              ("球", sphere), ("円柱", cylinder))
+    N_S = 16
     sym = {}
-    for label, gen in (("非対称当て金", bracket),
-                       ("素の直方体", lambda k, r: bracket(k, r, bump=0.0)),
-                       ("球", sphere), ("円柱", cylinder)):
-        rng_s = np.random.default_rng(24680)
-        a = gen(800, rng_s)
-        b = gen(1100, rng_s)
-        dm = diameter(b)
-        bn = fs.estimate_normals(b, k=16)
-        rr, res, conv, bad = [], [], 0, 0
-        for _ in range(16):
-            dstc, _dnc, Rt, tt = make_pair(b, bn, 25.0, 0.05, dm, rng_s)
-            R, t, _aln, rmse = fs.icp(a, dstc, max_iter=60)
-            rd = rot_error_deg(R, Rt)
-            rr.append(rd)
-            res.append(rmse / dm)
-            if rmse < 2.0 * spacing_of(dstc):
-                conv += 1
-                bad += int(rd > ROT_OK_DEG)
-        sym[label] = (conv, bad)
-        print(f"  {label:<12}{med(res):>16.5f}{med(rr):>22.2f}{conv:>13}/16{bad:>17}")
-    print("  → 素の直方体・球・円柱では残差が小さいまま姿勢が誤る。**残差を成功判定に")
-    print("     使うとこの嘘は原理的に検出できない** —— 真値を持つか、形状の対称群を")
-    print("     知っているかのどちらかが要る。")
+    for mode, init_deg, use_global in (("局所: ICP を恒等から", 25.0, False),
+                                       ("大域: PCA + ICP", 120.0, True)):
+        print(f"\n  [{mode}、初期ずれ {init_deg:.0f} 度 / 直径の 5 %、{N_S} 試行]")
+        print(f"  {'形状':<14}{'残差 rmse/直径':>16}{'回転誤差 中央値[度]':>22}"
+              f"{'見かけ上収束':>14}{'うち姿勢が誤り':>18}")
+        for label, gen in SHAPES:
+            rng_s = np.random.default_rng(24680)
+            a = gen(500, rng_s)
+            b = gen(700, rng_s)
+            dm = diameter(b)
+            bn = fs.estimate_normals(b, k=16)
+            rr, res, conv, bad = [], [], 0, 0
+            for _ in range(N_S):
+                dstc, _dnc, Rt, tt = make_pair(b, bn, init_deg, 0.05, dm, rng_s)
+                init = fs.pca_align(a, dstc) if use_global else None
+                R, t, _aln, rmse = fs.icp(a, dstc, init=init, max_iter=60)
+                rd = rot_error_deg(R, Rt)
+                rr.append(rd)
+                res.append(rmse / dm)
+                if rmse < 2.0 * spacing_of(dstc):
+                    conv += 1
+                    bad += int(rd > ROT_OK_DEG)
+            sym[(mode, label)] = (conv, bad)
+            print(f"  {label:<12}{med(res):>16.5f}{med(rr):>22.2f}"
+                  f"{conv:>13}/{N_S}{bad:>17}")
+    print("\n  → 局所 ICP は初期ずれが小さければ対称形状でも**近い**解に落ちるので嘘が出にくい")
+    print("     (素の直方体の他の 3 姿勢は 180 度先にあり、盆地の外)。大域手法に替えた")
+    print("     とたん、残差が同じまま別の姿勢を返す。**残差を成功判定に使うとこの嘘は")
+    print("     原理的に検出できない** —— 真値を持つか、形状の対称群を知っている必要がある。")
     rng_c = np.random.default_rng(1357)
     a = cylinder(800, rng_c)
     b = cylinder(1100, rng_c)
