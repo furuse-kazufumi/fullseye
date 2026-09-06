@@ -373,6 +373,17 @@ def main():
     print("     大きさ(成分 0.05 px = 1 点あたり 0.0707 px)にほぼ張り付く —— 当然で、")
     print("     最小二乗は残差を雑音まで落とすのが仕事だから。落ちた先が真値かは別の話。")
     print("  → 区別できる数字は sigma_fx(ヤコビアンの逆行列)の方。上の列を見よ。")
+    # この PoC の主題そのもの。RMS の列だけ横に読むと 3 行が同じに見える。
+    figs.save_table("reproj_vs_truth",
+                    ["配置", "再投影 RMS px", "fx 誤差 %", "|dcx| px", "sigma_fx px"],
+                    [[label, "%.4f" % v[0]["rms"],
+                      "%.4f" % (100 * abs(v[0]["fx"] - TRUE_FX) / TRUE_FX),
+                      "%.2f" % abs(v[0]["cx"] - TRUE_CX),
+                      "%.1f" % v[0]["sigma_fx"]] for label, v in keep.items()],
+                    title="再投影誤差はほぼ同じ、真の誤差は桁で違う", col_w=125,
+                    caption="RMS は %.2f 倍しか動かないのに fx 誤差は %.0f 倍動く。"
+                            "配置の良し悪しを映すのは sigma_fx のほう。"
+                            % (max(rms) / min(rms), max(dfx) / min(dfx)))
 
     print("\n=== 5. なぜ相殺するのか —— fx と Z の比は保存される ===")
     print(f"  {'配置':<22}{'fx比':>10}{'Z比(平均)':>12}{'|差|':>10}")
