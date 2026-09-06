@@ -1180,9 +1180,16 @@ def main():
         assert abs(v[2]) < 0.12 * edge_tab["全部数える"][0], (rule, v)
 
     # (9) 面積: 見えている面積には当たるが、真の面積には重なりぶん届かない(床)
-    for p in (MID, DENSE):
-        assert abs(area_tab[p][1]) < 15.0, (p, area_tab[p])
-        assert area_tab[p][2] < area_tab[p][1] - 3.0, (p, area_tab[p])
+    #     隠れていない帯では 2 つの列が一致し、隠れた帯では真の面積だけが外れる。
+    assert len(bins[0]["dv"]) > 20 and len(bins[3]["dv"]) > 3, \
+        [len(bins[i]["dv"]) for i in bins]
+    assert abs(np.mean(bins[0]["dv"]) - np.mean(bins[0]["dt"])) < 3.0, \
+        (np.mean(bins[0]["dv"]), np.mean(bins[0]["dt"]))
+    assert np.mean(bins[3]["dt"]) < np.mean(bins[3]["dv"]) - 20.0, \
+        (np.mean(bins[3]["dv"]), np.mean(bins[3]["dt"]))
+    # 混ぜると床が薄まる = 帯で分ける根拠
+    all_dt = sum((bins[i]["dt"] for i in bins), [])
+    assert np.mean(all_dt) > np.mean(bins[3]["dt"]) + 10.0, np.mean(all_dt)
     assert area_tab[DENSE][2] < area_tab[SPARSE][2], area_tab
 
     # (10) ★道具の穴が「まだ在る」ことを機械で確かめる(直ったら落ちる = 良い落ち方)
