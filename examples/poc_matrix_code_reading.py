@@ -373,12 +373,19 @@ def find_alignment(dark, finders, n, module_px_est):
     return np.array([got[0], got[1]])                                      # (x, y)
 
 
-def estimate_homography(dark, n, module_px_est, step=1):
-    """二値像から モジュール座標 -> 画像座標 のホモグラフィを推定する。"""
+def estimate_homography(dark, n, step=1):
+    """二値像から モジュール座標 -> 画像座標 のホモグラフィを推定する。
+
+    与える前提は格子数 ``n`` だけ(規格の QR ならタイミングパターンの本数から
+    数える所)。モジュール寸法は位置検出パターンの間隔から自分で出す。
+    """
     f = find_finders(dark, step)
     if f is None:
         return None, "位置検出パターンを取れず"
-    al = find_alignment(dark, f, n, module_px_est)
+    m_est = float(np.linalg.norm(f[1] - f[0])) / (n - 7)
+    if not np.isfinite(m_est) or m_est < 0.5:
+        return None, "モジュール寸法が出ず"
+    al = find_alignment(dark, f, n, m_est)
     if al is None:
         return None, "位置合わせパターンを取れず"
     src = np.array([[3.5, 3.5], [n - 3.5, 3.5], [3.5, n - 3.5], [n - 6.5, n - 6.5]])
