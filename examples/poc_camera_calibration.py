@@ -204,6 +204,18 @@ def calibrate(obj, obs, fit_dist: bool = True, fit_pp: bool = True):
             "init": init, "ms": elapsed, "nfev": sol.nfev}
 
 
+def zhang_null_ratio(obj, obs) -> float:
+    """Zhang 法の退化検出が見る量 sv[-2] / sv[0] を再現する(``calib`` 内部と同じ式)。
+    実装は ``sv[-2] <= 1e-8 * sv[0]`` で退化を弾こうとしている。"""
+    V = []
+    for o in obs:
+        H = calib._homography_dlt(obj[:, :2], o)      # o は (x, y) —— 内部と同じ向き
+        V.append(calib._vij(H, 0, 1))
+        V.append(calib._vij(H, 0, 0) - calib._vij(H, 1, 1))
+    sv = np.linalg.svd(np.asarray(V))[1]
+    return float(sv[-2] / sv[0])
+
+
 def pose_errors(rt, poses):
     """姿勢誤差: 回転角 [deg] と並進 [mm] の最大値。"""
     rot, tra = [], []
