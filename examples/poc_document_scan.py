@@ -255,7 +255,11 @@ def corners_by_side_fit(pts, corner_gap=18.0):
 def corners_by_hough(mask, n_peaks=4):
     """方向つき Hough で 4 辺を拾い、交点を隅にする。"""
     m = mask.astype(float)
-    ang = fs.op.sobel_dir(m) * 2.0 * np.pi - np.pi              # [0,1] → [-pi, pi]
+    # ★ 2 値マスクに直接 sobel_dir を当てると勾配方向が 0/90 度に量子化され、
+    #    1 点 1 票の方向つき Hough はその 2 本に潰れる(実測: 4 本のうち 2 本が
+    #    ちょうど 0.00 / 90.00 度)。先にぼかしてから方向を測る。
+    sm = np.asarray(fs.op.gauss_filter(m, a=1.0))
+    ang = np.asarray(fs.op.sobel_dir(sm)) * 2.0 * np.pi - np.pi   # [0,1] → [-pi, pi]
     dir_row, dir_col = np.sin(ang), np.cos(ang)
     bnd = np.asarray(fs.op.get_region_contour(m)) > 0.5
     acc = tools_geom.hough_line_trans_dir(bnd, dir_row, dir_col, n_angle=540)
