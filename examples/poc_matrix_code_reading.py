@@ -270,28 +270,34 @@ def _scan(dark, step):
     return hits
 
 
-def _refine_center(dark, cx, cy, rad, iters=4):
-    """(cx, cy) のまわり半径 rad の円板にある暗画素の重心へ寄せる。
+def _refine_center(dark, cx, cy, half, iters=6):
+    """(cx, cy) を中心とする一辺 2*half の**正方**窓の暗画素重心へ寄せる。
 
-    位置検出パターンも位置合わせパターンも 4 回対称なので、中心に置いた円板の
-    重心は(円板がパターンをはみ出しても)中心に一致する。まわり 1 モジュールが
-    明の分離帯なので、半径を 4 モジュール未満にしておけば隣のデータは入らない。
+    円板ではなく正方形にするのが要点だった。位置検出パターンも位置合わせパターンも
+    まわり 1 モジュールが明の分離帯なので、``half`` をパターンの半幅と分離帯の間
+    (位置検出なら 3.5〜4.5 モジュール、位置合わせなら 2.5〜3.5)に取れば、
+    窓は**パターン全体をちょうど含み、隣のデータは 1 画素も含まない**。すると
+    重心はパターンの中心そのもので、少しずれた所から始めても中心へ引き込まれる。
+    円板にすると外周の輪を斜めに切り落とすため、中心は不動点ではあっても
+    **反発する不動点**になり、実測で 1 反復ごとに 1 px ずつ逃げた(6 反復で 7 px)。
+
+    画素 ``i`` の幾何座標は ``i + 0.5``。指標の平均に 0.5 を足して返す。
     """
     h, w = dark.shape
     for _ in range(iters):
-        r0 = int(max(0, cy - rad)); r1 = int(min(h, cy + rad + 1))
-        c0 = int(max(0, cx - rad)); c1 = int(min(w, cx + rad + 1))
+        r0 = int(max(0, math.floor(cy - half))); r1 = int(min(h, math.ceil(cy + half)))
+        c0 = int(max(0, math.floor(cx - half))); c1 = int(min(w, math.ceil(cx + half)))
         if r1 - r0 < 2 or c1 - c0 < 2:
             return None
-        yy, xx = np.mgrid[r0:r1, c0:c1]
-        sel = (dark[r0:r1, c0:c1] > 0.5) & ((xx - cx) ** 2 + (yy - cy) ** 2 < rad * rad)
-        if sel.sum() < 4:
+        sub = dark[r0:r1, c0:c1] > 0.5
+        if sub.sum() < 4:
             return None
-        nx, ny = float(xx[sel].mean()), float(yy[sel].mean())
-        if abs(nx - cx) < 1e-3 and abs(ny - cy) < 1e-3:
-            cx, cy = nx, ny
-            break
+        yy, xx = np.mgrid[r0:r1, c0:c1]
+        nx, ny = float(xx[sub].mean()) + 0.5, float(yy[sub].mean()) + 0.5
+        moved = abs(nx - cx) + abs(ny - cy)
         cx, cy = nx, ny
+        if moved < 1e-3:
+            break
     return cx, cy
 
 
