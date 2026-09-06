@@ -351,6 +351,16 @@ def main():
     print(f"     Coates 推定量は 5 光子/サイクル(遅いビンが飢えきった状態)でも")
     print(f"     残差 {pileup[-1][2]:.4f} mm。これは μ→0 の残差と同じ値で、")
     print("     つまりゲートの裾切りぶんだけ。パイルアップ自体は完全に消えている。")
+    figs.save_plot("pileup",
+                   [("素の推定", [np.log10(p[0]) for p in pileup],
+                     [p[1] for p in pileup]),
+                    ("Coates 補正後", [np.log10(p[0]) for p in pileup],
+                     [p[2] for p in pileup])],
+                   xlabel="log10 光子/サイクル", ylabel="距離の誤差 [mm]",
+                   title="パイルアップは距離を「近く」読む",
+                   caption="素の推定は μ にほぼ比例して手前へずれる(5 光子/サイクル"
+                           "で %.1f mm)。Coates は残差 %.3f mm まで戻す。"
+                           % (pileup[-1][1], pileup[-1][2]))
 
     # ------------------------------------------------------------------ #
     print("\n=== 6. 壊れる境界 (c) 多重反射 —— 1/√N が止まる ===")
