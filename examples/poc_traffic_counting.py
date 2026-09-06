@@ -639,11 +639,15 @@ def section_framerate() -> dict:
                    [("真値", dts, [total] * len(dts)),
                     ("帯(計数列・位相平均)", dts, n_or_l),
                     ("予測 Σmin(1, L/VΔt)", dts, pred_l),
-                    ("帯(全部・中央値背景)", dts, n_all_l)],
+                    ("帯(全部)※20 で頭打ち", dts,
+                     [min(v, 20.0) for v in n_all_l])],
                    xlabel="フレーム間隔 Δt [frame]", ylabel="台数",
+                   ylim=(0.0, 21.5),
                    title="フレームレートを落とすと数え方で壊れ方が逆になる",
-                   caption="全部の帯を数えると千切れて過大に、計数列と交わる"
-                           "帯だけなら見逃しだけ。予測は閉形式 Σmin(1, L/VΔt)。")
+                   caption="全部の帯を数えると千切れて過大に(実測は最大 %d "
+                           "だが、他の系列が潰れるので 20 で頭打ちにして"
+                           "描いている)、計数列と交わる帯だけなら見逃しだけ。"
+                           "予測は閉形式 Σmin(1, L/VΔt)。" % max(n_all_l))
     return {"dts": dts, "n_all": n_all_l, "n_ref": n_ref_l, "n_oracle": n_or_l,
             "pred": pred_l, "verr": verr_l, "total": total, "rows": rows}
 
