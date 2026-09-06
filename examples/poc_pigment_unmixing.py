@@ -678,34 +678,41 @@ def main():
 
     # ---------------------------------------------------------------- 6 -----
     print("\n6. 崖 (c) —— 似た 2 つの青。どこまで似ると分けられなくなるか")
+    print("   ここだけは **層を挟まない**。層(Kubelka–Munk)の非線形を混ぜると、")
+    print("   アンミキシングの偏りが飽和して青の似方に反応しなくなる(最初の版が")
+    print("   まさにそれで、相関 -0.11 でも 0.9997 でも偏りが +0.474 で一定だった)。")
+    print("   線形混合モデルが成り立つ土俵でだけ「分光の似方」の崖を測る。")
     az = PIGMENTS["azurite"][0]
     ul = PIGMENTS["ultramarine"][0]
     _, filt16 = band_filters(NB0)
+    # 真値: 2 つの青の配合比を空間的に構造をもって振る(乱数の面にしない)
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float64)
+    frac = np.clip(0.5 + 0.45 * np.sin(xx * 0.11) * np.cos(yy * 0.07)
+                   + 0.15 * (yy / (H - 1) - 0.5), 0.02, 0.98)
+    wfrac = 0.25 + 0.15 * np.cos(xx * 0.05)               # 鉛白の混ぜ量
+    lw = PIGMENTS["lead_white"][0]
     rows_c = []
     cliff_c = []
+    rng_c = np.random.default_rng(SEED + 4)
     for s in (1.0, 0.5, 0.25, 0.12, 0.06, 0.03, 0.015):
         blue2 = np.clip(az + s * (ul - az), 0.02, 0.95)
-        bb = np.vstack([az, blue2]) @ filt16.T
-        r = float(np.corrcoef(bb[0], bb[1])[0, 1])
-        E = endmember_spectra(swap=("ultramarine", blue2))
-        sp = render_spectra(scene, tau=TAU0, swap=("ultramarine", blue2))
-        _, cube = make_cube(sp, NB0, np.random.default_rng(SEED + 4))
-        A = unmix_any(cube, E @ filt16.T)
-        lay = A[..., :len(LAYER_KEYS)]
-        lay = lay / np.maximum(lay.sum(axis=2, keepdims=True), 1e-12)
-        ia, iu = LAYER_KEYS.index("azurite"), LAYER_KEYS.index("ultramarine")
-        m1 = (field == 1) & ~flake & neg_all
-        m0 = (field == 0) & ~flake & neg_all
-        e_az = lay[..., ia][m1] - scene["conc"][..., ia][m1]
-        e_b2 = lay[..., iu][m0] - scene["conc"][..., iu][m0]
-        leak = float(lay[..., iu][m1].mean())         # アズライトの面に混ざった青2
-        b_az, s_az = bias_scatter(e_az)
-        cliff_c.append((r, b_az, s_az, leak))
-        rows_c.append(["%.5f" % r, "%+.3f" % b_az, "%.3f" % s_az,
-                       "%+.3f" % bias_scatter(e_b2)[0], "%.3f" % leak])
-    _table(["2 青の相関 r", "アズの偏り", "アズの散らばり", "青2の偏り", "青2の漏れ込み"],
+        Eb = np.vstack([az, blue2, lw]) @ filt16.T
+        r = float(np.corrcoef(Eb[0], Eb[1])[0, 1])
+        mix = ((1.0 - wfrac) * frac)[..., None] * Eb[0] \
+            + ((1.0 - wfrac) * (1.0 - frac))[..., None] * Eb[1] \
+            + wfrac[..., None] * Eb[2]
+        cube = mix + rng_c.normal(0.0, SIGMA0 * np.sqrt(NB0), mix.shape)
+        A = fs.spec_unmix(cube, Eb)
+        est = A[..., 0] / np.maximum(A[..., 0] + A[..., 1], 1e-12)
+        b, sc_ = bias_scatter(est - frac)
+        worst = float(np.abs(est - frac).max())
+        cliff_c.append((r, b, sc_, worst))
+        rows_c.append(["%.5f" % r, "%+.4f" % b, "%.4f" % sc_, "%.3f" % worst,
+                       "可" if sc_ < 0.10 else "不可"])
+    _table(["2 青の相関 r", "配合比の偏り", "配合比の散らばり", "最悪誤差", "分離"],
            rows_c)
     print("   偏り = 平均誤差、散らばり = 誤差の標準偏差。1 つの RMSE に丸めない。")
+    print("   「分離 可」= 散らばりが 0.10 未満(配合比を 1 割の精度で言える)。")
 
     # ---------------------------------------------------------------- 7 -----
     print("\n7. 崖 (d) —— 褪色。端成分を未褪色のまま使うとどれだけ外れるか")
