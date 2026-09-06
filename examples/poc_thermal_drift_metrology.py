@@ -490,33 +490,35 @@ def section_figures():
     if not figs.enabled():
         return
     dT = 15.0
-    nx, ny = 96, 80
-    us = np.linspace(60, IMG_W - 60, nx)
-    vs = np.linspace(60, IMG_H - 60, ny)
-    uu, vv = np.meshgrid(us, vs)
-    half = 60.0                      # 画素で ±60 px の小さな試験片
+    nx, ny = 72, 60
+    uu, vv = np.meshgrid(np.linspace(80, IMG_W - 80, nx),
+                         np.linspace(80, IMG_H - 80, ny))
+    half = 100.0                     # 一辺 200 px の小さな正方形を各点に置く
+    corners = ((-half, -half), (half, -half), (half, half), (-half, half))
+    w = np.concatenate([np.stack([(uu + du - CX0) * MM_PER_PX,
+                                  (vv + dv - CY0) * MM_PER_PX], axis=-1).reshape(-1, 2)
+                        for du, dv in corners], axis=0)
+    n = uu.size
+    side0 = 2 * half * MM_PER_PX
     maps = {}
     for drift in ("f", "c", "both"):
-        pts = []
-        for du in (-half, half):
-            pts.append(np.stack([(uu + du - CX0) * MM_PER_PX,
-                                 (vv - CY0) * MM_PER_PX], axis=-1).reshape(-1, 2))
-        w = np.concatenate(pts, axis=0)
-        m = measure_xy(image_points(w, dT, drift))
-        n = uu.size
-        d = np.hypot(*(m[n:] - m[:n]).T).reshape(ny, nx)
-        d0 = 2 * half * MM_PER_PX
-        maps[drift] = 1e6 * (d / d0 - 1.0)
+        m = measure_xy(image_points(w, dT, drift)).reshape(4, n, 2)
+        d = np.mean([np.hypot(*(m[(i + 1) % 4] - m[i]).T) for i in range(4)], axis=0)
+        maps[drift] = 1e6 * (d.reshape(ny, nx) / side0 - 1.0)
     lim = float(np.percentile(np.abs(maps["both"]), 99))
-    panels = [np.clip(maps["f"], -lim, lim), np.clip(maps["c"], -lim, lim),
-              np.clip(maps["both"], -lim, lim),
-              np.clip(maps["both"] - maps["f"] - maps["c"], -lim / 20, lim / 20)]
+    resid = maps["both"] - maps["f"] - maps["c"]
+    big = 4                          # 最近傍で拡大(パネル題が入る幅を確保)
+    panels = [np.repeat(np.repeat(np.clip(p, -a, a), big, 0), big, 1)
+              for p, a in ((maps["f"], lim), (maps["c"], lim),
+                           (maps["both"], lim), (resid, max(lim / 20, 1e-9)))]
     figs.save_grid("error_maps", panels,
-                   ["f のみ [ppm]", "主点のみ [ppm]", "両方 [ppm]", "両方-(f+主点)"],
-                   title="寸法誤差の面内分布(ΔT=15 K、±%.0f%% ppm で切る)" % lim,
+                   ["f のみ", "主点のみ", "両方", "残り(1/20 目盛)"],
+                   title="一辺 200 px の試験片の寸法誤差 [ppm](ΔT=15 K)",
                    ncols=2, signed=True,
-                   caption="f のみは一様、主点のみは中心から離れるほど大きい。"
-                           "4 枚目は非線形の残り(1/20 の目盛)。")
+                   caption="±%.0f ppm で切って発散 LUT。f のみはほぼ一様、"
+                           "主点のみは中心から離れるほど大きい。4 枚目は "
+                           "重ね合わせからの残り(最大 %.2f ppm)。"
+                           % (lim, float(np.max(np.abs(resid)))))
 
 
 def section8_tool_gaps():
