@@ -612,7 +612,8 @@ def main():
 
     # ---- 自己検査(速さは assert しない)-----------------------------------
     # (a) 対応点が既知なら閉形式は厳密
-    assert rot_error_deg(Rk, R_true) < 1e-9, "kabsch が対応点既知で厳密でない"
+    # arccos は 0 度付近で平方根ぶんの精度を失うので、厳密解でも 1e-6 度台までしか出ない
+    assert rot_error_deg(Rk, R_true) < 1e-4, "kabsch が対応点既知で厳密でない"
     assert cen_error(Rk, tk, R_true, t_true, c_src) < 1e-12
     assert np.allclose(fs.apply_transform(src, np.eye(3), np.zeros(3)), src)
     # (b) 下限がしきい値の内側にある = 「失敗」が精度不足でないことの保証
