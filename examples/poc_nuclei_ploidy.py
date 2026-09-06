@@ -456,13 +456,14 @@ def section6_fusion():
     print("=" * 78)
     print("6) ★融合 —— 触れた 2n + 2n は 4n に見える")
     print("=" * 78)
-    nu0 = make_nuclei(n=110, seed=11, sep=1.60)
+    nu0 = make_nuclei(n=110, seed=11, sep=1.30)
     truth4 = float(np.mean(nu0["ploidy"] == 4))
     img0, at0 = render(nu0)
     lab0 = segment(img0)
     o0 = objects(img0, lab0, nu0, at0)
     thr = best_split(o0["integ"][o0["idx"]], o0["ploidy"] == 4)[1]
-    print("  疎に撒いた版(間隔 1.60)で 3n 相当のしきい値を決める: %.0f。" % thr)
+    print("  核の数は 110 で固定し、**最小間隔だけ**を詰める(細胞密度に相当)。")
+    print("  疎に撒いた版(間隔 1.30、融合ゼロ)で 3n 相当のしきい値を決める: %.0f。" % thr)
     print("  以後の密度ではこの 1 本をそのまま使う(実務でも較正は 1 回)。")
     print("  真値の 4n 割合 = %.3f。" % truth4)
     print()
@@ -470,7 +471,7 @@ def section6_fusion():
           ("間隔", "塊", "融合", "4n 割合", "検出率", "誤検出", "除去後"))
     print("  " + "-" * 62)
     out = {}
-    for sep in (1.60, 1.10, 0.90):
+    for sep in (1.30, 1.15, 0.95, 0.80):
         nu = make_nuclei(n=110, seed=11, sep=sep)
         img, at = render(nu)
         lab = segment(img)
