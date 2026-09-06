@@ -709,6 +709,102 @@ def main():
     assert thr_un > thr_eq
     timing["4 二重星"] = time.perf_counter() - t0
 
+    # --------------------------------------------------------------- #
+    # 5) 宇宙線 —— 1 画素の鋭いスパイクを星と誤認する率                  #
+    # --------------------------------------------------------------- #
+    t0 = time.perf_counter()
+    print("\n【5】宇宙線 —— 1 画素の鋭いスパイクを星と誤認する率")
+    cr_bins = ((20.0, 60.0), (60.0, 150.0), (300.0, 1000.0),
+               (3000.0, 10000.0), (10000.0, 30000.0))
+    print(f"   星 30 個(flux 800〜80000 e-)の視野に、1 画素スパイクを "
+          f"{len(cr_bins)} 段の強さ x 20 発ずつ置く。5 実現。"
+          f"``star_detect`` の出力を、真の星 / 宇宙線 / どちらでもない、に分ける")
+    print("     " + pad("宇宙線 [e-]", 16) + pad("置いた数", 10)
+          + pad("星と誤認", 10) + pad("誤認率", 10) + pad("鋭さで除去後", 14)
+          + pad("巻き添えの星", 14))
+    cr_res = {}
+    for lo, hi in cr_bins:
+        n_put = n_fp = n_fp2 = n_lost = n_star = 0
+        survivor_d = []
+        for k in range(5):
+            rg = np.random.default_rng(4000 + k)
+            sr = rg.uniform(16, SHAPE[0] - 16, 30)
+            sc = rg.uniform(16, SHAPE[1] - 16, 30)
+            sf = 10 ** rg.uniform(np.log10(800.0), np.log10(80000.0), 30)
+            crr = rg.integers(16, SHAPE[0] - 16, 20)
+            crc = rg.integers(16, SHAPE[1] - 16, 20)
+            cra = rg.uniform(lo, hi, 20)
+            # 星の近く(3 px 以内)に落ちた宇宙線は「誤認」の勘定から外す
+            keep = np.array([np.hypot(sr - r, sc - c).min() > 3.0
+                             for r, c in zip(crr, crc)])
+            extra = [(r, c, a) for r, c, a, k2 in zip(crr, crc, cra, keep) if k2]
+            img = render(SHAPE, sr, sc, sf, 3.2, seed=5000 + k, extra=extra)
+            kp = A.star_detect(img, threshold_sigma=5.0, min_separation=3,
+                               max_stars=300)
+            n_put += len(extra)
+            is_cr, is_star = [], []
+            for r, c in kp:
+                d_star = np.hypot(sr - r, sc - c).min()
+                d_cr = (min(np.hypot(e[0] - r, e[1] - c) for e in extra)
+                        if extra else np.inf)
+                is_star.append(d_star < 2.0)
+                is_cr.append(d_cr < 2.0 and d_star >= 2.0)
+            is_cr, is_star = np.array(is_cr), np.array(is_star)
+            n_fp += int(is_cr.sum())
+            n_star += int(is_star.sum())
+            # 鋭さ = 中心画素 / 3x3 の和。点源より鋭ければ宇宙線と判定する。
+            if len(kp):
+                sharp = []
+                for r, c in kp:
+                    i, j = int(round(r)), int(round(c))
+                    blk = img[i - 1:i + 2, j - 1:j + 2] - np.median(img)
+                    sharp.append(blk[1, 1] / max(blk.sum(), 1e-9))
+                sharp = np.array(sharp)
+                star_sharp = float(profile((7, 7), 3.0, 3.0, 3.2)[2:5, 2:5].sum())
+                star_sharp = float(profile((7, 7), 3.0, 3.0, 3.2)[3, 3]) / star_sharp
+                cut = sharp > 0.5 * (star_sharp + 1.0)   # 点源と 1.0 の中間で切る
+                n_fp2 += int((is_cr & ~cut).sum())
+                n_lost += int((is_star & cut).sum())
+                for (r, c), bad in zip(kp, is_cr & ~cut):
+                    if bad:
+                        survivor_d.append(float(np.hypot(sr - r, sc - c).min()))
+        cr_res[(lo, hi)] = (n_put, n_fp, n_fp / max(n_put, 1), n_fp2, n_lost,
+                            n_star, survivor_d)
+        print("     " + pad(f"{lo:.0f}〜{hi:.0f}", 16) + f"{n_put:8d}  "
+              f"{n_fp:8d}  {n_fp / max(n_put, 1):8.1%}  {n_fp2:10d}    "
+              f"{n_lost:10d}")
+    worst = cr_res[(10000.0, 30000.0)]
+    print(f"   → 誤認率は宇宙線の強さで決まる: 検出しきい値 5σ は "
+          f"σ ≈ {np.sqrt(SKY + READ ** 2):.1f} e- なので "
+          f"{5 * np.sqrt(SKY + READ ** 2):.0f} e-。それを跨ぐ 20〜60 e- で "
+          f"{cr_res[(20.0, 60.0)][2]:.0%}、60〜150 e- で "
+          f"{cr_res[(60.0, 150.0)][2]:.0%}、それ以上は "
+          f"{cr_res[(300.0, 1000.0)][2]:.0%}〜{worst[2]:.0%} で飽和する。"
+          f"★ **弱い宇宙線ほど安全なのではない** —— しきい値を超えたら"
+          f"そこから先はほぼ全部が星として出てくる")
+    print(f"   鋭さ(中心画素 / 3x3 の和)で切ると、誤認は "
+          f"{worst[1]} → {worst[3]} 件({1 - worst[3] / max(worst[1], 1):.0%} 除去)、"
+          f"巻き添えで落ちた本物の星は {worst[4]} 個 / 検出した星 {worst[5]} 個 "
+          f"({worst[4] / max(worst[5], 1):.1%})。"
+          f"1 画素スパイクの鋭さは 1.0、FWHM 3.2 の点源は "
+          f"{float(profile((7, 7), 3.0, 3.0, 3.2)[3, 3]) / float(profile((7, 7), 3.0, 3.0, 3.2)[2:5, 2:5].sum()):.3f} "
+          f"—— 分布が重ならないので**本物の星は 1 個も落ちない**")
+    surv = worst[6]
+    if surv:
+        print(f"   残った {worst[3]} 件は、いちばん近い星まで "
+              f"{min(surv):.1f}〜{max(surv):.1f} px の場所に落ちた宇宙線 —— "
+              f"``star_detect`` が返すのは峰の画素ではなく "
+              f"7x7 窓の**重心**なので、星の翼が入ると報告位置がずれ、"
+              f"そのずれた位置で測った鋭さが下がる。"
+              f"**鋭さは検出器の中で測らないと正しく測れない**")
+    print(f"   ★ ``star_detect`` は鋭さも真円度も返さない(返るのは "
+          f"``(N, 2)`` の座標だけ)ので、この選別は利用者が書くしかない。"
+          f"``cosmic_ray_reject`` は**画像を直す** op であって"
+          f"「この検出は宇宙線か」を答える op ではない")
+    assert worst[2] > 0.8                              # 強い宇宙線はほぼ全部拾う
+    assert worst[3] < 0.1 * worst[1] and worst[4] == 0   # 9 割方切れる/星は無傷
+    timing["5 宇宙線"] = time.perf_counter() - t0
+
     print("\nPASS(執筆中)")
     return True
 
