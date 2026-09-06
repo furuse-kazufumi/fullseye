@@ -231,7 +231,7 @@ def main():
         vid, _ = make_clip([(d0, FREQ, 0.0)])
         for alpha in (1.0, 2.0, 5.0, 10.0, 25.0):
             r = M.motion_magnify(vid, alpha, *BAND, FPS)
-            meas = amp_peak(read_dx_oracle(r["video"]))
+            meas = amp_rms(read_dx_oracle(r["video"]))
             want = alpha * d0
             ratios.append(meas / want)
             print(f"  {d0:>10.2f}{alpha:>7.0f}{want:>13.4f}"
@@ -373,7 +373,7 @@ def main():
     for d0 in (0.001, 0.01, 0.05, 0.1, 0.2, 0.4, 0.8, 1.0, 1.2):
         vid, _ = make_clip([(d0, FREQ, 0.0)])
         r = M.motion_magnify(vid, alpha, *BAND, FPS)
-        meas = amp_peak(read_dx_oracle(r["video"]))
+        meas = amp_rms(read_dx_oracle(r["video"]))
         lin[d0] = meas / (alpha * d0)
         flag = "" if abs(lin[d0] - 1.0) < 0.01 else "  <- 1 % 超の逸脱"
         print(f"    {d0:>9.3f}{(alpha-1)*K_X*d0:>15.4f}{alpha*d0:>13.4f}"
@@ -392,7 +392,7 @@ def main():
     vid, _ = make_clip([(d0, FREQ, 0.0)])
     for alpha in (2.0, 5.0, 10.0, 20.0, 40.0, 60.0):
         r = M.motion_magnify(vid, alpha, *BAND, FPS)
-        meas = amp_peak(read_dx_oracle(r["video"]))
+        meas = amp_rms(read_dx_oracle(r["video"]))
         print(f"    {alpha:>8.0f}{(alpha-1)*K_X*d0:>15.4f}"
               f"{meas/(alpha*d0):>12.6f}{r['band_power_ratio']:>13.6f}"
               f"{r['phase_shift_rms_rad']:>17.4f}{str(r['linear_regime']):>8}")
@@ -478,7 +478,7 @@ def main():
     for d0 in AMPS:
         clip_ = make_clip([(d0, FREQ, 0.0)])[0]
         for a in (2.0, 5.0, 25.0):
-            got = amp_peak(read_dx_oracle(M.motion_magnify(clip_, a, *BAND, FPS)["video"]))
+            got = amp_rms(read_dx_oracle(M.motion_magnify(clip_, a, *BAND, FPS)["video"]))
             assert rel(got, a * d0) < 1e-6, (d0, a, got)
     # 3) ゼロ点は無雑音では拡大経路と同等以上(= 拡大は測定を良くしない)
     for d0 in AMPS:
@@ -510,7 +510,7 @@ def main():
     assert r["image_snr_change_db"] <= 1e-9
     # 10) 帯域外の運動は拡大されない
     off = make_clip([(0.5, 12.0, 0.0)])[0]
-    g = amp_peak(read_dx_oracle(M.motion_magnify(off, 20.0, *BAND, FPS)["video"])) / 0.5
+    g = amp_rms(read_dx_oracle(M.motion_magnify(off, 20.0, *BAND, FPS)["video"])) / 0.5
     assert abs(g - 1.0) < 1e-9, g
     # 11) fail-closed: 帯域が Nyquist を超えたら拒否される
     try:
