@@ -469,7 +469,8 @@ def section_spot() -> dict:
     out = {}
     for label, spot in (("黒点なし(対照群)", None),
                         ("黒点 r=0.85R", (0.85, 32.0, 0.07, 0.35)),
-                        ("黒点 r=0.97R(縁上)", (0.97, 32.0, 0.07, 0.35))):
+                        ("黒点 r=0.97R(縁上)", (0.97, 32.0, 0.07, 0.35)),
+                        ("黒点 r=1.00R(縁跨ぎ)", (1.00, 32.0, 0.07, 0.35))):
         img = render(spot=spot)
         for robust in (False, True):
             f = fit_disc(img, "level", 0.5, robust=robust)
