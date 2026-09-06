@@ -102,9 +102,22 @@ def main():
         err = abs(k - exact)
         ratio = (prev / err) if prev else float("nan")
         print(f"  {c:>10.1f}{k:>16.6f}{exact:>12.6f}{err:>12.2e}{ratio:>8.2f}")
+        conv.append((c, err))
         prev = err
     print("  → セルを半分にすると誤差が約 4 分の 1(比 ≈ 4)= **2 次収束**。")
     print("     これが出れば離散化の誤差であって、式の誤りではない。")
+    # 傾き 2 の参照線と重ねると「2 次収束」が一目で言える(数字の比だと
+    # 4.0 が偶然か本物かを読み手が判断できない)。
+    cs = np.array([c for c, _ in conv])
+    es = np.array([e for _, e in conv])
+    figs.save_plot("curvature_convergence",
+                   [("実測の誤差", np.log10(cs), np.log10(es)),
+                    ("傾き 2 の参照線", np.log10(cs),
+                     np.log10(es[0]) + 2.0 * (np.log10(cs) - np.log10(cs[0])))],
+                   xlabel="log10 セル寸法 [m]", ylabel="log10 |断面曲率の誤差|",
+                   title="曲率の誤差は離散化か、式の誤りか",
+                   caption="参照線と平行 = 2 次収束 = 離散化の誤差。"
+                           "式が違えばセルを細かくしても誤差は下げ止まる。")
 
     print("\n=== 4. 水の流れ —— 一様斜面の集水量は数えられる ===")
     z = plane(60, 40, cell, 10.0, 180.0)             # 南向きに下る = 行が増える向き
