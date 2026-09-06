@@ -49,6 +49,12 @@ flowchart TD
     L --> LB["labels2d (H, W) int32<br/>背景 0、物体 1..n"]
     LB --> FE["blob_features<br/>物体ごとに 19 項目"]
     FE --> T["table<br/>area / circularity / holes …"]
+    M --> DI["blob_distance<br/>背景までの距離(画素単位)"]
+    DI --> SD["blob_seeds<br/>h-maxima の種(h は絶対値)"]
+    LB --> SP["blob_split<br/>分水嶺で融合した塊を割る"]
+    SD --> SP
+    DI --> SP
+    SP --> LB
     LB --> SE["blob_select<br/>特徴量の範囲で残す"]
     LB --> SL["blob_select_largest<br/>面積の大きい順に n 個"]
     SE --> LB2["labels2d(1..k に振り直し)"]
