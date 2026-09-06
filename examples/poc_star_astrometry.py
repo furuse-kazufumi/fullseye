@@ -812,6 +812,155 @@ def main():
     assert worst[3] < 0.1 * worst[1] and worst[4] == 0   # 9 割方切れる/星は無傷
     timing["5 宇宙線"] = time.perf_counter() - t0
 
+    # --------------------------------------------------------------- #
+    # 6) 構造のある星野 —— 検出 → 測位 → プレートソルブ                  #
+    # --------------------------------------------------------------- #
+    t0 = time.perf_counter()
+    cat, crs = build_field(11)
+    img = render(SHAPE, cat["row"], cat["col"], cat["flux"], 3.2, seed=9001,
+                 full_well=FULL_WELL, extra=crs)
+    print(f"\n【6】構造のある星野 —— 一様 {int((cat['kind'] == 0).sum())} / "
+          f"星団 {int((cat['kind'] == 1).sum())} / "
+          f"二重星 {int((cat['kind'] == 2).sum())} 個(3 組)/ "
+          f"飽和 {int((cat['kind'] == 3).sum())} 個、宇宙線 {len(crs)} 発。"
+          f"乱数の一様分布だけでは出ない失敗を入れるための配置")
+    print(f"   星表は**天球座標で渡す**(画素座標は渡さない)。推定側が知って"
+          f"いいのは画像と ``(RA, Dec)`` だけで、スケールも回転も原点も知らない")
+
+    kp = A.star_detect(img, threshold_sigma=5.0, min_separation=3, max_stars=300)
+    sharp = np.array([sharpness(img, r, c) for r, c in kp])
+    star_sharp = float(profile((7, 7), 3.0, 3.0, 3.2)[3, 3]
+                       / profile((7, 7), 3.0, 3.0, 3.2)[2:5, 2:5].sum())
+    kp = kp[sharp < 0.5 * (star_sharp + 1.0)]          # 段 5 の鋭さ切り
+    meas = m_centroid_bg(img, kp, box=11)
+    print(f"   ``star_detect`` {len(sharp)} 検出 → 鋭さ切りで {len(kp)} —— "
+          f"真の星 {len(cat['row'])} 個に対して "
+          f"{len(kp) - len(cat['row']):+d}(二重星の未分離と、"
+          f"星団の混み合いで数が合わない)")
+
+    # 真値との対応は**採点にだけ**使う(推定には渡さない)
+    d = np.hypot(meas[:, None, 0] - cat["row"][None, :],
+                 meas[:, None, 1] - cat["col"][None, :])
+    j = np.argmin(d, axis=1)
+    dmin = d[np.arange(len(meas)), j]
+    ok = dmin < 2.0
+    print(f"   採点用の突き合わせ(2 px 以内): {int(ok.sum())} / {len(meas)} 一致")
+
+    # --- 6a) 対応が既知のとき、何個の星でプレート定数が決まるか ---------- #
+    clean = ok & (cat["kind"][j] == 0)                 # 一様配置の孤立星だけ
+    ci = j[clean]
+    xi_c, eta_c = sky_to_standard(cat["ra"][ci], cat["dec"][ci])
+    src_all = np.stack([eta_c, xi_c], axis=1)
+    dst_all = meas[clean]
+    n_clean = len(ci)
+    print(f"\n   6a) **対応が既知**のとき、星を何個使えばプレート定数が決まるか"
+          f"(孤立星 {n_clean} 個から k 個を無作為に選ぶ x 200 回)")
+    print("       " + pad("k", 5) + pad("スケール誤差[ppm]", 22)
+          + pad("回転誤差[秒角]", 20) + pad("原点誤差[px]", 18)
+          + pad("残りの星での予測[秒角]", 24))
+    print("       " + pad("", 5) + pad("中央     95 %", 22)
+          + pad("中央     95 %", 20) + pad("中央     95 %", 18)
+          + pad("中央     95 %", 24))
+    solve_tab = {}
+    for k in (2, 3, 4, 6, 10, 20, n_clean):
+        if k > n_clean:
+            continue
+        es, er, eo, ep = [], [], [], []
+        rg = np.random.default_rng(6000 + k)
+        for _ in range(200 if k < n_clean else 1):
+            sel = rg.choice(n_clean, size=k, replace=False) if k < n_clean \
+                else np.arange(n_clean)
+            M = FT.vector_to_similarity(src_all[sel], dst_all[sel])
+            s_est, rot_est, org = plate_from_matrix(M)
+            es.append(abs(s_est - PLATE_ARCSEC_PX) / PLATE_ARCSEC_PX * 1e6)
+            er.append(abs(rot_est - PLATE_ROT_DEG) * 3600.0)
+            eo.append(np.hypot(org[0] - CRPIX_ROW, org[1] - CRPIX_COL))
+            rest = np.setdiff1d(np.arange(n_clean), sel)
+            if len(rest):
+                pr = apply_matrix(M, src_all[rest])
+                ep.append(np.median(np.hypot(*(pr - dst_all[rest]).T))
+                          * PLATE_ARCSEC_PX)
+        solve_tab[k] = (np.median(es), np.percentile(es, 95),
+                        np.median(er), np.percentile(er, 95),
+                        np.median(eo), np.percentile(eo, 95),
+                        np.median(ep) if ep else np.nan,
+                        np.percentile(ep, 95) if ep else np.nan)
+        v = solve_tab[k]
+        print("       " + pad(f"{k}", 5)
+              + f"{v[0]:9.1f}{v[1]:11.1f}   " + f"{v[2]:8.2f}{v[3]:10.2f}  "
+              + f"{v[4]:8.3f}{v[5]:9.3f}   " + f"{v[6]:9.4f}{v[7]:11.4f}")
+    print(f"       → k=2 でも**解は必ず出る**(相似変換は 4 自由度、"
+          f"2 対応 = 4 式でちょうど決まる)。しかし予測誤差の 95 % 点は "
+          f"{solve_tab[2][7]:.3f} 秒角 = {solve_tab[2][7] / PLATE_ARCSEC_PX:.2f} px。"
+          f"k を増やすと {solve_tab[4][7]:.4f}(k=4)→ {solve_tab[10][7]:.4f}"
+          f"(k=10)秒角 と落ちる。**解が出ることと解が正しいことは別**")
+    assert solve_tab[2][7] > 5.0 * solve_tab[10][7]
+    timing["6 プレート解"] = time.perf_counter() - t0
+
+    # --- 6b) 対応が未知のとき、間違った対応が「もっともらしく」出る確率 --- #
+    t0 = time.perf_counter()
+    print(f"\n   6b) **対応が未知**のとき。k 個の星に**でたらめな**星表を"
+          f"割り当てて相似変換を当て、残差 RMS を見る(各 k で 3000 回)。"
+          f"正しい対応での残差は {rms_of(src_all, dst_all):.4f} px")
+    print("       " + pad("k", 5) + pad("残差の自由度", 14)
+          + pad("正しい対応", 13) + pad("でたらめな対応の残差 RMS [px]", 34)
+          + pad("0.5 px 未満に", 14))
+    print("       " + pad("", 5) + pad("2k-4", 14) + pad("[px]", 13)
+          + pad("中央      5 % 点     最小", 34) + pad("なる確率", 14))
+    false_p = {}
+    for k in (2, 3, 4, 5, 6):
+        rg = np.random.default_rng(7000 + k)
+        r = []
+        for _ in range(3000):
+            a = rg.choice(n_clean, size=k, replace=False)
+            b = rg.choice(n_clean, size=k, replace=False)
+            if np.array_equal(a, b):
+                continue
+            M = FT.vector_to_similarity(src_all[b], dst_all[a])
+            r.append(rms_of(src_all[b], dst_all[a], M))
+        r = np.array(r)
+        false_p[k] = (float(np.median(r)), float(np.percentile(r, 5)),
+                      float(r.min()), float((r < 0.5).mean()))
+        v = false_p[k]
+        print("       " + pad(f"{k}", 5) + pad(f"{2 * k - 4}", 14)
+              + f"{rms_of(src_all[:k], dst_all[:k]):9.4f}    "
+              + f"{v[0]:9.2f}{v[1]:10.3f}{v[2]:10.4f}      {v[3]:9.1%}")
+    print(f"       → k=2 は **でたらめでも残差が厳密に 0** "
+          f"({false_p[2][0]:.1e})—— 自由度が 0 なので何を当てても合う。"
+          f"「残差が小さいから正しい」は k=2 では**情報が 1 ビットも無い**")
+    print(f"       k=3 で自由度 2、でたらめでも {false_p[3][3]:.1%} が 0.5 px を"
+          f"下回る。k=4 で {false_p[4][3]:.2%}、k=5 で {false_p[5][3]:.2%}、"
+          f"k=6 で {false_p[6][3]:.2%} —— 星 1 個増やすごとに約 "
+          f"{np.exp(np.mean(np.diff(np.log([max(false_p[k][3], 1e-4) for k in (3, 4, 5, 6)])))):.2f} 倍"
+          f"に減る(理論: 自由度が 2 増えるので確率は "
+          f"``(許容/視野)^(2k-4)`` の形で落ちる)")
+    # 検算 —— 通ってしまった偽解を、使わなかった星で検証する
+    rg = np.random.default_rng(8080)
+    n_pass, n_survive = 0, 0
+    for _ in range(4000):
+        a = rg.choice(n_clean, size=4, replace=False)
+        b = rg.choice(n_clean, size=4, replace=False)
+        if np.array_equal(a, b):
+            continue
+        M = FT.vector_to_similarity(src_all[b], dst_all[a])
+        if rms_of(src_all[b], dst_all[a], M) >= 0.5:
+            continue
+        n_pass += 1
+        pr = apply_matrix(M, src_all)
+        hit = (np.hypot(*(pr[:, None, :] - dst_all[None, :, :]).T).min(axis=0)
+               < 1.0).sum()
+        if hit >= 6:
+            n_survive += 1
+    print(f"       検算 —— k=4 で 0.5 px を通った偽解 {n_pass} 件を、"
+          f"**使わなかった星も含めた全 {n_clean} 個**で検証した: "
+          f"1 px 以内に 6 個以上を当てたのは {n_survive} 件 "
+          f"({n_survive / max(n_pass, 1):.1%})。"
+          f"★ **少数で当てて多数で検証する**のが、対応が未知のときに"
+          f"「もっともらしい嘘」を落とす唯一の手")
+    assert false_p[2][0] < 1e-9 and false_p[6][3] < false_p[3][3]
+    assert n_survive == 0
+    timing["6b 偽解"] = time.perf_counter() - t0
+
     print("\nPASS(執筆中)")
     return True
 
