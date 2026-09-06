@@ -475,6 +475,8 @@ def main():
         raise AssertionError("csi_height_map が焦点評価スタックを通した")
     except ValueError:
         pass
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
