@@ -879,13 +879,18 @@ def main():
     l_occ = np.concatenate([(ch5[f]["err"][3:] > LOST_PX) for f in ch5])
     bundles["遮蔽 0-80 %"] = (p_occ, r_occ, l_occ)
 
+    p_amb = np.concatenate([zero[k]["peak"][1:] for k in zero])
+    r_amb = np.concatenate([zero[k]["prom"][1:] for k in zero])
+    l_amb = np.concatenate([(zero[k]["err"][1:] > LOST_PX) for k in zero])
+    bundles["紛らわしい対象(全域)"] = (p_amb, r_amb, l_amb)
+
     p_rep, r_rep, l_rep = [], [], []
-    for lab in ("全域探索", "局所 ±30", "局所 ±20"):
+    for lab in ch9:
         p_rep.append(ch9[lab]["peak"][1:])
         r_rep.append(ch9[lab]["prom"][1:])
         l_rep.append(ch9[lab]["err"][1:] > LOST_PX)
-    bundles["繰り返し模様"] = (np.concatenate(p_rep), np.concatenate(r_rep),
-                          np.concatenate(l_rep))
+    bundles["繰返・窓を混ぜる"] = (np.concatenate(p_rep), np.concatenate(r_rep),
+                            np.concatenate(l_rep))
 
     p_sc = np.concatenate([ch6s[q][1][1:] for q in ch6s] + [ch6r[r][1][1:] for r in ch6r])
     l_sc = np.concatenate([(ch6s[q][0][1:] > LOST_PX) for q in ch6s]
