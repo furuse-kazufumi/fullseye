@@ -92,21 +92,24 @@ FG_THRESHOLD = 0.10
 # --------------------------------------------------------------------------- #
 # 場面を作る                                                                    #
 # --------------------------------------------------------------------------- #
-def make_vehicles(seed: int = 3, n_far: int = 9, n_near: int = 8,
+def make_vehicles(seed: int = 3, n_far: int = 4, n_near: int = 6,
                   headway: float | None = None, truck_p: float = 0.30) -> list[dict]:
     """車の一覧。**計数列を跨ぐ時刻を先に決めて**初期位置を逆算する。
 
     ``headway`` を渡すと車線ごとに等間隔(フレーム)で流す(車間の掃引用)。
+    渡さないときは**層化して**散らす —— 一様乱数だと通過時刻が偶然固まって、
+    測りたい「疎な流れ」ではなく渋滞を測ってしまう(最初そうなった)。
     """
     rng = np.random.default_rng(seed)
     out = []
     for lane, n in (("far", n_far), ("near", n_near)):
         cfg = LANES[lane]
+        span = (T_FRAMES - 24.0) / max(n, 1)
         for i in range(n):
             v = float(rng.uniform(*cfg["v"]))
             length = float(rng.uniform(*cfg["len"]))
             if headway is None:
-                s = float(rng.uniform(6.0, T_FRAMES - 6.0))
+                s = 12.0 + (i + float(rng.uniform(0.2, 0.8))) * span
             else:
                 s = 8.0 + i * headway
             tall = (lane == "near") and bool(rng.random() < truck_p)
