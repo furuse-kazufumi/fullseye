@@ -78,8 +78,7 @@ def bracket(n, rng):
     対称群)ので、「間違った象限」と「正しい象限」が区別できない。この PoC の
     主役の形状は **その 3 つの対称をすべて壊してある**。
     """
-    a = box_surface(*BRACKET_MAIN[:1], n=int(n * 0.78), rng=rng, center=BRACKET_MAIN[1]) \
-        if False else box_surface(BRACKET_MAIN[0], int(n * 0.78), rng, BRACKET_MAIN[1])
+    a = box_surface(BRACKET_MAIN[0], int(n * 0.78), rng, BRACKET_MAIN[1])
     b = box_surface(BRACKET_BUMP[0], n - int(n * 0.78), rng, BRACKET_BUMP[1])
     a = a[~_inside(a, *BRACKET_BUMP)]
     b = b[~_inside(b, *BRACKET_MAIN)]
