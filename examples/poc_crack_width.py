@@ -332,8 +332,9 @@ def section_width_sweep() -> dict:
                     ("真値(y=x)", true_l, true_l)],
                    xlabel="真の幅 [mm]", ylabel="推定した幅 [mm]",
                    title="幅の掃引(きれいな場面)。0 は「何も返さなかった」",
-                   caption="2 値化の 2 本は階段。0.24 mm 以下ではマスクが空になり "
-                           "0(= 未検出)へ落ちる。積分法は 0.05 mm まで直線に乗る。")
+                   caption="2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが"
+                           "空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm "
+                           "(0.25 px)まで直線 y=x に乗る。")
     return {"true": true_l, "bin": bin_l, "bin2": bin2_l, "int": int_l, "rows": rows}
 
 
