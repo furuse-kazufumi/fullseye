@@ -165,8 +165,22 @@ def camera_calibration(object_points, image_points_list):
         V.append(_vij(H, 0, 0) - _vij(H, 1, 1))
     V = np.asarray(V)
     _, sv, Vt = np.linalg.svd(V)
-    # 正面平行ばかりの視点では零空間が 2 次元以上になり b が定まらない(Zhang 1999 §3.3)
-    if sv[-2] <= 1e-8 * sv[0]:
+    # 正面平行ばかりの視点では零空間が 2 次元以上になり b が定まらない(Zhang 1999 §3.3)。
+    #
+    # ★ この門が**実カメラでは発火しない**ことを 2026-09-06 に実測した。歪みの
+    #   無い合成では設計どおり働く(傾き 0 度で比 3.8e-14、0.05 度で 8.6e-10、
+    #   どちらも拒否)。ところが現実的な樽型歪み k1=-0.18 を入れると、平面
+    #   ホモグラフィのモデルがそもそも合わなくなり、比が**傾きに関係なく
+    #   1.9e-06 前後に張り付く**(0 度 1.916e-06 / 0.05 度 1.935e-06 /
+    #   0.2 度 2.005e-06)。しきい値を上げれば済む話でもない —— 歪みありでは
+    #   完全退化 1.92e-06 と傾き 2 度 4.42e-06 の差が 2.3 倍しかなく、
+    #   分ける線が引けない。よって:
+    #     * しきい値はそのまま(歪み補正済みの点なら正しく効く)
+    #     * 比そのものを ``orientation_rank_ratio`` として**返す**
+    #     * 実際に止めている後段の門に「板を傾けよ」を言わせる(下)
+    #   直せない代わりに、判断材料を利用者に渡す。
+    rank_ratio = float(sv[-2] / sv[0]) if sv[0] > 0.0 else 0.0
+    if rank_ratio <= 1e-8:
         raise ValueError("degenerate calibration views: the plane orientations do not "
                          "constrain the intrinsics (all views fronto-parallel or only "
                          "rotated about the optical axis) — tilt the target between views")
