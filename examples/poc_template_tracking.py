@@ -804,7 +804,8 @@ def main():
             pks.append(pk)
         e = np.mean(acc, axis=0)
         slope = loglog_slope(tt, e)
-        ch8[label] = dict(err=e, slope=slope, peak=np.mean(pks, axis=0))
+        ch8[label] = dict(err=e, slope=slope, peak=np.mean(pks, axis=0),
+                          raw_err=acc, raw_peak=pks)
         print(f"{label:<14}{e.mean():>10.2f}{e[-1]:>10.2f}{e.max():>8.2f}"
               f"{slope:>14.3f}{np.nanmean(np.mean(pks, axis=0)):>12.3f}")
     print("-" * 68)
