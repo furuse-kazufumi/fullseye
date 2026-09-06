@@ -486,13 +486,11 @@ def section_framerate() -> dict:
             s = slit_count(kymograph(mask, LANES[ln]["slit"]))
             n_all += s["n_all"]
             n_ref += s["n_ref"]
-            sp = band_speeds(kymograph(mask, LANES[ln]["slit"]),
-                             s["labels"], s["ids"], dt=float(dt))
-            tv = np.asarray(sorted(v["v"] for v in crossing if v["lane"] == ln))
-            ev = np.sort(sp["fit"])
-            m = min(tv.size, ev.size)
-            if m:
-                errs.append(100 * np.mean(np.abs(ev[:m] - tv[:m]) / tv[:m]))
+            sp = band_speeds(s["labels"], s["ids"], dt=float(dt))
+            mt = match_speeds(sp, [v for v in crossing if v["lane"] == ln],
+                              tol=max(12.0, 2.0 * dt))
+            if np.isfinite(mt["fit"]):
+                errs.append(mt["fit"])
         pred = float(sum(min(1.0, v["len"] / (v["v"] * dt)) for v in crossing))
         verr = float(np.mean(errs)) if errs else np.nan
         dts.append(dt)
