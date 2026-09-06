@@ -216,6 +216,25 @@ def skeleton_endpoints3d(vol):
     """3D 骨格の端点(26 近傍に骨格 voxel が 1 個以下)を voxel マスクで返す。
 
     孤立 voxel(次数 0)も端点に数える。2D の `r2_endpoints_skeleton` の 3D 版。
+
+    手順: ``_ensure_skeleton`` で入力を bool 化し、6 近傍がすべて前景の interior voxel
+    があれば ``skeletonize_vol`` で細線化してから、3x3x3 全 1 カーネル(中心 0、
+    ``mode="constant"`` で外側 0)の畳み込みで各 voxel の 26 近傍にある骨格 voxel 数
+    (次数)を数え、``skel & (次数 <= 1)`` を返す。volume の縁にある骨格 voxel は、
+    外側が 0 扱いなので枝がそこで途切れていれば端点になる。
+
+    返り値: 入力と同形の bool 配列(端点 = True)。前景が無ければ全 False。
+    ``np.argwhere`` で ``(z, y, x)`` 座標に、``.sum()`` で端点数になる。
+
+    検証(``ValueError``): 3-D でない・空配列・float で NaN/Inf を含む入力。
+    細線化が必要で scikit-image が無い環境では ``ImportError``。
+
+    注意:
+    - 端点は各枝の末端で厳密だが、ヒゲ(細線化が作る短い枝)の先端も端点に数える。
+      構造の端だけ欲しければ先に ``skeleton_prune3d`` で刈る。
+    - 閉ループだけの骨格(輪)は端点 0 個。
+    - 数だけ欲しいなら ``topology_signature`` が ``endpoints`` / ``isolated`` を
+      分けて返す。
     """
     skel = _ensure_skeleton(vol)
     if not skel.any():
