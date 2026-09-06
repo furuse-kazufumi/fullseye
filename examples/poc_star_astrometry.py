@@ -767,7 +767,9 @@ def main():
                 n_lost += int((is_star & cut).sum())
                 for (r, c), bad in zip(kp, is_cr & ~cut):
                     if bad:
-                        survivor_d.append(float(np.hypot(sr - r, sc - c).min()))
+                        d2 = sorted(np.hypot(e[0] - r, e[1] - c) for e in extra)
+                        survivor_d.append((float(np.hypot(sr - r, sc - c).min()),
+                                           float(d2[1]) if len(d2) > 1 else np.inf))
         cr_res[(lo, hi)] = (n_put, n_fp, n_fp / max(n_put, 1), n_fp2, n_lost,
                             n_star, survivor_d)
         print("     " + pad(f"{lo:.0f}〜{hi:.0f}", 16) + f"{n_put:8d}  "
@@ -791,12 +793,17 @@ def main():
           f"—— 分布が重ならないので**本物の星は 1 個も落ちない**")
     surv = worst[6]
     if surv:
-        print(f"   残った {worst[3]} 件は、いちばん近い星まで "
-              f"{min(surv):.1f}〜{max(surv):.1f} px の場所に落ちた宇宙線 —— "
-              f"``star_detect`` が返すのは峰の画素ではなく "
-              f"7x7 窓の**重心**なので、星の翼が入ると報告位置がずれ、"
-              f"そのずれた位置で測った鋭さが下がる。"
-              f"**鋭さは検出器の中で測らないと正しく測れない**")
+        pair = sum(1 for _, d2 in surv if d2 < 2.5)
+        print(f"   残った {worst[3]} 件の内訳を数えた: **{pair} 件は"
+              f"宇宙線が 2 発 {min(d2 for _, d2 in surv):.1f}〜"
+              f"{max(d2 for _, d2 in surv if d2 < 2.5):.1f} px 隣に落ちた組**で、"
+              f"``star_detect`` が返す 7x7 窓の**重心**が 2 発の中間に来る。"
+              f"そこの中心画素は空なので鋭さが {0.0:.1f} に落ちる。"
+              f"残り {worst[3] - pair} 件は星まで "
+              f"{min(d1 for d1, d2 in surv if d2 >= 2.5):.1f} px の宇宙線で、"
+              f"星の翼が窓に入って重心がずれた。"
+              f"★ どちらも原因は同じ —— **鋭さを測る場所が、検出器が返した"
+              f"重心であって峰ではない**。峰の画素を一緒に返す op なら起きない")
     print(f"   ★ ``star_detect`` は鋭さも真円度も返さない(返るのは "
           f"``(N, 2)`` の座標だけ)ので、この選別は利用者が書くしかない。"
           f"``cosmic_ray_reject`` は**画像を直す** op であって"
