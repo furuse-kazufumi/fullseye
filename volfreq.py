@@ -160,7 +160,24 @@ def vol_fft_bandpass(vol, low, high, spacing=None):
     """Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure
     between the two scales (``low < high`` required, both in cycles/voxel or
     cycles/mm with *spacing*). Typical use: isolate one texture scale, or a
-    periodic artefact band before subtracting it."""
+    periodic artefact band before subtracting it.
+
+    伝達関数は ``exp(-|f|^2 / (2 high^2)) - exp(-|f|^2 / (2 low^2))``。DC では
+    ``1 - 1 = 0`` なので平均輝度は落ち、``low`` と ``high`` の間に山を持つ Gaussian 差分
+    (DoG 型)の帯域だけが残る。山の高さは 1 に届かない(2 つの Gaussian の差なので、
+    ``low`` と ``high`` が近いほど通過量は小さい)。返り値は入力と同じ ``(D, H, W)`` の
+    float64、符号付き。
+
+    引数: ``low < high`` が必須(両方とも正の有限値)。単位は ``spacing=None`` で
+    cycles/voxel、``spacing`` 指定で cycles/mm。周期(voxel または mm)で考えるなら
+    ``1/high`` が最小構造サイズ、``1/low`` が最大構造サイズ。
+
+    検証(``ValueError``): 3-D でない / NaN・Inf / ``MAX_VOXELS`` 超 / ``low``・``high``
+    が非正・非有限・2 乗がアンダーフロー / ``low >= high`` / ``spacing`` 不正。
+
+    使いどころ: 1 つのテクスチャスケールの抽出、周期的な縞・リングアーティファクト帯
+    を取り出して入力から引く。``vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)``
+    と同値。"""
     lo = _check_cutoff(low, "low")
     hi = _check_cutoff(high, "high")
     if lo >= hi:
