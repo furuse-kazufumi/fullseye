@@ -455,6 +455,26 @@ def m_ws_all(img, fg=None):
     return watershed(-d, mk, fg)
 
 
+def m_ws_md(img, fg=None, min_distance=1):
+    """距離変換 + 分水嶺、種を **空間的な間隔** で間引く(``min_distance`` 画素)。
+
+    h-maxima が「高さ」で間引くのに対し、こちらは「近すぎる極大をまとめる」。
+    ★h-maxima の h には下限(``0.05 x max(EDT)``)があって細かく振れないので、
+    h=0 と h=下限 の **あいだ** を埋めるノブとしてこちらを使う。
+    """
+    fg = foreground(img) if fg is None else fg
+    d = edt(fg)
+    pk = volops.vol_local_maxima(d[None, :, :], int(min_distance))
+    seed = np.zeros_like(fg, bool)
+    if len(pk):
+        p = np.asarray(pk)
+        seed[p[:, 1], p[:, 2]] = True
+    mk, k = cc_label(seed)
+    if k == 0:
+        return cc_label(fg)[0]
+    return watershed(-d, mk, fg)
+
+
 def m_ws_h(img, fg=None, h_px=2.4):
     """h-maxima で種を間引いてから分水嶺。``h_px`` が過分割/過統合のノブ。"""
     fg = foreground(img) if fg is None else fg
