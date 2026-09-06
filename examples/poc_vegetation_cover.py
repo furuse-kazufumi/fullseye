@@ -544,9 +544,11 @@ def main():
     #   二値手法の線は階段になり、混合画素の帯で対角線から大きく離れる。
     _tx = np.array([tcat[idx == i].mean() for i in range(len(lbls))])
     _ser = [("真値", _tx, _tx)]
-    for _nm in ("大津・緑(ゼロ点)", "ExG + 大津", "NDVI 線形換算", "アンミックス3(+影)"):
+    # 凡例は図の右上に固定で置かれるので、名前を詰めないと曲線を隠してしまう。
+    for _nm, _short in (("大津・緑(ゼロ点)", "ゼロ点"), ("ExG + 大津", "ExG"),
+                        ("NDVI 線形換算", "NDVI 線形"), ("アンミックス3(+影)", "アンミックス3")):
         _v = np.concatenate([m.ravel() for m, _ in allmaps[_nm]])
-        _ser.append((_nm, _tx, np.array([_v[idx == i].mean() for i in range(len(lbls))])))
+        _ser.append((_short, _tx, np.array([_v[idx == i].mean() for i in range(len(lbls))])))
     figs.save_plot("mixed_pixel_response", _ser,
                    xlabel="真値 f(画素に入った葉の面積率)", ylabel="手法の平均応答",
                    title="混合画素で分数のまま答えられるか",
