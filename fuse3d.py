@@ -57,6 +57,26 @@ def register_cross(src, src_kind, dst, dst_kind, method="fpfh", samples=15000, *
     """異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。
 
     例: register_cross((verts,faces),"mesh", scan_pts,"points") で CAD↔スキャン整合。返り値 (R, t)。
+
+    手順: ``to_points(src, src_kind, samples, **kw)`` と ``to_points(dst, dst_kind,
+    samples, **kw)`` で両者を点群にし、``method`` で登録器を選ぶ。
+    - ``"fpfh"``(既定): ``feat_fpfh.register_fpfh(ps, pd)`` を既定パラメータで呼ぶ
+      (FPFH 記述子 + RANSAC、初期姿勢不要、大回転・部分重なりに対応)。
+    - ``"icp"``: ``match3d.icp_point2point_3d(ps, pd, iters=50)``(最近傍対応 +
+      Kabsch)。初期姿勢の引数は渡さないので、``src`` が ``dst`` に近い(粗く
+      合っている)ことが前提。
+    - それ以外は ``ValueError``。
+
+    返り値: ``(R, t)`` — ``R`` は ``(3, 3)``、``t`` は ``(3,)`` の numpy 配列(torch tensor
+    は CPU の numpy に変換して返す)。慣習は ``dst ≈ src @ R.T + t``。
+
+    注意:
+    - ``**kw`` は **両方の** ``to_points`` に同じものが渡る(``"depth"`` の ``fx, fy, cx,
+      cy`` や ``"voxel"`` の ``iso`` を片側だけに与えることはできない)。
+    - ``samples`` は ``"mesh"`` のサンプル数(既定 15000)。点群の個数・形は検査しない。
+    - 座標系の違い(``to_points`` 参照: voxel は ``(z, y, x)`` index、depth はカメラ
+      ``(x, y, z)``)は吸収しない。
+    - 精度を締めるには fpfh の結果を初期値に ``icp_point2point_3d`` を直接呼ぶ。
     """
     ps = to_points(src, src_kind, samples, **kw)
     pd = to_points(dst, dst_kind, samples, **kw)
