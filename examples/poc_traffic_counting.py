@@ -211,27 +211,38 @@ def band_speeds(lab: np.ndarray, ids, dt: float = 1.0, x_ref: int = X_REF) -> di
     """
     feats = _LAB.blob_features(lab)
     ang = np.asarray(feats["angle"], np.float64)
-    cross, fit, from_angle, npts = [], [], [], []
+    w = lab.shape[1]
+    cross, fit, fit_in, from_angle, npts = [], [], [], [], []
     for i in ids:
         rr, cc = np.nonzero(lab == i)
         rows = np.unique(rr)
         at_ref = np.nonzero(lab[:, x_ref] == i)[0]
         cross.append(float(np.median(at_ref)) * dt if at_ref.size else np.nan)
-        if rows.size < 2:
-            fit.append(np.nan)
-            from_angle.append(np.nan)
-            npts.append(int(rows.size))
-            continue
-        cen = np.asarray([cc[rr == r].mean() for r in rows], np.float64)
-        fit.append(float(np.polyfit(rows.astype(np.float64), cen, 1)[0]) / dt)
         # angle は +col -> +row(画面で時計回り)。帯の向きは (Δrow, Δcol) = (1, V·dt)
         # なので tan(angle) = 1/(V·dt) -> V = cot(angle)/dt。
         a = float(ang[int(i) - 1])
         t = np.tan(a)
         from_angle.append((1.0 / t if abs(t) > 1e-9 else np.nan) / dt)
         npts.append(int(rows.size))
+        if rows.size < 2:
+            fit.append(np.nan)
+            fit_in.append(np.nan)
+            continue
+        cen, clean_r, clean_c = [], [], []
+        for r in rows:
+            xr = cc[rr == r]
+            cen.append(xr.mean())
+            # ★画面の左右で切れている行は重心が引っ張られる。落とした版も測る。
+            if xr.min() > 0 and xr.max() < w - 1:
+                clean_r.append(float(r))
+                clean_c.append(float(xr.mean()))
+        fit.append(float(np.polyfit(rows.astype(np.float64),
+                                    np.asarray(cen), 1)[0]) / dt)
+        fit_in.append(float(np.polyfit(clean_r, clean_c, 1)[0]) / dt
+                      if len(clean_r) >= 2 else np.nan)
     return {"cross": np.asarray(cross), "fit": np.asarray(fit),
-            "angle": np.asarray(from_angle), "rows": np.asarray(npts)}
+            "fit_inner": np.asarray(fit_in), "angle": np.asarray(from_angle),
+            "rows": np.asarray(npts)}
 
 
 def match_speeds(sp: dict, vehicles, tol: float = 12.0) -> dict:
