@@ -290,8 +290,8 @@ def main():
     print(f"  投影 -> 逆投影 の往復残差 最大 "
           f"{np.abs(xc - (obj @ good[0][0].T + good[0][1])).max():.2e} m")
     p = np.vstack(obs0)
-    print(f"  観測 {p.shape[0]} 点 / {N_VIEWS} 視点、画像内に収まる: "
-          f"{bool((p[:, 0].min() > 0) and (p[:, 0].max() < IMG_W) and (p[:, 1].min() > 0) and (p[:, 1].max() < IMG_H))}"
+    inside = bool(p.min() > 0 and p[:, 0].max() < IMG_W and p[:, 1].max() < IMG_H)
+    print(f"  観測 {p.shape[0]} 点 / {N_VIEWS} 視点、画像内に収まる: {inside}"
           f"、視野占有 {100 * frame_fill(obs0):.0f} %")
     # ★ 穴 (b): reprojection_error は歪みを知らない。真値を渡しても 0 にならない。
     re_true = fs.reprojection_error(obj, obs0[0], K_TRUE, *good[0])
