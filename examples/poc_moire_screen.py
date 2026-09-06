@@ -149,7 +149,8 @@ def amplitude_at(img: np.ndarray, fj: float, fi: float) -> float:
 
 def mura_amplitude(img: np.ndarray) -> float:
     """現場の測り方: 評価領域の (最大-最小)/2。純粋な余弦なら真値と一致する。"""
-    c = img[CROP]
+    b = MARGIN if img.shape[0] > 4 * MARGIN else 2
+    c = img[b:img.shape[0] - b, b:img.shape[1] - b]
     return 0.5 * float(c.max() - c.min())
 
 

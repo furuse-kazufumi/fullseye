@@ -123,26 +123,42 @@ def _clip_len(c, d, half_len, n_pix):
 
 
 def make_scene(n_fibers: int = N_FIB, mu_deg: float = MU_DEG, kappa: float = KAPPA,
-               seed: int = SEED, n_pix: int = N_PIX, bimodal: bool = False) -> dict:
+               seed: int = SEED, n_pix: int = N_PIX, bimodal: bool = False,
+               couple: bool = False, n_pool: int | None = None) -> dict:
     """線分としての繊維を撒いた画像と、その真値を返す。
 
     角度は **2 倍角の領域** でフォン・ミーゼス分布から引く(向きは 180 度
     周期なので、素朴に vonmises(μ, κ) を引くと 360 度周期の量になってしまう)。
     中心は視野の外にもはみ出させる —— 縁で切れる繊維が無いと 7 節が測れない。
+
+    ``n_pool`` を渡すと **その本数ぶんの繊維を作ってから先頭 n_fibers 本だけ
+    描く**。密度を振るときに「同じ繊維に足していく」ためで、これをしないと
+    本数を変えるたびに別の標本になり、密度の効果と標本のばらつきが混ざる。
+
+    ``couple`` は **長さと角度に相関を入れる**(長い繊維ほど揃う ——
+    射出成形の実際に近い)。3 節の処理群。
     """
     rng = np.random.default_rng(seed)
+    pool = int(n_pool or n_fibers)
+    length = rng.uniform(LEN_LO, LEN_HI, pool)
     if bimodal:
-        half = n_fibers // 2
+        half = pool // 2
         ang = np.concatenate([rng.vonmises(0.0, 40.0, half) / 2.0,
-                              rng.vonmises(np.pi, 40.0, n_fibers - half) / 2.0])
+                              rng.vonmises(np.pi, 40.0, pool - half) / 2.0])
     else:
         mu2 = np.mod(2.0 * np.radians(mu_deg) + np.pi, 2.0 * np.pi) - np.pi
-        ang = rng.vonmises(mu2, kappa, n_fibers) / 2.0
+        kap = kappa
+        if couple:
+            # 長さで κ を 0.6 -> 20 と変える(短い繊維はほぼ無秩序)
+            f = (length - LEN_LO) / (LEN_HI - LEN_LO)
+            kap = 0.6 + 19.4 * f ** 2
+        ang = rng.vonmises(mu2, kap, pool) / 2.0
     ang = np.mod(ang, np.pi)
-    length = rng.uniform(LEN_LO, LEN_HI, n_fibers)
     margin = 0.5 * LEN_HI
-    cx = rng.uniform(-margin, n_pix + margin, n_fibers)
-    cy = rng.uniform(-margin, n_pix + margin, n_fibers)
+    cx = rng.uniform(-margin, n_pix + margin, pool)
+    cy = rng.uniform(-margin, n_pix + margin, pool)
+    ang, length = ang[:n_fibers], length[:n_fibers]
+    cx, cy = cx[:n_fibers], cy[:n_fibers]
 
     img = np.zeros((n_pix, n_pix))
     yy, xx = np.mgrid[0:n_pix, 0:n_pix]
