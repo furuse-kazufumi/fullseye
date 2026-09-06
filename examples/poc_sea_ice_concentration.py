@@ -195,7 +195,7 @@ def section_sanity() -> None:
     m = make_truth(0.35, 3.0, 0)
     print("  真値の面積率 %.10f(狙い 0.35、%d / %d セル)" % (
         m.mean(), m.sum(), m.size))
-    assert abs(m.mean() - 0.35) < 1e-6
+    assert abs(m.mean() - 0.35) < 1.0 / m.size + 1e-12   # 丸めは 1 セル分だけ
 
     # 線形混合模型が厳密か —— 反射率は割合の 1 次結合そのもの
     sc = make_scene(0.35, 3.0, 0, noise=0.0)
