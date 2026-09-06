@@ -351,18 +351,27 @@ def section_taper() -> dict:
             bw[k] = float(np.max(2.0 * edt[sk_r[sel], sk_c[sel]] - 1.0)) * PX_MM
     got = np.isfinite(bw)
 
+    # 経路方向に 5 点(30 px)の移動平均。実務でも「区間の幅」を報告するので
+    # これが素の使い方に近い。**偏りが無い推定器は平均すれば散らばりが落ちる**。
+    ker = np.ones(5) / 5.0
+    est_s = np.convolve(np.pad(est, 2, mode="edge"), ker, mode="valid")
+
     rms_i = float(np.sqrt(np.mean((est - truth) ** 2)))
+    rms_s = float(np.sqrt(np.mean((est_s - truth) ** 2)))
     rms_b = float(np.sqrt(np.mean((bw[got] - truth[got]) ** 2))) if got.any() else np.nan
+    rms_ball = float(np.sqrt(np.mean(np.where(got, bw - truth, truth) ** 2)))
     print("  測点 %d 点(6 px 間隔)。真の幅 %.2f 〜 %.2f mm。"
           % (xs.size, truth.min(), truth.max()))
-    print("  積分法    : 全点で値が出る。RMS 誤差 %.4f mm" % rms_i)
+    print("  積分法    : 全点で値が出る。RMS 誤差 %.4f mm(5 点移動平均で %.4f mm)"
+          % (rms_i, rms_s))
     print("  2 値化    : %d/%d 点でしか値が出ない(残りはマスクが空)。"
           "出た点だけの RMS 誤差 %.4f mm" % (int(got.sum()), xs.size, rms_b))
-    print("  ★「出た点だけ」で数えると 2 値化は %.4f mm で、積分法(%.4f mm)と"
-          " 大差ないように見える。" % (rms_b, rms_i))
-    print("     未検出を真値との差として数え直すと %.4f mm —— "
-          "**測れなかったことを誤差 0 として消してはいけない**。"
-          % float(np.sqrt(np.mean(np.where(got, bw - truth, truth) ** 2))))
+    print("\n  ★「出た点だけ」で数えると 2 値化 %.4f mm < 積分法 %.4f mm で、"
+          "**2 値化のほうが良く見える**。" % (rms_b, rms_i))
+    print("     中身は違う。積分法の誤差は**散らばり**なので 5 点平均すると "
+          "%.4f mm まで落ちる(偏りが無いから)。" % rms_s)
+    print("     2 値化の未検出は平均しても消えない: 未検出を真値との差として"
+          "数え直すと %.4f mm。" % rms_ball)
 
     thr = 0.20
     below = truth < thr

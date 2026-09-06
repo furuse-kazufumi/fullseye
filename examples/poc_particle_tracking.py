@@ -696,9 +696,11 @@ def section7_spacetime(rows, cols, movie):
     got["2d"] = _score([detect(movie[t]) for t in range(movie.shape[0])],
                        "フレームごとの 2-D")
     for md in (1, 2, 3):
-        pk = np.asarray(fs.ledger.vol_local_maxima(movie, min_distance=md,
-                                                   threshold=THR))
-        loc = np.argwhere(pk)
+        # ★返りは**マスクではなく (N, 3) の (z, y, x) 座標**(2-D の
+        #   `local_max` / `sk_local_maxima` は画像を返すので族の中で不揃い。
+        #   10 節の穴 (g))。最初 `count_nonzero` で数えて桁を間違えた。
+        loc = np.asarray(fs.ledger.vol_local_maxima(movie, min_distance=md,
+                                                    threshold=THR))
         by_frame = [loc[loc[:, 0] == t][:, 1:].astype(float)
                     for t in range(movie.shape[0])]
         got[md] = _score(by_frame, "3-D 極大 min_dist=%d" % md)
