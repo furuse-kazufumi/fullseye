@@ -691,27 +691,34 @@ def section_jam() -> dict:
     moving = times < 30.0
     fg_move = float(mask[np.ix_(moving, [row], range(c0, c1))].mean())
 
+    oracle = foreground_oracle(vid)
     s = slit_count(kymograph(mask, row))
+    s_or = slit_count(kymograph(oracle, row))
     cc = per_frame_counts(mask)
     seen_last = int(_LAB.blob_label(mask[-1]).max())
+    seen_last_or = int(_LAB.blob_label(oracle[-1]).max())
     print("  近い車線に %d 台。40 フレーム目から減速し、%d 列の前後へ詰まる。"
           % (len(veh), X_REF))
     print("  真値: 計数列を跨いだ %d 台 / 最後のフレームで画面に居る %d 台。"
           % (passed, onscreen))
-    print("  スリットの帯(計数列と交わる)%d 台 —— **通過台数としては正しい**。"
-          % s["n_ref"])
-    print("\n  ★壊れているのは通過台数ではなく**滞留のほう**。")
+    print("\n   数え方                    通過台数   最後のフレームの塊")
+    print("   時間中央値の背景            %4d           %4d" % (s["n_ref"], seen_last))
+    print("   真の空き路面(対照群)      %4d           %4d"
+          % (s_or["n_ref"], seen_last_or))
+    print("   真値                        %4d           %4d" % (passed, onscreen))
+    print("\n  ★**壊れているのは数え方ではなく背景モデル**。対照群に替えるだけで"
+          "通過台数は %d -> %d(真値 %d)、最終フレームの塊は %d -> %d に戻る。"
+          % (s["n_ref"], s_or["n_ref"], passed, seen_last, seen_last_or))
     print("     停止した先頭車の画素が前景に残っている割合: 走行中 %.2f -> "
-          "停止後 %.2f。" % (fg_move, fg_rate))
-    print("     最後のフレームで検出できた塊は %d(真の画面内 %d)。"
-          % (seen_last, onscreen))
-    print("     時間中央値の背景は**停止した車を背景として学習する**ので、"
-          "検出器を替えても直らない。")
+          "停止後 %.2f。時間中央値は**停止した車を背景として学習する**。"
+          % (fg_move, fg_rate))
     print("  ★渋滞では L/V -> ∞ なので 5 節・6 節の破綻条件は**遠ざかる**。"
-          "破綻の場所が前段(背景モデル)へ移っただけで、渋滞に強いのではない。")
+          "破綻の場所が前段へ移っただけで、渋滞に強くなったのではない ——"
+          "検出器を取り替えても 1 台も戻らない。")
     return {"fg_move": fg_move, "fg_stop": fg_rate, "n_ref": s["n_ref"],
-            "passed": passed, "onscreen": onscreen, "seen_last": seen_last,
-            "cc_max": int(cc.max())}
+            "n_ref_oracle": s_or["n_ref"], "passed": passed,
+            "onscreen": onscreen, "seen_last": seen_last,
+            "seen_last_oracle": seen_last_or, "cc_max": int(cc.max())}
 
 
 # --------------------------------------------------------------------------- #

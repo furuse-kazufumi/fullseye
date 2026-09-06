@@ -445,7 +445,7 @@ def _smooth(y, w: int, kind: str):
 
 
 def section7_figures(frames, out, cums, dirs, tru, rate_rows, rate_true,
-                     direct_res):
+                     direct_res, sweep):
     if not figs.enabled():
         return
     noisy = add_noise(frames, NOISE, 1)
@@ -589,11 +589,12 @@ def main():
     print()
     frames = section1_check()
     section2_zero_point(frames)
-    out, cums, dirs, tru = section3_crossover(frames)
+    out, cums, dirs, tru, sweep = section3_crossover(frames)
     rec = section4_origin(frames)
     direct_res, _ = section5_direct_breaks(frames)
     rate_rows, rate_true = section6_rate(frames, cums, dirs, tru)
-    section7_figures(frames, out, cums, dirs, tru, rate_rows, rate_true, direct_res)
+    section7_figures(frames, out, cums, dirs, tru, rate_rows, rate_true,
+                     direct_res, sweep)
     section8_findings(out, rec, direct_res, tru, rate_rows)
     section9_tool_gaps()
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
