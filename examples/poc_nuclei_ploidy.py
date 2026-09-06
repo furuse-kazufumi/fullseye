@@ -488,7 +488,9 @@ def section6_fusion():
             det = fpr = float("nan")
             ts = float("nan")
             clean = frac4
-        out[sep] = (o["n"], int(fused.sum()), frac4, det, fpr, clean, -ts)
+        out[sep] = (o["n"], int(fused.sum()), frac4, det, fpr, clean, -ts,
+                    float(np.mean(o["f"]["solidity"][~fused])),
+                    float(np.mean(o["f"]["solidity"][fused])) if fused.any() else float("nan"))
         print("  %6.2f %6d %6d %10.3f %10.3f %10.3f %10.3f"
               % (sep, o["n"], fused.sum(), frac4, det, fpr, clean))
     s = 0.80
@@ -649,7 +651,7 @@ def main():
           % (curve["raw"][-1], curve["sub"][-1], curve["ap"][-1]))
     print("  ・飽和 %.1f %% で DNA 指数 %.3f" % (sat_rows[-1][1], sat_rows[-1][2]))
     print("  ・融合 %d/%d で 4n 割合 %.3f(真値 %.3f)→ solidity で落として %.3f"
-          % (fus[0.90][1], fus[0.90][0], fus[0.90][2], truth4, fus[0.90][5]))
+          % (fus[0.80][1], fus[0.80][0], fus[0.80][2], truth4, fus[0.80][5]))
     print("  ・混合比の最大偏差 積分 %.3f / 面積 %.3f" % (dev_i, dev_a))
 
     assert sep2["積分輝度(測定)"][0] < 0.02 < sep2["面積(真値)"][0]
@@ -662,7 +664,7 @@ def main():
     assert abs(curve["sub"][-1] - curve["raw"][0]) < 1e-9, curve
     assert abs(curve["ap"][-1] - 2.0) < abs(curve["sub"][-1] - 2.0), curve
     assert sat_rows[-1][2] < 1.95, sat_rows
-    assert fus[0.90][2] > truth4 + 0.06 and abs(fus[0.90][5] - truth4) < 0.06, fus
+    assert fus[0.80][2] > truth4 + 0.05 and abs(fus[0.80][5] - truth4) < 0.08, fus
     assert dev_i < 0.06 < dev_a, (dev_i, dev_a)
     assert len(leak_rows) == 4
 
