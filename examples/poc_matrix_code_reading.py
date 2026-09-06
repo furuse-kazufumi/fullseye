@@ -544,39 +544,51 @@ def main():
     print("  exp(-2 pi^2 sigma^2 f^2) なので、そこの明暗比が 50 % になるのは")
     print(f"  sigma/m = {math.sqrt(4 * math.log(2) / (2 * math.pi ** 2)):.3f}、"
           f"10 % は {math.sqrt(4 * math.log(10) / (2 * math.pi ** 2)):.3f}。")
-    print(f"  {'sigma/m':>9}{'sigma [px]':>12}{'BER 既知':>10}{'BER 検出':>10}"
-          f"{'BER 既知 (雑音 0.02)':>21}{'検出':>8}")
-    for br in (0.0, 0.15, 0.30, 0.40, 0.50, 0.60, 0.75, 1.00):
+    print(f"  {'sigma/m':>9}{'sigma [px]':>12}{'BER 既知':>10}"
+          f"{'BER 既知 (雑音 0.02)':>21}{'BER 検出 (雑音 0.02)':>21}")
+    for br in (0.0, 0.15, 0.30, 0.40, 0.45, 0.50, 0.60, 0.75, 1.00):
         im, H = capture(bits, module_px=8, blur_ratio=br)
         bk, _ = read(im, n, 8, H_true=H)
-        bd, why = detect(im, 8)
         im2, H2 = capture(bits, module_px=8, blur_ratio=br, noise=0.02, seed=7)
         bk2, _ = read(im2, n, 8, H_true=H2)
-        bd2, why2 = read(im2, n, 8)
-        print(f"  {br:>9.2f}{br * 8:>12.1f}{ber(bits, bk):>10.4f}{ber(bits, bd):>10.4f}"
-              f"{ber(bits, bk2):>21.4f}{('ok' if bd2 is not None else 'x'):>8}")
-    print("  雑音が無ければ標本化は 0.6 まで持つ(中心画素の値がまだ自分のビット側に")
-    print("  ある)。雑音 0.02 を入れると 0.5 付近で崩れ、予想の 0.375〜0.68 に入る。")
+        bd2, why2 = detect(im2, 8)
+        det = f"{ber(bits, bd2):.4f}" if bd2 is not None else f"読めず({why2})"
+        print(f"  {br:>9.2f}{br * 8:>12.1f}{ber(bits, bk):>10.4f}"
+              f"{ber(bits, bk2):>21.4f}{det:>21}")
+    print("  崖は sigma/m = 0.4 と 0.5 の間(0.40 で BER 0.003、0.50 で 0.066、")
+    print("  0.60 で 0.29)。予想した帯 0.375〜0.68 のちょうど下端に来た。")
+    print("  雑音 0.02 の有無で崖はほとんど動かない —— 効いているのはコントラストの")
+    print("  低下ではなく、**隣のモジュールが中心画素に染み出すこと**の方。")
+    print("  定位はもう一段手前で落ちる: 標本化がまだ BER 0.07 の 0.50 では読めるが、")
+    print("  0.60 では 1:1:3:1:1 の比が崩れて位置検出パターンが見つからない。")
 
     print("\n=== 4. 透視ひずみ —— 傾けると横のモジュールが縮む ===")
     print(f"  {'傾き [度]':>10}{'横の縮み':>10}{'実効モジュール [px]':>20}"
-          f"{'BER 既知':>10}{'BER 検出':>10}")
-    for tilt in (0.0, 15.0, 30.0, 45.0, 55.0, 65.0, 72.0):
+          f"{'BER 既知':>10}{'BER 検出':>26}")
+    for tilt in (0.0, 30.0, 45.0, 55.0, 65.0, 72.0, 78.0, 80.0, 84.0):
         im, H = capture(bits, module_px=8, tilt_deg=tilt, noise=0.01, seed=3)
         bk, _ = read(im, n, 8, H_true=H)
         bd, why = detect(im, 8)
         q = _apply_h(H, [[0, 0], [n, 0], [n, n], [0, n]])
         wide = 0.5 * (np.linalg.norm(q[1] - q[0]) + np.linalg.norm(q[2] - q[3])) / n
+        det = f"{ber(bits, bd):.4f}" if bd is not None else f"読めず({why})"
         print(f"  {tilt:>10.0f}{math.cos(math.radians(tilt)):>10.3f}{wide:>20.2f}"
-              f"{ber(bits, bk):>10.4f}"
-              f"{(f'{ber(bits, bd):.4f}' if bd is not None else why):>10}")
-    print("  幾何が既知なら 72 度(横 2.6 px)でも読める。崩れるのは自力検出の方で、")
-    print("  1:1:3:1:1 の走査が斜めに切ると比が崩れるのが先に効く。")
+              f"{ber(bits, bk):>10.4f}{det:>26}")
+    print("  自力検出は 72 度(横 2.4 px)まで BER 0 で通り、78 度で落ちる。")
+    print("  幾何が既知なら 80 度まで持つので、限界を決めているのは標本化ではなく定位。")
+    print("  ★ ここは実装を 2 回書き直して初めて出た数字で、間違え方が 2 つあった:")
+    print("     (a) 3 個の中心の三角形に**二等辺**を要求すると 40 度で全滅する ——")
+    print("     傾けると上辺だけが cos で縮むので、二等辺なのは正対のときだけ。")
+    print("     直角だけを条件にし、当たりの多い塊を優先すると 72 度まで伸びた。")
+    print("     (b) 中心 3 点では対応が 3 組しか無く 8 自由度に足りない。位置検出")
+    print("     パターンの**外側 4 隅**を取って 12 組にしたら 45 度以上が通った。")
 
     print("\n=== 5. 照明ムラ —— 大域と局所はどこで分かれるか ===")
     modes = ("otsu", "adaptive_gauss", "sauvola", "illuminate+otsu", "bernsen(3mod)")
-    print("  1 モジュール 8 px。窓の大きさ: adaptive_gauss = sigma 4 px(上限)、")
-    print("  sauvola = 15 px(上限)、illuminate = sigma 15 px、bernsen = 24 px。")
+    print("  奥へ向かって明るさが 1.0 -> 1-ムラ幅 に落ちる乗算ムラ。幾何は既知。")
+    print("  窓: adaptive_gauss = sigma 4 px(op の上限)、sauvola = 15 px(上限)、")
+    print("  illuminate = sigma 15 px(上限)、bernsen = 3 モジュール(手書き)。")
+    print("  (a) 1 モジュール 8 px でムラ幅を振る")
     print(f"  {'ムラ幅':>8}" + "".join(f"{m:>17}" for m in modes))
     for illum in (0.0, 0.2, 0.4, 0.6, 0.8, 0.95):
         im, H = capture(bits, module_px=8, illum=illum, noise=0.01, seed=5)
@@ -585,10 +597,24 @@ def main():
             b, _ = read(im, n, 8, mode=m, H_true=H)
             row += f"{ber(bits, b):>17.4f}"
         print(row)
-    print("  大域 otsu はムラ 0.6 で崩れる(暗い側の紙が明るい側の墨より暗くなる)。")
-    print("  ★ 窓が 1 モジュール(8 px)より小さい 2 族は**ムラ 0 でも読めない** ——")
-    print("     局所平均が自分自身とほぼ同じになり、しきい値が信号を追いかけるため。")
-    print("     読めるのは窓が数モジュールある側だけ。これが道具の穴 A。")
+    print("  8 px なら局所しきい値の 3 つはムラ 0.95 でも耐える。大域 otsu は 0.8 から")
+    print("  崩れ始める(奥の紙が手前の墨より暗くなり、1 本の線では分けられない)。")
+    print("  (b) ムラ幅 0.9 に固定して**モジュール寸法**を振る ★ここが道具の穴 A")
+    print(f"  {'m [px]':>8}" + "".join(f"{m:>17}" for m in modes))
+    for m in (4, 6, 8, 12, 16, 24):
+        im, H = capture(bits, module_px=m, illum=0.9, noise=0.01, seed=5)
+        row = f"  {m:>8d}"
+        for md in modes:
+            b, _ = read(im, n, m, mode=md, H_true=H)
+            row += f"{ber(bits, b):>17.4f}"
+        print(row)
+    print("  ★ 窓が画素で固定されている 2 つは、モジュールが窓より大きくなった所で")
+    print("     崩れる: adaptive_gauss(sigma 4 px)は m=16 で BER 0.14、m=24 で 0.55。")
+    print("     sauvola(窓 15 px)は m=16 で 0.20。窓 = 3 モジュールの bernsen は")
+    print("     どの寸法でも 0。**局所しきい値の窓はモジュール寸法で決まる量**なのに、")
+    print("     op のつまみは [0,1] 正規化で画素の上限が固定されているため届かない。")
+    print("     つまり「照明ムラに強い op」ではなく「モジュールが 12 px 以下のときだけ")
+    print("     照明ムラに強い op」だった。撮像の解像度を上げると静かに壊れる。")
 
     print("\n=== 6. 雑音 ===")
     print(f"  {'sigma':>8}{'SN':>8}{'BER 既知':>10}{'BER 検出':>10}{'検出の可否':>12}")
@@ -606,38 +632,54 @@ def main():
     print("  sigma 0.3(SN 3.3)で BER が数 % に乗る。定位の方が先には壊れない。")
 
     print("\n=== 7. 部分遮蔽 —— どこを隠したかで壊れ方が違う ===")
+    print("  白い光沢で一辺 k モジュールの正方形を覆う。幾何既知の BER と自力検出の可否。")
     print(f"  {'一辺 [mod]':>11}{'覆う割合':>10}{'中央 BER':>10}{'中央 検出':>11}"
-          f"{'隅 BER':>9}{'隅 検出':>11}")
-    for k in (0, 2, 4, 6, 8, 10):
+          f"{'隅 BER':>9}{'隅 検出':>20}")
+    for k in (0, 1, 2, 4, 6, 8, 10):
         rows = []
         for at in ("center", "finder"):
             im, H = capture(bits, module_px=8, occl_mod=k, occl_at=at, noise=0.01, seed=9)
             bk, _ = read(im, n, 8, H_true=H)
             bd, why = detect(im, 8)
-            rows.append((ber(bits, bk), "ok" if bd is not None else why[:9]))
+            rows.append((ber(bits, bk), "ok" if bd is not None else why))
         print(f"  {k:>11d}{k * k / (n * n):>10.3f}{rows[0][0]:>10.4f}{rows[0][1]:>11}"
-              f"{rows[1][0]:>9.4f}{rows[1][1]:>11}")
-    print("  中央を隠すと誤りは覆った暗モジュールぶんだけ(遮蔽 = 白なので約半分)で、")
-    print("  定位は生きる。位置検出パターンを隠すと**一辺 4 モジュールで定位が死ぬ**")
-    print("  —— 誤り訂正があっても幾何が出ないので符号全体が読めない。")
+              f"{rows[1][0]:>9.4f}{rows[1][1]:>20}")
+    print("  中央(データ部)を覆っても定位は生きたまま、誤りは覆った暗モジュール分")
+    print("  だけに留まる —— 一辺 10 モジュール(全体の 16 %)で BER 0.10。")
+    print("  位置検出パターンの中心は**一辺 2 モジュールで致命的**。覆う面積は全体の")
+    print("  0.6 % しかないのに符号ごと読めなくなる。誤り訂正はビットを救う仕組みで、")
+    print("  幾何を救う仕組みではない。汚れやすい面に貼るなら、まず 3 隅を守ること。")
 
     print("\n=== 8. モジュール寸法 —— 何画素あれば読めるか(現場で一番効く数字)===")
-    print("  ぼけ sigma/m = 0.25、雑音 0.02。3 種の種で平均。")
-    print(f"  {'m [px]':>8}{'画布 [px]':>11}{'BER 既知':>10}{'BER 検出':>10}"
-          f"{'定位成功':>10}{'復号 [ms]':>11}")
-    for m in (2, 3, 4, 5, 6, 8, 12):
-        es, ed, okc, ts = [], [], 0, []
-        for s in (21, 22, 23):
-            im, H = capture(bits, module_px=m, blur_ratio=0.25, noise=0.02, seed=s)
-            bk, _ = read(im, n, m, H_true=H)
-            t0 = time.perf_counter()
-            bd, _ = detect(im, m)
-            ts.append(1e3 * (time.perf_counter() - t0))
-            es.append(ber(bits, bk)); ed.append(ber(bits, bd)); okc += bd is not None
-        print(f"  {m:>8d}{(n + 2 * QUIET) * m:>11d}{np.mean(es):>10.4f}"
-              f"{np.mean(ed):>10.4f}{okc:>7}/3{np.mean(ts):>11.1f}")
-    print("  1 モジュール 4 px で自力検出が通り、5 px 以上で BER 0。3 px 以下は")
-    print("  1:1:3:1:1 の細い方の run が 3 px しか無く、ぼけと雑音で比が崩れる。")
+    print("  ゆるい条件 = ぼけ sigma/m 0.25 + 雑音 0.02、きつい条件 = 0.40 + 0.05。")
+    print("  どちらも 3 種の種で平均。成功は自力検出が構造の自己採点を通った回数。")
+    print(f"  {'m [px]':>8}{'画布 [px]':>11}{'ゆるい 既知':>13}{'ゆるい 検出':>13}"
+          f"{'成功':>7}{'きつい 既知':>13}{'きつい 検出':>13}{'成功':>7}{'復号 [ms]':>11}")
+    for m in (1, 2, 3, 4, 5, 6, 8, 12):
+        out, ts = [], []
+        for br, nz in ((0.25, 0.02), (0.40, 0.05)):
+            es, ed, okc = [], [], 0
+            for sd in (21, 22, 23):
+                im, H = capture(bits, module_px=m, blur_ratio=br, noise=nz, seed=sd)
+                bk, _ = read(im, n, m, H_true=H)
+                t0 = time.perf_counter()
+                bd, _ = detect(im, m)
+                ts.append(1e3 * (time.perf_counter() - t0))
+                es.append(ber(bits, bk))
+                if bd is not None:
+                    ed.append(ber(bits, bd)); okc += 1
+            out.append((float(np.mean(es)), float(np.mean(ed)) if ed else float("nan"), okc))
+        ed0 = f"{out[0][1]:.4f}" if out[0][2] else "読めず"
+        ed1 = f"{out[1][1]:.4f}" if out[1][2] else "読めず"
+        print(f"  {m:>8d}{(n + 2 * QUIET) * m:>11d}{out[0][0]:>13.4f}{ed0:>13}"
+              f"{out[0][2]:>5}/3{out[1][0]:>13.4f}{ed1:>13}{out[1][2]:>5}/3"
+              f"{np.mean(ts):>11.1f}")
+    print("  **1 モジュール 2 px あれば自力で読める**。1 px では位置検出パターンの")
+    print("  細い run が 1 px しか無く 1:1:3:1:1 の比を判定できないので定位が立たない")
+    print("  (幾何を渡せば 1 px でもほぼ読めるので、限界は標本化ではなく定位にある)。")
+    print("  m=2 の「既知」がきつい条件だけ悪いのは合成側の都合で、モジュール中心が")
+    print("  ちょうど画素境界に乗るため —— 偶数寸法では標本点を半画素ずらすとよい。")
+    print("  実務の目安は、ぼけと雑音の余裕を見て **4〜6 px/モジュール**。")
 
     print("\n=== 9. Harris の corner_response は符号の定位に使えるか(使えない)===")
     im, H = capture(bits, module_px=8, noise=0.01, seed=31)
