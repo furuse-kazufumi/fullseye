@@ -479,18 +479,20 @@ def section_crossover() -> dict:
           "(曲がり %.2f)。予想は半分外れ。" % (e1_l[-1], e2_l[-1], curves[-1]))
 
     figs.save_plot("crossover",
-                   [("積分法 RMS", sigmas, int_rms),
-                    ("積分法 偏り", sigmas, int_bias),
-                    ("2 値化 RMS(返せた回のみ)", sigmas,
+                   [("積分法 点ごと RMS", sigmas, int_rms),
+                    ("積分法 経路平均 RMS", sigmas, int_mean_rms),
+                    ("2 値化 点ごと RMS", sigmas,
                      [b if np.isfinite(b) else 0.0 for b in bin_rms]),
-                    ("真値 0", sigmas, [0.0] * len(sigmas))],
-                   xlabel="ざらつき σ", ylabel="幅の誤差 [mm]",
+                    ("2 値化 経路平均 RMS", sigmas,
+                     [b if np.isfinite(b) else 0.0 for b in bin_mean_rms])],
+                   xlabel="ざらつき σ", ylabel="幅の誤差 RMS [mm]",
                    title="ざらつきに対する壊れ方(幅 0.60 mm)",
-                   caption="積分法は偏りがほぼ 0 のまま散らばりだけが増える。"
-                           "2 値化は散らばらないが、σ が上がると丸ごと"
-                           "未検出になる(その回は RMS に入らない)。")
+                   caption="点ごとでは 2 値化が下に見えるが、経路平均に直すと"
+                           "積分法の散らばりは消え、2 値化の偏りは残る。"
+                           "同じ場面・同じ画像から出した 4 本。")
     return {"sigmas": sigmas, "int_rms": int_rms, "bin_rms": bin_rms,
-            "curves": curves, "e1": e1_l, "e2": e2_l}
+            "int_mean_rms": int_mean_rms, "bin_mean_rms": bin_mean_rms,
+            "bin_bias": bin_bias, "curves": curves, "e1": e1_l, "e2": e2_l}
 
 
 # --------------------------------------------------------------------------- #
