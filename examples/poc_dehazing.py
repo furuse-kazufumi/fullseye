@@ -445,6 +445,22 @@ def main():
     print("     (空は 3 チャネルとも明るい)ので、omega=0.95 で頭打ちになった値しか出ない。")
     print("     近景では逆にバイアスが負 = 過小評価。**符号が帯で反転する**ので、")
     print("     全体の平均バイアスを見ても壊れ方が分からない。")
+    figs.save_grid("transmission",
+                   [t_true, t_dcp, t_dcp - t_true],
+                   ["真の透過率 t", "暗チャネルの推定", "推定 - 真値"],
+                   title="透過率の誤差は帯で符号が反転する", ncols=3,
+                   signed=[False, False, True],
+                   caption="空では過大評価(明るい側)、近景では過小評価(暗い側)。"
+                           "全体の平均バイアスでは打ち消し合って見えない。")
+    figs.save_table("bands",
+                    ["帯", "面積率 %", "真の t", "推定 t", "バイアス", "利得 dB"],
+                    [["%s" % name, "%.1f" % (100 * m.mean()),
+                      "%.4f" % np.mean(t_true[m]), "%.4f" % np.mean(t_dcp[m]),
+                      "%+.4f" % np.mean(t_dcp[m] - t_true[m]), "%+.2f" % g]
+                     for (name, m), g in zip(masks, gains)],
+                    title="1 つの数字にまとめない —— 帯ごとの内訳",
+                    caption="全体 %+.2f dB の正体。近景は劣化していて、"
+                            "その劣化が中景・遠景の改善に埋もれている。" % total_gain)
 
     print("\n=== 5. 崖 (a) 霞の濃さ —— beta を薄いから濃いまで振る ===")
     print("  t の誤差は 2 通りで出す。絶対誤差 |t̂-t| は t 自体が小さくなると勝手に")
