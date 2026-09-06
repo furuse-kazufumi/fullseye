@@ -230,9 +230,8 @@ def main():
         e0n = rmse(null_no_separation(f), diffuse)
         ratio = e0n / e if e > 0 else float("inf")
         ang_rows[th] = (dop, e, pred, e0n, ratio)
-        rt = f"{ratio:>12.2f}" if np.isfinite(ratio) else f"{'∞':>12}"
         print(f"  {th:>8.2f}{dop:>12.6f}{e:>14.3e}{pred:>14.3e}"
-              f"{abs(e - pred):>10.1e}{e0n:>12.3e}{rt}")
+              f"{abs(e - pred):>10.1e}{e0n:>12.3e}{ratio:>12.3g}")
     print("  → 誤差は閉形式 R_p * E に厳密一致(差は 1e-17 台)。理論どおり")
     print("     ブリュースター角で最良、そこから離れるほど悪い。ただし **20 度では")
     print("     ゼロ点の 1.2 倍しか勝たない** —— 偏光板を付ける価値が無い角度がある。")
