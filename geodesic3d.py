@@ -75,7 +75,22 @@ def _knn_csr(points: np.ndarray, k: int) -> csr_matrix:
 
 
 def geodesic_distances(points: np.ndarray, source: int, k: int = 8) -> np.ndarray:
-    """source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。"""
+    """source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。
+
+    ``knn_graph(points, k)`` で作った k 近傍グラフ(辺の重み = 点間の Euclid 距離 = 弦長)を
+    ``directed=False`` で無向化し、``scipy.sparse.csgraph.dijkstra`` で単一始点最短路を解く。
+    ``d[i]`` は source から点 i までのグラフ上の経路長で ``d[source] = 0``、source と繋がっていない
+    連結成分の点は ``inf``。単位は座標の単位そのまま。
+
+    - ``points``: (N,3) の点群(float64 に変換)。
+    - ``source``: 始点の添字(0..N-1 の整数。範囲外は scipy 側で例外)。
+    - ``k``: 近傍数(既定 8)。小さいとグラフが分断されて ``inf`` が増え、大きいと離れた面どうしを
+      直結する「近道」が生まれて曲面に沿わない距離になる(薄い板の表裏、折り返した面など)。
+
+    精度: 辺が弦長なので弧をわずかに過小評価する一方、経路のジグザグが過大評価を生む(モジュール
+    docstring の Bernstein らの挟み込み評価を参照)。三角メッシュがあるなら近傍数に依存しない
+    ``geodesic_mesh`` を使う。この距離で均等に間引くには ``farthest_point_sampling``。
+    """
     g = _knn_csr(points, k)
     d = dijkstra(g, directed=False, indices=int(source))
     return np.asarray(d, dtype=float)
