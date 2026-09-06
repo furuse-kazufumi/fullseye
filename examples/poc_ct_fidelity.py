@@ -224,8 +224,8 @@ def main() -> bool:
     print(f"     零点 B は投影数にほとんど反応しない: "
           f"{best['views']} 本 {best['bp']:.4f} -> {worst['views']} 本 {worst['bp']:.4f} "
           f"({worst['bp'] / best['bp'] - 1:+.1%})。")
-    print(f"     1/|r| のぼけが支配的で、ストリークはその下に埋もれる —— "
-          f"**零点 B は「投影が足りない」に盲目**。")
+    print("     1/|r| のぼけが支配的で、ストリークはその下に埋もれる —— "
+          "**零点 B は「投影が足りない」に盲目**。")
     print(f"     なお再スケール前の零点 B は RMSE {best['bp_raw']:.1f}"
           f"(ゲイン {best['gain']:.2e})。絶対スケールが無いので、")
     print("     生の数字で比べるのは手法ではなく単位を測ることになる。")
@@ -325,7 +325,7 @@ def main() -> bool:
     checks.append(("投影を減らすと FBP 誤差が単調に増える", monotone,
                    " < ".join(f"{r['fbp']:.4f}" for r in rows_out)))
 
-    checks.append((f"180 本では FBP が零点 B を 3 倍以上上回る",
+    checks.append(("180 本では FBP が零点 B を 3 倍以上上回る",
                    best["bp"] / best["fbp"] > 3.0, f"{best['bp'] / best['fbp']:.2f}x"))
 
     checks.append(("12 本では FBP が零点 B に負ける(逆転が起きる)",
@@ -353,8 +353,8 @@ def main() -> bool:
         assert passed
 
     print()
-    print(f"PASS: tomography 6 op(projection_angles / ellipse_phantom / ellipse_sinogram / "
-          f"radon_transform / filtered_backprojection / backproject_sinogram)を実行。")
+    print("PASS: tomography 6 op(projection_angles / ellipse_phantom / ellipse_sinogram / "
+          "radon_transform / filtered_backprojection / backproject_sinogram)を実行。")
     print(f"      投影 180 -> 12 本で FBP の RMSE は {best['fbp']:.4f} -> {worst['fbp']:.4f}、"
           f"ストリークは {worst['streak_fbp'] / best['streak_fbp']:.0f} 倍。")
     print(f"      零点との比較の結論: 180 本では {best['bp'] / best['fbp']:.1f} 倍勝ち、"

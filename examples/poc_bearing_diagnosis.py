@@ -351,11 +351,13 @@ def main():
     print("     周波数を当てる話と検出する話は別で、前者では包絡線が明確に上。")
     print("   * 純雑音が大域顕著さ 30 超を出したこと(§3)。閾値は null から決める、を")
     print("     手続きにしていなければ、この PoC 自体が偽陽性を出していた。")
+    print("   * 「帯域を外せば必ず負ける」でもなかった(§6b の上 2 段)。衝撃は広帯域なので")
+    print("     良 SNR では**どの帯域で復調しても**欠陥周波数が出る。負けるのは雑音が")
+    print("     乗ってから —— 帯域選択の効きは SNR に依存し、単独では順位が決まらない。")
 
     elapsed = time.perf_counter() - t_start
     print("\n所要 %.2f s(assert していない = 環境依存の数字)。"
-          "記録 %d 本 x %.0f サンプル。" % (elapsed, 20 + 3 + 7 * 10 + 12 + 2,
-                                            DURATION * RATE))
+          "1 記録 %.0f サンプル / %.1f s。" % (elapsed, DURATION * RATE, DURATION))
     print("PASS: 欠陥周波数の閉形式に 1 bin 以内で戻り、検出限界は"
           " 生 %+.1f dB -> 包絡線 %+.1f dB" % (raw_limit, env_limit))
     return True
