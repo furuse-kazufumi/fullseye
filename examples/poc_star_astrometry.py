@@ -616,6 +616,75 @@ def main():
     assert mask_fit[16.0] < 0.1 * g[16.0]["背景引き重心"][0]      # 当てはめは効く
     timing["3 飽和"] = time.perf_counter() - t0
 
+    # --------------------------------------------------------------- #
+    # 4) 二重星 —— 1 個と誤認する境界と、位置が真ん中に寄る量            #
+    # --------------------------------------------------------------- #
+    t0 = time.perf_counter()
+    fw = 3.2
+    sig = fw * SIGMA_PER_FWHM
+    seps_fwhm = (0.5, 0.75, 0.85, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0)
+    ang = np.deg2rad(30.0)
+    print(f"\n【4】二重星 —— 分離を PSF の 0.5〜3.0 倍で振る(FWHM {fw} px、"
+          f"σ = {sig:.3f} px、位置角 30 度)。総フラックス 60000 e-、"
+          f"雑音あり x 8 実現。検出は ``star_detect``"
+          f"(threshold 5σ, min_separation 2)")
+    print(f"   理論の目安: 等光度なら 2 つのガウシアンの和が**二峰になる**のは "
+          f"分離 > 2σ = {2 * sig:.2f} px = {2 * sig / fw:.2f} FWHM。"
+          f"それ未満は原理的に 1 つの山であって、検出器の出来の問題ではない")
+    print("     " + pad("分離", 16) + pad("等光度 1:1", 34)
+          + pad("不等光度 4:1", 34))
+    print("     " + pad("[FWHM]  [px]", 16)
+          + pad("2 個検出  1 個時の|e|  光心まで", 34)
+          + pad("2 個検出  1 個時の|e|  光心まで", 34))
+    dbl = {}
+    for sf in seps_fwhm:
+        sep = sf * fw
+        cells = []
+        for f1, f2 in ((30000.0, 30000.0), (48000.0, 12000.0)):
+            n2, e_prim, e_phot = 0, [], []
+            dr, dc = sep * np.cos(ang) / 2, sep * np.sin(ang) / 2
+            r1, c1 = 32.0 - dr, 32.0 - dc
+            r2, c2 = 32.0 + dr, 32.0 + dc
+            pr = (f1 * r1 + f2 * r2) / (f1 + f2)       # 光心(フラックス重心)
+            pc = (f1 * c1 + f2 * c2) / (f1 + f2)
+            for k in range(8):
+                img = render((64, 64), [r1, r2], [c1, c2], [f1, f2], fw, seed=3000 + k)
+                kp = A.star_detect(img, threshold_sigma=5.0, min_separation=2,
+                                   max_stars=10)
+                near = kp[(np.abs(kp[:, 0] - 32) < 8) & (np.abs(kp[:, 1] - 32) < 8)]
+                if len(near) >= 2:
+                    n2 += 1
+                elif len(near) == 1:
+                    got = m_centroid_bg(img, near, box=11)[0]
+                    e_prim.append(np.hypot(got[0] - r1, got[1] - c1))
+                    e_phot.append(np.hypot(got[0] - pr, got[1] - pc))
+            cells.append((n2 / 8.0,
+                          float(np.mean(e_prim)) if e_prim else np.nan,
+                          float(np.mean(e_phot)) if e_phot else np.nan))
+        dbl[sf] = cells
+        print(f"     {sf:5.2f}  {sep:6.2f}    " + "  ".join(
+            f"{c[0]:6.0%} {c[1]:11.3f} {c[2]:9.4f}" for c in cells)
+            + "  ")
+    thr_eq = next((sf for sf in seps_fwhm if dbl[sf][0][0] >= 0.5), None)
+    thr_un = next((sf for sf in seps_fwhm if dbl[sf][1][0] >= 0.5), None)
+    print(f"   → 2 個に割れ始める境界(半数以上で 2 検出): 等光度 "
+          f"**{thr_eq:.2f} FWHM**(理論の二峰条件 {2 * sig / fw:.2f} FWHM とほぼ一致)、"
+          f"不等光度 4:1 は **{thr_un:.2f} FWHM** —— 暗い方が明るい方の翼に"
+          f"埋もれるので {thr_un / thr_eq:.1f} 倍遠くまで離れないと割れない")
+    print(f"   1 個と誤認したとき、返る位置は**主星ではなく光心**: 分離 "
+          f"{0.75:.2f} FWHM 等光度で 主星まで {dbl[0.75][0][1]:.3f} px に対し "
+          f"光心まで {dbl[0.75][0][2]:.4f} px。不等光度 4:1・分離 1.0 FWHM でも "
+          f"主星まで {dbl[1.0][1][1]:.3f} px / 光心まで {dbl[1.0][1][2]:.4f} px")
+    print(f"   ★ 寄る量は幾何で決まる: 光心は主星から 分離 x f2/(f1+f2)。"
+          f"1:1 なら分離の 1/2、4:1 なら 1/5 —— 分離 1.0 FWHM (= {fw:.1f} px) の"
+          f"4:1 で {fw * 0.2:.2f} px = {PLATE_ARCSEC_PX * fw * 0.2:.2f} 秒角の"
+          f"**偏り**。星表に「二重星」と書いていなければ、この量が"
+          f"そのままプレート解の系統誤差になる")
+    assert dbl[0.5][0][0] == 0.0 and dbl[3.0][0][0] == 1.0
+    assert dbl[0.75][0][2] < 0.3 * dbl[0.75][0][1]     # 主星より光心に近い
+    assert thr_un > thr_eq
+    timing["4 二重星"] = time.perf_counter() - t0
+
     print("\nPASS(執筆中)")
     return True
 
