@@ -1248,13 +1248,10 @@ def main():
         mg = [hcurve[(p, h)]["merge"] for h in HS]
         assert sp[0] > sp[-1] + 5.0, (p, sp)
         assert mg[-1] > mg[0] + 4.0, (p, mg)
-        # 単調性は雑音で少し崩れてよいが、大枠で逆向きであることは要求する。
-        # 平坦な区間(同値)が長いので Pearson でなく順位相関で見る。
-        def _spear(v):
-            r = np.argsort(np.argsort(np.asarray(v, float)))
-            return float(np.corrcoef(np.arange(len(v)), r)[0, 1])
-        assert _spear(sp) < -0.75, (p, sp, _spear(sp))
-        assert _spear(mg) > 0.75, (p, mg, _spear(mg))
+        # 単調性は雑音で少し崩れてよい(3 枚平均なので 1 件 = 0.33 の粒)。
+        # 相関係数は平坦な区間が長いと当てにならないので、隣どうしで見る。
+        assert all(sp[i] >= sp[i + 1] - 0.8 for i in range(len(sp) - 1)), (p, sp)
+        assert all(mg[i] <= mg[i + 1] + 0.8 for i in range(len(mg) - 1)), (p, mg)
     # ★最適な h は密度で動く(偏り基準か 1対1 基準のどちらかで必ず動く)
     assert len(set(hb_list)) > 1 or len(set(ho_list)) > 1, (hb_list, ho_list)
 
