@@ -362,6 +362,11 @@ def main():
     print("     接平面へ落とすと接線方向のばらつきが消え、近傍中央値でさらに落ちる。")
     print("     ★穴 C: symmetry3d の対称スコアは点対点(chamfer)しか持たない。")
     floor_rms, floor_max, _ = floors[N_MAIN]
+    sm_pp, _ = _surface_deviation(P_undeformed, mirror_pipeline(P_undeformed, refine="p2point")[0])
+    rms_pp = float(np.sqrt(np.mean(sm_pp ** 2)))
+    print(f"  位置合わせ側も効く: 同じ {N_MAIN} 点で ICP を点対点にすると床は {rms_pp:.4f} mm"
+          f"(点対面の {rms_pp / floor_rms:.0f} 倍)。")
+    print("     測る距離と合わせる距離は別物で、**両方**接平面にして初めて床まで届く。")
 
     print("\n=== 3. ゼロ点 —— 鏡映しない / 位置合わせしない ===")
     amp_probe = 1.6
@@ -387,8 +392,8 @@ def main():
               f"{rms / floor_rms:>9.1f}{_fmt(ang, 10)}{_fmt(off, 10)}")
     print("  → (0) は変形量に関係なく恒等的に 0。**何を入れても検出できない**(盲目のゼロ点)。")
     print("     (1) は姿勢が違うだけで 4 桁外す —— 「解剖学的に想定した面」を固定で使う危険。")
-    print("     (2) から (4) が鏡映 + 位置合わせの取り分。点対点 ICP (3) は点対面 (4) にわずかに")
-    print("     及ばない。完全対称な標本(第 2 章)では差がもっと開き、点対点は床の 10 倍で止まる。")
+    print("     (2) から (4) が鏡映 + 位置合わせの取り分。変形が入っていると点対点 ICP (3) と")
+    print("     点対面 (4) の差は小さいが、完全対称な標本では第 2 章のとおり 1 桁開く。")
 
     print("\n=== 4. 入れた量 vs 測った量 —— 面の決め方で利得が変わる ===")
     sel = np.argsort(np.abs(V[:, 0]))[:400]
@@ -413,8 +418,8 @@ def main():
     g_opt = gains[6.4][1] / gains[6.4][0]
     g_lmk = gains[6.4][2] / gains[6.4][0]
     print(f"  → 残差最適面の利得は {g_opt:.2f} 前後で一定(= 系統的に {100 * (1 - g_opt):.0f} % 過小評価)。")
-    print(f"     ランドマーク面の利得は {g_lmk:.2f} だが、床が {lm_floor:.3f} mm と"
-          f" 残差最適面の {lm_floor / opt_floor:.0f} 倍(面自体の推定誤差がそのまま乗る)。")
+    print(f"     ランドマーク面の利得は {g_lmk:.2f}。ただし床が {lm_floor:.3f} mm あり、")
+    print(f"     残差最適面の {lm_floor / opt_floor:.0f} 倍(面そのものの推定誤差がそのまま乗る)。")
     print(f"     床の 3 倍を要求したときの検出限界 = 残差最適面 {3 * opt_floor / g_opt:.2f} mm 相当 /"
           f" ランドマーク面 {3 * lm_floor / g_lmk:.2f} mm 相当。")
     print("     小さい振幅でランドマーク面の利得が 1 を超えるのは、床が信号に足し込まれているだけ。")
@@ -437,9 +442,10 @@ def main():
                   f"{float(sm.max()) / truth:>7.3f}{ang:>10.3f}{off:>10.3f}")
     narrow_g = drag[("局所 sigma=12", 6.4)][1] / drag[("局所 sigma=12", 6.4)][0]
     wide_g = drag[("広い片側(半身)", 6.4)][1] / drag[("広い片側(半身)", 6.4)][0]
-    print(f"  → 変形が広いほど面が引きずられ、利得が落ちる({narrow_g:.2f} → {g_opt:.2f}"
-          f" → {wide_g:.2f})。残差最小化にとっては「変形を左右へ薄く塗り広げる」のが")
-    print("     一番安上がりなので、最適化はそちらへ行く。")
+    print(f"  → 変形が広いほど面が引きずられ、利得が落ちる"
+          f"({narrow_g:.2f} → {g_opt:.2f} → {wide_g:.2f})。")
+    print("     残差最小化にとっては「変形を左右へ薄く塗り広げる」のが一番安上がりなので、")
+    print("     最適化はそちらへ行く。")
     P64 = specimen(w_blob, 6.4)
     al64, m64, c64 = mirror_pipeline(P64)
     sm_opt, _ = _surface_deviation(P64, al64)
@@ -470,7 +476,8 @@ def main():
         print(f"  {amp:>9.1f}{truth:>10.3f}{float(sm.max()):>12.3f}"
               f"{float(sm.max()) / truth:>7.3f}{ang:>10.3f}{axis:>11d}{margin:>9.3f}")
     print(f"     境界は 12 mm と 25 mm の間(全長 {ext[0]:.0f} mm の 5.5 % と 11 %)。")
-    print("     変形が主軸そのものを動かしてしまうと、対称面の候補が入れ替わる。")
+    print("     変形が主軸そのものを動かすと、対称面の候補が入れ替わる。ここでも margin が")
+    print("     0.585 → 0.032 と先に潰れる —— 面を採用する前に見る値は残差ではなく margin。")
 
     print("\n  (b) 点群が粗い —— 床が上がり、信号が沈む(fs.voxel_downsample で間引く)")
     P_dense = posed_cloud(V, F, 40000, 1, R_pose, t_pose)
@@ -488,11 +495,11 @@ def main():
         coarse[vx] = (len(A), spacing, fmax, float(fb.max()))
         print(f"  {vx:>11.1f}{len(A):>8d}{spacing:>9.3f}{float(np.sqrt(np.mean(fa ** 2))):>10.4f}"
               f"{fmax:>10.4f}{float(fb.max()):>10.4f}{float(fb.max()) / fmax:>9.2f}")
-    print(f"     voxel 8 mm(点間隔 {coarse[8.0][1]:.1f} mm、{coarse[8.0][0]} 点)までは")
-    print(f"     1.6 mm の膨らみが床の {coarse[8.0][3] / coarse[8.0][2]:.1f} 倍で残る。"
-          f" 14 mm(点間隔 {coarse[14.0][1]:.1f} mm)で床が {coarse[14.0][2]:.2f} mm へ跳ね、")
-    print(f"     信号/床が {coarse[14.0][3] / coarse[14.0][2]:.2f} まで落ちて検出不能になる"
-          f"(近傍不足で法線推定そのものが壊れる)。")
+    print(f"     voxel 8 mm(点間隔 {coarse[8.0][1]:.1f} mm、{coarse[8.0][0]} 点)までは 1.6 mm の")
+    print(f"     膨らみが床の {coarse[8.0][3] / coarse[8.0][2]:.1f} 倍で残る。"
+          f"14 mm(点間隔 {coarse[14.0][1]:.1f} mm、{coarse[14.0][0]} 点)で床が")
+    print(f"     {coarse[14.0][2]:.2f} mm へ跳ね、信号/床が {coarse[14.0][3] / coarse[14.0][2]:.2f}"
+          f" まで落ちて検出不能になる(近傍不足で法線推定そのものが壊れる)。")
 
     print("\n  (c) もともと対称に近くない —— 主軸が縮退すると面ごと外し、しかも黙っている")
     print(f"  {'標本':<22}{'外接箱の辺':>26}{'候補スコア':>26}{'margin':>9}{'軸':>4}{'面の角度':>10}")
