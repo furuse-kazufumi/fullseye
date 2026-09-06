@@ -73,7 +73,7 @@ from collections import Counter
 from pathlib import Path
 
 import numpy as np
-from scipy.ndimage import gaussian_filter, uniform_filter1d
+from scipy.ndimage import gaussian_filter, maximum_filter1d, minimum_filter1d
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
@@ -112,6 +112,8 @@ PAD = 26                   # 左右の静止帯 [px]
 SS = 3                     # 描画のスーパーサンプル(1 画素を SS x SS)
 TRIALS = 24                # 1 条件あたりの試行数
 CENTER_ROW = IMG_H // 2
+#: measure_pos に渡す平滑化 sigma の候補(1 つに決められなかった。9 章 (d))
+CALIPER_SIGMAS = (0.4, 0.6, 0.8, 1.2)
 VOTE_ROWS = np.linspace(CENTER_ROW - 24, CENTER_ROW + 24, 9).astype(int)
 BAND_ROWS = np.arange(CENTER_ROW - 4, CENTER_ROW + 5)
 
@@ -266,7 +268,7 @@ def m4_subpixel(img):
 
     ★``sigma`` を 1 つに決められなかった。1 モジュール 3 px の周期構造では
     エッジ**本数**が sigma に非単調に依存する(9 章 (d) に実測表)ので、
-    0.4 / 0.6 / 0.8 / 1.2 を順に試して **%d 本ちょうど**になった最初のものを
+    0.4 / 0.6 / 0.8 / 1.2 を順に試して **44 本ちょうど**になった最初のものを
     採る。どれも本数が合わなければ「読めません」と答える。
     """
     h, w = img.shape
@@ -306,9 +308,9 @@ def dmg_contrast(img, level, rng, digits):
 
     ★3 つを**同時に**動かす。どれが効いているかは 8 章の対照群で分ける。
     """
-    amp, ctr = 1.0 - 0.9 * level, 0.5 + 0.25 * level
+    amp, ctr = 1.0 - 0.6 * level, 0.5 + 0.35 * level
     out = ctr + (img - 0.5) * amp
-    return np.clip(out + rng.normal(0.0, 0.12 * level, img.shape), 0.0, 1.0)
+    return np.clip(out + rng.normal(0.0, 0.05 * level, img.shape), 0.0, 1.0)
 
 
 def dmg_smudge(img, level, rng, digits):
@@ -335,7 +337,7 @@ def _render_tilt(digits, level, rng):
 DAMAGES = [
     ("(a) ぼけ σ px", [0.0, 1.0, 1.8, 2.1, 2.3, 2.6], dmg_blur, None),
     ("(b) 傾き 度", [0.0, 8.0, 14.0, 15.0, 16.0, 20.0], None, _render_tilt),
-    ("(c) 低コントラスト+雑音", [0.0, 0.3, 0.45, 0.5, 0.55, 0.7], dmg_contrast, None),
+    ("(c) 低コントラスト+雑音", [0.0, 0.3, 0.5, 0.65, 0.75, 0.95], dmg_contrast, None),
     ("(d) 汚れ モジュール", [0, 1, 2, 3, 4, 6], dmg_smudge, None),
 ]
 
@@ -453,7 +455,7 @@ def section3_sweeps() -> dict:
     return out
 
 
-def section4_misread(sweeps: dict) -> dict:
+def section4_misread() -> dict:
     print()
     print("=" * 78)
     print("4) ★★誤読と読み取り不能を分けて数える —— 厳格 / 寛容 / 検査数字")
@@ -821,8 +823,8 @@ def main() -> None:
     print()
     section1_code()
     section2_zero_point()
-    sweeps = section3_sweeps()
-    section4_misread(sweeps)
+    section3_sweeps()
+    section4_misread()
     section5_tilt()
     section6_smudge()
     section7_collapse()
