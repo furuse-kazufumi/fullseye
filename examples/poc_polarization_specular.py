@@ -302,74 +302,96 @@ def main():
     print("     ここを取り違えると「偏光が使えない場面」と誤判定する。")
 
     # ---------------------------------------------------------------- #
-    print("\n=== 8-(a) 壊れる条件: 雑音 ===")
+    print("\n=== 8. 壊れる条件 —— すべてブリュースター角で測る ===")
+    print("  雑音も較正誤差も飽和も無ければ op はここで厳密(3 節)。だから以下の")
+    print("  表に出る誤差は 100% 壊れ由来で、モデルの偏りと混ざらない。")
+    bias70 = ang_rows[70.0][1]              # 入射角 70 度で常時載る偏り = 物差し
+    print(f"  物差し: 入射角 70 度で常時載る R_p 由来の偏り = {bias70:.3e}。")
+    print("  壊れがこれを超えたら「角度を選び直す」より先に直すべき問題になる。")
+
+    print("\n=== 8-(a) 雑音 ===")
     print(f"  {'雑音σ':>10}{'既定(fail-closed)':>20}{'違反画素率':>12}"
-          f"{'RMSE(強制)':>14}{'雑音なし比':>12}")
-    base70 = rmse(separate(f70)[0], diffuse)
+          f"{'RMSE(強制通過)':>16}{'70度の偏り比':>14}")
+    fb = render_sweep(diffuse, s_s, s_p)            # ブリュースター角の掃引
     noise_rows = {}
     rng = np.random.default_rng(20260906)
-    for sigma in (0.0, 1e-4, 1e-3, 3e-3, 1e-2, 3e-2, 1e-1):
-        fn = f70 + sigma * rng.standard_normal(f70.shape)
-        fn = np.maximum(fn, 0.0)                    # センサは負を返さない
+    cvec = np.cos(np.radians(2 * np.asarray(ANGLES)))[:, None, None]
+    svec = np.sin(np.radians(2 * np.asarray(ANGLES)))[:, None, None]
+    for sigma in (0.0, 1e-4, 1e-3, 2e-3, 3e-3, 5e-3, 1e-2, 3e-2, 1e-1):
+        fn = np.maximum(fb + sigma * rng.standard_normal(fb.shape), 0.0)
         try:
             separate(fn)
             verdict = "通る"
         except ValueError:
             verdict = "拒否"
         d_f, _ = separate(fn, mvf=1.0)              # 強制的に通した場合
-        # 違反画素率 = 当てはめた最小輻度が負になった画素
+        # 違反画素率 = 当てはめた最小輻度が負になった画素(4 方位なら閉形式)
         a0 = fn.mean(axis=0)
-        c = np.cos(np.radians(2 * np.asarray(ANGLES)))
-        s = np.sin(np.radians(2 * np.asarray(ANGLES)))
-        a1 = 2 * (fn * c[:, None, None]).mean(axis=0)
-        a2 = 2 * (fn * s[:, None, None]).mean(axis=0)
-        frac = float((a0 - np.hypot(a1, a2) < 0).mean())
+        amp = np.hypot(2 * (fn * cvec).mean(axis=0), 2 * (fn * svec).mean(axis=0))
+        frac = float((a0 - amp < 0).mean())
         e = rmse(d_f, diffuse)
         noise_rows[sigma] = (verdict, frac, e)
-        print(f"  {sigma:>10.0e}{verdict:>18}{frac:>12.4f}{e:>14.3e}"
-              f"{e / base70:>12.2f}")
-    print("  → 既定は fail-closed。σ = 1e-3 で最初の画素が負の最小輻度を吐き、")
-    print("     **拒否に転じる境界は σ ≈ 1e-3**(拡散 0.02 の暗パッチが最初に落ちる)。")
-    print("     強制通過させると RMSE は σ に比例して増え、σ = 1e-2 で雑音なしの")
-    print("     6 倍、σ = 3e-2 で 17 倍。拒否は「使えない」ではなく「その画素の")
-    print("     偏光信号が雑音に埋もれた」という正しい報告。")
+        print(f"  {sigma:>10.0e}{verdict:>18}{frac:>12.5f}{e:>16.3e}"
+              f"{e / bias70:>14.3f}")
+    print("  → **既定の fail-closed が拒否に転じる境界は σ ≈ 2e-3**(暗パッチの")
+    print("     拡散 0.02 = 最小輻度 0.01 に雑音が届く点。12288 画素中 1 画素で拒否)。")
+    print("     強制通過させた誤差は σ にほぼ比例(σ を 10 倍 → 誤差 10 倍)。")
+    print("     70 度の偏りを超えるのは σ ≈ 1e-2 で、そこが実用の境界:")
+    print("     **σ < 1e-2 なら「角度が浅い」方が雑音より効く。**")
+    print("     拒否は「使えない」ではなく「その画素の偏光信号が雑音に埋もれた」")
+    print("     という正しい報告(1 画素でも全体を止めるのは設計どおり)。")
 
     # ---------------------------------------------------------------- #
-    print("\n=== 8-(b) 壊れる条件: 偏光子角度の較正誤差 ===")
-    print(f"  {'誤差δ[度]':>10}{'全体オフセット':>16}{'1 枚だけずれ':>16}"
-          f"{'1 枚ずれ/雑音なし':>18}")
+    print("\n=== 8-(b) 偏光子角度の較正誤差 ===")
+    print(f"  {'誤差δ[度]':>10}{'全体オフセット':>16}{'方位の誤差[度]':>16}"
+          f"{'1 枚だけずれ':>16}{'70度の偏り比':>14}")
     cal_rows = {}
     for delta in (0.0, 0.1, 0.5, 1.0, 2.0, 5.0):
-        f_all = render_sweep(diffuse, a70, b70,
+        f_all = render_sweep(diffuse, s_s, s_p,
                              angles=tuple(x + delta for x in ANGLES))
         e_all = rmse(separate(f_all)[0], diffuse)   # 公称角で解く
-        f_one = render_sweep(diffuse, a70, b70,
+        sk = specularity.polarization_stokes(f_all, ANGLES)
+        az_est = 0.5 * math.degrees(math.atan2(sk[2], sk[1]))
+        az_err = abs((az_est - AZIMUTH + 90.0) % 180.0 - 90.0)
+        f_one = render_sweep(diffuse, s_s, s_p,
                              angles=(0.0, 45.0 + delta, 90.0, 135.0))
         e_one = rmse(separate(f_one, mvf=1.0)[0], diffuse)
-        cal_rows[delta] = (e_all, e_one)
-        print(f"  {delta:>10.1f}{e_all:>16.3e}{e_one:>16.3e}"
-              f"{e_one / base70:>18.2f}")
-    print("  → **全画素共通のオフセットは分離を一切壊さない**(1e-16 台のまま)。")
-    print("     基底が丸ごと回るだけで振幅と平均が変わらないから。狂うのは方位")
-    print("     (AoLP)だけ。一方 **1 枚だけ 1 度ずれると誤差は 2 桁跳ねる**。")
-    print("     較正すべきは絶対角ではなく相対角、というのがこの 2 列の差。")
+        cal_rows[delta] = (e_all, az_err, e_one)
+        print(f"  {delta:>10.1f}{e_all:>16.3e}{az_err:>16.3f}{e_one:>16.3e}"
+              f"{e_one / bias70:>14.3f}")
+    print("  → **全画素共通のオフセットは分離を一切壊さない**(1e-17 台のまま)。")
+    print("     基底が丸ごと回るだけで、当てはめの平均も振幅も変わらないから。")
+    print("     代わりに **方位(AoLP)がちょうど δ だけ狂う**(3 列目 = δ に一致)。")
+    print("     一方 **1 枚だけずれると壊れる**: δ = 0.1 度で既に誤差 2e-4、")
+    print("     δ = 1 度で 2e-3、δ = 5 度で 1e-2 と δ にほぼ比例して増える。")
+    print("     70 度の偏りに追いつくのは δ ≈ 5 度。**較正すべきは絶対角ではなく")
+    print("     相対角** —— 絶対角の誤差は形状復元(方位)だけを壊し、相対角の")
+    print("     誤差は分離そのものを壊す。壊れ方が違う 2 つを 1 つの「較正精度」")
+    print("     という数字で語ってはいけない。")
 
     # ---------------------------------------------------------------- #
-    print("\n=== 8-(c) 壊れる条件: 鏡面の白飛び ===")
-    print(f"  {'露光倍率':>10}{'飽和画素率':>12}{'拡散RMSE(規格化)':>20}"
-          f"{'飽和なし比':>12}")
+    print("\n=== 8-(c) 鏡面の白飛び ===")
+    print(f"  {'露光倍率':>10}{'飽和画素率':>12}{'例外':>8}"
+          f"{'拡散RMSE(規格化)':>20}{'70度の偏り比':>14}")
     sat_rows = {}
-    for gain in (1.0, 1.5, 2.0, 3.0, 5.0):
-        fg = np.minimum(f70 * gain, 1.0)
-        frac = float((f70 * gain > 1.0).mean())
+    for gain in (1.0, 2.0, 2.5, 3.0, 4.0, 6.0):
+        fg = np.minimum(fb * gain, 1.0)
+        frac = float((fb * gain > 1.0).mean())
+        try:
+            separate(fg)
+            exc = "無し"
+        except ValueError:
+            exc = "拒否"
         d_g, _ = separate(fg, mvf=1.0)
         e = rmse(d_g / gain, diffuse)               # 倍率で割って比較可能にする
-        sat_rows[gain] = (frac, e)
-        print(f"  {gain:>10.1f}{frac:>12.4f}{e:>20.3e}{e / base70:>12.2f}")
-    print("  → 白飛びは **例外を出さない**。I_max が頭打ちになると振幅が縮み、")
-    print("     I_min が持ち上がり、拡散が過大評価される方向へ静かに倒れる。")
-    print("     飽和 0.6% で誤差 2.4 倍、4.4% で 8.7 倍。fail-closed 検査は")
-    print("     「最小輻度が負」しか見ておらず、上端の飽和は素通りする(所見 c)。")
+        sat_rows[gain] = (frac, exc, e)
+        print(f"  {gain:>10.1f}{frac:>12.5f}{exc:>8}{e:>20.3e}"
+              f"{e / bias70:>14.3f}")
+    print("  → 白飛びは **一度も例外を出さない**。I_max が頭打ちになると振幅が")
+    print("     縮み、I_min が持ち上がり、拡散が過大評価される側へ静かに倒れる。")
+    print("     飽和 1% で 70 度の偏りに並び、10% で 5 倍。fail-closed 検査は")
+    print("     「最小輻度が負」= **下端しか見ておらず、上端の飽和は素通りする**")
+    print("     (所見 c)。3 つの壊れのうち、これだけが黙っている。")
 
     # ---------------------------------------------------------------- #
     print("\n=== 9. 速度(この機械での実測)===")
