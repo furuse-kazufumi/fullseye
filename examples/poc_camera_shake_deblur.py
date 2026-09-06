@@ -426,12 +426,16 @@ def main():
         len_x.append(d); len_y.append(p)
         print(f"  {d:>13.0f}{p:>9.2f}{p - p_null40:>15.2f}{p - p_uns40:>17.2f}")
     len_break_null = crossing(len_x, len_y, p_null40)
+    ang_half = crossing(ang_x, ang_y, p_null40 + 0.5 * (ang_y[0] - p_null40))
+    len_half = crossing(len_x, len_y, p_null40 + 0.5 * (len_y[0] - p_null40))
     print(f"  → 角度が {ang_break_uns:.1f} 度ずれるとアンシャープマスクに抜かれ、"
           f"{ang_break_null:.1f} 度で「何もしない」にも抜かれる。")
     print(f"     長さは {len_break_null:.1f} px 過大でゼロ点以下。**現場で効くのは"
-          "この 2 つの数字**で、")
-    print("     15 px の核なら角度の許容は ±10 度、長さの許容は ±3 px 程度しかない。")
-    print("     角度がずれると核の台紙そのものがすれ違うので、長さより厳しい。")
+          "この 2 つの数字**。")
+    print(f"     取り分が半分に落ちる時点はもっと手前で、角度 {ang_half:.1f} 度 / "
+          f"長さ {len_half:.1f} px しかない。15 px の核に対する比で言えば、")
+    print("     長さは 13 % の誤差で半減する。角度がずれると核の台紙そのものが")
+    print("     すれ違うので、絶対値では角度の方が先に効いてくる。")
 
     print("\n=== 4b. 核を推定する場合(真値を一切見ない)===")
     print(f"  {'真の核':>18}{'推定した核':>18}{'推定核で':>10}{'既知なら':>10}{'差':>8}")
