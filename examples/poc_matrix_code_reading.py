@@ -207,10 +207,10 @@ def capture(bits, module_px=8, quiet=QUIET, tilt_deg=0.0, blur_ratio=0.0,
         c0 = int(max(0, np.floor(box[:, 0].min()))); c1 = int(min(canvas, np.ceil(box[:, 0].max())))
         img[r0:r1, c0:c1] = 1.0
 
-    if illum > 0:                      # 対角の乗算ムラ。1 ± illum
+    if illum > 0:                      # 対角の乗算ムラ。手前 1.0 -> 奥 1-illum
         yy, xx = np.mgrid[0:canvas, 0:canvas].astype(np.float64)
         t = (xx + yy) / (2.0 * (canvas - 1))
-        img = img * (1.0 + illum * (2.0 * t - 1.0))
+        img = img * (1.0 - illum * t)
 
     if blur_ratio > 0:
         img = ndimage.gaussian_filter(img, blur_ratio * module_px)
@@ -415,7 +415,7 @@ def read(img, n, module_px, mode="otsu", H_true=None, step=1):
     dark = binarize(img, mode, module_px)
     if H_true is not None:
         return sample_modules(dark, H_true, n), "既知"
-    H, why = estimate_homography(dark, n, module_px, step)
+    H, why = estimate_homography(dark, n, step)
     if H is None:
         return None, why
     return sample_modules(dark, H, n), "ok"
@@ -571,7 +571,7 @@ def main():
         t0 = time.perf_counter(); binarize(im, "otsu", m)
         t_bin = 1e3 * (time.perf_counter() - t0)
         d = binarize(im, "otsu", m)
-        t0 = time.perf_counter(); estimate_homography(d, n, m)
+        t0 = time.perf_counter(); estimate_homography(d, n)
         t_loc = 1e3 * (time.perf_counter() - t0)
         t0 = time.perf_counter(); read(im, n, m)
         t_all = 1e3 * (time.perf_counter() - t0)
