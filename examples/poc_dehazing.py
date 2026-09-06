@@ -325,7 +325,8 @@ def main():
         print(f"  {name:<16}{int(m.sum()):>8}{100 * m.mean():>8.1f}%"
               f"{np.median(d[m]):>10.1f}{np.median(t_true[m]):>12.4f}"
               f"{1.0 / max(1e-9, np.median(t_true[m])):>8.1f}")
-    print("  → 面積の 55 % を近景・中景が占める。**全体 1 個の数字は近景の成績**になる。")
+    near_mid = 100 * (masks[0][1] | masks[1][1]).mean()
+    print(f"  → 近景と中景で面積の {near_mid:.0f} % を占める。**全体 1 個の数字はこの面積比**で決まる。")
     print(f"  深度の段差(不連続)を持つ矩形 5 個。段差周り 5px の帯は "
           f"{100 * edge_band(d).mean():.1f} % の画素。")
 
