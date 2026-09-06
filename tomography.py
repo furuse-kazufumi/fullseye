@@ -631,6 +631,47 @@ def _backproject(sino: np.ndarray, angles_rad: np.ndarray, size: int) -> np.ndar
     return acc
 
 
+def _ramlak_spectrum(n_pad: int) -> np.ndarray:
+    """The Ram-Lak ramp, built as the DFT of its **spatial** impulse response.
+
+    Kak & Slaney, *Principles of Computerized Tomographic Imaging*, eq. 3.29:
+    with unit detector pitch the band-limited ramp has the closed-form kernel
+    ``h[0] = 1/4``, ``h[n] = 0`` for even ``n``, ``h[n] = -1/(pi n)^2`` for odd
+    ``n``. Its DFT is the filter actually applied.
+
+    **Why not simply ``|f|``.** ``np.fft.rfftfreq`` puts a bin exactly at zero,
+    so ``|f|`` has ``h[0] = 0`` — the filter **subtracts the mean of every
+    padded projection**. The amount removed is ``sum(P) / n_pad``, which is why
+    the error tracked the FFT pad length rather than the detector count (the
+    2026-09-06 PoC saw 363 and 511 detectors give identical numbers: both pad
+    to 1024). The Ram-Lak DC bin is small but **not** zero (3.958e-04 at
+    ``n_pad = 1024``), and that difference is the whole of the missing mass.
+
+    Measured on a uniform disc of density 1.0 (128x128, radius 40, 180 views,
+    analytic ``radon_transform``, unwindowed ramp):
+
+    ====================  =============  ==========  ========
+    ramp                  mass error     interior    RMSE
+    ====================  =============  ==========  ========
+    ``|f|`` (DC = 0)          -3.304 %     0.98998    0.03817
+    Ram-Lak (this one)        +0.013 %     1.00006    0.03680
+    ====================  =============  ==========  ========
+
+    A 250x reduction in the flux error, and the RMSE against the truth drops
+    too, so this is not a trade. The interior level that the unit tests pin
+    (density 1.0 in, 1.0 out) moves from 0.990 to 1.000.
+
+    Only the **base** changes; the apodisation windows below still multiply it
+    in ordinary frequency, and ``cutoff`` still masks on ``f``.
+    """
+    n = np.concatenate([np.arange(1, n_pad // 2 + 1, 2),
+                        np.arange(n_pad // 2 - 1, 0, -2)])
+    kernel = np.zeros(int(n_pad), dtype=np.float64)
+    kernel[0] = 0.25
+    kernel[1::2] = -1.0 / (np.pi * n) ** 2
+    return np.real(np.fft.rfft(kernel))
+
+
 def _ramp_filter(n_pad: int, kind: str, cutoff: float) -> np.ndarray:
     """The reconstruction filter, sampled on ``rfft`` bins of a length-*n_pad*
     projection with unit detector pitch.
