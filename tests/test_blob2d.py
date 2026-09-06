@@ -424,8 +424,8 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "blob"]
-    assert len(rows) == 7
-    assert {r[3] for r in rows} == {"labels2d", "table", "mask", "rgb"}
+    assert len(rows) == 10
+    assert {r[3] for r in rows} == {"labels2d", "table", "mask", "rgb", "image2d"}
 
 
 def test_the_fuzzer_knows_the_new_type_and_can_seed_it():
