@@ -481,13 +481,20 @@ def section_spot() -> dict:
                 f["r"] - R_TRUE, dc,
                 f.get("n_drop", "-") if robust else "-"))
 
-    a = out[("黒点 r=0.97R(縁上)", False)][0]
-    b = out[("黒点 r=0.97R(縁上)", True)][0]
-    c = out[("黒点なし(対照群)", False)][0]
-    print("\n  ★縁に載った黒点は半径を %+.2f px 動かす(対照群 %+.2f px からの差 %.2f px)。"
-          % (a, c, abs(a - c)))
-    print("  外れ値を落とすと %+.2f px。**円の当てはめは点の数 %% の汚染で動きます** ——"
-          % b)
+    key = "黒点 r=1.00R(縁跨ぎ)"
+    a_r, a_c = out[(key, False)]
+    b_r, b_c = out[(key, True)]
+    z_r, z_c = out[("黒点なし(対照群)", False)]
+    print("\n  ★**効くのは半径より中心**。縁を跨ぐ黒点で、半径は %+.2f -> %+.2f px"
+          % (z_r, a_r))
+    print("  (差 %.2f px)しか動かないのに、**中心は %.3f -> %.3f px** 動く"
+          % (abs(a_r - z_r), z_c, a_c))
+    print("  (%.0f 倍)。円の当てはめは、欠けた側の点が消えると中心を欠けた向きの"
+          % (a_c / max(z_c, 1e-9)))
+    print("  反対へ押します —— 半径だけ見ていると気づけない壊れ方です。")
+    print("  外れ値を刈ると 半径 %+.2f px / 中心 %.3f px。落とした点は %s 本"
+          % (b_r, b_c, out.get((key, True)) and "(表の右列)"))
+    print("  = 全 %d 本の数 %% で、**その数 %% で中心が半画素動いた**ということ。" % N_RAYS)
     print("  黒点が円板の内側(r=0.85R)にあるうちは縁の点列に入らないので効きません。")
     return out
 
