@@ -103,6 +103,14 @@ def synth_psd_surface(n, dx, hurst, q_lo, q_hi, seed):
     が **位相の引き方によらず**成り立つ。つまり Sq の真値が乱数に依存しない。
     ここを「乱数を振って rms を測る」で済ませると、真値そのものが実現ごとに
     ばらついて、後の掃引の誤差と区別できなくなる。
+
+    ★ 反対称化のしかたで一度間違えた(この PoC で最初に出たバグ)。
+    ``phi = (u - u[-k]) / 2`` は確かに反対称だが、**位相が一様でなくなる**
+    (三角分布になって 0 の近くに寄る)。すると全モードが原点で同位相に足され、
+    高さ場に 1 本のスパイクが立つ。実測では range/rms = 56、尖度 87 —— 自己
+    アフィン面なら 10 前後、3 前後になるはずの量。Sq は解析値と一致したまま
+    なので、**Sq だけ見ていたら気づけなかった**。正しくは共役対の片方だけに
+    一様乱数を引き、もう片方はその符号を反転して置く(下の実装)。
     """
     f = np.fft.fftfreq(n, d=dx)
     q = np.hypot(f[:, None], f[None, :])
@@ -111,9 +119,16 @@ def synth_psd_surface(n, dx, hurst, q_lo, q_hi, seed):
     amp[band] = q[band] ** (-(hurst + 1.0))          # √PSD ∝ q^-(H+1)
 
     rng = np.random.default_rng(seed)
-    phi = rng.uniform(-np.pi, np.pi, (n, n))
+    raw = rng.uniform(-np.pi, np.pi, (n, n))
     neg = (-np.arange(n)) % n                        # k -> -k の添字写像
-    phi = 0.5 * (phi - phi[np.ix_(neg, neg)])        # 反対称成分だけ残す
+    ii, jj = np.mgrid[0:n, 0:n]
+    ni, nj = neg[ii], neg[jj]
+    # 共役対 (k, -k) の「片方だけ」を辞書式順序で選ぶ。等しい要素(k = -k)は
+    # 自己共役なので係数が実でなければならず、位相を 0 に固定する。
+    half = (ii < ni) | ((ii == ni) & (jj < nj))
+    selfc = (ii == ni) & (jj == nj)
+    phi = np.where(half, raw, -raw[ni, nj])
+    phi[selfc] = 0.0
 
     coef = amp * np.exp(1j * phi)
     h = np.fft.ifft2(coef).real
