@@ -631,9 +631,11 @@ def section8_tool_gaps():
     print("      族の名前か docstring に入れておくと、この PoC の遠回りが減る。")
     print()
     print("  次にやるべきこと: (b) の `notch_filter` と (c) の方向別スペクトルを")
-    print("  `filters_freq` 族へ。ただし 5 節の境界(|δ-f_m| < 半径 でムラも消える)を")
-    print("  op の docstring に**測った数字で**書くこと —— 半径に既定値を置くと、")
-    print("  利用者は「モアレを消したらムラも消えた」を静かに踏む。")
+    print("  `filters_freq` 族へ。ただし 5 節の 2 つの境界 ——「2 次元距離 < ノッチ半径")
+    print("  でムラも消える」「うなりが非整数ビンだと漏れが残る」—— を op の docstring に")
+    print("  **測った数字で**書くこと。半径に既定値を置くと利用者は「モアレを消したら")
+    print("  ムラも消えた」を、窓長を黙って画像全体にすると「ノッチが効かない」を、")
+    print("  それぞれ静かに踏む。窓長は `matched_length` 相当を op 側で選ぶべき。")
 
 
 def main():
