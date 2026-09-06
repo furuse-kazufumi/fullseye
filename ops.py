@@ -264,7 +264,12 @@ def _gamma(v, a, b):
 def _invert(v, a, b):
     """階調反転（ネガポジ反転）。HALCON の ``invert_image``（Invert an image.）に相当。
 
-``1 - clip(v,0,1)`` を返すだけ。``a``, ``b`` は未使用。"""
+``1 - clip(v,0,1)`` を返すだけ。``a``, ``b`` は未使用。
+
+- 入力を先に [0,1] へ clip してから反転するので、範囲外の値は**飽和してから**反転される(1.3 → 0、-0.2 → 1)。値域が [0,1] でない配列は前段で正規化しておくこと。
+- 返り値は入力と同形の float、値域 [0,1]。NaN は clip を素通りして NaN のまま返る(``ops.py`` 直登録の op なので backend の guard は掛からない —— 非有限を止めたいなら ``fullseye.apply`` 経由で ``on_error="raise"``)。
+- 2 回掛けると元に戻る(対合)。region に掛ければ前景/背景が入れ替わるが、region 用には ``invert_region``(補集合)がある。
+- 使いどころ: 暗い対象を ``threshold`` で「明るい側」として拾う前の反転、``dc_rpca_sparse`` の暗い残差や ``xpil_contour`` の黒い線を正の信号にする、距離変換の「内側ほど暗い」を「内側ほど明るい」に読み替える。"""
     return 1.0 - np.clip(v, 0, 1)
 def _scale_clip(v, a, b):
     """ゲインとオフセットによる線形階調変換。HALCON の ``scale_image``（Scale the gray values of an image.）に相当。

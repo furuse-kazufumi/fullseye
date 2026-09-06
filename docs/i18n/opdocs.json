@@ -289,13 +289,6 @@
    "ko": "> 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.",
    "de": "> Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt."
   },
-  "*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*": {
-   "en": "*The figure is the real output on a synthetic 128×128 input. Left: input, right: output (a non-image return value is shown as the value itself).*",
-   "zh": "*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出(非图像的返回值直接显示其值)。*",
-   "tw": "*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出(非影像的回傳值直接顯示其值)。*",
-   "ko": "*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력(이미지가 아닌 반환값은 값 자체를 표시).*",
-   "de": "*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe (ein Nicht-Bild-Rückgabewert wird als Wert gezeigt).*"
-  },
   "*図なし: この op は `%s` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*": {
    "en": "*No figure: this op takes `%s` as input. A Studio program starting from an image cannot reach that type — see the runnable examples below for how it is used.*",
    "zh": "*无图: 该算子以 `%s` 为输入。从图像开始的 Studio 程序无法到达该类型，请参见下方的可运行示例。*",
@@ -323,6 +316,20 @@
    "tw": "下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。",
    "ko": "아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.",
    "de": "Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen."
+  },
+  "*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*": {
+   "en": "*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*",
+   "zh": "*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*",
+   "tw": "*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*",
+   "ko": "*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*",
+   "de": "*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*"
+  },
+  "*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— %s。下の「実行できる例」で使い方を見ること。*": {
+   "en": "*No figure: the type is reachable, but the generic synthetic input is outside this op's domain — %s. See the runnable examples below for usage.*",
+   "zh": "*无图: 类型可达，但通用合成输入不在此算子的定义域内 —— %s。用法见下方可运行示例。*",
+   "tw": "*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— %s。用法見下方可執行範例。*",
+   "ko": "*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— %s. 사용법은 아래 실행 가능한 예제를 볼 것.*",
+   "de": "*Keine Abbildung: der Typ ist erreichbar, aber die generische synthetische Eingabe liegt außerhalb des Definitionsbereichs dieses Ops — %s. Zur Verwendung siehe die lauffähigen Beispiele unten.*"
   }
  }
 }

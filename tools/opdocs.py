@@ -624,9 +624,11 @@ def _figure_lines(rec, path, lang):
         # alt は英語のみ(図の中の文字と同じ規則。6 言語のページで 1 つの図を共有する)。
         out.append("![%s: input → output](%s)" % (rec["name"], rel))
         out.append("")
-        out.append(T("*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力(絵にならない返り値は値そのもの)。*", lang))
+        out.append(T("*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*", lang))
     elif m["status"] == "unreachable":
         out.append(T("*図なし: この op は `%s` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*", lang) % m["in_sort"])
+    elif m["status"] == "domain":
+        out.append(T("*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— %s。下の「実行できる例」で使い方を見ること。*", lang) % m.get("reason", ""))
     else:
         out.append(T("*図なし: 走らせたが落ちた —— %s*", lang) % m.get("reason", ""))
     out.append("")

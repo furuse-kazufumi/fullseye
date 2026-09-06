@@ -63,9 +63,15 @@ def test_slots_are_registration_order():
         assert ops.REGISTRY[i].name == name
         assert ops._BY_NAME[name] is ops.REGISTRY[i]
     # _candidates preserves REGISTRY order (deterministic within an install).
+    # 2026-09-07: entry bridges (category "bridge", backends_bridge) are in
+    # REGISTRY for the name path but are NOT candidates — that is exactly what
+    # keeps every pinned candidate list (and so every genome -> op index) intact.
     for sort in SORTS:
-        expected = [op for op in ops.REGISTRY if op.in_sort in (sort, ops.ANY)]
+        expected = [op for op in ops.REGISTRY if op.in_sort in (sort, ops.ANY)
+                    and op.category not in ops._NOT_A_CANDIDATE]
         assert ops._candidates(sort) == expected
+    assert not any(op.category in ops._NOT_A_CANDIDATE
+                   for s_ in SORTS for op in ops._candidates(s_))
 
 
 def test_decode_is_deterministic_across_sorts():

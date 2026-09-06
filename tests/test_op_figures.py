@@ -53,7 +53,7 @@ def _manifest() -> dict:
 
 
 def _by_status(m):
-    out = {"ok": [], "unreachable": [], "failed": []}
+    out = {"ok": [], "unreachable": [], "failed": [], "domain": []}
     for name, r in m["ops"].items():
         out[r["status"]].append(name)
     return out
@@ -83,9 +83,9 @@ def test_every_2d_op_has_a_verdict_and_none_failed():
 def test_unreachable_is_exactly_what_the_type_graph_says():
     """「型が届かない」は言い訳ではなく計算結果であること。
 
-    画像から始めて登録 op だけで作れる sort は、いま `PREFIX` に書いた 5 つ
-    (image / any / region / contour / color)。登録簿にそれ以外へ渡る op が
-    増えたら(例: image → points)、この門が落ちて PREFIX を伸ばす番になる。
+    2026-09-07 に入口 op(backends_bridge)を足してからは、**登録されている全
+    in_sort に PREFIX の鎖がある**のが正常(unreachable は空)。新しい sort を
+    入力に取る op が登録されたら、この門が落ちて PREFIX を伸ばす番になる。
     """
     requires_full_registry()
     sys.path.insert(0, str(ROOT))
@@ -113,6 +113,44 @@ def test_unreachable_is_exactly_what_the_type_graph_says():
         "image から新しい sort へ届く op が登録された: %s —— "
         "tools/gen_op_figures.py の PREFIX に前置きを足せば図が増やせる"
         % sorted(reach - set(G.PREFIX)))
+    # 2026-09-07: 入口 op を足したので、登録簿の全 in_sort に鎖がある
+    missing = sorted({o.in_sort for o in ops.REGISTRY} - set(G.PREFIX))
+    assert not missing, ("PREFIX に鎖の無い in_sort がある: %s —— backends_bridge に"
+                         "入口 op を足す" % missing)
+
+
+def test_domain_mismatch_ledger_is_still_true():
+    """★免除台帳(DOMAIN_MISMATCH)が腐っていないこと。
+
+    「型は届くが定義域が合わない」と記録した op は、**本当にまだ拒否される**
+    ことを実際に走らせて確かめる。通るようになっていたら表から外して図を作る番。
+    逆に、表に無い op が unreachable/failed に混じっていないことは上の門が見る。
+    """
+    requires_full_registry()
+    sys.path.insert(0, str(ROOT))
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gen_op_figures as G
+    import ops
+    import fullseye as fs
+
+    m = _manifest()
+    st = _by_status(m)
+    assert sorted(st["domain"]) == sorted(G.DOMAIN_MISMATCH), (
+        "manifest の domain と表が違う: %s / %s" % (sorted(st["domain"]), sorted(G.DOMAIN_MISMATCH)))
+    base = G.canonical_image()
+    passed = []
+    for name in sorted(G.DOMAIN_MISMATCH):
+        op = ops._BY_NAME[name]
+        v = base
+        try:
+            for nm, ka, kb in G.PREFIX_OP.get(name, G.PREFIX[op.in_sort]):
+                v = fs.apply(v, nm, ka, kb, on_error="raise")
+            fs.apply(v, name, *G._knobs(op), on_error="raise")
+            passed.append(name)
+        except Exception:                                 # noqa: BLE001
+            pass
+    assert not passed, ("DOMAIN_MISMATCH に載っているのに通る op: %s —— 表から外して"
+                        "図を作る(`py -3.11 tools/gen_op_figures.py`)" % passed)
 
 
 def test_every_ok_op_has_its_png_in_both_places():
@@ -136,7 +174,7 @@ def test_every_ok_op_note_embeds_its_figure_and_program():
     # optional backend の op で KeyError になる)。2-D のノートは docs/ops/2d/<cat>/<op>.md。
     path_of = {p.stem: p for p in (ROOT / "docs" / "ops" / "2d").rglob("*.md")
                if p.name != "INDEX.md" and "guides" not in p.parts}
-    missing = [n for n in st["ok"] + st["unreachable"] if n not in path_of]
+    missing = [n for n in st["ok"] + st["unreachable"] + st["domain"] if n not in path_of]
     assert not missing, "manifest にあるのにノートが無い op: %s" % missing[:8]
     bad = []
     for n in st["ok"]:
@@ -147,7 +185,7 @@ def test_every_ok_op_note_embeds_its_figure_and_program():
             bad.append("%s: Studio プログラムが無い" % n)
         elif m["ops"][n]["program"].splitlines()[-1] not in md:
             bad.append("%s: プログラムの中身が manifest と違う" % n)
-    for n in st["unreachable"]:
+    for n in st["unreachable"] + st["domain"]:
         md = Path(path_of[n]).read_text(encoding="utf-8")
         if "図なし" not in md:
             bad.append("%s: 図が無い理由が書かれていない" % n)
