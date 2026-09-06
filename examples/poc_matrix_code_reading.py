@@ -96,9 +96,9 @@ import time
 import numpy as np
 from scipy import ndimage
 
-import examplefig as figs
 import fullseye as fs
 import calib          # 平面ホモグラフィ(ファサードには出ていない。穴 C)
+import examplefig as figs   # ★fullseye を先に import しないと解決しない(repo 直下)
 
 N_MODULES = 25        # 25x25。規格の版 2 と同じ格子数だが規格そのものではない
 QUIET = 4             # 余白(明)のモジュール数
