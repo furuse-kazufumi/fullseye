@@ -361,8 +361,13 @@ def main():
         print("  " + pad(name, W_LABEL, right=False) + pad(f"{a.mean():.4f}", 18)
               + pad(f"{b.mean():.4f}", 12) + pad(f"{ratio:.3f}", 10)
               + pad(f"{z:.1f}", 10))
-    print("  → 内/外の比は 1 付近だが、画素数が多いので z は大きく出る。**z が大きいこと**")
-    print("     **と検出できることは別**で、それを分けて言えるのが AUC のほうである。")
+    print("  → 内/外の比は 1 から離れ、z は 2 桁になる。**それでも AUC は 0.5 付近**")
+    print("     である(改竄していないのだから当然)。**z が大きいことと検出できること**")
+    print("     **は別**で、それを分けて言えるのが AUC と FPR 固定の検出率のほうである。")
+    print(f"     雑音 σ のゼロ点 AUC が {res_null['雑音σ']:.3f} と 0.5 から離れているのは、")
+    print("     ブロック定数の地図が端で最終ブロックを引き伸ばすため、画像の縁に固定の")
+    print("     偽陽性源ができ、中央に置いた偽マスクが相対的に『静か』になるから。")
+    print("     ★道具の穴 (c)。**場所に依存する偏りは、ゼロ点を置かないと見えない**。")
 
     print("\n=== 4-a. 効かなくなる境界:改竄領域の大きさ ===")
     header()
@@ -371,8 +376,15 @@ def main():
         size_rows[size] = row(f"{size}x{size}"
                               f"({100.0 * size * size / (N * N):.2f} %)",
                               make_cases(n_img, size=size))
-    print("  → 小さいほど落ちる。ELA と雑音は箱平均 / ブロックが 16 画素なので、")
-    print("     16x16 の改竄は 1 ブロックに収まり、まわりと混ざって消える。")
+    print("  ↓ 同じ条件を FPR 1 % での検出率で見る(AUC より落ち方がはっきりする)")
+    header()
+    for size in (96, 64, 48, 32, 16):
+        print("  " + pad(f"{size}x{size}", W_LABEL, right=False)
+              + "".join(pad(f"{size_rows[size][n][1]:.3f}", W_COL) for n, _ in DETECTORS))
+    print("  → AUC は面積に鈍い(陽性画素の数で正規化されるので、小さくしても")
+    print("     ELA は 0.97 → 0.85 程度にしか落ちない)。**落ちるのは FPR 1 % の検出率**")
+    print("     **のほう**で、こちらは同じ範囲でずっと大きく動く。AUC だけを見て")
+    print("     『小さい改竄でも効く』と書くのは、この差を隠すことになる。")
 
     print("\n=== 4-b. 効かなくなる境界:あとから全体にかけた後処理 ===")
     header()
@@ -383,16 +395,40 @@ def main():
                         ("0.75 倍に縮小して戻す", ("resize", 0.75)),
                         ("ぼかし sigma=1.0", ("blur", 1.0))):
         post_rows[label] = row(label, make_cases(n_img, post=post))
+    print("  ↓ 同じ条件を FPR 1 % での検出率で見る")
+    header()
+    for label in post_rows:
+        print("  " + pad(label, W_LABEL, right=False)
+              + "".join(pad(f"{post_rows[label][n][1]:.3f}", W_COL) for n, _ in DETECTORS))
     print("  → **フォレンジックは後処理で消える**。改竄者が保存し直すだけでよい。")
     print("     再圧縮は貼付部と背景の量子化履歴を同じものに塗り替え、縮小は 8x8 の")
     print("     格子そのものを壊す。どちらも『改竄を隠す意図』が無くても起きる。")
+    print("     ゴーストは q60 再圧縮とぼかしで **0.5 を下回る** —— これは『効かない』")
+    print("     を通り越して、符号を逆に読ませる方向に壊れているということである。")
 
-    print("\n=== 4-c. 効かなくなる境界:平坦な領域 ===")
+    print("\n=== 4-c. 効かなくなる境界:平坦な領域(貼っても画素が変わらない)===")
+    fim, fmk = build_case(0, flat=True)
+    fnull, _ = build_case(0, flat=True, tampered=False)
+    changed = int(np.count_nonzero(np.abs(fim - fnull)[fmk] > 0.5 / 255.0))
+    print(f"  平坦な帯(値 0.5 一定)に別画像の平坦部を貼ると、実際に変わった画素は")
+    print(f"  {changed} / {int(fmk.sum())}。JPEG は平坦な 8x8 を同じ定数に量子化するので、")
+    print("  **貼るという操作が画素の上に痕跡を一切残さない**。")
     header()
-    flat_rows = {"通常": row("通常(構造あり)", base),
+    flat_rows = {"通常": {n: res_pos[n] for n, _ in DETECTORS},
                  "平坦": row("平坦な帯に貼る", make_cases(n_img, flat=True))}
-    print("  → 平坦な所は圧縮しても誤差が出ず、雑音も乗らない。**手掛かりの素**が")
-    print("     無いので、貼ってあっても言えることが無い。")
+    print("  " + pad("通常(構造あり)= 2 節の再掲", W_LABEL, right=False)
+          + "".join(pad(f"{res_pos[n][0]:.3f}", W_COL) for n, _ in DETECTORS))
+    print("  → 真値マスクは『ここを貼った』と言っているのに、そこに情報が無い。")
+    print("     どの検出器も 0.5 付近に落ちるのが**正しい**振る舞いであって、ここで")
+    print("     高い AUC を出す検出器があれば、それは真値マスクの位置を別経路で")
+    print("     当てているという意味になる(この PoC の作りが漏れている疑い)。")
+
+    print("\n=== 4-e. 対照:品質差が無い貼り付け(素材も背景と同じ q92)===")
+    header()
+    same_rows = row("素材も q92", make_cases(n_img, donor_q=92))
+    print("  → 圧縮履歴の差が無くなると、圧縮を手掛かりにする検出器は落ちる。")
+    print("     ここが落ちずに残る検出器は、圧縮履歴ではなく **貼った素材の中身**")
+    print("     (別画像なので統計が違う)に反応している。切り分けにこの行が要る。")
 
     print("\n=== 4-d. 効かなくなる境界:貼り付け位置の 8 画素格子 ===")
     print("  " + pad("配置", 20, right=False) + pad("差 mod 8", 12)
