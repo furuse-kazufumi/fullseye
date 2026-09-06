@@ -1049,6 +1049,17 @@ def main():
     assert leak_max[2] == 0.0, "2 つ離れた B まで漏れた —— 漏れの機構が変わった"
     assert angular_error(est_whole, e_g) > 2.0 * angular_error(est_sob, e_g), \
         "画像ごとに渡しても自前 Sobel と同じ —— 漏れの影響が消えた"
+    # 1 件ではなく族の性質。近傍を平滑する op はどれも色軸を跨ぐ
+    leaking = [n for n, v in leak_family.items() if v and v[0] > 1e-9]
+    assert len(leaking) >= 4, f"色軸を跨ぐ op が減った: {leaking}"
+    for n in ("laplace", "prewitt_amp", "gauss_filter", "mean_image"):
+        assert leak_family[n] and leak_family[n][0] > 0.2, \
+            f"{n} の色軸漏れが消えた —— 族の性質という所見が崩れた"
+    # 平滑幅が 2 チャンネル以上ある op だけが B まで届く
+    assert leak_family["gauss_filter"][1] > 0.1 and leak_family["mean_image"][1] > 0.1, \
+        "広い平滑 op が B まで漏れない"
+    assert leak_family["sobel_amp"][1] == 0.0 and leak_family["laplace"][1] == 0.0, \
+        "3 点カーネルの微分 op が 2 つ離れた B まで漏れた"
 
     # 13. 穴 (a)(b): 該当 op が本当に無いことを台帳で確かめる
     catalog = set(fs.ledger) | set(fs.op)
