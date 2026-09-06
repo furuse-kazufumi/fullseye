@@ -418,9 +418,9 @@ def section_tall(sc: dict) -> dict:
     print("4) オクルージョンは「減らす」だけでなく「増やす」")
     print("=" * 78)
 
-    rows = []
-    for p in (0.0, 0.30, 0.60):
-        veh = make_vehicles(seed=3, truck_p=p)
+    rows, excess = [], []
+    for nt in (0, 2, 4, 6):
+        veh = make_vehicles(seed=3, n_truck=nt)
         n_truck = sum(1 for v in veh if v["tall"])
         vid = render_sequence(veh, np.arange(T_FRAMES, dtype=np.float64))
         mask = foreground(vid)
@@ -429,24 +429,32 @@ def section_tall(sc: dict) -> dict:
         cc = per_frame_counts(mask)
         t_far = sum(1 for v in veh if v["lane"] == "far")
         t_near = sum(1 for v in veh if v["lane"] == "near")
-        rows.append([("%.0f %%" % (100 * p)), str(n_truck),
-                     "%d / %d" % (s_far["n_ref"], t_far),
-                     "%d / %d" % (s_near["n_ref"], t_near),
-                     str(int(cc.max()))])
-        print("   トラック率 %3.0f %%(%d 台): far %d/%d、near %d/%d、"
-              "ゼロ点の最大値 %d" % (100 * p, n_truck, s_far["n_ref"], t_far,
+        excess.append((n_truck, s_far["n_ref"] - t_far))
+        rows.append([str(n_truck), "%d / %d" % (s_far["n_ref"], t_far),
+                     "%+d" % (s_far["n_ref"] - t_far),
+                     "%d / %d" % (s_near["n_ref"], t_near), str(int(cc.max()))])
+        print("   トラック %d 台: far %d/%d(%+d)、near %d/%d、"
+              "ゼロ点の最大値 %d" % (n_truck, s_far["n_ref"], t_far,
+                                     s_far["n_ref"] - t_far,
                                      s_near["n_ref"], t_near, cc.max()))
 
-    print("\n  ★遠い車線の過大分は**トラックの台数と一致する**"
+    same = sum(1 for n, e in excess if e == n)
+    print("\n  ★遠い車線の過大分がトラックの台数と一致したのは %d/%d 条件"
           "(背が %d 行から始まり、計数行 %d を覆うため)。"
-          % (TRUCK_Y0, LANES["far"]["slit"]))
+          % (same, len(excess), TRUCK_Y0, LANES["far"]["slit"]))
+    print("     一致しない条件は、トラックの帯が遠い車線の車の帯と"
+          "**同じ時刻に重なって融合した**分(増える失敗と減る失敗が同時に起きる)。")
     print("     車線ごとにスリットを引いても、**行が物理的に重なっていれば"
           "分離できない** —— 直すなら計数行ではなく車線の帯で切る必要がある。")
     figs.save_table("tall_vehicles",
-                    ["トラック率", "台数", "far 帯/真値", "near 帯/真値",
+                    ["トラック", "far 帯/真値", "過大", "near 帯/真値",
                      "ゼロ点 最大"],
-                    rows, title="背の高い車が遠い車線のスリットに書き込む")
-    return {"rows": rows}
+                    rows, title="背の高い車が遠い車線のスリットに書き込む",
+                    caption="トラックは画像の %d 行から %d 行を占めるので、"
+                            "遠い車線の計数行 %d を横切る。"
+                            % (TRUCK_Y0, LANES["near"]["y1"] - 1,
+                               LANES["far"]["slit"]))
+    return {"rows": rows, "excess": excess}
 
 
 # --------------------------------------------------------------------------- #
