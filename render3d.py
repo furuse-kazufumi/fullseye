@@ -1742,8 +1742,8 @@ def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
       非有限があると ``ValueError``。
 
     高さ場を 3 軸の中心差分で微分するので評価は 1 画素あたり 6 回。法線の傾きは
-    ``max |∇h| ≈ 2π A_k / λ_k`` 程度なので、振幅を波長の 1/10 より大きくすると法線が
-    大きく寝て陰影が破綻する。結果は ``phong_shade`` / ``brdf_hapke`` 等の
+    ``max |∇h| ≈ 2π A_k / λ_k`` 程度なので、振幅が波長に近づくほど法線が大きく寝る
+    (既定は A/λ = 0.1 前後)。結果は ``phong_shade`` / ``brdf_hapke`` 等の
     法線マップ入力へそのまま渡せる。"""
     N = np.asarray(normals, np.float64)
     P = np.asarray(positions, np.float64)
