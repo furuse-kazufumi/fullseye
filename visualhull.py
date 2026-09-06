@@ -196,7 +196,29 @@ def carve(silhouettes: Sequence[np.ndarray], Ks: Sequence[np.ndarray],
 def visual_hull(silhouettes: Sequence[np.ndarray], Ks: Sequence[np.ndarray],
                 Rs: Sequence[np.ndarray], ts: Sequence[np.ndarray],
                 bounds: Bounds, res: int) -> np.ndarray:
-    """多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。"""
+    """多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。
+
+    引数・返り値・例外は ``carve`` と完全に同じ(内部でそのまま ``carve`` を呼ぶだけ)。
+
+    - ``silhouettes``: 各カメラの前景マスク (H,W) bool を M 個並べたリスト(サイズはカメラごとに
+      異なってよい)。
+    - ``Ks``/``Rs``/``ts``: 各カメラの内部行列 (3,3)・回転 (3,3)・並進 (3,)。射影規約は
+      ``X_cam = R @ X_world + t``、``pixel = (K @ X_cam)[:2] / Z``(OpenCV 流)。画素は最近傍に丸める。
+    - ``bounds``: ``((xmin,xmax),(ymin,ymax),(zmin,zmax))`` の彫刻領域(各軸 max > min 必須)。
+    - ``res``: 各軸の voxel 分割数(正の整数)。voxel 総数 ``res**3``。
+
+    返り値は (res,res,res) bool。``indexing='ij'`` で軸は (x,y,z)、``vox[i,j,k]`` の中心は
+    ``(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)``。voxel が残る条件は、全カメラで「カメラ前方
+    (Z>0)・画像内・その画素がシルエット前景」を満たすこと(AND)。1 台でも外れれば削られる。
+
+    fail-closed: リスト長の不一致、カメラ 0 台、``res <= 0``、退化 bounds はすべて ``ValueError``
+    (0 台のときに「全 voxel 占有」を復元結果と偽って返さない)。
+
+    注意: visual hull は物体の上位集合で、どのカメラからも見えない凹みは埋まったまま残る。
+    シルエットは ``synthesize_silhouette`` のように 1 画素太らせた被覆マスクにしておくと、離散化
+    誤差で物体 voxel を削り落とす取りこぼしを避けられる。結果は ``voxel_to_mesh`` でメッシュ化、
+    ``esdf`` の占有入力にもそのまま使える。
+    """
     return carve(silhouettes, Ks, Rs, ts, bounds, res)
 
 
