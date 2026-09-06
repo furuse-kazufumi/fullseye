@@ -443,7 +443,8 @@ def brdf_hapke(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: float = 
       (μ0e=μ0, μe=μ, S=1)。負・非有限は ``ValueError``。
 
     返り値は float64 ``(H, W)`` の I/F で、``[0,1]`` に正規化しない(負値は 0 に切る)。
-    影(他の面による遮蔽)は含まないので、必要なら ``cast_shadow`` の可視性マップを掛ける
-    (``render_regolith`` がこの組み合わせ)。μ0 か μ が 0 以下の画素は 0。"""
+    影(他の面による遮蔽)は含まないので、必要なら ``cast_shadow`` / ``shadow_raycast`` の
+    可視性マップを掛ける(``render_regolith`` は ``shadow_raycast`` と組み合わせる)。
+    μ0 か μ が 0 以下の画素は 0。"""
     return brdf_shade(normals, light=light, view=view, model="hapke", w=w, g=g, B0=B0, h=h,
                       roughness_deg=roughness_deg)
