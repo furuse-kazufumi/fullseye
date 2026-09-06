@@ -179,10 +179,11 @@ def edge_points(img: np.ndarray, centre, r_rough: float, how: str = "level",
 def fit_disc(img: np.ndarray, how: str = "level", level: float = 0.5,
              robust: bool = False) -> dict:
     """縁を拾って円を当てはめる(中心は重心 -> 1 回だけ当てはめ直して精度を出す)。"""
-    c = rough_centre(img)
+    cy, cx, r_rough = rough_geometry(img)
+    c = (cy, cx)
     out = None
     for _ in range(2):
-        pts = edge_points(img, c, how, level)
+        pts = edge_points(img, c, r_rough, how, level)
         if len(pts) < 3:
             return {"r": float("nan"), "cy": float("nan"), "cx": float("nan"),
                     "n": 0, "rms": float("nan")}

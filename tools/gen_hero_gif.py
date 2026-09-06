@@ -364,13 +364,7 @@ def act_caliper(nf):
         c = fs.plot_series(c, ax2, np.arange(i + 1, dtype=float), wa[:i + 1],
                            kind="line", color="emphasis", width=2)
         c = _cap(c, 0, "(a) キャリパー phi=%.0f°  走査 %+.0f px" % (np.rad2deg(phi), travel[i]))
-        c = _cap(c, 1, "(b) measure_pos — エッジ %d 点" % int(np.sum(np.isfinite(p)) > 0
-                                                            and len(fs.ledger.measure_pos(
-                                                                img, fs.ledger.gen_measure_rectangle2(
-                                                                    cy + travel[i] * sa,
-                                                                    cx + travel[i] * ca,
-                                                                    phi, 34.0, 5.0, img.shape),
-                                                                sigma=1.0, threshold=0.10))))
+        c = _cap(c, 1, "(b) measure_pos — エッジ %d 点" % nedge[i])
         c = _cap(c, 2, "(c) measure_pairs — 幅 %.2f px" % wa[i])
         out.append(c)
     return out, "3 / 6  サブピクセル計測 — 測定線とキャリパー", \
