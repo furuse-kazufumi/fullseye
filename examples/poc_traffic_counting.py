@@ -702,7 +702,7 @@ def section_jam() -> dict:
     cc = per_frame_counts(mask)
     seen_last = int(_LAB.blob_label(mask[-1]).max())
     seen_last_or = int(_LAB.blob_label(oracle[-1]).max())
-    print("  近い車線に %d 台。40 フレーム目から減速し、%d 列の前後へ詰まる。"
+    print("  近い車線に %d 台。それぞれの停止位置で止まり、%d 列の前後へ詰まる。"
           % (len(veh), X_REF))
     print("  真値: 計数列を跨いだ %d 台 / 最後のフレームで画面に居る %d 台。"
           % (passed, onscreen))
