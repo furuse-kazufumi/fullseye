@@ -533,14 +533,6 @@ def main():
         fn()
         print(f"  {label:<28}{1e3 * (time.perf_counter() - t0):>9.1f} ms  (20000 点)")
     t0 = time.perf_counter()
-    _, _, _, r8 = fs.point_to_plane_icp(Qt, Pt, max_iter=60, tol=1e-8)
-    ms8 = 1e3 * (time.perf_counter() - t0)
-    t0 = time.perf_counter()
-    _, _, _, r7 = fs.point_to_plane_icp(Qt, Pt, max_iter=60, tol=1e-7)
-    ms7 = 1e3 * (time.perf_counter() - t0)
-    print(f"  ★穴 J: tol 既定 1e-8 は絶対値。mm 単位では収束判定が発火せず max_iter まで回る:")
-    print(f"     tol=1e-8 {ms8:.0f} ms / tol=1e-7 {ms7:.0f} ms(rmse 差 {abs(r8 - r7):.1e} = 同一)。")
-    t0 = time.perf_counter()
     fs.obb(Pt[:5000])
     ms_obb5 = 1e3 * (time.perf_counter() - t0)
     t0 = time.perf_counter()
@@ -549,10 +541,25 @@ def main():
     t0 = time.perf_counter()
     np.linalg.svd(Pt - Pt.mean(0), full_matrices=False)
     ms_svd = 1e3 * (time.perf_counter() - t0)
-    print(f"  ★穴 K: fs.obb 5000 点 {ms_obb5:.0f} ms / 20000 点 {ms_obb20:.0f} ms"
-          f"(点数の 2 乗)。中身は (N,3) の SVD 1 回で、")
-    print(f"     full_matrices=False なら {ms_svd:.2f} ms(**{ms_obb20 / ms_svd:.0f} 倍**)。"
-          f" 捨てている U を 20000x20000 = 3.2 GB 確保している。")
+    print(f"  ★穴 J: fs.obb 5000 点 {ms_obb5:.0f} ms / 20000 点 {ms_obb20:.0f} ms(点数の 2 乗)。")
+    print(f"     中身は (N,3) の SVD 1 回。full_matrices=False なら {ms_svd:.2f} ms"
+          f"(**{ms_obb20 / ms_svd:.0f} 倍**)。捨てている U を 20000x20000 = 3.2 GB 確保している。")
+    ms_tol, rmse_tol = {}, {}
+    for tol in (1e-8, 1e-7):
+        t0 = time.perf_counter()
+        _, _, _, r = fs.point_to_plane_icp(Qt, Pt, max_iter=60, tol=tol)
+        ms_tol[tol], rmse_tol[tol] = 1e3 * (time.perf_counter() - t0), r
+    print(f"  (否定した疑い)point_to_plane_icp の tol: 1e-8 {ms_tol[1e-8]:.0f} ms /"
+          f" 1e-7 {ms_tol[1e-7]:.0f} ms、rmse 差 {abs(rmse_tol[1e-8] - rmse_tol[1e-7]):.1e}。")
+    t0 = time.perf_counter()
+    _, _, _, r_short = fs.icp(Qt, Pt, max_iter=3, tol=1e-8)
+    ms_short = 1e3 * (time.perf_counter() - t0)
+    t0 = time.perf_counter()
+    _, _, _, r_long = fs.icp(Qt, Pt, max_iter=60, tol=1e-8)
+    ms_long = 1e3 * (time.perf_counter() - t0)
+    print(f"     一方 fs.icp(点対点)は 3 反復 {ms_short:.0f} ms(rmse {r_short:.4f})→"
+          f" 60 反復 {ms_long:.0f} ms(rmse {r_long:.4f})。20 倍かけて {r_short - r_long:.4f} mm"
+          f" しか下がらない —— 目的関数が点間隔ノイズに支配されていて下がる先が無い。")
 
     print("\n=== 8. ファサードに出ていない op(実行時に確認)===")
     for name in ("reflect_points", "reflection_symmetry_score", "detect_reflection_symmetry",
