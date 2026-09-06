@@ -538,10 +538,11 @@ def section8_tool_gaps():
     print("      6 節の対策 C はそれを呼ぶだけになる。")
 
     # (b) 基準物によるスケール引き直しの op が無い
-    for kw in ("gauge", "artifact", "rescale_by", "scale_from"):
+    for kw in ("gauge", "rescale_by", "scale_from", "known_length"):
         hit = [n for n in allnames if kw in n.lower()]
         assert not hit, (kw, hit)
-    print("  (b) **画面内の既知長さでスケールを引き直す op が無い**。")
+    print("  (b) **画面内の既知長さでスケールを引き直す op が無い**")
+    print("      ('gauge'/'scale_from'/'known_length' で 0 件)。")
     print("      `annotate_scale_bar` は**描く**ほうで、測るほうではない。")
     print("      6 節で見たとおりこの手法には「基準物をワークと同じ半径に置く」")
     print("      という非自明な条件が付くので、op にして docstring に書く価値がある。")
