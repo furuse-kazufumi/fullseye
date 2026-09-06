@@ -454,31 +454,45 @@ def section_waves() -> dict:
 # --------------------------------------------------------------------------- #
 def section_reflection() -> dict:
     print("\n" + "=" * 78)
-    print("5) ★★護岸が水面に映ると、水位は**系統的に低く**出る")
+    print("5) ★★護岸が水面に映ると —— 2 つの検出器が**別の壊れ方**をする")
     print("=" * 78)
-    print("  反射率   水位誤差[m](0.6 / 1.0 / 1.4 m)         平均      符号")
+    print("  反射率  [しきい値交差] 平均誤差   検出列   [キャリパー] 平均誤差   検出列")
 
     hhat = homography_from_marks()
-    out = {}
+    out, rate = {}, {}
+    ncol = len(_detect_cols())
     for refl in (0.0, 0.25, 0.5, 0.7):
-        errs = []
-        for h in (0.6, 1.0, 1.4):
-            img = render(h, refl=refl)
-            u, v = fit_waterline(detect_waterline(img), "tls")
-            errs.append(rectified_level(u, v, hhat) - h)
-        out[refl] = errs
-        sign = "すべて負" if all(e < 0 for e in errs) else "混在"
-        print("   %4.2f    %+7.4f  %+7.4f  %+7.4f            %+7.4f   %s" % (
-            refl, errs[0], errs[1], errs[2], float(np.mean(errs)), sign))
+        row = {}
+        for how in ("threshold", "caliper"):
+            errs, ns = [], []
+            for h in (0.6, 1.0, 1.4):
+                img = render(h, refl=refl)
+                pts = detect_waterline(img, how)
+                ns.append(len(pts))
+                if len(pts) < 3:
+                    continue
+                u, v = fit_waterline(pts, "trim")
+                errs.append(rectified_level(u, v, hhat) - h)
+            row[how] = (float(np.mean(errs)) if errs else float("nan"),
+                        int(np.mean(ns)))
+        out[refl] = [row["threshold"][0], row["caliper"][0]]
+        rate[refl] = [row["threshold"][1], row["caliper"][1]]
+        print("   %4.2f        %+8.4f m       %3d/%d        %+8.4f m       %3d/%d" % (
+            refl, row["threshold"][0], row["threshold"][1], ncol,
+            row["caliper"][0], row["caliper"][1], ncol))
 
-    b0 = float(np.mean(out[0.0]))
-    b7 = float(np.mean(out[0.7]))
-    print("\n  ★★対照群(反射率 0)の偏り %+.4f m に対し、反射率 0.7 で %+.4f m。"
-          % (b0, b7))
-    print("    差 %.1f cm は反射だけで説明がつく。水面直下は「壁の鏡像」なので"
-          % (100 * abs(b7 - b0)))
-    print("    明るく、明->暗のしきい値交差が**下へ**ずれる = 水位を低く読む。")
-    print("    偏りが片方向なので、**何枚平均しても消えません**。")
+    print("\n  ★★**同じ物理現象が、検出器によって逆の顔を見せる**。")
+    print("   * しきい値交差は**系統的に低く**読む(%.2f -> %.2f m)。水面直下は"
+          % (out[0.0][0], out[0.7][0]))
+    print("     壁の鏡像なので明るく、交差点が下へ落ちるから。対照群(反射率 0)は")
+    print("     %+.4f m なので、これは反射の効果です。**偏りは片方向なので"
+          % out[0.0][0])
+    print("     何枚平均しても消えません**。")
+    print("   * キャリパー(勾配ピーク + 振幅の門)は**見失う** —— 壁 -> 水の")
+    print("     グレー差が 0.38 -> 0.12 と潰れて門を通らず、検出列が %d -> %d に落ちる。"
+          % (rate[0.0][1], rate[0.7][1]))
+    print("     「静かに嘘をつく」のと「黙って落ちる」のは、運用上まったく別の")
+    print("     故障です。前者は監視で気づけません。")
     return out
 
 
