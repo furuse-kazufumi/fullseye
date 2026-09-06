@@ -817,6 +817,15 @@ def main():
     print("    → 平面キャンバスなので 180 度を超えるパノラマは原理的に張れない")
     print(f"      ({N_LOOP} 枚 360 度をそのまま渡すと無限遠へ飛ぶ)。円筒/球面へ張る op は")
     print("      無い(穴 c, k)。")
+    # 3 枚目は差(符号つき)。上書き合成なので、ずれていても継ぎ目に二重像が
+    # 出ない —— 引き算して初めてずれが見える、という主張そのものの図。
+    figs.save_grid("mosaic",
+                   [mos_true, mos_est, mos_est - mos_true],
+                   ["真の H で合成", "鎖の H で合成", "差(鎖 - 真値)"],
+                   title="合成画像を眺めても、ずれ量は分からない", ncols=1,
+                   signed=[False, False, True],
+                   caption="上 2 枚はどちらも継ぎ目が綺麗に見える(後勝ちの上書きで"
+                           "混合しないため)。3 枚目で初めてずれが出る。")
 
     BA_BEATS_CHAIN = bool(pe_ba.max() < pe_chain.max())
     print(f"\n【判定】")
