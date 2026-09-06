@@ -1170,8 +1170,8 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
         #   本物の欠陥 9433。2026-09-06 実測、_local_prominence の表を見よ)。
         #   帯域幅に依らない判定にはこちらを使う。既存の 2 つは意味を変えずに残す
         #   —— 名前が同じで中身が変わるほうが、増えるより危ない。
-        "local_prominence": _local_prominence(mag, freqs, int(np.argmax(body)))[0],
-        "local_noise_floor": _local_prominence(mag, freqs, int(np.argmax(body)))[1],
+        "local_prominence": loc_prom,
+        "local_noise_floor": loc_med,
         "band_rms": band_rms,
         "signal_rms": sig_rms,
         "band_fraction": (band_rms / sig_rms) if sig_rms > 0.0 else 0.0,
