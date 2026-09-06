@@ -672,14 +672,25 @@ def section_cliff_blur():
             if p50:
                 fv.append(p50[0]["width"] - w)
         det = nfound / len(phases)
+        mb = np.mean(mv) if mv else float("nan")
         if det < 1.0 and lost_at is None:
             lost_at = w
-        print(f"  {w:7.2f}{w / 1.5:7.2f} | {np.mean(mv) if mv else float('nan'):+9.4f}"
-              f"{det:7.0%} | {np.mean(fv) if fv else float('nan'):+9.4f}")
-    print(f"\n  -> エッジ対を **見失う** のは w = {lost_at} px(= {lost_at / 1.5:.2f} sigma)から。")
-    print("     見失う前に、まず偏る。検査で危ないのは「測れなかった」ではなく")
-    print("     「測れたが 0.2 px 小さく出た」のほう。")
-    return edge_ratio, lost_at
+        if np.isfinite(mb) and abs(mb) > 0.05 and usable_at is None:
+            usable_at = w
+        print(f"  {w:7.2f}{w / 1.5:7.2f} | {mb:+9.4f}{det:7.0%} | "
+              f"{np.mean(fv) if fv else float('nan'):+9.4f}")
+    if lost_at is None:
+        print("\n  -> ★ エッジ対を **一度も見失わなかった**。w = 2.37 px "
+              "(= 1.6 sigma)まで")
+        print("     『対が 1 つ見つかりました』と答え続ける。しかしその幅は")
+        print(f"     w = {usable_at} px(= {usable_at / 1.5:.2f} sigma)より詰まると "
+              "0.05 px 以上偏っている。")
+    else:
+        print(f"\n  -> エッジ対を見失うのは w = {lost_at} px "
+              f"(= {lost_at / 1.5:.2f} sigma)から。")
+    print("     **検査で危ないのは『測れなかった』ではなく『測れたが偏っていた』。**")
+    print("     `measure_pairs` は信頼度を返さないので、呼ぶ側が w/sigma を見張るしかない。")
+    return edge_ratio, lost_at, usable_at
 
 
 # --------------------------------------------------------------------------- #
