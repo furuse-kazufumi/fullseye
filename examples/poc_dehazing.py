@@ -637,6 +637,10 @@ def main():
     c_no, _e_no, p_no, _s_no = zero_scores["何もしない"]
     assert c_eq > c_no, "等化がコントラストを上げていない(前提が崩れている)"
     assert p_eq < p_no, f"等化の PSNR {p_eq:.2f} が「何もしない」{p_no:.2f} を下回っていない"
+    # 見た目の指標は真値を最大値としない —— ゼロ点 4 つとも真値より対比が高い。
+    c_true = rms_contrast(j_true)
+    assert all(v[0] > c_true for v in zero_scores.values()), \
+        f"真値の RMS 対比 {c_true:.4f} を下回るゼロ点がある(前提が崩れている)"
 
     # (3) 除霞は「何もしない」「大域コントラスト」の両ゼロ点に勝つ(この霞の濃さでは)。
     assert scores["暗チャネル p=15"][0] > scores["何もしない"][0] + 1.0
