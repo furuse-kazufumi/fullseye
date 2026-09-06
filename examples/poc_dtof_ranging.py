@@ -285,6 +285,16 @@ def main():
     print(f"     ピーク位置は {peak_rmse[-1]:.2f} mm で止まる。これは雑音ではなく")
     print(f"     ビン格子への量子化バイアス({1e3 * BIN_M * 0.28:.2f} mm)なので、")
     print("     光子をいくら増やしても消えない —— ゼロ点は収束しない。")
+    lg = np.log10(ns)
+    figs.save_plot("crb_scaling",
+                   [("ゲート重心", lg, np.log10(got)),
+                    ("CRB(理論下限)", lg, np.log10(want)),
+                    ("ピーク位置そのまま", lg, np.log10(peak_rmse))],
+                   xlabel="log10 N(光子数)", ylabel="log10 RMSE [mm]",
+                   title="1/√N に乗るか —— 傾き %.3f(理論 -0.500)" % slope,
+                   caption="ゲート重心は CRB に寄り添って落ちる。ピーク位置は "
+                           "%.1f mm で床に当たる(ビン量子化バイアス)。"
+                           % peak_rmse[-1])
 
     # ------------------------------------------------------------------ #
     print("\n=== 4. 壊れる境界 (a) 背景光 —— RMSE は飛ぶが中央値は動かない ===")
