@@ -713,33 +713,47 @@ def section7_spacetime(rows, cols, movie):
     print("     (md=3 で再現率 %.0f %%)。「雑音に強くなる」どころか**取り逃す**。"
           % (100 * got[3][1]))
     print()
-    print("  対照群 —— **粒子を止めて**同じことをする(σ_step = 0、ドリフト 0)。")
-    print("  原因が「動き」なのか「時間軸そのもの」なのかを分ける:")
-    rows_s, cols_s = simulate(100, sigma_step=0.0, drift=(0.0, 0.0), seed=SEED)
-    mov_s = make_movie(rows_s, cols_s, seed=999)
-    ins_s = (rows_s >= 0) & (rows_s < N) & (cols_s >= 0) & (cols_s < N)
-    loc_s = np.asarray(fs.ledger.vol_local_maxima(mov_s, min_distance=1,
-                                                  threshold=THR))
-    hit_s = 0
-    for t in range(mov_s.shape[0]):
-        tru = np.stack([rows_s[t][ins_s[t]], cols_s[t][ins_s[t]]], axis=1)
-        pts = loc_s[loc_s[:, 0] == t][:, 1:].astype(float)
-        if tru.shape[0] and pts.shape[0]:
-            d1, _ = cKDTree(pts).query(tru, k=1)
-            hit_s += int((d1 <= MATCH_TOL).sum())
-    print("  静止した粒子: 3-D 極大 %d 点 / 真値 %d → 再現率 %.1f %%"
-          % (loc_s.shape[0], int(ins_s.sum()), 100 * hit_s / int(ins_s.sum())))
+    print("  対照群 2 つ —— 原因を「動き」と「時間方向の揺らぎ」に分ける:")
+
+    def _recall_static(sigma_step, noise, tag):
+        r_s, c_s = simulate(100, sigma_step=sigma_step, drift=(0.0, 0.0),
+                            seed=SEED)
+        mv = make_movie(r_s, c_s, noise=noise, seed=999)
+        ins = (r_s >= 0) & (r_s < N) & (c_s >= 0) & (c_s < N)
+        lc = np.asarray(fs.ledger.vol_local_maxima(mv, min_distance=1,
+                                                   threshold=THR))
+        hit = 0
+        for t in range(mv.shape[0]):
+            tru = np.stack([r_s[t][ins[t]], c_s[t][ins[t]]], axis=1)
+            pts = lc[lc[:, 0] == t][:, 1:].astype(float)
+            if tru.shape[0] and pts.shape[0]:
+                d1, _ = cKDTree(pts).query(tru, k=1)
+                hit += int((d1 <= MATCH_TOL).sum())
+        rc = hit / int(ins.sum())
+        print("  %-28s 極大 %5d 点 / 真値 %d → 再現率 %.1f %%"
+              % (tag, lc.shape[0], int(ins.sum()), 100 * rc))
+        return rc
+
+    r_noise = _recall_static(0.0, NOISE, "静止 + 雑音 σ=%.2f" % NOISE)
+    r_clean = _recall_static(0.0, 0.0, "静止 + 雑音なし")
     print()
-    print("  → ★★原因は**動き**で確定。静止していれば時間方向の輝度が一定なので")
-    print("     『立方近傍の最大』に同点で残り、再現率はほぼ 100 %。ところが")
-    print("     粒子が動くと、中心画素の標本値がサブピクセル位置に応じて")
-    print("     フレームごとに揺れる。等方の立方近傍は**時間方向にも厳密な最大**")
-    print("     を要求するので、揺れる系列の中で『前後より高いコマ』しか残らない")
-    print("     (無相関な系列なら 1/3、実測 %.0f %%)。" % (100 * got[1][1]))
+    print("  → ★★**また予想が外れた**。「動きが犯人」と書きかけたが、")
+    print("     **静止させても再現率は %.1f %% にしか戻らない**。しかも 1/3 は"
+          % (100 * r_noise))
+    print("     偶然の数字ではない —— **無相関な系列の中で『前後より高い』確率**")
+    print("     **がちょうど 1/3**。雑音を切ると %.1f %% へ跳ね上がる。"
+          % (100 * r_clean))
+    print("     つまり犯人は動きでも雑音の大きさでもなく、**時間方向に**")
+    print("     **厳密な最大を要求すること**そのもの。σ=0.02 という")
+    print("     『無視してよい』雑音でも、時間軸に極大を課した瞬間に")
+    print("     検出の 2/3 が消える。動いている場合(%.1f %%)のほうが"
+          % (100 * got[1][1]))
+    print("     むしろ**良い** —— 位置が動くぶん時間系列に構造が入るため。")
     print("     `vol_local_maxima` は**空間の 1 画素と時間の 1 フレームを同じ**")
     print("     **物差しで比べている**。時間は空間ではない —— 体積として扱って")
     print("     よいのは「見る」ときで、「測る」ときは軸ごとに物差しを変える。")
-    print("     (10 節の穴 (b): 軸ごとに近傍幅を変える引数が無い。)")
+    print("     (10 節の穴 (b): 軸ごとに近傍幅を変える引数が無い。時間方向の")
+    print("     半幅を 0 にできれば、この op はそのまま per-frame 検出になる。)")
     return got
 
 
