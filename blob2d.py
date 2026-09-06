@@ -244,19 +244,36 @@ def _perimeter(mask: np.ndarray) -> float:
 
 
 def _convex_area(mask: np.ndarray) -> float:
-    """凸包の面積[px^2]。**画素の角**で作るので 1 画素でも退化しない。"""
+    """凸包を**塗り直して**数えた面積[px^2](``solidity`` の分母)。
+
+    多角形としての凸包面積ではなく、**凸包の中に中心が入る画素の数**を返す。
+    理由は測って決めた(2026-09-06、半径 40 px の円板 = 凸なので真値は 1.0):
+
+        画素の角で多角形の面積 …… 5140 px^2 → solidity 0.977(凸なのに 1 未満)
+        画素の中心で多角形面積 …… 4900 px^2 → solidity 1.025(1 を超える)
+        凸包を塗り直して数える …… 5025 px^2 → **solidity 1.000**
+
+    多角形の面積は「画素を点と見るか正方形と見るか」でどちらかへ必ずずれ、
+    凸な物体の solidity が 1 にならない。分子(面積)が画素の数である以上、
+    分母も画素の数で揃えるのが筋が通る。
+
+    退化(1 画素、1 画素幅の線)では凸包が作れないので、そのときは
+    **面積そのもの**を返す = solidity 1.0。線分も 1 点も凸なので正しい。
+    """
     from scipy.spatial import ConvexHull, QhullError
 
     edge = mask & ~ndimage.binary_erosion(mask, np.ones((3, 3), bool))
     rr, cc = np.nonzero(edge if edge.any() else mask)
-    # 画素 (r, c) は [r-0.5, r+0.5] x [c-0.5, c+0.5] を占める。その 4 隅を使う。
-    corners = np.concatenate([
-        np.stack([rr + dr, cc + dc], 1)
-        for dr in (-0.5, 0.5) for dc in (-0.5, 0.5)])
+    pts = np.stack([rr, cc], 1).astype(np.float64)
     try:
-        return float(ConvexHull(corners).volume)     # 2-D では volume = 面積
-    except (QhullError, ValueError):                 # 理屈上は来ないが黙らない
+        hull = ConvexHull(pts)
+    except (QhullError, ValueError):     # 1 点・共線 —— どちらも凸なので 1.0
         return float(mask.sum())
+    gr, gc = np.mgrid[0:mask.shape[0], 0:mask.shape[1]]
+    grid = np.stack([gr.ravel(), gc.ravel()], 1).astype(np.float64)
+    eq = hull.equations                  # [法線 | 切片]、内側で A x + b <= 0
+    inside = np.all(grid @ eq[:, :2].T + eq[:, 2] <= 1e-9, axis=1)
+    return float(inside.sum())
 
 
 def blob_features(labels: Any, spacing: float = 1.0) -> dict:
