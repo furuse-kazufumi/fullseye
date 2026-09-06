@@ -596,11 +596,14 @@ def main():
         return corner_rms(e, q), landmark_error(calib.vector_to_hom_mat2d(src, e), Ht)[0], c, Ht
 
     print(f"  {'傾き [度]':>10}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}   紙の占有")
-    for tilt in (5.0, 20.0, 35.0, 45.0, 55.0, 62.0):
+    for tilt in (5.0, 25.0, 45.0, 60.0, 64.0, 66.0, 70.0):
         cr, lr, c, _ = run_case(tilt=tilt)
-        occ = 100 * ((c > 0) & (page_mask(c))).mean()
+        occ = 100 * page_mask(c).mean()
         s = f"{cr:>14.2f}{lr:>14.3f}" if cr is not None else f"{'検出できず':>28}"
         print(f"  {tilt:>10.0f}{s}   {occ:>5.1f} %")
+    print("  → 傾きそのものにはほとんど負けない(60 度でも 2 px 台)。崖は 65 度前後で、")
+    print("     理由は角度ではなく**奥の辺が短くなりすぎて直線を当てる点が足りなくなる**")
+    print("     こと(1 辺 12 点未満で棄却)。紙の占有が 3 割を切るあたりが目安。")
 
     print(f"\n  {'枠外への食み出し [px]':>22}{'4 隅 RMS [px]':>14}{'格子 RMS [px]':>14}")
     for dx in (0.0, 0.004, 0.010, 0.018, 0.026, 0.034):
