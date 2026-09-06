@@ -772,6 +772,12 @@ def main():
     # ------------------------------------------------------------- assert -- #
     # 1) 合成器: 解析 Sq と実現 Sq が倍精度で一致する
     assert abs(sq_real / sq_an - 1.0) < 1e-10, "PSD 合成の解析値と実現値が不一致"
+    # 合成器は分散だけでなく形も正しいこと(位相の反対称化を壊すと尖度が跳ねる)
+    kurt = float(np.mean((psd_raw - psd_raw.mean()) ** 4) / psd_raw.std() ** 4)
+    assert 2.5 < kurt < 3.5, f"合成面の尖度が {kurt:.1f} —— 位相の引き方が壊れている"
+    # `radial_power_spectrum` は面 PSD の規約(H が ±0.05 以内で戻る)
+    assert all(abs(v) < 0.05 for v in h_err.values()), \
+        f"H が戻らない = 規約の読みが違う: {h_err}"
     # 2) ゼロ点: 生 rms は Sq を 10 倍以上に見せる / 正しい手順は 10% 以内
     assert areal_params(surface)["Sq"] > 10.0 * truth["Sq"]
     assert abs(rel_err(areal_params(rough_meas)["Sq"], truth["Sq"])) < 0.10
