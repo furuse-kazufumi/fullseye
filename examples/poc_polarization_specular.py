@@ -258,20 +258,28 @@ def main():
 
     # ---------------------------------------------------------------- #
     print("\n=== 6. 方位が 4 方位の格子に乗るかどうか ===")
-    print(f"  {'入射面方位':>10}{'op RMSE':>12}{'ゼロ点3 RMSE':>14}{'ゼロ点3/op':>12}")
+    print("  ブリュースター角で測る(op が厳密になる条件。ここで出る差は")
+    print("  すべて「方位が格子に乗るか」だけに由来する)。右 2 列は入射角 70 度。")
+    print(f"  {'入射面方位':>10}{'op RMSE':>12}{'ゼロ点3':>12}{'比':>10}"
+          f"{'op(70度)':>12}{'ゼロ点3(70度)':>16}{'比':>8}")
     az_rows = {}
+    ab_b, bb_b = specular_components(lobe, THETA_B)
+    ab_7, bb_7 = specular_components(lobe, 70.0)
     for az in (0.0, 10.0, 22.5, 45.0):
-        a, b = specular_components(lobe, 70.0)
-        f = render_sweep(diffuse, a, b, azimuth=az)
-        e = rmse(separate(f)[0], diffuse)
-        e3 = rmse(null_frame_min2(f), diffuse)
-        az_rows[az] = (e, e3)
-        print(f"  {az:>10.1f}{e:>12.3e}{e3:>14.3e}{e3 / e:>12.2f}")
+        fb = render_sweep(diffuse, ab_b, bb_b, azimuth=az)
+        f7 = render_sweep(diffuse, ab_7, bb_7, azimuth=az)
+        e, e3 = rmse(separate(fb)[0], diffuse), rmse(null_frame_min2(fb), diffuse)
+        e7, e37 = rmse(separate(f7)[0], diffuse), rmse(null_frame_min2(f7), diffuse)
+        az_rows[az] = (e, e3, e7, e37)
+        print(f"  {az:>10.1f}{e:>12.3e}{e3:>12.3e}{e3 / e:>10.3g}"
+              f"{e7:>12.3e}{e37:>16.3e}{e37 / e7:>8.2f}")
     print("  → 方位が 0 度 / 45 度(= 測った角度そのもの)では離散最小値が真の")
-    print("     I_min に一致し、素朴なゼロ点 3 が op に **引き分ける**。22.5 度で")
-    print("     4.6 倍差。正弦波当てはめが効くのは格子から外れたときだけで、")
-    print("     「当てはめだから常に良い」ではない。実機の方位は未知なので")
-    print("     最悪値で設計すべき、というのがこの表の使い道。")
+    print("     I_min に一致し、**素朴なゼロ点 3 が op に引き分ける**(比 1.0)。")
+    print("     22.5 度で初めて差がつく。正弦波当てはめが効くのは格子から外れた")
+    print("     ときだけで、「当てはめだから常に良い」ではない。")
+    print("  → 右 2 列(70 度)では同じ比が 1.9 倍まで縮む。op 側に R_p 由来の偏り")
+    print("     2.6e-2 が常時載っていて、方位のずれによる差をそれが覆い隠すため。")
+    print("     **比を見るときは分母が何で律速されているかを先に見る。**")
 
     # ---------------------------------------------------------------- #
     print("\n=== 7. 偏光度と Stokes —— 別の op も同じ真値に合うか ===")
