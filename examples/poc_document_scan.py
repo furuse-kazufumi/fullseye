@@ -579,8 +579,10 @@ def main():
     print(f"  {'手法':<32}{'地の平坦度':>11}{'濃い字':>8}{'薄い字':>8}{'紙の誤検出':>11}"
           f"{'図の相関':>9}{'図の段数':>9}")
     shadow_stats = {}
+    shadow_imgs = {}
     for name, fn in methods:
         out = fn(rect_ideal)
+        shadow_imgs[name] = out
         m = ink_mask(out)
         fl = flatness(out)
         rs = float(m[strong_ink].mean()); rw = float(m[faint_ink].mean())
