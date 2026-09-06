@@ -389,57 +389,64 @@ def section4_density(rows0, cols0):
     print("4) ★★密度掃引 —— 誤リンクは D を**下げる**")
     print("=" * 78)
     print("  粒子数を振る(視野は 192x192 px のまま)。平均最近接距離 ~ 0.5/sqrt(密度)。")
+    print("  **欠測を含む列(検出位置)と含まない列(真値位置)を並べる**。")
     print()
-    header = ("  %6s %9s %9s | %9s %9s | %9s %9s"
-              % ("粒子数", "最近接px", "誤り率%", "D(NN)", "比", "D(真リンク)", "比"))
+    header = ("  %6s %8s | %7s %7s %8s | %8s %7s | %8s"
+              % ("粒子数", "最近接px", "曖昧%", "欠測%", "D比 検出",
+                 "曖昧%", "D比 真値", "D比 真リンク"))
     print(header)
     print("  " + "-" * (len(header) - 2))
     counts = [25, 50, 100, 200, 400]
-    rec = {"n": [], "nn_d": [], "true_d": [], "bad": [], "nn_drift": [],
-           "true_drift": [], "nnd": [], "greedy_d": [], "greedy_bad": []}
+    rec = {"n": [], "nnd": [], "amb_det": [], "miss_det": [], "d_det_nn": [],
+           "amb_tru": [], "d_tru_nn": [], "d_det_true": [], "drift_det_nn": [],
+           "drift_tru_nn": [], "greedy_d": [], "greedy_amb": [], "greedy_miss": []}
     for n_part in counts:
         rows, cols = simulate(n_part, seed=SEED + n_part)
         movie = make_movie(rows, cols, seed=n_part)
-        pos, ident, back = build_positions(rows, cols, movie, use_detection=True)
-        nnd = float(np.median(cKDTree(np.stack([rows[0], cols[0]], 1))
-                              .query(np.stack([rows[0], cols[0]], 1), k=2)[0][:, 1]))
-        d_nn, bad = step_displacements(pos, ident, link_nn)
-        d_gr, bad_gr = step_displacements(pos, ident, link_greedy)
-        d_tr, _ = step_displacements(pos, ident, link_nn, use_truth_link=True,
-                                     truth_index=back)
-        a, _, ac = estimate(d_nn)
-        g, _, _ = estimate(d_gr)
-        b, _, bc = estimate(d_tr)
-        print("  %6d %9.1f %9.1f | %9.4f %9.3f | %9.4f %9.3f"
-              % (n_part, nnd, 100 * bad, a, a / D_TRUE, b, b / D_TRUE))
+        pts = np.stack([rows[0], cols[0]], 1)
+        nnd = float(np.median(cKDTree(pts).query(pts, k=2)[0][:, 1]))
+        # 検出位置(欠測あり)
+        posd, idd, backd = build_positions(rows, cols, movie, use_detection=True)
+        dd, bd = step_displacements(posd, idd, link_nn, truth_index=backd)
+        dg, bg = step_displacements(posd, idd, link_greedy, truth_index=backd)
+        dt, _ = step_displacements(posd, idd, link_nn, use_truth_link=True,
+                                   truth_index=backd)
+        # 真値位置(欠測なし = 曖昧だけ)
+        post, idt, backt = build_positions(rows, cols, movie, use_detection=False)
+        dv, bt = step_displacements(post, idt, link_nn, truth_index=backt)
+        a, _, ac = estimate(dd)
+        g, _, _ = estimate(dg)
+        b, _, _ = estimate(dt)
+        c, _, cc = estimate(dv)
+        print("  %6d %8.1f | %7.1f %7.1f %8.3f | %8.1f %7.3f | %8.3f"
+              % (n_part, nnd, 100 * bd["amb"], 100 * bd["miss"], a / D_TRUE,
+                 100 * bt["amb"], c / D_TRUE, b / D_TRUE))
         rec["n"].append(n_part)
         rec["nnd"].append(nnd)
-        rec["bad"].append(100 * bad)
-        rec["greedy_bad"].append(100 * bad_gr)
-        rec["nn_d"].append(a / D_TRUE)
+        rec["amb_det"].append(100 * bd["amb"])
+        rec["miss_det"].append(100 * bd["miss"])
+        rec["d_det_nn"].append(a / D_TRUE)
+        rec["amb_tru"].append(100 * bt["amb"])
+        rec["d_tru_nn"].append(c / D_TRUE)
+        rec["d_det_true"].append(b / D_TRUE)
+        rec["drift_det_nn"].append(ac / DRIFT[1])
+        rec["drift_tru_nn"].append(cc / DRIFT[1])
         rec["greedy_d"].append(g / D_TRUE)
-        rec["true_d"].append(b / D_TRUE)
-        rec["nn_drift"].append(ac / DRIFT[1])
-        rec["true_drift"].append(bc / DRIFT[1])
+        rec["greedy_amb"].append(100 * bg["amb"])
+        rec["greedy_miss"].append(100 * bg["miss"])
     print()
     print("  ドリフト(列)の真値比 —— **D ほどは壊れない**:")
-    print("  %6s %14s %14s" % ("粒子数", "NN リンク", "真値リンク"))
+    print("  %6s %14s %14s" % ("粒子数", "検出+NN", "真値位置+NN"))
     for k, n_part in enumerate(rec["n"]):
-        print("  %6d %14.3f %14.3f" % (n_part, rec["nn_drift"][k], rec["true_drift"][k]))
+        print("  %6d %14.3f %14.3f"
+              % (n_part, rec["drift_det_nn"][k], rec["drift_tru_nn"][k]))
     print()
-    print("  1 対 1 の貪欲リンク(近い対から確定)にすると:")
-    print("  %6s %12s %12s" % ("粒子数", "誤り率 %", "D 真値比"))
+    print("  1 対 1 の貪欲リンク(近い対から確定、検出位置)にすると:")
+    print("  %6s %10s %10s %10s" % ("粒子数", "曖昧 %", "欠測 %", "D 真値比"))
     for k, n_part in enumerate(rec["n"]):
-        print("  %6d %12.1f %12.3f" % (n_part, rec["greedy_bad"][k], rec["greedy_d"][k]))
-    print()
-    print("  → ★★ D は密度とともに**単調に下がる**。誤リンクは定義上いちばん")
-    print("     近い相手を選ぶので、採用される変位が系統的に短い。**片側にしか**")
-    print("     **外れない誤差**なので、フレームを増やしても平均では消えない。")
-    print("  → ★ドリフト(1 次モーメント)は D(2 次モーメント)ほど壊れない。")
-    print("     誤リンクの相手はドリフトの向きに関してほぼ対称に選ばれるため。")
-    print("     『追跡がどれだけ壊れているか』はドリフトを見ても分からない。")
-    print("  → 1 対 1 の制約(貪欲)を入れても**誤り率はほとんど下がらない**。")
-    print("     近すぎる相手が実在する以上、制約では区別が付かない。")
+        print("  %6d %10.1f %10.1f %10.3f"
+              % (n_part, rec["greedy_amb"][k], rec["greedy_miss"][k],
+                 rec["greedy_d"][k]))
     return rec
 
 
