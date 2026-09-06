@@ -455,46 +455,54 @@ def section6_fusion():
     print("=" * 78)
     print("6) ★融合 —— 触れた 2n + 2n は 4n に見える")
     print("=" * 78)
-    print("  真値の 4n 割合は 0.30。密に撒いて連結成分が融合すると、積分輝度は")
-    print("  足し算になるので 2n が 2 つで 4n の位置に来る。")
+    nu0 = make_nuclei(n=110, seed=11, sep=1.60)
+    truth4 = float(np.mean(nu0["ploidy"] == 4))
+    img0, at0 = render(nu0)
+    lab0 = segment(img0)
+    o0 = objects(img0, lab0, nu0, at0)
+    thr = best_split(o0["integ"][o0["idx"]], o0["ploidy"] == 4)[1]
+    print("  疎に撒いた版(間隔 1.60)で 3n 相当のしきい値を決める: %.0f。" % thr)
+    print("  以後の密度ではこの 1 本をそのまま使う(実務でも較正は 1 回)。")
+    print("  真値の 4n 割合 = %.3f。" % truth4)
     print()
-    print("  %6s %8s %8s %12s %12s %12s" %
-          ("間隔", "塊", "融合", "4n 割合", "検出率", "誤検出"))
+    print("  %6s %6s %6s %10s %10s %10s %10s" %
+          ("間隔", "塊", "融合", "4n 割合", "検出率", "誤検出", "除去後"))
     print("  " + "-" * 62)
     out = {}
-    for sep in (1.20, 1.00, 0.90):
-        nu = make_nuclei(seed=11, sep=sep)
+    for sep in (1.60, 1.10, 0.90):
+        nu = make_nuclei(n=110, seed=11, sep=sep)
         img, at = render(nu)
         lab = segment(img)
         o = objects(img, lab, nu, at)
         fused = np.array([len(o["members"][k]) > 1 for k in range(1, o["n"] + 1)])
-        integ = o["integ"]
-        thr = 1.5 * D0 * (1 - 0.087)          # 3n 相当(1 節の裾落ちを込みで)
-        frac4 = float(np.mean(integ > thr))
+        frac4 = float(np.mean(o["integ"] > thr))
         if fused.any():
             _, ts = best_split(-o["f"]["solidity"], fused)
             det = float(np.mean(-o["f"]["solidity"][fused] > ts))
             fpr = float(np.mean(-o["f"]["solidity"][~fused] > ts))
             keep = -o["f"]["solidity"] <= ts
-            frac4_clean = float(np.mean(integ[keep] > thr))
+            clean = float(np.mean(o["integ"][keep] > thr))
         else:
             det = fpr = float("nan")
-            frac4_clean = frac4
-        out[sep] = (o["n"], int(fused.sum()), frac4, det, fpr, frac4_clean, -ts if
-                    fused.any() else float("nan"))
-        print("  %6.2f %8d %8d %12.3f %12.3f %12.3f"
-              % (sep, o["n"], fused.sum(), frac4, det, fpr))
+            ts = float("nan")
+            clean = frac4
+        out[sep] = (o["n"], int(fused.sum()), frac4, det, fpr, clean, -ts)
+        print("  %6.2f %6d %6d %10.3f %10.3f %10.3f %10.3f"
+              % (sep, o["n"], fused.sum(), frac4, det, fpr, clean))
     s = 0.90
     print()
-    print("  → 間隔 %.2f では %d 塊中 %d が融合し、4n の割合が真値 0.30 に対し"
-          % (s, out[s][0], out[s][1]))
-    print("     **%.2f** になる。`solidity` の 1 本のしきい値(%.3f)で検出率 %.2f /"
+    print("  → 間隔 %.2f では %d 塊中 %d が融合し、4n の割合が真値 %.3f に対し"
+          % (s, out[s][0], out[s][1], truth4))
+    print("     **%.3f** になる。`solidity` の 1 本のしきい値(%.3f)で検出率 %.2f /"
           % (out[s][2], out[s][6], out[s][3]))
-    print("     誤検出 %.3f、落としたあとは **%.2f**。" % (out[s][4], out[s][5]))
+    print("     誤検出 %.3f、落としたあとは **%.3f**。" % (out[s][4], out[s][5]))
     print("  → ★ただし solidity が効くのは**核が凸に近い**からで、この合成では")
-    print("     単独核にも ±10 %% の半径変調を入れてある(入れないと solidity が")
+    print("     単独核にも ±10 % の半径変調を入れてある(入れないと solidity が")
     print("     ちょうど 1.000 になって、区別が不自然に簡単になる)。")
-    return out
+    print("  → ★★間隔 1.60 でも融合が %d 件ある。**「疎に撒いた」は「融合ゼロ」では"
+          % out[1.60][1])
+    print("     ない** —— 融合ゼロを仮定した較正はここで既に汚れている。")
+    return out, truth4
 
 
 # --------------------------------------------------------------------------- #
