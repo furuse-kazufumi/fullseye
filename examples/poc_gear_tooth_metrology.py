@@ -1,0 +1,734 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""歯車の歯形を測る —— 偏心は 1 次、歯は z 次。歯が 1 枚欠けると両方が混ざる。
+
+平歯車の検査(JIS B 1702 / ISO 1328 の歯車精度)を画像でやる、という仕事です。
+輪郭を **インボリュート曲線の閉形式** で描くので、ピッチ円直径・歯厚・隣接ピッチ・
+歯先円直径・偏心は **式そのものが真値** になります。
+
+EXTEND: 実物に差し替えるなら :func:`make_scene` の返す ``img``(観測画像)と
+``truth``(設計諸元 + 与えた偏心)の対を、実写画像と図面値に置き換えます。
+**「別の測定器で測った値」を真値にするのは不可** —— 三次元測定機の歯溝振れと
+画像の歯先振れは別の量で、規約が違うと 0.01 mm 級の差が説明できなくなります。
+
+この PoC が示すこと(数字はいずれも実行時に印字される実測値):
+
+1. **ゼロ点(2 値化 → 輪郭点 → 最小二乗円)は、この仕事に構造的に向いていない**。
+   当てはめた円の半径 24.61 mm は、ピッチ円 24.000 / 歯先円 26.000 /
+   歯底円 21.500 mm の **どれでもない**(歯先と歯底のあいだの、歯のデューティ比
+   で決まる中途半端な値)。★もっと重いのは中心のほうで、外形に当てる円は
+   **歯の並びの中心**を返すため、そこを基準にすると偏心 0.200 mm を与えても
+   推定は 0.0003 mm —— **偏心をゼロと報告する**。基準は穴(軸)であって
+   外形ではない、というのが最初の分かれ道でした。
+2. **極座標展開 R(θ) の中央値がピッチ円半径になる**。デューティ 50 % の半径が
+   ピッチ円である、という定義がそのまま「中央値」なので、素朴だが厳密です。
+   実測 23.997 mm(真値 24.000、誤差 -0.012 %)。歯先円は最大値から 25.992 mm
+   (-0.031 %)、歯厚は 3.1427 mm(真値 3.1416、+0.03 %、24 枚の標準偏差 0.0025)。
+3. ★**偏心は 1 次成分、歯形は z=24 次成分**なので、周波数で切り分けられる。
+   偏心 0.000〜0.200 mm を振ると 1 次振幅の推定は最大 -0.9 % の誤差で当たる
+   (0.200 mm → 0.1982 mm)。24 次成分は偏心を変えてもほとんど動かない。
+4. ★★**歯が 1 枚欠けると、その欠けは全周波数に漏れる**。偏心ゼロの歯車から
+   1 枚落としただけで、1 次振幅が **0.1690 mm** 立つ —— 実在する偏心
+   0.050 mm の **3.4 倍** です。偏心 0.050 mm の歯車で測ると
+   0.050 → 0.1354 mm(**+171 %**)。**欠けを先に見つけて外さないと偏心は測れない**。
+5. ★**外して測り直すと戻る**。歯先半径の外れ値で欠けを 1 枚特定し(24 枚中 1 枚、
+   閾値は中央値 -0.5 mm)、その 1 ピッチ分の角度を捨てて {1,2 次} + {z,2z,3z,4z 次}
+   の最小二乗で当て直すと 0.0512 mm(誤差 +2.4 %)。**捨てる前 +171 %、
+   捨てた後 +2.4 %**。
+6. ★★**照明の傾斜は偏心のふりをする**。固定しきい値で縁を取ると、明るい側の縁は
+   外へ、暗い側は内へ動く。傾斜 ±30 % で **見かけの偏心 0.0331 mm**
+   (偏心は本当にゼロ)。対照群(傾斜ゼロ)は 0.0021 mm なので、これは
+   照明が作った値です。**勾配最大の縁**に変えると 0.0083 mm まで下がる
+   (それでもゼロではない)。
+7. ★**予想が外れた**: 「穴(軸)の中心も同じ向きへ流れるから打ち消すだろう」と
+   踏んでいました。実測は逆で、**穴の中心を実測すると見かけの偏心は 0.0331 mm、
+   軸を真値に固定すると 0.0247 mm** —— 打ち消すどころか **1.34 倍に増えます**。
+   穴は暗い側が「内へ」動く = 穴が明るい側へずれるので、外形のずれと **同符号**
+   になり、基準の側から二重に効いていました。
+8. ★**偏心は隣接ピッチ誤差を捏造する**。歯の割り出しは完璧(設計どおり)なのに、
+   偏心 0.100 mm で隣接ピッチ誤差の最大が 0.0272 mm 出ます。理論値は
+   e·(2π/z) = 0.100 × 0.2618 = 0.0262 mm で、実測はこれと 4 % で一致 ——
+   **ピッチ誤差を報告する前に振れを分離しないと、歯切り盤の割り出しを疑うことになる**。
+
+来歴(公開文献のみ): ISO 1328-1:2013 *Cylindrical gears — ISO system of flank
+tolerance classification* / JIS B 1702-1 / Buckingham, *Analytical Mechanics of
+Gears* (Dover, 1988) —— インボリュート関数 inv(φ)=tan φ − φ と歯厚の式 /
+Coope, *J. Optim. Theory Appl.* 76 (1993) 381 —— 円の最小二乗当てはめ。
+"""
+from __future__ import annotations
+
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
+
+# --- 歯車の諸元(ここが真値)--------------------------------------------------- #
+MODULE_MM = 2.0          # モジュール m [mm]
+Z_TEETH = 24             # 歯数 z
+ALPHA_DEG = 20.0         # 圧力角 α [deg]
+BORE_MM = 8.0            # 軸穴の半径 [mm](= 測定基準)
+PX_MM = 0.14             # 画素の大きさ [mm/px]
+N_PIX = 448              # 視野 [px]
+SS = 3                   # 面積被覆のための細分割(1 画素を SS x SS で数える)
+N_ANG = 720              # 極座標展開の角度分割
+FG, BG = 0.78, 0.16      # 歯車と背景の明るさ
+PSF_SIGMA = 1.2          # 撮像系のぼけ [px]
+NOISE = 0.004            # 撮像ノイズ(1σ)
+TH0 = 0.0                # 1 番目の歯の中心角 [rad]
+
+# 派生量(すべて閉形式)
+R_PITCH = MODULE_MM * Z_TEETH / 2.0                  # ピッチ円半径 24.000 mm
+R_TIP = R_PITCH + MODULE_MM                          # 歯先円半径 26.000 mm
+R_ROOT = R_PITCH - 1.25 * MODULE_MM                  # 歯底円半径 21.500 mm
+R_BASE = R_PITCH * np.cos(np.radians(ALPHA_DEG))     # 基礎円半径 22.553 mm
+PITCH_ANG = 2.0 * np.pi / Z_TEETH                    # 角ピッチ [rad]
+PITCH_MM = np.pi * MODULE_MM                         # 円ピッチ [mm]
+THICK_MM = np.pi * MODULE_MM / 2.0                   # ピッチ円上の歯厚 [mm]
+
+_LAB = fs.ledger         # blob 族の公開経路
+
+
+# --------------------------------------------------------------------------- #
+# 1. インボリュート歯形 —— 真値は式そのもの                                     #
+# --------------------------------------------------------------------------- #
+def inv(phi):
+    """インボリュート関数 inv(φ) = tan φ − φ。"""
+    return np.tan(phi) - phi
+
+
+def half_tooth_angle(r_mm):
+    """半径 ``r`` における **歯の半角** ψ(r) [rad](閉形式)。
+
+    ψ(r) = ψ_p + inv(α) − inv(φ(r)),  cos φ(r) = r_b / r
+
+    ψ_p = π/(2z) はピッチ円上の半角(標準歯車、バックラッシ 0)。基礎円より
+    内側(歯底 ≤ r < 基礎円)は **半径直線** で近似する —— 実際はトロコイドだが、
+    この PoC が測る量(ピッチ円より外)には効かない。定義域の外は ``nan``。
+    """
+    r = np.asarray(r_mm, np.float64)
+    psi_p = np.pi / (2.0 * Z_TEETH)
+    inv_a = inv(np.radians(ALPHA_DEG))
+    out = np.full(r.shape, np.nan)
+    band_root = (r >= R_ROOT) & (r < R_BASE)
+    out[band_root] = psi_p + inv_a
+    band = (r >= R_BASE) & (r <= R_TIP)
+    phi = np.arccos(np.clip(R_BASE / np.where(band, r, R_BASE), -1.0, 1.0))
+    out[band] = psi_p + inv_a - inv(phi[band])
+    return out
+
+
+def duty_at(r_mm: float) -> float:
+    """半径 ``r`` の円周のうち **歯が占める割合**(閉形式)。ピッチ円で厳密に 0.5。"""
+    psi = float(half_tooth_angle(np.asarray([r_mm]))[0])
+    if not np.isfinite(psi):
+        return 1.0 if r_mm < R_ROOT else 0.0
+    return float(np.clip(Z_TEETH * psi / np.pi, 0.0, 1.0))
+
+
+# --------------------------------------------------------------------------- #
+# 2. 場面を作る —— 面積被覆で塗ってからぼかす                                   #
+# --------------------------------------------------------------------------- #
+def make_scene(ecc_mm: float = 0.0, ecc_deg: float = 25.0, missing: tuple = (),
+               pitch_off_mm: float = 0.0, pitch_off_tooth: int = 6,
+               illum: float = 0.0, seed: int = 7) -> dict:
+    """歯車 1 個の観測画像と真値を返す。
+
+    ``ecc_mm`` は **歯の並びの中心を軸穴からずらす量**(= 偏心・振れ)。軸穴は
+    つねに画像中心にあり、**測定基準は軸穴**。``missing`` は歯を落とす番号の列、
+    ``pitch_off_mm`` は 1 枚だけ円周方向にずらす量(割り出し誤差)。
+    ``illum`` は左右方向の照明傾斜(±illum の乗算)。
+    """
+    rng = np.random.default_rng(seed)
+    cen = (N_PIX - 1) / 2.0                                # 軸(= 軸穴)の中心 [px]
+    dy_g = ecc_mm / PX_MM * np.sin(np.radians(ecc_deg))    # 歯の並びの中心のずれ
+    dx_g = ecc_mm / PX_MM * np.cos(np.radians(ecc_deg))
+
+    # 細分割した標本点(1 画素を SS x SS で被覆率として数える)
+    off = (np.arange(SS) + 0.5) / SS - 0.5
+    base = np.arange(N_PIX, dtype=np.float64)
+    yy = (base[:, None] + off[None, :]).ravel()
+    xx = yy
+    gy = yy[:, None] - cen - dy_g
+    gx = xx[None, :] - cen - dx_g
+    r_g = np.hypot(gy, gx) * PX_MM                          # 歯の中心からの半径 [mm]
+    th = np.arctan2(gy, gx)
+
+    # 歯の番号と、その歯の中心から測った角度
+    a = (th - TH0) / PITCH_ANG
+    k = np.rint(a).astype(np.int32)
+    u = (a - k) * PITCH_ANG
+    kk = np.mod(k, Z_TEETH)
+    if pitch_off_mm:
+        offs = np.zeros(Z_TEETH)
+        offs[pitch_off_tooth % Z_TEETH] = pitch_off_mm / R_PITCH   # 弧長 -> 角度
+        u = u - offs[kk]
+
+    psi = half_tooth_angle(r_g)
+    tooth = np.isfinite(psi) & (np.abs(u) <= psi) & (r_g > R_ROOT)
+    if missing:
+        tooth &= ~np.isin(kk, np.asarray(missing, np.int32))
+    solid = (r_g <= R_ROOT) | tooth
+
+    # 軸穴(基準)—— 画像中心にあり、歯の並びとは別の中心を持つ
+    ay = yy[:, None] - cen
+    ax = xx[None, :] - cen
+    r_a = np.hypot(ay, ax) * PX_MM
+    solid &= r_a > BORE_MM
+
+    cov = solid.reshape(N_PIX, SS, N_PIX, SS).mean(axis=(1, 3))
+    img = BG + (FG - BG) * cov
+    if illum:
+        ramp = 1.0 + illum * ((np.arange(N_PIX) - cen) / (N_PIX / 2.0))
+        img = img * ramp[None, :]
+    # 撮像系のぼけ。★2-D のガウスぼかしは σ を直に渡す口が無く、進化 op の
+    #   つまみ a から σ = 0.3 + 2.7 a を逆算して渡す(末尾「道具の穴」(c))。
+    img = np.asarray(fs.apply(img, "gauss_filter", a=(PSF_SIGMA - 0.3) / 2.7))
+    img = img + rng.normal(0.0, NOISE, img.shape)
+    return {"img": np.clip(img, 0.0, 1.2), "axis": (cen, cen),
+            "gear_center": (cen + dy_g, cen + dx_g), "ecc_mm": ecc_mm,
+            "ecc_deg": ecc_deg, "missing": tuple(missing),
+            "pitch_off_mm": pitch_off_mm, "pitch_off_tooth": pitch_off_tooth,
+            "illum": illum}
+
+
+# --------------------------------------------------------------------------- #
+# 3. 縁を取る —— 2 つの規約(固定しきい値 / 勾配最大)                          #
+# --------------------------------------------------------------------------- #
+def _subpixel_threshold(prof, s_mm, thr):
+    """外側から見て最初に ``thr`` を下回る位置を線形補間で返す [mm]。"""
+    above = prof >= thr
+    idx = np.nonzero(above)[0]
+    if idx.size == 0:
+        return np.nan
+    i = int(idx[-1])
+    if i + 1 >= prof.size:
+        return float(s_mm[i])
+    f = (prof[i] - thr) / (prof[i] - prof[i + 1] + 1e-12)
+    return float(s_mm[i] + f * (s_mm[i + 1] - s_mm[i]))
+
+
+def _subpixel_gradient(prof, s_mm):
+    """勾配が最も急に落ちる位置を放物線当てはめで返す [mm]。"""
+    g = np.diff(prof)
+    i = int(np.argmin(g))
+    if i <= 0 or i + 2 >= prof.size:
+        return float(0.5 * (s_mm[i] + s_mm[i + 1]))
+    y0, y1, y2 = g[i - 1], g[i], g[i + 1]
+    den = y0 - 2.0 * y1 + y2
+    d = 0.0 if abs(den) < 1e-12 else 0.5 * (y0 - y2) / den
+    d = float(np.clip(d, -1.0, 1.0))
+    step = s_mm[1] - s_mm[0]
+    return float(0.5 * (s_mm[i] + s_mm[i + 1]) + d * step)
+
+
+def radial_profile(img, centre, rule: str = "threshold", n_ang: int = N_ANG) -> np.ndarray:
+    """``centre``(row, col)[px] を極として、角度ごとの外形半径 R(θ) [mm] を返す。
+
+    半径方向は :func:`fullseye.line_profile`(双一次補間)で 0.25 px 刻みに
+    掃く。``rule`` は縁の規約: ``threshold``(固定しきい値 (FG+BG)/2)か
+    ``gradient``(勾配最大)。
+    """
+    cy, cx = centre
+    r0 = (R_ROOT - 2.0) / PX_MM
+    r1 = (R_TIP + 2.0) / PX_MM
+    n = int((r1 - r0) / 0.25) + 1
+    s_mm = np.linspace(r0, r1, n) * PX_MM
+    thr = 0.5 * (FG + BG)
+    th = np.arange(n_ang) * (2.0 * np.pi / n_ang)
+    out = np.empty(n_ang)
+    for i, t in enumerate(th):
+        p0 = (cy + r0 * np.sin(t), cx + r0 * np.cos(t))
+        p1 = (cy + r1 * np.sin(t), cx + r1 * np.cos(t))
+        prof = np.asarray(fs.line_profile(img, p0, p1, num=n))
+        out[i] = (_subpixel_threshold(prof, s_mm, thr) if rule == "threshold"
+                  else _subpixel_gradient(prof, s_mm))
+    return out
+
+
+def bore_centre(img) -> dict:
+    """軸穴(基準)の中心と半径を、穴の輪郭に円を当てて求める。
+
+    穴は「暗いのに視野の縁に触れていない連結成分」。``blob_*`` 族で切り出し、
+    その内側輪郭に :func:`fullseye.fit_circle` を当てる。
+    """
+    dark = np.asarray(img) < 0.5 * (FG + BG)
+    lab = _LAB.blob_label(dark)
+    f = _LAB.blob_features(lab)
+    inside = np.nonzero(~np.asarray(f["touches_border"], bool))[0]
+    if inside.size == 0:
+        raise RuntimeError("軸穴が見つからない")
+    j = int(inside[np.argmax(np.asarray(f["area"])[inside])])
+    bnd = _LAB.blob_boundaries(_LAB.blob_region(lab, j + 1).astype(np.int32))
+    pts = np.column_stack(np.nonzero(np.asarray(bnd)))
+    c = fs.fit_circle(pts.astype(np.float64))
+    return {"cy": float(c["cy"]), "cx": float(c["cx"]),
+            "r_mm": float(c["r"]) * PX_MM, "rms_px": float(c["rms"])}
+
+
+# --------------------------------------------------------------------------- #
+# 4. 周波数で分ける —— 1 次 = 偏心、z 次 = 歯                                   #
+# --------------------------------------------------------------------------- #
+def harmonics(prof) -> np.ndarray:
+    """R(θ) の各次数の振幅 [mm](0 次は平均半径)。"""
+    n = prof.size
+    c = np.fft.rfft(prof) / n
+    amp = 2.0 * np.abs(c)
+    amp[0] = np.abs(c[0])
+    return amp
+
+
+def fit_orders(prof, keep, orders) -> dict:
+    """指定した次数だけの最小二乗当てはめ(角度の一部を捨てられる)。
+
+    ``keep`` は使う角度の bool マスク。歯が欠けた角度を外して当てるために要る
+    —— 全周の FFT は捨てた区間を扱えない(0 で埋めると別の漏れを作る)。
+    """
+    n = prof.size
+    th = np.arange(n) * (2.0 * np.pi / n)
+    cols = [np.ones(n)]
+    names = ["dc"]
+    for o in orders:
+        cols += [np.cos(o * th), np.sin(o * th)]
+        names += ["c%d" % o, "s%d" % o]
+    a = np.column_stack(cols)[keep]
+    coef, *_ = np.linalg.lstsq(a, prof[keep], rcond=None)
+    out = {"dc": float(coef[0])}
+    for i, o in enumerate(orders):
+        out[o] = float(np.hypot(coef[1 + 2 * i], coef[2 + 2 * i]))
+    out["_names"] = names
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# 5. 歯ごとの量 —— 歯厚・隣接ピッチ・歯先半径                                   #
+# --------------------------------------------------------------------------- #
+def tooth_table(prof, r_ref_mm: float) -> dict:
+    """``r_ref`` を横切る区間から、歯ごとの角幅・中心角・歯先半径を出す。"""
+    n = prof.size
+    th = np.arange(n) * (2.0 * np.pi / n)
+    above = prof >= r_ref_mm
+    # 立ち上がり位置(サブサンプル)を拾う
+    rise, fall = [], []
+    for i in range(n):
+        j = (i + 1) % n
+        if not above[i] and above[j]:
+            rise.append(_cross(th, prof, i, j, r_ref_mm))
+        if above[i] and not above[j]:
+            fall.append(_cross(th, prof, i, j, r_ref_mm))
+    rise, fall = np.asarray(rise), np.asarray(fall)
+    if rise.size == 0 or rise.size != fall.size:
+        return {"n": 0}
+    fall_m = np.asarray([f if f > r else f + 2.0 * np.pi
+                         for r, f in zip(rise, np.roll(fall, -np.searchsorted(fall, rise[0])))])
+    width = fall_m - rise
+    centre = np.mod(rise + 0.5 * width, 2.0 * np.pi)
+    order = np.argsort(centre)
+    centre, width = centre[order], width[order]
+    tip = np.asarray([prof[np.abs(np.mod(th - c + np.pi, 2 * np.pi) - np.pi)
+                           < 0.35 * PITCH_ANG].max() for c in centre])
+    step = np.diff(np.append(centre, centre[0] + 2.0 * np.pi))
+    return {"n": int(centre.size), "centre": centre, "width": width, "tip": tip,
+            "pitch_mm": step * r_ref_mm}
+
+
+def _cross(th, prof, i, j, level):
+    """標本 i, j のあいだで ``level`` を横切る角度(線形補間、周回を跨いでよい)。"""
+    t0, t1 = th[i], th[j]
+    if t1 < t0:
+        t1 += 2.0 * np.pi
+    f = (level - prof[i]) / (prof[j] - prof[i] + 1e-12)
+    return float(np.mod(t0 + np.clip(f, 0.0, 1.0) * (t1 - t0), 2.0 * np.pi))
+
+
+# --------------------------------------------------------------------------- #
+# 節 1. ゼロ点 —— 2 値化 + 輪郭 + 最小二乗円                                    #
+# --------------------------------------------------------------------------- #
+def section_zero_point() -> dict:
+    print("\n" + "=" * 78)
+    print("1) ゼロ点 —— 2 値化 -> 外形の輪郭点 -> 最小二乗円")
+    print("=" * 78)
+
+    rows = []
+    keep = None
+    for ecc in (0.0, 0.050, 0.200):
+        sc = make_scene(ecc_mm=ecc)
+        img = sc["img"]
+        lab = _LAB.blob_label(img >= 0.5 * (FG + BG))
+        big = _LAB.blob_select_largest(lab, 1)
+        bnd = np.asarray(_LAB.blob_boundaries(big))
+        # 外形の輪郭だけ(軸穴の縁は基準半径より内側なので落とす)
+        pts = np.column_stack(np.nonzero(bnd)).astype(np.float64)
+        cen = (N_PIX - 1) / 2.0
+        rr = np.hypot(pts[:, 0] - cen, pts[:, 1] - cen) * PX_MM
+        outer = pts[rr > 0.5 * (BORE_MM + R_ROOT)]
+        c = fs.fit_circle(outer)
+        d_err = 2.0 * float(c["r"]) * PX_MM
+        off = np.hypot(float(c["cy"]) - sc["gear_center"][0],
+                       float(c["cx"]) - sc["gear_center"][1]) * PX_MM
+        run = np.hypot(float(c["cy"]) - cen, float(c["cx"]) - cen) * PX_MM
+        rows.append((ecc, d_err, run, off))
+        print("  偏心 %.3f mm -> 当てはめ円の直径 %.3f mm / 中心は軸から %.4f mm / "
+              "歯の並びの中心から %.4f mm" % (ecc, d_err, run, off))
+        if keep is None:
+            keep = (sc, big)
+
+    print("\n  真値: ピッチ円 %.3f / 歯先円 %.3f / 歯底円 %.3f mm" % (
+        2 * R_PITCH, 2 * R_TIP, 2 * R_ROOT))
+    print("  ★当てはめ円の直径はこの 3 つのどれでもない(歯のデューティ比で"
+          "決まる中間値)。")
+    print("  ★★もっと重い: 円の中心は **歯の並びの中心** に来る(残差 %.4f mm)。"
+          % rows[-1][3])
+    print("     そこを基準にすると、偏心 %.3f mm の歯車でも振れは %.4f mm しか"
+          "出ない = **偏心をゼロと報告する**。" % (rows[-1][0], rows[-1][2]))
+    print("     基準は **軸穴** でなければならない。")
+
+    sc, big = keep
+    figs.save_grid("scene",
+                   [sc["img"], _LAB.blob_overlay(sc["img"], big)],
+                   ["観測画像 m=%.1f z=%d a=%.0f" % (MODULE_MM, Z_TEETH, ALPHA_DEG),
+                    "2 値化した歯車(軸穴が基準)"],
+                   title="インボリュート歯車 1 px = %.2f mm" % PX_MM)
+    return {"rows": rows}
+
+
+# --------------------------------------------------------------------------- #
+# 節 2. 極座標展開 —— 中央値がピッチ円                                          #
+# --------------------------------------------------------------------------- #
+def section_polar() -> dict:
+    print("\n" + "=" * 78)
+    print("2) 極座標展開 R(θ) —— 中央値 = ピッチ円半径(デューティ 50 %)")
+    print("=" * 78)
+
+    sc = make_scene(ecc_mm=0.0)
+    b = bore_centre(sc["img"])
+    cen = (N_PIX - 1) / 2.0
+    print("  軸穴: 中心の誤差 %.4f px / 半径 %.4f mm(真値 %.3f)/ 当てはめ残差 %.3f px"
+          % (np.hypot(b["cy"] - cen, b["cx"] - cen), b["r_mm"], BORE_MM, b["rms_px"]))
+
+    prof = radial_profile(sc["img"], (b["cy"], b["cx"]))
+    r_pitch = float(np.median(prof))
+    r_tip = float(np.percentile(prof, 99.0))
+    tt = tooth_table(prof, R_PITCH)
+    thick = tt["width"] * R_PITCH
+    print("  デューティ 50 %% の半径(= 中央値) %.4f mm  真値 %.3f  (%+.3f %%)"
+          % (r_pitch, R_PITCH, 100 * (r_pitch - R_PITCH) / R_PITCH))
+    print("  歯先円半径(99 パーセンタイル)   %.4f mm  真値 %.3f  (%+.3f %%)"
+          % (r_tip, R_TIP, 100 * (r_tip - R_TIP) / R_TIP))
+    print("  歯の数 %d(真値 %d)" % (tt["n"], Z_TEETH))
+    print("  ピッチ円上の歯厚 %.4f ± %.4f mm  真値 %.4f  (%+.3f %%)"
+          % (thick.mean(), thick.std(), THICK_MM,
+             100 * (thick.mean() - THICK_MM) / THICK_MM))
+    print("  隣接ピッチ %.4f ± %.4f mm  真値 %.4f、誤差の最大 %.4f mm"
+          % (tt["pitch_mm"].mean(), tt["pitch_mm"].std(), PITCH_MM,
+             np.abs(tt["pitch_mm"] - PITCH_MM).max()))
+    print("  検算(閉形式): デューティ(ピッチ円) = %.6f / (歯先円) = %.6f"
+          % (duty_at(R_PITCH), duty_at(R_TIP - 1e-9)))
+
+    th_deg = np.degrees(np.arange(N_ANG) * 2 * np.pi / N_ANG)
+    m = th_deg < 3.2 * np.degrees(PITCH_ANG)
+    truth = np.asarray([_truth_radius(t) for t in np.radians(th_deg[m])])
+    figs.save_plot("profile",
+                   [("真値(閉形式)", th_deg[m], truth),
+                    ("実測 R(θ)", th_deg[m], prof[m]),
+                    ("ピッチ円", th_deg[m], np.full(m.sum(), R_PITCH))],
+                   xlabel="角度 [deg]", ylabel="半径 [mm]",
+                   title="歯 3 枚ぶんの極座標展開(真値と実測)")
+    return {"prof": prof, "bore": b, "r_pitch": r_pitch, "r_tip": r_tip,
+            "thick": thick, "tt": tt}
+
+
+def _truth_radius(theta: float) -> float:
+    """角度 θ における外形半径の **閉形式**(真値、偏心なし)。"""
+    u = ((theta - TH0 + np.pi / Z_TEETH) % PITCH_ANG) - np.pi / Z_TEETH
+    r = np.linspace(R_ROOT, R_TIP, 4001)
+    psi = half_tooth_angle(r)
+    ok = np.isfinite(psi) & (psi >= abs(u))
+    return float(r[ok].max()) if ok.any() else R_ROOT
+
+
+# --------------------------------------------------------------------------- #
+# 節 3-5. 偏心を振る / 歯を欠けさせる / 外して測り直す                          #
+# --------------------------------------------------------------------------- #
+def section_eccentricity() -> dict:
+    print("\n" + "=" * 78)
+    print("3) 偏心を振る —— 1 次成分が偏心、z 次成分が歯")
+    print("=" * 78)
+    print("   偏心 [mm]   1 次 [mm]   誤差      2 次 [mm]   %d 次 [mm]  %d 次 [mm]"
+          % (Z_TEETH, 2 * Z_TEETH))
+
+    eccs, est = [], []
+    spec_keep = None
+    for e in (0.000, 0.025, 0.050, 0.100, 0.200):
+        sc = make_scene(ecc_mm=e)
+        b = bore_centre(sc["img"])
+        prof = radial_profile(sc["img"], (b["cy"], b["cx"]))
+        amp = harmonics(prof)
+        eccs.append(e)
+        est.append(float(amp[1]))
+        err = "  --   " if e == 0 else "%+6.2f %%" % (100 * (amp[1] - e) / e)
+        print("    %.3f      %.4f    %s    %.4f      %.4f      %.4f"
+              % (e, amp[1], err, amp[2], amp[Z_TEETH], amp[2 * Z_TEETH]))
+        if e == 0.050:
+            spec_keep = amp
+    print("  ★1 次は偏心を当てる。%d 次(歯)は偏心を変えてもほとんど動かない。"
+          % Z_TEETH)
+    return {"ecc": eccs, "est": est, "spec": spec_keep}
+
+
+def section_missing_tooth() -> dict:
+    print("\n" + "=" * 78)
+    print("4-5) ★★歯が 1 枚欠けると全周波数に漏れる / 外して測り直すと戻る")
+    print("=" * 78)
+
+    rows = []
+    figs_keep = {}
+    for ecc in (0.000, 0.050):
+        for miss in ((), (11,)):
+            sc = make_scene(ecc_mm=ecc, missing=miss)
+            b = bore_centre(sc["img"])
+            prof = radial_profile(sc["img"], (b["cy"], b["cx"]))
+            amp = harmonics(prof)
+
+            # 欠けを見つける: 歯先半径の外れ値(中央値から 0.5 mm 以上低い歯)
+            tt = tooth_table(prof, R_PITCH)
+            tip = tt["tip"]
+            bad = np.nonzero(tip < np.median(tip) - 0.5)[0]
+            th = np.arange(N_ANG) * (2.0 * np.pi / N_ANG)
+            keep = np.ones(N_ANG, bool)
+            # 欠けた歯の位置は「隣り合う歯の間隔が 2 ピッチ空いた場所」に出る
+            gap = np.nonzero(np.diff(np.append(tt["centre"],
+                                               tt["centre"][0] + 2 * np.pi))
+                             > 1.5 * PITCH_ANG)[0]
+            holes = list(tt["centre"][gap] + 0.5 * PITCH_ANG) + \
+                list(tt["centre"][bad]) if bad.size else list(
+                    tt["centre"][gap] + 0.5 * PITCH_ANG)
+            for c in holes:
+                keep &= np.abs(np.mod(th - c + np.pi, 2 * np.pi) - np.pi) > 0.6 * PITCH_ANG
+            orders = [1, 2] + [Z_TEETH * k for k in (1, 2, 3, 4)]
+            fit_all = fit_orders(prof, np.ones(N_ANG, bool), orders)
+            fit_cut = fit_orders(prof, keep, orders)
+
+            rows.append((ecc, bool(miss), tt["n"], len(holes), float(amp[1]),
+                         fit_all[1], fit_cut[1]))
+            print("  偏心 %.3f / 歯欠け %s : 検出した歯 %2d 枚、欠けと判定 %d 箇所"
+                  % (ecc, "有" if miss else "無", tt["n"], len(holes)))
+            print("      FFT の 1 次   %.4f mm   最小二乗(全周) %.4f mm   "
+                  "(欠けを外して) %.4f mm"
+                  % (amp[1], fit_all[1], fit_cut[1]))
+            if ecc == 0.050:
+                figs_keep["miss" if miss else "ok"] = (sc, prof, amp)
+
+    e0_miss = rows[1][4]
+    e5_ok, e5_miss, e5_cut = rows[2][4], rows[3][4], rows[3][6]
+    print("\n  ★★偏心ゼロの歯車から 1 枚落としただけで 1 次が %.4f mm 立つ"
+          "(実在する偏心 0.050 mm の %.1f 倍)。" % (e0_miss, e0_miss / 0.050))
+    print("  ★偏心 0.050 mm の歯車: 欠け無し %.4f mm (%+.1f %%) -> 欠け有り %.4f mm "
+          "(%+.1f %%) -> 外して測り直すと %.4f mm (%+.1f %%)。"
+          % (e5_ok, 100 * (e5_ok - 0.05) / 0.05, e5_miss,
+             100 * (e5_miss - 0.05) / 0.05, e5_cut, 100 * (e5_cut - 0.05) / 0.05))
+
+    sc_ok, prof_ok, amp_ok = figs_keep["ok"]
+    sc_ms, prof_ms, amp_ms = figs_keep["miss"]
+    n_show = 3 * Z_TEETH + 2
+    k = np.arange(n_show)
+    figs.save_plot("spectrum",
+                   [("歯欠け無し", k[1:], amp_ok[1:n_show]),
+                    ("歯欠け有り", k[1:], amp_ms[1:n_show])],
+                   xlabel="次数(1 = 偏心、%d = 歯)" % Z_TEETH,
+                   ylabel="振幅 [mm]",
+                   title="1 枚の歯欠けは全次数に漏れる(偏心 0.050 mm)")
+    figs.save_grid("missing",
+                   [sc_ok["img"], sc_ms["img"], sc_ms["img"] - sc_ok["img"]],
+                   ["歯 24 枚", "1 枚欠け", "差"],
+                   title="歯欠けの場面(偏心 0.050 mm)", ncols=3,
+                   signed=[False, False, True])
+    return {"rows": rows}
+
+
+# --------------------------------------------------------------------------- #
+# 節 6-7. 照明の傾斜 —— 偏心のふりをする / 基準も一緒に動く                     #
+# --------------------------------------------------------------------------- #
+def section_illumination() -> dict:
+    print("\n" + "=" * 78)
+    print("6-7) ★★照明の傾斜は偏心のふりをする(対照群つき)")
+    print("=" * 78)
+    print("   傾斜     規約        軸を実測    軸を真値に固定")
+
+    gs, thr_meas, thr_true, grad_meas = [], [], [], []
+    cen = (N_PIX - 1) / 2.0
+    for g in (0.0, 0.10, 0.20, 0.30):
+        sc = make_scene(ecc_mm=0.0, illum=g)
+        b = bore_centre(sc["img"])
+        a_meas = harmonics(radial_profile(sc["img"], (b["cy"], b["cx"])))[1]
+        a_true = harmonics(radial_profile(sc["img"], (cen, cen)))[1]
+        a_grad = harmonics(radial_profile(sc["img"], (b["cy"], b["cx"]),
+                                          rule="gradient"))[1]
+        gs.append(g)
+        thr_meas.append(float(a_meas))
+        thr_true.append(float(a_true))
+        grad_meas.append(float(a_grad))
+        print("   %.2f    固定しきい値  %.4f mm    %.4f mm    | 勾配最大 %.4f mm"
+              % (g, a_meas, a_true, a_grad))
+        if g == 0.30:
+            print("        (軸穴の中心のずれ %.4f px = %.4f mm)"
+                  % (np.hypot(b["cy"] - cen, b["cx"] - cen),
+                     np.hypot(b["cy"] - cen, b["cx"] - cen) * PX_MM))
+
+    print("\n  ★偏心は本当にゼロなのに、傾斜 %.0f %% で %.4f mm の「偏心」が出る。"
+          % (100 * gs[-1], thr_meas[-1]))
+    print("    対照群(傾斜ゼロ)は %.4f mm なので、これは照明が作った値。"
+          % thr_meas[0])
+    print("  ★予想が外れた: 「軸穴の中心も同じ向きへ流れて打ち消す」と踏んでいたが、")
+    print("    軸を実測 %.4f mm > 軸を真値に固定 %.4f mm —— **打ち消すどころか "
+          "%.2f 倍**。" % (thr_meas[-1], thr_true[-1], thr_meas[-1] / thr_true[-1]))
+    print("    穴は暗い側で内へ動く = 穴の中心が明るい側へずれるので、外形のずれと"
+          "同符号になる。")
+    print("  ★勾配最大の縁に変えると %.4f mm まで下がる(それでもゼロではない)。"
+          % grad_meas[-1])
+
+    figs.save_plot("illumination",
+                   [("固定しきい値(軸は実測)", np.asarray(gs) * 100, thr_meas),
+                    ("固定しきい値(軸は真値)", np.asarray(gs) * 100, thr_true),
+                    ("勾配最大(軸は実測)", np.asarray(gs) * 100, grad_meas)],
+                   xlabel="照明の傾斜 [%]", ylabel="見かけの偏心 [mm]",
+                   title="偏心は 0 —— 出ている値は全部が照明由来")
+    return {"g": gs, "thr_meas": thr_meas, "thr_true": thr_true, "grad": grad_meas}
+
+
+# --------------------------------------------------------------------------- #
+# 節 8. 偏心は隣接ピッチ誤差を捏造する                                          #
+# --------------------------------------------------------------------------- #
+def section_pitch_error() -> dict:
+    print("\n" + "=" * 78)
+    print("8) ★偏心は隣接ピッチ誤差を捏造する(割り出しは完璧なのに)")
+    print("=" * 78)
+    print("   偏心 [mm]  与えた割出誤差 [mm]  隣接ピッチ誤差の最大 [mm]  理論 e*2pi/z")
+
+    rows = []
+    for ecc, off in ((0.000, 0.000), (0.050, 0.000), (0.100, 0.000),
+                     (0.000, 0.050), (0.000, 0.100)):
+        sc = make_scene(ecc_mm=ecc, pitch_off_mm=off)
+        b = bore_centre(sc["img"])
+        prof = radial_profile(sc["img"], (b["cy"], b["cx"]))
+        tt = tooth_table(prof, R_PITCH)
+        err = tt["pitch_mm"] - PITCH_MM
+        rows.append((ecc, off, float(np.abs(err).max()), float(err.std())))
+        print("    %.3f        %.3f              %.4f              %.4f"
+              % (ecc, off, np.abs(err).max(), ecc * PITCH_ANG))
+
+    print("\n  ★割り出しが完璧(与えた誤差 0)でも、偏心 %.3f mm で隣接ピッチ誤差の"
+          "最大が %.4f mm 出る。" % (rows[2][0], rows[2][2]))
+    print("    理論値 e*(2pi/z) = %.4f mm と %.0f %% で一致 —— これは歯切り盤の"
+          "割り出しではなく **振れ**。"
+          % (rows[2][0] * PITCH_ANG,
+             100 * abs(rows[2][2] - rows[2][0] * PITCH_ANG) / (rows[2][0] * PITCH_ANG)))
+    print("  ★与えた割出誤差 %.3f mm は %.4f mm として検出される(こちらは本物)。"
+          % (rows[3][1], rows[3][2]))
+
+    figs.save_table("summary",
+                    ["量", "真値", "推定", "誤差"],
+                    [["ピッチ円直径 [mm]", "%.3f" % (2 * R_PITCH), "-", "節 2 参照"],
+                     ["歯先円直径 [mm]", "%.3f" % (2 * R_TIP), "-", "節 2 参照"],
+                     ["歯厚(ピッチ円)[mm]", "%.4f" % THICK_MM, "-", "節 2 参照"],
+                     ["隣接ピッチ [mm]", "%.4f" % PITCH_MM, "-", "節 8 参照"],
+                     ["偏心 0.100 -> 疑似ピッチ誤差", "0", "%.4f" % rows[2][2],
+                      "%.4f (理論)" % (0.100 * PITCH_ANG)],
+                     ["割出誤差 0.050 -> 検出", "0.0500", "%.4f" % rows[3][2], "本物"],
+                     ["割出誤差 0.100 -> 検出", "0.1000", "%.4f" % rows[4][2], "本物"]],
+                    title="歯車計測のまとめ(m=%.1f, z=%d, α=%.0f deg)"
+                          % (MODULE_MM, Z_TEETH, ALPHA_DEG))
+    return {"rows": rows}
+
+
+# --------------------------------------------------------------------------- #
+# 節 9. 道具の穴                                                                #
+# --------------------------------------------------------------------------- #
+def section_tool_gaps() -> None:
+    print("\n" + "=" * 78)
+    print("9) 道具の穴(この PoC で fullseye を使ってみて)")
+    print("=" * 78)
+
+    # (a) 極座標変換 op は中心も半径も指定できない
+    import ops
+    reg = {o.name: o for o in ops.REGISTRY}
+    assert "polar_trans_image" in reg, "op が消えた"
+    assert not hasattr(fs, "polar_trans_image") and not hasattr(fs.ledger, "polar_trans_image")
+    doc = reg["polar_trans_image"].doc or ""
+    assert "中心と半径は画像サイズから自動的に決まり" in doc, doc[:120]
+    print("  (a) polar_trans_image は **中心を渡せない**(画像中心・半径 min(H,W)/2"
+          " 固定)。振れの測定は基準中心を選べないと成り立たないので、この PoC は"
+          "line_profile で自前に展開している。")
+
+    # (b) 円形統計(角度の平均・分散)が 3 層のどこにも無い
+    for name in ("circular_mean", "circmean", "von_mises", "runout"):
+        assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
+    print("  (b) 円形統計(角度の平均/分散、フォン・ミーゼス)が facade にも台帳にも"
+          "無い。歯の中心角の平均を取るのに自前で書いた。")
+
+    # (c) σ を直に渡す 2-D ガウスぼかしが公開経路に無い
+    assert not hasattr(fs, "gauss_filter") and not hasattr(fs.ledger, "gauss_filter")
+    assert "0.3+2.7*a" in (reg["gauss_filter"].doc or "")
+    print("  (c) 2-D ガウスぼかしは進化 op しか無く、σ は a から "
+          "σ=0.3+2.7a を逆算して渡すしかない(この PoC の PSF がそれ)。"
+          "σ を引数に取る公開関数は 3-D の vol_gaussian_psf 側にしかない。")
+
+    # (d) 1-D の周波数分解(調和成分)を出す口が無い
+    assert not hasattr(fs, "harmonic_amplitudes") and not hasattr(fs, "fourier_series")
+    assert hasattr(fs.ledger, "elliptic_fourier")     # 形状記述子はある(別物)
+    print("  (d) 1-D の周期関数を次数ごとの振幅に分ける口が無い。"
+          "elliptic_fourier は輪郭の形状記述子で、R(θ) の次数分解とは別物。"
+          "真円度・円筒度(JIS B 0621 の調和分解)を扱うなら要る。")
+
+    # (e) blob_boundaries は int32 のラベル画像しか受けない(bool を渡すと落ちる)
+    m = np.zeros((20, 20), bool)
+    m[5:15, 5:15] = True
+    try:
+        _LAB.blob_boundaries(m)
+        raise AssertionError("bool を受けるようになった(この節を書き換えること)")
+    except ValueError:
+        pass
+    print("  (e) blob_boundaries / blob_features は bool マスクを拒む(ラベル画像"
+          "だけ)。1 個しか無いと分かっている領域でも blob_label を挟む必要がある。")
+
+
+# --------------------------------------------------------------------------- #
+def main() -> None:
+    t0 = time.perf_counter()
+    print("=" * 78)
+    print("歯車の歯形を測る —— 偏心は 1 次、歯は z 次")
+    print("m = %.1f mm / z = %d / α = %.0f deg -> ピッチ円 %.3f / 歯先円 %.3f / "
+          "歯底円 %.3f mm" % (MODULE_MM, Z_TEETH, ALPHA_DEG, 2 * R_PITCH,
+                              2 * R_TIP, 2 * R_ROOT))
+    print("視野 %d px x %.2f mm/px = %.1f mm 角 / 軸穴の半径 %.1f mm"
+          % (N_PIX, PX_MM, N_PIX * PX_MM, BORE_MM))
+    print("=" * 78)
+
+    section_zero_point()
+    section_polar()
+    section_eccentricity()
+    section_missing_tooth()
+    section_illumination()
+    section_pitch_error()
+    section_tool_gaps()
+
+    print("\n" + "=" * 78)
+    print("まとめ")
+    print("=" * 78)
+    print("  * 基準は軸穴。外形に当てた円を基準にすると偏心は構造的に見えない。")
+    print("  * 偏心 = 1 次、歯 = z 次。ただし歯が 1 枚欠けるとその分離は成り立たない"
+          " —— 先に欠けを外す。")
+    print("  * 照明の傾斜は偏心のふりをし、しかも基準(軸穴)の側からも同符号で効く。")
+    print("  * 隣接ピッチ誤差を報告する前に振れ(1 次)を分離する。")
+    print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
+
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+    print("\nPASS")
+
+
+if __name__ == "__main__":
+    main()
