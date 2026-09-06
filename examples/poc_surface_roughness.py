@@ -288,15 +288,32 @@ def main():
     print(f"  種を 5 通り振った実現 Sq の幅 = {max(spread) - min(spread):.3e}"
           f"(平均 {np.mean(spread):.6e})")
 
-    freqs, power = fs.radial_power_spectrum(psd_raw)
-    band = (freqs >= 2.0 * Q_LO * DX) & (freqs <= 0.4)
-    slope = float(np.polyfit(np.log(freqs[band]), np.log(power[band]), 1)[0])
-    print(f"  `fs.radial_power_spectrum` の log-log 傾き = {slope:+.3f}")
-    print(f"    面 PSD の規約なら -2(H+1) = {-2 * (HURST + 1):+.3f}、"
-          f"動径 1-D PSD の規約なら +1 して {-2 * (HURST + 1) + 1:+.3f}。"
-          "  ← 実測はこの 2 つのどちらでもない中間値で、")
-    print("       返り値が『環内の |F|² の平均』であることと有限帯域の端の効き方に"
-          "よる。**この op を粗さの H 推定に使うなら較正が要る**(所見 (C))。")
+    # `radial_power_spectrum` の正規化規約は docstring に書かれていない。
+    # H を 2 通り仕込んで傾きを測れば、どちらの規約かが実験で決まる。
+    print("
+  `fs.radial_power_spectrum` の規約を実験で決める(docstring に無い)")
+    print(f"  {'仕込んだ H':>10}{'面 PSD 予想':>13}{'動径 PSD 予想':>14}"
+          f"{'実測の傾き':>12}{'戻した H':>10}{'H の誤差':>10}")
+    slope, h_err = None, {}
+    for h_true in (0.5, HURST):
+        raw_h, _ = synth_psd_surface(N, DX, h_true, Q_LO, Q_HI, SEED)
+        freqs, power = fs.radial_power_spectrum(raw_h)
+        band = (freqs >= 2.0 * Q_LO * DX) & (freqs <= 0.4) & (power > 0)
+        sl = float(np.polyfit(np.log(freqs[band]), np.log(power[band]), 1)[0])
+        h_back = -sl / 2.0 - 1.0
+        h_err[h_true] = h_back - h_true
+        if h_true == HURST:
+            slope = sl
+        print(f"  {h_true:>10.2f}{-2 * (h_true + 1):>13.3f}"
+              f"{-2 * (h_true + 1) + 1:>14.3f}{sl:>12.3f}{h_back:>10.3f}"
+              f"{h_back - h_true:>+10.3f}")
+    print("  → 傾きは **面 PSD(環内の |F|² の平均)の規約**に乗る。動径 1-D PSD"
+          "(+1 したもの)ではない。つまり H = -傾き/2 - 1 で読める。")
+    print(f"     ただし戻した H は真値より一律 {abs(h_err[HURST]):.3f} 低い"
+          f"({100 * abs(h_err[HURST]) / HURST:.1f}%)。当てはめ帯域を狭めても"
+          "動かないので統計誤差ではなく、環平均の離散化による系統誤差。")
+    print("     **規約が書いてあれば較正なしで読める** —— 書いていないので"
+          "毎回この検算をやる羽目になる(所見 (C))。")
 
     print("\n  成分の内訳(それぞれ単独の rms / 最大高低差、µm)")
     print(f"  {'成分':<20}{'rms':>12}{'max-min':>12}   扱い")
