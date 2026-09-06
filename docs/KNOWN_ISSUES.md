@@ -645,18 +645,68 @@ NaN 画像で交互に呼ぶと SIGSEGV する(2026-09-05 実測)。これは
 PNG を書く。既定(CLI 実行)では**完全に無処理**なので、31 本の PoC の数値も
 速度も変わらない。Studio のギャラリーが Run のときにその変数を渡す。
 
+**片づいたもの(2026-09-06)**:
+
+1. ~~配線済みは 3 本だけ~~ → **全 PoC を配線した**。`tests/test_example_figures.py`
+   の `test_every_poc_is_wired_to_emit_figures` が `examples/poc_*.py` を 1 本ずつ
+   AST で見て、`examplefig` を import し `figs.save*` を呼び `figs.errors()` を
+   見ていることを要求する。**新しい PoC を足したときも自動で効く**ので、
+   「絵の出ない画像処理の例」はもう作れない。
+2. ~~`save_table` の列幅が固定(110 px)~~ → **`measure_text` で測って決める**
+   ようにした(`examplefig._column_widths`、下限 56 / 上限 320 px)。
+   自分の道具に「描く前に測る」関数があるのに使っていなかったのが直った。
+
 **残っている片手落ち**:
 
-1. **配線済みは 3 本だけ**(`poc_dic_strain` / `poc_thermography_ndt` /
-   `poc_photoelasticity`)。残り 28 本は Figures タブに
-   「この例は図を出しません」と出る。**動かないのではなく、まだ呼んでいない**。
-   足すのは 3〜5 行なので、順に配線していく。
-2. **CLI から図を出す口が無い**。`FULLSEYE_FIGURE_DIR=... py -3.11
+1. **CLI から図を出す口が無い**。`FULLSEYE_FIGURE_DIR=... py -3.11
    examples/poc_x.py` で出せるが、`--figures <dir>` のような引数は無い。
-   引数解析を 31 本に足すより環境変数 1 本のほうが安いと判断した。
-3. **`save_table` の列幅が固定**(110 px)。長い値は隣とくっついて見える。
-   `measure_text` で測ってから決めれば直せるが、まだやっていない。
+   引数解析を全 PoC に足すより環境変数 1 本のほうが安いと判断した。
+2. **パネル題がパネル幅に入らないと図が 1 枚まるごと落ちる**。
+   `annotate_figure_grid` が fail-closed で拒否するのは正しいが、パネル幅は
+   **入力画像の幅**で決まるので、呼び手には「何文字なら入るか」の手掛かりが
+   無い(実測で 4 人の書き手が全員踏んだ)。題を自動で縮めるか、パネルを
+   題が入る幅まで広げるかを決めていない。
+3. **`_to_rgb8` はパネルごとに値域を伸ばす**ので、値が狭い帯に密集する量
+   (突出度 0.96〜0.99)や外れ値の大きい差分は、呼び手が事前に分位点で
+   切らないと潰れる。`clip=(lo, hi)` か `robust=True` の口が無く、いまは
+   「切ったこと」を caption に書いて回避している。
+4. **`save_plot` に水平・垂直の基準線を引く口が無い**。「ゼロ点」「上限」を
+   示すのに定数の系列を渡していて、色役(5 つ)を 1 つ消費する。
+   6 系列以上のグラフは色が巡って区別できない。
+5. **`save_plot` の凡例は右上固定・不透明**なので、右上へ伸びるデータ
+   (ROC、単調増加)を隠す。
 
-門は `tests/test_example_figures.py`(13 件)。とくに
-`test_a_real_poc_emits_figures_only_when_asked` は実際の PoC を**別プロセスで
-2 回**走らせ、環境変数の有無で出力が変わり、**どちらも exit 0** であることを見る。
+門は `tests/test_example_figures.py`。`test_a_real_poc_emits_figures_only_when_asked`
+は実際の PoC を**別プロセスで 2 回**走らせ、環境変数の有無で出力が変わり
+**どちらも exit 0** であることを見る。加えて
+`tests/test_poc_scripts_run.py` が **全 PoC を実際に走らせる**(§37)。
+
+
+## 37. PoC を実行する門が無かった(2026-09-06 に追加。当時 4 本が赤だった)
+
+**症状(当時)**: `examples/poc_*.py` を**実行するテストが 1 本も無かった**。
+`test_examples2d` は登録と実体の一致を、`test_example_figures` は図の配線を
+静的に見るだけで、**看板作品が誰にも走らされないまま置かれていた**。
+
+見つかった 4 本は、いずれもこの repo が自分で仕掛けた
+**「記録した穴が塞がったら鳴る」assert** が鳴っていたもの。仕掛けは正しく
+機能していたのに、鳴らす人がいなかった:
+
+| PoC | 鳴った理由 |
+|---|---|
+| `poc_registration_basin` | `fpfh` が既定の法線で回転不変になった(自前の `estimate_point_normals` が重心から外向きに符号を揃えるようになった)。`ppf_model` の既定 `dist_step` も凸包の直径に替わり回転不変になった |
+| `poc_lightfield_depth` | `stereo.disparity_subpixel` が `np.divide(..., out=, where=)` に替わり、平坦領域の divide 警告が出なくなった |
+| `poc_dimensional_inspection` | `opsmeasure1d` 台帳の登録で、届かなかった 14 関数が `fs.ledger` から届くようになった |
+| `poc_ct_fidelity` | ランプフィルタの DC ビンを直した副産物で、検出器数と質量欠損の関係が消えた(**そもそも `n_detectors` は検出器の幅であって標本化の細かさではない**ので、動かないのが正しい) |
+
+4 本とも**所見と assert を「塞がった状態を固定する」向きへ書き換えた**。
+assert を消して通すのは、直すことでも記録することでもない。
+
+**費用**: 直列 425 秒 / 6 並列 **85 秒**。`tests/test_poc_scripts_run.py` は
+セッション用フィクスチャで一度に並列実行し、各 PoC はその結果を見るだけ ——
+「どの PoC が落ちたか」が個別に出るのに、時間は 1 回ぶんで済む。
+
+**まだやっていない**: 図を出す経路(`FULLSEYE_FIGURE_DIR` あり)での全 PoC 実行は
+していない。1 本(`poc_dic_strain`)だけ `test_example_figures` が端から端まで
+見ている。全本でやると時間が倍になるので、**figures 経路の壊れは 1 本ぶんしか
+見張っていない**ことを承知の上で置いている。
