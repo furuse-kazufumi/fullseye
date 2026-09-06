@@ -376,36 +376,55 @@ def find_finders(dark, n, step=1):
     # 窓の幅は**その塊自身の**モジュール推定から取る —— 傾けると同じ画像の中で
     # 手前と奥でモジュール寸法が変わるので、全体の中央値を使うと奥側の窓が
     # 広すぎて隣のデータを片側だけ拾い、中心が 13 px ずれた(55 度で実測)。
-    ref = []
+    ref, mm = [], []
     for t in trio:
         q = cand[t][1]
         mx = cand[t][3] if np.isfinite(cand[t][3]) else m_all
         my = cand[t][4] if np.isfinite(cand[t][4]) else m_all
         r = _refine_center(dark, q[1], q[0], 3.9 * mx, 3.9 * my)
         ref.append(np.array([q[0], q[1]]) if r is None else np.array([r[1], r[0]]))
-    p = np.array(ref)
-    tl = p[a]
-    rest = [p[t] for t in range(3) if t != a]
-    v1 = np.array([rest[0][1] - tl[1], rest[0][0] - tl[0]])     # (x, y)
-    v2 = np.array([rest[1][1] - tl[1], rest[1][0] - tl[0]])
-    if v1[0] * v2[1] - v1[1] * v2[0] > 0:                        # y 下向きの外積
-        tr, bl = rest[0], rest[1]
+        mm.append((mx, my))
+    p = np.array(ref); mm = np.array(mm)
+    tl, mtl = p[a], mm[a]
+    idx = [t for t in range(3) if t != a]
+    v1 = np.array([p[idx[0]][1] - tl[1], p[idx[0]][0] - tl[0]])   # (x, y)
+    v2 = np.array([p[idx[1]][1] - tl[1], p[idx[1]][0] - tl[0]])
+    if v1[0] * v2[1] - v1[1] * v2[0] > 0:                         # y 下向きの外積
+        i_tr, i_bl = idx[0], idx[1]
     else:
-        tr, bl = rest[1], rest[0]
-    return np.array([tl, tr, bl])                                # (row, col) x 3
+        i_tr, i_bl = idx[1], idx[0]
+    centers = np.array([tl, p[i_tr], p[i_bl]])                    # (row, col) x 3
+    mxy = np.array([mtl, mm[i_tr], mm[i_bl]])                     # (m_x, m_y) x 3
+    return centers, mxy
 
 
-def find_alignment(dark, finders, n, m_x, m_y):
-    """3 点のアフィン推定から位置合わせパターンを探し、重心で中心を出す。"""
-    src = np.array([[3.5, 3.5], [n - 3.5, 3.5], [3.5, n - 3.5]])          # (u, v)
-    dst = np.array([[f[1], f[0]] for f in finders])                        # (x, y)
-    M = np.linalg.solve(np.column_stack([src, np.ones(3)]), dst)           # 3x2
-    pred = np.array([n - 6.5, n - 6.5, 1.0]) @ M
-    # アフィン予測は透視ぶんだけ外れる。分離帯の内側に収まる正方窓で引き込む
-    got = _refine_center(dark, pred[0], pred[1], 3.0 * m_x, 3.0 * m_y, iters=8)
-    if got is None:
+def finder_quad(dark, cx, cy, hx, hy):
+    """位置検出パターンの**外側 4 隅**を (x, y) で返す(TL, TR, BR, BL の順)。
+
+    中心 1 点だけだと 3 点しか対応が取れず、透視を含む 8 自由度のホモグラフィには
+    足りない。4 隅まで拾えば 1 個の位置検出パターンから 4 点、3 個で 12 点になり、
+    位置合わせパターンに頼らずに済む。外側の輪は 7x7 の正方形なので、窓の中の
+    暗画素について ``x+y`` と ``x-y`` の最小・最大を取れば 4 隅の画素が出る
+    (面内回転が無いのが前提。回転を入れるなら凸包から取り直すこと)。
+    隅の画素の**外側の角**を返すので、対応するモジュール座標は 7x7 の角そのもの。
+    """
+    h, w = dark.shape
+    r0 = int(max(0, math.floor(cy - hy))); r1 = int(min(h, math.ceil(cy + hy)))
+    c0 = int(max(0, math.floor(cx - hx))); c1 = int(min(w, math.ceil(cx + hx)))
+    if r1 - r0 < 3 or c1 - c0 < 3:
         return None
-    return np.array([got[0], got[1]])                                      # (x, y)
+    sub = dark[r0:r1, c0:c1] > 0.5
+    if sub.sum() < 8:
+        return None
+    yy, xx = np.mgrid[r0:r1, c0:c1]
+    ys = yy[sub].astype(float); xs = xx[sub].astype(float)
+    ssum = xs + ys; sdif = xs - ys
+    i_tl = int(np.argmin(ssum)); i_br = int(np.argmax(ssum))
+    i_tr = int(np.argmax(sdif)); i_bl = int(np.argmin(sdif))
+    return np.array([[xs[i_tl], ys[i_tl]],                 # 画素の左上の角
+                     [xs[i_tr] + 1.0, ys[i_tr]],           # 右上
+                     [xs[i_br] + 1.0, ys[i_br] + 1.0],     # 右下
+                     [xs[i_bl], ys[i_bl] + 1.0]])          # 左下
 
 
 def estimate_homography(dark, n, step=1):
@@ -413,20 +432,26 @@ def estimate_homography(dark, n, step=1):
 
     与える前提は格子数 ``n`` だけ(規格の QR ならタイミングパターンの本数から
     数える所)。モジュール寸法は位置検出パターンの間隔から自分で出す。
+    対応点は 3 個の位置検出パターンの外側 4 隅 = 12 点で、DLT に流す。
     """
-    f = find_finders(dark, n, step)
-    if f is None:
+    got = find_finders(dark, n, step)
+    if got is None:
         return None, "位置検出パターンを取れず"
+    f, mxy = got
     m_x = float(np.linalg.norm(f[1] - f[0])) / (n - 7)     # 上辺 = 横のモジュール寸法
     m_y = float(np.linalg.norm(f[2] - f[0])) / (n - 7)     # 左辺 = 縦のモジュール寸法
     if not (np.isfinite(m_x) and np.isfinite(m_y)) or min(m_x, m_y) < 0.5:
         return None, "モジュール寸法が出ず"
-    al = find_alignment(dark, f, n, m_x, m_y)
-    if al is None:
-        return None, "位置合わせパターンを取れず"
-    src = np.array([[3.5, 3.5], [n - 3.5, 3.5], [3.5, n - 3.5], [n - 6.5, n - 6.5]])
-    dst = np.array([[f[0][1], f[0][0]], [f[1][1], f[1][0]], [f[2][1], f[2][0]], al])
-    H = calib.vector_to_hom_mat2d(src, dst)
+    # 位置検出パターンの左上のモジュール座標(TL / TR / BL)
+    origins = [(0.0, 0.0), (n - 7.0, 0.0), (0.0, n - 7.0)]
+    src, dst = [], []
+    for (ou, ov), c, (mx, my) in zip(origins, f, mxy):
+        quad = finder_quad(dark, c[1], c[0], 3.9 * mx, 3.9 * my)
+        if quad is None:
+            return None, "位置検出パターンの隅を取れず"
+        src.extend([[ou, ov], [ou + 7, ov], [ou + 7, ov + 7], [ou, ov + 7]])
+        dst.extend(quad.tolist())
+    H = calib.vector_to_hom_mat2d(np.array(src), np.array(dst))
     if not np.all(np.isfinite(H)):
         return None, "ホモグラフィが発散"
     return H, "ok"
