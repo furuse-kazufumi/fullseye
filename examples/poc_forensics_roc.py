@@ -73,6 +73,24 @@ N = 256
 BLOCK = 16
 
 
+def _dw(s):
+    """全角を 2 桁と数えた表示幅。表の桁を合わせるため(str.format は文字数で数える)。"""
+    return sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in str(s))
+
+
+def pad(s, n, right=True):
+    """表示幅 ``n`` に詰める。``right`` なら右寄せ。"""
+    s = str(s)
+    sp = " " * max(0, n - _dw(s))
+    return sp + s if right else s + sp
+
+
+def _mode(a):
+    """地図の最頻値(float の 2-D でも動く)。"""
+    v, c = np.unique(np.asarray(a).ravel(), return_counts=True)
+    return float(v[int(np.argmax(c))])
+
+
 # --------------------------------------------------------------------------- #
 # 素材 —— 真値つきの改竄をこちらで作る                                           #
 # --------------------------------------------------------------------------- #
