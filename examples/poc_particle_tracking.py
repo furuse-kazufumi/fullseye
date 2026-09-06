@@ -351,7 +351,11 @@ def section3_factorial(rows, cols, movie):
     print("  D の誤差を「検出のせい」と「リンクのせい」に**分けて**数える。")
     print("  1 つの指標に畳むと、逆向きの 2 つが打ち消して良い数字に化ける。")
     print()
-    header = "  %-22s %10s %10s %10s %10s" % ("条件", "D", "D 真値比", "ドリフト列", "誤り率 %")
+    print("  ★真値位置では**全粒子が毎フレーム在る**ので、誤りは曖昧だけ。")
+    print("     検出位置では融合と視野外で点が消えるので、欠測の誤りが入る。")
+    print()
+    header = ("  %-20s %9s %9s %9s %9s %9s"
+              % ("条件", "D", "D 真値比", "ドリフト列", "曖昧 %", "欠測 %"))
     print(header)
     print("  " + "-" * (len(header) - 2))
     out = {}
@@ -362,20 +366,20 @@ def section3_factorial(rows, cols, movie):
                                            use_truth_link=use_true_link,
                                            truth_index=back)
             d, _, mc = estimate(disp)
-            name = ("%s 位置 + %s リンク"
+            name = ("%s位置 + %sリンク"
                     % ("検出" if use_det else "真値", "真値" if use_true_link else "最近傍"))
-            print("  %-22s %10.4f %10.3f %10.3f %10s"
-                  % (name, d, d / D_TRUE, mc, "0.0" if use_true_link else "%.1f" % (100 * bad)))
+            print("  %-20s %9.4f %9.3f %9.3f %9s %9s"
+                  % (name, d, d / D_TRUE, mc,
+                     "—" if use_true_link else "%.1f" % (100 * bad["amb"]),
+                     "—" if use_true_link else "%.1f" % (100 * bad["miss"])))
             out[(use_det, use_true_link)] = (d, mc, bad)
     print()
     e_det = out[(True, True)][0] / out[(False, True)][0]
-    e_link = out[(False, False)][0] / out[(False, True)][0]
-    print("  → 検出だけの効き: D が %.3f 倍(重心の雑音が分散に**足し算**で乗る)"
-          % e_det)
-    print("     リンクだけの効き: D が %.3f 倍(誤リンクは近い相手を選ぶので**減算**)"
-          % e_link)
-    print("     ★**向きが逆**。両方入った素の追跡ではある程度打ち消し合うので、")
-    print("     『D の誤差 3 %%』のような 1 個の数字は原因を隠す。")
+    e_amb = out[(False, False)][0] / out[(False, True)][0]
+    e_all = out[(True, False)][0] / out[(True, True)][0]
+    print("  → 検出(重心)だけの効き: D が %.3f 倍" % e_det)
+    print("     曖昧な誤リンクだけの効き(真値位置): D が %.3f 倍" % e_amb)
+    print("     欠測込みの誤リンクの効き(検出位置): D が %.3f 倍" % e_all)
     return out
 
 
