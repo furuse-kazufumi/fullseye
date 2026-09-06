@@ -401,6 +401,18 @@ def main():
     print("     6.5 Hz 成分が相互変調して 3.7 Hz 帯に混変調積を落とす。")
     print("     オフビンだとそれが -42 dB まで悪化する。")
 
+    print("\n  3c) 帯域外の運動は拡大されない —— それもビンに乗っていれば")
+    print(f"    {'運動の周波数':>14}{'ビン番号':>11}{'alpha=20 での利得':>20}")
+    for f_out in (11.1, 12.0):
+        v_out = make_clip([(0.5, f_out, 0.0)])[0]
+        g = amp_rms(read_dx_oracle(
+            M.motion_magnify(v_out, 20.0, *BAND, FPS)["video"])) / 0.5
+        sel[("gain", f_out)] = g
+        print(f"    {f_out:>13.1f} Hz{f_out*T/FPS:>11.2f}{g:>20.6f}")
+    print("    → 11.1 Hz(30 ビン目ちょうど)は 1.000000 で素通し。同じ振幅を")
+    print("       12.0 Hz(32.43 ビン)に置くと漏れが 3.0-4.5 Hz 帯に入り、")
+    print("       通したつもりのない運動が 1.074 倍に**増幅**される。")
+
     print("\n  3d) 振幅を尖頭値で読むか RMS で読むかで答えが変わる")
     print(f"    {'T':>6}{'尖頭値 px':>13}{'誤差':>10}{'RMS 換算 px':>14}{'誤差':>10}")
     peaks = {}
