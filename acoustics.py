@@ -995,7 +995,14 @@ _LOCAL_EXCLUDE_HZ = 5.0
 _LOCAL_MIN_BINS = 8
 
 
-def _local_prominence(mag, freqs, i):
+#: 次数スペクトル用の窓(片側 [次数])と除外幅。周波数ではなく回転次数の軸なので
+#: Hz の値は使えない。2 次は軸受の欠陥次数(内輪 5.4、外輪 3.6 など)を
+#: 窓に入れないための値、0.2 次はピークの裾。
+_LOCAL_HALF_ORDER = 2.0
+_LOCAL_EXCLUDE_ORDER = 0.2
+
+
+def _local_prominence(mag, freqs, i, half=None, exclude=None):
     """ピークが**近傍**からどれだけ立っているか。``(比, 近傍の中央値)`` を返す。
 
     :func:`_prominence` の大域中央値は、**帯域を狭めると壊れる**。狭い帯域を
