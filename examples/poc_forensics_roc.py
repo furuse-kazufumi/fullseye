@@ -715,6 +715,8 @@ def main():
     # (11) コピー&ムーブは清浄画像で群を作らない(偽陽性 0)
     assert cm_scores[~cm_labels].max() == 0.0, cm_scores[~cm_labels]
     assert cm_auc > 0.9, cm_auc
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
 
 
