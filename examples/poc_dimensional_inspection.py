@@ -558,6 +558,36 @@ def section_dimensions(img):
         print(f"  {name:<26}{2 * rad:11.4f}{de:+11.4f}{ce:14.4f}{rms:9.4f}")
     circ_err = 2 * rc["params"]["radius"] - 2 * HOLE_RAD
 
+    sub("★丸い穴は必ず小さく出る —— 曲率とぼけの積(sigma^2/rho)")
+    print("  直線のエッジなら対称な PSF は偏りを生まない。曲がった縁では生む:")
+    print("  半径 rho の縁を sigma でぼかすと、等強度線は内側へ約 sigma^2/(2 rho) 寄る。")
+    print("  直径では 2 倍の sigma^2/rho。**部品が小さいほど小さく出る。**")
+    print(f"\n  {'rho [px]':>9}{'PSF s':>7}{'予測 -s^2/rho':>14}{'実測 [px]':>11}{'比':>7}")
+    curv = []
+    for rho, ps in ((8.0, 0.8), (8.0, 1.2), (8.0, 2.0), (16.0, 1.2)):
+        def _disk(rr, cc, _rho=rho):
+            return _rho - np.hypot(rr - 31.5, cc - 31.5)      # 明るい円板
+        di = _render_sdf(_disk, 64, 64, ps)
+        pts_d = []
+        for a in np.linspace(0, 2 * math.pi, 32, endpoint=False):
+            ms = m1.gen_measure_rectangle2(31.5 + rho * math.sin(a),
+                                           31.5 + rho * math.cos(a), a, 7, 1, di.shape)
+            ed = m1.measure_pos(di, ms, sigma=1.0, threshold=0.2)
+            if ed:
+                pts_d.append((ed[0]["row"], ed[0]["col"]))
+        f = fs.fit_circle(np.array(pts_d))
+        meas = 2 * f["r"] - 2 * rho
+        pred = -ps * ps / rho
+        curv.append((rho, ps, pred, meas))
+        print(f"  {rho:9.2f}{ps:7.2f}{pred:14.4f}{meas:11.4f}"
+              f"{meas / pred if pred else float('nan'):7.2f}")
+    print(f"\n  部品画像でも同じ: 円穴 rho={HOLE_RAD} / PSF 1.2 -> 予測 "
+          f"{-1.2 ** 2 / HOLE_RAD:+.4f} px、実測 {circ_err:+.4f} px")
+    print(f"  ボルト穴 rho={BOLT_RAD} / PSF 1.2 -> 予測 {-1.2 ** 2 / BOLT_RAD:+.4f} px "
+          f"(実測は 9 節の円弧キャリパー)")
+    print("  -> **これは校正で消せる偏り**(sigma を測れば引ける)。消せる偏りと")
+    print("     消せない散らばりを混ぜて『誤差 0.3 px』と書かないこと。")
+
     # ---- (d) 角度 ---- #
     sub("(d) 傾いた右端面(真: 鉛直から 12.000 度)")
     model = mt.create_metrology_model()

@@ -638,8 +638,8 @@ def main():
     print("複製を、真の対象から 51 px 離れた位置に一緒に動かす。遮蔽率は真の対象にだけ掛ける。")
     print()
     print(f"{'遮蔽 %':>7}{'平均誤差':>10}{'最悪':>8}{'壊れ':>8}{'平均ピーク':>12}"
-          f"{'平均突出度':>12}{'誤って見つけた':>16}")
-    print("-" * 73)
+          f"{'平均突出度':>12}{'誤報(ピーク)':>15}{'誤報(突出度)':>15}")
+    print("-" * 91)
     ch5t = {}
     for f_occ in (0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8):
         fr, tr, _, _ = make_sequence(world, TARGETS["一意"], n=30, step=2.0,
@@ -650,20 +650,24 @@ def main():
         m = np.arange(len(e)) >= 3
         lost = e > LOST_PX
         n_lost = int((lost & m).sum())
-        false_found = int((lost & m & (pk >= THR_PK)).sum())
+        ff = int((lost & m & (pk >= THR_PK)).sum())
+        ffp = int((lost & m & (np.nan_to_num(pr) >= THR_PR)).sum())
         ch5t[f_occ] = dict(err=e, peak=pk, prom=pr, lost=lost, mask=m,
-                           ff=false_found, nl=n_lost)
+                           ff=ff, ffp=ffp, nl=n_lost)
         print(f"{f_occ * 100:>7.0f}{e.mean():>10.2f}{e.max():>8.2f}"
               f"{n_lost:>6} /27{np.nanmean(pk[m]):>12.3f}{np.nanmean(pr[m]):>12.3f}"
-              f"{false_found:>10} /{n_lost:<3}")
-    print("-" * 73)
+              f"{ff:>10} /{n_lost:<4}{ffp:>10} /{n_lost:<4}")
+    print("-" * 91)
+    print(f"「誤報」= ずれている(5 px 超)のにその量が校正しきい値以上だったフレーム数。")
     tw_l = sorted(f for f in ch5t if ch5t[f]["nl"] > 0)
     tw_cliff = tw_l[0] if tw_l else None
     ff_tot = sum(ch5t[f]["ff"] for f in ch5t)
+    ffp_tot = sum(ch5t[f]["ffp"] for f in ch5t)
     nl_tot = sum(ch5t[f]["nl"] for f in ch5t)
     print(f"\n→ 崖は遮蔽 {'(壊れなかった)' if tw_cliff is None else format(tw_cliff * 100, '.0f') + ' %'}"
-          f" —— 平坦な遮蔽物より **手前に来る**。真の対象が少し崩れた瞬間に、")
-    print("   崩れていない複製のほうが相関が高くなって乗り換えるから。")
+          f" —— 平坦な遮蔽物の崖({'—' if cliff is None else format(cliff * 100, '.0f') + ' %'})"
+          f"より **手前に来る**。")
+    print("   真の対象が少し崩れた瞬間に、崩れていない複製のほうが相関が高くなって乗り換える。")
     if nl_tot:
         print(f"→ **ここでピーク値は嘘をつく**。ずれていた {nl_tot} フレームのうち "
               f"{ff_tot} フレーム({100.0 * ff_tot / nl_tot:.0f} %)で")
@@ -671,9 +675,12 @@ def main():
         _tf = max(ch5t)
         print(f"   遮蔽 {_tf * 100:.0f} % の平均ピークは {np.nanmean(ch5t[_tf]['peak'][3:]):.3f} で、")
         print(f"   平坦な遮蔽物の同じ条件 {np.nanmean(ch5[_tf]['peak'][3:]):.3f} より **高い**。")
-        print(f"→ 一方 突出度 は {np.nanmean(ch5t[_tf]['prom'][3:]):.3f} まで落ちる"
-              f"(平坦な遮蔽物 {np.nanmean(ch5[_tf]['prom'][3:]):.3f})。")
-        print("   2 つの山が同じ高さで立っているから。**この崖を見分けるのは突出度だけ**。")
+        print(f"→ 突出度も万能ではない。遮蔽が浅いうちは "
+              f"{np.nanmean(ch5t[min(ch5t)]['prom'][3:]):.3f} と低く出て嘘を捕まえるが、")
+        print(f"   遮蔽 {_tf * 100:.0f} % では {np.nanmean(ch5t[_tf]['prom'][3:]):.3f} まで **戻る** ——")
+        print("   真の対象が消えてしまえば、間違ったロックには競合が無いので曖昧さも無い。")
+        print(f"   突出度による誤報は合計 {ffp_tot} / {nl_tot} フレーム。")
+        print("   **突出度が測っているのは曖昧さであって、正しさではない**。")
 
     # =======================================================================
     rule("6. ★ 崖 (c) スケールと回転 —— 並進しか探さない追跡はどこまで耐えるか")
