@@ -707,6 +707,17 @@ def section_cliff_blur():
         print(f"  {ps:7.2f}{w_true / ps:7.2f} | {mb:+9.4f}{mp:11.4f}"
               f"{nfound / len(phases):7.0%} | {fb:+9.4f}{fp:11.4f}")
 
+    # 横軸は PSF sigma ではなく **w/sigma** —— 崖はこちらの軸で立つ、が主張。
+    ratios = np.array([r[1] for r in rows])
+    figs.save_plot("blur_cliff",
+                   [("判定境界 0.05 px", ratios, np.full(ratios.size, 0.05)),
+                    ("M measuring1d", ratios, np.array([r[2] for r in rows])),
+                    ("F 自前 50% 交差", ratios, np.array([r[5] for r in rows]))],
+                   xlabel="エッジ間距離 / PSF 幅 (w/sigma)", ylabel="幅の偏り [px]",
+                   title="崖は「ぼけ」ではなく「エッジ間距離 / PSF 幅」で立つ",
+                   caption="偏りは必ず正(対が互いを押し広げる)。"
+                           "符号が一定なので繰り返し測っても消えない。")
+
     # 崖の境界: sigma を大きくしていって |偏り| が最初に 0.05 px を超える w/sigma
     thr = 0.05
     edge_ratio = None
