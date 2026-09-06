@@ -280,12 +280,35 @@ def section3_crossover(frames):
             cross = k
             break
     if cross is None:
-        print("  → **交点は無かった**。この条件では最後まで %s のほうが小さい。"
+        print("  → **時間軸には交点が無かった**。この雑音では最後まで %s が小さい。"
               % ("累積" if out["cum"]["rms"][-1] < out["dir"]["rms"][-1] else "直接"))
     else:
         print("  → 交点は t = %d(真ひずみ %.0f µε)。ここから先は直接のほうが悪い。"
               % (cross, 1e6 * tru[cross]))
-    return out, cums, dirs, tru
+    print()
+    print("  ★交点は**時間軸ではなく雑音の軸に**あるかもしれない。累積の弱点は")
+    print("     揺らぎ(σ√T)なので、雑音を上げれば累積が先に負けるはず —— 実測:")
+    print()
+    print("  %8s | %12s %12s | %12s %12s | %s"
+          % ("雑音 σ", "累積 偏り", "累積 RMS", "直接 偏り", "直接 RMS", "勝ち"))
+    print("  " + "-" * 76)
+    sweep = {"sigma": [], "cum": [], "dir": []}
+    for sg in (0.02, 0.05, 0.10, 0.20, 0.40):
+        cs, ds = [], []
+        for s in range(3):
+            noisy = add_noise(frames, sg, 500 + 17 * s)
+            cs.append(history_cumulative(noisy)[-1])
+            ds.append(history_direct(noisy)[-1])
+        cs, ds = np.asarray(cs) - tru[-1], np.asarray(ds) - tru[-1]
+        rc = float(np.sqrt((cs ** 2).mean()))
+        rd = float(np.sqrt((ds ** 2).mean()))
+        sweep["sigma"].append(sg)
+        sweep["cum"].append(1e6 * rc)
+        sweep["dir"].append(1e6 * rd)
+        print("  %8.2f | %12.0f %12.0f | %12.0f %12.0f | %s"
+              % (sg, 1e6 * cs.mean(), 1e6 * rc, 1e6 * ds.mean(), 1e6 * rd,
+                 "累積" if rc < rd else "★直接"))
+    return out, cums, dirs, tru, sweep
 
 
 def section4_origin(frames):
