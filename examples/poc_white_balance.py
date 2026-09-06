@@ -1135,6 +1135,8 @@ def main():
     assert "illuminant_from_dichromatic_planes" in fs.ledger, \
         "唯一の光源推定 op が消えた"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print(f"\n総所要 {time.perf_counter() - t_all:.1f} 秒")
     print("PASS")
     return True
