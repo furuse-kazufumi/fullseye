@@ -299,7 +299,8 @@ def section_scene() -> dict:
               % (ln, truth[ln], min(sp), max(sp),
                  min(sp) * FPS * LANES[ln]["mps"] * 3.6,
                  max(sp) * FPS * LANES[ln]["mps"] * 3.6, LANES[ln]["mps"]))
-    print("   うち背の高い車(トラック)%d 台 —— 遠い車線の計数行 %d も覆う。"
+    print("   背の高い車(トラック)は %d 台 —— この場面には入れていない。"
+          "4 節で入れて、遠い車線の計数行 %d への書き込みを別に測る。"
           % (trucks, LANES["far"]["slit"]))
 
     # 前景が取れているかの素朴な検算(路面だけの列は前景にならないこと)
