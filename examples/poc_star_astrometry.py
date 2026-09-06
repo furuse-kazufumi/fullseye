@@ -657,6 +657,18 @@ def main():
     print(f"   → **理論限界は上回れない**。最良でも背景引き重心の "
           f"{min(bright.values()):.2f}x で、下回った例は 1 つも無い"
           f"(下回って見えるのは上の「動かない推定器」だけ)")
+    # 図: 理論下限(黒)に対して 4 手法がどこに並ぶか。下限を割っているように
+    #     見えるのは暗い端のゼロ点だけで、その正体は上の「感度」列。
+    lgf = np.log10(fluxes)
+    figs.save_plot(
+        "snr_sweep",
+        [(lab, lgf, [np.log10(sn_tab[f][lab][2]) for f in fluxes])
+         for lab, _ in METHODS]
+        + [("理論下限(CRLB)", lgf, [np.log10(crlb_px(f, 3.2)) for f in fluxes])],
+        xlabel="log10 flux [e-]", ylabel="log10 位置 RMS [px]",
+        title="S/N と測位精度 —— 理論下限は上回れない",
+        caption="暗い端で素の重心が下限を割って見えるのは「動かない推定器」"
+                "だから(感度 %.3f)。" % zero[4])
     assert min(bright.values()) > 0.95
     assert bright["ガウシアン当てはめ"] < 2.0 and bright["PSF 相関"] < 2.0
     timing["1 S/N"] = time.perf_counter() - t0
