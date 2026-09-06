@@ -436,25 +436,33 @@ def section6_chart():
             print(" %10.4f %10.4f" % (mich, pred), end="")
         print()
     print()
-    print("  → 実測と (1-g)×コア MTF が 4 桁一致(周期 4 px でも 256 px でも)。")
+    print("  → 周期 32 px 以下では実測と (1-g)×コア MTF が 4 桁一致。周期が裾の")
+    print("     広がり(%d px)に近づく 128 px 以上では裾自身の MTF が効いて 2 % ほど" % (2 * R_PSF))
+    print("     上振れする —— そこは裾が「まだ像を追随している」領域。")
     print("     **絶対コントラストで測れば、細かいチャートでも裾は見える。**")
     print()
     print("  では SFR はなぜ盲目だったのか。粗いチャートで正規化した CTF を作ると:")
+    print("  (CTF(4px) = 周期 4 px のコントラスト / 基準チャートのコントラスト)")
     print()
     print("  %10s |" % "基準の周期", end="")
-    for g in (0.10, 0.20):
-        print(" %14s" % ("g=%.2f CTF(4px)" % g), end="")
-    print()
-    print("  " + "-" * 44)
+    for g in (0.0, 0.10, 0.20):
+        print(" %14s" % ("g=%.2f" % g), end="")
+    print("  %10s" % "g で動く幅")
+    print("  " + "-" * 72)
     for k, per_ref in enumerate(periods):
+        vals = [ratio[g][0] / ratio[g][k] for g in (0.0, 0.10, 0.20)]
         print("  %10d |" % per_ref, end="")
-        for g in (0.10, 0.20):
-            print(" %14.4f" % (ratio[g][0] / ratio[g][k]), end="")
-        print()
+        for v in vals:
+            print(" %14.4f" % v, end="")
+        print("  %9.1f %%" % (100 * (max(vals) / min(vals) - 1)))
     print()
     print("  → 基準に取るチャートが**裾より細かい**(周期 << 裾の広がり %d px)と、"
           % (2 * R_PSF))
-    print("     基準そのものが同じ (1-g) を被っているので約分され、CTF は g に鈍くなる。")
+    print("     基準そのものが同じ (1-g) を被っているので約分され、CTF は g に鈍くなる:")
+    print("     絶対コントラストは g=0→0.20 で 20 %% 落ちるのに、周期 128 px を基準に")
+    print("     した CTF は %.1f %% しか動かない。"
+          % (100 * abs(ratio[0.20][0] / ratio[0.20][periods.index(128)]
+                       / (ratio[0.0][0] / ratio[0.0][periods.index(128)]) - 1)))
     print("     ★盲点を作るのは周波数ではなく**基準レベルの取り方**。SFR が窓の両端を")
     print("     黒/白の基準にする(ISO 12233 の実務)瞬間に、これが起きている。")
     if figs.enabled():
