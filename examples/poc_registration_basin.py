@@ -427,7 +427,7 @@ def main():
                         ("非対称 弱(角柱 0.25)", 0.25),
                         ("対称(素の直方体)", 0.0)):
         rq = np.random.default_rng(777)
-        best, rest, chosen_all, wrong = [], [], [], 0
+        best, rest, chosen_all, wrong = [], [], [], 0        # noqa: F841 (図と表で使う)
         for _ in range(N_Q):
             a = bracket(N_SRC, rq, bump=bump)
             b = bracket(N_DST, rq, bump=bump)
