@@ -859,12 +859,19 @@ def main():
     print("       任意の対角行列を作れない。**台帳側に `white_balance(rgb, gains)`")
     print("       が無いので、色の前処理の 3 段目(colorimetry ガイドの手順)が")
     print("       fullseye だけでは踏めない。**")
-    print("   (c) **fs.op.sobel_amp は呼び方で比が消える**(12 節)。画像ごと渡すと")
-    print("       全体の最大 1 個で割るので比が残り、ch ごとに 3 回呼ぶと各 ch が")
-    print("       自分の最大で割られて比が消える。角度誤差 "
-          f"{angular_error(own, e_g):.2f} -> "
+    print("   (c) ★**fs.op.sobel_amp にカラー画像の正しい渡し方が無い**(12 節)。")
+    print("       画像ごと (H,W,3) を渡すと ndimage.sobel が色軸を 3 本目の空間軸と")
+    print("       みなし、[1,2,1]/4 の平滑が RGB を跨ぐ —— **入力が恒等的に 0 の")
+    print(f"       チャンネルに {leak_max[1]:.4f} が漏れる**。ch ごとに 3 回呼ぶと今度は")
+    print("       各 ch が自分の最大(ops._norm)で割られ、比が消える。角度誤差は")
+    print(f"       自前 Sobel {angular_error(est_sob, e_g):.2f} -> 画像ごと "
+          f"{angular_error(est_whole, e_g):.2f} -> ch ごと "
           f"{angular_error(est_perch, e_g):.2f} 度。")
-    print("       docstring に「何で割るか」が書かれておらず、例外も出ない。")
+    print("       同型の 2-D 微分 op(laplace / prewitt_amp / roberts / sobel_dir")
+    print("       など、``_norm`` を通す族全部)が同じ 2 つの性質を持つはずで、")
+    print("       **1 件直すのではなく族ごと点検すべき**。")
+    print("       最小の直しは (1) 3 次元入力を色軸として明示的に扱う(または断る)")
+    print("       (2) 何で割ったかを docstring に書く、の 2 つ。")
     print("   (d) **spectrum_to_srgb は色かぶりを作れない。** 反射率 1 が常に")
     print("       (1,1,1) になる正規化なので、光源の色を残した生応答が出せない。")
     print("       本 PoC は光源を反射率側に畳む回り道で合成した(1 節)。")
