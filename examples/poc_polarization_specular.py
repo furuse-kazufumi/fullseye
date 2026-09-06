@@ -184,6 +184,21 @@ def main():
     print("     85 度で偏光度が 0.195 まで落ちるのも重要: **浅すぎても深すぎても")
     print("     偏光は効かない**。使える窓はブリュースター角の周りに限られる。")
     print("     最右列は match3d.fresnel_reflectance との差。同じ式を見ている。")
+    if figs.enabled():
+        # 図: この PoC の物理はこの 3 本の曲線に尽きる。R_p がブリュースター角で
+        #     0 を横切ることが「偏光で鏡面が剥がせる」の全て。
+        th_ax = np.linspace(0.0, 89.0, 90)
+        rs_c = np.array([fresnel_sp(t)[0] for t in th_ax])
+        rp_c = np.array([fresnel_sp(t)[1] for t in th_ax])
+        figs.save_plot("fresnel",
+                       [("R_s", th_ax, rs_c), ("R_p", th_ax, rp_c),
+                        ("鏡面の偏光度 (R_s-R_p)/(R_s+R_p)", th_ax,
+                         (rs_c - rp_c) / np.maximum(rs_c + rp_c, 1e-30))],
+                       xlabel="入射角 [度]", ylabel="強度反射率 / 偏光度",
+                       title="フレネル(屈折率 %.1f、ブリュースター角 %.2f 度)"
+                             % (ETA, THETA_B),
+                       caption="R_p がブリュースター角で 0 を横切る。浅すぎても"
+                               "深すぎても偏光度は落ちる —— 使える窓は限られる。")
 
     # ---------------------------------------------------------------- #
     print("\n=== 2. 前方モデル —— op の完全偏光モデルとの等価な組み替え ===")
