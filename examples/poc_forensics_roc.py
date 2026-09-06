@@ -221,11 +221,17 @@ def score_random(img, _rng=np.random.default_rng(12345)):
 
 DETECTORS = (
     ("ELA", score_ela),
-    ("雑音 σ", score_noise),
-    ("ゴースト(op の argmin)", score_ghost_argmin),
-    ("ゴースト(谷の深さ)", score_ghost_contrast),
+    ("雑音σ", score_noise),
+    ("ゴーストA", score_ghost_argmin),
+    ("ゴーストV", score_ghost_contrast),
     ("乱数", score_random),
 )
+#: 表の見出しに使う名前 → 長い説明(末尾のまとめで使う)
+LONG = {"ELA": "ELA(誤差レベル解析)",
+        "雑音σ": "雑音 σ の不整合",
+        "ゴーストA": "JPEG ゴースト(op の argmin 読み出し)",
+        "ゴーストV": "JPEG ゴースト(PoC 側の谷の深さ読み出し)",
+        "乱数": "乱数(画像を見ない)"}
 
 
 def standardize(m):
