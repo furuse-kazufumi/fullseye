@@ -1115,6 +1115,26 @@ def section_cliff_chamfer():
     print("    精密には正しくない。定義を式で書いても、測ると少しずれる。")
     print(f"    **定義を宣言しないと {wb8 - wt8:.1f} px = {um(wb8 - wt8):.0f} um 動く。**")
     print("    サブピクセルで 0.01 px を争う前に、ここで 3 桁大きい量が動いている。")
+    if figs.enabled():
+        # 丸みの遷移は 1 本のなだらかな坂で、真値の候補が 2 つある。
+        # 縦線 3 本(上面端・底面端・50% 交差)がどれだけ離れているかが要点。
+        prof8 = _front_lit_profile(width, centre, half_base, "fillet", 8.0, psf)
+        j0, j1 = int(centre), min(width, int(centre + half_base + 14))
+        xs = np.arange(j0, j1, dtype=float)
+        ys = prof8[j0:j1]
+        lo, hi = float(ys.min()), float(ys.max())
+        vert = [("上面幅の端(真 %.2f)" % wt8, centre + wt8 / 2.0),
+                ("底面幅の端(真 %.2f)" % wb8, centre + wb8 / 2.0),
+                ("50%% 交差が返した端(%.2f)" % wf8, centre + wf8 / 2.0)]
+        figs.save_plot("edge_definition",
+                       [("丸み rf=8 px の輝度", xs, ys)]
+                       + [(lab, np.array([c, c]), np.array([lo, hi]))
+                          for lab, c in vert],
+                       xlabel="列 [px]", ylabel="輝度",
+                       title="丸い縁 —— 「どこがエッジか」は 3 通りある",
+                       caption="3 本の縦線は %.1f px = %.0f um 離れている。"
+                               "サブピクセルの 0.01 px より 3 桁大きい。"
+                               % (wb8 - wt8, um(wb8 - wt8)))
     return spread
 
 

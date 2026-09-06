@@ -155,11 +155,23 @@ def main():
 
     print("\n=== 6. 日当たり —— 向きで陰影と天空率が変わる ===")
     print(f"  {'斜面の向き':>10}{'陰影(南東光源)':>16}{'天空率':>10}")
+    shades, shade_names = [], []
     for name, aspect_deg in (("北向き", 0.0), ("東向き", 90.0), ("南向き", 180.0), ("西向き", 270.0)):
         z3 = plane(61, 61, cell, 25.0, aspect_deg)
         sh = demops.dem_hillshade(z3, cell, azimuth_deg=135.0, altitude_deg=40.0)
         svf = demops.dem_sky_view_factor(z3, cell, n_azimuth=8)
         print(f"  {name:>10}{np.mean(sh[5:-5, 5:-5]):>16.4f}{np.mean(svf[5:-5, 5:-5]):>10.4f}")
+        shades.append(np.asarray(sh))
+        shade_names.append("%s(陰影 %.3f)" % (name, float(np.mean(sh[5:-5, 5:-5]))))
+    # 4 枚を**同じ塗り分け**で並べる(1 枚ずつ自動伸長すると差が消える)ため、
+    # 4 面を 1 枚の配列に連結してから渡す。
+    figs.save_grid("hillshade_aspect",
+                   [np.concatenate([np.concatenate(shades[:2], axis=1),
+                                    np.concatenate(shades[2:], axis=1)], axis=0)],
+                   [" / ".join(shade_names)], ncols=1,
+                   title="日当たりは斜面の向きで決まる(南東からの光、仰角 40 度)",
+                   caption="左上=北向き 右上=東向き 左下=南向き 右下=西向き。"
+                           "南東を向いた面がいちばん明るい。")
     flat = np.zeros((41, 41))
     print(f"  平坦面の天空率 {np.mean(demops.dem_sky_view_factor(flat, cell)):.6f}(閉形式 1.0)")
     print(f"  平坦面の陰影 {np.mean(demops.dem_hillshade(flat, cell, altitude_deg=40.0)):.6f}"
