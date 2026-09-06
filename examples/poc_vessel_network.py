@@ -732,10 +732,13 @@ def section_murray(tree: dict, r: dict) -> dict:
     print("     実測は分岐から離れれば %+.1f %% のほぼ比例した偏りだったので、"
           "指数はそこを通り抜けた。" % r["far"])
 
+    # 解けなかった点(nan)は落としてから渡す(落としたことは題に書く)
+    ok = [i for i in range(len(offs)) if np.isfinite(fits[i]) and np.isfinite(meds[i])]
     figs.save_plot("murray",
-                   [("まとめて当てはめ", offs, fits),
-                    ("三つ組ごとの中央値", offs, meds),
-                    ("真値 n=3", offs, [3.0] * len(offs))],
+                   [("まとめて当てはめ", [offs[i] for i in ok], [fits[i] for i in ok]),
+                    ("三つ組ごとの中央値", [offs[i] for i in ok],
+                     [meds[i] for i in ok]),
+                    ("真値 n=3", [offs[i] for i in ok], [3.0] * len(ok))],
                    xlabel="径を測る位置(分岐からの距離 [px]、14 = 枝の中点)",
                    ylabel="Murray の指数 n",
                    title="測る位置を変えても 3 に戻らない(主因は量子化)")
