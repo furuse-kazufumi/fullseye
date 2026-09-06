@@ -417,27 +417,43 @@ def section_which_truth() -> dict:
     print("3) ★真値が 3 通りある —— 本数 / 撒いた長さ / 視野内の長さ")
     print("=" * 78)
 
-    sc = make_scene()
-    ts = [("本数基準", circ_stats(sc["angles"])),
-          ("撒いた長さ基準", circ_stats(sc["angles"], sc["length"])),
-          ("視野内の長さ基準", circ_stats(sc["angles"], sc["len_vis"]))]
-    for name, t in ts:
-        ot = orientation_tensor(sc["angles"],
-                                None if name == "本数基準" else
-                                (sc["length"] if "撒いた" in name else sc["len_vis"]))
-        print("    %-16s 平均 %.2f 度 / 配向度 %.4f  (配向テンソル λ1-λ2 = %.4f)"
-              % (name, t["mean_deg"], t["R"], ot["aniso"]))
-    m = measure(sc)
-    print("    %-16s 平均 %.2f 度 / 配向度 %.4f" % ("推定(画素)", m["mean_deg"],
-                                                     m["R"]))
-    d = [abs(_ang_err(m["mean_deg"], t["mean_deg"])) for _, t in ts]
-    print("\n  ★画素ごとの測定は **面積 = 長さ** で重みがつくので、推定が近いのは"
-          " %s(差 %.2f 度)。" % (ts[int(np.argmin(d))][0], min(d)))
-    print("     本数基準の真値と比べると、それだけで %.2f 度ずれる —— "
-          "**測定器の誤差ではなく、比べる相手を間違えている**。" % d[0])
+    out = {}
+    for tag, couple in (("対照群: 長さと角度は独立", False),
+                        ("処理群: 長い繊維ほど揃う(射出成形)", True)):
+        sc = make_scene(couple=couple)
+        ws = [("本数基準", None), ("撒いた長さ基準", sc["length"]),
+              ("視野内の長さ基準", sc["len_vis"])]
+        print("\n  %s" % tag)
+        stats = []
+        for name, w in ws:
+            t = circ_stats(sc["angles"], w)
+            ot = orientation_tensor(sc["angles"], w)
+            stats.append((name, t))
+            print("    %-18s 平均 %6.2f 度 / 配向度 %.4f  "
+                  "(配向テンソル λ1-λ2 = %.4f)"
+                  % (name, t["mean_deg"], t["R"], ot["aniso"]))
+        m = measure(sc)
+        print("    %-18s 平均 %6.2f 度 / 配向度 %.4f" % ("推定(画素)",
+                                                          m["mean_deg"], m["R"]))
+        dr = [abs(m["R"] - t["R"]) for _, t in stats]
+        print("    -> 配向度で見ていちばん近い真値: **%s**(差 %.4f)。"
+              "本数基準との差は %.4f。"
+              % (stats[int(np.argmin(dr))][0], min(dr), dr[0]))
+        out[tag] = (stats, m)
+
+    (s_ctl, m_ctl), (s_cpl, m_cpl) = out.values()
+    spread_ctl = max(t["R"] for _, t in s_ctl) - min(t["R"] for _, t in s_ctl)
+    spread_cpl = max(t["R"] for _, t in s_cpl) - min(t["R"] for _, t in s_cpl)
+    print("\n  ★対照群では 3 つの真値の配向度の開きは %.4f しかない —— 長さと角度が"
+          "独立なら、どれで重みを付けても同じ母数を推定するから。" % spread_ctl)
+    print("  ★★処理群(長さと角度に相関を入れる)では開きが %.4f に広がり、"
+          "**どれを真値と呼ぶかで結論が変わる**。" % spread_cpl)
+    print("     画素ごとの測定は面積 = 長さで重みがつくので、本数基準の真値と"
+          "比べると配向度が %+.1f %% ずれて見える(測定器のせいではない)。"
+          % (100 * (m_cpl["R"] - s_cpl[0][1]["R"]) / s_cpl[0][1]["R"]))
     print("  検算: 配向テンソルの固有値差 λ1-λ2 は 2 倍角の合成ベクトル長 R に"
           "厳密に一致する(上の表の 2 列が同じ値)。")
-    return {"truths": ts, "est": m}
+    return {"ctl": (s_ctl, m_ctl), "cpl": (s_cpl, m_cpl)}
 
 
 # --------------------------------------------------------------------------- #
