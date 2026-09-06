@@ -436,6 +436,7 @@ def main():
         t0 = crop_template(f0, O_XY)
         T0[name], F0[name] = t0, f0
         corr = ops._ncc_map(f0, t0)
+        corr_maps[name] = corr
         pk, xy, prom, d2 = peak_and_prominence(corr)
         # 開口問題の指標: ピークから ±3 px の相関の落ち方が最も緩い方向
         r, c = int(round(xy[1])), int(round(xy[0]))
