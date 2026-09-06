@@ -452,6 +452,7 @@ def main():
     rough_with = _pipeline(surface, DX)
     rough_without = _pipeline(rough_true - scratch + wav + tilt, DX)
     ratios = {}
+    sz_curve = {}                       # 図用: 窓の大きさ -> Sz 平均 / 極値則の予測
     for tag, fld in (("傷あり", rough_with), ("傷なし", rough_without)):
         print(f"\n  [{tag}]  {'窓':>8}{'窓数':>7}{'Sz 平均':>11}{'Sz 最小':>11}"
               f"{'Sz 最大':>11}{'Sq 平均':>11}{'2√(2lnM)·Sq':>14}{'実測/予測':>11}")
