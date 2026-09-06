@@ -234,6 +234,37 @@ def m_gaussfit_w(img, centers, box=11, read=READ, **_):
     return np.array(out, float)
 
 
+def m_gaussfit_masked(img, centers, box=15, **_):
+    """飽和画素を ``nan`` にした画像を受け取り、**残りの画素だけで**当てはめる。
+
+    段 3 の対策。モデルは対称なので、欠けた画素があっても残りから中心を
+    復元できる —— 重心にはこれができない(欠けた形がそのまま偏りになる)。
+    """
+    from scipy.optimize import least_squares
+    out = []
+    for r0, c0 in centers:
+        st, r_off, c_off = _stamp(img, r0, c0, box)
+        rr, cc = np.indices(st.shape)
+        v = st.ravel().astype(float)
+        ok = np.isfinite(v)
+        rr, cc, v = rr.ravel()[ok], cc.ravel()[ok], v[ok]
+        b0 = float(np.median(v))
+        h = box // 2
+
+        def resid(p, rr=rr, cc=cc, v=v):
+            amp, pr, pc, s, bkg = p
+            return bkg + amp * np.exp(-0.5 * (((rr - pr) ** 2 + (cc - pc) ** 2)
+                                              / s ** 2)) - v
+
+        try:
+            res = least_squares(resid, [max(v.max() - b0, 1.0), h, h, 1.4, b0],
+                                method="lm", max_nfev=800)
+            out.append((res.x[1] + r_off, res.x[2] + c_off))
+        except Exception:
+            out.append((np.nan, np.nan))
+    return np.array(out, float)
+
+
 METHODS = (("重心(ゼロ点)", m_centroid),
            ("背景引き重心", m_centroid_bg),
            ("ガウシアン当てはめ", m_gaussfit),
