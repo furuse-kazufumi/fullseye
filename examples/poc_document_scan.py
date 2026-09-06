@@ -591,6 +591,28 @@ def main():
         shadow_stats[name] = (fl, rs, rw, fp, rc, lv)
         print(f"  {name:<32}{fl:>11.4f}{100 * rs:>7.0f}%{100 * rw:>7.0f}%{100 * fp:>10.1f}%"
               f"{rc:>9.3f}{lv:>9d}")
+    figs.save_table(
+        "shadow_tradeoff",
+        ["手法", "地の平坦度", "濃い字", "薄い字", "紙の誤検出", "図の相関", "図の段数"],
+        [[name, "%.4f" % v[0], "%.0f%%" % (100 * v[1]), "%.0f%%" % (100 * v[2]),
+          "%.1f%%" % (100 * v[3]), "%.3f" % v[4], "%d" % v[5]]
+         for name, v in shadow_stats.items()],
+        title="影除去は必ず何かを壊す", col_w=170,
+        caption="平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。"
+                "図の階調は真値で %d 段。" % ramp_levels(truth))
+    # 数字だけだと「何が壊れたのか」が像として残らないので、代表 4 つを並べる。
+    figs.save_grid(
+        "shadow_removal",
+        [shadow_imgs["何もしない"],
+         shadow_imgs["局所平均で割る(窓 9 = op の上限)"],
+         shadow_imgs["局所平均で割る(窓 61 = 自前)"],
+         shadow_imgs["var_threshold(2 値、窓 15)"]],
+        ["何もしない", "窓 9(op の上限)", "窓 61(自前)", "var_threshold"],
+        title="平らにするほど、薄い字と図の階調が消えていく", ncols=2,
+        caption="左下の帯が図の階調。窓 9 は地と一緒にそれも割ってしまう"
+                "(真の傾斜との相関 %.2f)。窓 61 なら %.2f 残る。"
+                % (shadow_stats["局所平均で割る(窓 9 = op の上限)"][4],
+                   shadow_stats["局所平均で割る(窓 61 = 自前)"][4]))
     print(f"  (図の階調は真値で {ramp_levels(truth)} 段。「濃い字」「薄い字」は真の字の画素の")
     print("   うち大域 2 値化のあとも字と判定された割合、「紙の誤検出」は紙の地が字に")
     print("   された割合。平坦度は小さいほど良い。)")
