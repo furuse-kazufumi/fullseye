@@ -291,8 +291,19 @@ def main():
         for mode in ("gaussian", "centroid"):
             if row[mode][2] <= limit_nm:
                 boundary[mode] = noise
+        noise_pts.append((noise, row["gaussian"][2], row["centroid"][2]))
         print("   %5.3f | %+7.2f %8.2f %8.2f nm | %+7.2f %8.2f %8.2f nm | %5.1f%%"
               % (noise, *row["gaussian"], *row["centroid"], 100 * rej))
+    nx = [np.log10(p[0]) for p in noise_pts]
+    figs.save_plot("noise_sweep",
+                   [("gaussian 総合誤差", nx, [np.log10(p[1]) for p in noise_pts]),
+                    ("centroid 総合誤差", nx, [np.log10(p[2]) for p in noise_pts]),
+                    ("測れたの線(段差の 10 %)", nx,
+                     [np.log10(limit_nm)] * len(noise_pts))],
+                   xlabel="log10 雑音(振幅比)", ylabel="log10 総合誤差 [nm]",
+                   title="どこで測れなくなるか(段差 100 nm)",
+                   caption="centroid のほうが常に下に見えるが、その差は精度ではなく"
+                           "段差を縮めるゲイン誤差(下の表)。")
     print("   測れなくなる境目(総合誤差が段差の 10%% = %.0f nm を超える点):"
           % limit_nm)
     for mode in ("gaussian", "centroid"):
