@@ -43,7 +43,9 @@ dependencies = ["numpy>=1.23", "scipy>=1.9", "threadpoolctl>=3.1"]
 [project.urls]
 Homepage = "https://github.com/furuse-kazufumi/fullseye"
 Repository = "https://github.com/furuse-kazufumi/fullseye"
-Documentation = "https://github.com/furuse-kazufumi/fullseye/tree/master/docs"
+# 2026-09-06: GitHub Pages に独自ドメインを付けた(CNAME = furuse.work)。
+# 配信元は docs/index.md なので、生の Markdown ツリーではなくこちらを指す。
+Documentation = "https://furuse.work/"
 "Operator corpus (RAG)" = "https://github.com/furuse-kazufumi/fullseye/tree/master/docs/ops"
 "Bug tracker" = "https://github.com/furuse-kazufumi/fullseye/issues"
 
@@ -133,6 +135,9 @@ py-modules = [
   # shapestats: 形態統計(Procrustes / GPA / 形態 PCA / 左右対称性)。比較形態学と
   # 「設計 CAD の無い部品を個体群と比べる」検査の両方に効く(2026-09-06 追加)。
   "shapestats", "opsshapestat", "opsshape2d", "roughness", "opsroughness", "opsmeasure1d",
+  # blob2d: 2-D の連結成分解析。閾値のあとの定番の連鎖(切る→測る→選ぶ)が
+  # 3 層のどこにも無かった(3-D 版だけ在った)ため新設(2026-09-06)。
+  "blob2d", "opsblob",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
