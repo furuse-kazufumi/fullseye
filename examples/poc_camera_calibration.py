@@ -77,6 +77,7 @@ K_TRUE = fs.intrinsic_matrix(TRUE_FX, TRUE_FY, TRUE_CX, TRUE_CY)
 
 COLS, ROWS, SPACING = 9, 7, 0.030                        # 9x7 格子, 30 mm 間隔
 N_VIEWS = 10
+NULL_B_DCX = abs(CENTER[0] - TRUE_CX)                    # ゼロ点 B が背負う主点誤差
 
 
 def board_points(cols: int = COLS, rows: int = ROWS, spacing: float = SPACING) -> np.ndarray:
