@@ -399,9 +399,9 @@ def section_resolution() -> dict:
     print("\n" + "=" * 78)
     print("7) ★予想が外れた —— 画素を細かくしても融合は減らない")
     print("=" * 78)
-    print("  画素 [µm]  視野 [px]   塊    融合   縁切れ   D50 誤差")
+    print("  画素 [µm]  視野 [px]   塊    融合   縁切れ   D50 誤差   単独だけの誤差")
 
-    px_list, merged, errs = [], [], []
+    px_list, merged, errs, ctrl = [], [], [], []
     for scale in (0.5, 1.0, 2.0):
         # 同じ**物理的な**場面を、粗い画素・標準・細かい画素で見る
         sc = make_scene(240, scale=scale)
@@ -411,14 +411,34 @@ def section_resolution() -> dict:
         tp = percentiles(2.0 * sc["radii"] * px_um)
         ep = percentiles(f["equiv_diameter"])
         err = 100 * (ep["d50"] - tp["d50"]) / tp["d50"]
+
+        # ★対照群 —— 融合も縁切れもしていない塊だけで測り直す。ここが動けば
+        #   原因は融合ではなく**標本化(画素で塗った面積の偏り)**。
+        lab = f["labels"]
+        rr = np.clip(np.round(sc["cy"]).astype(int), 0, lab.shape[0] - 1)
+        cc = np.clip(np.round(sc["cx"]).astype(int), 0, lab.shape[1] - 1)
+        inside = _fully_inside(sc)
+        owner = lab[rr, cc]
+        n_seed = np.bincount(owner[inside], minlength=int(lab.max()) + 1)[1:]
+        clean = (n_seed == 1) & ~np.asarray(f["touches_border"], bool)
+        tp_c = percentiles(2.0 * sc["radii"][inside] * px_um)
+        ep_c = percentiles(np.asarray(f["equiv_diameter"])[clean])
+        err_c = 100 * (ep_c["d50"] - tp_c["d50"]) / tp_c["d50"]
+
         px_list.append(px_um)
         merged.append(m)
         errs.append(err)
-        print("   %6.2f     %5d    %4d   %4d    %4d    %+6.2f %%" % (
-            px_um, sc["n_pix"], f["n"], m, e, err))
-    print("\n  融合の件数は画素の細かさでほとんど動かない —— 触れているかどうかは"
-          "\n  幾何の問題で、標本化の問題ではない。効くのは**視野あたりの粒子数**だけ。")
-    return {"px": px_list, "merged": merged, "err": errs}
+        ctrl.append(err_c)
+        print("   %6.2f     %5d    %4d   %4d    %4d    %+6.2f %%    %+6.2f %%" % (
+            px_um, sc["n_pix"], f["n"], m, e, err, err_c))
+    print("\n  融合の件数はほとんど動かない(%d → %d → %d)—— 触れているかどうかは"
+          "\n  幾何の問題で、標本化の問題ではない。**予想したとおりに動かなかった**。"
+          % tuple(merged))
+    print("  ただし D50 の誤差は %.2f → %.2f %% と縮む。対照群(融合も縁切れも"
+          "\n  していない塊だけ)が %.2f → %.2f %% と同じ向きに動くので、"
+          "\n  縮んだ分の出どころは融合ではなく**画素で塗った面積の偏り**。"
+          % (errs[0], errs[-1], ctrl[0], ctrl[-1]))
+    return {"px": px_list, "merged": merged, "err": errs, "clean_err": ctrl}
 
 
 # --------------------------------------------------------------------------- #
