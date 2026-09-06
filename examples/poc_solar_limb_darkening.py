@@ -363,32 +363,44 @@ def section_u_sweep() -> dict:
     print("=" * 78)
     print("     u    ぼけ無しの誤差   幾何の予測   50 % 法の誤差   勾配最大の誤差")
 
-    lv, gr, pred = [], [], []
+    lv, gr, pred, sharp = [], [], [], []
     for u in U_GRID:
         img = render(u=u)
         f = fit_disc(img, "level", 0.5)
         g = fit_disc(img, "gradient")
+        # ★対照群 —— ぼけを切ると、残るのは幾何(50 % 面の位置)だけ
+        s = fit_disc(render(u=u, seeing=0.0, noise=0.0), "level", 0.5)
         p = _geometric_prediction(u)
         lv.append(f["r"] - R_TRUE)
         gr.append(g["r"] - R_TRUE)
+        sharp.append(s["r"] - R_TRUE)
         pred.append(p)
-        print("   %.2f     %+8.3f     %s     %+8.3f" % (
-            u, f["r"] - R_TRUE,
-            "  (無し)  " if np.isnan(p) else "%+8.3f" % p, g["r"] - R_TRUE))
+        print("   %.2f     %+8.3f     %s     %+8.3f      %+8.3f" % (
+            u, s["r"] - R_TRUE,
+            " (無し) " if np.isnan(p) else "%+8.3f" % p,
+            f["r"] - R_TRUE, g["r"] - R_TRUE))
 
+    lin = lv[1] / U_GRID[1] * U_GRID[-1]      # u=0.2 の値を比例外挿した u=0.8
     print("\n  ★★**予想が外れた**。「偏りは u に比例する」と踏んでいたが、")
-    print("  u<=0.5 ではほぼ一定(%+.2f 〜 %+.2f px)で、u>0.5 から急に伸びる。"
-          % (lv[0], lv[3]))
-    print("  機構が入れ替わっている:")
-    print("   * u<=0.5 —— 縁の明るさ (1-u)I0 がまだ 50 % より上なので、交差は")
-    print("     **ぼけの斜面の中**で起きる。偏りはシーイングで決まり u に鈍い。")
-    print("   * u>0.5 —— 50 % の等輝度面が**円板の内側に入り込む**。偏りは")
-    print("     幾何だけで決まり、u=0.8 の実測 %+.2f px は予測 %+.2f px と一致。"
-          % (lv[-1], pred[-1]))
+    print("  u=0.2 の %+.2f px を比例で伸ばすと u=0.8 は %+.2f px のはず。実測は"
+          % (lv[1], lin))
+    print("  **%+.2f px(%.1f 倍)**。比例ではありません。" % (lv[-1], lv[-1] / lin))
+    print("  ★**対照群(ぼけ σ=0)が機構を分けた**:")
+    print("   * u<=0.5 —— ぼけを切ると偏りは %+.3f 〜 %+.3f px しか残らない。"
+          % (min(sharp[:4]), max(sharp[:4])))
+    print("     縁の明るさ (1-u)I0 がまだ 50 % より上なので、交差は**ぼけの斜面の")
+    print("     中**で起きる。つまりこの領域の偏りを作っているのは減光ではなく")
+    print("     **シーイング**です。")
+    print("   * u>0.5 —— 50 % の等輝度面が**円板の内側に入り込む**。ぼけ σ=0 でも")
+    print("     %+.2f px 残り、幾何の予測 %+.2f px とよく合う(u=0.8)。"
+          % (sharp[-1], pred[-1]))
+    print("     u=0.6 は遷移域で、幾何 %+.2f px にぼけの分が上乗せされて実測 %+.2f px。"
+          % (pred[4], lv[4]))
     print("  勾配最大は u に対して %+.2f 〜 %+.2f px と鈍い(縁の位置を明るさで"
           % (min(gr), max(gr)))
     print("  決めていないため)。")
-    return {"u": list(U_GRID), "level": lv, "grad": gr, "pred": pred}
+    return {"u": list(U_GRID), "level": lv, "grad": gr, "pred": pred,
+            "sharp": sharp}
 
 
 # --------------------------------------------------------------------------- #

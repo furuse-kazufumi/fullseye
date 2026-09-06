@@ -291,8 +291,7 @@ def act_blobs(nf):
         c, ax = _plot_panel(c, _wide_rect(2, 2), (0.0, float(thrs[-1])),
                             (0.0, float(counts[0]) * 1.08),
                             "面積のしきい値 [px²]", "残った物体")
-        c = fs.plot_series(c, ax, thrs[:i + 1], np.asarray(counts[:i + 1], float),
-                           kind="line", color="emphasis", width=2)
+        c = _series(c, ax, thrs[:i + 1], np.asarray(counts[:i + 1], float))
         c = _cap(c, 0, "(a) blob_label — %d 個" % feat["n"])
         c = _cap(c, 1, "(b) blob_select area ≥ %.0f px² — %d 個" % (thrs[i], counts[i]))
         out.append(c)
@@ -370,8 +369,7 @@ def act_caliper(nf):
         c, ax2 = _plot_panel(c, _wide_rect(2, 2), (0.0, float(nf - 1)),
                              (float(np.nanmin(wa)) - 2.0, float(np.nanmax(wa)) + 2.0),
                              "フレーム", "測った幅 [px]")
-        c = fs.plot_series(c, ax2, np.arange(i + 1, dtype=float), wa[:i + 1],
-                           kind="line", color="emphasis", width=2)
+        c = _series(c, ax2, np.arange(i + 1, dtype=float), wa[:i + 1])
         c = _cap(c, 0, "(a) キャリパー phi=%.0f°  走査 %+.0f px" % (np.rad2deg(phi), travel[i]))
         c = _cap(c, 1, "(b) measure_pos — エッジ %d 点" % nedge[i])
         c = _cap(c, 2, "(c) measure_pairs — 幅 %.2f px" % wa[i])
@@ -483,9 +481,7 @@ def act_pointcloud(nf):
         c = _place(c, seg, 1)
         c, ax = _plot_panel(c, _wide_rect(2, 2), (0.0, float(nf - 1)), (0.0, max(ncl) + 1.0),
                             "フレーム(tol が往復する)", "クラスタ数")
-        c = fs.plot_series(c, ax, np.arange(i + 1, dtype=float),
-                           np.asarray(ncl[:i + 1], float), kind="line",
-                           color="emphasis", width=2)
+        c = _series(c, ax, np.arange(i + 1, dtype=float), np.asarray(ncl[:i + 1], float))
         c = _cap(c, 0, "(a) 生の点群 %d 点" % len(pts))
         c = _cap(c, 1, "(b) euclidean_clusters tol=%.3f m — %d 個" % (tols[i], ncl[i]))
         out.append(c)
