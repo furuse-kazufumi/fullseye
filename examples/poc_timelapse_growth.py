@@ -181,23 +181,28 @@ def _pair_connected(i: int, j: int, t: float, pixel: float,
 
 
 def merge_time_continuous(i: int, j: int, pixel: float = 1.0,
-                          connectivity2d: int = 4, tol: float = 0.01) -> float:
+                          connectivity2d: int = 4, tol: float = 0.01,
+                          shift=(0.0, 0.0)) -> float:
     """**時間を連続とみなした**ときの合体時刻(空間の離散化だけが効く)。
 
     フレーム量子化と空間の離散化を**分けて数える**ための対照。二分法。
     """
     lo, hi = -T0 + 1e-6, float(T) * 4.0
-    if _pair_connected(i, j, lo, pixel, connectivity2d):
+    if _pair_connected(i, j, lo, pixel, connectivity2d, shift):
         return lo
-    if not _pair_connected(i, j, hi, pixel, connectivity2d):
+    if not _pair_connected(i, j, hi, pixel, connectivity2d, shift):
         return float("nan")
     while hi - lo > tol:
         mid = 0.5 * (lo + hi)
-        if _pair_connected(i, j, mid, pixel, connectivity2d):
+        if _pair_connected(i, j, mid, pixel, connectivity2d, shift):
             hi = mid
         else:
             lo = mid
     return 0.5 * (lo + hi)
+
+
+#: 画素格子の位相を振るためのずらし(単位は「画素サイズの何倍か」)。
+PHASES = [(0.0, 0.0), (0.37, 0.11), (0.5, 0.5), (0.13, 0.41), (0.29, 0.83)]
 
 
 def growth_fit(vol, labels, fam_id, colony_ids, times, pixel: float):

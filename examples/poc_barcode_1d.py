@@ -448,10 +448,15 @@ def section3_sweeps() -> dict:
             print()
         out[dname] = {"levels": levels, "table": table}
     print()
-    print("  → 壊し方ごとに勝つ手法が違う。ぼけと傾きは 5 つとも同じところで")
-    print("     落ちる(**二値化の問題ではない**)。低コントラストでは適応しきい値")
-    print("     とサブピクセルだけが残り、汚れでは多数決だけが残る。")
-    print("     ★**どれか 1 つを既定にしてはいけない**。")
+    print("  → 壊し方ごとに勝つ手法が違う。**どれか 1 つを既定にしてはいけない**。")
+    print("     ・ぼけ: 固定しきい値の 3 つが σ=2.1 px まで持ち、★適応しきい値と")
+    print("       サブピクセルのほうが**先に**(1.8 px で)落ちる。局所の差を見る")
+    print("       方式は、なまると差そのものが消えるので早く死ぬ。")
+    print("     ・傾き: 5 つとも同じ 16 度で落ちる —— 二値化の問題ではない(5 章)。")
+    print("     ・低コントラスト: 固定しきい値の 3 つだけが落ちる。適応しきい値と")
+    print("       サブピクセルは最後まで残る(原因の切り分けは 8 章)。")
+    print("     ・汚れ: 多数決だけが残る。他は中央の 1 行が汚れの中にあるので同じ")
+    print("       ように落ちる(6 章で非単調になる理由まで見る)。")
     return out
 
 
@@ -614,7 +619,7 @@ def section7_collapse() -> None:
     print("  (i) ぼけ: モジュール寸法 m を変えても σ/m の同じ場所で落ちるか")
     print()
     print("  %8s |" % "σ/m", end="")
-    es = [0.5, 0.65, 0.70, 0.75, 0.80, 0.90]
+    es = [0.60, 0.68, 0.71, 0.74, 0.77, 0.85]
     for e in es:
         print(" %7.2f" % e, end="")
     print()
@@ -647,7 +652,7 @@ def section7_collapse() -> None:
     print("  %8s | %9s %9s %9s" % ("角度 度", "にじみ px", "σ_eq/m", "成功"))
     print("  " + "-" * 42)
     tilt_e, tilt_ok = [], []
-    for th in [5.0, 10.0, 11.5, 13.0, 14.0, 16.0]:
+    for th in [5.0, 9.0, 10.0, 10.5, 11.0, 12.0]:
         smear = band * np.tan(np.deg2rad(th))
         e = smear / np.sqrt(12.0) / MODULE_PX
         rng = np.random.default_rng(600 + int(th * 13))
@@ -673,7 +678,7 @@ def section7_collapse() -> None:
         return float("nan")
 
     print()
-    print("  50 %% を切る位置(内挿):")
+    print("  50 % を切る位置(内挿):")
     for k, v in curves.items():
         print("    %-12s σ/m = %.3f" % (k, _cliff(es, v)))
     tc = _cliff(tilt_e, tilt_ok)
@@ -783,7 +788,8 @@ def section10_tool_gaps() -> None:
         assert not hasattr(fs, nm) and not hasattr(fs.ledger, nm), nm
     print("  (c) 1-D プロファイル向けの適応しきい値が無い(2-D の局所しきい値は")
     print("      窓が画素で固定という別の穴を `poc_matrix_code_reading` が既に")
-    print("      指摘している)。本 PoC は `uniform_filter1d` を直接呼んでいる。")
+    print("      指摘している)。本 PoC の Bernsen は scipy の順位フィルタから")
+    print("      手で組んでいる —— **対比の門**まで含めて毎回書き直すことになる。")
 
     # (d) polarity の表現が 2 通りある(文字列 と ±1)。
     prof_img = render(make_message(np.random.default_rng(3)))
