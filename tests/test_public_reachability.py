@@ -80,7 +80,6 @@ _PENDING_EXPOSURE = {
     "fit_transform": 5,     # hom_vector_to_proj_hom_mat2d(4 点以上→H)/ Umeyama
     "tools_geom": 14,
     "matrix": 33,
-    "geometry2d": 22,
     # --- 形状マッチング・3-D モデル照合 ---
     "shapematch": 39,
     "objmodel3d": 35,
@@ -189,6 +188,48 @@ def test_pending_exposure_shrinks_when_fixed():
     assert not fixed, (
         "公開経路から届くようになったのに _PENDING_EXPOSURE に残っている: "
         + ", ".join(fixed) + "  —— この表から行を消すこと。"
+    )
+
+
+#: 「1 本も届かない島」ではなく**部分的に隠れている**分の総数。2026-09-06 の実測で
+#: 配布関数 2865 本のうち 1229 本(42.9%)が公開経路のどこからも呼べず、うち 425 本は
+#: 「一部だけ出ている」モジュールの中に埋もれていた(`reconstruction` 28/29、
+#: `geometry2d` 21/22、`filters_arith` 16/20 —— 名前が 1 つ出ているせいで
+#: 島の検査には掛からない)。この総数が増えないことだけを見張り、減らす作業は
+#: 上の `_PENDING_EXPOSURE` と一緒に進める。
+_HIDDEN_FUNCTIONS_TODAY = 1229
+
+
+def _hidden_total():
+    public = _public_names()
+    total = 0
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        for name in _shipped_modules():
+            try:
+                mod = importlib.import_module(name)
+            except Exception:
+                continue
+            total += sum(1 for n in dir(mod)
+                         if not n.startswith("_")
+                         and callable(getattr(mod, n))
+                         and getattr(getattr(mod, n), "__module__", "") == name
+                         and n not in public)
+    return total
+
+
+def test_hidden_function_total_does_not_grow():
+    """半分だけ見えているモジュールも含めた総数のラチェット。
+
+    島の検査(上の 3 本)は「1 本も届かない」モジュールしか見ない。名前が
+    1 つでも出ていると素通しになるので、総数でも押さえる。
+    """
+    requires_full_registry()
+    now = _hidden_total()
+    assert now <= _HIDDEN_FUNCTIONS_TODAY, (
+        "公開経路から呼べない関数が %d -> %d に増えた。新しく足した関数は "
+        "facade / 型つき台帳 / 2-D op のどれかに載せること。"
+        % (_HIDDEN_FUNCTIONS_TODAY, now)
     )
 
 

@@ -294,10 +294,18 @@ def m_unmix3(cube):
     return np.clip(a[:, :, 0] / (a[:, :, 0] + a[:, :, 1] + 1e-9), 0.0, 1.0)
 
 
+#: 可視だけでアンミキシングしたいとき、**青緑赤の 3 バンドは ``spec_unmix`` に渡せない**
+#: —— ``_as_cube`` が B=3 を「色画像を分光キューブと取り違えないため」に拒否するため
+#: (B=2 は明示的な二バンドキューブとして通る)。色画像を分光的に解く経路が族に無い
+#: ので、ここでは緑・赤の 2 バンドに落として解く。★道具の穴。
+VIS_BANDS = (B_GREEN, B_RED)
+
+
 def m_unmix2_vis(cube):
-    """可視 3 バンドだけのアンミキシング(近赤外が無い機材の対照)。"""
-    return np.clip(specops.spec_unmix(cube[:, :, :3], E_LEAF_SOIL[:, :3],
-                                      constrained=True)[:, :, 0], 0.0, 1.0)
+    """可視だけのアンミキシング(近赤外が無い機材の対照)。緑・赤の 2 バンド。"""
+    sub = np.stack([cube[:, :, i] for i in VIS_BANDS], -1)
+    E = np.stack([E_LEAF_SOIL[:, i] for i in VIS_BANDS], -1)
+    return np.clip(specops.spec_unmix(sub, E, constrained=True)[:, :, 0], 0.0, 1.0)
 
 
 METHODS = (
