@@ -122,7 +122,22 @@ def integrate_gradients(p, q):
 
 
 def integrate_normals(normals, mask=None):
-    """法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。"""
+    """法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。
+
+    手順: 法線 ``(H,W,3)`` を勾配 ``p = -nx/nz``、``q = -ny/nz`` に直し(``|nz| < 1e-6`` の
+    画素は nz を ±1e-6 に置き換えて零割を避ける)、FFT 領域で最小二乗解
+    ``Z(wx,wy) = (-j·wx·P - j·wy·Q) / (wx² + wy²)`` を求め(直流成分は 0)、逆変換して
+    平均を 0 に引く。``mask`` (bool HxW) を与えると mask 外の勾配を 0 にしてから積分する
+    (その領域は平坦として扱われる)。返り値は float64 の ``(H,W)``。
+    注意点:
+    - 周期境界を仮定するため、画像の上下・左右がつながるように端が歪む。
+    - 絶対高さは決まらない(平均 0)。格子間隔 1 画素で積分するので ``z`` も画素単位の
+    高さになり、実寸には画素ピッチを掛ける。
+    - ``nz ≈ 0``(輪郭付近・視線に平行な面)は勾配が発散し、波打ちを周囲へ広げる。
+    ``mask`` で除くか法線を事前に平滑する。
+    入力検証は無い(``(H,W,3)`` 以外は内部の添字で失敗)。``surface_normals`` が逆変換で、
+    ``photometric_stereo`` の法線をここへ渡すと形状(高さ場)が得られる。
+    """
     p, q = normals_to_gradients(normals)
     if mask is not None:
         m = np.asarray(mask, bool)
@@ -132,7 +147,17 @@ def integrate_normals(normals, mask=None):
 
 
 def surface_normals(z):
-    """高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。"""
+    """高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。
+
+    ``np.gradient`` の中心差分(端は片側差分)で行方向の ``dz/dy`` と列方向の ``dz/dx`` を
+    取り、``n = (-dz/dx, -dz/dy, 1)`` を長さ 1 に正規化する(``+1e-12`` で零割を避ける)。
+    格子間隔を 1 画素とみなすので、``z`` の単位が画素と異なる(mm 等)場合は事前に
+    ``z / 画素ピッチ`` へ換算しないと傾きが実際より強く/弱く出る。法線の z 成分は常に正
+    (カメラ向き)。返り値は float32 の ``(H,W,3)``、第 3 軸は (x, y, z) 成分で x は列方向、
+    y は行方向。入力検証は無く、2-D 以外を渡すと ``np.gradient`` の展開で失敗する。
+    ``integrate_normals`` の逆変換にあたり、``photometric_stereo`` の出力と同じ法線規約
+    なので、そのまま ``render_lambertian`` に渡して陰影画像を合成できる。
+    """
     zy, zx = np.gradient(np.asarray(z, float))
     n = np.stack([-zx, -zy, np.ones_like(zx)], axis=-1)
     n /= (np.linalg.norm(n, axis=-1, keepdims=True) + 1e-12)
@@ -140,7 +165,18 @@ def surface_normals(z):
 
 
 def render_lambertian(normals, albedo, light, ambient=0.0):
-    """法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。"""
+    """法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。
+
+    ``I = albedo * (max(n·L, 0) + ambient)``。``light`` は (3,) の光源方向ベクトルで内部で
+    単位長に正規化する(長さは強度として効かない)。``n·L < 0`` の画素は 0 にクリップ
+    される(付着影)。``ambient`` は法線に依らず一様に足す定数で、アルベドは掛かる
+    (既定 0)。``normals`` は ``(H,W,3)`` の法線(単位長を仮定し正規化しない)、``albedo``
+    は ``(H,W)`` またはブロードキャスト可能な配列・スカラ。返り値は float32 の ``(H,W)``。
+    上限は ``albedo * (1 + ambient)`` で、[0,1] へのクリップはしない。入力検証は無い。
+    ``photometric_stereo`` の順方向モデルそのもの(光源正規化の規約は ``normalize=True``
+    に対応)なので、復元した法線・アルベドから再合成して元画像と比べる往復検証に使える。
+    鏡面・相互反射・投影影(cast shadow)は含まない。
+    """
     n = np.asarray(normals, float)
     L = np.asarray(light, float)
     L = L / (np.linalg.norm(L) + 1e-12)

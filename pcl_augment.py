@@ -72,7 +72,16 @@ def jitter(points, sigma: float, clip: Optional[float] = None, seed: int = 0) ->
 
     ``sigma`` はワールド単位の標準偏差(ユーザ指定パラメータ)。``clip`` を与えると
     各成分の変位を ``[-clip, clip]`` に切り詰める(外れ変位の抑制)。大 N ではノイズの
-    平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 ``(N,3)``。"""
+    平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 ``(N,3)``。
+
+    - ``sigma < 0`` は ``ValueError``。``sigma == 0`` または空入力は入力のコピーを返す。
+    - ``clip`` は与えるなら ``> 0``(それ以外は ``ValueError``)。切り詰めは成分ごとなので
+    変位ベクトルの長さは最大 ``√3·clip``。
+    - ``seed`` で決定論的(``np.random.default_rng(seed)``)。同 seed・同形状なら同じノイズ。
+    - 入力は ``(N,3)`` の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は
+    ``ValueError``)。返り値は float64。
+    - 位置合わせ(``register_fpfh`` 等)のノイズ耐性を測るとき、``sigma`` を点間隔
+    (``voxel_grid_downsample`` の格子幅など)に対する比で決めると条件を比較しやすい。"""
     P = _as_points(points)
     sigma = float(sigma)
     if sigma < 0.0:
@@ -109,7 +118,15 @@ def random_rotation(points, seed: int = 0,
     ``R`` は正規直交・``det=+1``(``rotated = points @ R.T`` = 各点に ``R`` を左作用、
     逆変換は ``rotated @ R``)。``max_angle=None`` なら Shoemake 法で一様ランダム回転、
     ``max_angle`` 指定(ラジアン, 期待 ``[0, π]``)なら軸を球面一様・角を ``[0, max_angle]``
-    一様に取り、回転角を制限する(``arccos((tr R -1)/2) ≤ max_angle`` を厳密に保証)。"""
+    一様に取り、回転角を制限する(``arccos((tr R -1)/2) ≤ max_angle`` を厳密に保証)。
+
+    ``max_angle < 0`` は ``ValueError``、``max_angle=0`` は単位行列。単位はラジアン(度で
+    渡すと桁違いに大きくなる)。``max_angle=None`` の一様回転は上限 π までの大きな回転も
+    普通に出るので、視点変化の範囲を絞りたいときは ``max_angle`` を使う。回転は原点まわり
+    で、雲が原点から離れていれば重心も動く。``R`` の規約 ``rotated = points @ R.T`` は
+    ``register_fpfh``・``register_shot`` が返す ``dst ≈ src @ R.T + t`` と同じ向きなので、
+    推定結果との角度誤差は ``arccos((tr(R_est·Rᵀ)-1)/2)`` で測れる。``seed`` で決定論的
+    (同 seed なら同じ ``R``)。返り値は float64 の ``(N,3)`` と ``(3,3)``。"""
     P = _as_points(points)
     rng = np.random.default_rng(int(seed))
 
@@ -155,7 +172,12 @@ def random_scale(points, lo: float, hi: float, seed: int = 0) -> Tuple[np.ndarra
 
     ``scaled = points * s``。bbox 対角長はちょうど ``s`` 倍になる(``s > 0`` なので
     ``max``/``min`` が共に ``s`` 倍 → 対角 ``‖max-min‖`` も ``s`` 倍)。物体スケールの
-    ばらつき(距離/センサ倍率)を学習に注入する。``0 < lo <= hi`` を要求(fail-closed)。"""
+    ばらつき(距離/センサ倍率)を学習に注入する。``0 < lo <= hi`` を要求(fail-closed)。
+
+    ``lo <= 0`` または ``hi < lo`` は ``ValueError``(``lo == hi`` は許され常に ``s = lo``)。
+    原点まわりの拡大なので、雲が原点から離れていれば重心も ``s`` 倍の位置へ動く(位置と
+    大きさが同時に変わる)。大きさだけ変えたいなら事前に重心を原点へ寄せる。``s`` は
+    Python float、返り値の点群は float64。``seed`` で決定論的。空入力は空を返す。"""
     P = _as_points(points)
     lo = float(lo)
     hi = float(hi)
@@ -176,7 +198,13 @@ def random_dropout(points, ratio: float, seed: int = 0) -> Tuple[np.ndarray, np.
 
     残す点数は ``round((1-ratio)*N)``。``kept_idx`` は元配列への昇順インデックスで、
     ``kept == points[kept_idx]`` が厳密に成り立つ。オクルージョン/疎な視点による
-    点欠損を学習で再現する。``0 <= ratio <= 1`` を要求。"""
+    点欠損を学習で再現する。``0 <= ratio <= 1`` を要求。
+
+    ``ratio`` が [0,1] の外なら ``ValueError``。``ratio=1`` は空 ``(0,3)`` と空インデックス、
+    ``ratio=0`` は全点(順序は元のまま)。残す点数は Python の ``round``(偶数丸め)で決まる
+    ので ``.5`` 端では偶数側に寄る。``seed`` で ``permutation`` が決まり決定論的。返り値は
+    ``(kept float64 (M,3), kept_idx int64 (M,))``。除去は空間的に一様なので、局所的な
+    欠損(遮蔽)を模すには ``cutout`` を使う。"""
     P = _as_points(points)
     ratio = float(ratio)
     if not (0.0 <= ratio <= 1.0):
@@ -201,7 +229,12 @@ def elastic_deform(points, sigma: float, alpha: float, seed: int = 0) -> np.ndar
     定数=剛体並進, ``σ→0`` で各点独立)。非剛体な物体変形/柔軟物の学習に。
 
     注意(honest): 近傍探索は ``cKDTree.query_pairs(r=3σ)``。``σ`` が雲の直径に近いほど
-    ペア数は O(N²) に近づくため、大規模雲では ``σ`` を局所スケールに保つこと。"""
+    ペア数は O(N²) に近づくため、大規模雲では ``σ`` を局所スケールに保つこと。
+
+    ``sigma < 0`` は ``ValueError``。``sigma == 0`` または 1 点だけの雲では平滑化せず各点
+    独立の変位になる。``alpha`` は検証しない(0 なら無変位、負なら場が反転するだけ)。
+    ``seed`` で決定論的。返り値は float64 ``(N,3)`` で点数・順序は保たれる(変形前後の
+    対応が添字で分かるので、非剛体位置合わせの誤差を直接測れる)。空入力は空を返す。"""
     P = _as_points(points)
     sigma = float(sigma)
     alpha = float(alpha)
@@ -248,7 +281,14 @@ def cutout(points, extent: Union[float, np.ndarray], seed: int = 0
     既存の点を 1 つ一様サンプルして中心とし、辺長 ``extent``(スカラ=立方体, または
     ``(3,)``=各軸辺長)のボックス内の点をすべて除去する。中心点自身が必ず入るため
     最低 1 点は除去される。除去点は必ず辺長 ``extent`` のボックスに収まる(空間的に
-    局所的 = ランダム散布とは判別可能)。``kept == points[kept_idx]``、``extent > 0``。"""
+    局所的 = ランダム散布とは判別可能)。``kept == points[kept_idx]``、``extent > 0``。
+
+    ``extent`` に正でない値や ``(3,)`` 以外の形を渡すと ``ValueError``。空入力は空と空
+    インデックスを返す。中心は ``rng.integers(n)`` で選ぶ点なので、``seed`` が同じでも点の
+    並びが変わると別の場所が抜ける。ボックス判定は ``|P - center| <= extent/2`` の閉区間。
+    除去点数は密度次第で、``extent`` を雲の大きさより大きくすると全点が消える。返り値は
+    ``(kept float64 (M,3), kept_idx int64 (M,))``、順序は元のまま。一様な欠損は
+    ``random_dropout``。"""
     P = _as_points(points)
     ext = np.asarray(extent, dtype=np.float64)
     if ext.ndim == 0:

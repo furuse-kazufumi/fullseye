@@ -15,6 +15,16 @@ def depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None):
     """organized 深度画像 → 格子整列 3D 点 (H,W,3)。
 
     fx,fy 指定で透視逆投影 P=((u-cx)/fx*d, (v-cy)/fy*d, d)。未指定は正射(P=(x,y,depth), 格子間隔1)。
+
+    ``u`` は列番号 (0..W-1)、``v`` は行番号 (0..H-1)。``fx``・``fy`` は画素単位の焦点距離、
+    ``cx``・``cy`` は主点で、省略時は画像中心 ``((W-1)/2, (H-1)/2)``。``fx`` と ``fy`` の
+    どちらか一方でも None なら正射モードになり、``cx``・``cy`` は無視される。正射モードでは
+    x, y が画素座標そのままなので、深度の単位(mm 等)と x, y の単位(画素)が混在する点に
+    注意。透視モードでは 3 成分とも深度と同じ単位になる。深度 0 や NaN はそのまま伝播する
+    (0 の画素は x=y=0 の原点に集まる)ため、無効画素の除外は呼び出し側で行う。返り値は
+    float64 の ``(H,W,3)``、第 3 軸は (x, y, z) で x は右、y は下、z は奥行き(画像座標系)。
+    入力検証は無く、2-D 以外は ``d.shape`` の展開で失敗する。``normals_from_depth`` は
+    この関数の出力を内部で使う。
     """
     d = np.asarray(depth, float)
     H, W = d.shape
@@ -38,6 +48,15 @@ def normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_came
     法線は隣接画素の外積で出すため両軸に近傍が要る。H<2 or W<2 は第2の接線方向が無く
     法線が定義できない(その軸の勾配を 0 とみなすと cross(dPx,0)=[0,0,0] の縮退法線を
     静かに返してしまう)。fail-closed で明示的に ValueError 拒否する。
+
+    計算は ``depth_to_organized_points`` で 3-D 点 ``P`` を作り、``np.gradient`` の列方向
+    差分 ``dPx`` と行方向差分 ``dPy`` の外積 ``dPx × dPy`` を単位長にする(端は片側差分)。
+    ``orient_to_camera=True`` では ``n·(-P) < 0`` の画素を反転し、法線が原点(カメラ)を向く
+    よう揃える。正射モード(``fx`` か ``fy`` が None)では ``P=(u,v,d)`` なので原点は画像
+    左上の深度 0 の位置になり、「カメラ向き」の意味が透視モードと異なる点に注意。``cx``・
+    ``cy`` 省略時は画像中心。深度の段差(遮蔽エッジ)をまたぐ画素では外積が段差の向きを
+    拾って法線が壊れるので、``occlusion_edges`` で境界画素を除いてから使う。深度 0 / NaN の
+    画素は検証せず、法線も不定になる。返り値は float32 の ``(H,W,3)``。
     """
     d = np.asarray(depth, float)
     if d.ndim != 2:
@@ -96,6 +115,15 @@ def bearing_angle_image(depth, direction="down"):
 
     隣接深度差から局所傾斜角 atan2(Δdepth, step) を計算。斜面の向きに敏感で照明不変。
     direction ∈ {down,up,right,left}。
+
+    ``direction`` が "down"/"up" なら行方向(axis=0)、"right"/"left" なら列方向(axis=1)の
+    ``np.gradient``(中心差分、端は片側差分)で隣接深度差 Δd を取り、"up"/"left" では符号を
+    反転する。角度は ``degrees(atan2(Δd, 1))`` なので値域は (-90, 90) 度、平坦面で 0、走査
+    方向に遠ざかる面で正。格子間隔を 1 としているため、深度の単位が画素と違う(mm 等)場合
+    は幾何学的な入射角そのものではなく「深度単位あたりの傾き」の角になる。上記 4 語以外の
+    ``direction`` は列方向・符号そのままとして扱われ、エラーにはならない。返り値は float32
+    の ``(H,W)``。深度の段差では ±90 度近くまで振れるので遮蔽の目安にもなるが、段差と斜面
+    を区別するには ``occlusion_edges`` を使う。入力検証は無い。
     """
     d = np.asarray(depth, float)
     if direction in ("down", "up"):
