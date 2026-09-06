@@ -448,9 +448,10 @@ def section4_density(rows0, cols0):
         g, _, _ = estimate(dg)
         b, _, _ = estimate(dt)
         c, _, cc = estimate(dv)
-        print("  %6d %8.1f | %7.1f %7.1f %8.3f | %8.1f %7.3f | %8.3f"
+        gt, _, gtc = estimate(dgate)
+        print("  %6d %8.1f | %7.1f %7.1f %8.3f | %8.1f %7.3f | %8.3f %8.3f"
               % (n_part, nnd, 100 * bd["amb"], 100 * bd["miss"], a / D_TRUE,
-                 100 * bt["amb"], c / D_TRUE, b / D_TRUE))
+                 100 * bt["amb"], c / D_TRUE, b / D_TRUE, gt / D_TRUE))
         rec["n"].append(n_part)
         rec["nnd"].append(nnd)
         rec["amb_det"].append(100 * bd["amb"])
