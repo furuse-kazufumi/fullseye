@@ -223,6 +223,25 @@ def report(name, r, poses, extra=""):
 HEAD = (f"  {'配置 / モデル':<22}{'再投影RMS':>9}{'fx誤差%':>10}{'|dcx|':>9}{'|dcy|':>8}"
         f"{'|dk1|':>10}{'姿勢deg':>9}{'姿勢mm':>9}")
 
+# 再投影 RMS は 1 点あたりの距離 sqrt(dx^2+dy^2) の二乗平均平方根(OpenCV の
+# calibrateCamera が返す量と同じ定義)。成分ごとに sigma px の白色雑音なら
+# 期待値は sigma * sqrt(2) —— sigma=0.05 px なら 0.0707 px。
+
+
+def sweep_seeds(obj, poses, sigma, seeds=(2, 7, 11)):
+    """同じ配置を種違いで解き、成分別の誤差を平均する(1 回の当たり外れを排す)。"""
+    acc = {"rms": [], "fx_full": [], "fx_nodist": [], "dcx_full": [], "sigma_cx": []}
+    for sd in seeds:
+        ob = observe(obj, poses, sigma_px=sigma, seed=sd)
+        full = calibrate(obj, ob, fit_dist=True, fit_pp=True)
+        nod = calibrate(obj, ob, fit_dist=False, fit_pp=True)
+        acc["rms"].append(full["rms"])
+        acc["fx_full"].append(100 * abs(full["fx"] - TRUE_FX) / TRUE_FX)
+        acc["fx_nodist"].append(100 * abs(nod["fx"] - TRUE_FX) / TRUE_FX)
+        acc["dcx_full"].append(abs(full["cx"] - TRUE_CX))
+        acc["sigma_cx"].append(full["sigma_cx"])
+    return {k: float(np.mean(v)) for k, v in acc.items()}
+
 
 def main():
     obj = board_points()
