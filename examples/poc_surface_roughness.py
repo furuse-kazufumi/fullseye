@@ -334,11 +334,15 @@ def main():
     for lab, d in zero_rows[:-1]:
         cells = "".join(f"{100 * rel_err(d[k], truth[k]):>12.1f}" for k in PARAMS)
         print(f"  {lab:<26}{cells}")
-    print(f"  → 生 rms は Sq を {areal_params(surface)['Sq'] / truth['Sq']:.1f} 倍に、"
+    print(f"  → 生 rms は Sq を {areal_params(surface)['Sq'] / truth['Sq']:.0f} 倍に、"
           f"平面だけ除いても {areal_params(resid_ls)['Sq'] / truth['Sq']:.1f} 倍に見せる。")
-    print("     Ssk と Sku は符号ごと変わる(うねりが支配すると Sku<3 の"
-          "『平らな山』分布になり、傷の情報が消える)。")
-    print("     **粗さは帯域の宣言とセットでなければ数字にならない。**")
+    print(f"     Ssk は真値 {truth['Ssk']:+.2f}(深い傷のある面)に対し生の面では "
+          f"{areal_params(surface)['Ssk']:+.2f}、Sku は {truth['Sku']:.1f} に対し "
+          f"{areal_params(surface)['Sku']:.1f}。**符号も桁も変わる** —— うねりと傾きが"
+          "支配すると分布は一様に近づき、傷の情報が完全に消える。")
+    print("     Sa は他より軽傷に見えるが、それは Sa が『平均の絶対値』で"
+          "傾き成分に対しても素直に増えるだけのこと。**どのパラメータも"
+          "帯域の宣言なしでは意味を持たない。**")
 
     # ---------------------------------------------------------------- 3 --- #
     print("\n=== 3. ★標本間隔の掃引 —— どれが先に壊れるか ===")
