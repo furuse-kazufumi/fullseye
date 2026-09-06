@@ -77,20 +77,21 @@ def _inside(P, dims, center):
 
 
 def bracket(n, rng, bump=1.0):
-    """当て金 —— 直方体の +x +y +z の隅に出っ張りを付けたもの。``bump`` が非対称性の強さ。
+    """当て金 —— 直方体の +x 面から角柱を突き出したもの。``bump`` が非対称性の強さ。
 
-    ``bump=0`` は素の直方体で、3 軸まわりの 180 度回転で自分自身に重なる(位数 8 の
-    対称群)。この 4 通りの姿勢は形からは区別できない。``bump`` を大きくすると
-    その対称がすべて壊れ、正しい象限が 1 つに決まる。
+    ``bump=0`` は素の直方体で、3 軸まわりの 180 度回転で自分自身に重なる(位数 4 の
+    真回転対称群)。この 4 通りの姿勢は形からは区別できない。``bump`` を上げると
+    角柱の断面が太くなり、その対称がすべて壊れて正しい象限が 1 つに決まる。
+    突き出し量は ``bump`` によらず一定なので、変わるのは**非対称な体積の量だけ**。
     """
     if bump <= 0.0:
         return box_surface(MAIN_DIMS, n, rng)
-    bd = tuple(v * bump for v in BUMP_DIMS)
-    n_bump = max(8, int(round(n * 0.22 * bump)))
-    a = box_surface(MAIN_DIMS, n - n_bump, rng)
-    b = box_surface(bd, n_bump, rng, BUMP_AT)
-    a = a[~_inside(a, bd, BUMP_AT)]
-    b = b[~_inside(b, MAIN_DIMS, (0.0, 0.0, 0.0))]
+    pd = (PEG_DIMS[0], PEG_DIMS[1] * bump, PEG_DIMS[2] * bump)
+    n_peg = max(12, int(round(n * 0.20 * bump)))
+    a = box_surface(MAIN_DIMS, n - n_peg, rng)
+    b = box_surface(pd, n_peg, rng, PEG_AT)
+    a = a[~_inside(a, pd, PEG_AT)]                     # 角柱に隠れる面の点を捨てる
+    b = b[~_inside(b, MAIN_DIMS, (0.0, 0.0, 0.0))]     # 本体に埋まる角柱の点を捨てる
     return np.concatenate([a, b])
 
 
