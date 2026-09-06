@@ -122,7 +122,7 @@ def observe(obj, poses, sigma_px: float, seed: int = 0):
 def frame_fill(obs) -> float:
     """観測点が画像のどれだけの範囲に散っているか(面積比 0..1)。"""
     p = np.vstack(obs)
-    return float((p[:, 0].ptp() / IMG_W) * (p[:, 1].ptp() / IMG_H))
+    return float((np.ptp(p[:, 0]) / IMG_W) * (np.ptp(p[:, 1]) / IMG_H))
 
 
 # ── 校正(自前の最小バンドル調整。★ 穴 (e))──────────────────────────────────── #
