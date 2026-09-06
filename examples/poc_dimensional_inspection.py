@@ -853,22 +853,21 @@ def section_cliff_illum():
 
     w_true, a = 40.50, 45.27
     print(f"\n  真の幅 {w_true} px。傾斜 g は画像端で +-g/2 の乗法変化")
-    print("  Z = 大津の整数幅 / Z' = 大津のしきい値を線形補間で横切った幅")
-    print("  (Z' を並べるのは、Z の整数量子化が『しきい値が動いた』を隠すから)")
+    print("  Z  = 毎回 大津をやり直した整数幅")
+    print("  Z' = **据付時に一度だけ較正した固定しきい値**をサブピクセルで横切った幅")
+    print("       (現場の実装はこちら。整数量子化を外すと『しきい値が動いた』が見える)")
     print(f"  {'g':>7} | {'Z 偏り':>9}{'Z’ 偏り':>10} | {'M 偏り':>9} | {'F 偏り':>9}")
     zz, zs, mm, ff = [], [], [], []
+    lvl0 = None
     for g in (0.0, 0.1, 0.2, 0.4, 0.8, 1.2):
         img = bar_image(140, a, a + w_true, 1.5, height=48)
         x = (np.arange(140) - 69.5) / 139.0
         img = img * (1.0 + g * x)[None, :]
         zw = otsu_bright_run_len(img, 24, 0, 140) - w_true
-        # 大域しきい値のサブピクセル交差(量子化を外して、しきい値のずれだけ見る)
-        mask = np.asarray(fs.op.otsu(img), float) > 0.5
-        lvl_hi = float(img[mask].min()) if mask.any() else 0.0
-        lvl_lo = float(img[~mask].max()) if (~mask).any() else 0.0
-        lvl = 0.5 * (lvl_hi + lvl_lo)
-        row = img[24]
-        d = row - lvl
+        if lvl0 is None:                       # g=0 の画像で一度だけ較正
+            mask0 = np.asarray(fs.op.otsu(img), float) > 0.5
+            lvl0 = 0.5 * (float(img[mask0].min()) + float(img[~mask0].max()))
+        d = img[24] - lvl0
         j = np.where(np.diff(np.sign(d)) != 0)[0]
         if len(j) >= 2:
             xs = [jj + d[jj] / (d[jj] - d[jj + 1]) for jj in (j[0], j[-1])]
