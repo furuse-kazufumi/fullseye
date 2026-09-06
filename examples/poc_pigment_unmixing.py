@@ -268,6 +268,26 @@ ENDMEMBER_NAMES = tuple(PIGMENTS[k][2] for k in LAYER_KEYS) + ("白亜(地)", "�
 CARBON_ROW = len(LAYER_KEYS) + 1
 
 
+def scene_endmembers(scene, spectra):
+    """**現場から採る**端成分 —— 各材料が単独で見えている小領域の平均分光。
+
+    masstone(無限厚の反射率)を端成分にすると、薄く透明な層(レーキの艶出し)は
+    自分の masstone と似ても似つかない見え方をする。修復の現場でやるのはむしろ
+    「その作品の、その材料だけの場所」を採ることなので、それを再現する。
+    真値(どこが何か)を使うので **これは反則側の上限**である。
+    """
+    ok = (~scene["flake"]) & (scene["ink"] <= 0.02)
+    rows = []
+    for i, key in enumerate(LAYER_KEYS):
+        m = ok & (scene["conc"][..., i] == scene["conc"].max(axis=2)) \
+            & (scene["conc"][..., i] > 0.4)
+        rows.append(spectra[m].mean(axis=0) if m.sum() >= 10
+                    else PIGMENTS[key][0].copy())
+    rows.append(spectra[scene["flake"] & (scene["ink"] <= 0.02)].mean(axis=0))
+    rows.append(spectra[scene["flake"] & (scene["ink"] >= 0.9)].mean(axis=0))
+    return np.asarray(rows, float)
+
+
 # --------------------------------------------------------------------------- #
 # 3. カメラ —— バンド化と雑音                                                    #
 # --------------------------------------------------------------------------- #
