@@ -519,6 +519,24 @@ def main():
     print("  → ずれを無視して平均すると像は鈍る。同じずれを解像度に変えるのが drizzle。")
     print("  → 標本化不足の側は**位置合わせも難しい**(推定誤差が数倍)。")
     print("     増やせる条件は、同時に測りにくい条件でもある。")
+    _img16, _single, _blt, _gain, _wmin = multi["標本化不足"]
+    figs.save_grid("multiframe",
+                   [_blt[bars_crop], _single[bars_crop], _img16[bars_crop]],
+                   ["上限(帯域制限した真値)", "単一画像 bicubic", "drizzle 16 枚"],
+                   title="標本化不足(σ=0.30)—— 複数フレームで本当に増える",
+                   ncols=1,
+                   caption="単一画像で消えている右側の細かい列が、drizzle では"
+                           "立ち上がる。")
+    figs.save_plot("multiframe_modulation",
+                   [("上限(帯域制限)", np.array(BAR_PERIODS),
+                     modulation(_blt, ref_amp)),
+                    ("単一画像 bicubic", np.array(BAR_PERIODS),
+                     modulation(_single, ref_amp)),
+                    ("drizzle 16 枚", np.array(BAR_PERIODS),
+                     modulation(_img16, ref_amp))],
+                   xlabel="縞の周期 [真値画素]", ylabel="変調度",
+                   title="標本化不足では、ナイキストより細かい列が 0 から立ち上がる",
+                   caption="上限の線がレンズの許す限界。drizzle はその 8 割まで届く。")
 
     print("\n=== 5. ずれの符号を間違えると、例外も出さずに二重像になる ===")
     sigma_lr = 0.30
