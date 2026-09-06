@@ -206,12 +206,12 @@ def main():
     for name, d_est, s_est in rows:
         e = rmse(d_est, d_true)
         es = rmse(s_est, s_true) if s_est is not None else float("nan")
-        ratio = (e / base) if base > 0 else float("inf")
         rs_txt = f"{es:>12.3e}" if s_est is not None else f"{'—':>12}"
-        rt_txt = f"{ratio:>9.1f}" if np.isfinite(ratio) else f"{'∞':>9}"
-        print(f"  {name:<34}{e:>12.3e}{rs_txt}{rt_txt}")
-    print("  → ブリュースター角では op の誤差が 1e-16 台 = 倍精度の床。R_p = 0 な")
-    print("     ので「2*I_min = D」が恒等式として成り立つ。ゼロ点はいずれも桁違い。")
+        print(f"  {name:<34}{e:>12.3e}{rs_txt}{e / base:>11.3g}")
+    print("  → ブリュースター角では op の誤差が 1e-17 台 = 倍精度の床。R_p = 0 な")
+    print("     ので「2*I_min = D」が恒等式として成り立ち、ゼロ点との比は 14〜15 桁。")
+    print("     この「比が意味を失うほど勝つ」のはブリュースター角限定で、4 節で")
+    print("     角度を振ると 1.2 倍まで落ちる。**一点で測って一般化してはいけない。**")
 
     # ---------------------------------------------------------------- #
     print("\n=== 4. 入射角を振る —— 誤差は R_p * E に一致するか ===")
