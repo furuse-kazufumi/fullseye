@@ -960,9 +960,11 @@ def main():
     print("列は誤差[px]。0/1/2/3 は第 3 章の系番号。")
     z_e = ch3[(C_S, SYS[0][0])]["err"]
     t_cross = next((t for t in range(len(z_e)) if z_e[t] > LOST_PX), None)
-    print(f"\n→ ゼロ点が 5 px を超えるのはフレーム "
-          f"{t_cross if t_cross is not None else '(超えなかった)'}"
-          f"{'' if t_cross is None else f'、そのときピーク {ch3[(C_S, SYS[0][0])][chr(39) + chr(39)] if False else ch3[(C_S, SYS[0][0])][chr(112) + chr(101) + chr(97) + chr(107)][t_cross]:.4f}'}。")
+    if t_cross is None:
+        print("\n→ ゼロ点はこの条件では 5 px を超えなかった。")
+    else:
+        print(f"\n→ ゼロ点が 5 px を超えるのはフレーム {t_cross}。そのときピークは "
+              f"{ch3[(C_S, SYS[0][0])]['peak'][t_cross]:.4f}。")
     print("   平均だけを見ていると **いつ壊れたか** が消える。壊れる前に")
     print("   ピークが落ちているかどうかも、時間で並べて初めて分かる。")
     dr = ch8["毎フレーム"]
