@@ -705,20 +705,39 @@ def section7_spacetime(rows, cols, movie):
                     for t in range(movie.shape[0])]
         got[md] = _score(by_frame, "3-D 極大 min_dist=%d" % md)
     print()
-    print("  → ★★予想は外れた。**min_distance=1 では逆に多すぎる**"
-          "(真値の %.0f %%)" % (100 * got[1][0] / n_true))
-    print("     のに、適合率が %.0f %% しかない —— 出てくる点の 1/3 は粒子の"
-          % (100 * got[1][2]))
-    print("     どこでもない場所。min_distance を上げると今度は取りこぼす")
-    print("     (md=3 で再現率 %.0f %%)。**どこにも正解が無い。**"
+    print("  → ★★予想は外れた。3-D 極大は**適合率だけ高い**(min_dist=1 で")
+    print("     %.0f %%、2-D の %.0f %% を上回る)のに、**再現率が %.0f %% しかない**"
+          % (100 * got[1][2], 100 * got["2d"][2], 100 * got[1][1]))
+    print("     —— 半分のコマで粒子が消える。min_distance を上げるとさらに減る")
+    print("     (md=3 で再現率 %.0f %%)。「雑音に強くなる」どころか**取り逃す**。"
           % (100 * got[3][1]))
-    print("     理由: `vol_local_maxima` は**等方の立方近傍**を使う。空間の")
-    print("     1 画素と時間の 1 フレーム(= %.1f px の移動)を同じ物差しで比べる。"
-          % SIGMA_STEP)
-    print("     動く粒子は時空間では斜めの管なので、管の内側で「立方近傍の最大」")
-    print("     になる voxel が中心から外れた場所にいくつも立つ。")
-    print("     **時間は空間ではない** —— 体積として扱ってよいのは「見る」ときで、")
-    print("     「測る」ときは軸ごとに物差しを変えないと壊れる。")
+    print()
+    print("  対照群 —— **粒子を止めて**同じことをする(σ_step = 0、ドリフト 0)。")
+    print("  原因が「動き」なのか「時間軸そのもの」なのかを分ける:")
+    rows_s, cols_s = simulate(100, sigma_step=0.0, drift=(0.0, 0.0), seed=SEED)
+    mov_s = make_movie(rows_s, cols_s, seed=999)
+    ins_s = (rows_s >= 0) & (rows_s < N) & (cols_s >= 0) & (cols_s < N)
+    loc_s = np.asarray(fs.ledger.vol_local_maxima(mov_s, min_distance=1,
+                                                  threshold=THR))
+    hit_s = 0
+    for t in range(mov_s.shape[0]):
+        tru = np.stack([rows_s[t][ins_s[t]], cols_s[t][ins_s[t]]], axis=1)
+        pts = loc_s[loc_s[:, 0] == t][:, 1:].astype(float)
+        if tru.shape[0] and pts.shape[0]:
+            d1, _ = cKDTree(pts).query(tru, k=1)
+            hit_s += int((d1 <= MATCH_TOL).sum())
+    print("  静止した粒子: 3-D 極大 %d 点 / 真値 %d → 再現率 %.1f %%"
+          % (loc_s.shape[0], int(ins_s.sum()), 100 * hit_s / int(ins_s.sum())))
+    print()
+    print("  → ★★原因は**動き**で確定。静止していれば時間方向の輝度が一定なので")
+    print("     『立方近傍の最大』に同点で残り、再現率はほぼ 100 %。ところが")
+    print("     粒子が動くと、中心画素の標本値がサブピクセル位置に応じて")
+    print("     フレームごとに揺れる。等方の立方近傍は**時間方向にも厳密な最大**")
+    print("     を要求するので、揺れる系列の中で『前後より高いコマ』しか残らない")
+    print("     (無相関な系列なら 1/3、実測 %.0f %%)。" % (100 * got[1][1]))
+    print("     `vol_local_maxima` は**空間の 1 画素と時間の 1 フレームを同じ**")
+    print("     **物差しで比べている**。時間は空間ではない —— 体積として扱って")
+    print("     よいのは「見る」ときで、「測る」ときは軸ごとに物差しを変える。")
     print("     (10 節の穴 (b): 軸ごとに近傍幅を変える引数が無い。)")
     return got
 
