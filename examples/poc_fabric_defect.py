@@ -530,13 +530,6 @@ def section_roc() -> dict:
           "消していたのは照明ではなく欠陥。"
           % (table[dn][1][i_sh], table["ノッチ(格子のみ)"][1][i_sh]))
 
-    figs.save_plot("roc",
-                   [("%s %.3f" % (dn, table[dn][0]), *curves[dn])
-                    for dn in DETECTORS],
-                   xlabel="偽陽性率", ylabel="検出率",
-                   title="3 種類をまとめた ROC(どれも良く見える)",
-                   caption="凡例の数字は AUC。この図には盲点が写っていない ——"
-                           "種類別は表のほうを見ること。")
     figs.save_table("auc_by_type", ["検出器", "まとめ"] + names, rows,
                     title="種類別 AUC(まとめた 1 列だけ見てはいけない)")
     return {"table": table, "names": names, "sc": sc}
