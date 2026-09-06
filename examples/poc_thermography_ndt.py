@@ -130,7 +130,14 @@ def synth_cube(depth_map, blur=True, netd=0.0, illum=None, seed=0):
 
 
 # --- 深さ推定 ---------------------------------------------------------------- #
-def tsr_depth(ts, cube, order=7):
+#: TSR で t* を探す範囲。★端を除くのは飾りではない —— 高次多項式の 2 階微分は
+#: 端で必ず暴れる(Runge)。除かないと argmax が最初か最後のフレームに張り付き、
+#: 深さが 0.18 mm か 3.98 mm の 2 値になる(実測、2026-09-06)。
+_TSR_EDGE = 0.12            # ln t 範囲の上下 12 % を捨てる
+_TSR_NSAMP = 64             # 対数等間隔に再標本化する点数
+
+
+def tsr_depth(ts, cube, order=5):
     """TSR(Thermographic Signal Reconstruction)で画素ごとの深さを出す。
 
     ln T を ln t の多項式で当てはめ(雑音を落とす)、**2 階微分が最大になる
