@@ -144,9 +144,9 @@ def edge_points(img: np.ndarray, centre, r_rough: float, how: str = "level",
     * ``gradient`` —— **fullseye のキャリパー**(``gen_measure_rectangle2`` +
       ``measure_pos``)で勾配が最大の位置をサブピクセルで拾う。
     """
-    i0, bg = _levels(img, centre)
+    i0, bg = _levels(img, centre, r_rough)
     thr = bg + level * (i0 - bg)
-    rmax = 1.35 * R_TRUE
+    rmax = 1.35 * r_rough
     n = int(rmax) + 1
     pts = []
     for a in np.linspace(0.0, 2.0 * np.pi, N_RAYS, endpoint=False):
