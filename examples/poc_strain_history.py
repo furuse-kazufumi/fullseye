@@ -431,32 +431,57 @@ def section6_rate(frames, cums, dirs, tru):
     print("  (`fs.ledger.moving_average_window`、先を見ない = 実時間で使える)")
     print("  を両方かける。分けて数えるのは **なまり(偏り)** と **揺らぎ**。")
     print()
-    hist = dirs.mean(axis=0) * 0.0 + dirs  # (n_real, T)
+    print("  ★採点の範囲は **全部の窓で同じ t ∈ [%d, %d)** に固定する。"
+          % (EVAL.start, EVAL.stop))
+    print("     窓ごとに範囲を変えると、なまりを測っているのか別の時刻を")
+    print("     測っているのか分からなくなる(最初そう書いていて気付いた)。")
+    print()
     rate_true = true_rate(TIMES)
+    te = TIMES[EVAL]
     rows = []
     for w in (1, 3, 5, 7, 9, 11):
         for kind in ("中央", "因果"):
-            rates = []
-            for h in hist:
-                sm = _smooth(h, w, kind)
-                rates.append(np.gradient(sm, TIMES))
-            rates = np.asarray(rates)
+            rates = np.asarray([np.gradient(_smooth(h, w, kind), TIMES)
+                                for h in dirs])
             err = rates - rate_true[None, :]
-            # 端は差分と平滑化の両方が効くので、中身だけで採点する
-            sl = slice(w, T - w)
-            bias = float(err[:, sl].mean())
-            scat = float(err[:, sl].std(axis=0).mean())
-            # なまりが最も効くのは曲率が大きい序盤
-            early = float(err[:, w:w + 3].mean())
-            rows.append((w, kind, 1e6 * bias, 1e6 * scat, 1e6 * early))
+            bias = float(err[:, EVAL].mean())
+            scat = float(err[:, EVAL].std(axis=0).mean())
+            # ★閉形式の予測。中央 = (w²-1)/24 x d²(速度)/dt²(平滑化のなまり)、
+            #   因果 = 遅れ (w-1)/2 ぶん過去の速度を返す。
+            if kind == "中央":
+                pred = float(np.mean((w * w - 1) / 24.0 * true_rate2(te)))
+            else:
+                pred = float(np.mean(true_rate(te - (w - 1) / 2.0)
+                                     - rate_true[EVAL]))
+            rows.append((w, kind, 1e6 * bias, 1e6 * scat, 1e6 * pred))
     print("  %5s %6s %14s %14s %16s"
-          % ("窓 w", "種類", "偏り µε/コマ", "揺らぎ µε/コマ", "序盤の偏り µε/コマ"))
+          % ("窓 w", "種類", "偏り µε/コマ", "揺らぎ µε/コマ", "閉形式の予測"))
     print("  " + "-" * 62)
-    for w, kind, b, s, e in rows:
-        print("  %5d %6s %14.1f %14.1f %16.1f" % (w, kind, b, s, e))
+    for w, kind, b, s, p in rows:
+        print("  %5d %6s %14.1f %14.1f %16.1f" % (w, kind, b, s, p))
     print()
-    print("  真の速度そのもの: 序盤 %.0f / 終盤 %.0f µε/コマ"
-          % (1e6 * rate_true[3], 1e6 * rate_true[-4]))
+    print("  真の速度: t=%d で %.0f、t=%d で %.0f µε/コマ"
+          % (EVAL.start, 1e6 * rate_true[EVAL.start],
+             EVAL.stop - 1, 1e6 * rate_true[EVAL.stop - 1]))
+    print()
+    print("  → ★★**因果フィルタの偏りは閉形式とよく合う**。遅れ (w-1)/2 ぶん")
+    print("     過去の速度を返す、というだけで説明が付く(w=11 で予測 %.0f、"
+          % rows[-1][4])
+    print("     実測 %.0f µε/コマ)。クリープは速度が単調に落ちるので、"
+          % rows[-1][2])
+    print("     **遅れはそのまま「速すぎる」方向の系統誤差**になる。")
+    print("     w=11 の偏りは真の速度の %.0f %% に達する。"
+          % (100 * rows[-1][2] / (1e6 * rate_true[EVAL.start])))
+    print("  → ★中央フィルタの偏りは w を広げてもほとんど増えない(%.0f → %.0f)。"
+          % (rows[0][2], rows[-2][2]))
+    print("     閉形式の予測も小さい —— この時間帯では速度の 2 階微分が")
+    print("     もう小さいから。**なまりが怖いのは曲率のある序盤だけ**で、")
+    print("     そこは因果フィルタだと履歴が足りなくて測ることすらできない。")
+    print("  → ★揺らぎは w とともに %.1f → %.1f µε/コマ へ下がる"
+          % (rows[0][3], rows[-2][3]))
+    print("     (中央、w=1 → 9)。**窓を広げる利得はここ**。偏りが増えない")
+    print("     範囲で窓を広げるのが正解で、それを決めるには**偏りと揺らぎを**")
+    print("     **別々に**持っていないといけない。")
     return rows, rate_true
 
 
