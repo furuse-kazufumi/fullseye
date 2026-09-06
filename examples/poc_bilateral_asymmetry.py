@@ -69,16 +69,23 @@ EXTEND: 実際の頭蓋・骨で走らせるなら ``cranium_mesh()`` を実ス�
   ``profileops.profile_deviation`` / ``_signed_distance_to_polyline`` が居るのに、
   3-D の対応物(点群 → 相手曲面への符号つき距離 + 近傍平滑 + 分位)が無い。
   この PoC は ``_surface_deviation`` を自前で書いた。
-- **J. `point_to_plane_icp` の `tol` 既定 1e-8 が絶対値**。mm 単位の標本では収束判定が
-  一度も発火せず ``max_iter`` まで回る。20000 点で 3.9 秒 → ``tol=1e-7`` なら 0.11 秒、
-  **返り値は完全に同一**(3 反復で収束済み)。tol をスケール相対にするか既定を見直したい。
-- **K. `fs.obb` が (N,3) の SVD を `full_matrices=True` で回す**(``pcseg.py:425``)。
-  20000 点で 20000x20000 の U を 3.2 GB 確保して 3.5 秒、しかもその U は捨てている。
-  ``full_matrices=False`` なら 1.1 ms(**3000 倍**)。10 万点では 80 GB で落ちる。
-  **同じ形が兄弟コードにもある**(いずれも U を捨てている、実コードで確認):
+- **J. `fs.obb` が (N,3) の SVD を `full_matrices=True` で回す**(``pcseg.py:425``)。
+  20000 点で 20000x20000 の U を 3.2 GB 確保して 3.8 秒、しかもその U は捨てている
+  (``_, _, Vt = np.linalg.svd(P - c)``)。``full_matrices=False`` なら 0.7 ms
+  (**5000 倍超**、第 7 章で実測)。10 万点では U だけで 80 GB になり落ちる。
+  **同じ形が兄弟コードにもある**(いずれも U を捨てている。実コードで 1 件ずつ確認):
   ``pcseg.py:92`` (fit_plane) / ``measure.py:73`` (2-D 直線フィット、(N,2) で N x N)/
   ``ops.py:565`` (輪郭の直線化)/ ``camera.py:366`` と ``pnp3d.py:178`` (平面 PnP)。
   1 件直すのではなく、この形をまとめて掃くべき。
+
+★ 疑ったが実測で否定したもの(残しておく): 最初は「``point_to_plane_icp`` の ``tol``
+既定 1e-8 が絶対値なので、mm 単位の標本では収束判定が発火せず ``max_iter`` まで回る」
+と書いた —— 一式が 20000 点で 3.9 秒かかっていたからだ。時間を関数ごとに割ったら
+3.8 秒は ``fs.obb``(上の J)で、ICP は ``max_iter`` 3 でも 60 でも 4 反復で収束し、
+tol=1e-8 と 1e-7 で **rmse が 10 桁一致**していた。遅い場所は測って特定する。
+なお ``fs.icp``(点対点)の方は 60 反復まで回っても rmse が 1.1658 から 1.1607 にしか
+動かない —— こちらは収束が遅いのではなく、目的関数が点間隔ノイズに支配されていて
+**下がる先が無い**(第 2 章の床がそれ)。
 
 数字はすべて下の実行結果。この機械(Windows 11 / py 3.11 / CPU)での実測。
 """
@@ -94,7 +101,7 @@ import fullseye as fs
 
 POSE_EULER_DEG = (17.0, -9.0, 23.0)      # 実スキャンは軸に揃っていない。揃えると問題が易しくなる
 POSE_SHIFT = np.array([120.0, -40.0, 55.0])
-OBB_SUBSET = 4000                        # ★穴 K: fs.obb は点数の 2 乗で効くので部分点で呼ぶ
+OBB_SUBSET = 4000                        # ★穴 J: fs.obb は点数の 2 乗で効くので部分点で呼ぶ
 
 
 # ==== 標本づくり ============================================================
@@ -193,7 +200,7 @@ def _mirror(P, p0, n):
 
 
 def _principal_axes(P):
-    """点群の主軸(列が軸、寄与の大きい順)。``full_matrices=False`` は必須 —— ★穴 K 参照。"""
+    """点群の主軸(列が軸、寄与の大きい順)。``full_matrices=False`` は必須 —— ★穴 J 参照。"""
     return np.linalg.svd(P - P.mean(0), full_matrices=False)[2].T
 
 
@@ -260,7 +267,7 @@ def mirror_pipeline(P, refine="p2plane", plane=None, max_iter=30, tol=1e-7):
 
     ``plane`` に ``(p0, n)`` を渡せばその面で、``None`` なら PCA 候補から選ぶ。
     ``refine`` = ``"none"``(位置合わせしない)/ ``"p2point"``(点対点 ICP)/
-    ``"p2plane"``(点対面 ICP)。``tol`` 既定 1e-7 —— ★穴 J、1e-8 だと 35 倍遅く結果は同じ。
+    ``"p2plane"``(点対面 ICP)。点対面は 4 反復で収束するので ``max_iter`` は 30 で足りる。
     """
     p0, n = plane if plane is not None else best_pca_plane(P)[:2]
     Q = _mirror(P, p0, n)
@@ -296,7 +303,7 @@ def midline_landmark_plane(V_posed, lm_idx):
 
 
 def extents_of(P):
-    """外接箱の辺(長い順)。★穴 K を避けるため部分点で ``fs.obb`` を呼ぶ。"""
+    """外接箱の辺(長い順)。★穴 J を避けるため部分点で ``fs.obb`` を呼ぶ。"""
     sub = P if len(P) <= OBB_SUBSET else P[np.linspace(0, len(P) - 1, OBB_SUBSET).astype(int)]
     return np.sort(2.0 * fs.obb(sub)["extents"])[::-1]
 
