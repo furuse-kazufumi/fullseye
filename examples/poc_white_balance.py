@@ -86,12 +86,16 @@ EXTEND: 実測に差し替えるなら ``render`` だけを実データ読み込
 from __future__ import annotations
 
 import math
+import sys
 import time
 import warnings
+from pathlib import Path
 
 import numpy as np
 
-import fullseye as fs
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
 
 # ---------------------------------------------------------------------------
 # 0. 分光の格子と道具
