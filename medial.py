@@ -287,6 +287,24 @@ def skeleton_branches3d(vol, min_length=0):
 
     分岐点 voxel を除いた残りが枝。min_length > 0 なら、26 連結成分の voxel 数が
     それ未満の断片を除去する。
+
+    手順: ``_ensure_skeleton`` で bool 化(interior voxel があれば ``skeletonize_vol``
+    で細線化)→ 26 近傍次数 ``>= 3`` の voxel(分岐点)を取り除く → ``min_length > 0``
+    なら ``scipy.ndimage.label``(3x3x3 全 1 構造 = 26 連結)で成分に分け、voxel 数が
+    ``min_length`` 未満の成分を落とす。
+
+    返り値: 入力と同形の bool 配列(枝 voxel = True)。**枝ごとのラベルは返さない**
+    — 枝を個別に扱うには返り値を ``vol_label(branches, 26)`` に通す(成分数 = 枝数)。
+    分岐点 voxel そのものは結果に含まれないので、枝の両端は分岐点の 1 voxel 手前で
+    終わる。
+
+    引数と検証: ``min_length`` は voxel 数(``int()`` で切り捨て。0 なら除去しない)。
+    入力が 3-D でない・空・NaN/Inf は ``ValueError``。細線化が必要で
+    scikit-image が無ければ ``ImportError``。前景が無ければ全 False。
+
+    注意: 26 近傍次数は分岐の対角隣接で 3 以上になりやすく、分岐点が数 voxel の
+    塊として除かれるため、枝が実際より短く出ることがある。閉ループだけの骨格は
+    分岐点が無く、全体が 1 本の枝として残る。
     """
     skel = _ensure_skeleton(vol)
     if not skel.any():
