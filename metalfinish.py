@@ -75,6 +75,23 @@ def finish_catalog() -> dict:
 
     値は設計値であって実測の Ra ではない ―― そこは正直に。粗さの**順序**
     (鏡面研磨 < ヘアライン < 交差目 < 梨地)が意味を持つ量。
+
+    引数は無い。返り値は ``{仕上げ名: {"alpha_x", "alpha_y", "grain"}}`` の dict で、
+    キーは ``FINISHES`` = ``linear``(ヘアライン)/ ``circular``(旋盤の同心目)/
+    ``radial``(放射目)/ ``crosshatch``(交差目)/ ``random``(梨地・ブラスト)の 5 つ。
+
+    - ``alpha_x``: 筋方向の異方性ローブ幅(無次元、Ward 型 BRDF の α)。
+    - ``alpha_y``: 筋と直交する方向のローブ幅。``alpha_x > alpha_y`` が「筋に沿って
+      ハイライトが伸びる」異方性で、``random`` だけ等方(両方 0.16)。
+    - ``grain``: 微小凹凸(法線の乱れ)の強さ、無次元。
+    - 返り値は内部表の**複製**なので、書き換えても以後の ``scene_material`` /
+      ``finish_shade`` には影響しない。
+
+    ``scene_material(kind="conductor", finish=...)`` はここから ``alpha_x`` /
+    ``alpha_y`` を引いて材質に埋め、``micro_normals`` / ``tangent_field`` /
+    ``finish_shade`` が同じ名前で筋の向きとローブを作る。手元の Ra を反映したい
+    ときは、この表を参考に ``scene_material`` の ``roughness_um`` を別途与える
+    (そちらは Rq [µm] で鏡面割合が決まる)。
     """
     return {k: dict(v) for k, v in _FINISH_DEFAULTS.items()}
 
