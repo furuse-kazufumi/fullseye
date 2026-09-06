@@ -12,26 +12,28 @@
 この例が示すこと(グラウンドトゥルース):
 
 1. **粒子像の合成**(``piv_synth_particles``)—— 粒子数は ``density × 画素数`` で
-   決まり、画像の総輝度はガウス輝点の積分 ``a·2πσ²`` の和に一致する。
-   ``speckle_quality`` の斑点径推定は FWHM(``1.1774 × diameter_px``)に 5 % 以内で乗る。
+   決まり、画像の総輝度はガウス輝点の積分 ``a·2πσ²`` の和に一致し、孤立粒子の
+   輝度重心は返された連続座標に 0.05 px 以内で乗る。``speckle_quality`` の斑点径
+   推定は FWHM(``1.1774 × diameter_px``)に 5 % 以内で乗る。
 2. **場の量は閉形式で検算できる**(``piv_velocity_gradient`` /
    ``piv_q_criterion`` / ``piv_swirling_strength`` / ``piv_strain_rate`` /
    ``piv_flow_magnitude``)—— 剛体回転 ω・一様膨張 s・単純せん断 g は線形場なので
    差分が厳密に当たり、Q = ω² / -s² / 0、λ_ci = ω / 0 / 0、ひずみ = 0 / 2s / g。
-3. **窓変形**(``piv_deform_pass``)—— 窓の中で変位が変わる渦で、整数ずらしの
-   多段より誤差が下がるか(下がらなければ隠さず印字)。
-4. **Q 基準は閾値の産物になりうる** —— 渦の面積を閾値で振って併記する。
+3. **窓変形**(``piv_deform_pass``)—— 窓の中で変位が変わる滑らかな渦
+   (Lamb–Oseen)で、整数ずらしの多段より誤差が下がる。
+4. **Q 基準は閾値の産物になりうる** —— 芯の Q は ω² に乗り、渦の面積は閾値で変わる。
 5. **既にある場の採点**(``correlation_quality``)—— 正しい場は ZNCC ≈ 1、
    一部を壊すとそこだけ落ちる。ゲインとオフセットに不変。
 6. **アンサンブル相関**(``piv_ensemble_correlate``)—— 粒子が少なく雑音が多い
-   定常流で、1 対ずつの平均より真値に近づく。
-7. **時間統計**(``piv_time_statistics``)—— 場全体を揺らした列(``piv_synth_sequence``)
-   で、時間 RMS が「各対の場の中央値の RMS」と一致する。
+   定常流(``piv_synth_sequence``)で、1 対ずつの平均より外れ本数が減り中央誤差が下がる。
+   **RMS は両方とも外れ値に支配される**ので、RMS だけ見ると差が見えない(隠さず印字)。
+7. **時間統計**(``piv_time_statistics``)—— 場全体を揺らした列で、時間 RMS が
+   「各対の場の中央値の RMS」という独立な経路と一致する。
 8. **ピークロッキング**(``piv_peak_locking``)—— 同じ場で centroid の c0 が gauss3 を上回る。
 9. **可視化**(``piv_flow_to_rgbimage`` / ``piv_line_integral_convolution``)——
    右・上・左・下の 4 方向が決まった色に写り、LIC の縞は流れの向きに伸びる。
 
-読み方: 各節の「真値」「測定」「差」を並べて印字し、末尾の assert が閾値。速さは
+読み方: 各節で「真値」「測定」「差」を並べて印字し、末尾の assert が閾値。速さは
 印字するだけで assert しない。
 """
 from __future__ import annotations
@@ -49,15 +51,20 @@ import pivops                                                    # noqa: E402
 
 H = W = 256
 CY, CX = (H - 1) / 2.0, (W - 1) / 2.0
+GAMMA, RC = 900.0, 40.0                     # Lamb–Oseen 渦の循環と芯半径 [px]
+OMEGA = GAMMA / (2.0 * np.pi * RC ** 2)     # 芯の角速度 [rad/frame](r→0 の極限)
 
 
-def rankine_like_vortex(rows, cols, gamma=700.0, core=28.0):
-    """芯は剛体回転(角速度 ω = γ / 2π core²)、外は 1/r の渦。非圧縮(発散 0)。"""
+def lamb_oseen_vortex(rows, cols):
+    """滑らかな渦 v_t = γ/(2πr)·(1 - exp(-(r/rc)²))。非圧縮(発散 0)。
+
+    芯の縁で勾配が折れる Rankine 渦と違い、どこでも滑らかなので**窓変形が効く**
+    (折れ目は変形では追えない —— それは piv_flow_from_particles.py が扱う話)。
+    """
     dy_c, dx_c = rows - CY, cols - CX
     r = np.hypot(dy_c, dx_c)
     r_safe = np.maximum(r, 1e-9)
-    v_t = np.where(r < core, gamma * r / (2.0 * np.pi * core ** 2),
-                   gamma / (2.0 * np.pi * r_safe))
+    v_t = GAMMA / (2.0 * np.pi * r_safe) * (1.0 - np.exp(-(r / RC) ** 2))
     return v_t * (-dx_c / r_safe), v_t * (dy_c / r_safe)
 
 
@@ -78,6 +85,32 @@ def linear_field(kind, amount, n=24):
     raise ValueError(kind)
 
 
+def _isolated_centroid_error(img, pos, sigma, min_gap=8.0, half=3):
+    """孤立した粒子(最近傍が min_gap px より遠い)の輝度重心と真の位置の差。"""
+    d2 = np.sum((pos[:, None, :] - pos[None, :, :]) ** 2, axis=-1)
+    np.fill_diagonal(d2, np.inf)
+    inside = ((pos[:, 0] > half + 3) & (pos[:, 0] < img.shape[0] - half - 4)
+              & (pos[:, 1] > half + 3) & (pos[:, 1] < img.shape[1] - half - 4))
+    iso = np.nonzero((np.sqrt(d2.min(axis=1)) > min_gap) & inside)[0]
+    err, peaks = [], []
+    for i in iso:
+        py, px = pos[i]
+        r, c = int(round(py)), int(round(px))
+        win = img[r - half:r + half + 1, c - half:c + half + 1]
+        yy, xx = np.mgrid[r - half:r + half + 1, c - half:c + half + 1]
+        err.append([(win * yy).sum() / win.sum() - py, (win * xx).sum() / win.sum() - px])
+        peaks.append(float(win.max()))
+    err = np.array(err)
+    return len(iso), float(np.sqrt(np.mean(np.sum(err ** 2, axis=1)))), min(peaks), max(peaks)
+
+
+def _anisotropy(im, lag):
+    """横方向の変化 / 縦方向の変化(lag 画素差)。横縞なら 1 より小、縦縞なら大。"""
+    dx = float(np.mean(np.abs(im[:, lag:] - im[:, :-lag])))
+    dy = float(np.mean(np.abs(im[lag:] - im[:-lag])))
+    return dx / dy
+
+
 def run() -> dict:
     t0 = time.perf_counter()
     out = {}
@@ -88,21 +121,25 @@ def run() -> dict:
     img, pos = pivops.piv_synth_particles((H, W), density=density, diameter_px=diam,
                                           seed=3, intensity=(0.6, 1.0))
     n_want = int(round(density * H * W))
-    # 真値: 粒子は画像の外側 3σ まで撒かれる。画像内に落ちる期待個数 × 平均輝度 ×
-    # ガウス輝点の積分 2πσ² が総輝度になる(縁で切れる分は 3σ の外だけなので無視できる)
+    # 真値: 粒子は画像の外側 3×直径 まで撒かれる(縁で欠けた粒子のバイアス避け)。
+    # 画像内に落ちる期待個数 × 平均輝度 0.8 × ガウス輝点の積分 2πσ² が総輝度
     sigma = diam / 2.0
-    pad = 3.0 * sigma
+    pad = 3.0 * diam
     inside = (H * W) / ((H + 2 * pad) * (W + 2 * pad))
     sum_want = n_want * inside * 0.8 * 2.0 * np.pi * sigma ** 2
     sum_got = float(img.sum())
+    n_iso, cen_rms, pk_lo, pk_hi = _isolated_centroid_error(img, pos, sigma)
     print(f"  粒子数 {len(pos)}(真値 {n_want})/ 総輝度 {sum_got:.1f}"
           f"(期待 {sum_want:.1f}、差 {100 * (sum_got / sum_want - 1):+.2f} %)")
+    print(f"  孤立粒子 {n_iso} 個の輝度重心と真の位置の差 RMS {cen_rms:.4f} px"
+          f" / 頂点輝度 {pk_lo:.3f}..{pk_hi:.3f}(輝度範囲 0.6..1.0 × 副画素の落ち)")
     sq = dic.speckle_quality(img)
     fwhm = 2.0 * np.sqrt(2.0 * np.log(2.0)) * sigma       # = 1.1774 × diameter_px
     print(f"  speckle_quality: 斑点径 {sq['mean_blob_diameter_px']:.3f} px"
           f"(FWHM の真値 {fwhm:.3f})/ MIG {sq['mig']:.4f} / 被覆 {sq['coverage']:.3f}")
     out["particles"] = {"n": len(pos), "n_want": n_want,
                         "sum_rel_err": sum_got / sum_want - 1.0,
+                        "centroid_rms_px": cen_rms, "n_isolated": n_iso,
                         "blob_rel_err": sq["mean_blob_diameter_px"] / fwhm - 1.0}
 
     # ------------------------------------------------------------------ 2
@@ -134,52 +171,54 @@ def run() -> dict:
     yy, xx = np.mgrid[0:24, 0:24].astype(np.float64) - 11.5
     mag = pivops.piv_flow_magnitude(f_rot)
     mag_err = float(np.max(np.abs(mag - om * np.hypot(yy, xx))))
-    print(f"  |v| = ω r の最大誤差 {mag_err:.1e} / 発散(膨張)= {2 * s:.3f} → "
-          f"{pivops.piv_velocity_gradient(linear_field('expansion', s))['divergence'].mean():.4f}")
+    div_exp = float(pivops.piv_velocity_gradient(linear_field("expansion", s))["divergence"].mean())
+    print(f"  |v| = ω r の最大誤差 {mag_err:.1e} / 一様膨張の発散 = 2s = {2 * s:.3f} → {div_exp:.4f}")
     out["field_closed_form_max_err"] = field_err
     out["magnitude_max_err"] = mag_err
 
     # ------------------------------------------------------------------ 3
-    print("\n=== 3. 窓変形 —— 窓の中で変位が変わる渦で、多段(整数ずらし)と比べる ===")
-    a, b, truth = pivops.piv_synth_pair((H, W), rankine_like_vortex,
+    print("\n=== 3. 窓変形 —— 窓の中で変位が変わる滑らかな渦で、多段(整数ずらし)と比べる ===")
+    a, b, truth = pivops.piv_synth_pair((H, W), lamb_oseen_vortex,
                                         density=0.02, diameter_px=2.5, seed=7)
+    print(f"  Lamb–Oseen 渦: 芯半径 {RC:.0f} px / 最大変位 {np.hypot(*truth).max():.2f} px"
+          f" / 窓 32 の中で変位が最大 {32 * OMEGA:.2f} px 変わる")
+    sflow, sinfo = pivops.piv_cross_correlate(a, b, window=32, overlap=0.5)
+    ss = pivops.piv_error_stats(sflow, pivops.piv_sample_at_windows(truth, sinfo))
     mflow, minfo = pivops.piv_multipass(a, b, windows=(64, 32), overlap=0.5)
     mt = pivops.piv_sample_at_windows(truth, minfo)
     ms = pivops.piv_error_stats(mflow, mt)
     dflow, dinfo = pivops.piv_deform_pass(a, b, mflow, minfo, window=32, overlap=0.5)
     dt = pivops.piv_sample_at_windows(truth, dinfo)
     ds = pivops.piv_error_stats(dflow, dt)
-    print(f"  多段 64→32      RMS {ms['rms']:.4f} px  偏り ({ms['bias_dy']:+.4f}, {ms['bias_dx']:+.4f})")
-    print(f"  + 窓変形 32     RMS {ds['rms']:.4f} px  偏り ({ds['bias_dy']:+.4f}, {ds['bias_dx']:+.4f})"
-          f"  (deformed={dinfo['deformed']})")
-    # 芯の縁(勾配が折れる r ≈ 28 px)に誤差が集中する。そこでの改善を別に出す
-    rr = np.hypot(dinfo["rows"][:, None] - CY, dinfo["cols"][None, :] - CX)
-    band = (rr > 16) & (rr < 44)
-    e_m = np.hypot(*(mflow - mt))[band]
-    e_d = np.hypot(*(dflow - dt))[band]
-    print(f"  芯の縁(16<r<44 px)の誤差 RMS  多段 {np.sqrt(np.mean(e_m ** 2)):.4f}"
-          f" → 窓変形 {np.sqrt(np.mean(e_d ** 2)):.4f} px")
-    out["deform"] = {"multipass_rms": ms["rms"], "deform_rms": ds["rms"],
-                     "band_rms_multipass": float(np.sqrt(np.mean(e_m ** 2))),
-                     "band_rms_deform": float(np.sqrt(np.mean(e_d ** 2)))}
+    d2flow, d2info = pivops.piv_deform_pass(a, b, dflow, dinfo, window=32, overlap=0.5)
+    ds2 = pivops.piv_error_stats(d2flow, pivops.piv_sample_at_windows(truth, d2info))
+    print(f"  {'段':<24} {'RMS [px]':>9} {'偏り dy':>9} {'偏り dx':>9} {'ピーク比':>9}")
+    for label, st_, inf in (("単段 32", ss, sinfo), ("多段 64→32", ms, minfo),
+                            ("+ 窓変形 32", ds, dinfo), ("+ 窓変形 32(2 回目)", ds2, d2info)):
+        print(f"  {label:<24} {st_['rms']:>9.4f} {st_['bias_dy']:>+9.4f} {st_['bias_dx']:>+9.4f}"
+              f" {np.nanmedian(inf['peak_ratio']):>9.2f}")
+    print("  → 変形で相関ピークが立ち直る(ピーク比が上がる)ので誤差が下がる。")
+    out["deform"] = {"single_rms": ss["rms"], "multipass_rms": ms["rms"],
+                     "deform_rms": ds["rms"], "deform2_rms": ds2["rms"]}
 
     # ------------------------------------------------------------------ 4
-    print("\n=== 4. 測った場の Q 基準 —— 芯は ω² に近づき、面積は閾値で変わる ===")
-    omega = 700.0 / (2.0 * np.pi * 28.0 ** 2)          # 芯の角速度 [rad/frame]
+    print("\n=== 4. 測った場の Q 基準 —— 芯は ω² に乗り、面積は閾値で変わる ===")
     step = dinfo["step"]
     q_meas = pivops.piv_q_criterion(dflow, spacing=step)
     q_true = pivops.piv_q_criterion(dt, spacing=step)
+    rr = np.hypot(dinfo["rows"][:, None] - CY, dinfo["cols"][None, :] - CX)
     ci = np.unravel_index(int(np.argmin(rr)), rr.shape)
-    print(f"  芯の Q: 測定 {q_meas[ci]:+.2e} / 真値格子 {q_true[ci]:+.2e} / 閉形式 ω² {omega ** 2:+.2e}")
-    print(f"  {'閾値 Q >':>10} {'面積(格子数)':>14}")
+    print(f"  芯の Q: 測定 {q_meas[ci]:+.2e} / 真値を同じ格子で差分 {q_true[ci]:+.2e}"
+          f" / 閉形式 ω² {OMEGA ** 2:+.2e}(格子 {step} px の差分は芯の外まで平均するので少し低い)")
+    print(f"  {'閾値 Q >':>10} {'面積 測定':>10} {'面積 真値':>10}")
     areas = {}
     for frac in (0.0, 0.1, 0.3, 0.5):
-        thr = frac * omega ** 2
-        areas[frac] = int(np.sum(q_meas > thr))
-        print(f"  {thr:>10.1e} {areas[frac]:>14d}")
-    print("  → 「Q > 0」の面積と「Q > 0.5 ω²」の面積は別物。閾値を書かない渦図は読めない。")
-    out["q_core"] = {"measured": float(q_meas[ci]), "closed_form": omega ** 2,
-                     "area_by_threshold": areas}
+        thr = frac * OMEGA ** 2
+        areas[frac] = (int(np.sum(q_meas > thr)), int(np.sum(q_true > thr)))
+        print(f"  {thr:>10.1e} {areas[frac][0]:>10d} {areas[frac][1]:>10d}")
+    print("  → 「Q > 0」の面積と「Q > 0.5 ω²」の面積は 4 倍違う。閾値を書かない渦図は読めない。")
+    out["q_core"] = {"measured": float(q_meas[ci]), "truth_grid": float(q_true[ci]),
+                     "closed_form": OMEGA ** 2, "area_by_threshold": areas}
 
     # ------------------------------------------------------------------ 5
     print("\n=== 5. 既にある変位場の採点(ZNCC)—— 正しい場は 1、壊した所だけ落ちる ===")
@@ -190,39 +229,46 @@ def run() -> dict:
     bad = uflow.copy()
     bad[:, 5:9, 5:9] += 3.0                                           # 4x4 窓だけ 3 px ずらす
     z_bad = dic.correlation_quality(ua, ub, bad, uinfo, subset=31)
-    # 壊した窓の中心の画素と、健全な領域
     r0, r1 = int(uinfo["rows"][5]), int(uinfo["rows"][8])
     c0, c1 = int(uinfo["cols"][5]), int(uinfo["cols"][8])
-    broken = np.nanmedian(z_bad[r0:r1, c0:c1])
-    healthy = np.nanmedian(z_bad[150:220, 150:220])
+    broken = float(np.nanmedian(z_bad[r0:r1, c0:c1]))
+    healthy = float(np.nanmedian(z_bad[150:220, 150:220]))
     # ゲイン・オフセット不変: cur を 1.7 倍 + 0.2 しても同じ採点
     z_gain = dic.correlation_quality(ua, ub * 1.7 + 0.2, uflow, uinfo, subset=31)
     print(f"  相関で測った場   ZNCC 中央値 {np.nanmedian(z_ok):.5f}")
     print(f"  画素ごとの真値場 ZNCC 中央値 {np.nanmedian(z_dense):.5f}")
     print(f"  4x4 窓を 3 px 壊す → 壊した領域 {broken:.4f} / 健全領域 {healthy:.4f}")
     print(f"  ゲイン 1.7 + オフセット 0.2 → 差の最大 {np.nanmax(np.abs(z_gain - z_ok)):.1e}")
+    print(f"  測れなかった画素(縁)の割合 {np.isnan(z_ok).mean():.3f}(サブセット 31 の半分 = 15 px の額縁)")
     out["zncc"] = {"measured": float(np.nanmedian(z_ok)), "truth": float(np.nanmedian(z_dense)),
-                   "broken": float(broken), "healthy": float(healthy),
+                   "broken": broken, "healthy": healthy,
                    "gain_invariance": float(np.nanmax(np.abs(z_gain - z_ok)))}
 
     # ------------------------------------------------------------------ 6
-    print("\n=== 6. アンサンブル相関 —— 粒子が少なく雑音の多い定常流 ===")
+    print("\n=== 6. アンサンブル相関 —— 粒子が少なく(窓に 3 個)雑音の多い定常流 ===")
     disp = (2.3, -1.7)
-    frames, seq_truth = pivops.piv_synth_sequence((H, W), disp, n_frames=8, density=0.004,
-                                                  diameter_px=2.5, seed=5, noise_sigma=0.15)
-    assert len(frames) == 8 and np.allclose(seq_truth[0], disp[0]) and np.allclose(seq_truth[1], disp[1])
+    frames, seq_truth = pivops.piv_synth_sequence((H, W), disp, n_frames=16, density=0.003,
+                                                  diameter_px=2.5, seed=5, noise_sigma=0.1)
+    assert len(frames) == 16 and np.allclose(seq_truth[0], disp[0]) and np.allclose(seq_truth[1], disp[1])
     eflow, einfo = pivops.piv_ensemble_correlate(frames, window=32, overlap=0.5)
     et = pivops.piv_sample_at_windows(seq_truth, einfo)
     es = pivops.piv_error_stats(eflow, et)
-    pair_flows = [pivops.piv_cross_correlate(frames[k], frames[k + 1], 32, 0.5)[0]
-                  for k in range(len(frames) - 1)]
-    avg = np.nanmean(np.stack(pair_flows), axis=0)
-    ps = pivops.piv_error_stats(np.nan_to_num(avg, nan=0.0), et)
-    print(f"  1 対ずつ測って平均({einfo['pairs']} 対) RMS {ps['rms']:.4f} px"
-          f"  偏り ({ps['bias_dy']:+.4f}, {ps['bias_dx']:+.4f})")
-    print(f"  相関を足してから探す           RMS {es['rms']:.4f} px"
-          f"  偏り ({es['bias_dy']:+.4f}, {es['bias_dx']:+.4f})")
-    out["ensemble"] = {"pair_mean_rms": ps["rms"], "ensemble_rms": es["rms"]}
+    pair_flows = np.stack([pivops.piv_cross_correlate(frames[k], frames[k + 1], 32, 0.5)[0]
+                           for k in range(len(frames) - 1)])
+    avg = np.nan_to_num(np.nanmean(pair_flows, axis=0), nan=0.0)
+    ps = pivops.piv_error_stats(avg, et)
+    inner = (slice(1, -1), slice(1, -1))
+    out_e = float(np.mean(np.hypot(*(eflow - et))[inner] > 1.0))
+    out_p = float(np.mean(np.hypot(*(avg - et))[inner] > 1.0))
+    print(f"  {'方法':<30} {'中央誤差':>9} {'外れ(>1px)':>11} {'RMS':>8}")
+    print(f"  {'1 対ずつ測って平均(' + str(einfo['pairs']) + ' 対)':<30} {ps['median_abs']:>9.3f}"
+          f" {100 * out_p:>10.0f}% {ps['rms']:>8.3f}")
+    print(f"  {'相関を足してから探す':<30} {es['median_abs']:>9.3f} {100 * out_e:>10.0f}% {es['rms']:>8.3f}")
+    print("  → 弱いピークが同じ場所に積み上がり、外れ本数が桁で減る。RMS はどちらも"
+          "残った外れ値(探索上限 8 px まで飛ぶ)に支配されるので、RMS だけでは差が見えない。")
+    out["ensemble"] = {"pair_mean_median": ps["median_abs"], "ensemble_median": es["median_abs"],
+                       "pair_mean_outlier": out_p, "ensemble_outlier": out_e,
+                       "pair_mean_rms": ps["rms"], "ensemble_rms": es["rms"]}
 
     # ------------------------------------------------------------------ 7
     print("\n=== 7. 時間統計 —— 場全体を揺らした列の RMS を、独立な経路で検算 ===")
@@ -242,7 +288,7 @@ def run() -> dict:
     print(f"  対の数 {ts['n_pairs']}(真値 {len(tframes) - 1})")
     print(f"  時間平均  窓の中央値 ({got_mean[0]:.4f}, {got_mean[1]:.4f})"
           f" / 対ごとの中央値の平均 ({ref_mean[0]:.4f}, {ref_mean[1]:.4f})"
-          f" / 仕込み (1.5, 2.0)")
+          f" / 仕込み (1.5, 2.0) + 揺れの平均")
     print(f"  時間 RMS  窓の中央値 ({got_rms[0]:.4f}, {got_rms[1]:.4f})"
           f" / 対ごとの中央値の RMS ({ref_rms[0]:.4f}, {ref_rms[1]:.4f})"
           f" / 仕込み σ={jit}(標本 {ts['n_pairs']} 個なので ±25 % は揺れる)")
@@ -253,20 +299,24 @@ def run() -> dict:
 
     # ------------------------------------------------------------------ 8
     print("\n=== 8. ピークロッキング —— 同じ場で推定法だけ変える ===")
-    # 小数部が一様に散る場(線形ランプ)。窓を 3/4 重ねて 29x29 = 841 本にする
+
     def ramp(rows, cols):
+        """小数部が一様に散る線形ランプ。"""
         return 0.5 + 0.017 * rows, -1.0 + 0.023 * cols
+
+    # 窓を 3/4 重ねて 29x29 = 841 本にする(20 階級 × 2 成分で 1 階級 42 本)
     ra, rb, rtruth = pivops.piv_synth_pair((H, W), ramp, density=0.02, seed=13)
     c0s = {}
     for mode in pivops.PEAK_MODES:
         rf, rinfo = pivops.piv_cross_correlate(ra, rb, 32, 0.75, peak=mode)
         c0s[mode] = pivops.piv_peak_locking(rf, bins=20)
     pl_truth = pivops.piv_peak_locking(pivops.piv_sample_at_windows(rtruth, rinfo), bins=20)
-    print(f"  {'推定法':<12} {'c0':>8}   (一様なら 1 前後。真値格子 {pl_truth['c0']:.2f})")
+    print(f"  {'推定法':<12} {'c0':>8}   (一様なら 1 前後。真値を格子に落とすと {pl_truth['c0']:.2f} —— "
+          "格子が離散なので真値も一様ではない)")
     for mode, pl in c0s.items():
         assert pl["hist"].shape == (2, 20)
         print(f"  {mode:<12} {pl['c0']:>8.2f}   小数部の平均 {pl['frac_mean']:.3f}")
-    print("  → centroid は整数へ引き寄せるので小数部の分布が偏り、c0 が跳ね上がる。")
+    print("  → centroid は整数へ引き寄せるので小数部の分布が偏り、c0 が 2 桁跳ね上がる。")
     out["peak_locking"] = {m: pl["c0"] for m, pl in c0s.items()}
     out["peak_locking"]["truth"] = pl_truth["c0"]
 
@@ -279,27 +329,26 @@ def run() -> dict:
     for name, (dy, dx) in dirs.items():
         fl = np.zeros((2, 6, 6))
         fl[0], fl[1] = dy, dx
-        rgb = pivops.piv_flow_to_rgbimage(fl, scale=2.0)         # 明度 1 = 2 px
-        got = tuple(np.round(rgb[3, 3], 3))
+        rgb = pivops.piv_flow_to_rgbimage(fl, scale=2.0)         # 明度 1 = 2 px(図ごとに固定)
+        got = tuple(float(v) for v in np.round(rgb[3, 3], 3))
         rgb_err = max(rgb_err, float(np.max(np.abs(rgb[3, 3] - want_rgb[name]))))
         print(f"  {name:<8} → RGB {got}   期待 {want_rgb[name]}")
     # 明度 = 速さ / scale(向きは問わない)
     rgb_v = pivops.piv_flow_to_rgbimage(dflow, scale=4.0)
-    bright_err = float(np.max(np.abs(rgb_v.max(axis=-1) - np.clip(pivops.piv_flow_magnitude(dflow) / 4.0, 0, 1))))
+    bright_err = float(np.max(np.abs(rgb_v.max(axis=-1)
+                                     - np.clip(pivops.piv_flow_magnitude(dflow) / 4.0, 0, 1))))
     print(f"  明度 = |v| / scale の最大誤差 {bright_err:.1e}(scale=4 px)")
-    lic_h = pivops.piv_line_integral_convolution(np.stack([np.zeros((16, 16)), np.ones((16, 16))]),
-                                                 length=12, upsample=4, seed=1)
-    lic_v = pivops.piv_line_integral_convolution(np.stack([np.ones((16, 16)), np.zeros((16, 16))]),
-                                                 length=12, upsample=4, seed=1)
-    def aniso(im):
-        """行方向の変化 / 列方向の変化。横縞なら小さく、縦縞なら大きい。"""
-        return float(np.mean(np.abs(np.diff(im, axis=1)))) / float(np.mean(np.abs(np.diff(im, axis=0))))
-    an_h, an_v = aniso(lic_h), aniso(lic_v)
+    flat = np.zeros((16, 16))
+    lic_h = pivops.piv_line_integral_convolution(np.stack([flat, flat + 1.0]), length=12, upsample=4, seed=1)
+    lic_v = pivops.piv_line_integral_convolution(np.stack([flat + 1.0, flat]), length=12, upsample=4, seed=1)
+    an = {(k, lag): _anisotropy(im, lag) for k, im in (("h", lic_h), ("v", lic_v)) for lag in (1, 2)}
     print(f"  LIC 形状 {lic_h.shape}(16x16 を 4 倍)/ 値域 [{lic_h.min():.2f}, {lic_h.max():.2f}]")
-    print(f"  横流れ: 横方向の変化/縦方向の変化 = {an_h:.3f}(縞が横に伸びる → 1 より小さい)")
-    print(f"  縦流れ: 同じ比 = {an_v:.3f}(→ 1 より大きい)")
+    print(f"  横流れ: 横方向の変化 / 縦方向の変化 = {an['h', 1]:.3f}(隣接)/ {an['h', 2]:.3f}(2 画素おき)")
+    print(f"  縦流れ: 同じ比                     = {an['v', 1]:.3f}(隣接)/ {an['v', 2]:.3f}(2 画素おき)")
+    print("  → 縞は流れの向きに伸びる。隣接画素で比が鈍いのは、積分の歩幅が格子の半分"
+          "(= upsample/2 出力画素)で、upsample=4 では隣り合う画素が雑音を共有しないため。")
     out["visual"] = {"rgb_max_err": rgb_err, "brightness_max_err": bright_err,
-                     "lic_aniso_horizontal": an_h, "lic_aniso_vertical": an_v}
+                     "lic_aniso_h_lag2": an["h", 2], "lic_aniso_v_lag2": an["v", 2]}
 
     elapsed = time.perf_counter() - t0
     out["elapsed_s"] = elapsed
@@ -308,31 +357,36 @@ def run() -> dict:
     # ---- 自己検査(速さではなく正しさだけを assert する)---------------------
     p = out["particles"]
     assert p["n"] == p["n_want"], p
-    assert abs(p["sum_rel_err"]) < 0.03, p
+    assert abs(p["sum_rel_err"]) < 0.02, p
+    assert p["n_isolated"] >= 10 and p["centroid_rms_px"] < 0.05, p
     assert abs(p["blob_rel_err"]) < 0.05, p
     assert field_err < 1e-9, field_err                     # 線形場は差分が厳密
     assert mag_err < 1e-12, mag_err
-    assert ds["rms"] < 0.30 and ms["rms"] < 0.30, (ds, ms)
-    assert out["deform"]["band_rms_deform"] < out["deform"]["band_rms_multipass"], out["deform"]
-    assert 0.5 * omega ** 2 < q_meas[ci] < 1.5 * omega ** 2, (q_meas[ci], omega ** 2)
-    assert areas[0.0] > areas[0.5], areas                  # 閾値で面積が変わる
+    assert abs(div_exp - 2 * s) < 1e-12
+    assert ds["rms"] < ms["rms"] < 0.15, out["deform"]     # 窓変形は多段より良い
+    assert ds2["rms"] < ds["rms"], out["deform"]
+    assert abs(q_meas[ci] - q_true[ci]) < 0.2 * OMEGA ** 2, out["q_core"]
+    assert 0.6 * OMEGA ** 2 < q_meas[ci] < 1.2 * OMEGA ** 2, out["q_core"]
+    assert areas[0.0][0] > 2 * areas[0.5][0], areas         # 閾値で面積が変わる
     z = out["zncc"]
     assert z["measured"] > 0.99 and z["truth"] > 0.99, z
-    assert z["broken"] < 0.8 < z["healthy"], z
+    assert z["broken"] < 0.5 < 0.99 < z["healthy"], z
     assert z["gain_invariance"] < 1e-9, z
-    assert es["rms"] < ps["rms"] and es["rms"] < 0.1, (es["rms"], ps["rms"])
+    en = out["ensemble"]
+    assert en["ensemble_median"] < 0.2 and en["ensemble_median"] < en["pair_mean_median"] / 3, en
+    assert en["ensemble_outlier"] < en["pair_mean_outlier"] / 3, en
     assert ts["n_pairs"] == len(tframes) - 1
     assert out["time_stats"]["mean_gap"] < 0.02 and out["time_stats"]["rms_gap"] < 0.03, out["time_stats"]
-    assert c0s["centroid"]["c0"] > 3.0 * c0s["gauss3"]["c0"], out["peak_locking"]
+    assert abs(got_rms.mean() - jit) < 0.5 * jit, got_rms   # 標本 11 個なので緩い
+    assert c0s["gauss3"]["c0"] < 3.0 and c0s["centroid"]["c0"] > 10.0 * c0s["gauss3"]["c0"], out["peak_locking"]
     assert rgb_err < 1e-9 and bright_err < 1e-9, (rgb_err, bright_err)
     assert lic_h.shape == (64, 64) and 0.0 <= lic_h.min() and lic_h.max() <= 1.0
-    assert an_h < 0.5 and an_v > 2.0, (an_h, an_v)
+    assert an["h", 2] < 0.3 and an["v", 2] > 3.0, an
     print("PASS")
     return out
 
 
 if __name__ == "__main__":
     result = run()
-    print({k: (v if not isinstance(v, dict) else {kk: (round(vv, 5) if isinstance(vv, float) else vv)
-                                                  for kk, vv in v.items()})
-           for k, v in result.items()})
+    for k, v in result.items():
+        print(f"{k}: {v}")
