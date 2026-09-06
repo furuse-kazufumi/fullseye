@@ -599,7 +599,7 @@ def section_scales() -> dict:
           % SIG_I)
     print("   σ_d [px]   雑音 %.3f: 平均 / 誤差 / 配向度      雑音 %.3f: 平均 / 誤差 / 配向度"
           % (NOISE, 5 * NOISE))
-    sd_list, sd_r_lo, sd_r_hi, sd_e_hi = [], [], [], []
+    sd_list, sd_r_lo, sd_r_hi, sd_e_lo = [], [], [], []
     sc_hi = make_scene(noise=5 * NOISE)
     t_hi = circ_stats(sc_hi["angles"], sc_hi["len_vis"])
     for sd in (0.0, 0.5, 1.0, 2.0, 4.0):
@@ -608,20 +608,22 @@ def section_scales() -> dict:
         sd_list.append(sd)
         sd_r_lo.append(a["R"])
         sd_r_hi.append(b["R"])
-        sd_e_hi.append(abs(_ang_err(b["mean_deg"], t_hi["mean_deg"])))
+        sd_e_lo.append(abs(_ang_err(a["mean_deg"], truth["mean_deg"])))
         print("     %4.1f      %6.2f / %+5.2f / %.4f          %6.2f / %+5.2f / %.4f"
               % (sd, a["mean_deg"], _ang_err(a["mean_deg"], truth["mean_deg"]), a["R"],
                  b["mean_deg"], _ang_err(b["mean_deg"], t_hi["mean_deg"]), b["R"]))
-    print("  ★★σ_d は **雑音が小さいうちはほとんど効かない**"
-          "(配向度 %.4f -> %.4f)。雑音を 5 倍にすると初めて効き、"
-          % (sd_r_lo[0], sd_r_lo[-1]))
-    print("     σ_d=0 で配向度 %.4f(真値 %.4f、%+.0f %%)が、σ_d=%.1f px で "
-          "%.4f(%+.0f %%)まで戻る。"
-          % (sd_r_hi[0], t_hi["R"], 100 * (sd_r_hi[0] - t_hi["R"]) / t_hi["R"],
-             sd_list[int(np.argmax(sd_r_hi))], max(sd_r_hi),
-             100 * (max(sd_r_hi) - t_hi["R"]) / t_hi["R"]))
-    print("     **σ_i を増やしても代わりにならない** —— σ_i は方向を集めるが、"
+    j_hi = int(np.argmax(sd_r_hi))
+    print("  ★σ_d の効き方は σ_i と違う。雑音 %.3f では上げても配向度は良くならず、"
+          "%.1f px では %.4f -> %.4f と落ちる(過平滑化)。" %
+          (NOISE, sd_list[-1], sd_r_lo[0], sd_r_lo[-1]))
+    print("     雑音を 5 倍にすると **最適点が現れる**: σ_d=0 の %.4f が "
+          "σ_d=%.1f px で %.4f(真値 %.4f)。"
+          % (sd_r_hi[0], sd_list[j_hi], sd_r_hi[j_hi], t_hi["R"]))
+    print("     σ_i を増やしても代わりにならない —— σ_i は方向を集めるが、"
           "雑音の勾配そのものは消せない。")
+    print("  ★ここでも 2 つの量が別々に動く: 平均角度の誤差は σ_d とともに"
+          "**単調に改善**(%.2f -> %.2f 度)、配向度は途中で悪化に転じる。"
+          % (sd_e_lo[0], sd_e_lo[-1]))
     figs.save_plot("scales",
                    [("配向度(推定)", sig, rr),
                     ("真値の配向度", sig, [truth["R"]] * len(sig)),
