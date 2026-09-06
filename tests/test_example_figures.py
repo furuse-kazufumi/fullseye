@@ -244,3 +244,58 @@ def test_studio_figures_tab_says_so_when_there_are_none(tmp_path):
     said = [w.text() for w in area.findChildren(QtWidgets.QLabel) if w.text()]
     assert any("図を出しません" in t for t in said), said
     app.processEvents()
+
+
+# --------------------------------------------------------------------------- #
+# 7. 全 PoC が図を出す(恒久の不変条件)                                          #
+# --------------------------------------------------------------------------- #
+def _poc_paths():
+    return sorted((ROOT / "examples").glob("poc_*.py"))
+
+
+def _figure_calls(tree):
+    """``figs.<何か>`` の呼び出し名を集める。"""
+    import ast
+
+    out = []
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and isinstance(node.func.value, ast.Name)
+                and node.func.value.id == "figs"):
+            out.append(node.func.attr)
+    return out
+
+
+@pytest.mark.parametrize("path", _poc_paths(), ids=lambda p: p.stem)
+def test_every_poc_is_wired_to_emit_figures(path):
+    """★PoC は 1 本残らず図を出すこと。
+
+    2026-09-06 の最初の版は 31 本中 3 本しか配線しておらず、残り 28 本は
+    Studio の Figures タブが空だった。**「絵の出ない画像処理の例」を作らない**
+    のがこの門の趣旨で、新しい PoC を足したときも自動で効く。
+
+    走らせて確かめるのは重い(1 本で分単位)ので、ここは静的に見る ——
+    実際に絵が出るところは :func:`test_a_real_poc_emits_figures_only_when_asked`
+    が端から端まで確かめる。
+    """
+    import ast
+
+    src = path.read_text(encoding="utf-8")
+    tree = ast.parse(src, filename=str(path))
+
+    imported = any(
+        isinstance(n, ast.Import) and any(a.name == "examplefig" for a in n.names)
+        for n in ast.walk(tree))
+    assert imported, "%s が examplefig を import していない" % path.name
+
+    calls = _figure_calls(tree)
+    savers = [c for c in calls if c.startswith("save")]
+    assert savers, "%s が図を 1 枚も出さない(figs.save* が無い)" % path.name
+    # 失敗を黙って捨てない —— 書けなかった理由は本文に出す。
+    assert "errors" in calls, (
+        "%s が figs.errors() を見ていない(図の失敗が誰にも届かない)" % path.name)
+
+
+def test_the_wiring_gate_actually_sees_all_of_them():
+    """門が空振りしていないこと(``poc_*.py`` を数える側の検算)。"""
+    assert len(_poc_paths()) >= 31, [p.name for p in _poc_paths()]

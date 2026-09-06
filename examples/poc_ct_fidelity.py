@@ -175,6 +175,7 @@ def main() -> bool:
     print("   views |  FBP RMSE | 零点B RMSE | FBP/零点B | FBP 相関 | 零点B 相関 | FBP SSIM")
     print("   ------+-----------+------------+-----------+----------+------------+---------")
     rows_out = []
+    recon = {}                  # 図に使う再構成像(図を出すときだけ持つ)
     for n_views in VIEW_COUNTS:
         ang, sino, dt_proj = sinos[n_views]
         t0 = time.perf_counter()
