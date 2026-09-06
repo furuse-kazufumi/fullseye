@@ -1172,3 +1172,8 @@ furuse.work へ誘導する」。
 - `r2_smallest_circle` / `xg_area_center` は docstring の「``b`` は<改行>未使用」が
   行の折り返しで「振る」判定に化けていた。判定前に折り返しを 1 行に戻す。
 - `tb_wetness` の `b` は `OP_KNOB_RANGE`(ior 1.01〜2.5)で生き返ったので台帳から消した。
+- **wheel から `backends_bridge` が落ちていた**(CI の wheel 門 `core (numpy+scipy only)` で
+  検出、2026-09-07)。`pyproject.toml` の py-modules に足し忘れ —— 0.1.6(321 op)/ 0.1.9
+  (224 op)と同じバグ族の 3 度目。手元の門 `test_every_module_the_registry_actually_loads_is_shipped`
+  は正しく落ちる(確認済み)が、backend を足した**後に**回していなかった。教訓: backend
+  モジュールを 1 本足したら packaging テストと wheel 門を**その場で**回す。

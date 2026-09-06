@@ -149,6 +149,8 @@ py-modules = [
   # 「レジストリ構築で実際に読み込まれた root モジュール」を数える形に変えた
   # (tests/test_packaging_foundation.py)。
   "backends_halcon_ext", "backends_typed",
+  # 2026-09-07: 入口 op 12 本(img_to_*)。同じバグ族の 3 度目 —— CI の wheel 門で捕まった。
+  "backends_bridge",
   # typed_catalog: backends_typed が読む型付きカタログ(2026-09-05 に tools/chain_fuzz から
   # 移した。出荷コードが非同梱の開発道具に依存していた —— wheel で tb_* 143 op が消えていた)
   "typed_catalog",
