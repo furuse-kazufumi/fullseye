@@ -327,6 +327,8 @@ def run_tracker(frames, tpl0, xy0, mode="static", update_k=None, rad=12):
             p, xy, pr, _ = locate_local(frames[t], tpl, est[-1] + v, rad)
         else:
             p, xy, pr, _ = locate_full(frames[t], tpl)
+        if not np.isfinite(xy).all():
+            xy = est[-1].copy()
         est.append(xy)
         pk.append(p)
         prom.append(pr)
