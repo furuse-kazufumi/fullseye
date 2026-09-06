@@ -888,3 +888,17 @@ nary 17 は全数が HALCON 由来。RAG がこの欄で絞り込むときは「
 収まらない(47)/ 長い op 名がキャプション幅に収まらない(36、次の走行)。
 「走ったのに描けなかった」を「落ちた」に混ぜると、op の失敗率を 4 倍に
 見せる。理由を分けて数えたから気づけた。
+
+### ★公開サイトでは図が 404 だった(2026-09-07、push 後に実測)
+
+push して Pages が反映されたあと `https://furuse.work/ops/_fig/gaussian.png` を
+叩いたら **404**。索引の新節も op ノートも 200 なのに、図だけ配信されていない。
+Jekyll は `_` で始まるディレクトリを配信しない(内部ディレクトリの規約)。
+手元では 724 枚すべてリンクが通り、門も緑 —— **配信側の規則は配信側でしか
+見えない**(「門は事故の起きる場所に立てる」の再演)。
+
+直し方は `docs/_config.yml` の `include: [_fig]`。再発防止に
+`tests/test_docs_index_reachable.py::test_underscore_directories_are_served_by_pages`
+が、リンクされている `_` ディレクトリが include に載っていることを見る。
+`docs/articles/assets/_sources` も `_` だが、md からリンクされていないので
+配信されなくてよい(生成の元データ)。
