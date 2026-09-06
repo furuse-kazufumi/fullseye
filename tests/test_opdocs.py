@@ -1007,3 +1007,134 @@ def test_summary_translations_stay_the_readers_language():
         if ok and not OD.has_japanese(tr):
             bad.append("%s/%s" % (r["dim"], r["name"]))
     assert not bad, ("日本語訳のはずが日本語を含まない: " + ", ".join(bad[:12]))
+
+
+# --------------------------------------------------------------------------- #
+# Studio ヘルプ HTML が「読める形」か —— 生成できたことと読めることは別          #
+# --------------------------------------------------------------------------- #
+def test_the_help_html_contains_no_raw_markdown():
+    """★Studio のヘルプに Markdown が生のまま出ていないこと。
+
+    2026-09-06、ユーザーの「ヘルプは使い物になる形になってるのか」を受けて
+    11,854 ページを実際に読んだところ、**60 ページに `[…](…)` が生で残って**
+    いた。原因は `opdocs._inline` がコードスパンをリンクより先に切っていた
+    こと —— ``[`../../SAMPLES.md`](../../SAMPLES.md)`` が 3 つに割れ、リンクの
+    正規表現がどの断片にも当たらなかった。生成は成功し、ドリフト検査も緑で、
+    **人が開いたときだけ壊れて見える**類の不具合。
+    """
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "studio_assets" / "op_help"
+    if not root.is_dir():                      # 未生成の checkout では検査しない
+        import pytest
+        pytest.skip("studio_assets/op_help が無い")
+    bad = []
+    for p in root.rglob("*.html"):
+        s = p.read_text(encoding="utf-8", errors="replace")
+        if re.search(r"\]\([^)]*\)", s):
+            bad.append("%s (markdown link)" % p.name)
+        elif re.search(r"^\s*#{2,} ", s, re.M):
+            bad.append("%s (markdown heading)" % p.name)
+    assert not bad, ("Markdown が生で残るヘルプ %d ページ: %s —— "
+                     "`py -3.11 tools/opdocs.py html`" % (len(bad), bad[:8]))
+
+
+def test_inline_renders_a_link_whose_text_is_code():
+    """回帰: リンクの表示文字列にコードスパンが入っていても、リンクになる。"""
+    import sys
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+    import opdocs as OD
+
+    got = OD.md_to_html("見よ [`x.md`](../guides/blob_analysis.md) ここ。")
+    assert 'href="guide2d:blob_analysis"' in got, got
+    assert "<code" in got, "リンク文字列の `code` が失われている: %s" % got
+    assert "](" not in got, "Markdown が残っている: %s" % got
+
+
+def test_every_operator_has_a_help_page_in_every_language():
+    """ヘルプの言語版が揃っていること。**意図的な例外は名指しで許す**。
+
+    `gaussian` / `otsu` / `sobel_mag` は手書きの英語ページで、実行できる
+    `sample:` パイプラインを持つ。言語を切り替えたときに、**手厚いページが
+    薄い自動生成ページに置き換わらないよう**、意図的に言語版を作っていない
+    (`studio.py: op_help_html` の docstring に理由あり)。
+    """
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(root / "tools"))
+    sys.path.insert(0, str(root))
+    import opdocs as OD
+
+    help_root = root / "studio_assets" / "op_help"
+    if not help_root.is_dir():
+        import pytest
+        pytest.skip("studio_assets/op_help が無い")
+
+    #: 言語版を作らないことが設計判断であるもの(手書き・英語・sample: つき)。
+    HAND_AUTHORED = {"gaussian", "otsu", "sobel_mag"}
+
+    pages = {p.name for p in help_root.rglob("*.html")}
+    recs, _i, _o, _f = OD._records()
+    missing = []
+    for r in recs:
+        if r["name"] in HAND_AUTHORED:
+            continue
+        for lang in ("en", "zh", "tw", "ko", "de"):
+            if "%s.%s.html" % (r["name"], lang) not in pages:
+                missing.append("%s.%s" % (r["name"], lang))
+    assert not missing, ("ヘルプの言語版が %d 件欠けている: %s —— "
+                         "`py -3.11 tools/opdocs.py html`"
+                         % (len(missing), missing[:10]))
+
+
+#: 2026-09-06 の実測。ヘルプ本文の翻訳が届いているページ数の**床**。
+#: 下回ったら落ちる(上げるのは自由)。en が多いのは原文が英語の op が多いため。
+_HELP_TRANSLATED_FLOOR = {"en": 906, "zh": 535, "tw": 535, "ko": 535, "de": 535}
+
+
+def test_the_help_translation_coverage_does_not_regress():
+    """★ヘルプ本文がどれだけ訳せているかを数える(訳したふりをしない)。
+
+    訳が無いページは、**読み手の言語で**「この演算子の説明はまだ翻訳が
+    ありません。原文をそのまま載せます」と断ってから原文を出す設計。
+    見出し・ラベル・要約は全ページ訳されている。ここで守るのは
+    **本文まで訳が届いているページ数**で、実測(2026-09-06)は
+    en 906 / zh・tw・ko・de 各 535(いずれも 1,887 ページ中)。
+    """
+    import collections
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "studio_assets" / "op_help"
+    if not root.is_dir():
+        import pytest
+        pytest.skip("studio_assets/op_help が無い")
+
+    #: 「原文のまま」を告げる文。**この文が無い = 本文まで訳が届いている**。
+    BANNER = {
+        "en": ("has not been translated yet", "description below is the original"),
+        "de": ("noch keine Übersetzung", "ist der Originaltext"),
+        "ko": ("아직 번역이 없습니다", "원문입니다"),
+        "zh": ("尚无译文", "为原文"),
+        "tw": ("尚無譯文", "為原文"),
+    }
+    done, total = collections.Counter(), collections.Counter()
+    for p in root.rglob("*.html"):
+        if p.name.count(".") != 2:
+            continue
+        lang = p.name.split(".")[-2]
+        if lang not in BANNER:
+            continue
+        total[lang] += 1
+        s = p.read_text(encoding="utf-8", errors="replace")
+        if not any(b in s for b in BANNER[lang]):
+            done[lang] += 1
+    low = {L: (done[L], f) for L, f in _HELP_TRANSLATED_FLOOR.items()
+           if done[L] < f}
+    assert not low, (
+        "ヘルプ本文の翻訳が減っている(いま / 床): %s —— 訳を消したなら床も"
+        "一緒に動かす理由を書くこと。総ページ数: %s" % (low, dict(total)))

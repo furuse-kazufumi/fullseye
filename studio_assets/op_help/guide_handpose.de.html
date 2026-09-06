@@ -4,7 +4,7 @@
 <p>&gt; 呼び出しモデル: この族は <code style="color:#22d3bf">apply(img, &quot;&lt;op名&gt;&quot;, a, b)</code> の 2 つまみ規約では<b>なく</b>、</p>
 <p>&gt; ファサード関数(<code style="color:#22d3bf">import fullseye; fullseye.hand_landmarks(...)</code>)です。</p>
 <p>&gt; 検出結果が dict のリストという構造化データで、a/b の連続つまみに馴染まないため。</p>
-<p>&gt; 検証済みテスト: [<code style="color:#22d3bf">tests/test_handpose.py</code>](../../../../tests/test_handpose.py)</p>
+<p>&gt; 検証済みテスト: <a style="color:#22d3bf" href="../../../../tests/test_handpose.py"><code style="color:#22d3bf">tests/test_handpose.py</code></a></p>
 <p>&gt; (幾何 = 伸びきり 0° / 直角 90° / 描画非破壊 / fail-closed を機械検証)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p>写真・動画から<b>手の 21 キーポイント</b>(手首 1 + 各指 4×5)を取り、そこから</p>
@@ -58,7 +58,7 @@ flex = H.finger_flexions({&quot;world_landmarks&quot;: w})
 assert abs(flex[&quot;index&quot;] - 90.0) &lt; 0.1              # 直角 = 90°
 print({k: round(v, 1) for k, v in flex.items()})</pre>
 <p>デモ(画像 1 枚 / Web カメラ 1 フレーム):</p>
-<p>[<code style="color:#22d3bf">examples/hand_tracking_demo.py</code>](../../../../examples/hand_tracking_demo.py)</p>
+<p><a style="color:#22d3bf" href="example2d:hand_tracking_demo"><code style="color:#22d3bf">examples/hand_tracking_demo.py</code></a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">正直な現状と落とし穴</h3>
 <p style="margin:2px 0 2px 12px">• <b>検証済み</b>: 幾何(屈曲角の 0°/90° GT、結線の全点被覆、描画の非破壊)、</p>
 <p>モデル不在の fail-closed、空画像 → 0 検出の機械的 e2e。</p>

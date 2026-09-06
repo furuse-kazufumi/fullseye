@@ -161,9 +161,9 @@ print(&quot;PASS&quot;)</pre>
 <p>\hat{c} = \arg\min_c \lVert V c - y \rVert_2^2</p>
 <p>$$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>この族の入力は画像ではなく数値配列なので、<b>seed 固定の合成データ + 解析的グラウンドトゥルース</b>(真の係数・真の固有値・厳密根)がそのまま最良のテストデータです — 上の最小例と <code style="color:#22d3bf">examples/math_metrology.py</code> がその作り方の見本(平面 + 既知ノイズ、回転楕円雲、樽型歪み風の較正曲線)。実測データに繋ぐなら、<code style="color:#22d3bf">measure</code> / <code style="color:#22d3bf">measure3d</code> の出力(残差列・点群座標)をそのまま <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">(N, D)</code> として渡せます。画像系サンプルの台帳は [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md)。</p>
+<p>この族の入力は画像ではなく数値配列なので、<b>seed 固定の合成データ + 解析的グラウンドトゥルース</b>(真の係数・真の固有値・厳密根)がそのまま最良のテストデータです — 上の最小例と <code style="color:#22d3bf">examples/math_metrology.py</code> がその作り方の見本(平面 + 既知ノイズ、回転楕円雲、樽型歪み風の較正曲線)。実測データに繋ぐなら、<code style="color:#22d3bf">measure</code> / <code style="color:#22d3bf">measure3d</code> の出力(残差列・点群座標)をそのまま <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">(N, D)</code> として渡せます。画像系サンプルの台帳は <code style="color:#22d3bf">../../SAMPLES.md</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
-<p>台帳は [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。この族の数値解析の古典(各 op の docstring が引用しているもの):</p>
+<p>台帳は <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族の数値解析の古典(各 op の docstring が引用しているもの):</p>
 <p style="margin:2px 0 2px 12px">• Golub, G. H. &amp; Van Loan, C. F., *Matrix Computations* (4th ed., 2013), §2.6 — 条件数と桁落ち(<code style="color:#22d3bf">mat_cond</code> / <code style="color:#22d3bf">mat_solve</code> の警告の根拠)。</p>
 <p style="margin:2px 0 2px 12px">• Anderson, E. et al. (1999), *LAPACK Users&#x27; Guide* (3rd ed.) — <code style="color:#22d3bf">gesv</code> / <code style="color:#22d3bf">gelsd</code> / <code style="color:#22d3bf">gesdd</code> / <code style="color:#22d3bf">syevd</code>(linalg 族の実体)。</p>
 <p style="margin:2px 0 2px 12px">• Runge, C. (1901), &quot;Über empirische Funktionen und die Interpolation zwischen äquidistanten Ordinaten&quot; — 等間隔ノード高次補間の発散(<code style="color:#22d3bf">poly_fit</code> の次数警告の根拠)。</p>

@@ -133,9 +133,9 @@ print(&quot;PASS&quot;)</pre>
 <p>$$M = \begin{bmatrix} \langle G_x^2\rangle_w &amp; \langle G_x G_y\rangle_w \\ \langle G_x G_y\rangle_w &amp; \langle G_y^2\rangle_w \end{bmatrix}, \qquad R = \det(M) - k\,\operatorname{tr}(M)^2$$</p>
 <p>Shi–Tomasi（<code style="color:#22d3bf">cv_min_eigen</code>/<code style="color:#22d3bf">xkor_gftt</code>）は同じ $M$ の最小固有値 $\min(\lambda_1,\lambda_2)$ をコーナー強度に使う。<code style="color:#22d3bf">edges_color</code> は各チャンネルの勾配から作る構造テンソルの最大固有値の平方根（Di Zenzo カラー勾配）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>デバッグ用の 2-D 画像源は [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) 参照。この族は輪郭・角のはっきりした画像が向く: 合成の <code style="color:#22d3bf">shapes</code>・<code style="color:#22d3bf">checker_noisy</code>（明確な段差と角）、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code>・<code style="color:#22d3bf">camera</code>（自然なエッジと特徴点）。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;shapes&quot;)</code>（外部 DL 不要）。</p>
+<p>デバッグ用の 2-D 画像源は <code style="color:#22d3bf">../../SAMPLES.md</code> 参照。この族は輪郭・角のはっきりした画像が向く: 合成の <code style="color:#22d3bf">shapes</code>・<code style="color:#22d3bf">checker_noisy</code>（明確な段差と角）、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code>・<code style="color:#22d3bf">camera</code>（自然なエッジと特徴点）。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;shapes&quot;)</code>（外部 DL 不要）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献（正典）</h3>
-<p>台帳: [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。</p>
+<p>台帳: <code style="color:#22d3bf">../../../REFERENCES.md</code>。</p>
 <p style="margin:2px 0 2px 12px">• Roberts, L. G. (1965), &quot;Machine Perception of Three-Dimensional Solids&quot; — Roberts cross。</p>
 <p style="margin:2px 0 2px 12px">• Sobel, I. &amp; Feldman, G. (1968), &quot;A 3×3 Isotropic Gradient Operator for Image Processing&quot; — Sobel。</p>
 <p style="margin:2px 0 2px 12px">• Prewitt, J. M. S. (1970), &quot;Object Enhancement and Extraction&quot; (Picture Processing and Psychopictorics) — Prewitt。</p>

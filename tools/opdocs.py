@@ -1008,7 +1008,7 @@ def _rewrite_link(text: str, target: str) -> str:
     t = target
     stem = os.path.splitext(os.path.basename(t))[0]
     if t.endswith(".md") and stem in ("SAMPLES", "REFERENCES", "INDEX"):
-        return _html.escape(text)
+        return _spans(text)          # 飛べないが、`code` の見た目は保つ
     if t.endswith(".py") and "examples_3d/" in t:
         href = "example3d:" + stem
     elif t.endswith(".py") and "examples/" in t:
@@ -1019,32 +1019,36 @@ def _rewrite_link(text: str, target: str) -> str:
         href = "op:" + stem
     else:
         href = t
-    return f'<a style="color:{_CODE}" href="{_html.escape(href, quote=True)}">{_html.escape(text)}</a>'
+    return (f'<a style="color:{_CODE}" href="{_html.escape(href, quote=True)}">'
+            f'{_spans(text)}</a>')
+
+
+def _spans(s: str) -> str:
+    """Code spans + bold, on text that is known to contain no links."""
+    out, idx = [], 0
+    for m in _ICODE.finditer(s):
+        out.append(_bold_escape(s[idx:m.start()]))
+        out.append(f'<code style="color:{_CODE}">{_html.escape(m.group(1))}</code>')
+        idx = m.end()
+    out.append(_bold_escape(s[idx:]))
+    return "".join(out)
 
 
 def _inline(s: str) -> str:
-    # protect code spans, then escape, then re-insert styled code + bold + links
-    parts = []
-    idx = 0
-    for m in _ICODE.finditer(s):
-        parts.append(("t", s[idx:m.start()]))
-        parts.append(("c", m.group(1)))
-        idx = m.end()
-    parts.append(("t", s[idx:]))
-    out = []
-    for kind, txt in parts:
-        if kind == "c":
-            out.append(f'<code style="color:{_CODE}">{_html.escape(txt)}</code>')
-            continue
-        # links first (escape handled inside), then bold, then escape remaining text
-        pos = 0
-        buf = []
-        for m in _LINK.finditer(txt):
-            buf.append(_bold_escape(txt[pos:m.start()]))
-            buf.append(_rewrite_link(m.group(1), m.group(2)))
-            pos = m.end()
-        buf.append(_bold_escape(txt[pos:]))
-        out.append("".join(buf))
+    """★リンクを**先に**切る。
+
+    2026-09-06 まで逆で、コードスパンを先に切っていた。すると
+    ``[`../../SAMPLES.md`](../../SAMPLES.md)`` は ``[`` / コード / ``](...)`` の
+    3 つに割れ、リンクの正規表現がどの断片にも当たらない。結果、Studio の
+    ヘルプに **Markdown が生のまま** ``[…](…)`` と表示されていた(60 ページ)。
+    リンクを先に取り出し、その**表示文字列の中で**コードスパンと太字を処理する。
+    """
+    out, pos = [], 0
+    for m in _LINK.finditer(s):
+        out.append(_spans(s[pos:m.start()]))
+        out.append(_rewrite_link(m.group(1), m.group(2)))
+        pos = m.end()
+    out.append(_spans(s[pos:]))
     return "".join(out)
 
 

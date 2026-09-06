@@ -193,12 +193,12 @@ print(&quot;PASS&quot;)</pre>
 <p>(理想的な円で 1、細長いほど大):</p>
 <p>$$C = \frac{P^2}{4\pi A}$$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>この族のデバッグには <b>二値化しやすい形状画像</b>が便利です。詳細は [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) を参照。</p>
+<p>この族のデバッグには <b>二値化しやすい形状画像</b>が便利です。詳細は <code style="color:#22d3bf">../../SAMPLES.md</code> を参照。</p>
 <p><code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>(合成ブロブ、穴埋め/成分選別に好適)や</p>
 <p><code style="color:#22d3bf">sample_images.load(&quot;coins&quot;)</code>(skimage.data、BSD/public。しきい値→モルフォロジー整形の題材)を</p>
 <p><code style="color:#22d3bf">fullseye.apply(img, &quot;otsu&quot;)</code> などで二値化してから領域 op を試せます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
-<p>台帳は [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。この族のアルゴリズムの古典:</p>
+<p>台帳は <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族のアルゴリズムの古典:</p>
 <p style="margin:2px 0 2px 12px">• Serra, J. (1982). &quot;Image Analysis and Mathematical Morphology.&quot; (Matheron 1975) — 収縮・膨張・開閉・トップハット。</p>
 <p style="margin:2px 0 2px 12px">• Rosenfeld, A. &amp; Pfaltz, J. L. (1966). &quot;Sequential operations in digital picture processing.&quot; JACM — 距離変換・連結成分ラベリング。</p>
 <p style="margin:2px 0 2px 12px">• Zhang, T. Y. &amp; Suen, C. Y. (1984). &quot;A fast parallel algorithm for thinning digital patterns.&quot; CACM — スケルトン化・細線化。</p>

@@ -106,9 +106,9 @@ print(&quot;PASS&quot;)</pre>
 <p>$$</p>
 <p>なお <code style="color:#22d3bf">tophat</code>/<code style="color:#22d3bf">bothat</code>/<code style="color:#22d3bf">morph_grad</code> の出力は実装上 $\max|\cdot|$ で割って [0,1] に正規化されます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>デバッグには合成画像が扱いやすい: <code style="color:#22d3bf">blobs</code>(大小の塊 → opening/面積フィルタで粒径選別)、<code style="color:#22d3bf">shapes</code>(境界が明快 → morph_grad で確認)。文字・線構造なら <code style="color:#22d3bf">page</code>(skimage.data、細線 → f2_gray_skeleton / bothat 向き)。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>。一覧・ライセンスは [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md)。</p>
+<p>デバッグには合成画像が扱いやすい: <code style="color:#22d3bf">blobs</code>(大小の塊 → opening/面積フィルタで粒径選別)、<code style="color:#22d3bf">shapes</code>(境界が明快 → morph_grad で確認)。文字・線構造なら <code style="color:#22d3bf">page</code>(skimage.data、細線 → f2_gray_skeleton / bothat 向き)。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>。一覧・ライセンスは <code style="color:#22d3bf">../../SAMPLES.md</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
-<p>台帳は [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。この族のアルゴリズムの古典:</p>
+<p>台帳は <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族のアルゴリズムの古典:</p>
 <p style="margin:2px 0 2px 12px">• Matheron, G. (1975), *Random Sets and Integral Geometry*.</p>
 <p style="margin:2px 0 2px 12px">• Serra, J. (1982), *Image Analysis and Mathematical Morphology*.</p>
 <p style="margin:2px 0 2px 12px">• Sternberg, S. R. (1986), &quot;Grayscale Morphology&quot;, *Computer Vision, Graphics, and Image Processing*.</p>

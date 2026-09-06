@@ -12,10 +12,10 @@
 | `docs/*.md` | **31 / 74** |
 | `docs/ops/**/INDEX.md` | **0 / 32** |
 | 族ガイド | **0 / 48** |
-| op ノート | **0 / 1,843** |
+| op ノート | **0 / 1,842** |
 | `docs/articles/**` | **0 / 40** |
 
-op ノート 1,843 本 —— **この repo でいちばん大きい中身**が、入口から 1 本も
+op ノート 1,842 本 —— **この repo でいちばん大きい中身**が、入口から 1 本も
 辿れなかった。原因は 2 つあって、どちらも「在るものを無いことにする」形:
 
 1. 索引に `docs/ops/` へのリンクが 1 本も無かった。
@@ -272,7 +272,11 @@ def test_the_machine_readable_index_is_current():
     import imgevolve as IE
 
     got = json.loads((DOCS / "OP_INDEX.json").read_text(encoding="utf-8"))
-    live = IE._all_ops()
+    fresh = IE.build_op_index()          # ★公開されるものと同じ組み立て
+    live = fresh["ops"]
+    assert got == fresh, (
+        "docs/OP_INDEX.json が生成物と一致しない —— "
+        "`py -3.11 imgevolve.py index` で書き直すこと")
     assert got["n_ops"] == len(live) == len(got["ops"]), (
         "docs/OP_INDEX.json が古い: n_ops=%d / 配列 %d 件 / いまは %d op —— "
         "`py -3.11 imgevolve.py index` で書き直すこと"
@@ -371,3 +375,95 @@ def test_the_index_renders_as_a_page_without_local_paths():
         for m in re.finditer(r"[A-Za-z]:[\\/](?:dev|Users)[\\/][^\s`)\"']+", s):
             bad.append("%s: %s" % (name, m.group(0)))
     assert not bad, "公開索引にローカル絶対パス: %s" % bad
+
+
+# --------------------------------------------------------------------------- #
+# ★生成物が「中身か」を見る —— 一致だけ見る門は、両方が空でも緑になる            #
+# --------------------------------------------------------------------------- #
+#: 2026-09-06 の実測。**下回ったら落ちる**(上げるのは自由)。
+_NOTES_FLOOR = 1842            # op ノートの本数
+_WITH_EXAMPLE_FLOOR = 1637     # 実行できる例が 1 本以上あるノート
+_WITH_USAGE_FLOOR = 1348       # 使い方が 120 字以上あるノート
+_GUIDES_FLOOR = 48             # 族ガイド
+_GUIDE_BYTES_FLOOR = 2000      # いちばん短い族ガイドの下限
+
+
+def test_the_notes_have_actual_content_not_just_structure():
+    """★ユーザーの指摘(2026-09-06)「生成物が正しいのか確かめて、中身が空とか
+    なってたら意味ない。」への門。
+
+    ドリフト門は**生成物と commit 済みが一致するか**しか見ない。生成器が
+    空を吐けば両方が空で一致し、緑のまま「1,842 本のノートがあります」と
+    書かれた空のページが公開される。ここでは一致ではなく**中身の量**を測る。
+
+    構造(frontmatter・呼び出し・型・次に繋がる op)は全数必須。読んで役に
+    立つ部分(実行できる例・使い方の本文)は**いま届いている数を床にする**
+    ratchet で、後戻りだけ止める。床の値は索引にもそのまま出している。
+    """
+    sys.path.insert(0, str(ROOT / "tools"))
+    sys.path.insert(0, str(ROOT))
+    import gen_docs_index_ops as G
+
+    n, ex, use = G._note_substance()
+    assert n >= _NOTES_FLOOR, "ノートが %d 本に減っている(床 %d)" % (n, _NOTES_FLOOR)
+    assert ex >= _WITH_EXAMPLE_FLOOR, (
+        "実行できる例のあるノートが %d 本に減った(床 %d)。例を消したなら "
+        "床も一緒に動かす理由を書くこと" % (ex, _WITH_EXAMPLE_FLOOR))
+    assert use >= _WITH_USAGE_FLOOR, (
+        "使い方が書かれたノートが %d 本に減った(床 %d)" % (use, _WITH_USAGE_FLOOR))
+
+
+def test_every_note_carries_the_structural_parts():
+    """構造は**全数**。1 本でも欠けたら落とす(こちらは ratchet にしない)。"""
+    notes = [p for p in (DOCS / "ops").rglob("*.md")
+             if p.name not in ("INDEX.md", "SAMPLES.md")
+             and "guides" not in p.parts]
+    need = ("**呼び出し**", "**データ種**", "## 実行できる例",
+            "型が繋がる次の op")
+    bad = []
+    for p in notes:
+        s = p.read_text(encoding="utf-8")
+        miss = [w for w in need if w not in s]
+        if not s.startswith("---" + chr(10)):
+            miss.append("frontmatter")
+        if miss:
+            bad.append("%s: %s" % (p.relative_to(ROOT), miss))
+    assert not bad, "構造が欠けたノート %d 本:\n  %s" % (
+        len(bad), chr(10).join("  " + b for b in bad[:15]))
+
+
+def test_the_family_guides_are_not_stubs():
+    """族ガイドは「48 本あります」と索引に書く以上、空であってはならない。"""
+    guides = sorted((DOCS / "ops").rglob("guides/*.md"))
+    assert len(guides) >= _GUIDES_FLOOR, (
+        "族ガイドが %d 本に減っている(床 %d)" % (len(guides), _GUIDES_FLOOR))
+    thin = [(len(p.read_text(encoding="utf-8")), str(p.relative_to(ROOT)))
+            for p in guides]
+    small = sorted(t for t in thin if t[0] < _GUIDE_BYTES_FLOOR)
+    assert not small, "中身の薄い族ガイド(< %d B): %s" % (_GUIDE_BYTES_FLOOR, small)
+
+
+def test_the_index_tables_are_not_empty_anywhere():
+    """★6 言語すべてで、生成した 3 つの表に**実際に行がある**こと。
+
+    「0 本の op ノート」と書かれた空の表を 6 言語ぶん公開した日の再発防止。
+    行数の下限は実測(op 31 次元 + 見出し、PoC 分野 23、地図 71 本)。
+    """
+    import re as _re
+    for lang in LANGS:
+        name = "README.md" if not lang else "README.%s.md" % lang
+        s = (DOCS / name).read_text(encoding="utf-8")
+        for a, b, floor, what in (
+                ("<!-- ops-index:start -->", "<!-- ops-index:end -->", 31, "次元"),
+                ("<!-- poc-index:start -->", "<!-- poc-index:end -->", 20, "PoC 分野"),
+                ("<!-- docmap:start -->", "<!-- docmap:end -->", 65, "文書")):
+            blk = s.split(a, 1)[1].split(b, 1)[0]
+            rows = [l for l in blk.splitlines()
+                    if l.startswith("| ") and not _re.match(r"^\|[-:\s|]+\|$", l)]
+            assert len(rows) >= floor, (
+                "%s の %s の表が %d 行しかない(床 %d)" % (name, what, len(rows), floor))
+            # 空セルを含む行を作らない(生成器がデータを取り落としたときに出る)
+            empty = [l for l in rows
+                     if any(c.strip() == "" for c in l.strip("|").split("|"))]
+            assert not empty, "%s の %s の表に空のセル: %s" % (
+                name, what, empty[:3])

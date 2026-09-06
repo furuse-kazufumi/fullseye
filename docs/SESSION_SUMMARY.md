@@ -3,84 +3,120 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-06 23:09:40
+- **最終更新**: 2026-09-07 00:13:44
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-dc981cded auto: poc_fabric_defect.py 編集前 (2026-09-06 22:08)
-8f983657c auto: poc_fabric_defect.py 編集前 (2026-09-06 22:07)
-61f55239f auto: poc_fabric_defect.py 編集前 (2026-09-06 22:06)
-f88c5e360 auto: poc_fabric_defect.py 編集前 (2026-09-06 22:06)
-f8a96edf6 auto: poc_fabric_defect.py 編集前 (2026-09-06 22:05)
-154881bb5 auto: poc_fabric_defect.py 編集前 (2026-09-06 22:05)
-494001716 auto: poc_fabric_defect.py 編集前 (2026-09-06 22:04)
-46cab8729 auto: poc_fabric_defect.py 編集前 (2026-09-06 22:04)
-baef47706 auto: poc_fabric_defect.py 編集前 (2026-09-06 22:03)
-2a43a6866 auto: poc_fabric_defect.py 編集前 (2026-09-06 22:02)
+53f78b90a auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:49)
+b1e7721b5 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:47)
+6e5e456d4 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:47)
+21ef249c0 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:46)
+8c97f2121 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:46)
+37957555d auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:46)
+d9bd149e0 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:46)
+bbc1bc393 auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:36)
+07cb560ce auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:34)
+cbfccf76b auto: test_docs_index_reachable.py 編集前 (2026-09-06 23:32)
 ```
 
 ## 現在の git status
 
 ```
-M  CITATION.cff
-M  README.md
-M  docs/3DGS_USAGE.md
-M  docs/ARTICLE_GPU_SHAPEMATCH.md
-M  docs/ARTICLE_INTEGRATION_TODO.md
-M  docs/FSCRIPT_LANGUAGE.md
-M  docs/FULLSEYE_OP_ARTICLE_SPEC.md
-M  docs/GETTING_STARTED.md
-M  docs/GSPLAT_NATIVE_WINDOWS.md
-M  docs/INSTALL.md
-M  docs/KNOWN_ISSUES.md
-M  docs/LIB_COVERAGE.md
-M  docs/OPERATORS.md
-M  docs/OP_CATALOG.md
-M  docs/PERCEPTION.md
-M  docs/PLAN_0_1_9.md
-MM docs/README.de.md
-MM docs/README.en.md
-MM docs/README.ko.md
-MM docs/README.md
-MM docs/README.tw.md
-MM docs/README.zh.md
-M  docs/SESSION_SUMMARY.md
-M  docs/STATUS.md
-M  docs/UNIFIED_API_REQUIREMENTS.md
-M  docs/articles/LINKEDIN_POST.md
-M  docs/articles/assets/_evis_media_snippet.md
-M  docs/design/PERF_MEMORY_VIDEO_SURVEY.md
-M  docs/design/TRIZ_DESIGN_PATTERN_MATRIX.md
-M  examples/README.md
-M  examples/poc_fabric_defect.py
-M  fullseye/OP_CATALOG.md
-M  tests/test_docs_index_numbers.py
-M  tests/test_op_example_coverage.py
-A  tools/gen_examples_readme.py
-?? tools/gen_docs_index_ops.py
+M docs/KNOWN_ISSUES.md
+ M docs/README.de.md
+ M docs/README.en.md
+ M docs/README.ko.md
+ M docs/README.md
+ M docs/README.tw.md
+ M docs/README.zh.md
+ M docs/SESSION_SUMMARY.md
+ M studio_assets/op_help/guide_gallery2d_color_artistic.de.html
+ M studio_assets/op_help/guide_gallery2d_color_artistic.en.html
+ M studio_assets/op_help/guide_gallery2d_color_artistic.html
+ M studio_assets/op_help/guide_gallery2d_color_artistic.ko.html
+ M studio_assets/op_help/guide_gallery2d_color_artistic.tw.html
+ M studio_assets/op_help/guide_gallery2d_color_artistic.zh.html
+ M studio_assets/op_help/guide_gallery2d_contour_measure.de.html
+ M studio_assets/op_help/guide_gallery2d_contour_measure.en.html
+ M studio_assets/op_help/guide_gallery2d_contour_measure.html
+ M studio_assets/op_help/guide_gallery2d_contour_measure.ko.html
+ M studio_assets/op_help/guide_gallery2d_contour_measure.tw.html
+ M studio_assets/op_help/guide_gallery2d_contour_measure.zh.html
+ M studio_assets/op_help/guide_gallery2d_edges.de.html
+ M studio_assets/op_help/guide_gallery2d_edges.en.html
+ M studio_assets/op_help/guide_gallery2d_edges.html
+ M studio_assets/op_help/guide_gallery2d_edges.ko.html
+ M studio_assets/op_help/guide_gallery2d_edges.tw.html
+ M studio_assets/op_help/guide_gallery2d_edges.zh.html
+ M studio_assets/op_help/guide_gallery2d_morphology.de.html
+ M studio_assets/op_help/guide_gallery2d_morphology.en.html
+ M studio_assets/op_help/guide_gallery2d_morphology.html
+ M studio_assets/op_help/guide_gallery2d_morphology.ko.html
+ M studio_assets/op_help/guide_gallery2d_morphology.tw.html
+ M studio_assets/op_help/guide_gallery2d_morphology.zh.html
+ M studio_assets/op_help/guide_gallery2d_region.de.html
+ M studio_assets/op_help/guide_gallery2d_region.en.html
+ M studio_assets/op_help/guide_gallery2d_region.html
+ M studio_assets/op_help/guide_gallery2d_region.ko.html
+ M studio_assets/op_help/guide_gallery2d_region.tw.html
+ M studio_assets/op_help/guide_gallery2d_region.zh.html
+ M studio_assets/op_help/guide_gallery2d_segmentation.de.html
+ M studio_assets/op_help/guide_gallery2d_segmentation.en.html
+ M studio_assets/op_help/guide_gallery2d_segmentation.html
+ M studio_assets/op_help/guide_gallery2d_segmentation.ko.html
+ M studio_assets/op_help/guide_gallery2d_segmentation.tw.html
+ M studio_assets/op_help/guide_gallery2d_segmentation.zh.html
+ M studio_assets/op_help/guide_gallery2d_smoothing_rank.de.html
+ M studio_assets/op_help/guide_gallery2d_smoothing_rank.en.html
+ M studio_assets/op_help/guide_gallery2d_smoothing_rank.html
+ M studio_assets/op_help/guide_gallery2d_smoothing_rank.ko.html
+ M studio_assets/op_help/guide_gallery2d_smoothing_rank.tw.html
+ M studio_assets/op_help/guide_gallery2d_smoothing_rank.zh.html
+ M studio_assets/op_help/guide_handpose.de.html
+ M studio_assets/op_help/guide_handpose.en.html
+ M studio_assets/op_help/guide_handpose.html
+ M studio_assets/op_help/guide_handpose.ko.html
+ M studio_assets/op_help/guide_handpose.tw.html
+ M studio_assets/op_help/guide_handpose.zh.html
+ M studio_assets/op_help/guide_math_metrology.de.html
+ M studio_assets/op_help/guide_math_metrology.en.html
+ M studio_assets/op_help/guide_math_metrology.html
+ M studio_assets/op_help/guide_math_metrology.ko.html
+ M studio_assets/op_help/guide_math_metrology.tw.html
+ M studio_assets/op_help/guide_math_metrology.zh.html
+ M studio_assets/op_help/highpass_image.tw.html
+ M studio_assets/op_help/highpass_image.zh.html
+ M studio_assets/op_help/laplace_of_gauss.tw.html
+ M studio_assets/op_help/laplace_of_gauss.zh.html
+ M studio_assets/op_help/phase_rad.tw.html
+ M studio_assets/op_help/phase_rad.zh.html
+ M tests/test_docs_index_reachable.py
+ M tests/test_opdocs.py
+ M tools/gen_docs_index_ops.py
+ M tools/opdocs.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-23:09 .pytest_cache/v/cache/nodeids
-23:09 docs/README.de.md
-23:09 docs/README.ko.md
-23:09 docs/README.tw.md
-23:09 docs/README.zh.md
-23:09 docs/README.en.md
-23:09 docs/README.md
-23:09 tools/gen_docs_index_ops.py
-23:03 tests/test_op_example_coverage.py
-23:02 docs/KNOWN_ISSUES.md
-23:01 tests/test_docs_index_numbers.py
-23:01 examples/README.md
-23:00 tools/gen_examples_readme.py
-22:58 docs/ARTICLE_INTEGRATION_TODO.md
-22:58 docs/design/TRIZ_DESIGN_PATTERN_MATRIX.md
+00:11 .hypothesis/constants/9ed561ab0776d749
+00:11 .hypothesis/constants/fd1c7f5fdd7d75d4
+00:11 examples/README.md
+00:11 fullseye/OP_CATALOG.md
+00:11 docs/OP_CATALOG.md
+00:11 docs/articles/README.md
+00:11 docs/README.de.md
+00:11 docs/README.ko.md
+00:11 docs/README.tw.md
+00:11 docs/SESSION_SUMMARY.md
+00:11 docs/README.zh.md
+00:10 docs/README.en.md
+00:10 docs/README.md
+00:10 .pytest_cache/v/cache/nodeids
+00:10 .pytest_cache/v/cache/lastfailed
 ```
 
 ---

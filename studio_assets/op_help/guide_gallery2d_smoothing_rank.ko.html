@@ -3,7 +3,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">平滑化・ランク・復元フィルタ — 使い方ガイド</h2>
 <p>&gt; 呼び出しモデル: 2-D op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a</code>,<code style="color:#22d3bf">b</code>∈[0,1]」。</p>
 <p>&gt; <code style="color:#22d3bf">out = fullseye.apply(img, &quot;&lt;op名&gt;&quot;, a, b)</code>。すべて <b>image → image</b>(2-D float、入力と同形状)。</p>
-<p>&gt; 検証済みサンプル: [<code style="color:#22d3bf">examples/gallery2d_smoothing_rank.py</code>](../../../../examples/gallery2d_smoothing_rank.py)(この族 86 op を全数、有限性・型・決定性・効果 GT で assert)。</p>
+<p>&gt; 検証済みサンプル: <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank"><code style="color:#22d3bf">examples/gallery2d_smoothing_rank.py</code></a>(この族 86 op を全数、有限性・型・決定性・効果 GT で assert)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p>画像を <b>「均す / 直す / 汚す」</b> ための道具箱です。入力も出力も 2-D の濃淡画像(grayscale)で、撮像・計測の前処理の中核を担います。用途は 4 つに分かれます。</p>
 <p style="margin:2px 0 2px 12px">• <b>平滑化(smoothing)</b> — ぼかしてノイズを消す。線形(Gaussian・箱型平均)、エッジを残す非線形(bilateral・sigma フィルタ・拡散 PDE)、強力な非局所/変分/変換ドメイン denoiser(NLM・全変動 TV・ウェーブレット収縮)まで段階がある。</p>
@@ -161,9 +161,9 @@ print(&quot;PASS&quot;)</pre>
 <p>**Richardson-Lucy 逆畳み込み(<code style="color:#22d3bf">iv_richardson_lucy</code>)** — 観測 $d=\text{psf}\otimes u$ を満たすよう推定 $u$ を乗算的に更新(反復数はつまみ <code style="color:#22d3bf">a</code>)。</p>
 <p>$$u^{(t+1)} = u^{(t)}\cdot\left(\text{psf}^{\!*} \otimes \frac{d}{\text{psf}\otimes u^{(t)}}\right)$$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>デバッグ・動作確認には [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) の 2-D 画像源が使えます(外部 DL 不要)。合成の <code style="color:#22d3bf">checker_noisy</code> / <code style="color:#22d3bf">blobs</code>(<code style="color:#22d3bf">import sample_images; sample_images.load(&quot;checker_noisy&quot;)</code>)は平滑化・ランク除去の効果を見るのに向き、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code>(BSD/public domain)はエッジ保存や先鋭化・復元(逆畳み込み・inpaint)の題材になります。</p>
+<p>デバッグ・動作確認には <code style="color:#22d3bf">../../SAMPLES.md</code> の 2-D 画像源が使えます(外部 DL 不要)。合成の <code style="color:#22d3bf">checker_noisy</code> / <code style="color:#22d3bf">blobs</code>(<code style="color:#22d3bf">import sample_images; sample_images.load(&quot;checker_noisy&quot;)</code>)は平滑化・ランク除去の効果を見るのに向き、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code>(BSD/public domain)はエッジ保存や先鋭化・復元(逆畳み込み・inpaint)の題材になります。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
-<p>台帳 [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md) に op ごとの出典を収録。この族の中核アルゴリズムの古典は以下。</p>
+<p>台帳 <code style="color:#22d3bf">../../../REFERENCES.md</code> に op ごとの出典を収録。この族の中核アルゴリズムの古典は以下。</p>
 <p style="margin:2px 0 2px 12px">• Tukey, J. W. (1977). &quot;Exploratory Data Analysis&quot;(running median smoothing). — <code style="color:#22d3bf">median</code> ほかランク中央値系</p>
 <p style="margin:2px 0 2px 12px">• Serra, J. (1982). &quot;Image Analysis and Mathematical Morphology&quot;(Matheron 1975). — <code style="color:#22d3bf">min_filter</code>/<code style="color:#22d3bf">max_filter</code>/<code style="color:#22d3bf">gray_range_rect</code>(グレー erosion/dilation/勾配)</p>
 <p style="margin:2px 0 2px 12px">• Lee, J.-S. (1983). &quot;Digital image smoothing and the sigma filter&quot;. Computer Vision, Graphics, and Image Processing. — <code style="color:#22d3bf">sigma_image</code>/<code style="color:#22d3bf">eliminate_sp</code></p>

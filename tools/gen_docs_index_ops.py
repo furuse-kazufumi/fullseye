@@ -196,6 +196,37 @@ def _rows():
     return out
 
 
+def _note_substance():
+    """★ノートが**実際に中身か**を数える(2026-09-06、ユーザーの指摘
+    「生成物が正しいのか確かめて、中身が空とかなってたら意味ない」)。
+
+    それまでの検査は「生成物と commit 済みが一致するか」しか見ておらず、
+    **生成器が空を吐いても両方が空で一致して緑**になった。構造(見出しや
+    frontmatter)が揃っていることと、読んで役に立つことは別なので、
+    分けて数える。
+
+    返り値 (総数, 実行できる例が 1 本以上, 使い方が 120 字以上)。
+    """
+    import glob
+    total = ex = use = 0
+    base = os.path.join(_ROOT, "docs", "ops")
+    for q in glob.glob(os.path.join(base, "**", "*.md"), recursive=True):
+        qq = q.replace("\\", "/")
+        if "/guides/" in qq or os.path.basename(q) in ("INDEX.md", "SAMPLES.md"):
+            continue
+        total += 1
+        txt = io.open(q, encoding="utf-8").read()
+        if "## 実行できる例" in txt:
+            body = txt.split("## 実行できる例", 1)[1].split(chr(10) + "## ")[0]
+            if "](../" in body:
+                ex += 1
+        if "## 使い方" in txt:
+            body = txt.split("## 使い方", 1)[1].split(chr(10) + "## ")[0]
+            if len(body.strip()) >= 120:
+                use += 1
+    return total, ex, use
+
+
 def _honest(lang: str) -> str:
     """**網羅していないことを索引そのものに書く。** 数は毎回数え直す。
 
@@ -235,9 +266,32 @@ def _honest(lang: str) -> str:
          "de": "**Gemessene Abdeckung**: evolvierbare Ops {r[1]}/{r[0]}, typisiertes "
                "Ledger {l[1]}/{l[0]}, Fassade `fullseye.<name>` {f[1]}/{f[0]} — "
                "**die Fassade ist erst zur Hälfte abgedeckt**."}
-    return t[lang].format(r=(len(reg), len(reg & noted)),
+    n, ex, use = _note_substance()
+    sub = {"": "**ノートの中身の実測**: %d 本のうち、実行できる例が付いているのは "
+               "**%d 本**(%d 本は例ゼロ)、使い方の説明が 120 字以上あるのは "
+               "**%d 本**(%d 本は 1 行の要約だけ)。構造(呼び出し・型・"
+               "次に繋がる op)は %d 本すべてにある。",
+           "en": "**Measured substance**: of %d notes, **%d** link at least one "
+                 "runnable example (%d have none) and **%d** have a usage section "
+                 "of 120+ characters (%d are a one-line summary). The structure "
+                 "(call form, types, ops that chain next) is present in all %d.",
+           "zh": "**内容实测**: %d 篇中，附有可运行示例的 **%d** 篇(%d 篇没有)，"
+                 "用法说明 120 字以上的 **%d** 篇(%d 篇仅一行)。"
+                 "结构(调用形式、类型、可衔接算子)%d 篇全有。",
+           "tw": "**內容實測**: %d 篇中，附有可執行範例的 **%d** 篇(%d 篇沒有)，"
+                 "用法說明 120 字以上的 **%d** 篇(%d 篇僅一行)。"
+                 "結構(呼叫形式、型別、可銜接運算子)%d 篇全有。",
+           "ko": "**내용 실측**: %d건 중 실행 가능한 예제가 붙은 것은 **%d**건"
+                 "(%d건은 없음), 사용법이 120자 이상인 것은 **%d**건"
+                 "(%d건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 %d건 모두.",
+           "de": "**Gemessener Inhalt**: von %d Notizen verweisen **%d** auf "
+                 "mindestens ein lauffähiges Beispiel (%d ohne), **%d** haben einen "
+                 "Nutzungsabschnitt ab 120 Zeichen (%d nur eine Zeile). Die Struktur "
+                 "(Aufrufform, Typen, anschließbare Ops) haben alle %d."}
+    line = t[lang].format(r=(len(reg), len(reg & noted)),
                           l=(len(led), len(led & noted)),
                           f=(len(fac), len(fac & noted)))
+    return line + chr(10) + chr(10) + (sub[lang] % (n, ex, n - ex, use, n - use, n))
 
 
 #: ★索引は人だけでなく **AI の検索面**でもある(2026-09-06 のユーザーの指摘

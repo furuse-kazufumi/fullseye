@@ -125,9 +125,9 @@ print(&quot;PASS&quot;)</pre>
 <p>\mu = \mathrm{clip}\!\left(\frac{amp - lo}{g_{\max} - lo},\ 0,\ 1\right), \qquad \text{keep if } \mu \ge b</p>
 <p>$$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>この族のデバッグには 2-D 画像が使えます(外部 DL 不要)。輪郭・エッジ抽出には skimage の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code> / <code style="color:#22d3bf">page</code>(境界がはっきりした自然画像)、キャリパ計測とテンプレート照合には合成の <code style="color:#22d3bf">shapes</code> / <code style="color:#22d3bf">checker_noisy</code>(既知の段差・矩形を持つ)が向きます。取得法とライセンスは [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) を参照(<code style="color:#22d3bf">import sample_images; sample_images.load(&#x27;coins&#x27;)</code>)。</p>
+<p>この族のデバッグには 2-D 画像が使えます(外部 DL 不要)。輪郭・エッジ抽出には skimage の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code> / <code style="color:#22d3bf">page</code>(境界がはっきりした自然画像)、キャリパ計測とテンプレート照合には合成の <code style="color:#22d3bf">shapes</code> / <code style="color:#22d3bf">checker_noisy</code>(既知の段差・矩形を持つ)が向きます。取得法とライセンスは <code style="color:#22d3bf">../../SAMPLES.md</code> を参照(<code style="color:#22d3bf">import sample_images; sample_images.load(&#x27;coins&#x27;)</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
-<p>台帳は [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。この族のアルゴリズムの古典:</p>
+<p>台帳は <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族のアルゴリズムの古典:</p>
 <p style="margin:2px 0 2px 12px">• Steger, C. (1998). &quot;An Unbiased Detector of Curvilinear Structures.&quot; IEEE TPAMI. — 下位画素エッジ・線抽出(edges_sub_pix / lines_gauss / lines_facet)。</p>
 <p style="margin:2px 0 2px 12px">• Lorensen, W. &amp; Cline, H. (1987). &quot;Marching Cubes: A High Resolution 3D Surface Construction Algorithm.&quot; SIGGRAPH. — 等値線抽出 marching-squares の基礎(threshold_sub_pix / sk_find_contours)。</p>
 <p style="margin:2px 0 2px 12px">• Marr, D. &amp; Hildreth, E. (1980). &quot;Theory of Edge Detection.&quot; Proc. R. Soc. Lond. B. — LoG ゼロ交差(zero_crossing_sub_pix)。</p>

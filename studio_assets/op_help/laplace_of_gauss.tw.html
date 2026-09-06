@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;laplace_of_gauss&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">laplace_of_gauss</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>LoG(Laplacian of Gaussian,即高斯平滑後再套用拉普拉斯運算子的二階導數邊緣偵測)。透過 `<code style="color:#22d3bf">signed01</code><code style="color:#22d3bf"> 將帶符號的響應映射到 [0,1](0.5 對應零交越),可作為零交越偵測或斑點偵測的基礎。相當於 HALCON 的 </code><code style="color:#22d3bf">laplace_of_gauss</code>`(LoG-Operator (Laplace of Gaussian).)。</p>
+<p>LoG(Laplacian of Gaussian,即高斯平滑後再套用拉普拉斯運算子的二階導數邊緣偵測)。透過 `<code style="color:#22d3bf">signed01</code>` 將帶符號的響應映射到 <a style="color:#22d3bf" href="0.5 對應零交越">0,1</a>,可作為零交越偵測或斑點偵測的基礎。相當於 HALCON 的 `<code style="color:#22d3bf">laplace_of_gauss</code>`(LoG-Operator (Laplace of Gaussian).)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がガウス核のシグマを 0.5〜3.0 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。値が 0.5</p>
 <p>から離れるほど強いエッジ/ブロブ応答であることを示す。</p>
