@@ -443,6 +443,7 @@ def main():
             wrong += int(chosen > cands[0] + 30.0)
         quad_wrong[label] = wrong / N_Q
         quad_best[label] = med(best)
+        quad_tbl[label] = (med(best), med(rest), 100 * wrong / N_Q, med(chosen_all))
         print(f"  {label:<22}{med(best):>13.2f}{med(rest):>16.1f}"
               f"{100 * wrong / N_Q:>9.0f}%{med(chosen_all):>16.2f}")
     print("  (象限誤り = 選ばれた解が最良候補より 30 度以上悪い = 反転した象限を掴んだ)")
