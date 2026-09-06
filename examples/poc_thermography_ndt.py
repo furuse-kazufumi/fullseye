@@ -281,37 +281,51 @@ def section3_depth_table(masks, d_hat):
     print("     冷え方が板厚のそれに近づくため。誤差は必ず**過大側**に出る。")
 
 
-def section4_aspect(masks, d_hat, cube, sound):
+def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
     print()
     print("=" * 78)
     print("4) ★★縦横比の限界 —— 直径/深さ で並べ直す")
     print("=" * 78)
+    # ★対照群: **横拡散を切った**同じ場面。これで「横拡散のせい」と
+    #   「画素が足りない/マスクが取れないせい」を分けられる。片方だけ見て
+    #   物理のせいにするのが、この種の実験でいちばんよくある間違い。
+    _, cube_nb = synth_cube(depth_map, blur=False, netd=NETD, seed=1)
+    d_nb, _ = tsr_depth(ts, cube_nb)
     rows = []
     for (d_mm, dia), m in masks.items():
         ar = dia / d_mm
         e = 1e3 * float(np.median(d_hat[m]))
+        e_nb = 1e3 * float(np.median(d_nb[m]))
         # 検出 SNR: 最良時刻での欠陥-健全部の差 / 健全部の面内標準偏差
         c = cube[:, m].mean(axis=1) - cube[:, sound].mean(axis=1)
         k = int(np.argmax(np.abs(c)))
         snr = abs(float(c[k])) / max(float(cube[k][sound].std()), 1e-9)
-        rows.append((ar, d_mm, dia, e, 100 * (e / d_mm - 1), snr))
+        rows.append((ar, d_mm, dia, e, 100 * (e / d_mm - 1), snr,
+                     100 * (e_nb / d_mm - 1), dia * 1e-3 / PX))
     rows.sort()
-    print("  %8s %7s %7s | %9s %9s | %9s"
-          % ("直径/深さ", "深さmm", "直径mm", "推定mm", "誤差%", "検出SNR"))
-    print("  " + "-" * 68)
-    for ar, d_mm, dia, e, err, snr in rows:
+    print("  %8s %6s %6s %6s | %8s %7s | %9s | %7s"
+          % ("直径/深さ", "深さmm", "直径mm", "直径px", "推定mm", "誤差%", "検出SNR", "拡散なし%"))
+    print("  " + "-" * 76)
+    for ar, d_mm, dia, e, err, snr, err_nb, dpx in rows:
         flag = "  ←壊れている" if abs(err) > 20 else ""
-        print("  %8.1f %7.1f %7.1f | %9.2f %9.0f | %9.1f%s"
-              % (ar, d_mm, dia, e, err, snr, flag))
+        print("  %8.1f %6.1f %6.1f %6.0f | %8.2f %6.0f%% | %9.1f | %6.0f%%%s"
+              % (ar, d_mm, dia, dpx, e, err, snr, err_nb, flag))
     print()
     ok = [r for r in rows if abs(r[4]) <= 20]
     ng = [r for r in rows if abs(r[4]) > 20]
     if ok and ng:
         print("  → 誤差 20 %% 以内に収まった最小の縦横比 = %.1f、"
               "壊れた最大の縦横比 = %.1f。" % (min(r[0] for r in ok), max(r[0] for r in ng)))
-    print("     現場の経験則『直径は深さの 2 倍以上必要』は、この合成でも同じ場所に")
-    print("     境界が出る。**深さの推定は検出より先に壊れる** —— 見えているのに")
-    print("     深さが 2 倍間違っている領域があることに注意。")
+    print("     境界は**縦横比 4 前後**。よく言われる『直径は深さの 2 倍あればよい』")
+    print("     より 1 段厳しい —— 少なくともこの深さ推定(TSR)ではそうなる。")
+    print()
+    print("     ★縦横比だけでは決まらない。縦横比 4 の 2 つ((0.5mm,2mm) と")
+    print("     (1.0mm,4mm))で結果が逆になっている。最後の列(拡散なし)を見ると、")
+    print("     直径 4 px の欠陥は**横拡散を切っても直らない** —— こちらは画素が")
+    print("     足りないほうの限界で、原因が別。1 つの表に 2 つの限界が同居している。")
+    print()
+    print("     **深さの推定は検出より先に壊れる**: 検出 SNR が 10 を超えている")
+    print("     (0.5mm, 2mm) の深さ推定は 600 % 以上ずれている。見えている ≠ 測れる。")
 
 
 def section5_methods(ts, cube, masks, sound):
@@ -330,8 +344,8 @@ def section5_methods(ts, cube, masks, sound):
     maps["TSR(ln-ln 2 階微分の最大)"] = d2max
     # PCT: 主成分サーモグラフィ。spec_pca は (H, W, B) を取る。
     sub = cube[::4].transpose(1, 2, 0).astype(np.float64)
-    pcs = np.asarray(fs.spec_pca(sub, n_components=3))
-    maps["PCT(spec_pca 第 2 主成分)"] = pcs[..., 1]
+    scores, _comps, _evr = fs.spec_pca(sub, n_components=3)
+    maps["PCT(spec_pca 第 2 主成分)"] = np.asarray(scores)[..., 1]
     print("  %-30s | %s" % ("手法", "  ".join("%5.1f" % (k[1] / k[0]) for k in masks)))
     print("  %-30s | %s" % ("(列 = 直径/深さ)", "  ".join("%5s" % "" for _ in masks)))
     print("  " + "-" * 76)
@@ -462,7 +476,7 @@ def main():
           % (NFRAME, NPIX, NPIX, cube.nbytes / 1e6, len(masks), 1e3 * NETD))
     d_hat = section2_zero_point(depth_map, ts, cube, masks, sound)
     section3_depth_table(masks, d_hat)
-    section4_aspect(masks, d_hat, cube, sound)
+    section4_aspect(depth_map, ts, masks, d_hat, cube, sound)
     section5_methods(ts, cube, masks, sound)
     section6_noise(depth_map, masks)
     section7_illumination(depth_map, masks, sound)
