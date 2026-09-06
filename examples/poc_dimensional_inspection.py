@@ -1550,9 +1550,15 @@ def main():
         f"align {align_ok} fuzzy {fz_ok}"
     assert ell_err < 0.10, f"楕円当てはめが円で崩れる: {ell_err}"
     assert u_rep > 0 and u_c >= u_rep and 2 * u_c < 0.20,         f"不確かさ収支が壊れている: u_rep={u_rep} u_c={u_c}"
-    assert n_reach == 0, \
-        f"14 関数のいずれかが公開経路から届くようになった(この PoC の前提が変わった): {n_reach}"
-    assert "measure_pairs" not in dir(fs) and "measure_pairs" not in dir(fs.ledger)
+    # ★2026-09-06 に「埋もれている」が解消された。以前は `n_reach == 0`
+    #   (届かないことを固定)だった。いまは**届くことを固定する**。
+    assert n_reach == 14, \
+        f"公開経路から届かない関数が出た(台帳の登録が外れた?): {n_reach} / 14"
+    assert "measure_pairs" in dir(fs.ledger), "台帳から measure_pairs が消えた"
+    # 残っている穴: ファサードには 1 つも出ていない。ここが変わったら
+    # 上の所見を書き換えること。
+    assert "measure_pairs" not in dir(fs), \
+        "ファサードに出た(穴が塞がった。所見を書き換えること)"
     assert "m1_measure_pairs" in dir(fs.op)
 
     if figs.errors():
