@@ -42,13 +42,16 @@ CASIA は再配布条件が明示されておらず、Columbia は研究利用�
       それ以外は 95(背景と同じ)。テストは ``[40:104]`` → ``[64:128]`` という
       差 24 = 8 の倍数の配置しか見ていない。docstring にこの条件が書かれていない。
   (c) **``noise_inconsistency_map`` は画像の縁に固定の偽陽性源を作る**。改竄が
-      1 画素も無い画像で、縁 1 ブロックの ``|σ - 中央値|`` が内側の **1.44 倍**
-      (実測 0.0924 / 0.0642)。境界を reflect で折り返して Immerkær のマスクを
-      畳み込むためで、その結果 **ゼロ点の AUC が 0.5 ではなく 0.447** になる
-      (画像の中央に置いた偽マスクが相対的に『静か』に見える)。docstring の
-      「言えないこと」に場所依存の偏りが載っていない。なお ``H % block != 0``
-      のときは ``full[out.shape[0]:] = out[-1:]`` が最終ブロックを引き伸ばす経路が
-      別にあるが、本 PoC は 256 / 16 割り切れなのでそちらは踏んでいない。
+      1 画素も無い画像で、``|σ - 中央値|`` は最外周のブロックが中心の **1.50 倍**
+      (実測 0.0924 / 0.0616)。σ そのものは逆に最外周がいちばん低く
+      (0.6546 / 中心 0.6658)、境界を reflect で折り返して Immerkær のマスクを
+      畳み込むと高周波が減るためである。**生成器の側には場所の偏りが無い**
+      (生画像の局所 std は環によらず 0.0357〜0.0375 で平ら)ので、これは
+      PoC の作りではなく op の性質。結果として **ゼロ点の AUC が 0.5 ではなく
+      0.447** になる。docstring の「言えないこと」に場所依存の偏りが載っていない。
+      なお ``H % block != 0`` のときは ``full[out.shape[0]:] = out[-1:]`` が最終
+      ブロックを引き伸ばす経路が別にあるが、本 PoC は 256 / 16 が割り切れるので
+      そちらは踏んでいない。
   (d) **``null_distribution`` / ``evidence_quantile`` は「証拠量 1 個」を清浄分布に
       置く道具で、画素ごとの地図には掛けられない**。ROC を引くには結局 PoC 側で
       順位計算を書くことになる。この族に「地図 + 真値マスク → ROC」の op が無い。
@@ -376,21 +379,36 @@ def main():
     print("  → 内/外の比は 1 から離れ、z は 2 桁になる。**それでも AUC は 0.5 付近**")
     print("     である(改竄していないのだから当然)。**z が大きいことと検出できること**")
     print("     **は別**で、それを分けて言えるのが AUC と FPR 固定の検出率のほうである。")
-    edge = np.zeros((N, N), bool)
-    edge[:BLOCK] = edge[-BLOCK:] = True
-    edge[:, :BLOCK] = edge[:, -BLOCK:] = True
-    e, i = [], []
-    for im, _ in null:
-        d = score_noise(im)
-        e.append(d[edge].mean())
-        i.append(d[~edge].mean())
+    # 場所への偏りを、ブロック格子の「中心からの環」で測る。
+    nb = N // BLOCK
+    yy, xx = np.mgrid[0:nb, 0:nb]
+    ring = np.maximum(np.abs(yy - (nb - 1) / 2), np.abs(xx - (nb - 1) / 2)).astype(int)
+    dev = np.zeros((nb, nb))      # |σ - 中央値| の環ごとの平均
+    sig = np.zeros((nb, nb))      # σ そのもの
+    gen = np.zeros((nb, nb))      # 生画像の局所標準偏差(生成器側の偏りの検査)
+    for k, (im, _) in enumerate(null):
+        m = F.noise_inconsistency_map(im, block=BLOCK)
+        dev += np.abs(m - float(np.median(m)))[::BLOCK, ::BLOCK]
+        sig += m[::BLOCK, ::BLOCK]
+        raw = natural(N, k)
+        loc = np.sqrt(np.maximum(ndimage.uniform_filter(raw ** 2, BLOCK)
+                                 - ndimage.uniform_filter(raw, BLOCK) ** 2, 0))
+        gen += loc[BLOCK // 2::BLOCK, BLOCK // 2::BLOCK]
+    dev, sig, gen = dev / len(null), sig / len(null), gen / len(null)
+    ctr, out = ring == 0, ring == ring.max()
     print(f"     雑音 σ のゼロ点 AUC は {res_null['雑音σ'][0]:.3f} で、0.5 から離れている。")
-    print(f"     実測すると縁 1 ブロックの |σ - 中央値| が {np.mean(e):.4f}、内側が"
-          f" {np.mean(i):.4f}")
-    print(f"     = {np.mean(e) / np.mean(i):.2f} 倍で、**改竄が無くても縁が固定の偽陽性源**")
-    print("     **になっている**(境界を reflect で折り返して畳み込むため)。0.447 という")
-    print("     数字が縁だけで説明できるとまでは言わない —— 言えるのは『場所に依存する")
-    print("     偏りが実在し、それはゼロ点を置かないと見えない』ことである。★道具の穴 (c)。")
+    print("     " + pad("ブロック格子の環", 22, right=False)
+          + pad("中心", 10) + pad("最外周", 10) + pad("外/中", 10))
+    for lbl, arr in (("|σ - 中央値|", dev), ("σ そのもの", sig),
+                     ("生画像の局所 std", gen)):
+        print("     " + pad(lbl, 22, right=False) + pad(f"{arr[ctr].mean():.4f}", 10)
+              + pad(f"{arr[out].mean():.4f}", 10)
+              + pad(f"{arr[out].mean() / arr[ctr].mean():.2f}", 10))
+    print("     → σ そのものは最外周がいちばん **低い**(境界を reflect で折り返すと")
+    print("       高周波が減る)。そのぶん中央値からの隔たりが大きくなり、**改竄が**")
+    print("       **無くても縁が固定の偽陽性源になる**。3 行目のとおり生成器の側には")
+    print("       場所の偏りが無い(生画像の局所 std は環によらず平ら)ので、これは")
+    print("       この PoC の作りではなく op の性質である。★道具の穴 (c)。")
 
     print("\n=== 4-a. 効かなくなる境界:改竄領域の大きさ ===")
     header()
