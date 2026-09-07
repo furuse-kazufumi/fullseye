@@ -765,10 +765,10 @@ def section_controls(layout: dict) -> dict:
                          "偽不合格 [%](空気に 1 個)"],
                         rows, title="要因を 1 つずつ止める")
         figs.save_grid("control_maps",
-                       [a["exc_true"], b["exc_true"], c["exc_true"], d["exc_true"]],
+                       [plan_view(v["exc_true"]) for v in (a, b, c, d)],
                        ["(a) 均一+扉", "(b) 壁だけ", "(c) 壁+扉", "(d) 扉だけ"],
-                       title="真の逸脱時間の地図 [min](4 条件、上=吹き出し口 下=扉)",
-                       ncols=4)
+                       title="真の逸脱時間の地図 [min](左=吹き出し口 / 右=扉)",
+                       ncols=2)
     return out
 
 
