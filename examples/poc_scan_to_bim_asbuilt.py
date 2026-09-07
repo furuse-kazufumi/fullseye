@@ -659,9 +659,11 @@ def measure_elements(scan_p: np.ndarray, seed: int = 0) -> dict:
         h, _, _ = np.histogram2d(fp[:, 0], fp[:, 1], bins=(24, 16),
                                  range=((0, RX), (0, RY)), weights=res)
         c, _, _ = np.histogram2d(fp[:, 0], fp[:, 1], bins=(24, 16), range=((0, RX), (0, RY)))
-        grid = np.where(c > 0, h / np.maximum(c, 1), np.nan)
+        grid = np.where(c > 4, h / np.maximum(c, 1), np.nan)
         good = np.isfinite(grid)
-        out["floor_pv"] = float(np.nanmax(grid) - np.nanmin(grid))
+        # PV は最大-最小だと格子 1 個の雑音が乗るので p1-p99 で取る(規約を書く)
+        out["floor_pv"] = float(np.nanpercentile(grid[good], 99)
+                                - np.nanpercentile(grid[good], 1))
         out["floor_rms"] = float(np.sqrt(np.nanmean(grid[good] ** 2)))
         out["floor_grid"] = grid
     else:
