@@ -861,28 +861,37 @@ def section6_optimum(sw: dict, geo: dict) -> dict:
     print("  予測 = 「遮蔽だけの誤差(撮像を通さない)」と「雑音だけの誤差")
     print("  (θ=%.0f 度で 1 点合わせて 1/sin θ で伸ばす)」の二乗和。" % THETA_REF)
     print("  どちらの側も**その量に固有**なので、最適角も量ごとに別になるはず。")
+    print("  ★2 つの基準を分けて出す: **全断面が測れる中での最小**(検査で使える角)と、")
+    print("  **測れた断面だけでの最小**(論文に載せると良く見える角)。")
     print()
     res = sw["res"]["b 遮蔽あり"]
     ang = np.asarray(ANGLES)
     rows, out = [], {}
-    print("  %-12s %8s %8s %12s %12s %7s"
-          % ("量", "予測 θ*", "実測 θ*", "θ* の |誤差|", "36 度で", "倍率"))
-    print("  " + "-" * 64)
+    print("  %-12s %8s %8s %11s | %8s %11s %8s"
+          % ("量", "予測 θ*", "実測 θ*", "|誤差|", "甘い θ*", "|誤差|", "測れた"))
+    print("  " + "-" * 72)
     for k in KEYS:
         gm = np.asarray(geo[k]["mae"], float)
         gg = np.asarray(geo[k]["got"], float)
         n0 = sw["res"]["a 遮蔽なし"][k]["mae"][I_REF] * np.sin(np.deg2rad(THETA_REF))
         pred = np.sqrt(np.nan_to_num(gm, nan=1e3) ** 2 + (n0 / np.sin(np.deg2rad(ang))) ** 2)
         pred = np.where(gg > 0.999, pred, np.inf)
-        meas = np.where(np.asarray(res[k]["got"]) > 0.999,
-                        np.nan_to_num(np.asarray(res[k]["mae"], float), nan=np.inf), np.inf)
-        ip, im = int(np.argmin(pred)), int(np.argmin(meas))
-        out[k] = (ang[ip], ang[im], meas[im], meas[I_REF])
+        mae = np.nan_to_num(np.asarray(res[k]["mae"], float), nan=np.inf)
+        got = np.asarray(res[k]["got"], float)
+        meas = np.where(got > 0.999, mae, np.inf)       # 全断面が測れる角だけ
+        loose = np.where(got > 0.0, mae, np.inf)        # 測れた断面だけで最小
+        ip, im, il = int(np.argmin(pred)), int(np.argmin(meas)), int(np.argmin(loose))
+        out[k] = (ang[ip], ang[im], meas[im], mae[il], ang[il], got[il])
         rows.append([LABEL[k], "%.0f" % ang[ip], "%.0f" % ang[im], "%.4f" % meas[im],
-                     "%.4f" % meas[I_REF], "%.1f" % (meas[I_REF] / meas[im])])
-        print("  %-12s %7.0f度 %7.0f度 %12.4f %12.4f %7.1f"
-              % (LABEL[k], ang[ip], ang[im], meas[im], meas[I_REF],
-                 meas[I_REF] / meas[im]))
+                     "%.0f" % ang[il], "%.4f" % mae[il], "%.0f %%" % (100 * got[il])])
+        print("  %-12s %7.0f度 %7.0f度 %11.4f | %7.0f度 %11.4f %7.0f %%"
+              % (LABEL[k], ang[ip], ang[im], meas[im], ang[il], mae[il], 100 * got[il]))
+    print()
+    print("  → ★★「誤差が最小の角度」と「全断面が測れる角度」は別物。左溝は")
+    print("     %.0f 度で |誤差| %.4f mm と**見た目いちばん良い**が、そこで測れて"
+          % (out["ucL"][4], out["ucL"][3]))
+    print("     いるのは %.0f %% の断面だけ。全断面が要るなら %.0f 度(%.4f mm)。"
+          % (100 * out["ucL"][5], out["ucL"][1], out["ucL"][2]))
     allm = []
     for i in range(len(ANGLES)):
         v = [res[k]["mae"][i] if res[k]["got"][i] > 0.999 else np.nan for k in KEYS]

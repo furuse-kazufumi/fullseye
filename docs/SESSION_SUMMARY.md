@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-08 04:12:26
+- **最終更新**: 2026-09-08 04:54:37
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-ff94cd07b PoC 2 本(埋設管の漏水位置決め / 太陽光の熱画像点検)+ gcc_delay + 版依存の台帳を外す
-ca8314d91 auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:40)
-a8bf6e42b auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:39)
-2c6df1876 auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:39)
-811085857 auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:39)
-13dd0171c auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:39)
-619ade025 auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:39)
-015d2a7fe auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:38)
-462e49ccd auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:38)
-b330d2c8e auto: poc_pv_thermal_survey.py 編集前 (2026-09-08 03:37)
+9430fd01f auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:54)
+b7cef52b3 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:53)
+96f5ff556 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:53)
+9680c8af0 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:53)
+7abf9e1b0 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:52)
+6cfe3ab55 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:52)
+eb861353c auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:51)
+0f6bcf76f auto: poc_cold_chain_excursion.py 編集前 (2026-09-08 04:51)
+dde3d4969 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:51)
+c8f78f839 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:50)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M examples/poc_weld_bead_scan_angle.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-04:10 .ruff_cache/0.16.0/13906884550158051618
-04:10 .ruff_cache/0.16.0/12943517194686254008
-04:09 .pytest_cache/v/cache/nodeids
-04:07 docs/SESSION_SUMMARY.md
-04:06 CHANGELOG.md
-04:06 docs/KNOWN_ISSUES.md
-04:05 .ruff_cache/0.16.0/15563442506313268617
-04:05 tests/test_op_figures.py
-04:04 .pytest_cache/v/cache/lastfailed
-04:01 docs/AI_RAG_GUIDE.md
-03:55 docs/ops/_fig/figures.json
-03:55 docs/ops/_fig/img_to_monogenic.inputs.jpg
-03:55 docs/ops/_fig/img_to_monogenic.b.jpg
-03:55 docs/ops/_fig/img_to_monogenic.a.jpg
-03:55 docs/ops/_fig/img_to_monogenic.png
+04:54 examples/poc_weld_bead_scan_angle.py
+04:54 .pytest_cache/v/cache/nodeids
+04:54 tests/test_acoustics.py
+04:53 examples2d.py
+04:53 docs/articles/exhibits/poc_captions.json
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/figures.json
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/16_logger_map.png
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/15_sweep_nlogger.png
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/14_excursion_events.tsv
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/14_excursion_events.png
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/14_excursion_events.csv
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/13_excursion_body.png
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/12_verdict_maps.png
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/11_metric_limits.tsv
+04:51 docs/articles/assets/poc/poc_cold_chain_excursion/11_metric_limits.png
 ```
 
 ---
