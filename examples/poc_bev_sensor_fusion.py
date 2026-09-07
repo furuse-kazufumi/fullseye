@@ -303,7 +303,7 @@ def in_camera(pts_world: np.ndarray) -> np.ndarray:
             & (uv[:, 1] >= 0) & (uv[:, 1] < H))
 
 
-def resample_known(known: np.ndarray, C, dyaw, dt, X, Y) -> np.ndarray:
+def resample_free(known: np.ndarray, C, dyaw, dt, X, Y) -> np.ndarray:
     """思い込みの姿勢で置いたときの既知マスク(真の既知マスクを剛体で写す)。"""
     q = np.stack([X.ravel(), Y.ravel(), np.zeros(X.size)], 1) - C - np.asarray(dt)
     p = q @ rz(dyaw) + C                              # R^T q + C
