@@ -537,8 +537,8 @@ def section_reprojection(rig: Rig) -> dict:
     K = np.array([[f, 0.0, (W - 1) / 2.0], [0.0, f, (H - 1) / 2.0],
                   [0.0, 0.0, 1.0]])
     diag = float(np.hypot(W, H))
-    print("   yaw 誤差    画像の再投影誤差       画像対角比    BEV のずれ @ %.1f m"
-          "   セル数" % OBSTACLES[1]["cx"])
+    print("   yaw 誤差    画像の再投影誤差   予測 f·tanθ   画像対角比"
+          "    BEV のずれ @ %.1f m   セル数" % OBSTACLES[1]["cx"])
     rows, out = [], {}
     for dy in (0.1, 0.2, 0.5, 1.0, 2.0):
         # ★誤差は **世界の z 軸まわり**(= place と同じ)。``R_wc @ rz`` と
