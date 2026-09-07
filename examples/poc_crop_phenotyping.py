@@ -881,8 +881,10 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
                    xlabel="葉の傾き [度](水平 = 0)", ylabel="累積割合",
                    title="面ごとの面積で重みを付けるかどうかで葉角分布が変わる")
     figs.save_table("fpar", ["太陽天頂角 [度]", "真の k(theta)", "球形仮定の k",
-                             "真の fPAR", "仮定の fPAR", "誤差"], rows,
-                    title="受光(fPAR)は天頂では k に鈍く、斜めで効く")
+                             "fPAR(真の葉角)", "fPAR(球形仮定)", "誤差"], rows,
+                    title="受光(fPAR)は天頂では k に鈍く、斜めで効く",
+                    caption="天頂 (0 度) では fPAR = 植被率で k が約分される。"
+                            "斜めで初めて葉角分布が要る。")
     return {"k_pts": k_pts, "k_naive": k_naive, "h99": h99, "rows": rows,
             "n_pts": int(pts.shape[0]), "z_g": z_g}
 
