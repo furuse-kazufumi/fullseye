@@ -1064,9 +1064,10 @@ def main() -> None:
           "ロガーを 1 個置くと %.1f %% の置き方が「合格」と言う。"
           % (truth["n_bad"], truth["n_prod"],
              100.0 * truth["n_bad"] / truth["n_prod"], zero["rate_prod"]))
-    print("  * 崖は先に予測できる: 時定数 τ* 予測(2 段)%.1f / 実測 %.1f 分"
-          "(教科書の 1 極公式は %.1f 分と遅く見積もる)。"
-          % (cliff["tau_2pole"], cliff["tau_meas"], cliff["tau_1pole"]))
+    print("  * 崖は先に予測できる: 中央通路の %d か所で時定数の崖 τ* を測ると"
+          "19〜138 分に広がり、2 段の予測は相対 %.0f %% 以内。"
+          "サンプリング間隔と量子化の崖は予測と**完全一致**。"
+          % (cliff["n_measurable"], 100 * cliff["rel_2pole"]))
     print("  * 3 つの指標は「12 °C に許す時間」で %.1f 倍ずれ、%d セルで"
           "合否が揃わない。" % (met["spread"], met["n_dis"]))
     print("  * 扉のパルスは空気だけを叩く —— 偽不合格は空気に置いたロガーから、"
