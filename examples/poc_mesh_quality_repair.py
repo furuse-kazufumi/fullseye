@@ -411,9 +411,12 @@ def section_scene() -> dict:
     if figs.enabled():
         occ = sdf < 0
         mid = occ.shape[0] // 2
+        # 断面は格子そのままだと 48 px しかなく、他のパネル(300 px)の中で
+        # 切手のように小さくなる。最近傍で 6 倍に伸ばして並べる。
+        slab = np.repeat(np.repeat(occ[mid].astype(float), 6, 0), 6, 1)
         figs.save_grid(
             "scene",
-            [render(V, F), render(V, F, shade=False), occ[mid].astype(float)],
+            [render(V, F), render(V, F, shade=False), slab],
             ["陰影(球 ∪ 襟 ∪ ボス − 貫通穴)", "深度図 [mm]",
              "断面(穴軸の中央) —— 中心の空洞が種数 1 を作る"],
             title="健全な部品(閉じた三角メッシュ 面 %d 枚、χ = %d)" % (t["F"], t["chi"]),
