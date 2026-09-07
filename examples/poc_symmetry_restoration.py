@@ -569,20 +569,35 @@ def section_offset_cliff(S: dict, Z: dict) -> dict:
     print("=" * 78)
     pts, surv, miss, tau = S["pts"], S["surv"], S["miss"], S["tau"]
     gt = pts[miss]
+    nrm = S["nrm"][~miss]
+    mir0 = np.asarray(_L.reflect_points(surv, TRUE_P0, TRUE_N), float)
+    d0, _ = cKDTree(surv).query(mir0, k=1, workers=-1)
+    src = d0 > tau
+    nb = nrm[src]
+    nb_ref = nb - 2.0 * (nb @ TRUE_N)[:, None] * TRUE_N        # 鏡像側の法線
+    cosb = float(np.sqrt(np.mean((nb_ref @ TRUE_N) ** 2)))     # |n_面 . x| の RMS
     ts = np.array([0.0, 0.1, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0])
     meas = []
     for t in ts:
         r = restore_symmetric(surv, np.array([t, 0.0, 0.0]), TRUE_N, tau)
-        meas.append(score_restoration(gt, r["restored"], pts, r["fill"], tau)["rms"])
+        meas.append(score_restoration(gt, r["restored"], r["fill"])["rms"])
     meas = np.array(meas)
-    pred = 2.0 * ts
-    print("  位置ずれ t [mm] | 実測 RMS [mm] | 予測 2t [mm]")
-    for t, m, p in zip(ts, meas, pred):
-        print("      %5.2f      |    %6.3f     |   %6.3f" % (t, m, p))
+    floor = float(meas[0])
+    naive = 2.0 * ts                                    # 鏡像点が動く量(厳密)
+    pred = np.sqrt(floor ** 2 + (2.0 * ts * cosb) ** 2)  # その法線成分 + 床
+    print("  面を t だけ平行移動すると鏡像点は**厳密に 2t** 動く(位置に依らない)。")
+    print("  ただし面に沿った分は面が吸うので、表面誤差に効くのは法線成分だけ:")
+    print("  穴を埋める鏡像点での |n_面 . x| の RMS = %.3f -> 予測 = %.3f * 2t(+床 %.3f mm)"
+          % (cosb, cosb, floor))
+    print("  位置ずれ t [mm] | 実測 RMS [mm] | 素朴 2t [mm] | 法線成分の予測 [mm]")
+    for t, m, a, p in zip(ts, meas, naive, pred):
+        print("      %5.2f      |    %6.3f     |   %6.3f     |   %6.3f" % (t, m, a, p))
     sel = ts >= 0.5
+    rel_n = float(np.mean(np.abs(naive[sel] - meas[sel]) / meas[sel]) * 100)
     rel = float(np.mean(np.abs(pred[sel] - meas[sel]) / meas[sel]) * 100)
-    print("  予測 2t の平均相対誤差(t >= 0.5 mm)= %.1f %%。"
-          "位置ずれは**形に依らず**一定量ずれる(角度ずれと違う)。" % rel)
+    print("  平均相対誤差(t >= 0.5 mm): 素朴 2t は %.1f %%、法線成分は %.1f %%。" % (rel_n, rel))
+    print("  ★角度ずれと違い、位置ずれは**形の広がりで増幅されない**"
+          "(2t は点の位置に依らない)。")
     zr = Z["zero_rms"]
     cross = np.nan
     for i in range(1, len(ts)):
