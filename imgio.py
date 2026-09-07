@@ -216,7 +216,58 @@ _ANALYTIC = {
 }
 
 
-def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)):
+#: 値 → [0,1] の**写し方**。パレットと直交する軸で、実務ではこちらのほうが効く
+#: (2026-09-08: それまで線形しか無かった)。``percentile`` / ``rank`` は配列全体を
+#: 見るので、複数枚を比べるときは ``vmin`` / ``vmax`` を明示すること。
+NORMS = ("linear", "log", "symlog", "sqrt", "power", "percentile", "rank", "symmetric")
+
+
+def _scale(a, fin, vmin, vmax, norm, gamma, percentile):
+    """有限セルを [0,1] へ写す。``norm`` ごとに写し方を変える。"""
+    v = a[fin] if fin.any() else np.zeros(1)
+    if norm == "percentile":
+        lo_p, hi_p = percentile
+        lo = float(np.percentile(v, lo_p)) if vmin is None else float(vmin)
+        hi = float(np.percentile(v, hi_p)) if vmax is None else float(vmax)
+        return np.clip(normalize(a, lo, hi), 0.0, 1.0)
+    if norm == "rank":
+        # 分位(ヒストグラム平坦化)。外れ値が 1 個あっても中身が潰れない
+        out = np.zeros_like(a)
+        order = np.argsort(v, kind="stable")
+        ranks = np.empty(v.size)
+        ranks[order] = np.linspace(0.0, 1.0, v.size) if v.size > 1 else 0.0
+        out[fin] = ranks
+        return out
+    if norm == "symmetric":
+        m = float(np.max(np.abs(v))) if vmax is None else float(vmax)
+        m = m if m > 0 else 1.0
+        return np.clip((a / m) * 0.5 + 0.5, 0.0, 1.0)     # 0 が必ず中央
+    lo = float(v.min()) if vmin is None else float(vmin)
+    hi = float(v.max()) if vmax is None else float(vmax)
+    if norm == "log":
+        # 正の量(強度・計数)専用。負や 0 があると対数が定義できないので
+        # **黙って持ち上げず**、最小の正の値を下端にする(そう書いてあること)
+        pos = v[v > 0]
+        lo = float(pos.min()) if (vmin is None and pos.size) else max(lo, 1e-300)
+        hi = max(hi, lo * (1.0 + 1e-12))
+        t = (np.log10(np.maximum(a, lo)) - np.log10(lo)) / (np.log10(hi) - np.log10(lo))
+        return np.clip(t, 0.0, 1.0)
+    if norm == "symlog":
+        m = float(np.max(np.abs(v))) if vmax is None else float(vmax)
+        m = m if m > 0 else 1.0
+        s = np.sign(a) * np.log10(1.0 + np.abs(a) / (m * 1e-3)) / np.log10(1.0 + 1e3)
+        return np.clip(s * 0.5 + 0.5, 0.0, 1.0)
+    t = normalize(a, lo, hi)
+    if norm == "sqrt":
+        return np.sqrt(np.clip(t, 0.0, 1.0))
+    if norm == "power":
+        return np.clip(t, 0.0, 1.0) ** float(gamma)
+    return t                                              # linear(clip は呼び手側)
+
+
+def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0),
+               norm: str = "linear", gamma: float = 2.2, percentile=(2.0, 98.0),
+               levels: int | None = None, under=None, over=None):
     """Map a scalar field to an (H, W, 3) RGB image in [0, 1] using a false-colour
     palette (see ``COLORMAPS``).
 
