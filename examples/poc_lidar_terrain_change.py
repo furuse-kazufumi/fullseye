@@ -1273,10 +1273,11 @@ def main() -> int:
           % (sy["plane"]["純平面・窓で切る"][1],
              sy["plane"]["純平面・窓で切る"][3]))
     print("  * 遮蔽 %.0f %%: 分類の取りこぼし %.2f %% で LoD(std)は %.3f -> %.3f m に"
-          "飛ぶが、MAD なら %.3f -> %.3f m。MAD-LoD でしきった掘削 %.1f m3、"
-          "分類しなければ %.1f m3。"
+          "飛ぶが、MAD なら %.3f -> %.3f m。掘削は 平均 DEM %.1f -> 中央値 DEM %.1f m3"
+          "(真値 %.1f)、分類しなければ %.1f m3。"
           % (oc["occ"][-1], oc["leak"][-1], oc["lstd"][0], oc["lstd"][-1],
-             oc["lmad"][0], oc["lmad"][-1], oc["adapt"][-1], oc["raw"][-1]))
+             oc["lmad"][0], oc["lmad"][-1], oc["adapt"][-1], oc["median"][-1],
+             truth(lod=oc["lmad"][-1])["ero"], oc["raw"][-1]))
     print("  * 法線の符号は道具では決まらない(estimate_normals の上向きは %.1f %%)。"
           % (100 * nr["up_raw"]))
 
