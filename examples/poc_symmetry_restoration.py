@@ -411,7 +411,7 @@ def section_zero_point(S: dict) -> dict:
 
     # (1) 穴埋め補間(密な深度格子 + 調和緩和)
     fillpts, hole, X, Y, Z, ins = zero_point_fill(S["centre"], DEF_R)
-    z1 = score_restoration(gt, np.vstack([surv, fillpts]), pts, fillpts, tau)
+    z1 = score_restoration(gt, np.vstack([surv, fillpts]), fillpts)
     print("  (1) 穴埋め補間(fill_holes)     : RMS %6.2f mm / p95 %6.2f / 最大 %6.2f"
           "(補間点 %d)" % (z1["rms"], z1["p95"], z1["max"], len(fillpts)))
 
