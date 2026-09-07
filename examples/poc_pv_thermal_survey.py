@@ -483,17 +483,20 @@ def normalise(t_app: np.ndarray, gt: dict, how: str) -> np.ndarray:
     if how == "全体平均":
         out = np.where(panel, t_app - float(t_app[panel].mean()), 0.0)
     elif how == "モジュール中央値":
-        for m in np.unique(mod[panel]):
+        for m in range(NMX * NMY):
             sel = panel & (mod == m)
-            out[sel] = t_app[sel] - float(np.median(t_app[sel]))
+            if sel.any():
+                out[sel] = t_app[sel] - float(np.median(t_app[sel]))
     elif how == "モジュール平面除去":
-        for m in np.unique(mod[panel]):
+        for m in range(NMX * NMY):
             sel = panel & (mod == m)
+            if not sel.any():
+                continue
             r0, r1 = np.where(sel.any(axis=1))[0][[0, -1]]
             c0, c1 = np.where(sel.any(axis=0))[0][[0, -1]]
             sub = t_app[r0:r1 + 1, c0:c1 + 1]
             res = np.asarray(fs.ledger.surface_form_remove(sub, 1.0, order=1))
-            out[r0:r1 + 1, c0:c1 + 1] = np.where(sel[r0:r1 + 1, c0:c1 + 1], res, 0.0)
+            out[sel] = res[sel[r0:r1 + 1, c0:c1 + 1]]
     else:
         raise ValueError("知らない正規化: %r" % (how,))
     return out
