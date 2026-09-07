@@ -522,8 +522,8 @@ def section_cliff(gap_median: float, edge_mean: float) -> dict:
     keys = ("area", "raw", "closed")
     err = {k: [] for k in keys}
     fail = {"missed_raw": [], "false_raw": [], "missed_closed": [], "false_closed": [],
-            "merged": [], "swallowed": [], "lost": [], "p_edge": []}
-    print("  途切れ  面積法ΔG(むら無し)  切片(素)ΔG  切片(閉)ΔG   辺の途切れ率p  見逃し/偽(素)  見逃し/偽(閉)  融合/飲まれ")
+            "merged": [], "swallowed": [], "lost": [], "p_edge": [], "hole": []}
+    print("  途切れ  面積法ΔG(むら無し)  切片(素)ΔG  切片(閉)ΔG  マスク上の途切れ  辺の途切れ率p  見逃し/偽(素)  見逃し/偽(閉)  融合/飲まれ")
     for f in fracs:
         acc = {k: [] for k in list(err) + list(fail)}
         for sd in SWEEP_SEEDS:
