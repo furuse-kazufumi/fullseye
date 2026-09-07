@@ -996,10 +996,11 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
         y0, x0 = _worst_product(scene)
         vm[y0, x0] = 4.0
         figs.save_grid("logger_map",
-                       [vm, zero["exc_meas"]],
-                       ["1=偽合格 2=正しく不合格 3=空気で不合格 4=真の最悪製品",
+                       [plan_view(vm), plan_view(zero["exc_meas"])],
+                       ["1=偽合格 2=当たり 3=空気で不合格 4=真の最悪",
                         "ロガー 1 個が出す逸脱時間 [min]"],
-                       title="どこに置くと当たるか(置き場所の地図)", ncols=2)
+                       title="どこに置くと当たるか(左=吹き出し口 / 右=扉)",
+                       ncols=1)
     return {"ns": ns, "rates": rates, "conv_pass": conv_pass,
             "jit_rate": jit_rate, "per_point": per}
 
