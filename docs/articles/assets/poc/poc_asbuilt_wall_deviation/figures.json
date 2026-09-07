@@ -1,6 +1,16 @@
 [
  {
-  "file": "01_aabb_vs_yaw.png",
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   383,
+   870,
+   3
+  ]
+ },
+ {
+  "file": "02_aabb_vs_yaw.png",
   "name": "aabb_vs_yaw",
   "caption": "許容 ±10 mm。AABB は ψ=0.5 度で既に外れる。",
   "shape": [
@@ -10,7 +20,7 @@
   ]
  },
  {
-  "file": "02_aabb_grows_with_points.png",
+  "file": "03_aabb_grows_with_points.png",
   "name": "aabb_grows_with_points",
   "caption": "",
   "shape": [
@@ -20,7 +30,7 @@
   ]
  },
  {
-  "file": "03_plumb_verdicts.png",
+  "file": "04_plumb_verdicts.png",
   "name": "plumb_verdicts",
   "caption": "",
   "shape": [
@@ -28,11 +38,11 @@
    516,
    3
   ],
-  "csv": "03_plumb_verdicts.csv",
-  "tsv": "03_plumb_verdicts.tsv"
+  "csv": "04_plumb_verdicts.csv",
+  "tsv": "04_plumb_verdicts.tsv"
  },
  {
-  "file": "04_squareness.png",
+  "file": "05_squareness.png",
   "name": "squareness",
   "caption": "",
   "shape": [
@@ -40,11 +50,11 @@
    524,
    3
   ],
-  "csv": "04_squareness.csv",
-  "tsv": "04_squareness.tsv"
+  "csv": "05_squareness.csv",
+  "tsv": "05_squareness.tsv"
  },
  {
-  "file": "05_outlier_sweep.png",
+  "file": "06_outlier_sweep.png",
   "name": "outlier_sweep",
   "caption": "",
   "shape": [
@@ -54,7 +64,7 @@
   ]
  },
  {
-  "file": "06_outlier_offset.png",
+  "file": "07_outlier_offset.png",
   "name": "outlier_offset",
   "caption": "",
   "shape": [
@@ -64,7 +74,17 @@
   ]
  },
  {
-  "file": "07_bulge_absorption.png",
+  "file": "08_outlier_maps.png",
+  "name": "outlier_maps",
+  "caption": "",
+  "shape": [
+   383,
+   870,
+   3
+  ]
+ },
+ {
+  "file": "09_bulge_absorption.png",
   "name": "bulge_absorption",
   "caption": "真の振幅はどの σ でも 9 mm。",
   "shape": [
@@ -74,7 +94,7 @@
   ]
  },
  {
-  "file": "08_bulge_fake_tilt.png",
+  "file": "10_bulge_fake_tilt.png",
   "name": "bulge_fake_tilt",
   "caption": "",
   "shape": [
@@ -84,7 +104,7 @@
   ]
  },
  {
-  "file": "09_bulge_maps.png",
+  "file": "11_bulge_maps.png",
   "name": "bulge_maps",
   "caption": "",
   "shape": [

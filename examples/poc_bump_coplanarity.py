@@ -249,8 +249,11 @@ def section_orders() -> dict:
         print("   %d    %8.2f µm  %6.2f µm   %5d   %5d   %5d"
               % (deg, pv, rms, n_bad, n_fp, n_fn))
     pv_true = float(dev_true.max() - dev_true.min())
-    print("   真値 %8.2f µm       -        %5d       -       -"
-          % (pv_true, int((np.abs(dev_true) > SPEC_UM).sum())))
+    n_true_bad = int((np.abs(dev_true) > SPEC_UM).sum())
+    print("   真値 %8.2f µm       -        %5d       -       -" % (pv_true, n_true_bad))
+    print("  (仕込んだ短小は %d 本だが、真に仕様外なのは %d 本 —— 1 本はもともと"
+          "背の高いバンプで、-%.0f µm 沈んでも ±%.0f µm に収まる。)"
+          % (N_SHORT, n_true_bad, -SHORT_UM, SPEC_UM))
     print("\n  ★ゼロ点は誤検出 %d 本の裏で**本物の短小を %d 本見逃している**"
           "(そりが正の側に居ると、-20 µm でも平面から -%.0f µm を切らない)。"
           % (out[1]["fp"], out[1]["fn"], SPEC_UM))
