@@ -1065,12 +1065,19 @@ def section_cliff_dropout() -> dict:
               % (100 * dr, ea, pa, eb, pb, lb, nb))
     ratio = low_e[-1] / max(rnd_e[-1], 1e-9)
     dev = 100 * abs(low_p[-1] - low_e[-1]) / max(low_e[-1], 1e-9)
+    dev60 = 100 * abs(low_p[2] - low_e[2]) / max(low_e[2], 1e-9)
     print("\n   ★同じ欠測率 %.0f %% で誤差が %.1f 倍違う"
           "(無作為 %.3f / 構造的 %.3f mrad)。" % (fr[-1], ratio, rnd_e[-1], low_e[-1]))
-    print("     残った高さは %.2f m → %.2f m。予測 %.3f mrad と実測 %.3f mrad の差は %.0f %%。"
-          % (low_L[0], low_L[-1], low_p[-1], low_e[-1], dev))
-    print("     ★施工誤差 3.00 mrad を検出する目安(誤差 < 1/3)を割るのは"
-          "構造的欠測だけ。")
+    print("     残った高さは %.2f m → %.2f m。予測は L >= %.1f m の範囲で %.0f %% 以内"
+          "(欠測 %.0f %%: 予測 %.3f / 実測 %.3f mrad)、"
+          % (low_L[0], low_L[-1], low_L[2], dev60, fr[2], low_p[2], low_e[2]))
+    print("     L = %.2f m まで削ると %.0f %% 外す(予測 %.3f / 実測 %.3f)—— "
+          "面が薄いと RANSAC のしきい値 %.0f mm が"
+          % (low_L[-1], dev, low_p[-1], low_e[-1], 8.0))
+    print("     面の広がり(傾き × L = %.2f mm)より大きくなり、平面適合が雑音を"
+          "当てにいく。" % (1000 * RACK * low_L[-1]))
+    print("     ★施工誤差 %.2f mrad を検出する目安(誤差 < 1/3 = %.2f mrad)を割るのは"
+          "構造的欠測だけ。" % (1000 * RACK, 1000 * RACK / 3))
     figs.save_plot("cliff_dropout",
                    [("無作為に落とす(実測)", fr, rnd_e),
                     ("下から順に残す(実測)", fr, low_e),
