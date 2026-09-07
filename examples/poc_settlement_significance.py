@@ -674,14 +674,17 @@ def section_volume(sc: dict, mv: dict) -> dict:
     v_sig = -float(np.nansum(d[sig])) / 1000.0 * cell
     v_truth_core = -float(np.sum(s_mm)) / 1000.0 * cell
 
-    # 予測 1: 横断ガウスを LoD で切ったときに残る割合(閉形式)
+    # 予測 1: 横断ガウスを LoD(中央値 1 個)で切ったときに残る割合(閉形式)
     lod_med = float(np.nanmedian(mv["lod"]))
     ratio_cf = float(erf(math.sqrt(max(math.log(S_MAX * 1000 / lod_med), 0.0))))
-    # 予測 2: 真の場を LoD で切って数値積分(縦断の立ち上がりも入る)
+    # 予測 2: 真の場を LoD 中央値で切って数値積分(縦断の立ち上がりも入る)
     xg = np.linspace(0.0, AREA_X, 601)
     yg = np.linspace(0.0, AREA_Y, 401)
     S = np.abs(settlement(*np.meshgrid(xg, yg, indexing="ij"))) * 1000.0
     ratio_num = float(S[S > lod_med].sum() / S.sum())
+    # 予測 3: LoD は場所ごとに違う。core ごとの LoD で切る(測った距離は使わない)
+    st, ld = np.abs(s_mm), mv["lod"]
+    ratio_core = float(st[st > ld].sum() / st.sum())
 
     print("  core 格子で足した体積(cell %.2f m2)"
           % cell)
