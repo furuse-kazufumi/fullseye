@@ -715,30 +715,38 @@ def section_scene(surf: dict, sc: dict) -> None:
                      1000 * sc["dev_true"][m].max()))
 
     if figs.enabled():
-        plan = _bin_mean(P[:, 0], P[:, 1], P[:, 2], (0, RX), (0, RY), 150, 100)
-        sec = P[np.abs(P[:, 1] - 2.0) < 0.12]
-        sect = _bin_mean(sec[:, 0], sec[:, 2], sec[:, 1], (0, RX), (0, RZ), 150, 75)
-        elm = _bin_mean(P[:, 0], P[:, 1], E.astype(float), (0, RX), (0, RY), 150, 100)
-        figs.save_grid("scene_plan_section",
-                       [np.repeat(np.repeat(plan, 3, 0), 3, 1),
-                        np.repeat(np.repeat(sect, 3, 0), 3, 1),
-                        np.repeat(np.repeat(elm, 3, 0), 3, 1)],
-                       ["平面図(色 = 点の高さ z [m]、0〜3 m)",
-                        "断面 y=2.0±0.12 m(色 = y [m])",
-                        "部材の割り当て(床・天井・壁 4・柱 2・見込み 2・幅木)"],
-                       title="部屋 6.0 x 4.0 x 3.0 m を 3 か所から走査した点群", ncols=3,
-                       caption="柱の後ろに影(欠測)が伸び、開口の見込みが奥に見える。")
+        def occ(u, v, ru, rv, nu, nv, cap=5.0):
+            """点の**在る所**を数えた線画(平面図・断面図)。"""
+            c, _, _ = np.histogram2d(u, v, bins=(nu, nv), range=(ru, rv))
+            return np.repeat(np.repeat(np.minimum(c, cap).T[::-1], 3, 0), 3, 1)
+
+        m = (P[:, 2] > 0.25) & (P[:, 2] < 2.60)      # 床と天井を抜いた平面図
+        plan = occ(P[m, 0], P[m, 1], (0, RX), (0, RY), 200, 134)
+        s1 = np.abs(P[:, 1] - 2.00) < 0.10           # 縦断面(柱 A の脇を通る)
+        sec1 = occ(P[s1, 0], P[s1, 2], (0, RX), (0, RZ), 200, 100)
+        s2 = np.abs(P[:, 0] - 2.95) < 0.10           # 横断面(戸を通る)
+        sec2 = occ(P[s2, 1], P[s2, 2], (-DOOR_D, RY), (0, RZ), 140, 100)
+        figs.save_grid("scene_plan_section", [plan, sec1, sec2],
+                       ["平面図(z=0.25〜2.60 m の点。壁・柱・柱の影)",
+                        "縦断面 y=2.00±0.10 m(床・天井・壁・幅木)",
+                        "横断面 x=2.95±0.10 m(戸の開口と見込み)"],
+                       title="部屋 6.0 x 4.0 x 3.0 m を 3 か所から走査した点群(明= 点が在る)",
+                       ncols=3,
+                       caption="柱の後ろに扇形の影(欠測)が伸びる。断面の左右の白い帯は"
+                               "開口。単位は m。")
         cov = _bin_mean(surf["P"][:, 0], surf["P"][:, 1], surf["seen"].astype(float),
-                        (0, RX), (0, RY), 120, 80)
+                        (0, RX), (0, RY), 66, 44)
         w = surf["elem"] == WY1
         covw = _bin_mean(surf["P"][w, 0], surf["P"][w, 2], surf["seen"][w].astype(float),
-                         (0, RX), (0, RZ), 120, 60)
+                         (0, RX), (0, RZ), 66, 33)
         figs.save_grid("station_coverage",
-                       [np.repeat(np.repeat(cov, 4, 0), 4, 1),
-                        np.repeat(np.repeat(covw, 4, 0), 4, 1)],
-                       ["床を見たスキャン位置の数(0〜3)", "北の壁を見た数(0〜3)"],
+                       [np.repeat(np.repeat(cov, 6, 0), 6, 1),
+                        np.repeat(np.repeat(covw, 6, 0), 6, 1)],
+                       ["床を見たスキャン位置の数(暗 0 〜 明 3)",
+                        "北の壁を見た数(暗 0 〜 明 3)"],
                        title="視線に依存する欠測 —— 柱の影と擦過角",
-                       caption="暗い所は 1 か所も見ていない。柱の影は放射状に伸びる。")
+                       caption="いちばん暗い所は 1 か所も見ていない。柱の影は"
+                               "スキャン位置から放射状に伸びる。")
 
 
 # --------------------------------------------------------------------------- #

@@ -52,5 +52,35 @@
   ],
   "csv": "05_scope.csv",
   "tsv": "05_scope.tsv"
+ },
+ {
+  "file": "06_cliff.png",
+  "name": "cliff",
+  "caption": "C2C は点間隔そのもの、法線方向は平均で消える。真の最大劣化 30.0 mm と比べること。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_cliff_angle.png",
+  "name": "cliff_angle",
+  "caption": "予測は (ω×(p-c))·n を core 上で積んだだけ。点群を測る前に出せる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_rate_error.png",
+  "name": "rate_error",
+  "caption": "3 回の点検で得た速度の誤差分布。1 mm/年 の進行は検出限界の下に沈む。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
