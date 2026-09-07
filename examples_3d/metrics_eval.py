@@ -225,12 +225,26 @@ print("m3c2  : 法線方向 %s (真値 %.3f, 最大誤差 %.4f)"
       % (np.array2string(d_m3c2, precision=4), SHIFT, err_m3c2))
 print("        検出限界 lod %s(この値を超えない差は雑音と区別できない)"
       % np.array2string(lod_m3c2, precision=4))
-print("null  : chamfer(最近傍・符号なし) = %.4f —— 面に沿ったずれを含むので"
-      " 真値 %.3f より大きく出る" % (c2c, SHIFT))
+print("null  : chamfer(最近傍・符号なし) = %.4f —— 大きさは近いが**符号が無い**ので"
+      " 増えたのか減ったのか分からない" % (c2c,))
 assert err_m3c2 < 0.01, (d_m3c2, SHIFT)                     # 真値を 5 % 以内で回収
 assert np.all(lod_m3c2 < 0.02), lod_m3c2                    # 検出限界は仕込んだ差より小さい
 assert np.all(np.abs(d_m3c2) > lod_m3c2), (d_m3c2, lod_m3c2)  # 差は検出限界を超えている
-assert c2c > SHIFT, (c2c, SHIFT)                            # ★ゼロ点は必ず過大に出る
+
+# ★最近傍距離が嘘をつくのは「変化ゼロで測り返しただけ」のとき。同じ斜面を別の
+# 密度・別の位置で取り直すと、最近傍は面に沿って隣の点を掴むので**点間隔ぶんの
+# 偽の変化**が出る。M3C2 は法線方向に射影するので、その成分は落ちる。
+# (この PoC を書く前の予想「C2C は法線シフトでも過大に出る」は**外れた** ——
+#  平行な面を法線方向に動かすだけなら最近傍距離もほぼ真値。嘘が出るのは
+#  面に沿った取り直しのほうだった。)
+cloud_again = _slope_cloud(700, 0.0, 0.02, rng_m)           # 同じ面・変化ゼロ・粗い
+c2c_null = M.chamfer_distance(cloud_t0, cloud_again)
+d_null, _lod_null = M.m3c2_distance(cloud_t0, cloud_again, cores_m, normals_m,
+                                    radius=1.0, max_depth=2.0)
+print("再測定: 変化ゼロで測り返しただけ —— chamfer %.4f(偽の変化)に対し "
+      "m3c2 は最大 %.4f" % (c2c_null, float(np.max(np.abs(d_null)))))
+assert c2c_null > 5 * float(np.max(np.abs(d_null))), (c2c_null, d_null)
+assert float(np.max(np.abs(d_null))) < 0.01, d_null         # 法線方向には変化なし
 # 法線の符号は呼び手の責任 —— 反転すると符号だけ反転する(大きさは同じ)
 d_flip, _ = M.m3c2_distance(cloud_t0, cloud_t1, cores_m, -normals_m,
                             radius=1.0, max_depth=2.0)

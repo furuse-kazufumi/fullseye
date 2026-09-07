@@ -932,7 +932,7 @@ def main() -> int:
 
     # --- 所見を固定する(壊れたら鳴る)---
     assert sw["err"] < 3.0, sw["err"]
-    assert sw["meas"][0] < 0.5 and sw["meas"][8] > 20.0, sw["meas"]
+    assert sw["meas"][0] < 0.5 and sw["meas"][i4] > 20.0, sw["meas"]
     assert sp["cres_k1_share"] > 0.6, sp["cres_k1_share"]
     assert co["scs"][1]["cres_rate"] < 0.5 * co["scs"][0]["cres_rate"]
     assert co["scs"][2]["band_rate"] < 0.5 * co["scs"][1]["band_rate"]

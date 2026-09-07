@@ -436,6 +436,13 @@ OP_PARAM_HINTS = {
     ("query_distance", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("fuse", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("geodesic_distances", "source"): lambda rng: 0,
+    # m3c2_distance(a, b, cores, normals, radius, max_depth): core と法線が要る。
+    # 生成器の points プール(単位球あたり)に合わせて半径を取る。
+    ("m3c2_distance", "cores"): lambda rng: np.zeros((4, 3)) + np.array([0.0, 0.0, 0.0]),
+    ("m3c2_distance", "normals"): lambda rng: np.tile(np.array([0.0, 0.0, 1.0]), (4, 1)),
+    ("m3c2_distance", "radius"): lambda rng: 0.5,
+    ("m3c2_distance", "max_depth"): lambda rng: 2.0,
+    ("m3c2_distance", "min_points"): lambda rng: 1,
     ("box_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
     # 2026-09-07 追加のプリミティブ。grid_coords の既定 bounds (0..10)^3 の中に
     # 収まる寸法にして、探針が「内側も外側も持つ」場を得られるようにする。
