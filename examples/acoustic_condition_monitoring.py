@@ -434,7 +434,60 @@ def main():
         except ValueError as exc:
             print(f"      rate={badv!r:12s} -> ValueError: {str(exc)[:66]}...")
 
-    print("\nPASS: acoustics 19 op すべてが閉形式のグラウンドトゥルースと一致")
+    # ── 11. gcc_delay: 2 チャンネルの到達時間差(仕込んだ遅れを回収する)──────
+    # 真値は「片方を整数標本だけ巡回シフトした」量。サブ標本の遅れは線形位相を
+    # 掛けて作るので、こちらも閉形式で分かる。
+    rng_g = np.random.default_rng(20260908)
+    n_g = 4096
+    src_g = rng_g.normal(size=n_g)
+    print("\n10) gcc_delay —— 到達時間差")
+    for lag_true in (37, -19, 0):
+        rec_a = src_g
+        rec_b = np.roll(src_g, lag_true) + 0.05 * rng_g.normal(size=n_g)
+        for w in ("none", "phat"):
+            d, tbl = A.gcc_delay(rec_a, rec_b, rate=fs, weight=w)
+            err = d * fs - lag_true
+            print(f"      真値 {lag_true:+4d} 標本 / weight={w:<5s} -> {d * fs:+9.3f} 標本 "
+                  f"(誤差 {err:+.3f}, ピーク比 {tbl['snr_peak']:.1f})")
+            assert abs(err) < 0.05, (lag_true, w, d * fs)
+            assert tbl["snr_peak"] > 3.0, tbl["snr_peak"]
+            assert tbl["r"].size == 2 * n_g - 1 and tbl["lags"].size == tbl["r"].size
+
+    # サブ標本の遅れ:線形位相で 0.37 標本ずらす(整数シフトでは作れない真値)
+    frac = 0.37
+    F = np.fft.rfft(src_g)
+    freqs_g = np.fft.rfftfreq(n_g)
+    shifted = np.fft.irfft(F * np.exp(-2j * np.pi * freqs_g * frac), n_g)
+    d_int, _ = A.gcc_delay(src_g, shifted, rate=fs, weight="none", interpolate=False)
+    d_sub, _ = A.gcc_delay(src_g, shifted, rate=fs, weight="none", interpolate=True)
+    print(f"      サブ標本 {frac} 標本: 補間なし {d_int * fs:+.3f} / 補間あり {d_sub * fs:+.3f}")
+    assert abs(d_int * fs - 0.0) < 1e-9                  # 補間しなければ整数に丸まる
+    assert abs(d_sub * fs - frac) < 0.05                 # 補間すればサブ標本まで出る
+
+    # 帯域を絞る / 重みを変えても、雑音の無い理想条件では同じ答えに収束する
+    d_band, _ = A.gcc_delay(src_g, np.roll(src_g, 37), rate=fs, weight="phat",
+                            band=(200.0, 3000.0))
+    print(f"      帯域 200-3000 Hz の PHAT: {d_band * fs:+.3f} 標本(真値 +37)")
+    assert abs(d_band * fs - 37.0) < 0.5
+
+    # fail-closed: 長さ違い / 未知の重み / 空になる帯域
+    for bad, why in (((src_g, src_g[:100]), "長さ違い"),):
+        try:
+            A.gcc_delay(bad[0], bad[1], rate=fs)
+            raise AssertionError("長さ違いが通った")
+        except ValueError as exc:
+            print(f"      {why}: ValueError: {str(exc)[:56]}...")
+    try:
+        A.gcc_delay(src_g, src_g, rate=fs, weight="magic")
+        raise AssertionError("未知の重みが通った")
+    except ValueError:
+        print("      未知の weight: ValueError")
+    try:
+        A.gcc_delay(src_g, src_g, rate=fs, band=(1e9, 2e9))
+        raise AssertionError("空の帯域が通った")
+    except ValueError:
+        print("      信号の無い帯域: ValueError(黙ってゼロの相関を返さない)")
+    print("\nPASS: acoustics 20 op すべてが閉形式のグラウンドトゥルースと一致")
     return True
 
 

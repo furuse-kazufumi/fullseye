@@ -1164,15 +1164,13 @@ def section_figures(base: dict, norms: dict) -> None:
     d_mean = detect(t0, gt, "全体平均")
     d_med = detect(t0, gt, "モジュール中央値")
     figs.save_grid("false_map",
-                   [np.clip(d_mean["delta"], -clip, clip),
-                    d_mean["mask"].astype(float),
-                    np.clip(d_med["delta"], -clip, clip),
-                    d_med["mask"].astype(float)],
+                   [dv(d_mean["delta"]), d_mean["mask"].astype(float),
+                    dv(d_med["delta"]), d_med["mask"].astype(float)],
                    ["ΔT 全体平均基準(±%.0f K)" % clip,
                     "そこで上がった塊(= 偽 + 非故障)",
                     "ΔT モジュール中央値基準(±%.0f K)" % clip,
                     "そこで上がった塊"],
-                   ncols=2, signed=[True, False, True, False],
+                   ncols=2,
                    title="対照群: 電気的故障を 1 つも置いていない場面",
                    caption="上段の塊はすべて偽か非故障の温度差。基準の取り方"
                            "だけで消える。")
