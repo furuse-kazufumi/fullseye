@@ -426,30 +426,57 @@ def absorbed(P, N, d):
 # --------------------------------------------------------------------------- #
 # 図の道具 —— 3-D は投影図と誤差地図で見せる                                     #
 # --------------------------------------------------------------------------- #
-def _view_rot() -> np.ndarray:
-    return rot([1, 0, 0], -58.0) @ rot([0, 0, 1], -38.0)
+#: カメラの居る向き(部品の原点から見て)と、陰影づけの光の向き
+CAM = np.array([0.62, -0.72, 0.75])
+LIGHT = np.array([0.35, -0.55, 0.90])
 
 
-def render(P, val=None, res=(300, 230), pad=3.0):
-    """斜め視点のオルソ投影 + z バッファ。``val`` を塗る(None なら奥行き)。"""
-    Rv = _view_rot()
-    p = P @ Rv.T
-    u, v, dep = p[:, 0], p[:, 1], p[:, 2]
+def _cam_basis():
+    """(右, 上, カメラ方向) の正規直交基底。カメラは部品の上・手前に置く。"""
+    c = CAM / np.linalg.norm(CAM)
+    r = np.cross(np.array([0.0, 0.0, 1.0]), c)
+    r /= np.linalg.norm(r)
+    return r, np.cross(c, r), c
+
+
+def render(P, val=None, nrm=None, res=(320, 250), pad=4.0, splat=1, scale=None):
+    """斜め視点の正射影 + z バッファ。点を散らさず**面として**見せる。
+
+    ``nrm`` を渡すと Lambert 陰影の (H,W,3) を返す(形が読める絵になる)。
+    ``val`` を渡すと符号付きの誤差地図 (H,W)。``scale`` を渡すと ±scale で
+    切り、右端に**色の目盛り帯**を付ける(パネルごとに勝手な正規化がかかって
+    見比べられなくなるのを防ぐ)。
+    """
+    r, up, c = _cam_basis()
+    x, y = P @ r, P @ up
+    dep = -(P @ c)                        # 小さいほど手前
     Wp, Hp = res
-    su = (u.max() - u.min() + 2 * pad) / Wp
-    sv = (v.max() - v.min() + 2 * pad) / Hp
-    s = max(su, sv)
-    ix = np.clip(((u - u.min() + pad) / s).astype(int), 0, Wp - 1)
-    iy = np.clip((Hp - 1 - (v - v.min() + pad) / s).astype(int), 0, Hp - 1)
+    s = max((x.max() - x.min() + 2 * pad) / Wp, (y.max() - y.min() + 2 * pad) / Hp)
+    ix = np.clip(((x - x.min() + pad) / s).astype(int), 0, Wp - 1)
+    iy = np.clip((Hp - 1 - (y - y.min() + pad) / s).astype(int), 0, Hp - 1)
+    if nrm is not None:
+        lam = np.asarray(nrm, float) @ (LIGHT / np.linalg.norm(LIGHT))
+        v = 0.18 + 0.82 * np.clip(lam, 0.0, 1.0)
+    else:
+        v = np.asarray(val, float)
     img = np.full((Hp, Wp), np.nan)
-    order = np.argsort(dep)[::-1]         # 遠い順に描いて手前で上書き
-    if val is None:
-        d = -dep
-        d = (d - d.min()) / (float(np.ptp(d)) or 1.0) * 0.85 + 0.15
-        img[iy[order], ix[order]] = d[order]
-        return np.nan_to_num(img, nan=0.0)
-    img[iy[order], ix[order]] = np.asarray(val, float)[order]
-    return np.nan_to_num(img, nan=0.0)
+    order = np.argsort(dep)[::-1]         # 遠い順に描き、手前で上書き
+    for dy in range(-splat, splat + 1):   # 1 点を数画素に広げて隙間を埋める
+        for dx in range(-splat, splat + 1):
+            img[np.clip(iy[order] + dy, 0, Hp - 1),
+                np.clip(ix[order] + dx, 0, Wp - 1)] = v[order]
+    img = np.nan_to_num(img, nan=0.0 if nrm is None else 0.02)
+    if nrm is not None:
+        return np.stack([img] * 3, axis=-1)
+    return with_scalebar(img, scale) if scale else img
+
+
+def with_scalebar(img, s: float, wpx: int = 12):
+    """右端に ±``s`` の色の目盛り帯を足す(全パネルで色と値の対応を固定する)。"""
+    h = img.shape[0]
+    ramp = np.linspace(s, -s, h)[:, None] * np.ones((1, wpx))
+    gap = np.zeros((h, 4))
+    return np.concatenate([np.clip(img, -s, s), gap, ramp], axis=1)
 
 
 def top_map(P2, val, res=(300, 200), rmax=1.2):

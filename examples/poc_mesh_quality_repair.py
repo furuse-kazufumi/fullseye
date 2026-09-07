@@ -223,9 +223,9 @@ def _edge_faces(F) -> dict:
     return m
 
 
-def _pick_isolated(F, n: int, rng, banned: set | None = None) -> np.ndarray:
+def _pick_isolated(F, n: int, rng) -> np.ndarray:
     """互いに頂点を共有しない面を ``n`` 枚選ぶ(欠陥どうしを干渉させない)。"""
-    used = set(banned or ())
+    used: set[int] = set()
     out = []
     for i in rng.permutation(len(F)):
         t = F[i].tolist()
@@ -523,7 +523,7 @@ def count_defects(V, F, weld_first: bool) -> dict:
             "degenerate": n_deg, "duplicate_v": n_dup, "long_edge_v": long_v}
 
 
-def section_count_by_type(scene: dict, defects: dict) -> dict:
+def section_count_by_type(scene: dict) -> dict:
     print("\n" + "=" * 78)
     print("4) 種類ごとに数える —— 順番がある(合わせてから測ると割れが消える)")
     print("=" * 78)
@@ -1078,11 +1078,11 @@ def main() -> int:
     rng = np.random.default_rng(SEED)
     defects = build_defects(scene["V"], scene["F"], rng)
     zero = section_zero_point(scene, defects)
-    counts = section_count_by_type(scene, defects)
+    section_count_by_type(scene)
     section_repair_vs_restore(scene)
     hole = section_hole_cliff()
     dec = section_decimate_cliff(scene)
-    sliver = section_sliver_threshold(scene)
+    section_sliver_threshold(scene)
     spike = section_self_intersection(scene)
     section_tool_gaps(scene)
 
