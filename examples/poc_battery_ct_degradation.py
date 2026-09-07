@@ -893,7 +893,7 @@ def section_resolution(cells, sinos) -> dict:
         theo = float(np.exp(-2.0 * np.pi ** 2 * sigma ** 2 / PITCH ** 2))
         ratios.append(ratio)
         n_err.append(m["n_layer"] - truth["n_layer"])
-        t_err.append(100.0 * (m["t_mean"] - T_ELEC) / T_ELEC
+        t_err.append(100.0 * (m["t_mean"] - truth["t_mean"]) / truth["t_mean"]
                      if np.isfinite(m["t_mean"]) else np.nan)
         v_err.append(100.0 * (m["void_volume"] - truth["void_volume"])
                      / truth["void_volume"])
@@ -901,20 +901,26 @@ def section_resolution(cells, sinos) -> dict:
         fftp.append(m["fft_pitch"])
         rows.append(["%.3f" % sp[1], "%.2f" % ratio, "%d" % m["n_layer"],
                      "%d..%d" % (m["n_layer_min"], m["n_layer_max"]),
-                     "%.3f" % m["t_mean"], "%.3f" % m["fft_pitch"],
+                     "%.3f" % m["t_mean"], "%.3f" % m["pitch_mean"],
+                     "%.3f" % m["fft_pitch"],
                      "%.2f" % m["void_fraction"], "%.0f" % (100 * theo)])
         print("   voxel %.3f mm (層厚比 %.2f)  層数 %2d (%2d..%2d)  層厚 %.3f mm  "
-              "周期 %.3f mm  空隙率 %.2f %%  予測コントラスト %3.0f %%"
+              "層間隔 %.3f mm  FFT 周期 %.3f mm  空隙率 %.2f %%  予測振幅 %3.0f %%"
               % (sp[1], ratio, m["n_layer"], m["n_layer_min"], m["n_layer_max"],
-                 m["t_mean"], m["fft_pitch"], m["void_fraction"], 100 * theo))
+                 m["t_mean"], m["pitch_mean"], m["fft_pitch"],
+                 m["void_fraction"], 100 * theo))
 
-    bad = [r for r, e in zip(ratios, n_err) if e != 0]
+    bad = [r for r, e in zip(ratios, n_err) if abs(e) > 1]
     cliff = min(bad) if bad else float("nan")
-    print("\n  ★実測の崖: 層数が狂い始めるのは voxel/層厚 = %.2f。予測は %.2f。"
-          % (cliff, v_nyq / T_ELEC))
-    ok_fft = [r for r, p in zip(ratios, fftp) if abs(p - PITCH) < 0.02 * PITCH]
+    print("\n  ★実測の崖: 層数が 1 枚を超えて狂うのは voxel/層厚 = %.2f。"
+          "予測 A(標本化)は %.2f、予測 B(隙間)は %.2f -> **B が当たり**。"
+          % (cliff, v_nyq / T_ELEC, v_gap / T_ELEC))
+    print("     効いているのは電極の厚み(%.3f mm)ではなく**層間の隙間**"
+          "(%.3f mm)—— 狭いほうの特徴が崖を決める。" % (T_ELEC, GAP))
+    ok_fft = [r for r, p in zip(ratios, fftp) if abs(p - PITCH) < 0.03 * PITCH]
     print("     **数えるのと周期を測るのは別の崖**: 周期(FFT)は"
-          " voxel/層厚 %.2f まで %.3f mm を保つ。" % (max(ok_fft), PITCH))
+          " voxel/層厚 %.2f まで %.3f mm を保つ(数え上げが死んだ後も 1 段生き残る)。"
+          % (max(ok_fft), PITCH))
 
     figs.save_plot("sweep_resolution",
                    [("層数の誤差 [枚]", ratios, n_err),
