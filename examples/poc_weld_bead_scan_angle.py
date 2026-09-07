@@ -1244,9 +1244,11 @@ def main() -> int:
 
     # --- 所見を固定する(壊れたら鳴る)------------------------------------- #
     res = sw["res"]["b 遮蔽あり"]
-    assert res["ucL"]["got"][I_REF] > 0.99, "36 度で左 UC が測れない"
+    assert res["ucL"]["got"][ANGLES.index(24.0)] > 0.99, "24 度で左 UC が測れない"
     assert res["ucL"]["got"][ANGLES.index(40.0)] < 0.01, "40 度で左 UC が残っている"
     assert res["ucR"]["got"][-1] > 0.99, "右 UC は最大角でも測れるはず"
+    assert res["ucL"]["tmean"][ANGLES.index(36.0)] < \
+        0.6 * res["ucL"]["tmean"][0], "★生存者バイアス(深い断面から抜ける)"
     assert abs(float(np.median(pred["plate"])) - 37.0) < 0.6, "左母材の崖は 37 度"
     assert float(pred["uc"].min()) < 25.0 < float(pred["uc"].max()), "溝の崖は深さ依存"
     tb = est2["table"]
