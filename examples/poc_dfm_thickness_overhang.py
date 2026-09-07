@@ -306,8 +306,7 @@ def section_scene():
     a_plane = sum(a for _, a, _ in F)
     a_cyl = 2 * np.pi * (HOLE_H[1] * HOLE_H[2] + HOLE_V[1] * HOLE_V[2])
     a_true = a_plane + a_cyl
-    _, _, _, area = _mesh_from(-sdf, 0.0)
-    a_mesh = float(area.sum())
+    a_mesh = float(_mesh_from(-sdf, 0.0)[1].sum())
     print("  表面積: 解析 %.1f mm^2(平面 %.1f + 円筒 %.1f) / メッシュ %.1f mm^2 (%+.2f %%)"
           % (a_true, a_plane, a_cyl, a_mesh, 100 * (a_mesh - a_true) / a_true))
 
