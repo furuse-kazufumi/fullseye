@@ -1030,8 +1030,10 @@ def section_angle(base: dict) -> dict:
     print("     減るのは往復の再標本化で 2 回ぼけるから —— %.0f° でも %.2f 倍"
           "しか残らない。放射率の補正は幾何とは別に、**画素ごとの入射角**が"
           "要る。" % (ANGLES[1], rect[1]))
-    print("  予測と実測の圧縮率の差は最大 %.3f(Fresnel の閉形式が追えている)。"
-          % max(abs(p - m) for p, m in zip(pe, me)))
+    print("  予測と実測の圧縮率の差は最大 %.3f。ただし**場面合成も同じ Fresnel を"
+          "使っている**ので、これは物理の検証ではなく" % max(abs(p - m) for p, m in zip(pe, me)))
+    print("     「4 乗則の線形化 (T/T_app)³ と、正規化・平滑・塊化を通しても"
+          "圧縮率が保たれる」ことの検算。本題は下の 2 行のほう。")
 
     figs.save_plot("angle_sweep",
                    [("予測 (ε/ε_set)(T/T_app)³", xs, pe),
