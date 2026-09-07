@@ -515,12 +515,12 @@ def section_outliers() -> dict:
     for f in (fl, frb):
         r = (w["P"] - f["point"]) @ f["normal"]
         maps.append(_bin_mean(w["eta"], w["zeta"], np.clip(r, -0.25, 0.25) * 1e3,
-                              (-RD / 2, RD / 2), (-RH / 2, RH / 2), 120, 84))
+                              (-RD / 2, RD / 2), (-RH / 2, RH / 2), 420, 290))
     figs.save_grid("outlier_maps", maps,
-                   ["最小二乗の残差 [mm](棚に引かれて面が回った)",
-                    "RANSAC の残差 [mm](棚だけが外れ点として残る)"],
-                   title="家具 20 %% を混ぜた東の壁(棚の出 %.0f mm)" % (1e3 * CAB_D),
-                   signed=True)
+                   ["最小二乗の残差 [mm](面が回った)",
+                    "RANSAC の残差 [mm](棚だけ残る)"],
+                   title="家具 20 %s を混ぜた東の壁(棚の出 %.0f mm)"
+                         % ("%", 1e3 * CAB_D), signed=True)
     return {"frac": fr, "ls": ls_e, "pred": ls_p, "rs": rs_e, "off": rs_off}
 
 
