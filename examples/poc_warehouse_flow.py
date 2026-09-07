@@ -1312,7 +1312,9 @@ def section_figures(base: dict, tru: dict, heat: dict, clear: np.ndarray) -> Non
                    ["真値(仕込んだ待ち)", "提案(x-y-t の柱から読んだ型)"],
                    ncols=2, title="種類ごとの色分け地図",
                    caption="橙 = 補充待ち / 青 = 人待ち / 赤 = 通路の干渉 / "
-                           "緑 = システム待ち / 紫 = 欠品 / 灰 = 作業。")
+                           "緑 = システム待ち / 紫の小点 = 欠品 / 灰 = 作業。"
+                           "欠品は補充待ちと同じ棚前で起きるので、橙の中の"
+                           "小さな紫として重ねてある。")
 
     # (d) 通路の空き幅(esdf)—— 型を決める特徴量そのもの
     figs.save_grid("clearance_map",
