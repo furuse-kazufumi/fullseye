@@ -364,8 +364,12 @@ def m3c2_volume(res: dict, lod: float | None = None, conf: float = 1.96) -> dict
     val = np.where(sig, res["L"], 0.0)
     nz = np.where(res["nz"] > 1e-6, res["nz"], 1.0)
     vol = val * (CORE * CORE / nz)             # ★水平セルが覆う斜面上の面積
+    # ★測れなかった core の面積は土量に一切入らない。有効率で割り戻した値も返す
+    #   —— 割り戻さないと「静かに欠けた土量」を正しい値だと思ってしまう。
+    rate = max(res["rate"], 1e-9)
     return {"ero": float(-vol[val < 0].sum()), "dep": float(vol[val > 0].sum()),
             "net": float(vol.sum()), "abs": float(np.abs(vol).sum()),
+            "net_cov": float(vol.sum() / rate), "ero_cov": float(-vol[val < 0].sum() / rate),
             "area": float(sig.sum() * CORE * CORE),
             "naive": float(np.abs(val * CORE * CORE)[val < 0].sum()),
             "sig": sig, "n_ok": int(ok.sum()), "rate": res["rate"]}
