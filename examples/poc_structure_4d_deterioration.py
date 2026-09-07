@@ -1510,8 +1510,11 @@ def main() -> int:
     assert cliff["mindet"][-1] > 2.5 * cliff["mindet"][0], \
         "角度誤差で検出限界が折れていない"
     assert rate["dmax"] < 1e-9, "等間隔 3 点の傾きが両端の差分と一致しない"
-    assert rate["acc_err"] > 1.5 * rate["err_rms"], "加速の誤差が速度より粗くない"
-    assert pri["dx_grd"] > 3.0 * pri["dx_all"], "支承を外しても x が決まっている"
+    assert rate["acc_err"] < rate["acc_pred_ind"], "加速の誤差が独立仮定を超えた"
+    assert rate["rho"] > 0.2, "時点間の誤差の相関が出ていない"
+    assert pri["dx_grd"] > 3.0 * pri["dx_all"], \
+        "キャンバーを落としても x が決まっている(縮退が再現しない)"
+    assert pri["fake_h"] > 1.0, "支承の偽の水平移動が出ていない"
     assert all(0.9 < n / p < 1.1 for n, p in zip(pri["num"][:4], pri["pred"][:4])), \
         "溝の薄まりが閉形式 2dh/(πR) から外れた"
     assert abs(pri["num"][1]) < 0.1 * CRACK_MM[2], "細い溝が薄まっていない"
