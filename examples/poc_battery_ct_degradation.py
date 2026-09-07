@@ -654,23 +654,22 @@ def section_scene(cells, recs) -> dict:
         # X 線投影(DRR)—— 実機で最初に撮る絵。**積層は見えるが、どの層が
         # 厚いのかは重なって消える**。断層に落とさないと内部指標は出ない。
         panels, caps = [], []
-        for key, name in (("healthy", "健全"), ("gas", "層間ガス空隙")):
+        for key, name in (("healthy", "健全"), ("gas", "ガス空隙")):
             for az in (0.0, 22.0):
-                panels.append(np.asarray(L.render_volume_projection(
+                panels.append(_up(L.render_volume_projection(
                     cells[key]["mu"], az, 0.0, mode="xray")))
-                caps.append("%s / 視線 %.0f 度" % (name, az))
+                caps.append("%s %.0f 度" % (name, az))
         figs.save_grid("xray_projection", panels, caps,
                        title="X 線投影(減衰の積算)—— 重なると内部の差は消える",
-                       ncols=2,
+                       ncols=4,
                        caption="投影だけでは空隙も膨れも判らない。だから断層に落とす。")
 
     mid = ND // 2
-    figs.save_grid("scene", [cells["healthy"]["mu"][mid], recs["healthy"][mid],
-                             recs["uniform"][mid], recs["gas"][mid]],
-                   ["真値 μ(健全)", "CT 再構成(健全)",
-                    "CT 再構成(一様膨れ)", "CT 再構成(ガス空隙)"],
-                   title="角形セルの断面(z 中央、縦 = 積層方向 y、1 目盛 %.2f mm)" % SY,
-                   ncols=2,
+    figs.save_grid("scene", [_up(cells["healthy"]["mu"][mid]), _up(recs["healthy"][mid]),
+                             _up(recs["uniform"][mid]), _up(recs["gas"][mid])],
+                   ["真値 μ 健全", "CT 健全", "CT 一様膨れ", "CT ガス空隙"],
+                   title="角形セルの断面(z 中央、縦 = 積層方向 y)",
+                   ncols=4,
                    caption="缶(明)・電極(中)・電解液(暗)・ガス(最暗)。"
                            "順投影 → ビームハードニング → リング → フォトン雑音 → FBP。")
     return {"outer_healthy": o}
