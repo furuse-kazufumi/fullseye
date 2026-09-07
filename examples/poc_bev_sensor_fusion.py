@@ -1241,7 +1241,9 @@ def main() -> int:
     assert drop[kr][-1] > drop[kr][0], "回転は遠方ほど落ちる"
     assert abs(drop[kt][-1] - drop[kt][0]) < abs(drop[kr][-1] - drop[kr][0]), \
         "並進のほうが一様"
-    assert abs(tr["mixed"][0.040][0] - tr["mixed"][0.040][1]) < 0.05
+    m80 = tr["mixed"][0.080]
+    assert abs(m80[0] - m80[1]) < 0.5 * abs(m80[0] - m80[2]), \
+        "時刻ずれは純回転より純並進に近い"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
