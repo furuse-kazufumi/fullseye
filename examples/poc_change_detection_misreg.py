@@ -1041,7 +1041,8 @@ def section_tool_gaps() -> None:
     # (e) 相対放射補正(線形)が無い。histogram_match は在る。
     assert hasattr(fs, "histogram_match")
     print("  (e) 線形の相対放射補正(利得・オフセットを頑健に当てはめる)が無い。"
-          "histogram_match(順位で分布を合わせる)は在って、この場面では同じだけ効いた。")
+          "histogram_match(順位で分布を合わせる)は在るが、変化そのものを分布差として消しにかかる"
+          "(6 節)ので代わりにならない。")
     # (f) piv_cross_correlate の ledger 経路は info を返さない(docstring は (flow, info))。
     fl = fs.ledger.piv_cross_correlate(np.zeros((64, 64)) + np.random.default_rng(0).random((64, 64)),
                                         np.random.default_rng(0).random((64, 64)), window=32)
