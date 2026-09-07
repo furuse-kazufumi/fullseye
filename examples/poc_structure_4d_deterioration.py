@@ -911,12 +911,13 @@ def section_cliff(zero: dict, sc: dict) -> dict:
     # 感度: 欠損の深さ 1 mm あたり、谷でどれだけ法線方向の値が動くか
     sens = abs(float(np.nanmin(tf))) / SPALL_MM[2]
 
-    print("\n   ω [rad]      向き        予測 RMS[mm]  実測 RMS[mm]   比    "
+    print("\n   ω [rad]   幾何の予測[mm]  雑音床と合成[mm]  実測 RMS[mm]   比    "
           "最小検出深さ[mm]")
     alphas = (0.0, 1.0e-4, 2.0e-4, 5.0e-4, 1.0e-3)
-    a_l, pr_l, ms_l, md_l = [], [], [], []
+    a_l, pr_l, ms_l, md_l, tot_l = [], [], [], [], []
     axis = np.array([0.3, 1.0, 0.6])
     axis = axis / np.linalg.norm(axis)
+    floor = None
     for al in alphas:
         om = al * axis
         pred = pred_false_rms(om, (0.0, 0.0, 0.0))
@@ -924,48 +925,60 @@ def section_cliff(zero: dict, sc: dict) -> dict:
         ln, _, _ = measure_normal(ref, q, cen, nor, ok)
         g = np.isfinite(ln) & ~CORES["edge"]
         meas = float(np.sqrt(np.mean(ln[g] ** 2)))
+        if floor is None:
+            floor = meas                    # ★α=0 の実測 = 雑音と欠測の床
+        tot = math.hypot(pred, floor)
         mdd = 2.0 * meas / sens
         a_l.append(al * 1e3)
         pr_l.append(pred)
         ms_l.append(meas)
+        tot_l.append(tot)
         md_l.append(mdd)
-        print("   %8.1e  (%.2f,%.2f,%.2f) %10.3f %13.3f %7.3f %14.2f"
-              % (al, *axis, pred, meas, meas / max(pred, 1e-9), mdd))
-    print("  ★予測と実測の比は %.3f 〜 %.3f。**幾何だけで先に出せる** —— "
-          "点群を測る前に、位置合わせの角度から嘘の大きさが分かる。"
-          % (min(m / max(p, 1e-9) for m, p in zip(ms_l[1:], pr_l[1:])),
-             max(m / max(p, 1e-9) for m, p in zip(ms_l[1:], pr_l[1:]))))
+        print("   %8.1e %13.3f %17.3f %13.3f %7.3f %14.2f"
+              % (al, pred, tot, meas, meas / max(tot, 1e-9), mdd))
+    rat = [m / max(t, 1e-9) for m, t in zip(ms_l, tot_l)]
+    print("  ★幾何の予測に**雑音床を直交に足す**(RMS は二乗和)だけで、比は "
+          "%.3f 〜 %.3f。" % (min(rat), max(rat)))
+    print("     点群を測る前に、位置合わせの角度から嘘の大きさが出せる —— "
+          "床の値だけ 1 回測ればよい。")
     print("  ★最小検出深さは %.2f -> %.2f mm。橋長 %.0f m では 1.0e-4 rad "
-          "(%.4f 度)が支点で %.2f mm に相当するので、\n     位置合わせの角度は"
-          "「度」でなく「秒」で管理しないと 1 mm の劣化は測れない。"
+          "(%.4f 度 = %.1f 秒)が支点で %.2f mm に相当するので、\n     位置合わせの"
+          "角度は「度」でなく「秒」で管理しないと 1 mm の劣化は測れない。"
           % (md_l[0], md_l[-1], LSPAN, math.degrees(1e-4),
-             1e-4 * LSPAN / 2 * 1e3))
+             math.degrees(1e-4) * 3600, 1e-4 * LSPAN / 2 * 1e3))
 
-    print("\n   面ごとの内訳(ω = %.1e rad):" % alphas[3])
-    om = alphas[3] * axis
-    q = apply_pose(cur0, om, (0.0, 0.0, 0.0))
-    ln, _, _ = measure_normal(ref, q, cen, nor, ok)
+    # --- 面の向きで嘘が変わることを、軸を分けて確かめる ---------------------- #
+    print("\n   ★同じ大きさの回転でも、**軸が違えば効く面が違う**"
+          "(ω = %.1e rad、面ごとの予測 RMS [mm]):" % 5.0e-4)
+    print("     面           ω_x のみ   ω_y のみ   ω_z のみ")
+    face_rows = []
     for i, nm in enumerate(SEG_NAME):
-        m = np.isfinite(ln) & (CORES["seg"] == i) & ~CORES["edge"]
-        if m.sum() < 5:
-            continue
-        pv = np.asarray((0.0, 0.0, 0.0))[None, :] + np.cross(om, CORES["p"][m] - CENTER)
-        pv = np.einsum("ij,ij->i", pv, CORES["n"][m]) * 1e3
-        print("     %-12s 予測 RMS %6.3f mm   実測 RMS %6.3f mm"
-              % (nm, float(np.sqrt(np.mean(pv ** 2))),
-                 float(np.sqrt(np.mean(ln[m] ** 2)))))
+        m = CORES["seg"] == i
+        vals = []
+        for ax in (np.array([1.0, 0, 0]), np.array([0, 1.0, 0]), np.array([0, 0, 1.0])):
+            d = np.cross(5.0e-4 * ax, CORES["p"][m] - CENTER)
+            v = np.einsum("ij,ij->i", d, CORES["n"][m]) * 1e3
+            vals.append(float(np.sqrt(np.mean(v ** 2))))
+        face_rows.append([nm] + ["%.3f" % v for v in vals])
+        print("     %-12s %8.3f %10.3f %10.3f" % (nm, *vals))
+    print("     ★腹板(法線が ±y)には **ω_y が厳密に効かない**、"
+          "下面・下フランジ(法線が -z)には **ω_z が厳密に効かない**。")
+    print("       (ω×r)·n を展開すると n が向いていない軸の成分が落ちるため。"
+          "\n       つまり**同じ位置合わせで、面ごとに違う嘘をつく** —— "
+          "1 枚の面だけで検算しても気づけない。")
 
     print("\n   並進だけの掃引(t = (0,0,tz)):")
-    print("     tz [mm]   予測 RMS[mm]  実測 RMS[mm]")
+    print("     tz [mm]   幾何の予測[mm]  床と合成[mm]  実測 RMS[mm]")
     for tz in (0.0, 0.5, 1.0, 2.0):
         pred = pred_false_rms((0, 0, 0), (0.0, 0.0, tz * 1e-3))
         q = apply_pose(cur0, (0, 0, 0), (0.0, 0.0, tz * 1e-3))
         ln, _, _ = measure_normal(ref, q, cen, nor, ok)
         g = np.isfinite(ln) & ~CORES["edge"]
-        print("     %7.2f %12.3f %13.3f"
-              % (tz, pred, float(np.sqrt(np.mean(ln[g] ** 2)))))
+        print("     %7.2f %14.3f %13.3f %13.3f"
+              % (tz, pred, math.hypot(pred, floor),
+                 float(np.sqrt(np.mean(ln[g] ** 2)))))
     print("     ★鉛直の並進は腹板(法線が水平)には**一切効かない**ので、"
-          "RMS は面積の平方根ぶんだけ小さく出る。")
+          "予測 RMS は tz より小さい(法線が鉛直な面の面積割合の平方根ぶん)。")
 
     # --- 密度の崖 ---------------------------------------------------------- #
     print("\n   点密度の崖(劣化ゼロ・姿勢誤差ゼロの対照で測る):")

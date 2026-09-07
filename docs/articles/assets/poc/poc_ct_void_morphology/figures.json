@@ -72,5 +72,27 @@
    560,
    3
   ]
+ },
+ {
+  "file": "08_voxel_cliff_shape.png",
+  "name": "voxel_cliff_shape",
+  "caption": "60 µm では扁平度が測れない(nan なので描けない)。界面欠損率は 31 % 減って『安全』に見える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_voxel_cliff_table.png",
+  "name": "voxel_cliff_table",
+  "caption": "",
+  "shape": [
+   200,
+   732,
+   3
+  ],
+  "csv": "09_voxel_cliff_table.csv",
+  "tsv": "09_voxel_cliff_table.tsv"
  }
 ]
