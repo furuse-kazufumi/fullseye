@@ -656,8 +656,9 @@ def section_cliffs(scene: dict) -> dict:
                         title="崖の τ は位置で 1 桁動く(予測も一緒に動く)")
         figs.save_table("sweep_sampling",
                         ["Δt [min]", "予測 落ちる割合 [%]", "実測 [%]"], rows_s,
-                        title="間隔でパルスが丸ごと落ちる割合(位相を全部試す、W_eff=%.0f 分)"
-                              % w_eff)
+                        title="間隔でパルスが丸ごと落ちる割合",
+                        caption="位相を全部試した。パルスが規定を超えている"
+                                "時間 W_eff = %.0f 分。" % w_eff)
         figs.save_table("sweep_quant",
                         ["分解能 q [K]", "予測 逸脱 [min]", "実測 [min]"], rows_q,
                         title="量子化は実効しきい値を limit + q/2 に上げる")
