@@ -106,7 +106,8 @@ def _inputs(maker, structured=True):
 
 
 def _probe():
-    banks = [(label, _inputs(maker)) for label, maker in _IMAGE_MAKERS]
+    banks = [(label, _inputs(maker, structured=(i == 0)))
+             for i, (label, maker) in enumerate(_IMAGE_MAKERS)]
     out = {}
     for op in ops.REGISTRY:
         if banks[0][1].get(op.in_sort) is None:
