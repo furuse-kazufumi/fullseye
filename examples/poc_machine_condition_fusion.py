@@ -768,7 +768,8 @@ def probe_value(blocks, feat: str, a: str, b) -> float:
 
 
 def sweep(name: str, values, kw_name: str, want, solo, probes, focus, xlabel: str,
-          title: str, caption: str, fmt: str = "%8.3f") -> dict:
+          title: str, caption: str, fmt: str = "%8.3f", pscale=None,
+          xplot=None, xplot_label: str = "") -> dict:
     """1 つの条件を振る。**崖は特徴 1 個の上で測り**、識別率も並べて出す。
 
     掃引で変わるセンサだけ測り直し、他の 2 つは基準条件のまま重ねる ——
