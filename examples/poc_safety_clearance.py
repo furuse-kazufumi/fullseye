@@ -1190,7 +1190,9 @@ def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
     print("人と機械の安全距離 —— 「近い」を測る点をどこに置くかで危険が消える")
-    print("人 = 9 カプセルの多関節 / 機械 = 2 リンク + 基台 / センサ 2 台")
+    print("人 = 10 カプセルの多関節 / 機械 = 2 リンク + 基台 / センサ 2 台")
+    print("危険 = 真の分離 < %.3f m / 停止判定 = 推定 < %.3f m"
+          % (S_GEOM, trigger_distance()))
     print("=" * 78)
 
     section_selfcheck()
