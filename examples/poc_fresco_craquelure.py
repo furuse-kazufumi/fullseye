@@ -331,9 +331,12 @@ def measure(sc: dict, det: dict) -> dict:
     # 縦のひび(x にずれると横方向に変位が出る)だけで平均すると意味が明瞭
     offs = float(-np.mean(dxs)) if dxs.size else 0.0
     # --- 幅: 暗画素マスクの EDT × 2 を骨格上で(公開経路の距離変換は正規化されるので scipy) ---
-    edt = ndi.maximum_filter(ndi.distance_transform_edt(det["dark"]), 3)   # 骨格が縁に乗る分を救う
-    on = skel & det["dark"]
-    width = float(2 * np.median(edt[on]) - 0.5) if on.any() else 0.0
+    # (暗画素マスクのうち骨格につながる成分だけ数え、面積 / 骨格の弧長)
+    dl, _ = ndi.label(det["dark"], np.ones((3, 3), int))
+    keep_d = np.isin(dl, np.unique(dl[skel & det["dark"]]))
+    keep_d &= dl > 0
+    skl_len = _arc_length(skel)
+    width = float(keep_d.sum() / skl_len) if skl_len > 0 else 0.0
     # --- セル: 骨格を 1 px 太らせた補集合の連結成分 ---
     wall = ndi.binary_dilation(skel, np.ones((3, 3), bool))
     lab = np.asarray(_LAB.blob_label(~wall))
