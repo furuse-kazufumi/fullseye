@@ -744,7 +744,7 @@ def section_correction() -> dict:
         return _big(np.clip(a, -3.0, 3.0), 2)
 
     figs.save_grid("map_corrected", [_clip(m) for m in maps],
-                   [n for n, _ in EST], ncols=2, signed=True,
+                   [n for n, _ in EST], ncols=3, signed=True,
                    title="同じ測定を 4 通りに補正した減肉地図 [mm](±3 mm 共通尺度、"
                          "縦 = z、横 = θ)")
     truth = loss_parts(sv["z_hit"], sv["th_hit"], FULL)["total"]
