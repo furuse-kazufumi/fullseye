@@ -602,15 +602,21 @@ def section_multiplicity(sc: dict, z: dict, mv: dict) -> dict:
     print("   + 塊の規則(8 近傍 3 個)  %3d/%3d (%.1f %%)"
           % (int(cl0.sum()), int(ok0.sum()), 100 * cl0.sum() / max(ok0.sum(), 1)))
 
-    # 名目 5 % を下回った。検定が保守的なのか、たまたまか —— z の散らばりで測る。
+    # 名目 5 % を下回った。LoD が保守的なのか、たまたまか —— 分けて測る。
     zz = (d0 / np.maximum(l0 / 1.96, 1e-12))[ok0]
-    print("\n  ★実測 %.1f %% は名目 5 %% を下回る。理由を測る: 帰無仮説のもとでの "
-          "z の標準偏差は %.3f(1.0 のはず)。" % (100 * sig0.sum() / max(ok0.sum(), 1),
-                                                float(zz.std(ddof=1))))
-    print("     σ は**面そのものの形と粗さ**を測っているが、面は 2 時期で同じなので"
-          "その大半は差を取ると消える。LoD は雑音を多めに見積もり、検定は保守側に"
-          "倒れる(実測の差の σ %.3f mm vs LoD/1.96 の中央値 %.3f mm)。"
-          % (float(d0[ok0].std(ddof=1)), float(np.nanmedian(l0) / 1.96)))
+    g = d0.reshape(nx, ny)
+    r1 = float(np.corrcoef(g[:-1].ravel(), g[1:].ravel())[0, 1])
+    exp_n = 0.05 * int(ok0.sum())
+    sd_n = math.sqrt(exp_n * 0.95)
+    print("\n  ★実測 %.1f %% は名目 5 %% を下回る。**LoD が保守的なのではない** ——"
+          "帰無仮説のもとでの z の標準偏差は %.3f(1.0 であるべき値)。"
+          % (100 * sig0.sum() / max(ok0.sum(), 1), float(zz.std(ddof=1))))
+    print("     二項分布の素朴な予測 %.1f ± %.1f 個に対して %d 個 —— %.1f σ。"
+          "しかも core 間隔 %.1f m に対し円筒の半径が %.1f m なので**隣の core と"
+          % (exp_n, sd_n, int(sig0.sum()), (exp_n - sig0.sum()) / sd_n,
+             CORE_STEP, RADIUS))
+    print("     円筒が重なる**(隣接 core の差の相関 %.2f)。独立でないぶん個数の"
+          "揺らぎは二項分布より大きい。" % r1)
 
     sig, d, lod = mv["sig"], mv["d"], mv["lod"]
     bh = bh_reject(pvalues(zscore(d, lod)))

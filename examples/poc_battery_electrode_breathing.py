@@ -638,9 +638,9 @@ def section_cliff(noise_out: dict) -> dict:
                            "**境界を数え損ねている**。種類を分けて数えること。")
     figs.save_grid("frames",
                    [render(False, noise=nz, contrast=1.0, seed=3000),
-                    render(False, noise=nz, contrast=0.25, seed=3000),
-                    render(False, noise=nz, contrast=0.06, seed=3000)],
-                   ["CNR %.1f" % cnrs[0], "CNR %.1f" % cnrs[2], "CNR %.1f" % cnrs[-1]],
+                    render(False, noise=nz, contrast=0.35, seed=3000),
+                    render(False, noise=nz, contrast=0.12, seed=3000)],
+                   ["CNR %.1f" % cnrs[0], "CNR %.1f" % cnrs[3], "CNR %.1f" % cnrs[-1]],
                    title="崖の手前・上・向こう(同じ場面、コントラストだけ)", ncols=3)
     return {"cnr": cnrs, "sd": sds, "lost": lost, "c_pred": c_pred,
             "cnr_pred": noise_out["h_rms"] * c_pred / nz}
@@ -747,7 +747,7 @@ def main() -> None:
     assert abs(bias["e_uniform"] - 0.0045) < 1e-5, bias["e_uniform"]
     # 7) 崖は 2 段: 高 CNR では本数は崩れず、低 CNR で崩れる
     assert cliff["lost"][1.0][0] == 0, cliff["lost"][1.0]
-    assert cliff["lost"][0.06][0] > 0, cliff["lost"][0.06]
+    assert cliff["lost"][0.12][0] > 0, cliff["lost"][0.12]
     assert cliff["sd"][1] > cliff["sd"][0], cliff["sd"]
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
