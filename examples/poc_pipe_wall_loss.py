@@ -834,9 +834,9 @@ def section_model_order() -> dict:
 # --------------------------------------------------------------------------- #
 def section_cres_extent() -> dict:
     print("\n" + "=" * 78)
-    print("8) ★E3 の崖 —— 管底腐食が長くなるほど「軸のずれ」に見える")
+    print("8) ★E4 の崖 —— 管底腐食が長くなるほど「軸のずれ」に見える")
     print("=" * 78)
-    print("   腐食の長さ   管長比    E3 の検出率   推定した最深部 [mm]  "
+    print("   腐食の長さ   管長比    E4 の検出率   推定した最深部 [mm]  "
           "(真値 %.1f)" % CRES_D)
 
     spans, rate, depth = [], [], []
@@ -847,7 +847,7 @@ def section_cres_extent() -> dict:
         s = spec(pit=0.0, band=0.0, weld=0.0, bend=0.0,
                  cres_z=(LZ / 2 - half, LZ / 2 + half))
         sv = survey(s, offset=4.0, tilt_deg=0.6)
-        m = correct(sv["dist"], k1=1, k2=1)
+        m = correct(sv["dist"], k1=2, k2=1)
         sc = score(sv, m, s)
         parts = loss_parts(sv["z_hit"], sv["th_hit"], s)
         foot = parts["cres"] >= CRES_D * 0.8
@@ -857,7 +857,7 @@ def section_cres_extent() -> dict:
         print("   %6.0f mm   %5.2f     %8.1f %%      %8.2f mm"
               % (spans[-1], frac, rate[-1], depth[-1]))
 
-    print("\n  ★腐食が管長の %.0f %% を覆うと、E3 は検出率 %.1f %%・"
+    print("\n  ★腐食が管長の %.0f %% を覆うと、E4 は検出率 %.1f %%・"
           "最深部 %.2f mm(真値 %.1f mm)まで落ちる。"
           % (100, rate[-1], depth[-1], CRES_D))
     print("     **1 本の管の中で z によらず一定な腐食は、軸のずれと幾何的に"
@@ -865,7 +865,7 @@ def section_cres_extent() -> dict:
           "仮定だけ。管を長く取るしかない。")
 
     figs.save_plot("sweep_cres_extent",
-                   [("E3 の検出率 [%]", spans, rate),
+                   [("E4 の検出率 [%]", spans, rate),
                     ("推定した最深部 [mm] x 50", spans,
                      [d * 50 for d in depth]),
                     ("真の最深部 [mm] x 50", spans, [CRES_D * 50] * len(spans))],
