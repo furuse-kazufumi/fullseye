@@ -182,8 +182,10 @@ def measure_vias(sc: dict) -> dict:
     ``L = sqrt(12·Var)``(一様な棒の閉形式)。
     """
     vol = sc["vol"]
-    lab, n = _L.vol_label(vol > CU_THR, connectivity=6)
-    lab = np.asarray(lab)
+    # ★台帳経由の vol_label は docstring と違って **labels だけ**を返す
+    #   (``(labels, n)`` の n が落ちている。節 9 の (f))。
+    lab = np.asarray(_L.vol_label(vol > CU_THR, connectivity=6))
+    n = int(lab.max())
     idx = np.nonzero(lab)
     lid = lab[idx]
     wgt = np.clip(vol[idx].astype(np.float64) - MU_SI, 0.0, MU_CU - MU_SI)
@@ -335,7 +337,7 @@ def section_bias() -> dict:
     figs.save_grid(
         "scene",
         [vol[kz_bot], vol[kz_top], vol[:, vol.shape[1] // 2, :],
-         np.asarray(_L.vol_label(vol > CU_THR, connectivity=6)[0])[kz_top] > 0],
+         np.asarray(_L.vol_label(vol > CU_THR, connectivity=6))[kz_top] > 0],
         ["下ダイの上面近く(z = %.0f µm)" % sc["zs"][kz_bot],
          "上ダイの上面近く(z = %.0f µm)" % sc["zs"][kz_top],
          "縦断面(y = 0)—— 上ダイが %.2f° 傾いている" % sc["tilt_deg"][0],

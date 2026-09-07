@@ -286,13 +286,21 @@ def cluster_filter(sig: np.ndarray, nx: int, ny: int, need: int = 3) -> np.ndarr
 
 
 def confusion(sig: np.ndarray, truth_mm: np.ndarray) -> dict:
+    """陽性 = 真値 |S| >= 2 mm、陰性 = |S| <= 0.2 mm、その間は**灰色帯**。
+
+    ★真値のしきい値(2 mm)と検定のしきい値(LoD、実測 0.8 mm 前後)は別物なので、
+    間の core を「偽陽性」に数えると**本物の小さな沈下を誤検出として罰する**ことに
+    なる。3 分類で数え、灰色帯は別に報告する。
+    """
     pos = np.abs(truth_mm) >= TRUE_POS_MM
-    ok = np.isfinite(sig.astype(float))
-    tp = int(np.count_nonzero(sig & pos & ok))
-    fn = int(np.count_nonzero(~sig & pos & ok))
-    fp = int(np.count_nonzero(sig & ~pos & ok))
-    tn = int(np.count_nonzero(~sig & ~pos & ok))
+    neg = np.abs(truth_mm) <= TRUE_NULL_MM
+    grey = ~pos & ~neg
+    tp = int(np.count_nonzero(sig & pos))
+    fn = int(np.count_nonzero(~sig & pos))
+    fp = int(np.count_nonzero(sig & neg))
+    tn = int(np.count_nonzero(~sig & neg))
     return {"tp": tp, "fn": fn, "fp": fp, "tn": tn,
+            "grey": int(grey.sum()), "grey_sig": int(np.count_nonzero(sig & grey)),
             "tpr": 100.0 * tp / max(tp + fn, 1), "fpr": 100.0 * fp / max(fp + tn, 1)}
 
 
