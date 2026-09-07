@@ -419,8 +419,17 @@ def classify(s: np.ndarray) -> dict:
     return {"smooth": ss, "iso": iso, "fi": fi, "fi_blobs": fi_blobs}
 
 
+def _visible() -> np.ndarray:
+    """バスバーの下(設計値 ±4 px)以外。クラックの再現率はここで数える。"""
+    cols = np.arange(N)
+    vis = np.ones((N, N), bool)
+    for bx in BUSBAR_X:
+        vis[:, np.abs(cols - bx) <= BUSBAR_W / 2 + 1.0] = False
+    return vis
+
+
 def analyze(sc: dict, use_fit: bool = True, calibrate: bool = True,
-            ref_w: float = CRACK_W) -> dict:
+            ref_w: float = REF_W) -> dict:
     """1 枚を通しで解析し、種類別に真値と突き合わせる。"""
     flat, fit = flatten(sc["img"], use_fit=use_fit)
     s = degrid(flat)
@@ -429,9 +438,11 @@ def analyze(sc: dict, use_fit: bool = True, calibrate: bool = True,
     near_iso_det = binary_dilation(cl["iso"], iterations=4)
     sk = sk_raw & ~binary_dilation(cl["fi"], iterations=2) & ~near_iso_det
 
-    # クラック: 本ごとの再現率(真値中心線が骨格の 2 px 以内にある割合)
+    # クラック: 本ごとの再現率(真値中心線が骨格の 2 px 以内にある割合。
+    # バスバーの下は見えないので真値からも外す)
     sk_d = binary_dilation(sk, iterations=2)
-    recall = [float(sk_d[m].mean()) for m in sc["crack_lines"]]
+    vis = _visible()
+    recall = [float(sk_d[m & vis].mean()) for m in sc["crack_lines"]]
     any_true = np.zeros_like(sk)
     for m in sc["crack_lines"]:
         any_true |= m
