@@ -194,99 +194,95 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
 # 計測 —— ビア 1 本ごとに (中心, 向き, 長さ)。ここが公開経路の穴の集まり           #
 # --------------------------------------------------------------------------- #
 def measure_vias(sc: dict) -> dict:
-    """CT から TSV を 1 本ずつ取り出し、軸と長さを測る。
+    """CT から TSV を 1 本ずつ取り出し、軸 (中心, 向き, 長さ) を測る。
 
     段取り: ``vol_label`` で Cu を連結成分に分ける -> 各成分の**スライスごとの
     gray 重心**(自前。台帳に gray 重み付き重心が無い)-> その点列に
     ``fit_line3`` で 3 次元直線を当てる -> 軸に沿った**等価幅**から長さ。
 
-    ★2 か所で踏んだ落とし穴を、どちらも「端を別扱いする」ことで外している:
+    ★測り方で 2 回はまった。どちらも「端」と「二値化」の扱い:
 
     * **端のスライスを直線当てはめに入れると向きが狂う**。端は斜めの蓋で切れた
-      部分領域なので、その重心は軸から外れる。入れたまま測ると α が
-      1.200° -> 1.247°(+3.9 %)と系統的にずれた。重みが平坦部の 70 % 未満の
-      スライスは落とす。
-    * **分散から長さを出すと短く出る**。``L = sqrt(12 Var)`` は一様な棒の式だが、
-      端の部分体積で重みが細るぶん分散が小さくなり、100 µm が 97.4 µm(-2.6 %)。
-      軸まわりの細い円柱の gray を**等価幅**(総和 / 平坦部の値)で数えれば、
-      端の半端なスライスがちょうど「その割合ぶん」効くので偏らない。
+      部分領域なので重心が軸から外れる。上下 3 スライスを落とす。
+    * ★**しきい値で切った画素だけで重心を取ると、二値化が折り返しを呼ぶ**。
+      生の gray を軸まわりの一定半径の円板で積むほうが正しい(しきい値は
+      「どのビアか」を決めるためだけに使う)。ノイズ無しの場で
+      α = 1.200° / β = 0.700° を、二値化重心は 1.223° / 0.750° と外し、
+      生 gray の円板は **1.200° / 0.697°** で当てる。
+    * 長さは ``L = sqrt(12 Var)``(一様な棒の閉形式)だと端の部分体積で
+      重みが細るぶん **-2.6 %**(100 -> 97.4 µm)。軸まわりの探針の gray を
+      **等価幅**(総和 / 平坦部)で数えれば偏らない。
     """
-    vol = sc["vol"]
+    vol = sc["vol"].astype(np.float64)
     # ★台帳経由の vol_label は docstring と違って **labels だけ**を返す
     #   (``(labels, n)`` の n が落ちている。節 9 の (f))。
     lab = np.asarray(_L.vol_label(vol > CU_THR, connectivity=6))
     n = int(lab.max())
-    idx = np.nonzero(lab)
-    lid = lab[idx]
-    wgt = np.clip(vol[idx].astype(np.float64) - MU_SI, 0.0, MU_CU - MU_SI)
-    zc = sc["zs"][idx[0]]
-    yc = sc["gy"][idx[1]]
-    xc = sc["gx"][idx[2]]
-
-    # スライス(label, z index)ごとの gray 重心 —— サブボクセルの点列を作る
-    key = lid.astype(np.int64) * vol.shape[0] + idx[0]
-    sw = np.bincount(key, weights=wgt)
-    sy = np.bincount(key, weights=wgt * yc)
-    sx = np.bincount(key, weights=wgt * xc)
-    sz = np.bincount(key, weights=wgt * zc)
-    ok = sw > 1e-9
-
-    # 軸まわりの細い円柱(半径 1.2 vox)—— 長さを等価幅で数えるための探針
-    pr = 1.2
-    p = int(np.ceil(pr))
-    dyy, dxx = np.mgrid[-p:p + 1, -p:p + 1]
-    probe = np.hypot(dyy, dxx) <= pr
     nz_, ny_, nx_ = vol.shape
+    zi, yi, xi = np.nonzero(lab)
+    lid = lab[zi, yi, xi]
+    order = np.argsort(lid, kind="stable")
+    zi, yi, xi, lid = zi[order], yi[order], xi[order], lid[order]
+    bounds = np.searchsorted(lid, np.arange(1, n + 2))
+
+    # 重心を取る円板(半径 5 vox)と、長さの等価幅を測る細い探針(半径 1.2 vox)
+    pc, pp = 5, 1
+    dyy, dxx = np.mgrid[-pc:pc + 1, -pc:pc + 1]
+    disc = np.hypot(dyy, dxx) <= pc
+    dyy2, dxx2 = np.mgrid[-pp:pp + 1, -pp:pp + 1]
+    probe = np.hypot(dyy2, dxx2) <= 1.2
+    gy, gx, zs = sc["gy"], sc["gx"], sc["zs"]
 
     out = []
-    for j in range(1, n + 1):
-        k0, k1 = j * nz_, (j + 1) * nz_
-        w_sl = sw[k0:k1]
-        m = ok[k0:k1].copy()
-        if int(m.sum()) < 8:
+    for j in range(n):
+        a0, a1 = bounds[j], bounds[j + 1]
+        zz, yy_, xx_ = zi[a0:a1], yi[a0:a1], xi[a0:a1]
+        ks = np.unique(zz)
+        if ks.size < 12:
             continue
-        m &= w_sl >= 0.70 * float(np.median(w_sl[m]))     # 端のスライスを落とす
-        if int(m.sum()) < 5:
-            continue
-        pz = sz[k0:k1][m] / w_sl[m]
-        py = sy[k0:k1][m] / w_sl[m]
-        px = sx[k0:k1][m] / w_sl[m]
+        ks_in = ks[3:ks.size - 3]                    # 端の 3 スライスを落とす
+        pz, py, px = [], [], []
+        for k in ks_in:
+            m = zz == k
+            r0 = int(np.clip(round(float(yy_[m].mean())), pc, ny_ - 1 - pc))
+            c0 = int(np.clip(round(float(xx_[m].mean())), pc, nx_ - 1 - pc))
+            w = (vol[k, r0 - pc:r0 + pc + 1, c0 - pc:c0 + pc + 1] - MU_SI) * disc
+            sw = float(w.sum())
+            py.append(float((w.sum(axis=1) * gy[r0 - pc:r0 + pc + 1]).sum()) / sw)
+            px.append(float((w.sum(axis=0) * gx[c0 - pc:c0 + pc + 1]).sum()) / sw)
+            pz.append(float(zs[k]))
         line = _L.fit_line3(np.column_stack([pz, py, px]))
         d = np.asarray(line["direction"], float)          # (dz, dy, dx)
         if d[0] < 0:
             d = -d
         c = np.asarray(line["center"], float)[:3]
 
-        # 長さ: 軸に沿って探針の gray を拾い、等価幅(総和 / 平坦部)で数える
-        ks = np.nonzero(ok[k0:k1])[0]
-        lo_k, hi_k = max(0, int(ks[0]) - 3), min(nz_ - 1, int(ks[-1]) + 3)
-        prof = np.empty(hi_k - lo_k + 1)
-        for i, kk in enumerate(range(lo_k, hi_k + 1)):
-            t = (sc["zs"][kk] - c[0]) / d[0]
-            r0 = int(round((c[1] + t * d[1]) / VOX_UM + (ny_ - 1) / 2.0))
-            c0 = int(round((c[2] + t * d[2]) / VOX_UM + (nx_ - 1) / 2.0))
-            r0 = int(np.clip(r0, p, ny_ - 1 - p))
-            c0 = int(np.clip(c0, p, nx_ - 1 - p))
-            prof[i] = float(vol[kk, r0 - p:r0 + p + 1,
-                                c0 - p:c0 + p + 1][probe].mean())
+        # 長さと中心: 軸に沿った gray の等価幅と重心(端の半端も割合ぶん効く)
+        lo_k = max(0, int(ks[0]) - 3)
+        hi_k = min(nz_ - 1, int(ks[-1]) + 3)
+        kk = np.arange(lo_k, hi_k + 1)
+        prof = np.empty(kk.size)
+        for i, k in enumerate(kk):
+            t = (zs[k] - c[0]) / d[0]
+            r0 = int(np.clip(round((c[1] + t * d[1]) / VOX_UM + (ny_ - 1) / 2.0),
+                             pp, ny_ - 1 - pp))
+            c0 = int(np.clip(round((c[2] + t * d[2]) / VOX_UM + (nx_ - 1) / 2.0),
+                             pp, nx_ - 1 - pp))
+            prof[i] = float(vol[k, r0 - pp:r0 + pp + 1,
+                                c0 - pp:c0 + pp + 1][probe].mean())
+        prof = np.clip(prof - MU_SI, 0.0, None)
         plateau = float(np.median(prof[prof > 0.5 * prof.max()]))
         length = float(prof.sum() / plateau * VOX_UM / d[0])
-
-        # 中心: gray 重み付きの重心を軸上に落とす
-        sel = lid == j
-        w = wgt[sel]
-        t = ((zc[sel] - c[0]) * d[0] + (yc[sel] - c[1]) * d[1]
-             + (xc[sel] - c[2]) * d[2])
-        mt = float((w * t).sum() / w.sum())
-        out.append((c[0] + mt * d[0], c[1] + mt * d[1], c[2] + mt * d[2],
+        z_mid = float((prof * zs[kk]).sum() / prof.sum())
+        t_mid = (z_mid - c[0]) / d[0]
+        out.append((z_mid, c[1] + t_mid * d[1], c[2] + t_mid * d[2],
                     d[0], d[1], d[2], length))
 
     a = np.asarray(out, float)
     assert a.shape[0] == 2 * NG * NG, (a.shape, n)
     z_split = sc["h_die"] + GAP_UM / 2.0
-    lower = a[a[:, 0] < z_split]
-    upper = a[a[:, 0] >= z_split]
-    return {"lower": lower, "upper": upper, "n_label": n}
+    return {"lower": a[a[:, 0] < z_split], "upper": a[a[:, 0] >= z_split],
+            "n_label": n}
 
 
 def face_xy(v: np.ndarray, sign: float) -> np.ndarray:
