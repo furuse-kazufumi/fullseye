@@ -303,7 +303,9 @@ def make_surface(scale: float = 1.0, step: float = STEP, light: bool = False) ->
              else np.column_stack([a, pos2, np.full_like(a, BASE_H)]))
         n = np.column_stack([np.zeros_like(a), np.zeros_like(a), np.ones_like(a)])
         add(p, n, BASE, 0.0, np.full_like(a, BASE_H))
-    return _pack(P, N, E, D, G)
+    out = _pack(P, N, E, D, G)
+    out["win"], out["door"] = win, door
+    return out
 
 
 def _pack(P, N, E, D, G) -> dict:
