@@ -826,44 +826,58 @@ def section_scope() -> dict:
         pr = np.array([np.nanmedian(v[flat & (np.abs(CORES["x"] - x0) < 1e-6)])
                        for x0 in xs])
         prof[nm] = pr
-    mid = np.argmin(np.abs(xs - LSPAN / 2))
-    end = np.argmin(np.abs(xs - 0.4))
+    mid = int(np.argmin(np.abs(xs - LSPAN / 2)))
+    end = int(np.argmin(np.abs(xs - 0.4)))
     d_mm = DEFLECT_MM[2]
-    print("\n   合わせ方          支間中央のたわみ [mm]      支点付近 [mm]")
-    print("     真値                    %+8.3f              %+8.3f"
-          % (-d_mm, -d_mm * 4 * (0.4 / LSPAN) * (1 - 0.4 / LSPAN)))
-    rows = []
+    # 法線が下向きの面では「面が下がる = 外へ動く」なので、たわみは**正**に出る。
+    w_true = d_mm * 4 * (xs / LSPAN) * (1 - xs / LSPAN)
+    print("\n   合わせ方              支間中央 [mm]   支点付近(x=%.1f m)[mm]"
+          "   吸われた割合" % xs[end])
+    print("     真値                    %+8.3f        %+8.3f              -"
+          % (w_true[mid], w_true[end]))
+    rows = [["真値", "%+.3f" % w_true[mid], "%+.3f" % w_true[end], "-"]]
     for nm in prof:
-        rows.append([nm, "%+.3f" % prof[nm][mid], "%+.3f" % prof[nm][end]])
-        print("     %-16s        %+8.3f              %+8.3f"
-              % (nm, prof[nm][mid], prof[nm][end]))
-    print("   予測              全点: %+8.3f / %+8.3f   端だけ: %+8.3f / %+8.3f"
-          % (-d_mm * (1 - w_all), d_mm * w_all,
-             -d_mm * (4 * (0.4 / LSPAN) * (1 - 0.4 / LSPAN) - w_end) * 1.0,
-             d_mm * w_end))
-    print("  ★★全点で合わせると中央のたわみは %.3f -> %.3f mm(予測 %.3f)に潰れ、"
-          % (-prof["合わせない"][mid], -prof["全点で合わせる"][mid],
-             d_mm * (1 - w_all)))
-    print("     支点付近には %+.3f mm の**偽の隆起**が出る(予測 %+.3f)。"
-          "劣化が全域に広がっていると、\n     位置合わせは平均を吸い、"
-          "**符号が逆の嘘を端に作る**。"
-          % (prof["全点で合わせる"][end], d_mm * w_all))
-    print("  ★端だけで合わせても中央は %.3f mm(真値の %.1f %%)。"
-          "予測どおり %.1f %% は吸われたまま。"
-          % (-prof["端だけで合わせる"][mid],
-             100 * prof["端だけで合わせる"][mid] / prof["合わせない"][mid],
-             100 * w_end))
+        eaten = 1.0 - prof[nm][mid] / w_true[mid]
+        rows.append([nm, "%+.3f" % prof[nm][mid], "%+.3f" % prof[nm][end],
+                     "%.3f" % eaten])
+        print("     %-16s        %+8.3f        %+8.3f          %8.3f"
+              % (nm, prof[nm][mid], prof[nm][end], eaten))
+    print("     予測(全点 = 2/3 を吸う)  %+8.3f        %+8.3f          %8.3f"
+          % (d_mm * (1 - w_all), d_mm * (w_true[end] / d_mm - w_all), w_all))
+    print("     予測(端だけ)            %+8.3f        %+8.3f          %8.3f"
+          % (d_mm * (1 - w_end), d_mm * (w_true[end] / d_mm - w_end), w_end))
+    eat_all = 1.0 - prof["全点で合わせる"][mid] / w_true[mid]
+    eat_end = 1.0 - prof["端だけで合わせる"][mid] / w_true[mid]
+    print("\n  ★★全点で合わせると中央のたわみは %.3f -> %.3f mm に潰れる"
+          "(吸われた割合 実測 %.3f / 予測 %.3f)。"
+          % (prof["合わせない"][mid], prof["全点で合わせる"][mid], eat_all, w_all))
+    print("     さらに支点付近には %+.3f mm の**符号が逆の変化**が出る"
+          "(予測 %+.3f)—— 沈んでいないのに\n     「持ち上がった」と読める。"
+          "劣化が全域に広がっていると、位置合わせは**平均を吸って端に嘘を作る**。"
+          % (prof["全点で合わせる"][end], d_mm * (w_true[end] / d_mm - w_all)))
+    print("  ★変わっていない端だけで合わせても %.3f が吸われる"
+          "(予測 %.3f)—— 支点でもたわみは厳密に 0 ではないから。"
+          % (eat_end, w_end))
+    print("     **合わせる範囲を狭めてもゼロにはならない**: 吸われる量は"
+          "「使った範囲での劣化の平均」そのもの。")
     figs.save_plot("deflection_profile",
-                   [("真値", xs, [-d_mm * 4 * (x / LSPAN) * (1 - x / LSPAN) for x in xs]),
+                   [("真値", xs, w_true),
                     ("合わせない", xs, prof["合わせない"]),
                     ("全点で合わせる", xs, prof["全点で合わせる"]),
                     ("端だけで合わせる", xs, prof["端だけで合わせる"])],
-                   xlabel="橋軸方向 x [m]", ylabel="法線方向の変化 [mm]",
+                   xlabel="橋軸方向 x [m]", ylabel="法線方向の変化 [mm](正 = 面が下がる)",
                    title="たわみは合わせた分だけ消え、端に逆符号が出る",
                    caption="法線が鉛直に近い面(下面・下フランジ)の中央値。"
                            "全点で合わせると平均 2/3 D が姿勢に吸われる。")
+    figs.save_table("scope",
+                    ["合わせる範囲", "支間中央 mm", "支点付近 mm", "吸われた割合"],
+                    rows, title="合わせる範囲で「たわみ」がどれだけ消えるか",
+                    caption="真のたわみは中央 %.2f mm。吸われる量は"
+                            "「使った範囲でのたわみの平均」で閉形式に予測できる。"
+                            % w_true[mid])
     return {"x": xs, "prof": prof, "w_all": w_all, "w_end": w_end,
-            "mid": mid, "end": end}
+            "mid": mid, "end": end, "w_true": w_true,
+            "eat_all": eat_all, "eat_end": eat_end}
 
 
 # --------------------------------------------------------------------------- #
