@@ -1,0 +1,94 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "上段: 左(遠側)の母材面ほど深い。下段: 明るい = 測れる。θ=45 度で左母材面が**いっせいに**消える(傾き tan53 = 1.327 がカメラ光線の傾き cot45 = 1 を超えるため)。",
+  "shape": [
+   255,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "02_frames.png",
+  "name": "frames",
+  "caption": "θ を大きくすると高さの伸び K が増えて分解能は上がる(輝線の起伏が大きくなる)が、左半分の輝線が消えていく。",
+  "shape": [
+   681,
+   340,
+   3
+  ]
+ },
+ {
+  "file": "03_profile_28.png",
+  "name": "profile_28",
+  "caption": "θ = 28 度。左の母材面と溝がまだ見えている(左側 4 量が出せる)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_profile_50.png",
+  "name": "profile_50",
+  "caption": "θ = 50 度。左母材面が背を向け、左側 4 量が「測れない」に落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_angle_sweep.png",
+  "name": "angle_sweep",
+  "caption": "線が途切れるところから先は「測れなかった」。左側の量は 37 度でいっせいに消え、左アンダーカットはその前から少しずつ欠けるので谷が手前にできる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_resolution_vs_occlusion.png",
+  "name": "resolution_vs_occlusion",
+  "caption": "同じノブの表裏。2 本が交わるあたりが最適角。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_optimum.png",
+  "name": "optimum",
+  "caption": "予測 = 遮蔽だけの誤差と 1/sinθ の雑音の二乗和。「甘い θ*」= 測れた断面だけで数えたときの最小。",
+  "shape": [
+   224,
+   549,
+   3
+  ],
+  "csv": "07_optimum.csv",
+  "tsv": "07_optimum.tsv"
+ },
+ {
+  "file": "08_stripe_width.png",
+  "name": "stripe_width",
+  "caption": "重心は √σ で増え、3 点当てはめはもっと速く増える。ゼロ点(最大値の画素)は幅にほぼ無関係な 1 画素の階段。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_map_visibility.png",
+  "name": "map_visibility",
+  "caption": "法線は自己遮蔽だけを見る。水平線の規則は投げかけ影も入るので必ず広い。",
+  "shape": [
+   255,
+   670,
+   3
+  ]
+ }
+]

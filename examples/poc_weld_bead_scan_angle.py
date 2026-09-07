@@ -1264,7 +1264,8 @@ def main() -> int:
     assert tb["重心 固定窓"][-1] < tb["重心 固定窓"][1], "★固定窓は太いほど良い(1/σ)"
     assert tb["対数放物線"][0] > tb["対数放物線"][1], "★細すぎる側にも床がある"
     assert tb["op lines_gauss"][3] > tb["ゼロ点 最大値"][3], "lines_gauss はゼロ点より悪い"
-    assert abs(cal["got"]["legL"] + cal["got"]["ucL"] - 1.0) < 0.02, "sin²+cos²=1"
+    for s in ("L", "R"):                     # 余りはつま先の這い(7 章で説明)
+        assert abs(cal["got"]["leg" + s] + cal["got"]["uc" + s] - 1.0) < 0.05, "sin²+cos²=1"
     assert opt["per"]["ucR"][1] > opt["per"]["ucL"][1], "近側の最適角のほうが大きい"
 
     print()
