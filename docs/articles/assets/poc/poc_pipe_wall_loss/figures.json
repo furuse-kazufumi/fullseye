@@ -8,5 +8,178 @@
    834,
    3
   ]
+ },
+ {
+  "file": "02_scene_polar.png",
+  "name": "scene_polar",
+  "caption": "下の帯の細くなっている所が管底腐食。",
+  "shape": [
+   839,
+   740,
+   3
+  ]
+ },
+ {
+  "file": "03_map_truth.png",
+  "name": "map_truth",
+  "caption": "真の減肉 [mm](縦 = z 0..300 mm、横 = θ 0..360 度。正 = 肉が減った、溶接ビードは負)",
+  "shape": [
+   360,
+   540
+  ]
+ },
+ {
+  "file": "04_map_naive_aligned.png",
+  "name": "map_naive_aligned",
+  "caption": "軸が合っているときの推定減肉 [mm](対照群 b)",
+  "shape": [
+   360,
+   540
+  ]
+ },
+ {
+  "file": "05_sweep_offset.png",
+  "name": "sweep_offset",
+  "caption": "予測を先に立ててから測った。差は最大 1.84 ポイント。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_map_false_loss.png",
+  "name": "map_false_loss",
+  "caption": "腐食ゼロの管・軸ずれ 4.0 mm のときの推定減肉 [mm](1 周期の正弦波)",
+  "shape": [
+   360,
+   540
+  ]
+ },
+ {
+  "file": "07_map_false_flag.png",
+  "name": "map_false_flag",
+  "caption": "",
+  "shape": [
+   333,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "08_sweep_tilt.png",
+  "name": "sweep_tilt",
+  "caption": "中央で 0 になるのは、そこでセンサが軸を横切るから。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_tilt_leak.png",
+  "name": "tilt_leak",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_spectrum.png",
+  "name": "spectrum",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_spectrum_table.png",
+  "name": "spectrum_table",
+  "caption": "",
+  "shape": [
+   200,
+   573,
+   3
+  ],
+  "csv": "11_spectrum_table.csv",
+  "tsv": "11_spectrum_table.tsv"
+ },
+ {
+  "file": "12_map_corrected.png",
+  "name": "map_corrected",
+  "caption": "",
+  "shape": [
+   615,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "13_map_truth_vs_best.png",
+  "name": "map_truth_vs_best",
+  "caption": "",
+  "shape": [
+   333,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "14_defect_table.png",
+  "name": "defect_table",
+  "caption": "",
+  "shape": [
+   176,
+   633,
+   3
+  ],
+  "csv": "14_defect_table.csv",
+  "tsv": "14_defect_table.tsv"
+ },
+ {
+  "file": "15_volume_table.png",
+  "name": "volume_table",
+  "caption": "",
+  "shape": [
+   200,
+   510,
+   3
+  ],
+  "csv": "15_volume_table.csv",
+  "tsv": "15_volume_table.tsv"
+ },
+ {
+  "file": "16_sweep_model_order.png",
+  "name": "sweep_model_order",
+  "caption": "孔食(局所)はどの次数でも残る —— 消えるのは1 周期に載っている欠陥だけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "17_sweep_cres_extent.png",
+  "name": "sweep_cres_extent",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "18_dc_bias.png",
+  "name": "dc_bias",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

@@ -276,23 +276,26 @@ def flatness(x: np.ndarray) -> np.ndarray:
     return np.linalg.norm(d, axis=-1) / np.maximum(np.mean(x, axis=-1), 1e-6)
 
 
-_FLAT_THR: list[float] = []
+_FLAT_THR: dict[str, float] = {}
 
 
-def flat_threshold() -> float:
+def flat_threshold(keep: np.ndarray | None = None) -> float:
     """平坦度の門を**校正で**決める(白板と平坦板を 1 枚ずつ測る要領)。
 
     平坦側 = 金属ライブラリ + 同じ雑音、特徴側 = 材質ライブラリの最小値。
-    その幾何平均を門にする(対数軸のまん中)。
+    その幾何平均を門にする(対数軸のまん中)。**門は分類器と同じ帯で測る**
+    —— 水帯を捨てた分類器に全帯の門を付けると、濡れた金属が門を素通りする。
     """
-    if not _FLAT_THR:
+    key = "all" if keep is None else "keep"
+    if key not in _FLAT_THR:
+        sl = slice(None) if keep is None else keep
         rng = np.random.default_rng(101)
-        flat = LIB[NAMES.index("金属")] + rng.normal(0.0, NOISE, (256, N_BAND))
+        flat = (LIB[NAMES.index("金属")] + rng.normal(0.0, NOISE, (256, N_BAND)))[:, sl]
         v_flat = float(np.median(flatness(flat)))
         feat = [i for i in range(1, K) if NAMES[i] != "金属"]
-        v_feat = float(np.min(flatness(LIB[feat])))
-        _FLAT_THR.append(float(np.sqrt(v_flat * v_feat)))
-    return _FLAT_THR[0]
+        v_feat = float(np.min(flatness(LIB[feat][:, sl])))
+        _FLAT_THR[key] = float(np.sqrt(v_flat * v_feat))
+    return _FLAT_THR[key]
 
 
 def best_band_pair(lib: np.ndarray) -> tuple[int, int]:
