@@ -364,7 +364,7 @@ def edge_inventory(seg_len: float = 4.0) -> list:
                     (fr["h"] / 2, fr["w"] / 2), (fr["h"] / 2, -fr["w"] / 2)])
     add_rect([np.array([fr["cy"], fr["cx"]]) + R @ p for p in loc], abs(fr["alb"] - SOIL))
     fy0, fy1, fx0, fx1, falb = FOREST
-    add_rect([(fy0, fx0), (fy0, fx1), (fy1, fx1), (fy1, fx0)], abs(falb - SOIL))
+    add_rect(px_corners(fy0, fy1, fx0, fx1), abs(falb - SOIL))
     for (y0, x0, y1, x1) in ROADS.values():
         p0, p1 = np.array([y0, x0]), np.array([y1, x1])
         tt = (p1 - p0) / np.linalg.norm(p1 - p0)
