@@ -622,10 +622,13 @@ def section_cliff(k_true):
         pred_l.append(pl)
         meas_l.append(float(ml))
         print("   %8.0f     %10.2f     %10.2f" % (rho, pl, ml))
-    print("  ★崖は点密度の**対数**でしか動かない: %.0f -> %.0f 点/m^2 と %.0f 倍に"
-          "しても\n     崖は %.2f -> %.2f(+%.2f)しか伸びない。"
-          % (dens[0], dens[-1], dens[-1] / dens[0], meas_l[0], meas_l[-1],
-             meas_l[-1] - meas_l[0]))
+    step_gain = float(np.mean(np.diff(meas_l)))
+    print("  ★崖は点密度の**対数**でしか動かない: 4 倍にするたびに崖は"
+          " +%.2f しか伸びない\n     (%.0f -> %.0f 点/m^2 で %.2f -> %.2f)。"
+          "**予測はどこでも実測より %.1f 楽観的** ——\n     予測は Omega を"
+          "薄いところの値で固定したが、実測の Omega は厚くなるほど下がるため。"
+          % (step_gain, dens[0], dens[-1], meas_l[0], meas_l[-1],
+             float(np.mean(np.asarray(pred_l) - np.asarray(meas_l)))))
 
     figs.save_plot("cliff_ceilings",
                    [("見えている葉面積(実測)", lai_t, vis),
