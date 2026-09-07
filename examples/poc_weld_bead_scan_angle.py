@@ -458,12 +458,14 @@ def quantities_one(h, lineL, lineR, root) -> dict:
         xt = _cross_tau(X, s, i, j)
         toe[side] = (xt, a * xt + b, a)
         dev[side] = s
+        out["xtl" if side == "L" else "xtr"] = xt
         sel = ((X >= xt - span) & (X < xt)) if side == "L" else \
               ((X > xt) & (X <= xt + span))
+        key = "ucL" if side == "L" else "ucR"
+        out["m_" + key] = float(1.0 - ok[sel].mean()) if sel.any() else 1.0
         m = sel & np.isfinite(s)
         if m.any():
-            out["ucL" if side == "L" else "ucR"] = float(
-                max(0.0, -np.min(s[m])) / np.hypot(1.0, a))
+            out[key] = float(max(0.0, -np.min(s[m])) / np.hypot(1.0, a))
     if "L" in toe and "R" in toe and not (toe["L"][0] < 0.0 < toe["R"][0]):
         return out
     if root is not None:
@@ -471,10 +473,15 @@ def quantities_one(h, lineL, lineR, root) -> dict:
         for side, key in (("L", "legL"), ("R", "legR")):
             if side in toe:
                 out[key] = abs(toe[side][0] - x_root) * np.hypot(1.0, toe[side][2])
+                lo, hi = sorted((toe[side][0], x_root))
+                sel = (X >= lo) & (X <= hi)
+                out["m_" + key] = float(1.0 - ok[sel].mean()) if sel.any() else 1.0
     if "L" not in toe or "R" not in toe:
         return out
     (xtl, ztl, _al), (xtr, ztr, _ar) = toe["L"], toe["R"]
-    face = ok & (X >= xtl) & (X <= xtr)
+    span = (X >= xtl) & (X <= xtr)
+    out["m_cv"] = out["m_throat"] = float(1.0 - ok[span].mean()) if span.any() else 1.0
+    face = ok & span
     if int(face.sum()) < 8:
         return out
     xf, hf = X[face], h[face]
