@@ -776,37 +776,21 @@ def section_zero_point(seed: int = SEED) -> dict:
 # --------------------------------------------------------------------------- #
 # 節 3 —— 合わせが吸うもの・配るもの                                           #
 # --------------------------------------------------------------------------- #
-def predicted_phi(surf: dict, sc: dict) -> float:
-    """y 軸まわりの回転を最小二乗で決めたときの角 [rad] を幾何で予測する。
-
-    回転 φ は各部材へ「腕の長さ × φ」の変位を与える。壁 x=const は z 方向の腕、
-    床と天井は x 方向の腕。最小二乗解は各部材の**てこ** Σ(腕 - 平均腕)² を
-    重みにした、部材ごとの含み角の加重平均になる。
-    """
-    P, E = sc["P"], sc["elem"]
-    num = den = 0.0
-    for e, arm, theta in ((WX0, 2, RACK), (WX1, 2, RACK),
-                          (FLOOR, 0, -FLOOR_SLOPE), (CEIL, 0, 0.0)):
-        m = E == e
-        if m.sum() < 10:
-            continue
-        w = float(np.var(P[m, arm]) * m.sum())
-        num += w * theta
-        den += w
-    return num / den if den else 0.0
-
-
-def section_alignment(seed: int = SEED) -> dict:
+def section_alignment(surf: dict, sc: dict, seed: int = SEED) -> dict:
     print("\n" + "=" * 78)
     print("3) ★合わせは剛体モードを吸い、余りを他の部材へ配る")
     print("=" * 78)
-    surf = make_surface(1.0)
-    sc = scan(surf, seed=seed)
-    phi_pred = predicted_phi(surf, sc)
-    print("   真値: 東西の壁の傾き %.2f mrad / 床の勾配 %.2f mrad / 天井 %.2f mrad"
-          % (1000 * RACK, -1000 * FLOOR_SLOPE, 0.0))
-    print("   幾何の予測 —— てこ Σ(腕)² で重みづけした加重平均角 φ = %.2f mrad"
-          % (1000 * phi_pred))
+    x = absorbed_pose(surf)
+    wy = float(x[1])                  # y 軸まわりに吸われる角 [rad]
+    print("   真値: 東西の壁の傾き %+.2f mrad / 床の勾配 %+.2f mrad / 天井 %+.2f mrad"
+          % (1000 * RACK, 1000 * FLOOR_SLOPE, 0.0))
+    print("   ★ICP を走らせる前の閉形式の予測(偏差の場を J=[p×n|n] の 6 次元へ射影):")
+    print("     吸われる回転 ω = (%+.2f, %+.2f, %+.2f) mrad / 並進 = (%+.2f, %+.2f, %+.2f) mm"
+          % tuple(list(1000 * x[:3]) + list(1000 * x[3:])))
+    pred = {"rack": RACK + wy, "floor_sx": FLOOR_SLOPE - wy, "ceil_sx": -wy,
+            "splay": SPLAY}
+    print("     -> 合わせたあとの読み: 壁 %+.2f / 床 %+.2f / 天井 %+.2f mrad"
+          % (1000 * pred["rack"], 1000 * pred["floor_sx"], 1000 * pred["ceil_sx"]))
 
     rows, res = [], {}
     for mode, name in (("none", "合わせない(設計座標のまま)"),
@@ -814,48 +798,49 @@ def section_alignment(seed: int = SEED) -> dict:
                        ("global", "全体 ICP(点群まるごと)")):
         p = align(sc["P"], mode, seed=seed)
         m = measure_elements(p, seed=seed)
-        rack = 0.5 * (m["wx0"] + m["wx1"])
-        splay = 0.5 * (m["wy0"] - m["wy1"])
+        m["rack"] = 0.5 * (m["wx0"] + m["wx1"])
+        m["splay"] = 0.5 * (m["wy1"] - m["wy0"])
+        m["P"] = p
         res[mode] = m
-        res[mode]["rack"] = rack
-        res[mode]["splay"] = splay
-        res[mode]["P"] = p
-        rows.append([name, "%+.2f" % (1000 * rack), "%+.2f" % (1000 * splay),
+        rows.append([name, "%+.2f" % (1000 * m["rack"]), "%+.2f" % (1000 * m["splay"]),
                      "%+.2f" % (1000 * m["floor_sx"]), "%+.2f" % (1000 * m["ceil_sx"]),
                      "%.2f" % (1000 * m["floor_pv"])])
         print("   %-26s 壁の傾き %+5.2f / 開き %+5.2f / 床の勾配 %+5.2f / "
               "天井の勾配 %+5.2f mrad / 床の反り %5.2f mm"
-              % (name, 1000 * rack, 1000 * splay, 1000 * m["floor_sx"],
+              % (name, 1000 * m["rack"], 1000 * m["splay"], 1000 * m["floor_sx"],
                  1000 * m["ceil_sx"], 1000 * m["floor_pv"]))
+    rows.append(["閉形式の予測(全体 ICP)", "%+.2f" % (1000 * pred["rack"]),
+                 "%+.2f" % (1000 * SPLAY), "%+.2f" % (1000 * pred["floor_sx"]),
+                 "%+.2f" % (1000 * pred["ceil_sx"]), "%.2f" % (1000 * SAG)])
     rows.append(["真値", "%+.2f" % (1000 * RACK), "%+.2f" % (1000 * SPLAY),
-                 "%+.2f" % (-1000 * FLOOR_SLOPE), "+0.00", "%.2f" % (1000 * SAG)])
+                 "%+.2f" % (1000 * FLOOR_SLOPE), "+0.00", "%.2f" % (1000 * SAG)])
     print("   %-26s 壁の傾き %+5.2f / 開き %+5.2f / 床の勾配 %+5.2f / "
           "天井の勾配 %+5.2f mrad / 床の反り %5.2f mm"
-          % ("真値", 1000 * RACK, 1000 * SPLAY, -1000 * FLOOR_SLOPE, 0.0, 1000 * SAG))
+          % ("真値", 1000 * RACK, 1000 * SPLAY, 1000 * FLOOR_SLOPE, 0.0, 1000 * SAG))
 
     g = res["global"]
-    print("\n   ★全体 ICP のあと、無傷の天井が %+.2f mrad 傾いて見える(真値 0)。"
-          % (1000 * g["ceil_sx"]))
-    print("     壁は真値の %.0f %%、床の勾配は %.0f %% に痩せた。"
-          % (100 * g["rack"] / RACK, 100 * g["floor_sx"] / (-FLOOR_SLOPE)))
-    phi_icp = float(np.mean([RACK - g["rack"], -FLOOR_SLOPE - g["floor_sx"],
-                             0.0 - g["ceil_sx"]]))
-    print("     ICP が取った角 φ の実測 %.2f mrad(予測 %.2f mrad、差 %.2f mrad)。"
-          % (1000 * phi_icp, 1000 * phi_pred, 1000 * abs(phi_icp - phi_pred)))
-    print("   ★吸われるのは剛体モードだけ: 南北の壁の開き %.2f mrad(真値 %.2f)と"
-          % (1000 * g["splay"], 1000 * SPLAY))
-    print("     床の反り %.2f mm(真値 %.2f)は合わせても動かない。"
+    err = max(abs(g["rack"] - pred["rack"]), abs(g["floor_sx"] - pred["floor_sx"]),
+              abs(g["ceil_sx"] - pred["ceil_sx"]))
+    print("\n   ★全体 ICP のあと、**無傷の天井が %+.2f mrad 傾いて見える**(真値 0、"
+          "予測 %+.2f)。" % (1000 * g["ceil_sx"], 1000 * pred["ceil_sx"]))
+    print("     壁は真値の %.0f %%、床の勾配は %.0f %% に痩せた。予測と実測の差は最大 %.2f mrad。"
+          % (100 * g["rack"] / RACK, 100 * g["floor_sx"] / FLOOR_SLOPE, 1000 * err))
+    print("   ★吸われるのは剛体モードだけ: 南北の壁の開き %+.2f mrad(真値 %+.2f、"
+          "上で外・下で内 = 剛体でない)と" % (1000 * g["splay"], 1000 * SPLAY))
+    print("     床の反り %.2f mm(真値 %.2f、対称な 2 次曲面)は合わせても動かない。"
           % (1000 * g["floor_pv"], 1000 * SAG))
+    print("     ★天井が一番大きく間違う —— **いちばん正しく建った部材に、"
+          "いちばん大きな偽の施工誤差が出る**。")
 
     figs.save_table("alignment_absorption",
                     ["合わせ方", "壁の傾き [mrad]", "壁の開き [mrad]",
                      "床の勾配 [mrad]", "天井の勾配 [mrad]", "床の反り PV [mm]"], rows,
                     title="合わせ方で動くのは剛体モードだけ(天井は無傷なのに傾いて見える)",
-                    caption="予測 φ = %.2f mrad / 実測 %.2f mrad。"
-                            % (1000 * phi_pred, 1000 * phi_icp))
+                    caption="閉形式の予測(吸われる ω_y = %+.2f mrad)と実測の差は最大 %.2f mrad。"
+                            % (1000 * wy, 1000 * err))
     figs.save_plot("alignment_bars",
                    [("真値", [0, 1, 2, 3], [1000 * RACK, 1000 * SPLAY,
-                                            -1000 * FLOOR_SLOPE, 0.0]),
+                                            1000 * FLOOR_SLOPE, 0.0]),
                     ("合わせない", [0, 1, 2, 3],
                      [1000 * res["none"]["rack"], 1000 * res["none"]["splay"],
                       1000 * res["none"]["floor_sx"], 1000 * res["none"]["ceil_sx"]]),
@@ -868,8 +853,9 @@ def section_alignment(seed: int = SEED) -> dict:
                    xlabel="0=壁の傾き 1=壁の開き 2=床の勾配 3=天井の勾配",
                    ylabel="角度 [mrad]",
                    title="合わせるほど傾きは消え、天井には無い傾きが生まれる",
-                   kinds=["scatter"] * 4)
-    return {"res": res, "phi_pred": phi_pred, "phi_icp": phi_icp, "surf": surf, "sc": sc}
+                   kinds=["scatter"] * 4,
+                   caption="剛体モード(壁の傾きと床の勾配)だけが動き、開きは動かない。")
+    return {"res": res, "pred": pred, "wy": wy, "err": err, "surf": surf, "sc": sc}
 
 
 # --------------------------------------------------------------------------- #
