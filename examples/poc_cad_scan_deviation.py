@@ -1266,7 +1266,7 @@ def section_controls(ref: CadRef) -> dict:
         print("     %-8s 姿勢誤差 %.4f ± %.4f 度" % (lab, stat[lab][0], stat[lab][1]))
     diff = stat["片側のみ"][0] - stat["全周"][0]
     sd = max(stat["全周"][1], stat["片側のみ"][1])
-    print("   ★差 %+.4f 度は散らばり(±%.4f)の %.1f 倍 —— 欠測は確かに姿勢を"
+    print("   ★差 %+.4f 度は散らばり(±%.4f)の %.1f 倍 —— 欠測は確かに姿勢を "
           "%.1f 倍に引く。" % (diff, sd, abs(diff) / sd,
                                stat["片側のみ"][0] / stat["全周"][0]))
     print("      ただし**上の表(種 1 本)では欠測のほうが小さい行すらある**"
