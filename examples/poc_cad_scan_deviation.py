@@ -988,7 +988,7 @@ def section_basin(ref: CadRef) -> dict:
     sc = make_scan(n=8000, noise=0.010)
     angs, errs, resid = [], [], []
     floor = None
-    for a in (0, 10, 20, 30, 50, 75, 90, 180):
+    for a in (0, 5, 10, 15, 20, 25, 30, 60, 90, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
         R, t = align(sc["pts"], ref, method="p2plane", init=(Rp, sc["t_true"]),
                      iters=40, sub=5000)
