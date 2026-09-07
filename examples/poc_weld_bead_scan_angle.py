@@ -127,6 +127,7 @@ DETECT = 0.25                      # この輝度に届かない列は「測れ�
 THETA_REF = 36.0                   # 基準の三角測量角 [度]
 PLATE_WIN = (6.5, 7.9)             # 母材面を当てはめる |x| の範囲 [mm]
 SMOOTH = 7                         # 断面を測る前の平滑(列数 = 0.35 mm)
+CHECK_IN, CHECK_DEV = 1.5, -0.6    # つま先の確認: 内側 1.5 mm に溶接金属が在るか
 
 X = -X_HALF + (np.arange(N_COL) + 0.5) / M_PX_MM
 KEYS = ("cv", "legL", "legR", "throat", "ucL", "ucR")
