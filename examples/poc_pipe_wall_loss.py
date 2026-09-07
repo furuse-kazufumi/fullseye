@@ -392,10 +392,14 @@ def section_scene() -> dict:
 
     # polar_unwrap: 1 枚の断面を (θ×r) の矩形へ
     sl = occ[int(50.0 / VOX)]
+    # ★r_in/r_out は **画素(ボクセル)単位**。mm のまま渡すと視野の外を
+    #   サンプルして返り値が全部 0 になる(黙って。最初これで真っ黒な図が出た)。
     pol = np.asarray(_L.polar_unwrap(sl.astype(np.float64),
                                      center=((n - 1) / 2, (n - 1) / 2),
-                                     r_in=R0 - 10, r_out=R0 + T0 + 6,
+                                     r_in=(R0 - 10) / VOX,
+                                     r_out=(R0 + T0 + 6) / VOX,
                                      ntheta=360, nr=64))
+    assert float(pol.max()) > 0.5, "polar_unwrap が全部 0(単位を疑う)"
     figs.save_grid("scene_polar", [_big(sl, 4), _big(pol.T, 2)],
                    ["断面 z=50 mm", "極座標に開いた壁 (横=θ 縦=r)"], ncols=1,
                    title="円環を矩形に開く —— ここから先は 2-D の仕事",
