@@ -701,9 +701,9 @@ def section_pairs(train_rows, test_rows, table) -> None:
     inner = sum(int(cm_t[i, j]) for i in idx for j in idx)
     print("\n  ★★熱だけだと %s の 3 モードは**互いの中で %d/%d 回まわる**"
           % ("・".join(cold), inner, len(idx) * N_TEST))
-    print("     —— 仕込んだ発熱が %s と %s でほぼ同じ(軸受 %.1f / %.1f W)だから。"
-          % (cold[0], cold[1], mode_params(cold[0], 1.0)["heat"][1],
-             mode_params(cold[1], 1.0)["heat"][1]))
+    print("     —— 仕込んだ軸受の発熱が %s でほぼ同じ(%s W)だから。"
+          % (" / ".join(cold),
+             " / ".join("%.1f" % mode_params(m, 1.0)["heat"][1] for m in cold)))
     print("     これが「1 つでは絶対に分けられない組」。振動だけがこの 3 つに"
           "身元(1X か 0.5X の櫛か何も無いか)を与える。")
     i_b, i_l = MODES.index("軸受外輪傷"), MODES.index("潤滑不良")
