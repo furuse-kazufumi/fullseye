@@ -373,9 +373,10 @@ def thickness_inscribed(occ, h):
 def thickness_probe(gray, h, res):
     """グレー値の探針(``vol_wall_thickness``)。薄壁 2 枚を横切って 2 つ返る。"""
     ix, kz = res[0] // 2, res[2] // 2
-    t = L.vol_wall_thickness(gray, (ix, 0, kz), (ix, res[1] - 1, kz),
-                             sigma=0.6, threshold=0.05, spacing=(h, h, h))
-    return float(np.mean(t)) if t else float("nan")
+    t = np.asarray(L.vol_wall_thickness(gray, (ix, 0, kz), (ix, res[1] - 1, kz),
+                                        sigma=0.6, threshold=0.05, spacing=(h, h, h)),
+                   np.float64).ravel()
+    return float(np.mean(t)) if t.size else float("nan")
 
 
 def slot_radius(occ, h):
