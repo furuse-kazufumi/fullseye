@@ -220,8 +220,16 @@ def make_cloud(rng, slope_deg=SLOPE, density=DENSITY, with_change=True,
 # --------------------------------------------------------------------------- #
 # 地面点の分類 —— 斜面では「セル内最低点 + 許容幅」は先に傾きを抜かないと壊れる  #
 # --------------------------------------------------------------------------- #
-def ground_filter(pts: np.ndarray, tol: float = 0.35, detrend: bool = True):
-    """粗い地面分類。``detrend`` で RANSAC 平面を抜いてからセル内最低点を取る。"""
+def ground_filter(pts: np.ndarray, tol: float = 0.35, detrend: bool = True,
+                  win: int = 1):
+    """粗い地面分類。``detrend`` で RANSAC 平面を抜いてからセル内最低点を取る。
+
+    ``win`` は最低点を探す窓の**セル数**(既定 1 = 自分のセルだけ)。
+    ★``win=1`` は「そのセルの点が全部樹冠」のとき無力 —— 樹冠の底が
+    そのセルの最低点になり、まるごと地面として通ってしまう。``win=3`` なら
+    隣のセルの地面と比べるので、丸ごと遮蔽されたセルは**空になる**
+    (= 測れなかったと分かる)。
+    """
     if detrend:
         step = max(1, len(pts) // 4000)
         params, _, _ = fs.ledger.ransac_plane(pts[::step], thresh=1.0, iters=200, seed=0)
@@ -235,9 +243,14 @@ def ground_filter(pts: np.ndarray, tol: float = 0.35, detrend: bool = True):
     iy = np.floor(pts[:, 1] / CELL).astype(np.int64)
     ix -= ix.min()
     iy -= iy.min()
-    flat = ix * (iy.max() + 1) + iy
-    lo = np.full(int(flat.max()) + 1, np.inf)
+    nx, ny = int(ix.max()) + 1, int(iy.max()) + 1
+    flat = ix * ny + iy
+    lo = np.full(nx * ny, np.inf)
     np.minimum.at(lo, flat, resid)
+    if win > 1:
+        from scipy import ndimage
+        big = np.where(np.isfinite(lo), lo, 1e9).reshape(nx, ny)
+        lo = ndimage.minimum_filter(big, size=win, mode="nearest").ravel()
     return resid - lo[flat] < tol
 
 
