@@ -350,10 +350,13 @@ def match_ray(dets: np.ndarray, truth: dict) -> dict:
         if d[j] <= tol:
             hit[i] = dets[j]
             used[j] = True
+    # 境界 i は「年輪 ks[i] に入る」位置なので、年輪 ks[i] の幅 = pos[i+1] - pos[i]。
+    # (最初 ks[i+1] を鍵にして 1 年ずれ、合意法の幅の相関が 0.62 に落ちた。)
+    # 最後の年輪の外側は樹皮(負極性の段)なので、正極性の段だけでは幅が出ない。
     widths = {}
     for i in range(pos.size - 1):
         if ks[i + 1] == ks[i] + 1 and np.isfinite(hit[i]) and np.isfinite(hit[i + 1]):
-            widths[int(ks[i + 1])] = (float(hit[i + 1] - hit[i]), float(pos[i + 1] - pos[i]))
+            widths[int(ks[i])] = (float(hit[i + 1] - hit[i]), float(pos[i + 1] - pos[i]))
     missed = sorted(int(ks[i]) for i in range(pos.size) if not np.isfinite(hit[i]))
     return {"n_det": int(dets.size), "n_true": int(pos.size), "missed": missed,
             "false": int((~used).sum()), "widths": widths, "hit": hit}
