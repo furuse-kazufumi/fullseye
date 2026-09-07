@@ -461,13 +461,24 @@ def section_snr_cliff() -> dict:
                                          - QUANT_M ** 2 / 12.0, 0.0)))
                        / fine[names[1]][idx0] - 1.0)))
 
-    figs.save_plot("snr_sweep",
-                   [(n, list(snrs), fine[n]) for n in names]
-                   + [("CRLB(実測スペクトル)", list(snrs), crlb_num)],
-                   xlabel="帯域内 SNR [dB]", ylabel="位置誤差の RMS [m](対数)",
-                   title="崖 —— どこから掘る場所が飛ぶか",
-                   caption="取り違えを除いた試行だけの RMS。下界に触れる手法は"
-                           "無い。")
+    lg = np.log10
+    figs.save_plot("snr_cliff",
+                   [(n, list(snrs), lg(allrms[n])) for n in names]
+                   + [("CRLB(この場面)", list(snrs), lg(crlb_num))],
+                   xlabel="帯域内 SNR [dB]", ylabel="log10(位置誤差の RMS [m])",
+                   title="崖 —— どこから掘る場所が飛ぶか(全試行)",
+                   caption="縦軸は常用対数。-10 dB のあたりで cm から十 m へ、"
+                           "3 桁飛ぶ。")
+    ok = [i for i in range(len(snrs)) if np.isfinite(fine[names[0]][i])]
+    figs.save_plot("snr_fine",
+                   [(n, [snrs[i] for i in ok], lg([fine[n][i] for i in ok]))
+                    for n in names]
+                   + [("CRLB(この場面)", [snrs[i] for i in ok],
+                       lg([crlb_num[i] for i in ok]))],
+                   xlabel="帯域内 SNR [dB]",
+                   ylabel="log10(位置誤差の RMS [m])",
+                   title="取り違えなかった試行だけの精度と下界",
+                   caption="下界に触れる手法は無い。帯域制限が最も近い。")
     figs.save_plot("gross_rate", [(n, list(snrs), gross[n]) for n in names],
                    xlabel="帯域内 SNR [dB]", ylabel="ピークの取り違え [%]",
                    title="崖の正体はピークの取り違え(%.2f m 超を数えた)" % GROSS_M)
