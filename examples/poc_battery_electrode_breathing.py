@@ -113,10 +113,14 @@ def layers() -> list[tuple[str, float, float, float]]:
     return [row for _ in range(N_UNIT) for row in UNIT]
 
 
-def truth(charged: bool) -> tuple[np.ndarray, np.ndarray]:
-    """境界位置 [px] と、境界をまたぐグレー値の列(``len = 境界 + 1``)。"""
+def truth(charged: bool, shift: float = 0.0) -> tuple[np.ndarray, np.ndarray]:
+    """境界位置 [px] と、境界をまたぐグレー値の列(``len = 境界 + 1``)。
+
+    ``shift`` は積層まるごとの平行移動 [px]。**真値を画素の中心に乗せるかどうか**
+    を変えるためのつまみで、3 章のピークロッキングの検査に使う。
+    """
     pos, lev = [], [G_OUT]
-    r = BASE_ROW
+    r = BASE_ROW + shift
     for _name, t_um, gray, strain in layers():
         pos.append(r)
         lev.append(gray)
@@ -128,9 +132,9 @@ def truth(charged: bool) -> tuple[np.ndarray, np.ndarray]:
 
 def render(charged: bool = False, sig_psf: float = SIG_PSF, noise: float = 0.0,
            gain: float = 1.0, offset: float = 0.0, ramp: float = 0.0,
-           contrast: float = 1.0, seed: int = SEED) -> np.ndarray:
+           contrast: float = 1.0, seed: int = SEED, shift: float = 0.0) -> np.ndarray:
     """断面画像を作る。``ramp`` は視野内で明るさが傾く照明(ケラレ/ビーム硬化)。"""
-    pos, lev = truth(charged)
+    pos, lev = truth(charged, shift)
     lev = G_OUT + (lev - G_OUT) * contrast
     rows = np.arange(H, dtype=float)
     prof = np.full(H, lev[0])
