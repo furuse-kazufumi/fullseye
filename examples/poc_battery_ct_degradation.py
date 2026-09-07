@@ -174,10 +174,14 @@ def degradation_fields(kind: str, scale: float = 1.0):
 
 
 def stack_height(fields) -> np.ndarray:
-    """積層高さの場 ``h(x, z)`` [mm]。電極が無いところは 0。"""
-    xx, zz, _ = _panel_grids()
-    foot = _elec_footprint(xx, zz)
-    h = np.where(foot, H_BASE, 0.0)
+    """積層高さの場 ``h(x, z)`` [mm]。
+
+    ★**電極の footprint の外でも ``H_BASE`` を返す**。ここを 0 にすると、層の
+    y 位置を決める積み上げ(``y_bot = 中心 - h/2``)が footprint の外で崩れ、
+    電極ずれで面内にはみ出した部分が消える(最初そう書いて、ずれの傾きが
+    真値の半分になった)。はみ出し量の計算だけ footprint で切る。
+    """
+    h = np.full((NW, ND), H_BASE)
     h = h + N_LAYER * T_ELEC * fields["alpha"]
     for _, hv in fields["voids"]:
         h = h + hv
