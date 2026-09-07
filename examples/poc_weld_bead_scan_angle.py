@@ -758,13 +758,13 @@ def section5_angle_sweep(p: dict, tru: dict) -> dict:
               ("b 遮蔽あり", dict(occlusion=True, specular=0.0)),
               ("c 遮蔽+鏡面", dict(occlusion=True, specular=4.0))]
     seeds = (21, 47, 83)
-    res = {g: {k: {"mae": [], "got": [], "miss": []} for k in KEYS} for g, _ in groups}
+    res = {g: {k: {"mae": [], "got": [], "miss": [], "tmean": []} for k in KEYS} for g, _ in groups}
     hgt = {g: [] for g, _ in groups}
     sat, sat_bias, unsat_bias = [], [], []
     h_true = profile_h(X, p)
     for gname, kw in groups:
         for a in ANGLES:
-            acc = {k: {"mae": [], "got": [], "miss": []} for k in KEYS}
+            acc = {k: {"mae": [], "got": [], "miss": [], "tmean": []} for k in KEYS}
             hh_rms = []
             for sd in seeds:
                 img, vis = render(p, a, seed=sd, **kw)

@@ -762,7 +762,10 @@ def test_a_motionmag_displacement_waveform_is_an_ordinary_acoustic_signal():
 # --------------------------------------------------------------------------- #
 def test_ledger_is_complete_and_declares_real_types():
     assert opsacoustics.missing() == []
-    assert len(opsacoustics.OPSACOUSTICS) == 19
+    # 2026-09-08: 19 -> 20(`gcc_delay` を追加。1-D の相互相関 / GCC / 到達時間差の
+    # 口がどの層にも無く、漏水位置決めと設備保全の PoC が 3-D の op を (1,1,N) に
+    # reshape して使っていた)。
+    assert len(opsacoustics.OPSACOUSTICS) == 20
     for name in opsacoustics.list_ops():
         m = opsacoustics.info(name)
         assert m["out"] in ("signal", "table", "measurement")
@@ -772,7 +775,9 @@ def test_ledger_is_complete_and_declares_real_types():
     # istft is the one op that consumes a table: an invertible transform cannot
     # be a bare array, and complex_steerable_reconstruct sets the precedent
     assert opsacoustics.info("istft")["in"] == ["table"]
-    assert opsacoustics.RESULT_ADAPTERS == {}
+    # gcc_delay は (delay, table) を返すので、宣言 out 型を取り出す adapter が要る。
+    # ここが空でなくなったのはこの 1 本だけ —— 増えたら理由を書くこと。
+    assert set(opsacoustics.RESULT_ADAPTERS) == {"gcc_delay"}
 
 
 def test_ledger_declared_output_types_are_the_actual_types():
