@@ -263,7 +263,6 @@ def final_geometry_kappa(areas, x_len, h, eps=EPS_LAYER):
 
 def section_I(areas, x_len, h):
     """最終断面の 2 次モーメント [mm^4](剥離モーメント EIκ に使う)。"""
-    b = np.asarray(areas, float) / float(x_len) * x_len / x_len
     b = np.asarray(areas, float) / float(x_len)
     z = (np.arange(b.size) + 0.5) * h
     a = b * h
