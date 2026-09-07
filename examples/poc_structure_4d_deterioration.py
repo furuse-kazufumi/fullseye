@@ -164,16 +164,20 @@ GIRDER_AREA = LSPAN * S_TOTAL
 BEARING_AREA = len(BEARING_X) * math.pi * BEARING_R * BEARING_LEN
 
 
+#: 現在のキャンバー(8 節で振るので 1 要素の箱に入れてある)。
+_CAMBER = [CAMBER]
+
+
 def camber(x):
     """キャンバー c(x) [m](支間中央で最大)。押し出し形状の x 対称性を破る。"""
     xi = np.asarray(x, float) / LSPAN
-    return CAMBER * 4.0 * xi * (1.0 - xi)
+    return _CAMBER[0] * 4.0 * xi * (1.0 - xi)
 
 
 def camber_slope(x):
     """dc/dx [-]。**ICP が x 方向を拘束できる唯一の傾き**(端で最大)。"""
     xi = np.asarray(x, float) / LSPAN
-    return CAMBER * 4.0 * (1.0 - 2.0 * xi) / LSPAN
+    return _CAMBER[0] * 4.0 * (1.0 - 2.0 * xi) / LSPAN
 
 
 def girder_surface(x, s):
