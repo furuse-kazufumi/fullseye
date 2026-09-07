@@ -380,6 +380,8 @@ def layout() -> dict:
     _LAYOUT = {
         "x": xx, "y": yy, "mod_id": mod_id, "panel": panel, "sub": sub,
         "shade": shade, "kill_shade": kill_shade, "soil": soil,
+        "shade_pole": shade_pole, "shade_row": shade_row,
+        "kill_pole": kill_pole, "kill_row": kill_row,
         "hot": hot, "kill_fault": kill_fault, "u_scale": u_scale,
         "g_time": g_time,
         "ground_tex": gaussian_filter(rng.standard_normal((NY, NX)), 24.0) * 26.0,

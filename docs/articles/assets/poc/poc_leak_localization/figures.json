@@ -58,5 +58,59 @@
    560,
    3
   ]
+ },
+ {
+  "file": "07_reflection_sweep.png",
+  "name": "reflection_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_reflection_table.png",
+  "name": "reflection_table",
+  "caption": "",
+  "shape": [
+   272,
+   756,
+   3
+  ],
+  "csv": "08_reflection_table.csv",
+  "tsv": "08_reflection_table.tsv"
+ },
+ {
+  "file": "09_sound_speed_error.png",
+  "name": "sound_speed_error",
+  "caption": "相関の形も相関係数も一切変わらない。変わるのは掘る場所だけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_position_scan.png",
+  "name": "position_scan",
+  "caption": "(c) は相関がきれいでも折れ曲がる。単一の音速ではどうやっても直せない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_error_budget.png",
+  "name": "error_budget",
+  "caption": "",
+  "shape": [
+   200,
+   469,
+   3
+  ],
+  "csv": "11_error_budget.csv",
+  "tsv": "11_error_budget.tsv"
  }
 ]
