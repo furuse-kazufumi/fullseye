@@ -94,6 +94,12 @@ from __future__ import annotations
 
 import numpy as np
 
+
+def _fssystem():
+    """``fssystem`` を遅延解決する(import 時の循環と起動コストを避ける)。"""
+    import fssystem
+    return fssystem
+
 __all__ = [
     # 方向(normals / pairs)
     "normals_to_angles", "angles_to_normals", "normals_to_egi",
