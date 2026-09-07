@@ -685,10 +685,27 @@ def section_orientation():
         out.append((name, a, ah, av))
         print("   %-20s %10.2f          %5.2f   %7.2f / %7.2f" % (name, a, a / base, ah, av))
     best = min(out, key=lambda r: r[1])
-    print("\n  最良は %s(%.2f mm^2)で Z+ の **%.1f 分の 1**。"
-          % (best[0], best[1], base / best[1]))
-    print("  ★ただしゼロにはならない —— 水平穴と垂直穴が直交しているので、"
+    worst = max(out, key=lambda r: r[1])
+    print("\n  ★予想は「向きを変えれば大きく減る」だった。実測は **ほとんど減らない**:")
+    print("     最良 %s = %.2f mm^2(Z+ の %.2f 倍)、最悪 %s = %.2f mm^2(%.2f 倍)。"
+          % (best[0], best[1], best[1] / base, worst[0], worst[1], worst[1] / base))
+    print("     板の裏 %.1f mm^2 が、Z+ 以外のどの向きでも「寝た面」になってしまう。"
+          % (60 * 40 - np.pi * HOLE_V[1] ** 2))
+    print("  ★どの向きでもゼロにはならない —— 水平穴と垂直穴が直交しているので、"
           "片方を立てるともう片方が寝る。")
+
+    # --- 向きではなく**設計**を直す(斜面 45 度 -> 50 度)------------------- #
+    fixed = tuple((50.0, x0, x1) for _, x0, x1 in GUSSETS)
+    a_fix = analytic_support_area((0, 0, 1), cos_c=c_hi, gussets=fixed)
+    print("\n  ★効いたのは向きではなく**設計**だった: 三角補強の斜面を 45 度 -> 50 度に"
+          "するだけで")
+    print("     Z+ のサポート面積は %.2f -> %.2f mm^2(%.2f 倍、%.2f mm^2 減)。"
+          % (base, a_fix, a_fix / base, base - a_fix))
+    print("     しきい値にわざわざ貼りつけた 1 面を 5 度ずらすほうが、"
+          "向きを 6 通り試すより効く。")
+    rows.append(["(参考)Z+ で斜面を 50 度に", "%.2f" % a_fix, "%.2f" % (a_fix / base),
+                 "%.2f" % cylinder_support_area((0, 1, 0), HOLE_H[1], HOLE_H[2], (0, 0, 1), c_hi),
+                 "0.00"])
     figs.save_table("orientation",
                     ["造形方向", "サポート面積 [mm^2]", "Z+ 比", "水平穴 [mm^2]", "垂直穴 [mm^2]"],
                     rows, title="造形方向を変えるとサポート面積はどれだけ減るか(解析値)",
