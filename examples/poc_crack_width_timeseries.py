@@ -803,8 +803,9 @@ def main() -> None:
              min(cl["ratios_bin"]), max(cl["ratios_bin"])))
     print("  * 2 値化の成長率は初期幅だけで %.4f〜%.4f mm/年 と動く(真値 %.4f)。"
           % (min(cw["live"]), max(cw["live"]), RATE_MM_YR))
-    print("  * 2 値化の臨界幅の予測 %.3f mm に対し、全期ゼロは %s。"
-          % (cw["wc_mm"], ", ".join("%.2f" % w for w in cw["dead"]) or "無し"))
+    print("  * 2 値化が死ぬ境界は w/σ で 実測 %.3f(値が出た最小)/ %.3f(出なかった"
+          "最大)。予測 1.349、ざらつきの最大値ぶんを入れると %d/%d 枚しか外れない。"
+          % (cw["cliff_lo"], cw["cliff_hi"], cw["wrong"], cw["npair"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
