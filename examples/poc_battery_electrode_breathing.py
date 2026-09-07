@@ -340,17 +340,22 @@ def section_peak_locking() -> dict:
     c0_true = fs.ledger.piv_peak_locking(np.stack([tf, tf]), bins=10)["c0"]
     print("    小数部の偏り c0(fs.ledger.piv_peak_locking、一様なら 1 前後): "
           "推定 %.2f / 真値 %.2f" % (c0_est, c0_true))
+    print("    ★c0 はこの大きさのロッキングに**気づかない**(どちらも 1 前後)。"
+          "\n     0.012 px の引き寄せは 10 個の階級では見えないから —— "
+          "op の docstring が\n     『決定的な診断は小数部を 0->0.9 まで振ること』"
+          "と書いているとおりだった。")
 
+    span = float(truth(False)[0][-1] - truth(False)[0][0])
     e_true = true_mean_strain()
     print("\n  この %.4f px が伸びに効く大きさ:" % mx)
     print("    積層全体(腕 %.0f px)   %.1e = 真値の %.1f %%"
-          % (H - 2 * BASE_ROW, mx * math.sqrt(2) / 480.0,
-             100 * mx * math.sqrt(2) / 480.0 / e_true))
+          % (span, mx * math.sqrt(2) / span,
+             100 * mx * math.sqrt(2) / span / e_true))
     print("    負極 1 層(腕 %.0f px)  %.1e = 真値の %.1f %%"
           % (UNIT[0][1], mx * math.sqrt(2) / UNIT[0][1],
              100 * mx * math.sqrt(2) / UNIT[0][1] / UNIT[0][3]))
-    print("  -> **雑音ゼロでも層別の伸びは数 %% ずれる**。1-2 章で層別が"
-          " +1.014 / +0.958 %% と\n     ばらついたのは雑音ではなく、これ。")
+    print("  -> **雑音ゼロでも層別の伸びは数 % ずれる**。1-2 章で層別が"
+          " +1.014 / +0.958 % と\n     ばらついたのは雑音ではなく、これ。")
 
     grid = np.asarray(errs)                       # (ずらし量, 境界)
     figs.save_plot("peak_locking",
