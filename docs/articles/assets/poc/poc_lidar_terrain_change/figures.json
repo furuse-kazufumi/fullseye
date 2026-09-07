@@ -46,7 +46,17 @@
   "tsv": "04_slope_table.tsv"
  },
  {
-  "file": "05_systematic.png",
+  "file": "05_density_cliff.png",
+  "name": "density_cliff",
+  "caption": "変化ゼロの対照で測った検出限界。C2C は変化が無くても点間隔ぶんの距離を返し、符号も持たない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_systematic.png",
   "name": "systematic",
   "caption": "変化ゼロの対照。DoD と M3C2 は体積では同じだけ間違える。雑音は正味では打ち消すので予測と直接比べられる。",
   "shape": [
@@ -56,7 +66,7 @@
   ]
  },
  {
-  "file": "06_occlusion.png",
+  "file": "07_occlusion.png",
   "name": "occlusion",
   "caption": "誤差はそのしきい値以上の真値に対する値。全滅セル = 地面点が 1 つも届かなかったセル。中央値では救えない。",
   "shape": [
@@ -64,13 +74,43 @@
    1225,
    3
   ],
-  "csv": "06_occlusion.csv",
-  "tsv": "06_occlusion.tsv"
+  "csv": "07_occlusion.csv",
+  "tsv": "07_occlusion.tsv"
  },
  {
-  "file": "07_occlusion_lod.png",
+  "file": "08_occlusion_lod.png",
   "name": "occlusion_lod",
   "caption": "取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_scene.png",
+  "name": "scene",
+  "caption": "左上は平面を抜いた残差(樹冠と 0.35 m のうねり)。右上が仕込んだ真値(負 = 掘削 164.2 m3 / 正 = 堆積 133.7 m3)。下 2 枚は足跡面積を揃えて測った 2 通りの差。",
+  "shape": [
+   855,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "10_change_maps.png",
+  "name": "change_maps",
+  "caption": "DoD は一律 LoD 0.148 m、M3C2 は core ごとの sigma で判定。面積が合っていても、縁の薄い層を落としていれば体積は足りない。",
+  "shape": [
+   453,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "11_scar_profile.png",
+  "name": "scar_profile",
+  "caption": "M3C2 の L は法線方向なので cos 25 度 = 0.906 倍だけ浅く出る。体積にするときは 1/cos を掛ける。",
   "shape": [
    360,
    560,

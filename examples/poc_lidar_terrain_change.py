@@ -1215,8 +1215,9 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
     sig_m[cj, ci] = m3c2_volume(mm["res"], lod=None)["sig"]
     truth_mask = np.abs(d_true) > TAU
     figs.save_grid("change_maps",
-                   [up(truth_mask.astype(float)), up(sig_dod.astype(float)),
-                    up(sig_m.astype(float))],
+                   [big(truth_mask.astype(float)[::-1]),
+                    big(sig_dod.astype(float)[::-1]),
+                    big(sig_m.astype(float)[::-1])],
                    ["真の変化域 %.0f m2" % tr["area"],
                     "DoD 有意 %.0f m2" % float(sig_dod.sum()),
                     "M3C2 有意 %.0f m2" % float(sig_m.sum())],
