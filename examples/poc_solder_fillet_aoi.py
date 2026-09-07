@@ -957,9 +957,12 @@ def section_illumination(v_thr: float) -> dict:
             print("    %4.0f %%       %+5.1f            %+5.1f          %+6.1f %%"
                   % (100 * u, dx_pred, dx_meas, 100 * (np.mean(hs) / base[1] - 1)))
         res[rgh] = {"pred": pred_l, "meas": meas_l}
-    print("\n  ★鏡面(粗さ %.2f)では境界が階段なので u = %.0f %% でも %.1f px。粗さ 0.40 では"
-          " %.1f px(予測 %.1f px)。" % (ROUGH_REF, 100 * us[-2], res[ROUGH_REF]["meas"][3],
-                                        res[0.40]["meas"][3], res[0.40]["pred"][3]))
+    print("\n  ★鏡面(粗さ %.2f)では境界が階段なので u = %.0f %% でも %.1f px(予測 %.1f px)。"
+          "粗さ 0.40 では u = %.0f %% で %.1f px(予測 %.1f px)、u = %.0f %% で %.1f px(予測 %.1f px)"
+          " —— 境界は 1 px に量子化されるので、予測がサブピクセルのうちは 0 と出る。"
+          % (ROUGH_REF, 100 * us[-1], res[ROUGH_REF]["meas"][4], res[ROUGH_REF]["pred"][4],
+             100 * us[3], res[0.40]["meas"][3], res[0.40]["pred"][3],
+             100 * us[4], res[0.40]["meas"][4], res[0.40]["pred"][4]))
     figs.save_plot("illumination", [("実測 粗さ %.2f" % ROUGH_REF, [100 * u for u in us], res[ROUGH_REF]["meas"]),
                                     ("実測 粗さ 0.40", [100 * u for u in us], res[0.40]["meas"]),
                                     ("予測 粗さ 0.40", [100 * u for u in us], res[0.40]["pred"])],
