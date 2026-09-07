@@ -837,7 +837,7 @@ def section_shift(v_thr: float) -> dict:
                     ("IPC 境界", shifts, [IPC_MIN * H] * len(shifts))],
                    xlabel="部品の位置ずれ Δx [mm]", ylabel="右フィレット高さ [mm]",
                    title="ずれると面が立ち、色帯が消える(V 一定)",
-                   caption="爪先の余地が減るほど真値は上がるが、傾き 40° を超えた瞬間に推定は 0 になる。")
+                   caption="爪先の余地が減るほど真値は上がるが、爪先の傾きが 30° を超えて緑帯が消えた瞬間に推定は崩れ、40° で 0 になる。")
     figs.save_plot("shift_verdict", [("「不足」判定率", shifts, frac)],
                    xlabel="部品の位置ずれ Δx [mm]", ylabel="不足と判定した割合 [%]",
                    title="良品が不足に化ける点(予測 %.2f mm)" % pred_cliff)
