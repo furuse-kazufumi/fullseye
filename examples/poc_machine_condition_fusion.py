@@ -758,42 +758,55 @@ def dprime(blocks, feat: str, a: str, b: str) -> float:
     return float(abs(va.mean() - vb.mean()) / np.sqrt(0.5 * (va.var() + vb.var()) + 1e-24))
 
 
-def sweep(name: str, values, kw_name: str, want, solo, probes, xlabel: str,
+def probe_value(blocks, feat: str, a: str, b) -> float:
+    """``b`` があれば d'(2 モードの分離度)、無ければ ``a`` の特徴の中央値。"""
+    if b is not None:
+        return dprime(blocks, feat, a, b)
+    i = MODES.index(a)
+    vals = np.concatenate([[r[feat] for r in rows[i * n:(i + 1) * n]] for rows, n in blocks])
+    return float(np.median(vals))
+
+
+def sweep(name: str, values, kw_name: str, want, solo, probes, focus, xlabel: str,
           title: str, caption: str, fmt: str = "%8.3f") -> dict:
-    """1 つの条件を振る。**崖は特徴 1 個の d' で測り**、識別率も並べて出す。
+    """1 つの条件を振る。**崖は特徴 1 個の上で測り**、識別率も並べて出す。
 
     掃引で変わるセンサだけ測り直し、他の 2 つは基準条件のまま重ねる ——
     対照群の作法(その要因だけを動かす)。``probes`` は
-    ``(見出し, 特徴名, モードA, モードB)`` の並びで、そこに崖が出る。
+    ``(見出し, 特徴名, モードA, モードB or None)``。``focus`` は単独識別率を
+    別に出す 2 モード(崖が識別に届いたかを見る)。
     """
     solo_name = [k for k, v in SENSORS.items() if v == solo][0]
-    print("   %-12s" % xlabel + "".join("%-24s" % p[0] for p in probes)
-          + "%s単独  融合" % solo_name)
-    rows, solo_r, fuse_r, fuse_all, dvals = [], [], [], [], []
+    print("   %-11s" % xlabel + "".join("%-22s" % p[0] for p in probes)
+          + "%s単独:総合 %s %s | 融合"
+          % (solo_name, focus[0], focus[1]))
+    rows, solo_r, fuse_r, fuse_all, pvals = [], [], [], [], []
     for v in values:
         kw = {kw_name: v}
         tr = [{**a, **b} for a, b in zip(BASE_TRAIN, collect(0, N_TRAIN, want=want, **kw))]
         te = [{**a, **b} for a, b in zip(BASE_TEST, collect(1, N_TEST, want=want, **kw))]
         cs = evaluate(solo, tr, te)
         cf = evaluate(ALL_FEATS, tr, te)
-        ds = [dprime(((tr, N_TRAIN), (te, N_TEST)), f, a, b) for _, f, a, b in probes]
-        solo_r.append(per_mode_rate(cs))
+        blocks = ((tr, N_TRAIN), (te, N_TEST))
+        ps = [probe_value(blocks, f, a, b) for _, f, a, b in probes]
+        r = per_mode_rate(cs)
+        solo_r.append(r)
         fuse_r.append(per_mode_rate(cf))
         fuse_all.append(np.trace(cf) / cf.sum())
-        dvals.append(ds)
+        pvals.append(ps)
         rows.append(v)
-        print("   " + (fmt + "    ") % v
-              + "".join("%-24.2f" % d for d in ds)
-              + "%5.1f %%  %5.1f %%" % (100 * np.trace(cs) / cs.sum(), 100 * fuse_all[-1]))
+        print("   " + (fmt + "   ") % v + "".join("%-22.3f" % p for p in ps)
+              + "%6.1f %% %6.1f %% %6.1f %% | %5.1f %%"
+              % (100 * np.trace(cs) / cs.sum(), 100 * r[MODES.index(focus[0])],
+                 100 * r[MODES.index(focus[1])], 100 * fuse_all[-1]))
     solo_r = np.asarray(solo_r)
-    dvals = np.asarray(dvals)
+    pvals = np.asarray(pvals)
     x = np.asarray(rows, float)
-    series = [("%s の d'" % p[0], x, dvals[:, i]) for i, p in enumerate(probes)]
-    series.append(("%s単独の識別率/20" % solo_name, x, 5.0 * solo_r.mean(axis=1)))
-    figs.save_plot(name, series, xlabel=xlabel, ylabel="分離度 d'",
+    series = [(p[0], x, pvals[:, i]) for i, p in enumerate(probes)]
+    figs.save_plot(name, series, xlabel=xlabel, ylabel="特徴の上での分離度・値",
                    title=title, caption=caption)
     return {"x": x, "solo": solo_r, "fuse": np.asarray(fuse_r),
-            "fuse_all": np.asarray(fuse_all), "d": dvals}
+            "fuse_all": np.asarray(fuse_all), "d": pvals}
 
 
 BASE_TRAIN: list = []
