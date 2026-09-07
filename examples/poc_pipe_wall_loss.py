@@ -443,8 +443,9 @@ def section_zero_point() -> dict:
     print("    楕円化は肉厚を 1 µm も変えていない(内外面に同じだけ効く)。")
 
     truth = loss_parts(sv_all["z_hit"], sv_all["th_hit"], FULL)["total"]
-    figs.save("map_truth", _big(truth), "真の減肉 [mm](縦 = z 0..%.0f mm、"
-              "横 = θ 0..360 度。正 = 肉が減った、溶接ビードは負)" % LZ,
+    figs.save("map_truth", _big(np.clip(truth, -1.6, 1.6)),
+              "真の減肉 [mm](縦 = z 0..%.0f mm、横 = θ 0..360 度。"
+              "±1.6 mm で切って塗った。正 = 肉が減った、溶接ビードは負)" % LZ,
               signed=True)
     figs.save("map_naive_aligned", _big(m0),
               "軸が合っているときの推定減肉 [mm](対照群 b)", signed=True)
