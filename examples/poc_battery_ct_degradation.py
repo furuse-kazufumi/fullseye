@@ -598,10 +598,11 @@ def misalign_slope(vol: np.ndarray, truth, spacing=SPACING) -> dict:
     """電極端のずれ —— 層ごとに x 方向の縁を測り、層番号に対する傾きを出す。"""
     zc = 0.5 * (ELEC_Z[0] + ELEC_Z[1])
     xs, idx = [], []
+    contrast = float(np.median([p[4] for p in _stack_probes(vol, spacing)] or [0.4]))
     for i, yc in enumerate(truth["layer_center_mm"]):
-        p0 = _vidx(zc, yc, CAV_X[0] + 0.02)
-        p1 = _vidx(zc, yc, CAV_X[1] - 0.02)
-        thr = 0.30 * (MU_ELEC - MU_LIQ) / (2.0 * spacing[2])
+        p0 = _vidx(zc, yc, CAV_X[0] + 0.02, spacing)
+        p1 = _vidx(zc, yc, CAV_X[1] - 0.02, spacing)
+        thr = 0.30 * contrast / (2.0 * spacing[2])
         ed = L.vol_edge_probe(vol, p0, p1, sigma=1.2, threshold=thr,
                               spacing=spacing, polarity="positive")
         if ed:
