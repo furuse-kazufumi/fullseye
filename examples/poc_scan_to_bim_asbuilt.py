@@ -936,7 +936,7 @@ def section_verdicts(alignres: dict, false_m: dict) -> dict:
          1000 * false_m["rack0"], TOL["wall"]),
         ("南北の壁の開き [mrad]", 1000 * SPLAY, 1000 * n["splay"], 1000 * g["splay"],
          1000 * false_m["splay0"], TOL["wall"]),
-        ("床の勾配 [mrad]", -1000 * FLOOR_SLOPE, 1000 * n["floor_sx"],
+        ("床の勾配 [mrad]", 1000 * FLOOR_SLOPE, 1000 * n["floor_sx"],
          1000 * g["floor_sx"], 1000 * f["floor_sx"], TOL["floor_slope"]),
         ("天井の勾配 [mrad]", 0.0, 1000 * n["ceil_sx"], 1000 * g["ceil_sx"],
          1000 * f["ceil_sx"], TOL["ceil_slope"]),
