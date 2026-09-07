@@ -808,33 +808,34 @@ def section_heatmap(base: dict) -> dict:
                     caption="ヒートマップは場所を当てるが、"
                             "「1 人が長く待った」と「何人も短く止まった」を分けない。")
 
-    # 柱と管の分かれ目 = 列あたりの平均時間厚み。
+    # 柱と管の分かれ目 = **1 人の軌跡の中で**、1 つの列に何フレーム居たか。
+    # ★複数人の成分で数えると「通路を 10 人が通った列」が厚くなって混ざるので、
+    #   同じ 1 人の中で「待っている間」と「歩いている間」を比べる。
     dwell_lab = base["det"]["labels"]
-    def mean_thickness(labels, cid):
-        m = labels == cid
-        cols = m.any(axis=0).sum()
-        return float(m.sum()) / max(int(cols), 1)
-    # 代表の「柱」= **いちばん長く続いた**成分(いちばん大きい成分ではない ——
-    # 2 人ぶんの足跡で太いだけの短い柱が選ばれてしまう)。
-    ext_t = {}
-    for c in range(1, int(dwell_lab.max()) + 1):
-        zs = np.nonzero((dwell_lab == c).any(axis=(1, 2)))[0]
-        if zs.size:
-            ext_t[c] = int(zs[-1] - zs[0] + 1)
-    pillar = max(ext_t, key=ext_t.get)
-    th_pillar = mean_thickness(dwell_lab, pillar)
-    # 管の代表 = 開いた後に何も残らなかった成分のうち最大のもの
-    moved = vol & ~base["det"]["dwell"]
-    lab_m, _ = fs.ledger.vol_label.raw(moved, connectivity=26)
-    sz = np.bincount(lab_m.ravel())
-    sz[0] = 0
-    tube = int(np.argmax(sz))
-    th_tube = mean_thickness(lab_m, tube)
-    print("  列あたりの平均時間厚み: **柱(最大の滞留) %.1f フレーム / "
-          "管(最大の移動) %.1f フレーム** = %.1f 倍。"
-          % (th_pillar, th_tube, th_pillar / th_tube))
-    print("  ★これは 3-D の連結成分の中でしか数えられない —— t 軸に潰した時点で"
-          "「誰の・いつの」厚みかが混ざる。")
+    probe_agent = "R0"
+    i = base["meas"]["names"].index(probe_agent)
+    x, y = base["meas"]["x"][i], base["meas"]["y"][i]
+    f = np.nonzero(np.isfinite(x))[0]
+    iy = np.clip((y[f] / CELL).astype(int), 1, NY - 2)
+    ix = np.clip((x[f] / CELL).astype(int), 1, NX - 2)
+    inside = dwell_lab[f, iy, ix] > 0
+    th_pillar = th_tube = 0.0
+    for sel, tag in ((inside, "wait"), (~inside, "move")):
+        acc = np.zeros((NY, NX), int)
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                np.add.at(acc, (iy[sel] + dy, ix[sel] + dx), 1)
+        v = float(acc.max())
+        if tag == "wait":
+            th_pillar = v
+        else:
+            th_tube = v
+    print("  同じ 1 人(%s)の軌跡で、1 つの列に居たフレーム数の最大: "
+          "**待っている間 %.0f / 歩いている間 %.0f** = %.1f 倍。"
+          % (probe_agent, th_pillar, th_tube, th_pillar / max(th_tube, 1)))
+    print("  ★これは t 軸を持ったままでしか数えられない —— 潰した積算では"
+          "「誰の・いつの」厚みかが混ざる(上の下段通路 %.0f フレームがその例)。"
+          % probe_rows_heat[2])
 
     # 柱 1 本をメッシュにして体積と向きを確かめる(3-D op の健全性検査)。
     sub = (dwell_lab == pillar)
