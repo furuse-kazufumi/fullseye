@@ -445,13 +445,16 @@ def predict_ls_tilt(f: float, tau: float | None = None) -> float:
 
 def section_outliers() -> dict:
     print("\n" + "=" * 78)
-    print("5) 家具を何 %% 混ぜると平面が引きずられるか —— 最小二乗 vs RANSAC")
+    print("5) 家具を何 %s 混ぜると平面が引きずられるか —— 最小二乗 vs RANSAC" % "%")
     print("=" * 78)
     print("  出 %.0f mm の棚を東の壁の前に立て、全点に占める割合を振る"
           "(棚の前面は完全に鉛直)" % (1e3 * CAB_D))
-    print("\n   割合 %%   最小二乗 [mrad]  閉形式の予測   RANSAC [mrad]  "
-          "RANSAC の面の位置ずれ [mm]")
+    print("\n   割合 %s   最小二乗 [mrad]  閉形式の予測   RANSAC [mrad]  "
+          "RANSAC の面の位置ずれ [mm]" % "%")
 
+    # ★閉形式には**ふくらみが吸われた分**(§6)を入れた実効の倒れを渡す。
+    #   入れないと f=0 の 1 点だけが 1.2 mrad ずれ、予測が外れたように見える。
+    tau_eff = TILT["east"] + predict_bulge(BULGE_A, BULGE_S)["fake_tilt"]
     tru = 1e3 * TILT["east"]
     fr, ls_e, ls_p, rs_e, rs_off = [], [], [], [], []
     rng_master = np.random.default_rng(101)
