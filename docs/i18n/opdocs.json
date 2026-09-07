@@ -163,13 +163,6 @@
    "ko": "- **호출**: `fullseye.apply(img, \"{a0}\", a=0.5, b=0.5)`(2-D 는 이미지 1 장 + 스칼라 노브 2 개 `a,b∈[0,1]` 모델)",
    "de": "- **Aufruf**: `fullseye.apply(img, \"{a0}\", a=0.5, b=0.5)` (das 2-D-Modell ist ein Bild plus zwei skalare Regler `a,b∈[0,1]`)"
   },
-  "- **呼び出し**: `import {a0}; {a1}.{a2}{a3}` (または `{a4}.get(\"{a5}\")`)": {
-   "en": "- **Call**: `import {a0}; {a1}.{a2}{a3}` (or `{a4}.get(\"{a5}\")`)",
-   "zh": "- **调用**:`import {a0}; {a1}.{a2}{a3}`(或 `{a4}.get(\"{a5}\")`)",
-   "tw": "- **呼叫**:`import {a0}; {a1}.{a2}{a3}`(或 `{a4}.get(\"{a5}\")`)",
-   "ko": "- **호출**: `import {a0}; {a1}.{a2}{a3}`(또는 `{a4}.get(\"{a5}\")`)",
-   "de": "- **Aufruf**: `import {a0}; {a1}.{a2}{a3}` (oder `{a4}.get(\"{a5}\")`)"
-  },
   "- **形状は厳格**: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は `ValueError`。reshape を明示する)。": {
    "en": "- **Shapes are strict**: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises `ValueError`; reshape explicitly).",
    "zh": "- **形状严格**:不对 1-D 与 2-D 做隐式提升或广播(向量槽位收到矩阵、矩阵槽位收到向量都是 `ValueError`;请显式 reshape)。",
@@ -414,6 +407,13 @@
    "tw": "  - 底層回傳: `{a0}`",
    "ko": "  - 실제 반환: `{a0}`",
    "de": "  - Rückgabe der Funktion: `{a0}`"
+  },
+  "- **呼び出し**: `import fullseye as fs; fs.ledger.{a0}{a1}` (実装を直接呼ぶなら `import {a2}; {a3}.{a4}{a5}`、台帳から引くなら `{a6}.get(\"{a7}\")`)": {
+   "en": "- **Call**: `import fullseye as fs; fs.ledger.{a0}{a1}` (to call the implementation directly, `import {a2}; {a3}.{a4}{a5}`; from the registry, `{a6}.get(\"{a7}\")`)",
+   "zh": "- **调用**: `import fullseye as fs; fs.ledger.{a0}{a1}`(要直接调用实现,`import {a2}; {a3}.{a4}{a5}`;从台账取用则 `{a6}.get(\"{a7}\")`)",
+   "tw": "- **呼叫**: `import fullseye as fs; fs.ledger.{a0}{a1}`(要直接呼叫實作,`import {a2}; {a3}.{a4}{a5}`;從台帳取用則 `{a6}.get(\"{a7}\")`)",
+   "ko": "- **호출**: `import fullseye as fs; fs.ledger.{a0}{a1}`(구현을 직접 호출하려면 `import {a2}; {a3}.{a4}{a5}`, 원장에서 가져오려면 `{a6}.get(\"{a7}\")`)",
+   "de": "- **Aufruf**: `import fullseye as fs; fs.ledger.{a0}{a1}` (die Implementierung direkt: `import {a2}; {a3}.{a4}{a5}`; aus dem Register: `{a6}.get(\"{a7}\")`)"
   }
  }
 }

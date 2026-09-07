@@ -975,7 +975,8 @@ def main() -> int:
     assert sw["meas"][0] < 0.5 and sw["meas"][i4] > 20.0, sw["meas"]
     assert sp["cres_k1_share"] > 0.6, sp["cres_k1_share"]
     assert co["scs"][1]["cres_rate"] < 0.5 * co["scs"][0]["cres_rate"]
-    assert co["scs"][2]["band_rate"] < 0.5 * co["scs"][1]["band_rate"]
+    assert co["scs"][2]["band_rate"] < co["scs"][1]["band_rate"] - 0.10
+    assert co["scs"][2]["band_vol"] < 0.7 * co["scs"][1]["band_vol"]
     assert co["scs"][3]["cres_rate"] > 0.5 and co["scs"][3]["band_rate"] > 0.5
     assert ce["rate"][-1] < ce["rate"][0]
     assert dc["err"] < 0.02, dc["err"]
