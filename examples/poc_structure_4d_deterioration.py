@@ -773,8 +773,8 @@ def section_control(sc: dict) -> dict:
               % (nclu, ", ".join(str(v) for v in sorted(sizes, reverse=True)[:6])))
         big_i = int(np.argmax(sizes)) if sizes else 0
         pb = c["cen"][neg][lab == big_i]
-        ext = np.asarray(fs.ledger.obb.raw(pb)[1], float) if pb.shape[0] > 3 else None
-        if ext is not None:
+        if pb.shape[0] > 3:
+            ext = 2.0 * np.asarray(fs.ledger.obb(pb)["extents"], float)
             print("     最大の塊の OBB 辺長 %.3f x %.3f x %.3f m(真の欠損は"
                   " 2σ = %.3f m の広がり)。"
                   % (*np.sort(ext)[::-1], 2 * SPALL_SIG))
