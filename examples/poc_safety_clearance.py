@@ -659,10 +659,14 @@ def section_sweep() -> dict:
     print("      点数   標本間隔 [m]  予想の過大評価 [m]  実測 [m]  見落とし   誤検知")
     d_rows, d_miss, d_fa, d_bias = [], [], [], []
     for n in dens:
-        allv = [np.ones(len(f["P"]), bool) for f in frames]
-        e = np.array([estimate(f, v, rng, density=n) for f, v in zip(frames, allv)])
-        e = np.where(np.isfinite(e), e, 10.0)
-        m_, fa_, _nh, _nf = _rates(d_true, e, S)
+        # ★雑音と間引きの引きが 1 回だと見落とし率が数 % 上下する。3 回まわして平均。
+        ee = [np.array([estimate(f, np.ones(len(f["P"]), bool), rng, density=n)
+                        for f in frames]) for _ in range(3)]
+        e = np.where(np.isfinite(ee[0]), ee[0], 10.0)
+        m_ = float(np.mean([_rates(d_true, np.where(np.isfinite(x), x, 10.0),
+                                   S_GEOM, S)[0] for x in ee]))
+        fa_ = float(np.mean([_rates(d_true, np.where(np.isfinite(x), x, 10.0),
+                                    S_GEOM, S)[1] for x in ee]))
         spacing = np.sqrt(area / n)
         predicted = (0.5 * spacing) ** 2 / (2 * R_HAND)
         bias = float(np.mean(e - d_true))
