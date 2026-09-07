@@ -449,7 +449,8 @@ def section_controls() -> dict:
                    title="同じ 5 条件の側面 MIP(上端 = ダイ側の界面)",
                    caption="界面欠損率は " + " / ".join(
                        "%s %.1f %%" % (c[2], out[c[0]]["a_int"]) for c in CONDITIONS)
-                       + " —— 体積率が同じでも 0 から %.1f %% まで動く。" % fr.max())
+                       + " —— 体積率が同じでも 0 から %.1f %% まで動く。"
+                       % max(out[c[0]]["a_int"] for c in CONDITIONS))
     return {"out": out, "spread": float(fr.max() - fr.min()), "ratios": ratios}
 
 
