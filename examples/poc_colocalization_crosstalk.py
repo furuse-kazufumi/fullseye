@@ -436,8 +436,12 @@ def section_crosstalk_sweep() -> dict:
 
     a_pred = 2.0 - np.sqrt(3.0)
     a_cross = crossing(alphas, r0_sym, 0.5)
-    a_m1 = crossing(alphas, np.abs(np.asarray(m1_50) - m1_50_true), 0.10)
-    a_r50 = crossing(alphas, np.abs(np.asarray(r50) - r50_ideal), 0.10)
+    # 崖は「漏れ込みなし(α=0)の同じ推定器」からの動きで測る。真値から測ると
+    # Otsu-Manders の裾落ち(1 節)が最初から −14 pt 乗っていて、途中で漏れ込みと
+    # 打ち消して「真値に近い」点ができる —— それは正確ではなく相殺。
+    a_m1 = crossing(alphas, np.asarray(m1_50) - m1_50[0], 0.10)
+    a_r50 = crossing(alphas, np.asarray(r50) - r50[0], 0.10)
+    a_cancel = crossing(alphas, np.asarray(m1_50) - m1_50_true, 0.0)
     print("\n  ★Pearson の崖: 真の共局在 0 %% の r が 0.5 を超える α(対称)= %.3f、"
           "予想 2−√3 = %.3f" % (a_cross, a_pred))
     print("   片側(β=0)は 30 %% でも r=%+.3f(予想 %.3f)—— 0.5 に届かない。"
