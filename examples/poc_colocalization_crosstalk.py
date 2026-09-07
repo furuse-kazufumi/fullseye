@@ -152,7 +152,7 @@ def fixed_mask(img: np.ndarray, roi: np.ndarray) -> tuple[np.ndarray, float]:
 
 
 def costes_threshold(a: np.ndarray, b: np.ndarray, roi: np.ndarray,
-                     n_levels: int = 120) -> tuple[np.ndarray, np.ndarray]:
+                     n_levels: int = 120) -> tuple[np.ndarray, np.ndarray, float, float]:
     """Costes の自動しきい値: 回帰直線 b = s·a + o に沿って T_A を下げ、
     しきい値未満の画素の r が 0 以下になった所で止める(公開経路に無いので自前)。"""
     x, y = a[roi], b[roi]
