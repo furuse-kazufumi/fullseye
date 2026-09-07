@@ -394,20 +394,24 @@ class Rig:
         self.depth, pb_raw = scan_camera(rng)
         self.pb_raw_n = int(pb_raw.shape[0])
         self.pb = np.asarray(fs.ledger.voxel_grid_downsample(pb_raw, CELL / 2))
-        self.kn_a0 = known_mask("lidar", self.X, self.Y)
-        self.kn_b0 = known_mask("cam", self.X, self.Y)
-        self.evalm = (self.kn_a0 | self.kn_b0) & self.win
+        self.free_a = free_mask("lidar", self.X, self.Y)
+        self.free_b0 = free_mask("cam", self.X, self.Y)
         self.esdf = np.asarray(fs.ledger.esdf(self.gt_occ, CELL))
         self.wa, self.Ra = weights(LIDAR["C"], self.X, self.Y,
                                    sigma=LIDAR["sigma"])
         self.wb, self.Rb = weights(CAM["C"], self.X, self.Y, kz=CAM["kz"])
         occ, h = to_bev(place(self.pa, LIDAR["C"]))
         self.occ_a, self.h_a = occ, h
+        # known = 自由と言い切れる ∪ 実際に返りがあった(= 占有と分かった)
+        self.kn_a0 = self.free_a | self.occ_a
+        occ_b0, self.kn_b0, _ = self.sensor_b()
+        self.occ_b0 = occ_b0
+        self.evalm = (self.kn_a0 | self.kn_b0) & self.win
 
     def sensor_b(self, dyaw=0.0, dt=(0.0, 0.0, 0.0)):
         occ, h = to_bev(place(self.pb, CAM["C"], dyaw, dt))
-        kn = resample_known(self.kn_b0, CAM["C"], dyaw, dt, self.X, self.Y)
-        return occ, kn, h
+        free = resample_free(self.free_b0, CAM["C"], dyaw, dt, self.X, self.Y)
+        return occ, free | occ, h
 
     def run(self, rule, dyaw=0.0, dt=(0.0, 0.0, 0.0)):
         ob, kb, hb = self.sensor_b(dyaw, dt)
