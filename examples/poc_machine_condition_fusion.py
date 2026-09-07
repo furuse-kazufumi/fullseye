@@ -802,8 +802,9 @@ def section_sweeps() -> dict:
     for o, tag in ((1.0, "1X"), (2.0, "2X(芯ずれ)"), (ORDER_BPFO, "BPFO"),
                    (6.0, "6X(ゆるみの櫛)")):
         print("           %-14s o = %5.3f -> δ < %.2f %%" % (tag, o, 100 / (2 * o * FR * DURATION)))
-    out["jitter"] = sweep("sweep_rpm_variation", (0.0, 0.0025, 0.005, 0.010, 0.020, 0.040),
-                          "jitter", ("v",), "回転数変動 δ",
+    out["jitter"] = sweep("sweep_rpm_variation",
+                          (0.0, 0.0025, 0.005, 0.010, 0.020, 0.040, 0.080),
+                          "jitter", ("v",), VIB_FEATS, "回転数変動 δ",
                           "回転数が揺れると高次から壊れる",
                           "予測どおり櫛(6X)を使うゆるみが最初に落ちる。",
                           fmt="%8.4f")
