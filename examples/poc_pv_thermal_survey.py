@@ -447,6 +447,18 @@ def capture(t_fine: np.ndarray, gsd: float = GSD, theta_deg: float = VIEW_DEG,
     return t_app + netd * rng.standard_normal(t_app.shape)
 
 
+def hot_centre() -> tuple[float, float]:
+    """ホットスポットの中心の世界座標 (y, x) [m]。"""
+    return (MARGIN + (MOD_HOT // NMX) * (MOD_H + GAP_Y) + (CELL_HOT[0] + 0.5) * CELL,
+            MARGIN + (MOD_HOT % NMX) * (MOD_W + GAP_X) + (CELL_HOT[1] + 0.5) * CELL)
+
+
+def hot_pixel(gsd: float, shape) -> tuple[int, int]:
+    """その中心が乗る画素(GSD の格子)。"""
+    cy, cx = hot_centre()
+    return (min(int(cy / gsd), shape[0] - 1), min(int(cx / gsd), shape[1] - 1))
+
+
 def ground_truth(gsd: float = GSD) -> dict:
     """GSD の格子に落とした 3 値の真値(面積比 0.5 超で採る)。"""
     L = layout()
