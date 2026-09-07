@@ -115,10 +115,10 @@ _GRID = 0.04                    # 粗さの場を作る格子 [m]
 # --------------------------------------------------------------------------- #
 # 真値                                                                          #
 # --------------------------------------------------------------------------- #
-def settlement(x, y) -> np.ndarray:
+def settlement(x, y, s_max: float = S_MAX) -> np.ndarray:
     """沈下量 [m](負が沈下)。Peck の横断ガウス x Attewell の縦断。"""
     x, y = np.asarray(x, np.float64), np.asarray(y, np.float64)
-    return -S_MAX * np.exp(-((y - Y0) ** 2) / (2.0 * I_TRANS ** 2)) \
+    return -s_max * np.exp(-((y - Y0) ** 2) / (2.0 * I_TRANS ** 2)) \
         * ndtr((X_FACE - x) / I_LONG)
 
 
