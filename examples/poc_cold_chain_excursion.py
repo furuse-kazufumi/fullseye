@@ -518,6 +518,10 @@ def section_cliffs(scene: dict) -> dict:
     vol, lay = scene["vol"], scene["layout"]
     a0, b0 = DOOR_EVENTS[2]
     width = float(b0 - a0)
+    # ★ピークを探す窓は**次の扉開閉の手前まで**。ここを広く取ると、τ が大きい
+    #   ところで次のパルスの立ち上がりを拾い、「崖が来ない」ように見える
+    #   (2026-09-08 に 200 分の窓で踏んだ: y=53 の実測が 153 分に伸びた)。
+    t_end = int(min(NT, DOOR_EVENTS[3][0]))
     taus = np.arange(1.0, 181.0, 1.0)
     cells = _aisle_cells(scene)
 
