@@ -1,0 +1,176 @@
+[
+ {
+  "file": "01_scene_slices.png",
+  "name": "scene_slices",
+  "caption": "同じ色尺度ではない —— 各枚は自分の最小最大で塗られる。数字は本文の表を見ること。",
+  "shape": [
+   327,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "02_layout_maps.png",
+  "name": "layout_maps",
+  "caption": "",
+  "shape": [
+   327,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "03_traces.png",
+  "name": "traces",
+  "caption": "扉前の空気は跳ねるが製品には届かない。最悪製品は跳ねないがずっと規定の上にいる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_placement_table.png",
+  "name": "placement_table",
+  "caption": "",
+  "shape": [
+   176,
+   580,
+   3
+  ],
+  "csv": "04_placement_table.csv",
+  "tsv": "04_placement_table.tsv"
+ },
+ {
+  "file": "05_sweep_tau.png",
+  "name": "sweep_tau",
+  "caption": "教科書の 1 極公式は荷室の空気の遅れを勘定に入れないので崖を遅く見積もる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_sweep_tau_positions.png",
+  "name": "sweep_tau_positions",
+  "caption": "",
+  "shape": [
+   200,
+   621,
+   3
+  ],
+  "csv": "06_sweep_tau_positions.csv",
+  "tsv": "06_sweep_tau_positions.tsv"
+ },
+ {
+  "file": "07_sweep_sampling.png",
+  "name": "sweep_sampling",
+  "caption": "位相を全部試した。パルスが規定を超えている時間 W_eff = 33 分。",
+  "shape": [
+   248,
+   290,
+   3
+  ],
+  "csv": "07_sweep_sampling.csv",
+  "tsv": "07_sweep_sampling.tsv"
+ },
+ {
+  "file": "08_sweep_quant.png",
+  "name": "sweep_quant",
+  "caption": "",
+  "shape": [
+   224,
+   295,
+   3
+  ],
+  "csv": "08_sweep_quant.csv",
+  "tsv": "08_sweep_quant.tsv"
+ },
+ {
+  "file": "09_control_groups.png",
+  "name": "control_groups",
+  "caption": "",
+  "shape": [
+   176,
+   574,
+   3
+  ],
+  "csv": "09_control_groups.csv",
+  "tsv": "09_control_groups.tsv"
+ },
+ {
+  "file": "10_control_maps.png",
+  "name": "control_maps",
+  "caption": "",
+  "shape": [
+   327,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "11_metric_limits.png",
+  "name": "metric_limits",
+  "caption": "",
+  "shape": [
+   152,
+   533,
+   3
+  ],
+  "csv": "11_metric_limits.csv",
+  "tsv": "11_metric_limits.tsv"
+ },
+ {
+  "file": "12_verdict_maps.png",
+  "name": "verdict_maps",
+  "caption": "4 枚目の明るいところが「同じ記録なのに指標で答えが違う」置き場所(82 セル)。",
+  "shape": [
+   327,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "13_excursion_body.png",
+  "name": "excursion_body",
+  "caption": "1 枚目は render_volume_projection の xray 投影(縦 = 時間 720 分、横 = 荷室の奥行き)。",
+  "shape": [
+   897,
+   500,
+   3
+  ]
+ },
+ {
+  "file": "14_excursion_events.png",
+  "name": "excursion_events",
+  "caption": "",
+  "shape": [
+   176,
+   467,
+   3
+  ],
+  "csv": "14_excursion_events.csv",
+  "tsv": "14_excursion_events.tsv"
+ },
+ {
+  "file": "15_sweep_nlogger.png",
+  "name": "sweep_nlogger",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "16_logger_map.png",
+  "name": "logger_map",
+  "caption": "",
+  "shape": [
+   327,
+   500,
+   3
+  ]
+ }
+]
