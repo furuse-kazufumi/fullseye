@@ -115,8 +115,9 @@ def _probe():
             continue
         verdicts = []
         failure = None
+        ovr = _opb().OP_PROBE_OVERRIDE.get(op.name)
         for label, ins in banks:
-            v = ins[op.in_sort]
+            v = ovr[0]() if ovr is not None else ins[op.in_sort]
             for a, b in _KNOBS:
                 bs.clear_fallbacks()
                 try:
