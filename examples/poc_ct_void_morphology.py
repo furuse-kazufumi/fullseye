@@ -838,8 +838,10 @@ def main() -> int:
                                   ctl["ratios"]["nn"]))
     print("  * 応力の代理指標(界面欠損率)は 0 -> %.2f %%。同体積の球 %.2f %% の "
           "%.2f 倍。" % (proxy["disc"], proxy["sph"], proxy["disc"] / proxy["sph"]))
-    print("  * 崖は最小寸法で決まる: 扁平 %.0f µm / 球 %.0f µm。**壊れる向きは"
-          "『合格』側**。" % (cliff["cliff_dsc"], cliff["cliff_sph"]))
+    print("  * ★崖の予想は外れた: ボイド率は %.0f µm でも %.2f %% と崩れず、"
+          "先に死ぬのは形の指標\n    (界面欠損率 %.2f -> %.2f %%、扁平度は %.0f µm で"
+          "測れない)。" % (cliff["vx"][-1], cliff["f_sph"][-1], cliff["ai"][0],
+                           cliff["ai"][-1], cliff["vx"][-1]))
     print("  * 連なりは連結半径 %.0f µm(予測 %.1f)で捕まるが、ボイド率には出ない。"
           % (swp["r_chain"], swp["pred_chain"]))
     print("  * 寿命そのものは測っていない —— 示せたのは合否 1 個の数字の盲目さまで。")
@@ -850,9 +852,13 @@ def main() -> int:
     assert ctl["ratios"]["nn"] > 4.0, ctl["ratios"]["nn"]
     assert proxy["disc"] / proxy["sph"] > 1.5, "扁平の界面欠損が球と変わらない"
     assert abs(proxy["disc"] - proxy["pred_disc"]) < 1.5, "閉形式と合わない"
-    assert cliff["cliff_dsc"] < cliff["cliff_sph"], "扁平のほうが先に壊れていない"
+    # ★体積率は粗いボクセルでも保たれ、先に死ぬのは形の指標(予想が外れた側)
+    assert cliff["f_sph"][-1] > 0.8 * cliff["f_sph"][0], "ボイド率が崩れた(所見が反転)"
+    assert cliff["ai"][-1] < 0.9 * cliff["ai"][0], "界面欠損率が劣化していない"
+    assert not np.isfinite(cliff["fl_dsc"][-1]), "最粗で扁平度が測れてしまった"
     assert abs(swp["r_chain"] - swp["pred_chain"]) <= 1000 * VOXEL, "連結半径が予測外"
     assert swp["tf"][-1] > swp["tf"][0], "しきい値でボイド率が増えない"
+    assert min(swp["tn"]) < N_VOID, "しきい値を上げても融合が起きない"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
