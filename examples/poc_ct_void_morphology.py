@@ -548,36 +548,33 @@ def section_voxel_cliff() -> dict:
 
     c_fr_dsc = _first_below(f_dsc, f_dsc[0], 0.80)
     c_fr_sph = _first_below(f_sph, f_sph[0], 0.80)
-    c_fl_dsc = _first_below(fl_dsc, fl_dsc[0], 0.80)
-    c_fl_sph = _first_below(fl_sph, fl_sph[0], 0.80)
     c_ai = _first_below(ai_dsc, ai_dsc[0], 0.80)
+    last_flat = max(v for v, x in zip(vx, fl_dsc) if np.isfinite(x))
+    ratio_flat = fl_sph[vx.index(last_flat)] / fl_dsc[vx.index(last_flat)]
     print("\n  ★予想は 2 段で外れた。")
-    print("   1) **体積率はほとんど崩れない**。球は %.0f µm(径の半分 %.0f µm を超える)"
-          "でも %.2f %%(10 µm の %.2f %% の %.0f %%)、\n      扁平も %.2f %% で、"
-          "80 %% を割る点は 球 %s / 扁平 %s。予測(球 %.0f µm / 扁平 %.0f µm で崩れる)"
-          "は外れ。" % (vx[-1], d_sph / 2, f_sph[-1], f_sph[0],
-                        100 * f_sph[-1] / f_sph[0], f_dsc[-1],
-                        ("%.0f µm" % c_fr_sph) if np.isfinite(c_fr_sph) else "無し",
-                        ("%.0f µm" % c_fr_dsc) if np.isfinite(c_fr_dsc) else "無し",
-                        d_sph / 2, d_dsc / 2))
+    print("   1) **体積率は崩れない —— むしろ増える。** 球は %.0f µm"
+          "(径の半分 %.0f µm を超える)で %.2f %%、\n      扁平も %.2f %% で、"
+          "10 µm の %.2f / %.2f %% より**大きい**。80 %% を割る点は 球 %s / 扁平 %s。"
+          "\n      予測(球 %.0f µm / 扁平 %.0f µm で崩れる)は外れた。"
+          % (vx[-1], d_sph / 2, f_sph[-1], f_dsc[-1], f_sph[0], f_dsc[0],
+             ("%.0f µm" % c_fr_sph) if np.isfinite(c_fr_sph) else "掃引内に無し",
+             ("%.0f µm" % c_fr_dsc) if np.isfinite(c_fr_dsc) else "掃引内に無し",
+             d_sph / 2, d_dsc / 2))
     print("      理由: 部分体積を線形の被覆率で積むと、**個々のボイドが解像されなくても"
           "体積は保存される**。\n      ボクセルを粗くしても『ボイド率 %.1f %%』という数字は"
-          "しれっと出続ける。" % f_sph[-1])
-    print("   2) ★**先に死ぬのは形のほう**。扁平度は 球 %s / 扁平 %s で 80 %% を割り、"
-          "\n      %.0f µm では両方とも**測れない**(ボイドあたりのボクセルが足りず nan)。"
-          "\n      界面欠損率も %s で 80 %% を割り、%.0f µm では %.2f -> %.2f %% "
-          "(**%.0f %% 減**)。"
-          % (("%.0f µm" % c_fl_sph) if np.isfinite(c_fl_sph) else "無し",
-             ("%.0f µm" % c_fl_dsc) if np.isfinite(c_fl_dsc) else "無し", vx[-1],
-             ("%.0f µm" % c_ai) if np.isfinite(c_ai) else "無し",
+          "しれっと出続ける —— ただし位相の運で\n      ±%.2f ポイント振れる"
+          "(%.0f µm)。合否線が 3 %% ならこの揺れだけで結論が反転する。"
+          % (f_sph[-1], max(s_dsc), vx[int(np.argmax(s_dsc))]))
+    print("   2) ★**先に死ぬのは形のほう**。扁平度は %.0f µm までは球 %.2f 対 扁平 %.2f "
+          "(%.1f 倍)と分離を保つが、\n      %.0f µm では**両方とも測れない**"
+          "(ボイドあたりのボクセルが足りず nan)。界面欠損率は %s で 80 %% を割り、"
+          "\n      %.0f µm で %.2f -> %.2f %%(**%.0f %% 減**)。"
+          % (last_flat, fl_sph[vx.index(last_flat)], fl_dsc[vx.index(last_flat)],
+             ratio_flat, vx[-1],
+             ("%.0f µm" % c_ai) if np.isfinite(c_ai) else "掃引内に無し",
              vx[-1], ai_dsc[0], ai_dsc[-1], 100 * (1 - ai_dsc[-1] / ai_dsc[0])))
-    print("      ★向きが悪い: **合否の数字は据え置きのまま、危ない形の指標だけが"
-          "『安全』側へ動く**。")
-    print("   3) 位相の散らばりは %.0f µm で最大 ±%.2f ポイント —— "
-          "1 本の位相だけで崖を語ると\n      %.2f %% と %.2f %% のどちらを引くかで"
-          "結論が変わる。" % (vx[int(np.argmax(s_dsc))], max(s_dsc),
-                              f_dsc[int(np.argmax(s_dsc))] - max(s_dsc),
-                              f_dsc[int(np.argmax(s_dsc))] + max(s_dsc)))
+    print("      ★向きが悪い: **合否の数字は据え置き(むしろ増える)のまま、"
+          "危ない形の指標だけが『安全』側へ動く**。")
     print("  ★離隔の判別(予想は %.0f µm より粗いと不能): 実測は 層中央 / 界面接触 = "
           % gap_mid)
     print("     " + " / ".join("%.0fµm:%.0f 対 %.0f" % (v, m, i)
