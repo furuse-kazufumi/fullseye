@@ -556,11 +556,18 @@ def section_cliff_epochs() -> dict:
         print("    %2d    %.2f      %.4f      %.4f     %.2f   %.4f      %.4f     %.2f"
               % (n, t[-1], s_i, p_i, s_i / p_i, s_b, p_b, s_b / p_b))
 
-    ratios = [a / b for a, b in zip(mi + mb, pi_ + pb)]
-    print("\n  ★予測との比は %.2f 〜 %.2f。閉形式は %d サイトの実測を説明する。"
-          % (min(ratios), max(ratios), N_SITE))
-    need_i = [n for n, s in zip(ns, pi_) if 2.0 * s < RATE_MM_YR]
-    need_b = [n for n, s in zip(ns, pb) if 2.0 * s < RATE_MM_YR]
+    ratios = [a / b for a, b in zip(mi, pi_)]
+    ratios_b = [a / b for a, b in zip(mb, pb)]
+    # M サイトから推定した σ 自体の相対誤差は 1/sqrt(2(M-1))
+    rel = 1.0 / math.sqrt(2.0 * (N_SITE - 1))
+    print("\n  ★積分法の予測との比は %.2f 〜 %.2f。%d サイトから σ を推定した"
+          "こと自体の相対誤差が ±%.0f %% なので、この幅は標本のゆらぎの範囲。"
+          % (min(ratios), max(ratios), N_SITE, 100 * rel))
+    print("  ★2 値化の比は %.2f 〜 %.2f と**一貫して 1 を超える** —— 誤差が"
+          "白色雑音でない(1 画素の階段に張り付く)ので iid の閉形式は下振れする。"
+          % (min(ratios_b), max(ratios_b)))
+    need_i = [n for n, s in zip(ns, mi) if 2.0 * s < RATE_MM_YR]
+    need_b = [n for n, s in zip(ns, mb) if 2.0 * s < RATE_MM_YR]
     print("  ★%.3f mm/年 を 2σ で言い切るのに要る期数: 積分法 %s / 2 値化 %s。"
           % (RATE_MM_YR,
              ("%d 期(%.1f 年)" % (min(need_i), (min(need_i) - 1) * DT_YEAR))
