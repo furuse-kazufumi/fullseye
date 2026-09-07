@@ -754,6 +754,9 @@ def section_controls() -> dict:
           "本物 %d / 非故障 %d / 偽 %d。"
           % (b["n_fault"], b["n_false"], c["n_fault"], c["n_nonfault"],
              c["n_false"]))
+    assert a_mean["n_false"] >= 1, "故障ゼロの対照群で偽が出ていない"
+    assert a_med["n_false"] == 0, "モジュール中央値で偽が消えていない"
+    assert b["n_fault"] == 2 and b["n_false"] == 0, "理想条件で 2 件取れていない"
     return out
 
 
