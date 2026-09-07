@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_capsule_sdf — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_capsule_sdf&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>線分 `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">–</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> を半径 </code><code style="color:#22d3bf">radius</code>` で太らせたカプセルの<b>厳密</b>な符号付き距離場。</p>
+<p>`<code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>`。</p>
+<p>線分への最短距離そのものなので<b>全空間で勾配ノルム 1</b>(円柱と違い端が丸いぶん、</p>
+<p>角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。</p>
+<p>引数と検証(`<code style="color:#22d3bf">ValueError</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">grid</code><code style="color:#22d3bf">: 最終軸が 3 の float 配列 </code><code style="color:#22d3bf">(..., 3)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">: 芯線の端点(要素数 3)。</code><code style="color:#22d3bf">a == b</code><code style="color:#22d3bf"> なら球(</code><code style="color:#22d3bf">sphere_sdf</code>` と一致)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius</code>`: 太さ(負は拒否)。</p>
+<p>返り値: `<code style="color:#22d3bf">grid.shape[:-1]</code>` の float64。</p>
+<p>使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具を</p>
+<p>カプセルで置いて `<code style="color:#22d3bf">sdf_intersect</code>` の最小値が正かを見る。骨梁・血管・繊維の合成にも。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">capsule_sdf</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">capsule_sdf</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:procedural_hand">procedural_hand</a> — <code style="color:#22d3bf">py -3.11 examples_3d/procedural_hand.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sdf_csg">sdf_csg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sdf_csg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">volume</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

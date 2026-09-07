@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_plane_sdf — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">volume</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_plane_sdf&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>半空間(平面で切った側)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>`<code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code><code style="color:#22d3bf">。法線 </code><code style="color:#22d3bf">n̂</code>` の<b>指す側が外側(正)</b>で、反対側が内側。</p>
+<p>面取り(chamfer)・切断・「基板から上だけ」のような<b>片側だけを残す</b>演算に使う。</p>
+<p>`<code style="color:#22d3bf">sdf_intersect</code>` を重ねれば任意の凸多面体が作れる。ただし **max による交差は角の外側で</p>
+<p>厳密ではない**: 6 枚で直方体を作ると占有(`<code style="color:#22d3bf">&lt;= 0</code><code style="color:#22d3bf">)と内側の値は </code><code style="color:#22d3bf">box_sdf</code>` に完全一致</p>
+<p>するが、外側は角の近くで最大 2.1(半辺 2 の箱・格子 0.25 で実測)だけ<b>過小評価</b>する</p>
+<p>—— CSG の標準的な性質で、距離そのものが要るなら `<code style="color:#22d3bf">box_sdf</code>` を使う。</p>
+<p>厳密性: 平面は全空間で勾配ノルム 1 なので、この値は<b>どこでも真の符号付き距離</b></p>
+<p>(`<code style="color:#22d3bf">box_sdf</code>` のように角で切り替わる場合分けが要らない)。</p>
+<p>引数と検証(`<code style="color:#22d3bf">ValueError</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">grid</code><code style="color:#22d3bf">: 最終軸が 3 の float 配列 </code><code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">grid_coords</code>` の出力または点列)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">point</code>`: 平面上の 1 点(要素数 3)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">normal</code>`: 平面の法線(要素数 3、<b>零ベクトル・NaN は拒否</b>)。長さは自動で 1 に</p>
+<p>正規化するので、大きさは結果に影響しない(向きだけが意味を持つ)。</p>
+<p>返り値: `<code style="color:#22d3bf">grid.shape[:-1]</code>` の float64。法線側で正、反対側で負、平面上で 0。</p>
+<p>使いどころ: `<code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code>` で「その平面より法線側を削る」。</p>
+<p>向きを逆にしたいときは `<code style="color:#22d3bf">normal</code><code style="color:#22d3bf"> の符号を反転する(</code><code style="color:#22d3bf">-sdf</code>` でも同じ)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">plane_sdf</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p>The examples below call the underlying ledger op <code style="color:#22d3bf">plane_sdf</code>. This bridge op is the same implementation adapted to the <code style="color:#22d3bf">fn(v, a, b)</code> convention, so the behaviour carries over unchanged (only the call form differs).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sdf_csg">sdf_csg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sdf_csg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">volume</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_angle_3points">tb_angle_3points</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
