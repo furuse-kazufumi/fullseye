@@ -1042,7 +1042,7 @@ def section_confusion(v_thr: float, zp: ZeroPoint) -> dict:
               "小さな浮きは「不足」と原理的に区別できない。")
     figs.save_table("confusion", header, rows, title="混同行列(各 50 個体)+ ゼロ点の NG 率")
     return {"acc": acc, "zp_ng": {k: 100.0 * zp_ng[k] / n_each for k in KINDS},
-            "miss_lift": miss_lift}
+            "miss_lift": miss_lift, "psi_len": psi_len, "cm": cm}
 
 
 # --------------------------------------------------------------------------- #
