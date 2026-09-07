@@ -721,7 +721,7 @@ def section_scene_figs(base: dict) -> None:
         v = np.sort(np.asarray(v, float))
         return v, np.arange(1, v.size + 1) / max(1, v.size)
     tr_d = truth_stats(sc_d)
-    me_d = measure(sc_d, extract_net(sc_d["img"]))
+    me_d = measure_scene(sc_d)
     series = []
     for lbl, v in [("乾燥 真値", tr_d["diam_all"]), ("乾燥 検出", me_d["diam_all"]),
                    ("経年 真値", tr["diam_all"]), ("経年 検出", me["diam_all"])]:
