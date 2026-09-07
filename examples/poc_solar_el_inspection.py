@@ -179,11 +179,13 @@ def make_scene(seed: int = SEED, grain_c: float = GRAIN_C, crack_w: float = CRAC
     iso = np.zeros((N, N), bool)
     fi_bands = []
     if defects:
-        for cy, cx, ln, deg in CRACKS:
-            base = base * np.where(_seg_dist(yy, xx, cy, cx, ln, deg) < crack_w / 2,
-                                   CRACK_T, 1.0)
+        cracks = [(cy, cx, ln, deg, crack_w, CRACK_T) for cy, cx, ln, deg in CRACKS]
+        if deep:
+            cracks.append(DEEP_CRACK)
+        for cy, cx, ln, deg, w, t in cracks:
+            base = base * np.where(_seg_dist(yy, xx, cy, cx, ln, deg) < w / 2, t, 1.0)
         yl, xl = np.mgrid[0:N, 0:N] + 0.5
-        for cy, cx, ln, deg in CRACKS:
+        for cy, cx, ln, deg, w, t in cracks:
             crack_lines.append(_seg_dist(yl, xl, cy, cx, ln, deg) < 0.5)
         iso_hi = _iso_mask(yy, xx)
         base = base * np.where(iso_hi, ISO_T, 1.0)
