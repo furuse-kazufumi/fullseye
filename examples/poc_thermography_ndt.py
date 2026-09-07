@@ -576,7 +576,9 @@ def section7_illumination(depth_map, masks, sound):
     cases = [("(a) 一様", None),
              ("(b) なだらかな傾斜 %.0f %%" % (100 * (smooth.max() / smooth.min() - 1)), smooth),
              ("(c) ランプの映り込み(相関長 6 px、±25 %)", tex)]
+    raw_hits, tsr_errs = {}, {}
     for label, illum in cases:
+        key = label[1]                                  # "(a)" -> "a"
         ts, cube = synth_cube(depth_map, illum=illum, netd=NETD, seed=2)
         print()
         print("  %s" % label)
@@ -584,12 +586,27 @@ def section7_illumination(depth_map, masks, sound):
         print("  " + "-" * 56)
         for name, mp in _method_maps(ts, cube, masks, sound).items():
             c = _cnr(mp, masks, sound)
-            print("  %-32s %7d/16 %10.2f" % (name, sum(v >= 3 for v in c), np.median(c)))
+            hits = sum(v >= 3 for v in c)
+            if name.startswith("生の 1 枚"):
+                raw_hits[key] = hits
+            print("  %-32s %7d/16 %10.2f" % (name, hits, np.median(c)))
         d_hat, _ = tsr_depth(ts, cube)
         errs = [100 * (1e3 * float(np.median(d_hat[masks[(d, 16.0)]])) / d - 1)
                 for d in DEPTHS_MM]
+        tsr_errs[key] = errs
         print("  直径 16 mm の TSR 深さ誤差: " + " / ".join("%+.0f%%" % e for e in errs))
     print()
+    # ★所見を固定する。
+    #   (1) 壊れるのは (c) の**欠陥と同じスケールのむら**だけ。(b) のなだらかな
+    #       傾斜は生の 1 枚をほとんど壊さない —— ここが「予想が外れた」所なので、
+    #       (b) が (a) を割り込まないことを明示的に押さえる。
+    assert raw_hits["b"] >= raw_hits["a"], raw_hits
+    assert raw_hits["c"] < raw_hits["a"], raw_hits
+    #   (2) TSR の深さは (a)(b)(c) でほぼ同じ。ln T を取ると加熱強度は定数の
+    #       足し算になり、時間の 2 階微分で消えるため(手法名ではなく式の形の話)。
+    spread = max(abs(tsr_errs[k][i] - tsr_errs["a"][i])
+                 for k in ("b", "c") for i in range(len(DEPTHS_MM)))
+    assert spread < 3.0, (spread, tsr_errs)
     print("  → ★**予想が 1 つ外れた**。「なだらかな加熱むらは生の 1 枚を壊す」と")
     print("     見込んで組んだが、(b) では検出数がほとんど変わらない。むらの")
     print("     空間スケール(視野の半分)が欠陥(4〜32 px)よりずっと大きく、")
