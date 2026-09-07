@@ -1465,6 +1465,7 @@ def main() -> int:
           % (LSPAN, GIRDER_AREA + BEARING_AREA, CORE_SP))
     print("=" * 78)
     sc = section_scene()
+    scene_figures(sc)
     obs = section_observe()
     zero = section_zero(obs, sc)
     ctrl = section_control(sc)
