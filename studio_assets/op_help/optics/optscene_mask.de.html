@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optscene_mask — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.optscene_mask(scene, camera, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;optscene_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_mask(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.optscene_mask.raw(...)</code> oder rufe <code style="color:#22d3bf">optscene.optscene_mask</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine bool-<b>Ground-Truth-Maske</b> (H, W) der Pixel, in denen Primitive Nummer `<code style="color:#22d3bf">index</code>` sichtbar ist.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

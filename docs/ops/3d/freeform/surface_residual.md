@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d × image2d × bspline_surface` → `measurement`
 - **呼び出し**: `import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)` (または `ops3d.get("surface_residual")`)
+- **台帳経由の戻り値**: `fullseye.ledger.surface_residual(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_residual.raw(...)`、または `bspline_surf.surface_residual` を直接呼ぶ。
+  - 本体の返り: `{"rms","max","pv"} → pv float`
 
 ## 使い方
 

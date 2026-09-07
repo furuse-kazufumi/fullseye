@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">random_rotation — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.random_rotation(points, seed: &#x27;int&#x27; = 0, max_angle: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;random_rotation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.random_rotation(...)</code> returns **only the declared out type <code style="color:#22d3bf">points</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.random_rotation.raw(...)</code> or call <code style="color:#22d3bf">pcl_augment.random_rotation</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(points, R)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Apply a random rotation and return `<code style="color:#22d3bf">(rotated, R)</code>` (mimicking a change of viewpoint).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

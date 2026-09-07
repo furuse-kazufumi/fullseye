@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cosmic_ray_reject — ASTROSTACK <code style="color:#22d3bf">cosmic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import astrostack; astrostack.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;cosmic_ray_reject&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.cosmic_ray_reject(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.cosmic_ray_reject.raw(...)</code>,或直接调用 <code style="color:#22d3bf">astrostack.cosmic_ray_reject</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(cleaned, mask) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>单帧的宇宙线剔除(拉普拉斯锐度)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

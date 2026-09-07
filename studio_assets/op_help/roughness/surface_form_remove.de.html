@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_form_remove — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import roughness; roughness.surface_form_remove(z, dx, order=1, method=&#x27;ls&#x27;, thresh=None, dy=None, iters=200, seed=0)</code> (oder <code style="color:#22d3bf">opsroughness.get(&quot;surface_form_remove&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_remove(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">depth</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.surface_form_remove.raw(...)</code> oder rufe <code style="color:#22d3bf">roughness.surface_form_remove</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(residual, coeffs)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>格子のまま平面 / 二次曲面を除く。`<code style="color:#22d3bf">(residual, coeffs)</code>` を返す。</p>

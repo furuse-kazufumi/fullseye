@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">cutout — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.cutout(points, extent: &#x27;Union[float, np.ndarray]&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;cutout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.cutout(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.cutout.raw(...)</code> oder rufe <code style="color:#22d3bf">pcl_augment.cutout</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entfernt eine achsenparallele Boxregion im Raum und liefert `<code style="color:#22d3bf">(kept, kept_idx)</code>` (simuliert lokalen Ausfall).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

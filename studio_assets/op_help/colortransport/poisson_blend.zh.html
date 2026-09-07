@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_blend — COLORTRANSPORT <code style="color:#22d3bf">blend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))</code>(或 <code style="color:#22d3bf">opscolortransport.get(&quot;poisson_blend&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code>,或直接调用 <code style="color:#22d3bf">colortransport.poisson_blend</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>搬运梯度场的无缝合成(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

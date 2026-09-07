@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rough_transmission — OPTICS <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;rough_transmission&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code>,或直接调用 <code style="color:#22d3bf">surfacelib.rough_transmission</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把毛玻璃的透射分成「直透分量」与「扩散分量」。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

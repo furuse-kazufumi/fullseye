@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `flow2d`
 - **呼び出し**: `import pivops; pivops.piv_multipass(a, b, windows=(64, 32), overlap=0.5, peak='gauss3', window_func='hann', outlier_threshold=2.0, normalize='overlap', search_limit=0.25)` (または `opspiv.get("piv_multipass")`)
+- **台帳経由の戻り値**: `fullseye.ledger.piv_multipass(...)` は**宣言 out 型 `flow2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.piv_multipass.raw(...)`、または `pivops.piv_multipass` を直接呼ぶ。
+  - 本体の返り: `(flow, info) -> flow2d`
 
 ## 使い方
 

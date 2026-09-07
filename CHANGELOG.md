@@ -48,6 +48,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   欠陥が消える」)。穴は §41.12 —— **台帳アダプタが複数戻り値を切り落とす**同型の
   バグが `gicp` / `grid_coords` / `voxel_to_mesh` の 3 か所、軸順の規約が点
   `(x,y,z)` とボリューム `(depth,row,col)` で割れている件を含む。
+- **台帳経由で戻り値が落ちる 85 op(12 族)に、その旨をノートとヘルプへ自動で出す**。
+  `fs.ledger.<名>` は宣言 out 型の値だけを返し(型忠実な連鎖のための設計)、捨てられた
+  側は `.raw(...)` で取れるが、**op ごとのノートには一度も書かれていなかった** ——
+  3-D バッチで 3 人が別々に「台帳が値を落とすバグ」として報告してきたのが発端。
+  `tools/opdocs.py:result_adapter_hints()` が `RESULT_ADAPTERS` の実測(と表に
+  書かれている「本体の返り」の一言)からノート・Studio ヘルプ 6 言語に 1 行を出す。
+  推測はしない —— 表にコメントが無い op には型だけの一般形を出す。
 - packaging: `sample_sources_ai/` を package の外へ、wheel 側の同梱検査 + CI のサイズ上限(70 MB)。
 - 修正: `imgmetrics` の int8/int16 `data_range`(255/65535 → 127/32767、PSNR 6 dB ずれ)、
   `tb_wetness` がノブの半分以上で必ず失敗していた(定義域つき引数の絶対範囲表

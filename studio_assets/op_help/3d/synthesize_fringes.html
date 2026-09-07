@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_fringes — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fringe; fringe.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;synthesize_fringes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes(...)</code> は**宣言 out 型 <code style="color:#22d3bf">images</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes.raw(...)</code>、または <code style="color:#22d3bf">fringe.synthesize_fringes</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。</p>
 <p>モデル: 総位相 φ(x,y) = φ_carrier + phase_gain·height。搬送波 φ_carrier は視野を横切る線形</p>

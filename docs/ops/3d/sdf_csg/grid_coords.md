@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `coordgrid`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import sdf_ops; sdf_ops.grid_coords(bounds, res)` (または `ops3d.get("grid_coords")`)
+- **台帳経由の戻り値**: `fullseye.ledger.grid_coords(...)` は**宣言 out 型 `coordgrid` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.grid_coords.raw(...)`、または `sdf_ops.grid_coords` を直接呼ぶ。
 
 ## 使い方
 

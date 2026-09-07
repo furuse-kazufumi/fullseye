@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_points — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.project_points(points, K, R=None, t=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;project_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.project_points(...)</code> は**宣言 out 型 <code style="color:#22d3bf">keypoints</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.project_points.raw(...)</code>、または <code style="color:#22d3bf">match3d.project_points</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(uv (N,2), depth (N,)) → uv</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。</p>
 <p>K=カメラ内部行列 [[fx,0,cx],[0,fy,cy],[0,0,1]]。R,t で外部姿勢。世界モデルの観測写像。</p>

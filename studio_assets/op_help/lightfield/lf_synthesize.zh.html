@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_synthesize — LIGHTFIELD <code style="color:#22d3bf">synthesis</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">lightfield</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp=&#x27;linear&#x27;, edge=&#x27;wrap&#x27;, seed=0)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_synthesize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.lf_synthesize(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">lightfield</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.lf_synthesize.raw(...)</code>,或直接调用 <code style="color:#22d3bf">lightfield.lf_synthesize</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用<b>已知</b>斜率的纹理层构建光场(试验台)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

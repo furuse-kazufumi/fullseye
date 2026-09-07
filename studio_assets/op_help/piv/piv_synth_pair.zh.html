@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_pair — PIV <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">image2d</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pivops; pivops.piv_synth_pair(shape, displacement, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0)</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_pair&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pivops.piv_synth_pair</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>既知の変位場を持つ画像対を作る。返りは `<code style="color:#22d3bf">(image_a, image_b, truth)</code>`。</p>

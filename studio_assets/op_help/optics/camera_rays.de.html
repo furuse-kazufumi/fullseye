@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_rays — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import optscene; optscene.camera_rays(camera: &#x27;dict&#x27;) -&gt; &#x27;tuple&#x27;</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;camera_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.camera_rays(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.camera_rays.raw(...)</code> oder rufe <code style="color:#22d3bf">optscene.camera_rays</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kamera-dict → Strahlen für jedes Pixel: origins (H·W, 3), directions (H·W, 3).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

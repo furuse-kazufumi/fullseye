@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_shape_3d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import match3d; match3d.match_shape_3d(vol, template, device=&#x27;cpu&#x27;, mc=0.05, subvoxel=True)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;match_shape_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.match_shape_3d(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">position</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.match_shape_3d.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.match_shape_3d</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 형상 기반(기울기 방향) 매칭 = 2D shapematch_gpu 의 voxel 판(「윤곽 매칭」).</p>

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">align_frames — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import astrostack; astrostack.align_frames(frames, reference=0, order=3, **align_kw)</code> (oder <code style="color:#22d3bf">opsastrostack.get(&quot;align_frames&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.align_frames(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">images</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.align_frames.raw(...)</code> oder rufe <code style="color:#22d3bf">astrostack.align_frames</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(aligned, matrices) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Registriert eine Bildfolge auf eine Referenz.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

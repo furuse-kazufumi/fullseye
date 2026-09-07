@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_align — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code>(或 <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code>,或直接调用 <code style="color:#22d3bf">profileops.profile_align</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>測った輪郭を設計輪郭へ合わせる。返りは `<code style="color:#22d3bf">(aligned, info)</code>`。</p>

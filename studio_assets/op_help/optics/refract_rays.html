@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">refract_rays — OPTICS <code style="color:#22d3bf">glassbody</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.refract_rays(directions, normals, n1=1.0, n2=1.5)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;refract_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> は**宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code>、または <code style="color:#22d3bf">glassmirror.refract_rays</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Snell 屈折のベクトル版。<b>光線ごとに全反射を判定</b>して (方向, TIR マスク) を返す。</p>
 <p>directions: (..., 3) 入射方向(面へ向かう)。normals: (..., 3) 入射側の外向き法線。</p>

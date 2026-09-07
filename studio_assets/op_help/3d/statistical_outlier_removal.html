@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">statistical_outlier_removal — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: &#x27;int&#x27; = 16, std_ratio: &#x27;float&#x27; = 2.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;statistical_outlier_removal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal(...)</code> は**宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.statistical_outlier_removal.raw(...)</code>、または <code style="color:#22d3bf">pcl_filter.statistical_outlier_removal</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(kept, mask)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。</p>
 <p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の</p>

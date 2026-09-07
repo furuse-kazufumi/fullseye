@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">refine_peak_newton — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">score × position</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;refine_peak_newton&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton(...)</code> は**宣言 out 型 <code style="color:#22d3bf">position</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton.raw(...)</code>、または <code style="color:#22d3bf">match3d.refine_peak_newton</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。</p>

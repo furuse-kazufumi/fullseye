@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">segment_rigid_motions — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;segment_rigid_motions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">labels</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">motion_seg3d.segment_rigid_motions</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">{&quot;labels&quot;, &quot;motions&quot;} → labels</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 점군을 운동이 일치하는 강체마다 분할(반복 RANSAC 에 의한 multi-body 분할).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

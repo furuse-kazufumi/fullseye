@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_nonrigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;register_nonrigid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.register_nonrigid(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">points</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.register_nonrigid.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">deform3d.register_nonrigid</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(warped, info, info)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비강체 ICP 로 `<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> 를 </code><code style="color:#22d3bf">dst</code>` 쪽으로 붙입니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

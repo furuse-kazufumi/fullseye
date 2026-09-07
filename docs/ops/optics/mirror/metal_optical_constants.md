@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `signal` → `pairs`
 - **呼び出し**: `import glassmirror; glassmirror.metal_optical_constants(metal='ag', wavelength_nm=550.0)` (または `opsoptics.get("metal_optical_constants")`)
+- **台帳経由の戻り値**: `fullseye.ledger.metal_optical_constants(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.metal_optical_constants.raw(...)`、または `glassmirror.metal_optical_constants` を直接呼ぶ。
 
 ## 使い方
 

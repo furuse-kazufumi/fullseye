@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">harris3d_keypoints — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import feat_harris; feat_harris.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;harris3d_keypoints&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">keypoints</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">feat_harris.harris3d_keypoints</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(keypoints, scores)</code></p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D Harris 關鍵點偵測(2D Harris 角點偵測的 3D 版)。</p>

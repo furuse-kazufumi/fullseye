@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">camera_rays — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import optscene; optscene.camera_rays(camera: &#x27;dict&#x27;) -&gt; &#x27;tuple&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;camera_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.camera_rays(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">points</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.camera_rays.raw(...)</code>,或直接调用 <code style="color:#22d3bf">optscene.camera_rays</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相机 dict → 全部像素的光线:origins (H·W, 3)、directions (H·W, 3)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

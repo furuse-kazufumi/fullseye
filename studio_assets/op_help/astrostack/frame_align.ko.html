@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">frame_align — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import astrostack; astrostack.frame_align(reference, frame, model=&#x27;similarity&#x27;, threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)</code>(또는 <code style="color:#22d3bf">opsastrostack.get(&quot;frame_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.frame_align(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">matrix</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.frame_align.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">astrostack.frame_align</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(matrix, info) -&gt; matrix</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>별의 대응으로부터 `<code style="color:#22d3bf">frame</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">reference</code>` 의 2-D 변환을 추정합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

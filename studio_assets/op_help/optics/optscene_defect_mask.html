@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">optscene_defect_mask — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optscene; optscene.optscene_defect_mask(scene, camera, index: &#x27;int&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;optscene_defect_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask(...)</code> は**宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask.raw(...)</code>、または <code style="color:#22d3bf">optscene.optscene_defect_mask</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><b>欠陥画素の真値マスク</b> (H, W)。学習・評価のラベルはこれを使う。</p>
 <p>`<code style="color:#22d3bf">index</code>` を省くとシーン中のすべての欠陥を合成する。画素完全で、レンダリングと</p>

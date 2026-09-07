@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `rgbimage` → `rgbimage`
 - **呼び出し**: `import specularity; specularity.specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)` (または `opsspecular.get("specular_diffuse_split")`)
+- **台帳経由の戻り値**: `fullseye.ledger.specular_diffuse_split(...)` は**宣言 out 型 `rgbimage` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.specular_diffuse_split.raw(...)`、または `specularity.specular_diffuse_split` を直接呼ぶ。
 
 ## 使い方
 

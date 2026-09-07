@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">random_rotation — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.random_rotation(points, seed: &#x27;int&#x27; = 0, max_angle: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;random_rotation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.random_rotation(...)</code> は**宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.random_rotation.raw(...)</code>、または <code style="color:#22d3bf">pcl_augment.random_rotation</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(points, R)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ランダム回転を適用し `<code style="color:#22d3bf">(rotated, R)</code>` を返す(視点変化の模倣)。</p>
 <p>`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> は正規直交・</code><code style="color:#22d3bf">det=+1</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">rotated = points @ R.T</code><code style="color:#22d3bf"> = 各点に </code><code style="color:#22d3bf">R</code>` を左作用、</p>

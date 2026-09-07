@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">medial_axis_points — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import medial; medial.medial_axis_points(vol, min_radius=0.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;medial_axis_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.medial_axis_points(...)</code> は**宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.medial_axis_points.raw(...)</code>、または <code style="color:#22d3bf">medial.medial_axis_points</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(points, radii)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。</p>
 <p>太い部分は面状、細い部分は線状に分布する medial 点を (M,3) の座標(z,y,x)と、それぞれの</p>

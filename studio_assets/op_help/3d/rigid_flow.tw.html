@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rigid_flow — 3D <code style="color:#22d3bf">scene_flow3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import scene_flow3d; scene_flow3d.rigid_flow(pts0, pts1, max_iter: &#x27;int&#x27; = 20) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;rigid_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.rigid_flow(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">pose</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.rigid_flow.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">scene_flow3d.rigid_flow</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用最近鄰對應 + Kabsch(類 ICP)估計解釋 pts0 -&gt; pts1 的單一剛體運動。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

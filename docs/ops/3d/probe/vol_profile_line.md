@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `pairs`
 - **呼び出し**: `import volprobe; volprobe.vol_profile_line(vol, p0, p1, n=None, spacing=None, order=1)` (または `ops3d.get("vol_profile_line")`)
+- **台帳経由の戻り値**: `fullseye.ledger.vol_profile_line(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_profile_line.raw(...)`、または `volprobe.vol_profile_line` を直接呼ぶ。
 
 ## 使い方
 

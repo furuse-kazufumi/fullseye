@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">data_to_pixel — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code> (or <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> returns **only the declared out type <code style="color:#22d3bf">pairs</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code> or call <code style="color:#22d3bf">annotate.data_to_pixel</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Map data points to pixel `<code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> through an :func:</code>axes_transform` mapping.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

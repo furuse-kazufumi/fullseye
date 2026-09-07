@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_shape_3d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.match_shape_3d(vol, template, device=&#x27;cpu&#x27;, mc=0.05, subvoxel=True)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;match_shape_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.match_shape_3d(...)</code> returns **only the declared out type <code style="color:#22d3bf">position</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.match_shape_3d.raw(...)</code> or call <code style="color:#22d3bf">match3d.match_shape_3d</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D shape-based (gradient-orientation) matching = the voxel version of the 2-D shapematch_gpu (&quot;contour matching&quot;).</p>

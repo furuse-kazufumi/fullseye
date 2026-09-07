@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `depth`
 - **呼び出し**: `import roughness; roughness.surface_form_remove(z, dx, order=1, method='ls', thresh=None, dy=None, iters=200, seed=0)` (または `opsroughness.get("surface_form_remove")`)
+- **台帳経由の戻り値**: `fullseye.ledger.surface_form_remove(...)` は**宣言 out 型 `depth` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_form_remove.raw(...)`、または `roughness.surface_form_remove` を直接呼ぶ。
+  - 本体の返り: `(residual, coeffs)`
 
 ## 使い方
 

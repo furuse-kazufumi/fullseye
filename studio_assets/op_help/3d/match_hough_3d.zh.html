@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_hough_3d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import match3d; match3d.match_hough_3d(scene, template, device=&#x27;cpu&#x27;, ndir=26, mc=0.05, topk=1, nms=3, subvoxel=True)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;match_hough_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.match_hough_3d(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">position</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.match_hough_3d.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.match_hough_3d</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。</p>

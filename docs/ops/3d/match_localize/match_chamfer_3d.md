@@ -15,6 +15,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel × voxel` → `position`
 - **呼び出し**: `import match3d; match3d.match_chamfer_3d(scene, template, device='cpu', thr=0.3, edt='scipy')` (または `ops3d.get("match_chamfer_3d")`)
+- **台帳経由の戻り値**: `fullseye.ledger.match_chamfer_3d(...)` は**宣言 out 型 `position` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.match_chamfer_3d.raw(...)`、または `match3d.match_chamfer_3d` を直接呼ぶ。
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

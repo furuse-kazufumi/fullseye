@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rmse_inliers — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import registration_eval; registration_eval.rmse_inliers(source, target, transform, thresh: &#x27;float&#x27;)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;rmse_inliers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.rmse_inliers(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">measurement</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.rmse_inliers.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">registration_eval.rmse_inliers</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(rmse, n_inliers) → rmse</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>內點對應(殘差 &lt; thresh)上的 RMSE 與內點數。→ (rmse, n_inliers)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

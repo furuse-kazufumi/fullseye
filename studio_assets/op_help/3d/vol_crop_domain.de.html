@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_crop_domain — 3D <code style="color:#22d3bf">domain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volops; volops.vol_crop_domain(vol, domain=None, margin=0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_crop_domain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">voxel</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain.raw(...)</code> oder rufe <code style="color:#22d3bf">volops.vol_crop_domain</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(part, offset)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Beschneidet ein Volumen auf die enge Bounding Box einer Domain (HALCON `<code style="color:#22d3bf">crop_domain</code>`).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `measurement`
 - **呼び出し**: `import registration_eval; registration_eval.rmse_inliers(source, target, transform, thresh: 'float')` (または `ops3d.get("rmse_inliers")`)
+- **台帳経由の戻り値**: `fullseye.ledger.rmse_inliers(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.rmse_inliers.raw(...)`、または `registration_eval.rmse_inliers` を直接呼ぶ。
+  - 本体の返り: `(rmse, n_inliers) → rmse`
 
 ## 使い方
 

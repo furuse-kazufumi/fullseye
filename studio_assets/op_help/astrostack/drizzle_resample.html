@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">drizzle_resample — ASTROSTACK <code style="color:#22d3bf">stack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import astrostack; astrostack.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)</code> (または <code style="color:#22d3bf">opsastrostack.get(&quot;drizzle_resample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.drizzle_resample(...)</code> は**宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.drizzle_resample.raw(...)</code>、または <code style="color:#22d3bf">astrostack.drizzle_resample</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(sci, wht) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。</p>
 <p>Fruchter &amp; Hook, *Drizzle: A Method for the Linear Reconstruction of</p>

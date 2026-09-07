@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rmse_inliers — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.rmse_inliers(source, target, transform, thresh: &#x27;float&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;rmse_inliers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.rmse_inliers(...)</code> は**宣言 out 型 <code style="color:#22d3bf">measurement</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.rmse_inliers.raw(...)</code>、または <code style="color:#22d3bf">registration_eval.rmse_inliers</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(rmse, n_inliers) → rmse</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>inlier 対応(残差 &lt; thresh)上の RMSE と inlier 数。→ (rmse, n_inliers)。</p>
 <p>`<code style="color:#22d3bf">source[i]↔target[i]</code><code style="color:#22d3bf"> の index 対応が前提(:func:</code>inlier_ratio` と同じ)。</p>

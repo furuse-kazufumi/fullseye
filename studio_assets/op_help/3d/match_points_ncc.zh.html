@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_points_ncc — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import match3d; match3d.match_points_ncc(pts_scene, pts_model, size, bounds, device=&#x27;cpu&#x27;, smooth=0.8)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;match_points_ncc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.match_points_ncc(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">position</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.match_points_ncc.raw(...)</code>,或直接调用 <code style="color:#22d3bf">match3d.match_points_ncc</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群间匹配(结构=point cloud × 方法=NCC、变换=splat)。在 scene 中定位 model。</p>

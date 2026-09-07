@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_align — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code> (または <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> は**宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code>、または <code style="color:#22d3bf">profileops.profile_align</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>測った輪郭を設計輪郭へ合わせる。返りは `<code style="color:#22d3bf">(aligned, info)</code>`。</p>
 <p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> は :data:</code>ALIGN_MODES`。<b>相似(スケール推定)は提供しない</b> ——</p>

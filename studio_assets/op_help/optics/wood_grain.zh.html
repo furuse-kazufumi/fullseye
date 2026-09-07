@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">wood_grain — OPTICS <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">image2d</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import surfacelib; surfacelib.wood_grain(shape, ring_px=18.0, angle_deg=15.0, wobble=0.25, seed=0)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;wood_grain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.wood_grain(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.wood_grain.raw(...)</code>,或直接调用 <code style="color:#22d3bf">surfacelib.wood_grain</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成木纹(年轮)的<b>颜色调制</b>与<b>纤维方向</b>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

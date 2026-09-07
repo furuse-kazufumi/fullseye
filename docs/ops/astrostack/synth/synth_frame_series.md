@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `images`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)` (または `opsastrostack.get("synth_frame_series")`)
+- **台帳経由の戻り値**: `fullseye.ledger.synth_frame_series(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.synth_frame_series.raw(...)`、または `astrostack.synth_frame_series` を直接呼ぶ。
+  - 本体の返り: `(frames, truth) -> images`
 
 ## 使い方
 

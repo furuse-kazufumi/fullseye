@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">random_dropout — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.random_dropout(points, ratio: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;random_dropout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.random_dropout(...)</code> は**宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.random_dropout.raw(...)</code>、または <code style="color:#22d3bf">pcl_augment.random_dropout</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点の `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> 割合をランダム除去し </code><code style="color:#22d3bf">(kept, kept_idx)</code>` を返す(欠損の模倣)。</p>
 <p>残す点数は `<code style="color:#22d3bf">round((1-ratio)*N)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">kept_idx</code>` は元配列への昇順インデックスで、</p>

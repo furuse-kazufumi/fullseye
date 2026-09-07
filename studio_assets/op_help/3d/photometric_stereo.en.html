@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photometric_stereo — 3D <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import photometric; photometric.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;photometric_stereo&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.photometric_stereo(...)</code> returns **only the declared out type <code style="color:#22d3bf">normalmap</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.photometric_stereo.raw(...)</code> or call <code style="color:#22d3bf">photometric.photometric_stereo</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lambertian photometric stereo: recover normals and albedo from N images taken under known light directions. → (normals HxWx3, albedo HxW).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

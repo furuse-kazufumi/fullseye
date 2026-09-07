@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">align_frames — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import astrostack; astrostack.align_frames(frames, reference=0, order=3, **align_kw)</code> (または <code style="color:#22d3bf">opsastrostack.get(&quot;align_frames&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.align_frames(...)</code> は**宣言 out 型 <code style="color:#22d3bf">images</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.align_frames.raw(...)</code>、または <code style="color:#22d3bf">astrostack.align_frames</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(aligned, matrices) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>フレーム列を 1 枚の基準へ重ね合わせる。</p>
 <p>各フレームについて :func:<code style="color:#22d3bf">frame_align</code> で変換を推定し、</p>

@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_svd — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import mathops; mathops.mat_svd(a, full_matrices=False)</code> (または <code style="color:#22d3bf">opsmath.get(&quot;mat_svd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.mat_svd(...)</code> は**宣言 out 型 <code style="color:#22d3bf">table</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.mat_svd.raw(...)</code>、または <code style="color:#22d3bf">mathops.mat_svd</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Singular value decomposition `<code style="color:#22d3bf">A = U @ diag(s) @ Vt</code><code style="color:#22d3bf"> (LAPACK </code><code style="color:#22d3bf">gesdd</code>`).</p>
 <p>Returns `<code style="color:#22d3bf">(U, s, Vt)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">s</code>` descending and non-negative. With the</p>

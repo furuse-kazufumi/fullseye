@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `points`
 - **呼び出し**: `import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)` (または `ops3d.get("register_nonrigid")`)
+- **台帳経由の戻り値**: `fullseye.ledger.register_nonrigid(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.register_nonrigid.raw(...)`、または `deform3d.register_nonrigid` を直接呼ぶ。
+  - 本体の返り: `(warped, info, info)`
 
 ## 使い方
 

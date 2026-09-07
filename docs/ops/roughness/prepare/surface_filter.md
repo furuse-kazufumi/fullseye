@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `depth` → `depth`
 - **呼び出し**: `import roughness; roughness.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind='gaussian', end_effect='reject', dy=None)` (または `opsroughness.get("surface_filter")`)
+- **台帳経由の戻り値**: `fullseye.ledger.surface_filter(...)` は**宣言 out 型 `depth` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_filter.raw(...)`、または `roughness.surface_filter` を直接呼ぶ。
+  - 本体の返り: `(roughness, waviness)`
 
 ## 使い方
 

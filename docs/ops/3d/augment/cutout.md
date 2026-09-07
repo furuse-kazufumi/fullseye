@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import pcl_augment; pcl_augment.cutout(points, extent: 'Union[float, np.ndarray]', seed: 'int' = 0) -> 'Tuple[np.ndarray, np.ndarray]'` (または `ops3d.get("cutout")`)
+- **台帳経由の戻り値**: `fullseye.ledger.cutout(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.cutout.raw(...)`、または `pcl_augment.cutout` を直接呼ぶ。
 
 ## 使い方
 

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synth_frame_series — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">images</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code> (または <code style="color:#22d3bf">opsastrostack.get(&quot;synth_frame_series&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> は**宣言 out 型 <code style="color:#22d3bf">images</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code>、または <code style="color:#22d3bf">astrostack.synth_frame_series</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>同じ星野を `<code style="color:#22d3bf">n_frames</code>` 枚、<b>別々のノイズと別々のディザ</b>で撮り直す。</p>
 <p>星の座標・フラックスは全フレームで同じ(`<code style="color:#22d3bf">field_seed</code>` を固定して星の抽選を</p>

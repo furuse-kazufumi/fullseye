@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_points_ncc — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.match_points_ncc(pts_scene, pts_model, size, bounds, device=&#x27;cpu&#x27;, smooth=0.8)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;match_points_ncc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.match_points_ncc(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">position</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.match_points_ncc.raw(...)</code> oder rufe <code style="color:#22d3bf">match3d.match_points_ncc</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktwolke-zu-Punktwolke-Matching (Struktur = Punktwolke × Methode = NCC, Transformation = Splat). Lokalisiert das Modell in der Szene.</p>

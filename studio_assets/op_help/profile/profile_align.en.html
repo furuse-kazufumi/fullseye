@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_align — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code> (or <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> returns **only the declared out type <code style="color:#22d3bf">pairs</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code> or call <code style="color:#22d3bf">profileops.profile_align</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>測った輪郭を設計輪郭へ合わせる。返りは `<code style="color:#22d3bf">(aligned, info)</code>`。</p>

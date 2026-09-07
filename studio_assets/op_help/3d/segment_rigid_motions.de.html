@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">segment_rigid_motions — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;segment_rigid_motions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">labels</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions.raw(...)</code> oder rufe <code style="color:#22d3bf">motion_seg3d.segment_rigid_motions</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">{&quot;labels&quot;, &quot;motions&quot;} → labels</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt zwei Punktmengen in die Starrkörper mit übereinstimmender Bewegung (Multi-Body-Segmentierung per iteriertem RANSAC).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `mesh`
 - **呼び出し**: `import match3d; match3d.voxel_to_mesh(vol, iso=0.5)` (または `ops3d.get("voxel_to_mesh")`)
+- **台帳経由の戻り値**: `fullseye.ledger.voxel_to_mesh(...)` は**宣言 out 型 `mesh` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.voxel_to_mesh.raw(...)`、または `match3d.voxel_to_mesh` を直接呼ぶ。
 
 ## 使い方
 

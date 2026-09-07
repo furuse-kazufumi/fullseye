@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_depth_from_focus — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_depth_from_focus(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, window=9, measure=&#x27;laplacian&#x27;, subpixel=True, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_depth_from_focus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.lf_depth_from_focus(...)</code> は**宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.lf_depth_from_focus.raw(...)</code>、または <code style="color:#22d3bf">lightfield.lf_depth_from_focus</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>再合焦掃引での<b>鮮鋭度のピーク</b>から、画素ごとの傾きを出す。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
 - **呼び出し**: `import pivops; pivops.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)` (または `opspiv.get("piv_synth_particles")`)
+- **台帳経由の戻り値**: `fullseye.ledger.piv_synth_particles(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.piv_synth_particles.raw(...)`、または `pivops.piv_synth_particles` を直接呼ぶ。
+  - 本体の返り: `(image, positions) -> image2d`
 
 ## 使い方
 

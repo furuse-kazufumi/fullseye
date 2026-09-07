@@ -400,6 +400,20 @@
    "tw": "**動態**(GIF: 依序顯示影格 / 視點 / 切片。靜態圖是完整版，GIF 為輔助):",
    "ko": "**움직임**(GIF: 프레임 / 시점 / 슬라이스를 차례로. 정지 그림이 완성형이고 GIF는 보조):",
    "de": "**Bewegung** (GIF: Bilder / Ansichten / Schnitte nacheinander. Die stehende Abbildung ist die vollständige; das GIF ist ergänzend):"
+  },
+  "- **台帳経由の戻り値**: `fullseye.ledger.{a0}(...)` は**宣言 out 型 `{a1}` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.{a2}.raw(...)`、または `{a3}.{a4}` を直接呼ぶ。": {
+   "en": "- **Return value through the ledger**: `fullseye.ledger.{a0}(...)` returns **only the declared out type `{a1}`** (the underlying function also returns auxiliary values). When you need what was dropped, use `fullseye.ledger.{a2}.raw(...)` or call `{a3}.{a4}` directly.",
+   "zh": "- **经台账调用的返回值**: `fullseye.ledger.{a0}(...)` 只返回**声明的 out 类型 `{a1}` 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 `fullseye.ledger.{a2}.raw(...)`,或直接调用 `{a3}.{a4}`。",
+   "tw": "- **經台帳呼叫的回傳值**: `fullseye.ledger.{a0}(...)` 只回傳**宣告的 out 型別 `{a1}` 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 `fullseye.ledger.{a2}.raw(...)`,或直接呼叫 `{a3}.{a4}`。",
+   "ko": "- **원장 경유의 반환값**: `fullseye.ledger.{a0}(...)` 는 **선언된 out 형 `{a1}` 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 `fullseye.ledger.{a2}.raw(...)` 를 쓰거나 `{a3}.{a4}` 를 직접 호출하세요.",
+   "de": "- **Rückgabewert über das Register**: `fullseye.ledger.{a0}(...)` liefert **nur den Wert des deklarierten Out-Typs `{a1}`** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze `fullseye.ledger.{a2}.raw(...)` oder rufe `{a3}.{a4}` direkt auf."
+  },
+  "  - 本体の返り: `{a0}`": {
+   "en": "  - Underlying return: `{a0}`",
+   "zh": "  - 底层返回: `{a0}`",
+   "tw": "  - 底層回傳: `{a0}`",
+   "ko": "  - 실제 반환: `{a0}`",
+   "de": "  - Rückgabe der Funktion: `{a0}`"
   }
  }
 }

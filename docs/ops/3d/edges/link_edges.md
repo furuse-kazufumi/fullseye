@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import edges3d; edges3d.link_edges(edge_mask)` (または `ops3d.get("link_edges")`)
+- **台帳経由の戻り値**: `fullseye.ledger.link_edges(...)` は**宣言 out 型 `voxel` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.link_edges.raw(...)`、または `edges3d.link_edges` を直接呼ぶ。
+  - 本体の返り: `(linked, n)`
 
 ## 使い方
 

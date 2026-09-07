@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d × image2d` → `flow2d`
 - **呼び出し**: `import pivops; pivops.piv_cross_correlate(a, b, window=32, overlap=0.5, peak='gauss3', window_func='hann', subtract_mean=True, shift=None, normalize='overlap', search_limit=0.25)` (または `opspiv.get("piv_cross_correlate")`)
+- **台帳経由の戻り値**: `fullseye.ledger.piv_cross_correlate(...)` は**宣言 out 型 `flow2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.piv_cross_correlate.raw(...)`、または `pivops.piv_cross_correlate` を直接呼ぶ。
+  - 本体の返り: `(flow, info) -> flow2d`
 
 ## 使い方
 

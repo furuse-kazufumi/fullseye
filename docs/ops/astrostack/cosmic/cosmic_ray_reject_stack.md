@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `images`
 - **呼び出し**: `import astrostack; astrostack.cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None, gain=1.0)` (または `opsastrostack.get("cosmic_ray_reject_stack")`)
+- **台帳経由の戻り値**: `fullseye.ledger.cosmic_ray_reject_stack(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.cosmic_ray_reject_stack.raw(...)`、または `astrostack.cosmic_ray_reject_stack` を直接呼ぶ。
+  - 本体の返り: `(cleaned, masks) -> images`
 
 ## 使い方
 

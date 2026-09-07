@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `voxel` → `signal`
 - **呼び出し**: `import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)` (または `ops3d.get("vol_wall_thickness")`)
+- **台帳経由の戻り値**: `fullseye.ledger.vol_wall_thickness(...)` は**宣言 out 型 `signal` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_wall_thickness.raw(...)`、または `volprobe.vol_wall_thickness` を直接呼ぶ。
 
 ## 使い方
 

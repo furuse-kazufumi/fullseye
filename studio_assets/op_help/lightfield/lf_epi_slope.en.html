@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_epi_slope — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_epi_slope(lf, *, window=9, min_energy=1e-10)</code> (or <code style="color:#22d3bf">opslightfield.get(&quot;lf_epi_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.lf_epi_slope(...)</code> returns **only the declared out type <code style="color:#22d3bf">image2d</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.lf_epi_slope.raw(...)</code> or call <code style="color:#22d3bf">lightfield.lf_epi_slope</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Per-pixel slope from the <b>EPI line orientation</b> (structure tensor, one pass).</p>
 <p>A scene point traces a straight line in the epipolar-plane image</p>

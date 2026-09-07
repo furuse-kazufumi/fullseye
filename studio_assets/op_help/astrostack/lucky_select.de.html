@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lucky_select — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code> (oder <code style="color:#22d3bf">opsastrostack.get(&quot;lucky_select&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.lucky_select(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">indices</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.lucky_select.raw(...)</code> oder rufe <code style="color:#22d3bf">astrostack.lucky_select</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält nur die besten `<code style="color:#22d3bf">keep_fraction</code>` nach Qualitätsbewertung — der Lucky-Imaging-Schnitt.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

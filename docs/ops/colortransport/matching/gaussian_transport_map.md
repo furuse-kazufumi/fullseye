@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `matrix`
 - **呼び出し**: `import colortransport; colortransport.gaussian_transport_map(src_samples, ref_samples)` (または `opscolortransport.get("gaussian_transport_map")`)
+- **台帳経由の戻り値**: `fullseye.ledger.gaussian_transport_map(...)` は**宣言 out 型 `matrix` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.gaussian_transport_map.raw(...)`、または `colortransport.gaussian_transport_map` を直接呼ぶ。
 
 ## 使い方
 

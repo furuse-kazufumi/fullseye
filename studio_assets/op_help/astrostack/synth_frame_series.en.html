@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synth_frame_series — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">images</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code> (or <code style="color:#22d3bf">opsastrostack.get(&quot;synth_frame_series&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> returns **only the declared out type <code style="color:#22d3bf">images</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code> or call <code style="color:#22d3bf">astrostack.synth_frame_series</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Re-shoot the same star field `<code style="color:#22d3bf">n_frames</code>` times, <b>each with its own noise and its own dither</b>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

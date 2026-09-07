@@ -15,6 +15,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `position`
 - **呼び出し**: `import match3d; match3d.match_points_ncc(pts_scene, pts_model, size, bounds, device='cpu', smooth=0.8)` (または `ops3d.get("match_points_ncc")`)
+- **台帳経由の戻り値**: `fullseye.ledger.match_points_ncc(...)` は**宣言 out 型 `position` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.match_points_ncc.raw(...)`、または `match3d.match_points_ncc` を直接呼ぶ。
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

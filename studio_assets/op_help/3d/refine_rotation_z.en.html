@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">refine_rotation_z — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel × angle</code> → <code style="color:#22d3bf">angle</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.refine_rotation_z(scene, template, init_angle_deg=0.0, device=&#x27;cpu&#x27;, iters=40, tol=0.001, max_step_deg=5.0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;refine_rotation_z&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.refine_rotation_z(...)</code> returns **only the declared out type <code style="color:#22d3bf">angle</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.refine_rotation_z.raw(...)</code> or call <code style="color:#22d3bf">match3d.refine_rotation_z</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Gauss-Newton refinement</b> of the rotation angle about z (Lucas-Kanade on SSD, one parameter).</p>

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_ridge — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import medial; medial.distance_ridge(vol, min_radius=0.0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;distance_ridge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.distance_ridge(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">voxel</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.distance_ridge.raw(...)</code> oder rufe <code style="color:#22d3bf">medial.distance_ridge</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(ridge, dist)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert den Grat der EDT (die lokalen Maxima des Distanzfeldes) als Medialachse. Liefert (ridge_mask, edt).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_residual — 3D <code style="color:#22d3bf">freeform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d × image2d × bspline_surface</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;surface_residual&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.surface_residual(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.surface_residual.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">bspline_surf.surface_residual</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">{&quot;rms&quot;,&quot;max&quot;,&quot;pv&quot;} → pv float</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>산포 데이터와 곡면 tck 의 잔차 통계를 돌려줍니다(형상 오차=적합으로부터의 이탈).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

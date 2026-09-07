@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">random_scale — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.random_scale(points, lo: &#x27;float&#x27;, hi: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, float]&#x27;</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;random_scale&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.random_scale(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.random_scale.raw(...)</code> oder rufe <code style="color:#22d3bf">pcl_augment.random_scale</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet eine gleichmäßige Skalierung `<code style="color:#22d3bf">s ~ U(lo, hi)</code><code style="color:#22d3bf"> um den Ursprung an und liefert </code><code style="color:#22d3bf">(scaled, s)</code>`.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

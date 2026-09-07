@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_sequence — PIV <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">images</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_sequence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">images</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pivops.piv_synth_sequence</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>同じ粒子を繰り返し動かした画像列。返りは `<code style="color:#22d3bf">(frames, truth)</code>`。</p>

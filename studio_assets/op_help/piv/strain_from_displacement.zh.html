@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">strain_from_displacement — PIV <code style="color:#22d3bf">solid</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import dic; dic.strain_from_displacement(u: &#x27;Any&#x27;, v: &#x27;Any&#x27;, window: &#x27;int&#x27;, method: &#x27;str&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;strain_from_displacement&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.strain_from_displacement(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.strain_from_displacement.raw(...)</code>,或直接调用 <code style="color:#22d3bf">dic.strain_from_displacement</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>変位場からひずみ場を出す。`<code style="color:#22d3bf">(exx, eyy, exy)</code>` を返す。</p>

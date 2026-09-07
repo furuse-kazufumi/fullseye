@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">specular_diffuse_split — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;specular_diffuse_split&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.specular_diffuse_split(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">rgbimage</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.specular_diffuse_split.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">specularity.specular_diffuse_split</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 RGB 이미지를 확산(체적) 성분과 정반사(계면) 성분으로 나눕니다. → (diffuse, specular), 둘 다 (H, W, 3).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

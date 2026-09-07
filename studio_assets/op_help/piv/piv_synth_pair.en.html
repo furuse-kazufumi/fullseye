@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_pair — PIV <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">image2d</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import pivops; pivops.piv_synth_pair(shape, displacement, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0)</code> (or <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_pair&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair(...)</code> returns **only the declared out type <code style="color:#22d3bf">image2d</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair.raw(...)</code> or call <code style="color:#22d3bf">pivops.piv_synth_pair</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>既知の変位場を持つ画像対を作る。返りは `<code style="color:#22d3bf">(image_a, image_b, truth)</code>`。</p>

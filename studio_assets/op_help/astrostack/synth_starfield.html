@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synth_starfield — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">image2d</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import astrostack; astrostack.synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.0, fwhm_px=3.2, psf=&#x27;gaussian&#x27;, moffat_beta=2.5, sky=60.0, read_sigma=6.0, shift_row=0.0, shift_col=0.0, n_cosmic=0, cosmic_flux=4000.0, margin_px=6.0, seed=0, field_seed=None, noise=True)</code> (または <code style="color:#22d3bf">opsastrostack.get(&quot;synth_starfield&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.synth_starfield(...)</code> は**宣言 out 型 <code style="color:#22d3bf">image2d</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.synth_starfield.raw(...)</code>、または <code style="color:#22d3bf">astrostack.synth_starfield</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(frame, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>既知の星野を 1 枚合成する —— <b>この族の正解の供給源</b>。</p>
 <p>星は `<code style="color:#22d3bf">flux_min</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">flux_max</code>` の対数一様分布から総フラックス(電子)を引き、</p>

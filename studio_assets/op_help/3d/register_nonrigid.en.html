@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_nonrigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;register_nonrigid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.register_nonrigid(...)</code> returns **only the declared out type <code style="color:#22d3bf">points</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.register_nonrigid.raw(...)</code> or call <code style="color:#22d3bf">deform3d.register_nonrigid</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(warped, info, info)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Bring `<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> toward </code><code style="color:#22d3bf">dst</code>` with non-rigid ICP.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">register_nonrigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;register_nonrigid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.register_nonrigid(...)</code> は**宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.register_nonrigid.raw(...)</code>、または <code style="color:#22d3bf">deform3d.register_nonrigid</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(warped, info, info)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>非剛体 ICP で `<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">dst</code>` へ寄せる。</p>
 <p>各反復で「現在の変形後 src」から `<code style="color:#22d3bf">dst</code>` への最近傍対応を張り直し、その対応を</p>

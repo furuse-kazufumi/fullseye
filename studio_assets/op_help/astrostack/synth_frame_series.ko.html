@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synth_frame_series — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">images</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code>(또는 <code style="color:#22d3bf">opsastrostack.get(&quot;synth_frame_series&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">images</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">astrostack.synth_frame_series</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>같은 성야를 `<code style="color:#22d3bf">n_frames</code>` 장, <b>각각 다른 잡음과 다른 디더</b>로 다시 촬영합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

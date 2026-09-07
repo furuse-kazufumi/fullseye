@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">drizzle_resample — ASTROSTACK <code style="color:#22d3bf">stack</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import astrostack; astrostack.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)</code> (or <code style="color:#22d3bf">opsastrostack.get(&quot;drizzle_resample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.drizzle_resample(...)</code> returns **only the declared out type <code style="color:#22d3bf">image2d</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.drizzle_resample.raw(...)</code> or call <code style="color:#22d3bf">astrostack.drizzle_resample</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(sci, wht) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Drizzle — build a finer grid from several sub-pixel-shifted frames (area-conserving).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

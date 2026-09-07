@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_points — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.project_points(points, K, R=None, t=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;project_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.project_points(...)</code> returns **only the declared out type <code style="color:#22d3bf">keypoints</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.project_points.raw(...)</code> or call <code style="color:#22d3bf">match3d.project_points</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(uv (N,2), depth (N,)) → uv</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D point set (N,3) → image coordinates (u,v) and depth. Pinhole (the forward direction of depth_to_points).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

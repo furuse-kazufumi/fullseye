@@ -1286,11 +1286,16 @@ furuse.work へ誘導する」。
 
 **契約違反(直す価値がある)**
 
-- ★**台帳アダプタが複数戻り値を切り落とす**。同じ壊れ方が 3 か所で出た:
-  `gicp` は `rmse` / `iterations` を落とし、`grid_coords` は `extent` を落とし
-  (モジュールは `(coords, extent)`、台帳は最初の配列だけ)、`voxel_to_mesh` は
-  `normals` を落とす(3 → 2)。**呼び手はモジュールを直 import するしか無い**。
-  同型の族がほかにも残っていないか、まとめて数えること。
+- **「台帳アダプタが複数戻り値を切り落とす」は 3 人が別々にバグとして報告してきたが、
+  検証したらバグではなかった。** `gicp` は `rmse` / `iterations` を、`grid_coords` は
+  `extent` を、`voxel_to_mesh` は `normals` を落とすが、これは `RESULT_ADAPTERS` に
+  よる設計(台帳経由は宣言 out 型の値だけを返す = 型忠実な連鎖のため)で、
+  `fs.ledger.<名>.raw(...)` という逃げ道も既にあった。**問題は道具ではなく説明**で、
+  該当する **85 op(12 族)のノートに一度もその旨が書かれていなかった**。
+  3 人が独立に同じ石につまずいたのがその証拠。→ `tools/opdocs.py` の
+  `result_adapter_hints()` で、85 op のノートと Studio ヘルプ(6 言語)に
+  「台帳経由は `<out>` だけを返す / 本体の返りは `(labels, n)` / 要るときは `.raw`」を
+  自動で出すようにした(2026-09-07 に修正済み)。
 - `icp_point2point_3d` は numpy を渡しても `torch.Tensor` を返す(入力の型に戻らない)。
 - `decimate_qem` は退化三角形(面積ゼロ)を出し、その出力を `vertex_curvature` /
   `face_normals` に渡すと落ちる。しかも「退化」の定義がライブラリ内で 3 通りある。

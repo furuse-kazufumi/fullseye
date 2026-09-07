@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gicp — 3D <code style="color:#22d3bf">gicp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import gicp; gicp.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None) -&gt; &#x27;dict&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;gicp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">pose</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">gicp.gicp</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Generalized-ICP(공분산 가중 마할라노비스 ICP)로 강체 변환 (R,t) 를 추정합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

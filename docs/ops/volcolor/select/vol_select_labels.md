@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `labels` → `labels`
 - **呼び出し**: `import volcolor; volcolor.vol_select_labels(labels, props=None, spacing=None, relabel: 'bool' = False, exclude_border: 'bool' = False, keep=None, **criteria)` (または `opsvolcolor.get("vol_select_labels")`)
+- **台帳経由の戻り値**: `fullseye.ledger.vol_select_labels(...)` は**宣言 out 型 `labels` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_select_labels.raw(...)`、または `volcolor.vol_select_labels` を直接呼ぶ。
 
 ## 使い方
 

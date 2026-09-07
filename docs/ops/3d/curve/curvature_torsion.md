@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `pairs`
 - **呼び出し**: `import curve3d; curve3d.curvature_torsion(curve)` (または `ops3d.get("curvature_torsion")`)
+- **台帳経由の戻り値**: `fullseye.ledger.curvature_torsion(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.curvature_torsion.raw(...)`、または `curve3d.curvature_torsion` を直接呼ぶ。
+  - 本体の返り: `(kappa,tau) → (N,2) pairs`
 
 ## 使い方
 

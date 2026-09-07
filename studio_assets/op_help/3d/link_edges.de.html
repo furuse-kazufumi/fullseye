@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">link_edges — 3D <code style="color:#22d3bf">edges</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import edges3d; edges3d.link_edges(edge_mask)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;link_edges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.link_edges(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">voxel</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.link_edges.raw(...)</code> oder rufe <code style="color:#22d3bf">edges3d.link_edges</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(linked, n)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Labelt eine Kantenmaske mit 26er-Nachbarschaft in Zusammenhangskomponenten.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

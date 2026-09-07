@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">polarization_separate — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_separate(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (or <code style="color:#22d3bf">opsspecular.get(&quot;polarization_separate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.polarization_separate(...)</code> returns **only the declared out type <code style="color:#22d3bf">image2d</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.polarization_separate.raw(...)</code> or call <code style="color:#22d3bf">specularity.polarization_separate</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W).</p>
 <p>Fitting `<code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code>` per pixel gives</p>

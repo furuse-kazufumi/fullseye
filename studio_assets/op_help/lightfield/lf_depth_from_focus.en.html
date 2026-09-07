@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_depth_from_focus — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_depth_from_focus(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, window=9, measure=&#x27;laplacian&#x27;, subpixel=True, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (or <code style="color:#22d3bf">opslightfield.get(&quot;lf_depth_from_focus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.lf_depth_from_focus(...)</code> returns **only the declared out type <code style="color:#22d3bf">image2d</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.lf_depth_from_focus.raw(...)</code> or call <code style="color:#22d3bf">lightfield.lf_depth_from_focus</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Per-pixel slope from the <b>sharpness peak</b> across the refocus sweep.</p>
 <p>Refocus at every slope in *slopes*, measure local sharpness (*measure*:</p>

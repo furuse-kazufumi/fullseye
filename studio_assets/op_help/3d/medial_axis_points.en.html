@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">medial_axis_points — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import medial; medial.medial_axis_points(vol, min_radius=0.0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;medial_axis_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.medial_axis_points(...)</code> returns **only the declared out type <code style="color:#22d3bf">points</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.medial_axis_points.raw(...)</code> or call <code style="color:#22d3bf">medial.medial_axis_points</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(points, radii)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turn the medial voxels into a point set with their local radius (= that point&#x27;s EDT value). Returns (points, radius).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

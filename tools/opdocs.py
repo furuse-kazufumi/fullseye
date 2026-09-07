@@ -479,6 +479,56 @@ def _family_map():
     return op_fam, fam_ops, idx2d
 
 
+#: 台帳経由(``fs.ledger.<名>`` / ``<族>.call``)は**宣言 out 型の値だけ**を返す。
+#: 本体が ``(labels, n)`` のような補助情報つきタプルを返す op では、2 番目以降が
+#: 落ちる —— 落ちること自体は設計(型忠実な連鎖のため。``fullseye._LedgerNamespace``
+#: に ``.raw`` の逃げ道がある)だが、**op ごとのノートには一度も書かれていなかった**。
+#: 2026-09-07 の 3-D PoC バッチで ``gicp`` / ``grid_coords`` / ``voxel_to_mesh`` の
+#: 3 本を「台帳が値を落とすバグ」として別々に報告してきたのが発端 —— 3 人が独立に
+#: 同じ石につまずいたのは、道具ではなく**説明が無いこと**のほうの問題。85 op(12 族)。
+_ADAPTER_ENTRY = re.compile(r'^\s*"(?P<name>\w+)"\s*:(?P<body>.*)$')
+
+
+def result_adapter_hints():
+    """``op 名 -> (族モジュール名, 表に書かれている一言 or "")``。
+
+    一言は ``RESULT_ADAPTERS`` の同じ行に付いている行末コメント(``# (labels, n)``
+    のような「本体が何を返すか」の実測メモ)。**推測はしない** —— コメントが無ければ
+    空文字にして、ノートには型だけの一般形を出す。
+    """
+    import importlib
+    import inspect as _inspect
+
+    import opassist
+    hints = {}
+    mods = [("ops3d", "OPS3D")] + list(opassist._LEDGERS)
+    for mod_name, _table in mods:
+        try:
+            mod = importlib.import_module(mod_name)
+        except Exception:                                # noqa: BLE001 — 任意依存の族
+            continue
+        adapters = getattr(mod, "RESULT_ADAPTERS", None)
+        if not adapters:
+            continue
+        try:
+            src = _inspect.getsource(mod).splitlines()
+        except (OSError, TypeError):
+            src = []
+        note = {}
+        for line in src:
+            m = _ADAPTER_ENTRY.match(line)
+            if m and m.group("name") in adapters and m.group("name") not in note:
+                body = m.group("body")
+                _c = body.split("#", 1)[1].strip() if "#" in body else ""
+                note[m.group("name")] = " ".join(_c.split())
+        for name in adapters:
+            # キーは (台帳の registry モジュール, op 名)。名前だけを鍵にすると
+            # 族をまたぐ同名(``gaussians_to_voxel`` が ops3d と opsreprconv に
+            # ある)で取り違える。
+            hints[(mod_name, name)] = note.get(name, "")
+    return hints
+
+
 _PSEUDOLINK = re.compile(r"\]\((?P<t>[^)\n]*)\)")
 
 
@@ -620,6 +670,15 @@ def _records():
         _exl = _base_examples.get(_base, [])
         _r["examples_inherited"] = ([("examples_3d", e, _base) for e in _ex3d]
                                     + [("examples", e, _base) for e in _exl])
+    # 台帳経由(``fs.ledger.<名>``)が**宣言 out 型の値だけ**を返す op には、その旨を
+    # レコードに持たせる(ノートに 1 行出す)。判定は :data:`RESULT_ADAPTERS` の実測で、
+    # 推測はしない。
+    _hints = result_adapter_hints()
+    for r in recs:
+        _reg = ("ops3d" if r["dim"] == "3d"
+                else LEDGER_DIMS[r["dim"]]["registry"] if r["dim"] in LEDGER_DIMS else None)
+        if _reg is not None and (_reg, r["name"]) in _hints:
+            r["adapter"] = _hints[(_reg, r["name"])]
     return recs, idx2d, op_fam, fam_ops
 
 
@@ -779,6 +838,13 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
                    or (LEDGER_DIMS[dim]["registry"] if dim in LEDGER_DIMS
                        else rec["module"]))
         lines.append(T('- **呼び出し**: `import {a0}; {a1}.{a2}{a3}` (または `{a4}.get("{a5}")`)', lang).format(a0=rec['module'], a1=rec['module'], a2=name, a3=rec['sig'], a4=reg_mod, a5=name))
+    if rec.get("adapter") is not None:
+        _base = T('- **台帳経由の戻り値**: `fullseye.ledger.{a0}(...)` は**宣言 out 型 '
+                  '`{a1}` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が'
+                  '要るときは `fullseye.ledger.{a2}.raw(...)`、または `{a3}.{a4}` を直接呼ぶ。', lang)
+        lines.append(_base.format(a0=name, a1=out, a2=name, a3=rec["module"], a4=name))
+        if rec["adapter"]:
+            lines.append(T('  - 本体の返り: `{a0}`', lang).format(a0=rec["adapter"]))
     if rec["halcon"]:
         lines.append(T('- **HALCON 相当**: `{a0}`(意味・パラメータは HALCON リファレンスが参考になる)', lang).format(a0=rec['halcon']))
     if rec.get("gpu"):

@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `images` → `images`
 - **呼び出し**: `import astrostack; astrostack.align_frames(frames, reference=0, order=3, **align_kw)` (または `opsastrostack.get("align_frames")`)
+- **台帳経由の戻り値**: `fullseye.ledger.align_frames(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.align_frames.raw(...)`、または `astrostack.align_frames` を直接呼ぶ。
+  - 本体の返り: `(aligned, matrices) -> images`
 
 ## 使い方
 

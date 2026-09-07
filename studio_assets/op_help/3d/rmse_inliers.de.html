@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rmse_inliers — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.rmse_inliers(source, target, transform, thresh: &#x27;float&#x27;)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;rmse_inliers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.rmse_inliers(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.rmse_inliers.raw(...)</code> oder rufe <code style="color:#22d3bf">registration_eval.rmse_inliers</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(rmse, n_inliers) → rmse</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der RMSE über die Inlier-Korrespondenzen (Residuum &lt; thresh) und die Inlier-Anzahl. → (rmse, n_inliers).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

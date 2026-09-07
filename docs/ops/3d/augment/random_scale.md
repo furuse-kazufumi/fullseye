@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points` → `points`
 - **呼び出し**: `import pcl_augment; pcl_augment.random_scale(points, lo: 'float', hi: 'float', seed: 'int' = 0) -> 'Tuple[np.ndarray, float]'` (または `ops3d.get("random_scale")`)
+- **台帳経由の戻り値**: `fullseye.ledger.random_scale(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.random_scale.raw(...)`、または `pcl_augment.random_scale` を直接呼ぶ。
 
 ## 使い方
 

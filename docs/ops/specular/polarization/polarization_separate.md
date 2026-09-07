@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `polsweep` → `image2d`
 - **呼び出し**: `import specularity; specularity.polarization_separate(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)` (または `opsspecular.get("polarization_separate")`)
+- **台帳経由の戻り値**: `fullseye.ledger.polarization_separate(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.polarization_separate.raw(...)`、または `specularity.polarization_separate` を直接呼ぶ。
 
 ## 使い方
 

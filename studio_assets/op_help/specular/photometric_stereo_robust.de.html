@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photometric_stereo_robust — SPECULAR <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import specularity; specularity.photometric_stereo_robust(images, lights, method=&#x27;ransac&#x27;, threshold=0.05, max_subsets=512, normalize=True, seed=0, min_inliers=3)</code> (oder <code style="color:#22d3bf">opsspecular.get(&quot;photometric_stereo_robust&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.photometric_stereo_robust(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">normalmap</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.photometric_stereo_robust.raw(...)</code> oder rufe <code style="color:#22d3bf">specularity.photometric_stereo_robust</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Photometrisches Stereo, das Schatten und Glanzlichter übersteht. → (Normalen, Albedo, Inlier).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

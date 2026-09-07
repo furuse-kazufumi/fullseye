@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_select_labels — VOLCOLOR <code style="color:#22d3bf">select</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code> (または <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_select_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_select_labels(...)</code> は**宣言 out 型 <code style="color:#22d3bf">labels</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_select_labels.raw(...)</code>、または <code style="color:#22d3bf">volcolor.vol_select_labels</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3-D の特徴で成分をふるいにかける(2-D のブロブ選別の 3-D 版)。</p>
 <p>`<code style="color:#22d3bf">(labels_out, kept_ids)</code>` を返す。落ちた成分のボクセルは 0(背景)になる。</p>

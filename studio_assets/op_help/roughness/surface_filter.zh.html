@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_filter — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import roughness; roughness.surface_filter(z, dx, lambda_c=None, lambda_s=None, kind=&#x27;gaussian&#x27;, end_effect=&#x27;reject&#x27;, dy=None)</code>(或 <code style="color:#22d3bf">opsroughness.get(&quot;surface_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_filter(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">depth</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.surface_filter.raw(...)</code>,或直接调用 <code style="color:#22d3bf">roughness.surface_filter</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(roughness, waviness)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。</p>

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_resize — 3D <code style="color:#22d3bf">geom_transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volxform; volxform.vol_resize(vol, factor=None, shape=None, order=1, spacing=None, mode=&#x27;nearest&#x27;, cval=0.0)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_resize&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.vol_resize(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">voxel</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.vol_resize.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">volxform.vol_resize</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">spacing 付き時</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>볼륨을 새 격자로 재표본화(`<code style="color:#22d3bf">scipy.ndimage.zoom</code>`, 셀 의미론).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

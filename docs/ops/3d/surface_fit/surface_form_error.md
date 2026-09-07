@@ -14,6 +14,8 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `image2d` → `measurement`
 - **呼び出し**: `import match3d; match3d.surface_form_error(height, degree=1)` (または `ops3d.get("surface_form_error")`)
+- **台帳経由の戻り値**: `fullseye.ledger.surface_form_error(...)` は**宣言 out 型 `measurement` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_form_error.raw(...)`、または `match3d.surface_form_error` を直接呼ぶ。
+  - 本体の返り: `(residual, rms, pv) → pv float`
 
 ## 使い方
 

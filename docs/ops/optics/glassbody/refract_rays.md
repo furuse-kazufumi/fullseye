@@ -14,6 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 - **データ種**: `points × points` → `points`
 - **呼び出し**: `import glassmirror; glassmirror.refract_rays(directions, normals, n1=1.0, n2=1.5)` (または `opsoptics.get("refract_rays")`)
+- **台帳経由の戻り値**: `fullseye.ledger.refract_rays(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.refract_rays.raw(...)`、または `glassmirror.refract_rays` を直接呼ぶ。
 
 ## 使い方
 

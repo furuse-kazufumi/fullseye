@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_multipass — PIV <code style="color:#22d3bf">estimate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import pivops; pivops.piv_multipass(a, b, windows=(64, 32), overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, outlier_threshold=2.0, normalize=&#x27;overlap&#x27;, search_limit=0.25)</code>(또는 <code style="color:#22d3bf">opspiv.get(&quot;piv_multipass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.piv_multipass(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">flow2d</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.piv_multipass.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pivops.piv_multipass</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>粗い窓から細かい窓へ段を下げる多段 PIV。返りは `<code style="color:#22d3bf">(flow, info)</code>`。</p>

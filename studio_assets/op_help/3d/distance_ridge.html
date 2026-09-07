@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_ridge — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import medial; medial.distance_ridge(vol, min_radius=0.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;distance_ridge&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.distance_ridge(...)</code> は**宣言 out 型 <code style="color:#22d3bf">voxel</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.distance_ridge.raw(...)</code>、または <code style="color:#22d3bf">medial.distance_ridge</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(ridge, dist)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。</p>
 <p>各前景 voxel の EDT を計算し、<b>26 近傍の局所極大</b>(自分の EDT が周囲 26 voxel の最大以上)を</p>

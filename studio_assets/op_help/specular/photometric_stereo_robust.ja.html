@@ -2,6 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">photometric_stereo_robust — SPECULAR <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.photometric_stereo_robust(images, lights, method=&#x27;ransac&#x27;, threshold=0.05, max_subsets=512, normalize=True, seed=0, min_inliers=3)</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;photometric_stereo_robust&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.photometric_stereo_robust(...)</code> は**宣言 out 型 <code style="color:#22d3bf">normalmap</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.photometric_stereo_robust.raw(...)</code>、または <code style="color:#22d3bf">specularity.photometric_stereo_robust</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>影とハイライトに耐える照度差ステレオ。→ (法線, アルベド, インライア)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
