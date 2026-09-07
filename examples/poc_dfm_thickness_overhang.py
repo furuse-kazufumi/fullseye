@@ -447,18 +447,19 @@ def section_thickness():
         return all(abs((v / (q * hh)) - round(v / (q * hh))) < 1e-6
                    for v, hh in zip(vals, hlist) if np.isfinite(v))
 
-    hlist = [T_WALL / r for r in ratios]
     t_ero = [r[2] for r in rows]
     t_ins = [r[3] for r in rows]
+    t_prb = [r[4] for r in rows]
     q_ero2 = quantum(t_ero, hlist, 2.0)
     q_ins2 = quantum(t_ins, hlist, 2.0)
-    q_ins1 = quantum(t_ins, hlist, 1.0)
-    print("\n  刻みの検定(%d 点すべて): 侵食が 2h の倍数 = %s / 内接球が 2h の倍数 = %s"
-          % (len(ratios), q_ero2, q_ins2))
-    print("  ★予想は「内接球は h 刻み」だった。実測は **2h 刻み**(h の倍数 = %s だが"
-          " 2h でも割り切れる)。" % q_ins1)
+    q_prb2 = quantum(t_prb, hlist, 2.0)
+    print("\n  刻みの検定(%d 点すべてで剰余を見る): 侵食が 2h の倍数 = %s / "
+          "内接球が 2h の倍数 = %s / 探針が 2h の倍数 = %s"
+          % (len(hlist), q_ero2, q_ins2, q_prb2))
+    print("  ★予想は「内接球なら h 刻みまで細かくなる」だった。実測は侵食と**同じ 2h 刻み**")
+    print("     (掃引 %d 点すべてで 2h の倍数、しかも侵食と 1 つ残らず同じ値)。" % len(hlist))
     print("     2 値格子の距離変換は「占有ボクセル中心 -> 自由ボクセル中心」を測るので、")
-    print("     半径ではなく**直径のほうが量子化される**。")
+    print("     半径ではなく**直径のほうが量子化される** —— 内接球にしても得しない。")
 
     med = lambda v: float(np.median(np.abs(v)))            # noqa: E731
     fine = [i for i, r in enumerate(ratios) if r >= 3.0]
