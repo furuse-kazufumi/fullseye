@@ -244,17 +244,28 @@ def ground_filter(pts: np.ndarray, tol: float = 0.35, detrend: bool = True):
 # --------------------------------------------------------------------------- #
 # ゼロ点: DoD(格子の標高図を引き算)                                           #
 # --------------------------------------------------------------------------- #
-def dem(pts: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    """点群 -> セル平均の標高図 (ny,nx) と点数。空セルは NaN。行 0 が y 最小。"""
+def dem(pts: np.ndarray, stat: str = "mean") -> tuple[np.ndarray, np.ndarray]:
+    """点群 -> セル代表値の標高図 (ny,nx) と点数。空セルは NaN。行 0 が y 最小。
+
+    ``stat="median"`` は**セル中央値**。樹冠の取りこぼしのように 1 セルに数点だけ
+    数 m 高い点が混ざる汚染に強い(平均は 1 点で数 m 動く)。
+    """
     nx = ny = int(round(LX / CELL))
     ix = np.floor(pts[:, 0] / CELL).astype(np.int64)
     iy = np.floor(pts[:, 1] / CELL).astype(np.int64)
     ok = (ix >= 0) & (ix < nx) & (iy >= 0) & (iy < ny)
     flat = iy[ok] * nx + ix[ok]
     cnt = np.bincount(flat, minlength=nx * ny).astype(np.float64)
-    ssum = np.bincount(flat, weights=pts[ok, 2], minlength=nx * ny)
-    with np.errstate(invalid="ignore", divide="ignore"):
-        z = np.where(cnt > 0, ssum / np.maximum(cnt, 1), np.nan)
+    if stat == "median":
+        from scipy import ndimage
+        z = np.full(nx * ny, np.nan)
+        lab = np.nonzero(cnt > 0)[0]
+        if lab.size:
+            z[lab] = ndimage.median(pts[ok, 2], labels=flat, index=lab)
+    else:
+        ssum = np.bincount(flat, weights=pts[ok, 2], minlength=nx * ny)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            z = np.where(cnt > 0, ssum / np.maximum(cnt, 1), np.nan)
     return z.reshape(ny, nx), cnt.reshape(ny, nx)
 
 
