@@ -173,6 +173,15 @@ def detect_bumps(height: np.ndarray) -> dict:
             "n": int(f["n"])}
 
 
+def match_to_truth(det: dict, cy: np.ndarray, cx: np.ndarray) -> np.ndarray:
+    """検出を仕込み順に並べ替える添字(最近傍。1 対 1 と 1 px 以内を検算する)。"""
+    d = np.hypot(det["row"][None, :] - cy[:, None], det["col"][None, :] - cx[:, None])
+    idx = np.argmin(d, axis=1)
+    assert len(set(idx.tolist())) == cy.size, "1 対 1 で対応しない"
+    assert float(d[np.arange(cy.size), idx].max()) < 1.0, "1 px 以上ずれた"
+    return idx
+
+
 def plateau_mean(height: np.ndarray, rows, cols, radius_px: float) -> np.ndarray:
     """天面の平坦部の**平均高さ**。★ラベルごとの gray 平均は公開経路に無いので自前。"""
     pad = int(np.ceil(radius_px)) + 1
@@ -217,9 +226,8 @@ def section_orders() -> dict:
     assert det["n"] == sc["cy"].size, (det["n"], sc["cy"].size)
 
     # 検出順を仕込み順に合わせる(格子なので行優先で一致する)
-    order = np.lexsort((det["col"], det["row"]))
-    rows, cols = det["row"][order], det["col"][order]
-    assert np.max(np.hypot(rows - sc["cy"], cols - sc["cx"])) < 1.0
+    idx = match_to_truth(det, sc["cy"], sc["cx"])
+    rows, cols = det["row"][idx], det["col"][idx]
 
     tops = plateau_mean(sc["height"], rows, cols, R_MEAS_UM / PX_UM)
     dev_true = sc["h_true"] - sc["h_true"].mean()
@@ -329,8 +337,8 @@ def section_cliff() -> dict:
     for pv in pvs:
         sc = make_scene(warp_pv=pv)
         det = detect_bumps(sc["height"])
-        order = np.lexsort((det["col"], det["row"]))
-        rows, cols = det["row"][order], det["col"][order]
+        idx = match_to_truth(det, sc["cy"], sc["cx"])
+        rows, cols = det["row"][idx], det["col"][idx]
         tops = plateau_mean(sc["height"], rows, cols, R_MEAS_UM / PX_UM)
         dev_true = sc["h_true"] - sc["h_true"].mean()
         line = []
@@ -381,8 +389,8 @@ def section_control() -> dict:
 
     sc = make_scene(warp_pv=0.0)
     det = detect_bumps(sc["height"])
-    order = np.lexsort((det["col"], det["row"]))
-    rows, cols = det["row"][order], det["col"][order]
+    idx = match_to_truth(det, sc["cy"], sc["cx"])
+    rows, cols = det["row"][idx], det["col"][idx]
     tops = plateau_mean(sc["height"], rows, cols, R_MEAS_UM / PX_UM)
     dev_true = sc["h_true"] - sc["h_true"].mean()
     res = {}
@@ -411,8 +419,8 @@ def section_absorbed_defect() -> dict:
     for sag in (0.0, CENTER_SAG):
         sc = make_scene(center_sag=sag)
         det = detect_bumps(sc["height"])
-        order = np.lexsort((det["col"], det["row"]))
-        rows, cols = det["row"][order], det["col"][order]
+        idx = match_to_truth(det, sc["cy"], sc["cx"])
+        rows, cols = det["row"][idx], det["col"][idx]
         tops = plateau_mean(sc["height"], rows, cols, R_MEAS_UM / PX_UM)
         dev_true = sc["h_true"] - sc["h_true"].mean()
         dev, model = deviations(tops, rows, cols, 2)
