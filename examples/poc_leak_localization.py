@@ -245,52 +245,59 @@ def threshold_prediction() -> float:
 def _scene_figure(rec: dict) -> None:
     if not figs.enabled():
         return
-    w, h = 820, 330
+    w, h = 860, 380
     img = np.full((h, w, 3), 0.97)
-    x0, x1, ypipe = 70.0, float(w - 70), 225.0
+    x0, x1, ypipe, yground = 80.0, float(w - 80), 250.0, 104.0
 
     def px(m: float) -> float:
         return x0 + (x1 - x0) * (m / L_M)
 
-    img = np.asarray(fs.draw_line(img, (0.0, 92.0), (float(w), 92.0),
+    img = np.asarray(fs.draw_line(img, (0.0, yground), (float(w), yground),
                                   color="neutral", width=2))
-    img = np.asarray(fs.text_box(img, "地表(舗装)", (10.0, 78.0), anchor="lb",
-                                 font_size=11))
+    img = np.asarray(fs.text_box(img, "地表(舗装)", (float(w - 10), yground - 6),
+                                 anchor="rb", font_size=11))
     img = np.asarray(fs.draw_line(img, (x0, ypipe), (x1, ypipe),
                                   color="reference", width=10))
+    img = np.asarray(fs.text_box(img, "埋設管", (float(w - 10), ypipe + 6),
+                                 anchor="rt", color="reference", font_size=11))
     for m, name in ((0.0, "センサ 1"), (L_M, "センサ 2")):
-        img = np.asarray(fs.draw_line(img, (px(m), 100.0), (px(m), ypipe - 6.0),
+        img = np.asarray(fs.draw_line(img, (px(m), yground + 6.0),
+                                      (px(m), ypipe - 6.0),
                                       color="neutral", width=2))
-        img = np.asarray(fs.draw_circle(img, (px(m), 108.0), 9.0,
+        img = np.asarray(fs.draw_circle(img, (px(m), yground + 14.0), 9.0,
                                         color="neutral", width=2, fill=True))
-        img = np.asarray(fs.text_box(img, name, (px(m), 74.0), anchor="ct",
-                                     font_size=12))
-    img = np.asarray(fs.draw_circle(img, (px(X_LEAK), ypipe), 11.0,
+        img = np.asarray(fs.text_box(img, name, (px(m), yground + 30.0),
+                                     anchor="ct", font_size=12))
+    img = np.asarray(fs.draw_circle(img, (px(X_LEAK), ypipe), 12.0,
                                     color="wrong", width=3, fill=False))
-    img = np.asarray(fs.arrow(img, (px(X_LEAK), ypipe - 8.0),
-                              (px(X_LEAK), ypipe - 52.0), color="wrong", width=2))
+    img = np.asarray(fs.arrow(img, (px(X_LEAK), ypipe - 14.0),
+                              (px(X_LEAK), ypipe - 56.0), color="wrong", width=2))
     img = np.asarray(fs.text_box(img, "漏水 x = %.0f m" % X_LEAK,
-                                 (px(X_LEAK), ypipe - 58.0), anchor="cb",
+                                 (px(X_LEAK), ypipe - 60.0), anchor="cb",
                                  color="wrong", font_size=12))
-    img = np.asarray(fs.arrow(img, (px(X_LEAK) - 14.0, ypipe + 30.0),
-                              (px(0.0) + 6.0, ypipe + 30.0), color="emphasis",
+    img = np.asarray(fs.arrow(img, (px(X_LEAK) - 16.0, ypipe + 34.0),
+                              (px(0.0) + 6.0, ypipe + 34.0), color="emphasis",
                               width=2))
-    img = np.asarray(fs.arrow(img, (px(X_LEAK) + 14.0, ypipe + 30.0),
-                              (px(L_M) - 6.0, ypipe + 30.0), color="emphasis",
+    img = np.asarray(fs.arrow(img, (px(X_LEAK) + 16.0, ypipe + 34.0),
+                              (px(L_M) - 6.0, ypipe + 34.0), color="emphasis",
                               width=2))
     img = np.asarray(fs.text_box(
         img, "d1 = %.0f m  /  %.1f ms" % (X_LEAK, 1e3 * rec["t1"]),
-        (px(X_LEAK * 0.5), ypipe + 46.0), anchor="ct", font_size=11))
+        (px(X_LEAK * 0.5), ypipe + 48.0), anchor="ct", font_size=11))
     img = np.asarray(fs.text_box(
         img, "d2 = %.0f m  /  %.1f ms" % (L_M - X_LEAK, 1e3 * rec["t2"]),
-        (px((X_LEAK + L_M) * 0.5), ypipe + 46.0), anchor="ct", font_size=11))
+        (px((X_LEAK + L_M) * 0.5), ypipe + 48.0), anchor="ct", font_size=11))
     img = np.asarray(fs.text_box(
         img, "管路 L = %.0f m / 音速 c = %.0f m/s / 帯域 %.0f-%.0f Hz"
-        % (L_M, C_TRUE, BAND[0], BAND[1]), (10.0, 16.0), anchor="lt", font_size=13))
+        % (L_M, C_TRUE, BAND[0], BAND[1]), (10.0, 14.0), anchor="lt",
+        font_size=13))
     img = np.asarray(fs.text_box(
-        img, "掘る場所 x = (L + c·τ) / 2   —— τ = d1/c - d2/c = %.2f ms"
-        % (1e3 * rec["tau_true"]), (10.0, float(h - 12)), anchor="lb",
-        color="emphasis", font_size=12))
+        img, "到達時間差 τ = d1/c - d2/c = %.2f ms" % (1e3 * rec["tau_true"]),
+        (10.0, 46.0), anchor="lt", font_size=12))
+    img = np.asarray(fs.text_box(
+        img, "掘る場所 x = (L + c·τ) / 2  —— c を 10 % 誤れば x は "
+             "(Δc/c)(x - L/2) だけずれる",
+        (10.0, float(h - 12)), anchor="lb", color="emphasis", font_size=12))
     figs.save("scene", img,
               "埋設管の 2 点に相関式漏水探知機を当てる。位置は到達時間差 τ と "
               "音速 c だけで決まる。")
