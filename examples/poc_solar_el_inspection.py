@@ -396,8 +396,10 @@ def analyze(sc: dict, use_fit: bool = True, calibrate: bool = True,
     """1 枚を通しで解析し、種類別に真値と突き合わせる。"""
     flat, fit = flatten(sc["img"], use_fit=use_fit)
     s = degrid(flat)
-    sk = crack_skeleton(s, calibrate=calibrate, ref_w=ref_w)
-    cl = classify(s, sk)
+    cl = classify(s)
+    sk_raw = crack_skeleton(s, calibrate=calibrate, ref_w=ref_w)
+    near_iso_det = binary_dilation(cl["iso"], iterations=4)
+    sk = sk_raw & ~binary_dilation(cl["fi"], iterations=2) & ~near_iso_det
 
     # クラック: 本ごとの再現率(真値中心線が骨格の 2 px 以内にある割合)
     sk_d = binary_dilation(sk, iterations=2)
@@ -409,7 +411,7 @@ def analyze(sc: dict, use_fit: bool = True, calibrate: bool = True,
     near_iso = binary_dilation(sc["iso"], iterations=5)
     matched_len = _skeleton_length(sk & near_true)
     false_len = _skeleton_length(sk & ~near_true & ~near_iso)
-    iso_edge_len = _skeleton_length(sk & ~near_true & near_iso)
+    iso_edge_len = _skeleton_length(sk_raw & ~near_true & near_iso)
 
     # 断線: 真値の帯と 30 % 以上重なる検出があれば一致
     fi_matched = 0
