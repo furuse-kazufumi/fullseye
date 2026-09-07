@@ -712,7 +712,7 @@ def section_volume(v_thr: float, v_pin: float, vis_frac: float) -> dict:
                    xlabel="真値のフィレット高さ [mm]", ylabel="推定 [mm]",
                    title="はんだ量を振る(片側 %.4f〜%.3f mm³)" % (vols[0], vols[-1]),
                    caption="E1 は 0.28 倍の直線に乗る(暗部を見ていない)。E2 は爪先固定から下に外れる。")
-    return {"ratio1": ratio1, "c1": c1, "c2": c2, "rel2_med": float(np.median(rel2)),
+    return {"ratio1": ratio1, "c1": c1, "c2": c2, "c2_all": c2_all, "rel2_med": float(np.median(rel2)),
             "rel2_mad": float(1.48 * np.median(np.abs(rel2 - np.median(rel2)))),
             "relp": (float(relp.min()) if pinned.any() else 0.0),
             "v030": float(100 * (h2[jmax] / ht[jmax] - 1)) if pinned.any() else 0.0}
