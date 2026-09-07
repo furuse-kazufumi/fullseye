@@ -494,7 +494,7 @@ def section_indicators() -> dict:
                 r = truth_stats(sc)
             else:
                 sc = make_scene(kind, **kw)
-                r = measure(sc, extract_net(sc["img"]))
+                r = measure_scene(sc)
             table[(kind, name)] = r
             print("  %-6s %-10s %8.1f %8.3f %8.2f %8.2f %7d" % (
                 kind, name, r["diam"], r["straight"], r["deg4"], r["aniso"], r["n_cells"]))
