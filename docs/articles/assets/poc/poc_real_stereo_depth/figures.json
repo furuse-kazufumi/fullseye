@@ -1,0 +1,54 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "Middlebury 2014 motorcycle (Scharstein et al., GCPR 2014)。真値の穴は +inf で入っており、apply_cmap は invalid 色に落とす。",
+  "shape": [
+   615,
+   1512,
+   3
+  ]
+ },
+ {
+  "file": "02_error.png",
+  "name": "error",
+  "caption": "下位 4 割を捨てると bad2 は 26.75 % -> 6.80 %。",
+  "shape": [
+   333,
+   2263,
+   3
+  ]
+ },
+ {
+  "file": "03_cliff.png",
+  "name": "cliff",
+  "caption": "真の最大視差を下回る設定は前景を丸ごと失う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_depth_bend.png",
+  "name": "depth_bend",
+  "caption": "単一のスケールでは直らない(最良でも残差 958 mm RMS)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_methods.png",
+  "name": "methods",
+  "caption": "census が最下位なのは窓が 64 bit で頭打ちだから。",
+  "shape": [
+   224,
+   305,
+   3
+  ],
+  "csv": "05_methods.csv",
+  "tsv": "05_methods.tsv"
+ }
+]
