@@ -552,7 +552,7 @@ def main() -> None:
     assert errs[0] < -10.0 and errs[-1] < -70.0, (errs[0], errs[-1])
     # 2) 指数は 1.5 ではない
     assert sweep["alpha_hi"] > 1.6, sweep["alpha_hi"]
-    assert sweep["alpha_lo"] > 2.5 * 1.0, sweep["alpha_lo"]
+    assert sweep["alpha_lo"] > 2.5, sweep["alpha_lo"]
     assert sweep["alpha_lo"] > sweep["alpha_hi"]
     # 3) 測地の 2 乗は Bruggeman に 5 % 以内で寄り添う(高空隙率の 3 点)
     for i in range(3):
