@@ -164,7 +164,14 @@ assert gap > 0.5, "角の外では必ずずれる(ずれないなら検定が効
 # --- 4) 実務の形: フランジ(円板)+ 貫通穴 4 つ + 内隅フィレット --------------- #
 # 体積を閉形式で予測して、ボクセル数と突き合わせる(格子の刻みぶんの誤差は許す)。
 gf, extf = sdf_ops.grid_coords(((-6, 6), (-6, 6), (-3, 3)), 96)
-hv = (extf[1] - extf[0]) / gf.shape[0]
+# ★罠: ``res`` はスカラでも**軸ごとのボクセル数**なので、bounds が非等方だと
+# ボクセルは立方体にならない(ここは x,y が 0.125、z が 0.0625)。体積を
+# ``h**3`` で出すと**ちょうど 2 倍**ずれる —— 実際この例で 295.00 と出て
+# 閉形式 148.03 に対し 99 % の誤差になり、下の assert が鳴いた。
+hx = (extf[1] - extf[0]) / gf.shape[0]
+hy = (extf[3] - extf[2]) / gf.shape[1]
+hz = (extf[5] - extf[4]) / gf.shape[2]
+cell = hx * hy * hz
 disc = sdf_ops.cylinder_sdf(gf, [0, 0, 0], [0, 0, 1], 5.0, 2.0)      # 円板 R=5, t=2
 part = disc
 for ang in (0.0, 90.0, 180.0, 270.0):                                # ボルト穴 4 つ
@@ -172,7 +179,7 @@ for ang in (0.0, 90.0, 180.0, 270.0):                                # ボルト
     cy = 3.5 * np.sin(np.radians(ang))
     hole = sdf_ops.cylinder_sdf(gf, [cx, cy, 0], [0, 0, 1], 0.6, 10.0)
     part = sdf_ops.sdf_subtract(part, hole)
-vol_voxels = float((part < 0).sum()) * hv ** 3
+vol_voxels = float((part < 0).sum()) * cell
 vol_closed = np.pi * 5.0 ** 2 * 2.0 - 4 * np.pi * 0.6 ** 2 * 2.0      # 円板 - 穴 4 本
 err = abs(vol_voxels - vol_closed) / vol_closed * 100.0
 print(f"  フランジの体積: ボクセル {vol_voxels:.2f} / 閉形式 {vol_closed:.2f}  誤差 {err:.2f} %")

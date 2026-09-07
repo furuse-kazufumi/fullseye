@@ -717,10 +717,12 @@ def section_controls(S: dict, Z: dict) -> dict:
         xs, ys, _, _ = grid_xy()
         S_ = 6.0
         panels, caps = [], []
-        for key, lab in (("truth", "(a) 真値の面"), ("damaged", "(c) 欠損のまま推定"),
-                         ("trim", "(d) 対称トリミング後"), ("icp", "(e) 鏡映+ICP")):
+        for key, lab in (("truth", "(a) 真値の面"),
+                         ("damaged_auto", "(c) 欠損のまま自動推定(軸ごと飛ぶ)"),
+                         ("damaged", "(c') 軸は人が選ぶ"),
+                         ("trim", "(d) 対称トリミング後")):
             r = restore_symmetric(surv, res[key]["p0"], res[key]["n"], tau)
-            s = score_restoration(gt, r["restored"], pts, r["fill"], tau)
+            s = score_restoration(gt, r["restored"], r["fill"])
             panels.append(with_scalebar(scatter_map(gt, s["per_pt"], xs, ys), S_))
             caps.append("%s: RMS %.2f mm" % (lab, s["rms"]))
         figs.save_grid("controls_maps", panels, caps,
