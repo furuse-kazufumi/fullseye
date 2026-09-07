@@ -741,8 +741,10 @@ def section_tool_gaps() -> None:
     assert abs(float(d.max()) - 1.0) < 1e-9
     print("  (a) 2-D の距離変換(distance_transform / cv_dist / xsp_chamfer_dist)はどれも最大値で"
           "正規化されるので、画素単位のひび幅が取れない。幅は scipy の EDT で測った。")
-    print("  (b) 分岐点の**次数**を返す op が無い(junctions_skeleton は位置だけ)。分岐点の束と"
-          "枝ラベルの隣接を数えて自前で出した。3-D には topology_signature がある。")
+    print("  (b) 分岐点の**次数**を返す op が無い(junctions_skeleton は位置だけ)。分岐点を束ねて"
+          "半径 %.0f px の環を横切る骨格の本数を自前で数えた。3-D には topology_signature がある。" % RING_PX)
+    print("  (f) 2-D の暗さ(ブラックハット)も最大値で正規化されるので、絶対しきい値の暗画素マスクが"
+          "作れない。骨格上の典型値の半分で切る相対しきい値にした。")
     print("  (c) 枝ごとの弧長・弦長(直線度)を返す op が無い。骨格の枝を 1 本ずつ歩いて自前で出した。")
     print("  (d) 骨格の枝の向きから異方性(2 次のモーメント)を出す op が無い。")
     two = np.full((64, 64), 0.7); two[:, 30:32] = 0.2
