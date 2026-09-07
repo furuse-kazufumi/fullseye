@@ -303,12 +303,40 @@ def normals_to_egi(normals, n_az=36, n_el=18):
         normals: (N, 3)。
         n_az: 方位の bin 数(既定 36 = 10 度刻み)。
         n_el: 仰角の bin 数(既定 18)。
+    ★**位置の点群を渡しても例外は出ない**。``backends_typed.TYPE_TO_SORT`` が
+    ``normals`` を ``points`` に畳んでいるので、進化器も台帳も両者を区別しない。
+    この op は方向しか見ない(長さは捨てる)ので、``(N,3)`` の座標を渡すと
+    「原点から各点を見た向き」のヒストグラムが**もっともらしく**返る。実測
+    (2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、
+    最大 bin が 200 → 44 に変わるだけで、**総和はどちらも 200**。
+    「総和が点数と合うから正しい」では区別がつかない。
+    ``fullseye.set_system("extra_checks", "on")`` にすると、単位長から外れた
+    ベクトルを**拒否**する(下の Raises)。
+
+    Args:
+        normals: (N, 3)。
+        n_az: 方位の bin 数(既定 36 = 10 度刻み)。
+        n_el: 仰角の bin 数(既定 18)。
     Returns:
         (n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。
     Raises:
         ValueError: bin 数が 1 未満 / 上限超 / 入力不正。
+        ValueError: ``extra_checks='on'`` で、長さが 1 から 1e-6 を超えて外れる
+            ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。
     """
     n_el_i, n_az_i = _shape2((n_el, n_az), "egi bins")
+    if _fssystem().get_system("extra_checks") == "on":
+        v = np.asarray(normals, np.float64)
+        if v.ndim == 2 and v.shape[1] == 3 and v.size:
+            r = np.linalg.norm(v, axis=1)
+            off = np.abs(r - 1.0)
+            if off.max() > 1e-6:
+                raise ValueError(
+                    "normals_to_egi: %d of %d vectors are not unit length "
+                    "(max |len-1| = %.4g). A point cloud passed as normals produces a "
+                    "plausible histogram with no error, so extra_checks='on' refuses it; "
+                    "normalise first, or drop that system setting to opt back in"
+                    % (int((off > 1e-6).sum()), len(v), float(off.max())))
     a = normals_to_angles(normals)
     az_i = np.clip(((a[:, 0] + 180.0) / 360.0 * n_az_i).astype(np.int64), 0, n_az_i - 1)
     el_i = np.clip(((np.sin(np.radians(a[:, 1])) + 1.0) / 2.0 * n_el_i).astype(np.int64),

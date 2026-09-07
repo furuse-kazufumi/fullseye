@@ -112,5 +112,17 @@
    400,
    3
   ]
+ },
+ {
+  "file": "12_verdicts.png",
+  "name": "verdicts",
+  "caption": "",
+  "shape": [
+   248,
+   524,
+   3
+  ],
+  "csv": "12_verdicts.csv",
+  "tsv": "12_verdicts.tsv"
  }
 ]
