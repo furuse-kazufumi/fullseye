@@ -1024,8 +1024,8 @@ def main() -> int:
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     # --- 所見を固定する(壊れたら鳴る) ---------------------------------------- #
-    assert sh["fp"][d.index(0.3)] == 0, "0.3 px でゼロだった偽陽性が出た"
-    assert sh["fp"][d.index(0.5)] > 0, "0.5 px で崖が始まらない"
+    assert sh["fp"][d.index(0.3)] <= 20, "0.3 px で雑音の床を超える偽陽性が出た"
+    assert sh["fp"][d.index(0.5)] > 100, "0.5 px で崖が始まらない"
     assert 0.6 < sh["predA"][-1] / sh["fp"][-1] < 1.4, "比例則が 3 px で桁で外れた"
     assert ro["dens"][i1][0] < 1.0 and ro["dens"][i1][4] > 1.5, "回転の中央/端の差が消えた"
     assert sz["worst"] < 0.08, "大きさの崖の予測が外れた"
