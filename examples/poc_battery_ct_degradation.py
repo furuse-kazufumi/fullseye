@@ -1129,10 +1129,11 @@ def section_noise_streak(cells, sinos) -> dict:
                      / truth["void_volume"])
         sd.append(m["pitch_sd"])
         print("   N0 = %8.0f  層数 %2d (%2d..%2d)  層厚 %.3f mm  "
-              "空隙率 %.2f %% (真 %.2f %%)  層間隔σ %.3f mm"
+              "空隙率 %.2f %% (真 %.2f %%、体積の誤差 %+.1f %%)  層間隔σ %.3f mm"
               % (n0, m["n_layer"], m["n_layer_min"], m["n_layer_max"],
                  m["t_mean"], m["void_fraction"],
-                 100.0 * truth["void_volume"] / m["roi_volume"], m["pitch_sd"]))
+                 100.0 * truth["void_volume"] / m["roi_volume"], v_err[-1],
+                 m["pitch_sd"]))
 
     print("\n  ビームハードニングを振る(硬さ比 1.0 = 単色 = むら無し):")
     bhs, bh_terr, bh_verr, bh_cal, bh_contrast = [], [], [], [], []

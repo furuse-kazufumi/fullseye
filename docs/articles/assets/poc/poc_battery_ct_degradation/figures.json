@@ -146,7 +146,7 @@
  {
   "file": "15_sweep_noise.png",
   "name": "sweep_noise",
-  "caption": "",
+  "caption": "フォトン数を 1000 分の 1 にしても層数は 1 枚しか動かない。空隙体積は -10 % から -25 % へ悪化する。",
   "shape": [
    360,
    560,
