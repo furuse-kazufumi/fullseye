@@ -58,5 +58,37 @@
    560,
    3
   ]
+ },
+ {
+  "file": "07_cliff_edge_blur.png",
+  "name": "cliff_edge_blur",
+  "caption": "真値を 50 % 線に置いても、25 % / 75 % 線は P·w/4 ± π(w/4)² だけ離れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_cliff_lesion_size.png",
+  "name": "cliff_lesion_size",
+  "caption": "予測の崖 1.8 px。検出できても縁の半分はしきい値の外で、画素は小さく出る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_grade_confusion.png",
+  "name": "grade_confusion",
+  "caption": "左 4 列は土の背景、右 2 列は同じ病斑配置を黒布の上で撮った対照群。大津は病斑の無い葉(0.5 %)で葉脈を切る。50 % は葉マスクが緑で作れず布が要る。",
+  "shape": [
+   200,
+   648,
+   3
+  ],
+  "csv": "09_grade_confusion.csv",
+  "tsv": "09_grade_confusion.tsv"
  }
 ]

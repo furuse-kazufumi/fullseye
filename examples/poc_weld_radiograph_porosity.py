@@ -109,7 +109,7 @@ POINTS_OVER = 25
 CLASS_LIMITS = (3, 6, 12)                   # 1 類 / 2 類 / 3 類 の上限点数(10×10 mm)
 FIELD_MM = 10.0
 
-K_SIGMA = 3.0            # 検出しきい値 [σ]
+K_SIGMA = 4.0            # 検出しきい値 [σ](3σ では 8 万画素の探索で偽陽性が出る、1 節で実測)
 SMOOTH_SIG = 1.0         # 検出前の平滑化 [px]
 A_MIN_PX = 3             # 塊の最小画素数
 
@@ -119,9 +119,12 @@ _LAB = fs.ledger
 # --------------------------------------------------------------------------- #
 # 場面を作る —— 真値は「埋めた球の直径と中心」                                    #
 # --------------------------------------------------------------------------- #
-def cap_height(rows: np.ndarray) -> np.ndarray:
-    """余盛の高さ h(y) [mm]。幅 CAP_W・高さ CAP_H の円弧。"""
+def cap_height(rows: np.ndarray, shape: str = "arc") -> np.ndarray:
+    """余盛の高さ h(y) [mm]。幅 CAP_W・高さ CAP_H の円弧(``"arc"``)か、
+    同じ幅・高さの**段差**(``"step"``、縁が垂直 = 最悪の明暗差)。"""
     y = (rows - CAP_ROW) * PX
+    if shape == "step":
+        return np.where(np.abs(y) <= CAP_W / 2, CAP_H, 0.0)
     r_arc = ((CAP_W / 2) ** 2 + CAP_H ** 2) / (2 * CAP_H)
     h = np.sqrt(np.clip(r_arc ** 2 - y ** 2, 0, None)) - (r_arc - CAP_H)
     return np.where(np.abs(y) <= CAP_W / 2, np.clip(h, 0, None), 0.0)
@@ -153,7 +156,7 @@ def _wire_chord(thick: np.ndarray, col: float, d_mm: float, r_lo: int, r_hi: int
 
 
 def render(pores, rng, *, cap: bool = True, spr: float = SPR_BASE,
-           wires: bool = False, noise: bool = True) -> dict:
+           wires: bool = False, noise: bool = True, cap_shape: str = "arc") -> dict:
     """透過像を作る。``pores`` = [(row, col, d_mm), ...]。
 
     返り値の ``img`` は [0,1] の float(透過率に線形 = DDA 表示。明るい = 薄い)。
@@ -162,7 +165,7 @@ def render(pores, rng, *, cap: bool = True, spr: float = SPR_BASE,
     rows = np.arange(H, dtype=np.float64)
     thick = np.full((H, W), T_PLATE)
     if cap:
-        thick += cap_height(rows)[:, None]
+        thick += cap_height(rows, cap_shape)[:, None]
     if wires:
         r_lo = int(CAP_ROW - WIRE_LEN_MM / (2 * PX))
         r_hi = int(CAP_ROW + WIRE_LEN_MM / (2 * PX))
@@ -236,20 +239,24 @@ def noise_rel(img: np.ndarray) -> float:
     return sigma / float(np.median(band))
 
 
-def detect(img: np.ndarray, method: str) -> dict:
+def detect(img: np.ndarray, method: str, k: float = K_SIGMA) -> dict:
     """背景推定 → 対数コントラスト c = ln(I/背景) → 平滑化 → kσ → 連結成分。"""
     bg = np.maximum(background(img, method), 1e-4)
     c = np.log(np.maximum(img, 1e-4) / bg)
     # 平滑化は fullseye の gauss_image(入力 [0,1] の契約なので、ずらして戻す)
     span = max(float(np.abs(c).max()), 1e-6) * 2.0
     cs = (np.asarray(fs.apply(c / span + 0.5, "gauss_image", a=(SMOOTH_SIG - 0.3) / 2.7)) - 0.5) * span
+    # 残差の零点を帯の中央値に合わせる(オープニング系は残差が正に偏るので、これが無いと
+    # 画像全体が 1 つの塊になる —— 2026-09-07 の最初の実行で 9 px 開が検出率 0 %・偽陽性 1 個/枚だった理由)
+    bias = float(np.median(cs[int(CAP_ROW - 40):int(CAP_ROW + 40)]))
+    cs = cs - bias
     s_rel = noise_rel(img)
-    thr = K_SIGMA * s_rel / (2 * np.sqrt(np.pi) * SMOOTH_SIG)   # ガウス平滑後の σ
+    thr = k * s_rel / (2 * np.sqrt(np.pi) * SMOOTH_SIG)         # ガウス平滑後の σ の k 倍
     lab = _LAB.blob_label(cs > thr)
     if lab.max() > 0:
         lab = _LAB.blob_select(lab, "area", vmin=A_MIN_PX, vmax=None)
     f = _LAB.blob_features(lab, spacing=PX)
-    return {"bg": bg, "c": c, "cs": cs, "thr": thr, "s_rel": s_rel, "labels": lab, "feat": f}
+    return {"bg": bg, "c": c, "cs": cs, "thr": thr, "s_rel": s_rel, "bias": bias, "labels": lab, "feat": f}
 
 
 def zero_point(img: np.ndarray) -> dict:
@@ -281,12 +288,16 @@ def diameters(det: dict, idx: int, mu: float = MU) -> dict:
     span = max(float(np.abs(det["c"]).max()), 1e-6) * 2.0
     cimg = np.clip(det["c"] / span + 0.5, 0, 1)
     mh = _LAB.gen_measure_rectangle2(row, col, 0.0, half, 1, cimg.shape)
-    pairs = _LAB.measure_pairs(cimg, mh, sigma=1.0, threshold=det["thr"] / span * 0.5)
+    edges = _LAB.measure_pos(cimg, mh, sigma=1.0, threshold=det["thr"] / span * 0.5)
+    # measure_pairs は「隣り合う逆極性」を対にするので、山の内側の雑音エッジと組んでしまう。
+    # 中心の左で最強の立ち上がり、右で最強の立ち下がりを取る(外側の縁 = 気孔の縁)。
+    left = [e for e in edges if e["polarity"] == "positive" and e["pos"] < half]
+    right = [e for e in edges if e["polarity"] == "negative" and e["pos"] > half]
     d_cal = np.nan
-    bracket = [p for p in pairs if p["first"] <= half <= p["second"]]
-    if bracket:
-        best = max(bracket, key=lambda p: min(abs(p["first_amplitude"]), abs(p["second_amplitude"])))
-        d_cal = float(best["width"]) * PX
+    if left and right:
+        e1 = max(left, key=lambda e: abs(e["amplitude"]))
+        e2 = max(right, key=lambda e: abs(e["amplitude"]))
+        d_cal = float(e2["pos"] - e1["pos"]) * PX
     return {"d_thr": d_thr, "d_vol": d_vol, "d_cal": d_cal}
 
 
@@ -341,6 +352,51 @@ def grade(items) -> int:
     return 4
 
 
+def model_profile(d_mm: float, spr: float = 0.0, fine: int = 4) -> tuple[np.ndarray, np.ndarray]:
+    """気孔の対数コントラスト c = μ·弦長/(1+SPR) を PSF と検出の平滑化で畳んだ**放射プロファイル**。
+
+    返り値 ``(r_px, c)``。予測に使う: ピーク(検出)、しきい値の等高線の半径(面積径)。
+    """
+    R = d_mm / (2 * PX)
+    sig = np.hypot(SMOOTH_SIG, PSF_SIG)
+    half = int(np.ceil((R + 4 * sig) * fine)) + 1
+    ax = np.arange(-half, half + 1) / fine
+    yy, xx = np.meshgrid(ax, ax, indexing="ij")
+    c = MU / (1.0 + spr) * 2 * PX * np.sqrt(np.clip(R * R - yy ** 2 - xx ** 2, 0, None))
+    c = gaussian_filter(c, sig * fine, mode="constant")
+    return ax[half:], c[half, half:]
+
+
+def predict_d50(thr: float, spr: float = 0.0, r_min: float = 0.0) -> float:
+    """平滑化後のプロファイルが半径 ``r_min`` [px] でしきい値に等しくなる直径(二分法)。
+
+    ``r_min = 0`` はピーク条件、``r_min = √(A_MIN/π)`` は「最小面積の塊がしきい値を
+    越える」条件。
+    """
+    lo, hi = 0.1, 3.0
+    for _ in range(40):
+        mid = 0.5 * (lo + hi)
+        r, c = model_profile(mid, spr)
+        if float(np.interp(r_min, r, c)) > thr:
+            hi = mid
+        else:
+            lo = mid
+    return 0.5 * (lo + hi)
+
+
+def predict_d_thr(d_mm: float, thr: float, spr: float = 0.0) -> float:
+    """しきい値の等高線の直径 [mm](平滑化後のプロファイルが thr を切る半径 × 2)。"""
+    r, c = model_profile(d_mm, spr)
+    above = np.nonzero(c > thr)[0]
+    if above.size == 0:
+        return np.nan
+    i = above[-1]
+    if i + 1 >= r.size:
+        return 2 * r[i] * PX
+    f = (c[i] - thr) / max(c[i] - c[i + 1], 1e-12)
+    return 2 * (r[i] + f * (r[i + 1] - r[i])) * PX
+
+
 def cnr_pred(d_mm: float, s_rel: float, spr: float = 0.0) -> float:
     """気孔 1 個の CNR の閉形式: 平均弦長 (2/3)d × μ/(1+SPR) × √(画素数) / σ_rel。"""
     n_pix = np.pi * (d_mm / (2 * PX)) ** 2
@@ -360,7 +416,7 @@ def section_scene() -> dict:
     print("1) 場面とゼロ点 —— 固定しきい値は余盛の断面を拾う")
     print("=" * 78)
     rng = np.random.default_rng(SEED)
-    pores = [(CAP_ROW - 20, 60.0, 0.5), (CAP_ROW + 15, 110.0, 0.8), (CAP_ROW - 5, 160.0, 1.2),
+    pores = [(CAP_ROW - 20, 60.0, 0.7), (CAP_ROW + 15, 110.0, 0.8), (CAP_ROW - 5, 160.0, 1.2),
              (CAP_ROW + 25, 205.0, 1.6), (CAP_ROW - 30, 250.0, 2.2), (CAP_ROW + 5, 290.0, 0.35)]
     sc = render(pores, rng, wires=True)
     sc_np = render(pores, np.random.default_rng(SEED), wires=False)
@@ -387,6 +443,9 @@ def section_scene() -> dict:
         print("        %5.2f        %5.2f      %5.2f     %5.2f" % (pores[i][2], dd["d_thr"], dd["d_vol"], dd["d_cal"]))
     if m["miss"]:
         print("     見落とし: %s mm" % ", ".join("%.2f" % pores[i][2] for i in m["miss"]))
+    fp3 = len(match(detect(sc_np["img"], MAIN, k=3.0), pores)["fp"])
+    print("  しきい値を 3σ にすると偽陽性 %d 個(4σ で %d 個)—— 3σ は 1 画素の話で、%d 画素を探すなら足りない。"
+          % (fp3, len(m["fp"]), H * W))
 
     figs.save_grid("scene_radiograph",
                    [sc["img"], sc["thick"], sc_np["img"], det["c"]],
@@ -400,24 +459,27 @@ def section_scene() -> dict:
                    title="固定しきい値は余盛のつま先を拾う")
     return {"zero_n": int(fz["n"]), "zero_area": float(fz["area"].sum()), "true_area": true_area,
             "zero_dmax": float(fz["equiv_diameter"].max()) if fz["n"] else 0.0,
-            "fs_n": int(fd["n"]), "fs_fp": len(m["fp"]), "fs_miss": len(m["miss"]), "s_rel": s_rel}
+            "fs_n": int(fd["n"]), "fs_fp": len(m["fp"]), "fs_miss": len(m["miss"]), "s_rel": s_rel, "fp3": fp3}
 
 
 # --------------------------------------------------------------------------- #
 # 2. 直径を振る —— 検出の崖と、背景の窓の天井                                    #
 # --------------------------------------------------------------------------- #
-def section_diameter_sweep(s_rel: float) -> dict:
+def section_diameter_sweep() -> dict:
     print("\n" + "=" * 78)
     print("2) 直径 0.3 → 3.0 mm —— 検出率(予測 CNR つき)、背景の天井、直径の偏り")
     print("=" * 78)
+    s_rel = noise_rel(render([], np.random.default_rng(99), spr=0.0)["img"])   # 散乱なし条件の雑音
+    print("  散乱なし条件の相対雑音 σ/I = %.4f(1 節の基準条件 SPR 0.5 は光子が 1.5 倍で %.4f)" % (
+        s_rel, noise_rel(render([], np.random.default_rng(99))["img"])))
     ds = (0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 1.4, 2.0, 2.5, 3.0)
     methods = ("med72", "med36", "open9", "grind")
     rate = {mth: [] for mth in methods}
     fp = {mth: [] for mth in methods}
-    err = {"d_thr": [], "d_vol": [], "d_cal": []}
+    err = {"d_thr": [], "d_vol": [], "d_cal": [], "d_vol36": []}
     pred_thr = []
     print("   d [mm]  CNR予測 | 検出率 %: 中央値72 中央値36  9px開  山削り | 偽陽性/枚: 中央値72  9px開  山削り"
-          " | 直径誤差 %(中央値72): しきい値  体積  キャリパ (しきい値の予測)")
+          " | 直径誤差 %(中央値72): しきい値 (予測)  体積  キャリパ | 体積径(中央値36)")
     for d in ds:
         hit = {mth: 0 for mth in methods}
         fpn = {mth: 0 for mth in methods}
@@ -437,9 +499,12 @@ def section_diameter_sweep(s_rel: float) -> dict:
                 if mth == MAIN:
                     for i, j in m["pairs"]:
                         dd = diameters(det, j)
-                        for k in e:
+                        for k in ("d_thr", "d_vol", "d_cal"):
                             if np.isfinite(dd[k]):
                                 e[k].append(100 * (dd[k] - d) / d)
+                if mth == "med36":
+                    for i, j in m["pairs"]:
+                        e["d_vol36"].append(100 * (diameters(det, j)["d_vol"] - d) / d)
         for mth in methods:
             rate[mth].append(100.0 * hit[mth] / tot)
             fp[mth].append(fpn[mth] / 3.0)
@@ -447,24 +512,31 @@ def section_diameter_sweep(s_rel: float) -> dict:
             err[k].append(float(np.mean(e[k])) if e[k] else np.nan)
         # しきい値径の予測: 弦長 μ·2√(R²−r²) = thr の等高線 → d_thr = √(d² − (thr/μ)²)
         thr = K_SIGMA * s_rel / (2 * np.sqrt(np.pi) * SMOOTH_SIG)
-        pt = 100 * (np.sqrt(max(d * d - (thr / MU) ** 2, 0)) / d - 1)
+        pt = 100 * (predict_d_thr(d, thr) / d - 1)
         pred_thr.append(pt)
-        print("   %4.2f   %6.2f  |  %6.1f   %6.1f   %6.1f  %6.1f  |  %6.2f   %6.1f  %6.1f  |   %+6.1f  %+6.1f  %+6.1f   (%+6.1f)"
+        print("   %4.2f   %6.2f  |  %6.1f   %6.1f   %6.1f  %6.1f  |  %6.2f   %6.1f  %6.1f  |   %+6.1f (%+6.1f)  %+6.1f  %+6.1f  |  %+6.1f"
               % (d, cnr_pred(d, s_rel), rate["med72"][-1], rate["med36"][-1], rate["open9"][-1], rate["grind"][-1],
-                 fp["med72"][-1], fp["open9"][-1], fp["grind"][-1], err["d_thr"][-1], err["d_vol"][-1], err["d_cal"][-1], pt))
+                 fp["med72"][-1], fp["open9"][-1], fp["grind"][-1], err["d_thr"][-1], pt, err["d_vol"][-1], err["d_cal"][-1],
+                 err["d_vol36"][-1]))
 
     r = np.array(rate[MAIN])
     d50 = float(np.interp(50.0, r[:5], np.array(ds[:5]))) if r[0] < 50 < r[4] else np.nan
-    k_pred = 4.0
-    d50_pred = float(np.sqrt(k_pred * (3 * PX * s_rel) / (MU * np.sqrt(np.pi))))
-    print("\n  ★予測: CNR = %.0f を 50 %% 検出の目安に置くと d₅₀ = %.2f mm(CNR = %.2f·d²)。"
-          % (k_pred, d50_pred, cnr_pred(1.0, s_rel)))
+    thr = K_SIGMA * s_rel / (2 * np.sqrt(np.pi) * SMOOTH_SIG)
+    d50_rose = float(np.sqrt(4.0 * (3 * PX * s_rel) / (MU * np.sqrt(np.pi))))
+    d50_peak = predict_d50(thr)
+    d50_pred = predict_d50(thr, r_min=np.sqrt(A_MIN_PX / np.pi))
+    print("\n  ★予測 3 つ: (i) Rose 流「CNR = 4 で 50 %%」→ d₅₀ = %.2f mm(CNR = %.2f·d²)。"
+          "\n            (ii) 平滑化後のピーク = しきい値(%.0fσ)→ d₅₀ = %.2f mm。"
+          "\n            (iii) (ii) に最小面積 %d px の条件(半径 %.2f px でしきい値)→ d₅₀ = %.2f mm。"
+          % (d50_rose, cnr_pred(1.0, s_rel), K_SIGMA, d50_peak, A_MIN_PX, np.sqrt(A_MIN_PX / np.pi), d50_pred))
     print("     実測の 50 %% 交点 = %.2f mm(そこでの CNR = %.2f)。" % (d50, cnr_pred(d50, s_rel)))
     cliff9 = [d for d, rt in zip(ds, rate["open9"]) if rt < 50 and d >= 0.6]
-    cliff36 = [d for d, rt in zip(ds, rate["med36"]) if rt < 50 and d >= 0.6]
-    print("  ★背景の天井: 9 px オープニングは %s mm、中央値 36 px は %s mm から検出率 50 %% を割る。"
-          "中央値 72 px は %.1f mm で %.0f %%。"
-          % ("%.1f" % cliff9[0] if cliff9 else "—", "%.1f" % cliff36[0] if cliff36 else "—", ds[-1], rate["med72"][-1]))
+    cliff36 = [d for d, ev in zip(ds, err["d_vol36"]) if np.isfinite(ev) and ev < -25 and d >= 0.6]
+    print("  ★背景の天井: 9 px オープニングは %s mm から検出率 50 %% を割る(気孔が背景に食われる)。"
+          "\n     中央値 36 px は検出は落ちないが体積径が %s mm から −25 %% を越えて縮む(3.0 mm で %+.0f %%)。"
+          "中央値 72 px は 3.0 mm で検出 %.0f %%・体積径 %+.0f %%。"
+          % ("%.1f" % cliff9[0] if cliff9 else "—", "%.1f" % cliff36[0] if cliff36 else "—", err["d_vol36"][-1],
+             rate["med72"][-1], err["d_vol"][-1]))
     fp_open = float(np.mean(fp["open9"] + fp["grind"]))
     print("  ★偽陽性: 中央値の背景は %.2f 個/枚、オープニング系(9 px 開・山削り)は %.0f 個/枚 —— "
           "\n     オープニングは背景を雑音の谷に置くので残差が片側に偏り、σ 由来のしきい値が破綻する。"
@@ -480,10 +552,12 @@ def section_diameter_sweep(s_rel: float) -> dict:
                    xlim=(0.25, 1.05), ylim=(0, 12))
     figs.save_plot("diameter_error",
                    [("しきい値の面積径", ds, err["d_thr"]), ("積分コントラスト(体積)径", ds, err["d_vol"]),
-                    ("キャリパ(エッジ対)径", ds, err["d_cal"]), ("しきい値径の予測 √(d²−(thr/μ)²)", ds, pred_thr)],
+                    ("キャリパ(エッジ対)径", ds, err["d_cal"]), ("しきい値径の予測(等高線モデル)", ds, pred_thr),
+                    ("体積径 / 中央値 36 px(窓の天井)", ds, err["d_vol36"])],
                    xlabel="気孔の直径 [mm]", ylabel="直径の相対誤差 [%]", title="直径 3 通り: 偏りの向きも大きさも違う",
                    caption="面積径は小さい側で縮む(等高線が内側)。体積径は μ 既知なら偏らない。キャリパは縁の位置で決まる。")
-    return {"ds": ds, "rate": rate, "fp": fp, "err": err, "d50": d50, "d50_pred": d50_pred,
+    return {"ds": ds, "rate": rate, "fp": fp, "err": err, "d50": d50, "d50_pred": d50_pred, "d50_rose": d50_rose,
+            "d50_peak": d50_peak, "s_rel": s_rel,
             "cliff9": cliff9[0] if cliff9 else np.nan, "cliff36": cliff36[0] if cliff36 else np.nan,
             "fp_med": float(np.mean(fp["med72"])), "fp_open": fp_open, "pred_thr": pred_thr}
 
@@ -493,55 +567,69 @@ def section_diameter_sweep(s_rel: float) -> dict:
 # --------------------------------------------------------------------------- #
 def section_toe_distance() -> dict:
     print("\n" + "=" * 78)
-    print("3) 余盛のつま先(明暗の段)からの距離 —— どの背景が壊れるか")
+    print("3) 余盛のつま先(明暗の段)からの距離 —— どの背景が、どの段で壊れるか")
     print("=" * 78)
     deltas = (0.0, 0.25, 0.5, 1.0, 1.5, 2.5)
     methods = ("med72", "gauss3", "open9", "grind")
     d = 0.8
     toe_row = CAP_ROW - CAP_W / (2 * PX)          # 上のつま先の行
-    rate = {m: [] for m in methods}
-    fp = {m: [] for m in methods}
-    print("   距離 δ [mm] | 検出率 %: 中央値72  ガウス3  9px開  山削り | 偽陽性/枚: 中央値72  ガウス3  9px開  山削り")
-    for dl in deltas:
-        hit = {m: 0 for m in methods}
-        fpn = {m: 0 for m in methods}
-        tot = 0
-        for seed in range(2):
-            rng = np.random.default_rng(300 + seed)
-            n = 8
-            pores = [(toe_row + dl / PX, 20 + (k + 0.5) * (W - 40) / n, d) for k in range(n)]
-            sc = render(pores, rng, spr=0.0)
-            tot += n
+    res = {}
+    for shape, shape_ja in (("arc", "円弧(√ の斜面、実物)"), ("step", "段差(垂直、最悪)")):
+        rate = {m: [] for m in methods}
+        fp = {m: [] for m in methods}
+        print("\n  余盛の縁 = %s" % shape_ja)
+        print("   距離 δ [mm] | 検出率 %: 中央値72  ガウス3  9px開  山削り | 偽陽性/枚: 中央値72  ガウス3  9px開  山削り")
+        for dl in deltas:
+            hit = {m: 0 for m in methods}
+            fpn = {m: 0 for m in methods}
+            tot = 0
+            for seed in range(2):
+                rng = np.random.default_rng(300 + seed)
+                n = 8
+                pores = [(toe_row + dl / PX, 20 + (k + 0.5) * (W - 40) / n, d) for k in range(n)]
+                sc = render(pores, rng, spr=0.0, cap_shape=shape)
+                tot += n
+                for m in methods:
+                    det = detect(sc["img"], m)
+                    mm = match(det, pores)
+                    hit[m] += len(mm["pairs"])
+                    fpn[m] += len(mm["fp"])
             for m in methods:
-                det = detect(sc["img"], m)
-                mm = match(det, pores)
-                hit[m] += len(mm["pairs"])
-                fpn[m] += len(mm["fp"])
-        for m in methods:
-            rate[m].append(100.0 * hit[m] / tot)
-            fp[m].append(fpn[m] / 2.0)
-        print("      %4.2f     |   %6.1f   %6.1f  %6.1f  %6.1f   |    %6.1f   %6.1f  %6.1f  %6.1f"
-              % (dl, *[rate[m][-1] for m in methods], *[fp[m][-1] for m in methods]))
-    near = [i for i, dl in enumerate(deltas) if dl <= 0.5]
-    far = [i for i, dl in enumerate(deltas) if dl >= 1.5]
-    out = {m: (float(np.mean([rate[m][i] for i in near])), float(np.mean([rate[m][i] for i in far]))) for m in methods}
-    fpn_near = {m: float(np.mean([fp[m][i] for i in near])) for m in methods}
-    print("\n  検出率(つま先 1.5 mm 以遠 → 0.5 mm 以内): " + " / ".join(
-        "%s %.0f→%.0f %%" % (METHOD_JA[m], out[m][1], out[m][0]) for m in methods))
-    print("  偽陽性(つま先 0.5 mm 以内): " + " / ".join(
-        "%s %.1f" % (METHOD_JA[m], fpn_near[m]) for m in methods) + " 個/枚")
+                rate[m].append(100.0 * hit[m] / tot)
+                fp[m].append(fpn[m] / 2.0)
+            print("      %4.2f     |   %6.1f   %6.1f  %6.1f  %6.1f   |    %6.1f   %6.1f  %6.1f  %6.1f"
+                  % (dl, *[rate[m][-1] for m in methods], *[fp[m][-1] for m in methods]))
+        near = [i for i, dl in enumerate(deltas) if dl <= 0.5]
+        far = [i for i, dl in enumerate(deltas) if dl >= 1.5]
+        res[shape] = {"rate": rate, "fp": fp,
+                      "near": {m: float(np.mean([rate[m][i] for i in near])) for m in methods},
+                      "far": {m: float(np.mean([rate[m][i] for i in far])) for m in methods},
+                      "fp_near": {m: float(np.mean([fp[m][i] for i in near])) for m in methods}}
+        print("     検出率(1.5 mm 以遠 → 0.5 mm 以内): " + " / ".join(
+            "%s %.0f→%.0f %%" % (METHOD_JA[m], res[shape]["far"][m], res[shape]["near"][m]) for m in methods))
+        print("     偽陽性(0.5 mm 以内): " + " / ".join(
+            "%s %.1f" % (METHOD_JA[m], res[shape]["fp_near"][m]) for m in methods) + " 個/枚")
+    print("\n  ★円弧のつま先は h ∝ √s の斜面(1 mm で 5 %%)で、σ=3 px の平滑でも残差はしきい値を越えない —— "
+          "\n     予想「大窓平滑はつま先で偽陽性」は円弧では外れ、垂直の段差にして初めて出る(ガウス σ=3: %.1f 個/枚、中央値: %.1f 個/枚)。"
+          % (res["step"]["fp_near"]["gauss3"], res["step"]["fp_near"]["med72"]))
 
     rng = np.random.default_rng(301)
-    sc = render([(toe_row + 0.25 / PX, 20 + (k + 0.5) * 35, d) for k in range(8)], rng, spr=0.0)
+    sc = render([(toe_row + 0.25 / PX, 20 + (k + 0.5) * 35, d) for k in range(8)], rng, spr=0.0, cap_shape="step")
     r0, r1 = int(toe_row) - 30, int(toe_row) + 50
     panels = [sc["img"][r0:r1]] + [detect(sc["img"], m)["c"][r0:r1] for m in ("gauss3", "med72")]
     figs.save_grid("map_toe_backgrounds", panels,
-                   ["透過像(気孔 0.8 mm をつま先の 0.25 mm 内側に 8 個)", "ガウス σ=3 の背景を引いた対数コントラスト",
-                    "中央値 24×72 px の背景を引いた対数コントラスト"], title="つま先(余盛の縁)の近くの背景推定", ncols=1,
-                   caption="つま先の段は弧の縁(√ の立ち上がり)。大窓平滑はそれをぼかし、中央値は保つ。")
-    figs.save_plot("toe_detection", [(METHOD_JA[m], deltas, rate[m]) for m in methods],
-                   xlabel="つま先からの距離 δ [mm]", ylabel="検出率 [%]", title="つま先の近くの検出率(気孔 0.8 mm)", ylim=(0, 105))
-    return {"deltas": deltas, "rate": rate, "fp": fp, "near_far": out, "fp_near": fpn_near}
+                   ["透過像(段差の余盛、気孔 0.8 mm を縁の 0.25 mm 内側に 8 個)", "ガウス σ=3 の背景を引いた対数コントラスト",
+                    "中央値 24×72 px の背景を引いた対数コントラスト"], title="段差の縁の近くの背景推定(最悪の明暗差)", ncols=1,
+                   caption="大窓平滑は段をぼかして明るい側に帯を残す。中央値は段を保つ。")
+    figs.save_plot("toe_detection",
+                   [("%s / 円弧" % METHOD_JA[m], deltas, res["arc"]["rate"][m]) for m in ("med72", "gauss3")] +
+                   [("%s / 段差" % METHOD_JA[m], deltas, res["step"]["rate"][m]) for m in ("med72", "gauss3")],
+                   xlabel="縁からの距離 δ [mm]", ylabel="検出率 [%]", title="余盛の縁の近くの検出率(気孔 0.8 mm)", ylim=(0, 105))
+    figs.save_plot("toe_false_positives",
+                   [("%s / 円弧" % METHOD_JA[m], deltas, res["arc"]["fp"][m]) for m in ("med72", "gauss3")] +
+                   [("%s / 段差" % METHOD_JA[m], deltas, res["step"]["fp"][m]) for m in ("med72", "gauss3")],
+                   xlabel="縁からの距離 δ [mm]", ylabel="偽陽性 [個/枚]", title="余盛の縁の近くの偽陽性")
+    return {"deltas": deltas, **res}
 
 
 # --------------------------------------------------------------------------- #
@@ -578,7 +666,7 @@ def section_scatter() -> dict:
                     e_thr.append(100 * (dd["d_thr"] - d) / d)
                     e_vol.append(100 * (dd["d_vol"] - d) / d)
                     hit += 1
-            p_thr = 100 * (np.sqrt(max(d * d - ((1 + spr) * thr / MU) ** 2, 0)) / d - 1)
+            p_thr = 100 * (predict_d_thr(d, thr, spr) / d - 1)
             p_vol = 100 * ((1 + spr) ** (-1 / 3) - 1)
             out[d]["thr"].append(float(np.mean(e_thr)) if e_thr else np.nan)
             out[d]["vol"].append(float(np.mean(e_vol)) if e_vol else np.nan)
@@ -757,20 +845,23 @@ def main() -> int:
     print("=" * 78)
 
     s1 = section_scene()
-    s2 = section_diameter_sweep(s1["s_rel"])
+    s2 = section_diameter_sweep()
     s3 = section_toe_distance()
     s4 = section_scatter()
-    s5 = section_iqi(s1["s_rel"], s2["d50"])
+    s5 = section_iqi(s2["s_rel"], s2["d50"])
     s6 = section_grading()
     section_tool_gaps()
 
     # 所見を固定する(壊れたら鳴る)
     assert s1["zero_area"] > 1.5 * s1["true_area"], s1
-    assert s1["fs_miss"] <= 1 and s1["fs_fp"] <= 1, s1
-    assert 0.35 <= s2["d50"] <= 0.7, s2["d50"]
-    assert abs(s2["d50"] - s2["d50_pred"]) / s2["d50_pred"] < 0.35, (s2["d50"], s2["d50_pred"])
+    assert s1["fs_miss"] <= 1 and s1["fs_fp"] == 0 and s1["fp3"] >= 2, s1
+    assert 0.4 <= s2["d50"] <= 0.8, s2["d50"]
+    assert abs(s2["d50"] - s2["d50_pred"]) / s2["d50_pred"] < 0.3, (s2["d50"], s2["d50_pred"])
     assert s2["rate"]["med72"][-1] >= 90 and s2["rate"]["open9"][-1] <= 30, s2["rate"]
-    assert s2["fp_open"] > 20 * max(s2["fp_med"], 0.05), (s2["fp_open"], s2["fp_med"])
+    assert s2["err"]["d_vol36"][-1] < -25 and s2["err"]["d_vol"][-1] > -15, s2["err"]
+    assert s2["fp_open"] > 5 * max(s2["fp_med"], 0.05), (s2["fp_open"], s2["fp_med"])
+    assert s3["arc"]["near"]["med72"] >= 90 and s3["arc"]["fp_near"]["med72"] < 1.0, s3["arc"]
+    assert s3["step"]["fp_near"]["gauss3"] > 5 * s3["step"]["fp_near"]["med72"], s3["step"]
     assert -35 < s4["vol1"] < -8, s4["vol1"]
     assert s5["ratio"] > 1.5, s5["ratio"]
     base = s6["基準(余盛あり・SPR 0.5)"]

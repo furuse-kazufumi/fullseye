@@ -1,0 +1,138 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "左上: 測る動画の 1 枚目(雑音・ちらつき・手ぶれ入り)。右上: 同じ梁を見える振幅で。下段: 位相法の変位場と重み(模様の無い所は票を持たない)。",
+  "shape": [
+   359,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "02_frames.png",
+  "name": "frames",
+  "caption": "",
+  "shape": [
+   359,
+   1330,
+   3
+  ]
+ },
+ {
+  "file": "03_zero_point_spectrum.png",
+  "name": "zero_point_spectrum",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_identification.png",
+  "name": "identification",
+  "caption": "",
+  "shape": [
+   224,
+   598,
+   3
+  ],
+  "csv": "04_identification.csv",
+  "tsv": "04_identification.tsv"
+ },
+ {
+  "file": "05_tip_waveform.png",
+  "name": "tip_waveform",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_tip_spectrum.png",
+  "name": "tip_spectrum",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_mode_shapes.png",
+  "name": "mode_shapes",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_cliff_frequency.png",
+  "name": "cliff_frequency",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_cliff_damping.png",
+  "name": "cliff_damping",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_cliff_mac.png",
+  "name": "cliff_mac",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_fps_sweep.png",
+  "name": "fps_sweep",
+  "caption": "",
+  "shape": [
+   224,
+   801,
+   3
+  ],
+  "csv": "11_fps_sweep.csv",
+  "tsv": "11_fps_sweep.tsv"
+ },
+ {
+  "file": "12_flicker_collision.png",
+  "name": "flicker_collision",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   224,
+   779,
+   3
+  ],
+  "csv": "13_controls.csv",
+  "tsv": "13_controls.tsv"
+ }
+]

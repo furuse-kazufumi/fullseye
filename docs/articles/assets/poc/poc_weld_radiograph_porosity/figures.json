@@ -1,0 +1,96 @@
+[
+ {
+  "file": "01_scene_radiograph.png",
+  "name": "scene_radiograph",
+  "caption": "余盛は暗い帯、気孔は明るい斑点。背景を引いて対数を取ると弦長 × μ に戻る。",
+  "shape": [
+   647,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "02_map_detections.png",
+  "name": "map_detections",
+  "caption": "",
+  "shape": [
+   349,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "03_detect_vs_diameter.png",
+  "name": "detect_vs_diameter",
+  "caption": "小さい側の崖は CNR で予測どおり。大きい側の崖は背景推定の窓の大きさそのもの。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_toe_detection.png",
+  "name": "toe_detection",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_toe_false_positives.png",
+  "name": "toe_false_positives",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_frames_scatter.png",
+  "name": "frames_scatter",
+  "caption": "",
+  "shape": [
+   349,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "07_scatter_diameter_bias.png",
+  "name": "scatter_diameter_bias",
+  "caption": "体積径は (1+SPR)^(-1/3) で縮む。しきい値径は小さい気孔ほど速く縮み、消える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_iqi_visibility.png",
+  "name": "iqi_visibility",
+  "caption": "視認基準 CNR ≥ 3(Rose)。10 mm の長さで平均。",
+  "shape": [
+   248,
+   692,
+   3
+  ],
+  "csv": "08_iqi_visibility.csv",
+  "tsv": "08_iqi_visibility.tsv"
+ },
+ {
+  "file": "09_grade_errors.png",
+  "name": "grade_errors",
+  "caption": "ゼロ点は余盛を拾って全滅。fullseye の誤りは主に直径の誤分類。",
+  "shape": [
+   176,
+   723,
+   3
+  ],
+  "csv": "09_grade_errors.csv",
+  "tsv": "09_grade_errors.tsv"
+ }
+]
