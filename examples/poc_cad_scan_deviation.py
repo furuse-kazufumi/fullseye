@@ -535,7 +535,7 @@ def section_part(ref: CadRef) -> dict:
     # 標本から面積を出し直す(面ごとの点数比 x 全面積は自明なので、
     # 体積をモンテカルロで独立に出して閉形式と突き合わせる)
     rng = np.random.default_rng(5)
-    m = 240000
+    m = 160000
     q = np.column_stack([rng.uniform(-L / 2, L / 2, m), rng.uniform(-W / 2, W / 2, m),
                          rng.uniform(0.0, BOSS_TOP, m)])
     inside = _inside(q)
@@ -564,7 +564,7 @@ def section_part(ref: CadRef) -> dict:
              out_of_tol_area(d["total"], ref.w)))
 
     if figs.enabled():
-        big = nominal_cloud(140000, seed=3)
+        big = nominal_cloud(110000, seed=3)
         dv = defect_field(big["pts"], big["nrm"])["total"]
         vis = big["nrm"] @ VIEW > 0.10
         S = 0.40
@@ -712,7 +712,7 @@ def section_normals(ref: CadRef) -> dict:
     print("4) 法線の符号 —— 凹面で裏返る(偏差の符号がそのまま裏返る)")
     print("=" * 78)
     rng = np.random.default_rng(4)
-    idx = rng.choice(len(ref.pts), 8000, replace=False)
+    idx = rng.choice(len(ref.pts), 6000, replace=False)
     P, Ntrue, cc = ref.pts[idx], ref.nrm[idx], ref.concave[idx]
     face = ref.face[idx]
     pred = float(np.mean(cc))
@@ -1053,7 +1053,7 @@ def section_pull(ref: CadRef) -> dict:
             xlabel="x [mm](上面の帯 |y| < 4 mm)", ylabel="偏差 [µm]",
             title="反りは全体が平行移動して見える —— 中央に無いへこみが出る",
             caption="真値は中央 0。位置合わせが平均 a/3 を吸うので下へずれる。")
-        big = nominal_cloud(90000, seed=13)
+        big = nominal_cloud(70000, seed=13)
         db = defect_field(big["pts"], big["nrm"], dent_h=0.0, warp_a=WARP_A,
                           wear_w=0.0)["total"]
         _, rb, _ = absorbed(big["pts"], big["nrm"], db)
@@ -1135,15 +1135,16 @@ def section_basin(ref: CadRef) -> dict:
           % (b_rows[1][2] / b_rows[0][2]))
 
     figs.save_plot("basin",
-                   [("姿勢誤差 [度]", angs, errs),
-                    ("最終残差 [µm] / 10", angs, [r / 10 for r in resid])],
+                   [("点-面 ICP の姿勢誤差 [度]", angs, errs),
+                    ("点-点 ICP の姿勢誤差 [度]", angs, errs2),
+                    ("点-面の最終残差 [µm] / 10", angs, [r / 10 for r in resid])],
                    xlabel="初期姿勢のずれ [度]", ylabel="[度] / [µm]/10",
-                   title="ICP の収束域(非対称な部品なら別解は残差で分かる)",
-                   caption="この部品は 75 度まで収束する。90 度以降の別解は"
-                           "残差が床の数倍に上がるので見抜ける ——"
-                           "素の直方体ではそうならない(本文の対照群)。")
-    return {"ang": angs, "err": errs, "resid": resid, "floor": floor,
-            "alt_ratio": last, "box": b_rows}
+                   title="収束域は手法で違う(0〜30 度には崖が無い)",
+                   caption="点-面はこの部品で 60 度でも収束する。別解の残差は"
+                           "床の数倍に上がるので見抜ける —— 素の直方体では"
+                           "そうならない(本文の対照群)。")
+    return {"ang": angs, "err": errs, "err_p2p": errs2, "resid": resid,
+            "floor": floor, "alt_ratio": last, "box": b_rows}
 
 
 def _plain_box_cloud(n: int, seed: int) -> dict:
