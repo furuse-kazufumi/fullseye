@@ -1,82 +1,6 @@
 [
  {
-  "file": "01_confusion_fusion.png",
-  "name": "confusion_fusion",
-  "caption": "対角が識別できた数。総合 100.0 %。",
-  "shape": [
-   224,
-   511,
-   3
-  ],
-  "csv": "01_confusion_fusion.csv",
-  "tsv": "01_confusion_fusion.tsv"
- },
- {
-  "file": "02_sensor_dropout.png",
-  "name": "sensor_dropout",
-  "caption": "総合の列だけを見ると差が小さく見える。壊れているのは特定のモードだけ。",
-  "shape": [
-   248,
-   687,
-   3
-  ],
-  "csv": "02_sensor_dropout.csv",
-  "tsv": "02_sensor_dropout.tsv"
- },
- {
-  "file": "03_redundancy_corr.png",
-  "name": "redundancy_corr",
-  "caption": "真値の重症度と 3 つの測定値がすべて 0.99 台で相関する。",
-  "shape": [
-   176,
-   424,
-   3
-  ],
-  "csv": "03_redundancy_corr.csv",
-  "tsv": "03_redundancy_corr.tsv"
- },
- {
-  "file": "04_sweep_vibration_noise.png",
-  "name": "sweep_vibration_noise",
-  "caption": "d' は特徴 1 個の情報量。識別率より先に落ちる。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "05_sweep_record_length.png",
-  "name": "sweep_record_length",
-  "caption": "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。側帯波比の真値は変調度 0.55 の半分 = 0.275。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "06_sweep_pixel_pitch.png",
-  "name": "sweep_pixel_pitch",
-  "caption": "軸受(局所)と潤滑不良(全体)を分けているのは広がりだけ。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "07_sweep_rpm_variation.png",
-  "name": "sweep_rpm_variation",
-  "caption": "櫛(最大 6X)は 2X の 3 倍の速さで広がる。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "08_scene_machine.png",
+  "file": "01_scene_machine.png",
   "name": "scene_machine",
   "caption": "同じ機械を 3 つのセンサで同時に見る。故障モードによって、身元を持っているセンサが違う。",
   "shape": [
@@ -86,7 +10,7 @@
   ]
  },
  {
-  "file": "09_thermal_maps.png",
+  "file": "02_thermal_maps.png",
   "name": "thermal_maps",
   "caption": "軸受外輪傷は狭く熱く、潤滑不良は広く熱い。最高温度だけ見ると同じ顔になる。",
   "shape": [
@@ -96,7 +20,7 @@
   ]
  },
  {
-  "file": "10_order_spectra.png",
+  "file": "03_order_spectra.png",
   "name": "order_spectra",
   "caption": "芯ずれは 2X、アンバランスは 1X、ゆるみは 0.5X と櫛。軸受と潤滑不良はこの図では見えない。",
   "shape": [
@@ -106,7 +30,7 @@
   ]
  },
  {
-  "file": "11_envelope_spectra.png",
+  "file": "04_envelope_spectra.png",
   "name": "envelope_spectra",
   "caption": "軸受だけが BPFO とその側帯波に線を立てる。潤滑不良は同じ帯域を持ち上げるが線を作らない。",
   "shape": [
@@ -116,7 +40,7 @@
   ]
  },
  {
-  "file": "12_misalignment_geometry.png",
+  "file": "05_misalignment_geometry.png",
   "name": "misalignment_geometry",
   "caption": "平行ずれ(切片)と角度ずれ(傾き)を fit_line3 で分けて取る。",
   "shape": [
@@ -126,7 +50,31 @@
   ]
  },
  {
-  "file": "13_confusion_without_vibration.png",
+  "file": "06_confusion_fusion.png",
+  "name": "confusion_fusion",
+  "caption": "対角が識別できた数。総合 100.0 %。",
+  "shape": [
+   224,
+   511,
+   3
+  ],
+  "csv": "06_confusion_fusion.csv",
+  "tsv": "06_confusion_fusion.tsv"
+ },
+ {
+  "file": "07_sensor_dropout.png",
+  "name": "sensor_dropout",
+  "caption": "総合の列だけを見ると差が小さく見える。壊れているのは特定のモードだけ。",
+  "shape": [
+   248,
+   687,
+   3
+  ],
+  "csv": "07_sensor_dropout.csv",
+  "tsv": "07_sensor_dropout.tsv"
+ },
+ {
+  "file": "08_confusion_without_vibration.png",
   "name": "confusion_without_vibration",
   "caption": "芯ずれは無傷。壊れるのは軸受外輪傷と潤滑不良の対。",
   "shape": [
@@ -134,7 +82,19 @@
    511,
    3
   ],
-  "csv": "13_confusion_without_vibration.csv",
-  "tsv": "13_confusion_without_vibration.tsv"
+  "csv": "08_confusion_without_vibration.csv",
+  "tsv": "08_confusion_without_vibration.tsv"
+ },
+ {
+  "file": "09_redundancy_corr.png",
+  "name": "redundancy_corr",
+  "caption": "真値の重症度と 3 つの測定値がすべて 0.99 台で相関する。",
+  "shape": [
+   176,
+   424,
+   3
+  ],
+  "csv": "09_redundancy_corr.csv",
+  "tsv": "09_redundancy_corr.tsv"
  }
 ]

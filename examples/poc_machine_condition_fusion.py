@@ -1167,16 +1167,17 @@ def main() -> int:
     print("=" * 78)
 
     section_truth()
+    section_scene_figures()
     BASE_TRAIN = collect(0, N_TRAIN)
     BASE_TEST = collect(1, N_TEST)
     zero = section_zero(BASE_TRAIN, BASE_TEST)
     base = section_baseline(BASE_TRAIN, BASE_TEST)
     table = section_dropout(BASE_TRAIN, BASE_TEST)
+    section_dropout_figure(table)
     section_pairs(BASE_TRAIN, BASE_TEST, table)
     red = section_redundancy(BASE_TRAIN)
     sw = section_sweeps()
     al = section_alias()
-    section_figures(table)
     section_tool_gaps()
 
     # ---- 所見を固定する assert(壊れたら鳴る)---------------------------- #
