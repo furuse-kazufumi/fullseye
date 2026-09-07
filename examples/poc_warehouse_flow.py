@@ -856,9 +856,14 @@ def section_heatmap(base: dict) -> dict:
     verts, faces, _ = fs.ledger.voxel_to_mesh.raw(pad, iso=0.5)
     mvol = float(fs.ledger.mesh_volume((verts, faces)))
     marea = float(np.sum(np.asarray(fs.ledger.face_areas((verts, faces)))))
-    print("  最大の柱をメッシュにすると 体積 %.0f voxel(ボクセル数 %d)、"
-          "表面積 %.0f、符号 %s。"
-          % (mvol, int(sub.sum()), marea, "正 = 外向き" if mvol > 0 else "負 = 裏返り"))
+    print("  いちばん長い柱(%.1f 秒)をメッシュにすると 体積 %.0f voxel"
+          "(ボクセル数 %d)、表面積 %.0f、符号 %s。"
+          % (ext_t[pillar] * base["meas"]["dt"], mvol, int(sub.sum()), marea,
+             "正 = 外向き" if mvol > 0 else "負 = 内向き"))
+    print("  ★`voxel_to_mesh`(marching cubes)が返す面の巻き順は**内向き**で、"
+          "`mesh_volume` は負を返す。向きの検査に使うなら符号の規約を先に"
+          "確かめること(絶対値はボクセル数と %.1f %% 差)。"
+          % (100 * abs(abs(mvol) - sub.sum()) / sub.sum()))
     return {"heat": heat, "n_wait_top": n_wait, "th_pillar": th_pillar,
             "th_tube": th_tube, "mesh_vol": mvol, "pillar": pillar}
 

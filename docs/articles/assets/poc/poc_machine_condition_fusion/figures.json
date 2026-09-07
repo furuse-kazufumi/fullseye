@@ -96,5 +96,25 @@
   ],
   "csv": "09_redundancy_corr.csv",
   "tsv": "09_redundancy_corr.tsv"
+ },
+ {
+  "file": "10_sweep_vibration_noise.png",
+  "name": "sweep_vibration_noise",
+  "caption": "d' は特徴 1 個の情報量。識別率より先に落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_sweep_record_length.png",
+  "name": "sweep_record_length",
+  "caption": "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。側帯波比の真値は変調度 0.55 の半分 = 0.275。横軸は周波数分解能 1/T —— 予測はこの軸の上で FTF = 11.62 Hz とf_r/2 = 14.58 Hz。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
