@@ -462,7 +462,23 @@ def main():
     d_sub, _ = A.gcc_delay(src_g, shifted, rate=fs, weight="none", interpolate=True)
     print(f"      サブ標本 {frac} 標本: 補間なし {d_int * fs:+.3f} / 補間あり {d_sub * fs:+.3f}")
     assert abs(d_int * fs - 0.0) < 1e-9                  # 補間しなければ整数に丸まる
-    assert abs(d_sub * fs - frac) < 0.05                 # 補間すればサブ標本まで出る
+    assert abs(d_sub * fs - frac) < abs(d_int * fs - frac)   # 補間は必ず近づける
+
+    # ★放物線補間には**整数へ引く偏り**が残る(ピークが sinc 状なので二次で近似
+    # しきれない)。0 から 1 まで振って偏りを実測し、S 字になることを示す ——
+    # 「サブ標本まで読めた」で終わらせると、この偏りが黙って結果に乗る。
+    biases = []
+    for fr in np.arange(0.0, 1.001, 0.1):
+        sh = np.fft.irfft(F * np.exp(-2j * np.pi * freqs_g * fr), n_g)
+        d_fr, _ = A.gcc_delay(src_g, sh, rate=fs, weight="none")
+        biases.append(d_fr * fs - fr)
+    worst = float(np.max(np.abs(biases)))
+    print(f"      補間の偏り: 0..1 標本を 0.1 刻みで振って最大 {worst:.4f} 標本"
+          f"(整数の近くで小さく、0.3 と 0.7 付近で最大 = S 字)")
+    assert worst < 0.15, biases                          # 偏りの大きさを固定する
+    assert abs(biases[0]) < 1e-9 and abs(biases[-1]) < 1e-3   # 整数では偏らない
+    assert abs(biases[3]) > 0.05 and abs(biases[7]) > 0.05    # 0.3 / 0.7 では偏る
+    assert biases[3] < 0 < biases[7]                     # 向きは整数へ引く
 
     # 帯域を絞る / 重みを変えても、雑音の無い理想条件では同じ答えに収束する
     d_band, _ = A.gcc_delay(src_g, np.roll(src_g, 37), rate=fs, weight="phat",

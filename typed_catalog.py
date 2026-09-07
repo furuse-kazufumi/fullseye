@@ -440,6 +440,9 @@ OP_PARAM_HINTS = {
     # 生成器の points プール(単位球あたり)に合わせて半径を取る。
     # distance_segment_segment(p0, p1, q0, q1): 端点 4 つ。交差しない配置にして、
     # 距離がゼロに潰れない(= つまみが効いて見える)ようにする。
+    # gcc_delay(a, b, rate, weight, band, interpolate): 既定のまま呼べるが、
+    # rate は 1.0(= 返りの単位が標本)にして探針の値が読みやすいようにする。
+    ("gcc_delay", "rate"): lambda rng: 1.0,
     ("distance_segment_segment", "p0"): lambda rng: np.array([0.0, 0.0, 0.0]),
     ("distance_segment_segment", "p1"): lambda rng: np.array([1.0, 0.0, 0.0]),
     ("distance_segment_segment", "q0"): lambda rng: np.array([0.0, 2.0, 0.0]),
