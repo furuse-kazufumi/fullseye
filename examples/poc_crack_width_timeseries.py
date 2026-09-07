@@ -606,7 +606,9 @@ def section_cliff_epochs() -> dict:
                     title="成長率の標準偏差 [mm/年] —— 実測と閉形式")
     return {"n": ns, "meas_int": mi, "pred_int": pi_, "meas_bin": mb, "pred_bin": pb,
             "sw_int": sw_i, "sw_bin": sw_b, "sd_same": sd_same, "sd_indep": sd_indep,
-            "ratios": ratios}
+            "ratios": ratios, "ratios_bin": ratios_b,
+            "need_int": (min(need_i) if need_i else None),
+            "need_bin": (min(need_b) if need_b else None)}
 
 
 # --------------------------------------------------------------------------- #
