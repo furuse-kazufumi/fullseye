@@ -741,17 +741,19 @@ def section_redundancy(train_rows) -> dict:
 # --------------------------------------------------------------------------- #
 # 7. 崖 —— 掃引                                                                 #
 # --------------------------------------------------------------------------- #
-def dprime(rows, feat: str, a: str, b: str) -> float:
+def dprime(blocks, feat: str, a: str, b: str) -> float:
     """2 モードのあいだの分離度 d' = |Δ平均| / 標準偏差(対数の上で)。
 
     識別率と違って**特徴 1 個の情報量**を測る。予測した崖はここに出る ——
     6 クラスの識別率には出ないことがあり、それは他の特徴が肩代わりしている
-    から(センサの中にも冗長性がある)。
+    から(センサの中にも冗長性がある)。``blocks`` は ``(行, 1 モードの試行数)``
+    の並びで、行は**モードごとに連続**していること(学習と試験を素朴に連結
+    すると並びが崩れる —— 一度そこで嘘の d' を出した)。
     """
     def col(mode):
         i = MODES.index(mode)
-        n = len(rows) // len(MODES)
-        return np.array([np.log10(max(r[feat], 1e-12)) for r in rows[i * n:(i + 1) * n]])
+        return np.concatenate([[np.log10(max(r[feat], 1e-12)) for r in rows[i * n:(i + 1) * n]]
+                               for rows, n in blocks])
     va, vb = col(a), col(b)
     return float(abs(va.mean() - vb.mean()) / np.sqrt(0.5 * (va.var() + vb.var()) + 1e-24))
 
