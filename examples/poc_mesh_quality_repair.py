@@ -800,15 +800,22 @@ def section_decimate_cliff(scene: dict) -> dict:
     assert abs(dv[-1]) > 1.0 and abs(dv[1]) < 0.05, (dv[1], dv[-1])
     assert c95[i50] > c95[0] * 1.2, "曲率が先に動くという所見が崩れた"
 
-    ideal = [abs(dv[-1]) * faces[-1] / f for f in faces]
+    # ★両対数で描く。線形軸だと誤差が粗い側の 1 点に潰れて、傾き(=誤差則)が
+    #   まったく読めない図になる(2026-09-07 に一度そう描いた)。
+    lf = [np.log10(f) for f in faces[1:]]
+    lv = [np.log10(abs(x)) for x in dv[1:]]
+    la = [np.log10(max(abs(x), 1e-4)) for x in da[1:]]
+    ideal = [np.log10(abs(dv[-1])) + (np.log10(faces[-1]) - x) for x in lf]
     figs.save_plot("decimate_cliff",
-                   [("体積の誤差 |ΔV|", faces, [abs(x) for x in dv]),
-                    ("表面積の誤差 |ΔA|", faces, [abs(x) for x in da]),
-                    ("予測 ∝ 1/F", faces, ideal)],
-                   xlabel="面数 [枚]", ylabel="誤差の大きさ [%]",
-                   title="簡略化の崖 —— 体積は最後に効く",
+                   [("体積の誤差 |ΔV|", lf, lv),
+                    ("表面積の誤差 |ΔA|", lf, la),
+                    ("予測 ∝ 1/F(傾き -1)", lf, ideal)],
+                   xlabel="log10(面数 [枚])", ylabel="log10(誤差の大きさ [%])",
+                   title="簡略化の崖 —— 傾きは粗い側で %.2f、細かい側で %.2f"
+                         % (s_late, s_early),
                    caption="予測線は最も粗い点で合わせた 1/F。面数が多い側では"
-                           "実測のほうが小さい(まだ削り代がある)。")
+                           "実測のほうが小さい(まだ削り代がある)。表面積は"
+                           "どこでも体積より 1 桁小さい。")
     figs.save_plot("decimate_curvature",
                    [("削減 %.0f %%" % (100 * r), curves[r],
                      np.linspace(0, 1, curves[r].size)) for r in sorted(curves)],
