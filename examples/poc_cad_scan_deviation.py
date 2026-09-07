@@ -598,26 +598,31 @@ def section_align(ref: CadRef) -> dict:
                             "点-面 ICP との差は姿勢ではなく datum の取り方の差。")
 
     # --- 稜線の罠 —— 最近傍が隣の面へ飛ぶ ------------------------------------ #
-    print("\n  稜線の罠(推定器そのものの誤差。姿勢は真値を与えている):")
+    print("\n  稜線の罠(姿勢は真値を与えているので、これは**推定器そのもの**の誤差):")
     q0 = sc["pts"] @ sc["R_true"].T + sc["t_true"]
-    for k, lab in ((1, "k=1(素朴な最近傍)"), (6, "k=6(接線最小の足を選ぶ)")):
-        _, s1, i1 = ref.deviate(q0, k=k)
-        bad = ref.face[i1] != sc["face"]
-        e = s1 - tru
-        print("   %-24s 面を跨いだ対応 %5.2f %% / 偏差RMS %6.1f µm "
-              "(跨いだ点を除くと %5.1f µm)"
-              % (lab, 100 * bad.mean(), 1000 * np.sqrt(np.mean(e ** 2)),
-                 1000 * np.sqrt(np.mean(e[~bad] ** 2))))
-        if k == 1:
-            edge_k1 = (100 * bad.mean(), 1000 * np.sqrt(np.mean(e ** 2)))
-        else:
-            edge_k6 = (100 * bad.mean(), 1000 * np.sqrt(np.mean(e ** 2)))
-    print("   ★同じ点群・同じ姿勢でも、**足の選び方だけ**で RMS が %.1f -> %.1f µm。"
-          % (edge_k1[1], edge_k6[1]))
+    _, s0, i0, ed0 = ref.deviate(q0)
+    scn = make_scan(noise=0.0, defects=False)          # 欠陥も雑音も無い対照
+    q1 = scn["pts"] @ scn["R_true"].T + scn["t_true"]
+    _, s1, _, ed1 = ref.deviate(q1)
+    cross = float(np.mean(ref.face[i0] != sc["face"]))
+    for lab, m in (("全点(素朴)", np.ones(len(s0), bool)), ("稜線帯を除く", ~ed0)):
+        e = (s0 - tru)[m]
+        print("   %-16s 点 %5.1f %%  偏差RMS %6.1f µm  最大 %7.1f µm"
+              % (lab, 100 * m.mean(), 1000 * np.sqrt(np.mean(e ** 2)),
+                 1000 * np.abs(e).max()))
+    a_false = out_of_tol_area(s1, scn["w"])
+    a_false_ok = out_of_tol_area(s1[~ed1], scn["w"])
+    print("   ★**欠陥ゼロ・雑音ゼロ・姿勢は真値**の対照で、素朴に測ると"
+          "%.1f mm^2 の偽の公差外領域が出る" % a_false)
+    print("      (稜線帯を除くと %.1f mm^2)。最近傍が隣の面へ飛んだ対応が"
+          "%.1f %% あり、" % (a_false_ok, 100 * cross))
+    print("      その点では「隣の面の法線への射影」を偏差として報告している。")
+    edge_naive = (100.0 * float(ed0.mean()), a_false)
+    edge_fixed = (a_false_ok, 1000 * float(np.sqrt(np.mean(((s0 - tru)[~ed0]) ** 2))))
 
     if figs.enabled():
         best = keep["p2plane"]
-        _, _, idx = ref.deviate(best["q"])
+        _, _, idx, _ = ref.deviate(best["q"])
         on_top = ref.face[idx] == ref.names.index("top")
         P2 = best["q"][on_top][:, :2]
         figs.save_grid(
