@@ -571,13 +571,13 @@ def section_texture_sweep() -> dict:
     print("\n" + "=" * 78)
     print("4) 崖: 質感のコントラスト 0 → 0.32(経年型、幅 2 px)—— 偽陽性はどこで爆発するか")
     print("=" * 78)
-    cs = [0.0, 0.04, 0.08, 0.12, 0.16, 0.24, 0.32]
+    cs = [0.0, 0.04, 0.08, 0.12, 0.16, 0.24, 0.32, 0.48, 0.64]
     print("   質感c  偽陽性長/真値長  再現率  ゼロ点%  真値%")
     fp, rec, zs = [], [], []
     for c in cs:
         sc = make_scene("経年", tex_c=c)
         tr = truth_stats(sc)
-        me = measure(sc, extract_net(sc["img"]))
+        me = measure_scene(sc)
         z = zero_point(sc["img"])
         fp.append(me["fp_ratio"] / tr["len_true"])
         rec.append(me["recall"])
@@ -585,16 +585,25 @@ def section_texture_sweep() -> dict:
         print("   %4.2f   %10.3f     %6.3f   %6.2f  %5.2f" % (c, fp[-1], me["recall"], 100 * z,
                                                               100 * tr["crack_frac"]))
     c_pred = K_CRACK / 3.0
-    i_ex = next((i for i, v in enumerate(fp) if v > 0.3), len(cs) - 1)
-    print("  予想の境目(色斑の最暗部 3σ がひびの深さ %.2f に届く c ≈ %.2f)。実測: c = %.2f で %.2f、"
-          "%.2f で %.2f。" % (K_CRACK, c_pred, cs[i_ex - 1], fp[i_ex - 1], cs[i_ex], fp[i_ex]))
-    print("  ゼロ点(大津)は c = %.2f で既に %.1f %%(真値の %.1f 倍)。" % (cs[1], zs[1], zs[1] / (100 * truth_stats(make_scene('経年', tex_c=0.0))['crack_frac'])))
-    figs.save_plot("texture_cliff", [("偽陽性長 / 真値長", cs, fp), ("再現率", cs, rec)],
+    i_ex = next((i for i, v in enumerate(fp) if v > 0.5), None)
+    where = ("c = %.2f で 0.5 を超える" % cs[i_ex]) if i_ex is not None else "0.64 まで 0.5 を超えない"
+    print("  ★予想は「色斑の最暗部 3σ がひびの深さ %.2f に届く c ≈ %.2f で爆発」。実測は爆発せず: "
+          "c = %.2f で %.2f、%.2f で %.2f、%.2f で %.2f(%s)。" % (
+              K_CRACK, c_pred, cs[4], fp[4], cs[6], fp[6], cs[8], fp[8], where))
+    print("  ヒステリシスのしきい値がリッジ応答の最大値に相対で、面積オープニングが小さい島を落とすので、"
+          "偽陽性は「爆発」ではなく直線的に増える。代わりに再現率が %.3f → %.3f と削れる。"
+          % (rec[0], rec[8]))
+    z0 = 100 * truth_stats(make_scene("経年", tex_c=0.0))["crack_frac"]
+    print("  ゼロ点(大津)は c = 0 でも %.1f %%(真値 %.1f %% の %.1f 倍)、c = %.2f で %.1f %%。"
+          % (zs[0], z0, zs[0] / z0, cs[2], zs[2]))
+    figs.save_plot("texture_cliff", [("偽陽性長 / 真値長", cs, fp), ("再現率", cs, rec),
+                                     ("ゼロ点のひび画素率 / 真値", cs, [z / z0 for z in zs])],
                    xlabel="色斑のコントラスト(標準偏差)", ylabel="比",
-                   title="質感のコントラストで偽陽性が爆発する境目",
-                   caption="ひびの深さ %.2f。予想の境目 c ≈ %.2f と一致。" % (K_CRACK, c_pred))
-    assert fp[4] < 0.15 and fp[6] > 0.8, "質感の崖が動いた: %s" % fp
-    return dict(cs=cs, fp=fp, rec=rec, zs=zs, c_pred=c_pred)
+                   title="質感のコントラストと偽陽性 —— 爆発はしない",
+                   caption="ひびの深さ %.2f。予想の境目 c ≈ %.2f は来なかった。" % (K_CRACK, c_pred))
+    assert fp[4] < 0.25 and fp[8] < 1.0 and fp[8] > fp[4], "質感の増え方が変わった: %s" % fp
+    assert zs[0] > 2 * z0
+    return dict(cs=cs, fp=fp, rec=rec, zs=zs, c_pred=c_pred, z0=z0)
 
 
 def section_rake_sweep() -> dict:
