@@ -1000,15 +1000,25 @@ def section_resolution(cells, sinos) -> dict:
           " voxel/層厚 %.2f まで %.3f mm を保つ(数え上げが死んだ後も 1 段生き残る)。"
           % (max(ok_fft), PITCH))
 
+    counted = [e + truth["n_layer"] for e in n_err]
     figs.save_plot("sweep_resolution",
-                   [("層数の誤差 [枚]", ratios, n_err),
-                    ("層厚の誤差 [%]", ratios, t_err),
+                   [("数えた層の数 [枚]", ratios, counted),
+                    ("真値 17 枚", ratios, [truth["n_layer"]] * len(ratios)),
+                    ("予測 A(標本化)", [v_nyq / T_ELEC] * 2, [0, truth["n_layer"]]),
+                    ("予測 B(隙間)", [v_gap / T_ELEC] * 2, [0, truth["n_layer"]])],
+                   xlabel="voxel / 電極厚", ylabel="数えた層の数 [枚]",
+                   title="分解能の崖 —— 当たったのは隙間からの予測 B",
+                   caption="標本化定理(A)はまだ余裕があると言うが、実際は層間の"
+                           "隙間 0.120 mm を分けられなくなった時点で全滅する。")
+    figs.save_plot("sweep_resolution_err",
+                   [("層厚の誤差 [%](±100 で切る)", ratios,
+                     [float(np.clip(e, -100, 100)) for e in t_err]),
                     ("空隙体積の誤差 [%]", ratios, v_err),
-                    ("縞の予測コントラスト [%]", ratios, mod)],
-                   xlabel="voxel / 電極厚", ylabel="誤差 [枚 or %]",
-                   title="分解能の崖(予測 A %.2f / 予測 B %.2f)"
-                         % (v_nyq / T_ELEC, v_gap / T_ELEC),
-                   caption="崖を決めるのは電極厚ではなく層間の隙間。空隙は層より早く痩せる。")
+                    ("縞の予測振幅 [%]", ratios, mod)],
+                   xlabel="voxel / 電極厚", ylabel="誤差 [%]",
+                   title="崖の手前から壊れているもの",
+                   caption="空隙体積は崖の手前から単調に痩せる(部分体積効果)。"
+                           "層厚は崖を越えると意味を失う。")
     figs.save_table("sweep_resolution_table",
                     ["voxel mm", "voxel/層厚", "層数", "層数の幅", "層厚 mm",
                      "層間隔 mm", "FFT 周期 mm", "空隙率 %", "予測 振幅 %"], rows,

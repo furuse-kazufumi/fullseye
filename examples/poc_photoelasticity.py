@@ -399,7 +399,7 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
     print("     マスク無し %.1f %% / 標本化不足だけ外して %.1f %% / 低変調まで外すと %.1f %%。"
           % (rates["そのまま(マスク無し)"],
              rates.get("標本化不足を外す", float("nan")),
-             rates.get("標本化不足+低変調を外す", float("nan"))))
+             rates.get("標本化不足 + 低変調を外す", float("nan"))))
     print("     外すほど領域が分断され、`unwrap_phase_2d` が島ごとに別の 2π を")
     print("     選ぶため。**予報としては正しいが、処方としては誤り** ——")
     print("     信頼できない画素は「捨てる」のでなく「重みを下げて繋いだまま解く」")

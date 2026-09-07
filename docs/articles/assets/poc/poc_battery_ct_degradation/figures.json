@@ -86,7 +86,7 @@
   "name": "void_map",
   "caption": "位置は当たる。縁が薄いところは落ちるので体積は過小。",
   "shape": [
-   220,
+   189,
    414,
    3
   ]
@@ -105,48 +105,6 @@
   "file": "11_misalign.png",
   "name": "misalign",
   "caption": "外形指標はこの劣化に完全に盲目(体積が変わらない)。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "12_sweep_resolution.png",
-  "name": "sweep_resolution",
-  "caption": "崖を決めるのは電極厚ではなく層間の隙間。空隙は層より早く痩せる。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "13_sweep_resolution_table.png",
-  "name": "sweep_resolution_table",
-  "caption": "",
-  "shape": [
-   272,
-   698,
-   3
-  ],
-  "csv": "13_sweep_resolution_table.csv",
-  "tsv": "13_sweep_resolution_table.tsv"
- },
- {
-  "file": "14_sweep_noise.png",
-  "name": "sweep_noise",
-  "caption": "",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "15_sweep_beamhardening.png",
-  "name": "sweep_beamhardening",
-  "caption": "",
   "shape": [
    360,
    560,
