@@ -898,7 +898,7 @@ def section_gsd() -> dict:
         s = score(det, gt)
         a = peak_attenuation(V_REF, g)
         st = np.sqrt(fin_length(V_REF) ** 2 + cam_sigma(g) ** 2)
-        p = Q_HOT / u_total(V_REF) * a
+        p = predict_hotspot(V_REF, g)
         m = peak_on(det, gt["hot"])
         xs.append(1e3 * g), pred.append(p), meas.append(m)
         print("     %6.0f    %7.1f     %8.3f     %6.2f    %6.2f    %s"
