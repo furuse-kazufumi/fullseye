@@ -198,7 +198,7 @@ def scene(Y, X, t: int, sigma=PSF, sizes: bool = False) -> np.ndarray:
     if sizes:
         if t == 2:
             for (ys, xs, s) in size_squares():
-                S = S + (BUILD_ALB - S) * rect(Y, X, ys, ys + s, xs, xs + s, sigma)
+                S = S + (BUILD_ALB - S) * rect_px(Y, X, ys, ys + s, xs, xs + s, sigma)
         return S
 
     def paint(S, W, alb):
