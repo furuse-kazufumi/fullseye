@@ -509,17 +509,19 @@ def section_area_history(cases):
                     for k in sel],
                    xlabel="層の周長 [mm]", ylabel="高さ z [mm]",
                    title="層ごとの周長の履歴(面積では見えない差が出る)")
-    a1 = cases["中央 1 柱"]["hist"]["area"]
-    a2 = cases["両端 2 柱"]["hist"]["area"]
-    d = float(np.max(np.abs(a1 - a2)))
-    p1 = cases["中央 1 柱"]["hist"]["perimeter"]
-    p2 = cases["両端 2 柱"]["hist"]["perimeter"]
-    print("  「中央 1 柱」と「両端 2 柱」の断面積の差の最大 = %.3g mm^2(完全一致)"
-          % d)
-    print("  同じ 2 つの**周長**の差の最大 = %.1f mm、塊の数 %d 対 %d —— "
+    trio = TRIO
+    ars = [cases[k]["hist"]["area"] for k in trio]
+    d = float(max(np.max(np.abs(ars[0] - a)) for a in ars[1:]))
+    prs = [cases[k]["hist"]["perimeter"] for k in trio]
+    print("  三つ子 %s の断面積の差の最大 = %.3g mm^2(完全一致)"
+          % (" / ".join(trio), d))
+    print("  同じ 3 つの**周長**の差の最大 = %.1f mm、最大の塊の数 %s —— "
           "面積は同じでも周長と塊の数は違う。"
-          % (float(np.max(np.abs(p1 - p2))), int(cases["中央 1 柱"]["hist"]["nblob"].max()),
-             int(cases["両端 2 柱"]["hist"]["nblob"].max())))
+          % (float(max(np.max(np.abs(prs[0] - p)) for p in prs[1:])),
+             " / ".join(str(int(cases[k]["hist"]["nblob"].max())) for k in trio)))
+    print("  ★周長と塊の数は「面積をどう置いたか」を少しだけ持っているが、"
+          "**どちらも符号を持たない**ので\n     反りの向きも大きさも決められない"
+          "(節 5 で実測する)。")
     return d
 
 

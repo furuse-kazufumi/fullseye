@@ -48,5 +48,27 @@
    700,
    3
   ]
+ },
+ {
+  "file": "06_controls.png",
+  "name": "controls",
+  "caption": "(b) と (c) の差が「欠損そのものが推定を歪める量」。ゼロ点(穴埋め補間)は RMS 1.60 mm。",
+  "shape": [
+   248,
+   711,
+   3
+  ],
+  "csv": "06_controls.csv",
+  "tsv": "06_controls.tsv"
+ },
+ {
+  "file": "07_controls_maps.png",
+  "name": "controls_maps",
+  "caption": "欠損のまま推定した面で復元すると、欠損部の全体が一様にずれる(位置ずれの署名)。",
+  "shape": [
+   795,
+   566,
+   3
+  ]
  }
 ]
