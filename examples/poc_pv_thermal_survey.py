@@ -453,6 +453,11 @@ def ground_truth(gsd: float = GSD) -> dict:
     k = int(round(gsd / FINE))
     fr = lambda m: block_mean(np.asarray(m, np.float64), k)   # noqa: E731
     panel = fr(L["panel"]) > 0.5
+    # ★モジュール番号は**番号ごとに面積比で**決める。番号の平均を丸めると
+    #   境界の画素が隣の番号(や 0)に化け、モジュールごとの処理が壊れる。
+    mods = np.full(panel.shape, -1, int)
+    for m in range(NMX * NMY):
+        mods[(fr(L["mod_id"] == m) > 0.5) & panel] = m
     fault = (fr(L["hot"]) > 0.5) | (fr(L["kill_fault"]) > 0.5)
     nonf = ((fr(L["shade"]) > 0.5) | (fr(L["soil"]) > 0.5)
             | (fr(L["kill_shade"]) > 0.5)) & ~fault
