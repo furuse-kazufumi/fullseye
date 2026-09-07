@@ -679,9 +679,20 @@ def section_norms(base: dict) -> dict:
           "中央値 %.2f K -> 平面除去 %.2f K(%.0f %%)。"
           % (out["モジュール中央値"]["peak_str"], pl["peak_str"],
              100 * pl["peak_str"] / out["モジュール中央値"]["peak_str"]))
-    print("     小さいホットスポットは %.0f %% しか食われない —— "
+    print("     小さいホットスポットは %.0f %% 残る(1 モジュール %d x %d px の中で"
+          " %d px しか占めないので、平面は当てはまらない)—— "
           "**食われる量は故障の面積で決まる**。"
-          % (100 * (1 - pl["peak_hot"] / out["モジュール中央値"]["peak_hot"])))
+          % (100 * pl["peak_hot"] / out["モジュール中央値"]["peak_hot"],
+             int(round(MOD_H / GSD)), int(round(MOD_W / GSD)),
+             int(gt["hot"].sum())))
+    zh = out["全体平均"]
+    print("  ★★そしてゼロ点は**本物のホットスポットを見逃す**: 再現率 %.2f、"
+          "ΔT %.2f K(中央値基準なら %.2f K)。"
+          % (zp["recall"]["hot"], zh["peak_hot"],
+             out["モジュール中央値"]["peak_hot"]))
+    print("     ホットスポットの乗るモジュール %d は視野の上側にあり、撮影中の"
+          "日射の変化(視野の上下で %.0f %%)でアレイ平均より冷たい ——"
+          " その分だけ ΔT が目減りしてしきい値を割る。" % (MOD_HOT, 100 * IRR_DRIFT))
 
     # ★モジュール中央値の代償 —— モジュール丸ごとの異常に盲目
     d_mean = normalise(t_app, gt, "全体平均")
