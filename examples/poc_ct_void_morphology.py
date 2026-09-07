@@ -764,7 +764,7 @@ def section_threshold_noise() -> dict:
                      [0, N_VOID])],
                    xlabel="橋渡しの連結半径 [µm]", ylabel="連結成分の個数",
                    title="連なりは設計どおりの半径で 3 本の鎖に落ちる",
-                   caption="ボイド率にはこの差が出ない —— 両条件とも 3 %% 台。")
+                   caption="ボイド率にはこの差が出ない —— 両条件とも 3 % 台。")
     figs.save_plot("noise_sweep",
                    [("塊の数(偽ボイドを含む)", [1000 * s for s in noises], nn_cnt),
                     ("ボイド率 [%] x 100", [1000 * s for s in noises],
