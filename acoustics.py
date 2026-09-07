@@ -158,7 +158,7 @@ __all__ = [
     "octave_bands", "octave_spectrum", "weighting_response", "apply_weighting",
     "equivalent_level", "percentile_level",
     # two-channel
-    "coherence", "transfer_function",
+    "coherence", "transfer_function", "gcc_delay",
     # limits
     "MAX_SAMPLES", "MAX_WINDOW", "MAX_STFT_ELEMENTS", "MAX_BANDS",
     "MAX_ANGULAR_SAMPLES", "FLOOR_DB",
@@ -2522,3 +2522,108 @@ def transfer_function(x, y, rate, win=None, hop=None, window="hann",
         "estimator": est, "n_frames": nf, "win": w_len, "hop": h,
         "rate": fs, "ref": r,
     }
+
+
+def gcc_delay(a, b, rate=1.0, weight="phat", band=None, interpolate=True):
+    """2 チャンネルの**到達時間差**を一般化相互相関(GCC)で測る。→ ``(delay, table)``。
+
+    漏水の位置決め、音源の方向、超音波の肉厚、振動の伝搬 —— どれも「同じ源が 2 か所に
+    いつ着いたか」の差で決まる。この op はその差を**秒**(``rate`` が既定 1.0 なら標本)で
+    返す。位置に直すには経路長と伝搬速度を掛ける(``x = (L - c·delay) / 2`` の形)。
+
+    ★**速度の仮定がそのまま位置の誤差になる**。相関がどれだけ綺麗でも、掛ける速度が
+    10 % 違えば位置は経路の中心からの距離に比例してずれる(`poc_leak_localization` の
+    実測: 中心から 18 m の漏水で +1.798 m、幾何の予測 1.800 m)。相関の質と位置の
+    正しさは**別の量**なので、報告では分けること。
+
+    Args:
+        a, b: 同じ長さの 1-D 記録。**``b`` が ``a`` より遅れていれば ``delay`` は正**
+            (``b(t) ≈ a(t - delay)``)。
+        rate: 標本化周波数 [Hz]。既定 1.0 のときは返りの単位が「標本」。
+        weight: 相互スペクトルの重み。
+            ``"none"`` = 素の相互相関(SNR が高く反射が無ければ最良)、
+            ``"phat"`` = 位相変換(振幅を白色化。残響に強いとされる)、
+            ``"roth"`` = ``1/|A|²``、``"scot"`` = ``1/sqrt(|A|²|B|²)``。
+            ★**PHAT が常に勝つわけではない**: 反射が非対称な経路では遅延そのものが
+            偏るので、どの重みでも取り除けない(実測: 反射 0.8 で raw 0.134 m /
+            PHAT 0.114 m と 1 割しか違わず、RMS はほぼ全部が偏り)。
+        band: ``(lo_hz, hi_hz)`` で帯域を絞る(``rate`` が要る)。``None`` で全帯域。
+            全帯域の PHAT は信号の無いビンまで持ち上げるので、**帯域を切るほうが
+            効くことが多い**(実測で 8 倍)。
+        interpolate: ピーク周りの放物線補間でサブ標本まで読む(既定 True)。
+            切ると量子化の刻みが**散らばりでなく偏り**として残る(位置を固定すると
+            毎回同じ方向に外す。PIV のピークロッキングと同じ)。
+
+    Returns:
+        ``(delay, table)``: ``delay`` は秒(``rate=1.0`` なら標本)の float。
+        ``table`` は ``{"lags": (2N-1,) の遅れ, "r": 相関値, "peak": ピーク値,
+        "snr_peak": ピーク / 副次ピークの比}``。
+
+        ★台帳経由(``fullseye.ledger.gcc_delay``)は宣言 out 型の ``delay`` だけを
+        返す。相関曲線も要るときは ``fullseye.ledger.gcc_delay.raw(...)``。
+
+    Raises:
+        ValueError: 長さが違う / 2 未満 / 非有限、``weight`` が未知、``band`` が
+        ``(lo, hi)`` でない・``lo >= hi``・``rate`` に対して無効なとき。
+
+    **限界(honest)**: (1) 反射・分散・経路差が作る**偏り**は取れない ——
+    取れるのは雑音による散らばりだけ。(2) 相関のピークを 1 つ選ぶので、
+    多重路で副次ピークが勝つと**不連続に**外す(``snr_peak`` を見ること)。
+    (3) 遅延が記録長の半分を超えると折り返す。
+
+    Reference (public): C. H. Knapp, G. C. Carter, "The Generalized Correlation
+    Method for Estimation of Time Delay", IEEE Trans. ASSP 24(4), 1976, 320-327.
+    """
+    x = _as_signal(a, "a", "gcc_delay")
+    y = _as_signal(b, "b", "gcc_delay")
+    if x.size != y.size:
+        raise ValueError("gcc_delay: a and b must have the same length "
+                         "(got %d and %d) — they are two records of one event"
+                         % (x.size, y.size))
+    fsr = _rate(rate)
+    w = _check_choice(weight, ("none", "phat", "roth", "scot"), "weight", "gcc_delay")
+
+    n = int(x.size)
+    nfft = int(2 ** int(np.ceil(np.log2(2 * n - 1))))
+    A = np.fft.rfft(x - x.mean(), nfft)
+    B = np.fft.rfft(y - y.mean(), nfft)
+    R = B * np.conj(A)                          # b が遅れていれば正のラグにピーク
+    eps = 1e-20
+    if w == "phat":
+        R = R / (np.abs(R) + eps)
+    elif w == "roth":
+        R = R / (np.abs(A) ** 2 + eps)
+    elif w == "scot":
+        R = R / (np.sqrt(np.abs(A) ** 2 * np.abs(B) ** 2) + eps)
+    if band is not None:
+        try:
+            lo, hi = (float(v) for v in band)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("gcc_delay: band must be (lo_hz, hi_hz)") from exc
+        if not (np.isfinite(lo) and np.isfinite(hi)) or lo >= hi or lo < 0:
+            raise ValueError("gcc_delay: band must satisfy 0 <= lo < hi (got %r)" % (band,))
+        freqs = np.fft.rfftfreq(nfft, 1.0 / fsr)
+        R = np.where((freqs >= lo) & (freqs <= hi), R, 0.0)
+        if not np.any(R):
+            raise ValueError("gcc_delay: band %g..%g Hz contains no frequency bin at "
+                             "rate %g Hz — the correlation would be identically zero"
+                             % (lo, hi, fsr))
+    r = np.fft.irfft(R, nfft)
+    r = np.concatenate([r[-(n - 1):], r[:n]])   # ラグ -(n-1) .. +(n-1)
+    lags = np.arange(-(n - 1), n, dtype=np.float64)
+    k = int(np.argmax(r))
+    shift = 0.0
+    if interpolate and 0 < k < len(r) - 1:      # 放物線補間(サブ標本)
+        y0, y1, y2 = float(r[k - 1]), float(r[k]), float(r[k + 1])
+        den = y0 - 2.0 * y1 + y2
+        if abs(den) > 1e-30:
+            shift = 0.5 * (y0 - y2) / den
+            shift = float(np.clip(shift, -1.0, 1.0))
+    # 副次ピーク(主ピークの ±3 標本を外して最大)—— 1 つ選ぶ判断の確からしさ
+    mask = np.ones(len(r), bool)
+    mask[max(0, k - 3):k + 4] = False
+    second = float(np.max(r[mask])) if np.any(mask) else 0.0
+    peak = float(r[k])
+    table = {"lags": lags / fsr, "r": r, "peak": peak,
+             "snr_peak": float(peak / second) if second > 0 else float("inf")}
+    return float((lags[k] + shift) / fsr), table

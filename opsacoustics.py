@@ -176,6 +176,10 @@ _CATALOG = {
     "dual": [
         ("coherence", "acoustics", ["signal", "signal"], "table"),
         ("transfer_function", "acoustics", ["signal", "signal"], "table"),
+        # 2026-09-08 追加。1-D の相互相関 / GCC / 到達時間差の口がどの層にも無く、
+        # 漏水位置決めと設備保全の PoC が 3-D の correlation_score を (1,1,N) に
+        # reshape して使っていた(KNOWN_ISSUES §41.14)。返りは (delay, table)。
+        ("gcc_delay", "acoustics", ["signal", "signal"], "measurement"),
     ],
 }
 
@@ -230,7 +234,11 @@ def categories():
 #:
 #: タプル返しの op を将来足すならここに登録すること(空欄を埋めるために既存の
 #: 返り型をタプルへ変える、は本末転倒なのでしない)。
-RESULT_ADAPTERS = {}
+# gcc_delay は (delay, table) を返す。宣言 out は遅延なので本体値を剥がす。
+# 相関曲線が要る呼び手は .raw / 素の関数を使う。
+RESULT_ADAPTERS = {
+    "gcc_delay": lambda r: r[0] if isinstance(r, tuple) else r,
+}
 
 
 def get(name):
