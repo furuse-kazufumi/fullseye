@@ -1108,7 +1108,11 @@ def section_scene_figures() -> None:
                    caption="平行ずれ(切片)と角度ずれ(傾き)を fit_line3 で分けて取る。",
                    kinds=["scatter", "scatter", "scatter", "scatter"])
 
-    # 振動を抜いた対照群の混同行列
+
+def section_dropout_figure(table) -> None:
+    """振動を抜いた対照群の混同行列(4 節の数字を絵にする)。"""
+    if not figs.enabled():
+        return
     cm = table["熱+形状(振動を抜く)"]["cm"]
     figs.save_table("confusion_without_vibration", ["真値 \\ 判定"] + list(MODES),
                     [[MODES[i]] + ["%d" % v for v in cm[i]] for i in range(len(MODES))],
