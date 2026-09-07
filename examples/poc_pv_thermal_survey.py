@@ -1024,7 +1024,7 @@ def section_angle(base: dict) -> dict:
                    title="角度で ΔT が圧縮される —— 射影補正では戻らない",
                    caption="ε(θ) は Fresnel(等価屈折率 1.8)。射影補正は "
                            "fs.ledger.warp_by_plane を 2 回。")
-    return {"deg": xs, "pred": pe, "meas": me, "rect": rect}
+    return {"deg": xs, "pred": pe, "meas": me, "rect": rect, "shift": shift}
 
 
 # --------------------------------------------------------------------------- #
