@@ -419,23 +419,24 @@ def section_thickness():
     print("     探針:     刻み無し。ただし 2 つの縁が PSF に融合する")
     print("               T <~ 2 sigma_psf = %.1f h で破綻すると予測" % (2 * PSF_VOXEL))
     print()
-    print("   T/h   h [mm]   侵食      内接球    探針      | 誤差 [mm] 侵食 / 内接球 / 探針")
+    print("   T/h   h [mm]   侵食      内接球    探針(本数) | 誤差 [mm] 侵食 / 内接球 / 探針")
 
     ratios = (12.0, 8.0, 6.0, 4.0, 3.0, 2.5, 2.0, 1.5)
-    rows, hs, e_ero, e_ins, e_prb = [], [], [], [], []
+    rows, hs, e_ero, e_ins, e_prb, n_prb = [], [], [], [], [], []
     for tr in ratios:
         h = T_WALL / tr
-        _, occ, gray, res = coupon(h)
+        _, occ, gray, res, _ = coupon(h)
         t_e = thickness_erosion(occ, h)
         t_i = thickness_inscribed(occ, h)
-        t_p = thickness_probe(gray, h, res)
+        t_p, n_p = thickness_probe(gray, h, res)
         hs.append(tr)
         e_ero.append(t_e - T_WALL)
         e_ins.append(t_i - T_WALL)
         e_prb.append(t_p - T_WALL)
+        n_prb.append(n_p)
         rows.append((tr, h, t_e, t_i, t_p))
-        print("  %5.1f  %6.3f   %6.3f    %6.3f    %6.3f    | %+6.3f / %+6.3f / %+6.3f" % (
-            tr, h, t_e, t_i, t_p, t_e - T_WALL, t_i - T_WALL, t_p - T_WALL))
+        print("  %5.1f  %6.3f   %6.3f    %6.3f    %6.3f (%d) | %+6.3f / %+6.3f / %+6.3f" % (
+            tr, h, t_e, t_i, t_p, n_p, t_e - T_WALL, t_i - T_WALL, t_p - T_WALL))
 
     # 刻みの検定: 値が 2h の倍数か h の倍数か(丸めでなく剰余で数える)。
     def quantum(vals, hlist, q):
