@@ -500,7 +500,7 @@ def section_scene(rig: Rig) -> None:
         for sy in (-yb, yb):
             for sx in (x0, x1):
                 edges.append(C[1] + (sy - C[1]) * xq / sx)
-            print("     %-12s 影 y = %+.2f 〜 %+.2f m" % (nm, min(edges), max(edges)))
+        print("     %-12s 影 y = %+.2f 〜 %+.2f m" % (nm, min(edges), max(edges)))
     for o in OBSTACLES[1:3]:
         print("     「%s」は y = %+.2f 〜 %+.2f m —— %s"
               % (o["name"], o["cy"] - o["ly"] / 2, o["cy"] + o["ly"] / 2,
