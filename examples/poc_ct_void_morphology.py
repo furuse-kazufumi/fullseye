@@ -611,8 +611,9 @@ def section_voxel_cliff() -> dict:
                      "扁平 扁平度", "扁平 界面欠損 %", "離隔 中央 µm", "離隔 接触 µm"],
                     rows, title="ボクセル寸法の掃引(物理的な場面は不変、位相 3 通りの平均±)")
     return {"vx": vx, "f_sph": f_sph, "f_dsc": f_dsc, "fl_dsc": fl_dsc,
-            "ai": ai_dsc, "cliff_frac_dsc": c_fr_dsc, "cliff_flat_dsc": c_fl_dsc,
-            "cliff_ai": c_ai, "g_mid": g_mid, "g_int": g_int,
+            "fl_sph": fl_sph, "ai": ai_dsc, "cliff_frac_dsc": c_fr_dsc,
+            "cliff_frac_sph": c_fr_sph, "cliff_ai": c_ai, "last_flat": last_flat,
+            "ratio_flat": ratio_flat, "g_mid": g_mid, "g_int": g_int,
             "sd_max": max(s_dsc)}
 
 

@@ -335,20 +335,24 @@ def forward(mu: np.ndarray) -> np.ndarray:
 
 def acquire(sino: np.ndarray, n0=N0_NOMINAL, bh=BH_NOMINAL, ring=RING_NOMINAL,
             seed=SEED) -> np.ndarray:
-    """サイノグラムに撮像の劣化を入れて再構成する。"""
-    s = np.asarray(sino, float)
+    """サイノグラムに撮像の劣化を入れて再構成する。
+
+    順序は物理どおり: 光学的厚みへ換算 -> 多色化(ビームハードニング)->
+    検出器ゲイン誤差(リング/ストリーク)-> 光子計数 -> 対数 -> FBP。
+    """
+    p = np.asarray(sino, float) * ATT
     if bh < 1.0:
-        s = np.stack([np.asarray(fs.beam_hardening_apply(s[k], 0.5, bh))
-                      for k in range(s.shape[0])])
+        p = np.stack([np.asarray(fs.beam_hardening_apply(p[k], 0.5, bh))
+                      for k in range(p.shape[0])])
     if ring > 0.0:
-        s = np.stack([np.asarray(fs.ring_artifact_apply(s[k], ring, seed))
-                      for k in range(s.shape[0])])
+        p = np.stack([np.asarray(fs.ring_artifact_apply(p[k], ring, seed))
+                      for k in range(p.shape[0])])
     if n0 is not None and np.isfinite(n0):
         rng = np.random.default_rng(seed)
-        inten = np.exp(-np.clip(s * ATT, 0.0, 30.0))
+        inten = np.exp(-np.clip(p, 0.0, 30.0))
         counts = rng.poisson(np.clip(n0 * inten, 1e-9, None)).astype(float)
-        s = -np.log(np.maximum(counts, 0.5) / n0) / ATT
-    rec = np.asarray(fs.fbp_volume(s, angles(), size=NH))
+        p = -np.log(np.maximum(counts, 0.5) / n0)
+    rec = np.asarray(fs.fbp_volume(p / ATT, angles(), size=NH))
     c0 = (rec.shape[2] - NW) // 2
     return np.ascontiguousarray(rec[:, :, c0:c0 + NW])
 
