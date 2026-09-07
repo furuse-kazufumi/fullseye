@@ -333,10 +333,11 @@ def consensus(results: list[dict], n: int) -> dict:
     for i, r in enumerate(results):
         for k, (e, t) in r["widths"].items():
             W[i, k - 1], T[i, k - 1] = e, t
-    with np.errstate(all="ignore"):
-        w_est = np.nanmedian(W, axis=0)
-        n_dir = np.sum(np.isfinite(W), axis=0)
-    w_est[n_dir < max(1, len(results) // 8)] = np.nan
+    n_dir = np.sum(np.isfinite(W), axis=0)
+    w_est = np.full(n, np.nan)
+    for k in range(n):
+        if n_dir[k] >= max(1, len(results) // 8):
+            w_est[k] = float(np.median(W[np.isfinite(W[:, k]), k]))
     miss_frac = np.zeros(n)
     for r in results:
         for k in r["missed"]:
