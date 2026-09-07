@@ -1083,7 +1083,7 @@ def section_basin(ref: CadRef) -> dict:
     print("   初期ずれ[度] | 点-面 ICP: 姿勢[度] 点移動[mm] 残差[µm]"
           " | 点-点 ICP: 姿勢[度] 点移動[mm] 残差[µm]")
     sc = make_scan(n=8000, noise=0.010)
-    angs, errs, resid, errs2, mm2 = [], [], [], [], []
+    angs, errs, resid, errs2, mm1, mm2 = [], [], [], [], [], []
     floor = None
     for a in (0, 5, 10, 15, 20, 25, 30, 60, 90, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
