@@ -323,12 +323,19 @@ def classify(cube: np.ndarray, method: str, pair: tuple[int, int],
         cr = np.asarray(fs.spec_continuum_removal(cube, WL))
         crl = np.asarray(fs.spec_continuum_removal(LIB[None, :, :], WL))[0]
         return _sam_classify(cr, crl)
-    if method == "d2":                                 # 2 次微分 + SAM
+    if method == "d2raw":                              # 2 次微分 + SAM(門なし)
         return _sam_classify(d2(cube), d2(LIB))
-    if method == "d2w":                                # 2 次微分 + 水帯を捨てる
+    if method == "d2":                                 # + 平坦度の門
+        return _flat_gate(cube, _sam_classify(d2(cube), d2(LIB)))
+    if method == "d2w":                                # + 水帯を捨てる
         k = keep if keep is not None else _water_keep()
-        return _sam_classify(d2(cube)[..., k], d2(LIB)[:, k])
+        return _flat_gate(cube, _sam_classify(d2(cube)[..., k], d2(LIB)[:, k]))
     raise ValueError(method)
+
+
+def _flat_gate(cube: np.ndarray, pred: np.ndarray) -> np.ndarray:
+    """平坦なスペクトルの画素は「金属」に回す(微分では分けられないから)。"""
+    return np.where(flatness(cube) < flat_threshold(), NAMES.index("金属"), pred)
 
 
 def _water_keep() -> np.ndarray:

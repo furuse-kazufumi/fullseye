@@ -719,7 +719,10 @@ def section_model_order() -> dict:
           "n=1 は直線(傾き)、\n  n=2 は放物線(たわみ)、free は毎スライス自由。")
     print("   次数    偽陽性     管底腐食の検出率   管底腐食の体積   孔食の検出率")
 
-    sv_c = survey(CLEAN, offset=4.0, tilt_deg=0.6)          # 対照群 a
+    # 対照群 a: 減肉ゼロ。ただし**楕円化と曲がりは実物どおり残す** —— ここを
+    # 真円・直線にすると次数 2 が要る理由(たわみ)が見えなくなる。
+    s_clean = spec(pit=0.0, band=0.0, cres=0.0, weld=0.0)
+    sv_c = survey(s_clean, offset=4.0, tilt_deg=0.6)
     sv = survey(FULL, offset=4.0, tilt_deg=0.6)             # 条件 c
     tvc = true_volume("cres")
     orders = [None, 0, 1, 2, 3, 5, 8, "free"]
