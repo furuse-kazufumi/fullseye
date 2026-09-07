@@ -523,20 +523,43 @@ def reg_phase(I1, I2):
     return 0.0, -float(s[1]), -float(s[2]), {"n": 1}
 
 
-def reg_piv(I1, I2, window=32):
-    """PIV 相互相関(窓ごと)→ 正規化中央値検定で外れを落とす → 剛体 LS。"""
+def _trimmed_rigid(q, p, keep, rounds=4):
+    """残差で刈る LS(中央値 + 3·MAD の外を落として繰り返す)。"""
+    th = dy = dx = 0.0
+    for _ in range(rounds):
+        th, dy, dx = fit_rigid_xy(q[keep], p[keep])
+        A, b = rigid_yx(th, dy, dx)
+        pred = (A @ np.c_[q[:, 1], q[:, 0]].T + b[:, None]).T
+        r = np.hypot(pred[:, 0] - p[:, 1], pred[:, 1] - p[:, 0])
+        r[~np.isfinite(r)] = np.inf
+        med = np.median(r[keep])
+        mad = np.median(np.abs(r[keep] - med)) * 1.4826 + 1e-6
+        keep = keep & (r < med + 3 * mad)
+    return th, dy, dx, keep
+
+
+def reg_piv(I1, I2, window=48):
+    """PIV 相互相関(窓ごと)→ 平坦な窓を捨てる → 正規化中央値検定 → 残差で刈る剛体 LS。
+
+    ★最初は「正規化中央値検定だけ」で組んだ(残留 0.87 px)。窓の半分は平坦な
+    土壌か直線エッジ 1 本(開口問題)で、**近傍も同じように間違う**ので近傍検定
+    では落ちない。残差で刈る LS を 4 回回して初めて 0.05 px 以下になる。
+    """
     fl = np.asarray(fs.ledger.piv_cross_correlate(I1, I2, window=window, overlap=0.5))
-    bad = np.asarray(fs.ledger.piv_outlier_mask(fl, threshold=2.0))
+    bad = np.asarray(fs.ledger.piv_outlier_mask(np.nan_to_num(fl), threshold=2.0))
     h, w = fl.shape[1:]
     step = window // 2
     ys = window / 2 + step * np.arange(h)
     xs = window / 2 + step * np.arange(w)
+    std = np.array([[I1[int(y - window / 2):int(y + window / 2),
+                        int(x - window / 2):int(x + window / 2)].std() for x in xs] for y in ys])
     YY, XX = np.meshgrid(ys, xs, indexing="ij")
     q = np.c_[XX.ravel(), YY.ravel()]
     p = q + np.c_[fl[1].ravel(), fl[0].ravel()]
-    keep = ~bad.ravel()
-    th, dy, dx = fit_rigid_xy(q[keep], p[keep])
-    return th, dy, dx, {"n": int(keep.sum()), "rejected": int((~keep).sum())}
+    keep = ~bad.ravel() & np.isfinite(p).all(axis=1) & (std.ravel() > 0.03)
+    th0, dy0, dx0 = fit_rigid_xy(q[keep], p[keep])
+    th, dy, dx, keep = _trimmed_rigid(q, p, keep)
+    return th, dy, dx, {"n": int(keep.sum()), "first_pass": (th0, dy0, dx0)}
 
 
 def reg_keypoints(I1, I2):
