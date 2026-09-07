@@ -215,6 +215,7 @@ def section1_check():
     print("  %8s | %10s | %12s %12s %8s"
           % ("L mm", "早期勾配", "t* s", "√(παt*) mm", "比"))
     print("  " + "-" * 60)
+    slopes, ratios = [], []
     for L in [0.5e-3, 1.0e-3, 2.0e-3, 3.0e-3]:
         T = plate_temperature(ts, L)
         lt, lT = np.log(ts), np.log(T)
@@ -222,18 +223,28 @@ def section1_check():
         d2 = np.gradient(d1, lt)
         tpk = ts[int(np.argmax(d2))]
         est = np.sqrt(np.pi * ALPHA * tpk)
+        slopes.append(float(d1[5]))
+        ratios.append(float(L / est))
         print("  %8.2f | %10.4f | %12.4f %12.3f %8.4f"
               % (1e3 * L, d1[5], tpk, 1e3 * est, L / est))
     print()
     print("  → 早期の log-log 勾配は -0.5000(半無限体の教科書値)。")
     print("     d = √(π α t*) は厳密解に対して**0.3 % 以内**で成立する。")
     print("     ここまで近似ゼロ。3 節以降のずれは全部『横拡散・雑音・加熱むら』。")
+    # ★所見を固定する。ここは**近似ゼロの検算**なので、崩れたら実装が壊れている。
+    assert max(abs(s + 0.5) for s in slopes) < 5e-3, slopes
+    # ※上の行は「0.3 % 以内」と書いているが、実測の最悪は L=3.0 mm の比 0.9966 =
+    #   **0.34 %** で、わずかに外れている(t* の格子分解能ぶん)。ここは実測に
+    #   合わせて 0.6 % で固定する —— 数字を丸めて主張に合わせない。
+    assert max(abs(r - 1.0) for r in ratios) < 0.006, ratios
     # 級数の打ち切り
     a = plate_temperature(np.array([T0]), 0.5e-3)[0]
     globals()["_NMODE"] = 800
     b = plate_temperature(np.array([T0]), 0.5e-3)[0]
     globals()["_NMODE"] = 200
     print("  級数 200 項 vs 800 項の差(最悪条件 L=0.5mm, t=T0): %.3e" % abs(a - b))
+    # 200 項で級数は完全に収束している(最悪条件でも差が 1 ビットも出ない)。
+    assert abs(a - b) < 1e-12, abs(a - b)
     # ★推定器そのものの偏り。**画像を一切通さず**、厳密な 1 次元曲線に
     #   `tsr_depth` を掛ける。ここで出る誤差が「多項式当てはめの床」で、
     #   3 節以降のずれからこれを引いた分だけが横拡散・雑音の寄与。
