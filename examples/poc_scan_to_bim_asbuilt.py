@@ -1092,7 +1092,7 @@ def section_cliff_dropout() -> dict:
                      "構造的 予測", "残った高さ L [m]", "点数 N"],
                     rows, title="欠測の掃引 —— 同じ欠測率、違う崖")
     return {"fr": fr, "rnd": rnd_e, "low": low_e, "pred": low_p, "ratio": ratio,
-            "dev": dev}
+            "dev": dev, "dev60": dev60, "L": low_L}
 
 
 def section_cliff_registration() -> dict:

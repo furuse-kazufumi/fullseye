@@ -1,0 +1,154 @@
+[
+ {
+  "file": "01_scene_plan_section.png",
+  "name": "scene_plan_section",
+  "caption": "柱の後ろに影(欠測)が伸び、開口の見込みが奥に見える。",
+  "shape": [
+   393,
+   1390,
+   3
+  ]
+ },
+ {
+  "file": "02_station_coverage.png",
+  "name": "station_coverage",
+  "caption": "暗い所は 1 か所も見ていない。柱の影は放射状に伸びる。",
+  "shape": [
+   413,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "03_one_number.png",
+  "name": "one_number",
+  "caption": "(a) と (c) の差 1.41 mm。要素ごとの不良は桁が違う。",
+  "shape": [
+   152,
+   445,
+   3
+  ],
+  "csv": "03_one_number.csv",
+  "tsv": "03_one_number.tsv"
+ },
+ {
+  "file": "04_alignment_absorption.png",
+  "name": "alignment_absorption",
+  "caption": "閉形式の予測(吸われる ω_y = -0.89 mrad)と実測の差は最大 0.05 mrad。",
+  "shape": [
+   200,
+   756,
+   3
+  ],
+  "csv": "04_alignment_absorption.csv",
+  "tsv": "04_alignment_absorption.tsv"
+ },
+ {
+  "file": "05_alignment_bars.png",
+  "name": "alignment_bars",
+  "caption": "剛体モード(壁の傾きと床の勾配)だけが動き、開きは動かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_deviation_map.png",
+  "name": "deviation_map",
+  "caption": "左端の帯が色目盛り(上 +12 mm / 下 -12 mm)。天井は無傷なのに東西方向の傾きが乗っている。",
+  "shape": [
+   375,
+   676,
+   3
+  ]
+ },
+ {
+  "file": "07_false_deviation_map.png",
+  "name": "false_deviation_map",
+  "caption": "仕込んだ施工誤差はゼロ。見えているのは測定と合わせだけが作った量。",
+  "shape": [
+   375,
+   676,
+   3
+  ]
+ },
+ {
+  "file": "08_element_verdicts.png",
+  "name": "element_verdicts",
+  "caption": "「偽の誤差」列は設計どおりに建った建物を同じ手順で測った値。食い違う判定は 合わせない 0 / 床+2 壁 4 / 全体 ICP 2。",
+  "shape": [
+   320,
+   667,
+   3
+  ],
+  "csv": "08_element_verdicts.csv",
+  "tsv": "08_element_verdicts.tsv"
+ },
+ {
+  "file": "09_cliff_dropout.png",
+  "name": "cliff_dropout",
+  "caption": "無作為欠測は N だけ減らす。構造的欠測は L も縮めるのでL^-1 が余分に掛かる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_cliff_dropout_table.png",
+  "name": "cliff_dropout_table",
+  "caption": "",
+  "shape": [
+   200,
+   658,
+   3
+  ],
+  "csv": "10_cliff_dropout_table.csv",
+  "tsv": "10_cliff_dropout_table.tsv"
+ },
+ {
+  "file": "11_cliff_registration.png",
+  "name": "cliff_registration",
+  "caption": "点を増やしても系統誤差は薄まらない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_cliff_registration_table.png",
+  "name": "cliff_registration_table",
+  "caption": "",
+  "shape": [
+   224,
+   319,
+   3
+  ],
+  "csv": "12_cliff_registration_table.csv",
+  "tsv": "12_cliff_registration_table.tsv"
+ },
+ {
+  "file": "13_cliff_mixed.png",
+  "name": "cliff_mixed",
+  "caption": "RANSAC の平面は動かず、min/max の obb は動く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_cliff_mixed_table.png",
+  "name": "cliff_mixed_table",
+  "caption": "",
+  "shape": [
+   200,
+   546,
+   3
+  ],
+  "csv": "14_cliff_mixed_table.csv",
+  "tsv": "14_cliff_mixed_table.tsv"
+ }
+]
