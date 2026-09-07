@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(167 例)
+### 2-D 画像/信号/幾何(169 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -28,6 +28,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **地心座標と地球の丸み(測地⇄ECEF・地心格子・曲率落ち・緯度で変わるセル寸法)** — 赤道・極・楕円体方程式・法線移動で ECEF を検算し、3700 点の往復誤差を高さ別に印字する(楕円体面 2e-9 m、20 km で 4e-6 m —— docstring の 1e-7 m は地表付近の値)。地心緯度と測地緯度の差 0.19 度、曲率落ちの表、Web メルカトル分解能、等角度格子の東西傾斜が北緯 60 度で素朴計算だと半分になることを閉形式と突き合わせる。 `py -3.11 examples/dem_geodesy_tour.py`
 - **地形解析ツアー(粗さ・TPI・D8 流向・河道・地平線仰角・可視領域)** — 平面・柱・円錐・V 字谷・壁という答えを数えられる地形で 6 op を通す。TRI=√(3/4)|∇z|·cell、谷底の集水量 W(i+1) と河道マスクのセル単位一致、壁の仰角 atan(H/d)、壁の影の長さ e·d0/(e-H)。欠測の outlet 方針は「他に下る先が無いときだけ欠測へ」と実測。 `py -3.11 examples/dem_terrain_analysis_tour.py`
 - **斜面の土量を測る(縦に引くか法線で測るか、そして合わせすぎの罠)** — 既知体積の掘削 164.2 m3 と堆積 133.7 m3 を傾斜地に仕込み、2 時期の点群から DoD(格子の引き算)と M3C2(法線方向)で測り返す。★予想「斜面では cos だけ体積が縮む」は外れ ―― 水平投影面積で積むと cos は約分し、誤差は 0〜40 度でどれも -0.011 %。間違うのは体積でなく厚さで、深さの比は sec θ に一致する。★★変化なしの対照が偽掘削 83.8 m3(真値の 51 %)を出し、しきい値を入れて 18.1 m3 に落ちる ―― **しきい値は飾りではなく本体**。★★変化域が視野の 33 % あると位置合わせが変化を吸い、正味は真値の 12.6 % に潰れる(trim 0.6 で 101.1 % に復帰)。M3C2 の利得は傾斜からしか来ない(検出限界の比は平地 1.18、40 度 3.40)。 `py -3.11 examples/poc_lidar_terrain_change.py`
+- **作物の葉面積を上から測る(葉が重なると投影が畳む)** — 葉を解析曲面で組み、片面葉面積 pi/4·L·W と投影係数 G(theta) を閉形式で持ったまま、天頂からの厳密な z-buffer で群落を測る。★植被率からの Beer-Lambert 反転は消光係数を真値に直しても LAI 4.85 で -52.2 % で、2 段階クランピングから予測した天井 2.26 の近く(実測 2.70)で止まる。★遮蔽は天頂の植被率を 1 ビットも変えない —— 壊れ方は「投影が畳む分 2.68(投影 m^2/m^2)」と「遮蔽が奪う分 3.80(葉 m^2/m^2)」の 2 つで単位から別物、対照群(葉の方位を互生から乱数へ)がクランピング指数 0.478 -> 0.946 と原因を名指しする。★見える葉面積の天井 1/k = 1.374 は閉形式どおり、崖は点密度の対数でしか動かず 4 倍で +1.92。★葉角は面積加重が正しい式なのに、推定法線に掛けると -30.1 % まで崩れ重みなしの平均 -1.2 % に負ける。 `py -3.11 examples/poc_crop_phenotyping.py`
 
 **metrology**
 - **白色干渉によるナノメートルの段差計測(どこまで測れるか)** — 既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。 `py -3.11 examples/poc_interferometry_step.py`
@@ -245,6 +246,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **3D Gaussian Splatting の出力(中心点群)を fullseye で処理する** — 3DGS を学習はしない(GPU レンダラが要る)。結果の点群を取り込みダウンサンプル・法線推定・2 回撮影の登録まで(テンプレート、--save で PLY)。 `py -3.11 examples/gaussian_splat_cloud.py`
 - **sim2real 劣化(aug_*)・人工生命・触覚 op 族の一巡** — 光子雑音/固定パターン/ローリングシャッター/JPEG/歪み等でクリーンな描画を実カメラ風に劣化させ、人工生命・触覚 op も含めて実行する(数値を印字)。 `py -3.11 examples/sim2real_and_alife.py`
 - **鳥瞰図への多センサ融合(px で合格の校正が、遠くでは長さになる)** — ★★再投影 1 px = 1/f ラジアン = 距離 R で R/f メートル。f=265 px なら 22 m 先で 0.083 m/px で、yaw 0.20 度 = 0.98 px の「サブピクセル合格」でも BEV では既に 0.077 m ずれる。★★融合(IoU 0.7033)が単センサの最良 0.5417 を上回る分は**すべて視界**から来る —— 横に 1.8 m 離した 2 センサの影は 20 m 先で食い違い、左の遠方車は LiDAR が 24 セル / カメラが 0 セル、右は 0 / 52 セルと綺麗に入れ替わる。★予想が外れたのは崖の尺度で、点がセルを跨ぐ割合は幾何の予測と最大差 0.0553 で当たるのに、yaw 0.5 度で 68 % が跨いでも IoU は 5.8 % しか落ちない(効くのはセル 0.2 m でなく車幅 1.9 m)。★同じ yaw 1 度から最大値則は偽占有 96 セル、平均則は見逃し 85 セルを作るが IoU は 0.6583 と 0.6600 でほぼ同じ —— IoU 1 本では急停止と衝突を区別できない。★信頼度重み則は「なめらかに混ざる」はずが、雑音モデルが交差しないので評価セルの 80.4 % で LiDAR が勝ち、**実質「LiDAR 優先」の順位規則に退化**していた。 `py -3.11 examples/poc_bev_sensor_fusion.py`
+- **人と機械の安全距離(「近い」を測る点を置き換えると危険が消える)** — 多関節の人体(カプセル 10 本)と可動アームを合成し、真の最小分離距離を線分どうしの閉形式(総当たりと最大差 5.6e-05 m)と線分-直方体の凸 1 次元最小化で持ち、危険(真値 < 0.640 m)と停止判定(推定 < 0.690 m)を分けて数えた。★ゼロ点の重心 1 点は危険時に +0.166 m / 最大 +0.304 m 遠く言い(予想は腕の伸び - 被せた半径 = +0.232 m で桁も向きも当たり)、危険の 14.3 % を見落として誤検知は 0.8 % —— 足元 1 点はさらに 28.6 %。★★崖は 3 つあるが誤りの向きが違う: 理想でも誤検知は 3.4 % 出る(停止判定が物理の危険より 0.050 m 大きい設計余裕ぶん)のに対し、遮蔽を入れるとその誤検知が 0.0 % に減って代わりに見落としが 18.1 % 出る —— 見えない点は必ず『もっと遠い』としか言えないので、遮蔽は誤りを危険な側へ移すだけ。★遮蔽は点を増やしても消えない(1 台 800 点 18.1 % / 100 点 29.5 %、遮蔽なしの 100 点は 4.8 %)、効くのは 2 台目だけ(0.0 %)。★★Z_d を繰り返し性から見積もると 0.036 m(3σ)だが、同じ点群を測り直しても遮蔽の形は変わらないので原理的に写らず、遮蔽の偏りの 95 % 点 0.178 m の 5 分の 1 —— 見落としを 0 にする Z_d 0.150 m を入れると停止時間が 18.3 → 24.4 % に増える。★予想を外したのは点密度の式で、(s/2)²/(2r) は最疎で 0.107 m と踏んだが実測 +0.040 m(2.7 倍の過大)。★Chamfer 0.0388 m は隠れた手を薄めるが Hausdorff 0.2481 m(6.4 倍)は分離距離の過大評価と同じ桁に残る。★占有格子 + ESDF は距離を必ず遠く言い、40/20/10 mm で +0.0104 / +0.0056 / +0.0024 m —— 予想の半ボクセルではなく約 1/4 ボクセル(三線形補間が階段を均す)。 `py -3.11 examples/poc_safety_clearance.py`
 
 **consumer**
 - **hillco / evis(筋骨格ヒューマノイド歩行)が fullseye を使う 3 つの検査** — 物理シムが真値を持つ前提で、fullseye は独立な知覚側の二重チェックのみ: 歩行安定性(支持多角形/COM 余裕)、レンダ動画の運動検証、姿勢の骨格化。制御は駆動しない。 `py -3.11 examples/consumer_hillco.py`
@@ -484,7 +486,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 355 ops / 66 categories。_
+_計 356 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -618,7 +620,7 @@ _計 355 ops / 66 categories。_
 - `vol_rotate` (`voxel → voxel`) — Rotate a volume in the plane of an axis pair (``scipy.ndimage.rotate``). · 例: `vol_geometry_transform`
 - `vol_affine` (`voxel → voxel`) — General affine resampling (``scipy.ndimage.affine_transform``). · 例: `vol_geometry_transform`
 
-### geometry(23)
+### geometry(24)
 - `line_from_2points` (`points → primitive`) — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
 - `plane_from_3points` (`points → primitive`) — 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
 - `angle_3points` (`points → measurement`) — 3 点のなす角(頂点 b、度)。∠ABC。 · 例: `geometry_metrology`
@@ -628,6 +630,7 @@ _計 355 ops / 66 categories。_
 - `distance_point_plane` (`points, primitive → measurement`) — 点-平面距離(符号なし)。 · 例: `geometry_metrology`
 - `distance_point_line` (`points, primitive → measurement`) — 点-直線距離。 · 例: `geometry_metrology`
 - `distance_line_line` (`primitive → measurement`) — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: `geometry_metrology`
+- `distance_segment_segment` (`primitive → measurement`) — **有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。 · 例: `geometry_metrology`
 - `intersect_line_plane` (`primitive → position`) — 直線 ∩ 平面 → 点(平行なら None)。 · 例: `geometry_metrology`
 - `intersect_planes` (`primitive → primitive`) — 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。 · 例: `geometry_metrology`
 - `fit_line_3d` (`points → primitive`) — 点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。 · 例: `geometry_metrology`

@@ -287,6 +287,10 @@ _CATALOG = {
         ("distance_point_plane", "match3d", ["points", "primitive"], "measurement", False),
         ("distance_point_line", "match3d", ["points", "primitive"], "measurement", False),
         ("distance_line_line", "match3d", ["primitive"], "measurement", False),
+        # 2026-09-07 追加。distance_line_line は**無限直線**なので、離れた 2 線分に
+        # 0 を返す(実測)。手足・リンク・配管は有限なので、安全距離では危険を
+        # 過小評価する(KNOWN_ISSUES §41.13)。線分版を足した。
+        ("distance_segment_segment", "match3d", ["primitive"], "measurement", False),
         ("intersect_line_plane", "match3d", ["primitive"], "position", False),
         ("intersect_planes", "match3d", ["primitive"], "primitive", False),
         ("fit_line_3d", "match3d", ["points"], "primitive", False),
@@ -859,6 +863,9 @@ RESULT_ADAPTERS = {
     # 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
     "vol_profile_line": lambda r: np.stack(r, axis=1) if isinstance(r, tuple) else r,
     "vol_wall_thickness": lambda r: np.asarray(r, np.float64),
+    # distance_segment_segment は (distance, cp, cq) を返す。宣言 out は距離なので
+    # 本体値を剥がす。最近接点が要る呼び手は .raw / 素の関数を使う。
+    "distance_segment_segment": lambda r: r[0] if isinstance(r, tuple) else r,
     # m3c2_distance は (distance, lod) を返す。宣言 out は法線方向の距離なので
     # 本体値を剥がす。検出限界 lod が要る呼び手は .raw / 素の関数を使う。
     "m3c2_distance": lambda r: r[0] if isinstance(r, tuple) else r,

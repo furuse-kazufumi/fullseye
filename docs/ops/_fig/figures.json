@@ -1,5 +1,5 @@
 {
- "generated_for": 897,
+ "generated_for": 901,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -13331,6 +13331,33 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_capsule_sdf": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_capsule_sdf.chain.jpg",
+    "gif": "tb_capsule_sdf.gif",
+    "inputs": "tb_capsule_sdf.inputs.jpg"
+   },
+   "fig": "tb_capsule_sdf.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_capsule_sdf 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_countrate_to_counts": {
    "color_ok": false,
    "extra": {
@@ -13607,6 +13634,33 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_cimage 0.50 0.50\ntb_cx_real 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_cylinder_sdf": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_cylinder_sdf.chain.jpg",
+    "gif": "tb_cylinder_sdf.gif",
+    "inputs": "tb_cylinder_sdf.inputs.jpg"
+   },
+   "fig": "tb_cylinder_sdf.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_cylinder_sdf 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -15165,6 +15219,33 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_plane_sdf": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_plane_sdf.chain.jpg",
+    "gif": "tb_plane_sdf.gif",
+    "inputs": "tb_plane_sdf.inputs.jpg"
+   },
+   "fig": "tb_plane_sdf.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_plane_sdf 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_plane_segmentation": {
    "color_ok": false,
    "extra": {
@@ -16580,6 +16661,33 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_video 0.50 0.50\ntb_three_frame_difference 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_torus_sdf": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_torus_sdf.chain.jpg",
+    "gif": "tb_torus_sdf.gif",
+    "inputs": "tb_torus_sdf.inputs.jpg"
+   },
+   "fig": "tb_torus_sdf.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_points 0.50 0.50\ntb_torus_sdf 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -20993,10 +21101,10 @@
   "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 892,
+  "ok": 896,
   "unreachable": 0,
-  "with_chain": 361,
-  "with_gif": 36,
+  "with_chain": 365,
+  "with_gif": 40,
   "with_sweep": 546
  }
 }

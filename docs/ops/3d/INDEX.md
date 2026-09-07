@@ -1,4 +1,4 @@
-# 3D operator help — 355 ops in 66 categories
+# 3D operator help — 356 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -93,9 +93,9 @@
 
 [vol_affine](geom_transform/vol_affine.md) · [vol_resize](geom_transform/vol_resize.md) · [vol_rotate](geom_transform/vol_rotate.md)
 
-### geometry (23)
+### geometry (24)
 
-[angle_3points](geometry/angle_3points.md) · [angle_between_lines](geometry/angle_between_lines.md) · [angle_between_planes](geometry/angle_between_planes.md) · [angle_line_plane](geometry/angle_line_plane.md) · [distance_line_line](geometry/distance_line_line.md) · [distance_point_line](geometry/distance_point_line.md) · [distance_point_plane](geometry/distance_point_plane.md) · [fit_box3](geometry/fit_box3.md) · [fit_circle3](geometry/fit_circle3.md) · [fit_circle_3d](geometry/fit_circle_3d.md) · [fit_line3](geometry/fit_line3.md) · [fit_line_3d](geometry/fit_line_3d.md) · [fit_plane3](geometry/fit_plane3.md) · [fit_plane_3d](geometry/fit_plane_3d.md) · [fit_sphere3](geometry/fit_sphere3.md) · [fit_sphere_3d](geometry/fit_sphere_3d.md) · [intersect_line_plane](geometry/intersect_line_plane.md) · [intersect_planes](geometry/intersect_planes.md) · [line_from_2points](geometry/line_from_2points.md) · [plane_from_3points](geometry/plane_from_3points.md) · [smallest_box3](geometry/smallest_box3.md) · [smallest_box3_axis](geometry/smallest_box3_axis.md) · [smallest_sphere3](geometry/smallest_sphere3.md)
+[angle_3points](geometry/angle_3points.md) · [angle_between_lines](geometry/angle_between_lines.md) · [angle_between_planes](geometry/angle_between_planes.md) · [angle_line_plane](geometry/angle_line_plane.md) · [distance_line_line](geometry/distance_line_line.md) · [distance_point_line](geometry/distance_point_line.md) · [distance_point_plane](geometry/distance_point_plane.md) · [distance_segment_segment](geometry/distance_segment_segment.md) · [fit_box3](geometry/fit_box3.md) · [fit_circle3](geometry/fit_circle3.md) · [fit_circle_3d](geometry/fit_circle_3d.md) · [fit_line3](geometry/fit_line3.md) · [fit_line_3d](geometry/fit_line_3d.md) · [fit_plane3](geometry/fit_plane3.md) · [fit_plane_3d](geometry/fit_plane_3d.md) · [fit_sphere3](geometry/fit_sphere3.md) · [fit_sphere_3d](geometry/fit_sphere_3d.md) · [intersect_line_plane](geometry/intersect_line_plane.md) · [intersect_planes](geometry/intersect_planes.md) · [line_from_2points](geometry/line_from_2points.md) · [plane_from_3points](geometry/plane_from_3points.md) · [smallest_box3](geometry/smallest_box3.md) · [smallest_box3_axis](geometry/smallest_box3_axis.md) · [smallest_sphere3](geometry/smallest_sphere3.md)
 
 ### gicp (2)
 

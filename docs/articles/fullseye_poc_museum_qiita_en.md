@@ -49,7 +49,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-09-07 — Pitch, Flank Angle and Pitch Diameter From a Thread Silhouette — Tilt Shows Up With Opposite Signs on the Two Flanks (poc_screw_thread_metrology)
 - 2026-09-07 — Change detection under misregistration — false positives are edge bands, with a cliff (poc_change_detection_misreg)
 
-## The wings (84 exhibits)
+## The wings (86 exhibits)
 
 <!-- generated -->
 
@@ -1644,6 +1644,42 @@ py -3.11 examples/poc_pipe_wall_loss.py
 Source: [examples/poc_pipe_wall_loss.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pipe_wall_loss.py)
 
 Ops used (notes): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_select`](https://furuse.work/ops/blob/select/blob_select.html) · [`cylinder_sdf`](https://furuse.work/ops/3d/sdf_csg/cylinder_sdf.html) · [`cylinder_unwrap`](https://furuse.work/ops/3d/curvilinear/cylinder_unwrap.html) · [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`polar_unwrap`](https://furuse.work/ops/3d/curvilinear/polar_unwrap.html) · [`ransac_cylinder`](https://furuse.work/ops/3d/robust_fit/ransac_cylinder.html) · [`render_volume_projection`](https://furuse.work/ops/3d/render/render_volume_projection.html) · [`sdf_subtract`](https://furuse.work/ops/3d/sdf_csg/sdf_subtract.html) · [`sdf_to_occupancy`](https://furuse.work/ops/3d/transform/sdf_to_occupancy.html) · [`vol_wall_thickness`](https://furuse.work/ops/3d/probe/vol_wall_thickness.html)
+
+## 85. Crop leaf area from above — folded by projection before it is ever hidden
+
+[![Crop leaf area from above — folded by projection before it is ever hidden](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir.png)
+
+*↑ **Crop leaf area from above — folded by projection before it is ever hidden** ―― A maize canopy built from analytic leaf surfaces (one-sided area pi/4·L·W, leaf angle and projection coefficient both closed-form) is viewed through an exact nadir z-buffer to measure cover, occlusion and leaf angle. Inverting cover with Beer-Lambert underestimates a true leaf area index of 4.85 by 52.2 % even with the exact extinction coefficient, and stalls just above the ceiling of 2.26 predicted from two-scale clumping (measured 2.70). Occlusion changes nadir cover by not one bit; what breaks the estimate is the folding of projection — an average of 3.49 leaves cover a cell yet are counted once — and quadrupling point density buys only +1.92 in the largest resolvable index.*
+
+[![閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。2 値化を挟むと面積だけが一方向に膨らむ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/01_capsule_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crop_phenotyping/01_capsule_calibration.png)
+
+*↑ The measurement ―― 閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。2 値化を挟むと面積だけが一方向に膨らむ。 (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_crop_phenotyping.py
+```
+
+Source: [examples/poc_crop_phenotyping.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crop_phenotyping.py)
+
+Ops used (notes): [`boundary_vertices`](https://furuse.work/ops/3d/mesh_process/boundary_vertices.html) · [`capsule_sdf`](https://furuse.work/ops/3d/sdf_csg/capsule_sdf.html) · [`dem_slope`](https://furuse.work/ops/dem/surface/dem_slope.html) · [`estimate_normals`](https://furuse.work/ops/3d/curvature/estimate_normals.html) · [`face_areas`](https://furuse.work/ops/3d/mesh_process/face_areas.html) · [`face_normals`](https://furuse.work/ops/3d/mesh_process/face_normals.html) · [`grid_coords`](https://furuse.work/ops/3d/sdf_csg/grid_coords.html) · [`mesh_area`](https://furuse.work/ops/3d/mesh_process/mesh_area.html) · [`mesh_sample_points`](https://furuse.work/ops/3d/resolution/mesh_sample_points.html) · [`mesh_volume`](https://furuse.work/ops/3d/mesh_process/mesh_volume.html) · [`occupancy_grid`](https://furuse.work/ops/3d/occupancy/occupancy_grid.html) · [`plane_segmentation`](https://furuse.work/ops/3d/segment/plane_segmentation.html) · [`render_volume_projection`](https://furuse.work/ops/3d/render/render_volume_projection.html) · [`sdf_to_occupancy`](https://furuse.work/ops/3d/transform/sdf_to_occupancy.html)
+
+## 86. Human-machine clearance — swap the body for a point, and the hazard vanishes with it
+
+[![Human-machine clearance — swap the body for a point, and the hazard vanishes with it](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance.png)
+
+*↑ **Human-machine clearance — swap the body for a point, and the hazard vanishes with it** ―― A ten-capsule articulated body and a moving arm are synthesised so that the true surface-to-surface minimum separation is known in closed form at every instant, and the speed-and-separation-monitoring verdict is then scored against it. Representing the person by one centroid inside a 0.30 m sphere reports the distance +0.166 m too far while a hazard is present and misses 14.3 % of the dangerous frames (28.6 % for a foot-level scanner) — with almost no false alarms, so the failure is strictly one-sided. With a single camera behind the person, 48.6 % of the dangerous frames have the estimate decided by a body part that is not the true nearest one, and 18.1 % are missed; a second camera restores 0 %, but the uncertainty claimed from repeatability, 0.036 m, is only one fifth of the 0.178 m bias that occlusion actually produces.*
+
+[![危険 = 真の距離 < 0.640 m、停止判定 = 推定 < 0.690 m。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/01_conditions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_safety_clearance/01_conditions.png)
+
+*↑ The measurement ―― 危険 = 真の距離 < 0.640 m、停止判定 = 推定 < 0.690 m。 (figure labels are in Japanese; the numbers are the same)*
+
+```
+py -3.11 examples/poc_safety_clearance.py
+```
+
+Source: [examples/poc_safety_clearance.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_safety_clearance.py)
+
+Ops used (notes): [`annotate3d_label`](https://furuse.work/ops/3d/annotate3d/annotate3d_label.html) · [`annotate3d_measure`](https://furuse.work/ops/3d/annotate3d/annotate3d_measure.html) · [`box_sdf`](https://furuse.work/ops/3d/sdf_csg/box_sdf.html) · [`capsule_sdf`](https://furuse.work/ops/3d/sdf_csg/capsule_sdf.html) · [`chamfer_distance`](https://furuse.work/ops/3d/metrics/chamfer_distance.html) · [`distance_line_line`](https://furuse.work/ops/3d/geometry/distance_line_line.html) · [`esdf`](https://furuse.work/ops/3d/occupancy/esdf.html) · [`face_areas`](https://furuse.work/ops/3d/mesh_process/face_areas.html) · [`hausdorff_distance`](https://furuse.work/ops/3d/metrics/hausdorff_distance.html) · [`query_distance`](https://furuse.work/ops/3d/occupancy/query_distance.html) · [`render_volume_projection`](https://furuse.work/ops/3d/render/render_volume_projection.html) · [`sdf_to_occupancy`](https://furuse.work/ops/3d/transform/sdf_to_occupancy.html) · [`sdf_union`](https://furuse.work/ops/3d/sdf_csg/sdf_union.html)
 
 
 ## Applying it to your own problem

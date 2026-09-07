@@ -438,6 +438,12 @@ OP_PARAM_HINTS = {
     ("geodesic_distances", "source"): lambda rng: 0,
     # m3c2_distance(a, b, cores, normals, radius, max_depth): core と法線が要る。
     # 生成器の points プール(単位球あたり)に合わせて半径を取る。
+    # distance_segment_segment(p0, p1, q0, q1): 端点 4 つ。交差しない配置にして、
+    # 距離がゼロに潰れない(= つまみが効いて見える)ようにする。
+    ("distance_segment_segment", "p0"): lambda rng: np.array([0.0, 0.0, 0.0]),
+    ("distance_segment_segment", "p1"): lambda rng: np.array([1.0, 0.0, 0.0]),
+    ("distance_segment_segment", "q0"): lambda rng: np.array([0.0, 2.0, 0.0]),
+    ("distance_segment_segment", "q1"): lambda rng: np.array([1.0, 2.0, 1.0]),
     ("m3c2_distance", "cores"): lambda rng: np.zeros((4, 3)) + np.array([0.0, 0.0, 0.0]),
     ("m3c2_distance", "normals"): lambda rng: np.tile(np.array([0.0, 0.0, 1.0]), (4, 1)),
     ("m3c2_distance", "radius"): lambda rng: 0.5,
@@ -447,7 +453,11 @@ OP_PARAM_HINTS = {
     # 2026-09-07 追加のプリミティブ。grid_coords の既定 bounds (0..10)^3 の中に
     # 収まる寸法にして、探針が「内側も外側も持つ」場を得られるようにする。
     ("plane_sdf", "point"): lambda rng: np.array([5.0, 5.0, 5.0]),
-    ("plane_sdf", "normal"): lambda rng: np.array([0.0, 0.0, 1.0]),
+    # ★法線は**軸に平行にしない**。軸平行だと距離場が 1 軸にしか変化せず、
+    # 図の生成器が作る「スライスを並べた GIF」が 1 コマに潰れる(2026-09-08 実測)。
+    # 傾けた法線なら全スライスが変わる。長さは効かない(op が正規化する)ので、
+    # 正規化していないベクトルを渡してその仕様も見せる。
+    ("plane_sdf", "normal"): lambda rng: np.array([1.0, 2.0, 3.0]),
     ("cylinder_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
     ("cylinder_sdf", "axis"): lambda rng: np.array([0.0, 0.0, 1.0]),
     ("cylinder_sdf", "radius"): lambda rng: 2.0,

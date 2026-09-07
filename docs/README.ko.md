@@ -17,7 +17,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 시리즈 — 참값을 두고 푼 실제 문제 84건
+## PoC 시리즈 — 참값을 두고 푼 실제 문제 86건
 
 모두 닫힌 형태 또는 합성으로 엄밀한 참값을 가지며, 제로 포인트(아무것도 하지 않는 경우)를 반드시 함께 적습니다. 전체 목록: [examples/README.md](../examples/README.md).
 
@@ -31,18 +31,18 @@
 | separation (5) | [`poc_colocalization_crosstalk`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colocalization_crosstalk.py) 蛍光の共局在と漏れ込み(Pearson と Manders は別の場所で壊れる)<br>[`poc_pigment_unmixing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py) 多波長で彩色層を剥がす(勝ったのは「多波長」ではなく「近赤外」だった)<br>[`poc_polarization_specular`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py) 偏光による鏡面分離(分けた「拡散」は本当に拡散か)<br>[`poc_recycling_sorting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_recycling_sorting.py) 混合廃棄物の材質選別(消せる汚れと消せない汚れは代数で決まる)<br>[`poc_sea_ice_concentration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_sea_ice_concentration.py) 海氷密接度(混合画素をどう数えるかで答えが変わる) |
 | motion (4) | [`poc_particle_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_tracking.py) 粒子追跡を (行, 列, 時刻) の体積として測る(誤リンクの向きは 1 種類ではない)<br>[`poc_river_surface_velocity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_river_surface_velocity.py) 河川表面流速を斜め動画から測る(速度の誤差と流量の誤差は別物)<br>[`poc_traffic_counting`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_traffic_counting.py) (x, y, t) で数える(通過台数とオクルージョン、そして L/V という 1 つの定数)<br>[`poc_warehouse_flow`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_warehouse_flow.py) 庫内の滞留を種類別に読む(1 つの「滞留時間」に畳むと全部が混雑になる) |
 | registration (3) | [`poc_change_detection_misreg`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_change_detection_misreg.py) 変化検出と位置合わせ誤差(偽陽性はエッジの帯、しかも崖つき)<br>[`poc_registration_basin`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py) 点群位置合わせの収束域(どれだけずれていたら失敗するか)<br>[`poc_template_tracking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_template_tracking.py) テンプレート追跡(見失うより先に、静かにずれる) |
+| terrain (3) | [`poc_crop_phenotyping`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_crop_phenotyping.py) 作物の葉面積を上から測る(葉が重なると投影が畳む)<br>[`poc_dem_terrain`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) 地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)<br>[`poc_lidar_terrain_change`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py) 斜面の土量を測る(縦に引くか法線で測るか、そして合わせすぎの罠) |
 | calibration (2) | [`poc_camera_calibration`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_calibration.py) カメラ校正の再投影誤差は何を保証しないか<br>[`poc_thermal_drift_metrology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_thermal_drift_metrology.py) カメラの熱ドリフトが寸法計測に効く量(分離できるのは歪みがあるから) |
 | decoding (2) | [`poc_barcode_1d`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_barcode_1d.py) 1 次元バーコードが読めなくなる境界(誤読と読み取り不能を分けて数える)<br>[`poc_matrix_code_reading`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_matrix_code_reading.py) 2 値マトリクスコードの読取限界(何画素あれば読めるか) |
 | depth (2) | [`poc_focus_stacking`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_focus_stacking.py) 深度合成(絵は圧勝、深度はゼロ点に負ける場所がある)<br>[`poc_lightfield_depth`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lightfield_depth.py) ライトフィールドの深度(81 視点は 2 眼に勝てるのか) |
 | forensics (2) | [`poc_forensics_roc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_forensics_roc.py) 画像改ざん検出の ROC(保存ボタン 1 回で何が消えるか)<br>[`poc_fresco_craquelure`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fresco_craquelure.py) 絵画のひび割れ網(壊れるのは分岐次数だけ) |
 | imaging quality (2) | [`poc_moire_screen`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_moire_screen.py) パネル検査のモアレは「本物のムラ」と区別できるか(打ち消しと窓長)<br>[`poc_veiling_glare`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_veiling_glare.py) 迷光がコントラスト計測を壊す(MTF 合格・黒レベル不合格を同じレンズで作る) |
 | morphology (2) | [`poc_bilateral_asymmetry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bilateral_asymmetry.py) 左右非対称性の定量(対称面そのものが変形に引きずられる)<br>[`poc_vessel_network`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vessel_network.py) 血管網を抜いて分岐を測る(ヒゲ、分岐近傍の径の過大、指数の脆さ) |
+| perception_templates (2) | [`poc_bev_sensor_fusion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py) 鳥瞰図への多センサ融合(px で合格の校正が、遠くでは長さになる)<br>[`poc_safety_clearance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_safety_clearance.py) 人と機械の安全距離(「近い」を測る点を置き換えると危険が消える) |
 | restoration (2) | [`poc_camera_shake_deblur`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_camera_shake_deblur.py) 手ブレ除去はどこまで戻せるか(核が既知でも雑音が上限を決める)<br>[`poc_dehazing`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dehazing.py) 霞除去(律速は大気光ではなく透過率。薄い霞では除霞が害になる) |
-| terrain (2) | [`poc_dem_terrain`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) 地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)<br>[`poc_lidar_terrain_change`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py) 斜面の土量を測る(縦に引くか法線で測るか、そして合わせすぎの罠) |
 | tomography_3d (2) | [`poc_battery_ct_degradation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_battery_ct_degradation.py) 電池セルの内部劣化を CT で測る(膨れの何割が外から見えるか)<br>[`poc_ct_void_morphology`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py) X 線 CT のボイド形態(合否 1 個の数字は、寿命に効く形に盲目) |
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) 動画からのモード同定(f は当たる、ζ が先に嘘をつく)<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) モーション拡大の振幅精度(拡大は測るための道具か) |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) 色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い) |
-| perception_templates (1) | [`poc_bev_sensor_fusion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py) 鳥瞰図への多センサ融合(px で合格の校正が、遠くでは長さになる) |
 | ranging (1) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) 光子計数 dToF の距離精度(理論限界に乗るか、どこで崩れるか) |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) 書類スキャンの台形補正と影除去(良いところ取りは無い) |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) CT 再構成の忠実度(投影数を減らすとどこで壊れるか) |
@@ -54,16 +54,16 @@
 
 ## 연산자 찾기
 
-**1,866개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **49개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**1,867개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **49개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 901/901, 타입 台帳 966/1010, 한 줄 파사드 `fullseye.<이름>` 501/1091 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 901/901, 타입 台帳 967/1011, 한 줄 파사드 `fullseye.<이름>` 501/1091 — **파사드는 아직 절반**.
 
-**내용 실측**: 1866건 중 실행 가능한 예제가 붙은 것은 **1837**건(29건은 없음), 사용법이 120자 이상인 것은 **1866**건(0건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 1866건 모두.
+**내용 실측**: 1867건 중 실행 가능한 예제가 붙은 것은 **1838**건(29건은 없음), 사용법이 120자 이상인 것은 **1867**건(0건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 1867건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
 | `2d` | 901 | [INDEX](ops/2d/INDEX.md) |
-| `3d` | 355 | [INDEX](ops/3d/INDEX.md) |
+| `3d` | 356 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 124 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 46 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
@@ -192,7 +192,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 71건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 1,866건과 패밀리 가이드 49건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 1,867건과 패밀리 가이드 49건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

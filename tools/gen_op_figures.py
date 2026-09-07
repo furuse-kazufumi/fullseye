@@ -493,11 +493,27 @@ def _gif_frames(value, sort: str):
 
 
 def _save_gif(path: str, frames) -> None:
+    """スライス / フレームの列を GIF に。**スケールは列全体で 1 つ**。
+
+    ★2026-09-08: 以前はコマごとに ``_panel`` の min-max 正規化を掛けていた。すると
+    「コマ間でどれだけ変わったか」が消える —— 平面の距離場のように各スライスが
+    同じ傾斜で値だけずれている場合、正規化後の全コマが**画素単位で同一**になり、
+    PIL が 1 コマに畳んだ(``tb_plane_sdf.gif`` が n_frames=1 で門に掛かって発覚)。
+    GIF の役目は「軸に沿って何が変わるか」を見せることなので、列の最小・最大で
+    一度だけ伸ばす。コマ内の相対構造も保たれる。
+    """
     from PIL import Image
 
+    arrs = [np.nan_to_num(np.asarray(f, np.float64), nan=0.0, posinf=0.0, neginf=0.0)
+            for f in frames]
+    lo = min(float(a.min()) for a in arrs)
+    hi = max(float(a.max()) for a in arrs)
+    scale = (hi > 1.0 or lo < 0.0) and (hi - lo) > 1e-12
     ims = []
-    for f in frames:
-        u8 = (np.clip(_panel(f), 0, 1) * 255).astype(np.uint8)
+    for a in arrs:
+        if scale:
+            a = (a - lo) / (hi - lo)
+        u8 = (np.clip(_panel(a), 0, 1) * 255).astype(np.uint8)
         ims.append(Image.fromarray(u8, "RGB").quantize(colors=128, method=Image.Quantize.MEDIANCUT, dither=0))
     ims[0].save(path, save_all=True, append_images=ims[1:], duration=250, loop=0, optimize=True)
 

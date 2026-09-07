@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">distance_segment_segment — 3D <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_segment_segment(p0, p1, q0, q1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.distance_segment_segment(p0, p1, q0, q1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;distance_segment_segment&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.distance_segment_segment</code> 를 직접 호출하세요.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
+<p><b>有限線分</b>どうしの最短距離と、その最近接点の対。→ `<code style="color:#22d3bf">(distance, cp, cq)</code>`。</p>
+<p>`<code style="color:#22d3bf">distance_line_line</code>` は<b>無限直線</b>の距離なので、離れた 2 線分に 0 を返すことが</p>
+<p>ある(実測: (0,0,0)-(1,0,0) と (5,0,0)-(6,0,0) に対し 0.0、真値は 4.0)。手足・</p>
+<p>ロボットのリンク・配管・工具はどれも<b>有限</b>なので、安全距離や干渉判定に</p>
+<p>無限直線版を使うと<b>危険を過小評価する</b>(<code style="color:#22d3bf">poc_safety_clearance</code> の実測では</p>
+<p>同じ 2 本に対し 87.6 % の過小評価)。</p>
+<p>Args:</p>
+<p>p0, p1: 線分 1 の端点 `<code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">p0 == p1</code>` なら点として扱う。</p>
+<p>q0, q1: 線分 2 の端点 `<code style="color:#22d3bf">(3,)</code>`。</p>
+<p>Returns:</p>
+<p>`<code style="color:#22d3bf">(distance, cp, cq)</code>`: 最短距離 float と、線分 1 側・線分 2 側の最近接点</p>
+<p>`<code style="color:#22d3bf">(3,)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">distance == 0</code>` は 2 線分が交差(または接触)しているとき。</p>
+<p>★台帳経由(`<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>`)は宣言 out 型の</p>
+<p>`<code style="color:#22d3bf">distance</code>` だけを返す。最近接点も要るときは</p>
+<p>`<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>`。</p>
+<p>Raises:</p>
+<p>ValueError: 端点が `<code style="color:#22d3bf">(3,)</code>` に直せない、または非有限のとき。</p>
+<p>平行・退化(点に潰れた線分)も分岐で正しく扱う(Ericson, *Real-Time Collision</p>
+<p>Detection*, §5.1.9 の clamped closest-point 法)。<b>カプセル</b>(芯線 + 半径)</p>
+<p>どうしの距離は `<code style="color:#22d3bf">distance - r1 - r2</code>`、干渉は それが負になること。</p>
+<p>Reference (public): C. Ericson, *Real-Time Collision Detection*, Morgan Kaufmann</p>
+<p>2005, §5.1.9 &quot;Closest Points of Two Line Segments&quot;.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geometry_metrology">geometry_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geometry_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">measurement</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:line_from_2points">line_from_2points</a> · <a style="color:#22d3bf" href="op3d:plane_from_3points">plane_from_3points</a> · <a style="color:#22d3bf" href="op3d:angle_3points">angle_3points</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -2476,6 +2476,12 @@ def distance_point_line(p, line_pt, d):
 def distance_line_line(p1, d1, p2, d2):
     """2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。
 
+    ★これは**無限直線**の距離。手足・ロボットのリンク・配管のような**有限線分**に
+    使うと、離れているのに 0 が返ることがある(実測: (0,0,0)-(1,0,0) と
+    (5,0,0)-(6,0,0) で 0.0、真値 4.0)。線分どうしは
+    :func:`distance_segment_segment` を使うこと —— 安全距離の判定でここを取り違えると
+    **危険を過小評価する**側に外れる。
+
     ``n = d̂1 × d̂2`` を取り、``|n| < 1e-9``(平行)なら ``distance_point_line(p2, p1, d1)``、それ
     以外は ``|(p2 − p1)·n̂|``(共通垂線の長さ)を float で返す。交わる直線では 0。
     ``p1, d1, p2, d2`` は数値の 2 または 3 ベクトル、次元の混在は ValueError。
@@ -2489,6 +2495,72 @@ def distance_line_line(p1, d1, p2, d2):
         return distance_point_line(p2, p1, d1)
     return float(abs((p2 - p1) @ (n / ln)))
 
+
+
+def distance_segment_segment(p0, p1, q0, q1):
+    """**有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。
+
+    ``distance_line_line`` は**無限直線**の距離なので、離れた 2 線分に 0 を返すことが
+    ある(実測: (0,0,0)-(1,0,0) と (5,0,0)-(6,0,0) に対し 0.0、真値は 4.0)。手足・
+    ロボットのリンク・配管・工具はどれも**有限**なので、安全距離や干渉判定に
+    無限直線版を使うと**危険を過小評価する**(`poc_safety_clearance` の実測では
+    同じ 2 本に対し 87.6 % の過小評価)。
+
+    Args:
+        p0, p1: 線分 1 の端点 ``(3,)``。``p0 == p1`` なら点として扱う。
+        q0, q1: 線分 2 の端点 ``(3,)``。
+
+    Returns:
+        ``(distance, cp, cq)``: 最短距離 float と、線分 1 側・線分 2 側の最近接点
+        ``(3,)``。``distance == 0`` は 2 線分が交差(または接触)しているとき。
+
+        ★台帳経由(``fullseye.ledger.distance_segment_segment``)は宣言 out 型の
+        ``distance`` だけを返す。最近接点も要るときは
+        ``fullseye.ledger.distance_segment_segment.raw(...)``。
+
+    Raises:
+        ValueError: 端点が ``(3,)`` に直せない、または非有限のとき。
+
+    平行・退化(点に潰れた線分)も分岐で正しく扱う(Ericson, *Real-Time Collision
+    Detection*, §5.1.9 の clamped closest-point 法)。**カプセル**(芯線 + 半径)
+    どうしの距離は ``distance - r1 - r2``、干渉は それが負になること。
+
+    Reference (public): C. Ericson, *Real-Time Collision Detection*, Morgan Kaufmann
+    2005, §5.1.9 "Closest Points of Two Line Segments".
+    """
+    def _pt(v, name):
+        a = np.asarray(v, np.float64).reshape(-1)
+        if a.size != 3 or not np.all(np.isfinite(a)):
+            raise ValueError("%s must be a finite 3-vector (got %r)" % (name, np.shape(v)))
+        return a
+
+    P0, P1 = _pt(p0, "p0"), _pt(p1, "p1")
+    Q0, Q1 = _pt(q0, "q0"), _pt(q1, "q1")
+    d1, d2, r = P1 - P0, Q1 - Q0, P0 - Q0
+    a = float(d1 @ d1)                          # 線分 1 の長さの 2 乗
+    e = float(d2 @ d2)                          # 線分 2 の長さの 2 乗
+    f = float(d2 @ r)
+    eps = 1e-12
+    if a <= eps and e <= eps:                   # 両方とも点
+        s = t = 0.0
+    elif a <= eps:                              # 線分 1 が点
+        s, t = 0.0, min(1.0, max(0.0, f / e))
+    else:
+        c = float(d1 @ r)
+        if e <= eps:                            # 線分 2 が点
+            t, s = 0.0, min(1.0, max(0.0, -c / a))
+        else:
+            b = float(d1 @ d2)
+            denom = a * e - b * b               # 平行なら 0
+            s = min(1.0, max(0.0, (b * f - c * e) / denom)) if denom > eps else 0.0
+            t = (b * s + f) / e
+            if t < 0.0:
+                t, s = 0.0, min(1.0, max(0.0, -c / a))
+            elif t > 1.0:
+                t, s = 1.0, min(1.0, max(0.0, (b - c) / a))
+    cp = P0 + s * d1
+    cq = Q0 + t * d2
+    return float(np.linalg.norm(cp - cq)), cp, cq
 
 def intersect_line_plane(line_pt, d, plane_pt, n):
     """直線 ∩ 平面 → 点(平行なら None)。

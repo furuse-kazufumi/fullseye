@@ -4,6 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。</p>
+<p>★これは<b>無限直線</b>の距離。手足・ロボットのリンク・配管のような<b>有限線分</b>に</p>
+<p>使うと、離れているのに 0 が返ることがある(実測: (0,0,0)-(1,0,0) と</p>
+<p>(5,0,0)-(6,0,0) で 0.0、真値 4.0)。線分どうしは</p>
+<p>:func:<code style="color:#22d3bf">distance_segment_segment</code> を使うこと —— 安全距離の判定でここを取り違えると</p>
+<p><b>危険を過小評価する</b>側に外れる。</p>
 <p>`<code style="color:#22d3bf">n = d̂1 × d̂2</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">|n| &lt; 1e-9</code><code style="color:#22d3bf">(平行)なら </code><code style="color:#22d3bf">distance_point_line(p2, p1, d1)</code>`、それ</p>
 <p>以外は `<code style="color:#22d3bf">|(p2 − p1)·n̂|</code>`(共通垂線の長さ)を float で返す。交わる直線では 0。</p>
 <p>`<code style="color:#22d3bf">p1, d1, p2, d2</code>` は数値の 2 または 3 ベクトル、次元の混在は ValueError。</p>

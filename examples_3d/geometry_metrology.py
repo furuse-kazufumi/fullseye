@@ -165,6 +165,47 @@ print(f"distance_point_plane: {m3.distance_point_plane(p_above, c0, n1):.6f} (�
 print(f"distance_point_line : {m3.distance_point_line(q_off, c0, e1):.6f} (設計 {T_OFF})")
 print(f"distance_line_line  : {m3.distance_line_line(c0, e0, c0 + H_SKEW * e2, e1):.6f} (設計 {H_SKEW}, skew)")
 
+# ── 有限線分どうしの距離 ── 無限直線版との差が「安全側/危険側」を決める ─────
+# 手足・ロボットのリンク・配管・工具はどれも**有限**。無限直線の距離を使うと、
+# 離れているのに 0 が返る(下で実測)。安全距離の判定では**危険を過小評価**する。
+seg_cases = [
+    # (線分1 端点, 線分2 端点, 真値, なぜ)
+    ((0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (5.0, 0.0, 0.0), (6.0, 0.0, 0.0), 4.0,
+     "同一直線上で離れている（無限直線なら 0）"),
+    ((0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (1.0, 1.0, 0.0), 1.0, "平行"),
+    ((0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.5, -1.0, 0.0), (0.5, 1.0, 0.0), 0.0, "交差"),
+    ((0.0, 0.0, 0.0), (0.0, 0.0, 0.0), (3.0, 4.0, 0.0), (3.0, 4.0, 0.0), 5.0,
+     "両方とも点に退化"),
+]
+for a0, a1, b0, b1, want, why in seg_cases:
+    got, cp, cq = m3.distance_segment_segment(a0, a1, b0, b1)
+    assert abs(got - want) < 1e-9, (why, got, want)
+    assert abs(float(np.linalg.norm(np.asarray(cp) - np.asarray(cq))) - got) < 1e-12
+    print(f"distance_segment_segment: {got:.6f} (設計 {want}, {why})")
+
+# ★無限直線版との差を数字で出す（同じ 2 線分）
+a0, a1, b0, b1 = (0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (5.0, 0.0, 0.0), (6.0, 0.0, 0.0)
+d_seg, _, _ = m3.distance_segment_segment(a0, a1, b0, b1)
+d_inf = float(m3.distance_line_line(np.array(a0), np.array(a1) - np.array(a0),
+                                    np.array(b0), np.array(b1) - np.array(b0)))
+print(f"  同じ 2 線分: 線分 {d_seg:.3f} vs 無限直線 {d_inf:.3f}"
+      f" —— 無限直線版は {d_seg - d_inf:.3f} だけ**近い側に**間違える")
+assert d_inf < d_seg                       # 無限直線は必ず短く（＝危険側に）出る
+
+# 総当たりとの突き合わせ（閉形式は格子の総当たり以下でなければならない）
+_rng_seg = np.random.default_rng(20260907)
+_worst = 0.0
+for _ in range(120):
+    P = _rng_seg.normal(size=(4, 3))
+    d, _, _ = m3.distance_segment_segment(P[0], P[1], P[2], P[3])
+    tt = np.linspace(0.0, 1.0, 200)[:, None]
+    A = P[0] + tt * (P[1] - P[0])
+    B = P[2] + tt * (P[3] - P[2])
+    brute = float(np.sqrt(((A[:, None, :] - B[None, :, :]) ** 2).sum(-1)).min())
+    _worst = max(_worst, d - brute)
+print(f"  閉形式 − 200x200 総当たり の最大差 = {_worst:.2e}（<= 0 なら閉形式が正しい）")
+assert _worst <= 1e-12, _worst
+
 # ══════════════════════════════════════════════════════════════════════════
 # 7) 線 ∩ 面: intersect_line_plane(当たり点は面上、平行線は None)
 # ══════════════════════════════════════════════════════════════════════════

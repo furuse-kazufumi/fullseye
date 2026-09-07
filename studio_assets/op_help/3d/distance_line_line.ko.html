@@ -5,6 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 직선 사이 거리(꼬인 위치도 가능). 평행하면 점-선 거리로 물러납니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>★これは<b>無限直線</b>の距離。手足・ロボットのリンク・配管のような<b>有限線分</b>に</p>
+<p>使うと、離れているのに 0 が返ることがある(実測: (0,0,0)-(1,0,0) と</p>
+<p>(5,0,0)-(6,0,0) で 0.0、真値 4.0)。線分どうしは</p>
+<p>:func:<code style="color:#22d3bf">distance_segment_segment</code> を使うこと —— 安全距離の判定でここを取り違えると</p>
+<p><b>危険を過小評価する</b>側に外れる。</p>
 <p>`<code style="color:#22d3bf">n = d̂1 × d̂2</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">|n| &lt; 1e-9</code><code style="color:#22d3bf">(平行)なら </code><code style="color:#22d3bf">distance_point_line(p2, p1, d1)</code>`、それ</p>
 <p>以外は `<code style="color:#22d3bf">|(p2 − p1)·n̂|</code>`(共通垂線の長さ)を float で返す。交わる直線では 0。</p>
 <p>`<code style="color:#22d3bf">p1, d1, p2, d2</code>` は数値の 2 または 3 ベクトル、次元の混在は ValueError。</p>
