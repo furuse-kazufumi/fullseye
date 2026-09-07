@@ -180,14 +180,15 @@ def sample_xy(rng, rho: float, dens_scale: float = 1.0) -> tuple[np.ndarray, np.
 
 
 def make_clouds(*, settle: bool = True, dz: float = 0.0, seed: int = SEED,
-                dens_scale: float = 1.0) -> tuple[np.ndarray, np.ndarray]:
+                dens_scale: float = 1.0,
+                s_max: float = S_MAX) -> tuple[np.ndarray, np.ndarray]:
     """(A, B) = 2 時期の点群 ``(N,3)``。B に沈下と合わせの残差 ``dz`` が入る。"""
     rng = np.random.default_rng(seed)
     xa, ya = sample_xy(rng, RHO_A, dens_scale)
     za = surface_z(xa, ya, settle=False, seed=seed) \
         + SIGMA_RANGE * rng.standard_normal(xa.size)
     xb, yb = sample_xy(rng, RHO_B, dens_scale)
-    zb = surface_z(xb, yb, settle=settle, dz=dz, seed=seed) \
+    zb = surface_z(xb, yb, settle=settle, dz=dz, seed=seed, s_max=s_max) \
         + SIGMA_RANGE * rng.standard_normal(xb.size)
     return (np.column_stack([xa, ya, za]), np.column_stack([xb, yb, zb]))
 
