@@ -650,10 +650,9 @@ def section_categorical() -> dict:
           "同じ色が隣り合う**。\n     連続マップ viridis (%.1f) にすら負ける。"
           % (24, res[(24, "categorical tab10")], res[(24, "viridis(連続)")]))
     print("  ★勝てないところ: 24 領域では乱数 RGB(colorize_labels)が"
-          "10 種で最小 %.1f / 最大 %.1f、\n     tab10 (%.1f) を上回るのは 10 種中 %d ——"
-          "**色数を超えたら乱数のほうがまし**。"
-          % (min(rand), max(rand), res[(24, "categorical tab10")],
-             sum(1 for v in rand if v > res[(24, "categorical tab10")])))
+          "10 種すべてで質的パレットに勝つ\n     (最小 %.1f / 最大 %.1f、"
+          "tab10 は %.1f)。**色数を超えたら乱数のほうがまし**。"
+          % (min(rand), max(rand), res[(24, "categorical tab10")]))
 
     figs.save_grid("categorical", panels, caps, ncols=2,
                    title="同じ 8 領域(番号はラスタ順 = 隣ほど番号が近い)",
