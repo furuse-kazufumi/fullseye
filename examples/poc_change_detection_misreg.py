@@ -985,7 +985,8 @@ def section_controls(sc: dict) -> dict:
           % (il[0], il[1]))
     print("  ★histogram_match は %d px —— ずれも照明差も無い対でも %d px 出る。順位で分布を合わせる写像は"
           "**変化そのもの(水域拡大で暗い画素が増える)を分布差として消しにかかる**ので、変化検出の前処理には"
-          "向かない(水域の検出率も %.2f に落ちる)。" % (il[2], none[2], none[3][CHANGE_TYPES[2]]))
+          "向かない(ずれ無しでも水域の検出率が %.2f → %.2f)。"
+          % (il[2], none[2], none[3][CHANGE_TYPES[2]], none[4][CHANGE_TYPES[2]]))
     print("  ★ずれだけは %d px で、放射補正しても %d px —— **同じ偽陽性でも直す道具が違う**。"
           "対照群を置かないと「照明を補正したのに直らない」で止まる。" % (sh_only[0], sh_only[1]))
     figs.save_table("table_controls", ["条件", "補正なし", "線形放射補正", "histogram_match"]
