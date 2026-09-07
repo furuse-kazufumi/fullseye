@@ -634,7 +634,8 @@ def section_sweep() -> dict:
     area = float(np.sum([2 * np.pi * h[3] * float(np.linalg.norm(h[2] - h[1]))
                          + 4 * np.pi * h[3] ** 2 for h in frames[0]["human"]]))
     dens = (1600, 800, 400, 200, 100)
-    print("\n  (i) 点密度(遮蔽なしの対照群。全身の表面積 %.2f m²)" % area)
+    print("\n  (i) 点密度(遮蔽なしの対照群。カプセル表面積の合計 %.2f m²"
+          " —— 関節の重なりを含むので実効はこれより小さい)" % area)
     print("      点数   標本間隔 [m]  予想の過大評価 [m]  実測 [m]  見落とし   誤検知")
     d_rows, d_miss, d_fa, d_bias = [], [], [], []
     for n in dens:
