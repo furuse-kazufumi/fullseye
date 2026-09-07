@@ -142,6 +142,15 @@ _OP_BRIDGE_SKIP = {
     "fresnel_dielectric", "fresnel_conductor", "beer_lambert_transmittance",
     "slab_transmittance", "thin_film_reflectance", "prism_min_deviation_deg",
     "cie_xyz_from_wavelength", "spectrum_to_srgb",
+    # 2026-09-08: 探針を 4 sort から全 sort に広げた初回に摘発。
+    # `angle_3points(a, b, c)` は**3 本のベクトル**を取るので、点群 1 本を渡す橋の
+    # 呼び方(a = (N,3) の雲まるごと)では毎回 ValueError になり、fail-soft が
+    # もっともらしい float を返していた —— つまり登録されているのに**一度も
+    # 走ったことがない**op。同じ族の `line_from_2points` / `plane_from_3points` は
+    # out が `primitive`(sort 無し)なので初めから橋が架かっておらず、
+    # 「out に sort がある」というだけの理由でこの 1 本だけが橋に載っていた。
+    # 台帳(`fullseye.ledger.angle_3points`)からは今までどおり 3 点を渡して使える。
+    "angle_3points",
 }
 
 
