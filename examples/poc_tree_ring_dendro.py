@@ -405,7 +405,7 @@ def run_consensus(scene: dict, center=None, sigma=SIG_M, thr=THR, med=(1.0, 0.0)
     center = scene["pith"] if center is None else center
     ps = polar_stack(scene["img"], center, med=med)
     # 円板が展開図に収まっていること(収まらないと外縁の検出が嘘になる)
-    assert float(ps["r_disc"].max()) < ps["avail"] - 2, (ps["r_disc"].max(), ps["avail"])
+    assert float(ps["r_disc"].max()) / OVS < ps["avail"] - 2, (ps["r_disc"].max(), ps["avail"])
     dets = detect_sectors(ps, sigma=sigma, thr=thr)
     res, truths = [], []
     for s in range(N_SECT):
