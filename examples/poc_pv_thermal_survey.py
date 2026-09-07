@@ -1136,13 +1136,17 @@ def section_figures(base: dict, norms: dict) -> None:
     truth[gt["nonfault"]] = (0.95, 0.80, 0.25)
     truth[gt["fault"]] = (0.90, 0.20, 0.20)
 
-    over = np.asarray(fs.overlay_mask(
-        np.asarray(fs.colorize_depth(det["delta"]), np.float64)[..., :3],
-        det["mask"], color=(1.0, 1.0, 1.0), alpha=0.85, mode="margin",
-        line_width=1))
+    # ΔT は影の -18 K が値域を独占するので ±CLIP K に切ってから塗る
+    clip = 8.0
+    d_show = np.clip(det["delta"], -clip, clip)
+    base = np.asarray(fs.diverging_lut(256))[
+        np.clip(((d_show / clip) * 0.5 + 0.5) * 255, 0, 255).astype(np.int32)]
+    over = np.asarray(fs.overlay_mask(np.clip(base, 0, 1), det["mask"],
+                                      color=(1.0, 1.0, 1.0), alpha=0.9,
+                                      mode="margin", line_width=1))
 
     figs.save_grid("scene",
-                   [t_app - T_AIR, truth, det["delta"], over],
+                   [t_app - T_AIR, truth, d_show, over],
                    ["見かけ温度 - 気温 [K]", "真値 3 値(赤=故障 黄=影と汚れ 青=健全)",
                     "ΔT(モジュール中央値基準)[K]", "検出された塊(白枠)"],
                    ncols=2, signed=[False, False, True, False],
