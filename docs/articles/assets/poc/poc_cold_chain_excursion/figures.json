@@ -134,10 +134,10 @@
  {
   "file": "13_excursion_body.png",
   "name": "excursion_body",
-  "caption": "1 枚目は render_volume_projection の xray 投影(縦 = 時間 720 分、横 = 荷室の奥行き)。",
+  "caption": "1 枚目は render_volume_projection を幅方向から掛けた xray 投影(明るいほど幅方向に厚い)。",
   "shape": [
    897,
-   500,
+   740,
    3
   ]
  },

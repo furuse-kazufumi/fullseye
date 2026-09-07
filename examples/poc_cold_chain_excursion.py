@@ -900,18 +900,21 @@ def section_events(scene: dict) -> dict:
           "塊の extent は 2 つを分けて返す。")
 
     if figs.enabled():
-        proj = _L.render_volume_projection(hot.astype(np.float32),
-                                           azimuth=35.0, elevation=20.0, mode="xray")
+        # ★視線方向(D 軸)を**幅**にする。(t, y, x) のまま投影すると D = 時間
+        #   720 になり、返る (H, W) = (60, 12) の細長い絵しか出ない。
+        body = hot[::4].astype(np.float32).transpose(2, 0, 1)   # (幅, 時間, 奥行き)
+        proj = np.asarray(_L.render_volume_projection(
+            body, azimuth=15.0, elevation=0.0, mode="xray"), np.float64).T
         figs.save_grid("excursion_body",
-                       [np.repeat(np.repeat(np.asarray(proj, np.float64), 4, 0),
-                                  4, 1),
+                       [np.repeat(np.repeat(proj, 4, 0), 4, 1),
                         plan_view(np.count_nonzero(hot, axis=0) * DT_MIN),
                         plan_view(np.asarray(fs.temporal_max(vol)))],
-                       ["逸脱体を斜めから見る", "各セルの逸脱時間 [min]",
-                        "各セルの最高温度 [°C]"],
+                       ["逸脱体の投影(横=時間 %d 分 / 縦=奥行き %.0f m)"
+                        % (NT, NY * CELL_M),
+                        "各セルの逸脱時間 [min]", "各セルの最高温度 [°C]"],
                        title="逸脱は (t, y, x) の 3-D の塊", ncols=1,
-                       caption="1 枚目は render_volume_projection の xray 投影"
-                               "(縦 = 時間 720 分、横 = 荷室の奥行き)。")
+                       caption="1 枚目は render_volume_projection を幅方向から"
+                               "掛けた xray 投影(明るいほど幅方向に厚い)。")
         figs.save_table("excursion_events",
                         ["順位", "続いた時間 [min]", "広がり 奥行き x 幅 [m]",
                          "延べセル分", "セル数"], rows,
