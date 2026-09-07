@@ -408,6 +408,8 @@ def section_plumb_square() -> dict:
           % (sq_err, 1e3 * pb["fake_yaw"]))
     print("     **面外のふくらみ 1 個が、倒れ・直交度・内法の 3 つの判定を"
           "同時に汚す**\n     (どれも §6 の 1 次の吸収で説明がつく)。")
+    pl_extra = {"east_err": east_err, "sq_err": sq_err,
+                "pred_tilt": 1e3 * pb["fake_tilt"], "pred_yaw": 1e3 * pb["fake_yaw"]}
 
     figs.save_table("plumb_verdicts",
                     ["壁", "真値 mrad", "推定 mrad", "差 mrad",
