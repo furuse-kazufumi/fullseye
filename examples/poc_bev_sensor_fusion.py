@@ -263,7 +263,6 @@ def place(pts_sensor: np.ndarray, C: np.ndarray, dyaw=0.0, dt=(0.0, 0.0, 0.0)):
 # --------------------------------------------------------------------------- #
 def ground_truth():
     """占有と高さの真値。占有は ``grid_coords`` + ``box_sdf`` + ``sdf_union``。"""
-    zc = (Z_LO + Z_HI) / 2.0
     coords = np.asarray(fs.ledger.grid_coords(
         (BOUNDS[0], BOUNDS[1], (0.4, 0.6)), (RES, RES, 1)))
     sdf = None
