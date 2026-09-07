@@ -1398,9 +1398,11 @@ def section_figures(sc: dict, zero: dict, ctrl: dict, rate: dict) -> None:
                     "最近傍距離 C2C [mm]", "偽の劣化(劣化ゼロの対照)[mm]"],
                    ncols=2, signed=[True, True, False, True],
                    title="t0 -> t2 の変化をどう測るか(展開図)",
-                   caption="C2C は面全体が点間隔ぶん明るく、欠損が背景に埋もれる。"
-                           "右下は構造物が全く変わっていないときの地図 —— "
-                           "同じ濃さの模様が出る。")
+                   caption="(a)(b)(d) は ±8 mm で切ってある(切らないと欠損の谷"
+                           "-21 mm に色域を全部取られる)。C2C は面全体が点間隔ぶん"
+                           "明るく欠損が背景に埋もれる。(d) は構造物が全く"
+                           "変わっていないときの地図 —— (b) と同じ濃さの模様が出る。"
+                           "暗い縦帯は仮設物による欠測。")
     figs.save_grid("map_rate",
                    [dev_map(rate["rate_true"], 12, 10, lim=4.0),
                     dev_map(rate["rate"], 12, 10, lim=4.0),
