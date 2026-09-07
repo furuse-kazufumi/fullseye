@@ -468,7 +468,7 @@ def section_outliers() -> dict:
         # 面の位置 —— 部屋の中心から東の壁までの距離。棚に乗り換えると 450 mm 縮む。
         q = np.array([RW / 2, RD / 2, ZREF])
         off = 1e3 * (signed_offset(frb["point"], frb["normal"], q) - RW / 2)
-        pred = 1e3 * predict_ls_tilt(frac)
+        pred = 1e3 * predict_ls_tilt(frac, tau_eff)
         fr.append(100 * frac)
         ls_e.append(e_ls)
         ls_p.append(abs(pred))
