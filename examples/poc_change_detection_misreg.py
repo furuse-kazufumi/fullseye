@@ -829,18 +829,20 @@ def section_size() -> dict:
         print("   %5d  %5s " % (s, line[1]) + "".join("   %s" % c for c in line[2:2 + len(deltas)])
               + "     " + line[-1])
     sides = list(SIZE_SIDES)
-    print("\n  ★予測 (1 − δ/(s√2))² と実測の差は s≥3 で最大 %.3f。一辺 1〜2 px は PSF で"
-          "ピークが下がる分だけ予測より落ちる。" % worst)
-    print("  ★オープニング(半径 1)を掛けると δ=0 でも一辺 %s px は検出率 0 —— 偽陽性の帯を消す"
-          "後処理は、同じ幅の本物の変化も消す。"
-          % "・".join(str(s) for s, v in zip(sides, open_series[0.0]) if v == 0.0))
+    print("\n  ★画素被覆則と実測の差は全 36 点で最大 %.3f(PSF は τ/C=0.2 の被覆判定をほとんど動かさない)。"
+          % worst)
+    print("  ★オープニング(半径 1)を掛けると δ=0 でも一辺 %s px は検出率 0、一辺 2 px は %.2f —— 偽陽性の"
+          "帯を消す後処理は、同じ幅の本物の変化も消す(2 px が残るのは PSF で検出マスクが膨らむため)。"
+          % ("・".join(str(s) for s, v in zip(sides, open_series[0.0]) if v == 0.0),
+             open_series[0.0][sides.index(2)]))
     figs.save_plot("plot_size_cliff",
                    [("δ=0", sides, series[0.0]), ("δ=1 px", sides, series[1.0]),
-                    ("δ=1 px 予測", sides, pred_series[1.0]), ("δ=2 px", sides, series[2.0]),
+                    ("δ=1 px 被覆則", sides, pred_series[1.0]), ("δ=2 px", sides, series[2.0]),
                     ("δ=0 + オープニング", sides, open_series[0.0])],
                    xlabel="変化の一辺 s [px]", ylabel="検出率",
-                   title="変化の大きさの崖 —— (1 − δ/(s√2))²",
-                   caption="ずれは小さい変化から削り、オープニングは 2 px 以下を根こそぎ消す。")
+                   title="変化の大きさの崖 —— 画素被覆率 > τ/C で決まる",
+                   caption="ずれ 1 px では角の画素だけ、2 px では行と列を 1 本ずつ失う。"
+                           "オープニングは 1 px を根こそぎ消す。")
     figs.save_table("table_size_cliff", ["一辺 s", "面積"] + ["δ=%.1f 実/予" % d for d in deltas]
                     + ["δ=0+開 / δ=1+開"], rows, title="変化の大きさ × ずれ × 後処理")
     return {"sides": sides, "series": series, "open": open_series, "worst": worst}
