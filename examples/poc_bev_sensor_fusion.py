@@ -1165,12 +1165,9 @@ def main() -> int:
     assert cross is not None and cross >= 2.0, "融合が単独に負ける yaw"
     assert brk[("yaw 1.00 度", "max")]["prec"] < brk[("yaw 1.00 度", "mean")]["prec"]
     assert brk[("yaw 1.00 度", "mean")]["rec"] < brk[("yaw 1.00 度", "max")]["rec"]
-    br, bt = bands[("cam", kr)], bands[("cam", kt)]
-    b0 = bands[("cam", "誤差なし")]
-    dr = [1 - v / max(u, 1e-9) for v, u in zip(br, b0)]
-    dt2 = [1 - v / max(u, 1e-9) for v, u in zip(bt, b0)]
-    assert dr[3] > dr[0], "回転は遠方ほど落ちる"
-    assert abs(dt2[3] - dt2[0]) < abs(dr[3] - dr[0]), "並進のほうが一様"
+    assert drop[kr][-1] > drop[kr][0], "回転は遠方ほど落ちる"
+    assert abs(drop[kt][-1] - drop[kt][0]) < abs(drop[kr][-1] - drop[kr][0]), \
+        "並進のほうが一様"
     assert abs(tr["mixed"][0.040][0] - tr["mixed"][0.040][1]) < 0.05
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
