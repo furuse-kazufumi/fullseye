@@ -344,8 +344,10 @@ def section_series() -> dict:
           % (RATE_MM_YR, s_i, 100 * (s_i - RATE_MM_YR) / RATE_MM_YR,
              s_b, 100 * (s_b - RATE_MM_YR) / RATE_MM_YR))
     print("  傾き除去後の散らばり: 積分法 %.4f mm / 2 値化 %.4f mm" % (sd_i, sd_b))
-    print("\n  ★偏りは差分で消える。効くのは散らばりのほうで、そこが %.1f 倍違う。"
-          % (sd_b / sd_i))
+    print("\n  ★**一定の偏りなら差分で消える** —— 効くのは傾きを引いた残りの"
+          "散らばりで、そこが %.1f 倍違う。" % (sd_b / sd_i))
+    print("     2 値化はその上、偏りが幅に依存する(1 画素の階段)ので"
+          "**差分でも消えない**。6 節でその階段を分離する。")
     assert abs(s_i - RATE_MM_YR) < 0.01, s_i
     assert abs(s_b - RATE_MM_YR) > abs(s_i - RATE_MM_YR), (s_b, s_i)
 
