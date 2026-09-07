@@ -379,8 +379,25 @@ def fit_plates(h: np.ndarray, yv: np.ndarray):
         a = -float(n[0]) / float(n[2])
         b = float(c[2]) + (float(n[0]) * float(c[0])
                            + float(n[1]) * (float(c[1]) - np.asarray(yv))) / float(n[2])
-        out.append((a, np.atleast_1d(b)))
+        out.append({"c": np.asarray(c, float), "n": np.asarray(n, float),
+                    "a": a, "b": np.atleast_1d(b)})
     return out[0], out[1]
+
+
+def root_line(pl: dict, pr: dict, yv: np.ndarray):
+    """2 枚の母材面の交線 = **根**(:func:`fullseye.ledger.intersect_planes`)。
+
+    根は溶接金属の下に隠れていて**直接は見えない** —— 脚長ものど厚もここを
+    基準にするので、遠側の面が 1 枚見えなくなると近側の脚長まで出せなくなる。
+    """
+    res = fs.ledger.intersect_planes(pl["c"], pl["n"], pr["c"], pr["n"])
+    if res is None:
+        return None
+    p0, d = np.asarray(res[0], float), np.asarray(res[1], float)
+    if abs(d[1]) < 1e-9:
+        return None
+    t = (np.asarray(yv, float) - p0[1]) / d[1]
+    return p0[0] + t * d[0], p0[2] + t * d[2]
 
 
 def _smooth_masked(v, ok):
