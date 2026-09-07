@@ -738,37 +738,51 @@ def section_controls(S: dict, Z: dict) -> dict:
 # --------------------------------------------------------------------------- #
 def section_defect_sweep(S: dict) -> dict:
     print("\n" + "=" * 78)
-    print("6) 欠損の大きさを振る —— 大きい欠損ほど対称面の推定が歪む")
+    print("6) 欠損の大きさを振る —— 軸を取り違える境目はどこか")
     print("=" * 78)
     pts = S["pts"]
-    radii = np.array([10.0, 18.0, 26.0, 34.0, 42.0, 50.0])
-    angs, offs, rmss, fr = [], [], [], []
+    radii = np.array([10.0, 16.0, 20.0, 23.0, 26.0, 30.0, 34.0, 42.0, 50.0])
+    angs, offs, rmss, fr, flip, cx = [], [], [], [], [], []
     for r in radii:
         c = damage_center()
         miss = break_off(pts, c, r)
         surv = pts[~miss]
-        tau = 1.6 * float(np.median(cKDTree(surv).query(surv, k=2)[0][:, 1]))
-        est = estimate_plane(surv, refine="nm")
+        tau = TAU_K * float(np.median(cKDTree(surv).query(surv, k=2)[0][:, 1]))
+        auto = estimate_plane(surv, refine="none")
+        est = estimate_plane(surv, refine="nm", axis_hint=True)
         a, o = plane_error(est["p0"], est["n"])
         rr = restore_symmetric(surv, est["p0"], est["n"], tau)
-        s = score_restoration(pts[miss], rr["restored"], pts, rr["fill"], tau)
-        angs.append(a); offs.append(o); rmss.append(s["rms"]); fr.append(100 * miss.mean())
-        print("  半径 %4.0f mm(失われた点 %5.1f %%): 面の角度 %6.3f deg / 位置 %6.3f mm"
-              " -> 復元 RMS %6.2f mm" % (r, 100 * miss.mean(), a, o, s["rms"]))
-    angs = np.array(angs); offs = np.array(offs); rmss = np.array(rmss); fr = np.array(fr)
-    print("  ★ 歪みは欠損の**体積**でなく、欠損が重心を動かす量で決まる ——")
-    print("     位置誤差 / 失われた点の割合 = %s(ほぼ一定なら重心のずれが主因)"
-          % " ".join("%.3f" % v for v in (offs / np.maximum(fr, 1e-9))))
+        s = score_restoration(pts[miss], rr["restored"], rr["fill"])
+        angs.append(a); offs.append(o); rmss.append(s["rms"])
+        fr.append(100 * miss.mean()); flip.append(bool(auto["flipped"]))
+        cx.append(abs(float(surv[:, 0].mean())))
+        print("  半径 %4.0f mm(失った点 %5.1f %%): 自動の軸 %s / 重心のずれ %5.2f mm"
+              " -> 角度 %6.3f deg・位置 %6.3f mm・復元 RMS %6.2f mm"
+              % (r, 100 * miss.mean(), "取り違え" if flip[-1] else "正しい ",
+                 cx[-1], a, o, s["rms"]))
+    angs = np.array(angs); offs = np.array(offs); rmss = np.array(rmss)
+    fr = np.array(fr); cx = np.array(cx)
+    first = int(np.argmax(flip)) if any(flip) else -1
+    if first > 0:
+        print("  ★ 自動選択が軸を取り違えるのは、失った点が %.1f %% を超えたあたり"
+              "(半径 %.0f -> %.0f mm の間)。"
+              % (fr[first - 1], radii[first - 1], radii[first]))
+    print("  正しい軸に固定したときの位置誤差は重心のずれにほぼ比例:"
+          " 位置誤差/重心ずれ = %s" % " ".join("%.2f" % v for v in offs / np.maximum(cx, 1e-9)))
     if figs.enabled():
         figs.save_plot(
             "defect_size",
-            [("面の位置誤差 [mm]", radii, offs),
-             ("面の角度誤差 [deg]", radii, angs),
-             ("復元 RMS [mm]", radii, rmss)],
+            [("面の位置誤差 [mm](軸は正しい)", radii, offs),
+             ("重心の x ずれ [mm]", radii, cx),
+             ("復元 RMS [mm]", radii, rmss),
+             ("面の角度誤差 [deg]", radii, angs)],
             xlabel="欠損球の半径 [mm]", ylabel="誤差(単位は凡例のとおり)",
-            title="欠損が大きいほど対称面がずれ、復元はその 2 倍ずれる",
-            caption="欠損のまま推定した対称面の誤差と、それを使った復元誤差。")
-    return {"radii": radii, "ang": angs, "off": offs, "rms": rmss, "frac": fr}
+            title="欠損が大きいほど対称面がずれる —— 主因は重心の移動",
+            caption="正しい軸に固定しても位置は重心のずれに引きずられる。"
+                    "自動選択が軸を取り違えるのは失った点 %.1f %% 以上。"
+                    % (fr[first - 1] if first > 0 else 0.0))
+    return {"radii": radii, "ang": angs, "off": offs, "rms": rmss, "frac": fr,
+            "flip": flip, "first": first, "cx": cx}
 
 
 # --------------------------------------------------------------------------- #
