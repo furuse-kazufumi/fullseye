@@ -1087,8 +1087,8 @@ def section_tool_gaps() -> None:
           "取れない)。列方向の最頻値も自前。")
     # (d) 2-D の円弧当てはめ(点 → 円)は fit_circle が在る。tangent 拘束つきは無い
     assert hasattr(fs, "fit_circle")
-    print("  (d) fit_circle は在る(使えた)。ただし「傾きが既知の点」で円を決める"
-          "(sin α に対する線形回帰)形は無いので、E2 は lstsq を直接書いた。")
+    print("  (d) fit_circle(点 → 円)は在る。ただし E2 が要るのは「傾きが既知の 2〜3 点」で"
+          "円を決める形(sin α に対する線形回帰)で、その口は無いので lstsq を直接書いた。")
     # (e) 混同行列 / ROC は PoC 3 本目でも自前
     assert not hasattr(fs, "confusion_matrix")
     print("  (e) 混同行列・ROC は無い(poc_forensics_roc / poc_fabric_defect に続き 3 本目)。")

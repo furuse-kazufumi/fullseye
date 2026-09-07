@@ -3,7 +3,7 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 18:35:27
+- **最終更新**: 2026-09-07 19:13:17
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
@@ -27,29 +27,52 @@ ae8b190da auto: poc_tree_ring_dendro.py 編集前 (2026-09-07 18:01)
 ```
 M docs/KNOWN_ISSUES.md
  M docs/SESSION_SUMMARY.md
+ D docs/articles/assets/poc/poc_fresco_craquelure/03_texture_cliff.png
+ D docs/articles/assets/poc/poc_fresco_craquelure/04_rake_bias.png
+ D docs/articles/assets/poc/poc_fresco_craquelure/05_blur_cell_limit.csv
+ D docs/articles/assets/poc/poc_fresco_craquelure/05_blur_cell_limit.png
+ D docs/articles/assets/poc/poc_fresco_craquelure/05_blur_cell_limit.tsv
+ D docs/articles/assets/poc/poc_fresco_craquelure/06_scene.png
+ D docs/articles/assets/poc/poc_fresco_craquelure/07_map_stages.png
+ D docs/articles/assets/poc/poc_fresco_craquelure/08_map_cells.png
+ D docs/articles/assets/poc/poc_fresco_craquelure/09_degree_hist.png
+ D docs/articles/assets/poc/poc_fresco_craquelure/10_cell_diameter_cdf.png
+ M docs/articles/assets/poc/poc_fresco_craquelure/figures.json
+ M docs/articles/assets/poc/poc_solder_fillet_aoi/figures.json
  M docs/articles/exhibits/poc_captions.json
  M examples/poc_solar_el_inspection.py
  M examples2d.py
+?? docs/articles/assets/poc/poc_fresco_craquelure/03_width_cliff.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/04_texture_cliff.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/05_rake_bias.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/06_blur_cell_limit.csv
+?? docs/articles/assets/poc/poc_fresco_craquelure/06_blur_cell_limit.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/06_blur_cell_limit.tsv
+?? docs/articles/assets/poc/poc_fresco_craquelure/07_scene.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/08_map_stages.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/09_map_cells.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/10_degree_hist.png
+?? docs/articles/assets/poc/poc_fresco_craquelure/11_cell_diameter_cdf.png
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-18:35 docs/KNOWN_ISSUES.md
-18:13 docs/SESSION_SUMMARY.md
-18:07 docs/articles/exhibits/poc_captions.json
-18:07 examples2d.py
-18:06 examples/poc_solar_el_inspection.py
-18:06 examples/poc_tree_ring_dendro.py
-18:06 .pytest_cache/v/cache/nodeids
-18:05 docs/articles/assets/poc/poc_solar_el_inspection/figures.json
-18:05 docs/articles/assets/poc/poc_solar_el_inspection/08_snr.png
-18:05 docs/articles/assets/poc/poc_solar_el_inspection/07_vignette.png
-18:05 docs/articles/assets/poc/poc_solar_el_inspection/06_crack_width.png
-18:04 docs/articles/assets/poc/poc_solar_el_inspection/05_grain_contrast.png
-18:04 docs/articles/assets/poc/poc_solar_el_inspection/04_frangi_norm.png
-18:04 docs/articles/assets/poc/poc_solar_el_inspection/03_scene_map.png
-18:04 docs/articles/assets/poc/poc_solar_el_inspection/02_by_type.tsv
+19:13 examples2d.py
+19:13 docs/articles/exhibits/poc_captions.json
+19:12 docs/articles/assets/poc/poc_solar_el_inspection/figures.json
+19:12 docs/articles/assets/poc/poc_solar_el_inspection/08_snr.png
+19:12 docs/articles/assets/poc/poc_solar_el_inspection/07_vignette.png
+19:11 docs/articles/assets/poc/poc_fresco_craquelure/figures.json
+19:11 docs/articles/assets/poc/poc_fresco_craquelure/11_cell_diameter_cdf.png
+19:11 docs/articles/assets/poc/poc_fresco_craquelure/10_degree_hist.png
+19:11 docs/articles/assets/poc/poc_fresco_craquelure/09_map_cells.png
+19:11 docs/articles/assets/poc/poc_fresco_craquelure/08_map_stages.png
+19:11 docs/articles/assets/poc/poc_fresco_craquelure/07_scene.png
+19:11 docs/articles/assets/poc/poc_solder_fillet_aoi/figures.json
+19:11 docs/articles/assets/poc/poc_solder_fillet_aoi/12_confusion.tsv
+19:11 docs/articles/assets/poc/poc_solder_fillet_aoi/12_confusion.png
+19:11 docs/articles/assets/poc/poc_solder_fillet_aoi/12_confusion.csv
 ```
 
 ---
