@@ -121,7 +121,9 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
     gy = VOX_UM * (np.arange(ny) - (ny - 1) / 2.0)
     yy, xx = np.meshgrid(gy, gx, indexing="ij")
 
-    ext_lat = (NG - 1) / 2.0 * PITCH_UM + R_TSV_UM     # 格子の広がり
+    # 格子の広がり。★部分体積の縁(半径 + VOX/2)まで含めないと、傾いたダイでは
+    #   外周のビアが z ごとに違う切られ方をして**偽の傾き**になる(1.200° -> 1.273°)。
+    ext_lat = (NG - 1) / 2.0 * PITCH_UM + R_TSV_UM + 2.0 * VOX_UM
 
     def via_frac(u, v):
         """周期格子までの距離から部分体積の充填率(格子の外は 0)。"""
