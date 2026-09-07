@@ -877,30 +877,18 @@ def section_figures(rig: Rig, zero: dict) -> None:
                    caption="評価窓は前方 %.0f-%.0f m。既知マスクが 0 の領域"
                            "(車体内部・陰)は評価から外す。" % WIN_X)
 
-    # (b) 場面の側面図(x-z)—— 高さの相補性を見せる
-    nx, nz = 320, 90
-    xs = np.linspace(0, 32, nx)
-    zs = np.linspace(0, 3.0, nz)
-    side = np.zeros((nz, nx))
-    for o in OBSTACLES:
-        if abs(o["cy"]) > 3.0:
-            continue
-        m = ((xs[None, :] >= o["cx"] - o["lx"] / 2)
-             & (xs[None, :] <= o["cx"] + o["lx"] / 2)
-             & (zs[:, None] <= o["h"]))
-        side[m] = 0.75
-    for C, val in ((LIDAR["C"], 0.35), (CAM["C"], 1.0)):
-        graze = OBSTACLES[0]
-        sl = (graze["h"] - C[2]) / (graze["cx"] + graze["lx"] / 2)
-        zline = C[2] + sl * xs
-        j = np.clip(((zline / 3.0) * (nz - 1)).astype(int), 0, nz - 1)
-        side[j, np.arange(nx)] = np.maximum(side[j, np.arange(nx)], val)
-        j0 = int(np.clip(C[2] / 3.0 * (nz - 1), 0, nz - 1))
-        side[max(j0 - 1, 0):j0 + 2, 0:4] = val
-    figs.save("scene_side", side[::-1],
-              "側面図(y≈0 の断面、横 0-32 m・縦 0-3 m)。明るい斜線が"
-              "ルーフのカメラ、暗い斜線がバンパーの LiDAR の、先行車の屋根を"
-              "かすめる視線。カメラだけが 22 m の車の上端に届く。")
+    # (b) 陰の食い違い —— 融合の取り分がどこから来るか
+    shadow = np.zeros(rig.X.shape + (3,))
+    shadow[..., 2] = np.where(rig.free_a, 0.55, 0.10)      # LiDAR が見た自由
+    shadow[..., 0] = np.where(rig.free_b0, 0.55, 0.10)     # カメラが見た自由
+    shadow[..., 1] = 0.10
+    shadow[rig.gt_occ] = (1.0, 1.0, 1.0)
+    figs.save("shadow_map", bev_img(shadow),
+              "横に %.2f m 離した 2 センサの「自由と言い切れた領域」。"
+              "青みだけの帯が LiDAR にしか見えない所、橙みだけの帯がカメラに"
+              "しか見えない所。白は真値の障害物。22 m の 2 台は"
+              "**互いの影に 1 台ずつ入っている**。"
+              % float(LIDAR["C"][1] - CAM["C"][1]))
 
     # (c) 各センサと融合(誤差 0)
     _, o_max = rig.run("max")
