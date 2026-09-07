@@ -912,7 +912,7 @@ def section_systematic(tr: dict) -> dict:
 # --------------------------------------------------------------------------- #
 def section_occlusion(tr: dict, lod: float) -> dict:
     print("\n" + "=" * 78)
-    print("8) 崖(4) 樹冠による遮蔽 0 -> 60 %(LoD %.3f m でしきった土量で比べる)" % lod)
+    print("8) 崖(4) 樹冠による遮蔽 0 -> 60 %% (LoD %.3f m でしきった土量で比べる)" % lod)
     print("=" * 78)
     tt = truth(lod=lod)
     print("   遮蔽率 地面点率 空セル  分類なし掘削  分類あり掘削 誤差%  堆積 誤差%"
