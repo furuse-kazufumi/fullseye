@@ -1109,7 +1109,7 @@ def section_occlusion(tr: dict, lod0: float) -> dict:
                    caption="取りこぼしは 1 % 未満でも、樹冠は数 m 高いので"
                            "標準偏差だけが桁で跳ねる。")
     return {"occ": occ, "raw": raw, "lstd": lstd, "lmad": lmad, "adapt": adapt,
-            "median": med, "leak": leak, "ground": gr}
+            "median": med, "wide": wide, "dead": dead, "leak": leak, "ground": gr}
 
 
 # --------------------------------------------------------------------------- #
