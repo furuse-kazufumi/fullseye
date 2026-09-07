@@ -1155,67 +1155,89 @@ def section_prism_and_crack(sc: dict) -> dict:
     print("8) 決まらない成分は、感度を持つ部品にだけ嘘として出る / 細い溝")
     print("=" * 78)
     print("  (a) 押し出し形状の縮退 —— 桁は断面を x に押し出した形なので、"
-          "平面だけでは x の並進が拘束されない。")
-    nx2_g = float(np.mean(CORES["n"][:, 0] ** 2))
+          "平面の法線は x 成分をほとんど持たない。")
     bp, bn, bi, bphi = bearing_cores()
-    nx2_b = float(np.mean(bn[:, 0] ** 2))
-    fr = BEARING_AREA / (GIRDER_AREA + BEARING_AREA)
-    print("      x への感度は法線の x 成分の二乗和で決まる。桁の面: 平均 n_x² = "
-          "%.3e(キャンバー勾配 %.4f から来る)、\n      支承の円柱: %.3f。"
-          "面積比 %.3f を掛けても、**支承のほうが %.0f 倍の情報を持つ**。"
-          % (nx2_g, camber_slope(0.0), nx2_b, fr,
-             (nx2_b * fr) / (nx2_g * (1 - fr))))
+    print("      予測: 点-面 ICP の x の分散は 1/Σn_x²。桁の n_x はキャンバー勾配"
+          " c'(x) そのものなので\n        Σn_x² ≈ N·mean(c'²) = N·(4C/L)²/3 —— "
+          "**x の決まり方はキャンバー C に反比例する**。")
+    print("      (円柱の支承は n_x = cosφ で mean n_x² = %.3f と桁の %.1e より"
+          "桁違いに大きいが、面積が %.1f %% しかない)"
+          % (float(np.mean(bn[:, 0] ** 2)), float(np.mean(CORES["n"][:, 0] ** 2)),
+             100 * BEARING_AREA / (GIRDER_AREA + BEARING_AREA)))
 
-    rows, res = [], {}
-    r0 = np.random.default_rng(SEED + 501)
-    ref = observe(0, r0)
-    cur = observe(2, np.random.default_rng(SEED + 502))
-    print("\n      合わせに使う範囲            ICP 後の重心での残差 (x, y, z) [mm]")
-    for name, msk in (("桁 + 支承(全部)", None),
-                      ("桁だけ(支承を外す)", lambda q: q[:, 2] > -0.95)):
-        q, rot, tr, _ = register(cur, ref, mask=msk)
+    print("\n      キャンバー[mm]  端の勾配 c'   予測の相対精度 1/c'  "
+          "ICP 後の残差 x[mm]  y,z[mm]")
+    rows, cam_l, dx_l = [], [], []
+    base_slope = 4.0 * CAMBER / LSPAN
+    for cval in (CAMBER, 0.010, 0.002):
+        _CAMBER[0] = cval
+        r0 = np.random.default_rng(SEED + 501)
+        ref_c = observe(0, r0)
+        cur_c = observe(2, np.random.default_rng(SEED + 502), parts=("deflect",))
+        # 支承を合わせから外す(x を桁だけで決めさせる)
+        q, rot, tr, _ = register(cur_c, ref_c, mask=lambda v: v[:, 2] > -0.95)
         r2 = rodrigues(POSE_ERR[2][:3])
         t2 = np.asarray(POSE_ERR[2][3:]) + CENTER - r2 @ CENTER
-        eff = ((rot @ r2) - np.eye(3)) @ CENTER + (rot @ t2 + tr)
-        res[name] = (q, eff * 1e3)
-        rows.append([name, "%+.2f" % (eff[0] * 1e3), "%+.2f" % (eff[1] * 1e3),
-                     "%+.2f" % (eff[2] * 1e3)])
-        print("      %-24s   (%+.2f, %+.2f, %+.2f)"
-              % (name, *(eff * 1e3)))
-    dx_all = abs(res["桁 + 支承(全部)"][1][0])
-    dx_grd = abs(res["桁だけ(支承を外す)"][1][0])
-    print("      ★支承を外すと x の残差は %.2f -> %.2f mm(%.1f 倍)。"
-          "y・z は %.2f -> %.2f mm でほとんど変わらない。"
-          % (dx_all, dx_grd, dx_grd / max(dx_all, 1e-9),
-             float(np.linalg.norm(res["桁 + 支承(全部)"][1][1:])),
-             float(np.linalg.norm(res["桁だけ(支承を外す)"][1][1:]))))
+        eff = (((rot @ r2) - np.eye(3)) @ CENTER + (rot @ t2 + tr)) * 1e3
+        sl = 4.0 * cval / LSPAN
+        cam_l.append(1e3 * cval)
+        dx_l.append(abs(float(eff[0])))
+        rows.append(["%.0f" % (1e3 * cval), "%.5f" % sl,
+                     "%.2f" % (base_slope / sl), "%.2f" % abs(eff[0]),
+                     "%.2f" % float(np.linalg.norm(eff[1:]))])
+        print("      %12.0f %13.5f %19.2f %19.2f %9.2f"
+              % (1e3 * cval, sl, base_slope / sl, abs(eff[0]),
+                 float(np.linalg.norm(eff[1:]))))
+    _CAMBER[0] = CAMBER
+    print("      ★キャンバーを %.0f -> %.0f mm(勾配 %.1f 分の 1)にすると x の残差は"
+          " %.2f -> %.2f mm(%.1f 倍)。" % (cam_l[0], cam_l[-1],
+                                            cam_l[0] / cam_l[-1], dx_l[0],
+                                            dx_l[-1], dx_l[-1] / max(dx_l[0], 1e-9)))
+    print("         予測は 1/c' に比例(%.1f 倍)—— **真っ直ぐな桁ほど、"
+          "橋軸方向がどこにも決まらない**。" % (cam_l[0] / cam_l[-1]))
+    print("      ★y・z は %.2f -> %.2f mm でほとんど変わらない。"
+          "**壊れるのは 1 方向だけ**なので、\n         残差 RMS を 1 個見ている限り"
+          "気づけない。" % (float(rows[0][4] and float(rows[0][4])),
+                            float(rows[-1][4])))
 
-    print("\n      その x 残差は**どこに嘘として出るか**:")
-    print("      合わせ方          桁の面の偽の変化 RMS[mm]   支承の水平移動 [mm]"
-          "   支承の沈下 [mm](真 %.2f)" % SETTLE_MM[2])
-    for name in res:
-        q = res[name][0]
-        cen, nor, ok = core_normals(ref)
-        ln, _, _ = measure_normal(ref, q, cen, nor, ok)
-        heal = np.isfinite(ln) & ~CORES["edge"] & (np.abs(sc["truth_fp"]) < 0.3)
-        bl, _, _ = measure_normal(ref, q, bp, bn, np.ones(bp.shape[0], bool))
+    # --- その x はどこに嘘として出るか --------------------------------------- #
+    print("\n      その x 残差は**どこに嘘として出るか**"
+          "(キャンバー %.0f mm の悪いほうで測る):" % cam_l[-1])
+    _CAMBER[0] = 0.002
+    r0 = np.random.default_rng(SEED + 511)
+    ref_b = observe(0, r0)
+    cur_b = observe(2, np.random.default_rng(SEED + 512))
+    cen_b, nor_b, ok_b = core_normals(ref_b)
+    tfb = truth_footprint(2)
+    print("      合わせ方              桁の面の偽の変化 RMS[mm]   支承の水平移動[mm]"
+          "   支承の沈下[mm](真 %.2f)" % SETTLE_MM[2])
+    prow = []
+    for name, msk in (("桁だけで合わせる", lambda v: v[:, 2] > -0.95),
+                      ("支承も入れて合わせる", None)):
+        q = register(cur_b, ref_b, mask=msk)[0]
+        ln, _, _ = measure_normal(ref_b, q, cen_b, nor_b, ok_b)
+        heal = np.isfinite(ln) & ~CORES["edge"] & (np.abs(tfb) < 0.3)
+        bl, _, _ = measure_normal(ref_b, q, bp, bn, np.ones(bp.shape[0], bool))
         d0 = fit_translation(bn[bi == 0], bl[bi == 0])
-        rows[[r[0] for r in rows].index(name)] += [
-            "%.3f" % float(np.sqrt(np.mean(ln[heal] ** 2))),
-            "%.2f" % d0[0], "%.2f" % (-d0[2])]
-        print("      %-16s %18.3f %20.2f %22.2f"
-              % (name, float(np.sqrt(np.mean(ln[heal] ** 2))), d0[0], -d0[2]))
-    print("      ★★桁の平面には**ほとんど嘘が出ない**(法線が x にほぼ直交)のに、"
-          "支承の円柱は法線が ±x を向くので\n         x の残差がそのまま"
-          "「支承が水平に動いた」という所見になる。**決まらなかった成分は、"
-          "\n         それに感度を持つ小さな部品にだけ現れる** —— "
-          "大きな面の残差では気づけない。")
-    figs.save_table("prism", ["合わせに使う範囲", "残差 x mm", "残差 y mm",
-                              "残差 z mm", "桁の偽変化 RMS mm",
-                              "支承の水平移動 mm", "支承の沈下 mm"], rows,
-                    title="押し出し形状で決まらない x は、円柱にだけ嘘を作る",
-                    caption="支承の沈下の真値は %.2f mm、水平移動の真値は 0 mm。"
-                            % SETTLE_MM[2])
+        rms_h = float(np.sqrt(np.mean(ln[heal] ** 2)))
+        prow.append([name, "%.3f" % rms_h, "%+.2f" % d0[0], "%.2f" % (-d0[2])])
+        print("      %-20s %18.3f %21.2f %21.2f"
+              % (name, rms_h, d0[0], -d0[2]))
+    _CAMBER[0] = CAMBER
+    fake_h = abs(float(prow[0][2].replace("+", "")))
+    print("      ★★桁の平面には**ほとんど嘘が出ない**(法線が x にほぼ直交するから)"
+          "のに、支承の円柱は法線が ±x を\n         向くので、"
+          "x の残差がそのまま「支承が %.2f mm 水平に動いた」という所見になる"
+          "(真値 0 mm)。\n         **決まらなかった成分は、それに感度を持つ"
+          "小さな部品にだけ嘘として現れる** —— 面積の 99 %% を占める\n"
+          "         大きな面の残差を見ている限り、永久に気づけない。" % fake_h)
+    figs.save_table("prism",
+                    ["キャンバー mm", "端の勾配", "予測 1/c'", "残差 x mm",
+                     "残差 y,z mm"], rows,
+                    title="橋軸方向がどれだけ決まるかは、反りの勾配で決まる",
+                    caption="押し出し形状の平面は法線に x 成分を持たない。"
+                            "x を拘束するのはキャンバーの傾きだけ。")
+    dx_all, dx_grd = dx_l[0], dx_l[-1]
 
     # --- (b) 細い溝 -------------------------------------------------------- #
     print("\n  (b) 細い溝(ひび割れ)—— 平均する測り方には原理的に見えない。")
