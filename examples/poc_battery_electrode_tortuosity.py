@@ -229,8 +229,7 @@ def section_zero_point() -> dict:
     print("  視野 %d^3 voxel x %.2f µm = %.1f µm 角 / 粒子半径の中央値 %.1f µm"
           % (N_VOX, VOX_UM, N_VOX * VOX_UM, R_MED * VOX_UM))
     print("  空隙率 ε = %.4f   実効拡散 D_eff/D_bulk = %.4f" % (tr["eps"], tr["d_eff"]))
-    print("    Bruggeman τ = ε^(-0.5)      %6.3f")  # 値は次行でまとめて
-    print("      Bruggeman   %6.3f" % br)
+    print("      Bruggeman   %6.3f   (経験則 ε^(-0.5))" % br)
     print("      測地 τ_geo  %6.3f   (Bruggeman の %.0f %%)" % (tg, 100 * tg / br))
     print("      輸送 τ_f    %6.3f   <- これが設計式に入る量" % tr["tau_f"])
     print("    Bruggeman の誤差 %+.1f %% / 測地の誤差 %+.1f %%"
