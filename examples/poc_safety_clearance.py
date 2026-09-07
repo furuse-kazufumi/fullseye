@@ -509,7 +509,7 @@ def section_timeseries() -> dict:
     ts = np.arange(0.0, T_END + 1e-9, DT)
     frames = [frame(t, 0.22, REACH_T0, rng) for t in ts]
     d_true = np.array([f["d_true"] for f in frames])
-    S = required_separation()
+    S = trigger_distance()
 
     est = {"重心 1 点": [], "足元 1 点": [], "全表面(遮蔽なし)": [],
            "背面 1 台": [], "背面 + 隅 2 台": []}
