@@ -458,7 +458,10 @@ def ground_truth(gsd: float = GSD) -> dict:
     mods = np.full(panel.shape, -1, int)
     for m in range(NMX * NMY):
         mods[(fr(L["mod_id"] == m) > 0.5) & panel] = m
-    fault = (fr(L["hot"]) > 0.5) | (fr(L["kill_fault"]) > 0.5)
+    hot = fr(L["hot"]) > 0.5
+    if not hot.any():                # GSD が粗いと面積比 0.5 を超えなくなる
+        hot[hot_pixel(gsd, hot.shape)] = True
+    fault = hot | (fr(L["kill_fault"]) > 0.5)
     nonf = ((fr(L["shade"]) > 0.5) | (fr(L["soil"]) > 0.5)
             | (fr(L["kill_shade"]) > 0.5)) & ~fault
     return {"panel": panel, "fault": fault, "nonfault": nonf,
