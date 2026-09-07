@@ -983,67 +983,82 @@ def section_verdicts(alignres: dict, false_m: dict) -> dict:
 # 節 6-8 —— 崖                                                                 #
 # --------------------------------------------------------------------------- #
 def _light_rack(seed, dropout=0.0, mode="random", mix=0.0, reg=0.0, sig=SIG0):
-    """軽い場面で「東西の壁の傾き」を測る(掃引用)。傾きと使った点数・高さを返す。"""
+    """軽い場面で**西の壁**の傾きを測る(掃引用)。
+
+    東の壁は膨らみを持たせてあるので、下半分だけ残すと膨らみの勾配 (~3 mrad) が
+    傾きに化ける。掃引で見たいのは欠測そのものの効きなので、無傷の西の壁を使う。
+    返り値 = (傾き [rad], 使った点数 N, 残った高さ L [m], 面残差の RMS σ [m])。
+    """
     surf = make_surface(1.0, step=STEP_LIGHT, light=True)
     s = scan(surf, seed=seed, dropout=dropout, dropout_mode=mode, mix=mix,
              reg_mrad=reg, reg_mm=reg * 2.0, sig0=sig)
     e = assign_elements(s["P"])
-    vals, ns, hs = [], [], []
-    for elem, ax in ((WX0, 0), (WX1, 0)):
-        q = s["P"][e == elem]
-        if len(q) < 40:
-            return np.nan, 0, 0.0
-        _, sb, _, ni = plane_slopes(q, ax, seed=seed)
-        vals.append(sb if elem == WX0 else sb)
-        ns.append(ni)
-        hs.append(q[:, 2].std() * np.sqrt(12.0))
-    return float(np.mean(vals)), int(np.mean(ns)), float(np.mean(hs))
+    q = s["P"][e == WX0]
+    if len(q) < 40:
+        return np.nan, 0, 0.0, 0.0
+    _, sb, rms, ni = plane_slopes(q, 0, seed=seed)
+    return float(sb), int(ni), float(q[:, 2].std() * np.sqrt(12.0)), float(rms)
 
 
 def section_cliff_dropout() -> dict:
     print("\n" + "=" * 78)
     print("6) ★崖は欠測率では決まらない —— 効くのは残った面の高さ L")
     print("=" * 78)
-    print("   予測: 傾きの標準誤差 = σ√12 / (L √N)。σ は面に直交する測距誤差。")
-    print("   欠測率  無作為: 傾き±散らばり [mrad]   構造的(下から残す): 傾き±散らばり  L [m]  予測")
-    fr, rnd_sd, low_sd, pred = [], [], [], []
+    print("   予測: 傾きの標準誤差 = σ√12 / (L √N)。σ = 面残差の RMS、L = 残った高さ。")
+    print("   無作為に落とすと N だけ減る(√N)。下から順に残すと **L も縮む**"
+          "(L^-1 が余分に効く)。")
+    print("   欠測率  無作為: 誤差 RMS / 予測      構造的: 誤差 RMS / 予測    L [m]   N")
+    fr, rnd_e, low_e, rnd_p, low_p = [], [], [], [], []
     rows = []
-    for dr in (0.0, 0.3, 0.6, 0.8, 0.9, 0.95):
-        a = [_light_rack(11 + i, dropout=dr, mode="random") for i in range(4)]
-        b = [_light_rack(11 + i, dropout=dr, mode="low") for i in range(4)]
-        av = np.array([x[0] for x in a])
-        bv = np.array([x[0] for x in b])
-        bn = np.mean([x[1] for x in b])
-        bl = np.mean([x[2] for x in b])
-        sig_n = SIG0 * (1 + K_R * 3.0)      # 3 m 前後の距離での代表的な σ
-        pr = sig_n * np.sqrt(12.0) / (max(bl, 0.05) * np.sqrt(max(bn, 1)))
+    seeds = range(6)
+    for dr in (0.0, 0.3, 0.6, 0.8, 0.9):
+        a = [_light_rack(11 + i, dropout=dr, mode="random") for i in seeds]
+        b = [_light_rack(11 + i, dropout=dr, mode="low") for i in seeds]
+
+        def stat(rec):
+            v = np.array([x[0] for x in rec])
+            n = np.mean([x[1] for x in rec])
+            ll = np.mean([x[2] for x in rec])
+            sg = np.mean([x[3] for x in rec])
+            err = float(np.sqrt(np.mean((v - RACK) ** 2)))
+            pr = sg * np.sqrt(12.0) / (max(ll, 1e-3) * np.sqrt(max(n, 1)))
+            return 1000 * err, 1000 * pr, ll, n
+
+        ea, pa, la, na = stat(a)
+        eb, pb, lb, nb = stat(b)
         fr.append(100 * dr)
-        rnd_sd.append(1000 * float(np.std(av)))
-        low_sd.append(1000 * float(np.std(bv)))
-        pred.append(1000 * pr)
-        rows.append(["%.0f %%" % (100 * dr), "%+.3f ± %.3f" % (1000 * av.mean(), rnd_sd[-1]),
-                     "%+.3f ± %.3f" % (1000 * bv.mean(), low_sd[-1]),
-                     "%.2f" % bl, "%.3f" % pred[-1]])
-        print("   %4.0f %%   %+6.3f ± %5.3f              %+6.3f ± %5.3f          "
-              "%.2f   %.3f"
-              % (100 * dr, 1000 * av.mean(), rnd_sd[-1], 1000 * bv.mean(),
-                 low_sd[-1], bl, pred[-1]))
-    ratio = low_sd[-2] / max(rnd_sd[-2], 1e-9)
-    print("\n   ★同じ欠測率 %.0f %% で散らばりが %.1f 倍違う(無作為 %.3f / 構造的 %.3f mrad)。"
-          % (fr[-2], ratio, rnd_sd[-2], low_sd[-2]))
-    print("     予測 %.3f mrad と実測 %.3f mrad の差は %.0f %%。"
-          % (pred[-2], low_sd[-2], 100 * abs(pred[-2] - low_sd[-2]) / max(low_sd[-2], 1e-9)))
+        rnd_e.append(ea)
+        rnd_p.append(pa)
+        low_e.append(eb)
+        low_p.append(pb)
+        rows.append(["%.0f %%" % (100 * dr), "%.3f" % ea, "%.3f" % pa,
+                     "%.3f" % eb, "%.3f" % pb, "%.2f" % lb, "%.0f" % nb])
+        print("   %4.0f %%    %6.3f / %6.3f            %6.3f / %6.3f       %.2f  %5.0f"
+              % (100 * dr, ea, pa, eb, pb, lb, nb))
+    ratio = low_e[-1] / max(rnd_e[-1], 1e-9)
+    dev = 100 * abs(low_p[-1] - low_e[-1]) / max(low_e[-1], 1e-9)
+    print("\n   ★同じ欠測率 %.0f %% で誤差が %.1f 倍違う"
+          "(無作為 %.3f / 構造的 %.3f mrad)。" % (fr[-1], ratio, rnd_e[-1], low_e[-1]))
+    print("     残った高さは %.2f m → %.2f m。予測 %.3f mrad と実測 %.3f mrad の差は %.0f %%。"
+          % (rows[0][5] and float(rows[0][5]), float(rows[-1][5]), low_p[-1],
+             low_e[-1], dev))
+    print("     ★施工誤差 3.00 mrad を検出する目安(誤差 < 1/3)を割るのは"
+          "構造的欠測だけ。")
     figs.save_plot("cliff_dropout",
-                   [("無作為に落とす", fr, rnd_sd), ("下から順に残す(構造的)", fr, low_sd),
-                    ("予測 σ√12/(L√N)", fr, pred),
-                    ("施工誤差 3 mrad の 1/3", fr, [1000 * RACK / 3] * len(fr))],
-                   xlabel="欠測率 [%]", ylabel="壁の傾きの散らばり(4 種) [mrad]",
-                   title="同じ欠測率でも壊れ方が 2 桁違う(効くのは残った面の高さ L)",
-                   caption="構造的な欠測は L を縮めるので L^-1.5 で荒れる。")
+                   [("無作為に落とす(実測)", fr, rnd_e),
+                    ("下から順に残す(実測)", fr, low_e),
+                    ("予測 σ√12/(L√N)(構造的)", fr, low_p),
+                    ("検出の目安 = 3 mrad の 1/3", fr, [1000 * RACK / 3] * len(fr))],
+                   xlabel="欠測率 [%]", ylabel="壁の傾きの誤差 RMS(6 種) [mrad]",
+                   title="同じ欠測率でも崖が違う —— 効くのは点数でなく残った面の高さ L",
+                   caption="無作為欠測は N だけ減らす。構造的欠測は L も縮めるので"
+                           "L^-1 が余分に掛かる。")
     figs.save_table("cliff_dropout_table",
-                    ["欠測率", "無作為 [mrad]", "構造的 [mrad]", "残った高さ L [m]", "予測 [mrad]"],
+                    ["欠測率", "無作為 実測 [mrad]", "無作為 予測", "構造的 実測 [mrad]",
+                     "構造的 予測", "残った高さ L [m]", "点数 N"],
                     rows, title="欠測の掃引 —— 同じ欠測率、違う崖")
-    return {"fr": fr, "rnd": rnd_sd, "low": low_sd, "pred": pred, "ratio": ratio}
+    return {"fr": fr, "rnd": rnd_e, "low": low_e, "pred": low_p, "ratio": ratio,
+            "dev": dev}
 
 
 def section_cliff_registration() -> dict:
