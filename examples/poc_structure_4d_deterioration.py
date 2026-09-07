@@ -1096,18 +1096,27 @@ def section_rate(obs: dict, sc: dict) -> dict:
           "**速度**を良くしない —— 良くなるのは次の量だけ。")
 
     # 中央の点が効くのは「曲がり(加速)」だけ
-    acc = (ls[2] - 2.0 * ls[1]) / (1.0 ** 2)          # 2 階差分 [mm/年^2]
+    acc = ls[2] - 2.0 * ls[1]                          # 2 階差分 [mm/年^2]
     acc_true = tf[2] - 2.0 * tf[1]
     g3 = np.isfinite(acc) & ~CORES["edge"]
     ea = float(np.sqrt(np.mean((acc[g3] - acc_true[g3]) ** 2)))
+    e2ep = float(np.sqrt(np.mean((ls[2][g3] - tf[2][g3]) ** 2)))
+    e1ep = float(np.sqrt(np.mean((ls[1][g3] - tf[1][g3]) ** 2)))
+    rho = float(np.corrcoef(ls[1][g3] - tf[1][g3], ls[2][g3] - tf[2][g3])[0, 1])
+    pred_ind = math.sqrt(e2ep ** 2 + 4 * e1ep ** 2)
+    pred_cor = math.sqrt(max(e2ep ** 2 + 4 * e1ep ** 2 - 4 * rho * e1ep * e2ep, 0.0))
     print("  ★中央の点が効くのは**加速**(2 階差分 L2 - 2·L1)。"
           "真の加速(谷)%.3f mm/年²、実測の誤差 RMS %.3f mm/年²。"
           % (float(np.nanmin(acc_true)), ea))
-    print("     予測: 各時点が独立なら 2 階差分の誤差は 1 時点の σ の √(1+4+1)="
-          "%.3f 倍。実測比 %.2f。"
-          % (math.sqrt(6.0), ea / max(e1 / math.sqrt(2.0), 1e-9)))
+    print("     予測: 各時点が独立なら √(σ2² + 4σ1²) = %.3f。"
+          "実測 %.3f は**それより小さい**。" % (pred_ind, ea))
+    print("     ★理由も測れる: t1 の誤差と t2 の誤差の相関は %+.3f —— "
+          "どちらも同じ t0 を基準に、\n       同じ面に対して位置合わせしている"
+          "ので、誤差が**共通成分を持つ**。相関を入れた予測は %.3f(比 %.2f)。"
+          % (rho, pred_cor, ea / max(pred_cor, 1e-9)))
     print("     劣化が加速していること(欠損 %.0f -> %.0f mm)は言えるが、"
-          "その**数字**は速度より 1 桁粗い。" % (SPALL_MM[1], SPALL_MM[2]))
+          "その数字の誤差は速度の %.1f 倍。" % (SPALL_MM[1], SPALL_MM[2],
+                                              ea / max(rms, 1e-9)))
 
     figs.save_plot("rate_error",
                    [("速度の誤差 |Δ|", np.arange(1, g.sum() + 1) / g.sum() * 100,
