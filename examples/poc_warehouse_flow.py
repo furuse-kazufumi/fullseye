@@ -717,11 +717,11 @@ def section_scene(base: dict, clear: np.ndarray) -> dict:
     print("   %-14s %4s   %10s      %8.1f  (うち損失 %.1f / 生産的 %.1f)"
           % ("合計", "", "", loss + work, loss, work))
     creep = 2.0 * CREEP_D / CREEP_V
-  print("  ★人待ちと通路の干渉は、**ゼロ点への寄与**(待ち + 前後の徐行 %.1f 秒)が"
-        % creep)
-  print("     %.1f 秒 / %.1f 秒 で揃うように件数と長さを置いてある。"
-        % (counts["人待ち"] * (DUR["人待ち"] + creep),
-           counts["通路の干渉"] * (DUR["通路の干渉"] + creep)))
+    print("  ★人待ちと通路の干渉は、**ゼロ点への寄与**(待ち + 前後の徐行 %.1f 秒)"
+          % creep)
+    print("     が %.1f 秒 / %.1f 秒 で揃うように件数と長さを置いてある。"
+          % (counts["人待ち"] * (DUR["人待ち"] + creep),
+             counts["通路の干渉"] * (DUR["通路の干渉"] + creep)))
     return {"counts": counts, "loss": loss, "work": work, "racks": racks}
 
 
