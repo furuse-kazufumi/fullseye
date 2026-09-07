@@ -335,7 +335,11 @@ def observe(k: int, rng, density: float | None = None, deteriorate=True,
         u = v / rr[:, None]
         ci = np.einsum("ij,ij->i", n, u)
         ok = ci > COS_MIN
-        eps = p + 2e-3 * n
+        # ★遮蔽は**設計形状**(``p_nom``)で判定する。数 mm〜数十 mm の劣化で
+        #   surface が自己遮蔽の箱の内側に入ると、欠損のいちばん深いところが
+        #   **まるごと欠測**になり「深い欠損ほど見えない」という嘘の場面ができる
+        #   (2026-09-07 に踏んだ: 欠損の谷 -21 mm の core が全部 NaN になった)。
+        eps = p_nom + 2e-3 * n
         ok &= ~_seg_hits_box(decamber(eps), decamber(np.broadcast_to(sp, p.shape)),
                              *SELF_BOX)
         if blocker:
