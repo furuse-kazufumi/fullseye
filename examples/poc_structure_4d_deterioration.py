@@ -1215,13 +1215,13 @@ def section_prism_and_crack(sc: dict) -> dict:
           "断面の円として ``fit_circle_3d`` で測る:")
     # ★まず測り方そのものの床を取る —— 劣化も姿勢誤差も無しで 2 回測るだけ。
     _CAMBER[0] = CAMBER
-    c0 = observe(0, np.random.default_rng(SEED + 531), pose=False)
-    c1 = observe(0, np.random.default_rng(SEED + 532), pose=False)
+    c0 = observe(0, np.random.default_rng(SEED + 511), pose=False)
+    c1 = observe(2, np.random.default_rng(SEED + 512), deteriorate=False, pose=False)
     f0, _, _ = bearing_pose(c0, 0)
     f1, _, _ = bearing_pose(c1, 0)
     floor_h, floor_v = ((f1 - f0) * 1e3)[0], -((f1 - f0) * 1e3)[1]
     print("      対照(劣化ゼロ・姿勢誤差ゼロで測り直しただけ): 水平 %+.2f mm / "
-          "沈下 %+.2f mm ← **円の当てはめ自体の床**\n      "
+          "沈下 %+.2f mm ← **測り方だけの床**\n      "
           "(下半分の円弧しか見えず、見える範囲が走査位置で変わるので中心が偏る)"
           % (floor_h, floor_v))
     print("      条件                                桁の偽の変化 RMS[mm]"
