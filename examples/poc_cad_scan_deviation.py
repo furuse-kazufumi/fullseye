@@ -592,12 +592,29 @@ def section_align(ref: CadRef) -> dict:
     figs.save_table("methods", ["手法", "姿勢 [度]", "点移動 [mm]", "偏差RMS [µm]",
                                 "偏差最大 [µm]", "公差外面積 [mm^2]", "面積誤差"],
                     rows, title="位置合わせの段階と、そこから出る偏差の誤差",
-                    caption="姿勢が 0.24 度残ると偏差の RMS が公差と同じ大きさになる。")
+                    caption="真の姿勢を与えた最終行が推定器そのものの床。"
+                            "点-面 ICP との差は姿勢ではなく datum の取り方の差。")
+
+    # --- 稜線の罠 —— 最近傍が隣の面へ飛ぶ ------------------------------------ #
+    print("\n  稜線の罠(推定器そのものの誤差。姿勢は真値を与えている):")
+    q0 = sc["pts"] @ sc["R_true"].T + sc["t_true"]
+    for k, lab in ((1, "k=1(素朴な最近傍)"), (6, "k=6(接線最小の足を選ぶ)")):
+        _, s1, i1 = ref.deviate(q0, k=k)
+        bad = ref.face[i1] != sc["face"]
+        e = s1 - tru
+        print("   %-24s 面を跨いだ対応 %5.2f %% / 偏差RMS %6.1f µm "
+              "(跨いだ点を除くと %5.1f µm)"
+              % (lab, 100 * bad.mean(), 1000 * np.sqrt(np.mean(e ** 2)),
+                 1000 * np.sqrt(np.mean(e[~bad] ** 2))))
+        if k == 1:
+            edge_k1 = (100 * bad.mean(), 1000 * np.sqrt(np.mean(e ** 2)))
+        else:
+            edge_k6 = (100 * bad.mean(), 1000 * np.sqrt(np.mean(e ** 2)))
+    print("   ★同じ点群・同じ姿勢でも、**足の選び方だけ**で RMS が %.1f -> %.1f µm。"
+          % (edge_k1[1], edge_k6[1]))
 
     if figs.enabled():
         best = keep["p2plane"]
-        top = (ref.names[np.argmax([1 if n == "top" else 0
-                                    for n in ref.names])])  # noqa: F841
         _, _, idx = ref.deviate(best["q"])
         on_top = ref.face[idx] == ref.names.index("top")
         P2 = best["q"][on_top][:, :2]
