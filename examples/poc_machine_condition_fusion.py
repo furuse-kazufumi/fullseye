@@ -803,9 +803,13 @@ def sweep(name: str, values, kw_name: str, want, solo, probes, focus, xlabel: st
     solo_r = np.asarray(solo_r)
     pvals = np.asarray(pvals)
     x = np.asarray(rows, float)
-    series = [(p[0], x, pvals[:, i]) for i, p in enumerate(probes)]
-    figs.save_plot(name, series, xlabel=xlabel, ylabel="特徴の上での分離度・値",
-                   title=title, caption=caption)
+    # 図では系列の桁を揃える(倍率はラベルに書く —— 隠すと数字が読めなくなる)
+    sc = list(pscale or [1.0] * len(probes))
+    xp = np.asarray([xplot(v) for v in rows], float) if xplot else x
+    series = [("%s%s" % (p[0], "" if sc[i] == 1.0 else " ×%g" % sc[i]),
+               xp, pvals[:, i] * sc[i]) for i, p in enumerate(probes)]
+    figs.save_plot(name, series, xlabel=xplot_label or xlabel,
+                   ylabel="特徴の上での分離度・値", title=title, caption=caption)
     return {"x": x, "solo": solo_r, "fuse": np.asarray(fuse_r),
             "fuse_all": np.asarray(fuse_all), "d": pvals}
 
