@@ -630,7 +630,8 @@ def section_bulge() -> dict:
     figs.save_grid("bulge_maps", maps, caps,
                    title="東の壁の偏差マップ [mm] —— 同じ振幅 %.0f mm のふくらみ"
                          % (1e3 * BULGE_A), signed=True, ncols=3)
-    return {"sig": sigs, "peak": peak_m, "pred": peak_p, "fake": fake_m}
+    return {"sig": sigs, "peak": peak_m, "clean": peak_c, "pred": peak_p,
+            "fake": fake_m, "fake_pred": fake_p, "floor": floor}
 
 
 # --------------------------------------------------------------------------- #
