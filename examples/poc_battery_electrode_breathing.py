@@ -723,7 +723,11 @@ def main() -> None:
           % float(np.mean(noise["ratios"])))
     print("  * 層別(欲しい数字)は全体の %.1f 倍ばらつく。てこの腕の幾何。"
           % (noise["keep"]["an"] / noise["keep"]["gl"]))
-    print("  * 崖は 2 段(精度の劣化と本数の崩壊)。分けて数えないと読み違える。")
+    print("  * 崖は 2 段(精度の劣化と本数の崩壊)。分けて数えないと読み違える。"
+          "本数の崩壊は
+    予測した 3σ の崖より 5.5 倍手前に来た。")
+    print("  * 真値を画素の中心に乗せた検査は推定器を実力以上に良く見せる"
+          "(1.8e-14 px 対 %.4f px)。" % lock["max"])
 
     # --- 所見を固定する assert ------------------------------------------------ #
     # 1-2) 雑音なしの提案は完全、Z1 は原理的に読めない
@@ -732,7 +736,12 @@ def main() -> None:
     assert abs(base["e_prop"] - e_true) < 2e-4, (base["e_prop"], e_true)
     for name, est, tru in base["per"]:
         assert abs(est - tru) < 5e-4, (name, est, tru)
-    # 3) 対照群: 勾配ピークはゲイン/オフセットに動かない、Z2 は動く
+    # 3) ピークロッキング: 格子に乗せると 0、外すと 0.01 px 級
+    assert lock["max"] > 5e-3, lock["max"]
+    assert lock["max"] < 3e-2, lock["max"]
+    assert lock["rms"] > base["bias"] * 1e6, (lock["rms"], base["bias"])
+    assert 0.5 < lock["c0_est"] < 3.0, lock["c0_est"]
+    # 4) 対照群: 勾配ピークはゲイン/オフセットに動かない、Z2 は動く
     assert abs(ctrl["ゲイン x1.30"][0]) < 1e-12, ctrl["ゲイン x1.30"]
     assert abs(ctrl["オフセット +0.10"][0]) < 1e-12, ctrl["オフセット +0.10"]
     assert abs(ctrl["オフセット +0.10"][1]) > 2.0 * e_true, ctrl["オフセット +0.10"]
@@ -748,7 +757,8 @@ def main() -> None:
     # 6) 回帰は偏る / 一様なら偏らない
     assert bias["e_reg"] < e_true, (bias["e_reg"], e_true)
     assert abs(bias["e_reg"] - e_true) / e_true > 0.01
-    assert abs(bias["e_e2e"] - e_true) < 1e-12, bias["e_e2e"]
+    assert abs(bias["e_e2e"] - e_true) < 5e-5, bias["e_e2e"]
+    assert abs(bias["e_e2e"] - e_true) < lock["max"] * math.sqrt(2) / 480.0
     assert abs(bias["e_uniform"] - 0.0045) < 1e-5, bias["e_uniform"]
     # 7) 崖は 2 段: 高 CNR では本数は崩れず、低 CNR で崩れる
     assert cliff["lost"][1.0][0] == 0, cliff["lost"][1.0]

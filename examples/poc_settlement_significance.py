@@ -848,9 +848,10 @@ def section_tool_gaps() -> None:
           "検定が 1 回増える道具を出しているのだから、族に入る価値がある。")
 
     assert not hasattr(fs.ledger, "core_normals") and not hasattr(fs, "core_normals")
-    print("  (d) **core ごとの法線**を作る口が無い。estimate_normals は点ごとで、"
-          "core 格子に対しては自前で平面を当てるしかない(5 節のとおり"
-          "ここを鉛直で代用すると LoD が %.1f 倍になる)。" % (CROSS * RADIUS * 1e3 / 2))
+    print("  (d) **core ごとの法線**を作る口が無い。estimate_normals は点ごと、"
+          "fit_plane_3d は 1 組ずつなので、core 格子に対しては呼び手が %d 回"
+          "回している(5 節のとおり、ここを鉛直で代用すると LoD が跳ねる)。"
+          % len(core_grid()[0]))
 
     assert not hasattr(fs.ledger, "volume_from_core_field")
     print("  (e) core の場から**体積**を出す口が無い(格子の cell を掛けて足す"

@@ -389,10 +389,17 @@ def section_gsd_slots() -> dict:
     err = max(abs(a - b) for w in SLOTS
               for a, b in zip(series[w][0], series[w][1]))
     print("\n  ★予測との差は最大 %.2f。**崖の位置は隙間の幅そのもの**"
-          "(g = w で 0 になる)。" % err)
-    print("     20 mm の隙間は g = 20 mm で既に見えない。40 mm のセルで測ると"
-          "\n     **荷 A の隙間は 3 本中 1 本しか残らない**ので、"
-          "積載率は隙間のぶんだけ高く出る。")
+          "(g >= w で 0 になる)。" % err)
+    print("     40 mm のセルで測ると **20 mm の隙間は完全に消え、50 mm も"
+          "3 割しか残らない**ので、\n     積載率はそのぶん高く出る。")
+
+    # ★g = w ちょうどは「格子が偶然そろうかどうか」の勝負になる。
+    per_off = [slot_recovered(pts, 20.0, (300.0, 320.0, 820.0, 1180.0), [o])
+               for o in np.linspace(0.0, 20.0, 5, endpoint=False)]
+    print("  ★★g = w(= 20 mm)ちょうどでは、**格子の位相で全か無かに割れる**:"
+          "\n     オフセット 0/4/8/12/16 mm で %s —— 平均 %.2f は"
+          "「半分見える」ではなく\n     「5 回に 1 回だけ全部見える」。"
+          % ("/".join("%.2f" % v for v in per_off), float(np.mean(per_off))))
 
     figs.save_plot("gsd_slot_cliff",
                    [("w = 20 mm(実測)", gcs, series[20.0][0]),
