@@ -884,8 +884,8 @@ def section_false_symmetry(S: dict) -> dict:
         S_ = 3.5
         pan, cap = [], []
         pan.append(shaded(Z, ins, xs, ys)); cap.append("真の形(右頬に装飾+ねじれ)")
-        pan.append(with_scalebar(np.where(ins, da, 0.0), S_))
-        cap.append("真の非対称 [mm](RMS %.2f)" % asym_true)
+        pan.append(with_scalebar(np.where(ins, -da, 0.0), S_))
+        cap.append("鏡像 - 真値 [mm](RMS %.2f)" % asym_true)
         short = {"無地の側(左)": "左(無地)を欠損: 捏造 %.0f mm^3",
                  "装飾のある側(右)": "右(装飾)を欠損: 消失 %.0f mm^3"}
         for side in ("無地の側(左)", "装飾のある側(右)"):
