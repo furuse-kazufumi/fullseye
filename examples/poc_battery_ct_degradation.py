@@ -843,15 +843,18 @@ def section_control(cells, recs) -> dict:
                                "落ち、そこから先の山が押し上げられている。")
         # 端から 2 枚目の層の界面(平面度の中身)
         fs_series = []
+        z_show = (int(ELEC_Z[0] / SZ) + 3 + 0.5) * SZ      # 1 枚のスライスだけ描く
         for key, name in (("healthy", "健全"), ("uniform", "一様膨れ"),
                           ("local", "局所膨れ"), ("gas", "層間ガス空隙")):
             p = flat[key]["points"]
             if p.size:
-                o = np.argsort(p[:, 0])
-                fs_series.append((name, p[o, 0], p[o, 1]))
+                k = np.abs(p[:, 2] - z_show) < 0.5 * SZ    # 点は (x, y, z)
+                if k.sum() >= 2:
+                    o = np.argsort(p[k, 0])
+                    fs_series.append((name, p[k][o, 0], p[k][o, 1]))
         figs.save_plot("flatness", fs_series,
                        xlabel="x [mm]", ylabel="界面の y 位置 [mm]",
-                       title="端から 2 枚目の層の界面 —— 平面度が劣化の形を映す",
+                       title="端から 2 枚目の層の界面(z = %.2f mm の 1 断面)" % z_show,
                        caption="一様膨れは平らなまま上がる。局所膨れとガス空隙は"
                                "うねる(残差 RMS で数字になる)。")
 
