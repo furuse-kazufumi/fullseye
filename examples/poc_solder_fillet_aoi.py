@@ -954,6 +954,8 @@ def section_illumination(v_thr: float) -> dict:
 # 8. 混同行列 —— 4 種 × ゼロ点                                                  #
 # --------------------------------------------------------------------------- #
 KINDS = ("good", "insufficient", "bridge", "tombstone")
+ROUGH_SET = (0.10, 0.15, 0.20, 0.25, 0.30, 0.35)
+BODY_LEN_TOL = 0.02          # 本体(暗部)の長さの許容 [mm]。浮きの前縮みを拾う
 KIND_JA = {"good": "良品", "insufficient": "不足", "bridge": "ブリッジ", "tombstone": "浮き"}
 
 
