@@ -800,13 +800,16 @@ def section_pull(ref: CadRef) -> dict:
         _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
         Pn = sc["nom"]
         if where == "部品の中央":
-            m = (np.abs(Pn[:, 0]) < 3.0) & (Pn[:, 2] > H - 1e-6) & (sc["nrm"][:, 2] > 0.9)
+            m = ((np.abs(Pn[:, 0]) < 3.0) & (Pn[:, 2] > H - 1e-6)
+                 & (sc["nrm"][:, 2] > 0.9) & ~ed)
             meas_read = float(np.mean(s[m]))
         elif where == "ボス外周":
-            m = (Pn[:, 2] > ZC) & (np.hypot(Pn[:, 0] - BX, Pn[:, 1]) > BOSS_R - 1e-6)
+            m = ((Pn[:, 2] > ZC) & (np.hypot(Pn[:, 0] - BX, Pn[:, 1]) > BOSS_R - 1e-6)
+                 & ~ed)
             meas_read = float(np.mean(s[m]))
         else:
-            meas_read = float(s[np.argmin(sc["dev_true"])])
+            dv = np.where(ed, 0.0, sc["dev_true"])
+            meas_read = float(s[np.argmin(dv)])
         dz = 1000.0 * float((t - t0)[2])
         print("   %-10s %-14s %8.1f %9.1f %10.1f %+7.1f %14.1f %%"
               % (name, where, 1000 * true_read, 1000 * pred_read, 1000 * meas_read,
