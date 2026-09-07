@@ -899,7 +899,8 @@ def section7_calibration(p: dict, tru: dict, design: dict) -> dict:
     j = np.argmin(dd, axis=1)
     dz = np.abs(hf[np.arange(hf.shape[0]), j])
     pr_thr = float(np.mean((dz / design["throat"]) ** 2))
-    predict = {"cv": np.nan, "ucL": 1.0 - s2L, "ucR": 1.0 - s2R,
+    sl = float(np.mean(((_toes(p)[3] - _toes(p)[2]) / (_toes(p)[1] - _toes(p)[0]))))
+    predict = {"cv": 1.0 / (1.0 + sl ** 2), "ucL": 1.0 - s2L, "ucR": 1.0 - s2R,
                "legL": s2L, "legR": s2R, "throat": pr_thr}
     eps = 0.01
     img, _ = render(p, THETA_REF, occlusion=False, noise=0.0, seed=9)
