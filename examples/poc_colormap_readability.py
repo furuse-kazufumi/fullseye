@@ -432,9 +432,14 @@ def section_bowl(meas: dict) -> dict:
         rgb = np.asarray(fs.apply_cmap(f, name, vmin=0.0, vmax=1.0))
         de = step_delta_e(rgb)
         de_panels.append(de / max(de.max(), 1e-9))
-    figs.save_grid("false_edge_map", de_panels, ["jet の色差", "viridis の色差"],
-                   ncols=2, title="隣接画素の色差マップ(明るい線 = 無い境目)",
-                   caption="真の場に段差は 1 つも無い。線はすべて配色が作った。")
+    figs.save_grid("false_edge_map", de_panels,
+                   ["jet(最大 %.2f ΔE)" % de_max[0],
+                    "viridis(最大 %.2f ΔE)" % de_max[1]],
+                   ncols=2, title="隣接画素の色差マップ(場に段差は 1 つも無い)",
+                   caption="jet の**輪**が偽の境目。viridis の外側が明るいのは"
+                           "配色ではなく椀そのものの勾配(外側ほど急)—— "
+                           "だから真の勾配で割らないと区別できない。"
+                           "各パネルは自分の最大で正規化してある。")
     return {"raw": raw_r, "gain": gain_r, "max_err": float(max(err))}
 
 
