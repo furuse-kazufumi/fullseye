@@ -387,7 +387,7 @@ def width_stats(w_est: np.ndarray, w_true: np.ndarray) -> dict:
 def run_zero(scene: dict, center=None, thetas=None) -> dict:
     """ゼロ点を方向ごとに走らせて集計(既定は 24 方向、報告は θ=0 と分布)。"""
     center = scene["pith"] if center is None else center
-    thetas = [2 * np.pi * (s + 0.5) / N_SECT for s in range(N_SECT)] if thetas is None else thetas
+    thetas = [sector_theta(s) for s in range(N_SECT)] if thetas is None else thetas
     res = []
     for th in thetas:
         tr = ray_truth(scene, center, th)
