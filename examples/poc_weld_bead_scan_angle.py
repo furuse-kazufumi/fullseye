@@ -292,6 +292,16 @@ def est_centroid_adapt(img, frac=0.25, half=12):
     return _centroid(img, w)
 
 
+def est_centroid_raw(img):
+    """★対照群 —— 固定窓のまま、**背景を 0 で切り上げない**(負の重みを許す)。
+
+    ``clip(I-BG, 0, None)`` の 1 行は無害に見えるが、雑音の負側だけを捨てる
+    ので整流になる。この対照群だけが 1/σ の法則にきれいに乗る(2 章)。
+    """
+    return _centroid(img, lambda im, k, r: (im - BG)
+                     * (np.abs(r - k[:, None, :]) <= HALF_FIX))
+
+
 est_centroid_fix.__doc__ = est_centroid_fix.__doc__ % HALF_FIX
 est_centroid_adapt.__doc__ = est_centroid_adapt.__doc__ % 25
 est_centroid = est_centroid_fix     # 以降の章で使う既定の推定量
