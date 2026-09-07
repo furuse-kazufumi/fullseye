@@ -893,13 +893,23 @@ def section_registration(sc: dict, sh: dict) -> dict:
     base = [r for r in out if r[0] == "ずれ+回転"]
     good = [r for r in base if r[1] != "ゼロ点" and "位相" not in r[1]]
     ph = next(r for r in base if "位相" in r[1])
+    rot_only = residual_px((0.0, 1.3, -0.8), (0.4, 1.3, -0.8), valid)
     print("\n  ★3 経路(PIV / 特徴点 / LK)の残留ずれは %.3f〜%.3f px、偽陽性 %d〜%d px(ゼロ点 %d px)。"
           % (min(r[2] for r in good), max(r[2] for r in good),
              min(r[3] for r in good), max(r[3] for r in good), base[0][3]))
-    print("  ★位相相関は公開経路に 3-D 用しか無く、整数精度・並進のみ: 残留 %.3f px、偽陽性 %d px。"
-          % (ph[2], ph[3]))
-    print("     残留 %.2f px は 2 節の掃引で %s に当たる —— **位置合わせ後も同じ崖の上**。"
-          % (ph[2], "δ=0.3 ではゼロ、0.5 で %d px の間" % sh["fp"][sh["deltas"].index(0.5)]))
+    print("  ★位相相関は公開経路に 3-D 用しか無く、整数精度・並進のみ: 残留 %.3f px(うち回転 0.4° の分が %.3f px)、"
+          "偽陽性 %d px。" % (ph[2], rot_only, ph[3]))
+    # 同じ崖に乗っているか: 2 節の掃引(ずれだけ)を残留ずれの位置で補間して比べる
+    interp = float(np.interp(ph[2], sh["deltas"], sh["fp"]))
+    print("     2 節の掃引を残留 %.2f px で読むと %.0f px —— 実測 %d px(%.2f 倍)。"
+          "**位置合わせ後も同じ崖の上に乗る**(残留の中身が回転でも)。" % (ph[2], interp, ph[3], ph[3] / interp))
+    lk_il = next(r for r in out if r[0] == "ずれ+回転+照明差" and "LK" in r[1])
+    kp_il = next(r for r in out if r[0] == "ずれ+回転+照明差" and "特徴点" in r[1])
+    print("  ★照明差が入ると LK(輝度不変を仮定)は残留 %.3f px に悪化、特徴点(正規化パッチ)は %.3f px のまま。"
+          "強い雑音では逆に特徴点が %.3f px、LK が %.3f px —— **経路ごとに弱点が違う**。"
+          % (lk_il[2], kp_il[2],
+             next(r for r in out if r[0] == "ずれ+回転+強い雑音" and "特徴点" in r[1])[2],
+             next(r for r in out if r[0] == "ずれ+回転+強い雑音" and "LK" in r[1])[2]))
     # ★1 枚のグラフ: 残留ずれ vs 偽陽性(掃引の線 + 登録結果の点)
     xs = [r[2] for r in out]
     ys = [r[3] for r in out]
