@@ -793,9 +793,13 @@ def main() -> int:
 
     # --- 所見を固定する assert(壊れたら鳴る)-------------------------------- #
     assert thick["q_ero2"], "侵食の値が 2h の倍数でなくなった"
-    assert thick["q_ins2"], "内接球の値が 2h の倍数でなくなった"
+    assert thick["q_ins2"], "内接球の値が 2h の倍数でなくなった(予想どおり h 刻みになった?)"
+    assert thick["same"] == thick["n"], "侵食と内接球が別の値を出した"
+    assert thick["bad"], "薄い側で探針が破綻しなくなった"
     assert over["a_hi"] / over["a_lo"] > 2.5, "45 度の段差が消えた"
-    assert over["steps"]["平滑化 sigma=1.5 voxel"] < 0.6 * over["step"], "平滑化が段差を潰さない"
+    assert over["spread"] > 3.0, "等値面の取り方による NG 面積の開きが縮んだ"
+    assert over["steps"]["距離場から"] < 0.1 * over["step"], "距離場から取った段差が残った"
+    assert reach["false_ok"] and reach["false_ng"], "工具判定の誤りが片方向しか出ない"
     assert orient["best"][1] > 0.0, "どこかの向きでサポートがゼロになった(穴の直交が崩れた)"
     assert abs(scene["a_mesh"] - scene["a_true"]) / scene["a_true"] < 0.05, "解析面積とメッシュ面積が乖離"
 
