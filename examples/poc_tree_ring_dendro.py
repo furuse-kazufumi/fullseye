@@ -901,21 +901,25 @@ def main() -> None:
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
-    print("  * ゼロ点は年数 %d(真値 %d、偽輪 %d)でも幅の相関 %.3f —— 年数と幅の相関は"
-          "別に数える。" % (b["z0"]["n_det"], N_RINGS, b["z0"]["false"], b["zs"]["corr"]))
+    print("  * ゼロ点(1 本の放射線)は 24 方向中 %d 方向で年数が合う。合わない %d 方向でも"
+          "幅の相関は中央値 %.3f —— 年数と幅の相関は別に数える。"
+          % (b["z24"]["exact"], b["wrong_n"], b["wrong_med"]))
     print("  * 合意法は年数 %d、欠落 %d、偽輪 %.1f、幅の相関 %.3f、平均誤差 %.2f px。"
           % (b["c"]["n_est"], len(b["c"]["missing"]), b["c"]["false"], b["cs"]["corr"],
              b["cs"]["mae"]))
-    print("  * 細い年輪の崖: 合意法 %.1f px(予測 %.2f)、ゼロ点 %.1f px。"
-          % (th["c_cliff"], th["pred"], th["z_cliff"]))
+    print("  * 細い年輪の崖: 合意法 %.1f px(モデル予測 %.1f)、ゼロ点 %.1f px(予測 %.1f)。"
+          % (th["c_cliff"], th["pred_c"], th["z_cliff"], th["pred_z"]))
     print("  * 髄の誤差 %.0f px で幅の相関 %.3f、年数 %d(到達不能 予測 %d / 実測 %d)。"
           "cos で変調されるのは半径(傾き %+.1f px)で幅(%+.2f px)ではない。"
           % (pe["d"][-1], pe["corr"][-1], pe["n_est"][-1], pe["lost_pred"][-1],
              pe["lost_meas"][-1], pe["slope_r"], pe["slope_w"]))
-    print("  * 割れ目 %d 本でゼロ点の偽輪は中央値 %.1f(最悪 %d)、合意法 %.1f。"
-          % (cr["n"][-1], cr["z_med"][-1], cr["z_max"][-1], cr["c_false"][-1]))
-    print("  * ぼけ σ %.1f px で合意法の欠落 %d 年(予測 %d)。"
-          % (bl["sig"][-1], bl["c_miss"][-1], bl["pred"][-1]))
+    print("  * 割れ目 %d 本でゼロ点の年数が合う方向 %d → %d、偽輪の中央値 %.1f → %.1f"
+          "(最悪 %d)。合意法は偽輪 %.1f。"
+          % (cr["n"][-1], cr["z_ok"][0], cr["z_ok"][-1], cr["z_med"][0], cr["z_med"][-1],
+             cr["z_max"][-1], cr["c_false"][-1]))
+    print("  * ぼけ σ %.1f px で合意法の欠落 %d 年(モデル予測 %d)、σ %.1f px で %d 年"
+          "(予測 %d)。" % (bl["sig"][2], bl["c_miss"][2], bl["pred_c"][2],
+                            bl["sig"][-1], bl["c_miss"][-1], bl["pred_c"][-1]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
