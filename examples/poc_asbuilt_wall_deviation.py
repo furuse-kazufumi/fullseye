@@ -431,7 +431,8 @@ def predict_ls_tilt(f: float, tau: float | None = None) -> float:
     ζ~U[ζ0,ζ1] で dev = -d。混合分布のモーメントは全部書けるので、
     **点を 1 つも作らずに**答えが出る。
     """
-    tau, d = TILT["east"], CAB_D
+    tau = TILT["east"] if tau is None else tau
+    d = CAB_D
     z0, z1 = CAB_Z[0] - ZREF, CAB_Z[1] - ZREF
     m1 = 0.5 * (z0 + z1)
     m2 = (z1 ** 3 - z0 ** 3) / (3.0 * (z1 - z0))
