@@ -744,10 +744,10 @@ def section_normals(ref: CadRef) -> dict:
     flip_or = res["estimate_oriented_normals(k=20)"]
     print("   ★予想 %.1f %%、実測 %.1f %% —— **外れた**。理由は面別の内訳が言う:"
           % (100 * pred, 100 * flip_en))
-    print("      凹面(hole1 / hole2 / fillet)は 73〜100 % 反転する(予想どおり)。"
-          "外れたのは**平面**で、")
-    print("      面ごとに 0 % から 68 % までばらつく。平面では近傍重心が点の上に"
-          "ほぼ載るので、")
+    print("      凹面(hole1 / hole2 / fillet)は %.0f〜%.0f %% 反転する"
+          "(予想どおり)。外れたのは**平面・凸面**で、" % (min(cav), max(cav)))
+    print("      面ごとに %.0f %% から %.0f %% までばらつく。平面では近傍重心が"
+          "点の上にほぼ載るので、" % (min(flat), max(flat)))
     print("      「重心から離れる向き」の法線成分がほぼ 0 —— 符号を決めているのは"
           "数値誤差であって形状ではない。")
     print("   Hoppe の大域向き付け(estimate_oriented_normals)は %.1f %% で"
