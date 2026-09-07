@@ -1192,9 +1192,10 @@ def main() -> int:
           % (zd["zd_need"], zd["stop"][1], zd["stop_need"]))
 
     # 所見を固定する assert(壊れたら鳴る)
-    assert st["重心 1 点"][1] > 0.10, st["重心 1 点"]        # 危険時に過大評価する
-    assert st["重心 1 点"][3] > 0, st["重心 1 点"]           # 見落としがある
-    assert st["重心 1 点"][4] == 0, st["重心 1 点"]          # 誤検知は無い(片側)
+    assert z0[1] > 0.10, z0                       # 危険時に過大評価する
+    assert z0[3] > 10.0, z0                       # 見落としがある
+    assert z0[4] == 0.0, z0                       # 誤検知は無い(片側)
+    assert sw["zero"]["足元 1 点"][3] > z0[3], sw["zero"]   # 足元はもっと悪い
     assert st["全表面(遮蔽なし)"][3] == 0, st["全表面(遮蔽なし)"]
     assert sw["occ_miss"][0] == 0.0 and sw["occ_miss"][2] > 15.0, sw["occ_miss"]
     assert sw["occ_miss"][3] > sw["occ_miss"][2], sw["occ_miss"]   # 疎で更に悪化
