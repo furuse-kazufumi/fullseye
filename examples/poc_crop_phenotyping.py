@@ -276,6 +276,11 @@ def canopy_mesh(can, nu=40, nt=8, max_leaves=None):
 
     面の向きは葉の表側(上向き)に揃える。``mesh_area`` と閉形式 pi/4 L W の
     差が、そのまま**離散化の代償**になる。
+
+    ★``u`` の両端(葉先と葉元)は幅がゼロなので、そこに頂点を置くと ``nt`` 個の
+    頂点が 1 点に潰れ、``face_normals`` が「退化三角形」で**拒否する**
+    (2026-09-07 に踏んだ)。半セル内側から取ることで避ける ——
+    そのぶん先端の面積を落とすので、閉形式との差に現れる。
     """
     idx = range(can["L"].size if max_leaves is None else min(max_leaves, can["L"].size))
     V, F = [], []
@@ -284,7 +289,7 @@ def canopy_mesh(can, nu=40, nt=8, max_leaves=None):
         bx, by, bz = can["base"][i]
         phi, beta, kap = can["phi"][i], can["beta"][i], can["kappa"][i]
         ll, ww = can["L"][i], can["W"][i]
-        u = np.linspace(0.0, ll, nu)
+        u = np.linspace(0.0, ll, nu + 2)[1:-1]
         t = np.linspace(-1.0, 1.0, nt)
         w = width_of(u, ll, ww)
         cx = bx + ix_of(u, beta, kap) * np.cos(phi)
