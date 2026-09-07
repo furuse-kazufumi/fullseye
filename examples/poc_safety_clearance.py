@@ -720,9 +720,16 @@ def section_sweep() -> dict:
                     ["条件", "見えた面", "過大評価 平均 m", "最大 m",
                      "見落とし", "誤検知"], occ_rows,
                     title="崖は遮蔽にある(点密度でも更新間隔でもない)")
+    print("\n  ★崖は遮蔽にある: 点密度を 16 倍疎にしても見落としは %.1f -> %.1f %%、"
+          "\n     更新間隔を 4 倍にしても %.1f -> %.1f %%。ところが遮蔽なし -> 1 台で"
+          " %.1f -> %.1f %%。"
+          % (d_miss[0], d_miss[-1], lat_miss[0], lat_miss[-1],
+             occ_miss[0], occ_miss[2]))
     return {"dens": dens, "d_miss": d_miss, "d_bias": d_bias,
             "occ_rows": occ_rows, "occ_miss": occ_miss, "lat_miss": lat_miss,
-            "frames": frames, "d_true": d_true, "S": S, "e_full": e_full}
+            "wrong_by_cond": wrong_by_cond,
+            "frames": frames, "d_true": d_true, "S": S, "e_full": e_full,
+            "e_clean": e_clean}
 
 
 # --------------------------------------------------------------------------- #
