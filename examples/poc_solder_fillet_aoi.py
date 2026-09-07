@@ -427,14 +427,18 @@ def _mode_columns(sub: np.ndarray) -> np.ndarray:
     return np.argmax(counts, axis=0)
 
 
-def _parse_profile(seq: np.ndarray, x_of: np.ndarray, theta: float) -> dict:
-    """壁から外へ向かう class 列 → 色境界の位置 → 円弧 → 高さ(E2)と傾き積分(E1)。"""
+def _parse_profile(seq: np.ndarray, x_of: np.ndarray, theta: float, xw: float) -> dict:
+    """壁 ``xw`` から外へ向かう class 列 → 色境界の位置 → 円弧 → 高さ(E2)と傾き積分(E1)。
+
+    爪先 = 色帯(赤/緑)の外側の端。その先は平らなパッド(青)か、パッド端を越えて
+    基板(暗)かのどちらかなので、「赤/緑でなくなる最初の画素」で取る。
+    """
     colored = np.nonzero((seq == 1) | (seq == 2))[0]
     if colored.size == 0:
         return {"h2": 0.0, "h1": 0.0, "n_pts": 0, "bands": (0, 0), "x40": None, "x30": None,
                 "xtoe": None}
     i0 = int(colored[0])
-    after = np.nonzero(seq[i0:] == 3)[0]
+    after = np.nonzero((seq[i0:] != 1) & (seq[i0:] != 2))[0]
     i_toe = int(i0 + after[0]) if after.size else seq.size
     run = seq[i0:i_toe]
     i30 = None
