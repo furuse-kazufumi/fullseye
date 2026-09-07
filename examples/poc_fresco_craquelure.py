@@ -301,9 +301,11 @@ def extract_net(img: np.ndarray, ridge: str = "xsk_meijering", a_lo: float = 0.0
     junc = np.asarray(fs.apply(skel.astype(float), "junctions_skeleton")) > 0.5
     ends = np.asarray(fs.apply(skel.astype(float), "r2_endpoints_skeleton")) > 0.5
     branch = np.asarray(fs.apply(skel.astype(float), "hx_split_skeleton_region")) > 0.5
-    # 幅: ブラックハット(周囲より暗い量)の半値で切った暗画素マスク → 距離変換 × 2
+    # 幅: ブラックハット(周囲より暗い量、最大値で正規化される)を、骨格上の典型値の半分で
+    # 切った暗画素マスク(= 半値幅)。面積 / 骨格の弧長 が幅。
     bh = np.asarray(fs.apply(img, "cv_blackhat", a=1.0, b=0.5))
-    dark = np.asarray(fs.apply(bh, "threshold", a=0.5)) > 0.5
+    half = 0.5 * float(np.median(bh[skel])) if skel.any() else 0.5
+    dark = np.asarray(fs.apply(bh, "threshold", a=half)) > 0.5
     return dict(resp=resp, mask=mask > 0.5, skel=skel, junc=junc, ends=ends,
                 branch=branch, dark=dark)
 
