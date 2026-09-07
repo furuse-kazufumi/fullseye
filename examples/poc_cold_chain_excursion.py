@@ -853,10 +853,13 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
         ns.append(n); rates.append(r)
         print("      %2d        %6.1f" % (n, r))
 
-    conv = [(NY - 2, NX // 2 - 1), (NY // 2, 2), (2, 2)]   # 扉前・中央・吹き出し口前
+    # 慣用の 3 点: 扉に近い側 / 中央 / 吹き出し口に近い側、いずれも荷の中(製品セル)
+    conv = [(NY - 3, 4), (NY // 2, 4), (3, 4)]
+    assert all(prod[y, x] for y, x in conv), "慣用 3 点が製品セルでない"
     conv_pass = all(bool(says_pass[y, x]) for y, x in conv)
-    print("\n  慣用の 3 点(扉前・中央・吹き出し口前、いずれも製品セル): %s"
-          % ("**偽合格**(3 点とも合格と言う)" if conv_pass else "不合格を出せた"))
+    print("\n  慣用の 3 点 %s(扉寄り・中央・吹き出し口寄り、いずれも荷の中): %s"
+          % (conv, "**偽合格**(3 点とも合格と言う)" if conv_pass
+             else "不合格を出せた"))
     print("  ★ランダム 3 個の偽合格 %.1f %% と比べる —— 規約の 3 点は"
           "「代表点」であって「最悪点」ではない。" % rates[2])
 
