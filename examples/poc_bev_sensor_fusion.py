@@ -565,7 +565,8 @@ def section_reprojection(rig: Rig) -> dict:
           "合格に見える。" % (1.0, px1, 100 * px1 / diag))
     print("     同じ誤差が BEV では %.3f m = %.1f セル。**px は角度、BEV は長さで、"
           "換算係数は距離そのもの**。" % (sh1, sh1 / CELL))
-    figs.save_table("reprojection", ["yaw 誤差", "画像の再投影誤差", "画像対角比",
+    figs.save_table("reprojection", ["yaw 誤差", "画像の再投影誤差",
+                                     "予測 f·tanθ", "画像対角比",
                                      "BEV のずれ(%.1f m)" % OBSTACLES[1]["cx"],
                                      "セル数"], rows,
                     title="同じ外部校正誤差を、画像と BEV で測る",
