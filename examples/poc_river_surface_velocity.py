@@ -336,7 +336,6 @@ def section_sanity(sc):
         print("  世界 (%.1f, %.1f) m → 画像 (%.0f, %.0f) px" % (X, Y, p[0] / p[2], p[1] / p[2]))
     cov = coverage()
     print("  正射画素のうち視野内 %.1f %%" % (100 * cov.mean()))
-    near = ground_scale(OBL_SHAPE[1] / 2, H_TRUE @ np.array([L_REACH / 2, 0.3, 1]))
     s_near = ground_scale(OBL_SHAPE[1] / 2.0, _v_of(0.3))
     s_far = ground_scale(OBL_SHAPE[1] / 2.0, _v_of(B_WIDTH - 0.3))
     s_mid = ground_scale(OBL_SHAPE[1] / 2.0, OBL_SHAPE[0] / 2.0)
