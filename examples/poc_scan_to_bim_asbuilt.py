@@ -1229,7 +1229,7 @@ def main() -> int:
     surf["seen"] = sc["seen"]
     section_scene(surf, sc)
     zero = section_zero_point()
-    al = section_alignment()
+    al = section_alignment(surf, sc)
     fm = section_maps(al, zero)
     vd = section_verdicts(al, fm)
     cd = section_cliff_dropout()
