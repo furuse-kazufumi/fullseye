@@ -54,16 +54,26 @@
   "tsv": "05_sweep_occlusion.tsv"
  },
  {
-  "file": "06_map_visibility.png",
-  "name": "map_visibility",
-  "caption": "手の表面のうち背面センサから見えた割合。0 の帯 = リンクと治具台の影。",
+  "file": "06_map_miss.png",
+  "name": "map_miss",
+  "caption": "横 = x [-0.2, 2.2] m、縦 = y [-1.1, 1.1] m。左 = 真の分離距離、中 = 推定 - 真値(0〜0.6 m で切った)、右 = 危険なのに止めない領域。中央の明るい帯 = ロボットのリンクと人の胴が落とす影。",
   "shape": [
-   60,
-   68
+   429,
+   1228,
+   3
   ]
  },
  {
-  "file": "07_metric_blindness.png",
+  "file": "07_map_visibility.png",
+  "name": "map_visibility",
+  "caption": "手の表面のうち背面センサから見えた割合。暗い帯 = リンク・治具台・人の胴の影で 1 点も見えない場所。",
+  "shape": [
+   336,
+   396
+  ]
+ },
+ {
+  "file": "08_metric_blindness.png",
   "name": "metric_blindness",
   "caption": "",
   "shape": [
@@ -73,7 +83,7 @@
   ]
  },
  {
-  "file": "08_grid_bias.png",
+  "file": "09_grid_bias.png",
   "name": "grid_bias",
   "caption": "",
   "shape": [
@@ -81,11 +91,11 @@
    502,
    3
   ],
-  "csv": "08_grid_bias.csv",
-  "tsv": "08_grid_bias.tsv"
+  "csv": "09_grid_bias.csv",
+  "tsv": "09_grid_bias.tsv"
  },
  {
-  "file": "09_zd_budget.png",
+  "file": "10_zd_budget.png",
   "name": "zd_budget",
   "caption": "",
   "shape": [
@@ -93,11 +103,11 @@
    429,
    3
   ],
-  "csv": "09_zd_budget.csv",
-  "tsv": "09_zd_budget.tsv"
+  "csv": "10_zd_budget.csv",
+  "tsv": "10_zd_budget.tsv"
  },
  {
-  "file": "10_zd_tradeoff.png",
+  "file": "11_zd_tradeoff.png",
   "name": "zd_tradeoff",
   "caption": "",
   "shape": [
@@ -107,7 +117,17 @@
   ]
  },
  {
-  "file": "11_map_distance_slice.png",
+  "file": "12_scene.png",
+  "name": "scene",
+  "caption": "人は 10 本のカプセル、機械は 2 本のリンク + 基台、手前は治具台。占有格子の最大値投影。上段 t=1.5 s、下段 t=4.6 s(上面図の数字はその時刻の真の最小分離距離)。",
+  "shape": [
+   334,
+   310,
+   3
+  ]
+ },
+ {
+  "file": "13_map_distance_slice.png",
   "name": "map_distance_slice",
   "caption": "危険源までの距離場を指先の高さ 1.09 m で切った断面 [m]。黒い輪 = 必要分離距離 S = 0.690 m の等高線。",
   "shape": [
@@ -116,7 +136,7 @@
   ]
  },
  {
-  "file": "12_scene_closest.png",
+  "file": "14_scene_closest.png",
   "name": "scene_closest",
   "caption": "最短分離 0.779 m を結ぶ線(最も近い部位 = 右手)。人 = 暖色、機械と治具台 = 寒色。",
   "shape": [

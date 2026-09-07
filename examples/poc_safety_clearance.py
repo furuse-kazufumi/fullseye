@@ -1017,15 +1017,16 @@ def section_scene_figures() -> None:
                + np.asarray(_L.sdf_to_occupancy(d_m)) * 0.45)
         # ★ボリューム op は (depth,row,col)。grid_coords は (nx,ny,nz) なので転置する。
         vol = occ.transpose(2, 1, 0)[::-1]
+        d0 = true_clearance(human, mach)[0]
         panels.append(np.asarray(_L.render_volume_projection(vol, 0.0, 0.0, "mip")))
-        caps.append("側面図 t=%.1f s(真の分離 %.3f m)"
-                    % (t, true_clearance(human, mach)[0]))
+        caps.append("側面 t=%.1f s" % t)
         panels.append(np.asarray(_L.render_volume_projection(vol, 0.0, 90.0, "mip")))
-        caps.append("上から見た図 t=%.1f s" % t)
+        caps.append("上面 %.3f m" % d0)
     figs.save_grid("scene", panels, caps, ncols=2,
                    title="協働ロボットのセル(人 = 明、機械と治具台 = 暗)",
-                   caption="人は 9 本のカプセル、機械は 2 本のリンク + 基台。"
-                           "占有格子の最大値投影。")
+                   caption="人は 10 本のカプセル、機械は 2 本のリンク + 基台、"
+                           "手前は治具台。占有格子の最大値投影。上段 t=1.5 s、"
+                           "下段 t=4.6 s(上面図の数字はその時刻の真の最小分離距離)。")
 
     # 距離場の断面(指先の高さの水平面)
     t = 4.6
