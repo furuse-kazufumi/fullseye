@@ -600,23 +600,34 @@ def section_thresholds(est: tuple[float, float]) -> dict:
     roi = sc["roi"]
     ua, ub = unmix(sc["obs_a"], sc["obs_b"], roi, *est)
     rows, out = [], {}
-    print("    流儀             | 生: M1     M2    | 分離後: M1     M2    | 真値 M1 %.3f M2 %.3f"
+    base_b = float(np.median(sc["obs_b"][roi]))
+    print("    流儀             | 生: T_B     M1     M2    | 分離後: T_B     M1     M2    | 真値 M1 %.3f M2 %.3f"
           % (sc["m1_true"], sc["m2_true"]))
-    for name in ("Otsu", "固定(背景+3σ)", "Costes 自動"):
-        vals = []
+    print("    (ch B の台 = %.3f、小胞ピークは台の上に約 %.2f)" % (base_b, GAIN_B * SIG_VES ** 2 / (SIG_VES ** 2 + PSF_SIG ** 2)))
+    for name in ("Otsu", "固定(台+3σ)", "Costes 自動"):
+        vals, thrs = [], []
         for a, b in ((sc["obs_a"], sc["obs_b"]), (ua, ub)):
             if name == "Otsu":
-                ma, mb = otsu_mask(a)[0], otsu_mask(b)[0]
+                (ma, _), (mb, tb) = otsu_mask(a), otsu_mask(b)
             elif name.startswith("固定"):
-                ma, mb = fixed_mask(a, roi), fixed_mask(b, roi)
+                (ma, _), (mb, tb) = fixed_mask(a, roi), fixed_mask(b, roi)
             else:
-                ma, mb = costes_threshold(a, b, roi)
+                ma, mb, _, tb = costes_threshold(a, b, roi)
             vals += list(manders(a, b, ma, mb, roi))
-        out[name] = vals
-        print("    %-16s | %.3f  %.3f  |  %.3f  %.3f" % (name, *vals))
-        rows.append([name, "%.3f" % vals[0], "%.3f" % vals[1], "%.3f" % vals[2], "%.3f" % vals[3]])
-    rows.append(["真値", "%.3f" % sc["m1_true"], "%.3f" % sc["m2_true"], "-", "-"])
-    figs.save_table("threshold_table", ["しきい値", "M1 生", "M2 生", "M1 分離", "M2 分離"], rows,
+            thrs.append(tb)
+        out[name] = vals + thrs
+        print("    %-16s | %.3f   %.3f  %.3f  |  %.3f   %.3f  %.3f" % (
+            name, thrs[0], vals[0], vals[1], thrs[1], vals[2], vals[3]))
+        rows.append([name, "%.3f" % thrs[0], "%.3f" % vals[0], "%.3f" % vals[1],
+                     "%.3f" % thrs[1], "%.3f" % vals[2], "%.3f" % vals[3]])
+    rows.append(["真値", "-", "%.3f" % sc["m1_true"], "%.3f" % sc["m2_true"], "-", "-", "-"])
+    print("\n  ★Costes 自動は漏れ込みで崩壊する: 暗い画素にも漏れ込みの相関が残るので、"
+          "\n   「相関が消える所」を探して下げるとしきい値が台まで落ち、M2=%.3f(ほぼ全画素が前景)。"
+          "\n   分離後は %.3f / %.3f —— 3 流儀の中でいちばん真値に近いが、しきい値が"
+          "台の上 %.3f と低い(裾を拾う)。" % (out["Costes 自動"][1], out["Costes 自動"][2],
+                                          out["Costes 自動"][3], out["Costes 自動"][5] - base_b))
+    figs.save_table("threshold_table",
+                    ["しきい値", "T_B 生", "M1 生", "M2 生", "T_B 分離", "M1 分離", "M2 分離"], rows,
                     title="しきい値の流儀と Manders(真の共局在 50 %)")
     return {"rows": out, "m1_true": sc["m1_true"]}
 
