@@ -83,6 +83,7 @@ PSF_SIGMA_PX = 0.7       # PSF [px](画素に比例 = 装置の分解能はボ�
 NOISE_SIGMA = 0.05       # 既定の雑音(骨 = 1、髄 = 0)—— 斑点の崖(§3)より下
 BIAS_BETA = 0.30         # カップ状バイアスの深さ
 MARROW_LEVEL = 0.15      # 髄腔の CT 値(骨を 1 として)
+RETINEX_UM = 800.0       # バイアス推定(retinex)の窓 σ [µm]
 SEED = 7
 
 _LAB = fs.ledger         # blob 族の公開経路
