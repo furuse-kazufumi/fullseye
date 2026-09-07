@@ -895,8 +895,9 @@ def section_false_symmetry(S: dict) -> dict:
         figs.save_grid("false_symmetry", pan, cap,
                        title="偽陽性: 対称でない形に対称復元をかけると何が起きるか",
                        ncols=2, signed=[False, True, True, True],
-                       caption="欠損がどちら側かで、装飾は**複製される**か"
-                               "**消される**かが決まる(面は真値でもこうなる)。")
+                       caption="色は「鏡像 - 真値」。欠損がどちら側かで、装飾は"
+                               "**複製される**か**消される**かが決まる"
+                               "(対称面が真値でもこうなる)。")
         figs.save_table(
             "false_symmetry_table",
             ["欠損の側", "失った点", "復元 RMS [mm]", "対称な形の対照 [mm]",
