@@ -451,7 +451,7 @@ def section_baseline() -> dict:
                    caption="偏心成長で境界が θ とともに斜めに走るので、正規化しないと"
                            "θ 窓の中で外側の年輪がにじむ。")
     # 図: 展開図に検出(赤)と真値(青)を重ねる
-    rgb = np.repeat(c["fil"][..., None], 3, axis=2)
+    rgb = np.repeat(c["pol"][..., None], 3, axis=2)
     for s in range(N_SECT):
         row = int((s + 0.5) * SECT_ROWS)
         for p in c["truths"][s]["pos"]:
@@ -463,7 +463,8 @@ def section_baseline() -> dict:
             if 0 <= j < rgb.shape[1]:
                 rgb[row + 2:row + 6, max(0, j - 1):j + 2] = (1.0, 0.15, 0.1)
     figs.save("polar_edges_map", rgb,
-              "扇形ごとの測定線が拾った境界(赤、下)と真値(青、上)。横 = 半径 px。")
+              "展開図(横 = 半径 px、縦 = 角度)に、扇形ごとの測定線が拾った境界(赤、下)と"
+              "真値(青、上)を重ねた。")
     # 図: 幅の時系列
     yrs = np.arange(1, sc["n"] + 1, dtype=float)
     okz = np.isfinite(zw)
