@@ -594,7 +594,7 @@ def section_cliff(k_true):
     d_lai = 0.5
     print("\n   点密度 rho   予測の崖 LAI*   実測の崖 LAI*(判別率 84 %% を切る点)")
     dens, pred_l, meas_l = [], [], []
-    for rho in (50.0, 200.0, 800.0, 3200.0):
+    for rho in (25.0, 100.0, 400.0, 1600.0):
         n_pt = int(round(rho * PLOT_AREA))
         # 予測: d' = dC / sqrt(2 C(1-C)/n) = 1 となる LAI(モデルは Omega 込み)
         om = float(np.interp(2.0, lai_t, omega))
