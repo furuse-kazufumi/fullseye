@@ -858,7 +858,26 @@ def section_sweeps() -> dict:
                        "記録長 T [s]", "記録長を縮める —— 予測した 2 つの崖",
                        "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。"
                        "側帯波比の真値は変調度 0.55 の半分 = 0.275。")
-    out["t_order"], out["t_side"] = t_order, t_side
+    dz = out["dur"]
+    x, d05, sb = dz["x"], dz["d"][:, 0], dz["d"][:, 1]
+    j = int(np.argmax(np.diff(d05)) + 1)
+    print("\n  ★予測 (a) は当たった。0.5X の d' は T=%.0f ms の %.2f から"
+          " T=%.0f ms の %.2f へ跳ぶ —— 予測の %.1f ms を跨いだ**まさにその 1 段**。"
+          % (1000 * x[j - 1], d05[j - 1], 1000 * x[j], d05[j], 1000 * t_order))
+    k = int(np.argmax(sb < 0.5))
+    print("  ★予測 (b) は**外れた方向がはっきりしている**。側帯波比が真値 0.275 に"
+          "近づくのは T=%.0f ms からで、" % (1000 * x[k]))
+    print("     予測の %.1f ms(分解能 1/T < FTF)ではまだ %.2f と 2 倍以上ずれている。"
+          % (1000 * t_side, sb[k - 1]))
+    print("     原因は測ってある: ピークを探す窓の半幅が 0.6/T Hz で、これが側帯波"
+          "間隔の半分(%.2f Hz)を切るのは **T > 1.2/FTF = %.0f ms**。"
+          % (FTF / 2, 1000 * 1.2 / FTF))
+    print("     分解能そのものではなく**読み取り窓**が崖を決めていた。"
+          "予測 %.1f ms -> 修正 %.0f ms、実測 %.0f ms。"
+          % (1000 * t_side, 1000 * 1.2 / FTF, 1000 * x[k]))
+    out["t_order"], out["t_side"], out["t_side_fix"] = t_order, t_side, 1.2 / FTF
+    out["sb_step"] = (x[k], sb[k - 1], sb[k])
+    out["d05_step"] = (x[j - 1], x[j], d05[j - 1], d05[j])
 
     print("\n" + "=" * 78)
     print("9) ★崖その 3 —— 熱画像の画素ピッチ(振動・形状は据え置き)")
