@@ -461,6 +461,8 @@ def section_thickness():
     print("     2 値格子の距離変換は「占有ボクセル中心 -> 自由ボクセル中心」を測るので、")
     print("     半径ではなく**直径のほうが量子化される** —— 内接球にしても得しない。")
 
+    same = sum(1 for a, c in zip(t_ero, t_ins) if abs(a - c) < 1e-9)
+    print("     侵食と内接球が同じ値になった点: %d / %d" % (same, len(hlist)))
     med = lambda v: float(np.median(np.abs(v)))            # noqa: E731
     fine = [i for i, r in enumerate(ratios) if r >= 3.0]
     print("\n  誤差の中央値 [mm](3 voxel 以上の %d 点): 侵食 %.3f / 内接球 %.3f / 探針 %.3f"
