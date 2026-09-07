@@ -400,7 +400,8 @@ class Rig:
         self.free_b0 = free_mask("cam", self.X, self.Y)
         self.esdf = np.asarray(fs.ledger.esdf(self.gt_occ, CELL))
         self.wa, self.Ra = weights(LIDAR["C"], self.X, self.Y,
-                                   sigma=LIDAR["sigma"])
+                                   sigma=LIDAR["sigma"], kz=0.0,
+                                   lin=LIDAR["div"])
         self.wb, self.Rb = weights(CAM["C"], self.X, self.Y, kz=CAM["kz"])
         occ, h = to_bev(place(self.pa, LIDAR["C"]))
         self.occ_a, self.h_a = occ, h
