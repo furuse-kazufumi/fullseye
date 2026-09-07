@@ -410,6 +410,7 @@ def core_normals(cloud: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     cen = CORES["p"].copy()
     nor = CORES["n"].copy()
     ok = np.zeros(m, bool)
+    flip = np.zeros(m, bool)
     for i, idx in enumerate(nb):
         if len(idx) < MIN_FIT:
             continue
