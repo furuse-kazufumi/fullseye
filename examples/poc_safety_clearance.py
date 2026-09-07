@@ -587,10 +587,16 @@ def section_timeseries() -> dict:
 TRIALS = ((0.22, 1.8, 0.25), (0.00, 2.4, 0.22), (-0.18, 1.4, 0.28), (0.35, 3.0, 0.24))
 
 
-def _rates(d_true, est, S):
-    haz = d_true < S
-    miss = np.count_nonzero(haz & (est >= S))
-    fa = np.count_nonzero(~haz & (est < S))
+def _rates(d_true, est, s_haz=S_GEOM, s_det=None):
+    """見落とし率と誤検知率を**別々に**返す。
+
+    ``s_haz`` = 物理として危険な距離、``s_det`` = 機械を止める判定の距離。
+    2 つを同じ値にすると「不確かさを増やすと危険も減る」という嘘が混ざる。
+    """
+    s_det = trigger_distance() if s_det is None else s_det
+    haz = d_true < s_haz
+    miss = np.count_nonzero(haz & (est >= s_det))
+    fa = np.count_nonzero(~haz & (est < s_det))
     return (100.0 * miss / max(1, haz.sum()), 100.0 * fa / max(1, (~haz).sum()),
             int(haz.sum()), int((~haz).sum()))
 
