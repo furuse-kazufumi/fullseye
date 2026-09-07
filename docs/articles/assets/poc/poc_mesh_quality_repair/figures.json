@@ -8,5 +8,51 @@
    940,
    3
   ]
+ },
+ {
+  "file": "02_euler_blindspots.png",
+  "name": "euler_blindspots",
+  "caption": "健全な部品の χ は 0(種数 1)。χ=2 を合格条件にすると健全品が落ちる。最終行は打ち消し。",
+  "shape": [
+   272,
+   509,
+   3
+  ],
+  "csv": "02_euler_blindspots.csv",
+  "tsv": "02_euler_blindspots.tsv"
+ },
+ {
+  "file": "03_defect_counts.png",
+  "name": "defect_counts",
+  "caption": "ただし順番が両向きに効く —— 溶接前は割れの境界を穴として数え、溶接後は退化三角形を数え損ねる。",
+  "shape": [
+   224,
+   509,
+   3
+  ],
+  "csv": "03_defect_counts.csv",
+  "tsv": "03_defect_counts.tsv"
+ },
+ {
+  "file": "04_repair_vs_restore.png",
+  "name": "repair_vs_restore",
+  "caption": "幅ゼロの割れ(重複頂点 18 個)を直した結果。水密は 2 通りとも True。",
+  "shape": [
+   128,
+   467,
+   3
+  ],
+  "csv": "04_repair_vs_restore.csv",
+  "tsv": "04_repair_vs_restore.tsv"
+ },
+ {
+  "file": "05_hole_cliff.png",
+  "name": "hole_cliff",
+  "caption": "体積の 2 本は重なる。表面積は θ=45° で符号すら逆。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

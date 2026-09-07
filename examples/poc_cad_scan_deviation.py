@@ -864,7 +864,7 @@ def section_pull(ref: CadRef) -> dict:
         tail = ("  |  %9.0f  %14.2f" % (1000 * hs[i], dil[i])) if i < len(hs) else ""
         print("     %10.0f  %17.1f  %14.1f%s" % (1000 * a, dzs[i], reads[i], tail))
     slope = float(np.polyfit(amps, np.asarray(dzs) / 1000.0, 1)[0])
-    print("     ★ICP の z 並進 vs 反り振幅の傾き = %.3f(予測 1/3 = 0.333)" % slope)
+    print("     ★ICP の z 並進 vs 反り振幅の傾き = %.3f(予測 -1/3 = -0.333)" % slope)
     print("     ★へこみは深さを %.0f 倍にしても薄まる割合が %.2f → %.2f %% で"
           "変わらない。" % (hs[-1] / hs[0], dil[0], dil[-1]))
     print("        薄まりを決めるのは**面積**(2πσ²/A = %.2f %%)であって深さでない。"
