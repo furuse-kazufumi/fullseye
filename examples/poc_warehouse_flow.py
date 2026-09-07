@@ -782,7 +782,7 @@ def section_heatmap(base: dict) -> dict:
               ("出会いの場所(交差通路)", X_C, 9.3),
               ("ただの通路(下段)", X_C, Y_BOT)]
     print("\n   場所                     積算 [フレーム]  3-D の柱の数  最長の柱 [s]")
-    probe_rows = []
+    probe_rows, probe_rows_heat = [], []
     for lbl, xm, ym in probes:
         iy, ix = int(ym / CELL), int(xm / CELL)
         col = dwell_lab0[:, iy, ix]
