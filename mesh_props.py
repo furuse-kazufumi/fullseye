@@ -32,7 +32,8 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["face_normals", "vertex_normals", "mesh_area", "vertex_curvature"]
+__all__ = ["face_normals", "vertex_normals", "mesh_area", "vertex_curvature",
+           "face_areas", "mesh_volume", "boundary_vertices"]
 
 # ゼロ面積(退化)三角形を「法線が定義できない」と見なすしきい値。外積ノルム(=2·面積)を
 # メッシュ全体の代表スケールで正規化した**無次元**量で判定し、座標スケールに依存しない。
@@ -261,3 +262,96 @@ def vertex_curvature(mesh) -> np.ndarray:
 
     Kvec = K / (2.0 * A_mixed[:, None])             # = 2·H·n(平均曲率法線)
     return 0.5 * np.linalg.norm(Kvec, axis=1)       # H = |K|/2(向きに依らない大きさ)
+
+
+# --------------------------------------------------------------------------- #
+# 2026-09-07 追加。DFM の PoC が「面ごとの面積 × 法線の判定」を書くのに、       #
+# ``mesh_area`` が総和しか返さないので外積を自前で書いていた(KNOWN_ISSUES     #
+# §41.12)。体積と境界も同じ理由で足す —— ``mesh_edge_stats`` は面積の分位数と #
+# 境界辺の**本数**は返すが、面ごとの値も境界の**場所**も返さない。            #
+# --------------------------------------------------------------------------- #
+def face_areas(mesh) -> np.ndarray:
+    """三角形メッシュの**面ごとの面積** → ``(M,)``。
+
+    面積 = ``0.5·|cross(v1−v0, v2−v0)|`` を面ごとに返す(``mesh_area`` はこの総和)。
+    面積は**重み**として使うためにある —— 「下を向いた面の面積」「公差外の面積」
+    「曲率の面積加重平均」はすべて面ごとの面積が要る量で、総和からは作れない。
+
+    Args:
+        mesh: ``(vertices (N,3), faces (M,3))`` のタプル。
+
+    Returns:
+        ``(M,)`` の float64(非負)。順序は ``faces`` の順で、``face_normals`` と同じ
+        並びなので ``areas[normals[:, 2] < 0].sum()`` のように直接組み合わせられる。
+
+    Raises:
+        ValueError: ``mesh`` が ``(vertices, faces)`` の 2 要素でない、形状不正、
+        非有限座標、非整数・範囲外の index、空のとき。
+
+    注意: ``mesh_area`` と同じく、退化三角形(面積 0)は**拒否せず 0 を返す**
+    (``face_normals`` は法線が定義できないので拒否する —— 同じメッシュでも
+    こちらは通る)。重複面・表裏 2 枚張りはそれぞれ 1 面として数える。
+    単位は座標の単位の 2 乗。"""
+    V, F = _as_mesh(mesh)
+    return 0.5 * np.linalg.norm(_face_cross(V, F), axis=1)
+
+
+def mesh_volume(mesh) -> float:
+    """閉じた三角形メッシュが囲む**符号付き体積** → float。
+
+    発散定理(divergence theorem)で ``V = (1/6)·Σ v0 · (v1 × v2)``。面の巻き順が外向き
+    (右手系)なら正、内向きなら負になる —— **符号は向きの検査そのもの**で、負が
+    返ったら法線が裏返っている。
+
+    Args:
+        mesh: ``(vertices (N,3), faces (M,3))`` のタプル。
+
+    Returns:
+        符号付き体積(float、座標の単位の 3 乗)。
+
+    Raises:
+        ValueError: ``mesh`` が ``(vertices, faces)`` の 2 要素でない、形状不正、
+        非有限座標、非整数・範囲外の index、空のとき。
+
+    **限界(honest)**: 発散定理は**閉じた曲面でのみ**成り立つ。開いたメッシュ
+    (穴のあるスキャン)に対しても数値は返るが、それは「穴を原点へ向かって
+    塞いだ立体の体積」であって、欲しい量ではない。閉じているかどうかは
+    :func:`boundary_vertices` が空か、``mesh_edge_stats`` の ``boundary_edges`` が
+    0 かで**先に確かめること**。自己交差があるメッシュでは重なった領域が
+    符号つきで二重に数えられる(これも定理どおりの挙動で、検出はしない)。
+
+    Reference (public): 発散定理による多面体体積は標準的な公式。例えば
+    C. Zhang & T. Chen, "Efficient feature extraction for 2D/3D objects in mesh
+    representation", ICIP 2001。"""
+    V, F = _as_mesh(mesh)
+    v0, v1, v2 = V[F[:, 0]], V[F[:, 1]], V[F[:, 2]]
+    return float(np.einsum("ij,ij->i", v0, np.cross(v1, v2)).sum() / 6.0)
+
+
+def boundary_vertices(mesh) -> np.ndarray:
+    """開いた縁(境界)に乗っている**頂点の index** → ``(K,)``。
+
+    無向辺のうち**ちょうど 1 つの面にしか使われていない辺**(境界辺)の端点を集めて
+    返す。閉じた多様体なら空配列 —— つまり ``len(boundary_vertices(mesh)) == 0`` が
+    **水密性(watertight)の判定**になる。穴埋め・体積計算・曲率のどれも、境界の
+    有無で意味が変わるので、先にここを見る。
+
+    Args:
+        mesh: ``(vertices (N,3), faces (M,3))`` のタプル。
+
+    Returns:
+        昇順・重複なしの ``(K,)`` int64。境界が無ければ ``shape == (0,)``。
+
+    Raises:
+        ValueError: ``mesh`` が ``(vertices, faces)`` の 2 要素でない、形状不正、
+        非有限座標、非整数・範囲外の index、空のとき。
+
+    **限界(honest)**: 返るのは頂点の集合で、**縁のループ(周回順)ではない**。
+    穴が複数あっても 1 つの配列にまとまるので、穴ごとに分けたいなら連結成分を
+    自分で辿ることになる(ループ抽出の op はまだ無い)。3 つ以上の面が共有する
+    非多様体辺はここには出ない(``mesh_edge_stats`` の ``non_manifold_edges``)。"""
+    V, F = _as_mesh(mesh)
+    e = np.concatenate([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=0)
+    e = np.sort(e, axis=1)                      # 無向辺にそろえる
+    uniq, counts = np.unique(e, axis=0, return_counts=True)
+    return np.unique(uniq[counts == 1]).astype(np.int64)

@@ -609,12 +609,24 @@ def section_zero(rig: Rig) -> dict:
           "遠方で効くが、視界の広さがそれを上回る。"
           % (res["cam"]["iou"], res["lidar"]["iou"],
              res["cam"]["iou"] - res["lidar"]["iou"], CAM["kz"]))
-    print("  ★★高さ誤差は LiDAR 単独 %.3f m 対 カメラ単独 %.3f m。"
-          "**低いセンサは高さを測れない** —— 屋根が見えないので、最も高い返りは"
-          "側面の一番上の梁になる。" % (res["lidar"]["h_err"], res["cam"]["h_err"]))
-    print("     格子の刻み %.3f m による量子化誤差は最大 %.3f m・期待値 %.3f m。"
-          "融合の実測中央値 %.3f m はこの水準。"
+    print("\n  高さを物体ごとに(融合・最大値則、真値と中央値の差):")
+    _, occ = rig.run("max")
+    _, hf = fuse("max", rig.occ_a, rig.kn_a0, rig.h_a, rig.occ_b0, rig.kn_b0,
+                 to_bev(place(rig.pb, CAM["C"]))[1], rig.wa, rig.wb)
+    for o in OBSTACLES:
+        sel = ((np.abs(rig.X - o["cx"]) <= o["lx"] / 2)
+               & (np.abs(rig.Y - o["cy"]) <= o["ly"] / 2) & occ & rig.evalm)
+        if not sel.any():
+            continue
+        print("     %-12s 真値 %.2f m / 実測中央値 %.2f m(差 %+.2f m、%d セル)"
+              % (o["name"], o["h"], float(np.median(hf[sel])),
+                 float(np.median(hf[sel])) - o["h"], int(sel.sum())))
+    print("  ★格子の刻み %.3f m による量子化誤差は最大 %.3f m・期待値 %.3f m。"
+          "融合の実測中央値 %.3f m はこの水準 —— **占有より高さのほうが素直**。"
           % (CELL, CELL / 2, CELL / 4, res["max"]["h_err"]))
+    print("  ★★ただし**帯の上端 %.2f m より高い物の高さは測れない**。トラック"
+          "(真値 %.2f m)は帯で切られるので、この誤差だけは量子化ではなく"
+          "**測り方の上限**。" % (Z_HI, OBSTACLES[0]["h"]))
     return res
 
 

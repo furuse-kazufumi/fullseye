@@ -743,6 +743,11 @@ _CATALOG = {
         ("vertex_normals", "mesh_props", ["mesh"], "normals", False),
         ("mesh_area", "mesh_props", ["mesh"], "measurement", False),
         ("vertex_curvature", "mesh_props", ["mesh"], "curvature", False),
+        # 2026-09-07 追加: 面ごとの面積(重みとして要る)・符号付き体積(向きの検査に
+        # もなる)・境界頂点(空なら水密)。mesh_edge_stats は分位数と本数しか返さない。
+        ("face_areas", "mesh_props", ["mesh"], "signal", False),
+        ("mesh_volume", "mesh_props", ["mesh"], "measurement", False),
+        ("boundary_vertices", "mesh_props", ["mesh"], "indices", False),
     ],
     # ---------------------------------------------------------------- #
     # annotate3d(2026-09-03): 3-D のアンカーを画像へ射影して矢印・引き出し線・
