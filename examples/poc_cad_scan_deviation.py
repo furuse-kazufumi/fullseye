@@ -120,7 +120,7 @@ ZC = H + RF                        # フィレットの中心円の z = 14.5
 TOL = 0.10                         # 公差 ±t [mm]
 NOISE = 0.020                      # 既定の測定雑音 σ [mm]
 N_REF = 40000                      # CAD 参照点群の点数
-N_SCAN = 30000                     # 実測点群の点数(主実験)
+N_SCAN = 24000                     # 実測点群の点数(主実験)
 SEED = 7
 
 # --- 欠陥の諸元(すべて真値として仕込む) --------------------------------------- #
@@ -997,7 +997,7 @@ def section_pull(ref: CadRef) -> dict:
         a2 = 2 * np.pi * sg ** 2
         icp = np.nan
         if sg in (3.5, 10.0):                 # 予測が当たるかを実 ICP で 2 点だけ確認
-            sc = make_scan(n=14000, noise=0.0, dent_h=DENT_H, dent_s=sg,
+            sc = make_scan(n=10000, noise=0.0, dent_h=DENT_H, dent_s=sg,
                            warp_a=0.0, wear_w=0.0)
             R, t = align(sc["pts"], ref, method="p2plane",
                          init=(sc["R_true"], sc["t_true"]), iters=25)
@@ -1082,15 +1082,17 @@ def section_basin(ref: CadRef) -> dict:
           "残差が小さくて見抜けない。")
     print("   初期ずれ[度] | 点-面 ICP: 姿勢[度] 点移動[mm] 残差[µm]"
           " | 点-点 ICP: 姿勢[度] 点移動[mm] 残差[µm]")
-    sc = make_scan(n=8000, noise=0.010)
+    # ★欠陥を入れない —— 入れると第 6 章の datum ずれ(0.107 mm)が
+    #   点移動の下駄になって「初期角度で壊れた量」と混ざる。
+    sc = make_scan(n=8000, noise=0.010, defects=False)
     angs, errs, resid, errs2, mm1, mm2 = [], [], [], [], [], []
     floor = None
-    for a in (0, 5, 10, 15, 20, 25, 30, 60, 90, 180):
+    for a in (0, 6, 12, 18, 24, 30, 60, 90, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
         row = []
         for meth in ("p2plane", "p2point"):
             R, t = align(sc["pts"], ref, method=meth, init=(Rp, sc["t_true"]),
-                         iters=40, sub=5000)
+                         iters=25, sub=4000)
             d, _, _, _ = ref.deviate(sc["pts"] @ R.T + t)
             row += [rot_err_deg(R, sc["R_true"]),
                     pose_shift_mm(R, t, sc["R_true"], sc["t_true"], ref.pts),
@@ -1113,12 +1115,13 @@ def section_basin(ref: CadRef) -> dict:
           "点-面も点-点も姿勢誤差 0.21 度以下で止まる。")
     if over:
         print("       だが**『公差を守れるか』で見ると崖はここに在る**: 点-点 ICP は"
-              "初期 %d 度で点移動が %.4f mm となり、" % (angs[over[0]], mm2[over[0]]))
+              "初期 %d 度で点移動が %.4f mm になり、" % (angs[over[0]], mm2[over[0]]))
         print("       公差 %.2f mm を超える(点-面は 60 度でも %.4f mm)。"
-              "**崖の位置は判定基準で動く**。" % (TOL, errs and mm2 and
-                                                 max(m for i, m in enumerate(mm2)
-                                                     if angs[i] <= 60) * 0 +
-                                                 _p2plane_mm60(angs, resid, floor)))
+              "**崖の位置は判定基準で動く**。"
+              % (TOL, mm1[angs.index(60)]))
+    else:
+        print("       点移動で見ても 0〜60 度では公差 %.2f mm を超えなかった"
+              "(点-点の最大 %.4f mm)。" % (TOL, max(mm2[:angs.index(60) + 1])))
     print("   (2) この部品では別解の残差が床の %.1f 倍あり、**残差で見抜ける**。"
           % last)
     print("      理由: ボスが片側にあり、穴が φ%.0f と φ%.0f で径も位置も違う ——"
@@ -1134,7 +1137,7 @@ def section_basin(ref: CadRef) -> dict:
     b_rows = []
     for a in (0, 180):
         Rp = rot([0, 0, 1.0], a) @ Rt
-        R, t = align(bs, bref, method="p2plane", init=(Rp, tt), iters=40, sub=5000)
+        R, t = align(bs, bref, method="p2plane", init=(Rp, tt), iters=25, sub=4000)
         d, _, _, _ = bref.deviate(bs @ R.T + t)
         b_rows.append((a, rot_err_deg(R, Rt), 1000 * float(d.mean())))
         print("   対照(素の直方体 %.0fx%.0fx%.0f、ボスも穴も無し) 初期 %3d 度: "
@@ -1247,7 +1250,7 @@ def section_controls(ref: CadRef) -> dict:
     for lab, kw in (("全周", dict()), ("片側のみ", dict(occlude=True))):
         es = []
         for sd in (7, 23, 51):
-            s2 = make_scan(n=10000, seed=sd, **kw)
+            s2 = make_scan(n=8000, seed=sd, **kw)
             R, t = align(s2["pts"], ref, method="p2plane",
                          init=(s2["R_true"], s2["t_true"]), iters=30)
             es.append(rot_err_deg(R, s2["R_true"]))

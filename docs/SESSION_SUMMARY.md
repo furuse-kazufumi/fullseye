@@ -3,53 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 20:08:56
+- **最終更新**: 2026-09-07 20:22:39
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-686aee78f auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:08)
-e581566d6 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:08)
-c63c2ed85 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:08)
-d3f6a4208 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:07)
-531c3c9a4 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:07)
-b26c6003f auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:07)
-5f3259829 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:07)
-cf642736b auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:07)
-c6fd3b345 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:07)
-10c8b3751 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:06)
+070c38f3e auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:18)
+d694e3012 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:18)
+89da96a3a auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:18)
+e8ea53d40 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:18)
+c7be536b8 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:15)
+ddf148be8 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:15)
+b964d3016 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:14)
+4c50036dc auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:14)
+1ce48809e auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:14)
+6788a3904 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 20:13)
 ```
 
 ## 現在の git status
 
 ```
-M docs/articles/assets/poc/poc_cad_scan_deviation/figures.json
- M examples/poc_lidar_terrain_change.py
-?? docs/articles/assets/poc/poc_cad_scan_deviation/07_defect_pull.png
-?? docs/articles/assets/poc/poc_cad_scan_deviation/08_warp_false_dent.png
-?? docs/articles/assets/poc/poc_cad_scan_deviation/09_warp_maps.png
+M docs/articles/exhibits/poc_captions.json
+ M examples/poc_cad_scan_deviation.py
+ M examples2d.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/figures.json
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/09_warp_maps.png
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/08_warp_false_dent.png
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/07_defect_pull.png
-20:08 examples/poc_lidar_terrain_change.py
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/06_density_bias_table.tsv
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/06_density_bias_table.png
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/06_density_bias_table.csv
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/05_density_bias.png
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/04_noise_bias.png
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/03_deviation_maps.png
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/02_methods.tsv
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/02_methods.csv
-20:08 docs/articles/assets/poc/poc_cad_scan_deviation/02_methods.png
-20:08 docs/articles/assets/poc/poc_lidar_terrain_change/figures.json
+20:22 docs/articles/exhibits/poc_captions.json
+20:22 examples2d.py
+20:21 examples/poc_cad_scan_deviation.py
+20:21 .pytest_cache/v/cache/nodeids
+20:15 docs/articles/assets/poc/poc_cad_scan_deviation/figures.json
+20:15 docs/articles/assets/poc/poc_cad_scan_deviation/13_controls.tsv
+20:15 docs/articles/assets/poc/poc_cad_scan_deviation/13_controls.png
+20:15 docs/articles/assets/poc/poc_cad_scan_deviation/13_controls.csv
+20:15 docs/articles/assets/poc/poc_cad_scan_deviation/12_basin.png
+20:14 examples/poc_lidar_terrain_change.py
+20:14 docs/articles/assets/poc/poc_cad_scan_deviation/11_warp_maps.png
+20:14 docs/articles/assets/poc/poc_cad_scan_deviation/10_warp_false_dent.png
+20:14 docs/articles/assets/poc/poc_cad_scan_deviation/09_defect_pull.png
+20:14 docs/articles/assets/poc/poc_cad_scan_deviation/08_dent_area.png
+20:14 docs/articles/assets/poc/poc_cad_scan_deviation/07_scan_density.png
 ```
 
 ---
