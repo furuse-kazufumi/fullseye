@@ -429,7 +429,7 @@ def section_controls() -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 4-5. 雑音 —— 先に下界を書いてから測る                                          #
+# 5-6. 雑音 —— 先に下界を書いてから測る                                          #
 # --------------------------------------------------------------------------- #
 def _crb_sigma_pos(noise: float, height: float, sig_psf: float = SIG_PSF,
                    n_avg: int = W - 4) -> float:
@@ -444,7 +444,7 @@ def _crb_sigma_pos(noise: float, height: float, sig_psf: float = SIG_PSF,
 
 def section_noise() -> dict:
     print("\n" + "=" * 78)
-    print("4-5) 雑音 —— Cramer-Rao 下界を先に書いてから測る")
+    print("5-6) 雑音 —— Cramer-Rao 下界を先に書いてから測る")
     print("=" * 78)
     b0 = truth(False)[0]
     lev = truth(False)[1]
@@ -521,11 +521,11 @@ def section_noise() -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 6. 全体のひずみの 2 通り —— 精度と偏りが逆を向く                               #
+# 7. 全体のひずみの 2 通り —— 精度と偏りが逆を向く                               #
 # --------------------------------------------------------------------------- #
 def section_bias_vs_precision(noise_out: dict) -> dict:
     print("\n" + "=" * 78)
-    print("6) 全体のひずみの 2 通り —— 回帰(精度)と端から端(不偏)")
+    print("7) 全体のひずみの 2 通り —— 回帰(精度)と端から端(不偏)")
     print("=" * 78)
     e_true = true_mean_strain()
     p0, p1 = edges_gradient(render(False)), edges_gradient(render(True))
@@ -560,11 +560,11 @@ def section_bias_vs_precision(noise_out: dict) -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 7. 崖 —— コントラストを落とす                                                 #
+# 8. 崖 —— コントラストを落とす                                                 #
 # --------------------------------------------------------------------------- #
 def section_cliff(noise_out: dict) -> dict:
     print("\n" + "=" * 78)
-    print("7) 崖 —— コントラストを落とす。壊れ方を種類ごとに数える")
+    print("8) 崖 —— コントラストを落とす。壊れ方を種類ごとに数える")
     print("=" * 78)
     nz = 0.05
     e_true = true_mean_strain()
@@ -633,11 +633,11 @@ def section_cliff(noise_out: dict) -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 8. 道具の穴                                                                   #
+# 9. 道具の穴                                                                   #
 # --------------------------------------------------------------------------- #
 def section_tool_gaps() -> None:
     print("\n" + "=" * 78)
-    print("8) 道具の穴(1-D 計測族を µm 級の追跡に使ってみて)")
+    print("9) 道具の穴(1-D 計測族を µm 級の追跡に使ってみて)")
     print("=" * 78)
 
     img = render(False)
@@ -664,7 +664,7 @@ def section_tool_gaps() -> None:
     # (c) エッジ位置の**不確かさ**を返さない
     assert set(e_lo[0]) == {"pos", "dist", "row", "col", "amplitude", "polarity"}, e_lo[0]
     print("  (c) 各エッジに `amplitude` は付くが**位置の不確かさ**が付かない。"
-          "\n      4 章の下界は amplitude と局所雑音から出せるので、"
+          "\n      5 章の下界は amplitude と局所雑音から出せるので、"
           "op 側で返せる(返せば\n      呼び手が重みつき回帰を書ける)。")
 
     # (d) 1-D プロファイルからの分位点・値域が無い(自動しきい値を毎回自作する)
@@ -686,6 +686,7 @@ def main() -> None:
     print("=" * 78)
 
     base = section_zero_and_proposal()
+    lock = section_peak_locking()
     ctrl = section_controls()
     noise = section_noise()
     bias = section_bias_vs_precision(noise)
@@ -719,7 +720,8 @@ def main() -> None:
     assert ctrl["オフセット +0.10"][1] < 0.0, "偽の伸びは負(逆符号)のはず"
     assert not np.isfinite(ctrl["ゲイン x1.30"][1]), "Z2 はゲインで測定不能のはず"
     assert abs(ctrl["ぼけ 1.6->2.4 px"][0]) < 1e-9, ctrl["ぼけ 1.6->2.4 px"]
-    assert abs(ctrl["ぼけ 1.6->6.0 px"][0]) > 1e-6, "σ=6 px では偽の伸びが出るはず"
+    assert abs(ctrl["ぼけ 1.6->5.0 px"][0]) > 1e-5, "σ=5 px では偽の伸びが出るはず"
+    assert not np.isfinite(ctrl["ぼけ 1.6->6.0 px"][0]), "σ=6 px は本数が壊れるはず"
     # 4-5) 下界との比は 2〜4 でほぼ一定 / 層別は全体より 3 倍以上ばらつく
     assert all(2.0 < r < 4.0 for r in noise["ratios"]), noise["ratios"]
     assert max(noise["ratios"]) / min(noise["ratios"]) < 1.4, noise["ratios"]

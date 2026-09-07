@@ -695,15 +695,22 @@ def section_volume(sc: dict, mv: dict) -> dict:
           % (v_all, 100 * (v_all - v_true) / v_true))
     print("   有意な core だけ足す          %.4f m3  (%+.1f %%)"
           % (v_sig, 100 * (v_sig - v_true) / v_true))
-    print("\n   残る割合 実測 %.3f / 閉形式 erf(sqrt(ln(S_max/LoD))) %.3f / "
-          "真の場の数値積分 %.3f" % (v_sig / v_all, ratio_cf, ratio_num))
+    print("\n   残る割合 実測                                   %.3f" % (v_sig / v_all))
+    print("     予測1 閉形式 erf(sqrt(ln(S_max/LoD中央値)))     %.3f" % ratio_cf)
+    print("     予測2 真の場を LoD 中央値で切って数値積分       %.3f" % ratio_num)
+    print("     予測3 **core ごとの LoD** で切る                %.3f" % ratio_core)
     print("  ★『有意でない』は『ゼロ』ではない。有意なものだけ足すと "
           "%.1f %% 足りない —— しかもその量は LoD から**先に計算できる**。"
           % (100 * (1.0 - v_sig / v_all)))
-    assert abs(ratio_num - v_sig / v_all) < 0.06, (ratio_num, v_sig / v_all)
+    print("  ★LoD を 1 個の数字(中央値)で代表すると欠け量を %.1f 倍**過小に**"
+          "見積もる。粗い場所ほど LoD が大きく、そこの沈下がまるごと落ちるから ——"
+          % ((1 - ratio_num) and (1 - ratio_core) / (1 - ratio_num)))
+    print("     欠け量の予測にも**LoD の地図**が要る(予測 3 は実測と %.1f %% 差)。"
+          % (100 * abs(ratio_core - v_sig / v_all)))
+    assert abs(ratio_core - v_sig / v_all) < 0.05, (ratio_core, v_sig / v_all)
     return {"v_true": v_true, "v_all": v_all, "v_sig": v_sig,
             "ratio": v_sig / v_all, "ratio_cf": ratio_cf, "ratio_num": ratio_num,
-            "lod_med": lod_med}
+            "ratio_core": ratio_core, "lod_med": lod_med}
 
 
 # --------------------------------------------------------------------------- #
