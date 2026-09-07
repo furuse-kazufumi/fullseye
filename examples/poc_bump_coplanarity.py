@@ -288,7 +288,9 @@ def section_orders() -> dict:
         ncols=2, signed=[False, True, True, False])
 
     def as_map(v):
-        return np.kron(v.reshape(NB, NB), np.ones((14, 14)))
+        # ★±SPEC_UM で clip してから渡す。examplefig の発散配色はパネルごとに
+        #   max|v| で正規化するので、clip しないと 3 枚の色の意味が揃わない。
+        return np.kron(np.clip(v, -SPEC_UM, SPEC_UM).reshape(NB, NB), np.ones((14, 14)))
 
     figs.save_grid(
         "deviation_map",
@@ -296,7 +298,8 @@ def section_orders() -> dict:
         ["真値の個体偏差 [µm](短小 %d 本)" % N_SHORT,
          "ゼロ点: 平面だけ引く(RMS 誤差 %.2f µm)" % out[1]["rms"],
          "2 次曲面を引く(RMS 誤差 %.2f µm)" % out[2]["rms"]],
-        title="バンプ %d 本の個体偏差(±%.0f µm で発散配色)" % (NB * NB, SPEC_UM),
+        title="バンプ %d 本の個体偏差(3 枚とも ±%.0f µm で clip して同じ配色)"
+        % (NB * NB, SPEC_UM),
         ncols=3, signed=True)
 
     figs.save_table("order_table",
@@ -388,8 +391,7 @@ def section_cliff() -> dict:
                    [("ゼロ点(平面)", pvs, meas[1]),
                     ("2 次曲面", pvs, meas[2]),
                     ("個体差 1σ = %.0f µm" % H_SD, [pvs[0], pvs[-1]], [H_SD, H_SD])],
-                   xlabel="仕込んだそりの PV [µm]",
-                   ylabel="個体偏差の読み取り RMS 誤差 [µm]",
+                   xlabel="そりの PV [µm]", ylabel="読み取り RMS 誤差 [µm]",
                    title="崖は幾何で予測できる(2 次: 予測 %.0f / 実測 %.0f µm)"
                          % (pred[2], got[2]),
                    caption="そりの形を固定すれば、取り切れない残りは PV に比例する。"

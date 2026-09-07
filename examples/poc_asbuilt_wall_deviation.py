@@ -276,11 +276,10 @@ def section_zero_point() -> dict:
     # 場面の図: 上面図 + 東壁の偏差マップ
     P = room["P"]
     plan = _bin_mean(P[:, 0], P[:, 1], np.ones(len(P)), (-0.2, RW + 0.2),
-                     (-0.2, RD + 0.2), 210, 145, up=2)
+                     (-0.2, RD + 0.2), 140, 96, up=3)
     # 偏差マップは点を多めに撒いた壁で描く(2500 点だと格子が埋まらない)
     ew = make_wall("east", 40000, np.random.default_rng(SEED))
-    f = fit_wall(ew["P"], seed=3)
-    res = (ew["P"] - f["point"]) @ f["normal"]
+    res = _residual(ew, fit_wall(ew["P"], seed=3))
     emap = _bin_mean(ew["eta"], ew["zeta"], res * 1e3, (-RD / 2, RD / 2),
                      (-RH / 2, RH / 2), 84, 58, up=5)
     figs.save_grid("scene", [plan, emap],
@@ -524,12 +523,12 @@ def section_outliers() -> dict:
                    title="壊れ方は 2 種類 —— 傾く(最小二乗)/ 乗り換える(RANSAC)")
 
     # 場面の図: 20 % 混入の東壁を、2 つの当てはめの残差で塗り分ける
-    w = make_wall("east", 4000, np.random.default_rng(4242), clutter_frac=0.20)
+    w = make_wall("east", 16000, np.random.default_rng(4242), clutter_frac=0.20)
     fl = fit_wall(w["P"], robust=False)
     frb = fit_wall(w["P"], robust=True, seed=7)
     maps = []
     for f in (fl, frb):
-        r = (w["P"] - f["point"]) @ f["normal"]
+        r = _residual(w, f)
         maps.append(_bin_mean(w["eta"], w["zeta"], np.clip(r, -0.25, 0.25) * 1e3,
                               (-RD / 2, RD / 2), (-RH / 2, RH / 2), 84, 58, up=5))
     figs.save_grid("outlier_maps", maps,
@@ -639,8 +638,7 @@ def section_bulge() -> dict:
     maps, caps = [], []
     for bs in (0.25, 0.70, 3.00):
         w = make_wall("east", 20000, np.random.default_rng(31), bsig=bs)
-        f = fit_wall(w["P"], seed=3)
-        r = (w["P"] - f["point"]) @ f["normal"]
+        r = _residual(w, fit_wall(w["P"], seed=3))
         maps.append(_bin_mean(w["eta"], w["zeta"], r * 1e3, (-RD / 2, RD / 2),
                               (-RH / 2, RH / 2), 84, 58, up=4))
         caps.append("σ = %.2f m" % bs)

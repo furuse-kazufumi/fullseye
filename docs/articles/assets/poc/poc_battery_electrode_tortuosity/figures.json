@@ -1,0 +1,34 @@
+[
+ {
+  "file": "01_bruggeman_error.png",
+  "name": "bruggeman_error",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_anisotropy.png",
+  "name": "anisotropy",
+  "caption": "経験則は向きを持てない。厚み方向がセル設計に効く。",
+  "shape": [
+   128,
+   617,
+   3
+  ],
+  "csv": "02_anisotropy.csv",
+  "tsv": "02_anisotropy.tsv"
+ },
+ {
+  "file": "03_resolution.png",
+  "name": "resolution",
+  "caption": "同じ物理構造を粗い格子から細かい格子まで。ε は -0.4 % しか動かないのに τ_f は +72 % 動く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

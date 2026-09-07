@@ -1,0 +1,59 @@
+{
+  "_doc": [
+    "backends_typed.TYPE_TO_SORT はカタログの宣言型を進化側の sort に畳む。畳むと繋げる",
+    "組合せは増えるが、隣の型を渡しても例外が出ないので『もっともらしく間違う』経路が",
+    "同時に増える。この台帳は、畳まれた型の組ごとに (1) なぜ畳んだか (2) またいだとき",
+    "どれだけ間違うか(実測) (3) 値から検出して拒否できるか を 1 行ずつ残す。",
+    "tests/test_type_alias_ledger.py が『TYPE_TO_SORT から導いた組 == この台帳の組』を",
+    "門にするので、新しい alias を黙って足すことはできない。fail_closed が true の行は",
+    "同じテストが実際に例外を出させて確かめる(検査が死んでいないことを毎回測る)。"
+  ],
+  "measured": "2026-09-08",
+  "aliases": [
+    {
+      "types": ["voxel", "sdf", "labels"],
+      "sort": "volume",
+      "why": "進化側にとって意味のある区別は『3-D の実配列であること』だけ。3 つを別 sort にすると op の 8 割が繋がらなくなる。",
+      "crossing_measured": "sdf_to_occupancy は (sdf <= iso)。24^3 の立方体(真の内側 1,728 voxel)に、同じ形の 0/1/2 ラベルを渡すと 9,504 voxel を『内側』と数える(5.5 倍、符号が反転)。",
+      "fail_closed": false,
+      "fail_closed_why_not": "符号なし距離場は全部が非負でも正しい入力なので、『負が無い』を拒否の根拠にできない。ラベルらしさ(整数・値種が少ない)は経験則で、正しい入力を落とすほうが害が大きい。",
+      "documented_at": ["match3d.sdf_to_occupancy"]
+    },
+    {
+      "types": ["image2d", "depth"],
+      "sort": "image",
+      "why": "どちらも (H, W) の実配列。形の契約(_SHAPE_OK['image'])を両方が満たす。",
+      "crossing_measured": "normals_from_depth に、同じ平面を 0..1 に正規化した『画像』として渡すと、中央の法線が真値から 3.024 度ずれる(深度そのままなら 0.000 度)。値域を変えただけで傾きが変わる。",
+      "fail_closed": false,
+      "fail_closed_why_not": "深度図も濃淡画像も非負の float。単位(m)は値の中に無いので、値だけを見て区別する方法が無い。",
+      "documented_at": ["range_image.normals_from_depth"]
+    },
+    {
+      "types": ["points", "normals"],
+      "sort": "points",
+      "why": "どちらも (N, 3)。形の契約を両方が満たす。",
+      "crossing_measured": "normals_to_egi に 200 点の曲線(位置)を渡すと、非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるが、総和はどちらも 200。『総和が点数と合う』では区別がつかない。",
+      "fail_closed": true,
+      "fail_closed_how": "extra_checks='on' のとき、長さが 1 から 1e-6 を超えて外れるベクトルを normals_to_egi が拒否する。",
+      "documented_at": ["reprconv.normals_to_egi"]
+    },
+    {
+      "types": ["signal", "indices"],
+      "sort": "signal",
+      "why": "どちらも (N,) の 1-D。",
+      "crossing_measured": "indices_to_labels は連続な信号を渡すと ValueError('must hold whole numbers to be used as indices')。この 1 件だけは既に fail-closed で、他の 4 件の手本。",
+      "fail_closed": true,
+      "fail_closed_how": "indices_to_labels が整数でない値を既定で拒否する(extra_checks 不要)。",
+      "documented_at": ["reprconv.indices_to_labels"]
+    },
+    {
+      "types": ["counts", "countrate"],
+      "sort": "counts",
+      "why": "どちらも非負の 1-D。カタログ側で 2 語に分けてあるのは、型の嘘をファザーに検出させるため。",
+      "crossing_measured": "countrate_to_counts を 2 度掛けると 1,200 Hz × 1 ms = 1.2000 counts が 0.0012 counts になる(1,000 倍の取り違え)。負も NaN も出ない。",
+      "fail_closed": false,
+      "fail_closed_why_not": "レートも計数も非負の float で、単位は値の中に無い。呼ぶ側が経路を書き残すしかない。",
+      "documented_at": ["reprconv.countrate_to_counts"]
+    }
+  ]
+}
