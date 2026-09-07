@@ -437,10 +437,8 @@ def _predict_false_fraction(e, t=THRESH, r=R0):
     1 次では ``d - R ≈ -e cosψ`` なので、**偽の減肉は必ず 1 周期の正弦波**で
     振幅は e。旗が立つ割合は ``arccos(t/e)/π``(e > t のときだけ)。
     """
-    psi = np.linspace(0, np.pi, 4001)
-    d = -e * np.cos(psi) + np.sqrt(max(r * r - (e * np.sin(psi)) ** 2, 0.0)
-                                   if np.isscalar(psi) else
-                                   np.clip(r * r - (e * np.sin(psi)) ** 2, 0, None))
+    psi = np.linspace(0.0, np.pi, 4001)
+    d = -e * np.cos(psi) + np.sqrt(np.clip(r * r - (e * np.sin(psi)) ** 2, 0.0, None))
     exact = float((d - r > t).mean())
     first = float(np.arccos(np.clip(t / e, -1, 1)) / np.pi) if e > 0 else 0.0
     return exact, first
