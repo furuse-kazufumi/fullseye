@@ -818,26 +818,38 @@ def section_alias() -> dict:
     print("\n" + "=" * 78)
     print("11) 測定の現実 —— 折り返し(エイリアス)は「機械にない線」を診断帯に立てる")
     print("=" * 78)
-    rad, _ = vib_record("軸受外輪傷", 1.4, SEED + 31, noise=0.02)
+    rad, _ = vib_record("軸受外輪傷", 1.6, SEED + 31, noise=0.02)
     dec = 4
     rate2 = RATE / dec
-    alias = abs(RESONANCE - rate2 * round(RESONANCE / rate2))
     print("   共振 %.0f Hz を、アンチエイリアスフィルタ無しで %.0f Hz へ間引く"
           "(1/%d)。" % (RESONANCE, rate2, dec))
-    print("   折り返し先 = |f_c - n·f_s| = %.1f Hz。診断の探索帯 20-400 Hz の**中**。"
-          % alias)
-    sp = np.abs(np.fft.rfft(rad[::dec] * np.hanning(rad[::dec].size)))
-    f2 = np.fft.rfftfreq(rad[::dec].size, dec / RATE)
+    print("   **先に予測する**: 衝撃列の線は k·BPFO に並ぶ。折り返し後は")
+    print("     |k·BPFO - n·f_s| に移る。共振(%.0f Hz)の近くの k は %d〜%d で、"
+          % (RESONANCE, int(RESONANCE / BPFO) - 1, int(RESONANCE / BPFO) + 1))
+    pred = []
+    for k in range(int(RESONANCE / BPFO) - 2, int(RESONANCE / BPFO) + 3):
+        f = k * BPFO
+        pred.append((k, abs(f - rate2 * round(f / rate2))))
+    print("     予測される線: "
+          + " / ".join("k=%d -> %.1f Hz" % (k, f) for k, f in pred))
+    print("     ★予測される**間隔**は %.2f Hz = BPFO そのもの —— 折り返した櫛は"
+          "「軸受らしい」姿をしている。" % BPFO)
+
+    d = rad[::dec]
+    sp = np.abs(np.fft.rfft(d * np.hanning(d.size)))
+    f2 = np.fft.rfftfreq(d.size, dec / RATE)
     sel = (f2 >= 20.0) & (f2 <= 400.0)
     fp = float(f2[sel][np.argmax(sp[sel])])
-    print("   間引いた記録の 20-400 Hz の最大ピーク: %.1f Hz。" % fp)
-    print("   ★これは 2×BPFO = %.1f Hz から %.1f %% で、許容 1 %% では一致しない ——"
-          % (2 * BPFO, 100 * abs(fp - 2 * BPFO) / (2 * BPFO)))
-    print("     だが**機械のどの部品にも属さない線が診断帯に立つ**。しきい値だけの")
-    print("     監視ならここで警報が出る。標本化定理は前処理の話であって、"
-          "後段の賢さでは戻らない。")
-    assert abs(fp - alias) < 6.0
-    return {"alias": alias, "peak": fp}
+    near = min(pred, key=lambda kf: abs(kf[1] - fp))
+    print("   実測: 20-400 Hz の最大ピークは %.1f Hz。予測の k=%d(%.1f Hz)と"
+          "%.2f Hz 差 —— 一致。" % (fp, near[0], near[1], abs(fp - near[1])))
+    print("   ★★これは**機械のどの部品にも属さない周波数**なのに、隣の線との間隔は")
+    print("     BPFO ちょうど。間隔だけを見る診断(ケプストラムの側帯波検出)は"
+          "ここで騙される。")
+    print("     標本化定理は前処理の話で、後段の賢さでは戻らない —— この PoC の"
+          "他の崖は測り方を変えれば下がるが、これは**測り直すしかない**。")
+    assert abs(fp - near[1]) < 1.5
+    return {"pred": pred, "peak": fp, "k": near[0]}
 
 
 # --------------------------------------------------------------------------- #

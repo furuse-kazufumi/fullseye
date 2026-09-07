@@ -520,12 +520,10 @@ def detect(meas: dict, clear: np.ndarray) -> dict:
     uk, inv = np.unique(key, return_inverse=True)
     tt, yy, xx = nz[0].astype(np.float64), nz[1].astype(np.float64), nz[2].astype(np.float64)
     cnt = np.bincount(inv)
-    t0 = np.zeros(uk.size)
+    t0 = np.full(uk.size, np.inf)
     t1 = np.zeros(uk.size)
     np.minimum.at(t0, inv, tt)
     np.maximum.at(t1, inv, tt)
-    t0 = np.full(uk.size, np.inf)
-    np.minimum.at(t0, inv, tt)
     cy = np.bincount(inv, weights=yy) / cnt
     cx = np.bincount(inv, weights=xx) / cnt
 
