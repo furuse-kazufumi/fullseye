@@ -29,8 +29,9 @@ _LAB = fs.ledger
 FREQS = np.fft.rfftfreq(N, 1.0 / FS_HZ)
 LAGS = np.arange(N)
 LAGS[LAGS > N // 2] -= N
-#: 物理的にあり得る遅れだけを探す(相関器の探索窓)。
-LAG_MAX = int(np.ceil(L_M / min(C_TRUE, C_PVC) * FS_HZ)) + 4
+#: 物理的にあり得る遅れだけを探す(相関器の探索窓)。仮定した音速で
+#: |τ| <= L/c、すなわち推定位置が管路 [0, L] の内側に入る範囲だけ。
+LAG_MAX = int(np.floor(L_M / C_TRUE * FS_HZ))
 #: 相関の主ローブの幅 c/(2B) [m]。これを超えた誤差は「別のピークを掴んだ」。
 GROSS_M = C_TRUE / (2.0 * (BAND[1] - BAND[0]))
 #: 整数ピークの位置量子 c/(2 fs) [m]。

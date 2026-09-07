@@ -273,6 +273,23 @@ def to_apparent(t_true, theta_deg: float = VIEW_DEG,
     return (np.maximum(l_corr, 1.0) / SIGMA_SB) ** 0.25
 
 
+def radiometric_gain(theta_deg: float = VIEW_DEG, t_ref: float = T_AIR + 25.0,
+                     dist_m: float = FLIGHT_H) -> float:
+    """真の ΔT に対して**表示される** ΔT が何倍になるか —— 閉形式の微分。
+
+    ``T_app⁴·ε_set = τ·ε·T⁴ + (T に依らない項)`` を微分して
+
+        dT_app/dT = τ·(ε/ε_set)·(T/T_app)³
+
+    大気で τ 倍、放射率の設定ずれで ε/ε_set 倍、温度の 4 乗則で (T/T_app)³ 倍。
+    **オフセットは正規化で消えるが、この圧縮は消えない**。
+    """
+    eps = float(apparent_emissivity(theta_deg))
+    tau = atm_transmittance(dist_m)
+    ta = float(to_apparent(t_ref, theta_deg, dist_m))
+    return tau * (eps / EPS_SET) * (t_ref / ta) ** 3
+
+
 # --------------------------------------------------------------------------- #
 # 場面 —— アレイの幾何と故障の真値                                              #
 # --------------------------------------------------------------------------- #
