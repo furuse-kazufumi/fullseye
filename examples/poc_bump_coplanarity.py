@@ -523,15 +523,20 @@ def section_tool_gaps() -> None:
           "\n      fit_poly_surface + eval_poly_surface で作り直している。")
 
     # (f) 進化 op は画像を [0,1] とみなす —— 単位つきの量をそのまま渡すと切る位置が狂う
-    z = np.zeros((32, 32))
-    z[8:24, 8:24] = 100.0                      # 「100 µm の段差」のつもり
-    m = np.asarray(fs.apply(z, "auto_threshold")) > 0.5
-    assert m.sum() == 256, int(m.sum())        # ここは当たるが……
-    z2 = z - 60.0                              # 背景 -60 / 前景 +40 の高さ場
-    m2 = np.asarray(fs.apply(z2, "auto_threshold")) > 0.5
-    print("  (f) ★進化 op の auto_threshold は値域を [0,1] とみなす。背景 -60 µm /"
-          " 前景 +40 µm の高さ場を\n      そのまま渡すと前景が %d 画素(正解 256)。"
-          "単位つきの量は正規化してから渡すこと。" % int(m2.sum()))
+    n = 64
+    ramp = np.linspace(-60.0, 13.0, n)[None, :] * np.ones((n, 1))   # 背景のうねり [µm]
+    yy, xx = np.mgrid[0:n, 0:n]
+    disc = np.hypot(yy - n / 2, xx - n / 2) < 12.0                  # 前景 +200 µm
+    z = ramp + 200.0 * disc
+    raw = int((np.asarray(fs.apply(z, "auto_threshold")) > 0.5).sum())
+    lo, hi = z.min(), z.max()
+    nrm = int((np.asarray(fs.apply((z - lo) / (hi - lo), "auto_threshold")) > 0.5).sum())
+    assert raw > 2 * int(disc.sum()) and abs(nrm - int(disc.sum())) < 20, (raw, nrm)
+    print("  (f) ★進化 op の auto_threshold は値域を [0,1] とみなす。背景が -60〜+13 µm、"
+          "前景 +200 µm の\n      高さ場をそのまま渡すと前景 %d 画素(正解 %d)—— "
+          "0.5 **µm** の位置で切っている。\n      正規化してから渡せば %d 画素。"
+          "単位つきの量を進化 op に渡すときの落とし穴。"
+          % (raw, int(disc.sum()), nrm))
 
 
 # --------------------------------------------------------------------------- #
