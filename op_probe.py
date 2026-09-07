@@ -148,9 +148,122 @@ def structured_signal(n: int = 256) -> np.ndarray:
     return np.clip(s, 0.0, 1.0)
 
 
+# --------------------------------------------------------------------------- #
+# 2026-09-08 に足した 8 sort —— 門が 4 sort しか見ていなかった                    #
+# --------------------------------------------------------------------------- #
+# ``tests/test_op_probe_ledger.py`` は image / region / color / volume の 4 つに
+# しか入力を作っておらず、残り 13 sort・**217 op(レジストリ 901 本の 24 %)**を
+# "uncallable" として素通りさせていた。門が「正しい場所に立っている」だけでは
+# 足りず、**入力を作れる範囲までしか見ていない**という穴だった。
+#
+# ここで足す 8 本は、どれも「その sort が本来運ぶ物理」を閉形式で仕込む。
+# 乱数で埋めると、たとえば背景差分は全画素が前景になって**定数**を返し、
+# それを「壊れている」と読み違える(実測でそうなりかけた)。
+def structured_video(t: int = 8, n: int = 32) -> np.ndarray:
+    """静止した地の上を**斜めに動く明るい円**。背景差分・動き履歴に意味が出る。
+
+    乱数のフレームを積むと前景が全面になり、5 つの video op がそろって
+    「定数を返す」に見える(2026-09-08 実測)。動く物と動かない地を分けて
+    仕込むのが、この sort の探針の要件。
+    """
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    ground = 0.35 + 0.15 * np.sin(xx / 3.0) * np.cos(yy / 4.0)
+    out = np.empty((t, n, n))
+    for k in range(t):
+        cx, cy = 6.0 + 2.2 * k, 8.0 + 1.6 * k
+        disk = np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / 18.0))
+        out[k] = np.clip(ground + 0.55 * disk, 0.0, 1.0)
+    return out
+
+
+def structured_qimage(n: int = 32) -> np.ndarray:
+    """**純四元数**の画像(実部 = 0、i/j/k に色)。``quaternion_to_rgb`` の契約。
+
+    実部を 0 にしないと「純でない」と拒否される —— それは op が正しく
+    fail-closed なのであって、拒否を欠陥と読んではいけない。
+    """
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    r = 0.5 + 0.4 * np.sin(xx / 5.0)
+    g = 0.5 + 0.4 * np.cos(yy / 6.0)
+    b = 0.5 + 0.4 * np.sin((xx + yy) / 7.0)
+    return np.stack([np.zeros_like(r), r, g, b], axis=-1)
+
+
+def structured_cimage(n: int = 32) -> np.ndarray:
+    """既知の**位相ランプ**(縞 3 本ぶん)× なだらかな振幅。位相 op に真値が出る。"""
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    phase = 2.0 * np.pi * (3.0 * xx / n + 1.0 * yy / n)
+    amp = 0.4 + 0.3 * np.exp(-(((xx - n / 2) ** 2 + (yy - n / 2) ** 2) / (n * 4.0)))
+    return amp * np.exp(1j * phase)
+
+
+def structured_lightfield(v: int = 3, u: int = 3, n: int = 32) -> np.ndarray:
+    """視差が**視点に線形**な平面(奥行き一定)。EPI の傾きが閉形式で分かる。"""
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    base = 0.4 + 0.35 * np.sin(xx / 3.5) * np.cos(yy / 5.0)
+    out = np.empty((v, u, n, n))
+    d = 1.5                                        # 視点 1 つあたりの視差 [px]
+    for iv in range(v):
+        for iu in range(u):
+            sx, sy = d * (iu - u // 2), d * (iv - v // 2)
+            out[iv, iu] = 0.4 + 0.35 * np.sin((xx - sx) / 3.5) * np.cos((yy - sy) / 5.0)
+    del base
+    return out
+
+
+def structured_beatcube(a: int = 4, c: int = 16, s: int = 32) -> np.ndarray:
+    """FMCW の**既知の 1 目標**(距離 bin 6・ドップラー bin 3・到来角 20 度)。
+
+    ``(antennas, chirps, samples)`` の複素。距離は標本方向の周波数、速度は
+    チャープ方向の位相、角度はアンテナ間の位相で表す —— 3 つとも閉形式なので
+    ``range_doppler_map`` / ``beamform_delay_sum`` の答えを先に予測できる。
+    """
+    ia = np.arange(a)[:, None, None]
+    ic = np.arange(c)[None, :, None]
+    is_ = np.arange(s)[None, None, :]
+    f_range, f_dopp = 6.0 / s, 3.0 / c
+    phi_a = 2.0 * np.pi * 0.5 * np.sin(np.radians(20.0))
+    sig = np.exp(2j * np.pi * (f_range * is_ + f_dopp * ic) + 1j * phi_a * ia)
+    return sig.astype(np.complex128)
+
+
+def structured_counts(n: int = 256) -> np.ndarray:
+    """TCSPC の**指数減衰 + 背景**(寿命 40 bin、ピーク 900、床 12)。
+
+    一様乱数だと寿命も飛行時間も出ない。``dtof_depth`` / ``tcspc_*`` は
+    この形を前提にしている。
+    """
+    t = np.arange(n, dtype=np.float64)
+    peak = 24.0
+    decay = np.where(t >= peak, 900.0 * np.exp(-(t - peak) / 40.0), 0.0)
+    return decay + 12.0
+
+
+def structured_keypoints(m: int = 160) -> np.ndarray:
+    """既知の**楕円**(中心 (24,18)、半径 14×9、傾き 25 度)の上の (u, v)。"""
+    th = np.linspace(0.0, 2.0 * np.pi, m, endpoint=False)
+    ca, sa = np.cos(np.radians(25.0)), np.sin(np.radians(25.0))
+    x, y = 14.0 * np.cos(th), 9.0 * np.sin(th)
+    return np.stack([24.0 + ca * x - sa * y, 18.0 + sa * x + ca * y], axis=1)
+
+
+def structured_matrix(rows: int = 2, cols: int = 8) -> np.ndarray:
+    """**相関のある** 2 行のデータ行列(相関係数 ≈ 0.94)。共分散 op に差が出る。"""
+    t = np.linspace(0.0, 1.0, cols)
+    a = np.sin(2.0 * np.pi * t)
+    b = 0.9 * a + 0.1 * np.cos(6.0 * np.pi * t)
+    out = np.stack([a, b], axis=0)
+    if rows != 2:
+        out = np.resize(out, (rows, cols))
+    return out
+
+
 #: 構造版を作れる sort(ここに無い sort は :func:`sample_pair` が独立な乱数を 2 本使う)
 STRUCTURED_SORTS = ("image", "any", "region", "contour", "color", "rgbimage",
-                    "volume", "points", "signal")
+                    "volume", "points", "signal",
+                    # 2026-09-08 追加(門を 4 sort → 全 sort に広げるため)
+                    "video", "qimage", "cimage", "lightfield", "beatcube",
+                    "counts", "keypoints", "matrix")
 
 
 def sample_input(sort: str, rng=None, structured: bool = False):
