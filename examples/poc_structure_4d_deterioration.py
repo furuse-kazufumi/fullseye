@@ -1325,7 +1325,6 @@ def section_prism_and_crack(sc: dict) -> dict:
                     title="橋軸方向がどれだけ決まるかは、反りの勾配で決まる",
                     caption="押し出し形状の平面は法線に x 成分を持たない。"
                             "x を拘束するのはキャンバーの傾きだけ。")
-    dx_all, dx_grd = dx_l[0], dx_l[-1]
 
     # --- (b) 細い溝 -------------------------------------------------------- #
     print("\n  (b) 細い溝(ひび割れ)—— 平均する測り方には原理的に見えない。")
@@ -1358,7 +1357,7 @@ def section_prism_and_crack(sc: dict) -> dict:
     print("      効かせたいなら足跡 R を溝幅まで縮めるしかないが、"
           "R を 1/10 にすると 1 core の点数が 1/100 になり\n"
           "      雑音が 10 倍になる —— **薄まりと雑音は同じつまみの両端**。")
-    return {"dx_all": dx_all, "dx_grd": dx_grd, "hw": hw_l, "pred": pred_l,
+    return {"hw": hw_l, "pred": pred_l,
             "num": num_l, "need": need, "cam": cam_l, "fake_h": fake_h,
             "ceil": ceil_x, "settle": settle_read, "dx": dx_l, "dyz": dyz,
             "nx2": nx2_pair}
@@ -1612,8 +1611,9 @@ def main() -> int:
     assert rate["dmax"] < 1e-9, "等間隔 3 点の傾きが両端の差分と一致しない"
     assert rate["acc_err"] < rate["acc_pred_ind"], "加速の誤差が独立仮定を超えた"
     assert rate["rho"] > 0.2, "時点間の誤差の相関が出ていない"
-    assert pri["dx_grd"] > 3.0 * pri["dx_all"], \
-        "キャンバーを落としても x が決まっている(縮退が再現しない)"
+    assert min(m / d for d, m in pri["nx2"]) > 5.0, \
+        "推定法線の雑音が幾何の x 情報を覆っていない"
+    assert min(pri["dx"]) > 10.0 * pri["dyz"], "x の残差が y,z より桁で大きくない"
     assert pri["fake_h"] > 10.0, "支承の偽の水平移動が出ていない"
     assert pri["settle"][0] < 0.4 * SETTLE_MM[2], "支承の沈下が消えていない"
     assert pri["settle"][2] > 1.5 * pri["settle"][0], \
