@@ -1018,6 +1018,11 @@ def section_sweep_dt(clear: np.ndarray) -> dict:
 # --------------------------------------------------------------------------- #
 # 節 8: 崖(2) 遮蔽                                                             #
 # --------------------------------------------------------------------------- #
+def base_events_replen(clear=None):
+    """補充待ちの真の事象(遮蔽の予測と突き合わせるために場所だけ要る)。"""
+    return [e for e in simulate()["events"] if e["cause"] == "補充待ち"]
+
+
 def section_sweep_occ(clear: np.ndarray) -> dict:
     print("\n" + "=" * 78)
     print("8) ★★崖(2) 遮蔽 —— 死角は「棚に挟まれた狭い通路」に先に出る")
