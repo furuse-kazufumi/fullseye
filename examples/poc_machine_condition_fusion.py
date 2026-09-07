@@ -235,6 +235,7 @@ def vib_record(mode: str, sev: float, seed: int, noise: float = VIB_NOISE,
     n = max(64, int(round(RATE * dur)))
     t = np.arange(n) / RATE
     p = mode_params(mode, sev)
+    gain = nuisance(seed)[0]
     rad = np.zeros(n)
     axl = np.zeros(n)
     for o, a in p["harm"].items():
