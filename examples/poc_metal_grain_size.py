@@ -644,11 +644,14 @@ def section_cliff(gap_median: float, edge_mean: float) -> dict:
                    [("融合した塊", x, fail["merged"]), ("飲まれた粒", x, fail["swallowed"]),
                     ("辺の途切れ率 p [%]", x, 100 * p)],
                    xlabel="粒界の途切れ率 f [%]", ylabel="件数(3 種の平均)/ p [%]",
-                   title="面積法の壊れ方: 融合は塊の数より飲まれた粒の数で効く")
+                   title="面積法の壊れ方: 融合は塊の数より飲まれた粒の数で効く",
+                   caption="融合した塊の数は f = 5 % を頂点に減る(塊どうしがさらに融合して 1 つになる)が、飲まれた粒の数は増え続ける。")
     return {"fracs": fracs, "err": err, "fail": fail, "cliff": cliff, "dg0": dg0,
             "cliff_pred_area": cliff_pred_area, "cliff_pred_raw": cliff_pred_raw,
             "cliff_pred_raw_naive": cliff_pred_raw_naive, "raw_dev": raw_dev,
-            "n_worse": len(worse), "p_over_f": p_over_f}
+            "naive_dev": naive_dev, "n_worse": len(worse), "p_over_f": p_over_f,
+            "feff_over_f": feff_over_f, "n_grain": n_grain, "sw5": sw5,
+            "dg_area_from_merges": dg_area_from_merges}
 
 
 # --------------------------------------------------------------------------- #
