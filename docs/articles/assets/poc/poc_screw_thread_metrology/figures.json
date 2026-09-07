@@ -1,0 +1,84 @@
+[
+ {
+  "file": "01_zero_spectrum.png",
+  "name": "zero_spectrum",
+  "caption": "幅の系列は上下輪郭(P/2 ずれ)の和なので基本波が消える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_tilt_pitch.png",
+  "name": "tilt_pitch",
+  "caption": "片側のフランクだけで測ると 1 度あたり約 1 % 狂う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_tilt_angles.png",
+  "name": "tilt_angles",
+  "caption": "半差が θ、半和が α。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_tilt_d2.png",
+  "name": "tilt_d2",
+  "caption": "下の輪郭は P/2 ずれているので、平均した歯の x が上下で揃わない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_tilt_correction.png",
+  "name": "tilt_correction",
+  "caption": "生 = 水平 caliper 4 山、補正 = θ_est の向きの caliper 16 山(3 種の平均)。",
+  "shape": [
+   248,
+   871,
+   3
+  ],
+  "csv": "05_tilt_correction.csv",
+  "tsv": "05_tilt_correction.tsv"
+ },
+ {
+  "file": "06_blur_sweep.png",
+  "name": "blur_sweep",
+  "caption": "帯はフランクの中央 30 %(両端の丸みから 7.6 px)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_sampling_frames.png",
+  "name": "sampling_frames",
+  "caption": "",
+  "shape": [
+   678,
+   350,
+   3
+  ]
+ },
+ {
+  "file": "08_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   855,
+   1310,
+   3
+  ]
+ }
+]
