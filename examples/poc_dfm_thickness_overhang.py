@@ -840,8 +840,10 @@ def main() -> int:
     print("    距離場から取ると段差は %.0f %% 消え、平滑化でも %.0f %% 消える。"
           % (100 * (1 - over["steps"]["距離場から"] / over["step"]),
              100 * (1 - over["steps"]["平滑化 sigma=1.5 voxel"] / over["step"])))
-    print("  * 向きは効く(最良 %s は Z+ の %.1f 分の 1)が、ゼロにはならない。"
-          % (orient["best"][0], orient["base"] / orient["best"][1]))
+    print("  * 向きはほとんど効かない(最良 %s で Z+ の %.2f 倍)。効いたのは設計 ——"
+          % (orient["best"][0], orient["best"][1] / orient["base"]))
+    print("    斜面を 45 度から 50 度へ 5 度ずらすと %.2f -> %.2f mm^2。"
+          % (orient["base"], orient["a_fix"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
