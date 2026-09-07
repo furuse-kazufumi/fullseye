@@ -361,16 +361,21 @@ def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W
     return np.asarray(fs.apply(hyst, "sk_skeleton")) > 0.5
 
 
-def classify(s: np.ndarray, crack_sk: np.ndarray) -> dict:
-    """平坦化後の明るさで 孤立領域 / 断線帯 を分ける。"""
+def classify(s: np.ndarray) -> dict:
+    """平坦化後の明るさで 孤立領域 / 断線帯 を分ける。
+
+    断線帯は**クラックより先に**決める。帯(高さ ≈ 周期 3.85 px)は σ=2 の
+    Frangi には立派な水平リッジなので、先にクラックを取ると帯が全部
+    クラックに化けて断線が 0/8 になった(2026-09-07 に踏んだ)。帯を
+    「細長く水平」で先に取り、その近傍を骨格から除く。
+    """
     ss = np.asarray(fs.apply(np.clip(s / 1.25, 0, 1), "gaussian", a=(1.0 - 0.3) / 2.7)) * 1.25
     iso_c = ss < T_ISO
     lab = _LAB.blob_label(iso_c)
     iso = np.zeros_like(iso_c)
     if int(lab.max()) > 0:
         iso = _LAB.blob_select(lab, "area", vmin=150.0) > 0
-    near_crack = binary_dilation(crack_sk, iterations=2)
-    fi_c = (ss >= T_ISO) & (ss < T_FI) & ~near_crack & ~binary_dilation(iso, iterations=2)
+    fi_c = (ss >= T_ISO) & (ss < T_FI) & ~binary_dilation(iso, iterations=2)
     lab = _LAB.blob_label(fi_c)
     fi = np.zeros_like(fi_c)
     fi_blobs = []
