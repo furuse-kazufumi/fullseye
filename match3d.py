@@ -1618,83 +1618,76 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
                          % (len(_s), len(_d)))
     from scipy.spatial import cKDTree
 
-    dev = torch.device(device)
+    # ★2026-09-07: 本体を numpy に書き換えた。この ICP は **最近傍探索が cKDTree、
+    # 姿勢の更新が 3x3 の SVD** で、torch でやる仕事が 1 つも無いのに torch を
+    # 必須にしていた。torch を入れない CI(py3.10 / 3.12)で PoC 4 本が
+    # `ImportError: this operator needs the optional 'torch' backend` で落ちて
+    # 発覚(手元には torch があるので気づけなかった —— 門は事故の起きる場所に
+    # 立てる、の実例)。数値は float64 の同じ式なので**環境で結果が変わらない**。
+    # 返り値の型は互換のため据え置き: torch があれば torch.Tensor、無ければ
+    # numpy.ndarray(値は同一)。device に "cpu" 以外を頼まれたら fail-closed。
+    if str(device) not in ("cpu", "None") and not _HAS_TORCH:
+        raise ValueError(
+            "icp_point2point_3d: device=%r needs the optional 'torch' backend "
+            "(numpy path runs on the CPU only)" % (device,))
 
-    # --- 入力を torch(float64)へ正規化 ------------------------------------
-    def _to_t(a):
-        if isinstance(a, torch.Tensor):
-            return a.to(device=dev, dtype=torch.float64)
-        return torch.as_tensor(np.asarray(a), dtype=torch.float64, device=dev)
-
-    src_t = _to_t(src)
-    dst_t = _to_t(dst)
-    if src_t.ndim != 2 or src_t.shape[1] != 3:
-        raise ValueError("src must be (N,3)")
-    if dst_t.ndim != 2 or dst_t.shape[1] != 3:
-        raise ValueError("dst must be (M,3)")
+    src_np = np.ascontiguousarray(_s, np.float64)
+    dst_np = np.ascontiguousarray(_d, np.float64)
 
     # --- 初期姿勢(累積 R, t)--------------------------------------------
-    if init_R is None:
-        R = torch.eye(3, dtype=torch.float64, device=dev)
-    else:
-        R = _to_t(init_R)
-    if init_t is None:
-        t = torch.zeros(3, dtype=torch.float64, device=dev)
-    else:
-        t = _to_t(init_t).reshape(3)
+    def _np3(a, shape):
+        if a is None:
+            return None
+        v = a.detach().cpu().numpy() if hasattr(a, "detach") else np.asarray(a)
+        return np.ascontiguousarray(v, np.float64).reshape(shape)
 
-    # dst 側は不変なので KD-tree を一度だけ構築(最近傍探索は numpy 側)
-    dst_np = dst_t.detach().cpu().numpy()
-    tree = cKDTree(dst_np)
+    R = np.eye(3, dtype=np.float64) if init_R is None else _np3(init_R, (3, 3))
+    t = np.zeros(3, dtype=np.float64) if init_t is None else _np3(init_t, (3,))
+
+    tree = cKDTree(dst_np)                      # dst は不変なので 1 回だけ
 
     rmse_history = []
     prev_rmse = float("inf")
     converged = False
     used_iters = 0
 
-    for it in range(iters):
-        used_iters = it + 1
-
-        # 現在の累積姿勢で src を変換
-        src_moved = src_t @ R.T + t
-        src_moved_np = src_moved.detach().cpu().numpy()
-
-        # 最近傍対応
-        dists, idx = tree.query(src_moved_np, k=1)
-
-        # 外れ値棄却: 絶対距離ゲート + Trimmed ICP(距離の小さい上位割合)
-        keep = np.ones(len(idx), dtype=bool)
+    def _select(dists):
+        """外れ値棄却: 絶対距離ゲート + Trimmed ICP(距離の小さい上位割合)。"""
+        keep = np.ones(len(dists), dtype=bool)
         if max_corr_dist is not None:
             keep &= (dists <= max_corr_dist)
         if trim_ratio is not None and 0.0 < trim_ratio < 1.0:
-            n_keep = max(3, int(round(len(idx) * trim_ratio)))
-            # 距離の小さい順に n_keep 個だけ採用
+            n_keep = max(3, int(round(len(dists) * trim_ratio)))
             order = np.argsort(dists)
-            trim_mask = np.zeros(len(idx), dtype=bool)
-            trim_mask[order[:n_keep]] = True
-            keep &= trim_mask
+            tm = np.zeros(len(dists), dtype=bool)
+            tm[order[:n_keep]] = True
+            keep &= tm
+        return keep
+
+    for it in range(iters):
+        used_iters = it + 1
+
+        src_moved = src_np @ R.T + t            # 現在の累積姿勢
+        dists, idx = tree.query(src_moved, k=1)
+
+        keep = _select(dists)
         if keep.sum() < 3:
             keep = np.ones(len(idx), dtype=bool)  # 退避: 全採用
 
-        sel = np.where(keep)[0]
-        P = src_moved[torch.as_tensor(sel, device=dev)]
-        Q = dst_t[torch.as_tensor(idx[keep], device=dev)]
+        P = src_moved[keep]
+        Q = dst_np[idx[keep]]
 
-        # 現姿勢での対応残差 RMSE(この反復の相対更新前)
-        rmse = torch.sqrt(torch.mean(torch.sum((P - Q) ** 2, dim=1))).item()
+        rmse = float(np.sqrt(np.mean(np.sum((P - Q) ** 2, axis=1))))
         rmse_history.append(rmse)
 
         # --- Kabsch: P を Q に合わせる相対 (dR, dt) を SVD で解く ----------
-        p_bar = P.mean(dim=0)
-        q_bar = Q.mean(dim=0)
-        Pc = P - p_bar
-        Qc = Q - q_bar
-        H = Pc.T @ Qc  # (3,3) 相互共分散
-        U, S, Vh = torch.linalg.svd(H)
+        p_bar = P.mean(axis=0)
+        q_bar = Q.mean(axis=0)
+        H = (P - p_bar).T @ (Q - q_bar)         # (3,3) 相互共分散
+        U, _S, Vh = np.linalg.svd(H)
         V = Vh.T
-        d = torch.sign(torch.linalg.det(V @ U.T))  # 反射補正
-        D = torch.diag(torch.tensor([1.0, 1.0, d], dtype=torch.float64, device=dev))
-        dR = V @ D @ U.T
+        d = np.sign(np.linalg.det(V @ U.T))     # 反射補正
+        dR = V @ np.diag([1.0, 1.0, d]) @ U.T
         dt = q_bar - dR @ p_bar
 
         # 累積姿勢へ合成(src_moved は既に R,t 適用済み -> 左から dR,dt)
@@ -1706,24 +1699,14 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
             converged = True
             break
         if prev_rmse < float("inf"):
-            rel = abs(prev_rmse - rmse) / (prev_rmse + 1e-12)
-            if rel < tol:
+            if abs(prev_rmse - rmse) / (prev_rmse + 1e-12) < tol:
                 converged = True
                 break
         prev_rmse = rmse
 
     # 収束後の最終 RMSE を採用対応(インライア)上で再評価
-    src_final = (src_t @ R.T + t).detach().cpu().numpy()
-    dists, _ = tree.query(src_final, k=1)
-    fkeep = np.ones(len(dists), dtype=bool)
-    if max_corr_dist is not None:
-        fkeep &= (dists <= max_corr_dist)
-    if trim_ratio is not None and 0.0 < trim_ratio < 1.0:
-        n_keep = max(3, int(round(len(dists) * trim_ratio)))
-        order = np.argsort(dists)
-        tm = np.zeros(len(dists), dtype=bool)
-        tm[order[:n_keep]] = True
-        fkeep &= tm
+    dists, _ = tree.query(src_np @ R.T + t, k=1)
+    fkeep = _select(dists)
     if fkeep.sum() < 1:
         fkeep = np.ones(len(dists), dtype=bool)
     final_rmse = float(np.sqrt(np.mean(dists[fkeep] ** 2)))
@@ -1736,7 +1719,11 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         "inliers": int(fkeep.sum()),
         "rmse_history": rmse_history,
     }
-    return R.to(dtype=torch.float64), t.to(dtype=torch.float64), info
+    if _HAS_TORCH:                    # 互換: これまでどおり torch を返す
+        dev = torch.device(device)
+        return (torch.as_tensor(R, dtype=torch.float64, device=dev),
+                torch.as_tensor(t, dtype=torch.float64, device=dev), info)
+    return R, t, info
 
 
 def _skew(v):
