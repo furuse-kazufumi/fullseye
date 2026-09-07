@@ -669,26 +669,27 @@ def section_decoupled(thick, over):
     c_hi = float(np.cos(np.radians(SELF_SUPPORT_DEG + 0.1)))
     a_true = analytic_support_area((0, 0, 1), cos_c=c_hi)
     b = np.array([0.0, 0.0, 1.0])
-    rows = []
+    rows, got = [], []
     print("   h [mm]   肉厚の誤差 [mm] (%)      NG 面積 [mm^2] (誤差 %)")
     global H_MESH
     keep = H_MESH
     for h in (0.5, 0.25):
-        _, occ, _, _ = coupon(h)
+        _, occ, _, _, _ = coupon(h)
         te = thickness_erosion(occ, h)
-        H_MESH = h
+        H_MESH = h                              # _mesh_from / measured_support_area が使う粗さ
         g, _ = make_grid(h)
-        sdf = part_sdf(g)
-        _, _, n, area = _mesh_from(-sdf, 0.0)
-        am = measured_support_area(n, area, b, cos_c=c_hi)
-        rows.append([("%.3f" % h), "%+.3f (%+.1f %%)" % (te - T_WALL, 100 * (te - T_WALL) / T_WALL),
-                     "%.2f (%+.1f %%)" % (am, 100 * (am - a_true) / a_true)])
+        am = measured_support_area(_mesh_from(-part_sdf(g), 0.0, h), b, cos_c=c_hi)
+        e_t, e_a = te - T_WALL, 100 * (am - a_true) / a_true
+        got.append((h, e_t, e_a))
+        rows.append([("%.3f" % h), "%+.3f (%+.1f %%)" % (e_t, 100 * e_t / T_WALL),
+                     "%.2f (%+.1f %%)" % (am, e_a)])
         print("   %5.3f    %+.3f (%+5.1f %%)          %8.2f (%+5.1f %%)"
-              % (h, te - T_WALL, 100 * (te - T_WALL) / T_WALL, am,
-                 100 * (am - a_true) / a_true))
+              % (h, e_t, 100 * e_t / T_WALL, am, e_a))
     H_MESH = keep
-    print("\n  粗いほうが肉厚は %s ずれているのに、NG 面積の誤差は %s。"
-          % (rows[0][1].split(" ")[0], rows[0][2].split("(")[1].rstrip(")")))
+    print("\n  粗い %.3f mm では肉厚が %+.3f mm (%.1f %%) ずれるのに NG 面積の誤差は %.1f %%、"
+          % (got[0][0], got[0][1], abs(100 * got[0][1] / T_WALL), abs(got[0][2])))
+    print("  細かい %.3f mm では肉厚は %+.3f mm(誤差ゼロ)なのに NG 面積は %.1f %% ずれたまま。"
+          % (got[1][0], got[1][1], abs(got[1][2])))
     print("  **片方の精度をもう片方の根拠にしてはいけない**。")
     figs.save_table("decoupled", ["ボクセルの粗さ h [mm]", "肉厚の誤差", "NG 面積(誤差)"],
                     rows, title="肉厚の誤差と NG 面積の誤差は連動しない",
