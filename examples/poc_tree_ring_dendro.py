@@ -563,8 +563,11 @@ def section_pith_error() -> dict:
             cosv.append(np.cos(th - th_d))
             r_out.append(tr["rho_end"])
             w_mean.append(float(np.mean(ws)))
-    slope_r = float(np.polyfit(cosv, r_out, 1)[0])
-    slope_w = float(np.polyfit(cosv, w_mean, 1)[0])
+    if len(cosv) >= 5:
+        slope_r = float(np.polyfit(cosv, r_out, 1)[0])
+        slope_w = float(np.polyfit(cosv, w_mean, 1)[0])
+    else:
+        slope_r = slope_w = float("nan")
     print("  ★対照円板(偏心成長・うねり無し)で d=%.0f px: 外周半径の cos 回帰の傾き "
           "%+.1f px(予測 %+.0f)、\n     幅の傾き %+.2f px(予測 0)。"
           "**cos で変調されるのは半径で、幅は 1 次で打ち消す**。" % (d, slope_r, -d, slope_w))
