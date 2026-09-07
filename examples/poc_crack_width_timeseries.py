@@ -686,7 +686,8 @@ def section_cliff_width() -> dict:
                      "2値の非ゼロ期"], rows,
                     title="幅を振ったときの成長率(真値 %.4f mm/年)" % RATE_MM_YR)
     return {"w0": w0s, "int": gi, "bin": gb, "wc_mm": wc_px * PX_MM, "dead": dead,
-            "live": live}
+            "live": live, "cliff_lo": min(ratio_live), "cliff_hi": max(ratio_dead),
+            "wrong": wrong, "npair": len(pairs)}
 
 
 # --------------------------------------------------------------------------- #
