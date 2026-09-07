@@ -762,8 +762,9 @@ def main() -> None:
              100 * (rng_out["naive"] - rng_out["true"]) / rng_out["true"]))
     print("  * 重みを載せると異常の的中率 %.0f → %.0f %%。"
           % (biv["plain"], biv["biv"]))
-    print("  * 勝てないところ: 乱数 RGB も種によっては質的パレットより離れる"
-          "(10 種中 %d 種が tab10 を下回るだけ)。" % cat["lose"])
+    print("  * 勝てないところ: 領域が色数(tab10 = 10)を超えると質的パレットは"
+          "循環し、\n    24 領域では連続マップにも乱数 RGB にも負ける"
+          "(最小色差 %.1f)。" % cat["res"][(24, "categorical tab10")])
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
