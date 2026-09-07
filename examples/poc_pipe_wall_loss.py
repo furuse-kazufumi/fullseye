@@ -339,7 +339,10 @@ def section_scene() -> dict:
 
     # esdf で肉の中心線までの距離 -> 肉厚の半分
     e = np.asarray(_L.esdf(occ, voxel_size=VOX))
-    clean = slice(int(20 / VOX), int(60 / VOX))
+    # ★健全部は「欠陥が 1 つも掛からない z」を選ぶこと。最初 z=20..60 を
+    #   健全部と書いたが、そこは管底腐食の真上だった(肉厚 4.5 mm)。
+    z_clean = 270.0
+    clean = slice(int(255 / VOX), int(290 / VOX))
     bandz = slice(int(BAND_Z0 / VOX) + 3, int(BAND_Z1 / VOX) - 3)
     print("   esdf の最小値(肉の芯まで): 健全部 %.2f mm / 全周減肉部 %.2f mm "
           "-> 肉厚 %.2f / %.2f mm(真値 %.2f / %.2f)"
