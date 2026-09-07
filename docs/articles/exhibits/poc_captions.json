@@ -1172,6 +1172,17 @@
    "caption_ja": "定常熱収支の閉形式でメガソーラーのアレイを合成し、既知の故障(セル内ホットスポット・ストリング故障)と、故障ではない温度差(影・汚れ)を仕込んだ図。余剰発熱 320 W/m² のホットスポットは薄まる前 11.20 K なのにカメラには 4.23 K しか届かず、薄めているのは予想した熱伝導(×0.960)ではなくカメラ(×0.511)だった。電気的故障をひとつも置かない対照群でも、画像平均を基準にすると塊が 6 個上がる(健全 1・非故障の温度差 5)。崖はしきい値ではなく面積の門が決め、ホットスポットは風速 1.0 m/s で消える(面積基準の予測 1.1 m/s、ピーク基準の予測 3.0 m/s は外れ)。列間影は同じストリングの日向側を +4.68 K 熱くし、本物のストリング故障 +5.55 K との差は 0.87 K しかない。",
    "caption_en": "A megawatt PV array synthesised from a closed-form steady-state heat balance, seeded with known electrical faults (an in-cell hotspot, a bypassed string) and with real-but-not-electrical temperature differences (shading, soiling). A hotspot dissipating 320 W/m² is 11.20 K before dilution yet reaches the camera as 4.23 K — and the dilution comes not from the lateral conduction we expected (x0.960) but from the camera (x0.511). A control scene containing no electrical fault at all still raises 6 blobs when the whole-image mean is the reference (1 healthy, 5 non-fault). The cliff is set by the minimum-area gate rather than the threshold: the hotspot disappears at 1.0 m/s of wind, matching the area-based prediction of 1.1 m/s while the peak-based prediction of 3.0 m/s is wrong. Row-to-row shading warms the sunlit cells of the same string by +4.68 K, only 0.87 K away from the genuine string fault at +5.55 K.",
    "run": "py -3.11 examples/poc_pv_thermal_survey.py"
+  },
+  {
+   "id": "poc_cold_chain_excursion",
+   "wing": "wing_xyt",
+   "added": "2026-09-07",
+   "numbers_source": "log",
+   "title_ja": "冷蔵輸送の温度記録 ―― ロガーを置いた場所が合否を決めている",
+   "title_en": "The Cold-Chain Temperature Record — Where You Taped the Logger Is the Verdict",
+   "caption_ja": "12.0 m x 2.4 m のリーファー荷室の 12 時間を (t, y, x) の 1 つの体積(720 分 x 60 x 12 セル)として組み立て、吹き出し口からの距離・4 枚の壁からの侵入・扉開閉 5 回のパルス・荷の 1 次遅れ(空気 5 分 / 製品 64〜91 分)を既知の閉形式で仕込んだ図。真に不合格な製品セルは 108 / 490(22.0 %)なのに、製品にロガーを 1 個貼ると 82.4 % の置き方が「合格」と言う。要因を 1 つずつ止めると壊れ方が分かれる ―― 壁だけなら偽合格 95.5 %・偽不合格 0.0 %、壁を止めて扉だけ残すと偽不合格が 3.5 % 現れ、しかも製品に貼ったロガーは 100 % 合格と言う(短いパルスは製品に入らない)。崖は紙の上で予測できて、時定数の崖は「空気 + ロガー」の 2 段モデルで実測 19〜138 分に対し相対 18 % 以内、サンプリング間隔と 0.5 K 量子化の崖は予測と完全一致。同じ記録から出した 3 指標は「12 °C に許す時間」に直すと 60 / 276 / 197 分と 4.6 倍ずれ、720 セル中 82 セル(11.4 %)で合否が揃わない。",
+   "caption_en": "Twelve hours of a 12.0 m x 2.4 m reefer hold, built as a single (t, y, x) volume of 720 min x 60 x 12 cells with known closed-form physics: distance from the supply vent, infiltration from each of the four walls, five door-opening pulses, and first-order thermal lag (5 min for air, 64-91 min for product). 108 of 490 product cells (22.0 %) truly fail, yet a single logger taped in the product reports PASS for 82.4 % of the placements. Turning the causes off one at a time separates the failure modes: walls alone give 95.5 % false passes and 0.0 % false alarms, while walls off and doors on drop true failures to 2.0 % but raise false alarms to 3.5 % — and a logger in the product then passes 100 % of the time, because short pulses never enter the product. The cliffs can be predicted on paper: the time-constant cliff measured at 19-138 min matches a two-stage (hold air + logger) model within 18 % relative, and the sampling-interval and 0.5 K quantisation cliffs match their predictions exactly. Converted to \"minutes allowed at 12 °C\", the three metrics computed from the same record differ by 4.6x (60 / 276 / 197 min) and disagree on the verdict at 82 of 720 placements (11.4 %).",
+   "run": "py -3.11 examples/poc_cold_chain_excursion.py"
   }
  ]
 }
