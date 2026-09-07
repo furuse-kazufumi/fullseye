@@ -279,9 +279,13 @@ def section4_phase_shift(dsig, theta, delta, m):
     i3 = plane_polariscope(delta, theta, 67.5)
     th_hat = 0.25 * np.arctan2(i3 - i1, i2 - i0)
     ang = np.abs(np.mod(th_hat - theta + np.pi / 4, np.pi / 2) - np.pi / 4)
+    ang_p90 = float(np.rad2deg(np.percentile(ang[IN_DISC], 90)))
     print()
     print("  等傾角 θ の誤差: 中央値 %.4f 度 / 90 パーセンタイル %.4f 度"
-          % (np.rad2deg(np.median(ang[IN_DISC])), np.rad2deg(np.percentile(ang[IN_DISC], 90))))
+          % (np.rad2deg(np.median(ang[IN_DISC])), ang_p90))
+    # ★雑音ゼロで同じ強度式から解き戻しているので、θ は**厳密に**戻るはず
+    #   (4 枚の平面偏光から 4θ を出す代数がそのまま逆写像になっている)。
+    assert ang_p90 < 1e-6, ang_p90
 
     # (ii) 位相差。θ を使うと sinδ の**符号まで**取れる。
     sin_d = s2 * np.cos(2 * th_hat) - s1 * np.sin(2 * th_hat)
