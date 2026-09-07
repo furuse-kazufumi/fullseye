@@ -1028,7 +1028,8 @@ def section_tool_gaps(ref: CadRef) -> None:
     vs = float((hi - lo).max() / (n_g - 1))
     sdf = np.asarray(_L.esdf(occ, voxel_size=vs))
     q = ref.pts[::37]
-    v = np.asarray(_L.query_distance(sdf, (lo, hi), n_g, q, mode="trilinear"))
+    bnd = tuple((float(lo[k]), float(hi[k])) for k in range(3))
+    v = np.asarray(_L.query_distance(sdf, bnd, n_g, q, mode="trilinear"))
     print("  (d) esdf(%d^3, ボクセル %.3f mm)+ query_distance を表面上の %d 点で"
           "引くと" % (n_g, vs, len(q)))
     print("      平均 %+.4f mm / 標準偏差 %.4f mm(真値は 0)。"
