@@ -1259,7 +1259,8 @@ def section_figures(base: dict, tru: dict, heat: dict, clear: np.ndarray) -> Non
     for e in base["scene"]["events"]:
         truth_img = _stamp(truth_img, e["x"], e["y"], TYPE_RGB[e["cause"]], r=1)
 
-    figs.save_grid("scene_layout", [plan, paths, seen_img, truth_img],
+    figs.save_grid("scene_layout",
+                   [_up(plan), _up(paths), _up(seen_img), _up(truth_img)],
                    ["平面図(青 = 作業台 / 緑 = 払い出し口 / 橙 = 棚前)",
                     "全 %d 台の軌跡の重ね(log 濃度)" % len(base["scene"]["tracks"]),
                     "天井カメラ 2 台の死角(赤、棚 %.1f m)" % RACK_H,
