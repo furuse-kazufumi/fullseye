@@ -121,12 +121,15 @@ ZD_BASE = 0.03                 # まず「繰り返し性から」名乗る Z_d
 
 BODY_RADIUS = 0.30             # ゼロ点が人に被せる円柱の半径 [m]
 
-_S_BASE = (V_H * (T_R + T_S) + V_R * T_R + B_STOP + C_INTRUSION + Z_R)
+#: **物理としての危険** —— これより近ければ、止め始めても間に合わない。
+#: Z_d / Z_r は測定の不確かさを埋める余裕であって、危険そのものの定義ではない
+#: (ここを混ぜると「不確かさを増やせば危険が減る」という嘘の結論が出る)。
+S_GEOM = V_H * (T_R + T_S) + V_R * T_R + B_STOP + C_INTRUSION
 
 
-def required_separation(z_d: float = ZD_BASE) -> float:
-    """ISO/TS 15066 の必要分離距離 S。``z_d`` はセンサの不確かさ [m]。"""
-    return _S_BASE + float(z_d)
+def trigger_distance(z_d: float = ZD_BASE) -> float:
+    """機械を止める判定に使う距離 = S_GEOM + Z_r + Z_d。"""
+    return S_GEOM + Z_R + float(z_d)
 
 
 # --------------------------------------------------------------------------- #
