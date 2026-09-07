@@ -618,7 +618,7 @@ def section_rake_sweep() -> dict:
     wid, off, an, d4 = [], [], [], []
     for s in ss:
         sc = make_scene("経年", tex_c=0.0, rake=s)
-        me = measure(sc, extract_net(sc["img"]))
+        me = measure_scene(sc)
         wid.append(me["width"])
         off.append(me["offset"])
         an.append(me["aniso"])
