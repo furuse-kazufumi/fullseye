@@ -484,7 +484,8 @@ def section_thickness():
                    caption="右ほど粗い。侵食と内接球は階段、探針は連続だが 2 voxel を"
                            "切ると壁を見失う。")
     return {"ratios": list(ratios), "e_ero": e_ero, "e_ins": e_ins, "e_prb": e_prb,
-            "q_ero2": q_ero2, "q_ins2": q_ins2, "rows": rows}
+            "q_ero2": q_ero2, "q_ins2": q_ins2, "rows": rows, "n_prb": n_prb,
+            "bad": bad, "fine": fine}
 
 
 def section_reach():
