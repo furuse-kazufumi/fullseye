@@ -756,7 +756,11 @@ def section_redundancy(train_rows) -> dict:
                     ["芯ずれ %d 試行" % N_TRAIN] + list(names),
                     [[names[i]] + ["%.3f" % v for v in corr[i]] for i in range(4)],
                     title="芯ずれでの相関 —— 3 センサは同じ潜在変数の別の顔",
-                    caption="真値の重症度と 3 つの測定値がすべて 0.99 台で相関する。")
+                    caption="真値の重症度に対し 2X 振動 %.3f / 継手温度 %.3f / "
+                            "芯ずれ量 %.3f。互いにも %.3f 以上 —— 独立な 3 つの"
+                            "証拠ではない。"
+                            % (corr[0, 1], corr[0, 2], corr[0, 3],
+                               min(corr[1, 2], corr[1, 3], corr[2, 3])))
     return {"misalign": corr, "bearing": corr2}
 
 
