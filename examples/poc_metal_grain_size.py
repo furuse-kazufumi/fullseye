@@ -630,7 +630,8 @@ def section_cliff(gap_median: float, edge_mean: float) -> dict:
                    ylim=(-4.5, 0.5),
                    caption="面積法は 1 本の途切れで 2 粒が融合するので、切片法の 3 分の 1 の途切れで 1 段落ちる。")
     figs.save_plot("cliff_prediction",
-                   [("切片法 実測", x, err["raw"]), ("切片法 予測 ΔG0 + 6.64 log10(1-f)", x, pred_raw),
+                   [("切片法 実測", x, err["raw"]), ("切片法 予測 ΔG0 + 6.64 log10(1-f_eff)", x, pred_raw),
+                    ("切片法 素朴な予測 6.64 log10(1-f)", x, pred_raw_naive),
                     ("面積法 実測", x, err["area"]), ("面積法 予測 3.32 log10(1-3p)", x, pred_area)],
                    xlabel="粒界の途切れ率 f [%]", ylabel="G の誤差 ΔG [段]",
                    title="幾何で先に立てた予測との突き合わせ", ylim=(-4.5, 0.5))
