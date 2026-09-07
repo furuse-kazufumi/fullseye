@@ -245,15 +245,18 @@ def make_surface(scale: float = 1.0, step: float = STEP, light: bool = False) ->
         WY1, -(yy - RY))
 
     if light:
-        return _pack(P, N, E, D, G)
+        out = _pack(P, N, E, D, G)
+        out["win"], out["door"] = win, door
+        return out
 
     # --- 柱 2 本(半径が設計と違う)------------------------------------------ #
     for k, (cx, cy) in enumerate(COL_XY):
         r = COL_R + DCOL[k] * s
-        nth = max(8, int(round(2 * np.pi * r / step)))
-        th, z = _grid(0, 2 * np.pi, 0.0, RZ, 2 * np.pi / nth)
-        z = z[:len(th)]
-        th = th[:len(z)]
+        nth = max(12, int(round(2 * np.pi * r / step)))
+        th1 = (np.arange(nth) + 0.5) * (2 * np.pi / nth)
+        z1 = np.arange(step / 2, RZ, step)
+        th, z = np.meshgrid(th1, z1, indexing="ij")
+        th, z = th.ravel(), z.ravel()
         px = cx + r * np.cos(th)
         py = cy + r * np.sin(th)
         add(np.column_stack([px, py, z]),
@@ -261,16 +264,24 @@ def make_surface(scale: float = 1.0, step: float = STEP, light: bool = False) ->
             COL0 + k, r - COL_R)
 
     # --- 窓・戸の見込み(奥の面。開口の位置ずれはここに出る)------------------ #
-    u, v = _grid(win[0], win[1], win[2], win[3], step)
-    rim = _rim_inside(u, v, win, EDGE_BAND)
-    add(np.column_stack([np.full_like(u, RX + WIN_D), u, v]),
-        np.column_stack([-np.ones_like(u), np.zeros_like(u), np.zeros_like(u)]),
-        WINR, 0.0, np.where(rim, -WIN_D, 0.0))
-    u, v = _grid(door[0], door[1], door[2], door[3], step)
-    rim = _rim_inside(u, v, door, EDGE_BAND)
-    add(np.column_stack([u, np.full_like(u, -DOOR_D), v]),
-        np.column_stack([np.zeros_like(u), np.ones_like(u), np.zeros_like(u)]),
-        DOORR, 0.0, np.where(rim, -DOOR_D, 0.0))
+    #    矩形は端まで**対称に**張る(片側だけ余ると中心が半格子ずれる)。
+    def _sym(a0, a1, n):
+        return np.linspace(a0, a1, max(2, n))
+
+    for rect, eid, depth, axis in ((win, WINR, WIN_D, 0), (door, DOORR, DOOR_D, 1)):
+        nu = int(round((rect[1] - rect[0]) / step)) + 1
+        nv = int(round((rect[3] - rect[2]) / step)) + 1
+        U, V = np.meshgrid(_sym(rect[0], rect[1], nu), _sym(rect[2], rect[3], nv),
+                           indexing="ij")
+        u, v = U.ravel(), V.ravel()
+        rim = _rim_inside(u, v, rect, EDGE_BAND)
+        if axis == 0:
+            p = np.column_stack([np.full_like(u, RX + depth), u, v])
+            n = np.column_stack([-np.ones_like(u), np.zeros_like(u), np.zeros_like(u)])
+        else:
+            p = np.column_stack([u, np.full_like(u, -depth), v])
+            n = np.column_stack([np.zeros_like(u), np.ones_like(u), np.zeros_like(u)])
+        add(p, n, eid, 0.0, np.where(rim, -depth, 0.0))
 
     # --- 幅木(設計どおり。小さい出っ張りが 1 個の数字に出ないことを見る)----- #
     for (o, ax) in ((0, 0), (RX, 0), (0, 1), (RY, 1)):
