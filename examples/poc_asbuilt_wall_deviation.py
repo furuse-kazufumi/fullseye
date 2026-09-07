@@ -396,6 +396,19 @@ def section_plumb_square() -> dict:
           "\n     ただし **AABB からは直交度が原理的に出ない**(軸平行なので"
           "常に 90 度)。" % leak)
 
+    # ★漏れていたのは倒れではなく**ふくらみ**。閉形式で predict_bulge が
+    #   1 次の係数として返す量が、そのまま偽の倒れと偽の平面内の振れになる。
+    pb = predict_bulge(BULGE_A, BULGE_S)
+    east_err = float([r for r in rows if r[0] == "east"][0][3])
+    sq_err = float(sq_rows[0][2]) - float(sq_rows[0][1])
+    print("\n  ★★漏れていたのは倒れではなく**東の壁のふくらみ**だった。")
+    print("     東の壁の倒れ  実測 %+.3f mrad / 閉形式の予測 %+.3f mrad"
+          % (east_err, 1e3 * pb["fake_tilt"]))
+    print("     east-north の直交度  実測 %+.3f mrad / 閉形式の予測 %+.3f mrad"
+          % (sq_err, -1e3 * pb["fake_yaw"]))
+    print("     **面外のふくらみ 1 個が、倒れ・直交度・内法の 3 つの判定を"
+          "同時に汚す**\n     (どれも §6 の 1 次の吸収で説明がつく)。")
+
     figs.save_table("plumb_verdicts",
                     ["壁", "真値 mrad", "推定 mrad", "差 mrad",
                      "階高あたり mm", "判定(許容 %.0f mm)" % TOL_PLUMB_MM],
