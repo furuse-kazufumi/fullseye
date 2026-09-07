@@ -513,10 +513,16 @@ def section_controls():
     e = speed_err(r["y"], r["u"])
     out.append(("基準 + 空間ハイパス", e, q))
     print("  %-22s 速度 RMS %.3f m/s / 流量 %+.1f %%" % (out[-1][0], e, 100 * (q / Q_TRUE - 1)))
-    d_wave = out[2][1] - out[0][1]
+    byname = {n: e for n, e, _ in out}
+    d_wave = byname["波紋だけ"] - byname["すべて無し(対照群)"]
     print("  波紋(振幅 %.2f・波速 %.2f m/s = %.2f px/コマ)が速度 RMS を動かす量 %+.3f m/s、"
           "ハイパスで基準 %.3f → %.3f m/s" % (WAVE_AMP, WAVE_SPEED, WAVE_SPEED * DT / S_PX, d_wave,
-                                              out[4][1], out[5][1]))
+                                              byname["すべて有り(基準)"], byname["基準 + 空間ハイパス"]))
+    print("  ★同じコントラスト %.2f でも、空の映り込みは %.3f、細かい映り込みは %.3f m/s(%.0f 倍)。"
+          % (REFL_C, byname["反射(空)だけ"], byname["反射(細かい)だけ"],
+             byname["反射(細かい)だけ"] / byname["反射(空)だけ"]))
+    assert byname["反射(細かい)だけ"] > 10 * byname["反射(空)だけ"]
+    assert d_wave > 0.03
     return out
 
 
