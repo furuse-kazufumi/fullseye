@@ -637,9 +637,11 @@ def section_cliff(k_true):
     figs.save_plot("cliff_estimators",
                    [("LAI(植被率から)", lai_t, lai_from_cover(cover, k_true)),
                     ("真値", lai_t, lai_t),
-                    ("重なりの平均枚数 / k", lai_t, np.asarray(layers) / k_true)],
+                    ("重なりの平均枚数 / k", lai_t, np.asarray(layers) / k_true),
+                    ("予測の天井(2 段階クランピング)", lai_t,
+                     np.full_like(lai_t, lai_ceiling))],
                    xlabel="真の LAI [m^2/m^2]", ylabel="推定 LAI [m^2/m^2]",
-                   title="植被率からの LAI は真値から離れ続ける",
+                   title="植被率からの LAI は予測どおりの天井で止まる",
                    caption="重なりの枚数(遮蔽を無視して全部数えた場合)は真値に乗る。")
     figs.save_plot("cliff_density",
                    [("予測(d'=1)", dens, pred_l), ("実測(判別率 84 %)", dens, meas_l)],
