@@ -272,8 +272,12 @@ def coverage():
 # --------------------------------------------------------------------------- #
 # PIV の共通部品                                                                #
 # --------------------------------------------------------------------------- #
-def piv_pairs(frames, pairs, window=WIN, **kw):
-    """対の列で PIV して平均する。返りは ``(mean_flow, info, per_pair_nan, per_pair_outlier)``。"""
+def piv_pairs(frames, pairs, window=WIN, drop_outliers=True, **kw):
+    """対の列で PIV して平均する。返りは ``(mean_flow, info, per_pair_nan, per_pair_outlier)``。
+
+    ``drop_outliers`` は正規化中央値検定で旗の立った窓を**埋めずに欠測**にしてから平均する
+    (現場の標準手順)。崖を「検定に救われずに」数えたいときは False。
+    """
     flows, nan_f, out_f = [], [], []
     info = None
     for a, b in pairs:
@@ -281,7 +285,7 @@ def piv_pairs(frames, pairs, window=WIN, **kw):
         nan_f.append(1.0 - info["valid_fraction"])
         mask = fs.ledger.piv_outlier_mask(flow) & np.isfinite(flow[0])
         out_f.append(float(np.mean(mask)))
-        flows.append(fs.ledger.piv_replace_outliers(flow, mask, method="nan"))   # 埋めずに欠測
+        flows.append(fs.ledger.piv_replace_outliers(flow, mask, method="nan") if drop_outliers else flow)
     import warnings
     with np.errstate(all="ignore"), warnings.catch_warnings():
         warnings.simplefilter("ignore", RuntimeWarning)
