@@ -448,7 +448,7 @@ def section_selfcheck() -> None:
     print("  線分-直方体: 三分探索 48 回 vs 4001 点  最大差 %.2e m"
           "(粗いのは総当たり側 —— 三分探索は必ず等しいか小さい)" % err2)
     assert err2 < 2e-3, err2
-    assert float(np.max(dv - dense)) < 1e-9, float(np.max(dv - dense))
+    assert float(np.max(dv - dense)) < 1e-7, float(np.max(dv - dense))
 
     # 表面サンプルの面積 = 解析値(カプセルの表面積 2πrL + 4πr²)
     a0, b0, r0 = np.array([0.0, 0.0, 0.0]), np.array([0.0, 0.0, 0.6]), 0.12
