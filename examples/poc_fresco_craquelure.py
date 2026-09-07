@@ -533,7 +533,7 @@ def section_indicators() -> dict:
 
 def section_width_sweep() -> dict:
     print("\n" + "=" * 78)
-    print("3) 崖: ひび幅 0.5 → 4 px(経年型、質感 %.2f、ぼけ σ %.1f px)" % (TEX_C, BLUR_SIG))
+    print("3) 崖: ひび幅 0.15 → 4 px(経年型、質感 %.2f、ぼけ σ %.1f px)" % (TEX_C, BLUR_SIG))
     print("=" * 78)
     ws = [0.15, 0.25, 0.35, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0]
     from scipy.special import erf
