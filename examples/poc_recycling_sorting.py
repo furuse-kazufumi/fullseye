@@ -977,7 +977,12 @@ def main() -> int:
         "連続体除去が強い加算で生 SAM に勝った(逆転の所見が消えた)"
     assert abs(det["overlap"]["sam"][-1] - det["overlap"]["sam"][0]) < 0.05, \
         "重なりが可視画素の再現率に効いてしまった"
-    assert pr["rho"] > 0.5, "ペアの予測順位が当たらない: %.2f" % pr["rho"]
+    assert pr["rho_noise"] > 0.6, \
+        "雑音だけの条件でペアの予測順位が当たらない: %.2f" % pr["rho_noise"]
+    assert pr["top_noise"] == pr["top_pred"], \
+        "雑音だけの条件で 1 位が予測と違う: %s" % pr["top_noise"]
+    assert pr["top_meas"] != pr["top_pred"], \
+        "全部入りでも 1 位が予測と一致した(入れ替わりの所見が消えた)"
     assert mx["pure"] > mx["all"], "境界を捨てても再現率が上がらない"
     assert mx["mix_deg"] > mx["mix_clean"], "劣化で線形混合分解が悪化しない"
 
