@@ -426,11 +426,21 @@ def section6_noise(dsig, theta, delta, m):
         rows[(sig, bits)] = (float(np.median(e[m])),
                              float(np.mean(np.abs(est[m] - dsig[m]))))
         print("  %10.3f %10s | %14.5f %12.5f"
-              % (sig, "%d bit" % bits if bits else "なし") + tuple())
+              % (sig, "%d bit" % bits if bits else "なし",
+                 rows[(sig, bits)][0], rows[(sig, bits)][1]))
     print()
     print("  → 8 bit 量子化だけで δ の誤差が %s。雑音より**先に量子化が効く**"
           % "雑音 0.002 と同程度")
     print("     ことがある(輝度 0〜1 を 256 段に切ると δ の刻みが有限になる)。")
+    # ★所見を固定する。
+    #   (1) 雑音も量子化も無ければ、明視野/暗視野の比から δ は**厳密に**戻る。
+    assert rows[(0.0, 0)][0] < 1e-9, rows[(0.0, 0)]
+    #   (2) ★8 bit 量子化「だけ」の誤差が、雑音 σ=0.002 だけの誤差と同オーダー
+    #       (実測 0.00277 vs 0.00305)。カメラの bit 深さは雑音と同じ重さで効く。
+    assert rows[(0.0, 8)][0] > 0.5 * rows[(0.002, 0)][0], (rows[(0.0, 8)], rows[(0.002, 0)])
+    #   (3) 雑音は 5 倍にすると誤差も同じ桁で増える(比例の確認)。
+    assert rows[(0.01, 0)][0] > 3.0 * rows[(0.002, 0)][0], (rows[(0.01, 0)], rows[(0.002, 0)])
+    return rows
 
 
 def section7_findings():
