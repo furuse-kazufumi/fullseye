@@ -1211,34 +1211,54 @@ def section_prism_and_crack(sc: dict) -> dict:
           "気づけない。" % (float(rows[0][4]), float(rows[-1][4])))
 
     # --- その x はどこに嘘として出るか --------------------------------------- #
-    print("\n      その x 残差は**どこに嘘として出るか**"
-          "(キャンバー %.0f mm の悪いほうで測る):" % cam_l[-1])
-    _CAMBER[0] = 0.002
-    r0 = np.random.default_rng(SEED + 511)
-    ref_b = observe(0, r0)
-    cur_b = observe(2, np.random.default_rng(SEED + 512))
-    cen_b, nor_b, ok_b = core_normals(ref_b)
-    tfb = truth_footprint(2)
-    p_ref, r_ref, n_in = bearing_pose(ref_b, 0)
-    print("      支承の位置は 断面の円として ``fit_circle_3d`` で測る(点 %d、"
-          "推定半径 %.4f m / 真 %.4f m)。" % (n_in, r_ref, BEARING_R))
-    print("      合わせ方              桁の面の偽の変化 RMS[mm]   支承の水平移動[mm]"
-          "(真 0)  支承の沈下[mm](真 %.2f)" % SETTLE_MM[2])
-    prow, fake_h = [], 0.0
-    for name, msk in (("桁だけで合わせる", lambda v: v[:, 2] > -0.95),
-                      ("支承も入れて合わせる", None)):
+    print("\n      その残差は**どこに嘘として出るか**。支承(円柱)の位置を"
+          "断面の円として ``fit_circle_3d`` で測る:")
+    print("      条件                                桁の偽の変化 RMS[mm]"
+          "   支承の水平移動[mm](真 0)  支承の沈下[mm](真 %.2f)" % SETTLE_MM[2])
+    prow, fake_h, settle_read = [], 0.0, []
+    conds = (("キャンバー %.0f mm・桁の全点" % (1e3 * CAMBER), CAMBER,
+              lambda v: v[:, 2] > -0.95),
+             ("キャンバー %.0f mm・桁の全点" % (1e3 * 0.002), 0.002,
+              lambda v: v[:, 2] > -0.95),
+             ("キャンバー %.0f mm・変わっていない端だけ" % (1e3 * CAMBER), CAMBER,
+              lambda v: (v[:, 2] > -0.95) & stable_mask(v)))
+    for name, cval, msk in conds:
+        _CAMBER[0] = cval
+        ref_b = observe(0, np.random.default_rng(SEED + 511))
+        cur_b = observe(2, np.random.default_rng(SEED + 512))
+        cen_b, nor_b, ok_b = core_normals(ref_b)
+        tfb = truth_footprint(2)
+        p_ref, r_ref, n_in = bearing_pose(ref_b, 0)
         q = register(cur_b, ref_b, mask=msk)[0]
         ln, _, _ = measure_normal(ref_b, q, cen_b, nor_b, ok_b)
         heal = np.isfinite(ln) & ~CORES["edge"] & (np.abs(tfb) < 0.3)
         p_cur, _, _ = bearing_pose(q, 0)
         dxz = (p_cur - p_ref) * 1e3
         rms_h = float(np.sqrt(np.mean(ln[heal] ** 2)))
-        prow.append([name, "%.3f" % rms_h, "%+.2f" % dxz[0], "%.2f" % (-dxz[1])])
-        if not prow[:-1]:
+        prow.append([name, "%.3f" % rms_h, "%+.2f" % dxz[0], "%+.2f" % (-dxz[1])])
+        settle_read.append(-float(dxz[1]))
+        if len(prow) == 2:
             fake_h = abs(float(dxz[0]))
-        print("      %-20s %18.3f %21.2f %25.2f"
+        print("      %-34s %14.3f %21.2f %25.2f"
               % (name, rms_h, dxz[0], -dxz[1]))
     _CAMBER[0] = CAMBER
+    print("      (円の半径の推定は %.4f m / 真 %.4f m。円弧が下半分しか見えないので"
+          "半径は %.1f mm 過小)" % (r_ref, BEARING_R, 1e3 * (BEARING_R - r_ref)))
+    print("      ★★桁の面の偽の変化はどの条件でも %.3f 〜 %.3f mm でほとんど"
+          "動かないのに、\n         支承の読みは水平 %+.2f -> %+.2f mm、"
+          "沈下 %+.2f -> %+.2f mm と別物になる。"
+          % (min(float(r[1]) for r in prow), max(float(r[1]) for r in prow),
+             float(prow[0][2]), float(prow[1][2]),
+             settle_read[0], settle_read[2]))
+    print("         (i) 決まらない x は、法線が ±x を向く**円柱にだけ** "
+          "「%.1f mm 水平に動いた」として出る(真値 0)。" % fake_h)
+    print("         (ii) 全点で合わせるとたわみの平均 %.1f mm が z に吸われ、"
+          "**支承の沈下 %.2f mm が %.2f mm に消える**。"
+          % (DEFLECT_MM[2] * 2 / 3, SETTLE_MM[2], settle_read[0]))
+    print("             変わっていない端だけで合わせると %.2f mm まで戻る。"
+          % settle_read[2])
+    print("         **どちらも、面積の 99 %% を占める大きな面の残差を見ている"
+          "限り気づけない**。")
     print("      ★★桁の平面には**ほとんど嘘が出ない**(法線が x にほぼ直交するから)"
           "のに、支承の円柱は法線が ±x を\n         向くので、"
           "x の残差がそのまま「支承が %.2f mm 水平に動いた」という所見になる"
