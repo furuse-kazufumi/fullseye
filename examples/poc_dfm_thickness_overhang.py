@@ -341,7 +341,11 @@ def _up(img, k=3):
 
 
 def _shaded(occ, grad, axis, reverse):
-    """``axis`` 方向に見た最初の占有面の Lambertian 陰影(H,W)。"""
+    """``axis`` 方向に見た最初の占有面の Lambertian 陰影 (H,W,3) グレー。
+
+    面法線は解析形状の距離場の勾配から取る(面平均ではない —— 格子バンディングを
+    避けるため)。手前ほど明るくする深度手掛かりを少しだけ足す。
+    """
     a = np.moveaxis(occ, axis, 0)
     gg = np.moveaxis(grad, axis + 1, 1)
     if reverse:
@@ -352,7 +356,10 @@ def _shaded(occ, grad, axis, reverse):
     nrm = np.stack([gg[k][hit, ii, jj] for k in range(3)], axis=-1)
     nrm /= np.maximum(np.linalg.norm(nrm, axis=-1, keepdims=True), 1e-9)
     img = np.asarray(L.render_shaded(nrm, light=(0.4, -0.5, 0.75), ambient=0.15))
-    return np.where(seen, img, 0.0).T[::-1]
+    depth = hit / float(max(1, a.shape[0] - 1))
+    img = np.clip(img * (1.0 - 0.45 * depth), 0.0, 1.0)
+    img = np.where(seen, img, 1.0).T[::-1]              # 背景は白
+    return np.repeat(img[..., None], 3, axis=2)
 
 
 # --------------------------------------------------------------------------- #
