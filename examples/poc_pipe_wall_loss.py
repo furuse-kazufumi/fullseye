@@ -384,22 +384,23 @@ def section_scene() -> dict:
     proj = np.asarray(_L.render_volume_projection(occ, azimuth=90.0, mode="xray"))
     figs.save_grid(
         "scene_pipe",
-        [occ[int(PIT_Z / VOX)], occ[int((BAND_Z0 + BAND_Z1) / 2 / VOX)],
-         occ[:, :, row].T, proj.T],
-        ["孔食の断面 (z=%.0f mm)" % PIT_Z,
-         "全周減肉の断面 (z=%.0f mm)" % ((BAND_Z0 + BAND_Z1) / 2),
+        [_big(occ[int(PIT_Z / VOX)]), _big(occ[int(CRES_Z0 + 35) // 1 and
+                                              int(50.0 / VOX)]),
+         _big(occ[:, :, row].T, 2), _big(proj.T, 2)],
+        ["孔食の断面 z=%.0f mm" % PIT_Z, "管底腐食の断面 z=50 mm",
          "縦断面(曲がり %.1f mm)" % BEND, "X 線積算投影"],
         title="配管の体積モデル(ボクセル %.1f mm、SDF の差で組んだ)" % VOX)
 
     # polar_unwrap: 1 枚の断面を (θ×r) の矩形へ
-    sl = occ[int(PIT_Z / VOX)]
+    sl = occ[int(50.0 / VOX)]
     pol = np.asarray(_L.polar_unwrap(sl.astype(np.float64),
                                      center=((n - 1) / 2, (n - 1) / 2),
-                                     r_in=R0 - 8, r_out=R0 + T0 + 4,
+                                     r_in=R0 - 10, r_out=R0 + T0 + 6,
                                      ntheta=360, nr=64))
-    figs.save_grid("scene_polar", [sl, pol],
-                   ["断面(z=%.0f mm)" % PIT_Z, "極座標展開 (θ × r)"],
-                   title="円環を矩形に開く —— ここから先は 2-D の仕事")
+    figs.save_grid("scene_polar", [_big(sl, 4), _big(pol.T, 2)],
+                   ["断面 z=50 mm", "極座標に開いた壁 (横=θ 縦=r)"], ncols=1,
+                   title="円環を矩形に開く —— ここから先は 2-D の仕事",
+                   caption="下の帯の細くなっている所が管底腐食。")
 
     return {"occ": occ, "v_pit": v_pit, "v_pit_cf": v_pit_cf,
             "th_clean": th_clean, "th_band": th_band,
