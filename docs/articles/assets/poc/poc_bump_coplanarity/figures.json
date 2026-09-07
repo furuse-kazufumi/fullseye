@@ -1,0 +1,66 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   573,
+   1480,
+   3
+  ]
+ },
+ {
+  "file": "02_deviation_map.png",
+  "name": "deviation_map",
+  "caption": "",
+  "shape": [
+   317,
+   712,
+   3
+  ]
+ },
+ {
+  "file": "03_order_table.png",
+  "name": "order_table",
+  "caption": "真値の共平面性は 38.44 µm、本当に仕様外なのは 5 本。",
+  "shape": [
+   152,
+   459,
+   3
+  ],
+  "csv": "03_order_table.csv",
+  "tsv": "03_order_table.tsv"
+ },
+ {
+  "file": "04_sorted_deviation.png",
+  "name": "sorted_deviation",
+  "caption": "左端の 6 本が仕込んだ短小。ゼロ点はそこを外し、無関係なバンプを仕様外へ押し出す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_warpage_cliff.png",
+  "name": "warpage_cliff",
+  "caption": "そりの形を固定すれば、取り切れない残りは PV に比例する。比例定数 r2=0.02355 から崖の位置が出る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_absorbed_defect.png",
+  "name": "absorbed_defect",
+  "caption": "消えた分はそり側の数字に足されている(+6.14 µm)。短小の検出数は変わらないので、検出できていることは健全さの証拠にならない。",
+  "shape": [
+   128,
+   718,
+   3
+  ],
+  "csv": "06_absorbed_defect.csv",
+  "tsv": "06_absorbed_defect.tsv"
+ }
+]

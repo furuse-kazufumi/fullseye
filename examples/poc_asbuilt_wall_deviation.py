@@ -187,15 +187,20 @@ def signed_offset(pt_on_plane: np.ndarray, normal: np.ndarray,
 # --------------------------------------------------------------------------- #
 # 図のための小道具                                                              #
 # --------------------------------------------------------------------------- #
-def _bin_mean(u, v, w, ru, rv, nu, nv):
-    """散らばった (u, v, 値) を格子に落として平均する(空セルは 0)。"""
+def _bin_mean(u, v, w, ru, rv, nu, nv, up=1):
+    """散らばった (u, v, 値) を格子に落として平均する(空セルは 0)。
+
+    ★格子を細かく取りすぎると空セルだらけになって図が真っ黒になる
+    (2026-09-08 に 420x290 で踏んだ)。粗く落としてから ``up`` 倍に
+    引き伸ばすほうが、点の密度に対して素直。
+    """
     iu = np.clip(((u - ru[0]) / (ru[1] - ru[0]) * nu).astype(int), 0, nu - 1)
     iv = np.clip(((v - rv[0]) / (rv[1] - rv[0]) * nv).astype(int), 0, nv - 1)
     k = iv * nu + iu
     s = np.bincount(k, weights=w, minlength=nu * nv)
     c = np.bincount(k, minlength=nu * nv)
-    out = np.where(c > 0, s / np.maximum(c, 1), 0.0)
-    return out.reshape(nv, nu)[::-1]
+    out = np.where(c > 0, s / np.maximum(c, 1), 0.0).reshape(nv, nu)[::-1]
+    return np.repeat(np.repeat(out, up, axis=0), up, axis=1) if up > 1 else out
 
 
 # --------------------------------------------------------------------------- #

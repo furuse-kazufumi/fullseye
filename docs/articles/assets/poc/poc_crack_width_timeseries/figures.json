@@ -18,5 +18,71 @@
    560,
    3
   ]
+ },
+ {
+  "file": "03_control.png",
+  "name": "control",
+  "caption": "ここに出る傾きはすべて『見かけの成長』。要因を 1 つずつ止めた 5 条件で、どれが効いているかを分ける。",
+  "shape": [
+   200,
+   621,
+   3
+  ],
+  "csv": "03_control.csv",
+  "tsv": "03_control.tsv"
+ },
+ {
+  "file": "04_control_series.png",
+  "name": "control_series",
+  "caption": "真の幅は 0.30 mm で一定。2 値化の上下はぼけの σ に追随している。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_phase.png",
+  "name": "phase",
+  "caption": "傾きが 0 に近いほど列方向の画素位相が揃い、2 値化は画面ごと 1 画素単位で跳ぶ。積分法は傾きに無反応。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_phase_tbl.png",
+  "name": "phase_tbl",
+  "caption": "",
+  "shape": [
+   224,
+   386,
+   3
+  ],
+  "csv": "06_phase_tbl.csv",
+  "tsv": "06_phase_tbl.tsv"
+ },
+ {
+  "file": "07_cliff_epochs.png",
+  "name": "cliff_epochs",
+  "caption": "横線を下回った時点で 0.040 mm/年 を 2σ で言える。2 値化は 3 年でも届かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_cliff_epochs_tbl.png",
+  "name": "cliff_epochs_tbl",
+  "caption": "",
+  "shape": [
+   200,
+   551,
+   3
+  ],
+  "csv": "08_cliff_epochs_tbl.csv",
+  "tsv": "08_cliff_epochs_tbl.tsv"
  }
 ]
