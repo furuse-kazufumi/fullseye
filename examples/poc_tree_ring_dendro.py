@@ -204,19 +204,26 @@ def ray_truth(scene: dict, center, theta: float) -> dict:
     """
     ring = scene["ring"]
     n = scene["n"]
+    if abs(center[0] - scene["pith"][0]) < 1e-9 and abs(center[1] - scene["pith"][1]) < 1e-9:
+        # 髄そのものからの放射線は閉形式: 年輪 k+1 に入る半径 = S_k·G(θ) + うねり(θ)
+        g = float(_growth(np.asarray(theta), scene["e_growth"]))
+        wb = float(_wobble(np.asarray(theta), scene["wobble"]))
+        pos = scene["S"][:-1] * g + wb
+        return {"pos": pos, "k": np.arange(1, n + 1), "rho_end": float(scene["S"][-1] * g + wb),
+                "unreachable": 0, "double": 0}
     rho = np.arange(0.0, 0.75 * N_PIX, RAY_STEP)
     y = np.clip(np.round(center[0] + rho * np.sin(theta)).astype(int), 0, N_PIX - 1)
     x = np.clip(np.round(center[1] + rho * np.cos(theta)).astype(int), 0, N_PIX - 1)
     k = ring[y, x].copy()
     # ★画素地図を斜めに読むと境界で番号が k, k+1, k, k+1 と震える(最近傍の階段)。
-    #   3 標本(0.75 px)未満の短い走りは直前の値に吸収する —— 放置すると真値の
+    #   5 標本(1.25 px)未満の短い走りは直前の値に吸収する —— 放置すると真値の
     #   境界が 1〜2 本増え、「年数が合う方向 18 + 合わない 13 = 31 > 24」になった。
     i = 0
     while i < k.size:
         j = i
         while j < k.size and k[j] == k[i]:
             j += 1
-        if j - i < 3 and i > 0:
+        if j - i < 5 and i > 0:
             k[i:j] = k[i - 1]
         i = j
     last = np.nonzero(k <= n)[0]
