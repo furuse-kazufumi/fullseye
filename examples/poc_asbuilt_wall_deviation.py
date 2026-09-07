@@ -518,8 +518,9 @@ def predict_bulge(amp: float, sig: float) -> dict:
     A = np.column_stack([np.ones(b.size), E.ravel(), Z.ravel()])
     coef, *_ = np.linalg.lstsq(A, b, rcond=None)
     resid = b - A @ coef
-    return {"peak": float(resid.max()), "fake_tilt": float(coef[2]),
-            "absorbed": float(1.0 - resid.max() / amp)}
+    return {"peak": float(resid.max()), "mean": float(coef[0]),
+            "fake_yaw": float(coef[1]), "fake_tilt": float(coef[2]),
+            "absorbed": float(1.0 - resid.max() / amp) if amp else 0.0}
 
 
 def section_bulge() -> dict:
