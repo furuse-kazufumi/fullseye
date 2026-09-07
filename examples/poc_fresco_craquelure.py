@@ -552,10 +552,10 @@ def section_width_sweep() -> dict:
     # 幾何の予想: ぼけ後の**点**コントラストが質感の 2 倍を割る幅
     from scipy.optimize import brentq
     w_pred = brentq(lambda w: K_CRACK * erf(w / (2 * np.sqrt(2) * BLUR_SIG)) - 2 * TEX_C, 0.05, 10)
-    i50 = next((i for i, r in enumerate(rec) if r >= 0.5), len(ws) - 1)
-    print("  ★予想の崖(点コントラスト = 質感 × 2)は %.2f px。実測は %.2f px でも再現率 %.2f、崖は %.2f px"
-          "(再現率 %.2f)まで来ない —— 線検出は線に沿って積分するので、点のコントラストでは予想できない。"
-          % (w_pred, 0.5, rec[ws.index(0.5)], ws[max(0, i50 - 1)], rec[max(0, i50 - 1)]))
+    i90 = next((i for i, r in enumerate(rec) if r >= 0.9), len(ws) - 1)
+    print("  ★予想の崖(点コントラスト = 質感 × 2)は %.2f px。実測は再現率 0.9 を割るのが %.2f px より下で、"
+          "%.2f px でも %.2f —— 崖ではなく緩い坂。線検出は線に沿って積分するので、点のコントラストでは"
+          "予想できない(予想は外れた)。" % (w_pred, ws[i90], ws[0], rec[0]))
     print("  先に壊れるのは適合率(%.2f px で %.2f)と幅: 真値 0.5 px → %.1f px(%.1f 倍)、1.0 px → %.1f px、"
           "4.0 px → %.1f px。ぼけ σ %.1f px の半値幅 %.1f px が下限。"
           % (0.5, prc[ws.index(0.5)], wid[ws.index(0.5)], wid[ws.index(0.5)] / 0.5, wid[ws.index(1.0)],
