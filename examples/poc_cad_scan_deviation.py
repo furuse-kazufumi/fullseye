@@ -915,11 +915,11 @@ def section_pull(ref: CadRef) -> dict:
 
     figs.save_plot("defect_pull",
                    [("ICP の z 並進", [1000 * a for a in amps], dzs),
-                    ("予測 a/3", [1000 * a for a in amps],
-                     [1000 * a / 3 for a in amps]),
+                    ("予測 -a/3", [1000 * a for a in amps],
+                     [-1000 * a / 3 for a in amps]),
                     ("部品中央の読み", [1000 * a for a in amps], reads)],
                    xlabel="反りの振幅 a [µm]", ylabel="[µm]",
-                   title="欠陥が大きいほど位置合わせが欠陥側へ寄る(傾き 1/3)",
+                   title="欠陥が大きいほど位置合わせが欠陥側へ寄る(傾き -1/3)",
                    caption="中央の読みは真値 0。位置合わせが吸った平均が"
                            "そのまま偽のへこみになる。")
 
