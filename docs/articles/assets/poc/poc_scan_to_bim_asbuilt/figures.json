@@ -22,10 +22,10 @@
  {
   "file": "03_one_number.png",
   "name": "one_number",
-  "caption": "(a) と (c) の差 1.41 mm。要素ごとの不良は桁が違う。",
+  "caption": "(a) と (c) の差は平均で 1.41 mm、Chamfer で 0.50 mm。要素ごとの不良は桁が違う。",
   "shape": [
    152,
-   445,
+   549,
    3
   ],
   "csv": "03_one_number.csv",
