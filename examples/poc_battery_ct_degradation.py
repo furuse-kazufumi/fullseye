@@ -484,9 +484,10 @@ def _stack_probes(vol, spacing):
 def internal_metrics(vol: np.ndarray, spacing=SPACING) -> dict:
     """内部指標 —— 層数・層厚・層間隔の散らばり・空隙率。"""
     counts, thicks, pitches, contrasts = [], [], [], []
-    fft_pitch = []
+    fft_pitch, lows = [], []
     for zc, xc, span, thr, contrast, pr in _stack_probes(vol, spacing):
         contrasts.append(contrast)
+        lows.append(float(np.percentile(pr[:, 1], 10)))
         p0 = _vidx(zc, span[0], xc, spacing)
         p1 = _vidx(zc, span[1], xc, spacing)
         th = list(L.vol_wall_thickness(vol, p0, p1, sigma=1.2, threshold=thr,
