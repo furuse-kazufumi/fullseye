@@ -237,7 +237,7 @@ def truth_stats(sc: dict) -> dict:
     diam = np.sqrt(4 * area / np.pi)
     # 分岐次数: 視野内の頂点を MERGE_PX で束ね、束から出る辺の本数
     vor, verts = sc["vor"], sc["verts"]
-    inside = np.all((verts > 2) & (verts < n - 3), axis=1)
+    inside = np.all((verts > RING_PX + 2) & (verts < n - RING_PX - 3), axis=1)
     vid = np.nonzero(inside)[0]
     grp = _cluster_points(verts[vid], MERGE_PX)
     g_of = dict(zip(vid.tolist(), grp.tolist()))
