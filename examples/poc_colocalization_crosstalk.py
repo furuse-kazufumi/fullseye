@@ -330,6 +330,20 @@ def section_zero_point() -> dict:
                      "%.3f" % cor["m2"]])
         if rho == 0.5:
             keep = (sc, ua, ub, raw, cor)
+        if rho == 1.0:
+            # ★裾落ちの予想: しきい値 T より下の Gaussian の裾は領域に入らない。
+            #   ピーク p の点のうち領域内の蛍光は 1 − (T − 台)/p(2-D Gaussian の
+            #   体積の閉形式)。台 = 細胞質 + 背景(+ 漏れ込みぶん)、p は PSF で
+            #   σ_ves²/(σ_ves²+σ_psf²) 倍に潰れる。
+            k = SIG_VES ** 2 / (SIG_VES ** 2 + PSF_SIG ** 2)
+            base = float(np.median(sc["obs_b"][sc["roi"]]))
+            peak_b = (GAIN_B + BETA) * sc["amp_a"] * k
+            inside = np.clip(1.0 - (raw["thr_b"] - base) / peak_b, 0.0, 1.0)
+            m1_pred_tail = float((sc["amp_a"] * inside).sum() / sc["amp_a"].sum())
+            print("\n  ★100 %% でも M1 生は %.3f —— Otsu(T_B=%.3f、台 %.3f)より下の裾が領域から"
+                  "落ちる。\n   閉形式の予想 Σ p·(1−(T−台)/p) / Σ p = %.3f(実測との差 %+.3f)。"
+                  % (raw["m1"], raw["thr_b"], base, m1_pred_tail, raw["m1"] - m1_pred_tail))
+            tail = (raw["m1"], m1_pred_tail)
     sc, ua, ub, raw, cor = keep
     figs.save_grid("scene_channels",
                    [sc["obs_a"], sc["obs_b"], sc["ideal_a"], sc["ideal_b"]],
