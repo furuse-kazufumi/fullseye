@@ -683,19 +683,26 @@ def section_zero(obs: dict, sc: dict) -> dict:
              / max(float(np.median(np.abs(ln[m] - tf[m]))), 1e-9)))
 
     # ★「密度が違うのが悪いなら揃えればよい」を実際に試す(voxel_grid_downsample)
-    vs = 0.05
-    ra = np.asarray(fs.ledger.voxel_grid_downsample(ref, vs), float)
-    cb = np.asarray(fs.ledger.voxel_grid_downsample(cur, vs), float)
-    c2c_v = measure_c2c(ra, cb, cen)
-    gv = np.isfinite(c2c_v) & ~CORES["edge"]
-    print("\n  ★「密度が違うのが悪いなら揃えればよい」を試す: 両時点を %.0f mm 格子で"
-          "間引くと点数は %d/%d -> %d/%d、\n     C2C の中央値は %.2f -> %.2f mm。"
-          "**下がるが消えない** —— 揃うのは密度であって、\n     格子の"
-          "**位相**は揃わない(同じセルに落ちた点の重心は面上の別の場所)。"
-          % (1e3 * vs, len(ref), len(cur), len(ra), len(cb),
-             float(np.median(c2c[m])), float(np.median(c2c_v[gv]))))
-    print("     格子間隔 %.0f mm に対して残る %.2f mm は、格子で決まる下限"
-          "(セル内の重心の散らばり)。" % (1e3 * vs, float(np.median(c2c_v[gv]))))
+    print("\n  ★「密度が違うのが悪いなら揃えればよい」を試す"
+          "(``voxel_grid_downsample`` で両時点を同じ格子に):")
+    print("     格子[mm]   点数 t0 / t2        C2C の中央値[mm]")
+    print("     %8s %8d / %-8d %14.2f" % ("(なし)", len(ref), len(cur),
+                                           float(np.median(c2c[m]))))
+    vox_res = []
+    for vs in (0.030, 0.050):
+        ra = np.asarray(fs.ledger.voxel_grid_downsample(ref, vs), float)
+        cb = np.asarray(fs.ledger.voxel_grid_downsample(cur, vs), float)
+        cv = measure_c2c(ra, cb, cen)
+        gv = np.isfinite(cv) & ~CORES["edge"]
+        vox_res.append(float(np.median(cv[gv])))
+        print("     %8.0f %8d / %-8d %14.2f" % (1e3 * vs, len(ra), len(cb),
+                                                vox_res[-1]))
+    print("     ★★**間引きでは絶対に良くならない**。密度を揃えるとは"
+          "「細かいほうを粗いほうに合わせる」ことなので、\n        点間隔は"
+          "**粗いほうに揃う** —— C2C の下限は粗いほうの時点の点間隔"
+          "(t2 の %.1f mm)であって、\n        両時点の平均でも細かいほうでもない。"
+          "揃えるべきなのは密度ではなく**測り方**のほう。"
+          % (1e3 * 0.5 / math.sqrt(DENSITY[2])))
 
     ch = float(fs.ledger.chamfer_distance(ref, cur)) * 1e3
     hd = float(fs.ledger.hausdorff_distance(ref, cur)) * 1e3
@@ -707,7 +714,7 @@ def section_zero(obs: dict, sc: dict) -> dict:
     return {"cen": cen, "nor": nor, "ok": ok, "L": ln, "sig": sg, "scat": scat,
             "c2c": c2c, "good": good, "chamfer": ch, "hausdorff": hd,
             "c2c_med": float(np.median(c2c[m])),
-            "c2c_vox": float(np.median(c2c_v[gv])),
+            "c2c_vox": vox_res,
             "err_n": float(np.median(np.abs(ln[m] - tf[m]))),
             "err_c": float(np.median(np.abs(c2c[m] - np.abs(tf[m])))),
             "err_edge": float(np.median(np.abs(ln[e] - tf[e])))}
