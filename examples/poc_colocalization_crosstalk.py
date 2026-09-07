@@ -691,6 +691,9 @@ def main() -> int:
     assert sig["0 %, α=β=15 %"][1] < 0.01, sig         # 漏れ込みが「有意」
     assert sig["0 %, α=β=15 %"][3] > 0.05, sig         # 分離後は有意でない
     assert abs(sw["a_cross"] - sw["a_pred"]) < 0.04, (sw["a_cross"], sw["a_pred"])
+    pred_sym = [2 * a / (1 + a * a) for a in np.arange(0.0, 0.301, 0.025)]
+    assert max(abs(p - m) for p, m in zip(pred_sym, sw["r0_sym"])) < 0.03, "予想との差"
+    assert z["res"][1.0]["cor"]["m1"] < 0.75, z["res"][1.0]["cor"]  # 分離しても裾落ちは残る
     assert sw["r0_one"][-1] < 0.5, sw["r0_one"][-1]
     assert sw["a_m1"] > sw["a_r50"], (sw["a_m1"], sw["a_r50"])   # 崖の場所が違う
     assert abs(ps["r0"][-1]) < 0.10 and ps["m1_0"][-1] > 0.25, (ps["r0"][-1], ps["m1_0"][-1])
