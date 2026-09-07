@@ -639,8 +639,9 @@ def section_tool_gaps() -> None:
     print("\n" + "=" * 78)
     print("9) 道具の穴(公開経路に無かった処理)")
     print("=" * 78)
-    for name in ("manders", "costes_threshold", "colocalization", "block_shuffle", "unmix"):
-        assert not fs.op_find(name), name
+    names = [n.lower() for n in list(fs.op_names()) + dir(fs.ledger)]
+    for key in ("manders", "costes", "coloc", "unmix", "shuffle"):
+        assert not [n for n in names if key in n], key
     print("  (a) Manders 係数 / Costes 自動しきい値 / ブロック並べ替え検定は公開経路に無い"
           "(この PoC は自前)。stat_correlation・mat_lstsq・mat_solve・otsu・gauss_image・"
           "photon_sample・noise_sigma で残りは組めた。")
