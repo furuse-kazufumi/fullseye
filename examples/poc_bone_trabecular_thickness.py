@@ -136,12 +136,11 @@ def make_master(seed: int = SEED) -> dict:
 
     # 閉形式の真値: 幅の長さ加重平均(視野内の長さで重みづけ)
     lengths, widths = [], []
+    t = (np.arange(4000) + 0.5) / 4000.0
     for x0, y0, x1, y1, w in segs:
-        L = np.hypot(min(x1, FIELD_UM) - max(x0, 0.0), min(y1, FIELD_UM) - max(y0, 0.0)) \
-            if abs(x1 - x0) > abs(y1 - y0) else \
-            np.hypot(x1 - x0, min(y1, FIELD_UM) - max(y0, 0.0))
-        lengths.append(float(np.hypot(min(max(x0, 0), FIELD_UM) - min(max(x1, 0), FIELD_UM),
-                                      min(max(y0, 0), FIELD_UM) - min(max(y1, 0), FIELD_UM))))
+        xs, ys = x0 + t * (x1 - x0), y0 + t * (y1 - y0)
+        inside = (xs >= 0) & (xs <= FIELD_UM) & (ys >= 0) & (ys <= FIELD_UM)
+        lengths.append(float(np.hypot(x1 - x0, y1 - y0) * inside.mean()))
         widths.append(w)
     lengths, widths = np.asarray(lengths), np.asarray(widths)
     return {"master": master, "segs": segs,
