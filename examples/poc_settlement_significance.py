@@ -407,9 +407,14 @@ def section_mean_vs_significant(sc: dict, z: dict) -> dict:
     print("   真値 |S| >= %.1f mm の core %d 個、その真値の平均 %.2f mm"
           % (TRUE_POS_MM, int(np.count_nonzero(np.abs(s_mm) >= TRUE_POS_MM)),
              float(s_mm[np.abs(s_mm) >= TRUE_POS_MM].mean())))
-    print("\n   混同行列(陽性 = 真値 |S| >= %.1f mm): TP %d / FN %d / FP %d / TN %d"
-          % (TRUE_POS_MM, cm["tp"], cm["fn"], cm["fp"], cm["tn"]))
-    print("   TPR %.1f %% / FPR %.1f %%" % (cm["tpr"], cm["fpr"]))
+    print("\n   混同行列(陽性 = |S| >= %.1f mm、陰性 = |S| <= %.1f mm):"
+          % (TRUE_POS_MM, TRUE_NULL_MM))
+    print("   TP %d / FN %d / FP %d / TN %d   -> TPR %.1f %% / FPR %.1f %%"
+          % (cm["tp"], cm["fn"], cm["fp"], cm["tn"], cm["tpr"], cm["fpr"]))
+    print("   灰色帯(%.1f 〜 %.1f mm)は %d core、うち有意 %d(%.1f %%)—— "
+          "**本物の小さな沈下なので偽陽性ではない**。"
+          % (TRUE_NULL_MM, TRUE_POS_MM, cm["grey"], cm["grey_sig"],
+             100 * cm["grey_sig"] / max(cm["grey"], 1)))
     print("\n  ★『平均 %.2f mm 沈んだ』は、有意な %.1f %% の平均 %.2f mm とも、"
           "本当に沈んだ領域の平均 %.2f mm とも一致しない。"
           % (np.nanmean(d), 100 * sig.sum() / max(ok.sum(), 1), float(np.nanmean(d[sig])),
