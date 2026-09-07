@@ -543,10 +543,17 @@ def section_cliffs(scene: dict) -> dict:
                     "tau_1pole": t1, "tau_2pole": t2, "tau_meas": tm,
                     "seen": seen, "pred2": p2,
                     "pred1": amp * (1.0 - np.exp(-width / taus))}
-    e1 = max(abs(float(r[5]) - float(r[7])) for r in rows_t if np.isfinite(float(r[5])))
-    e2 = max(abs(float(r[6]) - float(r[7])) for r in rows_t if np.isfinite(float(r[6])))
-    print("      ★予測と実測のずれ: 1 極 最大 %.0f 分 / 2 段 最大 %.0f 分。"
-          % (e1, e2))
+    # 崖が掃引の外(τ>%d 分)に出た行は「測れなかった」ので比べない。
+    ok_rows = [r for r in rows_t if np.isfinite(float(r[7]))]
+    e1 = max(abs(float(r[5]) - float(r[7])) for r in ok_rows
+             if np.isfinite(float(r[5])))
+    e2 = max(abs(float(r[6]) - float(r[7])) for r in ok_rows
+             if np.isfinite(float(r[6])))
+    print("      ★崖が測れた %d 行での予測と実測のずれ: 1 極 最大 %.0f 分 / "
+          "2 段 最大 %.0f 分。" % (len(ok_rows), e1, e2))
+    print("      扉のすぐ手前(余裕 %.2f K)は崖が掃引の上限 %.0f 分より遠く、"
+          "**そもそも測れない** —— 予測 1 極は %s 分と言うが確かめようがない。"
+          % (float(rows_t[0][4]), taus[-1], rows_t[0][5]))
     print("      1 極の式が外すのは**荷室の空気そのものが 1 次遅れ**だから ——"
           "ロガーが完璧でもパルスは既に鈍っている。")
     print("      実務の τ=%.0f 分なら y=%d はまだ見えるが、"
