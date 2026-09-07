@@ -1112,7 +1112,7 @@ def section_netd() -> dict:
                    caption="風速 %.1f m/s、モジュールごとの中央値を基準。"
                            "実在の非冷却カメラは 20〜50 mK。" % V_REF)
     return {"netd": xs, "false": fa, "recall": rc, "crit": 1e3 * nd_crit,
-            "first": first}
+            "first": first, "n_nonfault": nn, "area": ar}
 
 
 # --------------------------------------------------------------------------- #
