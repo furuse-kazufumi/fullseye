@@ -170,7 +170,8 @@ def make_geometry(n_frag: int = N_FRAG, seed: int = SEED, mixed: bool = True) ->
     xx = (xx + 0.5) / SS
 
     mats = rng.integers(1, K, n_frag)
-    a = rng.uniform(5.0, 15.0, n_frag)               # 長半径 [px]
+    a = rng.uniform(5.0, 15.0, n_frag) * np.array(   # 長半径 [px]
+        [SIZE[NAMES[m]] for m in mats])
     b = a * rng.uniform(0.45, 0.95, n_frag)          # 短半径 [px]
     th = rng.uniform(0.0, np.pi, n_frag)
     cy = rng.uniform(6.0, H - 6.0, n_frag)
