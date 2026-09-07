@@ -715,13 +715,16 @@ def section_outer_blindness(cells, recs) -> dict:
     for c, s in zip(clr[::2], seen[::2]):
         print("     クリアランス %.2f mm -> 外から見えるのは %5.1f %%" % (c, s))
 
-    xx, _, _ = _panel_grids()
     x_mm = (np.arange(NW) + 0.5) * SX
+
+    def _hprof(o):
+        h = o["height"][ND // 2]
+        k = np.isfinite(h)
+        return x_mm[k], h[k]
+
     figs.save_plot("outer_profile",
-                   [("健全", x_mm, o0["height"][ND // 2]),
-                    ("一様膨れ", x_mm, o1["height"][ND // 2]),
-                    ("ガス空隙(外形は同じ)", x_mm,
-                     outer_metrics(recs["gas"])["height"][ND // 2])],
+                   [("健全",) + _hprof(o0), ("一様膨れ",) + _hprof(o1),
+                    ("ガス空隙(外形は同じ)",) + _hprof(outer_metrics(recs["gas"]))],
                    xlabel="x [mm]", ylabel="缶の外形高さ [mm]",
                    title="外形はふくらむが、真ん中しかふくらまない",
                    caption="端板は周辺で固定なので中央だけが出る。ノギスは中央を"
