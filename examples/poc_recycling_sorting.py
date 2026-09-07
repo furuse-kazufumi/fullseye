@@ -266,6 +266,35 @@ def d2(x: np.ndarray) -> np.ndarray:
                          delta=float(WL[1] - WL[0]), axis=-1)
 
 
+def flatness(x: np.ndarray) -> np.ndarray:
+    """スペクトルの「特徴の多さ」= ``||2 次微分|| / 平均反射率``(明るさに不変)。
+
+    金属はほぼ平坦なので 2 次微分がほぼ 0 になり、**方向が雑音で決まる**。
+    方向しか見ない SAM はそこで無力になるので、微分の前に 1 本門を立てる。
+    """
+    d = d2(x)
+    return np.linalg.norm(d, axis=-1) / np.maximum(np.mean(x, axis=-1), 1e-6)
+
+
+_FLAT_THR: list[float] = []
+
+
+def flat_threshold() -> float:
+    """平坦度の門を**校正で**決める(白板と平坦板を 1 枚ずつ測る要領)。
+
+    平坦側 = 金属ライブラリ + 同じ雑音、特徴側 = 材質ライブラリの最小値。
+    その幾何平均を門にする(対数軸のまん中)。
+    """
+    if not _FLAT_THR:
+        rng = np.random.default_rng(101)
+        flat = LIB[NAMES.index("金属")] + rng.normal(0.0, NOISE, (256, N_BAND))
+        v_flat = float(np.median(flatness(flat)))
+        feat = [i for i in range(1, K) if NAMES[i] != "金属"]
+        v_feat = float(np.min(flatness(LIB[feat])))
+        _FLAT_THR.append(float(np.sqrt(v_flat * v_feat)))
+    return _FLAT_THR[0]
+
+
 def best_band_pair(lib: np.ndarray) -> tuple[int, int]:
     """ゼロ点のために **48x48 通りの band 対を総当たり**して最良の 1 対を選ぶ。
 

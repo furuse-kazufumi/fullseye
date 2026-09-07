@@ -561,7 +561,14 @@ def section_tilt_sweep() -> dict:
                    xlabel="管の位置 z [mm]", ylabel="1 周期成分の振幅 [mm]",
                    title="傾きは 1 周期を z に線形に育てる(V 字 = 中央で 0)",
                    caption="中央で 0 になるのは、そこでセンサが軸を横切るから。")
-    return {"tilts": tilts, "slope": slope, "amp2": amp2, "frac": frac}
+    figs.save_plot("tilt_leak",
+                   [("2 周期の実測", tilts, amp2),
+                    ("2 周期の予測(楕円 + 横ずれの 2 次項)", tilts, pred2),
+                    ("楕円化の真値", tilts, [OVAL_A] * len(tilts))],
+                   xlabel="センサの傾き [deg]", ylabel="2 周期成分の振幅 [mm]",
+                   title="傾きが 2 周期に漏らす分は楕円化の 100 分の 1 以下")
+    return {"tilts": tilts, "slope": slope, "amp2": amp2, "pred2": pred2,
+            "frac": frac}
 
 
 # --------------------------------------------------------------------------- #
