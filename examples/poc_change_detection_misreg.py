@@ -216,7 +216,7 @@ def scene(Y, X, t: int, sigma=PSF, sizes: bool = False) -> np.ndarray:
     for cy, cx, cs, ca in zip(c["y"], c["x"], c["s"], c["a"]):
         F = F + ca * np.exp(-((Y - cy) ** 2 + (X - cx) ** 2) / (2 * cs ** 2))
     if t == 2:
-        Wc = rect(Y, X, *CLEARCUT, sigma)
+        Wc = rect_px(Y, X, *CLEARCUT, sigma)
         F = F + (SOIL - F) * Wc
     S = S + (F - S) * Wf
     lk = LAKE
