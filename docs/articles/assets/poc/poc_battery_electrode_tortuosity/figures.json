@@ -1,0 +1,64 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "左と中は同じ球状粒子床の直交する 2 断面。右はカレンダリングで潰した粒子(空隙率はほぼ同じ、屈曲度は 3.7 倍)。",
+  "shape": [
+   413,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "02_map_transport.png",
+  "name": "map_transport",
+  "caption": "左: 上端 1 / 下端 0 の濃度場。等濃度線が固相を避けて曲がる分が遠回り。右: bond ごとの散逸(明るいほど流れが集中している = 首)。",
+  "shape": [
+   413,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "03_porosity_sweep.png",
+  "name": "porosity_sweep",
+  "caption": "ε が下がるほど経験則と真値が開く。測地の 2 乗は経験則に寄り添うが、真値には寄らない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_bruggeman_error.png",
+  "name": "bruggeman_error",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_anisotropy.png",
+  "name": "anisotropy",
+  "caption": "経験則は向きを持てない。厚み方向がセル設計に効く。",
+  "shape": [
+   128,
+   617,
+   3
+  ],
+  "csv": "05_anisotropy.csv",
+  "tsv": "05_anisotropy.tsv"
+ },
+ {
+  "file": "06_resolution.png",
+  "name": "resolution",
+  "caption": "同じ物理構造を粗い格子から細かい格子まで。ε は -0.4 % しか動かないのに τ_f は +72 % 動く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
