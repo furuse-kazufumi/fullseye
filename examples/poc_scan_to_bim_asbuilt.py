@@ -950,6 +950,8 @@ def section_verdicts(alignres: dict, false_m: dict) -> dict:
          1000 * f["ceil_sx"], TOL["ceil_slope"]),
         ("床の平面度 PV [mm]", 1000 * SAG, 1000 * n["floor_pv"], 1000 * g["floor_pv"],
          1000 * f["floor_pv"], TOL["flatness"]),
+        ("床の平面度 RMS [mm]", 1000 * SAG * 0.2948, 1000 * n["floor_rms"],
+         1000 * g["floor_rms"], 1000 * f["floor_rms"], TOL["flatness"] / 2),
         ("柱 A の半径の狂い [mm]", 1000 * DCOL[0], 1000 * (n["col0"] - COL_R),
          1000 * (g["col0"] - COL_R), 1000 * (f["col0"] - COL_R), TOL["col"]),
         ("柱 B の半径の狂い [mm]", 1000 * DCOL[1], 1000 * (n["col1"] - COL_R),
