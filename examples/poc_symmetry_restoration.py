@@ -390,8 +390,8 @@ def section_scene() -> dict:
             ncols=2,
             caption="高さ場 z=f(x,y) は x について厳密に偶関数(検算 RMS %.1e mm)。"
                     "欠損は既知の球で削る。" % asym)
-    return {"pts": pts, "surv": surv, "miss": miss, "centre": centre,
-            "spacing": spacing, "tau": 1.6 * spacing, "asym": asym}
+    return {"pts": pts, "nrm": nrm, "surv": surv, "miss": miss, "centre": centre,
+            "spacing": spacing, "tau": TAU_K * spacing, "asym": asym}
 
 
 # --------------------------------------------------------------------------- #
