@@ -748,8 +748,10 @@ def main() -> None:
             assert abs(float(r[3])) < 0.05, r
         else:
             assert abs(float(r[3]) - 1e3 * pb["fake_tilt"]) < 0.10, r
-    # 6) 倒れは直交度へは漏れない(2 次)。漏らすのはふくらみのほう
+    # 6) 倒れは直交度へは漏れない(2 次)。漏らすのはふくらみのほうで、
+    #    その量も閉形式で 0.1 mrad 以内に当たる
     assert pl["leak"] < 0.1, pl["leak"]
+    assert abs(pl["sq_err"] - pl["pred_yaw"]) < 0.10, (pl["sq_err"], pl["pred_yaw"])
     # 7) 最小二乗は 10 % 混入で真値の 5 倍以上、閉形式の予測と 5 % 以内
     i10 = out["frac"].index(10.0)
     assert out["ls"][i10] > 5.0 * 1e3 * TILT["east"]
