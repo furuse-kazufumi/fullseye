@@ -483,11 +483,10 @@ def section_crosstalk_sweep() -> dict:
                    [("真の共局在 0 %, 対称 α=β(実測)", x, r0_sym),
                     ("予想 2α/(1+α²)", x, [2 * a / (1 + a * a) for a in alphas]),
                     ("0 %, 片側 β=0(実測)", x, r0_one),
-                    ("予想 α/√(1+α²)", x, [a / np.sqrt(1 + a * a) for a in alphas]),
-                    ("r = 0.5", x, [0.5] * len(x))],
-                   xlabel="漏れ込み α [%]", ylabel="Pearson r",
-                   title="無関係な 2 色が漏れ込みだけで「相関」する(交点 α=%.1f %%)" % (100 * a_cross),
-                   kinds=["scatter", "line", "scatter", "line", "line"])
+                    ("予想 α/√(1+α²)", x, [a / np.sqrt(1 + a * a) for a in alphas])],
+                   xlabel="漏れ込み α [%]", ylabel="Pearson r(r=0.5 を超える交点 α=%.1f %%)" % (100 * a_cross),
+                   title="無関係な 2 色が漏れ込みだけで「相関」する", ylim=(-0.02, 1.15),
+                   kinds=["scatter", "line", "scatter", "line"])
     figs.save_plot("crosstalk_sweep_manders",
                    [("M1 生(Otsu)", x, m1_50), ("M2 生(Otsu)", x, m2_50),
                     ("M1 分離後", x, m1_50_cor),
