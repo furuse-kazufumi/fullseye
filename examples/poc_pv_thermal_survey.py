@@ -1053,7 +1053,7 @@ K_FALSE = 4.5              # 偽が出始める「しきい値 / 平滑後の雑
 
 def section_netd() -> dict:
     print("\n" + "=" * 78)
-    print("9) NETD(雑音)—— ★予想が外れたところ")
+    print("8) NETD(雑音)—— ★予想が外れたところ")
     print("=" * 78)
     n_sig = 2.0 * SMOOTH_PX * np.sqrt(np.pi)          # 平滑で雑音が減る率
     nd_crit = THETA * n_sig / K_FALSE
