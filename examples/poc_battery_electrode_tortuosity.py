@@ -266,8 +266,12 @@ def section_zero_point() -> dict:
     act = np.zeros(tr["flat_idx"].size)
     np.add.at(act, row, diss)
     np.add.at(act, col, diss)
-    act_vol = np.zeros(N_VOX ** 3)
-    act_vol[tr["flat_idx"]] = np.log10(act + 1e-12)
+    # ★固相を 0 のままにすると log10(散逸) は負なので**固相がいちばん明るく**
+    #   塗られる(2026-09-08 に一度そう出した)。固相は空隙の下位 2 % に合わせる。
+    lg = np.log10(act + 1e-14)
+    floor = float(np.percentile(lg, 2))
+    act_vol = np.full(N_VOX ** 3, floor)
+    act_vol[tr["flat_idx"]] = np.maximum(lg, floor)
     act_vol = act_vol.reshape(tr["shape"])
     figs.save_grid("map_transport",
                    [_zoom(phi_vol[:, mid, :]), _zoom(act_vol[:, mid, :])],
