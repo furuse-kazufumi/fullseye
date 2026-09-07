@@ -157,8 +157,12 @@ def make_grid(h, bounds=BOUNDS):
 # --------------------------------------------------------------------------- #
 # 2. 面の一覧(解析) —— 解像度無限の対照群                                     #
 # --------------------------------------------------------------------------- #
-def analytic_faces():
-    """平面の面 ``(法線, 面積 [mm^2], 重心)`` の一覧。円筒面は別扱い。"""
+def analytic_faces(gussets=GUSSETS):
+    """平面の面 ``(法線, 面積 [mm^2], 重心)`` の一覧。円筒面は別扱い。
+
+    ``gussets`` を差し替えると「斜面の角度だけを変えた設計」の面の一覧になる
+    (向きを変えるのではなく**設計を直す**選択肢を同じ物差しで測るため)。
+    """
     F = []
 
     def add(n, area, cen):
@@ -179,7 +183,7 @@ def analytic_faces():
     # --- リブ(y=RIB_Y1 の面は庇と三角補強の付け根で欠ける)------------------ #
     add((0, 0, 1), rib_len * T_RIB, (30, 20, 24))
     add((0, -1, 0), rib_len * 16.0, (30, RIB_Y0, 16))
-    cut = lw * (lz1 - lz0) + sum((x1 - x0) * GUSSET_H for _, x0, x1 in GUSSETS)
+    cut = lw * (lz1 - lz0) + sum((x1 - x0) * GUSSET_H for _, x0, x1 in gussets)
     add((0, 1, 0), rib_len * 16.0 - cut, (30, RIB_Y1, 16))
     add((-1, 0, 0), T_RIB * 16.0, (6, 20, 16))
     add((1, 0, 0), T_RIB * 16.0, (54, 20, 16))
@@ -198,7 +202,7 @@ def analytic_faces():
     add((-1, 0, 0), ll * (lz1 - lz0), (lx0, ym, (lz0 + lz1) / 2))
     add((1, 0, 0), ll * (lz1 - lz0), (lx1, ym, (lz0 + lz1) / 2))
     # --- 三角補強(斜面の角度が設計値)-------------------------------------- #
-    for phi, x0, x1 in GUSSETS:
+    for phi, x0, x1 in gussets:
         p = np.radians(phi)
         d = GUSSET_H / np.tan(p)
         w, xm = x1 - x0, (x0 + x1) / 2.0

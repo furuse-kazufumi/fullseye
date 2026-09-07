@@ -1,0 +1,128 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "この形の χ は 0。2 ではない。",
+  "shape": [
+   393,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "02_euler_blindspots.png",
+  "name": "euler_blindspots",
+  "caption": "健全な部品の χ は 0(種数 1)。χ=2 を合格条件にすると健全品が落ちる。最終行は打ち消し。",
+  "shape": [
+   272,
+   509,
+   3
+  ],
+  "csv": "02_euler_blindspots.csv",
+  "tsv": "02_euler_blindspots.tsv"
+ },
+ {
+  "file": "03_defect_counts.png",
+  "name": "defect_counts",
+  "caption": "ただし順番が両向きに効く —— 溶接前は割れの境界を穴として数え、溶接後は退化三角形を数え損ねる。",
+  "shape": [
+   224,
+   509,
+   3
+  ],
+  "csv": "03_defect_counts.csv",
+  "tsv": "03_defect_counts.tsv"
+ },
+ {
+  "file": "04_defect_scene.png",
+  "name": "defect_scene",
+  "caption": "右は ±0.05 mm で飽和させてある(素のままだと99 % が 0 で真っ黒になる)。深度差が立つのは突き刺した 6 頂点の周りだけで、穴・裏返り・退化・重複頂点は健全と同じ絵になる。",
+  "shape": [
+   393,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "05_repair_vs_restore.png",
+  "name": "repair_vs_restore",
+  "caption": "幅ゼロの割れ(重複頂点 18 個)を直した結果。水密は 2 通りとも True。",
+  "shape": [
+   128,
+   467,
+   3
+  ],
+  "csv": "05_repair_vs_restore.csv",
+  "tsv": "05_repair_vs_restore.tsv"
+ },
+ {
+  "file": "06_hole_cliff.png",
+  "name": "hole_cliff",
+  "caption": "体積の 2 本は重なる。表面積は θ=45° で符号すら逆。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_hole_rim_roughness.png",
+  "name": "hole_rim_roughness",
+  "caption": "どちらも 1 に近い θ と 2 倍を超える θ が混在する。縁が voxel 格子のどこに落ちるかで変わる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_hole_frames.png",
+  "name": "hole_frames",
+  "caption": "",
+  "shape": [
+   735,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "09_decimate_cliff.png",
+  "name": "decimate_cliff",
+  "caption": "予測線は最も粗い点で合わせた 1/F。面数が多い側では実測のほうが小さい(まだ削り代がある)。表面積はどこでも体積より 1 桁小さい。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_decimate_curvature.png",
+  "name": "decimate_curvature",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_sliver_threshold.png",
+  "name": "sliver_threshold",
+  "caption": "面積 0 の判定に引っかかるずっと手前で、潰れ面の法線は使いものにならなくなる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_sliver_normal_error.png",
+  "name": "sliver_normal_error",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
