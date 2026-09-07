@@ -653,7 +653,7 @@ def section_predict_vs_measure(cases):
                     title="予測と実測(1 層あたり ε = %.1e)" % EPS_LAYER)
 
     panels, caps = [], []
-    for n in ("首つき", "中央 1 柱", "両端 2 柱"):
+    for n in TRIO:
         r = cases[n]["fem"]
         uz = r["u"][1::2].reshape(r["nz"] + 1, r["nnx"])
         m = r["act"].reshape(r["nz"] + 1, r["nnx"])

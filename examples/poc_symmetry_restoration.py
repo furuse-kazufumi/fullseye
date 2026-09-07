@@ -550,14 +550,14 @@ def section_angle_cliff(S: dict, Z: dict) -> dict:
              ("予測(ii) 2r sin a", alphas, pf),
              ("予測(i) 2d sin a", alphas, pn),
              ("ゼロ点", alphas, np.full_like(alphas, zr))],
-            xlabel="alpha [deg]", ylabel="復元 RMS [mm]", size=(700, 430),
+            xlabel="alpha [deg]", ylabel="RMS [mm]", size=(700, 430),
             title="崖(1): 対称面が傾いた分だけ復元は嘘をつく",
             caption="崖は alpha = %.2f deg(%.0f 分角)。そこから先はゼロ点の"
                     "穴埋め補間のほうが正しい。" % (cross, cross * 60))
         figs.save_plot(
             "angle_spurious",
             [("偽の面になった鏡像点 [%]", alphas, np.array(spur))],
-            xlabel="alpha [deg]", ylabel="足した点のうち偽の面 [%]", size=(700, 430),
+            xlabel="alpha [deg]", ylabel="偽の面 [%]", size=(700, 430),
             title="崖(1)の裏側: 穴が埋まらないのとは別に「無い面」が生える",
             caption="真の面から %.1f mm 以上浮いた鏡像点の割合。"
                     "壊れ方は 2 種類あり、別々に数える必要がある。" % SPUR_TOL)
@@ -619,7 +619,7 @@ def section_offset_cliff(S: dict, Z: dict) -> dict:
              ("予測(2t の法線成分)", ts, pred),
              ("素朴な予測 2t", ts, naive),
              ("ゼロ点", ts, np.full_like(ts, zr))],
-            xlabel="位置ずれ t [mm]", ylabel="復元 RMS [mm]", size=(700, 430),
+            xlabel="t [mm]", ylabel="RMS [mm]", size=(700, 430),
             title="崖(2): 位置ずれは形に依らず 2t だけ効く",
             caption="鏡像点は厳密に 2t 動くが、表面誤差になるのはその法線成分"
                     "(|n.x| の RMS = %.2f)だけ。崖は t = %.2f mm。" % (cosb, cross))
@@ -801,7 +801,7 @@ def section_defect_sweep(S: dict) -> dict:
              ("重心の x ずれ [mm]", radii, cx),
              ("復元 RMS [mm]", radii, rmss),
              ("面の角度誤差 [deg]", radii, angs)],
-            xlabel="欠損球の半径 [mm]", ylabel="誤差", size=(700, 430),
+            xlabel="欠損半径 [mm]", ylabel="誤差", size=(700, 430),
             title="欠損が大きいほど対称面がずれる —— 主因は重心の移動",
             caption="正しい軸に固定しても位置は重心のずれに引きずられる。"
                     "自動選択が軸を取り違えるのは失った点 %.1f %% 以上。"
