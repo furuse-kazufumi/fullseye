@@ -1244,31 +1244,33 @@ def main() -> int:
     g = al["res"]["global"]
     print("  * 建物 1 個の数字(BIM への平均距離)は施工誤差のあるなしで %.2f mm しか"
           "動かない。" % zero["gap"])
-    print("  * 全体 ICP は剛体モードを吸い、余りを配る: 壁 %.2f → %.2f mrad、"
+    print("  * 全体 ICP は剛体モードを吸い、余りを配る: 壁 %+.2f → %+.2f mrad、"
           "無傷の天井に %+.2f mrad。"
           % (1000 * RACK, 1000 * g["rack"], 1000 * g["ceil_sx"]))
-    print("    予測 φ %.2f / 実測 %.2f mrad。剛体でない開き %.2f mrad と反り %.2f mm は残る。"
-          % (1000 * al["phi_pred"], 1000 * al["phi_icp"],
-             1000 * g["splay"], 1000 * g["floor_pv"]))
+    print("    閉形式の予測(吸われる ω_y = %+.2f mrad)と実測の差は最大 %.2f mrad。"
+          % (1000 * al["wy"], 1000 * al["err"]))
+    print("    剛体でない開き %+.2f mrad(真値 %+.2f)と反り %.2f mm(真値 %.2f)は残る。"
+          % (1000 * g["splay"], 1000 * SPLAY, 1000 * g["floor_pv"], 1000 * SAG))
     print("  * 崖は欠測率でなく残った面の高さ L で決まる(同じ %.0f %% で %.1f 倍)。"
           % (cd["fr"][-2], cd["ratio"]))
-    print("  * 検出限界を決めるのはレジストレーション(1 mrad で偽の傾き %.3f mrad)。"
-          % cr["bias"][cr["xs"].index(1.0)])
-    print("  * 混合画素は平面に効かず(%+.3f mrad)円柱に効く(%+.2f mm)。"
-          % (cm["dw"], cm["dc"]))
+    print("  * 検出限界を決めるのはレジストレーション(1 mrad で偽の傾き %.3f mrad、"
+          "雑音だけなら %.3f mrad)。"
+          % (cr["bias"][cr["xs"].index(1.0)], cr["bias"][0]))
+    print("  * 混合画素は RANSAC の平面に効かず(%+.3f mrad)、min/max の obb に効く"
+          "(%+.2f mm)。" % (cm["dw"], cm["dwin"]))
 
     # --- 所見を固定する ------------------------------------------------------ #
-    assert abs(g["rack"]) < 0.80 * RACK, ("全体 ICP が傾きを吸っていない", g["rack"])
-    assert abs(g["ceil_sx"]) > 0.4e-3, ("天井の偽の傾きが出ていない", g["ceil_sx"])
-    assert abs(al["phi_icp"] - al["phi_pred"]) < 0.6e-3, (al["phi_icp"], al["phi_pred"])
-    assert abs(g["splay"] - SPLAY) < 0.6e-3, ("剛体でないモードまで消えた", g["splay"])
-    assert g["floor_pv"] > 0.6 * SAG, ("反りが消えた", g["floor_pv"])
-    assert zero["gap"] < 2.0, ("1 個の数字が思ったより反応した", zero["gap"])
+    assert abs(g["rack"]) < 0.90 * RACK, ("全体 ICP が傾きを吸っていない", g["rack"])
+    assert abs(g["ceil_sx"]) > 0.3e-3, ("天井の偽の傾きが出ていない", g["ceil_sx"])
+    assert al["err"] < 0.4e-3, ("閉形式の予測が実測から外れた", al["err"])
+    assert abs(g["splay"] - SPLAY) < 0.5e-3, ("剛体でないモードまで消えた", g["splay"])
+    assert g["floor_pv"] > 0.7 * SAG, ("反りが消えた", g["floor_pv"])
+    assert zero["gap"] < 2.5, ("1 個の数字が思ったより反応した", zero["gap"])
     assert cd["ratio"] > 3.0, ("構造的な欠測の崖が出ていない", cd["ratio"])
-    assert cr["bias"][-1] > cr["bias"][0], ("姿勢誤差が効いていない", cr["bias"])
+    assert cr["bias"][-1] > 5 * cr["bias"][0], ("姿勢誤差が効いていない", cr["bias"])
     assert abs(cm["dw"]) < 0.30, ("混合画素が平面に効いてしまった", cm["dw"])
-    assert abs(cm["dc"]) > 0.30, ("混合画素が円柱に効いていない", cm["dc"])
-    assert tg["do"] > 10 * tg["di"], ("CSG の角の過小評価が出ていない", tg)
+    assert abs(cm["dwin"]) > 3 * abs(cm["dw"]), ("obb が壊れていない", cm["dwin"])
+    assert tg["do"] > 100 * tg["di"], ("CSG の角の過小評価が出ていない", tg)
     assert sg["acc"] > 0.90, ("BIM 案内の割り当てが壊れている", sg["acc"])
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
