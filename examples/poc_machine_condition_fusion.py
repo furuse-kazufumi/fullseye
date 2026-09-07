@@ -1139,7 +1139,8 @@ def section_dropout_figure(table) -> None:
     figs.save_table("confusion_without_vibration", ["真値 \\ 判定"] + list(MODES),
                     [[MODES[i]] + ["%d" % v for v in cm[i]] for i in range(len(MODES))],
                     title="振動を抜いた混同行列(熱 + 形状)",
-                    caption="芯ずれは無傷。壊れるのは軸受外輪傷と潤滑不良の対。")
+                    caption="芯ずれと軸受外輪傷は無傷。壊れるのは熱でも形状でも"
+                            "同じ顔になる 正常・アンバランス・ゆるみ。")
 
 
 # --------------------------------------------------------------------------- #
