@@ -1108,6 +1108,9 @@ def main() -> None:
     assert ctrl["(a) 均一+扉"]["ff"] == 0.0, ctrl["(a) 均一+扉"]["ff"]
     assert ctrl["(d) 扉だけ"]["ff"] > ctrl["(b) 壁だけ"]["ff"], "扉が偽不合格を生む"
     assert cnt["rates"][0] > cnt["rates"][-1], cnt["rates"]
+    assert cnt["n_err"] < 6.0, cnt["n_err"]
+    assert cnt["jit_rate"] < cnt["rates"][2], (cnt["jit_rate"], cnt["rates"][2])
+    assert ev["n_events"] >= 2, ev["n_events"]
 
     print("\n" + "=" * 78)
     print("まとめ")
