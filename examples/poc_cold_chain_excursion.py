@@ -614,12 +614,23 @@ def _worst_product(scene: dict) -> tuple[int, int]:
 # --------------------------------------------------------------------------- #
 # 6. 対照群 —— 均一 / 分布あり / 分布 + 扉                                       #
 # --------------------------------------------------------------------------- #
-def section_controls(layout: dict) -> dict:
+NEAR_M = 1.0            # 「そのロガーが代表する荷」の半径 [m]
+
+
+def section_controls(layout: dict, main: dict) -> dict:
+    """(a) 均一 / (b) 分布あり / (c) 分布 + 扉 / (d) 健全な荷 + 扉。
+
+    **偽不合格は「近くの製品」で定義する**。荷のどこかが不合格なら「荷は
+    不合格」なので、全体で見ると偽不合格は原理的に定義できない。実務の
+    「扉のセンサが鳴ったが、そこのパレットは無事だった」を測るには
+    **半径 %.1f m 以内の製品セルがすべて健全か**で見るしかない。
+    """ % NEAR_M
     print("\n" + "=" * 78)
-    print("6) 対照群 —— (a) 荷が均一 / (b) 分布あり / (c) 分布 + 扉開閉")
+    print("6) 対照群 —— (a) 均一 / (b) 分布あり / (c) 分布+扉 / (d) 健全な荷+扉")
     print("=" * 78)
-    print("  条件            真に不合格な    ロガー1個(製品)    ロガー1個(空気)")
-    print("                  製品セル [%]     偽合格 [%]         偽不合格 [%]")
+    print("  条件               真に不合格な   偽合格 [%]      偽不合格 [%]")
+    print("                     製品セル [%]   (製品に 1 個)   (空気に 1 個、"
+          "近傍 %.1f m の製品は健全)" % NEAR_M)
 
     prod = layout["is_product"]
     air = layout["is_air"]
@@ -627,36 +638,51 @@ def section_controls(layout: dict) -> dict:
     rows = []
     for name, kw in (("(a) 均一", dict(uniform=True, doors=True)),
                      ("(b) 分布あり", dict(uniform=False, doors=False)),
-                     ("(c) 分布+扉", dict(uniform=False, doors=True))):
+                     ("(c) 分布+扉", dict(uniform=False, doors=True)),
+                     ("(d) 健全な荷+扉", dict(uniform=False, doors=True,
+                                              setpoint_shift=-2.5))):
         sc = make_scene(layout=layout, **kw)
         vol = sc["vol"]
         exc_true = np.count_nonzero(vol > LIMIT_C, axis=0) * DT_MIN
-        load_fail = bool((exc_true[prod] > EXC_ALLOW_MIN).any())
+        bad_prod = (exc_true > EXC_ALLOW_MIN) & prod
+        load_fail = bool(bad_prod.any())
         rec, dt_s = _cell_records(vol)
         exc_meas = np.count_nonzero(rec > LIMIT_C, axis=0) * dt_s
         says_pass = exc_meas <= EXC_ALLOW_MIN
-        # 偽合格: ロガーは合格、真の最悪製品は不合格
         fp = 100.0 * float(says_pass[prod].mean()) if load_fail else 0.0
-        # 偽不合格: ロガーは不合格、製品は全部健全
-        ff = 100.0 * float((~says_pass[air]).mean()) if not load_fail else \
-            100.0 * float(((~says_pass) & air &
-                           (exc_true <= EXC_ALLOW_MIN)).sum() / air.sum())
-        bad = 100.0 * float((exc_true[prod] > EXC_ALLOW_MIN).mean())
+        # 近くに本当に傷んだ製品が 1 つも無いのに不合格を出す空気セル
+        near_bad = _dist_from(bad_prod) <= NEAR_M if load_fail else \
+            np.zeros_like(prod, bool)
+        ff = 100.0 * float(((~says_pass) & ~near_bad)[air].mean())
+        bad = 100.0 * float(bad_prod[prod].mean())
         rows.append([name, "%.1f" % bad, "%.1f" % fp, "%.1f" % ff])
-        print("  %-14s %8.1f          %8.1f           %8.1f" % (name, bad, fp, ff))
+        print("  %-16s %8.1f       %8.1f        %8.1f" % (name, bad, fp, ff))
         out[name] = {"scene": sc, "exc_true": exc_true, "exc_meas": exc_meas,
-                     "bad": bad, "fp": fp, "ff": ff}
+                     "bad": bad, "fp": fp, "ff": ff, "load_fail": load_fail}
 
-    print("\n  ★(a) では場所が効かないので偽合格も偽不合格も出ない —— "
-          "「1 個で足りる」は均一を仮定している。")
-    print("  ★(b) は分布だけで偽合格が出る(遅い・じわじわ)。")
-    print("  ★(c) で偽不合格が立ち上がる —— 扉のパルスは空気だけを叩き、"
-          "熱容量のある製品には届かない。")
+    print("\n  ★(a) 均一なら置き場所は効かない —— 偽合格も偽不合格も 0 %。"
+          "「1 個で足りる」は**均一を仮定している**。")
+    print("  ★(b) 分布だけで偽合格が %.1f %% 出る(壁と吹き出し口からの距離"
+          "だけで、扉は 1 度も開けていない)。" % out["(b) 分布あり"]["fp"])
+    print("  ★(c) 扉を足すと偽不合格が %.1f %% 立ち上がる —— パルスは空気だけを"
+          "叩き、熱容量のある製品には届かない。" % out["(c) 分布+扉"]["ff"])
+    print("  ★(d) 設定を %.1f K 下げて荷を健全にしても(真に不合格な製品セル"
+          " %.1f %%)、空気に置いたロガーの %.1f %% は不合格を出す ——"
+          "**捨てなくてよい荷を捨てる**。"
+          % (-2.5, out["(d) 健全な荷+扉"]["bad"], out["(d) 健全な荷+扉"]["ff"]))
     if figs.enabled():
         figs.save_table("control_groups",
                         ["条件", "真に不合格な製品セル [%]",
-                         "偽合格 [%](製品に 1 個)", "偽不合格 [%](空気に 1 個)"],
+                         "偽合格 [%](製品に 1 個)",
+                         "偽不合格 [%](空気に 1 個)"],
                         rows, title="要因を 1 つずつ止める")
+        figs.save_grid("control_maps",
+                       [out["(a) 均一"]["exc_true"], out["(b) 分布あり"]["exc_true"],
+                        out["(c) 分布+扉"]["exc_true"],
+                        out["(d) 健全な荷+扉"]["exc_true"]],
+                       ["(a) 均一", "(b) 分布あり", "(c) 分布+扉", "(d) 健全な荷+扉"],
+                       title="真の逸脱時間の地図 [min](4 条件、上=吹き出し口 下=扉)",
+                       ncols=4)
     return out
 
 
