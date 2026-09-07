@@ -780,10 +780,19 @@ def section_mixed(ab: dict, pair) -> dict:
     print("   平均絶対誤差 [pp]      %6.2f      %6.2f       %6.2f"
           % (e_all, e_pure, e_unmix))
     print("\n  ★境界を捨てると再現率は %.3f -> %.3f と**上がる**のに、"
-          "組成の誤差は %.2f -> %.2f pp と**悪化**する。"
-          % (all_s["macro"], pure_s["macro"], e_all, e_pure))
-    print("     小さい破片ほど境界の割合が高いので、捨てると小さい材質が"
-          "体系的に減る。")
+          "組成の誤差は %.2f -> %.2f pp と\n     **%s**する。"
+          "小さい破片ほど境界の割合が高いので、捨てると小さい材質が体系的に動く。"
+          % (all_s["macro"], pure_s["macro"], e_all, e_pure,
+             "悪化" if e_pure > e_all else "改善"))
+    print("  ★混合画素を分数のまま数えられるか(境界画素の存在量 vs 真の面積比、"
+          "平均絶対誤差):")
+    for label, e in err_mix:
+        print("     %-8s %.3f" % (label, e))
+    print("     線形混合分解は劣化がなければ境界を %.3f で当てるが、"
+          "全部入りでは %.3f —— \n     劣化は線形混合の仮定そのものを壊す"
+          "(乗算 g も加算 c も endmember に無い)。" % (err_mix[0][1], err_mix[1][1]))
+    print("     組成の平均絶対誤差でも %.2f pp で、素朴な画素計数(%.2f pp)に"
+          "%s。" % (e_unmix, e_all, "勝てない" if e_unmix > e_all else "勝つ"))
 
     figs.save_table("composition",
                     ["材質", "真値 %", "全画素 %", "境界を捨てる %", "混合分解 %"],
