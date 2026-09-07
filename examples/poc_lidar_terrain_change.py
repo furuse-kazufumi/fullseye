@@ -276,10 +276,10 @@ def window_mask(nx: int) -> np.ndarray:
     return inside[:, None] & inside[None, :]
 
 
-def dod(p1: np.ndarray, p2: np.ndarray, lod: float = 0.0) -> dict:
+def dod(p1: np.ndarray, p2: np.ndarray, lod: float = 0.0, stat: str = "mean") -> dict:
     """DoD。``lod`` 以下の差は 0 に落として(有意性でしきって)土量を積む。"""
-    z1, _ = dem(p1)
-    z2, _ = dem(p2)
+    z1, _ = dem(p1, stat)
+    z2, _ = dem(p2, stat)
     dz = z2 - z1
     win = window_mask(z1.shape[1])
     ok = np.isfinite(dz) & win
