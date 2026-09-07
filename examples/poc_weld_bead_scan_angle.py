@@ -105,9 +105,8 @@ TR = float(np.tan(np.deg2rad(PLATE_R_DEG)))     # 0.754 —— 右母材面の�
 CL = float(np.cos(np.deg2rad(PLATE_L_DEG)))     # 0.602
 CR = float(np.cos(np.deg2rad(PLATE_R_DEG)))     # 0.799
 
-UC_OFF_L, UC_SIG_L = 1.50, 0.35    # 左アンダーカット: つま先からの距離 / 1σ
-UC_OFF_R, UC_SIG_R = 1.10, 0.28    # 右アンダーカット
-UC_SPAN_L, UC_SPAN_R = 2.4, 1.9    # つま先から外側へこの範囲を溝とみなす [mm]
+UC_W_L, UC_W_R = 1.8, 1.4          # アンダーカット溝の幅(つま先から外側へ)[mm]
+UC_SPAN_L, UC_SPAN_R = 2.0, 1.6    # つま先から外側へこの範囲を溝とみなす [mm]
 TAU = 0.03                         # つま先の判定しきい値(母材面からの落ち込み)
 
 Y_MM = 30.0                        # 走査長 [mm]
