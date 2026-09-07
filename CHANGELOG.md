@@ -67,6 +67,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   印字していない」を判定しておきながら 0 を返しており、`assert code == 0` を必ず
   素通りしていた。この穴に落ちていた PoC が 3 本(`poc_dic_strain` /
   `poc_photoelasticity` / `poc_thermography_ndt`。assert ゼロ・PASS 行なし)。
+- **PoC の門が CI の共有ランナーで timeout していた**(84 本に増えたところで、
+  session fixture の実行時間が pytest 既定の 900 秒を超えて py3.10 / 3.12 が落ちた)。
+  並列数を固定 6 から **CPU 数に合わせ**、この門だけ timeout を広げた
+  (既定を緩めると他のテストのハング検出まで鈍るため)。
+- ★**`voxel_to_mesh` の巻き順は内向き**なので、そのまま `mesh_volume` に渡すと
+  **中身のある形でも負**になる(実測: 1000 voxel の立方体で -985.67)。
+  「負 = 法線が裏返っている」は正しいが、この組み合わせでは裏返っているのが既定 ——
+  両方の docstring に相互参照を書いた(`poc_warehouse_flow` の指摘を実測で確認)。
 - **`polar_unwrap` / `cylinder_unwrap` が「輪が視野の外」を fail-closed に**。
   半径は**画素(ボクセル)単位**なので mm のまま渡すと視野外を読み、例外なしに
   **全部 0** が返っていた(`poc_pipe_wall_loss` が真っ黒な図を 1 枚出して発覚)。

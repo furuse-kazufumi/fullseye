@@ -12,8 +12,12 @@
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">iso</code>`: 等値面のレベル。<b>入力の値域の外だと skimage が ValueError</b> を出す(全 0 の</p>
 <p>volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。</p>
 <p style="margin:2px 0 2px 12px">• 境界に接する等値面は開いたまま(端で閉じない)。</p>
+<p style="margin:2px 0 2px 12px">• ★<b>巻き順は内向き</b>。そのまま `<code style="color:#22d3bf">mesh_volume</code>` に渡すと**普通の中身のある形でも</p>
+<p>負**になる(実測: 1000 voxel の立方体で -985.67)。体積が欲しいだけなら</p>
+<p>`<code style="color:#22d3bf">abs()</code><code style="color:#22d3bf">、向きを揃えたいなら </code><code style="color:#22d3bf">faces[:, ::-1]</code>` で巻き直す。</p>
 <p style="margin:2px 0 2px 12px">• skimage は呼び出し時 import(未導入なら ImportError)。</p>
-<p>後段: `<code style="color:#22d3bf">mesh_to_points</code><code style="color:#22d3bf"> で点群化、</code><code style="color:#22d3bf">mesh_area</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mesh_edge_stats</code>` で計測。</p>
+<p>後段: `<code style="color:#22d3bf">mesh_to_points</code><code style="color:#22d3bf"> で点群化、</code><code style="color:#22d3bf">mesh_area</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">face_areas</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mesh_volume</code>` /</p>
+<p>`<code style="color:#22d3bf">boundary_vertices</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mesh_edge_stats</code>` で計測。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -1211,7 +1211,7 @@ def main() -> int:
     # ---- 所見を固定する assert(壊れたら鳴る)---------------------------- #
     i_m = MODES.index("芯ずれ")
     i_u, i_g = MODES.index("アンバランス"), MODES.index("ゆるみ")
-    i_b, i_l = MODES.index("軸受外輪傷"), MODES.index("潤滑不良")
+    i_b = MODES.index("軸受外輪傷")
     full = table["振動+熱+形状"]["rate"]
     novib = table["熱+形状(振動を抜く)"]["rate"]
     shape_only = table["形状のみ"]["rate"]

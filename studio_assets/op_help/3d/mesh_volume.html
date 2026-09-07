@@ -14,6 +14,11 @@
 <p>Raises:</p>
 <p>ValueError: `<code style="color:#22d3bf">mesh</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">(vertices, faces)</code>` の 2 要素でない、形状不正、</p>
 <p>非有限座標、非整数・範囲外の index、空のとき。</p>
+<p>★**<code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)の返りは内向き巻きなので、そのまま渡すと</p>
+<p>負になる**(実測: 1000 voxel の立方体で -985.67)。「負 = 法線が裏返っている」</p>
+<p>のは正しいが、<b>この組み合わせでは裏返っているのが既定</b>なので、体積が欲しい</p>
+<p>だけなら `<code style="color:#22d3bf">abs()</code><code style="color:#22d3bf"> を取るか </code><code style="color:#22d3bf">faces[:, ::-1]</code>` で巻き直すこと。向きの検査に</p>
+<p>使うのは、巻き順を自分で決めた(または向きを揃えた)メッシュに対して。</p>
 <p><b>限界(honest)</b>: 発散定理は<b>閉じた曲面でのみ</b>成り立つ。開いたメッシュ</p>
 <p>(穴のあるスキャン)に対しても数値は返るが、それは「穴を原点へ向かって</p>
 <p>塞いだ立体の体積」であって、欲しい量ではない。閉じているかどうかは</p>

@@ -28,8 +28,12 @@ voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。v
 - ``iso``: 等値面のレベル。**入力の値域の外だと skimage が ValueError** を出す(全 0 の
 volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。
 - 境界に接する等値面は開いたまま(端で閉じない)。
+- ★**巻き順は内向き**。そのまま ``mesh_volume`` に渡すと**普通の中身のある形でも
+負**になる(実測: 1000 voxel の立方体で -985.67)。体積が欲しいだけなら
+``abs()``、向きを揃えたいなら ``faces[:, ::-1]`` で巻き直す。
 - skimage は呼び出し時 import(未導入なら ImportError)。
-後段: ``mesh_to_points`` で点群化、``mesh_area`` / ``mesh_edge_stats`` で計測。
+後段: ``mesh_to_points`` で点群化、``mesh_area`` / ``face_areas`` / ``mesh_volume`` /
+``boundary_vertices`` / ``mesh_edge_stats`` で計測。
 
 ## 参考(サンプルデータ・文献)
 

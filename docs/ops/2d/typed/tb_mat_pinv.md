@@ -67,6 +67,7 @@ tb_mat_pinv 0.50 0.50
 
 次の例は元の台帳 op `mat_pinv` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [math_metrology](../../../../examples/math_metrology.py) — `py -3.11 examples/math_metrology.py`
+- [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

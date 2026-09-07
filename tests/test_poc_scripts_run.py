@@ -40,7 +40,11 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 
 #: 同時に走らせる本数。上げすぎると 1 本あたりが遅くなって timeout に近づく。
-WORKERS = 6
+#: ★2026-09-08: 固定 6 をやめて **CPU 数に合わせる**。共有ランナー(2〜4 vCPU)では
+#: 6 並列が 1 本ずつを遅くするだけで総時間が縮まらず、PoC が 84 本に増えたところで
+#: **ジョブごと pytest の 900 秒 timeout に落ちた**(py3.10 / 3.12)。手元(12 コア)は
+#: これまでどおり 6 以上で回る。
+WORKERS = max(2, min(8, (os.cpu_count() or 4)))
 
 #: 1 本あたりの上限[秒]。いちばん重い `poc_motion_magnification` が 62 秒
 #: (単独)、6 並列だと 2 倍近くになるので余裕を持たせる。
@@ -93,6 +97,10 @@ def poc_results() -> dict:
     return out
 
 
+# ★この門は 84 本の PoC を**まとめて 1 回**走らせる(session fixture)。その時間は
+# 最初のテストに計上されるので、pyproject の既定 timeout(900 秒)では共有ランナーで
+# 落ちる。ここだけ広げる —— 既定を緩めると他のテストのハング検出まで鈍る。
+@pytest.mark.timeout(5400)
 @pytest.mark.parametrize("name", [p.name for p in _poc_paths()])
 def test_the_poc_runs_clean(poc_results, name):
     """★PoC は 1 本残らず exit 0 で終わり、``PASS`` を印字すること。
