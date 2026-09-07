@@ -372,7 +372,7 @@ def edge_inventory(seg_len: float = 4.0) -> list:
         add_side(p0 + nn, p1 + nn, abs(ROAD_ALB - SOIL))
         add_side(p0 - nn, p1 - nn, abs(ROAD_ALB - SOIL))
     for (y0, y1, x0, x1) in BUILDINGS.values():
-        add_rect([(y0, x0), (y0, x1), (y1, x1), (y1, x0)], abs(BUILD_ALB - SOIL))
+        add_rect(px_corners(y0, y1, x0, x1), abs(BUILD_ALB - SOIL))
     lk = LAKE
     ang = np.linspace(0, 2 * np.pi, 65)
     pts = [(lk["cy"] + lk["r1"] * np.sin(a), lk["cx"] + lk["r1"] * np.cos(a)) for a in ang]
