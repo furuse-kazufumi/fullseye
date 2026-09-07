@@ -928,8 +928,8 @@ def section_zd(sw: dict) -> dict:
     rows, zs, miss_r, stop_r = [], [], [], []
     for name, zd in (("繰り返し性 3σ", zd_rep), ("既定値 0.030", ZD_BASE),
                      ("遮蔽の 95 % 点", zd_occ), ("遮蔽の最大", zd_max)):
-        S = required_separation(zd)
-        m_, fa_, nh, nf = _rates(sw["d_true"], sw["e_full"], S)
+        S = trigger_distance(zd)
+        m_, fa_, nh, nf = _rates(sw["d_true"], sw["e_full"], S_GEOM, S)
         stop = 100.0 * np.count_nonzero(sw["e_full"] < S) / len(sw["e_full"])
         rows.append([name, "%.3f" % zd, "%.3f" % S, "%.1f %%" % m_,
                      "%.1f %%" % fa_, "%.1f %%" % stop])
@@ -938,13 +938,13 @@ def section_zd(sw: dict) -> dict:
               "  誤検知 %5.1f %%  停止時間 %5.1f %%"
               % (zd, name, S, m_, fa_, stop))
     # 見落としを 0 にする最小の Z_d を探す(仮定でなく実測で決める)
-    zd_need = zd_max
-    for zd in np.arange(0.0, zd_max + 0.201, 0.005):
-        if _rates(sw["d_true"], sw["e_full"], required_separation(zd))[0] == 0.0:
+    zd_need = float("nan")
+    for zd in np.arange(0.0, zd_max + 0.301, 0.005):
+        if _rates(sw["d_true"], sw["e_full"], S_GEOM, trigger_distance(zd))[0] == 0.0:
             zd_need = float(zd)
             break
     stop_need = 100.0 * np.count_nonzero(
-        sw["e_full"] < required_separation(zd_need)) / len(sw["e_full"])
+        sw["e_full"] < trigger_distance(zd_need)) / len(sw["e_full"])
     print("\n  ★安全の代金は稼働率で払う: 見落としを 0 にする最小の Z_d = %.3f m で、"
           "\n     機械が止まっている時間は %.1f %% -> %.1f %% に増える。"
           % (zd_need, stop_r[1], stop_need))
