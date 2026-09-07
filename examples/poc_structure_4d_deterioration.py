@@ -682,6 +682,21 @@ def section_zero(obs: dict, sc: dict) -> dict:
              float(np.median(np.abs(ln[e] - tf[e])))
              / max(float(np.median(np.abs(ln[m] - tf[m]))), 1e-9)))
 
+    # ★「密度が違うのが悪いなら揃えればよい」を実際に試す(voxel_grid_downsample)
+    vs = 0.05
+    ra = np.asarray(fs.ledger.voxel_grid_downsample(ref, vs), float)
+    cb = np.asarray(fs.ledger.voxel_grid_downsample(cur, vs), float)
+    c2c_v = measure_c2c(ra, cb, cen)
+    gv = np.isfinite(c2c_v) & ~CORES["edge"]
+    print("\n  ★「密度が違うのが悪いなら揃えればよい」を試す: 両時点を %.0f mm 格子で"
+          "間引くと点数は %d/%d -> %d/%d、\n     C2C の中央値は %.2f -> %.2f mm。"
+          "**下がるが消えない** —— 揃うのは密度であって、\n     格子の"
+          "**位相**は揃わない(同じセルに落ちた点の重心は面上の別の場所)。"
+          % (1e3 * vs, len(ref), len(cur), len(ra), len(cb),
+             float(np.median(c2c[m])), float(np.median(c2c_v[gv]))))
+    print("     格子間隔 %.0f mm に対して残る %.2f mm は、格子で決まる下限"
+          "(セル内の重心の散らばり)。" % (1e3 * vs, float(np.median(c2c_v[gv]))))
+
     ch = float(fs.ledger.chamfer_distance(ref, cur)) * 1e3
     hd = float(fs.ledger.hausdorff_distance(ref, cur)) * 1e3
     print("  ★まとめた 1 個の数字はもっと役に立たない: Chamfer %.2f mm / "
