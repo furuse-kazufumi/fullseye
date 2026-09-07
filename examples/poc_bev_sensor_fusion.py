@@ -561,10 +561,20 @@ def section_reprojection(rig: Rig) -> dict:
               "        %5.1f" % (dy, px, pred_px, 100 * px / diag, shift,
                                  shift / CELL))
     px1, sh1 = out[1.0]
-    print("\n  ★★yaw %.2f 度は画像で %.2f px(対角の %.2f %%)—— 校正レポートなら"
-          "合格に見える。" % (1.0, px1, 100 * px1 / diag))
-    print("     同じ誤差が BEV では %.3f m = %.1f セル。**px は角度、BEV は長さで、"
-          "換算係数は距離そのもの**。" % (sh1, sh1 / CELL))
+    px02, sh02 = out[0.2]
+    print("\n  実測は予測 f·tanθ よりわずかに大きい(隅の点ほど tan の効きが"
+          "強いため)。")
+    print("  ★★換算則: 再投影 1 px = %.3f 度 = 距離 R で **R/f メートル**。"
+          "この光学系(f=%.0f px)なら %.1f m 先で **%.3f m/px = %.2f セル/px**。"
+          % (np.degrees(1.0 / f), f, OBSTACLES[1]["cx"],
+             OBSTACLES[1]["cx"] / f, OBSTACLES[1]["cx"] / f / CELL))
+    print("     再投影誤差 %.2f px(yaw %.2f 度)は**サブピクセルに近く校正"
+          "レポートなら合格**だが、%.1f m 先の BEV では既に %.3f m ずれている。"
+          % (px02, 0.2, OBSTACLES[1]["cx"], sh02))
+    print("     yaw %.2f 度(%.2f px)なら %.3f m = %.1f セル。"
+          "**px は角度の指標、BEV は長さの指標で、換算係数が距離そのもの** ——"
+          "同じ校正が近くでは合格・遠くでは不合格になる。"
+          % (1.0, px1, sh1, sh1 / CELL))
     figs.save_table("reprojection", ["yaw 誤差", "画像の再投影誤差",
                                      "予測 f·tanθ", "画像対角比",
                                      "BEV のずれ(%.1f m)" % OBSTACLES[1]["cx"],
