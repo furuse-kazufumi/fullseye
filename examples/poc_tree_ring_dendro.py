@@ -486,11 +486,11 @@ def section_baseline() -> dict:
     for s in range(N_SECT):
         row = sector_row(s)
         for p in c["truths"][s]["pos"]:
-            j = int(round(p))
+            j = int(round(p * OVS))
             if 0 <= j < rgb.shape[1]:
                 rgb[row - 6:row - 2, max(0, j - 1):j + 2] = (0.1, 0.3, 1.0)
         for p in c["dets"][s]:
-            j = int(round(p))
+            j = int(round(p * OVS))
             if 0 <= j < rgb.shape[1]:
                 rgb[row + 2:row + 6, max(0, j - 1):j + 2] = (1.0, 0.15, 0.1)
     figs.save("polar_edges_map", rgb,
