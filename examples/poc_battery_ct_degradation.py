@@ -928,14 +928,17 @@ def section_resolution(cells, sinos) -> dict:
                     ("空隙体積の誤差 [%]", ratios, v_err),
                     ("縞の予測コントラスト [%]", ratios, mod)],
                    xlabel="voxel / 電極厚", ylabel="誤差 [枚 or %]",
-                   title="分解能の崖(予測 %.2f)" % (v_nyq / T_ELEC),
-                   caption="層厚の誤差は崖の手前でも大きい。空隙は層より早く痩せる。")
+                   title="分解能の崖(予測 A %.2f / 予測 B %.2f)"
+                         % (v_nyq / T_ELEC, v_gap / T_ELEC),
+                   caption="崖を決めるのは電極厚ではなく層間の隙間。空隙は層より早く痩せる。")
     figs.save_table("sweep_resolution_table",
                     ["voxel mm", "voxel/層厚", "層数", "層数の幅", "層厚 mm",
-                     "FFT 周期 mm", "空隙率 %", "予測 コントラスト %"], rows,
-                    title="分解能を振る(真値: 層 17 枚 / 層厚 0.200 mm / 周期 0.320 mm)")
+                     "層間隔 mm", "FFT 周期 mm", "空隙率 %", "予測 振幅 %"], rows,
+                    title="分解能を振る(真値: 層 %d 枚 / 層厚 %.3f mm / 周期 %.3f mm)"
+                          % (truth["n_layer"], truth["t_mean"], PITCH))
     return {"ratios": ratios, "n_err": n_err, "cliff": cliff,
-            "pred": v_nyq / T_ELEC, "fft_ok": max(ok_fft)}
+            "pred_a": v_nyq / T_ELEC, "pred_b": v_gap / T_ELEC,
+            "fft_ok": max(ok_fft)}
 
 
 # --------------------------------------------------------------------------- #
