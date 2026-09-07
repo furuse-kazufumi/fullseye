@@ -354,11 +354,9 @@ def fuse(rule, occ_a, kn_a, h_a, occ_b, kn_b, h_b, w_a, w_b):
         wa = np.where(kn_a, w_a, 0.0)
         wb = np.where(kn_b, w_b, 0.0)
         occ = np.divide(wa * ea + wb * eb, np.maximum(wa + wb, 1e-9)) > 0.5
-    ha = np.where(occ_a & kn_a, h_a, np.nan)
-    hb = np.where(occ_b & kn_b, h_b, np.nan)
-    with np.errstate(invalid="ignore"):
-        h = np.nanmax(np.stack([ha, hb]), axis=0)
-    return occ, np.nan_to_num(h)
+    h = np.maximum(np.where(occ_a & kn_a, h_a, 0.0),
+                   np.where(occ_b & kn_b, h_b, 0.0))
+    return occ, h
 
 
 # --------------------------------------------------------------------------- #
