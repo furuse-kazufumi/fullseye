@@ -261,10 +261,18 @@ def fit_vignette(img: np.ndarray, nbins: int = 20) -> tuple[float, float]:
 
 
 def flatten(img: np.ndarray, use_fit: bool = True) -> tuple[np.ndarray, tuple]:
-    """ビネッティングを割る。補正そのものは ``aug_vignette`` を前向きモデルに使う。"""
+    """ビネッティングを割る。補正そのものは ``aug_vignette`` を前向きモデルに使う。
+
+    当てはめは **グレースケール・クロージング(3 px)で細い暗線を消した包絡**に
+    対して行う。生画像のままだと、フィンガーの無い上下の余白(数行)が隅の
+    リングにだけ混ざり、リングの分位が隅で跳ね上がって強さを 0.42 と当てた。
+    フィンガー・クラックは 3 px より細いのでクロージングで消え、バスバー・
+    孤立領域は残るが暗くしかしないので上側分位が効く。
+    """
     if not use_fit:
         return img, (np.nan, np.nan)
-    a, R = fit_vignette(img)
+    env = np.asarray(fs.apply(img, "gray_closing", a=0.0))
+    a, R = fit_vignette(env)
     v = np.asarray(fs.apply(np.ones_like(img), "aug_vignette", a=a, b=(R - 0.35) / 1.15))
     return img / np.maximum(v, 1e-3), (a, R)
 
