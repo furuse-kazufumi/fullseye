@@ -545,19 +545,19 @@ def section_angle_cliff(S: dict, Z: dict) -> dict:
     if figs.enabled():
         figs.save_plot(
             "angle_cliff",
-            [("実測(復元 RMS)", alphas, meas),
-             ("予測 (iii) 変位の法線成分", alphas, pnorm),
-             ("予測 (ii) 変位の大きさ 2 r sin a", alphas, pf),
-             ("予測 (i) 素朴 2 d sin a", alphas, pn),
-             ("ゼロ点(穴埋め補間)", alphas, np.full_like(alphas, zr))],
-            xlabel="対称面の角度ずれ alpha [deg]", ylabel="欠損部の復元 RMS [mm]",
+            [("実測", alphas, meas),
+             ("予測(iii) 法線成分", alphas, pnorm),
+             ("予測(ii) 2r sin a", alphas, pf),
+             ("予測(i) 2d sin a", alphas, pn),
+             ("ゼロ点", alphas, np.full_like(alphas, zr))],
+            xlabel="alpha [deg]", ylabel="復元 RMS [mm]", size=(700, 430),
             title="崖(1): 対称面が傾いた分だけ復元は嘘をつく",
             caption="崖は alpha = %.2f deg(%.0f 分角)。そこから先はゼロ点の"
                     "穴埋め補間のほうが正しい。" % (cross, cross * 60))
         figs.save_plot(
             "angle_spurious",
             [("偽の面になった鏡像点 [%]", alphas, np.array(spur))],
-            xlabel="対称面の角度ずれ alpha [deg]", ylabel="足した点のうち偽の面 [%]",
+            xlabel="alpha [deg]", ylabel="足した点のうち偽の面 [%]", size=(700, 430),
             title="崖(1)の裏側: 穴が埋まらないのとは別に「無い面」が生える",
             caption="真の面から %.1f mm 以上浮いた鏡像点の割合。"
                     "壊れ方は 2 種類あり、別々に数える必要がある。" % SPUR_TOL)
