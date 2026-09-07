@@ -499,24 +499,31 @@ def measure_all(h: np.ndarray, yv: np.ndarray) -> dict:
     """走査 (n_y, n_x) → 6 量 × n_y の配列。母材面は走査全体から当てる。"""
     pl, pr = fit_plates(h, yv)
     root = root_line(pl, pr, yv) if (pl is not None and pr is not None) else None
-    out = {k: np.full(h.shape[0], np.nan) for k in KEYS}
+    ks = list(KEYS) + ["m_" + k for k in KEYS] + ["xtl", "xtr"]
+    out = {k: np.full(h.shape[0], np.nan) for k in ks}
     for i in range(h.shape[0]):
         lL = None if pl is None else (pl["a"], float(pl["b"][min(i, pl["b"].size - 1)]))
         lR = None if pr is None else (pr["a"], float(pr["b"][min(i, pr["b"].size - 1)]))
         rt = None if root is None else (float(root[0][i]), float(root[1][i]))
         q = quantities_one(h[i], lL, lR, rt)
-        for k in KEYS:
+        for k in ks:
             out[k][i] = q[k]
     return out
 
 
 def score(est: dict, tru: dict) -> dict:
-    """量ごとに「測れた率」と「測れたところの平均 |誤差|」を**分けて**返す。"""
+    """量ごとに「測れた率」「区間の欠測率」「測れたところの平均 |誤差|」を**分けて**。
+
+    ★「測れた率 100 %」でも、その量を出す区間に欠測が混じっていれば値は嘘に
+    なりうる —— だから **2 つの欠け方を別々に数える**。
+    """
     out = {}
     for k in KEYS:
         e, t = np.asarray(est[k], float), np.asarray(tru[k], float)
         m = np.isfinite(e) & np.isfinite(t)
+        mm = np.asarray(est.get("m_" + k, np.full(e.shape, np.nan)), float)
         out[k] = {"got": float(np.isfinite(e).mean()),
+                  "miss": float(np.nanmean(mm[np.isfinite(e)])) if m.any() else 1.0,
                   "mae": float(np.mean(np.abs(e[m] - t[m]))) if m.any() else float("nan"),
                   "bias": float(np.mean(e[m] - t[m])) if m.any() else float("nan")}
     return out
