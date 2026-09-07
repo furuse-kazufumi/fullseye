@@ -105,5 +105,24 @@
    560,
    3
   ]
+ },
+ {
+  "file": "11_map_distance_slice.png",
+  "name": "map_distance_slice",
+  "caption": "危険源までの距離場を指先の高さ 1.09 m で切った断面 [m]。黒い輪 = 必要分離距離 S = 0.690 m の等高線。",
+  "shape": [
+   140,
+   220
+  ]
+ },
+ {
+  "file": "12_scene_closest.png",
+  "name": "scene_closest",
+  "caption": "最短分離 0.779 m を結ぶ線(最も近い部位 = 右手)。人 = 暖色、機械と治具台 = 寒色。",
+  "shape": [
+   400,
+   560,
+   3
+  ]
  }
 ]

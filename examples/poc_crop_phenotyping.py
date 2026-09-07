@@ -267,6 +267,30 @@ def canopy_buffers(can, cell=CELL, with_stem=True):
             "layer": layer.reshape(n, n).astype(np.float64), "cell": cell, "n": n}
 
 
+def plant_subset(can, p):
+    """株 ``p`` の葉だけの群落(株冠の footprint を測るため)。"""
+    m = can["plant"] == p
+    out = {k: (v[m] if isinstance(v, np.ndarray) and v.shape[:1] == m.shape else v)
+           for k, v in can.items()}
+    out["n_plant"] = 1
+    return out
+
+
+def crown_footprint(can):
+    """1 株の葉が地面に落とす影の面積 [m^2] の平均(株冠 footprint)。
+
+    2 段階クランピング(Nilson 1971 / Chen & Black 1991)の下の段。株の中の
+    重なりをここで潰しておいてから、株どうしを Poisson で重ねると
+    **植被率の天井が予測できる**。
+    """
+    tot = 0.0
+    for p in range(can["n_plant"]):
+        sub = plant_subset(can, p)
+        buf = canopy_buffers(sub, CELL, with_stem=False)
+        tot += float(np.mean(buf["layer"] > 0)) * PLOT_AREA
+    return tot / can["n_plant"]
+
+
 def cover_of(buf):
     """植被率(セル中心が植物に覆われている割合)。"""
     return float(np.mean(buf["layer"] > 0))
