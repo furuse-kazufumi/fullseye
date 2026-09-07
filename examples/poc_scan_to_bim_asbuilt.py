@@ -1331,7 +1331,23 @@ def section_segmentation(sc: dict, seed: int = SEED) -> dict:
     print("   BIM 無し(plane_segmentation)は %d 点から %d 枚の面を出し、"
           "%.1f %% の点が残差(柱・幅木・見込み)。"
           % (len(q), nseg, 100 * np.mean(lab < 0)))
-    return {"acc": acc, "acc_mix": acc_mix, "nseg": nseg}
+    rest = q[lab < 0]
+    cl = np.asarray(L.euclidean_cluster(rest, 0.16, 40))
+    ncl = int(cl.max()) + 1 if cl.size else 0
+    hits = 0
+    for k in range(ncl):
+        c = rest[cl == k]
+        o = L.obb.raw(c)
+        cen = np.asarray(o["center"])
+        for (cx, cy) in COL_XY:
+            if np.hypot(cen[0] - cx, cen[1] - cy) < 0.35:
+                hits += 1
+                break
+    print("   残差を距離クラスタリング(euclidean_cluster)すると %d 塊、"
+          "うち %d 個が柱の位置に一致する。" % (ncl, hits))
+    print("   ★BIM 無しでも面と柱は出るが、**どの面がどの部材か**は決まらない —— "
+          "as-built 検査は「見つける」より「対応づける」問題。")
+    return {"acc": acc, "acc_mix": acc_mix, "nseg": nseg, "ncl": ncl, "hits": hits}
 
 
 # --------------------------------------------------------------------------- #
