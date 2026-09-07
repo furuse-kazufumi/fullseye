@@ -5,7 +5,7 @@ category: frequency
 in: image
 out: image
 halcon: phase_rad
-examples: [acoustic_condition_monitoring, gallery2d_texture_freq]
+examples: [acoustic_condition_monitoring, gallery2d_texture_freq, poc_leak_localization]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ phase_rad 0.40 0.50
 
 - [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
+- [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

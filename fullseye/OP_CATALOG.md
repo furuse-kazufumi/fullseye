@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(169 例)
+### 2-D 画像/信号/幾何(171 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -75,9 +75,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **太陽電池 EL 検査(暗い = 不活性ではない。種別ごとに測る)** — ★★ゼロ点(Otsu の暗画素率)は 21.7 % で真値 4.77 % の 4.6 倍 ―― 暗画素の 42 % はフィンガー/バスバー、33 % は結晶粒とビネッティングで、本物の不活性領域は 20 %。等級は D(真値 C)。★行・列プロファイルで格子を割り、孤立領域 / 断線帯 / クラックを別々の門で取ると面積率 4.61 %(-0.15 ポイント)・クラック再現率 0.88〜1.00・断線 8/8 で等級 C。★★sk_frangi は最大値で正規化するので、校正線は画像中でいちばん強くないと尺度を固定しない(実クラックと同じ線は 0.69、幅 3 px の黒線は 1.00)。校正なしが壊れるのは欠陥ゼロの側で偽クラック 147 px ―― 良品ほど偽検出が出る。★崖: 結晶粒コントラスト c=0.24 から偽クラックが出て断線が飲まれる(ヘッセ行列の予測 1.48 は 6 倍外れ)、クラック幅 1.25 px(幅 × 深さの線形則で予測 1.38 px)、光子数 K=50 で断線 7/8(予測 12 は 4 倍楽観的)。cos^4 の当てはめは行列プロファイルが先に吸うので要らなかった。 `py -3.11 examples/poc_solar_el_inspection.py`
 - **はんだフィレットの AOI(3 リング照明は傾きの 3 段量子化器)** — 接触角と断面積で決まる円弧のフィレットに 3 リング照明(GGX を窓で積分)を当てた合成 AOI。★★接触角 18° の凹円弧は壁で 72° まで立ち、最低リングでも見えるのは高さの **28.8 %**(予測)―― 色帯の傾きを積分する素朴な推定は真値の 0.284 倍。色が変わる**位置**から円弧を壁へ外挿すると自由円弧で +1.7 % ± 5.3 %、爪先がパッド端に固定されると -42.3 %。★位置ずれ **0.16 mm** で爪先が 30° を超えて緑帯が消え、真値は上がっているのに良品が「不足」になる(真値が不足になるのは 0.28 mm)。★粗さは予想と違い暗部の縁を動かさず、0.5 で赤帯の消失と同時に壊れる。ゼロ点(パッド平均色 ΔE)は良品 56 % / ブリッジ 68 % を NG にして区別せず、円弧推定は良品 98 % / ブリッジ 100 % / 浮き 88 %(取りこぼしは 8.7〜11.0° の小さな浮き)。 `py -3.11 examples/poc_solder_fillet_aoi.py`
 - **熱・振動・形状の総合診断(束ねても情報が増えない条件)** — ★★3 センサ融合 100.0 % は**振動のみ 100.0 %** と同点 —— 基準条件では熱も形状も 1 pt も足さない。融合が効き始めるのは振動が壊れてからで、雑音 σ=1.6 で 45.8 % → 78.1 %(+32.3 pt)。★★芯ずれは軸心のずれ 1 つが原因なので振動・熱・形状の**どれ 1 個でも 100.0 %**(真値の重症度との相関 2X 0.843 / 継手温度 0.841 / 芯ずれ量 0.978 —— 独立な 3 つの証拠ではない)。逆に**熱だけでは 正常・アンバランス・ゆるみ が互いの中で 48/48 回まわり**(仕込んだ軸受発熱 2.5/2.7/2.6 W)、形状だけでは芯ずれ以外の 5 モードが 1 つの塊(6.2〜37.5 %)。振動を抜くとアンバランス 100.0→50.0 %、ゆるみ 100.0→31.2 %。★崖は特徴 1 個の上で先に予測: ゆるみの 0.5X は次数分解能 < 0.5 すなわち **T > 2/f_r = 68.6 ms**(実測 50→70 ms の 1 段で d' 2.45→4.32 = +76 %、その前の段は +4 %)、熱の広がりは閉形式の半値直径 66 mm(実測 64 mm から崩れ 96 mm で d' 0.00)。★側帯波は「1/T < FTF = 86.1 ms」と予測して**外れ**、ピークを読む窓 0.6/T が側帯波間隔の半分を切る **1.2/FTF = 103 ms** が正しい条件だった。★★そして崖はどれも 6 クラス識別率には出ない —— 同じセンサの他の特徴が肩代わりする(**冗長性はセンサ間だけでなくセンサ内にもある**)。★アンチエイリアス無しで 3200 Hz へ間引くと衝撃列 k=29 が 167.9 Hz(実測 168.0 Hz)へ折り返し、**間隔が BPFO ちょうどなので軸受らしく見える**。 `py -3.11 examples/poc_machine_condition_fusion.py`
+- **太陽光発電所のドローン熱画像(ΔT を測っているつもりで、風と角度を測っている)** — 定常熱収支の閉形式が真値なので、故障の ΔT を予測と 0.07 K 以内で突き合わせられる。★余剰発熱 320 W/m² のホットスポットは 11.20 K が 4.23 K になって届く —— 薄めているのは予想した熱伝導(×0.960)ではなく**カメラ**(×0.511)と、大気と放射率設定(×0.854)。★★崖を決めるのはしきい値でなく**面積の門**: 「ピークが 3.0 K を割る」予測 3.0 m/s は外れ、塊の面積 2πσ²ln(P/θ) が 4 px を割る予測 1.1 m/s が実測 1.0 m/s と一致する。★★電気的故障ゼロの対照群でも全体平均基準なら塊 6 個(健全 1 / 非故障 5)—— 正体は風の当たらないモジュールが 4 K 熱いだけで、モジュール中央値なら 0 個。ただし中央値は**モジュール丸ごとの異常に盲目**(+3.43 K が +0.08 K)、平面除去は広い故障を食う(ストリング 5.55 → 4.10 K)。★★列間影は同じストリングの日向側を +4.68 K 熱くし、本物のストリング故障 +5.55 K と 0.87 K しか違わない。★入射角 65° で ΔT は 0.93 倍、射影補正で位置ずれは 80.1 → 0.5 px に戻るのに ΔT は 0.61 倍(幾何は直せるが放射は直らない)。★NETD は 20 → 3000 mK まで振っても偽ゼロ(予想外れ)だが、非故障の塊が 1 → 44 個に増えて総面積は 1620 → 1892 px —— 個数で報告すると雑音が『発見』に化ける。 `py -3.11 examples/poc_pv_thermal_survey.py`
 
 **ranging**
 - **光子計数 dToF の距離精度(理論限界に乗るか、どこで崩れるか)** — 距離を先に決めて光子到着ヒストグラムを合成し、測り返す。ゲート重心は CRB の 1.003-1.068 倍、傾き -0.506(理論 -0.500)で 1/√N に乗る。ピーク位置というゼロ点に 4.80 倍。背景 SBR 0.008 で RMSE が 2 桁飛ぶのに**中央値はほとんど動かない**(3.8 % の試行だけが誤ロックする)ことまで出す。 `py -3.11 examples/poc_dtof_ranging.py`
+- **音で漏水を位置決めする(音速を誤ると掘る場所がずれる)** — 埋設管 120 m の 2 点で録った漏水音の到達時間差から位置を出す。★音速が真値なら 0 dB で 0.0107 m(CRLB 0.0091 m の 1.2 倍)、崖は予測 -20.1 dB に対し実測 -12.5 dB で 7.6 dB 楽観だった。★量子化誤差は散らばりでなく場所ごとの偏り —— 位置を 41 点振ると RMS 0.0221 m で予測 c/(2fs)/√12 = 0.0220 m と一致するが、1 点に固定すると小数部が固定されて毎回同じだけ外す。★★音速 10 % の誤りは 1.798 m(予測 1.800 m、中点では ±15 % でも 0.0007 m)、管種が途中で変わると τ = 0 になり、どの音速を仮定しても 18.001 m 外す —— パラメータでなくモデルの誤り。★反射では予想が外れ、GCC-PHAT は生の相関に 1 割しか勝たない(誤差 0.121 m のほぼ全部が偏り。左右の継手を入れ替えると符号が反転し、対称にすると 0.000 m)。 `py -3.11 examples/poc_leak_localization.py`
 
 **depth**
 - **ライトフィールドの深度(81 視点は 2 眼に勝てるのか)** — 既知の深度から合成ライトフィールドを作り、EPI 傾き・焦点度・2 眼を並べる。定数ゼロ点に 22 倍だが、**2 眼には既定設定だと 3.0 倍負ける**(cubic 補間にして初めて 1.6 倍勝つ)。圧勝するのは鏡面ハイライトの場面だけ、という切り分けまで数字で置く。 `py -3.11 examples/poc_lightfield_depth.py`
@@ -1272,7 +1274,7 @@ _計 901 ops / 48 categories。_
 - `fft_image` (halcon: `fft_image`) `image → image` · 例: `gallery2d_texture_freq`, `poc_moire_screen`
 - `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
 - `power_byte` (halcon: `power_byte`) `image → image` · 例: `gallery2d_texture_freq`
-- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `acoustic_condition_monitoring`, `gallery2d_texture_freq`
+- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `acoustic_condition_monitoring`, `gallery2d_texture_freq`, `poc_leak_localization`
 - `highpass_image` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `poc_river_surface_velocity`
 - `bandpass_image` (halcon: `bandpass_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `fft_image_inv` (halcon: `fft_image_inv`) `image → image` · 例: `gallery2d_texture_freq`
@@ -1294,7 +1296,7 @@ _計 901 ops / 48 categories。_
 - `mirror_image` (halcon: `mirror_image`) `image → image` · 例: `gallery2d_geometry`
 - `transpose_region` (halcon: `transpose_region`) `region → region` · 例: `gallery2d_geometry`
 - `rotate_image` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
-- `zoom_image_factor` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`
+- `zoom_image_factor` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`, `poc_pv_thermal_survey`
 - `zoom_image_size` (halcon: `zoom_image_size`) `image → image` · 例: `gallery2d_geometry`
 - `affine_trans_image` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_change_detection_misreg`
 - `polar_trans_image` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_allsky_cloud_cover`, `poc_gear_tooth_metrology`
@@ -1516,7 +1518,7 @@ _計 901 ops / 48 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_river_surface_velocity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1725,7 +1727,7 @@ _計 901 ops / 48 categories。_
 - `cv_sharpen` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `dl_guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_sea_ice_concentration`, `poc_solar_limb_darkening`, `poc_vessel_network`, `poc_white_balance`
+- `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_solar_limb_darkening`, `poc_vessel_network`, `poc_white_balance`
 - `gauss_image` (halcon: `gauss_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
 - `mean_image` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_document_scan`, `poc_focus_stacking`, `poc_white_balance`
 - `binomial_filter` (halcon: `binomial_filter`) `image → image` · 例: `gallery2d_smoothing_rank`

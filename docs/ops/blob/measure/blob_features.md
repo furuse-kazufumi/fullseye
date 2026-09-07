@@ -4,7 +4,7 @@ dim: blob
 category: measure
 in: labels2d
 out: table
-examples: [poc_bone_trabecular_thickness, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_print_warpage_risk, poc_sea_ice_concentration, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
+examples: [poc_bone_trabecular_thickness, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_print_warpage_risk, poc_pv_thermal_survey, poc_sea_ice_concentration, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -75,6 +75,7 @@ Examples
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
 - [poc_particle_tracking](../../../../examples/poc_particle_tracking.py) — `py -3.11 examples/poc_particle_tracking.py`
 - [poc_print_warpage_risk](../../../../examples/poc_print_warpage_risk.py) — `py -3.11 examples/poc_print_warpage_risk.py`
+- [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`
 - [poc_sea_ice_concentration](../../../../examples/poc_sea_ice_concentration.py) — `py -3.11 examples/poc_sea_ice_concentration.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_solder_fillet_aoi](../../../../examples/poc_solder_fillet_aoi.py) — `py -3.11 examples/poc_solder_fillet_aoi.py`

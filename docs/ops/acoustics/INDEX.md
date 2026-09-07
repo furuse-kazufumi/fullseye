@@ -1,4 +1,4 @@
-# ACOUSTICS operator help — 19 ops in 6 categories
+# ACOUSTICS operator help — 20 ops in 6 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/acoustics/<category>/<op>.md` を走査。
 
@@ -12,9 +12,9 @@
 
 [bearing_defect_frequencies](bearing/bearing_defect_frequencies.md) · [cepstrum](bearing/cepstrum.md) · [envelope_spectrum](bearing/envelope_spectrum.md) · [spectral_kurtosis](bearing/spectral_kurtosis.md)
 
-### dual (2)
+### dual (3)
 
-[coherence](dual/coherence.md) · [transfer_function](dual/transfer_function.md)
+[coherence](dual/coherence.md) · [gcc_delay](dual/gcc_delay.md) · [transfer_function](dual/transfer_function.md)
 
 ### level (6)
 

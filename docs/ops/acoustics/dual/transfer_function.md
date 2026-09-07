@@ -4,7 +4,7 @@ dim: acoustics
 category: dual
 in: signal × signal
 out: table
-examples: [acoustic_condition_monitoring]
+examples: [acoustic_condition_monitoring, poc_leak_localization]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -68,6 +68,7 @@ unknown ``estimator`` and ``ref <= 0``.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
+- [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
@@ -75,7 +76,7 @@ unknown ``estimator`` and ``ref <= 0``.
 
 ## 同カテゴリ(`dual`)
 
-[coherence](coherence.md)
+[coherence](coherence.md) · [gcc_delay](gcc_delay.md)
 
 ---
 *Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

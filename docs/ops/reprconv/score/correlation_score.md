@@ -4,7 +4,7 @@ dim: reprconv
 category: score
 in: voxel × voxel
 out: score
-examples: [representation_conversion, representation_roundtrip]
+examples: [poc_leak_localization, representation_conversion, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_leak_localization](../../../../examples/poc_leak_localization.py) — `py -3.11 examples/poc_leak_localization.py`
 - [representation_conversion](../../../../examples/representation_conversion.py) — `py -3.11 examples/representation_conversion.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 

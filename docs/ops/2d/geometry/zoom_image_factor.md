@@ -5,7 +5,7 @@ category: geometry
 in: image
 out: image
 halcon: zoom_image_factor
-examples: [gallery2d_geometry]
+examples: [gallery2d_geometry, poc_pv_thermal_survey]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -68,6 +68,7 @@ zoom_image_factor 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_geometry](../../../../examples/gallery2d_geometry.py) — `py -3.11 examples/gallery2d_geometry.py`
+- [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

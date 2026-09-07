@@ -4,7 +4,7 @@ dim: blob
 category: select
 in: labels2d
 out: labels2d
-examples: [poc_particle_sizing, poc_pipe_wall_loss, poc_solar_el_inspection, poc_weld_radiograph_porosity]
+examples: [poc_particle_sizing, poc_pipe_wall_loss, poc_pv_thermal_survey, poc_solar_el_inspection, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ numpy.ndarray
 
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
 - [poc_pipe_wall_loss](../../../../examples/poc_pipe_wall_loss.py) — `py -3.11 examples/poc_pipe_wall_loss.py`
+- [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
