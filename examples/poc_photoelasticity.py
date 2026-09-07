@@ -349,6 +349,7 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
     print()
     print("  %-34s %12s" % ("巻き戻しの入力", "一致率(<π/2)"))
     print("  " + "-" * 50)
+    rates = {}
     for label, mask in [("そのまま(マスク無し)", None),
                         ("標本化不足を外す", ~aliased),
                         ("標本化不足 + 低変調を外す", ~aliased & ~lowmod)]:
@@ -364,9 +365,22 @@ def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
             continue
         off = float(np.median((unwrapped - delta)[valid]))
         ok = np.abs(unwrapped - off - delta) < 0.5 * np.pi
-        print("  %-34s %11.1f %%  (評価画素 %d)"
-              % (label, 100 * float(np.mean(ok[valid])), valid.sum()))
+        rates[label] = 100 * float(np.mean(ok[valid]))
+        print("  %-34s %11.1f %%  (評価画素 %d)" % (label, rates[label], valid.sum()))
     print()
+    # ★所見を固定する。
+    #   (1) 減偏光は無い(Stokes の大きさが厳密に 1)。変調が落ちるのは光量ではなく
+    #       **位相の感度**のほうだ、という 5 節の主張の根拠。
+    assert abs(float(modulation[IN_DISC].min()) - 1.0) < 1e-9 \
+        and abs(float(modulation[IN_DISC].max()) - 1.0) < 1e-9, \
+        (float(modulation[IN_DISC].min()), float(modulation[IN_DISC].max()))
+    #   (2) ★★実測は「マスクを渡すと直る」という素朴な期待の**逆**を言っている:
+    #       マスク無し 97.0 % / 標本化不足を外して 97.1 % / **低変調まで外すと 81.9 %**。
+    #       低変調の画素を抜くと領域が分断され、skimage の unwrap が島ごとに
+    #       別の 2π オフセットを選ぶため。「どちらもマスクで外せる」は
+    #       **予報としては正しいが、処方としては誤り**。実測のほうを固定しておく。
+    assert rates["そのまま(マスク無し)"] > 90.0, rates
+    assert rates["標本化不足 + 低変調を外す"] < 90.0, rates
     figs.save_grid("unwrap",
                    [np.where(IN_DISC, wrapped, np.nan),
                     np.where(IN_DISC, np.hypot(s1, s2), np.nan),
