@@ -982,11 +982,11 @@ def section_delamination(cases):
               % (tb, f6, cap, "剥離" if f6 > cap else "保持"))
     cap = SIG_ADH * 2.0 * 6.0 * 16.0
     cross = next((tb_list[i] for i in range(len(f_list)) if f_list[i] > cap), None)
-    print("     ★崖は底板 %.1f mm(そこで力が %.1f N を越える)。"
-          "底板を薄くすると力は %.1f -> %.1f N と %.0f 倍に落ちる ——\n     "
-          "**端を薄く逃がすと剥がれない**(反り自体はほとんど変わらない)。"
-          % (cross if cross else -1.0, cap, f_list[0], f_list[-1],
-             f_list[-1] / f_list[0]))
+    print("     ★崖は底板 %.1f mm(そこで力が容量 %.1f N を越える)。底板 %.1f -> %.1f mm"
+          " で力は %.1f -> %.1f N と\n     **%.0f 倍**になる —— "
+          "**端を薄く逃がすと剥がれない**(反りの量そのものはほとんど変わらない)。"
+          % (cross if cross else -1.0, cap, tb_list[0], tb_list[-1],
+             f_list[0], f_list[-1], f_list[-1] / f_list[0]))
 
     figs.save_plot("peel_profile",
                    [("dx = %.2f mm" % dxs[-1], keep["x"], keep["stress"]),
