@@ -1026,15 +1026,13 @@ def section_sweep_dt(clear: np.ndarray) -> dict:
     print("\n   Δt [s]   " + "  ".join("%-9s" % k for k in LOSS_TYPES)
           + "  ゼロ点 [s]")
     for dt in dts:
-        r = pipeline(dt_meas=dt, clear=clear)
-        s = r["score"]
-        zeros.append(r["zero"])
+        rr, z, _ = rates(clear, dt_meas=dt)
+        zeros.append(z)
         line = "   %5.2f   " % dt
         for k in LOSS_TYPES:
-            v = s["hit"][k] / max(s["tot"][k], 1)
-            rec[k].append(v)
-            line += "%-9s" % ("%d/%d" % (s["hit"][k], s["tot"][k]))
-        print(line + "  %8.1f" % r["zero"])
+            rec[k].append(rr[k])
+            line += "%-9s" % ("%.2f" % rr[k])
+        print(line + "  %8.1f" % z)
 
     print("\n   種類            予測の崖 [s]   実測の崖 [s]   ずれ")
     rows = []
