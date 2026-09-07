@@ -679,10 +679,11 @@ def section_breakdown(rig: Rig) -> dict:
             out[(cname, r)] = m
             rows.append([cname, r, "%.4f" % m["iou"], "%.4f" % m["prec"],
                          "%.4f" % m["rec"], str(m["fp"]), str(m["fn"]),
-                         "%.3f m" % m["fp_dist"]])
+                         "%.3f m" % m["fp_dist"], "%.3f" % m["fp_far"]])
             print("   %-16s %-8s %.4f   %.4f   %.4f   %5d   %5d   %8.3f m"
+                  "        %.3f"
                   % (cname, r, m["iou"], m["prec"], m["rec"], m["fp"], m["fn"],
-                     m["fp_dist"]))
+                     m["fp_dist"], m["fp_far"]))
 
     mx = out[("yaw 1.00 度", "max")]
     mn = out[("yaw 1.00 度", "mean")]
