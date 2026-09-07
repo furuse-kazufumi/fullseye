@@ -492,10 +492,16 @@ def section_phase() -> dict:
                    [("2 値化", slopes, sd_b), ("積分法", slopes, sd_i)],
                    xlabel="ひび割れの傾き dy/dx", ylabel="期ごとの散らばり σ [mm]",
                    kinds=["scatter", "scatter"],
-                   title="据え直しの半画素がどれだけ跳ねるか(幅は凍結)",
+                   title="据え直しの半画素がどれだけ跳ねるか(幅は凍結、崖の予測 %.4f)"
+                         % m_crit,
                    caption="傾きが 0 に近いほど列方向の画素位相が揃い、2 値化は"
                            "画面ごと 1 画素単位で跳ぶ。積分法は傾きに無反応。")
-    return {"slopes": slopes, "sd_int": sd_i, "sd_bin": sd_b}
+    figs.save_table("phase_tbl",
+                    ["傾き dy/dx", "区間での上下差", "積分法 σ mm", "2 値化 σ mm"],
+                    rows, title="画素位相が混ざる崖(予測 %.4f = 1/%.0f 列)"
+                                % (m_crit, span))
+    return {"slopes": slopes, "sd_int": sd_i, "sd_bin": sd_b, "m_crit": m_crit,
+            "drop": (min(drop) if drop else float("nan"))}
 
 
 # --------------------------------------------------------------------------- #
