@@ -540,14 +540,16 @@ def section_bivariate() -> dict:
     n = 200
     y, x = np.mgrid[0:n, 0:n]
     # 重み(観測点の密度): 左が密、右が疎
-    weight = np.clip(1.0 - 0.9 * (x / (n - 1.0)), 0.1, 1.0)
+    weight = np.clip(1.0 - 0.96 * (x / (n - 1.0)), 0.04, 1.0)
     # 真の異常は密な側に 1 つだけ
-    truth = 3.0 * np.exp(-(((x - 55) ** 2 + (y - 100) ** 2) / (2 * 12.0 ** 2)))
-    noise = rng.standard_normal((n, n)) * 0.35 / np.sqrt(weight)
+    truth = 3.0 * np.exp(-(((x - 45) ** 2 + (y - 100) ** 2) / (2 * 8.0 ** 2)))
+    noise = rng.standard_normal((n, n)) * 0.30 / np.sqrt(weight)
     value = truth + noise
-    is_true = truth > 1.0
+    is_true = truth > 1.5
     k = int(is_true.sum())
-    print("  真の異常 %d 画素(密な側)。雑音は 1/√重みで大きくなる。" % k)
+    print("  真の異常 %d 画素(密な側)。雑音は 1/√重みで大きくなる"
+          "(左 σ=%.2f / 右 σ=%.2f)。"
+          % (k, 0.30, 0.30 / np.sqrt(0.04)))
 
     plain = np.asarray(fs.apply_cmap(value, "viridis", vmin=0.0, vmax=3.5))
     biv = np.asarray(fs.colorize_bivariate(value, weight, "viridis",
