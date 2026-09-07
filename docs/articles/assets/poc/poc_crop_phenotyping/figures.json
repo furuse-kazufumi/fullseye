@@ -121,7 +121,7 @@
  {
   "file": "12_leaf_angle_dist.png",
   "name": "leaf_angle_dist",
-  "caption": "",
+  "caption": "最上面は水平な葉に偏る(真値より左)。推定法線はさらに散らばり、面積加重を掛けると雑音が増幅される。",
   "shape": [
    360,
    560,

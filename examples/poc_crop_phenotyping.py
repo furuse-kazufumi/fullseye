@@ -1048,11 +1048,19 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
           " %s ずれる。" % (rows[-1][0], rows[-1][5]))
 
     order = np.argsort(inc)
+    inc_ref = np.degrees(np.arccos(np.clip(nz_ref, 0.0, 1.0)))
+    inc_est = np.degrees(np.arccos(np.clip(nz_est, 0.0, 1.0)))
     figs.save_plot("leaf_angle_dist",
-                   [("面積加重(face_areas)", inc[order], np.cumsum(ar[order]) / ar.sum()),
-                    ("面の数だけで数える", np.sort(inc), np.linspace(0, 1, inc.size))],
+                   [("真値(mesh を face_areas で面積加重)", inc[order],
+                     np.cumsum(ar[order]) / ar.sum()),
+                    ("最上面の真の法線", np.sort(inc_ref),
+                     np.linspace(0, 1, inc_ref.size)),
+                    ("点群から推定した法線", np.sort(inc_est),
+                     np.linspace(0, 1, inc_est.size))],
                    xlabel="葉の傾き [度](水平 = 0)", ylabel="累積割合",
-                   title="面ごとの面積で重みを付けるかどうかで葉角分布が変わる")
+                   title="葉角分布は見えている層からは復元できない",
+                   caption="最上面は水平な葉に偏る(真値より左)。推定法線はさらに"
+                           "散らばり、面積加重を掛けると雑音が増幅される。")
     figs.save_table("fpar", ["太陽天頂角 [度]", "真の k(theta)", "球形仮定の k",
                              "fPAR(真の葉角)", "fPAR(球形仮定)", "誤差"], rows,
                     title="受光(fPAR)は天頂では k に鈍く、斜めで効く",
