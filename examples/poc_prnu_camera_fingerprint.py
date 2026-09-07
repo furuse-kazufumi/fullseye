@@ -471,37 +471,66 @@ def resize_roundtrip(im: np.ndarray, s: float) -> np.ndarray:
 
 def section_resize(fp: np.ndarray, queries: dict, clean: dict) -> dict:
     print("\n" + "=" * 78)
-    print("5) 検査画像を縮小して戻してから照合(予想: 0.5× は 2×2 箱平均で相関 1/2 → PCE 25 %)")
+    print("5) 検査画像を縮小して戻してから照合")
+    print("   予想: 0.5× は 2×2 箱平均で K との相関が 1/2 → PCE 25 %。非整数倍(0.9×)は"
+          "画素位置が合わないので 0.5× より致命的")
     print("=" * 78)
     base_same = float(np.median(clean["same"]))
+    k_true = cams_k = fp_true_k(fp)      # 真の K(幾何の上限を測るためだけに使う)
     scales = [1.0, 0.95, 0.9, 0.75, 0.5]
-    rows, aucs, ratios = [], [], []
+    rows, aucs, ratios, geo, ext = [], [], [], [], []
+    probe = queries["A"][0]
+    w_clean = probe - np.asarray(fs.apply(probe, "xsp_wiener", a=0.0))
+    rho_clean = corr(w_clean, probe * k_true)
     for s in scales:
         ps, o_s = match([resize_roundtrip(im, s) for im in queries["A"]], fp)
         pd, _ = match([resize_roundtrip(im, s) for im in queries["B"]], fp)
         au = auc(ps, pd)
         ratio = float(np.median(ps)) / base_same
+        # 幾何の上限: K 自身を同じ往復に通したときの K との相関²(PCE ∝ 相関²)
+        k_rt = (resize_roundtrip(0.5 + 10.0 * k_true, s) - 0.5) / 10.0
+        g = corr(k_rt, k_true) ** 2
+        # 残差抽出まで含めた予測: 往復後の写真から取った残差と I·K の相関²(清浄比)
+        p_rt = resize_roundtrip(probe, s)
+        w_rt = p_rt - np.asarray(fs.apply(p_rt, "xsp_wiener", a=0.0))
+        e = (corr(w_rt, p_rt * k_true) / rho_clean) ** 2
         rows.append(("%.2f×" % s, "%.0f" % np.median(ps), "%.1f" % np.median(pd), "%.3f" % au,
-                     "%.1f %%" % (100 * ratio), "%d/%d" % (o_s, N_QUERY)))
+                     "%.1f %%" % (100 * ratio), "%.0f %%" % (100 * g), "%.1f %%" % (100 * e),
+                     "%d/%d" % (o_s, N_QUERY)))
         aucs.append(au)
         ratios.append(ratio)
-        print("  %.2f×  PCE 同一 %6.0f / 別 %5.1f  AUC %.3f  PCE 比 %5.1f %%  (0,0) %d/%d" % (
-            s, np.median(ps), np.median(pd), au, 100 * ratio, o_s, N_QUERY))
-    r05, r09 = ratios[scales.index(0.5)], ratios[scales.index(0.9)]
-    print("  ★0.5× の実測 %.1f %%(予想 25 %%)—— 半画素の重心ずれで位置合わせが崩れる。"
-          "0.9× は %.1f %%(AUC %.3f)で、偶数倍より非整数倍のほうが致命的。" % (
-              100 * r05, 100 * r09, aucs[scales.index(0.9)]))
-    assert r05 < 0.25, r05
-    assert aucs[scales.index(0.9)] < 0.8, aucs
+        geo.append(g)
+        ext.append(e)
+        print("  %.2f×  PCE 同一 %6.0f / 別 %5.1f  AUC %.3f  PCE 比 %5.1f %%  幾何の上限 %3.0f %%  "
+              "残差抽出後 %4.1f %%  (0,0) %d/%d" % (
+                  s, np.median(ps), np.median(pd), au, 100 * ratio, 100 * g, 100 * e, o_s, N_QUERY))
+    i05, i09 = scales.index(0.5), scales.index(0.9)
+    print("  ★予想は 2 つとも外れた。0.5× の実測 %.1f %%(予想 25 %%、幾何の上限は %.0f %% で"
+          "予想どおり)—— 消したのは幾何ではなく**残差抽出器**。縮小で K が 2×2 に"
+          "なまると、デノイザがそれを『被写体』として取り去る(残差抽出後 %.1f %%)。" % (
+              100 * ratios[i05], 100 * geo[i05], 100 * ext[i05]))
+    print("  ★0.9× は %.0f %%・AUC %.3f・ピーク (0,0) %d/%d で、非整数倍のほうが**安全**。"
+          "双一次の往復は位置を保つ低域通過で、指紋の高域が半分残る。" % (
+              100 * ratios[i09], aucs[i09], int(rows[i09][-1].split("/")[0]), N_QUERY))
+    print("  判定(AUC)が落ちるのは 0.5× だけ(%.3f)。位置がずれ始める((0,0) %s)のもそこから。"
+          % (aucs[i05], rows[i05][-1]))
+    assert ratios[i05] < 0.05 and geo[i05] > 0.15, (ratios[i05], geo[i05])
+    assert abs(ext[i05] - ratios[i05]) < 0.03, (ext[i05], ratios[i05])
+    assert aucs[i09] > 0.95 and ratios[i09] > 0.25, (aucs[i09], ratios[i09])
+    assert aucs[i05] < 0.95, aucs[i05]
 
-    figs.save_table("resize_sweep", ["倍率", "PCE 同一", "PCE 別", "AUC", "PCE 比(清浄=100)", "ピーク (0,0)"],
-                    rows, title="縮小して戻すと指紋はどこまで残るか")
+    figs.save_table("resize_sweep",
+                    ["倍率", "PCE 同一", "PCE 別", "AUC", "PCE 比(清浄=100)", "幾何の上限", "残差抽出後の予測", "ピーク (0,0)"],
+                    rows, title="縮小して戻すと指紋はどこまで残るか",
+                    caption="幾何の上限 = K 自身を同じ往復に通した相関²。残差抽出後 = 往復した写真の残差と I·K の相関²(清浄比)。")
     figs.save_plot("resize_cliff",
                    [("PCE 比 実測 [%]", scales, [100 * r for r in ratios]),
+                    ("幾何の上限 [%]", scales, [100 * g for g in geo]),
+                    ("残差抽出後の予測 [%]", scales, [100 * e for e in ext]),
                     ("AUC × 100", scales, [100 * a for a in aucs])],
                    xlabel="縮小倍率 [-]", ylabel="[%]",
-                   title="縮小の崖: 0.95× でもう半分、0.9× で判定不能")
-    return {"scales": scales, "auc": aucs, "ratio": ratios}
+                   title="縮小の崖: 幾何は 20 % 残すのに、残差抽出器が 2 % に削る(0.5×)")
+    return {"scales": scales, "auc": aucs, "ratio": ratios, "geo": geo, "ext": ext}
 
 
 # --------------------------------------------------------------------------- #
