@@ -373,10 +373,8 @@ def scan(surf: dict, seed: int = SEED, dropout: float = 0.0, dropout_mode: str =
                 hit |= ok & (t > 1e-3) & (t < r - 1e-3)
             vis &= ~(hit & ~own)
         # 見込みの奥の面は開口を通してしか見えない
-        for eid, wall_x, rect, axis in ((WINR, RX, (WIN_U[0], WIN_U[1],
-                                                    WIN_V[0] + WIN_DZ, WIN_V[1] + WIN_DZ), 0),
-                                        (DOORR, 0.0, (DOOR_U[0] + DOOR_DX, DOOR_U[1] + DOOR_DX,
-                                                      DOOR_V[0], DOOR_V[1]), 1)):
+        for eid, wall_x, rect, axis in ((WINR, RX, surf.get("win", (0, 0, 0, 0)), 0),
+                                        (DOORR, 0.0, surf.get("door", (0, 0, 0, 0)), 1)):
             m = E == eid
             if not m.any():
                 continue
