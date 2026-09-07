@@ -63,7 +63,7 @@ _INBAND = (FREQS >= BAND[0]) & (FREQS <= BAND[1])
 
 def make_records(snr_db: float, seed: int, x_leak: float = X_LEAK,
                  pipe=PIPE_UNIFORM, echo: float = 0.0,
-                 alpha: float = ALPHA_DB_1KHZ) -> dict:
+                 alpha: float = ALPHA_DB_1KHZ, echo_m=ECHO_M) -> dict:
     """2 点の記録を合成する。**遅れも減衰も反射も雑音の密度も既知**。
 
     源は「帯域内で振幅が平坦・位相が一様乱数」の広帯域雑音(漏水の噴流音)。
