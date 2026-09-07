@@ -958,12 +958,17 @@ def section_controls(ref: CadRef) -> dict:
         rms = 1000 * float(np.sqrt(np.mean((s - sc["dev_true"]) ** 2)))
         a_est = out_of_tol_area(s, sc["w"])
         a_tru = out_of_tol_area(sc["dev_true"], sc["w"])
-        da = 100 * (a_est - a_tru) / max(a_tru, 1e-9)
+        # ★真値が 0 の対照群で「%」を出すと 0 割りで意味の無い巨大な数になる。
+        #   面積は mm^2 のまま並べ、%は真値が意味を持つときだけ添える。
+        da = ("%.1f / %.1f (%+.1f %%)" % (a_est, a_tru,
+                                          100 * (a_est - a_tru) / a_tru)
+              if a_tru > 1.0 else "%.1f / %.1f" % (a_est, a_tru))
         rows.append([name, str(len(sc["pts"])), "%.0f" % sc["area_seen"],
-                     "%.4f" % e, "%.1f" % rms, "%+.1f %%" % da])
-        print("   %-28s %6d %12.0f %9.4f %11.1f  %+12.1f %%"
+                     "%.4f" % e, "%.1f" % rms, da])
+        print("   %-28s %6d %12.0f %9.4f %11.1f  %s"
               % (name, len(sc["pts"]), sc["area_seen"], e, rms, da))
-        out[name] = {"e": e, "rms": rms, "da": da, "area": sc["area_seen"]}
+        out[name] = {"e": e, "rms": rms, "a_est": a_est, "a_tru": a_tru,
+                     "area": sc["area_seen"]}
     print("\n   ★欠測は姿勢を %.1f 倍に引くが、効きは小さい。危ないのは"
           % (out["欠測: 片側スキャン"]["e"] / max(out["基準: 欠陥 + 雑音"]["e"], 1e-9)))
     print("      **測れなかった %.0f mm^2(%.1f %%)を『公差内』と書くこと**。"
