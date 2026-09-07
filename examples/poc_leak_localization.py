@@ -415,6 +415,9 @@ def section_snr_cliff() -> dict:
              float(np.sqrt(L_M ** 2 / 12.0 + (X_LEAK - L_M / 2.0) ** 2))))
     print("  予測 C: 整数ピークは c/(2fs) = %.3f m に量子化され、RMS は"
           " %.4f m を下回れない。" % (QUANT_M, QUANT_M / np.sqrt(12.0)))
+    print("          ★ただしこれは**漏水位置を振ったときの** RMS。位置を 1 つに"
+          "固定すると\n          真の遅延の小数部も固定なので、量子化誤差は"
+          "乱数ではなく**一定の偏り**になる。")
 
     # 数値の CRLB が閉形式と一致することを、減衰を切った場面で確かめておく
     flat_chk = crlb_sigma_x(make_records(0.0, SEED, alpha=0.0))
