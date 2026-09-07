@@ -721,8 +721,9 @@ def section_outer_blindness(cells, recs) -> dict:
     x_mm = (np.arange(NW) + 0.5) * SX
 
     def _hprof(o):
+        """端板の面内だけ(側壁の列は缶が丸ごと写るので外す)。"""
         h = o["height"][ND // 2]
-        k = np.isfinite(h)
+        k = np.isfinite(h) & o["panel"][ND // 2]
         return x_mm[k], h[k]
 
     figs.save_plot("outer_profile",
