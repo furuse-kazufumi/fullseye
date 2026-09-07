@@ -1224,29 +1224,35 @@ def section_prism_and_crack(sc: dict) -> dict:
         sl = 4.0 * cval / LSPAN
         cam_l.append(1e3 * cval)
         dx_l.append(abs(float(eff[0])))
-        rows.append(["%.0f" % (1e3 * cval), "%.5f" % sl,
-                     "%.2e" % (nx2 / d.shape[0]), "%.3f" % (rmse / math.sqrt(nx2)),
+        design = sl ** 2 / 3.0                      # mean c'(x)² = (4C/L)²/3
+        meas = nx2 / d.shape[0]
+        nx2_pair.append((design, meas))
+        rows.append(["%.0f" % (1e3 * cval), "%.5f" % sl, "%.2e" % design,
+                     "%.2e" % meas, "%.3f" % (rmse / math.sqrt(nx2)),
                      "%.4f" % (rmse / math.sqrt(nz2)), "%.2f" % abs(eff[0]),
                      "%.2f" % float(np.linalg.norm(eff[1:]))])
-        print("      %12.0f %11.5f %10.2e %12.3f %13.4f %13.2f %10.2f"
-              % (1e3 * cval, sl, nx2 / d.shape[0], rmse / math.sqrt(nx2),
+        print("      %12.0f %11.5f %12.2e %14.2e %13.3f %8.4f %12.2f %9.2f"
+              % (1e3 * cval, sl, design, meas, rmse / math.sqrt(nx2),
                  rmse / math.sqrt(nz2), abs(eff[0]),
                  float(np.linalg.norm(eff[1:]))))
     _CAMBER[0] = CAMBER
-    print("      ★予測 σ_x は予測 σ_z の %.0f 〜 %.0f 倍 —— **1 方向だけが桁違いに"
-          "決まらない**。実測もそのとおりで、\n         x の残差 %.2f 〜 %.2f mm に対し"
-          " y・z は %.2f 〜 %.2f mm。"
-          % (float(rows[0][3]) / float(rows[0][4]),
-             float(rows[-1][3]) / float(rows[-1][4]),
-             min(dx_l), max(dx_l), min(float(r[6]) for r in rows),
-             max(float(r[6]) for r in rows)))
-    print("      ★予想は「x の残差もキャンバーに反比例して %.0f 倍になる」だった。"
-          "**外れ** —— 実測は %.2f, %.2f, %.2f mm と\n         単調ですらない。"
-          "情報がほとんど無い方向では、残差は**その方向の偶然の非対称**で決まり、"
-          "\n         上限は仕込んだ誤差 %.1f mm(ICP が x を一度も動かさない場合)。"
-          "崖の底は「際限なくずれる」ではなく\n         「合わせが x について何も"
-          "言わなくなる」ところにある。"
-          % (cam_l[0] / cam_l[-1], dx_l[0], dx_l[1], dx_l[2], ceil_x))
+    dyz = max(float(r[7]) for r in rows)
+    print("      ★★予想は「x の情報はキャンバーから来るので、キャンバーを %.0f 分の 1"
+          "にすれば x が %.0f 倍決まらなくなる」\n         だった。**外れ**: "
+          "推定法線の n_x² は %.2e 〜 %.2e で**キャンバーにまったく反応しない**。"
+          % (cam_l[0] / cam_l[-1], cam_l[0] / cam_l[-1],
+             min(m for _, m in nx2_pair), max(m for _, m in nx2_pair)))
+    print("         設計形状の値(%.2e 〜 %.2e)より %.0f 〜 %.0f 倍大きい ——"
+          " **法線推定の雑音が、幾何より桁で大きな\n         「見かけの情報」を"
+          "作っている**。ICP は x を決めたつもりになるが、決めているのは雑音のほう。"
+          % (min(dd for dd, _ in nx2_pair), max(dd for dd, _ in nx2_pair),
+             min(m / dd for dd, m in nx2_pair), max(m / dd for dd, m in nx2_pair)))
+    print("      ★その結果、実測の x 残差は %.2f, %.2f, %.2f mm と**単調ですらない**"
+          "(y・z は %.2f mm 以下)。\n         雑音由来の情報は**独立でも不偏でもない**"
+          "ので、予測 σ_x %.2f mm より実測が大きく出る。\n         上限は仕込んだ誤差"
+          " %.1f mm(ICP が x を一度も動かさない場合)—— 崖の底は「際限なくずれる」"
+          "\n         ではなく「合わせが x について何も言わなくなる」ところにある。"
+          % (dx_l[0], dx_l[1], dx_l[2], dyz, float(rows[0][4]), ceil_x))
 
     # --- その x はどこに嘘として出るか --------------------------------------- #
     print("\n      その残差は**どこに嘘として出るか**。支承(円柱)の位置を"
@@ -1314,8 +1320,8 @@ def section_prism_and_crack(sc: dict) -> dict:
           "限り気づけない** —— \n         決まらなかった成分・吸われた成分は、"
           "それに感度を持つ**小さな部品にだけ**現れる。")
     figs.save_table("prism",
-                    ["キャンバー mm", "端の勾配", "Σn_x²/N", "予測 σ_x mm",
-                     "予測 σ_z mm", "実測 x mm", "実測 y,z mm"], rows,
+                    ["キャンバー mm", "端の勾配", "設計 n_x²", "推定法線 n_x²",
+                     "予測 σ_x mm", "予測 σ_z mm", "実測 x mm", "実測 y,z mm"], rows,
                     title="橋軸方向がどれだけ決まるかは、反りの勾配で決まる",
                     caption="押し出し形状の平面は法線に x 成分を持たない。"
                             "x を拘束するのはキャンバーの傾きだけ。")
@@ -1354,9 +1360,8 @@ def section_prism_and_crack(sc: dict) -> dict:
           "      雑音が 10 倍になる —— **薄まりと雑音は同じつまみの両端**。")
     return {"dx_all": dx_all, "dx_grd": dx_grd, "hw": hw_l, "pred": pred_l,
             "num": num_l, "need": need, "cam": cam_l, "fake_h": fake_h,
-            "ceil": ceil_x, "settle": settle_read, "dx": dx_l,
-            "dyz": max(float(r[6]) for r in rows),
-            "sig_ratio": float(rows[0][3]) / float(rows[0][4])}
+            "ceil": ceil_x, "settle": settle_read, "dx": dx_l, "dyz": dyz,
+            "nx2": nx2_pair}
 
 
 # --------------------------------------------------------------------------- #
