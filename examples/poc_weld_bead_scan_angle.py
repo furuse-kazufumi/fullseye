@@ -989,39 +989,62 @@ def section7_calibration(p: dict, tru: dict, design: dict) -> dict:
     return {"rows": rows, "got": gotv, "predict": predict}
 
 
-def section8_occlusion_map(pf: dict) -> dict:
-    print()
-    print("=" * 78)
-    print("8) ★遮蔽の地図 —— 法線から描くと投げかけ影が落ちる")
-    print("=" * 78)
-    h = profile_h(X, pf)
-    step = 10                                    # 列を 10 本おき -> Δx = 0.5 mm
-    dy = Y_MM / h.shape[0]
-    dx = step / M_PX_MM
+def _normal_map(step: int, n_y: int):
+    """等方格子の高さ場 → 法線 (:func:`fullseye.ledger.normals_from_depth`)。
+
+    正射版は **1 画素 = 1 単位**と決め打つので、Δx ≠ Δy の生の走査格子を
+    そのまま渡すと傾きが黙って倍率ぶんずれる。列を ``step`` 本おきに取り、
+    断面の本数を合わせて Δx = Δy にしてから、高さをその刻みで割って渡す。
+    """
+    pm = bead_params(y_grid(n_y))
+    h = profile_h(X, pm)
+    dx, dy = step / M_PX_MM, Y_MM / n_y
     assert abs(dx - dy) < 1e-9, (dx, dy)
-    depth = (-h[:, ::step]) / dx                 # ★等方格子・1 画素 = 1 単位へ
-    nrm = np.asarray(fs.ledger.normals_from_depth(depth))
+    nrm = np.asarray(fs.ledger.normals_from_depth((-h[:, ::step]) / dx))
     n = nrm / np.maximum(np.linalg.norm(nrm, axis=2, keepdims=True), 1e-12)
     n = n * np.sign(-n[..., 2:3] + 1e-15)        # 高さ方向(+h)を向くよう揃える
-    nx, nz = n[..., 0], -n[..., 2]
-    print("  %6s %16s %16s %10s" % ("θ", "法線で背向き", "水平線で不可視", "差"))
-    print("  " + "-" * 52)
-    rows = []
-    for a in (25.0, 35.0, 45.0, 55.0, 65.0):
-        th = np.deg2rad(a)
-        back = float(((nx * np.sin(th) + nz * np.cos(th)) < 0.0).mean())
-        hid = float((~visible(h, a))[:, ::step].mean())
-        rows.append((a, back, hid))
-        print("  %6.0f %15.1f %% %15.1f %% %9.1f pp"
-              % (a, 100 * back, 100 * hid, 100 * (hid - back)))
+    return n, h, dx
+
+
+def section8_occlusion_map() -> dict:
     print()
-    print("  → 法線は**自己遮蔽(背を向けた面)**しか見ない。水平線の規則は")
-    print("     **投げかけ影**(手前の盛り上がりが奥を隠す)も入るので必ず多い。")
-    print("  → ★格子間隔が等方でないと正射版 `normals_from_depth` は黙って")
-    print("     間違える(1 画素 = 1 単位と決め打つ)。生の走査格子は")
-    print("     Δx = %.3f mm・Δy = %.3f mm なので、10 列おきに間引いて"
-          % (1.0 / M_PX_MM, dy))
-    print("     Δx = Δy = %.1f mm に揃えてから渡している。" % dx)
+    print("=" * 78)
+    print("8) ★遮蔽の地図 —— 法線は自己遮蔽だけ、投げかけ影は水平線でしか出ない")
+    print("=" * 78)
+    print("  格子の細かさを 2 通りで比べる(法線は**局所差分**なので、稜線を")
+    print("  またぐ 1 セルが平均化されると背向きの判定がぶれる)。")
+    print()
+    rows = []
+    for step, n_y in ((10, 60), (2, 300)):
+        n, h, dx = _normal_map(step, n_y)
+        nx, nz = n[..., 0], -n[..., 2]
+        print("  格子 %.1f mm 角(%d x %d)" % (dx, n.shape[0], n.shape[1]))
+        print("  %6s %16s %16s %10s" % ("θ", "法線で背向き", "水平線で不可視", "差"))
+        print("  " + "-" * 52)
+        for a in (25.0, 35.0, 45.0, 55.0, 65.0):
+            th = np.deg2rad(a)
+            back = float(((nx * np.sin(th) + nz * np.cos(th)) < 0.0).mean())
+            hid = float((~visible(h, a))[:, ::step].mean())
+            rows.append((dx, a, back, hid))
+            print("  %6.0f %15.1f %% %15.1f %% %9.1f pp"
+                  % (a, 100 * back, 100 * hid, 100 * (hid - back)))
+        print()
+    fine = [r for r in rows if r[0] < 0.2]
+    coarse = [r for r in rows if r[0] > 0.2]
+    print("  → 細かい格子(%.1f mm)では **法線 ⊂ 不可視** が全角度で成り立ち"
+          % fine[0][0])
+    print("     (差 %s pp、すべて正)、余りが**投げかけ影**にあたる。"
+          % " / ".join("%+.1f" % (100 * (r[3] - r[2])) for r in fine))
+    print("  → ★粗い格子(%.1f mm)では θ=%.0f・%.0f 度で符号が反転する"
+          % (coarse[0][0], coarse[3][1], coarse[4][1]))
+    print("     (%+.1f / %+.1f pp)。稜線をまたぐセルの法線が平均化されて"
+          % (100 * (coarse[3][3] - coarse[3][2]), 100 * (coarse[4][3] - coarse[4][2])))
+    print("     背向き側に倒れるため —— **法線で遮蔽を見積もるなら格子の細かさが要る**。")
+    print("  → ★正射版 `normals_from_depth` は 1 画素 = 1 単位と決め打つので、")
+    print("     生の走査格子(Δx = %.3f mm・Δy = %.3f mm)をそのまま渡すと"
+          % (1.0 / M_PX_MM, Y_MM / N_Y_FIG))
+    print("     傾きが 10 倍ずれる。等方に直してから渡すこと。")
+    n, _h, _dx = _normal_map(10, N_Y_FIG)
     return {"rows": rows, "n": n}
 
 
