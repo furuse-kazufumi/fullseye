@@ -583,6 +583,16 @@ def section_multiplicity(sc: dict, z: dict, mv: dict) -> dict:
     print("   + 塊の規則(8 近傍 3 個)  %3d/%3d (%.1f %%)"
           % (int(cl0.sum()), int(ok0.sum()), 100 * cl0.sum() / max(ok0.sum(), 1)))
 
+    # 名目 5 % を下回った。検定が保守的なのか、たまたまか —— z の散らばりで測る。
+    zz = (d0 / np.maximum(l0 / 1.96, 1e-12))[ok0]
+    print("\n  ★実測 %.1f %% は名目 5 %% を下回る。理由を測る: 帰無仮説のもとでの "
+          "z の標準偏差は %.3f(1.0 のはず)。" % (100 * sig0.sum() / max(ok0.sum(), 1),
+                                                float(zz.std(ddof=1))))
+    print("     σ は**面そのものの形と粗さ**を測っているが、面は 2 時期で同じなので"
+          "その大半は差を取ると消える。LoD は雑音を多めに見積もり、検定は保守側に"
+          "倒れる(実測の差の σ %.3f mm vs LoD/1.96 の中央値 %.3f mm)。"
+          % (float(d0[ok0].std(ddof=1)), float(np.nanmedian(l0) / 1.96)))
+
     sig, d, lod = mv["sig"], mv["d"], mv["lod"]
     bh = bh_reject(pvalues(zscore(d, lod)))
     cl = cluster_filter(sig, nx, ny)
