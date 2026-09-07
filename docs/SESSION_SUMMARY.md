@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 13:19:57
+- **最終更新**: 2026-09-07 13:29:07
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+9d46e7b33 auto: poc_river_surface_velocity.py 編集前 (2026-09-07 13:24)
+e6b337513 auto: poc_river_surface_velocity.py 編集前 (2026-09-07 13:24)
 c9090a6fb auto: poc_mri_bias_field.py 編集前 (2026-09-07 13:03)
 60eb24ee4 tests: packaging 検査の改行エスケープ崩れを修正
 039a9ca87 auto: test_packaging_foundation.py 編集前 (2026-09-07 12:29)
@@ -18,24 +20,19 @@ bafa4e07e tests: packaging 検査を 3.10 でも動く形に(tomllib 不要)、_
 5ec15bc46 auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:13)
 1f4a0e3ac auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:13)
 364f8b6fe auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:12)
-33b8cc379 auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:12)
-397f4a070 auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:10)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
- M docs/articles/exhibits/poc_captions.json
- M examples/poc_mri_bias_field.py
- M examples2d.py
-?? docs/articles/assets/poc/poc_mri_bias_field/
+M examples/poc_river_surface_velocity.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-13:14 docs/SESSION_SUMMARY.md
+13:29 examples/poc_river_surface_velocity.py
+13:19 docs/SESSION_SUMMARY.md
 13:14 examples2d.py
 13:14 docs/articles/exhibits/poc_captions.json
 13:13 .pytest_cache/v/cache/nodeids
@@ -49,7 +46,6 @@ M docs/SESSION_SUMMARY.md
 13:10 docs/articles/assets/poc/poc_mri_bias_field/06_methods_table.csv
 13:10 docs/articles/assets/poc/poc_mri_bias_field/06_methods_table.png
 13:10 docs/articles/assets/poc/poc_mri_bias_field/05_amplitude_residual_cv.png
-13:10 docs/articles/assets/poc/poc_mri_bias_field/04_amplitude_sweep_methods.png
 ```
 
 ---
