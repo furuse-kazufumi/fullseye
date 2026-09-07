@@ -864,12 +864,16 @@ def section_resolution(cells, sinos) -> dict:
     print("6) 崖(1) 分解能 —— ボクセルが層厚の何倍で層は融合するか")
     print("=" * 78)
     v_nyq = 0.5 * PITCH
-    print("  ★先に予測する: 層は周期 %.3f mm の縞なので、標本化定理は"
-          " voxel < %.3f mm を要求する。" % (PITCH, v_nyq))
-    print("     電極厚 %.3f mm に対する比では **voxel/層厚 = %.2f が崖**のはず。"
-          % (T_ELEC, v_nyq / T_ELEC))
-    print("     もう 1 つの限界: 再構成のぼけ σ ≈ 0.6 voxel は縞の振幅を"
-          " exp(-2π²σ²/p²) に落とす。")
+    v_gap = 0.5 * GAP
+    print("  ★先に予測を 2 つ立てる(測る前に書く):")
+    print("   予測 A(標本化定理): 層は周期 %.3f mm の縞なので voxel < %.3f mm。"
+          " 電極厚 %.3f mm との比では **voxel/層厚 = %.2f が崖**。"
+          % (PITCH, v_nyq, T_ELEC, v_nyq / T_ELEC))
+    print("   予測 B(狭いほうの特徴): 層を 1 枚ずつ分けるには**隙間 %.3f mm** の"
+          "ほうを 2 標本で跨ぐ必要がある -> voxel < %.3f mm、**比では %.2f**。"
+          % (GAP, v_gap, v_gap / T_ELEC))
+    print("     A は縞が「見える」限界、B は縞を「分ける」限界。**電極厚ではなく"
+          "隙間が効く**なら B が先に来るはず。")
 
     rec = acquire(sinos["gas"])
     truth = cells["gas"]["truth"]
