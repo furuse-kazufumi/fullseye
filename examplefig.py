@@ -39,6 +39,7 @@ figs.save("strain", exx, "ε_xx。±2000 µε で塗り分け", signed=True)
 """
 from __future__ import annotations
 
+import atexit
 import json
 import os
 from pathlib import Path
