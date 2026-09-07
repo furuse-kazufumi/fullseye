@@ -218,6 +218,10 @@ def predict_aabb(n_pts: int = N_WALL, sig: float = SIG) -> dict:
             "width": RW + out_e + out_w + 2.0 * noise}
 
 
+#: 2 つの最大値が同じ点で起きると仮定した上界なので、実測はこれより少し小さい。
+AABB_PRED_IS_UPPER_BOUND = True
+
+
 def section_zero_point() -> dict:
     print("\n" + "=" * 78)
     print("1) ゼロ点 —— 点群の外接直方体(AABB)から内法寸法を出す")
