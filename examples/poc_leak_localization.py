@@ -383,9 +383,13 @@ def section_scene_zero() -> dict:
                    title="相関関数を「掘る場所」の軸で見る(SNR 0 dB)",
                    caption="探索窓は管路 0-%.0f m のぶんだけ。ピークは 1 本しか"
                            "立たないので、ここを見て安心してしまう。" % L_M)
-    figs.save_plot("correlation_zoom", series, xlabel="相関が指す位置 [m]",
-                   ylabel="正規化した相関", xlim=(X_LEAK - 3.0, X_LEAK + 3.0),
-                   ylim=(-0.5, 1.05),
+    zoom = []
+    for label, x, y in series:
+        x, y = np.asarray(x, float), np.asarray(y, float)
+        m = np.abs(x - X_LEAK) <= 3.0
+        zoom.append((label, x[m], y[m]))
+    figs.save_plot("correlation_zoom", zoom, xlabel="相関が指す位置 [m]",
+                   ylabel="正規化した相関",
                    title="同じ相関のピーク近傍(±3 m)",
                    caption="PHAT は白色化で主ローブが細くなる。ただし細いことと"
                            "当たることは別 —— 3 節で反射を入れると分かる。")

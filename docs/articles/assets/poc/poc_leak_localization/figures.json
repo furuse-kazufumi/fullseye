@@ -30,7 +30,17 @@
   ]
  },
  {
-  "file": "04_snr_cliff.png",
+  "file": "04_correlation_zoom.png",
+  "name": "correlation_zoom",
+  "caption": "PHAT は白色化で主ローブが細くなる。ただし細いことと当たることは別 —— 3 節で反射を入れると分かる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_snr_cliff.png",
   "name": "snr_cliff",
   "caption": "縦軸は常用対数。-10 dB のあたりで cm から十 m へ、3 桁飛ぶ。",
   "shape": [
@@ -40,7 +50,7 @@
   ]
  },
  {
-  "file": "05_snr_fine.png",
+  "file": "06_snr_fine.png",
   "name": "snr_fine",
   "caption": "下界に触れる手法は無い。帯域制限が最も近い。",
   "shape": [
@@ -50,7 +60,7 @@
   ]
  },
  {
-  "file": "06_gross_rate.png",
+  "file": "07_gross_rate.png",
   "name": "gross_rate",
   "caption": "",
   "shape": [
@@ -60,7 +70,7 @@
   ]
  },
  {
-  "file": "07_reflection_sweep.png",
+  "file": "08_reflection_sweep.png",
   "name": "reflection_sweep",
   "caption": "",
   "shape": [
@@ -70,7 +80,7 @@
   ]
  },
  {
-  "file": "08_reflection_table.png",
+  "file": "09_reflection_table.png",
   "name": "reflection_table",
   "caption": "",
   "shape": [
@@ -78,11 +88,11 @@
    756,
    3
   ],
-  "csv": "08_reflection_table.csv",
-  "tsv": "08_reflection_table.tsv"
+  "csv": "09_reflection_table.csv",
+  "tsv": "09_reflection_table.tsv"
  },
  {
-  "file": "09_sound_speed_error.png",
+  "file": "10_sound_speed_error.png",
   "name": "sound_speed_error",
   "caption": "相関の形も相関係数も一切変わらない。変わるのは掘る場所だけ。",
   "shape": [
@@ -92,7 +102,7 @@
   ]
  },
  {
-  "file": "10_position_scan.png",
+  "file": "11_position_scan.png",
   "name": "position_scan",
   "caption": "(c) は相関がきれいでも折れ曲がる。単一の音速ではどうやっても直せない。",
   "shape": [
@@ -102,7 +112,7 @@
   ]
  },
  {
-  "file": "11_error_budget.png",
+  "file": "12_error_budget.png",
   "name": "error_budget",
   "caption": "",
   "shape": [
@@ -110,7 +120,7 @@
    469,
    3
   ],
-  "csv": "11_error_budget.csv",
-  "tsv": "11_error_budget.tsv"
+  "csv": "12_error_budget.csv",
+  "tsv": "12_error_budget.tsv"
  }
 ]
