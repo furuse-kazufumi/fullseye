@@ -721,7 +721,7 @@ def section_correction() -> dict:
     # ★パネルごとに正規化されるので、**同じ範囲に切ってから**渡す
     #   (切らないと E0 だけ ±4 mm、他は ±1 mm で塗られて比べられない)。
     def _clip(a):
-        return np.clip(a, -3.0, 3.0)
+        return _big(np.clip(a, -3.0, 3.0), 2)
 
     figs.save_grid("map_corrected", [_clip(m) for m in maps],
                    [n for n, _ in EST], ncols=2, signed=True,
