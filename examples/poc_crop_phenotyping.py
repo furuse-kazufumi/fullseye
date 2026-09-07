@@ -1031,7 +1031,7 @@ def section_volume(can, buf_fine):
         w = width_of(u, can["L"][i], can["W"][i]) * (can["L"][i] / _QN)
         prof_true += np.histogram(z, bins=zc, weights=w)[0]
     prof_true /= PLOT_AREA * (zc[1] - zc[0])
-    prof_occ = occ.sum(axis=(1, 2))
+    prof_occ = occ.sum(axis=(0, 1))                 # 軸 2 が z
     prof_occ = prof_occ / max(prof_occ.max(), 1e-9) * prof_true.max()
     zmid = 0.5 * (zc[1:] + zc[:-1])
     i_pk = int(np.argmax(prof_true))
