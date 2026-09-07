@@ -143,11 +143,9 @@ def test_article_source_images_do_not_ship():
     # 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py
     # (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ
     # 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
-    excl = re.findall(r'"([^"]+)"', re.sub(r"#[^
-]*", "", _section("tool.setuptools.exclude-package-data")))
+    excl = re.findall(r'"([^"]+)"', _nocomment(_section("tool.setuptools.exclude-package-data")))
     assert any("sample_sources_ai" in g for g in excl), (
-        "exclude-package-data に sample_sources_ai が無い —— package-data に書かなくても "
-        "VCS 探索で wheel に乗る: %s" % excl)
+        "exclude-package-data に sample_sources_ai が無い(保険の除外を明示する): %s" % excl)
     # 読み手がいないことを実際に確かめる(コメントの主張と実装をずらさない)
     import glob as _glob
     shipped = ([os.path.join(ROOT, p) for p in ("studio.py", "api.py", "sample_images.py",
