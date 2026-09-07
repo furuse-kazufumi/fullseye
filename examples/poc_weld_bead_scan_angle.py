@@ -1173,20 +1173,21 @@ def make_figures(pf, sw, geo, opt, est2, cal, occ) -> None:
                            "左母材面が背を向け、左側 4 量が「測れない」に落ちる。"))
 
     # ★溝が角度とともに消えていく様子(母材面からの落ち込みで見る)
-    xl = float(_toes(pf)[0][j, 0])
-    zoom = (X > xl - 3.0) & (X < xl + 1.0)
-    ser = [("真値", X[zoom], (h[j] - TL * X)[zoom])]
+    jd = int(np.argmax(pf["d1"]))               # いちばん深い溝の断面を見せる
+    xl = float(_toes(pf)[0][jd, 0])
+    zoom = (X > xl - 2.6) & (X < xl + 0.6)
+    ser = [("真値(深さ %.2f mm)" % pf["d1"][jd], X[zoom], (h[jd] - TL * X)[zoom])]
     for a in (24.0, 32.0, 36.0):
         img, _v = render(pf, a, seed=31)
         hh = to_height(est_centroid(img), a)
         pl, _pr = fit_plates(hh, pf["y"])
         if pl is None:
             continue
-        d = hh[j] - (pl["a"] * X + pl["b"][j])
+        d = hh[jd] - (pl["a"] * X + pl["b"][jd])
         ser.append(("θ = %.0f 度" % a, *_finite(X[zoom], d[zoom])))
     figs.save_plot("undercut_zoom", ser,
                    xlabel="x [mm](左つま先の外側)", ylabel="母材面からの落ち込み [mm]",
-                   title="アンダーカットが角度とともに欠けていく",
+                   title="アンダーカットが角度とともに底から欠けていく",
                    caption="下に凸の谷がアンダーカット。θ を上げると谷の**底から**"
                            "測れなくなり、残った浅い部分だけで深さが決まるので"
                            "静かに浅く出る。")
