@@ -232,9 +232,10 @@ def cylinder_support_area(axis, radius, length, build_dir, cos_c=COS_C):
     return float(radius) * float(length) * 2.0 * float(np.arccos(cos_c / rho))
 
 
-def analytic_support_area(build_dir, cos_c=COS_C, faces=None, drop_baseplate=True):
+def analytic_support_area(build_dir, cos_c=COS_C, faces=None, drop_baseplate=True,
+                          gussets=GUSSETS):
     """解析値のサポート必要面積 [mm^2](造形板に寝ている面は除く)。"""
-    F = analytic_faces() if faces is None else faces
+    F = analytic_faces(gussets) if faces is None else faces
     b = np.asarray(build_dir, np.float64)
     b = b / np.linalg.norm(b)
     smin = min(float(np.dot(c, b)) for _, _, c in F) if drop_baseplate else -np.inf

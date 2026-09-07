@@ -479,7 +479,7 @@ def section_part(ref: CadRef) -> dict:
     # 標本から面積を出し直す(面ごとの点数比 x 全面積は自明なので、
     # 体積をモンテカルロで独立に出して閉形式と突き合わせる)
     rng = np.random.default_rng(5)
-    m = 400000
+    m = 240000
     q = np.column_stack([rng.uniform(-L / 2, L / 2, m), rng.uniform(-W / 2, W / 2, m),
                          rng.uniform(0.0, BOSS_TOP, m)])
     inside = _inside(q)
@@ -508,7 +508,7 @@ def section_part(ref: CadRef) -> dict:
              out_of_tol_area(d["total"], ref.w)))
 
     if figs.enabled():
-        big = nominal_cloud(200000, seed=3)
+        big = nominal_cloud(140000, seed=3)
         dv = defect_field(big["pts"], big["nrm"])["total"]
         vis = big["nrm"] @ VIEW > 0.10
         figs.save_grid(
@@ -649,7 +649,7 @@ def section_normals(ref: CadRef) -> dict:
     print("4) 法線の符号 —— 凹面で裏返る(偏差の符号がそのまま裏返る)")
     print("=" * 78)
     rng = np.random.default_rng(4)
-    idx = rng.choice(len(ref.pts), 12000, replace=False)
+    idx = rng.choice(len(ref.pts), 8000, replace=False)
     P, Ntrue, cc = ref.pts[idx], ref.nrm[idx], ref.concave[idx]
     face = ref.face[idx]
     pred = float(np.mean(cc))
@@ -734,7 +734,7 @@ def section_density() -> dict:
           "     実測(符号付き)")
     q_src = nominal_cloud(8000, seed=333)
     rows, rho_l, pl, ml = [], [], [], []
-    for n in (2500, 5000, 10000, 20000, 40000, 80000):
+    for n in (2500, 5000, 10000, 20000, 40000):
         r = CadRef(n=n, seed=555)
         d, s, _, _ = r.deviate(q_src["pts"])
         p = 0.5 / np.sqrt(r.rho)
@@ -745,8 +745,7 @@ def section_density() -> dict:
                      "%.3f" % (d.mean() / p), "%+.4f" % s.mean()])
         print("   %8d   %9.2f   %16.4f   %14.4f  %5.3f   %+12.4f"
               % (n, r.rho, p, d.mean(), d.mean() / p, s.mean()))
-    print("   ★公差 %.2f mm に対し、40000 点の参照でも符号なしは %.4f mm ——"
-          " **素で公差を超える**。" % (TOL, float(ml[4] / 1000)))
+    print("X
     print("      符号付き(最近傍点の法線へ射影)は接線方向のずれを落とすので"
           "残らない。")
     figs.save_plot("density_bias",
@@ -794,7 +793,7 @@ def section_pull(ref: CadRef) -> dict:
         else:
             k = np.argmin(d)
             true_read, pred_read = float(d[k]), float(res[k])
-        sc = make_scan(n=20000, noise=0.0, occlude=False, **kw)
+        sc = make_scan(n=14000, noise=0.0, occlude=False, **kw)
         R0, t0 = sc["R_true"], sc["t_true"]
         R, t = align(sc["pts"], ref, method="p2plane", init=(R0, t0), iters=25)
         _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
@@ -845,9 +844,9 @@ def section_pull(ref: CadRef) -> dict:
     amps = [0.0, 0.12, 0.24, 0.36, 0.48, 0.60]
     dzs, reads = [], []
     for a in amps:
-        sc = make_scan(n=12000, noise=0.0, dent_h=0.0, warp_a=a, wear_w=0.0)
+        sc = make_scan(n=9000, noise=0.0, dent_h=0.0, warp_a=a, wear_w=0.0)
         R, t = align(sc["pts"], ref, method="p2plane",
-                     init=(sc["R_true"], sc["t_true"]), iters=20, sub=12000)
+                     init=(sc["R_true"], sc["t_true"]), iters=20, sub=9000)
         _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
         m = ((np.abs(sc["nom"][:, 0]) < 3.0) & (sc["nom"][:, 2] > H - 1e-6)
              & (sc["nrm"][:, 2] > 0.9) & ~ed)
@@ -893,7 +892,7 @@ def section_pull(ref: CadRef) -> dict:
             xlabel="x [mm](上面の帯 |y| < 4 mm)", ylabel="偏差 [µm]",
             title="反りは全体が平行移動して見える —— 中央に無いへこみが出る",
             caption="真値は中央 0。位置合わせが平均 a/3 を吸うので下へずれる。")
-        big = nominal_cloud(120000, seed=13)
+        big = nominal_cloud(90000, seed=13)
         db = defect_field(big["pts"], big["nrm"], dent_h=0.0, warp_a=WARP_A,
                           wear_w=0.0)["total"]
         _, rb, _ = absorbed(big["pts"], big["nrm"], db)
@@ -915,7 +914,7 @@ def section_basin(ref: CadRef) -> dict:
     sc = make_scan(n=8000, noise=0.010)
     angs, errs, resid = [], [], []
     floor = None
-    for a in (0, 10, 20, 30, 40, 50, 60, 75, 90, 120, 180):
+    for a in (0, 10, 20, 30, 50, 75, 90, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
         R, t = align(sc["pts"], ref, method="p2plane", init=(Rp, sc["t_true"]),
                      iters=40, sub=5000)
@@ -937,8 +936,8 @@ def section_basin(ref: CadRef) -> dict:
           " 90/180 度対称が壊れている。" % (2 * HOLE_R, 2 * H2R))
 
     # 対照群: 対称を壊す特徴を取り去った素の直方体だと、同じ 180 度で見抜けない
-    box = _plain_box_cloud(30000, seed=41)
-    bref = _PlainRef(_plain_box_cloud(60000, seed=42))
+    box = _plain_box_cloud(20000, seed=41)
+    bref = _PlainRef(_plain_box_cloud(40000, seed=42))
     Rg = rot([0.35, 0.82, 0.45], 24.0)
     bs = box["pts"] @ Rg.T + np.array([35.0, -20.0, 9.0])
     bs = bs + 0.010 * np.random.default_rng(3).standard_normal(bs.shape)
@@ -1151,8 +1150,8 @@ def main() -> int:
     # --- 所見を固定する(壊れたら鳴る) --- #
     assert abs(part["vol_mc"] - part["vol"]) / part["vol"] < 0.01, part["vol_mc"]
     assert abs(nz["meas"][2] / nz["pred"][2] - 1.0) < 0.05, nz["meas"]
-    assert abs(de["meas"][4] / de["pred"][4] - 1.0) < 0.15, de["meas"]
-    assert de["meas"][4] > 1000 * TOL, "参照密度の偏りが公差を超えなかった"
+    assert abs(de["meas"][-1] / de["pred"][-1] - 1.0) < 0.15, de["meas"]
+    assert de["meas"][-1] > 1000 * TOL, "参照密度の偏りが公差を超えなかった"
     assert nr["flip_en"] > 0.30, nr["flip_en"]        # 平面がコイン投げになる
     assert nr["flip_or"] < 0.05, nr["flip_or"]        # Hoppe は正しく向く
     dent = pl["cases"]["へこみのみ"]

@@ -124,5 +124,17 @@
    560,
    3
   ]
+ },
+ {
+  "file": "13_self_intersection.png",
+  "name": "self_intersection",
+  "caption": "頂点 6 個だけを内側へ押した。形は壊れているのに水密・多様体・χ はすべて健全のまま。",
+  "shape": [
+   176,
+   616,
+   3
+  ],
+  "csv": "13_self_intersection.csv",
+  "tsv": "13_self_intersection.tsv"
  }
 ]
