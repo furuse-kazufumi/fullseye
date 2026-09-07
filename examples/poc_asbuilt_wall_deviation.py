@@ -594,7 +594,7 @@ def section_bulge() -> dict:
     cross = [s for s, p in zip(sigs, peak_c) if p < floor]
     print("  ★★崖は「吸われる量」ではなく**雑音の床と交わる所**にある。"
           "予測は残差 < %.2f mm、\n     つまり σ >= %.2f m。そこから先の読み"
-          "(%.2f mm)は**中身が全部雑音**で、\n     ふくらみが 9 mm あっても"
+          "(%.2f mm)は**中身が全部雑音**で、\n     ふくらみが 9 mm あっても "
           "0 mm あっても同じ数字が出る(床 %.2f mm)。"
           % (floor, cross[0] if cross else float("nan"),
              peak_m[-1], floor))
