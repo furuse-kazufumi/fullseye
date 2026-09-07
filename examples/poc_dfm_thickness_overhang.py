@@ -497,8 +497,8 @@ def section_reach():
     print("   h [mm]  測ったスロット幅   上限半径   r=0.60 の判定   r=0.80 の判定")
     hs, meas, verdicts = [], [], []
     for h in (0.125, 0.1875, 0.25, 0.375, 0.5, 0.625):
-        _, occ, _, _ = coupon(h)
-        rmax = slot_radius(occ, h)
+        _, occ, _, _, g = coupon(h)
+        rmax = slot_radius(occ, g, h)
         w = 2.0 * rmax
         v06 = "入る" if rmax >= 0.60 else "入らない"
         v08 = "入る" if rmax >= 0.80 else "入らない"
