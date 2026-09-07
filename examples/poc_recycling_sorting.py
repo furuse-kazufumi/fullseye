@@ -725,11 +725,15 @@ def section_mixed(ab: dict, pair) -> dict:
     print("=" * 78)
 
     geo, cube, det = ab["geo"], ab["cube"], ab["det"]
-    pred = classify(cube, "d2", pair)
+    pred = classify(cube, "d2w", pair)
     all_s = score(geo, pred, det)
     pure_s = score(geo, pred, det, only_pure=True)
     print("  材質別再現率の平均: 全画素 %.3f / 境界を捨てる %.3f"
           % (all_s["macro"], pure_s["macro"]))
+    # 境界画素の割合は材質ごとに違う(小さい破片ほど高い)。
+    print("   材質ごとの境界の割合 [%]: " + "  ".join(
+        "%s %.0f" % (n, 100 * float((~geo["pure"])[geo["truth"] == i + 1].mean()))
+        for i, n in enumerate(FRAG_NAMES)))
 
     # 面積基準の組成(工程が見る数字)。真値は**全面積**(隠れた分も含む)。
     truth_area = np.zeros(K)
