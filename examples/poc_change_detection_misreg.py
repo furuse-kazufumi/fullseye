@@ -1038,8 +1038,8 @@ def main() -> int:
     print("まとめ")
     print("=" * 78)
     d = sh["deltas"]
-    print("  * 偽陽性はずれ %.2f px までゼロ、%.2f px から崖(予測 δ*=%.3f px)。3 px で %d px。"
-          % (max(x for x, f in zip(d, sh["fp"]) if f == 0), sh["first"], sh["onset"], sh["fp"][-1]))
+    print("  * 偽陽性はずれ %.2f px まで雑音の床(≤20 px)、%.2f px から崖(予測 δ*=%.3f px)。3 px で %d px。"
+          % (max(x for x, f in zip(d, sh["fp"]) if f <= 20), sh["first"], sh["onset"], sh["fp"][-1]))
     print("  * 比例則(エッジ総長 %.0f px × δ)は 3 px で実測の %.2f 倍、PSF 込みは %.2f 倍、"
           "森林テクスチャを足すと %.2f 倍。"
           % (sh["Lproj"], sh["predA"][-1] / sh["fp"][-1], sh["predB"][-1] / sh["fp"][-1],
