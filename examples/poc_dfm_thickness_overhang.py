@@ -250,34 +250,44 @@ def analytic_support_area(build_dir, cos_c=COS_C, faces=None, drop_baseplate=Tru
 # --------------------------------------------------------------------------- #
 # 3. 場面 —— 図と、解析面積 vs メッシュ面積の突き合わせ                          #
 # --------------------------------------------------------------------------- #
-def _mesh_from(vol, iso):
-    """等値面 → (頂点 [mm], 面, 面法線, 面積 [mm^2])。**退化三角形は落とす**。
+def _mesh_from(vol, iso, h=None):
+    """等値面 → ``(法線, 面積 [mm^2], 重心 [mm], 頂点)``。**退化三角形は落とす**。
 
     ``voxel_to_mesh`` の頂点は**ボクセル index 座標**で、列は入力配列の軸順
     (この PoC は (x,y,z) 順に組んでいる)。world へは ``lo + (i+0.5)*h``。
     """
+    h = H_MESH if h is None else float(h)
     V, F = L.voxel_to_mesh(vol, iso=iso)
-    V = np.asarray(V, np.float64) * H_MESH + np.array([b[0] for b in BOUNDS]) + H_MESH / 2.0
+    V = np.asarray(V, np.float64) * h + np.array([b[0] for b in BOUNDS]) + h / 2.0
     F = np.asarray(F, np.int64)
     tri = V[F]
     cr = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
     area = 0.5 * np.linalg.norm(cr, axis=1)
     F = F[area > 0]                             # face_normals は退化があると fail-closed
-    tri, cr, area = V[F], cr[area > 0], area[area > 0]
+    tri, area = V[F], area[area > 0]
     # ★向き(表裏)は巻き順で決まるが、marching cubes の巻き順は入力の符号規約で反転する。
     #   閉じたメッシュなら符号付き体積で一意に決まる —— 目視でなく式で決める。
     sv = float(np.einsum("ij,ij->i", np.cross(tri[:, 0], tri[:, 1]), tri[:, 2]).sum())
     if sv < 0:
         F = F[:, ::-1]
+        tri = V[F]
     n = np.asarray(L.face_normals((V, F)))
-    return V, F, n, area
+    return n, area, tri.mean(axis=1), V
 
 
-def measured_support_area(n, area, build_dir, cos_c=COS_C, z_floor=0.6):
-    """メッシュから数えたサポート必要面積 [mm^2](造形板の面を除く)。"""
+def measured_support_area(mesh, build_dir, cos_c=COS_C):
+    """メッシュから数えたサポート必要面積 [mm^2]。
+
+    ★**解析側とまったく同じ規約**(造形板にべた置きの面は除く)にしないと、
+    板の裏 2349.7 mm^2 が丸ごと混ざって 4 倍以上ずれる(最初そう書いて踏んだ)。
+    """
+    n, area, cen, V = mesh
     b = np.asarray(build_dir, np.float64)
     b = b / np.linalg.norm(b)
-    return float(area[(n @ b) < -cos_c].sum()) - z_floor * 0.0
+    nb = n @ b
+    keep = nb < -cos_c
+    on_plate = (nb < -0.999) & ((cen @ b) - float((V @ b).min()) < 0.6 + H_MESH)
+    return float(area[keep & ~on_plate].sum())
 
 
 def section_scene():
