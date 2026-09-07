@@ -994,11 +994,14 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
 
     if figs.enabled():
         figs.save_plot("sweep_nlogger",
-                       [("偽合格の割合", ns, rates),
-                        ("ランダム 3 個", [3], [rates[2]])],
+                       [("実測: ランダム配置の偽合格", ns, rates),
+                        ("予測: 独立に n 回引く p1^n", ns, preds),
+                        ("慣用の 3 点(±1 m)", [3], [jit_rate])],
                        xlabel="ロガーの数 [個]", ylabel="偽合格 [%]",
-                       title="増やしても素直には減らない(製品セルにランダム配置)",
-                       kinds=["line", "scatter"])
+                       title="ランダムに増やすのは独立試行と同じ(%.3f^n)" % p1,
+                       kinds=["line", "line", "scatter"],
+                       caption="慣用の 3 点だけが線から大きく外れる —— "
+                               "位置に情報を入れると指数則から抜けられる。")
         vm = np.zeros((NY, NX))
         vm[prod & says_pass] = 1.0          # 偽合格になる置き場所
         vm[prod & ~says_pass] = 2.0         # 正しく不合格を出す置き場所
