@@ -779,7 +779,7 @@ def section_boundary(zp: ZeroPoint) -> dict:
     figs.save_plot("boundary_error", [("E2 判定", xs, ys), ("ゼロ点 ΔE", xs, y0)],
                    xlabel="h/H - 0.25(真値)", ylabel="誤判定率 [%]",
                    title="IPC 境界のまわりの誤判定(200 個体)",
-                   caption="推定誤差 6 % の帯の中だけで誤る。帯の外は 0 に近い。")
+                   caption="境界 ±0.5 px の量子化が作る帯(±0.038)の中だけで誤る。帯の外は 0 に近い。")
     return {"band": band, "in": float(100 * err[inside].mean()) if inside.any() else 0.0,
             "out": float(100 * err[~inside].mean()) if (~inside).any() else 0.0}
 
