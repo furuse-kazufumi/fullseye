@@ -819,12 +819,18 @@ def section_decimate_cliff(scene: dict) -> dict:
                    caption="予測線は最も粗い点で合わせた 1/F。面数が多い側では"
                            "実測のほうが小さい(まだ削り代がある)。表面積は"
                            "どこでも体積より 1 桁小さい。")
+    # ★累積分布をそのまま重ねると 4 本とも 0.9 以上で潰れて何も読めない。
+    #   動いているのは**上の裾**なので、分位点 0.5〜0.99 を横軸にして
+    #   「その分位点の曲率」を縦に描く(逆累積の上半分)。
+    qs = np.linspace(0.5, 0.99, 60)
     figs.save_plot("decimate_curvature",
-                   [("削減 %.0f %%" % (100 * r), curves[r],
-                     np.linspace(0, 1, curves[r].size)) for r in sorted(curves)],
-                   xlabel="平均曲率の大きさ |H| [1/mm]", ylabel="累積割合",
-                   title="曲率分布は体積より先に動く(50 %% 削減で p95 が %+.0f %%)"
-                         % (100 * (c95[i50] - c95[0]) / c95[0]))
+                   [("削減 %.0f %%" % (100 * r),
+                     qs, np.quantile(curves[r], qs)) for r in sorted(curves)],
+                   xlabel="分位点 [-]", ylabel="平均曲率の大きさ |H| [1/mm]",
+                   title="曲率の上の裾だけが動く(50 %% 削減で p95 が %+.0f %%)"
+                         % (100 * (c95[i50] - c95[0]) / c95[0]),
+                   caption="中央値(左端)はほとんど動かない。壊れるのは"
+                           "尖った所 = 右側だけ。")
     return {"faces": faces, "dv": dv, "da": da, "c95": c95,
             "s_late": s_late, "s_early": s_early, "cliff": cliff}
 
