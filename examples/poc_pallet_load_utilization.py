@@ -420,8 +420,9 @@ def section_gsd_overhang(lb: list) -> dict:
     print("  荷 A は 1 mm もはみ出していない。境界をまたぐセルには荷の天端が"
           "\n  入るので、外側の面積ぶんが「はみ出し」に数えられる。"
           "\n  予測は **周長 P x g/2 x 天端 h**(オフセットの平均)。")
+    true_over = OVERHANG * PD * 500.0 / 1e9      # 荷 B の**真の**はみ出し [m3]
     print("\n   セル g [mm]   荷 A の偽はみ出し [m3](実測/予測)   "
-          "荷 B の真のはみ出し [m3]")
+          "荷 B の実測 [m3](真値 %.4f)" % true_over)
 
     pa, pb = scan(LOAD_A), scan(lb)
     peri = 2.0 * (PW + PD)
