@@ -570,7 +570,7 @@ def section_pipeline(sc: dict) -> dict:
     det_map[r["cl"]["fi"]] = 0.4
     det_map[binary_dilation(r["sk"], iterations=1)] = 0.7
     det_map[r["cl"]["iso"]] = 1.0
-    ridge = np.asarray(fs.apply(np.clip(r["s"] / 1.25, 0, 1), "sk_frangi", a=0.25, b=0.5))
+    ridge, _ = ridge_map(r["s"])
     figs.save_grid("scene_map",
                    [sc["img"], np.clip(r["s"] / 1.25, 0, 1), ridge, truth_map, det_map,
                     r["cl"]["smooth"] / 1.25],
