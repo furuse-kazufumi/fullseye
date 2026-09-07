@@ -938,7 +938,7 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
     rng = np.random.default_rng(SEED)
     p1 = float(ok_cells.mean())
     ns, rates, preds = [], [], []
-    print("   ロガー数   偽合格 [%]   予測 p1^n [%]  (製品セルにランダムに置く、"
+    print("   ロガー数   偽合格 [%%]   予測 p1^n [%%]  (製品セルにランダムに置く、"
           "2000 通り、p1 = %.3f)" % p1)
     for n in (1, 2, 3, 5, 8, 12):
         idx = rng.integers(0, ys.size, size=(2000, n))
