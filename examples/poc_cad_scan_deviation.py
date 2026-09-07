@@ -975,7 +975,7 @@ def section_controls(ref: CadRef) -> dict:
           % (ref.area - out["欠測: 片側スキャン"]["area"],
              100 * (1 - out["欠測: 片側スキャン"]["area"] / ref.area)))
     figs.save_table("controls", ["条件", "点数", "可視面積 [mm^2]", "姿勢 [度]",
-                                 "偏差RMS [µm]", "公差外面積の誤差"], rows,
+                                 "偏差RMS [µm]", "公差外面積 推定/真値 [mm^2]"], rows,
                     title="対照群 —— 要因を 1 つずつ止める")
     return out
 
