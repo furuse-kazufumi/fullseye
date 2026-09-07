@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # matrix_to_descriptor — REPRCONV `descriptor` op
 
 - **データ種**: `matrix` → `descriptor`
-- **呼び出し**: `import reprconv; reprconv.matrix_to_descriptor(matrix)` (または `opsreprconv.get("matrix_to_descriptor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)` (実装を直接呼ぶなら `import reprconv; reprconv.matrix_to_descriptor(matrix)`、台帳から引くなら `opsreprconv.get("matrix_to_descriptor")`)
 
 ## 使い方
 

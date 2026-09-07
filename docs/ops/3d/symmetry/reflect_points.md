@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # reflect_points — 3D `symmetry` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)` (または `ops3d.get("reflect_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.reflect_points(points, plane_point, plane_normal)` (実装を直接呼ぶなら `import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)`、台帳から引くなら `ops3d.get("reflect_points")`)
 
 ## 使い方
 

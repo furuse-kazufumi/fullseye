@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_replace_outliers — PIV <code style="color:#22d3bf">validate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d × mask</code> → <code style="color:#22d3bf">flow2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import pivops; pivops.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code> (or <code style="color:#22d3bf">opspiv.get(&quot;piv_replace_outliers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_replace_outliers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>外れ値を近傍で埋める。`<code style="color:#22d3bf">method=&quot;nan&quot;</code>` なら<b>埋めずに欠測にする</b>。</p>

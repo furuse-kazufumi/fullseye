@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">cutout — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pcl_augment; pcl_augment.cutout(points, extent: &#x27;Union[float, np.ndarray]&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;cutout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutout(points, extent: &#x27;Union[float, np.ndarray]&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pcl_augment; pcl_augment.cutout(points, extent: &#x27;Union[float, np.ndarray]&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;cutout&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.cutout(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">points</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.cutout.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pcl_augment.cutout</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>去除空间中一个轴对齐盒区域,返回 `<code style="color:#22d3bf">(kept, kept_idx)</code>`(模拟局部缺失)。</p>

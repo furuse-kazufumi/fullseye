@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mean_reprojection_error — 3D `bundle_adjust` op
 
 - **データ種**: `pose × points` → `measurement`
-- **呼び出し**: `import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)` (または `ops3d.get("mean_reprojection_error")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)` (実装を直接呼ぶなら `import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)`、台帳から引くなら `ops3d.get("mean_reprojection_error")`)
 
 ## 使い方
 

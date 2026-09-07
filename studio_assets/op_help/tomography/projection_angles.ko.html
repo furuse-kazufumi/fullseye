@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">projection_angles — TOMOGRAPHY <code style="color:#22d3bf">layout</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">signal</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import tomography; tomography.projection_angles(n_angles=180, span_deg=180.0, scheme=&#x27;uniform&#x27;, start_deg=0.0)</code>(또는 <code style="color:#22d3bf">opstomography.get(&quot;projection_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.projection_angles(n_angles=180, span_deg=180.0, scheme=&#x27;uniform&#x27;, start_deg=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tomography; tomography.projection_angles(n_angles=180, span_deg=180.0, scheme=&#x27;uniform&#x27;, start_deg=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstomography.get(&quot;projection_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스캔의 각도 열을 <b>도</b> 단위 1-D float64 배열로.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
@@ -41,6 +41,7 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ct_fidelity">poc_ct_fidelity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ct_fidelity.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">signal</code> 를 입력으로 받는 것)</h3>

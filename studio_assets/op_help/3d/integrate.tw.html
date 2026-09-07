@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">integrate — 3D <code style="color:#22d3bf">tsdf_fusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sdf × depth</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用投影式 TSDF 把一張深度整合進 volume(原地,加權滑動平均)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

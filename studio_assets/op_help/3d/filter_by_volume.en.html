@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">filter_by_volume — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import regionprops3d; regionprops3d.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;filter_by_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import regionprops3d; regionprops3d.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;filter_by_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Return a bool mask with the connected components below min_voxels removed.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

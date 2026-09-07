@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # signed_surface_distance — SHAPESTAT `deviation` op
 
 - **データ種**: `points × points` → `signal`
-- **呼び出し**: `import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: 'int' = 1)` (または `opsshapestat.get("signed_surface_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: 'int' = 1)` (実装を直接呼ぶなら `import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: 'int' = 1)`、台帳から引くなら `opsshapestat.get("signed_surface_distance")`)
 
 ## 使い方
 

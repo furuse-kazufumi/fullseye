@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mat_lstsq — MATH `linalg` op
 
 - **データ種**: `matrix × signal` → `table`
-- **呼び出し**: `import mathops; mathops.mat_lstsq(a, b, rcond=None)` (または `opsmath.get("mat_lstsq")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mat_lstsq(a, b, rcond=None)` (実装を直接呼ぶなら `import mathops; mathops.mat_lstsq(a, b, rcond=None)`、台帳から引くなら `opsmath.get("mat_lstsq")`)
 
 ## 使い方
 

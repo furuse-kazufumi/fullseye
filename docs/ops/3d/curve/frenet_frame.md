@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # frenet_frame — 3D `curve` op
 
 - **データ種**: `points` → `frame`
-- **呼び出し**: `import curve3d; curve3d.frenet_frame(curve)` (または `ops3d.get("frenet_frame")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.frenet_frame(curve)` (実装を直接呼ぶなら `import curve3d; curve3d.frenet_frame(curve)`、台帳から引くなら `ops3d.get("frenet_frame")`)
 
 ## 使い方
 

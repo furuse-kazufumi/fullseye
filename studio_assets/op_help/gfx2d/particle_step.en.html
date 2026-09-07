@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_step — GFX2D <code style="color:#22d3bf">particle</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_step&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Advance a particle state by `<code style="color:#22d3bf">dt</code>` seconds. Returns a <b>new</b> dict.</p>
 <p>Semi-implicit (symplectic) Euler::</p>

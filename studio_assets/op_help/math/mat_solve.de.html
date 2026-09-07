@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_solve — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mathops; mathops.mat_solve(a, b)</code> (oder <code style="color:#22d3bf">opsmath.get(&quot;mat_solve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_solve(a, b)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.mat_solve(a, b)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;mat_solve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Löst das quadratische lineare System `<code style="color:#22d3bf">A x = b</code><code style="color:#22d3bf"> (LAPACK </code><code style="color:#22d3bf">gesv</code>`, LU mit Teilpivotisierung).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # triangulate — 3D `two_view` op
 
 - **データ種**: `image2d × image2d` → `points`
-- **呼び出し**: `import twoview; twoview.triangulate(pts1, pts2, P1, P2)` (または `ops3d.get("triangulate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.triangulate(pts1, pts2, P1, P2)` (実装を直接呼ぶなら `import twoview; twoview.triangulate(pts1, pts2, P1, P2)`、台帳から引くなら `ops3d.get("triangulate")`)
 
 ## 使い方
 

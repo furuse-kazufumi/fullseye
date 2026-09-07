@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_watershed — 3D <code style="color:#22d3bf">segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_watershed(vol, markers, mask=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_watershed&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_watershed(vol, markers, mask=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_watershed(vol, markers, mask=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_watershed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Marker-controlled 3-D watershed segmentation (<b>optional — scikit-image</b>).</p>
 <p>Floods the volume from the labelled *markers* (an int volume, `<code style="color:#22d3bf">0</code>` = unset),</p>

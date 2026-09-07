@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">esdf — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;esdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esdf(occupancy, voxel_size=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;esdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>占有格子 → Euclidean 符号付き距離場 (ESDF)(外=+ 最近占有まで, 内=- 最近自由まで)。</p>
 <p>`<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>` を自由側(外)と占有側(内)に別々にかけ、</p>

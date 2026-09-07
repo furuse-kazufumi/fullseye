@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # geodesic_mesh — 3D `geodesic` op
 
 - **データ種**: `mesh` → `signal`
-- **呼び出し**: `import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -> numpy.ndarray` (または `ops3d.get("geodesic_mesh")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -> numpy.ndarray` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -> numpy.ndarray`、台帳から引くなら `ops3d.get("geodesic_mesh")`)
 
 ## 使い方
 

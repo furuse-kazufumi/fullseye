@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # inertia_tensor — 3D `moment_invariant` op
 
 - **データ種**: `points` → `matrix`
-- **呼び出し**: `import moments3d; moments3d.inertia_tensor(points) -> 'np.ndarray'` (または `ops3d.get("inertia_tensor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.inertia_tensor(points) -> 'np.ndarray'` (実装を直接呼ぶなら `import moments3d; moments3d.inertia_tensor(points) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("inertia_tensor")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # deflicker — VIDEOSTREAM `restore` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.deflicker(video, alpha: 'float' = 0.1, max_gain: 'float' = 4.0) -> 'np.ndarray'` (または `opsvideostream.get("deflicker")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.deflicker(video, alpha: 'float' = 0.1, max_gain: 'float' = 4.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.deflicker(video, alpha: 'float' = 0.1, max_gain: 'float' = 4.0) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("deflicker")`)
 
 ## 使い方
 

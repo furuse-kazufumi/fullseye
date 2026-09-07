@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fit_box3 — 3D `geometry` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import measure3d; measure3d.fit_box3(points) -> 'dict'` (または `ops3d.get("fit_box3")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_box3(points) -> 'dict'` (実装を直接呼ぶなら `import measure3d; measure3d.fit_box3(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_box3")`)
 
 ## 使い方
 

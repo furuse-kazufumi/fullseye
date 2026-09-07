@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_synthesize — SHAPESTAT `model` op
 
 - **データ種**: `shapemodel` → `points`
-- **呼び出し**: `import shapestats; shapestats.shape_synthesize(model, sigmas=None, n_modes: 'int' = 3, seed: 'int' = 0)` (または `opsshapestat.get("shape_synthesize")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_synthesize(model, sigmas=None, n_modes: 'int' = 3, seed: 'int' = 0)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_synthesize(model, sigmas=None, n_modes: 'int' = 3, seed: 'int' = 0)`、台帳から引くなら `opsshapestat.get("shape_synthesize")`)
 
 ## 使い方
 

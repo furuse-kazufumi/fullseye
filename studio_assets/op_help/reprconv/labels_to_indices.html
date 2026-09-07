@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">labels_to_indices — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">indices</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>`<code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> → 非背景の添字 </code><code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf">。:func:</code>indices_to_labels` の逆向き。</p>
 <p>2-D 以上のラベル画像も受ける —— その場合の添字は</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mueller_apply — OPTICS `polarization` op
 
 - **データ種**: `matrix × stokes` → `stokes`
-- **呼び出し**: `import optics; optics.mueller_apply(mueller, stokes)` (または `opsoptics.get("mueller_apply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mueller_apply(mueller, stokes)` (実装を直接呼ぶなら `import optics; optics.mueller_apply(mueller, stokes)`、台帳から引くなら `opsoptics.get("mueller_apply")`)
 
 ## 使い方
 

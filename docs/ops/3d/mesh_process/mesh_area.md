@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_area — 3D `mesh_process` op
 
 - **データ種**: `mesh` → `measurement`
-- **呼び出し**: `import mesh_props; mesh_props.mesh_area(mesh) -> 'float'` (または `ops3d.get("mesh_area")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_area(mesh) -> 'float'` (実装を直接呼ぶなら `import mesh_props; mesh_props.mesh_area(mesh) -> 'float'`、台帳から引くなら `ops3d.get("mesh_area")`)
 
 ## 使い方
 
@@ -55,7 +55,7 @@ Raises:
 
 ## 同カテゴリ(`mesh_process`)
 
-[laplacian_smooth](laplacian_smooth.md) · [taubin_smooth](taubin_smooth.md) · [decimate_qem](decimate_qem.md) · [face_normals](face_normals.md) · [vertex_normals](vertex_normals.md) · [vertex_curvature](vertex_curvature.md)
+[laplacian_smooth](laplacian_smooth.md) · [taubin_smooth](taubin_smooth.md) · [decimate_qem](decimate_qem.md) · [face_normals](face_normals.md) · [vertex_normals](vertex_normals.md) · [vertex_curvature](vertex_curvature.md) · [face_areas](face_areas.md) · [mesh_volume](mesh_volume.md)
 
 ---
 *Provenance: mesh_props.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

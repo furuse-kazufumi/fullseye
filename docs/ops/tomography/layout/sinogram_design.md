@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sinogram_design — TOMOGRAPHY `layout` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import tomography; tomography.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)` (または `opstomography.get("sinogram_design")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)` (実装を直接呼ぶなら `import tomography; tomography.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)`、台帳から引くなら `opstomography.get("sinogram_design")`)
 
 ## 使い方
 

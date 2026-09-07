@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">normal_map_shade — GFX2D <code style="color:#22d3bf">light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse=&#x27;reference&#x27;, specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme=&#x27;okabe_ito&#x27;)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;normal_map_shade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse=&#x27;reference&#x27;, specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme=&#x27;okabe_ito&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse=&#x27;reference&#x27;, specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme=&#x27;okabe_ito&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;normal_map_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Shade a 2-D normal map with one directional light (Lambert + Blinn 1977).</p>
 <p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> is a </code><code style="color:#22d3bf">normalmap</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W, 3)</code>` <b>unit</b> vectors, as</p>

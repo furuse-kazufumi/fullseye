@@ -13,10 +13,10 @@
 <p><b>Bewegung</b> (GIF: Bilder / Ansichten / Schnitte nacheinander. Die stehende Abbildung ist die vollständige; das GIF ist ergänzend):</p>
 <p><img src="fig/tb_occupancy_grid.gif" alt="tb_occupancy_grid: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Punktwolke (N,3) → 3-D-Belegungs-Voxelgitter (res,res,res) bool (Voxel, in die Punkte fallen, werden als belegt markiert).</p>
+<p>Punktwolke (N,3) → 3-D-Belegungsvoxelgitter, bool (ein Voxel, in das ein Punkt fällt, gilt als belegt).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf"> が格子の張る体積、</code><code style="color:#22d3bf">res</code>` は各軸の</p>
-<p>ボクセル数(立方 res³)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、</p>
+<p>ボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、</p>
 <p>上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ</p>
 <p>clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float)</p>
 <p>を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>

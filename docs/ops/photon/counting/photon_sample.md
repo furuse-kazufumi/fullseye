@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # photon_sample — PHOTON `counting` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import photoncount; photoncount.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)` (または `opsphoton.get("photon_sample")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)` (実装を直接呼ぶなら `import photoncount; photoncount.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)`、台帳から引くなら `opsphoton.get("photon_sample")`)
 
 ## 使い方
 

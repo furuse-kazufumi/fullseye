@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_edge_stats — 3D `resolution` op
 
 - **データ種**: `mesh` → `table`
-- **呼び出し**: `import meshres; meshres.mesh_edge_stats(V, F)` (または `ops3d.get("mesh_edge_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_edge_stats(V, F)` (実装を直接呼ぶなら `import meshres; meshres.mesh_edge_stats(V, F)`、台帳から引くなら `ops3d.get("mesh_edge_stats")`)
 
 ## 使い方
 

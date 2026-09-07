@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # linear_to_srgb — GFX2D `colorspace` op
 
 - **データ種**: `rgb` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.linear_to_srgb(img)` (または `opsgfx2d.get("linear_to_srgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.linear_to_srgb(img)` (実装を直接呼ぶなら `import gfx2d; gfx2d.linear_to_srgb(img)`、台帳から引くなら `opsgfx2d.get("linear_to_srgb")`)
 
 ## 使い方
 

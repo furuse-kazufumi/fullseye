@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">metal_trace_interpolate — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None, mask=None, size=None)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;metal_trace_interpolate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None, mask=None, size=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None, mask=None, size=None)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;metal_trace_interpolate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Linear-interpolation metal artefact reduction (LI-MAR).</p>
 <p>A metal implant attenuates so strongly that its detector bins carry almost no</p>

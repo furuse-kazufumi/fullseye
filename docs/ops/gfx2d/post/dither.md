@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dither — GFX2D `post` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import gfx2d; gfx2d.dither(img, levels=2, method='ordered', matrix_size=4)` (または `opsgfx2d.get("dither")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dither(img, levels=2, method='ordered', matrix_size=4)` (実装を直接呼ぶなら `import gfx2d; gfx2d.dither(img, levels=2, method='ordered', matrix_size=4)`、台帳から引くなら `opsgfx2d.get("dither")`)
 
 ## 使い方
 

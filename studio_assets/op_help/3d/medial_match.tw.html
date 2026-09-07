@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">medial_match — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;medial_match&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code>(要直接呼叫實作,<code style="color:#22d3bf">import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;medial_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於 medial(拓撲 + 半徑分布)對兩個體素形狀的粗匹配得分。回傳 [0,1]。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

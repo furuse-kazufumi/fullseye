@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # scene_plane — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.scene_plane(z_mm: 'float' = 0.0, material=None, half_size_mm=None) -> 'dict'` (または `opsoptics.get("scene_plane")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scene_plane(z_mm: 'float' = 0.0, material=None, half_size_mm=None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_plane(z_mm: 'float' = 0.0, material=None, half_size_mm=None) -> 'dict'`、台帳から引くなら `opsoptics.get("scene_plane")`)
 
 ## 使い方
 

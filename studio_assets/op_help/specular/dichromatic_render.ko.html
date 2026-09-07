@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dichromatic_render — SPECULAR <code style="color:#22d3bf">reflectance</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">rgbimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;dichromatic_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model=&#x27;blinn_phong&#x27;, shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspecular.get(&quot;dichromatic_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이색성 모델의 순방향: 알려진 하이라이트를 렌더링해 분리 결과를 대조할 수 있게 합니다. → (H, W, 3).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

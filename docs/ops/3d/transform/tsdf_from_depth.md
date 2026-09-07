@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tsdf_from_depth — 3D `transform` op
 
 - **データ種**: `depth` → `sdf`
-- **呼び出し**: `import match3d; match3d.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)` (または `ops3d.get("tsdf_from_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)` (実装を直接呼ぶなら `import match3d; match3d.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)`、台帳から引くなら `ops3d.get("tsdf_from_depth")`)
 
 ## 使い方
 

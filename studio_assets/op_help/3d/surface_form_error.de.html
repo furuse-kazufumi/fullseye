@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_form_error — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.surface_form_error(height, degree=1)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;surface_form_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_form_error(height, degree=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.surface_form_error(height, degree=1)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;surface_form_error&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_error(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.surface_form_error.raw(...)</code> oder rufe <code style="color:#22d3bf">match3d.surface_form_error</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(residual, rms, pv) → pv float</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>

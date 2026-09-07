@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # irradiance_map — OPTICS `illumination` op
 
 - **データ種**: `table` → `image2d`
-- **呼び出し**: `import illumdesign; illumdesign.irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing='up')` (または `opsoptics.get("irradiance_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing='up')` (実装を直接呼ぶなら `import illumdesign; illumdesign.irradiance_map(light, size_mm=(50.0, 50.0), shape=(128, 128), height=None, z_mm=0.0, facing='up')`、台帳から引くなら `opsoptics.get("irradiance_map")`)
 
 ## 使い方
 

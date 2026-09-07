@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # skeleton_branches3d — 3D `medial` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import medial; medial.skeleton_branches3d(vol, min_length=0)` (または `ops3d.get("skeleton_branches3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.skeleton_branches3d(vol, min_length=0)` (実装を直接呼ぶなら `import medial; medial.skeleton_branches3d(vol, min_length=0)`、台帳から引くなら `ops3d.get("skeleton_branches3d")`)
 
 ## 使い方
 

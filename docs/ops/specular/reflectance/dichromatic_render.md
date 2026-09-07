@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dichromatic_render — SPECULAR `reflectance` op
 
 - **データ種**: `normalmap` → `rgbimage`
-- **呼び出し**: `import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model='blinn_phong', shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)` (または `opsspecular.get("dichromatic_render")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model='blinn_phong', shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)` (実装を直接呼ぶなら `import specularity; specularity.dichromatic_render(normals, albedo_rgb=(0.8, 0.55, 0.35), light=(0.3, 0.2, 1.0), illuminant_rgb=(1.0, 1.0, 1.0), view=(0.0, 0.0, 1.0), specular=0.25, model='blinn_phong', shininess=32.0, roughness=0.3, f0=0.04, ambient=0.0)`、台帳から引くなら `opsspecular.get("dichromatic_render")`)
 
 ## 使い方
 

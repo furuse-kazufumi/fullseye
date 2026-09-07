@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # spectrum_to_srgb — OPTICS `appearance` op
 
 - **データ種**: `signal` → `vector`
-- **呼び出し**: `import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -> 'np.ndarray'` (または `opsoptics.get("spectrum_to_srgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spectrum_to_srgb(nm, reflectance, illuminant=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("spectrum_to_srgb")`)
 
 ## 使い方
 

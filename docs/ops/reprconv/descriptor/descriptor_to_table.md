@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # descriptor_to_table — REPRCONV `descriptor` op
 
 - **データ種**: `descriptor` → `table`
-- **呼び出し**: `import reprconv; reprconv.descriptor_to_table(descriptor)` (または `opsreprconv.get("descriptor_to_table")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.descriptor_to_table(descriptor)` (実装を直接呼ぶなら `import reprconv; reprconv.descriptor_to_table(descriptor)`、台帳から引くなら `opsreprconv.get("descriptor_to_table")`)
 
 ## 使い方
 

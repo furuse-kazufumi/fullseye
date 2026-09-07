@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # backproject_sinogram — TOMOGRAPHY `reconstruct` op
 
 - **データ種**: `sinogram` → `image2d`
-- **呼び出し**: `import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)` (または `opstomography.get("backproject_sinogram")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)` (実装を直接呼ぶなら `import tomography; tomography.backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None)`、台帳から引くなら `opstomography.get("backproject_sinogram")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # angles_to_normals — REPRCONV `direction` op
 
 - **データ種**: `pairs` → `normals`
-- **呼び出し**: `import reprconv; reprconv.angles_to_normals(pairs)` (または `opsreprconv.get("angles_to_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.angles_to_normals(pairs)` (実装を直接呼ぶなら `import reprconv; reprconv.angles_to_normals(pairs)`、台帳から引くなら `opsreprconv.get("angles_to_normals")`)
 
 ## 使い方
 

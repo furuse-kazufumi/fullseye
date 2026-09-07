@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">label_components — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import regionprops3d; regionprops3d.label_components(vol, connectivity: &#x27;int&#x27; = 26)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;label_components&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_components(vol, connectivity: &#x27;int&#x27; = 26)</code> (die Implementierung direkt: <code style="color:#22d3bf">import regionprops3d; regionprops3d.label_components(vol, connectivity: &#x27;int&#x27; = 26)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;label_components&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.label_components(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">labels</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.label_components.raw(...)</code> oder rufe <code style="color:#22d3bf">regionprops3d.label_components</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(labels, n) → labels</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>

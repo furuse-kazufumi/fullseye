@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_figure_grid_layout — ANNOTATE `paper` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style='paren')` (または `opsannotate.get("annotate_figure_grid_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style='paren')` (実装を直接呼ぶなら `import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style='paren')`、台帳から引くなら `opsannotate.get("annotate_figure_grid_layout")`)
 
 ## 使い方
 

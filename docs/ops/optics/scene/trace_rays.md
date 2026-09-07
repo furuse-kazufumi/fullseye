@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # trace_rays — OPTICS `scene` op
 
 - **データ種**: `table × points × points` → `table`
-- **呼び出し**: `import optscene; optscene.trace_rays(scene, origins, directions) -> 'dict'` (または `opsoptics.get("trace_rays")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.trace_rays(scene, origins, directions) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.trace_rays(scene, origins, directions) -> 'dict'`、台帳から引くなら `opsoptics.get("trace_rays")`)
 
 ## 使い方
 

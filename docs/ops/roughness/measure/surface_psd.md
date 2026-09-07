@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # surface_psd — ROUGHNESS `measure` op
 
 - **データ種**: `depth` → `pairs`
-- **呼び出し**: `import roughness; roughness.surface_psd(z, dx, kind='areal', dy=None)` (または `opsroughness.get("surface_psd")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.surface_psd(z, dx, kind='areal', dy=None)` (実装を直接呼ぶなら `import roughness; roughness.surface_psd(z, dx, kind='areal', dy=None)`、台帳から引くなら `opsroughness.get("surface_psd")`)
 - **台帳経由の戻り値**: `fullseye.ledger.surface_psd(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.surface_psd.raw(...)`、または `roughness.surface_psd` を直接呼ぶ。
   - 本体の返り: `(q, C) -> (N,2)`
 

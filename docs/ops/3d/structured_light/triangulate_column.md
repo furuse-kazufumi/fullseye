@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # triangulate_column — 3D `structured_light` op
 
 - **データ種**: `image2d` → `depth`
-- **呼び出し**: `import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -> 'np.ndarray'` (または `ops3d.get("triangulate_column")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.triangulate_column(column, k_cam, k_proj, rot, trans) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("triangulate_column")`)
 
 ## 使い方
 

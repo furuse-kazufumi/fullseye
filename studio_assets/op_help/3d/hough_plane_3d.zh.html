@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">hough_plane_3d — 3D <code style="color:#22d3bf">detect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import match3d; match3d.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;hough_plane_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;hough_plane_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平面检测(2D Hough 直线的 3D 提升)。以梯度=法线,向 (法线 n, 距离 d) 空间投票。</p>

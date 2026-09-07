@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # spot_diagram — OPTICS `design` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)` (または `opsoptics.get("spot_diagram")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("spot_diagram")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # thin_film_rgb — OPTICS `appearance` op
 
 - **データ種**: `normalmap` → `rgbimage`
-- **呼び出し**: `import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -> 'np.ndarray'` (または `opsoptics.get("thin_film_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("thin_film_rgb")`)
 
 ## 使い方
 

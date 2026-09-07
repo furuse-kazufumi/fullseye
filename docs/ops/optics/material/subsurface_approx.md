@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # subsurface_approx — OPTICS `material` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import surfacelib; surfacelib.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -> 'np.ndarray'` (または `opsoptics.get("subsurface_approx")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("subsurface_approx")`)
 
 ## 使い方
 

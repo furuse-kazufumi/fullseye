@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lucky_select — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">indices</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code> (or <code style="color:#22d3bf">opsastrostack.get(&quot;lucky_select&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code> (to call the implementation directly, <code style="color:#22d3bf">import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)</code>; from the registry, <code style="color:#22d3bf">opsastrostack.get(&quot;lucky_select&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.lucky_select(...)</code> returns **only the declared out type <code style="color:#22d3bf">indices</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.lucky_select.raw(...)</code> or call <code style="color:#22d3bf">astrostack.lucky_select</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Keep only the top `<code style="color:#22d3bf">keep_fraction</code>` by quality score — the lucky-imaging cut.</p>

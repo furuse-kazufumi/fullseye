@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shot_descriptor — 3D `feature_register` op
 
 - **データ種**: `points × normals` → `descriptor`
-- **呼び出し**: `import feat_shot; feat_shot.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)` (または `ops3d.get("shot_descriptor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)` (実装を直接呼ぶなら `import feat_shot; feat_shot.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)`、台帳から引くなら `ops3d.get("shot_descriptor")`)
 
 ## 使い方
 

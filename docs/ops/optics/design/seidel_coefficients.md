@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # seidel_coefficients — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import raytrace; raytrace.seidel_coefficients(system, field=None)` (または `opsoptics.get("seidel_coefficients")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.seidel_coefficients(system, field=None)` (実装を直接呼ぶなら `import raytrace; raytrace.seidel_coefficients(system, field=None)`、台帳から引くなら `opsoptics.get("seidel_coefficients")`)
 
 ## 使い方
 

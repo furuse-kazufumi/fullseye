@@ -4,7 +4,7 @@ dim: annotate
 category: text
 in: image2d × text
 out: image2d
-examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred]
+examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_print_warpage_risk]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # text_box — ANNOTATE `text` op
 
 - **データ種**: `image2d × text` → `image2d`
-- **呼び出し**: `import annotate; annotate.text_box(img, text, xy, color='neutral', text_color=None, box_color=None, box_alpha=0.72, anchor='lt', pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme='okabe_ito', min_contrast=2.0, border=0, border_color=None, style=None, wrap=True)` (または `opsannotate.get("text_box")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.text_box(img, text, xy, color='neutral', text_color=None, box_color=None, box_alpha=0.72, anchor='lt', pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme='okabe_ito', min_contrast=2.0, border=0, border_color=None, style=None, wrap=True)` (実装を直接呼ぶなら `import annotate; annotate.text_box(img, text, xy, color='neutral', text_color=None, box_color=None, box_alpha=0.72, anchor='lt', pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme='okabe_ito', min_contrast=2.0, border=0, border_color=None, style=None, wrap=True)`、台帳から引くなら `opsannotate.get("text_box")`)
 
 ## 使い方
 
@@ -91,6 +91,7 @@ ValueError
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
 - [annotate_paper_tour](../../../../examples/annotate_paper_tour.py) — `py -3.11 examples/annotate_paper_tour.py`
 - [drawlist_deferred](../../../../examples/drawlist_deferred.py) — `py -3.11 examples/drawlist_deferred.py`
+- [poc_print_warpage_risk](../../../../examples/poc_print_warpage_risk.py) — `py -3.11 examples/poc_print_warpage_risk.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

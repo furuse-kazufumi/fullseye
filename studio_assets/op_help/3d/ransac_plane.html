@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">ransac_plane — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;ransac_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_plane(points, thresh, iters=500, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;ransac_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>外れ値に頑健な RANSAC 平面適合。</p>
 <p>3 点をサンプル → 平面法線(2 辺の外積)→ 点-平面距離 |n·(p-p0)| &lt; `<code style="color:#22d3bf">thresh</code>` の</p>

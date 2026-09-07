@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mirror_plane_from_pairs — SHAPESTAT `symmetry` op
 
 - **データ種**: `points` → `matrix`
-- **呼び出し**: `import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)` (または `opsshapestat.get("mirror_plane_from_pairs")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)` (実装を直接呼ぶなら `import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)`、台帳から引くなら `opsshapestat.get("mirror_plane_from_pairs")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # illuminant_from_dichromatic_planes — SPECULAR `dichromatic` op
 
 - **データ種**: `rgbimage × labels` → `vector`
-- **呼び出し**: `import specularity; specularity.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)` (または `opsspecular.get("illuminant_from_dichromatic_planes")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)` (実装を直接呼ぶなら `import specularity; specularity.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)`、台帳から引くなら `opsspecular.get("illuminant_from_dichromatic_planes")`)
 
 ## 使い方
 

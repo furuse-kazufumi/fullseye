@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mat_solve — MATH `linalg` op
 
 - **データ種**: `matrix × signal` → `signal`
-- **呼び出し**: `import mathops; mathops.mat_solve(a, b)` (または `opsmath.get("mat_solve")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mat_solve(a, b)` (実装を直接呼ぶなら `import mathops; mathops.mat_solve(a, b)`、台帳から引くなら `opsmath.get("mat_solve")`)
 
 ## 使い方
 

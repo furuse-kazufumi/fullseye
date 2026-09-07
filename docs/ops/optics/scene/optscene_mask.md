@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optscene_mask — OPTICS `scene` op
 
 - **データ種**: `table × table` → `image2d`
-- **呼び出し**: `import optscene; optscene.optscene_mask(scene, camera, index: 'int') -> 'np.ndarray'` (または `opsoptics.get("optscene_mask")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optscene_mask(scene, camera, index: 'int') -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.optscene_mask(scene, camera, index: 'int') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("optscene_mask")`)
 - **台帳経由の戻り値**: `fullseye.ledger.optscene_mask(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.optscene_mask.raw(...)`、または `optscene.optscene_mask` を直接呼ぶ。
 
 ## 使い方

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_bounding_box — 3D `domain` op
 
 - **データ種**: `voxel` → `primitive`
-- **呼び出し**: `import volops; volops.vol_bounding_box(domain, margin=0)` (または `ops3d.get("vol_bounding_box")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_bounding_box(domain, margin=0)` (実装を直接呼ぶなら `import volops; volops.vol_bounding_box(domain, margin=0)`、台帳から引くなら `ops3d.get("vol_bounding_box")`)
 
 ## 使い方
 

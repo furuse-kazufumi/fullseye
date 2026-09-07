@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # micro_normals — OPTICS `finish` op
 
 - **データ種**: `normalmap` → `normalmap`
-- **呼び出し**: `import metalfinish; metalfinish.micro_normals(normals, kind='linear', pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -> 'np.ndarray'` (または `opsoptics.get("micro_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.micro_normals(normals, kind='linear', pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import metalfinish; metalfinish.micro_normals(normals, kind='linear', pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("micro_normals")`)
 
 ## 使い方
 

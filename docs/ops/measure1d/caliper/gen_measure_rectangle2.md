@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # gen_measure_rectangle2 — MEASURE1D `caliper` op
 
 - **データ種**: `なし` → `measurehandle`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)` (または `opsmeasure1d.get("gen_measure_rectangle2")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)` (実装を直接呼ぶなら `import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)`、台帳から引くなら `opsmeasure1d.get("gen_measure_rectangle2")`)
 
 ## 使い方
 

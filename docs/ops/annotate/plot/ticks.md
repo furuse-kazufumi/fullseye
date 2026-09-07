@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ticks — ANNOTATE `plot` op
 
 - **データ種**: `image2d × axes` → `image2d`
-- **呼び出し**: `import annotate; annotate.ticks(img, axes, xticks=None, yticks=None, color='neutral', width=1, tick_len=5, label=True, label_fmt='{:g}', font_size=11, font_path=None, scheme='okabe_ito', text_color=None, style=None)` (または `opsannotate.get("ticks")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ticks(img, axes, xticks=None, yticks=None, color='neutral', width=1, tick_len=5, label=True, label_fmt='{:g}', font_size=11, font_path=None, scheme='okabe_ito', text_color=None, style=None)` (実装を直接呼ぶなら `import annotate; annotate.ticks(img, axes, xticks=None, yticks=None, color='neutral', width=1, tick_len=5, label=True, label_fmt='{:g}', font_size=11, font_path=None, scheme='okabe_ito', text_color=None, style=None)`、台帳から引くなら `opsannotate.get("ticks")`)
 
 ## 使い方
 

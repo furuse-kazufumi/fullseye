@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_pinv — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.mat_pinv(a, rcond=1e-12)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;mat_pinv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_pinv(a, rcond=1e-12)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.mat_pinv(a, rcond=1e-12)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mat_pinv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Moore-Penrose pseudo-inverse via SVD, with the cutoff <b>explicit</b>.</p>
 <p>Singular values below `<code style="color:#22d3bf">rcond * s_max</code>` are treated as zero — that cutoff</p>

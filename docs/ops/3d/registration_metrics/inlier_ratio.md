@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # inlier_ratio — 3D `registration_metrics` op
 
 - **データ種**: `points × points` → `measurement`
-- **呼び出し**: `import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: 'float') -> 'float'` (または `ops3d.get("inlier_ratio")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.inlier_ratio(source, target, transform, thresh: 'float') -> 'float'` (実装を直接呼ぶなら `import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: 'float') -> 'float'`、台帳から引くなら `ops3d.get("inlier_ratio")`)
 
 ## 使い方
 

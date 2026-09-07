@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # thin_lens — OPTICS `geometric` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optics; optics.thin_lens(focal_mm=50.0, object_mm=200.0)` (または `opsoptics.get("thin_lens")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.thin_lens(focal_mm=50.0, object_mm=200.0)` (実装を直接呼ぶなら `import optics; optics.thin_lens(focal_mm=50.0, object_mm=200.0)`、台帳から引くなら `opsoptics.get("thin_lens")`)
 
 ## 使い方
 

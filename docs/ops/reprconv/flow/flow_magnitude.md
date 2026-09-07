@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # flow_magnitude — REPRCONV `flow` op
 
 - **データ種**: `flow_dense` → `voxel`
-- **呼び出し**: `import reprconv; reprconv.flow_magnitude(flow)` (または `opsreprconv.get("flow_magnitude")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.flow_magnitude(flow)` (実装を直接呼ぶなら `import reprconv; reprconv.flow_magnitude(flow)`、台帳から引くなら `opsreprconv.get("flow_magnitude")`)
 
 ## 使い方
 

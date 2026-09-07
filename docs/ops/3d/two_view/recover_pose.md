@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # recover_pose — 3D `two_view` op
 
 - **データ種**: `image2d × image2d` → `pose`
-- **呼び出し**: `import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)` (または `ops3d.get("recover_pose")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)` (実装を直接呼ぶなら `import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)`、台帳から引くなら `ops3d.get("recover_pose")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">inlier_ratio — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対応集合の inlier 率 = ‖T·source[i] − target[i]‖ &lt; thresh の割合。→ [0,1]。</p>
 <p>`<code style="color:#22d3bf">source</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">target</code>` は <b>index 対応</b>(source[i] が target[i] に対応)の</p>

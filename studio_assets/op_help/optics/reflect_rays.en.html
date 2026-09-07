@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">reflect_rays — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optscene; optscene.reflect_rays(directions, normals)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;reflect_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect_rays(directions, normals)</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.reflect_rays(directions, normals)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;reflect_rays&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Specular reflection d − 2(d·n)n. The partner of `<code style="color:#22d3bf">glassmirror.refract_rays</code>` (the reflecting side was missing).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

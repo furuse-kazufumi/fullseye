@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_resample — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import profileops; profileops.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code> (または <code style="color:#22d3bf">opsprofile.get(&quot;profile_resample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import profileops; profileops.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsprofile.get(&quot;profile_resample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>輪郭を等間隔に取り直す。`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;arclength&quot;</code>` のみ(現状)。</p>
 <p>点の密度が場所で違うと、厚みやキャンバーの当てはめが密なところに引きずられる。</p>

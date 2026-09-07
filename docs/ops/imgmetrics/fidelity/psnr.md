@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # psnr — IMGMETRICS `fidelity` op
 
 - **データ種**: `image2d × image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.psnr(a, b, data_range=None)` (または `opsimgmetrics.get("psnr")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.psnr(a, b, data_range=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.psnr(a, b, data_range=None)`、台帳から引くなら `opsimgmetrics.get("psnr")`)
 
 ## 使い方
 

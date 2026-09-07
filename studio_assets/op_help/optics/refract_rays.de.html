@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">refract_rays — OPTICS <code style="color:#22d3bf">glassbody</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.refract_rays(directions, normals, n1=1.0, n2=1.5)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;refract_rays&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refract_rays(directions, normals, n1=1.0, n2=1.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.refract_rays(directions, normals, n1=1.0, n2=1.5)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;refract_rays&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code> oder rufe <code style="color:#22d3bf">glassmirror.refract_rays</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Vektorform der Snellius-Brechung. <b>Totalreflexion wird pro Strahl entschieden</b>; liefert (Richtung, TIR-Maske).</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_synthetic_aperture — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_synthetic_aperture(lf, slope=0.0, mask=None, *, reduce=&#x27;mean&#x27;, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (or <code style="color:#22d3bf">opslightfield.get(&quot;lf_synthetic_aperture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_synthetic_aperture(lf, slope=0.0, mask=None, *, reduce=&#x27;mean&#x27;, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import lightfield; lightfield.lf_synthetic_aperture(lf, slope=0.0, mask=None, *, reduce=&#x27;mean&#x27;, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>; from the registry, <code style="color:#22d3bf">opslightfield.get(&quot;lf_synthetic_aperture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Refocus through a shaped aperture — and, with `<code style="color:#22d3bf">reduce=&quot;median&quot;</code>`, through occluders.</p>
 <p>Same shift-and-add geometry as :func:<code style="color:#22d3bf">lf_refocus</code>, with two additions:</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dtof_cube_depth — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">histcube</code> → <code style="color:#22d3bf">depth</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code> (oder <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code>; aus dem Register: <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tiefenkarte aus einem `<code style="color:#22d3bf">(H, W, T)</code>`-Photonenhistogrammwürfel — die dToF-Inversion.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

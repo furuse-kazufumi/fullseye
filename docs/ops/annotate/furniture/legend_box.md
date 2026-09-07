@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # legend_box — ANNOTATE `furniture` op
 
 - **データ種**: `image2d × entries` → `image2d`
-- **呼び出し**: `import annotate; annotate.legend_box(img, entries, xy, anchor='lt', swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme='okabe_ito', font_path=None, min_font_size=9, style=None, border=1, border_color='neutral')` (または `opsannotate.get("legend_box")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.legend_box(img, entries, xy, anchor='lt', swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme='okabe_ito', font_path=None, min_font_size=9, style=None, border=1, border_color='neutral')` (実装を直接呼ぶなら `import annotate; annotate.legend_box(img, entries, xy, anchor='lt', swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme='okabe_ito', font_path=None, min_font_size=9, style=None, border=1, border_color='neutral')`、台帳から引くなら `opsannotate.get("legend_box")`)
 
 ## 使い方
 

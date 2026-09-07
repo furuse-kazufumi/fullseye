@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # octave_bands — ACOUSTICS `level` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import acoustics; acoustics.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)` (または `opsacoustics.get("octave_bands")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)` (実装を直接呼ぶなら `import acoustics; acoustics.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)`、台帳から引くなら `opsacoustics.get("octave_bands")`)
 
 ## 使い方
 

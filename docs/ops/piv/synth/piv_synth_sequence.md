@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_synth_sequence — PIV `synth` op
 
 - **データ種**: `なし` → `images`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)` (または `opspiv.get("piv_synth_sequence")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)` (実装を直接呼ぶなら `import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)`、台帳から引くなら `opspiv.get("piv_synth_sequence")`)
 - **台帳経由の戻り値**: `fullseye.ledger.piv_synth_sequence(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.piv_synth_sequence.raw(...)`、または `pivops.piv_synth_sequence` を直接呼ぶ。
   - 本体の返り: `(frames, truth) -> images`
 

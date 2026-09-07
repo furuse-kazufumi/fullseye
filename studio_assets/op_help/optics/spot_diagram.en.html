@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spot_diagram — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;spot_diagram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace; raytrace.spot_diagram(system, field=None, rings=8, wavelength_um=None, image_mm=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;spot_diagram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Transverse ray intersections on the image plane for one field point.</p>
 <p>Returns `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(x, y)</code>` positions in mm relative to the <b>chief ray</b></p>

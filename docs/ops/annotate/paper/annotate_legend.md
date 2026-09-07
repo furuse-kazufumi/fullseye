@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_legend — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_legend(img, labels, xy, anchor='lt', start=1, radius=7.0, color='emphasis', text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color='neutral', scheme='okabe_ito', font_path=None, min_font_size=9, numbers=None)` (または `opsannotate.get("annotate_legend")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_legend(img, labels, xy, anchor='lt', start=1, radius=7.0, color='emphasis', text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color='neutral', scheme='okabe_ito', font_path=None, min_font_size=9, numbers=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_legend(img, labels, xy, anchor='lt', start=1, radius=7.0, color='emphasis', text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color='neutral', scheme='okabe_ito', font_path=None, min_font_size=9, numbers=None)`、台帳から引くなら `opsannotate.get("annotate_legend")`)
 
 ## 使い方
 

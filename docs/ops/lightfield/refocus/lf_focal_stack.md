@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_focal_stack — LIGHTFIELD `refocus` op
 
 - **データ種**: `lightfield` → `images`
-- **呼び出し**: `import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp='linear', edge='nearest')` (または `opslightfield.get("lf_focal_stack")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp='linear', edge='nearest')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp='linear', edge='nearest')`、台帳から引くなら `opslightfield.get("lf_focal_stack")`)
 
 ## 使い方
 

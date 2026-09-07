@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">cad_surface_to_pixel — CADMAP <code style="color:#22d3bf">project</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh × points</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import cadmap; cadmap.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)</code>(或 <code style="color:#22d3bf">opscadmap.get(&quot;cad_surface_to_pixel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)</code>(要直接调用实现,<code style="color:#22d3bf">import cadmap; cadmap.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)</code>;从台账取用则 <code style="color:#22d3bf">opscadmap.get(&quot;cad_surface_to_pixel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3-D 点 (N,3) → 像素 + <b>可见性</b>(遮挡・背面・出画分别返回)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

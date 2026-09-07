@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # calibration_views — OPTICS `imaging_sim` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import lensimage; lensimage.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)` (または `opsoptics.get("calibration_views")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)` (実装を直接呼ぶなら `import lensimage; lensimage.calibration_views(system, image_size=(1024, 1024), pixel_pitch_um=5.5, target=(9, 7, 5.0), poses=None, distance_mm=None, noise_px=0.0, seed=0, order=2)`、台帳から引くなら `opsoptics.get("calibration_views")`)
 
 ## 使い方
 

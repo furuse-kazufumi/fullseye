@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate3d_measure — 3D `annotate3d` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate3d; annotate3d.annotate3d_measure(img, p0, p1, pose, K, unit='', depth=None, color='emphasis', width=1.5, tick=8.0, font_size=12, label_fmt='{:.3g}', box_alpha=0.6, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)` (または `ops3d.get("annotate3d_measure")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate3d_measure(img, p0, p1, pose, K, unit='', depth=None, color='emphasis', width=1.5, tick=8.0, font_size=12, label_fmt='{:.3g}', box_alpha=0.6, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate3d; annotate3d.annotate3d_measure(img, p0, p1, pose, K, unit='', depth=None, color='emphasis', width=1.5, tick=8.0, font_size=12, label_fmt='{:.3g}', box_alpha=0.6, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)`、台帳から引くなら `ops3d.get("annotate3d_measure")`)
 
 ## 使い方
 

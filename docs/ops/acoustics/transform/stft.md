@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # stft — ACOUSTICS `transform` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.stft(x, rate, win=256, hop=None, window='hann', nfft=None, scaling='none')` (または `opsacoustics.get("stft")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.stft(x, rate, win=256, hop=None, window='hann', nfft=None, scaling='none')` (実装を直接呼ぶなら `import acoustics; acoustics.stft(x, rate, win=256, hop=None, window='hann', nfft=None, scaling='none')`、台帳から引くなら `opsacoustics.get("stft")`)
 
 ## 使い方
 

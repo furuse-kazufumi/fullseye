@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # temporal_bandpass — MOTIONMAG `temporal` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -> 'np.ndarray'` (または `opsmotionmag.get("temporal_bandpass")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.temporal_bandpass(video, f_lo, f_hi, fps) -> 'np.ndarray'` (実装を直接呼ぶなら `import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -> 'np.ndarray'`、台帳から引くなら `opsmotionmag.get("temporal_bandpass")`)
 
 ## 使い方
 

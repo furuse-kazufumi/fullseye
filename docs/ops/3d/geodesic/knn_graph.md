@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # knn_graph — 3D `geodesic` op
 
 - **データ種**: `points` → `graph`
-- **呼び出し**: `import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -> Tuple[numpy.ndarray, numpy.ndarray]` (または `ops3d.get("knn_graph")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.knn_graph(points: numpy.ndarray, k: int = 8) -> Tuple[numpy.ndarray, numpy.ndarray]` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -> Tuple[numpy.ndarray, numpy.ndarray]`、台帳から引くなら `ops3d.get("knn_graph")`)
 
 ## 使い方
 

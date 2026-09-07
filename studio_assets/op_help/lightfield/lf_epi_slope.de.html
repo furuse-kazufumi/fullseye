@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_epi_slope — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_epi_slope(lf, *, window=9, min_energy=1e-10)</code> (oder <code style="color:#22d3bf">opslightfield.get(&quot;lf_epi_slope&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_epi_slope(lf, *, window=9, min_energy=1e-10)</code> (die Implementierung direkt: <code style="color:#22d3bf">import lightfield; lightfield.lf_epi_slope(lf, *, window=9, min_energy=1e-10)</code>; aus dem Register: <code style="color:#22d3bf">opslightfield.get(&quot;lf_epi_slope&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.lf_epi_slope(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.lf_epi_slope.raw(...)</code> oder rufe <code style="color:#22d3bf">lightfield.lf_epi_slope</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Steigung pro Pixel aus der <b>Orientierung der EPI-Linien</b> (Strukturtensor, ein Durchlauf).</p>

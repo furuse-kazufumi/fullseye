@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">illumination_design — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;illumination_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;illumination_design&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Rank the standard light families for a surface / defect pairing (`<code style="color:#22d3bf">table</code>`).</p>
 <p>Candidates: low-angle ring (dark field, elevation 20°), high-angle ring</p>

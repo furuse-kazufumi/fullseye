@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # gicp — 3D `gicp` op
 
 - **データ種**: `points × points` → `pose`
-- **呼び出し**: `import gicp; gicp.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None) -> 'dict'` (または `ops3d.get("gicp")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None) -> 'dict'` (実装を直接呼ぶなら `import gicp; gicp.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None) -> 'dict'`、台帳から引くなら `ops3d.get("gicp")`)
 - **台帳経由の戻り値**: `fullseye.ledger.gicp(...)` は**宣言 out 型 `pose` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.gicp.raw(...)`、または `gicp.gicp` を直接呼ぶ。
 
 ## 使い方

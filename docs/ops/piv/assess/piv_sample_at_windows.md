@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_sample_at_windows — PIV `assess` op
 
 - **データ種**: `flow2d` → `flow2d`
-- **呼び出し**: `import pivops; pivops.piv_sample_at_windows(field, info)` (または `opspiv.get("piv_sample_at_windows")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)` (実装を直接呼ぶなら `import pivops; pivops.piv_sample_at_windows(field, info)`、台帳から引くなら `opspiv.get("piv_sample_at_windows")`)
 
 ## 使い方
 

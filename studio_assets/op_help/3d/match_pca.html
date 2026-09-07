@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_pca — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.match_pca(pts_scene, pts_model)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;match_pca&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_pca(pts_scene, pts_model)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.match_pca(pts_scene, pts_model)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;match_pca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。</p>
 <p>両雲の主軸を合わせる粗い剛体変換(回転 R + 並進 t)を返す。NCC/位相相関が扱えない</p>

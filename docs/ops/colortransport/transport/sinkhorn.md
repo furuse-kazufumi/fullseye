@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sinkhorn — COLORTRANSPORT `transport` op
 
 - **データ種**: `signal × signal × matrix` → `transport_plan`
-- **呼び出し**: `import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)` (または `opscolortransport.get("sinkhorn")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)` (実装を直接呼ぶなら `import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)`、台帳から引くなら `opscolortransport.get("sinkhorn")`)
 
 ## 使い方
 

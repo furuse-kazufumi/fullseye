@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">distortion_map — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;distortion_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)</code> (to call the implementation directly, <code style="color:#22d3bf">import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;distortion_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Real chief-ray height versus the paraxial one, and the remap grid (`<code style="color:#22d3bf">table</code>`).</p>
 <p>Fields (degrees for an object at infinity, object heights in mm otherwise)</p>

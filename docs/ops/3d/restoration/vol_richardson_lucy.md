@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_richardson_lucy — 3D `restoration` op
 
 - **データ種**: `voxel × voxel` → `voxel`
-- **呼び出し**: `import volrestore; volrestore.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)` (または `ops3d.get("vol_richardson_lucy")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)` (実装を直接呼ぶなら `import volrestore; volrestore.vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12)`、台帳から引くなら `ops3d.get("vol_richardson_lucy")`)
 
 ## 使い方
 

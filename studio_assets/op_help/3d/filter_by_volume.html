@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">filter_by_volume — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import regionprops3d; regionprops3d.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;filter_by_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import regionprops3d; regionprops3d.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;filter_by_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>min_voxels 未満の連結成分を除去した bool マスクを返す。</p>
 <p>Parameters</p>

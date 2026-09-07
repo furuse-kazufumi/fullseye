@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # filled_polygon — ANNOTATE `shape` op
 
 - **データ種**: `image2d × pairs` → `image2d`
-- **呼び出し**: `import annotate; annotate.filled_polygon(img, points, color='neutral', alpha=1.0, scheme='okabe_ito')` (または `opsannotate.get("filled_polygon")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.filled_polygon(img, points, color='neutral', alpha=1.0, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate; annotate.filled_polygon(img, points, color='neutral', alpha=1.0, scheme='okabe_ito')`、台帳から引くなら `opsannotate.get("filled_polygon")`)
 
 ## 使い方
 

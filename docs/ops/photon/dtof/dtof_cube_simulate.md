@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dtof_cube_simulate — PHOTON `dtof` op
 
 - **データ種**: `depth` → `histcube`
-- **呼び出し**: `import photoncount; photoncount.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)` (または `opsphoton.get("dtof_cube_simulate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)` (実装を直接呼ぶなら `import photoncount; photoncount.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)`、台帳から引くなら `opsphoton.get("dtof_cube_simulate")`)
 
 ## 使い方
 

@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fuse_to_voxel — 3D `fusion` op
 
 - **データ種**: `any` → `voxel`
-- **呼び出し**: `import fuse3d; fuse3d.fuse_to_voxel(items, size=64, bounds=None, device='cpu', smooth=0.8)` (または `ops3d.get("fuse_to_voxel")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fuse_to_voxel(items, size=64, bounds=None, device='cpu', smooth=0.8)` (実装を直接呼ぶなら `import fuse3d; fuse3d.fuse_to_voxel(items, size=64, bounds=None, device='cpu', smooth=0.8)`、台帳から引くなら `ops3d.get("fuse_to_voxel")`)
 - **台帳経由の戻り値**: `fullseye.ledger.fuse_to_voxel(...)` は**宣言 out 型 `voxel` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.fuse_to_voxel.raw(...)`、または `fuse3d.fuse_to_voxel` を直接呼ぶ。
   - 本体の返り: `(voxel, bounds)`
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)

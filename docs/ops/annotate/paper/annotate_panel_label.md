@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_panel_label — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_panel_label(img, letter='a', corner='lt', margin=8, style='paren', font_size=16, color='neutral', box_alpha=0.72, text_color=None, box_color=None, scheme='okabe_ito', font_path=None)` (または `opsannotate.get("annotate_panel_label")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_panel_label(img, letter='a', corner='lt', margin=8, style='paren', font_size=16, color='neutral', box_alpha=0.72, text_color=None, box_color=None, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_panel_label(img, letter='a', corner='lt', margin=8, style='paren', font_size=16, color='neutral', box_alpha=0.72, text_color=None, box_color=None, scheme='okabe_ito', font_path=None)`、台帳から引くなら `opsannotate.get("annotate_panel_label")`)
 
 ## 使い方
 

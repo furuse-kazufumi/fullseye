@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # defect_dataset — OPTICS `imaging_sim` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import lensimage; lensimage.defect_dataset(n=8, system=None, size=(256, 256), kinds=('scratch', 'pits', 'crack', 'blob'), pixel_pitch_um=5.5, noise=True, seed=0, out_dir=None, zones=3, field_of_view=None, texture='orange_peel', max_defects=2)` (または `opsoptics.get("defect_dataset")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.defect_dataset(n=8, system=None, size=(256, 256), kinds=('scratch', 'pits', 'crack', 'blob'), pixel_pitch_um=5.5, noise=True, seed=0, out_dir=None, zones=3, field_of_view=None, texture='orange_peel', max_defects=2)` (実装を直接呼ぶなら `import lensimage; lensimage.defect_dataset(n=8, system=None, size=(256, 256), kinds=('scratch', 'pits', 'crack', 'blob'), pixel_pitch_um=5.5, noise=True, seed=0, out_dir=None, zones=3, field_of_view=None, texture='orange_peel', max_defects=2)`、台帳から引くなら `opsoptics.get("defect_dataset")`)
 
 ## 使い方
 

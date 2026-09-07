@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">light_source — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.light_source(kind=&#x27;ring&#x27;, radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=None, length_mm=100.0, intensity=1.0, cos_exponent=1.0, position=None, emitters=None, directions=None)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;light_source&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_source(kind=&#x27;ring&#x27;, radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=None, length_mm=100.0, intensity=1.0, cos_exponent=1.0, position=None, emitters=None, directions=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import illumdesign; illumdesign.light_source(kind=&#x27;ring&#x27;, radius_mm=60.0, height_mm=100.0, n=24, tilt_deg=None, length_mm=100.0, intensity=1.0, cos_exponent=1.0, position=None, emitters=None, directions=None)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;light_source&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>An emitter set for a standard machine-vision light family (`<code style="color:#22d3bf">table</code>`).</p>
 <p>*kind*:</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # metallic_flake_normals — OPTICS `surface` op
 
 - **データ種**: `なし` → `normalmap`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -> 'np.ndarray'` (または `opsoptics.get("metallic_flake_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("metallic_flake_normals")`)
 
 ## 使い方
 

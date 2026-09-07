@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # extract_surface_points — 3D `tsdf_fusion` op
 
 - **データ種**: `sdf` → `points`
-- **呼び出し**: `import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: 'np.ndarray', weight: 'np.ndarray', bounds: 'Bounds', res: 'int') -> 'np.ndarray'` (または `ops3d.get("extract_surface_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.extract_surface_points(tsdf: 'np.ndarray', weight: 'np.ndarray', bounds: 'Bounds', res: 'int') -> 'np.ndarray'` (実装を直接呼ぶなら `import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: 'np.ndarray', weight: 'np.ndarray', bounds: 'Bounds', res: 'int') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("extract_surface_points")`)
 
 ## 使い方
 

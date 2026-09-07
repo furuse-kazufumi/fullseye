@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # photometric_stereo — 3D `photometric` op
 
 - **データ種**: `images` → `normalmap`
-- **呼び出し**: `import photometric; photometric.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)` (または `ops3d.get("photometric_stereo")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)` (実装を直接呼ぶなら `import photometric; photometric.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)`、台帳から引くなら `ops3d.get("photometric_stereo")`)
 - **台帳経由の戻り値**: `fullseye.ledger.photometric_stereo(...)` は**宣言 out 型 `normalmap` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.photometric_stereo.raw(...)`、または `photometric.photometric_stereo` を直接呼ぶ。
 
 ## 使い方

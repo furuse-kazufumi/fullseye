@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # phase_displacement — MOTIONMAG `measure` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import motionmag; motionmag.phase_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'` (または `opsmotionmag.get("phase_displacement")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.phase_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import motionmag; motionmag.phase_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'`、台帳から引くなら `opsmotionmag.get("phase_displacement")`)
 
 ## 使い方
 

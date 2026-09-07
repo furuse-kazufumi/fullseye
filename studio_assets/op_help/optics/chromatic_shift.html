@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_shift — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;chromatic_shift&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;chromatic_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Focal shift, image-height shift and spot size versus wavelength (`<code style="color:#22d3bf">table</code>`).</p>
 <p>Re-evaluates the prescription at each wavelength (real dispersion for</p>

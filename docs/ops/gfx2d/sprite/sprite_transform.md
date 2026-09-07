@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sprite_transform — GFX2D `sprite` op
 
 - **データ種**: `rgba` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.sprite_transform(sprite, angle_deg=0.0, scale=1.0, interp='bilinear', out_shape=None)` (または `opsgfx2d.get("sprite_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sprite_transform(sprite, angle_deg=0.0, scale=1.0, interp='bilinear', out_shape=None)` (実装を直接呼ぶなら `import gfx2d; gfx2d.sprite_transform(sprite, angle_deg=0.0, scale=1.0, interp='bilinear', out_shape=None)`、台帳から引くなら `opsgfx2d.get("sprite_transform")`)
 
 ## 使い方
 

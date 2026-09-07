@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # illumination_design — OPTICS `illumination` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import illumdesign; illumdesign.illumination_design(surface='glossy', defect='topographic', slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)` (または `opsoptics.get("illumination_design")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.illumination_design(surface='glossy', defect='topographic', slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)` (実装を直接呼ぶなら `import illumdesign; illumdesign.illumination_design(surface='glossy', defect='topographic', slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)`、台帳から引くなら `opsoptics.get("illumination_design")`)
 
 ## 使い方
 

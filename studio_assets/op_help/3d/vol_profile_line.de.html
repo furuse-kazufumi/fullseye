@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_profile_line — 3D <code style="color:#22d3bf">probe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volprobe; volprobe.vol_profile_line(vol, p0, p1, n=None, spacing=None, order=1)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_profile_line&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_profile_line(vol, p0, p1, n=None, spacing=None, order=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volprobe; volprobe.vol_profile_line(vol, p0, p1, n=None, spacing=None, order=1)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;vol_profile_line&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.vol_profile_line(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.vol_profile_line.raw(...)</code> oder rufe <code style="color:#22d3bf">volprobe.vol_profile_line</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Grauwertprofil entlang der geraden Sonde `<code style="color:#22d3bf">p0 -&gt; p1</code>`.</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">istft — ACOUSTICS <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import acoustics; acoustics.istft(transform)</code> (or <code style="color:#22d3bf">opsacoustics.get(&quot;istft&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.istft(transform)</code> (to call the implementation directly, <code style="color:#22d3bf">import acoustics; acoustics.istft(transform)</code>; from the registry, <code style="color:#22d3bf">opsacoustics.get(&quot;istft&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Invert :func:<code style="color:#22d3bf">stft</code> by weighted overlap-add — exactly.</p>
 <p>Weighted overlap-add divides the synthesised sum by the overlap sum of the</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # paraxial_trace — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import raytrace; raytrace.paraxial_trace(system)` (または `opsoptics.get("paraxial_trace")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.paraxial_trace(system)` (実装を直接呼ぶなら `import raytrace; raytrace.paraxial_trace(system)`、台帳から引くなら `opsoptics.get("paraxial_trace")`)
 
 ## 使い方
 

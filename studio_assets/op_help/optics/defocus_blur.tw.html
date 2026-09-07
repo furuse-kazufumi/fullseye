@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">defocus_blur — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgbimage × image2d × table</code> → <code style="color:#22d3bf">rgbimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;defocus_blur&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;defocus_blur&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>依據深度真值施加<b>景深模糊</b>(理想針孔像 → 實際鏡頭的像)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

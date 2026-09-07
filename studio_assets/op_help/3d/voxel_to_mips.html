@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_mips — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">images</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.voxel_to_mips(vol)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mips&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_mips(vol)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.voxel_to_mips(vol)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mips&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。</p>
 <p>入力 `<code style="color:#22d3bf">(D,H,W)</code><code style="color:#22d3bf"> に対し </code><code style="color:#22d3bf">[max(axis=0), max(axis=1), max(axis=2)]</code>` の list を返す。形は</p>

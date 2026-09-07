@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # defect_contrast — OPTICS `illumination` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import illumdesign; illumdesign.defect_contrast(light, surface='satin', slopes_deg=(2.0, 5.0, 10.0, 20.0), camera=(0.0, 0.0, 300.0), point=(0.0, 0.0), n_azimuth=12, pigment_albedo_ratio=0.5)` (または `opsoptics.get("defect_contrast")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.defect_contrast(light, surface='satin', slopes_deg=(2.0, 5.0, 10.0, 20.0), camera=(0.0, 0.0, 300.0), point=(0.0, 0.0), n_azimuth=12, pigment_albedo_ratio=0.5)` (実装を直接呼ぶなら `import illumdesign; illumdesign.defect_contrast(light, surface='satin', slopes_deg=(2.0, 5.0, 10.0, 20.0), camera=(0.0, 0.0, 300.0), point=(0.0, 0.0), n_azimuth=12, pigment_albedo_ratio=0.5)`、台帳から引くなら `opsoptics.get("defect_contrast")`)
 
 ## 使い方
 

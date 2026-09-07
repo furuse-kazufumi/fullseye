@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # plane_segmentation — 3D `segment` op
 
 - **データ種**: `points` → `labels`
-- **呼び出し**: `import segment3d; segment3d.plane_segmentation(points, thresh: 'float', min_inliers: 'int', max_planes: 'int' = 5, iters: 'int' = 300, seed: 'int' = 0) -> 'np.ndarray'` (または `ops3d.get("plane_segmentation")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.plane_segmentation(points, thresh: 'float', min_inliers: 'int', max_planes: 'int' = 5, iters: 'int' = 300, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import segment3d; segment3d.plane_segmentation(points, thresh: 'float', min_inliers: 'int', max_planes: 'int' = 5, iters: 'int' = 300, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("plane_segmentation")`)
 
 ## 使い方
 

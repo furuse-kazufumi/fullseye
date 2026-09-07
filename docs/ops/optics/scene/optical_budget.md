@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optical_budget — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.optical_budget(focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, wavelength_nm: 'float' = 550.0, coc_um: 'float' = None) -> 'dict'` (または `opsoptics.get("optical_budget")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optical_budget(focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, wavelength_nm: 'float' = 550.0, coc_um: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_budget(focal_mm: 'float' = 25.0, working_distance_mm: 'float' = 200.0, f_number: 'float' = None, na: 'float' = None, pixel_um: 'float' = 3.45, wavelength_nm: 'float' = 550.0, coc_um: 'float' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_budget")`)
 
 ## 使い方
 

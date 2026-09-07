@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">smallest_box3_axis — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import measure3d; measure3d.smallest_box3_axis(points) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;smallest_box3_axis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smallest_box3_axis(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import measure3d; measure3d.smallest_box3_axis(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;smallest_box3_axis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Axis-aligned bounding box (the 3-D `<code style="color:#22d3bf">smallest_rectangle1</code>`). Returns the</p>
 <p>`<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> corners and </code><code style="color:#22d3bf">center</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">(depth, row, col)</code>`, the full</p>

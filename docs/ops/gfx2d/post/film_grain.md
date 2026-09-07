@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # film_grain — GFX2D `post` op
 
 - **データ種**: `rgb` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.film_grain(rgb, sigma=0.03, seed=0, monochrome=True)` (または `opsgfx2d.get("film_grain")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.film_grain(rgb, sigma=0.03, seed=0, monochrome=True)` (実装を直接呼ぶなら `import gfx2d; gfx2d.film_grain(rgb, sigma=0.03, seed=0, monochrome=True)`、台帳から引くなら `opsgfx2d.get("film_grain")`)
 
 ## 使い方
 

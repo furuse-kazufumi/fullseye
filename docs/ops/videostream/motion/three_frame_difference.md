@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # three_frame_difference — VIDEOSTREAM `motion` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.three_frame_difference(video, threshold: 'float' = 0.1) -> 'np.ndarray'` (または `opsvideostream.get("three_frame_difference")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.three_frame_difference(video, threshold: 'float' = 0.1) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.three_frame_difference(video, threshold: 'float' = 0.1) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("three_frame_difference")`)
 
 ## 使い方
 

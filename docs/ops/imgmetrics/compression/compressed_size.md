@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # compressed_size — IMGMETRICS `compression` op
 
 - **データ種**: `image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.compressed_size(a, compressor='lzma')` (または `opsimgmetrics.get("compressed_size")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.compressed_size(a, compressor='lzma')` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.compressed_size(a, compressor='lzma')`、台帳から引くなら `opsimgmetrics.get("compressed_size")`)
 
 ## 使い方
 

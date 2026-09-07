@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sdf_intersect — 3D `sdf_csg` op
 
 - **データ種**: `sdf × sdf` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.sdf_intersect(a, b)` (または `ops3d.get("sdf_intersect")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sdf_intersect(a, b)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.sdf_intersect(a, b)`、台帳から引くなら `ops3d.get("sdf_intersect")`)
 
 ## 使い方
 

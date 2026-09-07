@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sdf_to_occupancy — 3D `transform` op
 
 - **データ種**: `sdf` → `voxel`
-- **呼び出し**: `import match3d; match3d.sdf_to_occupancy(sdf, iso=0.0)` (または `ops3d.get("sdf_to_occupancy")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sdf_to_occupancy(sdf, iso=0.0)` (実装を直接呼ぶなら `import match3d; match3d.sdf_to_occupancy(sdf, iso=0.0)`、台帳から引くなら `ops3d.get("sdf_to_occupancy")`)
 
 ## 使い方
 

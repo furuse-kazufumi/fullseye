@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">indices_to_labels — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">indices</code> → <code style="color:#22d3bf">labels</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.indices_to_labels(indices)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>添字 `<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> → 選択マスク </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の出口(<b>可逆</b>)。</p>
 <p>`<code style="color:#22d3bf">max(indices) + 1</code>` 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。</p>

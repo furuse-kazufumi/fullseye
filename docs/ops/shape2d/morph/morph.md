@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # morph — SHAPE2D `morph` op
 
 - **データ種**: `image2d × image2d × pairs × pairs` → `image2d`
-- **呼び出し**: `import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method='affine', lam=0.0, with_corners=True)` (または `opsshape2d.get("morph")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.morph(imgA, imgB, ptsA, ptsB, alpha, method='affine', lam=0.0, with_corners=True)` (実装を直接呼ぶなら `import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method='affine', lam=0.0, with_corners=True)`、台帳から引くなら `opsshape2d.get("morph")`)
 
 ## 使い方
 

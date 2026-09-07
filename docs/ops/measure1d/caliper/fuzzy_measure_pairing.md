@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fuzzy_measure_pairing — MEASURE1D `caliper` op
 
 - **データ種**: `image2d × measurehandle` → `table`
-- **呼び出し**: `import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)` (または `opsmeasure1d.get("fuzzy_measure_pairing")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)` (実装を直接呼ぶなら `import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)`、台帳から引くなら `opsmeasure1d.get("fuzzy_measure_pairing")`)
 
 ## 使い方
 

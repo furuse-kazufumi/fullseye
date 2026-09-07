@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_residual — 3D <code style="color:#22d3bf">freeform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × image2d × bspline_surface</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;surface_residual&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_residual(x, y, z, tck)</code> (to call the implementation directly, <code style="color:#22d3bf">import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;surface_residual&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.surface_residual(...)</code> returns **only the declared out type <code style="color:#22d3bf">measurement</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.surface_residual.raw(...)</code> or call <code style="color:#22d3bf">bspline_surf.surface_residual</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">{&quot;rms&quot;,&quot;max&quot;,&quot;pv&quot;} → pv float</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>

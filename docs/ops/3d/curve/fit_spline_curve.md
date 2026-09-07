@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fit_spline_curve — 3D `curve` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)` (または `ops3d.get("fit_spline_curve")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_spline_curve(points, smooth=0.0, k=3, n=None)` (実装を直接呼ぶなら `import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)`、台帳から引くなら `ops3d.get("fit_spline_curve")`)
 
 ## 使い方
 

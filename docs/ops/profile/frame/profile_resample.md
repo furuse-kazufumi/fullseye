@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_resample — PROFILE `frame` op
 
 - **データ種**: `pairs` → `pairs`
-- **呼び出し**: `import profileops; profileops.profile_resample(contour, n=200, kind='arclength')` (または `opsprofile.get("profile_resample")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_resample(contour, n=200, kind='arclength')` (実装を直接呼ぶなら `import profileops; profileops.profile_resample(contour, n=200, kind='arclength')`、台帳から引くなら `opsprofile.get("profile_resample")`)
 
 ## 使い方
 

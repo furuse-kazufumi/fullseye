@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # poly_fit — MATH `interp_poly` op
 
 - **データ種**: `signal × signal` → `table`
-- **呼び出し**: `import mathops; mathops.poly_fit(x, y, degree)` (または `opsmath.get("poly_fit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.poly_fit(x, y, degree)` (実装を直接呼ぶなら `import mathops; mathops.poly_fit(x, y, degree)`、台帳から引くなら `opsmath.get("poly_fit")`)
 
 ## 使い方
 

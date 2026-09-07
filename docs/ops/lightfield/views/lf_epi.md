@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_epi — LIGHTFIELD `views` op
 
 - **データ種**: `lightfield` → `image2d`
-- **呼び出し**: `import lightfield; lightfield.lf_epi(lf, axis='u', index=0, view=None)` (または `opslightfield.get("lf_epi")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_epi(lf, axis='u', index=0, view=None)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_epi(lf, axis='u', index=0, view=None)`、台帳から引くなら `opslightfield.get("lf_epi")`)
 
 ## 使い方
 

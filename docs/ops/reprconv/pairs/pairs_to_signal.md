@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # pairs_to_signal — REPRCONV `pairs` op
 
 - **データ種**: `pairs` → `signal`
-- **呼び出し**: `import reprconv; reprconv.pairs_to_signal(pairs)` (または `opsreprconv.get("pairs_to_signal")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pairs_to_signal(pairs)` (実装を直接呼ぶなら `import reprconv; reprconv.pairs_to_signal(pairs)`、台帳から引くなら `opsreprconv.get("pairs_to_signal")`)
 
 ## 使い方
 

@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sh_descriptor — 3D `describe` op
 
 - **データ種**: `voxel` → `descriptor`
-- **呼び出し**: `import match3d; match3d.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device='cpu')` (または `ops3d.get("sh_descriptor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device='cpu')`、台帳から引くなら `ops3d.get("sh_descriptor")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_text_path — ANNOTATE `paper` op
 
 - **データ種**: `image2d × text` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None)` (または `opsannotate.get("annotate_text_path")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_text_path")`)
 
 ## 使い方
 

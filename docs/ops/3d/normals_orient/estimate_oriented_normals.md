@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # estimate_oriented_normals — 3D `normals_orient` op
 
 - **データ種**: `points` → `normals`
-- **呼び出し**: `import normals_orient; normals_orient.estimate_oriented_normals(points, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'` (または `ops3d.get("estimate_oriented_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.estimate_oriented_normals(points, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import normals_orient; normals_orient.estimate_oriented_normals(points, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("estimate_oriented_normals")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_area — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각형 메시의 <b>표면적</b>(모든 삼각형 면적의 총합). → float.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
@@ -27,7 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">measurement</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">mesh_process</code>)</h3>
-<p><a style="color:#22d3bf" href="op3d:laplacian_smooth">laplacian_smooth</a> · <a style="color:#22d3bf" href="op3d:taubin_smooth">taubin_smooth</a> · <a style="color:#22d3bf" href="op3d:decimate_qem">decimate_qem</a> · <a style="color:#22d3bf" href="op3d:face_normals">face_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_normals">vertex_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_curvature">vertex_curvature</a></p>
+<p><a style="color:#22d3bf" href="op3d:laplacian_smooth">laplacian_smooth</a> · <a style="color:#22d3bf" href="op3d:taubin_smooth">taubin_smooth</a> · <a style="color:#22d3bf" href="op3d:decimate_qem">decimate_qem</a> · <a style="color:#22d3bf" href="op3d:face_normals">face_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_normals">vertex_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_curvature">vertex_curvature</a> · <a style="color:#22d3bf" href="op3d:face_areas">face_areas</a> · <a style="color:#22d3bf" href="op3d:mesh_volume">mesh_volume</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: mesh_props.py — 3D 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

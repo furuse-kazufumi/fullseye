@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # superquadric_residual — 3D `superquadric` op
 
 - **データ種**: `points` → `measurement`
-- **呼び出し**: `import superquadric; superquadric.superquadric_residual(points, a, eps, R, t) -> 'float'` (または `ops3d.get("superquadric_residual")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.superquadric_residual(points, a, eps, R, t) -> 'float'` (実装を直接呼ぶなら `import superquadric; superquadric.superquadric_residual(points, a, eps, R, t) -> 'float'`、台帳から引くなら `ops3d.get("superquadric_residual")`)
 
 ## 使い方
 

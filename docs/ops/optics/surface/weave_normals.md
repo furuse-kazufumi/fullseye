@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # weave_normals — OPTICS `surface` op
 
 - **データ種**: `なし` → `normalmap`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -> 'np.ndarray'` (または `opsoptics.get("weave_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("weave_normals")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tps_fit — 3D `deform` op
 
 - **データ種**: `points × points` → `deformation`
-- **呼び出し**: `import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)` (または `ops3d.get("tps_fit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tps_fit(src_ctrl, dst_ctrl, lam=0.0)` (実装を直接呼ぶなら `import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)`、台帳から引くなら `ops3d.get("tps_fit")`)
 
 ## 使い方
 

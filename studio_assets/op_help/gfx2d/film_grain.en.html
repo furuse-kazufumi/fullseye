@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">film_grain — GFX2D <code style="color:#22d3bf">post</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.film_grain(rgb, sigma=0.03, seed=0, monochrome=True)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;film_grain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.film_grain(rgb, sigma=0.03, seed=0, monochrome=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.film_grain(rgb, sigma=0.03, seed=0, monochrome=True)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;film_grain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Add zero-mean Gaussian grain, deterministically from `<code style="color:#22d3bf">seed</code>`.</p>
 <p>`<code style="color:#22d3bf">monochrome</code>` adds the same noise to all three channels (what film grain</p>

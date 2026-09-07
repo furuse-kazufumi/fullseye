@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_reduce_domain — 3D `domain` op
 
 - **データ種**: `voxel × voxel` → `voxel`
-- **呼び出し**: `import volops; volops.vol_reduce_domain(vol, domain)` (または `ops3d.get("vol_reduce_domain")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_reduce_domain(vol, domain)` (実装を直接呼ぶなら `import volops; volops.vol_reduce_domain(vol, domain)`、台帳から引くなら `ops3d.get("vol_reduce_domain")`)
 
 ## 使い方
 

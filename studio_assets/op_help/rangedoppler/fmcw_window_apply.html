@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fmcw_window_apply — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">beatcube</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_window_apply(cube, window=&#x27;hann&#x27;, axis=&#x27;range&#x27;)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_window_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fmcw_window_apply(cube, window=&#x27;hann&#x27;, axis=&#x27;range&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_window_apply(cube, window=&#x27;hann&#x27;, axis=&#x27;range&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_window_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Apply a periodic window along the range and/or Doppler axis of a beat cube.</p>
 <p>The sidelobes of a rectangular (unwindowed) transform are -13.3 dB, so a</p>

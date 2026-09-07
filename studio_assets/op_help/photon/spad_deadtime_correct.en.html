@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spad_deadtime_correct — PHOTON <code style="color:#22d3bf">spad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">countrate</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_correct(measured_hz, dead_time_ns=50.0)</code> (or <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spad_deadtime_correct(measured_hz, dead_time_ns=50.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_correct(measured_hz, dead_time_ns=50.0)</code>; from the registry, <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_correct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recover the true photon rate from a dead-time-distorted measured rate.</p>
 <p>The exact inverse of the <b>non-paralysable</b> law of</p>

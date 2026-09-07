@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_prune3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import medial; medial.skeleton_prune3d(vol, length=1)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;skeleton_prune3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_prune3d(vol, length=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import medial; medial.skeleton_prune3d(vol, length=1)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;skeleton_prune3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D 骨格のヒゲ(短い枝)を刈る。端点除去を length 回反復 = 枝長 &lt;=length を除去。</p>
 <p>2D の <code style="color:#22d3bf">pruning</code> の 3D 版。孤立 voxel は端点扱いで消える。</p>

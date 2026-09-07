@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_focal_stack — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">images</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (oder <code style="color:#22d3bf">opslightfield.get(&quot;lf_focal_stack&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opslightfield.get(&quot;lf_focal_stack&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Refokussiert auf jede Steigung in *slopes* — ein Fokusstapel aus einer Aufnahme.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

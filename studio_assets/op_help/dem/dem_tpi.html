@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_tpi — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>地形位置指数 TPI —— 自セルと 8 近傍平均の差 [m]。正が尾根、負が谷。</p>
 <p>式: `<code style="color:#22d3bf">tpi = z - mean(8 近傍の z)</code>`(Weiss の TPI を 3x3 の最小近傍で取ったもの)。</p>

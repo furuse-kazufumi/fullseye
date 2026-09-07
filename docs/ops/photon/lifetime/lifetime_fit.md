@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lifetime_fit — PHOTON `lifetime` op
 
 - **データ種**: `counts` → `table`
-- **呼び出し**: `import photoncount; photoncount.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)` (または `opsphoton.get("lifetime_fit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)` (実装を直接呼ぶなら `import photoncount; photoncount.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)`、台帳から引くなら `opsphoton.get("lifetime_fit")`)
 
 ## 使い方
 

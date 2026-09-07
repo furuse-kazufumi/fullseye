@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">plane_segmentation — 3D <code style="color:#22d3bf">segment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import segment3d; segment3d.plane_segmentation(points, thresh: &#x27;float&#x27;, min_inliers: &#x27;int&#x27;, max_planes: &#x27;int&#x27; = 5, iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;plane_segmentation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_segmentation(points, thresh: &#x27;float&#x27;, min_inliers: &#x27;int&#x27;, max_planes: &#x27;int&#x27; = 5, iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segment3d; segment3d.plane_segmentation(points, thresh: &#x27;float&#x27;, min_inliers: &#x27;int&#x27;, max_planes: &#x27;int&#x27; = 5, iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;plane_segmentation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。</p>
 <p>残り点集合に :func:<code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の</p>

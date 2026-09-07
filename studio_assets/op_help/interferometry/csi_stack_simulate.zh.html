@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">csi_stack_simulate — INTERFEROMETRY <code style="color:#22d3bf">simulate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">zscan</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import interferometry; interferometry.csi_stack_simulate(height_um, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=None, noise=0.0, seed=0)</code>(或 <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_stack_simulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.csi_stack_simulate(height_um, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=None, noise=0.0, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import interferometry; interferometry.csi_stack_simulate(height_um, z_start_um=0.0, z_step_um=0.05, n_planes=241, wavelength_um=0.6, envelope_fwhm_um=2.8, envelope_sigma_um=None, bias=0.5, amplitude=0.4, reflectivity=None, noise=0.0, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_stack_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>合成干涉显微镜记录的 `<code style="color:#22d3bf">(Z, H, W)</code>` 扫描堆栈。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

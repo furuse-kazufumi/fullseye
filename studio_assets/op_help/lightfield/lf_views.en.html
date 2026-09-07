@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_views — LIGHTFIELD <code style="color:#22d3bf">views</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">images</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_views(lf)</code> (or <code style="color:#22d3bf">opslightfield.get(&quot;lf_views&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_views(lf)</code> (to call the implementation directly, <code style="color:#22d3bf">import lightfield; lightfield.lf_views(lf)</code>; from the registry, <code style="color:#22d3bf">opslightfield.get(&quot;lf_views&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The whole angular grid as a plain list of 2-D images (row-major over `<code style="color:#22d3bf">(v, u)</code>`).</p>
 <p>The bridge to the rest of fullseye: the returned `<code style="color:#22d3bf">list</code><code style="color:#22d3bf"> of </code><code style="color:#22d3bf">V*U</code>`</p>

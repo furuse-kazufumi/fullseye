@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cosmic_ray_reject — ASTROSTACK `cosmic` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import astrostack; astrostack.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1)` (または `opsastrostack.get("cosmic_ray_reject")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1)` (実装を直接呼ぶなら `import astrostack; astrostack.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1)`、台帳から引くなら `opsastrostack.get("cosmic_ray_reject")`)
 - **台帳経由の戻り値**: `fullseye.ledger.cosmic_ray_reject(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.cosmic_ray_reject.raw(...)`、または `astrostack.cosmic_ray_reject` を直接呼ぶ。
   - 本体の返り: `(cleaned, mask) -> image2d`
 

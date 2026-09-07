@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_geocentric_grid — DEM `geodesy` op
 
 - **データ種**: `depth` → `pointmap`
-- **呼び出し**: `import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)` (または `opsdem.get("dem_geocentric_grid")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)` (実装を直接呼ぶなら `import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)`、台帳から引くなら `opsdem.get("dem_geocentric_grid")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sprite_sheet_slice — GFX2D <code style="color:#22d3bf">sprite</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">sprites</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_sheet_slice(sheet, tile_height, tile_width, margin=0, spacing=0, count=None)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_sheet_slice&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sprite_sheet_slice(sheet, tile_height, tile_width, margin=0, spacing=0, count=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_sheet_slice(sheet, tile_height, tile_width, margin=0, spacing=0, count=None)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_sheet_slice&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cut a sprite atlas into a list of equal `<code style="color:#22d3bf">rgba</code>` frames, row-major.</p>
 <p>`<code style="color:#22d3bf">margin</code><code style="color:#22d3bf"> is the border around the whole sheet, </code><code style="color:#22d3bf">spacing</code>` the gap between</p>

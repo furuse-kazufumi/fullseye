@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_epi_slope — LIGHTFIELD `depth` op
 
 - **データ種**: `lightfield` → `image2d`
-- **呼び出し**: `import lightfield; lightfield.lf_epi_slope(lf, *, window=9, min_energy=1e-10)` (または `opslightfield.get("lf_epi_slope")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_epi_slope(lf, *, window=9, min_energy=1e-10)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_epi_slope(lf, *, window=9, min_energy=1e-10)`、台帳から引くなら `opslightfield.get("lf_epi_slope")`)
 - **台帳経由の戻り値**: `fullseye.ledger.lf_epi_slope(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.lf_epi_slope.raw(...)`、または `lightfield.lf_epi_slope` を直接呼ぶ。
 
 ## 使い方

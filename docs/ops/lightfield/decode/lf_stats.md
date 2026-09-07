@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_stats — LIGHTFIELD `decode` op
 
 - **データ種**: `lightfield` → `table`
-- **呼び出し**: `import lightfield; lightfield.lf_stats(lf)` (または `opslightfield.get("lf_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_stats(lf)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_stats(lf)`、台帳から引くなら `opslightfield.get("lf_stats")`)
 
 ## 使い方
 

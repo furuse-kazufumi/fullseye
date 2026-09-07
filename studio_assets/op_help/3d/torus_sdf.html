@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">torus_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.torus_sdf(grid, center, axis, major_radius, minor_radius)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;torus_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torus_sdf(grid, center, axis, major_radius, minor_radius)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sdf_ops; sdf_ops.torus_sdf(grid, center, axis, major_radius, minor_radius)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;torus_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>トーラス(ドーナツ)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
 <p>`<code style="color:#22d3bf">sdf(p) = ‖(r - major_radius, t)‖ - minor_radius</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> は軸からの半径、</code><code style="color:#22d3bf">t</code>` は</p>

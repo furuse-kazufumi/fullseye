@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_normalise — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code> (または <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_normalise(contour)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code>、台帳から引くなら <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>弦長 1・前縁が原点・弦が +x になるよう回転と並進で正規化する。</p>
 <p><b>スケールは弦長でしか変えない</b>(形を歪めない)。返りは正規化した輪郭。</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_features — BLOB <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import blob2d; blob2d.blob_features(labels: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (oder <code style="color:#22d3bf">opsblob.get(&quot;blob_features&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_features(labels: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_features(labels: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_features&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>物体ごとの形の特徴量を、<b>鍵ごとに 1 本の配列</b>で返す。</p>
@@ -51,6 +51,7 @@
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_nuclei_ploidy">poc_nuclei_ploidy</a> — <code style="color:#22d3bf">py -3.11 examples/poc_nuclei_ploidy.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_sizing">poc_particle_sizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_sizing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_tracking">poc_particle_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_warpage_risk">poc_print_warpage_risk</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_warpage_risk.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sea_ice_concentration">poc_sea_ice_concentration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sea_ice_concentration.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solar_el_inspection">poc_solar_el_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solar_el_inspection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solder_fillet_aoi">poc_solder_fillet_aoi</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solder_fillet_aoi.py</code></p>

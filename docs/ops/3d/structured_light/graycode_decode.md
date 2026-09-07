@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # graycode_decode — 3D `structured_light` op
 
 - **データ種**: `images` → `image2d`
-- **呼び出し**: `import fringe; fringe.graycode_decode(bit_images, thresh=0.5) -> 'np.ndarray'` (または `ops3d.get("graycode_decode")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.graycode_decode(bit_images, thresh=0.5) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.graycode_decode(bit_images, thresh=0.5) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("graycode_decode")`)
 
 ## 使い方
 

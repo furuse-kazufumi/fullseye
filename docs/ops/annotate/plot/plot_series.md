@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # plot_series — ANNOTATE `plot` op
 
 - **データ種**: `image2d × axes × signal × signal` → `image2d`
-- **呼び出し**: `import annotate; annotate.plot_series(img, axes, x, y, kind='line', color='reference', width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme='okabe_ito', style=None)` (または `opsannotate.get("plot_series")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.plot_series(img, axes, x, y, kind='line', color='reference', width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.plot_series(img, axes, x, y, kind='line', color='reference', width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("plot_series")`)
 
 ## 使い方
 

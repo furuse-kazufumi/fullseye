@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">moment_axes — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">axes</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>centroid and principal axes</b> (the eigenvectors of the inertia tensor) of a point set or weighted points. The basis of pose estimation.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

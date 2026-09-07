@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # order_spectrum — ACOUSTICS `order` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)` (または `opsacoustics.get("order_spectrum")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)` (実装を直接呼ぶなら `import acoustics; acoustics.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)`、台帳から引くなら `opsacoustics.get("order_spectrum")`)
 
 ## 使い方
 

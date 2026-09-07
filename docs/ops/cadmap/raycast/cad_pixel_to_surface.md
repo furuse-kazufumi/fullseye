@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cad_pixel_to_surface — CADMAP `raycast` op
 
 - **データ種**: `mesh × keypoints` → `table`
-- **呼び出し**: `import cadmap; cadmap.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)` (または `opscadmap.get("cad_pixel_to_surface")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)` (実装を直接呼ぶなら `import cadmap; cadmap.cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None, cull_backfaces=True, image_size=None, strict=False)`、台帳から引くなら `opscadmap.get("cad_pixel_to_surface")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">blend_mode — GFX2D <code style="color:#22d3bf">composite</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb × rgb</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.blend_mode(base, top, mode=&#x27;normal&#x27;, opacity=1.0)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;blend_mode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend_mode(base, top, mode=&#x27;normal&#x27;, opacity=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.blend_mode(base, top, mode=&#x27;normal&#x27;, opacity=1.0)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;blend_mode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Blend two opaque `<code style="color:#22d3bf">rgb</code>` images with a named mode (W3C Level 1).</p>
 <p>With an opaque backdrop the specification reduces to a lerp,</p>

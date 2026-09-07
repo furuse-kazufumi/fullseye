@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_angle — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_angle(img, a, vertex, b, radius=30.0, color=&#x27;emphasis&#x27;, width=1.5, draw_rays=True, label_fmt=&#x27;{:.1f}°&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (または <code style="color:#22d3bf">opsannotate.get(&quot;annotate_angle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_angle(img, a, vertex, b, radius=30.0, color=&#x27;emphasis&#x27;, width=1.5, draw_rays=True, label_fmt=&#x27;{:.1f}°&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_angle(img, a, vertex, b, radius=30.0, color=&#x27;emphasis&#x27;, width=1.5, draw_rays=True, label_fmt=&#x27;{:.1f}°&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像(image2d)を返す: 3 点のなす角を弧と値で示す(必要なら 2 本の腕も)。</p>
 <p>`<code style="color:#22d3bf">label_fmt=None</code>` なら値の文字を描かない(弧だけ)。</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # integrate_normals — 3D `photometric` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import photometric; photometric.integrate_normals(normals, mask=None)` (または `ops3d.get("integrate_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.integrate_normals(normals, mask=None)` (実装を直接呼ぶなら `import photometric; photometric.integrate_normals(normals, mask=None)`、台帳から引くなら `ops3d.get("integrate_normals")`)
 
 ## 使い方
 

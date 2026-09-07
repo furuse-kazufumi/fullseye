@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sprite_sheet_slice — GFX2D `sprite` op
 
 - **データ種**: `rgba` → `sprites`
-- **呼び出し**: `import gfx2d; gfx2d.sprite_sheet_slice(sheet, tile_height, tile_width, margin=0, spacing=0, count=None)` (または `opsgfx2d.get("sprite_sheet_slice")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sprite_sheet_slice(sheet, tile_height, tile_width, margin=0, spacing=0, count=None)` (実装を直接呼ぶなら `import gfx2d; gfx2d.sprite_sheet_slice(sheet, tile_height, tile_width, margin=0, spacing=0, count=None)`、台帳から引くなら `opsgfx2d.get("sprite_sheet_slice")`)
 
 ## 使い方
 

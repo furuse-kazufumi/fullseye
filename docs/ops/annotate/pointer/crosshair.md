@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # crosshair — ANNOTATE `pointer` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.crosshair(img, xy, color='emphasis', width=1, gap=6, extent=None, scheme='okabe_ito', style=None)` (または `opsannotate.get("crosshair")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.crosshair(img, xy, color='emphasis', width=1, gap=6, extent=None, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.crosshair(img, xy, color='emphasis', width=1, gap=6, extent=None, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("crosshair")`)
 
 ## 使い方
 

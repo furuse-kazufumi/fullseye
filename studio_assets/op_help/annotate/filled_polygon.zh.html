@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">filled_polygon — ANNOTATE <code style="color:#22d3bf">shape</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;filled_polygon&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;filled_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>多边形填充(奇偶交叉规则 —— :mod:<code style="color:#22d3bf">imagedraw</code> 只画轮廓)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

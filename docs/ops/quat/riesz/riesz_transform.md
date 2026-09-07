@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # riesz_transform — QUAT `riesz` op
 
 - **データ種**: `image2d` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.riesz_transform(image) -> 'np.ndarray'` (または `opsquat.get("riesz_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.riesz_transform(image) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_transform(image) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("riesz_transform")`)
 
 ## 使い方
 

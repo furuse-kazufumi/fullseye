@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ward_anisotropic — OPTICS `appearance` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import matappear; matappear.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -> 'np.ndarray'` (または `opsoptics.get("ward_anisotropic")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("ward_anisotropic")`)
 
 ## 使い方
 

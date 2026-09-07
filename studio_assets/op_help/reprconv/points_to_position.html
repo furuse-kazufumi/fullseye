@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_to_position — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_position(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 重心 </code><code style="color:#22d3bf">(z, y, x)</code>`。<b>不可逆</b>(分布を捨てる)。</p>
 <p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」</p>

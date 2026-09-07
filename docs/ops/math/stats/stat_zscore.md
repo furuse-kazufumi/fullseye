@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # stat_zscore — MATH `stats` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import mathops; mathops.stat_zscore(x)` (または `opsmath.get("stat_zscore")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.stat_zscore(x)` (実装を直接呼ぶなら `import mathops; mathops.stat_zscore(x)`、台帳から引くなら `opsmath.get("stat_zscore")`)
 
 ## 使い方
 

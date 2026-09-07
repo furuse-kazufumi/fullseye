@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mse — IMGMETRICS `fidelity` op
 
 - **データ種**: `image2d × image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.mse(a, b)` (または `opsimgmetrics.get("mse")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mse(a, b)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.mse(a, b)`、台帳から引くなら `opsimgmetrics.get("mse")`)
 
 ## 使い方
 

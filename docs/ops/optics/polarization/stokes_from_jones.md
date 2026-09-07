@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # stokes_from_jones — OPTICS `polarization` op
 
 - **データ種**: `jones` → `stokes`
-- **呼び出し**: `import optics; optics.stokes_from_jones(state)` (または `opsoptics.get("stokes_from_jones")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.stokes_from_jones(state)` (実装を直接呼ぶなら `import optics; optics.stokes_from_jones(state)`、台帳から引くなら `opsoptics.get("stokes_from_jones")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # topology_signature — 3D `medial` op
 
 - **データ種**: `voxel` → `table`
-- **呼び出し**: `import medial; medial.topology_signature(skeleton)` (または `ops3d.get("topology_signature")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.topology_signature(skeleton)` (実装を直接呼ぶなら `import medial; medial.topology_signature(skeleton)`、台帳から引くなら `ops3d.get("topology_signature")`)
 
 ## 使い方
 

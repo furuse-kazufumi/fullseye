@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tangent_field — OPTICS `finish` op
 
 - **データ種**: `なし` → `normalmap`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import metalfinish; metalfinish.tangent_field(shape, kind='linear', angle_deg=0.0, center=None) -> 'np.ndarray'` (または `opsoptics.get("tangent_field")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tangent_field(shape, kind='linear', angle_deg=0.0, center=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import metalfinish; metalfinish.tangent_field(shape, kind='linear', angle_deg=0.0, center=None) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("tangent_field")`)
 
 ## 使い方
 

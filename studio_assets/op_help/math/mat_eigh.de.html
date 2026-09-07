@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_eigh — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import mathops; mathops.mat_eigh(a)</code> (oder <code style="color:#22d3bf">opsmath.get(&quot;mat_eigh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_eigh(a)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.mat_eigh(a)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;mat_eigh&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.mat_eigh(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">table</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.mat_eigh.raw(...)</code> oder rufe <code style="color:#22d3bf">mathops.mat_eigh</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eigenzerlegung einer <b>symmetrischen</b> Matrix (LAPACK `<code style="color:#22d3bf">syevd</code>`).</p>

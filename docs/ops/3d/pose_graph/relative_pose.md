@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # relative_pose — 3D `pose_graph` op
 
 - **データ種**: `pose × pose` → `pose`
-- **呼び出し**: `import pose_graph; pose_graph.relative_pose(pose_i, pose_j)` (または `ops3d.get("relative_pose")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.relative_pose(pose_i, pose_j)` (実装を直接呼ぶなら `import pose_graph; pose_graph.relative_pose(pose_i, pose_j)`、台帳から引くなら `ops3d.get("relative_pose")`)
 
 ## 使い方
 

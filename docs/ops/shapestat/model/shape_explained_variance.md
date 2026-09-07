@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_explained_variance — SHAPESTAT `model` op
 
 - **データ種**: `shapemodel` → `signal`
-- **呼び出し**: `import shapestats; shapestats.shape_explained_variance(model)` (または `opsshapestat.get("shape_explained_variance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_explained_variance(model)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_explained_variance(model)`、台帳から引くなら `opsshapestat.get("shape_explained_variance")`)
 
 ## 使い方
 

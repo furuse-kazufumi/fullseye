@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_subdivide — 3D `terrain` op
 
 - **データ種**: `mesh` → `mesh`
-- **呼び出し**: `import render3d; render3d.mesh_subdivide(V, F, *, levels: 'int' = 1, target_edge=None, max_faces: 'int' = 4000000)` (または `ops3d.get("mesh_subdivide")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_subdivide(V, F, *, levels: 'int' = 1, target_edge=None, max_faces: 'int' = 4000000)` (実装を直接呼ぶなら `import render3d; render3d.mesh_subdivide(V, F, *, levels: 'int' = 1, target_edge=None, max_faces: 'int' = 4000000)`、台帳から引くなら `ops3d.get("mesh_subdivide")`)
 
 ## 使い方
 

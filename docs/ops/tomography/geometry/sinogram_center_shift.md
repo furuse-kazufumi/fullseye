@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sinogram_center_shift — TOMOGRAPHY `geometry` op
 
 - **データ種**: `sinogram` → `sinogram`
-- **呼び出し**: `import tomography; tomography.sinogram_center_shift(sinogram, shift_px=None, angles_deg=None)` (または `opstomography.get("sinogram_center_shift")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sinogram_center_shift(sinogram, shift_px=None, angles_deg=None)` (実装を直接呼ぶなら `import tomography; tomography.sinogram_center_shift(sinogram, shift_px=None, angles_deg=None)`、台帳から引くなら `opstomography.get("sinogram_center_shift")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sinogram_center_of_rotation — TOMOGRAPHY <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;sinogram_center_of_rotation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;sinogram_center_of_rotation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Where the axis of rotation actually is, in detector bins from the centre.</p>
 <p>The centre-of-mass identity, which is exact and needs no reconstruction: the</p>

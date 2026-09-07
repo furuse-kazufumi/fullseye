@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_edge_probe — 3D <code style="color:#22d3bf">probe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volprobe; volprobe.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity=&#x27;all&#x27;)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;vol_edge_probe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity=&#x27;all&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volprobe; volprobe.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity=&#x27;all&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;vol_edge_probe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kanten entlang der Sonde `<code style="color:#22d3bf">p0 -&gt; p1</code>` subsample-genau bestimmen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

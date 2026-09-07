@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # registration_recall — 3D `registration_metrics` op
 
 - **データ種**: `points × points` → `measurement`
-- **呼び出し**: `import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: 'float', *, corr_thresh: 'float | None' = None) -> 'float'` (または `ops3d.get("registration_recall")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.registration_recall(source, target, gt_transform, est_transform, thresh: 'float', *, corr_thresh: 'float | None' = None) -> 'float'` (実装を直接呼ぶなら `import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: 'float', *, corr_thresh: 'float | None' = None) -> 'float'`、台帳から引くなら `ops3d.get("registration_recall")`)
 
 ## 使い方
 

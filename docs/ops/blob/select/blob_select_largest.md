@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blob_select_largest — BLOB `select` op
 
 - **データ種**: `labels2d` → `labels2d`
-- **呼び出し**: `import blob2d; blob2d.blob_select_largest(labels: 'Any', count: 'int' = 1) -> 'np.ndarray'` (または `opsblob.get("blob_select_largest")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blob_select_largest(labels: 'Any', count: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_select_largest(labels: 'Any', count: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_select_largest")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">aabb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aabb(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>軸並行の外接直方体。`<code style="color:#22d3bf">(min (3,), max (3,))</code>` を返す。</p>
 <p>点群の各軸の最小値と最大値をそのまま返す(`<code style="color:#22d3bf">P.min(0)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">P.max(0)</code>`)。返り値は 2 つの (3,)</p>

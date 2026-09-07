@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # normalize — SHAPE2D `descriptor` op
 
 - **データ種**: `efdmodel` → `matrix`
-- **呼び出し**: `import fourierdesc; fourierdesc.normalize(model, size_invariant=True)` (または `opsshape2d.get("normalize")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.normalize(model, size_invariant=True)`、台帳から引くなら `opsshape2d.get("normalize")`)
 
 ## 使い方
 

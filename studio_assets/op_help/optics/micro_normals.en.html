@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">micro_normals — OPTICS <code style="color:#22d3bf">finish</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">normalmap</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import metalfinish; metalfinish.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;micro_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import metalfinish; metalfinish.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;micro_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cut the machining marks themselves <b>into the normals</b> (lathe feed marks, the ridges of a knurl).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

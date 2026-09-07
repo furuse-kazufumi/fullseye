@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # glass — OPTICS `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import raytrace; raytrace.glass(nd, vd)` (または `opsoptics.get("glass")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.glass(nd, vd)` (実装を直接呼ぶなら `import raytrace; raytrace.glass(nd, vd)`、台帳から引くなら `opsoptics.get("glass")`)
 
 ## 使い方
 

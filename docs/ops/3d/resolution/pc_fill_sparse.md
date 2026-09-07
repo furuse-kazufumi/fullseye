@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # pc_fill_sparse — 3D `resolution` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import meshres; meshres.pc_fill_sparse(points, spacing, k=8)` (または `ops3d.get("pc_fill_sparse")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pc_fill_sparse(points, spacing, k=8)` (実装を直接呼ぶなら `import meshres; meshres.pc_fill_sparse(points, spacing, k=8)`、台帳から引くなら `ops3d.get("pc_fill_sparse")`)
 
 ## 使い方
 

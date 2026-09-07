@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lens_spec — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.lens_spec(focal_mm: 'float' = 25.0, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None) -> 'dict'` (または `opsoptics.get("lens_spec")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lens_spec(focal_mm: 'float' = 25.0, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.lens_spec(focal_mm: 'float' = 25.0, f_number: 'float' = None, na: 'float' = None, working_distance_mm: 'float' = 200.0, coc_um: 'float' = None, telecentric: 'bool' = False, transmission: 'float' = 0.9, model: 'str' = None, maker: 'str' = None, image_circle_mm: 'float' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("lens_spec")`)
 
 ## 使い方
 

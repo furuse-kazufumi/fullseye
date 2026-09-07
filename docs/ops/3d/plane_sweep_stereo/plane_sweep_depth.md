@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # plane_sweep_depth — 3D `plane_sweep_stereo` op
 
 - **データ種**: `image2d × image2d` → `depth`
-- **呼び出し**: `import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: 'np.ndarray', img_src: 'np.ndarray', K: 'np.ndarray', R: 'np.ndarray', t: 'np.ndarray', depth_candidates, window: 'int' = 1, normal=(0.0, 0.0, 1.0)) -> 'np.ndarray'` (または `ops3d.get("plane_sweep_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.plane_sweep_depth(img_ref: 'np.ndarray', img_src: 'np.ndarray', K: 'np.ndarray', R: 'np.ndarray', t: 'np.ndarray', depth_candidates, window: 'int' = 1, normal=(0.0, 0.0, 1.0)) -> 'np.ndarray'` (実装を直接呼ぶなら `import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: 'np.ndarray', img_src: 'np.ndarray', K: 'np.ndarray', R: 'np.ndarray', t: 'np.ndarray', depth_candidates, window: 'int' = 1, normal=(0.0, 0.0, 1.0)) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("plane_sweep_depth")`)
 
 ## 使い方
 

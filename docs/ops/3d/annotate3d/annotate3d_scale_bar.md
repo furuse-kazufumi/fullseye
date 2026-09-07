@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate3d_scale_bar — 3D `annotate3d` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate3d; annotate3d.annotate3d_scale_bar(img, origin, direction, length, pose, K, unit='', depth=None, color='neutral', width=2.0, tick=8.0, font_size=12, label_fmt='{:g}', box_alpha=0.55, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)` (または `ops3d.get("annotate3d_scale_bar")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate3d_scale_bar(img, origin, direction, length, pose, K, unit='', depth=None, color='neutral', width=2.0, tick=8.0, font_size=12, label_fmt='{:g}', box_alpha=0.55, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate3d; annotate3d.annotate3d_scale_bar(img, origin, direction, length, pose, K, unit='', depth=None, color='neutral', width=2.0, tick=8.0, font_size=12, label_fmt='{:g}', box_alpha=0.55, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)`、台帳から引くなら `ops3d.get("annotate3d_scale_bar")`)
 
 ## 使い方
 

@@ -4,7 +4,7 @@ dim: tomography
 category: artifact
 in: sinogram
 out: sinogram
-examples: [ct_reconstruction]
+examples: [ct_reconstruction, poc_battery_ct_degradation]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # beam_hardening_apply — TOMOGRAPHY `artifact` op
 
 - **データ種**: `sinogram` → `sinogram`
-- **呼び出し**: `import tomography; tomography.beam_hardening_apply(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4)` (または `opstomography.get("beam_hardening_apply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.beam_hardening_apply(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4)` (実装を直接呼ぶなら `import tomography; tomography.beam_hardening_apply(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4)`、台帳から引くなら `opstomography.get("beam_hardening_apply")`)
 
 ## 使い方
 
@@ -63,6 +63,7 @@ cupping is the 6.7-point drop, not the 0.2-point one.)
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
+- [poc_battery_ct_degradation](../../../../examples/poc_battery_ct_degradation.py) — `py -3.11 examples/poc_battery_ct_degradation.py`
 
 ## 型が繋がる次の op(`sinogram` を入力に取れる)
 

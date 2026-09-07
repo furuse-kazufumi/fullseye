@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # refine_peak_newton — 3D `refine` op
 
 - **データ種**: `score × position` → `position`
-- **呼び出し**: `import match3d; match3d.refine_peak_newton(score, idx, device='cpu', max_iter=12, tol=0.0001)` (または `ops3d.get("refine_peak_newton")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.refine_peak_newton(score, idx, device='cpu', max_iter=12, tol=0.0001)` (実装を直接呼ぶなら `import match3d; match3d.refine_peak_newton(score, idx, device='cpu', max_iter=12, tol=0.0001)`、台帳から引くなら `ops3d.get("refine_peak_newton")`)
 - **台帳経由の戻り値**: `fullseye.ledger.refine_peak_newton(...)` は**宣言 out 型 `position` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.refine_peak_newton.raw(...)`、または `match3d.refine_peak_newton` を直接呼ぶ。
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 

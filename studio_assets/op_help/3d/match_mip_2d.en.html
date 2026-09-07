@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_mip_2d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.match_mip_2d(scene_vol, model_vol, device=&#x27;cpu&#x27;)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;match_mip_2d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_mip_2d(scene_vol, model_vol, device=&#x27;cpu&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.match_mip_2d(scene_vol, model_vol, device=&#x27;cpu&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;match_mip_2d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>MIP projection → 2-D NCC (structure = voxel → 2-D, method = NCC, transform = orthogonal MIP).</p>

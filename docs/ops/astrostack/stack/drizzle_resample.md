@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # drizzle_resample — ASTROSTACK `stack` op
 
 - **データ種**: `images` → `image2d`
-- **呼び出し**: `import astrostack; astrostack.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)` (または `opsastrostack.get("drizzle_resample")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)` (実装を直接呼ぶなら `import astrostack; astrostack.drizzle_resample(frames, shifts=None, scale=2.0, pixfrac=1.0)`、台帳から引くなら `opsastrostack.get("drizzle_resample")`)
 - **台帳経由の戻り値**: `fullseye.ledger.drizzle_resample(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.drizzle_resample.raw(...)`、または `astrostack.drizzle_resample` を直接呼ぶ。
   - 本体の返り: `(sci, wht) -> image2d`
 

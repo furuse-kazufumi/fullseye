@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # estimate_alpha — 3D `reconstruct` op
 
 - **データ種**: `points` → `measurement`
-- **呼び出し**: `import recon3d; recon3d.estimate_alpha(points)` (または `ops3d.get("estimate_alpha")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.estimate_alpha(points)` (実装を直接呼ぶなら `import recon3d; recon3d.estimate_alpha(points)`、台帳から引くなら `ops3d.get("estimate_alpha")`)
 
 ## 使い方
 

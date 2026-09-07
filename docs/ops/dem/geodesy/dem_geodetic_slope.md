@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_geodetic_slope — DEM `geodesy` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method='horn', units='degrees')` (または `opsdem.get("dem_geodetic_slope")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method='horn', units='degrees')` (実装を直接呼ぶなら `import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method='horn', units='degrees')`、台帳から引くなら `opsdem.get("dem_geodetic_slope")`)
 
 ## 使い方
 

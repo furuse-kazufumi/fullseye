@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # wetness — OPTICS `material` op
 
 - **データ種**: `rgbimage` → `rgbimage`
-- **呼び出し**: `import surfacelib; surfacelib.wetness(base_rgb, wet=1.0, ior=1.33) -> 'np.ndarray'` (または `opsoptics.get("wetness")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.wetness(base_rgb, wet=1.0, ior=1.33) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.wetness(base_rgb, wet=1.0, ior=1.33) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("wetness")`)
 
 ## 使い方
 

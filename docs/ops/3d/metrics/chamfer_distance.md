@@ -4,7 +4,7 @@ dim: 3d
 category: metrics
 in: points × points
 out: measurement
-examples: [itokawa_pose_canonical, itokawa_shape_match, mesh_lod_download, poisson_surface_recon]
+examples: [itokawa_pose_canonical, itokawa_shape_match, mesh_lod_download, metrics_eval, poisson_surface_recon]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # chamfer_distance — 3D `metrics` op
 
 - **データ種**: `points × points` → `measurement`
-- **呼び出し**: `import metrics3d; metrics3d.chamfer_distance(a, b, squared=False)` (または `ops3d.get("chamfer_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.chamfer_distance(a, b, squared=False)` (実装を直接呼ぶなら `import metrics3d; metrics3d.chamfer_distance(a, b, squared=False)`、台帳から引くなら `ops3d.get("chamfer_distance")`)
 
 ## 使い方
 
@@ -53,6 +53,7 @@ Raises ValueError: どちらかが空 or (N,3) でない場合(空の平均 = �
 - [itokawa_pose_canonical](../../../../examples_3d/itokawa_pose_canonical.py) — `py -3.11 examples_3d/itokawa_pose_canonical.py`
 - [itokawa_shape_match](../../../../examples_3d/itokawa_shape_match.py) — `py -3.11 examples_3d/itokawa_shape_match.py`
 - [mesh_lod_download](../../../../examples_3d/mesh_lod_download.py) — `py -3.11 examples_3d/mesh_lod_download.py`
+- [metrics_eval](../../../../examples_3d/metrics_eval.py) — `py -3.11 examples_3d/metrics_eval.py`
 - [poisson_surface_recon](../../../../examples_3d/poisson_surface_recon.py) — `py -3.11 examples_3d/poisson_surface_recon.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
@@ -61,7 +62,7 @@ Raises ValueError: どちらかが空 or (N,3) でない場合(空の平均 = �
 
 ## 同カテゴリ(`metrics`)
 
-[hausdorff_distance](hausdorff_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [normal_consistency](normal_consistency.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
+[hausdorff_distance](hausdorff_distance.md) · [m3c2_distance](m3c2_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [normal_consistency](normal_consistency.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
 
 ---
 *Provenance: metrics3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

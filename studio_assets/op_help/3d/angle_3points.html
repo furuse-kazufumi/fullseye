@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_3points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_3points(a, b, c)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.angle_3points(a, b, c)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;angle_3points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3 点のなす角(頂点 b、度)。∠ABC。</p>
 <p>`<code style="color:#22d3bf">arccos(û·v̂)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">u = a − b</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v = c − b</code>`)を度で返す(float)。値は <b>[0, 180]</b> で符号は</p>

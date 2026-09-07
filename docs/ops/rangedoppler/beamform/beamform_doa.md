@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # beamform_doa — RANGEDOPPLER `beamform` op
 
 - **データ種**: `beatcube` → `table`
-- **呼び出し**: `import rangedoppler; rangedoppler.beamform_doa(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, n_targets=1, min_fraction=0.1, range_bin_m=None, velocity_bin_ms=None)` (または `opsrangedoppler.get("beamform_doa")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.beamform_doa(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, n_targets=1, min_fraction=0.1, range_bin_m=None, velocity_bin_ms=None)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.beamform_doa(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, n_targets=1, min_fraction=0.1, range_bin_m=None, velocity_bin_ms=None)`、台帳から引くなら `opsrangedoppler.get("beamform_doa")`)
 
 ## 使い方
 

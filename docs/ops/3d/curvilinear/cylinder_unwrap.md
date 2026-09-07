@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cylinder_unwrap — 3D `curvilinear` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import match3d; match3d.cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device='cpu')` (または `ops3d.get("cylinder_unwrap")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device='cpu')`、台帳から引くなら `ops3d.get("cylinder_unwrap")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

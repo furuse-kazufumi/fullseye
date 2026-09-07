@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # terrain_region_mask — 3D `terrain` op
 
 - **データ種**: `mesh` → `signal`
-- **呼び出し**: `import render3d; render3d.terrain_region_mask(V, F, *, smooth_fraction: 'float' = 0.3, method: 'str' = 'neck', seed: 'int' = 0) -> 'np.ndarray'` (または `ops3d.get("terrain_region_mask")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.terrain_region_mask(V, F, *, smooth_fraction: 'float' = 0.3, method: 'str' = 'neck', seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import render3d; render3d.terrain_region_mask(V, F, *, smooth_fraction: 'float' = 0.3, method: 'str' = 'neck', seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("terrain_region_mask")`)
 
 ## 使い方
 

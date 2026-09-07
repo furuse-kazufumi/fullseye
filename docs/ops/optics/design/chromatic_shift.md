@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # chromatic_shift — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import raytrace; raytrace.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)` (または `opsoptics.get("chromatic_shift")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)` (実装を直接呼ぶなら `import raytrace; raytrace.chromatic_shift(system, wavelengths=(0.48613, 0.58756, 0.65627), field=None, rings=6)`、台帳から引くなら `opsoptics.get("chromatic_shift")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # clearcoat_shade — OPTICS `material` op
 
 - **データ種**: `rgbimage × normalmap` → `rgbimage`
-- **呼び出し**: `import surfacelib; surfacelib.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -> 'np.ndarray'` (または `opsoptics.get("clearcoat_shade")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("clearcoat_shade")`)
 
 ## 使い方
 

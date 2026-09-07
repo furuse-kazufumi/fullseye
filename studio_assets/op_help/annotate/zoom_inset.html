@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">zoom_inset — ANNOTATE <code style="color:#22d3bf">compose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (または <code style="color:#22d3bf">opsannotate.get(&quot;zoom_inset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;zoom_inset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>拡大の差し込み ―― 元図に<b>枠</b>と<b>引き出し線</b>を付ける。</p>
 <p>拡大は `<code style="color:#22d3bf">np.repeat</code>` の<b>最近傍</b>(整数倍)。補間しないのは、拡大図が</p>

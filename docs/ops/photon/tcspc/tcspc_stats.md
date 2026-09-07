@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tcspc_stats — PHOTON `tcspc` op
 
 - **データ種**: `counts` → `table`
-- **呼び出し**: `import photoncount; photoncount.tcspc_stats(hist, bin_ps=100.0)` (または `opsphoton.get("tcspc_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tcspc_stats(hist, bin_ps=100.0)` (実装を直接呼ぶなら `import photoncount; photoncount.tcspc_stats(hist, bin_ps=100.0)`、台帳から引くなら `opsphoton.get("tcspc_stats")`)
 
 ## 使い方
 

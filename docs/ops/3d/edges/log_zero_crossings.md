@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # log_zero_crossings — 3D `edges` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import edges3d; edges3d.log_zero_crossings(vol, sigma: 'float' = 1.5, rel_thresh: 'float' = 0.001) -> 'np.ndarray'` (または `ops3d.get("log_zero_crossings")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.log_zero_crossings(vol, sigma: 'float' = 1.5, rel_thresh: 'float' = 0.001) -> 'np.ndarray'` (実装を直接呼ぶなら `import edges3d; edges3d.log_zero_crossings(vol, sigma: 'float' = 1.5, rel_thresh: 'float' = 0.001) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("log_zero_crossings")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cad_surface_to_pixel — CADMAP `project` op
 
 - **データ種**: `mesh × points` → `table`
-- **呼び出し**: `import cadmap; cadmap.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)` (または `opscadmap.get("cad_surface_to_pixel")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)` (実装を直接呼ぶなら `import cadmap; cadmap.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)`、台帳から引くなら `opscadmap.get("cad_surface_to_pixel")`)
 
 ## 使い方
 

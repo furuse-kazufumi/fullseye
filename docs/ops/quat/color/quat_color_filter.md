@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # quat_color_filter — QUAT `color` op
 
 - **データ種**: `qimage` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.quat_color_filter(qimage, direction_rgb, mode) -> 'np.ndarray'` (または `opsquat.get("quat_color_filter")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.quat_color_filter(qimage, direction_rgb, mode) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_color_filter(qimage, direction_rgb, mode) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_color_filter")`)
 
 ## 使い方
 

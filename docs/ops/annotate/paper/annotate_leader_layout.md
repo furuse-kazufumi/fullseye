@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_leader_layout — ANNOTATE `paper` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side='auto', font_path=None, min_font_size=9)` (または `opsannotate.get("annotate_leader_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side='auto', font_path=None, min_font_size=9)` (実装を直接呼ぶなら `import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side='auto', font_path=None, min_font_size=9)`、台帳から引くなら `opsannotate.get("annotate_leader_layout")`)
 
 ## 使い方
 

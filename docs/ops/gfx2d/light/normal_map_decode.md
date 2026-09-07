@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # normal_map_decode — GFX2D `light` op
 
 - **データ種**: `rgb` → `normalmap`
-- **呼び出し**: `import gfx2d; gfx2d.normal_map_decode(rgb)` (または `opsgfx2d.get("normal_map_decode")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.normal_map_decode(rgb)` (実装を直接呼ぶなら `import gfx2d; gfx2d.normal_map_decode(rgb)`、台帳から引くなら `opsgfx2d.get("normal_map_decode")`)
 
 ## 使い方
 

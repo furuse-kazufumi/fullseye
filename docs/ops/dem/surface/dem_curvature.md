@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_curvature — DEM `surface` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_curvature(dem, cell_size, kind='profile')` (または `opsdem.get("dem_curvature")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_curvature(dem, cell_size, kind='profile')` (実装を直接呼ぶなら `import demops; demops.dem_curvature(dem, cell_size, kind='profile')`、台帳から引くなら `opsdem.get("dem_curvature")`)
 
 ## 使い方
 

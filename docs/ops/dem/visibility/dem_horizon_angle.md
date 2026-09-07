@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_horizon_angle — DEM `visibility` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)` (または `opsdem.get("dem_horizon_angle")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)` (実装を直接呼ぶなら `import demops; demops.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)`、台帳から引くなら `opsdem.get("dem_horizon_angle")`)
 
 ## 使い方
 

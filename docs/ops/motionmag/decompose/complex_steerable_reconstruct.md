@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # complex_steerable_reconstruct — MOTIONMAG `decompose` op
 
 - **データ種**: `table` → `image2d`
-- **呼び出し**: `import motionmag; motionmag.complex_steerable_reconstruct(decomposition) -> 'np.ndarray'` (または `opsmotionmag.get("complex_steerable_reconstruct")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.complex_steerable_reconstruct(decomposition) -> 'np.ndarray'` (実装を直接呼ぶなら `import motionmag; motionmag.complex_steerable_reconstruct(decomposition) -> 'np.ndarray'`、台帳から引くなら `opsmotionmag.get("complex_steerable_reconstruct")`)
 
 ## 使い方
 

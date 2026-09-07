@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cepstrum — ACOUSTICS `bearing` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.cepstrum(x, rate, mode='real', floor_ratio=1e-12, min_quefrency=0.0)` (または `opsacoustics.get("cepstrum")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cepstrum(x, rate, mode='real', floor_ratio=1e-12, min_quefrency=0.0)` (実装を直接呼ぶなら `import acoustics; acoustics.cepstrum(x, rate, mode='real', floor_ratio=1e-12, min_quefrency=0.0)`、台帳から引くなら `opsacoustics.get("cepstrum")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # motion_energy_image — VIDEOSTREAM `motion` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.motion_energy_image(video, tau: 'int' = 15, threshold: 'float' = 0.1) -> 'np.ndarray'` (または `opsvideostream.get("motion_energy_image")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.motion_energy_image(video, tau: 'int' = 15, threshold: 'float' = 0.1) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.motion_energy_image(video, tau: 'int' = 15, threshold: 'float' = 0.1) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("motion_energy_image")`)
 
 ## 使い方
 

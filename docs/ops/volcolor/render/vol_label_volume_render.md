@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_volume_render — VOLCOLOR `render` op
 
 - **データ種**: `labels` → `rgbimage`
-- **呼び出し**: `import volcolor; volcolor.vol_label_volume_render(labels, axis='z', mode: 'str' = 'front', seed: 'int' = 0, alpha: 'float' = 0.35, background=(0.0, 0.0, 0.0))` (または `opsvolcolor.get("vol_label_volume_render")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_volume_render(labels, axis='z', mode: 'str' = 'front', seed: 'int' = 0, alpha: 'float' = 0.35, background=(0.0, 0.0, 0.0))` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_volume_render(labels, axis='z', mode: 'str' = 'front', seed: 'int' = 0, alpha: 'float' = 0.35, background=(0.0, 0.0, 0.0))`、台帳から引くなら `opsvolcolor.get("vol_label_volume_render")`)
 
 ## 使い方
 

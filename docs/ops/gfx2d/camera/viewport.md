@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # viewport — GFX2D `camera` op
 
 - **データ種**: `rgb` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.viewport(img, x, y, width, height, scale=1.0, interp='bilinear')` (または `opsgfx2d.get("viewport")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.viewport(img, x, y, width, height, scale=1.0, interp='bilinear')` (実装を直接呼ぶなら `import gfx2d; gfx2d.viewport(img, x, y, width, height, scale=1.0, interp='bilinear')`、台帳から引くなら `opsgfx2d.get("viewport")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">cscalar_to_polar — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cscalar</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>複素スカラ → 極形式 `<code style="color:#22d3bf">pairs (1,2) = [|z|, arg z[度]]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">cscalar</code>` の出口。</p>
 <p>`<code style="color:#22d3bf">cplx_contour_integral</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cplx_cauchy_value</code>` が返す複素スカラは、</p>

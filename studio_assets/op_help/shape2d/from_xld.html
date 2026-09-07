@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">from_xld — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code> (または <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>XLD 輪郭 dict(`<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>`)から i 番目の輪郭を取り出す。</p>
 <p>返るのは XLD と同じ <b>(row, col)</b> 順の (N,2)。`<code style="color:#22d3bf">imagemorph</code>` へ渡すときは</p>

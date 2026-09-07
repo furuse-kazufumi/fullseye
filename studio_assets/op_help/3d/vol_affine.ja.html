@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_affine — 3D <code style="color:#22d3bf">geom_transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volxform; volxform.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode=&#x27;constant&#x27;, cval=0.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_affine&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode=&#x27;constant&#x27;, cval=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volxform; volxform.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode=&#x27;constant&#x27;, cval=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_affine&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>一般アフィン再標本化(`<code style="color:#22d3bf">scipy.ndimage.affine_transform</code>`)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

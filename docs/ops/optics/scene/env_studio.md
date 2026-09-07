@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # env_studio — OPTICS `scene` op
 
 - **データ種**: `points` → `signal`
-- **呼び出し**: `import optscene; optscene.env_studio(directions, key: 'float' = 12.0, fill: 'float' = 3.2, horizon: 'float' = 0.45, sky: 'float' = 0.14, ground: 'float' = 0.05)` (または `opsoptics.get("env_studio")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.env_studio(directions, key: 'float' = 12.0, fill: 'float' = 3.2, horizon: 'float' = 0.45, sky: 'float' = 0.14, ground: 'float' = 0.05)` (実装を直接呼ぶなら `import optscene; optscene.env_studio(directions, key: 'float' = 12.0, fill: 'float' = 3.2, horizon: 'float' = 0.45, sky: 'float' = 0.14, ground: 'float' = 0.05)`、台帳から引くなら `opsoptics.get("env_studio")`)
 
 ## 使い方
 

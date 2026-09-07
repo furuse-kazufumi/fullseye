@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rough_transmission — OPTICS `surface` op
 
 - **データ種**: `signal` → `pairs`
-- **呼び出し**: `import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)` (または `opsoptics.get("rough_transmission")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)` (実装を直接呼ぶなら `import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)`、台帳から引くなら `opsoptics.get("rough_transmission")`)
 - **台帳経由の戻り値**: `fullseye.ledger.rough_transmission(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.rough_transmission.raw(...)`、または `surfacelib.rough_transmission` を直接呼ぶ。
 
 ## 使い方

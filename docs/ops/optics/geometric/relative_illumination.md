@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # relative_illumination — OPTICS `geometric` op
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optics; optics.relative_illumination(half_angle_deg=20.0, samples=64, exponent=4.0)` (または `opsoptics.get("relative_illumination")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.relative_illumination(half_angle_deg=20.0, samples=64, exponent=4.0)` (実装を直接呼ぶなら `import optics; optics.relative_illumination(half_angle_deg=20.0, samples=64, exponent=4.0)`、台帳から引くなら `opsoptics.get("relative_illumination")`)
 
 ## 使い方
 

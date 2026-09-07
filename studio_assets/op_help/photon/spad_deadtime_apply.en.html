@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spad_deadtime_apply — PHOTON <code style="color:#22d3bf">spad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">countrate</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code> (or <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code>; from the registry, <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distort a true photon rate by the detector&#x27;s dead time (counts lost).</p>
 <p>After every detection a SPAD is blind for a recharge (dead) time `<code style="color:#22d3bf">tau</code>`, so</p>

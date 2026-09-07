@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">cplx_cauchy_value — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_cauchy_value(z, fz, w)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;cplx_cauchy_value&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_cauchy_value(z, fz, w)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.cplx_cauchy_value(z, fz, w)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;cplx_cauchy_value&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cauchy&#x27;s integral formula: recover `<code style="color:#22d3bf">f(w)</code>` <b>inside</b> a contour from its values <b>on</b> the contour.</p>
 <p>`<code style="color:#22d3bf">f(w) = 1/(2*pi*i*n) ∮ f(zeta)/(zeta - w) dzeta</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">n</code>` is the</p>

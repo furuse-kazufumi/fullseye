@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # extent_signature — 3D `shape_descriptor` op
 
 - **データ種**: `points` → `descriptor`
-- **呼び出し**: `import descriptors3d; descriptors3d.extent_signature(points) -> 'np.ndarray'` (または `ops3d.get("extent_signature")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.extent_signature(points) -> 'np.ndarray'` (実装を直接呼ぶなら `import descriptors3d; descriptors3d.extent_signature(points) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("extent_signature")`)
 
 ## 使い方
 

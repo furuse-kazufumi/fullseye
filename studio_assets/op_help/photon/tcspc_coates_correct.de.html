@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_coates_correct — PHOTON <code style="color:#22d3bf">spad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_coates_correct(hist, cycles)</code> (oder <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_coates_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tcspc_coates_correct(hist, cycles)</code> (die Implementierung direkt: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_coates_correct(hist, cycles)</code>; aus dem Register: <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_coates_correct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Macht TCSPC-Pile-up exakt rückgängig (Coates-Schätzer) — die Frühphotonen-Verzerrung.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

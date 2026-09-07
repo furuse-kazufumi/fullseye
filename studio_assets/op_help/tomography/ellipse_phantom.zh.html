@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">ellipse_phantom — TOMOGRAPHY <code style="color:#22d3bf">forward</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">image2d</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;ellipse_phantom&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse_phantom(size=256, ellipses=None, supersample=4)</code>(要直接调用实现,<code style="color:#22d3bf">import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;ellipse_phantom&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把若干均匀椭圆之和栅格化到 *size* x *size* 的切片上。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

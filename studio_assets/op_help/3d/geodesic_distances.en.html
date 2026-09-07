@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_distances — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code> (or <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code> (to call the implementation directly, <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodesic distances from a source to every point (Dijkstra on the kNN graph). → (N,) float (inf where unreachable).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # monogenic_signal — QUAT `riesz` op
 
 - **データ種**: `image2d` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -> 'np.ndarray'` (または `opsquat.get("monogenic_signal")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("monogenic_signal")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # radial_light — GFX2D `light` op
 
 - **データ種**: `なし` → `rgb`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import gfx2d; gfx2d.radial_light(height, width, x, y, radius, intensity=1.0, falloff='smooth', color='emphasis', scheme='okabe_ito')` (または `opsgfx2d.get("radial_light")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.radial_light(height, width, x, y, radius, intensity=1.0, falloff='smooth', color='emphasis', scheme='okabe_ito')` (実装を直接呼ぶなら `import gfx2d; gfx2d.radial_light(height, width, x, y, radius, intensity=1.0, falloff='smooth', color='emphasis', scheme='okabe_ito')`、台帳から引くなら `opsgfx2d.get("radial_light")`)
 
 ## 使い方
 

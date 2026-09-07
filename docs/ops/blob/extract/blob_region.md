@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blob_region — BLOB `extract` op
 
 - **データ種**: `labels2d` → `mask`
-- **呼び出し**: `import blob2d; blob2d.blob_region(labels: 'Any', index: 'int') -> 'np.ndarray'` (または `opsblob.get("blob_region")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blob_region(labels: 'Any', index: 'int') -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_region(labels: 'Any', index: 'int') -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_region")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # register_fpfh — 3D `feature_register` op
 
 - **データ種**: `points × points` → `pose`
-- **呼び出し**: `import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device='cpu')` (または `ops3d.get("register_fpfh")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device='cpu')` (実装を直接呼ぶなら `import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device='cpu')`、台帳から引くなら `ops3d.get("register_fpfh")`)
 
 ## 使い方
 

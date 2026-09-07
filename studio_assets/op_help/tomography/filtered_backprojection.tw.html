@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">filtered_backprojection — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>濾波反投影(FBP)—— CT 重建的標準方法。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

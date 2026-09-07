@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fmcw_window_apply — RANGEDOPPLER `process` op
 
 - **データ種**: `beatcube` → `beatcube`
-- **呼び出し**: `import rangedoppler; rangedoppler.fmcw_window_apply(cube, window='hann', axis='range')` (または `opsrangedoppler.get("fmcw_window_apply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fmcw_window_apply(cube, window='hann', axis='range')` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.fmcw_window_apply(cube, window='hann', axis='range')`、台帳から引くなら `opsrangedoppler.get("fmcw_window_apply")`)
 
 ## 使い方
 

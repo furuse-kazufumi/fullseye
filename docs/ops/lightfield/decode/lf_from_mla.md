@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_from_mla — LIGHTFIELD `decode` op
 
 - **データ種**: `image2d` → `lightfield`
-- **呼び出し**: `import lightfield; lightfield.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)` (または `opslightfield.get("lf_from_mla")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)`、台帳から引くなら `opslightfield.get("lf_from_mla")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # generalized_procrustes — SHAPESTAT `procrustes` op
 
 - **データ種**: `shapeset` → `shapeset`
-- **呼び出し**: `import shapestats; shapestats.generalized_procrustes(shapes, max_iter: 'int' = 100, tol: 'float' = 1e-10, scaling: 'bool' = True, reflection: 'bool' = False)` (または `opsshapestat.get("generalized_procrustes")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.generalized_procrustes(shapes, max_iter: 'int' = 100, tol: 'float' = 1e-10, scaling: 'bool' = True, reflection: 'bool' = False)` (実装を直接呼ぶなら `import shapestats; shapestats.generalized_procrustes(shapes, max_iter: 'int' = 100, tol: 'float' = 1e-10, scaling: 'bool' = True, reflection: 'bool' = False)`、台帳から引くなら `opsshapestat.get("generalized_procrustes")`)
 
 ## 使い方
 

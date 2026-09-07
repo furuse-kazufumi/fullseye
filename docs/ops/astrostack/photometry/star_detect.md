@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # star_detect — ASTROSTACK `photometry` op
 
 - **データ種**: `image2d` → `keypoints`
-- **呼び出し**: `import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method='mad')` (または `opsastrostack.get("star_detect")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method='mad')` (実装を直接呼ぶなら `import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method='mad')`、台帳から引くなら `opsastrostack.get("star_detect")`)
 
 ## 使い方
 

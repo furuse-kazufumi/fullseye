@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ransac_cylinder — 3D `robust_fit` op
 
 - **データ種**: `points × normals` → `primitive`
-- **呼び出し**: `import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)` (または `ops3d.get("ransac_cylinder")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)` (実装を直接呼ぶなら `import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)`、台帳から引くなら `ops3d.get("ransac_cylinder")`)
 
 ## 使い方
 

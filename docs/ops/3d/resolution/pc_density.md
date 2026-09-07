@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # pc_density — 3D `resolution` op
 
 - **データ種**: `points` → `table`
-- **呼び出し**: `import meshres; meshres.pc_density(points, k=8)` (または `ops3d.get("pc_density")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pc_density(points, k=8)` (実装を直接呼ぶなら `import meshres; meshres.pc_density(points, k=8)`、台帳から引くなら `ops3d.get("pc_density")`)
 
 ## 使い方
 

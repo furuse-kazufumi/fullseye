@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # estimate_covariances — 3D `gicp` op
 
 - **データ種**: `points` → `descriptor`
-- **呼び出し**: `import gicp; gicp.estimate_covariances(points, k: 'int' = 20, epsilon: 'float' = 0.001) -> 'np.ndarray'` (または `ops3d.get("estimate_covariances")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.estimate_covariances(points, k: 'int' = 20, epsilon: 'float' = 0.001) -> 'np.ndarray'` (実装を直接呼ぶなら `import gicp; gicp.estimate_covariances(points, k: 'int' = 20, epsilon: 'float' = 0.001) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("estimate_covariances")`)
 
 ## 使い方
 

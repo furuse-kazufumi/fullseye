@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tilemap_render — GFX2D `tile` op
 
 - **データ種**: `sprites` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.tilemap_render(tiles, indices, empty=-1)` (または `opsgfx2d.get("tilemap_render")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tilemap_render(tiles, indices, empty=-1)` (実装を直接呼ぶなら `import gfx2d; gfx2d.tilemap_render(tiles, indices, empty=-1)`、台帳から引くなら `opsgfx2d.get("tilemap_render")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optscene_instances — OPTICS `scene` op
 
 - **データ種**: `table × table` → `table`
-- **呼び出し**: `import optscene; optscene.optscene_instances(scene, camera, min_area_px: 'int' = 1) -> 'list'` (または `opsoptics.get("optscene_instances")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optscene_instances(scene, camera, min_area_px: 'int' = 1) -> 'list'` (実装を直接呼ぶなら `import optscene; optscene.optscene_instances(scene, camera, min_area_px: 'int' = 1) -> 'list'`、台帳から引くなら `opsoptics.get("optscene_instances")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # bend_singlet — OPTICS `optimization` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import lensopt; lensopt.bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_mm=5.0, object_mm=inf, shape_factor=None)` (または `opsoptics.get("bend_singlet")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_mm=5.0, object_mm=inf, shape_factor=None)` (実装を直接呼ぶなら `import lensopt; lensopt.bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_mm=5.0, object_mm=inf, shape_factor=None)`、台帳から引くなら `opsoptics.get("bend_singlet")`)
 
 ## 使い方
 

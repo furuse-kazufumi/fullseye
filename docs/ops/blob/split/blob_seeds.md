@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blob_seeds — BLOB `split` op
 
 - **データ種**: `image2d` → `labels2d`
-- **呼び出し**: `import blob2d; blob2d.blob_seeds(distance: 'Any', h: 'float', connectivity: 'int' = 8) -> 'np.ndarray'` (または `opsblob.get("blob_seeds")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blob_seeds(distance: 'Any', h: 'float', connectivity: 'int' = 8) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_seeds(distance: 'Any', h: 'float', connectivity: 'int' = 8) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_seeds")`)
 
 ## 使い方
 

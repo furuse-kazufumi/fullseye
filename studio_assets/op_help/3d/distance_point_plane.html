@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_point_plane — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × primitive</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.distance_point_plane(p, plane_pt, n)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;distance_point_plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_plane(p, plane_pt, n)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.distance_point_plane(p, plane_pt, n)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;distance_point_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点-平面距離(符号なし)。</p>
 <p>`<code style="color:#22d3bf">|(p − plane_pt)·n̂|</code><code style="color:#22d3bf"> を float で返す(</code><code style="color:#22d3bf">n</code>` は内部で単位化)。符号は捨てるので、面のどちら側か</p>

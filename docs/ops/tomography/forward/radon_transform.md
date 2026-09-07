@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # radon_transform — TOMOGRAPHY `forward` op
 
 - **データ種**: `image2d` → `sinogram`
-- **呼び出し**: `import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)` (または `opstomography.get("radon_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)` (実装を直接呼ぶなら `import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)`、台帳から引くなら `opstomography.get("radon_transform")`)
 
 ## 使い方
 

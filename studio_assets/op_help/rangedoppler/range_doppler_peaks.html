@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">range_doppler_peaks — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_peaks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_peaks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Detections from a range-Doppler map: bin indices back to metres and m/s.</p>
 <p>Finds strict local maxima of the 2-D magnitude map — greater than all eight</p>

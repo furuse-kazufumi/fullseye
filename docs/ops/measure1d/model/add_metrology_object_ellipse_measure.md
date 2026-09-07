@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # add_metrology_object_ellipse_measure — MEASURE1D `model` op
 
 - **データ種**: `metrologymodel` → `scalar`
-- **呼び出し**: `import metrology; metrology.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: 'int' = 40) -> 'int'` (または `opsmeasure1d.get("add_metrology_object_ellipse_measure")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: 'int' = 40) -> 'int'` (実装を直接呼ぶなら `import metrology; metrology.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: 'int' = 40) -> 'int'`、台帳から引くなら `opsmeasure1d.get("add_metrology_object_ellipse_measure")`)
 
 ## 使い方
 

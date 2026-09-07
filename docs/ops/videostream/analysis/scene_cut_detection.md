@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # scene_cut_detection — VIDEOSTREAM `analysis` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import videostream; videostream.scene_cut_detection(video, bins: 'int' = 64, threshold: 'float' = 0.3) -> 'dict'` (または `opsvideostream.get("scene_cut_detection")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scene_cut_detection(video, bins: 'int' = 64, threshold: 'float' = 0.3) -> 'dict'` (実装を直接呼ぶなら `import videostream; videostream.scene_cut_detection(video, bins: 'int' = 64, threshold: 'float' = 0.3) -> 'dict'`、台帳から引くなら `opsvideostream.get("scene_cut_detection")`)
 
 ## 使い方
 

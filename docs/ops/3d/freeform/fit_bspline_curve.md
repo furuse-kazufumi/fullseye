@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fit_bspline_curve — 3D `freeform` op
 
 - **データ種**: `points` → `bspline_curve`
-- **呼び出し**: `import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)` (または `ops3d.get("fit_bspline_curve")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)` (実装を直接呼ぶなら `import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)`、台帳から引くなら `ops3d.get("fit_bspline_curve")`)
 
 ## 使い方
 

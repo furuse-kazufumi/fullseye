@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # light_mask — GFX2D `light` op
 
 - **データ種**: `rgb × rgb` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.light_mask(base, light, ambient=0.0)` (または `opsgfx2d.get("light_mask")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.light_mask(base, light, ambient=0.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.light_mask(base, light, ambient=0.0)`、台帳から引くなら `opsgfx2d.get("light_mask")`)
 
 ## 使い方
 

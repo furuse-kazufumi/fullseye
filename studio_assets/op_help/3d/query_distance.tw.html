@@ -1,11 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">query_distance — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sdf × points</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode=&#x27;trilinear&#x27;)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;query_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.query_distance(esdf_grid, bounds, res, query_points, mode=&#x27;trilinear&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode=&#x27;trilinear&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;query_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>任意 world 座標 (M,3) 處的 ESDF 值 (M,)(`<code style="color:#22d3bf">mode</code>`=&#x27;trilinear&#x27; 插值或 &#x27;nearest&#x27;)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">res</code>` は ESDF を作った格子と同じもの。world→連続ボクセル座標は</p>
+<p>`<code style="color:#22d3bf">bounds</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">res</code><code style="color:#22d3bf"> は ESDF を作った格子と同じもの(</code><code style="color:#22d3bf">res</code>` はスカラ = 立方、</p>
+<p>または長さ 3 の軸ごとのボクセル数)。world→連続ボクセル座標は</p>
 <p>`<code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code>`(voxel i の中心が c=i)。三線形補間はボクセル中心 8 近傍を</p>
 <p>重み付け(格子外はエッジにクランプ=最近端の値で外挿)。planner がノード/経路上の任意点で</p>
 <p>離隔を問い合わせる用途。返り値は ESDF と同じ world 単位。</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_normals — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">normals</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import curvature3d; curvature3d.estimate_normals(points, k=25)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;estimate_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_normals(points, k=25)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import curvature3d; curvature3d.estimate_normals(points, k=25)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;estimate_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。</p>
 <p>手順(各点、Python ループ): `<code style="color:#22d3bf">cKDTree</code><code style="color:#22d3bf"> で自身を含む k+1 近傍(k は N-1 に切り詰め)を取り、クエリ点を原点にした近傍座標の散布行列 </code><code style="color:#22d3bf">local.T @ local</code>` の最小固有ベクトルを法線にする(単位長)。向きは「近傍重心との内積が正なら反転」= 近傍重心から離れる側に揃える。</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # render_studio — OPTICS `scene` op
 
 - **データ種**: `table × table` → `rgbimage`
-- **呼び出し**: `import optscene; optscene.render_studio(scene, camera, depth: 'int' = 3, samples: 'int' = 16, environment=None, supersample: 'int' = 1) -> 'np.ndarray'` (または `opsoptics.get("render_studio")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.render_studio(scene, camera, depth: 'int' = 3, samples: 'int' = 16, environment=None, supersample: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.render_studio(scene, camera, depth: 'int' = 3, samples: 'int' = 16, environment=None, supersample: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("render_studio")`)
 
 ## 使い方
 

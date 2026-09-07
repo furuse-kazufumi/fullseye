@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # alpha_shape_boundary — 3D `reconstruct` op
 
 - **データ種**: `points` → `indices`
-- **呼び出し**: `import recon3d; recon3d.alpha_shape_boundary(points, alpha)` (または `ops3d.get("alpha_shape_boundary")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.alpha_shape_boundary(points, alpha)` (実装を直接呼ぶなら `import recon3d; recon3d.alpha_shape_boundary(points, alpha)`、台帳から引くなら `ops3d.get("alpha_shape_boundary")`)
 
 ## 使い方
 

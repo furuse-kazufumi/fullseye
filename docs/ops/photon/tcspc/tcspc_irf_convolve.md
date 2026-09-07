@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tcspc_irf_convolve — PHOTON `tcspc` op
 
 - **データ種**: `counts` → `counts`
-- **呼び出し**: `import photoncount; photoncount.tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0)` (または `opsphoton.get("tcspc_irf_convolve")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0)` (実装を直接呼ぶなら `import photoncount; photoncount.tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0)`、台帳から引くなら `opsphoton.get("tcspc_irf_convolve")`)
 
 ## 使い方
 

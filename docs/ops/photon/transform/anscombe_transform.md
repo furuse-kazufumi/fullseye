@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # anscombe_transform — PHOTON `transform` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import photoncount; photoncount.anscombe_transform(image, gain=1.0, read_sigma=0.0, offset=0.0, clip=False)` (または `opsphoton.get("anscombe_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.anscombe_transform(image, gain=1.0, read_sigma=0.0, offset=0.0, clip=False)` (実装を直接呼ぶなら `import photoncount; photoncount.anscombe_transform(image, gain=1.0, read_sigma=0.0, offset=0.0, clip=False)`、台帳から引くなら `opsphoton.get("anscombe_transform")`)
 
 ## 使い方
 

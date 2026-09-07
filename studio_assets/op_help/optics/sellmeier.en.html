@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sellmeier — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;sellmeier&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;sellmeier&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A dispersive medium from three-term Sellmeier constants (`<code style="color:#22d3bf">table</code>`).</p>
 <p>`<code style="color:#22d3bf">n²(λ) − 1 = B1 λ²/(λ² − C1) + B2 λ²/(λ² − C2) + B3 λ²/(λ² − C3)</code>` with λ in</p>

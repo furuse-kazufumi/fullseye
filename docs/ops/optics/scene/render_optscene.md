@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # render_optscene — OPTICS `scene` op
 
 - **データ種**: `table × table × table` → `rgbimage`
-- **呼び出し**: `import optscene; optscene.render_optscene(scene, camera, lights, ambient: 'float' = 0.0, depth: 'int' = 2, shadows: 'bool' = True, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, edge_threshold: 'float' = 0.06, saturate_at: 'float' = None, wavelength_nm: 'float' = 550.0, environment=None, environment_gain: 'float' = 1.0, environment_samples: 'int' = 12) -> 'np.ndarray'` (または `opsoptics.get("render_optscene")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.render_optscene(scene, camera, lights, ambient: 'float' = 0.0, depth: 'int' = 2, shadows: 'bool' = True, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, edge_threshold: 'float' = 0.06, saturate_at: 'float' = None, wavelength_nm: 'float' = 550.0, environment=None, environment_gain: 'float' = 1.0, environment_samples: 'int' = 12) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.render_optscene(scene, camera, lights, ambient: 'float' = 0.0, depth: 'int' = 2, shadows: 'bool' = True, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, edge_threshold: 'float' = 0.06, saturate_at: 'float' = None, wavelength_nm: 'float' = 550.0, environment=None, environment_gain: 'float' = 1.0, environment_samples: 'int' = 12) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("render_optscene")`)
 
 ## 使い方
 

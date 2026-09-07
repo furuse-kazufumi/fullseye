@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_decimate_preserving — 3D <code style="color:#22d3bf">resolution</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_decimate_preserving(V, F, target_faces, protect_quantile=0.8, max_error=None, samples=4000, seed=0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;mesh_decimate_preserving&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_decimate_preserving(V, F, target_faces, protect_quantile=0.8, max_error=None, samples=4000, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import meshres; meshres.mesh_decimate_preserving(V, F, target_faces, protect_quantile=0.8, max_error=None, samples=4000, seed=0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;mesh_decimate_preserving&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Decimation that keeps the detailed regions and reports what it lost (`<code style="color:#22d3bf">table</code>`).</p>
 <p>Vertices whose :func:<code style="color:#22d3bf">mesh_detail_map</code> `<code style="color:#22d3bf">detail</code>` is in the top</p>

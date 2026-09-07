@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # bearing_angle_image — 3D `range_image` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import range_image; range_image.bearing_angle_image(depth, direction='down')` (または `ops3d.get("bearing_angle_image")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.bearing_angle_image(depth, direction='down')` (実装を直接呼ぶなら `import range_image; range_image.bearing_angle_image(depth, direction='down')`、台帳から引くなら `ops3d.get("bearing_angle_image")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">beam_hardening_correct — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import tomography; tomography.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;beam_hardening_correct&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)</code>(要直接呼叫實作,<code style="color:#22d3bf">import tomography; tomography.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)</code>;從台帳取用則 <code style="color:#22d3bf">opstomography.get(&quot;beam_hardening_correct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>消除杯狀偽影 —— 用模型的精確逆,或用校正過的多項式。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

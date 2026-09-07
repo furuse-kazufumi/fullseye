@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # specular_coefficient_map — SPECULAR `dichromatic` op
 
 - **データ種**: `rgbimage` → `image2d`
-- **呼び出し**: `import specularity; specularity.specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)` (または `opsspecular.get("specular_coefficient_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)` (実装を直接呼ぶなら `import specularity; specularity.specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0), body_rgb=None, max_rank_ratio=0.1, max_negative_frac=0.02)`、台帳から引くなら `opsspecular.get("specular_coefficient_map")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # random_defects — OPTICS `scene` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import optscene; optscene.random_defects(primitive: 'dict', count: 'int' = 2, kinds=('scratch', 'crack', 'pits', 'blob', 'stain', 'foreign'), seed: 'int' = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: 'bool' = True, shape=(192, 192), defect_roughness_um: 'float' = 0.6) -> 'dict'` (または `opsoptics.get("random_defects")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.random_defects(primitive: 'dict', count: 'int' = 2, kinds=('scratch', 'crack', 'pits', 'blob', 'stain', 'foreign'), seed: 'int' = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: 'bool' = True, shape=(192, 192), defect_roughness_um: 'float' = 0.6) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.random_defects(primitive: 'dict', count: 'int' = 2, kinds=('scratch', 'crack', 'pits', 'blob', 'stain', 'foreign'), seed: 'int' = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: 'bool' = True, shape=(192, 192), defect_roughness_um: 'float' = 0.6) -> 'dict'`、台帳から引くなら `opsoptics.get("random_defects")`)
 
 ## 使い方
 

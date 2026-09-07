@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_plan_1d — COLORTRANSPORT <code style="color:#22d3bf">transport</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">transport_plan</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.transport_plan_1d(u_values, v_values)</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;transport_plan_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_plan_1d(u_values, v_values)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import colortransport; colortransport.transport_plan_1d(u_values, v_values)</code>、台帳から引くなら <code style="color:#22d3bf">opscolortransport.get(&quot;transport_plan_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 次元の厳密な輸送計画(北西隅則)。`<code style="color:#22d3bf">(n, m)</code>` の質量行列を返す。</p>
 <p>行和が `<code style="color:#22d3bf">1/n</code><code style="color:#22d3bf">、列和が </code><code style="color:#22d3bf">1/m</code>` になる ―― これは<b>構成上厳密</b>で、</p>

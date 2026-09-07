@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # angle_to_matrix — REPRCONV `algebra` op
 
 - **データ種**: `angle` → `matrix`
-- **呼び出し**: `import reprconv; reprconv.angle_to_matrix(angle)` (または `opsreprconv.get("angle_to_matrix")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.angle_to_matrix(angle)` (実装を直接呼ぶなら `import reprconv; reprconv.angle_to_matrix(angle)`、台帳から引くなら `opsreprconv.get("angle_to_matrix")`)
 
 ## 使い方
 

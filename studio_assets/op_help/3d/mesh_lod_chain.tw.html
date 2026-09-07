@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_lod_chain — 3D <code style="color:#22d3bf">resolution</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import meshres; meshres.mesh_lod_chain(V, F, fractions=(0.5, 0.25, 0.125), samples=2000, seed=0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;mesh_lod_chain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_lod_chain(V, F, fractions=(0.5, 0.25, 0.125), samples=2000, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import meshres; meshres.mesh_lod_chain(V, F, fractions=(0.5, 0.25, 0.125), samples=2000, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;mesh_lod_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>簡化層級序列,並給出各級的實測幾何誤差(`<code style="color:#22d3bf">table</code>`)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

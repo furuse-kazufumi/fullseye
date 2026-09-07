@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_synth_family — SHAPESTAT `synth` op
 
 - **データ種**: `なし` → `shapeset`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import shapestats; shapestats.shape_synth_family(n_shapes: 'int' = 8, n_points: 'int' = 64, n_modes: 'int' = 2, mode_scale=(0.3, 0.12), noise: 'float' = 0.0, seed: 'int' = 0)` (または `opsshapestat.get("shape_synth_family")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_synth_family(n_shapes: 'int' = 8, n_points: 'int' = 64, n_modes: 'int' = 2, mode_scale=(0.3, 0.12), noise: 'float' = 0.0, seed: 'int' = 0)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_synth_family(n_shapes: 'int' = 8, n_points: 'int' = 64, n_modes: 'int' = 2, mode_scale=(0.3, 0.12), noise: 'float' = 0.0, seed: 'int' = 0)`、台帳から引くなら `opsshapestat.get("shape_synth_family")`)
 
 ## 使い方
 

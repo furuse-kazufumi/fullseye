@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # reconstruct — SHAPE2D `descriptor` op
 
 - **データ種**: `efdmodel` → `pairs`
-- **呼び出し**: `import fourierdesc; fourierdesc.reconstruct(model, n_points=300, n_harmonics=None)` (または `opsshape2d.get("reconstruct")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.reconstruct(model, n_points=300, n_harmonics=None)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.reconstruct(model, n_points=300, n_harmonics=None)`、台帳から引くなら `opsshape2d.get("reconstruct")`)
 
 ## 使い方
 

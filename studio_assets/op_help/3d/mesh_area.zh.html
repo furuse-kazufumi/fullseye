@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_area — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三角网格的<b>表面积</b>(全部三角形面积之和)。→ float。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
@@ -27,7 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">measurement</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">mesh_process</code>)</h3>
-<p><a style="color:#22d3bf" href="op3d:laplacian_smooth">laplacian_smooth</a> · <a style="color:#22d3bf" href="op3d:taubin_smooth">taubin_smooth</a> · <a style="color:#22d3bf" href="op3d:decimate_qem">decimate_qem</a> · <a style="color:#22d3bf" href="op3d:face_normals">face_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_normals">vertex_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_curvature">vertex_curvature</a></p>
+<p><a style="color:#22d3bf" href="op3d:laplacian_smooth">laplacian_smooth</a> · <a style="color:#22d3bf" href="op3d:taubin_smooth">taubin_smooth</a> · <a style="color:#22d3bf" href="op3d:decimate_qem">decimate_qem</a> · <a style="color:#22d3bf" href="op3d:face_normals">face_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_normals">vertex_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_curvature">vertex_curvature</a> · <a style="color:#22d3bf" href="op3d:face_areas">face_areas</a> · <a style="color:#22d3bf" href="op3d:mesh_volume">mesh_volume</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: mesh_props.py — 3D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

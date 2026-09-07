@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">csi_peak_position — INTERFEROMETRY <code style="color:#22d3bf">locate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sweep</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code> (or <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_peak_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import interferometry; interferometry.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code>; from the registry, <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_peak_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Surface height from one z-scan: the position of the coherence envelope peak.</p>
 <p>This is the operator the whole module is for. Unlike a phase, an envelope has</p>

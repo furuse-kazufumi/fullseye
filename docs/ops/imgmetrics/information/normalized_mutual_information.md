@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # normalized_mutual_information — IMGMETRICS `information` op
 
 - **データ種**: `image2d × image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.normalized_mutual_information(a, b, bins=64, data_range=None)` (または `opsimgmetrics.get("normalized_mutual_information")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.normalized_mutual_information(a, b, bins=64, data_range=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.normalized_mutual_information(a, b, bins=64, data_range=None)`、台帳から引くなら `opsimgmetrics.get("normalized_mutual_information")`)
 
 ## 使い方
 

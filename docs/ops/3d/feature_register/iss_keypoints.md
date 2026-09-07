@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # iss_keypoints — 3D `feature_register` op
 
 - **データ種**: `points` → `indices`
-- **呼び出し**: `import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)` (または `ops3d.get("iss_keypoints")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)` (実装を直接呼ぶなら `import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)`、台帳から引くなら `ops3d.get("iss_keypoints")`)
 
 ## 使い方
 

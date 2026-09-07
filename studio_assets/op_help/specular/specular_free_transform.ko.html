@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">specular_free_transform — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code>(또는 <code style="color:#22d3bf">opsspecular.get(&quot;specular_free_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspecular.get(&quot;specular_free_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>광원 방향을 사영으로 빼냅니다: 하이라이트가 건드릴 수 없는 부분의 이미지. → (H, W, 3).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

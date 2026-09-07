@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_scale_bar — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回图像(image2d):在角落放置取整长度的比例尺(带数值与单位)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_gradient_magnitude — 3D `feature` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volops; volops.vol_gradient_magnitude(vol)` (または `ops3d.get("vol_gradient_magnitude")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_gradient_magnitude(vol)` (実装を直接呼ぶなら `import volops; volops.vol_gradient_magnitude(vol)`、台帳から引くなら `ops3d.get("vol_gradient_magnitude")`)
 
 ## 使い方
 

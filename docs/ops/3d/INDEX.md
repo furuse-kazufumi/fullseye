@@ -1,4 +1,4 @@
-# 3D operator help — 351 ops in 66 categories
+# 3D operator help — 355 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -121,13 +121,13 @@
 
 [distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md) · [vol_distance_transform](medial/vol_distance_transform.md)
 
-### mesh_process (7)
+### mesh_process (10)
 
-[decimate_qem](mesh_process/decimate_qem.md) · [face_normals](mesh_process/face_normals.md) · [laplacian_smooth](mesh_process/laplacian_smooth.md) · [mesh_area](mesh_process/mesh_area.md) · [taubin_smooth](mesh_process/taubin_smooth.md) · [vertex_curvature](mesh_process/vertex_curvature.md) · [vertex_normals](mesh_process/vertex_normals.md)
+[boundary_vertices](mesh_process/boundary_vertices.md) · [decimate_qem](mesh_process/decimate_qem.md) · [face_areas](mesh_process/face_areas.md) · [face_normals](mesh_process/face_normals.md) · [laplacian_smooth](mesh_process/laplacian_smooth.md) · [mesh_area](mesh_process/mesh_area.md) · [mesh_volume](mesh_process/mesh_volume.md) · [taubin_smooth](mesh_process/taubin_smooth.md) · [vertex_curvature](mesh_process/vertex_curvature.md) · [vertex_normals](mesh_process/vertex_normals.md)
 
-### metrics (7)
+### metrics (8)
 
-[chamfer_distance](metrics/chamfer_distance.md) · [fscore](metrics/fscore.md) · [hausdorff_distance](metrics/hausdorff_distance.md) · [normal_consistency](metrics/normal_consistency.md) · [pose_error](metrics/pose_error.md) · [rmse_correspondence](metrics/rmse_correspondence.md) · [voxel_iou](metrics/voxel_iou.md)
+[chamfer_distance](metrics/chamfer_distance.md) · [fscore](metrics/fscore.md) · [hausdorff_distance](metrics/hausdorff_distance.md) · [m3c2_distance](metrics/m3c2_distance.md) · [normal_consistency](metrics/normal_consistency.md) · [pose_error](metrics/pose_error.md) · [rmse_correspondence](metrics/rmse_correspondence.md) · [voxel_iou](metrics/voxel_iou.md)
 
 ### moment_invariant (4)
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_isotropic_remesh — 3D `resolution` op
 
 - **データ種**: `mesh` → `mesh`
-- **呼び出し**: `import meshres; meshres.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)` (または `ops3d.get("mesh_isotropic_remesh")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)` (実装を直接呼ぶなら `import meshres; meshres.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)`、台帳から引くなら `ops3d.get("mesh_isotropic_remesh")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # color_grade — GFX2D `post` op
 
 - **データ種**: `rgb × lut` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.color_grade(rgb, lut)` (または `opsgfx2d.get("color_grade")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.color_grade(rgb, lut)` (実装を直接呼ぶなら `import gfx2d; gfx2d.color_grade(rgb, lut)`、台帳から引くなら `opsgfx2d.get("color_grade")`)
 
 ## 使い方
 

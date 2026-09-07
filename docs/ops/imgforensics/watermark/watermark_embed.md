@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # watermark_embed — IMGFORENSICS `watermark` op
 
 - **データ種**: `image2d × phash` → `image2d`
-- **呼び出し**: `import imgforensics; imgforensics.watermark_embed(image, bits, strength: 'float' = 0.1, wavelet: 'str' = 'haar', level: 'int' = 1) -> 'np.ndarray'` (または `opsimgforensics.get("watermark_embed")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.watermark_embed(image, bits, strength: 'float' = 0.1, wavelet: 'str' = 'haar', level: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.watermark_embed(image, bits, strength: 'float' = 0.1, wavelet: 'str' = 'haar', level: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("watermark_embed")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fit_bspline_surface — 3D `freeform` op
 
 - **データ種**: `image2d × image2d × image2d` → `bspline_surface`
-- **呼び出し**: `import bspline_surf; bspline_surf.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)` (または `ops3d.get("fit_bspline_surface")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)` (実装を直接呼ぶなら `import bspline_surf; bspline_surf.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)`、台帳から引くなら `ops3d.get("fit_bspline_surface")`)
 
 ## 使い方
 

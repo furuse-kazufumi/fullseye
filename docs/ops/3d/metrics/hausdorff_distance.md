@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # hausdorff_distance — 3D `metrics` op
 
 - **データ種**: `points × points` → `measurement`
-- **呼び出し**: `import metrics3d; metrics3d.hausdorff_distance(a, b)` (または `ops3d.get("hausdorff_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.hausdorff_distance(a, b)` (実装を直接呼ぶなら `import metrics3d; metrics3d.hausdorff_distance(a, b)`、台帳から引くなら `ops3d.get("hausdorff_distance")`)
 
 ## 使い方
 
@@ -58,7 +58,7 @@ LOD の ``max_error`` と同じ性格)に使う。
 
 ## 同カテゴリ(`metrics`)
 
-[chamfer_distance](chamfer_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [normal_consistency](normal_consistency.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
+[chamfer_distance](chamfer_distance.md) · [m3c2_distance](m3c2_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [normal_consistency](normal_consistency.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
 
 ---
 *Provenance: metrics3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

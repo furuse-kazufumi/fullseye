@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # region_props — 3D `regionprops` op
 
 - **データ種**: `voxel` → `table`
-- **呼び出し**: `import regionprops3d; regionprops3d.region_props(vol, connectivity: 'int' = 26) -> 'list[dict]'` (または `ops3d.get("region_props")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.region_props(vol, connectivity: 'int' = 26) -> 'list[dict]'` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.region_props(vol, connectivity: 'int' = 26) -> 'list[dict]'`、台帳から引くなら `ops3d.get("region_props")`)
 
 ## 使い方
 

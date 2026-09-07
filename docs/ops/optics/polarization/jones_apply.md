@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # jones_apply — OPTICS `polarization` op
 
 - **データ種**: `cimage × jones` → `jones`
-- **呼び出し**: `import optics; optics.jones_apply(jones, state)` (または `opsoptics.get("jones_apply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.jones_apply(jones, state)` (実装を直接呼ぶなら `import optics; optics.jones_apply(jones, state)`、台帳から引くなら `opsoptics.get("jones_apply")`)
 
 ## 使い方
 

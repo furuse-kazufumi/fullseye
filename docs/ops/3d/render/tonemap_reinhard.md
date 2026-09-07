@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tonemap_reinhard — 3D `render` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: 'float' = 1.0, white: 'float | None' = None) -> 'np.ndarray'` (または `ops3d.get("tonemap_reinhard")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tonemap_reinhard(hdr, exposure: 'float' = 1.0, white: 'float | None' = None) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: 'float' = 1.0, white: 'float | None' = None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("tonemap_reinhard")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # apply_metrology_model — MEASURE1D `apply` op
 
 - **データ種**: `metrologymodel × image2d` → `table`
-- **呼び出し**: `import metrology; metrology.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -> 'list'` (または `opsmeasure1d.get("apply_metrology_model")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -> 'list'` (実装を直接呼ぶなら `import metrology; metrology.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -> 'list'`、台帳から引くなら `opsmeasure1d.get("apply_metrology_model")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spad_deadtime_apply — PHOTON <code style="color:#22d3bf">spad</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">countrate</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code>(或 <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用偵測器的死時間扭曲真實光子率(計數遺失)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

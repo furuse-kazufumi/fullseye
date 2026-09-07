@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_markers — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color='emphasis', text_color=None, font_size=11, scheme='okabe_ito', font_path=None, min_contrast=2.0)` (または `opsannotate.get("annotate_markers")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_markers(img, points, labels=None, start=1, radius=9.0, color='emphasis', text_color=None, font_size=11, scheme='okabe_ito', font_path=None, min_contrast=2.0)` (実装を直接呼ぶなら `import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color='emphasis', text_color=None, font_size=11, scheme='okabe_ito', font_path=None, min_contrast=2.0)`、台帳から引くなら `opsannotate.get("annotate_markers")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">normal_map_decode — GFX2D <code style="color:#22d3bf">light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">normalmap</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.normal_map_decode(rgb)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;normal_map_decode&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_map_decode(rgb)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.normal_map_decode(rgb)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;normal_map_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Tangent-space normal map `<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> to unit vectors </code><code style="color:#22d3bf">(H, W, 3)</code>`.</p>
 <p>The usual encoding `<code style="color:#22d3bf">n = 2c - 1</code>` followed by normalisation. The result is</p>

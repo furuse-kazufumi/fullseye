@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sinkhorn_divergence — COLORTRANSPORT `transport` op
 
 - **データ種**: `signal × signal × matrix` → `scalar`
-- **呼び出し**: `import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)` (または `opscolortransport.get("sinkhorn_divergence")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)` (実装を直接呼ぶなら `import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)`、台帳から引くなら `opscolortransport.get("sinkhorn_divergence")`)
 
 ## 使い方
 

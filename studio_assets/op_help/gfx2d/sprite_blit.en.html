@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sprite_blit — GFX2D <code style="color:#22d3bf">sprite</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgba × rgba</code> → <code style="color:#22d3bf">rgba</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_blit(dst, sprite, x=0, y=0, anchor=&#x27;top_left&#x27;, flip_x=False, flip_y=False, opacity=1.0)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_blit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sprite_blit(dst, sprite, x=0, y=0, anchor=&#x27;top_left&#x27;, flip_x=False, flip_y=False, opacity=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_blit(dst, sprite, x=0, y=0, anchor=&#x27;top_left&#x27;, flip_x=False, flip_y=False, opacity=1.0)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_blit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Composite `<code style="color:#22d3bf">sprite</code><code style="color:#22d3bf"> onto a copy of </code><code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> at integer </code><code style="color:#22d3bf">(x, y)</code>`.</p>
 <p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> is the column and </code><code style="color:#22d3bf">y</code><code style="color:#22d3bf"> the row of the sprite&#x27;s </code><code style="color:#22d3bf">anchor</code>` point;</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # occlusion_edges — 3D `range_image` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)` (または `ops3d.get("occlusion_edges")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.occlusion_edges(depth, rel_thresh=0.05)` (実装を直接呼ぶなら `import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)`、台帳から引くなら `ops3d.get("occlusion_edges")`)
 
 ## 使い方
 

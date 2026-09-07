@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # normal_map_shade — GFX2D `light` op
 
 - **データ種**: `normalmap` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse='reference', specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme='okabe_ito')` (または `opsgfx2d.get("normal_map_shade")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse='reference', specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme='okabe_ito')` (実装を直接呼ぶなら `import gfx2d; gfx2d.normal_map_shade(normals, light_dir=(0.0, 0.0, 1.0), ambient=0.1, diffuse='reference', specular=0.0, shininess=32.0, view_dir=(0.0, 0.0, 1.0), scheme='okabe_ito')`、台帳から引くなら `opsgfx2d.get("normal_map_shade")`)
 
 ## 使い方
 

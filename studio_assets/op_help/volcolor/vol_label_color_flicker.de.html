@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_color_flicker — VOLCOLOR <code style="color:#22d3bf">diagnose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code> (oder <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_color_flicker&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code>; aus dem Register: <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_color_flicker&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Zählt</b> den Unterschied zwischen „erst segmentieren, dann einfärben“ und „erst einfärben, dann segmentieren“.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

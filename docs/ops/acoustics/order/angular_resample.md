@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # angular_resample — ACOUSTICS `order` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.angular_resample(x, rate, rpm, samples_per_rev=64)` (または `opsacoustics.get("angular_resample")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.angular_resample(x, rate, rpm, samples_per_rev=64)` (実装を直接呼ぶなら `import acoustics; acoustics.angular_resample(x, rate, rpm, samples_per_rev=64)`、台帳から引くなら `opsacoustics.get("angular_resample")`)
 
 ## 使い方
 

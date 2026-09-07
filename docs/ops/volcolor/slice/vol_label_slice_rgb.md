@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_slice_rgb — VOLCOLOR `slice` op
 
 - **データ種**: `rgbvolume` → `rgbimage`
-- **呼び出し**: `import volcolor; volcolor.vol_label_slice_rgb(rgbvol, index: 'int', axis='z')` (または `opsvolcolor.get("vol_label_slice_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_slice_rgb(rgbvol, index: 'int', axis='z')` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_slice_rgb(rgbvol, index: 'int', axis='z')`、台帳から引くなら `opsvolcolor.get("vol_label_slice_rgb")`)
 
 ## 使い方
 

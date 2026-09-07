@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">frame_quality — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import astrostack; astrostack.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code>(或 <code style="color:#22d3bf">opsastrostack.get(&quot;frame_quality&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import astrostack; astrostack.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)</code>;從台帳取用則 <code style="color:#22d3bf">opsastrostack.get(&quot;frame_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>給單影格打分 —— 銳度、FWHM、背景、圓度,以及用於篩選的分數。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

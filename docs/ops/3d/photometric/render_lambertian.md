@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # render_lambertian — 3D `photometric` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)` (または `ops3d.get("render_lambertian")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.render_lambertian(normals, albedo, light, ambient=0.0)` (実装を直接呼ぶなら `import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)`、台帳から引くなら `ops3d.get("render_lambertian")`)
 
 ## 使い方
 

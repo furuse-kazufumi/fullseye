@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">metrics_table — IMGMETRICS <code style="color:#22d3bf">report</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">metrics</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metrics_table(report, order=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>報告を `<code style="color:#22d3bf">(名前, 値)</code>` の表にする ―― 条件の行も<b>必ず一緒に</b>並べる。</p>
 <p>数値だけの表を作れないようにしてあるのがこの op の主旨。`<code style="color:#22d3bf">contract</code>` の</p>

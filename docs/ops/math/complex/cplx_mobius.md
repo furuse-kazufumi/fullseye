@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_mobius — MATH `complex` op
 
 - **データ種**: `cpoints` → `cpoints`
-- **呼び出し**: `import mathops; mathops.cplx_mobius(z, a, b, c, d)` (または `opsmath.get("cplx_mobius")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_mobius(z, a, b, c, d)` (実装を直接呼ぶなら `import mathops; mathops.cplx_mobius(z, a, b, c, d)`、台帳から引くなら `opsmath.get("cplx_mobius")`)
 
 ## 使い方
 

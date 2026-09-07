@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # add_frame_corners — SHAPE2D `morph` op
 
 - **データ種**: `pairs` → `pairs`
-- **呼び出し**: `import imagemorph; imagemorph.add_frame_corners(pts, shape)` (または `opsshape2d.get("add_frame_corners")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)` (実装を直接呼ぶなら `import imagemorph; imagemorph.add_frame_corners(pts, shape)`、台帳から引くなら `opsshape2d.get("add_frame_corners")`)
 
 ## 使い方
 

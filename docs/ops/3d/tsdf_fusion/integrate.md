@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # integrate — 3D `tsdf_fusion` op
 
 - **データ種**: `sdf × depth` → `sdf`
-- **呼び出し**: `import tsdf_fusion; tsdf_fusion.integrate(tsdf: 'np.ndarray', weight: 'np.ndarray', depth: 'np.ndarray', K, R, t, trunc: 'float', bounds: 'Optional[Bounds]' = None) -> 'None'` (または `ops3d.get("integrate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.integrate(tsdf: 'np.ndarray', weight: 'np.ndarray', depth: 'np.ndarray', K, R, t, trunc: 'float', bounds: 'Optional[Bounds]' = None) -> 'None'` (実装を直接呼ぶなら `import tsdf_fusion; tsdf_fusion.integrate(tsdf: 'np.ndarray', weight: 'np.ndarray', depth: 'np.ndarray', K, R, t, trunc: 'float', bounds: 'Optional[Bounds]' = None) -> 'None'`、台帳から引くなら `ops3d.get("integrate")`)
 
 ## 使い方
 

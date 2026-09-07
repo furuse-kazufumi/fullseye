@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # riesz_displacement — QUAT `motion` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import quatimage; quatimage.riesz_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'` (または `opsquat.get("riesz_displacement")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.riesz_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_displacement(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'`、台帳から引くなら `opsquat.get("riesz_displacement")`)
 
 ## 使い方
 

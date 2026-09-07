@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">optscene_instances — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optscene; optscene.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;optscene_instances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optscene; optscene.optscene_instances(scene, camera, min_area_px: &#x27;int&#x27; = 1) -&gt; &#x27;list&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;optscene_instances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>欠陥を<b>個体ごと</b>に返す(クラス・画素マスク・bounding box・面積)。</p>
 <p>1 枚の合成マスクだけでは個体を分けられず、検出や計数の学習には使えない。</p>

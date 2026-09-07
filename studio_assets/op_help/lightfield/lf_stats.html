@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_stats — LIGHTFIELD <code style="color:#22d3bf">decode</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_stats(lf)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_stats(lf)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lightfield; lightfield.lf_stats(lf)</code>、台帳から引くなら <code style="color:#22d3bf">opslightfield.get(&quot;lf_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Describe a light field: shape, angular centre, and the slope range it can carry.</p>
 <p>Returns a dict — `<code style="color:#22d3bf">angular_v</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angular_u</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">height</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">width</code>` ·</p>

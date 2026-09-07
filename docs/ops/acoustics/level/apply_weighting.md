@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # apply_weighting — ACOUSTICS `level` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import acoustics; acoustics.apply_weighting(x, rate, kind='A')` (または `opsacoustics.get("apply_weighting")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.apply_weighting(x, rate, kind='A')` (実装を直接呼ぶなら `import acoustics; acoustics.apply_weighting(x, rate, kind='A')`、台帳から引くなら `opsacoustics.get("apply_weighting")`)
 
 ## 使い方
 

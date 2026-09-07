@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # watermark_capacity — IMGFORENSICS `watermark` op
 
 - **データ種**: `image2d × phash` → `table`
-- **呼び出し**: `import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: 'str' = 'haar', level: 'int' = 1, jpeg_quality=None) -> 'dict'` (または `opsimgforensics.get("watermark_capacity")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: 'str' = 'haar', level: 'int' = 1, jpeg_quality=None) -> 'dict'` (実装を直接呼ぶなら `import imgforensics; imgforensics.watermark_capacity(image, bits, strengths=(0.02, 0.05, 0.1, 0.2, 0.4), wavelet: 'str' = 'haar', level: 'int' = 1, jpeg_quality=None) -> 'dict'`、台帳から引くなら `opsimgforensics.get("watermark_capacity")`)
 
 ## 使い方
 

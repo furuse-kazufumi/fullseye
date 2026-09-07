@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_roughness — DEM `surface` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_roughness(dem, cell_size=1.0)` (または `opsdem.get("dem_roughness")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_roughness(dem, cell_size=1.0)` (実装を直接呼ぶなら `import demops; demops.dem_roughness(dem, cell_size=1.0)`、台帳から引くなら `opsdem.get("dem_roughness")`)
 
 ## 使い方
 

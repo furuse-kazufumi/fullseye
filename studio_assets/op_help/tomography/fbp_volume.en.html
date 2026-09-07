@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fbp_volume — TOMOGRAPHY <code style="color:#22d3bf">volume</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinostack</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None)</code> (or <code style="color:#22d3bf">opstomography.get(&quot;fbp_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fbp_volume(stack, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;fbp_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reconstruct every sinogram of a `<code style="color:#22d3bf">(Z, A, D)</code><code style="color:#22d3bf"> stack -&gt; a </code><code style="color:#22d3bf">(Z, S, S)</code>` volume.</p>
 <p>The inverse of :func:<code style="color:#22d3bf">radon_volume</code>, slice by slice. The result is a plain</p>
@@ -28,6 +28,7 @@
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">voxel</code> as input)</h3>
 <p><a style="color:#22d3bf" href="optomography:radon_volume">radon_volume</a></p>

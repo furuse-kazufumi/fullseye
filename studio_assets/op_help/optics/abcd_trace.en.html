@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">abcd_trace — OPTICS <code style="color:#22d3bf">geometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optics; optics.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;abcd_trace&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import optics; optics.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;abcd_trace&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Propagate one paraxial ray through an ABCD matrix.</p>
 <p>Applies `<code style="color:#22d3bf">[y&#x27;, theta&#x27;] = M @ [y, theta]</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">y</code>` in millimetres and</p>

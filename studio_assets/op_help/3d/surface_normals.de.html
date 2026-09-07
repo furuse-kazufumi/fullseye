@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_normals — 3D <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photometric; photometric.surface_normals(z)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;surface_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_normals(z)</code> (die Implementierung direkt: <code style="color:#22d3bf">import photometric; photometric.surface_normals(z)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;surface_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Höhenfeld z (HxW) → Einheitsnormalen (H,W,3). n ∝ (−dz/dx, −dz/dy, 1). Die Vorwärtsumwandlung Tiefe → Normale.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # interp_linear — MATH `interp_poly` op
 
 - **データ種**: `signal × signal × signal` → `signal`
-- **呼び出し**: `import mathops; mathops.interp_linear(x, y, xq, out_of_range='raise')` (または `opsmath.get("interp_linear")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.interp_linear(x, y, xq, out_of_range='raise')` (実装を直接呼ぶなら `import mathops; mathops.interp_linear(x, y, xq, out_of_range='raise')`、台帳から引くなら `opsmath.get("interp_linear")`)
 
 ## 使い方
 

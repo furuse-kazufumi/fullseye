@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_synth_naca4 — PROFILE <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">pairs</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import profileops; profileops.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>(或 <code style="color:#22d3bf">opsprofile.get(&quot;profile_synth_naca4&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_synth_naca4&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>NACA 4 桁翼型を閉形式で生成する。返りは `<code style="color:#22d3bf">(N, 2)</code>` の一筆書き。</p>

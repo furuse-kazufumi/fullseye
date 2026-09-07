@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ms_ssim — IMGMETRICS `fidelity` op
 
 - **データ種**: `image2d × image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)` (または `opsimgmetrics.get("ms_ssim")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)`、台帳から引くなら `opsimgmetrics.get("ms_ssim")`)
 
 ## 使い方
 

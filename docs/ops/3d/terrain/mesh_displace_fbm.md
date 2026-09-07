@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_displace_fbm — 3D `terrain` op
 
 - **データ種**: `mesh` → `mesh`
-- **呼び出し**: `import render3d; render3d.mesh_displace_fbm(V, F, amplitude: 'float', *, scale=None, octaves: 'int' = 4, lacunarity: 'float' = 2.0, gain: 'float' = 0.5, seed: 'int' = 0)` (または `ops3d.get("mesh_displace_fbm")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_displace_fbm(V, F, amplitude: 'float', *, scale=None, octaves: 'int' = 4, lacunarity: 'float' = 2.0, gain: 'float' = 0.5, seed: 'int' = 0)` (実装を直接呼ぶなら `import render3d; render3d.mesh_displace_fbm(V, F, amplitude: 'float', *, scale=None, octaves: 'int' = 4, lacunarity: 'float' = 2.0, gain: 'float' = 0.5, seed: 'int' = 0)`、台帳から引くなら `ops3d.get("mesh_displace_fbm")`)
 
 ## 使い方
 

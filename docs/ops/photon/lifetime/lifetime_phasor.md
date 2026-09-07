@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lifetime_phasor — PHOTON `lifetime` op
 
 - **データ種**: `counts` → `table`
-- **呼び出し**: `import photoncount; photoncount.lifetime_phasor(decay, bin_ps=100.0, harmonic=1, background=0.0)` (または `opsphoton.get("lifetime_phasor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lifetime_phasor(decay, bin_ps=100.0, harmonic=1, background=0.0)` (実装を直接呼ぶなら `import photoncount; photoncount.lifetime_phasor(decay, bin_ps=100.0, harmonic=1, background=0.0)`、台帳から引くなら `opsphoton.get("lifetime_phasor")`)
 
 ## 使い方
 

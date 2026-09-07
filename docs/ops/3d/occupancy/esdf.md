@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # esdf — 3D `occupancy` op
 
 - **データ種**: `voxel` → `sdf`
-- **呼び出し**: `import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)` (または `ops3d.get("esdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.esdf(occupancy, voxel_size=1.0)` (実装を直接呼ぶなら `import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)`、台帳から引くなら `ops3d.get("esdf")`)
 
 ## 使い方
 

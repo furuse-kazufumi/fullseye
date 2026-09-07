@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # temporal_band_power — MOTIONMAG `temporal` op
 
 - **データ種**: `video` → `image2d`
-- **呼び出し**: `import motionmag; motionmag.temporal_band_power(video, f_lo, f_hi, fps) -> 'np.ndarray'` (または `opsmotionmag.get("temporal_band_power")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.temporal_band_power(video, f_lo, f_hi, fps) -> 'np.ndarray'` (実装を直接呼ぶなら `import motionmag; motionmag.temporal_band_power(video, f_lo, f_hi, fps) -> 'np.ndarray'`、台帳から引くなら `opsmotionmag.get("temporal_band_power")`)
 
 ## 使い方
 

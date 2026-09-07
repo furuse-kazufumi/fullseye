@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # random_rotation — 3D `augment` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import pcl_augment; pcl_augment.random_rotation(points, seed: 'int' = 0, max_angle: 'Optional[float]' = None) -> 'Tuple[np.ndarray, np.ndarray]'` (または `ops3d.get("random_rotation")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.random_rotation(points, seed: 'int' = 0, max_angle: 'Optional[float]' = None) -> 'Tuple[np.ndarray, np.ndarray]'` (実装を直接呼ぶなら `import pcl_augment; pcl_augment.random_rotation(points, seed: 'int' = 0, max_angle: 'Optional[float]' = None) -> 'Tuple[np.ndarray, np.ndarray]'`、台帳から引くなら `ops3d.get("random_rotation")`)
 - **台帳経由の戻り値**: `fullseye.ledger.random_rotation(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.random_rotation.raw(...)`、または `pcl_augment.random_rotation` を直接呼ぶ。
   - 本体の返り: `(points, R)`
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fraunhofer_pattern — OPTICS `wave` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import optics; optics.fraunhofer_pattern(aperture, wavelength_um=0.55, distance_mm=100.0, pixel_pitch_um=10.0)` (または `opsoptics.get("fraunhofer_pattern")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fraunhofer_pattern(aperture, wavelength_um=0.55, distance_mm=100.0, pixel_pitch_um=10.0)` (実装を直接呼ぶなら `import optics; optics.fraunhofer_pattern(aperture, wavelength_um=0.55, distance_mm=100.0, pixel_pitch_um=10.0)`、台帳から引くなら `opsoptics.get("fraunhofer_pattern")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fingerprint_correlate — IMGFORENSICS `sensor` op
 
 - **データ種**: `image2d × fingerprint` → `table`
-- **呼び出し**: `import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, exclude: 'int' = 11) -> 'dict'` (または `opsimgforensics.get("fingerprint_correlate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fingerprint_correlate(image, fingerprint, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, exclude: 'int' = 11) -> 'dict'` (実装を直接呼ぶなら `import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, exclude: 'int' = 11) -> 'dict'`、台帳から引くなら `opsimgforensics.get("fingerprint_correlate")`)
 
 ## 使い方
 

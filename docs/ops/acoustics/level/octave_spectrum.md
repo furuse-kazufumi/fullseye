@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # octave_spectrum — ACOUSTICS `level` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0, weighting='Z', floor_db=-200.0)` (または `opsacoustics.get("octave_spectrum")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0, weighting='Z', floor_db=-200.0)` (実装を直接呼ぶなら `import acoustics; acoustics.octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0, weighting='Z', floor_db=-200.0)`、台帳から引くなら `opsacoustics.get("octave_spectrum")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # range_doppler_peaks — RANGEDOPPLER `process` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import rangedoppler; rangedoppler.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)` (または `opsrangedoppler.get("range_doppler_peaks")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)`、台帳から引くなら `opsrangedoppler.get("range_doppler_peaks")`)
 
 ## 使い方
 

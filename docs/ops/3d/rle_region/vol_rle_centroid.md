@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_rle_centroid — 3D `rle_region` op
 
 - **データ種**: `rle_region` → `position`
-- **呼び出し**: `import volregion; volregion.vol_rle_centroid(region, spacing=None)` (または `ops3d.get("vol_rle_centroid")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_rle_centroid(region, spacing=None)` (実装を直接呼ぶなら `import volregion; volregion.vol_rle_centroid(region, spacing=None)`、台帳から引くなら `ops3d.get("vol_rle_centroid")`)
 
 ## 使い方
 

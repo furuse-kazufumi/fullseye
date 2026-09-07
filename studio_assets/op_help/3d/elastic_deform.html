@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">elastic_deform — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pcl_augment; pcl_augment.elastic_deform(points, sigma: &#x27;float&#x27;, alpha: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;elastic_deform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.elastic_deform(points, sigma: &#x27;float&#x27;, alpha: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcl_augment; pcl_augment.elastic_deform(points, sigma: &#x27;float&#x27;, alpha: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;elastic_deform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>滑らかな乱数変位場で弾性変形(相関距離 `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">, RMS 振幅 </code><code style="color:#22d3bf">alpha</code>`)。</p>
 <p>各点に独立ガウス乱数ベクトルを置き、空間ガウス重み `<code style="color:#22d3bf">exp(-d²/2σ²)</code>` で平滑化した</p>

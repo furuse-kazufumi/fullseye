@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # palette_quantize — GFX2D `post` op
 
 - **データ種**: `rgb` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.palette_quantize(rgb, colors=None, scheme='okabe_ito')` (または `opsgfx2d.get("palette_quantize")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.palette_quantize(rgb, colors=None, scheme='okabe_ito')` (実装を直接呼ぶなら `import gfx2d; gfx2d.palette_quantize(rgb, colors=None, scheme='okabe_ito')`、台帳から引くなら `opsgfx2d.get("palette_quantize")`)
 
 ## 使い方
 

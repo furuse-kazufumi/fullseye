@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_normals — 3D <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photometric; photometric.surface_normals(z)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;surface_normals&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_normals(z)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import photometric; photometric.surface_normals(z)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;surface_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。</p>
 <p>`<code style="color:#22d3bf">np.gradient</code><code style="color:#22d3bf"> の中心差分(端は片側差分)で行方向の </code><code style="color:#22d3bf">dz/dy</code><code style="color:#22d3bf"> と列方向の </code><code style="color:#22d3bf">dz/dx</code>` を</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_outline_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.annotate_outline_layout(mask)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_outline_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_outline_layout(mask)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_outline_layout(mask)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_outline_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳表(dict):二值遮罩的邊界迴路(沿像素邊的閉合多邊形)與重心。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

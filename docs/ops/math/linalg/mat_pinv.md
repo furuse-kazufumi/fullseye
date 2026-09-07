@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mat_pinv — MATH `linalg` op
 
 - **データ種**: `matrix` → `matrix`
-- **呼び出し**: `import mathops; mathops.mat_pinv(a, rcond=1e-12)` (または `opsmath.get("mat_pinv")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mat_pinv(a, rcond=1e-12)` (実装を直接呼ぶなら `import mathops; mathops.mat_pinv(a, rcond=1e-12)`、台帳から引くなら `opsmath.get("mat_pinv")`)
 
 ## 使い方
 

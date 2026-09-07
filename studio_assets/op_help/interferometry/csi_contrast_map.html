@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">csi_contrast_map — INTERFEROMETRY <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">zscan</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_contrast_map(stack, remove_bias=True)</code> (または <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_contrast_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.csi_contrast_map(stack, remove_bias=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import interferometry; interferometry.csi_contrast_map(stack, remove_bias=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_contrast_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Peak fringe modulation per pixel — the contrast (and validity) map.</p>
 <p>The maximum of each pixel&#x27;s coherence envelope. Three uses, in order of how</p>

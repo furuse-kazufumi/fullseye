@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_outline — ANNOTATE `paper` op
 
 - **データ種**: `image2d × mask` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_outline(img, mask, label=None, color='emphasis', width=1.5, alpha=1.0, dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (または `opsannotate.get("annotate_outline")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_outline(img, mask, label=None, color='emphasis', width=1.5, alpha=1.0, dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_outline(img, mask, label=None, color='emphasis', width=1.5, alpha=1.0, dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_outline")`)
 
 ## 使い方
 

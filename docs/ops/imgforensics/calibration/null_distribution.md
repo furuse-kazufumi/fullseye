@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # null_distribution — IMGFORENSICS `calibration` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import imgforensics; imgforensics.null_distribution(values)` (または `opsimgforensics.get("null_distribution")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.null_distribution(values)` (実装を直接呼ぶなら `import imgforensics; imgforensics.null_distribution(values)`、台帳から引くなら `opsimgforensics.get("null_distribution")`)
 
 ## 使い方
 

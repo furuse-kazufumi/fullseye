@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">gen_measure_arc — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">measurehandle</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>(或 <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_arc&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_arc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。</p>

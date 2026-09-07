@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × points × mesh × depth × gaussians</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.to_points(data, kind, samples=20000, **kw)</code>(要直接调用实现,<code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>任意 3D 结构 → 点群(共同表示)。把全部 5 种结构统一到一个入口。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

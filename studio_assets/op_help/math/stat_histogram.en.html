@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_histogram — MATH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.stat_histogram(x, bins=10, range=None, density=False)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;stat_histogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_histogram(x, bins=10, range=None, density=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.stat_histogram(x, bins=10, range=None, density=False)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;stat_histogram&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.stat_histogram(...)</code> returns **only the declared out type <code style="color:#22d3bf">pairs</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.stat_histogram.raw(...)</code> or call <code style="color:#22d3bf">mathops.stat_histogram</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Histogram of a 1-D sample with the binning <b>explicit</b>.</p>

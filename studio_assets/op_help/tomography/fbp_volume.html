@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fbp_volume — TOMOGRAPHY <code style="color:#22d3bf">volume</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sinostack</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None)</code> (または <code style="color:#22d3bf">opstomography.get(&quot;fbp_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fbp_volume(stack, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None)</code>、台帳から引くなら <code style="color:#22d3bf">opstomography.get(&quot;fbp_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Reconstruct every sinogram of a `<code style="color:#22d3bf">(Z, A, D)</code><code style="color:#22d3bf"> stack -&gt; a </code><code style="color:#22d3bf">(Z, S, S)</code>` volume.</p>
 <p>The inverse of :func:<code style="color:#22d3bf">radon_volume</code>, slice by slice. The result is a plain</p>
@@ -28,6 +28,7 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">voxel</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="optomography:radon_volume">radon_volume</a></p>

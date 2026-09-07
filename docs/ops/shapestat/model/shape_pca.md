@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_pca — SHAPESTAT `model` op
 
 - **データ種**: `shapeset` → `shapemodel`
-- **呼び出し**: `import shapestats; shapestats.shape_pca(shapes, n_components: 'int' = 0, align: 'bool' = True)` (または `opsshapestat.get("shape_pca")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_pca(shapes, n_components: 'int' = 0, align: 'bool' = True)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_pca(shapes, n_components: 'int' = 0, align: 'bool' = True)`、台帳から引くなら `opsshapestat.get("shape_pca")`)
 
 ## 使い方
 

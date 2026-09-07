@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # layer_stack — GFX2D `composite` op
 
 - **データ種**: `table` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.layer_stack(layers)` (または `opsgfx2d.get("layer_stack")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.layer_stack(layers)` (実装を直接呼ぶなら `import gfx2d; gfx2d.layer_stack(layers)`、台帳から引くなら `opsgfx2d.get("layer_stack")`)
 
 ## 使い方
 

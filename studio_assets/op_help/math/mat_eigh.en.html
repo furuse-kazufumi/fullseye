@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_eigh — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.mat_eigh(a)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;mat_eigh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_eigh(a)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.mat_eigh(a)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mat_eigh&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.mat_eigh(...)</code> returns **only the declared out type <code style="color:#22d3bf">table</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.mat_eigh.raw(...)</code> or call <code style="color:#22d3bf">mathops.mat_eigh</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Eigen-decomposition of a <b>symmetric</b> matrix (LAPACK `<code style="color:#22d3bf">syevd</code>`).</p>

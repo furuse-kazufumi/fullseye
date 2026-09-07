@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # brdf_microfacet — SPECULAR `reflectance` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import specularity; specularity.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)` (または `opsspecular.get("brdf_microfacet")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)` (実装を直接呼ぶなら `import specularity; specularity.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)`、台帳から引くなら `opsspecular.get("brdf_microfacet")`)
 
 ## 使い方
 

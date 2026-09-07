@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # skeleton_endpoints3d — 3D `medial` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import medial; medial.skeleton_endpoints3d(vol)` (または `ops3d.get("skeleton_endpoints3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.skeleton_endpoints3d(vol)` (実装を直接呼ぶなら `import medial; medial.skeleton_endpoints3d(vol)`、台帳から引くなら `ops3d.get("skeleton_endpoints3d")`)
 
 ## 使い方
 

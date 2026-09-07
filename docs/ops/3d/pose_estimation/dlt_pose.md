@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dlt_pose — 3D `pose_estimation` op
 
 - **データ種**: `points × keypoints` → `pose`
-- **呼び出し**: `import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)` (または `ops3d.get("dlt_pose")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dlt_pose(points_3d, points_2d, K)` (実装を直接呼ぶなら `import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)`、台帳から引くなら `ops3d.get("dlt_pose")`)
 
 ## 使い方
 

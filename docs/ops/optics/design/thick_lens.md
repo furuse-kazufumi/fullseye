@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # thick_lens — OPTICS `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import raytrace; raytrace.thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168)` (または `opsoptics.get("thick_lens")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168)` (実装を直接呼ぶなら `import raytrace; raytrace.thick_lens(R1=50.0, R2=-50.0, thickness=5.0, index=1.5168)`、台帳から引くなら `opsoptics.get("thick_lens")`)
 
 ## 使い方
 

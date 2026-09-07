@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_flow_accumulation — DEM <code style="color:#22d3bf">hydrology</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_accumulation&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import demops; demops.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_accumulation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>集水セル数。各セルへ流れ込む上流セルの個数(自セルを 1 と数える)。</p>
 <p>`<code style="color:#22d3bf">fill=True</code>` なら先に窪地を埋める(埋めないと窪地で流れが止まり、</p>

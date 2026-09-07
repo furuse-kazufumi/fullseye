@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # noise_inconsistency_map — IMGFORENSICS `noise` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import imgforensics; imgforensics.noise_inconsistency_map(image, block: 'int' = 16) -> 'np.ndarray'` (または `opsimgforensics.get("noise_inconsistency_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.noise_inconsistency_map(image, block: 'int' = 16) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.noise_inconsistency_map(image, block: 'int' = 16) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("noise_inconsistency_map")`)
 
 ## 使い方
 

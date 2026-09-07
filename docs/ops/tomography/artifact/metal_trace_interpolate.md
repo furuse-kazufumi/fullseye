@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # metal_trace_interpolate — TOMOGRAPHY `artifact` op
 
 - **データ種**: `sinogram` → `sinogram`
-- **呼び出し**: `import tomography; tomography.metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None, mask=None, size=None)` (または `opstomography.get("metal_trace_interpolate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None, mask=None, size=None)` (実装を直接呼ぶなら `import tomography; tomography.metal_trace_interpolate(sinogram, angles_deg=None, image_threshold=None, mask=None, size=None)`、台帳から引くなら `opstomography.get("metal_trace_interpolate")`)
 
 ## 使い方
 

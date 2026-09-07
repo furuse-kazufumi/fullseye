@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">csi_design — INTERFEROMETRY <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import interferometry; interferometry.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)</code> (or <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import interferometry; interferometry.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)</code>; from the registry, <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_design&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The axial limits of a coherence-scanning setup, from the source spectrum.</p>
 <p>The counterpart of :mod:<code style="color:#22d3bf">visiondesign</code> for the *vertical* axis: closed-form</p>

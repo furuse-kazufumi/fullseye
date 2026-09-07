@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sobel3d — 3D `feature` op
 
 - **データ種**: `voxel` → `gradient`
-- **呼び出し**: `import match3d; match3d.sobel3d(vol, device='cpu')` (または `ops3d.get("sobel3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sobel3d(vol, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.sobel3d(vol, device='cpu')`、台帳から引くなら `ops3d.get("sobel3d")`)
 - **台帳経由の戻り値**: `fullseye.ledger.sobel3d(...)` は**宣言 out 型 `gradient` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.sobel3d.raw(...)`、または `match3d.sobel3d` を直接呼ぶ。
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 

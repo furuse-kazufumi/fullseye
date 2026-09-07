@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">blob_overlay — BLOB <code style="color:#22d3bf">extract</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × labels2d</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import blob2d; blob2d.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(或 <code style="color:#22d3bf">opsblob.get(&quot;blob_overlay&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import blob2d; blob2d.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsblob.get(&quot;blob_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>元画像の上に物体を色分けして重ね、`<code style="color:#22d3bf">(H, W, 3)</code>` の float RGB を返す。</p>

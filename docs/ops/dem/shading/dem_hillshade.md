@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_hillshade — DEM `shading` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method='horn')` (または `opsdem.get("dem_hillshade")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method='horn')` (実装を直接呼ぶなら `import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method='horn')`、台帳から引くなら `opsdem.get("dem_hillshade")`)
 
 ## 使い方
 

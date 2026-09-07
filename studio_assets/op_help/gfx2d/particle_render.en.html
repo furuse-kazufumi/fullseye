@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">particle_render — GFX2D <code style="color:#22d3bf">particle</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_render&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Splat a particle state into an `<code style="color:#22d3bf">rgba</code>` image.</p>
 <p>Each particle is a radially symmetric `<code style="color:#22d3bf">(1 - (r/R)^2)^2</code>` kernel of radius</p>

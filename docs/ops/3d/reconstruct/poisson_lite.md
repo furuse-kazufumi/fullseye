@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # poisson_lite — 3D `reconstruct` op
 
 - **データ種**: `points` → `mesh`
-- **呼び出し**: `import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)` (または `ops3d.get("poisson_lite")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)` (実装を直接呼ぶなら `import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)`、台帳から引くなら `ops3d.get("poisson_lite")`)
 
 ## 使い方
 

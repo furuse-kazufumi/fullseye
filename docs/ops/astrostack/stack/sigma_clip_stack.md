@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sigma_clip_stack — ASTROSTACK `stack` op
 
 - **データ種**: `images` → `image2d`
-- **呼び出し**: `import astrostack; astrostack.sigma_clip_stack(frames, mode='sigma_clip', kappa=3.0, iters=5, center='median', scale='mad')` (または `opsastrostack.get("sigma_clip_stack")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sigma_clip_stack(frames, mode='sigma_clip', kappa=3.0, iters=5, center='median', scale='mad')` (実装を直接呼ぶなら `import astrostack; astrostack.sigma_clip_stack(frames, mode='sigma_clip', kappa=3.0, iters=5, center='median', scale='mad')`、台帳から引くなら `opsastrostack.get("sigma_clip_stack")`)
 - **台帳経由の戻り値**: `fullseye.ledger.sigma_clip_stack(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.sigma_clip_stack.raw(...)`、または `astrostack.sigma_clip_stack` を直接呼ぶ。
   - 本体の返り: `(stack, accepted) -> image2d`
 

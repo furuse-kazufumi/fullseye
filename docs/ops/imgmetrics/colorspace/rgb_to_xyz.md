@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rgb_to_xyz — IMGMETRICS `colorspace` op
 
 - **データ種**: `rgbimage` → `rgb`
-- **呼び出し**: `import imgmetrics; imgmetrics.rgb_to_xyz(rgb)` (または `opsimgmetrics.get("rgb_to_xyz")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rgb_to_xyz(rgb)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.rgb_to_xyz(rgb)`、台帳から引くなら `opsimgmetrics.get("rgb_to_xyz")`)
 
 ## 使い方
 

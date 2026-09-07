@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_boundary_points — 3D `boundary` op
 
 - **データ種**: `voxel` → `points`
-- **呼び出し**: `import volops; volops.vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0))` (または `ops3d.get("vol_boundary_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0))` (実装を直接呼ぶなら `import volops; volops.vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0))`、台帳から引くなら `ops3d.get("vol_boundary_points")`)
 
 ## 使い方
 

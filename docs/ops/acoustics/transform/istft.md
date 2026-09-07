@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # istft — ACOUSTICS `transform` op
 
 - **データ種**: `table` → `signal`
-- **呼び出し**: `import acoustics; acoustics.istft(transform)` (または `opsacoustics.get("istft")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.istft(transform)` (実装を直接呼ぶなら `import acoustics; acoustics.istft(transform)`、台帳から引くなら `opsacoustics.get("istft")`)
 
 ## 使い方
 

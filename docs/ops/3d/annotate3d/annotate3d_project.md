@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate3d_project — 3D `annotate3d` op
 
 - **データ種**: `points` → `table`
-- **呼び出し**: `import annotate3d; annotate3d.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)` (または `ops3d.get("annotate3d_project")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)` (実装を直接呼ぶなら `import annotate3d; annotate3d.annotate3d_project(points, pose, K, depth=None, shape=None, occlusion_tol=0.01)`、台帳から引くなら `ops3d.get("annotate3d_project")`)
 
 ## 使い方
 

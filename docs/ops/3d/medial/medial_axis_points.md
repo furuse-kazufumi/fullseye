@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # medial_axis_points — 3D `medial` op
 
 - **データ種**: `voxel` → `points`
-- **呼び出し**: `import medial; medial.medial_axis_points(vol, min_radius=0.0)` (または `ops3d.get("medial_axis_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.medial_axis_points(vol, min_radius=0.0)` (実装を直接呼ぶなら `import medial; medial.medial_axis_points(vol, min_radius=0.0)`、台帳から引くなら `ops3d.get("medial_axis_points")`)
 - **台帳経由の戻り値**: `fullseye.ledger.medial_axis_points(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.medial_axis_points.raw(...)`、または `medial.medial_axis_points` を直接呼ぶ。
   - 本体の返り: `(points, radii)`
 

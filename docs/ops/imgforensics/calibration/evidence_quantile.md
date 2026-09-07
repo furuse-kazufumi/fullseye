@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # evidence_quantile — IMGFORENSICS `calibration` op
 
 - **データ種**: `measurement × table` → `table`
-- **呼び出し**: `import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)` (または `opsimgforensics.get("evidence_quantile")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.evidence_quantile(measurement, null, higher_is_stronger=True)` (実装を直接呼ぶなら `import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)`、台帳から引くなら `opsimgforensics.get("evidence_quantile")`)
 
 ## 使い方
 

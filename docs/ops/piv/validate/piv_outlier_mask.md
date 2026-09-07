@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_outlier_mask — PIV `validate` op
 
 - **データ種**: `flow2d` → `mask`
-- **呼び出し**: `import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)` (または `opspiv.get("piv_outlier_mask")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)` (実装を直接呼ぶなら `import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)`、台帳から引くなら `opspiv.get("piv_outlier_mask")`)
 
 ## 使い方
 

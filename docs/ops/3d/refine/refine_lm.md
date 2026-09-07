@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # refine_lm — 3D `refine` op
 
 - **データ種**: `voxel × voxel × position` → `table`
-- **呼び出し**: `import match3d; match3d.refine_lm(scene, template, init_pos, device='cpu', iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)` (または `ops3d.get("refine_lm")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.refine_lm(scene, template, init_pos, device='cpu', iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)` (実装を直接呼ぶなら `import match3d; match3d.refine_lm(scene, template, init_pos, device='cpu', iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)`、台帳から引くなら `ops3d.get("refine_lm")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

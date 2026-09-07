@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sample_surface — 3D `superquadric` op
 
 - **データ種**: `vector` → `points`
-- **呼び出し**: `import superquadric; superquadric.sample_surface(a, eps, n_u: 'int' = 40, n_v: 'int' = 40, R=None, t=None) -> 'np.ndarray'` (または `ops3d.get("sample_surface")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sample_surface(a, eps, n_u: 'int' = 40, n_v: 'int' = 40, R=None, t=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import superquadric; superquadric.sample_surface(a, eps, n_u: 'int' = 40, n_v: 'int' = 40, R=None, t=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("sample_surface")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shift_to_vector — REPRCONV `algebra` op
 
 - **データ種**: `shift` → `vector`
-- **呼び出し**: `import reprconv; reprconv.shift_to_vector(shift)` (または `opsreprconv.get("shift_to_vector")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shift_to_vector(shift)` (実装を直接呼ぶなら `import reprconv; reprconv.shift_to_vector(shift)`、台帳から引くなら `opsreprconv.get("shift_to_vector")`)
 
 ## 使い方
 

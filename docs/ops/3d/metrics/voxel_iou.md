@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # voxel_iou — 3D `metrics` op
 
 - **データ種**: `voxel × voxel` → `measurement`
-- **呼び出し**: `import metrics3d; metrics3d.voxel_iou(vol_a, vol_b, iso=0.5)` (または `ops3d.get("voxel_iou")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.voxel_iou(vol_a, vol_b, iso=0.5)` (実装を直接呼ぶなら `import metrics3d; metrics3d.voxel_iou(vol_a, vol_b, iso=0.5)`、台帳から引くなら `ops3d.get("voxel_iou")`)
 
 ## 使い方
 
@@ -60,7 +60,7 @@ bool / 0-1 / 密度 grid のいずれでもよい)。``iso`` は占有とみな�
 
 ## 同カテゴリ(`metrics`)
 
-[chamfer_distance](chamfer_distance.md) · [hausdorff_distance](hausdorff_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [normal_consistency](normal_consistency.md) · [pose_error](pose_error.md)
+[chamfer_distance](chamfer_distance.md) · [hausdorff_distance](hausdorff_distance.md) · [m3c2_distance](m3c2_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [normal_consistency](normal_consistency.md) · [pose_error](pose_error.md)
 
 ---
 *Provenance: metrics3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

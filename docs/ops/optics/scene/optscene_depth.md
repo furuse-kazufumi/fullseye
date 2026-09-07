@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optscene_depth — OPTICS `scene` op
 
 - **データ種**: `table × table` → `image2d`
-- **呼び出し**: `import optscene; optscene.optscene_depth(scene, camera, supersample: 'int' = 1) -> 'np.ndarray'` (または `opsoptics.get("optscene_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.optscene_depth(scene, camera, supersample: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("optscene_depth")`)
 
 ## 使い方
 

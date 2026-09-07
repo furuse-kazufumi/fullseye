@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">psnr — IMGMETRICS <code style="color:#22d3bf">fidelity</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.psnr(a, b, data_range=None)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;psnr&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psnr(a, b, data_range=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgmetrics; imgmetrics.psnr(a, b, data_range=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;psnr&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ピーク信号対雑音比 [dB]。</p>
 <p>完全に一致する 2 枚では **`<code style="color:#22d3bf">inf</code>`** を返す(0 除算を黙って回避するために</p>

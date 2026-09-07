@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_text_path — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × text</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (or <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): text set along a polyline (each glyph rotated to the tangent angle).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

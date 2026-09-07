@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # smooth_flow — 3D `scene_flow3d` op
 
 - **データ種**: `points × points` → `flow_scattered`
-- **呼び出し**: `import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5) -> 'np.ndarray'` (または `ops3d.get("smooth_flow")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5) -> 'np.ndarray'` (実装を直接呼ぶなら `import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: 'int' = 10, n_iter: 'int' = 5) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("smooth_flow")`)
 
 ## 使い方
 

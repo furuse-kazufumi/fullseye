@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_lstsq — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import mathops; mathops.mat_lstsq(a, b, rcond=None)</code> (または <code style="color:#22d3bf">opsmath.get(&quot;mat_lstsq&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_lstsq(a, b, rcond=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.mat_lstsq(a, b, rcond=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;mat_lstsq&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>優決定系 `<code style="color:#22d3bf">A x ≈ b</code><code style="color:#22d3bf"> の最小二乗解(LAPACK </code><code style="color:#22d3bf">gelsd</code>`、SVD 基盤)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

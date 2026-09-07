@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # parallax_layers — GFX2D `tile` op
 
 - **データ種**: `sprites` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)` (または `opsgfx2d.get("parallax_layers")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)` (実装を直接呼ぶなら `import gfx2d; gfx2d.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)`、台帳から引くなら `opsgfx2d.get("parallax_layers")`)
 
 ## 使い方
 

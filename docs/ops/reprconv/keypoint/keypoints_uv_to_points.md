@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # keypoints_uv_to_points — REPRCONV `keypoint` op
 
 - **データ種**: `keypoints` → `points`
-- **呼び出し**: `import reprconv; reprconv.keypoints_uv_to_points(keypoints, z=0.0)` (または `opsreprconv.get("keypoints_uv_to_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.keypoints_uv_to_points(keypoints, z=0.0)` (実装を直接呼ぶなら `import reprconv; reprconv.keypoints_uv_to_points(keypoints, z=0.0)`、台帳から引くなら `opsreprconv.get("keypoints_uv_to_points")`)
 
 ## 使い方
 

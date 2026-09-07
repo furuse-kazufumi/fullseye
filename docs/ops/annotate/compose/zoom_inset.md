@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # zoom_inset — ANNOTATE `compose` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color='emphasis', width=2, connect=True, scheme='okabe_ito', style=None)` (または `opsannotate.get("zoom_inset")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color='emphasis', width=2, connect=True, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color='emphasis', width=2, connect=True, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("zoom_inset")`)
 
 ## 使い方
 

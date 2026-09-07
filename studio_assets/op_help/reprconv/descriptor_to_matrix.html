@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_matrix — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">matrix</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>記述子 → `<code style="color:#22d3bf">matrix</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">descriptor</code>` の出口(<b>可逆</b>)。</p>
 <p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束</p>

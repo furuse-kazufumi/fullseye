@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # to_points — 3D `transform` op
 
 - **データ種**: `voxel × points × mesh × depth × gaussians` → `points`
-- **呼び出し**: `import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)` (または `ops3d.get("to_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.to_points(data, kind, samples=20000, **kw)` (実装を直接呼ぶなら `import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)`、台帳から引くなら `ops3d.get("to_points")`)
 
 ## 使い方
 

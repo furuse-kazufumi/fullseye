@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optical_camera — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0) -> 'dict'` (または `opsoptics.get("optical_camera")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.optical_camera(focal_mm: 'float' = 25.0, pixel_um: 'float' = 3.45, resolution=(256, 256), working_distance_mm: 'float' = 200.0, look_at_mm=(0.0, 0.0, 0.0), tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsoptics.get("optical_camera")`)
 
 ## 使い方
 

@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # polar_unwrap — 3D `curvilinear` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import match3d; match3d.polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, device='cpu')` (または `ops3d.get("polar_unwrap")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, device='cpu')`、台帳から引くなら `ops3d.get("polar_unwrap")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_leader — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_leader(img, points, labels=None, color='emphasis', width=1.5, cap_size=3.0, font_size=12, pad=4, gap=22, side='auto', box_alpha=0.72, text_color=None, scheme='okabe_ito', font_path=None, min_font_size=9, layout=None)` (または `opsannotate.get("annotate_leader")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_leader(img, points, labels=None, color='emphasis', width=1.5, cap_size=3.0, font_size=12, pad=4, gap=22, side='auto', box_alpha=0.72, text_color=None, scheme='okabe_ito', font_path=None, min_font_size=9, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_leader(img, points, labels=None, color='emphasis', width=1.5, cap_size=3.0, font_size=12, pad=4, gap=22, side='auto', box_alpha=0.72, text_color=None, scheme='okabe_ito', font_path=None, min_font_size=9, layout=None)`、台帳から引くなら `opsannotate.get("annotate_leader")`)
 
 ## 使い方
 

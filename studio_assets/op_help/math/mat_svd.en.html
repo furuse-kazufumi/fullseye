@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_svd — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.mat_svd(a, full_matrices=False)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;mat_svd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_svd(a, full_matrices=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.mat_svd(a, full_matrices=False)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mat_svd&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.mat_svd(...)</code> returns **only the declared out type <code style="color:#22d3bf">table</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.mat_svd.raw(...)</code> or call <code style="color:#22d3bf">mathops.mat_svd</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Singular value decomposition `<code style="color:#22d3bf">A = U @ diag(s) @ Vt</code><code style="color:#22d3bf"> (LAPACK </code><code style="color:#22d3bf">gesdd</code>`).</p>

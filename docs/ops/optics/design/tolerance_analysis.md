@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tolerance_analysis — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)` (または `opsoptics.get("tolerance_analysis")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)` (実装を直接呼ぶなら `import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)`、台帳から引くなら `opsoptics.get("tolerance_analysis")`)
 
 ## 使い方
 

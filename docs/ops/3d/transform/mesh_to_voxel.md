@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_to_voxel — 3D `transform` op
 
 - **データ種**: `mesh` → `voxel`
-- **呼び出し**: `import match3d; match3d.mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000, device='cpu', smooth=0.8)` (または `ops3d.get("mesh_to_voxel")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000, device='cpu', smooth=0.8)` (実装を直接呼ぶなら `import match3d; match3d.mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000, device='cpu', smooth=0.8)`、台帳から引くなら `ops3d.get("mesh_to_voxel")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

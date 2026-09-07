@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">signed_distance_field — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;signed_distance_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;signed_distance_field&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Occupancy/density voxels → a signed distance field SDF (inside &lt; 0, outside &gt; 0). edt_jfa applied to both sides.</p>

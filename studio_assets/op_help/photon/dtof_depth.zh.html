@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dtof_depth — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import photoncount; photoncount.dtof_depth(hist, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, subtract_background=False)</code>(或 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_depth(hist, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, subtract_background=False)</code>(要直接调用实现,<code style="color:#22d3bf">import photoncount; photoncount.dtof_depth(hist, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, subtract_background=False)</code>;从台账取用则 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由光子到达时间直方图求距离:`<code style="color:#22d3bf">d = c*t/2</code>`。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

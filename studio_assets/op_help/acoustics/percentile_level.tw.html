@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">percentile_level — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import acoustics; acoustics.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting=&#x27;A&#x27;, ref=1.0, window_s=0.125, floor_db=-200.0)</code>(或 <code style="color:#22d3bf">opsacoustics.get(&quot;percentile_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting=&#x27;A&#x27;, ref=1.0, window_s=0.125, floor_db=-200.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import acoustics; acoustics.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting=&#x27;A&#x27;, ref=1.0, window_s=0.125, floor_db=-200.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsacoustics.get(&quot;percentile_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>統計級:`<code style="color:#22d3bf">L_N</code><code style="color:#22d3bf"> 是有 </code><code style="color:#22d3bf">N</code>` % 的時間被超過的級。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # layout_capture — OPTICS `scene` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import optscene; optscene.layout_capture(layout: 'dict', exposure_ms: 'float' = 10.0, supersample: 'int' = 2, spectral_samples: 'int' = 1, apply_diffraction: 'bool' = True, apply_defocus: 'bool' = False, raw: 'bool' = False) -> 'dict'` (または `opsoptics.get("layout_capture")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.layout_capture(layout: 'dict', exposure_ms: 'float' = 10.0, supersample: 'int' = 2, spectral_samples: 'int' = 1, apply_diffraction: 'bool' = True, apply_defocus: 'bool' = False, raw: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.layout_capture(layout: 'dict', exposure_ms: 'float' = 10.0, supersample: 'int' = 2, spectral_samples: 'int' = 1, apply_diffraction: 'bool' = True, apply_defocus: 'bool' = False, raw: 'bool' = False) -> 'dict'`、台帳から引くなら `opsoptics.get("layout_capture")`)
 
 ## 使い方
 

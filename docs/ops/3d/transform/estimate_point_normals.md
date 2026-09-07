@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # estimate_point_normals — 3D `transform` op
 
 - **データ種**: `points` → `normals`
-- **呼び出し**: `import match3d; match3d.estimate_point_normals(points, k=16, viewpoint=None)` (または `ops3d.get("estimate_point_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.estimate_point_normals(points, k=16, viewpoint=None)` (実装を直接呼ぶなら `import match3d; match3d.estimate_point_normals(points, k=16, viewpoint=None)`、台帳から引くなら `ops3d.get("estimate_point_normals")`)
 
 ## 使い方
 

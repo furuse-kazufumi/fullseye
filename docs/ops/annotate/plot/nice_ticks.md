@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # nice_ticks — ANNOTATE `plot` op
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import annotate; annotate.nice_ticks(lo, hi, n=5, scale='linear')` (または `opsannotate.get("nice_ticks")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.nice_ticks(lo, hi, n=5, scale='linear')` (実装を直接呼ぶなら `import annotate; annotate.nice_ticks(lo, hi, n=5, scale='linear')`、台帳から引くなら `opsannotate.get("nice_ticks")`)
 
 ## 使い方
 

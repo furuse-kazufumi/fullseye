@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # delta_e_2000 — IMGMETRICS `colordiff` op
 
 - **データ種**: `lab × lab` → `image2d`
-- **呼び出し**: `import imgmetrics; imgmetrics.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)` (または `opsimgmetrics.get("delta_e_2000")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)`、台帳から引くなら `opsimgmetrics.get("delta_e_2000")`)
 
 ## 使い方
 

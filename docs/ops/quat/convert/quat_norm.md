@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # quat_norm — QUAT `convert` op
 
 - **データ種**: `qimage` → `image2d`
-- **呼び出し**: `import quatimage; quatimage.quat_norm(qimage) -> 'np.ndarray'` (または `opsquat.get("quat_norm")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.quat_norm(qimage) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_norm(qimage) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_norm")`)
 
 ## 使い方
 

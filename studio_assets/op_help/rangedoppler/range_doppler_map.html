@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">range_doppler_map — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_map(cube, combine=&#x27;incoherent&#x27;, antenna=None, normalize=False)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.range_doppler_map(cube, combine=&#x27;incoherent&#x27;, antenna=None, normalize=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_map(cube, combine=&#x27;incoherent&#x27;, antenna=None, normalize=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The 2-D FFT of a beat cube -&gt; a `<code style="color:#22d3bf">(n_doppler, n_range)</code>` magnitude map.</p>
 <p>Fast time transforms to <b>range</b> (last axis, not shifted: bin `<code style="color:#22d3bf">j</code>` is</p>

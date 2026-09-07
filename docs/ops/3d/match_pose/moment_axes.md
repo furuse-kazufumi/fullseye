@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # moment_axes — 3D `match_pose` op
 
 - **データ種**: `points` → `axes`
-- **呼び出し**: `import match3d; match3d.moment_axes(points, weights=None)` (または `ops3d.get("moment_axes")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.moment_axes(points, weights=None)` (実装を直接呼ぶなら `import match3d; match3d.moment_axes(points, weights=None)`、台帳から引くなら `ops3d.get("moment_axes")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_aperture_mask — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">image2d</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import lightfield; lightfield.lf_aperture_mask(angular=(5, 5), shape=&#x27;circle&#x27;, *, radius=None, inner=0.0, sigma=None, normalize=True)</code>(或 <code style="color:#22d3bf">opslightfield.get(&quot;lf_aperture_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_aperture_mask(angular=(5, 5), shape=&#x27;circle&#x27;, *, radius=None, inner=0.0, sigma=None, normalize=True)</code>(要直接调用实现,<code style="color:#22d3bf">import lightfield; lightfield.lf_aperture_mask(angular=(5, 5), shape=&#x27;circle&#x27;, *, radius=None, inner=0.0, sigma=None, normalize=True)</code>;从台账取用则 <code style="color:#22d3bf">opslightfield.get(&quot;lf_aperture_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>角度方向的加权掩码 —— 你要收缩或塑形的合成孔径本身。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

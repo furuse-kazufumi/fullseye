@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_time_statistics — PIV `assess` op
 
 - **データ種**: `images` → `table`
-- **呼び出し**: `import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)` (または `opspiv.get("piv_time_statistics")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)` (実装を直接呼ぶなら `import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)`、台帳から引くなら `opspiv.get("piv_time_statistics")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">project — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import bundle3d; bundle3d.project(points, rvec, t, K)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;project&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project(points, rvec, t, K)</code> (to call the implementation directly, <code style="color:#22d3bf">import bundle3d; bundle3d.project(points, rvec, t, K)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;project&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Project 3-D points (n,3) to 2-D (n,2) with a camera (rvec, t, K) (perspective division).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

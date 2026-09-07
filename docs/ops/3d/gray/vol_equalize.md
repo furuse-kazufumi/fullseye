@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_equalize — 3D `gray` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volgray; volgray.vol_equalize(vol, nbins=256, mask=None)` (または `ops3d.get("vol_equalize")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_equalize(vol, nbins=256, mask=None)` (実装を直接呼ぶなら `import volgray; volgray.vol_equalize(vol, nbins=256, mask=None)`、台帳から引くなら `ops3d.get("vol_equalize")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # elliptic_fourier — SHAPE2D `descriptor` op
 
 - **データ種**: `pairs` → `efdmodel`
-- **呼び出し**: `import fourierdesc; fourierdesc.elliptic_fourier(points, n_harmonics=10)` (または `opsshape2d.get("elliptic_fourier")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.elliptic_fourier(points, n_harmonics=10)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.elliptic_fourier(points, n_harmonics=10)`、台帳から引くなら `opsshape2d.get("elliptic_fourier")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">ticks — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × axes</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;ticks&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;ticks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>刻度與其數值。<b>位置為閉合式</b>(就是 :func:<code style="color:#22d3bf">data_to_pixel</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

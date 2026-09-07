@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_shape_stats — VOLCOLOR `measure` op
 
 - **データ種**: `labels` → `table`
-- **呼び出し**: `import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: 'bool' = True)` (または `opsvolcolor.get("vol_label_shape_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_shape_stats(labels, spacing=None, shape: 'bool' = True)` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_shape_stats(labels, spacing=None, shape: 'bool' = True)`、台帳から引くなら `opsvolcolor.get("vol_label_shape_stats")`)
 
 ## 使い方
 

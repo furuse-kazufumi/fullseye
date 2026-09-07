@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # elastic_deform — 3D `augment` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import pcl_augment; pcl_augment.elastic_deform(points, sigma: 'float', alpha: 'float', seed: 'int' = 0) -> 'np.ndarray'` (または `ops3d.get("elastic_deform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.elastic_deform(points, sigma: 'float', alpha: 'float', seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import pcl_augment; pcl_augment.elastic_deform(points, sigma: 'float', alpha: 'float', seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("elastic_deform")`)
 
 ## 使い方
 

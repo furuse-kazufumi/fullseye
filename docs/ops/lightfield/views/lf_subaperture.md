@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_subaperture — LIGHTFIELD `views` op
 
 - **データ種**: `lightfield` → `image2d`
-- **呼び出し**: `import lightfield; lightfield.lf_subaperture(lf, v=0, u=0)` (または `opslightfield.get("lf_subaperture")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_subaperture(lf, v=0, u=0)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_subaperture(lf, v=0, u=0)`、台帳から引くなら `opslightfield.get("lf_subaperture")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # intersect_planes — 3D `geometry` op
 
 - **データ種**: `primitive` → `primitive`
-- **呼び出し**: `import match3d; match3d.intersect_planes(p1, n1, p2, n2)` (または `ops3d.get("intersect_planes")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.intersect_planes(p1, n1, p2, n2)` (実装を直接呼ぶなら `import match3d; match3d.intersect_planes(p1, n1, p2, n2)`、台帳から引くなら `ops3d.get("intersect_planes")`)
 
 ## 使い方
 

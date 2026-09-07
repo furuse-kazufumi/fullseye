@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vision_layout — OPTICS `scene` op
 
 - **データ種**: `table × table × table` → `table`
-- **呼び出し**: `import optscene; optscene.vision_layout(sensor: 'dict', lens: 'dict', lights, scene=None, tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -> 'dict'` (または `opsoptics.get("vision_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vision_layout(sensor: 'dict', lens: 'dict', lights, scene=None, tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.vision_layout(sensor: 'dict', lens: 'dict', lights, scene=None, tilt_deg: 'float' = 0.0, azimuth_deg: 'float' = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -> 'dict'`、台帳から引くなら `opsoptics.get("vision_layout")`)
 
 ## 使い方
 

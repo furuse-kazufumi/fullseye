@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # image_entropy — IMGMETRICS `information` op
 
 - **データ種**: `image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)` (または `opsimgmetrics.get("image_entropy")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)`、台帳から引くなら `opsimgmetrics.get("image_entropy")`)
 
 ## 使い方
 

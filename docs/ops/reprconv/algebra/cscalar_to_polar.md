@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cscalar_to_polar — REPRCONV `algebra` op
 
 - **データ種**: `cscalar` → `pairs`
-- **呼び出し**: `import reprconv; reprconv.cscalar_to_polar(cscalar)` (または `opsreprconv.get("cscalar_to_polar")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)` (実装を直接呼ぶなら `import reprconv; reprconv.cscalar_to_polar(cscalar)`、台帳から引くなら `opsreprconv.get("cscalar_to_polar")`)
 
 ## 使い方
 

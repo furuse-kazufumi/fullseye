@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_through_lens — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import lensimage; lensimage.render_through_lens(image, system, pixel_pitch_um=5.5, field_of_view=None, zones=3, noise=None, seed=0, illumination=&#x27;traced&#x27;, size=None, oversample=None)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;render_through_lens&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_through_lens(image, system, pixel_pitch_um=5.5, field_of_view=None, zones=3, noise=None, seed=0, illumination=&#x27;traced&#x27;, size=None, oversample=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import lensimage; lensimage.render_through_lens(image, system, pixel_pitch_um=5.5, field_of_view=None, zones=3, noise=None, seed=0, illumination=&#x27;traced&#x27;, size=None, oversample=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;render_through_lens&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rendert ein ideales Bestrahlungsstärkebild so, wie es der Sensor hinter *system* aufzeichnen würde (`<code style="color:#22d3bf">image2d</code>`).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

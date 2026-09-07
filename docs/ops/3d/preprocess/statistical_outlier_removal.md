@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # statistical_outlier_removal — 3D `preprocess` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: 'int' = 16, std_ratio: 'float' = 2.0)` (または `ops3d.get("statistical_outlier_removal")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.statistical_outlier_removal(points, k: 'int' = 16, std_ratio: 'float' = 2.0)` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.statistical_outlier_removal(points, k: 'int' = 16, std_ratio: 'float' = 2.0)`、台帳から引くなら `ops3d.get("statistical_outlier_removal")`)
 - **台帳経由の戻り値**: `fullseye.ledger.statistical_outlier_removal(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.statistical_outlier_removal.raw(...)`、または `pcl_filter.statistical_outlier_removal` を直接呼ぶ。
   - 本体の返り: `(kept, mask)`
 

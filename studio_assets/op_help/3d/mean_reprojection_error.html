@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mean_reprojection_error — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pose × points</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;mean_reprojection_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mean_reprojection_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>再投影 RMS 誤差(ピクセル)。</p>
 <p>全観測 k について `<code style="color:#22d3bf">project(points[obs_pt[k]], cameras[obs_cam[k]])</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">obs_uv[k]</code>` の差</p>

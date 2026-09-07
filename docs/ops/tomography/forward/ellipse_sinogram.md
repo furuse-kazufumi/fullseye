@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ellipse_sinogram — TOMOGRAPHY `forward` op
 
 - **データ種**: `なし` → `sinogram`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import tomography; tomography.ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)` (または `opstomography.get("ellipse_sinogram")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)` (実装を直接呼ぶなら `import tomography; tomography.ellipse_sinogram(size=256, ellipses=None, angles_deg=None, n_detectors=None)`、台帳から引くなら `opstomography.get("ellipse_sinogram")`)
 
 ## 使い方
 

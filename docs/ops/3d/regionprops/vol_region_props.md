@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_region_props — 3D `regionprops` op
 
 - **データ種**: `labels` → `table`
-- **呼び出し**: `import volops; volops.vol_region_props(labels, spacing=None, surface='auto')` (または `ops3d.get("vol_region_props")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_region_props(labels, spacing=None, surface='auto')` (実装を直接呼ぶなら `import volops; volops.vol_region_props(labels, spacing=None, surface='auto')`、台帳から引くなら `ops3d.get("vol_region_props")`)
 
 ## 使い方
 

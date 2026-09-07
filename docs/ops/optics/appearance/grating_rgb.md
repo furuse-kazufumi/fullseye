@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # grating_rgb — OPTICS `appearance` op
 
 - **データ種**: `normalmap` → `rgbimage`
-- **呼び出し**: `import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -> 'np.ndarray'` (または `opsoptics.get("grating_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("grating_rgb")`)
 
 ## 使い方
 

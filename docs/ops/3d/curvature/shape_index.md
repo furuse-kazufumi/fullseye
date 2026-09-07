@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_index — 3D `curvature` op
 
 - **データ種**: `points` → `descriptor`
-- **呼び出し**: `import curvature3d; curvature3d.shape_index(points, k=25, normals=None)` (または `ops3d.get("shape_index")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)` (実装を直接呼ぶなら `import curvature3d; curvature3d.shape_index(points, k=25, normals=None)`、台帳から引くなら `ops3d.get("shape_index")`)
 
 ## 使い方
 

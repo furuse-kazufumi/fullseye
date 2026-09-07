@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_local_maxima — 3D `feature` op
 
 - **データ種**: `voxel` → `points`
-- **呼び出し**: `import volops; volops.vol_local_maxima(vol, min_distance, threshold=None)` (または `ops3d.get("vol_local_maxima")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_local_maxima(vol, min_distance, threshold=None)` (実装を直接呼ぶなら `import volops; volops.vol_local_maxima(vol, min_distance, threshold=None)`、台帳から引くなら `ops3d.get("vol_local_maxima")`)
 
 ## 使い方
 

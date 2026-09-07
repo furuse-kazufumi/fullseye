@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_inset_layout — ANNOTATE `paper` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import annotate; annotate.annotate_inset_layout(shape, src_rect, corner='rt', factor=None, margin=10, max_fraction=0.4)` (または `opsannotate.get("annotate_inset_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_inset_layout(shape, src_rect, corner='rt', factor=None, margin=10, max_fraction=0.4)` (実装を直接呼ぶなら `import annotate; annotate.annotate_inset_layout(shape, src_rect, corner='rt', factor=None, margin=10, max_fraction=0.4)`、台帳から引くなら `opsannotate.get("annotate_inset_layout")`)
 
 ## 使い方
 

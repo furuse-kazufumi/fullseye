@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cad_visible_faces — CADMAP `visibility` op
 
 - **データ種**: `mesh` → `indices`
-- **呼び出し**: `import cadmap; cadmap.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)` (または `opscadmap.get("cad_visible_faces")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)` (実装を直接呼ぶなら `import cadmap; cadmap.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)`、台帳から引くなら `opscadmap.get("cad_visible_faces")`)
 
 ## 使い方
 

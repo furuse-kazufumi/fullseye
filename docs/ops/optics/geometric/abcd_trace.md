@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # abcd_trace — OPTICS `geometric` op
 
 - **データ種**: `matrix` → `table`
-- **呼び出し**: `import optics; optics.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)` (または `opsoptics.get("abcd_trace")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)` (実装を直接呼ぶなら `import optics; optics.abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0)`、台帳から引くなら `opsoptics.get("abcd_trace")`)
 
 ## 使い方
 

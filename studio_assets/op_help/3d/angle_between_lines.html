@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">angle_between_lines — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.angle_between_lines(d1, d2)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;angle_between_lines&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_between_lines(d1, d2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.angle_between_lines(d1, d2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;angle_between_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 直線方向のなす鋭角(度)。</p>
 <p>`<code style="color:#22d3bf">arccos(|d̂1·d̂2|)</code>` を度で返す(float)。絶対値を取るので <b>[0, 90]</b>(向きの前後を区別しない。</p>

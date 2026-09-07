@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # surface_defect — OPTICS `scene` op
 
 - **データ種**: `table × image2d` → `table`
-- **呼び出し**: `import optscene; optscene.surface_defect(primitive: 'dict', field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: 'float' = 0.0, height_field=None, roughness_um: 'float' = 0.6) -> 'dict'` (または `opsoptics.get("surface_defect")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.surface_defect(primitive: 'dict', field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: 'float' = 0.0, height_field=None, roughness_um: 'float' = 0.6) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.surface_defect(primitive: 'dict', field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: 'float' = 0.0, height_field=None, roughness_um: 'float' = 0.6) -> 'dict'`、台帳から引くなら `opsoptics.get("surface_defect")`)
 
 ## 使い方
 

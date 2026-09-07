@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_mips — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">images</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.voxel_to_mips(vol)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mips&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_mips(vol)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.voxel_to_mips(vol)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mips&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>3-D → maximum-intensity projections along the three orthogonal directions. The entry point for applying 2-D methods (e.g. accel&#x27;s 2-D NCC).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

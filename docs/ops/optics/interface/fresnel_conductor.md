@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fresnel_conductor — OPTICS `interface` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import glassmirror; glassmirror.fresnel_conductor(cos_i, n, k, polarization='unpolarized') -> 'np.ndarray'` (または `opsoptics.get("fresnel_conductor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fresnel_conductor(cos_i, n, k, polarization='unpolarized') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.fresnel_conductor(cos_i, n, k, polarization='unpolarized') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("fresnel_conductor")`)
 
 ## 使い方
 

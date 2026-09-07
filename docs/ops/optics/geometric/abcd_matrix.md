@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # abcd_matrix — OPTICS `geometric` op
 
 - **データ種**: `table` → `matrix`
-- **呼び出し**: `import optics; optics.abcd_matrix(elements)` (または `opsoptics.get("abcd_matrix")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.abcd_matrix(elements)` (実装を直接呼ぶなら `import optics; optics.abcd_matrix(elements)`、台帳から引くなら `opsoptics.get("abcd_matrix")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # pc_density_equalize — 3D `resolution` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import meshres; meshres.pc_density_equalize(points, spacing, k=8, seed=0)` (または `ops3d.get("pc_density_equalize")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pc_density_equalize(points, spacing, k=8, seed=0)` (実装を直接呼ぶなら `import meshres; meshres.pc_density_equalize(points, spacing, k=8, seed=0)`、台帳から引くなら `ops3d.get("pc_density_equalize")`)
 
 ## 使い方
 

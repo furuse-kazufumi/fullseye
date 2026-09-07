@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # quat_color_rotate — QUAT `color` op
 
 - **データ種**: `qimage` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.quat_color_rotate(qimage, axis_rgb, angle_rad) -> 'np.ndarray'` (または `opsquat.get("quat_color_rotate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.quat_color_rotate(qimage, axis_rgb, angle_rad) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_color_rotate(qimage, axis_rgb, angle_rad) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_color_rotate")`)
 
 ## 使い方
 

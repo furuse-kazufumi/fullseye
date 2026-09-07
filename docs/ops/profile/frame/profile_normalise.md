@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_normalise — PROFILE `frame` op
 
 - **データ種**: `pairs` → `pairs`
-- **呼び出し**: `import profileops; profileops.profile_normalise(contour)` (または `opsprofile.get("profile_normalise")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_normalise(contour)` (実装を直接呼ぶなら `import profileops; profileops.profile_normalise(contour)`、台帳から引くなら `opsprofile.get("profile_normalise")`)
 
 ## 使い方
 

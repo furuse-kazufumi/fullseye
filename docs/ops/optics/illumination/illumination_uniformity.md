@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # illumination_uniformity — OPTICS `illumination` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import illumdesign; illumdesign.illumination_uniformity(irradiance, region_fraction=0.8)` (または `opsoptics.get("illumination_uniformity")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.illumination_uniformity(irradiance, region_fraction=0.8)` (実装を直接呼ぶなら `import illumdesign; illumdesign.illumination_uniformity(irradiance, region_fraction=0.8)`、台帳から引くなら `opsoptics.get("illumination_uniformity")`)
 
 ## 使い方
 

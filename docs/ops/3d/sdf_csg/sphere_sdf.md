@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sphere_sdf — 3D `sdf_csg` op
 
 - **データ種**: `coordgrid` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.sphere_sdf(grid, center, R)` (または `ops3d.get("sphere_sdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sphere_sdf(grid, center, R)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.sphere_sdf(grid, center, R)`、台帳から引くなら `ops3d.get("sphere_sdf")`)
 
 ## 使い方
 

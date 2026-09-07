@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dataset_throughput — OPTICS `scene` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import optscene; optscene.dataset_throughput(dataset) -> 'dict'` (または `opsoptics.get("dataset_throughput")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dataset_throughput(dataset) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.dataset_throughput(dataset) -> 'dict'`、台帳から引くなら `opsoptics.get("dataset_throughput")`)
 
 ## 使い方
 

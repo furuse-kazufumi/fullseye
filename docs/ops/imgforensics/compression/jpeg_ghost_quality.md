@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # jpeg_ghost_quality — IMGFORENSICS `compression` op
 
 - **データ種**: `images` → `image2d`
-- **呼び出し**: `import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -> 'np.ndarray'` (または `opsimgforensics.get("jpeg_ghost_quality")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.jpeg_ghost_quality(ghosts, qualities=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("jpeg_ghost_quality")`)
 
 ## 使い方
 

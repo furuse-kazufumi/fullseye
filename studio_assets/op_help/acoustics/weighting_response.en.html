@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">weighting_response — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import acoustics; acoustics.weighting_response(freqs, kind=&#x27;A&#x27;, floor_db=-200.0)</code> (or <code style="color:#22d3bf">opsacoustics.get(&quot;weighting_response&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.weighting_response(freqs, kind=&#x27;A&#x27;, floor_db=-200.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import acoustics; acoustics.weighting_response(freqs, kind=&#x27;A&#x27;, floor_db=-200.0)</code>; from the registry, <code style="color:#22d3bf">opsacoustics.get(&quot;weighting_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The A / C / Z frequency-weighting curve, in dB, at the given frequencies.</p>
 <p>Computed from the four pole frequencies that *define* the networks and</p>

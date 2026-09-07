@@ -5057,12 +5057,12 @@
    "de": "Anzahl der Abtastwerte (HALCON ``num_points_funct_1d``)."
   },
   "2d/tb_occupancy_grid": {
-   "fp": "d13b0dba5c0a",
-   "en": "Point cloud (N,3) → 3-D occupancy voxel grid (res,res,res) bool (voxels that points fall into are marked occupied).",
-   "zh": "点云 (N,3) → 3-D 占据体素格 (res,res,res) bool（点落入的体素标记为占据）。",
-   "tw": "點雲 (N,3) → 3-D 佔用體素格 (res,res,res) bool（點落入的體素標記為佔用）。",
-   "ko": "점군 (N,3) → 3-D 점유 복셀 격자 (res,res,res) bool(점이 속한 복셀을 점유로 표시).",
-   "de": "Punktwolke (N,3) → 3-D-Belegungs-Voxelgitter (res,res,res) bool (Voxel, in die Punkte fallen, werden als belegt markiert)."
+   "fp": "acd9e9683a59",
+   "en": "Point cloud (N,3) → a 3-D occupancy voxel grid, bool (a voxel a point falls into counts as occupied).",
+   "zh": "点云 (N,3) → 三维占据体素栅格,bool(点落入的体素记为占据)。",
+   "tw": "點雲 (N,3) → 三維佔據體素柵格,bool(點落入的體素記為佔據)。",
+   "ko": "점군 (N,3) → 3-D 점유 복셀 격자, bool(점이 들어간 복셀을 점유로 표시).",
+   "de": "Punktwolke (N,3) → 3-D-Belegungsvoxelgitter, bool (ein Voxel, in das ein Punkt fällt, gilt als belegt)."
   },
   "2d/tb_optical_flow_magnitude_stream": {
    "fp": "96ac1f025871",
@@ -8521,12 +8521,12 @@
    "de": "Detektiert Tiefensprünge (die Vorder-/Hintergrundgrenze = Verdeckungskanten). → bool HxW."
   },
   "3d/occupancy_grid": {
-   "fp": "d13b0dba5c0a",
-   "en": "Point set (N,3) → a 3-D occupancy voxel grid (res,res,res) bool (a voxel a point falls into counts as occupied).",
-   "zh": "点群 (N,3) → 3-D 占据体素格 (res,res,res) bool(有点落入的 voxel 视为占据)。",
-   "tw": "點群 (N,3) → 3-D 佔據體素格 (res,res,res) bool(有點落入的 voxel 視為佔據)。",
-   "ko": "점군 (N,3) → 3-D 점유 복셀 격자 (res,res,res) bool(점이 떨어진 voxel 을 점유로).",
-   "de": "Punktmenge (N,3) → ein 3-D-Belegungsvoxelgitter (res,res,res) bool (ein Voxel, in das ein Punkt fällt, gilt als belegt)."
+   "fp": "acd9e9683a59",
+   "en": "Point cloud (N,3) → a 3-D occupancy voxel grid, bool (a voxel a point falls into counts as occupied).",
+   "zh": "点云 (N,3) → 三维占据体素栅格,bool(点落入的体素记为占据)。",
+   "tw": "點雲 (N,3) → 三維佔據體素柵格,bool(點落入的體素記為佔據)。",
+   "ko": "점군 (N,3) → 3-D 점유 복셀 격자, bool(점이 들어간 복셀을 점유로 표시).",
+   "de": "Punktwolke (N,3) → 3-D-Belegungsvoxelgitter, bool (ein Voxel, in das ein Punkt fällt, gilt als belegt)."
   },
   "3d/optimize_pose_graph": {
    "fp": "dc6e9489f78f",

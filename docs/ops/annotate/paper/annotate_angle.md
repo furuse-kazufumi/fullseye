@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_angle — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_angle(img, a, vertex, b, radius=30.0, color='emphasis', width=1.5, draw_rays=True, label_fmt='{:.1f}°', font_size=11, box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (または `opsannotate.get("annotate_angle")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_angle(img, a, vertex, b, radius=30.0, color='emphasis', width=1.5, draw_rays=True, label_fmt='{:.1f}°', font_size=11, box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_angle(img, a, vertex, b, radius=30.0, color='emphasis', width=1.5, draw_rays=True, label_fmt='{:.1f}°', font_size=11, box_alpha=0.6, text_color=None, scheme='okabe_ito', font_path=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_angle")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_params — ROUGHNESS <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import roughness; roughness.surface_params(z, dx=1.0, dy=None, assume_filtered=False)</code> (または <code style="color:#22d3bf">opsroughness.get(&quot;surface_params&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_params(z, dx=1.0, dy=None, assume_filtered=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roughness; roughness.surface_params(z, dx=1.0, dy=None, assume_filtered=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsroughness.get(&quot;surface_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>面の粗さパラメータ Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr(ISO 25178-2)。</p>
 <p>引数</p>

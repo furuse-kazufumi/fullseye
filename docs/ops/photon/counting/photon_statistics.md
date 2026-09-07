@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # photon_statistics — PHOTON `counting` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import photoncount; photoncount.photon_statistics(counts)` (または `opsphoton.get("photon_statistics")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.photon_statistics(counts)` (実装を直接呼ぶなら `import photoncount; photoncount.photon_statistics(counts)`、台帳から引くなら `opsphoton.get("photon_statistics")`)
 
 ## 使い方
 

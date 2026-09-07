@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">monogenic_signal — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">qimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;monogenic_signal&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import quatimage; quatimage.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsquat.get(&quot;monogenic_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The monogenic signal of an image at one scale. → (H, W, 4).</p>
 <p>Felsberg &amp; Sommer (2001). The image is band-passed by a log-radial raised</p>

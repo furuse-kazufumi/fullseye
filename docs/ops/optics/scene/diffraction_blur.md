@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # diffraction_blur — OPTICS `scene` op
 
 - **データ種**: `rgbimage × table` → `rgbimage`
-- **呼び出し**: `import optscene; optscene.diffraction_blur(image, camera, f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'np.ndarray'` (または `opsoptics.get("diffraction_blur")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.diffraction_blur(image, camera, f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.diffraction_blur(image, camera, f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("diffraction_blur")`)
 
 ## 使い方
 

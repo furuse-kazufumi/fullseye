@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # noise_sigma — ASTROSTACK `quality` op
 
 - **データ種**: `image2d` → `measurement`
-- **呼び出し**: `import astrostack; astrostack.noise_sigma(image, method='mad', kappa=3.0, iters=5)` (または `opsastrostack.get("noise_sigma")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.noise_sigma(image, method='mad', kappa=3.0, iters=5)` (実装を直接呼ぶなら `import astrostack; astrostack.noise_sigma(image, method='mad', kappa=3.0, iters=5)`、台帳から引くなら `opsastrostack.get("noise_sigma")`)
 
 ## 使い方
 

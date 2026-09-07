@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # data_to_pixel — ANNOTATE `plot` op
 
 - **データ種**: `axes × signal × signal` → `pairs`
-- **呼び出し**: `import annotate; annotate.data_to_pixel(axes, x, y)` (または `opsannotate.get("data_to_pixel")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.data_to_pixel(axes, x, y)` (実装を直接呼ぶなら `import annotate; annotate.data_to_pixel(axes, x, y)`、台帳から引くなら `opsannotate.get("data_to_pixel")`)
 - **台帳経由の戻り値**: `fullseye.ledger.data_to_pixel(...)` は**宣言 out 型 `pairs` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.data_to_pixel.raw(...)`、または `annotate.data_to_pixel` を直接呼ぶ。
 
 ## 使い方

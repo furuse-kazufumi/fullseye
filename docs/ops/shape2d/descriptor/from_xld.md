@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # from_xld — SHAPE2D `descriptor` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import fourierdesc; fourierdesc.from_xld(contour, i=0)` (または `opsshape2d.get("from_xld")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.from_xld(contour, i=0)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.from_xld(contour, i=0)`、台帳から引くなら `opsshape2d.get("from_xld")`)
 
 ## 使い方
 

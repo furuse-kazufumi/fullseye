@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_simulate — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">counts</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code> (or <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_simulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>; from the registry, <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Synthesise a single-pixel photon arrival-time histogram with a known answer.</p>
 <p>The generative model of a direct time-of-flight (dToF) / TCSPC measurement::</p>

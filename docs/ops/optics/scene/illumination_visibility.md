@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # illumination_visibility — OPTICS `scene` op
 
 - **データ種**: `table × points × table` → `signal`
-- **呼び出し**: `import optscene; optscene.illumination_visibility(scene, points, light) -> 'np.ndarray'` (または `opsoptics.get("illumination_visibility")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.illumination_visibility(scene, points, light) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.illumination_visibility(scene, points, light) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("illumination_visibility")`)
 
 ## 使い方
 

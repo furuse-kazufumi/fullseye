@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fit_superquadric — 3D `superquadric` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import superquadric; superquadric.fit_superquadric(points) -> 'dict'` (または `ops3d.get("fit_superquadric")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_superquadric(points) -> 'dict'` (実装を直接呼ぶなら `import superquadric; superquadric.fit_superquadric(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_superquadric")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">equivalent_level — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.equivalent_level(x, rate, weighting=&#x27;A&#x27;, ref=1.0, floor_db=-200.0, window=&#x27;none&#x27;)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;equivalent_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.equivalent_level(x, rate, weighting=&#x27;A&#x27;, ref=1.0, floor_db=-200.0, window=&#x27;none&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import acoustics; acoustics.equivalent_level(x, rate, weighting=&#x27;A&#x27;, ref=1.0, floor_db=-200.0, window=&#x27;none&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsacoustics.get(&quot;equivalent_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The energy-equivalent level of a record, in dB relative to `<code style="color:#22d3bf">ref</code>`.</p>
 <p>`<code style="color:#22d3bf">L_eq = 10 log10(mean(x_w**2) / ref**2)</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">x_w</code>` is the signal after</p>

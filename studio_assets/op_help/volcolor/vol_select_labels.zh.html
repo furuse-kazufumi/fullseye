@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_select_labels — VOLCOLOR <code style="color:#22d3bf">select</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">labels</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import volcolor; volcolor.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code>(或 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_select_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code>(要直接调用实现,<code style="color:#22d3bf">import volcolor; volcolor.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code>;从台账取用则 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_select_labels&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.vol_select_labels(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">labels</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.vol_select_labels.raw(...)</code>,或直接调用 <code style="color:#22d3bf">volcolor.vol_select_labels</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按 3-D 特征筛选成分(2-D 斑点筛选的 3-D 版)。</p>

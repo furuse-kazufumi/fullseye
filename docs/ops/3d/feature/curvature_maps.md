@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # curvature_maps — 3D `feature` op
 
 - **データ種**: `voxel` → `curvature`
-- **呼び出し**: `import match3d; match3d.curvature_maps(vol, device='cpu', mc=0.000625)` (または `ops3d.get("curvature_maps")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.curvature_maps(vol, device='cpu', mc=0.000625)` (実装を直接呼ぶなら `import match3d; match3d.curvature_maps(vol, device='cpu', mc=0.000625)`、台帳から引くなら `ops3d.get("curvature_maps")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

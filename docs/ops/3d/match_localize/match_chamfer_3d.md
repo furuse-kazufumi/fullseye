@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # match_chamfer_3d — 3D `match_localize` op
 
 - **データ種**: `voxel × voxel` → `position`
-- **呼び出し**: `import match3d; match3d.match_chamfer_3d(scene, template, device='cpu', thr=0.3, edt='scipy')` (または `ops3d.get("match_chamfer_3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.match_chamfer_3d(scene, template, device='cpu', thr=0.3, edt='scipy')` (実装を直接呼ぶなら `import match3d; match3d.match_chamfer_3d(scene, template, device='cpu', thr=0.3, edt='scipy')`、台帳から引くなら `ops3d.get("match_chamfer_3d")`)
 - **台帳経由の戻り値**: `fullseye.ledger.match_chamfer_3d(...)` は**宣言 out 型 `position` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.match_chamfer_3d.raw(...)`、または `match3d.match_chamfer_3d` を直接呼ぶ。
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 

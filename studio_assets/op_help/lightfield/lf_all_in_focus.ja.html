@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_all_in_focus — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">lightfield × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (または <code style="color:#22d3bf">opslightfield.get(&quot;lf_all_in_focus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import lightfield; lightfield.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opslightfield.get(&quot;lf_all_in_focus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画素ごとに自分の傾きで再合焦し、全面がシャープな 1 枚を合成する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

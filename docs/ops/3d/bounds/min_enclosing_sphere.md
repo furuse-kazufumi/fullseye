@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # min_enclosing_sphere — 3D `bounds` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: 'int' = 1000) -> 'Dict[str, object]'` (または `ops3d.get("min_enclosing_sphere")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.min_enclosing_sphere(points, refine_iters: 'int' = 1000) -> 'Dict[str, object]'` (実装を直接呼ぶなら `import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: 'int' = 1000) -> 'Dict[str, object]'`、台帳から引くなら `ops3d.get("min_enclosing_sphere")`)
 
 ## 使い方
 

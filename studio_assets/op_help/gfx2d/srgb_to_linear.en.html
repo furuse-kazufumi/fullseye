@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">srgb_to_linear — GFX2D <code style="color:#22d3bf">colorspace</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.srgb_to_linear(img)</code> (or <code style="color:#22d3bf">opsgfx2d.get(&quot;srgb_to_linear&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.srgb_to_linear(img)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.srgb_to_linear(img)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;srgb_to_linear&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>sRGB-encoded values to linear light (IEC 61966-2-1).</p>
 <p>An alpha channel, if present, is <b>not</b> transformed — coverage is already</p>

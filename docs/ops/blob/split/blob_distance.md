@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blob_distance — BLOB `split` op
 
 - **データ種**: `mask` → `image2d`
-- **呼び出し**: `import blob2d; blob2d.blob_distance(region: 'Any', spacing: 'float' = 1.0) -> 'np.ndarray'` (または `opsblob.get("blob_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blob_distance(region: 'Any', spacing: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_distance(region: 'Any', spacing: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_distance")`)
 
 ## 使い方
 

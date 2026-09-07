@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # edge_alias_energy — 3D `render` op
 
 - **データ種**: `image2d` → `measurement`
-- **呼び出し**: `import render_ssaa; render_ssaa.edge_alias_energy(img) -> 'float'` (または `ops3d.get("edge_alias_energy")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.edge_alias_energy(img) -> 'float'` (実装を直接呼ぶなら `import render_ssaa; render_ssaa.edge_alias_energy(img) -> 'float'`、台帳から引くなら `ops3d.get("edge_alias_energy")`)
 
 ## 使い方
 

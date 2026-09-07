@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ring_artifact_remove — TOMOGRAPHY `artifact` op
 
 - **データ種**: `sinogram` → `sinogram`
-- **呼び出し**: `import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode='median')` (または `opstomography.get("ring_artifact_remove")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ring_artifact_remove(sinogram, window=5, mode='median')` (実装を直接呼ぶなら `import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode='median')`、台帳から引くなら `opstomography.get("ring_artifact_remove")`)
 
 ## 使い方
 

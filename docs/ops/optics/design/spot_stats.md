@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # spot_stats — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)` (または `opsoptics.get("spot_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)` (実装を直接呼ぶなら `import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)`、台帳から引くなら `opsoptics.get("spot_stats")`)
 
 ## 使い方
 

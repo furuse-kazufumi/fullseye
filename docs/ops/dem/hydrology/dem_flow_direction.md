@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_flow_direction — DEM `hydrology` op
 
 - **データ種**: `depth` → `labels`
-- **呼び出し**: `import demops; demops.dem_flow_direction(dem, cell_size, nodata='error')` (または `opsdem.get("dem_flow_direction")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata='error')` (実装を直接呼ぶなら `import demops; demops.dem_flow_direction(dem, cell_size, nodata='error')`、台帳から引くなら `opsdem.get("dem_flow_direction")`)
 
 ## 使い方
 

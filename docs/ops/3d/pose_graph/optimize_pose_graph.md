@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optimize_pose_graph — 3D `pose_graph` op
 
 - **データ種**: `pose` → `table`
-- **呼び出し**: `import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)` (または `ops3d.get("optimize_pose_graph")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)` (実装を直接呼ぶなら `import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)`、台帳から引くなら `ops3d.get("optimize_pose_graph")`)
 
 ## 使い方
 

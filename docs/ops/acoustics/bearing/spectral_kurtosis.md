@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # spectral_kurtosis — ACOUSTICS `bearing` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.spectral_kurtosis(x, rate, win=None, hop=None, window='hann')` (または `opsacoustics.get("spectral_kurtosis")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spectral_kurtosis(x, rate, win=None, hop=None, window='hann')` (実装を直接呼ぶなら `import acoustics; acoustics.spectral_kurtosis(x, rate, win=None, hop=None, window='hann')`、台帳から引くなら `opsacoustics.get("spectral_kurtosis")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">beer_lambert_transmittance — OPTICS <code style="color:#22d3bf">glassbody</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;beer_lambert_transmittance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;beer_lambert_transmittance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>베어-람베르트 내부 투과율 T = exp(−σ·L). 색유리·두꺼운 유리의 초록 끼.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

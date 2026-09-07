@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # gaussians_to_voxel — REPRCONV `gaussians` op
 
 - **データ種**: `gaussians` → `voxel`
-- **呼び出し**: `import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)` (または `opsreprconv.get("gaussians_to_voxel")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)` (実装を直接呼ぶなら `import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)`、台帳から引くなら `opsreprconv.get("gaussians_to_voxel")`)
 
 ## 使い方
 

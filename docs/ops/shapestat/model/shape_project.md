@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_project — SHAPESTAT `model` op
 
 - **データ種**: `shapemodel × points` → `signal`
-- **呼び出し**: `import shapestats; shapestats.shape_project(model, shape, align: 'bool' = True)` (または `opsshapestat.get("shape_project")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_project(model, shape, align: 'bool' = True)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_project(model, shape, align: 'bool' = True)`、台帳から引くなら `opsshapestat.get("shape_project")`)
 
 ## 使い方
 

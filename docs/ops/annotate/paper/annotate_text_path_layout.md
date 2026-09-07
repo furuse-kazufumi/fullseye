@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_text_path_layout — ANNOTATE `paper` op
 
 - **データ種**: `text` → `table`
-- **呼び出し**: `import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)` (または `opsannotate.get("annotate_text_path_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)`、台帳から引くなら `opsannotate.get("annotate_text_path_layout")`)
 
 ## 使い方
 

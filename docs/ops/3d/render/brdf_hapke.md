@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # brdf_hapke — 3D `render` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import render_shade; render_shade.brdf_hapke(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0) -> 'np.ndarray'` (または `ops3d.get("brdf_hapke")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.brdf_hapke(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_shade; render_shade.brdf_hapke(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), w: 'float' = 0.42, g: 'float' = -0.35, B0: 'float' = 0.87, h: 'float' = 0.01, roughness_deg: 'float' = 26.0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("brdf_hapke")`)
 
 ## 使い方
 

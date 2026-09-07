@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_crop_domain — 3D <code style="color:#22d3bf">domain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_crop_domain(vol, domain=None, margin=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_crop_domain&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_crop_domain(vol, domain=None, margin=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_crop_domain(vol, domain=None, margin=0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_crop_domain&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain(...)</code> は**宣言 out 型 <code style="color:#22d3bf">voxel</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain.raw(...)</code>、または <code style="color:#22d3bf">volops.vol_crop_domain</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(part, offset)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>

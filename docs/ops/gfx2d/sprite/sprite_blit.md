@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sprite_blit — GFX2D `sprite` op
 
 - **データ種**: `rgba × rgba` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.sprite_blit(dst, sprite, x=0, y=0, anchor='top_left', flip_x=False, flip_y=False, opacity=1.0)` (または `opsgfx2d.get("sprite_blit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sprite_blit(dst, sprite, x=0, y=0, anchor='top_left', flip_x=False, flip_y=False, opacity=1.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.sprite_blit(dst, sprite, x=0, y=0, anchor='top_left', flip_x=False, flip_y=False, opacity=1.0)`、台帳から引くなら `opsgfx2d.get("sprite_blit")`)
 
 ## 使い方
 

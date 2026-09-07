@@ -4,7 +4,7 @@ dim: tomography
 category: volume
 in: voxel
 out: sinostack
-examples: [tomography_reconstruct]
+examples: [poc_battery_ct_degradation, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # radon_volume — TOMOGRAPHY `volume` op
 
 - **データ種**: `voxel` → `sinostack`
-- **呼び出し**: `import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)` (または `opstomography.get("radon_volume")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)` (実装を直接呼ぶなら `import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)`、台帳から引くなら `opstomography.get("radon_volume")`)
 
 ## 使い方
 
@@ -45,6 +45,7 @@ applies to it unchanged.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_battery_ct_degradation](../../../../examples/poc_battery_ct_degradation.py) — `py -3.11 examples/poc_battery_ct_degradation.py`
 - [tomography_reconstruct](../../../../examples/tomography_reconstruct.py) — `py -3.11 examples/tomography_reconstruct.py`
 
 ## 型が繋がる次の op(`sinostack` を入力に取れる)

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fmcw_range_profile — RANGEDOPPLER `process` op
 
 - **データ種**: `beatcube` → `signal`
-- **呼び出し**: `import rangedoppler; rangedoppler.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)` (または `opsrangedoppler.get("fmcw_range_profile")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)`、台帳から引くなら `opsrangedoppler.get("fmcw_range_profile")`)
 
 ## 使い方
 

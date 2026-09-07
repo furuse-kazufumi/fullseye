@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # percentile_level — ACOUSTICS `level` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting='A', ref=1.0, window_s=0.125, floor_db=-200.0)` (または `opsacoustics.get("percentile_level")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting='A', ref=1.0, window_s=0.125, floor_db=-200.0)` (実装を直接呼ぶなら `import acoustics; acoustics.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting='A', ref=1.0, window_s=0.125, floor_db=-200.0)`、台帳から引くなら `opsacoustics.get("percentile_level")`)
 
 ## 使い方
 

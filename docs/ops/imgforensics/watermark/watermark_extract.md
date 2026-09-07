@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # watermark_extract — IMGFORENSICS `watermark` op
 
 - **データ種**: `image2d` → `phash`
-- **呼び出し**: `import imgforensics; imgforensics.watermark_extract(image, n_bits: 'int', wavelet: 'str' = 'haar', level: 'int' = 1) -> 'np.ndarray'` (または `opsimgforensics.get("watermark_extract")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.watermark_extract(image, n_bits: 'int', wavelet: 'str' = 'haar', level: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.watermark_extract(image, n_bits: 'int', wavelet: 'str' = 'haar', level: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("watermark_extract")`)
 
 ## 使い方
 

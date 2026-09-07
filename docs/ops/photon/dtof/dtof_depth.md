@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dtof_depth — PHOTON `dtof` op
 
 - **データ種**: `counts` → `measurement`
-- **呼び出し**: `import photoncount; photoncount.dtof_depth(hist, bin_ps=100.0, mode='peak', offset_ps=0.0, subtract_background=False)` (または `opsphoton.get("dtof_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dtof_depth(hist, bin_ps=100.0, mode='peak', offset_ps=0.0, subtract_background=False)` (実装を直接呼ぶなら `import photoncount; photoncount.dtof_depth(hist, bin_ps=100.0, mode='peak', offset_ps=0.0, subtract_background=False)`、台帳から引くなら `opsphoton.get("dtof_depth")`)
 
 ## 使い方
 

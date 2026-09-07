@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_angle_layout — ANNOTATE `paper` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import annotate; annotate.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)` (または `opsannotate.get("annotate_angle_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)` (実装を直接呼ぶなら `import annotate; annotate.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)`、台帳から引くなら `opsannotate.get("annotate_angle_layout")`)
 
 ## 使い方
 

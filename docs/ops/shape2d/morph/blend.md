@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blend — SHAPE2D `morph` op
 
 - **データ種**: `image2d × image2d` → `image2d`
-- **呼び出し**: `import imagemorph; imagemorph.blend(a, b, alpha)` (または `opsshape2d.get("blend")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blend(a, b, alpha)` (実装を直接呼ぶなら `import imagemorph; imagemorph.blend(a, b, alpha)`、台帳から引くなら `opsshape2d.get("blend")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # frame_difference_causal — VIDEOSTREAM `recursive` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.frame_difference_causal(video) -> 'np.ndarray'` (または `opsvideostream.get("frame_difference_causal")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.frame_difference_causal(video) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.frame_difference_causal(video) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("frame_difference_causal")`)
 
 ## 使い方
 

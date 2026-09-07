@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">reprojection_error — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;reprojection_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reprojection_error(points_3d, points_2d, K, R, t)</code>(要直接调用实现,<code style="color:#22d3bf">import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;reprojection_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>重投影误差(RMS 像素)。评估位姿的拟合程度。→ scalar。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

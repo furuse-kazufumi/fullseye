@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blob_boundaries — BLOB `extract` op
 
 - **データ種**: `labels2d` → `mask`
-- **呼び出し**: `import blob2d; blob2d.blob_boundaries(labels: 'Any') -> 'np.ndarray'` (または `opsblob.get("blob_boundaries")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blob_boundaries(labels: 'Any') -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_boundaries(labels: 'Any') -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_boundaries")`)
 
 ## 使い方
 

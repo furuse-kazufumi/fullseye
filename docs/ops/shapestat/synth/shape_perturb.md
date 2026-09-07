@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_perturb — SHAPESTAT `synth` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import shapestats; shapestats.shape_perturb(shape, amplitude: 'float' = 0.05, mode: 'str' = 'bulge', center=(1.0, 0.0, 0.0), sigma: 'float' = 0.4, seed: 'int' = 0)` (または `opsshapestat.get("shape_perturb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: 'float' = 0.05, mode: 'str' = 'bulge', center=(1.0, 0.0, 0.0), sigma: 'float' = 0.4, seed: 'int' = 0)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_perturb(shape, amplitude: 'float' = 0.05, mode: 'str' = 'bulge', center=(1.0, 0.0, 0.0), sigma: 'float' = 0.4, seed: 'int' = 0)`、台帳から引くなら `opsshapestat.get("shape_perturb")`)
 
 ## 使い方
 

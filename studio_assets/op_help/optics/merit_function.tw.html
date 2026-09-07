@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">merit_function — OPTICS <code style="color:#22d3bf">optimization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lensopt; lensopt.merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, pupil_fill=0.98)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;merit_function&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, pupil_fill=0.98)</code>(要直接呼叫實作,<code style="color:#22d3bf">import lensopt; lensopt.merit_function(system, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, pupil_fill=0.98)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;merit_function&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>某個處方的 DLS 優值 `<code style="color:#22d3bf">Σ residual²</code><code style="color:#22d3bf"> 及其分項(</code><code style="color:#22d3bf">table</code>`)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

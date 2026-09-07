@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # register_light — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.register_light(maker: 'str', model: 'str', kind: 'str' = 'ring', radius_mm: 'float' = 60.0, height_mm: 'float' = 100.0, size_mm: 'float' = 25.0, source: 'str' = 'led', wavelength_nm: 'float' = 630.0, bandwidth_nm: 'float' = 25.0, oem_of: 'str' = None) -> 'str'` (または `opsoptics.get("register_light")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.register_light(maker: 'str', model: 'str', kind: 'str' = 'ring', radius_mm: 'float' = 60.0, height_mm: 'float' = 100.0, size_mm: 'float' = 25.0, source: 'str' = 'led', wavelength_nm: 'float' = 630.0, bandwidth_nm: 'float' = 25.0, oem_of: 'str' = None) -> 'str'` (実装を直接呼ぶなら `import optscene; optscene.register_light(maker: 'str', model: 'str', kind: 'str' = 'ring', radius_mm: 'float' = 60.0, height_mm: 'float' = 100.0, size_mm: 'float' = 25.0, source: 'str' = 'led', wavelength_nm: 'float' = 630.0, bandwidth_nm: 'float' = 25.0, oem_of: 'str' = None) -> 'str'`、台帳から引くなら `opsoptics.get("register_light")`)
 
 ## 使い方
 

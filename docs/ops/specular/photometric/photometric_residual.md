@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # photometric_residual — SPECULAR `photometric` op
 
 - **データ種**: `images` → `image2d`
-- **呼び出し**: `import specularity; specularity.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)` (または `opsspecular.get("photometric_residual")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)` (実装を直接呼ぶなら `import specularity; specularity.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)`、台帳から引くなら `opsspecular.get("photometric_residual")`)
 
 ## 使い方
 

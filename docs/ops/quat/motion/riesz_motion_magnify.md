@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # riesz_motion_magnify — QUAT `motion` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import quatimage; quatimage.riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'` (または `opsquat.get("riesz_motion_magnify")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4) -> 'dict'`、台帳から引くなら `opsquat.get("riesz_motion_magnify")`)
 
 ## 使い方
 

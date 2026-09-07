@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # csi_envelope — INTERFEROMETRY `envelope` op
 
 - **データ種**: `sweep` → `signal`
-- **呼び出し**: `import interferometry; interferometry.csi_envelope(signal, remove_bias=True)` (または `opsinterferometry.get("csi_envelope")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.csi_envelope(signal, remove_bias=True)` (実装を直接呼ぶなら `import interferometry; interferometry.csi_envelope(signal, remove_bias=True)`、台帳から引くなら `opsinterferometry.get("csi_envelope")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # plane_sdf — 3D `sdf_csg` op
 
 - **データ種**: `coordgrid` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.plane_sdf(grid, point, normal)` (または `ops3d.get("plane_sdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.plane_sdf(grid, point, normal)`、台帳から引くなら `ops3d.get("plane_sdf")`)
 
 ## 使い方
 

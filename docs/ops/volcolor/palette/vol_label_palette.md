@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_palette — VOLCOLOR `palette` op
 
 - **データ種**: `なし` → `matrix`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import volcolor; volcolor.vol_label_palette(n_labels, seed: 'int' = 0, background=(0.0, 0.0, 0.0))` (または `opsvolcolor.get("vol_label_palette")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_palette(n_labels, seed: 'int' = 0, background=(0.0, 0.0, 0.0))` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_palette(n_labels, seed: 'int' = 0, background=(0.0, 0.0, 0.0))`、台帳から引くなら `opsvolcolor.get("vol_label_palette")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">select_points — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × indices</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> と添字 </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → 部分点群 </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` の消費側。</p>
 <p>`<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> を産む op は 6 つあるのに(</code><code style="color:#22d3bf">iss_keypoints</code>` /</p>

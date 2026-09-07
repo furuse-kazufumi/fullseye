@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">apply_transport — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">transport_plan × signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>、台帳から引くなら <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>輸送計画で `<code style="color:#22d3bf">target_values</code>` を元の点へ引き戻す(重心写像)。</p>
 <p>各行(送り元)について、運んだ質量で重み付けした行き先の値の平均を返す。</p>

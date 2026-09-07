@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # matcap_shade — 3D `render` op
 
 - **データ種**: `normalmap × image2d` → `image2d`
-- **呼び出し**: `import render_shade; render_shade.matcap_shade(normals, matcap) -> 'np.ndarray'` (または `ops3d.get("matcap_shade")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_shade; render_shade.matcap_shade(normals, matcap) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("matcap_shade")`)
 
 ## 使い方
 

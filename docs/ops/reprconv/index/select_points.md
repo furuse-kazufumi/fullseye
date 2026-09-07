@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # select_points — REPRCONV `index` op
 
 - **データ種**: `points × indices` → `points`
-- **呼び出し**: `import reprconv; reprconv.select_points(points, indices)` (または `opsreprconv.get("select_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.select_points(points, indices)` (実装を直接呼ぶなら `import reprconv; reprconv.select_points(points, indices)`、台帳から引くなら `opsreprconv.get("select_points")`)
 
 ## 使い方
 

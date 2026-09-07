@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # linescan_capture — OPTICS `scene` op
 
 - **データ種**: `table × table × table` → `table`
-- **呼び出し**: `import optscene; optscene.linescan_capture(scene, camera, lights, velocity_mm_s: 'float' = 100.0, line_rate_hz: 'float' = 10000.0, lines: 'int' = 512, tdi_stages: 'int' = 1, sync_error: 'float' = 0.0, scan_axis=(1.0, 0.0, 0.0), ambient: 'float' = 0.0, depth: 'int' = 1, light_samples: 'int' = None) -> 'dict'` (または `opsoptics.get("linescan_capture")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.linescan_capture(scene, camera, lights, velocity_mm_s: 'float' = 100.0, line_rate_hz: 'float' = 10000.0, lines: 'int' = 512, tdi_stages: 'int' = 1, sync_error: 'float' = 0.0, scan_axis=(1.0, 0.0, 0.0), ambient: 'float' = 0.0, depth: 'int' = 1, light_samples: 'int' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.linescan_capture(scene, camera, lights, velocity_mm_s: 'float' = 100.0, line_rate_hz: 'float' = 10000.0, lines: 'int' = 512, tdi_stages: 'int' = 1, sync_error: 'float' = 0.0, scan_axis=(1.0, 0.0, 0.0), ambient: 'float' = 0.0, depth: 'int' = 1, light_samples: 'int' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("linescan_capture")`)
 
 ## 使い方
 

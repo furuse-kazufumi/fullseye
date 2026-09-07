@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # supersample_mesh — 3D `render` op
 
 - **データ種**: `mesh` → `image2d`
-- **呼び出し**: `import render_ssaa; render_ssaa.supersample_mesh(V, F, pose=None, intrinsics=None, size=256, ss: 'int' = 3, light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, shade: 'Optional[Callable[[dict], np.ndarray]]' = None, filter: 'str' = 'box') -> 'np.ndarray'` (または `ops3d.get("supersample_mesh")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.supersample_mesh(V, F, pose=None, intrinsics=None, size=256, ss: 'int' = 3, light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, shade: 'Optional[Callable[[dict], np.ndarray]]' = None, filter: 'str' = 'box') -> 'np.ndarray'` (実装を直接呼ぶなら `import render_ssaa; render_ssaa.supersample_mesh(V, F, pose=None, intrinsics=None, size=256, ss: 'int' = 3, light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, shade: 'Optional[Callable[[dict], np.ndarray]]' = None, filter: 'str' = 'box') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("supersample_mesh")`)
 
 ## 使い方
 

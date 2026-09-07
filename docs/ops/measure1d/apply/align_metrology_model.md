@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # align_metrology_model — MEASURE1D `apply` op
 
 - **データ種**: `metrologymodel` → `metrologymodel`
-- **呼び出し**: `import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -> 'dict'` (または `opsmeasure1d.get("align_metrology_model")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.align_metrology_model(model, drow=0.0, dcol=0.0) -> 'dict'` (実装を直接呼ぶなら `import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -> 'dict'`、台帳から引くなら `opsmeasure1d.get("align_metrology_model")`)
 
 ## 使い方
 

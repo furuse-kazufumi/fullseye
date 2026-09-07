@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # metrics_table — IMGMETRICS `report` op
 
 - **データ種**: `metrics` → `table`
-- **呼び出し**: `import imgmetrics; imgmetrics.metrics_table(report, order=None)` (または `opsimgmetrics.get("metrics_table")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.metrics_table(report, order=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.metrics_table(report, order=None)`、台帳から引くなら `opsimgmetrics.get("metrics_table")`)
 
 ## 使い方
 

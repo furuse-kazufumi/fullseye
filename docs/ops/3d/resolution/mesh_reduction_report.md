@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_reduction_report — 3D `resolution` op
 
 - **データ種**: `mesh × mesh` → `table`
-- **呼び出し**: `import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)` (または `ops3d.get("mesh_reduction_report")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)` (実装を直接呼ぶなら `import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)`、台帳から引くなら `ops3d.get("mesh_reduction_report")`)
 
 ## 使い方
 

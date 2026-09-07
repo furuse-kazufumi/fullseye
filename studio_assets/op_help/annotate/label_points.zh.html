@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">label_points — ANNOTATE <code style="color:#22d3bf">pointer</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.label_points(img, points, labels=None, color=&#x27;reference&#x27;, font_size=12, pad=3, marker_size=0, scheme=&#x27;okabe_ito&#x27;, allow_overlap=False, **text_kw)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;label_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_points(img, points, labels=None, color=&#x27;reference&#x27;, font_size=12, pad=3, marker_size=0, scheme=&#x27;okabe_ito&#x27;, allow_overlap=False, **text_kw)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.label_points(img, points, labels=None, color=&#x27;reference&#x27;, font_size=12, pad=3, marker_size=0, scheme=&#x27;okabe_ito&#x27;, allow_overlap=False, **text_kw)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;label_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>给点群编号或标注。<b>避开重叠放置</b>(避不开则抛异常)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

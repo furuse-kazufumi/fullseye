@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # compare_images — IMGMETRICS `report` op
 
 - **データ種**: `image2d × image2d` → `metrics`
-- **呼び出し**: `import imgmetrics; imgmetrics.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)` (または `opsimgmetrics.get("compare_images")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)`、台帳から引くなら `opsimgmetrics.get("compare_images")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">link_edges — 3D <code style="color:#22d3bf">edges</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import edges3d; edges3d.link_edges(edge_mask)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;link_edges&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.link_edges(edge_mask)</code> (to call the implementation directly, <code style="color:#22d3bf">import edges3d; edges3d.link_edges(edge_mask)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;link_edges&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.link_edges(...)</code> returns **only the declared out type <code style="color:#22d3bf">voxel</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.link_edges.raw(...)</code> or call <code style="color:#22d3bf">edges3d.link_edges</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(linked, n)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>

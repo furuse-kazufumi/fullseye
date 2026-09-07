@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">alpha_composite_premul — GFX2D <code style="color:#22d3bf">composite</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgba_premul × rgba_premul</code> → <code style="color:#22d3bf">rgba_premul</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.alpha_composite_premul(src, dst)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;alpha_composite_premul&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_composite_premul(src, dst)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.alpha_composite_premul(src, dst)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;alpha_composite_premul&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>乗算済みアルファでの Porter–Duff <b>over</b>: `<code style="color:#22d3bf">src + dst*(1 - src.a)</code>`。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

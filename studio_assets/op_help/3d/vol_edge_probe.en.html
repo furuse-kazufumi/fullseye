@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_edge_probe — 3D <code style="color:#22d3bf">probe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volprobe; volprobe.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity=&#x27;all&#x27;)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_edge_probe&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity=&#x27;all&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import volprobe; volprobe.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity=&#x27;all&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_edge_probe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sub-sample edges along the probe `<code style="color:#22d3bf">p0 -&gt; p1</code>`.</p>
 <p>The profile (default sampling of :func:<code style="color:#22d3bf">vol_profile_line</code>) is smoothed</p>

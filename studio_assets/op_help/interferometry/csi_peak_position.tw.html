@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">csi_peak_position — INTERFEROMETRY <code style="color:#22d3bf">locate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sweep</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import interferometry; interferometry.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code>(或 <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_peak_position&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import interferometry; interferometry.csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode=&#x27;gaussian&#x27;, remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsinterferometry.get(&quot;csi_peak_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由一次 z 掃描求表面高度:同調包絡峰的位置。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

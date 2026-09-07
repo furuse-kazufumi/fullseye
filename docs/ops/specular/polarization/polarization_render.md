@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # polarization_render — SPECULAR `polarization` op
 
 - **データ種**: `image2d × image2d` → `polsweep`
-- **呼び出し**: `import specularity; specularity.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)` (または `opsspecular.get("polarization_render")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)` (実装を直接呼ぶなら `import specularity; specularity.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)`、台帳から引くなら `opsspecular.get("polarization_render")`)
 
 ## 使い方
 

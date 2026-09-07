@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">illuminant_from_dichromatic_planes — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage × labels</code> → <code style="color:#22d3bf">vector</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import specularity; specularity.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)</code> (or <code style="color:#22d3bf">opsspecular.get(&quot;illuminant_from_dichromatic_planes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)</code> (to call the implementation directly, <code style="color:#22d3bf">import specularity; specularity.illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16, min_plane_ratio=1e-06, min_intersection_ratio=1e-06)</code>; from the registry, <code style="color:#22d3bf">opsspecular.get(&quot;illuminant_from_dichromatic_planes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recover the illuminant colour from two or more materials. → unit 3-vector.</p>
 <p>Lee&#x27;s construction (1986). Under the dichromatic model every pixel of one</p>

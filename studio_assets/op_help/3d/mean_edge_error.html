@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mean_edge_error — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pose</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pose_graph; pose_graph.mean_edge_error(poses, edges)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;mean_edge_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_edge_error(poses, edges)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pose_graph; pose_graph.mean_edge_error(poses, edges)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mean_edge_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。</p>
 <p>各エッジ `<code style="color:#22d3bf">(i, j, rvec_meas, t_meas[, w_rot, w_trans])</code><code style="color:#22d3bf"> について、予測相対姿勢 </code><code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code>` と</p>

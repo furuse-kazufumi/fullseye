@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # detect_reflection_symmetry — 3D `symmetry` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import symmetry3d; symmetry3d.detect_reflection_symmetry(points)` (または `ops3d.get("detect_reflection_symmetry")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.detect_reflection_symmetry(points)` (実装を直接呼ぶなら `import symmetry3d; symmetry3d.detect_reflection_symmetry(points)`、台帳から引くなら `ops3d.get("detect_reflection_symmetry")`)
 
 ## 使い方
 

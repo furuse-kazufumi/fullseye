@@ -4,7 +4,7 @@ dim: blob
 category: select
 in: labels2d
 out: labels2d
-examples: [poc_particle_sizing, poc_solar_el_inspection, poc_weld_radiograph_porosity]
+examples: [poc_particle_sizing, poc_pipe_wall_loss, poc_solar_el_inspection, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blob_select — BLOB `select` op
 
 - **データ種**: `labels2d` → `labels2d`
-- **呼び出し**: `import blob2d; blob2d.blob_select(labels: 'Any', feature: 'str', vmin: 'Optional[float]' = None, vmax: 'Optional[float]' = None, spacing: 'float' = 1.0) -> 'np.ndarray'` (または `opsblob.get("blob_select")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blob_select(labels: 'Any', feature: 'str', vmin: 'Optional[float]' = None, vmax: 'Optional[float]' = None, spacing: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_select(labels: 'Any', feature: 'str', vmin: 'Optional[float]' = None, vmax: 'Optional[float]' = None, spacing: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_select")`)
 
 ## 使い方
 
@@ -52,6 +52,7 @@ numpy.ndarray
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
+- [poc_pipe_wall_loss](../../../../examples/poc_pipe_wall_loss.py) — `py -3.11 examples/poc_pipe_wall_loss.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_lstsq — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import mathops; mathops.mat_lstsq(a, b, rcond=None)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;mat_lstsq&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_lstsq(a, b, rcond=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.mat_lstsq(a, b, rcond=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;mat_lstsq&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>超定方程組 `<code style="color:#22d3bf">A x ≈ b</code><code style="color:#22d3bf"> 的最小平方解(LAPACK </code><code style="color:#22d3bf">gelsd</code>`,基於 SVD)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # depth_of_field — OPTICS `geometric` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optics; optics.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)` (または `opsoptics.get("depth_of_field")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)` (実装を直接呼ぶなら `import optics; optics.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)`、台帳から引くなら `opsoptics.get("depth_of_field")`)
 
 ## 使い方
 

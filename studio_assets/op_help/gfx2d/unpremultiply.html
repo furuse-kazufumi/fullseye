@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">unpremultiply — GFX2D <code style="color:#22d3bf">composite</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgba_premul</code> → <code style="color:#22d3bf">rgba</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.unpremultiply(rgba_premul)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;unpremultiply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unpremultiply(rgba_premul)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.unpremultiply(rgba_premul)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;unpremultiply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><b>Premultiplied</b> `<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> back to straight alpha: </code><code style="color:#22d3bf">(C/A, A)</code>`.</p>
 <p>Pixels with `<code style="color:#22d3bf">alpha == 0</code>` come back as transparent black (see</p>

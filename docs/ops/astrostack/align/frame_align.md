@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # frame_align — ASTROSTACK `align` op
 
 - **データ種**: `image2d × image2d` → `matrix`
-- **呼び出し**: `import astrostack; astrostack.frame_align(reference, frame, model='similarity', threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)` (または `opsastrostack.get("frame_align")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.frame_align(reference, frame, model='similarity', threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)` (実装を直接呼ぶなら `import astrostack; astrostack.frame_align(reference, frame, model='similarity', threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)`、台帳から引くなら `opsastrostack.get("frame_align")`)
 - **台帳経由の戻り値**: `fullseye.ledger.frame_align(...)` は**宣言 out 型 `matrix` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.frame_align.raw(...)`、または `astrostack.frame_align` を直接呼ぶ。
   - 本体の返り: `(matrix, info) -> matrix`
 

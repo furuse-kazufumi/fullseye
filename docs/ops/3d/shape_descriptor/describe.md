@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # describe — 3D `shape_descriptor` op
 
 - **データ種**: `points` → `descriptor`
-- **呼び出し**: `import descriptors3d; descriptors3d.describe(points, bins: 'int' = 64, seed: 'int' = 0) -> 'np.ndarray'` (または `ops3d.get("describe")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.describe(points, bins: 'int' = 64, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import descriptors3d; descriptors3d.describe(points, bins: 'int' = 64, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("describe")`)
 
 ## 使い方
 

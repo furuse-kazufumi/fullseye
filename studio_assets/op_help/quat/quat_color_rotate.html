@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">quat_color_rotate — QUAT <code style="color:#22d3bf">color</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.quat_color_rotate(qimage, axis_rgb, angle_rad) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;quat_color_rotate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quat_color_rotate(qimage, axis_rgb, angle_rad) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import quatimage; quatimage.quat_color_rotate(qimage, axis_rgb, angle_rad) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsquat.get(&quot;quat_color_rotate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Rotate every pixel&#x27;s colour about an RGB axis: `<code style="color:#22d3bf">q x conj(q)</code>`. → (H, W, 4).</p>
 <p>The operation a complex pixel cannot express. `<code style="color:#22d3bf">axis_rgb</code>` is a direction in</p>

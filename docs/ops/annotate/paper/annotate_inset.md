@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_inset — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_inset(img, src_rect, corner='rt', factor=None, margin=10, color='emphasis', width=2, connect=True, label=None, font_size=11, scheme='okabe_ito', font_path=None, style=None, layout=None)` (または `opsannotate.get("annotate_inset")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_inset(img, src_rect, corner='rt', factor=None, margin=10, color='emphasis', width=2, connect=True, label=None, font_size=11, scheme='okabe_ito', font_path=None, style=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_inset(img, src_rect, corner='rt', factor=None, margin=10, color='emphasis', width=2, connect=True, label=None, font_size=11, scheme='okabe_ito', font_path=None, style=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_inset")`)
 
 ## 使い方
 

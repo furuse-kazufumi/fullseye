@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # obb — 3D `bounds` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import pcseg; pcseg.obb(points) -> 'dict'` (または `ops3d.get("obb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.obb(points) -> 'dict'` (実装を直接呼ぶなら `import pcseg; pcseg.obb(points) -> 'dict'`、台帳から引くなら `ops3d.get("obb")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # histogram_match — COLORTRANSPORT `matching` op
 
 - **データ種**: `image2d × image2d` → `image2d`
-- **呼び出し**: `import colortransport; colortransport.histogram_match(src, ref, bins=None, ties='average')` (または `opscolortransport.get("histogram_match")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties='average')` (実装を直接呼ぶなら `import colortransport; colortransport.histogram_match(src, ref, bins=None, ties='average')`、台帳から引くなら `opscolortransport.get("histogram_match")`)
 
 ## 使い方
 

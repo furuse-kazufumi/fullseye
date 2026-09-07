@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # deformation_to_points — REPRCONV `algebra` op
 
 - **データ種**: `deformation` → `points`
-- **呼び出し**: `import reprconv; reprconv.deformation_to_points(deformation)` (または `opsreprconv.get("deformation_to_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.deformation_to_points(deformation)` (実装を直接呼ぶなら `import reprconv; reprconv.deformation_to_points(deformation)`、台帳から引くなら `opsreprconv.get("deformation_to_points")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # largest_component — 3D `regionprops` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import regionprops3d; regionprops3d.largest_component(vol, connectivity: 'int' = 26) -> 'np.ndarray'` (または `ops3d.get("largest_component")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.largest_component(vol, connectivity: 'int' = 26) -> 'np.ndarray'` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.largest_component(vol, connectivity: 'int' = 26) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("largest_component")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spot_stats — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;spot_stats&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import raytrace; raytrace.spot_stats(system, field=None, rings=8, wavelength_um=None, image_mm=None, pupil_fill=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;spot_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>RMS-/geometrischer Spotradius (mm) und Schwerpunkt für einen Feldpunkt (`<code style="color:#22d3bf">table</code>`).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_distance_transform — 3D `medial` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volops; volops.vol_distance_transform(vol_binary, spacing=None)` (または `ops3d.get("vol_distance_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_distance_transform(vol_binary, spacing=None)` (実装を直接呼ぶなら `import volops; volops.vol_distance_transform(vol_binary, spacing=None)`、台帳から引くなら `ops3d.get("vol_distance_transform")`)
 
 ## 使い方
 

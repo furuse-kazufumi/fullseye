@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # compare_frame — ANNOTATE `compose` op
 
 - **データ種**: `image2d × image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.compare_frame(left, right, layout='h', labels=None, divider=3, gap=0, divider_color='neutral', background=0.0, label_anchor='lt', label_margin=8, scheme='okabe_ito', **text_kw)` (または `opsannotate.get("compare_frame")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.compare_frame(left, right, layout='h', labels=None, divider=3, gap=0, divider_color='neutral', background=0.0, label_anchor='lt', label_margin=8, scheme='okabe_ito', **text_kw)` (実装を直接呼ぶなら `import annotate; annotate.compare_frame(left, right, layout='h', labels=None, divider=3, gap=0, divider_color='neutral', background=0.0, label_anchor='lt', label_margin=8, scheme='okabe_ito', **text_kw)`、台帳から引くなら `opsannotate.get("compare_frame")`)
 
 ## 使い方
 

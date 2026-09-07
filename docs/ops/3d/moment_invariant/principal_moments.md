@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # principal_moments — 3D `moment_invariant` op
 
 - **データ種**: `points` → `descriptor`
-- **呼び出し**: `import moments3d; moments3d.principal_moments(points) -> 'np.ndarray'` (または `ops3d.get("principal_moments")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.principal_moments(points) -> 'np.ndarray'` (実装を直接呼ぶなら `import moments3d; moments3d.principal_moments(points) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("principal_moments")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">edt_jfa — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.edt_jfa(seed_bool, device=&#x27;cpu&#x27;)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;edt_jfa&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edt_jfa(seed_bool, device=&#x27;cpu&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.edt_jfa(seed_bool, device=&#x27;cpu&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;edt_jfa&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.edt_jfa(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">sdf</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.edt_jfa.raw(...)</code> oder rufe <code style="color:#22d3bf">match3d.edt_jfa</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>

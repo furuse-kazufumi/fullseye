@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # normal_consistency — 3D `metrics` op
 
 - **データ種**: `points × normals` → `measurement`
-- **呼び出し**: `import metrics3d; metrics3d.normal_consistency(points_a, normals_a, points_b, normals_b)` (または `ops3d.get("normal_consistency")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.normal_consistency(points_a, normals_a, points_b, normals_b)` (実装を直接呼ぶなら `import metrics3d; metrics3d.normal_consistency(points_a, normals_a, points_b, normals_b)`、台帳から引くなら `ops3d.get("normal_consistency")`)
 
 ## 使い方
 
@@ -59,7 +59,7 @@ Raises ValueError: 点群が空 or (N,3) でない/法線が点と 1 対 1 で�
 
 ## 同カテゴリ(`metrics`)
 
-[chamfer_distance](chamfer_distance.md) · [hausdorff_distance](hausdorff_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
+[chamfer_distance](chamfer_distance.md) · [hausdorff_distance](hausdorff_distance.md) · [m3c2_distance](m3c2_distance.md) · [fscore](fscore.md) · [rmse_correspondence](rmse_correspondence.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
 
 ---
 *Provenance: metrics3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

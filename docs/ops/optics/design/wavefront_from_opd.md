@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # wavefront_from_opd — OPTICS `design` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import raytrace; raytrace.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)` (または `opsoptics.get("wavefront_from_opd")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("wavefront_from_opd")`)
 
 ## 使い方
 

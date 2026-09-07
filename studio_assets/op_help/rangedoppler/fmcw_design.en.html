@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fmcw_design — RANGEDOPPLER <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_design(n_samples=64, n_chirps=32, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, n_antennas=1, element_spacing_m=None)</code> (or <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fmcw_design(n_samples=64, n_chirps=32, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, n_antennas=1, element_spacing_m=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_design(n_samples=64, n_chirps=32, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, n_antennas=1, element_spacing_m=None)</code>; from the registry, <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_design&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Bin widths, resolutions and aliasing limits of an FMCW configuration.</p>
 <p>The paper answer to &quot;will this waveform see what I care about?&quot;, with no data</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_rotate — 3D `geom_transform` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volxform; volxform.vol_rotate(vol, angle_deg, axes=(1, 2), order=1, reshape=False, mode='constant', cval=0.0)` (または `ops3d.get("vol_rotate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_rotate(vol, angle_deg, axes=(1, 2), order=1, reshape=False, mode='constant', cval=0.0)` (実装を直接呼ぶなら `import volxform; volxform.vol_rotate(vol, angle_deg, axes=(1, 2), order=1, reshape=False, mode='constant', cval=0.0)`、台帳から引くなら `ops3d.get("vol_rotate")`)
 
 ## 使い方
 

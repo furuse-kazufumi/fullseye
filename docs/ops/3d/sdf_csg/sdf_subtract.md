@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sdf_subtract — 3D `sdf_csg` op
 
 - **データ種**: `sdf × sdf` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.sdf_subtract(a, b)` (または `ops3d.get("sdf_subtract")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sdf_subtract(a, b)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.sdf_subtract(a, b)`、台帳から引くなら `ops3d.get("sdf_subtract")`)
 
 ## 使い方
 

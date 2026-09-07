@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # stat_describe — MATH `stats` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import mathops; mathops.stat_describe(x)` (または `opsmath.get("stat_describe")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.stat_describe(x)` (実装を直接呼ぶなら `import mathops; mathops.stat_describe(x)`、台帳から引くなら `opsmath.get("stat_describe")`)
 
 ## 使い方
 

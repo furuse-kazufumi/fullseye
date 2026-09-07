@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_contour_integral — MATH `complex` op
 
 - **データ種**: `cpoints × cpoints` → `cscalar`
-- **呼び出し**: `import mathops; mathops.cplx_contour_integral(z, fz)` (または `opsmath.get("cplx_contour_integral")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_contour_integral(z, fz)` (実装を直接呼ぶなら `import mathops; mathops.cplx_contour_integral(z, fz)`、台帳から引くなら `opsmath.get("cplx_contour_integral")`)
 
 ## 使い方
 

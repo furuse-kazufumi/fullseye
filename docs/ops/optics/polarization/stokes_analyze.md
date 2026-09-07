@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # stokes_analyze — OPTICS `polarization` op
 
 - **データ種**: `stokes` → `table`
-- **呼び出し**: `import optics; optics.stokes_analyze(stokes)` (または `opsoptics.get("stokes_analyze")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.stokes_analyze(stokes)` (実装を直接呼ぶなら `import optics; optics.stokes_analyze(stokes)`、台帳から引くなら `opsoptics.get("stokes_analyze")`)
 
 ## 使い方
 

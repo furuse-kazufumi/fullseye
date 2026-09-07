@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_displace_spectrum — 3D <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import render3d; render3d.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: &#x27;int&#x27; = 0, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0, weights=None, local_edge=None)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;mesh_displace_spectrum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: &#x27;int&#x27; = 0, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0, weights=None, local_edge=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import render3d; render3d.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: &#x27;int&#x27; = 0, nyquist: &#x27;float&#x27; = 2.0, fade: &#x27;float&#x27; = 1.0, weights=None, local_edge=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;mesh_displace_spectrum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以<b>明確給出的振幅譜</b>、帶限地沿法線位移頂點。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

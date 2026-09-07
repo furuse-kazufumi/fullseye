@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # points_to_voxel — 3D `transform` op
 
 - **データ種**: `points` → `voxel`
-- **呼び出し**: `import match3d; match3d.points_to_voxel(points, size, bounds=None, device='cpu', smooth=0.0)` (または `ops3d.get("points_to_voxel")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.points_to_voxel(points, size, bounds=None, device='cpu', smooth=0.0)` (実装を直接呼ぶなら `import match3d; match3d.points_to_voxel(points, size, bounds=None, device='cpu', smooth=0.0)`、台帳から引くなら `ops3d.get("points_to_voxel")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">overlay_labels — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × labels</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import annotate; annotate.overlay_labels(img, labels, alpha=0.5, colors=None, scheme=&#x27;okabe_ito&#x27;, background=0)</code> (or <code style="color:#22d3bf">opsannotate.get(&quot;overlay_labels&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overlay_labels(img, labels, alpha=0.5, colors=None, scheme=&#x27;okabe_ito&#x27;, background=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.overlay_labels(img, labels, alpha=0.5, colors=None, scheme=&#x27;okabe_ito&#x27;, background=0)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;overlay_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Overlay a colour label map with alpha. <b>The same label number always gets the same colour.</b></p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
@@ -27,6 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_mri_bias_field">poc_mri_bias_field</a> — <code style="color:#22d3bf">py -3.11 examples/poc_mri_bias_field.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_recycling_sorting">poc_recycling_sorting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_recycling_sorting.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image2d</code> as input)</h3>
 <p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">overlay</code>)</h3>

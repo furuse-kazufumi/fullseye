@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # voxel_grid_downsample — 3D `preprocess` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: 'float')` (または `ops3d.get("voxel_grid_downsample")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.voxel_grid_downsample(points, voxel_size: 'float')` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: 'float')`、台帳から引くなら `ops3d.get("voxel_grid_downsample")`)
 
 ## 使い方
 

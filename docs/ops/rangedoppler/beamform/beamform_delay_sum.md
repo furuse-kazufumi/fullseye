@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # beamform_delay_sum — RANGEDOPPLER `beamform` op
 
 - **データ種**: `beatcube` → `signal`
-- **呼び出し**: `import rangedoppler; rangedoppler.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)` (または `opsrangedoppler.get("beamform_delay_sum")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)`、台帳から引くなら `opsrangedoppler.get("beamform_delay_sum")`)
 
 ## 使い方
 

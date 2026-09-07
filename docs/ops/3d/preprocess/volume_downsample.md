@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # volume_downsample — 3D `preprocess` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volops; volops.volume_downsample(vol, factor, mode='mean')` (または `ops3d.get("volume_downsample")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode='mean')` (実装を直接呼ぶなら `import volops; volops.volume_downsample(vol, factor, mode='mean')`、台帳から引くなら `ops3d.get("volume_downsample")`)
 
 ## 使い方
 

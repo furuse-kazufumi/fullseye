@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_isotropic_remesh — 3D <code style="color:#22d3bf">resolution</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mesh_isotropic_remesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import meshres; meshres.mesh_isotropic_remesh(V, F, target_edge, iterations=5, project=True, relax=0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_isotropic_remesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>*target_edge* 로 균일화하는 점진적 등방 리메시(`<code style="color:#22d3bf">mesh</code>`).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

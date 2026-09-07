@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # delta_e_map — IMGMETRICS `colordiff` op
 
 - **データ種**: `rgbimage × rgbimage` → `image2d`
-- **呼び出し**: `import imgmetrics; imgmetrics.delta_e_map(rgb1, rgb2, kind='2000', white=(0.95047, 1.0, 1.08883))` (または `opsimgmetrics.get("delta_e_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.delta_e_map(rgb1, rgb2, kind='2000', white=(0.95047, 1.0, 1.08883))` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.delta_e_map(rgb1, rgb2, kind='2000', white=(0.95047, 1.0, 1.08883))`、台帳から引くなら `opsimgmetrics.get("delta_e_map")`)
 
 ## 使い方
 

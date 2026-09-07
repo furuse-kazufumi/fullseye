@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">photon_sample — PHOTON <code style="color:#22d3bf">counting</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import photoncount; photoncount.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)</code>(或 <code style="color:#22d3bf">opsphoton.get(&quot;photon_sample&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import photoncount; photoncount.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">opsphoton.get(&quot;photon_sample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把期望光子数图像做泊松采样,得到实际的光子计数图像。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

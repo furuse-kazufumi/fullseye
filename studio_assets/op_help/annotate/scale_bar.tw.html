@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">scale_bar — ANNOTATE <code style="color:#22d3bf">furniture</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.scale_bar(img, length, units_per_pixel, unit=&#x27;µm&#x27;, xy=None, anchor=&#x27;rb&#x27;, color=&#x27;neutral&#x27;, thickness=5, margin=14, font_size=13, label=True, label_fmt=&#x27;{:g}&#x27;, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;scale_bar&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scale_bar(img, length, units_per_pixel, unit=&#x27;µm&#x27;, xy=None, anchor=&#x27;rb&#x27;, color=&#x27;neutral&#x27;, thickness=5, margin=14, font_size=13, label=True, label_fmt=&#x27;{:g}&#x27;, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.scale_bar(img, length, units_per_pixel, unit=&#x27;µm&#x27;, xy=None, anchor=&#x27;rb&#x27;, color=&#x27;neutral&#x27;, thickness=5, margin=14, font_size=13, label=True, label_fmt=&#x27;{:g}&#x27;, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;scale_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>物理長度的比例尺。<b>像素↔物理的換算由參數給出</b>(不自行假定)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

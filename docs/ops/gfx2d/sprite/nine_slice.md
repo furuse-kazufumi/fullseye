@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # nine_slice — GFX2D `sprite` op
 
 - **データ種**: `rgba` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.nine_slice(sprite, left, right, top, bottom, out_height, out_width)` (または `opsgfx2d.get("nine_slice")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.nine_slice(sprite, left, right, top, bottom, out_height, out_width)` (実装を直接呼ぶなら `import gfx2d; gfx2d.nine_slice(sprite, left, right, top, bottom, out_height, out_width)`、台帳から引くなら `opsgfx2d.get("nine_slice")`)
 
 ## 使い方
 

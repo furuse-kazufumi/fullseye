@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_fringes — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import fringe; fringe.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;synthesize_fringes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fringe; fringe.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;synthesize_fringes&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">images</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">fringe.synthesize_fringes</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知 height map 合成 N 步相移條紋影像序列(用於測試/範例生成)。</p>

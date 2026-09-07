@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # bilateral_filter_depth — 3D `depth_denoise` op
 
 - **データ種**: `depth` → `depth`
-- **呼び出し**: `import depth_bilateral; depth_bilateral.bilateral_filter_depth(depth: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0) -> 'np.ndarray'` (または `ops3d.get("bilateral_filter_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.bilateral_filter_depth(depth: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.bilateral_filter_depth(depth: 'np.ndarray', spatial_sigma: 'float', range_sigma: 'float', *, invalid: 'float | None' = 0.0, truncate: 'float' = 3.0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("bilateral_filter_depth")`)
 
 ## 使い方
 

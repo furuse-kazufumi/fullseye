@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_reduction_report — 3D <code style="color:#22d3bf">resolution</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh × mesh</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;mesh_reduction_report&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_reduction_report&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삭감(간략화·리메시·복셀화)이 무엇을 잃었는지를 숫자로(`<code style="color:#22d3bf">table</code>`).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

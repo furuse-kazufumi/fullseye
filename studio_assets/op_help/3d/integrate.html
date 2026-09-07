@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">integrate — 3D <code style="color:#22d3bf">tsdf_fusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sdf × depth</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。</p>
 <p>各 voxel 中心を (K,R,t) で射影(`<code style="color:#22d3bf">X_cam = R X + t</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">u = fx*X/Z+cx</code>`)し、対応画素の</p>

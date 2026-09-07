@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # psf_from_opd — OPTICS `imaging_sim` op
 
 - **データ種**: `table` → `image2d`
-- **呼び出し**: `import lensimage; lensimage.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)` (または `opsoptics.get("psf_from_opd")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)` (実装を直接呼ぶなら `import lensimage; lensimage.psf_from_opd(system, field=None, size=None, wavelength_um=None, pixel_pitch_um=None, oversample=4)`、台帳から引くなら `opsoptics.get("psf_from_opd")`)
 
 ## 使い方
 

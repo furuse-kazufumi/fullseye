@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # render_volume_projection — 3D `render` op
 
 - **データ種**: `voxel` → `image2d`
-- **呼び出し**: `import match3d; match3d.render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode='xray', device='cpu')` (または `ops3d.get("render_volume_projection")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode='xray', device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode='xray', device='cpu')`、台帳から引くなら `ops3d.get("render_volume_projection")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # measure_pairs — MEASURE1D `caliper` op
 
 - **データ種**: `image2d × measurehandle` → `table`
-- **呼び出し**: `import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)` (または `opsmeasure1d.get("measure_pairs")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.measure_pairs(image, measure, sigma=1.0, threshold=0.1)` (実装を直接呼ぶなら `import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)`、台帳から引くなら `opsmeasure1d.get("measure_pairs")`)
 
 ## 使い方
 

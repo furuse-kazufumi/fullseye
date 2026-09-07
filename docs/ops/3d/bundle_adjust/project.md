@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # project — 3D `bundle_adjust` op
 
 - **データ種**: `points` → `image2d`
-- **呼び出し**: `import bundle3d; bundle3d.project(points, rvec, t, K)` (または `ops3d.get("project")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.project(points, rvec, t, K)` (実装を直接呼ぶなら `import bundle3d; bundle3d.project(points, rvec, t, K)`、台帳から引くなら `ops3d.get("project")`)
 
 ## 使い方
 

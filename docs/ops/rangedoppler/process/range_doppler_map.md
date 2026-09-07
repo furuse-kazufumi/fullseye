@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # range_doppler_map — RANGEDOPPLER `process` op
 
 - **データ種**: `beatcube` → `image2d`
-- **呼び出し**: `import rangedoppler; rangedoppler.range_doppler_map(cube, combine='incoherent', antenna=None, normalize=False)` (または `opsrangedoppler.get("range_doppler_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.range_doppler_map(cube, combine='incoherent', antenna=None, normalize=False)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.range_doppler_map(cube, combine='incoherent', antenna=None, normalize=False)`、台帳から引くなら `opsrangedoppler.get("range_doppler_map")`)
 
 ## 使い方
 

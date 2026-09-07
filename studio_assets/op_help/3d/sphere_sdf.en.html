@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sphere_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sphere_sdf(grid, center, R)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;sphere_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_sdf(grid, center, R)</code> (to call the implementation directly, <code style="color:#22d3bf">import sdf_ops; sdf_ops.sphere_sdf(grid, center, R)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;sphere_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The signed distance field of a sphere: `<code style="color:#22d3bf">|p − center| − R</code>` (negative inside, positive outside).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

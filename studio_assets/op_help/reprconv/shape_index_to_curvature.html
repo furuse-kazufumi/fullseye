@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_index_to_curvature — REPRCONV <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">curvature</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>形状指数と曲がり `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 主曲率 </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf">。:func:</code>curvature_to_shape_index` の逆。</p>
 <p>theta = pi*S/2 として `<code style="color:#22d3bf">k1 = C(sin+cos)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">k2 = C(sin-cos)</code>`。</p>

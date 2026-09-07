@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_wall_thickness — 3D <code style="color:#22d3bf">probe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness(...)</code> returns **only the declared out type <code style="color:#22d3bf">signal</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness.raw(...)</code> or call <code style="color:#22d3bf">volprobe.vol_wall_thickness</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Wall thicknesses along the probe `<code style="color:#22d3bf">p0 -&gt; p1</code>` — the industrial-CT</p>

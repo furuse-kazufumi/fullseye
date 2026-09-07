@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # icp_point2plane — 3D `refine` op
 
 - **データ種**: `points × points × normals` → `pose`
-- **呼び出し**: `import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu')` (または `ops3d.get("icp_point2plane")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu')`、台帳から引くなら `ops3d.get("icp_point2plane")`)
 
 ## 使い方
 

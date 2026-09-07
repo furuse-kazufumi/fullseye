@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate3d_label — 3D `annotate3d` op
 
 - **データ種**: `image2d × text` → `image2d`
-- **呼び出し**: `import annotate3d; annotate3d.annotate3d_label(img, text, anchor, pose, K, depth=None, offset=(26.0, -22.0), color='emphasis', width=1.5, cap_size=3.0, font_size=12, pad=4, box_alpha=0.72, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)` (または `ops3d.get("annotate3d_label")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate3d_label(img, text, anchor, pose, K, depth=None, offset=(26.0, -22.0), color='emphasis', width=1.5, cap_size=3.0, font_size=12, pad=4, box_alpha=0.72, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate3d; annotate3d.annotate3d_label(img, text, anchor, pose, K, depth=None, offset=(26.0, -22.0), color='emphasis', width=1.5, cap_size=3.0, font_size=12, pad=4, box_alpha=0.72, text_color=None, occlusion_tol=0.01, scheme='okabe_ito', font_path=None)`、台帳から引くなら `ops3d.get("annotate3d_label")`)
 
 ## 使い方
 

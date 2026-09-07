@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # brewster_angle_deg — OPTICS `interface` op
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import glassmirror; glassmirror.brewster_angle_deg(n1=1.0, n2=1.5) -> 'float'` (または `opsoptics.get("brewster_angle_deg")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.brewster_angle_deg(n1=1.0, n2=1.5) -> 'float'` (実装を直接呼ぶなら `import glassmirror; glassmirror.brewster_angle_deg(n1=1.0, n2=1.5) -> 'float'`、台帳から引くなら `opsoptics.get("brewster_angle_deg")`)
 
 ## 使い方
 

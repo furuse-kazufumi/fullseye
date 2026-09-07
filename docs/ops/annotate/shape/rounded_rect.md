@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rounded_rect — ANNOTATE `shape` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.rounded_rect(img, rect, radius=8, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')` (または `opsannotate.get("rounded_rect")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rounded_rect(img, rect, radius=8, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate; annotate.rounded_rect(img, rect, radius=8, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')`、台帳から引くなら `opsannotate.get("rounded_rect")`)
 
 ## 使い方
 

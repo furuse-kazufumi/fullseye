@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">radon_transform — TOMOGRAPHY <code style="color:#22d3bf">forward</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">sinogram</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code> (or <code style="color:#22d3bf">opstomography.get(&quot;radon_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;radon_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Forward parallel-beam projection: a slice in, a <b>sinogram</b> out.</p>
 <p>Rows of the result are projection angles and columns are detector bins. The</p>

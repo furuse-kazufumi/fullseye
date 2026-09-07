@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # nearest_neighbor_flow — 3D `scene_flow3d` op
 
 - **データ種**: `points × points` → `flow_scattered`
-- **呼び出し**: `import scene_flow3d; scene_flow3d.nearest_neighbor_flow(pts0, pts1) -> 'np.ndarray'` (または `ops3d.get("nearest_neighbor_flow")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.nearest_neighbor_flow(pts0, pts1) -> 'np.ndarray'` (実装を直接呼ぶなら `import scene_flow3d; scene_flow3d.nearest_neighbor_flow(pts0, pts1) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("nearest_neighbor_flow")`)
 
 ## 使い方
 

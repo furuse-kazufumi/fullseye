@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">jpeg_ghost_map — IMGFORENSICS <code style="color:#22d3bf">compression</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">images</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>(或 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>JPEG 幽灵(Farid 2009)。扫描质量得到的<b>重压缩残差图序列</b>。`<code style="color:#22d3bf">images</code>`。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

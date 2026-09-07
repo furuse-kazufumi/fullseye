@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">bloom — GFX2D <code style="color:#22d3bf">post</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;bloom&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;bloom&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Bleed the bright parts of an image into their neighbourhood.</p>
 <p>The classical three steps: isolate what is above `<code style="color:#22d3bf">threshold</code>`, blur it by a</p>

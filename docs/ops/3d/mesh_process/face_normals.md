@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # face_normals — 3D `mesh_process` op
 
 - **データ種**: `mesh` → `normals`
-- **呼び出し**: `import mesh_props; mesh_props.face_normals(mesh) -> 'np.ndarray'` (または `ops3d.get("face_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.face_normals(mesh) -> 'np.ndarray'` (実装を直接呼ぶなら `import mesh_props; mesh_props.face_normals(mesh) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("face_normals")`)
 
 ## 使い方
 
@@ -50,7 +50,7 @@ Raises:
 
 ## 同カテゴリ(`mesh_process`)
 
-[laplacian_smooth](laplacian_smooth.md) · [taubin_smooth](taubin_smooth.md) · [decimate_qem](decimate_qem.md) · [vertex_normals](vertex_normals.md) · [mesh_area](mesh_area.md) · [vertex_curvature](vertex_curvature.md)
+[laplacian_smooth](laplacian_smooth.md) · [taubin_smooth](taubin_smooth.md) · [decimate_qem](decimate_qem.md) · [vertex_normals](vertex_normals.md) · [mesh_area](mesh_area.md) · [vertex_curvature](vertex_curvature.md) · [face_areas](face_areas.md) · [mesh_volume](mesh_volume.md)
 
 ---
 *Provenance: mesh_props.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

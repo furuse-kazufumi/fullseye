@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lens_system — OPTICS `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)` (または `opsoptics.get("lens_system")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)` (実装を直接呼ぶなら `import raytrace; raytrace.lens_system(surfaces=None, stop=None, object_mm=inf, wavelength_um=0.58756, index_object=1.0, image_mm=None, field=None)`、台帳から引くなら `opsoptics.get("lens_system")`)
 
 ## 使い方
 

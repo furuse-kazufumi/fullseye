@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # radius_outlier_removal — 3D `preprocess` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import pcl_filter; pcl_filter.radius_outlier_removal(points, radius: 'float', min_neighbors: 'int' = 8)` (または `ops3d.get("radius_outlier_removal")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.radius_outlier_removal(points, radius: 'float', min_neighbors: 'int' = 8)` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.radius_outlier_removal(points, radius: 'float', min_neighbors: 'int' = 8)`、台帳から引くなら `ops3d.get("radius_outlier_removal")`)
 - **台帳経由の戻り値**: `fullseye.ledger.radius_outlier_removal(...)` は**宣言 out 型 `points` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.radius_outlier_removal.raw(...)`、または `pcl_filter.radius_outlier_removal` を直接呼ぶ。
 
 ## 使い方

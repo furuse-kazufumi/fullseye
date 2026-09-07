@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_all_in_focus — LIGHTFIELD `depth` op
 
 - **データ種**: `lightfield × image2d` → `image2d`
-- **呼び出し**: `import lightfield; lightfield.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp='linear', edge='nearest')` (または `opslightfield.get("lf_all_in_focus")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp='linear', edge='nearest')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16, interp='linear', edge='nearest')`、台帳から引くなら `opslightfield.get("lf_all_in_focus")`)
 
 ## 使い方
 

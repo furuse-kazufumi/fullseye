@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # monogenic_phase — QUAT `riesz` op
 
 - **データ種**: `qimage` → `image2d`
-- **呼び出し**: `import quatimage; quatimage.monogenic_phase(qimage, display: 'bool' = False) -> 'np.ndarray'` (または `opsquat.get("monogenic_phase")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.monogenic_phase(qimage, display: 'bool' = False) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.monogenic_phase(qimage, display: 'bool' = False) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("monogenic_phase")`)
 
 ## 使い方
 

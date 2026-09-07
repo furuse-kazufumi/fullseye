@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # distortion_map — OPTICS `imaging_sim` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)` (または `opsoptics.get("distortion_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)` (実装を直接呼ぶなら `import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)`、台帳から引くなら `opsoptics.get("distortion_map")`)
 
 ## 使い方
 

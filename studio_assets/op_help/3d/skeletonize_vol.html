@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">skeletonize_vol — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import medial; medial.skeletonize_vol(vol)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;skeletonize_vol&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeletonize_vol(vol)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import medial; medial.skeletonize_vol(vol)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;skeletonize_vol&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。</p>
 <p>method=&#x27;lee&#x27; は 3D 対応の位相保存細線化。塊も含めて線状の骨格へ潰す(medial *surface* が</p>

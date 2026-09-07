@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # measure_text — ANNOTATE `text` op
 
 - **データ種**: `text` → `table`
-- **呼び出し**: `import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True)` (または `opsannotate.get("measure_text")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True)` (実装を直接呼ぶなら `import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True)`、台帳から引くなら `opsannotate.get("measure_text")`)
 
 ## 使い方
 

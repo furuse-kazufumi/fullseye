@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_form_remove — ROUGHNESS <code style="color:#22d3bf">prepare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import roughness; roughness.surface_form_remove(z, dx, order=1, method=&#x27;ls&#x27;, thresh=None, dy=None, iters=200, seed=0)</code> (または <code style="color:#22d3bf">opsroughness.get(&quot;surface_form_remove&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_form_remove(z, dx, order=1, method=&#x27;ls&#x27;, thresh=None, dy=None, iters=200, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roughness; roughness.surface_form_remove(z, dx, order=1, method=&#x27;ls&#x27;, thresh=None, dy=None, iters=200, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsroughness.get(&quot;surface_form_remove&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_remove(...)</code> は**宣言 out 型 <code style="color:#22d3bf">depth</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.surface_form_remove.raw(...)</code>、または <code style="color:#22d3bf">roughness.surface_form_remove</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(residual, coeffs)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>

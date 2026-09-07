@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_label_legend — VOLCOLOR <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volcolor; volcolor.vol_label_legend(labels, props=None, seed: &#x27;int&#x27; = 0, spacing=None, measure: &#x27;str&#x27; = &#x27;volume&#x27;, top=None)</code> (または <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_legend&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_legend(labels, props=None, seed: &#x27;int&#x27; = 0, spacing=None, measure: &#x27;str&#x27; = &#x27;volume&#x27;, top=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volcolor; volcolor.vol_label_legend(labels, props=None, seed: &#x27;int&#x27; = 0, spacing=None, measure: &#x27;str&#x27; = &#x27;volume&#x27;, top=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_legend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>「どの色がどの成分で、その計測値は幾つか」の凡例表を返す。</p>
 <p>色だけを出して意味の読めない図を作らないための op。返りは `<code style="color:#22d3bf">list[dict]</code>`:</p>

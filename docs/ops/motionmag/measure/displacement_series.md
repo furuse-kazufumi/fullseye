@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # displacement_series — MOTIONMAG `measure` op
 
 - **データ種**: `video` → `pairs`
-- **呼び出し**: `import motionmag; motionmag.displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'np.ndarray'` (または `opsmotionmag.get("displacement_series")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'np.ndarray'` (実装を直接呼ぶなら `import motionmag; motionmag.displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'np.ndarray'`、台帳から引くなら `opsmotionmag.get("displacement_series")`)
 
 ## 使い方
 

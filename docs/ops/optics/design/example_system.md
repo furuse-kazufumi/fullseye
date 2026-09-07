@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # example_system — OPTICS `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import raytrace; raytrace.example_system(name='singlet')` (または `opsoptics.get("example_system")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.example_system(name='singlet')` (実装を直接呼ぶなら `import raytrace; raytrace.example_system(name='singlet')`、台帳から引くなら `opsoptics.get("example_system")`)
 
 ## 使い方
 

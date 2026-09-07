@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # translate_measure — MEASURE1D `caliper` op
 
 - **データ種**: `measurehandle` → `measurehandle`
-- **呼び出し**: `import measuring1d; measuring1d.translate_measure(measure, drow, dcol)` (または `opsmeasure1d.get("translate_measure")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.translate_measure(measure, drow, dcol)` (実装を直接呼ぶなら `import measuring1d; measuring1d.translate_measure(measure, drow, dcol)`、台帳から引くなら `opsmeasure1d.get("translate_measure")`)
 
 ## 使い方
 

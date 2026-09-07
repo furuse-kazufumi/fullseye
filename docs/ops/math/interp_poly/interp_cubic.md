@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # interp_cubic — MATH `interp_poly` op
 
 - **データ種**: `signal × signal × signal` → `signal`
-- **呼び出し**: `import mathops; mathops.interp_cubic(x, y, xq, out_of_range='raise', bc_type='not-a-knot')` (または `opsmath.get("interp_cubic")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.interp_cubic(x, y, xq, out_of_range='raise', bc_type='not-a-knot')` (実装を直接呼ぶなら `import mathops; mathops.interp_cubic(x, y, xq, out_of_range='raise', bc_type='not-a-knot')`、台帳から引くなら `opsmath.get("interp_cubic")`)
 
 ## 使い方
 

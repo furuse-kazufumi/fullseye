@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_replace_outliers — PIV `validate` op
 
 - **データ種**: `flow2d × mask` → `flow2d`
-- **呼び出し**: `import pivops; pivops.piv_replace_outliers(flow, mask, method='median')` (または `opspiv.get("piv_replace_outliers")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method='median')` (実装を直接呼ぶなら `import pivops; pivops.piv_replace_outliers(flow, mask, method='median')`、台帳から引くなら `opspiv.get("piv_replace_outliers")`)
 
 ## 使い方
 

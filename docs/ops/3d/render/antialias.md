@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # antialias — 3D `render` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: 'str' = 'box') -> 'np.ndarray'` (または `ops3d.get("antialias")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.antialias(hi_res_image, ss, filter: 'str' = 'box') -> 'np.ndarray'` (実装を直接呼ぶなら `import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: 'str' = 'box') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("antialias")`)
 
 ## 使い方
 

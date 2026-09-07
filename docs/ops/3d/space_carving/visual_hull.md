@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # visual_hull — 3D `space_carving` op
 
 - **データ種**: `images` → `voxel`
-- **呼び出し**: `import visualhull; visualhull.visual_hull(silhouettes: 'Sequence[np.ndarray]', Ks: 'Sequence[np.ndarray]', Rs: 'Sequence[np.ndarray]', ts: 'Sequence[np.ndarray]', bounds: 'Bounds', res: 'int') -> 'np.ndarray'` (または `ops3d.get("visual_hull")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.visual_hull(silhouettes: 'Sequence[np.ndarray]', Ks: 'Sequence[np.ndarray]', Rs: 'Sequence[np.ndarray]', ts: 'Sequence[np.ndarray]', bounds: 'Bounds', res: 'int') -> 'np.ndarray'` (実装を直接呼ぶなら `import visualhull; visualhull.visual_hull(silhouettes: 'Sequence[np.ndarray]', Ks: 'Sequence[np.ndarray]', Rs: 'Sequence[np.ndarray]', ts: 'Sequence[np.ndarray]', bounds: 'Bounds', res: 'int') -> 'np.ndarray'`、台帳から引くなら `ops3d.get("visual_hull")`)
 
 ## 使い方
 

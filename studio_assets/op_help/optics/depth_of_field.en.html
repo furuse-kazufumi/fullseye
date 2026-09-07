@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">depth_of_field — OPTICS <code style="color:#22d3bf">geometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optics; optics.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;depth_of_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)</code> (to call the implementation directly, <code style="color:#22d3bf">import optics; optics.depth_of_field(focal_mm=50.0, f_number=8.0, subject_mm=2000.0, coc_mm=0.03)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;depth_of_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Photographic depth of field: near limit, far limit and hyperfocal distance.</p>
 <p>The classical circle-of-confusion model. With `<code style="color:#22d3bf">H = f^2/(N*c) + f</code>` the</p>

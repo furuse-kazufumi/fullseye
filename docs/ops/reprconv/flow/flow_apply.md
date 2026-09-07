@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # flow_apply — REPRCONV `flow` op
 
 - **データ種**: `points × flow_scattered` → `points`
-- **呼び出し**: `import reprconv; reprconv.flow_apply(points, flow)` (または `opsreprconv.get("flow_apply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.flow_apply(points, flow)` (実装を直接呼ぶなら `import reprconv; reprconv.flow_apply(points, flow)`、台帳から引くなら `opsreprconv.get("flow_apply")`)
 
 ## 使い方
 

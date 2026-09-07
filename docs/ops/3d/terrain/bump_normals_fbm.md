@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # bump_normals_fbm — 3D `terrain` op
 
 - **データ種**: `normalmap × pointmap` → `normalmap`
-- **呼び出し**: `import render3d; render3d.bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001), amplitudes=(0.0002, 0.00012), *, seed: 'int' = 0, rotation=None, step=None, local_edge=None, nyquist: 'float' = 2.0, fade: 'float' = 1.0) -> 'np.ndarray'` (または `ops3d.get("bump_normals_fbm")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001), amplitudes=(0.0002, 0.00012), *, seed: 'int' = 0, rotation=None, step=None, local_edge=None, nyquist: 'float' = 2.0, fade: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import render3d; render3d.bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001), amplitudes=(0.0002, 0.00012), *, seed: 'int' = 0, rotation=None, step=None, local_edge=None, nyquist: 'float' = 2.0, fade: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("bump_normals_fbm")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_colorize_labels — VOLCOLOR `colorize` op
 
 - **データ種**: `labels` → `rgbvolume`
-- **呼び出し**: `import volcolor; volcolor.vol_colorize_labels(labels, seed: 'int' = 0, background=(0.0, 0.0, 0.0))` (または `opsvolcolor.get("vol_colorize_labels")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: 'int' = 0, background=(0.0, 0.0, 0.0))` (実装を直接呼ぶなら `import volcolor; volcolor.vol_colorize_labels(labels, seed: 'int' = 0, background=(0.0, 0.0, 0.0))`、台帳から引くなら `opsvolcolor.get("vol_colorize_labels")`)
 
 ## 使い方
 

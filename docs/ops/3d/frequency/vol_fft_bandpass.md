@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_fft_bandpass — 3D `frequency` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volfreq; volfreq.vol_fft_bandpass(vol, low, high, spacing=None)` (または `ops3d.get("vol_fft_bandpass")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_fft_bandpass(vol, low, high, spacing=None)` (実装を直接呼ぶなら `import volfreq; volfreq.vol_fft_bandpass(vol, low, high, spacing=None)`、台帳から引くなら `ops3d.get("vol_fft_bandpass")`)
 
 ## 使い方
 

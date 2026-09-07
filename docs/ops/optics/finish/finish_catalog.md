@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # finish_catalog — OPTICS `finish` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import metalfinish; metalfinish.finish_catalog() -> 'dict'` (または `opsoptics.get("finish_catalog")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.finish_catalog() -> 'dict'` (実装を直接呼ぶなら `import metalfinish; metalfinish.finish_catalog() -> 'dict'`、台帳から引くなら `opsoptics.get("finish_catalog")`)
 
 ## 使い方
 

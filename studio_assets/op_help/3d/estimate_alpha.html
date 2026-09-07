@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">estimate_alpha — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_alpha(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。</p>
 <p>各点の最近傍距離の中央値 `<code style="color:#22d3bf">m</code>` を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで</p>

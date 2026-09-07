@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # transfer_function — ACOUSTICS `dual` op
 
 - **データ種**: `signal × signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.transfer_function(x, y, rate, win=None, hop=None, window='hann', estimator='h1', ref=1.0, floor_db=-200.0)` (または `opsacoustics.get("transfer_function")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.transfer_function(x, y, rate, win=None, hop=None, window='hann', estimator='h1', ref=1.0, floor_db=-200.0)` (実装を直接呼ぶなら `import acoustics; acoustics.transfer_function(x, y, rate, win=None, hop=None, window='hann', estimator='h1', ref=1.0, floor_db=-200.0)`、台帳から引くなら `opsacoustics.get("transfer_function")`)
 
 ## 使い方
 

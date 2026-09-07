@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # gen_measure_arc — MEASURE1D `caliper` op
 
 - **データ種**: `なし` → `measurehandle`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)` (または `opsmeasure1d.get("gen_measure_arc")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)` (実装を直接呼ぶなら `import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)`、台帳から引くなら `opsmeasure1d.get("gen_measure_arc")`)
 
 ## 使い方
 

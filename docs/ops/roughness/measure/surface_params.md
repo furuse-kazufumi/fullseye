@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # surface_params — ROUGHNESS `measure` op
 
 - **データ種**: `depth` → `table`
-- **呼び出し**: `import roughness; roughness.surface_params(z, dx=1.0, dy=None, assume_filtered=False)` (または `opsroughness.get("surface_params")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.surface_params(z, dx=1.0, dy=None, assume_filtered=False)` (実装を直接呼ぶなら `import roughness; roughness.surface_params(z, dx=1.0, dy=None, assume_filtered=False)`、台帳から引くなら `opsroughness.get("surface_params")`)
 
 ## 使い方
 

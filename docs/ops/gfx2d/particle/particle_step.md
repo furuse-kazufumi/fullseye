@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # particle_step — GFX2D `particle` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import gfx2d; gfx2d.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)` (または `opsgfx2d.get("particle_step")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)`、台帳から引くなら `opsgfx2d.get("particle_step")`)
 
 ## 使い方
 

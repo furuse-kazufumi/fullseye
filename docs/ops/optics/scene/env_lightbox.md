@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # env_lightbox — OPTICS `scene` op
 
 - **データ種**: `points` → `signal`
-- **呼び出し**: `import optscene; optscene.env_lightbox(directions, base: 'float' = 0.45, key: 'float' = 4.0, elevation: 'float' = 0.85, width: 'float' = 0.55, azimuth_width: 'float' = 1.1, floor: 'float' = 0.25)` (または `opsoptics.get("env_lightbox")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.env_lightbox(directions, base: 'float' = 0.45, key: 'float' = 4.0, elevation: 'float' = 0.85, width: 'float' = 0.55, azimuth_width: 'float' = 1.1, floor: 'float' = 0.25)` (実装を直接呼ぶなら `import optscene; optscene.env_lightbox(directions, base: 'float' = 0.45, key: 'float' = 4.0, elevation: 'float' = 0.85, width: 'float' = 0.55, azimuth_width: 'float' = 1.1, floor: 'float' = 0.25)`、台帳から引くなら `opsoptics.get("env_lightbox")`)
 
 ## 使い方
 

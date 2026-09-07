@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # register_shot — 3D `feature_register` op
 
 - **データ種**: `points × points` → `pose`
-- **呼び出し**: `import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device='cpu', seed=0)` (または `ops3d.get("register_shot")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device='cpu', seed=0)` (実装を直接呼ぶなら `import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device='cpu', seed=0)`、台帳から引くなら `ops3d.get("register_shot")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mean_edge_error — 3D `pose_graph` op
 
 - **データ種**: `pose` → `measurement`
-- **呼び出し**: `import pose_graph; pose_graph.mean_edge_error(poses, edges)` (または `ops3d.get("mean_edge_error")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mean_edge_error(poses, edges)` (実装を直接呼ぶなら `import pose_graph; pose_graph.mean_edge_error(poses, edges)`、台帳から引くなら `ops3d.get("mean_edge_error")`)
 
 ## 使い方
 

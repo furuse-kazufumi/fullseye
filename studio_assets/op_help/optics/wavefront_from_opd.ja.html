@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">wavefront_from_opd — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;wavefront_from_opd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.wavefront_from_opd(system, field=None, size=64, n_max=6, wavelength_um=None, image_mm=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;wavefront_from_opd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>OPD マップ → Zernike 係数 [波] → RMS / PV / Strehl を一度に(`<code style="color:#22d3bf">table</code>`)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

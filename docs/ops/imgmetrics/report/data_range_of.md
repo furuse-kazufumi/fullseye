@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # data_range_of — IMGMETRICS `report` op
 
 - **データ種**: `image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.data_range_of(*arrays, data_range=None)` (または `opsimgmetrics.get("data_range_of")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.data_range_of(*arrays, data_range=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.data_range_of(*arrays, data_range=None)`、台帳から引くなら `opsimgmetrics.get("data_range_of")`)
 
 ## 使い方
 

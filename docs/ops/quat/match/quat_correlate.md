@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # quat_correlate — QUAT `match` op
 
 - **データ種**: `qimage × qimage` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.quat_correlate(qimage, template) -> 'np.ndarray'` (または `opsquat.get("quat_correlate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.quat_correlate(qimage, template) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_correlate(qimage, template) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_correlate")`)
 
 ## 使い方
 

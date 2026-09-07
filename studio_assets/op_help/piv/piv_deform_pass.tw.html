@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_deform_pass — PIV <code style="color:#22d3bf">estimate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d × flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import pivops; pivops.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code>(或 <code style="color:#22d3bf">opspiv.get(&quot;piv_deform_pass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_deform_pass&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">flow2d</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">pivops.piv_deform_pass</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>

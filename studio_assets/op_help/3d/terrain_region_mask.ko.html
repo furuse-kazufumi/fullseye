@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">terrain_region_mask — 3D <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import render3d; render3d.terrain_region_mask(V, F, *, smooth_fraction: &#x27;float&#x27; = 0.3, method: &#x27;str&#x27; = &#x27;neck&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;terrain_region_mask&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.terrain_region_mask(V, F, *, smooth_fraction: &#x27;float&#x27; = 0.3, method: &#x27;str&#x27; = &#x27;neck&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render3d; render3d.terrain_region_mask(V, F, *, smooth_fraction: &#x27;float&#x27; = 0.3, method: &#x27;str&#x27; = &#x27;neck&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;terrain_region_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>면별 지형 가중 (M,) 을 [0,1] 로: 0 = 매끄러운 레골리스 「바다」, 1 = 거친 고지.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

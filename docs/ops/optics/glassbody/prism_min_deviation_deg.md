@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # prism_min_deviation_deg — OPTICS `glassbody` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import glassmirror; glassmirror.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass='N-BK7') -> 'np.ndarray'` (または `opsoptics.get("prism_min_deviation_deg")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass='N-BK7') -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass='N-BK7') -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("prism_min_deviation_deg")`)
 
 ## 使い方
 

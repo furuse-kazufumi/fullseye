@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">icp_point2point_3d — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Refine point sets by point-to-point ICP (Kabsch/SVD).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
@@ -25,8 +25,13 @@
 <p>採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。</p>
 <p>device: torch デバイス(&quot;cpu&quot; 等)。SVD をこのデバイス上で解く。</p>
 <p>返り値:</p>
-<p>R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。</p>
-<p>t: (3,) torch.Tensor。並進。</p>
+<p>R: (3,3) 回転。dst ~= src @ R.T + t を満たす。**torch がある環境では</p>
+<p>`<code style="color:#22d3bf">torch.Tensor</code><code style="color:#22d3bf">、無ければ同じ値の </code><code style="color:#22d3bf">numpy.ndarray</code>`**(2026-09-07 に</p>
+<p>本体を numpy 化したときも、互換のため型は据え置いた)。</p>
+<p>★同じ族の :func:<code style="color:#22d3bf">icp_point2plane</code> は<b>常に numpy を返す</b> —— 族の中で</p>
+<p>型が揃っていないので、下流では `<code style="color:#22d3bf">np.asarray(R)</code>` を通すのが安全</p>
+<p>(どちらでも動く。破壊的変更を避けてこの不揃いを残してある)。</p>
+<p>t: (3,) 並進(R と同じ型)。</p>
 <p>info: dict。&quot;rmse&quot;(採用対応上の最終RMSE), &quot;iters&quot;(実反復数),</p>
 <p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用対応数), &quot;rmse_history&quot;(list)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

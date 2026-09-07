@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_lambertian — 3D <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;render_lambertian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_lambertian(normals, albedo, light, ambient=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;render_lambertian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalen + Albedo + Lichtrichtung → ein Lambert-Bild (Erzeugung von Prüfmustern / GT-Verifikation / das Vorwärtsmodell des Inverse Rendering). → HxW.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

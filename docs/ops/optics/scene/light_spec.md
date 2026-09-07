@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # light_spec — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.light_spec(kind: 'str' = 'coaxial', source: 'str' = 'led', wavelength_nm: 'float' = 550.0, bandwidth_nm: 'float' = 30.0, radius_mm: 'float' = 40.0, height_mm: 'float' = 110.0, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None) -> 'dict'` (または `opsoptics.get("light_spec")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.light_spec(kind: 'str' = 'coaxial', source: 'str' = 'led', wavelength_nm: 'float' = 550.0, bandwidth_nm: 'float' = 30.0, radius_mm: 'float' = 40.0, height_mm: 'float' = 110.0, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.light_spec(kind: 'str' = 'coaxial', source: 'str' = 'led', wavelength_nm: 'float' = 550.0, bandwidth_nm: 'float' = 30.0, radius_mm: 'float' = 40.0, height_mm: 'float' = 110.0, size_mm: 'float' = None, n: 'int' = 196, intensity: 'float' = 1.0, cos_exponent: 'float' = 1.0, polarization: 'str' = None, model: 'str' = None, maker: 'str' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("light_spec")`)
 
 ## 使い方
 

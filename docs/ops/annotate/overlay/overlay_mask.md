@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # overlay_mask — ANNOTATE `overlay` op
 
 - **データ種**: `image2d × mask` → `image2d`
-- **呼び出し**: `import annotate; annotate.overlay_mask(img, mask, color='wrong', alpha=0.45, outline=0, outline_color=None, scheme='okabe_ito', style=None)` (または `opsannotate.get("overlay_mask")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.overlay_mask(img, mask, color='wrong', alpha=0.45, outline=0, outline_color=None, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.overlay_mask(img, mask, color='wrong', alpha=0.45, outline=0, outline_color=None, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("overlay_mask")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # running_gaussian_background — VIDEOSTREAM `background` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.running_gaussian_background(video, alpha: 'float' = 0.02, k: 'float' = 2.5, var_init: 'float' = 0.01, selective: 'bool' = True) -> 'np.ndarray'` (または `opsvideostream.get("running_gaussian_background")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.running_gaussian_background(video, alpha: 'float' = 0.02, k: 'float' = 2.5, var_init: 'float' = 0.01, selective: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.running_gaussian_background(video, alpha: 'float' = 0.02, k: 'float' = 2.5, var_init: 'float' = 0.01, selective: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("running_gaussian_background")`)
 
 ## 使い方
 

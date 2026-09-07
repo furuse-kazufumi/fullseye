@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_psd — ROUGHNESS <code style="color:#22d3bf">measure</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import roughness; roughness.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code> (oder <code style="color:#22d3bf">opsroughness.get(&quot;surface_psd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import roughness; roughness.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code>; aus dem Register: <code style="color:#22d3bf">opsroughness.get(&quot;surface_psd&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.surface_psd(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.surface_psd.raw(...)</code> oder rufe <code style="color:#22d3bf">roughness.surface_psd</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>

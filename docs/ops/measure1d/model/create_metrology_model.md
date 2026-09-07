@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # create_metrology_model — MEASURE1D `model` op
 
 - **データ種**: `なし` → `metrologymodel`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import metrology; metrology.create_metrology_model() -> 'dict'` (または `opsmeasure1d.get("create_metrology_model")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.create_metrology_model() -> 'dict'` (実装を直接呼ぶなら `import metrology; metrology.create_metrology_model() -> 'dict'`、台帳から引くなら `opsmeasure1d.get("create_metrology_model")`)
 
 ## 使い方
 

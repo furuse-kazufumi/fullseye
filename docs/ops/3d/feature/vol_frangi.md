@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_frangi — 3D `feature` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volops; volops.vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None, black_ridges=False)` (または `ops3d.get("vol_frangi")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None, black_ridges=False)` (実装を直接呼ぶなら `import volops; volops.vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None, black_ridges=False)`、台帳から引くなら `ops3d.get("vol_frangi")`)
 
 ## 使い方
 

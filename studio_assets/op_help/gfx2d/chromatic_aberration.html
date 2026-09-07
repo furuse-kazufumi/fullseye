@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">chromatic_aberration — GFX2D <code style="color:#22d3bf">post</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import gfx2d; gfx2d.chromatic_aberration(rgb, strength=0.003, interp=&#x27;bilinear&#x27;)</code> (または <code style="color:#22d3bf">opsgfx2d.get(&quot;chromatic_aberration&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chromatic_aberration(rgb, strength=0.003, interp=&#x27;bilinear&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.chromatic_aberration(rgb, strength=0.003, interp=&#x27;bilinear&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;chromatic_aberration&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Scale the red and blue channels about the image centre, green fixed.</p>
 <p>Lateral chromatic aberration: red is magnified by `<code style="color:#22d3bf">1 + strength</code>`, blue by</p>

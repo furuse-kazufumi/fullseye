@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # depth_to_organized_points — 3D `range_image` op
 
 - **データ種**: `depth` → `pointmap`
-- **呼び出し**: `import range_image; range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)` (または `ops3d.get("depth_to_organized_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)` (実装を直接呼ぶなら `import range_image; range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)`、台帳から引くなら `ops3d.get("depth_to_organized_points")`)
 
 ## 使い方
 

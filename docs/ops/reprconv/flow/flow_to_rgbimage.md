@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # flow_to_rgbimage — REPRCONV `flow` op
 
 - **データ種**: `flow_dense` → `rgbimage`
-- **呼び出し**: `import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)` (または `opsreprconv.get("flow_to_rgbimage")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.flow_to_rgbimage(flow, index=None, scale=None)` (実装を直接呼ぶなら `import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)`、台帳から引くなら `opsreprconv.get("flow_to_rgbimage")`)
 
 ## 使い方
 

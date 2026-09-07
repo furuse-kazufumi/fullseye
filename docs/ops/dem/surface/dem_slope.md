@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_slope — DEM `surface` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_slope(dem, cell_size, method='horn', units='degrees')` (または `opsdem.get("dem_slope")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_slope(dem, cell_size, method='horn', units='degrees')` (実装を直接呼ぶなら `import demops; demops.dem_slope(dem, cell_size, method='horn', units='degrees')`、台帳から引くなら `opsdem.get("dem_slope")`)
 
 ## 使い方
 

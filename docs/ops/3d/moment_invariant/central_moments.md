@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # central_moments — 3D `moment_invariant` op
 
 - **データ種**: `points` → `table`
-- **呼び出し**: `import moments3d; moments3d.central_moments(points, max_order: 'int' = 3) -> 'dict'` (または `ops3d.get("central_moments")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.central_moments(points, max_order: 'int' = 3) -> 'dict'` (実装を直接呼ぶなら `import moments3d; moments3d.central_moments(points, max_order: 'int' = 3) -> 'dict'`、台帳から引くなら `ops3d.get("central_moments")`)
 
 ## 使い方
 

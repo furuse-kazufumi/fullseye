@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # quat_conjugate_image — QUAT `algebra` op
 
 - **データ種**: `qimage` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.quat_conjugate_image(qimage) -> 'np.ndarray'` (または `opsquat.get("quat_conjugate_image")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.quat_conjugate_image(qimage) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_conjugate_image(qimage) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_conjugate_image")`)
 
 ## 使い方
 

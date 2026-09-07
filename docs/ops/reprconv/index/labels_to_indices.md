@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # labels_to_indices — REPRCONV `index` op
 
 - **データ種**: `labels` → `indices`
-- **呼び出し**: `import reprconv; reprconv.labels_to_indices(labels)` (または `opsreprconv.get("labels_to_indices")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.labels_to_indices(labels)` (実装を直接呼ぶなら `import reprconv; reprconv.labels_to_indices(labels)`、台帳から引くなら `opsreprconv.get("labels_to_indices")`)
 
 ## 使い方
 

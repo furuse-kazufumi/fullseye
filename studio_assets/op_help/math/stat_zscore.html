@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_zscore — MATH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import mathops; mathops.stat_zscore(x)</code> (または <code style="color:#22d3bf">opsmath.get(&quot;stat_zscore&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_zscore(x)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.stat_zscore(x)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;stat_zscore&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Standardise a 1-D sample: `<code style="color:#22d3bf">(x - mean) / std</code><code style="color:#22d3bf"> (population </code><code style="color:#22d3bf">ddof=0</code>`).</p>
 <p>The result has mean 0 and standard deviation 1 — the common currency for</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mean_curvature — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;mean_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_curvature(points, k=25, normals=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mean_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。</p>
 <p>normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。</p>

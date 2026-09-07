@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # hash_distance — IMGFORENSICS `hash` op
 
 - **データ種**: `phash × phash` → `measurement`
-- **呼び出し**: `import imgforensics; imgforensics.hash_distance(hash1, hash2) -> 'int'` (または `opsimgforensics.get("hash_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -> 'int'` (実装を直接呼ぶなら `import imgforensics; imgforensics.hash_distance(hash1, hash2) -> 'int'`、台帳から引くなら `opsimgforensics.get("hash_distance")`)
 
 ## 使い方
 

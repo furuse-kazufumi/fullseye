@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # axes_transform — ANNOTATE `plot` op
 
 - **データ種**: `なし` → `axes`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale='linear', yscale='linear')` (または `opsannotate.get("axes_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale='linear', yscale='linear')` (実装を直接呼ぶなら `import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale='linear', yscale='linear')`、台帳から引くなら `opsannotate.get("axes_transform")`)
 
 ## 使い方
 

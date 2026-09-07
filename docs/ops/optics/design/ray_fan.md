@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ray_fan — OPTICS `design` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)` (または `opsoptics.get("ray_fan")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)` (実装を直接呼ぶなら `import raytrace; raytrace.ray_fan(system, field=None, n=21, axis='y', wavelength_um=None, image_mm=None)`、台帳から引くなら `opsoptics.get("ray_fan")`)
 
 ## 使い方
 

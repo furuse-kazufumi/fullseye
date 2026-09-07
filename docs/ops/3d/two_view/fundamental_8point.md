@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fundamental_8point — 3D `two_view` op
 
 - **データ種**: `image2d × image2d` → `matrix`
-- **呼び出し**: `import twoview; twoview.fundamental_8point(pts1, pts2)` (または `ops3d.get("fundamental_8point")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fundamental_8point(pts1, pts2)` (実装を直接呼ぶなら `import twoview; twoview.fundamental_8point(pts1, pts2)`、台帳から引くなら `ops3d.get("fundamental_8point")`)
 
 ## 使い方
 

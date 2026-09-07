@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # temporal_bilateral — VIDEOSTREAM `denoise` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.temporal_bilateral(video, window: 'int' = 5, sigma_t: 'float' = 2.0, sigma_r: 'float' = 0.1) -> 'np.ndarray'` (または `opsvideostream.get("temporal_bilateral")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.temporal_bilateral(video, window: 'int' = 5, sigma_t: 'float' = 2.0, sigma_r: 'float' = 0.1) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.temporal_bilateral(video, window: 'int' = 5, sigma_t: 'float' = 2.0, sigma_r: 'float' = 0.1) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("temporal_bilateral")`)
 
 ## 使い方
 

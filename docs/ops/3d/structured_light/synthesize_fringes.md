@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # synthesize_fringes — 3D `structured_light` op
 
 - **データ種**: `image2d` → `images`
-- **呼び出し**: `import fringe; fringe.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)` (または `ops3d.get("synthesize_fringes")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)` (実装を直接呼ぶなら `import fringe; fringe.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)`、台帳から引くなら `ops3d.get("synthesize_fringes")`)
 - **台帳経由の戻り値**: `fullseye.ledger.synthesize_fringes(...)` は**宣言 out 型 `images` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.synthesize_fringes.raw(...)`、または `fringe.synthesize_fringes` を直接呼ぶ。
 
 ## 使い方

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_background_subtract — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import photoncount; photoncount.tcspc_background_subtract(hist, method=&#x27;median&#x27;, leading_bins=None, quantile=0.5, scale=1.0)</code>(或 <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_background_subtract&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tcspc_background_subtract(hist, method=&#x27;median&#x27;, leading_bins=None, quantile=0.5, scale=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import photoncount; photoncount.tcspc_background_subtract(hist, method=&#x27;median&#x27;, leading_bins=None, quantile=0.5, scale=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_background_subtract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從到達時間直方圖中去掉環境光 / 暗計數的底噪。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

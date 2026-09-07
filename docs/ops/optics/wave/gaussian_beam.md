@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # gaussian_beam — OPTICS `wave` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optics; optics.gaussian_beam(waist_um=100.0, wavelength_um=1.064, distance_mm=0.0, n_medium=1.0)` (または `opsoptics.get("gaussian_beam")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gaussian_beam(waist_um=100.0, wavelength_um=1.064, distance_mm=0.0, n_medium=1.0)` (実装を直接呼ぶなら `import optics; optics.gaussian_beam(waist_um=100.0, wavelength_um=1.064, distance_mm=0.0, n_medium=1.0)`、台帳から引くなら `opsoptics.get("gaussian_beam")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_cauchy_value — MATH `complex` op
 
 - **データ種**: `cpoints × cpoints` → `cscalar`
-- **呼び出し**: `import mathops; mathops.cplx_cauchy_value(z, fz, w)` (または `opsmath.get("cplx_cauchy_value")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_cauchy_value(z, fz, w)` (実装を直接呼ぶなら `import mathops; mathops.cplx_cauchy_value(z, fz, w)`、台帳から引くなら `opsmath.get("cplx_cauchy_value")`)
 
 ## 使い方
 

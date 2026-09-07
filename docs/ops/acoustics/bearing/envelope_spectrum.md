@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # envelope_spectrum — ACOUSTICS `bearing` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.envelope_spectrum(x, rate, low, high, order=4, n_peaks=5)` (または `opsacoustics.get("envelope_spectrum")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.envelope_spectrum(x, rate, low, high, order=4, n_peaks=5)` (実装を直接呼ぶなら `import acoustics; acoustics.envelope_spectrum(x, rate, low, high, order=4, n_peaks=5)`、台帳から引くなら `opsacoustics.get("envelope_spectrum")`)
 
 ## 使い方
 

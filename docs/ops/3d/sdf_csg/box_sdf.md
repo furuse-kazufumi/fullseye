@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # box_sdf — 3D `sdf_csg` op
 
 - **データ種**: `coordgrid` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)` (または `ops3d.get("box_sdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.box_sdf(grid, center, half_extents)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)`、台帳から引くなら `ops3d.get("box_sdf")`)
 
 ## 使い方
 

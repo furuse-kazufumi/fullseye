@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # airy_radius_um — OPTICS `scene` op
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.airy_radius_um(f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'float'` (または `opsoptics.get("airy_radius_um")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.airy_radius_um(f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'float'` (実装を直接呼ぶなら `import optscene; optscene.airy_radius_um(f_number: 'float' = 5.6, wavelength_nm: 'float' = 550.0) -> 'float'`、台帳から引くなら `opsoptics.get("airy_radius_um")`)
 
 ## 使い方
 

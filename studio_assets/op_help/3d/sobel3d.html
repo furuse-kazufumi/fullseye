@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sobel3d — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">gradient</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.sobel3d(vol, device=&#x27;cpu&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;sobel3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sobel3d(vol, device=&#x27;cpu&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.sobel3d(vol, device=&#x27;cpu&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;sobel3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.sobel3d(...)</code> は**宣言 out 型 <code style="color:#22d3bf">gradient</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.sobel3d.raw(...)</code>、または <code style="color:#22d3bf">match3d.sobel3d</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>

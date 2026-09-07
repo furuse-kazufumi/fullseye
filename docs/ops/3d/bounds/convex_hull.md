@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # convex_hull — 3D `bounds` op
 
 - **データ種**: `points` → `mesh`
-- **呼び出し**: `import meshrepair; meshrepair.convex_hull(V)` (または `ops3d.get("convex_hull")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.convex_hull(V)` (実装を直接呼ぶなら `import meshrepair; meshrepair.convex_hull(V)`、台帳から引くなら `ops3d.get("convex_hull")`)
 
 ## 使い方
 

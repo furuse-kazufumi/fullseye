@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label — 3D `regionprops` op
 
 - **データ種**: `voxel` → `labels`
-- **呼び出し**: `import volops; volops.vol_label(vol_binary, connectivity=26)` (または `ops3d.get("vol_label")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label(vol_binary, connectivity=26)` (実装を直接呼ぶなら `import volops; volops.vol_label(vol_binary, connectivity=26)`、台帳から引くなら `ops3d.get("vol_label")`)
 - **台帳経由の戻り値**: `fullseye.ledger.vol_label(...)` は**宣言 out 型 `labels` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_label.raw(...)`、または `volops.vol_label` を直接呼ぶ。
   - 本体の返り: `(labels, n)`
 

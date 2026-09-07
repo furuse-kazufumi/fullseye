@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # angular_spectrum_propagate — OPTICS `wave` op
 
 - **データ種**: `cimage` → `cimage`
-- **呼び出し**: `import optics; optics.angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0, pixel_pitch_um=1.0)` (または `opsoptics.get("angular_spectrum_propagate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0, pixel_pitch_um=1.0)` (実装を直接呼ぶなら `import optics; optics.angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0, pixel_pitch_um=1.0)`、台帳から引くなら `opsoptics.get("angular_spectrum_propagate")`)
 
 ## 使い方
 

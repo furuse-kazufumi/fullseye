@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_to_mla — LIGHTFIELD `decode` op
 
 - **データ種**: `lightfield` → `image2d`
-- **呼び出し**: `import lightfield; lightfield.lf_to_mla(lf)` (または `opslightfield.get("lf_to_mla")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_to_mla(lf)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_to_mla(lf)`、台帳から引くなら `opslightfield.get("lf_to_mla")`)
 
 ## 使い方
 

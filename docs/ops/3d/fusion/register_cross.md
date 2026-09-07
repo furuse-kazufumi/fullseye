@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # register_cross — 3D `fusion` op
 
 - **データ種**: `any × any` → `pose`
-- **呼び出し**: `import fuse3d; fuse3d.register_cross(src, src_kind, dst, dst_kind, method='fpfh', samples=15000, **kw)` (または `ops3d.get("register_cross")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.register_cross(src, src_kind, dst, dst_kind, method='fpfh', samples=15000, **kw)` (実装を直接呼ぶなら `import fuse3d; fuse3d.register_cross(src, src_kind, dst, dst_kind, method='fpfh', samples=15000, **kw)`、台帳から引くなら `ops3d.get("register_cross")`)
 
 ## 使い方
 

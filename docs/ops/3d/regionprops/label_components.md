@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # label_components — 3D `regionprops` op
 
 - **データ種**: `voxel` → `labels`
-- **呼び出し**: `import regionprops3d; regionprops3d.label_components(vol, connectivity: 'int' = 26)` (または `ops3d.get("label_components")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.label_components(vol, connectivity: 'int' = 26)` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.label_components(vol, connectivity: 'int' = 26)`、台帳から引くなら `ops3d.get("label_components")`)
 - **台帳経由の戻り値**: `fullseye.ledger.label_components(...)` は**宣言 out 型 `labels` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.label_components.raw(...)`、または `regionprops3d.label_components` を直接呼ぶ。
   - 本体の返り: `(labels, n) → labels`
 

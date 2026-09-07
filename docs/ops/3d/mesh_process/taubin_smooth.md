@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # taubin_smooth — 3D `mesh_process` op
 
 - **データ種**: `mesh` → `mesh`
-- **呼び出し**: `import mesh_smooth; mesh_smooth.taubin_smooth(mesh: 'Sequence', iters: 'int' = 10, lam: 'float' = 0.33, mu: 'float' = -0.34) -> 'Mesh'` (または `ops3d.get("taubin_smooth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.taubin_smooth(mesh: 'Sequence', iters: 'int' = 10, lam: 'float' = 0.33, mu: 'float' = -0.34) -> 'Mesh'` (実装を直接呼ぶなら `import mesh_smooth; mesh_smooth.taubin_smooth(mesh: 'Sequence', iters: 'int' = 10, lam: 'float' = 0.33, mu: 'float' = -0.34) -> 'Mesh'`、台帳から引くなら `ops3d.get("taubin_smooth")`)
 
 ## 使い方
 
@@ -55,7 +55,7 @@ Raises:
 
 ## 同カテゴリ(`mesh_process`)
 
-[laplacian_smooth](laplacian_smooth.md) · [decimate_qem](decimate_qem.md) · [face_normals](face_normals.md) · [vertex_normals](vertex_normals.md) · [mesh_area](mesh_area.md) · [vertex_curvature](vertex_curvature.md)
+[laplacian_smooth](laplacian_smooth.md) · [decimate_qem](decimate_qem.md) · [face_normals](face_normals.md) · [vertex_normals](vertex_normals.md) · [mesh_area](mesh_area.md) · [vertex_curvature](vertex_curvature.md) · [face_areas](face_areas.md) · [mesh_volume](mesh_volume.md)
 
 ---
 *Provenance: mesh_smooth.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

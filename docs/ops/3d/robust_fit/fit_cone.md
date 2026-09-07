@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fit_cone — 3D `robust_fit` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -> 'dict'` (または `ops3d.get("fit_cone")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_cone(points) -> 'dict'` (実装を直接呼ぶなら `import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -> 'dict'`、台帳から引くなら `ops3d.get("fit_cone")`)
 
 ## 使い方
 

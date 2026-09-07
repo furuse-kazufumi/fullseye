@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # aperture_photometry — ASTROSTACK `photometry` op
 
 - **データ種**: `image2d × keypoints` → `table`
-- **呼び出し**: `import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)` (または `opsastrostack.get("aperture_photometry")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)` (実装を直接呼ぶなら `import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)`、台帳から引くなら `opsastrostack.get("aperture_photometry")`)
 
 ## 使い方
 

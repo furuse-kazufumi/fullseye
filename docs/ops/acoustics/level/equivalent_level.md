@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # equivalent_level — ACOUSTICS `level` op
 
 - **データ種**: `signal` → `measurement`
-- **呼び出し**: `import acoustics; acoustics.equivalent_level(x, rate, weighting='A', ref=1.0, floor_db=-200.0, window='none')` (または `opsacoustics.get("equivalent_level")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.equivalent_level(x, rate, weighting='A', ref=1.0, floor_db=-200.0, window='none')` (実装を直接呼ぶなら `import acoustics; acoustics.equivalent_level(x, rate, weighting='A', ref=1.0, floor_db=-200.0, window='none')`、台帳から引くなら `opsacoustics.get("equivalent_level")`)
 
 ## 使い方
 

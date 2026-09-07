@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">rough_transmission — OPTICS <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code> (oder <code style="color:#22d3bf">opsoptics.get(&quot;rough_transmission&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;rough_transmission&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code> oder rufe <code style="color:#22d3bf">surfacelib.rough_transmission</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt die Transmission von Mattglas in eine „geradlinige“ und eine „diffuse“ Komponente.</p>

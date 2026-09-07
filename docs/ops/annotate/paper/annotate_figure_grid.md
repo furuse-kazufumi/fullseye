@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_figure_grid — ANNOTATE `paper` op
 
 - **データ種**: `images` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_figure_grid(panels, captions=None, ncols=2, pad=10, caption_h=32, letters=True, letter_style='paren', title=None, font_size=14, min_font_size=9, background=1.0, border=1, border_color='neutral', text_color=None, scheme='okabe_ito', font_path=None)` (または `opsannotate.get("annotate_figure_grid")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_figure_grid(panels, captions=None, ncols=2, pad=10, caption_h=32, letters=True, letter_style='paren', title=None, font_size=14, min_font_size=9, background=1.0, border=1, border_color='neutral', text_color=None, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_figure_grid(panels, captions=None, ncols=2, pad=10, caption_h=32, letters=True, letter_style='paren', title=None, font_size=14, min_font_size=9, background=1.0, border=1, border_color='neutral', text_color=None, scheme='okabe_ito', font_path=None)`、台帳から引くなら `opsannotate.get("annotate_figure_grid")`)
 
 ## 使い方
 

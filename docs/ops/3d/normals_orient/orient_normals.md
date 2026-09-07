@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # orient_normals — 3D `normals_orient` op
 
 - **データ種**: `points × normals` → `normals`
-- **呼び出し**: `import normals_orient; normals_orient.orient_normals(points, normals, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'` (または `ops3d.get("orient_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.orient_normals(points, normals, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import normals_orient; normals_orient.orient_normals(points, normals, k: 'int' = 20, seed_dir=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("orient_normals")`)
 
 ## 使い方
 

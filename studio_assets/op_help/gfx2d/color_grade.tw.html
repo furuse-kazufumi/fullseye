@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">color_grade — GFX2D <code style="color:#22d3bf">post</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × lut</code> → <code style="color:#22d3bf">rgb</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.color_grade(rgb, lut)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;color_grade&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_grade(rgb, lut)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gfx2d; gfx2d.color_grade(rgb, lut)</code>;從台帳取用則 <code style="color:#22d3bf">opsgfx2d.get(&quot;color_grade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用三線性插值把 3-D 色彩 LUT 套用到 `<code style="color:#22d3bf">rgb</code>` 影像。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

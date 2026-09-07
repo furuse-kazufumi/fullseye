@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussian_curvature — 3D <code style="color:#22d3bf">curvature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import curvature3d; curvature3d.gaussian_curvature(points, k=25)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;gaussian_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussian_curvature(points, k=25)</code> (to call the implementation directly, <code style="color:#22d3bf">import curvature3d; curvature3d.gaussian_curvature(points, k=25)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;gaussian_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Gaussian curvature K = k1·k2 (invariant to flipping the normal). → (N,).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

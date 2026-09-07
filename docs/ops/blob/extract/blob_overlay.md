@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blob_overlay — BLOB `extract` op
 
 - **データ種**: `image2d × labels2d` → `rgb`
-- **呼び出し**: `import blob2d; blob2d.blob_overlay(image: 'Any', labels: 'Any', alpha: 'float' = 0.5, seed: 'int' = 0) -> 'np.ndarray'` (または `opsblob.get("blob_overlay")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blob_overlay(image: 'Any', labels: 'Any', alpha: 'float' = 0.5, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import blob2d; blob2d.blob_overlay(image: 'Any', labels: 'Any', alpha: 'float' = 0.5, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsblob.get("blob_overlay")`)
 
 ## 使い方
 

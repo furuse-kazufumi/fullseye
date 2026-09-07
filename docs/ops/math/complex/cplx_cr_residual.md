@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_cr_residual — MATH `complex` op
 
 - **データ種**: `cimage` → `measurement`
-- **呼び出し**: `import mathops; mathops.cplx_cr_residual(f, spacing=1.0)` (または `opsmath.get("cplx_cr_residual")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_cr_residual(f, spacing=1.0)` (実装を直接呼ぶなら `import mathops; mathops.cplx_cr_residual(f, spacing=1.0)`、台帳から引くなら `opsmath.get("cplx_cr_residual")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # reprojection_error — 3D `pose_estimation` op
 
 - **データ種**: `points × keypoints` → `measurement`
-- **呼び出し**: `import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)` (または `ops3d.get("reprojection_error")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.reprojection_error(points_3d, points_2d, K, R, t)` (実装を直接呼ぶなら `import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)`、台帳から引くなら `ops3d.get("reprojection_error")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # perceptual_hash — IMGFORENSICS `hash` op
 
 - **データ種**: `image2d` → `phash`
-- **呼び出し**: `import imgforensics; imgforensics.perceptual_hash(image, mode: 'str' = 'dct', hash_size: 'int' = 8) -> 'np.ndarray'` (または `opsimgforensics.get("perceptual_hash")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.perceptual_hash(image, mode: 'str' = 'dct', hash_size: 'int' = 8) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.perceptual_hash(image, mode: 'str' = 'dct', hash_size: 'int' = 8) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("perceptual_hash")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # eval_bspline_curve — 3D `freeform` op
 
 - **データ種**: `bspline_curve` → `points`
-- **呼び出し**: `import bspline_surf; bspline_surf.eval_bspline_curve(tck, n=200)` (または `ops3d.get("eval_bspline_curve")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.eval_bspline_curve(tck, n=200)` (実装を直接呼ぶなら `import bspline_surf; bspline_surf.eval_bspline_curve(tck, n=200)`、台帳から引くなら `ops3d.get("eval_bspline_curve")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_synthetic_aperture — LIGHTFIELD `refocus` op
 
 - **データ種**: `lightfield` → `image2d`
-- **呼び出し**: `import lightfield; lightfield.lf_synthetic_aperture(lf, slope=0.0, mask=None, *, reduce='mean', interp='linear', edge='nearest')` (または `opslightfield.get("lf_synthetic_aperture")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_synthetic_aperture(lf, slope=0.0, mask=None, *, reduce='mean', interp='linear', edge='nearest')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_synthetic_aperture(lf, slope=0.0, mask=None, *, reduce='mean', interp='linear', edge='nearest')`、台帳から引くなら `opslightfield.get("lf_synthetic_aperture")`)
 
 ## 使い方
 

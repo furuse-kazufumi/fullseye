@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_distances — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code> (または <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。</p>
 <p>`<code style="color:#22d3bf">knn_graph(points, k)</code>` で作った k 近傍グラフ(辺の重み = 点間の Euclid 距離 = 弦長)を</p>

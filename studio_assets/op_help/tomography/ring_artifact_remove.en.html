@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">ring_artifact_remove — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode=&#x27;median&#x27;)</code> (or <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_remove&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ring_artifact_remove(sinogram, window=5, mode=&#x27;median&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode=&#x27;median&#x27;)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_remove&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Remove per-detector-bin offsets by flattening the angle-averaged profile.</p>
 <p>The mean of a sinogram column over all angles is a smooth function of the</p>

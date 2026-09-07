@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # running_mean_std — VIDEOSTREAM `recursive` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import videostream; videostream.running_mean_std(video) -> 'dict'` (または `opsvideostream.get("running_mean_std")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.running_mean_std(video) -> 'dict'` (実装を直接呼ぶなら `import videostream; videostream.running_mean_std(video) -> 'dict'`、台帳から引くなら `opsvideostream.get("running_mean_std")`)
 
 ## 使い方
 

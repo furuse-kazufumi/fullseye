@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">add_metrology_object_ellipse_measure — MEASURE1D <code style="color:#22d3bf">model</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code> (または <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_ellipse_measure&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_ellipse_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。</p>
 <p>`<code style="color:#22d3bf">phi</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">ra</code>` 軸の向き(col 軸から、ラジアン)。</p>

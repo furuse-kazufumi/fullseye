@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">essential_8point — 3D <code style="color:#22d3bf">two_view</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import twoview; twoview.essential_8point(pts1, pts2, K1, K2=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;essential_8point&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.essential_8point(pts1, pts2, K1, K2=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import twoview; twoview.essential_8point(pts1, pts2, K1, K2=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;essential_8point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>対応点 + K から本質行列 E を直接。→ E (3,3)。</p>
 <p>手順: `<code style="color:#22d3bf">fundamental_8point(pts1, pts2)</code><code style="color:#22d3bf"> で F を推定し、</code><code style="color:#22d3bf">E = K2ᵀ F K1</code>` を作ってから SVD で特異値を (1, 1, 0) に置き換える(本質行列の性質。結果の Frobenius ノルムは √2 に固定される)。</p>

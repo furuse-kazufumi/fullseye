@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel × points × mesh × depth × gaussians</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.to_points(data, kind, samples=20000, **kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>임의의 3D 구조 → 점군(공통 표현). 5 개 구조 전부를 하나의 입구로 통합.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

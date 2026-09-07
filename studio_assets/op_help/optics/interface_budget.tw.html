@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">interface_budget — OPTICS <code style="color:#22d3bf">scene</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import optscene; optscene.interface_budget(sensor: &#x27;dict&#x27;, interface: &#x27;str&#x27; = &#x27;CXP-12&#x27;, links: &#x27;int&#x27; = 4, efficiency: &#x27;float&#x27; = 0.85, line_scan: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;interface_budget&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interface_budget(sensor: &#x27;dict&#x27;, interface: &#x27;str&#x27; = &#x27;CXP-12&#x27;, links: &#x27;int&#x27; = 4, efficiency: &#x27;float&#x27; = 0.85, line_scan: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.interface_budget(sensor: &#x27;dict&#x27;, interface: &#x27;str&#x27; = &#x27;CXP-12&#x27;, links: &#x27;int&#x27; = 4, efficiency: &#x27;float&#x27; = 0.85, line_scan: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;interface_budget&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由傳輸頻寬回傳<b>受頻寬限制的最大幀率 / 行頻</b>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

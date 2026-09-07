@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_tiled_map — 3D <code style="color:#22d3bf">domain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_tiled_map(vol, fn, tile=64, overlap=8)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_tiled_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_tiled_map(vol, fn, tile=64, overlap=8)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_tiled_map(vol, fn, tile=64, overlap=8)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_tiled_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>形を変えないボリューム op を、重なりを持つ z スラブに分けて適用する(ピーク使用量を抑える)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

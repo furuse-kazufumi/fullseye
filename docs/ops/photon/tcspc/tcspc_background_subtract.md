@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tcspc_background_subtract — PHOTON `tcspc` op
 
 - **データ種**: `counts` → `counts`
-- **呼び出し**: `import photoncount; photoncount.tcspc_background_subtract(hist, method='median', leading_bins=None, quantile=0.5, scale=1.0)` (または `opsphoton.get("tcspc_background_subtract")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tcspc_background_subtract(hist, method='median', leading_bins=None, quantile=0.5, scale=1.0)` (実装を直接呼ぶなら `import photoncount; photoncount.tcspc_background_subtract(hist, method='median', leading_bins=None, quantile=0.5, scale=1.0)`、台帳から引くなら `opsphoton.get("tcspc_background_subtract")`)
 
 ## 使い方
 

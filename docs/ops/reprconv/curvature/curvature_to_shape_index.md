@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # curvature_to_shape_index — REPRCONV `curvature` op
 
 - **データ種**: `curvature` → `pairs`
-- **呼び出し**: `import reprconv; reprconv.curvature_to_shape_index(curvature)` (または `opsreprconv.get("curvature_to_shape_index")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)` (実装を直接呼ぶなら `import reprconv; reprconv.curvature_to_shape_index(curvature)`、台帳から引くなら `opsreprconv.get("curvature_to_shape_index")`)
 
 ## 使い方
 

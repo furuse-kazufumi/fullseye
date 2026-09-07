@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fingerprint_strength_map — IMGFORENSICS `sensor` op
 
 - **データ種**: `fingerprint` → `image2d`
-- **呼び出し**: `import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: 'int' = 16) -> 'np.ndarray'` (または `opsimgforensics.get("fingerprint_strength_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fingerprint_strength_map(fingerprint, block: 'int' = 16) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: 'int' = 16) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("fingerprint_strength_map")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">frenet_frame — 3D <code style="color:#22d3bf">curve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">frame</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import curve3d; curve3d.frenet_frame(curve)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;frenet_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frenet_frame(curve)</code>(要直接呼叫實作,<code style="color:#22d3bf">import curve3d; curve3d.frenet_frame(curve)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;frenet_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>各點的 Frenet 標架(切線 T,主法線 N,副法線 B)。→ (T, N, B),各為 (Npts,3) 單位向量。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

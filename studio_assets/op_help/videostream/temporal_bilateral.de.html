@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">temporal_bilateral — VIDEOSTREAM <code style="color:#22d3bf">denoise</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import videostream; videostream.temporal_bilateral(video, window: &#x27;int&#x27; = 5, sigma_t: &#x27;float&#x27; = 2.0, sigma_r: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (oder <code style="color:#22d3bf">opsvideostream.get(&quot;temporal_bilateral&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.temporal_bilateral(video, window: &#x27;int&#x27; = 5, sigma_t: &#x27;float&#x27; = 2.0, sigma_r: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import videostream; videostream.temporal_bilateral(video, window: &#x27;int&#x27; = 5, sigma_t: &#x27;float&#x27; = 2.0, sigma_r: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsvideostream.get(&quot;temporal_bilateral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kausale zeitliche bilaterale Entrauschung pro Bild → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">video</code>`).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

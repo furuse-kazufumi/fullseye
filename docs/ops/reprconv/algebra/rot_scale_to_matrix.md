@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rot_scale_to_matrix — REPRCONV `algebra` op
 
 - **データ種**: `rot_scale` → `matrix`
-- **呼び出し**: `import reprconv; reprconv.rot_scale_to_matrix(rot_scale)` (または `opsreprconv.get("rot_scale_to_matrix")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rot_scale_to_matrix(rot_scale)` (実装を直接呼ぶなら `import reprconv; reprconv.rot_scale_to_matrix(rot_scale)`、台帳から引くなら `opsreprconv.get("rot_scale_to_matrix")`)
 
 ## 使い方
 

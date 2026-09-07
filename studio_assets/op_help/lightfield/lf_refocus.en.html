@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_refocus — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_refocus(lf, slope=0.0, *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (or <code style="color:#22d3bf">opslightfield.get(&quot;lf_refocus&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_refocus(lf, slope=0.0, *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import lightfield; lightfield.lf_refocus(lf, slope=0.0, *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>; from the registry, <code style="color:#22d3bf">opslightfield.get(&quot;lf_refocus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Shift-and-add refocus: the synthetic-aperture image focused at *slope*.</p>
 <p>Every view `<code style="color:#22d3bf">(v, u)</code><code style="color:#22d3bf"> is shifted by </code><code style="color:#22d3bf">(-s*(v - v_c), -s*(u - u_c))</code>` — the</p>

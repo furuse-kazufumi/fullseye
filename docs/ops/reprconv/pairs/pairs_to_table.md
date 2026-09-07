@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # pairs_to_table — REPRCONV `pairs` op
 
 - **データ種**: `pairs` → `table`
-- **呼び出し**: `import reprconv; reprconv.pairs_to_table(pairs)` (または `opsreprconv.get("pairs_to_table")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pairs_to_table(pairs)` (実装を直接呼ぶなら `import reprconv; reprconv.pairs_to_table(pairs)`、台帳から引くなら `opsreprconv.get("pairs_to_table")`)
 
 ## 使い方
 

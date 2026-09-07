@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # polarization_dolp_map — SPECULAR `polarization` op
 
 - **データ種**: `polsweep` → `image2d`
-- **呼び出し**: `import specularity; specularity.polarization_dolp_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)` (または `opsspecular.get("polarization_dolp_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.polarization_dolp_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)` (実装を直接呼ぶなら `import specularity; specularity.polarization_dolp_map(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)`、台帳から引くなら `opsspecular.get("polarization_dolp_map")`)
 
 ## 使い方
 

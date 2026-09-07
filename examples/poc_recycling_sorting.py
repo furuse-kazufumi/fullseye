@@ -444,7 +444,7 @@ def score(geo: dict, pred: np.ndarray, det: np.ndarray,
 # --------------------------------------------------------------------------- #
 def section_scene(pair) -> dict:
     print("\n" + "=" * 78)
-    print("1) 場面・真値・ゼロ点 —— 綺麗な場面ですら比は勝てない")
+    print("1) 場面・真値・ゼロ点 —— 綺麗な場面では比とSAMの差はほとんど無い")
     print("=" * 78)
 
     geo = make_geometry()

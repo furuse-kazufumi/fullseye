@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sellmeier — OPTICS `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name='custom')` (または `opsoptics.get("sellmeier")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sellmeier(B1, B2, B3, C1, C2, C3, name='custom')` (実装を直接呼ぶなら `import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name='custom')`、台帳から引くなら `opsoptics.get("sellmeier")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_params — ROUGHNESS `measure` op
 
 - **データ種**: `signal` → `table`
-- **呼び出し**: `import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)` (または `opsroughness.get("profile_params")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_params(p, dx=1.0, n_sampling=5)` (実装を直接呼ぶなら `import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)`、台帳から引くなら `opsroughness.get("profile_params")`)
 
 ## 使い方
 

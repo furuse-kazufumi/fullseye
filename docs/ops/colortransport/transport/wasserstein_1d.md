@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # wasserstein_1d — COLORTRANSPORT `transport` op
 
 - **データ種**: `signal × signal` → `scalar`
-- **呼び出し**: `import colortransport; colortransport.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)` (または `opscolortransport.get("wasserstein_1d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)` (実装を直接呼ぶなら `import colortransport; colortransport.wasserstein_1d(u_values, v_values, p=1, u_weights=None, v_weights=None)`、台帳から引くなら `opscolortransport.get("wasserstein_1d")`)
 
 ## 使い方
 

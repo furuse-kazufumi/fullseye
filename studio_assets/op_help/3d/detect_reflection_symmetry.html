@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">detect_reflection_symmetry — 3D <code style="color:#22d3bf">symmetry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detect_reflection_symmetry(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>PCA 主軸を法線とする候補平面(重心通過)から最良の反射対称面を選ぶ。</p>
 <p>→ dict{plane_point, plane_normal, score, all_scores, margin}。</p>

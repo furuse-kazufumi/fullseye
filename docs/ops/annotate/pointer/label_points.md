@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # label_points — ANNOTATE `pointer` op
 
 - **データ種**: `image2d × pairs` → `image2d`
-- **呼び出し**: `import annotate; annotate.label_points(img, points, labels=None, color='reference', font_size=12, pad=3, marker_size=0, scheme='okabe_ito', allow_overlap=False, **text_kw)` (または `opsannotate.get("label_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.label_points(img, points, labels=None, color='reference', font_size=12, pad=3, marker_size=0, scheme='okabe_ito', allow_overlap=False, **text_kw)` (実装を直接呼ぶなら `import annotate; annotate.label_points(img, points, labels=None, color='reference', font_size=12, pad=3, marker_size=0, scheme='okabe_ito', allow_overlap=False, **text_kw)`、台帳から引くなら `opsannotate.get("label_points")`)
 
 ## 使い方
 

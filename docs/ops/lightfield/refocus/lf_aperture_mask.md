@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_aperture_mask — LIGHTFIELD `refocus` op
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import lightfield; lightfield.lf_aperture_mask(angular=(5, 5), shape='circle', *, radius=None, inner=0.0, sigma=None, normalize=True)` (または `opslightfield.get("lf_aperture_mask")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_aperture_mask(angular=(5, 5), shape='circle', *, radius=None, inner=0.0, sigma=None, normalize=True)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_aperture_mask(angular=(5, 5), shape='circle', *, radius=None, inner=0.0, sigma=None, normalize=True)`、台帳から引くなら `opslightfield.get("lf_aperture_mask")`)
 
 ## 使い方
 

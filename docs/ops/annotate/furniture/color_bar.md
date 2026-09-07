@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # color_bar — ANNOTATE `furniture` op
 
 - **データ種**: `image2d × lut` → `image2d`
-- **呼び出し**: `import annotate; annotate.color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit='', label_fmt='{:g}', orientation='vertical', font_size=12, font_path=None, scheme='okabe_ito', border=1, border_color='neutral', text_color=None, style=None)` (または `opsannotate.get("color_bar")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit='', label_fmt='{:g}', orientation='vertical', font_size=12, font_path=None, scheme='okabe_ito', border=1, border_color='neutral', text_color=None, style=None)` (実装を直接呼ぶなら `import annotate; annotate.color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit='', label_fmt='{:g}', orientation='vertical', font_size=12, font_path=None, scheme='okabe_ito', border=1, border_color='neutral', text_color=None, style=None)`、台帳から引くなら `opsannotate.get("color_bar")`)
 
 ## 使い方
 

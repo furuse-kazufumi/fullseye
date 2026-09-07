@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_stretch — 3D `gray` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volgray; volgray.vol_stretch(vol, p_low=1.0, p_high=99.0)` (または `ops3d.get("vol_stretch")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_stretch(vol, p_low=1.0, p_high=99.0)` (実装を直接呼ぶなら `import volgray; volgray.vol_stretch(vol, p_low=1.0, p_high=99.0)`、台帳から引くなら `ops3d.get("vol_stretch")`)
 
 ## 使い方
 

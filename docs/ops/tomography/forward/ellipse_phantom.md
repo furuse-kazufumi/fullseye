@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ellipse_phantom — TOMOGRAPHY `forward` op
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)` (または `opstomography.get("ellipse_phantom")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ellipse_phantom(size=256, ellipses=None, supersample=4)` (実装を直接呼ぶなら `import tomography; tomography.ellipse_phantom(size=256, ellipses=None, supersample=4)`、台帳から引くなら `opstomography.get("ellipse_phantom")`)
 
 ## 使い方
 

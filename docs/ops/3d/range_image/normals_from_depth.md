@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # normals_from_depth — 3D `range_image` op
 
 - **データ種**: `depth` → `normalmap`
-- **呼び出し**: `import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)` (または `ops3d.get("normals_from_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)` (実装を直接呼ぶなら `import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)`、台帳から引くなら `ops3d.get("normals_from_depth")`)
 
 ## 使い方
 

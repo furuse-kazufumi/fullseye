@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # surface_finish — OPTICS `scene` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import optscene; optscene.surface_finish(primitive: 'dict', kind: 'str' = 'turned', pitch_um: 'float' = 120.0, depth_um: 'float' = 1.5, uv_size_mm=(20.0, 20.0), seed: 'int' = 0, shape=(384, 384)) -> 'dict'` (または `opsoptics.get("surface_finish")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.surface_finish(primitive: 'dict', kind: 'str' = 'turned', pitch_um: 'float' = 120.0, depth_um: 'float' = 1.5, uv_size_mm=(20.0, 20.0), seed: 'int' = 0, shape=(384, 384)) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.surface_finish(primitive: 'dict', kind: 'str' = 'turned', pitch_um: 'float' = 120.0, depth_um: 'float' = 1.5, uv_size_mm=(20.0, 20.0), seed: 'int' = 0, shape=(384, 384)) -> 'dict'`、台帳から引くなら `opsoptics.get("surface_finish")`)
 
 ## 使い方
 

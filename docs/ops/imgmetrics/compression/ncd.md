@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ncd — IMGMETRICS `compression` op
 
 - **データ種**: `image2d × image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.ncd(a, b, compressor='lzma', levels=None, data_range=None, symmetric=True)` (または `opsimgmetrics.get("ncd")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ncd(a, b, compressor='lzma', levels=None, data_range=None, symmetric=True)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.ncd(a, b, compressor='lzma', levels=None, data_range=None, symmetric=True)`、台帳から引くなら `opsimgmetrics.get("ncd")`)
 
 ## 使い方
 

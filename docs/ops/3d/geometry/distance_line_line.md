@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # distance_line_line — 3D `geometry` op
 
 - **データ種**: `primitive` → `measurement`
-- **呼び出し**: `import match3d; match3d.distance_line_line(p1, d1, p2, d2)` (または `ops3d.get("distance_line_line")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)` (実装を直接呼ぶなら `import match3d; match3d.distance_line_line(p1, d1, p2, d2)`、台帳から引くなら `ops3d.get("distance_line_line")`)
 
 ## 使い方
 

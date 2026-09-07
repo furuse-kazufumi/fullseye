@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # score_to_image2d — REPRCONV `score` op
 
 - **データ種**: `score` → `image2d`
-- **呼び出し**: `import reprconv; reprconv.score_to_image2d(score, axis=0)` (または `opsreprconv.get("score_to_image2d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.score_to_image2d(score, axis=0)` (実装を直接呼ぶなら `import reprconv; reprconv.score_to_image2d(score, axis=0)`、台帳から引くなら `opsreprconv.get("score_to_image2d")`)
 
 ## 使い方
 

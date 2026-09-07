@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # descriptor_distance — SHAPE2D `descriptor` op
 
 - **データ種**: `efdmodel × efdmodel` → `measurement`
-- **呼び出し**: `import fourierdesc; fourierdesc.descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)` (または `opsshape2d.get("descriptor_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)`、台帳から引くなら `opsshape2d.get("descriptor_distance")`)
 
 ## 使い方
 

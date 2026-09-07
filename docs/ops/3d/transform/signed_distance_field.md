@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # signed_distance_field — 3D `transform` op
 
 - **データ種**: `voxel` → `sdf`
-- **呼び出し**: `import match3d; match3d.signed_distance_field(vol, device='cpu', iso=0.5)` (または `ops3d.get("signed_distance_field")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.signed_distance_field(vol, device='cpu', iso=0.5)` (実装を直接呼ぶなら `import match3d; match3d.signed_distance_field(vol, device='cpu', iso=0.5)`、台帳から引くなら `ops3d.get("signed_distance_field")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

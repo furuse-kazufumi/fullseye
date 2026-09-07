@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">transport_cost — COLORTRANSPORT <code style="color:#22d3bf">plan_use</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">transport_plan × matrix</code> → <code style="color:#22d3bf">scalar</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>、台帳から引くなら <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>輸送計画の総費用 `<code style="color:#22d3bf">&lt;plan, cost&gt;</code>`。<b>計画を消費する</b>側の op。</p>
 <p>計画は「行和・列和が周辺分布に一致する」という意味を持つ行列で、普通の</p>

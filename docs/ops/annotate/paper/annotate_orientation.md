@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_orientation — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_orientation(img, angle_deg=0.0, corner='rt', xy=None, size=26.0, margin=16, label='N', color='neutral', width=2, font_size=12, box_alpha=0.0, text_color=None, scheme='okabe_ito', font_path=None)` (または `opsannotate.get("annotate_orientation")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_orientation(img, angle_deg=0.0, corner='rt', xy=None, size=26.0, margin=16, label='N', color='neutral', width=2, font_size=12, box_alpha=0.0, text_color=None, scheme='okabe_ito', font_path=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_orientation(img, angle_deg=0.0, corner='rt', xy=None, size=26.0, margin=16, label='N', color='neutral', width=2, font_size=12, box_alpha=0.0, text_color=None, scheme='okabe_ito', font_path=None)`、台帳から引くなら `opsannotate.get("annotate_orientation")`)
 
 ## 使い方
 

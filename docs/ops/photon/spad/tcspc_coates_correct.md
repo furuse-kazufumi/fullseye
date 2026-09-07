@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tcspc_coates_correct — PHOTON `spad` op
 
 - **データ種**: `counts` → `counts`
-- **呼び出し**: `import photoncount; photoncount.tcspc_coates_correct(hist, cycles)` (または `opsphoton.get("tcspc_coates_correct")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tcspc_coates_correct(hist, cycles)` (実装を直接呼ぶなら `import photoncount; photoncount.tcspc_coates_correct(hist, cycles)`、台帳から引くなら `opsphoton.get("tcspc_coates_correct")`)
 
 ## 使い方
 

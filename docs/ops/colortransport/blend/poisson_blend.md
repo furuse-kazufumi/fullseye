@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # poisson_blend — COLORTRANSPORT `blend` op
 
 - **データ種**: `image2d × image2d × mask` → `image2d`
-- **呼び出し**: `import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))` (または `opscolortransport.get("poisson_blend")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.poisson_blend(src, dst, mask, offset=(0, 0))` (実装を直接呼ぶなら `import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))`、台帳から引くなら `opscolortransport.get("poisson_blend")`)
 - **台帳経由の戻り値**: `fullseye.ledger.poisson_blend(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.poisson_blend.raw(...)`、または `colortransport.poisson_blend` を直接呼ぶ。
 
 ## 使い方

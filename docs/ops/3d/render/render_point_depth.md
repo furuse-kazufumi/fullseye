@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # render_point_depth — 3D `render` op
 
 - **データ種**: `points` → `depth`
-- **呼び出し**: `import match3d; match3d.render_point_depth(points, K, size, R=None, t=None)` (または `ops3d.get("render_point_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.render_point_depth(points, K, size, R=None, t=None)` (実装を直接呼ぶなら `import match3d; match3d.render_point_depth(points, K, size, R=None, t=None)`、台帳から引くなら `ops3d.get("render_point_depth")`)
 
 ## 使い方
 

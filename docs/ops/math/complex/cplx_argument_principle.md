@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_argument_principle — MATH `complex` op
 
 - **データ種**: `cpoints × cpoints` → `measurement`
-- **呼び出し**: `import mathops; mathops.cplx_argument_principle(z, fz)` (または `opsmath.get("cplx_argument_principle")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_argument_principle(z, fz)` (実装を直接呼ぶなら `import mathops; mathops.cplx_argument_principle(z, fz)`、台帳から引くなら `opsmath.get("cplx_argument_principle")`)
 
 ## 使い方
 

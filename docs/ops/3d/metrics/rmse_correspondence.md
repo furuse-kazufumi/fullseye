@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rmse_correspondence — 3D `metrics` op
 
 - **データ種**: `points × points` → `measurement`
-- **呼び出し**: `import metrics3d; metrics3d.rmse_correspondence(a, b)` (または `ops3d.get("rmse_correspondence")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rmse_correspondence(a, b)` (実装を直接呼ぶなら `import metrics3d; metrics3d.rmse_correspondence(a, b)`、台帳から引くなら `ops3d.get("rmse_correspondence")`)
 
 ## 使い方
 
@@ -54,7 +54,7 @@ GT と比べるなら ``pose_error``。
 
 ## 同カテゴリ(`metrics`)
 
-[chamfer_distance](chamfer_distance.md) · [hausdorff_distance](hausdorff_distance.md) · [fscore](fscore.md) · [normal_consistency](normal_consistency.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
+[chamfer_distance](chamfer_distance.md) · [hausdorff_distance](hausdorff_distance.md) · [m3c2_distance](m3c2_distance.md) · [fscore](fscore.md) · [normal_consistency](normal_consistency.md) · [voxel_iou](voxel_iou.md) · [pose_error](pose_error.md)
 
 ---
 *Provenance: metrics3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

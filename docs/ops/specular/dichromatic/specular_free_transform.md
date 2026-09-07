@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # specular_free_transform — SPECULAR `dichromatic` op
 
 - **データ種**: `rgbimage` → `rgbimage`
-- **呼び出し**: `import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))` (または `opsspecular.get("specular_free_transform")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))` (実装を直接呼ぶなら `import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))`、台帳から引くなら `opsspecular.get("specular_free_transform")`)
 
 ## 使い方
 

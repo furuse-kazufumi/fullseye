@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # detect_rotational_symmetry — 3D `symmetry` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import symmetry3d; symmetry3d.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))` (または `ops3d.get("detect_rotational_symmetry")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))` (実装を直接呼ぶなら `import symmetry3d; symmetry3d.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))`、台帳から引くなら `ops3d.get("detect_rotational_symmetry")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">psf_to_mtf — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;psf_to_mtf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psf_to_mtf(psf, pixel_pitch_um=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;psf_to_mtf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>実測した点像分布関数から、動径平均した MTF を出す。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

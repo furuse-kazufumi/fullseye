@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tps_warp — 3D `deform` op
 
 - **データ種**: `deformation × points` → `points`
-- **呼び出し**: `import deform3d; deform3d.tps_warp(model, points)` (または `ops3d.get("tps_warp")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tps_warp(model, points)` (実装を直接呼ぶなら `import deform3d; deform3d.tps_warp(model, points)`、台帳から引くなら `ops3d.get("tps_warp")`)
 
 ## 使い方
 

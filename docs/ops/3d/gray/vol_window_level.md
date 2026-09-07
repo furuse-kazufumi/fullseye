@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_window_level — 3D `gray` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volgray; volgray.vol_window_level(vol, center, width, out_range=(0.0, 1.0))` (または `ops3d.get("vol_window_level")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_window_level(vol, center, width, out_range=(0.0, 1.0))` (実装を直接呼ぶなら `import volgray; volgray.vol_window_level(vol, center, width, out_range=(0.0, 1.0))`、台帳から引くなら `ops3d.get("vol_window_level")`)
 
 ## 使い方
 

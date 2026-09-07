@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_reduction_report — 3D <code style="color:#22d3bf">resolution</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh × mesh</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;mesh_reduction_report&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)</code> (to call the implementation directly, <code style="color:#22d3bf">import meshres; meshres.mesh_reduction_report(V, F, V2, F2, samples=4000, seed=0, detail_quantile=0.9)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;mesh_reduction_report&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>What a reduction (decimation, remesh, voxelisation) lost, in numbers (`<code style="color:#22d3bf">table</code>`).</p>
 <p>Samples *samples* area-weighted points of the <b>original</b> surface, measures</p>

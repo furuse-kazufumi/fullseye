@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_rle_decode — 3D `rle_region` op
 
 - **データ種**: `rle_region` → `voxel`
-- **呼び出し**: `import volregion; volregion.vol_rle_decode(region) -> 'np.ndarray'` (または `ops3d.get("vol_rle_decode")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_rle_decode(region) -> 'np.ndarray'` (実装を直接呼ぶなら `import volregion; volregion.vol_rle_decode(region) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("vol_rle_decode")`)
 
 ## 使い方
 

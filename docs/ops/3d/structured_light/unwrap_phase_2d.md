@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # unwrap_phase_2d — 3D `structured_light` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -> 'np.ndarray'` (または `ops3d.get("unwrap_phase_2d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("unwrap_phase_2d")`)
 
 ## 使い方
 

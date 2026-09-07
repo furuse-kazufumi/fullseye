@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rgb_to_lab — IMGMETRICS `colorspace` op
 
 - **データ種**: `rgbimage` → `lab`
-- **呼び出し**: `import imgmetrics; imgmetrics.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))` (または `opsimgmetrics.get("rgb_to_lab")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.rgb_to_lab(rgb, white=(0.95047, 1.0, 1.08883))`、台帳から引くなら `opsimgmetrics.get("rgb_to_lab")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # photon_uncertainty — PHOTON `counting` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import photoncount; photoncount.photon_uncertainty(counts, relative=False, zero_floor=0.0)` (または `opsphoton.get("photon_uncertainty")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.photon_uncertainty(counts, relative=False, zero_floor=0.0)` (実装を直接呼ぶなら `import photoncount; photoncount.photon_uncertainty(counts, relative=False, zero_floor=0.0)`、台帳から引くなら `opsphoton.get("photon_uncertainty")`)
 
 ## 使い方
 

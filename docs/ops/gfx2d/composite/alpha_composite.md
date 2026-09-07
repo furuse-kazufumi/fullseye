@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # alpha_composite — GFX2D `composite` op
 
 - **データ種**: `rgba × rgba` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.alpha_composite(src, dst)` (または `opsgfx2d.get("alpha_composite")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.alpha_composite(src, dst)` (実装を直接呼ぶなら `import gfx2d; gfx2d.alpha_composite(src, dst)`、台帳から引くなら `opsgfx2d.get("alpha_composite")`)
 
 ## 使い方
 

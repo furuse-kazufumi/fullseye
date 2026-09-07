@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # coherence — ACOUSTICS `dual` op
 
 - **データ種**: `signal × signal` → `table`
-- **呼び出し**: `import acoustics; acoustics.coherence(x, y, rate, win=None, hop=None, window='hann')` (または `opsacoustics.get("coherence")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.coherence(x, y, rate, win=None, hop=None, window='hann')` (実装を直接呼ぶなら `import acoustics; acoustics.coherence(x, y, rate, win=None, hop=None, window='hann')`、台帳から引くなら `opsacoustics.get("coherence")`)
 
 ## 使い方
 

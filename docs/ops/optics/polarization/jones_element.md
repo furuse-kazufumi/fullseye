@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # jones_element — OPTICS `polarization` op
 
 - **データ種**: `なし` → `cimage`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optics; optics.jones_element(kind='polarizer', angle_deg=0.0, retardance_deg=90.0)` (または `opsoptics.get("jones_element")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.jones_element(kind='polarizer', angle_deg=0.0, retardance_deg=90.0)` (実装を直接呼ぶなら `import optics; optics.jones_element(kind='polarizer', angle_deg=0.0, retardance_deg=90.0)`、台帳から引くなら `opsoptics.get("jones_element")`)
 
 ## 使い方
 

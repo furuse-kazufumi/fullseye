@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # material_catalog — OPTICS `material` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import surfacelib; surfacelib.material_catalog() -> 'dict'` (または `opsoptics.get("material_catalog")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.material_catalog() -> 'dict'` (実装を直接呼ぶなら `import surfacelib; surfacelib.material_catalog() -> 'dict'`、台帳から引くなら `opsoptics.get("material_catalog")`)
 
 ## 使い方
 

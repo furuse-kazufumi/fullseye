@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # wavefront_stats — OPTICS `imaging` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import optics; optics.wavefront_stats(coeffs, radial=128, angular=192)` (または `opsoptics.get("wavefront_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.wavefront_stats(coeffs, radial=128, angular=192)` (実装を直接呼ぶなら `import optics; optics.wavefront_stats(coeffs, radial=128, angular=192)`、台帳から引くなら `opsoptics.get("wavefront_stats")`)
 
 ## 使い方
 

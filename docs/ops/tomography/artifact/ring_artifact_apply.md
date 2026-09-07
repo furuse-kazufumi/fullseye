@@ -4,7 +4,7 @@ dim: tomography
 category: artifact
 in: sinogram
 out: sinogram
-examples: [ct_reconstruction]
+examples: [ct_reconstruction, poc_battery_ct_degradation]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ring_artifact_apply — TOMOGRAPHY `artifact` op
 
 - **データ種**: `sinogram` → `sinogram`
-- **呼び出し**: `import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)` (または `opstomography.get("ring_artifact_apply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)` (実装を直接呼ぶなら `import tomography; tomography.ring_artifact_apply(sinogram, gain_sigma=0.02, seed=0, offsets=None)`、台帳から引くなら `opstomography.get("ring_artifact_apply")`)
 
 ## 使い方
 
@@ -47,6 +47,7 @@ vary with angle — that is what distinguishes a ring from noise, and what makes
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_reconstruction](../../../../examples/ct_reconstruction.py) — `py -3.11 examples/ct_reconstruction.py`
+- [poc_battery_ct_degradation](../../../../examples/poc_battery_ct_degradation.py) — `py -3.11 examples/poc_battery_ct_degradation.py`
 
 ## 型が繋がる次の op(`sinogram` を入力に取れる)
 

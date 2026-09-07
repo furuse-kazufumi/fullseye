@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">opd_map — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import raytrace; raytrace.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;opd_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import raytrace; raytrace.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;opd_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Optical path difference over the exit pupil, in waves (`<code style="color:#22d3bf">image2d</code>`).</p>
 <p>The OPD of each ray is the chief ray&#x27;s optical path from a common object-space</p>

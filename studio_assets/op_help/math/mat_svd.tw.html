@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_svd — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import mathops; mathops.mat_svd(a, full_matrices=False)</code>(或 <code style="color:#22d3bf">opsmath.get(&quot;mat_svd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_svd(a, full_matrices=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathops; mathops.mat_svd(a, full_matrices=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;mat_svd&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.mat_svd(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">table</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.mat_svd.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">mathops.mat_svd</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>奇異值分解 `<code style="color:#22d3bf">A = U @ diag(s) @ Vt</code><code style="color:#22d3bf">(LAPACK </code><code style="color:#22d3bf">gesdd</code>`)。</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # region_growing — 3D `segment` op
 
 - **データ種**: `points` → `labels`
-- **呼び出し**: `import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: 'float' = 15.0, k: 'int' = 20, min_region_size: 'int' = 3) -> 'np.ndarray'` (または `ops3d.get("region_growing")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.region_growing(points, normals=None, angle_thresh_deg: 'float' = 15.0, k: 'int' = 20, min_region_size: 'int' = 3) -> 'np.ndarray'` (実装を直接呼ぶなら `import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: 'float' = 15.0, k: 'int' = 20, min_region_size: 'int' = 3) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("region_growing")`)
 
 ## 使い方
 

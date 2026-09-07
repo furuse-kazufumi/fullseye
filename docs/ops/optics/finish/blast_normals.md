@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # blast_normals — OPTICS `finish` op
 
 - **データ種**: `normalmap` → `normalmap`
-- **呼び出し**: `import metalfinish; metalfinish.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -> 'np.ndarray'` (または `opsoptics.get("blast_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -> 'np.ndarray'` (実装を直接呼ぶなら `import metalfinish; metalfinish.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("blast_normals")`)
 
 ## 使い方
 

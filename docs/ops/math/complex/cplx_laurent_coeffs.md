@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_laurent_coeffs — MATH `complex` op
 
 - **データ種**: `cpoints × cpoints` → `table`
-- **呼び出し**: `import mathops; mathops.cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4)` (または `opsmath.get("cplx_laurent_coeffs")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4)` (実装を直接呼ぶなら `import mathops; mathops.cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4)`、台帳から引くなら `opsmath.get("cplx_laurent_coeffs")`)
 
 ## 使い方
 

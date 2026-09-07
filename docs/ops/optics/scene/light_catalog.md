@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # light_catalog — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.light_catalog(maker: 'str' = None, kind: 'str' = None) -> 'dict'` (または `opsoptics.get("light_catalog")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.light_catalog(maker: 'str' = None, kind: 'str' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.light_catalog(maker: 'str' = None, kind: 'str' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("light_catalog")`)
 
 ## 使い方
 

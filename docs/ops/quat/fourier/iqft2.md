@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # iqft2 — QUAT `fourier` op
 
 - **データ種**: `qimage` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.iqft2(spectrum, side, mu=None) -> 'np.ndarray'` (または `opsquat.get("iqft2")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.iqft2(spectrum, side, mu=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.iqft2(spectrum, side, mu=None) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("iqft2")`)
 
 ## 使い方
 

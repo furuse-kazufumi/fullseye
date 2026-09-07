@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">radon_volume — TOMOGRAPHY <code style="color:#22d3bf">volume</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sinostack</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code> (oder <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>; aus dem Register: <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Projiziert jede Schicht eines `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf">-Volumens -&gt; ein </code><code style="color:#22d3bf">(Z, A, D)</code>`-Stapel.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
@@ -25,6 +25,7 @@
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">sinostack</code> als Eingabe)</h3>
 <p><a style="color:#22d3bf" href="optomography:fbp_volume">fbp_volume</a></p>

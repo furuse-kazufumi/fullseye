@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sart_reconstruct — TOMOGRAPHY `reconstruct` op
 
 - **データ種**: `sinogram` → `image2d`
-- **呼び出し**: `import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)` (または `opstomography.get("sart_reconstruct")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)` (実装を直接呼ぶなら `import tomography; tomography.sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10, relaxation=0.3, initial=None, nonnegative=True)`、台帳から引くなら `opstomography.get("sart_reconstruct")`)
 
 ## 使い方
 

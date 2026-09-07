@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # measure_with — IMGMETRICS `report` op
 
 - **データ種**: `metrics × image2d × image2d` → `metrics`
-- **呼び出し**: `import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)` (または `opsimgmetrics.get("measure_with")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)`、台帳から引くなら `opsimgmetrics.get("measure_with")`)
 
 ## 使い方
 

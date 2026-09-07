@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # interface_budget — OPTICS `scene` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import optscene; optscene.interface_budget(sensor: 'dict', interface: 'str' = 'CXP-12', links: 'int' = 4, efficiency: 'float' = 0.85, line_scan: 'bool' = False) -> 'dict'` (または `opsoptics.get("interface_budget")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.interface_budget(sensor: 'dict', interface: 'str' = 'CXP-12', links: 'int' = 4, efficiency: 'float' = 0.85, line_scan: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.interface_budget(sensor: 'dict', interface: 'str' = 'CXP-12', links: 'int' = 4, efficiency: 'float' = 0.85, line_scan: 'bool' = False) -> 'dict'`、台帳から引くなら `opsoptics.get("interface_budget")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dtof_cube_depth — PHOTON `dtof` op
 
 - **データ種**: `histcube` → `depth`
-- **呼び出し**: `import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode='peak', offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)` (または `opsphoton.get("dtof_cube_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dtof_cube_depth(cube, bin_ps=100.0, mode='peak', offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)` (実装を直接呼ぶなら `import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode='peak', offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)`、台帳から引くなら `opsphoton.get("dtof_cube_depth")`)
 
 ## 使い方
 

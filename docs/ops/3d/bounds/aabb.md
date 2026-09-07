@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # aabb — 3D `bounds` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import pcseg; pcseg.aabb(points)` (または `ops3d.get("aabb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.aabb(points)` (実装を直接呼ぶなら `import pcseg; pcseg.aabb(points)`、台帳から引くなら `ops3d.get("aabb")`)
 
 ## 使い方
 

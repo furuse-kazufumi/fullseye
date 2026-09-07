@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # estimate_flow — 3D `motion_segment` op
 
 - **データ種**: `points × points` → `flow_scattered`
-- **呼び出し**: `import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -> 'np.ndarray'` (または `ops3d.get("estimate_flow")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.estimate_flow(pts0, pts1) -> 'np.ndarray'` (実装を直接呼ぶなら `import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("estimate_flow")`)
 
 ## 使い方
 

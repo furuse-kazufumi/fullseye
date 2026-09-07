@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # scene_difference — OPTICS `scene` op
 
 - **データ種**: `table × table` → `table`
-- **呼び出し**: `import optscene; optscene.scene_difference(solid: 'dict', cavity: 'dict') -> 'dict'` (または `opsoptics.get("scene_difference")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scene_difference(solid: 'dict', cavity: 'dict') -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_difference(solid: 'dict', cavity: 'dict') -> 'dict'`、台帳から引くなら `opsoptics.get("scene_difference")`)
 
 ## 使い方
 

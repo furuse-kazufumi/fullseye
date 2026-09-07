@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">motion_magnify — MOTIONMAG <code style="color:#22d3bf">magnify</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(或 <code style="color:#22d3bf">opsmotionmag.get(&quot;motion_magnify&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmotionmag.get(&quot;motion_magnify&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把片段带内的运动放大 *alpha* 倍 -&gt; `<code style="color:#22d3bf">dict</code>`。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_spline_curve — 3D <code style="color:#22d3bf">curve</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_spline_curve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_spline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。</p>
 <p>scipy.interpolate.splprep/splev。smooth=0 は補間、&gt;0 で平滑。n=出力点数(既定=入力数)。</p>

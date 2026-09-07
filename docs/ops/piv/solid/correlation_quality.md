@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # correlation_quality — PIV `solid` op
 
 - **データ種**: `image2d × image2d × flow2d` → `image2d`
-- **呼び出し**: `import dic; dic.correlation_quality(ref: 'Any', cur: 'Any', flow: 'Any', info: 'Optional[dict]' = None, subset: 'int' = 31) -> 'np.ndarray'` (または `opspiv.get("correlation_quality")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.correlation_quality(ref: 'Any', cur: 'Any', flow: 'Any', info: 'Optional[dict]' = None, subset: 'int' = 31) -> 'np.ndarray'` (実装を直接呼ぶなら `import dic; dic.correlation_quality(ref: 'Any', cur: 'Any', flow: 'Any', info: 'Optional[dict]' = None, subset: 'int' = 31) -> 'np.ndarray'`、台帳から引くなら `opspiv.get("correlation_quality")`)
 
 ## 使い方
 

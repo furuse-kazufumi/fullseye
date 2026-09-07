@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optimize_lens — OPTICS `optimization` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)` (または `opsoptics.get("optimize_lens")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)` (実装を直接呼ぶなら `import lensopt; lensopt.optimize_lens(system, variables=None, fields=None, wavelengths=None, rings=4, efl_target=None, efl_weight=None, field_weights=None, iterations=30, damping=0.001, tolerance=1e-07, min_thickness=0.5, max_thickness=None, min_radius=1.0, pupil_fill=0.98)`、台帳から引くなら `opsoptics.get("optimize_lens")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # stat_covariance — MATH `stats` op
 
 - **データ種**: `matrix` → `matrix`
-- **呼び出し**: `import mathops; mathops.stat_covariance(x)` (または `opsmath.get("stat_covariance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.stat_covariance(x)` (実装を直接呼ぶなら `import mathops; mathops.stat_covariance(x)`、台帳から引くなら `opsmath.get("stat_covariance")`)
 
 ## 使い方
 

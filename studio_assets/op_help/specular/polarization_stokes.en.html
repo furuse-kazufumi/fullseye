@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">polarization_stokes — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">stokes</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (or <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>; from the registry, <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:<code style="color:#22d3bf">optics.stokes_analyze</code>.</p>
 <p>Stokes parameters are linear in radiance, so the spatial mean of the frames</p>

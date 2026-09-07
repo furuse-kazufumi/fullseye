@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # speckle_quality — PIV `solid` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import dic; dic.speckle_quality(img: 'Any') -> 'dict[str, float]'` (または `opspiv.get("speckle_quality")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.speckle_quality(img: 'Any') -> 'dict[str, float]'` (実装を直接呼ぶなら `import dic; dic.speckle_quality(img: 'Any') -> 'dict[str, float]'`、台帳から引くなら `opspiv.get("speckle_quality")`)
 
 ## 使い方
 

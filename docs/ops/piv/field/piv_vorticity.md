@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_vorticity — PIV `field` op
 
 - **データ種**: `flow2d` → `image2d`
-- **呼び出し**: `import pivops; pivops.piv_vorticity(flow, spacing=1.0)` (または `opspiv.get("piv_vorticity")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)` (実装を直接呼ぶなら `import pivops; pivops.piv_vorticity(flow, spacing=1.0)`、台帳から引くなら `opspiv.get("piv_vorticity")`)
 
 ## 使い方
 

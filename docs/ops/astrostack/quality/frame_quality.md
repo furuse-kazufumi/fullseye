@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # frame_quality — ASTROSTACK `quality` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import astrostack; astrostack.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)` (または `opsastrostack.get("frame_quality")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)` (実装を直接呼ぶなら `import astrostack; astrostack.frame_quality(image, threshold_sigma=5.0, max_stars=25, min_separation=3, psf_box=11, n_score_stars=5)`、台帳から引くなら `opsastrostack.get("frame_quality")`)
 
 ## 使い方
 

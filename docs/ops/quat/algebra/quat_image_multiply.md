@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # quat_image_multiply — QUAT `algebra` op
 
 - **データ種**: `qimage × qimage` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.quat_image_multiply(qimage, other, side) -> 'np.ndarray'` (または `opsquat.get("quat_image_multiply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.quat_image_multiply(qimage, other, side) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.quat_image_multiply(qimage, other, side) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("quat_image_multiply")`)
 
 ## 使い方
 

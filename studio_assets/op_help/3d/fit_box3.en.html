@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_box3 — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import measure3d; measure3d.fit_box3(points) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;fit_box3&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_box3(points) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import measure3d; measure3d.fit_box3(points) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;fit_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Oriented box fit by PCA (fast, noise-tolerant; the same construction as</p>
 <p>`<code style="color:#22d3bf">pcseg.obb</code><code style="color:#22d3bf"> but with the </code><code style="color:#22d3bf">measure</code>`-style dict). Axes are the principal</p>

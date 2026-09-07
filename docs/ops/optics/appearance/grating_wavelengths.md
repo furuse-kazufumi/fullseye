@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # grating_wavelengths — OPTICS `appearance` op
 
 - **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -> 'np.ndarray'` (または `opsoptics.get("grating_wavelengths")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -> 'np.ndarray'` (実装を直接呼ぶなら `import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("grating_wavelengths")`)
 
 ## 使い方
 

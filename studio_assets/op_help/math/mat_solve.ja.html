@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_solve — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import mathops; mathops.mat_solve(a, b)</code> (または <code style="color:#22d3bf">opsmath.get(&quot;mat_solve&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_solve(a, b)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.mat_solve(a, b)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;mat_solve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正方の線形系 `<code style="color:#22d3bf">A x = b</code><code style="color:#22d3bf"> を解く(LAPACK </code><code style="color:#22d3bf">gesv</code>`、部分ピボット LU)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">compare_frame — ANNOTATE <code style="color:#22d3bf">compose</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import annotate; annotate.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;compare_frame&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;compare_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把兩張圖並排,在交界處放<b>分隔線</b>與<b>標籤</b>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

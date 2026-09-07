@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sensor_fingerprint — IMGFORENSICS `sensor` op
 
 - **データ種**: `images` → `fingerprint`
-- **呼び出し**: `import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, zero_mean: 'bool' = True) -> 'np.ndarray'` (または `opsimgforensics.get("sensor_fingerprint")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sensor_fingerprint(images, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, zero_mean: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: 'str' = 'wiener', sigma: 'float' = 0.02, zero_mean: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("sensor_fingerprint")`)
 
 ## 使い方
 

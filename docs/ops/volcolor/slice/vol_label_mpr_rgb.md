@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_mpr_rgb — VOLCOLOR `slice` op
 
 - **データ種**: `rgbvolume` → `rgbimage`
-- **呼び出し**: `import volcolor; volcolor.vol_label_mpr_rgb(rgbvol, center=None, gap: 'int' = 4, background=(0.05, 0.05, 0.07))` (または `opsvolcolor.get("vol_label_mpr_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_mpr_rgb(rgbvol, center=None, gap: 'int' = 4, background=(0.05, 0.05, 0.07))` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_mpr_rgb(rgbvol, center=None, gap: 'int' = 4, background=(0.05, 0.05, 0.07))`、台帳から引くなら `opsvolcolor.get("vol_label_mpr_rgb")`)
 
 ## 使い方
 

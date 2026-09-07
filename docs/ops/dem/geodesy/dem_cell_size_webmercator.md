@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_cell_size_webmercator — DEM `geodesy` op
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)` (または `opsdem.get("dem_cell_size_webmercator")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)` (実装を直接呼ぶなら `import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)`、台帳から引くなら `opsdem.get("dem_cell_size_webmercator")`)
 
 ## 使い方
 

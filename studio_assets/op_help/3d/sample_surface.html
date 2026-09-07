@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sample_surface — 3D <code style="color:#22d3bf">superquadric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import superquadric; superquadric.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;sample_surface&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import superquadric; superquadric.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;sample_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>スーパー2次曲面の表面点を (eta, omega) パラメトリックにサンプリング。</p>
 <p>`<code style="color:#22d3bf">x = a1 * sgn|cos eta|^eps1 * sgn|cos omega|^eps2</code>` などの符号付きべきで</p>

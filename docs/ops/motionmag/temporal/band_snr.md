@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # band_snr — MOTIONMAG `temporal` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import motionmag; motionmag.band_snr(video, f_lo, f_hi, fps) -> 'dict'` (または `opsmotionmag.get("band_snr")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.band_snr(video, f_lo, f_hi, fps) -> 'dict'` (実装を直接呼ぶなら `import motionmag; motionmag.band_snr(video, f_lo, f_hi, fps) -> 'dict'`、台帳から引くなら `opsmotionmag.get("band_snr")`)
 
 ## 使い方
 

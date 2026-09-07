@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # apply_transport — COLORTRANSPORT `plan_use` op
 
 - **データ種**: `transport_plan × signal` → `signal`
-- **呼び出し**: `import colortransport; colortransport.apply_transport(plan, target_values)` (または `opscolortransport.get("apply_transport")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.apply_transport(plan, target_values)` (実装を直接呼ぶなら `import colortransport; colortransport.apply_transport(plan, target_values)`、台帳から引くなら `opscolortransport.get("apply_transport")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # bloom — GFX2D `post` op
 
 - **データ種**: `rgb` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)` (または `opsgfx2d.get("bloom")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)` (実装を直接呼ぶなら `import gfx2d; gfx2d.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)`、台帳から引くなら `opsgfx2d.get("bloom")`)
 
 ## 使い方
 

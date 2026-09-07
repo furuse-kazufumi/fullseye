@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">optimize_pose_graph — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pose</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;optimize_pose_graph&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;optimize_pose_graph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。</p>
 <p>poses_init (N,6)=[rvec|t] の初期推定(ドリフトあり)、edges の相対姿勢制約を満たすよう最適化。</p>

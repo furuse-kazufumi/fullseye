@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">filled_polygon — ANNOTATE <code style="color:#22d3bf">shape</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate; annotate.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (または <code style="color:#22d3bf">opsannotate.get(&quot;filled_polygon&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;filled_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>多角形の塗り(偶奇規則の交差判定 ―― :mod:<code style="color:#22d3bf">imagedraw</code> は輪郭のみ)。</p>
 <p>Parameters</p>

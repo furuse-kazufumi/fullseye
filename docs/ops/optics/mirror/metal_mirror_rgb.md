@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # metal_mirror_rgb — OPTICS `mirror` op
 
 - **データ種**: `なし` → `vector`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61) -> 'np.ndarray'` (または `opsoptics.get("metal_mirror_rgb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61) -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.metal_mirror_rgb(metal='ag', cos_i=1.0, samples=61) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("metal_mirror_rgb")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">noise_sigma — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import astrostack; astrostack.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code> (または <code style="color:#22d3bf">opsastrostack.get(&quot;noise_sigma&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import astrostack; astrostack.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code>、台帳から引くなら <code style="color:#22d3bf">opsastrostack.get(&quot;noise_sigma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。</p>
 <p>*method* `<code style="color:#22d3bf">&quot;mad&quot;</code><code style="color:#22d3bf"> は中央絶対偏差の </code><code style="color:#22d3bf">1.4826</code>` 倍(正規分布のときに標準偏差と</p>

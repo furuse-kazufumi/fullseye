@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_perturb — PROFILE `synth` op
 
 - **データ種**: `pairs` → `pairs`
-- **呼び出し**: `import profileops; profileops.profile_perturb(contour, kind='thicken', amount=0.001, extent=0.1, cycles=6.0)` (または `opsprofile.get("profile_perturb")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_perturb(contour, kind='thicken', amount=0.001, extent=0.1, cycles=6.0)` (実装を直接呼ぶなら `import profileops; profileops.profile_perturb(contour, kind='thicken', amount=0.001, extent=0.1, cycles=6.0)`、台帳から引くなら `opsprofile.get("profile_perturb")`)
 
 ## 使い方
 

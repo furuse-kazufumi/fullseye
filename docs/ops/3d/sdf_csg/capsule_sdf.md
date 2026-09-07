@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # capsule_sdf — 3D `sdf_csg` op
 
 - **データ種**: `coordgrid` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)` (または `ops3d.get("capsule_sdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.capsule_sdf(grid, a, b, radius)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)`、台帳から引くなら `ops3d.get("capsule_sdf")`)
 
 ## 使い方
 

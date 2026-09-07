@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # project_points — 3D `render` op
 
 - **データ種**: `points` → `keypoints`
-- **呼び出し**: `import match3d; match3d.project_points(points, K, R=None, t=None)` (または `ops3d.get("project_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.project_points(points, K, R=None, t=None)` (実装を直接呼ぶなら `import match3d; match3d.project_points(points, K, R=None, t=None)`、台帳から引くなら `ops3d.get("project_points")`)
 - **台帳経由の戻り値**: `fullseye.ledger.project_points(...)` は**宣言 out 型 `keypoints` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.project_points.raw(...)`、または `match3d.project_points` を直接呼ぶ。
   - 本体の返り: `(uv (N,2), depth (N,)) → uv`
 

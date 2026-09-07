@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # synthesize_silhouette — 3D `space_carving` op
 
 - **データ種**: `points` → `image2d`
-- **呼び出し**: `import visualhull; visualhull.synthesize_silhouette(points, K, R, t, size: 'Tuple[int, int]', *, fill: 'bool' = True, dilate: 'int' = 1) -> 'np.ndarray'` (または `ops3d.get("synthesize_silhouette")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.synthesize_silhouette(points, K, R, t, size: 'Tuple[int, int]', *, fill: 'bool' = True, dilate: 'int' = 1) -> 'np.ndarray'` (実装を直接呼ぶなら `import visualhull; visualhull.synthesize_silhouette(points, K, R, t, size: 'Tuple[int, int]', *, fill: 'bool' = True, dilate: 'int' = 1) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("synthesize_silhouette")`)
 
 ## 使い方
 

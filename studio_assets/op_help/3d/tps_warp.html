@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tps_warp — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">deformation × points</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_warp(model, points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>TPS モデルで点群を変形する。</p>
 <p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # medial_match — 3D `medial` op
 
 - **データ種**: `voxel × voxel` → `measurement`
-- **呼び出し**: `import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)` (または `ops3d.get("medial_match")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)` (実装を直接呼ぶなら `import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)`、台帳から引くなら `ops3d.get("medial_match")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_stream_network — DEM `hydrology` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata='error')` (または `opsdem.get("dem_stream_network")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata='error')` (実装を直接呼ぶなら `import demops; demops.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata='error')`、台帳から引くなら `opsdem.get("dem_stream_network")`)
 
 ## 使い方
 

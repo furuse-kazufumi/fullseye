@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">specular_free_transform — SPECULAR <code style="color:#22d3bf">dichromatic</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code> (または <code style="color:#22d3bf">opsspecular.get(&quot;specular_free_transform&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import specularity; specularity.specular_free_transform(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0))</code>、台帳から引くなら <code style="color:#22d3bf">opsspecular.get(&quot;specular_free_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3).</p>
 <p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>

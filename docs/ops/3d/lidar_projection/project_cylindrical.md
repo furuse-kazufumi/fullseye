@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # project_cylindrical — 3D `lidar_projection` op
 
 - **データ種**: `points` → `image2d`
-- **呼び出し**: `import spherical_proj; spherical_proj.project_cylindrical(points, h_res: 'int' = 1024, z_bins: 'int' = 64, z_range=None) -> 'np.ndarray'` (または `ops3d.get("project_cylindrical")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.project_cylindrical(points, h_res: 'int' = 1024, z_bins: 'int' = 64, z_range=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import spherical_proj; spherical_proj.project_cylindrical(points, h_res: 'int' = 1024, z_bins: 'int' = 64, z_range=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("project_cylindrical")`)
 
 ## 使い方
 

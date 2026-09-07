@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_deform_pass — PIV <code style="color:#22d3bf">estimate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pivops; pivops.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code> (または <code style="color:#22d3bf">opspiv.get(&quot;piv_deform_pass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pivops; pivops.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code>、台帳から引くなら <code style="color:#22d3bf">opspiv.get(&quot;piv_deform_pass&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass(...)</code> は**宣言 out 型 <code style="color:#22d3bf">flow2d</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass.raw(...)</code>、または <code style="color:#22d3bf">pivops.piv_deform_pass</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>

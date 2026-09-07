@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fill_holes — 3D `depth_denoise` op
 
 - **データ種**: `depth` → `depth`
-- **呼び出し**: `import depth_bilateral; depth_bilateral.fill_holes(depth: 'np.ndarray', max_radius: 'float', *, invalid: 'float | None' = 0.0, max_iter: 'int | None' = None, rel_tol: 'float' = 1e-06) -> 'np.ndarray'` (または `ops3d.get("fill_holes")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fill_holes(depth: 'np.ndarray', max_radius: 'float', *, invalid: 'float | None' = 0.0, max_iter: 'int | None' = None, rel_tol: 'float' = 1e-06) -> 'np.ndarray'` (実装を直接呼ぶなら `import depth_bilateral; depth_bilateral.fill_holes(depth: 'np.ndarray', max_radius: 'float', *, invalid: 'float | None' = 0.0, max_iter: 'int | None' = None, rel_tol: 'float' = 1e-06) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("fill_holes")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # reflect — 3D `optics` op
 
 - **データ種**: `vector × normals` → `normals`
-- **呼び出し**: `import match3d; match3d.reflect(d, n)` (または `ops3d.get("reflect")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.reflect(d, n)` (実装を直接呼ぶなら `import match3d; match3d.reflect(d, n)`、台帳から引くなら `ops3d.get("reflect")`)
 
 ## 使い方
 

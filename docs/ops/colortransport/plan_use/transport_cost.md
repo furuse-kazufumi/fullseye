@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # transport_cost — COLORTRANSPORT `plan_use` op
 
 - **データ種**: `transport_plan × matrix` → `scalar`
-- **呼び出し**: `import colortransport; colortransport.transport_cost(plan, cost)` (または `opscolortransport.get("transport_cost")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.transport_cost(plan, cost)` (実装を直接呼ぶなら `import colortransport; colortransport.transport_cost(plan, cost)`、台帳から引くなら `opscolortransport.get("transport_cost")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">bend_singlet — OPTICS <code style="color:#22d3bf">optimization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import lensopt; lensopt.bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_mm=5.0, object_mm=inf, shape_factor=None)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;bend_singlet&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_mm=5.0, object_mm=inf, shape_factor=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import lensopt; lensopt.bend_singlet(focal_mm=100.0, index=1.5168, thickness_mm=3.0, semi_aperture_mm=5.0, object_mm=inf, shape_factor=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;bend_singlet&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>給定焦距的薄單透鏡,按 Coddington 形狀因子彎曲(`<code style="color:#22d3bf">table</code>`)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

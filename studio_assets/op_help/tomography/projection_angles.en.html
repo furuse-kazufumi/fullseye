@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">projection_angles — TOMOGRAPHY <code style="color:#22d3bf">layout</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">signal</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import tomography; tomography.projection_angles(n_angles=180, span_deg=180.0, scheme=&#x27;uniform&#x27;, start_deg=0.0)</code> (or <code style="color:#22d3bf">opstomography.get(&quot;projection_angles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.projection_angles(n_angles=180, span_deg=180.0, scheme=&#x27;uniform&#x27;, start_deg=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.projection_angles(n_angles=180, span_deg=180.0, scheme=&#x27;uniform&#x27;, start_deg=0.0)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;projection_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The angle sequence of a scan, in <b>degrees</b>, as a 1-D float64 array.</p>
 <p>Three schemes, and the difference between them is what happens when a scan is</p>
@@ -40,6 +40,7 @@
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ct_fidelity">poc_ct_fidelity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ct_fidelity.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">signal</code> as input)</h3>

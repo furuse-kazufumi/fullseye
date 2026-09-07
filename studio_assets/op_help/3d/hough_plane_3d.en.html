@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">hough_plane_3d — 3D <code style="color:#22d3bf">detect</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;hough_plane_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.hough_plane_3d(vol, device=&#x27;cpu&#x27;, ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;hough_plane_3d&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Plane detection (the 3-D lift of the 2-D Hough line). Uses the gradient as the normal and votes into (normal n, distance d) space.</p>

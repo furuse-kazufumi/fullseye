@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_distance — 3D `shape_descriptor` op
 
 - **データ種**: `descriptor × descriptor` → `measurement`
-- **呼び出し**: `import descriptors3d; descriptors3d.shape_distance(desc_a, desc_b, metric: 'str' = 'l1') -> 'float'` (または `ops3d.get("shape_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_distance(desc_a, desc_b, metric: 'str' = 'l1') -> 'float'` (実装を直接呼ぶなら `import descriptors3d; descriptors3d.shape_distance(desc_a, desc_b, metric: 'str' = 'l1') -> 'float'`、台帳から引くなら `ops3d.get("shape_distance")`)
 
 ## 使い方
 

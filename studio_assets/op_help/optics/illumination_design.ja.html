@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">illumination_design — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;illumination_design&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illumdesign; illumdesign.illumination_design(surface=&#x27;glossy&#x27;, defect=&#x27;topographic&#x27;, slope_deg=10.0, part_size_mm=50.0, camera_height_mm=300.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;illumination_design&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>面と欠陥の組合せに対して標準的な照明ファミリを順位づける(`<code style="color:#22d3bf">table</code>`)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

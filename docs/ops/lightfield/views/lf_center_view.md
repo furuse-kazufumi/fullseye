@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_center_view — LIGHTFIELD `views` op
 
 - **データ種**: `lightfield` → `image2d`
-- **呼び出し**: `import lightfield; lightfield.lf_center_view(lf, mode='average')` (または `opslightfield.get("lf_center_view")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_center_view(lf, mode='average')` (実装を直接呼ぶなら `import lightfield; lightfield.lf_center_view(lf, mode='average')`、台帳から引くなら `opslightfield.get("lf_center_view")`)
 
 ## 使い方
 

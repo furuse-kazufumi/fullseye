@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # decimate_qem — 3D `mesh_process` op
 
 - **データ種**: `mesh` → `mesh`
-- **呼び出し**: `import meshrepair; meshrepair.decimate_qem(V, F, target_faces, protect=None)` (または `ops3d.get("decimate_qem")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.decimate_qem(V, F, target_faces, protect=None)` (実装を直接呼ぶなら `import meshrepair; meshrepair.decimate_qem(V, F, target_faces, protect=None)`、台帳から引くなら `ops3d.get("decimate_qem")`)
 
 ## 使い方
 
@@ -61,7 +61,7 @@ for a cheap collision proxy; not a replacement for a dedicated remesher.
 
 ## 同カテゴリ(`mesh_process`)
 
-[laplacian_smooth](laplacian_smooth.md) · [taubin_smooth](taubin_smooth.md) · [face_normals](face_normals.md) · [vertex_normals](vertex_normals.md) · [mesh_area](mesh_area.md) · [vertex_curvature](vertex_curvature.md)
+[laplacian_smooth](laplacian_smooth.md) · [taubin_smooth](taubin_smooth.md) · [face_normals](face_normals.md) · [vertex_normals](vertex_normals.md) · [mesh_area](mesh_area.md) · [vertex_curvature](vertex_curvature.md) · [face_areas](face_areas.md) · [mesh_volume](mesh_volume.md)
 
 ---
 *Provenance: meshrepair.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

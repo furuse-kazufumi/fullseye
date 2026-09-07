@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_form_error — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.surface_form_error(height, degree=1)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;surface_form_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_form_error(height, degree=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.surface_form_error(height, degree=1)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;surface_form_error&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_error(...)</code> returns **only the declared out type <code style="color:#22d3bf">measurement</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.surface_form_error.raw(...)</code> or call <code style="color:#22d3bf">match3d.surface_form_error</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(residual, rms, pv) → pv float</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>

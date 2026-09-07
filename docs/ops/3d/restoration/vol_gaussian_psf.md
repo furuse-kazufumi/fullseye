@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_gaussian_psf — 3D `restoration` op
 
 - **データ種**: `measurement` → `voxel`
-- **呼び出し**: `import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)` (または `ops3d.get("vol_gaussian_psf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_gaussian_psf(sigma, truncate=4.0)` (実装を直接呼ぶなら `import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)`、台帳から引くなら `ops3d.get("vol_gaussian_psf")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # grid_lines — ANNOTATE `plot` op
 
 - **データ種**: `image2d × axes` → `image2d`
-- **呼び出し**: `import annotate; annotate.grid_lines(img, axes, xticks=None, yticks=None, color='neutral', width=1, alpha=0.35, scheme='okabe_ito', style=None)` (または `opsannotate.get("grid_lines")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.grid_lines(img, axes, xticks=None, yticks=None, color='neutral', width=1, alpha=0.35, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.grid_lines(img, axes, xticks=None, yticks=None, color='neutral', width=1, alpha=0.35, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("grid_lines")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # slab_transmittance — OPTICS `glassbody` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import glassmirror; glassmirror.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -> 'np.ndarray'` (または `opsoptics.get("slab_transmittance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("slab_transmittance")`)
 
 ## 使い方
 

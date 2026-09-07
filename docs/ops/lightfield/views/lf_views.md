@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_views — LIGHTFIELD `views` op
 
 - **データ種**: `lightfield` → `images`
-- **呼び出し**: `import lightfield; lightfield.lf_views(lf)` (または `opslightfield.get("lf_views")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_views(lf)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_views(lf)`、台帳から引くなら `opslightfield.get("lf_views")`)
 
 ## 使い方
 

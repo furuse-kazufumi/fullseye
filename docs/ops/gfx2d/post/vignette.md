@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vignette — GFX2D `post` op
 
 - **データ種**: `rgb` → `rgb`
-- **呼び出し**: `import gfx2d; gfx2d.vignette(rgb, strength=0.6, radius=1.0, power=2.0)` (または `opsgfx2d.get("vignette")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vignette(rgb, strength=0.6, radius=1.0, power=2.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.vignette(rgb, strength=0.6, radius=1.0, power=2.0)`、台帳から引くなら `opsgfx2d.get("vignette")`)
 
 ## 使い方
 

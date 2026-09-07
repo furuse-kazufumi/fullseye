@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_wall_thickness — 3D <code style="color:#22d3bf">probe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness(...)</code> は**宣言 out 型 <code style="color:#22d3bf">signal</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness.raw(...)</code>、または <code style="color:#22d3bf">volprobe.vol_wall_thickness</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>プローブ `<code style="color:#22d3bf">p0 -&gt; p1</code>` に沿った肉厚 —— 産業用 CT の定番計測。</p>

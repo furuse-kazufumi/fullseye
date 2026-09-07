@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">star_detect — ASTROSTACK <code style="color:#22d3bf">photometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">keypoints</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method=&#x27;mad&#x27;)</code> (または <code style="color:#22d3bf">opsastrostack.get(&quot;star_detect&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method=&#x27;mad&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import astrostack; astrostack.star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200, edge_margin=None, centroid_box=None, method=&#x27;mad&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsastrostack.get(&quot;star_detect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>星を検出して `<code style="color:#22d3bf">(row, col)</code>` の重心列を返す。</p>
 <p>背景と雑音を :func:<code style="color:#22d3bf">noise_sigma</code> と同じ頑健推定で出し、</p>

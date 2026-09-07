@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # error_level_map — IMGFORENSICS `compression` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import imgforensics; imgforensics.error_level_map(image, quality: 'int' = 90, normalize: 'bool' = True) -> 'np.ndarray'` (または `opsimgforensics.get("error_level_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.error_level_map(image, quality: 'int' = 90, normalize: 'bool' = True) -> 'np.ndarray'` (実装を直接呼ぶなら `import imgforensics; imgforensics.error_level_map(image, quality: 'int' = 90, normalize: 'bool' = True) -> 'np.ndarray'`、台帳から引くなら `opsimgforensics.get("error_level_map")`)
 
 ## 使い方
 

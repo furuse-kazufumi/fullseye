@@ -13,13 +13,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # query_distance — 3D `occupancy` op
 
 - **データ種**: `sdf × points` → `signal`
-- **呼び出し**: `import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear')` (または `ops3d.get("query_distance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear')` (実装を直接呼ぶなら `import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode='trilinear')`、台帳から引くなら `ops3d.get("query_distance")`)
 
 ## 使い方
 
 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。
 
-``bounds``/``res`` は ESDF を作った格子と同じもの。world→連続ボクセル座標は
+``bounds``/``res`` は ESDF を作った格子と同じもの(``res`` はスカラ = 立方、
+または長さ 3 の軸ごとのボクセル数)。world→連続ボクセル座標は
 ``c=(q-lo)/span*res-0.5``(voxel i の中心が c=i)。三線形補間はボクセル中心 8 近傍を
 重み付け(格子外はエッジにクランプ=最近端の値で外挿)。planner がノード/経路上の任意点で
 離隔を問い合わせる用途。返り値は ESDF と同じ world 単位。

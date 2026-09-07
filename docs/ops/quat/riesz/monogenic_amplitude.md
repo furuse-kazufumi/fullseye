@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # monogenic_amplitude — QUAT `riesz` op
 
 - **データ種**: `qimage` → `image2d`
-- **呼び出し**: `import quatimage; quatimage.monogenic_amplitude(qimage) -> 'np.ndarray'` (または `opsquat.get("monogenic_amplitude")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.monogenic_amplitude(qimage) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.monogenic_amplitude(qimage) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("monogenic_amplitude")`)
 
 ## 使い方
 

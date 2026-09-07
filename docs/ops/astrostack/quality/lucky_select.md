@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lucky_select — ASTROSTACK `quality` op
 
 - **データ種**: `images` → `indices`
-- **呼び出し**: `import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)` (または `opsastrostack.get("lucky_select")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)` (実装を直接呼ぶなら `import astrostack; astrostack.lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw)`、台帳から引くなら `opsastrostack.get("lucky_select")`)
 - **台帳経由の戻り値**: `fullseye.ledger.lucky_select(...)` は**宣言 out 型 `indices` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.lucky_select.raw(...)`、または `astrostack.lucky_select` を直接呼ぶ。
 
 ## 使い方

@@ -68,7 +68,7 @@ _物体の位置・向き・大きさを掴む_
 ### 占有地図・クリアランス
 _経路計画用の占有格子と連続距離場_
 
-- `occupancy_grid` (`points → voxel`) — 点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。
+- `occupancy_grid` (`points → voxel`) — 点群 (N,3) → 3-D 占有ボクセル格子 bool(点の落ちた voxel を占有)。
 - `esdf` (`voxel → sdf`) — 占有格子 → Euclidean 符号付き距離場 (ESDF)(外=+ 最近占有まで, 内=- 最近自由まで)。
 - `inflate` (`voxel → voxel`) — 障害物を ``radius``(world 単位)膨張した占有格子 bool(= ESDF<=radius を占有)。
 - `query_distance` (`sdf, points → signal`) — 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。

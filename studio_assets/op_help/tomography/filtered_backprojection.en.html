@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">filtered_backprojection — TOMOGRAPHY <code style="color:#22d3bf">reconstruct</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code> (or <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name=&#x27;ramp&#x27;, cutoff=1.0, span_deg=None, _op=&#x27;filtered_backprojection&#x27;)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;filtered_backprojection&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Filtered back-projection (FBP) — the standard CT reconstruction.</p>
 <p>Filter each projection along the detector axis with the ramp `<code style="color:#22d3bf">|f|</code>` (times an</p>

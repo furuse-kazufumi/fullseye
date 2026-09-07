@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cad_defect_to_cad — CADMAP `defect` op
 
 - **データ種**: `mesh × labels` → `table`
-- **呼び出し**: `import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)` (または `opscadmap.get("cad_defect_to_cad")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)` (実装を直接呼ぶなら `import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)`、台帳から引くなら `opscadmap.get("cad_defect_to_cad")`)
 
 ## 使い方
 

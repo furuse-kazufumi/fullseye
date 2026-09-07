@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # copy_move_regions — IMGFORENSICS `copy_move` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import imgforensics; imgforensics.copy_move_regions(image, method: 'str' = 'keypoint', min_matches: 'int' = 4, min_offset: 'float' = 16.0, offset_tol: 'float' = 2.0, ratio: 'float' = 0.6, patch: 'int' = 11, block: 'int' = 8, step: 'int' = 1, n_dct: 'int' = 10, min_variance: 'float' = 0.0001, max_feature_dist: 'float' = 0.02, neighbours: 'int' = 2, ransac_thresh: 'float' = 3.0, ransac_iters: 'int' = 300, seed: 'int' = 0) -> 'list'` (または `opsimgforensics.get("copy_move_regions")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.copy_move_regions(image, method: 'str' = 'keypoint', min_matches: 'int' = 4, min_offset: 'float' = 16.0, offset_tol: 'float' = 2.0, ratio: 'float' = 0.6, patch: 'int' = 11, block: 'int' = 8, step: 'int' = 1, n_dct: 'int' = 10, min_variance: 'float' = 0.0001, max_feature_dist: 'float' = 0.02, neighbours: 'int' = 2, ransac_thresh: 'float' = 3.0, ransac_iters: 'int' = 300, seed: 'int' = 0) -> 'list'` (実装を直接呼ぶなら `import imgforensics; imgforensics.copy_move_regions(image, method: 'str' = 'keypoint', min_matches: 'int' = 4, min_offset: 'float' = 16.0, offset_tol: 'float' = 2.0, ratio: 'float' = 0.6, patch: 'int' = 11, block: 'int' = 8, step: 'int' = 1, n_dct: 'int' = 10, min_variance: 'float' = 0.0001, max_feature_dist: 'float' = 0.02, neighbours: 'int' = 2, ransac_thresh: 'float' = 3.0, ransac_iters: 'int' = 300, seed: 'int' = 0) -> 'list'`、台帳から引くなら `opsimgforensics.get("copy_move_regions")`)
 
 ## 使い方
 

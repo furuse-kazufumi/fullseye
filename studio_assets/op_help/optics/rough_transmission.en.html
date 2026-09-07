@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">rough_transmission — OPTICS <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;rough_transmission&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;rough_transmission&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> returns **only the declared out type <code style="color:#22d3bf">pairs</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code> or call <code style="color:#22d3bf">surfacelib.rough_transmission</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Split the transmission of ground glass into a &quot;straight-through&quot; and a &quot;diffuse&quot; component.</p>

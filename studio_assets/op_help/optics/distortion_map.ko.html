@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">distortion_map — OPTICS <code style="color:#22d3bf">imaging_sim</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)</code>(또는 <code style="color:#22d3bf">opsoptics.get(&quot;distortion_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import lensimage; lensimage.distortion_map(system, image_size=(256, 256), pixel_pitch_um=5.5, fields=None, order=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;distortion_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>실제 주광선 높이와 근축 주광선 높이, 그리고 리맵 격자(`<code style="color:#22d3bf">table</code>`).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

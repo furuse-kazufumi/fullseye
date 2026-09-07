@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rotation_translation_error — 3D `registration_metrics` op
 
 - **データ種**: `pose × pose` → `measurement`
-- **呼び出し**: `import registration_eval; registration_eval.rotation_translation_error(gt, est)` (または `ops3d.get("rotation_translation_error")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)` (実装を直接呼ぶなら `import registration_eval; registration_eval.rotation_translation_error(gt, est)`、台帳から引くなら `ops3d.get("rotation_translation_error")`)
 
 ## 使い方
 

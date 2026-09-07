@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">data_to_pixel — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code> (または <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_to_pixel(axes, x, y)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> は**宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code>、または <code style="color:#22d3bf">annotate.data_to_pixel</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>:func:<code style="color:#22d3bf">axes_transform</code> の対応でデータ点を画素 (x,y) に写す。</p>

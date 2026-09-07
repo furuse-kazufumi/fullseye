@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fuse — 3D `tsdf_fusion` op
 
 - **データ種**: `depth` → `sdf`
-- **呼び出し**: `import tsdf_fusion; tsdf_fusion.fuse(depths: 'Sequence[np.ndarray]', Ks: 'Sequence', Rs: 'Sequence', ts: 'Sequence', bounds: 'Bounds', res: 'int', trunc: 'float') -> 'Tuple[np.ndarray, np.ndarray]'` (または `ops3d.get("fuse")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fuse(depths: 'Sequence[np.ndarray]', Ks: 'Sequence', Rs: 'Sequence', ts: 'Sequence', bounds: 'Bounds', res: 'int', trunc: 'float') -> 'Tuple[np.ndarray, np.ndarray]'` (実装を直接呼ぶなら `import tsdf_fusion; tsdf_fusion.fuse(depths: 'Sequence[np.ndarray]', Ks: 'Sequence', Rs: 'Sequence', ts: 'Sequence', bounds: 'Bounds', res: 'int', trunc: 'float') -> 'Tuple[np.ndarray, np.ndarray]'`、台帳から引くなら `ops3d.get("fuse")`)
 
 ## 使い方
 

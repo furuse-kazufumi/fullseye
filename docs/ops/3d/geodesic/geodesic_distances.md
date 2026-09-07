@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # geodesic_distances — 3D `geodesic` op
 
 - **データ種**: `points` → `signal`
-- **呼び出し**: `import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -> numpy.ndarray` (または `ops3d.get("geodesic_distances")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -> numpy.ndarray` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -> numpy.ndarray`、台帳から引くなら `ops3d.get("geodesic_distances")`)
 
 ## 使い方
 

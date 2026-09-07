@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sprite_synthesize — GFX2D `sprite` op
 
 - **データ種**: `なし` → `rgba`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import gfx2d; gfx2d.sprite_synthesize(kind='disc', size=32, color='emphasis', thickness=0.25, scheme='okabe_ito')` (または `opsgfx2d.get("sprite_synthesize")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sprite_synthesize(kind='disc', size=32, color='emphasis', thickness=0.25, scheme='okabe_ito')` (実装を直接呼ぶなら `import gfx2d; gfx2d.sprite_synthesize(kind='disc', size=32, color='emphasis', thickness=0.25, scheme='okabe_ito')`、台帳から引くなら `opsgfx2d.get("sprite_synthesize")`)
 
 ## 使い方
 

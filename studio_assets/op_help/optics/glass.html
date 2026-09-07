@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">glass — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.glass(nd, vd)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;glass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.glass(nd, vd)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.glass(nd, vd)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;glass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>A dispersive medium from its d-line index *nd* and Abbe number *vd*.</p>
 <p>Returns `<code style="color:#22d3bf">{&quot;nd&quot;: nd, &quot;vd&quot;: vd, &quot;A&quot;: A, &quot;B&quot;: B}</code>` — the two-term Cauchy model</p>

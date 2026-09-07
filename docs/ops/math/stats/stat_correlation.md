@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # stat_correlation — MATH `stats` op
 
 - **データ種**: `matrix` → `matrix`
-- **呼び出し**: `import mathops; mathops.stat_correlation(x)` (または `opsmath.get("stat_correlation")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.stat_correlation(x)` (実装を直接呼ぶなら `import mathops; mathops.stat_correlation(x)`、台帳から引くなら `opsmath.get("stat_correlation")`)
 
 ## 使い方
 

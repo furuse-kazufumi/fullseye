@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_ecef_to_geodetic — DEM `geodesy` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import demops; demops.dem_ecef_to_geodetic(xyz)` (または `opsdem.get("dem_ecef_to_geodetic")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_ecef_to_geodetic(xyz)` (実装を直接呼ぶなら `import demops; demops.dem_ecef_to_geodetic(xyz)`、台帳から引くなら `opsdem.get("dem_ecef_to_geodetic")`)
 
 ## 使い方
 

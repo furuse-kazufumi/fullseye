@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">line_from_2points — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.line_from_2points(a, b)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;line_from_2points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.line_from_2points(a, b)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.line_from_2points(a, b)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;line_from_2points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。</p>
 <p>返り値 `<code style="color:#22d3bf">(a, u)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は入力の 1 点目(float 配列)、</code><code style="color:#22d3bf">u = (b − a)/|b − a|</code>`。引数は数値の</p>

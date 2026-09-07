@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # joint_entropy — IMGMETRICS `information` op
 
 - **データ種**: `image2d × image2d` → `scalar`
-- **呼び出し**: `import imgmetrics; imgmetrics.joint_entropy(a, b, bins=64, data_range=None)` (または `opsimgmetrics.get("joint_entropy")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.joint_entropy(a, b, bins=64, data_range=None)` (実装を直接呼ぶなら `import imgmetrics; imgmetrics.joint_entropy(a, b, bins=64, data_range=None)`、台帳から引くなら `opsimgmetrics.get("joint_entropy")`)
 
 ## 使い方
 

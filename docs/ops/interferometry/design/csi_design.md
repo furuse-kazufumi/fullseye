@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # csi_design — INTERFEROMETRY `design` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import interferometry; interferometry.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)` (または `opsinterferometry.get("csi_design")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)` (実装を直接呼ぶなら `import interferometry; interferometry.csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0, width_px=640, height_px=480, min_visibility=0.3, step_divisor=8.0)`、台帳から引くなら `opsinterferometry.get("csi_design")`)
 
 ## 使い方
 

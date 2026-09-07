@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # inspection_dataset — OPTICS `scene` op
 
 - **データ種**: `table × table × table` → `table`
-- **呼び出し**: `import optscene; optscene.inspection_dataset(scene, camera, lights, n: 'int' = 8, seed: 'int' = 0, exposure_ms: 'float' = 10.0, bit_depth: 'int' = 8, jitter_mm: 'float' = 0.0, tilt_jitter_deg: 'float' = 0.0, intensity_jitter: 'float' = 0.0, depth: 'int' = 1, defects: 'dict' = None, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, environment=None, environment_gain: 'float' = 1.0) -> 'list'` (または `opsoptics.get("inspection_dataset")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.inspection_dataset(scene, camera, lights, n: 'int' = 8, seed: 'int' = 0, exposure_ms: 'float' = 10.0, bit_depth: 'int' = 8, jitter_mm: 'float' = 0.0, tilt_jitter_deg: 'float' = 0.0, intensity_jitter: 'float' = 0.0, depth: 'int' = 1, defects: 'dict' = None, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, environment=None, environment_gain: 'float' = 1.0) -> 'list'` (実装を直接呼ぶなら `import optscene; optscene.inspection_dataset(scene, camera, lights, n: 'int' = 8, seed: 'int' = 0, exposure_ms: 'float' = 10.0, bit_depth: 'int' = 8, jitter_mm: 'float' = 0.0, tilt_jitter_deg: 'float' = 0.0, intensity_jitter: 'float' = 0.0, depth: 'int' = 1, defects: 'dict' = None, supersample: 'int' = 1, adaptive: 'bool' = False, light_samples: 'int' = None, environment=None, environment_gain: 'float' = 1.0) -> 'list'`、台帳から引くなら `opsoptics.get("inspection_dataset")`)
 
 ## 使い方
 

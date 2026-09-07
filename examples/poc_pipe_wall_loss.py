@@ -1037,12 +1037,26 @@ def section_tool_gaps() -> None:
 
     z = np.zeros((32, 32))
     z[10:22, 10:22] = 1.0
-    empty = np.asarray(_L.polar_unwrap(z, r_in=40.0, r_out=60.0))
-    assert float(empty.max()) == 0.0
-    print("  (f) polar_unwrap / cylinder_unwrap の r_in・r_out は **画素単位**。"
-          "mm のまま\n      渡すと視野の外を読んで**例外なしに全部 0** が返る"
-          "(実測: 最大値 %.1f)。\n      この PoC はそれで一度真っ黒な図を出した"
-          " —— 空の出力を弾く門が要る。" % float(empty.max()))
+    # ★穴が塞がったら鳴る。2026-09-07 に鳴り、この節を書き換えた —— 「mm のまま渡すと
+    # 例外なしに全部 0 が返る」という指摘を受けて、輪が視野の外なら fail-closed に
+    # なった。空を返して黙る側から、拒否して教える側へ変わったことを記録する。
+    try:
+        empty = np.asarray(_L.polar_unwrap(z, r_in=40.0, r_out=60.0))
+        guarded = False
+    except ValueError as exc:
+        empty, guarded = None, str(exc)
+    if guarded:
+        print("  (f) polar_unwrap / cylinder_unwrap の r_in・r_out は **画素単位**。"
+              "mm のまま渡すと\n      視野の外を読むが、いまは**拒否する**"
+              "(2026-09-07 に fail-closed 化)。\n      この PoC を書いた時点では"
+              "例外なしに全部 0 が返り、真っ黒な図を 1 枚出した。")
+        assert "outside" in guarded and "millimetres" in guarded, guarded
+    else:
+        assert float(empty.max()) == 0.0
+        print("  (f) polar_unwrap / cylinder_unwrap の r_in・r_out は **画素単位**。"
+              "mm のまま\n      渡すと視野の外を読んで**例外なしに全部 0** が返る"
+              "(実測: 最大値 %.1f)。\n      この PoC はそれで一度真っ黒な図を出した"
+              " —— 空の出力を弾く門が要る。" % float(empty.max()))
 
 
 # --------------------------------------------------------------------------- #

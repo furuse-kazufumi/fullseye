@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # finish_shade — OPTICS `finish` op
 
 - **データ種**: `normalmap` → `rgbimage`
-- **呼び出し**: `import metalfinish; metalfinish.finish_shade(normals, kind='linear', metal='al', light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -> 'np.ndarray'` (または `opsoptics.get("finish_shade")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.finish_shade(normals, kind='linear', metal='al', light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -> 'np.ndarray'` (実装を直接呼ぶなら `import metalfinish; metalfinish.finish_shade(normals, kind='linear', metal='al', light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("finish_shade")`)
 
 ## 使い方
 

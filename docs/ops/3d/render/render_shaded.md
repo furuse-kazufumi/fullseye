@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # render_shaded — 3D `render` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import match3d; match3d.render_shaded(normals_img, light=(0, 0, 1), ambient=0.1)` (または `ops3d.get("render_shaded")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.render_shaded(normals_img, light=(0, 0, 1), ambient=0.1)` (実装を直接呼ぶなら `import match3d; match3d.render_shaded(normals_img, light=(0, 0, 1), ambient=0.1)`、台帳から引くなら `ops3d.get("render_shaded")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # eval_bspline_surface — 3D `freeform` op
 
 - **データ種**: `bspline_surface × image2d × image2d` → `image2d`
-- **呼び出し**: `import bspline_surf; bspline_surf.eval_bspline_surface(tck, x, y, grid=False)` (または `ops3d.get("eval_bspline_surface")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.eval_bspline_surface(tck, x, y, grid=False)` (実装を直接呼ぶなら `import bspline_surf; bspline_surf.eval_bspline_surface(tck, x, y, grid=False)`、台帳から引くなら `ops3d.get("eval_bspline_surface")`)
 
 ## 使い方
 

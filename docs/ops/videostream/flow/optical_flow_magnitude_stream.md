@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # optical_flow_magnitude_stream — VIDEOSTREAM `flow` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.optical_flow_magnitude_stream(video, **flow_kwargs) -> 'np.ndarray'` (または `opsvideostream.get("optical_flow_magnitude_stream")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.optical_flow_magnitude_stream(video, **flow_kwargs) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.optical_flow_magnitude_stream(video, **flow_kwargs) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("optical_flow_magnitude_stream")`)
 
 ## 使い方
 

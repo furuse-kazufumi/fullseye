@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # estimate_normals — 3D `curvature` op
 
 - **データ種**: `points` → `normals`
-- **呼び出し**: `import curvature3d; curvature3d.estimate_normals(points, k=25)` (または `ops3d.get("estimate_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.estimate_normals(points, k=25)` (実装を直接呼ぶなら `import curvature3d; curvature3d.estimate_normals(points, k=25)`、台帳から引くなら `ops3d.get("estimate_normals")`)
 
 ## 使い方
 

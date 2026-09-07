@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tps_fit — 3D <code style="color:#22d3bf">deform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">deformation</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;tps_fit&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;tps_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D Thin-Plate-Spline を制御点対応から当てはめる。</p>
 <p>移動側の制御点 `<code style="color:#22d3bf">src_ctrl</code><code style="color:#22d3bf"> を固定側 </code><code style="color:#22d3bf">dst_ctrl</code>` へ写す TPS 係数を、鞍点系</p>

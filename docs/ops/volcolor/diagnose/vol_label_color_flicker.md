@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_color_flicker — VOLCOLOR `diagnose` op
 
 - **データ種**: `voxel` → `table`
-- **呼び出し**: `import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis='z', seed: 'int' = 0, connectivity: 'int' = 26, connectivity_2d: 'int' = 8)` (または `opsvolcolor.get("vol_label_color_flicker")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_color_flicker(vol_binary, axis='z', seed: 'int' = 0, connectivity: 'int' = 26, connectivity_2d: 'int' = 8)` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis='z', seed: 'int' = 0, connectivity: 'int' = 26, connectivity_2d: 'int' = 8)`、台帳から引くなら `opsvolcolor.get("vol_label_color_flicker")`)
 
 ## 使い方
 

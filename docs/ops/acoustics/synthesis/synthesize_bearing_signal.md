@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # synthesize_bearing_signal — ACOUSTICS `synthesis` op
 
 - **データ種**: `なし` → `signal`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import acoustics; acoustics.synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0, defect_hz=107.0, modulation=0.5, mode='am', damping=0.05, noise_sigma=0.0, seed=None)` (または `opsacoustics.get("synthesize_bearing_signal")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0, defect_hz=107.0, modulation=0.5, mode='am', damping=0.05, noise_sigma=0.0, seed=None)` (実装を直接呼ぶなら `import acoustics; acoustics.synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0, defect_hz=107.0, modulation=0.5, mode='am', damping=0.05, noise_sigma=0.0, seed=None)`、台帳から引くなら `opsacoustics.get("synthesize_bearing_signal")`)
 
 ## 使い方
 

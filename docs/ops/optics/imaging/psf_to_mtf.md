@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # psf_to_mtf — OPTICS `imaging` op
 
 - **データ種**: `image2d` → `pairs`
-- **呼び出し**: `import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)` (または `opsoptics.get("psf_to_mtf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.psf_to_mtf(psf, pixel_pitch_um=1.0)` (実装を直接呼ぶなら `import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)`、台帳から引くなら `opsoptics.get("psf_to_mtf")`)
 
 ## 使い方
 

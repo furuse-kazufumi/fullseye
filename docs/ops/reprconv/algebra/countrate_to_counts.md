@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # countrate_to_counts — REPRCONV `algebra` op
 
 - **データ種**: `countrate` → `counts`
-- **呼び出し**: `import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)` (または `opsreprconv.get("countrate_to_counts")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)` (実装を直接呼ぶなら `import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)`、台帳から引くなら `opsreprconv.get("countrate_to_counts")`)
 
 ## 使い方
 

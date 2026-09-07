@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dtof_cube_depth — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">histcube</code> → <code style="color:#22d3bf">depth</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code>(또는 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>`<code style="color:#22d3bf">(H, W, T)</code>` 광자 히스토그램 큐브로부터의 깊이 맵 —— dToF 역문제.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

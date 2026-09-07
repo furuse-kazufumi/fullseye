@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_strain_rate — PIV `field` op
 
 - **データ種**: `flow2d` → `image2d`
-- **呼び出し**: `import pivops; pivops.piv_strain_rate(flow, spacing=1.0)` (または `opspiv.get("piv_strain_rate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_strain_rate(flow, spacing=1.0)` (実装を直接呼ぶなら `import pivops; pivops.piv_strain_rate(flow, spacing=1.0)`、台帳から引くなら `opspiv.get("piv_strain_rate")`)
 
 ## 使い方
 

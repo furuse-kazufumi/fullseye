@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # hough_sphere_3d — 3D `detect` op
 
 - **データ種**: `voxel` → `primitive`
-- **呼び出し**: `import match3d; match3d.hough_sphere_3d(vol, device='cpu', radii=None, mc=0.0, iso=0.5, subvoxel=True)` (または `ops3d.get("hough_sphere_3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.hough_sphere_3d(vol, device='cpu', radii=None, mc=0.0, iso=0.5, subvoxel=True)` (実装を直接呼ぶなら `import match3d; match3d.hough_sphere_3d(vol, device='cpu', radii=None, mc=0.0, iso=0.5, subvoxel=True)`、台帳から引くなら `ops3d.get("hough_sphere_3d")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mean_curvature — 3D `curvature` op
 
 - **データ種**: `points` → `signal`
-- **呼び出し**: `import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)` (または `ops3d.get("mean_curvature")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mean_curvature(points, k=25, normals=None)` (実装を直接呼ぶなら `import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)`、台帳から引くなら `ops3d.get("mean_curvature")`)
 
 ## 使い方
 

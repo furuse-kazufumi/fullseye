@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # canny3d — 3D `edges` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import edges3d; edges3d.canny3d(vol, low: 'float', high: 'float', sigma: 'float' = 1.0) -> 'np.ndarray'` (または `ops3d.get("canny3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.canny3d(vol, low: 'float', high: 'float', sigma: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import edges3d; edges3d.canny3d(vol, low: 'float', high: 'float', sigma: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("canny3d")`)
 
 ## 使い方
 

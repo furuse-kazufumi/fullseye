@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_offset — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_offset(sdf, r)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SDF のゼロ等値面を距離 `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> だけ法線方向へ動かす = </code><code style="color:#22d3bf">sdf - r</code>`(r&gt;0 膨張, r&lt;0 収縮)。</p>
 <p>新しいゼロ集合は旧 `<code style="color:#22d3bf">sdf == r</code><code style="color:#22d3bf"> の等値面。全点で距離が一様に </code><code style="color:#22d3bf">r</code>` シフトするので、距離場</p>

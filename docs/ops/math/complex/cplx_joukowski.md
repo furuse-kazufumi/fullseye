@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_joukowski — MATH `complex` op
 
 - **データ種**: `cpoints` → `cpoints`
-- **呼び出し**: `import mathops; mathops.cplx_joukowski(z, c=1.0)` (または `opsmath.get("cplx_joukowski")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_joukowski(z, c=1.0)` (実装を直接呼ぶなら `import mathops; mathops.cplx_joukowski(z, c=1.0)`、台帳から引くなら `opsmath.get("cplx_joukowski")`)
 
 ## 使い方
 

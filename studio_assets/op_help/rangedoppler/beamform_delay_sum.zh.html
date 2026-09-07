@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">beamform_delay_sum — RANGEDOPPLER <code style="color:#22d3bf">beamform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import rangedoppler; rangedoppler.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)</code>(或 <code style="color:#22d3bf">opsrangedoppler.get(&quot;beamform_delay_sum&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)</code>(要直接调用实现,<code style="color:#22d3bf">import rangedoppler; rangedoppler.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)</code>;从台账取用则 <code style="color:#22d3bf">opsrangedoppler.get(&quot;beamform_delay_sum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>单个距离-多普勒单元的延迟求和(Bartlett)角度谱。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">render_lambertian — 3D <code style="color:#22d3bf">photometric</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;render_lambertian&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_lambertian(normals, albedo, light, ambient=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;render_lambertian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法线 + 反照率 + 光源方向 → Lambert 图像(检测样本生成 / GT 验证 / 逆渲染的正向)。→ HxW。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

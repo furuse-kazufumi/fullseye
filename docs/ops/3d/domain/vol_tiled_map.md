@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_tiled_map — 3D `domain` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volops; volops.vol_tiled_map(vol, fn, tile=64, overlap=8)` (または `ops3d.get("vol_tiled_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_tiled_map(vol, fn, tile=64, overlap=8)` (実装を直接呼ぶなら `import volops; volops.vol_tiled_map(vol, fn, tile=64, overlap=8)`、台帳から引くなら `ops3d.get("vol_tiled_map")`)
 
 ## 使い方
 

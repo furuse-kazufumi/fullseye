@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_aspect — DEM `surface` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_aspect(dem, cell_size, method='horn', flat_tol=1e-12)` (または `opsdem.get("dem_aspect")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method='horn', flat_tol=1e-12)` (実装を直接呼ぶなら `import demops; demops.dem_aspect(dem, cell_size, method='horn', flat_tol=1e-12)`、台帳から引くなら `opsdem.get("dem_aspect")`)
 
 ## 使い方
 

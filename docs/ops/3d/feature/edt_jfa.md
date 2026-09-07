@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # edt_jfa — 3D `feature` op
 
 - **データ種**: `voxel` → `sdf`
-- **呼び出し**: `import match3d; match3d.edt_jfa(seed_bool, device='cpu')` (または `ops3d.get("edt_jfa")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.edt_jfa(seed_bool, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.edt_jfa(seed_bool, device='cpu')`、台帳から引くなら `ops3d.get("edt_jfa")`)
 - **台帳経由の戻り値**: `fullseye.ledger.edt_jfa(...)` は**宣言 out 型 `sdf` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.edt_jfa.raw(...)`、または `match3d.edt_jfa` を直接呼ぶ。
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 

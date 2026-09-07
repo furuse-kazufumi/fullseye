@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">box_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;box_sdf&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.box_sdf(grid, center, half_extents)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;box_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>軸平行直方体の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
 <p>Inigo Quilez の box SDF: `<code style="color:#22d3bf">q = |p-center| - half_extents</code>` とし、</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # arc — ANNOTATE `shape` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.arc(img, center, radius, start_deg, end_deg, color='neutral', width=2, alpha=1.0, scheme='okabe_ito')` (または `opsannotate.get("arc")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.arc(img, center, radius, start_deg, end_deg, color='neutral', width=2, alpha=1.0, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate; annotate.arc(img, center, radius, start_deg, end_deg, color='neutral', width=2, alpha=1.0, scheme='okabe_ito')`、台帳から引くなら `opsannotate.get("arc")`)
 
 ## 使い方
 

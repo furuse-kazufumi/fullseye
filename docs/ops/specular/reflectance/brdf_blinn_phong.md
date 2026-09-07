@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # brdf_blinn_phong — SPECULAR `reflectance` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import specularity; specularity.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)` (または `opsspecular.get("brdf_blinn_phong")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)` (実装を直接呼ぶなら `import specularity; specularity.brdf_blinn_phong(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), shininess=32.0)`、台帳から引くなら `opsspecular.get("brdf_blinn_phong")`)
 
 ## 使い方
 

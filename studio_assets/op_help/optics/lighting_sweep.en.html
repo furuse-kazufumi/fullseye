@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lighting_sweep — OPTICS <code style="color:#22d3bf">illumination</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">pairs</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import illumdesign; illumdesign.lighting_sweep(surface=&#x27;glossy&#x27;, slope_deg=10.0, elevations_deg=None, radius_mm=60.0, n=24, camera_height_mm=300.0, kind=&#x27;ring&#x27;)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;lighting_sweep&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lighting_sweep(surface=&#x27;glossy&#x27;, slope_deg=10.0, elevations_deg=None, radius_mm=60.0, n=24, camera_height_mm=300.0, kind=&#x27;ring&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import illumdesign; illumdesign.lighting_sweep(surface=&#x27;glossy&#x27;, slope_deg=10.0, elevations_deg=None, radius_mm=60.0, n=24, camera_height_mm=300.0, kind=&#x27;ring&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;lighting_sweep&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Defect contrast versus ring-light elevation angle (`<code style="color:#22d3bf">pairs</code>`).</p>
 <p>A ring (or bar) of *radius_mm* is placed at heights giving each elevation</p>

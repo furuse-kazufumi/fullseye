@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_chord_frame — PROFILE `frame` op
 
 - **データ種**: `pairs` → `table`
-- **呼び出し**: `import profileops; profileops.profile_chord_frame(contour)` (または `opsprofile.get("profile_chord_frame")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_chord_frame(contour)` (実装を直接呼ぶなら `import profileops; profileops.profile_chord_frame(contour)`、台帳から引くなら `opsprofile.get("profile_chord_frame")`)
 
 ## 使い方
 

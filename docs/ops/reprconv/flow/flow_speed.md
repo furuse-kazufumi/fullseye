@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # flow_speed — REPRCONV `flow` op
 
 - **データ種**: `flow_scattered` → `signal`
-- **呼び出し**: `import reprconv; reprconv.flow_speed(flow)` (または `opsreprconv.get("flow_speed")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.flow_speed(flow)` (実装を直接呼ぶなら `import reprconv; reprconv.flow_speed(flow)`、台帳から引くなら `opsreprconv.get("flow_speed")`)
 
 ## 使い方
 

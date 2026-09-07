@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_circle_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.fit_circle_3d(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_circle_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_3d(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.fit_circle_3d(points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_circle_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。</p>
 <p>`<code style="color:#22d3bf">fit_plane_3d</code><code style="color:#22d3bf"> で面 </code><code style="color:#22d3bf">(c, n)</code><code style="color:#22d3bf"> を取り、面内の正規直交基底 </code><code style="color:#22d3bf">(e1, e2)</code>` に点を射影して 2-D の</p>

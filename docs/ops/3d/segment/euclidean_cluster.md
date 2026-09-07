@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # euclidean_cluster — 3D `segment` op
 
 - **データ種**: `points` → `labels`
-- **呼び出し**: `import segment3d; segment3d.euclidean_cluster(points, tol: 'float', min_size: 'int' = 10) -> 'np.ndarray'` (または `ops3d.get("euclidean_cluster")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.euclidean_cluster(points, tol: 'float', min_size: 'int' = 10) -> 'np.ndarray'` (実装を直接呼ぶなら `import segment3d; segment3d.euclidean_cluster(points, tol: 'float', min_size: 'int' = 10) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("euclidean_cluster")`)
 
 ## 使い方
 

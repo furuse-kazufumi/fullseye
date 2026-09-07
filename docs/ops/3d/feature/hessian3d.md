@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # hessian3d — 3D `feature` op
 
 - **データ種**: `voxel` → `hessian`
-- **呼び出し**: `import match3d; match3d.hessian3d(vol, device='cpu')` (または `ops3d.get("hessian3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.hessian3d(vol, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.hessian3d(vol, device='cpu')`、台帳から引くなら `ops3d.get("hessian3d")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

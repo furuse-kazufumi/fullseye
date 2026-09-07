@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">iqft2 — QUAT <code style="color:#22d3bf">fourier</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import quatimage; quatimage.iqft2(spectrum, side, mu=None) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsquat.get(&quot;iqft2&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iqft2(spectrum, side, mu=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import quatimage; quatimage.iqft2(spectrum, side, mu=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsquat.get(&quot;iqft2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Inverse quaternion Fourier transform of a <b>centred</b> spectrum. → (H, W, 4).</p>
 <p>The exact inverse of :func:<code style="color:#22d3bf">qft2</code> <b>for the same side and the same mu</b>:</p>

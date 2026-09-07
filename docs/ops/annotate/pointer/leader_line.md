@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # leader_line — ANNOTATE `pointer` op
 
 - **データ種**: `image2d × text` → `image2d`
-- **呼び出し**: `import annotate; annotate.leader_line(img, anchor_xy, target_xy, text=None, color='emphasis', width=2, cap='dot', cap_size=4, elbow=True, scheme='okabe_ito', style=None, **text_kw)` (または `opsannotate.get("leader_line")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.leader_line(img, anchor_xy, target_xy, text=None, color='emphasis', width=2, cap='dot', cap_size=4, elbow=True, scheme='okabe_ito', style=None, **text_kw)` (実装を直接呼ぶなら `import annotate; annotate.leader_line(img, anchor_xy, target_xy, text=None, color='emphasis', width=2, cap='dot', cap_size=4, elbow=True, scheme='okabe_ito', style=None, **text_kw)`、台帳から引くなら `opsannotate.get("leader_line")`)
 
 ## 使い方
 

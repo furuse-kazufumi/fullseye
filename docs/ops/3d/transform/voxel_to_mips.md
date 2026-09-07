@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # voxel_to_mips — 3D `transform` op
 
 - **データ種**: `voxel` → `images`
-- **呼び出し**: `import match3d; match3d.voxel_to_mips(vol)` (または `ops3d.get("voxel_to_mips")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.voxel_to_mips(vol)` (実装を直接呼ぶなら `import match3d; match3d.voxel_to_mips(vol)`、台帳から引くなら `ops3d.get("voxel_to_mips")`)
 
 ## 使い方
 

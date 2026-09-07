@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # particle_render — GFX2D `particle` op
 
 - **データ種**: `table` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.particle_render(state, height, width, mode='add', fade=True)` (または `opsgfx2d.get("particle_render")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.particle_render(state, height, width, mode='add', fade=True)` (実装を直接呼ぶなら `import gfx2d; gfx2d.particle_render(state, height, width, mode='add', fade=True)`、台帳から引くなら `opsgfx2d.get("particle_render")`)
 
 ## 使い方
 

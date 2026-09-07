@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_label — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import volops; volops.vol_label(vol_binary, connectivity=26)</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;vol_label&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label(vol_binary, connectivity=26)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.vol_label(vol_binary, connectivity=26)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_label&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.vol_label(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">labels</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.vol_label.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">volops.vol_label</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(labels, n)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>

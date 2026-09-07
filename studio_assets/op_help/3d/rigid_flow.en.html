@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">rigid_flow — 3D <code style="color:#22d3bf">scene_flow3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.rigid_flow(pts0, pts1, max_iter: &#x27;int&#x27; = 20) -&gt; &#x27;dict&#x27;</code> (or <code style="color:#22d3bf">ops3d.get(&quot;rigid_flow&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rigid_flow(pts0, pts1, max_iter: &#x27;int&#x27; = 20) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.rigid_flow(pts0, pts1, max_iter: &#x27;int&#x27; = 20) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;rigid_flow&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.rigid_flow(...)</code> returns **only the declared out type <code style="color:#22d3bf">pose</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.rigid_flow.raw(...)</code> or call <code style="color:#22d3bf">scene_flow3d.rigid_flow</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate the single rigid motion that explains pts0 -&gt; pts1, via nearest-neighbour correspondences and Kabsch (ICP-like).</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # filtered_backprojection — TOMOGRAPHY `reconstruct` op
 
 - **データ種**: `sinogram` → `image2d`
-- **呼び出し**: `import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection')` (または `opstomography.get("filtered_backprojection")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection')` (実装を直接呼ぶなら `import tomography; tomography.filtered_backprojection(sinogram, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None, _op='filtered_backprojection')`、台帳から引くなら `opstomography.get("filtered_backprojection")`)
 
 ## 使い方
 

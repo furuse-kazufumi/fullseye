@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # points_to_gaussians — REPRCONV `gaussians` op
 
 - **データ種**: `points` → `gaussians`
-- **呼び出し**: `import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)` (または `opsreprconv.get("points_to_gaussians")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.points_to_gaussians(points, k=6, scale=1.0)` (実装を直接呼ぶなら `import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)`、台帳から引くなら `opsreprconv.get("points_to_gaussians")`)
 
 ## 使い方
 

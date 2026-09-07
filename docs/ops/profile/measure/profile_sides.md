@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_sides — PROFILE `measure` op
 
 - **データ種**: `pairs` → `table`
-- **呼び出し**: `import profileops; profileops.profile_sides(contour, n=101, normalise=True)` (または `opsprofile.get("profile_sides")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_sides(contour, n=101, normalise=True)` (実装を直接呼ぶなら `import profileops; profileops.profile_sides(contour, n=101, normalise=True)`、台帳から引くなら `opsprofile.get("profile_sides")`)
 
 ## 使い方
 

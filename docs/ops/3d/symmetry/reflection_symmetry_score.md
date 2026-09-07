@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # reflection_symmetry_score — 3D `symmetry` op
 
 - **データ種**: `points` → `measurement`
-- **呼び出し**: `import symmetry3d; symmetry3d.reflection_symmetry_score(points, plane_point, plane_normal)` (または `ops3d.get("reflection_symmetry_score")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.reflection_symmetry_score(points, plane_point, plane_normal)` (実装を直接呼ぶなら `import symmetry3d; symmetry3d.reflection_symmetry_score(points, plane_point, plane_normal)`、台帳から引くなら `ops3d.get("reflection_symmetry_score")`)
 
 ## 使い方
 

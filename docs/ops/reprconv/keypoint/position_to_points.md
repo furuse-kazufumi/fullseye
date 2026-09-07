@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # position_to_points — REPRCONV `keypoint` op
 
 - **データ種**: `position` → `points`
-- **呼び出し**: `import reprconv; reprconv.position_to_points(position)` (または `opsreprconv.get("position_to_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.position_to_points(position)` (実装を直接呼ぶなら `import reprconv; reprconv.position_to_points(position)`、台帳から引くなら `opsreprconv.get("position_to_points")`)
 
 ## 使い方
 

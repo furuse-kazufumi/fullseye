@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # anscombe_inverse — PHOTON `transform` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import photoncount; photoncount.anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0, mode='algebraic')` (または `opsphoton.get("anscombe_inverse")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0, mode='algebraic')` (実装を直接呼ぶなら `import photoncount; photoncount.anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0, mode='algebraic')`、台帳から引くなら `opsphoton.get("anscombe_inverse")`)
 
 ## 使い方
 

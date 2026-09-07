@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # color_lut — GFX2D `post` op
 
 - **データ種**: `なし` → `lut`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import gfx2d; gfx2d.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)` (または `opsgfx2d.get("color_lut")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)` (実装を直接呼ぶなら `import gfx2d; gfx2d.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)`、台帳から引くなら `opsgfx2d.get("color_lut")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">cplx_contour_circle — MATH <code style="color:#22d3bf">complex</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">cpoints</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_contour_circle(center=0.0, radius=1.0, n=256, orientation=&#x27;ccw&#x27;)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_circle&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_contour_circle(center=0.0, radius=1.0, n=256, orientation=&#x27;ccw&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.cplx_contour_circle(center=0.0, radius=1.0, n=256, orientation=&#x27;ccw&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_circle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sample a circle as a closed contour — the standard integration path.</p>
 <p>Returns `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> complex points </code><code style="color:#22d3bf">center + radius * exp(±i * 2*pi*k/n)</code>`,</p>

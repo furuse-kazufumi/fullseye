@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # compute_fpfh — 3D `feature_register` op
 
 - **データ種**: `points × normals` → `descriptor`
-- **呼び出し**: `import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)` (または `ops3d.get("compute_fpfh")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.compute_fpfh(points, normals, k=60, n_bins=11)` (実装を直接呼ぶなら `import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)`、台帳から引くなら `ops3d.get("compute_fpfh")`)
 
 ## 使い方
 

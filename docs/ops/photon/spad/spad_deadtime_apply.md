@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # spad_deadtime_apply — PHOTON `spad` op
 
 - **データ種**: `countrate` → `countrate`
-- **呼び出し**: `import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)` (または `opsphoton.get("spad_deadtime_apply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)` (実装を直接呼ぶなら `import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)`、台帳から引くなら `opsphoton.get("spad_deadtime_apply")`)
 
 ## 使い方
 

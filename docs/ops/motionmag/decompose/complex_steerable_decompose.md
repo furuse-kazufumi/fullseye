@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # complex_steerable_decompose — MOTIONMAG `decompose` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import motionmag; motionmag.complex_steerable_decompose(image, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'` (または `opsmotionmag.get("complex_steerable_decompose")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.complex_steerable_decompose(image, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import motionmag; motionmag.complex_steerable_decompose(image, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'`、台帳から引くなら `opsmotionmag.get("complex_steerable_decompose")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # inner_box3 — 3D `regionprops` op
 
 - **データ種**: `voxel` → `primitive`
-- **呼び出し**: `import regionprops3d; regionprops3d.inner_box3(vol) -> 'dict'` (または `ops3d.get("inner_box3")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.inner_box3(vol) -> 'dict'` (実装を直接呼ぶなら `import regionprops3d; regionprops3d.inner_box3(vol) -> 'dict'`、台帳から引くなら `ops3d.get("inner_box3")`)
 
 ## 使い方
 

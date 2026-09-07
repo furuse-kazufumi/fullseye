@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # invariants — SHAPE2D `descriptor` op
 
 - **データ種**: `efdmodel` → `pairs`
-- **呼び出し**: `import fourierdesc; fourierdesc.invariants(model, scale_invariant=True)` (または `opsshape2d.get("invariants")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.invariants(model, scale_invariant=True)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.invariants(model, scale_invariant=True)`、台帳から引くなら `opsshape2d.get("invariants")`)
 
 ## 使い方
 

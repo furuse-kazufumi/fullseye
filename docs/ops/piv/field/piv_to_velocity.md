@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_to_velocity — PIV `field` op
 
 - **データ種**: `flow2d` → `flow2d`
-- **呼び出し**: `import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)` (または `opspiv.get("piv_to_velocity")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_to_velocity(flow, pixel_size_m, dt_s)` (実装を直接呼ぶなら `import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)`、台帳から引くなら `opspiv.get("piv_to_velocity")`)
 
 ## 使い方
 

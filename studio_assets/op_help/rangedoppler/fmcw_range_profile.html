@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fmcw_range_profile — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">signal</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_range_profile&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_range_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Range-only profile: the fast-time FFT magnitude, averaged over the rest.</p>
 <p>The 1-D marginal of :func:<code style="color:#22d3bf">range_doppler_map</code> — what a static scene needs,</p>

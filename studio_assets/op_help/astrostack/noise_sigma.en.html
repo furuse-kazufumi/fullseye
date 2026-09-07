@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">noise_sigma — ASTROSTACK <code style="color:#22d3bf">quality</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import astrostack; astrostack.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code> (or <code style="color:#22d3bf">opsastrostack.get(&quot;noise_sigma&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code> (to call the implementation directly, <code style="color:#22d3bf">import astrostack; astrostack.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code>; from the registry, <code style="color:#22d3bf">opsastrostack.get(&quot;noise_sigma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Robustly estimate the background noise sigma (one real number that the stars cannot spoil).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

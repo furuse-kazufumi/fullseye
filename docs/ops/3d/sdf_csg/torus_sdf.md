@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # torus_sdf — 3D `sdf_csg` op
 
 - **データ種**: `coordgrid` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.torus_sdf(grid, center, axis, major_radius, minor_radius)` (または `ops3d.get("torus_sdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.torus_sdf(grid, center, axis, major_radius, minor_radius)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.torus_sdf(grid, center, axis, major_radius, minor_radius)`、台帳から引くなら `ops3d.get("torus_sdf")`)
 
 ## 使い方
 

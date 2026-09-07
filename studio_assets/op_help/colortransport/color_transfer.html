@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">color_transfer — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import colortransport; colortransport.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code> (または <code style="color:#22d3bf">opscolortransport.get(&quot;color_transfer&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import colortransport; colortransport.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opscolortransport.get(&quot;color_transfer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の色味を </code><code style="color:#22d3bf">ref</code>` に寄せる。</p>
 <p>Parameters</p>

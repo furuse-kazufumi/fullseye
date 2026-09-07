@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_resize — 3D `geom_transform` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volxform; volxform.vol_resize(vol, factor=None, shape=None, order=1, spacing=None, mode='nearest', cval=0.0)` (または `ops3d.get("vol_resize")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_resize(vol, factor=None, shape=None, order=1, spacing=None, mode='nearest', cval=0.0)` (実装を直接呼ぶなら `import volxform; volxform.vol_resize(vol, factor=None, shape=None, order=1, spacing=None, mode='nearest', cval=0.0)`、台帳から引くなら `ops3d.get("vol_resize")`)
 - **台帳経由の戻り値**: `fullseye.ledger.vol_resize(...)` は**宣言 out 型 `voxel` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.vol_resize.raw(...)`、または `volxform.vol_resize` を直接呼ぶ。
   - 本体の返り: `spacing 付き時`
 

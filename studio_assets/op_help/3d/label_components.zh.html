@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">label_components — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import regionprops3d; regionprops3d.label_components(vol, connectivity: &#x27;int&#x27; = 26)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;label_components&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_components(vol, connectivity: &#x27;int&#x27; = 26)</code>(要直接调用实现,<code style="color:#22d3bf">import regionprops3d; regionprops3d.label_components(vol, connectivity: &#x27;int&#x27; = 26)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;label_components&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.label_components(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">labels</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.label_components.raw(...)</code>,或直接调用 <code style="color:#22d3bf">regionprops3d.label_components</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(labels, n) → labels</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>

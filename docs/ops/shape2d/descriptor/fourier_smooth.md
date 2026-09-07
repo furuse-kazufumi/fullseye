@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fourier_smooth — SHAPE2D `descriptor` op
 
 - **データ種**: `pairs` → `pairs`
-- **呼び出し**: `import fourierdesc; fourierdesc.fourier_smooth(points, keep)` (または `opsshape2d.get("fourier_smooth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fourier_smooth(points, keep)` (実装を直接呼ぶなら `import fourierdesc; fourierdesc.fourier_smooth(points, keep)`、台帳から引くなら `opsshape2d.get("fourier_smooth")`)
 
 ## 使い方
 

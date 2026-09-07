@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_mahalanobis — SHAPESTAT `model` op
 
 - **データ種**: `shapemodel × points` → `measurement`
-- **呼び出し**: `import shapestats; shapestats.shape_mahalanobis(model, shape, align: 'bool' = True, cumulative: 'float' = 0.99, n_modes: 'int' = 0)` (または `opsshapestat.get("shape_mahalanobis")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_mahalanobis(model, shape, align: 'bool' = True, cumulative: 'float' = 0.99, n_modes: 'int' = 0)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_mahalanobis(model, shape, align: 'bool' = True, cumulative: 'float' = 0.99, n_modes: 'int' = 0)`、台帳から引くなら `opsshapestat.get("shape_mahalanobis")`)
 
 ## 使い方
 

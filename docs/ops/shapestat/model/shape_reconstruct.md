@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # shape_reconstruct — SHAPESTAT `model` op
 
 - **データ種**: `shapemodel × signal` → `points`
-- **呼び出し**: `import shapestats; shapestats.shape_reconstruct(model, scores)` (または `opsshapestat.get("shape_reconstruct")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.shape_reconstruct(model, scores)` (実装を直接呼ぶなら `import shapestats; shapestats.shape_reconstruct(model, scores)`、台帳から引くなら `opsshapestat.get("shape_reconstruct")`)
 
 ## 使い方
 

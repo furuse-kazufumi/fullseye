@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_simulate — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">counts</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>(또는 <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_simulate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>답을 아는 단일 화소 광자 도달 시각 히스토그램을 합성합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

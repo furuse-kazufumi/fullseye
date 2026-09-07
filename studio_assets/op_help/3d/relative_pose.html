@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">relative_pose — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pose × pose</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pose_graph; pose_graph.relative_pose(pose_i, pose_j)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;relative_pose&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.relative_pose(pose_i, pose_j)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pose_graph; pose_graph.relative_pose(pose_i, pose_j)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;relative_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。</p>
 <p>姿勢の規約は world←body(`<code style="color:#22d3bf">p_world = R p_body + t</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">T_i⁻¹ = (R_iᵀ, -R_iᵀ t_i)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">T_j</code>` を</p>

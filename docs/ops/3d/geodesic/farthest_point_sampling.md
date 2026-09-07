@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # farthest_point_sampling — 3D `geodesic` op
 
 - **データ種**: `points` → `indices`
-- **呼び出し**: `import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -> numpy.ndarray` (または `ops3d.get("farthest_point_sampling")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -> numpy.ndarray` (実装を直接呼ぶなら `import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -> numpy.ndarray`、台帳から引くなら `ops3d.get("farthest_point_sampling")`)
 
 ## 使い方
 

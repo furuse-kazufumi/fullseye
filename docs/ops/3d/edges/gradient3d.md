@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # gradient3d — 3D `edges` op
 
 - **データ種**: `voxel` → `gradient`
-- **呼び出し**: `import edges3d; edges3d.gradient3d(vol, sigma: 'float' = 1.0)` (または `ops3d.get("gradient3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gradient3d(vol, sigma: 'float' = 1.0)` (実装を直接呼ぶなら `import edges3d; edges3d.gradient3d(vol, sigma: 'float' = 1.0)`、台帳から引くなら `ops3d.get("gradient3d")`)
 
 ## 使い方
 

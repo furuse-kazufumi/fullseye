@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # opd_map — OPTICS `design` op
 
 - **データ種**: `table` → `image2d`
-- **呼び出し**: `import raytrace; raytrace.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)` (または `opsoptics.get("opd_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)` (実装を直接呼ぶなら `import raytrace; raytrace.opd_map(system, field=None, size=64, wavelength_um=None, image_mm=None, fill=0.0)`、台帳から引くなら `opsoptics.get("opd_map")`)
 
 ## 使い方
 

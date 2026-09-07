@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_subaperture — LIGHTFIELD <code style="color:#22d3bf">views</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import lightfield; lightfield.lf_subaperture(lf, v=0, u=0)</code> (or <code style="color:#22d3bf">opslightfield.get(&quot;lf_subaperture&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_subaperture(lf, v=0, u=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import lightfield; lightfield.lf_subaperture(lf, v=0, u=0)</code>; from the registry, <code style="color:#22d3bf">opslightfield.get(&quot;lf_subaperture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>One sub-aperture view — the image seen through one point of the pupil.</p>
 <p>Returns a copy of `<code style="color:#22d3bf">L[v, u]</code><code style="color:#22d3bf"> as a plain </code><code style="color:#22d3bf">(H, W)</code>` 2-D image, so every</p>

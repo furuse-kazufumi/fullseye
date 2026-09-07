@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">select_points — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × indices</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code> (or <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A point set `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> and indices </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → the sub-set </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">. The consuming side of </code><code style="color:#22d3bf">indices</code>`.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # warp_piecewise_affine — SHAPE2D `morph` op
 
 - **データ種**: `image2d × pairs × pairs` → `image2d`
-- **呼び出し**: `import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)` (または `opsshape2d.get("warp_piecewise_affine")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)` (実装を直接呼ぶなら `import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)`、台帳から引くなら `opsshape2d.get("warp_piecewise_affine")`)
 
 ## 使い方
 

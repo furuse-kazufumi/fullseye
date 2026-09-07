@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate3d_arrow — 3D `annotate3d` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate3d; annotate3d.annotate3d_arrow(img, p0, p1, pose, K, depth=None, color='emphasis', width=2, head_len=12.0, head_width=9.0, occlusion_tol=0.01, scheme='okabe_ito')` (または `ops3d.get("annotate3d_arrow")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate3d_arrow(img, p0, p1, pose, K, depth=None, color='emphasis', width=2, head_len=12.0, head_width=9.0, occlusion_tol=0.01, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate3d; annotate3d.annotate3d_arrow(img, p0, p1, pose, K, depth=None, color='emphasis', width=2, head_len=12.0, head_width=9.0, occlusion_tol=0.01, scheme='okabe_ito')`、台帳から引くなら `ops3d.get("annotate3d_arrow")`)
 
 ## 使い方
 

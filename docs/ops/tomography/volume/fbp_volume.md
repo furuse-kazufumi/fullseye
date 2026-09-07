@@ -4,7 +4,7 @@ dim: tomography
 category: volume
 in: sinostack
 out: voxel
-examples: [tomography_reconstruct]
+examples: [poc_battery_ct_degradation, tomography_reconstruct]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fbp_volume — TOMOGRAPHY `volume` op
 
 - **データ種**: `sinostack` → `voxel`
-- **呼び出し**: `import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None)` (または `opstomography.get("fbp_volume")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None)` (実装を直接呼ぶなら `import tomography; tomography.fbp_volume(stack, angles_deg=None, size=None, filter_name='ramp', cutoff=1.0, span_deg=None)`、台帳から引くなら `opstomography.get("fbp_volume")`)
 
 ## 使い方
 
@@ -49,6 +49,7 @@ tomographic volume becomes a wrong number — see
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_battery_ct_degradation](../../../../examples/poc_battery_ct_degradation.py) — `py -3.11 examples/poc_battery_ct_degradation.py`
 - [tomography_reconstruct](../../../../examples/tomography_reconstruct.py) — `py -3.11 examples/tomography_reconstruct.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # measure_pos — MEASURE1D `caliper` op
 
 - **データ種**: `image2d × measurehandle` → `table`
-- **呼び出し**: `import measuring1d; measuring1d.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition='all')` (または `opsmeasure1d.get("measure_pos")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition='all')` (実装を直接呼ぶなら `import measuring1d; measuring1d.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition='all')`、台帳から引くなら `opsmeasure1d.get("measure_pos")`)
 
 ## 使い方
 

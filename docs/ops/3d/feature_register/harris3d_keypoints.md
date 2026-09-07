@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # harris3d_keypoints — 3D `feature_register` op
 
 - **データ種**: `voxel` → `keypoints`
-- **呼び出し**: `import feat_harris; feat_harris.harris3d_keypoints(vol, device='cpu', k=0.005, nms=3, topn=64, sigma_i=1.5, response='mineig', rel_thresh=0.01, border=2)` (または `ops3d.get("harris3d_keypoints")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.harris3d_keypoints(vol, device='cpu', k=0.005, nms=3, topn=64, sigma_i=1.5, response='mineig', rel_thresh=0.01, border=2)` (実装を直接呼ぶなら `import feat_harris; feat_harris.harris3d_keypoints(vol, device='cpu', k=0.005, nms=3, topn=64, sigma_i=1.5, response='mineig', rel_thresh=0.01, border=2)`、台帳から引くなら `ops3d.get("harris3d_keypoints")`)
 - **台帳経由の戻り値**: `fullseye.ledger.harris3d_keypoints(...)` は**宣言 out 型 `keypoints` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.harris3d_keypoints.raw(...)`、または `feat_harris.harris3d_keypoints` を直接呼ぶ。
   - 本体の返り: `(keypoints, scores)`
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)

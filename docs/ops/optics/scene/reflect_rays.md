@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # reflect_rays — OPTICS `scene` op
 
 - **データ種**: `points × points` → `points`
-- **呼び出し**: `import optscene; optscene.reflect_rays(directions, normals)` (または `opsoptics.get("reflect_rays")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.reflect_rays(directions, normals)` (実装を直接呼ぶなら `import optscene; optscene.reflect_rays(directions, normals)`、台帳から引くなら `opsoptics.get("reflect_rays")`)
 
 ## 使い方
 

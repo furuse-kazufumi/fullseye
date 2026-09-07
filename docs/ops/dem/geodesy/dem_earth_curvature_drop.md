@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_earth_curvature_drop — DEM `geodesy` op
 
 - **データ種**: `なし` → `measurement`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)` (または `opsdem.get("dem_earth_curvature_drop")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_earth_curvature_drop(distance_m, refraction=0.13)` (実装を直接呼ぶなら `import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)`、台帳から引くなら `opsdem.get("dem_earth_curvature_drop")`)
 
 ## 使い方
 

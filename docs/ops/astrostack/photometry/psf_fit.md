@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # psf_fit — ASTROSTACK `photometry` op
 
 - **データ種**: `image2d × keypoints` → `table`
-- **呼び出し**: `import astrostack; astrostack.psf_fit(image, centers, model='gaussian', box=11, max_iter=200)` (または `opsastrostack.get("psf_fit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.psf_fit(image, centers, model='gaussian', box=11, max_iter=200)` (実装を直接呼ぶなら `import astrostack; astrostack.psf_fit(image, centers, model='gaussian', box=11, max_iter=200)`、台帳から引くなら `opsastrostack.get("psf_fit")`)
 
 ## 使い方
 

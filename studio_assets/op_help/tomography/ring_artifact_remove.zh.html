@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">ring_artifact_remove — TOMOGRAPHY <code style="color:#22d3bf">artifact</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode=&#x27;median&#x27;)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_remove&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ring_artifact_remove(sinogram, window=5, mode=&#x27;median&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import tomography; tomography.ring_artifact_remove(sinogram, window=5, mode=&#x27;median&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;ring_artifact_remove&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过压平角度平均剖面来去掉逐探测器 bin 的偏移。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>

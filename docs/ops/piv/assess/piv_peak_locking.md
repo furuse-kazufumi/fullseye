@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_peak_locking — PIV `assess` op
 
 - **データ種**: `flow2d` → `table`
-- **呼び出し**: `import pivops; pivops.piv_peak_locking(flow, bins=20)` (または `opspiv.get("piv_peak_locking")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)` (実装を直接呼ぶなら `import pivops; pivops.piv_peak_locking(flow, bins=20)`、台帳から引くなら `opspiv.get("piv_peak_locking")`)
 
 ## 使い方
 

@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # scene_flow_lk — 3D `motion` op
 
 - **データ種**: `voxel × voxel` → `flow_dense`
-- **呼び出し**: `import match3d; match3d.scene_flow_lk(vol0, vol1, device='cpu', win=3, levels=3, iters=3, reg=0.001)` (または `ops3d.get("scene_flow_lk")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scene_flow_lk(vol0, vol1, device='cpu', win=3, levels=3, iters=3, reg=0.001)` (実装を直接呼ぶなら `import match3d; match3d.scene_flow_lk(vol0, vol1, device='cpu', win=3, levels=3, iters=3, reg=0.001)`、台帳から引くなら `ops3d.get("scene_flow_lk")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

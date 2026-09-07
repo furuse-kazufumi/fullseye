@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_labels_to_meshes — VOLCOLOR `render` op
 
 - **データ種**: `labels` → `table`
-- **呼び出し**: `import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: 'int' = 0, level: 'float' = 0.5, axes: 'str' = 'xyz')` (または `opsvolcolor.get("vol_labels_to_meshes")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: 'int' = 0, level: 'float' = 0.5, axes: 'str' = 'xyz')` (実装を直接呼ぶなら `import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: 'int' = 0, level: 'float' = 0.5, axes: 'str' = 'xyz')`、台帳から引くなら `opsvolcolor.get("vol_labels_to_meshes")`)
 
 ## 使い方
 

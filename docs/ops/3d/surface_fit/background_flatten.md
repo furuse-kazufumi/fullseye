@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # background_flatten — 3D `surface_fit` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import match3d; match3d.background_flatten(image, degree=2)` (または `ops3d.get("background_flatten")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.background_flatten(image, degree=2)` (実装を直接呼ぶなら `import match3d; match3d.background_flatten(image, degree=2)`、台帳から引くなら `ops3d.get("background_flatten")`)
 
 ## 使い方
 

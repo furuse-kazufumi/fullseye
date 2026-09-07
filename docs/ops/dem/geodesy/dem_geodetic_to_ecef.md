@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_geodetic_to_ecef — DEM `geodesy` op
 
 - **データ種**: `なし` → `points`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)` (または `opsdem.get("dem_geodetic_to_ecef")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)` (実装を直接呼ぶなら `import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)`、台帳から引くなら `opsdem.get("dem_geodetic_to_ecef")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_synth_naca4 — PROFILE `synth` op
 
 - **データ種**: `なし` → `pairs`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import profileops; profileops.profile_synth_naca4(code='2412', n=161, closed_te=False)` (または `opsprofile.get("profile_synth_naca4")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_synth_naca4(code='2412', n=161, closed_te=False)` (実装を直接呼ぶなら `import profileops; profileops.profile_synth_naca4(code='2412', n=161, closed_te=False)`、台帳から引くなら `opsprofile.get("profile_synth_naca4")`)
 
 ## 使い方
 

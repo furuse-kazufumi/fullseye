@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # light_wavelengths — OPTICS `scene` op
 
 - **データ種**: `table` → `pairs`
-- **呼び出し**: `import optscene; optscene.light_wavelengths(light: 'dict', samples: 'int' = 5)` (または `opsoptics.get("light_wavelengths")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.light_wavelengths(light: 'dict', samples: 'int' = 5)` (実装を直接呼ぶなら `import optscene; optscene.light_wavelengths(light: 'dict', samples: 'int' = 5)`、台帳から引くなら `opsoptics.get("light_wavelengths")`)
 
 ## 使い方
 

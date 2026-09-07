@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # correlation_score — REPRCONV `score` op
 
 - **データ種**: `voxel × voxel` → `score`
-- **呼び出し**: `import reprconv; reprconv.correlation_score(voxel_a, voxel_b)` (または `opsreprconv.get("correlation_score")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)` (実装を直接呼ぶなら `import reprconv; reprconv.correlation_score(voxel_a, voxel_b)`、台帳から引くなら `opsreprconv.get("correlation_score")`)
 
 ## 使い方
 

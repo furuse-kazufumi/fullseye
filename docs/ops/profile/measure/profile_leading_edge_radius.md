@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_leading_edge_radius — PROFILE `measure` op
 
 - **データ種**: `pairs` → `measurement`
-- **呼び出し**: `import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)` (または `opsprofile.get("profile_leading_edge_radius")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)` (実装を直接呼ぶなら `import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)`、台帳から引くなら `opsprofile.get("profile_leading_edge_radius")`)
 
 ## 使い方
 

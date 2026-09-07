@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">jones_apply — OPTICS <code style="color:#22d3bf">polarization</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cimage × jones</code> → <code style="color:#22d3bf">jones</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optics; optics.jones_apply(jones, state)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;jones_apply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jones_apply(jones, state)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.jones_apply(jones, state)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;jones_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Push a Jones vector through a Jones matrix: `<code style="color:#22d3bf">[Ex&#x27;, Ey&#x27;] = J @ [Ex, Ey]</code>`.</p>
 <p>*jones* is a `<code style="color:#22d3bf">(2, 2)</code>` matrix (complex, or real which is promoted) and</p>

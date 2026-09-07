@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_legend — VOLCOLOR `measure` op
 
 - **データ種**: `labels` → `table`
-- **呼び出し**: `import volcolor; volcolor.vol_label_legend(labels, props=None, seed: 'int' = 0, spacing=None, measure: 'str' = 'volume', top=None)` (または `opsvolcolor.get("vol_label_legend")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_legend(labels, props=None, seed: 'int' = 0, spacing=None, measure: 'str' = 'volume', top=None)` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_legend(labels, props=None, seed: 'int' = 0, spacing=None, measure: 'str' = 'volume', top=None)`、台帳から引くなら `opsvolcolor.get("vol_label_legend")`)
 
 ## 使い方
 

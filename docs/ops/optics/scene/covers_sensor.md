@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # covers_sensor — OPTICS `scene` op
 
 - **データ種**: `table × table` → `table`
-- **呼び出し**: `import optscene; optscene.covers_sensor(lens: 'dict', sensor: 'dict') -> 'dict'` (または `opsoptics.get("covers_sensor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.covers_sensor(lens: 'dict', sensor: 'dict') -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.covers_sensor(lens: 'dict', sensor: 'dict') -> 'dict'`、台帳から引くなら `opsoptics.get("covers_sensor")`)
 
 ## 使い方
 

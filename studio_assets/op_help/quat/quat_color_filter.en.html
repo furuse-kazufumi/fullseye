@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">quat_color_filter — QUAT <code style="color:#22d3bf">color</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import quatimage; quatimage.quat_color_filter(qimage, direction_rgb, mode) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsquat.get(&quot;quat_color_filter&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quat_color_filter(qimage, direction_rgb, mode) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import quatimage; quatimage.quat_color_filter(qimage, direction_rgb, mode) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsquat.get(&quot;quat_color_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Keep or remove one colour direction, exactly. → (H, W, 4).</p>
 <p>`<code style="color:#22d3bf">mode=&quot;remove&quot;</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">v - (v.g) g</code><code style="color:#22d3bf"> for the unit RGB direction </code><code style="color:#22d3bf">g</code>`:</p>

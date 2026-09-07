@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_to_points — 3D `transform` op
 
 - **データ種**: `mesh` → `points`
-- **呼び出し**: `import match3d; match3d.mesh_to_points(vertices, faces, samples=20000, seed=0)` (または `ops3d.get("mesh_to_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_to_points(vertices, faces, samples=20000, seed=0)` (実装を直接呼ぶなら `import match3d; match3d.mesh_to_points(vertices, faces, samples=20000, seed=0)`、台帳から引くなら `ops3d.get("mesh_to_points")`)
 
 ## 使い方
 

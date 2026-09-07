@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # edge_points — 3D `edges` op
 
 - **データ種**: `voxel` → `points`
-- **呼び出し**: `import edges3d; edges3d.edge_points(edge_mask) -> 'np.ndarray'` (または `ops3d.get("edge_points")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.edge_points(edge_mask) -> 'np.ndarray'` (実装を直接呼ぶなら `import edges3d; edges3d.edge_points(edge_mask) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("edge_points")`)
 
 ## 使い方
 

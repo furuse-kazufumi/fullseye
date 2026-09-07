@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # transport_plan_1d — COLORTRANSPORT `transport` op
 
 - **データ種**: `signal × signal` → `transport_plan`
-- **呼び出し**: `import colortransport; colortransport.transport_plan_1d(u_values, v_values)` (または `opscolortransport.get("transport_plan_1d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.transport_plan_1d(u_values, v_values)` (実装を直接呼ぶなら `import colortransport; colortransport.transport_plan_1d(u_values, v_values)`、台帳から引くなら `opscolortransport.get("transport_plan_1d")`)
 
 ## 使い方
 

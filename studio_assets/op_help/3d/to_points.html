@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">to_points — 3D <code style="color:#22d3bf">transform</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel × points × mesh × depth × gaussians</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.to_points(data, kind, samples=20000, **kw)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fuse3d; fuse3d.to_points(data, kind, samples=20000, **kw)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>任意の 3D 構造 → 点群(共通表現)。全5構造を 1 本の入口へ統合。</p>
 <p>kind: &quot;points&quot;(N,3)/ &quot;mesh&quot;=(vertices,faces)/ &quot;depth&quot;=depth+{fx,fy,cx,cy[,stride]}/</p>

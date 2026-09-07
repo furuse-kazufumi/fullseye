@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">tolerance_analysis — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)</code>(或 <code style="color:#22d3bf">opsoptics.get(&quot;tolerance_analysis&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)</code>(要直接呼叫實作,<code style="color:#22d3bf">import raytrace; raytrace.tolerance_analysis(system, tolerances=None, trials=100, seed=0, field=None, rings=6)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;tolerance_analysis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>製造公差的蒙地卡羅 + 逐參數靈敏度(`<code style="color:#22d3bf">table</code>`)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

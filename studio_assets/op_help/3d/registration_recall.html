@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">registration_recall — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: &#x27;float&#x27;, *, corr_thresh: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;registration_recall&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.registration_recall(source, target, gt_transform, est_transform, thresh: &#x27;float&#x27;, *, corr_thresh: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: &#x27;float&#x27;, *, corr_thresh: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;registration_recall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。</p>
 <p>GT 変換 `<code style="color:#22d3bf">gt_transform</code>` で source を target フレームへ写し、target 側の最近傍</p>

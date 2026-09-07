@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # dem_sky_view_factor — DEM `visibility` op
 
 - **データ種**: `depth` → `image2d`
-- **呼び出し**: `import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)` (または `opsdem.get("dem_sky_view_factor")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)` (実装を直接呼ぶなら `import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)`、台帳から引くなら `opsdem.get("dem_sky_view_factor")`)
 
 ## 使い方
 

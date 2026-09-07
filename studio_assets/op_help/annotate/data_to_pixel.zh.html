@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">data_to_pixel — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code>(或 <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_to_pixel(axes, x, y)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code>,或直接调用 <code style="color:#22d3bf">annotate.data_to_pixel</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 :func:<code style="color:#22d3bf">axes_transform</code> 的映射把数据点映到像素 `<code style="color:#22d3bf">(x, y)</code>`。</p>

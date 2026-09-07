@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_select_lod — 3D `resolution` op
 
 - **データ種**: `table` → `table`
-- **呼び出し**: `import meshres; meshres.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use='max_error')` (または `ops3d.get("mesh_select_lod")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use='max_error')` (実装を直接呼ぶなら `import meshres; meshres.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use='max_error')`、台帳から引くなら `ops3d.get("mesh_select_lod")`)
 
 ## 使い方
 

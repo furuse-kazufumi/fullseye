@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_boundary — 3D `boundary` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volops; volops.vol_boundary(vol_binary, connectivity=6, side='inner')` (または `ops3d.get("vol_boundary")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_boundary(vol_binary, connectivity=6, side='inner')` (実装を直接呼ぶなら `import volops; volops.vol_boundary(vol_binary, connectivity=6, side='inner')`、台帳から引くなら `ops3d.get("vol_boundary")`)
 
 ## 使い方
 

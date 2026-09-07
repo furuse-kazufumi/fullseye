@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">dem_curvature — DEM <code style="color:#22d3bf">surface</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import demops; demops.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code> (または <code style="color:#22d3bf">opsdem.get(&quot;dem_curvature&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import demops; demops.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdem.get(&quot;dem_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>曲率 [1/m]。`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;profile&quot;</code><code style="color:#22d3bf">(断面) / </code><code style="color:#22d3bf">&quot;planform&quot;</code><code style="color:#22d3bf">(平面) / </code><code style="color:#22d3bf">&quot;total&quot;</code>`。</p>
 <p>Zevenbergen &amp; Thorne (1987) の 2 次曲面当てはめ。断面曲率は流下方向の</p>

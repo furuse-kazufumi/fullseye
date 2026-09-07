@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # gaussian_curvature — 3D `curvature` op
 
 - **データ種**: `points` → `signal`
-- **呼び出し**: `import curvature3d; curvature3d.gaussian_curvature(points, k=25)` (または `ops3d.get("gaussian_curvature")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gaussian_curvature(points, k=25)` (実装を直接呼ぶなら `import curvature3d; curvature3d.gaussian_curvature(points, k=25)`、台帳から引くなら `ops3d.get("gaussian_curvature")`)
 
 ## 使い方
 

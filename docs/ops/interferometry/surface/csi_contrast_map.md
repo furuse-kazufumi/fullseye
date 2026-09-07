@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # csi_contrast_map — INTERFEROMETRY `surface` op
 
 - **データ種**: `zscan` → `image2d`
-- **呼び出し**: `import interferometry; interferometry.csi_contrast_map(stack, remove_bias=True)` (または `opsinterferometry.get("csi_contrast_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.csi_contrast_map(stack, remove_bias=True)` (実装を直接呼ぶなら `import interferometry; interferometry.csi_contrast_map(stack, remove_bias=True)`、台帳から引くなら `opsinterferometry.get("csi_contrast_map")`)
 
 ## 使い方
 

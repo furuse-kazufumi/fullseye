@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # absolute_phase — 3D `structured_light` op
 
 - **データ種**: `image2d × image2d` → `image2d`
-- **呼び出し**: `import fringe; fringe.absolute_phase(wrapped, coarse) -> 'np.ndarray'` (または `ops3d.get("absolute_phase")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.absolute_phase(wrapped, coarse) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.absolute_phase(wrapped, coarse) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("absolute_phase")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_flow_magnitude — PIV `field` op
 
 - **データ種**: `flow2d` → `image2d`
-- **呼び出し**: `import pivops; pivops.piv_flow_magnitude(flow)` (または `opspiv.get("piv_flow_magnitude")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_flow_magnitude(flow)` (実装を直接呼ぶなら `import pivops; pivops.piv_flow_magnitude(flow)`、台帳から引くなら `opspiv.get("piv_flow_magnitude")`)
 
 ## 使い方
 

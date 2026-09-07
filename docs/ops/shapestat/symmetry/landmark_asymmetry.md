@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # landmark_asymmetry — SHAPESTAT `symmetry` op
 
 - **データ種**: `points` → `signal`
-- **呼び出し**: `import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)` (または `opsshapestat.get("landmark_asymmetry")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)` (実装を直接呼ぶなら `import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)`、台帳から引くなら `opsshapestat.get("landmark_asymmetry")`)
 
 ## 使い方
 

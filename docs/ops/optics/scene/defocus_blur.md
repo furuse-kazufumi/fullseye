@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # defocus_blur — OPTICS `scene` op
 
 - **データ種**: `rgbimage × image2d × table` → `rgbimage`
-- **呼び出し**: `import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: 'float' = 5.6, focus_mm: 'float' = None, layers: 'int' = 7) -> 'np.ndarray'` (または `opsoptics.get("defocus_blur")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.defocus_blur(image, depth_mm, camera, f_number: 'float' = 5.6, focus_mm: 'float' = None, layers: 'int' = 7) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: 'float' = 5.6, focus_mm: 'float' = None, layers: 'int' = 7) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("defocus_blur")`)
 
 ## 使い方
 

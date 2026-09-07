@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # beam_hardening_correct — TOMOGRAPHY `artifact` op
 
 - **データ種**: `sinogram` → `sinogram`
-- **呼び出し**: `import tomography; tomography.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)` (または `opstomography.get("beam_hardening_correct")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)` (実装を直接呼ぶなら `import tomography; tomography.beam_hardening_correct(sinogram, high_energy_fraction=0.5, attenuation_ratio=0.4, poly_coeffs=None, n_table=4096)`、台帳から引くなら `opstomography.get("beam_hardening_correct")`)
 
 ## 使い方
 

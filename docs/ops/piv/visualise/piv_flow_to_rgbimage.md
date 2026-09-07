@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_flow_to_rgbimage — PIV `visualise` op
 
 - **データ種**: `flow2d` → `rgb`
-- **呼び出し**: `import pivops; pivops.piv_flow_to_rgbimage(flow, scale=None)` (または `opspiv.get("piv_flow_to_rgbimage")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_flow_to_rgbimage(flow, scale=None)` (実装を直接呼ぶなら `import pivops; pivops.piv_flow_to_rgbimage(flow, scale=None)`、台帳から引くなら `opspiv.get("piv_flow_to_rgbimage")`)
 
 ## 使い方
 

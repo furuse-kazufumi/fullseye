@@ -14,7 +14,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # refine_translation_lk — 3D `refine` op
 
 - **データ種**: `voxel × voxel × position` → `position`
-- **呼び出し**: `import match3d; match3d.refine_translation_lk(scene, template, init_pos, device='cpu', iters=30, tol=0.0001)` (または `ops3d.get("refine_translation_lk")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.refine_translation_lk(scene, template, init_pos, device='cpu', iters=30, tol=0.0001)` (実装を直接呼ぶなら `import match3d; match3d.refine_translation_lk(scene, template, init_pos, device='cpu', iters=30, tol=0.0001)`、台帳から引くなら `ops3d.get("refine_translation_lk")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

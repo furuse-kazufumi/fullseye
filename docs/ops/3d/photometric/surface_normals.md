@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # surface_normals — 3D `photometric` op
 
 - **データ種**: `image2d` → `normalmap`
-- **呼び出し**: `import photometric; photometric.surface_normals(z)` (または `ops3d.get("surface_normals")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.surface_normals(z)` (実装を直接呼ぶなら `import photometric; photometric.surface_normals(z)`、台帳から引くなら `ops3d.get("surface_normals")`)
 
 ## 使い方
 

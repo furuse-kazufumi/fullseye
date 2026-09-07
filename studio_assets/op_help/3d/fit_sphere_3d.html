@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_sphere_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.fit_sphere_3d(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_sphere_3d(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.fit_sphere_3d(points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_sphere_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。</p>
 <p>`<code style="color:#22d3bf">|p|² = 2c·p + (r² − |c|²)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[2p, 1]</code><code style="color:#22d3bf"> の線形最小二乗(</code><code style="color:#22d3bf">lstsq</code>`)で解く代数フィット</p>

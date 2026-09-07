@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">normalized_mutual_information — IMGMETRICS <code style="color:#22d3bf">information</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import imgmetrics; imgmetrics.normalized_mutual_information(a, b, bins=64, data_range=None)</code> (または <code style="color:#22d3bf">opsimgmetrics.get(&quot;normalized_mutual_information&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalized_mutual_information(a, b, bins=64, data_range=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgmetrics; imgmetrics.normalized_mutual_information(a, b, bins=64, data_range=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;normalized_mutual_information&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正規化相互情報量 2*I(A;B) / (H(A) + H(B))。同じ絵で 1.0。</p>
 <p>周辺エントロピーが両方 0(どちらも一様な絵)のときは、**上限が 0 なので</p>

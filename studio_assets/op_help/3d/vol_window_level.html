@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_window_level — 3D <code style="color:#22d3bf">gray</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volgray; volgray.vol_window_level(vol, center, width, out_range=(0.0, 1.0))</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_window_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_window_level(vol, center, width, out_range=(0.0, 1.0))</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volgray; volgray.vol_window_level(vol, center, width, out_range=(0.0, 1.0))</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_window_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>CT window/level (HU windowing) — the radiologist&#x27;s daily linear remap.</p>
 <p>Maps the intensity window `<code style="color:#22d3bf">[center - width/2, center + width/2]</code>` linearly</p>

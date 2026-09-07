@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # csi_height_map — INTERFEROMETRY `surface` op
 
 - **データ種**: `zscan` → `depth`
-- **呼び出し**: `import interferometry; interferometry.csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode='gaussian', remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0, on_invalid='raise', fill_value=nan)` (または `opsinterferometry.get("csi_height_map")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode='gaussian', remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0, on_invalid='raise', fill_value=nan)` (実装を直接呼ぶなら `import interferometry; interferometry.csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6, mode='gaussian', remove_bias=True, min_visibility=0.3, max_edge_envelope=0.05, carrier_tolerance=2.0, on_invalid='raise', fill_value=nan)`、台帳から引くなら `opsinterferometry.get("csi_height_map")`)
 
 ## 使い方
 

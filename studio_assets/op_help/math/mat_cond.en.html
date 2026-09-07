@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mat_cond — MATH <code style="color:#22d3bf">linalg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import mathops; mathops.mat_cond(a)</code> (or <code style="color:#22d3bf">opsmath.get(&quot;mat_cond&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_cond(a)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.mat_cond(a)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mat_cond&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Spectral (2-norm) condition number `<code style="color:#22d3bf">s_max / s_min</code>` — the numerical canary of the whole linalg family.</p>
 <p>`<code style="color:#22d3bf">cond == 1</code>` for an orthogonal/orthonormal matrix (the best possible);</p>

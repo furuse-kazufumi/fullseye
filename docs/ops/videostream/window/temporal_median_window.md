@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # temporal_median_window — VIDEOSTREAM `window` op
 
 - **データ種**: `video` → `video`
-- **呼び出し**: `import videostream; videostream.temporal_median_window(video, window: 'int' = 5) -> 'np.ndarray'` (または `opsvideostream.get("temporal_median_window")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.temporal_median_window(video, window: 'int' = 5) -> 'np.ndarray'` (実装を直接呼ぶなら `import videostream; videostream.temporal_median_window(video, window: 'int' = 5) -> 'np.ndarray'`、台帳から引くなら `opsvideostream.get("temporal_median_window")`)
 
 ## 使い方
 

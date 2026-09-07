@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sdf_offset — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_offset(sdf, r)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verschiebt die Null-Niveaumenge eines SDF um die Distanz `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> entlang der Normalen = </code><code style="color:#22d3bf">sdf − r</code>` (r&gt;0 bläht auf, r&lt;0 schrumpft).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>

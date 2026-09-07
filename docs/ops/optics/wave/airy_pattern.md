@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # airy_pattern — OPTICS `wave` op
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optics; optics.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)` (または `opsoptics.get("airy_pattern")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)` (実装を直接呼ぶなら `import optics; optics.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)`、台帳から引くなら `opsoptics.get("airy_pattern")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sinogram_center_of_rotation — TOMOGRAPHY `geometry` op
 
 - **データ種**: `sinogram` → `measurement`
-- **呼び出し**: `import tomography; tomography.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)` (または `opstomography.get("sinogram_center_of_rotation")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)` (実装を直接呼ぶなら `import tomography; tomography.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)`、台帳から引くなら `opstomography.get("sinogram_center_of_rotation")`)
 
 ## 使い方
 

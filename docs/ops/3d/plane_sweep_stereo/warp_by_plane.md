@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # warp_by_plane — 3D `plane_sweep_stereo` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import plane_sweep; plane_sweep.warp_by_plane(img: 'np.ndarray', H: 'np.ndarray', order: 'int' = 1, cval: 'float' = nan) -> 'np.ndarray'` (または `ops3d.get("warp_by_plane")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.warp_by_plane(img: 'np.ndarray', H: 'np.ndarray', order: 'int' = 1, cval: 'float' = nan) -> 'np.ndarray'` (実装を直接呼ぶなら `import plane_sweep; plane_sweep.warp_by_plane(img: 'np.ndarray', H: 'np.ndarray', order: 'int' = 1, cval: 'float' = nan) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("warp_by_plane")`)
 
 ## 使い方
 

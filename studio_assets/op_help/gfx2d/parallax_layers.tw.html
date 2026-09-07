@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">parallax_layers — GFX2D <code style="color:#22d3bf">tile</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">sprites</code> → <code style="color:#22d3bf">rgba</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import gfx2d; gfx2d.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)</code>(或 <code style="color:#22d3bf">opsgfx2d.get(&quot;parallax_layers&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gfx2d; gfx2d.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsgfx2d.get(&quot;parallax_layers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讓一組 `<code style="color:#22d3bf">rgba</code>` 圖層以不同速度捲動並合成。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

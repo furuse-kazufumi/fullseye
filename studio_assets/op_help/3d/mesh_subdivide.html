@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">mesh_subdivide — 3D <code style="color:#22d3bf">terrain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import render3d; render3d.mesh_subdivide(V, F, *, levels: &#x27;int&#x27; = 1, target_edge=None, max_faces: &#x27;int&#x27; = 4000000)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;mesh_subdivide&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_subdivide(V, F, *, levels: &#x27;int&#x27; = 1, target_edge=None, max_faces: &#x27;int&#x27; = 4000000)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.mesh_subdivide(V, F, *, levels: &#x27;int&#x27; = 1, target_edge=None, max_faces: &#x27;int&#x27; = 4000000)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;mesh_subdivide&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Refine a triangle mesh → `<code style="color:#22d3bf">(V, F)</code><code style="color:#22d3bf">: uniform midpoint subdivision (</code><code style="color:#22d3bf">levels</code>` passes,</p>
 <p>×4 faces each) or <b>adaptive tessellation to a target edge length</b> (`<code style="color:#22d3bf">target_edge</code>`:</p>

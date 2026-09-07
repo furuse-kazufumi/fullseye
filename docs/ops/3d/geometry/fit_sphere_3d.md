@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fit_sphere_3d — 3D `geometry` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import match3d; match3d.fit_sphere_3d(points)` (または `ops3d.get("fit_sphere_3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_sphere_3d(points)` (実装を直接呼ぶなら `import match3d; match3d.fit_sphere_3d(points)`、台帳から引くなら `ops3d.get("fit_sphere_3d")`)
 
 ## 使い方
 

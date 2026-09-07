@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # wood_grain — OPTICS `surface` op
 
 - **データ種**: `なし` → `image2d`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import surfacelib; surfacelib.wood_grain(shape, ring_px=18.0, angle_deg=15.0, wobble=0.25, seed=0)` (または `opsoptics.get("wood_grain")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.wood_grain(shape, ring_px=18.0, angle_deg=15.0, wobble=0.25, seed=0)` (実装を直接呼ぶなら `import surfacelib; surfacelib.wood_grain(shape, ring_px=18.0, angle_deg=15.0, wobble=0.25, seed=0)`、台帳から引くなら `opsoptics.get("wood_grain")`)
 - **台帳経由の戻り値**: `fullseye.ledger.wood_grain(...)` は**宣言 out 型 `image2d` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.wood_grain.raw(...)`、または `surfacelib.wood_grain` を直接呼ぶ。
 
 ## 使い方

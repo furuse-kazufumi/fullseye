@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">shape_distance — 3D <code style="color:#22d3bf">shape_descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">descriptor × descriptor</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import descriptors3d; descriptors3d.shape_distance(desc_a, desc_b, metric: &#x27;str&#x27; = &#x27;l1&#x27;) -&gt; &#x27;float&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;shape_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_distance(desc_a, desc_b, metric: &#x27;str&#x27; = &#x27;l1&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import descriptors3d; descriptors3d.shape_distance(desc_a, desc_b, metric: &#x27;str&#x27; = &#x27;l1&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;shape_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 つの記述子間の距離。小さいほど同形状。</p>
 <p>Parameters</p>

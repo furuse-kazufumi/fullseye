@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">integrate — 3D <code style="color:#22d3bf">tsdf_fusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">sdf × depth</code> → <code style="color:#22d3bf">sdf</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>(또는 <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>깊이 한 장을 투영적 TSDF 로 volume 에 통합(in-place, 가중 이동평균).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>

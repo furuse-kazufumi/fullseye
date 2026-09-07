@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">scene_flow_lk — 3D <code style="color:#22d3bf">motion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import match3d; match3d.scene_flow_lk(vol0, vol1, device=&#x27;cpu&#x27;, win=3, levels=3, iters=3, reg=0.001)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;scene_flow_lk&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_flow_lk(vol0, vol1, device=&#x27;cpu&#x27;, win=3, levels=3, iters=3, reg=0.001)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.scene_flow_lk(vol0, vol1, device=&#x27;cpu&#x27;, win=3, levels=3, iters=3, reg=0.001)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;scene_flow_lk&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lucas-Kanade scene flow (the 3-D version of 2-D optical flow). A per-voxel motion field d = (dz, dy, dx).</p>

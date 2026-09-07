@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_scale_bar — ANNOTATE `paper` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, color='neutral', thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (または `opsannotate.get("annotate_scale_bar")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_scale_bar(img, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, color='neutral', thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme='okabe_ito', font_path=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, color='neutral', thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme='okabe_ito', font_path=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_scale_bar")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # decode_fringe — 3D `structured_light` op
 
 - **データ種**: `images` → `depth`
-- **呼び出し**: `import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -> 'np.ndarray'` (または `ops3d.get("decode_fringe")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("decode_fringe")`)
 
 ## 使い方
 

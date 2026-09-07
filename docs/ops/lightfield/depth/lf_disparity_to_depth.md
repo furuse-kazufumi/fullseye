@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # lf_disparity_to_depth — LIGHTFIELD `depth` op
 
 - **データ種**: `image2d` → `depth`
-- **呼び出し**: `import lightfield; lightfield.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)` (または `opslightfield.get("lf_disparity_to_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)` (実装を直接呼ぶなら `import lightfield; lightfield.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)`、台帳から引くなら `opslightfield.get("lf_disparity_to_depth")`)
 
 ## 使い方
 

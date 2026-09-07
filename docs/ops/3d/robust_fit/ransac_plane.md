@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ransac_plane — 3D `robust_fit` op
 
 - **データ種**: `points` → `primitive`
-- **呼び出し**: `import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)` (または `ops3d.get("ransac_plane")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ransac_plane(points, thresh, iters=500, seed=0)` (実装を直接呼ぶなら `import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)`、台帳から引くなら `ops3d.get("ransac_plane")`)
 
 ## 使い方
 

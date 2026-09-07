@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # fmcw_beat_simulate — RANGEDOPPLER `simulate` op
 
 - **データ種**: `なし` → `beatcube`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import rangedoppler; rangedoppler.fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None, amplitudes=None, n_samples=64, n_chirps=32, n_antennas=1, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, element_spacing_m=None, phase_deg=0.0, noise_sigma=0.0, seed=0)` (または `opsrangedoppler.get("fmcw_beat_simulate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None, amplitudes=None, n_samples=64, n_chirps=32, n_antennas=1, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, element_spacing_m=None, phase_deg=0.0, noise_sigma=0.0, seed=0)` (実装を直接呼ぶなら `import rangedoppler; rangedoppler.fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None, amplitudes=None, n_samples=64, n_chirps=32, n_antennas=1, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, element_spacing_m=None, phase_deg=0.0, noise_sigma=0.0, seed=0)`、台帳から引くなら `opsrangedoppler.get("fmcw_beat_simulate")`)
 
 ## 使い方
 

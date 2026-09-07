@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_edge_probe — 3D `probe` op
 
 - **データ種**: `voxel` → `table`
-- **呼び出し**: `import volprobe; volprobe.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity='all')` (または `ops3d.get("vol_edge_probe")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity='all')` (実装を直接呼ぶなら `import volprobe; volprobe.vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None, polarity='all')`、台帳から引くなら `ops3d.get("vol_edge_probe")`)
 
 ## 使い方
 

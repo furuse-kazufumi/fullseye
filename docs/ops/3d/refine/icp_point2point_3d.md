@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # icp_point2point_3d — 3D `refine` op
 
 - **データ種**: `points × points` → `pose`
-- **呼び出し**: `import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu')` (または `ops3d.get("icp_point2point_3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu')`、台帳から引くなら `ops3d.get("icp_point2point_3d")`)
 
 ## 使い方
 
@@ -42,8 +42,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
     device: torch デバイス("cpu" 等)。SVD をこのデバイス上で解く。
 
 返り値:
-    R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。
-    t: (3,) torch.Tensor。並進。
+    R: (3,3) 回転。dst ~= src @ R.T + t を満たす。**torch がある環境では
+       ``torch.Tensor``、無ければ同じ値の ``numpy.ndarray``**(2026-09-07 に
+       本体を numpy 化したときも、互換のため型は据え置いた)。
+       ★同じ族の :func:`icp_point2plane` は**常に numpy を返す** —— 族の中で
+       型が揃っていないので、下流では ``np.asarray(R)`` を通すのが安全
+       (どちらでも動く。破壊的変更を避けてこの不揃いを残してある)。
+    t: (3,) 並進(R と同じ型)。
     info: dict。"rmse"(採用対応上の最終RMSE), "iters"(実反復数),
           "converged"(bool), "inliers"(採用対応数), "rmse_history"(list)。
 

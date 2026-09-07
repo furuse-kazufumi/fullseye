@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_inset — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import annotate; annotate.annotate_inset(img, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, color=&#x27;emphasis&#x27;, width=2, connect=True, label=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, style=None, layout=None)</code> (または <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset(img, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, color=&#x27;emphasis&#x27;, width=2, connect=True, label=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, style=None, layout=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_inset(img, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, color=&#x27;emphasis&#x27;, width=2, connect=True, label=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, style=None, layout=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像(image2d)を返す: 元枠の拡大を隅に差し込み、対応する角を線で結ぶ。</p>
 <p>倍率と位置は :func:<code style="color:#22d3bf">annotate_inset_layout</code>、描画は :func:<code style="color:#22d3bf">zoom_inset</code></p>

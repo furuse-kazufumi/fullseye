@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # riesz_displacement_series — QUAT `motion` op
 
 - **データ種**: `video` → `pairs`
-- **呼び出し**: `import quatimage; quatimage.riesz_displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'np.ndarray'` (または `opsquat.get("riesz_displacement_series")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.riesz_displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.riesz_displacement_series(video, f_lo, f_hi, fps, scales: 'int' = 4) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("riesz_displacement_series")`)
 
 ## 使い方
 

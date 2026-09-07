@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # skeleton_prune3d — 3D `medial` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import medial; medial.skeleton_prune3d(vol, length=1)` (または `ops3d.get("skeleton_prune3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.skeleton_prune3d(vol, length=1)` (実装を直接呼ぶなら `import medial; medial.skeleton_prune3d(vol, length=1)`、台帳から引くなら `ops3d.get("skeleton_prune3d")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # motion_magnify — MOTIONMAG `magnify` op
 
 - **データ種**: `video` → `table`
-- **呼び出し**: `import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'` (または `opsmotionmag.get("motion_magnify")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'` (実装を直接呼ぶなら `import motionmag; motionmag.motion_magnify(video, alpha, f_lo, f_hi, fps, scales: 'int' = 4, orientations: 'int' = 4) -> 'dict'`、台帳から引くなら `opsmotionmag.get("motion_magnify")`)
 
 ## 使い方
 

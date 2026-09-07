@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cylinder_sdf — 3D `sdf_csg` op
 
 - **データ種**: `coordgrid` → `sdf`
-- **呼び出し**: `import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)` (または `ops3d.get("cylinder_sdf")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)` (実装を直接呼ぶなら `import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)`、台帳から引くなら `ops3d.get("cylinder_sdf")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # piv_error_stats — PIV `assess` op
 
 - **データ種**: `flow2d × flow2d` → `table`
-- **呼び出し**: `import pivops; pivops.piv_error_stats(flow, truth, trim=1)` (または `opspiv.get("piv_error_stats")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)` (実装を直接呼ぶなら `import pivops; pivops.piv_error_stats(flow, truth, trim=1)`、台帳から引くなら `opspiv.get("piv_error_stats")`)
 
 ## 使い方
 

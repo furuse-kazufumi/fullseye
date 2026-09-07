@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_scale_bar_layout — ANNOTATE `paper` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, thickness=5)` (または `opsannotate.get("annotate_scale_bar_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_scale_bar_layout(shape, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, thickness=5)` (実装を直接呼ぶなら `import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit='µm', corner='rb', target_fraction=0.2, margin=14, thickness=5)`、台帳から引くなら `opsannotate.get("annotate_scale_bar_layout")`)
 
 ## 使い方
 

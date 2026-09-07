@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_watershed — 3D `segment` op
 
 - **データ種**: `voxel` → `labels`
-- **呼び出し**: `import volops; volops.vol_watershed(vol, markers, mask=None)` (または `ops3d.get("vol_watershed")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_watershed(vol, markers, mask=None)` (実装を直接呼ぶなら `import volops; volops.vol_watershed(vol, markers, mask=None)`、台帳から引くなら `ops3d.get("vol_watershed")`)
 
 ## 使い方
 

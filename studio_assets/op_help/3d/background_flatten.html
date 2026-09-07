@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">background_flatten — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.background_flatten(image, degree=2)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;background_flatten&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_flatten(image, degree=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.background_flatten(image, degree=2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;background_flatten&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。</p>
 <p>`<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf"> 画像に </code><code style="color:#22d3bf">x = 列</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y = 行</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">fit_poly_surface(degree)</code>`(既定 2 次)を当て、</p>

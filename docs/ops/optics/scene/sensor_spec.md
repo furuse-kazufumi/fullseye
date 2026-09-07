@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sensor_spec — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.sensor_spec(pixel_um: 'float' = 3.45, resolution=(1024, 1024), quantum_efficiency: 'float' = 0.6, full_well_e: 'float' = 10000.0, read_noise_e: 'float' = 2.5, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = 'global', model: 'str' = None) -> 'dict'` (または `opsoptics.get("sensor_spec")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sensor_spec(pixel_um: 'float' = 3.45, resolution=(1024, 1024), quantum_efficiency: 'float' = 0.6, full_well_e: 'float' = 10000.0, read_noise_e: 'float' = 2.5, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = 'global', model: 'str' = None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.sensor_spec(pixel_um: 'float' = 3.45, resolution=(1024, 1024), quantum_efficiency: 'float' = 0.6, full_well_e: 'float' = 10000.0, read_noise_e: 'float' = 2.5, dark_e_per_s: 'float' = 5.0, bit_depth: 'int' = 8, gain_e_per_unit: 'float' = 50000.0, shutter: 'str' = 'global', model: 'str' = None) -> 'dict'`、台帳から引くなら `opsoptics.get("sensor_spec")`)
 
 ## 使い方
 

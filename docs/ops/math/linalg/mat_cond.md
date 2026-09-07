@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mat_cond — MATH `linalg` op
 
 - **データ種**: `matrix` → `measurement`
-- **呼び出し**: `import mathops; mathops.mat_cond(a)` (または `opsmath.get("mat_cond")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mat_cond(a)` (実装を直接呼ぶなら `import mathops; mathops.mat_cond(a)`、台帳から引くなら `opsmath.get("mat_cond")`)
 
 ## 使い方
 

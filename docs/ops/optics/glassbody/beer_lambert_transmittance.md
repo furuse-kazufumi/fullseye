@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # beer_lambert_transmittance — OPTICS `glassbody` op
 
 - **データ種**: `signal` → `signal`
-- **呼び出し**: `import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -> 'np.ndarray'` (または `opsoptics.get("beer_lambert_transmittance")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -> 'np.ndarray'` (実装を直接呼ぶなら `import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("beer_lambert_transmittance")`)
 
 ## 使い方
 

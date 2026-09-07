@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tcspc_simulate — PHOTON `tcspc` op
 
 - **データ種**: `なし` → `counts`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)` (または `opsphoton.get("tcspc_simulate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)` (実装を直接呼ぶなら `import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)`、台帳から引くなら `opsphoton.get("tcspc_simulate")`)
 
 ## 使い方
 

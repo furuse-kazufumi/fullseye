@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # tonemap_aces — 3D `render` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: 'float' = 1.0) -> 'np.ndarray'` (または `ops3d.get("tonemap_aces")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.tonemap_aces(hdr, exposure: 'float' = 1.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: 'float' = 1.0) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("tonemap_aces")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # bundle_adjust — 3D `bundle_adjust` op
 
 - **データ種**: `pose × points` → `table`
-- **呼び出し**: `import bundle3d; bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)` (または `ops3d.get("bundle_adjust")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)` (実装を直接呼ぶなら `import bundle3d; bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)`、台帳から引くなら `ops3d.get("bundle_adjust")`)
 
 ## 使い方
 

@@ -13,10 +13,10 @@
 <p><b>動態</b>(GIF: 依序顯示影格 / 視點 / 切片。靜態圖是完整版，GIF 為輔助):</p>
 <p><img src="fig/tb_occupancy_grid.gif" alt="tb_occupancy_grid: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>點雲 (N,3) → 3-D 佔用體素格 (res,res,res) bool（點落入的體素標記為佔用）。</p>
+<p>點雲 (N,3) → 三維佔據體素柵格,bool(點落入的體素記為佔據)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf"> が格子の張る体積、</code><code style="color:#22d3bf">res</code>` は各軸の</p>
-<p>ボクセル数(立方 res³)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、</p>
+<p>ボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、</p>
 <p>上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ</p>
 <p>clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float)</p>
 <p>を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>

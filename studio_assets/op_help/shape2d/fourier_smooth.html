@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fourier_smooth — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code> (または <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_smooth(points, keep)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code>、台帳から引くなら <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>輪郭を複素 FFT で帯域制限して平滑化する。</p>
 <p>輪郭を複素信号 z(t)=x(t)+i·y(t) と見て FFT し、低周波 `<code style="color:#22d3bf">keep</code>` 本(と対称成分)</p>

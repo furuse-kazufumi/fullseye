@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">points_zyx_to_keypoints_uv — REPRCONV <code style="color:#22d3bf">keypoint</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import reprconv; reprconv.points_zyx_to_keypoints_uv(points)</code> (または <code style="color:#22d3bf">opsreprconv.get(&quot;points_zyx_to_keypoints_uv&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_zyx_to_keypoints_uv(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.points_zyx_to_keypoints_uv(points)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;points_zyx_to_keypoints_uv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 `<code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf"> → 画像座標 </code><code style="color:#22d3bf">(N,2) = (u, v)</code>`。</p>
 <p>:func:<code style="color:#22d3bf">keypoints_uv_to_points</code> の逆向き。<b>不可逆</b> —— z が落ちる。</p>

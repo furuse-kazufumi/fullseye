@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sheen_shade — OPTICS `material` op
 
 - **データ種**: `normalmap` → `image2d`
-- **呼び出し**: `import surfacelib; surfacelib.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -> 'np.ndarray'` (または `opsoptics.get("sheen_shade")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -> 'np.ndarray'` (実装を直接呼ぶなら `import surfacelib; surfacelib.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("sheen_shade")`)
 
 ## 使い方
 

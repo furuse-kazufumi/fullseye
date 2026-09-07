@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # jpeg_quality_estimate — IMGFORENSICS `compression` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: 'int' = 64, n_coeff: 'int' = 21) -> 'dict'` (または `opsimgforensics.get("jpeg_quality_estimate")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: 'int' = 64, n_coeff: 'int' = 21) -> 'dict'` (実装を直接呼ぶなら `import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: 'int' = 64, n_coeff: 'int' = 21) -> 'dict'`、台帳から引くなら `opsimgforensics.get("jpeg_quality_estimate")`)
 
 ## 使い方
 

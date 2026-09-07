@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # procrustes_fit — SHAPESTAT `procrustes` op
 
 - **データ種**: `points × points` → `matrix`
-- **呼び出し**: `import shapestats; shapestats.procrustes_fit(source, target, scaling: 'bool' = True, reflection: 'bool' = False)` (または `opsshapestat.get("procrustes_fit")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.procrustes_fit(source, target, scaling: 'bool' = True, reflection: 'bool' = False)` (実装を直接呼ぶなら `import shapestats; shapestats.procrustes_fit(source, target, scaling: 'bool' = True, reflection: 'bool' = False)`、台帳から引くなら `opsshapestat.get("procrustes_fit")`)
 
 ## 使い方
 

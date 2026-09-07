@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">radon_volume — TOMOGRAPHY <code style="color:#22d3bf">volume</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sinostack</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code> (or <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Project every slice of a `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> volume -&gt; a </code><code style="color:#22d3bf">(Z, A, D)</code>` stack.</p>
 <p>Parallel-beam geometry with the rotation axis along `<code style="color:#22d3bf">Z</code>`, which is the case</p>
@@ -24,6 +24,7 @@
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">sinostack</code> as input)</h3>
 <p><a style="color:#22d3bf" href="optomography:fbp_volume">fbp_volume</a></p>

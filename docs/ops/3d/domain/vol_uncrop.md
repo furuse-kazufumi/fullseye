@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_uncrop — 3D `domain` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volops; volops.vol_uncrop(part, offset, shape, fill=0.0)` (または `ops3d.get("vol_uncrop")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_uncrop(part, offset, shape, fill=0.0)` (実装を直接呼ぶなら `import volops; volops.vol_uncrop(part, offset, shape, fill=0.0)`、台帳から引くなら `ops3d.get("vol_uncrop")`)
 
 ## 使い方
 

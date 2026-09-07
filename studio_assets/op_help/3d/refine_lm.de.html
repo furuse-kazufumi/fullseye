@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">refine_lm — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel × voxel × position</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import match3d; match3d.refine_lm(scene, template, init_pos, device=&#x27;cpu&#x27;, iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)</code> (oder <code style="color:#22d3bf">ops3d.get(&quot;refine_lm&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refine_lm(scene, template, init_pos, device=&#x27;cpu&#x27;, iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.refine_lm(scene, template, init_pos, device=&#x27;cpu&#x27;, iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;refine_lm&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Subvoxel-Verfeinerung der Translation (plus isotroper Skalierung / Intensitätsverstärkung) per Levenberg-Marquardt.</p>

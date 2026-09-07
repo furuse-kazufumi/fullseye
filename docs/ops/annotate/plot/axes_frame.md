@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # axes_frame — ANNOTATE `plot` op
 
 - **データ種**: `image2d × axes` → `image2d`
-- **呼び出し**: `import annotate; annotate.axes_frame(img, axes, color='neutral', width=1, box=True, scheme='okabe_ito', style=None)` (または `opsannotate.get("axes_frame")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.axes_frame(img, axes, color='neutral', width=1, box=True, scheme='okabe_ito', style=None)` (実装を直接呼ぶなら `import annotate; annotate.axes_frame(img, axes, color='neutral', width=1, box=True, scheme='okabe_ito', style=None)`、台帳から引くなら `opsannotate.get("axes_frame")`)
 
 ## 使い方
 

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_affine — 3D `geom_transform` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import volxform; volxform.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode='constant', cval=0.0)` (または `ops3d.get("vol_affine")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode='constant', cval=0.0)` (実装を直接呼ぶなら `import volxform; volxform.vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None, mode='constant', cval=0.0)`、台帳から引くなら `ops3d.get("vol_affine")`)
 
 ## 使い方
 

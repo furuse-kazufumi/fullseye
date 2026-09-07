@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">range_doppler_map — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_map(cube, combine=&#x27;incoherent&#x27;, antenna=None, normalize=False)</code>(或 <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_map&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.range_doppler_map(cube, combine=&#x27;incoherent&#x27;, antenna=None, normalize=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_map(cube, combine=&#x27;incoherent&#x27;, antenna=None, normalize=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>拍頻立方體的 2-D FFT -&gt; `<code style="color:#22d3bf">(n_doppler, n_range)</code>` 振幅圖。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>

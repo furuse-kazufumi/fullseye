@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # rgb_to_quaternion — QUAT `convert` op
 
 - **データ種**: `rgbimage` → `qimage`
-- **呼び出し**: `import quatimage; quatimage.rgb_to_quaternion(image_rgb) -> 'np.ndarray'` (または `opsquat.get("rgb_to_quaternion")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.rgb_to_quaternion(image_rgb) -> 'np.ndarray'` (実装を直接呼ぶなら `import quatimage; quatimage.rgb_to_quaternion(image_rgb) -> 'np.ndarray'`、台帳から引くなら `opsquat.get("rgb_to_quaternion")`)
 
 ## 使い方
 

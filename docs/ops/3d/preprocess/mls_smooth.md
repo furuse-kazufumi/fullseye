@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mls_smooth — 3D `preprocess` op
 
 - **データ種**: `points` → `points`
-- **呼び出し**: `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2)` (または `ops3d.get("mls_smooth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mls_smooth(points, radius: 'float', order: 'int' = 2)` (実装を直接呼ぶなら `import pcl_filter; pcl_filter.mls_smooth(points, radius: 'float', order: 'int' = 2)`、台帳から引くなら `ops3d.get("mls_smooth")`)
 
 ## 使い方
 

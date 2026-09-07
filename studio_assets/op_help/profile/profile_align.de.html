@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_align — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code> (oder <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code> oder rufe <code style="color:#22d3bf">profileops.profile_align</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sensor_diagonal_mm — OPTICS `scene` op
 
 - **データ種**: `table` → `measurement`
-- **呼び出し**: `import optscene; optscene.sensor_diagonal_mm(sensor: 'dict') -> 'float'` (または `opsoptics.get("sensor_diagonal_mm")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sensor_diagonal_mm(sensor: 'dict') -> 'float'` (実装を直接呼ぶなら `import optscene; optscene.sensor_diagonal_mm(sensor: 'dict') -> 'float'`、台帳から引くなら `opsoptics.get("sensor_diagonal_mm")`)
 
 ## 使い方
 

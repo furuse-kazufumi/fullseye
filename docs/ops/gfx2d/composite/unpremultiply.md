@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # unpremultiply — GFX2D `composite` op
 
 - **データ種**: `rgba_premul` → `rgba`
-- **呼び出し**: `import gfx2d; gfx2d.unpremultiply(rgba_premul)` (または `opsgfx2d.get("unpremultiply")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.unpremultiply(rgba_premul)` (実装を直接呼ぶなら `import gfx2d; gfx2d.unpremultiply(rgba_premul)`、台帳から引くなら `opsgfx2d.get("unpremultiply")`)
 
 ## 使い方
 

@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">quat_image_multiply — QUAT <code style="color:#22d3bf">algebra</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">qimage × qimage</code> → <code style="color:#22d3bf">qimage</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import quatimage; quatimage.quat_image_multiply(qimage, other, side) -&gt; &#x27;np.ndarray&#x27;</code> (or <code style="color:#22d3bf">opsquat.get(&quot;quat_image_multiply&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quat_image_multiply(qimage, other, side) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import quatimage; quatimage.quat_image_multiply(qimage, other, side) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsquat.get(&quot;quat_image_multiply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hamilton product of a quaternion image with a quaternion or a field. → (H, W, 4).</p>
 <p>`<code style="color:#22d3bf">side=&quot;left&quot;</code><code style="color:#22d3bf"> computes </code><code style="color:#22d3bf">other * qimage</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">side=&quot;right&quot;</code>` computes</p>

@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # ellipse — ANNOTATE `shape` op
 
 - **データ種**: `image2d` → `image2d`
-- **呼び出し**: `import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')` (または `opsannotate.get("ellipse")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.ellipse(img, center, radii, angle_deg=0.0, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')` (実装を直接呼ぶなら `import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color='neutral', width=2, fill=False, alpha=1.0, scheme='okabe_ito')`、台帳から引くなら `opsannotate.get("ellipse")`)
 
 ## 使い方
 

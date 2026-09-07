@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # inside_outside — 3D `superquadric` op
 
 - **データ種**: `points` → `signal`
-- **呼び出し**: `import superquadric; superquadric.inside_outside(points, a, eps, R=None, t=None) -> 'np.ndarray'` (または `ops3d.get("inside_outside")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.inside_outside(points, a, eps, R=None, t=None) -> 'np.ndarray'` (実装を直接呼ぶなら `import superquadric; superquadric.inside_outside(points, a, eps, R=None, t=None) -> 'np.ndarray'`、台帳から引くなら `ops3d.get("inside_outside")`)
 
 ## 使い方
 

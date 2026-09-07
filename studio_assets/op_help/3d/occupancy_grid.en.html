@@ -1,12 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">occupancy_grid — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">voxel</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import occupancy; occupancy.occupancy_grid(points, bounds, res)</code> (or <code style="color:#22d3bf">ops3d.get(&quot;occupancy_grid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res)</code> (to call the implementation directly, <code style="color:#22d3bf">import occupancy; occupancy.occupancy_grid(points, bounds, res)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;occupancy_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Point set (N,3) → a 3-D occupancy voxel grid (res,res,res) bool (a voxel a point falls into counts as occupied).</p>
+<p>Point cloud (N,3) → a 3-D occupancy voxel grid, bool (a voxel a point falls into counts as occupied).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf"> が格子の張る体積、</code><code style="color:#22d3bf">res</code>` は各軸の</p>
-<p>ボクセル数(立方 res³)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、</p>
+<p>ボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、</p>
 <p>上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ</p>
 <p>clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float)</p>
 <p>を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>

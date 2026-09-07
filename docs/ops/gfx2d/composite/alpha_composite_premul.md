@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # alpha_composite_premul — GFX2D `composite` op
 
 - **データ種**: `rgba_premul × rgba_premul` → `rgba_premul`
-- **呼び出し**: `import gfx2d; gfx2d.alpha_composite_premul(src, dst)` (または `opsgfx2d.get("alpha_composite_premul")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.alpha_composite_premul(src, dst)` (実装を直接呼ぶなら `import gfx2d; gfx2d.alpha_composite_premul(src, dst)`、台帳から引くなら `opsgfx2d.get("alpha_composite_premul")`)
 
 ## 使い方
 

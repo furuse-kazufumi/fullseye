@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">airy_pattern — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">image2d</code> (an op determined by its arguments alone — it takes no image or data input)</p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import optics; optics.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)</code> (or <code style="color:#22d3bf">opsoptics.get(&quot;airy_pattern&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import optics; optics.airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;airy_pattern&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The diffraction-limited PSF of a circular pupil (Airy pattern).</p>
 <p>`<code style="color:#22d3bf">I(r) = [2*J1(v)/v]^2</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">v = pi*r/(lambda*N)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">r</code>` the radial</p>

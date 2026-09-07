@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # sensor_capture — OPTICS `scene` op
 
 - **データ種**: `rgbimage` → `rgbimage`
-- **呼び出し**: `import optscene; optscene.sensor_capture(radiance, exposure_ms: 'float' = 10.0, gain_e_per_unit: 'float' = 50000.0, read_noise_e: 'float' = 2.5, full_well_e: 'float' = 10000.0, bit_depth: 'int' = 8, seed: 'int' = 0) -> 'np.ndarray'` (または `opsoptics.get("sensor_capture")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.sensor_capture(radiance, exposure_ms: 'float' = 10.0, gain_e_per_unit: 'float' = 50000.0, read_noise_e: 'float' = 2.5, full_well_e: 'float' = 10000.0, bit_depth: 'int' = 8, seed: 'int' = 0) -> 'np.ndarray'` (実装を直接呼ぶなら `import optscene; optscene.sensor_capture(radiance, exposure_ms: 'float' = 10.0, gain_e_per_unit: 'float' = 50000.0, read_noise_e: 'float' = 2.5, full_well_e: 'float' = 10000.0, bit_depth: 'int' = 8, seed: 'int' = 0) -> 'np.ndarray'`、台帳から引くなら `opsoptics.get("sensor_capture")`)
 
 ## 使い方
 

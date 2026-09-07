@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # vol_label_overlay — VOLCOLOR `colorize` op
 
 - **データ種**: `voxel × labels` → `rgbvolume`
-- **呼び出し**: `import volcolor; volcolor.vol_label_overlay(vol, labels, seed: 'int' = 0, alpha: 'float' = 0.5, vmin=None, vmax=None, mode: 'str' = 'fill')` (または `opsvolcolor.get("vol_label_overlay")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.vol_label_overlay(vol, labels, seed: 'int' = 0, alpha: 'float' = 0.5, vmin=None, vmax=None, mode: 'str' = 'fill')` (実装を直接呼ぶなら `import volcolor; volcolor.vol_label_overlay(vol, labels, seed: 'int' = 0, alpha: 'float' = 0.5, vmin=None, vmax=None, mode: 'str' = 'fill')`、台帳から引くなら `opsvolcolor.get("vol_label_overlay")`)
 
 ## 使い方
 

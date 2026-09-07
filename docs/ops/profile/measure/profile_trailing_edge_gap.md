@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # profile_trailing_edge_gap — PROFILE `measure` op
 
 - **データ種**: `pairs` → `measurement`
-- **呼び出し**: `import profileops; profileops.profile_trailing_edge_gap(contour, n=201)` (または `opsprofile.get("profile_trailing_edge_gap")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.profile_trailing_edge_gap(contour, n=201)` (実装を直接呼ぶなら `import profileops; profileops.profile_trailing_edge_gap(contour, n=201)`、台帳から引くなら `opsprofile.get("profile_trailing_edge_gap")`)
 
 ## 使い方
 

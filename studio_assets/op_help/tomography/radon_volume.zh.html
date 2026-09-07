@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">radon_volume — TOMOGRAPHY <code style="color:#22d3bf">volume</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sinostack</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>(或 <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>(要直接调用实现,<code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>;从台账取用则 <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>投影 `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> 体的每一张切片 -&gt; </code><code style="color:#22d3bf">(Z, A, D)</code>` 堆栈。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
@@ -25,6 +25,7 @@
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">sinostack</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="optomography:fbp_volume">fbp_volume</a></p>

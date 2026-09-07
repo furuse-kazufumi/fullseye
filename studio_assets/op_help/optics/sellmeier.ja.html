@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">sellmeier — OPTICS <code style="color:#22d3bf">design</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;sellmeier&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import raytrace; raytrace.sellmeier(B1, B2, B3, C1, C2, C3, name=&#x27;custom&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;sellmeier&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3 項 Sellmeier 定数から分散媒質を作る(`<code style="color:#22d3bf">table</code>`)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>

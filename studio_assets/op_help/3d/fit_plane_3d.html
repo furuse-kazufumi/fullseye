@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_plane_3d — 3D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.fit_plane_3d(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_plane_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_plane_3d(points)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.fit_plane_3d(points)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_plane_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。</p>
 <p>`<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> の点群(列数 3 でない・3 点未満は ValueError)の重心 </code><code style="color:#22d3bf">c</code>` と散布行列の最小固有値の</p>

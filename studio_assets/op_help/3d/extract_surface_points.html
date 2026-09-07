@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">extract_surface_points — 3D <code style="color:#22d3bf">tsdf_fusion</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">points</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;extract_surface_points&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;extract_surface_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>TSDF ゼロ交差から表面点 (M,3) を抽出(marching cubes 不要、線形補間)。</p>
 <p>観測済み(weight&gt;0)の隣接 voxel 対で TSDF 符号が変わる辺を、その 2 中心の間で</p>

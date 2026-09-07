@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # cplx_poly_eval — MATH `complex` op
 
 - **データ種**: `signal × cpoints` → `cpoints`
-- **呼び出し**: `import mathops; mathops.cplx_poly_eval(coeffs, z)` (または `opsmath.get("cplx_poly_eval")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.cplx_poly_eval(coeffs, z)` (実装を直接呼ぶなら `import mathops; mathops.cplx_poly_eval(coeffs, z)`、台帳から引くなら `opsmath.get("cplx_poly_eval")`)
 
 ## 使い方
 

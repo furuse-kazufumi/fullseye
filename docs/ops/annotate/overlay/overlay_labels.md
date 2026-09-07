@@ -4,7 +4,7 @@ dim: annotate
 category: overlay
 in: image2d × labels
 out: image2d
-examples: [annotate_gallery, poc_mri_bias_field]
+examples: [annotate_gallery, poc_mri_bias_field, poc_recycling_sorting]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # overlay_labels — ANNOTATE `overlay` op
 
 - **データ種**: `image2d × labels` → `image2d`
-- **呼び出し**: `import annotate; annotate.overlay_labels(img, labels, alpha=0.5, colors=None, scheme='okabe_ito', background=0)` (または `opsannotate.get("overlay_labels")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.overlay_labels(img, labels, alpha=0.5, colors=None, scheme='okabe_ito', background=0)` (実装を直接呼ぶなら `import annotate; annotate.overlay_labels(img, labels, alpha=0.5, colors=None, scheme='okabe_ito', background=0)`、台帳から引くなら `opsannotate.get("overlay_labels")`)
 
 ## 使い方
 
@@ -50,6 +50,7 @@ ValueError
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
 - [poc_mri_bias_field](../../../../examples/poc_mri_bias_field.py) — `py -3.11 examples/poc_mri_bias_field.py`
+- [poc_recycling_sorting](../../../../examples/poc_recycling_sorting.py) — `py -3.11 examples/poc_recycling_sorting.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

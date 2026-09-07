@@ -37,10 +37,10 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 ## 使い方
 
-点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。
+点群 (N,3) → 3-D 占有ボクセル格子 bool(点の落ちた voxel を占有)。
 
     ``bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))`` が格子の張る体積、``res`` は各軸の
-    ボクセル数(立方 res³)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、
+    ボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、
     上端 (frac==1) の点は最終ボクセルに含める。**bounds 外の点は落とす**(端セルへ
     clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float)
     を作るのに対し、これは planning 用の占有(bool)を作る点が固有。

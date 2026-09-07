@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # register_spin — 3D `feature_register` op
 
 - **データ種**: `points × points` → `pose`
-- **呼び出し**: `import feat_spin; feat_spin.register_spin(src, dst, device='cpu', n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)` (または `ops3d.get("register_spin")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.register_spin(src, dst, device='cpu', n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)` (実装を直接呼ぶなら `import feat_spin; feat_spin.register_spin(src, dst, device='cpu', n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)`、台帳から引くなら `ops3d.get("register_spin")`)
 
 ## 使い方
 

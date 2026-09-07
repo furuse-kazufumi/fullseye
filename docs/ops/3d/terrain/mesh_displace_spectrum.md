@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # mesh_displace_spectrum — 3D `terrain` op
 
 - **データ種**: `mesh` → `mesh`
-- **呼び出し**: `import render3d; render3d.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: 'int' = 0, nyquist: 'float' = 2.0, fade: 'float' = 1.0, weights=None, local_edge=None)` (または `ops3d.get("mesh_displace_spectrum")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: 'int' = 0, nyquist: 'float' = 2.0, fade: 'float' = 1.0, weights=None, local_edge=None)` (実装を直接呼ぶなら `import render3d; render3d.mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *, seed: 'int' = 0, nyquist: 'float' = 2.0, fade: 'float' = 1.0, weights=None, local_edge=None)`、台帳から引くなら `ops3d.get("mesh_displace_spectrum")`)
 
 ## 使い方
 

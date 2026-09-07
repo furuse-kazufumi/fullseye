@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # scene_cylinder — OPTICS `scene` op
 
 - **データ種**: `なし` → `table`(引数だけで決まる op —— 画像やデータの入力を取らない)
-- **呼び出し**: `import optscene; optscene.scene_cylinder(center_mm, radius_mm: 'float', half_height_mm: 'float', material=None) -> 'dict'` (または `opsoptics.get("scene_cylinder")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.scene_cylinder(center_mm, radius_mm: 'float', half_height_mm: 'float', material=None) -> 'dict'` (実装を直接呼ぶなら `import optscene; optscene.scene_cylinder(center_mm, radius_mm: 'float', half_height_mm: 'float', material=None) -> 'dict'`、台帳から引くなら `opsoptics.get("scene_cylinder")`)
 
 ## 使い方
 
