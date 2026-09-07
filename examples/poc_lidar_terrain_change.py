@@ -882,30 +882,45 @@ def section_systematic(tr: dict) -> dict:
     print("     ずれ (%.3f, %.3f, %.3f) m、大きさ %.3f m、法線成分 %.2e m"
           % (*inplane, np.linalg.norm(inplane),
              inplane @ np.array([0.0, math.sin(th), math.cos(th)])))
+    print("     ★区画の**縁**は ICP に情報を与える(ずらすと縁の位置も動く)ので、")
+    print("       「縁ごと」と「両時期を同じ窓に切ってから」の 2 通りで測る。")
     res = {}
-    for label, undul in (("うねりあり(既定)", UNDUL), ("純平面(うねり 0)", 0.0)):
+    for label, undul, crop in (("うねりあり・縁ごと", UNDUL, False),
+                               ("純平面・縁ごと", 0.0, False),
+                               ("うねりあり・窓で切る", UNDUL, True),
+                               ("純平面・窓で切る", 0.0, True)):
         rng = np.random.default_rng(SEED + 8)
         a, _ = make_cloud(rng, with_change=False, occl=0.0, undul=undul)
         b0, _ = make_cloud(rng, with_change=False, occl=0.0, undul=undul)
         b = apply_pose(b0, inplane)
         before = float(np.sqrt(np.mean(np.sum((b - b0) ** 2, axis=1))))
-        b_al, _, _, _ = align_icp(b, a, trim=0.8)
+        if crop:
+            def keep(q):
+                return q[(q[:, 0] > WIN[0]) & (q[:, 0] < WIN[1])
+                         & (q[:, 1] > WIN[0]) & (q[:, 1] < WIN[1])]
+            _, rot, tra, _ = align_icp(keep(b), keep(a), trim=0.8)
+            b_al = b @ rot.T + tra
+        else:
+            b_al, _, _, _ = align_icp(b, a, trim=0.8)
         rest = float(np.sqrt(np.mean(np.sum((b_al - b0) ** 2, axis=1))))
         v0, v1 = dod(a, b), dod(a, b_al)
         res[label] = (before, rest, v0["net"], v1["net"], v0["abs"], v1["abs"])
-        print("     %-18s 実変位 %.3f -> %.3f m   偽正味 %+.1f -> %+.1f m3   "
-              "偽|土量| %.0f -> %.0f m3"
-              % (label, before, rest, v0["net"], v1["net"], v0["abs"], v1["abs"]))
-    pl = res["純平面(うねり 0)"]
-    un = res["うねりあり(既定)"]
-    print("  -> 純平面では ICP 後も点は **%.3f m ずれたまま**(与えた %.3f m のうち "
-          "%.0f %% が残る)なのに、偽正味は %+.1f m3。"
-          % (pl[1], pl[0], 100 * pl[1] / pl[0], pl[3]))
-    print("     うねりがあると同じずれを %.3f m まで詰められる。"
-          "**測れない形は合わせられない形と同じ** ——" % un[1])
-    print("     決まらない成分(面内の平行移動)は平面を自分自身に写すので、"
-          "そもそも差分に現れない。位置合わせの残差だけを見て"
-          "「合っていない」と言うと判断を誤る。")
+        print("     %-22s 実変位 %.3f -> %.3f m   偽正味 %+.1f -> %+.1f m3"
+              % (label, before, rest, v0["net"], v1["net"]))
+    pl, un = res["純平面・窓で切る"], res["うねりあり・窓で切る"]
+    print("  ★★予測どおり**面内のずれは偽の正味を生まない**: どの条件でも |偽正味| <= %.1f m3"
+          "(雑音の floor)。" % max(abs(v[2]) for v in res.values()))
+    print("  ★予想は「純平面なら ICP が面内を全く決められない」だった。**縁ごと**だと"
+          "実測は %.3f m まで詰まる —— 区画の縁が拘束になるから(うねりありの %.3f m と"
+          "ほぼ同じ)。" % (res["純平面・縁ごと"][1], res["うねりあり・縁ごと"][1]))
+    print("     両時期を**同じ窓に切って**縁の情報を消すと、純平面では %.3f m"
+          "(与えた %.3f m の %.0f %%)が残ったまま —— 縮退が現れる。"
+          % (pl[1], pl[0], 100 * pl[1] / pl[0]))
+    print("     うねりがあれば同じ条件でも %.3f m まで詰まる。形が無ければ合わせられない。"
+          % un[1])
+    print("  -> それでも偽正味は %+.1f m3。**決まらない成分(面内の平行移動)は"
+          "平面を自分自身に写すので、そもそも差分に現れない**。" % pl[3])
+    print("     位置合わせの残差だけを見て「合っていない」と言うと判断を誤る。")
 
     figs.save_plot("systematic",
                    [("予測 (delta_z + tan θ delta_y) x 面積", mags, pred),
