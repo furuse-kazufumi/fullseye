@@ -66,9 +66,17 @@ Si 0.30 / Cu 1.00 の減弱値で、CT の PSF(σ 0.8 ボクセル)を**場に**
 2.5 µm 刻みで標本化し、雑音 σ 0.015 を足した **(96, 176, 176) のボリューム 1 個**が
 測定のすべて。真値はこの仕込みそのもの。
 
+★道具の穴(節 9 で assert つきで確かめている): gray 重み付きの領域統計 /
+円柱の軸と端面を返す口 / 2-D の相似変換 / ラベルごと・スライスごとの重心 ——
+いずれも公開経路に無い。``procrustes_fit`` は ledger にしか出ていない。
+そして ★**同じ op が経路で返り値を変える**: ``fs.vol_label`` は docstring どおり
+``(labels, n)`` を返すのに ``fs.ledger.vol_label`` は labels だけ。
+``surface_form_error`` も台帳経由では pv しか返らない。
+
 来歴(公開文献のみ): Kabsch, *Acta Cryst.* A32 (1976) 922 —— 対応点からの剛体/相似
 当てはめ / Gower, *Psychometrika* 40 (1975) 33 —— Procrustes 解析 / Beyne,
-*Proc. IEEE* 105 (2017) 2288 —— 3-D 積層と TSV の概観。
+*Proc. IEEE* 105 (2017) 2288 —— 3-D 積層と TSV の概観 / Shannon, *Proc. IRE* 37
+(1949) 10 —— 標本化定理(所見 9 の根拠)。
 """
 
 from __future__ import annotations
