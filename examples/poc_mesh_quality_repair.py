@@ -589,10 +589,9 @@ def section_count_by_type(scene: dict, defects: dict) -> dict:
         diff = np.where(both, np.nan_to_num(d1 - d0), 0.0)
         figs.save_grid("defect_scene",
                        [render(V, F), render(W, G), diff],
-                       ["健全", "6 種の欠陥を注入(穴 %d・裏返り %d・非多様体 %d・"
-                        "退化 %d・重複頂点 %d・自己交差 %d)"
-                        % (n_hole, n_flip, n_nm, n_deg, n_dup, n_spk),
-                        "深度差 [mm](青=手前へ / 赤=奥へ)"],
+                       ["健全", "6 種の欠陥を注入(合計 %d 件)"
+                        % (n_hole + n_flip + n_nm + n_deg + n_dup + n_spk),
+                        "深度差 [mm](符号つき)"],
                        signed=[False, False, True], ncols=3,
                        title="欠陥は絵にほとんど出ない —— 出るのは自己交差だけ",
                        caption="深度差が立つのは突き刺した %d 頂点の周りだけ。"
