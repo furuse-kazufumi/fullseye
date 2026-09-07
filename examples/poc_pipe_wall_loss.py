@@ -351,17 +351,28 @@ def section_scene() -> dict:
 
     # vol_wall_thickness: 産業 CT のプローブそのもの
     row = (n - 1) // 2
-    zi = int(round(60 / VOX))
+    zi = int(round(z_clean / VOX))
     th_clean = _L.vol_wall_thickness(occ, (zi, 0, row), (zi, n - 1, row),
                                      spacing=(VOX, VOX, VOX))
     zi2 = int(round((BAND_Z0 + BAND_Z1) / 2 / VOX))
     th_band = _L.vol_wall_thickness(occ, (zi2, 0, row), (zi2, n - 1, row),
                                     spacing=(VOX, VOX, VOX))
-    print("   vol_wall_thickness(管を横断する 1 本のプローブ): 健全部 %s mm / "
-          "全周減肉部 %s mm" % (np.round(th_clean, 2).tolist(),
-                                np.round(th_band, 2).tolist()))
-    print("   -> ボクセル %.1f mm では %.2f mm の全周減肉は**プローブに出ない**"
-          "(量子化が %.1f mm)。" % (VOX, BAND_D, VOX))
+    zi3 = int(round(50.0 / VOX))
+    th_cres = _L.vol_wall_thickness(occ, (zi3, 0, row), (zi3, n - 1, row),
+                                    spacing=(VOX, VOX, VOX))
+    print("   vol_wall_thickness(管を横断する 1 本のプローブ、上下 2 か所の壁):")
+    print("      健全部 z=%.0f  %s mm(真値 %.2f / %.2f)"
+          % (z_clean, np.round(th_clean, 2).tolist(), T0, T0))
+    print("      全周減肉 z=%.0f %s mm(真値 %.2f / %.2f)"
+          % ((BAND_Z0 + BAND_Z1) / 2, np.round(th_band, 2).tolist(),
+             T0 - BAND_D, T0 - BAND_D))
+    print("      管底腐食 z=%.0f %s mm(真値 %.2f / %.2f)"
+          % (50.0, np.round(th_cres, 2).tolist(), T0, T0 - CRES_D))
+    print("   -> ボクセル %.1f mm のプローブは管底腐食 %.1f mm は拾うが、"
+          "全周減肉 %.2f mm は\n      健全部と見分けられない"
+          "(差 %.2f mm < 量子化 %.1f mm)。"
+          % (VOX, CRES_D, BAND_D,
+             abs(float(np.max(th_clean)) - float(np.max(th_band))), VOX))
 
     # 図: 断面 2 枚 + 縦断面 + 投影
     proj = np.asarray(_L.render_volume_projection(occ, azimuth=90.0, mode="xray"))

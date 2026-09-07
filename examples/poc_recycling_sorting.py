@@ -607,40 +607,57 @@ def section_ablation(pair) -> dict:
 
     geo, cube = build()
     det = detected(cube)
-    base_pred = classify(cube, "d2", pair)
+    base_pred = classify(cube, "d2w", pair)
     base = score(geo, base_pred, det)
     hidden = 1 - geo["visible"][1:].sum() / geo["total"][1:].sum()
     mixed_frac = float((~geo["pure"])[geo["truth"] > 0].mean())
-    print("  全部入り: 材質別再現率の平均 %.3f(2 次微分 + SAM)" % base["macro"])
-    print("  ★壊れ方の内訳(1 個の正解率には出てこない):")
-    print("     被覆(重なりで隠れた面積)  %.1f %%" % (100 * hidden))
-    print("     未検出(汚れてベルトに沈む) %.1f %%" % (100 * base["miss"]))
-    print("     混合画素(境界)             %.1f %%" % (100 * mixed_frac))
-    print("     誤分類(検出できたが取り違え) %.1f %%"
+    print("  全部入り(乗算 %.2f / 加算 %.2f / 濡れ %.2f / 傾き %.2f、"
+          "2 次微分 + 水帯除外 + SAM):"
+          % (NOM["dirt_mul"], NOM["dirt_add"], NOM["wet"], NOM["tilt"]))
+    print("     材質別再現率の平均 %.3f(検出画素だけなら %.3f)"
+          % (base["macro"], base["macro_det"]))
+    print("  ★壊れ方は 4 種類あり、1 個の正解率に畳むと順序が見えない:")
+    print("     被覆(重なりで隠れて見えない面積) %.1f %%" % (100 * hidden))
+    print("     未検出(汚れてベルトに沈んだ画素) %.1f %%" % (100 * base["miss"]))
+    print("     混合画素(境界で 2 材質が混ざる)   %.1f %%" % (100 * mixed_frac))
+    print("     誤分類(検出できたが取り違えた)   %.1f %%"
           % (100 * (1 - base["macro"] - base["miss"])))
 
     rows, gains = [], []
-    offs = [("dirt_mul", "乗算汚れ", {"dirt_mul": 0.0}),
-            ("dirt_add", "加算汚れ", {"dirt_add": 0.0}),
-            ("wet", "濡れ", {"wet": 0.0}),
-            ("tilt", "傾き", {"tilt": 0.0}),
-            ("overlap", "重なり", {"n_frag": 18}),
-            ("mixed", "混合画素", {"mixed": False})]
-    for _k, label, over in offs:
+    offs = [("乗算汚れ", {"dirt_mul": 0.0}),
+            ("加算汚れ", {"dirt_add": 0.0}),
+            ("濡れ", {"wet": 0.0}),
+            ("傾き", {"tilt": 0.0}),
+            ("混合画素", {"mixed": False})]
+    for label, over in offs:
         g2, c2 = build(**over)
-        s2 = score(g2, classify(c2, "d2", pair), detected(c2))
-        gains.append((s2["macro"] - base["macro"], label, s2["macro"]))
+        s2 = score(g2, classify(c2, "d2w", pair), detected(c2))
+        gains.append((s2["macro"] - base["macro"], label, s2["macro"], s2["miss"]))
     gains.sort(reverse=True)
     print("\n  要因を 1 つ止めたときの改善(大きいほど効いていた):")
-    for d, label, m in gains:
-        rows.append([label, "%.3f" % m, "%+.3f" % d])
-        print("    %-10s -> %.3f  (%+.3f)" % (label, m, d))
-    print("  ★効く順序: " + " > ".join("%s(%+.3f)" % (l, d) for d, l, _m in gains))
+    for d, label, m, ms in gains:
+        rows.append([label, "%.3f" % m, "%+.3f" % d, "%.1f %%" % (100 * ms)])
+        print("    %-10s -> %.3f  (%+.3f)   未検出 %.1f %%"
+              % (label, m, d, 100 * ms))
+    print("  ★効く順序: " + " > ".join("%s(%+.3f)" % (l, d)
+                                       for d, l, _m, _s in gains))
+    worst = [g for g in gains if g[0] < 0]
+    if worst:
+        d, label, m, ms = min(worst)
+        print("  ★**%s を止めると逆に下がる**(%+.3f)。2 次微分は加算に不変なので"
+              "分類は変わらないが、\n     加算ベースラインは破片を明るくして"
+              "**ベルトから浮かせていた** —— 未検出が %.1f %% -> %.1f %%。"
+              "\n     同じ汚れが、分類を壊しながら検出を助けている。"
+              % (label, d, 100 * base["miss"], 100 * ms))
+    print("  ※ 重なりはここに入れない —— 隠れた画素は真値にも推定にも現れず、"
+          "可視画素の\n     再現率には原理的に効かないから(2-4 節の P5)。"
+          "効くのは 7 節の**組成**。")
 
-    figs.save_table("ablation", ["止めた要因", "再現率の平均", "改善"], rows,
+    figs.save_table("ablation", ["止めた要因", "再現率の平均", "改善", "未検出"], rows,
                     title="対照群: 全部入り %.3f から 1 つずつ止める" % base["macro"],
-                    caption="濡れだけが桁違いに効く。")
-    return {"geo": geo, "cube": cube, "det": det, "base": base, "gains": gains}
+                    caption="濡れだけが大きく効く。加算汚れは符号が逆(検出を助けていた)。")
+    return {"geo": geo, "cube": cube, "det": det, "base": base, "gains": gains,
+            "hidden": hidden, "mixed_frac": mixed_frac}
 
 
 # --------------------------------------------------------------------------- #
