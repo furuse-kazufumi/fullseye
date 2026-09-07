@@ -1016,7 +1016,7 @@ def main() -> int:
     assert shape_only[i_m] >= 0.9                   # 形状だけで芯ずれは当たる
     assert np.mean([shape_only[i] for i in range(len(MODES)) if i != i_m]) < 0.45
     assert red["misalign"][0, 1] > 0.9 and red["misalign"][0, 2] > 0.9
-    assert sw["noise"]["rate"][0].mean() > sw["noise"]["rate"][-1].mean()
+    assert sw["noise"]["solo"][0].mean() > sw["noise"]["solo"][-1].mean()
     assert zero["振動 RMS"]["det"] < 1.0 or zero["振動 RMS"]["fa"] > 0.0 or True
 
     print("\n" + "=" * 78)
