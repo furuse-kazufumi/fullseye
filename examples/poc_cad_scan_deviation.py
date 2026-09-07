@@ -444,11 +444,10 @@ def render(P, val=None, res=(300, 230), pad=3.0):
     ix = np.clip(((u - u.min() + pad) / s).astype(int), 0, Wp - 1)
     iy = np.clip((Hp - 1 - (v - v.min() + pad) / s).astype(int), 0, Hp - 1)
     img = np.full((Hp, Wp), np.nan)
-    z = dep if val is None else dep
-    order = np.argsort(z)[::-1]           # 遠い順に描いて手前で上書き
+    order = np.argsort(dep)[::-1]         # 遠い順に描いて手前で上書き
     if val is None:
         d = -dep
-        d = (d - d.min()) / (d.ptp() or 1.0) * 0.85 + 0.15
+        d = (d - d.min()) / (float(np.ptp(d)) or 1.0) * 0.85 + 0.15
         img[iy[order], ix[order]] = d[order]
         return np.nan_to_num(img, nan=0.0)
     img[iy[order], ix[order]] = np.asarray(val, float)[order]
