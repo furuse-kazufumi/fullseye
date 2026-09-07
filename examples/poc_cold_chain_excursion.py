@@ -1025,8 +1025,8 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
                         "ロガー 1 個が出す逸脱時間 [min]"],
                        title="どこに置くと当たるか(左=吹き出し口 / 右=扉)",
                        ncols=1)
-    return {"ns": ns, "rates": rates, "conv_pass": conv_pass,
-            "jit_rate": jit_rate, "per_point": per}
+    return {"ns": ns, "rates": rates, "preds": preds, "n_err": n_err, "p1": p1,
+            "conv_pass": conv_pass, "jit_rate": jit_rate, "per_point": per}
 
 
 # --------------------------------------------------------------------------- #
