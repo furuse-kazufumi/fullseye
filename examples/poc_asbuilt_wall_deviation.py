@@ -245,12 +245,18 @@ def section_zero_point() -> dict:
         size[0], 1e3 * (size[0] - RW), size[1], 1e3 * (size[1] - RD)))
     print("  平面 2 枚の距離  東西 %.4f m (%+6.1f mm) / 南北 %.4f m (%+6.1f mm)" % (
         dim_pl[0], 1e3 * (dim_pl[0] - RW), dim_pl[1], 1e3 * (dim_pl[1] - RD)))
+    pb = predict_bulge(BULGE_A, BULGE_S)
     print("\n  ★AABB の東西幅は**測る前に閉形式で予測できる**:")
     print("     倒れ + ふくらみ %.1f mm + 雑音の最大値統計 2σ√(2 ln N) = %.1f mm"
           "  -> 予測 %+.1f mm / 実測 %+.1f mm(差 %.1f mm)"
           % (1e3 * pr["tilt_bulge"], 1e3 * pr["noise"],
              1e3 * (pr["width"] - RW), 1e3 * (size[0] - RW),
              1e3 * abs(pr["width"] - size[0])))
+    print("     予測は**上界**(2 つの最大値が同じ点で起きるとした)なので、"
+          "実測はいつも少し内側に出る。")
+    print("  ★平面法の残り %+.1f mm も測定誤差ではない —— ふくらみの平均 %+.1f mm"
+          "(閉形式)が\n     面をそのぶん外へ押している。**面の偏差は寸法にも漏れる**。"
+          % (1e3 * (dim_pl[0] - RW), 1e3 * pb["mean"]))
 
     # 場面の図: 上面図 + 東壁の偏差マップ
     P = room["P"]
