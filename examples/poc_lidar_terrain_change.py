@@ -406,6 +406,19 @@ def spread(v: np.ndarray) -> float:
     return float(np.std(v)) if v.size > 1 else float("nan")
 
 
+def finite(x, y):
+    """図に渡す前に NaN を落とす(``examplefig.save_plot`` は有限値しか受けない)。"""
+    x = np.asarray(x, float)
+    y = np.asarray(y, float)
+    m = np.isfinite(x) & np.isfinite(y)
+    return x[m], y[m]
+
+
+def big(a, k: int = 6):
+    """図に載せるためだけの最近傍拡大。60x60 セルのままだとパネルの題が入らない。"""
+    return np.repeat(np.repeat(np.asarray(a, float), k, axis=0), k, axis=1)
+
+
 def robust_spread(v: np.ndarray) -> float:
     """外れ値に強い散らばり(1.4826 x MAD)。正規分布なら標準偏差と一致する。
 
