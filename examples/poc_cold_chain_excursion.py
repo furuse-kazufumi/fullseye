@@ -539,7 +539,7 @@ def section_cliffs(scene: dict) -> dict:
         p2 = np.asarray([_rect_cascade_peak(a_drive, width, TAU_AIR, float(t_))
                          for t_ in taus])
         t2 = float(taus[np.argmax(p2 <= margin)]) if (p2 <= margin).any() else np.inf
-        seen = np.asarray([float(first_order_lag(tr, float(t_))[a0:b0 + 200].max())
+        seen = np.asarray([float(first_order_lag(tr, float(t_))[a0:t_end].max())
                            - base for t_ in taus])
         tm = float(taus[np.argmax(seen <= margin)]) if (seen <= margin).any() else np.inf
         rows_t.append(["y=%d" % y, "%.1f" % lay["d_door"][y, x], "%.2f" % base,
