@@ -1238,13 +1238,15 @@ def main() -> int:
           % (1e3 * gsd["g_crit"],
              min(m / p for p, m in zip(gsd["pred"], gsd["meas"])),
              max(m / p for p, m in zip(gsd["pred"], gsd["meas"]))))
-    print("  * 入射角 %.0f° で ΔT は %.2f 倍。射影変換で正対に戻しても %.2f 倍の"
-          "まま —— 幾何は直せるが放射は直らない。"
-          % (ang["deg"][-2], ang["meas"][-2], ang["rect"][-2]))
-    print("  * NETD %.0f -> %.0f mK で見逃しは動かず(再現率 %.2f -> %.2f)、"
-          "偽だけが %d -> %d 個。"
-          % (netd["netd"][0], netd["netd"][-1], netd["recall"][0],
-             netd["recall"][-1], netd["false"][0], netd["false"][-1]))
+    print("  * 入射角 %.0f° で ΔT は %.2f 倍。射影変換で正対に戻すと位置は"
+          " %.1f -> %.1f px に戻るのに ΔT は %.2f 倍 —— "
+          "**幾何は直せるが放射は直らない**。"
+          % (ang["deg"][-2], ang["meas"][-2], ang["shift"][-2][0],
+             ang["shift"][-2][1], ang["rect"][-2]))
+    print("  * ★NETD の予想は外れた: %.0f -> %.0f mK まで振っても偽は %d -> %d 個。"
+          "雑音の崖は %.0f mK(実在のカメラの外)。"
+          % (netd["netd"][0], netd["netd"][-1], netd["false"][0],
+             netd["false"][-1], netd["crit"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
