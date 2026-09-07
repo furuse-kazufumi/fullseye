@@ -1031,6 +1031,7 @@ def section_cliff_dropout() -> dict:
         rnd_p.append(pa)
         low_e.append(eb)
         low_p.append(pb)
+        low_L.append(lb)
         rows.append(["%.0f %%" % (100 * dr), "%.3f" % ea, "%.3f" % pa,
                      "%.3f" % eb, "%.3f" % pb, "%.2f" % lb, "%.0f" % nb])
         print("   %4.0f %%    %6.3f / %6.3f            %6.3f / %6.3f       %.2f  %5.0f"
