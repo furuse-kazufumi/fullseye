@@ -899,6 +899,17 @@ def section_events(scene: dict) -> dict:
     print("  ★「逸脱時間」を 1 つの数字にすると長さと広がりが混ざる —— "
           "塊の extent は 2 つを分けて返す。")
 
+    # vol_region_props は同じラベルから**別の量**(発生時刻・曝露量)を返す
+    rp = fs.vol_region_props(lab, spacing=(DT_MIN, CELL_M, CELL_M))
+    top = max(rp, key=lambda d: d["voxel_count"])
+    t0 = top["bbox"][0]
+    print("  いちばん大きい塊は t = %.0f 分に生まれ、曝露量(面積 x 時間)は"
+          " %.0f m^2·min。" % (t0 * DT_MIN, top["volume"] * DT_MIN / 60.0))
+    print("  ★ただし同じ辞書の `surface_area` %.0f と `sphericity` %.3f は"
+          "**意味を持たない** —— 3 軸のうち 1 つが分、2 つが m なので、"
+          "面積も球形度も単位が混ざる。時空の体積に形の指標を当てないこと。"
+          % (top["surface_area"], top["sphericity"]))
+
     if figs.enabled():
         # ★視線方向(D 軸)を**幅**にする。(t, y, x) のまま投影すると D = 時間
         #   720 になり、返る (H, W) = (60, 12) の細長い絵しか出ない。
