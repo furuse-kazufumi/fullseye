@@ -1115,10 +1115,14 @@ def section_controls(ref: CadRef) -> dict:
             es.append(rot_err_deg(R, s2["R_true"]))
         stat[lab] = (float(np.mean(es)), float(np.std(es)))
         print("     %-8s 姿勢誤差 %.4f ± %.4f 度" % (lab, stat[lab][0], stat[lab][1]))
-    print("   ★差 %+.4f 度は散らばり(±%.4f)と同じ桁 —— **1 本の実行で"
-          "「欠測が引いた」とは言えない**。"
-          % (stat["片側のみ"][0] - stat["全周"][0], max(stat["全周"][1],
-                                                        stat["片側のみ"][1])))
+    diff = stat["片側のみ"][0] - stat["全周"][0]
+    sd = max(stat["全周"][1], stat["片側のみ"][1])
+    print("   ★差 %+.4f 度は散らばり(±%.4f)の %.1f 倍 —— 欠測は確かに姿勢を"
+          "%.1f 倍に引く。" % (diff, sd, abs(diff) / sd,
+                               stat["片側のみ"][0] / stat["全周"][0]))
+    print("      ただし**上の表(種 1 本)では欠測のほうが小さい行すらある**"
+          "(%.4f 度)—— 1 本では向きすら決められない。"
+          % out["欠測 + 密度 1/10"]["e"])
     print("      危ないのはそこではなく、**測れなかった %.0f mm^2(%.1f %%)を"
           "『公差内』と書くこと**。"
           % (ref.area - out["欠測: 片側スキャン"]["area"],
