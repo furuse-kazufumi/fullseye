@@ -10,7 +10,27 @@
   ]
  },
  {
-  "file": "02_lod_by_zone.png",
+  "file": "02_map_change.png",
+  "name": "map_change",
+  "caption": "有意の地図は真値の地図をよく復元する(TPR 88.7 % / FPR 3.6 %)。ただし縁が痩せる —— そこが 7 節の体積の話。",
+  "shape": [
+   1089,
+   484,
+   3
+  ]
+ },
+ {
+  "file": "03_map_lod.png",
+  "name": "map_lod",
+  "caption": "上の帯(砂利の路肩)は粗さ 15 mm・密度半分なので LoD が跳ね上がる。同じ沈下でもここでは有意にならない。",
+  "shape": [
+   397,
+   484,
+   3
+  ]
+ },
+ {
+  "file": "04_lod_by_zone.png",
   "name": "lod_by_zone",
   "caption": "予測は 1.96·σ·sqrt(1/na+1/nb)。σ に生の粗さを使うと上振れし、平面当てはめの残差を使うと合う。沈下量はこの式に入っていない —— LoD の地図は面の地図。",
   "shape": [
@@ -18,11 +38,21 @@
    782,
    3
   ],
-  "csv": "02_lod_by_zone.csv",
-  "tsv": "02_lod_by_zone.tsv"
+  "csv": "04_lod_by_zone.csv",
+  "tsv": "04_lod_by_zone.tsv"
  },
  {
-  "file": "03_cliff.png",
+  "file": "05_map_bias.png",
+  "name": "map_bias",
+  "caption": "LoD は雑音しか見ていないので、系統誤差はそのまま「有意な沈下」として通る。BH も塊の規則も効かない。",
+  "shape": [
+   1089,
+   484,
+   3
+  ]
+ },
+ {
+  "file": "06_cliff.png",
   "name": "cliff",
   "caption": "崖の位置はそのゾーンの LoD で決まる。粗い路肩なら同じ沈下でも崖はもっと右にある。",
   "shape": [
@@ -32,7 +62,7 @@
   ]
  },
  {
-  "file": "04_density.png",
+  "file": "07_density.png",
   "name": "density",
   "caption": "4 倍撒くと LoD は半分。撒く量を決めるのはこの式。",
   "shape": [

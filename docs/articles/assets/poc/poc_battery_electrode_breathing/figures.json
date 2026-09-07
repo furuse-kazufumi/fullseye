@@ -50,5 +50,47 @@
   ],
   "csv": "05_controls.csv",
   "tsv": "05_controls.tsv"
+ },
+ {
+  "file": "06_noise_scaling.png",
+  "name": "noise_scaling",
+  "caption": "横線は真値。線が横線を越えたところで、その量は「測れていない」。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_noise_table.png",
+  "name": "noise_table",
+  "caption": "",
+  "shape": [
+   176,
+   551,
+   3
+  ],
+  "csv": "07_noise_table.csv",
+  "tsv": "07_noise_table.tsv"
+ },
+ {
+  "file": "08_contrast_cliff.png",
+  "name": "contrast_cliff",
+  "caption": "実測が予測から離れる左端は、雑音が増えたのではなく**境界を数え損ねている**。種類を分けて数えること。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_frames.png",
+  "name": "frames",
+  "caption": "同じ場面・同じ雑音で、コントラストだけを落とした。右端では境界の本数が数えられない。",
+  "shape": [
+   605,
+   424,
+   3
+  ]
  }
 ]

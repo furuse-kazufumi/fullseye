@@ -171,9 +171,21 @@ def allow():
         return json.load(f)
 
 
-def test_probe_reaches_most_of_the_registry(probe):
-    n_call = sum(1 for t, _ in probe.values() if t != "uncallable")
-    assert n_call >= 0.7 * len(probe), (n_call, len(probe))
+def test_probe_reaches_every_op_in_the_registry(probe):
+    """★2026-09-08: 「7 割届けばよい」を「全部届く」に上げた。
+
+    それまでこの門は image / region / color / volume の 4 sort にしか入力を作らず、
+    到達率 **76 %**(684 / 901)—— 残る 217 op は "uncallable" として素通りだった。
+    7 割の閾値はその状態を**合格として固定**していたので、素通りが増えても
+    気づけない。8 sort ぶんの構造つき探針を ``op_probe`` に足して 100 % にし、
+    閾値を「1 本でも届かなければ失敗」に変えた。sort を新しく足すときは
+    ``op_probe.sample_input`` に代表値を足すのが条件になる。
+    """
+    missing = sorted((k, v[1]) for k, v in probe.items() if v[0] == "uncallable")
+    assert not missing, (
+        "探針を作れず一度も走らせていない op がある。sort ごとの代表値を "
+        "op_probe.sample_input に足すこと(この門を素通りする op を作らないため):\n"
+        + "\n".join(f"  {n} [{s}]" for n, s in missing[:40]))
 
 
 def test_no_op_falls_back_or_raises_on_the_structured_probe(probe):
