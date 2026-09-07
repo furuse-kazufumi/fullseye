@@ -891,7 +891,7 @@ def section_roughness(v_thr: float) -> dict:
                                       ("R 0.50", hi["alpha"], hi["R"]), ("G 0.50", hi["alpha"], hi["G"])],
                    xlabel="面の傾き α [deg]", ylabel="相対応答", title="粗さで窓の縁がなまる")
     return {"red_pred": r_red_gone_pred, "red_meas": r_red_gone_meas, "err_cliff": r_err_cliff,
-            "errs": errs}
+            "all_dark": r_all_dark, "errs": errs}
 
 
 # --------------------------------------------------------------------------- #
