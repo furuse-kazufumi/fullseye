@@ -682,8 +682,9 @@ def section_volume(v_thr: float, v_pin: float, vis_frac: float) -> dict:
     free = reg == "free"
     ok = ht > 0.03
     ratio1 = float(np.median(h1[free & ok] / ht[free & ok]))
-    c1 = float(np.corrcoef(h1[ok], ht[ok])[0, 1])
-    c2 = float(np.corrcoef(h2[ok], ht[ok])[0, 1])
+    c1 = float(np.corrcoef(h1[free & ok], ht[free & ok])[0, 1])
+    c2 = float(np.corrcoef(h2[free & ok], ht[free & ok])[0, 1])
+    c2_all = float(np.corrcoef(h2[ok], ht[ok])[0, 1])
     rel2 = 100 * (h2[free & ok] / ht[free & ok] - 1)
     print("   体積 [mm³]  真値 h   E1 積分   E1/真値   E2 円弧   E2 誤差   段")
     for i in range(0, len(vols), 5):
