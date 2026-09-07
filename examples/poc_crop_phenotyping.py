@@ -407,7 +407,7 @@ def section_scene():
 # --------------------------------------------------------------------------- #
 def section_stem_capsule():
     print("\n" + "=" * 78)
-    print("2) 稈 = カプセル —— SDF から mesh へ渡すたびに面積は目減りする")
+    print("2) 稈 = カプセル —— 2 値化を 1 回挟むと収束しなくなる")
     print("=" * 78)
 
     a = np.array([0.0, 0.0, 0.0])
@@ -1053,9 +1053,9 @@ def section_volume(can, buf_fine):
           % (zmid[i_pk], prof_true[i_pk], float(zmid[int(np.argmax(prof_occ))])))
     print("  ★山の位置は合うのに**重心高さは %.3f m 対 %.3f m(%+.0f mm)**とずれる。"
           % (cg_t, cg_o, 1000 * (cg_o - cg_t)))
-    print("     占有格子は「そこに葉があるか」しか持たず、**重なった葉を数えられない**"
-          "ので、\n     葉が混み合う下層ほど過小に出る。縦軸は面積密度ではない"
-          "(規格化しないと並べられない)。")
+    print("     占有格子は「そこに葉があるか」しか持たず、**重なりも向きも数えない** ——"
+          "\n     形が似ているのは偶然ではないが、縦軸を葉面積密度として読んではいけない"
+          "\n     (最大値で規格化しないと並べることすらできない)。")
 
     dsm = np.where(buf_fine["lid"] >= 0, buf_fine["top"], 0.0)
     slope = np.asarray(L3.dem_slope(dsm, CELL_FINE))
