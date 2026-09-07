@@ -736,11 +736,18 @@ def section_wind() -> dict:
     print("=" * 78)
     v_hot = solve_v_crit(lambda v: predict_hotspot(v, GSD))
     v_str = solve_v_crit(predict_string)
+    v_area = solve_v_crit(lambda v: predict_blob_area_px(v, GSD),
+                          theta=float(A_MIN))
     print("  対流係数 h = 5.7 + 3.8 v なので ΔT は 1/U(v) で薄まる。")
-    print("  予測: しきい値 %.1f K を割る風速は ホットスポット %.1f m/s、"
-          "ストリング故障 %.1f m/s。" % (THETA, v_hot, v_str))
-    print("\n     v [m/s]  U     予測ΔT(ホット) 実測  |  予測ΔT(ストリング) 実測"
-          "  |  本物 非故障 偽")
+    print("  予測 (1) **ピークがしきい値 %.1f K を割る風速**: ホットスポット"
+          " %.1f m/s、ストリング故障 %.1f m/s。" % (THETA, v_hot, v_str))
+    print("  予測 (2) ★**塊が面積の門 %d px を割る風速**: ホットスポット"
+          " %.1f m/s —— 判定はピークではなく**面積**で落ちる。"
+          % (A_MIN, v_area))
+    print("     (超える面積は 2π σ_tot² ln(P/θ)。ピークが %.1f K を"
+          "上回っていても、上回る範囲が狭ければ塊にならない。)" % THETA)
+    print("\n     v [m/s]  U     予測ΔT(ホット) 実測  予測面積[px] 実測"
+          "  |  予測ΔT(ストリング) 実測  |  本物 非故障 偽")
 
     gt = ground_truth()
     rows, ph_p, ph_m, ps_p, ps_m, nf = [], [], [], [], [], []
