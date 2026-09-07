@@ -1039,12 +1039,15 @@ def section_volume(can, buf_fine):
     prof_occ = prof_occ / max(prof_occ.max(), 1e-9) * prof_true.max()
     zmid = 0.5 * (zc[1:] + zc[:-1])
     i_pk = int(np.argmax(prof_true))
-    print("  葉面積密度のピーク: 真値 %.3f m 高さで %.3f m^2/m^3、"
-          "占有格子の山は %.3f m。"
+    cg_t = float(np.sum(zmid * prof_true) / np.sum(prof_true))
+    cg_o = float(np.sum(zmid * prof_occ) / np.sum(prof_occ))
+    print("  葉面積密度のピーク: 真値 %.3f m で %.3f m^2/m^3、占有格子の山も %.3f m。"
           % (zmid[i_pk], prof_true[i_pk], float(zmid[int(np.argmax(prof_occ))])))
-    print("  ★占有格子は「そこに葉があるか」しか持たないので、**重なった葉を数え"
-          "られない**。\n     形は似ていても縦軸は面積密度ではない(規格化しないと"
-          "並べられない)。")
+    print("  ★山の位置は合うのに**重心高さは %.3f m 対 %.3f m(%+.0f mm)**とずれる。"
+          % (cg_t, cg_o, 1000 * (cg_o - cg_t)))
+    print("     占有格子は「そこに葉があるか」しか持たず、**重なった葉を数えられない**"
+          "ので、\n     葉が混み合う下層ほど過小に出る。縦軸は面積密度ではない"
+          "(規格化しないと並べられない)。")
 
     dsm = np.where(buf_fine["lid"] >= 0, buf_fine["top"], 0.0)
     slope = np.asarray(L3.dem_slope(dsm, CELL_FINE))
