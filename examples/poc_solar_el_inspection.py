@@ -701,48 +701,43 @@ def section_width_sweep() -> dict:
     print("\n" + "=" * 78)
     print("5) 崖: クラック幅 0.5 → 3.0 px の再現率")
     print("=" * 78)
-    ref2 = 1.0
-    w_pred = HYST_HIGH * CRACK_W
-    print("  予測: Frangi の応答は幅に比例(σ より細い間)。校正線 %.1f px = 1.0 なので、"
-          "ヒステリシス上限 %.2f を割るのは幅 < %.2f px(校正線 %.1f px なら %.2f px)。"
-          % (CRACK_W, HYST_HIGH, w_pred, ref2, HYST_HIGH * ref2))
-    print("\n    幅 [px]   応答(中心線の中央値、校正線 %.1f px=1)  線形予測   再現率: 校正線 %.1f px / %.1f px"
-          % (CRACK_W, CRACK_W, ref2))
-    ws, rec, rec2, resp = [], [], [], []
+    unit = REF_W * (1 - REF_T)              # 校正線の「幅 × 深さ」
+    w_pred = HYST_HIGH * unit / (1 - CRACK_T)
+    print("  予測: Frangi の応答は「幅 × 深さ」に比例(σ より細い間)。校正線 %.0f px × %.1f = 1.0 "
+          "なので、幅 w のクラック(深さ %.2f)は w×%.2f/%.1f。ヒステリシス上限 %.2f を"
+          "割るのは幅 < %.2f px。" % (REF_W, 1 - REF_T, 1 - CRACK_T, 1 - CRACK_T, unit,
+                                    HYST_HIGH, w_pred))
+    print("\n    幅 [px]   応答(中心線の中央値)   線形予測   再現率(5 本平均)   最小   偽 [px]")
+    ws, rec, mn, resp, pred = [], [], [], [], []
     for w in (0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0):
         sc = make_scene(crack_w=w)
         r = analyze(sc)
-        r2 = analyze(sc, ref_w=ref2)
-        rm = ridge_map(degrid(flatten(sc["img"])[0]))
+        rm, _ = ridge_map(degrid(flatten(sc["img"])[0]))
         any_true = np.zeros_like(rm, bool)
         for m in sc["crack_lines"]:
             any_true |= m
         ws.append(w)
         rec.append(float(np.mean(r["recall"])))
-        rec2.append(float(np.mean(r2["recall"])))
+        mn.append(float(min(r["recall"])))
         resp.append(float(np.median(rm[any_true])))
-        print("    %4.2f               %.2f                      %.2f            %.2f  /  %.2f"
-              % (w, resp[-1], min(w / CRACK_W, 1.0), rec[-1], rec2[-1]))
+        pred.append(min(w * (1 - CRACK_T) / unit, 1.0))
+        print("    %4.2f          %.2f                %.2f          %.2f          %.2f    %.0f"
+              % (w, resp[-1], pred[-1], rec[-1], mn[-1], r["false_len"]))
     cliff = next((w for w, v in zip(ws, rec) if v >= 0.5), None)
-    cliff2 = next((w for w, v in zip(ws, rec2) if v >= 0.5), None)
-    i1 = ws.index(1.0)
-    print("\n  ★再現率 0.5 を超えるのは 校正線 %.1f px で幅 %.2f px から(予測 %.2f)、"
-          "校正線 %.1f px で %.2f px から(予測 %.2f)。" % (CRACK_W, cliff, w_pred, ref2,
-                                                        cliff2, HYST_HIGH * ref2))
-    print("     予測が外れた理由は測ってある: 幅 1.0 px の応答は %.2f で、線形予測 %.2f の"
-          "%.0f %% —— Frangi の応答は幅に**線形ではない**(構造量 S の飽和項)。"
-          % (resp[i1], 1.0 / CRACK_W, 100.0 * resp[i1] / (1.0 / CRACK_W)))
-    print("     それでも**校正線を細くすると崖は細い側へ動く** —— 検出したい最小幅で"
-          "校正線を作ること。")
-    figs.save_plot("crack_width", [("再現率(校正線 %.1f px)" % CRACK_W, ws, rec),
-                                   ("再現率(校正線 %.1f px)" % ref2, ws, rec2),
-                                   ("中心線の応答(校正線 %.1f px=1)" % CRACK_W, ws, resp),
-                                   ("線形予測 w/%.1f" % CRACK_W, ws,
-                                    [min(w / CRACK_W, 1.0) for w in ws])],
+    ratio = [a / b for a, b in zip(resp, pred)]
+    print("\n  ★再現率 0.5 を超えるのは幅 %.2f px から(予測 %.2f px)。実測の応答は線形予測の"
+          " %.2f〜%.2f 倍 —— %s。" % (cliff, w_pred, min(ratio), max(ratio),
+                                     "幅 × 深さの線形則で崖が読める" if abs(cliff - w_pred) <= 0.3
+                                     else "線形則は崖の位置を外す"))
+    print("     崖の位置は校正線の「幅 × 深さ」とヒステリシス上限の積で決まる —— "
+          "検出したい最小幅から逆算して決めること。")
+    figs.save_plot("crack_width", [("再現率(5 本平均)", ws, rec), ("再現率(最小)", ws, mn),
+                                   ("中心線の応答(校正線=1)", ws, resp),
+                                   ("線形予測 w×%.2f/%.1f" % (1 - CRACK_T, unit), ws, pred)],
                    xlabel="クラック幅 [px]", ylabel="再現率 / 応答",
-                   title="クラック幅の崖は校正線の幅で動く(応答は幅に線形ではない)")
-    return {"w": ws, "recall": rec, "recall2": rec2, "resp": resp, "cliff": cliff,
-            "cliff2": cliff2, "w_pred": w_pred, "resp1": resp[i1]}
+                   title="クラック幅の崖は「幅 × 深さ」の線形則で読める")
+    return {"w": ws, "recall": rec, "resp": resp, "cliff": cliff, "w_pred": w_pred,
+            "ratio": ratio}
 
 
 # --------------------------------------------------------------------------- #
