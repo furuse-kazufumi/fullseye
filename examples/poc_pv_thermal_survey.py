@@ -939,6 +939,7 @@ def section_gsd() -> dict:
     print("  ★「セルが 1 画素に写れば見える」は嘘。熱源はセルより小さい"
           "(半径 %.0f mm)ので、要るのは**熱源の径に対する** GSD。"
           % (1e3 * R_HOT))
+    assert 0.90 < min(ratios) and max(ratios) < 1.15, "GSD の閉形式が外れた"
 
     figs.save_plot("gsd_sweep",
                    [("予測(閉形式)", xs, pred), ("実測", xs, meas),
