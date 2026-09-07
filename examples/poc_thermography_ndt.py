@@ -318,14 +318,24 @@ def section3_depth_table(masks, d_hat):
         print(" %16s" % ("%.0f mm" % dia), end="")
     print()
     print("  " + "-" * 76)
+    errs = {}
     for d_mm in DEPTHS_MM:
         print("  %8.1f |" % d_mm, end="")
         for dia in DIAMS_MM:
             m = masks[(d_mm, dia)]
             e = 1e3 * float(np.median(d_hat[m]))
-            print(" %10.2f (%+4.0f%%)" % (e, 100 * (e / d_mm - 1)), end="")
+            errs[(d_mm, dia)] = 100 * (e / d_mm - 1)
+            print(" %10.2f (%+4.0f%%)" % (e, errs[(d_mm, dia)]), end="")
         print()
     print()
+    # ★所見を固定する。
+    #   (1) 直径が深さの 4 倍以上ある右下三角は数 % で当たる(1 節の床とほぼ同じ)。
+    big = [errs[(d, dia)] for d in DEPTHS_MM for dia in (8.0, 16.0)]
+    assert max(abs(v) for v in big) <= 8.0, big
+    #   (2) 左上(直径 2 mm)は**過大側に**壊れる。深く見えすぎるので、
+    #       誤差の符号が負に転ぶことは無い。
+    assert errs[(0.5, 2.0)] > 300.0, errs[(0.5, 2.0)]
+    assert min(errs[(d, 2.0)] for d in DEPTHS_MM) > 20.0, [errs[(d, 2.0)] for d in DEPTHS_MM]
     figs.save_table("depth_table",
                     ["深さ mm"] + ["直径 %.0f mm" % d for d in DIAMS_MM],
                     [["%.1f" % d] + ["%.2f (%+.0f%%)"
