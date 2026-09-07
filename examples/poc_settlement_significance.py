@@ -106,6 +106,7 @@ X_FACE, I_LONG = 14.0, 2.5      # 切羽の位置と縦断の立ち上がり
 CORE_STEP, RADIUS, MAX_DEPTH = 0.8, 0.6, 0.15
 MIN_POINTS = 8
 TRUE_POS_MM = 2.0               # 「本当に沈んだ」とみなす真値 [mm]
+TRUE_NULL_MM = 0.2              # 「実質沈んでいない」とみなす真値 [mm]
 SEED = 21
 
 _GRID = 0.04                    # 粗さの場を作る格子 [m]
