@@ -801,12 +801,14 @@ def section_mixed(ab: dict, pair) -> dict:
                     title="面積基準の材質構成比(真値は隠れた面積も含む全面積)")
     figs.save_grid("mixed_map",
                    [geo["pure"].astype(np.float64),
+                    true_frac[:, 4].reshape(H, W),
                     np.asarray(ab_map[..., 4])],
                    ["純画素(白)と混合画素(黒)",
-                    "PVC の存在量(線形混合分解)"],
-                   title="境界は必ず混ざる —— 捨てるか、分数で数えるか")
+                    "PVC の真の面積比", "PVC の存在量(線形混合分解)"],
+                   title="境界は必ず混ざる —— 捨てるか、分数で数えるか", ncols=3)
     return {"all": all_s["macro"], "pure": pure_s["macro"],
-            "e_all": e_all, "e_pure": e_pure, "e_unmix": e_unmix}
+            "e_all": e_all, "e_pure": e_pure, "e_unmix": e_unmix,
+            "mix_clean": err_mix[0][1], "mix_deg": err_mix[1][1]}
 
 
 # --------------------------------------------------------------------------- #

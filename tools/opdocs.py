@@ -837,7 +837,15 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
         reg_mod = ({"3d": "ops3d"}.get(dim)
                    or (LEDGER_DIMS[dim]["registry"] if dim in LEDGER_DIMS
                        else rec["module"]))
-        lines.append(T('- **呼び出し**: `import {a0}; {a1}.{a2}{a3}` (または `{a4}.get("{a5}")`)', lang).format(a0=rec['module'], a1=rec['module'], a2=name, a3=rec['sig'], a4=reg_mod, a5=name))
+        # ★2026-09-07: **公開経路を先に書く**。ここは実装モジュールの直 import しか
+        # 書いておらず、利用者が実際に使う `fullseye.ledger.<名>` が出ていなかった
+        # (2-D 以外の 1,244 op すべて)。PoC が繰り返し「fs.<名> に無い」と報告して
+        # いたのは、名前が無いことではなく**入口が書かれていないこと**の問題だった。
+        lines.append(T('- **呼び出し**: `import fullseye as fs; fs.ledger.{a0}{a1}` '
+                       '(実装を直接呼ぶなら `import {a2}; {a3}.{a4}{a5}`、'
+                       '台帳から引くなら `{a6}.get("{a7}")`)', lang)
+                     .format(a0=name, a1=rec['sig'], a2=rec['module'], a3=rec['module'],
+                             a4=name, a5=rec['sig'], a6=reg_mod, a7=name))
     if rec.get("adapter") is not None:
         _base = T('- **台帳経由の戻り値**: `fullseye.ledger.{a0}(...)` は**宣言 out 型 '
                   '`{a1}` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が'
