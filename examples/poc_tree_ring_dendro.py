@@ -852,6 +852,34 @@ def section_tool_gaps() -> None:
     print("  (d) fs.find_peaks は height / distance だけで prominence を渡せない。"
           "木目の低い山を落とすつまみが無いので、ゼロ点は素の scipy より不利。")
 
+    # (e) measure_pos の amplitude は木目で勾配が単調でなくなると段の途中で止まる
+    sc = make_scene()
+    ps = polar_stack(sc["img"], sc["pith"])
+    fil = ps["fil"]
+    nr = fil.shape[1]
+    row_c = float(sector_row(0))
+    m = fs.ledger.gen_measure_rectangle2(row_c, (nr - 1) / 2.0, 0.0, (nr - 1) / 2.0,
+                                         MEAS_ROWS, fil.shape)
+    edges = fs.ledger.measure_pos(fil, m, sigma=SIG_M * OVS, threshold=0.0,
+                                  transition="positive")
+    r0 = int(round(row_c)) - MEAS_ROWS // 2
+    sm = np.asarray(fs.smooth_funct_1d_gauss(fil[r0:r0 + MEAS_ROWS].mean(axis=0),
+                                             SIG_M * OVS))
+    under, total = 0, 0
+    for e in edges:
+        i = int(round(e["pos"]))
+        lo, hi = max(0, i - 3 * OVS), min(nr, i + 3 * OVS + 1)
+        rise = float(sm[lo:hi].max() - sm[lo:hi].min())
+        if rise >= 0.10:
+            total += 1
+            if e["amplitude"] < 0.5 * rise:
+                under += 1
+    assert total > 0
+    print("  (e) measure_pos の amplitude(勾配ローブの両端差)は、±3 px で %.2f 以上"
+          "上がっている段 %d 本のうち %d 本で実際の半分未満と出た。木目で勾配の大きさが"
+          "単調でなくなるとローブが途中で切れる。threshold で切るなら勾配の山の高さの"
+          "ほうが素直(この PoC はそうした)。" % (0.10, total, under))
+
 
 # --------------------------------------------------------------------------- #
 def main() -> None:
