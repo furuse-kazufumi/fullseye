@@ -683,19 +683,16 @@ def section_cliff(sc: dict) -> dict:
     print("\n" + "=" * 78)
     print("9) 崖 —— どれだけ沈めば、どれだけ撒けば有意になるか")
     print("=" * 78)
-    global S_MAX
     cores, nx, ny = sc["cores"], sc["nx"], sc["ny"]
-    keep = S_MAX
 
     print("   最大沈下 mm   舗装ゾーンの検出率   全体の有意率   平均 [mm]")
     smax_l, rate_l = [], []
     for s in (1.0, 2.0, 4.0, 8.0, 16.0):
-        S_MAX = s / 1000.0
-        a, b = make_clouds(settle=True)
+        a, b = make_clouds(settle=True, s_max=s / 1000.0)
         n_fit = fitted_normals(a, cores)
         d, lod = m3c2(a, b, cores, n_fit)
         d, lod = d * 1000.0, lod * 1000.0
-        s_mm = settlement(cores[:, 0], cores[:, 1]) * 1000.0
+        s_mm = settlement(cores[:, 0], cores[:, 1], s / 1000.0) * 1000.0
         ok = np.isfinite(d)
         sig = ok & (np.abs(d) > lod)
         band = (zone_of(cores[:, 1]) == 1) & (np.abs(s_mm) >= 0.5 * s)
@@ -704,7 +701,6 @@ def section_cliff(sc: dict) -> dict:
         rate_l.append(rate)
         print("     %5.1f          %6.1f %%            %5.1f %%      %7.2f"
               % (s, rate, 100 * sig.sum() / max(ok.sum(), 1), np.nanmean(d)))
-    S_MAX = keep
 
     print("\n   点密度 x    LoD 中央値 mm   予測 (1/sqrt) mm   有意率")
     dens_l, lod_l, pred_l = [], [], []
