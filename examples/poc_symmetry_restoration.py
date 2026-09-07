@@ -952,7 +952,7 @@ def main() -> int:
     Z = section_zero_point(S)
     Aeng = section_angle_cliff(S, Z)
     O = section_offset_cliff(S, Z)
-    C = section_controls(S, Z)
+    C = section_controls(S, Z, O)
     D = section_defect_sweep(S)
     F = section_false_symmetry(S)
     section_tool_gaps(S)
