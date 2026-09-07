@@ -958,62 +958,84 @@ def section_systematic(tr: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 8. 崖(4) 樹木による遮蔽                                                       #
 # --------------------------------------------------------------------------- #
-def section_occlusion(tr: dict, lod: float) -> dict:
+def section_occlusion(tr: dict, lod0: float) -> dict:
     print("\n" + "=" * 78)
-    print("8) 崖(4) 樹冠による遮蔽 0 -> 60 %% (LoD %.3f m でしきった土量で比べる)" % lod)
+    print("8) 崖(4) 樹冠による遮蔽 0 -> 60 %")
     print("=" * 78)
-    tt = truth(lod=lod)
-    print("   遮蔽率 地面点率 空セル  分類なし掘削  分類あり掘削 誤差%  堆積 誤差%"
-          "  M3C2 掘削 誤差%")
-    occ, gr, emp, raw, filt, mv, rows = [], [], [], [], [], [], []
+    print("  遮蔽は 2 つのことを同時にやる: (i) 地面点を減らして LoD を上げる、"
+          "(ii) 樹冠の点を地面に混ぜる。")
+    print("  **条件ごとに変化なしの対照を取り、その場で LoD を測り直す**ことで分ける。")
+    print("\n   遮蔽率 地面点  混入  実効密度  その場の LoD [m]  "
+          "固定 LoD の掘削 誤差%   その場 LoD の掘削 誤差%   分類なし")
+    occ, gr, leak, lodc, fixed, adapt, raw, rows = [], [], [], [], [], [], [], []
     for p in (0.0, 0.15, 0.30, 0.45, 0.60):
         rng = np.random.default_rng(SEED + 9)
         a, ga = make_cloud(rng, with_change=False, occl=p)
         b, _ = make_cloud(rng, with_change=True, occl=p)
-        r_raw = dod(a, b, lod=lod)
         ka, kb = ground_filter(a), ground_filter(b)
-        r_f = dod(a[ka], b[kb], lod=lod)
-        vm = m3c2_volume(m3c2(a[ka], b[kb]), lod=lod)
-        e1 = 100 * (r_f["ero"] / tt["ero"] - 1)
-        e2 = 100 * (r_f["dep"] / tt["dep"] - 1)
-        e3 = 100 * (vm["ero"] / tt["ero"] - 1)
+        # 同じ条件・変化なしの対照 -> その場の LoD
+        r0 = np.random.default_rng(SEED + 10)
+        c0, gc = make_cloud(r0, with_change=False, occl=p)
+        c1, _ = make_cloud(r0, with_change=False, occl=p)
+        k0, k1 = ground_filter(c0), ground_filter(c1)
+        rc = dod(c0[k0], c1[k1])
+        lod_here = 1.96 * spread(rc["dz"][rc["ok"]])
+        r_fix = dod(a[ka], b[kb], lod=lod0)
+        r_ada = dod(a[ka], b[kb], lod=lod_here)
+        r_raw = dod(a, b, lod=lod0)
+        t_fix, t_ada = truth(lod=lod0), truth(lod=lod_here)
+        e1 = 100 * (r_fix["ero"] / t_fix["ero"] - 1)
+        e2 = 100 * (r_ada["ero"] / t_ada["ero"] - 1)
         occ.append(100 * p)
         gr.append(100 * float(ga.mean()))
-        emp.append(r_f["empty"])
+        leak.append(int((ka & ~gc[:len(ka)]).sum()) if p > 0 else 0)
+        lodc.append(lod_here)
+        fixed.append(r_fix["ero"])
+        adapt.append(r_ada["ero"])
         raw.append(r_raw["ero"])
-        filt.append(r_f["ero"])
-        mv.append(vm["ero"])
-        rows.append(["%.0f" % (100 * p), "%.1f" % gr[-1], "%d" % emp[-1],
-                     "%.1f" % raw[-1], "%.1f" % filt[-1], "%+.1f" % e1,
-                     "%.1f" % r_f["dep"], "%+.1f" % e2, "%.1f" % vm["ero"],
-                     "%+.1f" % e3])
-        print("   %5.0f %% %7.1f %% %6d %13.1f %13.1f %+6.1f %7.1f %+6.1f %10.1f %+6.1f"
-              % (100 * p, gr[-1], emp[-1], raw[-1], filt[-1], e1,
-                 r_f["dep"], e2, vm["ero"], e3))
-    print("\n  ★分類しないと樹冠が標高に混ざる: 遮蔽 %.0f %% で掘削 %.1f m3"
-          "(しきい値以上の真値 %.1f m3 の %.1f 倍)。"
-          % (occ[-1], raw[-1], tt["ero"], raw[-1] / tt["ero"]))
-    print("     ★予想は「樹冠は両時期に同じだけ入るので差分では消える」だった。実測は"
-          " %s —— 遮蔽は**確率的**で、どの点が樹冠で返るかが時期ごとに違うから。"
-          % ("消えない" if raw[-1] > 1.5 * filt[-1] else "ほぼ消える"))
-    print("  ★分類すると %.0f %% 遮蔽でも掘削の誤差は %+.1f %%。"
-          "落ちるのは精度でなく**被覆**(空セル %d 個 = 窓の %.2f %%)。"
-          % (occ[-1], 100 * (filt[-1] / tt["ero"] - 1), emp[-1],
-             100 * emp[-1] / WIN_AREA))
-    print("     ★遮蔽が上がるほど地面点が減る(%.1f -> %.1f %%)ので、"
-          "LoD は %.2f 倍に悪化しているはず —— 同じ LoD でしきり続けると"
-          % (gr[0], gr[-1], math.sqrt(gr[0] / gr[-1])))
-    print("     偽陽性が増える。遮蔽率は**しきい値をその場で測り直せ**という指示。")
+        dens_eff = float(ka.sum()) / (LX * LY)
+        rows.append(["%.0f" % (100 * p), "%.1f" % gr[-1], "%d" % leak[-1],
+                     "%.1f" % dens_eff, "%.3f" % lod_here,
+                     "%.1f" % r_fix["ero"], "%+.1f" % e1,
+                     "%.1f" % r_ada["ero"], "%+.1f" % e2, "%.1f" % r_raw["ero"]])
+        print("   %5.0f %% %6.1f %% %5d %8.1f %14.3f %14.1f %+7.1f %16.1f %+7.1f %10.1f"
+              % (100 * p, gr[-1], leak[-1], dens_eff, lod_here,
+                 r_fix["ero"], e1, r_ada["ero"], e2, raw[-1]))
+    print("\n  ★分類しないと樹冠が標高に混ざる: 遮蔽 %.0f %% で掘削 %.1f m3 —— "
+          "その場 LoD の値 %.1f m3 の %.1f 倍。"
+          % (occ[-1], raw[-1], adapt[-1], raw[-1] / adapt[-1]))
+    print("     ★予想は「樹冠は両時期に同じだけ入るので差分では消える」だった。"
+          "実測は消えない —— 遮蔽は**確率的**で、どの点が樹冠で返るかが時期ごとに違う。")
+    print("  ★★分類しても**固定 LoD のままだと壊れる**: 誤差 %+.1f %%(遮蔽 0)-> "
+          "%+.1f %%(遮蔽 %.0f %%)。"
+          % (100 * (fixed[0] / truth(lod=lod0)["ero"] - 1),
+             100 * (fixed[-1] / truth(lod=lod0)["ero"] - 1), occ[-1]))
+    print("     地面点が %.1f -> %.1f %% に減って実効密度が下がり、LoD が "
+          "%.3f -> %.3f m(%.1f 倍)に悪化しているのに、しきい値だけ据え置くから。"
+          % (gr[0], gr[-1], lodc[0], lodc[-1], lodc[-1] / lodc[0]))
+    print("  ★★条件ごとに対照を取って LoD を測り直すと、遮蔽 %.0f %% でも誤差 %+.1f %%。"
+          % (occ[-1], 100 * (adapt[-1] / truth(lod=lodc[-1])["ero"] - 1)))
+    print("     **遮蔽率は「しきい値をその場で測り直せ」という指示**であって、"
+          "手法を替えろという意味ではない。")
+    print("     ただし LoD を上げるほど縁が落ちる: しきい値以上の真値は "
+          "%.1f -> %.1f m3(-%.0f %%)。測れる土量そのものが減る。"
+          % (truth(lod=lodc[0])["ero"], truth(lod=lodc[-1])["ero"],
+             100 * (1 - truth(lod=lodc[-1])["ero"] / truth(lod=lodc[0])["ero"])))
     figs.save_table("occlusion",
-                    ["遮蔽 %", "地面点 %", "空セル", "分類なし掘削 m3",
-                     "分類あり掘削 m3", "誤差 %", "堆積 m3", "誤差 %",
-                     "M3C2 掘削 m3", "誤差 %"], rows,
-                    title="樹冠の遮蔽(しきい値以上の真値 掘削 %.1f / 堆積 %.1f m3)"
-                          % (tt["ero"], tt["dep"]),
-                    caption="分類しない DoD は樹冠が混ざって桁で外れる。"
-                            "分類すれば精度は保たれ、落ちるのは被覆のほう。")
-    return {"occ": occ, "raw": raw, "filt": filt, "m3c2": mv, "empty": emp,
-            "ground": gr, "tt": tt}
+                    ["遮蔽 %", "地面点 %", "樹冠混入 点", "実効密度 pt/m2",
+                     "その場の LoD m", "固定 LoD の掘削 m3", "誤差 %",
+                     "その場 LoD の掘削 m3", "誤差 %", "分類なし m3"], rows,
+                    title="樹冠の遮蔽 —— しきい値を据え置くと壊れる",
+                    caption="誤差はそれぞれのしきい値以上の真値に対する値。"
+                            "分類しない列は樹冠が標高に混ざった結果。")
+    figs.save_plot("occlusion_lod",
+                   [("その場で測った LoD95", occ, lodc),
+                    ("固定 LoD(遮蔽 0 で決めた値)", occ, [lod0] * len(occ))],
+                   xlabel="樹冠での遮蔽率 [%]", ylabel="検出できる最小の変化 [m]",
+                   title="遮蔽は密度を削り、しきい値を押し上げる",
+                   caption="同じ条件で変化ゼロの対照を取れば、その場の検出限界は測れる。")
+    return {"occ": occ, "raw": raw, "fixed": fixed, "adapt": adapt,
+            "lod": lodc, "ground": gr}
 
 
 # --------------------------------------------------------------------------- #
