@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   223,
+   350,
+   3
+  ]
+ },
+ {
+  "file": "02_hidden_void_section.png",
+  "name": "hidden_void_section",
+  "caption": "",
+  "shape": [
+   244,
+   390,
+   3
+  ]
+ },
+ {
+  "file": "03_zero_points.png",
+  "name": "zero_points",
+  "caption": "",
+  "shape": [
+   320,
+   417,
+   3
+  ],
+  "csv": "03_zero_points.csv",
+  "tsv": "03_zero_points.tsv"
+ },
+ {
+  "file": "04_breakdown.png",
+  "name": "breakdown",
+  "caption": "",
+  "shape": [
+   128,
+   541,
+   3
+  ],
+  "csv": "04_breakdown.csv",
+  "tsv": "04_breakdown.tsv"
+ },
+ {
+  "file": "05_gsd_slot_cliff.png",
+  "name": "gsd_slot_cliff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_heightmap_frames.png",
+  "name": "heightmap_frames",
+  "caption": "",
+  "shape": [
+   353,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "07_gsd_false_overhang.png",
+  "name": "gsd_false_overhang",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

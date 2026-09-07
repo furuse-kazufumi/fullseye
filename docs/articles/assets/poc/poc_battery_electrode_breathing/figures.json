@@ -1,0 +1,96 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "負極(暗)・セパレータ(明)・正極(中)が 3 単位。2 枚の違いは µm 級で、並べても見えない —— そこが主題。",
+  "shape": [
+   636,
+   286,
+   3
+  ]
+ },
+ {
+  "file": "02_profiles.png",
+  "name": "profiles",
+  "caption": "境界は erf の重ね合わせで解析的に置いてあるので、真値は浮動小数点の精度で既知。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_displacement.png",
+  "name": "displacement",
+  "caption": "階段状に増えるのは、伸びる層(負極 1.00 %)と伸びない層(セパレータ 0 %)が交互だから。傾きが積層全体のひずみ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_peak_locking.png",
+  "name": "peak_locking",
+  "caption": "真値を画素の中心に置いた検査は、推定器を実力以上に良く見せる。乗せない検査を必ず 1 本置くこと。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_controls.png",
+  "name": "controls",
+  "caption": "真値の伸びは +4.45e-03。Z2 はサブピクセルなのにオフセットだけで真値を超える嘘をつく。",
+  "shape": [
+   224,
+   504,
+   3
+  ],
+  "csv": "05_controls.csv",
+  "tsv": "05_controls.tsv"
+ },
+ {
+  "file": "06_noise_scaling.png",
+  "name": "noise_scaling",
+  "caption": "横線は真値。線が横線を越えたところで、その量は「測れていない」。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_noise_table.png",
+  "name": "noise_table",
+  "caption": "",
+  "shape": [
+   176,
+   551,
+   3
+  ],
+  "csv": "07_noise_table.csv",
+  "tsv": "07_noise_table.tsv"
+ },
+ {
+  "file": "08_contrast_cliff.png",
+  "name": "contrast_cliff",
+  "caption": "実測が予測から離れる左端は、雑音が増えたのではなく**境界を数え損ねている**。種類を分けて数えること。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_frames.png",
+  "name": "frames",
+  "caption": "",
+  "shape": [
+   636,
+   424,
+   3
+  ]
+ }
+]

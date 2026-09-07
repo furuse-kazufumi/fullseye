@@ -181,7 +181,7 @@ def account(hm: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 1. 場面 —— 上から見えるものと、見えないもの                                   #
 # --------------------------------------------------------------------------- #
-def _section_raster(boxes, y: float, nz: int = 120, nx: int = 180,
+def _section_raster(boxes, y: float, nz: int = 210, nx: int = 320,
                     seen: bool = False) -> np.ndarray:
     """y = 一定の断面図(縦 z、横 x)。``seen=True`` は天端の押し出し。"""
     xs = np.linspace(SCAN_X[0], SCAN_X[1], nx)
@@ -538,7 +538,7 @@ def section_iou(lb: list) -> dict:
                    [_section_raster(LOAD_A, 500.0, seen=True),
                     _section_raster(lb, 500.0, seen=True)],
                    ["荷 A(隙間だらけ)", "荷 B(はみ出し・高さ超過)"],
-                   title="断面 y = 500 mm —— 同じ積載率の 2 つの荷", ncols=2)
+                   title="断面 y = 500 mm(同じ積載率)", ncols=2)
     return {"iou": out, "boxes": got}
 
 
@@ -615,7 +615,8 @@ def main() -> None:
     # 4) 粗い格子は偽のはみ出しを作り、どこかで B の真のはみ出しを追い越す
     assert all(b >= a for a, b in zip(over["meas"], over["meas"][1:]))
     assert any(m > over["true_over"] for m in over["meas"])
-    assert all(0.5 < m / p < 1.5 for m, p in zip(over["meas"], over["pred"]))
+    assert all(0.3 < m / p < 1.2 for m, p in zip(over["meas"], over["pred"]))
+    assert over["meas"][-1] / over["pred"][-1] > 0.9      # 粗い側では予測に乗る
     # 5) IoU は両方 0.9 台 —— 1 個の一致度は種類別の違いに盲目
     assert 0.90 < iou["iou"]["A"] < 0.99, iou["iou"]
     assert iou["iou"]["B"] > 0.999, iou["iou"]

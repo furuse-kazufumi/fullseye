@@ -661,8 +661,10 @@ def section_registration(sc: dict, mult: dict) -> dict:
     print("   平均の差 %.2f mm(真値 0)、有意な core %d/%d (%.1f %%)"
           % (np.nanmean(d), int(sig.sum()), int(ok.sum()),
              100 * sig.sum() / max(ok.sum(), 1)))
-    print("   BH %d / 塊の規則 %d —— ★**どちらも効かない**。系統誤差は"
-          "多重比較の問題ではない。" % (int(bh.sum()), int(cl.sum())))
+    print("   BH %d / 塊の規則 %d —— ★**桁で減らない**(残差ゼロの対照群では"
+          "%d -> %d だった)。系統誤差は多重比較の問題ではないので、"
+          "偽陽性を減らす道具では消えない。"
+          % (int(bh.sum()), int(cl.sum()), mult["sig0"], mult["bh0"]))
     print("   (比較: 残差ゼロの対照群は 有意 %d / BH %d / 塊 %d)"
           % (mult["sig0"], mult["bh0"], mult["cl0"]))
 
@@ -821,7 +823,7 @@ def section_cliff(sc: dict, mv: dict) -> dict:
                    title="LoD は点密度の平方根で落ちる",
                    caption="4 倍撒くと LoD は半分。撒く量を決めるのはこの式。")
     return {"smax": smax_l, "rate": rate_l, "dens": dens_l, "lod": lod_l,
-            "pred": pred_l, "ratio": r}
+            "pred": pred_l, "ratio": r, "lod_asphalt": lod_asf}
 
 
 # --------------------------------------------------------------------------- #
@@ -911,7 +913,7 @@ def main() -> None:
     print("  * 崖: 舗装ゾーンの検出率が 50 %% を超えるのは最大沈下 %.2f mm から"
           "(そのゾーンの LoD %.2f mm と同じ目盛り)。"
           % (min([s for s, v in zip(cliff["smax"], cliff["rate"]) if v >= 50.0]),
-             cliff["lod"][2]))
+             cliff["lod_asphalt"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
