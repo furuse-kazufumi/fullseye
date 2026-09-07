@@ -471,15 +471,21 @@ def section_phase() -> dict:
         a, b = float(r["int"].std()), float(r["bin"].std())
         sd_i.append(a)
         sd_b.append(b)
-        rows.append(["%.2f" % m, "%.2f px" % m, "%.4f" % a, "%.4f" % b])
-        print("     %.2f          %.2f px            %.4f         %.4f" % (m, m, a, b))
+        rows.append(["%.3f" % m, "%.2f px" % (m * span), "%.4f" % a, "%.4f" % b])
+        print("    %.3f         %6.2f px          %.4f         %.4f"
+              % (m, m * span, a, b))
 
-    print("\n  ★2 値化の期ごとの散らばりは傾き 0.00 で %.4f mm、0.35 で %.4f mm"
-          "(%.1f 分の 1)。" % (sd_b[0], sd_b[-1], sd_b[0] / max(sd_b[-1], 1e-9)))
+    print("\n  ★2 値化の期ごとの散らばりは傾き 0.000 で %.4f mm、0.350 で %.4f mm"
+          "(%.0f 分の 1)。" % (sd_b[0], sd_b[-1], sd_b[0] / max(sd_b[-1], 1e-9)))
     print("     水平だと全列が同じ位相なので、幅は列ごとではなく**画面ごと**に"
           "1 px = %.2f mm 単位で跳ぶ。" % PX_MM)
+    drop = [m for m, b in zip(slopes, sd_b) if b < 0.5 * sd_b[0]]
+    print("  ★崖の位置: 傾き %.3f で半分を切る。予測 %.4f(区間で 1 px 動く傾き)と"
+          "同じ目盛り。" % (min(drop) if drop else float("nan"), m_crit))
     print("  ★予想は「傾けると断面が斜めに切れて積分法も悪くなる」だったが、"
-          "積分法の σ は %.4f -> %.4f mm で**ほぼ無反応**。" % (sd_i[0], sd_i[-1]))
+          "積分法の σ は %.4f -> %.4f mm で**ほぼ無反応**(2 値化の %.0f 分の 1)。"
+          % (sd_i[0], sd_i[-1], sd_b[0] / max(sd_i[0], 1e-9)))
+    assert sd_b[0] > 10.0 * sd_i[0], (sd_b[0], sd_i[0])
     assert sd_b[0] > sd_b[-1], (sd_b[0], sd_b[-1])
 
     figs.save_plot("phase",
