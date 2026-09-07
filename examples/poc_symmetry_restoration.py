@@ -976,9 +976,10 @@ def main() -> int:
     print("  * 欠損は面を「ずらす」前に**軸ごと飛ばす**。失った点が %.1f %% を超えると"
           "PCA の候補順位が入れ替わった。" % (D["frac"][D["first"] - 1] if D["first"] > 0
                                               else float("nan")))
-    print("  * 軸を正しく選んでも、欠損のまま推定した面は位置が %.2f mm ずれる"
-          "(完全形なら %.3f mm)。対称トリミングで %.3f mm。"
-          % (C["damaged"]["off"], C["full"]["off"], C["trim"]["off"]))
+    print("  * 重心を通す粗い面は %.2f mm ずれるが、残差の掃引がその %.0f %% を吸う"
+          "(残り %.3f mm、完全形なら %.3f mm)。"
+          % (C["coarse"]["off"], 100 * (1 - C["damaged"]["off"] / C["coarse"]["off"]),
+             C["damaged"]["off"], C["full"]["off"]))
     print("  * 対称でない形では、欠損の側で装飾が %.0f mm^3 捏造されるか"
           " %.0f mm^3 消されるかが決まる(面が真値でも)。"
           % (F["out"]["無地の側(左)"]["fab"], F["out"]["装飾のある側(右)"]["ers"]))
