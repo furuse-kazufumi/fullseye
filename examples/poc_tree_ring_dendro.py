@@ -532,8 +532,8 @@ def section_baseline() -> dict:
                                    c["exact"], N_SECT))
     print("     幅の相関 %.3f(%d 年)、平均誤差 %.2f px、尺度 %.3f(θ 平均の真値に対して)"
           % (cs["corr"], cs["n"], cs["mae"], cs["scale"]))
-    print("  ★ゼロ点は年数を %+d 年間違えても幅の相関は %.3f。"
-          "年数の誤差と幅の相関は別の量。" % (z0["n_det"] - z0["n_true"], zs["corr"]))
+    print("  ゼロ点(θ=0)の幅の平均誤差 %.2f px は合意法の %.1f 倍 —— 1 本の放射線の"
+          "境界位置は木目で ±0.5 px 揺れる。" % (zs["mae"], zs["mae"] / cs["mae"]))
 
     # 図: 場面 / 真値地図 / 極座標展開(生・メディアン後)
     figs.save_grid("scene",
