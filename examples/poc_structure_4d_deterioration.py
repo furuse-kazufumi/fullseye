@@ -1129,7 +1129,8 @@ def section_rate(obs: dict, sc: dict) -> dict:
                            "検出限界の下に沈む。")
     return {"rate": rate, "rate_true": rate_true, "err_rms": rms,
             "detect": 2 * rms, "e_two": e_two, "e_lin": e_lin, "dmax": dmax,
-            "acc_err": ea, "L": ls, "scat": scats, "cen": cen,
+            "acc_err": ea, "acc_pred_ind": pred_ind, "acc_pred_cor": pred_cor,
+            "rho": rho, "L": ls, "scat": scats, "cen": cen,
             "nor": nor, "ok": ok, "tf": tf}
 
 
