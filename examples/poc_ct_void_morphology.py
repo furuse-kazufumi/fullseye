@@ -371,20 +371,21 @@ def section_scene() -> dict:
         "scene_sections",
         [sc["mu"][:, mid, :], obs[:, mid, :], est[:, mid, :].astype(float),
          np.asarray(L.voxel_to_mips(est.astype(float))[0])],
-        ["真値の減弱係数(xz 断面、上=ダイ 下=基板)",
-         "観測(PSF %.0f µm + 雑音 + カッピング)" % (1000 * PSF_MM),
-         "2 値化したボイド(xz 断面)",
-         "ボイドの上面 MIP(xy)"],
+        ["真値 μ(xz 断面)", "観測(ぼけ+雑音+むら)",
+         "2 値化(xz 断面)", "ボイド上面 MIP"],
         title="ダイアタッチ接合層の CT —— 扁平ボイドが界面に連なる条件",
-        caption="1 ボクセル = %.0f µm。層の厚みは %.0f µm = %d ボクセル。"
-                % (1000 * VOXEL, 1000 * T_LAYER, int(T_LAYER / VOXEL)))
+        caption="上=ダイ / 下=基板。1 ボクセル = %.0f µm、層の厚みは %.0f µm = "
+                "%d ボクセル。PSF sigma %.0f µm・雑音 %.3f・カッピング %.0f %%。"
+                % (1000 * VOXEL, 1000 * T_LAYER, int(T_LAYER / VOXEL),
+                   1000 * PSF_MM, NOISE, 100 * BH))
     figs.save_grid(
         "void_label_map",
         [np.asarray(L.voxel_to_mips(lab_show.astype(float))[0]),
          np.asarray(L.voxel_to_mips(est.astype(float))[1])],
-        ["連結成分のラベル地図(上から、疑似カラー、%d 個)" % res["n"],
-         "側面 MIP(xz)—— 界面に貼りついているのが見える"],
-        title="ボイドのラベル地図と側面投影")
+        ["ラベル地図(上から)", "側面 MIP(xz)"],
+        title="ボイドのラベル地図と側面投影(連結成分 %d 個)" % res["n"],
+        caption="疑似カラーはラベル番号を並べ替えたもの。側面図で界面(上端)に"
+                "貼りついているのが見える。")
     return res
 
 
