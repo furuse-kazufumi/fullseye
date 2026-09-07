@@ -507,12 +507,14 @@ def internal_metrics(vol: np.ndarray, spacing=SPACING) -> dict:
     y0, y1 = int((CAN_Y[0] + 0.30) / spacing[1]), int((CAN_Y[1] - 0.30) / spacing[1])
     x0, x1 = int(ELEC_X[0] / spacing[2]) + 2, int(ELEC_X[1] / spacing[2]) - 2
     roi[z0:z1, y0:y1, x0:x1] = True
-    lo = np.asarray([p[4] for p in _stack_probes(vol, spacing)] or [MU_ELEC - MU_LIQ])
-    dark = (np.asarray(vol) < 0.35 * float(np.median(lo))) & roi
+    # 空隙のしきい値は**電解液の水準の半分**(気体 0 と電解液の中間)。絶対値に
+    # すると、ビームハードニングで水準が下がったときに空隙が消える。
+    liq = float(np.median(lows)) if lows else MU_LIQ
+    dark = (np.asarray(vol) < 0.5 * liq) & roi
     lab = np.asarray(L.vol_label(dark, connectivity=26))
     props = L.vol_region_props(lab, spacing=spacing)
     cell_vol = float(spacing[0] * spacing[1] * spacing[2])
-    big = [p for p in props if p["volume"] > 0.004]
+    big = [p for p in props if p["volume"] > max(0.004, 4.0 * cell_vol)]
     void_vol = float(sum(p["volume"] for p in big))
     roi_vol = float(roi.sum() * cell_vol)
 
