@@ -1123,28 +1123,131 @@ def section_rate(obs: dict, sc: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 8. 細い溝 / 押し出し形状の縮退                                                #
 # --------------------------------------------------------------------------- #
-def section_crack_and_prism(rate: dict, sc: dict) -> dict:
+def bearing_cores(n_phi: int = 9, n_t: int = 3):
+    """支承(円柱)の測点。``(位置, 法線, 支承 index)``。"""
+    phi = np.linspace(math.pi + 0.25, 2 * math.pi - 0.25, n_phi)
+    tv = np.linspace(-0.30, 0.30, n_t)
+    pp, tt, ii = [], [], []
+    for b in range(len(BEARING_X)):
+        for a in phi:
+            for t in tv:
+                pp.append(a)
+                tt.append(t)
+                ii.append(b)
+    p, n = bearing_surface(np.asarray(pp), np.asarray(tt), ii)
+    return p, n, np.asarray(ii), np.asarray(pp)
+
+
+def fit_translation(nrm: np.ndarray, val_mm: np.ndarray) -> np.ndarray:
+    """法線方向の読み ``L_i`` から剛体並進 ``d`` を最小二乗で出す [mm]。"""
+    m = np.isfinite(val_mm)
+    if int(m.sum()) < 4:
+        return np.full(3, np.nan)
+    return np.linalg.lstsq(nrm[m], val_mm[m], rcond=None)[0]
+
+
+def section_prism_and_crack(sc: dict) -> dict:
     print("\n" + "=" * 78)
-    print("8) 細い溝と、押し出し形状の縮退")
+    print("8) 決まらない成分は、感度を持つ部品にだけ嘘として出る / 細い溝")
     print("=" * 78)
-    ln = rate["L"][2]
-    web = (CORES["seg"] == 2) & ~CORES["edge"]
-    near = web & (np.abs(CORES["x"] - CRACK_X) < 0.15)
-    far = web & (np.abs(CORES["x"] - CRACK_X) > 1.0)
-    tf = sc["truth_fp"]
-    print("  (a) ひび割れ状の溝(幅 %.0f mm・深さ %.2f mm)を法線方向の**平均**で:"
-          % (2000 * CRACK_HW, CRACK_MM[2]))
-    print("      溝の上 %.3f mm / 離れた腹板 %.3f mm(足跡平均の真値 %.3f mm)。"
-          % (float(np.nanmedian(ln[near])), float(np.nanmedian(ln[far])),
-             float(np.nanmin(tf[near]))))
-    print("      ★足跡(半径 %.2f m)の中で溝が占める面積は %.1f %% なので、"
-          "平均は %.0f 倍に薄まる —— **深さではなく面積で薄まる**。"
-          % (R_CYL, 100 * (2 * CRACK_HW * 2 * R_CYL) / (math.pi * R_CYL ** 2),
-             CRACK_MM[2] / max(abs(float(np.nanmin(tf[near]))), 1e-9)))
-    sc_near = float(np.nanmedian(rate.get("scat_near", np.nan)))
-    print("  (b) 同じ足跡の**残差ばらつき**なら:")
-    scat = rate["scat"] if "scat" in rate else None
-    return {"near": near, "far": far}
+    print("  (a) 押し出し形状の縮退 —— 桁は断面を x に押し出した形なので、"
+          "平面だけでは x の並進が拘束されない。")
+    nx2_g = float(np.mean(CORES["n"][:, 0] ** 2))
+    bp, bn, bi, bphi = bearing_cores()
+    nx2_b = float(np.mean(bn[:, 0] ** 2))
+    fr = BEARING_AREA / (GIRDER_AREA + BEARING_AREA)
+    print("      x への感度は法線の x 成分の二乗和で決まる。桁の面: 平均 n_x² = "
+          "%.3e(キャンバー勾配 %.4f から来る)、\n      支承の円柱: %.3f。"
+          "面積比 %.3f を掛けても、**支承のほうが %.0f 倍の情報を持つ**。"
+          % (nx2_g, camber_slope(0.0), nx2_b, fr,
+             (nx2_b * fr) / (nx2_g * (1 - fr))))
+
+    rows, res = [], {}
+    r0 = np.random.default_rng(SEED + 501)
+    ref = observe(0, r0)
+    cur = observe(2, np.random.default_rng(SEED + 502))
+    print("\n      合わせに使う範囲            ICP 後の重心での残差 (x, y, z) [mm]")
+    for name, msk in (("桁 + 支承(全部)", None),
+                      ("桁だけ(支承を外す)", lambda q: q[:, 2] > -0.95)):
+        q, rot, tr, _ = register(cur, ref, mask=msk)
+        r2 = rodrigues(POSE_ERR[2][:3])
+        t2 = np.asarray(POSE_ERR[2][3:]) + CENTER - r2 @ CENTER
+        eff = ((rot @ r2) - np.eye(3)) @ CENTER + (rot @ t2 + tr)
+        res[name] = (q, eff * 1e3)
+        rows.append([name, "%+.2f" % (eff[0] * 1e3), "%+.2f" % (eff[1] * 1e3),
+                     "%+.2f" % (eff[2] * 1e3)])
+        print("      %-24s   (%+.2f, %+.2f, %+.2f)"
+              % (name, *(eff * 1e3)))
+    dx_all = abs(res["桁 + 支承(全部)"][1][0])
+    dx_grd = abs(res["桁だけ(支承を外す)"][1][0])
+    print("      ★支承を外すと x の残差は %.2f -> %.2f mm(%.1f 倍)。"
+          "y・z は %.2f -> %.2f mm でほとんど変わらない。"
+          % (dx_all, dx_grd, dx_grd / max(dx_all, 1e-9),
+             float(np.linalg.norm(res["桁 + 支承(全部)"][1][1:])),
+             float(np.linalg.norm(res["桁だけ(支承を外す)"][1][1:]))))
+
+    print("\n      その x 残差は**どこに嘘として出るか**:")
+    print("      合わせ方          桁の面の偽の変化 RMS[mm]   支承の水平移動 [mm]"
+          "   支承の沈下 [mm](真 %.2f)" % SETTLE_MM[2])
+    for name in res:
+        q = res[name][0]
+        cen, nor, ok = core_normals(ref)
+        ln, _, _ = measure_normal(ref, q, cen, nor, ok)
+        heal = np.isfinite(ln) & ~CORES["edge"] & (np.abs(sc["truth_fp"]) < 0.3)
+        bl, _, _ = measure_normal(ref, q, bp, bn, np.ones(bp.shape[0], bool))
+        d0 = fit_translation(bn[bi == 0], bl[bi == 0])
+        rows[[r[0] for r in rows].index(name)] += [
+            "%.3f" % float(np.sqrt(np.mean(ln[heal] ** 2))),
+            "%.2f" % d0[0], "%.2f" % (-d0[2])]
+        print("      %-16s %18.3f %20.2f %22.2f"
+              % (name, float(np.sqrt(np.mean(ln[heal] ** 2))), d0[0], -d0[2]))
+    print("      ★★桁の平面には**ほとんど嘘が出ない**(法線が x にほぼ直交)のに、"
+          "支承の円柱は法線が ±x を向くので\n         x の残差がそのまま"
+          "「支承が水平に動いた」という所見になる。**決まらなかった成分は、"
+          "\n         それに感度を持つ小さな部品にだけ現れる** —— "
+          "大きな面の残差では気づけない。")
+    figs.save_table("prism", ["合わせに使う範囲", "残差 x mm", "残差 y mm",
+                              "残差 z mm", "桁の偽変化 RMS mm",
+                              "支承の水平移動 mm", "支承の沈下 mm"], rows,
+                    title="押し出し形状で決まらない x は、円柱にだけ嘘を作る",
+                    caption="支承の沈下の真値は %.2f mm、水平移動の真値は 0 mm。"
+                            % SETTLE_MM[2])
+
+    # --- (b) 細い溝 -------------------------------------------------------- #
+    print("\n  (b) 細い溝(ひび割れ)—— 平均する測り方には原理的に見えない。")
+    print("      閉形式: 三角断面の溝(半幅 h、深さ d)を半径 R の足跡で平均すると")
+    print("        平均 = d·h·(2R) / (π R²) · (1/2)·2 = 2 d h / (π R)"
+          "  ← **密度は入らない**")
+    print("\n       溝の全幅[mm]  予測の平均[mm]  足跡積分[mm]   比")
+    rng = np.random.default_rng(7)
+    ang = rng.uniform(0, 2 * math.pi, 4000)
+    rad = R_CYL * np.sqrt(rng.uniform(0, 1, 4000))
+    hw_l, pred_l, num_l = [], [], []
+    for hw in (0.003, 0.006, 0.0125, 0.025, 0.050, 0.100):
+        pred = 2.0 * CRACK_MM[2] * hw / (math.pi * R_CYL)
+        xs = CRACK_X + rad * np.cos(ang)
+        num = float(np.mean(CRACK_MM[2]
+                            * np.maximum(0.0, 1.0 - np.abs(xs - CRACK_X) / hw)))
+        hw_l.append(2000 * hw)
+        pred_l.append(pred)
+        num_l.append(num)
+        print("       %10.1f %14.4f %13.4f %7.3f"
+              % (2000 * hw, pred, num, num / max(pred, 1e-9)))
+    print("      ★予測と足跡積分の比は %.3f 〜 %.3f(溝が足跡より広くなると"
+          "崩れる = 全幅 %.0f mm 以上)。"
+          % (min(n / p for n, p in zip(num_l[:4], pred_l[:4])),
+             max(n / p for n, p in zip(num_l[:4], pred_l[:4])), 2000 * R_CYL))
+    need = math.pi * R_CYL * 2.0 * 2.0 / (2.0 * CRACK_MM[2]) * 1000
+    print("      ★深さ %.2f mm の溝を平均で 2 mm として読むには 全幅 %.0f mm が要る"
+          " —— **足跡と同じ幅**。" % (CRACK_MM[2], need))
+    print("      ★予想は「密度を上げれば見える」だったが**外れ**。薄まりは"
+          "2h/(πR) という**幾何**で、点の数には依らない。")
+    print("      効かせたいなら足跡 R を溝幅まで縮めるしかないが、"
+          "R を 1/10 にすると 1 core の点数が 1/100 になり\n"
+          "      雑音が 10 倍になる —— **薄まりと雑音は同じつまみの両端**。")
+    return {"dx_all": dx_all, "dx_grd": dx_grd, "hw": hw_l, "pred": pred_l,
+            "num": num_l, "res": res, "need": need, "bp": bp, "bn": bn,
+            "bi": bi}
 
 
 # --------------------------------------------------------------------------- #
