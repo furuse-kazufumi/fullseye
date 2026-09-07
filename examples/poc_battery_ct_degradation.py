@@ -585,13 +585,15 @@ def section_outer_blindness(cells, recs) -> dict:
     print("=" * 78)
 
     t = cells["uniform"]["truth"]
-    frac = 100.0 * t["dv_ext"] / t["dv_int"]
-    pred = 100.0 * (t["dh_mean"] - (CAV_LEN - H_BASE)) / t["dh_mean"]
-    print("  一様膨れ %.0f %%: 積層は %.3f mm 伸びる(体積 %.4f mm3)。" % (
-        100 * ALPHA_UNIFORM, t["dh_mean"], t["dv_int"]))
+    frac = 100.0 * t["dv_ext"] / t["dv_demand"]
+    pred = 100.0 * (t["dh_demand"] - (CAV_LEN - H_BASE)) / t["dh_demand"]
+    print("  一様膨れ %.0f %%: 積層は %.3f mm 伸びようとする(体積 %.4f mm3)。" % (
+        100 * ALPHA_UNIFORM, t["dh_demand"], t["dv_demand"]))
     print("    クリアランス %.3f mm を食い潰した残りだけが缶を押す"
           " -> 外形の体積増 %.4f mm3" % (CAV_LEN - H_BASE, t["dv_ext"]))
     print("    ★外から見える割合 = %.1f %%(幾何からの予測 %.1f %%)" % (frac, pred))
+    print("    残りの行き先は 2 つ: クリアランス(隙間)と、缶に押し返された"
+          "積層の弾性圧縮(最小 %.3f 倍)。" % t["squeeze_min"])
 
     o0 = outer_metrics(recs["healthy"])
     o1 = outer_metrics(recs["uniform"])
@@ -609,7 +611,7 @@ def section_outer_blindness(cells, recs) -> dict:
     # クリアランスを振ると「見える割合」は設計値で決まる
     clr, seen = [], []
     for c in np.linspace(0.0, 0.50, 11):
-        dh = t["dh_mean"]
+        dh = t["dh_demand"]
         clr.append(c)
         seen.append(100.0 * max(0.0, dh - c) / dh)
     print("\n  ★「見える割合」は劣化の大きさではなく**セルの初期クリアランス**で"
@@ -993,7 +995,7 @@ def main() -> int:
 
     # --- 所見を固定する(壊れたら鳴る)---
     assert 25.0 < outer["frac"] < 35.0, outer["frac"]
-    assert abs(outer["frac"] - outer["pred"]) < 1e-6
+    assert abs(outer["frac"] - outer["pred"]) < 2.0, (outer["frac"], outer["pred"])
     assert 3.0 < outer["ratio"] < 5.5, outer["ratio"]
     assert ctrl["res"]["uniform"]["inner"]["t_mean"] > \
         ctrl["res"]["gas"]["inner"]["t_mean"] + 0.005

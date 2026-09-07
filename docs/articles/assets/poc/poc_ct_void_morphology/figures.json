@@ -18,5 +18,111 @@
    390,
    3
   ]
+ },
+ {
+  "file": "03_controls_table.png",
+  "name": "controls_table",
+  "caption": "ボイド率の列だけを見ると 5 条件は区別できない。右の 6 列が形態。",
+  "shape": [
+   200,
+   816,
+   3
+  ],
+  "csv": "03_controls_table.csv",
+  "tsv": "03_controls_table.tsv"
+ },
+ {
+  "file": "04_controls_map.png",
+  "name": "controls_map",
+  "caption": "推定ボイド率は 球/中央/散 2.46 % / 球/界面/散 2.60 % / 扁平/界面/散 2.60 % / 球/中央/連 2.52 % / 扁平/界面/連 2.63 % —— この数字では 5 条件を分けられない。",
+  "shape": [
+   495,
+   580,
+   3
+  ]
+ },
+ {
+  "file": "05_controls_section.png",
+  "name": "controls_section",
+  "caption": "界面欠損率は 球/中央/散 0.0 % / 球/界面/散 6.9 % / 扁平/界面/散 14.5 % / 球/中央/連 0.0 % / 扁平/界面/連 14.7 % —— 体積率が同じでも 0 から 14.7 % まで動く。",
+  "shape": [
+   195,
+   580,
+   3
+  ]
+ },
+ {
+  "file": "06_proxy_table.png",
+  "name": "proxy_table",
+  "caption": "界面欠損率は寿命そのものではなく代理指標。",
+  "shape": [
+   200,
+   554,
+   3
+  ],
+  "csv": "06_proxy_table.csv",
+  "tsv": "06_proxy_table.tsv"
+ },
+ {
+  "file": "07_voxel_cliff_fraction.png",
+  "name": "voxel_cliff_fraction",
+  "caption": "線形の被覆率で積むと体積は保存される。合否の数字は解像できなくなっても出続ける。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_voxel_cliff_shape.png",
+  "name": "voxel_cliff_shape",
+  "caption": "60 µm では扁平度が測れない(nan なので描けない)。界面欠損率は 31 % 減って『安全』に見える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_voxel_cliff_table.png",
+  "name": "voxel_cliff_table",
+  "caption": "",
+  "shape": [
+   200,
+   732,
+   3
+  ],
+  "csv": "09_voxel_cliff_table.csv",
+  "tsv": "09_voxel_cliff_table.tsv"
+ },
+ {
+  "file": "10_threshold_sweep.png",
+  "name": "threshold_sweep",
+  "caption": "塊の数が 24 から落ちた瞬間、最近接間隔は『隣のボイドまで』から『隣の鎖まで』に黙って入れ替わる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_cluster_radius_sweep.png",
+  "name": "cluster_radius_sweep",
+  "caption": "ボイド率にはこの差が出ない —— 両条件とも 3 %% 台。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_noise_sweep.png",
+  "name": "noise_sweep",
+  "caption": "合否の数字は雑音に強い。強いことが問題で、壊れているのに気づけない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
