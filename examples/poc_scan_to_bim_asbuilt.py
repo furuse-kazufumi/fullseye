@@ -1198,11 +1198,11 @@ def section_cliff_mixed(seed: int = SEED) -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 節 9 —— 道具の穴と 3-D の落とし穴                                            #
+# 節 10 —— 道具の穴と 3-D の落とし穴                                            #
 # --------------------------------------------------------------------------- #
 def section_tool_gaps(sc: dict) -> dict:
     print("\n" + "=" * 78)
-    print("9) 道具の穴と 3-D の落とし穴")
+    print("10) 道具の穴と 3-D の落とし穴")
     print("=" * 78)
     # 部屋を囲む格子(``grid_coords``)で、半空間の交わりと厳密な箱を突き合わせる
     g = np.asarray(L.grid_coords(((-1.5, RX + 1.5), (-1.5, RY + 1.5), (-1.5, RZ + 1.5)),
@@ -1248,7 +1248,7 @@ def section_tool_gaps(sc: dict) -> dict:
 # --------------------------------------------------------------------------- #
 def section_segmentation(sc: dict, seed: int = SEED) -> dict:
     print("\n" + "=" * 78)
-    print("10) BIM 案内の割り当て vs BIM 無しの面分割")
+    print("9) BIM 案内の割り当て vs BIM 無しの面分割")
     print("=" * 78)
     e = assign_elements(sc["P"])
     acc = float(np.mean(e == sc["elem"]))
@@ -1321,7 +1321,8 @@ def main() -> int:
     assert cd["ratio"] > 3.0, ("構造的な欠測の崖が出ていない", cd["ratio"])
     assert cr["bias"][-1] > 5 * cr["bias"][0], ("姿勢誤差が効いていない", cr["bias"])
     assert abs(cm["dw"]) < 0.30, ("混合画素が平面に効いてしまった", cm["dw"])
-    assert abs(cm["dwin"]) > 3 * abs(cm["dw"]), ("obb が壊れていない", cm["dwin"])
+    assert cm["dwin"] > 5 * cm["dwin_c"], ("obb が壊れていない", cm["dwin"], cm["dwin_c"])
+    assert vd["miss"]["global"] > vd["miss"]["none"], ("合わせても判定が壊れない", vd["miss"])
     assert tg["do"] > 100 * tg["di"], ("CSG の角の過小評価が出ていない", tg)
     assert sg["acc"] > 0.90, ("BIM 案内の割り当てが壊れている", sg["acc"])
 
