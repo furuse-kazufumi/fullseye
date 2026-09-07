@@ -510,20 +510,24 @@ def section_timeseries() -> dict:
 
     est = {"重心 1 点": [], "足元 1 点": [], "全表面(遮蔽なし)": [],
            "背面 1 台": [], "背面 + 隅 2 台": []}
-    hidden_nearest = 0
+    hidden_nearest = 0      # 最近傍部位が 1 点も見えない
+    wrong_part = 0          # 推定の最小がよその部位から出た
     n_haz = 0
     for f in frames:
         allv = np.ones(len(f["P"]), bool)
         est["重心 1 点"].append(estimate_centroid(f, allv, rng, "centroid"))
         est["足元 1 点"].append(estimate_centroid(f, allv, rng, "feet"))
         est["全表面(遮蔽なし)"].append(estimate(f, allv, rng))
-        est["背面 1 台"].append(estimate(f, f["v_top"], rng))
+        d1, k1 = estimate_detail(f, f["v_top"], rng)
+        est["背面 1 台"].append(d1)
         est["背面 + 隅 2 台"].append(estimate(f, f["v_top"] | f["v_cor"], rng))
         if f["d_true"] < S:
             n_haz += 1
             k = int(np.argmin(f["per_part"]))          # いちばん近い部位
             if not np.any(f["v_top"][f["K"] == k]):
                 hidden_nearest += 1
+            if k1 != k:
+                wrong_part += 1
     for k in est:
         est[k] = np.array(est[k])
 
