@@ -1019,6 +1019,7 @@ def section_pull(ref: CadRef) -> dict:
                    caption="深さを 30 倍にしても割合は動かないが、広がりを"
                            "変えると比例して増える。")
 
+    out["_area_sweep"] = {"area": areas, "dil": dils}
     figs.save_plot("defect_pull",
                    [("ICP の z 並進", [1000 * a for a in amps], dzs),
                     ("予測 -a/3", [1000 * a for a in amps],
