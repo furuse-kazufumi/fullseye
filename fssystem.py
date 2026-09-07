@@ -100,8 +100,13 @@ SYSTEM_PARAMS = {
         "default": "off",
         "tightens_only": True,
         "affects_numbers": False,
-        "applied_by": ("colortransport.py", "imgmetrics.py", "reprconv.py"),
+        "applied_by": ("api.py", "colortransport.py", "imgmetrics.py", "reprconv.py"),
         "doc": (
+            "★2026-09-08 に api.py と reprconv.py を追加。api.py は ``image``/``color`` の"
+            "**値域 [0,1] 契約**を見る —— dtype は既定で fail-closed なのに値域は"
+            "``ops.py`` の 1 行目に書いてあるだけで誰も検査しておらず、µm 単位の"
+            "高さ場を渡すと Otsu が 0.5 µm で切って blob 387 個(正解 256)になった。"
+            "reprconv.py は位置の点群を法線として渡す事故を捕まえる。"
             "既定でも fail-closed だが、**理屈の上では正しくないが実害が出るとは"
             "限らない**場面(同値を引き裂くヒストグラム整合、対称でない圧縮距離)を"
             "拒否に格上げする。既定を on にしていないのは、既存の呼び手が"

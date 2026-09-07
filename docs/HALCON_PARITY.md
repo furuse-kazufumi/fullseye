@@ -12,7 +12,7 @@ excluded here, not counted).
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)
-- registry ops: 885 ; distinct real HALCON ops covered: **981**
+- registry ops: 899 ; distinct real HALCON ops covered: **981**
 - auto-generated ops passing the functional gate: 225 / 227
 - auto ops counted in coverage but FAILING the gate: 2 ['abs_image', 'area_center']
 

@@ -3,100 +3,75 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-08 05:20:04
+- **最終更新**: 2026-09-08 06:42:34
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-93b435a47 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 05:05)
-b77b1d8f9 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 05:03)
-d8636d5f6 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 05:01)
-79c8787e2 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 05:01)
-ef6caee52 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 05:00)
-0eb3450d7 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:59)
-dab8be5b3 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:58)
-919d841b5 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:58)
-af8498953 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:58)
-3b05c4232 auto: poc_weld_bead_scan_angle.py 編集前 (2026-09-08 04:57)
+54a57e34e auto: api.py 編集前 (2026-09-08 06:39)
+d3add5f30 auto: ci_wheel_check.py 編集前 (2026-09-08 06:32)
+0ee67dc30 auto: poc_die_tilt_tsv_overlay.py 編集前 (2026-09-08 06:30)
+3d3f9f312 auto: poc_die_tilt_tsv_overlay.py 編集前 (2026-09-08 06:30)
+e3562e293 auto: examplefig.py 編集前 (2026-09-08 06:30)
+4e080620c auto: examplefig.py 編集前 (2026-09-08 06:29)
+92ac8ff3e auto: poc_die_tilt_tsv_overlay.py 編集前 (2026-09-08 06:28)
+8a9bee025 auto: poc_die_tilt_tsv_overlay.py 編集前 (2026-09-08 06:27)
+60aa47e6f auto: poc_die_tilt_tsv_overlay.py 編集前 (2026-09-08 06:27)
+9c275bebc auto: poc_die_tilt_tsv_overlay.py 編集前 (2026-09-08 06:27)
 ```
 
 ## 現在の git status
 
 ```
-M CHANGELOG.md
- M docs/OP_CATALOG.md
+M api.py
+ M docs/KNOWN_ISSUES.md
  M docs/README.de.md
- M docs/README.en.md
  M docs/README.ko.md
- M docs/README.md
- M docs/README.tw.md
- M docs/README.zh.md
- M docs/articles/assets/poc/poc_weld_bead_scan_angle/10_stripe_width.png
- M docs/articles/assets/poc/poc_weld_bead_scan_angle/figures.json
- M docs/articles/exhibits/poc_captions.json
  M docs/articles/exhibits/wingpoc.en.md
  M docs/articles/exhibits/wingpoc.ja.md
  M docs/articles/fullseye_poc_museum_qiita_en.md
  M docs/articles/fullseye_poc_museum_qiita_ja.md
- M docs/ops/2d/3d/vol_mip.md
- M docs/ops/2d/contour/lines_gauss.md
- M docs/ops/3d/range_image/normals_from_depth.md
- M docs/ops/volcolor/measure/vol_label_shape_stats.md
  M examples/README.md
- M examples/poc_weld_bead_scan_angle.py
- M examples2d.py
- M fullseye/OP_CATALOG.md
- M range_image.py
- M studio_assets/op_help/3d/normals_from_depth.de.html
- M studio_assets/op_help/3d/normals_from_depth.en.html
- M studio_assets/op_help/3d/normals_from_depth.html
- M studio_assets/op_help/3d/normals_from_depth.ko.html
- M studio_assets/op_help/3d/normals_from_depth.tw.html
- M studio_assets/op_help/3d/normals_from_depth.zh.html
- M studio_assets/op_help/lines_gauss.de.html
- M studio_assets/op_help/lines_gauss.en.html
- M studio_assets/op_help/lines_gauss.html
- M studio_assets/op_help/lines_gauss.ko.html
- M studio_assets/op_help/lines_gauss.tw.html
- M studio_assets/op_help/lines_gauss.zh.html
- M studio_assets/op_help/vol_mip.de.html
- M studio_assets/op_help/vol_mip.en.html
- M studio_assets/op_help/vol_mip.html
- M studio_assets/op_help/vol_mip.ko.html
- M studio_assets/op_help/vol_mip.tw.html
- M studio_assets/op_help/vol_mip.zh.html
- M studio_assets/op_help/volcolor/vol_label_shape_stats.de.html
- M studio_assets/op_help/volcolor/vol_label_shape_stats.en.html
- M studio_assets/op_help/volcolor/vol_label_shape_stats.html
- M studio_assets/op_help/volcolor/vol_label_shape_stats.ko.html
- M studio_assets/op_help/volcolor/vol_label_shape_stats.tw.html
- M studio_assets/op_help/volcolor/vol_label_shape_stats.zh.html
-?? docs/articles/assets/poc/poc_cold_chain_excursion/01_scene_slices_720.jpg
-?? docs/articles/assets/poc/poc_cold_chain_excursion/02_layout_maps_720.jpg
-?? docs/articles/assets/poc/poc_weld_bead_scan_angle/01_scene_720.jpg
-?? docs/articles/assets/poc/poc_weld_bead_scan_angle/02_frames_720.jpg
+ M fssystem.py
+ M tests/test_type_alias_ledger.py
+?? docs/articles/assets/poc/poc_asbuilt_wall_deviation/01_scene_720.jpg
+?? docs/articles/assets/poc/poc_asbuilt_wall_deviation/02_aabb_vs_yaw_720.jpg
+?? docs/articles/assets/poc/poc_battery_electrode_breathing/01_scene_720.jpg
+?? docs/articles/assets/poc/poc_battery_electrode_breathing/02_profiles_720.jpg
+?? docs/articles/assets/poc/poc_battery_electrode_tortuosity/01_scene_720.jpg
+?? docs/articles/assets/poc/poc_battery_electrode_tortuosity/02_map_transport_720.jpg
+?? docs/articles/assets/poc/poc_bump_coplanarity/01_scene_720.jpg
+?? docs/articles/assets/poc/poc_bump_coplanarity/02_deviation_map_720.jpg
+?? docs/articles/assets/poc/poc_crack_width_timeseries/01_frames_720.jpg
+?? docs/articles/assets/poc/poc_crack_width_timeseries/02_timeseries_720.jpg
+?? docs/articles/assets/poc/poc_die_tilt_tsv_overlay/01_scene_720.jpg
+?? docs/articles/assets/poc/poc_die_tilt_tsv_overlay/02_overlay_scatter_720.jpg
+?? docs/articles/assets/poc/poc_pallet_load_utilization/01_scene_720.jpg
+?? docs/articles/assets/poc/poc_pallet_load_utilization/02_hidden_void_section_720.jpg
+?? docs/articles/assets/poc/poc_settlement_significance/01_scene_720.jpg
+?? docs/articles/assets/poc/poc_settlement_significance/02_map_change_720.jpg
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-05:20 .hypothesis/constants/1a8fe02cb32926c5
-05:19 .pytest_cache/v/cache/lastfailed
-05:19 .pytest_cache/v/cache/nodeids
-05:15 studio_assets/op_help/fig/zoom_region.png
-05:15 studio_assets/op_help/fig/zoom_image_size.png
-05:15 studio_assets/op_help/fig/zoom_image_factor.png
-05:15 studio_assets/op_help/fig/zero_crossing_sub_pix.png
-05:15 studio_assets/op_help/fig/zero_crossing.png
-05:15 studio_assets/op_help/fig/xwt_visushrink.png
-05:15 studio_assets/op_help/fig/xwt_subband_tile.png
-05:15 studio_assets/op_help/fig/xwt_packet_entropy.png
-05:15 studio_assets/op_help/fig/xwt_mra_component.png
-05:15 studio_assets/op_help/fig/xwt_lf_reconstruct.png
-05:15 studio_assets/op_help/fig/xwt_hf_reconstruct.png
-05:15 studio_assets/op_help/fig/xwt_firm_denoise.png
+06:42 .hypothesis/constants/d2ded8a5a963fe78
+06:42 .hypothesis/constants/0e437ece623a1742
+06:42 .hypothesis/constants/03519790b293d744
+06:42 .hypothesis/constants/76513c1aa243f8c4
+06:42 .hypothesis/constants/2f8299f41e1c36c0
+06:42 .hypothesis/constants/4205adea46c5c142
+06:42 .hypothesis/constants/e04b247603e372fa
+06:42 .hypothesis/constants/dfadd80af5ae21c2
+06:42 docs/KNOWN_ISSUES.md
+06:40 .pytest_cache/v/cache/nodeids
+06:40 tests/test_type_alias_ledger.py
+06:40 fssystem.py
+06:40 docs/articles/fullseye_poc_museum_qiita_en.md
+06:40 docs/articles/exhibits/wingpoc.en.md
+06:40 docs/articles/fullseye_poc_museum_qiita_ja.md
 ```
 
 ---

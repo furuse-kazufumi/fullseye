@@ -126,3 +126,35 @@ def test_documented_at_really_documents_it(fn, needle):
     mod, name = fn.rsplit(".", 1)
     doc = getattr(importlib.import_module(mod), name).__doc__ or ""
     assert needle in doc, f"{fn} の docstring に「{needle}」が無い(台帳とずれた)"
+
+
+def test_image_range_contract_is_fail_closed_under_extra_checks():
+    """``ops.py`` の「image = float64 in [0,1]」を、値域の側でも守る(2026-09-08)。
+
+    dtype は既に fail-closed だったが、値域は**書いてあるだけ**だった。単位つきの
+    量(µm の高さ場)を渡すと絶対値のしきい値が違う場所で切る —— 実測で
+    ``auto_threshold`` の前景が 668 → 2,256 画素(3.4 倍)になり、例外は出ない。
+    """
+    import op_probe as opb
+
+    g = opb.structured_image(48)
+    um = g * 50.0
+    loose = float(np.asarray(fs.apply(um, "auto_threshold")).sum())
+    tight = float(np.asarray(fs.apply(g, "auto_threshold")).sum())
+    assert loose == 2256.0 and tight == 668.0, (loose, tight)   # 台帳の数字
+    with fs.system(extra_checks="on"):
+        assert float(np.asarray(fs.apply(g, "auto_threshold")).sum()) == tight
+        with pytest.raises(ValueError, match=r"contract is float in \[0, 1\]"):
+            fs.apply(um, "auto_threshold", on_error="raise")
+
+
+def test_the_range_check_costs_nothing_when_it_is_off():
+    """既定(off)では値域を数えない —— 大きい配列で毎回 min/max を取らないこと。"""
+    import api
+
+    big = np.zeros((256, 256))
+    op = api._resolve("gaussian")
+    assert api._check_input_range(big, op) is None            # off: 早期に返る
+    with fs.system(extra_checks="on"):
+        assert api._check_input_range(big, op) is None        # 範囲内なら通る
+        assert api._check_input_range(big + 5.0, op) is not None

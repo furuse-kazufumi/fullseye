@@ -1376,8 +1376,55 @@ def _check_input_sort(v, op):
     return None
 
 
+#: 値域の契約(``ops.py`` の 1 行目「image : gray raster, float64 in [0,1]」)を
+#: 見る sort。dtype は既に fail-closed だが、**値域は書いてあるだけで誰も検査して
+#: いなかった**(2026-09-08)。
+_RANGE_CONTRACT_SORTS = frozenset({"image", "color"})
+
+#: [0,1] からこれだけ外れたら契約違反とみなす(丸め・フィルタのわずかな
+#: オーバーシュートを弾かないための幅)。
+_RANGE_SLACK = 1e-6
+
+
+def _check_input_range(v, op):
+    """``extra_checks='on'`` のとき、``image`` の値域 [0,1] を fail-closed で見る。
+
+    ★なぜ要るか(2026-09-08 実測): 進化 op の**しきい値は絶対値**で書かれている。
+    µm 単位の高さ場(値域 0〜50)を ``auto_threshold`` にそのまま渡すと、Otsu は
+    「0.5 µm」の位置で切り、blob が **387 個**出た(正解 256)。例外も NaN も出ない。
+    画像 530 本を尺度 ×1000 / ×0.001 で掃引すると、**328 本(61.9 %)が
+    op(k·x) を op(x) からは説明できない**(残りは 65 本が斉次、81 本が不変)。
+    つまり単位つきの量を渡す経路は op ごとの罠ではなく**入口の契約の問題**。
+
+    既定では見ない —— 進化器は正規化した絵しか流さないし、意図して範囲外を
+    渡している呼び手を壊さないため(``fssystem`` の ``tightens_only`` 規約)。
+    """
+    if _fssys().get_system("extra_checks") != "on":
+        return None
+    if op.in_sort not in _RANGE_CONTRACT_SORTS:
+        return None
+    a = np.asarray(v)
+    if a.dtype.kind != "f" or a.size == 0:
+        return None
+    lo, hi = float(np.nanmin(a)), float(np.nanmax(a))
+    if lo >= -_RANGE_SLACK and hi <= 1.0 + _RANGE_SLACK:
+        return None
+    return ValueError(
+        "%s: the '%s' contract is float in [0, 1] but this input spans "
+        "[%.6g, %.6g]. Absolute thresholds inside the op then cut in the wrong "
+        "place with no error (measured: a height field in um gave 387 blobs "
+        "against a true 256). Normalise first, or drop extra_checks='on' if the "
+        "range is deliberate" % (op.name, op.in_sort, lo, hi))
+
+
+def _fssys():
+    import fssystem
+    return fssystem
+
+
 def _guard_input(v, op, policy):
-    err = _check_input_sort(v, op) or _check_channel_axis(v, op)
+    err = (_check_input_sort(v, op) or _check_channel_axis(v, op)
+           or _check_input_range(v, op))
     if err is None:
         return
     if policy == "raise":
