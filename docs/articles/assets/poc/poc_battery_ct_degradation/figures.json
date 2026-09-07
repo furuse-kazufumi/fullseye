@@ -1,0 +1,106 @@
+[
+ {
+  "file": "01_visible_fraction.png",
+  "name": "visible_fraction",
+  "caption": "同じ劣化でもクリアランスが厚いセルでは外形に何も出ない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_profile_layers.png",
+  "name": "profile_layers",
+  "caption": "17 本の山が電極。ガス空隙のセルだけ谷が 1 つ深く落ち、そこから先の山が押し上げられている。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_flatness.png",
+  "name": "flatness",
+  "caption": "一様膨れは平らなまま上がる。局所膨れとガス空隙はうねる(残差 RMS で数字になる)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_control_group.png",
+  "name": "control_group",
+  "caption": "外形の 2 列はほぼ同じ。層厚・空隙率・膨張体積は違う。",
+  "shape": [
+   176,
+   818,
+   3
+  ],
+  "csv": "04_control_group.csv",
+  "tsv": "04_control_group.tsv"
+ },
+ {
+  "file": "05_map_control.png",
+  "name": "map_control",
+  "caption": "缶の外形はほぼ同じ。違いは中の層にしか出ない。",
+  "shape": [
+   269,
+   434,
+   3
+  ]
+ },
+ {
+  "file": "06_misalign.png",
+  "name": "misalign",
+  "caption": "外形指標はこの劣化に完全に盲目(体積が変わらない)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_sweep_resolution.png",
+  "name": "sweep_resolution",
+  "caption": "崖を決めるのは電極厚ではなく層間の隙間。空隙は層より早く痩せる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_sweep_resolution_table.png",
+  "name": "sweep_resolution_table",
+  "caption": "",
+  "shape": [
+   272,
+   698,
+   3
+  ],
+  "csv": "08_sweep_resolution_table.csv",
+  "tsv": "08_sweep_resolution_table.tsv"
+ },
+ {
+  "file": "09_sweep_noise.png",
+  "name": "sweep_noise",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_sweep_beamhardening.png",
+  "name": "sweep_beamhardening",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

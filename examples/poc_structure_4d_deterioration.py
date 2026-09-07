@@ -1243,8 +1243,7 @@ def section_prism_and_crack(sc: dict) -> dict:
     print("      閉形式: 三角断面の溝(半幅 h、深さ d)を半径 R の足跡で平均すると")
     print("        平均 = d·h·(2R) / (π R²) · (1/2)·2 = 2 d h / (π R)"
           "  ← **密度は入らない**")
-    print("\n       溝の全幅[mm]  予測の平均[mm]  足跡積分[mm]   比    "
-          "実測(法線方向)[mm]")
+    print("\n       溝の全幅[mm]  予測の平均[mm]  足跡積分[mm]   比")
     hw_l, pred_l, num_l = [], [], []
     for hw in (0.003, 0.006, 0.0125, 0.025, 0.050, 0.100):
         pred = 2.0 * CRACK_MM[2] * hw / (math.pi * R_CYL)
