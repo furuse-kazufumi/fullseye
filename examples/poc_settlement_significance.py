@@ -794,7 +794,7 @@ def section_cliff(sc: dict, mv: dict) -> dict:
         rate = 100.0 * np.count_nonzero(sig & band) / max(int(band.sum()), 1)
         smax_l.append(s)
         rate_l.append(rate)
-        print("     %5.1f          %6.1f %%            %5.1f %%      %7.2f"
+        print("     %5.2f          %6.1f %%            %5.1f %%      %7.2f"
               % (s, rate, 100 * sig.sum() / max(ok.sum(), 1), np.nanmean(d)))
 
     print("\n   点密度 x    LoD 中央値 mm   予測 (1/sqrt) mm   有意率")
@@ -823,7 +823,7 @@ def section_cliff(sc: dict, mv: dict) -> dict:
     half = [s for s, v in zip(smax_l, rate_l) if v >= 50.0]
     lod_asf = float(np.nanmedian(mv_lod_asphalt))
     print("  ★舗装ゾーンの検出率が 50 %% を超えるのは 最大沈下 %.2f mm から"
-          "(%.1f mm では %.1f %%)。予測は**そのゾーンの LoD** %.2f mm —— 同じ目盛り。"
+          "(%.2f mm では %.1f %%)。予測は**そのゾーンの LoD** %.2f mm —— 同じ目盛り。"
           % (min(half) if half else float("nan"), smax_l[0], rate_l[0], lod_asf))
     assert max(r) < 1.2 and min(r) > 0.8, r
     assert rate_l[0] < 60.0 and rate_l[-1] > 90.0, (rate_l[0], rate_l[-1])

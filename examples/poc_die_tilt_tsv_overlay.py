@@ -62,7 +62,7 @@ import time
 from pathlib import Path
 
 import numpy as np
-from scipy import ndimage
+from scipy import special
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
@@ -82,7 +82,8 @@ GAP_UM = 20.0           # 接合層の厚み [µm]。★傾き 2° で格子の�
 DIE_HALF_UM = 210.0     # ダイの半幅 [µm]
 MU_SI, MU_CU = 0.30, 1.00   # 減弱値(Si / Cu)
 NOISE = 0.015           # CT の雑音 1σ(減弱値)
-PSF_SIG_VOX = 0.9       # CT の点像分布関数 σ [voxel]
+PSF_SIG_VOX = 0.8       # CT の点像分布関数 σ [voxel]。★**標本化の前**に掛ける
+#                         (下の _soft)。刻んでから畳み込んでも折り返しは消えない。
 CU_THR = 0.65           # Cu を切るしきい値(Si と Cu のちょうど中間 = 幾何境界)
 
 DX_UM, DY_UM = 0.800, -0.450    # 真の位置ずれ(並進)
@@ -97,6 +98,22 @@ _L = fs.ledger
 # --------------------------------------------------------------------------- #
 # 幾何 —— 上ダイの姿勢は 1 つの回転行列で決まる                                  #
 # --------------------------------------------------------------------------- #
+def _soft(t):
+    """材料の内側 ``t>0`` で 1、外側で 0 になる**帯域制限された**境界。
+
+    ★ここがこの PoC でいちばん時間を取られたところ(2026-09-08)。最初は
+    部分体積を「1 ボクセル幅の直線ランプ」で描き、刻んでからガウスで畳み込んで
+    いた。**それでは直らない** —— 折り返し(aliasing)は標本化の瞬間に入るので、
+    後から平滑化しても消えない。ビアの中心は高さとともに 1 ボクセルぶん動くから、
+    残った周期的な重心誤差がそのまま**傾きの系統誤差**に化ける
+    (α = 1.200° の場に対して測定値が 0.5° で +7.3 %、1.2° で -8.0 %、
+    3.0° で +0.5 % と、傾きごとにばらばらに外れた)。
+    PSF を**場のほうに**(erf の縁として)入れて標本化すると、同じ掃引で
+    比 1.0000 / 1.0000 / 1.0000 になる。
+    """
+    return 0.5 * (1.0 + special.erf(t / (np.sqrt(2.0) * PSF_SIG_VOX * VOX_UM)))
+
+
 def tilt_matrix(a_deg: float, b_deg: float) -> np.ndarray:
     """``Rx(α) @ Ry(β)`` を (X, Y, Z) 順で返す。第 3 列 = 上面の法線。"""
     a, b = np.deg2rad(a_deg), np.deg2rad(b_deg)
@@ -123,17 +140,16 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
     gy = VOX_UM * (np.arange(ny) - (ny - 1) / 2.0)
     yy, xx = np.meshgrid(gy, gx, indexing="ij")
 
-    # 格子の広がり。★部分体積の縁(半径 + VOX/2)まで含めないと、傾いたダイでは
-    #   外周のビアが z ごとに違う切られ方をして**偽の傾き**になる(1.200° -> 1.273°)。
-    ext_lat = (NG - 1) / 2.0 * PITCH_UM + R_TSV_UM + 2.0 * VOX_UM
+    # 格子の広がり。★erf の裾(±4σ)まで含めないと、傾いたダイでは外周のビアが
+    #   z ごとに違う切られ方をして偽の傾きになる。
+    ext_lat = (NG - 1) / 2.0 * PITCH_UM + R_TSV_UM + 4.0 * VOX_UM
 
     def via_frac(u, v):
-        """周期格子までの距離から部分体積の充填率(格子の外は 0)。"""
+        """周期格子までの距離から材料の占有率(格子の外は 0)。"""
         du = u - PITCH_UM * np.round(u / PITCH_UM)
         dv = v - PITCH_UM * np.round(v / PITCH_UM)
-        d = np.hypot(du, dv)
         inside = (np.abs(u) <= ext_lat) & (np.abs(v) <= ext_lat)
-        return np.clip(0.5 + (R_TSV_UM - d) / VOX_UM, 0.0, 1.0) * inside
+        return _soft(R_TSV_UM - np.hypot(du, dv)) * inside
 
     # 下ダイ(傾いていないので z に依らない)
     bot_die = ((np.abs(xx) <= DIE_HALF_UM) & (np.abs(yy) <= DIE_HALF_UM)).astype(float)
@@ -147,8 +163,7 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
     vol = np.empty((nz, ny, nx), np.float32)
     for k, z in enumerate(zs):
         # 下ダイ: z 方向だけ部分体積で柔らかく
-        fz = (np.clip(0.5 + z / VOX_UM, 0, 1)
-              * np.clip(0.5 + (h_die - z) / VOX_UM, 0, 1))
+        fz = _soft(z) * _soft(h_die - z)
         s = fz * (MU_SI * bot_die + (MU_CU - MU_SI) * bot_via)
 
         # 上ダイ: 大域座標 -> ダイ座標(回転の転置)
@@ -156,8 +171,7 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
         u = rot[0, 0] * xx + rot[1, 0] * yy + rot[2, 0] * zr
         v = rot[0, 1] * xx + rot[1, 1] * yy + rot[2, 1] * zr
         w = rot[0, 2] * xx + rot[1, 2] * yy + rot[2, 2] * zr
-        fw = (np.clip(0.5 + w / VOX_UM, 0, 1)
-              * np.clip(0.5 + (h_die - w) / VOX_UM, 0, 1))
+        fw = _soft(w) * _soft(h_die - w)
         die = ((np.abs(u) <= DIE_HALF_UM) & (np.abs(v) <= DIE_HALF_UM)).astype(float)
         # ビアの格子はダイ座標で「並進 dx,dy + 回転 θ」だけずらして置く
         uu, vv = u - dx, v - dy
@@ -165,12 +179,6 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
                             * via_frac(ct * uu + st * vv, -st * uu + ct * vv))
         vol[k] = s
 
-    # ★CT の点像分布関数(PSF)。**これが無いと測れない** —— 半径 6 µm の円を
-    #   2.5 µm のボクセルで刻むと縁が帯域制限されず、スライスごとの重心に
-    #   周期的な標本化誤差が乗る。中心が高さとともに 1 ボクセルぶん動くので、
-    #   その誤差が**傾きの系統誤差**に化ける(実測 1.200° -> 1.273°、+6 %)。
-    #   ガウス PSF を掛けると帯域制限されて消える。
-    vol = ndimage.gaussian_filter(vol, PSF_SIG_VOX, mode="nearest")
     vol += (NOISE * rng.standard_normal(vol.shape)).astype(np.float32)
 
     # 真値: 上面の法線の横成分 x ダイ厚 = 見かけの並進(閉形式)
