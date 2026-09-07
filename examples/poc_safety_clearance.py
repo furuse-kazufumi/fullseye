@@ -674,14 +674,17 @@ def section_sweep() -> dict:
         print("     %-24s 危険時に最近傍部位が全く見えない: %d / %d (%.1f %%)"
               % (name, hid, nh, 100 * hid / max(1, nh)))
 
-    # --- (iii) 更新間隔 ---------------------------------------------------- #
-    print("\n  (iii) 更新間隔(背面 1 台、点密度 800。古い推定を保持する)")
+    # --- (iii) 更新間隔(こちらも遮蔽なしの対照群) --------------------------- #
+    print("\n  (iii) 更新間隔(遮蔽なしの対照群、点密度 800。古い推定を保持する)")
     e_full = np.array([estimate(f, f["v_top"], rng, density=800) for f in frames])
     e_full = np.where(np.isfinite(e_full), e_full, 10.0)
+    e_clean = np.array([estimate(f, np.ones(len(f["P"]), bool), rng, density=800)
+                        for f in frames])
+    e_clean = np.where(np.isfinite(e_clean), e_clean, 10.0)
     nT = len(ts)
     lat_rows, lat_miss, lat_fa, lat_x = [], [], [], []
     for step in (1, 2, 4):
-        held = e_full.copy()
+        held = e_clean.copy()
         for tr in range(len(TRIALS)):
             seg = held[tr * nT:(tr + 1) * nT]
             for i in range(nT):
