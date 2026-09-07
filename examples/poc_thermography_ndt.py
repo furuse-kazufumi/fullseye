@@ -683,9 +683,9 @@ def main():
     print()
     print("  合成キューブ: %d フレーム x %d x %d(%.0f MB)、欠陥 %d 個、NETD %.0f mK"
           % (NFRAME, NPIX, NPIX, cube.nbytes / 1e6, len(masks), 1e3 * NETD))
-    d_hat = section2_zero_point(depth_map, ts, cube, masks, sound)
+    d_hat, big_err = section2_zero_point(depth_map, ts, cube, masks, sound)
     section3_depth_table(masks, d_hat)
-    section4_aspect(depth_map, ts, masks, d_hat, cube, sound)
+    win_err = section4_aspect(depth_map, ts, masks, d_hat, cube, sound)
     section5_methods(ts, cube, masks, sound)
     section6_noise(depth_map, masks)
     section7_illumination(depth_map, masks, sound)
@@ -693,6 +693,11 @@ def main():
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("経過 %.1f 秒" % (time.time() - t0))
+    print("\nPASS: 直径 8 mm 以上の欠陥深さを平均誤差 %.3f mm で当て、"
+          "窓を 25 秒(最悪 %+.0f %%)から 4 秒(最悪 %+.0f %%)へ切ると"
+          "小さい欠陥 8 個すべてが ±15 %% に入った"
+          % (big_err, max(win_err[T_END]),
+             max(win_err[4.0], key=abs)))
 
 
 if __name__ == "__main__":
