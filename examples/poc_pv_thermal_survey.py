@@ -958,6 +958,23 @@ def oblique_homographies(shape, theta_deg: float):
     return np.linalg.inv(m), m          # (正対->斜めを描く用, 斜め->正対に戻す用)
 
 
+def _largest_centroid(labels: np.ndarray):
+    """いちばん面積の大きい塊の重心 ``(row, col)``(``fs.ledger.blob_features``)。"""
+    if int(labels.max()) == 0:
+        return None
+    f = fs.ledger.blob_features(labels)
+    i = int(np.argmax(f["area"]))
+    return float(f["row"][i]), float(f["col"][i])
+
+
+def _largest_shift(labels: np.ndarray, ref_labels: np.ndarray) -> float:
+    """基準画像の最大塊の重心からのずれ [px]。"""
+    a, b = _largest_centroid(labels), _largest_centroid(ref_labels)
+    if a is None or b is None:
+        return float("nan")
+    return float(np.hypot(a[0] - b[0], a[1] - b[1]))
+
+
 def section_angle(base: dict) -> dict:
     print("\n" + "=" * 78)
     print("7) ★★撮影角度 —— 幾何は直せるが放射は直らない")
