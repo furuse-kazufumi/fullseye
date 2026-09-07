@@ -472,8 +472,8 @@ def render(P, val=None, nrm=None, shade=False, res=(320, 250), pad=4.0, splat=1,
         for dx in range(-splat, splat + 1):
             img[np.clip(iy[order] + dy, 0, Hp - 1),
                 np.clip(ix[order] + dx, 0, Wp - 1)] = v[order]
-    img = np.nan_to_num(img, nan=0.0 if nrm is None else 0.02)
-    if nrm is not None:
+    img = np.nan_to_num(img, nan=0.02 if shade else 0.0)
+    if shade:
         return np.stack([img] * 3, axis=-1)
     return with_scalebar(img, scale) if scale else img
 
