@@ -220,9 +220,6 @@ def sample_probes(sort: str, name: str = "", n: int = 4):
         if v is None:
             break
         out.append(v)
-    # 末尾に「細い断片」画像を 1 枚足す(既存の探針は種も順序も変わらない)。
-    if sort in ("image", "any"):
-        out.append(structured_fragments())
     return out
 
 

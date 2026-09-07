@@ -48,6 +48,10 @@
   "hx_gen_image_proto": {
    "kind": "constant",
    "reason": "gen_image_proto fills a constant image by contract (value from a)"
+  },
+  "img_to_matrix": {
+   "kind": "identity",
+   "reason": "Entry op (category bridge, 2026-09-07): an image IS its pixel matrix, so image -> matrix is the identity by definition. The op exists only to give matrix-sort ops a reachable input; knobs a/b are documented as unused."
   }
  }
 }

@@ -138,6 +138,11 @@ def audit():
         # 入力は **op 名から種を作る**(共有の乱数を並び順に消費すると、op を
         # 1 つ足しただけで以降の入力が全部ずれ、結果が実行ごとに揺れる)
         vs = op_probe.sample_probes(op.in_sort, op.name)
+        # 「細い断片」画像(長さ 3〜40 px の線分)を **この門だけ** に足す。短い断片を落とす
+        # ノブは structured_image では効く余地が無い(2026-09-07 hx_close_edges_length)。
+        # sample_probes 本体に足すと退化 op の台帳(test_op_probe_ledger)まで動くので、ここで足す。
+        if vs and op.in_sort in ("image", "any"):
+            vs = list(vs) + [op_probe.structured_fragments()]
         if not vs:
             unmeasured.append((op.name, "in_sort=%s の代表値が作れない" % op.in_sort))
             continue
