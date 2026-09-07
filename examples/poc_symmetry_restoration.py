@@ -714,12 +714,10 @@ def section_false_symmetry(S: dict) -> dict:
 
     est = estimate_plane(pts, refine="nm")
     a_e, o_e = plane_error(est["p0"], est["n"])
+    est_sym = estimate_plane(S["pts"], refine="nm")
+    a_s, o_s = plane_error(est_sym["p0"], est_sym["n"])
     print("  非対称な形から推定した対称面: 角度 %.3f deg / 位置 %.3f mm"
-          "(対称な形では %.3f deg / %.3f mm)"
-          % (a_e, o_e, *plane_error(*estimate_plane(S["pts"], refine="nm").values()
-                                    if False else
-                                    (lambda e: (e["p0"], e["n"]))(
-                                        estimate_plane(S["pts"], refine="nm")))))
+          "(対称な形では %.3f deg / %.3f mm)" % (a_e, o_e, a_s, o_s))
 
     out, rows = {}, []
     px = xs[1] - xs[0]
