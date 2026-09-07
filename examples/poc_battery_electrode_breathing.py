@@ -300,7 +300,75 @@ def section_zero_and_proposal() -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 3. 対照群 —— 伸びゼロで照明だけ変える                                          #
+# 3. 真値を格子に乗せると推定器は「完璧」に見える —— ピークロッキング            #
+# --------------------------------------------------------------------------- #
+def section_peak_locking() -> dict:
+    print("\n" + "=" * 78)
+    print("3) ★★1-2 章の「誤差 1.8e-14 px」を疑う —— 真値を格子から外す")
+    print("=" * 78)
+    print("  1-2 章は境界が %g, %g, ... と**画素の中心にぴったり**乗っていた。"
+          % (BASE_ROW, BASE_ROW + UNIT[0][1]))
+    print("  放物線あてはめは左右対称な標本に対して厳密なので、それは"
+          "**推定器の性能ではなく\n  場面の作り方**かもしれない。積層まるごとを"
+          "小数画素だけずらして測り直す:")
+
+    offs = np.linspace(0.0, 0.95, 20)
+    errs, est_frac, true_frac = [], [], []
+    for off in offs:
+        b = truth(False, shift=off)[0]
+        p = edges_gradient(render(False, shift=off))
+        if p.size != b.size:
+            continue
+        errs.append(p - b)
+        est_frac.append(np.mod(p, 1.0))
+        true_frac.append(np.mod(b, 1.0))
+    err = np.concatenate(errs)
+    rms, mx = float(np.sqrt(np.mean(err ** 2))), float(np.abs(err).max())
+    print("\n  小数画素のずれを 0 -> 0.95 まで %d 通り x 境界 %d 本 = %d 点:"
+          % (len(errs), errs[0].size, err.size))
+    print("    位置の誤差 RMS %.4f px / 最大 %.4f px"
+          "   <- 1-2 章の 1.8e-14 px は**格子に乗せた場合だけ**" % (rms, mx))
+    print("    ずれ 0.00 のときだけ %.1e px、ずれ 0.25 では %+.4f px"
+          % (float(np.abs(errs[0]).max()),
+             float(np.mean(errs[int(0.25 / (offs[1] - offs[0]))]))))
+
+    # fullseye の PIV 族が持つ「ピークロッキング」の指標をそのまま使う。
+    # 真値の c0 と比べて読む(op の docstring がそう指示している)。
+    ef = np.concatenate(est_frac)
+    tf = np.concatenate(true_frac)
+    c0_est = fs.ledger.piv_peak_locking(np.stack([ef, ef]), bins=10)["c0"]
+    c0_true = fs.ledger.piv_peak_locking(np.stack([tf, tf]), bins=10)["c0"]
+    print("    小数部の偏り c0(fs.ledger.piv_peak_locking、一様なら 1 前後): "
+          "推定 %.2f / 真値 %.2f" % (c0_est, c0_true))
+
+    e_true = true_mean_strain()
+    print("\n  この %.4f px が伸びに効く大きさ:" % mx)
+    print("    積層全体(腕 %.0f px)   %.1e = 真値の %.1f %%"
+          % (H - 2 * BASE_ROW, mx * math.sqrt(2) / 480.0,
+             100 * mx * math.sqrt(2) / 480.0 / e_true))
+    print("    負極 1 層(腕 %.0f px)  %.1e = 真値の %.1f %%"
+          % (UNIT[0][1], mx * math.sqrt(2) / UNIT[0][1],
+             100 * mx * math.sqrt(2) / UNIT[0][1] / UNIT[0][3]))
+    print("  -> **雑音ゼロでも層別の伸びは数 %% ずれる**。1-2 章で層別が"
+          " +1.014 / +0.958 %% と\n     ばらついたのは雑音ではなく、これ。")
+
+    figs.save_plot("peak_locking",
+                   [("推定 - 真値", np.tile(offs[:len(errs)], errs[0].size),
+                     np.concatenate([e[k] for k in range(errs[0].size) for e in [None]])
+                     if False else np.concatenate([np.asarray(errs)[:, k]
+                                                   for k in range(errs[0].size)])),
+                    ("ゼロ", offs, np.zeros_like(offs))],
+                   xlabel="積層を小数画素だけずらした量 [px]",
+                   ylabel="境界位置の誤差 [px]",
+                   title="ピークロッキング(格子に乗ると誤差 0、外すと %.3f px)" % mx,
+                   kinds=("scatter", "line"),
+                   caption="真値を画素の中心に置いた検査は、推定器を実力以上に"
+                           "良く見せる。乗せない検査を必ず 1 本置くこと。")
+    return {"rms": rms, "max": mx, "c0_est": c0_est, "c0_true": c0_true}
+
+
+# --------------------------------------------------------------------------- #
+# 4. 対照群 —— 伸びゼロで照明だけ変える                                          #
 # --------------------------------------------------------------------------- #
 def section_controls() -> dict:
     print("\n" + "=" * 78)
