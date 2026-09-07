@@ -838,6 +838,14 @@ def section_heatmap(base: dict) -> dict:
           % probe_rows_heat[2])
 
     # 柱 1 本をメッシュにして体積と向きを確かめる(3-D op の健全性検査)。
+    # 代表は**いちばん長く続いた**成分(いちばん大きい成分ではない —— 2 人ぶんの
+    # 足跡で太いだけの短い柱が選ばれてしまう)。
+    ext_t = {}
+    for c in range(1, int(dwell_lab.max()) + 1):
+        zs = np.nonzero((dwell_lab == c).any(axis=(1, 2)))[0]
+        if zs.size:
+            ext_t[c] = int(zs[-1] - zs[0] + 1)
+    pillar = max(ext_t, key=ext_t.get)
     sub = (dwell_lab == pillar)
     zsl = np.nonzero(sub.any(axis=(1, 2)))[0]
     ysl = np.nonzero(sub.any(axis=(0, 2)))[0]
