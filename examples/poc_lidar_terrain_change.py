@@ -1378,6 +1378,7 @@ def main() -> int:
     assert sl["lod_d"][0] / sl["lod_m"][0] < 1.3, "平地で M3C2 が有利になっている"
     assert sl["lod_d"][-1] / sl["lod_m"][-1] > 2.0, "斜面で M3C2 の利得が出ていない"
     assert de["lod_d"][-1] < 0.5 * de["lod_d"][0], "LoD が密度で下がっていない"
+    assert de["c2c"][-1] < 0.4 * de["c2c"][0], "C2C が密度で下がっていない(間引きの罠)"
     assert de["rate"][1] < 0.5 * de["rate"][-1], "低密度で core が落ちていない(生存者バイアス)"
     assert abs(sy["dod"][-1] / sy["pred"][-1] - 1) < 0.10, "偽正味が予測から外れた"
     assert abs(sy["m3c2_cov"][-1] / sy["dod"][-1] - 1) < 0.10, "偽正味が両手法で違う"
