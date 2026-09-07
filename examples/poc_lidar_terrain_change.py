@@ -808,8 +808,9 @@ def section_density() -> dict:
         #: ★有効 core が少なすぎるときの LoD は「測った」ことにしない
         #   (2 点の標準偏差は数字にはなるが意味を持たない)。
         s_m = 1.96 * spread(mc["L"]) if int(mc["ok"].sum()) >= 100 else float("nan")
-        step = max(1, len(a) // 6000)
-        ch = float(fs.ledger.chamfer_distance(a[::step], b[::step]))
+        # ★ここで間引くと C2C が「間引き後の点間隔」を測ってしまい、密度依存が消える
+        #   (最初に 6000 点へ揃えて書いたら、どの密度でも 0.42 m の一定値になった)。
+        ch = float(fs.ledger.chamfer_distance(a, b))
         dens.append(rho)
         ld.append(s_d)
         lm.append(s_m)
