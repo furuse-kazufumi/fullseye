@@ -929,25 +929,38 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
     print("\n  慣用の 3 点 %s(扉寄り・中央・吹き出し口寄り、いずれも荷の中): %s"
           % (conv, "**偽合格**(3 点とも合格と言う)" if conv_pass
              else "不合格を出せた(扉寄りの 1 点が最悪ゾーンに入った)"))
-    # ★「当たった」のが規約のおかげか偶然かを分ける: 3 点それぞれを ±1 m 揺らす。
-    jit = 0
+    # ★「当たった」のが規約のおかげか偶然かを分ける: 各点を ±1 m 揺らして数える。
     trials = 2000
-    for _ in range(trials):
-        okk = True
-        for (y0, x0) in conv:
-            for _try in range(20):
-                y = int(np.clip(y0 + rng.integers(-5, 6), 0, NY - 1))
-                x = int(np.clip(x0 + rng.integers(-5, 6), 0, NX - 1))
-                if prod[y, x]:
-                    break
-            okk &= bool(says_pass[y, x])
-        jit += int(okk)
-    jit_rate = 100.0 * jit / trials
-    print("  ★その 3 点を**それぞれ ±1 m 揺らす**と偽合格 %.1f %%"
-          "(%d 通り)。ランダム 3 個は %.1f %%。"
-          % (jit_rate, trials, rates[2]))
-    print("     規約の 3 点が当たったのは**位置の 1 m の運**であって、規約が"
-          "最悪点を狙っているからではない —— 規約は「代表点」を選ぶ道具。")
+
+    def _jitter(points) -> float:
+        n_pass = 0
+        for _ in range(trials):
+            okk = True
+            for (y0, x0) in points:
+                y, x = y0, x0
+                for _try in range(20):
+                    yy = int(np.clip(y0 + rng.integers(-5, 6), 0, NY - 1))
+                    xx = int(np.clip(x0 + rng.integers(-5, 6), 0, NX - 1))
+                    if prod[yy, xx]:
+                        y, x = yy, xx
+                        break
+                okk &= bool(says_pass[y, x])
+            n_pass += int(okk)
+        return 100.0 * n_pass / trials
+
+    jit_rate = _jitter(conv)
+    per = [_jitter([p]) for p in conv]
+    print("  ★その 3 点を**それぞれ ±1 m 揺らす**と偽合格 %.1f %%(%d 通り)。"
+          "ランダム 3 個は %.1f %%。" % (jit_rate, trials, rates[2]))
+    print("     ★★予想が外れた —— 「規約は代表点を選ぶだけだからランダムより"
+          "弱い」と踏んでいたが、実測は**規約のほうがずっと当たる**"
+          "(%.1f %% 対 %.1f %%)。" % (jit_rate, rates[2]))
+    print("     内訳(1 点だけ、±1 m 揺らす): 扉寄り %.1f %% / 中央 %.1f %% / "
+          "吹き出し口寄り %.1f %% —— 効いているのは**扉寄りの 1 点だけ**で、"
+          "残り 2 点は 1 個も見つけない。" % tuple(per))
+    print("     つまり規約が強いのではなく、**この荷の最悪点が扉側にある**から"
+          "当たった。壁ではなく吹き出し口側が壊れる故障(送風の偏り)なら、"
+          "同じ 3 点は同じようには当たらない。")
 
     if figs.enabled():
         figs.save_plot("sweep_nlogger",
