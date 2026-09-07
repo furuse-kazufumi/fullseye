@@ -835,16 +835,21 @@ def section5_angle_sweep(p: dict, tru: dict) -> dict:
             print()
         print()
     ucl = res["b 遮蔽あり"]["ucL"]
+    i3 = 3
     print("  → ★★**測れた率は 100 % のまま、値だけが静かに浅くなる**。左溝は")
-    print("     θ=%.0f 度で区間の %.0f %% が欠測、θ=%.0f 度で %.0f %% ——"
-          % (ANGLES[3], 100 * ucl["miss"][3], ANGLES[I_REF],
-             100 * ucl["miss"][I_REF]))
-    print("     それでも「測れた」ので値は返り、誤差は %.4f -> %.4f mm(真値の平均は"
-          % (ucl["mae"][3], ucl["mae"][I_REF]))
-    print("     %.3f mm なので **%.0f %% 過小**)。**警報を出せるのは欠測率だけ**で、"
-          % (float(np.nanmean(tru["ucL"])),
-             100 * ucl["mae"][I_REF] / float(np.nanmean(tru["ucL"]))))
-    print("     測れた率でも値そのものでもない。")
+    print("     θ=%.0f 度でまだ全断面が「測れた」が、区間の %.0f %% が欠測していて、"
+          % (ANGLES[i3], 100 * ucl["miss"][i3]))
+    print("     誤差は %.4f mm(生き残った断面の真値 平均 %.3f mm の %.0f %%)。"
+          % (ucl["mae"][i3], ucl["tmean"][i3],
+             100 * ucl["mae"][i3] / ucl["tmean"][i3]))
+    print("     **警報を出せるのは欠測率だけ**で、測れた率でも値そのものでもない。")
+    print("  → ★★もっと悪いのは**生存者バイアス**。θ を上げると深い溝の断面から")
+    print("     「測れない」に落ちるので、生き残った断面の真値の平均が")
+    print("     %s mm と**浅いほうへ流れる**。"
+          % " -> ".join("%.3f" % ucl["tmean"][i] for i in (0, 3, 4, 5)))
+    print("     平均誤差だけを見ると %s mm と「良くなった」ように見えるが、"
+          % " -> ".join("%.4f" % ucl["mae"][i] for i in (0, 3, 4, 5)))
+    print("     **測れなくなった断面がいちばん危ない断面**なので、これは改善ではない。")
     print()
     return {"res": res, "hgt": hgt, "c0": c0, "sat": sat}
 
