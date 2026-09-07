@@ -1,0 +1,175 @@
+[
+ {
+  "file": "01_capsule_calibration.png",
+  "name": "capsule_calibration",
+  "caption": "閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。2 値化を挟むと面積だけが一方向に膨らむ。",
+  "shape": [
+   272,
+   604,
+   3
+  ],
+  "csv": "01_capsule_calibration.csv",
+  "tsv": "01_capsule_calibration.tsv"
+ },
+ {
+  "file": "02_capsule_sdf_slice.png",
+  "name": "capsule_sdf_slice",
+  "caption": "稈カプセルの符号付き距離場(中央断面、青が内側)",
+  "shape": [
+   15,
+   15
+  ]
+ },
+ {
+  "file": "03_zero_point.png",
+  "name": "zero_point",
+  "caption": "k を真値にしても、厚くなるほど過小評価が進む。",
+  "shape": [
+   224,
+   536,
+   3
+  ],
+  "csv": "03_zero_point.csv",
+  "tsv": "03_zero_point.tsv"
+ },
+ {
+  "file": "04_cliff_ceilings.png",
+  "name": "cliff_ceilings",
+  "caption": "実測と閉形式 (1-e^-kL)/k が重なる。斜めの直線が真値。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_cliff_estimators.png",
+  "name": "cliff_estimators",
+  "caption": "重なりの枚数(遮蔽を無視して全部数えた場合)は真値に乗る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_cliff_density.png",
+  "name": "cliff_density",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_controls.png",
+  "name": "controls",
+  "caption": "「畳んだ分」は投影面積の単位、「奪われた分」は葉面積の単位。同じ量の言い換えではない。",
+  "shape": [
+   176,
+   599,
+   3
+  ],
+  "csv": "07_controls.csv",
+  "tsv": "07_controls.tsv"
+ },
+ {
+  "file": "08_scene_nadir.png",
+  "name": "scene_nadir",
+  "caption": "真ん中の図が「投影が畳む分」そのもの ——白いほど何枚も重なっている。",
+  "shape": [
+   543,
+   1390,
+   3
+  ]
+ },
+ {
+  "file": "09_sweep_row_beta.png",
+  "name": "sweep_row_beta",
+  "caption": "LAI をそろえても並べ方で推定値が動く。",
+  "shape": [
+   176,
+   421,
+   3
+  ],
+  "csv": "09_sweep_row_beta.csv",
+  "tsv": "09_sweep_row_beta.tsv"
+ },
+ {
+  "file": "10_sweep_beta.png",
+  "name": "sweep_beta",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_sweep_cell.png",
+  "name": "sweep_cell",
+  "caption": "セル中心で判定すれば偏らない。太るのは規約のせい。",
+  "shape": [
+   224,
+   345,
+   3
+  ],
+  "csv": "11_sweep_cell.csv",
+  "tsv": "11_sweep_cell.tsv"
+ },
+ {
+  "file": "12_leaf_angle_dist.png",
+  "name": "leaf_angle_dist",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_fpar.png",
+  "name": "fpar",
+  "caption": "天頂 (0 度) では fPAR = 植被率で k が約分される。斜めで初めて葉角分布が要る。",
+  "shape": [
+   176,
+   572,
+   3
+  ],
+  "csv": "13_fpar.csv",
+  "tsv": "13_fpar.tsv"
+ },
+ {
+  "file": "14_wind.png",
+  "name": "wind",
+  "caption": "",
+  "shape": [
+   176,
+   462,
+   3
+  ],
+  "csv": "14_wind.csv",
+  "tsv": "14_wind.tsv"
+ },
+ {
+  "file": "15_section_and_dsm.png",
+  "name": "section_and_dsm",
+  "caption": "草冠面は連続面ではなく、葉ごとに切り立っている。",
+  "shape": [
+   543,
+   1390,
+   3
+  ]
+ },
+ {
+  "file": "16_vertical_profile.png",
+  "name": "vertical_profile",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
