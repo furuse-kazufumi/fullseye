@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""混合廃棄物の材質選別 —— どの汚れが消えるかは代数で決まり、濡れだけが残る。
+"""混合廃棄物の材質選別 —— 何が消えるかは前処理の代数で決まる(予想は 2 つ外れた)。
 
 リサイクルの選別ラインは、ベルトの上を流れる破片を近赤外(SWIR)の分光カメラで
 見て、PET / PP / PE / PVC / 紙 / 金属 に分けます。実験室の綺麗な試片では

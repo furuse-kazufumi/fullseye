@@ -67,6 +67,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   印字していない」を判定しておきながら 0 を返しており、`assert code == 0` を必ず
   素通りしていた。この穴に落ちていた PoC が 3 本(`poc_dic_strain` /
   `poc_photoelasticity` / `poc_thermography_ndt`。assert ゼロ・PASS 行なし)。
+- **`polar_unwrap` / `cylinder_unwrap` が「輪が視野の外」を fail-closed に**。
+  半径は**画素(ボクセル)単位**なので mm のまま渡すと視野外を読み、例外なしに
+  **全部 0** が返っていた(`poc_pipe_wall_loss` が真っ黒な図を 1 枚出して発覚)。
+  中心から四隅までの距離より内側の半径が 1 つも無ければ拒否する。
 - ★**op ノートの「呼び出し」行が公開経路を書いていなかった**(2-D 以外の 1,244 op
   すべて)。実装モジュールの直 import しか書いておらず、利用者が実際に使う
   `fullseye.ledger.<名>` が出ていない。PoC が繰り返し「`fs.<名>` に無い」と報告して
