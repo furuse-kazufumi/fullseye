@@ -417,7 +417,7 @@ def section_zero_point(S: dict) -> dict:
 
     # (2) 対称復元(対称面は真値)
     r2 = restore_symmetric(surv, TRUE_P0, TRUE_N, tau)
-    s2 = score_restoration(gt, r2["restored"], pts, r2["fill"], tau)
+    s2 = score_restoration(gt, r2["restored"], r2["fill"])
     print("  (2) 対称復元(面は真値)         : RMS %6.2f mm / p95 %6.2f / 最大 %6.2f"
           "(足した点 %d、偽の面 %.2f %%)"
           % (s2["rms"], s2["p95"], s2["max"], s2["n_fill"], 100 * s2["spur_frac"]))
