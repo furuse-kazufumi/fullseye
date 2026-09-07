@@ -806,14 +806,24 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
     pts, is_veg = sensor_cloud(buf_fine, 4000.0, rng)
     print("  センサ点群 %d 点(4000 点/m^2、測距雑音 5 mm、欠測 5 %%)" % pts.shape[0])
 
-    # 地面を知らない前提で平面を当てる(plane_segmentation は RANSAC)
-    lab = np.asarray(L3.plane_segmentation(pts, 0.02, 200, 1, 200, SEED))
-    ground = pts[lab == 0]
-    z_g = float(np.median(ground[:, 2])) if ground.size else 0.0
+    # 地面を知らない前提で平面を当てる(plane_segmentation は RANSAC)。
+    # ★**いちばん大きい平面は地面とはかぎらない** —— 群落が閉じていると草冠の
+    #   一部が最大平面になる。最初の平面をそのまま地面にした版は標高を
+    #   1.7 m と答えた(2026-09-07 に踏んだ)。低いほうを選ぶ規則が要る。
+    lab = np.asarray(L3.plane_segmentation(pts, 0.02, 150, 4, 300, SEED))
+    zmed = [(float(np.median(pts[lab == j, 2])), j, int(np.sum(lab == j)))
+            for j in range(int(lab.max()) + 1) if np.sum(lab == j) >= 150]
+    first = min([t for t in zmed if t[1] == 0], default=(np.nan, 0, 0))
+    lo = min(zmed) if zmed else (0.0, -1, 0)
+    ground = pts[lab == lo[1]]
+    z_g = lo[0]
     h99 = float(np.percentile(pts[:, 2] - z_g, 99.9))
-    print("  地面: 抽出 %d 点、推定標高 %.4f m(真値 0)-> 草高 %.3f m(真値 %.3f m、"
-          "%+.1f %%)" % (ground.shape[0] // 1, z_g, h99, can["height"],
-                         100 * (h99 - can["height"]) / can["height"]))
+    print("  平面 %d 枚を抽出。**最大の平面の標高は %.3f m** —— 地面ではない。"
+          % (len(zmed), first[0]))
+    print("  いちばん低い平面を地面にすると 標高 %.4f m(真値 0、%d 点)-> "
+          "草高 %.3f m(真値 %.3f m、%+.1f %%)"
+          % (z_g, ground.shape[0], h99, can["height"],
+             100 * (h99 - can["height"]) / can["height"]))
 
     veg = pts[pts[:, 2] - z_g > 0.05]
     sub = veg[rng.choice(veg.shape[0], min(20000, veg.shape[0]), replace=False)]
