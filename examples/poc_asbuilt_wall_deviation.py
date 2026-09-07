@@ -672,9 +672,11 @@ def section_verdicts(zero: dict, out: dict) -> dict:
 
     for r in rows:
         print("   %-24s %-10s %12s   %s" % tuple(r))
-    figs.save_table("verdicts", ["項目", "やり方", "読み", "判定"], rows,
-                    title="やり方を変えると判定が変わる(許容 内法 ±%.0f mm / "
-                          "倒れ %.0f mm)" % (TOL_DIM_MM, TOL_PLUMB_MM))
+    figs.save_table("verdicts",
+                    ["項目", "やり方", "読み",
+                     "判定(内法 ±%.0f mm / 倒れ %.0f mm)"
+                     % (TOL_DIM_MM, TOL_PLUMB_MM)], rows,
+                    title="やり方を変えると判定が変わる")
     return {"rows": rows}
 
 
