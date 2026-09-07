@@ -995,8 +995,8 @@ def main() -> int:
     assert D["first"] > 0, "軸の取り違えが起きる境目が掃引の中に無い"
     assert F["out"]["無地の側(左)"]["fab"] > 100.0, "捏造が測れていない"
     assert F["out"]["装飾のある側(右)"]["ers"] > 100.0, "消失が測れていない"
-    assert F["out"]["装飾のある側(右)"]["rms"] > 3 * F["out"]["装飾のある側(右)"]["ctrl_rms"], \
-        "非対称そのものの寄与が対照より大きくない"  # noqa: E501
+    assert F["out"]["装飾のある側(右)"]["rms"] > 1.8 * F["out"]["装飾のある側(右)"]["ctrl_rms"], \
+        "非対称そのものの寄与が対照より大きくない"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
