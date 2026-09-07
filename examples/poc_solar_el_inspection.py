@@ -248,30 +248,35 @@ def _ring_stat(vals: np.ndarray) -> float:
     return float(np.median(vals[keep])) if keep.any() else hi
 
 
-def fit_vignette(img: np.ndarray, nbins: int = 20, valid=None) -> tuple[float, float]:
-    """半径ビンの「刈ってから中央値」に cos^4 則を当てはめる。
+def fit_vignette(img: np.ndarray, nbins: int = 10, valid=None) -> tuple[float, float]:
+    """半径ビンの「刈ってから中央値」に cos^4 則を当てはめる(画素数で重みづけ)。
 
     ``valid`` は当てはめに使う画素(既定は全部)。フィンガーの無い上下の余白は
     外側のリングにだけ混ざって分位を持ち上げるので、フィンガーの範囲
-    (設計値)に限る。
+    (設計値)に限る。ビンを画素数で重みづけるのは、中心と隅のリングには
+    結晶粒が数個しか入らず、その粒の明暗の抽選がそのまま当てはめに乗るから
+    (6 節で種を変えて測る)。
     """
     r = _radius(img.shape)
     if valid is None:
         valid = np.ones(img.shape, bool)
     edges = np.linspace(0, 1.0, nbins + 1)
-    rc, med = [], []
+    rc, med, wt = [], [], []
     for k in range(nbins):
         sel = (r >= edges[k]) & (r < edges[k + 1]) & valid
         if sel.sum() > 50:
             rc.append(0.5 * (edges[k] + edges[k + 1]))
             med.append(_ring_stat(img[sel]))
+            wt.append(float(sel.sum()))
     rc, lm = np.asarray(rc), np.log(np.asarray(med))
+    wt = np.asarray(wt) / np.sum(wt)
     best = (np.inf, 0.0, 1.0)
     for a in np.linspace(0, 1, 51):
         for R in np.arange(0.35, 1.5001, 0.025):
             m = np.log(1.0 - a + a / (1.0 + (rc / R) ** 2) ** 2)
             res = lm - m
-            cost = float(np.sum((res - res.mean()) ** 2))
+            mu = float(np.sum(wt * res))
+            cost = float(np.sum(wt * (res - mu) ** 2))
             if cost < best[0]:
                 best = (cost, float(a), float(R))
     return best[1], best[2]
