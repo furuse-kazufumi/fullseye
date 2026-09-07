@@ -269,10 +269,14 @@ def _element(dx, dz, t, incompat=True):
             B[1, 1::2] = bz
             B[2, 0::2] = bz
             B[2, 1::2] = bx
-            Ba = np.zeros((3, 4))
+            # 非適合モード N5 = 1 - xi^2 / N6 = 1 - eta^2 の 4 内部自由度
+            # (a1,a2 が x 変位、a3,a4 が z 変位)
             g5x, g6z = -2 * xi * (2.0 / dx), -2 * et * (2.0 / dz)
-            Ba[0, 0] = g5x
-            Ba[1, 3] = g6z
+            Ba = np.zeros((3, 4))
+            Ba[0, 0] = g5x        # ε_xx <- a1
+            Ba[2, 1] = g6z        # γ_xz <- a2
+            Ba[2, 2] = g5x        # γ_xz <- a3
+            Ba[1, 3] = g6z        # ε_zz <- a4
             dJ = dx * dz / 4.0 * t
             Kuu += B.T @ D @ B * dJ
             fu += B.T @ D @ es * dJ
