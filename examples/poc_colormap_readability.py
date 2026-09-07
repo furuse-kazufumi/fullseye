@@ -586,72 +586,85 @@ def section_categorical() -> dict:
     print("8) 質的 —— 隣り合うラベルの色差の最小値(連続マップは隣番号が近い色)")
     print("=" * 78)
 
-    rng = np.random.default_rng(SEED)
-    n_lab = 8
     h, w = 200, 300
-    sy = rng.uniform(0, h, n_lab)
-    sx = rng.uniform(0, w, n_lab)
-    y, x = np.mgrid[0:h, 0:w]
-    d = np.stack([(y - a) ** 2 + (x - b) ** 2 for a, b in zip(sy, sx)])
-    labels = (np.argmin(d, axis=0) + 1).astype(np.int32)
 
-    # 隣接するラベル対(4 近傍)。**公開経路に無かった処理**
-    pairs = set()
-    for a, b in ((labels[:, :-1], labels[:, 1:]), (labels[:-1], labels[1:])):
-        m = a != b
-        for p, q in zip(a[m].ravel(), b[m].ravel()):
-            pairs.add((min(int(p), int(q)), max(int(p), int(q))))
-    print("  領域 %d、隣接する対 %d 組" % (n_lab, len(pairs)))
+    def _scene(n_lab: int):
+        """``n_lab`` 個の領域。番号は**ラスタ順**(連結成分ラベリングと同じ)——
+        だから空間的に隣り合う領域ほど番号が近い、という現実の条件になる。"""
+        rng = np.random.default_rng(SEED)
+        sy = rng.uniform(0, h, n_lab)
+        sx = rng.uniform(0, w, n_lab)
+        order = np.lexsort((sx, np.round(sy / (h / 3.0))))   # 上の行から左→右
+        sy, sx = sy[order], sx[order]
+        y, x = np.mgrid[0:h, 0:w]
+        d = np.stack([(y - a) ** 2 + (x - b) ** 2 for a, b in zip(sy, sx)])
+        lab = (np.argmin(d, axis=0) + 1).astype(np.int32)
+        pairs = set()
+        for a, b in ((lab[:, :-1], lab[:, 1:]), (lab[:-1], lab[1:])):
+            m = a != b
+            for p, q in zip(a[m].ravel(), b[m].ravel()):
+                pairs.add((min(int(p), int(q)), max(int(p), int(q))))
+        return lab, sorted(pairs)
 
-    def _label_colours(rgb):
-        return np.array([rgb[labels == k].mean(axis=0) for k in range(1, n_lab + 1)])
-
-    def _min_de(rgb):
-        col = _label_colours(rgb)
-        de = []
-        for p, q in pairs:
-            a = col[p - 1].reshape(1, 1, 3)
-            b = col[q - 1].reshape(1, 1, 3)
-            de.append(float(np.asarray(fs.delta_e_map(a, b))[0, 0]))
+    def _min_de(rgb, lab, pairs, n_lab):
+        col = np.array([rgb[lab == k].mean(axis=0) for k in range(1, n_lab + 1)])
+        de = [float(np.asarray(fs.delta_e_map(col[p - 1].reshape(1, 1, 3),
+                                              col[q - 1].reshape(1, 1, 3)))[0, 0])
+              for p, q in pairs]
         return float(min(de)), int(sum(1 for v in de if v < JND_DE))
 
-    lf = labels.astype(np.float64)
-    cands = [
-        ("viridis(連続)", np.asarray(fs.apply_cmap(lf, "viridis", vmin=0.0,
-                                                    vmax=float(n_lab)))),
-        ("jet(連続)", np.asarray(fs.apply_cmap(lf, "jet", vmin=0.0,
-                                                vmax=float(n_lab)))),
-        ("categorical tab10", np.asarray(fs.colorize_categorical(labels, "tab10"))),
-        ("categorical wong", np.asarray(fs.colorize_categorical(labels, "wong"))),
-        ("colorize_labels 種 0", np.asarray(fs.colorize_labels(labels, seed=0))),
-    ]
-    rows, res = [], {}
-    print("\n  塗り方                 隣接対の色差の最小   JND(2.3)未満の対")
-    for name, rgb in cands:
-        mn, bad = _min_de(rgb)
-        res[name] = mn
-        rows.append([name, "%.1f" % mn, str(bad)])
-        print("   %-22s %8.1f              %d" % (name, mn, bad))
+    res, panels, caps = {}, [], []
+    rows = []
+    for n_lab in (8, 24):
+        lab, pairs = _scene(n_lab)
+        lf = lab.astype(np.float64)
+        cands = [
+            ("viridis(連続)", fs.apply_cmap(lf, "viridis", vmin=0.0, vmax=float(n_lab))),
+            ("jet(連続)", fs.apply_cmap(lf, "jet", vmin=0.0, vmax=float(n_lab))),
+            ("categorical tab10", fs.colorize_categorical(lab, "tab10")),
+            ("categorical wong", fs.colorize_categorical(lab, "wong")),
+            ("colorize_labels 種 0", fs.colorize_labels(lab, seed=0)),
+        ]
+        print("\n  領域 %d 個・隣接する対 %d 組" % (n_lab, len(pairs)))
+        print("   塗り方                 隣接対の色差の最小   JND(%.1f)未満の対" % JND_DE)
+        for name, rgb in cands:
+            mn, bad = _min_de(np.asarray(rgb), lab, pairs, n_lab)
+            res[(n_lab, name)] = mn
+            rows.append(["%d 領域" % n_lab, name, "%.1f" % mn, str(bad)])
+            print("    %-22s %8.1f              %d" % (name, mn, bad))
+            if n_lab == 8 and name != "colorize_labels 種 0":
+                panels.append(np.asarray(rgb))
+                caps.append("%s (最小 %.0f)" % (name, mn))
+        if n_lab == 24:
+            rand = [_min_de(np.asarray(fs.colorize_labels(lab, seed=s)),
+                            lab, pairs, n_lab)[0] for s in range(10)]
+            lab24, pairs24 = lab, pairs
 
-    # ★乱数 RGB は種で当たり外れがある —— 10 種で数える(対照群)
-    rand_min = [_min_de(np.asarray(fs.colorize_labels(labels, seed=s)))[0]
-                for s in range(10)]
-    lose = sum(1 for v in rand_min if v < res["categorical tab10"])
-    print("\n  ★勝てないところ: colorize_labels は種で当たり外れがあり、"
-          "10 種で最小 %.1f / 最大 %.1f。" % (min(rand_min), max(rand_min)))
-    print("     tab10 (%.1f) を下回るのは 10 種中 %d。"
-          "**乱数でも運が良ければ質的パレットより離れる**。"
-          % (res["categorical tab10"], lose))
+    print("\n  ★★崖がある: 領域が %d 個(tab10 の色数 10 を超える)になると、"
+          "\n     tab10 の隣接対の最小色差は %.1f まで落ちる —— **循環して"
+          "同じ色が隣り合う**。\n     連続マップ viridis (%.1f) にすら負ける。"
+          % (24, res[(24, "categorical tab10")], res[(24, "viridis(連続)")]))
+    print("  ★勝てないところ: 24 領域では乱数 RGB(colorize_labels)が"
+          "10 種で最小 %.1f / 最大 %.1f、\n     tab10 (%.1f) を上回るのは 10 種中 %d ——"
+          "**色数を超えたら乱数のほうがまし**。"
+          % (min(rand), max(rand), res[(24, "categorical tab10")],
+             sum(1 for v in rand if v > res[(24, "categorical tab10")])))
 
-    figs.save_grid("categorical",
-                   [c[1] for c in cands[:4]], [c[0] for c in cands[:4]], ncols=2,
-                   title="同じ 8 領域。連続マップは隣番号が似た色になる",
+    figs.save_grid("categorical", panels, caps, ncols=2,
+                   title="同じ 8 領域(番号はラスタ順 = 隣ほど番号が近い)",
                    caption="番号の大小に意味は無いのに、連続マップは"
                            "『近い番号 = 近い領域』と読ませる。")
+    figs.save_grid("categorical_overflow",
+                   [np.asarray(fs.colorize_categorical(lab24, "tab10")),
+                    np.asarray(fs.colorize_labels(lab24, seed=0))],
+                   ["tab10(色数 10 < 領域 24、最小 %.0f)" % res[(24, "categorical tab10")],
+                    "colorize_labels 乱数(最小 %.0f)" % rand[0]], ncols=2,
+                   title="質的パレットは色数を超えると黙って循環する",
+                   caption="同じ色の領域が隣り合っても、戻り値からは分からない。")
     figs.save_table("categorical_table",
-                    ["塗り方", "隣接対の色差の最小 ΔE", "JND 未満の対"], rows,
+                    ["場面", "塗り方", "隣接対の色差の最小 ΔE", "JND 未満の対"], rows,
                     title="隣り合う領域を見分けられるか")
-    return {"res": res, "rand_min": rand_min, "lose": lose, "n_pairs": len(pairs)}
+    return {"res": res, "rand": rand}
 
 
 # --------------------------------------------------------------------------- #
