@@ -151,8 +151,8 @@ def _iso_mask(yy, xx):
 
 def make_scene(seed: int = SEED, grain_c: float = GRAIN_C, crack_w: float = CRACK_W,
                vig_a: float = VIG_A, photons: float = PHOTONS,
-               defects: bool = True) -> dict:
-    """EL 画像と、種別ごとの真値を返す。"""
+               defects: bool = True, deep: bool = False) -> dict:
+    """EL 画像と、種別ごとの真値を返す。``deep`` で 6 本目の深いクラックを足す。"""
     rng = np.random.default_rng(seed)
     n = N * SS
     yy, xx = (np.mgrid[0:n, 0:n] + 0.5) / SS          # 最終画素の座標系 [px]
