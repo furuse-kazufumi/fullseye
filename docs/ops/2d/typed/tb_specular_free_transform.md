@@ -77,6 +77,7 @@ tb_specular_free_transform 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 次の例は元の台帳 op `specular_free_transform` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)

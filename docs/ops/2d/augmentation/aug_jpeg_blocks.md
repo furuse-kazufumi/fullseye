@@ -4,7 +4,7 @@ dim: 2d
 category: augmentation
 in: image
 out: image
-examples: [gallery2d_color_artistic, sim2real_and_alife]
+examples: [gallery2d_color_artistic, poc_prnu_camera_fingerprint, sim2real_and_alife]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ aug_jpeg_blocks 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_color_artistic](../../../../examples/gallery2d_color_artistic.py) — `py -3.11 examples/gallery2d_color_artistic.py`
+- [poc_prnu_camera_fingerprint](../../../../examples/poc_prnu_camera_fingerprint.py) — `py -3.11 examples/poc_prnu_camera_fingerprint.py`
 - [sim2real_and_alife](../../../../examples/sim2real_and_alife.py) — `py -3.11 examples/sim2real_and_alife.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

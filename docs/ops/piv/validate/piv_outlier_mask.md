@@ -4,7 +4,7 @@ dim: piv
 category: validate
 in: flow2d
 out: mask
-examples: [piv_flow_from_particles]
+examples: [piv_flow_from_particles, poc_change_detection_misreg, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -53,6 +53,8 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
+- [poc_change_detection_misreg](../../../../examples/poc_change_detection_misreg.py) — `py -3.11 examples/poc_change_detection_misreg.py`
+- [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 
 ## 型が繋がる次の op(`mask` を入力に取れる)
 

@@ -4,7 +4,7 @@ dim: imgforensics
 category: sensor
 in: image2d × fingerprint
 out: table
-examples: [image_forensics_audit]
+examples: [image_forensics_audit, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -88,6 +88,7 @@ PCE = -5.97 という有限値が返る(実測)。つまり実行時チェック
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_forensics_audit](../../../../examples/image_forensics_audit.py) — `py -3.11 examples/image_forensics_audit.py`
+- [poc_prnu_camera_fingerprint](../../../../examples/poc_prnu_camera_fingerprint.py) — `py -3.11 examples/poc_prnu_camera_fingerprint.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

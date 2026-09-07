@@ -4,7 +4,7 @@ dim: 2d
 category: morphology
 in: image
 out: image
-examples: [gallery2d_morphology]
+examples: [gallery2d_morphology, poc_bone_trabecular_thickness]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -58,6 +58,7 @@ sk_area_opening 0.35 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_morphology](../../../../examples/gallery2d_morphology.py) — `py -3.11 examples/gallery2d_morphology.py`
+- [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

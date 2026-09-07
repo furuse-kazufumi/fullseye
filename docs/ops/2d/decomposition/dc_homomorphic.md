@@ -4,7 +4,7 @@ dim: 2d
 category: decomposition
 in: image
 out: image
-examples: [gallery2d_texture_freq, poc_document_scan]
+examples: [gallery2d_texture_freq, poc_document_scan, poc_mri_bias_field]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ dc_homomorphic 0.50 0.50
 
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
 - [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
+- [poc_mri_bias_field](../../../../examples/poc_mri_bias_field.py) — `py -3.11 examples/poc_mri_bias_field.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

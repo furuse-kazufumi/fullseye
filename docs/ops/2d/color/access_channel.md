@@ -5,7 +5,7 @@ category: color
 in: color
 out: image
 halcon: access_channel
-examples: [gallery2d_color_artistic]
+examples: [gallery2d_color_artistic, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -69,6 +69,7 @@ access_channel 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_color_artistic](../../../../examples/gallery2d_color_artistic.py) — `py -3.11 examples/gallery2d_color_artistic.py`
+- [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

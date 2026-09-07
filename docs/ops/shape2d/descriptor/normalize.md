@@ -4,7 +4,7 @@ dim: shape2d
 category: descriptor
 in: efdmodel
 out: matrix
-examples: [piv_flow_from_particles]
+examples: [piv_flow_from_particles, poc_exoplanet_transit]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -40,6 +40,7 @@ Kuhl–Giardina の正準化: (1) 第1高調波の位相で **始点** の任意
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
+- [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

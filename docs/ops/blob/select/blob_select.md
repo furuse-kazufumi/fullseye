@@ -4,7 +4,7 @@ dim: blob
 category: select
 in: labels2d
 out: labels2d
-examples: [poc_particle_sizing]
+examples: [poc_particle_sizing, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ numpy.ndarray
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
+- [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
 ## 型が繋がる次の op(`labels2d` を入力に取れる)
 

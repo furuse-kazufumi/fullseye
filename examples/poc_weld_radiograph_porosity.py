@@ -626,9 +626,9 @@ def section_toe_distance() -> dict:
     r0, r1 = int(toe_row) - 30, int(toe_row) + 50
     panels = [sc["img"][r0:r1]] + [detect(sc["img"], m)["c"][r0:r1] for m in ("gauss3", "med72")]
     figs.save_grid("map_toe_backgrounds", panels,
-                   ["透過像(段差の余盛、気孔 0.8 mm を縁の 0.25 mm 内側に 8 個)", "ガウス σ=3 の背景を引いた対数コントラスト",
-                    "中央値 24×72 px の背景を引いた対数コントラスト"], title="段差の縁の近くの背景推定(最悪の明暗差)", ncols=1,
-                   caption="大窓平滑は段をぼかして明るい側に帯を残す。中央値は段を保つ。")
+                   ["透過像(段差の余盛)", "ガウス σ=3 の背景との差", "中央値 24×72 px の背景との差"],
+                   title="段差の縁の近くの背景推定", ncols=1,
+                   caption="気孔 0.8 mm を縁の 0.25 mm 内側に 8 個。大窓平滑は段をぼかして明るい側に帯を残す。中央値は段を保つ。")
     figs.save_plot("toe_detection",
                    [("%s / 円弧" % METHOD_JA[m], deltas, res["arc"]["rate"][m]) for m in ("med72", "gauss3")] +
                    [("%s / 段差" % METHOD_JA[m], deltas, res["step"]["rate"][m]) for m in ("med72", "gauss3")],

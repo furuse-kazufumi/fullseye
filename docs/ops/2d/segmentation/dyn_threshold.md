@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: dyn_threshold
-examples: [gallery2d_segmentation]
+examples: [gallery2d_segmentation, poc_metal_grain_size]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ dyn_threshold 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
+- [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

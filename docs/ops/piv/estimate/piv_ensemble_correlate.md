@@ -4,7 +4,7 @@ dim: piv
 category: estimate
 in: images
 out: flow2d
-examples: [piv_field_analysis_tour]
+examples: [piv_field_analysis_tour, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ Returns:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [piv_field_analysis_tour](../../../../examples/piv_field_analysis_tour.py) — `py -3.11 examples/piv_field_analysis_tour.py`
+- [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 
 ## 型が繋がる次の op(`flow2d` を入力に取れる)
 

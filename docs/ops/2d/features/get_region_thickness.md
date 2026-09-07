@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: get_region_thickness
-examples: [gallery2d_features]
+examples: [gallery2d_features, poc_bone_trabecular_thickness]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ get_region_thickness 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

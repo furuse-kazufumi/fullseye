@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(136 例)
+### 2-D 画像/信号/幾何(146 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -45,12 +45,15 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **光弾性(縞から応力。壊れるのは応力が大きい所ではない)** — 円板の直径圧縮は閉形式の応力場を持ち、偏光系は fullseye の `mueller_element` で組める(教科書の I=sin²(δ/2) と 125 通りで最大差 2.2e-16、水平直径の力の積分は誤差 0.000 %)。位相シフトで δ は復元できるが **(δ,θ) ↔ (-δ,θ+90°) の二義性で 2.7 % の画素は符号が反転**する。巻き戻しが壊れる場所は 2 つ(1 縞 2 画素未満・変調が落ちる等方点)で、どちらも撮る前に予測できてマスクで外せる。 `py -3.11 examples/poc_photoelasticity.py`
 - **断面形状の検査(翼型・羽根。既知の欠陥を入れて検出できる大きさを出す)** — NACA 4 桁の閉形式を設計形状にして、厚み・キャンバー・前縁半径を測る。既知の量の欠陥を注入して測り返し、検査の床(同じ形どうしの偏差)と検出限界を数字で示す。**位置合わせが前縁の欠陥を後縁へ移す**ことも隠さず印字する。 `py -3.11 examples/profile_shape_inspection.py`
 - **断面輪郭の枠を作る(正規化・等弧長の取り直し・上下面の分離・位置合わせを閉形式で検算)** — 既知の相似変換を掛けた翼型が正規化で機械精度で戻ること、粗密 2 万倍の円が等弧長で一様な角度刻みになること、NACA 0012 の上下面が閉形式の ±y_t に 6e-6 で乗ること、7 度・並進の剛体変換を chord/rigid が取り戻しつつ**2 % の拡大は吸収しない**ことを出す。開いた曲線の拒否も確かめる。 `py -3.11 examples/profile_frame_tour.py`
+- **結晶粒度 G(面積法と切片法は別の崖で落ちる)** — Voronoi の粒と真値ラベルで ASTM E112 の G を厳密に検算できる(閉形式 π/(4√λ) と +1.5 %、E112 の 2 式は同じ組織で +0.32 段ずれる)。★ゼロ点の面積法は雑音だけ -0.02・むらだけ -0.40 が**両方で +3.82** と相互作用で死ぬ。★★粒界の途切れの崖は面積法 **7.2 %**、切片法 **40.7 %** ―― 予想の 29.3 % は外れ、マスク上で消える粒界は f の 0.76 倍だった。closing 9×9 は 13 点中 12 点で素の版より悪い。混粒の全体 G 7.82 に ±0.5 で入るタイルは 4/64。 `py -3.11 examples/poc_metal_grain_size.py`
+- **ねじのピッチ・フランク角・有効径(傾きは左右フランクに逆符号)** — ★列幅の FFT はピッチを**半分**と答える(単条ねじの上下輪郭は P/2 ずれる)。★★軸の傾き 3 度で左右フランク角は 33.18 / 26.74 度 ―― 半和が真のフランク角、半差が傾き。片側フランクのピッチは 1 次で ±3 % 狂い、頂点間隔は 2 次(-0.12 %)。★ぼけ σ=4 px で壊れるのは d2(-0.06 %)でなく α(-0.57 度)。★標本化の崖は α(8 px/山)→ d2(4 px/山)→ FFT の P(2 px/山 まで当たり、1.5 px/山 は 3.0 px に折り返す)の順。 `py -3.11 examples/poc_screw_thread_metrology.py`
 
 **photometry**
 - **天体スタックの測光精度(何枚重ねるとどこまで正確に測れるか)** — 合成星野の既知フラックスを真値に、枚数を振って測光誤差が 1/√N で下がるかを測る。宇宙線汚染で単純平均 +5.89 % に対し κ-σ +0.30 %。**選別は雑音を √2 払って系統誤差を買う取引**であることも数字で示す。 `py -3.11 examples/poc_astro_photometry.py`
 - **全天カメラの雲量(画素を数えると雲の位置で 1.45 倍動く)** — 魚眼(等距離射影)で撮った空の雲量。**同じ角半径 8 度の雲を天頂角 0 → 82 度へ動かすと推定が 0.00789 → 0.01142(真値はどちらも 0.00973)**。閉形式 (θ/sinθ)/(θmax²/2) と最大差 0.0026 で一致し、重み sinθ/θ を掛けると 6 通りとも 0.999〜1.000 に直る。★予想は逆だった —— 引き伸ばされるのは天頂ではなく**地平線側の方位方向**。太陽周りの偽陽性は雲ゼロの晴天で雲量 7.25 %、幾何 -5.0 % と検出 +38.0 % が打ち消して合計 +29.7 % になる。 `py -3.11 examples/poc_allsky_cloud_cover.py`
 - **蛍光核の積分輝度から倍数性を出す(面積では分かれない)** — ★★誤分類は**面積(真値)15.4 % / 積分輝度 0.0 %**(log の分離度 1.5σ 対 6.2σ)。★★**「測った面積」は面積ではない** —— 固定しきい値のマスク面積だと 8.0 % と真の面積より良くなる。ln(測定/真値) を ln(明るさ) に回帰すると傾き +0.26・相関 0.97 で、**面積という名前で DNA 量を漏らしている**。★★飽和 8.8 % のとき DNA 指数は 2.002 と真値ぴったりだが、裾落ち +5.8 % と飽和 -5.3 % が釣り合っているだけ。 `py -3.11 examples/poc_nuclei_ploidy.py`
 - **縁が暗い天体の輪郭はどこか(周辺減光と「50 % 法」)** — ★★**「偏りは減光係数 u に比例」という予想は外れた** —— u=0.2 の -0.56 px を比例で伸ばすと u=0.8 は -2.2 px のはずが実測 **-12.76 px(5.7 倍)**。★対照群(ぼけ σ=0)が機構を分けた: u≤0.5 の偏りを作っていたのは減光ではなく**シーイング**、u>0.5 でだけ幾何が残る。★★ぼけの効き方はしきい値で符号が変わり、0.26 付近に打ち消し点が実在する(u を 0.3 にすると 0.38 へ動く)。★黒点が動かすのは半径(0.33 px)ではなく**中心**(0.005 → 0.591 px、122 倍)。 `py -3.11 examples/poc_solar_limb_darkening.py`
+- **系外惑星トランジットの相対測光(深さと継続時間は別々に壊れる)** — 目標星だけに 10 ppt の周辺減光つきトランジットを仕込んだ 240 枚を star_detect → frame_align → aperture_photometry で測る。ゼロ点は雲で深さ +72 ppt、比なら -0.13 ppt / T14 -0.9 fr。★比較星の選び方で残差 rms が 6.0 倍変わるが T14 の誤差は動かず、逆分散重みは生の分散で決めると雲に騙されて単純和の 1.52 倍悪い。★★開口 1σ の崖は予想した重心誤差ではなく op の開口マスクの階段(supersample=8 で不動の星が理論比 1.69、32 で 0.93)。検出限界 SNR=5 は暦既知で 1.48 ppt(理論 1.45)、暦未知は 2.0 ppt で深さより先に継続時間が壊れる。★★ドリフト 2 px とフラット 3 % は単独で 0.16 / 0.08 ppt、掛け算で 0.94 ppt、4 px で 2.97 ppt(真値の 30 %)。 `py -3.11 examples/poc_exoplanet_transit.py`
 
 **tomography**
 - **CT 再構成の忠実度(投影数を減らすとどこで壊れるか)** — Shepp-Logan を真値に、投影数 180→12 で FBP の誤差を測る。**フィルタ無し逆投影というゼロ点と 24 本で並び 12 本で逆転する**。投影の質量保存という独立検算つき。 `py -3.11 examples/poc_ct_fidelity.py`
@@ -59,6 +62,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **転がり軸受の異常診断(どこまで雑音に埋もれた欠陥を拾えるか)** — 欠陥周波数の閉形式を真値に、SNR を振って検出限界を測る。生スペクトルというゼロ点に対し包絡線解析が **17.5 dB** 稼ぐ。帯域選択の窓長を誤ると共振を外すことも数字で示す。 `py -3.11 examples/poc_bearing_diagnosis.py`
 - **周期のある地に埋もれた欠陥(まとめた ROC が隠すもの)** — ★★線欠陥・斑点・ムラを 1 本の ROC にまとめると AUC は高く見えるが、**種類別に描くとムラが 0.5 付近(でたらめ)**になる検出器がある。しかもそれは「格子除去 + 低周波除去」という現場でいちばん普通のレシピ —— **照明ムラを消す処理が、検出したいムラも消す**。格子のノッチは地の残差を 2 桁下げるが、低周波を落とすかどうかの 1 行で AUC が壊れる。 `py -3.11 examples/poc_fabric_defect.py`
 - **パルスサーモグラフィ(『測れない欠陥』の正体が時間窓だった)** — 裏面断熱平板の厳密解が真値なので、深さの推定を近似ゼロで検算できる(早期の log-log 勾配 -0.5000、d=√(παt*) が 0.3 % で成立)。**縦横比の限界に見えたものは物理ではなく当てはめ窓**で、25 秒 → 4 秒に切るだけで小欠陥 8 個の誤差が +59〜+612 % から ±15 % に入る。なだらかな加熱むら 76 % は検出をほとんど壊さない(**予想が外れた**)——壊すのは欠陥と同じスケールのむらだけ。 `py -3.11 examples/poc_thermography_ndt.py`
+- **カメラ指紋 PRNU(枚数で育ち、保存ボタンで消える)** — ★★清浄条件では同一カメラ PCE 中央値 2192 / 別カメラ 15.7(AUC 1.000)。★指紋は √N で育つが N=1 では最尤がゼロ点に負ける(ΣWI/ΣI² が W/I に退化)。★★JPEG 相当の量子化は品質 50 相当で PCE 3.6 %(量子化利得² の予測 3.8 %)、0.5× 縮小で 1.5 % ―― 幾何の上限 20 % より下で、**デノイザがなまった指紋を被写体として取り去る**。★★K=0 のカメラでも同じ背景 30 枚から PCE 1706 の偽指紋が出る。 `py -3.11 examples/poc_prnu_camera_fingerprint.py`
 
 **ranging**
 - **光子計数 dToF の距離精度(理論限界に乗るか、どこで崩れるか)** — 距離を先に決めて光子到着ヒストグラムを合成し、測り返す。ゲート重心は CRB の 1.003-1.068 倍、傾き -0.506(理論 -0.500)で 1/√N に乗る。ピーク位置というゼロ点に 4.80 倍。背景 SBR 0.008 で RMSE が 2 桁飛ぶのに**中央値はほとんど動かない**(3.8 % の試行だけが誤ロックする)ことまで出す。 `py -3.11 examples/poc_dtof_ranging.py`
@@ -71,9 +75,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **偏光による鏡面分離(分けた「拡散」は本当に拡散か)** — 拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。返る拡散は常に真値より **R_p·E** だけ高いという閉形式の偏りを実測 (差 3.5e-18)。ブリュースター角が最良なのは R_p が消えるからで、**最適角は評価指標で動く**。飽和だけが例外を出さずに壊す。 `py -3.11 examples/poc_polarization_specular.py`
 - **多波長で彩色層を剥がす(勝ったのは「多波長」ではなく「近赤外」だった)** — 層構造を Kubelka–Munk で合成して真値を握り、下絵検出・顔料存在量・褪色前の色の復元を 9 手法で比べる。**可視だけ 16 バンドに割っても RGB と同じ**(再現率 0.118 対 0.119)。近赤外 1 枚は面ごとには完璧(AUC 1.000)なのに全体では 1 本も閾値が引けない —— 絵具ごとの近赤外反射率の差が下絵の信号より大きいため。近赤外の差分は逆に**剥落部で盲目**(0.013)になる。★MNF が PCA に負けた: 雑音共分散を横隣との差で作るので、下絵の上での横差分エネルギー(他所の 3.9 倍)を雑音として白色化していた。 `py -3.11 examples/poc_pigment_unmixing.py`
 - **海氷密接度(混合画素をどう数えるかで答えが変わる)** — ★ゼロ点(1 本のしきい値で 2 値化)は密接度 0.35・相関長 3 セルで **-4.2 ポイント**外し、線形混合分解は +0.02。対照群(標本化そのものの誤差 +0.01)が効いていて、**偏りは標本化ではなく数え方**だと分かる。★★同じしきい値・同じ真値でも塊の大きさで偏りが変わり(-4.2 → -0.2 ポイント)、**周長率で説明がつく**(偏り = -0.80 × 周長率 + 0.015、R² = 0.984)。第 3 成分(薄氷)は必ず配分され、同じ数字が真値の定義で -4.4 / +2.7 ポイントに化ける。 `py -3.11 examples/poc_sea_ice_concentration.py`
+- **蛍光の共局在と漏れ込み(Pearson と Manders は別の場所で壊れる)** — 2 色の小胞画像を真の共局在率 0〜100 % で合成し、漏れ込み [[1,α],[β,1]]・PSF・光子雑音を掛けて Pearson r と Otsu-Manders を測る。★無関係な 2 色が α=β=10 % で r=0.203 / M1=0.133、対称漏れ込みなら r=2α/(1+α²) で 0.5 を超える崖は α=0.282(予想 2−√3=0.268、片側なら 30 % でも 0.289)。★★単染色対照から分離すると r は戻る(0.007)が **Manders は戻らない** —— Otsu より下の裾が落ちて 100 % でも 0.705(閉形式の予想 0.756)。生の M1 が真値を横切る α=0.222 は裾落ちと漏れ込みの相殺。★★ぼけは Pearson を動かさず(0.011→0.089)Manders だけ 0.044→0.946 に押し、σ=2.5 px で Otsu の前景が小胞から細胞体へ飛び移る段差。★Costes のシャッフル検定は漏れ込みだけの r を p=0.000 で有意と言い、Costes 自動しきい値は漏れ込みで台まで落ちて M2=1.000 に崩壊する。 `py -3.11 examples/poc_colocalization_crosstalk.py`
 
 **vibration**
 - **モーション拡大の振幅精度(拡大は測るための道具か)** — 既知の振幅 0.02-0.5 px を拡大して測り返す。拡大率は α=200 まで厳密(実測/期待 = 1.00000000)。だが**測るなら拡大は要らない** —— 生映像の位相相関と誤差比 1.14 で引き分ける。崩れるのは拡大率ではなく入力振幅で、境界は位相の巻きではなく J0 の第 1 零点 3.0619 px。 `py -3.11 examples/poc_motion_magnification.py`
+- **動画からのモード同定(f は当たる、ζ が先に嘘をつく)** — ★★片持ち梁 3 モードの自由減衰を妨害入り動画に合成し、位相法と PIV で f_n / ζ_n / MAC を測る。**f_n は 0.06 Hz 以内で当たるのに ζ_1 は同じ時系列から半値幅 0.0778 / 包絡線 0.0188 / 当てはめ 0.0181(真値 0.02)**。半値幅の 3.9 倍は窓長 2 s の分解能下限(予測 0.0738)そのもの。★振幅を 0.02→2 px で掃引すると崖の順番は f → ζ → MAC_2 → MAC_3 で、0.02 px では f_1 誤差 +0.030 Hz のまま ζ_1 が真値の 0.23 倍。★照明 100 Hz の折り返しは fps 48.5 でちょうど f_1 = 3.00 Hz に乗り、輝度のゼロ点は ζ を出せない。★phase_displacement の wrap_limit_px(0.018 px)は崖を予測せず、先端 3.1 px でも壊れなかった。 `py -3.11 examples/poc_beam_modal_video.py`
 
 **calibration**
 - **カメラ校正の再投影誤差は何を保証しないか** — 内部パラメータと姿勢を自分で決めて推定し返す。板の傾きだけを変えると**再投影 RMS は比 1.00 倍のまま fx の誤差が 281 倍**(0.026 % 対 7.33 %)。区別できるのは sigma_fx(129 倍)。傾き 0 度の退化配置は閉形式が拒否するが非線形最適化は正常な再投影誤差とともに 25 % 外れた答えを返す。 `py -3.11 examples/poc_camera_calibration.py`
@@ -89,6 +95,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **registration**
 - **点群位置合わせの収束域(どれだけずれていたら失敗するか)** — 初期姿勢のずれを振って成功率の等高線を出す。境界は初期回転 **90-120 度**で、並進は直径の 50 % まで振っても回転ほど効かない。PCA 単独は 4 % しか成功せず、**素の直方体では 83 % が反転した象限を掴む**。球と円柱は 16/16 が「残差はそのままで別の姿勢」を返す —— 収束したのに間違っている。 `py -3.11 examples/poc_registration_basin.py`
 - **テンプレート追跡(見失うより先に、静かにずれる)** — 既知の相似変換で動画を合成して真値を握る。ゼロ点(更新なし全域探索)の床は0.79 px(整数座標のため)。毎フレーム更新のドリフトは log-log 傾き 0.456。★**ずれたフレームほど相関ピークが高い**(ドリフト検出の AUC 0.182 = 逆相関)。そっくりな別物体が併走すると、ずれた 152 フレームが**全部**校正しきい値を通って「見つけた」と報告する —— AUC 0.993 でも運用点が使えない。ピーク値と突出度は**得意な崖が逆**(平坦な遮蔽はピーク値、紛らわしい対象は突出度)。 `py -3.11 examples/poc_template_tracking.py`
+- **変化検出と位置合わせ誤差(偽陽性はエッジの帯、しかも崖つき)** — ★★2 時期の差分は位置合わせ誤差でエッジが全部「変化」になるが、その偽陽性はずれ 0.3 px まで雑音の床で **0.5 px から崖**(PSF から予測した δ*=τσ√2π/C=0.351 px と一致)、3 px で 7175 px。★エッジ総長×ずれの比例則は 3 px で 0.78 倍だが崖を説明せず、PSF と雑音を入れた台帳予測は 0.84〜1.07 倍 ―― 漏れるのは樹冠テクスチャ(1.5 px で 482 px、勾配則で 409 px と予測できる)。★★位置合わせ 3 経路は残留 0.02〜0.13 px まで戻すが、唯一の位相相関は 3-D 用の整数精度で残留 0.72 px、その偽陽性 995 px は「ずれだけ」の掃引を同じ残留で読んだ 915 px に乗る(位置合わせ後も同じ崖)。★変化の大きさの崖は面積の重なり則 (1−δ/(s√2))² でなく画素被覆則(被覆 > τ/C)で決まり、36 点で差 0.000。伐採は完璧な位置合わせでも検出率 0.33、照明差だけの偽陽性 17198 px は放射補正で 0、histogram_match は変化そのものを消しにかかって 383 px 出す。 `py -3.11 examples/poc_change_detection_misreg.py`
 
 **decoding**
 - **2 値マトリクスコードの読取限界(何画素あれば読めるか)** — QR と同型の構造(位置検出パターン + タイミング + 25x25 格子)を自分で作り、埋めたビット行列を真値に BER を測る。読める限界は **2 px/モジュール**、ぼけ σ/m 0.50、傾き 72 度。★**局所閾値は「モジュールが 12 px 以下のときだけ****照明ムラに強い**」—— 解像度を上げると BER 0.55 まで崩れる。 `py -3.11 examples/poc_matrix_code_reading.py`
@@ -108,6 +115,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **細胞の計数と分割(計数が合っていて分割が全部外れる点がある)** — 既知の位置・大きさ・重なりで細胞を配置して真値を握る。★**偏り +0.3 個(0.4 %)なのに分割誤り 13.3 件**という点が実在する(過分割 +1 と過統合 -1 が相殺する)。★**過分割は重なりに反応しない** —— 密度を 5 段振っても過分割の列はほぼ一定で、過分割は種の撒き方が、過統合は重なりが決める別原因。★「最適な h は密度で動く」は基準を書かないと真偽が決まらない(偏り基準では1.1→0.0 と動き、1対1 基準では 0.4 で動かない)。縁の規約だけで計数が 13 % 動く。 `py -3.11 examples/poc_cell_counting.py`
 - **成長のタイムラプスを時空間の連結成分として測る(合体はいつ起きたか)** — ★ゼロ点(フレーム独立の計数)は思ったより強く、塊の数が減るフレームは真の合体時刻の1 コマ以内に出る。壊れるのは数ではなく**その先** ——「どれとどれが」「合体か消失か」「同時に 2 組か」。★★**空間の離散化は合体を早める**(予想が外れた: 画素は面積を持つので円が半画素ぶん太り、まだ接していないのに繋がる。-1.16 / -0.04 フレーム)。一方フレーム格子への丸めは必ず遅らせる(+0.17 / +0.94)—— **逆向きの 2 つが混ざる**。 `py -3.11 examples/poc_timelapse_growth.py`
 - **植生被覆率(被覆率が当たっていて画素が全部外れる、が実際に起きる)** — 合成群落なので被覆率も画素の帰属も真値が既知。発芽期・湿った土でゼロ点の被覆率誤差は **-0.2 pp(ほぼ完璧)なのに適合率も再現率も 0.000** —— 植生と答えた画素数だけが偶然一致していた。混合画素が 100% になると二値手法は生育段階で誤差の向きが逆転する(発芽期 +32〜+46 pp / 繁茂期 -14〜-36 pp)。 `py -3.11 examples/poc_vegetation_cover.py`
+- **MRI バイアス場と組織面積(GM と WM は逆向きに壊れ、足すと隠れる)** — 楕円殻の脳ファントムで 3 組織の真値面積を握り、乗算場と Rician 雑音を掛けて 3 クラス大津で測る。★★振幅 30 % で **GM +20.2 % / WM -7.7 % なのに GM+WM は +0.0 %**(脳実質体積は両方間違っても動かない)。★雑音を止めると符号が反転(GM -11.8 %)し、崖は幾何予測 30 % に対し実測 17.5 %。★★log I をそのまま平滑する補正は**場が無くても GM +81.8 %** 壊す(解剖が場に見える)が、分割残差の Wells 型反復なら 40 % でも +1.8 %。周波数の崖は基底で決まり(多項式 32 / ガウス 16 / 格子 B スプライン 8 px)、4 px では理想補正だけが残る。SNR 15 で場なしでも GM +8.5 %(裾の予測 +6.3 %)。 `py -3.11 examples/poc_mri_bias_field.py`
+- **葉の病斑面積率(等級は色の軸より葉マスクと縁の定義で決まる)** — 閉形式の葉と既知面積の病斑に土・照明むら・白飛び・影を重ねた合成葉。緑の固定しきい値は土だけで **+65.2 pt**、射影 G で葉を切り a* で病斑を切ると標準場面で -0.8 pt。★白飛びの鏡面反射は a* に**偽陽性しか出さない**(20 % で +12.6 pt、偽陰性 0.0 ―― 予想した符号の逆転は起きない)、白を足しても動かない色相なら +2.0 pt。★★縁のぼけ幅 4 px では境界を 25 %/75 % 線のどちらに置くかだけで **±3.5 pt** 動き(Steiner の式が 0.4 pt 以内で予測)、等級境界 ±3 pt の 40 枚は土の上では 19〜35 枚が誤等級、黒布 + 明るさ葉マスク + 色相固定なら 8 枚。 `py -3.11 examples/poc_leaf_disease_area.py`
 
 **color**
 - **色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い)** — 既知の反射率チャートに既知の光源を掛けて合成し、角度誤差で測る。白パッチ法は素のチャートで 1.06 度と最良だが、**一番明るい 1 枚を外すだけで 8.45 度(8 倍)**、飽和 43% で 13.61 度 = ゼロ点に厳密退化する。灰色世界は有彩色が 60% を占めると29.79 度でゼロ点に負ける。**最適な p は場面ごとに 1 から ∞ まで動く**。 `py -3.11 examples/poc_white_balance.py`
@@ -132,6 +141,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **(x, y, t) で数える(通過台数とオクルージョン、そして L/V という 1 つの定数)** — ★**疎な自由流ではスリット法は仮想ループ(1-D)に勝てない** —— どちらも 10/10 で同点。同じ計数列の情報しか使っていないので当然で、2-D にした見返りは台数ではなく**速度(誤差 0.02 % 以下)**と、壊れ方が絵で見えること。★★同じスリット画像から2 通りの数え方が出て**壊れ方が逆向き**: 帯を全部数えるとフレーム間隔で千切れて過大(Δt=16 で 10 → 49)、計数線と交わる帯だけなら過大は起きず見逃しだけになる。 `py -3.11 examples/poc_traffic_counting.py`
 - **粒子画像 2 枚から流れを測る(PIV。真値を自分で作って誤差を出す)** — 既知の渦を撒いた粒子画像対を合成し、窓ごとの相互相関で変位場を出す。零方向への偏りと補正、多段、既知の系統誤差(ピークロッキング)、非圧縮の発散 0 による独立検算まで。**外れ値検定がここでは害になる**ことも隠さず印字する。 `py -3.11 examples/piv_flow_from_particles.py`
 - **PIV の派生 op を一巡する(場の量・可視化・採点・アンサンブル・時間統計を閉形式で検算)** — 剛体回転・膨張・せん断の線形場で Q 基準/渦回転強度/ひずみ速度/渦度を厳密に検算し、Lamb–Oseen 渦で窓変形が多段より誤差を下げることと、Q の面積が閾値で 4 倍変わることを出す。ZNCC 採点は壊した窓だけ落ち、アンサンブル相関は外れ本数を 52 %→5 % に減らし、時間統計の RMS を独立な経路で突き合わせ、centroid のピークロッキングと 4 方向の色を固定する。**RMS だけでは差が見えない**ことも隠さず印字する。 `py -3.11 examples/piv_field_analysis_tour.py`
+- **河川表面流速を斜め動画から測る(速度の誤差と流量の誤差は別物)** — ★★ゼロ点(斜め画像のまま 1 尺度で m/s に直す)は近岸 +0.31 / 遠岸 -0.28 m/s と符号が逆、見かけの川幅 3.3 m(真値 8 m)で流量 -57 %。正射化で速度 RMS 0.074 m/s・流量 -7.8 %。★★対照群の流量 -3.0 % のうち -2.5 % は岸 0 との台形積分だけで生じ、速度と無関係。★★密度 0.05 % の崖は nan 0 % なのに外れ値旗 44 %、アンサンブル相関は外れ窓を 46 → 44 % としか救わない。★窓を広げても岸の速度は「窓幅×勾配」の予想(0.12〜0.28 m/s)より桁で小さい -0.008 m/s、代わりに流量が -1.1 → -7.0 %。★★静止した映り込みは細かいときだけ効き、引かれてから(速度比 0.70)張り付く(0.03)、時間中央値引きで 0.998。★dt の崖は 1/4 則でなく対の消失(探索上限を外しても同じ k=4)。 `py -3.11 examples/poc_river_surface_velocity.py`
 
 **shape_descriptors**
 - **輪郭の楕円フーリエ記述子(平滑化・不変マッチング)** — 閉輪郭をフーリエ級数で表し、高調波打ち切りで平滑化、回転/拡大/移動/始点に不変な記述子で形状検索する(EFD, Kuhl-Giardina)。 `py -3.11 examples/contour_fourier.py`
@@ -959,7 +969,7 @@ _計 897 ops / 48 categories。_
 - `abs_image` (halcon: `abs_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `sqrt_image` (halcon: `sqrt_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `exp_image` (halcon: `exp_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `log_image` (halcon: `log_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `log_image` (halcon: `log_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_weld_radiograph_porosity`
 - `sin_image` (halcon: `sin_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `cos_image` (halcon: `cos_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `asin_image` (halcon: `asin_image`) `image → image` · 例: `gallery2d_gray_arith`
@@ -994,7 +1004,7 @@ _計 897 ops / 48 categories。_
 - `aug_vignette` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
 - `aug_chromatic` `image → image` · 例: `gallery2d_color_artistic`
 - `aug_rolling_shutter` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
-- `aug_jpeg_blocks` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_jpeg_blocks` `image → image` · 例: `gallery2d_color_artistic`, `poc_prnu_camera_fingerprint`, `sim2real_and_alife`
 - `aug_cutout` `image → image` · 例: `gallery2d_color_artistic`
 - `aug_barrel` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
 
@@ -1020,18 +1030,18 @@ _計 897 ops / 48 categories。_
 
 ### color(8)
 - `cfa_to_rgb` (halcon: `cfa_to_rgb`) `image → color` · 例: `gallery2d_color_artistic`
-- `trans_from_rgb` (halcon: `trans_from_rgb`) `color → color` · 例: `gallery2d_color_artistic`
+- `trans_from_rgb` (halcon: `trans_from_rgb`) `color → color` · 例: `gallery2d_color_artistic`, `poc_leaf_disease_area`
 - `trans_to_rgb` (halcon: `trans_to_rgb`) `color → color` · 例: `gallery2d_color_artistic`
 - `linear_trans_color` (halcon: `linear_trans_color`) `color → color` · 例: `gallery2d_color_artistic`
 - `principal_comp` (halcon: `principal_comp`) `color → color` · 例: `gallery2d_color_artistic`
 - `rgb1_to_gray` (halcon: `rgb1_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
 - `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
-- `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`
+- `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`, `poc_leaf_disease_area`
 
 ### contour(25)
 - `select_contours` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `quickstart`
 - `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `poc_screw_thread_metrology`
 - `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`, `quickstart`
 - `sk_find_contours` `image → contour` · 例: `gallery2d_contour_measure`
 - `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
@@ -1044,7 +1054,7 @@ _計 897 ops / 48 categories。_
 - `projective_trans_contour_xld` (halcon: `projective_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
 - `polar_trans_contour_xld` (halcon: `polar_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
 - `shape_trans_xld` (halcon: `shape_trans_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
-- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`
+- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `poc_screw_thread_metrology`
 - `zero_crossing_sub_pix` (halcon: `zero_crossing_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`
 - `lines_facet` (halcon: `lines_facet`) `image → contour` · 例: `gallery2d_contour_measure`
 - `gen_region_polygon_xld` (halcon: `gen_region_polygon_xld`) `contour → region` · 例: `gallery2d_contour_measure`
@@ -1060,9 +1070,9 @@ _計 897 ops / 48 categories。_
 - `dc_texture_residual` `image → image` · 例: `gallery2d_texture_freq`
 - `dc_rpca_lowrank` `image → image` · 例: `blas_thread_budget`, `gallery2d_texture_freq`
 - `dc_rpca_sparse` `image → image` · 例: `gallery2d_texture_freq`
-- `dc_retinex` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_retinex` `image → image` · 例: `gallery2d_texture_freq`, `poc_bone_trabecular_thickness`
 - `dc_local_contrast_norm` `image → image` · 例: `gallery2d_texture_freq`
-- `dc_homomorphic` `image → image` · 例: `gallery2d_texture_freq`, `poc_document_scan`
+- `dc_homomorphic` `image → image` · 例: `gallery2d_texture_freq`, `poc_document_scan`, `poc_mri_bias_field`
 
 ### deformation(3)
 - `deform_tps` `image → image` · 例: `gallery2d_geometry`
@@ -1137,7 +1147,7 @@ _計 897 ops / 48 categories。_
 - `xsitk_curv_aniso_diff` `image → image` · 例: `gallery2d_color_artistic`
 - `xsitk_laplacian_sharpen` `image → image` · 例: `gallery2d_color_artistic`
 - `xsitk_grayscale_fillhole` `image → image` · 例: `gallery2d_color_artistic`
-- `xsitk_grayscale_grindpeak` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_grayscale_grindpeak` `image → image` · 例: `gallery2d_color_artistic`, `poc_weld_radiograph_porosity`
 - `xsitk_opening_by_recon` `image → image` · 例: `gallery2d_color_artistic`
 - `xsitk_closing_by_recon` `image → image` · 例: `gallery2d_color_artistic`
 - `xsitk_signed_maurer_dist` `region → image` · 例: `gallery2d_color_artistic`
@@ -1190,7 +1200,7 @@ _計 897 ops / 48 categories。_
 - `moments_region_central_invar` (halcon: `moments_region_central_invar`) `region → feature` · 例: `gallery2d_features`
 - `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` · 例: `gallery2d_features`
 - `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` · 例: `gallery2d_features`
-- `estimate_noise` (halcon: `estimate_noise`) `image → feature` · 例: `gallery2d_features`
+- `estimate_noise` (halcon: `estimate_noise`) `image → feature` · 例: `gallery2d_features`, `poc_weld_radiograph_porosity`
 - `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → feature` · 例: `gallery2d_features`
 - `orientation_xld` (halcon: `orientation_xld`) `contour → feature` · 例: `gallery2d_features`
 - `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → feature` · 例: `gallery2d_features`
@@ -1199,7 +1209,7 @@ _計 897 ops / 48 categories。_
 - `moments_xld` (halcon: `moments_xld`) `contour → feature` · 例: `gallery2d_features`
 - `hough_line_trans` (halcon: `hough_line_trans`) `image → image` · 例: `gallery2d_features`
 - `hough_circle_trans` (halcon: `hough_circle_trans`) `image → image` · 例: `gallery2d_features`
-- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` · 例: `gallery2d_features`
+- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` · 例: `gallery2d_features`, `poc_bone_trabecular_thickness`
 - `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` · 例: `gallery2d_features`
 - `elliptic_axis` (halcon: `elliptic_axis`) `region → feature` · 例: `gallery2d_features`
 - `count_channels` (halcon: `count_channels`) `color → feature` · 例: `gallery2d_features`
@@ -1231,7 +1241,7 @@ _計 897 ops / 48 categories。_
 - `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
 - `power_byte` (halcon: `power_byte`) `image → image` · 例: `gallery2d_texture_freq`
 - `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `acoustic_condition_monitoring`, `gallery2d_texture_freq`
-- `highpass_image` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `highpass_image` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `poc_river_surface_velocity`
 - `bandpass_image` (halcon: `bandpass_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `fft_image_inv` (halcon: `fft_image_inv`) `image → image` · 例: `gallery2d_texture_freq`
 - `fft_generic` (halcon: `fft_generic`) `image → image` · 例: `gallery2d_texture_freq`
@@ -1254,7 +1264,7 @@ _計 897 ops / 48 categories。_
 - `rotate_image` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
 - `zoom_image_factor` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`
 - `zoom_image_size` (halcon: `zoom_image_size`) `image → image` · 例: `gallery2d_geometry`
-- `affine_trans_image` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`
+- `affine_trans_image` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_change_detection_misreg`
 - `polar_trans_image` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_allsky_cloud_cover`, `poc_gear_tooth_metrology`
 - `projective_trans_image` (halcon: `projective_trans_image`) `image → image` · 例: `gallery2d_geometry`, `poc_water_level`
 - `projective_trans_image_size` (halcon: `projective_trans_image_size`) `image → image` · 例: `gallery2d_geometry`
@@ -1289,7 +1299,7 @@ _計 897 ops / 48 categories。_
 - `cv_trunc` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `gamma_image` (halcon: `gamma_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `pow_image` (halcon: `pow_image`) `image → image` · 例: `gallery2d_gray_arith`
-- `invert_image` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `invert_image` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_metal_grain_size`
 - `scale_image` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `equ_histo_image` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `illuminate` (halcon: `illuminate`) `image → image` · 例: `gallery2d_gray_arith`, `poc_document_scan`, `poc_matrix_code_reading`
@@ -1329,7 +1339,7 @@ _計 897 ops / 48 categories。_
 - `hx_cooc_feature` (halcon: `cooc_feature_image`) `image → feature` · 例: `gallery2d_halcon_ext`
 - `hx_full_domain` (halcon: `full_domain`) `image → region` · 例: `gallery2d_halcon_ext`
 - `hx_mean_shape` (halcon: `mean_image_shape`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_close_edges` (halcon: `close_edges`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_close_edges` (halcon: `close_edges`) `image → image` · 例: `gallery2d_halcon_ext`, `poc_metal_grain_size`
 - `hx_close_edges_length` (halcon: `close_edges_length`) `image → image` · 例: `gallery2d_halcon_ext`
 - `hx_expand_region` (halcon: `expand_region`) `region → region` · 例: `gallery2d_halcon_ext`
 - `hx_region_to_mean` (halcon: `region_to_mean`) `image → image` · 例: `gallery2d_halcon_ext`
@@ -1373,7 +1383,7 @@ _計 897 ops / 48 categories。_
 - `hx_test_closed_xld` (halcon: `test_closed_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
 - `hx_regress_contours` (halcon: `regress_contours_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
 - `hx_moments_any_xld` (halcon: `moments_any_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
-- `hx_split_contours` (halcon: `split_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_split_contours` (halcon: `split_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`, `poc_screw_thread_metrology`
 - `hx_gen_parallel_contour` (halcon: `gen_parallel_contour_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
 - `hx_fit_circle_contour` (halcon: `fit_circle_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
 - `hx_fit_ellipse_contour` (halcon: `fit_ellipse_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
@@ -1429,9 +1439,9 @@ _計 897 ops / 48 categories。_
 - `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
 - `gclose` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
 - `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`
-- `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`
+- `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
-- `sk_area_opening` `image → image` · 例: `gallery2d_morphology`
+- `sk_area_opening` `image → image` · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`
 - `cv_open` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
 - `cv_close` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
 - `cv_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`
@@ -1446,10 +1456,10 @@ _計 897 ops / 48 categories。_
 - `gray_opening_shape` (halcon: `gray_opening_shape`) `image → image` · 例: `gallery2d_morphology`
 - `gray_closing_shape` (halcon: `gray_closing_shape`) `image → image` · 例: `gallery2d_morphology`
 - `gray_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_document_scan`
-- `gray_bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`
+- `gray_bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `gray_erosion_shape` (halcon: `gray_erosion_shape`) `image → image` · 例: `gallery2d_morphology`
 - `gray_dilation_shape` (halcon: `gray_dilation_shape`) `image → image` · 例: `gallery2d_morphology`
-- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` · 例: `gallery2d_morphology`
+- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` · 例: `gallery2d_morphology`, `poc_weld_radiograph_porosity`
 - `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` · 例: `gallery2d_morphology`
 - `xsk2_reconstruction` `image → image` · 例: `gallery2d_morphology`
 - `xsk2_diameter_opening` `image → image` · 例: `gallery2d_morphology`
@@ -1474,14 +1484,14 @@ _計 897 ops / 48 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_nuclei_ploidy`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_nuclei_ploidy`, `poc_river_surface_velocity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `median_rect` (halcon: `median_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `median_rect` (halcon: `median_rect`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_weld_radiograph_porosity`
 - `median_separate` (halcon: `median_separate`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `gray_erosion_rect` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `gray_dilation_rect` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1499,15 +1509,15 @@ _計 897 ops / 48 categories。_
 - `xkor_median` `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### region(78)
-- `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`
+- `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`, `poc_colocalization_crosstalk`, `poc_leaf_disease_area`
 - `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_open` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
-- `reg_close` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`
-- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`
-- `select_largest` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`
+- `reg_close` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_leaf_disease_area`
+- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`
+- `select_largest` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`, `poc_leaf_disease_area`
 - `remove_small` (halcon: `select_shape`) `region → region` · 例: `gallery2d_region`, `quickstart`
 - `invert_region` (halcon: `complement`) `region → region` · 例: `gallery2d_region`
-- `dist_transform` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`
+- `dist_transform` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`
 - `region_boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
 - `convex_fill` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
 - `sk_skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`
@@ -1520,7 +1530,7 @@ _計 897 ops / 48 categories。_
 - `cv_dist` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`
 - `erosion_circle` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`
 - `dilation_circle` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`, `poc_focus_stacking`
-- `opening_circle` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`
+- `opening_circle` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_document_scan`
 - `closing_circle` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`
 - `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `dilation_rectangle1` (halcon: `dilation_rectangle1`) `region → region` · 例: `gallery2d_region`
@@ -1608,11 +1618,11 @@ _計 897 ops / 48 categories。_
 - `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`
 
 ### segmentation(54)
-- `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_gear_tooth_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_matrix_code_reading`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`
+- `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
-- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_nuclei_ploidy`, `poc_vegetation_cover`
+- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`
 - `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
@@ -1630,7 +1640,7 @@ _計 897 ops / 48 categories。_
 - `h_threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `binary_threshold` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `auto_threshold` (halcon: `auto_threshold`) `image → region` · 例: `gallery2d_segmentation`
-- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
 - `var_threshold` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `local_threshold` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `hysteresis_threshold` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`
@@ -1644,7 +1654,7 @@ _計 897 ops / 48 categories。_
 - `regiongrowing_mean` (halcon: `regiongrowing_mean`) `image → region` · 例: `gallery2d_segmentation`
 - `zero_crossing` (halcon: `zero_crossing`) `image → region` · 例: `gallery2d_segmentation`
 - `local_min` (halcon: `local_min`) `image → region` · 例: `gallery2d_segmentation`
-- `bin_threshold` (halcon: `bin_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `bin_threshold` (halcon: `bin_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_metal_grain_size`
 - `fast_threshold` (halcon: `fast_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` · 例: `gallery2d_segmentation`
 - `pouring` (halcon: `pouring`) `image → region` · 例: `gallery2d_segmentation`
@@ -1652,7 +1662,7 @@ _計 897 ops / 48 categories。_
 - `xsk_flood` `image → region` · 例: `gallery2d_segmentation`
 - `xcv_grabcut` `image → region` · 例: `gallery2d_segmentation`
 - `xcv_watershed_markers` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`
-- `xsk2_multiotsu` `image → image` · 例: `gallery2d_segmentation`
+- `xsk2_multiotsu` `image → image` · 例: `gallery2d_segmentation`, `poc_mri_bias_field`
 - `xsk2_h_maxima` `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`
 - `xcv2_meanshift` `image → image` · 例: `gallery2d_segmentation`
 - `xmh_bernsen` `image → region` · 例: `gallery2d_segmentation`
@@ -1667,14 +1677,14 @@ _計 897 ops / 48 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_nuclei_ploidy`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `video_streaming`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_superresolution_limits`
-- `sk_tv` `image → image` · 例: `gallery2d_smoothing_rank`
-- `sk_wavelet` `image → image` · 例: `gallery2d_smoothing_rank`
-- `sk_rolling_ball` `image → image` · 例: `gallery2d_smoothing_rank`
-- `sk_nlm` `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_tv` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `sk_wavelet` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `sk_rolling_ball` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_weld_radiograph_porosity`
+- `sk_nlm` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `sk_tv_bregman` `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1684,7 +1694,7 @@ _計 897 ops / 48 categories。_
 - `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `dl_guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_sea_ice_concentration`, `poc_solar_limb_darkening`, `poc_vessel_network`, `poc_white_balance`
-- `gauss_image` (halcon: `gauss_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_moire_screen`
+- `gauss_image` (halcon: `gauss_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
 - `mean_image` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_document_scan`, `poc_focus_stacking`, `poc_white_balance`
 - `binomial_filter` (halcon: `binomial_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `smooth_image` (halcon: `smooth_image`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1700,9 +1710,9 @@ _計 897 ops / 48 categories。_
 - `xcv_edge_preserving` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xpil_smooth_more` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xpil_unsharp_mask` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsp_wiener` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsp_wiener` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `xsp_savgol` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsp_dct_denoise` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsp_dct_denoise` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `xsp_cspline_smooth` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xwt_visushrink` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xwt_firm_denoise` `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1929,7 +1939,7 @@ _計 897 ops / 48 categories。_
 - `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
 - `xg_elliptic_axis` (halcon: `elliptic_axis_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
 - `xg_height_width_ratio` (halcon: `height_width_ratio_xld`) `contour → feature` · 例: `gallery2d_geometry`
-- `xg_regress_contours` `contour → feature` · 例: `gallery2d_geometry`
+- `xg_regress_contours` `contour → feature` · 例: `gallery2d_geometry`, `poc_screw_thread_metrology`
 - `xg_clip_contours` `contour → contour` · 例: `gallery2d_geometry`
 - `xg_gen_polygons` (halcon: `gen_polygons_xld`) `contour → contour` · 例: `gallery2d_geometry`
 - `xg_crop_contours` `contour → contour` · 例: `gallery2d_geometry`

@@ -4,7 +4,7 @@ dim: imgmetrics
 category: colorspace
 in: rgbimage
 out: lab
-examples: [image_quality_metrics]
+examples: [image_quality_metrics, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ sRGB → CIE L\*a\*b\*(D65)。ΔE を測る前段。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
+- [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 
 ## 型が繋がる次の op(`lab` を入力に取れる)
 

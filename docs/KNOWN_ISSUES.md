@@ -1052,6 +1052,12 @@ py -3.11 tools/gen_examples_readme.py   # examples/README.md
 `toc` を抜かすと「INDEX.md の指紋が live と違う」「新カテゴリのノートが索引から辿れない」
 の 2 門が落ちる(実測)。`imgevolve.py index` を後にすると README の op 数が古いまま出る。
 
+**PoC を足したときも同じ順番が要る**(2026-09-07、CI で発見): op ノートには「この op を使う例」
+の節があり(`op_example_index`)、PoC を 1 本足すだけで呼んでいる op のノートが全部古くなる
+(8 本足して 13 ノート以上が stale)。展示館の生成器だけ回して push すると `test_opdocs` が落ちる。
+PoC バッチの取り込み後は **`opdocs.py md → toc → html → gen_op_catalog → imgevolve.py index →
+gen_docs_index_ops → gen_examples_readme → gen_wingpoc_gallery`** を通す(図の再生成は不要)。
+
 ### 3. 使い方が 1 行だった 494 本 → 0 本
 
 2 つの原因が重なっていた。

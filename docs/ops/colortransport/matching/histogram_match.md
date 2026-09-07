@@ -4,7 +4,7 @@ dim: colortransport
 category: matching
 in: image2d × image2d
 out: image2d
-examples: [color_transport]
+examples: [color_transport, poc_change_detection_misreg]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [color_transport](../../../../examples/color_transport.py) — `py -3.11 examples/color_transport.py`
+- [poc_change_detection_misreg](../../../../examples/poc_change_detection_misreg.py) — `py -3.11 examples/poc_change_detection_misreg.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

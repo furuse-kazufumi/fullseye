@@ -5,7 +5,7 @@ category: contour
 in: image
 out: contour
 halcon: threshold_sub_pix
-examples: [gallery2d_contour_measure]
+examples: [gallery2d_contour_measure, poc_screw_thread_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ threshold_sub_pix 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_contour_measure](../../../../examples/gallery2d_contour_measure.py) — `py -3.11 examples/gallery2d_contour_measure.py`
+- [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
 
 ## 型が繋がる次の op(`contour` を入力に取れる)
 

@@ -76,6 +76,7 @@ tb_temporal_bandpass 0.50 0.50
 
 次の例は元の台帳 op `temporal_bandpass` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [motion_magnification](../../../../examples/motion_magnification.py) — `py -3.11 examples/motion_magnification.py`
+- [poc_beam_modal_video](../../../../examples/poc_beam_modal_video.py) — `py -3.11 examples/poc_beam_modal_video.py`
 - [poc_motion_magnification](../../../../examples/poc_motion_magnification.py) — `py -3.11 examples/poc_motion_magnification.py`
 
 ## 型が繋がる次の op(`video` を入力に取れる)

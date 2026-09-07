@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_astro_photometry, poc_dtof_ranging, poc_nuclei_ploidy, poc_weld_bead_profile, quickstart, specular_photometric]
+examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_astro_photometry, poc_dtof_ranging, poc_nuclei_ploidy, poc_river_surface_velocity, poc_weld_bead_profile, quickstart, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -69,6 +69,7 @@ median 0.50 0.50
 - [poc_astro_photometry](../../../../examples/poc_astro_photometry.py) — `py -3.11 examples/poc_astro_photometry.py`
 - [poc_dtof_ranging](../../../../examples/poc_dtof_ranging.py) — `py -3.11 examples/poc_dtof_ranging.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
+- [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 - [poc_weld_bead_profile](../../../../examples/poc_weld_bead_profile.py) — `py -3.11 examples/poc_weld_bead_profile.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`

@@ -4,7 +4,7 @@ dim: measure1d
 category: caliper
 in: image2d × measurehandle
 out: table
-examples: [poc_dimensional_inspection]
+examples: [poc_dimensional_inspection, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
+- [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

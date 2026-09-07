@@ -5,7 +5,7 @@ category: gray
 in: image
 out: image
 halcon: invert_image
-examples: [gallery2d_gray_arith]
+examples: [gallery2d_gray_arith, poc_metal_grain_size]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ invert_image 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_gray_arith](../../../../examples/gallery2d_gray_arith.py) — `py -3.11 examples/gallery2d_gray_arith.py`
+- [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

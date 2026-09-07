@@ -4,7 +4,7 @@ dim: blob
 category: measure
 in: labels2d
 out: table
-examples: [poc_gear_tooth_metrology, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_sea_ice_concentration, poc_traffic_counting, poc_vessel_network, poc_wound_area_tracking]
+examples: [poc_bone_trabecular_thickness, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_sea_ice_concentration, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -66,13 +66,17 @@ Examples
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
+- [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
+- [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
 - [poc_particle_tracking](../../../../examples/poc_particle_tracking.py) — `py -3.11 examples/poc_particle_tracking.py`
 - [poc_sea_ice_concentration](../../../../examples/poc_sea_ice_concentration.py) — `py -3.11 examples/poc_sea_ice_concentration.py`
 - [poc_traffic_counting](../../../../examples/poc_traffic_counting.py) — `py -3.11 examples/poc_traffic_counting.py`
 - [poc_vessel_network](../../../../examples/poc_vessel_network.py) — `py -3.11 examples/poc_vessel_network.py`
+- [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

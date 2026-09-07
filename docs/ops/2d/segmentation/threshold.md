@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: threshold
-examples: [gallery2d_segmentation, poc_gear_tooth_metrology, poc_traffic_counting, poc_water_level, video_streaming]
+examples: [gallery2d_segmentation, poc_bone_trabecular_thickness, poc_change_detection_misreg, poc_gear_tooth_metrology, poc_metal_grain_size, poc_screw_thread_metrology, poc_traffic_counting, poc_water_level, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -60,7 +60,11 @@ threshold 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
+- [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
+- [poc_change_detection_misreg](../../../../examples/poc_change_detection_misreg.py) — `py -3.11 examples/poc_change_detection_misreg.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
+- [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
+- [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
 - [poc_traffic_counting](../../../../examples/poc_traffic_counting.py) — `py -3.11 examples/poc_traffic_counting.py`
 - [poc_water_level](../../../../examples/poc_water_level.py) — `py -3.11 examples/poc_water_level.py`
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`

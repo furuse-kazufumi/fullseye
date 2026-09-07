@@ -4,7 +4,7 @@ dim: photon
 category: counting
 in: image2d
 out: image2d
-examples: [photon_timeresolved]
+examples: [photon_timeresolved, poc_colocalization_crosstalk]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ inside the sampler — any ``lambda`` over :data:`MAX_LAMBDA`.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
+- [poc_colocalization_crosstalk](../../../../examples/poc_colocalization_crosstalk.py) — `py -3.11 examples/poc_colocalization_crosstalk.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

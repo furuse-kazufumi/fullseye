@@ -5,7 +5,7 @@ category: halcon_ext
 in: contour
 out: contour
 halcon: split_contours_xld
-examples: [gallery2d_halcon_ext]
+examples: [gallery2d_halcon_ext, poc_screw_thread_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -73,6 +73,7 @@ hx_split_contours 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_halcon_ext](../../../../examples/gallery2d_halcon_ext.py) — `py -3.11 examples/gallery2d_halcon_ext.py`
+- [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
 
 ## 型が繋がる次の op(`contour` を入力に取れる)
 

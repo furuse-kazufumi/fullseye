@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [gallery2d_segmentation, poc_cell_counting, poc_nuclei_ploidy, poc_vegetation_cover]
+examples: [gallery2d_segmentation, poc_cell_counting, poc_leaf_disease_area, poc_nuclei_ploidy, poc_vegetation_cover]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ sk_otsu 0.50 0.50
 
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
+- [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_vegetation_cover](../../../../examples/poc_vegetation_cover.py) — `py -3.11 examples/poc_vegetation_cover.py`
 

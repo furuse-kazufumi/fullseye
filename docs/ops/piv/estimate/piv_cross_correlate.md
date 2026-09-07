@@ -4,7 +4,7 @@ dim: piv
 category: estimate
 in: image2d × image2d
 out: flow2d
-examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_dic_strain, poc_strain_history, poc_superresolution_limits]
+examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_beam_modal_video, poc_change_detection_misreg, poc_dic_strain, poc_river_surface_velocity, poc_strain_history, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -75,7 +75,10 @@ Returns:
 
 - [piv_field_analysis_tour](../../../../examples/piv_field_analysis_tour.py) — `py -3.11 examples/piv_field_analysis_tour.py`
 - [piv_flow_from_particles](../../../../examples/piv_flow_from_particles.py) — `py -3.11 examples/piv_flow_from_particles.py`
+- [poc_beam_modal_video](../../../../examples/poc_beam_modal_video.py) — `py -3.11 examples/poc_beam_modal_video.py`
+- [poc_change_detection_misreg](../../../../examples/poc_change_detection_misreg.py) — `py -3.11 examples/poc_change_detection_misreg.py`
 - [poc_dic_strain](../../../../examples/poc_dic_strain.py) — `py -3.11 examples/poc_dic_strain.py`
+- [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 - [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 

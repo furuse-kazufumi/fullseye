@@ -4,7 +4,7 @@ dim: astrostack
 category: stack
 in: images
 out: image2d
-examples: [astro_stacking, poc_astro_photometry]
+examples: [astro_stacking, poc_astro_photometry, poc_exoplanet_transit, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -68,6 +68,8 @@ Returns ``(stack, accepted)``:
 
 - [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 - [poc_astro_photometry](../../../../examples/poc_astro_photometry.py) — `py -3.11 examples/poc_astro_photometry.py`
+- [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`
+- [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

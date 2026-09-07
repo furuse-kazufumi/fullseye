@@ -4,7 +4,7 @@ dim: blob
 category: split
 in: mask
 out: image2d
-examples: [blob_split_tour]
+examples: [blob_split_tour, poc_bone_trabecular_thickness]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ Examples
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
+- [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

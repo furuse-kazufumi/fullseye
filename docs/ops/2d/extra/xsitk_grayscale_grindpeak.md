@@ -4,7 +4,7 @@ dim: 2d
 category: extra
 in: image
 out: image
-examples: [gallery2d_color_artistic]
+examples: [gallery2d_color_artistic, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ xsitk_grayscale_grindpeak 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_color_artistic](../../../../examples/gallery2d_color_artistic.py) — `py -3.11 examples/gallery2d_color_artistic.py`
+- [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
