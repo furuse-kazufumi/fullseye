@@ -1165,18 +1165,22 @@ def section_cliff_mixed(seed: int = SEED) -> dict:
                      "%+.2f" % wc, "%.2f %%" % ac])
         print("   %8.0f %%   %+12.3f     %+12.2f      %+12.2f       %8.2f %%"
               % (100 * mf, rk, wr, wc, ac))
-    dw = wall[-1] - wall[0]
-    dwin = win_raw[-1] - win_raw[0]
-    dwin_c = win_cl[-1] - win_cl[0]
+    dw = max(abs(np.array(wall) - 1000 * RACK))
+    dwin = max(abs(np.array(win_raw) - 1000 * WIN_DZ))
+    dwin_c = max(abs(np.array(win_cl) - 1000 * WIN_DZ))
     print("\n   真値: 壁の傾き %+.2f mrad / 窓の高さのずれ %+.1f mm"
           % (1000 * RACK, 1000 * WIN_DZ))
-    print("   ★混合 %.0f %% で壁の傾きは %+.3f mrad しか動かない —— RANSAC が"
-          "外れ値として落とすから。" % (xs[-1], dw))
-    print("     同じ点群で窓の高さ(obb = 主成分の min/max)は %+.2f mm 動く。"
-          % dwin)
+    print("   ★掃引のどこでも壁の傾き(RANSAC)の誤差は最大 %.3f mrad —— "
+          "混合画素は外れ値として落ちる。" % dw)
+    print("     同じ点群で窓の高さ(obb = 主成分の min/max)は最大 %.2f mm 外す。"
+          "しかも**単調でない**" % dwin)
+    print("     (%s mm)—— 主軸が数点で傾くので、どの割合でも突然壊れうる。"
+          % " / ".join("%+.1f" % v for v in win_raw))
     print("     **同じ幾何・同じ点群で、崖の位置を決めているのは推定器の頑健さ**。")
-    print("     obb の前に statistical_outlier_removal を挟むと %+.2f mm に落ちる"
-          "(%.0f %% 抑制)。" % (dwin_c, 100 * (1 - abs(dwin_c) / max(abs(dwin), 1e-9))))
+    print("     obb の前に ransac_plane で面上の点だけにすると最大 %.2f mm に落ちる"
+          "(%.0f %% 抑制)。" % (dwin_c, 100 * (1 - dwin_c / max(dwin, 1e-9))))
+    print("     割り当ての正答率は %.2f → %.2f %% としか落ちない —— "
+          "**正答率という 1 個の数字は、この壊れ方に盲目**。" % (acc[0], acc[-1]))
     figs.save_plot("cliff_mixed",
                    [("窓の高さ(obb 素)[mm]", xs, win_raw),
                     ("窓の高さ(外れ値除去つき)[mm]", xs, win_cl),
