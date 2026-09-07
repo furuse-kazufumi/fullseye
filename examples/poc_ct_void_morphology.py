@@ -601,8 +601,9 @@ def section_voxel_cliff() -> dict:
                      [0.0, 100 * VOID_FRAC * 1.3])],
                    xlabel="ボクセル寸法 [µm]", ylabel="推定ボイド率 [%]",
                    title="予想と違い、ボイド率は粗いボクセルでも崩れない",
-                   caption="線形の被覆率で積むと体積は保存される。合否の数字は"
-                           "解像できなくなっても出続ける。")
+                   caption="位相 3 通りの平均。線形の被覆率で積むと体積は保存される"
+                           "ので、合否の数字は解像できなくなっても出続ける"
+                           "(ただし位相の運で ±%.2f ポイント振れる)。" % max(s_dsc))
     # ★nan(測れなかった点)は落として引く —— 折れ線 op は非有限値を拒否する。
     ok = [i for i, x in enumerate(fl_sph) if np.isfinite(x) and np.isfinite(fl_dsc[i])]
     vxo = [vx[i] for i in ok]
