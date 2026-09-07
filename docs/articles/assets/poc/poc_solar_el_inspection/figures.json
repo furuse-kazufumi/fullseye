@@ -2,7 +2,7 @@
  {
   "file": "01_zero_point_map.png",
   "name": "zero_point_map",
-  "caption": "単位は % of セル面積。暗画素の 6 割はフィンガーとバスバー。",
+  "caption": "単位は % of セル面積。暗画素の 4 割はフィンガーとバスバー、3 割は結晶粒とビネッティング。",
   "shape": [
    493,
    1240,

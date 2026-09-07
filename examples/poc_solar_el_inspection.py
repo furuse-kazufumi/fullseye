@@ -533,7 +533,8 @@ def section_zero_point(sc: dict) -> dict:
                    ["EL 画像(ゼロ点の入力)", "Otsu の暗画素 %.1f %%" % rate,
                     "真値の孤立領域 %.2f %%" % truth],
                    ncols=3, title="ゼロ点: 暗画素率は不活性面積率ではない",
-                   caption="単位は % of セル面積。暗画素の 6 割はフィンガーとバスバー。")
+                   caption="単位は % of セル面積。暗画素の 4 割はフィンガーとバスバー、"
+                           "3 割は結晶粒とビネッティング。")
     return {"rate": rate, "parts": out, "dark_n": int(dark.sum())}
 
 
