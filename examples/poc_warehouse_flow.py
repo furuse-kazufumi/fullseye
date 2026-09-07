@@ -530,9 +530,8 @@ def detect(meas: dict, clear: np.ndarray) -> dict:
     # 成分ごとに、その中の ID の数と「いちばん早く始まった ID」を持つ。
     comp_of = (uk // 10000).astype(int)
     n_ids, first_t = {}, {}
-    for c, a, b in zip(comp_of, t0, cnt):
-        n_ids[c] = n_ids.get(c, 0) + 1
     for c, a in zip(comp_of, t0):
+        n_ids[c] = n_ids.get(c, 0) + 1
         first_t[c] = min(first_t.get(c, np.inf), a)
 
     dt = meas["dt"]

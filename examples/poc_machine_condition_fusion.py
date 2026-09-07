@@ -1050,8 +1050,8 @@ def main() -> int:
     print("  * 崖は 4 つとも先に予測できた: 0.5X は T>%.1f ms、側帯波は T>%.1f ms、"
           "熱の広がりは画素 < 半値半径 %.1f mm、回転数変動は δ<1/(2·o·f_r·T)。"
           % (1000 * sw["t_order"], 1000 * sw["t_side"], sw["r_half"]))
-    print("  * 折り返しは %.1f Hz に「機械にない線」を立てる(実測ピーク %.1f Hz)。"
-          % (al["alias"], al["peak"]))
+    print("  * 折り返した櫛は %.1f Hz(k=%d)に「機械にない線」を立てる。間隔は"
+          " BPFO ちょうどなので**軸受らしく見える**。" % (al["peak"], al["k"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
