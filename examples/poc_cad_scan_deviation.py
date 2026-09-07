@@ -763,52 +763,69 @@ def section_pull(ref: CadRef) -> dict:
     print("=" * 78)
     print("   剛体 6 自由度が吸える偏差場 = J = [n | X×n] の張る 6 次元。")
     print("   位置合わせ後に残るのは d - J(JᵀJ)⁻¹Jᵀd。")
-    print("\n   欠陥        真の最大|d| 吸われる割合  予測の読み  実測の読み"
-          "   姿勢 z 並進[µm]")
+    print("\n   欠陥       測る場所         真値[µm] 予測の読み 実測の読み  ずれ"
+          "   剛体に吸われた割合")
 
     P, N = ref.pts, ref.nrm
-    cases = [("へこみのみ", dict(dent_h=DENT_H, warp_a=0.0, wear_w=0.0)),
-             ("反りのみ", dict(dent_h=0.0, warp_a=WARP_A, wear_w=0.0)),
-             ("摩耗のみ", dict(dent_h=0.0, warp_a=0.0, wear_w=WEAR_W)),
-             ("3 つ同時", dict())]
+    cases = [("へこみのみ", "へこみの底", dict(dent_h=DENT_H, warp_a=0.0, wear_w=0.0)),
+             ("反りのみ", "部品の中央", dict(dent_h=0.0, warp_a=WARP_A, wear_w=0.0)),
+             ("摩耗のみ", "ボス外周", dict(dent_h=0.0, warp_a=0.0, wear_w=WEAR_W)),
+             ("3 つ同時", "へこみの底", dict())]
     out = {}
-    for name, kw in cases:
+    for name, where, kw in cases:
         d = defect_field(P, N, **kw)["total"]
         fit, res, c = absorbed(P, N, d)
         rho = float(np.linalg.norm(fit) / (np.linalg.norm(d) or 1.0))
-        # 予測の「読み」: 欠陥の代表点で residual がいくつになるか
-        if name == "反りのみ":
-            key = np.argmin(np.abs(P[:, 0])) if True else 0
+        # 「読む場所」を先に決めてから、真値・予測・実測をそこで比べる
+        if where == "部品の中央":
             sel = (np.abs(P[:, 0]) < 3.0) & (P[:, 2] > H - 1e-6) & (N[:, 2] > 0.9)
-            pred_read = float(np.mean(res[sel]))
+            true_read, pred_read = float(np.mean(d[sel])), float(np.mean(res[sel]))
+        elif where == "ボス外周":
+            sel = (P[:, 2] > ZC) & (np.hypot(P[:, 0] - BX, P[:, 1]) > BOSS_R - 1e-6)
+            true_read, pred_read = float(np.mean(d[sel])), float(np.mean(res[sel]))
         else:
-            sel = np.argmin(d)
-            pred_read = float(res[sel])
+            k = np.argmin(d)
+            true_read, pred_read = float(d[k]), float(res[k])
         sc = make_scan(n=20000, noise=0.0, occlude=False, **kw)
         R0, t0 = sc["R_true"], sc["t_true"]
         R, t = align(sc["pts"], ref, method="p2plane", init=(R0, t0), iters=25)
         _, s, _ = ref.deviate(sc["pts"] @ R.T + t)
-        if name == "反りのみ":
-            m = (np.abs(sc["nom"][:, 0]) < 3.0) & (sc["nom"][:, 2] > H - 1e-6)
-            meas_read = float(np.mean(s[m])) if m.any() else np.nan
+        Pn = sc["nom"]
+        if where == "部品の中央":
+            m = (np.abs(Pn[:, 0]) < 3.0) & (Pn[:, 2] > H - 1e-6) & (sc["nrm"][:, 2] > 0.9)
+            meas_read = float(np.mean(s[m]))
+        elif where == "ボス外周":
+            m = (Pn[:, 2] > ZC) & (np.hypot(Pn[:, 0] - BX, Pn[:, 1]) > BOSS_R - 1e-6)
+            meas_read = float(np.mean(s[m]))
         else:
             meas_read = float(s[np.argmin(sc["dev_true"])])
         dz = 1000.0 * float((t - t0)[2])
-        print("   %-10s %10.1f µm %10.2f %%  %9.1f µm %9.1f µm %12.1f"
-              % (name, 1000 * np.abs(d).max(), 100 * rho, 1000 * pred_read,
-                 1000 * meas_read, dz))
-        out[name] = {"rho": rho, "pred": pred_read, "meas": meas_read, "dz": dz,
-                     "res": res, "d": d}
+        print("   %-10s %-14s %8.1f %9.1f %10.1f %+7.1f %14.1f %%"
+              % (name, where, 1000 * true_read, 1000 * pred_read, 1000 * meas_read,
+                 1000 * (meas_read - true_read), 100 * rho))
+        out[name] = {"rho": rho, "true": true_read, "pred": pred_read,
+                     "meas": meas_read, "dz": dz, "res": res, "d": d}
 
-    print("\n   ★読み方: へこみは %.2f %% しか吸われない(局所だから)。"
-          % (100 * out["へこみのみ"]["rho"]))
-    print("      反りは %.1f %% 吸われ、**真値 0 の中央に深さ %.0f µm の"
-          "偽のへこみ**が出る。" % (100 * out["反りのみ"]["rho"],
-                                    -1000 * out["反りのみ"]["meas"]))
-    print("      閉形式の予測: 反り u_z = a(2x/L)^2 の平均 = a/3 = %.0f µm を"
-          "並進 z が吸うので、" % (1000 * WARP_A / 3))
-    print("      中央の読みは -a/3 = %.0f µm。公差 ±%.0f µm なので**偽の不合格**。"
-          % (-1000 * WARP_A / 3, 1000 * TOL))
+    dent = out["へこみのみ"]
+    print("\n   ★読み方(単位はすべて µm、公差は ±%.0f):" % (1000 * TOL))
+    print("      へこみ: %.1f -> %.1f、薄まりは %.1f %%。局所なので剛体に似ておらず、"
+          "ほとんど残る。" % (-1000 * dent["true"], -1000 * dent["meas"],
+                              100 * (1 - dent["meas"] / dent["true"])))
+    print("      摩耗:   %.1f -> %.1f、薄まりは %.1f %%。ボス全周なので法線の平均が"
+          "0 で、並進では吸えない。"
+          % (-1000 * out["摩耗のみ"]["true"], -1000 * out["摩耗のみ"]["meas"],
+             100 * (1 - out["摩耗のみ"]["meas"] / out["摩耗のみ"]["true"])))
+    print("      ★反り: 真値 %.1f の中央に **%.1f の偽のへこみ**が出る。"
+          % (1000 * out["反りのみ"]["true"], 1000 * out["反りのみ"]["meas"]))
+    print("        閉形式の予測: u_z = a(2x/L)^2 の平均 a/3 = %.0f µm を並進 z が"
+          "吸うので中央の読みは -a/3 = %.0f。"
+          % (1000 * WARP_A / 3, -1000 * WARP_A / 3))
+    print("        実測 %.1f。**公差 ±%.0f を超えるので偽の不合格**。"
+          % (1000 * out["反りのみ"]["meas"], 1000 * TOL))
+    print("      「吸われた割合」(場のエネルギー比)と「読みの薄まり」は別の数字 ——"
+          "へこみは %.0f %% 吸われても" % (100 * dent["rho"]))
+    print("      底の読みは %.1f %% しか動かない。**合否を決めるのは読みのほう**。"
+          % (100 * (1 - dent["meas"] / dent["true"])))
 
     # 振幅を振る —— 引かれ量は欠陥の大きさに比例する
     print("\n   振幅を振る(無雑音・全密度・真の姿勢から出発):")
