@@ -683,6 +683,7 @@ def section_cliff_width() -> dict:
     print("     ざらつきの最も高い 1 画素ぶんだけ実効のしきい値が下がる。その量を"
           "測ると %.4f(%d 枚の平均)、補正した予測は %.3f で実測との差 %+.1f %%。"
           % (lift, N_EPOCH, wc2, 100 * (wc2 / min(ratio_live) - 1.0)))
+    assert abs(wc2 / min(ratio_live) - 1.0) < 0.08, (wc2, min(ratio_live))
     dead = [w for w, g in zip(w0s, gb) if abs(g) < 1e-9]
     live = [g for g in gb if abs(g) > 1e-9]
     print("  ★★**2 値化の成長率は初期の幅で %.4f 〜 %.4f mm/年 と %.0f 倍動く**"

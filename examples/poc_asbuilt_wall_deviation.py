@@ -261,17 +261,16 @@ def section_zero_point() -> dict:
     # 場面の図: 上面図 + 東壁の偏差マップ
     P = room["P"]
     plan = _bin_mean(P[:, 0], P[:, 1], np.ones(len(P)), (-0.2, RW + 0.2),
-                     (-0.2, RD + 0.2), 200, 140)
+                     (-0.2, RD + 0.2), 420, 290)
     ew = room["walls"]["east"]
     f = fit_wall(ew["P"], seed=3)
     res = (ew["P"] - f["point"]) @ f["normal"]
     emap = _bin_mean(ew["eta"], ew["zeta"], res * 1e3, (-RD / 2, RD / 2),
-                     (-RH / 2, RH / 2), 120, 84)
+                     (-RH / 2, RH / 2), 420, 290)
     figs.save_grid("scene", [plan, emap],
-                   ["上面図(4 枚の壁の点群 %d 点)" % len(P),
-                    "東の壁 面の偏差 [mm](倒れ %.1f mrad + ふくらみ %.0f mm)"
-                    % (1e3 * TILT["east"], 1e3 * BULGE_A)],
-                   title="室内点群と、そこから取り出す壁面(内法 %.1f x %.1f x %.1f m)"
+                   ["上面図(壁 4 枚 %d 点)" % len(P),
+                    "東の壁の偏差 [mm](倒れ + ふくらみ %.0f mm)" % (1e3 * BULGE_A)],
+                   title="室内点群と壁面(内法 %.1f x %.1f x %.1f m)"
                          % (RW, RD, RH), signed=[False, True], ncols=2)
     return {"aabb": size, "plane": dim_pl, "pred": pr}
 
