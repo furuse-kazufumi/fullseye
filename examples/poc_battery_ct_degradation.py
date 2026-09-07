@@ -477,7 +477,10 @@ def _edge_threshold(vol, spacing, zc, xc, span):
                                        _vidx(zc, span[1], xc, spacing),
                                        spacing=spacing))
     v = pr[:, 1]
-    c = float(np.percentile(v, 95) - np.percentile(v, 5))
+    # p5 ではなく p25 を下端にとる —— 空隙(気体)は電解液よりずっと暗いので、
+    # p5 だと空隙のあるプローブだけコントラストが水増しされ、しきい値が上がって
+    # 層を数え落とす(実測でそうなった)。
+    c = float(np.percentile(v, 90) - np.percentile(v, 25))
     return max(1e-6, 0.30 * c / (2.0 * spacing[1])), c, pr
 
 
