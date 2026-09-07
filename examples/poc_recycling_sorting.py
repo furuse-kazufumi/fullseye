@@ -504,8 +504,12 @@ def section_sweep(pair) -> dict:
     print("\n  ※ 値は**検出できた画素だけ**の材質別再現率(不変性はここで測る)")
     print("  要因                 水準   %s" % head)
     for key, label, _unit, gain in FACTORS:
-        curves = {m: [] for m, _ in SWEEP_METHODS}
-        curves_all = {m: [] for m, _ in SWEEP_METHODS}
+        # 連続体除去は画素ごとに凸包を取るので重い。**効く要因(加算・濡れ)だけ**
+        # 回して、明るさに不変と分かっている 3 要因では省く(時間の予算)。
+        mkeys = [m for m, _ in SWEEP_METHODS
+                 if m != "cr" or key in ("dirt_add", "wet")]
+        curves = {m: [] for m in mkeys}
+        curves_all = {m: [] for m in mkeys}
         hid = []
         for lv in LEVELS:
             if key == "overlap":
@@ -516,19 +520,22 @@ def section_sweep(pair) -> dict:
                 cube = degrade(geo, **{key: float(lv * gain)})
             det = detected(cube)
             hid.append(100 * (1 - geo["visible"][1:].sum() / geo["total"][1:].sum()))
-            for m, _ in SWEEP_METHODS:
+            for m in mkeys:
                 s = score(geo, classify(cube, m, pair), det)
                 curves[m].append(s["macro_det"])
                 curves_all[m].append(s["macro"])
         out[key], out_det[key], hidden[key] = curves_all, curves, hid
         for i, lv in enumerate(LEVELS):
             print("   %-20s %4.2f   %s" % (label if i == 0 else "", lv,
-                  "  ".join("%9.3f" % curves[m][i] for m, _ in SWEEP_METHODS)))
+                  "  ".join("%9.3f" % curves[m][i] if m in curves else "%9s" % "-"
+                            for m, _ in SWEEP_METHODS)))
 
     print("\n  ★崖(検出画素の材質別再現率が 0.90 を割る最初の水準):")
     for key, label, _u, _g in FACTORS:
         line = []
         for m, mlabel in SWEEP_METHODS:
+            if m not in out_det[key]:
+                continue
             c = out_det[key][m]
             hit = [LEVELS[i] for i in range(len(LEVELS)) if c[i] < 0.90]
             line.append("%s %s" % (mlabel.split(":")[0][:9],

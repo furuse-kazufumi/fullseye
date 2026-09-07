@@ -749,8 +749,8 @@ def section_correction() -> dict:
                          "縦 = z、横 = θ)")
     truth = loss_parts(sv["z_hit"], sv["th_hit"], FULL)["total"]
     figs.save_grid("map_truth_vs_best",
-                   [_clip(truth), _clip(maps[0]), _clip(maps[3])],
-                   ["真の減肉 [mm]", "E0 素朴", "E3 軸を直線とみなす"], ncols=3,
+                   [_clip(truth), _clip(maps[0]), _clip(maps[4])],
+                   ["真の減肉 [mm]", "E0 素朴", "E4 軸は直線・管はたわむ"], ncols=3,
                    signed=True, title="真値と、いちばん素朴な推定と、"
                                       "軸を直線に縛った推定(±3 mm 共通尺度)")
     figs.save_table("defect_table",
