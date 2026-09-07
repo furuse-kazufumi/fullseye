@@ -1321,6 +1321,7 @@ def main() -> int:
     nr = section_normals(ref)
     nz = section_noise(ref)
     de = section_density()
+    sd = section_scan_density(ref)
     pl = section_pull(ref)
     ba = section_basin(ref)
     ct = section_controls(ref)
