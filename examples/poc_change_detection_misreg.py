@@ -224,10 +224,10 @@ def scene(Y, X, t: int, sigma=PSF, sizes: bool = False) -> np.ndarray:
     for (y0, x0, y1, x1) in ROADS.values():
         S = paint(S, segment(Y, X, y0, x0, y1, x1, ROAD_W, sigma), ROAD_ALB)
     for (y0, y1, x0, x1) in BUILDINGS.values():
-        S = paint(S, rect(Y, X, y0, y1, x0, x1, sigma), BUILD_ALB)
+        S = paint(S, rect_px(Y, X, y0, y1, x0, x1, sigma), BUILD_ALB)
     if t == 2:
         for (y0, y1, x0, x1) in NEW_BUILDINGS.values():
-            S = paint(S, rect(Y, X, y0, y1, x0, x1, sigma), BUILD_ALB)
+            S = paint(S, rect_px(Y, X, y0, y1, x0, x1, sigma), BUILD_ALB)
     return S
 
 
