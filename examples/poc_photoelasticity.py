@@ -507,7 +507,7 @@ def main():
     print("経過 %.1f 秒" % (time.time() - t0))
     print("\nPASS: 中心の縞次数 %.3f を閉形式どおりに合成し、位相シフトで解き戻すと"
           "主応力差の誤差は %.1e MPa(8 bit 量子化だけでも δ に %.5f rad 乗る)"
-          % (n_centre, 3.5e-17, rows[(0.0, 8)][0]))
+          % (n_centre, abs_err, rows[(0.0, 8)][0]))
 
 
 if __name__ == "__main__":
