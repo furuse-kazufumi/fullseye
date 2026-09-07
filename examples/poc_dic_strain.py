@@ -478,6 +478,14 @@ def section7_gradient(sp, ref):
     print("  → 窓を広げると尖頭が下がり、幅が広がる —— **集中の高さを過小に**")
     print("     読む。ひずみの空間分解能は窓幅で決まり、散らばり(5 節)と")
     print("     直接トレードオフ。切欠きや亀裂先端では窓を集中幅より小さく取る。")
+    # ★所見を固定する。
+    #   (1) lk の尖頭は窓幅について**単調に下がる**(空間分解能の限界そのもの)。
+    lk_peaks = [peaks[("lk", w)] for w in windows]
+    assert all(a > b for a, b in zip(lk_peaks, lk_peaks[1:])), lk_peaks
+    #   (2) hs は**どの窓でも**尖頭を 3 割近く落とす(全域の滑らかさが集中を平らにする)。
+    #       5 節では hs のほうが散らばりが小さかったのに、ここでは使ってはいけない。
+    assert all(peaks[("hs", w)] < 0.80 * 1e6 * eps0 for w in windows), \
+        [peaks[("hs", w)] for w in windows]
     if figs.enabled():
         prof_true = eps0 * np.exp(-((xs - c0) ** 2) / (2 * sig_c ** 2))
         series = [("真値", xs[MARGIN:N - MARGIN], 1e6 * prof_true[MARGIN:N - MARGIN])]
