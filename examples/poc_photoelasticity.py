@@ -303,8 +303,16 @@ def section4_phase_shift(dsig, theta, delta, m):
     print("     復元も 4θ からなので θ は π/2 の周期しか決まらず、その飛びが")
     print("     そのまま δ の符号の飛びになる。")
     est = F_SIGMA * (np.abs(d_hat) / (2 * np.pi)) / H_MM
-    print("     |δ| だけを使えば主応力差は N<0.5 の領域で誤差 %.2e MPa。"
-          % float(np.mean(np.abs(est[m] - dsig[m]))))
+    abs_err = float(np.mean(np.abs(est[m] - dsig[m])))
+    print("     |δ| だけを使えば主応力差は N<0.5 の領域で誤差 %.2e MPa。" % abs_err)
+    # ★所見を固定する。
+    #   (1) 一致率は 95 % を超えるが、**100 % にはならない**。残りは (δ,θ) ↔ (-δ,θ+90°)
+    #       の二義性で符号が反転した画素で、1 波長 1 回の測定では原理的に消せない。
+    #       「ほぼ合う」でも「完全に合う」でもない、という所見をそのまま固定する。
+    assert 95.0 < agree < 99.5, agree
+    #   (2) 符号を捨てて |δ| だけ使えば、巻きの無い領域では機械精度で戻る
+    #       (3 節の 0.58 MPa と比べると 15 桁ちがう)。
+    assert abs_err < 1e-12, abs_err
     return d_hat, th_hat, s1, s2, s3
 
 
