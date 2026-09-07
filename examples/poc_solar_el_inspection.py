@@ -138,8 +138,11 @@ def _seg_dist(yy, xx, cy, cx, length, deg):
 
 
 def _iso_mask(yy, xx):
+    """孤立領域 2 つ(どちらも隅の三角形。行・列を丸ごと覆わないようにしてある)。"""
     tri = (xx / ISO_TRI[0] + yy / ISO_TRI[1]) < 1.0
-    return tri | (xx >= ISO_STRIP_X)
+    x0, y0 = ISO_TRI2
+    tri2 = (xx - x0) * (N - y0) + (yy - N) * (N - x0) > 0.0
+    return tri | tri2
 
 
 def make_scene(seed: int = SEED, grain_c: float = GRAIN_C, crack_w: float = CRACK_W,
