@@ -240,16 +240,18 @@ def section_zero_point() -> dict:
              100 * (tg - tr["tau_f"]) / tr["tau_f"]))
 
     # 場面の図(断面 3 枚)。同じ構造を、扁平粒子の対照群と並べる。
+    # ★64 voxel のスライスをそのまま渡すとパネル幅が 64 px しかなく、
+    #   題の文字が入らずに図ごと落ちる(examplefig は黙って諦めない)。
     flake = make_electrode(N_FLAKE, flat=FLAT)
     mid = N_VOX // 2
     figs.save_grid(
         "scene",
-        [pore[:, mid, :].astype(float), pore[mid].astype(float),
-         flake[:, mid, :].astype(float)],
-        ["球状粒子 断面(厚み方向 縦, ε=%.3f)" % tr["eps"],
-         "球状粒子 面内断面",
-         "扁平粒子(カレンダリング後, ε=%.3f)" % float(flake.mean())],
-        title="電極塗工層の多孔構造(白 = 空隙 / 黒 = 活物質)", ncols=3)
+        [_zoom(pore[:, mid, :]), _zoom(pore[mid]), _zoom(flake[:, mid, :])],
+        ["球状 厚み方向 ε=%.3f" % tr["eps"], "球状 面内",
+         "扁平4:1 ε=%.3f" % float(flake.mean())],
+        title="電極塗工層の多孔構造(白 = 空隙 / 黒 = 活物質)", ncols=3,
+        caption="左と中は同じ球状粒子床の直交する 2 断面。右はカレンダリングで"
+                "潰した粒子(空隙率はほぼ同じ、屈曲度は 3.7 倍)。")
 
     # 「働いている空隙」の地図 —— 濃度場と散逸
     phi_vol = np.zeros(N_VOX ** 3)
