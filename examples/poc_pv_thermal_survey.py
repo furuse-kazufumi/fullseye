@@ -987,8 +987,7 @@ def section_angle(base: dict) -> dict:
     sc = thermal_field(V_REF)
     gt = ground_truth()
     g0 = radiometric_gain(0.0)
-    ref = None
-    hp = hot_pixel(GSD, gt["panel"].shape)
+    ref, ref_lab = None, None
     xs, pe, me, rect, shift = [], [], [], [], []
     for a in ANGLES:
         t_app = capture(sc["T"], theta_deg=a)
