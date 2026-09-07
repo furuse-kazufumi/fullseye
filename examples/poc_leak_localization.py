@@ -450,13 +450,16 @@ def section_snr_cliff() -> dict:
           "**どれも下界には遠い**。"
           % (fine[names[0]][idx0], fine[names[1]][idx0], fine[ref][idx0],
              crlb[idx0], crlb_num[idx0]))
-    print("     整数ピークの量子化の寄与 %.4f m を二乗で引くと %.4f m —— "
-          "サブサンプルの実測 %.4f m とほぼ同じで、\n     **整数版の誤差は"
-          "ほぼ量子化だけで説明できる**。"
+    print("     整数版から量子化の寄与 %.4f m を二乗で引くと %.4f m。"
+          "サブサンプル版の実測は %.4f m で、\n     **整数版の超過ぶんの大半は"
+          "量子化で説明できる**(残り %.0f %% は補間そのものの偏り)。"
           % (QUANT_M / np.sqrt(12.0),
              float(np.sqrt(max(fine[names[0]][idx0] ** 2
                                - QUANT_M ** 2 / 12.0, 0.0))),
-             fine[names[1]][idx0]))
+             fine[names[1]][idx0],
+             100 * abs(float(np.sqrt(max(fine[names[0]][idx0] ** 2
+                                         - QUANT_M ** 2 / 12.0, 0.0)))
+                       / fine[names[1]][idx0] - 1.0)))
 
     figs.save_plot("snr_sweep",
                    [(n, list(snrs), fine[n]) for n in names]
