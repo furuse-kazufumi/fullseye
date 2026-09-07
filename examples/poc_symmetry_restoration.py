@@ -112,6 +112,21 @@ def sample_mask(n: int, seed: int, deco: float = 0.0, warp: float = 0.0) -> dict
     return {"pts": np.column_stack([x, y, z]), "nrm": nrm}
 
 
+def off_surface(P, deco: float = 0.0, warp: float = 0.0) -> np.ndarray:
+    """点から**真の面**までの直交距離 [mm](閉形式)。楕円の外は inf。
+
+    点群どうしの最近傍距離で「面から浮いているか」を測ると、標本間隔の裾を
+    拾って**同じ面の上の点まで浮いていることになる**(最初にそう書いて、
+    面が真値のときですら 68 % が「偽の面」と数えられた)。真値があるのだから
+    真値と比べる。
+    """
+    P = np.asarray(P, float)
+    z, ins = mask_height(P[:, 0], P[:, 1], deco, warp)
+    zx, zy = _grad(P[:, 0], P[:, 1], deco, warp)
+    d = np.abs(P[:, 2] - z) / np.sqrt(1.0 + zx ** 2 + zy ** 2)
+    return np.where(ins, d, np.inf)
+
+
 def damage_center(cxy=DEF_C_XY, deco=0.0, warp=0.0) -> np.ndarray:
     """欠損球の中心(面の少し内側に置く)。"""
     z, _ = mask_height(np.array([cxy[0]]), np.array([cxy[1]]), deco, warp)
