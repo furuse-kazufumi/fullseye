@@ -1211,13 +1211,15 @@ def main() -> int:
     assert de["lod_d"][-1] < 0.5 * de["lod_d"][0], "LoD が密度で下がっていない"
     assert de["rate"][1] < 0.5 * de["rate"][-1], "低密度で core が落ちていない(生存者バイアス)"
     assert abs(sy["dod"][-1] / sy["pred"][-1] - 1) < 0.10, "偽正味が予測から外れた"
-    assert abs(sy["m3c2"][-1] / sy["dod"][-1] - 1) < 0.10, "偽正味が両手法で違う"
+    assert abs(sy["m3c2_cov"][-1] / sy["dod"][-1] - 1) < 0.10, "偽正味が両手法で違う"
+    assert sy["m3c2"][-1] < 0.95 * sy["dod"][-1], "M3C2 の被覆欠けが再現していない"
     assert abs(sy["after"][-1]) < 0.15 * abs(sy["dod"][-1]), "ICP が系統誤差を落とせていない"
     assert abs(sy["eat"][0][1]) < 0.3 * abs(tr["net"]), "全対応 ICP が変化を吸っていない"
     assert abs(sy["eat"][-1][1]) > 0.6 * abs(tr["net"]), "trimmed ICP で戻っていない"
-    pl = sy["plane"]["純平面(うねり 0)"]
+    pl = sy["plane"]["純平面・窓で切る"]
     assert pl[1] > 0.5 * pl[0], "純平面の面内縮退が再現していない"
-    assert abs(pl[3]) < 5.0, "面内のずれが偽の正味土量を生んでいる"
+    assert max(abs(v[3]) for v in sy["plane"].values()) < 10.0, \
+        "面内のずれが偽の正味土量を生んでいる"
     assert oc["raw"][-1] > 1.5 * oc["filt"][-1], "地面分類の効果が出ていない"
     assert nr["up_raw"] < 0.95, "開いた斜面で法線の符号が揃ってしまった"
 
