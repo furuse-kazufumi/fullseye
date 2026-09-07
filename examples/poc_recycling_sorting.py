@@ -893,16 +893,19 @@ def section_spectra(pair) -> None:
         c = degrade(geo, noise=0.0, **kw).reshape(-1, N_BAND)[idx]
         series.append((label, WL, c))
         print("   %-14s 平均反射率 %.3f  最大 %.3f" % (label, c.mean(), c.max()))
-    figs.save_plot("spectra", series, xlabel="波長 [nm]", ylabel="反射率 [-]",
-                   title="1 個の %s 破片のスペクトル(劣化の前後)"
+    figs.save_plot("spectra", series, xlabel="波長 [nm]", size=FIG_SIZE,
+                   ylim=_ylim([y for _l, _x, y in series]),
+                   title="1 個の %s 破片のスペクトル(劣化の前後)/ 縦軸 = 反射率 [-]"
                          % NAMES[geo["frag_mat"][tgt]],
                    caption="乗算は形を保つ。加算は谷を浅くする。濡れは 1450 /"
                            " 1940 nm に無い谷を作る。")
     d2s = [(l, WL, d2(y)) for l, _x, y in series]
-    figs.save_plot("spectra_d2", d2s, xlabel="波長 [nm]",
-                   ylabel="2 次微分 [反射率/nm^2]",
-                   title="2 次微分にすると乗算と加算の差が消える",
-                   caption="残るのは濡れ(波長に依存する乗算)だけ。")
+    figs.save_plot("spectra_d2", d2s, xlabel="波長 [nm]", size=FIG_SIZE,
+                   ylim=_ylim([y for _l, _x, y in d2s]),
+                   title="2 次微分にすると乗算と加算の差が消える "
+                         "/ 縦軸 = 2 次微分 [反射率/nm^2]",
+                   caption="残るのは濡れ(波長に依存する乗算)だけ。"
+                           "ただし水の帯は広いので 1/σ² で潰れる。")
 
 
 def section_tool_gaps() -> None:
