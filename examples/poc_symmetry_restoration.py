@@ -609,13 +609,16 @@ def section_offset_cliff(S: dict, Z: dict) -> dict:
     if figs.enabled():
         figs.save_plot(
             "offset_cliff",
-            [("実測(復元 RMS)", ts, meas), ("予測 2t(厳密)", ts, pred),
+            [("実測(復元 RMS)", ts, meas),
+             ("予測(変位 2t の法線成分)", ts, pred),
+             ("素朴な予測 2t", ts, naive),
              ("ゼロ点(穴埋め補間)", ts, np.full_like(ts, zr))],
             xlabel="対称面の位置ずれ t [mm]", ylabel="欠損部の復元 RMS [mm]",
             title="崖(2): 位置ずれは形に依らず 2t だけ効く",
-            caption="角度ずれは形の広がりで増幅されるが、位置ずれは増幅されない。"
-                    "崖は t = %.2f mm。" % cross)
-    return {"ts": ts, "meas": meas, "cross": float(cross), "rel": rel}
+            caption="鏡像点は厳密に 2t 動くが、表面誤差になるのはその法線成分"
+                    "(|n.x| の RMS = %.2f)だけ。崖は t = %.2f mm。" % (cosb, cross))
+    return {"ts": ts, "meas": meas, "cross": float(cross), "rel": rel,
+            "rel_naive": rel_n, "cosb": cosb}
 
 
 # --------------------------------------------------------------------------- #
