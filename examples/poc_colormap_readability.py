@@ -505,9 +505,9 @@ def section_out_of_range() -> dict:
                                     under=(1.0, 0.0, 1.0), over=(1.0, 1.0, 1.0)))
 
     def _count_like(rgb, colour):
-        """その色と ΔE < 1 の画素数(= 読み手が『その色だ』と判断できる範囲)。"""
+        """その色と ΔE < JND の画素数(= 読み手が『同じ色だ』と判断する範囲)。"""
         tgt = np.broadcast_to(np.asarray(colour, np.float64), rgb.shape)
-        return int(np.count_nonzero(np.asarray(fs.delta_e_map(rgb, tgt)) < 1.0))
+        return int(np.count_nonzero(np.asarray(fs.delta_e_map(rgb, tgt)) < JND_DE))
 
     end_hi = np.asarray(fs.apply_cmap(np.array([[vmax]]), "viridis",
                                       vmin=vmin, vmax=vmax))[0, 0]
