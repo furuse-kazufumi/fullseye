@@ -974,7 +974,7 @@ def section_controls(sc: dict) -> dict:
         e1 = evaluate(detect(I1, I2l), masks, valid)
         I2h = np.asarray(fs.ledger.histogram_match(I2, I1))
         e2 = evaluate(detect(I1, I2h), masks, valid)
-        res[name] = (e0["fp"], e1["fp"], e2["fp"], e0["recall"])
+        res[name] = (e0["fp"], e1["fp"], e2["fp"], e0["recall"], e2["recall"])
         rows.append([name, "%d" % e0["fp"], "%d" % e1["fp"], "%d" % e2["fp"]]
                     + ["%.2f" % e0["recall"][k] for k in CHANGE_TYPES])
         print("   %-26s %8d    %8d       %8d                     "
