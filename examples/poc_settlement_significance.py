@@ -262,6 +262,12 @@ def c2c_map(a: np.ndarray, b: np.ndarray, cores: np.ndarray) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 有意性のまとめ方                                                              #
 # --------------------------------------------------------------------------- #
+def as_map(v: np.ndarray, nx: int, ny: int, k: int = 16) -> np.ndarray:
+    """core の並び (M,) を画像 (ny·k, nx·k) にする(最近傍で拡大して見せるだけ)。"""
+    g = np.asarray(v, np.float64).reshape(nx, ny).T
+    return np.repeat(np.repeat(g, k, axis=0), k, axis=1)
+
+
 def zscore(d: np.ndarray, lod: np.ndarray) -> np.ndarray:
     """LoD = 1.96σ_diff なので、z = |d| / (LoD/1.96)。"""
     with np.errstate(invalid="ignore", divide="ignore"):
