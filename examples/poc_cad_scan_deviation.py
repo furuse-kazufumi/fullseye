@@ -1008,6 +1008,7 @@ def section_pull(ref: CadRef) -> dict:
             _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
             j = np.argmin(np.where(ed, 0.0, sc["dev_true"]))
             icp = 100.0 * (1.0 - s[j] / sc["dev_true"][j])
+            icps[sg] = icp
         sigs.append(sg)
         dils.append(dl)
         areas.append(100 * a2 / ref.area)
