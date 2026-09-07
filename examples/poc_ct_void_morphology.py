@@ -435,19 +435,21 @@ def section_controls() -> dict:
                     rows, title="体積率をそろえた 5 条件 —— 合否の数字は動かない",
                     caption="ボイド率の列だけを見ると 5 条件は区別できない。"
                             "右の 6 列が形態。")
-    panels, caps = [], []
-    for key, name, *_ in CONDITIONS:
-        panels.append(np.asarray(L.voxel_to_mips(out[key]["est"].astype(float))[0]))
-        caps.append("%s(率 %.2f %%)" % (name, out[key]["frac"]))
-    figs.save_grid("controls_map", panels, caps, ncols=3,
-                   title="同じボイド率 %.0f %% の 5 条件を上から見る" % (100 * VOID_FRAC))
-    panels, caps = [], []
-    for key, name, *_ in CONDITIONS:
-        e = out[key]["est"]
-        panels.append(np.asarray(L.voxel_to_mips(e.astype(float))[1]))
-        caps.append("%s(界面欠損 %.1f %%)" % (name, out[key]["a_int"]))
-    figs.save_grid("controls_section", panels, caps, ncols=3,
-                   title="同じ 5 条件の側面 MIP(上端 = ダイ側の界面)")
+    panels = [np.asarray(L.voxel_to_mips(out[c[0]]["est"].astype(float))[0])
+              for c in CONDITIONS]
+    figs.save_grid("controls_map", panels, [c[2] for c in CONDITIONS], ncols=3,
+                   title="同じボイド率の 5 条件を上から見る(推定 %.2f〜%.2f %%)"
+                         % (fr.min(), fr.max()),
+                   caption="推定ボイド率は " + " / ".join(
+                       "%s %.2f %%" % (c[2], out[c[0]]["frac"]) for c in CONDITIONS)
+                       + " —— この数字では 5 条件を分けられない。")
+    panels = [np.asarray(L.voxel_to_mips(out[c[0]]["est"].astype(float))[1])
+              for c in CONDITIONS]
+    figs.save_grid("controls_section", panels, [c[2] for c in CONDITIONS], ncols=3,
+                   title="同じ 5 条件の側面 MIP(上端 = ダイ側の界面)",
+                   caption="界面欠損率は " + " / ".join(
+                       "%s %.1f %%" % (c[2], out[c[0]]["a_int"]) for c in CONDITIONS)
+                       + " —— 体積率が同じでも 0 から %.1f %% まで動く。" % fr.max())
     return {"out": out, "spread": float(fr.max() - fr.min()), "ratios": ratios}
 
 
