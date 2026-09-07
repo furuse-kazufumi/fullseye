@@ -577,7 +577,7 @@ def section_overhang(scene):
     conds = [("2 値から(ゼロ点)", occ.astype(np.float64), 0.5),
              ("距離場から", -sdf, 0.0),
              ("平滑化 sigma=1.5 voxel", ndimage.gaussian_filter(occ.astype(np.float64), 1.5), 0.5)]
-    curves, rows, steps = [], [], {}
+    curves, rows, steps, los = [], [], {}, {}
     angs = np.arange(30.0, 61.0, 0.5)
     for name, vol, iso in conds:
         mesh = _mesh_from(vol, iso)
