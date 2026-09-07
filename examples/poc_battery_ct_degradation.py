@@ -1058,7 +1058,7 @@ def section_resolution(cells, sinos) -> dict:
                      "%d..%d" % (m["n_layer_min"], m["n_layer_max"]),
                      "%.3f" % m["t_mean"], "%.3f" % m["pitch_mean"],
                      "%.3f" % m["fft_pitch"],
-                     "%.2f" % m["void_fraction"], "%.0f" % (100 * theo)])
+                     "%+.1f" % v_err[-1], "%.0f" % (100 * theo)])
         print("   voxel %.3f mm (層厚比 %.2f)  層数 %2d (%2d..%2d)  層厚 %.3f mm  "
               "層間隔 %.3f mm  FFT 周期 %.3f mm  空隙体積 %+6.1f %%  予測振幅 %3.0f %%"
               % (sp[1], ratio, m["n_layer"], m["n_layer_min"], m["n_layer_max"],
@@ -1098,7 +1098,7 @@ def section_resolution(cells, sinos) -> dict:
                            "層厚は崖を越えると意味を失う。")
     figs.save_table("sweep_resolution_table",
                     ["voxel mm", "voxel/層厚", "層数", "層数の幅", "層厚 mm",
-                     "層間隔 mm", "FFT 周期 mm", "空隙率 %", "予測 振幅 %"], rows,
+                     "層間隔 mm", "FFT 周期 mm", "空隙体積 誤差 %", "予測 振幅 %"], rows,
                     title="分解能を振る(真値: 層 %d 枚 / 層厚 %.3f mm / 周期 %.3f mm)"
                           % (truth["n_layer"], truth["t_mean"], PITCH))
     return {"ratios": ratios, "n_err": n_err, "cliff": cliff,

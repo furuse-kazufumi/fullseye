@@ -821,10 +821,20 @@ def section_tool_gaps():
 
     tri = np.asarray(V)[np.asarray(F)]
     cr = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
-    assert not hasattr(fs.ledger, "face_areas")
-    print("  (e) **面ごとの面積を返す op が無い**(mesh_area は総和だけ)。")
-    print("      オーバーハング面積は「面ごとの面積 x 法線の判定」なので、呼び手が")
-    print("      外積を自分で書くことになる(この PoC も %d 面ぶん自前で計算した)。" % len(cr))
+    # ★穴が塞がったら鳴る assert。2026-09-07 に鳴り、この行を書き換えた ——
+    # 「面ごとの面積が無い」という指摘を受けて face_areas / mesh_volume /
+    # boundary_vertices が足された。塞がったことを記録して先へ進める。
+    if hasattr(fs.ledger, "face_areas"):
+        got = np.asarray(fs.ledger.face_areas((V, F)))
+        mine = 0.5 * np.linalg.norm(cr, axis=1)
+        assert got.shape == mine.shape and np.allclose(got, mine), (got.shape, mine.shape)
+        print("  (e) **面ごとの面積を返す op が無かった**(mesh_area は総和だけ)ので、")
+        print("      この PoC は %d 面ぶんの外積を自前で書いた。指摘のあと face_areas が" % len(cr))
+        print("      足され、自前の値と %d 面すべて一致する(いま書くなら自前は要らない)。" % len(got))
+    else:
+        print("  (e) **面ごとの面積を返す op が無い**(mesh_area は総和だけ)。")
+        print("      オーバーハング面積は「面ごとの面積 x 法線の判定」なので、呼び手が")
+        print("      外積を自分で書くことになる(この PoC も %d 面ぶん自前で計算した)。" % len(cr))
 
     assert not hasattr(fs.ledger, "overhang_area") and not hasattr(fs.ledger, "support_area")
     print("  (f) DFM の判定そのもの(オーバーハング面積・自己支持角・工具到達性)は")
