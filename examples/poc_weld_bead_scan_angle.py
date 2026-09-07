@@ -550,7 +550,9 @@ def score(est: dict, tru: dict) -> dict:
         out[k] = {"got": float(np.isfinite(e).mean()),
                   "miss": float(np.nanmean(mm[np.isfinite(e)])) if m.any() else 1.0,
                   "mae": float(np.mean(np.abs(e[m] - t[m]))) if m.any() else float("nan"),
-                  "bias": float(np.mean(e[m] - t[m])) if m.any() else float("nan")}
+                  "bias": float(np.mean(e[m] - t[m])) if m.any() else float("nan"),
+                  # ★生き残った断面だけの真値の平均。集計から何が抜けたかを見る。
+                  "tmean": float(np.mean(t[m])) if m.any() else float("nan")}
     return out
 
 
