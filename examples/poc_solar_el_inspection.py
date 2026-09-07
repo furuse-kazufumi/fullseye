@@ -316,7 +316,10 @@ def ridge_map(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W) -> 
         frac = ref_w - full
         if frac > 0:
             strip[r0 + full, :] = 1.0 - frac * (1.0 - CRACK_T)
-        v = np.vstack([v, strip])
+        # ★校正線も**同じ撮像系(ぼけ)を通す**。ぼかさずに貼った校正線は実クラック
+        #   より 2.4 倍強く応答し、崖が太い側(1.25 px)へ寄った(2026-09-07 に踏んだ)。
+        strip = np.asarray(fs.apply(strip, "gaussian", a=(BLUR - 0.3) / 2.7))
+        v = np.vstack([v, strip / 1.25])
     ridge = np.asarray(fs.apply(v, "sk_frangi", a=0.25, b=0.5))
     if calibrate:
         ridge = ridge[:s.shape[0]].copy()
