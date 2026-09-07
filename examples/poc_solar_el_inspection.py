@@ -682,10 +682,12 @@ def section_grain_sweep() -> dict:
                  r["iso_err"], r["grain_as_iso"]))
     onset = next((c for c, f in zip(cs, false_len) if f > 30.0), None)
     fi_drop = next((c for c, n in zip(cs, fi_ok) if n < len(FI_BANDS)), None)
-    print("\n  ★偽クラックが 30 px を超えるのは c=%s(予測 %.2f)。偽の断線は最大 %d 本だが"
-          "**一致が %d/%d → %d/%d に落ちる**(落ちはじめ c=%s、予測 c>%.2f)—— 暗い粒が"
-          "帯を飲み込み、「細長く水平」の形の門が塊ごと落とす。"
-          % (onset, c_pred, max(fi_false), fi_ok[0], len(FI_BANDS), fi_ok[-1], len(FI_BANDS),
+    print("\n  ★偽クラックが 30 px を超えるのは c=%s —— **予測 %.2f は %.0f 倍外れた**。"
+          "粒の境界を「段差」と見た予測が間違いで、幅が σ 程度の暗い粒は段差ではなく"
+          "**谷そのもの**(深さ ≈ 2c)になる。" % (onset, c_pred, c_pred / onset))
+    print("  ★偽の断線は最大 %d 本だが**一致が %d/%d → %d/%d に落ちる**(落ちはじめ c=%s、"
+          "予測 c>%.2f)—— 暗い粒が帯を飲み込み、「細長く水平」の形の門が塊ごと落とす。"
+          % (max(fi_false), fi_ok[0], len(FI_BANDS), fi_ok[-1], len(FI_BANDS),
              fi_drop, 1 - T_FI))
     print("     面積率の誤差は c=%.2f でも %+.2f ポイント(T_ISO を割る粒は無い、予測どおり)。"
           % (cs[-1], iso_err[-1]))
