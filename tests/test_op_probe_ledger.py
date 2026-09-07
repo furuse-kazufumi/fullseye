@@ -134,7 +134,9 @@ def _probe():
                     continue
                 tag = "ok"
                 if isinstance(res, np.ndarray) and res.size > 1:
-                    if res.shape == v.shape and np.array_equal(res, v):
+                    # contour のように探針が配列でない sort もある(dict / タプル)
+                    if isinstance(v, np.ndarray) and res.shape == v.shape \
+                            and np.array_equal(res, v):
                         tag = "identity"
                     elif np.all(res == res.flat[0]):
                         tag = "constant"
