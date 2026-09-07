@@ -175,6 +175,9 @@ def fillet_shape(area: float, toe_max: float, theta: float = THETA,
     部品の下へ回る)。
     """
     th = np.deg2rad(theta)
+    if toe_max <= 1e-4 or h_max <= 1e-4 or area <= 0.0:
+        # 余地が無い(電極がパッド端に乗っている): 端部フィレットは作れない
+        return _pack(0.0, 0.0, 0.0, 0.0, 1.0, "clamped", th)
     k = np.cos(th) - np.sin(th)
     g = np.cos(th) * k - (np.pi / 4.0 - th)
     R_free = float(np.sqrt(area / g))
