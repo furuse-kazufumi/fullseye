@@ -697,16 +697,17 @@ def section_dt():
     limit = 0.25 * WIN
     for k in range(1, 9):
         pairs = [(a, a + k) for a in range(0, n - k, max(1, (n - k) // 6))][:6]
-        flow, info, nan_f, _ = piv_pairs(rec, pairs)
-        flow_p, _, nan_p, _ = piv_pairs(rec, pairs, normalize="none", search_limit=None)
+        # 外れ値検定に救わせない(旗が立った窓も「外れた」と数える)
+        flow, info, nan_f, _ = piv_pairs(rec, pairs, drop_outliers=False)
+        flow_p, _, nan_p, _ = piv_pairs(rec, pairs, drop_outliers=False, normalize="none", search_limit=None)
         ok = window_ok(info, WIN)
         truth = fs.ledger.piv_sample_at_windows(sc["truth_px"], info) * k
-        bad = np.abs(flow[1] - truth[1]) > 1.0
-        bad_p = np.abs(flow_p[1] - truth[1]) > 1.0
-        m = ok & np.isfinite(flow[1])
+        with np.errstate(invalid="ignore"):
+            bad = ~(np.abs(flow[1] - truth[1]) <= 1.0)      # nan も外れに数える
+            bad_p = ~(np.abs(flow_p[1] - truth[1]) <= 1.0)
         pred = float(np.mean(truth[1][ok] > limit))
-        f_bad = float(np.mean(bad[m]))
-        f_bad_p = float(np.mean(bad_p[ok & np.isfinite(flow_p[1])]))
+        f_bad = float(np.mean(bad[ok]))
+        f_bad_p = float(np.mean(bad_p[ok]))
         rows.append((k, k * 2.5, f_bad, pred, f_bad_p, nan_f))
         print("  k=%d(中央 %.1f px):外れ窓 既定 %5.1f %% / 予測(真値 > %.0f px)%5.1f %% / "
               "探索無制限・補正なし %5.1f %%" % (k, k * 2.5, 100 * f_bad, limit, 100 * pred, 100 * f_bad_p))
