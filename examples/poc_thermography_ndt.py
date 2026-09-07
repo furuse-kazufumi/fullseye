@@ -515,11 +515,18 @@ def section5_methods(ts, cube, masks, sound):
     print()
     print("  %-32s %10s %10s %10s" % ("手法", "CNR>=3", "中央値", "最小"))
     print("  " + "-" * 66)
+    counts = {}
     for name, mp in _method_maps(ts, cube, masks, sound).items():
         s = _cnr(mp, masks, sound)
+        counts[name.split("(")[0]] = sum(v >= 3 for v in s)
         print("  %-32s %7d/16 %10.2f %10.2f" % (name, sum(v >= 3 for v in s),
                                                 np.median(s), min(s)))
     print()
+    # ★所見を固定する: 加熱が一様なら**生の 1 枚が最多**で、TSR の 2 階微分は
+    #   1 個も出さない。「深さの推定には効くが検出には向かない」= 同じ道具が
+    #   両方に効くとは限らない、というこの節の主張そのもの。
+    assert counts["生の 1 枚"] >= 4, counts
+    assert counts["TSR"] <= 1, counts
     print("  → ★**加熱が一様なら、生の 1 枚がいちばん多く出す**。時間方向を使う")
     print("     手法(temporal_std / TSR / PCT)は、ここでは勝てない —— 雑音が")
     print("     20 mK しかなく、平均して得をする余地が小さいため。")
