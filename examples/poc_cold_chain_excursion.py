@@ -217,9 +217,9 @@ def make_scene(uniform: bool = False, doors: bool = True,
     amb = ambient(t)
     op = door_open(t) if doors else np.zeros_like(t)
 
-    t_sup = T_SET + setpoint_shift + G_DIST * lay["d_vent"]
+    t_sup = T_SET + G_DIST * lay["d_vent"]
     throw = 1.0 - np.exp(-lay["d_vent"] / L_THROW)
-    gain = H_WALL * throw * lay["wall"]
+    gain = H_WALL * wall_scale * throw * lay["wall"]
     pulse = A_DOOR * np.exp(-lay["d_door"] / LAM_DOOR)
     tau = lay["tau"]
 
