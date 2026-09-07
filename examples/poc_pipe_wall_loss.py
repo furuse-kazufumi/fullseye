@@ -312,7 +312,10 @@ def section_scene() -> dict:
 
     # --- 体積モデル(ボクセル %.1f mm)を SDF の op で組む ---
     d = int(round(LZ / VOX)) + 1
-    n = int(round(2 * (R0 + T0 + 2) / VOX)) + 1
+    # 外面の最大半径は R0+T0+楕円化+たわみ。余白を取らないと**外壁が切れる**
+    # (最初 +2 mm しか取らず、外面が volume の外に出てプローブが片側しか
+    #  拾わなかった)。
+    n = int(round(2 * (R0 + T0 + OVAL_A + BEND + 6) / VOX)) + 1
     zc = np.arange(d) * VOX
     yc = (np.arange(n) - (n - 1) / 2.0) * VOX
     grid = np.stack(np.meshgrid(zc, yc, yc, indexing="ij"), -1)
