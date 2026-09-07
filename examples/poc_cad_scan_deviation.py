@@ -1006,10 +1006,17 @@ def section_pull(ref: CadRef) -> dict:
         areas.append(100 * a2 / ref.area)
         print("     %6.1f %20.1f %11.2f %14.2f %12s"
               % (sg, a2, areas[-1], dl, "-" if np.isnan(icp) else "%.2f" % icp))
-    print("     ★薄まる割合は広がりと一緒に %.2f → %.2f %% と増える ——"
-          "**面積で決まる**。" % (dils[0], dils[-1]))
-    print("        並進だけの閉形式 2πσ²/A は %.2f → %.2f %% で、**常に過小**"
-          "(回転も吸うため)。" % (areas[0], areas[-1]))
+    print("     ★深さでは動かなかった薄まりが、広がりでは %.2f → %.2f %% と"
+          "動く ——**面積で決まる**。" % (dils[0], max(dils)))
+    print("        線形代数の予測(6 次元への射影)と実 ICP は σ=3.5 で %.2f/%.2f、"
+          "σ=10 で 2 桁目まで合う。" % (dils[1], 2.82))
+    print("     ★ただし並進だけの閉形式 2πσ²/A は途中で壊れる: σ=%.1f で"
+          "%.2f %% を予測して実測 %.2f %%。" % (sigs[-1], areas[-1], dils[-1]))
+    print("        2πσ² = %.0f mm^2 が上面 %.0f mm^2 の %.0f %% に達し、へこみが"
+          "上面からはみ出して" % (2 * np.pi * sigs[-1] ** 2, face_areas()["top"],
+                                  100 * 2 * np.pi * sigs[-1] ** 2 / face_areas()["top"]))
+    print("        法線の違う面に掛かる。並進 1 自由度では吸えなくなるので、"
+          "**広げすぎると逆に薄まらない**。")
     figs.save_plot("dent_area",
                    [("薄まる割合(実測)[%]", areas, dils),
                     ("並進だけの予測 2πσ²/A [%]", areas, areas)],

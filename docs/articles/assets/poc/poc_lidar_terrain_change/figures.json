@@ -22,5 +22,69 @@
   ],
   "csv": "02_controls.csv",
   "tsv": "02_controls.tsv"
+ },
+ {
+  "file": "03_slope_cliff.png",
+  "name": "slope_cliff",
+  "caption": "足跡面積を揃えた比較。平地では両者は一致し、傾斜とともに DoD だけが悪化する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_slope_table.png",
+  "name": "slope_table",
+  "caption": "予測式は先に立ててから測った。うねりの寄与ぶん実測がわずかに上に出る。",
+  "shape": [
+   224,
+   567,
+   3
+  ],
+  "csv": "04_slope_table.csv",
+  "tsv": "04_slope_table.tsv"
+ },
+ {
+  "file": "05_density_cliff.png",
+  "name": "density_cliff",
+  "caption": "変化ゼロの対照で測った検出限界。C2C は変化が無くても点間隔ぶんの距離を返し、符号も持たない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_systematic.png",
+  "name": "systematic",
+  "caption": "変化ゼロの対照。DoD と M3C2 は体積では同じだけ間違える。雑音は正味では打ち消すので予測と直接比べられる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_occlusion.png",
+  "name": "occlusion",
+  "caption": "誤差はそのしきい値以上の真値に対する値。全滅セル = 地面点が 1 つも届かなかったセル。中央値では救えない。",
+  "shape": [
+   200,
+   1225,
+   3
+  ],
+  "csv": "07_occlusion.csv",
+  "tsv": "07_occlusion.tsv"
+ },
+ {
+  "file": "08_occlusion_lod.png",
+  "name": "occlusion_lod",
+  "caption": "取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
