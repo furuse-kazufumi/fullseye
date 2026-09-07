@@ -649,6 +649,14 @@ def section_spectrum() -> dict:
     figs.save_plot("spectrum", series, xlabel="角周波数 k [周期/回転]",
                    ylabel="振幅の z 平均 [mm]",
                    title="何が何周期に出るか(軸ずれと管底腐食は同じ k=1)")
+    # 軸ずれ(振幅 4 mm)を外すと、欠陥そのものの形が見える
+    figs.save_plot("spectrum_defects",
+                   [s for s in series if not s[0].startswith("a ")
+                    and not s[0].startswith("c ")],
+                   xlabel="角周波数 k [周期/回転]", ylabel="振幅の z 平均 [mm]",
+                   title="欠陥だけの角周波数 —— 管底腐食の山は k=1 に立つ",
+                   caption="楕円化は k=2 に立つので分離できる。"
+                           "管底腐食は軸ずれと同じ k=1。")
     figs.save_table("spectrum_table",
                     ["条件"] + ["k=%d" % k for k in ks], rows,
                     title="角周波数ごとの振幅 [mm]")

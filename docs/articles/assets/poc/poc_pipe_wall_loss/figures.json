@@ -97,7 +97,17 @@
   ]
  },
  {
-  "file": "11_spectrum_table.png",
+  "file": "11_spectrum_defects.png",
+  "name": "spectrum_defects",
+  "caption": "楕円化は k=2 に立つので分離できる。管底腐食は軸ずれと同じ k=1。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_spectrum_table.png",
   "name": "spectrum_table",
   "caption": "",
   "shape": [
@@ -105,11 +115,11 @@
    573,
    3
   ],
-  "csv": "11_spectrum_table.csv",
-  "tsv": "11_spectrum_table.tsv"
+  "csv": "12_spectrum_table.csv",
+  "tsv": "12_spectrum_table.tsv"
  },
  {
-  "file": "12_map_corrected.png",
+  "file": "13_map_corrected.png",
   "name": "map_corrected",
   "caption": "",
   "shape": [
@@ -119,7 +129,7 @@
   ]
  },
  {
-  "file": "13_map_truth_vs_best.png",
+  "file": "14_map_truth_vs_best.png",
   "name": "map_truth_vs_best",
   "caption": "",
   "shape": [
@@ -129,7 +139,7 @@
   ]
  },
  {
-  "file": "14_defect_table.png",
+  "file": "15_defect_table.png",
   "name": "defect_table",
   "caption": "",
   "shape": [
@@ -137,11 +147,11 @@
    633,
    3
   ],
-  "csv": "14_defect_table.csv",
-  "tsv": "14_defect_table.tsv"
+  "csv": "15_defect_table.csv",
+  "tsv": "15_defect_table.tsv"
  },
  {
-  "file": "15_volume_table.png",
+  "file": "16_volume_table.png",
   "name": "volume_table",
   "caption": "",
   "shape": [
@@ -149,11 +159,11 @@
    510,
    3
   ],
-  "csv": "15_volume_table.csv",
-  "tsv": "15_volume_table.tsv"
+  "csv": "16_volume_table.csv",
+  "tsv": "16_volume_table.tsv"
  },
  {
-  "file": "16_sweep_model_order.png",
+  "file": "17_sweep_model_order.png",
   "name": "sweep_model_order",
   "caption": "孔食(局所)はどの次数でも残る —— 消えるのは1 周期に載っている欠陥だけ。",
   "shape": [
@@ -163,7 +173,7 @@
   ]
  },
  {
-  "file": "17_sweep_cres_extent.png",
+  "file": "18_sweep_cres_extent.png",
   "name": "sweep_cres_extent",
   "caption": "",
   "shape": [
@@ -173,7 +183,7 @@
   ]
  },
  {
-  "file": "18_dc_bias.png",
+  "file": "19_dc_bias.png",
   "name": "dc_bias",
   "caption": "",
   "shape": [
