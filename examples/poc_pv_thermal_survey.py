@@ -963,13 +963,16 @@ def section_angle(base: dict) -> dict:
     print("7) ★★撮影角度 —— 幾何は直せるが放射は直らない")
     print("=" * 78)
     print("  見かけ放射率 ε(θ) = 1 - R(θ)(Fresnel、等価屈折率 1.8)。")
-    print("  予測の圧縮率 dT_app/dT = (ε/ε_set)·(T/T_app)³。")
-    print("\n     角度 [deg]  ε(θ)   予測圧縮  実測圧縮  ΔT(ホット)  射影補正後  検出")
+    print("  予測の圧縮率 dT_app/dT = τ·(ε/ε_set)·(T/T_app)³ を 0° で割った比。")
+    print("\n     角度 [deg]  ε(θ)   予測圧縮  実測圧縮  ΔT(ホット)  射影補正後"
+          "  位置ずれ[px]  検出")
 
     sc = thermal_field(V_REF)
     gt = ground_truth()
+    g0 = radiometric_gain(0.0)
     ref = None
-    xs, pe, me, rect = [], [], [], []
+    hp = hot_pixel(GSD, gt["panel"].shape)
+    xs, pe, me, rect, shift = [], [], [], [], []
     for a in ANGLES:
         t_app = capture(sc["T"], theta_deg=a)
         det = detect(t_app, gt, "モジュール中央値")
@@ -977,31 +980,41 @@ def section_angle(base: dict) -> dict:
         ph = peak_on(det, gt["hot"])
         if ref is None:
             ref = ph
-        eps = float(apparent_emissivity(a))
-        tm = float(np.median(sc["T"][layout()["panel"]]))
-        ta = float(to_apparent(tm, a))
-        p = (eps / EPS_SET) * (tm / ta) ** 3
-        # 斜めから撮って、射影変換で正対に戻す
+        p = radiometric_gain(a) / g0
+        # 斜めから撮って、射影変換(``warp_by_plane``)で正対に戻す
         h_draw, h_back = oblique_homographies(t_app.shape, a)
         obl = np.asarray(fs.ledger.warp_by_plane(t_app, h_draw, cval=float(np.nan)))
-        back = np.asarray(fs.ledger.warp_by_plane(np.nan_to_num(obl, nan=T_AIR),
-                                                  h_back, cval=float(np.nan)))
-        back = np.nan_to_num(back, nan=T_AIR)
-        d2 = detect(back, gt, "モジュール中央値")
-        pr = peak_on(d2, gt["hot"])
+        obl = np.nan_to_num(obl, nan=T_AIR)
+        back = np.nan_to_num(np.asarray(
+            fs.ledger.warp_by_plane(obl, h_back, cval=float(np.nan))), nan=T_AIR)
+        d_ob = detect(obl, gt, "モジュール中央値")
+        d_bk = detect(back, gt, "モジュール中央値")
+        pr = peak_on(d_bk, gt["hot"])
+        # 幾何は戻ったか —— 斜めのままと補正後で、ホットスポットの位置を測る
+        pk_ob = np.unravel_index(int(np.argmax(d_ob["delta"])), d_ob["delta"].shape)
+        pk_bk = np.unravel_index(int(np.argmax(d_bk["delta"])), d_bk["delta"].shape)
+        sh_ob = float(np.hypot(pk_ob[0] - hp[0], pk_ob[1] - hp[1]))
+        sh_bk = float(np.hypot(pk_bk[0] - hp[0], pk_bk[1] - hp[1]))
         xs.append(a), pe.append(p), me.append(ph / ref), rect.append(pr / ref)
-        print("     %7.0f    %.3f   %7.3f   %7.3f    %6.2f      %6.2f    %s"
-              % (a, eps, p, ph / ref, ph, pr, "○" if s["recall"]["hot"] > 0.3 else "×"))
+        shift.append((sh_ob, sh_bk))
+        print("     %7.0f    %.3f   %7.3f   %7.3f    %6.2f      %6.2f "
+              "   %4.1f -> %4.1f    %s"
+              % (a, float(apparent_emissivity(a)), p, ph / ref, ph, pr,
+                 sh_ob, sh_bk, "○" if s["recall"]["hot"] > 0.3 else "×"))
 
     i = len(ANGLES) - 2
     print("\n  ★★%.0f° で見かけ放射率は %.3f -> %.3f、ΔT は %.2f 倍に圧縮される。"
           % (ANGLES[i], float(apparent_emissivity(0.0)),
              float(apparent_emissivity(ANGLES[i])), me[i]))
-    print("     射影変換(``warp_by_plane``)で正対に戻すと**形は戻る**が、"
-          "ΔT は %.2f 倍のまま(%.2f -> %.2f)。" % (rect[i], me[i], rect[i]))
-    print("     **見かけの温度差は幾何補正では回復しない** —— 放射率の補正が"
-          "別に要る(そのためには入射角を画素ごとに知る必要がある)。")
-    print("  予測と実測の差は最大 %.3f。" % max(abs(p - m) for p, m in zip(pe, me)))
+    print("     ★**幾何は戻るが放射は戻らない**: 射影補正でホットスポットの"
+          "位置ずれは %.1f -> %.1f px に戻るのに、ΔT は %.2f 倍 -> %.2f 倍"
+          "(**さらに減る**)。"
+          % (shift[i][0], shift[i][1], me[i], rect[i]))
+    print("     減るのは往復の再標本化で 2 回ぼけるから —— %.0f° でも %.2f 倍"
+          "しか残らない。放射率の補正は幾何とは別に、**画素ごとの入射角**が"
+          "要る。" % (ANGLES[1], rect[1]))
+    print("  予測と実測の圧縮率の差は最大 %.3f(Fresnel の閉形式が追えている)。"
+          % max(abs(p - m) for p, m in zip(pe, me)))
 
     figs.save_plot("angle_sweep",
                    [("予測 (ε/ε_set)(T/T_app)³", xs, pe),
