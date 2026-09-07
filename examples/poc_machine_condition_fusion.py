@@ -688,7 +688,8 @@ def section_pairs(train_rows, test_rows, table) -> None:
         off.sort(reverse=True)
         top = [t for t in off if t[0] > 0][:3]
         print("   %-8s の主な取り違え: " % label
-              + " / ".join("%s -> %s (%d/%d)" % (a, b, n, N_TEST) for n, a, b in top))
+              + (" / ".join("%s -> %s (%d/%d)" % (a, b, n, N_TEST) for n, a, b in top)
+                 or "(取り違えなし)"))
     cm_s = table["形状のみ"]["cm"]
     lumped = [MODES[i] for i in range(len(MODES)) if per_mode_rate(cm_s)[i] < 0.5]
     print("\n  ★形状は**芯ずれが有るか無いか**しか言わない。%s の %d モードは"
