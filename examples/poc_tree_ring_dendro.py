@@ -782,42 +782,47 @@ def section_blur() -> dict:
 # --------------------------------------------------------------------------- #
 def section_controls() -> dict:
     print("\n" + "=" * 78)
-    print("7) 対照群 2×2 —— 偏心・うねり と 割れ目・腐朽 を別々に止める")
+    print("7) 対照群 —— 偏心・うねり / 割れ目 / 腐朽 を 1 つずつ止める")
     print("=" * 78)
-    print("   偏心   割れ目   ゼロ点(θ=0): 年数 / 欠落 / 偽輪 / 相関    合意法: 年数 / 偽輪 / 相関")
+    print("   偏心  割れ目  腐朽   ゼロ点 24 方向: 年数が合う方向 / 偽輪の中央値 / 最悪"
+          "   合意法: 年数 / 偽輪 / 幅の相関")
+    conds = [("全部あり", True, True, True), ("偏心なし", False, True, True),
+             ("割れ目なし", True, False, True), ("腐朽なし", True, True, False),
+             ("全部なし", False, False, False)]
     rows, out = [], {}
-    for ecc in (True, False):
-        for crack in (True, False):
-            kw = {}
-            if not ecc:
-                kw.update(e_growth=0.0, wobble=(), pith=((N_PIX - 1) / 2, (N_PIX - 1) / 2))
-            if not crack:
-                kw.update(n_crack=0, decay=())
-            sc = make_scene(**kw)
-            z = run_zero(sc, thetas=[0.0])["per"][0]
-            zw = np.full(sc["n"], np.nan)
-            zt = np.full(sc["n"], np.nan)
-            for k, (e, t) in z["widths"].items():
-                zw[k - 1], zt[k - 1] = e, t
-            zs = width_stats(zw, zt)
-            c = run_consensus(sc)
-            cs = width_stats(c["w_est"], sc["widths"])
-            key = (ecc, crack)
-            out[key] = {"z": z, "zs": zs, "c": c, "cs": cs}
-            lab = ("○" if ecc else "×", "○" if crack else "×")
-            rows.append([lab[0], lab[1], str(z["n_det"]), str(len(z["missed"])),
-                         str(z["false"]), "%.3f" % zs["corr"], str(c["n_est"]),
-                         "%.1f" % c["false"], "%.3f" % cs["corr"]])
-            print("    %s       %s        %3d / %d / %d / %.3f              %3d / %.1f / %.3f"
-                  % (lab[0], lab[1], z["n_det"], len(z["missed"]), z["false"], zs["corr"],
-                     c["n_est"], c["false"], cs["corr"]))
-    a, b = out[(True, True)]["z"], out[(True, False)]["z"]
-    print("\n  ★ゼロ点の偽輪は割れ目・腐朽を止めるだけで %d → %d。偏心を止めても %d → %d。"
-          % (a["false"], b["false"], a["false"], out[(False, True)]["z"]["false"]))
+    for name, ecc, crack, decay in conds:
+        kw = {}
+        if not ecc:
+            kw.update(e_growth=0.0, wobble=(), pith=((N_PIX - 1) / 2, (N_PIX - 1) / 2))
+        if not crack:
+            kw.update(n_crack=0)
+        if not decay:
+            kw.update(decay=())
+        sc = make_scene(**kw)
+        z = run_zero(sc)["cons"]
+        c = run_consensus(sc)
+        cs = width_stats(c["w_est"], sc["widths"])
+        out[name] = {"z": z, "c": c, "cs": cs}
+        lab = tuple("○" if v else "×" for v in (ecc, crack, decay))
+        rows.append([name, lab[0], lab[1], lab[2], "%d / %d" % (z["exact"], N_SECT),
+                     "%.1f" % z["false"], str(z["false_max"]), str(c["n_est"]),
+                     "%.1f" % c["false"], "%.3f" % cs["corr"]])
+        print("    %s     %s      %s        %2d / %d / %4.1f / %d"
+              "                      %3d / %.1f / %.3f"
+              % (lab[0], lab[1], lab[2], z["exact"], N_SECT, z["false"], z["false_max"],
+                 c["n_est"], c["false"], cs["corr"]))
+    a = out["全部あり"]["z"]
+    print("\n  ★ゼロ点で年数が合う方向(24 中): 全部あり %d / 偏心なし %d / 割れ目なし %d / "
+          "腐朽なし %d / 全部なし %d。" % (a["exact"], out["偏心なし"]["z"]["exact"],
+                                          out["割れ目なし"]["z"]["exact"],
+                                          out["腐朽なし"]["z"]["exact"],
+                                          out["全部なし"]["z"]["exact"]))
+    print("     合意法はどの条件でも年数 %d・偽輪 %.1f。" % (
+        out["全部あり"]["c"]["n_est"], max(v["c"]["false"] for v in out.values())))
     figs.save_table("controls",
-                    ["偏心", "割れ目", "ゼロ点 年数", "欠落", "偽輪", "相関",
-                     "合意法 年数", "偽輪", "相関"], rows,
-                    title="対照群 2×2(真値 %d 年)" % N_RINGS)
+                    ["条件", "偏心", "割れ目", "腐朽", "ゼロ点 合う方向", "偽輪 中央値",
+                     "最悪", "合意法 年数", "偽輪", "幅の相関"], rows,
+                    title="対照群(真値 %d 年、ゼロ点は 24 方向)" % N_RINGS)
     return out
 
 
