@@ -283,9 +283,17 @@ def zero_point(img: np.ndarray) -> float:
     return float(m.mean())
 
 
-def extract_net(img: np.ndarray, a_lo: float = 0.3, b_hi: float = 0.5) -> dict:
-    """リッジ検出 → ヒステリシス → 面積オープニング → 骨格 → 枝刈り → 分岐点/端点/枝。"""
-    resp = np.asarray(fs.apply(img, "sk_frangi", a=0.5, b=0.5))        # 暗いリッジ、σ=1..3
+def extract_net(img: np.ndarray, ridge: str = "xsk_meijering", a_lo: float = 0.0,
+                b_hi: float = 0.0) -> dict:
+    """リッジ検出 → ヒステリシス → 面積オープニング → 骨格 → 枝刈り → 分岐点/端点/枝。
+
+    ``ridge`` は fullseye のリッジ op 名(``xsk_meijering`` / ``xsk_sato`` /
+    ``sk_frangi``)か、``"cv_blackhat"``(暗さそのもの、対照用)。
+    """
+    if ridge == "cv_blackhat":
+        resp = np.asarray(fs.apply(img, "cv_blackhat", a=1.0, b=0.5))   # 構造要素 9 px
+    else:
+        resp = np.asarray(fs.apply(img, ridge, a=0.5, b=0.5))           # 暗いリッジ、σ=1..3
     mask = np.asarray(fs.apply(resp, "hysteresis_threshold", a=a_lo, b=b_hi))
     mask = np.asarray(fs.apply(mask, "sk_area_opening", a=0.0))         # 16 px 未満の島を消す
     skel = np.asarray(fs.apply(mask, "skeleton"))
@@ -293,8 +301,9 @@ def extract_net(img: np.ndarray, a_lo: float = 0.3, b_hi: float = 0.5) -> dict:
     junc = np.asarray(fs.apply(skel.astype(float), "junctions_skeleton")) > 0.5
     ends = np.asarray(fs.apply(skel.astype(float), "r2_endpoints_skeleton")) > 0.5
     branch = np.asarray(fs.apply(skel.astype(float), "hx_split_skeleton_region")) > 0.5
-    # 幅: 局所しきい値(dyn_threshold)の暗画素マスクの距離変換 × 2 を骨格上で読む
-    dark = np.asarray(fs.apply(1.0 - img, "dyn_threshold", a=0.5, b=0.7)) > 0.5
+    # 幅: ブラックハット(周囲より暗い量)の半値で切った暗画素マスク → 距離変換 × 2
+    bh = np.asarray(fs.apply(img, "cv_blackhat", a=1.0, b=0.5))
+    dark = np.asarray(fs.apply(bh, "threshold", a=0.5)) > 0.5
     return dict(resp=resp, mask=mask > 0.5, skel=skel, junc=junc, ends=ends,
                 branch=branch, dark=dark)
 
