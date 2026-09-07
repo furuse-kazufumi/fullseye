@@ -548,14 +548,20 @@ def section_diameter_sweep() -> dict:
                    [(METHOD_JA[m], ds, rate[m]) for m in ("med72", "med36", "open9")],
                    xlabel="気孔の直径 [mm]", ylabel="検出率 [%]", title="検出の崖(小さい側)と背景の窓の天井(大きい側)",
                    caption="小さい側の崖は CNR で予測どおり。大きい側の崖は背景推定の窓の大きさそのもの。")
-    figs.save_plot("cnr_prediction", [("予測 CNR = %.1f·d²" % cnr_pred(1.0, s_rel), ds, [cnr_pred(d, s_rel) for d in ds]),
-                                      ("検出率 [%] ÷ 10(中央値 72 px)", ds, [x / 10 for x in rate[MAIN]])],
-                   xlabel="気孔の直径 [mm]", ylabel="CNR / (検出率 ÷ 10)", title="CNR の閉形式と検出率(50 % は CNR≈4 か)",
-                   xlim=(0.25, 1.05), ylim=(0, 12))
+    small = [d for d in ds if d <= 1.0]
+    figs.save_plot("cnr_prediction", [("予測 CNR = %.1f·d²" % cnr_pred(1.0, s_rel), small, [cnr_pred(d, s_rel) for d in small]),
+                                      ("検出率 [%] ÷ 10(中央値 72 px)", small, [x / 10 for x in rate[MAIN][:len(small)]])],
+                   xlabel="気孔の直径 [mm]", ylabel="CNR / (検出率 ÷ 10)", title="CNR の閉形式と検出率(50 % は CNR≈5)")
+
+    def _finite(x, y):
+        xy = [(a, b) for a, b in zip(x, y) if np.isfinite(b)]
+        return [a for a, _ in xy], [b for _, b in xy]
+
     figs.save_plot("diameter_error",
-                   [("しきい値の面積径", ds, err["d_thr"]), ("積分コントラスト(体積)径", ds, err["d_vol"]),
-                    ("キャリパ(エッジ対)径", ds, err["d_cal"]), ("しきい値径の予測(等高線モデル)", ds, pred_thr),
-                    ("体積径 / 中央値 36 px(窓の天井)", ds, err["d_vol36"])],
+                   [(lab, *_finite(ds, y)) for lab, y in
+                    (("しきい値の面積径", err["d_thr"]), ("積分コントラスト(体積)径", err["d_vol"]),
+                     ("キャリパ(エッジ対)径", err["d_cal"]), ("しきい値径の予測(等高線モデル)", pred_thr),
+                     ("体積径 / 中央値 36 px(窓の天井)", err["d_vol36"]))],
                    xlabel="気孔の直径 [mm]", ylabel="直径の相対誤差 [%]", title="直径 3 通り: 偏りの向きも大きさも違う",
                    caption="面積径は小さい側で縮む(等高線が内側)。体積径は μ 既知なら偏らない。キャリパは縁の位置で決まる。")
     return {"ds": ds, "rate": rate, "fp": fp, "err": err, "d50": d50, "d50_pred": d50_pred, "d50_rose": d50_rose,
