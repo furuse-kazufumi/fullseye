@@ -636,7 +636,7 @@ def trim_symmetric(pts, p0, n, tau, rounds=2):
         if keep.sum() < 500:
             break
         cur = cur[keep]
-        est = estimate_plane(cur, refine="nm")
+        est = estimate_plane(cur, refine="nm", axis_hint=True)
         P0, N = est["p0"], est["n"]
     return P0, N, len(cur)
 
