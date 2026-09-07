@@ -729,7 +729,8 @@ def section_budget(sw: dict, ss: dict) -> None:
           % (1e3 * QUANT_M / np.sqrt(12.0), 1e3 * sw["fine"][ref][i0],
              abs(ss["cases"][1][3]), abs(ss["mixed_x"] - X_LEAK)))
     print("     **相関を良くする努力は左の 2 つにしか効かない。**")
-    figs.save_table("error_budget", ["誤差の種類", "大きさ [m]", "性質"], rows,
+    figs.save_table("error_budget", ["誤差の種類", "大きさ [m]", "性質"],
+                    [[r[0], r[1], s] for r, s in zip(rows, short)],
                     title="掘る場所の誤差の内訳(種類ごとに分けて数える)")
 
 

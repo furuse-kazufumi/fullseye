@@ -30,7 +30,27 @@
   ]
  },
  {
-  "file": "04_gross_rate.png",
+  "file": "04_snr_cliff.png",
+  "name": "snr_cliff",
+  "caption": "縦軸は常用対数。-10 dB のあたりで cm から十 m へ、3 桁飛ぶ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_snr_fine.png",
+  "name": "snr_fine",
+  "caption": "下界に触れる手法は無い。帯域制限が最も近い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_gross_rate.png",
   "name": "gross_rate",
   "caption": "",
   "shape": [
@@ -40,7 +60,7 @@
   ]
  },
  {
-  "file": "05_reflection_sweep.png",
+  "file": "07_reflection_sweep.png",
   "name": "reflection_sweep",
   "caption": "",
   "shape": [
@@ -50,7 +70,7 @@
   ]
  },
  {
-  "file": "06_reflection_table.png",
+  "file": "08_reflection_table.png",
   "name": "reflection_table",
   "caption": "",
   "shape": [
@@ -58,11 +78,11 @@
    756,
    3
   ],
-  "csv": "06_reflection_table.csv",
-  "tsv": "06_reflection_table.tsv"
+  "csv": "08_reflection_table.csv",
+  "tsv": "08_reflection_table.tsv"
  },
  {
-  "file": "07_sound_speed_error.png",
+  "file": "09_sound_speed_error.png",
   "name": "sound_speed_error",
   "caption": "相関の形も相関係数も一切変わらない。変わるのは掘る場所だけ。",
   "shape": [
@@ -72,7 +92,7 @@
   ]
  },
  {
-  "file": "08_position_scan.png",
+  "file": "10_position_scan.png",
   "name": "position_scan",
   "caption": "(c) は相関がきれいでも折れ曲がる。単一の音速ではどうやっても直せない。",
   "shape": [
@@ -80,5 +100,17 @@
    560,
    3
   ]
+ },
+ {
+  "file": "11_error_budget.png",
+  "name": "error_budget",
+  "caption": "",
+  "shape": [
+   200,
+   469,
+   3
+  ],
+  "csv": "11_error_budget.csv",
+  "tsv": "11_error_budget.tsv"
  }
 ]
