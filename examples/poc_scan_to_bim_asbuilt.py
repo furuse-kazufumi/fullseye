@@ -1091,13 +1091,12 @@ def section_cliff_registration() -> dict:
 
 def section_cliff_mixed(seed: int = SEED) -> dict:
     print("\n" + "=" * 78)
-    print("8) ★混合画素は平面に効かず、円柱の半径にだけ効く")
+    print("8) ★混合画素の崖は幾何でなく**推定器の頑健さ**で決まる")
     print("=" * 78)
-    print("   混合の割合   壁の傾き [mrad]   柱 A の半径の狂い [mm]  柱 B [mm]")
-    xs, wall, ca, cb = [], [], [], []
+    print("   混合の割合   壁の傾き(RANSAC)  窓の高さ(obb 素)  窓(外れ値除去つき)  割り当ての正答率")
+    xs, wall, win_raw, win_cl, acc = [], [], [], [], []
     rows = []
-    base_rack = None
-    for mf in (0.0, 0.05, 0.12, 0.20, 0.30):
+    for mf in (0.0, 0.05, 0.12, 0.25, 0.40):
         surf = make_surface(1.0)
         s = scan(surf, seed=seed, mix=mf, reg_mrad=0.0, reg_mm=0.0)
         e = assign_elements(s["P"])
@@ -1106,34 +1105,46 @@ def section_cliff_mixed(seed: int = SEED) -> dict:
             _, sb, _, _ = plane_slopes(s["P"][e == elem], 0, seed=seed)
             r.append(sb)
         rk = 1000 * float(np.mean(r))
-        r0 = 1000 * (column_radius(s["P"][e == COL0], seed=seed) - COL_R)
-        r1 = 1000 * (column_radius(s["P"][e == COL1], seed=seed) - COL_R)
-        if base_rack is None:
-            base_rack, base_c0 = rk, r0
+        wr = 1000 * (opening_center(s["P"][e == WINR], (1, 2), clean=False)[1]
+                     - sum(WIN_V) / 2)
+        wc = 1000 * (opening_center(s["P"][e == WINR], (1, 2), clean=True)[1]
+                     - sum(WIN_V) / 2)
+        ac = 100 * float(np.mean(e == s["elem"]))
         xs.append(100 * mf)
         wall.append(rk)
-        ca.append(r0)
-        cb.append(r1)
-        rows.append(["%.0f %%" % (100 * mf), "%+.3f" % rk, "%+.2f" % r0, "%+.2f" % r1])
-        print("   %8.0f %%   %+10.3f       %+12.2f        %+8.2f" % (100 * mf, rk, r0, r1))
-    dw = wall[-1] - base_rack
-    dc = ca[-1] - base_c0
-    print("\n   ★混合 %.0f %% で壁の傾きは %+.3f mrad しか動かない(RANSAC が外れ値として落とす)。"
-          % (xs[-1], dw))
-    print("     同じ割合で柱 A の半径は %+.2f mm 動く —— 柱は輪郭が**全周**縁なので、"
-          % dc)
-    print("     混合画素が一様に内側へ寄って外れ値でなく系統的な縮みになる。")
+        win_raw.append(wr)
+        win_cl.append(wc)
+        acc.append(ac)
+        rows.append(["%.0f %%" % (100 * mf), "%+.3f" % rk, "%+.2f" % wr,
+                     "%+.2f" % wc, "%.2f %%" % ac])
+        print("   %8.0f %%   %+12.3f     %+12.2f      %+12.2f       %8.2f %%"
+              % (100 * mf, rk, wr, wc, ac))
+    dw = wall[-1] - wall[0]
+    dwin = win_raw[-1] - win_raw[0]
+    dwin_c = win_cl[-1] - win_cl[0]
+    print("\n   真値: 壁の傾き %+.2f mrad / 窓の高さのずれ %+.1f mm"
+          % (1000 * RACK, 1000 * WIN_DZ))
+    print("   ★混合 %.0f %% で壁の傾きは %+.3f mrad しか動かない —— RANSAC が"
+          "外れ値として落とすから。" % (xs[-1], dw))
+    print("     同じ点群で窓の高さ(obb = 主成分の min/max)は %+.2f mm 動く。"
+          % dwin)
+    print("     **同じ幾何・同じ点群で、崖の位置を決めているのは推定器の頑健さ**。")
+    print("     obb の前に statistical_outlier_removal を挟むと %+.2f mm に落ちる"
+          "(%.0f %% 抑制)。" % (dwin_c, 100 * (1 - abs(dwin_c) / max(abs(dwin), 1e-9))))
     figs.save_plot("cliff_mixed",
-                   [("柱 A の半径の狂い [mm]", xs, ca), ("柱 B の半径の狂い [mm]", xs, cb),
-                    ("壁の傾き [mrad](別単位)", xs, wall),
-                    ("柱の真値 A [mm]", xs, [1000 * DCOL[0]] * len(xs))],
-                   xlabel="混合画素の割合 [%]", ylabel="狂い [mm] / 傾き [mrad]",
-                   title="混合画素は平面には効かず円柱の半径を縮める",
-                   caption="平面は片側だけが縁なので外れ値、円柱は全周が縁なので系統誤差。")
+                   [("窓の高さ(obb 素)[mm]", xs, win_raw),
+                    ("窓の高さ(外れ値除去つき)[mm]", xs, win_cl),
+                    ("窓の真値 [mm]", xs, [1000 * WIN_DZ] * len(xs)),
+                    ("壁の傾き [mrad](別単位・RANSAC)", xs, wall)],
+                   xlabel="混合画素の割合 [%]", ylabel="ずれ [mm] / 傾き [mrad]",
+                   title="混合画素に壊されるのは幾何でなく頑健でない推定器のほう",
+                   caption="RANSAC の平面は動かず、min/max の obb は動く。")
     figs.save_table("cliff_mixed_table",
-                    ["混合の割合", "壁の傾き [mrad]", "柱 A [mm]", "柱 B [mm]"], rows,
-                    title="混合画素の掃引")
-    return {"xs": xs, "wall": wall, "ca": ca, "cb": cb, "dw": dw, "dc": dc}
+                    ["混合の割合", "壁の傾き [mrad]", "窓 obb 素 [mm]",
+                     "窓 除去つき [mm]", "割り当ての正答率"], rows,
+                    title="混合画素の掃引 —— 推定器ごとに崖が違う")
+    return {"xs": xs, "wall": wall, "win_raw": win_raw, "win_cl": win_cl,
+            "acc": acc, "dw": dw, "dwin": dwin, "dwin_c": dwin_c}
 
 
 # --------------------------------------------------------------------------- #

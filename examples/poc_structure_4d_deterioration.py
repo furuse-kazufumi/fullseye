@@ -1314,8 +1314,8 @@ def section_prism_and_crack(sc: dict) -> dict:
           "限り気づけない** —— \n         決まらなかった成分・吸われた成分は、"
           "それに感度を持つ**小さな部品にだけ**現れる。")
     figs.save_table("prism",
-                    ["キャンバー mm", "端の勾配", "予測 x 残差 mm", "実測 x mm",
-                     "残差 y,z mm"], rows,
+                    ["キャンバー mm", "端の勾配", "Σn_x²/N", "予測 σ_x mm",
+                     "予測 σ_z mm", "実測 x mm", "実測 y,z mm"], rows,
                     title="橋軸方向がどれだけ決まるかは、反りの勾配で決まる",
                     caption="押し出し形状の平面は法線に x 成分を持たない。"
                             "x を拘束するのはキャンバーの傾きだけ。")
@@ -1354,7 +1354,9 @@ def section_prism_and_crack(sc: dict) -> dict:
           "      雑音が 10 倍になる —— **薄まりと雑音は同じつまみの両端**。")
     return {"dx_all": dx_all, "dx_grd": dx_grd, "hw": hw_l, "pred": pred_l,
             "num": num_l, "need": need, "cam": cam_l, "fake_h": fake_h,
-            "ceil": ceil_x, "settle": settle_read}
+            "ceil": ceil_x, "settle": settle_read, "dx": dx_l,
+            "dyz": max(float(r[6]) for r in rows),
+            "sig_ratio": float(rows[0][3]) / float(rows[0][4])}
 
 
 # --------------------------------------------------------------------------- #
