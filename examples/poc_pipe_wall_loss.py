@@ -473,11 +473,16 @@ def section_offset_sweep() -> dict:
           "減肉と判定される\n     (偽の減肉体積 %.0f mm^3 = 本物の孔食 %.0f mm^3 の"
           "%.1f 倍)。" % (offs[i4], meas[i4], fvol[i4], true_volume("pit"),
                           fvol[i4] / true_volume("pit")))
-    err = max(abs(m - p) for m, p in zip(meas[1:], pred[1:]))
+    err = max(abs(m - p) for m, p in zip(meas, pred))
     print("  ★幾何の予測(厳密)と実測の差は最大 %.2f ポイント —— "
           "偽の減肉は**必ず 1 周期**で振幅はオフセットそのもの。" % err)
     print("     1 周期の振幅の実測はオフセットの %.3f 倍(幾何の予測は 1.000)。"
           % (amp1[-1] / offs[-1]))
+    i_knee = next(i for i, v in enumerate(meas) if v > 0.0)
+    print("  ★崖はしきい値の所に立つ: オフセット %.2f mm(= しきい値 %.1f mm)"
+          "までは偽物ゼロ、\n     %.2f mm で %.1f %% に跳ねる —— "
+          "e < t なら 1 周期の正弦波はしきい値に届かないから。"
+          % (offs[i_knee - 1], THRESH, offs[i_knee], meas[i_knee]))
 
     figs.save_plot("sweep_offset",
                    [("実測(しきい値 %.1f mm)" % THRESH, offs, meas),
