@@ -32,5 +32,67 @@
   ],
   "csv": "03_scope.csv",
   "tsv": "03_scope.tsv"
+ },
+ {
+  "file": "04_cliff.png",
+  "name": "cliff",
+  "caption": "C2C は点間隔そのもの、法線方向は平均で消える。真の最大劣化 30.0 mm と比べること。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_cliff_angle.png",
+  "name": "cliff_angle",
+  "caption": "予測は (ω×(p-c))·n を core 上で積んだだけ。点群を測る前に出せる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_rate_error.png",
+  "name": "rate_error",
+  "caption": "3 回の点検で得た速度の誤差分布。1 mm/年 の進行は検出限界の下に沈む。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_prism.png",
+  "name": "prism",
+  "caption": "押し出し形状の平面は法線に x 成分を持たない。x を拘束するのはキャンバーの傾きだけ。",
+  "shape": [
+   152,
+   471,
+   3
+  ],
+  "csv": "07_prism.csv",
+  "tsv": "07_prism.tsv"
+ },
+ {
+  "file": "08_scene.png",
+  "name": "scene",
+  "caption": "断面は fullseye の sdf op(box/plane/cylinder + union/intersect)だけで組んである。展開図は行 = 断面まわり(下面左→腹板→下フランジ→腹板→下面右)、列 = 橋軸方向。",
+  "shape": [
+   649,
+   260,
+   3
+  ]
+ },
+ {
+  "file": "09_map_rate.png",
+  "name": "map_rate",
+  "caption": "速度は差を年数で割っただけなので、位置合わせの残差がそのまま速度の嘘になる。",
+  "shape": [
+   680,
+   164,
+   3
+  ]
  }
 ]
