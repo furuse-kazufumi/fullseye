@@ -337,8 +337,8 @@ def section_series() -> dict:
     sd_b = float(np.std(res["bin"] - w_true - np.polyval(
         np.polyfit(EPOCH_YEAR, res["bin"] - w_true, 1), EPOCH_YEAR)))
 
-    print("\n  幅の偏り   : 積分法 %+.4f mm / 2 値化 %+.4f mm  (%.1f 倍)"
-          % (bias_i, bias_b, abs(bias_b / bias_i) if bias_i else float("nan")))
+    print("\n  幅の偏り   : 積分法 %+.5f mm / 2 値化 %+.5f mm(真の幅の %+.1f %%)"
+          % (bias_i, bias_b, 100 * bias_b / float(w_true.mean())))
     print("  幅の RMS   : 積分法 %.4f mm / 2 値化 %.4f mm" % (rms_i, rms_b))
     print("  成長率     : 真値 %.4f -> 積分法 %.4f (%+.1f %%) / 2 値化 %.4f (%+.1f %%) mm/年"
           % (RATE_MM_YR, s_i, 100 * (s_i - RATE_MM_YR) / RATE_MM_YR,
