@@ -795,10 +795,11 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
     print("  手が 1 点も見えない面積: %.3f m²(全体の %.1f %%)"
           % (cell * np.count_nonzero(vis_map == 0.0),
              100 * np.mean(vis_map == 0.0)))
-    print("  危険(真値 < S)な面積 %.3f m² のうち、**安全と出る**面積 %.3f m²"
+    print("  危険(真値 < %.3f m)な面積 %.3f m² のうち、**止めない**面積 %.3f m²"
           " = %.1f %%"
-          % (cell * np.count_nonzero(true_map < S), cell * np.count_nonzero(miss),
-             100 * np.count_nonzero(miss) / max(1, np.count_nonzero(true_map < S))))
+          % (S_GEOM, cell * np.count_nonzero(true_map < S_GEOM),
+             cell * np.count_nonzero(miss),
+             100 * np.count_nonzero(miss) / max(1, np.count_nonzero(true_map < S_GEOM))))
     near = true_map < 1.0                      # 危険に関わる帯だけで最大を取る
     over_near = float(np.max(over[near & np.isfinite(over)]))
     print("  過大評価の最大 %.3f m(真の距離 < 1.0 m の帯。手が完全に隠れて"
