@@ -651,7 +651,7 @@ def section_blur_cell() -> dict:
         for b in blurs:
             sc = make_scene("乾燥", cell=c, warp_amp=1.0, tex_c=0.0, blur=b, n=256)
             tr = truth_stats(sc)
-            me = measure(sc, extract_net(sc["img"]))
+            me = measure_scene(sc)
             r = me["n_cells"] / max(1, tr["n_cells"])
             grid[(c, b)] = r
             line.append(r)
