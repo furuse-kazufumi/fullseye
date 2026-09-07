@@ -574,6 +574,7 @@ def section_timeseries() -> dict:
                            "S を下回るのは真値だけ、という時間帯が見落とし。")
     return {"ts": ts, "frames": frames, "d_true": d_true, "est": est,
             "S": S, "haz": haz, "pred": pred, "stats": stats,
+            "wrong_part": (wrong_part, n_haz),
             "hidden_nearest": (hidden_nearest, n_haz)}
 
 
