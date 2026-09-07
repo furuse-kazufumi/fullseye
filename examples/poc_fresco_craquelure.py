@@ -625,14 +625,16 @@ def section_rake_sweep() -> dict:
         d4.append(me["deg4"])
         print("   %4.2f   %6.2f     %+6.2f      %5.2f   %5.2f   %5.3f" % (
             s, me["width"], me["offset"], me["aniso"], me["deg4"], me["recall"]))
-    print("  推定幅 %.2f → %.2f px(真値 2 px)、中心線は光源側へ %.2f px、異方性 %.2f → %.2f。"
-          % (wid[0], wid[-1], -off[-1], an[0], an[-1]))
+    print("  推定幅 %.2f → %.2f px(真値 2 px、+%.2f px)、中心線は光源側へ %.2f px、次数 4 割合 %.2f → %.2f、"
+          "異方性 %.2f → %.2f。" % (wid[0], wid[-1], wid[-1] - wid[0], -off[-1], d4[0], d4[-1], an[0], an[-1]))
+    print("  影の側だけが暗くなるので、半値幅のマスクが光源側へ伸び、骨格もそちらへ寄る。")
     figs.save_plot("rake_bias", [("推定幅 [px]", ss, wid), ("次数 4 割合", ss, d4),
-                                 ("中心線ずれ [px]", ss, off)],
+                                 ("中心線ずれ [px](負 = 光源側)", ss, off)],
                    xlabel="斜光の強さ(0 = 拡散光)", ylabel="px / 割合",
                    title="斜光で幅は片側に太り、4 差路が割れる",
                    caption="光源は左。影側が暗くなるので暗画素マスクが左に伸びる。")
-    assert wid[-1] - wid[0] > 0.4 and abs(an[-1] - an[0]) < 0.1
+    assert wid[-1] - wid[0] > 0.25 and off[-1] < -0.5 and abs(an[-1] - an[0]) < 0.05
+    assert d4[0] - d4[-1] > 0.1
     return dict(ss=ss, wid=wid, off=off, an=an, d4=d4)
 
 
