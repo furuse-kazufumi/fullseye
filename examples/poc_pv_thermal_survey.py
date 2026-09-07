@@ -1062,30 +1062,43 @@ def section_netd() -> dict:
     print("  偽が出始めるのは しきい値 %.1f K が %.1f σ を割るとき ->"
           " **NETD %.0f mK**(実在の非冷却カメラの %.0f 倍)。"
           % (THETA, K_FALSE, 1e3 * nd_crit, nd_crit / 0.050))
-    print("\n     NETD [mK]  平滑後σ[K]  ホット再現  ストリング再現  本物 非故障 偽")
+    print("\n     NETD [mK]  平滑後σ[K]  ホット再現  ストリング再現  本物 非故障 偽"
+          "   塊の総面積[px]")
 
     sc = thermal_field(V_REF)
     gt = ground_truth()
-    xs, fa, rc = [], [], []
+    xs, fa, rc, nn, ar = [], [], [], [], []
     for nd in NETDS:
         t_app = capture(sc["T"], netd=nd)
         det = detect(t_app, gt, "モジュール中央値")
         s = score(det, gt)
+        area = int(det["mask"].sum())
         xs.append(1e3 * nd), fa.append(s["n_false"]), rc.append(s["recall"]["hot"])
+        nn.append(s["n_nonfault"]), ar.append(area)
         print("     %7.0f     %7.3f      %.2f        %.2f        %3d %5d %4d"
+              "      %6d"
               % (1e3 * nd, nd / n_sig, s["recall"]["hot"],
                  s["recall"]["string"], s["n_fault"], s["n_nonfault"],
-                 s["n_false"]))
+                 s["n_false"], area))
 
     first = next((x for x, f in zip(xs, fa) if f > 0), None)
     print("\n  ★★予想は「NETD を上げると偽の故障が増える」だった。**実在の"
           "カメラの範囲(20〜50 mK)では何も起きない** —— 偽が出るのは"
           " %s。"
           % ("NETD %.0f mK から(予測 %.0f mK)" % (first, 1e3 * nd_crit)
-             if first else "%.0f mK まで振っても出なかった" % xs[-1]))
+             if first else "%.0f mK まで振っても出なかった(予測 %.0f mK より"
+                           "さらに厳しい)" % (xs[-1], 1e3 * nd_crit)))
+    print("     予測が甘いのは 4 節と同じ理由 —— 予測は「1 画素が %.1f σ を"
+          "超える」条件で、実際には**%d px つながらないと塊にならない**。"
+          "面積の門はここでも効く。" % (K_FALSE, A_MIN))
     print("     見逃しも %.2f -> %.2f。**この課題を壊しているのは雑音ではない** ——"
           "風(4 節)・画素(6 節)・角度(7 節)・正規化(2 節)のほう。"
           % (rc[0], rc[-1]))
+    print("  ★★数え方の罠: 非故障の塊は %d -> %d 個に増えるが、塊の総面積は"
+          " %d -> %d px でほとんど変わらない。"
+          % (nn[0], nn[-1], ar[0], ar[-1]))
+    print("     **新しい異常が見つかったのではなく、同じ帯が雑音でちぎれている"
+          "だけ**。個数で報告すると雑音が『発見』に化ける —— 面積で数えること。")
     print("     ★これは「雑音を減らせば見えるようになる」という直感が"
           "**この場面では成り立たない**ということ。カメラを買い替えても直らない。")
 

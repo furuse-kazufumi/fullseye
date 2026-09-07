@@ -1150,6 +1150,17 @@
    "caption_ja": "多関節の骨格に太さを持たせた人体(カプセル 10 本)と可動アームを合成し、表面どうしの真の最小分離距離を時刻ごとに閉形式で持たせた場面で、速度分離監視の判定がどこで嘘になるかを数えた。人を重心 1 点 + 半径 0.30 m の球で代表すると危険時に +0.166 m 遠く言い、危険の 14.3 % を見落とす(足元 1 点なら 28.6 %)—— どちらも誤検知はほぼ 0 で、壊れ方は片側にしか出ない。背面カメラ 1 台では危険フレームの 48.6 % で「推定を決めた部位が真の最近傍と違う」ことが起き見落としは 18.1 %、2 台目で 0 % に戻るが、繰り返し性から名乗った不確かさ 0.036 m は遮蔽の偏り 0.178 m の 5 分の 1 しか無い。",
    "caption_en": "A ten-capsule articulated body and a moving arm are synthesised so that the true surface-to-surface minimum separation is known in closed form at every instant, and the speed-and-separation-monitoring verdict is then scored against it. Representing the person by one centroid inside a 0.30 m sphere reports the distance +0.166 m too far while a hazard is present and misses 14.3 % of the dangerous frames (28.6 % for a foot-level scanner) — with almost no false alarms, so the failure is strictly one-sided. With a single camera behind the person, 48.6 % of the dangerous frames have the estimate decided by a body part that is not the true nearest one, and 18.1 % are missed; a second camera restores 0 %, but the uncertainty claimed from repeatability, 0.036 m, is only one fifth of the 0.178 m bias that occlusion actually produces.",
    "run": "py -3.11 examples/poc_safety_clearance.py"
+  },
+  {
+   "id": "poc_leak_localization",
+   "wing": "wing_industrial",
+   "added": "2026-09-07",
+   "numbers_source": "log",
+   "title_ja": "音で漏水を掘り当てる ―― 相関がきれいでも、伝わる速さを間違えれば場所は外れる",
+   "title_en": "Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place",
+   "caption_ja": "120 m の埋設管の 2 点で漏水音を録り、到達時間差から位置を出す仕事を、源・音速・減衰・反射をすべて仕込んで再現した。音速が真値なら SNR 0 dB で 0.0107 m まで当たり(Knapp-Carter の下界 0.0091 m の 1.2 倍)、崖は予測 -20.1 dB に対し実測 -12.5 dB、その下では誤差が 36.0 m と探索窓いっぱいに飛ぶ。ところが音速を 10 % 誤るだけで 1.798 m ずれ(予測 (Δc/c)(x-L/2) = 1.800 m と 0.002 m 差)、途中で管種が鋳鉄から樹脂に変わる管路では時間差がちょうど 0 になって、鋳鉄・樹脂・その平均のどれを仮定しても 18.001 m 外す ―― 掛ける相手が 0 なので、音速をいくら較正しても直らない。反射では予想が外れ、GCC-PHAT は生の相関に 1 割しか勝たなかった(誤差 0.121 m のほぼ全部が偏りで、白色化するのは振幅、遅延を運ぶのは位相だから)。",
+   "caption_en": "Locating a leak in a 120 m buried main from the arrival-time difference at two sensors, with the source, sound speed, attenuation and reflections all planted as ground truth. With the true sound speed the estimate lands within 0.0107 m at 0 dB SNR (1.2x the Knapp-Carter bound of 0.0091 m); the threshold was predicted at -20.1 dB but measured at -12.5 dB, below which the error jumps to 36.0 m — the whole search window. Yet a 10 % error in the assumed sound speed alone moves the dig by 1.798 m (against the predicted (dc/c)(x-L/2) = 1.800 m), and on a pipe that changes from ductile iron to plastic mid-run the time difference is exactly zero, so iron, plastic or their average all miss by 18.001 m: no calibration of a single speed can fix a factor multiplying zero. The reflection prediction failed — GCC-PHAT beat the plain correlation by only 10 %, because 0.121 m of its 0.121 m RMS is bias, and whitening acts on the magnitude while the delay lives in the phase.",
+   "run": "py -3.11 examples/poc_leak_localization.py"
   }
  ]
 }
