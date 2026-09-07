@@ -857,23 +857,31 @@ def section_sliver_threshold(scene: dict) -> dict:
             fn = "★拒む"
         ts.append(np.log10(t)); frac.append(n_found); angs.append(float(ang.max()))
         ratios.append(ar / med); nbroken.append(broken)
-        print("   %.0e   %.2e     %3d        %3d           %8.3f      %s" % (
-            t, ar / med, n_found, broken, ang.max(), fn))
+        nzero.append(int((~good).sum()))
+        print("   %.0e   %.2e     %3d       %3d        %3d        %8.3f      %s" % (
+            t, ar / med, n_found, broken, nzero[-1], ang.max(), fn))
         assert fs.is_watertight(Vd, Fd), "潰し方が位相を壊した"
 
     first = next(i for i, f in enumerate(frac) if f > 0)
     full = next(i for i, f in enumerate(frac) if f == 2 * N_SLIVER)
     fb = next(i for i, b in enumerate(nbroken) if b > 0)
-    print("\n  ★検出の崖: 面積比 %.0e(t=%.0e)ではまだ 0 枚。%.0e で %d 枚、"
-          "%.0e で全 %d 枚。"
-          % (ratios[2], 10.0 ** ts[2], ratios[first], frac[first],
-             ratios[full], frac[full]))
-    print("  ★★**壊れるほうが %d 桁早い**。面積比 %.0e(t=%.0e)で既に %d 枚の"
-          "法線が 1° 以上ずれているのに、" % (ts[first] - ts[fb], ratios[fb],
-                                              10.0 ** ts[fb], nbroken[fb]))
-    print("     ``remove_degenerate_faces`` の検出は %d 枚。"
-          "**退化の判定は「面積が 0 か」だが、実害は「法線が壊れるか」で"
-          "先に来る**。" % frac[fb])
+    print("\n  ★検出の崖: 面積比 %.1e(t=%.0e)ではまだ 0 枚、%.1e(t=%.0e)で %d 枚、"
+          "t=%.0e で全 %d 枚。"
+          % (ratios[first - 1], 10.0 ** ts[first - 1], ratios[first],
+             10.0 ** ts[first], frac[first], 10.0 ** ts[full], frac[full]))
+    print("  ★★**壊れるほうが %d 桁早い**。t=%.0e(面積比 %.1e)で既に %d 枚の"
+          "法線が 1° 以上(最大 %.1f°)ずれ、"
+          % (abs(ts[first] - ts[fb]), 10.0 ** ts[fb], ratios[fb],
+             nbroken[fb], angs[fb]))
+    print("     水密も多様体も χ も健全なのに、``remove_degenerate_faces`` の"
+          "検出は %d 枚。" % frac[fb])
+    print("     **退化の判定は「面積が 0 か」だが、実害は「法線が壊れるか」で"
+          "先に来る**。")
+    print("  ★同じ族の 2 つの op が食い違う: t=%.0e で ``face_normals`` は"
+          "メッシュ全体を拒むが、" % 10.0 ** ts[first])
+    print("     法線が本当に作れない(外積が厳密に 0)のは %d 枚、"
+          "``remove_degenerate_faces`` が落とすのは %d 枚 —— "
+          "\n     「退化」の定義が 3 通りある。" % (nzero[first], frac[first]))
 
     assert frac[0] == 0 and frac[-1] == 2 * N_SLIVER
     assert max(angs) > 1.0, "法線が壊れるという所見が崩れた"
