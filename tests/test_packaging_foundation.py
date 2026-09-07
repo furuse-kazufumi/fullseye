@@ -128,13 +128,14 @@ def test_article_source_images_do_not_ship():
     """
     # tomllib は 3.11+ なので(CI は 3.10 も回す)節を文字列で切り出す
     def _section(name):
-        m = re.search(r"^\[%s\]
-(.*?)(?=^\[|\Z)" % re.escape(name), _read("pyproject.toml"),
+        m = re.search(r"^\[%s\]\n(.*?)(?=^\[|\Z)" % re.escape(name), _read("pyproject.toml"),
                       re.M | re.S)
         return m.group(1) if m else ""
+
+    def _nocomment(text):
+        return re.sub(r"#[^\n]*", "", text)
     pkg_data = _section("tool.setuptools.package-data")
-    assert "sample_sources_ai" not in re.sub(r"#[^
-]*", "", pkg_data), (
+    assert "sample_sources_ai" not in _nocomment(pkg_data), (
         "sample_sources_ai が package-data に戻っている —— 出荷コードは読まないのに "
         "wheel を 42 MB 太らせる")
     # ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。
