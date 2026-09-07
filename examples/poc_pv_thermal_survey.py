@@ -1007,8 +1007,8 @@ def section_angle(base: dict) -> dict:
         d_bk = detect(back, gt, "モジュール中央値")
         pr = peak_on(d_bk, gt["hot"])
         # 幾何は戻ったか —— いちばん大きい塊(ストリング故障)の重心を測る
-        sh_ob = _largest_shift(d_ob["labels"], det["labels"])
-        sh_bk = _largest_shift(d_bk["labels"], det["labels"])
+        sh_ob = _largest_shift(d_ob["labels"], ref_lab)
+        sh_bk = _largest_shift(d_bk["labels"], ref_lab)
         xs.append(a), pe.append(p), me.append(ph / ref), rect.append(pr / ref)
         shift.append((sh_ob, sh_bk))
         print("     %7.0f    %.3f   %7.3f   %7.3f    %6.2f      %6.2f "
