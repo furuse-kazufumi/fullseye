@@ -803,15 +803,18 @@ def section_zero_point(seed: int = SEED) -> dict:
         keep[tag[1]] = (surf, s, p, d, ch)
     gap = float(rows[2][1]) - float(rows[0][1])
     gap_ch = float(rows[2][4]) - float(rows[0][4])
-    print("\n   ★施工誤差のあるなしで平均距離は %.2f mm しか動かない。" % gap)
+    print("\n   ★施工誤差のあるなしで平均距離は %.2f mm しか動かない"
+          "(Chamfer 距離でも %.2f mm)。" % (gap, gap_ch))
     print("     同じ点群を要素ごとに見ると柱の半径 +6.5 mm、床の反り 12 mm の"
           "不良が入っている(節 5)。")
     print("     幅木(出 %.0f mm)は点の %.1f %% しかないので、1 個の数字には最初から出てこない。"
           % (1000 * BASE_T, 100 * (keep["c"][1]["elem"] == BASE).mean()))
-    figs.save_table("one_number", ["条件", "平均 [mm]", "中央 [mm]", "95 % [mm]"], rows,
+    figs.save_table("one_number",
+                    ["条件", "平均 [mm]", "中央 [mm]", "95 % [mm]", "Chamfer [mm]"], rows,
                     title="建物 1 個の数字(BIM への平均距離)は施工誤差にほとんど反応しない",
-                    caption="(a) と (c) の差 %.2f mm。要素ごとの不良は桁が違う。" % gap)
-    return {"rows": rows, "gap": gap, "keep": keep}
+                    caption="(a) と (c) の差は平均で %.2f mm、Chamfer で %.2f mm。"
+                            "要素ごとの不良は桁が違う。" % (gap, gap_ch))
+    return {"rows": rows, "gap": gap, "gap_ch": gap_ch, "keep": keep}
 
 
 # --------------------------------------------------------------------------- #
