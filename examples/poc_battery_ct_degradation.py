@@ -730,12 +730,13 @@ def section_control(cells, recs) -> dict:
           % (res["uniform"]["truth"]["dv_int"], res["local"]["truth"]["dv_int"],
              res["gas"]["truth"]["dv_int"]))
 
-    # 層の平面度
-    y_mid = float(cells["healthy"]["truth"]["layer_center_mm"][N_LAYER // 2])
+    # 層の平面度 —— **端に近い層**で測る。膨れは積層の中央について対称なので、
+    # 真ん中の層はどの劣化でも平らなまま(ここを測ると差が出ない)。
     flat = {}
     for key in ("healthy", "uniform", "local", "gas"):
-        flat[key] = flatness(recs[key], y_mid)
-        print("     平面度(中央の層の界面、%s): 残差 RMS %.4f mm(%d 点)"
+        y_t = float(cells[key]["truth"]["layer_center_mm"][N_LAYER - 2])
+        flat[key] = flatness(recs[key], y_t)
+        print("     平面度(端から 2 枚目の層、%s): 残差 RMS %.4f mm(%d 点)"
               % (key, flat[key]["resid"], flat[key]["n"]))
 
     figs.save_table("control_group",
