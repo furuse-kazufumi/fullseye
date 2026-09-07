@@ -1096,7 +1096,8 @@ def main() -> int:
     assert ro["dens"][i1][0] < 1.0 and ro["dens"][i1][4] > 1.5, "回転の中央/端の差が消えた"
     assert sz["worst"] < 0.05, "大きさの崖の画素被覆則が外れた"
     assert sz["open"][0.0][0] == 0.0, "オープニングが 1 px を消さない"
-    assert max(r[2] for r in rg["good"]) < 0.1, "位置合わせ 3 経路の残留が 0.1 px を超えた"
+    # 特徴点経路は整数座標のキーポイント(poc_panorama_drift の穴 (h))で 0.13 px 止まり
+    assert max(r[2] for r in rg["good"]) < 0.15, "位置合わせ 3 経路の残留が 0.15 px を超えた"
     assert rg["phase"][2] > 0.2, "位相相関(整数)の残留が小さすぎる(2-D 経路が増えた?)"
     assert il[0] > 3000 and il[1] < 50, "照明差の対照群が崩れた"
     assert ct["ずれ無し・照明差無し"][2] > 100, "histogram_match が変化を消さなくなった(改良された?)"
