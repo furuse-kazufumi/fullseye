@@ -1033,7 +1033,8 @@ def section_angle(base: dict) -> dict:
     print("  予測と実測の圧縮率の差は最大 %.3f。ただし**場面合成も同じ Fresnel を"
           "使っている**ので、これは物理の検証ではなく" % max(abs(p - m) for p, m in zip(pe, me)))
     print("     「4 乗則の線形化 (T/T_app)³ と、正規化・平滑・塊化を通しても"
-          "圧縮率が保たれる」ことの検算。本題は下の 2 行のほう。")
+          "圧縮率が保たれる」ことの検算。本題は上の**幾何は戻るが放射は"
+          "戻らない**のほう。")
 
     figs.save_plot("angle_sweep",
                    [("予測 (ε/ε_set)(T/T_app)³", xs, pe),
