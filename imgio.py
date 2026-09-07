@@ -14,6 +14,9 @@ __all__ = [
     "apply_cmap", "colorize_depth", "colorize_disparity", "colorize_labels",
     "colorize_height", "colorize_flow", "shaded_relief", "overlay_mask",
     "save", "load", "save_ply", "COLORMAPS",
+    # 2026-09-08: 疑似カラーの「種類」を増やした回(ユーザー指摘)
+    "colorize_categorical", "colorize_bivariate", "colorize_significance",
+    "NORMS", "QUALITATIVE", "PERCEPTUAL_SAFE", "CYCLIC",
 ]
 
 # A library of false-colour palettes (HDevelop-style pseudo-colour). Sequential
@@ -358,13 +361,131 @@ def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)
     return rgb
 
 
-def colorize_depth(depth, name="viridis"):
-    """Colourise a depth map; ``inf``/unknown -> black."""
-    return apply_cmap(depth, name=name)
+def colorize_depth(depth, name="viridis", **kw):
+    """Colourise a depth map; ``inf``/unknown -> black.
+
+    ★2026-09-08: ``vmin`` / ``vmax`` / ``norm`` / ``levels`` / ``under`` / ``over``
+    をそのまま :func:`apply_cmap` へ渡すようにした。それまでこの薄い包みは
+    **``name`` しか受けず**、下の層に在る値域指定と番兵色を落としていた
+    (族の中で契約が片側だけ、という形。KNOWN_ISSUES §42)。
+    """
+    return apply_cmap(depth, name=name, **kw)
 
 
-def colorize_disparity(disp, name="jet"):
-    return apply_cmap(disp, name=name)
+def colorize_disparity(disp, name="turbo", **kw):
+    """視差マップを塗る。
+
+    ★**既定を ``jet`` から ``turbo`` に変えた**(2026-09-08)。虹色という見た目は
+    現場の慣習として残しつつ、``jet`` は明度が行ったり来たりするので**無い境目を
+    作る**。CIE L* を 256 段で測った折返しの回数(増減が反転した回数):
+
+    ====================  ==========  ==================
+    マップ                折返し      刻みの変動係数
+    ====================  ==========  ==================
+    ``hsv``                        5                0.97
+    ``jet``(旧既定)              3                0.60
+    ``turbo``(新既定)            1                0.42
+    ``viridis``                    0                0.08
+    ====================  ==========  ==================
+
+    順序をいちばん正直に見せたいなら ``viridis``(``PERCEPTUAL_SAFE`` の一覧)。
+    ``name="jet"`` と明示すれば従来の色に戻せる。
+    """
+    return apply_cmap(disp, name=name, **kw)
+
+
+def colorize_categorical(labels, palette="tab10", background=(0.0, 0.0, 0.0)):
+    """ラベル(**順序の無い量**)を質的パレットで塗る。→ ``(H, W, 3)``。
+
+    :func:`colorize_labels` は乱数 RGB を割り当てるので、隣り合うラベルが似た色に
+    なることがあり、色覚特性への配慮も無い。こちらは公開されている質的パレットを
+    順に割り当てる(``QUALITATIVE`` = ``tab10`` / ``wong``)。
+
+    ★連続マップ(viridis 等)をラベルに使ってはいけない —— 番号の大小が「近さ」に
+    見え、ラベル 3 とラベル 4 が隣の領域だと**読者が誤解する**。
+
+    Args:
+        labels: 整数ラベル(0 = 背景)。
+        palette: ``QUALITATIVE`` のキー。色数を超えたラベルは循環する
+            (循環したことは戻り値からは分からないので、色数を超える数の
+            ラベルには :func:`colorize_labels` を使うほうが誠実)。
+        background: ラベル 0 の色。
+    Raises:
+        ValueError: 未知の ``palette``。
+    """
+    if palette not in QUALITATIVE:
+        raise ValueError("unknown qualitative palette %r (have %s)"
+                         % (palette, tuple(QUALITATIVE)))
+    lab = np.asarray(labels)
+    pal = np.asarray(QUALITATIVE[palette], np.float64)
+    out = np.zeros(lab.shape + (3,), np.float64)
+    out[...] = np.asarray(background, np.float64)
+    pos = lab > 0
+    if pos.any():
+        idx = (lab[pos].astype(np.int64) - 1) % len(pal)
+        out[pos] = pal[idx]
+    return out
+
+
+def colorize_bivariate(value, weight, name="viridis", vmin=None, vmax=None,
+                       wmin=None, wmax=None, floor=0.15, norm="linear"):
+    """**2 つの量を 1 枚に**塗る: 色 = ``value``、明るさ = ``weight``。
+
+    「どこがどれだけか」と「その値をどれだけ信じてよいか」は別の量なのに、
+    図では 1 枚に畳まれがちで、**疎な領域の外れ値が濃い色で目立つ**という
+    決まった嘘が出る。重み(点数・信頼度・SN 比)で明度を落とすと、
+    薄いところは薄く見える。
+
+    実例: 沈下量(``value``)× 有意性の余裕(``weight`` = |d| / LoD)。
+    光学なら位相 × 変調度、写真なら深度 × マッチングコスト。
+
+    Args:
+        value: 色にする量。
+        weight: 明るさにする量(同形)。``[wmin, wmax]`` で [0,1] に写す。
+        floor: 重み 0 のときの明るさ(0 だと真っ黒になり、形が読めない)。
+    Returns:
+        ``(H, W, 3)`` float [0,1]。
+    Raises:
+        ValueError: 形が違う。
+    """
+    v = np.asarray(value, np.float64)
+    w = np.asarray(weight, np.float64)
+    if v.shape != w.shape:
+        raise ValueError("colorize_bivariate: value %r and weight %r must have the "
+                         "same shape" % (v.shape, w.shape))
+    rgb = apply_cmap(v, name=name, vmin=vmin, vmax=vmax, norm=norm)
+    fw = np.isfinite(w)
+    k = normalize(np.where(fw, w, 0.0), wmin, wmax)
+    k = np.clip(k, 0.0, 1.0) * (1.0 - float(floor)) + float(floor)
+    k = np.where(fw, k, float(floor))
+    return np.clip(rgb * k[..., None], 0.0, 1.0)
+
+
+def colorize_significance(value, significant, name="coolwarm", vmin=None, vmax=None,
+                          norm="symmetric", dim=0.25):
+    """有意でないところを**灰色に落として**塗る。→ ``(H, W, 3)``。
+
+    「平均は -2.43 mm 沈んだ」と「有意に沈んだのは 49.9 % で、その平均は
+    -4.34 mm」は別の話で、1 枚の色地図に全部を濃く塗ると前者しか読めない
+    (``poc_settlement_significance`` の実測)。判定を通らなかったセルは彩度を
+    落とし、**在るけれど言い切れない**ことを図の上で表す。
+
+    Args:
+        significant: bool 配列(同形)。True のセルだけ元の色で塗る。
+        dim: 有意でないセルに残す彩度(0 = 完全な灰、1 = そのまま)。
+    Raises:
+        ValueError: 形が違う。
+    """
+    v = np.asarray(value, np.float64)
+    s = np.asarray(significant, bool)
+    if v.shape != s.shape:
+        raise ValueError("colorize_significance: value %r and significant %r must "
+                         "have the same shape" % (v.shape, s.shape))
+    rgb = apply_cmap(v, name=name, vmin=vmin, vmax=vmax, norm=norm)
+    gray = rgb @ np.array([0.299, 0.587, 0.114])
+    d = float(dim)
+    mixed = gray[..., None] * (1.0 - d) + rgb * d
+    return np.where(s[..., None], rgb, mixed)
 
 
 def shaded_relief(heightmap, azimuth: float = 315.0, altitude: float = 45.0, z: float = 1.0):

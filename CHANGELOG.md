@@ -9,6 +9,32 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 **索引・ヘルプに残っていた穴を全部埋めた回。** 詳細は `docs/KNOWN_ISSUES.md` §41。
 
+- ★**疑似カラーの「種類」を増やした**(ユーザー指摘「入れ方の種類が少なくないか?」)。
+  数えると palette は 16 あったが、**足りないのは枚数ではなく軸**だった:
+  - **写し方 `norm` が線形しか無かった**。`log` / `symlog` / `sqrt` / `power` /
+    `percentile` / `rank`(分位)/ `symmetric`(0 を必ず中央)を追加。実務では
+    パレットよりこちらが効く —— 外れ値 1 個で中身が潰れる例では、線形が
+    相異なる色 **10 未満**に潰れるのに対し `rank` は 100 以上を保つ。
+  - **範囲外が端の色に丸められ、正当な最小値と見分けがつかなかった**
+    (実測: `-5` も viridis の下端 `(0.267, 0.005, 0.329)`)。`under` / `over` で
+    別の色を置けるようにした(既定は従来どおり丸める)。
+  - **巡回**(位相)が `hsv` だけだったので `twilight` / `phase` を、
+    **等輝度**(陰影の上に色だけ重ねる)に `isolum` を追加(16 → 19 palette)。
+  - **質的パレット** `QUALITATIVE`(`tab10` / Wong 2011 の色覚安全 8 色)と
+    `colorize_categorical`。連続マップをラベルに使うと**番号の大小が「近さ」に
+    見える**(ラベル 3 と 4 は隣ではない)。
+  - `levels=n` で **n 段に量子化**(計測の等高線・干渉縞)。
+  - `colorize_bivariate`(色 = 値 / 明るさ = 信頼度)と `colorize_significance`
+    (有意でないセルを灰へ)を追加。**「どこがどれだけか」と「どれだけ信じてよいか」を
+    1 枚に畳むと、疎な領域の外れ値が濃い色で目立つ**という決まった嘘が出る。
+  - ★**`colorize_disparity` の既定を `jet` → `turbo`** に変えた。CIE L* を 256 段で
+    測った明度の折返し(増減が反転した回数)は jet **3** / turbo **1** / viridis **0**
+    (hsv は 5)。虹色という慣習は残しつつ、無い境目を作るのをやめる。
+    `name="jet"` と明示すれば従来の色に戻る。
+  - ★`colorize_depth` / `colorize_disparity` は **`name` しか受け取らず**、下の層に
+    在る `vmin` / `vmax` / `invalid` を落としていた(族の中で契約が片側だけ)。
+    `**kw` で素通しにした。
+
 - ★**`gcc_delay` を追加(357 op)**。1-D の相互相関 / GCC / 到達時間差の口が
   **どの層にも無く**、2 本の PoC が 3-D の `correlation_score` を `(1,1,N)` に
   reshape して使っていた。重み none / phat / roth / scot、帯域制限、サブ標本補間。

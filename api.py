@@ -294,6 +294,8 @@ from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
     colorize_labels, colorize_height, colorize_flow, shaded_relief, overlay_mask,
     save, load, save_ply, COLORMAPS,
+    colorize_categorical, colorize_bivariate, colorize_significance,
+    NORMS, QUALITATIVE, PERCEPTUAL_SAFE, CYCLIC,
 )
 from detect import segment_objects, object_descriptor, nearest_prototype, draw_objects  # noqa: E402,F401
 from synth import (  # noqa: E402,F401
@@ -705,6 +707,8 @@ __all__ = [
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
     "colorize_disparity", "colorize_labels", "colorize_height", "colorize_flow",
     "shaded_relief", "overlay_mask", "save", "load", "save_ply", "COLORMAPS",
+    "colorize_categorical", "colorize_bivariate", "colorize_significance",
+    "NORMS", "QUALITATIVE", "PERCEPTUAL_SAFE", "CYCLIC",
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
     "registration", "kabsch", "icp", "point_to_plane_icp", "apply_transform",
     "pca_align", "register", "feature_register",
