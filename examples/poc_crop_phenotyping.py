@@ -1250,6 +1250,12 @@ def main() -> int:
     assert ang["k_naive"] > ang["k_pts"], "推定法線に面積加重を掛けると崩れる"
     assert 0.02 < abs(ang["k_ref"] - k_true) / k_true < 0.15, "真の法線でも最上面からは復元しきれない"
     assert ang["turbid"] > ang["cov"], "一様媒質モデルは受光を過大評価する"
+    assert zero["lai_kt"][0] / zero["lai_true"][0] > 0.95, "薄い群落では当たる"
+    assert all(abs(a) > abs(b) for a, b in zip(cap["area_sdf"], cap["area_sdf"][1:])), \
+        "距離場のままなら単調に収束する"
+    assert max(map(abs, cap["area_bin"])) > 3.0 * abs(cap["area_sdf"][-1]), \
+        "2 値化を挟むと収束しない"
+    assert vol["slope_med"] > 20.0, "草冠面は平らではない"
     assert abs(sw["errs"][0] - sw["errs"][-1]) < 8.0, "葉角を振っても誤差はほぼ動かない"
 
     if figs.errors():
