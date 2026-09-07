@@ -987,6 +987,10 @@ def main() -> int:
         pipe["fi_matched"], pipe["fi_false"])
     assert grade(pipe["iso_rate"]) == grade(sc["iso_rate"])
     assert max(abs(v) for v in vg["e_fit"]) < 0.3, vg["e_fit"]
+    assert gr["onset"] is not None and gr["onset"] <= 0.32, gr["onset"]
+    assert gr["fi_drop"] is not None and 0.18 <= gr["fi_drop"] <= 0.32, gr["fi_drop"]
+    assert wd["cliff"] is not None and abs(wd["cliff"] - wd["w_pred"]) <= 0.3, (wd["cliff"], wd["w_pred"])
+    assert sn["k_fail"] is not None and sn["k_fail"] <= 200, sn["k_fail"]
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():

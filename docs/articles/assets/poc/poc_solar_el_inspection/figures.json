@@ -1,0 +1,64 @@
+[
+ {
+  "file": "01_zero_point_map.png",
+  "name": "zero_point_map",
+  "caption": "単位は % of セル面積。暗画素の 6 割はフィンガーとバスバー。",
+  "shape": [
+   493,
+   1240,
+   3
+  ]
+ },
+ {
+  "file": "02_by_type.png",
+  "name": "by_type",
+  "caption": "",
+  "shape": [
+   200,
+   334,
+   3
+  ],
+  "csv": "02_by_type.csv",
+  "tsv": "02_by_type.tsv"
+ },
+ {
+  "file": "03_scene_map.png",
+  "name": "scene_map",
+  "caption": "孤立領域 2 つ・クラック 5 本・断線 8 本。相対明るさは 1.25 で割って [0,1] に収めてある。",
+  "shape": [
+   935,
+   1240,
+   3
+  ]
+ },
+ {
+  "file": "04_frangi_norm.png",
+  "name": "frangi_norm",
+  "caption": "",
+  "shape": [
+   935,
+   830,
+   3
+  ]
+ },
+ {
+  "file": "05_grain_contrast.png",
+  "name": "grain_contrast",
+  "caption": "面積率は c=0.60 でも 3 ポイント以内。壊れ方は 3 種で別々。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_crack_width.png",
+  "name": "crack_width",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
