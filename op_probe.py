@@ -296,6 +296,17 @@ def sample_input(sort: str, rng=None, structured: bool = False):
         return structured_points()
     if structured and sort == "signal":
         return structured_signal()
+    if structured:
+        # 2026-09-08 追加分。形は chain_fuzz の生成器と同じにしてある
+        # (揃えないと「探針を足したら形が変わって落ちた」が起きる)。
+        extra = {
+            "video": structured_video, "qimage": structured_qimage,
+            "cimage": structured_cimage, "lightfield": structured_lightfield,
+            "beatcube": structured_beatcube, "counts": structured_counts,
+            "keypoints": structured_keypoints, "matrix": structured_matrix,
+        }
+        if sort in extra:
+            return extra[sort]()
     key = SORT_TO_GENERATOR.get(sort)
     return None if key is None else _generators()[key](rng)
 
