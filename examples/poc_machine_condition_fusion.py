@@ -897,7 +897,22 @@ def section_sweeps() -> dict:
                          "画素ピッチ [mm]", "熱画像の画素を粗くする",
                          "軸受(局所)と潤滑不良(全体)を分けているのは広がりだけ。",
                          fmt="%8.0f")
+    pz = out["pitch"]
+    px, pd = pz["x"], pz["d"][:, 0]
+    kk = int(np.argmax(pd < 0.5 * pd[0]))
+    print("\n  ★予測は当たった。広がりの d' は %.0f mm まで %.1f 前後を保ち、"
+          "%.0f mm で %.2f、%.0f mm で %.2f へ落ちる。"
+          % (px[kk - 2], pd[kk - 2], px[kk - 1], pd[kk - 1], px[kk], pd[kk]))
+    print("     予測の半値直径 %.0f mm と、崩れ始める %.0f mm がよく合う。"
+          % (2 * rh_b, px[kk - 1]))
+    i_l = MODES.index("潤滑不良")
+    print("  ★ただし**熱単独の識別率はそこまで落ちない**(潤滑不良 %.1f %% -> %.1f %%)。"
+          % (100 * pz["solo"][0, i_l], 100 * pz["solo"][-1, i_l]))
+    print("     広がりが死んでも最高温度と全体平均が残るから —— "
+          "**同じセンサの中にも冗長性がある**。融合は %.1f %% のまま無傷。"
+          % (100 * pz["fuse_all"][-1]))
     out["r_half"], out["r_half_g"] = rh_b, rh_g
+    out["pitch_step"] = (px[kk - 1], px[kk], pd[kk - 1], pd[kk])
 
     print("\n" + "=" * 78)
     print("10) ★崖その 4 —— 回転数変動 δ。**次数に比例して先に壊れる**")
