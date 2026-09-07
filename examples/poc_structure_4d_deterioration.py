@@ -328,8 +328,9 @@ def observe(k: int, rng, density: float | None = None, deteriorate=True,
         u = v / rr[:, None]
         ci = np.einsum("ij,ij->i", n, u)
         ok = ci > COS_MIN
-        eps = p + 1e-3 * n
-        ok &= ~_seg_hits_box(eps, np.broadcast_to(sp, p.shape), *SELF_BOX)
+        eps = p + 2e-3 * n
+        ok &= ~_seg_hits_box(decamber(eps), decamber(np.broadcast_to(sp, p.shape)),
+                             *SELF_BOX)
         if blocker:
             ok &= ~_seg_hits_box(eps, np.broadcast_to(sp, p.shape), *blo)
         q = np.where(ok, ci / (rr ** 2), -1.0)

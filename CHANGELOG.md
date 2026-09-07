@@ -48,6 +48,19 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   欠陥が消える」)。穴は §41.12 —— **台帳アダプタが複数戻り値を切り落とす**同型の
   バグが `gicp` / `grid_coords` / `voxel_to_mesh` の 3 か所、軸順の規約が点
   `(x,y,z)` とボリューム `(depth,row,col)` で割れている件を含む。
+- **torch が要らないのに必須だった 5 op を numpy / scipy に戻した**:
+  `icp_point2point_3d` / `icp_point2plane` / `register_fpfh` / `match_phase_3d` /
+  `polar_unwrap`(+ `cylinder_unwrap`)。中身は最近傍探索・小さい線形代数・FFT・
+  双線形補間で GPU の仕事が無く、`register_fpfh` は**返り値を包むためだけ**に torch を
+  掴んでいた。torch を入れない環境(CI の py3.10 / 3.12)でこれらが丸ごと
+  `ImportError` になり、PoC 4 本が落ちていた。返り値の型は互換のため据え置き
+  (torch があれば `torch.Tensor`、無ければ同じ値の numpy)。torch 版との差は
+  R/t が 0、RMSE が 0、双線形が 6.0e-06 / 7.6e-06(float32 の丸めぶん)。
+  手元で再現するには `tools/run_without_torch.py <script>`。
+- ★**PoC の門が合否を計算した直後に捨てていたのを直した**。「exit 0 だが PASS を
+  印字していない」を判定しておきながら 0 を返しており、`assert code == 0` を必ず
+  素通りしていた。この穴に落ちていた PoC が 3 本(`poc_dic_strain` /
+  `poc_photoelasticity` / `poc_thermography_ndt`。assert ゼロ・PASS 行なし)。
 - **3-D op を 7 本追加(347 → 354)。すべて PoC が「無い」と報告した口**:
   - `plane_sdf` / `cylinder_sdf` / `torus_sdf` / `capsule_sdf` —— プリミティブが球と
     直方体しか無く、**機械部品の円筒穴・面取り・フィレットが CSG で組めなかった**
