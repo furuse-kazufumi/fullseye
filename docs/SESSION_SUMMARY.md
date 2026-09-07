@@ -3,51 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 20:37:14
+- **最終更新**: 2026-09-07 22:34:35
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-b116ec4d1 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:34)
-820bba1b4 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:30)
-31d850729 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:28)
-d85be541c auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:28)
-f3f492636 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:27)
-dc66feae5 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:27)
-574064bd4 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:27)
-9b50b746a auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:27)
-cbac6d3ff auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:26)
-0895977e8 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 20:26)
+e11dae62b auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 22:34)
+e603cd51d auto: poc_dic_strain.py 編集前 (2026-09-07 22:34)
+ba227d289 auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 22:34)
+8612c4db2 auto: poc_dic_strain.py 編集前 (2026-09-07 22:34)
+64840f496 auto: poc_dic_strain.py 編集前 (2026-09-07 22:33)
+f8c964b95 auto: poc_ct_void_morphology.py 編集前 (2026-09-07 22:33)
+3c4ba8b92 auto: poc_ct_void_morphology.py 編集前 (2026-09-07 22:33)
+635f1728b auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 22:33)
+afcebde70 auto: poc_battery_ct_degradation.py 編集前 (2026-09-07 22:32)
+8822b3d83 auto: poc_battery_ct_degradation.py 編集前 (2026-09-07 22:32)
 ```
 
 ## 現在の git status
 
 ```
-M docs/articles/exhibits/poc_captions.json
- M examples/poc_cad_scan_deviation.py
- M examples2d.py
+M examples/poc_structure_4d_deterioration.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:37 examples2d.py
-20:37 docs/articles/exhibits/poc_captions.json
-20:36 docs/articles/assets/poc/poc_cad_scan_deviation/figures.json
-20:36 docs/articles/assets/poc/poc_cad_scan_deviation/13_controls.tsv
-20:36 docs/articles/assets/poc/poc_cad_scan_deviation/13_controls.csv
-20:36 docs/articles/assets/poc/poc_cad_scan_deviation/13_controls.png
-20:36 docs/articles/assets/poc/poc_cad_scan_deviation/12_basin.png
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/11_warp_maps.png
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/10_warp_false_dent.png
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/09_defect_pull.png
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/08_dent_area.png
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/07_scan_density.png
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/06_density_bias_table.tsv
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/06_density_bias_table.png
-20:35 docs/articles/assets/poc/poc_cad_scan_deviation/06_density_bias_table.csv
+22:34 examples/poc_structure_4d_deterioration.py
+22:34 examples/poc_dic_strain.py
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/figures.json
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/09_voxel_cliff_table.tsv
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/09_voxel_cliff_table.csv
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/09_voxel_cliff_table.png
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/08_voxel_cliff_shape.png
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/07_voxel_cliff_fraction.png
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/06_proxy_table.tsv
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/06_proxy_table.csv
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/06_proxy_table.png
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/05_controls_section.png
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/04_controls_map.png
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/03_controls_table.tsv
+22:34 docs/articles/assets/poc/poc_ct_void_morphology/03_controls_table.png
 ```
 
 ---

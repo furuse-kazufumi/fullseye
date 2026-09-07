@@ -983,7 +983,7 @@ def section_cliff(zero: dict, sc: dict) -> dict:
     # --- 密度の崖 ---------------------------------------------------------- #
     print("\n   点密度の崖(劣化ゼロ・姿勢誤差ゼロの対照で測る):")
     print("     密度[pt/m2]  点間隔[mm]  予測 C2C[mm]  実測 C2C[mm]   比    "
-          "法線方向 RMS[mm]  有効 core %")
+          "法線方向 RMS[mm]   測れた core %")
     dl, sp_l, pc_l, mc_l, mn_l = [], [], [], [], []
     for rho in (300.0, 600.0, 1200.0, 2400.0):
         ra = np.random.default_rng(SEED + 401)
@@ -994,16 +994,17 @@ def section_cliff(zero: dict, sc: dict) -> dict:
         ce, no, okk = core_normals(a)
         ln, _, _ = measure_normal(a, b, ce, no, okk)
         cc = measure_c2c(a, b, ce)
-        g = np.isfinite(ln) & np.isfinite(cc) & ~CORES["edge"]
+        fin = np.isfinite(ln) & np.isfinite(cc)
+        g = fin & ~CORES["edge"]
         pred = 1e3 * 0.5 / math.sqrt(rho)
         dl.append(rho)
         sp_l.append(1e3 / math.sqrt(rho))
         pc_l.append(pred)
         mc_l.append(float(np.median(cc[g])))
         mn_l.append(float(np.sqrt(np.mean(ln[g] ** 2))))
-        print("     %10.0f %11.2f %13.2f %13.2f %7.3f %16.3f %11.1f"
+        print("     %10.0f %11.2f %13.2f %13.2f %7.3f %16.3f %13.1f"
               % (rho, sp_l[-1], pred, mc_l[-1], mc_l[-1] / pred, mn_l[-1],
-                 100 * g.mean()))
+                 100 * fin.mean()))
     print("  ★C2C の偽の劣化は**点間隔でほぼ決まる**(予測 0.5/√ρ との比 %.3f 〜 %.3f)。"
           % (min(m / p for m, p in zip(mc_l, pc_l)),
              max(m / p for m, p in zip(mc_l, pc_l))))
