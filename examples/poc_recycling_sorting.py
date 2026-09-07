@@ -477,20 +477,30 @@ def section_sweep(pair) -> dict:
     print("\n" + "=" * 78)
     print("2-4) 崖 —— 要因を 1 つずつ掃引する(★予測を先に書く)")
     print("=" * 78)
-    print("  予測(代数から):")
+    # ★掃引の**前に**、代数から予測を立てて印字する。
+    sig_mat = float(np.mean([w for n in FRAG_NAMES for _c, _d, w in MATERIALS[n][1]
+                             if n != "金属"]))
+    sig_water = 70.0
+    supp = (sig_mat / sig_water) ** 2
+    print("  予測(代数から。掃引の前に書く):")
     print("    s(λ) = g·R(λ)·exp(-w·A_w(λ)) + (a·u(λ)+c)")
-    print("    * SAM は方向しか見ないので **g に不変** -> 乗算汚れ・傾きでは落ちない")
-    print("    * 2 階微分は 1 次式 a·u+c を消すので **加算に不変** -> 生 SAM だけ落ちる")
-    print("    * 濡れは波長に依存する乗算なので **方向にも 2 階微分にも残る**"
+    print("    P1 SAM は方向しか見ないので **g に不変** -> 乗算汚れ・傾きでは"
+          "分類は落ちない")
+    print("    P2 2 階微分は 1 次式 a·u+c を消すので **加算に不変** -> 生 SAM だけ落ちる")
+    print("    P3 濡れは波長に依存する乗算なので **方向にも 2 階微分にも残る**"
           " -> どれも落ちる")
-    print("    * 重なりは分光を壊さない(見えないだけ) -> 可視画素の再現率は落ちない")
+    print("    P4 連続体除去(上側凸包で割る)はなだらかな加算を吸うはず")
+    print("    P5 重なりは分光を壊さない(見えないだけ) -> 可視画素の再現率は落ちない")
 
     base = make_geometry()
-    out = {}
-    print("\n  要因                 水準   %s" % "  ".join(
-        "%-8s" % l[:8] for _, l in METHODS[:4]))
+    out, out_det, hidden = {}, {}, {}
+    head = "  ".join("%-9s" % l.split(":")[0][:9] for _, l in SWEEP_METHODS)
+    print("\n  ※ 値は**検出できた画素だけ**の材質別再現率(不変性はここで測る)")
+    print("  要因                 水準   %s" % head)
     for key, label, _unit, gain in FACTORS:
-        curves = {m: [] for m, _ in METHODS[:4]}
+        curves = {m: [] for m, _ in SWEEP_METHODS}
+        curves_all = {m: [] for m, _ in SWEEP_METHODS}
+        hid = []
         for lv in LEVELS:
             if key == "overlap":
                 geo = make_geometry(n_frag=int(round(N_FRAG * (0.2 + gain * lv))))
@@ -499,57 +509,84 @@ def section_sweep(pair) -> dict:
                 geo = base
                 cube = degrade(geo, **{key: float(lv * gain)})
             det = detected(cube)
-            for m, _ in METHODS[:4]:
-                curves[m].append(score(geo, classify(cube, m, pair), det)["macro"])
-        out[key] = curves
+            hid.append(100 * (1 - geo["visible"][1:].sum() / geo["total"][1:].sum()))
+            for m, _ in SWEEP_METHODS:
+                s = score(geo, classify(cube, m, pair), det)
+                curves[m].append(s["macro_det"])
+                curves_all[m].append(s["macro"])
+        out[key], out_det[key], hidden[key] = curves_all, curves, hid
         for i, lv in enumerate(LEVELS):
             print("   %-20s %4.2f   %s" % (label if i == 0 else "", lv,
-                  "  ".join("%8.3f" % curves[m][i] for m, _ in METHODS[:4])))
+                  "  ".join("%9.3f" % curves[m][i] for m, _ in SWEEP_METHODS)))
 
-    print("\n  ★崖(材質別再現率の平均が 0.90 を割る最初の水準):")
+    print("\n  ★崖(検出画素の材質別再現率が 0.90 を割る最初の水準):")
     for key, label, _u, _g in FACTORS:
-        for m, mlabel in METHODS[1:4]:
-            c = out[key][m]
+        line = []
+        for m, mlabel in SWEEP_METHODS:
+            c = out_det[key][m]
             hit = [LEVELS[i] for i in range(len(LEVELS)) if c[i] < 0.90]
-            where = "%.1f" % hit[0] if hit else "折れない"
-            print("    %-22s %-18s %s (最終 %.3f)" % (label, mlabel, where, c[-1]))
+            line.append("%s %s" % (mlabel.split(":")[0][:9],
+                                   "%.1f" % hit[0] if hit else "-"))
+        print("    %-22s %s" % (label, " | ".join(line)))
 
     print("\n  ★予測との突き合わせ:")
-    print("    乗算汚れ: 生 SAM %.3f -> %.3f、2 次微分 %.3f -> %.3f  (予測=不変)"
-          % (out["dirt_mul"]["sam"][0], out["dirt_mul"]["sam"][-1],
-             out["dirt_mul"]["d2"][0], out["dirt_mul"]["d2"][-1]))
-    print("    傾き    : 生 SAM %.3f -> %.3f、2 次微分 %.3f -> %.3f  (予測=不変)"
-          % (out["tilt"]["sam"][0], out["tilt"]["sam"][-1],
-             out["tilt"]["d2"][0], out["tilt"]["d2"][-1]))
-    print("    加算汚れ: 生 SAM %.3f -> %.3f、2 次微分 %.3f -> %.3f  (予測=微分だけ不変)"
-          % (out["dirt_add"]["sam"][0], out["dirt_add"]["sam"][-1],
-             out["dirt_add"]["d2"][0], out["dirt_add"]["d2"][-1]))
-    print("    濡れ    : 生 SAM %.3f -> %.3f、2 次微分 %.3f -> %.3f  (予測=どちらも落ちる)"
-          % (out["wet"]["sam"][0], out["wet"]["sam"][-1],
-             out["wet"]["d2"][0], out["wet"]["d2"][-1]))
-    print("    ★外れた: 連続体除去は加算に強いと踏んだが、加算 0.6 で %.3f —— "
-          "生 SAM(%.3f)より**悪い**。" % (out["dirt_add"]["cr"][-1],
-                                          out["dirt_add"]["sam"][-1]))
-    print("      凸包はベースラインの**傾き**は吸うが、加算された定数は"
-          "吸収の谷を浅くするので、\n      材質を分けている形そのものが潰れる。")
+    print("    P1 乗算汚れ: 生 SAM %.3f -> %.3f、2 次微分 %.3f -> %.3f  **当たり**"
+          % (out_det["dirt_mul"]["sam"][0], out_det["dirt_mul"]["sam"][-1],
+             out_det["dirt_mul"]["d2"][0], out_det["dirt_mul"]["d2"][-1]))
+    print("       ただし**検出まで入れると** 生 SAM は %.3f -> %.3f。"
+          "落ちたのは分類ではなく検出\n       (暗くなった破片がベルトに沈む)。"
+          % (out["dirt_mul"]["sam"][0], out["dirt_mul"]["sam"][-1]))
+    print("    P1 傾き    : 生 SAM %.3f -> %.3f  **当たり**(cos は乗算だから)"
+          % (out_det["tilt"]["sam"][0], out_det["tilt"]["sam"][-1]))
+    print("    P2 加算汚れ: 生 SAM %.3f -> %.3f、2 次微分 %.3f -> %.3f  **当たり**"
+          % (out_det["dirt_add"]["sam"][0], out_det["dirt_add"]["sam"][-1],
+             out_det["dirt_add"]["d2"][0], out_det["dirt_add"]["d2"][-1]))
+    print("    ★P3 濡れ: **外れた**。生 SAM %.3f -> %.3f、連続体除去 %.3f -> %.3f は"
+          "予測どおり壊滅\n       するのに、2 次微分は %.3f -> %.3f でほとんど耐える。"
+          % (out_det["wet"]["sam"][0], out_det["wet"]["sam"][-1],
+             out_det["wet"]["cr"][0], out_det["wet"]["cr"][-1],
+             out_det["wet"]["d2"][0], out_det["wet"]["d2"][-1]))
+    print("       理由も代数だった: 2 階微分はガウス帯の深さを 1/σ² で重みづける。"
+          "\n       水の帯 σ≈%.0f nm に対し材質の帯は σ≈%.0f nm なので、"
+          "水は **(%.0f/%.0f)² = %.2f 倍**に潰れる。"
+          % (sig_water, sig_mat, sig_mat, sig_water, supp))
+    print("       水帯を捨てる手はそれでも効く: %.3f -> %.3f。"
+          % (out_det["wet"]["d2"][-1], out_det["wet"]["d2w"][-1]))
+    print("    ★P4 連続体除去: **半分外れ**。加算が弱いうちは生 SAM より強い"
+          "(0.4 で %.3f 対 %.3f)が、\n       0.6 を超えると逆転して %.3f 対 %.3f。"
+          "凸包は傾きは吸うが、加算された定数は\n       吸収の谷を浅くするので、"
+          "材質を分けている形そのものが潰れる。"
+          % (out_det["dirt_add"]["cr"][2], out_det["dirt_add"]["sam"][2],
+             out_det["dirt_add"]["cr"][-1], out_det["dirt_add"]["sam"][-1]))
+    print("    P5 重なり  : 被覆 %.1f -> %.1f %% に対して生 SAM %.3f -> %.3f  "
+          "**当たり**\n       (隠れた画素は推定にも真値にも出ないので、"
+          "効くのは正解率ではなく**組成**)。"
+          % (hidden["overlap"][0], hidden["overlap"][-1],
+             out_det["overlap"]["sam"][0], out_det["overlap"]["sam"][-1]))
 
     figs.save_plot(
         "sweep_raw_sam",
-        [(l, LEVELS, out[k]["sam"]) for k, l, _u, _g in FACTORS],
-        xlabel="要因の強さ(正規化)[-]", ylabel="材質別再現率の平均 [-]",
+        [(l, LEVELS, out_det[k]["sam"]) for k, l, _u, _g in FACTORS],
+        xlabel="要因の強さ(正規化)[-]", ylabel="検出画素の材質別再現率 [-]",
         title="生 SAM: 単独で掃引したときの崖", ylim=(0.0, 1.05),
-        caption="乗算汚れ・傾き・重なりは重ならない(SAM は明るさに不変)。")
+        caption="乗算汚れ・傾き・重なりは平ら(SAM は明るさに不変)。落ちるのは濡れと加算。")
     figs.save_plot(
         "sweep_methods_add",
-        [(m, LEVELS, out["dirt_add"][k]) for k, m in METHODS[:4]],
-        xlabel="加算ベースラインの強さ [-]", ylabel="材質別再現率の平均 [-]",
+        [(m.split(":")[0], LEVELS, out_det["dirt_add"][k]) for k, m in SWEEP_METHODS],
+        xlabel="加算ベースラインの強さ [-]", ylabel="検出画素の材質別再現率 [-]",
         title="加算的な汚れ: 2 次微分だけが平ら", ylim=(0.0, 1.05))
     figs.save_plot(
         "sweep_methods_wet",
-        [(m, LEVELS, out["wet"][k]) for k, m in METHODS[:4]],
-        xlabel="水の深さ [-]", ylabel="材質別再現率の平均 [-]",
-        title="濡れ: どの前処理でも消えない", ylim=(0.0, 1.05))
-    return out
+        [(m.split(":")[0], LEVELS, out_det["wet"][k]) for k, m in SWEEP_METHODS],
+        xlabel="水の深さ [-]", ylabel="検出画素の材質別再現率 [-]",
+        title="濡れ: ★予測が外れた —— 2 次微分は水の広い帯を潰す", ylim=(0.0, 1.05))
+    figs.save_plot(
+        "sweep_detection",
+        [("分類だけ(検出画素)", LEVELS, out_det["dirt_mul"]["sam"]),
+         ("検出も入れる", LEVELS, out["dirt_mul"]["sam"])],
+        xlabel="乗算的な汚れの強さ [-]", ylabel="材質別再現率 [-]",
+        title="乗算汚れが壊すのは分類ではなく**検出**", ylim=(0.0, 1.05))
+    return {"all": out, "det": out_det, "hidden": hidden, "supp": supp}
 
 
 # --------------------------------------------------------------------------- #
