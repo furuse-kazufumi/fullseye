@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 13:29:07
+- **最終更新**: 2026-09-07 13:29:52
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+37503e5a5 auto: poc_river_surface_velocity.py 編集前 (2026-09-07 13:29)
 9d46e7b33 auto: poc_river_surface_velocity.py 編集前 (2026-09-07 13:24)
 e6b337513 auto: poc_river_surface_velocity.py 編集前 (2026-09-07 13:24)
 c9090a6fb auto: poc_mri_bias_field.py 編集前 (2026-09-07 13:03)
@@ -19,7 +20,6 @@ c9090a6fb auto: poc_mri_bias_field.py 編集前 (2026-09-07 13:03)
 bafa4e07e tests: packaging 検査を 3.10 でも動く形に(tomllib 不要)、__pycache__ を資産に数えない
 5ec15bc46 auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:13)
 1f4a0e3ac auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:13)
-364f8b6fe auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:12)
 ```
 
 ## 現在の git status
@@ -32,7 +32,7 @@ M examples/poc_river_surface_velocity.py
 
 ```
 13:29 examples/poc_river_surface_velocity.py
-13:19 docs/SESSION_SUMMARY.md
+13:29 docs/SESSION_SUMMARY.md
 13:14 examples2d.py
 13:14 docs/articles/exhibits/poc_captions.json
 13:13 .pytest_cache/v/cache/nodeids

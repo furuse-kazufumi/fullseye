@@ -513,8 +513,7 @@ def section_controls():
 # 5. 崖 (a) トレーサ密度                                                          #
 # --------------------------------------------------------------------------- #
 def section_density():
-    print("
-" + "=" * 78)
+    print("\n" + "=" * 78)
     print("4) 崖 (a) トレーサ密度 0.05 → 2 % —— 欠測は種類ごとに数える")
     print("=" * 78)
     dens = [0.0005, 0.001, 0.002, 0.005, 0.01, 0.02]
@@ -558,16 +557,19 @@ def section_density():
 # 6. 崖 (b) 問い合わせ窓 —— 岸の勾配がなまる                                        #
 # --------------------------------------------------------------------------- #
 def section_window():
-    print("\n" + "=" * 78)
+    print("
+" + "=" * 78)
     print("5) 崖 (b) 窓 16 → 64 px —— 岸の勾配がなまる量を窓平均で予測する")
     print("=" * 78)
     sc = build_frames(density=0.02, n_frames=11, refl_c=0, wave_amp=0, noise=0.0)
     pairs = [(k, k + 1) for k in range(10)]
     rows = []
+    print("  窓 [px]  岸 1 m 以内の偏り 実測 / 窓平均の予測 [m/s]  岸に最も近い行 実測 / 予測 [m/s]  "
+          "「窓幅×勾配」 [m/s]  未測定の岸帯 [m]  流量 実測 / 積分則だけ [%]")
     for w in (16, 24, 32, 48, 64):
         flow, info, _, _ = piv_pairs(sc["ortho"], pairs, window=w)
         y, u = profile_from_flow(flow, info)
-        # 予測:窓の中の真値の平均 − 中心の真値(窓関数 Hann の重みで)
+        # 予測:窓の中の真値の Hann 重み平均 − 中心の真値
         pred = np.empty_like(y)
         grad1 = np.empty_like(y)
         hann = np.hanning(w + 2)[1:-1]
@@ -577,15 +579,27 @@ def section_window():
             grad1[i] = (profile(yc + S_PX) - profile(yc - S_PX)) / (2 * S_PX) * w * S_PX
         bank = ((y < 1.0) | (y > B_WIDTH - 1.0)) & np.isfinite(u)
         meas = u - profile(y)
-        b_meas = float(np.mean(meas[bank]))
-        b_pred = float(np.mean(pred[bank]))
-        rho = float(np.corrcoef(meas[bank], pred[bank])[0, 1]) if bank.sum() > 2 else np.nan
-        rows.append((w, b_meas, b_pred, rho, float(np.mean(np.abs(grad1[bank])))))
-        print("  窓 %2d px:岸 1 m 以内の偏り 実測 %+.3f / 窓平均の予測 %+.3f m/s(相関 %.3f)"
-              "、「窓幅×勾配」の 1 次量 %.3f m/s" % (w, b_meas, b_pred, rho, rows[-1][4]))
-    print("  1 次項は窓の左右で打ち消し、残るのは 2 次項(窓² × 曲率 / 24)。")
-    assert rows[-1][1] < rows[0][1] < 0.0, "窓を広げるほど岸で遅く出る"
-    assert abs(rows[-1][1] - rows[-1][2]) < 0.02
+        b_meas, b_pred = float(np.mean(meas[bank])), float(np.mean(pred[bank]))
+        first = float(np.mean([meas[0], meas[-1]])) if np.isfinite(meas[0]) and np.isfinite(meas[-1]) else np.nan
+        first_p = float(np.mean([pred[0], pred[-1]]))
+        strip = float(y[0])
+        q = discharge(y, u)
+        q_rule = discharge(y, profile(y))
+        rows.append((w, b_meas, b_pred, first, first_p, float(np.mean(np.abs(grad1[bank]))), strip,
+                     100 * (q / Q_TRUE - 1), 100 * (q_rule / Q_TRUE - 1)))
+        print("  %5d   %+21.3f / %+.3f   %+22.3f / %+.3f   %14.3f   %12.2f   %+9.1f / %+.1f"
+              % (w, b_meas, b_pred, first, first_p, rows[-1][5], strip, rows[-1][7], rows[-1][8]))
+    print("  ★予想は「偏り ≈ 窓幅 × 勾配」(%.2f〜%.2f m/s)だったが、実測は %.3f〜%.3f m/s と桁で小さい。"
+          % (rows[0][5], rows[-1][5], min(r[1] for r in rows[1:]), max(r[1] for r in rows[1:])))
+    print("  1 次項は窓の左右で打ち消し、残るのは 2 次項(窓² × 曲率 / 24、Hann で更に 0.4 倍)。")
+    print("  窓 16 px の実測 %+.3f が予測 %+.3f から外れるのは粒子 %.0f 個/窓の散らばりで、なまりではない。"
+          % (rows[0][1], rows[0][2], 0.02 * 16 * 16))
+    print("  ★窓の崖は速度ではなく**流量**に出る:窓 w の 1 行目は岸から w/2 px で、その帯を岸 0 との台形で")
+    print("    埋めるので、積分則だけの誤差が %+.1f → %+.1f %% と窓に比例して増える。" % (rows[0][8], rows[-1][8]))
+    for r in rows[1:]:
+        assert abs(r[1] - r[2]) < 0.02, r
+        assert abs(r[1]) < 0.1 * r[5], "窓幅×勾配より桁で小さい"
+    assert rows[-1][8] < rows[0][8] - 2.0
     return rows
 
 
@@ -710,9 +724,15 @@ def section_figures(sc, zp, rc, ctrl, dens, wins, refl, dts):
     figs.save_plot("window_bank_bias",
                    [("実測(岸 1 m 以内)", w, np.array([r[1] for r in wins])),
                     ("窓平均の予測", w, np.array([r[2] for r in wins])),
+                    ("予想していた「窓幅×勾配」(符号は負)", w, -np.array([r[5] for r in wins])),
                     ("誤差ゼロ", w, np.zeros_like(w, float))],
                    xlabel="問い合わせ窓 [px]", ylabel="岸 1 m 以内の速度の偏り [m/s]",
-                   title="窓を広げると岸の勾配がなまる(2 次項)")
+                   title="窓を広げても岸の速度は桁でなまらない(1 次項は打ち消す)")
+    figs.save_plot("window_discharge",
+                   [("流量の誤差(実測)", w, np.array([r[7] for r in wins])),
+                    ("積分則だけの誤差", w, np.array([r[8] for r in wins]))],
+                   xlabel="問い合わせ窓 [px]", ylabel="流量の誤差 [%]",
+                   title="窓の崖は流量に出る(岸の未測定帯 = w/2)")
     c = np.array([r[0] for r in refl])
     figs.save_plot("reflection_cliff",
                    [("生", c, np.array([r[1] for r in refl])),
