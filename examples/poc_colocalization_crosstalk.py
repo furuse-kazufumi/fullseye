@@ -500,7 +500,7 @@ def section_psf_sweep() -> dict:
         print("    %.1f     %+.3f  %.3f        %.3f              %+.3f   %.3f      %+.3f" % (
             sg, m0["r"], m0["m1"], frac_b, m5["r"], m5["m1"], mn["r"]))
     cc = float(np.corrcoef(m1_0, m1_pred)[0, 1])
-    print("\n  ★r は動かない(0 %: %+.3f → %+.3f)。M1 は %.3f → %.3f —— 「近接」が Otsu の"
+    print("\n  ★r は動かない(0 %%: %+.3f → %+.3f)。M1 は %.3f → %.3f —— 「近接」が Otsu の"
           "\n   領域の重なりに化ける。予想(B 領域の面積率)との相関 %.3f。"
           % (r0[0], r0[-1], m1_0[0], m1_0[-1], cc))
     figs.save_plot("psf_sweep",
