@@ -643,7 +643,11 @@ def section_normals(ref: CadRef) -> dict:
     rng = np.random.default_rng(4)
     idx = rng.choice(len(ref.pts), 12000, replace=False)
     P, Ntrue, cc = ref.pts[idx], ref.nrm[idx], ref.concave[idx]
+    face = ref.face[idx]
     pred = float(np.mean(cc))
+    print("   予想: 反転するのは凹面(穴 2 本 + フィレット)だけ = 面積比 %.1f %%。"
+          % (100 * pred))
+    res = {}
     for name, fn in (("estimate_normals(k=25)", lambda p: _L.estimate_normals(p, k=25)),
                      ("estimate_oriented_normals(k=20)",
                       lambda p: _L.estimate_oriented_normals(p, k=20))):
@@ -651,15 +655,28 @@ def section_normals(ref: CadRef) -> dict:
         dot = np.einsum("ij,ij->i", Ne, Ntrue)
         flip = dot < 0
         ang = np.degrees(np.arccos(np.clip(np.abs(dot), 0, 1)))
-        print("   %-32s 反転 %5.1f %%(うち凹面 %5.1f %%) / 軸のずれ 中央値 %.2f 度"
-              % (name, 100 * flip.mean(),
-                 100 * (flip & cc).sum() / max(1, flip.sum()), np.median(ang)))
-        if "oriented" in name:
-            flip_or = float(flip.mean())
-        else:
-            flip_en = float(flip.mean())
-    print("   予測(凹面の面積比 = 穴 2 本 + フィレット) %.1f %% / "
-          "estimate_normals の実測 %.1f %%" % (100 * pred, 100 * flip_en))
+        print("   %-32s 反転 %5.1f %% / 軸のずれ 中央値 %.2f 度"
+              % (name, 100 * flip.mean(), np.median(ang)))
+        res[name] = float(flip.mean())
+        if "oriented" not in name:
+            print("        面別の反転率:", end="")
+            for i, k in enumerate(ref.names):
+                m = face == i
+                if m.any():
+                    print("  %s %.0f %%" % (k, 100 * flip[m].mean()), end="")
+            print()
+    flip_en = res["estimate_normals(k=25)"]
+    flip_or = res["estimate_oriented_normals(k=20)"]
+    print("   ★予想 %.1f %%、実測 %.1f %% —— **外れた**。理由は面別の内訳が言う:"
+          % (100 * pred, 100 * flip_en))
+    print("      凹面(hole1/hole2/fillet)はほぼ 100 %% 反転する(予想どおり)が、"
+          "**平面がほぼ 50 %%**。")
+    print("      平面では近傍重心が点の上に載るので「重心から離れる向き」に"
+          "情報が無く、符号がコイン投げになる。")
+    print("   Hoppe の大域向き付け(estimate_oriented_normals)は %.1f %% で"
+          "この場面では正しい。" % (100 * flip_or))
+    print("      ただし閉曲面の内外は**大域に 1 回反転できる**"
+          "(seed_dir を渡さないと保証は無い)。")
     print("   ★符号が裏返った点では、へこみ(-)が出っ張り(+)として報告される。")
     print("   → この PoC の推定器は **CAD 側の厳密な法線**を使う(実測側から取らない)。")
     return {"pred": pred, "flip_en": flip_en, "flip_or": flip_or}
