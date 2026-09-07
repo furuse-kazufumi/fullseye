@@ -373,7 +373,7 @@ def section_zero_point() -> dict:
                     ["真の共局在", "r 理想", "r 生", "r 分離", "M1 真", "M1 生", "M1 分離",
                      "M2 真", "M2 生", "M2 分離"], rows,
                     title="ゼロ点と分離後(α=β=%.0f %%、PSF σ=%.0f px)" % (100 * ALPHA, PSF_SIG))
-    return {"alpha_est": a_est, "beta_est": b_est, "res": res}
+    return {"alpha_est": a_est, "beta_est": b_est, "res": res, "tail": tail}
 
 
 # --------------------------------------------------------------------------- #
