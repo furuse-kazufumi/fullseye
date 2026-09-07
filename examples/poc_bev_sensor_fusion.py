@@ -581,12 +581,16 @@ def section_zero(rig: Rig) -> dict:
           "できるのは %d 個、カメラは %d 個。"
           % (far["name"], int(inside.sum()), int((inside & rig.kn_a0).sum()),
              int((inside & rig.kn_b0).sum())))
-    print("  ★カメラ単独 %.4f は LiDAR 単独 %.4f を**下回る**(深度雑音 %.4f z² が"
-          "遠方で効く)。融合が買っているのは精度ではなく**視界**。"
-          % (res["cam"]["iou"], res["lidar"]["iou"], CAM["kz"]))
-    print("  高さ誤差の下限はセルの半分 %.3f m。融合の実測中央値 %.3f m は"
-          "その水準で、**高さは格子の刻みで決まっている**。"
-          % (CELL / 2, res["max"]["h_err"]))
+    print("  ★カメラ単独 %.4f と LiDAR 単独 %.4f の差 %+.4f。深度雑音 %.4f z² は"
+          "遠方で効くが、視界の広さがそれを上回る。"
+          % (res["cam"]["iou"], res["lidar"]["iou"],
+             res["cam"]["iou"] - res["lidar"]["iou"], CAM["kz"]))
+    print("  ★★高さ誤差は LiDAR 単独 %.3f m 対 カメラ単独 %.3f m。"
+          "**低いセンサは高さを測れない** —— 屋根が見えないので、最も高い返りは"
+          "側面の一番上の梁になる。" % (res["lidar"]["h_err"], res["cam"]["h_err"]))
+    print("     格子の刻み %.3f m による量子化誤差は最大 %.3f m・期待値 %.3f m。"
+          "融合の実測中央値 %.3f m はこの水準。"
+          % (CELL, CELL / 2, CELL / 4, res["max"]["h_err"]))
     return res
 
 
