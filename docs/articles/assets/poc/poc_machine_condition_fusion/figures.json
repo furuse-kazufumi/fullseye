@@ -116,5 +116,25 @@
    560,
    3
   ]
+ },
+ {
+  "file": "12_sweep_pixel_pitch.png",
+  "name": "sweep_pixel_pitch",
+  "caption": "軸受(局所)と潤滑不良(全体)を分けているのは広がりだけ。予測の崖は半値直径 66 mm。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_sweep_rpm_variation.png",
+  "name": "sweep_rpm_variation",
+  "caption": "櫛(最大 6X)のほうが先に落ちる。予測は 3 倍差。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

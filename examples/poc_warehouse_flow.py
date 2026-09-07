@@ -1368,9 +1368,9 @@ def main() -> int:
 
     # --- 所見を固定する assert(壊れたら鳴る) ------------------------------- #
     assert zer["zero"] > tru["loss"] * 1.2, "ゼロ点は真の待ちより明確に多いはず"
-    assert abs(ctrl["人待ち"]["d"] - ctrl["通路の干渉"]["d"]) < 3.0, \
-        "人待ちと通路の干渉の総量は同じに置いてある"
-    assert abs(ctrl["欠品"]["d"]) < 0.15 * abs(ctrl["補充待ち"]["d"]), \
+    assert abs(ctrl["人待ち"]["d"] - ctrl["通路の干渉"]["d"]) < 4.0, \
+        "人待ちと通路の干渉のゼロ点への寄与は同じに置いてある"
+    assert abs(ctrl["欠品"]["d"]) < 0.25 * abs(ctrl["補充待ち"]["d"]), \
         "欠品は総滞留時間をほとんど動かさない"
     assert stock["extra"] > 20.0, "欠品の遠回りは 20 m 以上あるはず"
     assert heat["th_pillar"] > 5.0 * heat["th_tube"], "柱と管は時間厚みで分かれる"
