@@ -557,8 +557,7 @@ def section_density():
 # 6. 崖 (b) 問い合わせ窓 —— 岸の勾配がなまる                                        #
 # --------------------------------------------------------------------------- #
 def section_window():
-    print("
-" + "=" * 78)
+    print("\n" + "=" * 78)
     print("5) 崖 (b) 窓 16 → 64 px —— 岸の勾配がなまる量を窓平均で予測する")
     print("=" * 78)
     sc = build_frames(density=0.02, n_frames=11, refl_c=0, wave_amp=0, noise=0.0)
