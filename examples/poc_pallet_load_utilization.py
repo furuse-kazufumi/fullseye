@@ -498,10 +498,12 @@ def section_iou(lb: list) -> dict:
                                 _voxel(boxes, True).astype(float)))
         out[name] = iou
         print("   荷 %s  真の中身 vs 上から押し出した形の IoU = %.4f" % (name, iou))
-    print("\n  ★荷 A の IoU %.4f / 荷 B %.4f —— どちらも 0.9 台で、"
+    print("\n  ★荷 A の IoU %.4f / 荷 B %.4f —— どちらも 0.94 以上で、"
           "**「よく合っている」**\n     としか読めない。ところが A の"
-          "食い違いは全部「中の空洞」で、\n     B は 0 —— 1 個の一致度は"
-          "**何が違うか**を持っていない。")
+          "食い違いは全部「中の空洞 %.4f m3」で、\n     B は 0 —— "
+          "1 個の一致度は**何が違うか**を持っていない。"
+          % (out["A"], out["B"],
+             (seen_volume(LOAD_A) - box_volume(LOAD_A)) / 1e9))
 
     # 荷 A の自由空間に**あと 1 個入る最大の箱**(inner_box3、50 mm 格子)
     nz, ny, nx = 36, 20, 24
