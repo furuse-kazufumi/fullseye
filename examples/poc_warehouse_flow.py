@@ -677,6 +677,26 @@ def score(truth, detected) -> dict:
     return {"hit": hit, "tot": tot, "tp": tp, "fp": fp}
 
 
+#: 掃引は 5 通りの乱数で平均する。1 通りだと事象が 4〜10 件しかない型で
+#: 検出率が 0.25 刻みにばたつき、崖の位置が乱数で 1 段ずれる。
+SEEDS = (7, 17, 27, 37, 47)
+
+
+def rates(clear, dt_meas=DT_MEAS, rack_h=RACK_H, p_switch=P_SWITCH):
+    """掃引の 1 点: 種類別の検出率とゼロ点を :data:`SEEDS` で平均する。"""
+    acc = {k: 0.0 for k in LOSS_TYPES}
+    z, last = 0.0, None
+    for sd in SEEDS:
+        r = pipeline(dt_meas=dt_meas, rack_h=rack_h, p_switch=p_switch,
+                     clear=clear, seed=sd)
+        for k in LOSS_TYPES:
+            acc[k] += r["score"]["hit"][k] / max(r["score"]["tot"][k], 1)
+        z += r["zero"]
+        last = r
+    n = len(SEEDS)
+    return {k: acc[k] / n for k in LOSS_TYPES}, z / n, last
+
+
 def pipeline(disabled=(), dt_meas=DT_MEAS, rack_h=RACK_H, p_switch=P_SWITCH,
              clear=None, seed=SEED) -> dict:
     """場面を作る → 測る → ゼロ点と提案の両方で読む(掃引の 1 点ぶん)。"""
