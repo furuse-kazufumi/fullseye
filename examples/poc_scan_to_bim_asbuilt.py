@@ -487,6 +487,49 @@ def design_dev(pts: np.ndarray, elem: np.ndarray) -> np.ndarray:
     return d
 
 
+def design_normals(pts: np.ndarray, elem: np.ndarray) -> np.ndarray:
+    """設計面の法線(部屋の内側向き)。閉形式の姿勢予測に使う。"""
+    p = np.asarray(pts, np.float64)
+    n = np.zeros_like(p)
+    for e, v in ((FLOOR, (0, 0, 1)), (CEIL, (0, 0, -1)), (WX0, (1, 0, 0)),
+                 (WX1, (-1, 0, 0)), (WY0, (0, 1, 0)), (WY1, (0, -1, 0)),
+                 (WINR, (-1, 0, 0)), (DOORR, (0, 1, 0))):
+        n[elem == e] = v
+    for k, (cx, cy) in enumerate(COL_XY):
+        m = elem == COL0 + k
+        if m.any():
+            d = p[m][:, :2] - np.array([cx, cy])
+            d = d / np.maximum(np.linalg.norm(d, axis=1, keepdims=True), 1e-12)
+            n[m, 0], n[m, 1] = d[:, 0], d[:, 1]
+    for (o, ax) in ((0, 0), (RX, 0), (0, 1), (RY, 1)):
+        sgn = 1.0 if o == 0 else -1.0
+        m = (elem == BASE) & (np.abs(p[:, ax] - (o + sgn * BASE_T)) < 0.004)
+        n[m] = 0.0
+        n[m, ax] = sgn
+    m = (elem == BASE) & (np.abs(p[:, 2] - BASE_H) < 0.004)
+    n[m] = (0, 0, 1)
+    return n
+
+
+def absorbed_pose(surf: dict) -> np.ndarray:
+    """★合わせが吸える量を**ICP を走らせずに**閉形式で予測する。
+
+    剛体の微小変位は各点で ``n·(ω×p + t)`` しか作れない。したがって最小二乗の
+    合わせが吸えるのは、偏差の場を ``J = [p×n | n]`` の張る 6 次元へ射影した
+    成分だけ。``J x = -dev`` の最小二乗解 ``x = [ω | t]`` が「消える分」。
+    見えている点だけを使う(見えない面は合わせに参加しない)。
+    """
+    m = surf["seen"] > 0
+    p, e = surf["P"][m], surf["elem"][m]
+    n = design_normals(p, e)
+    w = np.sqrt(surf["seen"][m].astype(np.float64))[:, None]
+    ok = np.linalg.norm(n, axis=1) > 0.5
+    p, n, w = p[ok], n[ok], w[ok]
+    J = np.column_stack([np.cross(p, n), n]) * w
+    b = -surf["dev_true"][m][ok] * w[:, 0]
+    return np.linalg.lstsq(J, b, rcond=None)[0]
+
+
 def assign_elements(pts: np.ndarray) -> np.ndarray:
     """BIM 案内の割り当て —— いちばん近い設計部材へ。実務の Scan-to-BIM と同じ。"""
     p = np.asarray(pts, np.float64)
