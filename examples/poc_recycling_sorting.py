@@ -749,12 +749,23 @@ def section_mixed(ab: dict, pair) -> dict:
     est_all = comp_from_labels(np.ones((H, W), bool))
     est_pure = comp_from_labels(geo["pure"])
 
-    # 分数のまま数える: 線形混合分解(FCLS)。ライブラリは 2 次微分では
-    # 使えない(負の値が出る)ので、生のキューブに掛ける。
+    # 分数のまま数える: 線形混合分解(FCLS、:func:`fullseye.spec_unmix`)。
+    # 2 次微分の空間では負の値が出て制約が意味を失うので、生のキューブに掛ける。
     ab_map = np.asarray(fs.spec_unmix(cube, LIB, constrained=True))
-    w = ab_map[..., 1:].reshape(-1, K - 1)
-    w = w[(geo["truth"] > 0).ravel()]
+    w = ab_map[..., 1:].reshape(-1, K - 1)[(geo["truth"] > 0).ravel()]
     est_unmix = 100 * w.sum(axis=0) / max(1e-9, w.sum())
+
+    # 線形混合分解が**混合画素の面積比そのもの**をどれだけ当てるか。
+    # 真値は場面を作るときの面積比(厳密)。劣化の有無で 2 通り測る。
+    clean_cube = degrade(geo)
+    true_frac = np.zeros((H * W, K))
+    for i in range(geo["n_frag"] + 1):
+        true_frac[:, geo["frag_mat"][i]] += geo["frac"][:, i]
+    bnd = (~geo["pure"]).ravel() & (geo["truth"] > 0).ravel()
+    err_mix = []
+    for label, c in (("劣化なし", clean_cube), ("全部入り", cube)):
+        amap = np.asarray(fs.spec_unmix(c, LIB, constrained=True)).reshape(-1, K)
+        err_mix.append((label, float(np.mean(np.abs(amap[bnd] - true_frac[bnd])))))
 
     rows = []
     print("   材質    真値 %%   全画素   境界を捨てる   線形混合分解")
