@@ -1016,7 +1016,12 @@ def main() -> int:
     assert co["scs"][2]["band_rate"] < co["scs"][1]["band_rate"] - 0.10
     assert co["scs"][2]["band_vol"] < 0.7 * co["scs"][1]["band_vol"]
     assert co["scs"][3]["cres_rate"] > 0.5 and co["scs"][3]["band_rate"] > 0.5
-    assert ce["rate"][-1] < ce["rate"][0]
+    assert co["scs"][4]["cres_rate"] > 0.5 and co["scs"][4]["false"] < 0.02
+    assert co["scs"][4]["false"] < co["scs"][3]["false"]
+    assert ce["rate"][-1] < 0.3 * ce["rate"][0]
+    assert ce["depth"][-1] < 0.4 * ce["depth"][0]
+    assert mo["cres"][1] < 20.0 and mo["cres"][2] > 80.0      # 次数 0 と 1
+    assert mo["false"][1] > 10.0 and mo["false"][3] < 1.0     # 次数 0 と 2
     assert dc["err"] < 0.02, dc["err"]
     assert sc1["v_pit"] > 0
 

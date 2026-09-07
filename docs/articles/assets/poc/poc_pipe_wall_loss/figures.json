@@ -124,7 +124,7 @@
   "caption": "",
   "shape": [
    615,
-   750,
+   1120,
    3
   ]
  },
@@ -143,7 +143,7 @@
   "name": "defect_table",
   "caption": "",
   "shape": [
-   176,
+   200,
    633,
    3
   ],
@@ -155,7 +155,7 @@
   "name": "volume_table",
   "caption": "",
   "shape": [
-   200,
+   224,
    510,
    3
   ],
