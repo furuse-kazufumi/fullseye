@@ -859,10 +859,10 @@ def section_scan_density(ref: CadRef) -> dict:
           "**偏らない**)。" % (bias[0], bias[-1]))
     print("      分散も %.1f → %.1f µm でほぼ横ばい —— 1 点あたりの測り方は"
           "密度に依らないから。" % (sdev[0], sdev[-1]))
-    print("      壊れるのは**面積**のほう: 公差外面積の誤差が %+.1f → %+.1f %% ——"
-          " 点が %d 個では境界を %.0f mm^2 刻みでしか引けない。"
-          % (ar[0], ar[-1], int(len(make_scan(keep=keeps[-1])["pts"])),
-             ref.area * keeps[-1] / 1.0 * 0 + ref.area / (N_SCAN * keeps[-1])))
+    print("      壊れるのは**面積**のほう: 公差外面積の誤差が %+.1f → %+.1f %%。"
+          "1/%.0f では 1 点が %.2f mm^2 を代表するので、"
+          % (ar[0], ar[-1], 1 / keeps[-1], ref.area / (N_SCAN * keeps[-1])))
+    print("      公差の境界をその刻みでしか引けない(境界の長さ × 刻み分だけ痩せる)。")
     figs.save_plot("scan_density",
                    [("偏り(平均)[µm]", ks, bias),
                     ("分散(σ)[µm]", ks, sdev),
