@@ -374,7 +374,7 @@ def thermal_features(frame: np.ndarray, pitch: int) -> dict:
     t_max = float(frame.max())
     roi_c = _disc_mask(frame.shape, pitch, SOURCES[0][1], SOURCES[0][2], 25.0)
     roi_b = _disc_mask(frame.shape, pitch, SOURCES[1][1], SOURCES[1][2], 25.0)
-    hot = (frame > 0.5 * t_max) & (frame > 3.0 * NETD)
+    hot = (frame > 0.5 * t_max) & (frame > 4.0 * NETD)
     area = 0.0
     if hot.any():
         lab = fs.ledger.blob_label(hot.astype(np.float64))
