@@ -752,7 +752,7 @@ def main() -> None:
           "(viridis 0 本)。" % (meas["jet"]["n_peaks"], meas["hsv"]["n_peaks"]))
     print("  * 位置は閉形式で当たる(jet の明度折返し、最大ずれ %.4f)。"
           % pred["max_err"])
-    print("  * 崖は jet %.2f %%FS / viridis %.2f %%FS —— 本物の段差に "
+    print("  * 崖は jet %.3f %%FS / viridis %.3f %%FS —— 本物の段差に "
           "%.1f 倍の高さが要る。" % (cliff["crit"]["jet"], cliff["crit"]["viridis"],
                                       cliff["crit"]["jet"] / cliff["crit"]["viridis"]))
     print("  * 配色より写し方が効く: 実効階調 linear %.1f → rank %.1f 段。"
