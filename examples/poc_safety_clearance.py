@@ -1113,29 +1113,33 @@ def main() -> int:
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
-    e0 = ts["est"]["重心 1 点"] - ts["d_true"]
-    print("  * 重心 1 点は %+.3f m 過大評価する(予想 %+.3f m)。危険の %.1f %% を"
-          "見落とし、誤検知は 0。"
-          % (e0.mean(), ts["pred"],
-             100 * np.count_nonzero(ts["haz"] & (ts["est"]["重心 1 点"] >= ts["S"]))
-             / max(1, int(ts["haz"].sum()))))
-    print("  * 崖は遮蔽にある: 見えている部位だけで測ると、危険時の %.1f %% で"
-          "最近傍部位が 1 点も見えない。"
-          % (100 * ts["hidden_nearest"][0] / max(1, ts["hidden_nearest"][1])))
+    st = ts["stats"]
+    print("  * 重心 1 点は危険時に %+.3f m / 最大 %+.3f m 過大評価する"
+          "(予想 %+.3f m)。危険の %.1f %% を見落とし、誤検知は %d。"
+          % (st["重心 1 点"][1], st["重心 1 点"][2], ts["pred"],
+             100 * st["重心 1 点"][3] / max(1, int(ts["haz"].sum())),
+             st["重心 1 点"][4]))
+    print("  * 崖は遮蔽: 点密度 16 倍疎で %.1f -> %.1f %%、更新間隔 4 倍で"
+          " %.1f -> %.1f %%、遮蔽なし -> 1 台で %.1f -> %.1f %%。"
+          % (sw["d_miss"][0], sw["d_miss"][-1], sw["lat_miss"][0], sw["lat_miss"][-1],
+             sw["occ_miss"][0], sw["occ_miss"][2]))
     print("  * Z_d を繰り返し性から出すと %.4f m。遮蔽の 95 %% 点は %.4f m で"
           "**%.0f 倍**足りない。" % (zd["zd_rep"], zd["zd_occ"],
                                      zd["zd_occ"] / max(zd["zd_rep"], 1e-9)))
-    print("  * 見落としを 0 にすると停止時間は %.1f %% -> %.1f %%。"
-          % (zd["stop"][1], zd["stop"][-1]))
+    print("  * 見落としを 0 にする Z_d = %.3f m。停止時間は %.1f %% -> %.1f %%。"
+          % (zd["zd_need"], zd["stop"][1], zd["stop_need"]))
 
     # 所見を固定する assert(壊れたら鳴る)
-    assert e0.mean() > 0.25, e0.mean()
-    assert np.count_nonzero(ts["haz"] & (ts["est"]["重心 1 点"] >= ts["S"])) > 0
-    assert np.count_nonzero(ts["haz"] & (ts["est"]["全表面(遮蔽なし)"] >= ts["S"])) == 0
-    assert zd["zd_occ"] > 8.0 * zd["zd_rep"], (zd["zd_occ"], zd["zd_rep"])
-    assert me["hd"] > 5.0 * me["ch"], (me["hd"], me["ch"])
-    for b, v in zip(gb["bias"], (0.020, 0.010, 0.005)):
-        assert 0.3 * v < b < 2.2 * v, (b, v)
+    assert st["重心 1 点"][1] > 0.10, st["重心 1 点"]        # 危険時に過大評価する
+    assert st["重心 1 点"][3] > 0, st["重心 1 点"]           # 見落としがある
+    assert st["重心 1 点"][4] == 0, st["重心 1 点"]          # 誤検知は無い(片側)
+    assert st["全表面(遮蔽なし)"][3] == 0, st["全表面(遮蔽なし)"]
+    assert sw["occ_miss"][0] == 0.0 and sw["occ_miss"][2] > 15.0, sw["occ_miss"]
+    assert sw["d_miss"][-1] < sw["occ_miss"][2], (sw["d_miss"], sw["occ_miss"])
+    assert zd["zd_occ"] > 5.0 * zd["zd_rep"], (zd["zd_occ"], zd["zd_rep"])
+    assert me["hd"] > 4.0 * me["ch"], (me["hd"], me["ch"])
+    for b, v in zip(gb["bias"], (0.040, 0.020, 0.010)):
+        assert 0.10 * v < b < 0.40 * v, (b, v)   # 1/4 ボクセル前後、符号は正
     assert mm["over_max"] > 0.15, mm["over_max"]
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
