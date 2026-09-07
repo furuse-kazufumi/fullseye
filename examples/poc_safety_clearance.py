@@ -631,7 +631,22 @@ def section_sweep() -> dict:
             dt_list.append(dtr)
     d_true = np.array(dt_list)
     print("  試行 %d 本 x %d フレーム = %d フレーム(危険 %d)"
-          % (len(TRIALS), len(ts), len(frames), int((d_true < S).sum())))
+          % (len(TRIALS), len(ts), len(frames), int((d_true < S_GEOM).sum())))
+
+    # --- (0) ゼロ点を 4 試行ぶんで測り直す(1 試行だと標本が足りない) -------- #
+    print("\n  (0) ゼロ点(1 点で代表)を 4 試行 %d フレームで" % len(frames))
+    print("      代表の仕方     過大評価 平均 / 危険時 / 最大 [m]   見落とし   誤検知")
+    zero_rows = {}
+    for mode, label in (("centroid", "重心 1 点"), ("feet", "足元 1 点")):
+        e = np.array([estimate_centroid(f, np.ones(len(f["P"]), bool), rng, mode)
+                      for f in frames])
+        m_, fa_, _a, _b = _rates(d_true, e, S_GEOM, S)
+        d = e - d_true
+        hz = d_true < S_GEOM
+        zero_rows[label] = (float(d.mean()), float(d[hz].mean()), float(d.max()),
+                            m_, fa_)
+        print("      %-12s   %+7.3f / %+7.3f / %+7.3f    %5.1f %%   %5.1f %%"
+              % (label, d.mean(), d[hz].mean(), d.max(), m_, fa_))
 
     # --- (i) 点密度(**遮蔽を止めた対照群**で測る) -------------------------- #
     # ★遮蔽を入れたまま密度を振ると、遮蔽の偏り(+0.12 m)が全部の行に乗って
