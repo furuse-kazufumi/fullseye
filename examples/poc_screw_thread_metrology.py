@@ -659,13 +659,16 @@ def section_sampling() -> dict:
           % (first_alpha, first_d2))
     figs.save_grid("sampling_frames", frames, caps, ncols=2,
                    title="同じ M6 ねじを 40 → 2 px/山 で標本化(左端 160 px)")
-    xs = [r[0] for r in rows]
-    fin = lambda v: [x if np.isfinite(x) else np.nan for x in v]    # noqa: E731
+    def series(label, vals, clip=50.0):
+        """測れなかった点(nan)は落とし、残りは ±clip で頭打ち(plot_series は nan を拒む)。"""
+        pts = [(r[0], min(max(v, -clip), clip)) for r, v in zip(rows, vals) if np.isfinite(v)]
+        return (label, [q[0] for q in pts], [q[1] for q in pts])
+
     figs.save_plot("sampling_sweep",
-                   [("二値 FFT の P 誤差 [%](ゼロ点)", xs, fin([min(max(r[2], -50), 50) for r in rows])),
-                    ("灰 FFT の P 誤差 [%]", xs, fin([min(max(r[4], -50), 50) for r in rows])),
-                    ("α の誤差 [deg]", xs, fin([r[6] - 30 for r in rows])),
-                    ("d2 の誤差 [%]", xs, fin([min(max(r[7], -50), 50) for r in rows]))],
+                   [series("二値 FFT の P 誤差 [%](ゼロ点)", [r[2] for r in rows]),
+                    series("灰 FFT の P 誤差 [%]", [r[4] for r in rows]),
+                    series("α の誤差 [deg]", [r[6] - 30 for r in rows]),
+                    series("d2 の誤差 [%]", [r[7] for r in rows])],
                    xlabel="1 山あたりの画素数 [px]", ylabel="誤差(±50 で頭打ち、単位は凡例)",
                    title="標本化の崖: α → d2 → FFT の順に壊れる",
                    caption="測れなかった点は描かない。FFT は Nyquist(2 px/山)まで当たり、その先は折り返す。",

@@ -6,52 +6,80 @@
 比較星を開口測光し、**比を取って**大気の透明度変動を消し、残った光度曲線に
 解析モデルを当てはめて深さ δ(惑星半径)と継続時間 T14(軌道)を出す、
 というものです。δ の誤差と T14 の誤差は**別の量**で、壊れ方も別なので、
-この PoC は最後まで 2 つを分けて数えます。
+この PoC は最後まで 2 つを分けて数えます。単位は ppt(千分率、10 ppt = 1 %)
+と フレーム(fr)。
 
-EXTEND: 実写に差し替えるなら :func:`make_series` が返る辞書の ``frames``
-(画像列)を撮影画像に、``model``(真のトランジット光度曲線)と
-``stars``(星の真の位置と明るさの比)を既知の系(TESS/既知惑星の暦)に
-置き換えます。**フラット ``gain`` と位置ずれ ``shifts`` の真値は実写では手に
-入らない**ので、5 節の「ドリフト × フラット」の分解は実写では再現できず、
+EXTEND: 実写に差し替えるなら :func:`make_series` が返す辞書の ``frames``
+(画像列)を撮影画像に、``model``(真のトランジット光度曲線)と ``rows`` /
+``cols`` / ``ratio``(星の真の位置と明るさの比)を既知の系(既知惑星の暦と
+星表)に置き換えます。**フラット ``gain`` と位置ずれ ``shifts`` の真値は実写では
+手に入らない**ので、5 節の「ドリフト × フラット」の分解は実写では再現できず、
 代わりに 5 節の予測式(``a * sqrt(sum w^2)``)で上限を見積もることになります。
 
 この PoC が示すこと(数字はいずれも実行時に印字される実測値):
 
 1. **ゼロ点(目標星の開口積分だけ)は雲で死ぬ**。透明度変動 rms 3 % の下で
-   深さは +33.8 ppt(真値 10.0 ppt、誤差 **+23.8 ppt = 真値の 2.4 倍**)、
-   T14 は +37.0 フレーム(真値 80)。対照群(雲なし)では同じゼロ点が
-   誤差 -0.10 ppt / -0.15 フレームで当たる —— 壊すのは手法ではなく雲。
-   比較星との比を取ると雲ありでも -0.02 ppt / -0.45 フレーム。
-2. ★**比較星の選び方で精度が 4.7 倍変わる**。残差 rms は最良(逆分散重み
-   の全星)0.72 ppt、最悪(いちばん暗い 1 星)3.41 ppt。深さの誤差 σ は
-   その比で動くが、★**T14 の誤差はそうならない**(最悪 -0.4 フレーム、
-   最良 -0.5 フレーム)—— 入出の傾斜は深さより雑音に強い。
-   全星の単純和(0.75 ppt)は重み付き(0.72 ppt)とほぼ並ぶ ——
-   明るい星が支配する和は、重みを付けたのとほぼ同じ。
-3. **開口半径の崖は下側にある**。残差 rms は r = 1σ で 2.09 ppt、
-   2σ で 0.85 ppt、3σ で 0.72 ppt、6σ で 0.98 ppt(理論の CCD 式は
-   1.64 / 0.80 / 0.70 / 0.99)。r=1σ だけ理論より 27 % 悪い ——
-   ★開口が小さいと**重心の誤差(rms 0.03 px)が明るさの誤差に化ける**
-   (開口の縁で PSF の勾配が最大)。深さの偏りは 1σ で +0.66 ppt、
-   3σ 以上では |0.05| ppt 以内。
-4. **検出限界(SNR = 5)は理論の CCD 式で予測できる**。δ を 1〜20 ppt で
-   振った実測の SNR は理論と比 0.90〜1.09 で並び、SNR = 5 の境目は実測
-   2.6 ppt / 理論 2.5 ppt。★1 ppt(SNR 1.9)では深さの推定が +0.5 ppt
-   ずれ T14 が 33 フレーム外れる —— 検出できない信号に当てはめると、
-   **深さより先に継続時間が壊れる**。
+   深さは +82.2 ppt(真値 10 ppt、誤差 **+72.2 ppt = 真値の 7 倍**)、
+   T14 は 60.8 fr(真値 80、誤差 -19.2)。対照群(雲なし)では同じゼロ点が
+   誤差 +0.16 ppt / +0.8 fr で当たる —— 壊すのは手法ではなく雲。比較星 5 個の
+   和との比を取ると雲ありでも -0.13 ppt / -0.9 fr(残差 rms 1.93 ppt)。
+2. ★**比較星の選び方で精度が 6.0 倍変わる**。残差 rms は最良(明るい 2 星の
+   和)1.91 ppt、最悪(1/20 の明るさの 1 星)11.43 ppt。深さの σ は 0.30 →
+   1.84 ppt とその比で動くが、★**T14 の誤差はそうならない**(最悪の星でも
+   -0.5 fr、最良で -1.4 fr)—— 入出の傾斜は深さより雑音に強い。
+   ★★**逆分散重みは生の分散で決めると罠**: 雲(全星共通)が明るい星の分散を
+   支配して重みが暗い星へ行き、単純和 1.93 ppt より悪い 2.92 ppt(1.52 倍)。
+   共通モードを外してから測り直すと 1.98 ppt。
+3. ★★**開口半径の崖(小さい側)は、予想した重心誤差ではなかった**。予想は
+   「r = 1σ では重心誤差(実測 rms 0.039 px)が明るさに化けて理論より 27 %
+   悪い」。実測は +14 % —— そして**星が画素に対して不動の対照群では +69 % と
+   逆に悪化**した。開口は中心対称なので位置誤差 ε は 2 次(ε² = 0.0015 px²)
+   でしか効かない。効いていたのは op の**開口マスクの階段**: ``supersample=8``
+   は縁の画素の重みを 1/64 刻みで量子化し、r = 1σ では縁の 1 画素が総光量の
+   5.5 % を持つので 1 段の跳びが 0.86 ppt。``supersample=32`` で 動く星 2.54 /
+   不動 2.67 ppt(理論比 0.89 / 0.93)に落ちる。r ≥ 2σ ではどの条件も理論比
+   0.90〜1.03 で、大きい側の坂(6σ で 2.29 ppt)は背景推定の雑音 ``A² σ_B²
+   (π/2)/n_annulus`` を CCD 式に足すと合う(★これも最初は忘れていて 12 % 外れた)。
+4. **検出限界(SNR = 5)は暦既知なら CCD 式 + Fisher が当てる**: 実測 1.48 ppt
+   / 理論 1.45 ppt(比 0.82〜0.98)。★暦未知(t0 と T14 も探す)だと崖は
+   2.0 ppt(|T14 誤差| < 5 fr になる最小の δ)で Fisher 限界の 1.4 倍。
+   限界の下では ★**深さより先に継続時間が壊れる**: δ = 0.5 ppt で深さの誤差は
+   +0.11 ppt なのに |T14 誤差| は 26.5 fr。そして暦未知の SNR(推定深さ/σ)は
+   限界の下でも 1.7〜4.2 と出る —— 雑音を惑星と呼んでいる。
 5. ★★**ドリフトとフラット不均一は単独では無害、掛け算で偽の深さを作る**。
-   ドリフト 2 px・フラット均一で深さ誤差 -0.03 ppt、ドリフト 0・画素
-   フラット 3 % で +0.01 ppt、**両方あると +1.63 ppt(真値の 16 %)**。
-   予測は上限 ``a * sqrt(sum w^2) = 0.19 a`` = 3 % で 5.6 ppt、実測は
-   その 29 %(直線基線が大半を吸う)。T14 は同じ条件で +2.1 フレーム。
+   深さ誤差 rms は ドリフト 2 px・フラット均一で 0.16 ppt、ドリフト 0・画素
+   フラット 3 % で 0.08 ppt、**両方あると 0.94 ppt(真値の 9 %)、4 px なら
+   2.97 ppt(30 %)**。予測式の上限 ``a * sqrt(sum w^2) = 0.185 a``(3 % で
+   5.54 ppt)に対し 2 px で 17 %、4 px で 54 % —— 直線基線が大半を吸い、動く量が
+   PSF の幅を超えると吸えなくなる。雑音を切って真の位置で測った**系統分だけの
+   予測**は seed ごとに実測と一致する(差の rms 0.05〜0.23 ppt = 雑音の床)。
+   T14 も 4 px・3 % で rms 4.3 fr 外れる。
+6. ★**当てはめのバグが偽の所見を出しかけた**。最初の格子初期化は
+   ``y ≈ a·m + c1·x`` と書いて深さを基線に縛っていたので δ が小さいほど真の解を
+   外し、「暦未知だと崖は 10 ppt(Fisher の 6.9 倍)」という数字が出た。
+   **暦未知の残差 rms が暦既知より大きい**(2.20 vs 2.00 ppt)ことが局所解の
+   印だった。深さを線形係数にした格子に直すと崖は 2.0 ppt。
 
 【グラウンドトゥルース】
 星は erf による**画素の厳密積分**のガウス PSF(σ = 1.5 px)、トランジットは
 Mandel & Agol の小惑星近似(2 円の重なり面積 × 惑星中心での周辺減光強度、
 2 次周辺減光 u1 = 0.40, u2 = 0.25)の**閉形式**。系統誤差は 4 つを別々の
 乱数で仕込む —— 透明度(全星共通の乗算)、副画素ドリフト(全星共通の平行
-移動)、フラット不均一(画素ごとの感度、低次勾配 + 画素ランダム)、
-光子雑音(Poisson + 読み出し)。どれも**止められる**ので対照群が作れる。
+移動 + フレームごとのジッタ)、フラット不均一(画素ごとの感度、低次勾配 +
+画素ランダム)、光子雑音(Poisson + 読み出し)。どれも**止められる**ので
+対照群が作れる。測る側は fullseye の ``sigma_clip_stack``(基準像)→
+``star_detect``(星表)→ ``frame_align``(各フレームの平行移動)→
+``aperture_photometry``(開口測光)で、真の位置は星の名付けにしか使わない。
+
+【道具の穴(この PoC で分かったこと)】
+* ``fs.ledger.synth_starfield`` は ``(frame, truth)`` のうち **frame しか返さない**
+  (``astrostack.synth_starfield`` 直呼びなら truth も出る)。真値の供給源なのに
+  公開経路で真値が落ちる。ここでは星ごとに時間変化する明るさが要るので自前で描いた。
+* ``aperture_photometry`` の ``supersample=8`` は小開口で**雑音源**になる(3 節)。
+  docstring は「円の面積の離散化だけを直す」と書くが、星が動くと縁の重みの階段が
+  そのまま光度曲線に乗る。小開口の測光は 32 を使うか、既定を上げる価値がある。
+* トランジット光度曲線のモデル、光度曲線の当てはめ(基線 + 暦)、比較星の
+  アンサンブル重み付けは公開経路に無い(すべて自前)。
 
 来歴(公開文献のみ): Mandel & Agol, *ApJ* 580 (2002) L171 —— トランジット
 光度曲線の解析式 / Howell, *Handbook of CCD Astronomy* (2006) —— CCD 式 /
@@ -335,67 +363,109 @@ def lightcurve(flux, which=("sum",)):
     return normalize(tgt / ref)
 
 
+def _full_model(t, p):
+    """5 パラメータ ``(δ, t0, T14, c0, c1)`` → 相対光度(直線基線 × トランジット)。"""
+    d, t0, t14, c0, c1 = p
+    tc = 0.5 * (T - 1)
+    return (c0 + c1 * (t - tc) / T) * transit_model(t, d, t0, t14)
+
+
+def _jacobian(t, p, free):
+    """固定刻みの中心差分ヤコビアン(``free`` の添字だけ)。
+
+    ★``least_squares`` の ``res.jac``(刻み ≈ 1e-8 × 値)は δ が 1e-3 のとき
+    刻みが 1e-11 になり、p = sqrt(δ) を通る経路で丸めに負けて共分散が膨らんだ
+    (暦既知の σ̂ が理論の 1.4 倍に見えた)。刻みを量の尺度で固定する。
+    """
+    h = np.array([1e-5, 1e-2, 1e-2, 1e-5, 1e-5])
+    cols = []
+    for i in free:
+        dp = np.zeros(5)
+        dp[i] = h[i]
+        cols.append((_full_model(t, p + dp) - _full_model(t, p - dp)) / (2 * h[i]))
+    return np.stack(cols, axis=1)
+
+
+def _grid_init(t, y, d0: float = 0.01):
+    """粗い格子(t0 2 フレーム刻み × T14 5 刻み)で χ² 最小の ``(t0, T14, δ)``。
+
+    各格子点は ``y ≈ c0 + c1 x + δ (m-1)/d0`` の**線形**最小二乗(正規方程式を
+    t0 方向にまとめて解く)。t0 の格子は整数なので、テンプレートを整数だけ
+    ずらして作る(モデルの再計算は T14 ごとに 1 回)。
+    """
+    tc = 0.5 * (T - 1)
+    x = (t - tc) / T
+    t0s = np.arange(40.0, 200.0, 2.0)
+    ext = np.arange(-T, 2 * T, dtype=np.float64)
+    best = None
+    a11, a12, a22 = float(t.size), float(x.sum()), float(x @ x)
+    b1, b2 = float(y.sum()), float(x @ y)
+    for t14 in np.arange(20.0, 130.0, 5.0):
+        tmpl = transit_model(ext, d0, 0.0, t14)
+        idx = (t[None, :] - t0s[:, None]).astype(int) + T
+        sm = (tmpl[idx] - 1.0) / d0                              # (n_t0, T)
+        a13, a23, a33 = sm.sum(axis=1), sm @ x, (sm * sm).sum(axis=1)
+        b3 = sm @ y
+        n = t0s.size
+        amat = np.empty((n, 3, 3))
+        amat[:, 0, 0], amat[:, 0, 1], amat[:, 0, 2] = a11, a12, a13
+        amat[:, 1, 0], amat[:, 1, 1], amat[:, 1, 2] = a12, a22, a23
+        amat[:, 2, 0], amat[:, 2, 1], amat[:, 2, 2] = a13, a23, a33
+        bvec = np.stack([np.full(n, b1), np.full(n, b2), b3], axis=1)
+        coef = np.linalg.solve(amat, bvec[..., None])[..., 0]    # (n, 3)
+        pred = coef[:, [0]] + coef[:, [1]] * x[None, :] + coef[:, [2]] * sm
+        chi = ((y[None, :] - pred) ** 2).sum(axis=1)
+        j = int(np.argmin(chi))
+        if best is None or chi[j] < best[0]:
+            best = (float(chi[j]), float(t0s[j]), float(t14), float(coef[j, 2]))
+    _, t0i, t14i, di = best
+    return t0i, t14i, float(np.clip(di, 1e-4, 0.29))
+
+
 def fit_transit(t, y, fixed=None):
     """深さ・中心・継続時間 + 直線基線の 5 パラメータ最小二乗。
 
-    初期値は粗い格子(t0 2 フレーム刻み × T14 5 刻み)の χ² 最小から取る
-    —— 真値を初期値に使わない。各格子点では ``y ≈ c0 + c1 x + δ (m-1)/δ0``
-    の**線形**最小二乗で深さと基線を出す(★最初は ``y ≈ a m + c1 x`` と書いて
-    深さを基線に縛っていたので、δ が小さいほど格子が真の解を外し、局所解に
-    落ちて「暦未知だと崖は 10 ppt」という**偽の所見**を出しかけた。当てはめの
-    残差が暦既知より**大きい**ことがその印だった)。``fixed=(t0, t14)`` なら
-    暦を既知として深さと基線 2 つだけを当てはめる(既知惑星の追観測に相当)。
+    初期値は :func:`_grid_init` の粗い格子から取る —— 真値を初期値に使わない
+    (★最初は格子で ``y ≈ a m + c1 x`` と書いて深さを基線に縛っていたので、
+    δ が小さいほど格子が真の解を外し、局所解に落ちて「暦未知だと崖は 10 ppt」
+    という**偽の所見**を出しかけた。当てはめの残差が暦既知より**大きい**ことが
+    その印だった)。``fixed=(t0, t14)`` なら暦を既知として深さと基線 2 つだけを
+    当てはめる(既知惑星の追観測に相当)。誤差は残差 rms × 数値ヤコビアンの
+    ``(JᵀJ)⁻¹``。
     """
-    tc = 0.5 * (T - 1)
     if fixed is not None:
         t0f, t14f = fixed
+        free = [0, 3, 4]
 
-        def resid_f(p):
-            d, c0, c1 = p
-            return y - (c0 + c1 * (t - tc) / T) * transit_model(t, d, t0f, t14f)
+        def resid_f(q):
+            return y - _full_model(t, np.array([q[0], t0f, t14f, q[1], q[2]]))
 
         res = least_squares(resid_f, [0.01, 1.0, 0.0], bounds=([0.0, 0.5, -1.0], [0.3, 1.5, 1.0]),
                             x_scale=[0.01, 1, 0.1])
-        n, k = y.size, 3
-        rss = float(res.fun @ res.fun)
-        cov = np.linalg.inv(res.jac.T @ res.jac) * rss / (n - k)
-        return {"depth": float(res.x[0]), "t0": t0f, "t14": t14f,
-                "sig_depth": float(np.sqrt(cov[0, 0])), "sig_t14": 0.0,
-                "rms": float(np.std(res.fun)), "resid": res.fun, "fit": y - res.fun}
-    best = None
-    d0 = 0.01
-    for t14 in np.arange(20.0, 130.0, 5.0):
-        for t0 in np.arange(40.0, 200.0, 2.0):
-            m = transit_model(t, d0, t0, t14)
-            a = np.stack([np.ones_like(t), (t - tc) / T, (m - 1.0) / d0], axis=1)
-            coef, *_ = np.linalg.lstsq(a, y, rcond=None)
-            r = y - a @ coef
-            chi = float(r @ r)
-            if best is None or chi < best[0]:
-                best = (chi, t0, t14, coef[2])
-    _, t0i, t14i, di = best
-    di = float(np.clip(di, 1e-4, 0.29))
+        pfull = np.array([res.x[0], t0f, t14f, res.x[1], res.x[2]])
+    else:
+        t0i, t14i, di = _grid_init(t, y)
+        free = [0, 1, 2, 3, 4]
 
-    def resid(p):
-        d, t0, t14, c0, c1 = p
-        return y - (c0 + c1 * (t - tc) / T) * transit_model(t, d, t0, t14)
+        def resid(q):
+            return y - _full_model(t, np.asarray(q))
 
-    p0 = [di, t0i, t14i, 1.0, 0.0]
-    lo = [0.0, 30.0, 10.0, 0.5, -1.0]
-    hi = [0.30, 210.0, 160.0, 1.5, 1.0]
-    res = least_squares(resid, p0, bounds=(lo, hi), x_scale=[0.01, 10, 10, 1, 0.1])
-    n, k = y.size, 5
+        lo = [0.0, 30.0, 10.0, 0.5, -1.0]
+        hi = [0.30, 210.0, 160.0, 1.5, 1.0]
+        res = least_squares(resid, [di, t0i, t14i, 1.0, 0.0], bounds=(lo, hi),
+                            x_scale=[0.01, 10, 10, 1, 0.1])
+        pfull = np.asarray(res.x)
+    n, k = y.size, len(free)
     rss = float(res.fun @ res.fun)
-    jtj = res.jac.T @ res.jac
+    jac = _jacobian(t, pfull, free)
     try:
-        cov = np.linalg.inv(jtj) * rss / (n - k)
+        cov = np.linalg.inv(jac.T @ jac) * rss / (n - k)
         sig = np.sqrt(np.maximum(np.diag(cov), 0.0))
     except np.linalg.LinAlgError:
         sig = np.full(k, np.nan)
-    d, t0, t14 = res.x[:3]
-    rms = float(np.std(res.fun))
-    return {"depth": float(d), "t0": float(t0), "t14": float(t14),
-            "sig_depth": float(sig[0]), "sig_t14": float(sig[2]), "rms": rms,
+    sig_t14 = float(sig[2]) if fixed is None else 0.0
+    return {"depth": float(pfull[0]), "t0": float(pfull[1]), "t14": float(pfull[2]),
+            "sig_depth": float(sig[0]), "sig_t14": sig_t14, "rms": float(np.std(res.fun)),
             "resid": res.fun, "fit": y - res.fun}
 
 
@@ -434,28 +504,16 @@ def theory_rel_noise(r: float, ratio, which=("sum",), r_in: float = R_IN,
     return float(np.sqrt(rel_t + rel_c))
 
 
-def theory_sig_depth(rel_noise: float, depth: float = DEPTH) -> float:
-    """深さの推定誤差の理論値 —— 5 パラメータ(δ, t0, T14, 基線 2 つ)の Fisher 下限。
+def theory_sig_depth(rel_noise: float, depth: float = DEPTH, fixed: bool = False) -> float:
+    """深さの推定誤差の理論値 —— Fisher 下限(``σ_rel² (JᵀJ)⁻¹`` の対角)。
 
     箱形近似 ``σ_rel * sqrt(1/N_in + 1/N_out)`` は t0 / T14 / 基線を同時に
-    推定する分を無視するので楽観的になる。ここでは真値でモデルを数値微分して
-    ``σ_rel² (JᵀJ)⁻¹`` の対角を取る。
+    推定する分を無視するので楽観的になる。``fixed=True`` は暦既知
+    (δ と基線 2 つ)、``False`` は暦未知(5 パラメータ)。
     """
     t = np.arange(T, dtype=np.float64)
-    tc = 0.5 * (T - 1)
-
-    def model(p):
-        d, t0, t14, c0, c1 = p
-        return (c0 + c1 * (t - tc) / T) * transit_model(t, d, t0, t14)
-
     p = np.array([depth, T0, T14, 1.0, 0.0])
-    h = np.array([1e-5, 1e-3, 1e-3, 1e-5, 1e-5])
-    cols = []
-    for i in range(5):
-        dp = np.zeros(5)
-        dp[i] = h[i]
-        cols.append((model(p + dp) - model(p - dp)) / (2 * h[i]))
-    jac = np.stack(cols, axis=1)
+    jac = _jacobian(t, p, [0, 3, 4] if fixed else [0, 1, 2, 3, 4])
     cov = np.linalg.inv(jac.T @ jac) * rel_noise ** 2
     return float(np.sqrt(cov[0, 0]))
 
@@ -497,33 +555,37 @@ def section_zero_point() -> dict:
     mid = np.abs(t - T0) < 0.2 * T14
     diff = sc["frames"][mid].mean(axis=0) - sc["frames"][oot].mean(axis=0)
     diff_pre = sc["frames"][t < 30].mean(axis=0) - sc["frames"][oot].mean(axis=0)
+    up = lambda a: np.kron(a, np.ones((2, 2)))                    # 2 倍に拡大(見出しが入る幅)
     figs.save_grid("scene_starfield",
-                   [np.sqrt(np.clip(fr0, 0, None)), sc["gain"] - 1.0,
-                    diff_pre, diff],
-                   ["フレーム 0(√ストレッチ)[e-]", "フラット(感度 - 1)",
-                    "差分: 前半 - トランジット外", "差分: 最深部 - トランジット外 [e-]"],
+                   [up(np.sqrt(np.clip(fr0, 0, None))), up(sc["gain"] - 1.0),
+                    up(diff_pre), up(diff)],
+                   ["フレーム 0 [√e-]", "感度 - 1", "差分 前半 [e-]", "差分 最深部 [e-]"],
                    title="星野(目標星は中央、比較星 5 個)と、最深部で目標星だけが沈む差分",
-                   ncols=2, signed=[False, True, True, True])
+                   ncols=2, signed=[False, True, True, True],
+                   caption="112x112 px の星野を 2 倍に拡大。差分はトランジット外の平均との差 [e-]。"
+                           "前半の差分に見える双極子はドリフト(位置ずれ)で、最深部では目標星(中央)だけが沈む")
     # トランジット外との差分をフレーム群ごとに(段階の図)
-    phases = [("前", t < 60), ("入(ingress)", (t > 78) & (t < 92)),
-              ("最深部", mid), ("出(egress)", (t > 148) & (t < 162)), ("後", t > 180)]
+    phases = [("前", t < 60), ("入", (t > 78) & (t < 92)),
+              ("最深部", mid), ("出", (t > 148) & (t < 162)), ("後", t > 180)]
     cut = (slice(40, 73), slice(40, 73))
-    panels = [(sc["frames"][m].mean(axis=0) - sc["frames"][oot].mean(axis=0))[cut]
-              for _, m in phases]
+    panels = [np.kron((sc["frames"][m].mean(axis=0) - sc["frames"][oot].mean(axis=0))[cut],
+                      np.ones((4, 4))) for _, m in phases]
     figs.save_grid("frames_transit_phases", panels, [p for p, _ in phases],
                    title="目標星まわり 33 px の差分(各段階の平均 - トランジット外の平均)[e-]",
-                   ncols=5, signed=True)
+                   ncols=5, signed=True,
+                   caption="前/入/最深部/出/後の各段階で平均した画像からトランジット外の平均を引いた [e-]。4 倍拡大")
     # 光度曲線
     zero = lightcurve(me["flux"], ("zero",))
     comp = normalize(me["flux"][:, 1:].sum(axis=1))
     ratio = lightcurve(me["flux"], ("sum",))
     figs.save_plot("lightcurve_zero_vs_relative",
                    [("目標星の開口積分(ゼロ点)", t, zero),
-                    ("比較星 5 個の和", t, comp + 0.06),
-                    ("比 目標/比較星(+0.12)", t, ratio + 0.12),
-                    ("真のトランジット(+0.12)", t, sc["model"] + 0.12)],
+                    ("比較星 5 個の和(-0.12)", t, comp - 0.12),
+                    ("比 目標/比較星(-0.22)", t, ratio - 0.22),
+                    ("真のトランジット(-0.22)", t, sc["model"] - 0.22)],
                    xlabel="フレーム", ylabel="相対光度(見やすさのため上下にずらした)",
-                   title="雲(透明度 rms 3 %)の下で: ゼロ点は雲そのもの、比を取ると 1 % の凹みが残る")
+                   title="雲(透明度 rms 3 %)の下で: ゼロ点は雲そのもの、比を取ると 1 % の凹みが残る",
+                   caption="ゼロ点と比較星の和は雲(全星共通)そのもの。比を取ると 10 ppt の凹みが真値の上に乗る")
     figs.save_plot("transparency_truth", [("透明度 τ(t)", t, sc["tau"]),
                                           ("目標星のモデル", t, sc["model"])],
                    xlabel="フレーム", ylabel="相対値",
@@ -585,7 +647,7 @@ def section_comparison_choice(sec1: dict) -> dict:
 # --------------------------------------------------------------------------- #
 def section_aperture_sweep(sec1: dict) -> dict:
     print("\n" + "=" * 78)
-    print("3) 開口半径の崖 —— 小さすぎると重心誤差が明るさに化け、大きすぎると空を拾う")
+    print("3) 開口半径の崖 —— 小さい側で壊れるのは重心誤差ではなかった")
     print("=" * 78)
     sc = sec1["雲あり"]["scene"]
     t = np.arange(T, dtype=np.float64)
@@ -639,7 +701,7 @@ def section_aperture_sweep(sec1: dict) -> dict:
                     ("不動の星, supersample 32", ks, 1e3 * ctl32),
                     ("理論 CCD 式(背景推定込み)", ks, 1e3 * theo)],
                    xlabel="開口半径 r / σ", ylabel="比の 1 フレーム雑音 [ppt]",
-                   title="開口半径の掃引: 崖は小さい側(重心誤差)、緩い坂は大きい側(空)")
+                   title="開口半径の掃引: 小さい側の崖は開口マスクの階段、大きい側の坂は空と背景推定")
     figs.save_plot("aperture_depth_bias",
                    [("深さの誤差", ks, 1e3 * np.array(derr))],
                    xlabel="開口半径 r / σ", ylabel="深さの誤差 [ppt](真値 10 ppt)",
@@ -660,9 +722,9 @@ def section_depth_cliff() -> dict:
     seeds = (101, 102, 103)
     th_noise = theory_rel_noise(R_AP, np.array([STARS[n]["ratio"] for n in NAMES]))
     snr_m, snr_t, derr, terr, rms_m = [], [], [], [], []
-    print("   δ[ppt]  暦未知: SNR(δ^/σ^) 深さ誤差[ppt] |T14誤差|[fr]   暦既知: SNR  深さ誤差  "
-          "理論SNR  既知/理論   (3 seed の平均)")
-    snr_true, derr_k = [], []
+    print("   δ[ppt]  暦未知: SNR(δ^/σ^) 理論  深さ誤差[ppt] |T14誤差|[fr]   暦既知: δ/σ^  理論  "
+          "既知/理論  深さ誤差   (3 seed の平均)")
+    snr_true, derr_k, snr_t5 = [], [], []
     for d in depths:
         sm, st_, de, dk, te, rr = [], [], [], [], [], []
         for s in seeds:
@@ -670,17 +732,21 @@ def section_depth_cliff() -> dict:
             y = lightcurve(measure(sc)["flux"], ("sum",))
             f = fit_transit(t, y)                              # 暦未知(t0, T14 も探す)
             fk = fit_transit(t, y, fixed=(T0, T14))            # 暦既知(深さだけ)
-            sm.append(f["depth"] / f["sig_depth"]); st_.append(fk["depth"] / fk["sig_depth"])
+            sm.append(f["depth"] / f["sig_depth"]); st_.append(d / fk["sig_depth"])
             de.append(f["depth"] - d); dk.append(fk["depth"] - d)
             te.append(abs(f["t14"] - T14)); rr.append(f["rms"])
-        st = d / theory_sig_depth(th_noise, d)
+        st = d / theory_sig_depth(th_noise, d, fixed=True)
+        st5 = d / theory_sig_depth(th_noise, d, fixed=False)
         snr_m.append(np.mean(sm)); snr_true.append(np.mean(st_)); snr_t.append(st)
+        snr_t5.append(st5)
         derr.append(np.mean(de)); derr_k.append(np.mean(dk)); terr.append(np.mean(te))
         rms_m.append(np.mean(rr))
-        print("   %5.1f         %5.2f        %+6.2f       %6.1f          %5.2f    %+6.2f    %5.2f    %4.2f"
-              % (1e3 * d, np.mean(sm), 1e3 * np.mean(de), np.mean(te), np.mean(st_),
-                 1e3 * np.mean(dk), st, np.mean(st_) / st))
+        print("   %5.1f         %5.2f       %5.2f   %+6.2f       %6.1f          %5.2f   %5.2f    %4.2f"
+              "    %+6.2f"
+              % (1e3 * d, np.mean(sm), st5, 1e3 * np.mean(de), np.mean(te), np.mean(st_), st,
+                 np.mean(st_) / st, 1e3 * np.mean(dk)))
     snr_m, snr_t, snr_true = np.array(snr_m), np.array(snr_t), np.array(snr_true)
+    snr_t5 = np.array(snr_t5)
 
     def cross(snr):
         # SNR は δ にほぼ比例するので log-log で 5 を横切る δ を補間
@@ -689,9 +755,10 @@ def section_depth_cliff() -> dict:
     blind = [1e3 * d for d, e in zip(depths, terr) if e < 5.0]
     blind_min = min(blind) if blind else float("nan")
     print("\n   SNR = 5 の境目(暦既知): 実測 %.2f ppt / 理論(CCD 式 + Fisher)%.2f ppt。"
-          "既知/理論の比は %.2f〜%.2f。" % (1e3 * dm, 1e3 * dt_, (snr_true / snr_t).min(),
-                                        (snr_true / snr_t).max()))
-    print("   ★暦未知だと崖は %.1f ppt(|T14 誤差| < 5 fr になる最小の δ)—— Fisher 限界の "
+          "既知/理論の比は %.2f〜%.2f。暦未知の理論(5 パラメータ)は %.2f ppt。"
+          % (1e3 * dm, 1e3 * dt_, (snr_true / snr_t).min(), (snr_true / snr_t).max(),
+             1e3 * cross(snr_t5)))
+    print("   ★暦未知だと崖は %.1f ppt(|T14 誤差| < 5 fr になる最小の δ)—— 暦既知の Fisher 限界の "
           "%.1f 倍。局所の下限は t0/T14 を知らない探索には効かない。" % (blind_min, blind_min / (1e3 * dt_)))
     print("   ★暦未知の SNR(δ^/σ^)は限界の下でも %.1f〜%.1f と出る(δ^ が過大: δ=%.1f ppt で "
           "%+.2f ppt)—— 雑音を惑星と呼んでいる。" % (snr_m[0], snr_m[2], 1e3 * depths[0], 1e3 * derr[0]))
@@ -699,8 +766,9 @@ def section_depth_cliff() -> dict:
           "継続時間が壊れる。" % (1e3 * depths[0], terr[0]))
     figs.save_plot("depth_cliff",
                    [("暦未知の当てはめ(推定深さ/σ)", 1e3 * depths, snr_m),
-                    ("暦既知の当てはめ", 1e3 * depths, snr_true),
-                    ("理論 CCD 式 + Fisher", 1e3 * depths, snr_t),
+                    ("暦既知の当てはめ(真の深さ/σ)", 1e3 * depths, snr_true),
+                    ("理論(暦既知)CCD 式 + Fisher", 1e3 * depths, snr_t),
+                    ("理論(暦未知)", 1e3 * depths, snr_t5),
                     ("SNR = 5", 1e3 * depths, np.full(depths.size, 5.0))],
                    xlabel="深さ δ [ppt]", ylabel="深さの検出 SNR",
                    title="深さの検出限界: 暦既知なら理論どおり、暦未知は限界の下で SNR が嘘をつく")
@@ -711,6 +779,7 @@ def section_depth_cliff() -> dict:
                    title="検出限界の下では継続時間が先に壊れる")
     return {"depths": depths, "snr_m": snr_m, "snr_t": snr_t, "snr_true": snr_true,
             "derr": np.array(derr), "derr_k": np.array(derr_k), "blind_min": blind_min,
+            "snr_t5": snr_t5,
             "terr": np.array(terr), "cross_m": dm, "cross_t": dt_}
 
 
@@ -730,12 +799,12 @@ def section_drift_flat() -> dict:
     t = np.arange(T, dtype=np.float64)
     drifts = np.array([0.0, 1.0, 2.0, 4.0])
     flats = np.array([0.0, 0.01, 0.03])
-    seeds = (201, 202, 203)
+    seeds = (201, 202)
     coef = psf_weight_norm()
     print("   予測(上限): 偽の明るさ変化 rms ≈ a * sqrt(Σw²) = %.3f a → a=1 %% で %.2f ppt、"
           "a=3 %% で %.2f ppt" % (coef, 1e3 * 0.01 * coef, 1e3 * 0.03 * coef))
     print("   ドリフト[px]  画素フラット  深さ誤差 rms[ppt]  系統分の予測 rms  差の rms  "
-          "|T14誤差| rms[fr]  残差rms[ppt]  (3 seed)")
+          "|T14誤差| rms[fr]  残差rms[ppt]  (2 seed)")
     grid = np.zeros((flats.size, drifts.size))       # 深さ誤差の rms(符号はフラット次第)
     grid_p = np.zeros_like(grid)                     # 雑音なし・真の位置で測った系統分
     grid_t = np.zeros_like(grid)
@@ -749,6 +818,10 @@ def section_drift_flat() -> dict:
                 f = fit_transit(t, lightcurve(measure(sc)["flux"], ("sum",)))
                 de.append(f["depth"] - DEPTH); te.append(f["t14"] - T14); rr.append(f["rms"])
                 # 系統分の予測: 同じフラット・同じドリフトで雑音を切り、真の位置に開口を置く
+                # (フラット均一なら恒等的に 0 なので省く)
+                if a == 0.0:
+                    dp.append(0.0)
+                    continue
                 sn = make_series(drift_px=dpx, flat_px=a, cloud=False, seed=s,
                                  flat_seed=s * 13 + 5, photon=False)
                 ctr = np.stack([sn["rows"], sn["cols"]], axis=1)
@@ -780,7 +853,7 @@ def section_drift_flat() -> dict:
     figs.save_table("drift_flat_table",
                     ["ドリフト px", "画素フラット", "深さ誤差 rms ppt", "系統分の予測 rms ppt",
                      "差の rms ppt", "|T14 誤差| rms fr", "残差 rms ppt"], rows,
-                    title="ドリフト × フラット不均一(雲なし・開口 3σ・3 seed)")
+                    title="ドリフト × フラット不均一(雲なし・開口 3σ・2 seed)")
     figs.save_plot("drift_flat_map",
                    [("フラット均一(対照)", drifts, 1e3 * grid[0]),
                     ("画素フラット 1 %", drifts, 1e3 * grid[1]),
@@ -817,7 +890,27 @@ def main() -> int:
     s5 = section_drift_flat()
     print("   [%.1f s]" % (time.perf_counter() - tt))
 
-    # --- 所見を固定する(壊れたら鳴る): 数字を見てから入れる ---------------
+    # --- 所見を固定する(壊れたら鳴る) ---------------------------------------
+    fz, fr_ = s1["雲あり"]["fits"][0][1], s1["雲あり"]["fits"][1][1]
+    fz0 = s1["雲なし(対照)"]["fits"][0][1]
+    assert abs(fz["depth"] - DEPTH) > 0.03, "雲でゼロ点が壊れていない"
+    assert abs(fz0["depth"] - DEPTH) < 0.5e-3 and abs(fz0["t14"] - T14) < 3.0, "雲なしのゼロ点は当たるはず"
+    assert abs(fr_["depth"] - DEPTH) < 0.5e-3 and abs(fr_["t14"] - T14) < 3.0, "比は雲ありでも当たるはず"
+    assert s1["shift_rms"] < 0.1
+    assert s2["ratio"] > 4.0, s2["ratio"]
+    assert s2["raw"] > 1.3 * s2["res"]["全 5 星の単純和"][0]["rms"], "生の分散の罠が消えた"
+    assert s2["good"] < 1.1 * s2["res"]["全 5 星の単純和"][0]["rms"]
+    assert s3["ctl"][0] / s3["theo"][0] > 1.4, "不動の星の r=1σ が理論並みになった(階段が消えた?)"
+    assert s3["meas32"][0] / s3["theo"][0] < 1.0 and s3["ctl32"][0] / s3["theo"][0] < 1.0
+    assert np.all(s3["meas"][2:] / s3["theo"][2:] < 1.15)
+    assert abs(s4["cross_m"] - s4["cross_t"]) < 0.3e-3, (s4["cross_m"], s4["cross_t"])
+    assert np.all((s4["snr_true"] / s4["snr_t"])[1:] > 0.9)
+    assert s4["blind_min"] <= 3.0 and s4["terr"][0] > 15.0
+    g, gp = s5["grid"], s5["grid_p"]
+    assert g[0, 2] < 0.3e-3 and g[2, 0] < 0.3e-3, "単独では無害のはず"
+    assert g[2, 2] > 0.6e-3 and g[2, 3] > 2.0e-3, "掛け算で偽の深さ"
+    assert abs(g[2, 3] - gp[2, 3]) < 0.3e-3, "系統分の予測が実測と合わない"
+    assert g[2, 3] < 0.03 * s5["coef"], "予測上限を超えた"
     print("\n所要 %.1f s" % (time.perf_counter() - t_start))
     if figs.errors():
         print("図の警告:", figs.errors())

@@ -3,37 +3,53 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 11:31:29
+- **最終更新**: 2026-09-07 12:00:44
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-ef4a06f36 gates: img_to_matrix は定義上の恒等(台帳へ)、断片探針はノブ生死の門だけで使う
-f3e92d534 packaging: sample_sources_ai を package の外へ移動、wheel 側の同梱検査と CI のサイズ上限(70 MB)を追加
-ee1f9556c packaging: backends_bridge を py-modules に(wheel から入口 op 12 本が落ちていた、CI wheel 門で検出)
-dca932480 PoC 展示館記事: 公開済み item へ言語切替リンクを向ける
-c606b2726 PoC 展示館記事: Qiita 限定共有の item id を記録 (qiita_items.json)
-2c689f1a8 0.1.11 準備: 入口 op 12 本・図の第 2 波(892/897)・使い方 494→0・例ゼロ 205→1・PoC 展示館記事
-c8432f190 auto: gen_wingpoc_gallery.py 編集前 (2026-09-07 07:24)
-50112daf2 auto: gen_wingpoc_gallery.py 編集前 (2026-09-07 07:24)
-dfee6b55b auto: gen_wingpoc_gallery.py 編集前 (2026-09-07 07:24)
-f02a952dd auto: gen_wingpoc_gallery.py 編集前 (2026-09-07 07:24)
+182c4ddaa auto: poc_screw_thread_metrology.py 編集前 (2026-09-07 11:50)
+710fe2992 auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:49)
+a5d8cfe07 auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:47)
+0d6387c7c auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:47)
+45abb6b49 auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:47)
+545c5b5e9 auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:47)
+ca1d71062 auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:47)
+923e7752d auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:47)
+4ed11562c auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:47)
+9d61644e6 auto: poc_metal_grain_size.py 編集前 (2026-09-07 11:46)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M docs/articles/exhibits/poc_captions.json
+ M examples/poc_exoplanet_transit.py
+ M examples/poc_screw_thread_metrology.py
+ M examples2d.py
+?? docs/articles/assets/poc/poc_exoplanet_transit/
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-11:30 docs/OP_PROBE_ALLOWLIST.json
-11:29 tests/test_op_knob_liveness.py
-11:29 op_probe.py
+11:59 examples2d.py
+11:59 docs/articles/exhibits/poc_captions.json
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/figures.json
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/11_drift_flat_map.png
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/10_drift_flat_table.tsv
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/10_drift_flat_table.csv
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/10_drift_flat_table.png
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/09_depth_cliff_t14.png
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/08_depth_cliff.png
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/07_aperture_depth_bias.png
+11:58 docs/articles/assets/poc/poc_exoplanet_transit/06_aperture_sweep.png
+11:57 docs/articles/assets/poc/poc_exoplanet_transit/05_comparison_choice.tsv
+11:57 docs/articles/assets/poc/poc_exoplanet_transit/05_comparison_choice.png
+11:57 docs/articles/assets/poc/poc_exoplanet_transit/05_comparison_choice.csv
+11:57 docs/articles/assets/poc/poc_exoplanet_transit/04_transparency_truth.png
 ```
 
 ---

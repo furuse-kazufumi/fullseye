@@ -1,0 +1,116 @@
+[
+ {
+  "file": "01_scene_starfield.png",
+  "name": "scene_starfield",
+  "caption": "112x112 px の星野を 2 倍に拡大。差分はトランジット外の平均との差 [e-]。前半の差分に見える双極子はドリフト(位置ずれ)で、最深部では目標星(中央)だけが沈む",
+  "shape": [
+   614,
+   478,
+   3
+  ]
+ },
+ {
+  "file": "02_frames_transit_phases.png",
+  "name": "frames_transit_phases",
+  "caption": "前/入/最深部/出/後の各段階で平均した画像からトランジット外の平均を引いた [e-]。4 倍拡大",
+  "shape": [
+   225,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "03_lightcurve_zero_vs_relative.png",
+  "name": "lightcurve_zero_vs_relative",
+  "caption": "ゼロ点と比較星の和は雲(全星共通)そのもの。比を取ると 10 ppt の凹みが真値の上に乗る",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_transparency_truth.png",
+  "name": "transparency_truth",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_comparison_choice.png",
+  "name": "comparison_choice",
+  "caption": "",
+  "shape": [
+   272,
+   718,
+   3
+  ],
+  "csv": "05_comparison_choice.csv",
+  "tsv": "05_comparison_choice.tsv"
+ },
+ {
+  "file": "06_aperture_sweep.png",
+  "name": "aperture_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_aperture_depth_bias.png",
+  "name": "aperture_depth_bias",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_depth_cliff.png",
+  "name": "depth_cliff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_depth_cliff_t14.png",
+  "name": "depth_cliff_t14",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_drift_flat_table.png",
+  "name": "drift_flat_table",
+  "caption": "",
+  "shape": [
+   368,
+   742,
+   3
+  ],
+  "csv": "10_drift_flat_table.csv",
+  "tsv": "10_drift_flat_table.tsv"
+ },
+ {
+  "file": "11_drift_flat_map.png",
+  "name": "drift_flat_map",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

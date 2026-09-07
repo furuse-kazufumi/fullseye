@@ -737,6 +737,12 @@ EXAMPLES = [
      "name": "経路に沿う文字の配置表とパネル文字 (a)(b) を閉形式で検算",
      "summary": "annotate_text_path_layout の弧長・位置・傾き・used を閉形式と突き合わせ(L 字経路で 0/90 度)、"
                 "annotate_panel_label の板の縁が margin に乗ること・text_box と画素同一であることを確かめる。"},
+    {"id": "poc_exoplanet_transit", "task": "photometry", "data": "synthetic",
+     "name": "系外惑星トランジットの相対測光(深さと継続時間は別々に壊れる)",
+     "summary": "目標星だけに 10 ppt の周辺減光つきトランジットを仕込んだ 240 枚を star_detect → frame_align → aperture_photometry で測る。ゼロ点は雲で深さ +72 ppt、比なら -0.13 ppt / T14 -0.9 fr。★比較星の選び方で残差 rms が 6.0 倍変わるが T14 の誤差は動かず、逆分散重みは生の分散で決めると雲に騙されて単純和の 1.52 倍悪い。★★開口 1σ の崖は予想した重心誤差ではなく op の開口マスクの階段(supersample=8 で不動の星が理論比 1.69、32 で 0.93)。検出限界 SNR=5 は暦既知で 1.48 ppt(理論 1.45)、暦未知は 2.0 ppt で深さより先に継続時間が壊れる。★★ドリフト 2 px とフラット 3 % は単独で 0.16 / 0.08 ppt、掛け算で 0.94 ppt、4 px で 2.97 ppt(真値の 30 %)。"},
+    {"id": "poc_metal_grain_size", "task": "metrology", "data": "synthetic",
+     "name": "結晶粒度 G(面積法と切片法は別の崖で落ちる)",
+     "summary": "Voronoi の粒と真値ラベルで ASTM E112 の G を厳密に検算できる(閉形式 π/(4√λ) と +1.5 %、E112 の 2 式は同じ組織で +0.32 段ずれる)。★ゼロ点の面積法は雑音だけ -0.02・むらだけ -0.40 が**両方で +3.82** と相互作用で死ぬ。★★粒界の途切れの崖は面積法 **7.2 %**、切片法 **40.7 %** ―― 予想の 29.3 % は外れ、マスク上で消える粒界は f の 0.76 倍だった。closing 9×9 は 13 点中 12 点で素の版より悪い。混粒の全体 G 7.82 に ±0.5 で入るタイルは 4/64。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the
