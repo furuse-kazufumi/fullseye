@@ -944,13 +944,16 @@ def main() -> int:
     print("  * 種類別に測ると 面積率誤差 %+.2f pt / クラック再現率 %.2f〜%.2f / 断線 %d/%d"
           "(等級 %s)。" % (pipe["iso_err"], min(pipe["recall"]), max(pipe["recall"]),
                           pipe["fi_matched"], len(FI_BANDS), grade(pipe["iso_rate"])))
-    print("  * sk_frangi の最大値正規化: 欠陥ゼロで偽クラック %.0f px → 校正線で %.0f px。"
-          % (fr["len_raw"], fr["len_cal"]))
-    print("  * 崖: 粒コントラスト c=%s で偽クラック(予測 %.2f)/ クラック幅 %.2f px"
-          "(予測 %.2f)/ 断線は K=%s で 8/8 を割る(予測 %.0f)/ ビネッティングは"
-          "当てはめ込みで %+.2f〜%+.2f pt。"
-          % (gr["onset"], gr["c_pred"], wd["cliff"], wd["w_pred"], sn["k_fail"],
-             sn["k_pred"], min(vg["e_fit"]), max(vg["e_fit"])))
+    o0, o1, o2 = fr["out"].values()
+    print("  * sk_frangi の最大値正規化: 校正なしは欠陥ゼロで偽クラック %.0f px、深いクラック"
+          " 1 本で 5 本の再現率 %.2f → %.2f。強い校正線で %.0f px / %.2f → %.2f。"
+          % (o0["false_raw"], o1["rec_raw"], o2["rec_raw"], o0["false_cal"],
+             o1["rec_cal"], o2["rec_cal"]))
+    print("  * 崖: 粒コントラスト c=%s で偽クラック(予測 %.2f)、断線は c=%s から飲まれる"
+          "(予測 %.2f)/ クラック幅 %.2f px(予測 %.2f)/ 断線は K=%s で 8/8 を割る"
+          "(予測 %.0f)/ ビネッティングは当てはめ込みで %+.2f〜%+.2f pt。"
+          % (gr["onset"], gr["c_pred"], gr["fi_drop"], 1 - T_FI, wd["cliff"], wd["w_pred"],
+             sn["k_fail"], sn["k_pred"], min(vg["e_fit"]), max(vg["e_fit"])))
 
     # 所見を固定する(壊れたら鳴る)
     assert zp["rate"] > 3.0 * sc["iso_rate"], zp["rate"]
