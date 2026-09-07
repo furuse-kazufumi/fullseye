@@ -686,8 +686,8 @@ def section_scene_figs(base: dict) -> None:
     figs.save_grid("scene", panels, caps, ncols=2,
                    title="ひび割れ網の合成シーン(視野 %d px)" % N_PIX,
                    caption="絵の具の色斑 + ニスの光沢むら + ぼけ + 雑音。斜光は溝の片側を影にする。")
-    det = extract_net(sc_a["img"])
-    me = measure(sc_a, det)
+    me = measure_scene(sc_a)
+    det = me["det"]
     ov = np.stack([sc_a["img"]] * 3, -1)
     ov[det["skel"]] = (0.1, 0.4, 1.0)
     ov[ndi.binary_dilation(det["junc"], np.ones((3, 3), bool))] = (1.0, 0.6, 0.0)
