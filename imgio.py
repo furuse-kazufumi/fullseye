@@ -424,7 +424,7 @@ def colorize_disparity(disp, name="turbo", **kw):
     return apply_cmap(disp, name=name, **kw)
 
 
-def colorize_categorical(labels, palette="tab10", background=(0.0, 0.0, 0.0)):
+def colorize_categorical(labels, palette="tab10", background=(0.0, 0.0, 0.0), cycle=False):
     """ラベル(**順序の無い量**)を質的パレットで塗る。→ ``(H, W, 3)``。
 
     :func:`colorize_labels` は乱数 RGB を割り当てるので、隣り合うラベルが似た色に
