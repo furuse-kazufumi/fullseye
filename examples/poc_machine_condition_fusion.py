@@ -677,10 +677,20 @@ def section_pairs(train_rows, test_rows, table) -> None:
     print("     軸心のずれが同じ(仕込んだ値 0.010 mm、測定雑音 %.3f mm)なので、"
           "原理的に 1 つの塊。" % GEOM_SIGMA)
     cm_t = table["熱のみ"]["cm"]
+    cold = ("正常", "アンバランス", "ゆるみ")
+    idx = [MODES.index(m) for m in cold]
+    inner = sum(int(cm_t[i, j]) for i in idx for j in idx)
+    print("\n  ★★熱だけだと %s の 3 モードは**互いの中で %d/%d 回まわる**"
+          % ("・".join(cold), inner, len(idx) * N_TEST))
+    print("     —— 仕込んだ発熱が %s と %s でほぼ同じ(軸受 %.1f / %.1f W)だから。"
+          % (cold[0], cold[1], mode_params(cold[0], 1.0)["heat"][1],
+             mode_params(cold[1], 1.0)["heat"][1]))
+    print("     これが「1 つでは絶対に分けられない組」。振動だけがこの 3 つに"
+          "身元(1X か 0.5X の櫛か何も無いか)を与える。")
     i_b, i_l = MODES.index("軸受外輪傷"), MODES.index("潤滑不良")
-    print("  ★熱だけでは 軸受外輪傷 <-> 潤滑不良 が %d + %d / %d 回入れ替わる ——"
+    print("  ★逆に 軸受外輪傷 <-> 潤滑不良 は熱だけで %d + %d / %d 回しか入れ替わらない"
           % (cm_t[i_b, i_l], cm_t[i_l, i_b], 2 * N_TEST))
-    print("     どちらも「軸受のあたりが熱い」で、違いは**広がり**だけ(6 節で崖を測る)。")
+    print("     —— 局所発熱と全体発熱は**広がり**が違う。9 節でその広がりの崖を測る。")
 
 
 # --------------------------------------------------------------------------- #
