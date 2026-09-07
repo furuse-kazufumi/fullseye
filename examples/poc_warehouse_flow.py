@@ -767,6 +767,36 @@ def section_heatmap(base: dict) -> dict:
     n_wait = int(wait_mask.ravel()[flat].sum())
     print("  積算の上位 30 列のうち、真の待ち位置に当たるのは **%d 列**、"
           "残り %d 列は通路(人が通っただけ)。" % (n_wait, 30 - n_wait))
+    print("  ★つまりヒートマップは**場所**はだいたい当てる。当てられないのは"
+          "「そこで何が起きたか」のほう —— 同じ積算値が別の中身から出る。")
+
+    # 同じくらいの積算値が、まったく違う中身から出ることを 3 列で見せる。
+    dwell_lab0 = base["det"]["labels"]
+    probes = [("補充待ち の棚前", PICKS["M1"][0], PICKS["M1"][1]),
+              ("出会いの場所(交差通路)", X_C, 9.3),
+              ("ただの通路(下段)", X_C, Y_BOT)]
+    print("\n   場所                     積算 [フレーム]  3-D の柱の数  最長の柱 [s]")
+    probe_rows = []
+    for lbl, xm, ym in probes:
+        iy, ix = int(ym / CELL), int(xm / CELL)
+        col = dwell_lab0[:, iy, ix]
+        ids = [c for c in np.unique(col) if c > 0]
+        longest = 0
+        for c in ids:
+            f = np.nonzero(col == c)[0]
+            longest = max(longest, int(f[-1] - f[0] + 1))
+        print("   %-24s %10.0f     %8d      %8.1f"
+              % (lbl, heat[iy, ix], len(ids), longest * base["meas"]["dt"]))
+        probe_rows.append([lbl, "%.0f" % heat[iy, ix], str(len(ids)),
+                           "%.1f" % (longest * base["meas"]["dt"])])
+    print("  ★積算だけを見ると区別がつかないが、3-D に戻すと"
+          "「1 本の長い柱」と「短い柱が何本も」に分かれる。")
+    figs.save_table("heat_ambiguity",
+                    ["場所", "積算 [フレーム]", "3-D の柱の数", "最長の柱 [s]"],
+                    probe_rows,
+                    title="同じ積算値が違う中身から出る(2-D に潰すと消える情報)",
+                    caption="ヒートマップは場所を当てるが、"
+                            "「1 人が長く待った」と「何人も短く止まった」を分けない。")
 
     # 柱と管の分かれ目 = 列あたりの平均時間厚み。
     dwell_lab = base["det"]["labels"]
