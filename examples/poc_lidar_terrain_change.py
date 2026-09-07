@@ -1218,17 +1218,18 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
                    [up(truth_mask.astype(float)), up(sig_dod.astype(float)),
                     up(sig_m.astype(float))],
                    ["真の変化域 %.0f m2" % tr["area"],
-                    "DoD 有意 %.0f m2(LoD %.3f m 一律)" % (float(sig_dod.sum()), lod),
-                    "M3C2 有意 %.0f m2(core ごとの sigma)" % float(sig_m.sum())],
+                    "DoD 有意 %.0f m2" % float(sig_dod.sum()),
+                    "M3C2 有意 %.0f m2" % float(sig_m.sum())],
                    ncols=3, title="「変化ありと判定した面積」は体積とは別に数える",
-                   caption="面積と体積は別の量。面積が合っていても、縁の薄い層を"
-                           "落としていれば体積は足りない。")
+                   caption="DoD は一律 LoD %.3f m、M3C2 は core ごとの sigma で判定。"
+                           "面積が合っていても、縁の薄い層を落としていれば体積は"
+                           "足りない。" % lod)
 
     row = int(SCAR["y"] / CELL)
     figs.save_plot("scar_profile",
-                   [("真の鉛直変位 -d", cc, -d_true[row]),
-                    ("DoD の dz", cc, r["dz"][row]),
-                    ("M3C2 の L(法線方向)", cc, lmap[row])],
+                   [("真の鉛直変位 -d", *finite(cc, -d_true[row])),
+                    ("DoD の dz", *finite(cc, r["dz"][row])),
+                    ("M3C2 の L(法線方向)", *finite(cc, lmap[row]))],
                    xlabel="x [m](崩壊中心を通る東西断面)", ylabel="変化量 [m]",
                    title="同じ崩壊、2 つの「深さ」",
                    caption="M3C2 の L は法線方向なので cos %.0f 度 = %.3f 倍だけ"
