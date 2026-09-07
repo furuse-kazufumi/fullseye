@@ -936,6 +936,7 @@ def section_zd(sw: dict) -> dict:
                    xlabel="Z_d [m]", ylabel="率 [%]",
                    title="Z_d を上げれば危険は消えるが、機械も止まる")
     return {"zd_rep": zd_rep, "zd_occ": zd_occ, "zd_max": zd_max,
+            "zd_need": zd_need, "stop_need": stop_need,
             "stop": stop_r, "miss": miss_r}
 
 
