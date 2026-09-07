@@ -1041,8 +1041,7 @@ def section_cliff_dropout() -> dict:
     print("\n   ★同じ欠測率 %.0f %% で誤差が %.1f 倍違う"
           "(無作為 %.3f / 構造的 %.3f mrad)。" % (fr[-1], ratio, rnd_e[-1], low_e[-1]))
     print("     残った高さは %.2f m → %.2f m。予測 %.3f mrad と実測 %.3f mrad の差は %.0f %%。"
-          % (rows[0][5] and float(rows[0][5]), float(rows[-1][5]), low_p[-1],
-             low_e[-1], dev))
+          % (low_L[0], low_L[-1], low_p[-1], low_e[-1], dev))
     print("     ★施工誤差 3.00 mrad を検出する目安(誤差 < 1/3)を割るのは"
           "構造的欠測だけ。")
     figs.save_plot("cliff_dropout",
