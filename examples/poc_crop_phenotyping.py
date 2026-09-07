@@ -922,7 +922,7 @@ def section_volume(can, buf_fine):
     rng = np.random.default_rng(SEED + 3)
     mesh = canopy_mesh(can, nu=30, nt=6)
     pts = np.asarray(L3.mesh_sample_points(mesh[0], mesh[1], n=180000,
-                                           method="uniform", seed=SEED))
+                                           method="area", seed=SEED))
     bounds = ((0.0, PLOT), (0.0, PLOT), (0.0, 1.8))
     res = (90, 90, 72)
     occ = np.asarray(L3.occupancy_grid(pts, bounds, res), np.float64)
