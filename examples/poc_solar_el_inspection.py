@@ -587,28 +587,48 @@ def section_width_sweep() -> dict:
     print("\n" + "=" * 78)
     print("5) 崖: クラック幅 0.5 → 3.0 px の再現率")
     print("=" * 78)
+    ref2 = 1.0
     w_pred = 0.5 * CRACK_W
     print("  予測: Frangi の応答は幅に比例(σ より細い間)。校正線 %.1f px = 1.0 なので、"
-          "ヒステリシス上限 0.5 を割るのは幅 < %.2f px。" % (CRACK_W, w_pred))
-    print("\n    幅 [px]   再現率(5 本の平均)  最小   一致長/真値   偽 [px]")
-    ws, rec, mn = [], [], []
-    for w in (0.5, 0.75, 1.0, 1.5, 2.0, 3.0):
+          "ヒステリシス上限 0.5 を割るのは幅 < %.2f px(校正線 %.1f px なら %.2f px)。"
+          % (CRACK_W, w_pred, ref2, 0.5 * ref2))
+    print("\n    幅 [px]   応答(中心線の中央値、校正線 %.1f px=1)  線形予測   再現率: 校正線 %.1f px / %.1f px"
+          % (CRACK_W, CRACK_W, ref2))
+    ws, rec, rec2, resp = [], [], [], []
+    for w in (0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0):
         sc = make_scene(crack_w=w)
         r = analyze(sc)
+        r2 = analyze(sc, ref_w=ref2)
+        rm = ridge_map(degrid(flatten(sc["img"])[0]))
+        any_true = np.zeros_like(rm, bool)
+        for m in sc["crack_lines"]:
+            any_true |= m
         ws.append(w)
         rec.append(float(np.mean(r["recall"])))
-        mn.append(float(min(r["recall"])))
-        print("    %4.2f         %.2f            %.2f      %.2f        %.0f"
-              % (w, rec[-1], mn[-1], r["matched_len"] / r["true_len"], r["false_len"]))
+        rec2.append(float(np.mean(r2["recall"])))
+        resp.append(float(np.median(rm[any_true])))
+        print("    %4.2f               %.2f                      %.2f            %.2f  /  %.2f"
+              % (w, resp[-1], min(w / CRACK_W, 1.0), rec[-1], rec2[-1]))
     cliff = next((w for w, v in zip(ws, rec) if v >= 0.5), None)
-    print("\n  ★再現率 0.5 を超えるのは幅 %.2f px から(予測 %.2f px)。"
-          "**崖の位置は校正線の幅が決める** —— 検出したい最小幅で校正線を作ること。"
-          % (cliff, w_pred))
-    figs.save_plot("crack_width", [("再現率(平均)", ws, rec), ("再現率(最小)", ws, mn),
-                                   ("予測の崖 %.2f px" % w_pred, [w_pred, w_pred], [0, 1])],
-                   xlabel="クラック幅 [px]", ylabel="再現率",
-                   title="クラック幅の崖は校正線の幅の半分に出る")
-    return {"w": ws, "recall": rec, "cliff": cliff, "w_pred": w_pred}
+    cliff2 = next((w for w, v in zip(ws, rec2) if v >= 0.5), None)
+    i1 = ws.index(1.0)
+    print("\n  ★再現率 0.5 を超えるのは 校正線 %.1f px で幅 %.2f px から(予測 %.2f)、"
+          "校正線 %.1f px で %.2f px から(予測 %.2f)。" % (CRACK_W, cliff, w_pred, ref2,
+                                                        cliff2, 0.5 * ref2))
+    print("     予測が外れた理由は測ってある: 幅 1.0 px の応答は %.2f で、線形予測 %.2f の"
+          "%.0f %% —— Frangi の応答は幅に**線形ではない**(構造量 S の飽和項)。"
+          % (resp[i1], 1.0 / CRACK_W, 100.0 * resp[i1] / (1.0 / CRACK_W)))
+    print("     それでも**校正線を細くすると崖は細い側へ動く** —— 検出したい最小幅で"
+          "校正線を作ること。")
+    figs.save_plot("crack_width", [("再現率(校正線 %.1f px)" % CRACK_W, ws, rec),
+                                   ("再現率(校正線 %.1f px)" % ref2, ws, rec2),
+                                   ("中心線の応答(校正線 %.1f px=1)" % CRACK_W, ws, resp),
+                                   ("線形予測 w/%.1f" % CRACK_W, ws,
+                                    [min(w / CRACK_W, 1.0) for w in ws])],
+                   xlabel="クラック幅 [px]", ylabel="再現率 / 応答",
+                   title="クラック幅の崖は校正線の幅で動く(応答は幅に線形ではない)")
+    return {"w": ws, "recall": rec, "recall2": rec2, "resp": resp, "cliff": cliff,
+            "cliff2": cliff2, "w_pred": w_pred, "resp1": resp[i1]}
 
 
 # --------------------------------------------------------------------------- #
