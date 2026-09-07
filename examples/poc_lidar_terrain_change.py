@@ -1006,7 +1006,7 @@ def section_occlusion(tr: dict, lod0: float) -> dict:
     print("\n   遮蔽率 地面点 取りこぼし 全滅セル LoD(MAD)  平均 DEM 誤差%  "
           "中央値 DEM 誤差%  3x3 窓 誤差%  空セル  分類なし")
     occ, gr, leak, lstd, lmad = [], [], [], [], []
-    adapt, med, wide, raw, rows, dead = [], [], [], [], [], []
+    adapt, med, wide, raw, rows, dead, empt = [], [], [], [], [], [], []
     for p in (0.0, 0.15, 0.30, 0.45, 0.60):
         rng = np.random.default_rng(SEED + 9)
         a, ga = make_cloud(rng, with_change=False, occl=p)
