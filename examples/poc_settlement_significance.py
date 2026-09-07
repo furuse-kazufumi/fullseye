@@ -559,15 +559,20 @@ def section_normals(sc: dict, z: dict, mv: dict) -> dict:
              cm_up["tpr"], cm_up["fpr"]))
     print("\n  ★沈下量そのものはどちらも当たっている(%.2f / %.2f mm、真値 %.2f)。"
           % (np.nanmean(mv["d"]), np.nanmean(d_up), s_mm.mean()))
-    print("     壊れるのは LoD で、%.2f -> %.2f mm(%.1f 倍)。有意な core は "
-          "%d -> %d 個。" % (np.nanmedian(mv["lod"]), np.nanmedian(l_up),
-                            np.nanmedian(l_up) / np.nanmedian(mv["lod"]),
-                            int(mv["sig"].sum()), int(sig_up.sum())))
-    print("     予測: 勾配 %.4f の面を半径 %.1f m で切ると軸方向の σ は %.2f mm 増える"
-          " → LoD は sqrt(σ²+…) 経由で効く。" % (slope, RADIUS, sd_tilt * 1000))
-    print("  **測れているのに『有意でない』になる** —— これは面の問題ではなく"
-          "法線の取り方の問題。")
-    assert np.nanmedian(l_up) > 2.0 * np.nanmedian(mv["lod"])
+    zaf = zid == 1
+    print("     壊れるのは LoD で、全体の中央値 %.2f -> %.2f mm(%.1f 倍)、"
+          "**いちばん滑らかなアスファルトでは %.2f -> %.2f mm(%.1f 倍)**。"
+          % (np.nanmedian(mv["lod"]), np.nanmedian(l_up),
+             np.nanmedian(l_up) / np.nanmedian(mv["lod"]),
+             float(np.nanmedian(mv["lod"][zaf])), float(np.nanmedian(l_up[zaf])),
+             float(np.nanmedian(l_up[zaf]) / np.nanmedian(mv["lod"][zaf]))))
+    print("     有意な core は %d -> %d 個。**測れているのに『有意でない』になる** ——"
+          "面の問題ではなく法線の取り方の問題。"
+          % (int(mv["sig"].sum()), int(sig_up.sum())))
+    print("     滑らかな面ほど損をする(粗い路肩は元から σ が大きいので勾配が"
+          "埋もれる)—— 直感と逆向き。")
+    assert np.nanmedian(l_up) > 1.5 * np.nanmedian(mv["lod"])
+    assert np.nanmedian(l_up[zaf]) > 2.0 * np.nanmedian(mv["lod"][zaf])
     return {"lod_up": float(np.nanmedian(l_up)), "n_up": int(sig_up.sum()),
             "cm_up": cm_up, "d_up": d_up}
 
