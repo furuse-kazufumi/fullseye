@@ -241,7 +241,7 @@ def build_frames(density=DENSITY, n_frames=N_FRAMES, refl_c=REFL_C, wave_amp=WAV
         blur = gaussian_filter(hi, 1.5)
         ob = fs.ledger.warp_by_plane(blur, _H_I2HI, order=1, cval=BG)[:OBL_SHAPE[0], :OBL_SHAPE[1]]
         obl_clean.append(ob)
-        ob2 = ob + refl_c * refl
+        ob2 = ob + refl_c * refl + refl_fine_c * refl_fine
         if noise > 0:
             ob2 = ob2 + rng.normal(0.0, noise, ob2.shape)
         obl.append(ob2)
