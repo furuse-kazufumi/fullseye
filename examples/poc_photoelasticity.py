@@ -423,9 +423,10 @@ def section6_noise(dsig, theta, delta, m):
                                  np.sqrt(np.maximum(bright, 0)))
         e = np.abs(np.mod(d_hat - delta + np.pi, 2 * np.pi) - np.pi)
         est = F_SIGMA * (d_hat / (2 * np.pi)) / H_MM
+        rows[(sig, bits)] = (float(np.median(e[m])),
+                             float(np.mean(np.abs(est[m] - dsig[m]))))
         print("  %10.3f %10s | %14.5f %12.5f"
-              % (sig, "%d bit" % bits if bits else "なし",
-                 float(np.median(e[m])), float(np.mean(np.abs(est[m] - dsig[m])))))
+              % (sig, "%d bit" % bits if bits else "なし") + tuple())
     print()
     print("  → 8 bit 量子化だけで δ の誤差が %s。雑音より**先に量子化が効く**"
           % "雑音 0.002 と同程度")
