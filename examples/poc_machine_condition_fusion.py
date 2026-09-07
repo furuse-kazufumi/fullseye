@@ -703,12 +703,10 @@ def sweep(name: str, values, kw_name: str, want, xlabel: str, title: str,
     rows, rates = [], []
     for v in values:
         kw = {kw_name: v}
-        tr = collect(0, N_TRAIN, want=want, **kw)
-        te = collect(1, N_TEST, want=want, **kw)
-        base_tr = BASE_TRAIN if want != ("v", "t", "s") else None
-        if base_tr is not None:
-            tr = [{**a, **b} for a, b in zip(BASE_TRAIN, tr)]
-            te = [{**a, **b} for a, b in zip(BASE_TEST, te)]
+        # 掃引で変わるセンサだけ測り直し、他の 2 つは基準条件のまま重ねる
+        # (対照群 = その要因だけを動かした条件)。
+        tr = [{**a, **b} for a, b in zip(BASE_TRAIN, collect(0, N_TRAIN, want=want, **kw))]
+        te = [{**a, **b} for a, b in zip(BASE_TEST, collect(1, N_TEST, want=want, **kw))]
         cm = evaluate(ALL_FEATS, tr, te)
         r = per_mode_rate(cm)
         rates.append(r)
