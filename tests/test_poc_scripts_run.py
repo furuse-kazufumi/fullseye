@@ -71,7 +71,14 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     if r.returncode == 0:
         out = r.stdout.decode("utf-8", "replace")
         if "\nPASS" not in out:
-            return path.name, 0, "exit 0 だが PASS を印字していない"
+            # ★2026-09-07: ここは長らく **0 を返していた** ので、下の
+            # `assert code == 0` を素通りしていた —— 合否を計算した直後に
+            # 捨てる門(実測: PASS を一度も印字しない PoC が 3 本 ——
+            # poc_dic_strain / poc_photoelasticity / poc_thermography_ndt)。
+            # -2 を返して落ちるようにする。
+            return path.name, -2, ("exit 0 だが PASS を印字していない"
+                                   + chr(10) + "--- stdout(末尾) ---"
+                                   + chr(10) + out[-1200:])
     return path.name, r.returncode, tail
 
 

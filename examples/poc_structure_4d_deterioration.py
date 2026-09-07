@@ -469,10 +469,11 @@ def register(src: np.ndarray, dst: np.ndarray, mask=None, vox: float = VOX):
     if mask is not None:
         a, b = a[mask(a)], b[mask(b)]
     nb = np.asarray(fs.ledger.estimate_normals(b, k=25), float)
-    rot, tr, info = fs.ledger.icp_point2plane.raw(a, b, nb, iters=40)
+    # ★台帳経由は宣言 out 型(pose)しか返さないので ``.raw`` で全部受ける。
+    rot, tr, _, rmse, iters = fs.ledger.icp_point2plane.raw(a, b, nb, iters=40)
     rot = np.asarray(rot, float)
     tr = np.asarray(tr, float).ravel()
-    return src @ rot.T + tr, rot, tr, info
+    return src @ rot.T + tr, rot, tr, {"rmse": float(rmse), "iters": int(iters)}
 
 
 def pose_residual(rot, tr) -> tuple[float, float, np.ndarray]:
