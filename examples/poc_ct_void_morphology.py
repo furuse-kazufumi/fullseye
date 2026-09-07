@@ -532,8 +532,12 @@ def section_voxel_cliff() -> dict:
         pick = lambda rs, k: np.array([r[k] for r in rs], float)   # noqa: E731
         f_sph.append(float(pick(A, "frac").mean())); s_sph.append(float(pick(A, "frac").std()))
         f_dsc.append(float(pick(B, "frac").mean())); s_dsc.append(float(pick(B, "frac").std()))
-        fl_sph.append(float(np.nanmean(pick(A, "flat"))))
-        fl_dsc.append(float(np.nanmean(pick(B, "flat"))))
+        # ★全部 nan(どの位相でも測れなかった)を np.nanmean に渡すと警告が出る。
+        #   「測れなかった」は平均の対象ではないので、ここで明示的に nan にする。
+        mean_ok = lambda a: float(a[np.isfinite(a)].mean()) if np.isfinite(a).any() \
+            else float("nan")                                          # noqa: E731
+        fl_sph.append(mean_ok(pick(A, "flat")))
+        fl_dsc.append(mean_ok(pick(B, "flat")))
         ai_dsc.append(float(pick(B, "a_int").mean())); s_ai.append(float(pick(B, "a_int").std()))
         g_int.append(float(pick(A, "gap").mean())); g_mid.append(c["gap"])
         print("   %7.0f   | %5.2f (%.2f) %6.2f  | %5.2f (%.2f) %6.2f  %5.2f (%.2f)"
