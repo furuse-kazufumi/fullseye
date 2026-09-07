@@ -991,7 +991,7 @@ def section_pull(ref: CadRef) -> dict:
     print("\n   へこみの**広がり**を振る(深さは %.0f µm 固定):" % (1000 * DENT_H))
     print("     σ [mm]  覆う面積 2πσ² [mm^2]  面積比 [%]  薄まる割合[%]"
           "  ICP 実測[%]")
-    sigs, dils, areas = [], [], []
+    sigs, dils, areas, icps = [], [], [], {}
     for sg in (2.0, 3.5, 6.0, 10.0, 15.0):
         d = defect_field(P, N, dent_h=DENT_H, dent_s=sg, warp_a=0.0,
                          wear_w=0.0)["total"]
