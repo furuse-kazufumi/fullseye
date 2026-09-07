@@ -456,14 +456,23 @@ def section_thickness():
     print("     2 値格子の距離変換は「占有ボクセル中心 -> 自由ボクセル中心」を測るので、")
     print("     半径ではなく**直径のほうが量子化される**。")
 
-    ok = [abs(e) for e in e_prb if np.isfinite(e)]
     med = lambda v: float(np.median(np.abs(v)))            # noqa: E731
-    print("\n  誤差の中央値 [mm]: 侵食 %.3f / 内接球 %.3f / 探針 %.3f(有限値 %d/%d 点)"
-          % (med(e_ero), med(e_ins), float(np.median(ok)), len(ok), len(ratios)))
-    broke = [r[0] for r, e in zip(rows, e_prb) if not np.isfinite(e)]
-    if broke:
-        print("  ★探針が壁を見つけられなくなるのは T/h = %s(予測 %.1f 以下と一致)"
-              % (", ".join("%.1f" % b for b in broke), 2 * PSF_VOXEL))
+    fine = [i for i, r in enumerate(ratios) if r >= 3.0]
+    print("\n  誤差の中央値 [mm](3 voxel 以上の %d 点): 侵食 %.3f / 内接球 %.3f / 探針 %.3f"
+          % (len(fine), med([e_ero[i] for i in fine]), med([e_ins[i] for i in fine]),
+             med([e_prb[i] for i in fine])))
+    print("  最悪誤差 [mm](同じ %d 点): 侵食 %.3f / 内接球 %.3f / 探針 %.3f"
+          % (len(fine), max(abs(e_ero[i]) for i in fine), max(abs(e_ins[i]) for i in fine),
+             max(abs(e_prb[i]) for i in fine)))
+
+    bad = [(r, e_prb[i], n_prb[i]) for i, r in enumerate(ratios) if abs(e_prb[i]) > 0.5 * T_WALL]
+    print("\n  ★予想は「2 voxel を切ると探針は壁を見つけられなくなる」だった。")
+    print("     実測は**見つけたと言って間違える**: T/h = %s で誤差 %s mm、"
+          % (", ".join("%.1f" % b[0] for b in bad), ", ".join("%+.3f" % b[1] for b in bad)))
+    print("     返る壁の本数が 2 -> %s に落ちている = 薄壁 2 枚を 1 枚と数え、"
+          % ", ".join("%d" % b[2] for b in bad))
+    print("     壁 + スロット + 壁 = %.3f mm を「肉厚」として返している。" % (2 * T_WALL + T_SLOT))
+    print("     **空を返して落ちるのではなく、もっともらしい数字を返すのが厄介**。")
 
     figs.save_plot("thickness_cliff",
                    [("侵食(ゼロ点)", hs, [T_WALL + e for e in e_ero]),
