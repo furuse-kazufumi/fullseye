@@ -1247,11 +1247,17 @@ def make_figures(pf, sw, geo, opt, est2, cal, occ) -> None:
                             "同じ母材面で足すと 1。")
 
     figs.save_plot("stripe_width",
-                   [(n, est2["widths"], est2["table"][n]) for n, _ in ESTIMATORS],
+                   [(n, est2["widths"], est2["table"][n]) for n, _ in ESTIMATORS
+                    if "lines_gauss" not in n],
                    xlabel="光条の 1σ [px]", ylabel="高さ RMS [mm]",
-                   title="光条は細いほど良い(ただし 0.7 px で床)",
-                   caption="重心は √σ で増え、3 点当てはめはもっと速く増える。"
-                           "ゼロ点(最大値の画素)は幅にほぼ無関係な 1 画素の階段。")
+                   title="同じ「重心」でも窓の決め方で光条幅への向きが逆になる",
+                   caption="固定窓は太いほど良く(σ^%+.2f)、幅に追従する窓は"
+                           "細いほど良い(σ^%+.2f)。3 点当てはめ(対数放物線)は"
+                           "σ^%+.2f でいちばん敏感。ゼロ点は幅にほぼ無関係な"
+                           "1 画素の階段。op の lines_gauss は 0.04〜0.19 mm で"
+                           "枠外(サブピクセルを返さないため)。"
+                           % (est2["expo"]["重心 固定窓"], est2["expo"]["重心 追従窓"],
+                              est2["expo"]["対数放物線"]))
 
     th45 = np.deg2rad(45.0)
     back = (occ["n"][..., 0] * np.sin(th45) - occ["n"][..., 2] * np.cos(th45)) < 0.0

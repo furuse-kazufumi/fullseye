@@ -1,11 +1,25 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">normals_from_depth — 3D <code style="color:#22d3bf">range_image</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">normalmap</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;normals_from_depth&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;normals_from_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Organisierte Tiefe → orientierte Einheitsnormalen (H,W,3). Das Kreuzprodukt der 3-D-Punkte benachbarter Pixel (nutzt die Gitterstruktur, O(HW)).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>fx,fy 指定で透視、未指定で正射。orient_to_camera=True で法線をカメラ(原点)向きに符号統一。</p>
+<p>★<b>同名の別関数が 1 行ファサードにある</b>。`<code style="color:#22d3bf">fullseye.normals_from_depth</code>` は</p>
+<p>`<code style="color:#22d3bf">(depth, K, smooth=0)</code><code style="color:#22d3bf"> の**透視版で K が必須**、こちら(</code><code style="color:#22d3bf">fullseye.ledger</code>`</p>
+<p>経由 = `<code style="color:#22d3bf">range_image</code>`)は K を取らない正射版。片方の呼び方を覚えると、もう</p>
+<p>片方で `<code style="color:#22d3bf">TypeError</code>` になる(2026-09-08 実測)。</p>
+<p>★`<code style="color:#22d3bf">spacing=(dy, dx)</code><code style="color:#22d3bf"> は**正射モードでの画素の実寸**。既定 </code><code style="color:#22d3bf">None</code>` は</p>
+<p>「1 画素 = 1 単位」で、**異方な格子(例: 列 0.05 mm × 行 0.5 mm)をそのまま</p>
+<p>渡すと傾きが黙ってずれる** —— 実測で x 成分が 20 倍(= 1/dx 倍)外れ、例外も</p>
+<p>警告も出なかった。実寸が分かっているなら必ず渡すこと。透視モード</p>
+<p>(`<code style="color:#22d3bf">fx</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">fy</code>` 指定)では焦点距離が実寸を決めるので無視される。</p>
+<p>★`<code style="color:#22d3bf">spacing</code><code style="color:#22d3bf"> を渡すときは **</code><code style="color:#22d3bf">orient_to_camera=False</code>`** にすること。正射での</p>
+<p>「カメラ」は原点(左上・深度 0)という便宜的なもので、実寸を入れると面に対する</p>
+<p>その位置が変わり、<b>符号が反転しうる</b>(実測: 傾き 0.1 の平面で</p>
+<p>`<code style="color:#22d3bf">orient_to_camera=False</code><code style="color:#22d3bf"> なら真値 x=-0.0995 と一致、</code><code style="color:#22d3bf">True</code>` では +0.0995)。</p>
+<p>向きが要るなら、視線が定義できる座標系で後段で揃える。</p>
 <p>法線は隣接画素の外積で出すため両軸に近傍が要る。H&lt;2 or W&lt;2 は第2の接線方向が無く</p>
 <p>法線が定義できない(その軸の勾配を 0 とみなすと cross(dPx,0)=[0,0,0] の縮退法線を</p>
 <p>静かに返してしまう)。fail-closed で明示的に ValueError 拒否する。</p>

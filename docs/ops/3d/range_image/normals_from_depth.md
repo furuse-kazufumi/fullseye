@@ -13,13 +13,29 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # normals_from_depth — 3D `range_image` op
 
 - **データ種**: `depth` → `normalmap`
-- **呼び出し**: `import fullseye as fs; fs.ledger.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)` (実装を直接呼ぶなら `import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)`、台帳から引くなら `ops3d.get("normals_from_depth")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)` (実装を直接呼ぶなら `import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True, spacing=None)`、台帳から引くなら `ops3d.get("normals_from_depth")`)
 
 ## 使い方
 
 organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。
 
 fx,fy 指定で透視、未指定で正射。orient_to_camera=True で法線をカメラ(原点)向きに符号統一。
+
+★**同名の別関数が 1 行ファサードにある**。``fullseye.normals_from_depth`` は
+``(depth, K, smooth=0)`` の**透視版で K が必須**、こちら(``fullseye.ledger``
+経由 = ``range_image``)は K を取らない正射版。片方の呼び方を覚えると、もう
+片方で ``TypeError`` になる(2026-09-08 実測)。
+
+★``spacing=(dy, dx)`` は**正射モードでの画素の実寸**。既定 ``None`` は
+「1 画素 = 1 単位」で、**異方な格子(例: 列 0.05 mm × 行 0.5 mm)をそのまま
+渡すと傾きが黙ってずれる** —— 実測で x 成分が 20 倍(= 1/dx 倍)外れ、例外も
+警告も出なかった。実寸が分かっているなら必ず渡すこと。透視モード
+(``fx``/``fy`` 指定)では焦点距離が実寸を決めるので無視される。
+★``spacing`` を渡すときは **``orient_to_camera=False``** にすること。正射での
+「カメラ」は原点(左上・深度 0)という便宜的なもので、実寸を入れると面に対する
+その位置が変わり、**符号が反転しうる**(実測: 傾き 0.1 の平面で
+``orient_to_camera=False`` なら真値 x=-0.0995 と一致、``True`` では +0.0995)。
+向きが要るなら、視線が定義できる座標系で後段で揃える。
 
 法線は隣接画素の外積で出すため両軸に近傍が要る。H<2 or W<2 は第2の接線方向が無く
 法線が定義できない(その軸の勾配を 0 とみなすと cross(dPx,0)=[0,0,0] の縮退法線を

@@ -9,6 +9,20 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 **索引・ヘルプに残っていた穴を全部埋めた回。** 詳細は `docs/KNOWN_ISSUES.md` §41。
 
+- ★**`gcc_delay` を追加(357 op)**。1-D の相互相関 / GCC / 到達時間差の口が
+  **どの層にも無く**、2 本の PoC が 3-D の `correlation_score` を `(1,1,N)` に
+  reshape して使っていた。重み none / phat / roth / scot、帯域制限、サブ標本補間。
+  ★**補間の偏りも実測して門に固定**した —— 相関のピークは sinc 状なので放物線では
+  近似しきれず、0〜1 標本で最大 **0.117 標本**の S 字(整数へ引く)。
+  「サブ標本まで読める」だけ書くとこの偏りが黙って乗る。
+- ★**正射の `normals_from_depth` が「1 画素 = 1 単位」を決め打っていた**。異方な格子
+  (列 0.05 mm × 行 0.5 mm)をそのまま渡すと傾きが**黙って** 20 倍(= 1/dx 倍)ずれる。
+  `spacing=(dy, dx)` を足した(既定は従来どおり)。あわせて 2 つの注意を docstring に:
+  ★**`fullseye.normals_from_depth` は同名の別関数**(透視版・K が必須)で、片方の
+  呼び方を覚えるともう片方で `TypeError`。★`spacing` を渡すときは
+  `orient_to_camera=False` にすること(正射の「カメラ」は原点という便宜なので、
+  実寸を入れると符号が反転しうる。実測で真値 x=-0.0995 に対し True では +0.0995)。
+
 - **入口 op 12 本(`img_to_*`、category `bridge`、`backends_bridge.py`)**: 1 枚の画像から
   点群・1-D 信号・光子列・行列・動画・体積・ライトフィールド・RGB・複素場・ビート
   立方体・キーポイント・モノジェニック信号を作る。これで**型が届かなかった 161 op** に

@@ -4,7 +4,7 @@ dim: 2d
 category: 3d
 in: volume
 out: image
-examples: [gallery2d_physics_alife_3d]
+examples: [gallery2d_physics_alife_3d, poc_cold_chain_excursion]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ vol_mip 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_physics_alife_3d](../../../../examples/gallery2d_physics_alife_3d.py) — `py -3.11 examples/gallery2d_physics_alife_3d.py`
+- [poc_cold_chain_excursion](../../../../examples/poc_cold_chain_excursion.py) — `py -3.11 examples/poc_cold_chain_excursion.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
