@@ -492,7 +492,7 @@ def section_thickness():
                            "切ると壁を見失う。")
     return {"ratios": list(ratios), "e_ero": e_ero, "e_ins": e_ins, "e_prb": e_prb,
             "q_ero2": q_ero2, "q_ins2": q_ins2, "rows": rows, "n_prb": n_prb,
-            "bad": bad, "fine": fine}
+            "bad": bad, "fine": fine, "same": same, "n": len(hlist)}
 
 
 def section_reach():
