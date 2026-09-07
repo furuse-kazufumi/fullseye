@@ -850,12 +850,14 @@ def section_tool_gaps() -> None:
     print("10) 道具の穴(この PoC で使ってみて)")
     print("=" * 78)
     import inspect
+    import ops3d
 
-    sig = inspect.signature(fs.ledger.cylinder_unwrap.__wrapped__
-                            if hasattr(fs.ledger.cylinder_unwrap, "__wrapped__")
-                            else fs.ledger.cylinder_unwrap)
-    assert "center" in str(sig), str(sig)
-    print("  (a) cylinder_unwrap の center は **z によらず 1 つ**。"
+    sig = inspect.signature(ops3d.OPS3D["cylinder_unwrap"]["func"])
+    assert "center" in sig.parameters, str(sig)
+    assert sig.parameters["center"].default is None
+    print("  (a) cylinder_unwrap の center は **z によらず 1 つ**"
+          "(%s)。" % str(sig).replace("device='cpu'", "…"))
+    print("      "
           "曲がった管や\n      斜めに走ったセンサには追随できない"
           "(この PoC の主題そのもの)。")
 
