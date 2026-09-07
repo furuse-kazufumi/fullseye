@@ -825,12 +825,19 @@ def section_translation(rig: Rig) -> dict:
     print("     はっきり落ちるのは回転と同じく**物体の幅**に近づいてから: "
           "IoU が 90 %% を切るのは %.0f mm(車幅 %.1f m の %.0f %%)。"
           % (1000 * fall_t, w, 100 * fall_t / w))
-    a, b, c, ctr, crot = mixed[0.040]
+    a, b, c, ctr, crot = mixed[0.080]
     print("\n  ★Δt=%.0f ms は「並進 %.0f mm + 回転 %.2f 度」。20 m 地点での寄与は"
-          " %.1f 倍 並進が大きい。" % (40, 1000 * EGO_V * 0.040,
-                                        EGO_YAWRATE * 0.040, ctr / crot))
-    print("     実測 IoU %.4f は 純並進 %.4f と差 %.4f、純回転 %.4f とは差 %.4f。"
-          "**この速度域では時刻ずれ = 並進**。" % (a, b, abs(a - b), c, abs(a - c)))
+          " %.1f 倍 並進が大きい。" % (80, 1000 * EGO_V * 0.080,
+                                        EGO_YAWRATE * 0.080, ctr / crot))
+    print("     実測 IoU %.4f は 純並進 %.4f と差 %.4f、純回転 %.4f とは差 %.4f"
+          "(%.0f 倍)。**この速度域では時刻ずれ = 並進**。"
+          % (a, b, abs(a - b), c, abs(a - c), abs(a - c) / max(abs(a - b), 1e-9)))
+    s, sb, sc, _, _ = mixed[0.040]
+    print("  ★ただし小さい Δt では見分けられない: %.0f ms は 実測 %.4f / "
+          "純並進 %.4f / 純回転 %.4f で、差 %.4f と %.4f は**丸めのゆらぎ"
+          "(前の掃引で見た ±0.02)と同じ大きさ**。原因を分けたいなら IoU では"
+          "なく、点の移動量そのものを距離帯で見る(7 節)。"
+          % (40, s, sb, sc, abs(s - sb), abs(s - sc)))
     return {"trans": curves, "time": tcurve, "mixed": mixed}
 
 
