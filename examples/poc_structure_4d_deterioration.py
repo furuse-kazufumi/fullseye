@@ -790,16 +790,24 @@ def section_control(sc: dict) -> dict:
                                                      min_size=4), int)
         nclu = int(lab.max()) + 1 if lab.size else 0
         sizes = [int((lab == j).sum()) for j in range(nclu)]
+        pts_n = c["cen"][neg]
+        # 真の欠損の中心に最も近い塊を選ぶ(いちばん大きい塊とは限らない)
+        tgt = CORES["p"][int(np.argmin(sc["truth_fp"]))]   # 欠損の谷
+        hit = -1
+        for j in range(nclu):
+            if np.min(np.linalg.norm(pts_n[lab == j] - tgt, axis=1)) < 0.4:
+                hit = j
         print("  ★検出された塊(euclidean_cluster、tol 0.45 m): %d 個 "
-              "(点数 %s)。真の劣化箇所は 3 個(欠損・ひび・たわみは面全体)。"
+              "(点数 %s)。**本物の塊は欠損 1 個だけ**"
               % (nclu, ", ".join(str(v) for v in sorted(sizes, reverse=True)[:6])))
-        big_i = int(np.argmax(sizes)) if sizes else 0
-        pb = c["cen"][neg][lab == big_i]
-        if pb.shape[0] > 3:
-            ext = 2.0 * np.asarray(fs.ledger.obb(pb)["extents"], float)
-            print("     最大の塊の OBB 辺長 %.3f x %.3f x %.3f m(真の欠損は"
-                  " 2σ = %.3f m の広がり)。"
-                  % (*np.sort(ext)[::-1], 2 * SPALL_SIG))
+        print("     (ひびは足跡で薄まって見えず、支承は桁の core に入っていない)。"
+              "残り %d 個は偽陽性の塊 —— \n     「塊にまとめれば偽陽性が消える」"
+              "は成り立たない: 偽の劣化は空間的に**相関している**"
+              "(欠測の縁・入射角の悪い帯)。" % max(nclu - (1 if hit >= 0 else 0), 0))
+        if hit >= 0 and int((lab == hit).sum()) > 3:
+            ext = 2.0 * np.asarray(fs.ledger.obb(pts_n[lab == hit])["extents"], float)
+            print("     欠損の塊の OBB 辺長 %.3f x %.3f x %.3f m(真の欠損の"
+                  " 2σ = %.3f m)。" % (*np.sort(ext)[::-1], 2 * SPALL_SIG))
     return {"conds": conds, "false_area": fa, "false_vol": fv, "thr": thr,
             "v_true": v_true, "counts": out}
 
