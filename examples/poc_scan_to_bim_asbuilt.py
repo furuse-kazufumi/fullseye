@@ -1336,7 +1336,7 @@ def main() -> int:
     print("    剛体でない開き %+.2f mrad(真値 %+.2f)と反り %.2f mm(真値 %.2f)は残る。"
           % (1000 * g["splay"], 1000 * SPLAY, 1000 * g["floor_pv"], 1000 * SAG))
     print("  * 崖は欠測率でなく残った面の高さ L で決まる(同じ %.0f %% で %.1f 倍)。"
-          % (cd["fr"][-2], cd["ratio"]))
+          % (cd["fr"][-1], cd["ratio"]))
     print("  * 検出限界を決めるのはレジストレーション(1 mrad で偽の傾き %.3f mrad、"
           "雑音だけなら %.3f mrad)。"
           % (cr["bias"][cr["xs"].index(1.0)], cr["bias"][0]))
