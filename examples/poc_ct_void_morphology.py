@@ -802,20 +802,24 @@ def section_tool_gaps() -> None:
     p = max(props, key=lambda d: d["voxel_count"])
     z0, z1, y0, y1, x0, x1 = p["bbox"]
     sub = (lab[z0:z1, y0:y1, x0:x1] == p["label"]).astype(float)
-    pad = np.pad(sub, 1)
-    verts, faces, _ = L.voxel_to_mesh.raw(pad, iso=0.5)
-    bv = np.asarray(L.boundary_vertices((verts, faces)))
-    mv = abs(float(L.mesh_volume((verts, faces)))) * VOXEL ** 3
-    fa = float(np.sum(np.asarray(L.face_areas((verts, faces))))) * VOXEL ** 2
-    print("  (e) 界面に接するボイドを切り出して等値面にすると、ROI の上端で"
-          "**開いたまま**になる:\n      境界頂点 %d 個(0 なら水密)。"
-          "mesh_volume %.5f mm^3 対 ボクセル体積 %.5f mm^3 (%+.1f %%)、"
-          "\n      face_areas 合計 %.4f mm^2 対 vol_region_props %.4f mm^2 (%+.1f %%)。"
-          % (len(bv), mv, p["volume"], 100 * (mv / p["volume"] - 1), fa,
-             p["surface_area"], 100 * (fa / p["surface_area"] - 1)))
-    print("      **開いたメッシュでも mesh_volume は数字を返す**(docstring どおり"
-          "『穴を原点へ塞いだ立体』)。\n      界面ボイドを体積で語るなら、"
-          "先に boundary_vertices を見ること。")
+    out = []
+    for tag, vol in (("余白 1 ボクセルつき", np.pad(sub, 1)), ("切り出したまま", sub)):
+        verts, faces, _ = L.voxel_to_mesh.raw(vol, iso=0.5)
+        bv = int(len(np.asarray(L.boundary_vertices((verts, faces)))))
+        mv = abs(float(L.mesh_volume((verts, faces)))) * VOXEL ** 3
+        fa = float(np.sum(np.asarray(L.face_areas((verts, faces))))) * VOXEL ** 2
+        out.append((tag, bv, mv, fa))
+        print("  (e) %s: 境界頂点 %4d 個(0 なら水密) / mesh_volume %.5f mm^3 "
+              "(ボクセル体積 %.5f の %+.1f %%) / face_areas %.4f mm^2 "
+              "(vol_region_props %.4f の %+.1f %%)"
+              % (tag, bv, mv, p["volume"], 100 * (mv / p["volume"] - 1),
+                 fa, p["surface_area"], 100 * (fa / p["surface_area"] - 1)))
+    print("      ★同じボイドで、**切り出し方だけで体積が %+.1f %% 変わる**。"
+          "開いた側は境界頂点 %d 個で\n      それと分かるのに、**mesh_volume は"
+          "黙って数字を返す**(docstring どおり『穴を原点へ塞いだ立体』)。"
+          "\n      界面に接するボイドは ROI の縁で必ず開くので、体積で語る前に"
+          " boundary_vertices を見ること。"
+          % (100 * (out[1][2] / out[0][2] - 1), out[1][1]))
 
 
 # --------------------------------------------------------------------------- #
