@@ -605,10 +605,14 @@ def section_zero(rig: Rig) -> dict:
               % (far["name"], int(inside.sum()),
                  int((inside & rig.occ_a).sum()), int((inside & rig.occ_b0).sum()),
                  int((inside & (rig.occ_a | rig.occ_b0)).sum())))
-    print("  ★カメラ単独 %.4f と LiDAR 単独 %.4f の差 %+.4f。深度雑音 %.4f z² は"
-          "遠方で効くが、視界の広さがそれを上回る。"
-          % (res["cam"]["iou"], res["lidar"]["iou"],
-             res["cam"]["iou"] - res["lidar"]["iou"], CAM["kz"]))
+    print("  ★2 つのゼロ点は IoU では拮抗(%.4f 対 %.4f)なのに**中身は正反対**: "
+          "LiDAR は 適合率 %.3f / 再現率 %.3f(正確だが疎)、カメラは %.3f / %.3f"
+          "(密だが深度雑音 %.4f z² で滲む)。"
+          % (res["lidar"]["iou"], res["cam"]["iou"], res["lidar"]["prec"],
+             res["lidar"]["rec"], res["cam"]["prec"], res["cam"]["rec"],
+             CAM["kz"]))
+    print("     融合が両方を上回るのはこの**相補性**があるから —— "
+          "同じ弱点の 2 台を足しても増えない。")
     print("\n  高さを物体ごとに(融合・最大値則、真値と中央値の差):")
     _, occ = rig.run("max")
     _, hf = fuse("max", rig.occ_a, rig.kn_a0, rig.h_a, rig.occ_b0, rig.kn_b0,
