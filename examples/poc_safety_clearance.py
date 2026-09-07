@@ -524,7 +524,7 @@ def section_timeseries() -> dict:
         d1, k1 = estimate_detail(f, f["v_top"], rng)
         est["背面 1 台"].append(d1)
         est["背面 + 隅 2 台"].append(estimate(f, f["v_top"] | f["v_cor"], rng))
-        if f["d_true"] < S:
+        if f["d_true"] < S_GEOM:
             n_haz += 1
             k = int(np.argmin(f["per_part"]))          # いちばん近い部位
             if not np.any(f["v_top"][f["K"] == k]):
