@@ -188,5 +188,27 @@
   ],
   "csv": "18_peel.csv",
   "tsv": "18_peel.tsv"
+ },
+ {
+  "file": "19_risk_map.png",
+  "name": "risk_map",
+  "caption": "明るいほど危ない。縦に降りる(層を薄くする)ほうが、横に進む(首を細くする)より効く —— しかも向きが逆で、首を細くすると反りは減る。",
+  "shape": [
+   352,
+   434,
+   3
+  ]
+ },
+ {
+  "file": "20_risk_map_table.png",
+  "name": "risk_map_table",
+  "caption": "",
+  "shape": [
+   224,
+   411,
+   3
+  ],
+  "csv": "20_risk_map_table.csv",
+  "tsv": "20_risk_map_table.tsv"
  }
 ]

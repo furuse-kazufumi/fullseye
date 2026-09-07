@@ -949,9 +949,17 @@ def far_cells(rig, idx: int) -> np.ndarray:
             & (np.abs(rig.Y - o["cy"]) <= o["ly"] / 2))
 
 
+#: 図に出す範囲(評価窓の少し外まで)。全 32 x 32 m を出すと空が大半になる。
+CROP_X, CROP_Y = (2.0, 30.0), (-10.0, 10.0)
+
+
 def bev_img(a) -> np.ndarray:
-    """BEV 配列 (x,y) → 画像(上が前方、左が車の左)。"""
-    return np.asarray(a, float)[::-1, ::-1]
+    """BEV 配列 (x,y) → 画像(上が前方、左が車の左)。表示範囲に切る。"""
+    i0 = int((CROP_X[0] - BOUNDS[0][0]) / CELL)
+    i1 = int((CROP_X[1] - BOUNDS[0][0]) / CELL)
+    j0 = int((CROP_Y[0] - BOUNDS[1][0]) / CELL)
+    j1 = int((CROP_Y[1] - BOUNDS[1][0]) / CELL)
+    return np.asarray(a, float)[i0:i1, j0:j1][::-1, ::-1]
 
 
 def _tri_color(occ, gt, evalm) -> np.ndarray:
