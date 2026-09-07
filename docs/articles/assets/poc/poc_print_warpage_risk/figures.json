@@ -188,26 +188,5 @@
   ],
   "csv": "18_peel.csv",
   "tsv": "18_peel.tsv"
- },
- {
-  "file": "19_risk_map.png",
-  "name": "risk_map",
-  "caption": "危険度 = 予測たわみ / 許容 0.20 mm。縦は層厚 1.00 -> 0.20 mm(上が厚い)、横は首の幅 16.0 -> 1.0 mm(右が細い)。明るいほど危ない。",
-  "shape": [
-   288,
-   300
-  ]
- },
- {
-  "file": "20_risk_map_table.png",
-  "name": "risk_map_table",
-  "caption": "",
-  "shape": [
-   224,
-   411,
-   3
-  ],
-  "csv": "20_risk_map_table.csv",
-  "tsv": "20_risk_map_table.tsv"
  }
 ]

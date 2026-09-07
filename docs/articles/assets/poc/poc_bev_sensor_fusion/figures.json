@@ -1,44 +1,18 @@
 [
  {
-  "file": "01_reprojection.png",
-  "name": "reprojection",
-  "caption": "画像 320 x 240 px、焦点距離 265 px。画像側は角度に比例し、BEV 側は距離に比例する。",
+  "file": "01_scene_bev.png",
+  "name": "scene_bev",
+  "caption": "評価窓は前方 3-30 m。既知でない領域(車体内部・陰)は評価から外す。",
   "shape": [
-   200,
-   469,
+   486,
+   350,
    3
-  ],
-  "csv": "01_reprojection.csv",
-  "tsv": "01_reprojection.tsv"
+  ]
  },
  {
-  "file": "02_conditions.png",
-  "name": "conditions",
-  "caption": "誤差はカメラ側の外部パラメータにだけ入れる。LiDAR は常に正しい校正。",
-  "shape": [
-   368,
-   713,
-   3
-  ],
-  "csv": "02_conditions.csv",
-  "tsv": "02_conditions.tsv"
- },
- {
-  "file": "03_range_bands.png",
-  "name": "range_bands",
-  "caption": "回転誤差は距離に比例して効き、並進誤差は距離に依らない。融合するとその差が隠れる。",
-  "shape": [
-   224,
-   488,
-   3
-  ],
-  "csv": "03_range_bands.csv",
-  "tsv": "03_range_bands.tsv"
- },
- {
-  "file": "04_shadow_map.png",
+  "file": "02_shadow_map.png",
   "name": "shadow_map",
-  "caption": "横に 1.80 m 離した 2 センサの「自由と言い切れた領域」。青みだけの帯が LiDAR にしか見えない所、橙みだけの帯がカメラにしか見えない所。白は真値の障害物。22 m の 2 台は**互いの影に 1 台ずつ入っている**。",
+  "caption": "横に 1.80 m 離した 2 センサの「自由と言い切れた領域」。青い帯が LiDAR にしか見えない所、橙の帯がカメラにしか見えない所、灰色は両方。白は真値の障害物。22 m の 2 台は**互いの影に 1 台ずつ入っている**。",
   "shape": [
    160,
    160,
@@ -46,7 +20,43 @@
   ]
  },
  {
-  "file": "05_fusion_map.png",
+  "file": "03_reprojection.png",
+  "name": "reprojection",
+  "caption": "画像 320 x 240 px、焦点距離 265 px。画像側は角度に比例し、BEV 側は距離に比例する。",
+  "shape": [
+   200,
+   469,
+   3
+  ],
+  "csv": "03_reprojection.csv",
+  "tsv": "03_reprojection.tsv"
+ },
+ {
+  "file": "04_conditions.png",
+  "name": "conditions",
+  "caption": "誤差はカメラ側の外部パラメータにだけ入れる。LiDAR は常に正しい校正。",
+  "shape": [
+   368,
+   713,
+   3
+  ],
+  "csv": "04_conditions.csv",
+  "tsv": "04_conditions.tsv"
+ },
+ {
+  "file": "05_range_bands.png",
+  "name": "range_bands",
+  "caption": "回転誤差は距離に比例して効き、並進誤差は距離に依らない。融合するとその差が隠れる。",
+  "shape": [
+   224,
+   488,
+   3
+  ],
+  "csv": "05_range_bands.csv",
+  "tsv": "05_range_bands.tsv"
+ },
+ {
+  "file": "06_fusion_map.png",
   "name": "fusion_map",
   "caption": "LiDAR は 22 m の車を 1 セルも返せない(先行車の陰)。カメラは屋根越しに見えるので融合で復活する。",
   "shape": [
@@ -56,7 +66,7 @@
   ]
  },
  {
-  "file": "06_error_map.png",
+  "file": "07_error_map.png",
   "name": "error_map",
   "caption": "同じ yaw 1.00 度でも、最大値則は橙(偽占有)、平均則は青(見逃し)に偏る。壊れ方の種類が違う。",
   "shape": [
@@ -66,7 +76,7 @@
   ]
  },
  {
-  "file": "07_cliff_rotation.png",
+  "file": "08_cliff_rotation.png",
   "name": "cliff_rotation",
   "caption": "水平の 2 本は単センサのゼロ点。yaw 1 度では融合の 2 規則が LiDAR 単独を下回る。",
   "shape": [
@@ -76,7 +86,7 @@
   ]
  },
  {
-  "file": "08_cliff_translation.png",
+  "file": "09_cliff_translation.png",
   "name": "cliff_translation",
   "caption": "並進は距離に依らず全セルを同じだけ動かすので、崖は半セルを超えたところに 1 回だけ来る。",
   "shape": [

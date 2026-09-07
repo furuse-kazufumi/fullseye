@@ -445,6 +445,45 @@ def _spearman(a, b):
     return float(ra @ rb / np.sqrt((ra @ ra) * (rb @ rb)))
 
 
+def _labeled_map(grid, row_labels, col_labels, row_title, col_title,
+                 title, cell=44):
+    """疑似カラーの地図に**目盛りと軸名**を焼き込む(すべて annotate 族で)。
+
+    ``examplefig.save`` に 1 チャンネルで渡すと軸が付かないので、ここで
+    RGB まで組んでから渡す(呼ばれた側は [0,1] の RGB をそのまま使う)。
+    """
+    g = np.asarray(grid, float)
+    lo, hi = float(g.min()), float(g.max())
+    norm = (g - lo) / (hi - lo if hi > lo else 1.0)
+    body = np.asarray(fs.colorize_depth(_up(norm, cell, cell)), float)[..., :3]
+    h, w = body.shape[:2]
+    pl, pt, pb, pr = 96, 34, 54, 118
+    img = np.ones((h + pt + pb, w + pl + pr, 3))
+    img[pt:pt + h, pl:pl + w] = np.clip(body, 0.0, 1.0)
+    img = np.asarray(fs.text_box(img, title, (10, 8), anchor="lt", font_size=13))
+    for a_, lab in enumerate(row_labels):
+        img = np.asarray(fs.text_box(img, lab, (pl - 8, pt + cell * a_ + cell // 2),
+                                     anchor="rm", font_size=11, box_alpha=0.0,
+                                     border=0))
+    for b_, lab in enumerate(col_labels):
+        img = np.asarray(fs.text_box(img, lab, (pl + cell * b_ + cell // 2, pt + h + 6),
+                                     anchor="cb", font_size=11, box_alpha=0.0,
+                                     border=0))
+        # 数値もセルに焼く(見た目の色だけでは読み取れないため)
+    for a_ in range(g.shape[0]):
+        for b_ in range(g.shape[1]):
+            img = np.asarray(fs.text_box(
+                img, "%.2f" % g[a_, b_],
+                (pl + cell * b_ + cell // 2, pt + cell * a_ + cell // 2),
+                anchor="cm", font_size=10, box_alpha=0.0, border=0,
+                text_color="black" if norm[a_, b_] > 0.5 else "white"))
+    img = np.asarray(fs.text_box(img, row_title, (10, pt + h // 2), anchor="lm",
+                                 font_size=11, box_alpha=0.0, border=0))
+    img = np.asarray(fs.text_box(img, col_title, (pl + w // 2, pt + h + 30),
+                                 anchor="cb", font_size=11, box_alpha=0.0, border=0))
+    return img
+
+
 def _up3(img, fz, fx):
     """RGB 版の整数倍拡大。"""
     return np.repeat(np.repeat(np.asarray(img, float), fz, axis=0), fx, axis=1)
@@ -688,7 +727,8 @@ def section_predict_vs_measure(cases):
 
     lo, hi = float(min(kp.min(), kf.min())), float(max(kp.max(), kf.max()))
     figs.save_plot("predict_vs_measure",
-                   [("6 形状", kp, kf), ("y = x(完全一致)", [lo, hi], [lo, hi])],
+                   [("%d 形状" % kp.size, kp, kf),
+                    ("y = x(完全一致)", [lo, hi], [lo, hi])],
                    xlabel="閉形式の予測 κ [1/mm]", ylabel="FEM の実測 κ [1/mm]",
                    title="層の履歴だけで曲率はどこまで当たるか",
                    kinds=["scatter", "line"],
@@ -1000,11 +1040,15 @@ def section_risk_map():
           "**層厚のほうが効く**。"
           % (grid.min(), grid.max(), grid.max() / grid.min(),
              grid[0, -1] / grid[0, 0], grid[4, 0] / grid[0, 0]))
-    figs.save("risk_map", np.repeat(np.repeat(grid, 48, axis=0), 60, axis=1),
-              caption="危険度 = 予測たわみ / 許容 %.2f mm。縦は層厚 %.2f -> %.2f mm"
-                      "(上が厚い)、横は首の幅 %.1f -> %.1f mm(右が細い)。"
-                      "明るいほど危ない。"
-                      % (DEV_ALLOW, hs[0], hs[-1], wns[0], wns[-1]))
+    figs.save("risk_map",
+              _labeled_map(grid, ["%.2f" % h for h in hs],
+                           ["%.0f" % w for w in wns],
+                           "層厚 [mm]", "首の幅 [mm]",
+                           "危険度の地図(予測たわみ / 許容 %.2f mm、1 を超えると不合格)"
+                           % DEV_ALLOW),
+              caption="明るいほど危ない。縦に降りる(層を薄くする)ほうが、"
+                      "横に進む(首を細くする)より効く —— しかも向きが逆で、"
+                      "首を細くすると反りは減る。")
     figs.save_table("risk_map_table",
                     ["層厚 mm"] + ["首 %.2f" % w for w in wns],
                     [["%.2f" % hs[a]] + ["%.2f" % v for v in grid[a]]

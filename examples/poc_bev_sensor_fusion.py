@@ -1108,6 +1108,7 @@ def main() -> int:
 
     rig = Rig()
     section_scene(rig)
+    section_scene_figures(rig)
     rep = section_reprojection(rig)
     zero = section_zero(rig)
     rot = section_rotation(rig)
