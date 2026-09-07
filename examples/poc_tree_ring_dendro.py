@@ -578,7 +578,8 @@ def section_baseline() -> dict:
                    xlabel="年(髄から数えて)", ylabel="年輪幅 [px]",
                    title="年輪幅の時系列(気候の代理記録)",
                    caption="ゼロ点は θ=0 方向の局所幅なので偏心成長ぶん尺度がずれる。")
-    return {"sc": sc, "z0": z0, "zs": zs, "z24": zc, "c": c, "cs": cs}
+    return {"sc": sc, "z0": z0, "zs": zs, "z24": zc, "c": c, "cs": cs,
+            "wrong_n": len(wrong), "wrong_med": wrong_med}
 
 
 # --------------------------------------------------------------------------- #
