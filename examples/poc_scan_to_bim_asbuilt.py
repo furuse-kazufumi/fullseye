@@ -870,19 +870,23 @@ def section_alignment(surf: dict, sc: dict, seed: int = SEED) -> dict:
 # --------------------------------------------------------------------------- #
 # 節 4 —— 偏差の地図と、偽の施工誤差の地図                                     #
 # --------------------------------------------------------------------------- #
-def _dev_maps(p: np.ndarray, e: np.ndarray, clip=0.012):
+def _dev_maps(p: np.ndarray, e: np.ndarray, clip=0.012, only=None):
     d = design_dev(p, e)
     panels, caps = [], []
     spec = ((FLOOR, 0, 1, (0, RX), (0, RY)), (CEIL, 0, 1, (0, RX), (0, RY)),
             (WX0, 1, 2, (0, RY), (0, RZ)), (WX1, 1, 2, (0, RY), (0, RZ)),
             (WY0, 0, 2, (0, RX), (0, RZ)), (WY1, 0, 2, (0, RX), (0, RZ)))
     for elem, ia, ib, ra, rb in spec:
+        if only is not None and elem not in only:
+            continue
         m = (e == elem) & np.isfinite(d)
-        nu = 48 if ra[1] > 5 else 36
-        mp = _bin_mean(p[m, ia], p[m, ib], 1000 * d[m], ra, rb, nu, 30)
-        panels.append(_with_bar(mp, 1000 * clip))
-        caps.append("%s(%+.1f 〜 %+.1f mm)"
-                    % (ELEM_JA[elem], 1000 * np.nanmin(d[m]), 1000 * np.nanmax(d[m])))
+        nu = 44 if ra[1] > 5 else 30
+        mp = _bin_mean(p[m, ia], p[m, ib], 1000 * d[m], ra, rb, nu, 26)
+        panels.append(_with_bar(mp, 1000 * clip, up=6))
+        # 裾は混合画素が支配するので、範囲は p1..p99 で書く
+        caps.append("%s(%+.1f 〜 %+.1f mm、色は ±%.0f mm)"
+                    % (ELEM_JA[elem], 1000 * np.nanpercentile(d[m], 1),
+                       1000 * np.nanpercentile(d[m], 99), 1000 * clip))
     return panels, caps
 
 
