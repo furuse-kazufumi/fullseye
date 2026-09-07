@@ -714,7 +714,7 @@ def main() -> int:
     clean = section_match(cams, est["fp_w"], queries)
     section_n_sweep(cams, banks, queries)
     section_jpeg(est["fp_w"], queries, clean)
-    section_resize(est["fp_w"], queries, clean)
+    section_resize(cams, est["fp_w"], queries, clean)
     section_controls(cams, banks, queries)
     section_denoisers(cams, banks, queries)
     section_tool_gaps()
