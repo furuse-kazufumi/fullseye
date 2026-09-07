@@ -476,7 +476,7 @@ def section_resize(cams: dict, fp: np.ndarray, queries: dict, clean: dict) -> di
           "画素位置が合わないので 0.5× より致命的")
     print("=" * 78)
     base_same = float(np.median(clean["same"]))
-    k_true = cams_k = fp_true_k(fp)      # 真の K(幾何の上限を測るためだけに使う)
+    k_true = cams["A"]                   # 真の K(幾何の上限を測るためだけに使う)
     scales = [1.0, 0.95, 0.9, 0.75, 0.5]
     rows, aucs, ratios, geo, ext = [], [], [], [], []
     probe = queries["A"][0]
