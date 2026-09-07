@@ -1014,10 +1014,14 @@ def section_volume(can, buf_fine):
     print("  点群 %d 点 -> 占有格子 %s(軸ごとの res)。占有率 %.4f"
           % (pts.shape[0], "x".join(map(str, res)), float(occ.mean())))
 
-    side = np.asarray(L3.render_volume_projection(occ, azimuth=0.0, elevation=90.0,
-                                                  mode="xray"))
-    nadir = np.asarray(L3.render_volume_projection(occ, azimuth=0.0, elevation=0.0,
-                                                   mode="xray"))
+    # ★``occupancy_grid`` の軸は (x, y, z)。``render_volume_projection`` は
+    #   **軸 0 を視線方向**として潰すので、天頂図が欲しければ (z, y, x) へ入れ替える。
+    #   入れ替えずに呼ぶと「側面図のつもりの天頂図」が出る(黙って間違える型)。
+    occ_zyx = np.ascontiguousarray(occ.transpose(2, 1, 0))
+    nadir = np.asarray(L3.render_volume_projection(occ_zyx, azimuth=0.0,
+                                                   elevation=0.0, mode="xray"))
+    side = np.asarray(L3.render_volume_projection(occ_zyx, azimuth=0.0,
+                                                  elevation=90.0, mode="xray"))
     # 葉面積密度の鉛直分布(真値は葉の設計値から閉形式で積める)
     zc = np.linspace(0.0, 1.8, 73)
     prof_true = np.zeros(72)
