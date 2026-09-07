@@ -698,7 +698,7 @@ def section_scene_figs(base: dict) -> None:
                    ncols=2, title="op 列の段階(経年ひび)",
                    caption="分岐点 %d 個、セル %d 個を検出。" % (me["n_junc"], me["n_cells"]))
     figs.save_grid("map_cells", [_LAB.blob_overlay(sc_a["img"], me["labels"]),
-                                 _LAB.blob_overlay(sc_d["img"], measure(sc_d, extract_net(sc_d["img"]))["labels"])],
+                                 _LAB.blob_overlay(sc_d["img"], measure_scene(sc_d)["labels"])],
                    ["経年: 検出したセル", "乾燥: 検出したセル"], ncols=2,
                    title="セルの切り出し(骨格の補集合の連結成分)",
                    caption="縁に触れるセルは統計から外す(真値も同じ規約)。")
