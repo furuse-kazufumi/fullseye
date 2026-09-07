@@ -667,7 +667,8 @@ def section_bias_and_controls(sc: dict, tr: dict) -> dict:
         print("  %-22s %+6.1f %%     %+6.1f %%     %+6.1f %%" % (name, *e))
     figs.save_table("controls", ["条件", "BV/TV 誤差", "Tb.Th 誤差", "Tb.Sp 誤差"], ctrl_rows,
                     title="対照群: どの要因が効いているか(画素 %.0f µm)" % px)
-    return {"beta": beta_ax, "bv_otsu": bv_o, "bv_ret": bv_r, "bv_exp": bv_e, "ce_gap": ce_gap, "ctrl": ctrl}
+    return {"beta": beta_ax, "bv_otsu": bv_o, "bv_ret": bv_r, "bv_exp": bv_e, "ce_gap": ce_gap,
+            "ce_otsu60": ce_last[0], "ce_exp60": ce_last[1], "ce_true": ce_t, "ctrl": ctrl}
 
 
 # --------------------------------------------------------------------------- #
