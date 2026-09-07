@@ -462,8 +462,7 @@ def ground_truth(gsd: float = GSD) -> dict:
             "row_warm": (fr(L["kill_row"]) > 0.5) & (fr(L["shade_row"]) <= 0.5),
             "pole_warm": (fr(L["kill_pole"]) > 0.5) & (fr(L["shade_pole"]) <= 0.5),
             "soil": fr(L["soil"]) > 0.5,
-            "mod_id": np.rint(fr(L["mod_id"].astype(np.float64))).astype(int),
-            "healthy": panel & ~fault & ~nonf}
+            "mod_id": mods, "healthy": panel & ~fault & ~nonf}
 
 
 # --------------------------------------------------------------------------- #
