@@ -770,7 +770,9 @@ def section_cres_extent() -> dict:
     spans, rate, depth = [], [], []
     for frac in (0.15, 0.30, 0.45, 0.60, 0.80, 1.00):
         half = frac * LZ / 2.0
-        s = spec(pit=0.0, band=0.0, weld=0.0,
+        # 曲がりは止める —— たわみの残差(2 次)が管底に重なって、
+        # 「長さの効き」と混ざるため(最初これを入れたまま測って取り違えた)。
+        s = spec(pit=0.0, band=0.0, weld=0.0, bend=0.0,
                  cres_z=(LZ / 2 - half, LZ / 2 + half))
         sv = survey(s, offset=4.0, tilt_deg=0.6)
         m = correct(sv["dist"], k1=1, k2=1)
