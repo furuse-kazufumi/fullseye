@@ -1203,9 +1203,9 @@ def section_prism_and_crack(sc: dict) -> dict:
              100 * BEARING_AREA / (GIRDER_AREA + BEARING_AREA)))
     ceil_x = abs(POSE_ERR[2][3]) * 1e3
 
-    print("\n      キャンバー[mm] 端の勾配 c'  Σn_x²/N   予測 σ_x[mm]  予測 σ_z[mm]"
-          "   実測 |x|[mm]  |y,z|[mm]")
-    rows, cam_l, dx_l = [], [], []
+    print("\n      キャンバー[mm] 端の勾配 c'  設計の n_x²  推定法線の n_x²"
+          "  予測 σ_x[mm] σ_z[mm]  実測 |x|[mm] |y,z|[mm]")
+    rows, cam_l, dx_l, nx2_pair = [], [], [], []
     for cval in (CAMBER, 0.010, 0.002):
         _CAMBER[0] = cval
         ref_c = observe(0, np.random.default_rng(SEED + 501), parts=())
