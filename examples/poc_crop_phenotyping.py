@@ -844,29 +844,35 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
     print("     メッシュ側(face_areas で重み)= %.4f、面ごとの面積を無視すると %.4f。"
           % (float(np.sum(ar * nz) / np.sum(ar)), float(np.mean(nz))))
 
-    # 受光: fPAR = 1 - exp(-k(theta_s) LAI)。天頂の植被率だけからだと k(0) LAI しか
-    # 分からないので、**必要なのは比 k(theta_s)/k(0)**。
-    print("\n  受光(fPAR)への効き —— 太陽高度で必要な係数が変わる")
-    print("      太陽天頂角   G(theta)/cos   球形仮定   真の fPAR   仮定の fPAR   誤差")
+    # 受光: 太陽が真上のとき、遮られる光の割合は**植被率そのもの**(実測できる)。
+    print("\n  受光(fPAR)への効き")
     rows = []
     cov = cover_of(buf_fine)
+    turbid = 1.0 - np.exp(-k_true * can["lai"])
+    print("  ★太陽が真上なら fPAR は**植被率そのもの** = %.4f(実測)。"
+          "一様媒質モデル\n     1-exp(-k LAI) は %.4f —— **+%.1f %% 過大**。"
+          "光を遮る量までクランピングで\n     過大評価している"
+          "(モデルは「葉がばらばらに散っている」と仮定するため)。"
+          % (cov, turbid, 100 * (turbid - cov) / cov))
+    print("     ★ここは k の精度と無関係: 植被率から LAI を出して同じ k で戻すと"
+          "\n     fPAR = 植被率がそのまま返る(k が約分される)。"
+          "葉角が効くのは**斜めの太陽**だけ。")
+    print("\n      太陽天頂角   真の k(theta)   球形仮定 k   fPAR(仮定)/fPAR(真)")
     for th_deg in (15.0, 30.0, 45.0, 60.0):
         th = np.radians(th_deg)
-        g = canopy_G_zenith(can, th)
-        k_th = g / np.cos(th)
+        k_th = canopy_G_zenith(can, th) / np.cos(th)
         k_sph = 0.5 / np.cos(th)
-        fpar_true = 1.0 - np.exp(-k_th * can["lai"])
-        # 天頂の植被率 C = 1 - exp(-k(0) LAI_eff) から: fPAR = 1 - (1-C)^(k_th/k0)
-        fpar_est = 1.0 - (1.0 - cov) ** (k_sph / (0.5 / 1.0))
+        # 天頂の実測 C から斜めへ外挿: fPAR = 1 - (1-C)^(k(theta)/k(0))
+        f_true = 1.0 - (1.0 - cov) ** (k_th / k_true)
+        f_sph = 1.0 - (1.0 - cov) ** (k_sph / 0.5)
         rows.append(["%.0f" % th_deg, "%.4f" % k_th, "%.4f" % k_sph,
-                     "%.4f" % fpar_true, "%.4f" % fpar_est,
-                     "%+.1f %%" % (100 * (fpar_est - fpar_true) / fpar_true)])
-        print("      %8.0f    %8.4f   %8.4f   %8.4f   %10.4f   %+6.1f %%"
-              % (th_deg, k_th, k_sph, fpar_true, fpar_est,
-                 100 * (fpar_est - fpar_true) / fpar_true))
-    print("  ★天頂 (theta=0) では **fPAR = 植被率**がそのまま答えで、k を取り違えても"
-          "消える\n     (LAI は k で割るが fPAR は k を掛け戻すので相殺する)。"
-          "誤差が出るのは\n     斜めの太陽 —— そこで初めて葉角分布が要る。")
+                     "%.4f" % f_true, "%.4f" % f_sph,
+                     "%+.1f %%" % (100 * (f_sph - f_true) / f_true)])
+        print("      %8.0f    %10.4f   %10.4f      %.4f / %.4f = %+.1f %%"
+              % (th_deg, k_th, k_sph, f_sph, f_true,
+                 100 * (f_sph - f_true) / f_true))
+    print("     葉角分布を球形と決め打つと、低い太陽(天頂角 %s 度)で fPAR が"
+          " %s ずれる。" % (rows[-1][0], rows[-1][5]))
 
     order = np.argsort(inc)
     figs.save_plot("leaf_angle_dist",
