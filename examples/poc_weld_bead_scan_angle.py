@@ -346,8 +346,8 @@ def est_lines_gauss(img):
 
 
 ESTIMATORS = [("ゼロ点 最大値", est_argmax), ("重心 固定窓", est_centroid_fix),
-              ("重心 追従窓", est_centroid_adapt), ("対数放物線", est_log_parabola),
-              ("op lines_gauss", est_lines_gauss)]
+              ("重心 切上無", est_centroid_raw), ("重心 追従窓", est_centroid_adapt),
+              ("対数放物線", est_log_parabola), ("op lines_gauss", est_lines_gauss)]
 
 
 def to_height(rows, theta_deg: float, k_scale: float = 1.0) -> np.ndarray:
