@@ -700,30 +700,34 @@ def section_cracks() -> dict:
     print("\n" + "=" * 78)
     print("5) 割れ目の本数 0 → 16 —— 偽輪はどこから増えるか")
     print("=" * 78)
-    print("   本数   ゼロ点 24 方向: 偽輪の中央値 / 最悪 / 年数が合う方向   合意法: 年数 / 偽輪")
-    ns, z_med, z_max, c_false = [], [], [], []
+    print("  割れ目は放射方向に走り ±%.0f px うねる。放射線は割れ目と**並走**するので、"
+          "うねりが線を横切る方向だけが段を拾う。" % CRACK_WANDER)
+    print("\n   本数   ゼロ点 24 方向: 偽輪の中央値 / 最悪 / 年数が合う方向   "
+          "合意法: 年数 / 偽輪 / 年数が合う扇形")
+    ns, z_med, z_max, z_ok, c_false = [], [], [], [], []
     for nc in (0, 2, 4, 8, 16):
-        sc = make_scene(n_crack=nc)
+        sc = make_scene(n_crack=nc, decay=())      # 腐朽は止めて割れ目だけの効きを見る
         z = run_zero(sc)["cons"]
         c = run_consensus(sc)
         ns.append(nc)
         z_med.append(z["false"])
         z_max.append(z["false_max"])
+        z_ok.append(z["exact"])
         c_false.append(c["false"])
-        print("   %3d          %4.1f / %2d / %2d                          %3d / %.1f"
-              % (nc, z["false"], z["false_max"], z["exact"], c["n_est"], c["false"]))
-    print("\n  ★ゼロ点は割れ目 %d 本で最悪の方向に偽輪 %d 本、%d 本で中央値 %.1f。"
-          "合意法は %d 本でも偽輪 %.1f。" % (ns[1], z_max[1], ns[-1], z_med[-1],
-                                            ns[-1], c_false[-1]))
-    print("     放射方向の割れ目は放射線と**並走**するので、うねりが線を横切るたびに"
-          "段が出る。展開図では横線なので θ 方向メディアンが消す。")
+        print("   %3d          %4.1f / %2d / %2d                          %3d / %.1f / %2d"
+              % (nc, z["false"], z["false_max"], z["exact"], c["n_est"], c["false"],
+                 c["exact"]))
+    print("\n  ★ゼロ点で年数が合う方向は %d 本 → %d 本で %d → %d(24 方向中)、"
+          "偽輪の中央値 %.1f → %.1f。" % (ns[0], ns[-1], z_ok[0], z_ok[-1], z_med[0], z_med[-1]))
+    print("     合意法は %d 本でも年数 %d・偽輪 %.1f —— 展開図で割れ目は横線になり、"
+          "θ 方向メディアン(9 行)が消す。" % (ns[-1], N_RINGS, c_false[-1]))
     figs.save_plot("cliff_cracks",
                    [("ゼロ点 偽輪の中央値(24 方向)", ns, z_med),
                     ("ゼロ点 偽輪の最悪", ns, z_max),
                     ("合意法 偽輪", ns, c_false)],
                    xlabel="割れ目の本数", ylabel="偽輪 [年]",
-                   title="割れ目が増えるとゼロ点は偽輪を数える")
-    return {"n": ns, "z_med": z_med, "z_max": z_max, "c_false": c_false}
+                   title="割れ目が増えるとゼロ点は偽輪を数える(腐朽なし)")
+    return {"n": ns, "z_med": z_med, "z_max": z_max, "z_ok": z_ok, "c_false": c_false}
 
 
 # --------------------------------------------------------------------------- #
