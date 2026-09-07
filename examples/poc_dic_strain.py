@@ -456,7 +456,9 @@ def section7_gradient(sp, ref):
     print()
     print("  " + "-" * (9 + 24 * (len(ESTIMATORS) - 1)))
     xs = _XX[N // 2, :]
-    for w in [11, 21, 31, 51, 81]:
+    windows = [11, 21, 31, 51, 81]
+    peaks = {}
+    for w in windows:
         print("  %6d |" % w, end="")
         for name, est in ESTIMATORS[1:]:
             uu, vv = est(ref, cur)
@@ -465,6 +467,7 @@ def section7_gradient(sp, ref):
             peak = float(prof[MARGIN:N - MARGIN].max())
             idx = np.where(prof[MARGIN:N - MARGIN] >= peak / 2.0)[0]
             fwhm = float(xs[MARGIN + idx[-1]] - xs[MARGIN + idx[0]]) if idx.size else 0.0
+            peaks[(name, w)] = 1e6 * peak
             print(" %11.0f %11.1f" % (1e6 * peak, fwhm), end="")
         print()
     print("  %6s |" % "真値", end="")
