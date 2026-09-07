@@ -79,6 +79,29 @@ def errors() -> list[str]:
     return list(_errors)
 
 
+def _report_errors_at_exit():
+    """★書けなかった図を、**終了時に必ず標準出力へ出す**(2026-09-08)。
+
+    それまでは :func:`errors` に積むだけで、誰も見ていなかった。図の失敗が例を
+    落とさない設計は正しい(数値を出すのが例の仕事)が、**落とさない = 気づかない**
+    ではいけない —— 実際に、看板に選ばれる ``scene`` 図が 1 枚消えたまま
+    PoC が ``PASS`` を印字し、担当 2 人が別々に同じ穴に落ちた。
+    ここで出しておけば、図つきで走らせた人の目には必ず入る。
+    """
+    if not _errors or target_dir() is None:
+        return
+    try:
+        print("\n[examplefig] 書けなかった図が %d 件ある(数値には影響しないが、"
+              "記事や展示から図が 1 枚消える):" % len(_errors))
+        for line in _errors:
+            print("  - " + line)
+    except Exception:                                   # noqa: BLE001 - 終了処理
+        pass
+
+
+atexit.register(_report_errors_at_exit)
+
+
 def _to_rgb8(v, signed: bool):
     """(H,W) か (H,W,3|4) → uint8 RGB。**値域の伸ばし方をここに 1 か所だけ持つ**。"""
     import fullseye as fs
