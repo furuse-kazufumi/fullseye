@@ -402,13 +402,24 @@ def _sensor_of(vis_top, vis_cor):
     return S
 
 
-def estimate(fr: dict, vis, rng, density=None, noise=True) -> float:
-    """測定点群から出す分離距離の推定 = 点ごとの危険源 SDF の最小。"""
-    q, _idx = observe(fr["P"], fr["N"], vis, rng, _sensor_of(fr["v_top"], fr["v_cor"]),
-                      density=density, noise=noise)
+def estimate_detail(fr: dict, vis, rng, density=None, noise=True):
+    """測定点群から出す分離距離の推定 = 点ごとの危険源 SDF の最小。
+
+    返り値は ``(距離, その最小を与えた点の部位番号)``。**どの部位が答えを
+    決めたか**を持たないと「推定がよその部位へ飛んだ」を数えられない。
+    """
+    q, idx = observe(fr["P"], fr["N"], vis, rng, _sensor_of(fr["v_top"], fr["v_cor"]),
+                     density=density, noise=noise)
     if len(q) == 0:
-        return np.inf
-    return float(np.min(hazard_sdf(q, fr["mach"])))
+        return np.inf, -1
+    d = hazard_sdf(q, fr["mach"])
+    k = int(np.argmin(d))
+    return float(d[k]), int(fr["K"][idx[k]])
+
+
+def estimate(fr: dict, vis, rng, density=None, noise=True) -> float:
+    """:func:`estimate_detail` の距離だけ。"""
+    return estimate_detail(fr, vis, rng, density=density, noise=noise)[0]
 
 
 def estimate_centroid(fr: dict, vis, rng, mode="centroid") -> float:
