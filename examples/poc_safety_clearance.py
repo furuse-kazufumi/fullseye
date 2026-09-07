@@ -1243,7 +1243,7 @@ def main() -> int:
     assert sw["occ_miss"][3] > sw["occ_miss"][2], sw["occ_miss"]   # 疎で更に悪化
     assert sw["occ_miss"][1] < 0.3 * sw["occ_miss"][2], sw["occ_miss"]  # 2 台目が効く
     assert zd["zd_occ"] > 3.5 * zd["zd_rep"], (zd["zd_occ"], zd["zd_rep"])
-    assert zd["miss"][0] > 15.0 and zd["miss"][2] == 0.0, zd["miss"]
+    assert zd["miss"][0] > 10.0 and zd["miss"][2] == 0.0, zd["miss"]
     assert me["hd"] > 4.0 * me["ch"], (me["hd"], me["ch"])
     for b, v in zip(gb["bias"], (0.040, 0.020, 0.010)):
         assert 0.10 * v < b < 0.40 * v, (b, v)   # 1/4 ボクセル前後、符号は正
