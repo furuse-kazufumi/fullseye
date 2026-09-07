@@ -1349,51 +1349,55 @@ def cross_section_sdf(x0: float, ny: int = 240, nz: int = 130) -> np.ndarray:
     return np.asarray(part)[1].T[::-1]        # (nz, ny) に直して上下を起こす
 
 
-def section_figures(sc: dict, obs: dict, zero: dict, ctrl: dict,
-                    rate: dict) -> None:
+def scene_figures(sc: dict) -> None:
+    """場面の図 —— 断面(sdf op で組む)と 3 時点の展開図。"""
     if not figs.enabled():
         return
-    # (1) 場面: 断面 2 枚(支間中央と支承の上)+ 展開した真値
     figs.save_grid("scene",
                    [np.clip(cross_section_sdf(6.0), -0.35, 0.35),
                     np.clip(cross_section_sdf(BEARING_X[0]), -0.35, 0.35),
-                    dev_map(sc["truth_fp"])],
-                   ["断面 x = 6.0 m(支間中央)", "断面 x = %.1f m(支承)"
-                    % BEARING_X[0], "展開した真の変化 t2 [mm](正 = 面が外へ)"],
+                    dev_map(sc["truth_fp"], 6, 5)],
+                   ["断面 x = 6.0 m(支間中央)",
+                    "断面 x = %.1f m(支承)" % BEARING_X[0],
+                    "展開した真の変化 t2 [mm]"],
                    ncols=1, signed=[True, True, True],
                    title="橋桁(平面 7 枚 + 円柱 2 本)と仕込んだ劣化",
-                   caption="断面は fullseye の sdf op(box/plane/cylinder + "
-                           "union/intersect)だけで組んである。展開図は"
-                           "行 = 断面まわり(下面左→腹板→下フランジ→腹板→下面右)、"
-                           "列 = 橋軸方向。")
-
-    # (2) 3 時点の真値(展開図)
+                   caption="断面は fullseye の sdf op(box / plane / cylinder + "
+                           "union / intersect)だけで組んである。展開図は"
+                           "行 = 断面まわり(上から 下面左・ハンチ・腹板・"
+                           "下フランジ・腹板・ハンチ・下面右)、列 = 橋軸方向。")
     figs.save_grid("frames",
-                   [dev_map(truth_footprint(1) * 0.0), dev_map(truth_footprint(1)),
-                    dev_map(sc["truth_fp"])],
+                   [dev_map(np.zeros(CORES["x"].size), 14, 12),
+                    dev_map(truth_footprint(1), 14, 12),
+                    dev_map(sc["truth_fp"], 14, 12)],
                    ["t0(基準)", "t1(1 年後)", "t2(2 年後)"],
                    ncols=1, signed=True,
                    title="真の法線方向変化 [mm] —— 3 時点",
-                   caption="下フランジ中央の暗い窪みが断面欠損、面全体の淡い"
-                           "変化がたわみ。腹板(法線が水平)にはたわみが出ない。")
+                   caption="下フランジの暗い窪みが断面欠損、面全体の淡い変化が"
+                           "たわみ。腹板(法線が水平)にはたわみが出ない ——"
+                           "同じ劣化でも面の向きで見え方が変わる。")
 
-    # (3) 変化の地図: 真値 / 法線方向 / C2C / 偽の劣化
+
+def section_figures(sc: dict, zero: dict, ctrl: dict, rate: dict) -> None:
+    if not figs.enabled():
+        return
     fa = ctrl["conds"]["(a) 劣化ゼロ・測り直しのみ"]
     figs.save_grid("map_change",
-                   [dev_map(sc["truth_fp"]), dev_map(zero["L"]),
-                    dev_map(np.where(np.isfinite(zero["c2c"]), zero["c2c"], 0.0)),
-                    dev_map(fa["L"])],
+                   [dev_map(sc["truth_fp"], 10, 8), dev_map(zero["L"], 10, 8),
+                    dev_map(np.where(np.isfinite(zero["c2c"]), zero["c2c"], 0.0),
+                            10, 8),
+                    dev_map(fa["L"], 10, 8)],
                    ["真値(足跡平均)[mm]", "法線方向に測る [mm]",
-                    "最近傍距離 C2C [mm](符号なし)", "偽の劣化 = 劣化ゼロの対照 [mm]"],
+                    "最近傍距離 C2C [mm]", "偽の劣化(劣化ゼロの対照)[mm]"],
                    ncols=2, signed=[True, True, False, True],
                    title="t0 -> t2 の変化をどう測るか(展開図)",
                    caption="C2C は面全体が点間隔ぶん明るく、欠損が背景に埋もれる。"
-                           "右下は**構造物が全く変わっていない**ときの地図。")
-
-    # (4) 速度の地図
+                           "右下は構造物が全く変わっていないときの地図 —— "
+                           "同じ濃さの模様が出る。")
     figs.save_grid("map_rate",
-                   [dev_map(rate["rate_true"]), dev_map(rate["rate"]),
-                    dev_map(rate["rate"] - rate["rate_true"])],
+                   [dev_map(rate["rate_true"], 12, 10),
+                    dev_map(rate["rate"], 12, 10),
+                    dev_map(rate["rate"] - rate["rate_true"], 12, 10)],
                    ["真の速度 [mm/年]", "測った速度 [mm/年]", "速度の誤差 [mm/年]"],
                    ncols=1, signed=True,
                    title="劣化速度(mm/年)の地図と、その誤差",
