@@ -705,7 +705,12 @@ def section_zero(obs: dict, sc: dict) -> dict:
           "**面の大半を占める健全部の点間隔**で決まる。どちらも"
           "「どこがどれだけ劣化したか」を返さない。")
     return {"cen": cen, "nor": nor, "ok": ok, "L": ln, "sig": sg, "scat": scat,
-            "c2c": c2c, "good": good, "chamfer": ch, "hausdorff": hd}
+            "c2c": c2c, "good": good, "chamfer": ch, "hausdorff": hd,
+            "c2c_med": float(np.median(c2c[m])),
+            "c2c_vox": float(np.median(c2c_v[gv])),
+            "err_n": float(np.median(np.abs(ln[m] - tf[m]))),
+            "err_c": float(np.median(np.abs(c2c[m] - np.abs(tf[m])))),
+            "err_edge": float(np.median(np.abs(ln[e] - tf[e])))}
 
 
 # --------------------------------------------------------------------------- #
