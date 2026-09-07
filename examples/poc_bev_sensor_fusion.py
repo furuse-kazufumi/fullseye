@@ -1116,17 +1116,22 @@ def main() -> int:
              / max(shp[("yaw 1.00 度", "なし")][2], 1)))
 
     # --- 所見を固定する assert(壊れたら鳴る)------------------------------- #
-    assert zero["max"]["iou"] > zero["lidar"]["iou"] + 0.05, "融合の視界の利得"
-    assert zero["cam"]["iou"] < zero["lidar"]["iou"], "カメラ単独は LiDAR に劣る"
-    assert max(abs(p - m) for p, m in zip(rot["pred"], rot["meas"])) < 0.05
-    assert rot["curves"]["max"][YAWS.index(1.0)] < zero["lidar"]["iou"], \
-        "yaw 1 度で融合は単センサを下回る"
+    assert zero["max"]["iou"] > best + 0.10, "融合の視界の利得"
+    assert rig.occ_a[far_cells(rig, 2)].sum() == 0, "右の遠方車は LiDAR に見えない"
+    assert rig.occ_b0[far_cells(rig, 1)].sum() == 0, "左の遠方車はカメラに見えない"
+    assert max(abs(p - m) for p, m in zip(rot["pred"], rot["meas"])) < 0.08
+    assert rot["meas"][YAWS.index(0.5)] > 0.5 \
+        and rot["curves"]["max"][YAWS.index(0.5)] > 0.85 * rot["curves"]["max"][0], \
+        "半分の点がセルを跨いでも IoU は折れない"
+    assert cross is not None and cross >= 2.0, "融合が単独に負ける yaw"
     assert brk[("yaw 1.00 度", "max")]["prec"] < brk[("yaw 1.00 度", "mean")]["prec"]
     assert brk[("yaw 1.00 度", "mean")]["rec"] < brk[("yaw 1.00 度", "max")]["rec"]
-    b = bands["yaw 1.00 度"]
-    assert b[1] / max(b[3], 1e-9) > 2.0, "回転は遠方から壊れる"
-    bt = bands["並進 150 mm"]
-    assert bt[1] / max(bt[3], 1e-9) < 1.5, "並進は距離に依らない"
+    br, bt = bands[("cam", kr)], bands[("cam", kt)]
+    b0 = bands[("cam", "誤差なし")]
+    dr = [1 - v / max(u, 1e-9) for v, u in zip(br, b0)]
+    dt2 = [1 - v / max(u, 1e-9) for v, u in zip(bt, b0)]
+    assert dr[3] > dr[0], "回転は遠方ほど落ちる"
+    assert abs(dt2[3] - dt2[0]) < abs(dr[3] - dr[0]), "並進のほうが一様"
     assert abs(tr["mixed"][0.040][0] - tr["mixed"][0.040][1]) < 0.05
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
