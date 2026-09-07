@@ -866,7 +866,7 @@ def sensor_cloud(buf, rho, rng, sigma=0.005, dropout=0.05):
 
 def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
     print("\n" + "=" * 78)
-    print("7) 葉角の推定と受光 —— 面積で重みを付けないと角度は嘘になる")
+    print("7) 葉角の推定と受光 —— 正しい重みほど法線の雑音を増幅する")
     print("=" * 78)
 
     inc, ar, nz = mesh_stats
@@ -908,9 +908,12 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
     print("\n  法線の符号は任意なので |n.z| で受ける(そこは既知の作法)。問題は重み:")
     print("     メッシュ(face_areas で面積加重)= %.4f / 面積を無視 = %.4f / 真値 %.4f"
           % (float(np.sum(ar * nz) / np.sum(ar)), float(np.mean(nz)), k_true))
-    print("     真の法線を使った点群の調和平均 = %.4f(%+.1f %%)—— **式は正しい**。"
+    print("  ★対照群 1(真の法線を使う): 最上面の |n.z| の調和平均 = %.4f"
+          "(%+.1f %%)。\n     **法線が完璧でも合わない** —— 最上面は水平な葉に"
+          "偏るので、見えている層だけ\n     から母集団の葉角は復元できない"
+          "(これも「隠れる」の一種)。"
           % (k_ref, 100 * (k_ref - k_true) / k_true))
-    print("  ★★ところが推定した法線に同じ式を当てると %.4f(%+.1f %%)まで崩れ、"
+    print("  ★★対照群 2(推定した法線): 同じ式を当てると %.4f(%+.1f %%)まで崩れ、"
           % (k_pts, 100 * (k_pts - k_true) / k_true))
     print("     重みを付けない素の平均 %.4f(%+.1f %%)のほうが当たる。"
           % (k_naive, 100 * (k_naive - k_true) / k_true))
@@ -1144,7 +1147,7 @@ def main() -> int:
     assert all(p > m for p, m in zip(cliff["pred_l"], cliff["meas_l"])), "予測は楽観的"
     assert abs(wind["d_upd"]) < abs(wind["d_fix"]), "k の更新は片方しか直さない"
     assert ang["k_naive"] > ang["k_pts"], "推定法線に面積加重を掛けると崩れる"
-    assert abs(ang["k_ref"] - k_true) < 0.02 * k_true, "真の法線なら調和平均は当たる"
+    assert 0.02 < abs(ang["k_ref"] - k_true) / k_true < 0.15, "真の法線でも最上面からは復元しきれない"
     assert ang["turbid"] > ang["cov"], "一様媒質モデルは受光を過大評価する"
     assert abs(sw["errs"][0] - sw["errs"][-1]) < 8.0, "葉角を振っても誤差はほぼ動かない"
 

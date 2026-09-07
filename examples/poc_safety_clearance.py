@@ -685,9 +685,12 @@ def section_sweep() -> dict:
              ("(c') 背面 1 台 + 疎(100 点)", lambda f: f["v_top"])]
     for i, (name, sel) in enumerate(conds):
         dd = 100 if i == 3 else 800
-        e = np.array([estimate(f, sel(f), rng, density=dd) for f in frames])
-        e = np.where(np.isfinite(e), e, 10.0)
-        m_, fa_, _a, _b = _rates(d_true, e, S)
+        ee = [np.array([estimate(f, sel(f), rng, density=dd) for f in frames])
+              for _ in range(3)]
+        ee = [np.where(np.isfinite(x), x, 10.0) for x in ee]
+        e = ee[0]
+        m_ = float(np.mean([_rates(d_true, x, S_GEOM, S)[0] for x in ee]))
+        fa_ = float(np.mean([_rates(d_true, x, S_GEOM, S)[1] for x in ee]))
         seen = float(np.mean([sel(f).mean() for f in frames]))
         bias = float(np.mean(e - d_true))
         occ_rows.append([name, "%.1f %%" % (100 * seen), "%+.3f" % bias,
