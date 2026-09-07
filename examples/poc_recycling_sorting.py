@@ -780,10 +780,11 @@ def section_mixed(ab: dict, pair) -> dict:
     for i in range(geo["n_frag"] + 1):
         true_frac[:, geo["frag_mat"][i]] += geo["frac"][:, i]
     bnd = (~geo["pure"]).ravel() & (geo["truth"] > 0).ravel()
-    err_mix = []
-    for label, c in (("劣化なし", clean_cube), ("全部入り", cube)):
-        amap = np.asarray(fs.spec_unmix(c, LIB, constrained=True)).reshape(-1, K)
-        err_mix.append((label, float(np.mean(np.abs(amap[bnd] - true_frac[bnd])))))
+    clean_map = np.asarray(fs.spec_unmix(clean_cube, LIB, constrained=True))
+    err_mix = [("劣化なし", float(np.mean(np.abs(
+                    clean_map.reshape(-1, K)[bnd] - true_frac[bnd])))),
+               ("全部入り", float(np.mean(np.abs(
+                    ab_map.reshape(-1, K)[bnd] - true_frac[bnd]))))]
 
     rows = []
     print("   材質    真値 %%   全画素   境界を捨てる   線形混合分解")
