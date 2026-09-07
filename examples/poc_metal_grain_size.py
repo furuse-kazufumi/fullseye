@@ -126,7 +126,9 @@ def _voronoi(n_pix: int, lam_of_col, rng) -> tuple[np.ndarray, np.ndarray]:
     pad = 3 * L_COARSE_PX
     lo, hi = -pad, n_pix + pad
     lam_max = max(lam_of_col(0.0), lam_of_col(float(n_pix)))
-    n_cand = int(lam_max * (hi - lo) ** 2 * 1.2) + 50
+    # ★候補は Poisson(λ_max·面積)個。最初 1.2 倍に水増しして間引かずに使い、
+    #   密度が 20 % 高い組織を「狙い G」だと思い込んだ(閉形式と -10.7 % ずれて発覚)。
+    n_cand = int(rng.poisson(lam_max * (hi - lo) ** 2))
     cand = rng.uniform(lo, hi, (n_cand, 2))                # (y, x)
     keep = rng.uniform(0, lam_max, n_cand) < np.asarray([lam_of_col(x) for x in cand[:, 1]])
     seeds = cand[keep]
