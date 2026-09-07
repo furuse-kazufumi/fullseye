@@ -1322,10 +1322,16 @@ def section_prism_and_crack(sc: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 9. 図                                                                         #
 # --------------------------------------------------------------------------- #
-def dev_map(values: np.ndarray, ky: int = 7, kx: int = 3) -> np.ndarray:
-    """core の値 -> **断面を展開した地図**(行 = 断面まわり s、列 = 橋軸 x)。"""
+def dev_map(values, ky: int = 7, kx: int = 3, lim: float | None = None):
+    """core の値 -> **断面を展開した地図**(行 = 断面まわり s、列 = 橋軸 x)。
+
+    ``lim`` を渡すと ±lim で切る —— 切らないと欠損の谷(-21 mm)に色域を
+    全部持っていかれ、たわみ(数 mm)と雑音が同じ黒に潰れる。
+    """
     a = np.asarray(values, float).reshape(CORES["shape"])
     a = np.nan_to_num(a, nan=0.0, posinf=0.0, neginf=0.0)
+    if lim is not None:
+        a = np.clip(a, -lim, lim)
     return np.repeat(np.repeat(a, ky, axis=0), kx, axis=1)
 
 
@@ -1356,7 +1362,7 @@ def scene_figures(sc: dict) -> None:
     figs.save_grid("scene",
                    [np.clip(cross_section_sdf(6.0), -0.35, 0.35),
                     np.clip(cross_section_sdf(BEARING_X[0]), -0.35, 0.35),
-                    dev_map(sc["truth_fp"], 6, 5)],
+                    dev_map(sc["truth_fp"], 6, 5, lim=8.0)],
                    ["断面 x = 6.0 m(支間中央)",
                     "断面 x = %.1f m(支承)" % BEARING_X[0],
                     "展開した真の変化 t2 [mm]"],
@@ -1368,8 +1374,8 @@ def scene_figures(sc: dict) -> None:
                            "下フランジ・腹板・ハンチ・下面右)、列 = 橋軸方向。")
     figs.save_grid("frames",
                    [dev_map(np.zeros(CORES["x"].size), 14, 12),
-                    dev_map(truth_footprint(1), 14, 12),
-                    dev_map(sc["truth_fp"], 14, 12)],
+                    dev_map(truth_footprint(1), 14, 12, lim=8.0),
+                    dev_map(sc["truth_fp"], 14, 12, lim=8.0)],
                    ["t0(基準)", "t1(1 年後)", "t2(2 年後)"],
                    ncols=1, signed=True,
                    title="真の法線方向変化 [mm] —— 3 時点",
@@ -1383,10 +1389,11 @@ def section_figures(sc: dict, zero: dict, ctrl: dict, rate: dict) -> None:
         return
     fa = ctrl["conds"]["(a) 劣化ゼロ・測り直しのみ"]
     figs.save_grid("map_change",
-                   [dev_map(sc["truth_fp"], 10, 8), dev_map(zero["L"], 10, 8),
+                   [dev_map(sc["truth_fp"], 10, 8, lim=8.0),
+                    dev_map(zero["L"], 10, 8, lim=8.0),
                     dev_map(np.where(np.isfinite(zero["c2c"]), zero["c2c"], 0.0),
                             10, 8),
-                    dev_map(fa["L"], 10, 8)],
+                    dev_map(fa["L"], 10, 8, lim=8.0)],
                    ["真値(足跡平均)[mm]", "法線方向に測る [mm]",
                     "最近傍距離 C2C [mm]", "偽の劣化(劣化ゼロの対照)[mm]"],
                    ncols=2, signed=[True, True, False, True],
@@ -1395,9 +1402,9 @@ def section_figures(sc: dict, zero: dict, ctrl: dict, rate: dict) -> None:
                            "右下は構造物が全く変わっていないときの地図 —— "
                            "同じ濃さの模様が出る。")
     figs.save_grid("map_rate",
-                   [dev_map(rate["rate_true"], 12, 10),
-                    dev_map(rate["rate"], 12, 10),
-                    dev_map(rate["rate"] - rate["rate_true"], 12, 10)],
+                   [dev_map(rate["rate_true"], 12, 10, lim=4.0),
+                    dev_map(rate["rate"], 12, 10, lim=4.0),
+                    dev_map(rate["rate"] - rate["rate_true"], 12, 10, lim=4.0)],
                    ["真の速度 [mm/年]", "測った速度 [mm/年]", "速度の誤差 [mm/年]"],
                    ncols=1, signed=True,
                    title="劣化速度(mm/年)の地図と、その誤差",
