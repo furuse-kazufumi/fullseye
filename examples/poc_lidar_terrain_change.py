@@ -1195,19 +1195,19 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
     lmap[cj, ci] = mm["res"]["L"]
 
     def up(a):
-        return np.asarray(a, float)[::-1]        # 行 0 = 南。北を上にする
+        return big(np.asarray(a, float)[::-1])   # 行 0 = 南。北を上にし、6 倍に拡大
 
     figs.save_grid("scene",
                    [up(detr), up(-d_true), up(r["dz"]), up(lmap)],
-                   ["時期 1 の起伏(平面を抜いた残差 [m])",
-                    "真の鉛直変位 [m](負 = 掘削)",
-                    "DoD: 鉛直差 dz [m]", "M3C2: 法線方向の距離 L [m]"],
+                   ["時期 1 の起伏 [m]", "真の鉛直変位 [m]",
+                    "DoD の鉛直差 [m]", "M3C2 の法線距離 [m]"],
                    ncols=2, signed=[False, True, True, True],
                    title="航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)"
                          % (SLOPE, DENSITY),
-                   caption="左上は樹冠と %.2f m のうねり。右上が仕込んだ真値"
-                           "(掘削 %.1f m3 / 堆積 %.1f m3)。下 2 枚は足跡面積を"
-                           "揃えて測った 2 通りの差。" % (UNDUL, tr["ero"], tr["dep"]))
+                   caption="左上は平面を抜いた残差(樹冠と %.2f m のうねり)。右上が"
+                           "仕込んだ真値(負 = 掘削 %.1f m3 / 正 = 堆積 %.1f m3)。"
+                           "下 2 枚は足跡面積を揃えて測った 2 通りの差。"
+                           % (UNDUL, tr["ero"], tr["dep"]))
 
     lod = ctrl["lod"]
     sig_dod = dod(p1, p2, lod=lod)["sig"]
