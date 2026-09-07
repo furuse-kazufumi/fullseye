@@ -821,32 +821,38 @@ def section_shadow(base: dict) -> dict:
     gt = base["gt"]
     det = detect(base["t_app"], gt, "モジュール中央値")
     d = det["delta"]
-    cold = float(np.median(d[gt["panel"] & _shade_gsd()]))
-    warm = float(np.median(d[gt["shade_warm"]])) if gt["shade_warm"].any() else float("nan")
+    cold = float(np.median(d[gt["shade"]]))
+    warm = float(np.median(d[gt["row_warm"]]))
     real = float(np.median(d[gt["string"]]))
-    print("  影に入ったセル自身: ΔT %+.2f K(日射が %.0f %% に落ちるので冷える)"
-          % (cold, 100 * SHADE_FRAC))
-    print("  ★同じストリングの**日向のセル**: ΔT %+.2f K —— 発電が止まった分が"
-          "熱になる。" % warm)
+    print("  列間影(前列の陰)に入ったセル自身: ΔT %+.2f K"
+          "(日射が %.0f %% に落ちるので冷える)" % (cold, 100 * SHADE_FRAC))
+    print("  ★同じストリングの**日向のセル**: ΔT %+.2f K —— そのストリングの"
+          "発電が止まった分が熱になる。" % warm)
     print("  本物のストリング故障(バイパスダイオード導通): ΔT %+.2f K" % real)
-    print("  ★★差は %.2f K。**熱画像だけでは区別できない** —— 区別するには"
-          "影の側(冷たい帯)が同じストリングに接しているかを見るしかない。"
+    print("  ★★差は %.2f K。**熱の形も大きさも同じ** —— 熱画像だけでは"
+          "区別できない。区別できるのは「冷たい帯が同じストリングに接して"
+          "いるか」だけで、それは影が視野に入っていて初めて見える。"
           % abs(warm - real))
 
-    # 対照群: 影だけ / 故障だけ
+    L = layout()
+    n_gr = int(L["shade"][L["mod_id"] == MOD_GRASS].sum())
+    n_kill = int(L["kill_shade"][L["mod_id"] == MOD_GRASS].sum())
+    print("  ★小さい原因で大きく壊れる: モジュール %d の雑草の影は %.0f cm²"
+          "(パネル面積の %.2f %%)だが、止めた発電面は %.0f 倍の %.0f cm²"
+          " —— **ストリングは直列なので、いちばん暗いセルが全部を決める**。"
+          % (MOD_GRASS, n_gr * (FINE * 100) ** 2,
+             100 * n_gr / (MOD_W * MOD_H / FINE ** 2),
+             n_kill / max(n_gr, 1), n_kill * (FINE * 100) ** 2))
+
+    # 対照群: 故障ゼロ(影と汚れだけ)
     only_shade = capture(thermal_field(V_REF, faults=False, extras=True)["T"])
     s_only = score(detect(only_shade, gt, "モジュール中央値"), gt)
-    print("  対照群(故障ゼロ・影あり)では、この偽ストリングが"
-          "非故障の温度差 %d 個として上がる —— **点検票では『要調査』**。"
+    print("  対照群(電気的故障ゼロ・影あり)では、この偽ストリングを含む"
+          "非故障の温度差が %d 個上がる —— **点検票では『要調査』のまま**。"
           % s_only["n_nonfault"])
     assert abs(warm - real) < 1.5, "影による偽ストリングが本物と離れすぎている"
-    return {"cold": cold, "warm": warm, "real": real}
-
-
-def _shade_gsd() -> np.ndarray:
-    L = layout()
-    k = int(round(GSD / FINE))
-    return block_mean(L["shade"].astype(np.float64), k) > 0.5
+    return {"cold": cold, "warm": warm, "real": real,
+            "n_nonfault": s_only["n_nonfault"]}
 
 
 # --------------------------------------------------------------------------- #
