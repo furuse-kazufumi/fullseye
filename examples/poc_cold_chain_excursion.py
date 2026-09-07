@@ -107,8 +107,8 @@ G_DIST = 0.26           # 吹き出し口から離れるほど暖まる勾配 [K
 L_THROW = 3.0           # 風が届く距離 [m](ここまでは壁の侵入を持ち去る)
 H_WALL = 0.100          # 壁からの侵入の効き [-]
 LAM_WALL = 0.80         # 壁の影響が効く厚み [m]
-A_DOOR = 11.0           # 扉開放時の流入の振幅 [K]
-LAM_DOOR = 2.5          # 扉から奥への減衰長 [m]
+A_DOOR = 13.0           # 扉開放時の流入の振幅 [K]
+LAM_DOOR = 4.0          # 扉から奥への減衰長 [m]
 TAU_AIR = 5.0           # 空気の時定数 [min]
 TAU_P0, TAU_P1 = 30.0, 100.0   # 製品の時定数 [min](表層 -> 芯)
 LAM_TAU = 0.30          # 潜り込み深さの効き [m]
@@ -188,8 +188,13 @@ def build_layout() -> dict:
 
 
 def ambient(t_min: np.ndarray) -> np.ndarray:
-    """外気温 [°C] —— 早朝に積んで昼過ぎに着く夏の輸送(20 -> 34 -> 32 °C)。"""
-    return 26.0 + 8.0 * np.sin(2.0 * np.pi * (t_min - 180.0) / 1440.0)
+    """外気温 [°C] —— 早朝に積んで昼過ぎに着く夏の輸送(18 -> 34 °C の単調上昇)。
+
+    出発時に**どのセルも規定内**であること(実測 最高 7.69 °C)。ここが
+    最初から 8 °C を超えていると「逸脱」ではなく「積み込み時点で不合格」に
+    なってしまい、崖も対照群も意味を失う。
+    """
+    return 26.0 + 8.0 * np.sin(2.0 * np.pi * (t_min - 360.0) / 1440.0)
 
 
 def door_open(t_min: np.ndarray, events=DOOR_EVENTS) -> np.ndarray:
@@ -656,7 +661,7 @@ def _mid_product(scene: dict, target: float = 300.0) -> tuple[int, int]:
 # 6. 対照群 —— 均一 / 分布あり / 分布 + 扉                                       #
 # --------------------------------------------------------------------------- #
 NEAR_M = 1.0            # 「そのロガーが代表する荷」の半径 [m]
-WALL_FIX = 0.25         # 対照群 (d): 壁からの侵入を 1/4 に(積み付けを直す)
+WALL_FIX = 0.0          # 対照群 (d): 壁からの侵入を止める(扉だけを残す)
 
 
 def section_controls(layout: dict) -> dict:
@@ -668,7 +673,7 @@ def section_controls(layout: dict) -> dict:
     **半径 %.1f m 以内の製品セルがすべて健全か**で見るしかない。
     """ % NEAR_M
     print("\n" + "=" * 78)
-    print("6) 対照群 —— (a) 均一 / (b) 分布あり / (c) 分布+扉 / (d) 健全な荷+扉")
+    print("6) 対照群 —— (a) 均一 / (b) 壁だけ / (c) 壁+扉 / (d) 扉だけ")
     print("=" * 78)
     print("  条件               真に不合格な   偽合格 [%]      偽不合格 [%]")
     print("                     製品セル [%%]   (製品に 1 個)   (空気に 1 個、"
@@ -681,8 +686,8 @@ def section_controls(layout: dict) -> dict:
     for name, kw in (("(a) 均一", dict(uniform=True, doors=True)),
                      ("(b) 分布あり", dict(uniform=False, doors=False)),
                      ("(c) 分布+扉", dict(uniform=False, doors=True)),
-                     ("(d) 健全な荷+扉", dict(uniform=False, doors=True,
-                                              wall_scale=WALL_FIX))):
+                     ("(d) 壁なし+扉", dict(uniform=False, doors=True,
+                                            wall_scale=WALL_FIX))):
         sc = make_scene(layout=layout, **kw)
         vol = sc["vol"]
         exc_true = np.count_nonzero(vol > LIMIT_C, axis=0) * DT_MIN
