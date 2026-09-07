@@ -147,7 +147,7 @@ K_SEC = 2.5                     # t 軸オープニングの線分長 [s]
 MIN_SAMPLES = 3                 # 柱として認めるのに要る標本数
 PICK_CLEAR, NARROW_CLEAR = 0.75, 1.25   # esdf の空き幅による通路の区分 [m]
 LANDMARK_R = 1.5                # 作業台・払い出し口とみなす半径 [m]
-EXTENT_MAX = 0.9                # 柱の中で「動かなかった」と認める広がり [m]
+CORE_R = 0.45                   # 柱の中で「動かなかった」と認める半径 [m]
 LONG_WAIT = 8.0                 # 棚前の待ちを「補充待ち」と読む長さ [s]
 SEED = 7
 
@@ -546,24 +546,41 @@ def _runs_in_components(meas: dict, labels: np.ndarray):
                 cur = None
             if cur is None:
                 cur = {"key": key, "f0": int(f[k]), "f1": int(f[k]),
-                       "xs": [], "ys": [], "n": 0}
+                       "fs": [], "xs": [], "ys": []}
             cur["f1"] = int(f[k])
+            cur["fs"].append(int(f[k]))
             cur["xs"].append(float(x[f[k]]))
             cur["ys"].append(float(y[f[k]]))
-            cur["n"] += 1
         if cur is not None:
             runs.append(cur)
+
     keep = []
     for r in runs:
-        if r["n"] < MIN_SAMPLES or (r["f1"] - r["f0"] + 1) < MIN_SAMPLES:
+        ff = np.array(r["fs"])
+        xs, ys = np.array(r["xs"]), np.array(r["ys"])
+        # ★止まっている**芯**だけを残す。柱は 2 人ぶんの足跡で 1.8 m あるので、
+        #   通り抜ける人の中心も 2〜3 フレーム柱の中に入る(実測でそれが
+        #   「1 人しか居ない干渉」を作り、10 件中 8 件を落とした)。
+        #   中央値から :data:`CORE_R` 以内に居続けた最長の連なりを芯とする。
+        near = np.hypot(xs - np.median(xs), ys - np.median(ys)) <= CORE_R
+        best_i = best_n = cur_i = cur_n = 0
+        for k, v in enumerate(near):
+            if v:
+                cur_n = cur_n + 1 if cur_n else 1
+                cur_i = k - cur_n + 1
+                if cur_n > best_n:
+                    best_n, best_i = cur_n, cur_i
+            else:
+                cur_n = 0
+        if best_n < MIN_SAMPLES:
             continue
-        # 柱の中を**通り抜けた**人を落とす(柱の広がりより大きく動いた ID)。
-        ext = float(np.hypot(max(r["xs"]) - min(r["xs"]),
-                             max(r["ys"]) - min(r["ys"])))
-        if ext > EXTENT_MAX:
+        sl = slice(best_i, best_i + best_n)
+        span = int(ff[sl][-1] - ff[sl][0] + 1)
+        if span < MIN_SAMPLES:
             continue
-        r["ext"] = ext
-        keep.append(r)
+        keep.append({"key": r["key"], "f0": int(ff[sl][0]), "f1": int(ff[sl][-1]),
+                     "n": int(best_n), "x": float(np.mean(xs[sl])),
+                     "y": float(np.mean(ys[sl]))})
     return keep
 
 
@@ -586,7 +603,7 @@ def detect(meas: dict, clear: np.ndarray) -> dict:
         c, rid = r["key"]
         nid = len(n_ids[c])
         dur = (r["f1"] - r["f0"] + 1) * dt
-        xm, ym = float(np.mean(r["xs"])), float(np.mean(r["ys"]))
+        xm, ym = r["x"], r["y"]
         z = zone_of(xm, ym, clear)
         if z == "ws":
             kind = "人待ち" if (nid >= 2 and r["f0"] > first_f[c]) else "作業"
