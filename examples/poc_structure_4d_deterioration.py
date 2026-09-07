@@ -503,7 +503,7 @@ def section_scene() -> dict:
     for i, nm in enumerate(SEG_NAME):
         th = math.degrees(math.acos(min(1.0, abs(SEG_NRM[i][1]))))
         print("    %-12s 長さ %.4f m  法線 (y,z) = (%+.3f, %+.3f)  鉛直から %5.1f 度"
-              % (nm, SEG_LEN[i], SEG_NRM[i][0], SEG_NRM[i][1], 90.0 - th))
+              % (nm, SEG_LEN[i], SEG_NRM[i][0], SEG_NRM[i][1], th))
 
     print("\n  劣化(時点ごとの真値):")
     print("    年     たわみ中央   欠損深さ   支承沈下   ひび深さ   欠損体積")
