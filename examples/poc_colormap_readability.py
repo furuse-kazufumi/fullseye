@@ -387,18 +387,25 @@ def section_bowl(meas: dict) -> dict:
             _smooth(de[half] / np.maximum(grad[row][half], 1e-12), 5),
             PEAK_RATIO, sep=4))
 
+    n_px = (half.stop - half.start)
+    print("  中央行の右半分 %d 画素で t を 0.1 → 1.0 まで見る"
+          "(1-D 掃引の %d 刻みに対して %.0f 分の 1 の粗さ)"
+          % (n_px, N_T, (N_T - 1) / n_px))
     print("  マップ      1-D の山   2-D 生の色差   2-D 真の勾配で割った後")
     for name in MAPS:
         print("  %-9s   %4d        %4d           %4d"
               % (name, meas[name]["n_peaks"], raw_n[name], gain_n[name]))
     hit = sum(1 for n in MAPS if gain_n[n] == meas[n]["n_peaks"])
-    print("\n  ★★予想が外れた: 生の色差マップでは gray が %d 本・viridis が %d 本"
-          "立つ。\n     場は完全になめらかなのに —— これは配色ではなく"
-          "**場そのものの勾配**(椀は\n     外側ほど急)。真の勾配で割ると"
-          " %d 本 / %d 本 に戻る。" % (raw_n["gray"], raw_n["viridis"],
-                                       gain_n["gray"], gain_n["viridis"]))
+    print("\n  ★★予想は『1-D と同じ本数が出る』だったが %d / %d しか合わない。"
+          "理由は 2 つあり、\n     どちらも図を見ているだけでは分からない:"
+          % (hit, len(MAPS)))
+    print("   (1) **場そのものの勾配**が混ざる。椀は外側ほど急なので、"
+          "生の色差は\n       gray でも %d 本(場はなめらかなのに)。"
+          "真の勾配で割ると %d 本に戻る。" % (raw_n["gray"], gain_n["gray"]))
+    print("   (2) **画像の粗さで山が融合する**。jet の 1-D 3 本は 2-D で %d 本"
+          "(t=0.249 と 0.345 が\n       %d 画素しか離れておらず、1 本に見える)。"
+          % (gain_n["jet"], int(round(0.096 * n_px / 0.9))))
     print("     真値を持たずに色差マップを眺めると、**場のせいを配色のせいにする**。")
-    print("  勾配で割った後は %d / %d のマップで 1-D の本数と一致。" % (hit, len(MAPS)))
 
     figs.save_grid("scene_maps", panels, caps, ncols=3,
                    title="同じなめらかな 2 次曲面(段差ゼロ)を 6 通りに塗る",
