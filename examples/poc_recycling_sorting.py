@@ -365,26 +365,38 @@ def detected(cube: np.ndarray) -> np.ndarray:
 
 def score(geo: dict, pred: np.ndarray, det: np.ndarray,
           only_pure: bool = False) -> dict:
-    """材質ごとの再現率と混同行列。**未検出は誤分類と別に数える**。"""
+    """材質ごとの再現率と混同行列。**未検出は誤分類と別に数える**。
+
+    ``macro`` は未検出も誤りに数えた「工程が見る」再現率、``macro_det`` は
+    **検出できた画素だけ**の分類再現率。不変性の主張は後者で検証する
+    (前者には「暗くなってベルトに沈んだ」が混ざるため)。
+    """
     truth = geo["truth"]
     lab = np.where(det, pred, 0)
     sel = truth > 0
     if only_pure:
         sel = sel & geo["pure"]
     conf = np.zeros((K, K), np.int64)
+    conf_det = np.zeros((K, K), np.int64)
     for t in range(1, K):
         m = sel & (truth == t)
         if m.any():
             conf[t] = np.bincount(lab[m], minlength=K)
-    recall = np.full(K, np.nan)
-    for t in range(1, K):
-        n = conf[t].sum()
-        if n:
-            recall[t] = conf[t, t] / n
+        md = m & det
+        if md.any():
+            conf_det[t] = np.bincount(lab[md], minlength=K)
+    def _macro(c):
+        r = np.full(K, np.nan)
+        for t in range(1, K):
+            n = c[t].sum()
+            if n:
+                r[t] = c[t, t] / n
+        return r, float(np.nanmean(r[1:]))
+    recall, macro = _macro(conf)
+    _rd, macro_det = _macro(conf_det)
     miss = float(conf[1:, 0].sum() / max(1, conf[1:].sum()))
-    return {"conf": conf, "recall": recall,
-            "macro": float(np.nanmean(recall[1:])), "miss": miss,
-            "n": int(conf[1:].sum())}
+    return {"conf": conf, "recall": recall, "macro": macro,
+            "macro_det": macro_det, "miss": miss, "n": int(conf[1:].sum())}
 
 
 # --------------------------------------------------------------------------- #
