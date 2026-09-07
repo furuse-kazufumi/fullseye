@@ -535,7 +535,7 @@ def section_truth() -> None:
     rh_b = half_radius(SOURCES[1][1], SOURCES[1][2], SOURCES[1][3], 13.0)
     rh_g = half_radius(SOURCES[3][1], SOURCES[3][2], SOURCES[3][3], 22.0)
     print("        高温域の半値半径: 軸受 %.1f mm / 機械全体 %.1f mm ——"
-          " 6 節の画素ピッチの崖はこの %.1f mm で決まる。" % (rh_b, rh_g, rh_b))
+          " 9 節の画素ピッチの崖はこの %.1f mm で決まる。" % (rh_b, rh_g, rh_b))
     print("  形状: 芯ずれは仕込んだ量そのもの(重症度 s に対し %.3f·s mm / %.2f·s mrad)。"
           % (0.280, 0.55))
     print("  重症度 s は %.1f〜%.1f を対数一様。**同じモードでも軽い/重いが混ざる**"
