@@ -438,14 +438,15 @@ def section_zero_point(S: dict) -> dict:
         e2 = scatter_map(gt, s2["per_pt"], xs, ys)
         figs.save_grid(
             "restore_error_maps",
-            [with_scalebar(e0, S_), with_scalebar(e1, S_), with_scalebar(e2, S_)],
+            [with_scalebar(e0, S_, lo=0.0), with_scalebar(e1, S_, lo=0.0),
+             with_scalebar(e2, S_, lo=0.0)],
             ["(0) 何もしない: RMS %.2f mm" % np.sqrt(np.mean(d0 ** 2)),
              "(1) ゼロ点 穴埋め補間: RMS %.2f mm" % z1["rms"],
              "(2) 対称復元(面は真値): RMS %.2f mm" % s2["rms"]],
-            title="欠損部の復元誤差地図 [mm](色は ±%.0f mm、右端が目盛り)" % S_,
-            ncols=3, signed=True,
-            caption="失われた真値の点から復元点群までの距離。"
-                    "対称復元だけが眼窩の形を取り戻す。")
+            title="欠損部の復元誤差地図 [mm](0〜%.0f mm、右端が目盛り)" % S_,
+            ncols=3,
+            caption="失われた真値の点から復元点群までの距離(符号なし、%.0f mm で頭打ち)。"
+                    "対称復元だけが眼窩の形を取り戻す。" % S_)
     return {"zero_rms": z1["rms"], "zero_fill": fillpts, "true_rms": s2["rms"],
             "none_rms": float(np.sqrt(np.mean(d0 ** 2))), "gain": gain,
             "s2": s2, "z1": z1, "hole_grid": (hole, X, Y, Z, ins)}
