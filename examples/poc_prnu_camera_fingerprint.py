@@ -623,35 +623,49 @@ def section_denoisers(cams: dict, banks: dict, queries: dict) -> dict:
         fp = ml_fingerprint(train, rf)
         pce_s = np.median([pce_from_residual(rf(im), im * fp) for im in qs])
         pce_d = np.median([pce_from_residual(rf(im), im * fp) for im in qd])
+        # 同じ指紋を、照合側だけ fullseye の Wiener 残差で当てる(指紋が悪いのか照合が悪いのか)
+        cross, _ = match(qs, fp)
         rms = float(np.mean([rf(im).std() for im in qs]))
-        rows.append([label, corr(fp, k_true), float(pce_s), float(pce_d), rms])
+        rows.append([label, corr(fp, k_true), float(pce_s), float(pce_d), float(np.median(cross)), rms])
     for label, dn in [("fullseye wiener(局所 Wiener・多窓)", "wiener"),
                       ("fullseye wavelet(db4 + 局所 Wiener)", "wavelet")]:
         fp = _F.sensor_fingerprint(train, denoiser=dn, sigma=DENOISE_SIGMA)
         ps, _ = match(qs, fp, denoiser=dn)
         pd, _ = match(qd, fp, denoiser=dn)
-        rows.append([label, corr(fp, k_true), float(np.median(ps)), float(np.median(pd)), float("nan")])
+        cross, _ = match(qs, fp)
+        rows.append([label, corr(fp, k_true), float(np.median(ps)), float(np.median(pd)),
+                     float(np.median(cross)), float("nan")])
     best = max(r[2] for r in rows)
-    noise_rms = float(np.mean([(im - scene(SEED + 5000 + i)).std() for i, im in enumerate(qs[:1])]))
-    print("  %-38s %7s %9s %8s %7s %8s" % ("デノイザ", "相関", "PCE同一", "PCE別", "倍率", "残差RMS"))
+    noise_rms = float(np.hypot(np.sqrt(0.55 / FULL_WELL), READ_NOISE))
+    print("  雑音そのものの σ ≈ %.4f(ショット + 読み出し)。残差 RMS がこれより大きければ被写体が漏れている。" % noise_rms)
+    print("  %-36s %7s %8s %7s %9s %6s %8s" % ("デノイザ", "相関", "PCE同一", "PCE別", "照合Wiener", "倍率", "残差RMS"))
     table = []
-    for label, c, ps, pd, rms in rows:
-        print("  %-38s %+7.3f %9.0f %8.1f %7.2f %8s" % (
-            label, c, ps, pd, ps / best, ("%.4f" % rms) if np.isfinite(rms) else "(内部)"))
-        table.append((label, "%+.3f" % c, "%.0f" % ps, "%.1f" % pd, "%.2f" % (ps / best),
+    for label, c, ps, pd, cr, rms in rows:
+        print("  %-36s %+7.3f %8.0f %7.1f %9.0f %6.2f %8s" % (
+            label, c, ps, pd, cr, ps / best, ("%.4f" % rms) if np.isfinite(rms) else "(内部)"))
+        table.append((label, "%+.3f" % c, "%.0f" % ps, "%.1f" % pd, "%.0f" % cr, "%.2f" % (ps / best),
                       ("%.4f" % rms) if np.isfinite(rms) else "(内部)"))
     ratios = {r[0]: r[2] / best for r in rows}
-    worst = min(ratios.values())
-    print("  ★最良と最悪で PCE は %.1f 倍違う。sk_wavelet は残差 RMS %.4f で生の雑音"
-          "(σ ≈ %.4f)と同じ = ほとんど平滑していない。" % (
-              1.0 / worst, rows[4][4], np.hypot(np.sqrt(0.5 / FULL_WELL), READ_NOISE)))
-    assert 1.0 / worst > 3.0, ratios
-    assert rows[4][1] < 0.3, rows[4]      # sk_wavelet は指紋を捉えない
+    by = {r[0]: r for r in rows}
+    dct = by["xsp_dct_denoise"]
+    tv, nlm = by["sk_tv (Chambolle)"], by["sk_nlm (非局所平均)"]
+    worst_alive = min(v for v in ratios.values() if v > 0.01)
+    print("  ★最良(fullseye wavelet)と、生きている中で最悪(%.2f 倍)で PCE は %.0f 倍違う。"
+          "xsp_dct_denoise は残差 RMS %.3f(雑音の %.0f 倍 = 被写体ごと削る圧縮器)で PCE %.0f、"
+          "指紋として**消滅**。" % (worst_alive, 1.0 / worst_alive, dct[5], dct[5] / noise_rms, dct[2]))
+    print("  ★TV / NLM は指紋そのものは悪くない(相関 %.3f / %.3f)のに PCE %.0f / %.0f —— "
+          "照合側だけ Wiener 残差に替えると %.0f / %.0f に戻る。壊しているのは指紋ではなく"
+          "**照合画像の残差に漏れた被写体**(残差 RMS %.4f / %.4f > 雑音 %.4f)。" % (
+              tv[1], nlm[1], tv[2], nlm[2], tv[4], nlm[4], tv[5], nlm[5], noise_rms))
+    assert 1.0 / worst_alive > 3.0, ratios
+    assert abs(dct[2]) < 0.05 * best, dct
+    assert tv[4] > 5 * tv[2] and nlm[4] > 5 * nlm[2], (tv, nlm)
     figs.save_table("denoisers",
-                    ["デノイザ F", "真の K との相関", "PCE 同一", "PCE 別", "倍率(最良=1)", "残差 RMS"],
-                    table, title="残差の取り方で PCE は %.1f 倍動く(16 枚)" % (1.0 / worst),
+                    ["デノイザ F", "真の K との相関", "PCE 同一", "PCE 別", "照合だけ Wiener", "倍率(最良=1)", "残差 RMS"],
+                    table, title="残差の取り方で PCE は %.0f 倍動く(16 枚)" % (1.0 / worst_alive),
                     caption="上 7 行は fullseye の平滑 op + 自前の最尤式と PCE、下 2 行は"
-                            " sensor_fingerprint / fingerprint_correlate(残差器は内部)。")
+                            " sensor_fingerprint / fingerprint_correlate(残差器は内部)。"
+                            "「照合だけ Wiener」は同じ指紋を fingerprint_correlate で当てた PCE。")
     return {"ratios": ratios, "rows": rows}
 
 
