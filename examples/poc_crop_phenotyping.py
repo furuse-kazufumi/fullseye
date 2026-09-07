@@ -955,8 +955,9 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
                     title="受光(fPAR)は天頂では k に鈍く、斜めで効く",
                     caption="天頂 (0 度) では fPAR = 植被率で k が約分される。"
                             "斜めで初めて葉角分布が要る。")
-    return {"k_pts": k_pts, "k_naive": k_naive, "h99": h99, "rows": rows,
-            "n_pts": int(pts.shape[0]), "z_g": z_g}
+    return {"k_pts": k_pts, "k_naive": k_naive, "k_ref": k_ref, "h99": h99,
+            "rows": rows, "n_pts": int(pts.shape[0]), "z_g": z_g,
+            "cov": cov, "turbid": turbid}
 
 
 # --------------------------------------------------------------------------- #
