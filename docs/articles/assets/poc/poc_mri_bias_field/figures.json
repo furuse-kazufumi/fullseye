@@ -1,0 +1,116 @@
+[
+ {
+  "file": "01_controls.png",
+  "name": "controls",
+  "caption": "雑音だけでは壊れず、場だけで GM と WM が逆向きに動く。",
+  "shape": [
+   176,
+   625,
+   3
+  ],
+  "csv": "01_controls.csv",
+  "tsv": "01_controls.tsv"
+ },
+ {
+  "file": "02_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   647,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "03_amplitude_sweep_zero.png",
+  "name": "amplitude_sweep_zero",
+  "caption": "幾何予測(しきい値固定・雑音なし)と大津の実測は同じ振幅で崖を越える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_amplitude_sweep_methods.png",
+  "name": "amplitude_sweep_methods",
+  "caption": "素朴な log I の平滑は場が無くても壊す。分割残差の反復は 40 % まで持つ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_amplitude_residual_cv.png",
+  "name": "amplitude_residual_cv",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_methods_table.png",
+  "name": "methods_table",
+  "caption": "素朴な低域推定は解剖を場と誤認する。dc_homomorphic は組織コントラストごと潰す。",
+  "shape": [
+   296,
+   660,
+   3
+  ],
+  "csv": "06_methods_table.csv",
+  "tsv": "06_methods_table.tsv"
+ },
+ {
+  "file": "07_bias_map.png",
+  "name": "bias_map",
+  "caption": "",
+  "shape": [
+   647,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "08_correction_frames.png",
+  "name": "correction_frames",
+  "caption": "",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "09_frequency_sweep.png",
+  "name": "frequency_sweep",
+  "caption": "σ_b 4 px は皮質リボンの太さ。そこで場と組織は区別できない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_estimator_scale.png",
+  "name": "estimator_scale",
+  "caption": "場なしの線は雑音の床(理想補正でも同じ値)。予想した『細かい格子の自傷』は出なかった。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_snr_sweep.png",
+  "name": "snr_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

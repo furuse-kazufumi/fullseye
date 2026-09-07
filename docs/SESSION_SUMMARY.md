@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 12:50:26
+- **最終更新**: 2026-09-07 13:19:57
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+c9090a6fb auto: poc_mri_bias_field.py 編集前 (2026-09-07 13:03)
 60eb24ee4 tests: packaging 検査の改行エスケープ崩れを修正
 039a9ca87 auto: test_packaging_foundation.py 編集前 (2026-09-07 12:29)
 3d8edb2c1 auto: test_packaging_foundation.py 編集前 (2026-09-07 12:29)
@@ -19,33 +20,36 @@ bafa4e07e tests: packaging 検査を 3.10 でも動く形に(tomllib 不要)、_
 364f8b6fe auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:12)
 33b8cc379 auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:12)
 397f4a070 auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:10)
-efb7827f6 auto: poc_colocalization_crosstalk.py 編集前 (2026-09-07 12:10)
 ```
 
 ## 現在の git status
 
 ```
 M docs/SESSION_SUMMARY.md
+ M docs/articles/exhibits/poc_captions.json
+ M examples/poc_mri_bias_field.py
+ M examples2d.py
+?? docs/articles/assets/poc/poc_mri_bias_field/
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-12:30 docs/SESSION_SUMMARY.md
-12:29 tests/test_packaging_foundation.py
-12:13 examples/poc_colocalization_crosstalk.py
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/figures.json
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/11_threshold_table.tsv
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/11_threshold_table.png
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/11_threshold_table.csv
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/10_controls.tsv
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/10_controls.png
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/10_controls.csv
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/09_psf_masks.png
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/08_psf_sweep.png
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/07_crosstalk_sweep_manders.png
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/06_crosstalk_sweep_pearson.png
-12:11 docs/articles/assets/poc/poc_colocalization_crosstalk/05_costes_significance.tsv
+13:14 docs/SESSION_SUMMARY.md
+13:14 examples2d.py
+13:14 docs/articles/exhibits/poc_captions.json
+13:13 .pytest_cache/v/cache/nodeids
+13:10 docs/articles/assets/poc/poc_mri_bias_field/figures.json
+13:10 docs/articles/assets/poc/poc_mri_bias_field/11_snr_sweep.png
+13:10 docs/articles/assets/poc/poc_mri_bias_field/10_estimator_scale.png
+13:10 docs/articles/assets/poc/poc_mri_bias_field/09_frequency_sweep.png
+13:10 docs/articles/assets/poc/poc_mri_bias_field/08_correction_frames.png
+13:10 docs/articles/assets/poc/poc_mri_bias_field/07_bias_map.png
+13:10 docs/articles/assets/poc/poc_mri_bias_field/06_methods_table.tsv
+13:10 docs/articles/assets/poc/poc_mri_bias_field/06_methods_table.csv
+13:10 docs/articles/assets/poc/poc_mri_bias_field/06_methods_table.png
+13:10 docs/articles/assets/poc/poc_mri_bias_field/05_amplitude_residual_cv.png
+13:10 docs/articles/assets/poc/poc_mri_bias_field/04_amplitude_sweep_methods.png
 ```
 
 ---
