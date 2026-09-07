@@ -48,6 +48,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   欠陥が消える」)。穴は §41.12 —— **台帳アダプタが複数戻り値を切り落とす**同型の
   バグが `gicp` / `grid_coords` / `voxel_to_mesh` の 3 か所、軸順の規約が点
   `(x,y,z)` とボリューム `(depth,row,col)` で割れている件を含む。
+- **`query_distance` が立方格子しか受けなかったのを軸ごとに直した**。`esdf` は長さ 3 の
+  異方 `voxel_size` を受けるのに、その出力を world 座標で引く側が `int(res)` で
+  立方限定という**片側だけ狭い契約**だった(CT の薄い接合層 (30,180,180) でそのまま
+  詰まる —— `poc_ct_void_morphology` で実測)。スカラを渡す既存の呼び手は不変。
 - **torch が要らないのに必須だった 5 op を numpy / scipy に戻した**:
   `icp_point2point_3d` / `icp_point2plane` / `register_fpfh` / `match_phase_3d` /
   `polar_unwrap`(+ `cylinder_unwrap`)。中身は最近傍探索・小さい線形代数・FFT・

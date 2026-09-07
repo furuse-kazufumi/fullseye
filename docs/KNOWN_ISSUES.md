@@ -1354,6 +1354,10 @@ torch があるので、**手元で緑・CI で赤**という一番たちの悪�
   3 本(`poc_dic_strain` / `poc_photoelasticity` / `poc_thermography_ndt`)—— いずれも
   **assert がゼロ・PASS 行なし**で、走ってはいるが何も検証していなかった。-2 を返すよう
   直し、3 本には所見を固定する assert を入れる。
+- ★**片側だけ狭い契約**: `esdf` は長さ 3 の異方 `voxel_size` を受けるのに、その出力を
+  world 座標で引く `query_distance` は `int(res)` で立方格子限定だった。CT の薄い
+  接合層 (30,180,180) では引けない。軸ごとの `res` を受けるよう直した(2026-09-07)。
+  **同じ族の入口と出口で契約の広さが違わないか**を、族ごとに一度見ること。
 - 手元で CI の条件を再現するには `tools/run_without_torch.py <script>`
   (`importlib.util.find_spec("torch")` を None にし、meta_path でも実 import を塞ぐ)。
   これで 77 本すべてを掃いて、上の 5 op を洗い出した。

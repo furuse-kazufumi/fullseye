@@ -853,9 +853,9 @@ def section_control(cells, recs) -> dict:
 
     mid = ND // 2
     figs.save_grid("map_control",
-                   [recs["healthy"][mid], recs["uniform"][mid],
-                    recs["local"][mid], recs["gas"][mid]],
-                   ["健全", "一様膨れ", "局所膨れ", "層間ガス空隙"],
+                   [_up(recs["healthy"][mid]), _up(recs["uniform"][mid]),
+                    _up(recs["local"][mid]), _up(recs["gas"][mid])],
+                   ["健全", "一様膨れ", "局所膨れ", "ガス空隙"],
                    title="外形のふくらみを揃えた 4 つの断面(同じ窓)", ncols=4,
                    caption="缶の外形はほぼ同じ。違いは中の層にしか出ない。")
     return {"res": res, "flat": flat, "base": base}
