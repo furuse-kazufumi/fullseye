@@ -54,5 +54,25 @@
    560,
    3
   ]
+ },
+ {
+  "file": "06_hole_rim_roughness.png",
+  "name": "hole_rim_roughness",
+  "caption": "どちらも 1 に近い θ と 2 倍を超える θ が混在する。縁が voxel 格子のどこに落ちるかで変わる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_hole_frames.png",
+  "name": "hole_frames",
+  "caption": "",
+  "shape": [
+   735,
+   630,
+   3
+  ]
  }
 ]

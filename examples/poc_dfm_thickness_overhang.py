@@ -587,15 +587,27 @@ def section_overhang(scene):
                for t in angs]
         curves.append((name, angs, cur))
         steps[name] = m_hi - m_lo
+        los[name] = m_lo
         rows.append([name, "%.2f" % m_lo, "%.2f" % m_hi, "%.2f" % (m_hi - m_lo),
-                     "%+.1f %%" % (100 * (m_hi - a_hi) / a_hi)])
-        print("   %-26s %8.2f / %8.2f            %7.2f   %+6.1f %%"
-              % (name, m_lo, m_hi, m_hi - m_lo, 100 * (m_hi - a_hi) / a_hi))
-    print("   %-26s %8.2f / %8.2f            %7.2f" % ("解析(解像度無限)", a_lo, a_hi, step))
-    print("\n  ★平滑化は段差を %.2f -> %.2f mm^2 に潰す(%.0f %% 消える)。"
+                     "%.2f" % (m_hi / max(m_lo, 1e-9))])
+        print("   %-26s %8.2f / %8.2f            %7.2f       %5.2f 倍"
+              % (name, m_lo, m_hi, m_hi - m_lo, m_hi / max(m_lo, 1e-9)))
+    print("   %-26s %8.2f / %8.2f            %7.2f       %5.2f 倍"
+          % ("解析(解像度無限)", a_lo, a_hi, step, a_hi / a_lo))
+    lo_vals = [los[n] for n, _, _ in conds]
+    print("\n  ★★同じ形・同じしきい値 44.9 度なのに、面の出し方だけで NG 面積が")
+    print("     %s mm^2 —— **%.1f 倍**の開き(解析値は %.2f mm^2)。"
+          % (" / ".join("%.2f" % v for v in lo_vals), max(lo_vals) / min(lo_vals), a_lo))
+    print("  ★距離場から取ると段差そのものが消える(%.2f 倍 -> %.2f 倍)。"
+          % (a_hi / a_lo, steps["距離場から"] / max(los["距離場から"], 1e-9) + 1.0))
+    print("     消えたのは良いことではない —— **45 度の面 %.2f mm^2 を「要サポート」側に"
+          % step)
+    print("     勝手に寄せて確定させただけ**で、44.9 度で見れば %.0f %% の過大評価。"
+          % (100 * (los["距離場から"] - a_lo) / a_lo))
+    print("  ★平滑化は段差を %.2f -> %.2f mm^2 に潰す(%.0f %% 消える)。丸めた分だけ"
           % (step, steps["平滑化 sigma=1.5 voxel"],
              100 * (1 - steps["平滑化 sigma=1.5 voxel"] / step)))
-    print("     数字は滑らかになるが、**造形機は丸まっていない形を作る**。")
+    print("     「45 度ちょうど」という危うい設計が数字から見えなくなる。")
 
     ana = [analytic_support_area(b, cos_c=float(np.cos(np.radians(t)))) for t in angs]
     figs.save_plot("threshold_cliff",
