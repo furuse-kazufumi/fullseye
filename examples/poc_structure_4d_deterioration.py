@@ -1287,8 +1287,8 @@ def section_prism_and_crack(sc: dict) -> dict:
           "R を 1/10 にすると 1 core の点数が 1/100 になり\n"
           "      雑音が 10 倍になる —— **薄まりと雑音は同じつまみの両端**。")
     return {"dx_all": dx_all, "dx_grd": dx_grd, "hw": hw_l, "pred": pred_l,
-            "num": num_l, "need": need, "bp": bp, "bn": bn, "bi": bi,
-            "cam": cam_l, "fake_h": fake_h}
+            "num": num_l, "need": need, "cam": cam_l, "fake_h": fake_h,
+            "ceil": ceil_x}
 
 
 # --------------------------------------------------------------------------- #

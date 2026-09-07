@@ -1,0 +1,166 @@
+[
+ {
+  "file": "01_xray_projection.png",
+  "name": "xray_projection",
+  "caption": "投影だけでは空隙も膨れも判らない。だから断層に落とす。",
+  "shape": [
+   445,
+   818,
+   3
+  ]
+ },
+ {
+  "file": "02_scene.png",
+  "name": "scene",
+  "caption": "缶(明)・電極(中)・電解液(暗)・ガス(最暗)。順投影 → ビームハードニング → リング → フォトン雑音 → FBP。",
+  "shape": [
+   445,
+   818,
+   3
+  ]
+ },
+ {
+  "file": "03_outer_profile.png",
+  "name": "outer_profile",
+  "caption": "端板は周辺で固定なので中央だけが出る。ノギスは中央を読むので体積等価な平均の 4 倍を報告する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_visible_fraction.png",
+  "name": "visible_fraction",
+  "caption": "同じ劣化でもクリアランスが厚いセルでは外形に何も出ない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_profile_layers.png",
+  "name": "profile_layers",
+  "caption": "17 本の山が電極。ガス空隙のセルだけ谷が 1 つ深く落ち、そこから先の山が押し上げられている。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_flatness.png",
+  "name": "flatness",
+  "caption": "一様膨れは平らなまま上がる。局所膨れとガス空隙はうねる(残差 RMS で数字になる)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_control_group.png",
+  "name": "control_group",
+  "caption": "外形の 2 列はほぼ同じ。層厚・空隙率・膨張体積は違う。",
+  "shape": [
+   176,
+   818,
+   3
+  ],
+  "csv": "07_control_group.csv",
+  "tsv": "07_control_group.tsv"
+ },
+ {
+  "file": "08_map_control.png",
+  "name": "map_control",
+  "caption": "缶の外形はほぼ同じ。違いは中の層にしか出ない。",
+  "shape": [
+   445,
+   818,
+   3
+  ]
+ },
+ {
+  "file": "09_void_map.png",
+  "name": "void_map",
+  "caption": "位置は当たる。縁が薄いところは落ちるので体積は過小。",
+  "shape": [
+   189,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "10_void_slices.png",
+  "name": "void_slices",
+  "caption": "",
+  "shape": [
+   445,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "11_misalign.png",
+  "name": "misalign",
+  "caption": "外形指標はこの劣化に完全に盲目(体積が変わらない)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_sweep_resolution.png",
+  "name": "sweep_resolution",
+  "caption": "標本化定理(A)はまだ余裕があると言うが、実際は層間の隙間 0.120 mm を分けられなくなった時点で全滅する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_sweep_resolution_err.png",
+  "name": "sweep_resolution_err",
+  "caption": "空隙体積は崖の手前から単調に痩せる(部分体積効果)。層厚は崖を越えると意味を失う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_sweep_resolution_table.png",
+  "name": "sweep_resolution_table",
+  "caption": "",
+  "shape": [
+   272,
+   698,
+   3
+  ],
+  "csv": "14_sweep_resolution_table.csv",
+  "tsv": "14_sweep_resolution_table.tsv"
+ },
+ {
+  "file": "15_sweep_noise.png",
+  "name": "sweep_noise",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "16_sweep_beamhardening.png",
+  "name": "sweep_beamhardening",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
