@@ -704,21 +704,38 @@ def section_threshold_noise() -> dict:
     figs.save_plot("threshold_sweep",
                    [("ボイド率 [%]", thrs, tf),
                     ("界面欠損率 [%] の 1/5", thrs, [x / 5 for x in tai]),
-                    ("扁平度 x 10", thrs, [x * 10 for x in tflat]),
-                    ("連なりの最近接 [µm] の 1/5", thrs, [x / 5 for x in tnn])],
+                    ("連なりの塊の数 / 8", thrs, [x / 8 for x in tn]),
+                    ("連なりの最近接 [µm] の 1/50", thrs, [x / 50 for x in tnn])],
                    xlabel="2 値化のしきい値", ylabel="各指標(尺度を合わせてある)",
-                   title="しきい値を上げると率は増え、形の指標は鈍る",
-                   caption="安全側(率を大きく)に振ると、形態の側は危険側"
-                           "(連結しやすい)へ動く。")
+                   title="しきい値 %.2f でボイドが融合し、最近接間隔の意味が変わる" % merge_thr,
+                   caption="塊の数が %d から落ちた瞬間、最近接間隔は『隣のボイドまで』"
+                           "から『隣の鎖まで』に黙って入れ替わる。" % N_VOID)
     figs.save_plot("cluster_radius_sweep",
-                   [("連なり(隙間 %.0f µm)" % gap_chain, [1000 * r for r in radii], nc_chain),
-                    ("散在(隙間 %.0f µm)" % gap_scat, [1000 * r for r in radii], nc_scat),
-                    ("予測(連なり)", [gap_chain / 2] * 2, [0, N_VOID]),
-                    ("予測(散在)", [gap_scat / 2] * 2, [0, N_VOID])],
+                   [("連なり(すき間 %.0f µm)" % gap_chain,
+                     [1000 * r for r in radii], nc_chain),
+                    ("散在(すき間 %.0f µm)" % gap_scat,
+                     [1000 * r for r in radii], nc_scat),
+                    ("予測(連なり %.0f µm)" % (gap_chain / 2), [gap_chain / 2] * 2,
+                     [0, N_VOID]),
+                    ("予測(散在 %.0f µm)" % (gap_scat / 2), [gap_scat / 2] * 2,
+                     [0, N_VOID])],
                    xlabel="橋渡しの連結半径 [µm]", ylabel="連結成分の個数",
-                   title="連なりは連結半径 %.0f µm で 3 本の鎖に落ちる" % r_chain)
-    return {"thr": thrs, "tf": tf, "tflat": tflat, "tnn": tnn, "nf": nf,
+                   title="連なりは設計どおりの半径で 3 本の鎖に落ちる",
+                   caption="ボイド率にはこの差が出ない —— 両条件とも 3 %% 台。")
+    figs.save_plot("noise_sweep",
+                   [("塊の数(偽ボイドを含む)", [1000 * s for s in noises], nn_cnt),
+                    ("ボイド率 [%] x 100", [1000 * s for s in noises],
+                     [x * 100 for x in nf]),
+                    ("真値 %.1f %% x 100" % (100 * VOID_FRAC),
+                     [1000 * s for s in noises], [100 * VOID_FRAC * 100] * len(noises))],
+                   xlabel="雑音 sigma x 1000(はんだ = 1000)",
+                   ylabel="個数 / ボイド率 x 100",
+                   title="雑音は個数を爆発させるが、体積率はほとんど動かない",
+                   caption="合否の数字は雑音に強い。強いことが問題で、"
+                           "壊れているのに気づけない。")
+    return {"thr": thrs, "tf": tf, "tflat": tflat, "tnn": tnn, "tn": tn, "nf": nf,
             "n_noise": nn_cnt, "r_chain": r_chain, "r_scat": r_scat,
+            "merge_thr": merge_thr,
             "pred_chain": gap_chain / 2, "pred_scat": gap_scat / 2}
 
 
