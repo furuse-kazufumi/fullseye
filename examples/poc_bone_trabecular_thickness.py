@@ -611,19 +611,24 @@ def section_bias_and_controls(sc: dict, tr: dict) -> dict:
         ratio = np.exp(6.0 * (ret - 0.5))
         m_e = np.asarray(fs.apply(ratio / ratio.max(), "otsu")) > 0.5
         d_o, d_e = direct_metrics(m_o, px), direct_metrics(m_e, px)
-        ce_o = center_edge(m_o)
+        ce_o, ce_e = center_edge(m_o), center_edge(m_e)
         beta_ax.append(beta)
         bv_o.append(100 * (m_o.mean() / tb.mean() - 1))
         bv_r.append(100 * (m_r.mean() / tb.mean() - 1))
         bv_e.append(100 * (m_e.mean() / tb.mean() - 1))
         ce_gap.append(100 * (ce_o[0] / ce_o[1] - ce_t[0] / ce_t[1]))
-        print("  %.1f   |  %+6.1f %%  %6.1f   %5.0f / %5.0f  |   %+6.1f %%          |   %+6.1f %%   %6.1f" % (
-            beta, bv_o[-1], d_o["tbth"], ce_o[0], ce_o[1], bv_r[-1], bv_e[-1], d_e["tbth"]))
+        print("  %.1f   |  %+6.1f %%  %6.1f   %5.0f / %5.0f  |   %+6.1f %%          |   %+6.1f %%   %6.1f   %5.0f / %5.0f" % (
+            beta, bv_o[-1], d_o["tbth"], ce_o[0], ce_o[1], bv_r[-1], bv_e[-1], d_e["tbth"], ce_e[0], ce_e[1]))
         if beta == 0.4:
-            keep = (img, m_o, m_r, m_e, ce_o, center_edge(m_e))
-    print("\n  ★大津 1 本は β = 0.6 でも BV/TV %+.1f %%、中心/縁の比のずれ %+.1f 点 —— 予想より頑健。"
-          "\n    髄と骨の間が広い(髄 %.2f、骨 1)ので、中心の骨 %.1f でもしきい値の側に落ちない。" % (
-              bv_o[-1], ce_gap[-1], MARROW_LEVEL, 1 - 0.6))
+            keep = (img, m_o, m_r, m_e, ce_o, ce_e)
+        if beta == 0.6:
+            ce_last = (ce_o, ce_e)
+    print("\n  ★大津 1 本は β = 0.6 でも BV/TV %+.1f %% —— 予想より頑健に見える。**しかし**中心の Tb.Th"
+          " %.0f µm と縁の %.0f µm で\n    %.0f %% 違う(真値は %.0f / %.0f)。中心が痩せた分を縁が太って"
+          "打ち消し、**全体の BV/TV は合っているのに場所ごとには壊れている**。"
+          "\n    retinex → exp → 大津なら中心 %.0f / 縁 %.0f µm に戻る。" % (
+              bv_o[-1], ce_last[0][0], ce_last[0][1], 100 * (1 - ce_last[0][0] / ce_last[0][1]),
+              ce_t[0], ce_t[1], ce_last[1][0], ce_last[1][1]))
     print("  ★retinex → 大津は β = 0 でも BV/TV %+.1f %%。log 域で大津を取ると"
           "しきい値が幾何平均 √(髄·骨) = %.2f 側へ落ちて帯が太る。\n    exp で比に戻してから"
           "大津なら %+.1f %%(β = 0.6)。「バイアス補正」は対数のまま二値化してはいけない。" % (
