@@ -329,6 +329,15 @@ def fem_build(thick, dx, dz, eps=EPS_LAYER, incompat=True):
             act[n] = True
         if not grew:
             continue
+        # ★生まれた層は「そのとき既に反っている面の上」に置かれる(要素誕生は
+        #   変形後の配置で行う)。ここを初期化し忘れると、後から生えた層だけ
+        #   変位ゼロのまま残り、**列平均で測った反りが 1/4 になる**
+        #   (2026-09-07 に踏んだ)。力学(K と f)は公称格子上なので不変。
+        for i in range(nnx):
+            below, above = j * nnx + i, (j + 1) * nnx + i
+            if act[above] and act[below]:
+                u[2 * above] = u[2 * below]
+                u[2 * above + 1] = u[2 * below + 1]
         K = sparse.coo_matrix((np.concatenate(vals),
                                (np.concatenate(rows), np.concatenate(cols))),
                               shape=(ndof, ndof)).tocsr()

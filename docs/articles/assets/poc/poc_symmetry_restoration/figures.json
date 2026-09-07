@@ -70,5 +70,27 @@
    566,
    3
   ]
+ },
+ {
+  "file": "08_defect_size.png",
+  "name": "defect_size",
+  "caption": "正しい軸に固定しても位置は重心のずれに引きずられる。自動選択が軸を取り違えるのは失った点 3.1 % 以上。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_false_symmetry_table.png",
+  "name": "false_symmetry_table",
+  "caption": "真の非対称 RMS 0.75 mm。復元部は定義上ぴったり対称になるので、見かけの非対称度は 0.75 -> 0.61 / 0.61 mm に下がる。",
+  "shape": [
+   128,
+   758,
+   3
+  ],
+  "csv": "09_false_symmetry_table.csv",
+  "tsv": "09_false_symmetry_table.tsv"
  }
 ]
