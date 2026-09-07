@@ -472,7 +472,8 @@ def section_snr_cliff() -> dict:
                    xlabel="帯域内 SNR [dB]", ylabel="ピークの取り違え [%]",
                    title="崖の正体はピークの取り違え(%.2f m 超を数えた)" % GROSS_M)
     return {"snrs": snrs, "fine": fine, "gross": gross, "crlb": crlb,
-            "crlb_num": crlb_num, "thr": thr, "first": first, "names": names}
+            "crlb_num": crlb_num, "thr": thr, "first": first, "names": names,
+            "allrms": allrms}
 
 
 # --------------------------------------------------------------------------- #
