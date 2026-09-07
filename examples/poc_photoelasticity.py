@@ -204,6 +204,9 @@ def section2_zero_point(dsig, delta):
     print("  巻きの無い領域(N < 0.5、円板の %.0f %%)での平均絶対誤差:"
           % (100 * m.sum() / IN_DISC.sum()))
     print("    ゼロ点 : %.4f MPa" % err0)
+    # ★ゼロ点の水準を固定する。以降の「◯倍」はすべてこの 1.09 MPa を分母にしている
+    #   ので、ここが動くと比較の意味が変わる。
+    assert 1.0 < err0 < 1.2, err0
     return naive, m
 
 
