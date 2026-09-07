@@ -332,13 +332,16 @@ def classify(cube: np.ndarray, method: str, pair: tuple[int, int],
         return _flat_gate(cube, _sam_classify(d2(cube), d2(LIB)))
     if method == "d2w":                                # + 水帯を捨てる
         k = keep if keep is not None else _water_keep()
-        return _flat_gate(cube, _sam_classify(d2(cube)[..., k], d2(LIB)[:, k]))
+        return _flat_gate(cube[..., k],
+                          _sam_classify(d2(cube)[..., k], d2(LIB)[:, k]), k)
     raise ValueError(method)
 
 
-def _flat_gate(cube: np.ndarray, pred: np.ndarray) -> np.ndarray:
+def _flat_gate(cube: np.ndarray, pred: np.ndarray,
+               keep: np.ndarray | None = None) -> np.ndarray:
     """平坦なスペクトルの画素は「金属」に回す(微分では分けられないから)。"""
-    return np.where(flatness(cube) < flat_threshold(), NAMES.index("金属"), pred)
+    return np.where(flatness(cube) < flat_threshold(keep),
+                    NAMES.index("金属"), pred)
 
 
 def _water_keep() -> np.ndarray:
