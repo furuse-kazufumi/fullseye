@@ -316,15 +316,23 @@ def section_scene_zero() -> dict:
                      "%.3f" % x_hat, "%+.3f" % (x_hat - X_LEAK)])
         print("   %-24s %+8.1f      %8.3f    %+7.3f"
               % (name, 1e6 * (tau - rec["tau_true"]), x_hat, x_hat - X_LEAK))
-    tau_ps = tau_phase_slope(rec)
-    x_ps = position(tau_ps, C_TRUE)
-    rows.append(["位相勾配(transfer_function)",
-                 "%+.1f" % (1e6 * (tau_ps - rec["tau_true"])),
-                 "%.3f" % x_ps, "%+.3f" % (x_ps - X_LEAK)])
-    print("   %-24s %+8.1f      %8.3f    %+7.3f"
-          % ("位相勾配", 1e6 * (tau_ps - rec["tau_true"]), x_ps, x_ps - X_LEAK))
-    print("\n  ★SNR 0 dB・音速が真値なら、どの手法も %.1f m 以内。"
-          "**ここで満足すると次の節で掘る場所を外す**。" % GROSS_M)
+    worst = max(abs(float(r[3])) for r in rows)
+    ps = []
+    for snr in (20.0, 0.0):
+        tau_ps = tau_phase_slope(make_records(snr, SEED))
+        x_ps = position(tau_ps, C_TRUE)
+        ps.append(float(x_ps) - X_LEAK)
+        print("   %-20s(SNR %+.0f dB) %+8.1f      %8.3f    %+7.3f"
+              % ("位相勾配", snr, 1e6 * (tau_ps - rec["tau_true"]), x_ps,
+                 x_ps - X_LEAK))
+    rows.append(["位相勾配(transfer_function)", "-", "%.3f" % position(
+        tau_phase_slope(rec), C_TRUE), "%+.3f" % ps[1]])
+    print("\n  ★SNR 0 dB・音速が真値なら、相関系の 5 手法はどれも %.3f m 以内"
+          "(主ローブ幅 %.2f m の 1/10 以下)。" % (worst, GROSS_M))
+    print("     ★位相勾配だけは別で、+20 dB なら %+.3f m だが 0 dB では "
+          "%+.3f m —— 位相の unwrap が\n     帯域のどこかで 1 周滑ると、"
+          "傾き = 遅延がそのぶん丸ごとずれる(壊れ方が連続でない)。"
+          % (ps[0], ps[1]))
 
     _scene_figure(rec)
 
