@@ -524,12 +524,16 @@ def inspect_image(img: np.ndarray, theta: float = THETA) -> dict:
             fb = _LAB.blob_features(lab, spacing=PX_MM)
             bridge_area = max(bridge_area, float(fb["area"].max()))
     out["bridge_area"] = bridge_area
+    out["body_len"] = body_len
     h2 = (out["L"]["h2"], out["R"]["h2"])
     h1 = (out["L"]["h1"], out["R"]["h1"])
     out["h2"], out["h1"] = h2, h1
+    lifted_color = min(out["L"]["elec_blue"], out["R"]["elec_blue"]) < 0.5
+    lifted_len = abs(body_len - body_nominal) > BODY_LEN_TOL
+    out["lift_cue"] = ("color" if lifted_color else "") + ("+len" if lifted_len else "")
     if bridge_area >= 0.01:
         out["verdict"] = "bridge"
-    elif min(out["L"]["elec_blue"], out["R"]["elec_blue"]) < 0.5:
+    elif lifted_color or lifted_len:
         out["verdict"] = "tombstone"
     elif min(h2) < IPC_MIN * H:
         out["verdict"] = "insufficient"
