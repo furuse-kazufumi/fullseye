@@ -381,11 +381,11 @@ def section_bowl(meas: dict) -> dict:
         panels.append(rgb)
         caps.append(name)
         de = step_delta_e(rgb)[row]
-        raw_n[name] = len(count_false_edges(_smooth(de[half], 11), PEAK_RATIO, sep=8))
+        raw_n[name] = len(count_false_edges(_smooth(de[half], 5), PEAK_RATIO, sep=4))
         # ★真の勾配で割る。割らないと「場が急なところ」を境目と数えてしまう
         gain_n[name] = len(count_false_edges(
-            _smooth(de[half] / np.maximum(grad[row][half], 1e-12), 11),
-            PEAK_RATIO, sep=8))
+            _smooth(de[half] / np.maximum(grad[row][half], 1e-12), 5),
+            PEAK_RATIO, sep=4))
 
     print("  マップ      1-D の山   2-D 生の色差   2-D 真の勾配で割った後")
     for name in MAPS:
