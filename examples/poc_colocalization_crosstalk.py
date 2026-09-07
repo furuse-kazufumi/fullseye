@@ -540,13 +540,12 @@ def section_psf_sweep() -> dict:
              sigmas[sigmas.index(flip) - 1] if not np.isnan(flip) else float("nan"),
              peak_k[sigmas.index(flip)] if not np.isnan(flip) else float("nan"), flip))
     figs.save_plot("psf_sweep",
-                   [("M1(真の共局在 0 %)", sigmas, m1_0),
-                    ("予想: B の Otsu 領域の面積率", sigmas, m1_pred),
-                    ("Pearson r(0 %)", sigmas, r0),
-                    ("M1(50 %、真値 0.5 付近)", sigmas, m1_50)],
-                   xlabel="PSF σ [px]", ylabel="係数",
+                   [("Otsu-Manders M1(真の共局在 0 %)", sigmas, m1_0),
+                    ("偶然の重なり = B の Otsu 領域の面積率", sigmas, m1_pred),
+                    ("Pearson r(真の共局在 0 %)", sigmas, r0)],
+                   xlabel="PSF σ [px]", ylabel="係数(崖 σ=%.1f px で Otsu が細胞体へ飛び移る)" % flip,
                    title="ぼけは Manders だけを押し上げる(Pearson は動かない)",
-                   kinds=["scatter", "line", "scatter", "scatter"])
+                   ylim=(-0.05, 1.7), kinds=["scatter", "line", "scatter"])
     s_big = make_scene(0.0, 0.0, 0.0, psf_sigma=4.0)
     mb = measure(s_big["obs_a"], s_big["obs_b"], s_big["roi"])
     s_small = make_scene(0.0, 0.0, 0.0, psf_sigma=0.5)
