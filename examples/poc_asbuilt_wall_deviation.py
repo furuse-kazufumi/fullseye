@@ -405,7 +405,7 @@ def section_plumb_square() -> dict:
     print("     東の壁の倒れ  実測 %+.3f mrad / 閉形式の予測 %+.3f mrad"
           % (east_err, 1e3 * pb["fake_tilt"]))
     print("     east-north の直交度  実測 %+.3f mrad / 閉形式の予測 %+.3f mrad"
-          % (sq_err, -1e3 * pb["fake_yaw"]))
+          % (sq_err, 1e3 * pb["fake_yaw"]))
     print("     **面外のふくらみ 1 個が、倒れ・直交度・内法の 3 つの判定を"
           "同時に汚す**\n     (どれも §6 の 1 次の吸収で説明がつく)。")
 
