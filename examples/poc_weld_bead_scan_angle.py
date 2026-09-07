@@ -676,7 +676,7 @@ def section5_angle_sweep(p: dict, tru: dict) -> dict:
     print()
     groups = [("a 遮蔽なし", dict(occlusion=False, specular=0.0)),
               ("b 遮蔽あり", dict(occlusion=True, specular=0.0)),
-              ("c 遮蔽+鏡面", dict(occlusion=True, specular=3.0))]
+              ("c 遮蔽+鏡面", dict(occlusion=True, specular=4.0))]
     res = {g: {k: {"mae": [], "got": []} for k in KEYS} for g, _ in groups}
     hgt = {g: [] for g, _ in groups}
     sat = []
