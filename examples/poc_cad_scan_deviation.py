@@ -979,8 +979,45 @@ def section_pull(ref: CadRef) -> dict:
     print("     ★ICP の z 並進 vs 反り振幅の傾き = %.3f(予測 -1/3 = -0.333)" % slope)
     print("     ★へこみは深さを %.0f 倍にしても薄まる割合が %.2f → %.2f %% で"
           "変わらない。" % (hs[-1] / hs[0], dil[0], dil[-1]))
-    print("        薄まりを決めるのは**面積**(2πσ²/A = %.2f %%)であって深さでない。"
-          % (100 * 2 * np.pi * DENT_S ** 2 / ref.area))
+
+    # 「薄まりを決めるのは面積」を、面積そのものを振って確かめる
+    print("\n   へこみの**広がり**を振る(深さは %.0f µm 固定):" % (1000 * DENT_H))
+    print("     σ [mm]  覆う面積 2πσ² [mm^2]  面積比 [%]  薄まる割合[%]"
+          "  ICP 実測[%]")
+    sigs, dils, areas = [], [], []
+    for sg in (2.0, 3.5, 6.0, 10.0, 15.0):
+        d = defect_field(P, N, dent_h=DENT_H, dent_s=sg, warp_a=0.0,
+                         wear_w=0.0)["total"]
+        _, r6, _ = absorbed(P, N, d)
+        k = np.argmin(d)
+        dl = 100.0 * (1.0 - r6[k] / d[k])
+        a2 = 2 * np.pi * sg ** 2
+        icp = np.nan
+        if sg in (3.5, 10.0):                 # 予測が当たるかを実 ICP で 2 点だけ確認
+            sc = make_scan(n=14000, noise=0.0, dent_h=DENT_H, dent_s=sg,
+                           warp_a=0.0, wear_w=0.0)
+            R, t = align(sc["pts"], ref, method="p2plane",
+                         init=(sc["R_true"], sc["t_true"]), iters=25)
+            _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
+            j = np.argmin(np.where(ed, 0.0, sc["dev_true"]))
+            icp = 100.0 * (1.0 - s[j] / sc["dev_true"][j])
+        sigs.append(sg)
+        dils.append(dl)
+        areas.append(100 * a2 / ref.area)
+        print("     %6.1f %20.1f %11.2f %14.2f %12s"
+              % (sg, a2, areas[-1], dl, "-" if np.isnan(icp) else "%.2f" % icp))
+    print("     ★薄まる割合は広がりと一緒に %.2f → %.2f %% と増える ——"
+          "**面積で決まる**。" % (dils[0], dils[-1]))
+    print("        並進だけの閉形式 2πσ²/A は %.2f → %.2f %% で、**常に過小**"
+          "(回転も吸うため)。" % (areas[0], areas[-1]))
+    figs.save_plot("dent_area",
+                   [("薄まる割合(実測)[%]", areas, dils),
+                    ("並進だけの予測 2πσ²/A [%]", areas, areas)],
+                   xlabel="へこみが覆う面積の比 2πσ²/A [%]",
+                   ylabel="へこみの読みが薄まる割合 [%]",
+                   title="欠陥を薄めるのは深さではなく面積",
+                   caption="深さを 30 倍にしても割合は動かないが、広がりを"
+                           "変えると比例して増える。")
 
     figs.save_plot("defect_pull",
                    [("ICP の z 並進", [1000 * a for a in amps], dzs),
