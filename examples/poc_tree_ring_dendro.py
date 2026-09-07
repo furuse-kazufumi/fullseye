@@ -231,6 +231,16 @@ def detect_ray_peaks(img, center, theta: float, rho_end: float,
     return pk
 
 
+def sector_row(s: int) -> int:
+    """扇形 ``s`` の中心行(展開図の行 = 角度 [度])。"""
+    return s * SECT_ROWS + SECT_ROWS // 2
+
+
+def sector_theta(s: int) -> float:
+    """扇形 ``s`` の中心角 [rad](展開図の行と同じ向き・同じ角度)。"""
+    return 2.0 * np.pi * sector_row(s) / NTHETA
+
+
 def disc_edge(pol: np.ndarray) -> np.ndarray:
     """展開図の行ごとに円板の外縁(暗い樹皮 → 明るい背景)の半径を返す。
 
