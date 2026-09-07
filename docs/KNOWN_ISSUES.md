@@ -1185,3 +1185,29 @@ furuse.work へ誘導する」。
   `exclude-package-data` を保険で明示、`tools/ci_wheel_check.py` が wheel 側の存在を NG に、
   ci.yml に wheel サイズ上限(70 MB)。手順書に「wheel を組む前に build/ を消す」。
 
+### 9. PoC 第 2 バッチ(2026-09-07、7 本)が見つけたライブラリの穴
+
+展示館に足した PoC: `poc_exoplanet_transit` / `poc_metal_grain_size` / `poc_prnu_camera_fingerprint` /
+`poc_screw_thread_metrology` / `poc_colocalization_crosstalk` / `poc_mri_bias_field` /
+`poc_river_surface_velocity`(全部 exit 0 / PASS、`tests/test_poc_scripts_run.py` 61 件緑)。
+書きながら見つかった穴(**未修正**、Agent の報告を実行ログで確認したもの):
+
+- `fs.ledger.synth_starfield` は `(frame, truth)` の frame しか返さない(モジュール直呼びなら
+  truth も出る)。真値の供給源なのに公開経路で真値が落ちる。
+- `aperture_photometry(supersample=8)` の開口マスクの 1/64 階段が、星が動く小開口(≤1.5σ)で
+  雑音源になる(縁 1 画素 = 総光量の 5.5 %、1 段 0.86 ppt)。`supersample=32` で理論比 0.9 に戻る。
+- `fit_bspline_surface`(FITPACK)は非矩形の台で `smooth=5` にすると |log b̂| が 2.7e3 に発散し
+  警告を握って返す。`dc_homomorphic` は低域利得 0.4 固定 + min-max 正規化で定量補正に使えない。
+- `gaussian` op は σ ≤ 3.0、`gauss_image` の a は 0..1 に clamp され σ[px] を指定できない。
+  マスク付き大 σ の正規化畳み込みは公開経路に無い。
+- `fs.ledger.piv_cross_correlate` は flow だけ返して info(窓中心・valid_fraction・peak_ratio)を
+  落とす。4 点対応からホモグラフィを解く op が無い(`warp_by_plane` は使う口だけ、出力形も
+  入力形固定)。`piv_synth_sequence` は周期境界が無く、長い列で場外の NaN が
+  `_render_particles` の `ValueError` になる(fail-closed でなく内部で落ちる)。
+- `xg_regress_contours` は輪郭ごとでなく全輪郭を 1 本に混ぜて残差を返す(平行 2 本で 18.5 px)。
+  `fit_line_contours` / `hx_split_contours` は docstring が空。caliper 交点をフランクごとに束ねる
+  処理、左右フランク角の半差 → 傾き → caliper へ戻す閉ループは無い。
+- 領域限定の多クラス大津(`xsk2_multiotsu` は画像全体のみ)が無く、しきい値を返す経路も無い。
+- 起きたこと(手順の穴): 並列 Agent 8 本を同時起動したらセッション上限(429)で全滅、4 本ずつに
+  分けて再実行。4 本は成果物を書いた後に報告なしで停止し、JSON 2 本は主が実行ログから書いた。
+

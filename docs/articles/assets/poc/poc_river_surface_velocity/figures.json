@@ -1,0 +1,124 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   1095,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "02_frames_oblique.png",
+  "name": "frames_oblique",
+  "caption": "",
+  "shape": [
+   573,
+   1960,
+   3
+  ]
+ },
+ {
+  "file": "03_map_speed.png",
+  "name": "map_speed",
+  "caption": "",
+  "shape": [
+   285,
+   496,
+   3
+  ]
+ },
+ {
+  "file": "04_profile.png",
+  "name": "profile",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_density_cliff.png",
+  "name": "density_cliff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_density_rms.png",
+  "name": "density_rms",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_window_bank_bias.png",
+  "name": "window_bank_bias",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_window_discharge.png",
+  "name": "window_discharge",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_reflection_cliff.png",
+  "name": "reflection_cliff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_reflection_modes.png",
+  "name": "reflection_modes",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_dt_cliff.png",
+  "name": "dt_cliff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_discharge.png",
+  "name": "discharge",
+  "caption": "速度 RMS は窓の行ごとの u(y) と真値の差。流量は岸 0 の台形則で積分(積分則だけで -2.5 %)。",
+  "shape": [
+   344,
+   360,
+   3
+  ],
+  "csv": "12_discharge.csv",
+  "tsv": "12_discharge.tsv"
+ }
+]
