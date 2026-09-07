@@ -657,7 +657,7 @@ def section_width_sweep() -> dict:
     i1 = ws.index(1.0)
     print("\n  ★再現率 0.5 を超えるのは 校正線 %.1f px で幅 %.2f px から(予測 %.2f)、"
           "校正線 %.1f px で %.2f px から(予測 %.2f)。" % (CRACK_W, cliff, w_pred, ref2,
-                                                        cliff2, 0.5 * ref2))
+                                                        cliff2, HYST_HIGH * ref2))
     print("     予測が外れた理由は測ってある: 幅 1.0 px の応答は %.2f で、線形予測 %.2f の"
           "%.0f %% —— Frangi の応答は幅に**線形ではない**(構造量 S の飽和項)。"
           % (resp[i1], 1.0 / CRACK_W, 100.0 * resp[i1] / (1.0 / CRACK_W)))
