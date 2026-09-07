@@ -534,7 +534,8 @@ def section_tool_gaps() -> None:
     raw = int((np.asarray(fs.apply(z, "auto_threshold")) > 0.5).sum())
     lo, hi = z.min(), z.max()
     nrm = int((np.asarray(fs.apply((z - lo) / (hi - lo), "auto_threshold")) > 0.5).sum())
-    assert raw > 2 * int(disc.sum()) and abs(nrm - int(disc.sum())) < 20, (raw, nrm)
+    assert raw > 2 * int(disc.sum()), (raw, int(disc.sum()))
+    assert abs(nrm - int(disc.sum())) < 0.2 * int(disc.sum()), (nrm, int(disc.sum()))
     print("  (f) ★進化 op の auto_threshold は値域を [0,1] とみなす。背景が -60〜+13 µm、"
           "前景 +200 µm の\n      高さ場をそのまま渡すと前景 %d 画素(正解 %d)—— "
           "0.5 **µm** の位置で切っている。\n      正規化してから渡せば %d 画素。"
