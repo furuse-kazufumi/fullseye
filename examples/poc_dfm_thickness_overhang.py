@@ -385,18 +385,27 @@ def thickness_inscribed(occ, h):
 
 
 def thickness_probe(gray, h, res):
-    """グレー値の探針(``vol_wall_thickness``)。薄壁 2 枚を横切って 2 つ返る。"""
+    """グレー値の探針(``vol_wall_thickness``)。薄壁 2 枚を横切るので**本来 2 つ返る**。
+
+    返る本数も一緒に見る —— 1 本しか返らなければ 2 枚を 1 枚と誤認しており、
+    そのときの「肉厚」は壁 + スロット + 壁を 1 枚と数えた値になる。
+    """
     ix, kz = res[0] // 2, res[2] // 2
     t = np.asarray(L.vol_wall_thickness(gray, (ix, 0, kz), (ix, res[1] - 1, kz),
                                         sigma=0.6, threshold=0.05, spacing=(h, h, h)),
                    np.float64).ravel()
-    return float(np.mean(t)) if t.size else float("nan")
+    return (float(np.mean(t)) if t.size else float("nan")), int(t.size)
 
 
-def slot_radius(occ, h):
-    """スロットに入る工具半径の上限 = 自由側 ESDF の最大値(壁のあいだで)。"""
+def slot_radius(occ, g, h):
+    """スロットに入る工具半径の上限 = **スロットの中の**自由側 ESDF の最大値。
+
+    ★coupon 全体で最大を取ると、壁の外側の広い自由空間(2.250 mm)を拾って
+    「工具は何でも入る」になる。測りたいのは隙間なので y で切る。
+    """
     e = np.asarray(L.esdf(occ, voxel_size=h))
-    free = e[np.isfinite(e) & (e > 0)]
+    inside = (g[..., 1] > SLOT_Y[0]) & (g[..., 1] < SLOT_Y[1])
+    free = e[inside & np.isfinite(e) & (e > 0)]
     return float(free.max()) if free.size else 0.0
 
 
