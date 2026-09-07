@@ -662,17 +662,24 @@ def section_sweep() -> dict:
               "  見落とし %5.1f %%  誤検知 %4.1f %%"
               % (name, 100 * seen, bias, float(np.max(e - d_true)), m_, fa_))
 
-    # 「いちばん近い部位が 1 点も見えない」割合(条件ごと)
+    # 「最近傍部位が見えない」「推定がよその部位から出た」割合(条件ごと)
+    wrong_by_cond = {}
     for name, sel in conds[:3]:
-        hid = 0; nh = 0
+        hid = 0; wrong = 0; nh = 0
         for f in frames:
             if f["d_true"] < S:
                 nh += 1
                 k = int(np.argmin(f["per_part"]))
-                if not np.any(sel(f)[f["K"] == k]):
+                v = sel(f)
+                if not np.any(v[f["K"] == k]):
                     hid += 1
-        print("     %-24s 危険時に最近傍部位が全く見えない: %d / %d (%.1f %%)"
-              % (name, hid, nh, 100 * hid / max(1, nh)))
+                if estimate_detail(f, v, rng, density=800)[1] != k:
+                    wrong += 1
+        wrong_by_cond[name] = 100.0 * wrong / max(1, nh)
+        print("     %-24s 危険時: 最近傍部位が全く見えない %2d / %d (%4.1f %%) / "
+              "推定がよその部位から出た %2d / %d (%4.1f %%)"
+              % (name, hid, nh, 100 * hid / max(1, nh), wrong, nh,
+                 100 * wrong / max(1, nh)))
 
     # --- (iii) 更新間隔(こちらも遮蔽なしの対照群) --------------------------- #
     print("\n  (iii) 更新間隔(遮蔽なしの対照群、点密度 800。古い推定を保持する)")
