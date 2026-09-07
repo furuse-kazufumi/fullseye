@@ -627,10 +627,15 @@ def section_frangi_norm() -> dict:
     print("     幅 %.0f px・透過 %.1f の強い線なら 3 場面とも %.2f〜%.2f で最大 = 尺度が固定。"
           % (REF_W, REF_T, min(o["strong"] for o in out.values()),
              max(o["strong"] for o in out.values())))
-    print("  ★校正なしでは、欠陥ゼロで偽クラック %.0f px(雑音が 1.0 に伸びる)、深いクラックを"
-          "1 本足すと 5 本の再現率 %.2f → %.2f(1 本が他の 5 本を消す)。校正ありは "
-          "%.2f → %.2f。" % (o0["false_raw"], o1["rec_raw"], o2["rec_raw"],
-                            o1["rec_cal"], o2["rec_cal"]))
+    print("  ★校正なしが壊れるのは**欠陥ゼロの側**: 偽クラック %.0f px(雑音が 1.0 に伸びる)。"
+          "校正ありは %.0f px。" % (o0["false_raw"], o0["false_cal"]))
+    print("  ★予想「深いクラックを 1 本足すと他の 5 本が消える」は%s: 校正なしの再現率 "
+          "%.2f → %.2f(クラック応答は %.2f → %.2f に縮んだが、しきい値 %.2f の上に残った)。"
+          "校正ありは %.2f → %.2f。"
+          % ("外れた" if o2["rec_raw"] > 0.8 else "当たった", o1["rec_raw"], o2["rec_raw"],
+             o1["med_raw"], o2["med_raw"], HYST_HIGH, o1["rec_cal"], o2["rec_cal"]))
+    print("     つまり最大値正規化が危ないのは「強い欠陥がある画像」ではなく"
+          "「何も無い画像」—— 良品ほど偽検出が出る検査器になる。")
     assert o1["weak"] < 0.9 and o1["strong"] > 0.99, (o1["weak"], o1["strong"])
     assert o0["false_raw"] > 10 * max(o0["false_cal"], 1.0), (o0["false_raw"], o0["false_cal"])
     sc2 = scenes[2][1]
