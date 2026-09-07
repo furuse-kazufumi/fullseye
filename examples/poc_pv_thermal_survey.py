@@ -679,9 +679,9 @@ def section_norms(base: dict) -> dict:
           "中央値 %.2f K -> 平面除去 %.2f K(%.0f %%)。"
           % (out["モジュール中央値"]["peak_str"], pl["peak_str"],
              100 * pl["peak_str"] / out["モジュール中央値"]["peak_str"]))
-    print("     小さいホットスポットは %.0f %% 残る(1 モジュール %d x %d px の中で"
-          " %d px しか占めないので、平面は当てはまらない)—— "
-          "**食われる量は故障の面積で決まる**。"
+    print("     小さいホットスポットは %.0f %% 残る(むしろ少し増える —— "
+          "1 モジュール %d x %d px の中で %d px しか占めないので、平面は"
+          "そちらに当てはまらない)。**食われる量は故障の面積で決まる**。"
           % (100 * pl["peak_hot"] / out["モジュール中央値"]["peak_hot"],
              int(round(MOD_H / GSD)), int(round(MOD_W / GSD)),
              int(gt["hot"].sum())))
