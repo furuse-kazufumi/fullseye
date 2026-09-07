@@ -366,23 +366,37 @@ def section_cliff() -> dict:
 # --------------------------------------------------------------------------- #
 def section_bowl(meas: dict) -> dict:
     print("\n" + "=" * 78)
-    print("4) 2-D の椀で見る —— 水平線は各 t を 2 回横切るので帯は 2 倍のはず")
+    print("4) 2-D の椀で見る —— ★生の色差マップを信じると場の勾配を配色のせいにする")
     print("=" * 78)
 
     f = bowl_field()
-    panels, caps, bands = [], [], {}
+    grad = np.abs(np.diff(f, axis=1))            # 真の勾配(閉形式で分かっている)
+    row = H // 2
+    half = slice(W // 2 + int(0.10 * W), W - 2)  # 右半分・中心付近の |grad|≈0 は除く
+    panels, caps, raw_n, gain_n = [], [], {}, {}
     for name in MAPS:
         rgb = np.asarray(fs.apply_cmap(f, name, vmin=0.0, vmax=1.0))
         panels.append(rgb)
         caps.append(name)
-        prof = _smooth(step_delta_e(rgb)[H // 2], 11)
-        bands[name] = len(count_false_edges(prof, PEAK_RATIO, sep=10))
-    print("  マップ      1-D の山   2-D の帯(中央行)   予測 = 2 倍")
+        de = step_delta_e(rgb)[row]
+        raw_n[name] = len(count_false_edges(_smooth(de[half], 11), PEAK_RATIO, sep=8))
+        # ★真の勾配で割る。割らないと「場が急なところ」を境目と数えてしまう
+        gain_n[name] = len(count_false_edges(
+            _smooth(de[half] / np.maximum(grad[row][half], 1e-12), 11),
+            PEAK_RATIO, sep=8))
+
+    print("  マップ      1-D の山   2-D 生の色差   2-D 真の勾配で割った後")
     for name in MAPS:
-        print("  %-9s   %4d        %4d               %4d"
-              % (name, meas[name]["n_peaks"], bands[name], 2 * meas[name]["n_peaks"]))
-    hit = sum(1 for n in MAPS if bands[n] == 2 * meas[n]["n_peaks"])
-    print("\n  %d / %d のマップで予測どおり。" % (hit, len(MAPS)))
+        print("  %-9s   %4d        %4d           %4d"
+              % (name, meas[name]["n_peaks"], raw_n[name], gain_n[name]))
+    hit = sum(1 for n in MAPS if gain_n[n] == meas[n]["n_peaks"])
+    print("\n  ★★予想が外れた: 生の色差マップでは gray が %d 本・viridis が %d 本"
+          "立つ。\n     場は完全になめらかなのに —— これは配色ではなく"
+          "**場そのものの勾配**(椀は\n     外側ほど急)。真の勾配で割ると"
+          " %d 本 / %d 本 に戻る。" % (raw_n["gray"], raw_n["viridis"],
+                                       gain_n["gray"], gain_n["viridis"]))
+    print("     真値を持たずに色差マップを眺めると、**場のせいを配色のせいにする**。")
+    print("  勾配で割った後は %d / %d のマップで 1-D の本数と一致。" % (hit, len(MAPS)))
 
     figs.save_grid("scene_maps", panels, caps, ncols=3,
                    title="同じなめらかな 2 次曲面(段差ゼロ)を 6 通りに塗る",
