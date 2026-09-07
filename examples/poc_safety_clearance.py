@@ -549,9 +549,11 @@ def section_timeseries() -> dict:
                      "%d/%d" % (fa, int((~haz).sum()))])
         print("   %-18s %+7.3f / %+7.3f / %+7.3f    %-16s %s"
               % (name, e.mean(), e[haz].mean(), e.max(), rows[-1][4], rows[-1][5]))
-    print("\n  ★危険フレームのうち **%d / %d (%.1f %%)** で、いちばん近い部位が"
-          " 背面センサから 1 点も見えていない。"
-          % (hidden_nearest, n_haz, 100 * hidden_nearest / max(1, n_haz)))
+    print("\n  ★危険フレームのうち **%d / %d (%.1f %%)** で、推定の最小が"
+          "**真の最近傍部位とは別の部位**から出た(背面 1 台)。"
+          % (wrong_part, n_haz, 100 * wrong_part / max(1, n_haz)))
+    print("     そのうち %d / %d は最近傍部位が 1 点も見えていない(完全な影)。"
+          % (hidden_nearest, n_haz))
     print("     遮蔽は雑音と違って**片側にしか出ない** —— 見えない点は必ず"
           "「もっと遠い」と報告される。")
     print("     予想 %+.3f m(伸ばしきった姿勢)vs 実測の最大 %+.3f m。"
