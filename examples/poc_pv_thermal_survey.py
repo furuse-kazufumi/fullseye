@@ -820,6 +820,10 @@ def section_wind() -> dict:
     print("  予測と実測の差は ホットスポット %.2f〜%.2f K / ストリング"
           " %.2f〜%.2f K(閉形式が実測を追えている)。"
           % (min(err), max(err), min(err2), max(err2)))
+    ra = [m / p for p, m in zip(ar_p, ar_m) if p > 0.5 and m > 0]
+    print("  ★面積のほうは形が違う: 予測は塊を**ガウス山**と見ているが実物は"
+          "円板のぼけなので、実測面積は %.1f〜%.1f 倍。**崖の位置は当たるが"
+          "面積そのものは当たらない**。" % (min(ra), max(ra)))
     print("  ★低風速では逆向きに壊れる: 全体平均基準の非故障の温度差は"
           " v=%.1f で %d 個、v=%.1f で %d 個 —— "
           % (WINDS[0], nonf_mean[0], WINDS[-1], nonf_mean[-1]))
