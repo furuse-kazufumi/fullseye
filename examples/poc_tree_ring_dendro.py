@@ -296,7 +296,10 @@ def detect_sectors(ps: dict, sigma: float = SIG_M, thr: float = THR) -> list[np.
         r0 = int(round(row_c)) - MEAS_ROWS // 2
         prof = fil[max(0, r0):r0 + MEAS_ROWS].mean(axis=0)
         sm = np.asarray(fs.smooth_funct_1d_gauss(prof, sigma))
-        rd = float(np.median(r_disc[s * SECT_ROWS:(s + 1) * SECT_ROWS]))
+        # ★px へ戻す外縁半径は**測った行**のもの。扇形 15° 全体の中央値を使うと
+        #   偏心成長で外縁が扇形の中で 10 px 以上動くので外側の年輪が全部ずれる
+        #   (最初そう書いて年輪 18〜35 を丸ごと落とした)。
+        rd = float(np.median(r_disc[max(0, r0):r0 + MEAS_ROWS]))
         pos = []
         for e in edges:
             i = int(round(e["pos"]))
