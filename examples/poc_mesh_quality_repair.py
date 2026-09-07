@@ -665,44 +665,47 @@ def section_hole_cliff() -> dict:
     Vol0 = fs.inertia_tensor(V0, F0)["volume"]
     cen = V0[F0].mean(1)
 
-    degs, pv, mv, pa, ma, ratio = [], [], [], [], [], []
+    degs, pv, mv, pa, ma, ratio, fanr = [], [], [], [], [], [], []
     print("\n   θ[deg]  削った面  縁の辺  体積: 予測    実測   |  表面積: 予測    実測"
-          "   L/2πa")
+          "  | L/2πa  扇/πa²")
     for deg in (4, 8, 14, 22, 32, 45, 60, 80):
         th = np.radians(deg)
         keep = cen[:, 0] < R * np.cos(th)
         Fh = F0[keep]
         be = np.asarray(fs.boundary_edges(V0, Fh))
         perim = float(np.linalg.norm(V0[be[:, 0]] - V0[be[:, 1]], axis=1).sum())
+        a_hole = L.mesh_area((V0, Fh))
         Vf, Ff = fs.fill_holes(V0, Fh)
+        a_fill = L.mesh_area((Vf, Ff))
         h, a = R * (1 - np.cos(th)), R * np.sin(th)
         p_v = -100 * (np.pi * h * h * (3 * R - h) / 3) / (4 / 3 * np.pi * R ** 3)
         p_a = 100 * (np.pi * a * a - 2 * np.pi * R * h) / (4 * np.pi * R * R)
         m_v = 100 * (signed_volume(Vf, Ff) - Vol0) / Vol0
-        m_a = 100 * (L.mesh_area((Vf, Ff)) - A0) / A0
+        m_a = 100 * (a_fill - A0) / A0
         rr = perim / (2 * np.pi * a) if a > 1e-9 else np.nan
+        fr = (a_fill - a_hole) / (np.pi * a * a) if a > 1e-9 else np.nan
         degs.append(deg); pv.append(p_v); mv.append(m_v)
-        pa.append(p_a); ma.append(m_a); ratio.append(rr)
-        print("   %5d   %6d   %5d   %8.3f %8.3f  | %8.3f %8.3f   %5.2f" % (
-            deg, int((~keep).sum()), len(be), p_v, m_v, p_a, m_a, rr))
+        pa.append(p_a); ma.append(m_a); ratio.append(rr); fanr.append(fr)
+        print("   %5d   %6d   %5d   %8.3f %8.3f  | %8.3f %8.3f  | %5.2f  %5.2f" % (
+            deg, int((~keep).sum()), len(be), p_v, m_v, p_a, m_a, rr, fr))
         assert fs.is_watertight(Vf, Ff), "穴埋めは水密にするはず"
 
     i45 = degs.index(45)
-    # 縁が円でなく階段だと、扇の面積は πa² ではなく 0.5·a·L になる
-    th = np.radians(45.0)
-    a45 = R * np.sin(th)
-    fan_ideal = np.pi * a45 ** 2
-    fan_real = fan_ideal * ratio[i45]
-    p_a_fix = 100 * (fan_real - 2 * np.pi * R * R * (1 - np.cos(th))) / (4 * np.pi * R * R)
     print("\n  ★体積は予測どおり(θ=32° で %+.3f / %+.3f %%、θ=80° で %+.3f / %+.3f %%)。"
           % (pv[degs.index(32)], mv[degs.index(32)], pv[-1], mv[-1]))
+    print("     扇は平ら = 冠の体積がそのまま抜けるので、"
+          "**球欠の閉形式がそのまま使える**。")
     print("  ★★表面積は**予測が外れた**: θ=45° で予測 %+.3f %%、実測 %+.3f %% —— 符号も逆。"
           % (pa[i45], ma[i45]))
-    print("     原因は縁が円ではなく**階段**だから。実周長は円周の %.2f 倍で、"
-          % ratio[i45])
-    print("     扇の面積は πa² ではなく 0.5·a·L。入れ直すと予測は %+.3f %% で"
-          "実測 %+.3f %% に寄る。" % (p_a_fix, ma[i45]))
-    print("     ★実データでは縁はもっと汚いので、**穴埋め後の表面積を信用しない**。")
+    print("     原因は縁が円ではなく**階段**だから。θ=45° の縁は実周長が円周の"
+          " %.2f 倍あり、" % ratio[i45])
+    print("     張られた扇の面積は平らな円 πa² の **%.2f 倍**。同じ「穴の大きさ」でも"
+          % fanr[i45])
+    print("     θ=32° では %.2f 倍・θ=80° では %.2f 倍しかない —— "
+          "**扇の面積は穴の大きさだけでは決まらない**。" % (fanr[degs.index(32)], fanr[-1]))
+    print("     縁が voxel 格子のどこに落ちるかで階段の粗さが変わるから。"
+          "\n     ★実データの縁はもっと汚いので、**穴埋め後の表面積は信用しない**"
+          "(体積は使える)。")
 
     figs.save_plot("hole_cliff",
                    [("体積 予測(球欠)", degs, pv), ("体積 実測", degs, mv),
@@ -711,10 +714,13 @@ def section_hole_cliff() -> dict:
                    title="穴の大きさの崖 —— 体積は予測でき、表面積はできない",
                    caption="体積の 2 本は重なる。表面積は θ=45° で符号すら逆。")
     figs.save_plot("hole_rim_roughness",
-                   [("実周長 / 円周", degs, ratio),
-                    ("円(=1)", degs, [1.0] * len(degs))],
-                   xlabel="穴の半頂角 θ [deg]", ylabel="縁の周長の比 [-]",
-                   title="縁は円ではない —— 階段の分だけ扇の面積が増える")
+                   [("縁の実周長 / 円周", degs, ratio),
+                    ("張られた扇 / 平らな円 πa²", degs, fanr),
+                    ("円のとき(=1)", degs, [1.0] * len(degs))],
+                   xlabel="穴の半頂角 θ [deg]", ylabel="比 [-]",
+                   title="縁は円ではない —— 階段の粗さは穴の大きさで決まらない",
+                   caption="どちらも 1 に近い θ と 2 倍を超える θ が混在する。"
+                           "縁が voxel 格子のどこに落ちるかで変わる。")
 
     if figs.enabled():
         th = np.radians(45.0)
