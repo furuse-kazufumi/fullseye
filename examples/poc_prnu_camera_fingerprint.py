@@ -244,50 +244,68 @@ def quantizer_gain(sigma: float, step: float) -> float:
 # --------------------------------------------------------------------------- #
 # 1. 場面と、指紋の推定(ゼロ点 vs 最尤)                                         #
 # --------------------------------------------------------------------------- #
-def section_estimate(cams: dict, banks: dict) -> dict:
-    print("\n" + "=" * 78)
+def zero_mean_unit(k: np.ndarray) -> np.ndarray:
+    """行・列平均を抜いて σ=1(fullseye の指紋と同じ正規化。ゼロ点にも同じ扱いをする)。"""
+    k = k - k.mean(axis=0, keepdims=True)
+    k = k - k.mean(axis=1, keepdims=True)
+    return k / k.std()
+
+
+def section_estimate(cams: dict, banks: dict, queries: dict) -> dict:
+    print("
+" + "=" * 78)
     print("1) 指紋を推定する —— ゼロ点 vs 最尤重み付き平均(%d 枚)" % N_TRAIN)
+    print("   予想: 「平滑成分を引かない生の平均」は被写体まみれで使えず、"
+          "最尤 + 適応 Wiener がゼロ点に桁で勝つ")
     print("=" * 78)
     k_true = cams["A"]
     imgs = banks["A"]
 
-    # ゼロ点 0: 写真をそのまま平均し、その平滑成分を引く
-    mean_img = np.mean(imgs, axis=0)
-    z0 = mean_img - np.asarray(fs.apply(mean_img, "gauss_image", a=0.25))
-    # ゼロ点 1: 各枚から平滑成分を引いた残差の単純平均(重み無し)
-    z1 = np.mean([im - np.asarray(fs.apply(im, "gauss_image", a=0.25)) for im in imgs], axis=0)
-    # ゼロ点 2: 重み無し・Wiener 残差(= 最尤との差は重みだけ)
-    z2 = np.mean([im - np.asarray(fs.apply(im, "xsp_wiener", a=0.0)) for im in imgs], axis=0)
+    # ゼロ点 0: 写真をそのまま平均する(行・列平均だけ抜く)
+    z0 = zero_mean_unit(np.mean(imgs, axis=0))
+    # ゼロ点 1: 各枚から平滑成分(ガウス σ≈1)を引いた残差の単純平均(重み無し・非適応)
+    z1 = zero_mean_unit(np.mean([im - np.asarray(fs.apply(im, "gauss_image", a=0.25))
+                                 for im in imgs], axis=0))
     fp_w = _F.sensor_fingerprint(imgs, denoiser="wiener", sigma=DENOISE_SIGMA)
     fp_v = _F.sensor_fingerprint(imgs, denoiser="wavelet", sigma=DENOISE_SIGMA)
 
-    rows = []
-    for name, k in [("ゼロ点: 平均画像 − 平滑", z0),
-                    ("ゼロ点: 残差(ガウス)の単純平均", z1),
-                    ("重み無し: 残差(Wiener 3x3)の単純平均", z2),
+    rows, r, pce = [], {}, {}
+    for name, k in [("ゼロ点 0: 生の平均(平滑を引かない)", z0),
+                    ("ゼロ点 1: 残差(ガウス高域)の単純平均", z1),
                     ("最尤 sensor_fingerprint(wiener)", fp_w),
                     ("最尤 sensor_fingerprint(wavelet)", fp_v)]:
         c = corr(k, k_true)
-        rows.append((name, c))
-        print("  %-40s 真の K との相関 %+.3f" % (name, c))
-    r = dict(rows)
-    print("  ★重み無し(%.3f)と最尤(%.3f)の差は小さい。効いているのは"
-          "「各枚から平滑成分を引く」こと。" % (r["重み無し: 残差(Wiener 3x3)の単純平均"],
-                                            r["最尤 sensor_fingerprint(wiener)"]))
-    assert r["ゼロ点: 平均画像 − 平滑"] < 0.15, r
-    assert r["最尤 sensor_fingerprint(wiener)"] > 0.7, r
+        ps, _ = match(queries["A"], k)
+        pd, _ = match(queries["B"], k)
+        a = auc(ps, pd)
+        r[name], pce[name] = c, float(np.median(ps))
+        rows.append((name, "%+.3f" % c, "%.0f" % np.median(ps), "%.1f" % np.median(pd), "%.3f" % a))
+        print("  %-40s 真の K との相関 %+.3f  PCE 同一 %5.0f / 別 %5.1f  AUC %.3f" % (
+            name, c, np.median(ps), np.median(pd), a))
+    z0n, z1n = "ゼロ点 0: 生の平均(平滑を引かない)", "ゼロ点 1: 残差(ガウス高域)の単純平均"
+    mln = "最尤 sensor_fingerprint(wiener)"
+    print("  ★予想は外れた。生の平均ですら相関 %.3f・AUC %.3f(場面が毎枚違うので"
+          "平均すると被写体が消える)。" % (r[z0n], auc(*[match(queries[c], z0)[0] for c in "AB"])))
+    print("  ★ゼロ点 1(非適応ガウス高域)%.3f と最尤 + 適応 Wiener %.3f は**同点**。"
+          "効いているのは重みでも適応でもなく、「平滑成分を引いてから平均する」ことと枚数。"
+          % (r[z1n], r[mln]))
+    print("     PCE では最尤 %.0f vs ゼロ点 0 %.0f(%.1f 倍)—— AUC だけ見ると差が見えない。"
+          % (pce[mln], pce[z0n], pce[mln] / pce[z0n]))
+    assert r[z0n] < 0.6 < r[z1n], r
+    assert abs(r[z1n] - r[mln]) < 0.05, (r[z1n], r[mln])
+    assert pce[mln] > 3 * pce[z0n], (pce[mln], pce[z0n])
 
     figs.save_grid("scene",
                    [imgs[0], imgs[1], k_true, fp_w],
                    ["カメラ A の写真 1(勾配+模様+物体)", "カメラ A の写真 2(別の場面)",
                     "真の指紋 K(σ = %.2f)" % SIGMA_K,
-                    "推定した指紋 K̂(%d 枚、相関 %.2f)" % (N_TRAIN, r["最尤 sensor_fingerprint(wiener)"])],
+                    "推定した指紋 K̂(%d 枚、相関 %.2f)" % (N_TRAIN, r[mln])],
                    title="カメラ指紋(PRNU)の場面: 写真の雑音の中に固定の模様がある",
                    signed=[False, False, True, True], ncols=2)
-    figs.save_table("estimators", ["推定のしかた", "真の K との相関"],
-                    [(n, "%+.3f" % c) for n, c in rows],
-                    title="指紋の推定: ゼロ点は捉えない(%d 枚)" % N_TRAIN)
-    return {"fp_w": fp_w, "fp_v": fp_v, "corr": r}
+    figs.save_table("estimators", ["推定のしかた", "真の K との相関", "PCE 同一", "PCE 別", "AUC"],
+                    rows, title="指紋の推定: ゼロ点は AUC では負けない(%d 枚)" % N_TRAIN,
+                    caption="場面が毎枚違えば生の平均でも指紋は出る。差は PCE の桁に出る。")
+    return {"fp_w": fp_w, "fp_v": fp_v, "corr": r, "pce": pce}
 
 
 # --------------------------------------------------------------------------- #
@@ -329,42 +347,52 @@ def section_match(cams: dict, fp: np.ndarray, queries: dict) -> dict:
 # 3. 崖 1: 枚数 N(理論 SNR ∝ √N)                                             #
 # --------------------------------------------------------------------------- #
 def section_n_sweep(cams: dict, banks: dict, queries: dict) -> dict:
-    print("\n" + "=" * 78)
-    print("3) 枚数 N を 1 → 50 で掃引(予測: corr = 1/√(1 + (1/r₁² − 1)/N))")
+    print("
+" + "=" * 78)
+    print("3) 枚数 N を 1 → 50 で掃引(予測: corr = 1/√(1 + (1/r₁² − 1)/N)、SNR ∝ √N)")
     print("=" * 78)
     k_true = cams["A"]
     big = banks["A_big"]
     ns = [1, 2, 3, 5, 8, 12, 20, 30, 50]
-    cs, ps, pd = [], [], []
+    cs, cz, ps, pd = [], [], [], []
     for n in ns:
         # N=1 は同じ画像を 2 枚渡す(ΣWI/ΣI² は複製で不変 = 1 枚の最尤推定そのもの)
         imgs = big[:n] if n >= 2 else [big[0], big[0]]
         fp = _F.sensor_fingerprint(imgs, denoiser="wiener", sigma=DENOISE_SIGMA)
+        z1 = zero_mean_unit(np.mean([im - np.asarray(fs.apply(im, "gauss_image", a=0.25))
+                                     for im in big[:n]], axis=0))
         cs.append(corr(fp, k_true))
+        cz.append(corr(z1, k_true))
         s, _ = match(queries["A"][:12], fp)
         d, _ = match(queries["B"][:12], fp)
         ps.append(float(np.median(s)))
         pd.append(float(np.median(d)))
-    r1 = cs[0]
+    r1 = cz[0]
     pred = [1.0 / np.sqrt(1.0 + (1.0 / r1 ** 2 - 1.0) / n) for n in ns]
-    print("  %4s  %8s  %8s  %10s  %8s" % ("N", "相関実測", "相関予測", "PCE同一", "PCE別"))
-    for n, c, p, s, d in zip(ns, cs, pred, ps, pd):
-        print("  %4d  %8.3f  %8.3f  %10.0f  %8.1f" % (n, c, p, s, d))
-    gap = pred[-1] - cs[-1]
-    print("  ★N=50 で予測 %.3f・実測 %.3f(差 %.3f)。√N で育つが、被写体の漏れ込みが"
-          "下限を作る(N を増やしても縮まない)。" % (pred[-1], cs[-1], gap))
+    print("  %4s  %9s  %9s  %8s  %9s  %8s" % ("N", "相関 最尤", "相関 ゼロ点1", "√N 予測", "PCE同一", "PCE別"))
+    for n, c, z, p, s, d in zip(ns, cs, cz, pred, ps, pd):
+        print("  %4d  %9.3f  %9.3f  %8.3f  %9.0f  %8.1f" % (n, c, z, p, s, d))
+    print("  ★N=1 では最尤(%.3f)がゼロ点 1(%.3f)より悪い —— ΣWI/ΣI² は 1 枚だと W/I で、"
+          "暗い画素で雑音を割り増す。N≥%d で並ぶ。" % (
+              cs[0], cz[0], next(n for n, c, z in zip(ns, cs, cz) if c > z - 0.02)))
+    print("  ★√N 予測(ゼロ点 1 の N=1 から外挿)は N=50 で %.3f、実測 %.3f(差 %.3f)。"
+          "√N で育つが、被写体の漏れ込みが下限を作る(N を増やしても縮まない)。"
+          % (pred[-1], cz[-1], pred[-1] - cz[-1]))
     assert cs[-1] > cs[0] + 0.3, (cs[0], cs[-1])
+    assert abs(pred[-1] - cz[-1]) < 0.1, (pred[-1], cz[-1])
     assert ps[-1] > 5 * ps[0], (ps[0], ps[-1])
 
     figs.save_plot("n_sweep_corr",
-                   [("真の K との相関(実測)", ns, cs), ("√N 予測(N=1 から外挿)", ns, pred)],
+                   [("最尤 + 適応 Wiener(実測)", ns, cs),
+                    ("ゼロ点 1: ガウス高域の平均(実測)", ns, cz),
+                    ("√N 予測(ゼロ点 1 の N=1 から外挿)", ns, pred)],
                    xlabel="指紋を作った枚数 N [枚]", ylabel="真の K との相関 [-]",
-                   title="指紋は √N で育つ —— 予測と実測", kinds=["line", "line"])
+                   title="指紋は √N で育つ —— 予測と実測(最尤は 1 枚だと負ける)")
     figs.save_plot("n_sweep_pce",
                    [("同一カメラ PCE(中央値)", ns, ps), ("別カメラ PCE(中央値)", ns, pd)],
                    xlabel="指紋を作った枚数 N [枚]", ylabel="PCE [-]",
-                   title="枚数と PCE: 1 枚でも 3 桁の差は出る")
-    return {"ns": ns, "corr": cs, "pred": pred, "pce_same": ps, "pce_diff": pd}
+                   title="枚数と PCE: 1 枚でも 2 桁の差は出る")
+    return {"ns": ns, "corr": cs, "corr_zero": cz, "pred": pred, "pce_same": ps, "pce_diff": pd}
 
 
 # --------------------------------------------------------------------------- #
@@ -650,7 +678,7 @@ def main() -> int:
         "B_fixed": bank(cams["B"], N_QUERY, 8000, texture=fixed_tex),
     }
 
-    est = section_estimate(cams, banks)
+    est = section_estimate(cams, banks, queries)
     clean = section_match(cams, est["fp_w"], queries)
     section_n_sweep(cams, banks, queries)
     section_jpeg(est["fp_w"], queries, clean)

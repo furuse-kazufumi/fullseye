@@ -351,7 +351,7 @@ def section_truth() -> dict:
     broken = make_scene(SEED, break_frac=0.30)
     figs.save_grid("scene", [clean["img"], sc["img"], sc["thin"].astype(float), broken["img"]],
                    ["粒界完全・むら無し・雑音無し", "エッチングむら σ0.10 + 雑音 σ0.03",
-                    "真値の粒界(所属が変わる画素)", "粒界の途切れ 30 %(実測 %.1f %%)"
+                    "真値の粒界(所属が変わる画素)", "粒界の途切れ 30 %%(実測 %.1f %%)"
                     % (100 * broken["removed"])],
                    title="金相写真の合成場面(1 px = %.0f µm、狙い G = %.0f)"
                          % (PX_MM * 1000, G_TARGET))
