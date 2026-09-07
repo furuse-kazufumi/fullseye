@@ -135,9 +135,9 @@ def make_net(kind: str, rng, n: int = N_PIX, **over) -> dict:
     # 幾何の真値: 頂点と辺(歪めた座標系 → 画像座標へ逆写像)
     vor = Voronoi(seeds)
     def inv_warp(pts):
-        """x' = x + D(x) の逆。|∇D| < 1 なので不動点反復で収束(25 回)。"""
+        """x' = x + D(x) の逆。|∇D| < 1 なので不動点反復で収束(40 回)。"""
         x = pts.copy()
-        for _ in range(25):
+        for _ in range(40):
             yi = np.clip(x[:, 0], 0, n - 1)
             xi = np.clip(x[:, 1], 0, n - 1)
             dyi = ndi.map_coordinates(dy, [yi, xi], order=1)
