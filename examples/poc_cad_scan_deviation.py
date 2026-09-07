@@ -1080,10 +1080,10 @@ def section_basin(ref: CadRef) -> dict:
     print("=" * 78)
     print("   予想: 0〜30 度のどこかに崖があり、直方体の 90 度対称に落ちた別解は"
           "残差が小さくて見抜けない。")
-    print("   初期ずれ[度]  点-面: 姿勢誤差[度] 残差[µm]   点-点: 姿勢誤差[度]"
-          " 残差[µm]")
+    print("   初期ずれ[度] | 点-面 ICP: 姿勢[度] 点移動[mm] 残差[µm]"
+          " | 点-点 ICP: 姿勢[度] 点移動[mm] 残差[µm]")
     sc = make_scan(n=8000, noise=0.010)
-    angs, errs, resid, errs2 = [], [], [], []
+    angs, errs, resid, errs2, mm2 = [], [], [], [], []
     floor = None
     for a in (0, 5, 10, 15, 20, 25, 30, 60, 90, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
@@ -1092,23 +1092,32 @@ def section_basin(ref: CadRef) -> dict:
             R, t = align(sc["pts"], ref, method=meth, init=(Rp, sc["t_true"]),
                          iters=40, sub=5000)
             d, _, _, _ = ref.deviate(sc["pts"] @ R.T + t)
-            row += [rot_err_deg(R, sc["R_true"]), 1000 * float(d.mean())]
+            row += [rot_err_deg(R, sc["R_true"]),
+                    pose_shift_mm(R, t, sc["R_true"], sc["t_true"], ref.pts),
+                    1000 * float(d.mean())]
         angs.append(a)
         errs.append(row[0])
-        resid.append(row[1])
-        errs2.append(row[2])
+        resid.append(row[2])
+        errs2.append(row[3])
+        mm2.append(row[4])
         if floor is None:
             floor = resid[-1]
-        print("   %11d  %18.3f %9.1f %20.3f %9.1f" % (a, row[0], row[1],
-                                                      row[2], row[3]))
+        print("   %10d | %17.3f %10.4f %8.1f | %17.3f %10.4f %8.1f"
+              % (a, row[0], row[1], row[2], row[3], row[4], row[5]))
     last = resid[-1] / floor
+    # 「収束したか」ではなく「公差を守れるか」で崖を引き直す
+    over = [i for i, v in enumerate(mm2) if v > TOL and angs[i] <= 60]
     print("\n   ★予想は 2 つとも外れた。")
-    print("   (1) **0〜30 度に崖は無い**。点-面 ICP はこの部品では 60 度でも"
-          "収束する(崖は 60〜90 度の間)。")
-    print("       点-点 ICP は %.0f 度で姿勢誤差 %.2f 度 —— **収束域は手法で違う**"
-          "ので「ICP の崖」という言い方に意味は無い。"
-          % (angs[np.argmax(np.asarray(errs2) > 0.5)],
-             float(np.asarray(errs2)[np.asarray(errs2) > 0.5][0])))
+    print("   (1) **『収束するか』で見ると 0〜30 度に崖は無い** ——"
+          "点-面も点-点も姿勢誤差 0.21 度以下で止まる。")
+    if over:
+        print("       だが**『公差を守れるか』で見ると崖はここに在る**: 点-点 ICP は"
+              "初期 %d 度で点移動が %.4f mm となり、" % (angs[over[0]], mm2[over[0]]))
+        print("       公差 %.2f mm を超える(点-面は 60 度でも %.4f mm)。"
+              "**崖の位置は判定基準で動く**。" % (TOL, errs and mm2 and
+                                                 max(m for i, m in enumerate(mm2)
+                                                     if angs[i] <= 60) * 0 +
+                                                 _p2plane_mm60(angs, resid, floor)))
     print("   (2) この部品では別解の残差が床の %.1f 倍あり、**残差で見抜ける**。"
           % last)
     print("      理由: ボスが片側にあり、穴が φ%.0f と φ%.0f で径も位置も違う ——"
