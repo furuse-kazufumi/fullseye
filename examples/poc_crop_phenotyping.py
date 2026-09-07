@@ -1021,8 +1021,8 @@ def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
     print("作物の 3-D 表現型 —— 葉が重なった瞬間、葉面積は測れなくなる")
-    print("区画 %.2f m 角(周期境界)/ 葉身 %.2f x %.3f m / 稈長 %.2f m"
-          % (PLOT, LEAF_L, LEAF_W, STEM_H))
+    print("区画 %.2f m 角(周期境界)/ 葉身 %.2f x %.3f m / 着生角 %.0f 度"
+          % (PLOT, LEAF_L, LEAF_W, BETA_DEG))
     print("=" * 78)
 
     can, buf_fine, k_true, mesh_stats = section_scene()
