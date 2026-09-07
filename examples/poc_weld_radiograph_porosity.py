@@ -538,10 +538,11 @@ def section_diameter_sweep() -> dict:
           "中央値 72 px は 3.0 mm で検出 %.0f %%・体積径 %+.0f %%。"
           % ("%.1f" % cliff9[0] if cliff9 else "—", "%.1f" % cliff36[0] if cliff36 else "—", err["d_vol36"][-1],
              rate["med72"][-1], err["d_vol"][-1]))
-    fp_open = float(np.mean(fp["open9"] + fp["grind"]))
-    print("  ★偽陽性: 中央値の背景は %.2f 個/枚、オープニング系(9 px 開・山削り)は %.0f 個/枚 —— "
-          "\n     オープニングは背景を雑音の谷に置くので残差が片側に偏り、σ 由来のしきい値が破綻する。"
-          % (float(np.mean(fp["med72"])), fp_open))
+    fp_open = float(np.mean(fp["open9"]))
+    print("  ★偽陽性: 中央値の背景は %.2f 個/枚、9 px オープニングは %.1f 個/枚 —— オープニングは背景を雑音の谷に"
+          "\n     置くので残差が片側に歪み、中央値で零点を合わせても σ 由来のしきい値が破綻する。山削り(再構成)は"
+          "\n     偽陽性 %.1f 個/枚だが検出が遅れる(0.8 mm で %.0f %%)—— 山を鞍点まで削るので雑音の鞍点ぶんコントラストが減る。"
+          % (float(np.mean(fp["med72"])), fp_open, float(np.mean(fp["grind"])), rate["grind"][ds.index(0.8)]))
 
     figs.save_plot("detect_vs_diameter",
                    [(METHOD_JA[m], ds, rate[m]) for m in ("med72", "med36", "open9")],
