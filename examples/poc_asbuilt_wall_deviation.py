@@ -723,30 +723,44 @@ def main() -> None:
     section_tool_gaps()
 
     # --- 所見を固定する assert -------------------------------------------- #
-    # 1) AABB は必ず過大、平面法は許容内
+    pb = predict_bulge(BULGE_A, BULGE_S)
+    # 1) AABB は必ず過大、平面法は許容内(残りはふくらみの平均で説明がつく)
     assert zero["aabb"][0] - RW > 0.010, zero["aabb"][0]
     assert abs(zero["plane"][0] - RW) < 0.010, zero["plane"][0]
-    # 2) AABB の閉形式の予測が 3 mm 以内で当たる
-    assert abs(zero["pred"]["width"] - zero["aabb"][0]) < 0.003
-    # 3) 部屋を 10 度回すと AABB は 500 mm 以上外し、平面法は 1 mm 以内
-    assert yaw["aabb"][-1] > 500.0 and abs(yaw["plane"][-1]) < 1.0
-    # 4) 点を増やすほど AABB は広がる(単調)
+    assert abs((zero["plane"][0] - RW) - pb["mean"]) < 0.001
+    # 2) AABB の閉形式は**上界**として当たる(実測より大きく、差は 5 mm 未満)
+    assert zero["pred"]["width"] >= zero["aabb"][0]
+    assert zero["pred"]["width"] - zero["aabb"][0] < 0.005
+    # 3) 部屋を 10 度回すと AABB は 500 mm 以上外すが、平面法は**動かない**
+    assert yaw["aabb"][-1] > 500.0, yaw["aabb"]
+    assert max(yaw["plane"]) - min(yaw["plane"]) < 0.05, yaw["plane"]
+    # 4) 点を増やすほど AABB は広がる(単調)。伸び方は閉形式と 1 mm 以内で一致
     assert all(b >= a - 0.2 for a, b in zip(grow["meas"], grow["meas"][1:]))
-    assert grow["meas"][-1] - grow["meas"][0] > 5.0
-    # 5) 倒れの推定は 0.3 mrad 以内、直交度への倒れの漏れは 0.1 mrad 未満
-    assert all(abs(float(r[3])) < 0.3 for r in pl["rows"]), pl["rows"]
+    assert grow["meas"][-1] - grow["meas"][0] > 4.0
+    assert abs((grow["meas"][-1] - grow["meas"][0])
+               - (grow["pred"][-1] - grow["pred"][0])) < 1.0
+    # 5) ふくらみの無い 3 枚の倒れは 0.05 mrad 以内。東の壁のずれは
+    #    「測定の誤差」ではなく閉形式のふくらみ吸収で 0.1 mrad 以内に説明される
+    for r in pl["rows"]:
+        if r[0] != "east":
+            assert abs(float(r[3])) < 0.05, r
+        else:
+            assert abs(float(r[3]) - 1e3 * pb["fake_tilt"]) < 0.10, r
+    # 6) 倒れは直交度へは漏れない(2 次)。漏らすのはふくらみのほう
     assert pl["leak"] < 0.1, pl["leak"]
-    # 6) 最小二乗は 10 % 混入で真値の 5 倍以上、閉形式の予測と 15 % 以内
+    # 7) 最小二乗は 10 % 混入で真値の 5 倍以上、閉形式の予測と 5 % 以内
     i10 = out["frac"].index(10.0)
     assert out["ls"][i10] > 5.0 * 1e3 * TILT["east"]
-    assert abs(out["ls"][i10] - out["pred"][i10]) < 0.15 * out["pred"][i10]
-    # 7) RANSAC は 45 % までは踏みとどまり、55 % で棚へ乗り換える
+    assert abs(out["ls"][i10] - out["pred"][i10]) < 0.05 * out["pred"][i10]
+    # 8) RANSAC は 45 % までは踏みとどまり、55 % で棚へ乗り換える
     i45 = out["frac"].index(45.0)
     i55 = out["frac"].index(55.0)
     assert abs(out["off"][i45]) < 20.0 and abs(out["off"][i55]) > 300.0
-    # 8) 広いふくらみは吸われる(単調に小さくなる)
-    assert bul["peak"][0] > bul["peak"][-1] * 2.0
-    assert all(abs(m - p) < 1.2 for m, p in zip(bul["peak"], bul["pred"]))
+    # 9) 雑音を切った残差の山は閉形式と 0.6 mm 以内。雑音ありは床より下がらない
+    assert bul["clean"][0] > bul["clean"][-1] * 3.0
+    assert all(abs(m - p) < 0.6 for m, p in zip(bul["clean"], bul["pred"]))
+    assert bul["peak"][-1] >= bul["floor"] - 0.3
+    assert all(abs(m - p) < 0.10 for m, p in zip(bul["fake"], bul["fake_pred"]))
 
     print("\n" + "=" * 78)
     print("まとめ")
