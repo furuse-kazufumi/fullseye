@@ -403,7 +403,7 @@ def run_consensus(scene: dict, center=None, sigma=SIG_M, thr=THR, med=(1.0, 0.0)
     dets = detect_sectors(ps, sigma=sigma, thr=thr)
     res, truths = [], []
     for s in range(N_SECT):
-        th = 2 * np.pi * (s + 0.5) / N_SECT
+        th = sector_theta(s)
         tr = ray_truth(scene, center, th)
         truths.append(tr)
         res.append(match_ray(dets[s], tr))
@@ -587,7 +587,7 @@ def section_pith_error() -> dict:
     c0 = run_consensus(sc0, center=ctr)
     cosv, r_out, w_mean = [], [], []
     for s in range(N_SECT):
-        th = 2 * np.pi * (s + 0.5) / N_SECT
+        th = sector_theta(s)
         tr = c0["truths"][s]
         ws = [e for k, (e, t) in c0["per"][s]["widths"].items() if k > 5]
         if len(ws) >= 5:
