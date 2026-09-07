@@ -730,12 +730,16 @@ def section_normals(ref: CadRef) -> dict:
               % (name, 100 * flip.mean(), np.median(ang)))
         res[name] = float(flip.mean())
         if "oriented" not in name:
+            per = {}
             print("        面別の反転率:", end="")
             for i, k in enumerate(ref.names):
                 m = face == i
                 if m.any():
-                    print("  %s %.0f %%" % (k, 100 * flip[m].mean()), end="")
+                    per[k] = 100 * float(flip[m].mean())
+                    print("  %s %.0f %%" % (k, per[k]), end="")
             print()
+            cav = [per[k] for k in CONCAVE]
+            flat = [v for k, v in per.items() if k not in CONCAVE]
     flip_en = res["estimate_normals(k=25)"]
     flip_or = res["estimate_oriented_normals(k=20)"]
     print("   ★予想 %.1f %%、実測 %.1f %% —— **外れた**。理由は面別の内訳が言う:"
