@@ -1129,16 +1129,18 @@ def section_curves(rot: dict, tr: dict, zero: dict) -> None:
                    caption="水平の 2 本は単センサのゼロ点。点の 6 割以上が"
                            "セルを跨ぐ yaw 0.5 度でも IoU はまだ落ちず、"
                            "ずれが車幅に近づく数度で単センサに追い抜かれる。")
-    ser2 = [("LiDAR 単独", [1000 * t for t in TRANS],
-             [zero["lidar"]["iou"]] * len(TRANS))]
+    xs = [1000 * t for t in TRANS]
+    ser2 = [("LiDAR 単独", xs, [zero["lidar"]["iou"]] * len(TRANS)),
+            ("カメラ単独", xs, [zero["cam"]["iou"]] * len(TRANS))]
     for r in RULES:
-        ser2.append((RULE_JA[r].split("(")[0], [1000 * t for t in TRANS],
-                     tr["trans"][r]))
+        ser2.append((RULE_JA[r].split("(")[0], xs, tr["trans"][r]))
     figs.save_plot("cliff_translation", ser2, xlabel="カメラ側 並進誤差 [mm]",
                    ylabel="占有 IoU",
-                   title="並進の崖(c/2 = %.0f mm の 1 か所だけ)" % (500 * CELL),
-                   caption="並進は距離に依らず全セルを同じだけ動かすので、"
-                           "崖は半セルを超えたところに 1 回だけ来る。")
+                   title="並進誤差と占有 IoU(半セル %.0f mm に崖は無い)"
+                         % (500 * CELL),
+                   caption="半セル以下では丸めのゆらぎで上下するだけ。"
+                           "はっきり落ちるのは、ずれが車幅に近づいてから。"
+                           "水平の 2 本は単センサのゼロ点。")
 
 
 # --------------------------------------------------------------------------- #

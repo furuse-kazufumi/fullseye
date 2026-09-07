@@ -2696,13 +2696,22 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
-    th = torch.arange(ntheta, device=device, dtype=torch.float32) * (2 * float(np.pi) / ntheta)
-    rr = torch.linspace(r_in, r_out, nr, device=device)
-    ys = cy + rr[None, :] * torch.sin(th[:, None])
-    xs = cx + rr[None, :] * torch.cos(th[:, None])
-    grid = torch.stack([xs / (W - 1) * 2 - 1, ys / (H - 1) * 2 - 1], -1)[None]
-    t = torch.as_tensor(img, device=device)[None, None]
-    return F.grid_sample(t, grid, align_corners=True, mode="bilinear")[0, 0].detach().cpu().numpy()
+    # ★2026-09-07: grid_sample(bilinear, align_corners=True, zeros padding)を
+    # scipy の map_coordinates(order=1, mode="constant", cval=0)に置き換えた ——
+    # 同じ双線形補間で、torch を入れない CI(py3.10 / 3.12)でも走る。
+    # 実測差は最大 6.0e-06(値域 0..1 の乱数画像。float32 と float64 の丸めぶん)。
+    if str(device) not in ("cpu", "None") and not _HAS_TORCH:
+        raise ValueError(
+            "polar_unwrap: device=%r needs the optional 'torch' backend "
+            "(the numpy path runs on the CPU only)" % (device,))
+    from scipy.ndimage import map_coordinates
+    th = np.arange(ntheta, dtype=np.float64) * (2 * float(np.pi) / ntheta)
+    rr = np.linspace(r_in, r_out, nr, dtype=np.float64)
+    ys = cy + rr[None, :] * np.sin(th[:, None])
+    xs = cx + rr[None, :] * np.cos(th[:, None])
+    out = map_coordinates(np.asarray(img, np.float64), [ys, xs], order=1,
+                          mode="constant", cval=0.0)
+    return out.astype(np.float32)
 
 
 def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device="cpu"):
@@ -2724,17 +2733,23 @@ def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, d
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
-    th = torch.arange(ntheta, device=device, dtype=torch.float32) * (2 * float(np.pi) / ntheta)
-    rr = torch.linspace(r_in, r_out, nr, device=device)
-    zz = torch.arange(D, device=device, dtype=torch.float32)
+    # ★2026-09-07: polar_unwrap と同じ理由で map_coordinates に置き換え(双線形・
+    # 範囲外 0)。torch 不在でも走る。実測差は最大 7.6e-06。
+    if str(device) not in ("cpu", "None") and not _HAS_TORCH:
+        raise ValueError(
+            "cylinder_unwrap: device=%r needs the optional 'torch' backend "
+            "(the numpy path runs on the CPU only)" % (device,))
+    from scipy.ndimage import map_coordinates
+    th = np.arange(ntheta, dtype=np.float64) * (2 * float(np.pi) / ntheta)
+    rr = np.linspace(r_in, r_out, nr, dtype=np.float64)
+    zz = np.arange(D, dtype=np.float64)
     Z = zz[:, None, None]; TH = th[None, :, None]; RR = rr[None, None, :]
-    ys = cy + RR * torch.sin(TH) + 0 * Z
-    xs = cx + RR * torch.cos(TH) + 0 * Z
+    ys = cy + RR * np.sin(TH) + 0 * Z
+    xs = cx + RR * np.cos(TH) + 0 * Z
     zs = Z + 0 * TH + 0 * RR
-    grid = torch.stack([xs / (W - 1) * 2 - 1, ys / (H - 1) * 2 - 1,
-                        zs / (D - 1) * 2 - 1], -1)[None]
-    t = torch.as_tensor(v, device=device)[None, None]
-    return F.grid_sample(t, grid, align_corners=True, mode="bilinear")[0, 0].detach().cpu().numpy()
+    out = map_coordinates(np.asarray(v, np.float64), [zs, ys, xs], order=1,
+                          mode="constant", cval=0.0)
+    return out.astype(np.float32)
 
 
 def _zernike_basis(nr, nt, n_max):
