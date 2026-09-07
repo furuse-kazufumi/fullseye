@@ -807,7 +807,9 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
               "手の表面のうち背面センサから見えた割合。0 の帯 = リンクと治具台の影。")
     return {"miss_area": float(cell * np.count_nonzero(miss)),
             "haz_area": float(cell * np.count_nonzero(true_map < S)),
-            "over_max": float(np.max(over[np.isfinite(over)])),
+            "miss_frac": 100.0 * np.count_nonzero(miss)
+            / max(1, np.count_nonzero(true_map < S)),
+            "over_max": over_near,
             "blind": float(np.mean(vis_map == 0.0))}
 
 
