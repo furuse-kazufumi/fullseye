@@ -881,8 +881,9 @@ def section_grid_bias(sw: dict) -> dict:
     print("     ただし符号は必ず正(遠く言う)で、ボクセルに比例する。"
           "**雑音ではなく既知の系統誤差**なので、\n     Z_d に足すのではなく"
           "格子から引いた距離そのものを補正すべき量。")
-    figs.save_table("grid_bias", ["ボクセル mm", "格子", "予想 m", "実測 m", "ばらつき m"],
-                    rows, title="占有格子 + ESDF は距離を半ボクセルだけ遠く言う")
+    figs.save_table("grid_bias", ["ボクセル mm", "格子", "予想 m", "実測 m",
+                                  "ボクセル比", "ばらつき m"],
+                    rows, title="占有格子 + ESDF は距離を一定割合だけ遠く言う")
     return {"xs": xs, "bias": bias}
 
 
