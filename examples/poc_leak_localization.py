@@ -443,7 +443,7 @@ def section_snr_cliff() -> dict:
     ref = "帯域制限 + サブサンプル"
     first = next((snrs[i] for i in range(len(snrs)) if gross[ref][i] > 5.0), None)
     print("\n  ★実測の崖(%s が 5 %% 以上取り違える最初の点): %s dB。予測は %.1f dB。"
-          % (ref, "%+.0f" % first if first is not None else "掃引内に無し", thr))
+          % (ref, "%+.1f" % first if first is not None else "掃引内に無し", thr))
     idx0 = snrs.index(0.0)
     print("  ★0 dB での実測 RMS: 整数 %.4f m / サブサンプル %.4f m / "
           "帯域制限 %.4f m\n     —— CRLB は %.4f m(実測スペクトル %.4f m)。"
@@ -543,6 +543,31 @@ def section_reflection() -> dict:
           % (r(10.0, "GCC-PHAT(帯域内)") / r(10.0, "生の相関 + サブサンプル"),
              r(0.0, "GCC-PHAT(帯域内)") / r(0.0, "生の相関 + サブサンプル")))
 
+    print("\n  ★予想は外れた。PHAT は勝たない(せいぜい 1 割)。理由は数字が"
+          "教えてくれる ——\n     反射 0.8 の誤差は RMS %.3f m に対して偏りが "
+          "%+.3f m で、**ほぼ全部が偏り**。\n     散らばりではないので、"
+          "重み付けを変えても消えない。PHAT が白色化するのは\n     "
+          "相互スペクトルの**振幅** |X(f)| だが、遅延を運んでいるのは"
+          "**位相** arg X(f) で、\n     反射はその位相を歪める。"
+          "PHAT は歪んだ位相をそのまま通す。"
+          % (r(10.0, "GCC-PHAT(帯域内)"),
+             bias[10.0]["GCC-PHAT(帯域内)"][-1]))
+
+    # ★対照群 —— 反射だけを左右入れ替える。偏りの向きが反転すれば
+    #   「遠いほうの継手が偏りの向きを決める」が原因だと言える。
+    ctrl = {}
+    for tag, em in (("継手 %.1f/%.1f m" % (ECHO_M[0] / 2, ECHO_M[1] / 2), ECHO_M),
+                    ("左右を入替", (ECHO_M[1], ECHO_M[0])),
+                    ("左右とも %.1f m" % (ECHO_M[0] / 2), (ECHO_M[0], ECHO_M[0]))):
+        e = [position(tau_bandlimited(make_records(10.0, sd, echo=0.8,
+                                                   echo_m=em)), C_TRUE) - X_LEAK
+             for sd in seeds]
+        ctrl[tag] = float(np.mean(e))
+        print("     対照群 %-18s 偏り %+.3f m" % (tag, ctrl[tag]))
+    print("     -> 左右を入れ替えると偏りの符号が反転し、対称にすると "
+          "%+.3f m まで縮む。\n        **偏りの向きは「どちら側の継手が遠いか」"
+          "だけで決まる**(反射の強さではない)。" % list(ctrl.values())[2])
+
     figs.save_plot("reflection_sweep",
                    [("%s / %+.0f dB" % (n.replace(" + サブサンプル", ""), snr),
                      list(amps), out[snr][n])
@@ -573,8 +598,8 @@ def section_sound_speed() -> dict:
     tau_hat = tau_bandlimited(rec)
     cases = []
     for label, c_as in (("(a) 音速が真値 %.0f m/s" % C_TRUE, C_TRUE),
-                        ("(b) 音速を +10 %% 誤る", 1.10 * C_TRUE),
-                        ("(c) 音速を -10 %% 誤る", 0.90 * C_TRUE)):
+                        ("(b) 音速を +10 % 誤る", 1.10 * C_TRUE),
+                        ("(c) 音速を -10 % 誤る", 0.90 * C_TRUE)):
         x_hat = position(tau_hat, c_as)
         cases.append((label, c_as, x_hat, x_hat - X_LEAK))
         print("   %-26s c = %7.1f m/s -> x = %7.3f m (%+7.3f m)"
@@ -671,9 +696,8 @@ def section_budget(sw: dict, ss: dict) -> None:
         ["サブサンプル誤差", "%.4f" % sw["fine"][ref][i0],
          "SNR 0 dB の実測 RMS。CRLB %.4f m の %.1f 倍"
          % (sw["crlb_num"][i0], sw["fine"][ref][i0] / sw["crlb_num"][i0])],
-        ["ピークの取り違え", "%.1f" % (0.01 * sw["gross"][ref][-1]
-                                      * float(np.sqrt(L_M ** 2 / 12.0))),
-         "SNR %.0f dB で %.0f %% 起きる。起きると誤差は探索窓いっぱい"
+        ["ピークの取り違え", "%.1f" % sw["allrms"][ref][-1],
+         "SNR %.0f dB の全試行 RMS(取り違え %.0f %%)。探索窓いっぱいに飛ぶ"
          % (sw["snrs"][-1], sw["gross"][ref][-1])],
         ["音速の偏り(+10 %)", "%.3f" % abs(ss["cases"][1][3]),
          "(Δc/c)(x - L/2)。系統誤差なので平均しても消えない"],
@@ -739,7 +763,7 @@ def main() -> int:
           % (sw["fine"][ref][i0], sw["crlb_num"][i0]))
     print("  * 崖は %s dB(予測 %.1f dB)。落ちるとピークの取り違えで"
           " %.0f m 級に飛ぶ。"
-          % ("%+.0f" % sw["first"] if sw["first"] is not None else "?",
+          % ("%+.1f" % sw["first"] if sw["first"] is not None else "?",
              sw["thr"], L_M / 4.0))
     print("  * 音速を 10 %% 間違えると %+.2f m。管種が途中で変わると %+.1f m で、"
           "\n    **どの単一音速でも直らない**。" % (ss["cases"][1][3],

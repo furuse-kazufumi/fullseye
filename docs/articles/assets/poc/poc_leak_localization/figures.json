@@ -1,0 +1,84 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "埋設管の 2 点に相関式漏水探知機を当てる。位置は到達時間差 τ と 音速 c だけで決まる。",
+  "shape": [
+   330,
+   820,
+   3
+  ]
+ },
+ {
+  "file": "02_waveforms.png",
+  "name": "waveforms",
+  "caption": "同じ漏水源に既知の遅れ 28.80 ms・距離に応じた減衰・独立な広帯域雑音を乗せた。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_correlation_curves.png",
+  "name": "correlation_curves",
+  "caption": "PHAT は白色化でピークが尖る。ただし尖ることと当たることは別。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_gross_rate.png",
+  "name": "gross_rate",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_reflection_sweep.png",
+  "name": "reflection_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_reflection_table.png",
+  "name": "reflection_table",
+  "caption": "",
+  "shape": [
+   272,
+   756,
+   3
+  ],
+  "csv": "06_reflection_table.csv",
+  "tsv": "06_reflection_table.tsv"
+ },
+ {
+  "file": "07_sound_speed_error.png",
+  "name": "sound_speed_error",
+  "caption": "相関の形も相関係数も一切変わらない。変わるのは掘る場所だけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_position_scan.png",
+  "name": "position_scan",
+  "caption": "(c) は相関がきれいでも折れ曲がる。単一の音速ではどうやっても直せない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
