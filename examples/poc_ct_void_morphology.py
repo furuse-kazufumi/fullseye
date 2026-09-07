@@ -298,7 +298,7 @@ def morphology(void_est: np.ndarray, layer: np.ndarray, die_dist: np.ndarray,
         proj = m.any(axis=0)
         a_cluster = 100.0 * float(proj.sum()) / float(proj.size)
         ys, xs = np.nonzero(proj)
-        span = 100.0 * max(ys.ptp() + 1, xs.ptp() + 1) / proj.shape[0]
+        span = 100.0 * max(np.ptp(ys) + 1, np.ptp(xs) + 1) / proj.shape[0]
 
     a_int = 100.0 * float(contact.any(axis=0).sum()) / float(layer.any(axis=0).sum())
     return {"n": int(n), "gap": float(np.median(gaps)) * 1000.0,
