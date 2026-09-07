@@ -462,6 +462,7 @@ def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
     print("     正しい設計は**深さに応じて窓を選ぶ**こと —— まず短い窓で t* を粗く")
     print("     取り、t* の数倍で窓を切り直して当て直す。op にするならこれを")
     print("     内側に入れるべきで、固定窓を既定にしてはいけない。")
+    return win_err
 
 
 def _cnr(mp, masks, sound):
