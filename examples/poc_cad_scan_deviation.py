@@ -849,7 +849,8 @@ def section_pull(ref: CadRef) -> dict:
         R, t = align(sc["pts"], ref, method="p2plane",
                      init=(sc["R_true"], sc["t_true"]), iters=20, sub=12000)
         _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
-        m = (np.abs(sc["nom"][:, 0]) < 3.0) & (sc["nom"][:, 2] > H - 1e-6)
+        m = ((np.abs(sc["nom"][:, 0]) < 3.0) & (sc["nom"][:, 2] > H - 1e-6)
+             & (sc["nrm"][:, 2] > 0.9) & ~ed)
         dzs.append(1000 * float((t - sc["t_true"])[2]))
         reads.append(1000 * float(np.mean(s[m])) if m.any() else np.nan)
     hs = [0.05, 0.15, 0.45, 1.00, 1.50]
