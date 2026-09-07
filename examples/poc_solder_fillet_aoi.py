@@ -830,26 +830,32 @@ def section_roughness(v_thr: float) -> dict:
     sc = make_scene(volume=v)
     fR = sc["fillet"]["R"]
     print("  V = %.4f mm³、真値 h = %.4f mm。表(LUT)から予測 → 実測。" % (v, fR["h"]))
-    print("   粗さ   赤が勝つ傾き   暗部の始まり   予測 E2 h   実測 E2 h   誤差    赤帯 px   合否誤り")
+    print("   粗さ   ピーク R/G/B      赤が勝つ傾き   暗部の始まり   予測 E2 h   実測 E2 h   誤差    赤帯 px   合否誤り")
     rows, errs, redpx, pred_h = [], [], [], []
-    r_red_gone_pred, r_red_gone_meas, r_err_cliff = None, None, None
+    r_red_gone_pred, r_red_gone_meas, r_err_cliff, r_all_dark = None, None, None, None
     for rgh in roughs:
         lut = lut_response(rgh)
+        peaks = [float(lut[n].max()) for n in RINGS]
         dom = (lut["R"] > lut["G"]) & (lut["R"] > lut["B"]) & (lut["R"] >= V_DARK)
         red_rng = (float(lut["alpha"][dom].min()), float(lut["alpha"][dom].max())) if dom.any() else None
         bright = np.max(np.stack([lut[n] for n in RINGS]), axis=0) >= V_DARK
-        a_dark = float(lut["alpha"][bright].max())
+        a_dark = float(lut["alpha"][bright].max()) if bright.any() else 0.0
+        if not bright.any() and r_all_dark is None:
+            r_all_dark = rgh
         # 予測: 真の円弧上で、表が言う境界の傾きに対応する位置を E2 が固定の傾きで読むと
         pts = [(a_dark, TILT_MAX)]
         gr = (lut["G"] > lut["R"]) & (lut["G"] > lut["B"]) & (lut["G"] >= V_DARK)
         if red_rng is not None and gr.any():
             pts.append((float(lut["alpha"][gr].max()), 30.0))
         pts.append((THETA, THETA))
-        xs_true = [fR["cx"] - fR["R"] * np.sin(np.deg2rad(a_t)) for a_t, _ in pts]
-        s_ass = np.array([np.sin(np.deg2rad(a_a)) for _, a_a in pts])
-        sol, *_ = np.linalg.lstsq(np.c_[np.ones_like(s_ass), -s_ass], np.asarray(xs_true), rcond=None)
-        xc_p, R_p = sol
-        hp = max(0.0, R_p * (np.cos(np.deg2rad(THETA)) - np.sqrt(max(0.0, 1 - min(1.0, xc_p / R_p) ** 2)))) if R_p > 0 else 0.0
+        if bright.any():
+            xs_true = [fR["cx"] - fR["R"] * np.sin(np.deg2rad(a_t)) for a_t, _ in pts]
+            s_ass = np.array([np.sin(np.deg2rad(a_a)) for _, a_a in pts])
+            sol, *_ = np.linalg.lstsq(np.c_[np.ones_like(s_ass), -s_ass], np.asarray(xs_true), rcond=None)
+            xc_p, R_p = sol
+            hp = max(0.0, R_p * (np.cos(np.deg2rad(THETA)) - np.sqrt(max(0.0, 1 - min(1.0, xc_p / R_p) ** 2)))) if R_p > 0 else 0.0
+        else:
+            hp = 0.0
         hs, ins, rp = [], [], []
         for s in range(4):
             r = inspect_image(render(sc, roughness=rgh, seed=3000 + s))
