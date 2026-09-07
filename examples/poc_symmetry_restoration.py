@@ -996,7 +996,7 @@ def main() -> int:
     assert F["out"]["無地の側(左)"]["fab"] > 100.0, "捏造が測れていない"
     assert F["out"]["装飾のある側(右)"]["ers"] > 100.0, "消失が測れていない"
     assert F["out"]["装飾のある側(右)"]["rms"] > 3 * F["out"]["装飾のある側(右)"]["ctrl_rms"], \
-        "非対称そのものの寄与が対照より大きくない"
+        "非対称そのものの寄与が対照より大きくない"  # noqa: E501
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
