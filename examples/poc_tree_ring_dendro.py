@@ -589,42 +589,43 @@ def section_thin_ring() -> dict:
     print("\n" + "=" * 78)
     print("3) 最も細い年輪の崖 —— 年輪 %d の幅を 4 → 1 px に細める" % K_THIN)
     print("=" * 78)
-    sig_tot = float(np.hypot(BLUR, SIG_M))
-    pred = 2.0 * sig_tot
-    print("  予測: 2 つの段が分離できる条件 w > 2σ_tot、σ_tot = sqrt(%.1f² + %.1f²) = %.2f px"
-          " → 崖 %.2f px" % (BLUR, SIG_M, sig_tot, pred))
-    print("\n   幅 [px]   ゼロ点(θ=0): 年数 / 年輪 %d   合意法: 年数 / 年輪 %d / 欠落"
+    sig_tot = float(np.hypot(BLUR, np.hypot(SIG_M, RESAMPLE_SIG)))
+    pred_c = model_cliff(BLUR, "consensus")
+    pred_z = model_cliff(BLUR, "zero")
+    print("  予測(閉形式の 1-D モデル: t^%.1f のプロファイル + ぼけ σ %.1f ⊕ リサンプル %.1f"
+          " ⊕ 平滑化 %.1f = %.2f px):" % (P_LATE, BLUR, RESAMPLE_SIG, SIG_M, sig_tot))
+    print("     合意法(境界の勾配 ≥ %.2f /px)は %.1f px から、ゼロ点(輝度の山が 2 つ"
+          "立つ)は %.1f px から落ちる。" % (THR, pred_c, pred_z))
+    print("     素朴な目安「2 つの段の分離 w > 2σ_tot = %.2f px」も併記。" % (2 * sig_tot))
+    print("\n   幅 [px]   ゼロ点 24 方向: 年輪 %d が取れた方向   合意法: 年数 / 年輪 %d / 欠落"
           % (K_THIN, K_THIN))
     base = make_widths()
-    rows, thin_w, z_found, c_found = [], [], [], []
+    rows, thin_w, z_frac, c_found = [], [], [], []
     for wt in (4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0):
         w = base.copy()
         w[K_THIN - 1] = wt
         sc = make_scene(widths=w)
-        z = run_zero(sc, thetas=[0.0])["per"][0]
-        zf = K_THIN not in z["missed"] and K_THIN in [int(k) for k in
-                                                     ray_truth(sc, sc["pith"], 0.0)["k"]]
+        z = run_zero(sc)["per"]
+        zf = sum(K_THIN in r["widths"] for r in z)
         c = run_consensus(sc)
-        cf = K_THIN not in c["missing"]
+        cf = thin_found(c["per"], K_THIN)
         thin_w.append(wt)
-        z_found.append(zf)
+        z_frac.append(zf)
         c_found.append(cf)
-        rows.append(["%.1f" % wt, str(z["n_det"]), "○" if zf else "×",
-                     str(c["n_est"]), "○" if cf else "×", str(len(c["missing"]))])
-        print("   %5.1f       %3d / %s                 %3d / %s / %d"
-              % (wt, z["n_det"], "○" if zf else "×", c["n_est"], "○" if cf else "×",
-                 len(c["missing"])))
-    z_cliff = next((wt for wt, f in zip(thin_w, z_found) if not f), None)
+        rows.append(["%.1f" % wt, "%d / %d" % (zf, N_SECT), str(c["n_est"]),
+                     "○" if cf else "×", str(len(c["missing"]))])
+        print("   %5.1f            %2d / %d                        %3d / %s / %d"
+              % (wt, zf, N_SECT, c["n_est"], "○" if cf else "×", len(c["missing"])))
+    z_cliff = next((wt for wt, f in zip(thin_w, z_frac) if 2 * f <= N_SECT), None)
     c_cliff = next((wt for wt, f in zip(thin_w, c_found) if not f), None)
-    print("\n  ★合意法が落とし始める幅 %.1f px(予測 %.2f px)、ゼロ点は %.1f px。"
-          % (c_cliff, pred, z_cliff))
-    print("     合意法は θ 方向メディアンが雑音を先に落とすので、境界の分離条件"
-          "そのものまで粘る。ゼロ点は雑音の中で 2 つの段を分けられず早く落ちる。")
+    print("\n  ★合意法が落とす幅 %.1f px(モデルの予測 %.1f px)、ゼロ点(過半数の方向で"
+          "落ちる幅)%.1f px(予測 %.1f px)。" % (c_cliff, pred_c, z_cliff, pred_z))
     figs.save_table("cliff_thin_ring",
-                    ["幅 px", "ゼロ点 年数", "年輪 %d" % K_THIN, "合意法 年数",
-                     "年輪 %d" % K_THIN, "欠落"],
-                    rows, title="最も細い年輪の崖(予測 2σ_tot = %.2f px)" % pred)
-    return {"pred": pred, "z_cliff": z_cliff, "c_cliff": c_cliff}
+                    ["幅 px", "ゼロ点: 取れた方向", "合意法 年数", "年輪 %d" % K_THIN, "欠落"],
+                    rows, title="最も細い年輪の崖(モデル予測: 合意法 %.1f px / ゼロ点 %.1f px)"
+                                % (pred_c, pred_z))
+    return {"pred_c": pred_c, "pred_z": pred_z, "z_cliff": z_cliff, "c_cliff": c_cliff,
+            "sig_tot": sig_tot}
 
 
 # --------------------------------------------------------------------------- #
