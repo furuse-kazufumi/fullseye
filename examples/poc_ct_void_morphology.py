@@ -209,6 +209,10 @@ def build_scene(voids: list[dict], voxel: float = VOXEL, phase: float = 0.0) -> 
     s_sub = L.box_sdf(grid, (JOINT / 2, JOINT / 2, Z_LO / 2),
                       (JOINT, JOINT, -Z_LO / 2))
     s_void = _void_sdf(grid, (nx, nx, nz), voids, voxel)
+    # 界面の基準は**ダイの占有ではなく半空間** `z >= T_LAYER`(``plane_sdf``)。
+    # ★ダイの占有で代用すると、粗いボクセルで厚み 50 µm のダイがボクセル中心の
+    #   あいだに落ち、**基準そのものが消える**(60 µm・位相 2/3 で実際に 0 個になった)。
+    s_above = L.plane_sdf(grid, (JOINT / 2, JOINT / 2, T_LAYER), (0.0, 0.0, -1.0))
 
     t = lambda a: np.ascontiguousarray(np.transpose(a, (2, 1, 0)))   # noqa: E731
     c_layer, c_die, c_sub, c_void = (_cover(t(s), voxel)
@@ -216,7 +220,7 @@ def build_scene(voids: list[dict], voxel: float = VOXEL, phase: float = 0.0) -> 
     mu = (MU_SOLDER * c_layer * (1.0 - c_void) + MU_DIE * c_die
           + MU_SUB * c_sub + MU_VOID * c_void * c_layer)
     return {"mu": mu, "layer": c_layer > 0.5, "void_true": c_void * c_layer > 0.5,
-            "die": t(s_die) <= 0.0, "voxel": voxel, "shape": mu.shape,
+            "die": t(s_above) <= 0.0, "voxel": voxel, "shape": mu.shape,
             "voids": voids}
 
 
