@@ -773,7 +773,8 @@ def section_sweep() -> dict:
           % (dens[1], np.sqrt(area / dens[1]), d_miss[1],
              occ_miss[2], occ_miss[3], d_miss[-1], occ_miss[2], occ_miss[1]))
     return {"dens": dens, "d_miss": d_miss, "d_bias": d_bias, "zero": zero_rows,
-            "occ_rows": occ_rows, "occ_miss": occ_miss, "lat_miss": lat_miss,
+            "occ_rows": occ_rows, "occ_miss": occ_miss, "occ_fa": occ_fa,
+            "lat_miss": lat_miss, "lat_fa": lat_fa,
             "wrong_by_cond": wrong_by_cond,
             "frames": frames, "d_true": d_true, "S": S, "e_full": e_full,
             "e_clean": e_clean}
