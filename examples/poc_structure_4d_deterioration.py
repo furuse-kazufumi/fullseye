@@ -637,7 +637,9 @@ def section_zero(obs: dict, sc: dict) -> dict:
     print("  有効 core %d / %d(%.1f %%)。無効は欠測(仮設物の影・入射角)。"
           % (int(good.sum()), good.size, 100 * good.mean()))
     print("  法線の推定: fit_plane_3d の符号は任意なので**真の外向きに合わせている**。"
-          "合わせないと %.1f %% が裏返る。" % 50.0)
+          "実測では %.1f %% を反転させた —— \n  合わせなければその core は"
+          "**符号が逆**になり、劣化と隆起が入れ替わる。"
+          % (100 * core_normals.flipped))
 
     print("\n   面           真値(点) 真値(足跡)  法線方向   誤差    C2C   "
           "C2C の |誤差|")
