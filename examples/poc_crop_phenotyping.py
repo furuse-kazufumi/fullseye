@@ -1137,8 +1137,13 @@ def main() -> int:
     assert cliff["vis"][-1] / cliff["vis"][-6] < 1.15, "見える葉面積は頭打ち"
     assert cliff["omega"][-1] < cliff["omega"][0], "クランピングは厚いほど強い"
     assert ctrl["omega_d"] > ctrl["omega_c"], "方位乱数は互生より真値に近い"
-    assert cliff["meas_l"][-1] - cliff["meas_l"][0] < 4.0, "崖は対数でしか動かない"
+    assert cliff["step_gain"] < 2.0, "点密度 4 倍で崖は 2 も伸びない"
+    assert all(p > m for p, m in zip(cliff["pred_l"], cliff["meas_l"])), "予測は楽観的"
     assert abs(wind["d_upd"]) < abs(wind["d_fix"]), "k の更新は片方しか直さない"
+    assert ang["k_naive"] > ang["k_pts"], "推定法線に面積加重を掛けると崩れる"
+    assert abs(ang["k_ref"] - k_true) < 0.02 * k_true, "真の法線なら調和平均は当たる"
+    assert ang["turbid"] > ang["cov"], "一様媒質モデルは受光を過大評価する"
+    assert sw["errs"][0] > sw["errs"][-1] - 1.0, "葉角を振っても誤差はほぼ動かない"
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
