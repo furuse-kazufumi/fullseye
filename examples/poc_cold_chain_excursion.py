@@ -980,7 +980,8 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
                        ["1=偽合格 2=正しく不合格 3=空気で不合格 4=真の最悪製品",
                         "ロガー 1 個が出す逸脱時間 [min]"],
                        title="どこに置くと当たるか(置き場所の地図)", ncols=2)
-    return {"ns": ns, "rates": rates, "conv_pass": conv_pass}
+    return {"ns": ns, "rates": rates, "conv_pass": conv_pass,
+            "jit_rate": jit_rate, "per_point": per}
 
 
 # --------------------------------------------------------------------------- #

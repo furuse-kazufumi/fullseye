@@ -1,0 +1,104 @@
+[
+ {
+  "file": "01_traces.png",
+  "name": "traces",
+  "caption": "扉前の空気は跳ねるが製品には届かない。最悪製品は跳ねないがずっと規定の上にいる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_placement_table.png",
+  "name": "placement_table",
+  "caption": "",
+  "shape": [
+   176,
+   580,
+   3
+  ],
+  "csv": "02_placement_table.csv",
+  "tsv": "02_placement_table.tsv"
+ },
+ {
+  "file": "03_sweep_tau.png",
+  "name": "sweep_tau",
+  "caption": "教科書の 1 極公式は荷室の空気の遅れを勘定に入れないので崖を遅く見積もる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sweep_tau_positions.png",
+  "name": "sweep_tau_positions",
+  "caption": "",
+  "shape": [
+   200,
+   621,
+   3
+  ],
+  "csv": "04_sweep_tau_positions.csv",
+  "tsv": "04_sweep_tau_positions.tsv"
+ },
+ {
+  "file": "05_sweep_quant.png",
+  "name": "sweep_quant",
+  "caption": "",
+  "shape": [
+   224,
+   295,
+   3
+  ],
+  "csv": "05_sweep_quant.csv",
+  "tsv": "05_sweep_quant.tsv"
+ },
+ {
+  "file": "06_control_groups.png",
+  "name": "control_groups",
+  "caption": "",
+  "shape": [
+   176,
+   574,
+   3
+  ],
+  "csv": "06_control_groups.csv",
+  "tsv": "06_control_groups.tsv"
+ },
+ {
+  "file": "07_metric_limits.png",
+  "name": "metric_limits",
+  "caption": "",
+  "shape": [
+   152,
+   533,
+   3
+  ],
+  "csv": "07_metric_limits.csv",
+  "tsv": "07_metric_limits.tsv"
+ },
+ {
+  "file": "08_excursion_events.png",
+  "name": "excursion_events",
+  "caption": "",
+  "shape": [
+   176,
+   467,
+   3
+  ],
+  "csv": "08_excursion_events.csv",
+  "tsv": "08_excursion_events.tsv"
+ },
+ {
+  "file": "09_sweep_nlogger.png",
+  "name": "sweep_nlogger",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
