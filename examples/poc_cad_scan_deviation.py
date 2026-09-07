@@ -1150,14 +1150,13 @@ def section_basin(ref: CadRef) -> dict:
           % (b_rows[1][2] / b_rows[0][2]))
 
     figs.save_plot("basin",
-                   [("点-面 ICP の姿勢誤差 [度]", angs, errs),
-                    ("点-点 ICP の姿勢誤差 [度]", angs, errs2),
-                    ("点-面の最終残差 [µm] / 10", angs, [r / 10 for r in resid])],
-                   xlabel="初期姿勢のずれ [度]", ylabel="[度] / [µm]/10",
-                   title="収束域は手法で違う(0〜30 度には崖が無い)",
-                   caption="点-面はこの部品で 60 度でも収束する。別解の残差は"
-                           "床の数倍に上がるので見抜ける —— 素の直方体では"
-                           "そうならない(本文の対照群)。")
+                   [("点-面 ICP の点移動 [mm]", angs[:7], mm1[:7]),
+                    ("点-点 ICP の点移動 [mm]", angs[:7], mm2[:7]),
+                    ("公差 %.2f mm" % TOL, angs[:7], [TOL] * 7)],
+                   xlabel="初期姿勢のずれ [度]", ylabel="姿勢由来の点の移動 [mm]",
+                   title="崖は手法ごとに別の場所にある(点-点はなだらかな坂)",
+                   caption="点-面は 60 度まで平ら。点-点は 0〜30 度で公差を"
+                           "跨ぐが、残差だけ見ていると「収束した」ように見える。")
     return {"ang": angs, "err": errs, "err_p2p": errs2, "resid": resid,
             "floor": floor, "alt_ratio": last, "box": b_rows}
 
