@@ -402,6 +402,8 @@ def section_aabb_yaw() -> dict:
           "なく\n     **部屋が走査軸に対して傾いていること**を測っている。"
           "平面法は最大 %.2f mm。" % (aabb_err[2], aabb_err[-1],
                                      max(abs(e) for e in plane_err)))
+    print("     しかも平面法の読みは ψ を振っても **%.1e mm しか動かない**"
+          "(回転に対して不変)。" % (max(plane_err) - min(plane_err)))
 
     figs.save_plot("aabb_vs_yaw",
                    [("AABB", psis, aabb_err),
