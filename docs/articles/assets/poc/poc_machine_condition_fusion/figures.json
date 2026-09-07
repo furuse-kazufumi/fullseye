@@ -76,7 +76,7 @@
  {
   "file": "08_confusion_without_vibration.png",
   "name": "confusion_without_vibration",
-  "caption": "芯ずれは無傷。壊れるのは軸受外輪傷と潤滑不良の対。",
+  "caption": "芯ずれと軸受外輪傷は無傷。壊れるのは熱でも形状でも同じ顔になる 正常・アンバランス・ゆるみ。",
   "shape": [
    224,
    511,
@@ -88,7 +88,7 @@
  {
   "file": "09_redundancy_corr.png",
   "name": "redundancy_corr",
-  "caption": "真値の重症度と 3 つの測定値がすべて 0.99 台で相関する。",
+  "caption": "真値の重症度に対し 2X 振動 0.843 / 継手温度 0.841 / 芯ずれ量 0.978。互いにも 0.677 以上 —— 独立な 3 つの証拠ではない。",
   "shape": [
    176,
    424,
@@ -110,7 +110,7 @@
  {
   "file": "11_sweep_record_length.png",
   "name": "sweep_record_length",
-  "caption": "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。側帯波比の真値は変調度 0.55 の半分 = 0.275。横軸は周波数分解能 1/T —— 予測はこの軸の上で FTF = 11.62 Hz とf_r/2 = 14.58 Hz。",
+  "caption": "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。側帯波比の真値は変調度 0.55 の半分 = 0.275。横軸は周波数分解能 1/T —— 予測はこの軸の上で FTF = 11.62 Hz とf_r/2 = 14.58 Hz。側帯波は予測より遅れて直り、読み取り窓の条件 FTF/1.2 = 9.68 Hz のほうが合う。",
   "shape": [
    360,
    560,
