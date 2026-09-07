@@ -477,17 +477,26 @@ def section_reflection() -> dict:
     print("\n" + "=" * 78)
     print("3) 反射を入れる —— ★予想: PHAT が勝つ(白色化で直達ピークが立つ)")
     print("=" * 78)
-    print("  予想: 継手からの反射は相関に第 2 のピークを作り、生の相関の重心を")
-    print("        引っぱる。PHAT は振幅を白色化するので直達波のピークが")
-    print("        相対的に立ち、反射に強いはず。ただし低 SNR では雑音しか")
-    print("        無いビンも等しく持ち上げるので負けるはず。")
+    dt = 1e3 * ECHO_M[0] / C_TRUE
+    print("  場面: センサの先 %.1f m / %.1f m の継手で折り返す(往復 %.1f / %.1f m)。"
+          % (ECHO_M[0] / 2, ECHO_M[1] / 2, ECHO_M[0], ECHO_M[1]))
+    print("        遅れ差は %.2f ms = %.1f 標本で、相関の主ローブ半幅 "
+          "fs/(2 f_hi) = %.1f 標本と\n        同じ桁 —— つまり**別のピークにならず、"
+          "主ピークを歪ませる**。"
+          % (dt, dt * FS_HZ / 1e3, FS_HZ / (2 * BAND[1])))
+    print("  予想: 生の相関は主ピークが非対称になり、サブサンプルが反射側へ偏る。")
+    print("        PHAT は振幅を白色化して実効帯域を広げるのでピークが尖り、")
+    print("        反射に強いはず。ただし低 SNR では雑音しか無いビンも等しく")
+    print("        持ち上げるので負けるはず。")
 
     amps = (0.0, 0.2, 0.4, 0.6, 0.8)
     seeds = [SEED + 13 * k for k in range(16)]
     pick = ("生の相関 + サブサンプル", "帯域制限 + サブサンプル",
-            "GCC-PHAT(帯域内)")
-    out = {snr: {n: [] for n in pick} for snr in (10.0, -10.0)}
-    for snr in (10.0, -10.0):
+            "GCC-PHAT(全帯域)", "GCC-PHAT(帯域内)")
+    snrs = (10.0, 0.0)
+    out = {snr: {n: [] for n in pick} for snr in snrs}
+    bias = {snr: {n: [] for n in pick} for snr in snrs}
+    for snr in snrs:
         for amp in amps:
             acc = {n: [] for n in pick}
             for sd in seeds:
@@ -496,39 +505,51 @@ def section_reflection() -> dict:
                     if name in pick:
                         acc[name].append(position(fn(rec), C_TRUE) - X_LEAK)
             for name in pick:
-                out[snr][name].append(float(np.sqrt(np.mean(
-                    np.asarray(acc[name]) ** 2))))
+                e = np.asarray(acc[name])
+                out[snr][name].append(float(np.sqrt(np.mean(e ** 2))))
+                bias[snr][name].append(float(np.mean(e)))
 
     rows = []
-    for snr in (10.0, -10.0):
+    for snr in snrs:
         print("\n  SNR %+.0f dB   反射振幅 " % snr
-              + "  ".join("%6.1f" % a for a in amps) + "   [位置誤差の RMS, m]")
+              + "  ".join("%7.1f" % a for a in amps)
+              + "   [位置誤差の RMS / 偏り, m]")
         for name in pick:
-            print("     %-24s " % name
-                  + "  ".join("%6.3f" % v for v in out[snr][name]))
+            print("     %-22s " % name
+                  + "  ".join("%7.3f" % v for v in out[snr][name]))
+            print("     %-22s " % ""
+                  + "  ".join("%+7.3f" % v for v in bias[snr][name]))
             rows.append(["%+.0f dB" % snr, name]
-                        + ["%.3f" % v for v in out[snr][name]])
+                        + ["%.3f / %+.3f" % (v, b)
+                           for v, b in zip(out[snr][name], bias[snr][name])])
 
-    hi_raw = out[10.0]["生の相関 + サブサンプル"][-1]
-    hi_phat = out[10.0]["GCC-PHAT(帯域内)"][-1]
-    lo_raw = out[-10.0]["生の相関 + サブサンプル"][-1]
-    lo_phat = out[-10.0]["GCC-PHAT(帯域内)"][-1]
-    print("\n  ★実測: 反射 0.8・SNR +10 dB では PHAT %.3f m vs 生 %.3f m "
-          "(%.2f 倍)。" % (hi_phat, hi_raw, hi_phat / hi_raw))
-    print("     反射 0.8・SNR -10 dB では PHAT %.3f m vs 生 %.3f m (%.2f 倍)。"
-          % (lo_phat, lo_raw, lo_phat / lo_raw))
+    def r(snr, name):
+        return out[snr][name][-1]
+
+    print("\n  ★実測(反射 0.8):")
+    for snr in snrs:
+        print("     SNR %+3.0f dB  生 %.3f m / 帯域制限 %.3f m / "
+              "PHAT 全帯域 %.3f m / PHAT 帯域内 %.3f m"
+              % (snr, r(snr, "生の相関 + サブサンプル"),
+                 r(snr, "帯域制限 + サブサンプル"), r(snr, "GCC-PHAT(全帯域)"),
+                 r(snr, "GCC-PHAT(帯域内)")))
+    print("     -> PHAT(帯域内)は +10 dB で生の %.2f 倍、0 dB で %.2f 倍。"
+          % (r(10.0, "GCC-PHAT(帯域内)") / r(10.0, "生の相関 + サブサンプル"),
+             r(0.0, "GCC-PHAT(帯域内)") / r(0.0, "生の相関 + サブサンプル")))
 
     figs.save_plot("reflection_sweep",
-                   [("%s / %+.0f dB" % (n.replace("+ サブサンプル", ""), snr),
+                   [("%s / %+.0f dB" % (n.replace(" + サブサンプル", ""), snr),
                      list(amps), out[snr][n])
-                    for snr in (10.0, -10.0) for n in pick],
+                    for snr in snrs for n in ("生の相関 + サブサンプル",
+                                              "GCC-PHAT(帯域内)")],
                    xlabel="反射の振幅(直達波を 1 として)",
                    ylabel="位置誤差の RMS [m]",
-                   title="反射があるとき PHAT は勝つか")
+                   title="反射があるとき PHAT は勝つか(継手 %.1f m 先)"
+                         % (ECHO_M[0] / 2))
     figs.save_table("reflection_table",
                     ["SNR", "手法"] + ["反射 %.1f" % a for a in amps], rows,
-                    title="反射の掃引(位置誤差の RMS [m])")
-    return {"amps": amps, "out": out}
+                    title="反射の掃引(位置誤差の RMS / 偏り [m])")
+    return {"amps": amps, "out": out, "bias": bias, "snrs": snrs}
 
 
 # --------------------------------------------------------------------------- #
@@ -536,7 +557,7 @@ def section_reflection() -> dict:
 # --------------------------------------------------------------------------- #
 def section_sound_speed() -> dict:
     print("\n" + "=" * 78)
-    print("4) 対照群 —— (a) 音速が真値 (b) 10 %% 間違える (c) 管種が変わる")
+    print("4) 対照群 —— (a) 音速が真値 (b) 10 % 間違える (c) 管種が変わる")
     print("=" * 78)
     print("  ★予測: 音速の誤差は位置に**線形**に効く。"
           "Δx = (Δc/c)·(x - L/2)\n          —— 中点では 0、端に行くほど大きい。"
@@ -642,7 +663,7 @@ def section_budget(sw: dict, ss: dict) -> None:
         ["量子化(整数ピーク)", "%.4f" % (QUANT_M / np.sqrt(12.0)),
          "c/(2 fs)/√12。標本化周期で決まる。サブサンプル補間で消える"],
         ["サブサンプル誤差", "%.4f" % sw["fine"][ref][i0],
-         "SNR 0 dB の実測 RMS。CRLB %.4f m には %.0f 倍届かない"
+         "SNR 0 dB の実測 RMS。CRLB %.4f m の %.1f 倍"
          % (sw["crlb_num"][i0], sw["fine"][ref][i0] / sw["crlb_num"][i0])],
         ["ピークの取り違え", "%.1f" % (0.01 * sw["gross"][ref][-1]
                                       * float(np.sqrt(L_M ** 2 / 12.0))),
@@ -685,7 +706,7 @@ def section_tool_gaps() -> None:
           "族に入れる価値がある。")
     assert not hasattr(fs.ledger, "correlation_score_1d")
     print("  (d) correlation_score は 3-D 専用で、1-D 信号は (1,1,N) に"
-          "整形して渡すしかない。\n      サブサンプルの相棒 refine_peak_newton"
+          "整形して渡すしかない。\n      サブサンプルの相棒 refine_peak_newton "
           "も 27 近傍を要求するので 1-D では使えない。")
 
 
