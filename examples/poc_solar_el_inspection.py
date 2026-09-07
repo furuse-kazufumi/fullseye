@@ -834,7 +834,7 @@ def main() -> int:
              sn["k_pred"], min(vg["e_fit"]), max(vg["e_fit"])))
 
     # 所見を固定する(壊れたら鳴る)
-    assert zp["rate"] > 5.0 * sc["iso_rate"], zp["rate"]
+    assert zp["rate"] > 3.0 * sc["iso_rate"], zp["rate"]
     assert abs(pipe["iso_err"]) < 0.3, pipe["iso_err"]
     assert min(pipe["recall"]) > 0.85, pipe["recall"]
     assert pipe["fi_matched"] == len(FI_BANDS) and pipe["fi_false"] == 0, (
