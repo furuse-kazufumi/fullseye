@@ -355,11 +355,22 @@ def ridge_map(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W) -> 
 
 def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W,
                    low: float = HYST_LOW, high: float = HYST_HIGH) -> np.ndarray:
-    """リッジ応答 → ヒステリシス → 骨格(1 px 幅のクラック中心線)。"""
+    """リッジ応答 → ヒステリシス → 骨格(1 px 幅のクラック中心線)→ 最小長。
+
+    バスバーの縁(設計値 ±4 px)は除く —— 列プロファイルで割っても縁の
+    ぼけが 1 px の縦リッジとして残り、短い偽片になる。
+    """
     ridge = ridge_map(s, calibrate=calibrate, ref_w=ref_w)
     hyst = np.asarray(fs.apply(ridge, "hysteresis_threshold",
                                a=(low - 0.2) / 0.3, b=(high - 0.5) / 0.3))
-    return np.asarray(fs.apply(hyst, "sk_skeleton")) > 0.5
+    sk = np.asarray(fs.apply(hyst, "sk_skeleton")) > 0.5
+    cols = np.arange(s.shape[1])
+    for bx in BUSBAR_X:
+        sk[:, np.abs(cols - bx) <= BUSBAR_W / 2 + 1.0] = False
+    lab = _LAB.blob_label(sk, connectivity=8)
+    if int(lab.max()) > 0:
+        sk = _LAB.blob_select(lab, "area", vmin=float(MIN_CRACK_PX)) > 0
+    return sk
 
 
 def classify(s: np.ndarray) -> dict:
