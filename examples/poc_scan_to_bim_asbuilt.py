@@ -603,16 +603,17 @@ def column_radius(pts: np.ndarray, seed: int = 0) -> float:
 def opening_center(pts: np.ndarray, axes=(1, 2), clean: bool = True) -> tuple:
     """見込みの奥の面の点群から開口の中心を取る(``obb``)。
 
-    ``obb`` は主成分の min/max なので**頑健ではない**(1 点の外れ値で箱が伸びる)。
-    ``clean=True`` は ``statistical_outlier_removal`` を先に掛ける。
+    ``obb`` は主成分の min/max なので**頑健ではない**。面から外れた点が数点あると
+    主軸が傾き、``center`` が面内へ漏れる(実測: 戸で +45.60 mm、真値 +18.00)。
+    ``clean=True`` は先に ``ransac_plane`` で面上の inlier だけを取る。
     """
     if len(pts) < 40:
         return np.nan, np.nan
     q = np.asarray(pts, np.float64)
     if clean and len(q) > 60:
-        q = np.asarray(L.statistical_outlier_removal(q, k=12, std_ratio=1.5), np.float64)
-        if len(q) < 40:
-            q = np.asarray(pts, np.float64)
+        _, mask, _ = L.ransac_plane.raw(q, 0.010, iters=200, seed=0)
+        if int(mask.sum()) >= 40:
+            q = q[mask]
     o = L.obb.raw(q)
     c = np.asarray(o["center"], np.float64)
     return float(c[axes[0]]), float(c[axes[1]])
