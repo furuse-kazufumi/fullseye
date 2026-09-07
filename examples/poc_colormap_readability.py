@@ -184,11 +184,18 @@ def effective_levels(lab_l: np.ndarray, jnd: float = JND) -> float:
     return float(np.exp(-(p * np.log(p)).sum()))
 
 
+def _rankdata(a: np.ndarray) -> np.ndarray:
+    """同順位を平均順位にした順位(numpy だけ。scipy に依存しない)。"""
+    _, inv, cnt = np.unique(np.asarray(a, np.float64).ravel(),
+                            return_inverse=True, return_counts=True)
+    start = np.cumsum(cnt) - cnt
+    return (start + (cnt + 1) / 2.0)[inv]
+
+
 def spearman(a: np.ndarray, b: np.ndarray) -> float:
-    """順位相関(同順位は平均順位)。scipy が無くても動くよう numpy で書く。"""
-    from scipy.stats import rankdata
-    ra = rankdata(np.asarray(a, np.float64).ravel())
-    rb = rankdata(np.asarray(b, np.float64).ravel())
+    """順位相関(同順位は平均順位)。**同順位が多いほど下がる**のが要点。"""
+    ra = _rankdata(a)
+    rb = _rankdata(b)
     ra = ra - ra.mean()
     rb = rb - rb.mean()
     den = np.sqrt((ra * ra).sum() * (rb * rb).sum())
