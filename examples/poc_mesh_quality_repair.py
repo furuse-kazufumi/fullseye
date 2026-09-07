@@ -809,7 +809,6 @@ def section_decimate_cliff(scene: dict) -> dict:
                    [("削減 %.0f %%" % (100 * r), curves[r],
                      np.linspace(0, 1, curves[r].size)) for r in sorted(curves)],
                    xlabel="平均曲率の大きさ |H| [1/mm]", ylabel="累積割合",
-                   xlim=(0.0, 12.0),
                    title="曲率分布は体積より先に動く(50 %% 削減で p95 が %+.0f %%)"
                          % (100 * (c95[i50] - c95[0]) / c95[0]))
     return {"faces": faces, "dv": dv, "da": da, "c95": c95,
