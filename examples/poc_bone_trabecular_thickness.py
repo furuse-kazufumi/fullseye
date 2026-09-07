@@ -603,8 +603,9 @@ def section_bias_and_controls(sc: dict, tr: dict) -> dict:
     for beta in (0.0, 0.2, 0.4, 0.6):
         img = observe(sc["master"], px, noise=NOISE_SIGMA, bias=beta)
         m_o = np.asarray(fs.apply(img, "otsu")) > 0.5
-        # retinex: log(I) - log(G_σ(I))、σ = 1 + a·0.5·n → 1500 µm(格子間隔の 1.4 倍)。
-        a_ret = (1500.0 / px - 1.0) / (0.5 * n)
+        # retinex: log(I) - log(G_σ(I))、σ = 1 + a·0.5·n → 800 µm(骨梁幅の 7 倍、格子間隔の 0.7 倍)。
+        # 窓は骨梁より広く、バイアスの曲率(視野の半分 = 3000 µm)より狭く —— 両立の余地は狭い。
+        a_ret = (RETINEX_UM / px - 1.0) / (0.5 * n)
         ret = np.asarray(fs.apply(img, "dc_retinex", a=a_ret, b=0.5))
         m_r = np.asarray(fs.apply(ret, "otsu")) > 0.5
         # retinex の出力は 0.5 + log(I/G)/6 なので exp(6·(ret-0.5)) = I/G(I) に戻る
