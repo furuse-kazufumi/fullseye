@@ -156,8 +156,9 @@ def make_scene(warp_pv: float = WARP_PV, center_sag: float = 0.0,
 def detect_bumps(height: np.ndarray) -> dict:
     """そりを引いた画像から天面を拾う(``background_flatten`` -> 自動しきい値 -> blob)。"""
     flat = np.asarray(_L.background_flatten(height, degree=2))
-    thr = float(_L.auto_threshold(flat))
-    lab = _L.blob_label(flat > thr)
+    mask = np.asarray(fs.apply(flat, "auto_threshold")) > 0.5   # Otsu(進化 op)
+    thr = float(flat[mask].min()) if mask.any() else float("nan")
+    lab = _L.blob_label(mask)
     f = _L.blob_features(lab)
     return {"flat": flat, "thr": thr, "labels": lab,
             "row": np.asarray(f["row"], float), "col": np.asarray(f["col"], float),
