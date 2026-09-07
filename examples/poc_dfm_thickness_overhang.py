@@ -421,10 +421,14 @@ def section_thickness():
     print()
     print("   T/h   h [mm]   侵食      内接球    探針(本数) | 誤差 [mm] 侵食 / 内接球 / 探針")
 
-    ratios = (12.0, 8.0, 6.0, 4.0, 3.0, 2.5, 2.0, 1.5)
+    # ★h を「T/h が整数」になる点だけで振ってはいけない。整数比では占有ボクセルの
+    #   枚数がぴったり T/h 枚になり、誤差 0.000 mm が並んで「量子化は起きない」に
+    #   見える(2026-09-07 に一度そう書いた)。h は連続に振る。
+    hlist = [round(x, 4) for x in np.linspace(0.125, 1.0, 12)]
+    ratios = tuple(T_WALL / h for h in hlist)
     rows, hs, e_ero, e_ins, e_prb, n_prb = [], [], [], [], [], []
-    for tr in ratios:
-        h = T_WALL / tr
+    for h in hlist:
+        tr = T_WALL / h
         _, occ, gray, res, _ = coupon(h)
         t_e = thickness_erosion(occ, h)
         t_i = thickness_inscribed(occ, h)
