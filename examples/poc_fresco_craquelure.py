@@ -389,12 +389,13 @@ def measure(sc: dict, det: dict) -> dict:
     # --- 直線度・異方性: 枝ごとに 弦 / 弧 ---
     st, L, th = [], [], []
     nb = ndi.convolve(det["branch"].astype(int), np.ones((3, 3), int), mode="constant") - 1
-    for k in range(1, int(bl.max()) + 1):
-        ys, xs = np.nonzero(bl == k)
-        if len(ys) < 6:
+    for k, sl in enumerate(ndi.find_objects(bl), start=1):
+        if sl is None:
             continue
-        m = bl == k
-        end = m & (nb <= 1)
+        m = bl[sl] == k                                   # 枝の外接箱だけ見る(速さのため)
+        if m.sum() < 6:
+            continue
+        end = m & (nb[sl] <= 1)
         ey, ex = np.nonzero(end)
         if len(ey) != 2:
             continue
