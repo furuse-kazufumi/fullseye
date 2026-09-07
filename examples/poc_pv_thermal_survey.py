@@ -364,11 +364,14 @@ def layout() -> dict:
     kill_fault = (mod_id == MOD_STR) & (sub == SUB_STR)
 
     # --- モジュールごとの熱の出方の差(取付と風の当たり方)-------------------- #
+    #     ★MOD_SHELTER は**健全なのに風が当たらない**モジュール。3 節でこれが
+    #       全体平均基準では「故障」に化ける。
     rng = np.random.default_rng(SEED)
-    shelter = np.array([1.00, 0.94, 0.98])          # 内側の列は風が当たらない
     u_scale = np.ones((NY, NX))
     for m in range(NMX * NMY):
-        f = shelter[m // NMX] * (1.0 + 0.045 * rng.standard_normal())
+        f = 1.0 + 0.045 * rng.standard_normal()
+        if m == MOD_SHELTER:
+            f *= U_SHELTER
         u_scale[mod_id == m] = f
 
     # --- 撮影中の日射の変化(視野の上下で ±IRR_DRIFT/2)------------------------ #
