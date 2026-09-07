@@ -594,30 +594,33 @@ def section_sweep(pair) -> dict:
     print("       濡れ 0.2 の時点では水帯を捨てる効果が大きい: %.3f -> %.3f。"
           % (out_det["wet"]["d2"][1], out_det["wet"]["d2w"][1]))
 
+    short = {"ratio": "比(ゼロ点)", "sam": "生 SAM", "cr": "連続体除去",
+             "d2": "2 次微分", "d2w": "2 次微分+水帯除外"}
     figs.save_plot(
         "sweep_raw_sam",
         [(l, LEVELS, out_det[k]["sam"]) for k, l, _u, _g in FACTORS],
-        xlabel="要因の強さ(正規化)[-]", ylabel="検出画素の材質別再現率 [-]",
-        title="生 SAM: 単独で掃引したときの崖", ylim=(0.0, 1.05),
+        xlabel="要因の強さ(正規化)[-]", size=FIG_SIZE, ylim=(0.0, 1.40),
+        title="生 SAM の崖 / 縦軸 = 検出画素の材質別再現率 [-]",
         caption="乗算汚れ・傾き・重なりは平ら(SAM は明るさに不変)。落ちるのは濡れと加算。")
     figs.save_plot(
         "sweep_methods_add",
-        [(m.split(":")[0], LEVELS, out_det["dirt_add"][k])
-         for k, m in SWEEP_METHODS if k in out_det["dirt_add"]],
-        xlabel="加算ベースラインの強さ [-]", ylabel="検出画素の材質別再現率 [-]",
-        title="加算的な汚れ: 2 次微分だけが平ら", ylim=(0.0, 1.05))
+        [(short[k], LEVELS, out_det["dirt_add"][k])
+         for k, _m in SWEEP_METHODS if k in out_det["dirt_add"]],
+        xlabel="加算ベースラインの強さ [-]", size=FIG_SIZE, ylim=(0.0, 1.40),
+        title="加算的な汚れ: 2 次微分だけが平ら / 縦軸 = 検出画素の材質別再現率 [-]")
     figs.save_plot(
         "sweep_methods_wet",
-        [(m.split(":")[0], LEVELS, out_det["wet"][k])
-         for k, m in SWEEP_METHODS if k in out_det["wet"]],
-        xlabel="水の深さ [-]", ylabel="検出画素の材質別再現率 [-]",
-        title="濡れ: ★予測が外れた —— 2 次微分は水の広い帯を潰す", ylim=(0.0, 1.05))
+        [(short[k], LEVELS, out_det["wet"][k])
+         for k, _m in SWEEP_METHODS if k in out_det["wet"]],
+        xlabel="水の深さ [-]", size=FIG_SIZE, ylim=(0.0, 1.40),
+        title="濡れ: ★予測が外れた —— 2 次微分は水の広い帯を潰す "
+              "/ 縦軸 = 検出画素の材質別再現率 [-]")
     figs.save_plot(
         "sweep_detection",
         [("分類だけ(検出画素)", LEVELS, out_det["dirt_mul"]["sam"]),
          ("検出も入れる", LEVELS, out["dirt_mul"]["sam"])],
-        xlabel="乗算的な汚れの強さ [-]", ylabel="材質別再現率 [-]",
-        title="乗算汚れが壊すのは分類ではなく**検出**", ylim=(0.0, 1.05))
+        xlabel="乗算的な汚れの強さ [-]", size=FIG_SIZE, ylim=(0.0, 1.40),
+        title="乗算汚れが壊すのは分類ではなく検出 / 縦軸 = 材質別再現率 [-]")
     return {"all": out, "det": out_det, "hidden": hidden, "supp": supp}
 
 
