@@ -952,8 +952,9 @@ def main() -> int:
           % (det["wet"]["d2"][-1], det["wet"]["sam"][-1]))
     print("  * 効く順序: " + " > ".join("%s(%+.3f)" % (l, d)
                                         for d, l, _m, _s in ab["gains"]))
-    print("  * 先に壊れる組はライブラリだけで予測できる(順位相関 %.2f、"
-          "1 位 予測 %s / 実測 %s)。" % (pr["rho"], pr["top_pred"], pr["top_meas"]))
+    print("  * 先に壊れる組はライブラリだけで予測できる —— ただし劣化が弱いとき"
+          "だけ(雑音のみ: 相関 %.2f・1 位 %s = 予測どおり / 全部入り: %.2f・%s)。"
+          % (pr["rho_noise"], pr["top_noise"], pr["rho"], pr["top_meas"]))
     print("  * 境界を捨てると再現率 %+.3f、組成の誤差 %+.2f pp。"
           % (mx["pure"] - mx["all"], mx["e_pure"] - mx["e_all"]))
 
