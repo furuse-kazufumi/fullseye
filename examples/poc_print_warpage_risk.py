@@ -1017,7 +1017,8 @@ def main() -> None:
     assert rc > 4.0 and rp < 1.3, (rc, rp)
     assert smax[-1] / smax[0] > 1.2, smax
     assert abs(fedge[-1] / fedge[-2] - 1.0) < 0.05, fedge
-    assert cv < 0.05, cv
+    assert cv > 0.5, cv                      # 剥離力は EIκ で決まらない
+    assert trio_spread > 10.0, trio_spread   # 三つ子で端の力が 1 桁違う
     assert grid.max() / grid.min() > 5.0, grid
 
     print("\n" + "=" * 78)

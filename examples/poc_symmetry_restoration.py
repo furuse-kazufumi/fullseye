@@ -440,9 +440,9 @@ def section_zero_point(S: dict) -> dict:
             "restore_error_maps",
             [with_scalebar(e0, S_, lo=0.0), with_scalebar(e1, S_, lo=0.0),
              with_scalebar(e2, S_, lo=0.0)],
-            ["(0) 何もしない: RMS %.2f mm" % np.sqrt(np.mean(d0 ** 2)),
-             "(1) ゼロ点 穴埋め補間: RMS %.2f mm" % z1["rms"],
-             "(2) 対称復元(面は真値): RMS %.2f mm" % s2["rms"]],
+            ["何もしない: RMS %.2f mm" % np.sqrt(np.mean(d0 ** 2)),
+             "ゼロ点 穴埋め補間: RMS %.2f mm" % z1["rms"],
+             "対称復元(面は真値): RMS %.2f mm" % s2["rms"]],
             title="欠損部の復元誤差地図 [mm](0〜%.0f mm、右端が目盛り)" % S_,
             ncols=3,
             caption="失われた真値の点から復元点群までの距離(符号なし、%.0f mm で頭打ち)。"
@@ -740,10 +740,10 @@ def section_controls(S: dict, Z: dict, O: dict) -> dict:
         xs, ys, _, _ = grid_xy()
         S_ = 6.0
         panels, caps = [], []
-        for key, lab in (("truth", "(a) 真値の面"),
-                         ("damaged_auto", "(c) 欠損のまま自動推定(軸ごと飛ぶ)"),
-                         ("damaged", "(c') 軸は人が選ぶ"),
-                         ("trim", "(d) 対称トリミング後")):
+        for key, lab in (("truth", "真値の面"),
+                         ("damaged_auto", "欠損のまま自動推定(軸ごと飛ぶ)"),
+                         ("damaged", "軸は人が選ぶ"),
+                         ("trim", "対称トリミング後")):
             r = restore_symmetric(surv, res[key]["p0"], res[key]["n"], tau)
             s = score_restoration(gt, r["restored"], r["fill"])
             panels.append(with_scalebar(scatter_map(gt, s["per_pt"], xs, ys), S_, lo=0.0))
