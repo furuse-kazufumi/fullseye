@@ -916,7 +916,7 @@ def section_roughness(v_thr: float) -> dict:
     figs.save_plot("roughness", [("実測 E2 誤差", list(roughs), errs),
                                  ("表からの予測", list(roughs), [100 * (p / fR["h"] - 1) for p in pred_h])],
                    xlabel="GGX 粗さ", ylabel="E2 の相対誤差 [%]", title="粗さで暗部の定義が動く",
-                   caption="赤帯が消えるより前に、暗→色の境界が壁側へ寄って上に外れる。")
+                   caption="予想(暗→色の境界が先に動く)は外れ、赤帯の消失(0.5)と同時に壊れ、0.6 で全体が暗部に落ちる。")
     lo, hi = lut_response(0.15), lut_response(0.5)
     figs.save_plot("ring_lut_rough", [("R 0.15", lo["alpha"], lo["R"]), ("G 0.15", lo["alpha"], lo["G"]),
                                       ("R 0.50", hi["alpha"], hi["R"]), ("G 0.50", hi["alpha"], hi["G"])],

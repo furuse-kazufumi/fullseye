@@ -60,5 +60,25 @@
    560,
    3
   ]
+ },
+ {
+  "file": "07_vignette.png",
+  "name": "vignette",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_snr.png",
+  "name": "snr",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
