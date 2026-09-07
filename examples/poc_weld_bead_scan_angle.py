@@ -1202,8 +1202,9 @@ def make_figures(pf, sw, geo, opt, est2, cal, occ) -> None:
                     caption="予測 = 遮蔽だけの誤差と 1/sinθ の雑音の二乗和。"
                             "「甘い θ*」= 測れた断面だけで数えたときの最小。")
 
-    figs.save_table("calibration", ["量", "予測 [%]", "実測 [%]"], cal["rows"],
-                    title="高さ倍率 +1 % の校正誤差が各量に出る大きさ",
+    figs.save_table("calibration",
+                    ["量", "校正誤差 +1 % の予測 [%]", "実測 [%]"], cal["rows"],
+                    title="校正誤差の効き方",
                     caption="脚長は sin²(母材角)、溝深さは cos²(母材角) —— "
                             "同じ母材面で足すと 1。")
 

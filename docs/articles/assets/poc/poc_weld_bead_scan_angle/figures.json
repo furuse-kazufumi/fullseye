@@ -72,7 +72,19 @@
   "tsv": "07_optimum.tsv"
  },
  {
-  "file": "08_stripe_width.png",
+  "file": "08_calibration.png",
+  "name": "calibration",
+  "caption": "脚長は sin²(母材角)、溝深さは cos²(母材角) —— 同じ母材面で足すと 1。",
+  "shape": [
+   224,
+   334,
+   3
+  ],
+  "csv": "08_calibration.csv",
+  "tsv": "08_calibration.tsv"
+ },
+ {
+  "file": "09_stripe_width.png",
   "name": "stripe_width",
   "caption": "重心は √σ で増え、3 点当てはめはもっと速く増える。ゼロ点(最大値の画素)は幅にほぼ無関係な 1 画素の階段。",
   "shape": [
@@ -82,7 +94,7 @@
   ]
  },
  {
-  "file": "09_map_visibility.png",
+  "file": "10_map_visibility.png",
   "name": "map_visibility",
   "caption": "法線は自己遮蔽だけを見る。水平線の規則は投げかけ影も入るので必ず広い。",
   "shape": [
