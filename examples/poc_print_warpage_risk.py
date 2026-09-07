@@ -876,7 +876,7 @@ def section_risk_map():
           % DEV_ALLOW)
     print("=" * 78)
     hs = [1.0, 0.75, 0.5, 0.375, 0.25, 0.2]
-    wns = [16.0, 8.0, 4.0, 2.0, 1.0, 0.5]
+    wns = [16.0, 8.0, 4.0, 2.0, 1.0]
     grid = np.zeros((len(hs), len(wns)))
     for a, h in enumerate(hs):
         for b, wn in enumerate(wns):

@@ -48,5 +48,59 @@
    700,
    3
   ]
+ },
+ {
+  "file": "06_controls.png",
+  "name": "controls",
+  "caption": "(b) と (c) の差が「欠損そのものが推定を歪める量」。ゼロ点(穴埋め補間)は RMS 1.60 mm。",
+  "shape": [
+   248,
+   711,
+   3
+  ],
+  "csv": "06_controls.csv",
+  "tsv": "06_controls.tsv"
+ },
+ {
+  "file": "07_controls_maps.png",
+  "name": "controls_maps",
+  "caption": "欠損のまま推定した面で復元すると、欠損部の全体が一様にずれる(位置ずれの署名)。",
+  "shape": [
+   795,
+   566,
+   3
+  ]
+ },
+ {
+  "file": "08_defect_size.png",
+  "name": "defect_size",
+  "caption": "正しい軸に固定しても位置は重心のずれに引きずられる。自動選択が軸を取り違えるのは失った点 3.1 % 以上。",
+  "shape": [
+   430,
+   700,
+   3
+  ]
+ },
+ {
+  "file": "09_false_symmetry.png",
+  "name": "false_symmetry",
+  "caption": "欠損がどちら側かで、装飾は**複製される**か**消される**かが決まる(面は真値でもこうなる)。",
+  "shape": [
+   795,
+   566,
+   3
+  ]
+ },
+ {
+  "file": "10_false_symmetry_table.png",
+  "name": "false_symmetry_table",
+  "caption": "真の非対称 RMS 0.75 mm。復元部は定義上ぴったり対称になるので、見かけの非対称度は 0.75 -> 0.61 / 0.61 mm に下がる。",
+  "shape": [
+   128,
+   758,
+   3
+  ],
+  "csv": "10_false_symmetry_table.csv",
+  "tsv": "10_false_symmetry_table.tsv"
  }
 ]
