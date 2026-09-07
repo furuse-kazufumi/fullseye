@@ -427,10 +427,16 @@ def _smooth_masked(v, ok):
 
 
 def _cross_tau(x, d, i, j):
-    """``d`` が ``-TAU`` を横切る位置を線形内挿(i = 内側、j = その隣)。"""
+    """``d`` が ``-TAU`` を横切る位置を線形内挿(i = 内側、j = その隣)。
+
+    ★内挿は必ず 2 列のあいだに**留める**。2 点の差が雑音なみに小さいと
+    傾きの逆数が発散して、つま先が視野の外(4 mm 先)へ飛ぶ(16 断面の 1 本で
+    実際に起きた)。外挿を許す 1 行が、まれに桁違いの外れ値を作る。
+    """
     if not (np.isfinite(d[i]) and np.isfinite(d[j])) or d[i] == d[j]:
         return float(x[i])
-    return float(x[i] + (d[i] + TAU) * (x[j] - x[i]) / (d[i] - d[j]))
+    v = float(x[i] + (d[i] + TAU) * (x[j] - x[i]) / (d[i] - d[j]))
+    return float(np.clip(v, min(x[i], x[j]), max(x[i], x[j])))
 
 
 def quantities_one(h, lineL, lineR, root) -> dict:
