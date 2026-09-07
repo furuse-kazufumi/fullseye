@@ -403,11 +403,12 @@ def section_snr_cliff() -> dict:
              crlb_sigma_x(make_records(0.0, SEED))))
     assert abs(flat_chk / crlb_flat(0.0) - 1.0) < 0.02, (flat_chk, crlb_flat(0.0))
 
-    snrs = (10.0, 5.0, 0.0, -5.0, -10.0, -15.0, -20.0, -25.0, -30.0)
+    snrs = (10.0, 5.0, 0.0, -2.5, -5.0, -7.5, -10.0, -12.5, -15.0, -20.0, -30.0)
     seeds = [SEED + 7 * k for k in range(24)]
     names = [n for n, _ in METHODS]
     fine = {n: [] for n in names}
     gross = {n: [] for n in names}
+    allrms = {n: [] for n in names}
     crlb, crlb_num = [], []
 
     for snr in snrs:
@@ -425,6 +426,7 @@ def section_snr_cliff() -> dict:
             e = np.asarray(errs[name])
             ok = np.abs(e) <= GROSS_M
             gross[name].append(100.0 * float(np.mean(~ok)))
+            allrms[name].append(float(np.sqrt(np.mean(e ** 2))))
             fine[name].append(float(np.sqrt(np.mean(e[ok] ** 2))) if ok.any()
                               else float("nan"))
 
