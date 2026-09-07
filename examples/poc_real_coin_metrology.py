@@ -103,6 +103,7 @@ def gradient_of(a):
 # --------------------------------------------------------------------------- #
 def section_truth(img):
     f, _k, m = segment(img)
+    m_lab = np.asarray(L.blob_label(m))
     plateau = [(a, int((f["area"] >= a).sum()))
                for a in (0, 50, 100, 150, 200, 400, 800, 1200)]
 
@@ -119,6 +120,21 @@ def section_truth(img):
     hough = [(k, int((vote >= k * vote.max()).sum()))
              for k in (0.30, 0.35, 0.40, 0.45, 0.50)]
 
+    # ★数が合っていても、同じものを数えているとは限らない。円 1 個が成分 1 個に
+    #   きっちり収まるか(1 対 1)を確かめる —— これをやらないと「24 = 24」は
+    #   偶然でも成立する(2 枚くっついた塊 1 個 + ごみ 1 個、でも 24)。
+    sel = vote >= 0.30 * vote.max()
+    per = dict((int(i), 0) for i in f["label"][f["area"] >= AREA_MIN])
+    outside = 0
+    for x, y in zip(_cx[sel], _cy[sel]):
+        lb = int(m_lab[y, x]) if m_lab[y, x] else 0
+        if lb in per:
+            per[lb] += 1
+        else:
+            outside += 1
+    hist = np.bincount(np.asarray(list(per.values()), int), minlength=3)
+    one_to_one = (int(hist[0]), int(hist[1]), int(hist[2:].sum()), outside)
+
     # (d) fullseye 自身の hough_circle_trans は、この用途では真値に届かない
     own = []
     for b in (0.5, 0.7, 0.9, 1.0):
@@ -134,7 +150,7 @@ def section_truth(img):
     em = ndi.binary_fill_holes(em)
     fe = L.blob_features(np.asarray(L.blob_label(em)))
     n_sobel = int((fe["area"] >= AREA_MIN).sum())
-    return plateau, hough, n_sobel, own, f, m
+    return plateau, hough, n_sobel, own, one_to_one, f, m
 
 
 # --------------------------------------------------------------------------- #
@@ -201,7 +217,7 @@ def main() -> None:
           % (rows_bg[0], rows_bg[-1], cols_bg[0], cols_bg[-1]))
 
     # --- 1 ---------------------------------------------------------------- #
-    plateau, hough, n_sobel, own, f, mask = section_truth(img)
+    plateau, hough, n_sobel, own, o2o, f, mask = section_truth(img)
     print("\n1. 真値を 3 つの独立な経路の一致で決める")
     print("   (a) 面積の平坦域: "
           + " / ".join("%d->%d" % p for p in plateau))
@@ -211,6 +227,9 @@ def main() -> None:
     print("   (d) fullseye の hough_circle_trans: "
           + " / ".join("b=%.1f->%d 峰" % o for o in own)
           + "  <- 真値に届かない")
+    print("   1 対 1 の検算: 円 0 個の成分 %d / 1 個 %d / 2 個以上 %d / "
+          "成分の外に落ちた円 %d" % o2o)
+    assert o2o == (0, TRUE_N, 0, 0), o2o
     flat_counts = set(n for a, n in plateau if 50 <= a <= 800)
     hough_counts = set(n for _k, n in hough)
     print("   -> 平坦域 %s / Hough %s / Sobel %d"
