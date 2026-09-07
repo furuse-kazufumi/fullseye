@@ -302,6 +302,7 @@ def observe(k: int, rng, density: float | None = None, deteriorate=True,
     x = rng.uniform(0.0, LSPAN, n_g)
     s = rng.uniform(0.0, S_TOTAL, n_g)
     p, n, seg = girder_surface(x, s)
+    p_nom = p.copy()          # ★遮蔽の判定は**設計形状**で行う(下を見よ)
     gp = [pp for pp in parts if pp in ("deflect", "spall", "crack")]
     if gp:
         p = p + disp_girder(x, s, seg, n, kk, parts=gp)
