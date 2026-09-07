@@ -301,16 +301,16 @@ def region_classes() -> dict:
     Y, X = grid()
     hard = []
     for (y0, y1, x0, x1, _) in FIELDS.values():
-        hard.append(rect(Y, X, y0, y1, x0, x1, None) > 0.5)
+        hard.append(rect_px(Y, X, y0, y1, x0, x1, None) > 0.5)
     fr = FIELD_ROT
     hard.append(rot_rect(Y, X, fr["cy"], fr["cx"], fr["h"], fr["w"], fr["deg"], None) > 0.5)
     for (y0, x0, y1, x1) in ROADS.values():
         hard.append(segment(Y, X, y0, x0, y1, x1, ROAD_W, None) > 0.5)
     for (y0, y1, x0, x1) in BUILDINGS.values():
-        hard.append(rect(Y, X, y0, y1, x0, x1, None) > 0.5)
+        hard.append(rect_px(Y, X, y0, y1, x0, x1, None) > 0.5)
     lk = LAKE
     hard.append(disk(Y, X, lk["cy"], lk["cx"], lk["r1"], None) > 0.5)
-    forest = rect(Y, X, *FOREST[:4], None) > 0.5
+    forest = rect_px(Y, X, *FOREST[:4], None) > 0.5
     hard.append(forest)
     edge = np.zeros((N, N), bool)
     for h in hard:
