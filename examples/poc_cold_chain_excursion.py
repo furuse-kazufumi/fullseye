@@ -907,9 +907,26 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
     conv_pass = all(bool(says_pass[y, x]) for y, x in conv)
     print("\n  慣用の 3 点 %s(扉寄り・中央・吹き出し口寄り、いずれも荷の中): %s"
           % (conv, "**偽合格**(3 点とも合格と言う)" if conv_pass
-             else "不合格を出せた"))
-    print("  ★ランダム 3 個の偽合格 %.1f %% と比べる —— 規約の 3 点は"
-          "「代表点」であって「最悪点」ではない。" % rates[2])
+             else "不合格を出せた(扉寄りの 1 点が最悪ゾーンに入った)"))
+    # ★「当たった」のが規約のおかげか偶然かを分ける: 3 点それぞれを ±1 m 揺らす。
+    jit = 0
+    trials = 2000
+    for _ in range(trials):
+        okk = True
+        for (y0, x0) in conv:
+            for _try in range(20):
+                y = int(np.clip(y0 + rng.integers(-5, 6), 0, NY - 1))
+                x = int(np.clip(x0 + rng.integers(-5, 6), 0, NX - 1))
+                if prod[y, x]:
+                    break
+            okk &= bool(says_pass[y, x])
+        jit += int(okk)
+    jit_rate = 100.0 * jit / trials
+    print("  ★その 3 点を**それぞれ ±1 m 揺らす**と偽合格 %.1f %%"
+          "(%d 通り)。ランダム 3 個は %.1f %%。"
+          % (jit_rate, trials, rates[2]))
+    print("     規約の 3 点が当たったのは**位置の 1 m の運**であって、規約が"
+          "最悪点を狙っているからではない —— 規約は「代表点」を選ぶ道具。")
 
     if figs.enabled():
         figs.save_plot("sweep_nlogger",
