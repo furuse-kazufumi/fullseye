@@ -418,7 +418,7 @@ def section_bowl(meas: dict) -> dict:
     figs.save_grid("false_edge_map", de_panels, ["jet の色差", "viridis の色差"],
                    ncols=2, title="隣接画素の色差マップ(明るい線 = 無い境目)",
                    caption="真の場に段差は 1 つも無い。線はすべて配色が作った。")
-    return {"bands": bands, "hit": hit}
+    return {"raw": raw_n, "gain": gain_n, "hit": hit}
 
 
 # --------------------------------------------------------------------------- #
