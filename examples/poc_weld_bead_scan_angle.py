@@ -436,6 +436,8 @@ def quantities_one(h, lineL, lineR, root) -> dict:
     のど厚は**根**が要り、根は 2 枚の面の交点なので片側が見えないと出せない。
     """
     out = {k: float("nan") for k in KEYS}
+    out.update({"m_" + k: 1.0 for k in KEYS})
+    out["xtl"] = out["xtr"] = float("nan")
     ok = np.isfinite(h)
     if ok.sum() < 40:
         return out
