@@ -312,15 +312,18 @@ def detect_sectors(ps: dict, sigma: float = SIG_M, thr: float = THR) -> list[np.
         r0 = int(round(row_c)) - MEAS_ROWS // 2
         prof = fil[max(0, r0):r0 + MEAS_ROWS].mean(axis=0)
         sm = np.asarray(fs.smooth_funct_1d_gauss(prof, sigma * OVS))
+        grad = np.asarray(fs.derivate_funct_1d(sm)) * OVS          # 輝度 / px
         # ★px へ戻す外縁半径は**測った行**のもの。扇形 15° 全体の中央値を使うと
         #   偏心成長で外縁が扇形の中で 10 px 以上動くので外側の年輪が全部ずれる
         #   (最初そう書いて年輪 18〜35 を丸ごと落とした)。
         rd = float(np.median(r_disc[max(0, r0):r0 + MEAS_ROWS]))
         pos = []
         for e in edges:
-            i = int(round(e["pos"]))
-            rise = sm[min(nr - 1, i + 2 * OVS)] - sm[max(0, i - 2 * OVS)]
-            if rise >= thr:
+            i = min(nr - 1, max(0, int(round(e["pos"]))))
+            # 段の強さは**勾配の山の高さ**(輝度/px)で判定する。「±2 px の上がり」
+            # だと 4 px の年輪は窓が 1 周期ぶんになって上がりが 0 になる
+            # (最初そう書いて幅 4 px の年輪をすべて落とした)。
+            if float(grad[max(0, i - 1):i + 2].max()) >= thr:
                 pos.append(e["pos"] * (rd / r_bar) / OVS)
         pos = np.asarray(pos, np.float64)
         out.append(pos[pos < rd / OVS - 2.5])
