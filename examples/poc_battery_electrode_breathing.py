@@ -352,11 +352,10 @@ def section_peak_locking() -> dict:
     print("  -> **雑音ゼロでも層別の伸びは数 %% ずれる**。1-2 章で層別が"
           " +1.014 / +0.958 %% と\n     ばらついたのは雑音ではなく、これ。")
 
+    grid = np.asarray(errs)                       # (ずらし量, 境界)
     figs.save_plot("peak_locking",
-                   [("推定 - 真値", np.tile(offs[:len(errs)], errs[0].size),
-                     np.concatenate([e[k] for k in range(errs[0].size) for e in [None]])
-                     if False else np.concatenate([np.asarray(errs)[:, k]
-                                                   for k in range(errs[0].size)])),
+                   [("境界ごとの誤差", np.repeat(offs[:grid.shape[0]], grid.shape[1]),
+                     grid.ravel()),
                     ("ゼロ", offs, np.zeros_like(offs))],
                    xlabel="積層を小数画素だけずらした量 [px]",
                    ylabel="境界位置の誤差 [px]",
