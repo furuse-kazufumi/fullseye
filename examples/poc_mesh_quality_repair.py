@@ -586,7 +586,9 @@ def section_count_by_type(scene: dict, defects: dict) -> dict:
         d0, s0 = depth_map(V, F)
         d1, s1 = depth_map(W, G)
         both = (s0 > 0) & (s1 > 0)
-        diff = np.where(both, np.nan_to_num(d1 - d0), 0.0)
+        # ★飽和させて見せる。素の差は最大 %.2f mm で、そのまま塗ると
+        #   99 %% の画素が 0 の真っ黒になり「走ったが何も出ていない」図になる。
+        diff = np.clip(np.where(both, np.nan_to_num(d1 - d0), 0.0), -0.05, 0.05)
         figs.save_grid("defect_scene",
                        [render(V, F), render(W, G), diff],
                        ["健全", "6 種の欠陥を注入(合計 %d 件)"
