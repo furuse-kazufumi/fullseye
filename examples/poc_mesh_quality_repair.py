@@ -1014,6 +1014,29 @@ def section_tool_gaps(scene: dict) -> None:
           "``fs.ledger`` からしか呼べない。\n      同じメッシュ族なのに"
           "``fs.fill_holes`` は 1 行ファサードに在る —— 規約が揃っていない。")
 
+    # (g) 「退化」の定義が族の中で 3 通りある(9 節の実測)
+    rng = np.random.default_rng(SEED)
+    Vd, Fd = inject_slivers(V, F, 4, 1e-6, rng)[:2]
+    n_drop = len(Fd) - len(fs.remove_degenerate_faces(Vd, Fd)[1])
+    try:
+        L.face_normals((Vd, Fd))
+        raised = False
+    except ValueError:
+        raised = True
+    assert raised and n_drop > 0
+    print("  (g) ★「退化」の定義が族の中で食い違う。同じメッシュで"
+          "``face_normals`` は**全体を拒み**、\n      "
+          "``remove_degenerate_faces`` は %d 枚だけ落とし、外積が厳密に 0 の面は"
+          "それより少ない。\n      しきい値(面積の絶対値か、辺長との比か、"
+          "外積が 0 か)を族で 1 つに決めるべき。" % n_drop)
+
+    # (h) 簡略化が退化面を作る —— 直す族が壊す側にも回る
+    V2, F2 = fs.decimate_qem(V, F, int(len(F) * 0.7))
+    n_new = len(F2) - len(fs.remove_degenerate_faces(V2, F2)[1])
+    print("  (h) ``decimate_qem`` の出力に退化面が %d 枚出た(30 %% 削減)。"
+          "簡略化の直後は\n      ``remove_degenerate_faces`` を通さないと"
+          "``vertex_curvature`` が ValueError で落ちる。" % n_new)
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
