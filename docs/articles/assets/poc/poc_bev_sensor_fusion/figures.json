@@ -25,7 +25,7 @@
   "caption": "画像 320 x 240 px、焦点距離 265 px。画像側は角度に比例し、BEV 側は距離に比例する。",
   "shape": [
    200,
-   469,
+   549,
    3
   ],
   "csv": "03_reprojection.csv",
@@ -78,7 +78,7 @@
  {
   "file": "08_cliff_rotation.png",
   "name": "cliff_rotation",
-  "caption": "水平の 2 本は単センサのゼロ点。yaw 1 度では融合の 2 規則が LiDAR 単独を下回る。",
+  "caption": "水平の 2 本は単センサのゼロ点。点の 6 割以上がセルを跨ぐ yaw 0.5 度でも IoU はまだ落ちず、ずれが車幅に近づく数度で単センサに追い抜かれる。",
   "shape": [
    360,
    560,

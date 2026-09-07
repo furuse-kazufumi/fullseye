@@ -198,5 +198,17 @@
    434,
    3
   ]
+ },
+ {
+  "file": "20_risk_map_table.png",
+  "name": "risk_map_table",
+  "caption": "",
+  "shape": [
+   224,
+   411,
+   3
+  ],
+  "csv": "20_risk_map_table.csv",
+  "tsv": "20_risk_map_table.tsv"
  }
 ]
