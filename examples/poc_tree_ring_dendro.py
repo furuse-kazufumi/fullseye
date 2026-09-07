@@ -478,7 +478,7 @@ def section_baseline() -> dict:
     # 図: 展開図に検出(赤)と真値(青)を重ねる
     rgb = np.repeat(c["pol"][..., None], 3, axis=2)
     for s in range(N_SECT):
-        row = int((s + 0.5) * SECT_ROWS)
+        row = sector_row(s)
         for p in c["truths"][s]["pos"]:
             j = int(round(p))
             if 0 <= j < rgb.shape[1]:
