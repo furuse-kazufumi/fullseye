@@ -646,12 +646,16 @@ def section_cliff_width() -> dict:
         print("      %.2f       %.2f      %.3f          %.4f        %.4f       %d/%d"
               % (w0, w0 / PX_MM, peak, si, sb, nz, n))
 
+    # 崖の位置を w/σ で数え直す(期ごとに σ が違うので mm では境界がぼやける)
+    ratio_live = [x for x, ok in pairs if ok]
+    ratio_dead = [x for x, ok in pairs if not ok]
+    wrong = sum(1 for x, ok in pairs if ok != (x >= 1.349))
+    print("\n  ★崖を w/σ で数え直す(%d 枚)。2 値化が値を返した最小の w/σ = %.3f、"
+          "返さなかった最大 = %.3f。" % (len(pairs), min(ratio_live), max(ratio_dead)))
+    print("     予測 1.349 で線を引くと %d/%d 枚しか外れない(誤り %.1f %%)。"
+          % (wrong, len(pairs), 100 * wrong / len(pairs)))
+    assert wrong <= 0.15 * len(pairs), (wrong, len(pairs))
     dead = [w for w, g in zip(w0s, gb) if abs(g) < 1e-9]
-    print("\n  ★2 値化が全期ゼロ(何も返さない)なのは %s mm。"
-          % (", ".join("%.2f" % w for w in dead) if dead else "(この掃引には無い)"))
-    print("     予測の臨界幅 %.3f mm と %s。" % (
-        wc_px * PX_MM,
-        "整合" if (not dead or max(dead) <= wc_px * PX_MM + 0.05) else "食い違う"))
     live = [g for g in gb if abs(g) > 1e-9]
     print("  ★★**2 値化の成長率は初期の幅で %.4f 〜 %.4f mm/年 と %.0f 倍動く**"
           "(真値はどれも %.4f)。" % (min(live), max(live), max(live) / max(min(live), 1e-9),
