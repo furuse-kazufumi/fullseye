@@ -743,10 +743,15 @@ def main() -> None:
              RATE_MM_YR))
     print("  * 幅を凍結した対照群でも 2 値化は %+.4f mm/年 動く。犯人はぼけ(%+.4f)。"
           % (ctrl["cond"]["全部"][1], ctrl["cond"]["ぼけだけ"][1]))
-    print("  * 据え直しの半画素は、経路が水平だと %.4f mm、傾き 0.35 だと %.4f mm 跳ねる。"
-          % (ph["sd_bin"][0], ph["sd_bin"][-1]))
-    print("  * 成長率の σ は閉形式 σ_w/(σ_t√N) と比 %.2f〜%.2f で一致。"
-          % (min(cl["ratios"]), max(cl["ratios"])))
+    print("  * 据え直しの半画素は、経路が水平だと %.4f mm、傾き 0.35 だと %.4f mm 跳ねる"
+          "(崖は傾き %.3f、予測 %.4f)。"
+          % (ph["sd_bin"][0], ph["sd_bin"][-1], ph["drop"], ph["m_crit"]))
+    print("  * 成長率の σ は閉形式 σ_w/(σ_t√N) と、積分法で比 %.2f〜%.2f、"
+          "2 値化で %.2f〜%.2f(階段なので下振れする)。"
+          % (min(cl["ratios"]), max(cl["ratios"]),
+             min(cl["ratios_bin"]), max(cl["ratios_bin"])))
+    print("  * 2 値化の成長率は初期幅だけで %.4f〜%.4f mm/年 と動く(真値 %.4f)。"
+          % (min(cw["live"]), max(cw["live"]), RATE_MM_YR))
     print("  * 2 値化の臨界幅の予測 %.3f mm に対し、全期ゼロは %s。"
           % (cw["wc_mm"], ", ".join("%.2f" % w for w in cw["dead"]) or "無し"))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
