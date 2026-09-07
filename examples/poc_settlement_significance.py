@@ -374,9 +374,13 @@ def section_zero(sc: dict) -> dict:
           % (np.nanmean(d1) * 1000, np.nanmean(
               m3c2(a0, b0, cores, n_fit)[0]) * 1000,
              (np.nanmean(d1) - np.nanmean(m3c2(a0, b0, cores, n_fit)[0])) * 1000))
-    print("\n  ★C2C は真の最大沈下 %.1f mm と同じ桁の値を**変化ゼロでも**返す"
-          "(中央値の差はわずか %+.2f mm)。符号も無い。"
-          % (S_MAX * 1000, np.nanmedian(c1) - np.nanmedian(c0)))
+    print("\n  ★C2C は真の最大沈下 %.1f mm の %.0f 倍の値を**変化ゼロでも**返す"
+          "(沈下ありとの中央値の差はわずか %+.2f mm)。符号も無い。"
+          % (S_MAX * 1000, np.nanmedian(c0) / (S_MAX * 1000),
+             np.nanmedian(c1) - np.nanmedian(c0)))
+    print("     正体は**点間隔**(密度 %.0f pt/m2 なら平均間隔 %.0f mm)—— "
+          "「いちばん近い点までの距離」は撒き直しただけで出る。"
+          % (RHO_B, 1000.0 / math.sqrt(RHO_B)))
     print("     M3C2 の平均 %.2f mm は真値の平均 %.2f mm と %+.2f mm。"
           % (np.nanmean(d1) * 1000, sc["s_mm"].mean(),
              np.nanmean(d1) * 1000 - sc["s_mm"].mean()))
