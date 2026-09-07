@@ -1473,7 +1473,7 @@ def main() -> int:
     cliff = section_cliff(zero, sc)
     rate = section_rate(obs, sc)
     pri = section_prism_and_crack(sc)
-    section_figures(sc, obs, zero, ctrl, rate)
+    section_figures(sc, zero, ctrl, rate)
     section_tool_gaps()
 
     print("\n" + "=" * 78)
