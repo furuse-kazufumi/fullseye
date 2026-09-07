@@ -40,7 +40,7 @@
     {
       "types": ["signal", "indices"],
       "sort": "signal",
-      "why": "どちらも (N,) の 1-D。",
+      "why": "どちらも (N,) の 1-D で、_SHAPE_OK['signal'] の契約を両方が満たす(畳めるかどうかは『意味が近いか』でなく『同じ sort の形の契約を両方が満たすか』で決まる)。添字を別 sort にすると、ピーク検出のような『信号を入れて添字を返す』op が下流と一切繋がらなくなる。",
       "crossing_measured": "indices_to_labels は連続な信号を渡すと ValueError('must hold whole numbers to be used as indices')。この 1 件だけは既に fail-closed で、他の 4 件の手本。",
       "fail_closed": true,
       "fail_closed_how": "indices_to_labels が整数でない値を既定で拒否する(extra_checks 不要)。",
