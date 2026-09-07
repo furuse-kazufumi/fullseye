@@ -210,7 +210,19 @@ def make_scene(kind: str, seed: int = SEED, **kw) -> dict:
     sc = dict(net)
     sc.update(ren)
     sc["kind"] = kind
+    _SCENES[key] = sc
     return sc
+
+
+_MEAS: dict = {}
+
+
+def measure_scene(sc: dict) -> dict:
+    """既定の op 列(xsk_meijering)で測る。同じシーンは memo。"""
+    key = id(sc)
+    if key not in _MEAS:
+        _MEAS[key] = measure(sc, extract_net(sc["img"]))
+    return _MEAS[key]
 
 
 # --------------------------------------------------------------------------- #
