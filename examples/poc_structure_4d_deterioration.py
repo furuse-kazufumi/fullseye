@@ -1243,23 +1243,23 @@ def section_prism_and_crack(sc: dict) -> dict:
     print("      閉形式: 三角断面の溝(半幅 h、深さ d)を半径 R の足跡で平均すると")
     print("        平均 = d·h·(2R) / (π R²) · (1/2)·2 = 2 d h / (π R)"
           "  ← **密度は入らない**")
-    print("\n       溝の全幅[mm]  予測の平均[mm]  足跡積分[mm]   比")
-    rng = np.random.default_rng(7)
-    ang = rng.uniform(0, 2 * math.pi, 4000)
-    rad = R_CYL * np.sqrt(rng.uniform(0, 1, 4000))
+    print("\n       溝の全幅[mm]  予測の平均[mm]  足跡積分[mm]   比    "
+          "実測(法線方向)[mm]")
     hw_l, pred_l, num_l = [], [], []
     for hw in (0.003, 0.006, 0.0125, 0.025, 0.050, 0.100):
         pred = 2.0 * CRACK_MM[2] * hw / (math.pi * R_CYL)
-        xs = CRACK_X + rad * np.cos(ang)
-        num = float(np.mean(CRACK_MM[2]
-                            * np.maximum(0.0, 1.0 - np.abs(xs - CRACK_X) / hw)))
+        # 足跡(半径 R の円板)での厳密な平均 —— 1-D の求積で出す
+        u = np.linspace(-min(hw, R_CYL), min(hw, R_CYL), 4001)
+        chord = 2.0 * np.sqrt(np.maximum(0.0, R_CYL ** 2 - u ** 2))
+        prof = CRACK_MM[2] * np.maximum(0.0, 1.0 - np.abs(u) / hw)
+        num = float(np.trapezoid(prof * chord, u) / (math.pi * R_CYL ** 2))
         hw_l.append(2000 * hw)
         pred_l.append(pred)
         num_l.append(num)
         print("       %10.1f %14.4f %13.4f %7.3f"
               % (2000 * hw, pred, num, num / max(pred, 1e-9)))
-    print("      ★予測と足跡積分の比は %.3f 〜 %.3f(溝が足跡より広くなると"
-          "崩れる = 全幅 %.0f mm 以上)。"
+    print("      ★予測(2dh/(πR))と厳密な足跡積分の比は %.3f 〜 %.3f"
+          "(溝が足跡に近づくと弦が縮んで崩れる = 全幅 %.0f mm 以上)。"
           % (min(n / p for n, p in zip(num_l[:4], pred_l[:4])),
              max(n / p for n, p in zip(num_l[:4], pred_l[:4])), 2000 * R_CYL))
     need = math.pi * R_CYL * 2.0 * 2.0 / (2.0 * CRACK_MM[2]) * 1000
