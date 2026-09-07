@@ -1134,11 +1134,16 @@ def main() -> int:
           % (max(abs(p - m) for p, m in zip(rot["pred"], rot["meas"])),
              best, cross))
     kr, kt = "回転 %.2f 度" % BAND_YAW, "並進 %.0f mm" % (1000 * BAND_SHIFT)
-    print("  * 同じずれ量で距離帯を割ると、回転は遠 / 近 %.2f、並進は %.2f。"
-          "**壊れる場所が違う**のに、融合するとその差は %.2f まで薄まる。"
-          % (bands[("cam", kr)][3] / max(bands[("cam", kr)][1], 1e-9),
-             bands[("cam", kt)][3] / max(bands[("cam", kt)][1], 1e-9),
-             bands[("max", kr)][3] / max(bands[("max", kr)][1], 1e-9)))
+    b0 = bands[("cam", "誤差なし")]
+    drop = {k: [1 - v / max(u, 1e-9) for v, u in zip(bands[("cam", k)], b0)]
+            for k in (kr, kt)}
+    print("  * 同じずれ量で距離帯を割ると、カメラ単独の低下率は 回転 %.0f→%.0f %%"
+          "(遠方ほど大きい)、並進 %.0f→%.0f %%(帯によらない)。"
+          "融合すると遠 / 近の比は %.2f → %.2f に薄まる。"
+          % (100 * drop[kr][0], 100 * drop[kr][-1],
+             100 * drop[kt][0], 100 * drop[kt][-1],
+             bands[("cam", kr)][-1] / max(bands[("cam", kr)][0], 1e-9),
+             bands[("max", kr)][-1] / max(bands[("max", kr)][0], 1e-9)))
     print("  * 時刻ずれ 40 ms(%.1f m/s)は純並進 %.0f mm とほぼ同じ"
           "(IoU 差 %.4f)。"
           % (EGO_V, 1000 * EGO_V * 0.040,
