@@ -379,6 +379,7 @@ def metrics(occ, hgt, gt_occ, gt_h, evalm, esdf_gt) -> dict:
     return {"iou": iou, "prec": tp / max(tp + fp, 1), "rec": tp / max(tp + fn, 1),
             "tp": tp, "fp": fp, "fn": fn,
             "fp_dist": float(np.median(d)) if d.size else 0.0,
+            "fp_far": float(np.mean(d > 2 * CELL)) if d.size else 0.0,
             "h_err": float(np.median(herr)) if herr.size else float("nan")}
 
 
