@@ -493,6 +493,9 @@ def inspect_image(img: np.ndarray, theta: float = THETA) -> dict:
     x_body_l = FOV_X[0] + float(f["bbox_c0"][0]) * PX_MM
     x_body_r = FOV_X[0] + float(f["bbox_c1"][0]) * PX_MM
     xw = {"L": x_body_l - ELEC_L, "R": x_body_r + ELEC_L}
+    # 本体(電極の間の暗い部分)の長さ。浮けば cos ψ で縮む。電極まで暗くなる(ψ > 40°)と伸びる
+    body_len = x_body_r - x_body_l
+    body_nominal = BODY_L - 2 * ELEC_L
 
     pr0, pr1 = _row(-0.3), _row(0.3)
     out = {"xw": xw}
