@@ -112,5 +112,27 @@
    702,
    3
   ]
+ },
+ {
+  "file": "12_basin.png",
+  "name": "basin",
+  "caption": "この部品は 75 度まで収束する。90 度以降の別解は残差が床の数倍に上がるので見抜ける ——素の直方体ではそうならない(本文の対照群)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   272,
+   757,
+   3
+  ],
+  "csv": "13_controls.csv",
+  "tsv": "13_controls.tsv"
  }
 ]
