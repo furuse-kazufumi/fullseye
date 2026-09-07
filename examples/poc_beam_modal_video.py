@@ -80,9 +80,9 @@ import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
 
 # --- 場面の諸元 -------------------------------------------------------------- #
-H, W = 52, 192              # 画面 [px]
+H, W = 60, 192              # 画面 [px]
 X0, L = 8.0, 160.0          # 固定端の x と梁の長さ [px]
-YC, HB = 26.0, 8.0          # 梁の中心行と半厚 [px](16 px 厚)
+YC, HB = 30.0, 8.0          # 梁の中心行と半厚 [px](16 px 厚)
 F1 = 3.0                    # モード 1 の固有振動数 [Hz]
 ZETA = (0.02, 0.01, 0.005)  # 減衰比 ζ_n(真値)
 AMP_RATIO = (1.0, 0.4, 0.15)  # モード n の先端振幅 / A_1
@@ -97,7 +97,7 @@ N_ST = 12                   # 梁に沿った測点数
 SEED = 7
 BETA_L = (1.87510407, 4.69409113, 7.85475744)
 FN = tuple(F1 * (b / BETA_L[0]) ** 2 for b in BETA_L)   # 3.00 / 18.80 / 52.64 Hz
-BAND = (1.0, 60.0)          # 位相法の通過帯域 [Hz](fps 128 のとき)
+BAND = (0.5, 60.0)          # 位相法の通過帯域 [Hz](fps 128 のとき。手ぶれ 0.8 Hz も帯域内に入れる)
 
 
 # --------------------------------------------------------------------------- #
@@ -183,7 +183,7 @@ def make_clip(a1: float, fps: float = FPS, noise: float = NOISE, flicker: bool =
         video[i] = img
     if noise > 0:
         video += noise * rng.standard_normal(video.shape)
-    st_x = X0 + L * (np.arange(1, N_ST + 1) / N_ST)         # 測点(先端を含む)
+    st_x = X0 + L * (np.arange(1, N_ST + 1) / N_ST) - 3.0   # 測点(先端は縁から 3 px 内側)
     st_xn = (st_x - X0) / L
     return {"video": np.clip(video, 0, 1), "t": t, "fps": fps, "T": T, "a1": a1,
             "stations": st_x, "phi_true": mode_shapes(st_xn),
@@ -195,8 +195,12 @@ def make_clip(a1: float, fps: float = FPS, noise: float = NOISE, flicker: bool =
 # 推定器 —— ゼロ点(輝度)/ 位相法 / PIV                                        #
 # --------------------------------------------------------------------------- #
 def _bg_rows() -> np.ndarray:
-    """梁が決して入らない背景の行(手ぶれの参照)。"""
-    return np.r_[0:12, H - 12:H]
+    """梁が決して入らない背景の行(手ぶれの参照)。
+
+    画面の上下 8 行は使わない —— 位相法の dy は画面の縁で 0.33〜0.96 倍に
+    落ちる(道具の穴 (f)、実測)。
+    """
+    return np.r_[9:15, H - 15:H - 9]
 
 
 def stations_phase(clip: dict, correct_shake: bool = True, band=BAND) -> dict:
@@ -207,7 +211,7 @@ def stations_phase(clip: dict, correct_shake: bool = True, band=BAND) -> dict:
     fld = fs.ledger.phase_displacement(v, band[0], hi, fps)
     wgt = fld["weight"] * fld["valid"]
     dy = fld["dy"]
-    rows = slice(int(YC - HB + 2), int(YC + HB - 2))
+    rows = slice(int(YC - HB + 4), int(YC + HB - 4))     # 梁の内側 8 行(A_1 = 2 px でも出ない)
     out = np.zeros((clip["T"], N_ST))
     for i, x in enumerate(clip["stations"]):
         c = slice(int(round(x)) - 3, int(round(x)) + 2)
@@ -232,7 +236,7 @@ def stations_piv(clip: dict, correct_shake: bool = True) -> dict:
     v = clip["video"]
     r0, r1 = int(YC - HB), int(YC + HB)
     beam = v[:, r0:r1]
-    bg_top = v[:, 0:12]
+    bg_top = v[:, 2:14]
     win = 16
     ref = beam[0]
     T = clip["T"]
@@ -321,8 +325,12 @@ def bandpass_1d(u: np.ndarray, fps: float, f_lo: float, f_hi: float) -> np.ndarr
     op は「4×4 以上のフレーム」を要求するので、同じ時系列を 4×4 に敷き詰めて
     渡し、1 画素ぶんを取り出す(道具の穴 (d))。
     """
-    v = np.broadcast_to(u.reshape(-1, 1, 1), (len(u), 4, 4))
-    return np.asarray(fs.temporal_bandpass(np.ascontiguousarray(v), f_lo, f_hi, fps))[:, 0, 0]
+    n = len(u)
+    # 減衰する信号は先頭と末尾で値が違う(周期的でない)。そのまま DFT に掛けると
+    # 継ぎ目の段差が帯域内に漏れて包絡線を歪めるので、偶関数で折り返して繋ぐ。
+    ext = np.concatenate([u[::-1], u, u[::-1]])
+    v = np.broadcast_to(ext.reshape(-1, 1, 1), (3 * n, 4, 4))
+    return np.asarray(fs.temporal_bandpass(np.ascontiguousarray(v), f_lo, f_hi, fps))[n:2 * n, 0, 0]
 
 
 def damping_envelope(u: np.ndarray, fps: float, f_hat: float, half_band: float) -> float:

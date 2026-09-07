@@ -1,0 +1,148 @@
+[
+ {
+  "file": "01_scene_truth.png",
+  "name": "scene_truth",
+  "caption": "",
+  "shape": [
+   1293,
+   3640,
+   3
+  ]
+ },
+ {
+  "file": "02_resolution_sweep.png",
+  "name": "resolution_sweep",
+  "caption": "Tb.Th の平均は 2 px/骨梁でも持つが、BV/TV と分布は壊れている。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_thickness_distribution.png",
+  "name": "thickness_distribution",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_resolution_table.png",
+  "name": "resolution_table",
+  "caption": "括弧は定義による真値(Tb.Th 121.6 µm / Tb.Sp 803 µm)比。",
+  "shape": [
+   224,
+   918,
+   3
+  ],
+  "csv": "04_resolution_table.csv",
+  "tsv": "04_resolution_table.tsv"
+ },
+ {
+  "file": "05_scene_observed.png",
+  "name": "scene_observed",
+  "caption": "",
+  "shape": [
+   1335,
+   1230,
+   3
+  ]
+ },
+ {
+  "file": "06_thickness_map_measured.png",
+  "name": "thickness_map_measured",
+  "caption": "",
+  "shape": [
+   693,
+   1230,
+   3
+  ]
+ },
+ {
+  "file": "07_noise_sweep.png",
+  "name": "noise_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_noise_breakage.png",
+  "name": "noise_breakage",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_noise_remedies.png",
+  "name": "noise_remedies",
+  "caption": "",
+  "shape": [
+   176,
+   497,
+   3
+  ],
+  "csv": "09_noise_remedies.csv",
+  "tsv": "09_noise_remedies.tsv"
+ },
+ {
+  "file": "10_noise_masks.png",
+  "name": "noise_masks",
+  "caption": "",
+  "shape": [
+   535,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "11_threshold_sweep.png",
+  "name": "threshold_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_bias_masks.png",
+  "name": "bias_masks",
+  "caption": "",
+  "shape": [
+   735,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "13_bias_sweep.png",
+  "name": "bias_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   200,
+   427,
+   3
+  ],
+  "csv": "14_controls.csv",
+  "tsv": "14_controls.tsv"
+ }
+]
