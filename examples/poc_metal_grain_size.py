@@ -545,6 +545,8 @@ def section_cliff(gap_median: float, edge_mean: float) -> dict:
             acc["swallowed"].append(am["swallowed"])
             acc["lost"].append(am["lost"])
             acc["p_edge"].append(_edge_break_fraction(sc0["labels"], sc0["thin"], sc0["drawn"]))
+            # マスク上の途切れ率: 真値粒界の画素のうち、抜いた粒界マスクが 0 の割合
+            acc["hole"].append(1.0 - float(np.mean(bm["dyn"][sc["thin"]] > 0.5)))
         for k in err:
             err[k].append(float(np.mean(acc[k])))
         for k in fail:
