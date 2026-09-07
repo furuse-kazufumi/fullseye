@@ -675,8 +675,8 @@ def section_sound_speed() -> dict:
           % position(tau_mx, C_TRUE))
 
     # 漏水位置を管路全体に振って、3 つの条件を比べる
-    xs = np.arange(6.0, L_M - 5.0, 4.0)
-    ideal, wrong_c, mixed = [], [], []
+    xs = np.arange(6.0, L_M - 5.0, 3.0)
+    ideal, wrong_c, mixed, inwin = [], [], [], []
     for x in xs:
         r = make_records(10.0, SEED, x_leak=float(x))
         t = tau_bandlimited(r)
@@ -684,11 +684,21 @@ def section_sound_speed() -> dict:
         wrong_c.append(position(t, 1.10 * C_TRUE))
         rm = make_records(10.0, SEED, x_leak=float(x), pipe=PIPE_MIXED)
         mixed.append(position(tau_bandlimited(rm), C_TRUE))
+        inwin.append(abs(rm["tau_true"]) <= LAG_MAX / FS_HZ)
+    inwin = np.asarray(inwin)
     err_ideal = float(np.max(np.abs(np.asarray(ideal) - xs)))
     err_wrong = float(np.max(np.abs(np.asarray(wrong_c) - xs)))
-    err_mixed = float(np.max(np.abs(np.asarray(mixed) - xs)))
+    err_mixed = float(np.max(np.abs(np.asarray(mixed)[inwin] - xs[inwin])))
     print("\n   管路全体に漏水を振ったときの最大の外し [m]: "
           "(a) %.3f / (b) %.3f / (c) %.3f" % (err_ideal, err_wrong, err_mixed))
+    print("   ★(c) にはもう 1 段ある: 管種が違うと**真の遅延そのものが探索窓の"
+          "外へ出る**。\n     単一音速 %.0f m/s が許す窓は |τ| <= L/c = %.1f ms "
+          "だが、この管路では x < %.0f m と\n     x > %.0f m の漏水がその外にあり"
+          "(掃引 %d 点中 %d 点)、相関器は窓の中の雑音を掴む。\n     "
+          "**「相関のピークが立った」ことは、真の遅延が窓に入っている証拠に"
+          "ならない。**"
+          % (C_TRUE, 1e3 * LAG_MAX / FS_HZ, float(xs[inwin].min()),
+             float(xs[inwin].max()), len(xs), int((~inwin).sum())))
 
     figs.save_plot("sound_speed_error",
                    [("x = %.0f m(端寄り)実測" % X_LEAK, 100 * fracs, meas_far),
