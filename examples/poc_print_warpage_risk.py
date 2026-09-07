@@ -623,20 +623,22 @@ def section_predict_vs_measure(cases):
     kp, kf = np.array(kp), np.array(kf)
     err = np.abs(kf / kp - 1.0)
     good = [names[i] for i in range(len(names)) if err[i] < 0.004]
+    bad = [names[i] for i in range(len(names)) if err[i] >= 0.004]
     print("\n  0.4 %% 以内で当たったのは %d / %d 形状(%s)。"
           % (len(good), len(names), " / ".join(good)))
-    bad = sorted(range(len(names)), key=lambda i: -err[i])[:2]
-    print("  ★崩れたのは %s(比 %.3f)と %s(比 %.3f)—— どちらも"
-          "**同じ層面積を x 方向に別々に置いた**形。"
-          % (names[bad[0]], kf[bad[0]] / kp[bad[0]],
-             names[bad[1]], kf[bad[1]] / kp[bad[1]]))
-    d1 = cases["中央 1 柱"]["dev_fem"]
-    d2 = cases["両端 2 柱"]["dev_fem"]
-    print("  ★★面積の履歴が**完全に同じ**「中央 1 柱」と「両端 2 柱」で、"
-          "実測たわみは %.4f と %.4f mm(%.0f %% 違う)。"
-          % (d1, d2, 100 * abs(d1 - d2) / max(d1, d2)))
-    print("     閉形式は両方に同じ %.4e を返す —— **配置に構造的に盲目**。"
-          % cases["中央 1 柱"]["kappa_pred"])
+    print("  ★崩れた %d 形状(%s)は**すべて断面が x 方向に一様でない**形。"
+          % (len(bad), " / ".join("%s %.3f" % (n, kf[names.index(n)] / kp[names.index(n)])
+                                  for n in bad)))
+    dtrio = [cases[n]["dev_fem"] for n in TRIO]
+    spread = max(dtrio) / min(dtrio) - 1.0
+    print("  ★★層面積の履歴が**1 mm^2 も違わない**三つ子で、実測たわみは"
+          " %s mm(%.0f %% 開く)。"
+          % (" / ".join("%.4f" % d for d in dtrio), 100 * spread))
+    print("     閉形式は 3 つとも同じ %.4e を返す —— **配置に構造的に盲目**。"
+          % cases[TRIO[0]]["kappa_pred"])
+    print("     当たるのは面積を全長に均した「%s」だけ(比 %.4f)。"
+          % (TRIO[0], kf[names.index(TRIO[0])] / kp[names.index(TRIO[0])]))
+    d1, d2 = dtrio[0], dtrio[-1]
 
     lo, hi = float(min(kp.min(), kf.min())), float(max(kp.max(), kf.max()))
     figs.save_plot("predict_vs_measure",
