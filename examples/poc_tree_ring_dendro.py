@@ -435,16 +435,21 @@ def section_baseline() -> dict:
 
     # 図: 場面 / 真値地図 / 極座標展開(生・メディアン後)
     figs.save_grid("scene",
-                   [sc["img"], sc["ring"].astype(np.float64) / (sc["n"] + 1),
-                    c["pol"], c["fil"]],
+                   [sc["img"], sc["ring"].astype(np.float64) / (sc["n"] + 1)],
                    ["円板の画像(%d 年、割れ目 %d 本、腐朽 %d 個)" % (sc["n"], N_CRACK, len(DECAY)),
-                    "真値: 画素ごとの年番号",
-                    "極座標展開(横 = 半径 px、縦 = 角度 1°/行)",
-                    "θ 方向メディアン 9x3 の後"],
+                    "真値: 画素ごとの年番号"],
                    ncols=2, title="年輪の円板 —— 髄は中心から (%+.1f, %+.1f) px"
                                   % (PITH[0] - (N_PIX - 1) / 2, PITH[1] - (N_PIX - 1) / 2),
-                   caption="極座標展開は髄を中心に取っている。割れ目は展開図で横線になり、"
-                           "θ 方向のメディアンで消える。")
+                   caption="幅系列は AR(1) の気候信号、偏心成長 ±%.0f %%、周方向のうねり、"
+                           "割れ目、腐朽、木目、ぼけ、雑音を仕込んである。" % (100 * E_GROWTH))
+    figs.save_grid("polar_stages",
+                   [c["pol"].T, c["norm"].T, c["fil"].T],
+                   ["極座標展開(縦 = 半径 px、横 = 角度 1°/列)",
+                    "外縁で半径を正規化(年輪が横にそろう)",
+                    "θ 方向メディアン 9x3 の後(割れ目の縦線が消える)"],
+                   ncols=3, title="合意法の 3 段階(髄を中心に展開)",
+                   caption="偏心成長で境界が θ とともに斜めに走るので、正規化しないと"
+                           "θ 窓の中で外側の年輪がにじむ。")
     # 図: 展開図に検出(赤)と真値(青)を重ねる
     rgb = np.repeat(c["fil"][..., None], 3, axis=2)
     for s in range(N_SECT):
