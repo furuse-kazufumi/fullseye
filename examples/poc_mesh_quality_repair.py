@@ -893,7 +893,7 @@ def section_sliver_threshold(scene: dict) -> dict:
                     ("注入した枚数", ts, [float(2 * N_SLIVER)] * len(ts))],
                    xlabel="log10(潰し具合 t)", ylabel="枚数 [枚]",
                    title="退化の検出より、法線の破壊のほうが %d 桁早い"
-                         % (ts[first] - ts[fb]),
+                         % abs(ts[first] - ts[fb]),
                    caption="面積 0 の判定に引っかかるずっと手前で、"
                            "潰れ面の法線は使いものにならなくなる。")
     figs.save_plot("sliver_normal_error",
