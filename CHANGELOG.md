@@ -48,7 +48,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   欠陥が消える」)。穴は §41.12 —— **台帳アダプタが複数戻り値を切り落とす**同型の
   バグが `gicp` / `grid_coords` / `voxel_to_mesh` の 3 か所、軸順の規約が点
   `(x,y,z)` とボリューム `(depth,row,col)` で割れている件を含む。
-- **`query_distance` が立方格子しか受けなかったのを軸ごとに直した**。`esdf` は長さ 3 の
+- **`occupancy_grid` と `query_distance` が立方格子しか受けなかったのを軸ごとに直した**。
+  同じ族の `grid_coords` は最初から軸ごとの `res` を受けており、**入口と出口で契約の
+  広さが違った**。鳥瞰格子(薄い z × 広い xy)では確保したボクセルの 8.1 % しか使えず
+  (`poc_bev_sensor_fusion` の実測)、CT の薄い接合層 (30,180,180) では
+  `query_distance` がそもそも引けなかった(`poc_ct_void_morphology` の実測)。
+  スカラを渡す既存の呼び手は不変。
+- ~~**`query_distance` が立方格子しか受けなかったのを軸ごとに直した**。~~`esdf` は長さ 3 の
   異方 `voxel_size` を受けるのに、その出力を world 座標で引く側が `int(res)` で
   立方限定という**片側だけ狭い契約**だった(CT の薄い接合層 (30,180,180) でそのまま
   詰まる —— `poc_ct_void_morphology` で実測)。スカラを渡す既存の呼び手は不変。

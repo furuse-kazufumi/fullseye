@@ -208,10 +208,10 @@ def _parse_bounds(bounds):
 
 
 def occupancy_grid(points, bounds, res):
-    """点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。
+    """点群 (N,3) → 3-D 占有ボクセル格子 bool(点の落ちた voxel を占有)。
 
     ``bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))`` が格子の張る体積、``res`` は各軸の
-    ボクセル数(立方 res³)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、
+    ボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、
     上端 (frac==1) の点は最終ボクセルに含める。**bounds 外の点は落とす**(端セルへ
     clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float)
     を作るのに対し、これは planning 用の占有(bool)を作る点が固有。
@@ -220,11 +220,19 @@ def occupancy_grid(points, bounds, res):
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
         raise ValueError("points must be (N, 3)")
-    res = int(res)
-    if res <= 0:                                # fail-closed
-        raise ValueError("res must be a positive integer")
+    # ★2026-09-07: ``res`` は**軸ごと**を受けるようにした(長さ 3 も可)。立方限定だと
+    # 鳥瞰格子(薄い z × 広い xy)のような扁平な体積で、要らない軸まで同じ刻みを
+    # 強いられる(`poc_bev_sensor_fusion` の実測: 409.6 万ボクセルのうち使うのは 8.1 %)。
+    # 同じ族の `grid_coords` は最初から軸ごとの res を受けていた —— **入口と出口で
+    # 契約の広さが違う**のを合わせた。スカラを渡す既存の呼び手は不変。
+    r = np.atleast_1d(np.asarray(res, np.int64))
+    if r.size == 1:
+        r = np.repeat(r, 3)
+    if r.size != 3 or np.any(r <= 0):           # fail-closed
+        raise ValueError("res must be a positive integer or a length-3 sequence "
+                         "of positive integers")
     lo, span = _parse_bounds(bounds)
-    grid = np.zeros((res, res, res), bool)
+    grid = np.zeros(tuple(int(x) for x in r), bool)
     if P.shape[0] == 0:
         return grid                             # 空雲 → 何も占有しない(honest: 幻を足さない)
     frac = (P - lo) / span                      # in-bounds なら [0,1]
@@ -233,7 +241,7 @@ def occupancy_grid(points, bounds, res):
         return grid
     fi = frac[inb]
     # floor(frac*res); frac==1 は res になるので最終ボクセル res-1 にクランプ
-    idx = np.minimum((fi * res).astype(np.int64), res - 1)
+    idx = np.minimum((fi * r).astype(np.int64), r - 1)
     grid[idx[:, 0], idx[:, 1], idx[:, 2]] = True
     return grid
 

@@ -788,6 +788,13 @@ def section_control(cells, recs) -> dict:
     # 層厚の系統誤差 —— ぼけると縁の間隔は半周期へ引き寄せられる
     th = res["healthy"]["inner"]["t_mean"]
     tr = res["healthy"]["truth"]["t_mean"]
+    print("\n  ★層を**数えるだけ**では劣化の種類は分からない —— それどころか、"
+          "膨れたセルでは %d 枚に減る(健全 %d 枚)。積層が缶に密着すると、"
+          "端の層の立ち上がりが**缶の内面の立ち下がりと融合**して 1 枚落ちる"
+          "(健全セルでは端板まで %.2f mm 空いているので落ちない)。"
+          % (res["uniform"]["inner"]["n_layer"], res["healthy"]["inner"]["n_layer"],
+             0.5 * (CAV_LEN - H_BASE) + 0.5 * GAP))
+
     print("\n  ★層厚は**系統的に過小**に出る(健全セル: 真値 %.3f -> 測定 %.3f mm、"
           "%+.1f %%)。" % (tr, th, 100 * (th - tr) / tr))
     print("     理由: ぼけると縞は正弦波に近づき、微分のピーク間隔は"
