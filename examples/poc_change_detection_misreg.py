@@ -648,10 +648,11 @@ def section_shift(sc: dict) -> dict:
                      "%.3f" % ev["iou"]] + ["%d" % s for s in split])
         print("   %5.2f    %7d     %6.0f    %6.0f     %6.0f     %.3f      %5d / %5d / %5d"
               % (d, ev["fp"], pa, pb, pc, ev["iou"], *split))
-    first = next((d for d, f in zip(deltas, fp_l) if f > 0), None)
-    last_zero = max(d for d, f in zip(deltas, fp_l) if f == 0)
-    print("\n  ★偽陽性が最初に出たのは δ=%.2f px(δ=%.2f までゼロ)。予想 B の崖 δ*=%.3f px と整合。"
-          % (first, last_zero, onset_shift(Cmax)))
+    quiet = 20                                                  # 雑音の床(視野の 0.03 %)
+    first = next((d for d, f in zip(deltas, fp_l) if f > quiet), None)
+    last_zero = max(d for d, f in zip(deltas, fp_l) if f <= quiet)
+    print("\n  ★偽陽性が最初に出た(> %d px)のは δ=%.2f px(δ=%.2f までは %d px 以下 = 雑音の床)。"
+          "予想 B の崖 δ*=%.3f px と整合。" % (quiet, first, last_zero, quiet, onset_shift(Cmax)))
     i3 = deltas.index(3.0)
     print("  ★比例則は 3 px で実測の %.2f 倍 —— 大きなずれでは合うが、崖の位置を説明しない。"
           % (predA[i3] / fp_l[i3]))
