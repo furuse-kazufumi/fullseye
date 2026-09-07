@@ -29,3 +29,14 @@
    3
   ]
  },
+ {
+  "file": "04_fillet_profile.png",
+  "name": "fillet_profile",
+  "caption": "見えるのは傾き 40° までの裾。E2 は円弧を壁まで外挿する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
