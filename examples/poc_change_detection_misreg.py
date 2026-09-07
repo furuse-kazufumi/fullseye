@@ -1023,9 +1023,9 @@ def section_tool_gaps() -> None:
     # (a) 2-D の位相相関が無い(3-D 用を (1,H,W) で通した。整数精度)。
     assert hasattr(fs.ledger, "match_phase_3d")
     assert not hasattr(fs, "phase_correlate") and not hasattr(fs.ledger, "phase_correlate_2d")
-    print("  (a) 2-D の位相相関が無い。3-D 用 match_phase_3d に (1,H,W) を通せば動くが整数精度で、"
-          "サブピクセル(refine_translation_lk)も 3-D 用。2-D 用の 1 本があれば 5 節の"
-          "残留 0.38 px は 0.05 px 以下になるはず。")
+    print("  (a) 2-D の位相相関が無い。3-D 用 match_phase_3d に (1,H,W) を通せば動くが整数精度"
+          "(丸めだけで最大 0.71 px の残留)で回転も返さず、サブピクセル(refine_translation_lk)も"
+          " 3-D 用。2-D の 1 本(サブピクセル + log-polar で回転)があれば 5 節の整数経路は要らない。")
     # (b) 2-D の剛体/相似当てはめ(+RANSAC)が無い。
     assert not hasattr(fs, "fit_rigid_2d") and not hasattr(fs.ledger, "ransac_rigid_2d")
     print("  (b) 対応点から 2-D の剛体変換を頑健に当てはめる口が無い(procrustes_fit は 3-D、"
