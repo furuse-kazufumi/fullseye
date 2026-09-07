@@ -188,16 +188,25 @@ def _splat(pos_y, pos_x, amp, shape, sigma):
     return np.bincount(idx, weights=g[ok], minlength=h * w).reshape(h, w)
 
 
-def _reflection(rng):
-    """空の映り込み:カメラ座標で**動かない**、横に伸びた滑らかな模様 [0, 1]。"""
+def _reflection(rng, kind="smooth"):
+    """カメラ座標で**動かない**映り込み。零平均・標準偏差 1(コントラスト = 標準偏差)。
+
+    ``"smooth"`` = 空・雲(横に伸びた滑らかな模様、相関長 8〜30 px)。
+    ``"fine"`` = 岸の樹木や構造物の映り込み(粒子と同じ 1〜2 px の細かい模様)。
+    """
     n = rng.normal(size=OBL_SHAPE)
-    r = gaussian_filter(n, (8, 30)) + 0.5 * gaussian_filter(n, (3, 12))
-    r = r - r.min()
-    return r / r.max()
+    if kind == "smooth":
+        r = gaussian_filter(n, (8, 30)) + 0.5 * gaussian_filter(n, (3, 12))
+    elif kind == "fine":
+        r = gaussian_filter(n, 1.2)
+    else:
+        raise ValueError(kind)
+    r = r - r.mean()
+    return r / r.std()
 
 
 def build_frames(density=DENSITY, n_frames=N_FRAMES, refl_c=REFL_C, wave_amp=WAVE_AMP,
-                 noise=NOISE, seed=SEED, want_ortho=True):
+                 noise=NOISE, seed=SEED, want_ortho=True, refl_fine_c=0.0):
     """斜め動画(と対照用の真上動画)を作る。返りは辞書。
 
     ``obl``: 斜めカメラのコマ列 / ``obl_clean``: 反射・雑音を足す前 /
