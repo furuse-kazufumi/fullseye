@@ -594,15 +594,24 @@ def section_cliff(gap_median: float, edge_mean: float) -> dict:
 
     cliff = {k: first_cliff(err[k]) for k in keys}
     raw_dev = float(np.max(np.abs(np.asarray(err["raw"]) - pred_raw)))
+    naive_dev = float(np.max(np.abs(np.asarray(err["raw"]) - dg0 - pred_raw_naive)))
     worse = [100 * f for f, a, b in zip(fracs, err["raw"], err["closed"]) if abs(b) > abs(a)]
+    n_grain = int(np.mean([make_scene(sd)["seeds"].shape[0] for sd in SWEEP_SEEDS]))
+    sw5 = fail["swallowed"][1]
+    dg_area_from_merges = 3.3219 * np.log10(1.0 - sw5 / n_grain)
     print("\n  ★崖(|ΔG| >= 1 になる途切れ率): 面積法 %.1f %% / 切片法(素) %.1f %% / 切片法(閉) %.1f %%"
           % (cliff["area"], cliff["raw"], cliff["closed"]))
-    print("     切片法の予想は %.1f %%(横切り (1-f) 倍)だったが、途切れ 0 %% で既に ΔG = %+.2f"
-          "(短い弦が溶ける)なので\n     補正した予測は %.1f %%。実測曲線は補正した予測と最大 %.2f 段で並走。"
-          % (cliff_pred_raw_naive, dg0, cliff_pred_raw, raw_dev))
-    print("     面積法: 辺の途切れ率 p は f の %.1f 倍で走る(隙間 1 塊が頂点で 2〜3 辺を同時に開く)。"
-          "木近似 N(1-3p) で 1 段の点は f = %.1f %%、実測 %.1f %%(閉路の分だけ木近似と違う)。"
-          % (p_over_f, cliff_pred_area, cliff["area"]))
+    print("     切片法の予想は %.1f %%(横切り (1-f) 倍)だったが**外れた**: マスク上で実際に消えて"
+          "いる粒界は f の %.2f 倍\n     (ぼけが隙間の両端に隣の黒を漏らし、局所しきい値がそれを拾う)。"
+          "f_eff で引き直した予測は %.1f %%、\n     実測曲線は引き直した予測と最大 %.2f 段で並走"
+          "(素朴な予測とは %.2f 段)。"
+          % (cliff_pred_raw_naive, feff_over_f, cliff_pred_raw, raw_dev, naive_dev))
+    print("     面積法: 辺の途切れ率 p(1 画素でも隙間)は f の %.1f 倍で走る(隙間 1 塊が 2〜3 辺を"
+          "同時に触る)。\n     木近似 N(1-3p) の 1 段は f = %.1f %% で実測 %.1f %% より早い —— "
+          "短い隙間は二値化後もつながらないし、閉路もある。\n     実測の融合で数え直すと "
+          "f = 5 %% で飲まれた粒 %.0f 個(粒 %d 個中)= 塊 %.2f 倍 = ΔG %+.2f(実測 %+.2f)。"
+          % (p_over_f, cliff_pred_area, cliff["area"], sw5, n_grain, 1.0 - sw5 / n_grain,
+             dg_area_from_merges, err["area"][1]))
     print("  ★閉じる(closing 9x9、閉じられる隙間 8 px 以下)は隙間の中央値 %.0f px に届かず、"
           "小さい粒を塗り潰す:\n     途切れ 0 %% の見逃し %.0f → %.0f、偽 %.0f → %.0f。"
           "掃引 %d 点中 %d 点で素の版より悪い。"
