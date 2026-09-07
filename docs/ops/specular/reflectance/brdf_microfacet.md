@@ -4,7 +4,7 @@ dim: specular
 category: reflectance
 in: normalmap
 out: image2d
-examples: [specular_photometric]
+examples: [poc_solder_fillet_aoi, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ finite BRDF, so it is refused rather than returned as an infinity.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_solder_fillet_aoi](../../../../examples/poc_solder_fillet_aoi.py) — `py -3.11 examples/poc_solder_fillet_aoi.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

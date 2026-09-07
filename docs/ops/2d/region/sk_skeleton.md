@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: skeleton
-examples: [gallery2d_region]
+examples: [gallery2d_region, poc_solar_el_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ sk_skeleton 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
+- [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

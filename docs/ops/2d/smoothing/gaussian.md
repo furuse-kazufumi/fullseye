@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: gauss_filter
-examples: [coherence_scanning, color_transport, ct_inspection, gallery2d_smoothing_rank, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, video_streaming]
+examples: [coherence_scanning, color_transport, ct_inspection, gallery2d_smoothing_rank, photon_timeresolved, poc_bone_trabecular_thickness, poc_dtof_ranging, poc_interferometry_step, poc_leaf_disease_area, poc_nuclei_ploidy, poc_solar_el_inspection, poc_solar_limb_darkening, poc_star_astrometry, poc_wound_area_tracking, quickstart, video_streaming]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -69,6 +69,7 @@ gaussian 0.35 0.50
 - [poc_interferometry_step](../../../../examples/poc_interferometry_step.py) — `py -3.11 examples/poc_interferometry_step.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
+- [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_solar_limb_darkening](../../../../examples/poc_solar_limb_darkening.py) — `py -3.11 examples/poc_solar_limb_darkening.py`
 - [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`

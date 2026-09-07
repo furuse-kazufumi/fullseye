@@ -4,7 +4,7 @@ dim: optics
 category: illumination
 in: 
 out: table
-examples: [illumination_design_demo]
+examples: [illumination_design_demo, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -77,6 +77,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [illumination_design_demo](../../../../examples/illumination_design_demo.py) — `py -3.11 examples/illumination_design_demo.py`
+- [poc_solder_fillet_aoi](../../../../examples/poc_solder_fillet_aoi.py) — `py -3.11 examples/poc_solder_fillet_aoi.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

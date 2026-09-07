@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_rect
-examples: [gallery2d_smoothing_rank, poc_weld_radiograph_porosity]
+examples: [gallery2d_smoothing_rank, poc_tree_ring_dendro, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ median_rect 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [poc_tree_ring_dendro](../../../../examples/poc_tree_ring_dendro.py) — `py -3.11 examples/poc_tree_ring_dendro.py`
 - [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

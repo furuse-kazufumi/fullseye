@@ -5,7 +5,7 @@ category: halcon_ext
 in: region
 out: region
 halcon: split_skeleton_region
-examples: [gallery2d_halcon_ext]
+examples: [gallery2d_halcon_ext, poc_fresco_craquelure]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -69,6 +69,7 @@ hx_split_skeleton_region 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_halcon_ext](../../../../examples/gallery2d_halcon_ext.py) — `py -3.11 examples/gallery2d_halcon_ext.py`
+- [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

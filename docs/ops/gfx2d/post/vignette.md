@@ -4,7 +4,7 @@ dim: gfx2d
 category: post
 in: rgb
 out: rgb
-examples: [gfx2d_scene]
+examples: [gfx2d_scene, poc_solar_el_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ geometry rather than a rounding error.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gfx2d_scene](../../../../examples/gfx2d_scene.py) — `py -3.11 examples/gfx2d_scene.py`
+- [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)
 

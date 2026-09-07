@@ -1253,3 +1253,29 @@ furuse.work へ誘導する」。
   **対策**: PoC バッチの commit は `git add` に**明示パス**を並べる(`examples/poc_<id>.py`、
   `docs/articles/assets/poc/poc_<id>/`、生成物の docs)。あるいは Agent が全部終わってから add する。
 
+### 11. PoC 第 4 バッチ(2026-09-07、4 本)が見つけた穴
+
+`poc_fresco_craquelure` / `poc_solar_el_inspection` / `poc_tree_ring_dendro` /
+`poc_solder_fillet_aoi`(展示館 65 → 69)。
+
+- ★**`otsu` が雑音の無い 2 値画像(0.3 / 0.8)で全画素を前景にする**(4096/4096)。
+  `sk_otsu` / `cv_otsu` は正しく 128。256 ビンヒストグラムの端の扱いと見られる(**要修正**)。
+- ★`lines_gauss` の XLD は連結成分の画素をラスタ順に並べただけで、`total_length` が
+  80√2 px の線分に 825 px(7.3 倍)を返す(`poc_solar_el_inspection` §9(e) に assert)。
+- `sk_frangi` / `sk_meijering` / `sk_hessian` は画像ごとの最大値正規化なので、検査用途で
+  **絶対しきい値を持てない**(校正線が画像中で最強でないと尺度が定まらない)。
+  距離変換(`distance_transform` / `cv_dist` / `xsp_chamfer_dist`)と blackhat も同様に正規化され、
+  画素単位の幅が取れない。
+- 大窓の背景推定が無い(`gaussian` σ ≤ 3、`rolling_ball` r ≤ 25、ピラミッド 1/16 止まり)。
+  「行の関数 × 列の関数」で割る分離可能な格子除去、cos⁴ ビネッティングの当てはめ口も無い。
+  `hysteresis_threshold` のしきい値範囲は 0.2–0.5 / 0.5–0.8 に固定。
+- 骨格の枝ごとの弧長・弦長(直線度)、分岐点の**次数**(`junctions_skeleton` は位置のみ)、
+  枝の向きの異方性、骨格の折れ線長が無い。
+- 髄中心の極座標展開は台帳 `polar_unwrap` のみで 1 行ファサードが無い(進化 op
+  `polar_trans_image` は中心固定)。測定線の束を一括で置く口、外縁で半径を正規化する
+  アンラップ、`find_peaks` の prominence が無い。
+- リング光源(仰角窓 × 全方位)を BRDF で積分して「傾き → 色」表を作る口、列方向の
+  多値ラベル run-length、混同行列 / ROC の評価器(3 本目の指摘)が無い。
+- `trans_from_rgb` の H は OpenCV 8 bit の 0–179 を 255 で割った値(青 220° → 0.431)で、
+  docstring からは読めない。
+

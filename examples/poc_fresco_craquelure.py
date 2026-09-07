@@ -773,7 +773,7 @@ def section_tool_gaps() -> None:
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
-    print("絵画のひび割れ網(craquelure)を測る —— 3 指標のうち照明で壊れるのは 1 つだけ")
+    print("絵画のひび割れ網(craquelure)を測る —— 3 指標のうち撮影条件で壊れるのは分岐次数だけ")
     print("視野 %d px / ひびの深さ %.2f / ぼけ σ %.1f px / 質感 %.2f" % (N_PIX, K_CRACK, BLUR_SIG, TEX_C))
     print("=" * 78)
 

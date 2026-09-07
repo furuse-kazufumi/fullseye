@@ -4,7 +4,7 @@ dim: blob
 category: select
 in: labels2d
 out: labels2d
-examples: [poc_gear_tooth_metrology, poc_wound_area_tracking]
+examples: [poc_gear_tooth_metrology, poc_solder_fillet_aoi, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
+- [poc_solder_fillet_aoi](../../../../examples/poc_solder_fillet_aoi.py) — `py -3.11 examples/poc_solder_fillet_aoi.py`
 - [poc_wound_area_tracking](../../../../examples/poc_wound_area_tracking.py) — `py -3.11 examples/poc_wound_area_tracking.py`
 
 ## 型が繋がる次の op(`labels2d` を入力に取れる)

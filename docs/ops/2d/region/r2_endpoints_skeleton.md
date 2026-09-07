@@ -4,7 +4,7 @@ dim: 2d
 category: region
 in: region
 out: region
-examples: [gallery2d_region]
+examples: [gallery2d_region, poc_fresco_craquelure]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ r2_endpoints_skeleton 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
+- [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 
