@@ -781,6 +781,9 @@ def main() -> None:
     print("  * 崖は jet %.3f %%FS / viridis %.3f %%FS —— 本物の段差に "
           "%.1f 倍の高さが要る。" % (cliff["crit"]["jet"], cliff["crit"]["viridis"],
                                       cliff["crit"]["jet"] / cliff["crit"]["viridis"]))
+    print("  * 生の色差マップは場の勾配を配色のせいにする"
+          "(gray でも %.2f 倍、勾配で割ると %.2f)。"
+          % (bowl["raw"]["gray"], bowl["gain"]["gray"]))
     print("  * 配色より写し方が効く: 実効階調 linear %.1f → rank %.1f 段。"
           % (norms["linear"]["clean"][0], norms["rank"]["clean"][0]))
     print("  * under/over 無しでは範囲外 %d 画素を %d 画素と数える(+%.0f %%)。"
