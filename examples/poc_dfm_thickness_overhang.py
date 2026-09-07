@@ -531,11 +531,13 @@ def section_reach():
     figs.save_plot("reach_cliff",
                    [("測ったスロット幅", hs, meas),
                     ("設計値 1.500 mm", hs, [T_SLOT] * len(hs)),
-                    ("r=0.60 の工具が入る下限(1.200 mm)", hs, [1.2] * len(hs))],
+                    ("r=0.80 を通してしまう線(1.600 mm)", hs, [1.6] * len(hs)),
+                    ("r=0.60 を落としてしまう線(1.200 mm)", hs, [1.2] * len(hs))],
                    xlabel="ボクセルの粗さ [mm]", ylabel="スロットの幅 [mm]",
-                   title="隙間は 2 voxel 刻みで痩せる —— 工具の go/no-go が反転する",
-                   caption="測った幅が 1.200 mm を切ると、入るはずの工具を落とす。")
-    return {"h": hs, "w": meas, "wrong": wrong}
+                   title="隙間の刻みは工具の go/no-go を両方向に反転させる",
+                   caption="1.600 mm を超えると入らない工具を通し、1.200 mm を切ると"
+                           "入る工具を落とす。")
+    return {"h": hs, "w": meas, "false_ok": false_ok, "false_ng": false_ng}
 
 
 # --------------------------------------------------------------------------- #
