@@ -192,14 +192,31 @@ def peak_attenuation(v: float, gsd: float, radius: float = R_HOT,
     return float(1.0 - np.exp(-radius ** 2 / (2.0 * s2)))
 
 
-def predict_hotspot(v: float, gsd: float = GSD) -> float:
+def predict_hotspot(v: float, gsd: float = GSD, radio: bool = True) -> float:
     """セル内ホットスポットの見かけの ΔT [K](予測、閉形式)。"""
-    return Q_HOT / u_total(v) * peak_attenuation(v, gsd)
+    g = radiometric_gain() if radio else 1.0
+    return Q_HOT / u_total(v) * peak_attenuation(v, gsd) * g
 
 
-def predict_string(v: float) -> float:
+def predict_string(v: float, radio: bool = True) -> float:
     """ストリング故障の ΔT [K](広いので薄まらない)。"""
-    return ETA_EL * G0 / u_total(v)
+    g = radiometric_gain() if radio else 1.0
+    return ETA_EL * G0 / u_total(v) * g
+
+
+def predict_blob_area_px(v: float, gsd: float = GSD,
+                         theta: float = THETA) -> float:
+    """しきい値を超える塊の面積 [px] —— ガウス山の等高線の閉形式。
+
+    ピーク ``P``、σ_tot のガウス山が ``theta`` を超える面積は
+    ``2π σ_tot² ln(P/theta)``。**面積の門(``A_MIN``)はここに効く** ——
+    ピークがしきい値を超えていても、超える範囲が狭ければ塊にならない。
+    """
+    p = predict_hotspot(v, gsd)
+    if p <= theta:
+        return 0.0
+    s2 = fin_length(v) ** 2 + cam_sigma(gsd) ** 2
+    return float(2.0 * np.pi * s2 * np.log(p / theta) / gsd ** 2)
 
 
 def solve_v_crit(fn, lo: float = 0.0, hi: float = 30.0,
