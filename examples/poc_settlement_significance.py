@@ -751,11 +751,12 @@ def section_volume(sc: dict, mv: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 9. 崖 —— 沈下量と点密度を振る                                                 #
 # --------------------------------------------------------------------------- #
-def section_cliff(sc: dict) -> dict:
+def section_cliff(sc: dict, mv: dict) -> dict:
     print("\n" + "=" * 78)
     print("9) 崖 —— どれだけ沈めば、どれだけ撒けば有意になるか")
     print("=" * 78)
     cores, nx, ny = sc["cores"], sc["nx"], sc["ny"]
+    mv_lod_asphalt = mv["lod"][zone_of(cores[:, 1]) == 1]
 
     print("   最大沈下 mm   舗装ゾーンの検出率   全体の有意率   平均 [mm]")
     smax_l, rate_l = [], []
@@ -877,7 +878,7 @@ def main() -> None:
     mult = section_multiplicity(sc, z, mv)
     reg = section_registration(sc, mult)
     vol = section_volume(sc, mv)
-    cliff = section_cliff(sc)
+    cliff = section_cliff(sc, mv)
     section_tool_gaps()
 
     print("\n" + "=" * 78)

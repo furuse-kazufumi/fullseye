@@ -98,7 +98,7 @@ def _inputs(maker, structured=True):
         "volume": np.stack([np.roll(maker(24), k, 0) for k in range(10)], 0),
     }
     # 既存 4 sort の探針は 1 文字も変えない(変えると allowlist が総入れ替えになる)。
-    import op_probe as opb
+    opb = _opb()
     for sort in _EXTRA_SORTS:
         rng = np.random.default_rng(20260908 if structured else 71)
         try:

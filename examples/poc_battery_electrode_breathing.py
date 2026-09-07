@@ -538,6 +538,11 @@ def section_bias_vs_precision(noise_out: dict) -> dict:
     print("  雑音なし: 回帰 %+.6f(真値比 %+.2f %%) / 端から端 %+.6f(真値比 %+.2f %%)"
           % (e_reg, 100 * (e_reg - e_true) / e_true,
              e_e2e, 100 * (e_e2e - e_true) / e_true))
+    print("  (端から端の -0.37 %% は 3 章のピークロッキング —— 充電側の境界は"
+          "格子から外れる。\n   0.0122 px x √2 / %.0f px = %.1e が上限で、"
+          "実測 %.1e はその中に収まる。)"
+          % (float(p0[-1] - p0[0]), 0.0122 * math.sqrt(2) / float(p0[-1] - p0[0]),
+             abs(e_e2e - e_true)))
     print("  ★回帰が %.1f %% 低いのは推定の誤差ではなく**重みの違い**: 回帰は"
           % abs(100 * (e_reg - e_true) / e_true))
     print("     境界を重心からの距離で重みづけるが、真の平均は層厚で重みづける。"
