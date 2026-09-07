@@ -501,20 +501,29 @@ def section_indicators() -> dict:
             rows.append([kind, name, "%.1f" % r["diam"], "%.3f" % r["straight"],
                          "%.2f" % r["deg4"], "%.2f" % r["aniso"], "%d" % r["n_cells"]])
     t_d, t_a = table[("乾燥", "真値")], table[("経年", "真値")]
-    c_a, r_a = table[("経年", "きれい")], table[("経年", "+斜光")]
+    c_d, c_a = table[("乾燥", "きれい")], table[("経年", "きれい")]
+    x_a, r_a = table[("経年", "+質感")], table[("経年", "+斜光")]
     print("\n  分離(真値): セル径 %.1f vs %.1f px(%.1f 倍) / 直線度 %.3f vs %.3f / 次数 4 割合 %.2f vs %.2f"
           % (t_d["diam"], t_a["diam"], t_a["diam"] / t_d["diam"], t_d["straight"], t_a["straight"],
              t_d["deg4"], t_a["deg4"]))
-    print("  斜光(経年、強さ 1.0): 次数 4 割合 %.2f → %.2f / セル径 %.1f → %.1f px / 直線度 %.3f → %.3f"
-          % (c_a["deg4"], r_a["deg4"], c_a["diam"], r_a["diam"], c_a["straight"], r_a["straight"]))
-    print("  ★予想は「斜光で直線度が壊れる」。実測で動いたのは分岐次数(4 差路が 3 差路 2 個に割れる)。")
+    print("  セル径の推定は壁(骨格を 1 px 太らせた 3 px)の分だけ一定に小さい: 乾燥 %.1f px / 経年 %.1f px 不足"
+          "(壁 3 px + 反エイリアス)。引き算で戻る。" % (t_d["diam"] - c_d["diam"], t_a["diam"] - c_a["diam"]))
+    print("  経年の次数 4 割合: きれい %.2f → +質感 %.2f / +斜光 %.2f(真値 %.2f)。質感は 3 差路の偽分岐を"
+          "足して割合を薄め、斜光は 4 差路を 3 差路 2 個に割る。" % (c_a["deg4"], x_a["deg4"], r_a["deg4"], t_a["deg4"]))
+    print("  セル径 %.1f → %.1f / %.1f px、直線度 %.3f → %.3f / %.3f は動かない。"
+          % (c_a["diam"], x_a["diam"], r_a["diam"], c_a["straight"], x_a["straight"], r_a["straight"]))
+    print("  ★予想は「斜光で直線度が壊れる(片側の影で骨格が蛇行する)」。実測で動いたのは分岐次数だった。")
+    print("  異方性は真値 %.2f に対して推定 %.2f と上に偏るが、条件を変えても %.2f〜%.2f で動かない。"
+          % (t_a["aniso"], c_a["aniso"], min(x_a["aniso"], r_a["aniso"], c_a["aniso"]),
+             max(x_a["aniso"], r_a["aniso"], c_a["aniso"])))
     figs.save_table("indicators", ["種類", "条件", "セル径 [px]", "直線度(弦/弧)", "次数 4 割合",
                                    "異方性", "セル数"], rows,
                     title="3 指標の分離力と壊れ方(乾燥 vs 経年 × 撮影条件)",
-                    caption="真値は幾何(ボロノイの頂点・辺)から。斜光で動くのは次数 4 割合だけ。")
-    assert t_a["deg4"] > t_d["deg4"] + 0.2 and t_a["straight"] > t_d["straight"] + 0.05
-    assert c_a["deg4"] - r_a["deg4"] > 0.08, "斜光で次数 4 割合が落ちなくなった"
-    assert abs(c_a["straight"] - r_a["straight"]) < 0.02
+                    caption="真値は幾何(ボロノイの頂点・辺)から。質感と斜光で動くのは次数 4 割合だけ。")
+    assert t_a["deg4"] > t_d["deg4"] + 0.4 and t_a["straight"] > t_d["straight"] + 0.03
+    assert c_a["deg4"] - r_a["deg4"] > 0.1, "斜光で次数 4 割合が落ちなくなった"
+    assert c_a["deg4"] - x_a["deg4"] > 0.1, "質感で次数 4 割合が落ちなくなった"
+    assert abs(c_a["straight"] - r_a["straight"]) < 0.02 and abs(c_a["diam"] - r_a["diam"]) < 1.0
     return table
 
 
