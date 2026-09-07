@@ -647,9 +647,9 @@ def section_norms(base: dict) -> dict:
     bm = out["モジュール中央値"]["score"]
     print("\n  ★ゼロ点(全体平均)は偽の故障 %d 個。モジュールごとの中央値で %d 個。"
           % (zp["n_false"], bm["n_false"]))
-    print("  ★★2 値に畳んではいけない: 「異常」として上がる塊の内訳は"
+    print("  ★★2 値に畳んではいけない: 全体平均で「異常」として上がる塊の内訳は"
           "本物 %d / 非故障の温度差(影・汚れ)%d / 偽 %d。"
-          % (bm["n_fault"], bm["n_nonfault"], bm["n_false"]))
+          % (zp["n_fault"], zp["n_nonfault"], zp["n_false"]))
     print("     影と汚れは**本物の温度差**なので、雑音でも偽でもない ——"
           "しかし電気的故障でもない。")
     pl = out["モジュール平面除去"]
@@ -660,6 +660,20 @@ def section_norms(base: dict) -> dict:
     print("     小さいホットスポットは %.0f %% しか食われない —— "
           "**食われる量は故障の面積で決まる**。"
           % (100 * (1 - pl["peak_hot"] / out["モジュール中央値"]["peak_hot"])))
+
+    # ★モジュール中央値の代償 —— モジュール丸ごとの異常に盲目
+    d_mean = normalise(t_app, gt, "全体平均")
+    d_med = normalise(t_app, gt, "モジュール中央値")
+    pw = gt["pole_warm"]
+    print("  ★★中央値には別の代償がある: 支柱の影で**全ストリングが止まった**"
+          "モジュール %d は、" % MOD_POLE)
+    print("     全体平均基準なら ΔT %+.2f K なのに、モジュール中央値基準では"
+          " %+.2f K —— **モジュールが丸ごと熱いと基準ごと持ち上がる**。"
+          % (float(np.median(d_mean[pw])), float(np.median(d_med[pw]))))
+    print("     3 つの正規化はどれも別の壊れ方をする: 全体平均は偽を作り、"
+          "中央値は丸ごとの異常に盲目、平面除去は広い故障を食う。")
+    out["pole_mean"] = float(np.median(d_mean[pw]))
+    out["pole_med"] = float(np.median(d_med[pw]))
 
     figs.save_table("norm_table",
                     ["正規化", "本物", "非故障", "偽", "ホット再現",
