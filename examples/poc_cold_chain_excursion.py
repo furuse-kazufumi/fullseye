@@ -641,13 +641,6 @@ def _mid_product(scene: dict, target: float = 300.0) -> tuple[int, int]:
     return int(iy), int(ix)
 
 
-def _worst_product(scene: dict) -> tuple[int, int]:
-    vol, prod = scene["vol"], scene["layout"]["is_product"]
-    exc = np.count_nonzero(vol > LIMIT_C, axis=0) * DT_MIN
-    iy, ix = np.unravel_index(int(np.argmax(np.where(prod, exc, -1))), exc.shape)
-    return int(iy), int(ix)
-
-
 # --------------------------------------------------------------------------- #
 # 6. 対照群 —— 均一 / 分布あり / 分布 + 扉                                       #
 # --------------------------------------------------------------------------- #
