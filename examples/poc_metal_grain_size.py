@@ -559,15 +559,21 @@ def section_cliff(gap_median: float, edge_mean: float) -> dict:
                  fail["merged"][-1], fail["swallowed"][-1]))
 
     # --- 予測 --------------------------------------------------------------- #
-    # 切片法: 横切りが (1-f) 倍 → ΔG = 6.64 log10(1-f)。素朴な崖は f = 1 - 1/√2。
-    #   ただし f = 0 でも短い弦が溶けて ΔG0 から始まるので、そこを足した予測が正しい。
+    # 切片法: 横切りが (1-f) 倍 → ΔG = 6.64 log10(1-f)。素朴な崖は f = 1 - 1/√2 = 29.3 %。
+    #   ★実測はそれより遅い。マスク上で実際に消えている粒界画素の割合 f_eff は f より
+    #   小さい(ぼけが隙間の両端 1 px に隣の黒を漏らし、局所しきい値がそれを拾う)ので、
+    #   f_eff で引き直した予測 ΔG0 + 6.64 log10(1-f_eff) と突き合わせる。
     dg0 = err["raw"][0]
+    f_eff = np.asarray(fail["hole"]) - fail["hole"][0]
     pred_raw_naive = 6.6439 * np.log10(1.0 - fracs)
-    pred_raw = dg0 + pred_raw_naive
+    pred_raw = dg0 + 6.6439 * np.log10(np.clip(1.0 - f_eff, 1e-6, None))
     cliff_pred_raw_naive = 100 * (1.0 - 2 ** -0.5)
-    cliff_pred_raw = 100 * (1.0 - 10 ** ((-1.0 - dg0) / 6.6439))
+    f_eff_cliff = 1.0 - 10 ** ((-1.0 - dg0) / 6.6439)
+    cliff_pred_raw = (float(np.interp(f_eff_cliff, f_eff, 100 * fracs))
+                      if f_eff.max() > f_eff_cliff else float("nan"))
+    feff_over_f = float(np.mean(f_eff[2:8] / fracs[2:8]))
     # 面積法: 木近似で塊の数は N(1 - 3p)(1 粒あたり辺 6 本 = 辺 3N 本、途切れた辺で 2 粒が 1 塊)。
-    #   p は実測の「辺の途切れ率」。1 段 = 塊が半分 = p = 1/6。
+    #   p は実測の「辺の途切れ率」(1 画素でも隙間があれば途切れ)。1 段 = 塊が半分 = p = 1/6。
     p = np.asarray(fail["p_edge"])
     pred_area = np.where(1.0 - 3.0 * p > 0.05, 3.3219 * np.log10(np.maximum(1.0 - 3.0 * p, 0.05)), np.nan)
     cliff_pred_area = float(np.interp(1.0 / 6.0, p, 100 * fracs)) if p.max() > 1 / 6 else float("nan")
