@@ -116,7 +116,7 @@ def make_canopy(n_leaf=N_LEAF, row=ROW, in_row=IN_ROW, beta_deg=BETA_DEG,
     for p in range(n_plant):
         phi0 = rng.uniform(0.0, 2.0 * np.pi)
         for k in range(n_leaf):
-            frac = (k + 0.5) / n_leaf
+            frac = (k + 0.5) / NESTED_MAX
             z0 = LEAF_Z0 + frac * (LEAF_Z1 - LEAF_Z0)
             if distichous:
                 ang = phi0 + k * np.pi + rng.normal(0.0, np.radians(12.0))
