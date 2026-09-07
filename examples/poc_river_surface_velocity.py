@@ -623,37 +623,51 @@ def section_reflection():
     n = 13
     sc = build_frames(n_frames=n, refl_c=0, wave_amp=0, noise=0.0, want_ortho=False)
     pairs = [(k, k + 1) for k in range(n - 1)]
-    rows = []
-    for c in (0.0, 0.05, 0.10, 0.15, 0.20, 0.30, 0.45, 0.60):
-        rng = np.random.default_rng(SEED + 7)
-        obl = [f + c * sc["refl"] + rng.normal(0.0, NOISE, f.shape) for f in sc["obl_clean"]]
-        r = run_rectified(obl, pairs)
-        truth = fs.ledger.piv_sample_at_windows(sc["truth_px"], r["info"])
-        yy = np.asarray(r["info"]["rows"])[:, None] * S_PX * np.ones((1, len(r["info"]["cols"])))
-        mid = r["ok"] & (yy > 2.0) & (yy < B_WIDTH - 2.0) & np.isfinite(r["flow"][1])
-        ratio = float(np.mean(r["flow"][1][mid]) / np.mean(truth[1][mid]))
-        dxm = r["flow"][1][mid]
-        snapped = float(np.mean(np.abs(dxm) < 0.3))
-        pulled = float(np.mean((np.abs(dxm) >= 0.3) & (dxm < truth[1][mid] - 0.3)))
-        # 時間中央値(固定カメラの背景)を引く
-        bg = fs.ledger.sigma_clip_stack(list(obl), mode="median")
-        r2 = run_rectified([f - bg for f in obl], pairs)
-        ratio_med = float(np.mean(r2["flow"][1][mid]) / np.mean(truth[1][mid]))
-        # アンサンブル相関
-        rec = [rectify(f) for f in obl]
-        fe, _ = pivops.piv_ensemble_correlate(rec, window=WIN)
-        ratio_ens = float(np.mean(fe[1][mid]) / np.mean(truth[1][mid]))
-        rows.append((c, ratio, pulled, snapped, ratio_med, ratio_ens))
-        print("  コントラスト %.2f:速度比 生 %.3f(部分的に引かれた窓 %2.0f %% / ゼロに張り付いた窓 %2.0f %%)"
-              " / 中央値引き %.3f / アンサンブル %.3f"
-              % (c, ratio, 100 * pulled, 100 * snapped, ratio_med, ratio_ens))
-    r_hi = rows[-1]
-    print("  静止ピークと移動ピークは**どちらかが勝つ**。平均は 2 峰の混合比で、")
-    print("  なだらかな偏りではない。中央値引きは %.2f でも比 %.3f、アンサンブルは効かない。"
-          % (r_hi[0], r_hi[4]))
-    assert rows[-1][1] < 0.1 and rows[-1][4] > 0.95
-    assert rows[2][1] > 0.9
-    return rows
+    out = {}
+    for kind, pat in (("smooth", sc["refl"]), ("fine", sc["refl_fine"])):
+        print("  --- %s ---" % ("空・雲の映り込み(滑らか、相関長 8〜30 px)" if kind == "smooth"
+                                else "岸の樹木の映り込み(細かい、相関長 1.2 px)"))
+        rows = []
+        for c in (0.0, 0.10, 0.20, 0.30, 0.45, 0.60):
+            rng = np.random.default_rng(SEED + 7)
+            obl = [f + c * pat + rng.normal(0.0, NOISE, f.shape) for f in sc["obl_clean"]]
+            r = run_rectified(obl, pairs)
+            truth = fs.ledger.piv_sample_at_windows(sc["truth_px"], r["info"])
+            yy = np.asarray(r["info"]["rows"])[:, None] * S_PX * np.ones((1, len(r["info"]["cols"])))
+            mid = r["ok"] & (yy > 2.0) & (yy < B_WIDTH - 2.0) & np.isfinite(r["flow"][1])
+            ratio = float(np.mean(r["flow"][1][mid]) / np.mean(truth[1][mid]))
+            dxm = r["flow"][1][mid]
+            snapped = float(np.mean(np.abs(dxm) < 0.3))
+            pulled = float(np.mean((np.abs(dxm) >= 0.3) & (dxm < truth[1][mid] - 0.3)))
+            if kind == "smooth":
+                rows.append((c, ratio, pulled, snapped, np.nan, np.nan))
+                print("  コントラスト %.2f:速度比 生 %.3f(部分的に引かれた窓 %2.0f %% / ゼロに張り付いた窓 %2.0f %%)"
+                      % (c, ratio, 100 * pulled, 100 * snapped))
+                continue
+            # 時間中央値(固定カメラの背景)を引く
+            bg = fs.ledger.sigma_clip_stack(list(obl), mode="median")
+            r2 = run_rectified([f - bg for f in obl], pairs)
+            ratio_med = float(np.mean(r2["flow"][1][mid]) / np.mean(truth[1][mid]))
+            # アンサンブル相関
+            rec = [rectify(f) for f in obl]
+            fe, _ = pivops.piv_ensemble_correlate(rec, window=WIN)
+            ratio_ens = float(np.mean(fe[1][mid]) / np.mean(truth[1][mid]))
+            rows.append((c, ratio, pulled, snapped, ratio_med, ratio_ens))
+            print("  コントラスト %.2f:速度比 生 %.3f(部分的に引かれた窓 %2.0f %% / ゼロに張り付いた窓 %2.0f %%)"
+                  " / 中央値引き %.3f / アンサンブル %.3f"
+                  % (c, ratio, 100 * pulled, 100 * snapped, ratio_med, ratio_ens))
+        out[kind] = rows
+    sm, fi = out["smooth"], out["fine"]
+    print("  ★予想は「動かない模様は流速をゼロへ引く」。空の映り込みは %.2f でも速度比 %.3f と**引かない**"
+          % (sm[-1][0], sm[-1][1]))
+    print("    (滑らかな模様は窓の平均引きで消え、残りの相関ピークは幅が広くて粒子の鋭い峰に負ける)。")
+    print("  細かい映り込みだけが効き、静止ピークと移動ピークは**どちらかが勝つ**:平均は 2 峰の混合比。")
+    print("  中央値引きは %.2f でも比 %.3f。アンサンブルは静止ピークも積み上げるので効かない(%.3f)。"
+          % (fi[-1][0], fi[-1][4], fi[-1][5]))
+    assert sm[-1][1] > 0.95, "空の映り込みは効かない"
+    assert fi[-1][1] < 0.2 and fi[-1][4] > 0.95
+    assert fi[1][1] > 0.9
+    return out
 
 
 # --------------------------------------------------------------------------- #
