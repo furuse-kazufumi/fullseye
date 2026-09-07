@@ -746,9 +746,9 @@ def section_density() -> dict:
     print("\n" + "=" * 78)
     print("6) 崖(2) 点密度 —— 「検出できる最小の変化厚」は 1/sqrt(密度)")
     print("=" * 78)
-    print("   密度   セル内点数  DoD LoD95 [m]  予測   M3C2 LoD95 [m]  予測  "
-          "M3C2 有効 core   C2C 平均 [m]")
-    dens, ld, lm, pd_, pm, c2c, rate = [], [], [], [], [], [], []
+    print("   密度  セル内点数  DoD LoD95 [m] 予測   DoD 空セル  M3C2 LoD95 [m] 予測  "
+          "M3C2 有効 core  C2C [m]")
+    dens, ld, lm, pd_, pm, c2c, rate, emp = [], [], [], [], [], [], [], []
     for rho in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0):
         rng = np.random.default_rng(SEED + 6)
         a, _ = make_cloud(rng, density=rho, with_change=False, occl=0.0)
@@ -756,7 +756,9 @@ def section_density() -> dict:
         rc = dod(a, b)
         mc = m3c2(a, b)
         s_d = 1.96 * spread(rc["dz"][rc["ok"]])
-        s_m = 1.96 * spread(mc["L"])
+        #: ★有効 core が少なすぎるときの LoD は「測った」ことにしない
+        #   (2 点の標準偏差は数字にはなるが意味を持たない)。
+        s_m = 1.96 * spread(mc["L"]) if int(mc["ok"].sum()) >= 100 else float("nan")
         step = max(1, len(a) // 6000)
         ch = float(fs.ledger.chamfer_distance(a[::step], b[::step]))
         dens.append(rho)
@@ -766,25 +768,27 @@ def section_density() -> dict:
         pm.append(1.96 * pred_sigma_m3c2(SLOPE, rho))
         c2c.append(ch)
         rate.append(100 * mc["rate"])
-        print("   %5.1f %10.1f %13.3f %7.3f %14s %7.3f %13.1f %% %11.3f"
-              % (rho, rho * CELL * CELL, s_d, pd_[-1],
+        emp.append(100 * rc["empty"] / WIN_AREA)
+        print("   %5.1f %9.1f %12.3f %7.3f %8.1f %% %13s %7.3f %12.1f %% %8.3f"
+              % (rho, rho * CELL * CELL, s_d, pd_[-1], emp[-1],
                  ("%.3f" % s_m) if np.isfinite(s_m) else "測れず", pm[-1],
                  rate[-1], ch))
     print("\n  ★DoD の LoD は %.3f m(%.1f pt/m2)-> %.3f m(%.1f pt/m2)。"
-          "密度 32 倍で %.2f 倍(予測 1/sqrt(32) = %.3f、"
+          "密度 32 倍で %.2f 倍(予測 1/sqrt(32) = %.3f)。"
           % (ld[0], dens[0], ld[-1], dens[-1], ld[-1] / ld[0], 1 / math.sqrt(32)))
-    print("     低密度側で予測より良いのは、点の無いセルが差分から落ちるため)。")
     print("     %.1f pt/m2 では最小検出厚 %.3f m —— この崩壊の最大深さ %.2f m の %.0f %% で、"
           "**縁は丸ごと見えない**。" % (dens[0], ld[0], SCAR["amp"],
                                         100 * ld[0] / SCAR["amp"]))
-    print("  ★★M3C2 の LoD が低密度で**見かけ上よくなる**(%.1f pt/m2 で %.3f m、"
-          "予測 %.3f m の半分以下)のは生存者バイアス。"
-          % (dens[1], lm[1], pm[1]))
-    print("     円柱に %d 点そろわない core を捨てているので、有効 core 率が "
-          "%.1f %%(%.1f pt/m2)。**「よく見える」のではなく「見えた所だけ数えている」**。"
-          % (MIN_CYL, rate[1], dens[1]))
-    print("     体積を出すなら、捨てた core の面積は**測れなかった面積**として"
-          "別に数えないと、土量が静かに欠ける。")
+    print("     低密度側で予測より良く見えるのは、点の無いセル(%.1f %% at %.1f pt/m2)が"
+          "差分から落ちるため —— これも「見えた所だけ数えている」。" % (emp[0], dens[0]))
+    print("  ★★崖の形が 2 つの手法で違う。DoD は空セルが %.1f %% 増えるだけで動き続けるが、"
+          % emp[0])
+    print("     M3C2 は有効 core 率が %.1f %%(4 pt/m2)-> %.1f %%(2)-> %.1f %%(0.5)と"
+          "**崩れて測れなくなる**" % (rate[3], rate[2], rate[0]))
+    print("     (円柱の足跡 %.2f m2 に %d 点そろわない core を捨てるため)。"
+          "止まるのは正直な壊れ方だが、" % (math.pi * R_CYL ** 2, MIN_CYL))
+    print("     **体積を足す側が有効率で補正しないと土量が静かに欠ける**"
+          "(7 節で %.0f %% 欠けるのを実測する)。" % (100 * (1 - 0.868)))
     print("  ★ゼロ点その 2: C2C(点群どうしの最近傍距離)は**変化が無くても** "
           "%.3f -> %.3f m を返す。" % (c2c[0], c2c[-1]))
     print("     これは点間隔そのもの(密度で決まる)で、しかも**符号が無い**ので"

@@ -3,82 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 19:58:15
+- **最終更新**: 2026-09-07 19:59:02
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+2c95b3c40 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 19:59)
+47eddd4dd auto: poc_dfm_thickness_overhang.py 編集前 (2026-09-07 19:58)
+4447ff065 auto: poc_dfm_thickness_overhang.py 編集前 (2026-09-07 19:58)
+8c986bd28 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 19:58)
+4fb5ca3cf auto: poc_dfm_thickness_overhang.py 編集前 (2026-09-07 19:58)
+f1eb274de auto: poc_dfm_thickness_overhang.py 編集前 (2026-09-07 19:58)
 7d2045d6d auto: poc_mesh_quality_repair.py 編集前 (2026-09-07 19:57)
 fa2510ae3 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 19:57)
 e10c62f7f auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 19:56)
 823597935 auto: poc_dfm_thickness_overhang.py 編集前 (2026-09-07 19:56)
-bb8175c46 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 19:56)
-f9ce867b9 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 19:56)
-c56940c4f auto: poc_dfm_thickness_overhang.py 編集前 (2026-09-07 19:56)
-e04149009 auto: poc_cad_scan_deviation.py 編集前 (2026-09-07 19:56)
-994538995 auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 19:56)
-0902cad5e auto: poc_lidar_terrain_change.py 編集前 (2026-09-07 19:56)
 ```
 
 ## 現在の git status
 
 ```
-M docs/articles/assets/poc/poc_cad_scan_deviation/figures.json
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/01_thickness_cliff.png
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/02_threshold_cliff.png
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/03_overhang_conditions.csv
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/03_overhang_conditions.png
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/03_overhang_conditions.tsv
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/04_decoupled.csv
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/04_decoupled.png
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/04_decoupled.tsv
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/05_reach_cliff.png
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/06_orientation.csv
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/06_orientation.png
- D docs/articles/assets/poc/poc_dfm_thickness_overhang/06_orientation.tsv
- M docs/articles/assets/poc/poc_dfm_thickness_overhang/figures.json
- M examples/poc_mesh_quality_repair.py
-?? docs/articles/assets/poc/poc_cad_scan_deviation/10_basin.png
-?? docs/articles/assets/poc/poc_cad_scan_deviation/11_controls.csv
-?? docs/articles/assets/poc/poc_cad_scan_deviation/11_controls.png
-?? docs/articles/assets/poc/poc_cad_scan_deviation/11_controls.tsv
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/01_scene.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/02_sections.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/03_thickness_cliff.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/04_threshold_cliff.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/05_overhang_conditions.csv
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/05_overhang_conditions.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/05_overhang_conditions.tsv
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/06_overhang_map.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/07_decoupled.csv
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/07_decoupled.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/07_decoupled.tsv
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/08_reach_cliff.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/09_orientation.csv
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/09_orientation.png
-?? docs/articles/assets/poc/poc_dfm_thickness_overhang/09_orientation.tsv
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/figures.json
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/09_orientation.tsv
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/09_orientation.csv
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/09_orientation.png
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/08_reach_cliff.png
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/07_decoupled.tsv
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/07_decoupled.png
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/07_decoupled.csv
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/06_overhang_map.png
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/05_overhang_conditions.tsv
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/05_overhang_conditions.csv
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/05_overhang_conditions.png
-19:57 docs/articles/assets/poc/poc_dfm_thickness_overhang/04_threshold_cliff.png
-19:57 docs/articles/assets/poc/poc_cad_scan_deviation/figures.json
-19:57 docs/articles/assets/poc/poc_cad_scan_deviation/11_controls.tsv
+19:59 examples/poc_lidar_terrain_change.py
+19:58 examples/poc_dfm_thickness_overhang.py
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/figures.json
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/13_self_intersection.tsv
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/13_self_intersection.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/13_self_intersection.csv
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/12_sliver_normal_error.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/11_sliver_threshold.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/10_decimate_curvature.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/09_decimate_cliff.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/08_hole_frames.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/07_hole_rim_roughness.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/06_hole_cliff.png
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/05_repair_vs_restore.tsv
+19:58 docs/articles/assets/poc/poc_mesh_quality_repair/05_repair_vs_restore.png
 ```
 
 ---
