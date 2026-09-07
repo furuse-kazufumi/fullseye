@@ -1098,7 +1098,9 @@ def main() -> int:
     assert sz["open"][0.0][0] == 0.0, "オープニングが 1 px を消さない"
     assert max(r[2] for r in rg["good"]) < 0.1, "位置合わせ 3 経路の残留が 0.1 px を超えた"
     assert rg["phase"][2] > 0.2, "位相相関(整数)の残留が小さすぎる(2-D 経路が増えた?)"
-    assert il[0] > 300 and il[1] < 50, "照明差の対照群が崩れた"
+    assert il[0] > 3000 and il[1] < 50, "照明差の対照群が崩れた"
+    assert ct["ずれ無し・照明差無し"][2] > 100, "histogram_match が変化を消さなくなった(改良された?)"
+    assert 0.8 < rg["phase"][3] / float(np.interp(rg["phase"][2], d, sh["fp"])) < 1.3, "位相相関の残留と偽陽性が掃引の崖から外れた"
     assert sc["ev0"]["recall"][CHANGE_TYPES[1]] < 0.7, "伐採の検出率が上がった(樹冠の設定が変わった?)"
 
     if figs.errors():
