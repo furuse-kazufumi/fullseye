@@ -498,7 +498,7 @@ def main():
     dsig, theta, delta = build_fields()
     naive, m = section2_zero_point(dsig, delta)
     section3_dark_field(dsig, theta, delta, naive, m)
-    d_hat, _th, k1, k2, k3 = section4_phase_shift(dsig, theta, delta, m)
+    d_hat, _th, k1, k2, k3, abs_err = section4_phase_shift(dsig, theta, delta, m)
     section5_wrapping(dsig, delta, d_hat, k1, k2, k3)
     rows = section6_noise(dsig, theta, delta, m)
     section7_findings()
