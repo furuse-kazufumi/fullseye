@@ -624,12 +624,22 @@ def section_bias_and_controls(sc: dict, tr: dict) -> dict:
             keep = (img, m_o, m_r, m_e, ce_o, ce_e)
         if beta == 0.6:
             ce_last = (ce_o, ce_e)
+    # 対照群: 雑音を止めて β = 0.6 —— 比で割ると雑音が 1/(1-β) 倍に増えるのが残りの原因か
+    img0 = observe(sc["master"], px, noise=0.0, bias=0.6)
+    ret0 = np.asarray(fs.apply(img0, "dc_retinex", a=a_ret, b=0.5))
+    ratio0 = np.exp(6.0 * (ret0 - 0.5))
+    ce_e0 = center_edge(np.asarray(fs.apply(ratio0 / ratio0.max(), "otsu")) > 0.5)
+    ce_o0 = center_edge(np.asarray(fs.apply(img0, "otsu")) > 0.5)
+    print("  0.6 雑音無し |  中心/縁 %5.0f / %5.0f  |                     |                     中心/縁 %5.0f / %5.0f" % (
+        ce_o0[0], ce_o0[1], ce_e0[0], ce_e0[1]))
     print("\n  ★大津 1 本は β = 0.6 でも BV/TV %+.1f %% —— 予想より頑健に見える。**しかし**中心の Tb.Th"
           " %.0f µm と縁の %.0f µm で\n    %.0f %% 違う(真値は %.0f / %.0f)。中心が痩せた分を縁が太って"
           "打ち消し、**全体の BV/TV は合っているのに場所ごとには壊れている**。"
-          "\n    retinex → exp → 大津なら中心 %.0f / 縁 %.0f µm に戻る。" % (
+          "\n    retinex → exp → 大津で中心 %.0f / 縁 %.0f µm —— 半分しか戻らない。雑音を止めても"
+          " %.0f / %.0f なので、\n    残りは雑音でなく「局所平均に骨そのものが混ざる」ぶん"
+          "(窓 %.0f µm は骨梁間隔 %.0f µm より狭い)。" % (
               bv_o[-1], ce_last[0][0], ce_last[0][1], 100 * (1 - ce_last[0][0] / ce_last[0][1]),
-              ce_t[0], ce_t[1], ce_last[1][0], ce_last[1][1]))
+              ce_t[0], ce_t[1], ce_last[1][0], ce_last[1][1], ce_e0[0], ce_e0[1], RETINEX_UM, GRID_UM))
     print("  ★retinex → 大津は β = 0 でも BV/TV %+.1f %%。log 域で大津を取ると"
           "しきい値が幾何平均 √(髄·骨) = %.2f 側へ落ちて帯が太る。\n    exp で比に戻してから"
           "大津なら %+.1f %%(β = 0.6)。「バイアス補正」は対数のまま二値化してはいけない。" % (
