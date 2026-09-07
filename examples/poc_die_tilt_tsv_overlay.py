@@ -213,32 +213,55 @@ def measure_vias(sc: dict) -> dict:
     sz = np.bincount(key, weights=wgt * zc)
     ok = sw > 1e-9
 
+    # 軸まわりの細い円柱(半径 1.2 vox)—— 長さを等価幅で数えるための探針
+    pr = 1.2
+    p = int(np.ceil(pr))
+    dyy, dxx = np.mgrid[-p:p + 1, -p:p + 1]
+    probe = np.hypot(dyy, dxx) <= pr
+    nz_, ny_, nx_ = vol.shape
+
     out = []
     for j in range(1, n + 1):
-        k0, k1 = j * vol.shape[0], (j + 1) * vol.shape[0]
-        m = ok[k0:k1]
+        k0, k1 = j * nz_, (j + 1) * nz_
+        w_sl = sw[k0:k1]
+        m = ok[k0:k1].copy()
+        if int(m.sum()) < 8:
+            continue
+        m &= w_sl >= 0.70 * float(np.median(w_sl[m]))     # 端のスライスを落とす
         if int(m.sum()) < 5:
             continue
-        pz = sz[k0:k1][m] / sw[k0:k1][m]
-        py = sy[k0:k1][m] / sw[k0:k1][m]
-        px = sx[k0:k1][m] / sw[k0:k1][m]
+        pz = sz[k0:k1][m] / w_sl[m]
+        py = sy[k0:k1][m] / w_sl[m]
+        px = sx[k0:k1][m] / w_sl[m]
         line = _L.fit_line3(np.column_stack([pz, py, px]))
         d = np.asarray(line["direction"], float)          # (dz, dy, dx)
         if d[0] < 0:
             d = -d
         c = np.asarray(line["center"], float)[:3]
-        # 長さ: 軸に沿った座標の分散から(一様な棒なら Var = L^2/12)
+
+        # 長さ: 軸に沿って探針の gray を拾い、等価幅(総和 / 平坦部)で数える
+        ks = np.nonzero(ok[k0:k1])[0]
+        lo_k, hi_k = max(0, int(ks[0]) - 3), min(nz_ - 1, int(ks[-1]) + 3)
+        prof = np.empty(hi_k - lo_k + 1)
+        for i, kk in enumerate(range(lo_k, hi_k + 1)):
+            t = (sc["zs"][kk] - c[0]) / d[0]
+            r0 = int(round((c[1] + t * d[1]) / VOX_UM + (ny_ - 1) / 2.0))
+            c0 = int(round((c[2] + t * d[2]) / VOX_UM + (nx_ - 1) / 2.0))
+            r0 = int(np.clip(r0, p, ny_ - 1 - p))
+            c0 = int(np.clip(c0, p, nx_ - 1 - p))
+            prof[i] = float(vol[kk, r0 - p:r0 + p + 1,
+                                c0 - p:c0 + p + 1][probe].mean())
+        plateau = float(np.median(prof[prof > 0.5 * prof.max()]))
+        length = float(prof.sum() / plateau * VOX_UM / d[0])
+
+        # 中心: gray 重み付きの重心を軸上に落とす
         sel = lid == j
+        w = wgt[sel]
         t = ((zc[sel] - c[0]) * d[0] + (yc[sel] - c[1]) * d[1]
              + (xc[sel] - c[2]) * d[2])
-        w = wgt[sel]
         mt = float((w * t).sum() / w.sum())
-        var = float((w * (t - mt) ** 2).sum() / w.sum())
-        length = float(np.sqrt(12.0 * var))
-        cz = c[0] + mt * d[0]
-        cy = c[1] + mt * d[1]
-        cx = c[2] + mt * d[2]
-        out.append((cz, cy, cx, d[0], d[1], d[2], length))
+        out.append((c[0] + mt * d[0], c[1] + mt * d[1], c[2] + mt * d[2],
+                    d[0], d[1], d[2], length))
 
     a = np.asarray(out, float)
     assert a.shape[0] == 2 * NG * NG, (a.shape, n)
