@@ -499,6 +499,25 @@ def section_tool_gaps() -> None:
     print("  (d) fit_poly_surface / surface_form_error / blob_* は"
           "fullseye.ledger からしか呼べない(1 行ファサードに出ていない)。")
 
+    # (e) ★台帳経由の surface_form_error は **PV の float しか返らない**
+    v = _L.surface_form_error(np.zeros((8, 8)) + np.arange(8), 2)
+    assert isinstance(v, float), type(v)
+    print("  (e) ★surface_form_error は docstring に「(residual, rms, pv) を返す」と"
+          "書いてあるのに、\n      台帳経由では **pv の float 1 個**しか返らない"
+          "(残差の (H,W) も rms も取れない)。この PoC の残差の絵は"
+          "\n      fit_poly_surface + eval_poly_surface で作り直している。")
+
+    # (f) 進化 op は画像を [0,1] とみなす —— 単位つきの量をそのまま渡すと切る位置が狂う
+    z = np.zeros((32, 32))
+    z[8:24, 8:24] = 100.0                      # 「100 µm の段差」のつもり
+    m = np.asarray(fs.apply(z, "auto_threshold")) > 0.5
+    assert m.sum() == 256, int(m.sum())        # ここは当たるが……
+    z2 = z - 60.0                              # 背景 -60 / 前景 +40 の高さ場
+    m2 = np.asarray(fs.apply(z2, "auto_threshold")) > 0.5
+    print("  (f) ★進化 op の auto_threshold は値域を [0,1] とみなす。背景 -60 µm /"
+          " 前景 +40 µm の高さ場を\n      そのまま渡すと前景が %d 画素(正解 256)。"
+          "単位つきの量は正規化してから渡すこと。" % int(m2.sum()))
+
 
 # --------------------------------------------------------------------------- #
 def main() -> None:
