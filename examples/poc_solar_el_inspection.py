@@ -565,7 +565,7 @@ def section_grain_sweep() -> dict:
           "ヘッセ行列の比 %.3f/%.3f から c ≈ %.2f。" % (sig, step_h, line_h, c_pred))
     print("\n     c     偽クラック [px]  偽の断線  一致した断線  面積率誤差 [pt]  粒→孤立 [%]")
     cs, false_len, fi_false, fi_ok, iso_err = [], [], [], [], []
-    for c in (0.0, 0.06, 0.12, 0.18, 0.24, 0.32, 0.40):
+    for c in (0.0, 0.06, 0.12, 0.18, 0.24, 0.32, 0.40, 0.50, 0.60):
         sc = make_scene(grain_c=c)
         r = analyze(sc)
         cs.append(c)
