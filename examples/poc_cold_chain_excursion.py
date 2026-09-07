@@ -388,19 +388,20 @@ def section_scene(scene: dict) -> dict:
           % (EXC_ALLOW_MIN, n_bad, n_prod, 100.0 * n_bad / n_prod))
 
     if figs.enabled():
-        idx = [60, 155, 400, 510]
-        figs.save_grid("scene_slices", [vol[k] for k in idx],
-                       ["t = %d 分(定常)" % idx[0], "t = %d 分(扉 1 回目)" % idx[1],
+        idx = [10, 130, 300, 410]
+        figs.save_grid("scene_slices", [plan_view(vol[k]) for k in idx],
+                       ["t = %d 分(出発)" % idx[0], "t = %d 分(扉 1 回目)" % idx[1],
                         "t = %d 分(閉扉中)" % idx[2], "t = %d 分(扉 3 回目)" % idx[3]],
-                       title="荷室の温度場 [°C](上 = 吹き出し口、下 = 扉)", ncols=4,
+                       title="荷室の温度場 [°C](左 = 吹き出し口 / 右 = 扉)", ncols=2,
                        caption="同じ色尺度ではない —— 各枚は自分の最小最大で塗られる。"
                                "数字は本文の表を見ること。")
         figs.save_grid("layout_maps",
-                       [lay["is_product"].astype(float), lay["d_vent"],
-                        lay["wall"], lay["tau"]],
-                       ["製品セル(白)と空気の通路", "吹き出し口からの距離 [m](esdf)",
-                        "壁の効き Σe^(-d/λ) [-]", "時定数 τ [min]"],
-                       title="荷室の geometry —— 距離場はすべて esdf で測る", ncols=4)
+                       [plan_view(lay["is_product"].astype(float)),
+                        plan_view(lay["d_vent"]), plan_view(lay["wall"]),
+                        plan_view(lay["tau"])],
+                       ["製品セル(明)と通路", "吹き出し口からの距離 [m]",
+                        "壁の効き [-]", "時定数 [min]"],
+                       title="荷室の geometry —— 距離場はすべて esdf で測る", ncols=2)
     return {"tmax": tmax, "exc": exc, "worst": (int(iy), int(ix)),
             "n_bad": n_bad, "n_prod": n_prod}
 
