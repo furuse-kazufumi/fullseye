@@ -1103,11 +1103,27 @@ def section_controls(ref: CadRef) -> dict:
               % (name, len(sc["pts"]), sc["area_seen"], e, rms, da))
         out[name] = {"e": e, "rms": rms, "a_est": a_est, "a_tru": a_tru,
                      "area": sc["area_seen"]}
-    print("\n   ★欠測は姿勢を %.1f 倍に引くが、効きは小さい。危ないのは"
-          % (out["欠測: 片側スキャン"]["e"] / max(out["基準: 欠陥 + 雑音"]["e"], 1e-9)))
-    print("      **測れなかった %.0f mm^2(%.1f %%)を『公差内』と書くこと**。"
+    # ★1 本の実行の差を「効いた」と読まない —— 種を振って散らばりと比べる
+    print("\n   欠測が姿勢を引くか(種を 3 本振って平均 ± 散らばり):")
+    stat = {}
+    for lab, kw in (("全周", dict()), ("片側のみ", dict(occlude=True))):
+        es = []
+        for sd in (7, 23, 51):
+            s2 = make_scan(n=10000, seed=sd, **kw)
+            R, t = align(s2["pts"], ref, method="p2plane",
+                         init=(s2["R_true"], s2["t_true"]), iters=30)
+            es.append(rot_err_deg(R, s2["R_true"]))
+        stat[lab] = (float(np.mean(es)), float(np.std(es)))
+        print("     %-8s 姿勢誤差 %.4f ± %.4f 度" % (lab, stat[lab][0], stat[lab][1]))
+    print("   ★差 %+.4f 度は散らばり(±%.4f)と同じ桁 —— **1 本の実行で"
+          "「欠測が引いた」とは言えない**。"
+          % (stat["片側のみ"][0] - stat["全周"][0], max(stat["全周"][1],
+                                                        stat["片側のみ"][1])))
+    print("      危ないのはそこではなく、**測れなかった %.0f mm^2(%.1f %%)を"
+          "『公差内』と書くこと**。"
           % (ref.area - out["欠測: 片側スキャン"]["area"],
              100 * (1 - out["欠測: 片側スキャン"]["area"] / ref.area)))
+    out["_seed_stat"] = stat
     figs.save_table("controls", ["条件", "点数", "可視面積 [mm^2]", "姿勢 [度]",
                                  "偏差RMS [µm]", "公差外面積 推定/真値 [mm^2]"], rows,
                     title="対照群 —— 要因を 1 つずつ止める")
