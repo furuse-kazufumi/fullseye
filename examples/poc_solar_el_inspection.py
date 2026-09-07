@@ -215,26 +215,39 @@ def grade(rate_pct: float) -> str:
 # --------------------------------------------------------------------------- #
 # 解析 —— fullseye の op を並べる                                               #
 # --------------------------------------------------------------------------- #
-def vignette_model(shape, a: float, R: float) -> np.ndarray:
-    """``aug_vignette`` と同じ cos^4 則(r は半対角で正規化)。当てはめの前向きモデル。"""
+def _radius(shape) -> np.ndarray:
+    """``aug_vignette`` と同じ正規化半径(中心 0、隅 1)。"""
     h, w = shape
+    cy, cx = (h - 1) / 2.0, (w - 1) / 2.0
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
-    r = np.hypot((yy - (h - 1) / 2) / (h / 2), (xx - (w - 1) / 2) / (w / 2)) / np.sqrt(2)
+    return np.hypot(yy - cy, xx - cx) / np.hypot(cy, cx)
+
+
+def vignette_model(shape, a: float, R: float) -> np.ndarray:
+    """``aug_vignette`` と同じ cos^4 則。当てはめの前向きモデル。"""
+    r = _radius(shape)
     return 1.0 - a + a / (1.0 + (r / R) ** 2) ** 2
 
 
+FIT_Q = 0.8                 # 半径ビンの代表値に使う分位(欠陥は暗くしかしないので上側)
+
+
 def fit_vignette(img: np.ndarray, nbins: int = 20) -> tuple[float, float]:
-    """半径ビンの中央値に cos^4 則を当てはめる(格子・欠陥に頑健な粗い当てはめ)。"""
-    h, w = img.shape
-    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
-    r = np.hypot((yy - (h - 1) / 2) / (h / 2), (xx - (w - 1) / 2) / (w / 2)) / np.sqrt(2)
+    """半径ビンの上側分位に cos^4 則を当てはめる。
+
+    中央値ではなく **80 % 分位**を使う —— EL の欠陥は暗くしかしない(明るく
+    する欠陥は無い)ので、上側の分位は暗い欠陥に頑健。隅のリングは 4 隅の
+    小さな面積しか無く、そのうち 2 隅が孤立領域で暗いと**中央値は落ちる**
+    (最初は中央値で書いて、強さ 0.5 を 1.0 と当ててしまった)。
+    """
+    r = _radius(img.shape)
     edges = np.linspace(0, 1.0, nbins + 1)
     rc, med = [], []
     for k in range(nbins):
         sel = (r >= edges[k]) & (r < edges[k + 1])
         if sel.sum() > 50:
             rc.append(0.5 * (edges[k] + edges[k + 1]))
-            med.append(float(np.median(img[sel])))
+            med.append(float(np.quantile(img[sel], FIT_Q)))
     rc, lm = np.asarray(rc), np.log(np.asarray(med))
     best = (np.inf, 0.0, 1.0)
     for a in np.linspace(0, 1, 51):
