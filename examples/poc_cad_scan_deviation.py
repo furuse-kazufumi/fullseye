@@ -1341,6 +1341,10 @@ def main() -> int:
     assert abs(pl["cases"]["反りのみ"]["meas"] + WARP_A / 3) < 0.02, \
         pl["cases"]["反りのみ"]["meas"]
     assert abs(pl["dil"][0] - pl["dil"][-1]) < 0.3, pl["dil"]
+    aw = pl["cases"]["_area_sweep"] if "_area_sweep" in pl["cases"] else None
+    assert aw and aw["dil"][-1] > 3 * aw["dil"][0], aw       # 面積で薄まりが増える
+    assert abs(sd["bias"][-1] - sd["bias"][0]) < 15.0, sd["bias"]
+    assert abs(sd["area_err"][-1]) > abs(sd["area_err"][0]), sd["area_err"]
     assert al["edge_naive"][1] > 50.0, al["edge_naive"]     # 偽の公差外領域が出る
     assert al["edge_fixed"][0] < 5.0, al["edge_fixed"]      # 除外すればほぼ消える
     assert ba["alt_ratio"] > 3.0, ba["alt_ratio"]           # 非対称なら別解は見える
