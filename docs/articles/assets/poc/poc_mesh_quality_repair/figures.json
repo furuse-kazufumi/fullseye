@@ -84,5 +84,57 @@
    630,
    3
   ]
+ },
+ {
+  "file": "09_decimate_cliff.png",
+  "name": "decimate_cliff",
+  "caption": "予測線は最も粗い点で合わせた 1/F。面数が多い側では実測のほうが小さい(まだ削り代がある)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_decimate_curvature.png",
+  "name": "decimate_curvature",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_sliver_threshold.png",
+  "name": "sliver_threshold",
+  "caption": "面積 0 の判定に引っかかるずっと手前で、潰れ面の法線は使いものにならなくなる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_sliver_normal_error.png",
+  "name": "sliver_normal_error",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_self_intersection.png",
+  "name": "self_intersection",
+  "caption": "頂点 6 個だけを内側へ押した。形は壊れているのに水密・多様体・χ はすべて健全のまま。",
+  "shape": [
+   176,
+   616,
+   3
+  ],
+  "csv": "13_self_intersection.csv",
+  "tsv": "13_self_intersection.tsv"
  }
 ]

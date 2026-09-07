@@ -910,11 +910,11 @@ def section_basin(ref: CadRef) -> dict:
     print("\n" + "=" * 78)
     print("7) 崖(初期姿勢) —— ICP 単独はどこから収束しなくなるか")
     print("=" * 78)
-    print("   ★収束の判定に**残差**を使うと、直方体の 90 度対称に落ちた別解を"
-          "見逃す。")
+    print("   予想: 直方体の 90 度対称に落ちた別解は残差が小さく、見抜けない。")
     print("   初期ずれ[度]  姿勢誤差[度]  点移動[mm]  最終残差[µm]  判定")
     sc = make_scan(n=8000, noise=0.010)
     angs, errs, resid = [], [], []
+    floor = None
     for a in (0, 10, 20, 30, 40, 50, 60, 75, 90, 120, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
         R, t = align(sc["pts"], ref, method="p2plane", init=(Rp, sc["t_true"]),
@@ -923,20 +923,91 @@ def section_basin(ref: CadRef) -> dict:
         d, _, _, _ = ref.deviate(q)
         e = rot_err_deg(R, sc["R_true"])
         mm = pose_shift_mm(R, t, sc["R_true"], sc["t_true"], ref.pts)
-        ok = "収束" if e < 0.5 else ("別解(残差は小さい)" if d.mean() < 0.35
-                                       else "発散")
         angs.append(a)
         errs.append(e)
         resid.append(1000 * float(d.mean()))
+        if floor is None:
+            floor = resid[-1]
+        ok = "収束" if e < 0.5 else "別解(残差は床の %.1f 倍)" % (resid[-1] / floor)
         print("   %11d  %12.3f  %10.4f  %12.1f  %s" % (a, e, mm, resid[-1], ok))
+    last = resid[-1] / floor
+    print("\n   ★予想は外れた。この部品では別解の残差が床の %.1f 倍あり、"
+          "**残差で見抜ける**。" % last)
+    print("      理由: ボスが片側にあり、穴が φ%.0f と φ%.0f で径も位置も違う ——"
+          " 90/180 度対称が壊れている。" % (2 * HOLE_R, 2 * H2R))
+
+    # 対照群: 対称を壊す特徴を取り去った素の直方体だと、同じ 180 度で見抜けない
+    box = _plain_box_cloud(30000, seed=41)
+    bref = _PlainRef(_plain_box_cloud(60000, seed=42))
+    Rg = rot([0.35, 0.82, 0.45], 24.0)
+    bs = box["pts"] @ Rg.T + np.array([35.0, -20.0, 9.0])
+    bs = bs + 0.010 * np.random.default_rng(3).standard_normal(bs.shape)
+    Rt, tt = Rg.T, -Rg.T @ np.array([35.0, -20.0, 9.0])
+    b_rows = []
+    for a in (0, 180):
+        Rp = rot([0, 0, 1.0], a) @ Rt
+        R, t = align(bs, bref, method="p2plane", init=(Rp, tt), iters=40, sub=5000)
+        d, _, _, _ = bref.deviate(bs @ R.T + t)
+        b_rows.append((a, rot_err_deg(R, Rt), 1000 * float(d.mean())))
+        print("   対照(素の直方体 %.0fx%.0fx%.0f、ボスも穴も無し) 初期 %3d 度: "
+              "姿勢誤差 %6.2f 度 / 残差 %6.1f µm" % (L, W, H, a, b_rows[-1][1],
+                                                     b_rows[-1][2]))
+    print("      ★対称形では 180 度ずれたまま残差が %.2f 倍(= 床)。"
+          "**残差を合否に使うと嘘を見抜けない**のはこちら。"
+          % (b_rows[1][2] / b_rows[0][2]))
+
     figs.save_plot("basin",
                    [("姿勢誤差 [度]", angs, errs),
                     ("最終残差 [µm] / 10", angs, [r / 10 for r in resid])],
                    xlabel="初期姿勢のずれ [度]", ylabel="[度] / [µm]/10",
-                   title="ICP の収束域と、残差が嘘をつく角度",
-                   caption="残差が小さくても姿勢が合っているとは限らない"
-                           "(直方体の 90 度対称)。")
-    return {"ang": angs, "err": errs, "resid": resid}
+                   title="ICP の収束域(非対称な部品なら別解は残差で分かる)",
+                   caption="この部品は 75 度まで収束する。90 度以降の別解は"
+                           "残差が床の数倍に上がるので見抜ける ——"
+                           "素の直方体ではそうならない(本文の対照群)。")
+    return {"ang": angs, "err": errs, "resid": resid, "floor": floor,
+            "alt_ratio": last, "box": b_rows}
+
+
+def _plain_box_cloud(n: int, seed: int) -> dict:
+    """対称を壊す特徴(ボス・フィレット・穴)を持たない素の直方体の表面点群。"""
+    rng = np.random.default_rng(seed)
+    faces = [("z", 1.0, L, W), ("z", -1.0, L, W), ("x", 1.0, W, H),
+             ("x", -1.0, W, H), ("y", 1.0, L, H), ("y", -1.0, L, H)]
+    ar = np.array([a * b for _, _, a, b in faces], float)
+    m = np.maximum(8, (n * ar / ar.sum()).astype(int))
+    P, N = [], []
+    for (ax, sg, u1, u2), mi in zip(faces, m):
+        u = rng.uniform(-u1 / 2, u1 / 2, mi)
+        v = rng.uniform(-u2 / 2, u2 / 2, mi)
+        p = np.zeros((mi, 3))
+        nn = np.zeros((mi, 3))
+        if ax == "z":
+            p[:, 0], p[:, 1], p[:, 2] = u, v, (H if sg > 0 else 0.0)
+            nn[:, 2] = sg
+        elif ax == "x":
+            p[:, 0], p[:, 1], p[:, 2] = sg * L / 2, u, v + H / 2
+            nn[:, 0] = sg
+        else:
+            p[:, 0], p[:, 1], p[:, 2] = u, sg * W / 2, v + H / 2
+            nn[:, 1] = sg
+        P.append(p)
+        N.append(nn)
+    return {"pts": np.concatenate(P), "nrm": np.concatenate(N)}
+
+
+class _PlainRef:
+    """対照群用の最小の参照(CadRef と同じ口だけ持つ)。"""
+
+    def __init__(self, cloud):
+        self.pts, self.nrm = cloud["pts"], cloud["nrm"]
+        self.tree = cKDTree(self.pts)
+
+    def deviate(self, q, k=6, edge_deg=30.0):
+        d, i = self.tree.query(np.asarray(q, float), k=k, workers=-1)
+        i0 = i[:, 0]
+        s = np.einsum("ij,ij->i", np.asarray(q, float) - self.pts[i0], self.nrm[i0])
+        cos = np.einsum("mkj,mj->mk", self.nrm[i], self.nrm[i0])
+        return d[:, 0], s, i0, cos.min(axis=1) < np.cos(np.radians(edge_deg))
 
 
 # --------------------------------------------------------------------------- #
