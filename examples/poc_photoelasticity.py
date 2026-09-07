@@ -313,7 +313,7 @@ def section4_phase_shift(dsig, theta, delta, m):
     #   (2) 符号を捨てて |δ| だけ使えば、巻きの無い領域では機械精度で戻る
     #       (3 節の 0.58 MPa と比べると 15 桁ちがう)。
     assert abs_err < 1e-12, abs_err
-    return d_hat, th_hat, s1, s2, s3
+    return d_hat, th_hat, s1, s2, s3, abs_err
 
 
 def section5_wrapping(dsig, delta, d_hat, s1, s2, s3):
