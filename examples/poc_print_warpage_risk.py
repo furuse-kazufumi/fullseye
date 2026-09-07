@@ -457,7 +457,7 @@ def _side_view(occ):
 # --------------------------------------------------------------------------- #
 def section_scene():
     print("\n" + "=" * 78)
-    print("1) 場面 —— 6 つの形を層に切り、断面を 2-D の領域 op で測る")
+    print("1) 場面 —— %d つの形を層に切り、断面を 2-D の領域 op で測る" % len(SHAPES))
     print("=" * 78)
     cases = {}
     rows = []
@@ -478,8 +478,8 @@ def section_scene():
 
     figs.save_grid("scene", [_side_view(c["occ"]) for c in cases.values()],
                    list(cases.keys()), ncols=3,
-                   title="6 つの形の側面図(y 方向に投影、横 %.0f mm x 縦 %.0f mm)"
-                         % (L_X, Z_SPAN),
+                   title="%d つの形の側面図(y 方向に投影、横 %.0f mm x 縦 %.0f mm)"
+                         % (len(SHAPES), L_X, Z_SPAN),
                    caption="層は下から上へ積む。層厚 %.2f mm、ボクセル %.2f mm。"
                            % (H_LAYER, VOX))
     occ = cases["首つき"]["occ"]
@@ -493,7 +493,7 @@ def section_scene():
                    caption="この断面の面積の列だけが、閉形式の入力になる。")
     figs.save_table("shapes", ["形", "層数", "底面 mm^2", "最大断面 mm^2",
                                "体積 mm^3", "最大周長 mm", "最大塊数"], rows,
-                    title="6 つの形の諸元(すべて長さ %.0f mm)" % L_X)
+                    title="%d つの形の諸元(すべて長さ %.0f mm)" % (len(SHAPES), L_X))
     return cases
 
 
@@ -681,30 +681,39 @@ def section_cliff():
     print("\n  (a) 首の細さを振る(L = %.0f mm, H = %.0f mm)" % (L_X, Z_SPAN))
     print("     設計の首  測った首  予測 κ         実測 κ        比       たわみ [mm]")
     wn_list, ratio_n, dev_n, wn_meas = [], [], [], []
-    for wn in (16.0, 8.0, 4.0, 2.0, 1.0, 0.25):
+    vanished = None
+    for wn in (16.0, 8.0, 4.0, 2.0, 1.0, 0.5, 0.25):
         boxes = [(0.0, 2.0, 2.0, 18.0, 0.0, 60.0),
                  (2.0, 8.0, 10.0 - wn / 2, 10.0 + wn / 2, 0.0, 60.0),
                  (8.0, 12.0, 2.0, 18.0, 0.0, 60.0)]
-        c = build_case(boxes, x_bin=2)
+        occ, _ = voxelize(boxes)
+        hist = layer_history(occ)
         # 測った首 = 中ほどの層の断面積 / 長さ(2-D の領域 op が返した面積から)
-        wm = c["hist"]["area"][int(5.0 / H_LAYER)] / L_X
+        wm = hist["area"][int(5.0 / H_LAYER)] / L_X
+        if wm <= 0.0:
+            # ★首が丸ごと消える。部品が 2 つに分かれるので解いてはいけない。
+            vanished = (wn, wm)
+            print("     %6.2f    %6.2f   —— 首が**消えた**。ボクセル %.2f mm では"
+                  "表現できず、部品が 2 つに分かれる。" % (wn, wm, VOX))
+            continue
+        c = build_case(boxes, x_bin=2)
         wn_list.append(wn)
         wn_meas.append(wm)
         ratio_n.append(c["kappa_fem"] / c["kappa_pred"])
         dev_n.append(c["dev_fem"])
         print("     %6.2f    %6.2f   %.4e   %.4e   %.4f   %.4f"
               % (wn, wm, c["kappa_pred"], c["kappa_fem"], ratio_n[-1], c["dev_fem"]))
-    print("     ★予想は外れた —— 首を %.2f mm(実際に測れたのは %.2f mm)まで"
-          "細くしても誤差は %.1f %% しか出ない。"
-          % (wn_list[-1], wn_meas[-1], 100 * abs(ratio_n[-1] - 1)))
+    print("     ★予想は外れた —— 首を %.2f mm まで細くしても誤差は %.1f %% "
+          "しか出ない。" % (wn_list[-1], 100 * abs(ratio_n[-1] - 1)))
     print("     一様な層の収縮は**純曲げ**でせん断力が立たないので、"
           "細い首でもモーメントは伝わる。")
-    print("     ★ついでに: ボクセル %.2f mm では %.2f mm の首は %.2f mm としか"
-          "測れない(下から 2 番目と同じ値になる)。"
-          % (VOX, wn_list[-1], wn_meas[-1]))
     print("     ★首を細くすると反りは**減る**(%.4f -> %.4f mm)—— 首は"
           "「弱いから危ない」場所ではなく、\n     **縮む材料が少ない**場所。"
           % (dev_n[0], dev_n[-1]))
+    print("     ★設計 %.2f / %.2f mm の首はどちらもボクセル %.2f mm では"
+          " %.2f mm としか測れず、%.2f mm では**跡形も無い**。"
+          "\n     力学の崖より先に**表現の崖**が来る。"
+          % (0.5, 1.0, VOX, wn_meas[-1], vanished[0]))
 
     print("\n  (b) 細長比 L/H を振る(H = %.0f mm)" % Z_SPAN)
     print("     L [mm]  L/H   中実の比   首つきの比")
@@ -1026,8 +1035,9 @@ def main() -> None:
     print("=" * 78)
     print("  * 最終形状だけを見る予測器は厳密にゼロ(%.1e)。反りは層の履歴にしかない。"
           % fin_max)
-    print("  * 層の履歴の閉形式は 6 形状中 4 形状で 0.4 %% 以内。崩れるのは"
-          "**同じ面積を別々に置いた**形(たわみ %.4f vs %.4f mm)。" % (d1, d2))
+    print("  * 層の履歴の閉形式は %d 形状中 %d 形状で 0.4 %% 以内。崩れるのは"
+          "**同じ面積を別々に置いた**形(たわみ %.4f vs %.4f mm)。"
+          % (err.size, int(np.count_nonzero(err < 0.004)), d1, d2))
     print("  * 同じ形・同じ体積・同じ底面積でも、層厚 1.00 -> 0.25 mm で"
           "たわみ %.2f 倍(ε 一定の仮定)。" % rc)
     print("  * 剥離は応力でも EIκ でも決まらない(応力は要素寸法で %.0f %% 動き、"
