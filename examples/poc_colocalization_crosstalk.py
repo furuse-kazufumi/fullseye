@@ -550,7 +550,7 @@ def section_psf_sweep() -> dict:
                     "σ=4.0 px の ch B", "A∩B の Otsu 領域(M1=%.3f)" % mb["m1"]],
                    title="真の共局在 0 % でも、ぼけると領域が重なる")
     return {"sigmas": sigmas, "r0": r0, "m1_0": m1_0, "m1_pred": m1_pred, "cc": cc,
-            "r0_nocyto": r0_nocyto}
+            "r0_nocyto": r0_nocyto, "flip": flip, "thr_b": thr_b}
 
 
 # --------------------------------------------------------------------------- #
