@@ -757,17 +757,19 @@ def section_figures(sc, zp, rc, ctrl, dens, wins, refl, dts):
                     ("積分則だけの誤差", w, np.array([r[8] for r in wins]))],
                    xlabel="問い合わせ窓 [px]", ylabel="流量の誤差 [%]",
                    title="窓の崖は流量に出る(岸の未測定帯 = w/2)")
-    c = np.array([r[0] for r in refl])
+    fi, sm = refl["fine"], refl["smooth"]
+    c = np.array([r[0] for r in fi])
     figs.save_plot("reflection_cliff",
-                   [("生", c, np.array([r[1] for r in refl])),
-                    ("時間中央値を引く", c, np.array([r[4] for r in refl])),
-                    ("アンサンブル相関", c, np.array([r[5] for r in refl]))],
-                   xlabel="反射のコントラスト(トレーサ輝度比)", ylabel="中央部の速度比(推定 / 真値)",
-                   title="動かない模様は速度をゼロへ引く", ylim=(-0.05, 1.1))
+                   [("細かい映り込み・生", c, np.array([r[1] for r in fi])),
+                    ("細かい・時間中央値を引く", c, np.array([r[4] for r in fi])),
+                    ("細かい・アンサンブル相関", c, np.array([r[5] for r in fi])),
+                    ("空の映り込み・生", np.array([r[0] for r in sm]), np.array([r[1] for r in sm]))],
+                   xlabel="反射のコントラスト(標準偏差 / トレーサ輝度)", ylabel="中央部の速度比(推定 / 真値)",
+                   title="動かない模様が速度をゼロへ引くのは細かいときだけ", ylim=(-0.05, 1.1))
     figs.save_plot("reflection_modes",
-                   [("部分的に引かれた窓", c, np.array([100 * r[2] for r in refl])),
-                    ("ゼロに張り付いた窓", c, np.array([100 * r[3] for r in refl]))],
-                   xlabel="反射のコントラスト", ylabel="窓の割合 [%]",
+                   [("部分的に引かれた窓", c, np.array([100 * r[2] for r in fi])),
+                    ("ゼロに張り付いた窓", c, np.array([100 * r[3] for r in fi]))],
+                   xlabel="細かい映り込みのコントラスト", ylabel="窓の割合 [%]",
                    title="平均は 2 峰の混合比だった")
     k = np.array([r[0] for r in dts])
     figs.save_plot("dt_cliff",
