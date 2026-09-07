@@ -551,47 +551,73 @@ def section_bulge() -> dict:
     print("=" * 78)
     print("  振幅は %.0f mm 固定、広がり σ を振る(壁は %.1f x %.1f m)"
           % (1e3 * BULGE_A, RD, RH))
-    print("\n   σ [m]   残差の山 [mm](実測)  予測  吸われた割合 [%]  "
-          "偽の倒れ [mrad](実測 / 予測)")
 
-    sigs, peak_m, peak_p, fake_m, fake_p = [], [], [], [], []
+    def _peak(pts, fit):
+        """残差の山 —— 1 点の外れ値に振られないよう上位 0.5 %% の中央値で読む。"""
+        r = (pts - fit["point"]) @ fit["normal"]
+        return float(np.median(np.sort(r)[-max(1, len(r) // 200):]))
+
+    # ★雑音だけの床。ふくらみゼロの壁で同じ読み方をすると、これが出る。
+    w0 = make_wall("east", 20000, np.random.default_rng(31), amp=0.0)
+    floor = 1e3 * _peak(w0["P"], fit_wall(w0["P"], seed=3))
+    print("  ★先に**雑音の床**を測る: ふくらみゼロの壁でも同じ読み方で %.2f mm 出る"
+          "(σ_雑音 %.1f mm の 2.6 倍)。" % (floor, 1e3 * SIG))
+    print("\n   σ [m]   残差の山 [mm]  雑音なし  閉形式  吸われた割合 [%s]  "
+          "偽の倒れ [mrad](実測 / 予測)" % "%")
+
+    sigs, peak_m, peak_c, peak_p, fake_m, fake_p = [], [], [], [], [], []
     base_tilt = 1e3 * TILT["east"]
     for bs in (0.25, 0.40, 0.70, 1.10, 1.80, 3.00):
         w = make_wall("east", 20000, np.random.default_rng(31), bsig=bs)
+        wc = make_wall("east", 20000, np.random.default_rng(31), bsig=bs,
+                       jitter_free=True)
         f = fit_wall(w["P"], seed=3)
-        r = (w["P"] - f["point"]) @ f["normal"]
-        # 山の高さは 1 点の外れ値に振られるので上位 0.5 % の中央値で読む
-        pk = float(np.median(np.sort(r)[-max(1, len(r) // 200):]))
         pr = predict_bulge(BULGE_A, bs)
-        est_tilt = plumb_mrad(f["normal"])
         sigs.append(bs)
-        peak_m.append(1e3 * pk)
+        peak_m.append(1e3 * _peak(w["P"], f))
+        peak_c.append(1e3 * _peak(wc["P"], fit_wall(wc["P"], seed=3)))
         peak_p.append(1e3 * pr["peak"])
-        fake_m.append(est_tilt - base_tilt)
+        fake_m.append(plumb_mrad(f["normal"]) - base_tilt)
         fake_p.append(1e3 * pr["fake_tilt"])
-        print("   %5.2f      %10.2f       %6.2f      %10.1f        %+6.2f / %+6.2f" % (
-            bs, peak_m[-1], peak_p[-1], 100 * pr["absorbed"], fake_m[-1], fake_p[-1]))
+        print("   %5.2f    %10.2f  %8.2f  %6.2f      %10.1f        %+6.2f / %+6.2f"
+              % (bs, peak_m[-1], peak_c[-1], peak_p[-1], 100 * pr["absorbed"],
+                 fake_m[-1], fake_p[-1]))
 
-    print("\n  ★σ = %.2f m では山の %.0f %% が残るが、σ = %.2f m では %.0f %% しか"
-          "残らない。" % (sigs[0], 100 * peak_m[0] / (1e3 * BULGE_A),
-                         sigs[-1], 100 * peak_m[-1] / (1e3 * BULGE_A)))
-    print("     **ふくらみが広いほど「平ら」と報告される** —— 一番危ない"
-          "(壁全体が出ている)\n     状態が一番見えない。")
+    print("\n  ★雑音を切ると閉形式とぴったり合う(差は最大 %.2f mm)。"
+          "σ = %.2f m では真の残り %.2f mm、\n     σ = %.2f m では %.2f mm ——"
+          " **ふくらみが広いほど「平ら」と報告される**。一番危ない\n     "
+          "(壁全体が出ている)状態が一番見えない。"
+          % (max(abs(a - b) for a, b in zip(peak_c, peak_p)),
+             sigs[0], peak_c[0], sigs[-1], peak_c[-1]))
+    cross = [s for s, p in zip(sigs, peak_c) if p < floor]
+    print("  ★★崖は「吸われる量」ではなく**雑音の床と交わる所**にある。"
+          "予測は残差 < %.2f mm、\n     つまり σ >= %.2f m。そこから先の読み"
+          "(%.2f mm)は**中身が全部雑音**で、\n     ふくらみが 9 mm あっても"
+          "0 mm あっても同じ数字が出る(床 %.2f mm)。"
+          % (floor, cross[0] if cross else float("nan"),
+             peak_m[-1], floor))
     print("  ★しかも吸われた分は消えるのでなく**倒れに化ける**: 偽の倒れは"
-          " 最大 %+.2f mrad\n     (階高で %.1f mm)。許容 %.0f mm の %.0f %% を"
+          " 最大 %+.2f mrad\n     (階高で %.1f mm)。許容 %.0f mm の %.0f %s を"
           "ふくらみだけで使う。"
           % (max(fake_m, key=abs), abs(max(fake_m, key=abs)) * 1e-3 * RH * 1e3,
              TOL_PLUMB_MM,
-             100 * abs(max(fake_m, key=abs)) * 1e-3 * RH * 1e3 / TOL_PLUMB_MM))
+             100 * abs(max(fake_m, key=abs)) * 1e-3 * RH * 1e3 / TOL_PLUMB_MM, "%"))
 
     figs.save_plot("bulge_absorption",
-                   [("残差の山(実測)", sigs, peak_m),
-                    ("残差の山(予測)", sigs, peak_p),
-                    ("真の振幅 %.0f mm" % (1e3 * BULGE_A), sigs,
-                     [1e3 * BULGE_A] * len(sigs)),
-                    ("偽の倒れ [mrad]", sigs, fake_m)],
-                   xlabel="ふくらみの広がり σ [m]", ylabel="[mm] / [mrad]",
-                   title="広いふくらみは平面に吸われ、倒れに化ける")
+                   [("残差の山(実測・雑音あり)", sigs, peak_m),
+                    ("残差の山(雑音なし)", sigs, peak_c),
+                    ("閉形式の予測", sigs, peak_p),
+                    ("雑音の床 %.2f mm" % floor, sigs, [floor] * len(sigs))],
+                   xlabel="ふくらみの広がり σ [m]", ylabel="残差の山 [mm]",
+                   title="広いふくらみは平面に吸われ、残りは雑音の床に沈む",
+                   caption="真の振幅はどの σ でも %.0f mm。" % (1e3 * BULGE_A))
+    figs.save_plot("bulge_fake_tilt",
+                   [("偽の倒れ(実測)", sigs, fake_m),
+                    ("偽の倒れ(閉形式)", sigs, fake_p),
+                    ("許容 %.0f mm 相当" % TOL_PLUMB_MM, sigs,
+                     [-TOL_PLUMB_MM / RH] * len(sigs))],
+                   xlabel="ふくらみの広がり σ [m]", ylabel="倒れの読みのずれ [mrad]",
+                   title="吸われた分は消えず、倒れの判定へ移る")
 
     maps, caps = [], []
     for bs in (0.25, 0.70, 3.00):
