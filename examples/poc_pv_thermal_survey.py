@@ -990,11 +990,9 @@ def section_angle(base: dict) -> dict:
         d_ob = detect(obl, gt, "モジュール中央値")
         d_bk = detect(back, gt, "モジュール中央値")
         pr = peak_on(d_bk, gt["hot"])
-        # 幾何は戻ったか —— 斜めのままと補正後で、ホットスポットの位置を測る
-        pk_ob = np.unravel_index(int(np.argmax(d_ob["delta"])), d_ob["delta"].shape)
-        pk_bk = np.unravel_index(int(np.argmax(d_bk["delta"])), d_bk["delta"].shape)
-        sh_ob = float(np.hypot(pk_ob[0] - hp[0], pk_ob[1] - hp[1]))
-        sh_bk = float(np.hypot(pk_bk[0] - hp[0], pk_bk[1] - hp[1]))
+        # 幾何は戻ったか —— いちばん大きい塊(ストリング故障)の重心を測る
+        sh_ob = _largest_shift(d_ob["labels"], det["labels"])
+        sh_bk = _largest_shift(d_bk["labels"], det["labels"])
         xs.append(a), pe.append(p), me.append(ph / ref), rect.append(pr / ref)
         shift.append((sh_ob, sh_bk))
         print("     %7.0f    %.3f   %7.3f   %7.3f    %6.2f      %6.2f "
