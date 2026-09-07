@@ -163,29 +163,31 @@ def mode_params(mode: str, sev: float) -> dict:
     harm = {1.0: 0.020, 2.0: 0.006}
     axial = {1.0: 0.004, 2.0: 0.002}
     bpfo, mod, bb = 0.0, 0.0, 0.010
-    # (継手, 軸受A, 軸受B, 機械全体) の発熱 [W]
-    heat = (0.5, 2.0, 2.0, 3.0)
+    # (継手, 軸受A, 軸受B, 機械全体) の発熱 [W]。★正常・アンバランス・ゆるみは
+    # **わざと同じ**にしてある —— 熱では原理的に分けられない 3 モード。
+    heat = (0.5, 2.5, 2.5, 3.0)
     off, ang = 0.010, 0.030          # 芯ずれ量 [mm] / 角度ずれ [mrad]
     if mode == "芯ずれ":
         harm = {1.0: 0.055 * s, 2.0: 0.150 * s, 3.0: 0.035 * s}
         axial = {1.0: 0.070 * s, 2.0: 0.090 * s}
-        heat = (16.0 * s, 3.0, 3.0, 3.0)
+        heat = (16.0 * s, 3.0, 2.8, 3.0)
         off, ang = 0.280 * s, 0.55 * s
     elif mode == "アンバランス":
         harm = {1.0: 0.230 * s, 2.0: 0.018 * s}
         axial = {1.0: 0.012 * s, 2.0: 0.004 * s}
-        heat = (0.6, 3.2, 3.0, 3.5)
+        heat = (0.6, 2.7, 2.6, 3.1)
     elif mode == "軸受外輪傷":
         bpfo, mod = 0.130 * s, 0.55
-        heat = (0.5, 13.0 * s, 2.0, 3.0)
+        heat = (0.5, 11.0 * s, 2.6, 3.0)
     elif mode == "潤滑不良":
         bb = 0.010 + 0.075 * s
-        heat = (0.5, 6.0 * s, 6.0 * s, 22.0 * s)
+        # ★軸受と同じくらい熱い。違うのは**広がり**だけ(両軸受 + 機械全体)。
+        heat = (0.5, 7.0 * s, 7.0 * s, 9.0 * s)
     elif mode == "ゆるみ":
         harm = {0.5: 0.045 * s, 1.0: 0.090 * s, 2.0: 0.060 * s, 3.0: 0.045 * s,
                 4.0: 0.036 * s, 5.0: 0.030 * s, 6.0: 0.025 * s}
         axial = {1.0: 0.020 * s, 2.0: 0.014 * s}
-        heat = (0.8, 2.5, 2.5, 3.2)
+        heat = (0.6, 2.6, 2.5, 3.0)
     return {"harm": harm, "axial": axial, "bpfo": bpfo, "mod": mod,
             "bb": bb, "heat": heat, "off": off, "ang": ang}
 
@@ -193,6 +195,19 @@ def mode_params(mode: str, sev: float) -> dict:
 def severity(rng) -> float:
     """重症度を対数一様に引く(軽い故障と重い故障が同じクラスに混ざる)。"""
     return float(np.exp(rng.uniform(np.log(SEV_LO), np.log(SEV_HI))))
+
+
+#: 試行ごとの**邪魔なばらつき**(故障とは無関係に効く量)。これが無いと
+#: 絶対振幅がそのまま身元になり、問題が現実より易しくなる。
+GAIN_VIB = 1.33            # 加速度計の取り付け感度のばらつき(×/÷ この係数まで)
+GAIN_HEAT = 1.25           # 運転負荷のばらつき(発熱がまるごと上下する)
+
+
+def nuisance(seed: int):
+    """取り付け感度と運転負荷のばらつきを引く(モードに依らない)。"""
+    rng = np.random.default_rng(seed + 7717)
+    return (float(np.exp(rng.uniform(-np.log(GAIN_VIB), np.log(GAIN_VIB)))),
+            float(np.exp(rng.uniform(-np.log(GAIN_HEAT), np.log(GAIN_HEAT)))))
 
 
 # --------------------------------------------------------------------------- #
