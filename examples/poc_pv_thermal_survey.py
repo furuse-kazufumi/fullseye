@@ -1225,9 +1225,11 @@ def main() -> int:
           "モジュールごとの中央値なら偽 %d 個 / 非故障 %d 個。"
           % (a_mean["n_false"], a_mean["n_nonfault"],
              a_med["n_false"], a_med["n_nonfault"]))
-    print("  * 風速の崖: 予測 %.1f / %.1f m/s、実測で検出できた最後は"
-          " %.1f / %.1f m/s(ホットスポット / ストリング)。"
-          % (wind["v_hot"], wind["v_str"], wind["last_hot"], wind["last_str"]))
+    print("  * 風速の崖: ホットスポットは**面積の門**で落ちる(予測 %.1f m/s、"
+          "実測 %.1f m/s。ピーク基準の予測 %.1f m/s は外れ)。ストリングは"
+          "ピーク基準どおり(予測 %.1f / 実測 %.1f m/s)。"
+          % (wind["v_area"], wind["last_hot"], wind["v_hot"],
+             wind["v_str"], wind["last_str"]))
     print("  * 影はストリング故障を偽造する: 日向側 %+.2f K 対 本物 %+.2f K"
           "(差 %.2f K)。" % (shadow["warm"], shadow["real"],
                              abs(shadow["warm"] - shadow["real"])))
