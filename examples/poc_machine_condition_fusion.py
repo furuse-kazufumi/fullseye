@@ -1184,10 +1184,16 @@ def main() -> int:
     assert np.mean([shape_only[i] for i in range(len(MODES)) if i != i_m]) < 0.45
     assert thr_only[i_b] >= 0.75 and thr_only[i_g] < 0.5   # 熱は軸受を見て、ゆるみを見ない
     assert red["misalign"][0, 1] > 0.5 and red["misalign"][0, 3] > 0.9
-    assert sw["noise"]["d"][0, 0] > 3.0 * sw["noise"]["d"][-1, 0]   # 1X の d' は崩れる
-    assert sw["dur"]["d"][0, 0] < sw["dur"]["d"][-1, 0]             # 0.5X は記録長で効く
-    assert sw["pitch"]["d"][0, 0] > sw["pitch"]["d"][-1, 0]         # 広がりは粗さで死ぬ
+    assert sw["noise"]["d"][0, 1] > 10.0 * sw["noise"]["d"][-1, 1]  # BPFO は雑音で死ぬ
+    st = sw["d05_step"]
+    assert st[3] > 1.5 * st[2], st                  # 0.5X は予測した段で跳ぶ
+    assert sw["dur"]["d"][-1, 1] < 0.7 * sw["dur"]["d"][0, 1]       # 側帯波比は真値へ寄る
+    assert sw["pitch"]["d"][-1, 0] < 0.2 * sw["pitch"]["d"][0, 0]   # 広がりは粗さで死ぬ
+    assert sw["kneecomb"] < sw["knee2x"]            # 高次のほうが先に落ちる
     assert zero["振動 RMS"]["det"] > 0.5
+    # 融合は「振動が壊れてから」効く(基準条件では 1 pt も足さない)
+    assert abs(sw["noise"]["fuse_all"][0] - sw["noise"]["solo"][0].mean()) < 0.01
+    assert sw["noise"]["fuse_all"][-1] > sw["noise"]["solo"][-1].mean() + 0.15
 
     print("\n" + "=" * 78)
     print("まとめ")
