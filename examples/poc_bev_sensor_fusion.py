@@ -1216,10 +1216,11 @@ def main() -> int:
              100 * drop[kt][0], 100 * drop[kt][-1],
              bands[("cam", kr)][-1] / max(bands[("cam", kr)][0], 1e-9),
              bands[("max", kr)][-1] / max(bands[("max", kr)][0], 1e-9)))
-    print("  * 時刻ずれ 40 ms(%.1f m/s)は純並進 %.0f mm とほぼ同じ"
-          "(IoU 差 %.4f)。"
-          % (EGO_V, 1000 * EGO_V * 0.040,
-             abs(tr["mixed"][0.040][0] - tr["mixed"][0.040][1])))
+    print("  * 時刻ずれ 80 ms(%.1f m/s)は純並進 %.0f mm と IoU 差 %.4f、"
+          "純回転とは %.4f —— **時刻ずれの正体は並進**。"
+          % (EGO_V, 1000 * EGO_V * 0.080,
+             abs(tr["mixed"][0.080][0] - tr["mixed"][0.080][1]),
+             abs(tr["mixed"][0.080][0] - tr["mixed"][0.080][2])))
     print("  * 整形は footprint に近づける(solid IoU %.4f -> %.4f)が、"
           "yaw 1 度では偽占有を %.2f 倍にする。"
           % (shp[("誤差なし", "なし")][1], shp[("誤差なし", "あり")][1],
