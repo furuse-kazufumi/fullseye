@@ -128,23 +128,22 @@ def make_net(kind: str, rng, n: int = N_PIX, **over) -> dict:
     dy, dx = _warp_field(n, p["warp_amp"], p["warp_len"], rng)
     yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
     q = np.stack([(yy + dy).ravel(), (xx + dx).ravel()], 1)      # 歪めた座標
-    d, idx = cKDTree(seeds).query(q, k=2)
-    label = idx[:, 0].reshape(n, n)
-    e = (0.5 * (d[:, 1] - d[:, 0])).reshape(n, n)               # 二等分線までの距離
+    _, idx = cKDTree(seeds).query(q, k=1)
+    label = idx.reshape(n, n)                                     # セルの番地(歪み込み)
 
     # 幾何の真値: 頂点と辺(歪めた座標系 → 画像座標へ逆写像)
     vor = Voronoi(seeds)
     def inv_warp(pts):
-        """x' = x + D(x) の逆。D は小さいので不動点反復(5 回で 1e-3 px)。"""
+        """x' = x + D(x) の逆。|∇D| < 1 なので不動点反復で収束(25 回)。"""
         x = pts.copy()
-        for _ in range(6):
+        for _ in range(25):
             yi = np.clip(x[:, 0], 0, n - 1)
             xi = np.clip(x[:, 1], 0, n - 1)
             dyi = ndi.map_coordinates(dy, [yi, xi], order=1)
             dxi = ndi.map_coordinates(dx, [yi, xi], order=1)
             x = pts - np.stack([dyi, dxi], 1)
         return x
-    edges = []
+    edges, dense = [], []
     for (v0, v1) in vor.ridge_vertices:
         if v0 < 0 or v1 < 0:
             continue
@@ -153,11 +152,16 @@ def make_net(kind: str, rng, n: int = N_PIX, **over) -> dict:
                 np.all(b > -cell) and np.all(b < n + cell)):
             continue
         L = float(np.hypot(*(b - a)))
-        m = max(2, int(np.ceil(L / 1.0)) + 1)
+        m = max(3, int(np.ceil(L / 0.3)) + 1)
         t = np.linspace(0, 1, m)[:, None]
         poly = inv_warp(a[None, :] * (1 - t) + b[None, :] * t)
-        edges.append(poly)
+        dense.append(poly)
+        edges.append(poly[:: max(1, m // max(2, int(L)))])       # 約 1 px おき
     verts = inv_warp(vor.vertices)
+    # ひびの中心線までの距離(画像座標)。歪みがあっても幅は画像座標で厳密。
+    pts = np.concatenate(dense, 0)
+    e, _ = cKDTree(pts).query(np.stack([yy.ravel(), xx.ravel()], 1), k=1)
+    e = e.reshape(n, n)
     return dict(label=label, e=e, edges=edges, verts=verts, vor=vor, width=p["width"],
                 seeds=seeds)
 
