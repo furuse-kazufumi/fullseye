@@ -336,6 +336,19 @@ def logger_record(true_series: np.ndarray, tau: float = TAU_LOG,
     return quantize(rec, q), step * DT_MIN
 
 
+FIG_ZOOM = 8            # 平面図の拡大率(60x12 のままだと題が入らない)
+
+
+def plan_view(m: np.ndarray, zoom: int = FIG_ZOOM) -> np.ndarray:
+    """(奥行き, 幅) の地図を**横長の平面図**にして拡大する。
+
+    左 = 吹き出し口 / 右 = 扉。荷室は 60 x 12 セルしかないので、そのまま
+    :func:`examplefig.save_grid` に渡すとパネルの題が 12 px に収まらず
+    例外になる(fullseye の ``text_box`` は黙って切らない)。
+    """
+    return np.repeat(np.repeat(np.asarray(m, np.float64).T, zoom, 0), zoom, 1)
+
+
 def probe_true(vol: np.ndarray, y: int, x: int) -> np.ndarray:
     """体積からロガー位置の真の時系列を抜く —— :func:`vol_profile_line` の線プローブ。"""
     _, val = fs.vol_profile_line(vol, (0, y, x), (NT - 1, y, x), n=NT)
