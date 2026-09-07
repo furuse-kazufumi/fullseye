@@ -237,7 +237,7 @@ def render(p: dict, theta_deg: float, noise: float = NOISE, sigma: float = LINE_
     amp = np.full(h.shape, 0.85)
     if specular > 0.0:
         phi0 = -np.tan(np.deg2rad(theta_deg) / 2.0)
-        amp = amp + specular * np.exp(-((dh_dx(h) - phi0) ** 2) / (2 * 0.16 ** 2))
+        amp = amp + specular * np.exp(-((dh_dx(h) - phi0) ** 2) / (2 * 0.35 ** 2))
     vis = visible(h, theta_deg) if occlusion else np.ones(h.shape, bool)
     rows = np.arange(IMG_H)[None, :, None]
     img = amp[:, None, :] * np.exp(-((rows - row_c[:, None, :]) ** 2) / (2 * sigma ** 2))
