@@ -529,35 +529,57 @@ def section_count_by_type(scene: dict, defects: dict) -> dict:
         *fs.weld_vertices(*fs.remove_degenerate_faces(W, G), tol=1e-9))
 
     rows = [
-        ["穴(境界の輪)", str(n_hole), str(raw["loops"]), str(wel["loops"])],
+        ["穴(境界の輪)", str(n_hole),
+         "%d = 穴 %d + 割れ %d + テント %d" % (raw["loops"], n_hole,
+                                              2 * N_CRACK, n_nm),
+         "%d = 穴 %d + テント %d" % (wel["loops"], n_hole, n_nm)],
         ["非多様体辺", str(n_nm), str(raw["nonmanifold"]), str(wel["nonmanifold"])],
-        ["退化三角形", str(n_deg), str(raw["degenerate"]), str(wel["degenerate"])],
-        ["重複頂点", str(n_dup), str(raw["duplicate_v"]), "0(溶接済)"],
+        ["退化三角形", str(n_deg), "%d(一致)" % raw["degenerate"],
+         "%d ★溶接が先に消した" % wel["degenerate"]],
+        ["重複頂点", str(n_dup),
+         "%d = 割れ %d + 潰れ辺 %d" % (raw["duplicate_v"], n_dup, N_SLIVER),
+         "0(溶接済)"],
         ["裏返った面", str(n_flip), "—(位相を直すまで数えられない)",
-         str(int(n_flip_found))],
+         "%d(一致)" % int(n_flip_found)],
         ["自己交差(頂点)", str(n_spk), "—(検出 op なし)",
-         "%d(辺長の外れ値)" % wel["long_edge_v"]],
+         "%d(辺長の外れ値で代用)" % wel["long_edge_v"]],
     ]
-    print("  欠陥の種類        真値   そのまま数える              溶接してから数える")
+    print("  欠陥の種類        真値   そのまま数える                     溶接してから数える")
     for r in rows:
-        print("   %-16s %5s   %-28s %s" % (r[0], r[1], r[2], r[3]))
-    print("\n  ★そのまま数えると境界の輪は %d 個 —— 真値の穴は %d 個。"
-          "差の %d 個は**溶接割れが作ったゼロ幅の境界**。"
-          % (raw["loops"], n_hole, raw["loops"] - n_hole))
-    print("     先に頂点を溶接すると輪はちょうど %d 個になる。"
-          "「合わせてから測ると、合わせた分だけ欠陥が消える」。" % wel["loops"])
+        print("   %-16s %5s   %-32s %s" % (r[0], r[1], r[2], r[3]))
 
-    assert wel["loops"] == n_hole, (wel["loops"], n_hole)
-    assert wel["nonmanifold"] == n_nm
-    assert wel["degenerate"] == n_deg
-    assert raw["duplicate_v"] == n_dup
+    print("\n  ★★どの数字も「その欠陥だけ」を数えてはいない。境界の輪 %d 個の内訳は"
+          % raw["loops"])
+    print("     穴 %d + 割れ %d(1 枚ほどくと表裏 2 個の輪ができる) + "
+          "テント %d(3 枚目の面が\n     2 本の境界辺を連れてくる)。"
+          "**足し合わせは 1 個の狂いもなく合う**が、輪の数を穴の数だと"
+          "\n     思って読むと %.1f 倍に読み違える。"
+          % (n_hole, 2 * N_CRACK, n_nm, raw["loops"] / n_hole))
+    print("  ★★順番が両向きに効く。**溶接を先にすると**割れの輪 %d 個は"
+          "きれいに消えるが、" % (2 * N_CRACK))
+    print("     退化三角形も一緒に %d -> %d 枚に消えて**数え損ねる**"
+          "(潰し具合 t=%.0e の頂点は\n     元の頂点から %.0e mm しか離れておらず、"
+          "溶接の許容差の内側)。退化は溶接の**前**に、\n     穴は溶接の**後**に数える。"
+          % (raw["degenerate"], wel["degenerate"], SLIVER_T, SLIVER_T * 0.04))
+    print("  ★重複頂点 %d 個と真値 %d 個の差 %d は**潰した辺が置いた頂点**。"
+          % (raw["duplicate_v"], n_dup, raw["duplicate_v"] - n_dup))
+    print("     退化と重複は同じ現象の 2 つの顔で、t が小さいところでは"
+          "分けて数えられない。")
+
+    assert raw["loops"] == n_hole + 2 * N_CRACK + n_nm, raw["loops"]
+    assert wel["loops"] == n_hole + n_nm, wel["loops"]
+    assert wel["loops"] - wel["nonmanifold"] == n_hole
+    assert raw["nonmanifold"] == n_nm and wel["nonmanifold"] == n_nm
+    assert raw["degenerate"] == n_deg and wel["degenerate"] == 0
+    assert raw["duplicate_v"] == n_dup + N_SLIVER, raw["duplicate_v"]
     assert int(n_flip_found) == n_flip
+    assert wel["long_edge_v"] == n_spk
 
     figs.save_table("defect_counts",
                     ["欠陥の種類", "真値", "そのまま数える", "溶接してから数える"],
-                    rows, title="種類ごとに数えれば 6 種すべて真値と一致する",
-                    caption="ただし順番がある —— 溶接前は割れの境界を"
-                            "穴として数えてしまう。")
+                    rows, title="種類ごとに数えると内訳まで 1 個の狂いもなく合う",
+                    caption="ただし順番が両向きに効く —— 溶接前は割れの境界を"
+                            "穴として数え、溶接後は退化三角形を数え損ねる。")
     if figs.enabled():
         d0, s0 = depth_map(V, F)
         d1, s1 = depth_map(W, G)
