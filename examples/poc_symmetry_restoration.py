@@ -553,8 +553,8 @@ def section_angle_cliff(S: dict, Z: dict) -> dict:
             [("偽の面になった鏡像点 [%]", alphas, np.array(spur))],
             xlabel="対称面の角度ずれ alpha [deg]", ylabel="足した点のうち偽の面 [%]",
             title="崖(1)の裏側: 穴が埋まらないのとは別に「無い面」が生える",
-            caption="真の完全形から tau=%.2f mm 以上離れた鏡像点の割合。"
-                    "壊れ方は 2 種類あり、別々に数える必要がある。" % S["tau"])
+            caption="真の面から %.1f mm 以上浮いた鏡像点の割合。"
+                    "壊れ方は 2 種類あり、別々に数える必要がある。" % SPUR_TOL)
     return {"alphas": alphas, "meas": meas, "pred": pnorm, "cross": float(cross),
             "rel": (rel(pn), rel(pf), rel(pnorm)), "spur": np.array(spur),
             "src": src, "nrm": nrm}
