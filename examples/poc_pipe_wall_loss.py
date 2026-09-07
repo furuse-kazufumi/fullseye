@@ -766,6 +766,21 @@ def section_model_order() -> dict:
               % (labels[-1], false_a[-1], cres_r[-1], cres_v[-1], pit_r[-1]))
     print("   %-6s %8s %14s %14.0f mm^3 %10s" % ("真値", "0.00 %", "100.0 %",
                                                  tvc, "100.0 %"))
+    best = int(np.argmax([r - f for r, f in zip(cres_r, false_a)]))
+    print("\n  ★★このつまみは**両端で落ちる**。次数 0(平行移動しか許さない)は"
+          "\n     傾きを表せないので、残った 1 周期が管底腐食を打ち消して検出率"
+          " %.1f %% —— \n     **補正しすぎで消えるのではなく、補正が足りなくて"
+          "消える**(予想外だった)。"
+          % cres_r[labels.index("0")])
+    print("     次数を %s に上げると %.1f %% に戻り、そこから先は下がる一方"
+          "(free で %.1f %%)。" % (labels[best], cres_r[best], cres_r[-1]))
+    print("     偽の減肉は逆に単調に減る(%.2f → %.2f → %.2f %%)—— "
+          "たわみ %.1f mm を吸うのに\n     2 次が要る。"
+          "**いちばん良い次数は「軸は直線で、管はたわむ」という物理そのもの**。"
+          % (false_a[labels.index("0")], false_a[labels.index("1")],
+             false_a[labels.index("2")], BEND))
+    print("     孔食(局所)はどの次数でも %.0f %% 以上残る —— "
+          "消えるのは 1 周期に載っている欠陥だけ。" % min(pit_r[1:]))
 
     x = np.arange(len(orders))
     figs.save_plot("sweep_model_order",
