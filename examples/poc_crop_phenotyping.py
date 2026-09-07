@@ -1008,8 +1008,10 @@ def section_leaf_angle(can, buf_fine):
     nz_ref = buf_fine["nz"][(buf_fine["lid"] >= 0) & (buf_fine["nz"] > 1e-6)]
     k_ref = float(nz_ref.size / np.sum(1.0 / nz_ref))
     print("\n  法線の符号は任意なので |n.z| で受ける(そこは既知の作法)。問題は重み:")
-    print("     メッシュ(face_areas で面積加重)= %.4f / 面積を無視 = %.4f / 真値 %.4f"
-          % (float(np.sum(ar * nz) / np.sum(ar)), float(np.mean(nz)), k_true))
+    k_mesh = float(np.sum(ar * nz) / np.sum(ar))
+    print("     メッシュ(face_areas で面積加重)= %.4f(%+.2f %%)/ 面積を無視 = %.4f"
+          " / 真値 %.4f"
+          % (k_mesh, 100 * (k_mesh - k_true) / k_true, float(np.mean(nz)), k_true))
     print("  ★対照群 1(真の法線を使う): 最上面の |n.z| の調和平均 = %.4f"
           "(%+.1f %%)。\n     **法線が完璧でも合わない** —— 最上面は水平な葉に"
           "偏るので、見えている層だけ\n     から母集団の葉角は復元できない"
