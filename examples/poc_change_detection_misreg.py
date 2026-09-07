@@ -276,14 +276,14 @@ def truth_masks(sizes=False) -> dict:
     """基準座標の硬い真値マスク(種類別)。"""
     Y, X = grid()
     if sizes:
-        return {("s=%d" % s): rect(Y, X, y, y + s, x, x + s, None) > 0.5
+        return {("s=%d" % s): rect_px(Y, X, y, y + s, x, x + s, None) > 0.5
                 for (y, x, s) in size_squares()}
     m = {}
     nb = np.zeros((N, N), bool)
     for (y0, y1, x0, x1) in NEW_BUILDINGS.values():
-        nb |= rect(Y, X, y0, y1, x0, x1, None) > 0.5
+        nb |= rect_px(Y, X, y0, y1, x0, x1, None) > 0.5
     m[CHANGE_TYPES[0]] = nb
-    m[CHANGE_TYPES[1]] = rect(Y, X, *CLEARCUT, None) > 0.5
+    m[CHANGE_TYPES[1]] = rect_px(Y, X, *CLEARCUT, None) > 0.5
     lk = LAKE
     m[CHANGE_TYPES[2]] = ((disk(Y, X, lk["cy"], lk["cx"], lk["r2"], None) > 0.5)
                           & ~(disk(Y, X, lk["cy"], lk["cx"], lk["r1"], None) > 0.5))
