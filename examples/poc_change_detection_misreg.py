@@ -417,6 +417,16 @@ def predict_fp(edges, disp_fn, linear: bool = False) -> float:
     return tot
 
 
+def coverage_rule(s: int, a: float, tau: float = TAU, C: float = BUILD_ALB - SOIL) -> float:
+    """一辺 s の正方形を各軸 a だけずらしたとき、真値画素のうち被覆率 > τ/C の割合。
+
+    行と列は独立なので被覆率は ``cov_y(i)·cov_x(j)``、``cov(i) = |[i,i+1) ∩ [a,a+s)|``。
+    """
+    i = np.arange(s)
+    cov = np.clip(np.minimum(i + 1, a + s) - np.maximum(i, a), 0.0, 1.0)
+    return float(np.mean(np.outer(cov, cov) > tau / C))
+
+
 def predict_fp_texture(I_clean: np.ndarray, region: np.ndarray, dy: float, dx: float) -> float:
     """テクスチャ領域の偽陽性を 1 次近似 |∇I·d| > τ で予測(基準画像 1 枚から)。"""
     gy, gx = np.gradient(I_clean)
