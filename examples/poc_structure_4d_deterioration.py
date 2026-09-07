@@ -1552,7 +1552,10 @@ def main() -> int:
     assert rate["rho"] > 0.2, "時点間の誤差の相関が出ていない"
     assert pri["dx_grd"] > 3.0 * pri["dx_all"], \
         "キャンバーを落としても x が決まっている(縮退が再現しない)"
-    assert pri["fake_h"] > 1.0, "支承の偽の水平移動が出ていない"
+    assert pri["fake_h"] > 10.0, "支承の偽の水平移動が出ていない"
+    assert pri["settle"][0] < 0.4 * SETTLE_MM[2], "支承の沈下が消えていない"
+    assert pri["settle"][2] > 1.5 * pri["settle"][0], \
+        "端だけで合わせても沈下が戻っていない"
     assert all(0.9 < n / p < 1.1 for n, p in zip(pri["num"][:4], pri["pred"][:4])), \
         "溝の薄まりが閉形式 2dh/(πR) から外れた"
     assert abs(pri["num"][1]) < 0.1 * CRACK_MM[2], "細い溝が薄まっていない"

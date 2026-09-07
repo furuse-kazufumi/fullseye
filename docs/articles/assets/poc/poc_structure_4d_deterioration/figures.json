@@ -1,0 +1,36 @@
+[
+ {
+  "file": "01_conditions.png",
+  "name": "conditions",
+  "caption": "同じ構造物を 3 回測る。変わるのは構造物ではなく測り方。",
+  "shape": [
+   152,
+   656,
+   3
+  ],
+  "csv": "01_conditions.csv",
+  "tsv": "01_conditions.tsv"
+ },
+ {
+  "file": "02_deflection_profile.png",
+  "name": "deflection_profile",
+  "caption": "法線が鉛直に近い面(下面・下フランジ)の中央値。全点で合わせると平均 2/3 D が姿勢に吸われる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_scope.png",
+  "name": "scope",
+  "caption": "真のたわみは中央 3.00 mm。吸われる量は「使った範囲でのたわみの平均」で閉形式に予測できる。",
+  "shape": [
+   176,
+   406,
+   3
+  ],
+  "csv": "03_scope.csv",
+  "tsv": "03_scope.tsv"
+ }
+]
