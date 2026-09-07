@@ -838,33 +838,80 @@ def section_delamination(cases):
           "**判定に使えるのは力のほう**。"
           % (fedge[0], fedge[-1], 100 * abs(fedge[-1] / fedge[-2] - 1)))
 
-    print("\n  (b) 端 6 mm の引き剥がし力は EIκ に比例するか(6 形状)")
-    print("     形          EIκ [N mm]   端の力 [N]   力 / EIκ [1/mm]")
-    ratio = []
-    rows = []
+    print("\n  (b) その力は EIκ で予測できるか(%d 形状)" % len(cases))
+    print("     形          EIκ [N mm]  端 6 mm の力 [N]  接着の容量 [N]  判定")
+    ratio, rows, forces = [], [], {}
     for n, c in cases.items():
-        pf = peel_forces(c["fem"], max(4.0, c["hist"]["area"][0] / L_X))
+        wb = c["hist"]["area"][0] / L_X
+        pf = peel_forces(c["fem"], wb)
         f6 = edge_peel_force(pf)
+        cap = SIG_ADH * 2.0 * 6.0 * wb
         m = E_MOD * c["I"] * c["kappa_fem"]
         ratio.append(f6 / m)
-        rows.append([n, "%.1f" % m, "%.1f" % f6, "%.4f" % ratio[-1]])
-        print("     %-10s %9.1f   %9.1f     %.4f" % (n, m, f6, ratio[-1]))
+        forces[n] = (f6, cap)
+        verdict = "剥離" if f6 > cap else "保持"
+        rows.append([n, "%.1f" % m, "%.1f" % f6, "%.1f" % cap,
+                     "%s(余裕 %.2f)" % (verdict, cap / f6)])
+        print("     %-10s %9.1f  %10.1f      %8.1f    %s(余裕 %.2f 倍)"
+              % (n, m, f6, cap, verdict, cap / f6))
     ratio = np.array(ratio)
     cv = float(ratio.std() / ratio.mean())
-    print("     係数 %.4f 1/mm、ばらつき(変動係数)%.1f %% —— "
-          "**閉形式の EIκ で順位づけできる**。" % (ratio.mean(), 100 * cv))
+    f_lo, f_hi = min(forces[k][0] for k in TRIO), max(forces[k][0] for k in TRIO)
+    print("\n     ★★**予測できるはずの量が予測できない**。力 / EIκ の変動係数は"
+          " %.0f %% で、\n     EIκ からは 1 桁も決まらない。" % (100 * cv))
+    print("     決定的なのは三つ子(層面積の履歴が同一・EIκ もほぼ同じ)で、"
+          "端の力が %.1f -> %.1f N の\n     **%.0f 倍**違い、判定も割れる。"
+          % (f_lo, f_hi, f_hi / f_lo))
+    print("     効いているのは**端で基板につながっている材料の背の高さ**で、"
+          "これは層の面積の履歴には入っていない\n     "
+          "(x のどこに置いたかの情報だから)。")
+
+    print("\n  (c) では端のフラップの厚さで崖を探す(中央 1 柱の底板を振る)")
+    print("     底板 [mm]  端 6 mm の力 [N]  容量 [N]  判定")
+    tb_list, f_list = [], []
+    for tb in (1.0, 2.0, 3.0, 4.0, 6.0, 8.0):
+        boxes = [(0.0, tb, 2.0, 18.0, 0.0, 60.0),
+                 (tb, 8.0, 2.0, 18.0, 15.0, 45.0),
+                 (8.0, 12.0, 2.0, 18.0, 0.0, 60.0)]
+        c = build_case(boxes, x_bin=2)
+        pf = peel_forces(c["fem"], 16.0)
+        f6 = edge_peel_force(pf)
+        cap = SIG_ADH * 2.0 * 6.0 * 16.0
+        tb_list.append(tb)
+        f_list.append(f6)
+        print("     %6.1f     %10.1f      %6.1f    %s"
+              % (tb, f6, cap, "剥離" if f6 > cap else "保持"))
+    cap = SIG_ADH * 2.0 * 6.0 * 16.0
+    cross = next((tb_list[i] for i in range(len(f_list)) if f_list[i] > cap), None)
+    print("     ★崖は底板 %.1f mm(そこで力が %.1f N を越える)。"
+          "底板を薄くすると力は %.1f -> %.1f N と %.0f 倍に落ちる ——\n     "
+          "**端を薄く逃がすと剥がれない**(反り自体はほとんど変わらない)。"
+          % (cross if cross else -1.0, cap, f_list[0], f_list[-1],
+             f_list[-1] / f_list[0]))
 
     figs.save_plot("peel_profile",
                    [("dx = %.2f mm" % dxs[-1], keep["x"], keep["stress"]),
                     ("接着強さ %.1f MPa" % SIG_ADH, keep["x"],
                      [SIG_ADH] * keep["x"].size)],
                    xlabel="x [mm]", ylabel="引き剥がし応力 [MPa]",
-                   title="剥離応力は端の %.0f mm に集中する" % 3.0,
+                   title="剥離応力は端に集中し、要素寸法で決まらない",
                    caption="正 = 接着剤が引っ張られる。中央は押しつけられている。")
-    figs.save_table("peel", ["形", "EIκ N mm", "端 6 mm の力 N", "力/EIκ 1/mm"],
-                    rows, title="引き剥がし力は EIκ に比例(変動係数 %.1f %%)"
-                                % (100 * cv))
-    return smax, fedge, ratio.mean(), cv
+    figs.save_plot("peel_vs_moment",
+                   [("形ごとの実測", [E_MOD * c["I"] * c["kappa_fem"]
+                                      for c in cases.values()],
+                     [forces[n][0] for n in cases]),
+                    ("底板の掃引", [E_MOD * cases["中央 1 柱"]["I"]
+                                    * cases["中央 1 柱"]["kappa_fem"]] * len(f_list),
+                     f_list)],
+                   xlabel="EIκ [N mm]", ylabel="端 6 mm の引き剥がし力 [N]",
+                   title="剥離力は EIκ では決まらない(変動係数 %.0f %%)" % (100 * cv),
+                   kinds=["scatter", "scatter"],
+                   caption="同じ EIκ でも端の作りしだいで 1 桁動く。")
+    figs.save_table("peel", ["形", "EIκ N mm", "端 6 mm の力 N", "接着の容量 N",
+                             "判定"], rows,
+                    title="引き剥がしの判定(接着強さ %.1f MPa、端 6 mm で評価)"
+                          % SIG_ADH)
+    return smax, fedge, cv, f_hi / f_lo
 
 
 # --------------------------------------------------------------------------- #
