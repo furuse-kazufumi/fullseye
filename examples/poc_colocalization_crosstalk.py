@@ -171,7 +171,7 @@ def costes_threshold(a: np.ndarray, b: np.ndarray, roi: np.ndarray,
         if r <= 0.0:
             break
         ta_best, tb_best = float(ta), float(tb)
-    return a > ta_best, b > tb_best
+    return a > ta_best, b > tb_best, ta_best, tb_best
 
 
 def costes_shuffle_p(a: np.ndarray, b: np.ndarray, roi: np.ndarray, rng,
