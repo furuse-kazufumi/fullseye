@@ -1008,7 +1008,7 @@ def section_cliff_dropout() -> dict:
     print("   無作為に落とすと N だけ減る(√N)。下から順に残すと **L も縮む**"
           "(L^-1 が余分に効く)。")
     print("   欠測率  無作為: 誤差 RMS / 予測      構造的: 誤差 RMS / 予測    L [m]   N")
-    fr, rnd_e, low_e, rnd_p, low_p = [], [], [], [], []
+    fr, rnd_e, low_e, rnd_p, low_p, low_L = [], [], [], [], [], []
     rows = []
     seeds = range(6)
     for dr in (0.0, 0.3, 0.6, 0.8, 0.9):
