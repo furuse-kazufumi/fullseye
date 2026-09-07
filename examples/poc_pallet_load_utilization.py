@@ -335,21 +335,26 @@ def section_same_number(lb: list) -> dict:
 # 4. 崖 —— 格子の刻みで隙間が消える                                             #
 # --------------------------------------------------------------------------- #
 def slot_recovered(pts: np.ndarray, gc: float, slot: tuple, offsets) -> float:
-    """隙間 1 本の空所のうち、高さマップが**取り戻した割合**(0〜1)。"""
+    """隙間 1 本の空所のうち、高さマップが**取り戻した体積の割合**(0〜1)。
+
+    真の空所は ``w x 奥行 x 深さ``。高さマップから取り戻せる空所は
+    ``Σ (天端 - h) x (セル ∩ 隙間の面積)``。セルの中は最大値なので、
+    **セルが丸ごと隙間に収まったときだけ**床が見える —— 期待値は
+    ``max(0, 1 - g/w)``。
+    """
     x_lo, x_hi, floor_z, top_z = slot
+    w = x_hi - x_lo
+    true_void = w * PD * (top_z - floor_z)
     got = []
     for off in offsets:
         hm = height_map(pts, gc, off)
-        nx = hm["h"].shape[1]
-        cx = hm["x0"] + gc * (np.arange(nx) + 0.5)
-        sel = (cx >= x_lo) & (cx < x_hi)
-        if not sel.any():
-            got.append(0.0)
-            continue
-        # 隙間の列で、天端が「隙間の床」まで下がっているセルの割合
-        col = hm["h"][:, sel]
-        deep = (col < 0.5 * (floor_z + top_z)).mean()
-        got.append(float(deep * sel.sum() * gc / (x_hi - x_lo)))
+        ny, nx = hm["h"].shape
+        cx0 = hm["x0"] + gc * np.arange(nx)
+        cy0 = hm["y0"] + gc * np.arange(ny)
+        ox = np.clip(np.minimum(cx0 + gc, x_hi) - np.maximum(cx0, x_lo), 0.0, gc)
+        oy = np.clip(np.minimum(cy0 + gc, PD) - np.maximum(cy0, 0.0), 0.0, gc)
+        depth = np.clip(top_z - hm["h"], 0.0, top_z - floor_z)
+        got.append(float((depth * np.outer(oy, ox)).sum() / true_void))
     return float(np.mean(got))
 
 
