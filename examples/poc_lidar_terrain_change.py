@@ -1204,9 +1204,10 @@ def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
                    ncols=2, signed=[False, True, True, True],
                    title="航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)"
                          % (SLOPE, DENSITY),
-                   caption="左上は平面を抜いた残差(樹冠と %.2f m のうねり)。右上が"
-                           "仕込んだ真値(負 = 掘削 %.1f m3 / 正 = 堆積 %.1f m3)。"
-                           "下 2 枚は足跡面積を揃えて測った 2 通りの差。"
+                   caption="左上は平面を抜いた残差(%.2f m のうねり。この場面は遮蔽を"
+                           "止めてある)。右上が仕込んだ真値(掘削 %.1f m3 / 堆積 "
+                           "%.1f m3)。下 2 枚は足跡面積を揃えて測った 2 通りの差 —— "
+                           "右下の黒い粒は円柱に点が足りず測れなかった core。"
                            % (UNDUL, tr["ero"], tr["dep"]))
 
     lod = ctrl["lod"]

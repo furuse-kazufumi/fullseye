@@ -828,6 +828,53 @@ def section_density() -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# 章 5c: 崖(実測点の間引き 1/1〜1/50)—— 偏りと分散を分けて数える                 #
+# --------------------------------------------------------------------------- #
+def section_scan_density(ref: CadRef) -> dict:
+    print("\n" + "=" * 78)
+    print("5c) 崖(実測点の密度) —— 1/1 から 1/50 まで間引く")
+    print("=" * 78)
+    print("   ★偏り(平均のずれ)と分散(散らばり)を**別に**数える。"
+          "1 つの RMS にすると区別できない。")
+    print("   間引き   点数  姿勢[度]  偏差の偏り[µm]  偏差の分散(σ)[µm]"
+          "  公差外面積 推定/真値[mm^2]")
+    keeps = (1.0, 0.5, 0.2, 0.1, 0.04, 0.02)
+    ks, bias, sdev, ar = [], [], [], []
+    for kp in keeps:
+        sc = make_scan(keep=kp)
+        R, t = align(sc["pts"], ref, method="p2plane",
+                     init=(sc["R_true"], sc["t_true"]), iters=30)
+        _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
+        e = (s - sc["dev_true"])[~ed]
+        a_e = out_of_tol_area(s[~ed], sc["w"])
+        a_t = out_of_tol_area(sc["dev_true"][~ed], sc["w"])
+        ks.append(1.0 / kp)
+        bias.append(1000 * float(e.mean()))
+        sdev.append(1000 * float(e.std()))
+        ar.append(100 * (a_e - a_t) / max(a_t, 1e-9))
+        print("   1/%-4.0f %6d %9.4f %14.1f %18.1f %14.1f / %.1f (%+.1f %%)"
+              % (1 / kp, len(sc["pts"]), rot_err_deg(R, sc["R_true"]),
+                 bias[-1], sdev[-1], a_e, a_t, ar[-1]))
+    print("   ★偏りは %+.1f → %+.1f µm とほとんど動かない(間引いても"
+          "**偏らない**)。" % (bias[0], bias[-1]))
+    print("      分散も %.1f → %.1f µm でほぼ横ばい —— 1 点あたりの測り方は"
+          "密度に依らないから。" % (sdev[0], sdev[-1]))
+    print("      壊れるのは**面積**のほう: 公差外面積の誤差が %+.1f → %+.1f %% ——"
+          " 点が %d 個では境界を %.0f mm^2 刻みでしか引けない。"
+          % (ar[0], ar[-1], int(len(make_scan(keep=keeps[-1])["pts"])),
+             ref.area * keeps[-1] / 1.0 * 0 + ref.area / (N_SCAN * keeps[-1])))
+    figs.save_plot("scan_density",
+                   [("偏り(平均)[µm]", ks, bias),
+                    ("分散(σ)[µm]", ks, sdev),
+                    ("公差外面積の誤差 [%]", ks, ar)],
+                   xlabel="間引き(1/N の N)", ylabel="[µm] / [%]",
+                   title="実測点を間引くと壊れるのは偏差ではなく面積",
+                   caption="偏差の偏りと分散は横ばい。合否を決める公差外面積だけが"
+                           "境界の刻みで痩せる。")
+    return {"keep": ks, "bias": bias, "sd": sdev, "area_err": ar}
+
+
+# --------------------------------------------------------------------------- #
 # 章 6: ★欠陥が位置合わせを引く —— 剛体 6 次元への射影で予測する                #
 # --------------------------------------------------------------------------- #
 def section_pull(ref: CadRef) -> dict:
