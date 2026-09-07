@@ -816,10 +816,9 @@ def section_size() -> dict:
             I2 = render(2, dy=d * u[0], dx=d * u[1], sizes=True)
             det = detect(I1, I2) & valid
             rec = float(np.count_nonzero(det & masks[key]) / masks[key].sum())
-            pr = max(0.0, 1.0 - d / (s * np.sqrt(2.0))) ** 2
+            pr = coverage_rule(s, d / np.sqrt(2.0))
             series[d].append(rec); pred_series[d].append(pr)
-            if s >= 3:
-                worst = max(worst, abs(rec - pr))
+            worst = max(worst, abs(rec - pr))
             line.append("%.2f/%.2f" % (rec, pr))
         for d in (0.0, 1.0):
             I2 = render(2, dy=d * u[0], dx=d * u[1], sizes=True)
