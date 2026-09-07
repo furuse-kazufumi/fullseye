@@ -1214,9 +1214,11 @@ def main() -> int:
     print("まとめ")
     print("=" * 78)
     print("  * 健全セル +%.1f K、ホットスポットは薄まる前 %.1f K が"
-          "**カメラに届くのは %.1f K**(伝導 x%.3f、カメラ x%.3f)。"
+          "**カメラに届くのは %.2f K**(伝導 x%.3f、カメラ x%.3f、"
+          "放射と大気 x%.3f)。"
           % (base["dt_ok"], Q_HOT / base["u"],
-             Q_HOT / base["u"] * base["a_both"], base["a_cond"], base["a_cam"]))
+             Q_HOT / base["u"] * base["a_both"] * base["gain"],
+             base["a_cond"], base["a_cam"], base["gain"]))
     a_mean = ctl[("(a) 故障ゼロ・影と汚れあり", "全体平均")]
     a_med = ctl[("(a) 故障ゼロ・影と汚れあり", "モジュール中央値")]
     print("  * 故障ゼロの対照群で、全体平均は偽 %d 個 / 非故障 %d 個。"
