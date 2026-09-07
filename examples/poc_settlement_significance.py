@@ -797,10 +797,13 @@ def section_cliff(sc: dict) -> dict:
     r = [a / b for a, b in zip(lod_l, pred_l)]
     print("\n  ★LoD は点密度の平方根で落ちる(実測/予測 %.2f 〜 %.2f)。"
           "**4 倍撒いて半分**。" % (min(r), max(r)))
-    print("  ★検出率は %.1f mm で %.1f %%、%.1f mm で %.1f %% —— 崖は LoD の"
-          "あたり(舗装ゾーンの LoD 中央値 %.2f mm)。"
-          % (smax_l[1], rate_l[1], smax_l[2], rate_l[2], lod_l[2]))
+    half = [s for s, v in zip(smax_l, rate_l) if v >= 50.0]
+    lod_asf = float(np.nanmedian(mv_lod_asphalt))
+    print("  ★舗装ゾーンの検出率が 50 %% を超えるのは 最大沈下 %.2f mm から"
+          "(%.1f mm では %.1f %%)。予測は**そのゾーンの LoD** %.2f mm —— 同じ目盛り。"
+          % (min(half) if half else float("nan"), smax_l[0], rate_l[0], lod_asf))
     assert max(r) < 1.2 and min(r) > 0.8, r
+    assert rate_l[0] < 60.0 and rate_l[-1] > 90.0, (rate_l[0], rate_l[-1])
 
     figs.save_plot("cliff",
                    [("舗装ゾーンの検出率 [%]", smax_l, rate_l),
