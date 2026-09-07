@@ -917,9 +917,17 @@ def section_zd(sw: dict) -> dict:
         print("   Z_d = %.3f (%-14s) -> S = %.3f m  見落とし %5.1f %%"
               "  誤検知 %5.1f %%  停止時間 %5.1f %%"
               % (zd, name, S, m_, fa_, stop))
-    print("\n  ★安全の代金は稼働率で払う: 見落としを 0 にする Z_d = %.3f m で、"
+    # 見落としを 0 にする最小の Z_d を探す(仮定でなく実測で決める)
+    zd_need = zd_max
+    for zd in np.arange(0.0, zd_max + 0.201, 0.005):
+        if _rates(sw["d_true"], sw["e_full"], required_separation(zd))[0] == 0.0:
+            zd_need = float(zd)
+            break
+    stop_need = 100.0 * np.count_nonzero(
+        sw["e_full"] < required_separation(zd_need)) / len(sw["e_full"])
+    print("\n  ★安全の代金は稼働率で払う: 見落としを 0 にする最小の Z_d = %.3f m で、"
           "\n     機械が止まっている時間は %.1f %% -> %.1f %% に増える。"
-          % (zd_max, stop_r[1], stop_r[-1]))
+          % (zd_need, stop_r[1], stop_need))
     figs.save_table("zd_budget", ["Z_d の出どころ", "Z_d m", "S m", "見落とし",
                                   "誤検知", "停止時間"], rows,
                     title="不確かさをどこから取るかで、安全と稼働率の配分が決まる")
