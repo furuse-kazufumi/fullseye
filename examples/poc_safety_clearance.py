@@ -762,7 +762,7 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
     body = [h for h in human if h[0] not in ("右手", "右前腕")]
     S = trigger_distance()
 
-    nx, ny = 68, 60
+    nx, ny = 132, 112
     xs = np.linspace(-0.20, 2.20, nx)
     ys = np.linspace(-1.10, 1.10, ny)
     z_h = float(human[4][2][2])                      # 指先の高さ
@@ -775,19 +775,30 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
     d_body_est = float(np.min(hazard_sdf(Pb[vb], mach))) if vb.any() else np.inf
     d_body_true = float(np.min(hazard_sdf(Pb, mach)))
 
-    # 手をそこへ置いたときの真値と、見える点だけの推定
+    # 手をそこへ置いたときの真値と、見える点だけの推定。
+    # ★行ごとにまとめて評価する(1 セルずつの Python ループだと 15000 回まわる)。
     sph = capsule_surface([0, 0, 0], [0, 0, 0], R_HAND, 16)[0]      # 球のサンプル
     nsph = sph / R_HAND
+    k_ray = 5
+    S_pos = np.asarray(SENSOR_BACK, np.float64)
     d_hand_true = np.empty(len(hand_c))
     d_hand_est = np.empty(len(hand_c))
     vis_frac = np.empty(len(hand_c))
-    for i, c in enumerate(hand_c):
-        pts = sph + c
-        dt_ = float(np.min(hazard_sdf(pts, mach)))
-        d_hand_true[i] = dt_
-        v = visible_from(pts, nsph, SENSOR_BACK, body, mach, k_ray=5)
-        vis_frac[i] = v.mean()
-        d_hand_est[i] = float(np.min(hazard_sdf(pts[v], mach))) if v.any() else np.inf
+    for i0 in range(0, len(hand_c), ny):
+        c = hand_c[i0:i0 + ny]                       # (m,3)
+        pts = c[:, None, :] + sph[None, :, :]        # (m,16,3)
+        d_hand_true[i0:i0 + ny] = hazard_sdf(pts, mach).min(axis=1)
+        ray = S_pos - pts
+        rng_ = np.linalg.norm(ray, axis=-1)
+        ok = (nsph[None, :, :] * ray).sum(-1) > 0.0
+        d0 = 0.05 / np.maximum(rng_, 1e-6)
+        ss = (d0[..., None] + np.linspace(0.0, 1.0, k_ray)[None, None, :]
+              * (0.97 - d0)[..., None])              # (m,16,k)
+        q = pts[:, :, None, :] + ss[..., None] * ray[:, :, None, :]
+        ok &= ~(scene_sdf(q, body, mach) < 0.0).any(axis=-1)
+        vis_frac[i0:i0 + ny] = ok.mean(axis=1)
+        dh = np.where(ok, hazard_sdf(pts, mach), np.inf).min(axis=1)
+        d_hand_est[i0:i0 + ny] = dh
 
     true_map = np.minimum(d_hand_true, d_body_true).reshape(nx, ny)
     est_map = np.minimum(np.where(np.isfinite(d_hand_est), d_hand_est, np.inf),
