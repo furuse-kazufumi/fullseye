@@ -857,15 +857,23 @@ def section6_optimum(sw: dict, geo: dict) -> dict:
         allm.append(float(np.mean(v)) if np.all(np.isfinite(v)) else np.nan)
     allm = np.asarray(allm, float)
     ia = int(np.argmin(np.where(np.isfinite(allm), allm, np.inf)))
-    uc_at, uc_best = res["ucL"]["mae"][ia], out["ucL"][2]
     print()
-    print("  ★6 量の平均に畳むと最適角は %.0f 度。そこでの左アンダーカット誤差は"
+    print("  ★★6 量の平均に畳むと最適角は %.0f 度。そこは**壊れやすい 1 量に"
           % ang[ia])
-    print("     %.4f mm で、左アンダーカット自身の最適角 %.0f 度(%.4f mm)の **%.1f 倍**。"
-          % (uc_at, out["ucL"][1], uc_best, uc_at / uc_best))
+    print("     引きずられた角度**で、他の量にとっては最良でない:")
+    for k in KEYS:
+        v = res[k]["mae"][ia]
+        if np.isfinite(v) and np.isfinite(out[k][2]) and out[k][2] > 0:
+            print("       %-12s %.0f 度で %.4f mm = 自分の最適角(%.0f 度)の %.1f 倍"
+                  % (LABEL[k], ang[ia], v, out[k][1], v / out[k][2]))
     print("     **1 つの角度で 6 量を同時に最良にはできない。**")
-    print("     しかも 1 つに畳んだ指標は「測れなかった量」を隠す ——")
-    print("     40 度以上では左側 4 量が全滅しているのに、平均は右側だけで出せてしまう。")
+    print("     しかも 1 つに畳んだ指標は「測れなかった量」を隠す —— %.0f 度以上では"
+          % ANGLES[6])
+    print("     右溝しか残っていないのに、平均はその 1 量だけで出せてしまう。")
+    print("  ★近側の脚長まで %.0f 度で消えるのが効いている: 脚長も のど厚も"
+          % ANGLES[6])
+    print("     **根**(2 枚の母材面の交線)が基準で、根は溶接金属の下に隠れている。")
+    print("     遠側の面が 1 枚見えなくなると、**手前の量まで道連れ**になる。")
     return {"rows": rows, "all": allm, "best_all": ang[ia], "per": out}
 
 

@@ -842,7 +842,7 @@ def section_metrics(scene: dict) -> dict:
     hot = np.full(NT, 4.0); hot[:200] = 20.0
     print("\n  ★逸脱時間は**大きさに盲目**: 200 分 8.1 °C と 200 分 20.0 °C は"
           "どちらも逸脱 %.0f 分。" % excursion_minutes(mild, DT_MIN))
-    print("      劣化は %.3f と %.3f(%.0f 倍)、MKT は %.2f と %.2f °C。"
+    print("      劣化は %.3f と %.3f(%.2f 倍)、MKT は %.2f と %.2f °C。"
           % (degradation_index(mild, DT_MIN), degradation_index(hot, DT_MIN),
              degradation_index(hot, DT_MIN) / degradation_index(mild, DT_MIN),
              mkt_celsius(mild), mkt_celsius(hot)))
@@ -904,7 +904,7 @@ def section_events(scene: dict) -> dict:
     top = max(rp, key=lambda d: d["voxel_count"])
     t0 = top["bbox"][0]
     print("  いちばん大きい塊は t = %.0f 分に生まれ、曝露量(面積 x 時間)は"
-          " %.0f m^2·min。" % (t0 * DT_MIN, top["volume"] * DT_MIN / 60.0))
+          " %.0f m^2·min。" % (t0 * DT_MIN, top["volume"]))
     print("  ★ただし同じ辞書の `surface_area` %.0f と `sphericity` %.3f は"
           "**意味を持たない** —— 3 軸のうち 1 つが分、2 つが m なので、"
           "面積も球形度も単位が混ざる。時空の体積に形の指標を当てないこと。"
