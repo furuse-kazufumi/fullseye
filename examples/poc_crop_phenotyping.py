@@ -654,7 +654,8 @@ def section_cliff(k_true):
     return {"lai": lai_t, "cover": cover, "vis": vis, "layers": np.asarray(layers),
             "omega": omega, "pred_vis": pred_vis, "dens": dens,
             "pred_l": pred_l, "meas_l": meas_l, "k": k_true,
-            "a_crown": a_c, "cov_inf": cov_inf, "lai_ceiling": lai_ceiling}
+            "a_crown": a_c, "cov_inf": cov_inf, "lai_ceiling": lai_ceiling,
+            "step_gain": step_gain}
 
 
 # --------------------------------------------------------------------------- #
