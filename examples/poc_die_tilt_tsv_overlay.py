@@ -236,8 +236,8 @@ def measure_vias(sc: dict) -> dict:
 
 def face_xy(v: np.ndarray, sign: float) -> np.ndarray:
     """ビアの端面(``sign=+1`` 上面 / ``-1`` 下面)の中心 (x, y)。"""
-    half = sign * v[:, 6] / 2.0
-    return np.column_stack([v[:, 5] + half * v[:, 3 + 2], v[:, 4] + half * v[:, 3 + 1]])
+    half = sign * v[:, 6] / 2.0            # 列: cz cy cx dz dy dx L
+    return np.column_stack([v[:, 2] + half * v[:, 5], v[:, 1] + half * v[:, 4]])
 
 
 def pair(a: np.ndarray, b: np.ndarray) -> np.ndarray:
@@ -264,7 +264,7 @@ def estimators(sc: dict, mv: dict) -> dict:
     """3 段の推定器: 素(上面) / 軸で下面へ / 測った傾きで逆投影。"""
     lo, up = mv["lower"], mv["upper"]
     ref = face_xy(lo, +1.0)                  # 下ダイの上面 = 接合面のパッド
-    top = face_xy(up, +1.0)                  # 上ダ�の上面(見えている側)
+    top = face_xy(up, +1.0)                  # 上ダイの上面(見えている側)
     bot = face_xy(up, -1.0)                  # 上ダイの下面 = 本当のパッド面
     i = pair(ref, top)
     ref_o, top_o, bot_o = ref[i], top, bot

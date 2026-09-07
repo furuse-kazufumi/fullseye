@@ -158,10 +158,11 @@ def rough_at(x, y, seed: int = SEED) -> np.ndarray:
                            order=1, mode="nearest")
 
 
-def surface_z(x, y, *, settle: bool, dz: float = 0.0, seed: int = SEED) -> np.ndarray:
+def surface_z(x, y, *, settle: bool, dz: float = 0.0, seed: int = SEED,
+              s_max: float = S_MAX) -> np.ndarray:
     z = base_z(x, y) + rough_at(x, y, seed)
     if settle:
-        z = z + settlement(x, y)
+        z = z + settlement(x, y, s_max)
     return z + dz
 
 
