@@ -1,0 +1,707 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""室内の壁が設計どおりに建ったか —— 外接直方体は寸法を測っていない。
+
+(所見は実行後に転記する)
+"""
+from __future__ import annotations
+
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import examplefig as figs                                        # noqa: E402
+import fullseye as fs                                            # noqa: E402
+
+L = fs.ledger
+
+# --- 部屋の設計 -------------------------------------------------------------- #
+RW, RD, RH = 6.000, 4.000, 2.700     # 内法 幅(東西) / 奥行(南北) / 階高 [m]
+ZREF = RH / 2.0                      # 寸法を読む基準の高さ [m](= 1.35 m)
+
+# --- 施工誤差の真値 ---------------------------------------------------------- #
+#: 壁ごとの倒れ(鉛直からの傾き)[rad]。正 = 上で外へ倒れる。
+TILT = {"west": 0.0012, "east": 0.0060, "south": 0.0005, "north": 0.0090}
+#: 壁ごとの平面内の振れ(平面図での向きの狂い)[rad]。直交度はこの差で決まる。
+YAW = {"west": 0.0, "east": 0.0, "south": 0.0, "north": 0.0050}
+#: 東の壁の面外のふくらみ(振幅 [m]、広がり σ [m]、中心 (η,ζ) [m])
+BULGE_A, BULGE_S = 0.0090, 0.70
+BULGE_C = (0.30, -0.45)              # 壁の中心から見た位置(η=水平, ζ=z-ZREF)
+
+# --- 測定の癖 ---------------------------------------------------------------- #
+SIG = 0.0015                         # 測距の雑音 σ [m](面の法線方向)
+N_WALL = 2500                        # 壁 1 枚あたりの点数
+SEED = 5
+
+# --- 家具(外れ点)------------------------------------------------------------ #
+CAB_D = 0.450                        # 東の壁の前に立つ棚の出 [m]
+CAB_ETA = (-1.00, 0.60)              # 棚の水平範囲(壁中心からの η)[m]
+CAB_Z = (0.05, 0.80)                 # 棚の高さ範囲 [m]
+
+# --- 許容 -------------------------------------------------------------------- #
+TOL_PLUMB_MM = 5.0                   # 階高あたりの倒れの許容 [mm]
+TOL_DIM_MM = 10.0                    # 内法寸法の許容 [mm]
+TOL_SQUARE_MRAD = 3.0                # 直交度の許容 [mrad]
+
+#: 壁の諸元 —— (法線の平面内向き u, 面内水平 t, 面の中心の平面位置, 壁の幅)
+WALLS = {
+    "west":  ((-1.0, 0.0), (0.0, -1.0), (0.0, RD / 2), RD),
+    "east":  ((+1.0, 0.0), (0.0, +1.0), (RW, RD / 2), RD),
+    "south": ((0.0, -1.0), (+1.0, 0.0), (RW / 2, 0.0), RW),
+    "north": ((0.0, +1.0), (-1.0, 0.0), (RW / 2, RD), RW),
+}
+
+
+# --------------------------------------------------------------------------- #
+# 場面を作る —— 真値は「仕込んだ倒れ・振れ・ふくらみ」                          #
+# --------------------------------------------------------------------------- #
+def _rot_z(v2, ang):
+    """平面内のベクトルを角 ``ang`` [rad] だけ回す。"""
+    c, s = np.cos(ang), np.sin(ang)
+    return np.array([c * v2[0] - s * v2[1], s * v2[0] + c * v2[1]])
+
+
+def bulge_field(eta, zeta, amp=BULGE_A, sig=BULGE_S):
+    """東の壁の面外のふくらみ [m]。面内座標 (η, ζ) のガウス。"""
+    e0, z0 = BULGE_C
+    return amp * np.exp(-((eta - e0) ** 2 + (zeta - z0) ** 2) / (2.0 * sig * sig))
+
+
+def true_normal(name: str) -> np.ndarray:
+    """仕込んだ壁面の**真の法線**(単位、外向き)。ふくらみは含まない。"""
+    u2 = _rot_z(WALLS[name][0], YAW[name])
+    n = np.array([u2[0], u2[1], -TILT[name]])
+    return n / np.linalg.norm(n)
+
+
+def make_wall(name: str, n_pts: int = N_WALL, rng=None, sig: float = SIG,
+              tilt: float | None = None, amp: float = BULGE_A,
+              bsig: float = BULGE_S, clutter_frac: float = 0.0,
+              jitter_free: bool = False) -> dict:
+    """壁 1 枚の点群と、その点の面内座標・真の偏差を返す。
+
+    ``clutter_frac`` は**全点に占める家具の割合**(0.2 なら 5 点に 1 点が棚の前面)。
+    棚の前面は完全に鉛直に立てる —— そうしないと「頑健推定が棚に乗り換えた」
+    ときの壊れ方が倒れの誤差に混ざって見えなくなる。
+    """
+    rng = np.random.default_rng(SEED if rng is None else rng)
+    u2, t2, base2, width = WALLS[name]
+    tau = TILT[name] if tilt is None else tilt
+    ug = _rot_z(u2, YAW[name])
+    tg = _rot_z(t2, YAW[name])
+    u3 = np.array([ug[0], ug[1], 0.0])
+    t3 = np.array([tg[0], tg[1], 0.0])
+    base = np.array([base2[0], base2[1], 0.0])
+
+    n_cl = int(round(n_pts * clutter_frac))
+    n_w = n_pts - n_cl
+    eta = rng.uniform(-width / 2, width / 2, n_w)
+    zeta = rng.uniform(-RH / 2, RH / 2, n_w)
+    dev = tau * zeta
+    if name == "east" and amp > 0:
+        dev = dev + bulge_field(eta, zeta, amp, bsig)
+    eps = np.zeros(n_w) if jitter_free else rng.normal(0.0, sig, n_w)
+    P = (base + np.outer(eta, t3) + np.outer(zeta + ZREF, (0.0, 0.0, 1.0))
+         + np.outer(dev + eps, u3))
+    is_cl = np.zeros(n_w, bool)
+
+    if n_cl > 0:
+        ce = rng.uniform(CAB_ETA[0], CAB_ETA[1], n_cl)
+        cz = rng.uniform(CAB_Z[0], CAB_Z[1], n_cl)
+        cd = np.full(n_cl, -CAB_D) + (0.0 if jitter_free else rng.normal(0, sig, n_cl))
+        Q = (base + np.outer(ce, t3) + np.outer(cz, (0.0, 0.0, 1.0))
+             + np.outer(cd, u3))
+        P = np.vstack([P, Q])
+        eta = np.concatenate([eta, ce])
+        zeta = np.concatenate([zeta, cz - ZREF])
+        dev = np.concatenate([dev, np.full(n_cl, -CAB_D)])
+        is_cl = np.concatenate([is_cl, np.ones(n_cl, bool)])
+    return {"P": P, "eta": eta, "zeta": zeta, "dev": dev, "clutter": is_cl,
+            "u": u3, "t": t3, "base": base, "width": width, "tau": tau}
+
+
+def make_room(rng_seed: int = SEED, n_pts: int = N_WALL, sig: float = SIG,
+              yaw_room: float = 0.0) -> dict:
+    """4 枚の壁をまとめた室内点群。``yaw_room`` は**部屋ごと**走査軸に対して回す。"""
+    rng = np.random.default_rng(rng_seed)
+    walls = {k: make_wall(k, n_pts, rng, sig) for k in WALLS}
+    P = np.vstack([w["P"] for w in walls.values()])
+    if yaw_room != 0.0:
+        c, s = np.cos(yaw_room), np.sin(yaw_room)
+        R = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
+        P = P @ R.T
+        for w in walls.values():
+            w["P"] = w["P"] @ R.T
+            w["u"] = R @ w["u"]
+    return {"P": P, "walls": walls}
+
+
+# --------------------------------------------------------------------------- #
+# 測る —— 平面を取り出して倒れ・直交度・寸法を出す                              #
+# --------------------------------------------------------------------------- #
+def fit_wall(P: np.ndarray, robust: bool = True, thresh: float = 0.008,
+             seed: int = 0) -> dict:
+    """壁の平面。``robust=True`` は RANSAC、False は最小二乗。"""
+    if robust:
+        par, mask, info = L.ransac_plane(P, thresh=thresh, iters=300, seed=seed)
+        n = np.asarray(par["normal"], float)
+        pt = np.asarray(par["point"], float)
+        return {"normal": n / np.linalg.norm(n), "point": pt,
+                "inliers": int(mask.sum()), "mask": mask}
+    r = L.fit_plane3(P)
+    n = np.asarray(r["normal"], float)
+    return {"normal": n / np.linalg.norm(n), "point": np.asarray(r["center"], float),
+            "inliers": len(P), "mask": np.ones(len(P), bool)}
+
+
+def plumb_mrad(normal: np.ndarray) -> float:
+    """壁面の**倒れ**[mrad] —— 鉛直線と壁面のなす角(``angle_line_plane``)。"""
+    return float(np.deg2rad(L.angle_line_plane(np.array([0.0, 0.0, 1.0]),
+                                               np.asarray(normal, float)))) * 1e3
+
+
+def plan_dir(normal: np.ndarray) -> np.ndarray:
+    """法線の**水平成分**(単位)。直交度はここで測る(倒れを混ぜないため)。"""
+    h = np.asarray(normal, float)[:2].copy()
+    nrm = np.linalg.norm(h)
+    return h / nrm if nrm > 1e-12 else np.array([1.0, 0.0])
+
+
+def squareness_mrad(n1: np.ndarray, n2: np.ndarray) -> float:
+    """2 枚の壁の**平面図での**直交度のずれ [mrad](0 = 直角)。"""
+    a, b = plan_dir(n1), plan_dir(n2)
+    ang = np.arccos(np.clip(abs(float(a @ b)), 0.0, 1.0))   # [0, π/2]
+    return float(np.pi / 2 - ang) * 1e3
+
+
+def signed_offset(pt_on_plane: np.ndarray, normal: np.ndarray,
+                  q: np.ndarray) -> float:
+    """基準点 q から壁面までの距離 [m](``distance_point_plane``)。"""
+    return float(L.distance_point_plane(np.asarray(q, float),
+                                        np.asarray(pt_on_plane, float),
+                                        np.asarray(normal, float)))
+
+
+# --------------------------------------------------------------------------- #
+# 図のための小道具                                                              #
+# --------------------------------------------------------------------------- #
+def _bin_mean(u, v, w, ru, rv, nu, nv):
+    """散らばった (u, v, 値) を格子に落として平均する(空セルは 0)。"""
+    iu = np.clip(((u - ru[0]) / (ru[1] - ru[0]) * nu).astype(int), 0, nu - 1)
+    iv = np.clip(((v - rv[0]) / (rv[1] - rv[0]) * nv).astype(int), 0, nv - 1)
+    k = iv * nu + iu
+    s = np.bincount(k, weights=w, minlength=nu * nv)
+    c = np.bincount(k, minlength=nu * nv)
+    out = np.where(c > 0, s / np.maximum(c, 1), 0.0)
+    return out.reshape(nv, nu)[::-1]
+
+
+# --------------------------------------------------------------------------- #
+# 1. ゼロ点 —— 外接直方体(AABB)から寸法を出す                                  #
+# --------------------------------------------------------------------------- #
+def predict_aabb(n_pts: int = N_WALL, sig: float = SIG) -> dict:
+    """AABB の x 方向の幅を**測る前に**予測する(閉形式)。
+
+    3 つの足し算: (a) 倒れ —— 東西の壁が上で外へ出る分 τ·H/2、(b) ふくらみ ——
+    面外へ出た最大値、(c) **雑音の最大値統計** —— N 点の N(0,σ) の最大値は
+    σ√(2 ln N) で伸びる。(c) が肝で、**点を増やすほど AABB は大きくなる**。
+    """
+    grid_e = np.linspace(-RH / 2, RH / 2, 401)
+    eta_e = np.linspace(-RD / 2, RD / 2, 401)
+    EE, ZZ = np.meshgrid(eta_e, grid_e)
+    out_e = float(np.max(TILT["east"] * ZZ + bulge_field(EE, ZZ)))
+    out_w = float(np.max(TILT["west"] * grid_e))
+    noise = sig * np.sqrt(2.0 * np.log(max(n_pts, 2)))
+    return {"tilt_bulge": out_e + out_w, "noise": 2.0 * noise,
+            "width": RW + out_e + out_w + 2.0 * noise}
+
+
+def section_zero_point() -> dict:
+    print("\n" + "=" * 78)
+    print("1) ゼロ点 —— 点群の外接直方体(AABB)から内法寸法を出す")
+    print("=" * 78)
+
+    room = make_room()
+    lo, hi = L.aabb(room["P"])
+    size = hi - lo
+    pr = predict_aabb()
+    q = np.array([RW / 2, RD / 2, ZREF])
+    dim_pl = {}
+    for pair, axis in ((("west", "east"), 0), (("south", "north"), 1)):
+        d = 0.0
+        for k in pair:
+            f = fit_wall(room["walls"][k]["P"], seed=3)
+            d += signed_offset(f["point"], f["normal"], q)
+        dim_pl[axis] = d
+
+    print("  真値(基準高さ %.2f m での内法) 東西 %.4f m / 南北 %.4f m" % (ZREF, RW, RD))
+    print("  AABB            東西 %.4f m (%+6.1f mm) / 南北 %.4f m (%+6.1f mm)" % (
+        size[0], 1e3 * (size[0] - RW), size[1], 1e3 * (size[1] - RD)))
+    print("  平面 2 枚の距離  東西 %.4f m (%+6.1f mm) / 南北 %.4f m (%+6.1f mm)" % (
+        dim_pl[0], 1e3 * (dim_pl[0] - RW), dim_pl[1], 1e3 * (dim_pl[1] - RD)))
+    print("\n  ★AABB の東西幅は**測る前に閉形式で予測できる**:")
+    print("     倒れ + ふくらみ %.1f mm + 雑音の最大値統計 2σ√(2 ln N) = %.1f mm"
+          "  -> 予測 %+.1f mm / 実測 %+.1f mm(差 %.1f mm)"
+          % (1e3 * pr["tilt_bulge"], 1e3 * pr["noise"],
+             1e3 * (pr["width"] - RW), 1e3 * (size[0] - RW),
+             1e3 * abs(pr["width"] - size[0])))
+
+    # 場面の図: 上面図 + 東壁の偏差マップ
+    P = room["P"]
+    plan = _bin_mean(P[:, 0], P[:, 1], np.ones(len(P)), (-0.2, RW + 0.2),
+                     (-0.2, RD + 0.2), 200, 140)
+    ew = room["walls"]["east"]
+    f = fit_wall(ew["P"], seed=3)
+    res = (ew["P"] - f["point"]) @ f["normal"]
+    emap = _bin_mean(ew["eta"], ew["zeta"], res * 1e3, (-RD / 2, RD / 2),
+                     (-RH / 2, RH / 2), 120, 84)
+    figs.save_grid("scene", [plan, emap],
+                   ["上面図(4 枚の壁の点群 %d 点)" % len(P),
+                    "東の壁 面の偏差 [mm](倒れ %.1f mrad + ふくらみ %.0f mm)"
+                    % (1e3 * TILT["east"], 1e3 * BULGE_A)],
+                   title="室内点群と、そこから取り出す壁面(内法 %.1f x %.1f x %.1f m)"
+                         % (RW, RD, RH), signed=[False, True], ncols=2)
+    return {"aabb": size, "plane": dim_pl, "pred": pr}
+
+
+def section_aabb_yaw() -> dict:
+    print("\n" + "=" * 78)
+    print("2) AABB は部屋の向きを測っている —— 走査軸に対する回転 ψ の掃引")
+    print("=" * 78)
+    print("   ψ [deg]   AABB 東西 [mm 誤差]   閉形式 W cosψ + D sinψ   平面法 [mm 誤差]")
+
+    q0 = np.array([RW / 2, RD / 2, ZREF])
+    psis, aabb_err, pred_err, plane_err = [], [], [], []
+    for psi_deg in (0.0, 0.5, 1.0, 2.0, 5.0, 10.0):
+        psi = np.deg2rad(psi_deg)
+        room = make_room(yaw_room=psi)
+        lo, hi = L.aabb(room["P"])
+        pred = RW * np.cos(psi) + RD * np.sin(psi)
+        c, s = np.cos(psi), np.sin(psi)
+        R = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
+        q = R @ q0
+        d = 0.0
+        for k in ("west", "east"):
+            f = fit_wall(room["walls"][k]["P"], seed=3)
+            d += signed_offset(f["point"], f["normal"], q)
+        psis.append(psi_deg)
+        aabb_err.append(1e3 * (hi[0] - lo[0] - RW))
+        pred_err.append(1e3 * (pred - RW))
+        plane_err.append(1e3 * (d - RW))
+        print("   %6.1f    %+10.1f          %+10.1f              %+8.2f" % (
+            psi_deg, aabb_err[-1], pred_err[-1], plane_err[-1]))
+    print("\n  ★AABB は 1 度で %+.0f mm、10 度で %+.0f mm 外す —— これは施工誤差では"
+          "なく\n     **部屋が走査軸に対して傾いていること**を測っている。"
+          "平面法は最大 %.2f mm。" % (aabb_err[2], aabb_err[-1],
+                                     max(abs(e) for e in plane_err)))
+
+    figs.save_plot("aabb_vs_yaw",
+                   [("AABB", psis, aabb_err),
+                    ("閉形式 W cosψ + D sinψ - W", psis, pred_err),
+                    ("平面 2 枚の距離", psis, plane_err)],
+                   xlabel="部屋の向き ψ [deg]", ylabel="東西の内法の誤差 [mm]",
+                   title="外接直方体は「部屋の向き」を寸法と取り違える",
+                   caption="許容 ±%.0f mm。AABB は ψ=0.5 度で既に外れる。"
+                           % TOL_DIM_MM)
+    return {"psi": psis, "aabb": aabb_err, "plane": plane_err}
+
+
+def section_aabb_n() -> dict:
+    print("\n" + "=" * 78)
+    print("3) ★AABB は点を増やすほど大きくなる —— 一致推定量ですらない")
+    print("=" * 78)
+    print("   壁 1 枚の点数    AABB 東西 [mm 誤差]   予測 2σ√(2 ln N) + 倒れ [mm]")
+
+    ns, meas, pred = [], [], []
+    for n in (200, 800, 3200, 12800, 51200):
+        room = make_room(n_pts=n)
+        lo, hi = L.aabb(room["P"])
+        pr = predict_aabb(n_pts=n)
+        ns.append(n)
+        meas.append(1e3 * (hi[0] - lo[0] - RW))
+        pred.append(1e3 * (pr["width"] - RW))
+        print("   %8d        %+10.1f            %+10.1f" % (n, meas[-1], pred[-1]))
+    print("\n  ★点を 256 倍にすると AABB は %+.1f -> %+.1f mm と %.1f mm 広がる。"
+          % (meas[0], meas[-1], meas[-1] - meas[0]))
+    print("     最大値統計は N で対数的にしか収束しないので、**測点を増やす**"
+          "という\n     普通の対策が逆に効く。予測との差は最大 %.1f mm。"
+          % max(abs(a - b) for a, b in zip(meas, pred)))
+
+    figs.save_plot("aabb_grows_with_points",
+                   [("AABB の誤差(実測)", np.log10(ns), meas),
+                    ("閉形式の予測", np.log10(ns), pred),
+                    ("許容 +%.0f mm" % TOL_DIM_MM, np.log10(ns),
+                     [TOL_DIM_MM] * len(ns))],
+                   xlabel="log10(壁 1 枚の点数)", ylabel="東西の内法の誤差 [mm]",
+                   title="点を増やすと外接直方体は必ず大きくなる")
+    return {"n": ns, "meas": meas, "pred": pred}
+
+
+# --------------------------------------------------------------------------- #
+# 4. 垂直度と直交度                                                             #
+# --------------------------------------------------------------------------- #
+def section_plumb_square() -> dict:
+    print("\n" + "=" * 78)
+    print("4) 垂直度(倒れ)と直交度 —— 平面の法線から出す")
+    print("=" * 78)
+    print("   壁      真値 [mrad]  推定 [mrad]  差 [mrad]   階高 %.2f m あたり [mm]  判定"
+          % RH)
+
+    room = make_room()
+    rows, fits = [], {}
+    for k in ("west", "east", "south", "north"):
+        f = fit_wall(room["walls"][k]["P"], seed=3)
+        fits[k] = f
+        est = plumb_mrad(f["normal"])
+        tru = plumb_mrad(true_normal(k))
+        mm = est * 1e-3 * RH * 1e3
+        ok = "合格" if mm <= TOL_PLUMB_MM else "不合格"
+        rows.append([k, "%.2f" % tru, "%.2f" % est, "%+.3f" % (est - tru),
+                     "%.1f" % mm, ok])
+        print("   %-6s   %8.2f     %8.2f    %+8.3f        %8.1f          %s" % (
+            k, tru, est, est - tru, mm, ok))
+
+    print("\n   直交する 2 面の組み合わせ(平面図での直交度)")
+    sq_rows = []
+    for a, b in (("east", "north"), ("north", "west"), ("west", "south"),
+                 ("south", "east")):
+        tru = squareness_mrad(true_normal(a), true_normal(b))
+        est = squareness_mrad(fits[a]["normal"], fits[b]["normal"])
+        d3 = 90.0 - float(L.angle_between_planes(fits[a]["normal"], fits[b]["normal"]))
+        ok = "合格" if abs(est) <= TOL_SQUARE_MRAD else "不合格"
+        sq_rows.append([a + "-" + b, "%.2f" % tru, "%.2f" % est,
+                        "%.3f" % (d3 * np.pi / 180 * 1e3), ok])
+        print("   %-12s 真値 %6.2f mrad / 推定 %6.2f mrad / "
+              "3-D 二面角から %6.2f mrad   %s"
+              % (a + "-" + b, tru, est, d3 * np.pi / 180 * 1e3, ok))
+    leak = max(abs(float(r[3]) - float(r[2])) for r in sq_rows)
+    print("\n  ★倒れが直交度に漏れると踏んでいたが、3-D の二面角と平面図の角の差は"
+          "\n     最大 %.3f mrad —— 2 次の効果で無視できた(予想は外れ)。"
+          "\n     ただし **AABB からは直交度が原理的に出ない**(軸平行なので"
+          "常に 90 度)。" % leak)
+
+    figs.save_table("plumb_verdicts",
+                    ["壁", "真値 mrad", "推定 mrad", "差 mrad",
+                     "階高あたり mm", "判定(許容 %.0f mm)" % TOL_PLUMB_MM],
+                    rows, title="壁ごとの倒れ(垂直度)")
+    figs.save_table("squareness",
+                    ["組", "真値 mrad", "平面図の角 mrad", "3-D 二面角 mrad",
+                     "判定(許容 %.0f mrad)" % TOL_SQUARE_MRAD],
+                    sq_rows, title="隣り合う 2 面の直交度")
+    return {"rows": rows, "sq": sq_rows, "leak": leak}
+
+
+# --------------------------------------------------------------------------- #
+# 5. 家具(外れ点)—— 最小二乗と頑健推定                                        #
+# --------------------------------------------------------------------------- #
+def predict_ls_tilt(f: float) -> float:
+    """外れ点の割合 f のとき、**最小二乗**が読む倒れ [rad] を閉形式で。
+
+    面内の高さ ζ = z - ZREF に対して偏差 dev を 1 次で当てはめると、傾きは
+    ``Cov(dev, ζ) / Var(ζ)``。壁は ζ~U[-H/2, H/2] で dev = τζ、棚は
+    ζ~U[ζ0,ζ1] で dev = -d。混合分布のモーメントは全部書けるので、
+    **点を 1 つも作らずに**答えが出る。
+    """
+    tau, d = TILT["east"], CAB_D
+    z0, z1 = CAB_Z[0] - ZREF, CAB_Z[1] - ZREF
+    m1 = 0.5 * (z0 + z1)
+    m2 = (z1 ** 3 - z0 ** 3) / (3.0 * (z1 - z0))
+    ez = f * m1
+    ez2 = (1 - f) * (RH ** 2 / 12.0) + f * m2
+    cov = (1 - f) * tau * (RH ** 2 / 12.0) - f * (1 - f) * d * m1
+    var = ez2 - ez * ez
+    return cov / var
+
+
+def section_outliers() -> dict:
+    print("\n" + "=" * 78)
+    print("5) 家具を何 %% 混ぜると平面が引きずられるか —— 最小二乗 vs RANSAC")
+    print("=" * 78)
+    print("  出 %.0f mm の棚を東の壁の前に立て、全点に占める割合を振る"
+          "(棚の前面は完全に鉛直)" % (1e3 * CAB_D))
+    print("\n   割合 %%   最小二乗 [mrad]  閉形式の予測   RANSAC [mrad]  "
+          "RANSAC の面の位置ずれ [mm]")
+
+    tru = 1e3 * TILT["east"]
+    fr, ls_e, ls_p, rs_e, rs_off = [], [], [], [], []
+    rng_master = np.random.default_rng(101)
+    for frac in (0.0, 0.02, 0.05, 0.10, 0.20, 0.35, 0.45, 0.55, 0.70):
+        w = make_wall("east", 4000, np.random.default_rng(int(rng_master.integers(1e6))),
+                      clutter_frac=frac)
+        fl = fit_wall(w["P"], robust=False)
+        frb = fit_wall(w["P"], robust=True, seed=7)
+        e_ls = plumb_mrad(fl["normal"])
+        e_rs = plumb_mrad(frb["normal"])
+        # 面の位置 —— 部屋の中心から東の壁までの距離。棚に乗り換えると 450 mm 縮む。
+        q = np.array([RW / 2, RD / 2, ZREF])
+        off = 1e3 * (signed_offset(frb["point"], frb["normal"], q) - RW / 2)
+        pred = 1e3 * predict_ls_tilt(frac)
+        fr.append(100 * frac)
+        ls_e.append(e_ls)
+        ls_p.append(abs(pred))
+        rs_e.append(e_rs)
+        rs_off.append(off)
+        print("   %5.0f    %10.2f     %10.2f     %10.2f        %+10.1f" % (
+            100 * frac, e_ls, abs(pred), e_rs, off))
+
+    print("\n   真値 %.2f mrad。" % tru)
+    i10 = fr.index(10.0)
+    print("  ★最小二乗は %.0f %% の混入で %.1f mrad(真値の %.0f 倍)。"
+          "閉形式の予測 %.1f mrad と %.1f %% 以内で一致。"
+          % (fr[i10], ls_e[i10], ls_e[i10] / tru, ls_p[i10],
+             100 * abs(ls_e[i10] - ls_p[i10]) / ls_p[i10]))
+    bad = [i for i, o in enumerate(rs_off) if abs(o) > 100.0]
+    if bad:
+        j = bad[0]
+        print("  ★★RANSAC の崖は %.0f %% と %.0f %% のあいだ(予測 50 %% = 棚の点が"
+              "壁を上回る点)。" % (fr[j - 1], fr[j]))
+        print("     ★崖の向こうで**倒れの誤差は小さいまま**(%.2f mrad)なのに、"
+              "面そのものが\n        %.0f mm 手前の棚へ乗り換えている。"
+              "1 つの数字(倒れ)では破綻が見えない。" % (rs_e[j], abs(rs_off[j])))
+
+    figs.save_plot("outlier_sweep",
+                   [("最小二乗(実測)", fr, ls_e),
+                    ("最小二乗(閉形式)", fr, ls_p),
+                    ("RANSAC(実測)", fr, rs_e),
+                    ("真値 %.1f mrad" % tru, fr, [tru] * len(fr))],
+                   xlabel="家具の点の割合 [%]", ylabel="読み取った倒れ [mrad]",
+                   title="最小二乗は最初の 1 % で壊れ、RANSAC は 50 % で乗り換える")
+    figs.save_plot("outlier_offset",
+                   [("RANSAC が置いた面の位置ずれ", fr, rs_off),
+                    ("許容 ±%.0f mm" % TOL_DIM_MM, fr, [-TOL_DIM_MM] * len(fr))],
+                   xlabel="家具の点の割合 [%]", ylabel="壁面の位置ずれ [mm]",
+                   title="壊れ方は 2 種類 —— 傾く(最小二乗)/ 乗り換える(RANSAC)")
+
+    # 場面の図: 20 % 混入の東壁を、2 つの当てはめの残差で塗り分ける
+    w = make_wall("east", 4000, np.random.default_rng(4242), clutter_frac=0.20)
+    fl = fit_wall(w["P"], robust=False)
+    frb = fit_wall(w["P"], robust=True, seed=7)
+    maps = []
+    for f in (fl, frb):
+        r = (w["P"] - f["point"]) @ f["normal"]
+        maps.append(_bin_mean(w["eta"], w["zeta"], np.clip(r, -0.25, 0.25) * 1e3,
+                              (-RD / 2, RD / 2), (-RH / 2, RH / 2), 120, 84))
+    figs.save_grid("outlier_maps", maps,
+                   ["最小二乗の残差 [mm](棚に引かれて面が回った)",
+                    "RANSAC の残差 [mm](棚だけが外れ点として残る)"],
+                   title="家具 20 %% を混ぜた東の壁(棚の出 %.0f mm)" % (1e3 * CAB_D),
+                   signed=True)
+    return {"frac": fr, "ls": ls_e, "pred": ls_p, "rs": rs_e, "off": rs_off}
+
+
+# --------------------------------------------------------------------------- #
+# 6. 面のふくらみ —— 平面当てはめが自分で食べてしまう分                         #
+# --------------------------------------------------------------------------- #
+def predict_bulge(amp: float, sig: float) -> dict:
+    """ふくらみのうち平面に**吸われる**分を、真値の場から直接計算する。
+
+    面内の密な格子でふくらみの場を作り、``{1, η, ζ}`` の張る部分空間へ
+    最小二乗射影して引く。残った山の高さが「測れるふくらみ」、
+    ζ に掛かる係数が「ふくらみが化けた偽の倒れ」。点も雑音も使わない。
+    """
+    eta = np.linspace(-RD / 2, RD / 2, 161)
+    zeta = np.linspace(-RH / 2, RH / 2, 121)
+    E, Z = np.meshgrid(eta, zeta)
+    b = bulge_field(E, Z, amp, sig).ravel()
+    A = np.column_stack([np.ones(b.size), E.ravel(), Z.ravel()])
+    coef, *_ = np.linalg.lstsq(A, b, rcond=None)
+    resid = b - A @ coef
+    return {"peak": float(resid.max()), "fake_tilt": float(coef[2]),
+            "absorbed": float(1.0 - resid.max() / amp)}
+
+
+def section_bulge() -> dict:
+    print("\n" + "=" * 78)
+    print("6) 面のふくらみ —— 広いふくらみは平面当てはめに食べられる")
+    print("=" * 78)
+    print("  振幅は %.0f mm 固定、広がり σ を振る(壁は %.1f x %.1f m)"
+          % (1e3 * BULGE_A, RD, RH))
+    print("\n   σ [m]   残差の山 [mm](実測)  予測  吸われた割合 [%]  "
+          "偽の倒れ [mrad](実測 / 予測)")
+
+    sigs, peak_m, peak_p, fake_m, fake_p = [], [], [], [], []
+    base_tilt = 1e3 * TILT["east"]
+    for bs in (0.25, 0.40, 0.70, 1.10, 1.80, 3.00):
+        w = make_wall("east", 20000, np.random.default_rng(31), bsig=bs)
+        f = fit_wall(w["P"], seed=3)
+        r = (w["P"] - f["point"]) @ f["normal"]
+        # 山の高さは 1 点の外れ値に振られるので上位 0.5 % の中央値で読む
+        pk = float(np.median(np.sort(r)[-max(1, len(r) // 200):]))
+        pr = predict_bulge(BULGE_A, bs)
+        est_tilt = plumb_mrad(f["normal"])
+        sigs.append(bs)
+        peak_m.append(1e3 * pk)
+        peak_p.append(1e3 * pr["peak"])
+        fake_m.append(est_tilt - base_tilt)
+        fake_p.append(1e3 * pr["fake_tilt"])
+        print("   %5.2f      %10.2f       %6.2f      %10.1f        %+6.2f / %+6.2f" % (
+            bs, peak_m[-1], peak_p[-1], 100 * pr["absorbed"], fake_m[-1], fake_p[-1]))
+
+    print("\n  ★σ = %.2f m では山の %.0f %% が残るが、σ = %.2f m では %.0f %% しか"
+          "残らない。" % (sigs[0], 100 * peak_m[0] / (1e3 * BULGE_A),
+                         sigs[-1], 100 * peak_m[-1] / (1e3 * BULGE_A)))
+    print("     **ふくらみが広いほど「平ら」と報告される** —— 一番危ない"
+          "(壁全体が出ている)\n     状態が一番見えない。")
+    print("  ★しかも吸われた分は消えるのでなく**倒れに化ける**: 偽の倒れは"
+          " 最大 %+.2f mrad\n     (階高で %.1f mm)。許容 %.0f mm の %.0f %% を"
+          "ふくらみだけで使う。"
+          % (max(fake_m, key=abs), abs(max(fake_m, key=abs)) * 1e-3 * RH * 1e3,
+             TOL_PLUMB_MM,
+             100 * abs(max(fake_m, key=abs)) * 1e-3 * RH * 1e3 / TOL_PLUMB_MM))
+
+    figs.save_plot("bulge_absorption",
+                   [("残差の山(実測)", sigs, peak_m),
+                    ("残差の山(予測)", sigs, peak_p),
+                    ("真の振幅 %.0f mm" % (1e3 * BULGE_A), sigs,
+                     [1e3 * BULGE_A] * len(sigs)),
+                    ("偽の倒れ [mrad]", sigs, fake_m)],
+                   xlabel="ふくらみの広がり σ [m]", ylabel="[mm] / [mrad]",
+                   title="広いふくらみは平面に吸われ、倒れに化ける")
+
+    maps, caps = [], []
+    for bs in (0.25, 0.70, 3.00):
+        w = make_wall("east", 20000, np.random.default_rng(31), bsig=bs)
+        f = fit_wall(w["P"], seed=3)
+        r = (w["P"] - f["point"]) @ f["normal"]
+        maps.append(_bin_mean(w["eta"], w["zeta"], r * 1e3, (-RD / 2, RD / 2),
+                              (-RH / 2, RH / 2), 120, 84))
+        caps.append("σ = %.2f m" % bs)
+    figs.save_grid("bulge_maps", maps, caps,
+                   title="東の壁の偏差マップ [mm] —— 同じ振幅 %.0f mm のふくらみ"
+                         % (1e3 * BULGE_A), signed=True, ncols=3)
+    return {"sig": sigs, "peak": peak_m, "pred": peak_p, "fake": fake_m}
+
+
+# --------------------------------------------------------------------------- #
+# 7. 判定が食い違う —— 3 つのやり方を並べる                                     #
+# --------------------------------------------------------------------------- #
+def section_verdicts(zero: dict, out: dict) -> dict:
+    print("\n" + "=" * 78)
+    print("7) 同じ点群・同じ許容で判定が食い違う")
+    print("=" * 78)
+
+    room = make_room()
+    q = np.array([RW / 2, RD / 2, ZREF])
+    rows = []
+
+    def _verdict(v, tol):
+        return "合格" if abs(v) <= tol else "不合格"
+
+    lo, hi = L.aabb(room["P"])
+    rows.append(["内法 東西", "AABB", "%+.1f mm" % (1e3 * (hi[0] - lo[0] - RW)),
+                 _verdict(1e3 * (hi[0] - lo[0] - RW), TOL_DIM_MM)])
+    rows.append(["内法 東西", "平面 2 枚", "%+.1f mm" % (1e3 * (zero["plane"][0] - RW)),
+                 _verdict(1e3 * (zero["plane"][0] - RW), TOL_DIM_MM)])
+    rows.append(["内法 南北", "AABB", "%+.1f mm" % (1e3 * (hi[1] - lo[1] - RD)),
+                 _verdict(1e3 * (hi[1] - lo[1] - RD), TOL_DIM_MM)])
+    rows.append(["内法 南北", "平面 2 枚", "%+.1f mm" % (1e3 * (zero["plane"][1] - RD)),
+                 _verdict(1e3 * (zero["plane"][1] - RD), TOL_DIM_MM)])
+
+    i = out["frac"].index(20.0)
+    rows.append(["東壁の倒れ(家具 20 %)", "最小二乗",
+                 "%.1f mrad" % out["ls"][i],
+                 _verdict(out["ls"][i] * 1e-3 * RH * 1e3, TOL_PLUMB_MM)])
+    rows.append(["東壁の倒れ(家具 20 %)", "RANSAC",
+                 "%.2f mrad" % out["rs"][i],
+                 _verdict(out["rs"][i] * 1e-3 * RH * 1e3, TOL_PLUMB_MM)])
+    rows.append(["東壁の倒れ(真値)", "—", "%.2f mrad" % (1e3 * TILT["east"]),
+                 _verdict(1e3 * TILT["east"] * 1e-3 * RH * 1e3, TOL_PLUMB_MM)])
+
+    for r in rows:
+        print("   %-24s %-10s %12s   %s" % tuple(r))
+    figs.save_table("verdicts", ["項目", "やり方", "読み", "判定"], rows,
+                    title="やり方を変えると判定が変わる(許容 内法 ±%.0f mm / "
+                          "倒れ %.0f mm)" % (TOL_DIM_MM, TOL_PLUMB_MM))
+    return {"rows": rows}
+
+
+# --------------------------------------------------------------------------- #
+# 8. 道具の穴                                                                   #
+# --------------------------------------------------------------------------- #
+def section_tool_gaps() -> None:
+    print("\n" + "=" * 78)
+    print("8) 公開経路に無かった処理(この PoC が自前で書いたもの)")
+    print("=" * 78)
+    for name in ("plumb_deviation", "squareness", "plane_pair_distance",
+                 "extreme_value_inflation"):
+        assert not hasattr(fs, name) and not hasattr(fs.ledger, name), name
+    print("  (a) plumb_deviation(normal) —— 壁面の倒れを mrad と「階高あたり mm」で。"
+          "\n      角そのものは angle_line_plane で取れるが、度で返るので"
+          "施工の単位へ\n      直す所を毎回書いている。")
+    print("  (b) squareness(n1, n2) —— **平面図に落としてから**の直交度。"
+          "angle_between_planes は\n      3-D の二面角なので、床や天井を"
+          "混ぜた瞬間に意味が変わる。")
+    print("  (c) plane_pair_distance(planeA, planeB, ref) —— 向かい合う 2 面の"
+          "基準点での\n      内法。distance_point_plane を 2 回呼んで足すだけだが、"
+          "**寸法検査の\n      基本の 1 つ**が 1 行で書けない。")
+    print("  (d) 面内座標への写像(点群 -> (η, ζ, 偏差) の 3 列)。偏差マップを"
+          "描くのに\n      毎回書いている(warp_by_plane は画像を歪める op で"
+          "別物)。")
+    print("  (e) 外れ点に対する**最小二乗と頑健推定の対照**を返す口。"
+          "ransac_plane と\n      fit_plane3 は在るが、「どちらがどれだけ"
+          "引きずられたか」を返す層が無い。")
+
+
+# --------------------------------------------------------------------------- #
+def main() -> None:
+    t0 = time.perf_counter()
+    print("=" * 78)
+    print("室内点群から壁の施工誤差を出す —— 外接直方体は寸法を測っていない")
+    print("設計 %.1f x %.1f x %.1f m / 測距の雑音 σ = %.1f mm / 壁 1 枚 %d 点"
+          % (RW, RD, RH, 1e3 * SIG, N_WALL))
+    print("=" * 78)
+
+    zero = section_zero_point()
+    yaw = section_aabb_yaw()
+    grow = section_aabb_n()
+    pl = section_plumb_square()
+    out = section_outliers()
+    bul = section_bulge()
+    section_verdicts(zero, out)
+    section_tool_gaps()
+
+    # --- 所見を固定する assert -------------------------------------------- #
+    # 1) AABB は必ず過大、平面法は許容内
+    assert zero["aabb"][0] - RW > 0.010, zero["aabb"][0]
+    assert abs(zero["plane"][0] - RW) < 0.010, zero["plane"][0]
+    # 2) AABB の閉形式の予測が 3 mm 以内で当たる
+    assert abs(zero["pred"]["width"] - zero["aabb"][0]) < 0.003
+    # 3) 部屋を 10 度回すと AABB は 500 mm 以上外し、平面法は 1 mm 以内
+    assert yaw["aabb"][-1] > 500.0 and abs(yaw["plane"][-1]) < 1.0
+    # 4) 点を増やすほど AABB は広がる(単調)
+    assert all(b >= a - 0.2 for a, b in zip(grow["meas"], grow["meas"][1:]))
+    assert grow["meas"][-1] - grow["meas"][0] > 5.0
+    # 5) 倒れの推定は 0.3 mrad 以内、直交度への倒れの漏れは 0.1 mrad 未満
+    assert all(abs(float(r[3])) < 0.3 for r in pl["rows"]), pl["rows"]
+    assert pl["leak"] < 0.1, pl["leak"]
+    # 6) 最小二乗は 10 % 混入で真値の 5 倍以上、閉形式の予測と 15 % 以内
+    i10 = out["frac"].index(10.0)
+    assert out["ls"][i10] > 5.0 * 1e3 * TILT["east"]
+    assert abs(out["ls"][i10] - out["pred"][i10]) < 0.15 * out["pred"][i10]
+    # 7) RANSAC は 45 % までは踏みとどまり、55 % で棚へ乗り換える
+    i45 = out["frac"].index(45.0)
+    i55 = out["frac"].index(55.0)
+    assert abs(out["off"][i45]) < 20.0 and abs(out["off"][i55]) > 300.0
+    # 8) 広いふくらみは吸われる(単調に小さくなる)
+    assert bul["peak"][0] > bul["peak"][-1] * 2.0
+    assert all(abs(m - p) < 1.2 for m, p in zip(bul["peak"], bul["pred"]))
+
+    print("\n" + "=" * 78)
+    print("まとめ")
+    print("=" * 78)
+    print("  * 外接直方体は寸法でなく「部屋の向き + 点の数」を測っている"
+          "(ψ=10 度で %+.0f mm、点 256 倍で %+.1f mm)。"
+          % (yaw["aabb"][-1], grow["meas"][-1] - grow["meas"][0]))
+    print("  * 外れ点への壊れ方は 2 種類 —— 最小二乗は傾き、RANSAC は乗り換え。")
+    print("  * 広いふくらみは平面に吸われ、消えずに倒れへ化ける。")
+    print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
+
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+    print("\nPASS")
+
+
+if __name__ == "__main__":
+    main()
