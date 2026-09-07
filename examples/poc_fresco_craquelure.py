@@ -92,7 +92,7 @@ RING_PX = 4.0          # 分岐次数を数える環の半径 [px]
 
 # 2 種のひび網(Bucklow 1997 の分類軸)
 TYPES = {
-    "乾燥": dict(cell=16.0, beta=0.3, aspect=1.0, warp_amp=1.0, warp_len=11.0, width=2.0),
+    "乾燥": dict(cell=16.0, beta=0.3, aspect=1.0, warp_amp=1.2, warp_len=11.0, width=2.0),
     "経年": dict(cell=40.0, beta=0.92, aspect=1.3, warp_amp=0.3, warp_len=60.0, width=2.0),
 }
 
