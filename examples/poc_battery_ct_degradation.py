@@ -663,9 +663,12 @@ def section_scene(cells, recs) -> dict:
                     cells[key]["mu"], az, 0.0, mode="xray")))
                 caps.append("%s %.0f 度" % (name, az))
         figs.save_grid("xray_projection", panels, caps,
-                       title="X 線投影(減衰の積算)—— 重なると内部の差は消える",
+                       title="X 線投影(減衰の積算)—— 姿勢が変わると縞が消える",
                        ncols=4,
-                       caption="投影だけでは空隙も膨れも判らない。だから断層に落とす。")
+                       caption="真正面(0 度)なら空隙の影までは見える。ただし"
+                               "奥行きに積算されているので厚みも深さも出ない。"
+                               "22 度傾けると層の縞そのものが重なって消える —— "
+                               "投影では姿勢が結果を決めてしまう。だから断層に落とす。")
 
     mid = ND // 2
     figs.save_grid("scene", [_up(cells["healthy"]["mu"][mid]), _up(recs["healthy"][mid]),
