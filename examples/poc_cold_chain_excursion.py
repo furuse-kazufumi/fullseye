@@ -775,8 +775,7 @@ def section_metrics(scene: dict) -> dict:
                         title="同じ「規定内」でも 3 つの指標は %.1f 倍ずれる" % spread)
         vmap = (ok[0].astype(float) + 2.0 * ok[1] + 4.0 * ok[2])
         figs.save_grid("verdict_maps",
-                       [np.where(lay["is_product"], exc, np.nan * 0.0),
-                        mkt, deg, vmap],
+                       [np.where(lay["is_product"], exc, 0.0), mkt, deg, vmap],
                        ["記録の逸脱時間 [min]", "記録の MKT [°C]",
                         "記録の劣化 [-]", "合否の組合せ(7 = 3 つとも合格)"],
                        title="全セルにロガーを置いたときの 3 指標", ncols=4,
