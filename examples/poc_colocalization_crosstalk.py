@@ -660,6 +660,8 @@ def main() -> int:
               100 * ALPHA, r0_raw, z["res"][0.0]["raw"]["m1"], r0_cor, z["res"][0.0]["cor"]["m1"]))
     print("  * Pearson の崖は α=%.3f(予想 %.3f)、Manders の崖は α=%.3f —— 別の場所。"
           % (sw["a_cross"], sw["a_pred"], sw["a_m1"]))
+    print("  * Otsu-Manders は 100 %% でも %.3f(裾落ち、予想 %.3f)。真値に一致する α=%.3f は相殺。"
+          % (z["tail"][0], z["tail"][1], sw["a_cancel"]))
     print("  * ぼけは Manders だけを押す(σ=4 px で M1 %.3f、r %+.3f)。" % (ps["m1_0"][-1], ps["r0"][-1]))
     print("  * シャッフル検定は漏れ込みを「有意」と言う(p=%.3f)。" % sig["0 %, α=β=15 %"][1])
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
