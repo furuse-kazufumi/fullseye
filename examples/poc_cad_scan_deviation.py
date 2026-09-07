@@ -547,9 +547,14 @@ def section_align(ref: CadRef) -> dict:
     print("=" * 78)
     sc = make_scan()
     tru = sc["dev_true"]
-    a_true = out_of_tol_area(tru, sc["w"])
+    # 稜線帯は姿勢に依らずほぼ同じ点集合なので、真の姿勢で 1 回決めて全手法で使う
+    _, _, _, edge = ref.deviate(sc["pts"] @ sc["R_true"].T + sc["t_true"])
+    ok = ~edge
+    a_true = out_of_tol_area(tru[ok], sc["w"])
     print("  真値: 公差外面積 %.2f mm^2 / 最大 |偏差| %.1f µm / 点数 %d"
           % (a_true, 1000 * np.abs(tru).max(), len(sc["pts"])))
+    print("  稜線帯(k 近傍の法線が 30 度以上割れる点)を %.1f %% = %.0f mm^2 除外して"
+          "測る(理由は表のあと)。" % (100 * edge.mean(), edge.mean() * ref.area))
     print("\n  手法            姿勢[度]   点移動[mm]   偏差RMS[µm]  偏差最大[µm]"
           "  公差外面積[mm^2]  面積誤差")
 
