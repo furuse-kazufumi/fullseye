@@ -94,5 +94,35 @@
   ],
   "csv": "09_voxel_cliff_table.csv",
   "tsv": "09_voxel_cliff_table.tsv"
+ },
+ {
+  "file": "10_threshold_sweep.png",
+  "name": "threshold_sweep",
+  "caption": "塊の数が 24 から落ちた瞬間、最近接間隔は『隣のボイドまで』から『隣の鎖まで』に黙って入れ替わる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_cluster_radius_sweep.png",
+  "name": "cluster_radius_sweep",
+  "caption": "ボイド率にはこの差が出ない —— 両条件とも 3 %% 台。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_noise_sweep.png",
+  "name": "noise_sweep",
+  "caption": "合否の数字は雑音に強い。強いことが問題で、壊れているのに気づけない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

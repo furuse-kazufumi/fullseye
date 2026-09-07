@@ -345,18 +345,34 @@ def section5_uniform_strain(sp, ref):
         print(" %10s %10s" % (name + " µε", name + " 散 µε"), end="")
     print()
     print("  " + "-" * (13 + 22 * (len(ESTIMATORS) - 1)))
+    got = {}
     for eps in [100e-6, 500e-6, 2000e-6, 5000e-6, 20000e-6]:
         cur = sp.render(lambda x, y: x * (1.0 + eps), lambda x, y: y)
         print("  %10.0f |" % (1e6 * eps), end="")
         for name, est in ESTIMATORS[1:]:
             uu, vv = est(ref, cur)
             exx, _, _ = strain(uu, vv, w=31)
-            print(" %10.1f %10.1f" % (1e6 * float(np.mean(exx[_SL])),
-                                      1e6 * float(np.std(exx[_SL]))), end="")
+            mu, sd = 1e6 * float(np.mean(exx[_SL])), 1e6 * float(np.std(exx[_SL]))
+            got[(name, round(1e6 * eps))] = (mu, sd)
+            print(" %10.1f %10.1f" % (mu, sd), end="")
         print()
     print()
     print("  → 100 µε でも符号と桁は出る。ただし散らばりが同じ桁なので、")
     print("     **1 点の値ではなく領域平均でしか使えない**。")
+    # ★所見を固定する。
+    #   (1) lk と piv は 100 µε を ±30 µε で回収する(実測 +9.1 / +0.4)。
+    for name in ("lk", "piv"):
+        assert abs(got[(name, 100)][0] - 100.0) < 30.0, (name, got[(name, 100)])
+    #   (2) ★hs は 100 µε で 22 µε しか返さない —— 上の「符号と桁は出る」は
+    #       **hs には当てはまらない**(正則化が一様ひずみそのものを平らにする)。
+    #       主張と実測の食い違いなので、実測のほうを固定しておく。
+    assert got[("hs", 100)][0] < 60.0, got[("hs", 100)]
+    #   (3) 20000 µε(2 %、塑性域)なら 3 つとも ±3 % で一致する。
+    for name in ("lk", "hs", "piv"):
+        assert abs(got[(name, 20000)][0] / 20000.0 - 1.0) < 0.03, (name, got[(name, 20000)])
+    #   (4) 100 µε では散らばりが真値と同じ桁 = 1 点の値では使えない。
+    assert got[("piv", 100)][1] > 3.0, got[("piv", 100)]
+    return got
 
 
 def section6_rotation(sp, ref):
