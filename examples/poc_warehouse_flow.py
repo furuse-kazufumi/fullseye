@@ -413,20 +413,32 @@ def measure(scene: dict, dt_meas: float = DT_MEAS, rack_h: float = RACK_H,
         ok &= vis[iy, ix]
         xs[i, ok], ys[i, ok] = x[ok], y[ok]
 
-    # ID の取り違え: 近接した対で確率 p、以後**永続**する入れ替え。
-    perm = np.arange(n)
-    rid = np.zeros((n, frames.size), int)
+    # ID の取り違え(**併合**): 近づいた 2 人を追跡器が 1 本の軌跡にしてしまう。
+    # 一度併合したら**離れるまで続く**(1 フレームごとにちらつく実装は非現実的)。
+    # ★入れ替え(swap)ではなく併合にしてある —— 入れ替えは「同じ柱の中で
+    #   遅く始まったほうが待ち」という時間の入れ子を壊さない(役が入れ替わるだけ
+    #   で、両方の役が正しく埋まる)。壊れるのは **2 人が 1 人に見えたとき**。
+    rid = np.tile(np.arange(n)[:, None], (1, frames.size))
+    merged: dict = {}
     for f in range(frames.size):
         live = np.nonzero(np.isfinite(xs[:, f]))[0]
-        if p_switch > 0 and live.size > 1:
+        if live.size > 1:
             px, py = xs[live, f], ys[live, f]
             d = np.hypot(px[:, None] - px[None, :], py[:, None] - py[None, :])
+            near = set()
             iu, ju = np.nonzero(np.triu(d < D_SWITCH, 1))
             for a, b in zip(iu, ju):
-                if rng.random() < p_switch:
-                    i, j = live[a], live[b]
-                    perm[i], perm[j] = perm[j], perm[i]
-        rid[:, f] = perm
+                i, j = int(live[a]), int(live[b])
+                near.add((i, j))
+                if (i, j) not in merged and p_switch > 0 \
+                        and rng.random() < p_switch:
+                    merged[(i, j)] = True
+            for pair in [k for k in merged if k not in near]:
+                del merged[pair]
+        else:
+            merged.clear()
+        for (i, j) in merged:
+            rid[j, f] = rid[i, f]
     seen = int(np.isfinite(xs).sum())
     total = int(sum(scene["tracks"][nm]["present"][frames].sum() for nm in names))
     return {"names": names, "frames": frames, "dt": step * DT_BASE,
@@ -929,7 +941,7 @@ def section_sweep_dt(clear: np.ndarray) -> dict:
     pred = {k: (DUR[k] + creep) / (MIN_SAMPLES - 1) for k in LOSS_TYPES}
     print("   " + "  ".join("%s %.1f s" % (k, pred[k]) for k in LOSS_TYPES))
 
-    dts = (0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0)
+    dts = (0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0)
     rec = {k: [] for k in LOSS_TYPES}
     zeros = []
     print("\n   Δt [s]   " + "  ".join("%-9s" % k for k in LOSS_TYPES)
@@ -952,10 +964,10 @@ def section_sweep_dt(clear: np.ndarray) -> dict:
         below = [d for d, v in zip(dts, rec[k]) if v < 0.5]
         c = below[0] if below else np.inf
         cliffs[k] = c
-        rows.append([k, "%.1f" % pred[k], ("%.1f" % c) if np.isfinite(c) else ">8",
+        rows.append([k, "%.1f" % pred[k], ("%.1f" % c) if np.isfinite(c) else ">12",
                      "%+.1f" % (c - pred[k]) if np.isfinite(c) else "-"])
         print("   %-14s %10.1f     %10s   %s"
-              % (k, pred[k], ("%.1f" % c) if np.isfinite(c) else ">8",
+              % (k, pred[k], ("%.1f" % c) if np.isfinite(c) else ">12",
                  ("%+.1f" % (c - pred[k])) if np.isfinite(c) else "-"))
     print("  ★崖の**順番**は予測どおり(短い待ちから消える)。"
           "ゼロ点は %.1f -> %.1f 秒(%.1f %%)しか動かず、警報にならない。"
@@ -989,7 +1001,7 @@ def section_sweep_occ(clear: np.ndarray) -> dict:
           % (DISPATCH[0], DISPATCH[1],
              "どの高さでも見える" if not np.isfinite(hc_open) else "%.2f m" % hc_open))
 
-    hs = (1.6, 2.0, 2.4, 2.8, 3.2, 3.6, 4.2)
+    hs = (1.6, 2.0, 2.2, 2.4, 2.6, 2.8, 3.2, 4.0)
     rec = {k: [] for k in LOSS_TYPES}
     lost = []
     print("\n   棚の高さ [m]   欠測率 [%]   "
@@ -1029,7 +1041,7 @@ def section_sweep_id(clear: np.ndarray) -> dict:
     print("  作業台では「同じ柱の中で遅く始まったほうが待ち」という**時間の入れ子**で"
           "待ちと作業を分ける。")
     print("  ID が入れ替わると、待ちと作業が丸ごと交換される。")
-    ps = (0.0, 3e-4, 1e-3, 3e-3, 1e-2, 3e-2)
+    ps = (0.0, 0.005, 0.01, 0.02, 0.05, 0.15)
     rec = {k: [] for k in LOSS_TYPES}
     zeros = []
     print("\n   取り違え率     ゼロ点 [s]   "
@@ -1053,11 +1065,11 @@ def section_sweep_id(clear: np.ndarray) -> dict:
     figs.save_plot("sweep_idswitch",
                    [(k, [1e-5 if p == 0 else p for p in ps], rec[k])
                     for k in LOSS_TYPES],
-                   xlabel="ID 取り違え確率 [/フレーム/近接対]",
+                   xlabel="ID 併合の確率 [/フレーム/近接対]",
                    ylabel="種類別の検出率",
-                   title="ID の取り違えが壊すのは人待ちだけ",
-                   caption="左端は取り違え無し(対数軸にできないので 1e-5 に置いた)。"
-                           "総滞留時間はこの掃引でほとんど動かない。")
+                   title="ID の併合が壊すのは「2 人の関係を読む型」だけ",
+                   caption="左端は併合なし(対数軸にできないので 1e-5 に置いた)。"
+                           "総滞留時間はこの掃引で 1 秒も動かない。")
     return {"ps": list(ps), "rec": rec, "zeros": zeros}
 
 
