@@ -891,13 +891,16 @@ def main() -> None:
           % (np.nanmean(mv["d"]), int(mv["sig"].sum()), int(mv["ok"].sum()),
              100 * mv["sig"].sum() / max(mv["ok"].sum(), 1),
              float(np.nanmean(mv["d"][mv["sig"]]))))
-    print("  * LoD はゾーンで %.2f 〜 %.2f mm(予測との比 %.2f〜%.2f)。沈下ではなく"
-          "粗さの地図。" % (min(lodz["meas"]), max(lodz["meas"]),
-                            min(lodz["ratio"]), max(lodz["ratio"])))
+    print("  * LoD はゾーンで %.2f 〜 %.2f mm。沈下ではなく粗さと密度の地図"
+          "(素朴な予測との比 %.2f〜%.2f、平面残差を使えば %.2f〜%.2f)。"
+          % (min(lodz["meas"]), max(lodz["meas"]),
+             min(lodz["ratio"]), max(lodz["ratio"]),
+             min(lodz["ratio_b"]), max(lodz["ratio_b"])))
     print("  * 法線を鉛直にすると LoD %.2f mm、有意 %d core(局所平面なら %d)。"
           % (nrm["lod_up"], nrm["n_up"], int(mv["sig"].sum())))
-    print("  * 沈下ゼロで %d/%d core が有意(名目 5 %%)。BH %d / 塊 %d。"
-          % (mult["sig0"], mult["n0"], mult["bh0"], mult["cl0"]))
+    print("  * 沈下ゼロで %d/%d core が有意(名目 5 %% = %.0f 個の 1.5σ 下)。"
+          "BH %d / 塊 %d。"
+          % (mult["sig0"], mult["n0"], 0.05 * mult["n0"], mult["bh0"], mult["cl0"]))
     print("  * 合わせ残差 %.2f mm だけで有意 %d core。BH %d / 塊 %d で**減らない**。"
           "安定域で較正して %d。"
           % (DZ_BIAS * 1000, reg["n_sig"], reg["n_bh"], reg["n_cl"], reg["n_cal"]))
