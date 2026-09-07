@@ -81,5 +81,68 @@
    560,
    3
   ]
+ },
+ {
+  "file": "09_grid_bias.png",
+  "name": "grid_bias",
+  "caption": "",
+  "shape": [
+   152,
+   502,
+   3
+  ],
+  "csv": "09_grid_bias.csv",
+  "tsv": "09_grid_bias.tsv"
+ },
+ {
+  "file": "10_zd_budget.png",
+  "name": "zd_budget",
+  "caption": "",
+  "shape": [
+   176,
+   435,
+   3
+  ],
+  "csv": "10_zd_budget.csv",
+  "tsv": "10_zd_budget.tsv"
+ },
+ {
+  "file": "11_zd_tradeoff.png",
+  "name": "zd_tradeoff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_scene.png",
+  "name": "scene",
+  "caption": "人は 10 本のカプセル、機械は 2 本のリンク + 基台、手前は治具台。占有格子の最大値投影。上段 t=1.5 s、下段 t=4.6 s(上面図の数字はその時刻の真の最小分離距離)。",
+  "shape": [
+   334,
+   310,
+   3
+  ]
+ },
+ {
+  "file": "13_map_distance_slice.png",
+  "name": "map_distance_slice",
+  "caption": "危険源までの距離場を指先の高さ 1.09 m で切った断面 [m]。黒い輪 = 必要分離距離 S = 0.690 m の等高線。",
+  "shape": [
+   140,
+   220
+  ]
+ },
+ {
+  "file": "14_scene_closest.png",
+  "name": "scene_closest",
+  "caption": "最短分離 0.747 m を結ぶ線(最も近い部位 = 右手)。人 = 暖色、機械と治具台 = 寒色。",
+  "shape": [
+   400,
+   560,
+   3
+  ]
  }
 ]

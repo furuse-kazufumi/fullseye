@@ -789,7 +789,7 @@ def section_sweeps():
     print("         k は植被率(下がる)と反転(割る)の両方に入るので**相殺する** ——"
           "\n         残るのはクランピングだけで、それは葉角では動かない。")
 
-    print("\n  (c) センサの粗さ(セル辺長)と点密度 —— **欠測の扱いで向きが逆**")
+    print("\n  (c) センサの粗さ(セル辺長)—— **数え方の規約で誤差の向きが逆になる**")
     can = make_canopy(n_leaf=11)
     k = canopy_G(can)
     ref = cover_of(canopy_buffers(can, 0.0025))
