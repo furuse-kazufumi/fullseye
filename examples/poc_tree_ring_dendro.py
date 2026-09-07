@@ -510,6 +510,19 @@ def section_baseline() -> dict:
     print("  ゼロ点を 24 方向で: 年数が合う方向 %d / %d、年数の中央値 %d、"
           "偽輪の中央値 %.1f(最悪 %d)"
           % (zc["exact"], N_SECT, zc["n_est"], zc["false"], zc["false_max"]))
+    # ★年数を間違えた方向でも幅の相関は高いか —— 年数と幅の相関は別の量
+    wrong = []
+    for r in z24["per"]:
+        if r["n_det"] != r["n_true"]:
+            e = np.array([v[0] for v in r["widths"].values()])
+            t = np.array([v[1] for v in r["widths"].values()])
+            if e.size >= 3:
+                wrong.append(float(np.corrcoef(e, t)[0, 1]))
+    wrong_med = float(np.median(wrong)) if wrong else float("nan")
+    print("  ★年数を間違えた %d 方向の幅の相関は 中央値 %.3f(最小 %.3f)—— "
+          "偽輪や欠落が 1〜%d 本入っても、残りの境界の間隔は合っている。"
+          % (len(wrong), wrong_med, min(wrong) if wrong else float("nan"),
+             zc["false_max"]))
 
     # 合意法
     c = run_consensus(sc)
