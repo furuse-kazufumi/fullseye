@@ -364,9 +364,16 @@ def thermal_frame(mode: str, sev: float, seed: int, pitch: int = PITCH) -> np.nd
     return frame + NETD * np.random.default_rng(seed + 991).standard_normal(frame.shape)
 
 
-def _disc_mask(shape, pitch: int, cx: float, cy: float, r_mm: float) -> np.ndarray:
-    yy, xx = np.mgrid[0:shape[0], 0:shape[1]].astype(np.float64)
-    return np.hypot((xx + 0.5) * pitch - cx, (yy + 0.5) * pitch - cy) <= r_mm
+def _roi_mean(frame: np.ndarray, pitch: int, cx: float, cy: float,
+              r_mm: float = 25.0) -> float:
+    """半径 ``r_mm`` の円内の平均。**画素が 1 個も入らない粗さでは最寄り 1 画素**
+    (ここで最高温度に退避すると、粗さの効果と別の量がすり替わる)。"""
+    yy, xx = np.mgrid[0:frame.shape[0], 0:frame.shape[1]].astype(np.float64)
+    d = np.hypot((xx + 0.5) * pitch - cx, (yy + 0.5) * pitch - cy)
+    sel = d <= r_mm
+    if sel.any():
+        return float(frame[sel].mean())
+    return float(frame.ravel()[int(np.argmin(d))])
 
 
 def thermal_features(frame: np.ndarray, pitch: int) -> dict:
