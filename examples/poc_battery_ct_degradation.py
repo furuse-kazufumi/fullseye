@@ -159,9 +159,9 @@ def degradation_fields(kind: str, scale: float = 1.0):
         alpha = np.where(foot, scale * g, 0.0)
     elif kind == "gas":
         # 層間ガス空隙: レンズ形(扁平楕円体)を 3 つの層間に置く
-        for k, (xc, zc, ax, az) in enumerate(((1.35, 0.85, 0.34, 0.30),
-                                              (2.05, 1.05, 0.30, 0.28),
-                                              (2.65, 0.86, 0.32, 0.30))):
+        for k, (xc, zc, ax, az) in enumerate(((1.28, 0.82, 0.42, 0.32),
+                                              (2.00, 1.06, 0.40, 0.30),
+                                              (2.68, 0.84, 0.42, 0.32))):
             gap_index = 4 + 4 * k
             r2 = ((xx - xc) / ax) ** 2 + ((zz - zc) / az) ** 2
             hv = 2.0 * scale * np.sqrt(np.clip(1.0 - r2, 0.0, None))
