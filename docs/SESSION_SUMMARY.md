@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-08 03:00:27
+- **最終更新**: 2026-09-08 03:06:12
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+7b829ba27 PoC 2 本(安全距離 / 作物の 3-D 表現型)+ 線分距離 op + GIF が変化を消していた件
 67b7b60f5 auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:53)
 b067cc93e auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:53)
 462cb33d4 auto: poc_safety_clearance.py 編集前 (2026-09-08 01:53)
@@ -19,387 +20,23 @@ aa10ab256 auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:52)
 03825ed0a auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:51)
 6b87254e8 auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:50)
 8a8ef84b4 auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:50)
-c4018ed10 auto: poc_safety_clearance.py 編集前 (2026-09-08 01:50)
 ```
 
 ## 現在の git status
 
 ```
-M CHANGELOG.md
- D _final_log.txt
- M docs/AI_RAG_GUIDE.md
- M docs/KNOWN_ISSUES.md
- M docs/OP_CATALOG.md
- M docs/README.de.md
- M docs/README.en.md
- M docs/README.ko.md
- M docs/README.md
- M docs/README.tw.md
- M docs/README.zh.md
- M docs/SESSION_SUMMARY.md
- M docs/articles/exhibits/poc_captions.json
- M docs/articles/exhibits/wingpoc.en.md
- M docs/articles/exhibits/wingpoc.ja.md
- M docs/articles/fullseye_poc_museum_qiita_en.md
- M docs/articles/fullseye_poc_museum_qiita_ja.md
- M docs/ops/2d/typed/tb_capsule_sdf.md
- M docs/ops/2d/typed/tb_cylinder_sdf.md
- M docs/ops/2d/typed/tb_plane_sdf.md
- M docs/ops/2d/typed/tb_torus_sdf.md
- M docs/ops/3d/INDEX.md
- M docs/ops/3d/bounds/aabb.md
- M docs/ops/3d/bounds/min_enclosing_sphere.md
- M docs/ops/3d/bounds/obb.md
- M docs/ops/3d/detect/hough_plane_3d.md
- M docs/ops/3d/detect/hough_sphere_3d.md
- M docs/ops/3d/domain/vol_bounding_box.md
- M docs/ops/3d/geometry/distance_line_line.md
- M docs/ops/3d/geometry/fit_box3.md
- M docs/ops/3d/geometry/fit_circle3.md
- M docs/ops/3d/geometry/fit_circle_3d.md
- M docs/ops/3d/geometry/fit_line3.md
- M docs/ops/3d/geometry/fit_line_3d.md
- M docs/ops/3d/geometry/fit_plane3.md
- M docs/ops/3d/geometry/fit_plane_3d.md
- M docs/ops/3d/geometry/fit_sphere3.md
- M docs/ops/3d/geometry/fit_sphere_3d.md
- M docs/ops/3d/geometry/intersect_planes.md
- M docs/ops/3d/geometry/line_from_2points.md
- M docs/ops/3d/geometry/plane_from_3points.md
- M docs/ops/3d/geometry/smallest_box3.md
- M docs/ops/3d/geometry/smallest_box3_axis.md
- M docs/ops/3d/geometry/smallest_sphere3.md
- M docs/ops/3d/regionprops/inner_box3.md
- M docs/ops/3d/rle_region/vol_rle_bbox.md
- M docs/ops/3d/robust_fit/fit_cone.md
- M docs/ops/3d/robust_fit/fit_ellipsoid.md
- M docs/ops/3d/robust_fit/fit_torus.md
- M docs/ops/3d/robust_fit/ransac_cylinder.md
- M docs/ops/3d/robust_fit/ransac_line.md
- M docs/ops/3d/robust_fit/ransac_plane.md
- M docs/ops/3d/robust_fit/ransac_sphere.md
- M docs/ops/3d/superquadric/fit_superquadric.md
- M docs/ops/3d/symmetry/detect_reflection_symmetry.md
- M docs/ops/3d/symmetry/detect_rotational_symmetry.md
- M docs/ops/INDEX.md
- M docs/ops/_fig/figures.json
- M docs/ops/_fig/tb_box_sdf.gif
- M docs/ops/_fig/tb_euclidean_cluster.gif
- M docs/ops/_fig/tb_optical_flow_magnitude_stream.gif
- M docs/ops/_fig/tb_plane_segmentation.gif
- M docs/ops/_fig/tb_points_to_voxel.gif
- M docs/ops/_fig/tb_region_growing.gif
- M docs/ops/_fig/tb_sphere_sdf.gif
- M docs/ops/_fig/tb_temporal_bandpass.gif
- M docs/ops/dem/surface/dem_slope.md
- M examples/README.md
- M examples/poc_crop_phenotyping.py
- M examples2d.py
- M examples_3d/geometry_metrology.py
- M fullseye/OP_CATALOG.md
- M match3d.py
- M ops3d.py
- M studio_assets/op_help/3d/aabb.de.html
- M studio_assets/op_help/3d/aabb.en.html
- M studio_assets/op_help/3d/aabb.html
- M studio_assets/op_help/3d/aabb.ja.html
- M studio_assets/op_help/3d/aabb.ko.html
- M studio_assets/op_help/3d/aabb.tw.html
- M studio_assets/op_help/3d/aabb.zh.html
- M studio_assets/op_help/3d/detect_reflection_symmetry.de.html
- M studio_assets/op_help/3d/detect_reflection_symmetry.en.html
- M studio_assets/op_help/3d/detect_reflection_symmetry.html
- M studio_assets/op_help/3d/detect_reflection_symmetry.ko.html
- M studio_assets/op_help/3d/detect_reflection_symmetry.tw.html
- M studio_assets/op_help/3d/detect_reflection_symmetry.zh.html
- M studio_assets/op_help/3d/detect_rotational_symmetry.de.html
- M studio_assets/op_help/3d/detect_rotational_symmetry.en.html
- M studio_assets/op_help/3d/detect_rotational_symmetry.html
- M studio_assets/op_help/3d/detect_rotational_symmetry.ko.html
- M studio_assets/op_help/3d/detect_rotational_symmetry.tw.html
- M studio_assets/op_help/3d/detect_rotational_symmetry.zh.html
- M studio_assets/op_help/3d/distance_line_line.de.html
- M studio_assets/op_help/3d/distance_line_line.en.html
- M studio_assets/op_help/3d/distance_line_line.html
- M studio_assets/op_help/3d/distance_line_line.ko.html
- M studio_assets/op_help/3d/distance_line_line.tw.html
- M studio_assets/op_help/3d/distance_line_line.zh.html
- M studio_assets/op_help/3d/fit_box3.de.html
- M studio_assets/op_help/3d/fit_box3.en.html
- M studio_assets/op_help/3d/fit_box3.html
- M studio_assets/op_help/3d/fit_box3.ja.html
- M studio_assets/op_help/3d/fit_box3.ko.html
- M studio_assets/op_help/3d/fit_box3.tw.html
- M studio_assets/op_help/3d/fit_box3.zh.html
- M studio_assets/op_help/3d/fit_circle3.de.html
- M studio_assets/op_help/3d/fit_circle3.en.html
- M studio_assets/op_help/3d/fit_circle3.html
- M studio_assets/op_help/3d/fit_circle3.ja.html
- M studio_assets/op_help/3d/fit_circle3.ko.html
- M studio_assets/op_help/3d/fit_circle3.tw.html
- M studio_assets/op_help/3d/fit_circle3.zh.html
- M studio_assets/op_help/3d/fit_circle_3d.de.html
- M studio_assets/op_help/3d/fit_circle_3d.en.html
- M studio_assets/op_help/3d/fit_circle_3d.html
- M studio_assets/op_help/3d/fit_circle_3d.ko.html
- M studio_assets/op_help/3d/fit_circle_3d.tw.html
- M studio_assets/op_help/3d/fit_circle_3d.zh.html
- M studio_assets/op_help/3d/fit_cone.de.html
- M studio_assets/op_help/3d/fit_cone.en.html
- M studio_assets/op_help/3d/fit_cone.html
- M studio_assets/op_help/3d/fit_cone.ko.html
- M studio_assets/op_help/3d/fit_cone.tw.html
- M studio_assets/op_help/3d/fit_cone.zh.html
- M studio_assets/op_help/3d/fit_ellipsoid.de.html
- M studio_assets/op_help/3d/fit_ellipsoid.en.html
- M studio_assets/op_help/3d/fit_ellipsoid.html
- M studio_assets/op_help/3d/fit_ellipsoid.ko.html
- M studio_assets/op_help/3d/fit_ellipsoid.tw.html
- M studio_assets/op_help/3d/fit_ellipsoid.zh.html
- M studio_assets/op_help/3d/fit_line3.de.html
- M studio_assets/op_help/3d/fit_line3.en.html
- M studio_assets/op_help/3d/fit_line3.html
- M studio_assets/op_help/3d/fit_line3.ja.html
- M studio_assets/op_help/3d/fit_line3.ko.html
- M studio_assets/op_help/3d/fit_line3.tw.html
- M studio_assets/op_help/3d/fit_line3.zh.html
- M studio_assets/op_help/3d/fit_line_3d.de.html
- M studio_assets/op_help/3d/fit_line_3d.en.html
- M studio_assets/op_help/3d/fit_line_3d.html
- M studio_assets/op_help/3d/fit_line_3d.ko.html
- M studio_assets/op_help/3d/fit_line_3d.tw.html
- M studio_assets/op_help/3d/fit_line_3d.zh.html
- M studio_assets/op_help/3d/fit_plane3.de.html
- M studio_assets/op_help/3d/fit_plane3.en.html
- M studio_assets/op_help/3d/fit_plane3.html
- M studio_assets/op_help/3d/fit_plane3.ja.html
- M studio_assets/op_help/3d/fit_plane3.ko.html
- M studio_assets/op_help/3d/fit_plane3.tw.html
- M studio_assets/op_help/3d/fit_plane3.zh.html
- M studio_assets/op_help/3d/fit_plane_3d.de.html
- M studio_assets/op_help/3d/fit_plane_3d.en.html
- M studio_assets/op_help/3d/fit_plane_3d.html
- M studio_assets/op_help/3d/fit_plane_3d.ko.html
- M studio_assets/op_help/3d/fit_plane_3d.tw.html
- M studio_assets/op_help/3d/fit_plane_3d.zh.html
- M studio_assets/op_help/3d/fit_sphere3.de.html
- M studio_assets/op_help/3d/fit_sphere3.en.html
- M studio_assets/op_help/3d/fit_sphere3.html
- M studio_assets/op_help/3d/fit_sphere3.ja.html
- M studio_assets/op_help/3d/fit_sphere3.ko.html
- M studio_assets/op_help/3d/fit_sphere3.tw.html
- M studio_assets/op_help/3d/fit_sphere3.zh.html
- M studio_assets/op_help/3d/fit_sphere_3d.de.html
- M studio_assets/op_help/3d/fit_sphere_3d.en.html
- M studio_assets/op_help/3d/fit_sphere_3d.html
- M studio_assets/op_help/3d/fit_sphere_3d.ko.html
- M studio_assets/op_help/3d/fit_sphere_3d.tw.html
- M studio_assets/op_help/3d/fit_sphere_3d.zh.html
- M studio_assets/op_help/3d/fit_superquadric.de.html
- M studio_assets/op_help/3d/fit_superquadric.en.html
- M studio_assets/op_help/3d/fit_superquadric.html
- M studio_assets/op_help/3d/fit_superquadric.ko.html
- M studio_assets/op_help/3d/fit_superquadric.tw.html
- M studio_assets/op_help/3d/fit_superquadric.zh.html
- M studio_assets/op_help/3d/fit_torus.de.html
- M studio_assets/op_help/3d/fit_torus.en.html
- M studio_assets/op_help/3d/fit_torus.html
- M studio_assets/op_help/3d/fit_torus.ko.html
- M studio_assets/op_help/3d/fit_torus.tw.html
- M studio_assets/op_help/3d/fit_torus.zh.html
- M studio_assets/op_help/3d/hough_plane_3d.de.html
- M studio_assets/op_help/3d/hough_plane_3d.en.html
- M studio_assets/op_help/3d/hough_plane_3d.html
- M studio_assets/op_help/3d/hough_plane_3d.ko.html
- M studio_assets/op_help/3d/hough_plane_3d.tw.html
- M studio_assets/op_help/3d/hough_plane_3d.zh.html
- M studio_assets/op_help/3d/hough_sphere_3d.de.html
- M studio_assets/op_help/3d/hough_sphere_3d.en.html
- M studio_assets/op_help/3d/hough_sphere_3d.html
- M studio_assets/op_help/3d/hough_sphere_3d.ko.html
- M studio_assets/op_help/3d/hough_sphere_3d.tw.html
- M studio_assets/op_help/3d/hough_sphere_3d.zh.html
- M studio_assets/op_help/3d/inner_box3.de.html
- M studio_assets/op_help/3d/inner_box3.en.html
- M studio_assets/op_help/3d/inner_box3.html
- M studio_assets/op_help/3d/inner_box3.ko.html
- M studio_assets/op_help/3d/inner_box3.tw.html
- M studio_assets/op_help/3d/inner_box3.zh.html
- M studio_assets/op_help/3d/intersect_planes.de.html
- M studio_assets/op_help/3d/intersect_planes.en.html
- M studio_assets/op_help/3d/intersect_planes.html
- M studio_assets/op_help/3d/intersect_planes.ko.html
- M studio_assets/op_help/3d/intersect_planes.tw.html
- M studio_assets/op_help/3d/intersect_planes.zh.html
- M studio_assets/op_help/3d/line_from_2points.de.html
- M studio_assets/op_help/3d/line_from_2points.en.html
- M studio_assets/op_help/3d/line_from_2points.html
- M studio_assets/op_help/3d/line_from_2points.ko.html
- M studio_assets/op_help/3d/line_from_2points.tw.html
- M studio_assets/op_help/3d/line_from_2points.zh.html
- M studio_assets/op_help/3d/min_enclosing_sphere.de.html
- M studio_assets/op_help/3d/min_enclosing_sphere.en.html
- M studio_assets/op_help/3d/min_enclosing_sphere.html
- M studio_assets/op_help/3d/min_enclosing_sphere.ko.html
- M studio_assets/op_help/3d/min_enclosing_sphere.tw.html
- M studio_assets/op_help/3d/min_enclosing_sphere.zh.html
- M studio_assets/op_help/3d/obb.de.html
- M studio_assets/op_help/3d/obb.en.html
- M studio_assets/op_help/3d/obb.html
- M studio_assets/op_help/3d/obb.ja.html
- M studio_assets/op_help/3d/obb.ko.html
- M studio_assets/op_help/3d/obb.tw.html
- M studio_assets/op_help/3d/obb.zh.html
- M studio_assets/op_help/3d/plane_from_3points.de.html
- M studio_assets/op_help/3d/plane_from_3points.en.html
- M studio_assets/op_help/3d/plane_from_3points.html
- M studio_assets/op_help/3d/plane_from_3points.ko.html
- M studio_assets/op_help/3d/plane_from_3points.tw.html
- M studio_assets/op_help/3d/plane_from_3points.zh.html
- M studio_assets/op_help/3d/ransac_cylinder.de.html
- M studio_assets/op_help/3d/ransac_cylinder.en.html
- M studio_assets/op_help/3d/ransac_cylinder.html
- M studio_assets/op_help/3d/ransac_cylinder.ko.html
- M studio_assets/op_help/3d/ransac_cylinder.tw.html
- M studio_assets/op_help/3d/ransac_cylinder.zh.html
- M studio_assets/op_help/3d/ransac_line.de.html
- M studio_assets/op_help/3d/ransac_line.en.html
- M studio_assets/op_help/3d/ransac_line.html
- M studio_assets/op_help/3d/ransac_line.ko.html
- M studio_assets/op_help/3d/ransac_line.tw.html
- M studio_assets/op_help/3d/ransac_line.zh.html
- M studio_assets/op_help/3d/ransac_plane.de.html
- M studio_assets/op_help/3d/ransac_plane.en.html
- M studio_assets/op_help/3d/ransac_plane.html
- M studio_assets/op_help/3d/ransac_plane.ko.html
- M studio_assets/op_help/3d/ransac_plane.tw.html
- M studio_assets/op_help/3d/ransac_plane.zh.html
- M studio_assets/op_help/3d/ransac_sphere.de.html
- M studio_assets/op_help/3d/ransac_sphere.en.html
- M studio_assets/op_help/3d/ransac_sphere.html
- M studio_assets/op_help/3d/ransac_sphere.ko.html
- M studio_assets/op_help/3d/ransac_sphere.tw.html
- M studio_assets/op_help/3d/ransac_sphere.zh.html
- M studio_assets/op_help/3d/smallest_box3.de.html
- M studio_assets/op_help/3d/smallest_box3.en.html
- M studio_assets/op_help/3d/smallest_box3.html
- M studio_assets/op_help/3d/smallest_box3.ja.html
- M studio_assets/op_help/3d/smallest_box3.ko.html
- M studio_assets/op_help/3d/smallest_box3.tw.html
- M studio_assets/op_help/3d/smallest_box3.zh.html
- M studio_assets/op_help/3d/smallest_box3_axis.de.html
- M studio_assets/op_help/3d/smallest_box3_axis.en.html
- M studio_assets/op_help/3d/smallest_box3_axis.html
- M studio_assets/op_help/3d/smallest_box3_axis.ja.html
- M studio_assets/op_help/3d/smallest_box3_axis.ko.html
- M studio_assets/op_help/3d/smallest_box3_axis.tw.html
- M studio_assets/op_help/3d/smallest_box3_axis.zh.html
- M studio_assets/op_help/3d/smallest_sphere3.de.html
- M studio_assets/op_help/3d/smallest_sphere3.en.html
- M studio_assets/op_help/3d/smallest_sphere3.html
- M studio_assets/op_help/3d/smallest_sphere3.ja.html
- M studio_assets/op_help/3d/smallest_sphere3.ko.html
- M studio_assets/op_help/3d/smallest_sphere3.tw.html
- M studio_assets/op_help/3d/smallest_sphere3.zh.html
- M studio_assets/op_help/3d/vol_bounding_box.de.html
- M studio_assets/op_help/3d/vol_bounding_box.en.html
- M studio_assets/op_help/3d/vol_bounding_box.html
- M studio_assets/op_help/3d/vol_bounding_box.ja.html
- M studio_assets/op_help/3d/vol_bounding_box.ko.html
- M studio_assets/op_help/3d/vol_bounding_box.tw.html
- M studio_assets/op_help/3d/vol_bounding_box.zh.html
- M studio_assets/op_help/3d/vol_rle_bbox.de.html
- M studio_assets/op_help/3d/vol_rle_bbox.en.html
- M studio_assets/op_help/3d/vol_rle_bbox.html
- M studio_assets/op_help/3d/vol_rle_bbox.ja.html
- M studio_assets/op_help/3d/vol_rle_bbox.ko.html
- M studio_assets/op_help/3d/vol_rle_bbox.tw.html
- M studio_assets/op_help/3d/vol_rle_bbox.zh.html
- M studio_assets/op_help/dem/dem_slope.de.html
- M studio_assets/op_help/dem/dem_slope.en.html
- M studio_assets/op_help/dem/dem_slope.html
- M studio_assets/op_help/dem/dem_slope.ko.html
- M studio_assets/op_help/dem/dem_slope.tw.html
- M studio_assets/op_help/dem/dem_slope.zh.html
- M studio_assets/op_help/fig/tb_box_sdf.gif
- M studio_assets/op_help/fig/tb_euclidean_cluster.gif
- M studio_assets/op_help/fig/tb_optical_flow_magnitude_stream.gif
- M studio_assets/op_help/fig/tb_plane_segmentation.gif
- M studio_assets/op_help/fig/tb_points_to_voxel.gif
- M studio_assets/op_help/fig/tb_region_growing.gif
- M studio_assets/op_help/fig/tb_sphere_sdf.gif
- M studio_assets/op_help/fig/tb_temporal_bandpass.gif
- M studio_assets/op_help/tb_capsule_sdf.de.html
- M studio_assets/op_help/tb_capsule_sdf.en.html
- M studio_assets/op_help/tb_capsule_sdf.html
- M studio_assets/op_help/tb_capsule_sdf.ko.html
- M studio_assets/op_help/tb_capsule_sdf.tw.html
- M studio_assets/op_help/tb_capsule_sdf.zh.html
- M studio_assets/op_help/tb_cylinder_sdf.de.html
- M studio_assets/op_help/tb_cylinder_sdf.en.html
- M studio_assets/op_help/tb_cylinder_sdf.html
- M studio_assets/op_help/tb_cylinder_sdf.ko.html
- M studio_assets/op_help/tb_cylinder_sdf.tw.html
- M studio_assets/op_help/tb_cylinder_sdf.zh.html
- M studio_assets/op_help/tb_plane_sdf.de.html
- M studio_assets/op_help/tb_plane_sdf.en.html
- M studio_assets/op_help/tb_plane_sdf.html
- M studio_assets/op_help/tb_plane_sdf.ko.html
- M studio_assets/op_help/tb_plane_sdf.tw.html
- M studio_assets/op_help/tb_plane_sdf.zh.html
- M studio_assets/op_help/tb_torus_sdf.de.html
- M studio_assets/op_help/tb_torus_sdf.en.html
- M studio_assets/op_help/tb_torus_sdf.html
- M studio_assets/op_help/tb_torus_sdf.ko.html
- M studio_assets/op_help/tb_torus_sdf.tw.html
- M studio_assets/op_help/tb_torus_sdf.zh.html
- M tools/gen_op_figures.py
- M typed_catalog.py
-?? docs/articles/assets/poc/poc_crop_phenotyping/01_capsule_calibration_720.jpg
-?? docs/articles/assets/poc/poc_crop_phenotyping/08_scene_nadir_720.jpg
-?? docs/articles/assets/poc/poc_safety_clearance/01_conditions_720.jpg
-?? docs/articles/assets/poc/poc_safety_clearance/02_frames_clearance_720.jpg
-?? docs/ops/3d/geometry/distance_segment_segment.md
-?? docs/ops/_fig/tb_capsule_sdf.chain.jpg
-?? docs/ops/_fig/tb_capsule_sdf.gif
-?? docs/ops/_fig/tb_capsule_sdf.inputs.jpg
-?? docs/ops/_fig/tb_capsule_sdf.png
-?? docs/ops/_fig/tb_cylinder_sdf.chain.jpg
-?? docs/ops/_fig/tb_cylinder_sdf.gif
-?? docs/ops/_fig/tb_cylinder_sdf.inputs.jpg
-?? docs/ops/_fig/tb_cylinder_sdf.png
-?? docs/ops/_fig/tb_plane_sdf.chain.jpg
-?? docs/ops/_fig/tb_plane_sdf.gif
-?? docs/ops/_fig/tb_plane_sdf.inputs.jpg
-?? docs/ops/_fig/tb_plane_sdf.png
-?? docs/ops/_fig/tb_torus_sdf.chain.jpg
-?? docs/ops/_fig/tb_torus_sdf.gif
-?? docs/ops/_fig/tb_torus_sdf.inputs.jpg
-?? docs/ops/_fig/tb_torus_sdf.png
-?? studio_assets/op_help/3d/distance_segment_segment.de.html
-?? studio_assets/op_help/3d/distance_segment_segment.en.html
-?? studio_assets/op_help/3d/distance_segment_segment.html
-?? studio_assets/op_help/3d/distance_segment_segment.ko.html
-?? studio_assets/op_help/3d/distance_segment_segment.tw.html
-?? studio_assets/op_help/3d/distance_segment_segment.zh.html
-?? studio_assets/op_help/fig/tb_capsule_sdf.gif
-?? studio_assets/op_help/fig/tb_capsule_sdf.png
-?? studio_assets/op_help/fig/tb_cylinder_sdf.gif
-?? studio_assets/op_help/fig/tb_cylinder_sdf.png
-?? studio_assets/op_help/fig/tb_plane_sdf.gif
-?? studio_assets/op_help/fig/tb_plane_sdf.png
-?? studio_assets/op_help/fig/tb_torus_sdf.gif
-?? studio_assets/op_help/fig/tb_torus_sdf.png
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+03:03 .pytest_cache/v/cache/nodeids
+03:00 docs/SESSION_SUMMARY.md
 03:00 docs/KNOWN_ISSUES.md
 03:00 CHANGELOG.md
 03:00 .ruff_cache/0.16.0/13906884550158051618
 03:00 .ruff_cache/0.16.0/12943517194686254008
-03:00 .pytest_cache/v/cache/nodeids
 02:54 .pytest_cache/v/cache/lastfailed
 02:53 studio_assets/op_help/fig/zoom_region.png
 02:53 studio_assets/op_help/fig/zoom_image_size.png
@@ -409,7 +46,6 @@ M CHANGELOG.md
 02:53 studio_assets/op_help/fig/xwt_visushrink.png
 02:53 studio_assets/op_help/fig/xwt_subband_tile.png
 02:53 studio_assets/op_help/fig/xwt_packet_entropy.png
-02:53 studio_assets/op_help/fig/xwt_mra_component.png
 ```
 
 ---
