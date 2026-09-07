@@ -871,21 +871,22 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
     print("  センサ点群 %d 点(4000 点/m^2、測距雑音 5 mm、欠測 5 %%)" % pts.shape[0])
 
     # 地面を知らない前提で平面を当てる(plane_segmentation は RANSAC)。
-    # ★**いちばん大きい平面は地面とはかぎらない** —— 群落が閉じていると草冠の
-    #   一部が最大平面になる。最初の平面をそのまま地面にした版は標高を
-    #   1.7 m と答えた(2026-09-07 に踏んだ)。低いほうを選ぶ規則が要る。
+    # ★最大の平面が地面とはかぎらない(群落が閉じると草冠の一部が最大になる)。
+    #   最初の平面をそのまま地面にした版は標高 1.69 m と答えた(2026-09-07 に踏んだ)。
+    #   **いちばん低い平面を採る**規則を入れて初めて安定した。
     lab = np.asarray(L3.plane_segmentation(pts, 0.02, 150, 4, 300, SEED))
     zmed = [(float(np.median(pts[lab == j, 2])), j, int(np.sum(lab == j)))
             for j in range(int(lab.max()) + 1) if np.sum(lab == j) >= 150]
-    first = min([t for t in zmed if t[1] == 0], default=(np.nan, 0, 0))
     lo = min(zmed) if zmed else (0.0, -1, 0)
     ground = pts[lab == lo[1]]
     z_g = lo[0]
     h99 = float(np.percentile(pts[:, 2] - z_g, 99.9))
-    print("  平面 %d 枚を抽出。**最大の平面の標高は %.3f m** —— 地面ではない。"
-          % (len(zmed), first[0]))
-    print("  いちばん低い平面を地面にすると 標高 %.4f m(真値 0、%d 点)-> "
-          "草高 %.3f m(真値 %.3f m、%+.1f %%)"
+    print("  平面 %d 枚: " % len(zmed)
+          + " / ".join("標高 %.3f m(%d 点)" % (t[0], t[2]) for t in zmed))
+    print("  ★いちばん低い平面を地面にする(最大の平面ではない —— 群落が閉じると"
+          "草冠が\n     最大になり、最初の平面をそのまま採った版は標高 1.69 m と"
+          "答えた)。")
+    print("  地面の標高 %.4f m(真値 0、%d 点)-> 草高 %.3f m(真値 %.3f m、%+.1f %%)"
           % (z_g, ground.shape[0], h99, can["height"],
              100 * (h99 - can["height"]) / can["height"]))
 
@@ -893,14 +894,25 @@ def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
     sub = veg[rng.choice(veg.shape[0], min(20000, veg.shape[0]), replace=False)]
     nrm = np.asarray(L3.estimate_normals(sub, 18))
     nz_est = np.abs(nrm[:, 2])
-    # 各点が写す葉面積は cell^2/|n.z| なので、重みは 1/|n.z| = 面積加重の逆数
+    # 天頂の点群は**投影面積に比例して**点を拾うので、|n.z| の素の平均は上に偏る。
+    # 面積で重みを付ける正しい式は調和平均 N / sum(1/|n.z|)。
     k_pts = float(sub.shape[0] / np.sum(1.0 / np.maximum(nz_est, 0.05)))
     k_naive = float(np.mean(nz_est))
-    print("\n  ★法線の符号は任意なので |n.z| で受ける(そこは既知の作法)。問題は重み:")
-    print("     面積加重の k = %.4f / 点数だけの平均 = %.4f / 真値 %.4f"
-          % (k_pts, k_naive, k_true))
-    print("     メッシュ側(face_areas で重み)= %.4f、面ごとの面積を無視すると %.4f。"
-          % (float(np.sum(ar * nz) / np.sum(ar)), float(np.mean(nz))))
+    # ★対照群: 同じ式を**真の法線**(バッファが持っている)に当てる。
+    nz_ref = buf_fine["nz"][(buf_fine["lid"] >= 0) & (buf_fine["nz"] > 1e-6)]
+    k_ref = float(nz_ref.size / np.sum(1.0 / nz_ref))
+    print("\n  法線の符号は任意なので |n.z| で受ける(そこは既知の作法)。問題は重み:")
+    print("     メッシュ(face_areas で面積加重)= %.4f / 面積を無視 = %.4f / 真値 %.4f"
+          % (float(np.sum(ar * nz) / np.sum(ar)), float(np.mean(nz)), k_true))
+    print("     真の法線を使った点群の調和平均 = %.4f(%+.1f %%)—— **式は正しい**。"
+          % (k_ref, 100 * (k_ref - k_true) / k_true))
+    print("  ★★ところが推定した法線に同じ式を当てると %.4f(%+.1f %%)まで崩れ、"
+          % (k_pts, 100 * (k_pts - k_true) / k_true))
+    print("     重みを付けない素の平均 %.4f(%+.1f %%)のほうが当たる。"
+          % (k_naive, 100 * (k_naive - k_true) / k_true))
+    print("     1/|n.z| は |n.z| が小さいところで発散するので、**正しい重みほど"
+          "法線の雑音を\n     増幅する**。面積加重が効くのは面積を知っている"
+          "とき(メッシュ)だけ。")
 
     # 受光: 太陽が真上のとき、遮られる光の割合は**植被率そのもの**(実測できる)。
     print("\n  受光(fPAR)への効き")
