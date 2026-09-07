@@ -40,7 +40,17 @@
   ]
  },
  {
-  "file": "05_angle_sweep.png",
+  "file": "05_undercut_zoom.png",
+  "name": "undercut_zoom",
+  "caption": "下に凸の谷がアンダーカット。θ を上げると谷の**底から**測れなくなり、残った浅い部分だけで深さが決まるので静かに浅く出る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_angle_sweep.png",
   "name": "angle_sweep",
   "caption": "線が途切れるところから先は「測れなかった」。左側の量は 37 度でいっせいに消え、左アンダーカットはその前から少しずつ欠けるので谷が手前にできる。",
   "shape": [
@@ -50,7 +60,7 @@
   ]
  },
  {
-  "file": "06_resolution_vs_occlusion.png",
+  "file": "07_resolution_vs_occlusion.png",
   "name": "resolution_vs_occlusion",
   "caption": "同じノブの表裏。2 本が交わるあたりが最適角。",
   "shape": [
@@ -60,7 +70,7 @@
   ]
  },
  {
-  "file": "07_optimum.png",
+  "file": "08_optimum.png",
   "name": "optimum",
   "caption": "予測 = 遮蔽だけの誤差と 1/sinθ の雑音の二乗和。「甘い θ*」= 測れた断面だけで数えたときの最小。",
   "shape": [
@@ -68,11 +78,11 @@
    549,
    3
   ],
-  "csv": "07_optimum.csv",
-  "tsv": "07_optimum.tsv"
+  "csv": "08_optimum.csv",
+  "tsv": "08_optimum.tsv"
  },
  {
-  "file": "08_calibration.png",
+  "file": "09_calibration.png",
   "name": "calibration",
   "caption": "脚長は sin²(母材角)、溝深さは cos²(母材角) —— 同じ母材面で足すと 1。",
   "shape": [
@@ -80,11 +90,11 @@
    334,
    3
   ],
-  "csv": "08_calibration.csv",
-  "tsv": "08_calibration.tsv"
+  "csv": "09_calibration.csv",
+  "tsv": "09_calibration.tsv"
  },
  {
-  "file": "09_stripe_width.png",
+  "file": "10_stripe_width.png",
   "name": "stripe_width",
   "caption": "重心は √σ で増え、3 点当てはめはもっと速く増える。ゼロ点(最大値の画素)は幅にほぼ無関係な 1 画素の階段。",
   "shape": [
@@ -94,7 +104,7 @@
   ]
  },
  {
-  "file": "10_map_visibility.png",
+  "file": "11_map_visibility.png",
   "name": "map_visibility",
   "caption": "法線は自己遮蔽だけを見る。水平線の規則は投げかけ影も入るので必ず広い。",
   "shape": [
