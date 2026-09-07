@@ -1042,6 +1042,7 @@ def section_occlusion(tr: dict, lod0: float) -> dict:
         wide.append(r_wid["ero"])
         raw.append(r_raw["ero"])
         dead.append(dead_cells)
+        empt.append(r_wid["empty"])
         rows.append(["%.0f" % (100 * p), "%.1f" % gr[-1], "%.2f" % leak[-1],
                      "%d" % dead_cells, "%.3f" % l_std, "%.3f" % l_mad,
                      "%.1f" % r_ada["ero"], "%+.1f" % e2,
