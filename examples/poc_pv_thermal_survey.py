@@ -576,19 +576,22 @@ def section_truth() -> dict:
     a_cond = peak_attenuation(V_REF, 1e-9)             # 伝導だけ
     a_cam = 1.0 - np.exp(-R_HOT ** 2 / (2 * cam_sigma(GSD) ** 2))
     a_both = peak_attenuation(V_REF, GSD)
+    gain = radiometric_gain()
     print("\n  セル内ホットスポット(余剰発熱 %.0f W/m²、半径 %.0f mm):"
           % (Q_HOT, 1e3 * R_HOT))
-    print("    薄まる前          %.2f K" % raw_hot)
-    print("    熱伝導だけ        x %.3f -> %.2f K" % (a_cond, raw_hot * a_cond))
-    print("    カメラだけ        x %.3f -> %.2f K" % (a_cam, raw_hot * a_cam))
-    print("    両方(予測)      x %.3f -> %.2f K" % (a_both, raw_hot * a_both))
+    print("    薄まる前              %.2f K" % raw_hot)
+    print("    熱伝導だけ            x %.3f -> %.2f K" % (a_cond, raw_hot * a_cond))
+    print("    カメラだけ            x %.3f -> %.2f K" % (a_cam, raw_hot * a_cam))
+    print("    伝導 + カメラ         x %.3f -> %.2f K" % (a_both, raw_hot * a_both))
+    print("    さらに放射と大気      x %.3f -> %.2f K(予測)"
+          % (gain, raw_hot * a_both * gain))
     print("  ★予想は「熱が横に流れて薄まる」だった。実測の内訳は逆で、"
           "薄めているのは**カメラ**(%.3f 対 %.3f)。" % (a_cam, a_cond))
 
     print("\n  ストリング故障(バイパスダイオード導通 = %.0f W/m² の発電が熱に):"
           % (ETA_EL * G0))
-    print("    ΔT = %.2 f K(面が広いので薄まらない)".replace("%.2 f", "%.2f")
-          % predict_string(V_REF))
+    print("    ΔT = %.2f K(面が広いので薄まらない)+ 放射と大気で %.2f K"
+          % (ETA_EL * G0 / u, predict_string(V_REF)))
 
     sc = thermal_field(V_REF)
     gt = ground_truth()
@@ -597,16 +600,20 @@ def section_truth() -> dict:
           "ストリング %d)、非故障の温度差 %d、健全 %d"
           % (gt["fault"].sum(), gt["hot"].sum(), gt["string"].sum(),
              gt["nonfault"].sum(), gt["healthy"].sum()))
-    print("  大気の透過率 τ(%.0f m) = %.3f、見かけ放射率 ε(0°) = %.3f"
-          % (FLIGHT_H, atm_transmittance(FLIGHT_H), float(apparent_emissivity(0.0))))
+    print("  大気の透過率 τ(%.0f m) = %.3f、見かけ放射率 ε(0°) = %.3f、"
+          "カメラの設定 ε = %.2f" % (FLIGHT_H, atm_transmittance(FLIGHT_H),
+                                     float(apparent_emissivity(0.0)), EPS_SET))
     off = float(t_app[gt["panel"]].mean() - sc["T"][layout()["panel"]].mean())
-    print("  ★放射と大気で、表示温度はパネル平均で %+.2f K ずれている"
-          "(オフセットは正規化で消えるが、**ΔT の圧縮は消えない** = 8 節)。" % off)
+    print("  ★放射と大気で、表示温度はパネル平均で %+.2f K ずれ、ΔT は %.3f 倍に"
+          "圧縮される。" % (off, gain))
+    print("     **オフセットは正規化で消えるが、圧縮は消えない** —— "
+          "以降の予測にはこの %.3f を掛けてある(7 節で角度とともに掃引)。" % gain)
 
     assert 20.0 < dt_ok < 30.0, "健全セルの温度上昇が現実的でない"
     assert 0.30 < a_both < 0.60, "ホットスポットの薄まり率が想定外"
+    assert 0.80 < gain < 1.00, "放射計の利得が想定外"
     return {"scene": sc, "gt": gt, "t_app": t_app, "u": u, "dt_ok": dt_ok,
-            "a_cond": a_cond, "a_cam": a_cam, "a_both": a_both}
+            "a_cond": a_cond, "a_cam": a_cam, "a_both": a_both, "gain": gain}
 
 
 # --------------------------------------------------------------------------- #
