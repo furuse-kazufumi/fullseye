@@ -618,7 +618,7 @@ def _worst_product(scene: dict) -> tuple[int, int]:
 NEAR_M = 1.0            # 「そのロガーが代表する荷」の半径 [m]
 
 
-def section_controls(layout: dict, main: dict) -> dict:
+def section_controls(layout: dict) -> dict:
     """(a) 均一 / (b) 分布あり / (c) 分布 + 扉 / (d) 健全な荷 + 扉。
 
     **偽不合格は「近くの製品」で定義する**。荷のどこかが不合格なら「荷は
