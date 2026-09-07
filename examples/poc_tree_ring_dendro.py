@@ -527,7 +527,8 @@ def section_pith_error() -> dict:
     print("=" * 78)
     sc = make_scene()
     w = sc["widths"]
-    th_d = np.deg2rad(30.0)
+    # ずらす向きは画像中心へ向かう向き(円板が展開図に収まる側)
+    th_d = float(np.arctan2((N_PIX - 1) / 2 - PITH[0], (N_PIX - 1) / 2 - PITH[1]))
     print("  ずらす向き %.0f°。予測: 半径 S_k < d の年輪はずれた中心からの放射線が"
           "届かない(合意法で欠落)。" % np.rad2deg(th_d))
     print("\n   d [px]   合意法: 年数  欠落  偽輪   幅の相関   平均誤差   到達不能(予測/実測)")
