@@ -438,13 +438,16 @@ def section_crosstalk_sweep() -> dict:
     a_cross = crossing(alphas, r0_sym, 0.5)
     a_m1 = crossing(alphas, np.abs(np.asarray(m1_50) - m1_50_true), 0.10)
     a_r50 = crossing(alphas, np.abs(np.asarray(r50) - r50_ideal), 0.10)
-    print("\n  ★Pearson の崖: 真の共局在 0 % の r が 0.5 を超える α(対称)= %.3f、"
+    print("\n  ★Pearson の崖: 真の共局在 0 %% の r が 0.5 を超える α(対称)= %.3f、"
           "予想 2−√3 = %.3f" % (a_cross, a_pred))
-    print("   片側(β=0)は 30 % でも r=%+.3f(予想 %.3f)—— 0.5 に届かない。"
+    print("   片側(β=0)は 30 %% でも r=%+.3f(予想 %.3f)—— 0.5 に届かない。"
           % (r0_one[-1], 0.3 / np.sqrt(1.09)))
-    print("  ★Manders の崖: 50 % の M1 が真値 %.3f から 10 pt 外れる α = %.3f / "
-          "Pearson が理想 %.3f から 0.10 外れる α = %.3f" % (m1_50_true, a_m1, r50_ideal, a_r50))
-    print("   分離後は α=30 % でも r=%+.3f、M1=%.3f。" % (r50_cor[-1], m1_50_cor[-1]))
+    print("  ★Manders の崖: 50 %% の M1 が漏れ込みなしの値 %.3f から +10 pt 動く α = %.3f / "
+          "Pearson が漏れ込みなしの値 %.3f から +0.10 動く α = %.3f"
+          % (m1_50[0], a_m1, r50[0], a_r50))
+    print("   (漏れ込みなしの M1 %.3f は真値 %.3f より %+.1f pt 低い —— Otsu より下の裾を"
+          "落とす分。1 節の予想と同じ原因)" % (m1_50[0], m1_50_true, 100 * (m1_50[0] - m1_50_true)))
+    print("   分離後は α=30 %% でも r=%+.3f、M1=%.3f。" % (r50_cor[-1], m1_50_cor[-1]))
 
     x = list(alphas * 100)
     figs.save_plot("crosstalk_sweep_pearson",
