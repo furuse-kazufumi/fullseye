@@ -645,6 +645,20 @@ def section_scene(cells, recs) -> dict:
     print("  健全セルの外形高さ: 中央 %.3f mm / 平均 %.3f mm(真値 %.3f mm)"
           % (o["caliper"], o["mean"], CAN_Y[1] - CAN_Y[0]))
 
+    if figs.enabled():
+        # X 線投影(DRR)—— 実機で最初に撮る絵。**積層は見えるが、どの層が
+        # 厚いのかは重なって消える**。断層に落とさないと内部指標は出ない。
+        panels, caps = [], []
+        for key, name in (("healthy", "健全"), ("gas", "層間ガス空隙")):
+            for az in (0.0, 22.0):
+                panels.append(np.asarray(L.render_volume_projection(
+                    cells[key]["mu"], az, 0.0, mode="xray")))
+                caps.append("%s / 視線 %.0f 度" % (name, az))
+        figs.save_grid("xray_projection", panels, caps,
+                       title="X 線投影(減衰の積算)—— 重なると内部の差は消える",
+                       ncols=2,
+                       caption="投影だけでは空隙も膨れも判らない。だから断層に落とす。")
+
     mid = ND // 2
     figs.save_grid("scene", [cells["healthy"]["mu"][mid], recs["healthy"][mid],
                              recs["uniform"][mid], recs["gas"][mid]],
