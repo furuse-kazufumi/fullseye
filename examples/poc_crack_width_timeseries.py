@@ -616,6 +616,14 @@ def section_cliff_epochs() -> dict:
 # --------------------------------------------------------------------------- #
 # 6. 崖その 2 —— 元の幅を振る                                                   #
 # --------------------------------------------------------------------------- #
+def _expected_max(n: float) -> float:
+    """N 個の標準正規標本の期待最大値(Cramer の漸近展開)。"""
+    if n < 2.0:
+        return 0.0
+    a = math.sqrt(2.0 * math.log(n))
+    return a - (math.log(math.log(n)) + math.log(4.0 * math.pi)) / (2.0 * a) + 0.5772156649 / a
+
+
 def section_cliff_width() -> dict:
     print("\n" + "=" * 78)
     print("6) 崖その 2 —— 細いひび割れの成長は読めるか(2 値化の臨界幅は erf で出る)")
