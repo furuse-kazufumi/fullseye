@@ -370,10 +370,10 @@ def run_zero(scene: dict, center=None, thetas=None) -> dict:
 
 def run_consensus(scene: dict, center=None, sigma=SIG_M, thr=THR, med=(1.0, 0.0)) -> dict:
     center = scene["pith"] if center is None else center
-    r_out = max(ray_truth(scene, center, th)["rho_end"]
-                for th in np.linspace(0, 2 * np.pi, 36, endpoint=False)) + BARK_W + 4
-    pol, fil = polar_stack(scene["img"], center, r_out, med=med)
-    dets = detect_sectors(fil, sigma=sigma, thr=thr)
+    ps = polar_stack(scene["img"], center, med=med)
+    # 円板が展開図に収まっていること(収まらないと外縁の検出が嘘になる)
+    assert float(ps["r_disc"].max()) < ps["avail"] - 2, (ps["r_disc"].max(), ps["avail"])
+    dets = detect_sectors(ps, sigma=sigma, thr=thr)
     res, truths = [], []
     for s in range(N_SECT):
         th = 2 * np.pi * (s + 0.5) / N_SECT
@@ -381,7 +381,9 @@ def run_consensus(scene: dict, center=None, sigma=SIG_M, thr=THR, med=(1.0, 0.0)
         truths.append(tr)
         res.append(match_ray(dets[s], tr))
     out = consensus(res, scene["n"])
-    out.update({"per": res, "pol": pol, "fil": fil, "dets": dets, "truths": truths,
+    out.update({"per": res, "pol": ps["pol"], "fil": ps["fil"], "norm": ps["norm"],
+                "r_disc": ps["r_disc"], "r_bar": ps["r_bar"], "dets": dets,
+                "truths": truths,
                 "unreachable": int(np.median([t["unreachable"] for t in truths])),
                 "double": int(np.median([t["double"] for t in truths]))})
     return out
