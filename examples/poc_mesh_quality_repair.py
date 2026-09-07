@@ -868,12 +868,6 @@ def section_sliver_threshold(scene: dict) -> dict:
     print("     ``remove_degenerate_faces`` の検出は %d 枚。"
           "**退化の判定は「面積が 0 か」だが、実害は「法線が壊れるか」で"
           "先に来る**。" % frac[fb])
-    print("  ★同じモジュールの中でしきい値が食い違う: ``face_normals`` が"
-          "拒み始めるのは t=%.0e、"
-          % 10.0 ** ts[next(i for i in range(len(ts)) if nbroken[i] and frac[i] == 0
-                            or frac[i] > 0)])
-    print("     ``remove_degenerate_faces`` が拾い始めるのも t=%.0e —— "
-          "だが枚数は一致しない(下の道具の穴)。" % 10.0 ** ts[first])
 
     assert frac[0] == 0 and frac[-1] == 2 * N_SLIVER
     assert max(angs) > 1.0, "法線が壊れるという所見が崩れた"
