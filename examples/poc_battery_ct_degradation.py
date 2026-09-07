@@ -374,9 +374,13 @@ def acquire(sino: np.ndarray, n0=N0_NOMINAL, bh=BH_NOMINAL, ring=RING_NOMINAL,
 # --------------------------------------------------------------------------- #
 # 4. 測る —— 外形(ゼロ点)と内部指標
 # --------------------------------------------------------------------------- #
-def _vidx(z_mm, y_mm, x_mm):
-    """物理座標 [mm] -> ボリュームの (z, y, x) 添字(中心アライン)。"""
-    return (z_mm / SZ - 0.5, y_mm / SY - 0.5, x_mm / SX - 0.5)
+def _vidx(z_mm, y_mm, x_mm, spacing=SPACING):
+    """物理座標 [mm] -> ボリュームの (z, y, x) 添字(中心アライン)。
+
+    ★掃引で voxel を変えるとき、ここに ``SPACING`` を焼き込んでいると静かに
+    ずれる(最初そう書いて、粗い格子で probe が範囲外に飛んだ)。
+    """
+    return (z_mm / spacing[0] - 0.5, y_mm / spacing[1] - 0.5, x_mm / spacing[2] - 0.5)
 
 
 def outer_metrics(vol: np.ndarray) -> dict:

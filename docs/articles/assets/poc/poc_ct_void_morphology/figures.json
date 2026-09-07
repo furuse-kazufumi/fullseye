@@ -18,5 +18,49 @@
    390,
    3
   ]
+ },
+ {
+  "file": "03_controls_table.png",
+  "name": "controls_table",
+  "caption": "ボイド率の列だけを見ると 5 条件は区別できない。右の 6 列が形態。",
+  "shape": [
+   200,
+   816,
+   3
+  ],
+  "csv": "03_controls_table.csv",
+  "tsv": "03_controls_table.tsv"
+ },
+ {
+  "file": "04_controls_map.png",
+  "name": "controls_map",
+  "caption": "推定ボイド率は 球/中央/散 2.46 % / 球/界面/散 2.60 % / 扁平/界面/散 2.60 % / 球/中央/連 2.52 % / 扁平/界面/連 2.63 % —— この数字では 5 条件を分けられない。",
+  "shape": [
+   495,
+   580,
+   3
+  ]
+ },
+ {
+  "file": "05_controls_section.png",
+  "name": "controls_section",
+  "caption": "界面欠損率は 球/中央/散 0.0 % / 球/界面/散 6.9 % / 扁平/界面/散 14.5 % / 球/中央/連 0.0 % / 扁平/界面/連 14.7 % —— 体積率が同じでも 0 から 14.7 % まで動く。",
+  "shape": [
+   195,
+   580,
+   3
+  ]
+ },
+ {
+  "file": "06_proxy_table.png",
+  "name": "proxy_table",
+  "caption": "界面欠損率は寿命そのものではなく代理指標。",
+  "shape": [
+   200,
+   554,
+   3
+  ],
+  "csv": "06_proxy_table.csv",
+  "tsv": "06_proxy_table.tsv"
  }
 ]
