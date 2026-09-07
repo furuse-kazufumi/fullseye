@@ -926,6 +926,22 @@ def section7_calibration(p: dict, tru: dict, design: dict) -> dict:
     print("     右母材(37 度)は 脚長 %.3f + 溝 %.3f = %.3f —— **どちらも 1**。"
           % (gotv["legR"], gotv["ucR"], gotv["legR"] + gotv["ucR"]))
     print("     「較正精度 1 %」だけでは、どの量が何 % ずれるかを言えない。")
+    # ★凸みだけ予測から外れた。原因はつま先の這い(τ が絶対値のしきい値だから)。
+    dxl = float(np.nanmean(q1["xtl"] - q0["xtl"])) / eps
+    dxr = float(np.nanmean(q1["xtr"] - q0["xtr"])) / eps
+    extra = (abs(TL * dxl) + abs(TR * dxr)) / 2.0 / float(np.nanmean(tru["cv"]))
+    print()
+    print("  → ★凸みだけ予測(cos²(弦の傾き) = %.3f)より大きい(実測 %.3f)。"
+          % (predict["cv"], gotv["cv"]))
+    print("     対照群で切り分けた: つま先の位置が %+.4f / %+.4f mm(左/右、ε=1 あたり)"
+          % (dxl, dxr))
+    print("     だけ**外へ這う** —— つま先の規則 τ = %.2f mm が**絶対値**なので、" % TAU)
+    print("     高さが (1+ε) 倍に伸びると同じ τ に届く点が外へずれる。這った分だけ")
+    print("     弦の両端が母材面を下り、凸みは +%.3f 増える。%.3f + %.3f = %.3f で"
+          % (extra, predict["cv"], extra, predict["cv"] + extra))
+    print("     実測 %.3f とほぼ一致する。同じ這いは脚長の実測が予測より"
+          % gotv["cv"])
+    print("     %.3f 大きいことも説明する。" % (gotv["legL"] - predict["legL"]))
     return {"rows": rows, "got": gotv, "predict": predict}
 
 

@@ -156,7 +156,7 @@
  {
   "file": "15_sweep_nlogger.png",
   "name": "sweep_nlogger",
-  "caption": "",
+  "caption": "慣用の 3 点だけが線から大きく外れる —— 位置に情報を入れると指数則から抜けられる。",
   "shape": [
    360,
    560,
