@@ -462,6 +462,10 @@ _CATALOG = {
     "metrics": [  # 評価メトリクス(進化探索の fitness 土台 = 一致度を数値化)
         ("chamfer_distance", "metrics3d", ["points", "points"], "measurement", False),
         ("hausdorff_distance", "metrics3d", ["points", "points"], "measurement", False),
+        # 2026-09-07 追加。最近傍距離は傾いた面で「面に沿ったずれ」まで距離に数える
+        # ので、変化検出では偽の変化の主因になる(KNOWN_ISSUES §41.12)。法線方向に
+        # 測る M3C2 を足した。返りは (distance, lod) で、台帳経由は distance のみ。
+        ("m3c2_distance", "metrics3d", ["points", "points"], "signal", False),
         # (f, precision, recall) を返す → adapter で F 値を剥がして measurement
         ("fscore", "metrics3d", ["points", "points"], "measurement", False),
         ("rmse_correspondence", "metrics3d", ["points", "points"], "measurement", False),
@@ -855,6 +859,9 @@ RESULT_ADAPTERS = {
     # 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
     "vol_profile_line": lambda r: np.stack(r, axis=1) if isinstance(r, tuple) else r,
     "vol_wall_thickness": lambda r: np.asarray(r, np.float64),
+    # m3c2_distance は (distance, lod) を返す。宣言 out は法線方向の距離なので
+    # 本体値を剥がす。検出限界 lod が要る呼び手は .raw / 素の関数を使う。
+    "m3c2_distance": lambda r: r[0] if isinstance(r, tuple) else r,
     # curve/metrology(wave-4 TYPEMISS 修正): 同格対は stack、補助つきは本体を剥がす
     "curvature_torsion": lambda r: np.stack(r, axis=1),   # (kappa,tau) → (N,2) pairs
     "arc_length": lambda r: r[1],                   # (cumulative, total) → 全長 float

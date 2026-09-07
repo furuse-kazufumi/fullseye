@@ -280,3 +280,111 @@ def pose_error(R_est, t_est, R_gt, t_gt):
     rot = float(np.degrees(np.arccos(cos)))
     trans = float(np.linalg.norm(np.asarray(t_est, float) - np.asarray(t_gt, float)))
     return rot, trans
+
+
+def m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4):
+    """2 時点の点群の差を**法線方向に**測る(M3C2)。→ ``(distance, lod)`` の 2 つ。
+
+    最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、**傾いた面では
+    面に沿ったずれまで距離として数えてしまう**。地形・構造物の変化検出では、それが
+    「測り直しただけで検出される偽の変化」の主因になる(`poc_structure_4d_deterioration`
+    の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。
+
+    M3C2(Lague 2013)は core 点ごとに **法線 ``n`` を軸とする円筒**(半径 ``radius``、
+    長さ ``max_depth``)で両方の雲を切り取り、各点を ``n`` に射影した平均の差を返す。
+    向きは ``n`` の指す側が正 —— **符号がそのまま「増えた / 減った」**になる。
+
+    Args:
+        a: 時点 1 の点群 ``(Na,3)``。
+        b: 時点 2 の点群 ``(Nb,3)``。
+        cores: 測る場所 ``(M,3)``(a の部分集合でも、別に置いた格子でもよい)。
+        normals: core ごとの法線 ``(M,3)``(未正規化でよい。**符号が結果の符号を決める**)。
+        radius: 円筒の半径(core 周りで平均する範囲。面の粗さより大きく、測りたい
+            構造より小さく取る)。
+        max_depth: 円筒の長さの半分。``None`` なら軸方向を制限しない。
+        min_points: 片側にこの数だけ点が無い core は ``nan`` を返す(既定 4)。
+
+    Returns:
+        ``(distance, lod)``: どちらも ``(M,)`` float64。``distance`` は法線方向の
+        符号つき差、``lod``(level of detection)は
+        ``1.96·sqrt(σa²/na + σb²/nb)`` —— **この値を超えない差は雑音と区別できない**。
+        点が足りない core は両方 ``nan``。
+
+        ★台帳経由(``fullseye.ledger.m3c2_distance``)は宣言 out 型の ``distance`` だけを
+        返す。``lod`` も要るときは ``fullseye.ledger.m3c2_distance.raw(...)``。
+
+    Raises:
+        ValueError: 点群 / cores が ``(N,3)`` でない、空、``normals`` の数が cores と
+        合わない、``radius <= 0``、``max_depth <= 0``、``min_points < 1`` のとき。
+
+    **限界(honest)**: (1) 法線は呼び手が与える —— `estimate_normals` の符号は任意なので、
+    向きを揃えないと符号が場所ごとに反転する。(2) ``lod`` は雑音だけを見ており、
+    **位置合わせの残差は含まない**(Lague の原論文は登録誤差を別項として足す)。
+    (3) 円筒に入る点が少ない縁では ``nan`` になる —— 0 を返して「変化なし」に
+    見せない。
+
+    Reference (public): D. Lague, N. Brodu, J. Leroux, "Accurate 3D comparison of
+    complex topography with terrestrial laser scanner: application to the Rangitikei
+    canyon (N-Z)", ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.
+    """
+    from scipy.spatial import cKDTree
+
+    A = _require_cloud(a, "a")
+    B = _require_cloud(b, "b")
+    C = _require_cloud(cores, "cores")
+    N = np.asarray(normals, float)
+    if N.ndim != 2 or N.shape[1] != 3 or len(N) != len(C):
+        raise ValueError("normals must be (M, 3) pairing one normal with each core "
+                         "point (got %r for %d cores)" % (N.shape, len(C)))
+    r = float(radius)
+    if not np.isfinite(r) or r <= 0:
+        raise ValueError("radius must be a positive finite number")
+    if max_depth is not None:
+        md = float(max_depth)
+        if not np.isfinite(md) or md <= 0:
+            raise ValueError("max_depth must be a positive finite number or None")
+    else:
+        md = None
+    mp = int(min_points)
+    if mp < 1:
+        raise ValueError("min_points must be at least 1")
+
+    nn = np.linalg.norm(N, axis=1, keepdims=True)
+    if np.any(nn <= 0) or not np.all(np.isfinite(nn)):
+        raise ValueError("normals must be non-zero finite vectors")
+    N = N / nn
+
+    # 円筒に入りうる点は「半径 sqrt(r^2 + md^2) の球」の中にしかない。球で粗く絞って
+    # から軸・半径で厳密に判定する(全点との内積を M 回やるより速い)。
+    reach = r if md is None else float(np.hypot(r, md))
+    ta, tb = cKDTree(A), cKDTree(B)
+    ia = ta.query_ball_point(C, reach)
+    ib = tb.query_ball_point(C, reach)
+
+    dist = np.full(len(C), np.nan)
+    lod = np.full(len(C), np.nan)
+    for k in range(len(C)):
+        c, n = C[k], N[k]
+        stats = []
+        for idx, P in ((ia[k], A), (ib[k], B)):
+            if not idx:
+                stats.append(None)
+                continue
+            d = P[idx] - c
+            t = d @ n                            # 軸方向(符号つき)
+            perp = np.linalg.norm(d - t[:, None] * n, axis=1)
+            keep = perp <= r
+            if md is not None:
+                keep &= np.abs(t) <= md
+            if int(keep.sum()) < mp:
+                stats.append(None)
+                continue
+            tv = t[keep]
+            stats.append((float(tv.mean()), float(tv.std(ddof=1)) if tv.size > 1 else 0.0,
+                          int(tv.size)))
+        if stats[0] is None or stats[1] is None:
+            continue
+        (ma, sa, na), (mb, sb, nb) = stats
+        dist[k] = mb - ma
+        lod[k] = 1.96 * float(np.sqrt(sa * sa / na + sb * sb / nb))
+    return dist, lod
