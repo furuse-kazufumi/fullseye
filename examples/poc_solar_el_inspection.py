@@ -264,7 +264,7 @@ def fit_vignette(img: np.ndarray, nbins: int = 20, valid=None) -> tuple[float, f
         sel = (r >= edges[k]) & (r < edges[k + 1]) & valid
         if sel.sum() > 50:
             rc.append(0.5 * (edges[k] + edges[k + 1]))
-            med.append(float(np.quantile(img[sel], FIT_Q)))
+            med.append(_ring_stat(img[sel]))
     rc, lm = np.asarray(rc), np.log(np.asarray(med))
     best = (np.inf, 0.0, 1.0)
     for a in np.linspace(0, 1, 51):

@@ -1,0 +1,46 @@
+[
+ {
+  "file": "01_ridge_ops.png",
+  "name": "ridge_ops",
+  "caption": "Frangi は分岐点で応答が落ち、斜光でセルが崩れる。",
+  "shape": [
+   368,
+   439,
+   3
+  ],
+  "csv": "01_ridge_ops.csv",
+  "tsv": "01_ridge_ops.tsv"
+ },
+ {
+  "file": "02_indicators.png",
+  "name": "indicators",
+  "caption": "真値は幾何(ボロノイの頂点・辺)から。質感と斜光で動くのは次数 4 割合だけ。",
+  "shape": [
+   320,
+   522,
+   3
+  ],
+  "csv": "02_indicators.csv",
+  "tsv": "02_indicators.tsv"
+ },
+ {
+  "file": "03_texture_cliff.png",
+  "name": "texture_cliff",
+  "caption": "ひびの深さ 0.55。予想の境目 c ≈ 0.18 は来なかった。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_rake_bias.png",
+  "name": "rake_bias",
+  "caption": "光源は左。影側が暗くなるので暗画素マスクが左に伸びる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
