@@ -266,12 +266,13 @@ def section_zero_point() -> dict:
     # 場面の図: 上面図 + 東壁の偏差マップ
     P = room["P"]
     plan = _bin_mean(P[:, 0], P[:, 1], np.ones(len(P)), (-0.2, RW + 0.2),
-                     (-0.2, RD + 0.2), 420, 290)
-    ew = room["walls"]["east"]
+                     (-0.2, RD + 0.2), 210, 145, up=2)
+    # 偏差マップは点を多めに撒いた壁で描く(2500 点だと格子が埋まらない)
+    ew = make_wall("east", 40000, np.random.default_rng(SEED))
     f = fit_wall(ew["P"], seed=3)
     res = (ew["P"] - f["point"]) @ f["normal"]
     emap = _bin_mean(ew["eta"], ew["zeta"], res * 1e3, (-RD / 2, RD / 2),
-                     (-RH / 2, RH / 2), 420, 290)
+                     (-RH / 2, RH / 2), 84, 58, up=5)
     figs.save_grid("scene", [plan, emap],
                    ["上面図(壁 4 枚 %d 点)" % len(P),
                     "東の壁の偏差 [mm](倒れ + ふくらみ %.0f mm)" % (1e3 * BULGE_A)],
@@ -520,7 +521,7 @@ def section_outliers() -> dict:
     for f in (fl, frb):
         r = (w["P"] - f["point"]) @ f["normal"]
         maps.append(_bin_mean(w["eta"], w["zeta"], np.clip(r, -0.25, 0.25) * 1e3,
-                              (-RD / 2, RD / 2), (-RH / 2, RH / 2), 420, 290))
+                              (-RD / 2, RD / 2), (-RH / 2, RH / 2), 84, 58, up=5))
     figs.save_grid("outlier_maps", maps,
                    ["最小二乗の残差 [mm](面が回った)",
                     "RANSAC の残差 [mm](棚だけ残る)"],
@@ -631,7 +632,7 @@ def section_bulge() -> dict:
         f = fit_wall(w["P"], seed=3)
         r = (w["P"] - f["point"]) @ f["normal"]
         maps.append(_bin_mean(w["eta"], w["zeta"], r * 1e3, (-RD / 2, RD / 2),
-                              (-RH / 2, RH / 2), 120, 84))
+                              (-RH / 2, RH / 2), 84, 58, up=4))
         caps.append("σ = %.2f m" % bs)
     figs.save_grid("bulge_maps", maps, caps,
                    title="東の壁の偏差マップ [mm] —— 同じ振幅 %.0f mm のふくらみ"

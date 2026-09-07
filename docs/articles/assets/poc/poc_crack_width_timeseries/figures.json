@@ -84,5 +84,27 @@
   ],
   "csv": "08_cliff_epochs_tbl.csv",
   "tsv": "08_cliff_epochs_tbl.tsv"
+ },
+ {
+  "file": "09_cliff_width.png",
+  "name": "cliff_width",
+  "caption": "2 値化は臨界幅より細いと 0(未検出)。積分法は 0.10 mm(0.67 px)でも成長率を返す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_cliff_width_tbl.png",
+  "name": "cliff_width_tbl",
+  "caption": "",
+  "shape": [
+   224,
+   501,
+   3
+  ],
+  "csv": "10_cliff_width_tbl.csv",
+  "tsv": "10_cliff_width_tbl.tsv"
  }
 ]
