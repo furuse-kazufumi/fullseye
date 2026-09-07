@@ -394,6 +394,15 @@ def section_snr_cliff() -> dict:
     print("  予測 C: 整数ピークは c/(2fs) = %.3f m に量子化され、RMS は"
           " %.4f m を下回れない。" % (QUANT_M, QUANT_M / np.sqrt(12.0)))
 
+    # 数値の CRLB が閉形式と一致することを、減衰を切った場面で確かめておく
+    flat_chk = crlb_sigma_x(make_records(0.0, SEED, alpha=0.0))
+    print("  検算: 減衰を切った場面のビンごと CRLB %.5f m と平坦帯域の閉形式"
+          " %.5f m は %.2f %% 差。\n        減衰を入れると %.5f m へ悪化する"
+          "(高域が先に痩せ、Fisher 情報は f² で効くため)。"
+          % (flat_chk, crlb_flat(0.0), 100 * abs(flat_chk / crlb_flat(0.0) - 1),
+             crlb_sigma_x(make_records(0.0, SEED))))
+    assert abs(flat_chk / crlb_flat(0.0) - 1.0) < 0.02, (flat_chk, crlb_flat(0.0))
+
     snrs = (10.0, 5.0, 0.0, -5.0, -10.0, -15.0, -20.0, -25.0, -30.0)
     seeds = [SEED + 7 * k for k in range(24)]
     names = [n for n, _ in METHODS]
