@@ -339,23 +339,26 @@ def measure(sc: dict, det: dict) -> dict:
     keep = ~np.asarray(f["touches_border"], bool)
     area = np.asarray(f["area"], float)[keep]
     diam = np.sqrt(4 * area / np.pi)
-    # --- 分岐次数: 分岐点の束 × 隣接する枝の種類数 ---
-    jl = np.asarray(_LAB.blob_label(ndi.binary_dilation(det["junc"], np.ones((3, 3), bool))
-                                    & ~det["ends"]))
+    # --- 分岐次数: 分岐点を MERGE_PX で束ね、束の中心から半径 RING_PX の環を横切る骨格の本数 ---
+    jy, jx = np.nonzero(det["junc"])
+    jpts = np.stack([jy, jx], 1).astype(float)
+    grp = _cluster_points(jpts, MERGE_PX)
+    degs = []
+    r0, r1 = RING_PX - 1.0, RING_PX + 1.0
+    for g in np.unique(grp):
+        cy, cx = jpts[grp == g].mean(0)
+        y0, y1 = int(max(0, cy - r1 - 1)), int(min(n, cy + r1 + 2))
+        x0, x1 = int(max(0, cx - r1 - 1)), int(min(n, cx + r1 + 2))
+        if y0 <= 0 or x0 <= 0 or y1 >= n or x1 >= n:
+            continue                                            # 縁の束は数えない
+        sub = skel[y0:y1, x0:x1]
+        yy, xx = np.mgrid[y0:y1, x0:x1]
+        rr = np.hypot(yy - cy, xx - cx)
+        ring = sub & (rr >= r0) & (rr <= r1)
+        _, k = ndi.label(ring, np.ones((3, 3), int))
+        degs.append(k)
+    degs = np.asarray(degs, float)
     bl = np.asarray(_LAB.blob_label(det["branch"]))
-    pairs = set()
-    for dy in (-1, 0, 1):
-        for dx in (-1, 0, 1):
-            if dy == 0 and dx == 0:
-                continue
-            a = jl[max(0, dy):n + min(0, dy), max(0, dx):n + min(0, dx)]
-            b = bl[max(0, -dy):n + min(0, -dy), max(0, -dx):n + min(0, -dx)]
-            sel = (a > 0) & (b > 0)
-            pairs.update(zip(a[sel].tolist(), b[sel].tolist()))
-    degc = {}
-    for j, _ in pairs:
-        degc[j] = degc.get(j, 0) + 1
-    degs = np.asarray(list(degc.values()), float)
     # --- 直線度・異方性: 枝ごとに 弦 / 弧 ---
     st, L, th = [], [], []
     nb = ndi.convolve(det["branch"].astype(int), np.ones((3, 3), int), mode="constant") - 1
