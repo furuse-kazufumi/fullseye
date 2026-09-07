@@ -920,7 +920,7 @@ def section_maps(alignres: dict, zero: dict, seed: int = SEED) -> dict:
     for m, name in ((n, "合わせない"), (dm, "床+2 壁を基準"), (g, "全体 ICP")):
         pp = m["P"]
         ee = m["elem"]
-        pan, _ = _dev_maps(pp, ee, clip=0.005, only=(CEIL,))
+        pan, _ = _dev_maps(pp, ee, clip=0.006, only=(CEIL,))
         cpanels.append(pan[0])
         ccaps.append("天井 / %s(勾配 %+.2f mrad)" % (name, 1000 * m["ceil_sx"]))
     figs.save_grid("ceiling_false_tilt", cpanels, ccaps, ncols=3, signed=True,
