@@ -255,8 +255,9 @@ def vib_record(mode: str, sev: float, seed: int, noise: float = VIB_NOISE,
         shift = jitter * (1.0 - np.cos(2 * np.pi * F_MOD * t)) / (2 * np.pi * F_MOD)
         rad = np.interp(t + shift, t, rad)
         axl = np.interp(t + shift, t, axl)
-    rad = rad + noise * rng.standard_normal(n)
-    axl = axl + noise * rng.standard_normal(n)
+    # 取り付け感度は機械の振動にだけ掛かる(加速度計の雑音には掛からない)
+    rad = gain * rad + noise * rng.standard_normal(n)
+    axl = gain * axl + noise * rng.standard_normal(n)
     return rad, axl
 
 
