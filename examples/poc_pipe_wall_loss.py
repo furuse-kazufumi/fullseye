@@ -368,11 +368,12 @@ def section_scene() -> dict:
              T0 - BAND_D, T0 - BAND_D))
     print("      管底腐食 z=%.0f %s mm(真値 %.2f / %.2f)"
           % (50.0, np.round(th_cres, 2).tolist(), T0, T0 - CRES_D))
-    print("   -> ボクセル %.1f mm のプローブは管底腐食 %.1f mm は拾うが、"
-          "全周減肉 %.2f mm は\n      健全部と見分けられない"
-          "(差 %.2f mm < 量子化 %.1f mm)。"
-          % (VOX, CRES_D, BAND_D,
-             abs(float(np.max(th_clean)) - float(np.max(th_band))), VOX))
+    print("   -> ボクセル %.1f mm では、左右対称であるはずの全周減肉が "
+          "%.2f / %.2f mm と\n      %.2f mm も食い違う(真値の減肉 %.2f mm より"
+          "大きい)。**CT 側の経路では\n      この欠陥は測れない** —— "
+          "距離センサ(以下の節)は同じ %.2f mm を見つける。"
+          % (VOX, th_band[0], th_band[1], abs(th_band[0] - th_band[1]),
+             BAND_D, BAND_D))
 
     # 図: 断面 2 枚 + 縦断面 + 投影
     proj = np.asarray(_L.render_volume_projection(occ, azimuth=90.0, mode="xray"))
