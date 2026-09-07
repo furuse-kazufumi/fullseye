@@ -657,20 +657,25 @@ def section_overhang(scene):
             "rows": rows, "a_hole": a_hole, "spread": max(lo_vals) / min(lo_vals)}
 
 
-def _overhang_map(occ, sdf):
-    """下から見た「傾き [度]」の疑似カラーと、サポートが要る面のマスク。"""
+def _overhang_map(occ, sdf, g):
+    """下から見た「傾き [度]」の疑似カラーと、サポートが要る面のマスク。
+
+    ★板の裏は視野を全部ふさぐので、**板の上(z > 板厚)だけ**を下から見る。
+    最初そうしなかったら、地図が板の裏一色になって何も見えなかった。
+    水平穴の天井は板の中なのでこの地図には出ない(数字のほうで数えている)。
+    """
     grad = np.stack(np.gradient(sdf, H_MESH), axis=0)
-    a = occ[:, :, ::-1]
-    gg = grad[:, :, :, ::-1]
+    above = g[..., 2] > T_PLATE + 0.2
+    a = occ & above                              # 下から見る = z の小さいほうから探す
     hit = a.argmax(2)
     seen = a.any(2)
     ii, jj = np.meshgrid(np.arange(a.shape[0]), np.arange(a.shape[1]), indexing="ij")
-    nz = gg[2][ii, jj, hit]
-    nn = np.sqrt(sum(gg[k][ii, jj, hit] ** 2 for k in range(3)))
+    nz = grad[2][ii, jj, hit]
+    nn = np.sqrt(sum(grad[k][ii, jj, hit] ** 2 for k in range(3)))
     nz = nz / np.maximum(nn, 1e-9)
     tilt = np.degrees(np.arccos(np.clip(np.abs(nz), 0, 1)))     # 水平からの傾き [度]
     tilt = np.where(seen, tilt, 90.0)
-    need = seen & (nz < -COS_C) & (hit > 0)
+    need = seen & (nz < -COS_C)
     figs.save_grid("overhang_map",
                    [_up(tilt.T[::-1]), _up(need.T[::-1].astype(float))],
                    ["傾き [度]", "要サポート"],
