@@ -295,11 +295,11 @@ def section_estimate(cams: dict, banks: dict, queries: dict) -> dict:
     assert pce[mln] > 3 * pce[z0n], (pce[mln], pce[z0n])
 
     figs.save_grid("scene",
-                   [imgs[0], imgs[1], k_true, fp_w],
-                   ["カメラ A の写真 1(勾配+模様+物体)", "カメラ A の写真 2(別の場面)",
-                    "真の指紋 K(σ = %.2f)" % SIGMA_K,
-                    "推定した指紋 K̂(%d 枚、相関 %.2f)" % (N_TRAIN, r[mln])],
-                   title="カメラ指紋(PRNU)の場面: 写真の雑音の中に固定の模様がある",
+                   [big(imgs[0]), big(imgs[1]), big(k_true), big(fp_w)],
+                   ["カメラ A の写真 1", "カメラ A の写真 2(別の場面)",
+                    "真の指紋 K(σ=%.2f)" % SIGMA_K,
+                    "推定 K̂(%d 枚、相関 %.2f)" % (N_TRAIN, r[mln])],
+                   title="カメラ指紋(PRNU)の場面: 写真の雑音の中に固定の模様がある(%d px を 3 倍表示)" % N_PIX,
                    signed=[False, False, True, True], ncols=2)
     figs.save_table("estimators", ["推定のしかた", "真の K との相関", "PCE 同一", "PCE 別", "AUC"],
                     rows, title="指紋の推定: ゼロ点は AUC では負けない(%d 枚)" % N_TRAIN,
