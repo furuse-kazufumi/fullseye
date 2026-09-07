@@ -664,13 +664,24 @@ def section_rotation(rig: Rig) -> dict:
               % (dy, rcrit, pred, meas, "   ".join("%.4f" % v for v in row)))
 
     err = max(abs(p - m) for p, m in zip(pred_l, meas_l))
-    print("\n  予測と実測の最大差 %.4f —— **量子化まで含めて幾何で当たる**。" % err)
+    print("\n  予測と実測の最大差 %.4f —— 点がセルを跨ぐ量は**量子化まで含めて"
+          "幾何で当たる**。" % err)
     i1 = YAWS.index(1.0)
     base = curves["max"][0]
     fall = next((y for y, v in zip(YAWS, curves["max"]) if v < 0.9 * base), None)
-    print("  ★最大値則の IoU が誤差 0(%.4f)の 90 %% を切るのは yaw %.2f 度 —— "
-          "c/θ = %.1f m で、評価窓の奥 %.0f m の側から壊れ始める。"
-          % (base, fall, CELL / np.radians(fall), WIN_X[1]))
+    print("  ★★しかし **IoU は c/θ では折れない**。yaw %.2f 度で点の %.0f %% が"
+          "既にセルを跨いでいるのに、IoU は %.4f -> %.4f(%.1f %% 減)しか落ちない。"
+          % (0.5, 100 * meas_l[YAWS.index(0.5)], base,
+             curves["max"][YAWS.index(0.5)],
+             100 * (1 - curves["max"][YAWS.index(0.5)] / base)))
+    print("     予想は「セル 1 個ずれたら崖」。実測の崖の尺度は**セルではなく"
+          "物体の大きさ** —— 幅 %.1f m の車を %.2f m ずらしても重なりは "
+          "%.0f %% 残る。IoU が 90 %% を切るのは yaw %.2f 度(BEV のずれ "
+          "%.2f m = 物体幅の %.0f %%)。"
+          % (OBSTACLES[1]["ly"], CELL, 100 * (1 - CELL / OBSTACLES[1]["ly"]),
+             fall, OBSTACLES[1]["cx"] * np.tan(np.radians(fall)),
+             100 * OBSTACLES[1]["cx"] * np.tan(np.radians(fall))
+             / OBSTACLES[1]["ly"]))
     print("  ★★yaw %.2f 度で 最大値則 %.4f / 平均則 %.4f —— 同じ誤差から"
           "**片方は偽物を作り、片方は本物を消す**(次節で内訳)。"
           % (1.0, curves["max"][i1], curves["mean"][i1]))
