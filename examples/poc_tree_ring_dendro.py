@@ -288,10 +288,22 @@ def detect_sectors(ps: dict, sigma: float = SIG_M, thr: float = THR) -> list[np.
         row_c = (s + 0.5) * SECT_ROWS - 0.5
         m = fs.ledger.gen_measure_rectangle2(row_c, (nr - 1) / 2.0, 0.0,
                                              (nr - 1) / 2.0, MEAS_ROWS, fil.shape)
-        edges = fs.ledger.measure_pos(fil, m, sigma=sigma, threshold=thr,
+        # ★threshold=0 で全部取り、段の高さは自分で測る。measure_pos の amplitude
+        #   (勾配ローブの両端差)は木目で勾配が単調でなくなると段の途中で止まり、
+        #   0.14 の段を 0.05 と返す(8 節で数える)。
+        edges = fs.ledger.measure_pos(fil, m, sigma=sigma, threshold=0.0,
                                       transition="positive")
+        r0 = int(round(row_c)) - MEAS_ROWS // 2
+        prof = fil[max(0, r0):r0 + MEAS_ROWS].mean(axis=0)
+        sm = np.asarray(fs.smooth_funct_1d_gauss(prof, sigma))
         rd = float(np.median(r_disc[s * SECT_ROWS:(s + 1) * SECT_ROWS]))
-        pos = np.asarray([e["pos"] for e in edges], np.float64) * (rd / r_bar)
+        pos = []
+        for e in edges:
+            i = int(round(e["pos"]))
+            rise = sm[min(nr - 1, i + 2)] - sm[max(0, i - 2)]
+            if rise >= thr:
+                pos.append(e["pos"] * (rd / r_bar))
+        pos = np.asarray(pos, np.float64)
         out.append(pos[pos < rd - 2.5])
     return out
 
