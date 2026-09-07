@@ -533,10 +533,24 @@ def section_normals(sc: dict, z: dict, mv: dict) -> dict:
     sig_up = np.isfinite(d_up) & (np.abs(d_up) > l_up)
     cm_up = confusion(sig_up, s_mm)
 
-    # 予測: 半径 r の円筒に入る点の軸方向の散らばりは、勾配 g のとき g·r/2
+    # 予測: 半径 r の円板に一様に撒いた点の、勾配 g の面での鉛直方向の散らばりは
+    # g·r/2(円板上の座標の標準偏差が r/2)。
     slope = math.hypot(CROSS, GRADE)
     sd_tilt = slope * RADIUS / 2.0
-    print("   法線          LoD 中央値   平均の差      有意な core   TPR      FPR")
+    print("  予測を先に: 勾配 %.4f の面を半径 %.1f m の円筒で切ると、鉛直軸への"
+          "射影は σ = g·r/2 = %.2f mm 散らばる。" % (slope, RADIUS, sd_tilt * 1000))
+    print("\n   ゾーン            LoD 局所平面   LoD 鉛直   予測(鉛直)   比")
+    zid = zone_of(cores[:, 1])
+    for k, (_, name, rgh, dens) in enumerate(ZONES):
+        m = zid == k
+        na = RHO_A * dens * math.pi * RADIUS ** 2
+        nb = RHO_B * dens * math.pi * RADIUS ** 2
+        sg = math.sqrt(sd_tilt ** 2 + rgh ** 2 + SIGMA_RANGE ** 2)
+        p = 1.96 * sg * math.sqrt(1.0 / na + 1.0 / nb) * 1000.0
+        got = float(np.nanmedian(l_up[m]))
+        print("   %-16s %8.2f mm  %8.2f mm  %8.2f mm   %.2f"
+              % (name, float(np.nanmedian(mv["lod"][m])), got, p, got / p))
+    print("\n   法線          LoD 中央値   平均の差      有意な core   TPR      FPR")
     print("   局所平面      %7.2f mm  %7.2f mm    %4d      %5.1f %%  %5.1f %%"
           % (np.nanmedian(mv["lod"]), np.nanmean(mv["d"]), int(mv["sig"].sum()),
              mv["cm"]["tpr"], mv["cm"]["fpr"]))
