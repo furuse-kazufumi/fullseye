@@ -151,7 +151,9 @@ def height_map(pts: np.ndarray, gc: float = GC, offset: float = 0.0):
     np.maximum.at(hm, k, pts[:, 2])
     seen = np.zeros(nx * ny, bool)
     seen[k] = True
-    hm = np.where(seen, hm, 0.0).reshape(ny, nx)
+    # ★デッキの点は雑音で +3σ まで浮くので、床のしきい値で切る。これを
+    #   入れないと、はみ出しゼロの荷にも 0.006 m3 の「はみ出し」が出る。
+    hm = np.where(seen & (hm > H_FLOOR), hm, 0.0).reshape(ny, nx)
 
     # セルとパレット外形の**重なり面積**(端のセルを丸ごと内 / 外にしない)
     cx0 = x0 + gc * np.arange(nx)
