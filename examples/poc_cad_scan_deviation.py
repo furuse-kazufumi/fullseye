@@ -548,9 +548,9 @@ def section_part(ref: CadRef) -> dict:
         S = 0.40
         figs.save_grid(
             "scene",
-            [render(big["pts"], nrm=big["nrm"]),
-             render(big["pts"], dv, scale=S),
-             render(big["pts"][vis], dv[vis], scale=S)],
+            [render(big["pts"], nrm=big["nrm"], shade=True),
+             render(big["pts"], dv, nrm=big["nrm"], scale=S),
+             render(big["pts"][vis], dv[vis], nrm=big["nrm"][vis], scale=S)],
             ["公称形状(60x40x12 + ボス + フィレット + 穴 2)",
              "真の偏差(だいだい = 足りない / 青 = 余る、±%.2f mm)" % S,
              "片側スキャンで見える面だけ(可視 %.0f %%)" % (100 * vis.mean())],
