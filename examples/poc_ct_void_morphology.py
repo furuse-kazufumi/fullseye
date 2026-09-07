@@ -744,8 +744,7 @@ def section_threshold_noise() -> dict:
                      [x * 100 for x in nf]),
                     ("真値 %.1f %% x 100" % (100 * VOID_FRAC),
                      [1000 * s for s in noises], [100 * VOID_FRAC * 100] * len(noises))],
-                   xlabel="雑音 sigma x 1000(はんだ = 1000)",
-                   ylabel="個数 / ボイド率 x 100",
+                   xlabel="雑音 sigma x 1000", ylabel="個数 / 率 x 100",
                    title="雑音は個数を爆発させるが、体積率はほとんど動かない",
                    caption="合否の数字は雑音に強い。強いことが問題で、"
                            "壊れているのに気づけない。")
