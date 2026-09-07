@@ -547,9 +547,9 @@ def section_controls() -> dict:
         print("    %-14s  | %+.3f  %.3f  %.3f  |  %+.3f  %.3f  %.3f" % (name, *vals))
         rows.append([name] + ["%+.3f" % vals[0], "%.3f" % vals[1], "%.3f" % vals[2],
                               "%+.3f" % vals[3], "%.3f" % vals[4], "%.3f" % vals[5]])
-    print("\n  ★0 % の Pearson を作っているのは漏れ込みだけ(止めると %+.3f → %+.3f)。"
+    print("\n  ★0 %% の Pearson を作っているのは漏れ込みだけ(止めると %+.3f → %+.3f)。"
           % (out["全部あり"][0], out["漏れ込みなし"][0]))
-    print("   Manders(0 %)は漏れ込みを止めて %.3f、ぼけを止めて %.3f —— 2 つの原因が乗る。"
+    print("   Manders(0 %%)は漏れ込みを止めて %.3f、ぼけを止めて %.3f —— 2 つの原因が乗る。"
           % (out["漏れ込みなし"][1], out["ぼけなし"][1]))
     figs.save_table("controls", ["条件", "r (0%)", "M1 (0%)", "M2 (0%)", "r (50%)", "M1 (50%)", "M2 (50%)"],
                     rows, title="対照群(真の共局在 0 % と 50 %)")
