@@ -591,9 +591,6 @@ def section_sweep(pair) -> dict:
           % (hidden["overlap"][0], hidden["overlap"][-1],
              out_det["overlap"]["sam"][0], out_det["overlap"]["sam"][-1]))
 
-    print("       濡れ 0.2 の時点では水帯を捨てる効果が大きい: %.3f -> %.3f。"
-          % (out_det["wet"]["d2"][1], out_det["wet"]["d2w"][1]))
-
     short = {"ratio": "比(ゼロ点)", "sam": "生 SAM", "cr": "連続体除去",
              "d2": "2 次微分", "d2w": "2 次微分+水帯除外"}
     figs.save_plot(
