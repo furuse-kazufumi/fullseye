@@ -735,7 +735,7 @@ def section_sweep() -> dict:
             seg = held[tr * nT:(tr + 1) * nT]
             for i in range(nT):
                 seg[i] = seg[(i // step) * step]
-        m_, fa_, _a, _b = _rates(d_true, held, S)
+        m_, fa_, _a, _b = _rates(d_true, held, S_GEOM, S)
         pred = V_WALK * DT * step
         lat_rows.append(["%.2f" % (DT * step), "%.3f" % pred,
                          "%+.3f" % float(np.mean(held - d_true)),
