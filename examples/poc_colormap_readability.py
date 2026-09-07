@@ -375,37 +375,33 @@ def section_bowl(meas: dict) -> dict:
     grad = np.abs(np.diff(f, axis=1))            # 真の勾配(閉形式で分かっている)
     row = H // 2
     half = slice(W // 2 + int(0.10 * W), W - 2)  # 右半分・中心付近の |grad|≈0 は除く
-    panels, caps, raw_n, gain_n = [], [], {}, {}
+    panels, caps, raw_r, gain_r = [], [], {}, {}
     for name in MAPS:
         rgb = np.asarray(fs.apply_cmap(f, name, vmin=0.0, vmax=1.0))
         panels.append(rgb)
         caps.append(name)
-        de = step_delta_e(rgb)[row]
-        raw_n[name] = len(count_false_edges(_smooth(de[half], 5), PEAK_RATIO, sep=4))
+        de = _smooth(step_delta_e(rgb)[row][half], 5)
+        raw_r[name] = float(de.max() / np.median(de))
         # ★真の勾配で割る。割らないと「場が急なところ」を境目と数えてしまう
-        gain_n[name] = len(count_false_edges(
-            _smooth(de[half] / np.maximum(grad[row][half], 1e-12), 5),
-            PEAK_RATIO, sep=4))
+        g = _smooth(step_delta_e(rgb)[row][half]
+                    / np.maximum(grad[row][half], 1e-12), 5)
+        gain_r[name] = float(g.max() / np.median(g))
 
     n_px = (half.stop - half.start)
     print("  中央行の右半分 %d 画素で t を 0.1 → 1.0 まで見る"
-          "(1-D 掃引の %d 刻みに対して %.0f 分の 1 の粗さ)"
-          % (n_px, N_T, (N_T - 1) / n_px))
-    print("  マップ      1-D の山   2-D 生の色差   2-D 真の勾配で割った後")
+          "(段差ゼロ、勾配は外側ほど急)" % n_px)
+    print("  マップ     1-D 最大/median   2-D 生の色差   2-D 真の勾配で割った後")
+    err = []
     for name in MAPS:
-        print("  %-9s   %4d        %4d           %4d"
-              % (name, meas[name]["n_peaks"], raw_n[name], gain_n[name]))
-    hit = sum(1 for n in MAPS if gain_n[n] == meas[n]["n_peaks"])
-    print("\n  ★★予想は『1-D と同じ本数が出る』だったが %d / %d しか合わない。"
-          "理由は 2 つあり、\n     どちらも図を見ているだけでは分からない:"
-          % (hit, len(MAPS)))
-    print("   (1) **場そのものの勾配**が混ざる。椀は外側ほど急なので、"
-          "生の色差は\n       gray でも %d 本(場はなめらかなのに)。"
-          "真の勾配で割ると %d 本に戻る。" % (raw_n["gray"], gain_n["gray"]))
-    print("   (2) **画像の粗さで山が融合する**。jet の 1-D 3 本は 2-D で %d 本"
-          "(t=0.249 と 0.345 が\n       %d 画素しか離れておらず、1 本に見える)。"
-          % (gain_n["jet"], int(round(0.096 * n_px / 0.9))))
+        err.append(abs(gain_r[name] - meas[name]["ratio"]))
+        print("  %-9s     %5.2f          %6.2f          %6.2f"
+              % (name, meas[name]["ratio"], raw_r[name], gain_r[name]))
+    print("\n  ★★生の色差マップは gray でも %.2f 倍の山を作る —— "
+          "**場はなめらかなのに**。\n     椀は外側ほど急だから。"
+          "真の勾配で割ると %.2f に戻り、1-D の %.2f と一致する。"
+          % (raw_r["gray"], gain_r["gray"], meas["gray"]["ratio"]))
     print("     真値を持たずに色差マップを眺めると、**場のせいを配色のせいにする**。")
+    print("  勾配で割った後の 1-D とのずれは最大 %.2f(6 マップ)。" % max(err))
 
     figs.save_grid("scene_maps", panels, caps, ncols=3,
                    title="同じなめらかな 2 次曲面(段差ゼロ)を 6 通りに塗る",
