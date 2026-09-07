@@ -846,9 +846,11 @@ def section_density() -> dict:
     print("     これは点間隔そのもの(密度で決まる)で、しかも**符号が無い**ので"
           "掘削と堆積を分けられない。C2C で土量は測れない。")
     figs.save_plot("density_cliff",
-                   [("DoD LoD95 実測", dens, ld), ("DoD 予測", dens, pd_),
-                    ("M3C2 LoD95 実測", dens, lm), ("M3C2 予測", dens, pm),
-                    ("C2C 最近傍距離(符号なし)", dens, c2c)],
+                   [("DoD LoD95 実測", *finite(dens, ld)),
+                    ("DoD 予測", *finite(dens, pd_)),
+                    ("M3C2 LoD95 実測", *finite(dens, lm)),
+                    ("M3C2 予測", *finite(dens, pm)),
+                    ("C2C 最近傍距離(符号なし)", *finite(dens, c2c))],
                    xlabel="点密度 [pt/m2]", ylabel="距離 [m]",
                    title="密度は「何 m の変化まで言えるか」を決める",
                    caption="変化ゼロの対照で測った検出限界。C2C は変化が無くても"
