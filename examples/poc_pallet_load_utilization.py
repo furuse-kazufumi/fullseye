@@ -460,7 +460,9 @@ def section_gsd_overhang(lb: list) -> dict:
     figs.save_plot("gsd_false_overhang",
                    [("荷 A の偽はみ出し(実測)", gcs, meas),
                     ("予測 P x g/2 x h", gcs, pred),
-                    ("荷 B の真のはみ出し", gcs, real)],
+                    ("荷 B の実測", gcs, real),
+                    ("荷 B の真値 %.3f m3" % true_over, gcs,
+                     [true_over] * len(gcs))],
                    xlabel="高さマップのセル寸法 g [mm]",
                    ylabel="はみ出し体積 [m3]",
                    title="粗い格子は、出ていない荷にはみ出しを作る")
