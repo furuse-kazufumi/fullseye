@@ -561,7 +561,7 @@ def section_controls() -> dict:
 # --------------------------------------------------------------------------- #
 def section_thresholds(est: tuple[float, float]) -> dict:
     print("\n" + "=" * 78)
-    print("8) しきい値の流儀で M1 / M2 が動く(真の共局在 50 %、α=β=%.0f %%)" % (100 * ALPHA))
+    print("8) しきい値の流儀で M1 / M2 が動く(真の共局在 50 %%、α=β=%.0f %%)" % (100 * ALPHA))
     print("=" * 78)
     sc = make_scene(0.5)
     roi = sc["roi"]
