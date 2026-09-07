@@ -1262,13 +1262,16 @@ def section_prism_and_crack(sc: dict) -> dict:
              float(prow[0][2]), float(prow[1][2]),
              settle_read[0], settle_read[2]))
     print("         (i) 決まらない x は、法線が ±x を向く**円柱にだけ** "
-          "「%.1f mm 水平に動いた」として出る(真値 0)。" % fake_h)
-    print("         (ii) 全点で合わせるとたわみの平均 %.1f mm が z に吸われ、"
-          "**支承の沈下 %.2f mm が %.2f mm に消える**。"
-          % (DEFLECT_MM[2] * 2 / 3, SETTLE_MM[2], settle_read[0]))
-    print("             変わっていない端だけで合わせると %.2f mm まで戻る"
-          "(残りは端でもたわみが 0 でないぶん %.2f mm と、上の床 %.2f mm)。"
-          % (settle_read[2], DEFLECT_MM[2] * 0.296, floor_v))
+          "「%.1f mm 水平に動いた」として出る(真値 0、測り方の床 %.2f mm)。"
+          % (fake_h, abs(floor_h)))
+    print("         (ii) 沈下のほうは**符号ではなく大きさが壊れる**: 真値 %.2f mm に"
+          "対し 全点で合わせると %.2f mm、\n             端だけなら %.2f mm。"
+          "たわみの平均(全点 %.1f mm / 端だけ %.1f mm)が z に吸われるうえ、"
+          "\n             測り方だけの床が %.2f mm もある —— "
+          "**この測り方で「%.0f mm 沈下した」とは言えない**。"
+          % (SETTLE_MM[2], settle_read[0], settle_read[2],
+             DEFLECT_MM[2] * 2 / 3, DEFLECT_MM[2] * 0.296, abs(floor_v),
+             SETTLE_MM[2]))
     print("         **どちらも、面積の大半を占める大きな面の残差を見ている"
           "限り気づけない** —— \n         決まらなかった成分・吸われた成分は、"
           "それに感度を持つ**小さな部品にだけ**現れる。")

@@ -3028,8 +3028,12 @@ def render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray", devic
     zin = (gz + 1.0) / 2.0 * D - 0.5
     yin = (gy + 1.0) / 2.0 * H - 0.5
     xin = (gx + 1.0) / 2.0 * W - 0.5
+    # mode は **grid-constant**。素の "constant" は [0, N-1] の外を丸ごと cval に
+    # するので、-1e-16 のような端の丸めが黒い列を作る(実測: 恒等変換で差 1.0)。
+    # grid-constant は範囲外の**寄与だけ**を cval にするので、grid_sample の
+    # zeros padding と同じ半画素の端の扱いになる。
     rot = map_coordinates(v.astype(np.float64), [zin, yin, xin], order=1,
-                          mode="constant", cval=0.0)
+                          mode="grid-constant", cval=0.0)
     if mode == "mip":
         return rot.max(axis=0).astype(np.float32)
     return rot.sum(axis=0).astype(np.float32)               # xray=Beer-Lambert 近似の積算
