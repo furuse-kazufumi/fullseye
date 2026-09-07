@@ -298,25 +298,36 @@ def inflate(occupancy, radius, voxel_size=1.0):
 def query_distance(esdf_grid, bounds, res, query_points, mode="trilinear"):
     """任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。
 
-    ``bounds``/``res`` は ESDF を作った格子と同じもの。world→連続ボクセル座標は
+    ``bounds``/``res`` は ESDF を作った格子と同じもの(``res`` はスカラ = 立方、
+    または長さ 3 の軸ごとのボクセル数)。world→連続ボクセル座標は
     ``c=(q-lo)/span*res-0.5``(voxel i の中心が c=i)。三線形補間はボクセル中心 8 近傍を
     重み付け(格子外はエッジにクランプ=最近端の値で外挿)。planner がノード/経路上の任意点で
     離隔を問い合わせる用途。返り値は ESDF と同じ world 単位。
 
     Raises ValueError for res<=0, degenerate bounds, non-(M,3) query, or unknown mode."""
     E = np.asarray(esdf_grid, np.float64)
-    res = int(res)
-    if res <= 0:
-        raise ValueError("res must be a positive integer")
-    if E.shape != (res, res, res):
-        raise ValueError("esdf_grid shape must be (res, res, res)")
+    # ★2026-09-07: ``res`` は**軸ごと**を受けるようにした(長さ 3 も可)。それまでは
+    # ``int(res)`` で立方格子だけを許しており、``esdf`` が長さ 3 の異方 ``voxel_size`` を
+    # 受け付けるのに、その出力を world 座標で引くこちらが立方限定という**片側だけ狭い
+    # 契約**になっていた。CT の薄い接合層 (30,180,180) のような格子でそのまま詰まる
+    # (`poc_ct_void_morphology` で実測)。スカラを渡す既存の呼び手は不変。
+    r = np.atleast_1d(np.asarray(res, np.int64))
+    if r.size == 1:
+        r = np.repeat(r, 3)
+    if r.size != 3 or np.any(r <= 0):
+        raise ValueError("res must be a positive integer or a length-3 sequence "
+                         "of positive integers")
+    if E.ndim != 3 or E.shape != tuple(int(x) for x in r):
+        raise ValueError("esdf_grid shape must be %r (got %r)"
+                         % (tuple(int(x) for x in r), E.shape))
     lo, span = _parse_bounds(bounds)
     Q = np.asarray(query_points, np.float64)
     if Q.ndim != 2 or Q.shape[1] != 3:
         raise ValueError("query_points must be (M, 3)")
-    c = (Q - lo) / span * res - 0.5             # voxel-center-aligned 連続座標
+    hi = r - 1                                  # 軸ごとの上限 index
+    c = (Q - lo) / span * r - 0.5               # voxel-center-aligned 連続座標
     if mode == "nearest":
-        idx = np.clip(np.round(c).astype(np.int64), 0, res - 1)
+        idx = np.clip(np.round(c).astype(np.int64), 0, hi)
         return E[idx[:, 0], idx[:, 1], idx[:, 2]]
     if mode != "trilinear":
         raise ValueError("mode must be 'trilinear' or 'nearest'")
@@ -325,12 +336,12 @@ def query_distance(esdf_grid, bounds, res, query_points, mode="trilinear"):
     out = np.zeros(len(Q), np.float64)
     for dx in (0, 1):
         wx = t[:, 0] if dx else (1.0 - t[:, 0])
-        i = np.clip(c0[:, 0] + dx, 0, res - 1)
+        i = np.clip(c0[:, 0] + dx, 0, hi[0])
         for dy in (0, 1):
             wy = t[:, 1] if dy else (1.0 - t[:, 1])
-            j = np.clip(c0[:, 1] + dy, 0, res - 1)
+            j = np.clip(c0[:, 1] + dy, 0, hi[1])
             for dz in (0, 1):
                 wz = t[:, 2] if dz else (1.0 - t[:, 2])
-                k = np.clip(c0[:, 2] + dz, 0, res - 1)
+                k = np.clip(c0[:, 2] + dz, 0, hi[2])
                 out += (wx * wy * wz) * E[i, j, k]
     return out
