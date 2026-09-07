@@ -1220,6 +1220,12 @@ def _floor_rgb(racks: np.ndarray) -> np.ndarray:
     return img
 
 
+def _up(img, k=4):
+    """図を見やすくするための整数倍拡大(1 マス 0.30 m だと 80x60 px しかない)。"""
+    a = np.asarray(img)
+    return np.repeat(np.repeat(a, k, axis=0), k, axis=1)
+
+
 def _stamp(img, xm, ym, rgb, r=1):
     iy = int(np.clip(ym / CELL, 1, NY - 2))
     ix = int(np.clip(xm / CELL, 1, NX - 2))
