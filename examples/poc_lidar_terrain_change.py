@@ -990,9 +990,9 @@ def section_occlusion(tr: dict, lod0: float) -> dict:
     print("  **条件ごとに変化なしの対照を取り、その場で LoD を測り直す**ことで分ける。")
     print("  さらに LoD を標準偏差と MAD の 2 通りで出し、"
           "**外れ値汚染と密度低下を分ける**。")
-    print("\n   遮蔽率 地面点  取りこぼし 実効密度  LoD(std)  LoD(MAD)  "
-          "MAD-LoD の掘削 誤差%   分類なし")
-    occ, gr, leak, lstd, lmad, adapt, raw, rows = [], [], [], [], [], [], [], []
+    print("\n   遮蔽率 地面点 取りこぼし 実効密度 LoD(std) LoD(MAD)  "
+          "平均 DEM 掘削 誤差%   中央値 DEM 掘削 誤差%   分類なし")
+    occ, gr, leak, lstd, lmad, adapt, med, raw, rows = [], [], [], [], [], [], [], [], []
     for p in (0.0, 0.15, 0.30, 0.45, 0.60):
         rng = np.random.default_rng(SEED + 9)
         a, ga = make_cloud(rng, with_change=False, occl=p)
@@ -1007,24 +1007,28 @@ def section_occlusion(tr: dict, lod0: float) -> dict:
         l_std = 1.96 * spread(dz_c)
         l_mad = 1.96 * robust_spread(dz_c)
         r_ada = dod(a[ka], b[kb], lod=l_mad)
+        r_med = dod(a[ka], b[kb], lod=l_mad, stat="median")
         r_raw = dod(a, b, lod=l_mad)
         t_ada = truth(lod=l_mad)
-        e2 = 100 * (r_ada["ero"] / t_ada["ero"] - 1) if t_ada["ero"] > 1e-6 else float("nan")
+        e2 = 100 * (r_ada["ero"] / t_ada["ero"] - 1)
+        e3 = 100 * (r_med["ero"] / t_ada["ero"] - 1)
         occ.append(100 * p)
         gr.append(100 * float(ga.mean()))
         leak.append(100 * float((k0 & ~gc).sum()) / max(int(k0.sum()), 1))
         lstd.append(l_std)
         lmad.append(l_mad)
         adapt.append(r_ada["ero"])
+        med.append(r_med["ero"])
         raw.append(r_raw["ero"])
         dens_eff = float(ka.sum()) / (LX * LY)
         rows.append(["%.0f" % (100 * p), "%.1f" % gr[-1], "%.2f" % leak[-1],
                      "%.1f" % dens_eff, "%.3f" % l_std, "%.3f" % l_mad,
                      "%.1f" % r_ada["ero"], "%+.1f" % e2,
+                     "%.1f" % r_med["ero"], "%+.1f" % e3,
                      "%.1f" % t_ada["ero"], "%.1f" % r_raw["ero"]])
-        print("   %5.0f %% %6.1f %% %8.2f %% %7.1f %9.3f %9.3f %13.1f %+7.1f %11.1f"
+        print("   %5.0f %% %6.1f %% %7.2f %% %6.1f %8.3f %8.3f %12.1f %+7.1f %14.1f %+7.1f %9.1f"
               % (100 * p, gr[-1], leak[-1], dens_eff, l_std, l_mad,
-                 r_ada["ero"], e2, raw[-1]))
+                 r_ada["ero"], e2, r_med["ero"], e3, raw[-1]))
     print("\n  ★★取りこぼしはたった %.2f %%(遮蔽 %.0f %%)なのに、標準偏差で引いた LoD は "
           "%.3f -> %.3f m と %.1f 倍に飛ぶ。" % (leak[-1], occ[-1], lstd[0], lstd[-1],
                                                  lstd[-1] / lstd[0]))
