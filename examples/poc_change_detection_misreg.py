@@ -210,7 +210,7 @@ def scene(Y, X, t: int, sigma=PSF, sizes: bool = False) -> np.ndarray:
     S = paint(S, rot_rect(Y, X, fr["cy"], fr["cx"], fr["h"], fr["w"], fr["deg"], sigma), fr["alb"])
     # 森林: 地 + 樹冠。伐採(t=2)は樹冠ごと土壌に戻す。
     fy0, fy1, fx0, fx1, falb = FOREST
-    Wf = rect(Y, X, fy0, fy1, fx0, fx1, sigma)
+    Wf = rect_px(Y, X, fy0, fy1, fx0, fx1, sigma)
     F = np.full_like(S, falb)
     c = CROWNS
     for cy, cx, cs, ca in zip(c["y"], c["x"], c["s"], c["a"]):
