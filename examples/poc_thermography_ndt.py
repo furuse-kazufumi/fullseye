@@ -253,14 +253,21 @@ def section1_check():
     print()
     print("  推定器の床(1 次元の厳密曲線に TSR を直接掛ける。画像は通さない):")
     print("    %8s %10s %8s" % ("真の深さ", "TSR", "誤差"))
+    floor = []
     for d_mm in DEPTHS_MM + [3.0]:
         th = d_mm * 1e-3
         curve = ((q / th) * plate_temperature(ts_cam, th)).astype(np.float32)
         est = 1e3 * float(tsr_depth(ts_cam, curve[:, None, None])[0][0, 0])
+        floor.append(100 * (est / d_mm - 1))
         print("    %8.1f %10.2f %7.0f%%" % (d_mm, est, 100 * (est / d_mm - 1)))
     print("    → 多項式当てはめだけで **-4 %〜+6 %** の床がある。")
     print("       3 節の ±5 % は「よく当たっている」ではなく**床とほぼ同じ**、")
     print("       つまり横拡散の寄与がその条件ではほぼ無いという意味。")
+    # ★所見を固定する: 床は**ゼロではないが小さい**。両側を押さえる ——
+    #   ゼロになったら「画像を通さない曲線でも数 % ずれる」という 3 節の
+    #   読み替え(±5 % は床とほぼ同じ)が成り立たなくなり、大きくなったら
+    #   3 節以降のずれを横拡散のせいにできなくなる。
+    assert 2.0 < max(abs(f) for f in floor) < 8.0, floor
 
 
 def section2_zero_point(depth_map, ts, cube, masks, sound):
