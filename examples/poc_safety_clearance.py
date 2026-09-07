@@ -617,16 +617,20 @@ def section_sweep() -> dict:
     print("  試行 %d 本 x %d フレーム = %d フレーム(危険 %d)"
           % (len(TRIALS), len(ts), len(frames), int((d_true < S).sum())))
 
-    # --- (i) 点密度 ------------------------------------------------------- #
+    # --- (i) 点密度(**遮蔽を止めた対照群**で測る) -------------------------- #
+    # ★遮蔽を入れたまま密度を振ると、遮蔽の偏り(+0.12 m)が全部の行に乗って
+    #   密度の効きが見えなくなる。要因を 1 つずつ止めるのが対照群の役目。
+    area = float(np.sum([2 * np.pi * h[3] * float(np.linalg.norm(h[2] - h[1]))
+                         + 4 * np.pi * h[3] ** 2 for h in frames[0]["human"]]))
     dens = (1600, 800, 400, 200, 100)
-    print("\n  (i) 点密度(背面 1 台)")
+    print("\n  (i) 点密度(遮蔽なしの対照群。全身の表面積 %.2f m²)" % area)
     print("      点数   標本間隔 [m]  予想の過大評価 [m]  実測 [m]  見落とし   誤検知")
     d_rows, d_miss, d_fa, d_bias = [], [], [], []
     for n in dens:
-        e = np.array([estimate(f, f["v_top"], rng, density=n) for f in frames])
+        allv = [np.ones(len(f["P"]), bool) for f in frames]
+        e = np.array([estimate(f, v, rng, density=n) for f, v in zip(frames, allv)])
         e = np.where(np.isfinite(e), e, 10.0)
         m_, fa_, _nh, _nf = _rates(d_true, e, S)
-        area = 1.75                                   # 全身の表面積 [m²](実測は下で印字)
         spacing = np.sqrt(area / n)
         predicted = (0.5 * spacing) ** 2 / (2 * R_HAND)
         bias = float(np.mean(e - d_true))
