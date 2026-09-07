@@ -64,7 +64,27 @@
   "tsv": "06_density_bias_table.tsv"
  },
  {
-  "file": "07_defect_pull.png",
+  "file": "07_scan_density.png",
+  "name": "scan_density",
+  "caption": "偏差の偏りと分散は横ばい。合否を決める公差外面積だけが境界の刻みで痩せる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_dent_area.png",
+  "name": "dent_area",
+  "caption": "深さを 30 倍にしても割合は動かないが、広がりを変えると比例して増える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_defect_pull.png",
   "name": "defect_pull",
   "caption": "中央の読みは真値 0。位置合わせが吸った平均がそのまま偽のへこみになる。",
   "shape": [
@@ -74,7 +94,7 @@
   ]
  },
  {
-  "file": "08_warp_false_dent.png",
+  "file": "10_warp_false_dent.png",
   "name": "warp_false_dent",
   "caption": "真値は中央 0。位置合わせが平均 a/3 を吸うので下へずれる。",
   "shape": [
@@ -84,7 +104,7 @@
   ]
  },
  {
-  "file": "09_warp_maps.png",
+  "file": "11_warp_maps.png",
   "name": "warp_maps",
   "caption": "上面だけを見ている。右の中央がだいだいに変わるのが「無いへこみ」。",
   "shape": [
@@ -92,27 +112,5 @@
    702,
    3
   ]
- },
- {
-  "file": "10_basin.png",
-  "name": "basin",
-  "caption": "この部品は 75 度まで収束する。90 度以降の別解は残差が床の数倍に上がるので見抜ける ——素の直方体ではそうならない(本文の対照群)。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "11_controls.png",
-  "name": "controls",
-  "caption": "",
-  "shape": [
-   272,
-   757,
-   3
-  ],
-  "csv": "11_controls.csv",
-  "tsv": "11_controls.tsv"
  }
 ]
