@@ -155,36 +155,34 @@ def bead_params(yv: np.ndarray) -> dict:
 
 
 def _toes(p: dict):
-    """つま先の x 座標(左・右)と、そこでの高さ(溝の裾を含む)。"""
+    """つま先の x 座標(左・右)と、そこでの高さ(= 母材面の値)。"""
     xl = -p["L1"][:, None] * CL
     xr = p["L2"][:, None] * CR
-    nl0 = (p["d1"][:, None] / CL) * np.exp(-(UC_OFF_L * CL) ** 2 / (2 * UC_SIG_L ** 2))
-    nr0 = (p["d2"][:, None] / CR) * np.exp(-(UC_OFF_R * CR) ** 2 / (2 * UC_SIG_R ** 2))
-    return xl, xr, TL * xl - nl0, -TR * xr - nr0
+    return xl, xr, TL * xl, -TR * xr
 
 
 def profile_h(x: np.ndarray, p: dict) -> np.ndarray:
-    """断面の真値 h(x) [mm] を (n_y, n_x) で返す。**閉形式・連続**。
+    """断面の真値 h(x) [mm] を (n_y, n_x) で返す。**閉形式・C¹ 連続**。
 
-    母材面(左 53 度 / 右 37 度)+ 両つま先の外側のガウス溝 + つま先どうしを
-    結ぶ弦に放物線の凸みを載せた溶接面。溶接面の端点は**溝を掘ったあとの
-    高さ**に合わせてあるので、つま先で段差が出ない(溝の中心はつま先から
-    %.1f mm 外なので、つま先まで戻ると溝はほぼ埋まっている)。
+    母材面(左 53 度 / 右 37 度)+ 両つま先の外側の溝(アンダーカット)+
+    つま先どうしを結ぶ弦に放物線の凸みを載せた溶接面。
+
+    ★溝は**有限台の sin²**(幅 UC_W、つま先から外側へ)にしてある。ガウスに
+    すると裾がつま先まで残り、「母材面から TAU 以内の点」というつま先の規則が
+    溝に飲まれて脚長が数 mm 外へ飛ぶ(最初にガウスで書いて踏んだ)。sin² なら
+    つま先で値も傾きもちょうど 0 で、**深さの真値は台の中央でぴったり d**。
     """
     xg = np.asarray(x, np.float64)[None, :]
     xl, xr, zl, zr = _toes(p)
     base = np.where(xg <= 0.0, TL * xg, -TR * xg)
-    nl = (p["d1"][:, None] / CL) * np.exp(
-        -((xg - (xl - UC_OFF_L * CL)) ** 2) / (2 * UC_SIG_L ** 2))
-    nr = (p["d2"][:, None] / CR) * np.exp(
-        -((xg - (xr + UC_OFF_R * CR)) ** 2) / (2 * UC_SIG_R ** 2))
+    ul = np.clip((xl - xg) / UC_W_L, 0.0, 1.0)
+    ur = np.clip((xg - xr) / UC_W_R, 0.0, 1.0)
+    nl = (p["d1"][:, None] / CL) * np.sin(np.pi * ul) ** 2
+    nr = (p["d2"][:, None] / CR) * np.sin(np.pi * ur) ** 2
     outer = base - np.where(xg < xl, nl, 0.0) - np.where(xg > xr, nr, 0.0)
     s = (xg - xl) / (xr - xl)
     face = zl + s * (zr - zl) + 4.0 * p["cv"][:, None] * s * (1.0 - s)
     return np.where((xg >= xl) & (xg <= xr), face, outer)
-
-
-profile_h.__doc__ = profile_h.__doc__ % UC_OFF_L
 
 
 def design_quantities(p: dict) -> dict:
