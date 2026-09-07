@@ -786,7 +786,8 @@ def section_sweeps() -> dict:
     rh = half_radius(SOURCES[1][1], SOURCES[1][2], SOURCES[1][3], 13.0)
     print("   予測: 軸受の高温域の半値半径は %.1f mm。画素ピッチがこれを超えると" % rh)
     print("         面積積分で峰がならされ、**広がり(t_spread)が測れなくなる**。")
-    out["pitch"] = sweep("sweep_pixel_pitch", (1, 2, 4, 8, 16, 24), "pitch", ("t",),
+    out["pitch"] = sweep("sweep_pixel_pitch", (1, 2, 4, 8, 16, 32, 48), "pitch",
+                         ("t",), THR_FEATS,
                          "画素ピッチ [mm]", "熱画像の画素を粗くする",
                          "軸受(局所)と潤滑不良(全体)を分けているのは広がりだけ。",
                          fmt="%8.0f")
