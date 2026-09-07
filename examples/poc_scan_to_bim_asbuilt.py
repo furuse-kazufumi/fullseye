@@ -904,17 +904,24 @@ def section_maps(alignres: dict, zero: dict, seed: int = SEED) -> dict:
     splay0 = 0.5 * (m0["wy1"] - m0["wy0"])
     print("   誤差ゼロの建物を同じ手順で測ると: 壁の傾き %+.2f mrad / 開き %+.2f mrad /"
           % (1000 * rack0, 1000 * splay0))
-    print("     床の勾配 %+.2f mrad / 天井の勾配 %+.2f mrad / 床の反り PV %.2f mm /"
-          % (1000 * m0["floor_sx"], 1000 * m0["ceil_sx"], 1000 * m0["floor_pv"]))
+    print("     床の勾配 %+.2f mrad / 天井の勾配 %+.2f mrad / 床の平面度 PV %.2f mm"
+          " (RMS %.2f mm) /"
+          % (1000 * m0["floor_sx"], 1000 * m0["ceil_sx"], 1000 * m0["floor_pv"],
+             1000 * m0["floor_rms"]))
     print("     柱の半径 %+.2f / %+.2f mm。**これが偽の施工誤差の大きさ**。"
           % (1000 * (m0["col0"] - COL_R), 1000 * (m0["col1"] - COL_R)))
+    print("   ★平面度 PV は許容 ±%.1f mm に対して %.2f mm —— 完全に平らな床が"
+          "許容の %.0f %% を雑音だけで使う。" % (TOL["flatness"], 1000 * m0["floor_pv"],
+                                                100 * 1000 * m0["floor_pv"] / TOL["flatness"]))
     d0 = design_dev(p0, e0)
-    print("   偽の偏差の大きさ: RMS %.2f mm / 95 %% %.2f mm / 99.9 %% %.1f mm"
-          % (1000 * np.sqrt(np.nanmean(d0 ** 2)),
+    print("   偽の偏差の大きさ: 中央 %.2f mm / 95 %% %.2f mm / 99.9 %% %.1f mm"
+          % (1000 * np.nanmedian(np.abs(d0)),
              1000 * np.nanpercentile(np.abs(d0), 95),
              1000 * np.nanpercentile(np.abs(d0), 99.9)))
-    print("     (最大 %.0f mm は柱の影の混合画素 —— 数 m 後ろの壁まで飛ぶ。"
-          "分布の裾は別に数える。)" % (1000 * np.nanmax(np.abs(d0))))
+    print("     (RMS は %.2f mm だが、最大 %.0f mm の混合画素が裾を支配していて"
+          "要約に使えない。" % (1000 * np.sqrt(np.nanmean(d0 ** 2)),
+                                1000 * np.nanmax(np.abs(d0))))
+    print("      柱の影の混合画素は数 m 後ろの壁まで飛ぶ —— 裾は別に数える。)")
     return {"false": m0, "rack0": rack0, "splay0": splay0}
 
 
