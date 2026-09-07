@@ -925,8 +925,11 @@ def section_gsd() -> dict:
     print("\n  ★予測と実測の比は %.2f〜%.2f(閉形式が %d 点すべてで当たる)。"
           % (min(ratios), max(ratios), len(ratios)))
     print("  しきい値 %.1f K を割る GSD の予測は %.0f mm ——"
-          "セル 1 枚(%.0f mm)の %.2f 倍で、**セルが写っていても足りない**。"
-          % (THETA, 1e3 * g_crit, 1e3 * CELL, g_crit / CELL))
+          "セル 1 枚(%.0f mm)が %.1f 画素に写る細かさでも足りない。"
+          % (THETA, 1e3 * g_crit, 1e3 * CELL, CELL / g_crit))
+    print("  ★「セルが 1 画素に写れば見える」は嘘。熱源はセルより小さい"
+          "(半径 %.0f mm)ので、要るのは**熱源の径に対する** GSD。"
+          % (1e3 * R_HOT))
 
     figs.save_plot("gsd_sweep",
                    [("予測(閉形式)", xs, pred), ("実測", xs, meas),
