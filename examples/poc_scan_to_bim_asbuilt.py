@@ -784,6 +784,7 @@ def section_zero_point(seed: int = SEED) -> dict:
     print("2) ゼロ点 —— 点群全体を BIM へ一括 ICP して平均距離を 1 個出す")
     print("=" * 78)
     rows, keep = [], {}
+    bp, _ = bim_samples(0.07)
     for tag, sscale, msig in (("(a) 誤差ゼロ + 測定の癖", 0.0, 1.0),
                               ("(b) 施工誤差だけ(測定は理想)", 1.0, 0.0),
                               ("(c) 両方(実際に測る条件)", 1.0, 1.0)):
@@ -792,12 +793,16 @@ def section_zero_point(seed: int = SEED) -> dict:
                  reg_mrad=REG_MRAD * msig, reg_mm=REG_MM * msig)
         p = align(s["P"], "global", seed=seed)
         d = np.abs(design_sdf(p))
+        # もう 1 つの「1 個の数字」—— 設計面の標本との対称 Chamfer 距離
+        ch = float(L.chamfer_distance(np.asarray(L.voxel_grid_downsample(p, 0.06)), bp))
         rows.append([tag, "%.2f" % (1000 * d.mean()), "%.2f" % (1000 * np.median(d)),
-                     "%.2f" % (1000 * np.percentile(d, 95))])
-        print("   %-30s 平均 %5.2f mm / 中央 %5.2f mm / 95 %% %6.2f mm"
-              % (tag, 1000 * d.mean(), 1000 * np.median(d), 1000 * np.percentile(d, 95)))
-        keep[tag[1]] = (surf, s, p, d)
+                     "%.2f" % (1000 * np.percentile(d, 95)), "%.2f" % (1000 * ch)])
+        print("   %-30s 平均 %5.2f mm / 中央 %5.2f mm / 95 %% %6.2f mm / Chamfer %5.2f mm"
+              % (tag, 1000 * d.mean(), 1000 * np.median(d),
+                 1000 * np.percentile(d, 95), 1000 * ch))
+        keep[tag[1]] = (surf, s, p, d, ch)
     gap = float(rows[2][1]) - float(rows[0][1])
+    gap_ch = float(rows[2][4]) - float(rows[0][4])
     print("\n   ★施工誤差のあるなしで平均距離は %.2f mm しか動かない。" % gap)
     print("     同じ点群を要素ごとに見ると柱の半径 +6.5 mm、床の反り 12 mm の"
           "不良が入っている(節 5)。")
