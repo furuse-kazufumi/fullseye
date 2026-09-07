@@ -1098,9 +1098,12 @@ def section_scene_figures() -> None:
     S = trigger_distance()
     band = np.clip(dm, 0.0, 1.6)
     band[np.abs(dm - S) < 0.02] = 0.0          # S の等高線を黒く抜く
-    figs.save("map_distance_slice", band.T,
-              "危険源までの距離場を指先の高さ %.2f m で切った断面 [m]。"
-              "黒い輪 = 必要分離距離 S = %.3f m の等高線。" % (z_h, S))
+    band[np.abs(dm - S_GEOM) < 0.02] = 0.0     # S_geom の等高線も
+    big = np.repeat(np.repeat(band.T, 2, 0), 2, 1)
+    figs.save("map_distance_slice", big,
+              "危険源(リンク + 基台)までの距離場を指先の高さ %.2f m で切った断面 [m]。"
+              "横 = x [-0.9, 2.6] m、縦 = y [-1.1, 1.1] m。黒い 2 本の輪は内側から"
+              "S_geom = %.3f m と停止判定 S = %.3f m の等高線。" % (z_h, S_GEOM, S))
 
     # 3-D 描画 + 最短距離の注記
     try:
