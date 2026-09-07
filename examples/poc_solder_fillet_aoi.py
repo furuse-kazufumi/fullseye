@@ -805,18 +805,21 @@ def section_shift(v_thr: float) -> dict:
         htrue.append(fR["h"])
         hest.append(float(np.mean(hs)))
         pred_vis.append(vis)
+        pred_green.append(green)
         truth_ins.append(sc["kind"] == "insufficient")
-        print("   %5.2f     %5.2f   %-12s  %.4f    %5.1f°    %-5s         %.4f     %5.0f %%"
-              % (dx, TOE - dx, fR["regime"], fR["h"], fR["tilt_toe"], "見える" if vis else "暗い",
-                 hest[-1], frac[-1]))
+        print("   %5.2f     %5.2f   %-12s  %.4f    %5.1f°    %-4s/%-4s       %.4f     %5.0f %%"
+              % (dx, TOE - dx, fR["regime"], fR["h"], fR["tilt_toe"], "有" if green else "無",
+                 "有" if vis else "無", hest[-1], frac[-1]))
     frac = np.asarray(frac)
-    pred_cliff = next((float(s) for s, p in zip(shifts, pred_vis) if not p), None)
+    pred_cliff = next((float(s) for s, p in zip(shifts, pred_green) if not p), None)
+    dark_cliff = next((float(s) for s, p in zip(shifts, pred_vis) if not p), None)
     meas_cliff = next((float(s) for s, fr in zip(shifts, frac) if fr >= 50), None)
     truth_cliff = next((float(s) for s, t in zip(shifts, truth_ins) if t), None)
     i_p = int(np.argmax(shifts >= pred_cliff)) if pred_cliff is not None else 0
-    print("\n  ★予測の崖(爪先の傾きが %.0f° を超えて色帯が消える)Δx = %.2f mm、"
-          "実測の反転(不足判定 ≥ 50 %%)Δx = %s mm。" % (TILT_MAX, pred_cliff, "%.2f" % meas_cliff if meas_cliff is not None else "無し"))
-    print("     そこで真値の h は %.3f → %.3f mm と**上がって**いる(面が立つだけ)。"
+    print("\n  ★予測の崖(爪先の傾きが 30° を超えて緑帯が消え、E2 の「爪先 = θ」が破れる)Δx = %.2f mm、"
+          "実測の反転(不足判定 ≥ 50 %%)Δx = %s mm。" % (pred_cliff, "%.2f" % meas_cliff if meas_cliff is not None else "無し"))
+    print("     フィレット全体が暗部に落ちる(爪先 > %.0f°)のは Δx = %.2f mm。" % (TILT_MAX, dark_cliff))
+    print("     崖の手前で真値の h は %.3f → %.3f mm と**上がって**いる(面が立つだけ)。"
           % (htrue[0], htrue[i_p]))
     print("     真値が本当に不足になるのは Δx = %s mm。その間は全て「良品を不足と言う」誤判定。"
           % ("%.2f" % truth_cliff if truth_cliff is not None else "範囲内に無し"))
