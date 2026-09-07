@@ -105,6 +105,11 @@ def to_volume(a):
     return np.ascontiguousarray(np.asarray(a).transpose(2, 1, 0))
 
 
+def _up(a, ky=2, kx=2):
+    """図のパネルを整数倍に拡大する(パネルが細いと題が入らない)。"""
+    return np.repeat(np.repeat(np.asarray(a, float), ky, axis=0), kx, axis=1)
+
+
 def _xz_field(f):
     """``(nx, nz)`` の面内の場を格子順に放送できる ``(nx, 1, nz)`` にする。"""
     return np.asarray(f)[:, None, :]
