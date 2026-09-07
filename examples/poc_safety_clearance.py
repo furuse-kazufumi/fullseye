@@ -731,11 +731,17 @@ def section_sweep() -> dict:
                     ["条件", "見えた面", "過大評価 平均 m", "最大 m",
                      "見落とし", "誤検知"], occ_rows,
                     title="崖は遮蔽にある(点密度でも更新間隔でもない)")
-    print("\n  ★崖は遮蔽にある: 点密度を 16 倍疎にしても見落としは %.1f -> %.1f %%、"
-          "\n     更新間隔を 4 倍にしても %.1f -> %.1f %%。ところが遮蔽なし -> 1 台で"
-          " %.1f -> %.1f %%。"
-          % (d_miss[0], d_miss[-1], lat_miss[0], lat_miss[-1],
-             occ_miss[0], occ_miss[2]))
+    print("\n  ★3 つとも崖を持つが**種類が違う**。")
+    print("   1) 片側か両側か: 点密度と遮蔽は誤検知を 1 件も出さない"
+          "(疎な標本も見えない点も、必ず『もっと遠い』としか言えない)。"
+          "\n      更新間隔だけは誤検知も出す(%.1f %%) —— 遅れは人が遠ざかる向きにも効くから。"
+          % lat_fa[-1])
+    print("   2) 買い戻せるか: 点密度は %d 点(標本間隔 %.3f m)まで戻せば %.1f %% に下がる。"
+          "\n      遮蔽は**点を増やしても消えない** —— 800 点で %.1f %%、"
+          "100 点で %.1f %%(遮蔽なしの 100 点は %.1f %%)。"
+          "\n      効くのは 2 台目だけ(%.1f -> %.1f %%)。"
+          % (dens[1], np.sqrt(area / dens[1]), d_miss[1],
+             occ_miss[2], occ_miss[3], d_miss[-1], occ_miss[2], occ_miss[1]))
     return {"dens": dens, "d_miss": d_miss, "d_bias": d_bias,
             "occ_rows": occ_rows, "occ_miss": occ_miss, "lat_miss": lat_miss,
             "wrong_by_cond": wrong_by_cond,
