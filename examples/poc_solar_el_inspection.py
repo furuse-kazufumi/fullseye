@@ -314,7 +314,8 @@ def flatten(img: np.ndarray, use_fit: bool = True) -> tuple[np.ndarray, tuple]:
     rows = np.arange(img.shape[0])
     span = (rows >= FINGER_Y0 - PITCH / 2) & (rows <= FINGER_Y0 + (N_FINGER - 1) * PITCH + PITCH / 2)
     a, R = fit_vignette(env, valid=np.repeat(span[:, None], img.shape[1], axis=1))
-    v = np.asarray(fs.apply(np.ones_like(img), "aug_vignette", a=a, b=(R - 0.35) / 1.15))
+    b = min(1.0, max(0.0, (R - 0.35) / 1.15))       # 格子探索の端 R=1.5 で 1+1e-16 になる
+    v = np.asarray(fs.apply(np.ones_like(img), "aug_vignette", a=a, b=b))
     return img / np.maximum(v, 1e-3), (a, R)
 
 

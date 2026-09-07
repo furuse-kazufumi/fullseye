@@ -24,7 +24,17 @@
   "tsv": "02_indicators.tsv"
  },
  {
-  "file": "03_texture_cliff.png",
+  "file": "03_width_cliff.png",
+  "name": "width_cliff",
+  "caption": "再現率の崖は 0.5 px より下。幅の推定は細いほど太る(ぼけの半値幅が下限)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_texture_cliff.png",
   "name": "texture_cliff",
   "caption": "ひびの深さ 0.55。予想の境目 c ≈ 0.18 は来なかった。",
   "shape": [
@@ -34,7 +44,7 @@
   ]
  },
  {
-  "file": "04_rake_bias.png",
+  "file": "05_rake_bias.png",
   "name": "rake_bias",
   "caption": "光源は左。影側が暗くなるので暗画素マスクが左に伸びる。",
   "shape": [
@@ -44,7 +54,7 @@
   ]
  },
  {
-  "file": "05_blur_cell_limit.png",
+  "file": "06_blur_cell_limit.png",
   "name": "blur_cell_limit",
   "caption": "ぼけが大きいほど小さいセルから消える。目安は 径 < 5σ + 幅。",
   "shape": [
@@ -52,11 +62,11 @@
    502,
    3
   ],
-  "csv": "05_blur_cell_limit.csv",
-  "tsv": "05_blur_cell_limit.tsv"
+  "csv": "06_blur_cell_limit.csv",
+  "tsv": "06_blur_cell_limit.tsv"
  },
  {
-  "file": "06_scene.png",
+  "file": "07_scene.png",
   "name": "scene",
   "caption": "絵の具の色斑 + ニスの光沢むら + ぼけ + 雑音。斜光は溝の片側を影にする。",
   "shape": [
@@ -66,7 +76,7 @@
   ]
  },
  {
-  "file": "07_map_stages.png",
+  "file": "08_map_stages.png",
   "name": "map_stages",
   "caption": "分岐点 73 個、セル 53 個を検出。",
   "shape": [
@@ -76,7 +86,7 @@
   ]
  },
  {
-  "file": "08_map_cells.png",
+  "file": "09_map_cells.png",
   "name": "map_cells",
   "caption": "縁に触れるセルは統計から外す(真値も同じ規約)。",
   "shape": [
@@ -86,7 +96,7 @@
   ]
  },
  {
-  "file": "09_degree_hist.png",
+  "file": "10_degree_hist.png",
   "name": "degree_hist",
   "caption": "次数 4 割合 真値 0.83 / 拡散光 0.64 / 斜光 0.73",
   "shape": [
@@ -96,7 +106,7 @@
   ]
  },
  {
-  "file": "10_cell_diameter_cdf.png",
+  "file": "11_cell_diameter_cdf.png",
   "name": "cell_diameter_cdf",
   "caption": "乾燥 18.0 px / 経年 45.2 px(真値の平均)。",
   "shape": [

@@ -1246,4 +1246,10 @@ furuse.work へ誘導する」。
   足すこと。止まった Agent の docstring は改訂途中で、**数字がログと食い違う**(骨梁: 117.6 vs
   104.8 µm、溶接: 等級誤り 90 % → 23 %)。取り込む前に「キャプションの数字が実行ログに
   存在するか」を機械で照合する(scratchpad の check を tools 化する価値あり)。
+- ★**`git add -A` は走っている Agent の書きかけを巻き込む**(2026-09-07、master が赤に)。
+  第 3 バッチを commit した時点で、第 4 バッチの Agent が書いている途中の
+  `examples/poc_fresco_craquelure.py` が index に入り、`examples2d` 未登録のまま push された
+  (`test_examples2d` と `test_opdocs` が CI で落ちた)。auto-commit hook も同じ形で書きかけを拾う。
+  **対策**: PoC バッチの commit は `git add` に**明示パス**を並べる(`examples/poc_<id>.py`、
+  `docs/articles/assets/poc/poc_<id>/`、生成物の docs)。あるいは Agent が全部終わってから add する。
 
