@@ -26,7 +26,7 @@ world の点群 (N,3) と、その点がどのセンサから見えたか)を実
    過大評価の平均 +0.575 m、見落とし **60/66 (90.9 %)**。高さを捨てると
    「伸ばした手」だけでなく「上体の前傾」も消える。
 3. ★★**見えている部位だけで測ると危険が消える**。全表面が見えれば推定は
-   真値に張り付く(平均 +0.007 m、見落とし 0 件)。ところが頭上センサ 1 台では
+   真値に張り付く(平均 +0.007 m、見落とし 0 件)。ところが背面センサ 1 台では
    **危険フレームの 33.3 % で「いちばん近い部位が 1 点も見えていない」**。
    そのとき推定は次に近い部位(胴)に飛ぶので、過大評価は平均 +0.062 m /
    最大 **+0.334 m**、見落とし **9/66 (13.6 %)**。**遮蔽は雑音と違って
@@ -230,8 +230,10 @@ def human_pose(t: float, y_h: float = 0.22, t0: float = REACH_T0,
     w_r = e_r + FARM_L * u2
     f_r = w_r + HAND_L * u2
     s_l = n + np.array([0.0, 0.19, -0.03])               # 左腕は下げたまま
+    dy = np.array([0.0, TORSO_HALF_W, 0.0])
     return [
-        ("胴", p, n, R_TORSO),
+        ("胴(右)", p - dy, n - dy, R_TORSO),
+        ("胴(左)", p + dy, n + dy, R_TORSO),
         ("頭", n + np.array([0.0, 0.0, 0.06]), n + np.array([0.0, 0.0, 0.06 + HEAD_H]), R_HEAD),
         ("右上腕", s_r, e_r, R_UARM),
         ("右前腕", e_r, w_r, R_FARM),
@@ -385,7 +387,7 @@ def frame(t: float, y_h: float, t0: float, rng, n_surf: int = N_SURF) -> dict:
     mach = machine_pose(t)
     d_true, part, pa, pb, per_part = true_clearance(human, mach)
     P, N, K, area = human_surface(human, n_surf)
-    v_top = visible_from(P, N, SENSOR_TOP, human, mach)
+    v_top = visible_from(P, N, SENSOR_BACK, human, mach)
     v_cor = visible_from(P, N, SENSOR_COR, human, mach)
     return {"t": t, "human": human, "mach": mach, "d_true": d_true,
             "part": part, "pa": pa, "pb": pb, "per_part": per_part,
@@ -394,9 +396,9 @@ def frame(t: float, y_h: float, t0: float, rng, n_surf: int = N_SURF) -> dict:
 
 
 def _sensor_of(vis_top, vis_cor):
-    """点ごとに「どちらのセンサから見た距離か」(頭上を優先)。"""
+    """点ごとに「どちらのセンサから見た距離か」(背面カメラを優先)。"""
     S = np.repeat(np.asarray(SENSOR_COR)[None], len(vis_top), axis=0)
-    S[vis_top] = np.asarray(SENSOR_TOP)
+    S[vis_top] = np.asarray(SENSOR_BACK)
     return S
 
 
@@ -496,7 +498,7 @@ def section_timeseries() -> dict:
     S = required_separation()
 
     est = {"重心 1 点": [], "足元 1 点": [], "全表面(遮蔽なし)": [],
-           "頭上 1 台": [], "頭上 + 隅 2 台": []}
+           "背面 1 台": [], "背面 + 隅 2 台": []}
     hidden_nearest = 0
     n_haz = 0
     for f in frames:
@@ -504,8 +506,8 @@ def section_timeseries() -> dict:
         est["重心 1 点"].append(estimate_centroid(f, allv, rng, "centroid"))
         est["足元 1 点"].append(estimate_centroid(f, allv, rng, "feet"))
         est["全表面(遮蔽なし)"].append(estimate(f, allv, rng))
-        est["頭上 1 台"].append(estimate(f, f["v_top"], rng))
-        est["頭上 + 隅 2 台"].append(estimate(f, f["v_top"] | f["v_cor"], rng))
+        est["背面 1 台"].append(estimate(f, f["v_top"], rng))
+        est["背面 + 隅 2 台"].append(estimate(f, f["v_top"] | f["v_cor"], rng))
         if f["d_true"] < S:
             n_haz += 1
             k = int(np.argmin(f["per_part"]))          # いちばん近い部位
@@ -519,8 +521,8 @@ def section_timeseries() -> dict:
     print("\n  必要分離距離 S = %.3f m(Z_d = %.3f m)。危険フレーム %d / %d"
           % (S, ZD_BASE, int(haz.sum()), len(ts)))
     print("  推定器                過大評価 平均 / 最大 [m]   見落とし        誤検知")
-    for name in ("重心 1 点", "足元 1 点", "全表面(遮蔽なし)", "頭上 1 台",
-                 "頭上 + 隅 2 台"):
+    for name in ("重心 1 点", "足元 1 点", "全表面(遮蔽なし)", "背面 1 台",
+                 "背面 + 隅 2 台"):
         e = est[name] - d_true
         miss = int(np.count_nonzero(haz & (est[name] >= S)))
         fa = int(np.count_nonzero(~haz & (est[name] < S)))
@@ -530,7 +532,7 @@ def section_timeseries() -> dict:
         print("   %-18s  %+7.3f / %+7.3f      %-16s %s"
               % (name, e.mean(), e.max(), rows[-1][3], rows[-1][4]))
     print("\n  ★危険フレームのうち **%d / %d (%.1f %%)** で、いちばん近い部位が"
-          " 頭上センサから 1 点も見えていない。"
+          " 背面センサから 1 点も見えていない。"
           % (hidden_nearest, n_haz, 100 * hidden_nearest / max(1, n_haz)))
     print("     遮蔽は雑音と違って**片側にしか出ない** —— 見えない点は必ず"
           "「もっと遠い」と報告される。")
@@ -542,7 +544,7 @@ def section_timeseries() -> dict:
     figs.save_plot("frames_clearance",
                    [("真の最小分離距離", ts, d_true),
                     ("重心 1 点(ゼロ点)", ts, est["重心 1 点"]),
-                    ("頭上 1 台(遮蔽あり)", ts, est["頭上 1 台"]),
+                    ("背面 1 台(遮蔽あり)", ts, est["背面 1 台"]),
                     ("必要分離距離 S", ts, np.full_like(ts, S))],
                    xlabel="時刻 [s]", ylabel="分離距離 [m]",
                    title="人が近づき手を伸ばす 6 秒間",
@@ -582,7 +584,7 @@ def section_sweep() -> dict:
             m = machine_pose(t)
             dtr, _p, _a, _b, per = true_clearance(h, m)
             P, N, K, _ar = human_surface(h, N_SURF)
-            vt = visible_from(P, N, SENSOR_TOP, h, m)
+            vt = visible_from(P, N, SENSOR_BACK, h, m)
             vc = visible_from(P, N, SENSOR_COR, h, m)
             frames.append({"t": t, "human": h, "mach": m, "d_true": dtr,
                            "per_part": per, "P": P, "N": N, "K": K,
@@ -594,7 +596,7 @@ def section_sweep() -> dict:
 
     # --- (i) 点密度 ------------------------------------------------------- #
     dens = (1600, 800, 400, 200, 100)
-    print("\n  (i) 点密度(頭上 1 台)")
+    print("\n  (i) 点密度(背面 1 台)")
     print("      点数   標本間隔 [m]  予想の過大評価 [m]  実測 [m]  見落とし   誤検知")
     d_rows, d_miss, d_fa, d_bias = [], [], [], []
     for n in dens:
@@ -615,9 +617,9 @@ def section_sweep() -> dict:
     print("\n  (ii) 遮蔽(点密度 800 で固定)")
     occ_rows, occ_miss, occ_fa = [], [], []
     conds = [("(a) 遮蔽なし", lambda f: np.ones(len(f["P"]), bool)),
-             ("(b) 頭上 + 隅 2 台", lambda f: f["v_top"] | f["v_cor"]),
-             ("(c) 頭上 1 台", lambda f: f["v_top"]),
-             ("(c') 頭上 1 台 + 疎(100 点)", lambda f: f["v_top"])]
+             ("(b) 背面 + 隅 2 台", lambda f: f["v_top"] | f["v_cor"]),
+             ("(c) 背面 1 台", lambda f: f["v_top"]),
+             ("(c') 背面 1 台 + 疎(100 点)", lambda f: f["v_top"])]
     for i, (name, sel) in enumerate(conds):
         dd = 100 if i == 3 else 800
         e = np.array([estimate(f, sel(f), rng, density=dd) for f in frames])
@@ -646,7 +648,7 @@ def section_sweep() -> dict:
               % (name, hid, nh, 100 * hid / max(1, nh)))
 
     # --- (iii) 更新間隔 ---------------------------------------------------- #
-    print("\n  (iii) 更新間隔(頭上 1 台、点密度 800。古い推定を保持する)")
+    print("\n  (iii) 更新間隔(背面 1 台、点密度 800。古い推定を保持する)")
     e_full = np.array([estimate(f, f["v_top"], rng, density=800) for f in frames])
     e_full = np.where(np.isfinite(e_full), e_full, 10.0)
     nT = len(ts)
@@ -707,7 +709,7 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
 
     # 胴などの「本体」の推定(手の位置によらない)
     Pb, Nb, Kb, _ar = human_surface(body, 900)
-    vb = visible_from(Pb, Nb, SENSOR_TOP, body, mach)
+    vb = visible_from(Pb, Nb, SENSOR_BACK, body, mach)
     d_body_est = float(np.min(hazard_sdf(Pb[vb], mach))) if vb.any() else np.inf
     d_body_true = float(np.min(hazard_sdf(Pb, mach)))
 
@@ -721,7 +723,7 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
         pts = sph + c
         dt_ = float(np.min(hazard_sdf(pts, mach)))
         d_hand_true[i] = dt_
-        v = visible_from(pts, nsph, SENSOR_TOP, body, mach, k_ray=5)
+        v = visible_from(pts, nsph, SENSOR_BACK, body, mach, k_ray=5)
         vis_frac[i] = v.mean()
         d_hand_est[i] = float(np.min(hazard_sdf(pts[v], mach))) if v.any() else np.inf
 
@@ -751,12 +753,12 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
                     "過大評価 [m](0〜0.6 で切った)",
                     "危険なのに安全と出る領域"],
                    ncols=3,
-                   title="見落としの地図(頭上センサ 1 台、指先の高さ %.2f m の水平面)" % z_h,
+                   title="見落としの地図(背面センサ 1 台、指先の高さ %.2f m の水平面)" % z_h,
                    caption="横 = x [%.1f, %.1f] m、縦 = y [%.1f, %.1f] m。"
                            "白い帯はロボットのリンクが落とす影。"
                            % (xs[0], xs[-1], ys[0], ys[-1]))
     figs.save("map_visibility", vis_map.T,
-              "手の表面のうち頭上センサから見えた割合。0 の帯 = リンクと治具台の影。")
+              "手の表面のうち背面センサから見えた割合。0 の帯 = リンクと治具台の影。")
     return {"miss_area": float(cell * np.count_nonzero(miss)),
             "haz_area": float(cell * np.count_nonzero(true_map < S)),
             "over_max": float(np.max(over[np.isfinite(over)])),
