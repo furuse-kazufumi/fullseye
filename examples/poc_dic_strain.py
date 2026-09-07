@@ -234,12 +234,22 @@ def section2_zero_point(sp, ref):
     cur = sp.render(lambda x, y: x + 0.37, lambda x, y: y)
     print("  %-6s %10s %10s %10s" % ("手法", "偏り px", "散らばり px", "ゼロ点比"))
     base = 0.37
+    ratio, bias = {}, {}
     for name, est in ESTIMATORS:
         u, _ = est(ref, cur)
         m, s = _stat(u[_SL] - 0.37)
         rms = float(np.sqrt(m * m + s * s))
+        if name != "zero":
+            ratio[name] = base / max(rms, 1e-12)
+            bias[name] = m
         print("  %-6s %10.4f %10.4f %10s"
               % (name, m, s, "—" if name == "zero" else "%.0f 倍" % (base / max(rms, 1e-12))))
+    # ★所見を固定する: 3 つとも「動いていない」と答えるだけのゼロ点に**桁で勝つ**。
+    #   1 つでも 10 倍を割ったら、その推定器はこの場面では使い物になっていない。
+    assert min(ratio.values()) > 10.0, ratio
+    #   piv は 2 桁上回る(10 節 (a) の看板)。実測 167 倍なので下限は広めに取る。
+    assert ratio["piv"] > 100.0, ratio
+    return ratio, bias
 
 
 def section3_subpixel(sp, ref):

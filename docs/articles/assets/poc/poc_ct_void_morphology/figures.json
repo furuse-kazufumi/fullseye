@@ -62,5 +62,15 @@
   ],
   "csv": "06_proxy_table.csv",
   "tsv": "06_proxy_table.tsv"
+ },
+ {
+  "file": "07_voxel_cliff_fraction.png",
+  "name": "voxel_cliff_fraction",
+  "caption": "位相 3 通りの平均。線形の被覆率で積むと体積は保存されるので、合否の数字は解像できなくなっても出続ける(ただし位相の運で ±1.36 ポイント振れる)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
