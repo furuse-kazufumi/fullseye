@@ -84,6 +84,11 @@ _EXTRA_SORTS = ("contour", "points", "signal", "video", "qimage", "cimage",
                 "keypoints", "any")
 
 
+def _opb():
+    import op_probe
+    return op_probe
+
+
 def _inputs(maker, structured=True):
     g = maker()
     out = {
