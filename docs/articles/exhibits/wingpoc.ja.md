@@ -1,4 +1,4 @@
-<!-- tools/gen_wingpoc_gallery.py が自動生成(単一真実源 = docs/articles/exhibits/poc_captions.json + 各 PoC の figures.json)。手で編集しない。 -->
+<!-- generated -->
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
