@@ -649,6 +649,7 @@ def _mid_product(scene: dict, target: float = 300.0) -> tuple[int, int]:
 # 6. 対照群 —— 均一 / 分布あり / 分布 + 扉                                       #
 # --------------------------------------------------------------------------- #
 NEAR_M = 1.0            # 「そのロガーが代表する荷」の半径 [m]
+WALL_FIX = 0.25         # 対照群 (d): 壁からの侵入を 1/4 に(積み付けを直す)
 
 
 def section_controls(layout: dict) -> dict:
