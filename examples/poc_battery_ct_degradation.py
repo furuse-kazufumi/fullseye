@@ -554,15 +554,14 @@ def _fft_pitch(t_mm, values) -> float:
 def flatness(vol: np.ndarray, y_target: float, spacing=SPACING) -> dict:
     """層の平面度 —— 1 枚の界面を面で測り、``fit_plane_3d`` の残差 RMS を返す。"""
     pts = []
-    for zc, xc in _probe_points():
-        thr, _, _ = _edge_threshold(vol, spacing, zc, xc)
-        p0 = _vidx(zc, CAV_Y[0] + 0.02, xc)
-        p1 = _vidx(zc, CAV_Y[1] - 0.02, xc)
+    for zc, xc, span, thr, _c, _pr in _stack_probes(vol, spacing):
+        p0 = _vidx(zc, span[0], xc, spacing)
+        p1 = _vidx(zc, span[1], xc, spacing)
         ed = L.vol_edge_probe(vol, p0, p1, sigma=1.2, threshold=thr,
                               spacing=spacing, polarity="positive")
         if not ed:
             continue
-        y = np.asarray([CAV_Y[0] + 0.02 + e["t_mm"] for e in ed])
+        y = np.asarray([span[0] + e["t_mm"] for e in ed])
         j = int(np.argmin(np.abs(y - y_target)))
         if abs(y[j] - y_target) < 0.5 * PITCH:
             pts.append((xc, float(y[j]), zc))          # 点の op は (x, y, z)

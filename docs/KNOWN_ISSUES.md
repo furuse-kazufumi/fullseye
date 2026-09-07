@@ -1335,3 +1335,25 @@ furuse.work へ誘導する」。
   σ 2 → 10 mm で 0.81 → 8.49 %)。
 - 肉厚は 2 voxel 刻みに潰れる。「最大内接球なら 1 voxel 刻み」という予想は外れ、
   12 点すべてで侵食と同値だった(2 値格子では直径が量子化される)。
+
+### §41.13 torch が要らないのに必須だった 5 op / 合否を捨てていた門(2026-09-07 夜)
+
+CI の py3.10 / 3.12 は **torch を入れない**(サイズと時間。3.11 だけ入れる)。手元には
+torch があるので、**手元で緑・CI で赤**という一番たちの悪い形で出た。
+
+- **torch が要らないのに必須だった 5 op**。`icp_point2point_3d` / `icp_point2plane` /
+  `register_fpfh` / `match_phase_3d` / `polar_unwrap`(と同型の `cylinder_unwrap`)。
+  中身は cKDTree の最近傍・3x3 と 6x6 の線形代数・FFT・双線形補間で、**GPU の仕事が
+  1 つも無い**のに torch を掴んでいた(`register_fpfh` に至っては**返り値を包むためだけ**)。
+  すべて numpy / scipy に書き換え、torch があるときの返り値の型は据え置き
+  (`torch.Tensor`)、無ければ同じ値の numpy を返す。torch 版との差は実測で
+  R/t が 0、RMSE が 0、双線形は 6.0e-06 と 7.6e-06(float32 の丸めぶん)。
+- ★**門が合否を計算した直後に捨てていた**。`tests/test_poc_scripts_run.py` は
+  「exit 0 だが PASS を印字していない」を判定しておきながら **0 を返して**いたので、
+  すぐ下の `assert code == 0` を必ず通っていた。実測でこの穴に落ちていた PoC が
+  3 本(`poc_dic_strain` / `poc_photoelasticity` / `poc_thermography_ndt`)—— いずれも
+  **assert がゼロ・PASS 行なし**で、走ってはいるが何も検証していなかった。-2 を返すよう
+  直し、3 本には所見を固定する assert を入れる。
+- 手元で CI の条件を再現するには `tools/run_without_torch.py <script>`
+  (`importlib.util.find_spec("torch")` を None にし、meta_path でも実 import を塞ぐ)。
+  これで 77 本すべてを掃いて、上の 5 op を洗い出した。
