@@ -334,8 +334,8 @@ def section_peak_locking() -> dict:
 
     # fullseye の PIV 族が持つ「ピークロッキング」の指標をそのまま使う。
     # 真値の c0 と比べて読む(op の docstring がそう指示している)。
-    ef = np.concatenate(est_frac)
-    tf = np.concatenate(true_frac)
+    ef = np.asarray(est_frac)                     # (ずらし量, 境界) の 2-D
+    tf = np.asarray(true_frac)
     c0_est = fs.ledger.piv_peak_locking(np.stack([ef, ef]), bins=10)["c0"]
     c0_true = fs.ledger.piv_peak_locking(np.stack([tf, tf]), bins=10)["c0"]
     print("    小数部の偏り c0(fs.ledger.piv_peak_locking、一様なら 1 前後): "
