@@ -504,7 +504,7 @@ def inspect_image(img: np.ndarray, theta: float = THETA) -> dict:
         cs = cs[(cs >= 0) & (cs < NX)]
         seq = _mode_columns(cls[pr0:pr1, cs])
         x_of = FOV_X[0] + (cs + 0.5) * PX_MM
-        out[side] = _parse_profile(seq, x_of, theta)
+        out[side] = _parse_profile(seq, x_of, theta, xw[side])
         # 電極上面: 青(傾き < 15°)のはず。浮けば緑/赤/暗に変わる
         ex0, ex1 = ((xw["R"] - 0.27, xw["R"] - 0.03) if side == "R"
                     else (xw["L"] + 0.03, xw["L"] + 0.27))
