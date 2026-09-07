@@ -538,16 +538,19 @@ def section_part(ref: CadRef) -> dict:
         big = nominal_cloud(140000, seed=3)
         dv = defect_field(big["pts"], big["nrm"])["total"]
         vis = big["nrm"] @ VIEW > 0.10
+        S = 0.40
         figs.save_grid(
             "scene",
-            [render(big["pts"]), render(big["pts"], dv),
-             render(big["pts"][vis], dv[vis])],
+            [render(big["pts"], nrm=big["nrm"]),
+             render(big["pts"], dv, scale=S),
+             render(big["pts"][vis], dv[vis], scale=S)],
             ["公称形状(60x40x12 + ボス + フィレット + 穴 2)",
-             "真の偏差 [mm](青 = 足りない / 赤 = 余る)",
+             "真の偏差(だいだい = 足りない / 青 = 余る、±%.2f mm)" % S,
              "片側スキャンで見える面だけ(可視 %.0f %%)" % (100 * vis.mean())],
             title="CAD と実測の差分検査 —— 場面", ncols=3,
             signed=[False, True, True],
-            caption="偏差は法線方向の変位そのもの(構成で厳密)。")
+            caption="偏差は法線方向の変位そのもの(構成で厳密)。"
+                    "右端の帯が色と値の対応。")
     return {"area": a_closed, "vol": v_closed, "vol_mc": v_mc, "dev": d}
 
 
