@@ -1306,7 +1306,7 @@ def section_prism_and_crack(sc: dict) -> dict:
           "      雑音が 10 倍になる —— **薄まりと雑音は同じつまみの両端**。")
     return {"dx_all": dx_all, "dx_grd": dx_grd, "hw": hw_l, "pred": pred_l,
             "num": num_l, "need": need, "cam": cam_l, "fake_h": fake_h,
-            "ceil": ceil_x}
+            "ceil": ceil_x, "settle": settle_read}
 
 
 # --------------------------------------------------------------------------- #
