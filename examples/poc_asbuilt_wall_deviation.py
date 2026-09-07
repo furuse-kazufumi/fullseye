@@ -419,7 +419,7 @@ def section_plumb_square() -> dict:
                     ["組", "真値 mrad", "平面図の角 mrad", "3-D 二面角 mrad",
                      "判定(許容 %.0f mrad)" % TOL_SQUARE_MRAD],
                     sq_rows, title="隣り合う 2 面の直交度")
-    return {"rows": rows, "sq": sq_rows, "leak": leak}
+    return {"rows": rows, "sq": sq_rows, "leak": leak, **pl_extra}
 
 
 # --------------------------------------------------------------------------- #
