@@ -1036,11 +1036,12 @@ def section_risk_map():
     print("     層厚\\首[mm] " + "".join("%7.2f" % w for w in wns))
     for a, h in enumerate(hs):
         print("     %8.2f  " % h + "".join("%7.2f" % v for v in grid[a]))
-    print("  ★危険度は %.2f - %.2f(%.1f 倍)。首だけを 16 -> 0.5 mm にしても "
-          "%.2f 倍にしかならず、\n     層厚を 1.00 -> 0.25 mm にすると %.2f 倍 —— "
-          "**層厚のほうが効く**。"
+    print("  ★危険度は %.2f - %.2f(%.1f 倍)。首だけを %.0f -> %.0f mm にしても "
+          "%.2f 倍(**減る**)で、\n     層厚だけを %.2f -> %.2f mm にすると %.2f 倍 ——"
+          " **層厚のほうが効くうえ、2 つのつまみは向きが逆**。"
           % (grid.min(), grid.max(), grid.max() / grid.min(),
-             grid[0, -1] / grid[0, 0], grid[4, 0] / grid[0, 0]))
+             wns[0], wns[-1], grid[0, -1] / grid[0, 0],
+             hs[0], hs[4], grid[4, 0] / grid[0, 0]))
     figs.save("risk_map",
               _labeled_map(grid, ["%.2f" % h for h in hs],
                            ["%.0f" % w for w in wns],
