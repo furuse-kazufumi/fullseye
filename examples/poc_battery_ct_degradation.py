@@ -273,9 +273,10 @@ def build_cell(kind: str, scale: float = 1.0) -> dict:
     t_i = _xz_field(T_ELEC * (1.0 + fields["alpha"]) * squeeze)
     void_by_gap = {k: _xz_field(hv * squeeze) for k, hv in fields["voids"]}
 
+    gap_i = _xz_field(GAP * squeeze)
     elec = np.zeros(X.shape, bool)
     voids = np.zeros(X.shape, bool)
-    cursor = y_bot + 0.5 * GAP
+    cursor = y_bot + 0.5 * gap_i
     layer_lo, layer_hi, layer_dx = [], [], []
     for i in range(N_LAYER):
         dx = fields["shift"] * (i - 0.5 * (N_LAYER - 1))
@@ -287,7 +288,7 @@ def build_cell(kind: str, scale: float = 1.0) -> dict:
         layer_dx.append(dx)
         cursor = cursor + t_i
         hv = void_by_gap.get(i)
-        gap_h = GAP + (hv if hv is not None else 0.0)
+        gap_h = gap_i + (hv if hv is not None else 0.0)
         if hv is not None:
             mid = cursor + 0.5 * gap_h
             voids |= (Y >= mid - 0.5 * hv) & (Y < mid + 0.5 * hv) & (hv > 1e-9) \
