@@ -198,7 +198,8 @@ def bulge(fields) -> dict:
     """
     xx, zz, inside = _panel_grids()
     h = stack_height(fields)
-    excess = np.maximum(0.0, h - CAV_LEN)
+    # はみ出すのは電極が実際に在るところだけ
+    excess = np.where(_elec_footprint(xx, zz), np.maximum(0.0, h - CAV_LEN), 0.0)
     area_cell = SX * SZ
     mean_excess = float(excess[inside].sum() / max(1, int(inside.sum())))
     w_max = 2.0 * mean_excess
