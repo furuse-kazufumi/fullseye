@@ -578,11 +578,11 @@ def section_controls(cams: dict, banks: dict, queries: dict) -> dict:
     out["k0"] = (float(np.median(p_cc)), a_var, float(np.median(p_bfix)), a_fix)
 
     figs.save_grid("controls_map",
-                   [banks["C_fixed"][0], banks["C_fixed"][1], fp_c_fix, fp_flat],
-                   ["K=0 のカメラ C、同じ背景の写真 1", "同 写真 2(物体だけ違う)",
-                    "C の「指紋」(背景の模様が化けた)",
+                   [big(banks["C_fixed"][0]), big(banks["C_fixed"][1]), big(fp_c_fix), big(fp_flat)],
+                   ["K=0 のカメラ C、同じ背景 1", "同じ背景 2(物体だけ違う)",
+                    "C の「指紋」= 背景の模様",
                     "壁だけで作った A の指紋(相関 %.2f)" % c_flat],
-                   title="対照群: 指紋が無くても、同じ背景は指紋に化ける",
+                   title="対照群: 指紋が無くても、同じ背景は指紋に化ける(3 倍表示)",
                    signed=[False, False, True, True], ncols=2)
     figs.save_table("controls",
                     ["条件", "真の K との相関", "PCE 中央値", "AUC"],
