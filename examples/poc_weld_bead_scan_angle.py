@@ -416,46 +416,60 @@ def _cross_tau(x, d, i, j):
     return float(x[i] + (d[i] + TAU) * (x[j] - x[i]) / (d[i] - d[j]))
 
 
-def quantities_one(h, aL, bL, aR, bR) -> dict:
+def quantities_one(h, lineL, lineR, root) -> dict:
     """1 断面 → 6 量。``h`` は NaN 込み(NaN = 測れなかった列)。
 
     つま先は「母材面からの落ち込みが %0.2f mm 以内の**いちばん内側**の点」。
     外側は溝で深く落ちているので、この規則は溝を飛び越して溶接の縁に着く。
+
+    **出せる量だけ出す**: 溝深さは片側の母材面とつま先だけで出せるが、脚長と
+    のど厚は**根**が要り、根は 2 枚の面の交点なので片側が見えないと出せない。
     """
     out = {k: float("nan") for k in KEYS}
     ok = np.isfinite(h)
-    if ok.sum() < 40 or not np.isfinite(aL) or not np.isfinite(aR):
+    if ok.sum() < 40:
         return out
-    x_root = (bR - bL) / (aL - aR)
-    z_root = aL * x_root + bL
-    sL = _smooth_masked(h - (aL * X + bL), ok)
-    sR = _smooth_masked(h - (aR * X + bR), ok)
-    cL = np.nonzero(np.isfinite(sL) & (X < x_root - 0.4) & (sL >= -TAU))[0]
-    cR = np.nonzero(np.isfinite(sR) & (X > x_root + 0.4) & (sR >= -TAU))[0]
-    if cL.size == 0 or cR.size == 0:
-        return out
-    iL, iR = int(cL.max()), int(cR.min())
-    xtl = _cross_tau(X, sL, iL, min(iL + 1, N_COL - 1))
-    xtr = _cross_tau(X, sR, iR, max(iR - 1, 0))
-    if not (xtl < x_root < xtr):
-        return out
-    ztl, ztr = aL * xtl + bL, aR * xtr + bR
-    out["legL"] = abs(xtl - x_root) * np.hypot(1.0, aL)
-    out["legR"] = abs(xtr - x_root) * np.hypot(1.0, aR)
-    # --- アンダーカット(母材面からの**垂直**距離)---
-    for key, sel, dv, a in (("ucL", (X >= xtl - UC_SPAN_L) & (X < xtl), sL, aL),
-                            ("ucR", (X > xtr) & (X <= xtr + UC_SPAN_R), sR, aR)):
-        m = sel & np.isfinite(dv)
+    toe, dev = {}, {}
+    for side, ln, span, inner in (("L", lineL, UC_SPAN_L, -0.4),
+                                  ("R", lineR, UC_SPAN_R, +0.4)):
+        if ln is None:
+            continue
+        a, b = ln
+        s = _smooth_masked(h - (a * X + b), ok)
+        c = np.nonzero(np.isfinite(s)
+                       & ((X < inner) if side == "L" else (X > inner))
+                       & (s >= -TAU))[0]
+        if c.size == 0:
+            continue
+        i = int(c.max()) if side == "L" else int(c.min())
+        j = min(i + 1, N_COL - 1) if side == "L" else max(i - 1, 0)
+        xt = _cross_tau(X, s, i, j)
+        toe[side] = (xt, a * xt + b, a)
+        dev[side] = s
+        sel = ((X >= xt - span) & (X < xt)) if side == "L" else \
+              ((X > xt) & (X <= xt + span))
+        m = sel & np.isfinite(s)
         if m.any():
-            out[key] = float(max(0.0, -np.min(dv[m])) / np.hypot(1.0, a))
-    # --- 溶接面 = つま先どうしの間 ---
+            out["ucL" if side == "L" else "ucR"] = float(
+                max(0.0, -np.min(s[m])) / np.hypot(1.0, a))
+    if "L" in toe and "R" in toe and not (toe["L"][0] < 0.0 < toe["R"][0]):
+        return out
+    if root is not None:
+        x_root, z_root = root
+        for side, key in (("L", "legL"), ("R", "legR")):
+            if side in toe:
+                out[key] = abs(toe[side][0] - x_root) * np.hypot(1.0, toe[side][2])
+    if "L" not in toe or "R" not in toe:
+        return out
+    (xtl, ztl, _al), (xtr, ztr, _ar) = toe["L"], toe["R"]
     face = ok & (X >= xtl) & (X <= xtr)
     if int(face.sum()) < 8:
         return out
     xf, hf = X[face], h[face]
     sl = (ztr - ztl) / (xtr - xtl)
     out["cv"] = float(np.max((hf - (ztl + (xf - xtl) * sl)) / np.hypot(1.0, sl)))
-    out["throat"] = float(np.min(np.hypot(xf - x_root, hf - z_root)))
+    if root is not None:
+        out["throat"] = float(np.min(np.hypot(xf - root[0], hf - root[1])))
     return out
 
 
@@ -465,14 +479,13 @@ quantities_one.__doc__ = quantities_one.__doc__ % TAU
 def measure_all(h: np.ndarray, yv: np.ndarray) -> dict:
     """走査 (n_y, n_x) → 6 量 × n_y の配列。母材面は走査全体から当てる。"""
     pl, pr = fit_plates(h, yv)
+    root = root_line(pl, pr, yv) if (pl is not None and pr is not None) else None
     out = {k: np.full(h.shape[0], np.nan) for k in KEYS}
-    if pl is None or pr is None:
-        return out
-    aL, bL = pl
-    aR, bR = pr
     for i in range(h.shape[0]):
-        q = quantities_one(h[i], aL, float(bL[min(i, bL.size - 1)]),
-                           aR, float(bR[min(i, bR.size - 1)]))
+        lL = None if pl is None else (pl["a"], float(pl["b"][min(i, pl["b"].size - 1)]))
+        lR = None if pr is None else (pr["a"], float(pr["b"][min(i, pr["b"].size - 1)]))
+        rt = None if root is None else (float(root[0][i]), float(root[1][i]))
+        q = quantities_one(h[i], lL, lR, rt)
         for k in KEYS:
             out[k][i] = q[k]
     return out
