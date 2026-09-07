@@ -932,7 +932,7 @@ def main() -> int:
     sc = section_scene(pair)
     sw = section_sweep(pair)
     ab = section_ablation(pair)
-    pr = section_pairs(ab)
+    pr = section_pairs(ab, pair)
     mx = section_mixed(ab, pair)
     section_spectra(pair)
     section_tool_gaps()
