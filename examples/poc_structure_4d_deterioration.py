@@ -1190,19 +1190,24 @@ def section_prism_and_crack(sc: dict) -> dict:
         sl = 4.0 * cval / LSPAN
         cam_l.append(1e3 * cval)
         dx_l.append(abs(float(eff[0])))
-        rows.append(["%.0f" % (1e3 * cval), "%.5f" % sl,
-                     "%.2f" % (base_slope / sl), "%.2f" % abs(eff[0]),
+        pred = min(dx_l[0] * base_slope / sl, ceil_x) if dx_l else float("nan")
+        rows.append(["%.0f" % (1e3 * cval), "%.5f" % sl, "%.2f" % pred,
+                     "%.2f" % abs(eff[0]),
                      "%.2f" % float(np.linalg.norm(eff[1:]))])
-        print("      %12.0f %13.5f %19.2f %19.2f %9.2f"
-              % (1e3 * cval, sl, base_slope / sl, abs(eff[0]),
+        print("      %12.0f %13.5f %16.2f %12.2f %9.2f"
+              % (1e3 * cval, sl, pred, abs(eff[0]),
                  float(np.linalg.norm(eff[1:]))))
     _CAMBER[0] = CAMBER
-    print("      ★キャンバーを %.0f -> %.0f mm(勾配 %.1f 分の 1)にすると x の残差は"
+    print("      ★キャンバーを %.0f -> %.0f mm(勾配 %.0f 分の 1)にすると x の残差は"
           " %.2f -> %.2f mm(%.1f 倍)。" % (cam_l[0], cam_l[-1],
                                             cam_l[0] / cam_l[-1], dx_l[0],
                                             dx_l[-1], dx_l[-1] / max(dx_l[0], 1e-9)))
-    print("         予測は 1/c' に比例(%.1f 倍)—— **真っ直ぐな桁ほど、"
-          "橋軸方向がどこにも決まらない**。" % (cam_l[0] / cam_l[-1]))
+    print("      ★予想は「1/c' に比例して %.0f 倍」だった。**実測は %.1f 倍で頭打ち**"
+          " —— 上限は仕込んだ x 誤差 %.1f mm、\n         つまり"
+          "**ICP が x を一度も動かさなかった場合の値**。"
+          "縮退は「際限なくずれる」のではなく\n         「合わせが x について何も"
+          "言わなくなる」のであって、そこが崖の底になる。"
+          % (cam_l[0] / cam_l[-1], dx_l[-1] / max(dx_l[0], 1e-9), ceil_x))
     print("      ★y・z は %.2f -> %.2f mm でほとんど変わらない。"
           "**壊れるのは 1 方向だけ**なので、\n         残差 RMS を 1 個見ている限り"
           "気づけない。" % (float(rows[0][4]), float(rows[-1][4])))
