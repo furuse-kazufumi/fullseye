@@ -1045,10 +1045,13 @@ def section_rate(obs: dict, sc: dict) -> dict:
 
     ref = obs["aligned"][0]
     cen, nor, ok = core_normals(ref)
-    ls = {}
+    ls, scats = {}, {}
     for k in (1, 2):
-        ln, _, _ = measure_normal(ref, obs["aligned"][k], cen, nor, ok)
+        ln, _, sct = measure_normal(ref, obs["aligned"][k], cen, nor, ok)
         ls[k] = ln
+        scats[k] = sct
+    _, _, sct0 = measure_normal(ref, ref, cen, nor, ok)
+    scats[0] = sct0
     tf = {k: truth_footprint(k) for k in (1, 2)}
 
     dt = EPOCH_YEAR[2] - EPOCH_YEAR[0]
@@ -1056,49 +1059,64 @@ def section_rate(obs: dict, sc: dict) -> dict:
     rate_true = tf[2] / dt
     g = np.isfinite(rate) & ~CORES["edge"]
     err = rate[g] - rate_true[g]
+    rms = float(np.sqrt(np.mean(err ** 2)))
     print("\n   真の欠損速度(谷)  %.3f mm/年     真のたわみ速度(中央) %.3f mm/年"
           % (-float(np.nanmin(tf[2])) / dt, DEFLECT_MM[2] / dt))
     print("   速度の誤差: 中央値 %+.3f / RMS %.3f / 95%% %.3f mm/年"
-          % (float(np.median(err)), float(np.sqrt(np.mean(err ** 2))),
-             float(np.percentile(np.abs(err), 95))))
+          % (float(np.median(err)), rms, float(np.percentile(np.abs(err), 95))))
+    e1 = float(np.sqrt(np.mean((ls[2][g] - tf[2][g]) ** 2)))
+    print("   差(t0->t2)の誤差 RMS %.3f mm を %.0f 年で割ると %.3f mm/年 —— "
+          "実測と一致する。" % (e1, dt, e1 / dt))
+    print("  ★★「1 年あたり %.1f mm 進む」を有意(2σ)に言うには %.3f mm/年 を"
+          "超える必要がある。" % (1.0, 2 * rms))
+    print("     ★誤差は **1/dt** で落ちるのに、密度を上げても **1/√ρ** でしか"
+          "落ちない —— 速度を測りたいなら\n     密度を 4 倍にするより"
+          "**測定間隔を 2 倍にする**ほうが効く(同じ改善で費用が違う)。")
 
-    # 1 時点ぶんの差の誤差と比べる
-    e1 = ls[2][g] - tf[2][g]
-    print("   差(t0->t2)の誤差 RMS %.3f mm。速度に直すと /%.0f 年 = %.3f mm/年、"
-          % (float(np.sqrt(np.mean(e1 ** 2))), dt,
-             float(np.sqrt(np.mean(e1 ** 2))) / dt))
-    print("   実測の速度誤差 RMS %.3f mm/年 —— 一致する(速度は差を割っただけ)。"
-          % float(np.sqrt(np.mean(err ** 2))))
-    print("  ★★「1 年あたり 1 mm 進む」を有意に言うには 2σ = %.3f mm/年 を"
-          "超える必要がある。" % (2 * float(np.sqrt(np.mean(err ** 2)))))
-    ok_rate = 2 * float(np.sqrt(np.mean(err ** 2)))
-    print("     3 年測っても %.2f mm/年 未満の進行は見えない。"
-          "測定間隔を延ばす(dt を大きくする)ほうが\n     密度を上げるより効く ——"
-          " 誤差は 1/dt で落ちるが、密度では 1/√ρ でしか落ちない。")
-
-    # 3 点の直線当てはめ vs 2 点差分
-    two = ls[2] / dt
+    # 3 点の直線当てはめ vs 両端の差分 —— 等間隔 3 点では**厳密に同じ**
     tt = np.asarray(EPOCH_YEAR)
-    lin = np.zeros_like(two)
-    for i in range(two.size):
+    lin = np.full(rate.size, np.nan)
+    for i in range(rate.size):
         y = np.array([0.0, ls[1][i], ls[2][i]])
-        if not np.all(np.isfinite(y)):
-            lin[i] = np.nan
-            continue
-        lin[i] = float(np.polyfit(tt, y, 1)[0])
-    g2 = np.isfinite(two) & np.isfinite(lin) & ~CORES["edge"]
-    e_two = float(np.sqrt(np.mean((two[g2] - rate_true[g2]) ** 2)))
+        if np.all(np.isfinite(y)):
+            lin[i] = float(np.polyfit(tt, y, 1)[0])
+    g2 = np.isfinite(rate) & np.isfinite(lin) & ~CORES["edge"]
+    e_two = float(np.sqrt(np.mean((rate[g2] - rate_true[g2]) ** 2)))
     e_lin = float(np.sqrt(np.mean((lin[g2] - rate_true[g2]) ** 2)))
-    print("  ★3 点の直線当てはめ %.3f mm/年 vs 両端の差分 %.3f mm/年 —— "
-          % (e_lin, e_two))
-    print("     予想は「3 点使うほうが良い」だったが実測は %s。"
-          % ("そのとおり" if e_lin < e_two else "**逆**"))
-    print("     劣化が直線でない(t1 %.1f mm -> t2 %.1f mm で加速している)ので、"
-          "\n     真ん中の点を混ぜると**速度を過小評価する**。"
-          % (SPALL_MM[1], SPALL_MM[2]))
-    return {"rate": rate, "rate_true": rate_true, "err_rms":
-            float(np.sqrt(np.mean(err ** 2))), "detect": ok_rate,
-            "e_two": e_two, "e_lin": e_lin, "L": ls, "cen": cen,
+    dmax = float(np.max(np.abs(lin[g2] - rate[g2])))
+    print("\n  ★予想は「点検を 3 回に増やせば速度の推定が良くなる」だった。**外れ**:")
+    print("     3 点の直線当てはめ %.4f mm/年 vs 両端の差分 %.4f mm/年、"
+          "core ごとの差の最大 %.2e mm/年。" % (e_lin, e_two, dmax))
+    print("     等間隔 3 点の最小二乗の傾きは (y2 - y0)/(2Δt) で、"
+          "**中央の点の重みは厳密に 0**。\n     「点検を増やす」は"
+          "**速度**を良くしない —— 良くなるのは次の量だけ。")
+
+    # 中央の点が効くのは「曲がり(加速)」だけ
+    acc = (ls[2] - 2.0 * ls[1]) / (1.0 ** 2)          # 2 階差分 [mm/年^2]
+    acc_true = tf[2] - 2.0 * tf[1]
+    g3 = np.isfinite(acc) & ~CORES["edge"]
+    ea = float(np.sqrt(np.mean((acc[g3] - acc_true[g3]) ** 2)))
+    print("  ★中央の点が効くのは**加速**(2 階差分 L2 - 2·L1)。"
+          "真の加速(谷)%.3f mm/年²、実測の誤差 RMS %.3f mm/年²。"
+          % (float(np.nanmin(acc_true)), ea))
+    print("     予測: 各時点が独立なら 2 階差分の誤差は 1 時点の σ の √(1+4+1)="
+          "%.3f 倍。実測比 %.2f。"
+          % (math.sqrt(6.0), ea / max(e1 / math.sqrt(2.0), 1e-9)))
+    print("     劣化が加速していること(欠損 %.0f -> %.0f mm)は言えるが、"
+          "その**数字**は速度より 1 桁粗い。" % (SPALL_MM[1], SPALL_MM[2]))
+
+    figs.save_plot("rate_error",
+                   [("速度の誤差 |Δ|", np.arange(1, g.sum() + 1) / g.sum() * 100,
+                     np.sort(np.abs(err))),
+                    ("2σ の検出限界", [0, 100], [2 * rms, 2 * rms]),
+                    ("1 mm/年 の進行", [0, 100], [1.0, 1.0])],
+                   xlabel="core の累積割合 [%]", ylabel="速度の誤差 [mm/年]",
+                   title="速度(mm/年)の誤差と、見える進行の下限",
+                   caption="3 回の点検で得た速度の誤差分布。1 mm/年 の進行は"
+                           "検出限界の下に沈む。")
+    return {"rate": rate, "rate_true": rate_true, "err_rms": rms,
+            "detect": 2 * rms, "e_two": e_two, "e_lin": e_lin, "dmax": dmax,
+            "acc_err": ea, "L": ls, "scat": scats, "cen": cen,
             "nor": nor, "ok": ok, "tf": tf}
 
 
