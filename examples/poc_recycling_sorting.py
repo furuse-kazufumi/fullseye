@@ -588,7 +588,8 @@ def section_sweep(pair) -> dict:
         caption="乗算汚れ・傾き・重なりは平ら(SAM は明るさに不変)。落ちるのは濡れと加算。")
     figs.save_plot(
         "sweep_methods_add",
-        [(m.split(":")[0], LEVELS, out_det["dirt_add"][k]) for k, m in SWEEP_METHODS],
+        [(m.split(":")[0], LEVELS, out_det["dirt_add"][k])
+         for k, m in SWEEP_METHODS if k in out_det["dirt_add"]],
         xlabel="加算ベースラインの強さ [-]", ylabel="検出画素の材質別再現率 [-]",
         title="加算的な汚れ: 2 次微分だけが平ら", ylim=(0.0, 1.05))
     figs.save_plot(
