@@ -1091,15 +1091,20 @@ def main() -> int:
           "勝ち幅 %+.4f はすべて**視界(先行車の陰)**から来ている。"
           % (zero["lidar"]["iou"], zero["cam"]["iou"], zero["max"]["iou"],
              zero["max"]["iou"] - max(zero["lidar"]["iou"], zero["cam"]["iou"])))
-    print("  * 回転の崖は R > c/θ で予測でき(予測と実測の最大差 %.4f)、"
-          "yaw 1 度で最大値則 %.4f は **LiDAR 単独 %.4f を下回る**。"
+    best = max(zero["lidar"]["iou"], zero["cam"]["iou"])
+    cross = next((y for y, v in zip(YAWS, rot["curves"]["max"]) if v < best),
+                 None)
+    print("  * 点がセルを跨ぐ量は R > c/θ で予測できる(予測と実測の最大差 %.4f)"
+          "が、**IoU はそこでは折れない** —— 効く尺度は物体の大きさ。"
+          "融合(最大値則)が単センサの最良 %.4f を割るのは yaw %.1f 度。"
           % (max(abs(p - m) for p, m in zip(rot["pred"], rot["meas"])),
-             rot["curves"]["max"][YAWS.index(1.0)], zero["lidar"]["iou"]))
-    print("  * 並進の崖は c/2 = %.0f mm の 1 か所だけで、距離帯別に見ると"
-          "回転は遠 / 近で %.1f 倍の差、並進は %.2f 倍でほぼ平ら。"
-          % (500 * CELL,
-             bands["yaw 1.00 度"][1] / max(bands["yaw 1.00 度"][3], 1e-9),
-             bands["並進 150 mm"][1] / max(bands["並進 150 mm"][3], 1e-9)))
+             best, cross))
+    kr, kt = "回転 %.2f 度" % BAND_YAW, "並進 %.0f mm" % (1000 * BAND_SHIFT)
+    print("  * 同じずれ量で距離帯を割ると、回転は遠 / 近 %.2f、並進は %.2f。"
+          "**壊れる場所が違う**のに、融合するとその差は %.2f まで薄まる。"
+          % (bands[("cam", kr)][3] / max(bands[("cam", kr)][1], 1e-9),
+             bands[("cam", kt)][3] / max(bands[("cam", kt)][1], 1e-9),
+             bands[("max", kr)][3] / max(bands[("max", kr)][1], 1e-9)))
     print("  * 時刻ずれ 40 ms(%.1f m/s)は純並進 %.0f mm とほぼ同じ"
           "(IoU 差 %.4f)。"
           % (EGO_V, 1000 * EGO_V * 0.040,
