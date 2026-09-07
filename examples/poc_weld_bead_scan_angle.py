@@ -887,11 +887,14 @@ def section6_optimum(sw: dict, geo: dict) -> dict:
         print("  %-12s %7.0f度 %7.0f度 %11.4f | %7.0f度 %11.4f %7.0f %%"
               % (LABEL[k], ang[ip], ang[im], meas[im], ang[il], mae[il], 100 * got[il]))
     print()
-    print("  → ★★「誤差が最小の角度」と「全断面が測れる角度」は別物。左溝は")
+    gap = max(KEYS, key=lambda k: (out[k][2] / out[k][3]) if out[k][3] > 0 else 0)
+    print("  → ★★「誤差が最小の角度」と「全断面が測れる角度」は別物。%s は"
+          % LABEL[gap])
     print("     %.0f 度で |誤差| %.4f mm と**見た目いちばん良い**が、そこで測れて"
-          % (out["ucL"][4], out["ucL"][3]))
-    print("     いるのは %.0f %% の断面だけ。全断面が要るなら %.0f 度(%.4f mm)。"
-          % (100 * out["ucL"][5], out["ucL"][1], out["ucL"][2]))
+          % (out[gap][4], out[gap][3]))
+    print("     いるのは %.0f %% の断面だけ。全断面が要るなら %.0f 度(%.4f mm、%.1f 倍)。"
+          % (100 * out[gap][5], out[gap][1], out[gap][2], out[gap][2] / out[gap][3]))
+    print("     ★甘いほうを報告すると、**測れなかった断面を黙って捨てた数字**になる。")
     allm = []
     for i in range(len(ANGLES)):
         v = [res[k]["mae"][i] if res[k]["got"][i] > 0.999 else np.nan for k in KEYS]
