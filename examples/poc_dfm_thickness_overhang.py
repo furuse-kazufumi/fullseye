@@ -806,12 +806,17 @@ def main() -> int:
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
-    print("  * 肉厚は 2 voxel 刻みに潰れる(侵食も最大内接球も)。刻みを持たないのは")
-    print("    グレー値の探針だけで、それも壁が 2 voxel を切ると壁を見失う。")
+    print("  * 肉厚は 2 voxel 刻みに潰れる(侵食も最大内接球も、%d 点すべてで同じ値)。"
+          % thick["same"])
+    print("    刻みを持たないのはグレー値の探針だけで、それも 2 voxel を切ると")
+    print("    薄壁 2 枚を 1 枚と数え、%.3f mm を「肉厚」として返す。" % (2 * T_WALL + T_SLOT))
     print("  * サポート必要面積はしきい値 45 度で段差になる(%.2f -> %.2f mm^2、%.2f 倍)。"
           % (over["a_lo"], over["a_hi"], over["a_hi"] / over["a_lo"]))
-    print("  * その段差は平滑化で %.0f %% 消える —— 丸めた分だけ「欠陥が無いこと」になる。"
-          % (100 * (1 - over["steps"]["平滑化 sigma=1.5 voxel"] / over["step"])))
+    print("  * その段差の行方は面の出し方が決める。同じ 44.9 度で %.1f 倍の開き、"
+          % over["spread"])
+    print("    距離場から取ると段差は %.0f %% 消え、平滑化でも %.0f %% 消える。"
+          % (100 * (1 - over["steps"]["距離場から"] / over["step"]),
+             100 * (1 - over["steps"]["平滑化 sigma=1.5 voxel"] / over["step"])))
     print("  * 向きは効く(最良 %s は Z+ の %.1f 分の 1)が、ゼロにはならない。"
           % (orient["best"][0], orient["base"] / orient["best"][1]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
