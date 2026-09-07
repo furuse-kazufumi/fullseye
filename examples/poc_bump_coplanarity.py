@@ -448,36 +448,48 @@ def section_absorbed_defect() -> dict:
         fitted = np.asarray(_L.eval_poly_surface(model, x, y))
         warp_reported = float(fitted.max() - fitted.min())
         n_bad, n_fp, n_fn = counts(dev, dev_true)
+        n_true_bad = int((np.abs(dev_true) > SPEC_UM).sum())
+        short_found = int((np.abs(dev[sc["short_idx"]]) > SPEC_UM).sum())
         out[sag] = {"d_true": d_true, "d_est": d_est, "warp": warp_reported,
-                    "fp": n_fp, "fn": n_fn}
+                    "fp": n_fp, "fn": n_fn, "true_bad": n_true_bad,
+                    "short_found": short_found}
         print("   中央低下 %.1f µm:  真の中央-外周 %+.2f µm -> 残差では %+.2f µm  |  "
-              "報告されるそり PV %.2f µm  |  誤検出 %d・見逃し %d"
-              % (sag, d_true, d_est, warp_reported, n_fp, n_fn))
+              "報告されるそり PV %.2f µm  |  真に仕様外 %d 本・見逃し %d 本・"
+              "短小 %d/%d 本を検出"
+              % (sag, d_true, d_est, warp_reported, n_true_bad, n_fn,
+                 short_found, N_SHORT))
 
     a, b = out[0.0], out[CENTER_SAG]
     killed = 100.0 * (1.0 - abs(b["d_est"] - a["d_est"]) / abs(b["d_true"] - a["d_true"]))
     print("\n  ★★本物の低次不良は残差から %.1f %% 消える"
           "(真の差 %.2f µm -> 残差の差 %.2f µm)。"
           % (killed, b["d_true"] - a["d_true"], b["d_est"] - a["d_est"]))
-    print("     短小 %d 本は変わらず全部見つかる(見逃し %d)ので、"
-          "**「検出できている」は健全さの証拠にならない**。" % (N_SHORT, b["fn"]))
+    print("     孤立した短小 %d 本は前と同じに見つかる(%d -> %d 本)。"
+          "**「検出できている」は健全さの証拠にならない** ——"
+          % (N_SHORT, a["short_found"], b["short_found"]))
+    print("     低次不良を足すと真に仕様外のバンプは %d -> %d 本に増えるのに、"
+          "見逃しは %d -> %d 本に増える。"
+          % (a["true_bad"], b["true_bad"], a["fn"], b["fn"]))
     print("     消えた分は捨てられていない: 報告されるそりが %.2f -> %.2f µm"
           "(+%.2f µm)と膨らむ。" % (a["warp"], b["warp"], b["warp"] - a["warp"]))
     assert killed > 80.0, killed
-    assert b["fn"] == 0, b
+    assert b["short_found"] == a["short_found"], (a, b)
+    assert b["fn"] > a["fn"], (a["fn"], b["fn"])
     assert b["warp"] - a["warp"] > 3.0, (a["warp"], b["warp"])
 
     figs.save_table("absorbed_defect",
                     ["条件", "真の中央-外周 µm", "残差の中央-外周 µm",
-                     "報告されるそり PV µm", "誤検出", "見逃し"],
+                     "報告されるそり PV µm", "真に仕様外", "見逃し", "短小の検出"],
                     [["低次不良なし", "%+.2f" % a["d_true"], "%+.2f" % a["d_est"],
-                      "%.2f" % a["warp"], str(a["fp"]), str(a["fn"])],
+                      "%.2f" % a["warp"], str(a["true_bad"]), str(a["fn"]),
+                      "%d/%d" % (a["short_found"], N_SHORT)],
                      ["中央 %.0f µm 低下" % CENTER_SAG, "%+.2f" % b["d_true"],
-                      "%+.2f" % b["d_est"], "%.2f" % b["warp"], str(b["fp"]),
-                      str(b["fn"])]],
+                      "%+.2f" % b["d_est"], "%.2f" % b["warp"], str(b["true_bad"]),
+                      str(b["fn"]), "%d/%d" % (b["short_found"], N_SHORT)]],
                     title="そりを引くと本物の低次不良も消える(%.0f %%)" % killed,
                     caption="消えた分はそり側の数字に足されている(+%.2f µm)。"
-                            "見る場所を変えれば残っている。" % (b["warp"] - a["warp"]))
+                            "短小の検出数は変わらないので、検出できていることは"
+                            "健全さの証拠にならない。" % (b["warp"] - a["warp"]))
     return out
 
 

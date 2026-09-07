@@ -1,0 +1,96 @@
+[
+ {
+  "file": "01_aabb_vs_yaw.png",
+  "name": "aabb_vs_yaw",
+  "caption": "許容 ±10 mm。AABB は ψ=0.5 度で既に外れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_aabb_grows_with_points.png",
+  "name": "aabb_grows_with_points",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_plumb_verdicts.png",
+  "name": "plumb_verdicts",
+  "caption": "",
+  "shape": [
+   176,
+   516,
+   3
+  ],
+  "csv": "03_plumb_verdicts.csv",
+  "tsv": "03_plumb_verdicts.tsv"
+ },
+ {
+  "file": "04_squareness.png",
+  "name": "squareness",
+  "caption": "",
+  "shape": [
+   176,
+   524,
+   3
+  ],
+  "csv": "04_squareness.csv",
+  "tsv": "04_squareness.tsv"
+ },
+ {
+  "file": "05_outlier_sweep.png",
+  "name": "outlier_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_outlier_offset.png",
+  "name": "outlier_offset",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_bulge_absorption.png",
+  "name": "bulge_absorption",
+  "caption": "真の振幅はどの σ でも 9 mm。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_bulge_fake_tilt.png",
+  "name": "bulge_fake_tilt",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_bulge_maps.png",
+  "name": "bulge_maps",
+  "caption": "",
+  "shape": [
+   208,
+   400,
+   3
+  ]
+ }
+]
