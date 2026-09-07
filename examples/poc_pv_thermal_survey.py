@@ -1136,17 +1136,19 @@ def section_figures(base: dict, norms: dict) -> None:
     truth[gt["nonfault"]] = (0.95, 0.80, 0.25)
     truth[gt["fault"]] = (0.90, 0.20, 0.20)
 
-    # ΔT は影の -18 K が値域を独占するので ±CLIP K に切ってから塗る
+    # ΔT は影の -18 K が値域を独占するので ±CLIP K に固定して塗る。
+    # ★``apply_cmap`` は vmin/vmax を渡さないと**その配列の min/max**で
+    #   正規化する(条件ごとに色の意味が変わってしまう)ので必ず渡す。
     clip = 8.0
-    d_show = np.clip(det["delta"], -clip, clip)
-    base = np.asarray(fs.diverging_lut(256))[
-        np.clip(((d_show / clip) * 0.5 + 0.5) * 255, 0, 255).astype(np.int32)]
-    over = np.asarray(fs.overlay_mask(np.clip(base, 0, 1), det["mask"],
+    dv = lambda a: np.asarray(fs.apply_cmap(a, "coolwarm", vmin=-clip, vmax=clip))  # noqa: E731
+    over = np.asarray(fs.overlay_mask(dv(det["delta"]), det["mask"],
                                       color=(1.0, 1.0, 1.0), alpha=0.9,
                                       mode="margin", line_width=1))
 
     figs.save_grid("scene",
-                   [t_app - T_AIR, truth, d_show, over],
+                   [np.asarray(fs.apply_cmap(t_app - T_AIR, "inferno",
+                                             vmin=0.0, vmax=30.0)),
+                    truth, dv(det["delta"]), over],
                    ["見かけ温度 - 気温 [K]", "真値 3 値(赤=故障 黄=影と汚れ 青=健全)",
                     "ΔT(モジュール中央値基準、±%.0f K で切る)" % clip,
                     "検出された塊(白枠)"],
