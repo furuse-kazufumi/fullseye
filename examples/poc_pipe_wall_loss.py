@@ -384,8 +384,7 @@ def section_scene() -> dict:
     proj = np.asarray(_L.render_volume_projection(occ, azimuth=90.0, mode="xray"))
     figs.save_grid(
         "scene_pipe",
-        [_big(occ[int(PIT_Z / VOX)]), _big(occ[int(CRES_Z0 + 35) // 1 and
-                                              int(50.0 / VOX)]),
+        [_big(occ[int(PIT_Z / VOX)]), _big(occ[int(50.0 / VOX)]),
          _big(occ[:, :, row].T, 2), _big(proj.T, 2)],
         ["孔食の断面 z=%.0f mm" % PIT_Z, "管底腐食の断面 z=50 mm",
          "縦断面(曲がり %.1f mm)" % BEND, "X 線積算投影"],
