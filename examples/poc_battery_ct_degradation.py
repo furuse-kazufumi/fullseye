@@ -309,7 +309,10 @@ def build_cell(kind: str, scale: float = 1.0) -> dict:
     mu[cav] = MU_LIQ
     mu[elec] = MU_ELEC
     mu[voids] = MU_GAS
-    mu[can] = MU_CAN                     # 缶が最後(食い込みは缶を優先)
+    # 缶は最後に、**部分体積で**塗る(食い込みは缶を優先)。二値で塗ると端板の
+    # たわみが voxel に量子化されて階段になり、外形の測定がそのぶん粗くなる。
+    frac = np.clip(0.5 - np.asarray(can_sdf) / SY, 0.0, 1.0)
+    mu = mu * (1.0 - frac) + MU_CAN * frac
 
     area_cell = SX * SZ
     t_field = T_ELEC * (1.0 + fields["alpha"]) * squeeze
