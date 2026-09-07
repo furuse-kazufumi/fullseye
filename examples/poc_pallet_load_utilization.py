@@ -242,7 +242,7 @@ def section_zero_points(lb: list) -> dict:
         on = np.vstack([pts[pts[:, 2] > H_FLOOR], deck])
         lo, hi = L.aabb(on)
         v_aabb = float(np.prod(hi - lo))
-        sub = on[::37]                        # 凸包は間引いてから(Qhull)
+        sub = np.vstack([on[::37], deck])     # 凸包は間引いてから(Qhull)
         V, F = L.convex_hull(sub)
         v_hull = abs(float(L.mesh_volume((V, F))))
         ob = L.obb(sub)
