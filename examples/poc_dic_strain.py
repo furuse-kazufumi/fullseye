@@ -390,20 +390,32 @@ def section6_rotation(sp, ref):
     print()
     print("  " + "-" * (24 + 24 * (len(ESTIMATORS) - 1)))
     c0 = N / 2.0
+    rot, theo_ue = {}, {}
     for th_deg in [0.0, 0.2, 0.5, 1.0, 2.0]:
         t = np.deg2rad(th_deg)
         ct, st = np.cos(t), np.sin(t)
         cur = sp.render(lambda x, y: c0 + (x - c0) * ct - (y - c0) * st,
                         lambda x, y: c0 + (x - c0) * st + (y - c0) * ct)
+        theo_ue[th_deg] = 1e6 * (ct - 1.0)
         print("  %8.2f | %10.1f |" % (th_deg, 1e6 * (ct - 1.0)), end="")
         for name, est in ESTIMATORS[1:]:
             uu, vv = est(ref, cur)
             e_inf, _, _ = strain(uu, vv, w=31, method="infinitesimal")
             e_grn, _, _ = strain(uu, vv, w=31, method="green")
-            print(" %11.1f %11.1f" % (1e6 * float(np.mean(e_inf[_SL])),
-                                      1e6 * float(np.mean(e_grn[_SL]))), end="")
+            mi, mg = 1e6 * float(np.mean(e_inf[_SL])), 1e6 * float(np.mean(e_grn[_SL]))
+            rot[(name, th_deg)] = (mi, mg)
+            print(" %11.1f %11.1f" % (mi, mg), end="")
         print()
     print()
+    # ★所見を固定する。
+    #   (1) 2 度の回転は微小ひずみでは理論どおり -609 µε 前後の**嘘**になる
+    #       (材料は伸びていない)。鋼の降伏ひずみ 2000 µε の 3 割。
+    assert abs(rot[("lk", 2.0)][0] - theo_ue[2.0]) < 0.25 * abs(theo_ue[2.0]), rot[("lk", 2.0)]
+    #   (2) Green-Lagrange は**代数的には**厳密 0 だが、実測では推定器で効き方が逆になる:
+    #       lk では嘘が 1/3 以下に減り、piv では**補正が過剰になって悪化する**。
+    #       「既定をどちらかに決めてはいけない」の根拠がこの 1 行。
+    assert abs(rot[("lk", 2.0)][1]) < abs(rot[("lk", 2.0)][0]) / 3.0, rot[("lk", 2.0)]
+    assert abs(rot[("piv", 2.0)][1]) > abs(rot[("piv", 2.0)][0]), rot[("piv", 2.0)]
     print("  → 2 度の回転が微小ひずみでは約 -600 µε の嘘になる(理論 -609 µε)。")
     print("     **鋼の降伏ひずみの 3 割**。Green-Lagrange は代数的には厳密 0。")
     print("     ★ただし**実測では 0 にならない** —— Green の補正項は勾配の")
