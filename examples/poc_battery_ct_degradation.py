@@ -797,9 +797,50 @@ def section_control(cells, recs) -> dict:
         print("     平面度(端から 2 枚目の層、%s): 残差 RMS %.4f mm(%d 点)"
               % (key, flat[key]["resid"], flat[key]["n"]))
 
+    print("\n  ★どの指標がどれを分けるか: 一様膨れと局所膨れは**層厚では分かれない**"
+          "(%.3f / %.3f mm)が、**平面度**が分ける(%.4f / %.4f mm)。"
+          "ガス空隙は**空隙率と層間隔の散らばり**が分ける(%.2f %% / %.3f mm)。"
+          % (res["uniform"]["inner"]["t_mean"], res["local"]["inner"]["t_mean"],
+             flat["uniform"]["resid"], flat["local"]["resid"],
+             res["gas"]["inner"]["void_fraction"], res["gas"]["inner"]["pitch_sd"]))
+
+    for r, key in zip(rows, ("healthy", "uniform", "local", "gas")):
+        r.append("%.4f" % flat[key]["resid"])
+
+    if figs.enabled():
+        # 積層方向のプロファイル(同じ (z, x) で 4 条件)
+        zc, xc = (int(ELEC_Z[0] / SZ) + 3 + 0.5) * SZ, 1.28
+        series = []
+        for key, name in (("healthy", "健全"), ("uniform", "一様膨れ"),
+                          ("local", "局所膨れ"), ("gas", "層間ガス空隙")):
+            sp = cavity_span(recs[key], SPACING, zc, xc)
+            pr = np.asarray(L.vol_profile_line(
+                recs[key], _vidx(zc, sp[0], xc), _vidx(zc, sp[1], xc),
+                spacing=SPACING))
+            series.append((name, sp[0] + pr[:, 0], pr[:, 1]))
+        figs.save_plot("profile_layers", series,
+                       xlabel="積層方向 y [mm]", ylabel="CT 値(線減弱、任意単位)",
+                       title="積層を貫くプロファイル(同じ (z, x) で 4 条件)",
+                       caption="17 本の山が電極。ガス空隙のセルだけ谷が 1 つ深く"
+                               "落ち、そこから先の山が押し上げられている。")
+        # 端から 2 枚目の層の界面(平面度の中身)
+        fs_series = []
+        for key, name in (("healthy", "健全"), ("uniform", "一様膨れ"),
+                          ("local", "局所膨れ"), ("gas", "層間ガス空隙")):
+            p = flat[key]["points"]
+            if p.size:
+                o = np.argsort(p[:, 0])
+                fs_series.append((name, p[o, 0], p[o, 1]))
+        figs.save_plot("flatness", fs_series,
+                       xlabel="x [mm]", ylabel="界面の y 位置 [mm]",
+                       title="端から 2 枚目の層の界面 —— 平面度が劣化の形を映す",
+                       caption="一様膨れは平らなまま上がる。局所膨れとガス空隙は"
+                               "うねる(残差 RMS で数字になる)。")
+
     figs.save_table("control_group",
                     ["セル", "外形 中央 mm", "外形 平均 mm", "層数", "層厚 mm",
-                     "層間隔σ mm", "空隙率 %", "真の膨張体積 mm3"], rows,
+                     "層間隔σ mm", "空隙率 %", "真の膨張体積 mm3", "平面度 RMS mm"],
+                    rows,
                     title="外形が同じ 3 つのセル ―― 内部指標だけが分ける",
                     caption="外形の 2 列はほぼ同じ。層厚・空隙率・膨張体積は違う。")
 
