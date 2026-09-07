@@ -247,12 +247,9 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
              else "*↑ The measurement ―― %s (figure labels are in Japanese; the numbers are the same)*" % sub),
             "",
         ]
+    # 生成の内幕(サムネ URL・FULLSEYE_FIGURE_DIR・数字の出所)は記事に出さない
+    # (ユーザー指示 2026-09-07「読者の ROI と関係ない独自ルールは書かない」)。
     lines += [
-        "<!-- 静止サムネ: %s -->" % th,
-        "<!-- 生成: examples/%s.py (FULLSEYE_FIGURE_DIR) / %s / %s / numbers: %s / added %s -->"
-        % (ex["id"], pick["file"], pick.get("caption", "")[:80].replace("--", "—"),
-           ex.get("numbers_source", "docstring"), ex["added"]),
-        "",
         ("```\n%s\n```" % run),
         "",
         ("ソース: [%s](%s)" % ("examples/%s.py" % ex["id"], src)) if lang == "ja"
