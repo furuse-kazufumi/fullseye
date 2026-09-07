@@ -566,12 +566,13 @@ def section_timeseries() -> dict:
     figs.save_table("conditions", ["推定器", "過大評価 平均 m", "危険時 m", "最大 m",
                                    "見落とし", "誤検知"], rows,
                     title="人をどう代表するかで、危険の見え方が変わる",
-                    caption="S = %.3f m。見落とし = 真の距離 < S なのに推定 >= S。" % S)
+                    caption="危険 = 真の距離 < %.3f m、停止判定 = 推定 < %.3f m。"
+                            % (S_GEOM, S))
     figs.save_plot("frames_clearance",
                    [("真の最小分離距離", ts, d_true),
                     ("重心 1 点(ゼロ点)", ts, est["重心 1 点"]),
                     ("背面 1 台(遮蔽あり)", ts, est["背面 1 台"]),
-                    ("必要分離距離 S", ts, np.full_like(ts, S))],
+                    ("停止判定の距離 S", ts, np.full_like(ts, S))],
                    xlabel="時刻 [s]", ylabel="分離距離 [m]",
                    title="人が近づき手を伸ばす 6 秒間",
                    caption="重心 1 点は手の伸びをまるごと見落とす。"
