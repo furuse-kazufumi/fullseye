@@ -126,5 +126,15 @@
    560,
    3
   ]
+ },
+ {
+  "file": "13_sweep_rpm_variation.png",
+  "name": "sweep_rpm_variation",
+  "caption": "櫛(最大 6X)のほうが先に落ちる。予測は 3 倍差。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
