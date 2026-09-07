@@ -1154,13 +1154,21 @@ def section_tool_gaps(sc: dict) -> dict:
     print("\n" + "=" * 78)
     print("9) 道具の穴と 3-D の落とし穴")
     print("=" * 78)
-    q = sc["P"][::37]
-    a = design_sdf(q, halfspace=True)
-    b = design_sdf(q, halfspace=False)
-    inside = b < 0
+    # 部屋を囲む格子(``grid_coords``)で、半空間の交わりと厳密な箱を突き合わせる
+    g = np.asarray(L.grid_coords(((-1.5, RX + 1.5), (-1.5, RY + 1.5), (-1.5, RZ + 1.5)),
+                                 (36, 28, 24)), np.float64).reshape(-1, 3)
+    a = np.asarray(L.plane_sdf(g, (0, 0, 0), (-1, 0, 0)))
+    for pt, nn in (((RX, 0, 0), (1, 0, 0)), ((0, 0, 0), (0, -1, 0)),
+                   ((0, RY, 0), (0, 1, 0)), ((0, 0, 0), (0, 0, -1)),
+                   ((0, 0, RZ), (0, 0, 1))):
+        a = L.sdf_intersect(a, L.plane_sdf(g, pt, nn))
+    a = np.asarray(a)
+    b = np.asarray(L.box_sdf(g, (RX / 2, RY / 2, RZ / 2), (RX / 2, RY / 2, RZ / 2)))
+    inside = b <= 0
     di = float(np.max(np.abs(a[inside] - b[inside]))) if inside.any() else 0.0
     do = float(np.max(np.abs(a[~inside] - b[~inside]))) if (~inside).any() else 0.0
-    print("   (a) 6 枚の半空間 (plane_sdf + sdf_intersect) と厳密な box_sdf の差:")
+    print("   (a) 6 枚の半空間 (plane_sdf + sdf_intersect) と厳密な box_sdf の差"
+          "(格子 %d 点):" % len(g))
     print("       部屋の内側 最大 %.4f mm / 外側(角の近く)最大 %.1f mm。"
           % (1000 * di, 1000 * do))
     print("       max による交差は角の外で過小評価する —— op の docstring の警告どおり。")
