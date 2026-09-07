@@ -631,10 +631,10 @@ def section_width_sweep() -> dict:
     print("5) 崖: クラック幅 0.5 → 3.0 px の再現率")
     print("=" * 78)
     ref2 = 1.0
-    w_pred = 0.5 * CRACK_W
+    w_pred = HYST_HIGH * CRACK_W
     print("  予測: Frangi の応答は幅に比例(σ より細い間)。校正線 %.1f px = 1.0 なので、"
-          "ヒステリシス上限 0.5 を割るのは幅 < %.2f px(校正線 %.1f px なら %.2f px)。"
-          % (CRACK_W, w_pred, ref2, 0.5 * ref2))
+          "ヒステリシス上限 %.2f を割るのは幅 < %.2f px(校正線 %.1f px なら %.2f px)。"
+          % (CRACK_W, HYST_HIGH, w_pred, ref2, HYST_HIGH * ref2))
     print("\n    幅 [px]   応答(中心線の中央値、校正線 %.1f px=1)  線形予測   再現率: 校正線 %.1f px / %.1f px"
           % (CRACK_W, CRACK_W, ref2))
     ws, rec, rec2, resp = [], [], [], []
