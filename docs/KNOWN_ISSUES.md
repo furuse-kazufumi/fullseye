@@ -1210,4 +1210,10 @@ furuse.work へ誘導する」。
 - 領域限定の多クラス大津(`xsk2_multiotsu` は画像全体のみ)が無く、しきい値を返す経路も無い。
 - 起きたこと(手順の穴): 並列 Agent 8 本を同時起動したらセッション上限(429)で全滅、4 本ずつに
   分けて再実行。4 本は成果物を書いた後に報告なしで停止し、JSON 2 本は主が実行ログから書いた。
+- (8 本目 `poc_change_detection_misreg`)`fs.ledger.piv_cross_correlate` の docstring は `(flow, info)` と
+  書くが ledger 経路は flow だけ(上と同じ穴、2 本目の PoC で再現)。平坦な窓の flow に NaN が混ざり
+  `piv_outlier_mask` に渡せない。2-D の位相相関が無く 3-D `match_phase_3d` に (1,H,W) を通した(整数精度)。
+  対応点からの 2-D 剛体当てはめ + RANSAC が無い(`procrustes_fit` に z=0 を渡す、`poc_panorama_drift` と
+  同じ穴の 2 本目)。`affine_trans_image` は並進不可。`histogram_match` は変化そのものを分布差として消す
+  (ずれも照明差も無い対で偽陽性 383 px)。
 

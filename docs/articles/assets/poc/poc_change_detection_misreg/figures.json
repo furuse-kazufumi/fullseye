@@ -1,0 +1,120 @@
+[
+ {
+  "file": "01_plot_fp_vs_shift.png",
+  "name": "plot_fp_vs_shift",
+  "caption": "0.35 px までゼロ、そこから立ち上がる。比例則は崖を説明しない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_table_fp_shift.png",
+  "name": "table_fp_shift",
+  "caption": "",
+  "shape": [
+   320,
+   580,
+   3
+  ],
+  "csv": "02_table_fp_shift.csv",
+  "tsv": "02_table_fp_shift.tsv"
+ },
+ {
+  "file": "03_map_fp_shift.png",
+  "name": "map_fp_shift",
+  "caption": "ずれ 0 では変化だけ。0.5 px から強いエッジ(屋根・道路)が帯として出る。",
+  "shape": [
+   349,
+   1074,
+   3
+  ]
+ },
+ {
+  "file": "04_plot_rotation_radial.png",
+  "name": "plot_rotation_radial",
+  "caption": "局所のずれ r·θ が崖 δ* を超える半径から偽陽性が立ち上がる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_map_rotation_1deg.png",
+  "name": "map_rotation_1deg",
+  "caption": "回転 1 度の偽陽性地図(橙)。中央付近のエッジは無傷で、端ほど帯が太い。",
+  "shape": [
+   256,
+   256,
+   3
+  ]
+ },
+ {
+  "file": "06_plot_size_cliff.png",
+  "name": "plot_size_cliff",
+  "caption": "ずれ 1 px では角の画素だけ、2 px では行と列を 1 本ずつ失う。オープニングは 1 px を根こそぎ消す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_table_size_cliff.png",
+  "name": "table_size_cliff",
+  "caption": "",
+  "shape": [
+   296,
+   605,
+   3
+  ],
+  "csv": "07_table_size_cliff.csv",
+  "tsv": "07_table_size_cliff.tsv"
+ },
+ {
+  "file": "08_plot_residual_vs_fp.png",
+  "name": "plot_residual_vs_fp",
+  "caption": "点は 3 条件 × (ゼロ点 + 4 経路)。残留 0.05 px 以下の 3 経路は原点近く、整数精度の位相相関は崖の途中に落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_table_registration.png",
+  "name": "table_registration",
+  "caption": "",
+  "shape": [
+   440,
+   945,
+   3
+  ],
+  "csv": "09_table_registration.csv",
+  "tsv": "09_table_registration.tsv"
+ },
+ {
+  "file": "10_table_controls.png",
+  "name": "table_controls",
+  "caption": "",
+  "shape": [
+   200,
+   657,
+   3
+  ],
+  "csv": "10_table_controls.csv",
+  "tsv": "10_table_controls.tsv"
+ },
+ {
+  "file": "11_scene_pair.png",
+  "name": "scene_pair",
+  "caption": "差分にはエッジが全部出る。変化そのものはその帯の中に埋もれる。",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ }
+]
