@@ -850,9 +850,14 @@ def section_metrics(sw: dict) -> dict:
         hd.append(float(_L.hausdorff_distance(np.ascontiguousarray(f["P"]), q)))
         err.append(float(np.min(hazard_sdf(q, f["mach"]))) - f["d_true"])
     ch, hd, err = np.array(ch), np.array(hd), np.array(err)
-    print("  %d フレーム: Chamfer 平均 %.4f m / Hausdorff 平均 %.4f m"
-          % (len(ch), ch.mean(), hd.mean()))
-    print("  分離距離の過大評価との相関: Chamfer r = %.3f / Hausdorff r = %.3f"
+    print("  %d フレーム: Chamfer 平均 %.4f m / Hausdorff 平均 %.4f m(**%.1f 倍**)"
+          % (len(ch), ch.mean(), hd.mean(), hd.mean() / max(ch.mean(), 1e-9)))
+    print("  分離距離の過大評価は 平均 %+.4f m / 最大 %+.4f m。"
+          "Chamfer(%.4f)はこれを 1 桁小さく見せ、\n  Hausdorff(%.4f)は同じ桁で残す。"
+          % (err.mean(), err.max(), ch.mean(), hd.mean()))
+    print("  ★ただしフレームごとの相関は弱い(Chamfer r = %.3f / Hausdorff r = %.3f)"
+          " —— Hausdorff は\n     『どこかに大穴がある』とは言えるが"
+          "『それが危険源の側かどうか』は言えない。"
           % (float(np.corrcoef(ch, err)[0, 1]), float(np.corrcoef(hd, err)[0, 1])))
     print("  ★平均で丸める指標は「見えている大半が合っている」を報告してしまう。")
     figs.save_plot("metric_blindness",
