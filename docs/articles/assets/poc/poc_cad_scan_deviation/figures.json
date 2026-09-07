@@ -62,5 +62,35 @@
   ],
   "csv": "06_density_bias_table.csv",
   "tsv": "06_density_bias_table.tsv"
+ },
+ {
+  "file": "07_defect_pull.png",
+  "name": "defect_pull",
+  "caption": "中央の読みは真値 0。位置合わせが吸った平均がそのまま偽のへこみになる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_warp_false_dent.png",
+  "name": "warp_false_dent",
+  "caption": "真値は中央 0。位置合わせが平均 a/3 を吸うので下へずれる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_warp_maps.png",
+  "name": "warp_maps",
+  "caption": "上面だけを見ている。右の中央がだいだいに変わるのが「無いへこみ」。",
+  "shape": [
+   343,
+   702,
+   3
+  ]
  }
 ]
