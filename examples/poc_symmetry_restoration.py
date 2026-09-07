@@ -703,10 +703,11 @@ def section_controls(S: dict, Z: dict, O: dict) -> dict:
           % (res["damaged"]["rms"], res["damaged_auto"]["rms"]))
     print("  ★予想は外れた。欠損は重心を x = %+.2f mm 動かすので"
           "「面もそれだけずれる」と踏んでいた —— " % surv[:, 0].mean())
-    print("    重心を通す粗い面 (f) は確かに %.2f mm ずれる(4 節の式から復元 RMS の予測"
-          " %.2f mm、実測 %.2f mm)が、"
-          % (res["coarse"]["off"],
-             np.sqrt(O["meas"][0] ** 2 + (2 * res["coarse"]["off"] * O["cosb"]) ** 2),
+    print("    重心を通す粗い面 (f) は確かに %.2f mm ずれる(同時に %.2f deg 傾く)。"
+          % (res["coarse"]["off"], res["coarse"]["ang"]))
+    print("    位置ぶんだけで 4 節の式が %.2f mm を予測し、実測は %.2f mm"
+          "(残りは角度ぶん)。しかし "
+          % (np.sqrt(O["meas"][0] ** 2 + (2 * res["coarse"]["off"] * O["cosb"]) ** 2),
              res["coarse"]["rms"]))
     print("    残差を掃引する精緻化 (c') は重心を使わないので %.3f mm まで戻す"
           "(粗い面のずれの %.0f %% を吸う)。"
