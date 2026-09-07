@@ -1151,7 +1151,7 @@ def section_figures(base: dict, norms: dict) -> None:
 # --------------------------------------------------------------------------- #
 def section_tool_gaps() -> None:
     print("\n" + "=" * 78)
-    print("10) 道具の穴(この PoC で fullseye を引いてみて)")
+    print("9) 道具の穴(この PoC で fullseye を引いてみて)")
     print("=" * 78)
 
     assert hasattr(fs.ledger, "volume_downsample")
