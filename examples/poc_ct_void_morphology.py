@@ -502,30 +502,39 @@ def section_voxel_cliff() -> dict:
     print("   * 扁平ボイドは径 %.1f µm でも**厚みが %.1f µm** -> 崖は %.1f µm"
           % (2000 * R_DISC, d_dsc, d_dsc / 2))
     gap_mid = 1000 * (T_LAYER / 2 - R_SPH)
-    print("   * 界面接触の判別は、層中央との離隔差 %.1f µm より粗いと不能"
-          % gap_mid)
+    print("   * 界面接触の判別は、層中央との離隔差 %.1f µm より粗いと不能" % gap_mid)
+    print("  ★格子の位相を 3 通り(0, 1/3, 2/3 ボクセル)振って平均と散らばりを分ける。"
+          "\n     1 本の位相だけの曲線は『たまたま境界に乗ったか』の運を含む。")
 
-    voxels = [0.010, 0.015, 0.020, 0.025, 0.030, 0.060]
-    print("\n  ボクセルµm  |  球:率%%  個数  離隔µm  扁平度  |  扁平:率%%  個数  "
-          "離隔µm  扁平度  界面欠損%%")
-    vx, f_sph, f_dsc, fl_sph, fl_dsc, g_mid, g_int, ai_dsc = [], [], [], [], [], [], [], []
-    rows = []
+    voxels = [0.010, 0.015, 0.020, 0.030, 0.060]
+    phases = (0.0, 1.0 / 3.0, 2.0 / 3.0)
+    print("\n  ボクセルµm | 球:率%%(±)  扁平度  | 扁平:率%%(±)  扁平度  界面欠損%%(±)"
+          "  | 離隔 中央/接触 µm")
+    vx = [1000 * v for v in voxels]
+    f_sph, f_dsc, s_sph, s_dsc = [], [], [], []
+    fl_sph, fl_dsc, ai_dsc, s_ai = [], [], [], []
+    g_mid, g_int, rows = [], [], []
     for v in voxels:
-        a = evaluate(make_voids("sphere", "scatter", "interface"), voxel=v)
-        b = evaluate(make_voids("disc", "scatter", "interface"), voxel=v)
+        A = [evaluate(make_voids("sphere", "scatter", "interface"), voxel=v, phase=p)
+             for p in phases]
+        B = [evaluate(make_voids("disc", "scatter", "interface"), voxel=v, phase=p)
+             for p in phases]
         c = evaluate(make_voids("sphere", "scatter", "mid"), voxel=v)
-        vx.append(1000 * v)
-        f_sph.append(a["frac"]); f_dsc.append(b["frac"])
-        fl_sph.append(a["flat"]); fl_dsc.append(b["flat"])
-        g_int.append(a["gap"]); g_mid.append(c["gap"])
-        ai_dsc.append(b["a_int"])
-        print("   %7.0f    |  %6.2f  %4d  %6.1f  %6.2f  |  %7.2f  %4d  %6.1f  "
-              "%6.2f  %8.2f" % (1000 * v, a["frac"], a["n"], a["gap"], a["flat"],
-                                b["frac"], b["n"], b["gap"], b["flat"], b["a_int"]))
-        rows.append(["%.0f" % (1000 * v), "%.2f" % a["frac"], str(a["n"]),
-                     "%.2f" % a["flat"], "%.2f" % b["frac"], str(b["n"]),
-                     "%.2f" % b["flat"], "%.2f" % b["a_int"],
-                     "%.1f" % c["gap"], "%.1f" % a["gap"]])
+        pick = lambda rs, k: np.array([r[k] for r in rs], float)   # noqa: E731
+        f_sph.append(float(pick(A, "frac").mean())); s_sph.append(float(pick(A, "frac").std()))
+        f_dsc.append(float(pick(B, "frac").mean())); s_dsc.append(float(pick(B, "frac").std()))
+        fl_sph.append(float(np.nanmean(pick(A, "flat"))))
+        fl_dsc.append(float(np.nanmean(pick(B, "flat"))))
+        ai_dsc.append(float(pick(B, "a_int").mean())); s_ai.append(float(pick(B, "a_int").std()))
+        g_int.append(float(pick(A, "gap").mean())); g_mid.append(c["gap"])
+        print("   %7.0f   | %5.2f (%.2f) %6.2f  | %5.2f (%.2f) %6.2f  %5.2f (%.2f)"
+              "  | %6.1f / %.1f"
+              % (1000 * v, f_sph[-1], s_sph[-1], fl_sph[-1], f_dsc[-1], s_dsc[-1],
+                 fl_dsc[-1], ai_dsc[-1], s_ai[-1], g_mid[-1], g_int[-1]))
+        rows.append(["%.0f" % (1000 * v), "%.2f ± %.2f" % (f_sph[-1], s_sph[-1]),
+                     "%.2f" % fl_sph[-1], "%.2f ± %.2f" % (f_dsc[-1], s_dsc[-1]),
+                     "%.2f" % fl_dsc[-1], "%.2f ± %.2f" % (ai_dsc[-1], s_ai[-1]),
+                     "%.1f" % g_mid[-1], "%.1f" % g_int[-1]])
 
     def _first_below(vals, ref, frac):
         for v, x in zip(vx, vals):
@@ -533,45 +542,73 @@ def section_voxel_cliff() -> dict:
                 return v
         return float("nan")
 
-    c_dsc = _first_below(f_dsc, f_dsc[0], 0.80)
-    c_sph = _first_below(f_sph, f_sph[0], 0.80)
-    print("\n  ★実測の崖(ボイド率が最良値の 80 %% を割る最初の点): "
-          "扁平 %.0f µm / 球 %.0f µm。" % (c_dsc, c_sph))
-    print("     予測は扁平 %.1f µm(厚みの半分)/ 球 %.1f µm(径の半分)。"
-          % (d_dsc / 2, d_sph / 2))
-    print("     ★**同じ体積率でも、寿命に効く扁平ボイドのほうが先に見えなくなる**。"
-          "しかも壊れる向きは\n     ボイド率が**減る**側 = 合否では『合格』に化ける"
-          "(%.0f µm で %.2f -> %.2f %%)。" % (vx[-1], f_dsc[0], f_dsc[-1]))
-    print("  ★離隔の判別(予想は %.0f µm で不能): 実測は層中央 / 界面接触 = "
+    c_fr_dsc = _first_below(f_dsc, f_dsc[0], 0.80)
+    c_fr_sph = _first_below(f_sph, f_sph[0], 0.80)
+    c_fl_dsc = _first_below(fl_dsc, fl_dsc[0], 0.80)
+    c_fl_sph = _first_below(fl_sph, fl_sph[0], 0.80)
+    c_ai = _first_below(ai_dsc, ai_dsc[0], 0.80)
+    print("\n  ★予想は 2 段で外れた。")
+    print("   1) **体積率はほとんど崩れない**。球は %.0f µm(径の半分 %.0f µm を超える)"
+          "でも %.2f %%(10 µm の %.2f %% の %.0f %%)、\n      扁平も %.2f %% で、"
+          "80 %% を割る点は 球 %s / 扁平 %s。予測(球 %.0f µm / 扁平 %.0f µm で崩れる)"
+          "は外れ。" % (vx[-1], d_sph / 2, f_sph[-1], f_sph[0],
+                        100 * f_sph[-1] / f_sph[0], f_dsc[-1],
+                        ("%.0f µm" % c_fr_sph) if np.isfinite(c_fr_sph) else "無し",
+                        ("%.0f µm" % c_fr_dsc) if np.isfinite(c_fr_dsc) else "無し",
+                        d_sph / 2, d_dsc / 2))
+    print("      理由: 部分体積を線形の被覆率で積むと、**個々のボイドが解像されなくても"
+          "体積は保存される**。\n      ボクセルを粗くしても『ボイド率 %.1f %%』という数字は"
+          "しれっと出続ける。" % f_sph[-1])
+    print("   2) ★**先に死ぬのは形のほう**。扁平度は 球 %s / 扁平 %s で 80 %% を割り、"
+          "\n      %.0f µm では両方とも**測れない**(ボイドあたりのボクセルが足りず nan)。"
+          "\n      界面欠損率も %s で 80 %% を割り、%.0f µm では %.2f -> %.2f %% "
+          "(**%.0f %% 減**)。"
+          % (("%.0f µm" % c_fl_sph) if np.isfinite(c_fl_sph) else "無し",
+             ("%.0f µm" % c_fl_dsc) if np.isfinite(c_fl_dsc) else "無し", vx[-1],
+             ("%.0f µm" % c_ai) if np.isfinite(c_ai) else "無し",
+             vx[-1], ai_dsc[0], ai_dsc[-1], 100 * (1 - ai_dsc[-1] / ai_dsc[0])))
+    print("      ★向きが悪い: **合否の数字は据え置きのまま、危ない形の指標だけが"
+          "『安全』側へ動く**。")
+    print("   3) 位相の散らばりは %.0f µm で最大 ±%.2f ポイント —— "
+          "1 本の位相だけで崖を語ると\n      %.2f %% と %.2f %% のどちらを引くかで"
+          "結論が変わる。" % (vx[int(np.argmax(s_dsc))], max(s_dsc),
+                              f_dsc[int(np.argmax(s_dsc))] - max(s_dsc),
+                              f_dsc[int(np.argmax(s_dsc))] + max(s_dsc)))
+    print("  ★離隔の判別(予想は %.0f µm より粗いと不能): 実測は 層中央 / 界面接触 = "
           % gap_mid)
     print("     " + " / ".join("%.0fµm:%.0f 対 %.0f" % (v, m, i)
                                for v, m, i in zip(vx, g_mid, g_int)))
-    print("     予想は外れた —— 差が縮むのではなく**両方がボクセル刻みに量子化**され、"
+    print("     これも外れた —— 差が縮むのではなく**両方がボクセル刻みに量子化**され、"
           "順序は最後まで残る。\n     壊れるのは判別ではなく**離隔の値そのもの**"
-          "(ESDF のゼロ交差はボクセル中心の中間に落ちる)。")
+          "(接触側は ESDF の下限 1 ボクセルに貼りつく: 真値 0 µm に対し %.0f µm)。"
+          % g_int[-1])
 
     figs.save_plot("voxel_cliff_fraction",
                    [("球(径 %.0f µm)" % d_sph, vx, f_sph),
                     ("扁平(厚み %.0f µm)" % d_dsc, vx, f_dsc),
                     ("真値 %.1f %%" % (100 * VOID_FRAC), vx, [100 * VOID_FRAC] * len(vx)),
-                    ("予測の崖(扁平 %.0f µm)" % (d_dsc / 2), [d_dsc / 2, d_dsc / 2],
-                     [0.0, 100 * VOID_FRAC * 1.2])],
-                   xlabel="ボクセル寸法 [µm]", ylabel="推定ボイド率 [%]",
-                   title="崖はボイド径ではなく**最小寸法**で決まる",
-                   caption="同体積の球と扁平ボイド。扁平のほうが先に、しかも"
-                           "『合格』側へ壊れる。")
+                    ("予測した崖(扁平 %.0f µm)" % (d_dsc / 2), [d_dsc / 2] * 2,
+                     [0.0, 100 * VOID_FRAC * 1.3])],
+                   xlabel="ボクセル寸法 [µm]", ylabel="推定ボイド率 [%](位相 3 通りの平均)",
+                   title="予想と違い、ボイド率は粗いボクセルでも崩れない",
+                   caption="線形の被覆率で積むと体積は保存される。合否の数字は"
+                           "解像できなくなっても出続ける。")
     figs.save_plot("voxel_cliff_shape",
                    [("球の扁平度", vx, fl_sph), ("扁平ボイドの扁平度", vx, fl_dsc),
-                    ("扁平の界面欠損率 [%]", vx, [x / 20.0 for x in ai_dsc])],
+                    ("扁平の界面欠損率 [%] の 1/20", vx, [x / 20.0 for x in ai_dsc])],
                    xlabel="ボクセル寸法 [µm]", ylabel="扁平度(界面欠損は 1/20 倍)",
-                   title="形の指標はボイド率より先に潰れる")
+                   title="先に死ぬのは形の指標のほう",
+                   caption="%.0f µm では扁平度が測れない(nan)。"
+                           "界面欠損率は %.0f %% 減って『安全』に見える。"
+                           % (vx[-1], 100 * (1 - ai_dsc[-1] / ai_dsc[0])))
     figs.save_table("voxel_cliff_table",
-                    ["ボクセル µm", "球 率 %", "球 個数", "球 扁平度",
-                     "扁平 率 %", "扁平 個数", "扁平 扁平度", "扁平 界面欠損 %",
-                     "離隔 中央 µm", "離隔 接触 µm"], rows,
-                    title="ボクセル寸法の掃引(物理的な場面は不変)")
-    return {"vx": vx, "f_sph": f_sph, "f_dsc": f_dsc, "cliff_dsc": c_dsc,
-            "cliff_sph": c_sph, "g_mid": g_mid, "g_int": g_int}
+                    ["ボクセル µm", "球 率 %", "球 扁平度", "扁平 率 %",
+                     "扁平 扁平度", "扁平 界面欠損 %", "離隔 中央 µm", "離隔 接触 µm"],
+                    rows, title="ボクセル寸法の掃引(物理的な場面は不変、位相 3 通りの平均±)")
+    return {"vx": vx, "f_sph": f_sph, "f_dsc": f_dsc, "fl_dsc": fl_dsc,
+            "ai": ai_dsc, "cliff_frac_dsc": c_fr_dsc, "cliff_flat_dsc": c_fl_dsc,
+            "cliff_ai": c_ai, "g_mid": g_mid, "g_int": g_int,
+            "sd_max": max(s_dsc)}
 
 
 # --------------------------------------------------------------------------- #

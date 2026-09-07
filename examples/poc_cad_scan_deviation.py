@@ -1347,15 +1347,22 @@ def section_tool_gaps(ref: CadRef) -> None:
           "公差 %.2f mm には %.1f 倍足りない。"
           % (v.mean(), v.std(), TOL, v.std() / TOL))
 
-    # (e) SDF の原始形状が球と直方体しかない
+    # (e) SDF の原始形状 —— この PoC を書いた時点では球と直方体の 2 つだけだった
     import ops3d
-    prim = [n for n in ops3d.OPS3D if n.endswith("_sdf")]
-    assert sorted(prim) == ["box_sdf", "sphere_sdf"], prim
-    assert not any(hasattr(fs, n) for n in prim)
-    print("  (e) SDF の原始形状が %s の 2 つだけで、円柱・トーラス(フィレット)・"
-          "カプセルが無い。" % " / ".join(sorted(prim)))
-    print("      ボス + 貫通穴 + 根元フィレットという普通の機械部品は"
-          "この 2 つでは組めず、この PoC は面ごとの解析式を自前で書いた。")
+    prim = sorted(n for n in ops3d.OPS3D if n.endswith("_sdf"))
+    # ★穴が塞がったら鳴る assert。実際 2026-09-07 に鳴り、この行を書き換えた:
+    # 「円筒穴・面取り・フィレットが組めない」という指摘を受けて plane / cylinder /
+    # torus / capsule が足された。指摘が道具を変えたので、記録を残して先へ進める。
+    assert set(prim) >= {"box_sdf", "sphere_sdf"}, prim
+    added = sorted(set(prim) - {"box_sdf", "sphere_sdf"})
+    print("  (e) SDF の原始形状は %d 個: %s" % (len(prim), " / ".join(prim)))
+    if added:
+        print("      ボス + 貫通穴 + 根元フィレットが球と直方体だけでは組めないので、"
+              "この PoC は面ごとの解析式を自前で書いた。指摘のあと %s が"
+              "足されたので、いま書くなら CSG で組める。" % " / ".join(added))
+    else:
+        print("      ボス + 貫通穴 + 根元フィレットという普通の機械部品は"
+              "この 2 つでは組めず、この PoC は面ごとの解析式を自前で書いた。")
 
     # (f) 公差外領域の面積を出す口が無い
     assert not hasattr(fs.ledger, "out_of_tolerance_area")
