@@ -506,20 +506,9 @@ def internal_metrics(vol: np.ndarray, spacing=SPACING) -> dict:
             pitches.extend(np.diff(t).tolist())
         fft_pitch.append(_fft_pitch(pr[:, 0], pr[:, 1]))
 
-    # 空隙率: 電解液より暗い連結成分を数える(気体 0.02 < 電解液 0.35)
-    roi = np.zeros(vol.shape, bool)
-    z0, z1 = int(ELEC_Z[0] / spacing[0]) + 1, int(ELEC_Z[1] / spacing[0])
-    y0, y1 = int((CAN_Y[0] + 0.30) / spacing[1]), int((CAN_Y[1] - 0.30) / spacing[1])
-    x0, x1 = int(ELEC_X[0] / spacing[2]) + 2, int(ELEC_X[1] / spacing[2]) - 2
-    roi[z0:z1, y0:y1, x0:x1] = True
-    # 空隙のしきい値は**電解液の水準の半分**(気体 0 と電解液の中間)。絶対値に
-    # すると、ビームハードニングで水準が下がったときに空隙が消える。
     liq = float(np.median(lows)) if lows else MU_LIQ
-    dark = (np.asarray(vol) < 0.5 * liq) & roi
-    lab = np.asarray(L.vol_label(dark, connectivity=26))
-    props = L.vol_region_props(lab, spacing=spacing)
+    dark, lab, big, roi = detect_voids(vol, spacing, liq)
     cell_vol = float(spacing[0] * spacing[1] * spacing[2])
-    big = [p for p in props if p["volume"] > max(0.004, 4.0 * cell_vol)]
     void_vol = float(sum(p["volume"] for p in big))
     roi_vol = float(roi.sum() * cell_vol)
 
