@@ -903,7 +903,7 @@ def section_basin(ref: CadRef) -> dict:
     print("   初期ずれ[度]  姿勢誤差[度]  点移動[mm]  最終残差[µm]  判定")
     sc = make_scan(n=8000, noise=0.010)
     angs, errs, resid = [], [], []
-    for a in (0, 4, 8, 12, 16, 20, 24, 28, 32):
+    for a in (0, 10, 20, 30, 40, 50, 60, 75, 90, 120, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
         R, t = align(sc["pts"], ref, method="p2plane", init=(Rp, sc["t_true"]),
                      iters=40, sub=5000)
