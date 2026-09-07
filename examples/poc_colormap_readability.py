@@ -654,8 +654,11 @@ def section_categorical() -> dict:
         cands = [
             ("viridis(連続)", fs.apply_cmap(lf, "viridis", vmin=0.0, vmax=float(n_lab))),
             ("jet(連続)", fs.apply_cmap(lf, "jet", vmin=0.0, vmax=float(n_lab))),
-            ("categorical tab10", fs.colorize_categorical(lab, "tab10")),
-            ("categorical wong", fs.colorize_categorical(lab, "wong")),
+            # ★色数を超えると既定で拒否される(この PoC が指摘して同日に
+            #   fail-closed になった)。ここは「循環したらどうなるか」を測るのが
+            #   目的なので cycle=True を**明示**する —— 明示させること自体が対策。
+            ("categorical tab10", fs.colorize_categorical(lab, "tab10", cycle=True)),
+            ("categorical wong", fs.colorize_categorical(lab, "wong", cycle=True)),
             ("colorize_labels 種 0", fs.colorize_labels(lab, seed=0)),
         ]
         print("\n  領域 %d 個・隣接する対 %d 組" % (n_lab, len(pairs)))
@@ -687,12 +690,14 @@ def section_categorical() -> dict:
                    caption="番号の大小に意味は無いのに、連続マップは"
                            "『近い番号 = 近い領域』と読ませる。")
     figs.save_grid("categorical_overflow",
-                   [np.asarray(fs.colorize_categorical(lab24, "tab10")),
+                   [np.asarray(fs.colorize_categorical(lab24, "tab10", cycle=True)),
                     np.asarray(fs.colorize_labels(lab24, seed=0))],
                    ["tab10(色数 10 < 領域 24、最小 %.0f)" % res[(24, "categorical tab10")],
                     "colorize_labels 乱数(最小 %.0f)" % rand[0]], ncols=2,
-                   title="質的パレットは色数を超えると黙って循環する",
-                   caption="同じ色の領域が隣り合っても、戻り値からは分からない。")
+                   title="質的パレットは色数を超えると循環する(いまは要 cycle=True)",
+                   caption="同じ色の領域が隣り合っても、戻り値からは分からない。"
+                           "この PoC の指摘で、既定では ValueError で拒否する"
+                           "ようになった(2026-09-08)。")
     figs.save_table("categorical_table",
                     ["場面", "塗り方", "隣接対の色差の最小 ΔE", "JND 未満の対"], rows,
                     title="隣り合う領域を見分けられるか")

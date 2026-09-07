@@ -50,12 +50,51 @@ def test_every_palette_in_the_catalogue_actually_renders():
         assert len(np.unique(np.round(rgb.reshape(-1, 3), 4), axis=0)) > 8, name
 
 
-def test_the_perceptually_safe_list_is_measured_not_asserted():
-    """``PERCEPTUAL_SAFE`` に挙げたマップは、本当に明度が単調であること。"""
+def _delta_e_profile(name, n=512):
+    """隣接色差の列(CIE76 近似)。色差の刻みが不均一だと無い境目が見える。"""
+    import fullseye as fs
+
+    t = np.linspace(0.0, 1.0, n).reshape(1, -1)
+    rgb = np.asarray(fs.apply_cmap(t, name), float)[0]
+    lab = np.asarray(fs.rgb_to_lab(rgb.reshape(1, -1, 3)), float)[0]
+    return np.sqrt((np.diff(lab, axis=0) ** 2).sum(1))
+
+
+def _ridges(name):
+    de = _delta_e_profile(name)
+    med = float(np.median(de)) or 1e-12
+    inner = de[1:-1]
+    peak = (inner > de[:-2]) & (inner > de[2:]) & (inner > 1.6 * med)
+    return int(peak.sum()), float(de.max() / med)
+
+
+def test_the_perceptually_safe_list_is_measured_on_both_criteria():
+    """``PERCEPTUAL_SAFE`` は**明度の単調さと色差の一様さの両方**で選ぶ。
+
+    ★2026-09-08、``poc_colormap_readability`` の指摘で基準を足した。それまでは
+    「L* の折返しが 0 回」だけで選んでおり、``cividis``(折返し 0 回、しかし
+    ΔE max/median **2.23** で尾根 1 本)が入っていた。明度が単調でも色差の刻みが
+    不均一なら、なめらかな場に**無い境目**が見える —— 片側の基準で「安全」と
+    名乗っていた。この repo が繰り返し踏む「一方向だけ確かめて不変を主張する」形。
+    """
     for name in imgio.PERCEPTUAL_SAFE:
         assert _turns(name) == 0, (
             "%s を PERCEPTUAL_SAFE に挙げているが、明度が %d 回行き来する"
             % (name, _turns(name)))
+        ridges, ratio = _ridges(name)
+        assert ridges == 0 and ratio < 1.6, (
+            "%s は明度こそ単調だが色差の刻みが不均一(尾根 %d 本 / "
+            "max/median %.2f)。なめらかな場に無い境目を作るので "
+            "PERCEPTUAL_SAFE には置けない" % (name, ridges, ratio))
+
+
+def test_cividis_is_kept_out_of_perceptual_safe_for_a_measured_reason():
+    """外した理由を数字で固定する(直したら基準の側でなくこのテストが鳴る)。"""
+    assert "cividis" not in imgio.PERCEPTUAL_SAFE
+    assert "cividis" in imgio.CVD_SAFE
+    ridges, ratio = _ridges("cividis")
+    assert _turns("cividis") == 0                # 明度は単調 —— だから見落とした
+    assert ridges >= 1 and ratio > 1.6, (ridges, ratio)
 
 
 def test_the_rainbow_maps_are_worse_and_we_say_so_with_numbers():
@@ -231,3 +270,17 @@ def test_disparity_default_is_no_longer_the_worst_map():
     import inspect
     assert inspect.signature(imgio.colorize_disparity).parameters["name"].default == "turbo"
     assert _turns("turbo") < _turns("jet")
+
+
+def test_categorical_refuses_to_reuse_a_colour_without_being_told_to():
+    """★色数を超えたら拒否する(2026-09-08、黙って循環していた)。
+
+    24 領域を ``tab10`` で塗ると隣り合う領域が同じ色になり(実測: 隣接色差の
+    最小 0.0 が 3 組)、循環したことが戻り値からは分からなかった。
+    """
+    lab = np.arange(25).reshape(5, 5)
+    with pytest.raises(ValueError, match="exceeds the 10 colours"):
+        imgio.colorize_categorical(lab, "tab10")
+    assert imgio.colorize_categorical(lab, "tab10", cycle=True).shape == (5, 5, 3)
+    ok = np.arange(11).reshape(11, 1)            # ラベル 1..10 はちょうど収まる
+    assert imgio.colorize_categorical(ok, "tab10").shape == (11, 1, 3)

@@ -16,7 +16,7 @@ __all__ = [
     "save", "load", "save_ply", "COLORMAPS",
     # 2026-09-08: 疑似カラーの「種類」を増やした回(ユーザー指摘)
     "colorize_categorical", "colorize_bivariate", "colorize_significance",
-    "NORMS", "QUALITATIVE", "PERCEPTUAL_SAFE", "CYCLIC",
+    "NORMS", "QUALITATIVE", "PERCEPTUAL_SAFE", "CVD_SAFE", "CYCLIC",
 ]
 
 # A library of false-colour palettes (HDevelop-style pseudo-colour). Sequential
@@ -434,14 +434,20 @@ def colorize_categorical(labels, palette="tab10", background=(0.0, 0.0, 0.0), cy
     ★連続マップ(viridis 等)をラベルに使ってはいけない —— 番号の大小が「近さ」に
     見え、ラベル 3 とラベル 4 が隣の領域だと**読者が誤解する**。
 
+    ★**色数を超えたら既定で拒否する**(2026-09-08、``poc_colormap_readability`` の
+    指摘で fail-closed にした)。最初の版は黙って循環していたので、24 領域を
+    ``tab10`` で塗ると**隣り合う領域が同じ色**になり(実測: 隣接色差の最小 0.0 が
+    3 組)、しかもそれを呼び手が知る手段が無かった。循環してよいなら
+    ``cycle=True`` と明示する —— 明示していれば図の読み方も変わる。
+
     Args:
         labels: 整数ラベル(0 = 背景)。
-        palette: ``QUALITATIVE`` のキー。色数を超えたラベルは循環する
-            (循環したことは戻り値からは分からないので、色数を超える数の
-            ラベルには :func:`colorize_labels` を使うほうが誠実)。
+        palette: ``QUALITATIVE`` のキー。
         background: ラベル 0 の色。
+        cycle: True なら色数を超えたラベルを循環させる(既定 False = 拒否)。
     Raises:
         ValueError: 未知の ``palette``。
+        ValueError: ``cycle=False`` でラベルの最大値がパレットの色数を超えるとき。
     """
     if palette not in QUALITATIVE:
         raise ValueError("unknown qualitative palette %r (have %s)"
@@ -452,6 +458,14 @@ def colorize_categorical(labels, palette="tab10", background=(0.0, 0.0, 0.0), cy
     out[...] = np.asarray(background, np.float64)
     pos = lab > 0
     if pos.any():
+        hi = int(lab[pos].max())
+        if hi > len(pal) and not cycle:
+            raise ValueError(
+                "colorize_categorical: label %d exceeds the %d colours of palette %r, "
+                "so two regions would get the same colour with nothing in the result to "
+                "say so (measured: 24 regions on 'tab10' put 3 adjacent pairs below the "
+                "just-noticeable difference). Pass cycle=True to accept that, or use "
+                "colorize_labels for many labels" % (hi, len(pal), palette))
         idx = (lab[pos].astype(np.int64) - 1) % len(pal)
         out[pos] = pal[idx]
     return out
