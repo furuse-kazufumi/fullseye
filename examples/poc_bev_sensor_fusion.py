@@ -965,7 +965,8 @@ def _tri_color(occ, gt, evalm) -> np.ndarray:
     return rgb
 
 
-def section_figures(rig: Rig, zero: dict) -> None:
+def section_scene_figures(rig: Rig) -> None:
+    """場面の図(記事の看板になるので **最初に**書く)。"""
     if not figs.enabled():
         return
     # (a) 場面: 真値占有 / 真値高さ / 既知マスク / LiDAR の生 BEV
@@ -975,26 +976,30 @@ def section_figures(rig: Rig, zero: dict) -> None:
     figs.save_grid("scene_bev",
                    [bev_img(rig.gt_occ), bev_img(rig.gt_h), bev_img(cov),
                     bev_img(rig.occ_a & rig.kn_a0)],
-                   ["真値の占有(式で決まる)", "真値の高さ [m](疑似カラー)",
-                    "既知マスク(0.5=片方 / 1.0=両方)", "LiDAR 単独の BEV"],
+                   ["真値の占有", "真値の高さ [m]", "既知セル(片方 / 両方)",
+                    "LiDAR 単独の BEV"],
                    ncols=2, title="鳥瞰図の真値と観測(1 セル %.2f m、上が前方)"
                                   % CELL,
-                   caption="評価窓は前方 %.0f-%.0f m。既知マスクが 0 の領域"
+                   caption="評価窓は前方 %.0f-%.0f m。既知でない領域"
                            "(車体内部・陰)は評価から外す。" % WIN_X)
 
     # (b) 陰の食い違い —— 融合の取り分がどこから来るか
     shadow = np.zeros(rig.X.shape + (3,))
-    shadow[..., 2] = np.where(rig.free_a, 0.55, 0.10)      # LiDAR が見た自由
-    shadow[..., 0] = np.where(rig.free_b0, 0.55, 0.10)     # カメラが見た自由
-    shadow[..., 1] = 0.10
+    shadow[..., 2] = np.where(rig.free_a, 0.62, 0.10)      # LiDAR が見た自由
+    shadow[..., 0] = np.where(rig.free_b0, 0.62, 0.10)     # カメラが見た自由
+    shadow[..., 1] = np.where(rig.free_a & rig.free_b0, 0.45, 0.10)
     shadow[rig.gt_occ] = (1.0, 1.0, 1.0)
     figs.save("shadow_map", bev_img(shadow),
               "横に %.2f m 離した 2 センサの「自由と言い切れた領域」。"
-              "青みだけの帯が LiDAR にしか見えない所、橙みだけの帯がカメラに"
-              "しか見えない所。白は真値の障害物。22 m の 2 台は"
+              "青い帯が LiDAR にしか見えない所、橙の帯がカメラにしか見えない所、"
+              "灰色は両方。白は真値の障害物。22 m の 2 台は"
               "**互いの影に 1 台ずつ入っている**。"
               % float(LIDAR["C"][1] - CAM["C"][1]))
 
+
+def section_figures(rig: Rig, zero: dict) -> None:
+    if not figs.enabled():
+        return
     # (c) 各センサと融合(誤差 0)
     _, o_max = rig.run("max")
     _, o_lid = rig.single("lidar")
