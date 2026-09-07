@@ -1,0 +1,10 @@
+デノイザ F	真の K との相関	PCE 同一	PCE 別	照合だけ Wiener	倍率(最良=1)	残差 RMS
+gauss_image (σ≈1.0)	+0.815	1665	-15.4	1713	0.49	0.0232
+median_image (3x3)	+0.814	2196	16.8	1929	0.65	0.0197
+xsp_wiener (3x3, scipy)	+0.833	2870	15.4	1954	0.85	0.0200
+sk_tv (Chambolle)	+0.725	216	-15.4	969	0.06	0.0292
+sk_wavelet (BayesShrink)	+0.619	1969	20.8	1297	0.58	0.0106
+xsp_dct_denoise	+0.350	-10	10.6	183	-0.00	0.1162
+sk_nlm (非局所平均)	+0.725	195	-15.6	1009	0.06	0.0362
+fullseye wiener(局所 Wiener・多窓)	+0.805	1895	16.9	1895	0.56	(内部)
+fullseye wavelet(db4 + 局所 Wiener)	+0.828	3390	1.2	2241	1.00	(内部)

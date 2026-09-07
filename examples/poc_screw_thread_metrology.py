@@ -82,8 +82,10 @@ SS = 4                   # 面積被覆の超解像倍率
 BLUR = 1.0               # ぼけ σ [px](既定)
 NOISE = 0.02             # 白色雑音 σ(既定)
 SEED = 7
-BAND = (0.2, 0.8)        # フランクのうち使う帯(深さ方向の割合)
+BAND = (0.35, 0.65)      # フランクのうち使う帯(深さ方向の割合)。両端の丸みを避ける
 N_LINES = 9              # caliper 線の本数(帯の中)
+NAIVE_PITCHES = 4        # 軸を仮定しない(水平)caliper の長さ [山]。長いと帯から外れる
+PHASE = 0.3              # 山頂の位相 [px](画素格子と揃えない)
 
 SQ3 = np.sqrt(3.0)
 
@@ -106,6 +108,7 @@ def thread_truth(p: float = P_PX, d: float = D_PX) -> dict:
 
 def radius_profile(x: np.ndarray, t: dict) -> np.ndarray:
     """半径 r(x): 頂点から傾き √3 で下る三角波を山頂・谷で切り落とす。"""
+    x = x - PHASE
     dist = np.abs(x - np.round(x / t["P"]) * t["P"])
     return np.clip(t["r_apex"] - SQ3 * dist, t["r_root"], t["r_major"])
 
@@ -182,37 +185,47 @@ def zero_point(img: np.ndarray) -> dict:
 # --------------------------------------------------------------------------- #
 # サブピクセル: caliper でフランクを刺し、直線を当て、交点から P/α/d2           #
 # --------------------------------------------------------------------------- #
-def caliper_crossings(img: np.ndarray, t: dict, n_lines: int = N_LINES,
+def caliper_crossings(img: np.ndarray, t: dict, phi_deg: float = 0.0,
+                      length_pitches: float | None = None, n_lines: int = N_LINES,
                       sigma: float = 1.0) -> list[dict]:
-    """帯の中に水平な測定線を引き、フランクとの交点(サブピクセル)を集める。
+    """帯の中に測定線(向き ``phi_deg``)を引き、フランクとの交点(サブピクセル)を集める。
 
-    返り値の各要素: ``side``(+1 上側 / -1 下側)、``r``(軸からの距離 [px])、
-    ``x``(列)、``kind``('L' = 半径が x とともに増える左フランク / 'R' = 右)。
+    ``phi_deg`` = 0 は「軸は画像の横」と仮定する素の測り方。``length_pitches`` が
+    None なら視野いっぱい。返り値の各要素: ``side``(+1 上側 / -1 下側)、``r``(測定線の
+    軸からの距離 [px])、``x``/``row``(交点の画像座標)、``kind``('L' = 半径が
+    軸方向とともに増える左フランク / 'R' = 右)。
     """
     hh, ww = img.shape
     cy, cx = t["cy"], t["cx"]
+    ph = np.deg2rad(phi_deg)
     r_lo = t["r_root"] + BAND[0] * t["depth"]
     r_hi = t["r_root"] + BAND[1] * t["depth"]
+    half = (ww / 2.0 - 2.0) if length_pitches is None else 0.5 * length_pitches * t["P"]
     out = []
     for side in (+1, -1):
         for r in np.linspace(r_lo, r_hi, n_lines):
-            row = cy - side * r
+            row = cy - side * r * np.cos(ph)
+            col = cx + side * r * np.sin(ph)
             if not (1 <= row <= hh - 2):
                 continue
-            ms = fs.ledger.gen_measure_rectangle2(row=float(row), col=float(cx), phi=0.0,
-                                                  length1=ww / 2.0 - 2.0, length2=1.0,
+            ms = fs.ledger.gen_measure_rectangle2(row=float(row), col=float(col), phi=float(ph),
+                                                  length1=float(half), length2=1.0,
                                                   shape=img.shape)
             for e in fs.ledger.measure_pos(img, ms, sigma=sigma, threshold=0.2):
                 # 明→暗(negative)= ねじに入る = 半径が増えるフランク(L)
                 kind = "L" if e["polarity"] == "negative" else "R"
                 out.append({"side": side, "r": float(r), "x": float(e["col"]),
-                            "row": float(row), "kind": kind})
+                            "row": float(e["row"]), "kind": kind,
+                            "s": float(e["pos"] - (len(ms["rows"]) - 1) / 2.0)})
     return out
 
 
 def group_flanks(cross: list[dict], t: dict, min_pts: int = 3) -> list[dict]:
-    """交点をフランクごとに束ねる。中央の測定線を錨にして各線から最寄りを拾う。"""
-    tol = max(1.5, 0.15 * t["P"])
+    """交点をフランクごとに束ねる。中央の測定線を錨にして各線から最寄りを拾う。
+
+    位置は測定線に沿った座標 ``s`` で比べる(線が傾いていても同じ式で済む)。
+    """
+    tol = max(0.6, 0.12 * t["P"])
     flanks = []
     for side in (+1, -1):
         for kind in ("L", "R"):
@@ -221,16 +234,16 @@ def group_flanks(cross: list[dict], t: dict, min_pts: int = 3) -> list[dict]:
                 continue
             rs = sorted({c["r"] for c in pts})
             r_mid = rs[len(rs) // 2]
-            slope = (1.0 if kind == "L" else -1.0) / SQ3        # dx/dr の公称
+            slope = (1.0 if kind == "L" else -1.0) / SQ3        # ds/dr の公称
             for a in [c for c in pts if c["r"] == r_mid]:
                 members = []
                 for r in rs:
-                    x_pred = a["x"] + slope * (r - r_mid)
+                    s_pred = a["s"] + slope * (r - r_mid)
                     cand = [c for c in pts if c["r"] == r]
                     if not cand:
                         continue
-                    best = min(cand, key=lambda c: abs(c["x"] - x_pred))
-                    if abs(best["x"] - x_pred) <= tol:
+                    best = min(cand, key=lambda c: abs(c["s"] - s_pred))
+                    if abs(best["s"] - s_pred) <= tol:
                         members.append(best)
                 if len(members) >= min_pts:
                     flanks.append({"side": side, "kind": kind,
@@ -306,12 +319,18 @@ def profile_metrics(fitted: list[dict], t: dict) -> dict:
     return res
 
 
-def measure_thread(img: np.ndarray, t: dict, n_lines: int = N_LINES,
-                   sigma: float = 1.0, correct_tilt: bool = False) -> dict:
-    """caliper → 直線 → P / α / d2 / θ_est。``correct_tilt`` で θ_est だけ回し戻す。"""
-    cross = caliper_crossings(img, t, n_lines=n_lines, sigma=sigma)
+def measure_thread(img: np.ndarray, t: dict, phi_deg: float = 0.0,
+                   length_pitches: float | None = None, n_lines: int = N_LINES,
+                   sigma: float = 1.0) -> dict:
+    """caliper(向き phi)→ 直線 → P / α / d2 / θ_est。
+
+    解析は交点を -phi 回して「軸 = 横」の座標で行う。phi = 0 で画像軸を軸と
+    仮定した素の測り方、phi = θ_est で回し戻した測り方になる。
+    """
+    cross = caliper_crossings(img, t, phi_deg=phi_deg, length_pitches=length_pitches,
+                              n_lines=n_lines, sigma=sigma)
     flanks = group_flanks(cross, t)
-    fitted = fit_flanks(flanks, 0.0, t)
+    fitted = fit_flanks(flanks, -phi_deg, t)
     m = profile_metrics(fitted, t)
     top, bot = m[+1], m[-1]
 
@@ -319,27 +338,17 @@ def measure_thread(img: np.ndarray, t: dict, n_lines: int = N_LINES,
         v = [m[s][key] for s in (+1, -1) if np.isfinite(m[s][key])]
         return float(np.mean(v)) if v else np.nan
 
-    # 傾き: 上側は |α_L| = 30+θ, |α_R| = 30-θ / 下側は符号が逆
-    th_top = 0.5 * (top["alpha_L"] - top["alpha_R"])
-    th_bot = -0.5 * (bot["alpha_L"] - bot["alpha_R"])
-    theta_est = float(np.nanmean([th_top, th_bot]))
-    out = {"cross": cross, "flanks": flanks, "fitted": fitted, "per_side": m,
-           "alpha_L": top["alpha_L"], "alpha_R": top["alpha_R"],
-           "alpha": 0.5 * (comb("alpha_L") + comb("alpha_R")),
-           "theta_est": theta_est,
-           "P_apex": comb("P_apex"), "P_left": top["P_left"], "P_right": top["P_right"],
-           "d2": top["r2"] + bot["r2"], "rms": comb("rms"),
-           "n_flanks": top["n_flanks"] + bot["n_flanks"]}
-    if correct_tilt and np.isfinite(theta_est):
-        fitted_c = fit_flanks(flanks, -theta_est, t)
-        mc = profile_metrics(fitted_c, t)
-        tc, bc = mc[+1], mc[-1]
-        out["corrected"] = {
-            "alpha": 0.25 * (tc["alpha_L"] + tc["alpha_R"] + bc["alpha_L"] + bc["alpha_R"]),
-            "P_apex": float(np.nanmean([tc["P_apex"], bc["P_apex"]])),
-            "P_left": tc["P_left"], "P_right": tc["P_right"],
-            "d2": tc["r2"] + bc["r2"]}
-    return out
+    # 残り傾き: 上側は |α_L| = 30+θ, |α_R| = 30-θ / 下側は符号が逆
+    ths = [v for v in (0.5 * (top["alpha_L"] - top["alpha_R"]),
+                       -0.5 * (bot["alpha_L"] - bot["alpha_R"])) if np.isfinite(v)]
+    theta_res = float(np.mean(ths)) if ths else np.nan
+    return {"cross": cross, "flanks": flanks, "fitted": fitted, "per_side": m,
+            "alpha_L": top["alpha_L"], "alpha_R": top["alpha_R"],
+            "alpha": 0.5 * (comb("alpha_L") + comb("alpha_R")),
+            "theta_res": theta_res, "theta_est": phi_deg + theta_res,
+            "P_apex": comb("P_apex"), "P_left": top["P_left"], "P_right": top["P_right"],
+            "d2": top["r2"] + bot["r2"], "rms": comb("rms"),
+            "n_flanks": top["n_flanks"] + bot["n_flanks"]}
 
 
 def pct(v, ref):

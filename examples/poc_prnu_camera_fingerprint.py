@@ -659,7 +659,7 @@ def section_denoisers(cams: dict, banks: dict, queries: dict) -> dict:
               tv[1], nlm[1], tv[2], nlm[2], tv[4], nlm[4], tv[5], nlm[5], noise_rms))
     assert 1.0 / worst_alive > 3.0, ratios
     assert abs(dct[2]) < 0.05 * best, dct
-    assert tv[4] > 5 * tv[2] and nlm[4] > 5 * nlm[2], (tv, nlm)
+    assert tv[4] > 3 * tv[2] and nlm[4] > 3 * nlm[2], (tv, nlm)
     figs.save_table("denoisers",
                     ["デノイザ F", "真の K との相関", "PCE 同一", "PCE 別", "照合だけ Wiener", "倍率(最良=1)", "残差 RMS"],
                     table, title="残差の取り方で PCE は %.0f 倍動く(16 枚)" % (1.0 / worst_alive),

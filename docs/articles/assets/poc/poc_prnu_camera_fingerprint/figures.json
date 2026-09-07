@@ -1,0 +1,112 @@
+[
+ {
+  "file": "01_estimators.png",
+  "name": "estimators",
+  "caption": "場面が毎枚違えば生の平均でも指紋は出る。差は PCE の桁に出る。",
+  "shape": [
+   176,
+   527,
+   3
+  ],
+  "csv": "01_estimators.csv",
+  "tsv": "01_estimators.tsv"
+ },
+ {
+  "file": "02_match_pce.png",
+  "name": "match_pce",
+  "caption": "別カメラのピークは毎回別の位置に立つ((0,0) は 0/30)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_n_sweep_corr.png",
+  "name": "n_sweep_corr",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_n_sweep_pce.png",
+  "name": "n_sweep_pce",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_jpeg_sweep.png",
+  "name": "jpeg_sweep",
+  "caption": "",
+  "shape": [
+   296,
+   644,
+   3
+  ],
+  "csv": "05_jpeg_sweep.csv",
+  "tsv": "05_jpeg_sweep.tsv"
+ },
+ {
+  "file": "06_jpeg_cliff.png",
+  "name": "jpeg_cliff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_resize_sweep.png",
+  "name": "resize_sweep",
+  "caption": "幾何の上限 = K 自身を同じ往復に通した相関²。残差抽出後 = 往復した写真の残差と I·K の相関²(清浄比)。",
+  "shape": [
+   200,
+   657,
+   3
+  ],
+  "csv": "07_resize_sweep.csv",
+  "tsv": "07_resize_sweep.tsv"
+ },
+ {
+  "file": "08_resize_cliff.png",
+  "name": "resize_cliff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   176,
+   463,
+   3
+  ],
+  "csv": "09_controls.csv",
+  "tsv": "09_controls.tsv"
+ },
+ {
+  "file": "10_denoisers.png",
+  "name": "denoisers",
+  "caption": "上 7 行は fullseye の平滑 op + 自前の最尤式と PCE、下 2 行は sensor_fingerprint / fingerprint_correlate(残差器は内部)。「照合だけ Wiener」は同じ指紋を fingerprint_correlate で当てた PCE。",
+  "shape": [
+   296,
+   744,
+   3
+  ],
+  "csv": "10_denoisers.csv",
+  "tsv": "10_denoisers.tsv"
+ }
+]
