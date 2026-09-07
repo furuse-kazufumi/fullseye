@@ -228,12 +228,18 @@ def section_zero_points(lb: list) -> dict:
     print("\n" + "=" * 78)
     print("2) ゼロ点 —— 「荷を 1 個の外形とみなす」3 通りと、高さマップ")
     print("=" * 78)
-    print("   荷    やり方          体積 [m3]   積載率 [%]   真値との差 [pt]")
+    print("  荷の点(天端)+ **既知のパレット外形(z=0)** を 1 つの塊とみなす。"
+          "\n  デッキを入れないと、外形は天端の起伏だけを囲む薄い板になる"
+          "(実際に一度そうなった)。")
+    print("\n   荷    やり方          体積 [m3]   積載率 [%s]   真値との差 [pt]" % "%")
 
+    # 既知のパレットデッキ(4 隅、z = 0)。実機でも架台の位置は決まっている。
+    deck = np.array([[0.0, 0.0, 0.0], [PW, 0.0, 0.0],
+                     [0.0, PD, 0.0], [PW, PD, 0.0]])
     rows = []
     for name, boxes in (("A", LOAD_A), ("B", lb)):
         pts = scan(boxes)
-        on = pts[pts[:, 2] > 20.0]            # デッキ面の点は荷ではない
+        on = np.vstack([pts[pts[:, 2] > H_FLOOR], deck])
         lo, hi = L.aabb(on)
         v_aabb = float(np.prod(hi - lo))
         sub = on[::37]                        # 凸包は間引いてから(Qhull)
