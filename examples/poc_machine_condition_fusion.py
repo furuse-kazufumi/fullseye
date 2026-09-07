@@ -387,8 +387,8 @@ def thermal_features(frame: np.ndarray, pitch: int) -> dict:
         if int(bf["n"]) > 0:
             area = float(np.max(np.asarray(bf["area"])))
     return {"t_max": t_max,
-            "t_coup": float(frame[roi_c].mean()) if roi_c.any() else t_max,
-            "t_bear": float(frame[roi_b].mean()) if roi_b.any() else t_max,
+            "t_coup": _roi_mean(frame, pitch, SOURCES[0][1], SOURCES[0][2]),
+            "t_bear": _roi_mean(frame, pitch, SOURCES[1][1], SOURCES[1][2]),
             "t_glob": float(frame.mean()),
             "t_spread": max(area, 0.5 * pitch * pitch)}
 
