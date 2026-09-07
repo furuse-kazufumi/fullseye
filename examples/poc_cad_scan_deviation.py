@@ -745,7 +745,8 @@ def section_density() -> dict:
                      "%.3f" % (d.mean() / p), "%+.4f" % s.mean()])
         print("   %8d   %9.2f   %16.4f   %14.4f  %5.3f   %+12.4f"
               % (n, r.rho, p, d.mean(), d.mean() / p, s.mean()))
-    print("X
+    print("   ★公差 %.2f mm に対し、%d 点の参照(ρ=%.2f)でも符号なしは %.4f mm"
+          " —— **素で公差を超える**。" % (TOL, 40000, rho_l[-1], ml[-1] / 1000))
     print("      符号付き(最近傍点の法線へ射影)は接線方向のずれを落とすので"
           "残らない。")
     figs.save_plot("density_bias",
