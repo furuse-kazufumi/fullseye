@@ -655,8 +655,7 @@ def section_blur_cell() -> dict:
             r = me["n_cells"] / max(1, tr["n_cells"])
             grid[(c, b)] = r
             line.append(r)
-        print("   %6.0f    |       " + "  ".join("%4.2f" % v for v in line) % c if False else
-              "   %6.0f    |       %s" % (c, "  ".join("%4.2f" % v for v in line)))
+        print("   %6.0f    |       %s" % (c, "  ".join("%4.2f" % v for v in line)))
         rows.append(["%.0f" % c] + ["%.2f" % v for v in line])
     lim = []
     for b in blurs:
