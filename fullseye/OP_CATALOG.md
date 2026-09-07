@@ -473,7 +473,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 347 ops / 66 categories。_
+_計 351 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -864,12 +864,16 @@ _計 347 ops / 66 categories。_
 - `rigid_flow` (`points, points → pose`) — pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。 · 例: `scene_flow_rigid`
 - `smooth_flow` (`points, points → flow_scattered`) — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
 
-### sdf_csg(8)
+### sdf_csg(12)
 - `grid_coords` (` → coordgrid`) — CSG 評価用のボクセル中心座標グリッドを作る(occupancy と同じ格子規約)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
 - `sphere_sdf` (`coordgrid → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `annotate3d_figure`, `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
 - `box_sdf` (`coordgrid → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
+- `plane_sdf` (`coordgrid → sdf`) — 半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+- `cylinder_sdf` (`coordgrid → sdf`) — 有限長の円柱(両端が平らな蓋)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+- `torus_sdf` (`coordgrid → sdf`) — トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `sdf_csg`
+- `capsule_sdf` (`coordgrid → sdf`) — 線分 ``a``–``b`` を半径 ``radius`` で太らせたカプセルの**厳密**な符号付き距離場。 · 例: `procedural_hand`, `sdf_csg`
 - `sdf_union` (`sdf, sdf → sdf`) — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
-- `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`
+- `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`, `render_beauty`, `sdf_csg`
 - `sdf_subtract` (`sdf, sdf → sdf`) — 差集合 A\B = max(a, -b)(A の内側 かつ B の外側 = ``-b`` の内側)。 · 例: `sdf_csg`
 - `sdf_smooth_union` (`sdf, sdf → sdf`) — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。 · 例: `render_beauty`
 - `sdf_offset` (`sdf → sdf`) — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。 · 例: `sfm_recon`
@@ -956,7 +960,7 @@ _計 347 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 897 ops / 48 categories。_
+_計 901 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1523,7 +1527,7 @@ _計 897 ops / 48 categories。_
 - `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_open` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_close` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_leaf_disease_area`
-- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`
+- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`, `poc_symmetry_restoration`
 - `select_largest` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`, `poc_leaf_disease_area`
 - `remove_small` (halcon: `select_shape`) `region → region` · 例: `gallery2d_region`, `quickstart`
 - `invert_region` (halcon: `complement`) `region → region` · 例: `gallery2d_region`
@@ -1541,12 +1545,12 @@ _計 897 ops / 48 categories。_
 - `erosion_circle` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`
 - `dilation_circle` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`, `poc_focus_stacking`
 - `opening_circle` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_document_scan`
-- `closing_circle` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`
+- `closing_circle` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
 - `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `dilation_rectangle1` (halcon: `dilation_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `opening_rectangle1` (halcon: `opening_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` · 例: `gallery2d_region`
-- `fill_up` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`
+- `fill_up` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
 - `boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`, `voxel_labels_color`
 - `skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_fresco_craquelure`, `poc_vessel_network`
 - `thinning` (halcon: `thinning`) `region → region` · 例: `gallery2d_region`, `poc_crack_width`, `poc_vessel_network`
@@ -1793,7 +1797,7 @@ _計 897 ops / 48 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(147)
+### typed(151)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1836,6 +1840,10 @@ _計 897 ops / 48 categories。_
 - `tb_project_cylindrical` `points → image` · 例: なし
 - `tb_sphere_sdf` `points → volume` · 例: なし
 - `tb_box_sdf` `points → volume` · 例: なし
+- `tb_plane_sdf` `points → volume` · 例: なし
+- `tb_cylinder_sdf` `points → volume` · 例: なし
+- `tb_torus_sdf` `points → volume` · 例: なし
+- `tb_capsule_sdf` `points → volume` · 例: なし
 - `tb_pc_poisson_disk` `points → points` · 例: なし
 - `tb_pc_fill_sparse` `points → points` · 例: なし
 - `tb_pc_density_equalize` `points → points` · 例: なし

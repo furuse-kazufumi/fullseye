@@ -1,9 +1,9 @@
 {
- "n_ops": 914,
+ "n_ops": 918,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 885
+  "registry": 889
  },
  "sorts": [
   "any",
@@ -4865,6 +4865,14 @@
    "tier": "registry"
   },
   {
+   "name": "tb_capsule_sdf",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "volume",
+   "category": "typed",
+   "tier": "registry"
+  },
+  {
    "name": "tb_countrate_to_counts",
    "halcon": "",
    "in_sort": "counts",
@@ -4957,6 +4965,14 @@
    "halcon": "",
    "in_sort": "cimage",
    "out_sort": "image",
+   "category": "typed",
+   "tier": "registry"
+  },
+  {
+   "name": "tb_cylinder_sdf",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "volume",
    "category": "typed",
    "tier": "registry"
   },
@@ -5473,6 +5489,14 @@
    "tier": "registry"
   },
   {
+   "name": "tb_plane_sdf",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "volume",
+   "category": "typed",
+   "tier": "registry"
+  },
+  {
    "name": "tb_plane_segmentation",
    "halcon": "",
    "in_sort": "points",
@@ -5917,6 +5941,14 @@
    "halcon": "",
    "in_sort": "video",
    "out_sort": "video",
+   "category": "typed",
+   "tier": "registry"
+  },
+  {
+   "name": "tb_torus_sdf",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "volume",
    "category": "typed",
    "tier": "registry"
   },

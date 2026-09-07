@@ -783,8 +783,10 @@ def section_defect_sweep(S: dict) -> dict:
         print("  ★ 自動選択が軸を取り違えるのは、失った点が %.1f %% を超えたあたり"
               "(半径 %.0f -> %.0f mm の間)。"
               % (fr[first - 1], radii[first - 1], radii[first]))
-    print("  正しい軸に固定したときの位置誤差は重心のずれにほぼ比例:"
-          " 位置誤差/重心ずれ = %s" % " ".join("%.2f" % v for v in offs / np.maximum(cx, 1e-9)))
+    print("  ★ 軸さえ正しければ復元 RMS は %.2f〜%.2f mm でほぼ平ら —— "
+          "崖は欠損の大きさでなく**軸の取り違え**にある。" % (rmss.min(), rmss.max()))
+    print("     重心は最大 %.1f mm 動くのに、精緻化後の面の位置誤差は残り %s %%"
+          % (cx.max(), " ".join("%.0f" % v for v in 100 * offs / np.maximum(cx, 1e-9))))
     if figs.enabled():
         figs.save_plot(
             "defect_size",

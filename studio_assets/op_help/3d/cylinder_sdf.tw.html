@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cylinder_sdf — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>(或 <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>有限長の円柱(両端が平らな蓋)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>軸方向の距離 `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> と軸からの半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> に分け、</code><code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code>`</p>
+<p>として `<code style="color:#22d3bf">outside = ‖max(q, 0)‖</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">inside = min(max(q), 0)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sdf = outside + inside</code>`。</p>
+<p>これは `<code style="color:#22d3bf">box_sdf</code>` と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、</p>
+<p>側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
+<p>引数と検証(`<code style="color:#22d3bf">ValueError</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">grid</code><code style="color:#22d3bf">: 最終軸が 3 の float 配列 </code><code style="color:#22d3bf">(..., 3)</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">center</code>`: 円柱の<b>中心</b>(端面ではなく重心。要素数 3)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">axis</code>`: 軸の向き(要素数 3、零ベクトル・NaN は拒否。長さは自動正規化)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">: 半径 &gt; 0 相当のスカラ(</code><code style="color:#22d3bf">0</code>` は軸線そのもの、負は拒否)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">height</code><code style="color:#22d3bf">: 全長のスカラ(</code><code style="color:#22d3bf">center</code>` から ±height/2。負は拒否)。</p>
+<p>返り値: `<code style="color:#22d3bf">grid.shape[:-1]</code>` の float64。</p>
+<p>使いどころ: **貫通穴は `<code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code><code style="color:#22d3bf">**(</code><code style="color:#22d3bf">height</code>` を部品より</p>
+<p>長くして端面の縁を残さない)。ボス・ピン・シャフトは `<code style="color:#22d3bf">sdf_union</code>`。無限長の円柱が</p>
+<p>要るなら `<code style="color:#22d3bf">height</code>` を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sdf_csg">sdf_csg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sdf_csg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">sdf</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:integrate">integrate</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">sdf_csg</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:grid_coords">grid_coords</a> · <a style="color:#22d3bf" href="op3d:sphere_sdf">sphere_sdf</a> · <a style="color:#22d3bf" href="op3d:box_sdf">box_sdf</a> · <a style="color:#22d3bf" href="op3d:plane_sdf">plane_sdf</a> · <a style="color:#22d3bf" href="op3d:torus_sdf">torus_sdf</a> · <a style="color:#22d3bf" href="op3d:capsule_sdf">capsule_sdf</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sdf_ops.py — 3D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
