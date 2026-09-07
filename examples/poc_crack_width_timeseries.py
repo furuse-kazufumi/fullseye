@@ -629,9 +629,12 @@ def section_cliff_width() -> dict:
     n = N_EPOCH
     t = EPOCH_YEAR[:n]
     rows, w0s, gi, gb = [], [], [], []
+    pairs = []                                    # (w/σ [px], 2 値化が値を返したか)
     for w0 in (0.10, 0.15, 0.20, 0.24, 0.35, 0.55):
         widths = w0 + RATE_MM_YR * t
         r = run_series(widths, sch, tex=tex, noise_base=2500)
+        pairs += [(w / PX_MM / p, b > 1e-9)
+                  for w, p, b in zip(widths, sch["psf"], r["bin"])]
         si, sb = slope_of(t, r["int"]), slope_of(t, r["bin"])
         peak = float(erf((w0 / PX_MM) / (2.0 * math.sqrt(2.0) * psf_mean)))
         nz = int(np.count_nonzero(r["bin"] > 1e-9))

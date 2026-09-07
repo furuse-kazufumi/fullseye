@@ -477,17 +477,18 @@ def section_outliers() -> dict:
         print("   %5.0f    %10.2f     %10.2f     %10.2f        %+10.1f" % (
             100 * frac, e_ls, abs(pred), e_rs, off))
 
-    print("\n   真値 %.2f mrad。" % tru)
+    print("\n   真値 %.2f mrad(ふくらみを吸った実効値 %.2f mrad —— 閉形式には"
+          "こちらを渡す)。" % (tru, 1e3 * tau_eff))
     i10 = fr.index(10.0)
-    print("  ★最小二乗は %.0f %% の混入で %.1f mrad(真値の %.0f 倍)。"
-          "閉形式の予測 %.1f mrad と %.1f %% 以内で一致。"
-          % (fr[i10], ls_e[i10], ls_e[i10] / tru, ls_p[i10],
-             100 * abs(ls_e[i10] - ls_p[i10]) / ls_p[i10]))
+    print("  ★最小二乗は %.0f %s の混入で %.1f mrad(真値の %.0f 倍)。"
+          "閉形式の予測 %.1f mrad と %.1f %s 以内で一致。"
+          % (fr[i10], "%", ls_e[i10], ls_e[i10] / tru, ls_p[i10],
+             100 * abs(ls_e[i10] - ls_p[i10]) / ls_p[i10], "%"))
     bad = [i for i, o in enumerate(rs_off) if abs(o) > 100.0]
+    j = bad[0] if bad else len(fr) - 1
     if bad:
-        j = bad[0]
-        print("  ★★RANSAC の崖は %.0f %% と %.0f %% のあいだ(予測 50 %% = 棚の点が"
-              "壁を上回る点)。" % (fr[j - 1], fr[j]))
+        print("  ★★RANSAC の崖は %.0f %s と %.0f %s のあいだ(予測 50 %s = 棚の点が"
+              "壁を上回る点)。" % (fr[j - 1], "%", fr[j], "%", "%"))
         print("     ★崖の向こうで**倒れの誤差は小さいまま**(%.2f mrad)なのに、"
               "面そのものが\n        %.0f mm 手前の棚へ乗り換えている。"
               "1 つの数字(倒れ)では破綻が見えない。" % (rs_e[j], abs(rs_off[j])))
