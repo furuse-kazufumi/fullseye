@@ -34,7 +34,17 @@
   "tsv": "03_defect_counts.tsv"
  },
  {
-  "file": "04_repair_vs_restore.png",
+  "file": "04_defect_scene.png",
+  "name": "defect_scene",
+  "caption": "深度差が立つのは突き刺した 6 頂点の周りだけ。穴・裏返り・退化・重複頂点は同じ絵になる。",
+  "shape": [
+   393,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "05_repair_vs_restore.png",
   "name": "repair_vs_restore",
   "caption": "幅ゼロの割れ(重複頂点 18 個)を直した結果。水密は 2 通りとも True。",
   "shape": [
@@ -42,11 +52,11 @@
    467,
    3
   ],
-  "csv": "04_repair_vs_restore.csv",
-  "tsv": "04_repair_vs_restore.tsv"
+  "csv": "05_repair_vs_restore.csv",
+  "tsv": "05_repair_vs_restore.tsv"
  },
  {
-  "file": "05_hole_cliff.png",
+  "file": "06_hole_cliff.png",
   "name": "hole_cliff",
   "caption": "体積の 2 本は重なる。表面積は θ=45° で符号すら逆。",
   "shape": [
@@ -56,7 +66,7 @@
   ]
  },
  {
-  "file": "06_hole_rim_roughness.png",
+  "file": "07_hole_rim_roughness.png",
   "name": "hole_rim_roughness",
   "caption": "どちらも 1 に近い θ と 2 倍を超える θ が混在する。縁が voxel 格子のどこに落ちるかで変わる。",
   "shape": [
@@ -66,7 +76,7 @@
   ]
  },
  {
-  "file": "07_hole_frames.png",
+  "file": "08_hole_frames.png",
   "name": "hole_frames",
   "caption": "",
   "shape": [
@@ -74,47 +84,5 @@
    630,
    3
   ]
- },
- {
-  "file": "08_decimate_cliff.png",
-  "name": "decimate_cliff",
-  "caption": "予測線は最も粗い点で合わせた 1/F。面数が多い側では実測のほうが小さい(まだ削り代がある)。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "09_sliver_threshold.png",
-  "name": "sliver_threshold",
-  "caption": "面積 0 の判定に引っかかるずっと手前で、潰れ面の法線は使いものにならなくなる。",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "10_sliver_normal_error.png",
-  "name": "sliver_normal_error",
-  "caption": "",
-  "shape": [
-   360,
-   560,
-   3
-  ]
- },
- {
-  "file": "11_self_intersection.png",
-  "name": "self_intersection",
-  "caption": "頂点 6 個だけを内側へ押した。形は壊れているのに水密・多様体・χ はすべて健全のまま。",
-  "shape": [
-   176,
-   616,
-   3
-  ],
-  "csv": "11_self_intersection.csv",
-  "tsv": "11_self_intersection.tsv"
  }
 ]

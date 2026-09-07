@@ -503,7 +503,7 @@ def section_reach():
           % (T_SLOT, T_SLOT / 2))
     print("   h [mm]  測ったスロット幅   上限半径   r=0.60 の判定   r=0.80 の判定")
     hs, meas, verdicts = [], [], []
-    for h in (0.125, 0.1875, 0.25, 0.375, 0.5, 0.625):
+    for h in (0.125, 0.1875, 0.25, 0.3, 0.375, 0.45, 0.5, 0.55, 0.625, 0.7):
         _, occ, _, _, g = coupon(h)
         rmax = slot_radius(occ, g, h)
         w = 2.0 * rmax
@@ -514,12 +514,20 @@ def section_reach():
         verdicts.append((h, w, rmax, v06, v08))
         print("   %5.3f       %6.3f mm       %5.3f mm     %-8s      %-8s"
               % (h, w, rmax, v06, v08))
-    wrong = [v for v in verdicts if v[3] == "入らない"]
-    print("\n  真値では r=0.60 は入り、r=0.80 は入らない。")
-    if wrong:
-        print("  ★粗さ %s mm では r=0.60 を「入らない」と**誤って落とす**(隙間が %s mm に見える)。"
-              % (", ".join("%.3f" % v[0] for v in wrong),
-                 ", ".join("%.3f" % v[1] for v in wrong)))
+    false_ok = [v for v in verdicts if v[4] == "入る"]          # 入らない工具を通す
+    false_ng = [v for v in verdicts if v[3] == "入らない"]      # 入る工具を落とす
+    print("\n  真値では r=0.60 は入り、r=0.80 は入らない。誤判定は**両方向に出る**:")
+    if false_ng:
+        print("   ・入る工具を落とす(安全側): 粗さ %s mm で隙間が %s mm に見える"
+              % (", ".join("%.3f" % v[0] for v in false_ng),
+                 ", ".join("%.3f" % v[1] for v in false_ng)))
+    if false_ok:
+        print("   ・★入らない工具を通す(危険側): 粗さ %s mm で隙間が %s mm に**太って**見え、"
+              % (", ".join("%.3f" % v[0] for v in false_ok),
+                 ", ".join("%.3f" % v[1] for v in false_ok)))
+        print("     r=0.80 の工具で加工計画を立ててしまう(実物には入らない)。")
+    print("   隙間は痩せるとは限らない —— 自由側の距離変換は「自由中心 -> 占有中心」なので、")
+    print("   壁が voxel の境目をまたぐと隙間が **1 voxel ぶん太る**。")
     figs.save_plot("reach_cliff",
                    [("測ったスロット幅", hs, meas),
                     ("設計値 1.500 mm", hs, [T_SLOT] * len(hs)),
