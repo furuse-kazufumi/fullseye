@@ -453,7 +453,7 @@ def section_jpeg(fp: np.ndarray, queries: dict, clean: dict) -> dict:
                     ("PCE 比 予測(量子化利得²)[%]", qs, [100 * p for p in preds]),
                     ("AUC × 100", qs, [100 * a for a in aucs])],
                    xlabel="IJG 品質相当 [-](左ほど強い圧縮)", ylabel="[%]",
-                   title="JPEG の崖: PCE は品質 90 で 1/8、AUC は品質 50 以下で落ちる")
+                   title="JPEG の崖: PCE は品質 90 で半分、判定(AUC)は品質 30 台まで持つ")
     return {"q": qs, "auc": aucs, "ratio": ratios}
 
 
