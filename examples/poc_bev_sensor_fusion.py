@@ -856,7 +856,7 @@ def section_bands(rig: Rig) -> dict:
         ob, kb, _ = rig.sensor_b(**kw)
         vals, ns = _band_iou(ob & kb, rig.gt_occ, rig.evalm, rig.X)
         out[("cam", cname)] = vals
-        ratio = vals[3] / max(vals[1], 1e-9)
+        ratio = vals[-1] / max(vals[0], 1e-9)
         rows.append(["カメラ単独", cname] + ["%.4f" % v for v in vals]
                     + ["%.2f" % ratio])
         print("   %-28s" % cname + " ".join("%9.4f" % v for v in vals)
@@ -869,7 +869,7 @@ def section_bands(rig: Rig) -> dict:
         _, occ = rig.run("max", **kw)
         vals, _ = _band_iou(occ, rig.gt_occ, rig.evalm, rig.X)
         out[("max", cname)] = vals
-        ratio = vals[3] / max(vals[1], 1e-9)
+        ratio = vals[-1] / max(vals[0], 1e-9)
         rows.append(["融合(最大値)", cname] + ["%.4f" % v for v in vals]
                     + ["%.2f" % ratio])
         print("   %-28s" % cname + " ".join("%9.4f" % v for v in vals)
@@ -882,15 +882,17 @@ def section_bands(rig: Rig) -> dict:
     print("\n  誤差なしからの低下率(カメラ単独): 回転 %s / 並進 %s"
           % (" ".join("%.0f%%" % (100 * v) for v in dr),
              " ".join("%.0f%%" % (100 * v) for v in dt_)))
-    print("  ★回転は近 %.0f %% -> 遠 %.0f %% と**遠方ほど大きく落ち**、"
-          "並進は %.0f %% -> %.0f %% と**帯によらない**。"
-          % (100 * dr[0], 100 * dr[3], 100 * dt_[0], 100 * dt_[3]))
+    print("  ★回転は近 %.0f %% -> 遠 %.0f %% と**遠方ほど大きく落ちる**。"
+          "並進は %.0f %% -> %.0f %% で、落ち方の差は回転の %.2f 倍しかない ——"
+          " 近くも遠くも同じだけ壊す。"
+          % (100 * dr[0], 100 * dr[-1], 100 * dt_[0], 100 * dt_[-1],
+             abs(dt_[-1] - dt_[0]) / max(abs(dr[-1] - dr[0]), 1e-9)))
     print("  ★★融合すると LiDAR が遠方を埋めるので、この距離依存性は"
-          "**ほとんど見えなくなる**(遠 / 近の比 %.2f -> %.2f)。"
-          "融合は誤差を消さずに**隠す**。"
-          % (rot[3] / max(rot[1], 1e-9),
-             out[("max", conds[1][0])][3] / max(out[("max", conds[1][0])][1],
-                                                1e-9)))
+          "**薄まる**(遠 / 近の比 %.2f -> %.2f)。融合は誤差を消さずに**隠す**"
+          " —— 校正の異常を IoU の距離依存で見つける診断は、融合の後では効かない。"
+          % (rot[-1] / max(rot[0], 1e-9),
+             out[("max", conds[1][0])][-1]
+             / max(out[("max", conds[1][0])][0], 1e-9)))
     figs.save_table("range_bands", ["手法", "条件"]
                     + ["%.0f-%.0f m" % b for b in BANDS] + ["遠 / 近の比"],
                     rows, title="距離帯別の占有 IoU(ずれ量を揃えた 2 条件)",
