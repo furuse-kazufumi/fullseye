@@ -291,13 +291,13 @@ def _skeleton_length(sk: np.ndarray) -> float:
     return n_h + n_v + np.sqrt(2.0) * n_d
 
 
-def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W,
-                   low: float = 0.2, high: float = 0.5) -> np.ndarray:
-    """暗いリッジ(sk_frangi)→ ヒステリシス → 骨格。
+def ridge_map(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W) -> np.ndarray:
+    """暗いリッジ(sk_frangi)の応答。
 
     ``calibrate=True`` なら、既知の深さ・幅の**校正線**を画像の下に貼ってから
     Frangi を掛ける。``sk_frangi`` は出力を画像ごとの最大値で正規化するので、
     こうしないと「いちばん強いリッジ = 1.0」が雑音でも成り立ってしまう。
+    返す配列は校正線を切り落とした元の大きさ(校正線 = 1.0 の尺度)。
     """
     v = np.clip(s / 1.25, 0.0, 1.0)
     if calibrate:
@@ -310,13 +310,19 @@ def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W
             strip[r0 + full, :] = 1.0 - frac * (1.0 - CRACK_T)
         v = np.vstack([v, strip])
     ridge = np.asarray(fs.apply(v, "sk_frangi", a=0.25, b=0.5))
+    if calibrate:
+        ridge = ridge[:s.shape[0]].copy()
+        ridge[-2:, :] = 0.0               # 校正線の縁の影響を落とす
+    return ridge
+
+
+def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W,
+                   low: float = 0.2, high: float = 0.5) -> np.ndarray:
+    """リッジ応答 → ヒステリシス → 骨格(1 px 幅のクラック中心線)。"""
+    ridge = ridge_map(s, calibrate=calibrate, ref_w=ref_w)
     hyst = np.asarray(fs.apply(ridge, "hysteresis_threshold",
                                a=(low - 0.2) / 0.3, b=(high - 0.5) / 0.3))
-    sk = np.asarray(fs.apply(hyst, "sk_skeleton")) > 0.5
-    if calibrate:
-        sk = sk[:s.shape[0]]
-        sk[-2:, :] = False                 # 校正線の縁の影響を落とす
-    return sk
+    return np.asarray(fs.apply(hyst, "sk_skeleton")) > 0.5
 
 
 def classify(s: np.ndarray, crack_sk: np.ndarray) -> dict:
