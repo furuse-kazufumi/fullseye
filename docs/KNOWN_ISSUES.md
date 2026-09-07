@@ -1223,3 +1223,27 @@ furuse.work へ誘導する」。
   同じ穴の 2 本目)。`affine_trans_image` は並進不可。`histogram_match` は変化そのものを分布差として消す
   (ずれも照明差も無い対で偽陽性 383 px)。
 
+### 10. PoC 第 3 バッチ(2026-09-07、4 本)が見つけた穴と、Agent 運用の教訓
+
+`poc_leaf_disease_area` / `poc_beam_modal_video` / `poc_bone_trabecular_thickness` /
+`poc_weld_radiograph_porosity`(展示館 61 → 65)。
+
+- 可視 3 バンド植生指数(ExG / NGRDI)が無い(`spec_index` は 2 バンド差のみ)。大津の**しきい値の
+  値**を返す口が無い(`sk_otsu` は二値だけ)。`remove_small` の最小面積は画像の 1 % から。
+  `trans_from_rgb` は 8 bit 経由(a* 1 刻み)。
+- 減衰比 ζ(半値幅 / 対数減衰率 / 減衰正弦波当てはめ)、MAC、測点列からのモード形状抽出、1-D の
+  理想帯域通過(`temporal_bandpass` は 1×1 を拒む)、スペクトル線のサブビン読みが無い。
+  `phase_displacement` の `dy` は画面の上下 8 行で 0.43〜0.99 倍に落ち `valid`/`weight` に出ない。
+  `wrap_limit_px`(0.018 px)は実用の限界(3 px でも f_1 +0.011 Hz)と 2 桁ずれている。
+- 2-D の局所厚さ(Hildebrand の最大内接円)が無く `blob_distance` を半径ごとに回した。
+  `dist_transform` / `cv_dist` / `xsp_chamfer_dist` は最大値で正規化され画素単位の距離は
+  `ledger.blob_distance` のみ。`add_noise_white` の σ は 0.02〜0.22 に固定。
+- 背景推定 op の窓上限(矩形オープニング 9 px)が気孔の検出範囲を決めていた(2.0 mm から
+  50 % を割る)。等級表・キャリパ径など RT 特有の処理は自前。
+- **Agent 運用**: 4 本同時でも、成果物を書いた後に報告なしで止まる Agent が 6/12 本。原因は
+  Bash の `cat`/heredoc が **stdin 待ちで固まる**(本人の最後のメッセージに「stray `cat` line
+  hung on stdin」)。ブリーフに「ファイルは Write ツールで書く。heredoc / 対話コマンド禁止」を
+  足すこと。止まった Agent の docstring は改訂途中で、**数字がログと食い違う**(骨梁: 117.6 vs
+  104.8 µm、溶接: 等級誤り 90 % → 23 %)。取り込む前に「キャプションの数字が実行ログに
+  存在するか」を機械で照合する(scratchpad の check を tools 化する価値あり)。
+

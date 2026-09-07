@@ -38,6 +38,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - **PoC 第 2 バッチ 8 本**(系外惑星トランジット / 金属結晶粒度 ASTM E112 / カメラ指紋 PRNU /
   ねじのピッチ・フランク角・有効径 / 蛍光共局在と漏れ込み / MRI バイアス場 / 河川表面流速 LSPIV / 変化検出と位置ずれ)。
   展示館は 53 → 61 展示。見つけた穴は KNOWN_ISSUES §41.9。
+- **PoC 第 3 バッチ 4 本**(葉の病斑面積 / 梁のモード同定(動画) / 骨梁の厚さ・間隔 /
+  溶接 X 線の気孔と等級)。展示館 61 → 65。穴は §41.10。
 - packaging: `sample_sources_ai/` を package の外へ、wheel 側の同梱検査 + CI のサイズ上限(70 MB)。
 - 修正: `imgmetrics` の int8/int16 `data_range`(255/65535 → 127/32767、PSNR 6 dB ずれ)、
   `tb_wetness` がノブの半分以上で必ず失敗していた(定義域つき引数の絶対範囲表
