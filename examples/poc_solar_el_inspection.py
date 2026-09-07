@@ -353,7 +353,7 @@ def ridge_map(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W) -> 
 
 
 def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W,
-                   low: float = 0.2, high: float = 0.5) -> np.ndarray:
+                   low: float = HYST_LOW, high: float = HYST_HIGH) -> np.ndarray:
     """リッジ応答 → ヒステリシス → 骨格(1 px 幅のクラック中心線)。"""
     ridge = ridge_map(s, calibrate=calibrate, ref_w=ref_w)
     hyst = np.asarray(fs.apply(ridge, "hysteresis_threshold",
