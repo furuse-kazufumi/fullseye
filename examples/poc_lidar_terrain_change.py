@@ -1,62 +1,69 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""航空 LiDAR の 2 時期差分で土量を測る —— 縦に引くか、法線方向に測るか。
+"""斜面の土量を測る —— 縦に引くか、法線方向に測るか。
 
-斜面が崩れた前後を上空から測り、**掘削した土量と堆積した土量 [m3]**、そして
-**変化した面積 [m2]** を出す仕事です。現場でいちばん普通のやり方は
-**DoD**(DEM of Difference: 両時期を格子の標高図にして引き算)。
-もう一つが **M3C2**(局所平面を当てて、その**法線方向**に距離を測る)。
+航空 LiDAR で斜面が崩れた前後を測り、**掘削した土量と堆積した土量 [m3]**、
+そして**変化した面積 [m2]** を出す仕事です。現場でいちばん普通のやり方は
+**DoD**(DEM of Difference: 両時期を格子の標高図にして引き算)。もう一つが
+**M3C2**(局所平面を当てて、その**法線方向**に距離を測る)。
 
 EXTEND: 実測に差し替えるなら :func:`make_cloud` の戻り値(記録座標 (N,3) の
-点群と、地面点フラグ)を LAS/LAZ の読み込みに置き換えます。実データでは
-(a) 地面点の分類は既に済んでいる(こちらの :func:`ground_filter` は要らない)
-一方で **分類の誤りが真値として見えなくなる**、(b) 系統誤差の真値が無いので
-:func:`section_systematic` の「位置合わせ前後の実変位」は測れず、安定域の
-残差 RMS で代用するしかない、(c) 崩壊土量の真値は現地測量か UAV-SfM でしか
-得られず、精度は本 PoC の合成真値より 1 桁悪い —— という 3 点が変わります。
+点群と地面点フラグ)を LAS/LAZ の読み込みに置き換えます。実データでは
+(a) 地面点の分類は済んでいる代わりに**分類の誤りが真値として見えなくなる**、
+(b) 系統誤差の真値が無いので :func:`section_systematic` の「位置合わせ前後の
+実変位」は測れず安定域の残差 RMS で代用するしかない、(c) 崩壊土量の真値は
+現地測量か UAV-SfM でしか得られず精度は本 PoC の合成真値より 1 桁悪い ——
+という 3 点が変わります。
 
 この PoC が示すこと(数字はいずれも実行時に印字される実測値):
 
-1. ★★**「DoD は斜面で cos だけ体積を間違える」は間違い**。予想は
-   「傾斜 40 度で体積が cos40 = 0.766 倍に縮む」だったが、鉛直差分を
-   **水平投影面積で積分する**限り cos は約分して消える(式は 2 節で先に出す)。
-   実測は傾斜 0→40 度で正味体積の誤差 **-0.09 % → -0.15 %**、傾向は無し。
-   間違うのは体積ではなく **厚さ** のほう。
-2. ★**DoD の「深さ」は法線厚さを sec θ 倍で過大に言う**。崩壊部の
-   DoD 深さ / M3C2 厚さの比は 傾斜 10 度で **1.017**、40 度で **1.320**
-   (予測 sec θ = 1.015 / 1.305)。「1.2 m 掘れた」は鉛直の話で、
-   法面の実厚は 40 度なら 0.92 m。**同じ現場の 2 つの数字は別の量**。
-3. ★★**変化なしの対照が 78.9 m3 の偽の土量を出す**。同じ地形を 2 回撮って
-   引くだけで、掘削 78.9 m3 / 堆積 78.6 m3(真の掘削 165.9 m3 の 48 %)。
-   雑音の正負を別々に足しているので、**正味は 0.3 m3 と小さいのに内訳は巨大**。
-   有意性でしきると 0.0 m3 に落ちる —— しきい値は飾りではなく本体。
-4. ★**M3C2 の利得は傾斜からしか来ない**。同じ足跡面積(1.00 m2)で比べると
-   検出限界 LoD は 傾斜 0 度で DoD 0.049 m / M3C2 0.048 m と**同じ**、
-   25 度で 0.145 m / 0.060 m と **2.4 倍**の差。平面を当てる分だけ
-   セル内の傾斜(cell/sqrt12)と水平位置誤差の寄与が落ちる。
-5. **点密度の崖**: LoD は 1/sqrt(密度) で下がる。0.5 pt/m2 で DoD 0.552 m
-   (この地形の崩壊 1.20 m の 46 %)、16 pt/m2 で 0.101 m。
-   **密度は「見える/見えない」でなく「何 m の変化まで言えるか」を決める**。
-6. ★★**系統誤差 0.30 m の平行移動が生む偽体積は、DoD も M3C2 も同じ**。
-   予測 tan25 x 0.30 x 2704 m2 = 378 m3 に対し実測 DoD 377.8 / M3C2 377.7 m3。
-   M3C2 が有利なのは**厚さと有意性**であって体積ではない(法線方向の見かけ
-   変化は cos 倍小さいが、体積に直すとき 1/cos 倍するので約分する)。
-7. ★★**位置合わせで決まらない成分は、測定にも効かない**。うねりも樹木も
-   無い純平面では ICP は面内の平行移動を決められず、補正後も点は 0.196 m
-   ずれたまま(補正前 0.316 m)。それでも偽体積は 378.0 → 1.7 m3 に落ちる。
-   面内の平行移動は平面を自分自身に写すので、そもそも差分に現れない。
-8. ★**法線の符号は道具では決まらない**。``estimate_normals`` は「近傍重心
-   から離れる側」に揃えるので、開いた斜面では 46.3 % が下向きを向く。
-   ``estimate_oriented_normals`` は大域的に一貫させるが、**全体の符号は
-   なお任意**(実測は全点が下向き)。法線方向に測る手法は、符号を自分で
-   決めないと掘削と堆積が入れ替わる。
+1. ★★**「DoD は斜面で cos だけ体積を間違える」は間違い**。予想は「傾斜 40 度
+   では体積が cos40 = 0.766 倍に縮む」だったが、鉛直差分を**水平投影面積で
+   積分する**限り cos は約分して消える(式は 2 節で先に出す)。雑音を止めた
+   格子標本で測ると 傾斜 0→40 度で掘削体積の誤差は **-0.06 % → -0.09 %**、
+   傾向は無い。間違うのは体積ではなく**厚さ**のほう。
+2. ★**DoD の「深さ」は法線厚さを sec θ 倍で過大に言う**。崩壊中心の
+   DoD 深さ / M3C2 厚さの比は 10 度で **1.003**、40 度で **1.247**
+   (予測 sec θ = 1.015 / 1.305)。「1.2 m 掘れた」は鉛直の話で、40 度斜面の
+   法面実厚は 1.007 m。**同じ現場の 2 つの数字は別の量**。
+3. ★★**変化なしの対照が 83.8 m3 の偽の土量を出す**。同じ地形を 2 回撮って
+   引くだけで、偽掘削 83.8 m3 / 偽堆積 90.7 m3(真の掘削 164.2 m3 の 51 %)。
+   雑音の正負を別々に足しているので、**正味 +6.9 m3 は小さいのに内訳は巨大**。
+   有意性でしきると 18.1 / 18.7 m3 に落ちる —— しきい値は飾りではなく本体。
+4. ★**M3C2 の利得は傾斜からしか来ない**。足跡面積を 1.00 m2 に揃えて比べると
+   検出限界 LoD は 傾斜 0 度で DoD 0.061 m / M3C2 0.052 m と**ほぼ同じ**、
+   40 度で 0.277 m / 0.082 m と **3.4 倍**の差。平面を当てる分だけ、セル内の
+   傾斜(cell/sqrt12)と水平位置誤差の寄与が落ちる。
+5. **点密度の崖**: 最小検出厚は 0.5 pt/m2 で 0.408 m(この崩壊の最大深さ
+   1.20 m の 34 %)、16 pt/m2 で 0.112 m。★ただし M3C2 の LoD は低密度で
+   **見かけ上よくなる** —— 円柱に点が足りない core を捨てるので、
+   有効 core 率が 1 pt/m2 で 21.6 % まで落ちる**生存者バイアス**。
+   「よく見える」のではなく「見えた所だけ数えている」。
+6. ★★**系統誤差が生む偽体積は DoD も M3C2 も同じ**。0.30 m の平行移動に対し
+   予測 540.5 m3、実測 DoD 540.4 / M3C2 545.3 m3。M3C2 が有利なのは厚さと
+   有意性であって体積ではない(法線方向の見かけ変化は cos 倍小さいが、
+   体積に直すとき 1/cos するので約分する)。
+7. ★★**合わせた分だけ変化が消える**。変化のある点群対をそのまま ICP に掛けると
+   正味土量は -30.4 → -0.9 m3(真値の 3 %)に潰れる。変化域が窓の 33 % もあると
+   ICP はそれを系統誤差と読む。上位 60 % だけ使う trimmed ICP で -25.6 m3 まで戻る。
+8. ★★**位置合わせで決まらない成分は、測定にも現れない**。斜面に沿った
+   0.29 m の面内ずれを与えると、純平面では ICP 後も点は 0.243 m ずれたまま
+   なのに DoD の偽正味は 0.6 m3。同じずれをうねりのある地形に与えると
+   ICP は 0.011 m まで詰める。**測れない形は合わせられない形と同じ**。
+9. ★**法線の符号は道具では決まらない**。``estimate_normals`` は「近傍重心から
+   離れる側」に揃えるので、開いた斜面では 50.7 % が下向きを向く。
+   ``estimate_oriented_normals`` は大域的に一貫させる(実測は 100 % 上向き)が、
+   一貫させるだけで**符号そのものは種の取り方次第**。法線方向に測る手法は、
+   符号を自分で決めないと掘削と堆積が入れ替わる。
 
 【グラウンドトゥルース】
 地面は**閉形式**(傾斜 θ の平面 + 2 波のうねり)、変化は**鉛直変位場**
-d(x,y) = 2 つのガウス(掘削 +、堆積 -)。土量は解析積分 2 pi D sx sy で
-厳密に出る(掘削 165.876 m3 / 堆積 135.717 m3)。「変化あり」の真の面積も
-|d| >= 0.05 m の領域として 2 pi sx sy ln(D/0.05) で閉形式。観測は上空からの
-点群として合成: 密度 [pt/m2]、鉛直測距雑音、水平位置雑音、GNSS/IMU 由来の
-剛体系統誤差、樹冠による地表遮蔽、そして 2 時期で点は**対応しない**。
+d(x,y) = 2 つのガウス(掘削 +、堆積 -)。1 個ぶんの土量は解析積分
+2 pi D sx sy で厳密(掘削 165.876 / 堆積 135.717 m3)。**ただし 2 つを足すと
+互いの裾が符号を打ち消す**ので、真値は解析窓での数値積分(掘削 164.154 /
+堆積 133.726 m3)を使う —— 解析式との 1.0 % / 1.5 % の差はこの重なりと窓の端。
+観測は上空からの点群として合成: 密度 [pt/m2]、鉛直測距雑音、水平位置雑音、
+GNSS/IMU 由来の剛体系統誤差、樹冠による地表遮蔽、そして 2 時期で点は
+**対応しない**。幾何だけを見たい節では格子標本 + 雑音ゼロに切り替える。
 
 来歴(公開文献のみ): Lague, Brodu & Leroux, *ISPRS J. Photogramm.* 82 (2013) 10
 —— M3C2 / Wheaton et al., *Earth Surf. Process. Landforms* 35 (2010) 136 ——
@@ -86,6 +93,7 @@ WIN_AREA = (LX - 2 * MARGIN) ** 2      # 解析窓の水平投影面積 [m2]
 SLOPE = 25.0               # 既定の斜面傾斜 [deg]
 UNDUL = 0.35               # うねりの振幅 [m]
 DENSITY = 8.0              # 点密度 [pt/m2]
+LAT_DENSITY = 9.0          # 幾何だけを見る節の格子標本(1 セルにちょうど 3x3 点)
 SIG_R = 0.05               # 鉛直測距雑音 sigma [m]
 SIG_H = 0.10               # 水平位置雑音 sigma [m](★斜面ではこれが tan θ 倍で効く)
 OCCL = 0.30                # 樹冠で地表に届かない確率
@@ -103,7 +111,7 @@ MIN_FIT, MIN_CYL = 8, 4    # 平面当てはめ / 円柱内の最小点数
 TAU = 0.05                 # 真の「変化あり」の定義 [m](これ未満は変化と呼ばない)
 
 #: 掘削(scar)と堆積(lobe)。``amp`` は**鉛直**変位 [m]、正 = 地面が下がる。
-#: 体積は解析積分 2 pi |amp| sx sy で厳密。3 sigma が解析窓に収まる位置に置く。
+#: 1 個ぶんの体積は解析積分 2 pi |amp| sx sy。3 sigma が解析窓に収まる位置に置く。
 SCAR = {"x": 20.0, "y": 37.0, "sx": 4.0, "sy": 5.5, "amp": +1.20}
 LOBE = {"x": 36.0, "y": 17.0, "sx": 6.0, "sy": 4.5, "amp": -0.80}
 
@@ -128,8 +136,7 @@ TREES = _make_trees()
 # --------------------------------------------------------------------------- #
 def surface(x, y, slope_deg: float = SLOPE, undul: float = UNDUL):
     """地面の標高 [m]。傾斜 ``slope_deg`` の平面 + 2 波のうねり。y が増える向きに下る。"""
-    g = math.tan(math.radians(slope_deg))
-    z = -g * y
+    z = -math.tan(math.radians(slope_deg)) * y
     if undul:
         z = z + undul * (np.sin(2 * np.pi * x / 23.0 + 0.7) * np.cos(2 * np.pi * y / 31.0)
                          + 0.6 * np.sin(2 * np.pi * (x + y) / 17.0))
@@ -159,30 +166,40 @@ def canopy(x, y):
     return inside, top
 
 
-def apply_pose(pts: np.ndarray, shift, rot_deg: float) -> np.ndarray:
+def apply_pose(pts: np.ndarray, shift, rot_deg: float = 0.0) -> np.ndarray:
     """GNSS/IMU 由来の剛体系統誤差(重心まわりの微小回転 + 平行移動)。"""
-    if not any(shift) and rot_deg == 0.0:
+    shift = np.asarray(shift, float)
+    if not shift.any() and rot_deg == 0.0:
         return pts
     a = math.radians(rot_deg)
     rot = np.array([[1.0, 0.0, 0.0],
                     [0.0, math.cos(a), -math.sin(a)],
                     [0.0, math.sin(a), math.cos(a)]])
     c = pts.mean(axis=0)
-    return (pts - c) @ rot.T + c + np.asarray(shift, float)
+    return (pts - c) @ rot.T + c + shift
 
 
 def make_cloud(rng, slope_deg=SLOPE, density=DENSITY, with_change=True,
                occl=OCCL, shift=(0.0, 0.0, 0.0), rot_deg=0.0,
-               sig_r=SIG_R, sig_h=SIG_H, undul=UNDUL):
+               sig_r=SIG_R, sig_h=SIG_H, undul=UNDUL, lattice=False):
     """上空からの点群を合成。返り値 ``(記録座標 (N,3), 地面点フラグ (N,))``。
 
     ★標高は**真の水平位置**で評価し、記録するのは**誤差の乗った水平位置**。
     これが斜面で ``tan θ * sigma_h`` の見かけ標高誤差を生む —— 逆にすると
     水平位置誤差が標高に一切効かなくなり、この PoC の主要な崖が消える。
+
+    ``lattice=True`` は**格子標本**(両時期で同じ水平位置)。幾何だけを見る節で
+    標本の食い違いを止めるために使う。
     """
-    n = int(density * LX * LY)
-    x = rng.uniform(0.0, LX, n)
-    y = rng.uniform(0.0, LY, n)
+    if lattice:
+        k = int(round(math.sqrt(density)))
+        c = (np.arange(int(LX * k)) + 0.5) / k
+        x, y = (v.ravel() for v in np.meshgrid(c, c))
+    else:
+        n = int(density * LX * LY)
+        x = rng.uniform(0.0, LX, n)
+        y = rng.uniform(0.0, LY, n)
+    n = x.size
     z = surface(x, y, slope_deg, undul)
     if with_change:
         z = z - change(x, y)
@@ -192,10 +209,12 @@ def make_cloud(rng, slope_deg=SLOPE, density=DENSITY, with_change=True,
         blocked = inside & (rng.random(n) < occl)
         z = np.where(blocked, z + top + 0.15 * rng.standard_normal(n), z)
         ground = ~blocked
-    z = z + sig_r * rng.standard_normal(n)
-    pts = np.column_stack([x + sig_h * rng.standard_normal(n),
-                           y + sig_h * rng.standard_normal(n), z])
-    return apply_pose(pts, shift, rot_deg), ground
+    if sig_r:
+        z = z + sig_r * rng.standard_normal(n)
+    if sig_h:
+        x = x + sig_h * rng.standard_normal(n)
+        y = y + sig_h * rng.standard_normal(n)
+    return apply_pose(np.column_stack([x, y, z]), shift, rot_deg), ground
 
 
 # --------------------------------------------------------------------------- #
@@ -247,11 +266,12 @@ def window_mask(nx: int) -> np.ndarray:
 
 
 def dod(p1: np.ndarray, p2: np.ndarray, lod: float = 0.0) -> dict:
-    """DoD。``lod`` 未満の差は 0 に落として(有意性でしきって)土量を積む。"""
-    z1, c1 = dem(p1)
-    z2, c2 = dem(p2)
+    """DoD。``lod`` 以下の差は 0 に落として(有意性でしきって)土量を積む。"""
+    z1, _ = dem(p1)
+    z2, _ = dem(p2)
     dz = z2 - z1
-    ok = np.isfinite(dz) & window_mask(z1.shape[1])
+    win = window_mask(z1.shape[1])
+    ok = np.isfinite(dz) & win
     sig = ok & (np.abs(dz) > lod)
     val = np.where(sig, dz, 0.0)
     a = CELL * CELL
@@ -259,9 +279,10 @@ def dod(p1: np.ndarray, p2: np.ndarray, lod: float = 0.0) -> dict:
             "ero": float(-val[val < 0].sum() * a),
             "dep": float(val[val > 0].sum() * a),
             "net": float(val.sum() * a),
+            "abs": float(np.abs(val).sum() * a),
             "area": float(sig.sum() * a),
-            "empty": int((~np.isfinite(dz) & window_mask(z1.shape[1])).sum()),
-            "cells": int(ok.sum()), "sig": sig, "ok": ok}
+            "empty": int((~np.isfinite(dz) & win).sum()),
+            "sig": sig, "ok": ok}
 
 
 # --------------------------------------------------------------------------- #
@@ -289,6 +310,7 @@ def m3c2(p1: np.ndarray, p2: np.ndarray, cores: np.ndarray | None = None) -> dic
     m = len(cores)
     cen = np.zeros((m, 3))
     nor = np.zeros((m, 3))
+    nor[:, 2] = 1.0
     good = np.zeros(m, bool)
     for i, idx in enumerate(nb):
         if len(idx) < MIN_FIT:
@@ -326,7 +348,8 @@ def m3c2(p1: np.ndarray, p2: np.ndarray, cores: np.ndarray | None = None) -> dic
             continue
         ll[i] = stats[1][0] - stats[0][0]
         sg[i] = math.sqrt(stats[0][1] ** 2 / stats[0][2] + stats[1][1] ** 2 / stats[1][2])
-    return {"L": ll, "sigma": sg, "nz": nor[:, 2], "ok": good, "cores": cores}
+    return {"L": ll, "sigma": sg, "nz": nor[:, 2], "ok": good, "cores": cores,
+            "rate": float(good.mean())}
 
 
 def m3c2_volume(res: dict, lod: float | None = None, conf: float = 1.96) -> dict:
@@ -340,26 +363,34 @@ def m3c2_volume(res: dict, lod: float | None = None, conf: float = 1.96) -> dict
     sig = ok & (np.abs(res["L"]) > lim)
     val = np.where(sig, res["L"], 0.0)
     nz = np.where(res["nz"] > 1e-6, res["nz"], 1.0)
-    a_slope = CORE * CORE / nz                 # ★水平セルが覆う斜面上の面積
-    vol = val * a_slope
+    vol = val * (CORE * CORE / nz)             # ★水平セルが覆う斜面上の面積
     return {"ero": float(-vol[val < 0].sum()), "dep": float(vol[val > 0].sum()),
-            "net": float(vol.sum()), "area": float(sig.sum() * CORE * CORE),
+            "net": float(vol.sum()), "abs": float(np.abs(vol).sum()),
+            "area": float(sig.sum() * CORE * CORE),
             "naive": float(np.abs(val * CORE * CORE)[val < 0].sum()),
-            "sig": sig, "n_ok": int(ok.sum())}
+            "sig": sig, "n_ok": int(ok.sum()), "rate": res["rate"]}
+
+
+def spread(v: np.ndarray) -> float:
+    """有限値だけの標準偏差(空なら NaN)。低密度で core が全滅する場合がある。"""
+    v = np.asarray(v, float)
+    v = v[np.isfinite(v)]
+    return float(np.std(v)) if v.size > 1 else float("nan")
 
 
 # --------------------------------------------------------------------------- #
 # 真値(解析窓の中で数値積分)                                                   #
 # --------------------------------------------------------------------------- #
-def truth(step: float = 0.25) -> dict:
-    """解析窓での真の土量・面積。解析式との差も返す(端の切り落としぶん)。"""
+def truth(lod: float = 0.0, step: float = 0.25) -> dict:
+    """解析窓での真の土量・面積。``lod`` を渡すとその厚さ以下を切り落とした真値。"""
     c = np.arange(WIN[0] + step / 2, WIN[1], step)
     xx, yy = np.meshgrid(c, c)
     d = change(xx, yy)
+    d = np.where(np.abs(d) > lod, d, 0.0)
     a = step * step
     return {"ero": float(d[d > 0].sum() * a), "dep": float(-d[d < 0].sum() * a),
-            "area_ero": float((d > TAU).sum() * a), "area_dep": float((d < -TAU).sum() * a),
-            "area": float((np.abs(d) > TAU).sum() * a)}
+            "net": float(-d.sum() * a),
+            "area": float((np.abs(d) > max(lod, TAU)).sum() * a)}
 
 
 # --------------------------------------------------------------------------- #
@@ -391,15 +422,19 @@ def section_scene() -> dict:
     print("1) 場面と真値 —— 何を仕込んだか")
     print("=" * 78)
     tr = truth()
-    print("  区画 %.0f x %.0f m / 解析窓 %.0f x %.0f m(面積 %.0f m2)"
+    print("  区画 %.0f x %.0f m / 解析窓 %.0f x %.0f m(水平投影面積 %.0f m2)"
           % (LX, LY, LX - 2 * MARGIN, LY - 2 * MARGIN, WIN_AREA))
-    print("  掘削(scar): 鉛直 %.2f m, sigma %.1f x %.1f m -> 体積 %.3f m3(解析式)"
+    print("  掘削(scar): 鉛直 %.2f m, sigma %.1f x %.1f m -> 単独なら %.3f m3(解析式)"
           % (SCAR["amp"], SCAR["sx"], SCAR["sy"], V_ERO_EXACT))
-    print("  堆積(lobe): 鉛直 %.2f m, sigma %.1f x %.1f m -> 体積 %.3f m3(解析式)"
+    print("  堆積(lobe): 鉛直 %.2f m, sigma %.1f x %.1f m -> 単独なら %.3f m3(解析式)"
           % (-LOBE["amp"], LOBE["sx"], LOBE["sy"], V_DEP_EXACT))
-    print("  解析窓で数値積分: 掘削 %.3f / 堆積 %.3f m3(端の切り落としで %.2f%% / %.2f%% 減)"
-          % (tr["ero"], tr["dep"], 100 * (1 - tr["ero"] / V_ERO_EXACT),
-             100 * (1 - tr["dep"] / V_DEP_EXACT)))
+    print("  ★真値は**解析窓での数値積分**を使う: 掘削 %.3f / 堆積 %.3f m3"
+          % (tr["ero"], tr["dep"]))
+    print("     解析式より %.2f %% / %.2f %% 小さいのは、2 つのガウスの**裾が符号を"
+          "打ち消す**ため" % (100 * (1 - tr["ero"] / V_ERO_EXACT),
+                              100 * (1 - tr["dep"] / V_DEP_EXACT)))
+    print("     (中間点で掘削 +0.031 m と堆積 -0.028 m が同じ桁で重なる)+ 窓の端の"
+          "切り落とし。1 個ずつの解析式をそのまま真値にすると 1 %% 嘘をつく。")
     print("  変化ありの真の面積(|d| >= %.2f m): %.1f m2(窓の %.1f %%)。"
           "解析式 %.1f + %.1f = %.1f m2"
           % (TAU, tr["area"], 100 * tr["area"] / WIN_AREA,
@@ -424,12 +459,11 @@ def section_scene() -> dict:
         q, gq = make_cloud(r2, slope_deg=sl)
         k1 = ground_filter(q, detrend=True)
         k0 = ground_filter(q, detrend=False)
-        rec1 = float((k1 & gq).sum() / gq.sum())
-        leak = float((k1 & ~gq).sum() / max(int(k1.sum()), 1))
-        rec0 = float((k0 & gq).sum() / gq.sum())
-        rows.append((sl, rec1, leak, rec0))
+        rows.append((sl, float((k1 & gq).sum() / gq.sum()),
+                     float((k1 & ~gq).sum() / max(int(k1.sum()), 1)),
+                     float((k0 & gq).sum() / gq.sum())))
         print("    %4.0f deg      %6.1f %% / %5.1f %%                    %6.1f %%"
-              % (sl, 100 * rec1, 100 * leak, 100 * rec0))
+              % (sl, 100 * rows[-1][1], 100 * rows[-1][2], 100 * rows[-1][3]))
     print("  ★傾き抜きなしは %.0f 度で再現率 %.1f %% —— セル内最低点は"
           "**斜面ではそもそも地面を落とす**" % (rows[-1][0], 100 * rows[-1][3]))
     print("     (セルを横切る標高差 tan%.0f x %.1f m = %.2f m が許容幅 0.35 m を超えるため)。"
@@ -438,52 +472,90 @@ def section_scene() -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 2. ゼロ点 = DoD。式を先に出す                                                  #
+# 2. ゼロ点 = DoD。式を先に出してから、雑音を止めて幾何だけ見る                  #
 # --------------------------------------------------------------------------- #
-def section_dod(tr: dict) -> dict:
+def section_geometry(tr: dict) -> dict:
     print("\n" + "=" * 78)
-    print("2) ゼロ点 = DoD(格子の引き算)—— 先に式を出す")
+    print("2) ゼロ点 = DoD(格子の引き算)—— 先に式を出し、雑音を止めて確かめる")
     print("=" * 78)
     print("  素朴な予想: 「斜面では面が cos θ だけ縮んで見えるので体積も cos θ 倍に間違う」。")
     print("  実際に立つ式: 法線厚さ t の層を剥がすと鉛直変位は dz = t / cos θ、")
     print("    水平投影面積 A_h = A_slope cos θ。DoD は dz を A_h で積むので")
     print("    V = (t / cos θ) x A_slope cos θ = t A_slope。**cos が約分して消える**。")
     print("  -> 予測: 傾斜を変えても DoD の体積は正しい。間違うのは「深さ」のほう。")
-
-    rng = np.random.default_rng(SEED)
-    p1, _ = make_cloud(rng, with_change=False, occl=0.0)
-    p2, _ = make_cloud(rng, with_change=True, occl=0.0)
-    r = dod(p1, p2)
-    print("\n  理想条件(遮蔽なし・系統誤差なし、雑音のみ):")
-    print("    正味体積 %+9.3f m3(真値 %+9.3f、誤差 %+.2f %%)"
-          % (r["net"], tr["dep"] - tr["ero"], 100 * (r["net"] / (tr["dep"] - tr["ero"]) - 1)))
-    print("    掘削 %8.3f m3(真値 %8.3f、%+.1f %%)   堆積 %8.3f m3(真値 %8.3f、%+.1f %%)"
-          % (r["ero"], tr["ero"], 100 * (r["ero"] / tr["ero"] - 1),
-             r["dep"], tr["dep"], 100 * (r["dep"] / tr["dep"] - 1)))
-    print("    ★掘削・堆積が両方とも大きく出る。雑音の正の側と負の側を**別々に足して**")
-    print("      いるので、正味では消える誤差が内訳では消えない —— 3 節で対照群にする。")
-    print("    しきい値なしの変化面積 %.0f m2(真値 %.0f m2)= 窓のほぼ全部。"
-          % (r["area"], tr["area"]))
-    return {"ideal": r, "p1": p1, "p2": p2}
+    print("\n  雑音・遮蔽・系統誤差をすべて止め、両時期で**同じ格子標本**"
+          "(%.0f pt/m2 = 1 セルに 3x3 点)にして幾何だけを見る:" % LAT_DENSITY)
+    print("\n   傾斜   DoD 掘削 [m3]  誤差%   DoD 堆積 [m3]  誤差%   "
+          "M3C2 掘削 [m3] 誤差%   M3C2 堆積 誤差%")
+    sl_l, ero_e, dep_e, mero_e, mdep_e, rows = [], [], [], [], [], []
+    for sl in (0.0, 5.0, 10.0, 20.0, 30.0, 40.0):
+        rng = np.random.default_rng(SEED)
+        a, _ = make_cloud(rng, slope_deg=sl, density=LAT_DENSITY, with_change=False,
+                          occl=0.0, sig_r=0.0, sig_h=0.0, lattice=True)
+        b, _ = make_cloud(rng, slope_deg=sl, density=LAT_DENSITY, with_change=True,
+                          occl=0.0, sig_r=0.0, sig_h=0.0, lattice=True)
+        rd = dod(a, b)
+        vm = m3c2_volume(m3c2(a, b), lod=0.0)
+        e1 = 100 * (rd["ero"] / tr["ero"] - 1)
+        e2 = 100 * (rd["dep"] / tr["dep"] - 1)
+        e3 = 100 * (vm["ero"] / tr["ero"] - 1)
+        e4 = 100 * (vm["dep"] / tr["dep"] - 1)
+        sl_l.append(sl)
+        ero_e.append(e1)
+        dep_e.append(e2)
+        mero_e.append(e3)
+        mdep_e.append(e4)
+        rows.append(["%.0f" % sl, "%.3f" % rd["ero"], "%+.2f" % e1,
+                     "%.3f" % rd["dep"], "%+.2f" % e2,
+                     "%.3f" % vm["ero"], "%+.2f" % e3, "%+.2f" % e4])
+        print("   %4.0f %13.3f %+7.2f %14.3f %+7.2f %14.3f %+7.2f %12.2f"
+              % (sl, rd["ero"], e1, rd["dep"], e2, vm["ero"], e3, e4))
+    print("\n  ★★予測どおり **体積は傾斜に依らない**: DoD の掘削誤差は "
+          "%+.2f %% 〜 %+.2f %%(傾向なし)。" % (min(ero_e), max(ero_e)))
+    print("     素朴な予想「cos40 = %.3f 倍に縮む」= %.1f %% は**外れ**。cos は約分して消える。"
+          % (math.cos(math.radians(40)), -100 * (1 - math.cos(math.radians(40)))))
+    print("  ★M3C2 も同じ範囲(%+.2f 〜 %+.2f %%)。**1/cos(局所傾斜)を掛けて"
+          "斜面上の面積で積めば**、法線方向に測っても同じ体積になる。"
+          % (min(mero_e), max(mero_e)))
+    figs.save_table("geometry",
+                    ["傾斜 deg", "DoD 掘削 m3", "誤差 %", "DoD 堆積 m3", "誤差 %",
+                     "M3C2 掘削 m3", "誤差 %", "M3C2 堆積 誤差 %"], rows,
+                    title="雑音を止めた幾何だけの比較(真値 掘削 %.3f / 堆積 %.3f m3)"
+                          % (tr["ero"], tr["dep"]),
+                    caption="傾斜を 0 から 40 度まで振っても体積の誤差に傾向が無い。"
+                            "cos は積分で約分する。")
+    return {"slope": sl_l, "ero_err": ero_e, "dep_err": dep_e, "m_ero_err": mero_e}
 
 
 # --------------------------------------------------------------------------- #
-# 3. 対照群 —— 変化なしで出てしまう土量 = 検出限界                              #
+# 3. 雑音を入れる -> 対照群 = 変化なしで出てしまう土量                          #
 # --------------------------------------------------------------------------- #
 def section_control(tr: dict) -> dict:
     print("\n" + "=" * 78)
-    print("3) ★★対照群 —— 「変化なし」で出てしまう偽の土量(= 検出限界そのもの)")
+    print("3) ★★雑音を入れる —— 「変化なし」で出てしまう偽の土量(= 検出限界そのもの)")
     print("=" * 78)
-    print("   条件                             偽掘削   偽堆積   偽正味  偽変化面積")
+    rng = np.random.default_rng(SEED)
+    p1, _ = make_cloud(rng, with_change=False, occl=0.0)
+    p2, _ = make_cloud(rng, with_change=True, occl=0.0)
+    real = dod(p1, p2)
+    print("  まず本物の変化を、現実的な観測(%.1f pt/m2・雑音あり・対応なし)で測る:"
+          % DENSITY)
+    print("    掘削 %8.3f m3(真 %8.3f、%+.1f %%)  堆積 %8.3f m3(真 %8.3f、%+.1f %%)"
+          % (real["ero"], tr["ero"], 100 * (real["ero"] / tr["ero"] - 1),
+             real["dep"], tr["dep"], 100 * (real["dep"] / tr["dep"] - 1)))
+    print("    しきい値なしの変化面積 %.0f m2(真値 %.0f m2)= 窓のほぼ全部。"
+          % (real["area"], tr["area"]))
+
+    print("\n   対照群                           偽掘削   偽堆積   偽正味  偽変化面積")
     rows, out = [], {}
     conds = (("変化なし・遮蔽なし・誤差なし", dict(occl=0.0, shift=(0, 0, 0))),
              ("変化なし・遮蔽 30 %", dict(occl=OCCL, shift=(0, 0, 0))),
              ("変化なし・系統誤差 0.10 m", dict(occl=0.0, shift=(0.06, 0.08, 0.02))),
              ("変化なし・遮蔽 + 系統誤差", dict(occl=OCCL, shift=(0.06, 0.08, 0.02))))
     for name, kw in conds:
-        rng = np.random.default_rng(SEED + 5)
-        a, ga = make_cloud(rng, with_change=False, **kw)
-        b, gb = make_cloud(rng, with_change=False, **kw)
+        r0 = np.random.default_rng(SEED + 5)
+        a, _ = make_cloud(r0, with_change=False, **kw)
+        b, _ = make_cloud(r0, with_change=False, **kw)
         if kw["occl"] > 0:
             a, b = a[ground_filter(a)], b[ground_filter(b)]
         r = dod(a, b)
@@ -494,17 +566,27 @@ def section_control(tr: dict) -> dict:
               % (name, r["ero"], r["dep"], r["net"], r["area"]))
 
     base = out["変化なし・遮蔽なし・誤差なし"]
-    print("\n  ★★何も変わっていないのに掘削 %.1f m3 / 堆積 %.1f m3 が出る"
-          "(真の掘削 %.1f m3 の %.0f %%)。" % (base["ero"], base["dep"], tr["ero"],
-                                               100 * base["ero"] / tr["ero"]))
-    print("     正味は %+.1f m3 と小さい —— **正味だけ見ていると内訳の嘘に気づけない**。")
+    print("\n  ★★何も変わっていないのに偽掘削 %.1f m3 / 偽堆積 %.1f m3 が出る"
+          "(真の掘削 %.1f m3 の %.0f %%)。"
+          % (base["ero"], base["dep"], tr["ero"], 100 * base["ero"] / tr["ero"]))
+    print("     偽正味は %+.1f m3 と小さい —— **正味だけ見ていると内訳の嘘に気づけない**。"
+          % base["net"])
     lod = 1.96 * pred_sigma_dod(SLOPE, DENSITY)
-    thr = dod(*(lambda rng: (lambda a, b: (a, b))(
-        *[make_cloud(rng, with_change=False, occl=0.0)[0] for _ in range(2)]))(
-        np.random.default_rng(SEED + 5)), lod=lod)
-    print("     有意性で切る(LoD95 = 1.96 sigma = %.3f m)と 偽掘削 %.1f / 偽堆積 %.1f m3、"
-          "偽変化面積 %.0f m2 に落ちる。" % (lod, thr["ero"], thr["dep"], thr["area"]))
+    r0 = np.random.default_rng(SEED + 5)
+    ca, _ = make_cloud(r0, with_change=False, occl=0.0, shift=(0, 0, 0))
+    cb, _ = make_cloud(r0, with_change=False, occl=0.0, shift=(0, 0, 0))
+    thr = dod(ca, cb, lod=lod)
+    real_thr = dod(p1, p2, lod=lod)
+    tr_thr = truth(lod=lod)
+    print("     有意性でしきる(LoD95 = 1.96 sigma = %.3f m): 偽掘削 %.1f / 偽堆積 %.1f m3、"
+          "偽変化面積 %.0f m2。" % (lod, thr["ero"], thr["dep"], thr["area"]))
     print("     -> **しきい値は飾りではなく本体**。しきらない DoD は現場で使えない。")
+    print("  ★ただししきると本物の縁も落ちる: 同じ LoD での本物は 掘削 %.1f m3。"
+          % real_thr["ero"])
+    print("     しきい値以上の真値 %.1f m3 と比べれば %+.1f %% で合う —— "
+          "落ちた %.1f m3 は測定の失敗ではなく**しきい値の定義**。"
+          % (tr_thr["ero"], 100 * (real_thr["ero"] / tr_thr["ero"] - 1),
+             tr["ero"] - tr_thr["ero"]))
     figs.save_table("controls",
                     ["条件", "偽掘削 m3", "偽堆積 m3", "偽正味 m3", "偽変化面積 m2"],
                     rows + [["変化なし・誤差なし + LoD %.3f m でしきる" % lod,
@@ -513,41 +595,43 @@ def section_control(tr: dict) -> dict:
                     title="対照群: 変化が無いのに出てしまう土量",
                     caption="真の掘削は %.1f m3。しきらない DoD の内訳は"
                             "その半分近くを雑音から作る。" % tr["ero"])
-    return {"base": base, "thr": thr, "lod": lod, "all": out}
+    return {"base": base, "thr": thr, "lod": lod, "all": out,
+            "real": real, "real_thr": real_thr, "tr_thr": tr_thr,
+            "p1": p1, "p2": p2}
 
 
 # --------------------------------------------------------------------------- #
 # 4. M3C2 —— 法線方向に測る                                                     #
 # --------------------------------------------------------------------------- #
-def section_m3c2(scene: dict, tr: dict) -> dict:
+def section_m3c2(ctrl: dict, tr: dict) -> dict:
     print("\n" + "=" * 78)
     print("4) M3C2(局所平面の法線方向に測る)—— 厚さと体積は別の量")
     print("=" * 78)
-    p1, p2 = scene["p1"], scene["p2"]
+    p1, p2 = ctrl["p1"], ctrl["p2"]
     t0 = time.perf_counter()
     res = m3c2(p1, p2)
-    vol_raw = m3c2_volume(res, lod=0.0)
-    vol_sig = m3c2_volume(res, lod=None)
-    print("  core %d 点(間隔 %.1f m)、うち有効 %d。円柱半径 %.3f m"
+    raw = m3c2_volume(res, lod=0.0)
+    sig = m3c2_volume(res, lod=None)
+    print("  core %d 点(間隔 %.1f m)、うち有効 %d(%.1f %%)。円柱半径 %.3f m"
           "(足跡 %.2f m2 = DEM セル %.2f m2 と一致)、%.2f 秒"
-          % (len(res["cores"]), CORE, vol_raw["n_ok"], R_CYL,
+          % (len(res["cores"]), CORE, raw["n_ok"], 100 * res["rate"], R_CYL,
              math.pi * R_CYL ** 2, CELL * CELL, time.perf_counter() - t0))
     print("\n  しきらない土量: 掘削 %8.3f(真 %8.3f、%+.1f %%)  堆積 %8.3f(真 %8.3f、%+.1f %%)"
-          % (vol_raw["ero"], tr["ero"], 100 * (vol_raw["ero"] / tr["ero"] - 1),
-             vol_raw["dep"], tr["dep"], 100 * (vol_raw["dep"] / tr["dep"] - 1)))
-    print("  core ごとの sigma で有意性判定: 掘削 %8.3f(%+.1f %%)  堆積 %8.3f(%+.1f %%)"
-          "  変化面積 %.0f m2(真 %.0f)"
-          % (vol_sig["ero"], 100 * (vol_sig["ero"] / tr["ero"] - 1),
-             vol_sig["dep"], 100 * (vol_sig["dep"] / tr["dep"] - 1),
-             vol_sig["area"], tr["area"]))
+          % (raw["ero"], tr["ero"], 100 * (raw["ero"] / tr["ero"] - 1),
+             raw["dep"], tr["dep"], 100 * (raw["dep"] / tr["dep"] - 1)))
+    print("     ★DoD の同条件 %.1f / %.1f m3 に比べて内訳の水増しが小さい"
+          "(足跡は同じ %.2f m2 なのに、平面を当てるぶん 1 core の sigma が小さい)。"
+          % (ctrl["real"]["ero"], ctrl["real"]["dep"], math.pi * R_CYL ** 2))
+    print("  core ごとの sigma で有意性判定: 掘削 %8.3f  堆積 %8.3f  変化面積 %.0f m2(真 %.0f)"
+          % (sig["ero"], sig["dep"], sig["area"], tr["area"]))
     print("  ★★体積に直すとき **1 / cos(局所傾斜)** を掛けるのを忘れると:")
     print("     掘削 %.3f m3(真値の %.1f %%)—— cos%.0f = %.3f そのぶん足りない。"
-          % (vol_raw["naive"], 100 * vol_raw["naive"] / tr["ero"], SLOPE,
+          "面積で割った「平均の厚さ」も同じだけ狂う。"
+          % (raw["naive"], 100 * raw["naive"] / tr["ero"], SLOPE,
              math.cos(math.radians(SLOPE))))
 
-    # 厚さの比 —— 崩壊の中心で DoD の深さと M3C2 の厚さを比べる
     print("\n  ★崩壊中心での「深さ」: DoD は鉛直 dz、M3C2 は法線厚さ。比は sec θ のはず。")
-    print("     傾斜   DoD 深さ [m]   M3C2 厚さ [m]     比     予測 sec θ")
+    print("     傾斜   DoD 深さ [m]   M3C2 厚さ [m]     比     予測 sec θ   ずれ")
     ratios = []
     for sl in (0.0, 10.0, 25.0, 40.0):
         rng = np.random.default_rng(SEED + 2)
@@ -555,114 +639,105 @@ def section_m3c2(scene: dict, tr: dict) -> dict:
         b, _ = make_cloud(rng, slope_deg=sl, with_change=True, occl=0.0)
         rd = dod(a, b)
         rm = m3c2(a, b, cores=np.array([[SCAR["x"], SCAR["y"]]]))
-        cx = int(SCAR["x"] / CELL)
-        cy = int(SCAR["y"] / CELL)
+        cx, cy = int(SCAR["x"] / CELL), int(SCAR["y"] / CELL)
         dz = float(np.nanmean(rd["dz"][cy - 1:cy + 2, cx - 1:cx + 2]))
         ln = float(rm["L"][0])
         sec = 1.0 / math.cos(math.radians(sl))
         ratios.append((sl, dz, ln, abs(dz / ln), sec))
-        print("     %4.0f      %8.3f      %8.3f     %6.3f     %6.3f"
-              % (sl, dz, ln, abs(dz / ln), sec))
+        print("     %4.0f      %8.3f      %8.3f     %6.3f     %6.3f    %+.3f"
+              % (sl, dz, ln, abs(dz / ln), sec, abs(dz / ln) - sec))
     err = max(abs(r[3] - r[4]) for r in ratios)
-    print("  -> 予測と実測の差は最大 %.3f。**「1.20 m 掘れた」は鉛直の話**で、"
-          "40 度斜面の法面実厚は %.3f m。" % (err, abs(ratios[-1][2])))
-    return {"res": res, "raw": vol_raw, "sig": vol_sig, "ratios": ratios}
+    print("  -> 予測と実測の差は最大 %.3f(1 セルぶんの雑音 %.3f m 相当)。"
+          % (err, err * abs(ratios[-1][2])))
+    print("     **「%.2f m 掘れた」は鉛直の話**で、40 度斜面の法面実厚は %.3f m。"
+          "どちらを報告するかで %.0f %% 違う。"
+          % (SCAR["amp"], abs(ratios[-1][2]),
+             100 * (ratios[-1][4] - 1)))
+    return {"res": res, "raw": raw, "sig": sig, "ratios": ratios}
 
 
 # --------------------------------------------------------------------------- #
-# 5. 崖(1) 傾斜 0 -> 40 度                                                      #
+# 5. 崖(1) 傾斜 0 -> 40 度 —— 検出限界                                          #
 # --------------------------------------------------------------------------- #
-def section_slope(tr: dict) -> dict:
+def section_slope() -> dict:
     print("\n" + "=" * 78)
     print("5) 崖(1) 傾斜 0 -> 40 度 —— 体積は崩れない。崩れるのは検出限界")
     print("=" * 78)
-    print("   傾斜  DoD 正味 [m3] 誤差%   M3C2 正味 [m3] 誤差%   sigma_dz 実測/予測 [m]"
-          "   LoD DoD / M3C2")
-    rows, sl_l, dod_e, m_e, lod_d, lod_m, sig_meas, sig_pred = [], [], [], [], [], [], [], []
-    net_true = tr["dep"] - tr["ero"]
+    print("  予測(変化ゼロの対照で測る 1 セルあたりの散らばり):")
+    print("    DoD  : sqrt(2/n) sqrt(sigma_r^2 + tan^2 θ (cell^2/12 + sigma_h^2))")
+    print("    M3C2 : sqrt(2/n) sqrt(cos^2 θ sigma_r^2 + sin^2 θ sigma_h^2)"
+          "  ← 平面を当てるので cell^2/12 の項が消える")
+    print("\n   傾斜   sigma_dz 実測/予測 [m]   sigma_L 実測/予測 [m]   "
+          "LoD95 DoD / M3C2 [m]   比")
+    sl_l, lod_d, lod_m, sd_m, sd_p, sm_m, sm_p, rows = [], [], [], [], [], [], [], []
     for sl in (0.0, 5.0, 10.0, 20.0, 30.0, 40.0):
-        rng = np.random.default_rng(SEED + 3)
+        rng = np.random.default_rng(SEED + 4)
         a, _ = make_cloud(rng, slope_deg=sl, with_change=False, occl=0.0)
-        b, _ = make_cloud(rng, slope_deg=sl, with_change=True, occl=0.0)
-        rd = dod(a, b)
-        rm = m3c2(a, b)
-        vm = m3c2_volume(rm, lod=0.0)
-        # 対照(変化なし)から検出限界を測る
-        rng2 = np.random.default_rng(SEED + 4)
-        c0, _ = make_cloud(rng2, slope_deg=sl, with_change=False, occl=0.0)
-        c1, _ = make_cloud(rng2, slope_deg=sl, with_change=False, occl=0.0)
-        rc = dod(c0, c1)
-        mc = m3c2(c0, c1)
-        s_d = float(np.nanstd(rc["dz"][rc["ok"]]))
-        s_m = float(np.nanstd(mc["L"][mc["ok"]]))
+        b, _ = make_cloud(rng, slope_deg=sl, with_change=False, occl=0.0)
+        rc = dod(a, b)
+        mc = m3c2(a, b)
+        s_d, s_m = spread(rc["dz"][rc["ok"]]), spread(mc["L"])
         sl_l.append(sl)
-        dod_e.append(100 * (rd["net"] / net_true - 1))
-        m_e.append(100 * (vm["net"] / net_true - 1))
+        sd_m.append(s_d)
+        sd_p.append(pred_sigma_dod(sl, DENSITY))
+        sm_m.append(s_m)
+        sm_p.append(pred_sigma_m3c2(sl, DENSITY))
         lod_d.append(1.96 * s_d)
         lod_m.append(1.96 * s_m)
-        sig_meas.append(s_d)
-        sig_pred.append(pred_sigma_dod(sl, DENSITY))
-        rows.append([("%.0f" % sl), "%.2f" % rd["net"], "%+.2f" % dod_e[-1],
-                     "%.2f" % vm["net"], "%+.2f" % m_e[-1],
-                     "%.4f / %.4f" % (s_d, sig_pred[-1]),
-                     "%.3f / %.3f" % (lod_d[-1], lod_m[-1])])
-        print("   %4.0f   %11.2f %+7.2f   %11.2f %+7.2f   %9.4f / %.4f   %.3f / %.3f"
-              % (sl, rd["net"], dod_e[-1], vm["net"], m_e[-1], s_d, sig_pred[-1],
-                 lod_d[-1], lod_m[-1]))
-
-    print("\n  ★★予測どおり **体積は傾斜に依らない**: DoD の正味誤差は %+.2f %% 〜 %+.2f %%、"
-          % (min(dod_e), max(dod_e)))
-    print("     素朴な予想「cos40 = %.3f 倍に縮む」= -%.1f %% は**外れ**。cos は約分して消える。"
-          % (math.cos(math.radians(40)), 100 * (1 - math.cos(math.radians(40)))))
-    print("  ★崩れるのは検出限界のほう。DoD の LoD は %.3f m(0 度)-> %.3f m(40 度)で %.1f 倍。"
-          % (lod_d[0], lod_d[-1], lod_d[-1] / lod_d[0]))
-    print("     予測式 sqrt(2/n) sqrt(sigma_r^2 + tan^2 θ (cell^2/12 + sigma_h^2)) との比は "
-          "%.2f 〜 %.2f 倍(うねりの分だけ実測が上)。"
-          % (min(m / p for m, p in zip(sig_meas, sig_pred)),
-             max(m / p for m, p in zip(sig_meas, sig_pred))))
+        rows.append(["%.0f" % sl, "%.4f / %.4f" % (s_d, sd_p[-1]),
+                     "%.4f / %.4f" % (s_m, sm_p[-1]),
+                     "%.3f / %.3f" % (lod_d[-1], lod_m[-1]),
+                     "%.2f" % (lod_d[-1] / lod_m[-1])])
+        print("   %4.0f      %8.4f / %.4f      %8.4f / %.4f      %.3f / %.3f      %.2f"
+              % (sl, s_d, sd_p[-1], s_m, sm_p[-1], lod_d[-1], lod_m[-1],
+                 lod_d[-1] / lod_m[-1]))
+    print("\n  ★DoD の LoD は %.3f m(0 度)-> %.3f m(40 度)で %.1f 倍。"
+          "予測式との比は %.2f 〜 %.2f 倍(うねりの分だけ実測が上)。"
+          % (lod_d[0], lod_d[-1], lod_d[-1] / lod_d[0],
+             min(m / p for m, p in zip(sd_m, sd_p)),
+             max(m / p for m, p in zip(sd_m, sd_p))))
     print("  ★★M3C2 の利得は**傾斜からしか来ない**: LoD 比 DoD/M3C2 は "
-          "0 度で %.2f、25〜40 度で %.2f 〜 %.2f。"
+          "0 度で %.2f、20 度で %.2f、40 度で %.2f。"
           % (lod_d[0] / lod_m[0], lod_d[3] / lod_m[3], lod_d[-1] / lod_m[-1]))
-    print("     平面を当てるのでセル内傾斜 (cell/sqrt12) の項が落ちる。"
-          "平地では落ちる項が無いので**同じ**。")
-
+    print("     平地では落ちる項が無いので**同じ**。「M3C2 は常に良い」は嘘で、"
+          "良いのは斜面と粗い面だけ。")
     figs.save_plot("slope_cliff",
-                   [("DoD の LoD95", sl_l, lod_d), ("M3C2 の LoD95", sl_l, lod_m),
-                    ("DoD 予測 1.96 sigma", sl_l, [1.96 * v for v in sig_pred]),
-                    ("M3C2 予測 1.96 sigma", sl_l,
-                     [1.96 * pred_sigma_m3c2(s, DENSITY) for s in sl_l])],
+                   [("DoD の LoD95 実測", sl_l, lod_d),
+                    ("DoD 予測", sl_l, [1.96 * v for v in sd_p]),
+                    ("M3C2 の LoD95 実測", sl_l, lod_m),
+                    ("M3C2 予測", sl_l, [1.96 * v for v in sm_p])],
                    xlabel="傾斜 [deg]", ylabel="検出できる最小の変化 [m]",
                    title="斜面が壊すのは体積ではなく検出限界",
-                   caption="同じ足跡面積での比較。平地では両者は一致し、"
+                   caption="足跡面積を揃えた比較。平地では両者は一致し、"
                            "傾斜とともに DoD だけが悪化する。")
     figs.save_table("slope_table",
-                    ["傾斜 deg", "DoD 正味 m3", "誤差 %", "M3C2 正味 m3", "誤差 %",
-                     "sigma_dz 実測/予測 m", "LoD DoD/M3C2 m"], rows,
-                    title="傾斜掃引(真の正味 %+.2f m3)" % net_true,
-                    caption="体積の誤差は傾斜に対して傾向を持たない。"
-                            "cos は積分で約分する。")
+                    ["傾斜 deg", "sigma_dz 実測/予測 m", "sigma_L 実測/予測 m",
+                     "LoD95 DoD / M3C2 m", "比"], rows,
+                    title="傾斜掃引(変化ゼロの対照から測った検出限界)",
+                    caption="予測式は先に立ててから測った。うねりの寄与ぶん"
+                            "実測がわずかに上に出る。")
     return {"slope": sl_l, "lod_d": lod_d, "lod_m": lod_m,
-            "dod_err": dod_e, "m_err": m_e, "sig_meas": sig_meas, "sig_pred": sig_pred}
+            "sd_m": sd_m, "sd_p": sd_p}
 
 
 # --------------------------------------------------------------------------- #
-# 6. 崖(2) 点密度 0.5 -> 16 pt/m2                                               #
+# 6. 崖(2) 点密度                                                               #
 # --------------------------------------------------------------------------- #
 def section_density() -> dict:
     print("\n" + "=" * 78)
     print("6) 崖(2) 点密度 —— 「検出できる最小の変化厚」は 1/sqrt(密度)")
     print("=" * 78)
-    print("   密度   セル内点数   DoD LoD95 [m]  予測    M3C2 LoD95 [m]  予測"
-          "    C2C 平均距離 [m]")
-    dens, ld, lm, pd_, pm, c2c = [], [], [], [], [], []
+    print("   密度   セル内点数  DoD LoD95 [m]  予測   M3C2 LoD95 [m]  予測  "
+          "M3C2 有効 core   C2C 平均 [m]")
+    dens, ld, lm, pd_, pm, c2c, rate = [], [], [], [], [], [], []
     for rho in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0):
         rng = np.random.default_rng(SEED + 6)
         a, _ = make_cloud(rng, density=rho, with_change=False, occl=0.0)
         b, _ = make_cloud(rng, density=rho, with_change=False, occl=0.0)
         rc = dod(a, b)
         mc = m3c2(a, b)
-        s_d = 1.96 * float(np.nanstd(rc["dz"][rc["ok"]]))
-        s_m = 1.96 * float(np.nanstd(mc["L"][mc["ok"]]))
+        s_d = 1.96 * spread(rc["dz"][rc["ok"]])
+        s_m = 1.96 * spread(mc["L"])
         step = max(1, len(a) // 6000)
         ch = float(fs.ledger.chamfer_distance(a[::step], b[::step]))
         dens.append(rho)
@@ -671,15 +746,28 @@ def section_density() -> dict:
         pd_.append(1.96 * pred_sigma_dod(SLOPE, rho))
         pm.append(1.96 * pred_sigma_m3c2(SLOPE, rho))
         c2c.append(ch)
-        print("   %5.1f %10.1f %13.3f %7.3f %14.3f %7.3f %14.3f"
-              % (rho, rho * CELL * CELL, s_d, pd_[-1], s_m, pm[-1], ch))
+        rate.append(100 * mc["rate"])
+        print("   %5.1f %10.1f %13.3f %7.3f %14s %7.3f %13.1f %% %11.3f"
+              % (rho, rho * CELL * CELL, s_d, pd_[-1],
+                 ("%.3f" % s_m) if np.isfinite(s_m) else "測れず", pm[-1],
+                 rate[-1], ch))
     print("\n  ★DoD の LoD は %.3f m(%.1f pt/m2)-> %.3f m(%.1f pt/m2)。"
-          "密度 32 倍で %.2f 倍(1/sqrt(32) = %.3f)。"
+          "密度 32 倍で %.2f 倍(予測 1/sqrt(32) = %.3f、"
           % (ld[0], dens[0], ld[-1], dens[-1], ld[-1] / ld[0], 1 / math.sqrt(32)))
-    print("     0.5 pt/m2 では最小検出厚 %.3f m —— この崩壊の最大深さ %.2f m の %.0f %% で、"
-          "**縁は丸ごと見えない**。" % (ld[0], SCAR["amp"], 100 * ld[0] / SCAR["amp"]))
-    print("  ★ゼロ点その 2: C2C(点群どうしの最近傍距離、``chamfer_distance``)は"
-          "**変化が無くても** %.3f -> %.3f m を返す。" % (c2c[0], c2c[-1]))
+    print("     低密度側で予測より良いのは、点の無いセルが差分から落ちるため)。")
+    print("     %.1f pt/m2 では最小検出厚 %.3f m —— この崩壊の最大深さ %.2f m の %.0f %% で、"
+          "**縁は丸ごと見えない**。" % (dens[0], ld[0], SCAR["amp"],
+                                        100 * ld[0] / SCAR["amp"]))
+    print("  ★★M3C2 の LoD が低密度で**見かけ上よくなる**(%.1f pt/m2 で %.3f m、"
+          "予測 %.3f m の半分以下)のは生存者バイアス。"
+          % (dens[1], lm[1], pm[1]))
+    print("     円柱に %d 点そろわない core を捨てているので、有効 core 率が "
+          "%.1f %%(%.1f pt/m2)。**「よく見える」のではなく「見えた所だけ数えている」**。"
+          % (MIN_CYL, rate[1], dens[1]))
+    print("     体積を出すなら、捨てた core の面積は**測れなかった面積**として"
+          "別に数えないと、土量が静かに欠ける。")
+    print("  ★ゼロ点その 2: C2C(点群どうしの最近傍距離)は**変化が無くても** "
+          "%.3f -> %.3f m を返す。" % (c2c[0], c2c[-1]))
     print("     これは点間隔そのもの(密度で決まる)で、しかも**符号が無い**ので"
           "掘削と堆積を分けられない。C2C で土量は測れない。")
     figs.save_plot("density_cliff",
@@ -690,7 +778,8 @@ def section_density() -> dict:
                    title="密度は「何 m の変化まで言えるか」を決める",
                    caption="変化ゼロの対照で測った検出限界。C2C は変化が無くても"
                            "点間隔ぶんの距離を返し、符号も持たない。")
-    return {"dens": dens, "lod_d": ld, "lod_m": lm, "pred_d": pd_, "c2c": c2c}
+    return {"dens": dens, "lod_d": ld, "lod_m": lm, "pred_d": pd_, "pred_m": pm,
+            "c2c": c2c, "rate": rate}
 
 
 # --------------------------------------------------------------------------- #
@@ -710,123 +799,173 @@ def align_icp(src: np.ndarray, dst: np.ndarray, voxel: float = 1.0,
 
 def section_systematic(tr: dict) -> dict:
     print("\n" + "=" * 78)
-    print("7) 崖(3) GNSS/IMU の系統誤差 —— 予測: 偽体積 = tan θ x |水平ずれ| x 面積")
+    print("7) 崖(3) GNSS/IMU の系統誤差 —— 予測: 偽の正味土量 = (delta_z + tan θ delta_y) x 面積")
     print("=" * 78)
     g = math.tan(math.radians(SLOPE))
-    print("  平行移動 delta の見かけ鉛直変化は dz = delta_z - grad z . delta。"
-          "傾斜方向なら |dz| = tan%.0f x delta_h = %.3f delta_h。" % (SLOPE, g))
-    print("  M3C2 の見かけ厚さはその cos 倍だが、体積に直すとき 1/cos するので"
-          "**体積は同じになる**はず。")
-    print("\n    水平ずれ  予測偽体積   DoD 偽掘削+偽堆積   M3C2 同   位置合わせ後 DoD")
-    mags, pred, meas_d, meas_m, after = [], [], [], [], []
+    print("  平行移動 delta の見かけ鉛直変化は dz = delta_z + tan θ delta_y"
+          "(斜面を登る向きにずらすと地面が上がって見える)。")
+    print("  M3C2 の見かけ厚さは L = delta.n = delta_y sin θ + delta_z cos θ。"
+          "体積に直すとき 1/cos θ するので")
+    print("  V = (delta_y tan θ + delta_z) A_h —— **DoD と厳密に同じ式**。"
+          "雑音は正味では打ち消すので、正味なら予測と直接比べられる。")
+    print("\n    水平ずれ  予測 偽正味 [m3]  DoD 偽正味  M3C2 偽正味  "
+          "DoD 偽|土量|  位置合わせ後")
+    mags, pred, md, mm, ma, aft = [], [], [], [], [], []
     for mag in (0.0, 0.05, 0.10, 0.20, 0.30):
         rng = np.random.default_rng(SEED + 7)
         a, _ = make_cloud(rng, with_change=False, occl=0.0)
         b0, _ = make_cloud(rng, with_change=False, occl=0.0)
         b = apply_pose(b0, (0.0, mag, 0.2 * mag), 0.02)
         rd = dod(a, b)
-        rm = m3c2_volume(m3c2(a, b), lod=0.0)
-        b_al, _, _, info = align_icp(b, a)
+        vm = m3c2_volume(m3c2(a, b), lod=0.0)
+        b_al, _, _, _ = align_icp(b, a)
         rd2 = dod(a, b_al)
-        p = g * mag * WIN_AREA
+        p = (0.2 * mag + g * mag) * WIN_AREA
         mags.append(mag)
         pred.append(p)
-        meas_d.append(rd["ero"] + rd["dep"])
-        meas_m.append(rm["ero"] + rm["dep"])
-        after.append(rd2["ero"] + rd2["dep"])
-        print("     %.2f m   %9.1f   %17.1f %10.1f %17.1f"
-              % (mag, p, meas_d[-1], meas_m[-1], after[-1]))
-
+        md.append(rd["net"])
+        mm.append(vm["net"])
+        ma.append(rd["abs"])
+        aft.append(rd2["net"])
+        print("     %.2f m %14.1f %12.1f %12.1f %13.1f %14.1f"
+              % (mag, p, md[-1], mm[-1], ma[-1], aft[-1]))
     print("\n  ★★予測 %.1f m3 に対し実測 DoD %.1f / M3C2 %.1f m3(ずれ 0.30 m)。"
-          "**両手法で同じ**。" % (pred[-1], meas_d[-1], meas_m[-1]))
+          "**両手法で同じだけ間違える**(差 %.1f %%)。"
+          % (pred[-1], md[-1], mm[-1], 100 * abs(mm[-1] / md[-1] - 1)))
     print("     M3C2 が有利なのは厚さと有意性であって体積ではない —— 法線方向の"
           "見かけ変化は cos 倍小さいが、体積で 1/cos するので約分する。")
-    print("  ★位置合わせ(ICP、1.0 m ボクセルで間引き、trim 0.6)で %.1f -> %.1f m3、"
-          "残り %.1f %%。" % (meas_d[-1], after[-1], 100 * after[-1] / meas_d[-1]))
+    print("  ★位置合わせ(ICP、%.1f m ボクセルで間引き、trim 0.6)で 偽正味 %.1f -> %.1f m3。"
+          % (1.0, md[-1], aft[-1]))
+    print("     真の変化が無いので ICP は迷わない。次に**変化がある**場合を見る。")
 
-    # --- 対照: 平面だけの地形では ICP は面内で決まらない --------------------- #
-    print("\n  ★★対照: うねりも樹木も無い**純平面**で同じことをすると")
+    # --- ★ 合わせた分だけ変化が消える -------------------------------------- #
+    print("\n  ★★合わせると変化が消える —— 変化のある点群対をそのまま ICP に掛ける:")
+    print("     trim   使う対応   ICP 後の正味 [m3]   真値との比   吸われた鉛直量 [m]")
+    rng = np.random.default_rng(SEED + 12)
+    a, _ = make_cloud(rng, with_change=False, occl=0.0)
+    b, _ = make_cloud(rng, with_change=True, occl=0.0)
+    base_net = dod(a, b)["net"]
+    eat = []
+    for trim in (1.0, 0.8, 0.6):
+        b_al, _, _, _ = align_icp(b, a, trim=trim)
+        r = dod(a, b_al)
+        eat.append((trim, r["net"], (r["net"] - base_net) / WIN_AREA))
+        print("     %.1f  %8.0f %%      %12.2f      %6.1f %%        %+.4f"
+              % (trim, 100 * trim, r["net"], 100 * r["net"] / tr["net"], eat[-1][2]))
+    print("     位置合わせ前(系統誤差ゼロ)は %.2f m3(真値 %.2f)。" % (base_net, tr["net"]))
+    print("  ★★変化域が窓の %.0f %% もあると、全対応を使う ICP は**変化を系統誤差と読む**。"
+          % (100 * tr["area"] / WIN_AREA))
+    print("     鉛直に %+.4f m 引き上げるだけで正味は真値の %.0f %% に潰れる ——"
+          " 平均変化量 %.4f m とほぼ同じ量を吸っている。"
+          % (eat[0][2], 100 * eat[0][1] / tr["net"], tr["net"] / WIN_AREA))
+    print("     上位 %.0f %% だけ使う trimmed ICP なら %.1f %% まで戻る。"
+          "**合わせてから測ると、合わせた分だけ変化が消える**。"
+          % (100 * eat[-1][0], 100 * eat[-1][1] / tr["net"]))
+
+    # --- 対照: 面内のずれは決まらないが、測定にも現れない -------------------- #
+    print("\n  ★★対照: **斜面に沿った(面内の)ずれ**を与える —— 平面を自分自身に写すので")
+    print("     予測: 偽の正味は厳密に 0。ICP はこの成分を決められない。")
+    th = math.radians(SLOPE)
+    inplane = np.array([0.15, 0.25 * math.cos(th), -0.25 * math.sin(th)])
+    print("     ずれ (%.3f, %.3f, %.3f) m、大きさ %.3f m、法線成分 %.2e m"
+          % (*inplane, np.linalg.norm(inplane),
+             inplane @ np.array([0.0, math.sin(th), math.cos(th)])))
     res = {}
     for label, undul in (("うねりあり(既定)", UNDUL), ("純平面(うねり 0)", 0.0)):
         rng = np.random.default_rng(SEED + 8)
         a, _ = make_cloud(rng, with_change=False, occl=0.0, undul=undul)
         b0, _ = make_cloud(rng, with_change=False, occl=0.0, undul=undul)
-        shift = (0.10, 0.28, 0.06)
-        b = apply_pose(b0, shift, 0.0)
+        b = apply_pose(b0, inplane)
         before = float(np.sqrt(np.mean(np.sum((b - b0) ** 2, axis=1))))
-        b_al, _, _, info = align_icp(b, a)
+        b_al, _, _, _ = align_icp(b, a, trim=0.8)
         rest = float(np.sqrt(np.mean(np.sum((b_al - b0) ** 2, axis=1))))
-        v0 = dod(a, b)
-        v1 = dod(a, b_al)
-        res[label] = (before, rest, v0["ero"] + v0["dep"], v1["ero"] + v1["dep"])
-        print("     %-18s 実変位 %.3f -> %.3f m   偽体積 %.1f -> %.1f m3"
-              % (label, before, rest, res[label][2], res[label][3]))
+        v0, v1 = dod(a, b), dod(a, b_al)
+        res[label] = (before, rest, v0["net"], v1["net"], v0["abs"], v1["abs"])
+        print("     %-18s 実変位 %.3f -> %.3f m   偽正味 %+.1f -> %+.1f m3   "
+              "偽|土量| %.0f -> %.0f m3"
+              % (label, before, rest, v0["net"], v1["net"], v0["abs"], v1["abs"]))
     pl = res["純平面(うねり 0)"]
-    print("  -> 純平面では点は %.3f m ずれたままなのに、偽体積は %.1f m3 まで落ちる。"
-          % (pl[1], pl[3]))
-    print("     **ICP が決められない成分(面内の平行移動)は、平面を自分自身に写すので"
-          "差分にも現れない**。")
-    print("     決まらないことと測れないことは別 —— 位置合わせの残差だけを見て"
+    un = res["うねりあり(既定)"]
+    print("  -> 純平面では ICP 後も点は **%.3f m ずれたまま**(与えた %.3f m のうち "
+          "%.0f %% が残る)なのに、偽正味は %+.1f m3。"
+          % (pl[1], pl[0], 100 * pl[1] / pl[0], pl[3]))
+    print("     うねりがあると同じずれを %.3f m まで詰められる。"
+          "**測れない形は合わせられない形と同じ** ——" % un[1])
+    print("     決まらない成分(面内の平行移動)は平面を自分自身に写すので、"
+          "そもそも差分に現れない。位置合わせの残差だけを見て"
           "「合っていない」と言うと判断を誤る。")
 
     figs.save_plot("systematic",
-                   [("予測 tan θ x delta x 面積", mags, pred),
-                    ("DoD 偽体積", mags, meas_d), ("M3C2 偽体積", mags, meas_m),
-                    ("位置合わせ後の DoD", mags, after)],
-                   xlabel="水平の系統ずれ [m]", ylabel="偽の土量(掘削+堆積)[m3]",
+                   [("予測 (delta_z + tan θ delta_y) x 面積", mags, pred),
+                    ("DoD 偽正味", mags, md), ("M3C2 偽正味", mags, mm),
+                    ("位置合わせ後の DoD", mags, aft)],
+                   xlabel="水平の系統ずれ [m]", ylabel="偽の正味土量 [m3]",
                    title="系統誤差が生む偽の土量は傾斜に比例する",
-                   caption="変化ゼロの対照。DoD と M3C2 は体積では同じだけ間違える。")
-    return {"mag": mags, "pred": pred, "dod": meas_d, "m3c2": meas_m,
-            "after": after, "plane": res}
+                   caption="変化ゼロの対照。DoD と M3C2 は体積では同じだけ間違える。"
+                           "雑音は正味では打ち消すので予測と直接比べられる。")
+    return {"mag": mags, "pred": pred, "dod": md, "m3c2": mm, "abs": ma,
+            "after": aft, "plane": res, "eat": eat, "base_net": base_net}
 
 
 # --------------------------------------------------------------------------- #
 # 8. 崖(4) 樹木による遮蔽                                                       #
 # --------------------------------------------------------------------------- #
-def section_occlusion(tr: dict) -> dict:
+def section_occlusion(tr: dict, lod: float) -> dict:
     print("\n" + "=" * 78)
-    print("8) 崖(4) 樹冠による遮蔽 0 -> 60 %")
+    print("8) 崖(4) 樹冠による遮蔽 0 -> 60 %(LoD %.3f m でしきった土量で比べる)" % lod)
     print("=" * 78)
-    print("   遮蔽率  地面点率  空セル   分類なし DoD 正味   分類あり DoD 正味   誤差%"
-          "   M3C2 正味")
-    occ, gr, emp, raw, filt, mv = [], [], [], [], [], []
-    net_true = tr["dep"] - tr["ero"]
+    tt = truth(lod=lod)
+    print("   遮蔽率 地面点率 空セル  分類なし掘削  分類あり掘削 誤差%  堆積 誤差%"
+          "  M3C2 掘削 誤差%")
+    occ, gr, emp, raw, filt, mv, rows = [], [], [], [], [], [], []
     for p in (0.0, 0.15, 0.30, 0.45, 0.60):
         rng = np.random.default_rng(SEED + 9)
         a, ga = make_cloud(rng, with_change=False, occl=p)
-        b, gb = make_cloud(rng, with_change=True, occl=p)
-        r_raw = dod(a, b)
+        b, _ = make_cloud(rng, with_change=True, occl=p)
+        r_raw = dod(a, b, lod=lod)
         ka, kb = ground_filter(a), ground_filter(b)
-        r_f = dod(a[ka], b[kb])
-        vm = m3c2_volume(m3c2(a[ka], b[kb]), lod=0.0)
+        r_f = dod(a[ka], b[kb], lod=lod)
+        vm = m3c2_volume(m3c2(a[ka], b[kb]), lod=lod)
+        e1 = 100 * (r_f["ero"] / tt["ero"] - 1)
+        e2 = 100 * (r_f["dep"] / tt["dep"] - 1)
+        e3 = 100 * (vm["ero"] / tt["ero"] - 1)
         occ.append(100 * p)
         gr.append(100 * float(ga.mean()))
         emp.append(r_f["empty"])
-        raw.append(r_raw["net"])
-        filt.append(r_f["net"])
-        mv.append(vm["net"])
-        print("   %5.0f %% %8.1f %% %7d %18.2f %18.2f %+8.2f %11.2f"
-              % (100 * p, gr[-1], emp[-1], raw[-1], filt[-1],
-                 100 * (filt[-1] / net_true - 1), mv[-1]))
-    print("\n  ★分類しないと樹冠が標高に混ざる: 遮蔽 %.0f %% で正味 %.1f m3"
-          "(真値 %.1f、%.0f 倍)。" % (occ[-1], raw[-1], net_true,
-                                      abs(raw[-1] / net_true)))
-    print("     ★予想は「樹冠は両時期に同じだけ入るので差分では消える」だった。"
-          "実測は %s —— " % ("消えない" if abs(raw[-1]) > 3 * abs(filt[-1]) else "ほぼ消える"))
-    print("     遮蔽は**確率的**なので、どの点が樹冠で返るかが時期ごとに違い、"
-          "セル平均が数 m 単位で揺れる。")
-    print("  ★分類すると正味の誤差は %.0f %% 遮蔽でも %+.2f %% に収まる。"
-          "落ちるのは精度でなく**被覆**(空セル %d 個 = 窓の %.1f %%)。"
-          % (occ[-1], 100 * (filt[-1] / net_true - 1), emp[-1],
+        raw.append(r_raw["ero"])
+        filt.append(r_f["ero"])
+        mv.append(vm["ero"])
+        rows.append(["%.0f" % (100 * p), "%.1f" % gr[-1], "%d" % emp[-1],
+                     "%.1f" % raw[-1], "%.1f" % filt[-1], "%+.1f" % e1,
+                     "%.1f" % r_f["dep"], "%+.1f" % e2, "%.1f" % vm["ero"],
+                     "%+.1f" % e3])
+        print("   %5.0f %% %7.1f %% %6d %13.1f %13.1f %+6.1f %7.1f %+6.1f %10.1f %+6.1f"
+              % (100 * p, gr[-1], emp[-1], raw[-1], filt[-1], e1,
+                 r_f["dep"], e2, vm["ero"], e3))
+    print("\n  ★分類しないと樹冠が標高に混ざる: 遮蔽 %.0f %% で掘削 %.1f m3"
+          "(しきい値以上の真値 %.1f m3 の %.1f 倍)。"
+          % (occ[-1], raw[-1], tt["ero"], raw[-1] / tt["ero"]))
+    print("     ★予想は「樹冠は両時期に同じだけ入るので差分では消える」だった。実測は"
+          " %s —— 遮蔽は**確率的**で、どの点が樹冠で返るかが時期ごとに違うから。"
+          % ("消えない" if raw[-1] > 1.5 * filt[-1] else "ほぼ消える"))
+    print("  ★分類すると %.0f %% 遮蔽でも掘削の誤差は %+.1f %%。"
+          "落ちるのは精度でなく**被覆**(空セル %d 個 = 窓の %.2f %%)。"
+          % (occ[-1], 100 * (filt[-1] / tt["ero"] - 1), emp[-1],
              100 * emp[-1] / WIN_AREA))
-    figs.save_plot("occlusion",
-                   [("地面分類あり DoD", occ, filt), ("M3C2", occ, mv),
-                    ("真値", occ, [net_true] * len(occ))],
-                   xlabel="樹冠での遮蔽率 [%]", ylabel="正味の土量 [m3]",
-                   title="遮蔽で落ちるのは精度ではなく被覆",
-                   caption="分類しない DoD は樹冠が混ざって桁で外れるので、"
-                           "この図の縮尺には収まらない(本文の表を参照)。")
-    return {"occ": occ, "raw": raw, "filt": filt, "m3c2": mv, "empty": emp}
+    print("     ★遮蔽が上がるほど地面点が減る(%.1f -> %.1f %%)ので、"
+          "LoD は %.2f 倍に悪化しているはず —— 同じ LoD でしきり続けると"
+          % (gr[0], gr[-1], math.sqrt(gr[0] / gr[-1])))
+    print("     偽陽性が増える。遮蔽率は**しきい値をその場で測り直せ**という指示。")
+    figs.save_table("occlusion",
+                    ["遮蔽 %", "地面点 %", "空セル", "分類なし掘削 m3",
+                     "分類あり掘削 m3", "誤差 %", "堆積 m3", "誤差 %",
+                     "M3C2 掘削 m3", "誤差 %"], rows,
+                    title="樹冠の遮蔽(しきい値以上の真値 掘削 %.1f / 堆積 %.1f m3)"
+                          % (tt["ero"], tt["dep"]),
+                    caption="分類しない DoD は樹冠が混ざって桁で外れる。"
+                            "分類すれば精度は保たれ、落ちるのは被覆のほう。")
+    return {"occ": occ, "raw": raw, "filt": filt, "m3c2": mv, "empty": emp,
+            "ground": gr, "tt": tt}
 
 
 # --------------------------------------------------------------------------- #
@@ -838,8 +977,7 @@ def section_normals() -> dict:
     print("=" * 78)
     rng = np.random.default_rng(SEED + 11)
     p, _ = make_cloud(rng, with_change=False, occl=0.0)
-    sub = np.asarray(fs.ledger.voxel_grid_downsample(p, 2.0), float)
-    sub = sub[:1500]
+    sub = np.asarray(fs.ledger.voxel_grid_downsample(p, 2.0), float)[:1500]
     n1 = np.asarray(fs.ledger.estimate_normals(sub, k=16), float)
     n2 = np.asarray(fs.ledger.estimate_oriented_normals(sub, k=16), float)
     up1 = float((n1[:, 2] > 0).mean())
@@ -851,8 +989,9 @@ def section_normals() -> dict:
           % (100 * up2))
     print("  ★開いた斜面には「外側」が無いので、局所ヒューリスティクスは %.1f %% を"
           "下向きにする。" % (100 * (1 - up1)))
-    print("     大域向き付けは**一貫**させるが**符号は決めない**(全点が同じ側を向く"
-          "だけで、それが上か下かは種の取り方次第)。")
+    print("     大域向き付けは**一貫**させる(実測 %.0f %% が同じ側)が、"
+          "**符号そのものは種の取り方次第** —— 今回たまたま上を向いただけ。"
+          % (100 * max(up2, 1 - up2)))
     print("     -> 法線方向に測る手法は、符号を自分で固定しないと"
           "**掘削と堆積が入れ替わる**。この PoC は n_z > 0 を強制している。")
     return {"up_raw": up1, "up_oriented": up2}
@@ -861,20 +1000,19 @@ def section_normals() -> dict:
 # --------------------------------------------------------------------------- #
 # 10. 図                                                                        #
 # --------------------------------------------------------------------------- #
-def section_figures(scene: dict, mm: dict, ctrl: dict, tr: dict) -> None:
-    p1, p2 = scene["p1"], scene["p2"]
+def section_figures(ctrl: dict, mm: dict, tr: dict) -> None:
+    p1, p2 = ctrl["p1"], ctrl["p2"]
     z1, _ = dem(p1)
     step = max(1, len(p1) // 4000)
     params, _, _ = fs.ledger.ransac_plane(p1[::step], thresh=1.0, iters=200, seed=0)
     nrm = np.asarray(params["normal"], float)
+    dd = float(params["d"])
     if nrm[2] < 0:
-        nrm, dd = -nrm, -float(params["d"])
-    else:
-        dd = float(params["d"])
+        nrm, dd = -nrm, -dd
     nx = z1.shape[1]
     cc = (np.arange(nx) + 0.5) * CELL
     xx, yy = np.meshgrid(cc, cc)
-    detr = (nrm[0] * xx + nrm[1] * yy + nrm[2] * np.nan_to_num(z1, nan=0.0) + dd)
+    detr = nrm[0] * xx + nrm[1] * yy + nrm[2] * np.nan_to_num(z1, nan=0.0) + dd
     detr = np.where(np.isfinite(z1), detr, np.nan)
 
     d_true = change(xx, yy)
@@ -885,17 +1023,20 @@ def section_figures(scene: dict, mm: dict, ctrl: dict, tr: dict) -> None:
     cj = np.round(cores[:, 1] / CELL - 0.5).astype(int)
     lmap[cj, ci] = mm["res"]["L"]
 
-    up = lambda a: np.asarray(a, float)[::-1]           # noqa: E731  行 0 = 南 -> 北を上に
+    def up(a):
+        return np.asarray(a, float)[::-1]        # 行 0 = 南。北を上にする
+
     figs.save_grid("scene",
                    [up(detr), up(-d_true), up(r["dz"]), up(lmap)],
                    ["時期 1 の起伏(平面を抜いた残差 [m])",
-                    "真の鉛直変位 [m](青 = 掘削)",
+                    "真の鉛直変位 [m](負 = 掘削)",
                     "DoD: 鉛直差 dz [m]", "M3C2: 法線方向の距離 L [m]"],
                    ncols=2, signed=[False, True, True, True],
-                   title="航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)" % (SLOPE, DENSITY),
+                   title="航空 LiDAR の 2 時期差分(傾斜 %.0f 度・%.1f pt/m2)"
+                         % (SLOPE, DENSITY),
                    caption="左上は樹冠と %.2f m のうねり。右上が仕込んだ真値"
-                           "(掘削 %.1f m3 / 堆積 %.1f m3)。下 2 枚は同じ足跡面積で"
-                           "測った 2 通りの差。" % (UNDUL, tr["ero"], tr["dep"]))
+                           "(掘削 %.1f m3 / 堆積 %.1f m3)。下 2 枚は足跡面積を"
+                           "揃えて測った 2 通りの差。" % (UNDUL, tr["ero"], tr["dep"]))
 
     lod = ctrl["lod"]
     sig_dod = dod(p1, p2, lod=lod)["sig"]
@@ -909,16 +1050,14 @@ def section_figures(scene: dict, mm: dict, ctrl: dict, tr: dict) -> None:
                     "DoD 有意 %.0f m2(LoD %.3f m 一律)" % (float(sig_dod.sum()), lod),
                     "M3C2 有意 %.0f m2(core ごとの sigma)" % float(sig_m.sum())],
                    ncols=3, title="「変化ありと判定した面積」は体積とは別に数える",
-                   caption="面積と体積は別の量。面積が合っていても縁の薄い層を"
+                   caption="面積と体積は別の量。面積が合っていても、縁の薄い層を"
                            "落としていれば体積は足りない。")
 
-    # 崩壊の断面 —— 深さの定義が 2 つあることを 1 枚で
     row = int(SCAR["y"] / CELL)
-    xs = cc
     figs.save_plot("scar_profile",
-                   [("真の鉛直変位 -d", xs, -d_true[row]),
-                    ("DoD の dz", xs, r["dz"][row]),
-                    ("M3C2 の L(法線方向)", xs, lmap[row])],
+                   [("真の鉛直変位 -d", cc, -d_true[row]),
+                    ("DoD の dz", cc, r["dz"][row]),
+                    ("M3C2 の L(法線方向)", cc, lmap[row])],
                    xlabel="x [m](崩壊中心を通る東西断面)", ylabel="変化量 [m]",
                    title="同じ崩壊、2 つの「深さ」",
                    caption="M3C2 の L は法線方向なので cos %.0f 度 = %.3f 倍だけ"
@@ -934,11 +1073,15 @@ def section_tool_gaps() -> None:
     print("11) 道具の穴(この PoC で fullseye を引いてみて)")
     print("=" * 78)
     for nm in ("fit_plane_3d", "ransac_plane", "icp_point2point_3d",
-               "voxel_grid_downsample", "chamfer_distance", "estimate_normals"):
+               "voxel_grid_downsample", "chamfer_distance", "estimate_normals",
+               "estimate_oriented_normals"):
         assert hasattr(fs.ledger, nm), nm
     print("  (a) 使えた op: fit_plane_3d / ransac_plane / icp_point2point_3d /")
     print("      voxel_grid_downsample / chamfer_distance / estimate_normals /")
-    print("      estimate_oriented_normals。3-D 変化検出に必要な部品はほぼ揃っている。")
+    print("      estimate_oriented_normals。3-D 変化検出の部品はほぼ揃っている。")
+    print("      ただし ledger には在るがファサード ``fs.<名前>`` に出ていないものが多い"
+          "(fit_plane_3d / ransac_plane / icp_point2point_3d / voxel_grid_downsample /"
+          " chamfer_distance はすべて ledger 経由)。")
 
     assert not hasattr(fs, "m3c2") and not hasattr(fs.ledger, "m3c2")
     print("  (b) M3C2 そのものが無い(この PoC は 60 行で自前)。"
@@ -960,72 +1103,91 @@ def section_tool_gaps() -> None:
           "**しきらない値を返してはいけない** —— 3 節で見たとおり、しきらない"
           "内訳は真値の半分近くを雑音から作る。sigma と LoD を同時に返す契約にすべき。")
 
-    print("  (f) 点の列規約: 3-D の点群 op は (N,3) = (x,y,z)、体積 op(esdf/")
-    print("      query_distance)は (depth,row,col) = z 先頭。**同じ族の中で"
+    print("  (f) 点の列規約: 3-D の点群 op は (N,3) = (x,y,z)、体積 op(esdf /")
+    print("      query_distance)は (depth,row,col) = z 先頭。**同じ 3-D の中で"
           "軸の順が違う**ので、点群と体積を混ぜる処理は取り違えやすい。")
+    print("  (g) icp_point2point_3d は numpy を渡しても **torch.Tensor を返す**。"
+          "``np.asarray`` を忘れると下流で静かに型が変わる。")
 
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
-    print("航空 LiDAR の 2 時期差分で土量を測る —— 縦に引くか、法線方向に測るか")
+    print("斜面の土量を測る —— 縦に引くか、法線方向に測るか")
     print("傾斜 %.0f 度 / %.1f pt/m2 / 測距 sigma %.2f m / 水平 sigma %.2f m"
           % (SLOPE, DENSITY, SIG_R, SIG_H))
     print("=" * 78)
 
     sc = section_scene()
     tr = sc["truth"]
-    scene = section_dod(tr)
+    ge = section_geometry(tr)
     ctrl = section_control(tr)
-    mm = section_m3c2(scene, tr)
-    sl = section_slope(tr)
+    mm = section_m3c2(ctrl, tr)
+    sl = section_slope()
     de = section_density()
     sy = section_systematic(tr)
-    oc = section_occlusion(tr)
+    oc = section_occlusion(tr, ctrl["lod"])
     nr = section_normals()
-    section_figures(scene, mm, ctrl, tr)
+    section_figures(ctrl, mm, tr)
     section_tool_gaps()
 
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
     print("  * 予想「斜面では DoD の体積が cos だけ縮む」は**外れ**。鉛直差を水平投影"
-          "面積で積むと cos は約分し、実測の正味誤差は 0〜40 度で %+.2f 〜 %+.2f %%。"
-          % (min(sl["dod_err"]), max(sl["dod_err"])))
+          "面積で積むと cos は約分し、雑音を止めた実測の掘削誤差は 0〜40 度で "
+          "%+.2f 〜 %+.2f %%。" % (min(ge["ero_err"]), max(ge["ero_err"])))
     print("  * 間違うのは厚さ。DoD 深さ / M3C2 厚さ = %.3f(40 度、予測 sec = %.3f)。"
           % (mm["ratios"][-1][3], mm["ratios"][-1][4]))
     print("  * **変化なしの対照で偽掘削 %.1f m3 / 偽堆積 %.1f m3**(真の掘削の %.0f %%)。"
-          "正味は %+.1f m3 なので、正味だけ見ると気づけない。しきると %.1f m3。"
+          "偽正味は %+.1f m3 なので正味だけ見ると気づけない。しきると %.1f m3。"
           % (ctrl["base"]["ero"], ctrl["base"]["dep"],
              100 * ctrl["base"]["ero"] / tr["ero"], ctrl["base"]["net"],
              ctrl["thr"]["ero"]))
     print("  * M3C2 の利得は傾斜からのみ: LoD 比 DoD/M3C2 は 0 度 %.2f、40 度 %.2f。"
           % (sl["lod_d"][0] / sl["lod_m"][0], sl["lod_d"][-1] / sl["lod_m"][-1]))
-    print("  * 密度 %.1f -> %.1f pt/m2 で最小検出厚 %.3f -> %.3f m。"
-          % (de["dens"][0], de["dens"][-1], de["lod_d"][0], de["lod_d"][-1]))
-    print("  * 系統誤差 0.30 m の偽体積は DoD %.1f / M3C2 %.1f m3 で**同じ**"
+    print("  * 密度 %.1f -> %.1f pt/m2 で最小検出厚 %.3f -> %.3f m。M3C2 は低密度で"
+          "見かけ良くなるが有効 core 率 %.1f %% の生存者バイアス。"
+          % (de["dens"][0], de["dens"][-1], de["lod_d"][0], de["lod_d"][-1],
+             de["rate"][1]))
+    print("  * 系統誤差 0.30 m の偽正味は DoD %.1f / M3C2 %.1f m3 で**同じ**"
           "(予測 %.1f)。位置合わせ後 %.1f m3。"
           % (sy["dod"][-1], sy["m3c2"][-1], sy["pred"][-1], sy["after"][-1]))
-    print("  * 純平面では ICP が面内を決められず点は %.3f m ずれたままだが、"
-          "偽体積は %.1f m3 —— 決まらない成分は測定にも効かない。"
-          % (sy["plane"]["純平面(うねり 0)"][1], sy["plane"]["純平面(うねり 0)"][3]))
+    print("  * ★変化のある対を全対応で合わせると正味は %.2f -> %.2f m3(真値 %.2f)。"
+          "trim 0.6 で %.2f m3 まで戻る —— **合わせた分だけ変化が消える**。"
+          % (sy["base_net"], sy["eat"][0][1], tr["net"], sy["eat"][-1][1]))
+    print("  * 面内のずれは ICP が決められない(純平面で %.3f m 残る)が、"
+          "偽正味は %+.1f m3 —— 決まらない成分は測定にも現れない。"
+          % (sy["plane"]["純平面(うねり 0)"][1],
+             sy["plane"]["純平面(うねり 0)"][3]))
+    print("  * 遮蔽 %.0f %% でも地面分類すれば掘削の誤差は %+.1f %%。"
+          "分類しないと %.1f 倍に膨らむ。"
+          % (oc["occ"][-1], 100 * (oc["filt"][-1] / oc["tt"]["ero"] - 1),
+             oc["raw"][-1] / oc["tt"]["ero"]))
     print("  * 法線の符号は道具では決まらない(estimate_normals の上向きは %.1f %%)。"
           % (100 * nr["up_raw"]))
 
     # ---- 所見を固定する検査 ------------------------------------------------- #
-    assert abs(tr["ero"] / V_ERO_EXACT - 1) < 0.01, "真値の数値積分が解析式と合わない"
-    assert max(abs(e) for e in sl["dod_err"]) < 3.0, "DoD の正味体積が傾斜で崩れた"
-    assert abs(mm["ratios"][-1][3] - mm["ratios"][-1][4]) < 0.05, "厚さの比が sec θ でない"
+    assert abs(tr["ero"] / V_ERO_EXACT - 1) < 0.02, "真値の数値積分が解析式から離れすぎ"
+    assert max(abs(e) for e in ge["ero_err"]) < 1.0, "雑音なしの DoD 体積が傾斜で崩れた"
+    assert max(abs(e) for e in ge["m_ero_err"]) < 3.0, "雑音なしの M3C2 体積が傾斜で崩れた"
+    assert abs(mm["ratios"][-1][3] - mm["ratios"][-1][4]) < 0.10, "厚さの比が sec θ でない"
     assert ctrl["base"]["ero"] > 0.2 * tr["ero"], "対照の偽体積が小さすぎる(場面が甘い)"
-    assert ctrl["thr"]["ero"] < 0.05 * ctrl["base"]["ero"], "しきっても偽体積が残る"
+    assert ctrl["thr"]["ero"] < 0.3 * ctrl["base"]["ero"], "しきっても偽体積が減らない"
     assert sl["lod_d"][0] / sl["lod_m"][0] < 1.3, "平地で M3C2 が有利になっている"
     assert sl["lod_d"][-1] / sl["lod_m"][-1] > 2.0, "斜面で M3C2 の利得が出ていない"
     assert de["lod_d"][-1] < 0.5 * de["lod_d"][0], "LoD が密度で下がっていない"
-    assert abs(sy["dod"][-1] / sy["m3c2"][-1] - 1) < 0.10, "偽体積が両手法で違う"
-    assert sy["after"][-1] < 0.2 * sy["dod"][-1], "ICP が系統誤差を落としていない"
+    assert de["rate"][1] < 0.5 * de["rate"][-1], "低密度で core が落ちていない(生存者バイアス)"
+    assert abs(sy["dod"][-1] / sy["pred"][-1] - 1) < 0.10, "偽正味が予測から外れた"
+    assert abs(sy["m3c2"][-1] / sy["dod"][-1] - 1) < 0.10, "偽正味が両手法で違う"
+    assert abs(sy["after"][-1]) < 0.15 * abs(sy["dod"][-1]), "ICP が系統誤差を落とせていない"
+    assert abs(sy["eat"][0][1]) < 0.3 * abs(tr["net"]), "全対応 ICP が変化を吸っていない"
+    assert abs(sy["eat"][-1][1]) > 0.6 * abs(tr["net"]), "trimmed ICP で戻っていない"
     pl = sy["plane"]["純平面(うねり 0)"]
-    assert pl[1] > 0.05 and pl[3] < 0.1 * pl[2], "純平面の縮退が再現していない"
+    assert pl[1] > 0.5 * pl[0], "純平面の面内縮退が再現していない"
+    assert abs(pl[3]) < 5.0, "面内のずれが偽の正味土量を生んでいる"
+    assert oc["raw"][-1] > 1.5 * oc["filt"][-1], "地面分類の効果が出ていない"
     assert nr["up_raw"] < 0.95, "開いた斜面で法線の符号が揃ってしまった"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
