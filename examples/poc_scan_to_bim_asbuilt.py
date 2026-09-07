@@ -893,23 +893,22 @@ def section_alignment(surf: dict, sc: dict, seed: int = SEED) -> dict:
                     title="合わせ方で動くのは剛体モードだけ(天井は無傷なのに傾いて見える)",
                     caption="閉形式の予測(吸われる ω_y = %+.2f mrad)と実測の差は最大 %.2f mrad。"
                             % (1000 * wy, 1000 * err))
-    figs.save_plot("alignment_bars",
-                   [("真値", [0, 1, 2, 3], [1000 * RACK, 1000 * SPLAY,
-                                            1000 * FLOOR_SLOPE, 0.0]),
-                    ("合わせない", [0, 1, 2, 3],
-                     [1000 * res["none"]["rack"], 1000 * res["none"]["splay"],
-                      1000 * res["none"]["floor_sx"], 1000 * res["none"]["ceil_sx"]]),
-                    ("床+2 壁を基準", [0, 1, 2, 3],
-                     [1000 * res["datum"]["rack"], 1000 * res["datum"]["splay"],
-                      1000 * res["datum"]["floor_sx"], 1000 * res["datum"]["ceil_sx"]]),
-                    ("全体 ICP", [0, 1, 2, 3],
-                     [1000 * g["rack"], 1000 * g["splay"],
-                      1000 * g["floor_sx"], 1000 * g["ceil_sx"]])],
-                   xlabel="0=壁の傾き 1=壁の開き 2=床の勾配 3=天井の勾配",
-                   ylabel="角度 [mrad]",
-                   title="合わせるほど傾きは消え、天井には無い傾きが生まれる",
-                   kinds=["scatter"] * 4,
-                   caption="剛体モード(壁の傾きと床の勾配)だけが動き、開きは動かない。")
+    order = ("none", "datum", "global")
+    xs = [0, 1, 2]
+    figs.save_plot(
+        "alignment_bars",
+        [("壁の傾き(真値 %+.2f)" % (1000 * RACK), xs,
+          [1000 * res[k]["rack"] for k in order]),
+         ("壁の開き(真値 %+.2f)" % (1000 * SPLAY), xs,
+          [1000 * res[k]["splay"] for k in order]),
+         ("床の勾配(真値 %+.2f)" % (1000 * FLOOR_SLOPE), xs,
+          [1000 * res[k]["floor_sx"] for k in order]),
+         ("天井の勾配(真値 +0.00)", xs, [1000 * res[k]["ceil_sx"] for k in order]),
+         ("0 mrad", xs, [0.0, 0.0, 0.0])],
+        xlabel="0=合わせない  1=床+2 壁を基準  2=全体 ICP", ylabel="角度 [mrad]",
+        title="合わせるほど傾きは消え、天井には無い傾きが生まれる",
+        caption="剛体モード(壁の傾きと床の勾配、そして道連れの天井)だけが動き、"
+                "剛体でない「壁の開き」は 3 通りとも動かない。")
     return {"res": res, "pred": pred, "wy": wy, "err": err, "surf": surf, "sc": sc}
 
 
