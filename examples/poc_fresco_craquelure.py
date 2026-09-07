@@ -663,11 +663,12 @@ def section_blur_cell() -> dict:
         lim.append(min(ok) if ok else float("nan"))
     print("  再現率 0.9 を保つ最小セル径: " + " / ".join("σ=%.1f → %s px" % (b, ("%.0f" % l) if np.isfinite(l) else "無し")
                                                      for b, l in zip(blurs, lim)))
-    print("  目安: 径 < 5σ + 幅 で隣のひびがぼけで融合する(σ=2 → 12 px、σ=3 → 17 px)。")
+    print("  目安: 径 < 5σ + 幅 で隣のひびがぼけで融合する(σ=2 → 12 px、σ=3 → 17 px、実測と一致)。")
     figs.save_table("blur_cell_limit", ["セル径 [px]"] + ["ぼけ σ=%.1f px" % b for b in blurs], rows,
                     title="セル数の再現率(乾燥型、幅 2 px)",
-                    caption="ぼけが大きいほど小さいセルから消える。")
-    assert grid[(24.0, 0.5)] >= 0.9 and grid[(8.0, 3.0)] < 0.9
+                    caption="ぼけが大きいほど小さいセルから消える。目安は 径 < 5σ + 幅。")
+    assert grid[(24.0, 0.5)] >= 0.9 and grid[(8.0, 3.0)] < 0.5 and grid[(12.0, 3.0)] < 0.9
+    assert grid[(16.0, 3.0)] >= 0.9 and grid[(12.0, 2.0)] >= 0.9
     return dict(grid=grid, lim=lim)
 
 
