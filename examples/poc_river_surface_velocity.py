@@ -491,7 +491,8 @@ def section_controls():
     print("3) 対照群 —— 反射・波紋・雑音を 1 つずつ")
     print("=" * 78)
     conds = [("すべて無し(対照群)", dict(refl_c=0, wave_amp=0, noise=0)),
-             ("反射だけ", dict(refl_c=REFL_C, wave_amp=0, noise=0)),
+             ("反射(空)だけ", dict(refl_c=REFL_C, wave_amp=0, noise=0)),
+             ("反射(細かい)だけ", dict(refl_c=0, refl_fine_c=REFL_C, wave_amp=0, noise=0)),
              ("波紋だけ", dict(refl_c=0, wave_amp=WAVE_AMP, noise=0)),
              ("雑音だけ", dict(refl_c=0, wave_amp=0, noise=NOISE)),
              ("すべて有り(基準)", dict(refl_c=REFL_C, wave_amp=WAVE_AMP, noise=NOISE))]
