@@ -354,24 +354,22 @@ class CadRef:
         self.tree = cKDTree(self.pts)
         self.rho = len(self.pts) / self.area      # 点密度 [点/mm^2]
 
-    def deviate(self, q, k=6):
-        """(素の最近傍距離, 符号付き偏差, 採用した参照点 index)。
+    def deviate(self, q, k=6, edge_deg=30.0):
+        """(素の最近傍距離, 符号付き偏差, 参照点 index, 稜線帯フラグ)。
 
-        ★``k=1`` の最近傍をそのまま使うと、**稜線の近くで最近傍が隣の面へ飛ぶ**。
-        隣の面の法線へ射影した値は偏差でも何でもない。そこで k 近傍のうち
-        **接線方向のずれ ``sqrt(d^2 - s^2)`` が最小のもの**(= その点の足だと
-        いちばん筋の通る候補)を採る。``k=1`` を渡せば従来の素朴版。
+        符号付き偏差 = 最近傍の参照点から見た変位を**その点の法線へ射影**した値。
+        ★稜線(面と面の境)の近くでは、最近傍が**隣の面へ飛ぶ**ことがある。
+        隣の面の法線へ射影した値は偏差でも何でもない。ここでは直そうとせず
+        **見つけて外に出す**: k 近傍の法線が ``edge_deg`` 以上割れている点を
+        「稜線帯 = 測れない」として旗を立てる(黙って数を出すほうが罪が重い)。
         """
         q = np.asarray(q, float)
         d, i = self.tree.query(q, k=k, workers=-1)
-        if k == 1:
-            s = np.einsum("ij,ij->i", q - self.pts[i], self.nrm[i])
-            return d, s, i
-        s = np.einsum("mkj,mkj->mk", q[:, None, :] - self.pts[i], self.nrm[i])
-        tang = np.sqrt(np.maximum(d ** 2 - s ** 2, 0.0))
-        j = np.argmin(tang, axis=1)
-        r = np.arange(len(q))
-        return d[:, 0], s[r, j], i[r, j]
+        i0 = i[:, 0]
+        s = np.einsum("ij,ij->i", q - self.pts[i0], self.nrm[i0])
+        cos = np.einsum("mkj,mj->mk", self.nrm[i], self.nrm[i0])
+        edge = cos.min(axis=1) < np.cos(np.radians(edge_deg))
+        return d[:, 0], s, i0, edge
 
 
 def out_of_tol_area(dev, w, tol=TOL) -> float:
