@@ -573,10 +573,10 @@ def section_overhang(scene):
     curves, rows, steps = [], [], {}
     angs = np.arange(30.0, 61.0, 0.5)
     for name, vol, iso in conds:
-        _, _, n, area = _mesh_from(vol, iso)
-        m_lo = measured_support_area(n, area, b, cos_c=c_lo)
-        m_hi = measured_support_area(n, area, b, cos_c=c_hi)
-        cur = [measured_support_area(n, area, b, cos_c=float(np.cos(np.radians(t))))
+        mesh = _mesh_from(vol, iso)
+        m_lo = measured_support_area(mesh, b, cos_c=c_lo)
+        m_hi = measured_support_area(mesh, b, cos_c=c_hi)
+        cur = [measured_support_area(mesh, b, cos_c=float(np.cos(np.radians(t))))
                for t in angs]
         curves.append((name, angs, cur))
         steps[name] = m_hi - m_lo
