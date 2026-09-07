@@ -400,7 +400,7 @@ def section_controls() -> dict:
           "最近接µm  界面欠損%%  最大塊投影%%  跨ぎ%%")
 
     rows, out = [], {}
-    for key, name, shape, layout, place in CONDITIONS:
+    for key, name, _short, shape, layout, place in CONDITIONS:
         r = evaluate(make_voids(shape, layout, place))
         out[key] = r
         print("   %-18s %6.2f  %6.3f  %4d  %8.1f  %6.2f  %8.1f  %8.2f  %10.2f  %6.1f"
