@@ -694,7 +694,11 @@ def section_volume(v_thr: float, v_pin: float, vis_frac: float) -> dict:
     print("\n  ★E1(色帯の傾きを積分)は真値の %.3f 倍(自由円弧、中央値)。予測 %.3f。"
           "相関 %.4f。" % (ratio1, vis_frac, c1))
     print("  ★E2(境界位置 → 円弧 → 壁へ外挿)は自由円弧で相対誤差 中央値 %+.1f %%、"
-          "ばらつき(MAD×1.48)%.1f %%、相関 %.4f。" % (np.median(rel2), 1.48 * np.median(np.abs(rel2 - np.median(rel2))), c2))
+          "ばらつき(MAD×1.48)%.1f %%、相関 %.4f(固定域も含めると %.4f)。"
+          % (np.median(rel2), 1.48 * np.median(np.abs(rel2 - np.median(rel2))), c2, c2_all))
+    small = free & ok & (ht < 0.09)
+    print("     h < 0.09 mm(色帯 2〜4 px)では %+.1f 〜 %+.1f %% —— 境界 1 px の量子化がそのまま出る。"
+          % (100 * (h2[small] / ht[small] - 1).min(), 100 * (h2[small] / ht[small] - 1).max()))
     pinned = (reg != "free") & ok
     if pinned.any():
         relp = 100 * (h2[pinned] / ht[pinned] - 1)
