@@ -802,10 +802,10 @@ def section_defect_sweep(S: dict) -> dict:
              ("復元 RMS [mm]", radii, rmss),
              ("面の角度誤差 [deg]", radii, angs)],
             xlabel="欠損半径 [mm]", ylabel="誤差", size=(700, 430),
-            title="欠損が大きいほど対称面がずれる —— 主因は重心の移動",
-            caption="正しい軸に固定しても位置は重心のずれに引きずられる。"
-                    "自動選択が軸を取り違えるのは失った点 %.1f %% 以上。"
-                    % (fr[first - 1] if first > 0 else 0.0))
+            title="欠損が大きくなっても、軸さえ正しければ復元は平ら",
+            caption="重心は %.0f mm も動くのに、残差を掃引した面の位置誤差はその数 %% しか"
+                    "残らない。自動選択が軸を取り違えるのは失った点 %.1f %% 以上。"
+                    % (cx.max(), fr[first - 1] if first > 0 else 0.0))
     return {"radii": radii, "ang": angs, "off": offs, "rms": rmss, "frac": fr,
             "flip": flip, "first": first, "cx": cx}
 
