@@ -1044,38 +1044,59 @@ def section_angle(base: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 8. NETD                                                                       #
 # --------------------------------------------------------------------------- #
-NETDS = (0.020, 0.050, 0.080, 0.120, 0.160, 0.200)
+NETDS = (0.020, 0.050, 0.100, 0.300, 0.600, 1.200, 1.800, 2.400, 3.000)
+K_FALSE = 4.5              # 偽が出始める「しきい値 / 平滑後の雑音 σ」の目安
 
 
 def section_netd() -> dict:
     print("\n" + "=" * 78)
-    print("8) NETD(雑音)—— 崖は「見えなくなる」ではなく「無いものが見える」")
+    print("9) NETD(雑音)—— ★予想が外れたところ")
     print("=" * 78)
-    print("     NETD [mK]  ホット再現  ストリング再現  本物  非故障  偽")
+    n_sig = 2.0 * SMOOTH_PX * np.sqrt(np.pi)          # 平滑で雑音が減る率
+    nd_crit = THETA * n_sig / K_FALSE
+    print("  予測: σ %.1f px の平滑で雑音は 1/%.2f になるので、平滑後の σ は"
+          " NETD/%.2f。" % (SMOOTH_PX, n_sig, n_sig))
+    print("  偽が出始めるのは しきい値 %.1f K が %.1f σ を割るとき ->"
+          " **NETD %.0f mK**(実在の非冷却カメラの %.0f 倍)。"
+          % (THETA, K_FALSE, 1e3 * nd_crit, nd_crit / 0.050))
+    print("\n     NETD [mK]  平滑後σ[K]  ホット再現  ストリング再現  本物 非故障 偽")
 
     sc = thermal_field(V_REF)
     gt = ground_truth()
     xs, fa, rc = [], [], []
     for nd in NETDS:
         t_app = capture(sc["T"], netd=nd)
-        s = score(detect(t_app, gt, "モジュール中央値"), gt)
+        det = detect(t_app, gt, "モジュール中央値")
+        s = score(det, gt)
         xs.append(1e3 * nd), fa.append(s["n_false"]), rc.append(s["recall"]["hot"])
-        print("     %7.0f      %.2f        %.2f        %3d %5d %4d"
-              % (1e3 * nd, s["recall"]["hot"], s["recall"]["string"],
-                 s["n_fault"], s["n_nonfault"], s["n_false"]))
-    print("\n  ★見逃しは %.2f -> %.2f とほとんど動かないのに、偽の故障は "
-          "%d -> %d 個に増える。" % (rc[0], rc[-1], fa[0], fa[-1]))
-    print("     しきい値 1 本で切る限り、雑音は**偽を作る向き**に効く"
-          "(面積の門 %d px を上げれば減るが、小さい本物も落ちる)。" % A_MIN)
+        print("     %7.0f     %7.3f      %.2f        %.2f        %3d %5d %4d"
+              % (1e3 * nd, nd / n_sig, s["recall"]["hot"],
+                 s["recall"]["string"], s["n_fault"], s["n_nonfault"],
+                 s["n_false"]))
+
+    first = next((x for x, f in zip(xs, fa) if f > 0), None)
+    print("\n  ★★予想は「NETD を上げると偽の故障が増える」だった。**実在の"
+          "カメラの範囲(20〜50 mK)では何も起きない** —— 偽が出るのは"
+          " %s。"
+          % ("NETD %.0f mK から(予測 %.0f mK)" % (first, 1e3 * nd_crit)
+             if first else "%.0f mK まで振っても出なかった" % xs[-1]))
+    print("     見逃しも %.2f -> %.2f。**この課題を壊しているのは雑音ではない** ——"
+          "風(4 節)・画素(6 節)・角度(7 節)・正規化(2 節)のほう。"
+          % (rc[0], rc[-1]))
+    print("     ★これは「雑音を減らせば見えるようになる」という直感が"
+          "**この場面では成り立たない**ということ。カメラを買い替えても直らない。")
 
     figs.save_plot("netd_sweep",
                    [("偽の故障の数", xs, fa),
-                    ("ホットスポット再現率 x10", xs, [10 * v for v in rc])],
+                    ("ホットスポット再現率 x10", xs, [10 * v for v in rc]),
+                    ("予測の崖 %.0f mK" % (1e3 * nd_crit),
+                     [1e3 * nd_crit, 1e3 * nd_crit], [0, max(max(fa), 10)])],
                    xlabel="NETD [mK]", ylabel="個数 / 再現率 x10",
-                   title="雑音は見逃しでなく偽を増やす",
+                   title="雑音の崖は実在のカメラの遥か外にある",
                    caption="風速 %.1f m/s、モジュールごとの中央値を基準。"
-                           % V_REF)
-    return {"netd": xs, "false": fa, "recall": rc}
+                           "実在の非冷却カメラは 20〜50 mK。" % V_REF)
+    return {"netd": xs, "false": fa, "recall": rc, "crit": 1e3 * nd_crit,
+            "first": first}
 
 
 # --------------------------------------------------------------------------- #
