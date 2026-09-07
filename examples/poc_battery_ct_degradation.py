@@ -534,10 +534,13 @@ def internal_metrics(vol: np.ndarray, spacing=SPACING) -> dict:
         p1 = _vidx(zc, span[1], xc, spacing)
         th = list(L.vol_wall_thickness(vol, p0, p1, sigma=1.2, threshold=thr,
                                        spacing=spacing))
-        counts.append(len(th))
         thicks.extend(th)
         ed = L.vol_edge_probe(vol, p0, p1, sigma=1.2, threshold=thr,
                               spacing=spacing, polarity="positive")
+        # ★層は「立ち上がりの縁の数」で数える。``vol_wall_thickness`` の対
+        #   (立ち上がり -> 立ち下がり)で数えると、缶の内面のすぐ内側に余分な
+        #   立ち下がりが 1 本入るだけで対がずれ、健全なセルでも 17 -> 16 に落ちる。
+        counts.append(len(ed))
         t = np.asarray([e["t_mm"] for e in ed])
         if t.size >= 2:
             pitches.extend(np.diff(t).tolist())
