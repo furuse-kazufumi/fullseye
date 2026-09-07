@@ -819,57 +819,82 @@ def section_sliver_threshold(scene: dict) -> dict:
     print("9) 崖 3 —— 退化三角形は「どれだけ潰れたら」検出されるか")
     print("=" * 78)
 
-    from scipy.spatial import cKDTree
-
     V0, F0 = scene["V"], scene["F"]
-    n0 = np.asarray(L.face_normals((V0, F0)))
-    cen0 = V0[F0].mean(1)
-    tree = cKDTree(cen0)
+    n0 = np.asarray(L.face_normals((V0, F0)))     # 潰れ面が乗る平面の**厳密な**法線
     med = float(np.median(0.5 * np.linalg.norm(np.cross(
         V0[F0[:, 1]] - V0[F0[:, 0]], V0[F0[:, 2]] - V0[F0[:, 0]]), axis=1)))
     print("  中央値の面積 %.3e mm^2。潰れ面の面積をその何倍にするかで振る。" % med)
-    print("\n   t        面積比        検出 /%2d   面法線の最大ずれ [deg]" % (2 * N_SLIVER))
+    print("  ★潰れ面が乗る平面は元の面と同じなので、**正しい法線は分かっている**"
+          "(= 親の面法線)。")
+    print("\n   t        面積比       検出 /%2d   法線が壊れた枚数  最大ずれ [deg]"
+          "  face_normals" % (2 * N_SLIVER))
 
-    ts, frac, angs, ratios = [], [], [], []
+    ts, frac, angs, ratios, nbroken = [], [], [], [], []
     for t in (1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9):
         rng = np.random.default_rng(SEED)
-        Vd, Fd, ndeg, ar = inject_slivers(V0, F0, N_SLIVER, t, rng)
+        Vd, Fd, ndeg, ar, sl = inject_slivers(V0, F0, N_SLIVER, t, rng)
         n_found = len(Fd) - len(fs.remove_degenerate_faces(Vd, Fd)[1])
-        nd = np.asarray(L.face_normals((Vd, Fd)))
-        aa = 0.5 * np.linalg.norm(np.cross(Vd[Fd[:, 1]] - Vd[Fd[:, 0]],
-                                           Vd[Fd[:, 2]] - Vd[Fd[:, 0]]), axis=1)
-        small = np.nonzero(aa < med * 1e-2)[0]
-        _, j = tree.query(Vd[Fd[small]].mean(1))
-        dot = np.abs(np.einsum("ij,ij->i", nd[small], n0[j]))
-        ang = float(np.degrees(np.arccos(np.clip(dot, 0, 1))).max()) if len(small) else 0.0
-        ts.append(np.log10(t)); frac.append(n_found); angs.append(ang)
-        ratios.append(ar / med)
-        print("   %.0e   %.2e     %3d       %8.3f" % (t, ar / med, n_found, ang))
+        # 潰れ面の法線を自前で作る(face_normals は退化面を fail-closed で拒む)
+        a, b, c = Vd[Fd[sl, 0]], Vd[Fd[sl, 1]], Vd[Fd[sl, 2]]
+        cr = np.cross(b - a, c - a)
+        nn = np.linalg.norm(cr, axis=1, keepdims=True)
+        good = nn[:, 0] > 0
+        unit = np.where(good[:, None], cr / np.where(nn > 0, nn, 1.0), 0.0)
+        dot = np.abs(np.einsum("ij,ij->i", unit, n0[sl]))
+        ang = np.degrees(np.arccos(np.clip(dot, 0.0, 1.0)))
+        ang[~good] = 90.0                       # 法線が作れない = 完全に壊れた
+        broken = int((ang > 1.0).sum())
+        try:
+            L.face_normals((Vd, Fd))
+            fn = "通る"
+        except ValueError:
+            fn = "★拒む"
+        ts.append(np.log10(t)); frac.append(n_found); angs.append(float(ang.max()))
+        ratios.append(ar / med); nbroken.append(broken)
+        print("   %.0e   %.2e     %3d        %3d           %8.3f      %s" % (
+            t, ar / med, n_found, broken, ang.max(), fn))
         assert fs.is_watertight(Vd, Fd), "潰し方が位相を壊した"
 
     first = next(i for i, f in enumerate(frac) if f > 0)
     full = next(i for i, f in enumerate(frac) if f == 2 * N_SLIVER)
-    print("\n  ★面積比 %.0e(t=%.0e)ではまだ 0 枚。%.0e で %d 枚、%.0e で全 %d 枚。"
+    fb = next(i for i, b in enumerate(nbroken) if b > 0)
+    print("\n  ★検出の崖: 面積比 %.0e(t=%.0e)ではまだ 0 枚。%.0e で %d 枚、"
+          "%.0e で全 %d 枚。"
           % (ratios[2], 10.0 ** ts[2], ratios[first], frac[first],
              ratios[full], frac[full]))
-    print("  ★★見逃された潰れ面は**面法線を壊す**: 最大ずれは %.1f° "
-          "(t=%.0e、まだ %d 枚しか検出されない)。"
-          % (max(angs), 10.0 ** ts[int(np.argmax(angs))], frac[int(np.argmax(angs))]))
-    print("     退化の判定は「面積が 0 か」だが、実害は「法線が壊れるか」で"
-          "先に来る。")
+    print("  ★★**壊れるほうが %d 桁早い**。面積比 %.0e(t=%.0e)で既に %d 枚の"
+          "法線が 1° 以上ずれているのに、" % (ts[first] - ts[fb], ratios[fb],
+                                              10.0 ** ts[fb], nbroken[fb]))
+    print("     ``remove_degenerate_faces`` の検出は %d 枚。"
+          "**退化の判定は「面積が 0 か」だが、実害は「法線が壊れるか」で"
+          "先に来る**。" % frac[fb])
+    print("  ★同じモジュールの中でしきい値が食い違う: ``face_normals`` が"
+          "拒み始めるのは t=%.0e、"
+          % 10.0 ** ts[next(i for i in range(len(ts)) if nbroken[i] and frac[i] == 0
+                            or frac[i] > 0)])
+    print("     ``remove_degenerate_faces`` が拾い始めるのも t=%.0e —— "
+          "だが枚数は一致しない(下の道具の穴)。" % 10.0 ** ts[first])
 
     assert frac[0] == 0 and frac[-1] == 2 * N_SLIVER
     assert max(angs) > 1.0, "法線が壊れるという所見が崩れた"
+    assert fb < first, "法線のほうが先に壊れるという所見が崩れた"
 
     figs.save_plot("sliver_threshold",
                    [("検出された枚数", ts, [float(f) for f in frac]),
-                    ("面法線の最大ずれ [deg]", ts, angs),
+                    ("法線が 1°以上ずれた枚数", ts, [float(b) for b in nbroken]),
                     ("注入した枚数", ts, [float(2 * N_SLIVER)] * len(ts))],
-                   xlabel="log10(潰し具合 t)", ylabel="枚数 [枚] / ずれ [deg]",
-                   title="退化三角形のしきい値と、その手前で壊れる面法線",
-                   caption="検出は面積 0 に極めて近づいてから。法線はその"
-                           "ずっと手前で壊れる。")
-    return {"t": ts, "found": frac, "ang": angs, "ratio": ratios}
+                   xlabel="log10(潰し具合 t)", ylabel="枚数 [枚]",
+                   title="退化の検出より、法線の破壊のほうが %d 桁早い"
+                         % (ts[first] - ts[fb]),
+                   caption="面積 0 の判定に引っかかるずっと手前で、"
+                           "潰れ面の法線は使いものにならなくなる。")
+    figs.save_plot("sliver_normal_error",
+                   [("潰れ面の法線の最大ずれ", ts, angs),
+                    ("1° の線", ts, [1.0] * len(ts))],
+                   xlabel="log10(潰し具合 t)", ylabel="親の面法線からのずれ [deg]",
+                   title="潰れ面の法線は親の平面から離れていく(90°=法線が作れない)")
+    return {"t": ts, "found": frac, "ang": angs, "ratio": ratios,
+            "broken": nbroken, "first": first, "fb": fb}
 
 
 # --------------------------------------------------------------------------- #
