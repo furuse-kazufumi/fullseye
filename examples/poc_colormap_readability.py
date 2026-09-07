@@ -590,7 +590,7 @@ def section_bivariate() -> dict:
     figs.save_grid("bivariate", [plain, biv],
                    ["値だけ(的中 %.0f %%)" % p_plain,
                     "値 × 信頼度(的中 %.0f %%)" % p_biv], ncols=2,
-                   title="右half は観測が疎(重み 1/10)—— 雑音が明るく光る",
+                   title="右へ行くほど観測が疎(重み 1/50)—— 雑音が明るく光る",
                    caption="真の異常は左の 1 か所だけ。")
     figs.save_grid("bivariate_inputs", [value, weight],
                    ["観測値(真の異常 + 雑音)", "重み(観測密度)"], ncols=2,
