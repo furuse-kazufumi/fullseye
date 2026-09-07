@@ -1572,15 +1572,18 @@ def main() -> int:
           "持つから。"
           % (rate["err_rms"], rate["detect"], rate["dmax"], rate["acc_err"],
              rate["acc_pred_ind"], rate["rho"]))
-    print("  * 押し出し形状は橋軸方向が反りの勾配からしか決まらない: キャンバーを"
-          " %.0f -> %.0f mm にすると残差 x が %.2f -> %.2f mm\n    "
-          "(予想「1/c' で %.0f 倍」は外れ、仕込んだ誤差 %.1f mm で頭打ち)。"
+    print("  * 押し出し形状は橋軸方向の情報が反りの勾配からしか来ない。★予想"
+          "「キャンバーを %.0f 分の 1 にすれば x が決まらなくなる」は**外れ** ——\n    "
+          "推定法線の n_x² は幾何の %.0f 倍もあり(法線推定の雑音)、キャンバーに"
+          "反応しない。実測の x 残差は %.2f 〜 %.2f mm と単調ですらない\n    "
+          "(y,z は %.2f mm 以下)—— **雑音由来の情報で「決めたつもり」になる**。"
           "★その嘘は桁の平面には出ず(法線が x に直交)、\n    "
           "法線が ±x を向く**支承の円柱にだけ**「%.1f mm 水平に動いた」として現れ、"
-          "支承の沈下 %.2f mm は %.2f mm に消える。"
-          % (pri["cam"][0], pri["cam"][-1], pri["dx_all"], pri["dx_grd"],
-             pri["cam"][0] / pri["cam"][-1], pri["ceil"], pri["fake_h"],
-             SETTLE_MM[2], pri["settle"][0]))
+          "支承の沈下 %.2f mm は %.2f mm に消える(端だけで合わせると %.2f mm)。"
+          % (pri["cam"][0] / pri["cam"][-1],
+             min(m / d for d, m in pri["nx2"]),
+             min(pri["dx"]), max(pri["dx"]), pri["dyz"], pri["fake_h"],
+             SETTLE_MM[2], pri["settle"][0], pri["settle"][2]))
     print("  * 幅 %.0f mm の溝は足跡平均では %.4f mm(閉形式 2dh/(πR) = %.4f)。"
           "★密度は分母に入らないので、密度を上げても見えない ——\n    "
           "深さ %.1f mm の溝を 2 mm と読むには全幅 %.0f mm(= 足跡の直径)が要る。"
