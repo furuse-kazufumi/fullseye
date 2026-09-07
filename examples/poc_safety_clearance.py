@@ -556,7 +556,7 @@ def section_timeseries() -> dict:
                    caption="重心 1 点は手の伸びをまるごと見落とす。"
                            "S を下回るのは真値だけ、という時間帯が見落とし。")
     return {"ts": ts, "frames": frames, "d_true": d_true, "est": est,
-            "S": S, "haz": haz, "pred": pred,
+            "S": S, "haz": haz, "pred": pred, "stats": stats,
             "hidden_nearest": (hidden_nearest, n_haz)}
 
 
