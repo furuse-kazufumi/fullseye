@@ -513,10 +513,11 @@ def section_tilt_sweep() -> dict:
     print("\n" + "=" * 78)
     print("4) 傾きの掃引 —— 1 周期の振幅は z に比例して育つ")
     print("=" * 78)
-    print("   傾き      端での予測    実測の傾き    偽の面積    2 周期の振幅")
+    print("   傾き    実測の傾き   予測 tanα   偽の面積   2 周期 実測   2 周期 予測")
 
     tilts = [0.0, 0.1, 0.2, 0.4, 0.8, 1.2, 1.6]
-    frac, slope, amp2, curves = [], [], [], []
+    frac, slope, amp2, pred2, curves = [], [], [], [], []
+    half = ZS >= LZ / 2.0            # ★|c1| は V 字なので全長で直線を引くと傾き 0
     for a in tilts:
         sv = survey(CLEAN, offset=0.0, tilt_deg=a)
         m = correct(sv["dist"])
@@ -524,25 +525,33 @@ def section_tilt_sweep() -> dict:
         raw = _fill_theta(sv["dist"]) - R0
         c1 = np.abs(harmonic(raw, 1))
         c2 = np.abs(harmonic(raw, 2))
-        sl = float(np.polyfit(ZS, c1, 1)[0])
-        pred_end = np.tan(np.deg2rad(a)) * LZ / 2.0
+        sl = float(np.polyfit(ZS[half], c1[half], 1)[0])
+        ta = np.tan(np.deg2rad(a))
+        # 2 周期に漏れる 2 つの経路: 斜め切りの楕円 R(secα-1)/2 と、
+        # 傾きが作る横ずれ e(z)=tanα(z-L/2) の 2 次項 <e²>/4R
+        p2 = R0 * (1 / np.cos(np.deg2rad(a)) - 1) / 2 + ta * ta * LZ * LZ / (48 * R0)
         frac.append(100 * float(fl.mean()))
         slope.append(sl)
         amp2.append(float(c2.mean()))
+        pred2.append(p2)
         curves.append(c1)
-        print("   %4.2f deg   %7.3f mm    %7.4f mm/mm  %7.2f %%   %7.4f mm"
-              % (a, pred_end, sl, frac[-1], amp2[-1]))
+        print("   %4.2f deg  %8.4f    %8.4f   %6.2f %%   %8.4f mm  %8.4f mm"
+              % (a, sl, ta, frac[-1], amp2[-1], p2))
 
     a_last = tilts[-1]
     print("\n  ★傾き α の効きは 2 つに分かれる。1 周期は"
-          "**振幅 tan α·(z - L/2) で z に線形**(実測の傾き %.4f、予測 %.4f mm/mm)。"
-          % (slope[-1], np.tan(np.deg2rad(a_last))))
-    print("     2 周期は斜め切りの楕円から来る 2 次の効き(R(1/cos α - 1) = "
-          "%.4f mm、実測 %.4f mm)。"
-          % (R0 * (1 / np.cos(np.deg2rad(a_last)) - 1), amp2[-1]))
-    print("     つまり**楕円化(2 周期)と軸ずれ(1 周期)は分離できる** —— "
-          "傾きが 2 周期に漏らす分は %.1f 度でも %.3f mm しかない。"
-          % (a_last, amp2[-1]))
+          "**振幅 tan α·|z - L/2| で z に線形**(実測の傾き %.4f、予測 %.4f mm/mm、"
+          "\n     差 %.1f %%)。管長中央で 0 になるのは、そこでセンサが軸を横切るから。"
+          % (slope[-1], np.tan(np.deg2rad(a_last)),
+             100 * abs(slope[-1] - np.tan(np.deg2rad(a_last)))
+             / np.tan(np.deg2rad(a_last))))
+    print("     2 周期は 2 次でしか出ない(斜め切りの楕円 %.4f + 横ずれの 2 次項 "
+          "%.4f = %.4f mm、\n     実測 %.4f mm)。**だから楕円化(2 周期)と軸ずれ"
+          "(1 周期)は分離できる** ——\n     傾き %.1f 度が 2 周期に漏らす分は"
+          " %.3f mm で、楕円化 %.1f mm の %.1f %% しかない。"
+          % (R0 * (1 / np.cos(np.deg2rad(a_last)) - 1) / 2,
+             np.tan(np.deg2rad(a_last)) ** 2 * LZ * LZ / (48 * R0), pred2[-1],
+             amp2[-1], a_last, amp2[-1], OVAL_A, 100 * amp2[-1] / OVAL_A))
 
     figs.save_plot("sweep_tilt",
                    [("傾き %.1f deg" % tilts[-1], ZS, curves[-1]),
