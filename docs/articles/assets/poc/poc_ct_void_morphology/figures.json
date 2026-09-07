@@ -104,5 +104,25 @@
    560,
    3
   ]
+ },
+ {
+  "file": "11_cluster_radius_sweep.png",
+  "name": "cluster_radius_sweep",
+  "caption": "ボイド率にはこの差が出ない —— 両条件とも 3 % 台。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_noise_sweep.png",
+  "name": "noise_sweep",
+  "caption": "合否の数字は雑音に強い。強いことが問題で、壊れているのに気づけない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

@@ -298,7 +298,12 @@ def section2_zero_point(depth_map, ts, cube, masks, sound):
           % (b0 / max(b1, 1e-9)))
     print("     負けているのは小さい欠陥で、その原因は 4 節で**物理ではなかった**")
     print("     ことが分かる。1 本の平均で結論を出してはいけない例。")
-    return d_hat
+    # ★所見を固定する。この 2 行が同時に成り立つことがこの節の主張そのもの。
+    #   (1) 16 個を 1 本の平均にまとめると、TSR は「常に 1.50 mm と答える」ゼロ点に負ける。
+    assert z1 > z0, (z0, z1)
+    #   (2) 直径 8 mm 以上に絞れば桁で勝つ(実測 14 倍)。
+    assert b0 / max(b1, 1e-9) > 8.0, (b0, b1)
+    return d_hat, b1
 
 
 def section3_depth_table(masks, d_hat):
