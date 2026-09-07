@@ -430,29 +430,65 @@ def _probe_points():
     return [(float(z), float(x)) for z in zs for x in xs]
 
 
-def _edge_threshold(vol, spacing, zc, xc):
+def cavity_span(vol, spacing, zc, xc):
+    """缶の**内側の面**を列ごとにデータから見つける(真値を使わない)。
+
+    プロファイルは 空気 -> 缶 -> 空洞 -> 缶 -> 空気 と進むので、缶の水準の半値で
+    2 値化した最初の塊の終わりと最後の塊の始まりが内面。★これをやらずに設計上の
+    空洞 ``CAV_Y`` で突くと、**膨れて端板が動いた分だけ端の層を数え落とす**
+    (最初そう書いて、一様膨れのセルだけ層が 17 -> 15 枚になった)。
+    """
+    y0 = 0.5 * spacing[1]
+    y1 = (vol.shape[1] - 0.5) * spacing[1]
+    pr = np.asarray(L.vol_profile_line(vol, _vidx(zc, y0, xc, spacing),
+                                       _vidx(zc, y1, xc, spacing), spacing=spacing))
+    t, v = pr[:, 0], pr[:, 1]
+    above = v > 0.55 * float(v.max())
+    idx = np.nonzero(above)[0]
+    if idx.size < 2:
+        return None
+    br = np.nonzero(np.diff(idx) > 1)[0]
+    if br.size == 0:
+        return None
+    lo = y0 + float(t[idx[br[0]]]) + 0.02
+    hi = y0 + float(t[idx[br[-1] + 1]]) - 0.02
+    return (lo, hi) if hi - lo > 1.0 else None
+
+
+def _edge_threshold(vol, spacing, zc, xc, span):
     """観測されたコントラストから微分しきい値を決める(voxel に依らない規約)。
 
     「2 voxel のあいだにコントラストの 30 % を振る縁だけを縁と認める」。
     固定値にすると崖の位置がしきい値の選び方で動いてしまう。
     """
-    p0 = _vidx(zc, CAV_Y[0] + 0.02, xc)
-    p1 = _vidx(zc, CAV_Y[1] - 0.02, xc)
-    pr = np.asarray(L.vol_profile_line(vol, p0, p1, spacing=spacing))
+    pr = np.asarray(L.vol_profile_line(vol, _vidx(zc, span[0], xc, spacing),
+                                       _vidx(zc, span[1], xc, spacing),
+                                       spacing=spacing))
     v = pr[:, 1]
     c = float(np.percentile(v, 95) - np.percentile(v, 5))
     return max(1e-6, 0.30 * c / (2.0 * spacing[1])), c, pr
 
 
+def _stack_probes(vol, spacing):
+    """各プローブの ``(zc, xc, span, thr, profile)``。空洞が見つからない列は捨てる。"""
+    out = []
+    for zc, xc in _probe_points():
+        span = cavity_span(vol, spacing, zc, xc)
+        if span is None:
+            continue
+        thr, contrast, pr = _edge_threshold(vol, spacing, zc, xc, span)
+        out.append((zc, xc, span, thr, contrast, pr))
+    return out
+
+
 def internal_metrics(vol: np.ndarray, spacing=SPACING) -> dict:
-    """内部指標 —— 層数・層厚・層間隔の散らばり・空隙率・層の平面度。"""
+    """内部指標 —— 層数・層厚・層間隔の散らばり・空隙率。"""
     counts, thicks, pitches, contrasts = [], [], [], []
     fft_pitch = []
-    for zc, xc in _probe_points():
-        thr, contrast, pr = _edge_threshold(vol, spacing, zc, xc)
+    for zc, xc, span, thr, contrast, pr in _stack_probes(vol, spacing):
         contrasts.append(contrast)
-        p0 = _vidx(zc, CAV_Y[0] + 0.02, xc)
-        p1 = _vidx(zc, CAV_Y[1] - 0.02, xc)
+        p0 = _vidx(zc, span[0], xc, spacing)
+        p1 = _vidx(zc, span[1], xc, spacing)
         th = list(L.vol_wall_thickness(vol, p0, p1, sigma=1.2, threshold=thr,
                                        spacing=spacing))
         counts.append(len(th))
@@ -466,15 +502,16 @@ def internal_metrics(vol: np.ndarray, spacing=SPACING) -> dict:
 
     # 空隙率: 電解液より暗い連結成分を数える(気体 0.02 < 電解液 0.35)
     roi = np.zeros(vol.shape, bool)
-    z0, z1 = int(ELEC_Z[0] / SZ) + 1, int(ELEC_Z[1] / SZ)
-    y0, y1 = int((CAV_Y[0] + 0.10) / SY), int((CAV_Y[1] - 0.10) / SY)
-    x0, x1 = int(ELEC_X[0] / SX) + 2, int(ELEC_X[1] / SX) - 2
+    z0, z1 = int(ELEC_Z[0] / spacing[0]) + 1, int(ELEC_Z[1] / spacing[0])
+    y0, y1 = int((CAN_Y[0] + 0.30) / spacing[1]), int((CAN_Y[1] - 0.30) / spacing[1])
+    x0, x1 = int(ELEC_X[0] / spacing[2]) + 2, int(ELEC_X[1] / spacing[2]) - 2
     roi[z0:z1, y0:y1, x0:x1] = True
-    dark = (np.asarray(vol) < 0.5 * (MU_GAS + MU_LIQ)) & roi
+    lo = np.asarray([p[4] for p in _stack_probes(vol, spacing)] or [MU_ELEC - MU_LIQ])
+    dark = (np.asarray(vol) < 0.35 * float(np.median(lo))) & roi
     lab = np.asarray(L.vol_label(dark, connectivity=26))
     props = L.vol_region_props(lab, spacing=spacing)
-    cell_vol = SZ * SY * SX
-    big = [p for p in props if p["volume"] > 20 * cell_vol]
+    cell_vol = float(spacing[0] * spacing[1] * spacing[2])
+    big = [p for p in props if p["volume"] > 0.004]
     void_vol = float(sum(p["volume"] for p in big))
     roi_vol = float(roi.sum() * cell_vol)
 
