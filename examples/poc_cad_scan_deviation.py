@@ -935,7 +935,7 @@ def section_controls(ref: CadRef) -> dict:
     print("8) 欠測と密度、そして対照群 —— 要因を 1 つずつ止める")
     print("=" * 78)
     print("   条件                        点数  可視面積[mm^2] 姿勢[度]"
-          "  偏差RMS[µm]  公差外面積誤差")
+          "  偏差RMS[µm]  公差外面積 推定/真値[mm^2]")
     conds = [
         ("対照: 変換なし・欠陥なし・雑音なし", dict(noise=0.0, defects=False,
                                                      transform=False)),
