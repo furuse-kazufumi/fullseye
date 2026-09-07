@@ -54,9 +54,9 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   (`poc_bev_sensor_fusion` の実測)、CT の薄い接合層 (30,180,180) では
   `query_distance` がそもそも引けなかった(`poc_ct_void_morphology` の実測)。
   スカラを渡す既存の呼び手は不変。
-- **torch が要らないのに必須だった 5 op を numpy / scipy に戻した**:
+- **torch が要らないのに必須だった 7 op を numpy / scipy に戻した**:
   `icp_point2point_3d` / `icp_point2plane` / `register_fpfh` / `match_phase_3d` /
-  `polar_unwrap`(+ `cylinder_unwrap`)。中身は最近傍探索・小さい線形代数・FFT・
+  `polar_unwrap` / `cylinder_unwrap` / `render_volume_projection`。中身は最近傍探索・小さい線形代数・FFT・
   双線形補間で GPU の仕事が無く、`register_fpfh` は**返り値を包むためだけ**に torch を
   掴んでいた。torch を入れない環境(CI の py3.10 / 3.12)でこれらが丸ごと
   `ImportError` になり、PoC 4 本が落ちていた。返り値の型は互換のため据え置き

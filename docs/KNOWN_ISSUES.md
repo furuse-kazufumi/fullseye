@@ -1342,8 +1342,9 @@ furuse.work へ誘導する」。
 CI の py3.10 / 3.12 は **torch を入れない**(サイズと時間。3.11 だけ入れる)。手元には
 torch があるので、**手元で緑・CI で赤**という一番たちの悪い形で出た。
 
-- **torch が要らないのに必須だった 5 op**。`icp_point2point_3d` / `icp_point2plane` /
-  `register_fpfh` / `match_phase_3d` / `polar_unwrap`(と同型の `cylinder_unwrap`)。
+- **torch が要らないのに必須だった 7 op**。`icp_point2point_3d` / `icp_point2plane` /
+  `register_fpfh` / `match_phase_3d` / `polar_unwrap` / `cylinder_unwrap` /
+  `render_volume_projection`。
   中身は cKDTree の最近傍・3x3 と 6x6 の線形代数・FFT・双線形補間で、**GPU の仕事が
   1 つも無い**のに torch を掴んでいた(`register_fpfh` に至っては**返り値を包むためだけ**)。
   すべて numpy / scipy に書き換え、torch があるときの返り値の型は据え置き

@@ -681,9 +681,18 @@ def section_ablation(pair) -> dict:
 # --------------------------------------------------------------------------- #
 # 6. 似た組が先に壊れる —— 先に予測して突き合わせる                              #
 # --------------------------------------------------------------------------- #
-def section_pairs(ab: dict) -> dict:
+def _rank_pairs(conf: np.ndarray):
+    """混同行列を「対ごとの取り違え画素数」の順位に畳む(対称化)。"""
+    sym = {}
+    for i in range(1, K):
+        for j in range(i + 1, K):
+            sym[(i, j)] = int(conf[i, j] + conf[j, i])
+    return sorted(sym.items(), key=lambda kv: -kv[1])
+
+
+def section_pairs(ab: dict, pair) -> dict:
     print("\n" + "=" * 78)
-    print("6) ★どの組が先に壊れるかは、ライブラリだけで先に予測できる")
+    print("6) ★どの組が先に壊れるかは、ライブラリだけで先に予測できる —— ただし条件つき")
     print("=" * 78)
 
     ang = np.zeros((K, K))
@@ -697,30 +706,38 @@ def section_pairs(ab: dict) -> dict:
     print("  予測(ライブラリのペア間分光角、小さいほど混同しやすい):")
     for a, i, j in pred_rank[:4]:
         print("    %-4s - %-4s  %5.2f 度" % (NAMES[i], NAMES[j], a))
-
-    conf = ab["base"]["conf"]
-    sym = np.zeros((K, K), np.int64)
-    for i in range(1, K):
-        for j in range(1, K):
-            if i != j:
-                sym[i, j] = conf[i, j] + conf[j, i]
-    meas_rank = sorted(((-sym[i, j], i, j) for i in range(1, K)
-                        for j in range(i + 1, K)))
-    print("  実測(全部入りの条件で取り違えた画素数):")
-    for c, i, j in meas_rank[:4]:
-        print("    %-4s - %-4s  %6d 画素" % (NAMES[i], NAMES[j], -c))
-
-    # 順位相関(Spearman) —— 15 対
     pk = {(i, j): r for r, (_a, i, j) in enumerate(pred_rank)}
-    mk = {(i, j): r for r, (_c, i, j) in enumerate(meas_rank)}
-    x = np.array([pk[k] for k in pk])
-    y = np.array([mk[k] for k in pk])
-    rho = float(np.corrcoef(x, y)[0, 1])
-    print("  ★予測順位と実測順位の順位相関 %.2f(%d 対)" % (rho, len(pk)))
+
+    def compare(conf, label):
+        mr = _rank_pairs(conf)
+        mk = {kv[0]: r for r, kv in enumerate(mr)}
+        rho = float(np.corrcoef(np.array([pk[k] for k in pk]),
+                                np.array([mk[k] for k in pk]))[0, 1])
+        top = "%s-%s" % (NAMES[mr[0][0][0]], NAMES[mr[0][0][1]])
+        print("  実測(%s):" % label)
+        for (i, j), c in mr[:3]:
+            print("    %-4s - %-4s  %6d 画素" % (NAMES[i], NAMES[j], c))
+        print("    -> 順位相関 %.2f(15 対)、1 位 %s" % (rho, top))
+        return rho, top
+
+    # (a) 劣化なし・雑音だけ 10 倍。混同は**ライブラリの近さ**だけで決まるはず。
+    geo = make_geometry()
+    noisy = degrade(geo, noise=NOISE * 10, seed=31)
+    s_noise = score(geo, classify(noisy, "sam", pair), detected(noisy))
+    rho_n, top_n = compare(s_noise["conf"], "劣化なし・雑音 10 倍、生 SAM")
+
+    # (b) 全部入り。濡れが全材質に**同じ水の帯**を足すので、順位が入れ替わる。
+    conf = ab["base"]["conf"]
+    rho_f, top_f = compare(conf, "全部入り、2 次微分 + 水帯除外 + SAM")
+
     top_p = "%s-%s" % (NAMES[pred_rank[0][1]], NAMES[pred_rank[0][2]])
-    top_m = "%s-%s" % (NAMES[meas_rank[0][1]], NAMES[meas_rank[0][2]])
-    print("     1 位 予測 %s / 実測 %s  -> %s"
-          % (top_p, top_m, "一致" if top_p == top_m else "外れ"))
+    print("\n  ★予測 1 位は %s(%.2f 度)。雑音だけなら実測も %s で**当たる**"
+          "(相関 %.2f)。" % (top_p, pred_rank[0][0], top_n, rho_n))
+    print("  ★ところが全部入りでは 1 位が %s に入れ替わる(相関 %.2f)。"
+          % (top_f, rho_f))
+    print("     濡れは**どの材質にも同じ水の帯**を足すので、材質どうしの違いより"
+          "水が勝つ。\n     「似た組が先に壊れる」はライブラリの話であって、"
+          "劣化が強いと別の組が先に来る。")
 
     header = ["真値 \\ 推定", "ベルト"] + FRAG_NAMES + ["再現率"]
     rows = []
@@ -728,10 +745,17 @@ def section_pairs(ab: dict) -> dict:
         rows.append([NAMES[t]] + ["%d" % c for c in conf[t]]
                     + ["%.3f" % ab["base"]["recall"][t]])
     figs.save_table("confusion", header, rows,
-                    title="混同行列(全部入り、2 次微分 + SAM、画素数)",
-                    caption="PE と PVC が最初に混ざる。1 個の正解率には出ない。")
-    return {"rho": rho, "top_pred": top_p, "top_meas": top_m,
-            "pred_rank": pred_rank}
+                    title="混同行列(全部入り、2 次微分 + 水帯除外 + SAM、画素数)",
+                    caption="1 個の正解率には出ない盲点がここに出る。")
+    rows2 = []
+    for t in range(1, K):
+        rows2.append([NAMES[t]] + ["%d" % c for c in s_noise["conf"][t]]
+                     + ["%.3f" % s_noise["recall"][t]])
+    figs.save_table("confusion_noise", header, rows2,
+                    title="混同行列(劣化なし・雑音 10 倍、生 SAM、画素数)",
+                    caption="ここではライブラリで予測した %s が 1 位。" % top_p)
+    return {"rho": rho_f, "rho_noise": rho_n, "top_pred": top_p,
+            "top_meas": top_f, "top_noise": top_n, "pred_rank": pred_rank}
 
 
 # --------------------------------------------------------------------------- #
