@@ -203,18 +203,24 @@ def core_grid() -> tuple[np.ndarray, np.ndarray, int, int]:
     return c, settlement(x, y), xs.size, ys.size
 
 
-def fitted_normals(a: np.ndarray, cores: np.ndarray) -> np.ndarray:
-    """core ごとに局所平面を当てて法線を取る(**+z 側に向きを揃える**)。"""
+def fitted_normals(a: np.ndarray, cores: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """core ごとに局所平面を当てて法線を取る(**+z 側に向きを揃える**)。
+
+    Returns: 法線 ``(M,3)`` と、面からの直交距離の RMS ``(M,)``[m]。後者は
+    「その円筒で実際に効いている粗さ」で、LoD の予測に使う。
+    """
     tree = cKDTree(a[:, :2])
     out = np.tile(np.asarray([0.0, 0.0, 1.0]), (len(cores), 1))
+    res = np.full(len(cores), np.nan)
     for k, c in enumerate(cores):
         idx = tree.query_ball_point(c[:2], RADIUS)
         if len(idx) < 8:
             continue
-        _, n, _ = fs.ledger.fit_plane_3d.raw(a[idx])
+        _, n, r = fs.ledger.fit_plane_3d.raw(a[idx])
         n = np.asarray(n, np.float64)
         out[k] = n if n[2] >= 0 else -n
-    return out
+        res[k] = float(r)
+    return out, res
 
 
 def m3c2(a, b, cores, normals):
