@@ -648,7 +648,9 @@ def section_cliff(noise_out: dict) -> dict:
                    ["CNR %.1f" % cnrs[0], "CNR %.1f" % cnrs[3], "CNR %.1f" % cnrs[-1]],
                    title="崖の手前・上・向こう(同じ場面、コントラストだけ)", ncols=3)
     return {"cnr": cnrs, "sd": sds, "lost": lost, "c_pred": c_pred,
-            "cnr_pred": noise_out["h_rms"] * c_pred / nz}
+            "cnr_pred": noise_out["h_rms"] * c_pred / nz,
+            "cnr_break": (noise_out["h_rms"] * first_break / nz
+                          if first_break is not None else float("nan"))}
 
 
 # --------------------------------------------------------------------------- #

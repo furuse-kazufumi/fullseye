@@ -905,7 +905,13 @@ def main() -> None:
           "安定域で較正して %d。"
           % (DZ_BIAS * 1000, reg["n_sig"], reg["n_bh"], reg["n_cl"], reg["n_cal"]))
     print("  * 有意なものだけ足すと体積は %.4f -> %.4f m3(残る割合 実測 %.3f / "
-          "予測 %.3f)。" % (vol["v_all"], vol["v_sig"], vol["ratio"], vol["ratio_num"]))
+          "core ごとの LoD で切った予測 %.3f / LoD 1 個で代表した予測 %.3f)。"
+          % (vol["v_all"], vol["v_sig"], vol["ratio"], vol["ratio_core"],
+             vol["ratio_num"]))
+    print("  * 崖: 舗装ゾーンの検出率が 50 %% を超えるのは最大沈下 %.2f mm から"
+          "(そのゾーンの LoD %.2f mm と同じ目盛り)。"
+          % (min([s for s, v in zip(cliff["smax"], cliff["rate"]) if v >= 50.0]),
+             cliff["lod"][2]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
