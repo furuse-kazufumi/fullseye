@@ -664,6 +664,14 @@ def section2_estimators(p: dict) -> dict:
     print("  → ★3 点当てはめ(対数放物線)は幅への感度が桁違い(σ^%+.2f)。"
           % expo["対数放物線"])
     print("     3 点しか見ない推定量は、光条が太ると山の曲率が消えて壊れる。")
+    j = int(np.argmin(table["対数放物線"]))
+    print("  → ★細い側には床がある: 対数放物線は 1σ = %.1f px が最良(%.5f mm)で、"
+          % (widths[j], table["対数放物線"][j]))
+    print("     %.1f px では %.5f mm(%.1f 倍)へ跳ね返る —— 山が 1 画素に収まると"
+          % (widths[0], table["対数放物線"][0],
+             table["対数放物線"][0] / table["対数放物線"][j]))
+    print("     3 点のうち両隣が背景まで落ちて、曲率そのものが測れない。")
+    print("     つまり**光条の幅には最適値が在る**(ここでは 1σ ≈ %.1f px)。" % widths[j])
     print("  → ★op の `lines_gauss` は Frangi リッジの**二値化**で、中心を")
     print("     サブピクセルで返さない(%.4f mm = ゼロ点の %.1f 倍)。"
           % (table["op lines_gauss"][i14], table["op lines_gauss"][i14] / base))
