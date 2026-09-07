@@ -91,8 +91,8 @@ def make_records(snr_db: float, seed: int, x_leak: float = X_LEAK,
     ys = [leg(t1, d1), leg(t2, d2)]
     if echo > 0.0:
         c_end = (pipe[0][1], pipe[-1][1])
-        for k, (tt, dd, extra) in enumerate(((t1, d1, ECHO_M[0]),
-                                             (t2, d2, ECHO_M[1]))):
+        for k, (tt, dd, extra) in enumerate(((t1, d1, echo_m[0]),
+                                             (t2, d2, echo_m[1]))):
             ys[k] = ys[k] + leg(tt + extra / c_end[k], dd + extra, echo)
 
     snr = 10.0 ** (snr_db / 10.0)
