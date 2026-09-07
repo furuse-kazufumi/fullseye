@@ -492,9 +492,9 @@ def section_out_of_range() -> dict:
     def _bump(cy, cx, sig, amp):
         return amp * np.exp(-(((y - cy) ** 2 + (x - cx) ** 2) / (2.0 * sig * sig)))
 
-    field = (2.0 + _bump(H * 0.5, W * 0.32, 46.0, 7.98)
-             + _bump(H * 0.45, W * 0.74, 9.0, 10.5)
-             - _bump(H * 0.80, W * 0.86, 14.0, 3.2))
+    field = (2.0 + _bump(H * 0.5, W * 0.32, 95.0, 7.99)
+             + _bump(H * 0.45, W * 0.74, 8.0, 10.2)
+             - _bump(H * 0.80, W * 0.86, 11.0, 3.2))
     vmin, vmax = 0.0, 10.0
     n_over = int(np.count_nonzero(field > vmax))
     n_under = int(np.count_nonzero(field < vmin))
