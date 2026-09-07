@@ -567,10 +567,26 @@ def section_cliff(k_true):
     print("\n  クランピング指数 Omega = LAI(推定) / LAI(真値):"
           " LAI %.2f で %.3f、LAI %.2f で %.3f。"
           % (lai_t[0], omega[0], lai_t[-1], omega[-1]))
-    print("     ★予想は「株冠が地面を覆い尽くしているので Omega ≒ 1」だったが、"
-          "実測は %.3f。" % (omega[-1]))
-    print("     株冠は閉じていても**株の中で葉どうしが同じ地面を何度も覆う** ——"
+    print("     ★予想は「株の芯から葉先まで %.2f m 届き、条間 %.2f m なので株冠は"
+          "重なりきる\n        -> Omega ≒ 1」だった。実測は %.3f。"
+          % (float(np.mean(make_canopy()["smax"])), ROW, omega[-1]))
+    print("     株冠は重なっていても**株の中で葉どうしが同じ地面を何度も覆う** ——"
           " 互生の葉は\n     1 つの鉛直面に並ぶので、そこが二重三重に重なる。")
+
+    # --- 予測 C: 2 段階クランピング(株の中を潰してから株どうしを Poisson)-- #
+    can_full = make_canopy(n_leaf=NESTED_MAX)
+    a_c = crown_footprint(can_full)
+    cov_inf = 1.0 - np.exp(-can_full["n_plant"] * a_c / PLOT_AREA)
+    lai_ceiling = float(lai_from_cover(cov_inf, k_true))
+    print("\n  ★予測 C(2 段階クランピング): 1 株の影 %.4f m^2 x %d 株 / %.2f m^2"
+          " = %.3f。" % (a_c, can_full["n_plant"], PLOT_AREA,
+                         can_full["n_plant"] * a_c / PLOT_AREA))
+    print("     株どうしが Poisson に重なるとして植被率の天井 %.4f、"
+          "つまり**推定 LAI の天井 %.3f**。" % (cov_inf, lai_ceiling))
+    print("     実測は LAI %.2f で植被率 %.4f -> 推定 LAI %.3f。予測比 %.3f ——"
+          " 葉を何枚\n     足しても推定はこの数字の近くで止まる。"
+          % (lai_t[-1], cover[-1], float(lai_from_cover(cover[-1], k_true)),
+             float(lai_from_cover(cover[-1], k_true)) / lai_ceiling))
 
     # --- 崖 B: 雑音が LAI 差 0.5 を飲む点 --------------------------------- #
     rng = np.random.default_rng(SEED)
