@@ -802,7 +802,7 @@ def section_density() -> dict:
                    caption="変化ゼロの対照で測った検出限界。C2C は変化が無くても"
                            "点間隔ぶんの距離を返し、符号も持たない。")
     return {"dens": dens, "lod_d": ld, "lod_m": lm, "pred_d": pd_, "pred_m": pm,
-            "c2c": c2c, "rate": rate}
+            "c2c": c2c, "rate": rate, "empty": emp}
 
 
 # --------------------------------------------------------------------------- #
