@@ -474,9 +474,11 @@ def section_noise(sc: dict, tr: dict) -> dict:
     print("\n  ★斑点は σ = %s から(予想 %.2f)、途切れは σ = %s から。斑点が先。" % (
         "%.2f" % sig_ax[i_sp] if i_sp is not None else "無し", sig_speckle,
         "%.2f" % sig_ax[i_br] if i_br is not None else "無し"))
-    print("  ★斑点を面積オープニングで消すと Tb.Sp の誤差は %+.1f %% → %+.1f %%(σ=0.20)、"
-          "\n    σ=0.40 では %+.1f %% と**正**に転じる = 途切れで髄腔が繋がる方向。"
-          "2 つの壊れ方は逆向き。" % (sp_err[4], sp_err2[4], sp_err2[-1]))
+    print("  ★斑点を面積オープニングで消すと Tb.Sp の誤差は %+.1f %% → %+.1f %%(σ=0.20)。"
+          "\n    予想は「途切れ(σ=0.40 で %d 件)で髄腔が繋がり Tb.Sp が正に転じる」だったが、"
+          "\n    実測は %+.1f %% と負のまま —— 大津のしきい値が雑音で下がって帯が太る"
+          "(BV/TV %+.0f %%)ほうが勝つ。\n    途切れの効果は平均には出ず、件数でしか見えない。"
+          % (sp_err[4], sp_err2[4], brk[-1], sp_err2[-1], 100 * (mask.mean() / tb.mean() - 1)))
 
     # 対策: opening r=1 / 面積オープニング 16 px / 前処理ぼかし σ=1 px
     s = 0.20
