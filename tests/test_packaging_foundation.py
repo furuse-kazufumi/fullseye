@@ -109,6 +109,7 @@ def test_studio_assets_are_shipped_by_package_data():
         os.path.relpath(p, os.path.join(ROOT, "studio_assets")).replace("\\", "/")
         for p in glob.glob(os.path.join(ROOT, "studio_assets", "**", "*"), recursive=True)
         if os.path.isfile(p) and not p.endswith("__init__.py")
+        and "__pycache__" not in p                      # import studio_assets が作る(資産ではない)
     ]
     tracked = [f for f in tracked if not f.startswith(_DELIBERATELY_UNSHIPPED)]
     assert tracked, "no studio_assets files found"
@@ -125,10 +126,15 @@ def test_article_source_images_do_not_ship():
     読まないものを配らない。Studio が実際に使うサンプルは `sample_images/` と
     `sample_thumbs/` で、そちらは同梱を続ける。
     """
-    import tomllib
-    cfg = tomllib.loads(_read("pyproject.toml"))["tool"]["setuptools"]
-    pkg_data = cfg.get("package-data", {})
-    assert not any("sample_sources_ai" in g for gs in pkg_data.values() for g in gs), (
+    # tomllib は 3.11+ なので(CI は 3.10 も回す)節を文字列で切り出す
+    def _section(name):
+        m = re.search(r"^\[%s\]
+(.*?)(?=^\[|\Z)" % re.escape(name), _read("pyproject.toml"),
+                      re.M | re.S)
+        return m.group(1) if m else ""
+    pkg_data = _section("tool.setuptools.package-data")
+    assert "sample_sources_ai" not in re.sub(r"#[^
+]*", "", pkg_data), (
         "sample_sources_ai が package-data に戻っている —— 出荷コードは読まないのに "
         "wheel を 42 MB 太らせる")
     # ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。
@@ -136,7 +142,8 @@ def test_article_source_images_do_not_ship():
     # 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py
     # (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ
     # 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
-    excl = cfg.get("exclude-package-data", {}).get("studio_assets", [])
+    excl = re.findall(r'"([^"]+)"', re.sub(r"#[^
+]*", "", _section("tool.setuptools.exclude-package-data")))
     assert any("sample_sources_ai" in g for g in excl), (
         "exclude-package-data に sample_sources_ai が無い —— package-data に書かなくても "
         "VCS 探索で wheel に乗る: %s" % excl)
