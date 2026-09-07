@@ -520,24 +520,29 @@ def section_timeseries() -> dict:
     rows = []
     print("\n  必要分離距離 S = %.3f m(Z_d = %.3f m)。危険フレーム %d / %d"
           % (S, ZD_BASE, int(haz.sum()), len(ts)))
-    print("  推定器                過大評価 平均 / 最大 [m]   見落とし        誤検知")
+    print("  推定器             過大評価 [m] 全体 / 危険時 / 最大   見落とし        誤検知")
+    stats = {}
     for name in ("重心 1 点", "足元 1 点", "全表面(遮蔽なし)", "背面 1 台",
                  "背面 + 隅 2 台"):
         e = est[name] - d_true
         miss = int(np.count_nonzero(haz & (est[name] >= S)))
         fa = int(np.count_nonzero(~haz & (est[name] < S)))
-        rows.append([name, "%+.3f" % e.mean(), "%+.3f" % e.max(),
+        stats[name] = (float(e.mean()), float(e[haz].mean()), float(e.max()), miss, fa)
+        rows.append([name, "%+.3f" % e.mean(), "%+.3f" % e[haz].mean(),
+                     "%+.3f" % e.max(),
                      "%d/%d (%.1f %%)" % (miss, haz.sum(), 100 * miss / max(1, haz.sum())),
                      "%d/%d" % (fa, int((~haz).sum()))])
-        print("   %-18s  %+7.3f / %+7.3f      %-16s %s"
-              % (name, e.mean(), e.max(), rows[-1][3], rows[-1][4]))
+        print("   %-18s %+7.3f / %+7.3f / %+7.3f    %-16s %s"
+              % (name, e.mean(), e[haz].mean(), e.max(), rows[-1][4], rows[-1][5]))
     print("\n  ★危険フレームのうち **%d / %d (%.1f %%)** で、いちばん近い部位が"
           " 背面センサから 1 点も見えていない。"
           % (hidden_nearest, n_haz, 100 * hidden_nearest / max(1, n_haz)))
     print("     遮蔽は雑音と違って**片側にしか出ない** —— 見えない点は必ず"
           "「もっと遠い」と報告される。")
+    print("     予想 %+.3f m(伸ばしきった姿勢)vs 実測の最大 %+.3f m。"
+          % (pred, stats["重心 1 点"][2]))
 
-    figs.save_table("conditions", ["推定器", "過大評価 平均 m", "最大 m",
+    figs.save_table("conditions", ["推定器", "過大評価 平均 m", "危険時 m", "最大 m",
                                    "見落とし", "誤検知"], rows,
                     title="人をどう代表するかで、危険の見え方が変わる",
                     caption="S = %.3f m。見落とし = 真の距離 < S なのに推定 >= S。" % S)
