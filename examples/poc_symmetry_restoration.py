@@ -863,12 +863,14 @@ def section_false_symmetry(S: dict) -> dict:
     # 復元後の見かけの非対称度(欠損部は定義上ぴったり対称になる)
     for side in out:
         h = out[side]["hole"]
-        d2 = np.where(h, 0.0, da)
-        out[side]["asym_after"] = float(np.sqrt(np.mean(d2[ins] ** 2)))
-    print("  ★ 見かけの非対称度は %.3f mm -> %.3f / %.3f mm に下がる ——"
+        out[side]["asym_in_hole"] = float(np.sqrt(np.mean(da[h] ** 2)))
+        out[side]["asym_after"] = float(np.sqrt(np.mean(np.where(h, 0.0, da)[ins] ** 2)))
+    print("  ★★ 欠損部だけを見ると、真の非対称は RMS %.2f / %.2f mm あったのに"
+          % (out["装飾のある側(右)"]["asym_in_hole"], out["無地の側(左)"]["asym_in_hole"]))
+    print("     復元後は**厳密に 0**(鏡像なので)。仮面全体でも %.3f mm -> %.3f / %.3f mm。"
           % (asym_true, out["装飾のある側(右)"]["asym_after"],
              out["無地の側(左)"]["asym_after"]))
-    print("     復元した所は**定義上ぴったり対称**なので、"
+    print("     復元した所は定義上ぴったり対称なので、"
           "「対称だから正しい」という検算は原理的にできない。")
 
     if figs.enabled():
