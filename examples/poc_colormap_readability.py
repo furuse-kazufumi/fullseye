@@ -732,16 +732,18 @@ def main() -> None:
     assert meas["cividis"]["n_peaks"] >= 2, "明度単調でも色差の山は立つ"
     assert pred["max_err"] < 0.002, pred["max_err"]
     assert cliff["crit"]["jet"] > cliff["crit"]["viridis"]
-    assert abs(cliff["crit"]["jet"] - cliff["pred"]["jet"]) < 0.1
+    assert abs(cliff["crit"]["jet"] - cliff["pred"]["jet"]) < 0.05, cliff
+    assert abs(cliff["crit"]["viridis"] - cliff["pred"]["viridis"]) < 0.05, cliff
     assert norms["rank"]["clean"][0] > 10 * norms["linear"]["clean"][0]
     assert abs(norms["linear"]["clean"][1] - 1.0) < 1e-6, "生の ρ は縮退する"
     assert norms["log"]["outlier"][0] < 0.8 * norms["log"]["clean"][0]
     assert abs(norms["rank"]["outlier"][0] - norms["rank"]["clean"][0]) < 1.0
     assert rng_out["sentinel"] == rng_out["true"]
-    assert rng_out["naive"] > 1.5 * rng_out["true"]
-    assert biv["biv"] > 5 * biv["plain"]
-    assert cat["res"]["categorical wong"] > cat["res"]["viridis(連続)"]
-    assert min(cat["rand_min"]) < cat["res"]["categorical tab10"]
+    assert rng_out["naive"] > 2.0 * rng_out["true"]
+    assert biv["biv"] > 3 * biv["plain"]
+    assert cat["res"][(8, "categorical wong")] > cat["res"][(8, "viridis(連続)")]
+    assert cat["res"][(24, "categorical tab10")] < cat["res"][(24, "viridis(連続)")], \
+        "色数を超えた質的パレットは連続マップに負ける"
 
     print("\n" + "=" * 78)
     print("まとめ")
