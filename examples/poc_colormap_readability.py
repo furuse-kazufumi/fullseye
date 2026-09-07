@@ -427,10 +427,11 @@ def section_bowl(meas: dict) -> dict:
     figs.save_grid("scene_maps", panels, caps, ncols=3,
                    title="同じなめらかな 2 次曲面(段差ゼロ)を 6 通りに塗る",
                    caption="jet と hsv には無いはずの帯が見える。")
-    de_panels = []
+    de_panels, de_max = [], []
     for name in ("jet", "viridis"):
         rgb = np.asarray(fs.apply_cmap(f, name, vmin=0.0, vmax=1.0))
         de = step_delta_e(rgb)
+        de_max.append(float(de.max()))
         de_panels.append(de / max(de.max(), 1e-9))
     figs.save_grid("false_edge_map", de_panels,
                    ["jet(最大 %.2f ΔE)" % de_max[0],
