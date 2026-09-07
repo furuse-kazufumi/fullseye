@@ -1068,8 +1068,9 @@ def main() -> int:
     assert abs(float(np.median(pred["plate"])) - 37.0) < 0.6, "左母材の崖は 37 度"
     assert float(pred["uc"].min()) < 25.0 < float(pred["uc"].max()), "溝の崖は深さ依存"
     tb = est2["table"]
-    assert tb["重心"][-1] > tb["重心"][1], "★太い光条のほうが悪い(√σ)"
-    assert tb["重心"][0] > tb["重心"][1], "★細すぎる側にも床がある"
+    assert tb["重心 追従窓"][-1] > tb["重心 追従窓"][1], "★追従窓は太いほど悪い(√σ)"
+    assert tb["重心 固定窓"][-1] < tb["重心 固定窓"][1], "★固定窓は太いほど良い(1/σ)"
+    assert tb["重心 追従窓"][0] > tb["重心 追従窓"][1], "★細すぎる側にも床がある"
     assert tb["op lines_gauss"][3] > tb["ゼロ点 最大値"][3], "lines_gauss はゼロ点より悪い"
     assert abs(cal["got"]["legL"] + cal["got"]["ucL"] - 1.0) < 0.02, "sin²+cos²=1"
     assert opt["per"]["ucR"][1] > opt["per"]["ucL"][1], "近側の最適角のほうが大きい"
