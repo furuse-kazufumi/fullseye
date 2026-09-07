@@ -838,8 +838,11 @@ def section_snr_sweep() -> dict:
               % (k, r["fi_matched"], len(FI_BANDS), r["fi_false"], rec[-1], r["iso_err"],
                  r["false_len"]))
     k_fail = next((k for k, n in zip(ks, fi_ok) if n < len(FI_BANDS)), None)
-    print("\n  ★断線が 8/8 を割るのは K=%s(予測 K≈%.0f)。クラック再現率は K=%d でも %.2f。"
-          % (k_fail, k_pred, ks[-1], rec[-1]))
+    print("\n  ★断線が 8/8 を割るのは K=%s(予測 K≈%.0f —— 予測は %.0f 倍楽観的)。帯は"
+          "「割れる」より先に**画素ごとの誤分類で形の門(高さ ≤ 9 px)から外れる**。"
+          % (k_fail, k_pred, k_fail / k_pred))
+    print("     クラック再現率は K=%d で %.2f、偽クラックは K=%d で %.0f px —— 雑音の崖では"
+          "偽が先に増え、見逃しは後から来る。" % (ks[-1], rec[-1], ks[-2], fl[-2]))
     figs.save_plot("snr", [("断線 一致 [本]", ks, fi_ok),
                            ("クラック再現率 x 8", ks, [8 * v for v in rec])],
                    xlabel="光子数 K(明るさ 1.0 あたり)", ylabel="検出",
