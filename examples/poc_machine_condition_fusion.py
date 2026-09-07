@@ -775,7 +775,7 @@ def section_sweeps() -> dict:
     print("            下回るのは **T > 1/FTF = %.1f ms**。" % (1000 * t_side))
     out["dur"] = sweep("sweep_record_length",
                        (0.04, 0.05, 0.07, 0.10, 0.15, 0.25, 0.50, 1.00),
-                       "dur", ("v",), "記録長 T [s]",
+                       "dur", ("v",), VIB_FEATS, "記録長 T [s]",
                        "記録長を縮める —— 予測した 2 つの崖",
                        "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。")
     out["t_order"], out["t_side"] = t_order, t_side
