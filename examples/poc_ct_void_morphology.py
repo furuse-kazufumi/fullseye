@@ -599,7 +599,7 @@ def section_voxel_cliff() -> dict:
                     ("真値 %.1f %%" % (100 * VOID_FRAC), vx, [100 * VOID_FRAC] * len(vx)),
                     ("予測した崖(扁平 %.0f µm)" % (d_dsc / 2), [d_dsc / 2] * 2,
                      [0.0, 100 * VOID_FRAC * 1.3])],
-                   xlabel="ボクセル寸法 [µm]", ylabel="推定ボイド率 [%](位相 3 通りの平均)",
+                   xlabel="ボクセル寸法 [µm]", ylabel="推定ボイド率 [%]",
                    title="予想と違い、ボイド率は粗いボクセルでも崩れない",
                    caption="線形の被覆率で積むと体積は保存される。合否の数字は"
                            "解像できなくなっても出続ける。")
