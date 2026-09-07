@@ -697,9 +697,8 @@ def section_ablation(pair) -> dict:
         [rgb, np.asarray(fs.overlay_labels(rgb, geo["truth"])),
          np.asarray(fs.overlay_labels(rgb, lab)),
          np.asarray(fs.overlay_labels(np.full_like(rgb, 0.85), wrong, alpha=0.9))],
-        ["全部入りの SWIR 合成(汚れ・濡れ・傾き)", "真値の材質ラベル",
-         "推定(2 次微分 + 水帯除外 + SAM)",
-         "間違えた画素(色 = 誤った推定先、白 = ベルト扱い)"],
+        ["全部入りの SWIR 合成", "真値の材質ラベル",
+         "推定(2 次微分 + 水帯除外)", "間違えた画素(色 = 推定先)"],
         title="全部入りの場面 —— 再現率 %.3f(誤分類 %.1f %% / 未検出 %.1f %%)"
               % (base["macro"], 100 * (1 - base["macro"] - base["miss"]),
                  100 * base["miss"]), ncols=2)

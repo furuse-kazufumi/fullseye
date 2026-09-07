@@ -60,7 +60,17 @@
   ]
  },
  {
-  "file": "07_ablation.png",
+  "file": "07_scene_degraded.png",
+  "name": "scene_degraded",
+  "caption": "",
+  "shape": [
+   446,
+   470,
+   3
+  ]
+ },
+ {
+  "file": "08_ablation.png",
   "name": "ablation",
   "caption": "濡れだけが大きく効く。加算汚れは符号が逆(検出を助けていた)。",
   "shape": [
@@ -68,11 +78,11 @@
    314,
    3
   ],
-  "csv": "07_ablation.csv",
-  "tsv": "07_ablation.tsv"
+  "csv": "08_ablation.csv",
+  "tsv": "08_ablation.tsv"
  },
  {
-  "file": "08_confusion.png",
+  "file": "09_confusion.png",
   "name": "confusion",
   "caption": "1 個の正解率には出ない盲点がここに出る。",
   "shape": [
@@ -80,11 +90,11 @@
    553,
    3
   ],
-  "csv": "08_confusion.csv",
-  "tsv": "08_confusion.tsv"
+  "csv": "09_confusion.csv",
+  "tsv": "09_confusion.tsv"
  },
  {
-  "file": "09_confusion_noise.png",
+  "file": "10_confusion_noise.png",
   "name": "confusion_noise",
   "caption": "ここではライブラリで予測した PP-PE が 1 位。",
   "shape": [
@@ -92,11 +102,11 @@
    553,
    3
   ],
-  "csv": "09_confusion_noise.csv",
-  "tsv": "09_confusion_noise.tsv"
+  "csv": "10_confusion_noise.csv",
+  "tsv": "10_confusion_noise.tsv"
  },
  {
-  "file": "10_composition.png",
+  "file": "11_composition.png",
   "name": "composition",
   "caption": "",
   "shape": [
@@ -104,11 +114,11 @@
    453,
    3
   ],
-  "csv": "10_composition.csv",
-  "tsv": "10_composition.tsv"
+  "csv": "11_composition.csv",
+  "tsv": "11_composition.tsv"
  },
  {
-  "file": "11_mixed_map.png",
+  "file": "12_mixed_map.png",
   "name": "mixed_map",
   "caption": "",
   "shape": [
@@ -118,7 +128,7 @@
   ]
  },
  {
-  "file": "12_spectra.png",
+  "file": "13_spectra.png",
   "name": "spectra",
   "caption": "乗算は形を保つ。加算は谷を浅くする。濡れは 1450 / 1940 nm に無い谷を作る。",
   "shape": [
@@ -128,7 +138,7 @@
   ]
  },
  {
-  "file": "13_spectra_d2.png",
+  "file": "14_spectra_d2.png",
   "name": "spectra_d2",
   "caption": "残るのは濡れ(波長に依存する乗算)だけ。ただし水の帯は広いので 1/σ² で潰れる。",
   "shape": [
