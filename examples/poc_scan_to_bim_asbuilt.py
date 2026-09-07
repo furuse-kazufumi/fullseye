@@ -1095,6 +1095,7 @@ def section_cliff_registration() -> dict:
     print("   姿勢誤差 [mrad]   偽の傾き(誤差ゼロの建物) [mrad]   信号対雑音(3 mrad に対して)")
     xs, bias, snr = [], [], []
     rows = []
+    npts = 0
     for reg in (0.0, 0.5, 1.0, 2.0, 3.0, 5.0):
         vals = []
         for i in range(4):
@@ -1104,6 +1105,7 @@ def section_cliff_registration() -> dict:
             v = []
             for elem in (WX0, WX1):
                 q = s["P"][e == elem]
+                npts = len(q)
                 _, sb, _, _ = plane_slopes(q, 0, seed=i)
                 v.append(sb)
             vals.append(np.mean(v))
@@ -1113,12 +1115,13 @@ def section_cliff_registration() -> dict:
         snr.append(1000 * RACK / max(b, 1e-3))
         rows.append(["%.1f" % reg, "%.3f" % b, "%.1f" % snr[-1]])
         print("   %8.1f          %8.3f                         %6.1f" % (reg, b, snr[-1]))
-    print("\n   ★点の数は 3 条件とも同じ(%s 点前後)。無作為欠測は √N で薄まるのに、"
-          % "9 千")
-    print("     姿勢誤差は N に無関係な系統誤差なので薄まらない。")
+    print("\n   ★点の数はどの行も同じ(壁 1 枚あたり %d 点)。無作為欠測は √N で"
+          "薄まるのに、" % npts)
+    print("     姿勢誤差は N に無関係な系統誤差なので薄まらない —— "
+          "測距の雑音だけなら %.3f mrad で済むところが、" % bias[0])
     i1 = xs.index(1.0)
-    print("     姿勢誤差 %.1f mrad で偽の傾き %.3f mrad、信号対雑音 %.1f。"
-          % (xs[i1], bias[i1], snr[i1]))
+    print("     姿勢誤差 %.1f mrad で %.3f mrad(%.1f 倍)。信号対雑音は %.0f → %.1f。"
+          % (xs[i1], bias[i1], bias[i1] / max(bias[0], 1e-9), snr[0], snr[i1]))
     figs.save_plot("cliff_registration",
                    [("偽の傾き(誤差ゼロの建物)", xs, bias),
                     ("施工誤差 3 mrad", xs, [1000 * RACK] * len(xs)),
