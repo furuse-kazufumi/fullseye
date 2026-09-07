@@ -379,8 +379,6 @@ def _roi_mean(frame: np.ndarray, pitch: int, cx: float, cy: float,
 def thermal_features(frame: np.ndarray, pitch: int) -> dict:
     """熱画像の特徴量。高温域の広がりは blob_label + blob_features で測る。"""
     t_max = float(frame.max())
-    roi_c = _disc_mask(frame.shape, pitch, SOURCES[0][1], SOURCES[0][2], 25.0)
-    roi_b = _disc_mask(frame.shape, pitch, SOURCES[1][1], SOURCES[1][2], 25.0)
     hot = (frame > 0.5 * t_max) & (frame > 4.0 * NETD)
     area = 0.0
     if hot.any():
