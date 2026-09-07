@@ -504,63 +504,86 @@ def zone_of(xm: float, ym: float, clear: np.ndarray) -> str:
     return "open"
 
 
+def _runs_in_components(meas: dict, labels: np.ndarray):
+    """各 ID が「どの柱の中に、いつからいつまで居たか」を切り出す。
+
+    ★成分の中身を **ID を焼き込んだ体積**から読むと、柱の脇をすり抜けた人が
+    足跡の重なりで数ボクセルを上書きし、**存在しない待ちの ID** が湧く
+    (最初の実装がそうなり、作業台の柱が「7 人」になった)。読むのは
+    **中心の座標**のほうにする —— すり抜けた人の中心が柱の列に入るのは
+    1〜2 フレームだけなので :data:`MIN_SAMPLES` で落ちる。
+    """
+    runs = []
+    for i in range(len(meas["names"])):
+        x, y = meas["x"][i], meas["y"][i]
+        f = np.nonzero(np.isfinite(x))[0]
+        if f.size == 0:
+            continue
+        iy = np.clip((y[f] / CELL).astype(int), 0, NY - 1)
+        ix = np.clip((x[f] / CELL).astype(int), 0, NX - 1)
+        comp = labels[f, iy, ix]
+        rid = meas["rid"][i, f]
+        cur = None
+        for k in range(f.size):
+            if cur is not None and f[k] - cur["f1"] > 2:
+                runs.append(cur)
+                cur = None
+            if comp[k] <= 0:
+                continue
+            key = (int(comp[k]), int(rid[k]))
+            if cur is not None and cur["key"] != key:
+                runs.append(cur)
+                cur = None
+            if cur is None:
+                cur = {"key": key, "f0": int(f[k]), "f1": int(f[k]),
+                       "xs": [], "ys": [], "n": 0}
+            cur["f1"] = int(f[k])
+            cur["xs"].append(float(x[f[k]]))
+            cur["ys"].append(float(y[f[k]]))
+            cur["n"] += 1
+        if cur is not None:
+            runs.append(cur)
+    keep = [r for r in runs
+            if r["n"] >= MIN_SAMPLES and (r["f1"] - r["f0"] + 1) >= MIN_SAMPLES]
+    return keep
+
+
 def detect(meas: dict, clear: np.ndarray) -> dict:
     """x-y-t 体積 → 柱 → 種類。返り値は検出事象の列と中間結果。"""
-    vol, idvol = build_volume(meas)
+    vol, _ = build_volume(meas)
     dwell = dwell_volume(vol, meas["dt"])
     labels, ncomp = fs.ledger.vol_label.raw(dwell, connectivity=26)
+    runs = _runs_in_components(meas, labels)
 
-    nz = np.nonzero(labels)
-    if nz[0].size == 0:
-        return {"vol": vol, "dwell": dwell, "labels": labels, "n": 0, "events": [],
-                "stats": []}
-    comp = labels[nz]
-    who = idvol[nz]
-    key = comp.astype(np.int64) * 10000 + who.astype(np.int64)
-    uk, inv = np.unique(key, return_inverse=True)
-    tt, yy, xx = nz[0].astype(np.float64), nz[1].astype(np.float64), nz[2].astype(np.float64)
-    cnt = np.bincount(inv)
-    t0 = np.full(uk.size, np.inf)
-    t1 = np.zeros(uk.size)
-    np.minimum.at(t0, inv, tt)
-    np.maximum.at(t1, inv, tt)
-    cy = np.bincount(inv, weights=yy) / cnt
-    cx = np.bincount(inv, weights=xx) / cnt
-
-    # 成分ごとに、その中の ID の数と「いちばん早く始まった ID」を持つ。
-    comp_of = (uk // 10000).astype(int)
-    n_ids, first_t = {}, {}
-    for c, a in zip(comp_of, t0):
-        n_ids[c] = n_ids.get(c, 0) + 1
-        first_t[c] = min(first_t.get(c, np.inf), a)
+    n_ids, first_f = {}, {}
+    for r in runs:
+        c = r["key"][0]
+        n_ids.setdefault(c, set()).add(r["key"][1])
+        first_f[c] = min(first_f.get(c, np.inf), r["f0"])
 
     dt = meas["dt"]
     evs = []
-    for j in range(uk.size):
-        if (uk[j] % 10000) == 0:
-            continue
-        dur = (t1[j] - t0[j] + 1) * dt
-        if (t1[j] - t0[j] + 1) < MIN_SAMPLES:
-            continue
-        xm, ym = (cx[j] + 0.5) * CELL, (cy[j] + 0.5) * CELL
+    for r in runs:
+        c, rid = r["key"]
+        nid = len(n_ids[c])
+        dur = (r["f1"] - r["f0"] + 1) * dt
+        xm, ym = float(np.mean(r["xs"])), float(np.mean(r["ys"]))
         z = zone_of(xm, ym, clear)
-        c = comp_of[j]
         if z == "ws":
-            kind = "人待ち" if (n_ids[c] >= 2 and t0[j] > first_t[c] + 1e-9) else "作業"
+            kind = "人待ち" if (nid >= 2 and r["f0"] > first_f[c]) else "作業"
         elif z == "disp":
             kind = "システム待ち"
-        elif z == "narrow" and n_ids[c] >= 2 and dur < 6.0:
+        elif z == "narrow" and nid >= 2 and dur < LONG_WAIT:
             kind = "通路の干渉"
         elif z == "pick":
             kind = "補充待ち" if dur >= LONG_WAIT else "欠品"
         else:
             kind = "その他"
-        # 時刻は実時間へ(frames は 0 から step 刻みなので t = index * dt)
-        evs.append({"kind": kind, "t0": t0[j] * dt, "t1": t1[j] * dt,
+        evs.append({"kind": kind, "t0": r["f0"] * dt, "t1": r["f1"] * dt,
                     "x": xm, "y": ym, "zone": z, "dur": dur,
-                    "n_ids": n_ids[c], "comp": int(c), "vox": int(cnt[j])})
+                    "n_ids": nid, "comp": int(c)})
     return {"vol": vol, "dwell": dwell, "labels": labels, "n": int(ncomp),
-            "events": evs, "idvol": idvol}
+            "events": evs}
 
 
 def score(truth, detected) -> dict:
