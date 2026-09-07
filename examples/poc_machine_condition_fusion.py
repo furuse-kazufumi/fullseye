@@ -776,7 +776,7 @@ def sweep(name: str, values, kw_name: str, want, solo, probes, xlabel: str,
         te = [{**a, **b} for a, b in zip(BASE_TEST, collect(1, N_TEST, want=want, **kw))]
         cs = evaluate(solo, tr, te)
         cf = evaluate(ALL_FEATS, tr, te)
-        ds = [dprime(tr + te, f, a, b) for _, f, a, b in probes]
+        ds = [dprime(((tr, N_TRAIN), (te, N_TEST)), f, a, b) for _, f, a, b in probes]
         solo_r.append(per_mode_rate(cs))
         fuse_r.append(per_mode_rate(cf))
         fuse_all.append(np.trace(cf) / cf.sum())
