@@ -456,9 +456,10 @@ def _parse_profile(seq: np.ndarray, x_of: np.ndarray, theta: float, xw: float) -
         pts.insert(1, (30.0, x30))
     s = np.array([np.sin(np.deg2rad(a)) for a, _ in pts])
     x = np.array([xx for _, xx in pts])
-    # 外向きの符号を揃える(左側は x が減る向き)
+    # 外向きの符号を揃える(左側は x が減る向き)。原点は**壁の推定位置**
+    # (最初の列の中心にすると 0〜1 px 外へずれ、壁の傾き 72° では h が 5 % 縮む)。
     sgn = np.sign(x_of[-1] - x_of[0]) if x_of.size > 1 else 1.0
-    xo = sgn * (x - x_of[0]) + 0.0          # 壁を 0 とした外向き距離
+    xo = sgn * (x - xw)                     # 壁を 0 とした外向き距離
     A = np.c_[np.ones_like(s), -s]
     sol, *_ = np.linalg.lstsq(A, xo, rcond=None)
     xc, R = float(sol[0]), float(sol[1])
