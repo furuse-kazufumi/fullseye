@@ -250,31 +250,36 @@ def disc_edge(pol: np.ndarray) -> np.ndarray:
     nr = pol.shape[1]
     out = np.zeros(pol.shape[0])
     for i in range(pol.shape[0]):
-        sm = np.asarray(fs.smooth_funct_1d_gauss(pol[i], 1.5))
+        sm = np.asarray(fs.smooth_funct_1d_gauss(pol[i], 1.5 * OVS))
         dark = np.nonzero(sm < 0.5)[0]
         out[i] = dark[-1] + 0.5 if dark.size else nr - 1.0
     return np.median(np.stack([np.roll(out, s) for s in range(-4, 5)]), axis=0)
 
 
 def polar_stack(img, center, med=(1.0, 0.0)) -> dict:
-    """極座標展開(髄中心、1 px/列、1°/行)→ 外縁で半径を正規化 → θ 方向メディアン。
+    """極座標展開(髄中心、1/OVS px/列、1°/行)→ 外縁で半径を正規化 → θ 方向メディアン。
 
     ★角度一定の展開図では θ 窓の接線方向の長さが半径に比例して伸びる。偏心成長
     (境界の傾き dR/dθ = S·E·sin)があると外側の年輪ほど θ 窓の中でにじむので、
     先に**外縁の形で各行の半径を正規化**して年輪を縦にそろえてから θ 方向に
     まとめる(年輪年代学の「外形で正規化する」作法)。正規化後の位置は扇形ごとに
     外縁の半径で px へ戻す。
+
+    ★半径方向は OVS 倍に細かく取る。展開(双一次)と正規化(線形補間)で 2 回
+    リサンプルするので、1 px 刻みだと 4 px の年輪のコントラストが半分に落ちた
+    (最初そう書いて幅 4 px の年輪 19〜24 を丸ごと落とした)。
+    列の単位は 1/OVS px。``r_disc`` / ``r_bar`` も列単位。
     """
     cy, cx = float(center[0]), float(center[1])
     avail = int(min(cy, cx, N_PIX - 1 - cy, N_PIX - 1 - cx)) - 1
-    nr = avail + 1
+    nr = OVS * avail + 1
     pol = np.asarray(fs.ledger.polar_unwrap(img, center=(cy, cx), r_in=0.0,
-                                            r_out=float(nr - 1), nr=nr, ntheta=NTHETA),
+                                            r_out=float(avail), nr=nr, ntheta=NTHETA),
                      np.float64)
     pol = np.clip(pol, 0.0, 1.0)
     r_disc = disc_edge(pol)
     r_bar = float(np.median(r_disc))
-    nr2 = int(np.ceil(r_bar)) + 4
+    nr2 = int(np.ceil(r_bar)) + 4 * OVS
     grid = np.arange(nr2, dtype=np.float64)
     norm = np.empty((NTHETA, nr2))
     cols = np.arange(nr, dtype=np.float64)
