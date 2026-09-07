@@ -493,14 +493,14 @@ def section_scene(rig: Rig) -> None:
     x0, x1 = blocker["cx"] - blocker["lx"] / 2, blocker["cx"] + blocker["lx"] / 2
     yb = blocker["ly"] / 2
     print("\n  ★陰の縁は幾何で先に出せる。遮蔽物 x=%.1f-%.1f m / |y|<%.1f m の"
-          "影を x=%.1f m の断面で予測すると:" % (x0, x1, yb, OBSTACLES[1]["cx"]))
+          "影を x=%.2f m の断面で予測すると:" % (x0, x1, yb, xq))
     xq = OBSTACLES[1]["cx"] - OBSTACLES[1]["lx"] / 2
     for nm, C in (("LiDAR(左)", LIDAR["C"]), ("カメラ(右)", CAM["C"])):
         edges = []
         for sy in (-yb, yb):
             for sx in (x0, x1):
                 edges.append(C[1] + (sy - C[1]) * xq / sx)
-        print("     %-12s 影 y = %+.2f 〜 %+.2f m" % (nm, min(edges), max(edges)))
+            print("     %-12s 影 y = %+.2f 〜 %+.2f m" % (nm, min(edges), max(edges)))
     for o in OBSTACLES[1:3]:
         print("     「%s」は y = %+.2f 〜 %+.2f m —— %s"
               % (o["name"], o["cy"] - o["ly"] / 2, o["cy"] + o["ly"] / 2,
