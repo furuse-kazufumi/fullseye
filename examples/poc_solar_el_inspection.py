@@ -207,7 +207,7 @@ def make_scene(seed: int = SEED, grain_c: float = GRAIN_C, crack_w: float = CRAC
     img = np.clip(img, 0.0, 1.0)
     return {"img": img, "cell": cell, "grid": grid, "iso": iso,
             "crack_lines": crack_lines, "fi_bands": fi_bands,
-            "crack_len": [c[2] for c in CRACKS] if defects else [],
+            "crack_len": [c[2] for c in cracks] if defects else [],
             "iso_rate": 100.0 * iso.mean()}
 
 
