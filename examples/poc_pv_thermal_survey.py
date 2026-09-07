@@ -320,22 +320,37 @@ def layout() -> dict:
     panel = mod_id >= 0
     sub = np.where(panel, cell_r // 2, -1)          # 60 セル = 20 セル x 3 ストリング
 
-    # --- 影(支柱)—— 左列を斜めに横切る帯 ---------------------------------- #
-    ang = np.radians(SHADE_DEG)
-    dist = np.abs(xx * np.cos(ang) + yy * np.sin(ang) - SHADE_C)
-    shade = (dist < 0.5 * SHADE_W) & panel & (mod_id % NMX == 0)
-    # --- 雑草の影 —— モジュール 2 の上に小さい円 ------------------------------ #
-    mx2, my2 = 2 % NMX, 2 // NMX
-    bx = MARGIN + mx2 * (MOD_W + GAP_X)
-    by = MARGIN + my2 * (MOD_H + GAP_Y)
-    for gx, gr in GRASS:
-        shade |= ((xx - (bx + gx)) ** 2 + (yy - (by + 0.55)) ** 2 < gr ** 2) & panel
+    def origin(m):
+        return (MARGIN + (m % NMX) * (MOD_W + GAP_X),
+                MARGIN + (m // NMX) * (MOD_H + GAP_Y))
 
-    # --- 影に食われたストリング(発電が止まる)------------------------------- #
-    kill_shade = np.zeros_like(panel)
-    for m in np.unique(mod_id[shade]):
-        for s in np.unique(sub[shade & (mod_id == m)]):
-            kill_shade |= (mod_id == m) & (sub == s)
+    # --- 影 1: 支柱 —— モジュールを斜めに横切る帯(全ストリングを止める)------ #
+    ang = np.radians(POLE_DEG)
+    bx, by = origin(MOD_POLE)
+    c = (bx + 0.5 * MOD_W) * np.cos(ang) + (by + 0.5 * MOD_H) * np.sin(ang)
+    dist = np.abs(xx * np.cos(ang) + yy * np.sin(ang) - c)
+    shade_pole = (dist < 0.5 * POLE_W) & (mod_id == MOD_POLE)
+    # --- 影 2: 列間影 —— 前列の陰が下辺に乗る(1 ストリングだけ止める)-------- #
+    bx, by = origin(MOD_ROWSH)
+    shade_row = (mod_id == MOD_ROWSH) & (yy > by + MOD_H - ROWSH_H)
+    # --- 影 3: 雑草 —— 小さい円(小さい原因で 20 セルが止まる)---------------- #
+    bx, by = origin(MOD_GRASS)
+    shade_grass = np.zeros_like(panel)
+    for gx, gr in GRASS:
+        shade_grass |= (((xx - (bx + gx)) ** 2 + (yy - (by + 0.55)) ** 2 < gr ** 2)
+                        & (mod_id == MOD_GRASS))
+    shade = shade_pole | shade_row | shade_grass
+
+    # --- 影に食われたストリング(そのストリングの発電が止まる)---------------- #
+    def killed(sh):
+        out = np.zeros_like(panel)
+        for m in np.unique(mod_id[sh]):
+            for s in np.unique(sub[sh & (mod_id == m)]):
+                out |= (mod_id == m) & (sub == s)
+        return out
+
+    kill_pole, kill_row = killed(shade_pole), killed(shade_row)
+    kill_shade = kill_pole | kill_row | killed(shade_grass)
 
     # --- 汚れの帯(下段モジュールの下辺)------------------------------------- #
     y_bot = MARGIN + SOIL_ROW * (MOD_H + GAP_Y) + MOD_H
