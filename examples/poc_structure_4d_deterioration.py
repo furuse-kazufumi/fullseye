@@ -1163,17 +1163,18 @@ def section_prism_and_crack(sc: dict) -> dict:
     print("=" * 78)
     print("  (a) 押し出し形状の縮退 —— 桁は断面を x に押し出した形なので、"
           "平面の法線は x 成分をほとんど持たない。")
-    bp, bn, bi, bphi = bearing_cores()
     print("      予測: 点-面 ICP の x の分散は 1/Σn_x²。桁の n_x はキャンバー勾配"
           " c'(x) そのものなので\n        Σn_x² ≈ N·mean(c'²) = N·(4C/L)²/3 —— "
           "**x の決まり方はキャンバー C に反比例する**。")
-    print("      (円柱の支承は n_x = cosφ で mean n_x² = %.3f と桁の %.1e より"
+    print("      (円柱の支承は n_x = cosφ で mean n_x² = 0.5 と桁の %.1e より"
           "桁違いに大きいが、面積が %.1f %% しかない)"
-          % (float(np.mean(bn[:, 0] ** 2)), float(np.mean(CORES["n"][:, 0] ** 2)),
+          % (float(np.mean(CORES["n"][:, 0] ** 2)),
              100 * BEARING_AREA / (GIRDER_AREA + BEARING_AREA)))
+    ceil_x = abs(POSE_ERR[2][3]) * 1e3
 
-    print("\n      キャンバー[mm]  端の勾配 c'   予測の相対精度 1/c'  "
-          "ICP 後の残差 x[mm]  y,z[mm]")
+    print("\n      キャンバー[mm]  端の勾配 c'   予測 x 残差[mm]  実測 x[mm]  y,z[mm]")
+    print("      (予測 = 最小のキャンバーでの実測を 1/c' で伸ばし、"
+          "**仕込んだ x 誤差 %.1f mm で頭打ち**にしたもの)" % ceil_x)
     rows, cam_l, dx_l = [], [], []
     base_slope = 4.0 * CAMBER / LSPAN
     for cval in (CAMBER, 0.010, 0.002):
