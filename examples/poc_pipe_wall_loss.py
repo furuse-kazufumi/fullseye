@@ -943,6 +943,15 @@ def section_tool_gaps() -> None:
           "入れた管の\n      SDF は自前(numpy)で組んだ。"
           "sdf_subtract / sdf_to_occupancy は使えた。")
 
+    z = np.zeros((32, 32))
+    z[10:22, 10:22] = 1.0
+    empty = np.asarray(_L.polar_unwrap(z, r_in=40.0, r_out=60.0))
+    assert float(empty.max()) == 0.0
+    print("  (f) polar_unwrap / cylinder_unwrap の r_in・r_out は **画素単位**。"
+          "mm のまま\n      渡すと視野の外を読んで**例外なしに全部 0** が返る"
+          "(実測: 最大値 %.1f)。\n      この PoC はそれで一度真っ黒な図を出した"
+          " —— 空の出力を弾く門が要る。" % float(empty.max()))
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
