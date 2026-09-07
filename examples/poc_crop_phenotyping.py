@@ -112,24 +112,32 @@ def make_canopy(n_leaf=N_LEAF, row=ROW, in_row=IN_ROW, beta_deg=BETA_DEG,
     py = py.ravel() + rng.normal(0.0, 0.02, py.size)
     n_plant = px.size
 
+    # ★乱数は**必ず (n_plant, NESTED_MAX) の形で先に引く**。葉数ごとに引く数を
+    #   変えると乱数列がずれ、n_leaf を 1 増やしただけで別の群落になる
+    #   (2026-09-07: 植被率が葉数に対して単調でなくなり、崖が測れなかった)。
+    shp = (n_plant, NESTED_MAX)
+    phi0 = rng.uniform(0.0, 2.0 * np.pi, n_plant)
+    j_ang = rng.normal(0.0, np.radians(12.0), shp)
+    u_ang = rng.uniform(0.0, 2.0 * np.pi, shp)
+    j_beta = rng.normal(0.0, np.radians(5.0), shp)
+    f_kap = rng.uniform(0.88, 1.12, shp)
+    f_len = rng.uniform(0.85, 1.15, shp)
+    f_wid = rng.uniform(0.85, 1.15, shp)
+
     base, phi, beta, kap, ll, ww, plant = [], [], [], [], [], [], []
     for p in range(n_plant):
-        phi0 = rng.uniform(0.0, 2.0 * np.pi)
         for k in range(n_leaf):
             frac = (k + 0.5) / NESTED_MAX
             z0 = LEAF_Z0 + frac * (LEAF_Z1 - LEAF_Z0)
-            if distichous:
-                ang = phi0 + k * np.pi + rng.normal(0.0, np.radians(12.0))
-            else:
-                ang = rng.uniform(0.0, 2.0 * np.pi)
+            ang = (phi0[p] + k * np.pi + j_ang[p, k]) if distichous else u_ang[p, k]
             base.append((px[p], py[p], z0))
             phi.append(ang)
             # 上位葉ほど立つ(実測される垂直勾配)。風はここを一律に寝かせる。
             beta.append(np.radians(beta_deg - bend_deg + 6.0 * (frac - 0.5))
-                        + rng.normal(0.0, np.radians(5.0)))
-            kap.append(kappa * rng.uniform(0.88, 1.12))
-            ll.append(leaf_len * rng.uniform(0.85, 1.15))
-            ww.append(leaf_w * rng.uniform(0.85, 1.15))
+                        + j_beta[p, k])
+            kap.append(kappa * f_kap[p, k])
+            ll.append(leaf_len * f_len[p, k])
+            ww.append(leaf_w * f_wid[p, k])
             plant.append(p)
 
     stem_h = LEAF_Z0 + ((n_leaf - 0.5) / NESTED_MAX) * (LEAF_Z1 - LEAF_Z0) + 0.12
