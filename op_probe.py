@@ -300,11 +300,6 @@ def _unit_normals_probe(m: int = 160) -> np.ndarray:
                      np.cos(phi)], axis=1)
 
 
-def _indices_probe(n: int = 24) -> np.ndarray:
-    """非負整数の添字(``indices``)。``signal`` の連続値では拒否される。"""
-    return np.arange(0, 4 * n, 4, dtype=np.float64)
-
-
 def _dichromatic_probe():
     """二色性レンダ(単一材質 + ハイライト)。``specular_*` の契約。"""
     return _generators()["rgbimage"](np.random.default_rng(20260908))
@@ -321,8 +316,6 @@ OP_PROBE_OVERRIDE = {
         "純四元数(実部 0)だけを受ける。乱数の qimage は実部が残るので拒否される"),
     "tb_normals_to_egi": (_unit_normals_probe,
         "normals は points に畳まれている。位置の雲を渡すと原点が零ベクトルになり拒否される"),
-    "tb_indices_to_labels": (_indices_probe,
-        "indices は signal に畳まれている。連続値は整数でないので正しく拒否される"),
     "tb_specular_diffuse_split": (_dichromatic_probe,
         "単一材質の面(照明直交成分の階数 1)を要求する。乱数の色画像は階数が立つ"),
     "tb_specular_coefficient_map": (_dichromatic_probe, "同上(単一材質を要求する)"),

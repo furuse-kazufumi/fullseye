@@ -4,8 +4,8 @@
   "name": "scene",
   "caption": "",
   "shape": [
-   223,
-   350,
+   483,
+   990,
    3
   ]
  },
@@ -58,8 +58,8 @@
   "name": "heightmap_frames",
   "caption": "",
   "shape": [
-   353,
-   1000,
+   669,
+   1960,
    3
   ]
  },

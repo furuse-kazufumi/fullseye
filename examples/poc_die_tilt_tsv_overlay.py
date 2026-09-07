@@ -62,6 +62,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+from scipy import ndimage
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
@@ -81,6 +82,7 @@ GAP_UM = 20.0           # 接合層の厚み [µm]。★傾き 2° で格子の�
 DIE_HALF_UM = 210.0     # ダイの半幅 [µm]
 MU_SI, MU_CU = 0.30, 1.00   # 減弱値(Si / Cu)
 NOISE = 0.015           # CT の雑音 1σ(減弱値)
+PSF_SIG_VOX = 0.9       # CT の点像分布関数 σ [voxel]
 CU_THR = 0.65           # Cu を切るしきい値(Si と Cu のちょうど中間 = 幾何境界)
 
 DX_UM, DY_UM = 0.800, -0.450    # 真の位置ずれ(並進)
@@ -167,7 +169,7 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
     #   2.5 µm のボクセルで刻むと縁が帯域制限されず、スライスごとの重心に
     #   周期的な標本化誤差が乗る。中心が高さとともに 1 ボクセルぶん動くので、
     #   その誤差が**傾きの系統誤差**に化ける(実測 1.200° -> 1.273°、+6 %)。
-    #   ガウス PSF(σ = %.1f ボクセル)を掛けると帯域制限されて消える。
+    #   ガウス PSF を掛けると帯域制限されて消える。
     vol = ndimage.gaussian_filter(vol, PSF_SIG_VOX, mode="nearest")
     vol += (NOISE * rng.standard_normal(vol.shape)).astype(np.float32)
 

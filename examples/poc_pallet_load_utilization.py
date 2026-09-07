@@ -195,6 +195,11 @@ def _section_raster(boxes, y: float, nz: int = 210, nx: int = 320,
     return img[::-1]
 
 
+def _up(a, k: int):
+    """最近傍で k 倍に引き伸ばす(高さマップは 1 セル 10 mm で細かすぎる)。"""
+    return np.repeat(np.repeat(np.asarray(a), k, axis=0), k, axis=1)
+
+
 def section_scene(lb: list) -> dict:
     print("\n" + "=" * 78)
     print("1) 場面 —— 真上からの走査で見えるのは天端だけ")
@@ -207,8 +212,8 @@ def section_scene(lb: list) -> dict:
               % (name, vt / 1e9, vs / 1e9, (vs - vt) / 1e9,
                  100 * (vs - vt) / vs, "%"))
 
-    ha = height_map(scan(LOAD_A))["h"]
-    hb = height_map(scan(lb))["h"]
+    ha = _up(height_map(scan(LOAD_A))["h"], 3)
+    hb = _up(height_map(scan(lb))["h"], 3)
     figs.save_grid("scene", [ha, hb],
                    ["荷 A の高さマップ [mm]", "荷 B の高さマップ [mm]"],
                    title="真上から測った高さマップ(セル %.0f mm)" % GC, ncols=2)
@@ -412,7 +417,7 @@ def section_gsd_slots() -> dict:
 
     frames, caps = [], []
     for gc in (5.0, 40.0, 160.0):
-        frames.append(height_map(pts, gc)["h"])
+        frames.append(_up(height_map(pts, gc)["h"], max(1, int(gc / 2.5))))
         caps.append("g = %.0f mm" % gc)
     figs.save_grid("heightmap_frames", frames, caps,
                    title="セルを粗くすると隙間が埋まっていく(荷 A)", ncols=3)

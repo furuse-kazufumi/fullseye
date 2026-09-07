@@ -646,7 +646,9 @@ def section_cliff(noise_out: dict) -> dict:
                     render(False, noise=nz, contrast=0.35, seed=3000),
                     render(False, noise=nz, contrast=0.12, seed=3000)],
                    ["CNR %.1f" % cnrs[0], "CNR %.1f" % cnrs[3], "CNR %.1f" % cnrs[-1]],
-                   title="崖の手前・上・向こう(同じ場面、コントラストだけ)", ncols=3)
+                   title="崖の手前・上・向こう", ncols=3,
+                   caption="同じ場面・同じ雑音で、コントラストだけを落とした。"
+                           "右端では境界の本数が数えられない。")
     return {"cnr": cnrs, "sd": sds, "lost": lost, "c_pred": c_pred,
             "cnr_pred": noise_out["h_rms"] * c_pred / nz,
             "cnr_break": (noise_out["h_rms"] * first_break / nz
