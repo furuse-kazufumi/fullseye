@@ -1307,12 +1307,12 @@ def main() -> int:
           "偽正味は %+.1f m3 —— 決まらない成分は測定にも現れない。"
           % (sy["plane"]["純平面・窓で切る"][1],
              sy["plane"]["純平面・窓で切る"][3]))
-    print("  * 遮蔽 %.0f %%: 分類の取りこぼし %.2f %% で LoD(std)は %.3f -> %.3f m に"
-          "飛ぶが、MAD なら %.3f -> %.3f m。掘削は 平均 DEM %.1f -> 中央値 DEM %.1f m3"
-          "(真値 %.1f)、分類しなければ %.1f m3。"
+    print("  * 遮蔽 %.0f %%: 取りこぼし %.2f %% で LoD(std)が %.3f -> %.3f m に飛ぶ"
+          "(MAD なら %.3f -> %.3f m)。掘削は 平均 DEM %.1f / 中央値 %.1f / "
+          "3x3 窓の分類 %.1f m3(真値 %.1f)—— ★直るのは代表値でなく分類の窓。"
           % (oc["occ"][-1], oc["leak"][-1], oc["lstd"][0], oc["lstd"][-1],
              oc["lmad"][0], oc["lmad"][-1], oc["adapt"][-1], oc["median"][-1],
-             truth(lod=oc["lmad"][-1])["ero"], oc["raw"][-1]))
+             oc["wide"][-1], truth(lod=oc["lmad"][-1])["ero"]))
     print("  * 法線の符号は道具では決まらない(estimate_normals の上向きは %.1f %%)。"
           % (100 * nr["up_raw"]))
 
