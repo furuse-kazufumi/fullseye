@@ -651,43 +651,61 @@ def section_controls(S: dict, Z: dict) -> dict:
 
     def run(key, label, p0, n, extra=""):
         r = restore_symmetric(surv, p0, n, tau)
-        s = score_restoration(gt, r["restored"], pts, r["fill"], tau)
+        s = score_restoration(gt, r["restored"], r["fill"])
         a, o = plane_error(p0, n)
         rows.append([label, "%.3f" % a, "%.3f" % o, "%.2f" % s["rms"],
                      "%.2f" % s["max"], "%.1f" % (100 * s["spur_frac"])])
-        print("  %-26s 角度 %6.3f deg / 位置 %6.3f mm -> RMS %6.2f mm / 最大 %6.2f %s"
-              % (label, a, o, s["rms"], s["max"], extra))
+        print("  %-30s 角度 %7.3f deg / 位置 %6.3f mm -> RMS %6.2f mm / 最大 %6.2f"
+              " / 偽の面 %5.1f %% %s"
+              % (label, a, o, s["rms"], s["max"], 100 * s["spur_frac"], extra))
         res[key] = {"ang": a, "off": o, "rms": s["rms"], "max": s["max"],
                     "spur": s["spur_frac"], "p0": p0, "n": n}
 
+    # まず PCA の候補そのものを見る —— 欠損は面をずらす前に「軸を取り違えさせる」
+    e_full_auto = estimate_plane(pts, refine="none")
+    e_dmg_auto = estimate_plane(surv, refine="none")
+    print("  PCA 候補のスコア(小さいほど対称。detect_reflection_symmetry の all_scores):")
+    print("    完全形 : %s -> 選ばれた軸は x から %.2f deg"
+          % (" / ".join("%.2f" % v for v in e_full_auto["all_scores"]),
+             e_full_auto["auto_axis_deg"]))
+    print("    欠損後 : %s -> 選ばれた軸は x から %.2f deg"
+          % (" / ".join("%.2f" % v for v in e_dmg_auto["all_scores"]),
+             e_dmg_auto["auto_axis_deg"]))
+    print("  ★★ 欠損は対称面を**少しずらす**のではなく、"
+          "候補の順位を入れ替えて**別の軸へ飛ばす**。")
+
     run("truth", "(a) 真値の面", TRUE_P0, TRUE_N)
 
-    e_full = estimate_plane(pts, refine="nm")            # 完全形から
-    run("full", "(b) 完全形から推定", e_full["p0"], e_full["n"])
+    e_full = estimate_plane(pts, refine="nm")                    # 完全形から(自動)
+    run("full", "(b) 完全形から推定(自動)", e_full["p0"], e_full["n"])
 
-    e_dmg = estimate_plane(surv, refine="nm")            # 欠損したまま
-    run("damaged", "(c) 欠損のまま推定", e_dmg["p0"], e_dmg["n"])
+    e_dmg = estimate_plane(surv, refine="nm")                    # 欠損したまま(自動)
+    run("damaged_auto", "(c) 欠損のまま推定(自動)", e_dmg["p0"], e_dmg["n"])
 
-    p0t, nt, nkeep = trim_symmetric(surv, e_dmg["p0"], e_dmg["n"], tau)
-    run("trim", "(d) 対称トリミング後", p0t, nt, "(残した点 %d)" % nkeep)
+    e_hint = estimate_plane(surv, refine="nm", axis_hint=True)   # 軸は人が選ぶ
+    run("damaged", "(c') 欠損のまま・軸は人が選ぶ", e_hint["p0"], e_hint["n"])
 
-    e_icp = estimate_plane(surv, refine="icp")
-    run("icp", "(e) 鏡映+ICP+中点面", e_icp["p0"], e_icp["n"])
+    p0t, nt, nkeep = trim_symmetric(surv, e_hint["p0"], e_hint["n"], tau)
+    run("trim", "(d) (c')+対称トリミング", p0t, nt, "(残した点 %d)" % nkeep)
 
-    e_coarse = estimate_plane(surv, refine="none")
-    run("coarse", "(f) 粗(PCA 3 候補)のみ", e_coarse["p0"], e_coarse["n"])
+    e_icp = estimate_plane(surv, refine="icp", axis_hint=True)
+    run("icp", "(e) (c')の軸 + 鏡映+ICP+中点面", e_icp["p0"], e_icp["n"])
 
-    print("\n  欠損が加える歪み(c - b): 角度 %+.3f deg / 位置 %+.3f mm"
+    print("\n  推定器そのものの偏り(b): 角度 %.3f deg / 位置 %.3f mm"
+          "(完全形でもゼロにはならない)" % (res["full"]["ang"], res["full"]["off"]))
+    print("  欠損が加える歪み(c' - b): 角度 %+.3f deg / 位置 %+.3f mm"
           % (res["damaged"]["ang"] - res["full"]["ang"],
              res["damaged"]["off"] - res["full"]["off"]))
-    print("  推定器そのものの偏り(b): 角度 %.3f deg / 位置 %.3f mm"
-          "(完全形でもゼロにはならない)" % (res["full"]["ang"], res["full"]["off"]))
-    print("  粗い PCA の候補間 margin = %.4f(小さいほど「どの軸でも同じ」)"
-          % e_coarse["margin"])
-    print("  ★ 欠損のまま推定すると重心が動くので **位置ずれ**が主因。"
-          "対称トリミングで %.2f -> %.2f mm、RMS は %.2f -> %.2f mm。"
-          % (res["damaged"]["off"], res["trim"]["off"],
+    print("  軸を取り違えた場合(c)の代償: 復元 RMS %.2f -> %.2f mm"
+          % (res["damaged"]["rms"], res["damaged_auto"]["rms"]))
+    print("  ★ 欠損は重心を x = %+.2f mm 動かすので、歪みの主因は**位置**。"
+          "対称トリミングで %.3f -> %.3f mm、RMS は %.2f -> %.2f mm。"
+          % (surv[:, 0].mean(), res["damaged"]["off"], res["trim"]["off"],
              res["damaged"]["rms"], res["trim"]["rms"]))
+    print("  ★ ただし (c) の復元 RMS %.2f mm は「何もしない %.2f mm」より小さい ——"
+          % (res["damaged_auto"]["rms"], Z["none_rms"]))
+    print("    軸を 90 度取り違えても**もっともらしい面**が生えるので、"
+          "残差だけでは気づけない。")
 
     if figs.enabled():
         figs.save_table(

@@ -81,3 +81,108 @@ print(f"union interior={n_union}  solid interior={n_solid}  "
       f"carved={n_union - n_solid}  zero-crossing edges(x)={sign_flips}")
 assert sign_flips > 0, "ゼロ等値面(形状の表面)が存在する"
 print("OK: (球∪箱−小球) の SDF 符号が CSG 集合論理と厳密一致し、表面も非空")
+
+# =========================================================================== #
+# 追加のプリミティブ(2026-09-07): 半空間・円柱・トーラス・カプセル            #
+#                                                                             #
+# 球と直方体だけでは、機械部品の**円筒穴・面取り・フィレット**が組めなかった   #
+# (DFM / CAD 差分の PoC が面ごとの解析式を自前で書いていた)。ここでは 4 つの  #
+# プリミティブを **閉形式の真値と突き合わせて**検証する。                      #
+# =========================================================================== #
+print()
+print("=== 追加プリミティブ: 閉形式との突き合わせ ===")
+
+# --- 1) 代表点で「距離そのもの」を手計算と比べる ------------------------------ #
+# 厳密な SDF なので、値は最近表面までの符号つき距離に一致しなければならない。
+cases = [
+    # (名前, 呼び出し, 点, 期待値, 説明)
+    ("plane_sdf", lambda p: sdf_ops.plane_sdf(p, [0, 0, 0], [0, 0, 1]),
+     [1.0, 2.0, 3.0], 3.0, "法線側に 3.0 = 平面までの距離"),
+    ("plane_sdf", lambda p: sdf_ops.plane_sdf(p, [0, 0, 0], [0, 0, 5]),
+     [0.0, 0.0, -2.0], -2.0, "法線の長さは効かない(向きだけ)"),
+    ("cylinder_sdf", lambda p: sdf_ops.cylinder_sdf(p, [0, 0, 0], [0, 0, 1], 2.0, 6.0),
+     [5.0, 0.0, 0.0], 3.0, "側面の外 = 半径方向の距離 5-2"),
+    ("cylinder_sdf", lambda p: sdf_ops.cylinder_sdf(p, [0, 0, 0], [0, 0, 1], 2.0, 6.0),
+     [0.0, 0.0, 4.0], 1.0, "蓋の外 = 軸方向の距離 4-3"),
+    ("cylinder_sdf", lambda p: sdf_ops.cylinder_sdf(p, [0, 0, 0], [0, 0, 1], 2.0, 6.0),
+     [5.0, 0.0, 7.0], 5.0, "角(縁)の外 = 斜辺 hypot(3,4)"),
+    ("cylinder_sdf", lambda p: sdf_ops.cylinder_sdf(p, [0, 0, 0], [0, 0, 1], 2.0, 6.0),
+     [0.0, 0.0, 0.0], -2.0, "軸上 = 最近面(側面)まで -2"),
+    ("torus_sdf", lambda p: sdf_ops.torus_sdf(p, [0, 0, 0], [0, 0, 1], 3.0, 1.0),
+     [3.0, 0.0, 0.0], -1.0, "芯線上 = 管の半径ぶん内側"),
+    ("torus_sdf", lambda p: sdf_ops.torus_sdf(p, [0, 0, 0], [0, 0, 1], 3.0, 1.0),
+     [0.0, 0.0, 0.0], 2.0, "穴の中心 = 芯線まで 3、管の縁まで 2"),
+    ("capsule_sdf", lambda p: sdf_ops.capsule_sdf(p, [-2, 0, 0], [2, 0, 0], 1.0),
+     [0.0, 3.0, 0.0], 2.0, "芯線の真横 = 3-1"),
+    ("capsule_sdf", lambda p: sdf_ops.capsule_sdf(p, [-2, 0, 0], [2, 0, 0], 1.0),
+     [6.0, 0.0, 0.0], 3.0, "端の外は球状 = 端点まで 4、-1"),
+]
+for name, fn, point, want, why in cases:
+    got = float(fn(np.array([point], float))[0])
+    print(f"  {name:13s} p={point}  sdf={got:+.4f}  期待={want:+.4f}  # {why}")
+    assert abs(got - want) < 1e-9, (name, point, got, want)
+
+# --- 2) 厳密性の検定: 勾配のノルムが 1 ---------------------------------------- #
+# 真の距離場は「1 m 進めば距離が 1 m 変わる」ので |∇sdf| = 1。角や芯線のような
+# 微分不能点の周りだけは差分が鈍るため、中央値で見る(全域の平均ではない)。
+gg, ext2 = sdf_ops.grid_coords(((-6, 6), (-6, 6), (-6, 6)), 48)
+h = (ext2[1] - ext2[0]) / gg.shape[0]
+fields = {
+    "plane": sdf_ops.plane_sdf(gg, [0, 0, 0], [0, 0, 1]),
+    "cylinder": sdf_ops.cylinder_sdf(gg, [0, 0, 0], [0, 0, 1], 2.0, 6.0),
+    "torus": sdf_ops.torus_sdf(gg, [0, 0, 0], [0, 0, 1], 3.0, 1.0),
+    "capsule": sdf_ops.capsule_sdf(gg, [-2, 0, 0], [2, 0, 0], 1.0),
+}
+for name, f in fields.items():
+    gr = np.gradient(f, h, h, h)
+    norm = np.sqrt(sum(x ** 2 for x in gr))
+    med = float(np.median(norm))
+    print(f"  |∇{name:9s}| 中央値 = {med:.4f}  (厳密なら 1)")
+    assert abs(med - 1.0) < 0.01, (name, med)
+
+# --- 3) 退化と同一性 ---------------------------------------------------------- #
+# カプセルの両端を同じ点にすると球に一致する(近似ではなく厳密に)。
+same = sdf_ops.capsule_sdf(gg, [0, 0, 0], [0, 0, 0], 2.0)
+assert np.allclose(same, sdf_ops.sphere_sdf(gg, [0, 0, 0], 2.0)), "a==b は球に退化する"
+print("  capsule(a==b) == sphere: 厳密一致")
+
+# 半空間 6 枚の交差は、占有と内側の値では box_sdf に一致するが、**外側は角の近くで
+# 過小評価する**(max による交差の標準的な性質)。ここを黙って「一致」と書かない。
+planes = [sdf_ops.plane_sdf(gg, [2, 0, 0], [1, 0, 0]), sdf_ops.plane_sdf(gg, [-2, 0, 0], [-1, 0, 0]),
+          sdf_ops.plane_sdf(gg, [0, 2, 0], [0, 1, 0]), sdf_ops.plane_sdf(gg, [0, -2, 0], [0, -1, 0]),
+          sdf_ops.plane_sdf(gg, [0, 0, 2], [0, 0, 1]), sdf_ops.plane_sdf(gg, [0, 0, -2], [0, 0, -1])]
+inter = planes[0]
+for q in planes[1:]:
+    inter = sdf_ops.sdf_intersect(inter, q)
+boxf = sdf_ops.box_sdf(gg, [0, 0, 0], [2, 2, 2])
+assert np.array_equal(inter <= 0, boxf <= 0), "占有は一致する"
+assert np.allclose(inter[boxf < 0], boxf[boxf < 0]), "内側の値も一致する"
+gap = float(np.max(np.abs(inter - boxf)[boxf > 0]))
+print(f"  半空間 6 枚 vs box_sdf: 占有と内側は一致、外側は最大 {gap:.3f} 過小評価")
+assert gap > 0.5, "角の外では必ずずれる(ずれないなら検定が効いていない)"
+
+# --- 4) 実務の形: フランジ(円板)+ 貫通穴 4 つ + 内隅フィレット --------------- #
+# 体積を閉形式で予測して、ボクセル数と突き合わせる(格子の刻みぶんの誤差は許す)。
+gf, extf = sdf_ops.grid_coords(((-6, 6), (-6, 6), (-3, 3)), 96)
+hv = (extf[1] - extf[0]) / gf.shape[0]
+disc = sdf_ops.cylinder_sdf(gf, [0, 0, 0], [0, 0, 1], 5.0, 2.0)      # 円板 R=5, t=2
+part = disc
+for ang in (0.0, 90.0, 180.0, 270.0):                                # ボルト穴 4 つ
+    cx = 3.5 * np.cos(np.radians(ang))
+    cy = 3.5 * np.sin(np.radians(ang))
+    hole = sdf_ops.cylinder_sdf(gf, [cx, cy, 0], [0, 0, 1], 0.6, 10.0)
+    part = sdf_ops.sdf_subtract(part, hole)
+vol_voxels = float((part < 0).sum()) * hv ** 3
+vol_closed = np.pi * 5.0 ** 2 * 2.0 - 4 * np.pi * 0.6 ** 2 * 2.0      # 円板 - 穴 4 本
+err = abs(vol_voxels - vol_closed) / vol_closed * 100.0
+print(f"  フランジの体積: ボクセル {vol_voxels:.2f} / 閉形式 {vol_closed:.2f}  誤差 {err:.2f} %")
+assert err < 1.0, (vol_voxels, vol_closed)
+
+# トーラスでフィレットを削る = 内隅の丸み。半径が設計値どおりに出るかを見る。
+fillet = sdf_ops.torus_sdf(gf, [0, 0, 1.0], [0, 0, 1], 5.0, 1.0)      # 縁に沿った管
+filleted = sdf_ops.sdf_subtract(part, fillet)
+carved = int((part < 0).sum() - (filleted < 0).sum())
+print(f"  縁のフィレットで削れたボクセル = {carved}(トーラス 1 周ぶん)")
+assert carved > 0, "フィレットが何も削っていない"
+
+print("OK: 半空間・円柱・トーラス・カプセルが閉形式の真値と一致した")
