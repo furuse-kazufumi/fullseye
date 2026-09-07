@@ -655,12 +655,13 @@ def section_grain_sweep() -> dict:
     print("=" * 78)
     sig = 1.0
     step_h = 1.0 / (sig ** 2 * np.sqrt(2 * np.pi * np.e))          # 段差 1 の 2 階微分の最大
-    line_h = CRACK_W * (1 - CRACK_T) / (np.sqrt(2 * np.pi) * sig ** 3)  # 線の 2 階微分
-    c_pred = HYST_LOW * line_h / step_h
-    print("  予測: 暗い粒が T_FI=%.2f を割るのは c > %.2f、T_ISO=%.2f を割るのは c > %.2f。"
+    line_h = REF_W * (1 - REF_T) / (np.sqrt(2 * np.pi) * sig ** 3)  # 校正線の 2 階微分
+    c_pred = HYST_HIGH * line_h / step_h
+    print("  予測: 暗い粒が T_FI=%.2f を割るのは c > %.2f —— そこから粒が帯を飲み込んで"
+          "断線の一致が落ちる。T_ISO=%.2f を割るのは c > %.2f。"
           % (T_FI, 1 - T_FI, T_ISO, 1 - T_ISO))
-    print("        粒の段差(高さ c)がヒステリシス下限 %.2f に届くのは、σ=%.0f の"
-          "ヘッセ行列の比 %.3f/%.3f から c ≈ %.2f。" % (HYST_LOW, sig, step_h, line_h, c_pred))
+    print("        粒の段差(高さ c)がヒステリシス上限 %.2f に届くのは、σ=%.0f の"
+          "ヘッセ行列の比 %.3f/%.3f から c ≈ %.2f。" % (HYST_HIGH, sig, step_h, line_h, c_pred))
     print("\n     c     偽クラック [px]  偽の断線  一致した断線  面積率誤差 [pt]  粒→孤立 [%]")
     cs, false_len, fi_false, fi_ok, iso_err = [], [], [], [], []
     for c in (0.0, 0.06, 0.12, 0.18, 0.24, 0.32, 0.40, 0.50, 0.60):
