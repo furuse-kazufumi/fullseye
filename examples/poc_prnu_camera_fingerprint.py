@@ -168,6 +168,11 @@ def bank(k: np.ndarray, n: int, base_seed: int, **scene_kw) -> list:
 # --------------------------------------------------------------------------- #
 # 測る道具                                                                      #
 # --------------------------------------------------------------------------- #
+def big(im: np.ndarray, k: int = 3) -> np.ndarray:
+    """図のためだけの最近傍 k 倍(128 px のままだと説明文が入らない)。測定には使わない。"""
+    return np.kron(im, np.ones((k, k)))
+
+
 def corr(a: np.ndarray, b: np.ndarray) -> float:
     a = a - a.mean()
     b = b - b.mean()
