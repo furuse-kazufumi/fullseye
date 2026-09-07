@@ -208,21 +208,15 @@ METHODS = (("生の相関(整数ピーク)", lambda r: tau_raw(r, False)),
 # --------------------------------------------------------------------------- #
 # 崖を先に予測する —— Cramér-Rao 下界(Knapp-Carter 1976)                      #
 # --------------------------------------------------------------------------- #
-def crlb_sigma_x(rec: dict, smooth: int = 65) -> float:
-    """実測スペクトルから数値積分した CRLB(位置の標準偏差 [m])。
+def crlb_sigma_x(rec: dict) -> float:
+    """この場面の CRLB(位置の標準偏差 [m])を**閉形式のビンごと SNR から**出す。
 
-    ``var(τ) = [2 Σ_k (2π f_k)² ρ1 ρ2 / (1 + ρ1 + ρ2)]⁻¹``。
+    ``var(τ) = [2 Σ_k (2π f_k)² ρ1 ρ2 / (1 + ρ1 + ρ2)]⁻¹``
+    (Knapp-Carter 1976 の一般形。``γ²/(1-γ²) = ρ1ρ2/(1+ρ1+ρ2)``)。
     ρ_i は**ビンごとの** SNR なので、減衰で高域が痩せていることも
     帯域外に信号が無いことも自動的に入る(平坦帯域の閉形式より正直)。
     """
-    ker = np.ones(smooth) / smooth
-
-    def psd(x):
-        p = np.abs(np.fft.rfft(x)) ** 2
-        return np.convolve(p, ker, mode="same") + 1e-300
-
-    r1 = psd(rec["clean1"]) / psd(rec["n1"])
-    r2 = psd(rec["clean2"]) / psd(rec["n2"])
+    r1, r2 = rec["rho1"], rec["rho2"]
     fisher = 2.0 * np.sum((2.0 * np.pi * FREQS) ** 2 * r1 * r2 / (1.0 + r1 + r2))
     return 0.5 * C_TRUE * float(np.sqrt(1.0 / fisher))
 
