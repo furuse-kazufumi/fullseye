@@ -285,7 +285,7 @@ def detect_sectors(ps: dict, sigma: float = SIG_M, thr: float = THR) -> list[np.
     nr = fil.shape[1]
     out = []
     for s in range(N_SECT):
-        row_c = (s + 0.5) * SECT_ROWS - 0.5
+        row_c = float(sector_row(s))
         m = fs.ledger.gen_measure_rectangle2(row_c, (nr - 1) / 2.0, 0.0,
                                              (nr - 1) / 2.0, MEAS_ROWS, fil.shape)
         # ★threshold=0 で全部取り、段の高さは自分で測る。measure_pos の amplitude
