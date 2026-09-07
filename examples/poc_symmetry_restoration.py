@@ -169,9 +169,11 @@ def sym_residual(pts, tree, p0, n) -> float:
     return float(np.sqrt(np.mean(d ** 2)))
 
 
-def estimate_plane(pts, refine: str = "nm") -> dict:
+def estimate_plane(pts, refine: str = "nm", axis_hint: bool = False) -> dict:
     """対称面を推定する。粗 = ``detect_reflection_symmetry``(PCA 3 候補)。
 
+    ``axis_hint=True`` なら PCA の 3 候補のうち **x に最も近い軸**を人が選ぶ
+    (自動選択が別の軸へ飛ぶかどうかを、面の精度と切り離して測るため)。
     ``refine='nm'`` は公開 op と同じ残差を Nelder-Mead で 3 自由度(2 角 + 位置)
     掃引。``refine='icp'`` は「鏡映 → ``icp_point2point_3d`` → 対応点の中点に
     ``fit_plane_3d``」の古典手法。``refine='none'`` は粗のまま。
@@ -179,11 +181,17 @@ def estimate_plane(pts, refine: str = "nm") -> dict:
     pts = np.asarray(pts, float)
     tree = cKDTree(pts)
     det = _L.detect_reflection_symmetry(pts)
-    p0, n = np.asarray(det["plane_point"], float), np.asarray(det["plane_normal"], float)
+    p0 = np.asarray(det["plane_point"], float)
+    n = np.asarray(det["plane_normal"], float)
+    axes = _pca_axes_of(pts)
+    picked_ang = float(np.degrees(np.arccos(np.clip(abs(n @ TRUE_N), -1, 1))))
+    if axis_hint:
+        n = axes[:, int(np.argmax(np.abs(axes[0, :])))]
     if n[0] < 0:
         n = -n
     out = {"coarse": (p0, n), "margin": float(det["margin"]),
-           "score": float(det["score"])}
+           "score": float(det["score"]), "all_scores": list(det["all_scores"]),
+           "auto_axis_deg": picked_ang, "flipped": picked_ang > 45.0}
     if refine == "none":
         out["p0"], out["n"] = p0, n
         return out
