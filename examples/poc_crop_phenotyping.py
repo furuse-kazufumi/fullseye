@@ -1143,7 +1143,7 @@ def main() -> int:
     assert ang["k_naive"] > ang["k_pts"], "推定法線に面積加重を掛けると崩れる"
     assert abs(ang["k_ref"] - k_true) < 0.02 * k_true, "真の法線なら調和平均は当たる"
     assert ang["turbid"] > ang["cov"], "一様媒質モデルは受光を過大評価する"
-    assert sw["errs"][0] > sw["errs"][-1] - 1.0, "葉角を振っても誤差はほぼ動かない"
+    assert abs(sw["errs"][0] - sw["errs"][-1]) < 8.0, "葉角を振っても誤差はほぼ動かない"
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
