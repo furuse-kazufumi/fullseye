@@ -77,7 +77,7 @@ import time
 from pathlib import Path
 
 import numpy as np
-from scipy.ndimage import binary_dilation, gaussian_filter
+from scipy.ndimage import binary_dilation, gaussian_filter, zoom
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
@@ -202,18 +202,30 @@ def place_pores(rng, n: int, d_lo: float, d_hi: float, *, band: float = 4.5,
 # --------------------------------------------------------------------------- #
 # 背景推定(fullseye の op)→ 対数コントラスト → 検出                             #
 # --------------------------------------------------------------------------- #
+def _coarse_median(img: np.ndarray, f: int) -> np.ndarray:
+    """f×f の区画平均で縮小 → fullseye の median_rect(3 × 9)→ 双一次で戻す。
+
+    fullseye の窓は 9 px までなので、**縮小して窓を広げる**。溶接線方向(横)に
+    長く、余盛の曲率方向(縦)に短い窓 = 3f × 9f px。中央値は線形フィルタと同じく
+    雑音の残差が**片側に偏らない**(オープニング系との違い、2 節で実測)。
+    """
+    c = img.reshape(H // f, f, W // f, f).mean(axis=(1, 3))
+    m = np.asarray(fs.apply(c, "median_rect", a=0.0, b=1.0))
+    return zoom(m, f, order=1, grid_mode=True, mode="nearest")
+
+
 def background(img: np.ndarray, method: str) -> np.ndarray:
     """背景画像を返す。``img - 背景`` が気孔(明るい突起)。"""
-    if method == "grind":            # 再構成による山削り(大きさに依らず全ての山を削る)
+    if method == "med72":            # 縮小 ×8 + 中央値 3×9 = 24 × 72 px の窓(主経路)
+        return _coarse_median(img, 8)
+    if method == "med36":            # 縮小 ×4 + 中央値 3×9 = 12 × 36 px の窓(天井の対照)
+        return _coarse_median(img, 4)
+    if method == "grind":            # 再構成による山削り(全ての山を鞍点の高さまで削る)
         return np.asarray(fs.apply(img, "xsitk_grayscale_grindpeak"))
     if method == "open9":            # 9 px 矩形オープニング(fullseye の窓の上限)
         return np.asarray(fs.apply(img, "gray_opening_rect", a=1.0))
-    if method == "diam34":           # 直径オープニング(直径 34 px 未満の明部を潰す)
-        return np.asarray(fs.apply(img, "xsk2_diameter_opening", a=1.0))
     if method == "gauss3":           # 大窓平滑(ガウス σ = 3 px、op の上限)
         return np.asarray(fs.apply(img, "gauss_image", a=1.0))
-    if method == "row":              # 行方向プロファイル(余盛が横に一様なときだけ)
-        return np.repeat(np.median(img, axis=1, keepdims=True), W, axis=1)
     raise ValueError(method)
 
 
@@ -271,8 +283,9 @@ def diameters(det: dict, idx: int, mu: float = MU) -> dict:
     mh = _LAB.gen_measure_rectangle2(row, col, 0.0, half, 1, cimg.shape)
     pairs = _LAB.measure_pairs(cimg, mh, sigma=1.0, threshold=det["thr"] / span * 0.5)
     d_cal = np.nan
-    if pairs:
-        best = min(pairs, key=lambda p: abs(0.5 * (p["first"] + p["second"]) - half))
+    bracket = [p for p in pairs if p["first"] <= half <= p["second"]]
+    if bracket:
+        best = max(bracket, key=lambda p: min(abs(p["first_amplitude"]), abs(p["second_amplitude"])))
         d_cal = float(best["width"]) * PX
     return {"d_thr": d_thr, "d_vol": d_vol, "d_cal": d_cal}
 

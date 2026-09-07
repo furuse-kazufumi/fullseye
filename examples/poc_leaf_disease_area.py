@@ -414,15 +414,31 @@ def _feature_lesion(fn, invert=False):
 _CAL = {}
 
 
-def calibrate_a_star(scene: dict) -> float:
-    """a* の固定しきい値: 参照画像(面積率 12 %)の葉の中で大津が選んだ値を凍結する。"""
+def calibrate_thresholds(scene: dict) -> dict:
+    """固定しきい値の校正: 参照画像(面積率 12 %)の葉の中で大津が選んだ値を凍結する。"""
     leaf = leaf_mask_proj(scene["img"])
     _CAL["a"] = otsu_threshold(lab_a(scene["img"])[leaf])
-    return _CAL["a"]
+    _CAL["h"] = otsu_threshold(hue_deg(scene["img"])[leaf])
+    return dict(_CAL)
 
 
 def _fixed_a_lesion(img, leaf):
     return leaf & (lab_a(img) > _CAL["a"])
+
+
+def _fixed_h_lesion(img, leaf):
+    return leaf & (hue_deg(img) < _CAL["h"])
+
+
+def leaf_mask_cloth(img) -> np.ndarray:
+    """背景が黒布のときの葉マスク: 明るさが**画像の縁(= 布)の中央値の 2 倍**を超える画素。
+
+    背景を制御して撮る、という現場の定石そのもの。色を使わないので、重症で緑が
+    ばらばらになった葉でも 1 つの塊として切れる(7 節の対照群)。
+    """
+    v = img.max(-1)
+    border = np.concatenate([v[0], v[-1], v[:, 0], v[:, -1]])
+    return _leaf_post(v > 2.0 * float(np.median(border)))
 
 
 EST = {
@@ -434,6 +450,9 @@ EST = {
     "鏡面除去 大津": Estimator("鏡面除去 大津", leaf_mask_proj,
                           _feature_lesion(specfree_g, invert=True)),
     "a* 校正固定": Estimator("a* 校正固定", leaf_mask_proj, _fixed_a_lesion),
+    "色相 校正固定": Estimator("色相 校正固定", leaf_mask_proj, _fixed_h_lesion),
+    "a* 校正固定(布)": Estimator("a* 校正固定(布)", leaf_mask_cloth, _fixed_a_lesion),
+    "色相 校正固定(布)": Estimator("色相 校正固定(布)", leaf_mask_cloth, _fixed_h_lesion),
 }
 MAIN = "a* 大津"
 
@@ -490,11 +509,15 @@ def section_baseline() -> dict:
     print("=" * 78)
     ctrl = make_scene(12.0, **CTRL)
     calibrate_zero(ctrl)
-    tau = calibrate_a_star(ctrl)
+    cal = calibrate_thresholds(ctrl)
+    tau = cal["a"]
     a_ctrl = lab_a(ctrl["img"])
+    h_ctrl = hue_deg(ctrl["img"])
     print("  a* の分布(対照): 健全葉 %.1f / 病斑 %.1f / 背景 %.1f → 葉の中の大津しきい値 %.1f"
           % (a_ctrl[ctrl["leaf"] & ~ctrl["lesion"]].mean(), a_ctrl[ctrl["lesion"]].mean(),
              a_ctrl[~ctrl["leaf"]].mean(), tau))
+    print("  色相の分布(対照): 健全葉 %.0f° / 病斑 %.0f° → 葉の中の大津しきい値 %.0f°"
+          % (h_ctrl[ctrl["leaf"] & ~ctrl["lesion"]].mean(), h_ctrl[ctrl["lesion"]].mean(), cal["h"]))
     print("  ゼロ点のしきい値(対照画像で校正): 背景/病斑/葉 の緑 = %.3f / %.3f / %.3f "
           "→ T_lo %.3f, T_hi %.3f" % (*_ZERO_T["means"], _ZERO_T["lo"], _ZERO_T["hi"]))
     conds = [("対照(黒布・均一・反射なし・影なし)", CTRL),
@@ -740,9 +763,9 @@ def section_size(tau: float) -> dict:
     print("  予測: σ_eff = sqrt(%.2f² + %.1f²/12) = %.2f px。葉 a* %.1f → 病斑 a* %.1f のうち"
           "しきい値 %.1f までに要る割合 %.2f → 中心がそこを割る直径 %.2f px"
           % (PSF_SIGMA, edge, sig_eff, a_leaf, a_les, tau, need, d_star))
-    print("  (大津は使えない: 病斑が葉の 0.4 %% しか無いと 2 クラスが無く、葉脈と葉身を切る —— "
+    print("  (大津は使えない: 病斑が葉の 0.4 % しか無いと 2 クラスが無く、葉脈と葉身を切る —— "
           "直径 2 px で大津の Δ率は下の表の右端)")
-    print("  %-8s %8s %10s %10s %12s %12s" % ("d[px]", "個数", "検出率", "画素回収率", "Δ率[pt]", "大津Δ率[pt]"))
+    print("  %-8s %8s %10s %10s %12s %12s %12s" % ("d[px]", "個数", "検出率", "画素回収率", "Δ率[pt]", "大津Δ率[pt]", "見逃し=縁"))
     rows = []
     for d in ds:
         n_les = 14 if d <= 8 else 6
@@ -752,17 +775,20 @@ def section_size(tau: float) -> dict:
         est = EST["a* 校正固定"](sc["img"])
         lab_t = _L.blob_label(sc["lesion"])
         n_t = int(lab_t.max())
-        hit, rec = 0, []
+        inner = np.asarray(fs.apply(sc["leaf"].astype(np.float64), "reg_erode", a=0.0)) > 0.5
+        hit, rec, miss_border = 0, [], 0
         for k in range(1, n_t + 1):
             m = lab_t == k
             frac = (est["lesion"] & m).sum() / m.sum()
             hit += frac >= 0.5
             rec.append(frac)
+            if frac < 0.5 and (m & ~inner).any():
+                miss_border += 1                     # 見逃した塊が葉の縁に接している
         rate = hit / max(n_t, 1)
         dsev = evaluate(sc, est)["dsev"]
         d_otsu = evaluate(sc, EST[MAIN](sc["img"]))["dsev"]
-        rows.append((d, n_t, rate, float(np.mean(rec)), dsev, d_otsu))
-        print("  %-8d %8d %10.2f %10.2f %+12.2f %+12.2f" % rows[-1])
+        rows.append((d, n_t, rate, float(np.mean(rec)), dsev, d_otsu, miss_border))
+        print("  %-8d %8d %10.2f %10.2f %+12.2f %+12.2f %12d" % rows[-1])
     r = np.asarray(rows)
     figs.save_plot("cliff_lesion_size",
                    [("検出率(塊の 50 % 以上)", r[:, 0], r[:, 2]), ("画素の回収率", r[:, 0], r[:, 3])],
@@ -777,46 +803,60 @@ def section_size(tau: float) -> dict:
 # --------------------------------------------------------------------------- #
 def section_grades() -> dict:
     print("\n" + "=" * 78)
-    print("7) 等級の境目(0.5 / 5 / 25 / 50 %)の近くに置いた画像の誤等級(標準場面)")
+    print("7) 等級の境目(0.5 / 5 / 25 / 50 %)の近くに置いた画像の誤等級")
     print("=" * 78)
-    names = ["ゼロ点(緑 固定)", "ExG色度 大津", "a* 大津", "a* 校正固定"]
+    blocks = [("土の背景(標準場面)", STD,
+               ["ゼロ点(緑 固定)", "a* 大津", "a* 校正固定", "色相 校正固定"]),
+              ("黒布の背景(対照群: 明るさで葉を切る)", dict(STD, soil=False),
+               ["a* 校正固定(布)", "色相 校正固定(布)"])]
     per_b = 10
-    rng = np.random.default_rng(SEED + 11)
-    total = {n: 0 for n in names}
-    signs = {n: {"up": 0, "down": 0} for n in names}
-    header = ["境界 [%]", "枚数"] + ["%s" % n for n in names] + ["a* 校正固定 Δ[pt]"]
-    rows, table = [], {}
-    n_img = 0
-    for b in GRADE_EDGES:
-        wrong = {n: 0 for n in names}
-        dsum = 0.0
-        for _k in range(per_b):
-            span = 0.4 if b < 1.0 else 3.0
-            target = max(0.0, b + rng.uniform(-span, span))
-            sc = make_scene(target, seed=int(rng.integers(1 << 30)), **STD)
-            tg = grade(sc["true_sev"])
+    out = {}
+    header = ["境界 [%]"]
+    cols = {}
+    for bl, kw, names in blocks:
+        print("  -- %s --" % bl)
+        rng = np.random.default_rng(SEED + 11)          # 同じ乱数列 → 同じ病斑配置で背景だけ違う
+        total = {n: 0 for n in names}
+        signs = {n: {"up": 0, "down": 0} for n in names}
+        dsum = {n: 0.0 for n in names}
+        leaf_loss = {n: 0.0 for n in names}
+        n_img = 0
+        for b in GRADE_EDGES:
+            wrong = {n: 0 for n in names}
+            for _k in range(per_b):
+                span = 0.4 if b < 1.0 else 3.0
+                target = max(0.0, b + rng.uniform(-span, span))
+                sc = make_scene(target, seed=int(rng.integers(1 << 30)), **kw)
+                tg = grade(sc["true_sev"])
+                for n in names:
+                    ev = evaluate(sc, EST[n](sc["img"]))
+                    g = grade(ev["sev"])
+                    if g != tg:
+                        wrong[n] += 1
+                        signs[n]["up" if g > tg else "down"] += 1
+                    dsum[n] += ev["dsev"]
+                    leaf_loss[n] += ev["fn_loss_pt"]
+                n_img += 1
             for n in names:
-                ev = evaluate(sc, EST[n](sc["img"]))
-                g = grade(ev["sev"])
-                if g != tg:
-                    wrong[n] += 1
-                    signs[n]["up" if g > tg else "down"] += 1
-                if n == "a* 校正固定":
-                    dsum += ev["dsev"]
-            n_img += 1
-        table[b] = wrong
+                total[n] += wrong[n]
+                cols.setdefault(n, {})[b] = wrong[n]
+            print("  境界 %5.1f %%: " % b + "  ".join("%s %2d/%d" % (n, wrong[n], per_b) for n in names))
+        print("  合計 %d 枚: " % n_img + "  ".join("%s %d 枚" % (n, total[n]) for n in names))
         for n in names:
-            total[n] += wrong[n]
-        rows.append(["%.1f" % b, "%d" % per_b] + ["%d" % wrong[n] for n in names] + ["%+.2f" % (dsum / per_b)])
-        print("  境界 %5.1f %%: " % b + "  ".join("%s %2d/%d" % (n, wrong[n], per_b) for n in names)
-              + "   校正固定の平均Δ %+.2f pt" % (dsum / per_b))
-    print("  合計 %d 枚: " % n_img + "  ".join("%s %d 枚" % (n, total[n]) for n in names))
-    for n in names:
-        print("    %s: 上の等級へ %d 枚 / 下の等級へ %d 枚" % (n, signs[n]["up"], signs[n]["down"]))
+            print("    %s: 上へ %d / 下へ %d 枚、平均Δ %+.2f pt、うち葉マスクごと失った病斑 %.2f pt"
+                  % (n, signs[n]["up"], signs[n]["down"], dsum[n] / n_img, leaf_loss[n] / n_img))
+        out[bl] = {"total": total, "signs": signs, "n_img": n_img,
+                   "mean_d": {n: dsum[n] / n_img for n in names},
+                   "leaf_loss": {n: leaf_loss[n] / n_img for n in names}}
+    names_all = [n for _, _, ns in blocks for n in ns]
+    header += names_all
+    rows = [["%.1f" % b] + ["%d" % cols[n][b] for n in names_all] for b in GRADE_EDGES]
+    rows.append(["合計"] + ["%d" % sum(cols[n].values()) for n in names_all])
     figs.save_table("grade_confusion", header, rows,
-                    title="等級境界の近く(±3 pt、0.5 % は ±0.4 pt)での誤等級の枚数(標準場面、各 %d 枚)" % per_b,
-                    caption="大津は病斑が無い葉(境界 0.5 %)で葉脈を切って必ず誤等級。校正固定は境界に依らない。")
-    return {"table": table, "total": total, "signs": signs, "n_img": n_img}
+                    title="等級境界の近く(±3 pt、0.5 %% は ±0.4 pt)での誤等級の枚数(各境界 %d 枚)" % per_b,
+                    caption="左 4 列は土の背景、右 2 列は同じ病斑配置を黒布の上で撮った対照群。"
+                            "大津は病斑の無い葉(0.5 %)で葉脈を切る。50 % は葉マスクが緑で作れず布が要る。")
+    return out
 
 
 # --------------------------------------------------------------------------- #

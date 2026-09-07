@@ -61,11 +61,11 @@ from __future__ import annotations
 
 import sys
 import time
-from math import erf, sqrt
+from math import sqrt
 from pathlib import Path
 
 import numpy as np
-from scipy import ndimage, special
+from scipy import special
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
@@ -738,6 +738,9 @@ def main() -> int:
     assert abs(thr["ts"][-1] - thr["ts"][0]) < 3.0, thr["ts"]
     assert bia["bv_ret"][0] > 10.0 and abs(bia["bv_exp"][-1]) < abs(bia["bv_ret"][-1]), (bia["bv_ret"], bia["bv_exp"])
     assert abs(bia["bv_otsu"][-1]) < 10.0, bia["bv_otsu"]
+    assert bia["ce_otsu60"][0] < 0.85 * bia["ce_otsu60"][1], "中心の痩せが消えた"
+    assert abs(bia["ce_exp60"][0] / bia["ce_exp60"][1] - bia["ce_true"][0] / bia["ce_true"][1]) < 0.08
+    assert all(abs(v) < 6.0 for e in bia["ctrl"].values() for v in e), bia["ctrl"]
 
     print("\n" + "=" * 78)
     print("まとめ")
