@@ -1,0 +1,140 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   415,
+   470,
+   3
+  ]
+ },
+ {
+  "file": "02_library.png",
+  "name": "library",
+  "caption": "PE と PVC は骨格が同じなのでわざと似せてある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_sweep_raw_sam.png",
+  "name": "sweep_raw_sam",
+  "caption": "乗算汚れ・傾き・重なりは平ら(SAM は明るさに不変)。落ちるのは濡れと加算。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sweep_methods_add.png",
+  "name": "sweep_methods_add",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_sweep_methods_wet.png",
+  "name": "sweep_methods_wet",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_sweep_detection.png",
+  "name": "sweep_detection",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_ablation.png",
+  "name": "ablation",
+  "caption": "濡れだけが大きく効く。加算汚れは符号が逆(検出を助けていた)。",
+  "shape": [
+   200,
+   314,
+   3
+  ],
+  "csv": "07_ablation.csv",
+  "tsv": "07_ablation.tsv"
+ },
+ {
+  "file": "08_confusion.png",
+  "name": "confusion",
+  "caption": "1 個の正解率には出ない盲点がここに出る。",
+  "shape": [
+   224,
+   553,
+   3
+  ],
+  "csv": "08_confusion.csv",
+  "tsv": "08_confusion.tsv"
+ },
+ {
+  "file": "09_confusion_noise.png",
+  "name": "confusion_noise",
+  "caption": "ここではライブラリで予測した PP-PE が 1 位。",
+  "shape": [
+   224,
+   553,
+   3
+  ],
+  "csv": "09_confusion_noise.csv",
+  "tsv": "09_confusion_noise.tsv"
+ },
+ {
+  "file": "10_composition.png",
+  "name": "composition",
+  "caption": "",
+  "shape": [
+   248,
+   453,
+   3
+  ],
+  "csv": "10_composition.csv",
+  "tsv": "10_composition.tsv"
+ },
+ {
+  "file": "11_mixed_map.png",
+  "name": "mixed_map",
+  "caption": "",
+  "shape": [
+   233,
+   700,
+   3
+  ]
+ },
+ {
+  "file": "12_spectra.png",
+  "name": "spectra",
+  "caption": "乗算は形を保つ。加算は谷を浅くする。濡れは 1450 / 1940 nm に無い谷を作る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_spectra_d2.png",
+  "name": "spectra_d2",
+  "caption": "残るのは濡れ(波長に依存する乗算)だけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

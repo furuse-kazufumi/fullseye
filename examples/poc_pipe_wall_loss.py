@@ -821,7 +821,7 @@ def section_correction() -> dict:
 
     figs.save_grid("map_corrected", [_clip(m) for m in maps],
                    [n for n, _ in EST], ncols=3, signed=True,
-                   title="同じ測定を 4 通りに補正した減肉地図 [mm](±3 mm 共通尺度、"
+                   title="同じ測定を 5 通りに補正した減肉地図 [mm](±3 mm 共通尺度、"
                          "縦 = z、横 = θ)")
     truth = loss_parts(sv["z_hit"], sv["th_hit"], FULL)["total"]
     figs.save_grid("map_truth_vs_best",
