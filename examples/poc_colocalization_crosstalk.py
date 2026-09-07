@@ -484,7 +484,8 @@ def section_crosstalk_sweep() -> dict:
                     ("M1 分離後", x, m1_50_cor),
                     ("真値 M1", x, [m1_50_true] * len(x))],
                    xlabel="漏れ込み α=β [%]", ylabel="Manders 係数",
-                   title="真の共局在 50 % の Manders(崖 α=%.1f %%)" % (100 * a_m1))
+                   title="真の共局在 50 %% の Manders(崖 α=%.1f %%、真値を横切る α=%.1f %%)"
+                         % (100 * a_m1, 100 * a_cancel))
     return {"a_cross": a_cross, "a_pred": a_pred, "a_m1": a_m1, "a_r50": a_r50, "a_cancel": a_cancel,
             "r0_sym": r0_sym, "r0_one": r0_one, "m1_50": m1_50, "r50": r50,
             "r50_cor": r50_cor, "m1_50_cor": m1_50_cor, "m1_true": m1_50_true,
