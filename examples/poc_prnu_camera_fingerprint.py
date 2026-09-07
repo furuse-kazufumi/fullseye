@@ -252,8 +252,7 @@ def zero_mean_unit(k: np.ndarray) -> np.ndarray:
 
 
 def section_estimate(cams: dict, banks: dict, queries: dict) -> dict:
-    print("
-" + "=" * 78)
+    print("\n" + "=" * 78)
     print("1) 指紋を推定する —— ゼロ点 vs 最尤重み付き平均(%d 枚)" % N_TRAIN)
     print("   予想: 「平滑成分を引かない生の平均」は被写体まみれで使えず、"
           "最尤 + 適応 Wiener がゼロ点に桁で勝つ")
