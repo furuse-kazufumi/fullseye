@@ -995,7 +995,7 @@ def section_angle(base: dict) -> dict:
         s = score(det, gt)
         ph = peak_on(det, gt["hot"])
         if ref is None:
-            ref = ph
+            ref, ref_lab = ph, det["labels"]
         p = radiometric_gain(a) / g0
         # 斜めから撮って、射影変換(``warp_by_plane``)で正対に戻す
         h_draw, h_back = oblique_homographies(t_app.shape, a)
