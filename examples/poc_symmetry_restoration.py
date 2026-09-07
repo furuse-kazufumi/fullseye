@@ -1014,7 +1014,7 @@ def section_tool_gaps(S: dict) -> None:
           "PCA の 3 軸だけで、")
     print("      精緻化は呼び手が書く。公開の score は毎回 KD 木と中央値間隔を"
           "作り直すので")
-    print("      1 回 %.1f ms(自前の使い回しは %.1f ms、%.0f 倍)。掃引 200 回で差が出る。"
+    print("      1 回 %.1f ms(自前の使い回しは %.1f ms、%.1f 倍)。掃引 200 回で差が出る。"
           % (1e3 * t_pub, 1e3 * t_own, t_pub / max(t_own, 1e-9)))
     assert not hasattr(fs, "refine_reflection_symmetry")
     assert not hasattr(_L, "refine_reflection_symmetry")

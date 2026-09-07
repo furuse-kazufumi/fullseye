@@ -445,6 +445,11 @@ def _spearman(a, b):
     return float(ra @ rb / np.sqrt((ra @ ra) * (rb @ rb)))
 
 
+def _up3(img, fz, fx):
+    """RGB 版の整数倍拡大。"""
+    return np.repeat(np.repeat(np.asarray(img, float), fz, axis=0), fx, axis=1)
+
+
 def _up(img, fz, fx):
     """図を見えるように整数倍で拡大する(補間しない = 画素の粗さを隠さない)。"""
     return np.repeat(np.repeat(np.asarray(img, float), fz, axis=0), fx, axis=1)
@@ -462,6 +467,18 @@ def _side_view(occ):
     # 「材料が無い(0)」と「材料が薄い」を混ぜないため、材料側に下駄を履かせる。
     # 明るさの目盛りは全パネル共通(y の最大幅 16 mm)。
     return np.flipud(np.where(t > 0.0, 0.35 + 0.65 * t / 16.0, 0.0))
+
+
+def _side_rgb(occ):
+    """側面図を **全パネル共通の目盛り**で塗った RGB にする。
+
+    ★``examplefig`` の 1 チャンネル入力は**パネルごとに**値域を伸ばすので、
+    薄いフィン(面外 2 mm)と太い板(16 mm)が同じ明るさになり、
+    「首つきの首」は背景と同じ色になって**空に見えた**(2026-09-07)。
+    RGB で渡せばそのまま使われるので、ここで目盛りを固定する。
+    """
+    v = np.clip(_side_view(occ), 0.0, 1.0)
+    return np.stack([v, v * 0.86, v * 0.34], axis=-1)
 
 
 def _deformed_view(case, mag=20.0):
@@ -503,7 +520,7 @@ def section_scene():
               % (name, n_layer, hst["area"][0], hst["area"].max(), vol,
                  hst["perimeter"].max(), hst["nblob"].max()))
 
-    figs.save_grid("scene", [_up(_side_view(c["occ"]), 3, 3)
+    figs.save_grid("scene", [_up3(_side_rgb(c["occ"]), 3, 3)
                              for c in cases.values()],
                    list(cases.keys()), ncols=3,
                    title="%d つの形の側面図(y 方向に投影、横 %.0f mm x 縦 %.0f mm)"
