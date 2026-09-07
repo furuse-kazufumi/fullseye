@@ -260,9 +260,16 @@ def section_orders() -> dict:
     assert out[2]["fp"] == 0 and out[2]["fn"] == 0, (out[2]["fp"], out[2]["fn"])
 
     # --- 図 ---------------------------------------------------------------- #
+    # ★`surface_form_error` は台帳経由だと **PV の float しか返らない**(節 7)ので、
+    #   残差の絵は fit_poly_surface + eval_poly_surface で自分で作る。
+    hh, ww = sc["height"].shape
+    gyy, gxx = np.mgrid[0:hh, 0:ww]
+    m_img = _L.fit_poly_surface(gxx / ww, gyy / hh, sc["height"], degree=2)
+    resid_img = sc["height"] - np.asarray(_L.eval_poly_surface(m_img, gxx / ww, gyy / hh))
+
     figs.save_grid(
         "scene",
-        [sc["height"], sc["warp"], np.asarray(_L.surface_form_error(sc["height"], 2)[0])],
+        [sc["height"], sc["warp"], resid_img],
         ["高さ場(そり PV %.0f µm + バンプ %.0f µm)" % (sc["warp_pv"], H_NOM),
          "仕込んだそり(真値、PV %.0f µm)" % sc["warp_pv"],
          "2 次曲面を引いた残差 [µm]"],
