@@ -346,8 +346,7 @@ def section_match(cams: dict, fp: np.ndarray, queries: dict) -> dict:
 # 3. 崖 1: 枚数 N(理論 SNR ∝ √N)                                             #
 # --------------------------------------------------------------------------- #
 def section_n_sweep(cams: dict, banks: dict, queries: dict) -> dict:
-    print("
-" + "=" * 78)
+    print("\n" + "=" * 78)
     print("3) 枚数 N を 1 → 50 で掃引(予測: corr = 1/√(1 + (1/r₁² − 1)/N)、SNR ∝ √N)")
     print("=" * 78)
     k_true = cams["A"]
