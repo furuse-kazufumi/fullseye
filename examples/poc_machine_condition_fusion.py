@@ -820,7 +820,8 @@ def section_sweeps() -> dict:
     t_order = 2.0 / FR
     t_side = 1.0 / FTF
     print("   予測 (a) ゆるみの 0.5X: 次数分解能 = 1/(整数回転数) が 0.5 を切るのは")
-    print("            整数回転数 >= 2、すなわち **T > 2/f_r = %.1f ms**。それより短い")
+    print("            整数回転数 >= 2、すなわち **T > 2/f_r = %.1f ms**。それより短い"
+          % (1000 * t_order))
     print("            記録では 0.5 次のビンが存在せず、窓が 1X を巻き込む。")
     print("   予測 (b) 軸受の側帯波: 包絡線の分解能 1/T が側帯波間隔 FTF = %.2f Hz を" % FTF)
     print("            下回るのは **T > 1/FTF = %.1f ms**。" % (1000 * t_side))
