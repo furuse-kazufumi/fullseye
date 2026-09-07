@@ -746,11 +746,11 @@ def section_controls(S: dict, Z: dict, O: dict) -> dict:
                          ("trim", "(d) 対称トリミング後")):
             r = restore_symmetric(surv, res[key]["p0"], res[key]["n"], tau)
             s = score_restoration(gt, r["restored"], r["fill"])
-            panels.append(with_scalebar(scatter_map(gt, s["per_pt"], xs, ys), S_))
+            panels.append(with_scalebar(scatter_map(gt, s["per_pt"], xs, ys), S_, lo=0.0))
             caps.append("%s: RMS %.2f mm" % (lab, s["rms"]))
         figs.save_grid("controls_maps", panels, caps,
-                       title="対照群の復元誤差地図 [mm](色は ±%.0f mm)" % S_,
-                       ncols=2, signed=True,
+                       title="対照群の復元誤差地図 [mm](0〜%.0f mm)" % S_,
+                       ncols=2,
                        caption="欠損のまま推定した面で復元すると、"
                                "欠損部の全体が一様にずれる(位置ずれの署名)。")
     return res
