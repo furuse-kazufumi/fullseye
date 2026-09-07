@@ -617,14 +617,14 @@ def section_overhang(scene):
                    caption="解析は階段。測った側は等値面の取り方で段差の高さが変わる。")
     figs.save_table("overhang_conditions",
                     ["等値面の取り方", "44.9 度 [mm^2]", "45.1 度 [mm^2]", "段差 [mm^2]",
-                     "45.1 度での誤差"],
+                     "段差の比"],
                     rows + [["解析(解像度無限)", "%.2f" % a_lo, "%.2f" % a_hi,
-                             "%.2f" % step, "0.0 %"]],
+                             "%.2f" % step, "%.2f" % (a_hi / a_lo)]],
                     title="同じ形・同じしきい値でも、面の出し方で NG 面積が変わる")
 
     _overhang_map(occ, sdf)
-    return {"a_lo": a_lo, "a_hi": a_hi, "step": step, "steps": steps,
-            "rows": rows, "a_hole": a_hole}
+    return {"a_lo": a_lo, "a_hi": a_hi, "step": step, "steps": steps, "los": los,
+            "rows": rows, "a_hole": a_hole, "spread": max(lo_vals) / min(lo_vals)}
 
 
 def _overhang_map(occ, sdf):
