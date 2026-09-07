@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_thickness_cliff.png",
+  "name": "thickness_cliff",
+  "caption": "右ほど粗い。侵食と内接球は階段、探針は連続だが 2 voxel を切ると壁を見失う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_threshold_cliff.png",
+  "name": "threshold_cliff",
+  "caption": "解析は階段。測った側は等値面の取り方で段差の高さが変わる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_overhang_conditions.png",
+  "name": "overhang_conditions",
+  "caption": "",
+  "shape": [
+   176,
+   564,
+   3
+  ],
+  "csv": "03_overhang_conditions.csv",
+  "tsv": "03_overhang_conditions.tsv"
+ },
+ {
+  "file": "04_decoupled.png",
+  "name": "decoupled",
+  "caption": "単位が違うだけでなく、壊れ方の原因が別(量子化 vs 法線の丸め)。",
+  "shape": [
+   128,
+   420,
+   3
+  ],
+  "csv": "04_decoupled.csv",
+  "tsv": "04_decoupled.tsv"
+ },
+ {
+  "file": "05_reach_cliff.png",
+  "name": "reach_cliff",
+  "caption": "1.600 mm を超えると入らない工具を通し、1.200 mm を切ると入る工具を落とす。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_orientation.png",
+  "name": "orientation",
+  "caption": "どの向きでも 0 にならないのは 2 本の穴が直交しているから。最下行 = 向きではなく斜面の角度を 5 度ずらした場合。",
+  "shape": [
+   248,
+   596,
+   3
+  ],
+  "csv": "06_orientation.csv",
+  "tsv": "06_orientation.tsv"
+ }
+]

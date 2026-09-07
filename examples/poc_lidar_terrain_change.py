@@ -813,8 +813,8 @@ def section_systematic(tr: dict) -> dict:
     print("  V = (delta_y tan θ + delta_z) A_h —— **DoD と厳密に同じ式**。"
           "雑音は正味では打ち消すので、正味なら予測と直接比べられる。")
     print("\n    水平ずれ  予測 偽正味 [m3]  DoD 偽正味  M3C2 偽正味  "
-          "DoD 偽|土量|  位置合わせ後")
-    mags, pred, md, mm, ma, aft = [], [], [], [], [], []
+          "M3C2(有効率で補正)  位置合わせ後")
+    mags, pred, md, mm, mc, aft, rate = [], [], [], [], [], [], []
     for mag in (0.0, 0.05, 0.10, 0.20, 0.30):
         rng = np.random.default_rng(SEED + 7)
         a, _ = make_cloud(rng, with_change=False, occl=0.0)
@@ -829,13 +829,21 @@ def section_systematic(tr: dict) -> dict:
         pred.append(p)
         md.append(rd["net"])
         mm.append(vm["net"])
-        ma.append(rd["abs"])
+        mc.append(vm["net_cov"])
         aft.append(rd2["net"])
-        print("     %.2f m %14.1f %12.1f %12.1f %13.1f %14.1f"
-              % (mag, p, md[-1], mm[-1], ma[-1], aft[-1]))
-    print("\n  ★★予測 %.1f m3 に対し実測 DoD %.1f / M3C2 %.1f m3(ずれ 0.30 m)。"
-          "**両手法で同じだけ間違える**(差 %.1f %%)。"
-          % (pred[-1], md[-1], mm[-1], 100 * abs(mm[-1] / md[-1] - 1)))
+        rate.append(vm["rate"])
+        print("     %.2f m %14.1f %12.1f %12.1f %17.1f %14.1f"
+              % (mag, p, md[-1], mm[-1], mc[-1], aft[-1]))
+    print("\n  ★★予測 %.1f m3 に対し実測 DoD %.1f m3(差 %.1f %%)。"
+          % (pred[-1], md[-1], 100 * abs(md[-1] / pred[-1] - 1)))
+    print("  ★★M3C2 の生値 %.1f m3 は %.1f %% 足りない —— これは手法の差ではなく"
+          "**有効 core 率 %.1f %% そのもの**。" % (mm[-1], 100 * (1 - mm[-1] / md[-1]),
+                                                   100 * rate[-1]))
+    print("     測れなかった core の面積は土量に一度も足されない。有効率で割り戻すと "
+          "%.1f m3 で DoD と %.1f %% 差、予測とも一致する。"
+          % (mc[-1], 100 * abs(mc[-1] / md[-1] - 1)))
+    print("     -> 体積を返す実装は**測れた面積を必ず一緒に返す**べき。"
+          "面積を返さない体積は、静かに欠けていても気づけない。")
     print("     M3C2 が有利なのは厚さと有意性であって体積ではない —— 法線方向の"
           "見かけ変化は cos 倍小さいが、体積で 1/cos するので約分する。")
     print("  ★位置合わせ(ICP、%.1f m ボクセルで間引き、trim 0.6)で 偽正味 %.1f -> %.1f m3。"

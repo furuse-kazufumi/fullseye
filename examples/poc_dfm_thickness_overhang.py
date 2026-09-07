@@ -665,7 +665,7 @@ def _overhang_map(occ, sdf):
 
 def section_orientation():
     print("\n" + "=" * 78)
-    print("8) 造形方向を振る —— 効くが、ゼロにはならない")
+    print("8) 造形方向を振る —— ★予想に反してほとんど効かない(効いたのは設計)")
     print("=" * 78)
     c_hi = float(np.cos(np.radians(SELF_SUPPORT_DEG + 0.1)))
     # ★45 度ちょうどの傾斜方向は入れない —— 板の裏 2349.7 mm^2 が自分もしきい値に
