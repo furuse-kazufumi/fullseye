@@ -801,12 +801,24 @@ def section5_angle_sweep(p: dict, tru: dict) -> dict:
             print("  %6.0f" % a, end="")
             for k in KEYS:
                 v = res["b 遮蔽あり"][k][field][i]
-                if field == "got":
-                    print(fmt % (100 * v), end="")
-                else:
+                if field == "mae":
                     print(fmt % ("—" if not np.isfinite(v) else "%.4f" % v), end="")
+                else:
+                    print(fmt % (100 * v), end="")
             print()
         print()
+    ucl = res["b 遮蔽あり"]["ucL"]
+    print("  → ★★**測れた率は 100 % のまま、値だけが静かに浅くなる**。左溝は")
+    print("     θ=%.0f 度で区間の %.0f %% が欠測、θ=%.0f 度で %.0f %% ——"
+          % (ANGLES[3], 100 * ucl["miss"][3], ANGLES[I_REF],
+             100 * ucl["miss"][I_REF]))
+    print("     それでも「測れた」ので値は返り、誤差は %.4f -> %.4f mm(真値の平均は"
+          % (ucl["mae"][3], ucl["mae"][I_REF]))
+    print("     %.3f mm なので **%.0f %% 過小**)。**警報を出せるのは欠測率だけ**で、"
+          % (float(np.nanmean(tru["ucL"])),
+             100 * ucl["mae"][I_REF] / float(np.nanmean(tru["ucL"]))))
+    print("     測れた率でも値そのものでもない。")
+    print()
     return {"res": res, "hgt": hgt, "c0": c0, "sat": sat}
 
 
