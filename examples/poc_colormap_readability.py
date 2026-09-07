@@ -500,7 +500,7 @@ def section_out_of_range() -> dict:
     n_under = int(np.count_nonzero(field < vmin))
     n_true = n_over + n_under
     print("  場: 広い丘(頂点 %.2f = 範囲内)+ 細い尖り(%.1f = 範囲外)+ 窪み(%.2f)"
-          % (2.0 + 7.98, field.max(), field.min()))
+          % (2.0 + 7.99, field.max(), field.min()))
     print("  vmin=%.0f / vmax=%.0f、実際に範囲外なのは %d 画素"
           "(上 %d / 下 %d、全体の %.2f %%)"
           % (vmin, vmax, n_true, n_over, n_under, 100.0 * n_true / field.size))
