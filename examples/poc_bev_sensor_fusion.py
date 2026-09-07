@@ -336,11 +336,11 @@ def to_bev(pts_world: np.ndarray):
 # --------------------------------------------------------------------------- #
 # 融合の規則                                                                    #
 # --------------------------------------------------------------------------- #
-def weights(C, X, Y, kz=0.0, sigma=0.0):
+def weights(C, X, Y, kz=0.0, sigma=0.0, lin=0.0):
     """信頼度 = 1/(1 + (Rσθ/c)² + (測距雑音/c)²)。**校正の宣言値**から作る。"""
     R = np.hypot(X - C[0], Y - C[1])
     sth = np.radians(SIGMA_THETA_DEG)
-    noise = sigma + kz * R ** 2
+    noise = sigma + lin * R + kz * R ** 2
     return 1.0 / (1.0 + (R * sth / CELL) ** 2 + (noise / CELL) ** 2), R
 
 
