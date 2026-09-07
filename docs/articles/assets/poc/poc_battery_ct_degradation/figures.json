@@ -110,5 +110,57 @@
    560,
    3
   ]
+ },
+ {
+  "file": "12_sweep_resolution.png",
+  "name": "sweep_resolution",
+  "caption": "標本化定理(A)はまだ余裕があると言うが、実際は層間の隙間 0.120 mm を分けられなくなった時点で全滅する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_sweep_resolution_err.png",
+  "name": "sweep_resolution_err",
+  "caption": "空隙体積は崖の手前から単調に痩せる(部分体積効果)。層厚は崖を越えると意味を失う。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_sweep_resolution_table.png",
+  "name": "sweep_resolution_table",
+  "caption": "",
+  "shape": [
+   272,
+   698,
+   3
+  ],
+  "csv": "14_sweep_resolution_table.csv",
+  "tsv": "14_sweep_resolution_table.tsv"
+ },
+ {
+  "file": "15_sweep_noise.png",
+  "name": "sweep_noise",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "16_sweep_beamhardening.png",
+  "name": "sweep_beamhardening",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]

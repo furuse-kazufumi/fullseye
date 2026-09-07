@@ -1137,27 +1137,24 @@ def section_rate(obs: dict, sc: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 8. 細い溝 / 押し出し形状の縮退                                                #
 # --------------------------------------------------------------------------- #
-def bearing_cores(n_phi: int = 9, n_t: int = 3):
-    """支承(円柱)の測点。``(位置, 法線, 支承 index)``。"""
-    phi = np.linspace(math.pi + 0.25, 2 * math.pi - 0.25, n_phi)
-    tv = np.linspace(-0.30, 0.30, n_t)
-    pp, tt, ii = [], [], []
-    for b in range(len(BEARING_X)):
-        for a in phi:
-            for t in tv:
-                pp.append(a)
-                tt.append(t)
-                ii.append(b)
-    p, n = bearing_surface(np.asarray(pp), np.asarray(tt), ii)
-    return p, n, np.asarray(ii), np.asarray(pp)
+def bearing_pose(cloud: np.ndarray, idx: int = 0):
+    """支承(円柱)の位置を ``ransac_cylinder`` で出す。返り値 ``((x, z) [m], 半径)``。
 
-
-def fit_translation(nrm: np.ndarray, val_mm: np.ndarray) -> np.ndarray:
-    """法線方向の読み ``L_i`` から剛体並進 ``d`` を最小二乗で出す [mm]。"""
-    m = np.isfinite(val_mm)
-    if int(m.sum()) < 4:
-        return np.full(3, np.nan)
-    return np.linalg.lstsq(nrm[m], val_mm[m], rcond=None)[0]
+    軸上の一点は軸方向に自由なので、``y = 2.0`` の断面へ射影して一意にする。
+    """
+    bx = BEARING_X[idx]
+    m = (np.abs(cloud[:, 0] - bx) < 0.40) & (cloud[:, 2] < -0.95)
+    pts = cloud[m]
+    if pts.shape[0] < 40:
+        return np.full(2, np.nan), float("nan"), 0
+    nrm = np.asarray(fs.ledger.estimate_normals(pts, k=15), float)
+    par, inl, info = fs.ledger.ransac_cylinder.raw(pts, nrm, thresh=0.005,
+                                                   iters=800, seed=0)
+    ax = np.asarray(par["axis"], float)
+    pt = np.asarray(par["point"], float)
+    t = (2.0 - pt[1]) / ax[1] if abs(ax[1]) > 1e-6 else 0.0
+    q = pt + t * ax
+    return np.array([q[0], q[2]]), float(par["radius"]), int(info["n_inliers"])
 
 
 def section_prism_and_crack(sc: dict) -> dict:
