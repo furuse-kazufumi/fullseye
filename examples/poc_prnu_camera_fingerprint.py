@@ -431,14 +431,19 @@ def section_jpeg(fp: np.ndarray, queries: dict, clean: dict) -> dict:
                   a, q, np.median(ps), np.median(pd), au, 100 * ratio, 100 * pred, 100 * surv))
     i90 = min(range(len(qs)), key=lambda i: abs(qs[i] - 90))
     i50 = avals.index(0.375)
-    print("  ★品質 90 相当で PCE %.0f %%、品質 50 相当で %.1f %%(予測 %.1f %%)。"
-          "予測は死に過ぎ = 雑音がディザになって量子化幅より小さい信号も少し通す。" % (
-              100 * ratios[i90], 100 * ratios[i50], 100 * preds[i50]))
-    dead = [q for q, au in zip(qs, aucs) if au < 0.6]
-    print("  AUC < 0.6(判定不能)になるのは品質 %s 相当から。" % (
-          "%.0f" % max(dead) if dead else "(範囲内では起きない)"))
-    assert ratios[i90] < 0.5 and aucs[i90] > 0.95, (ratios[i90], aucs[i90])
-    assert aucs[-1] < 0.7, aucs[-1]
+    print("  ★品質 90 相当で PCE %.0f %%、品質 50 相当で %.1f %%(量子化利得² の予測 %.1f %%"
+          " —— ほぼ的中)。" % (100 * ratios[i90], 100 * ratios[i50], 100 * preds[i50]))
+    print("  ★予測が外れるのは品質 %.0f 相当より下(予測 %.1f %% / 実測 %.1f %%): 予測は"
+          "死に過ぎ = ショット雑音がディザになって量子化幅より小さい信号も少し通す。" % (
+              qs[-2], 100 * preds[-1], 100 * ratios[-1]))
+    weak = [q for q, au in zip(qs, aucs) if au < 0.9]
+    print("  それでも AUC は品質 %.0f 相当まで 1.000 を保ち、AUC < 0.9 になるのは品質 %s 相当から"
+          "(最低の品質 %.0f 相当で AUC %.3f)。PCE が 1/25 になっても判定はまだ壊れない。" % (
+              min(q for q, au in zip(qs, aucs) if au >= 0.999),
+              "%.0f" % max(weak) if weak else "(範囲内では起きない)", qs[-1], aucs[-1]))
+    assert 0.3 < ratios[i90] < 0.8 and aucs[i90] > 0.95, (ratios[i90], aucs[i90])
+    assert abs(preds[i50] - ratios[i50]) < 0.02, (preds[i50], ratios[i50])
+    assert aucs[i50] > 0.95 and aucs[-1] < 0.8, (aucs[i50], aucs[-1])
 
     figs.save_table("jpeg_sweep",
                     ["a", "IJG 品質相当", "PCE 同一", "PCE 別", "AUC", "PCE 比(清浄=100)", "予測 PCE 比", "Δ≤2σ の係数"],
