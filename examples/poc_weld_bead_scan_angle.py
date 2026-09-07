@@ -730,21 +730,36 @@ def section5_angle_sweep(p: dict, tru: dict) -> dict:
     groups = [("a 遮蔽なし", dict(occlusion=False, specular=0.0)),
               ("b 遮蔽あり", dict(occlusion=True, specular=0.0)),
               ("c 遮蔽+鏡面", dict(occlusion=True, specular=4.0))]
-    res = {g: {k: {"mae": [], "got": []} for k in KEYS} for g, _ in groups}
+    seeds = (21, 47, 83)
+    res = {g: {k: {"mae": [], "got": [], "miss": []} for k in KEYS} for g, _ in groups}
     hgt = {g: [] for g, _ in groups}
-    sat = []
+    sat, sat_bias, unsat_bias = [], [], []
     h_true = profile_h(X, p)
     for gname, kw in groups:
         for a in ANGLES:
-            img, vis = render(p, a, seed=21, **kw)
-            hh = to_height(est_centroid(img), a)
-            hgt[gname].append(_rms((hh - h_true)[np.isfinite(hh) & vis]))
-            if gname.startswith("c"):
-                sat.append(float((img >= 0.999).mean()))
-            sc = score(measure_all(hh, p["y"]), tru)
+            acc = {k: {"mae": [], "got": [], "miss": []} for k in KEYS}
+            hh_rms = []
+            for sd in seeds:
+                img, vis = render(p, a, seed=sd, **kw)
+                hh = to_height(est_centroid(img), a)
+                good = np.isfinite(hh) & vis
+                hh_rms.append(_rms((hh - h_true)[good]))
+                if gname.startswith("c") and sd == seeds[0]:
+                    hot = (img >= 0.999).any(axis=1)          # 飽和画素を含む列
+                    sat.append(float((img >= 0.999).mean()))
+                    sat_bias.append(float(np.mean((hh - h_true)[good & hot]))
+                                    if (good & hot).any() else np.nan)
+                    unsat_bias.append(float(np.mean((hh - h_true)[good & ~hot])))
+                sc = score(measure_all(hh, p["y"]), tru)
+                for k in KEYS:
+                    for f in ("mae", "got", "miss"):
+                        acc[k][f].append(sc[k][f])
+            hgt[gname].append(float(np.mean(hh_rms)))
             for k in KEYS:
-                res[gname][k]["mae"].append(sc[k]["mae"])
-                res[gname][k]["got"].append(sc[k]["got"])
+                for f in ("mae", "got", "miss"):
+                    res[gname][k][f].append(float(np.nanmean(acc[k][f]))
+                                            if np.any(np.isfinite(acc[k][f]))
+                                            else float("nan"))
 
     c0 = hgt["a 遮蔽なし"][I_REF] * np.sin(np.deg2rad(THETA_REF))
     print("  高さそのものの RMS [mm](予測 = %.4f/sin θ、θ=%.0f 度で 1 点だけ合わせた)"
