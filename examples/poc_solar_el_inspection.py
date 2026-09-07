@@ -904,6 +904,11 @@ def section_tool_gaps() -> None:
           % (tl, true_len, tl / true_len))
     assert tl > 1.5 * true_len, tl
 
+    # (f) hysteresis_threshold のしきい値範囲が固定(下 0.2〜0.5、上 0.5〜0.8)
+    print("  (f) hysteresis_threshold のしきい値は下 0.2〜0.5 / 上 0.5〜0.8 に固定で、"
+          "校正線 = 1.0 の尺度では上限 %.2f が指定できない。応答にゲイン %.2f を掛けて"
+          "範囲に入れている。" % (HYST_HIGH, 0.5 / HYST_HIGH))
+
 
 # --------------------------------------------------------------------------- #
 def main() -> int:
