@@ -139,11 +139,16 @@ def manders(a: np.ndarray, b: np.ndarray, ma: np.ndarray, mb: np.ndarray,
     return m1, m2
 
 
-def fixed_mask(img: np.ndarray, roi: np.ndarray) -> np.ndarray:
-    """固定しきい値: 背景の中央値 + 3σ(σ は ``noise_sigma`` の MAD 推定)。"""
+def fixed_mask(img: np.ndarray, roi: np.ndarray) -> tuple[np.ndarray, float]:
+    """固定しきい値: ROI の中央値 + 3σ(σ は ``noise_sigma`` の MAD 推定)。
+
+    σ は ROI の中で測る —— 視野全体に掛けると細胞の内外の 2 山が MAD に入って
+    雑音の 3 倍以上に膨らむ(ROI の外は中央値で埋めて op に渡す)。
+    """
     med = float(np.median(img[roi]))
-    sig = float(_LAB.noise_sigma(img, method="mad"))
-    return img > med + 3.0 * sig
+    sig = float(_LAB.noise_sigma(np.where(roi, img, med), method="mad"))
+    thr = med + 3.0 * sig
+    return img > thr, thr
 
 
 def costes_threshold(a: np.ndarray, b: np.ndarray, roi: np.ndarray,
