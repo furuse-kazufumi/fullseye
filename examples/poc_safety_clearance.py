@@ -534,10 +534,11 @@ def section_timeseries() -> dict:
     for k in est:
         est[k] = np.array(est[k])
 
-    haz = d_true < S
+    haz = d_true < S_GEOM
     rows = []
-    print("\n  必要分離距離 S = %.3f m(Z_d = %.3f m)。危険フレーム %d / %d"
-          % (S, ZD_BASE, int(haz.sum()), len(ts)))
+    print("\n  物理として危険な距離 S_geom = %.3f m / 停止判定 S = %.3f m"
+          "(Z_r + Z_d = %.3f m)。危険フレーム %d / %d"
+          % (S_GEOM, S, Z_R + ZD_BASE, int(haz.sum()), len(ts)))
     print("  推定器             過大評価 [m] 全体 / 危険時 / 最大   見落とし        誤検知")
     stats = {}
     for name in ("重心 1 点", "足元 1 点", "全表面(遮蔽なし)", "背面 1 台",
