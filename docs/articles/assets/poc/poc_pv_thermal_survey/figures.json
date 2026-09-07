@@ -1,0 +1,74 @@
+[
+ {
+  "file": "01_norm_table.png",
+  "name": "norm_table",
+  "caption": "「偽」= 故障でも影でも汚れでもない場所に出た塊。しきい値 3.0 K、風速 1.0 m/s。",
+  "shape": [
+   152,
+   701,
+   3
+  ],
+  "csv": "01_norm_table.csv",
+  "tsv": "01_norm_table.tsv"
+ },
+ {
+  "file": "02_wind_sweep.png",
+  "name": "wind_sweep",
+  "caption": "U(v) = 1.75·(5.7 + 3.8v + h_rad)。予測の線は画像を一切見ずに引いてある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_gsd_sweep.png",
+  "name": "gsd_sweep",
+  "caption": "半径 30 mm の熱源。σ_tot は熱伝導・光学・画素・判定平滑の二乗和。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_angle_sweep.png",
+  "name": "angle_sweep",
+  "caption": "ε(θ) は Fresnel(等価屈折率 1.8)。射影補正は fs.ledger.warp_by_plane を 2 回。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_netd_sweep.png",
+  "name": "netd_sweep",
+  "caption": "風速 1.0 m/s、モジュールごとの中央値を基準。実在の非冷却カメラは 20〜50 mK。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_scene.png",
+  "name": "scene",
+  "caption": "真値の赤はセル内ホットスポットとストリング故障、黄は影と汚れ(本物の温度差だが電気的故障ではない)。",
+  "shape": [
+   545,
+   546,
+   3
+  ]
+ },
+ {
+  "file": "07_false_map.png",
+  "name": "false_map",
+  "caption": "上段の塊はすべて偽か非故障の温度差。基準の取り方だけで消える。",
+  "shape": [
+   545,
+   546,
+   3
+  ]
+ }
+]

@@ -813,7 +813,7 @@ def section_wind() -> dict:
              "面積基準" if abs(last_hot - v_area) < abs(last_hot - v_hot)
              else "ピーク基準"))
     print("     ストリングは面積が広いので面積の門が効かず、ピーク基準 %.1f と"
-          "実測 %.1f が一致する。" % (v_str, last_str))
+          "実測 %.1f が掃引の刻み(1 m/s)の中で一致する。" % (v_str, last_str))
     print("     **同じ日の朝と昼で、同じ故障が出たり消えたりする**。")
     err = [abs(p - m) for p, m in zip(ph_p, ph_m)]
     err2 = [abs(p - m) for p, m in zip(ps_p, ps_m)]
