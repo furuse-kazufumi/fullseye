@@ -760,6 +760,20 @@ def section_control(cells, recs) -> dict:
           % (res["uniform"]["truth"]["dv_int"], res["local"]["truth"]["dv_int"],
              res["gas"]["truth"]["dv_int"]))
 
+    # 層厚の系統誤差 —— ぼけると縁の間隔は半周期へ引き寄せられる
+    th = res["healthy"]["inner"]["t_mean"]
+    tr = res["healthy"]["truth"]["t_mean"]
+    print("\n  ★層厚は**系統的に過小**に出る(健全セル: 真値 %.3f -> 測定 %.3f mm、"
+          "%+.1f %%)。" % (tr, th, 100 * (th - tr) / tr))
+    print("     理由: ぼけると縞は正弦波に近づき、微分のピーク間隔は"
+          "**半周期 %.3f mm** へ引き寄せられる(真値 %.3f と半周期のあいだの %.0f %% の"
+          "ところに落ちた)。**層間隔(ピッチ)は %.3f mm で真値 %.3f を保つ** ——"
+          "同じプロファイルから出しても、周期は当たり厚みは外れる。"
+          % (0.5 * PITCH, tr, 100 * (tr - th) / (tr - 0.5 * PITCH),
+             res["healthy"]["inner"]["pitch_mean"], PITCH))
+    print("     だから層厚は**条件どうしの比較にだけ**使える(絶対値の合否判定には"
+          "使えない)。")
+
     # 層の平面度 —— **端に近い層**で測る。膨れは積層の中央について対称なので、
     # 真ん中の層はどの劣化でも平らなまま(ここを測ると差が出ない)。
     flat = {}
