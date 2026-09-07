@@ -655,17 +655,21 @@ def section_align(ref: CadRef) -> dict:
         _, _, idx, _ = ref.deviate(best["q"])
         on_top = ref.face[idx] == ref.names.index("top")
         P2 = best["q"][on_top][:, :2]
+        S = 0.40
         figs.save_grid(
             "deviation_maps",
-            [top_map(P2, tru[on_top]), top_map(P2, best["sig"][on_top]),
-             top_map(P2, best["sig"][on_top] - tru[on_top]),
-             top_map(P2, np.where(np.abs(best["sig"][on_top]) > TOL,
-                                  np.sign(best["sig"][on_top]), 0.0))],
-            ["真の偏差 [mm]", "点-面 ICP のあとの推定 [mm]",
-             "推定 - 真値 [mm]", "公差 ±%.2f mm を外れた領域" % TOL],
-            title="上面の偏差地図(青 = 足りない / 赤 = 余る)", ncols=2, signed=True,
-            caption="中央付近の広い青は「反り」ではなく、位置合わせが反りの平均を"
-                    "吸ったために出た偽のへこみ(第 6 章)。")
+            [with_scalebar(top_map(P2, tru[on_top]), S),
+             with_scalebar(top_map(P2, best["sig"][on_top]), S),
+             with_scalebar(top_map(P2, best["sig"][on_top] - tru[on_top]), S),
+             with_scalebar(top_map(P2, np.where(np.abs(best["sig"][on_top]) > TOL,
+                                                np.sign(best["sig"][on_top]),
+                                                0.0)) * S, S)],
+            ["真の偏差(±%.2f mm)" % S, "点-面 ICP のあとの推定(同じ目盛り)" ,
+             "推定 - 真値(同じ目盛り)", "公差 ±%.2f mm を外れた領域" % TOL],
+            title="上面の偏差地図(だいだい = 足りない / 青 = 余る)", ncols=2,
+            signed=True,
+            caption="3 枚目が一様に色づくのが第 6 章の主張 —— 位置合わせが"
+                    "反りの平均を吸って、部品全体が下へずれて読める。")
     return {"scan": sc, "keep": keep, "a_true": a_true, "rows": rows,
             "edge_naive": edge_naive, "edge_fixed": edge_fixed,
             "edge_frac": float(edge.mean()), "cross": cross}
