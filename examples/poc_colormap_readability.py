@@ -715,7 +715,7 @@ def main() -> None:
 
     meas = section_false_edges()
     pred = section_closed_form(meas)
-    cliff = section_cliff(meas)
+    cliff = section_cliff()
     bowl = section_bowl(meas)
     norms = section_norms()
     rng_out = section_out_of_range()
