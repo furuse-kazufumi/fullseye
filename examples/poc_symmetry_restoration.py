@@ -877,15 +877,15 @@ def section_false_symmetry(S: dict) -> dict:
     if figs.enabled():
         S_ = 3.5
         pan, cap = [], []
-        pan.append(shaded(Z, ins, xs, ys)); cap.append("真の形(右頬に装飾 + ねじれ)")
+        pan.append(shaded(Z, ins, xs, ys)); cap.append("真の形(右頬に装飾+ねじれ)")
         pan.append(with_scalebar(np.where(ins, da, 0.0), S_))
-        cap.append("真の非対称 z(x,y)-z(-x,y) [mm](RMS %.2f)" % asym_true)
+        cap.append("真の非対称 [mm](RMS %.2f)" % asym_true)
+        short = {"無地の側(左)": "左(無地)を欠損: 捏造 %.0f mm^3",
+                 "装飾のある側(右)": "右(装飾)を欠損: 消失 %.0f mm^3"}
         for side in ("無地の側(左)", "装飾のある側(右)"):
             h = out[side]["hole"]
-            vis = np.where(h, Zm - Z, 0.0)
-            pan.append(with_scalebar(vis, S_))
-            cap.append("%sを欠損 -> 復元の嘘 [mm](捏造 %.0f / 消失 %.0f mm^3)"
-                       % (side, out[side]["fab"], out[side]["ers"]))
+            pan.append(with_scalebar(np.where(h, Zm - Z, 0.0), S_))
+            cap.append(short[side] % (out[side]["fab"] + out[side]["ers"]))
         figs.save_grid("false_symmetry", pan, cap,
                        title="偽陽性: 対称でない形に対称復元をかけると何が起きるか",
                        ncols=2, signed=[False, True, True, True],

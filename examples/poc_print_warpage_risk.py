@@ -356,13 +356,18 @@ def fem_build(thick, dx, dz, eps=EPS_LAYER, incompat=True):
 
 
 def _warp_summary(u, act, K, nnx, nz, dx, ndof):
-    """反りを**列ごとの平均 z 変位**から測る(底面が無い形でも測れる)。"""
+    """反りを**底面(基板に接していた面)の z 変位**から測る。
+
+    底面は最初の層から最後まで在る材料面なので、履歴を全部受け取っている。
+    後から生えた面で測ると「その面が生まれてから先」しか見えない。
+    """
     uz = u[1::2].reshape(nz + 1, nnx)
     m = act.reshape(nz + 1, nnx)
-    cnt = m.sum(axis=0)
-    ok = cnt > 0
-    prof = np.where(ok, (uz * m).sum(axis=0) / np.maximum(cnt, 1), np.nan)
+    ok = m[0]
+    if ok.sum() < 4:
+        raise ValueError("底面が短すぎて反りを測れない(基板に接する層が要る)")
     xs = np.arange(nnx) * dx
+    prof = np.where(ok, uz[0], np.nan)
     p = np.polyfit(xs[ok], prof[ok], 2)
     chord = np.interp(xs[ok], [xs[ok][0], xs[ok][-1]], [prof[ok][0], prof[ok][-1]])
     return {"kappa": float(2.0 * p[0]),
