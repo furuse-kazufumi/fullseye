@@ -967,9 +967,9 @@ def section_controls(ref: CadRef) -> dict:
         q = sc["pts"] @ R.T + t
         _, s, _, ed = ref.deviate(q)
         e = rot_err_deg(R, sc["R_true"])
-        rms = 1000 * float(np.sqrt(np.mean((s - sc["dev_true"]) ** 2)))
-        a_est = out_of_tol_area(s, sc["w"])
-        a_tru = out_of_tol_area(sc["dev_true"], sc["w"])
+        rms = 1000 * float(np.sqrt(np.mean(((s - sc["dev_true"])[~ed]) ** 2)))
+        a_est = out_of_tol_area(s[~ed], sc["w"])
+        a_tru = out_of_tol_area(sc["dev_true"][~ed], sc["w"])
         # ★真値が 0 の対照群で「%」を出すと 0 割りで意味の無い巨大な数になる。
         #   面積は mm^2 のまま並べ、%は真値が意味を持つときだけ添える。
         da = ("%.1f / %.1f (%+.1f %%)" % (a_est, a_tru,
