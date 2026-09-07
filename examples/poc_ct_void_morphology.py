@@ -319,8 +319,8 @@ def die_distance(scene: dict) -> np.ndarray:
 
 
 def evaluate(voids: list[dict], voxel: float = VOXEL, thr: float = THR,
-             noise: float = NOISE, seed: int = SEED) -> dict:
-    scene = build_scene(voids, voxel)
+             noise: float = NOISE, seed: int = SEED, phase: float = 0.0) -> dict:
+    scene = build_scene(voids, voxel, phase)
     obs = observe(scene["mu"], voxel, seed=seed, noise=noise)
     est = segment(obs, scene["layer"], thr)
     m = morphology(est, scene["layer"], die_distance(scene), voxel)

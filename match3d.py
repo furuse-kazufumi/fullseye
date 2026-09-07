@@ -1754,6 +1754,21 @@ def _rodrigues(omega, device):
     return eye + torch.sin(theta) * K + (1.0 - torch.cos(theta)) * (K @ K)
 
 
+def _rodrigues_np(omega):
+    """回転ベクトル ω → 回転行列 R = expm([ω]×)(Rodrigues, numpy 3x3)。
+
+    :func:`_rodrigues` の numpy 版(2026-09-07)。式は同じで、torch を入れない
+    環境でも点-面 ICP が走るようにするためだけに分けてある。
+    """
+    theta = float(np.linalg.norm(omega))
+    eye = np.eye(3, dtype=np.float64)
+    if theta < 1e-12:
+        return eye
+    k = np.asarray(omega, np.float64) / theta
+    K = np.array([[0.0, -k[2], k[1]], [k[2], 0.0, -k[0]], [-k[1], k[0], 0.0]])
+    return eye + np.sin(theta) * K + (1.0 - np.cos(theta)) * (K @ K)
+
+
 def _nearest(cur, Q, chunk=4096):
     """cur(N,3) 各点の Q(M,3) 内最近傍 index。torch.cdist をチャンク分割(device 非依存)。"""
     N = cur.shape[0]
@@ -1825,57 +1840,64 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
                          "each dst point (got %d normals for %d points) — "
                          "estimate normals on this dst cloud (e.g. "
                          "pointcloud.estimate_normals(dst))" % (len(_n), len(_d)))
-    dt = torch.float64
-    P0 = torch.as_tensor(np.asarray(src, np.float64), dtype=dt, device=device)
-    Q = torch.as_tensor(np.asarray(dst, np.float64), dtype=dt, device=device)
-    Nn = torch.as_tensor(np.asarray(dst_normals, np.float64), dtype=dt, device=device)
-    Nn = Nn / torch.linalg.norm(Nn, dim=1, keepdim=True).clamp_min(1e-12)
+    # ★2026-09-07: 本体を numpy に書き換えた。最近傍探索・6x6 の正規方程式・
+    # Rodrigues のどれも CPU の小さい線形代数で、torch でやる必要が無かったのに
+    # 必須になっていた。torch を入れない CI(py3.10 / 3.12)で PoC が
+    # ImportError で落ちて発覚。式は同じ float64 なので結果は変わらない
+    # (torch 版との差は R/t で 0、RMSE で 0 を実測)。
+    if str(device) not in ("cpu", "None") and not _HAS_TORCH:
+        raise ValueError(
+            "icp_point2plane: device=%r needs the optional 'torch' backend "
+            "(the numpy path runs on the CPU only)" % (device,))
+    from scipy.spatial import cKDTree
+
+    P0 = np.ascontiguousarray(_s, np.float64)
+    Q = np.ascontiguousarray(_d, np.float64)
+    Nn = np.ascontiguousarray(_n, np.float64)
+    Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=1, keepdims=True), 1e-12)
 
     n_src = P0.shape[0]
     if init is None:
-        R_tot = torch.eye(3, dtype=dt, device=device)
-        t_tot = torch.zeros(3, dtype=dt, device=device)
-        cur = P0.clone()
+        R_tot = np.eye(3, dtype=np.float64)
+        t_tot = np.zeros(3, dtype=np.float64)
+        cur = P0.copy()
     else:
-        R_tot = torch.as_tensor(np.asarray(init[0], np.float64), dtype=dt, device=device).clone()
-        t_tot = torch.as_tensor(np.asarray(init[1], np.float64), dtype=dt, device=device).clone()
+        R_tot = np.ascontiguousarray(np.asarray(init[0], np.float64)).reshape(3, 3).copy()
+        t_tot = np.ascontiguousarray(np.asarray(init[1], np.float64)).reshape(3).copy()
         cur = P0 @ R_tot.T + t_tot
     keep_n = n_src if trim is None else max(3, int(round((1.0 - float(trim)) * n_src)))
 
     prev = float("inf")
     rmse = float("inf")
     n_iter = 0
-    reg = torch.eye(6, dtype=dt, device=device) * 1e-12       # 特異回避の微小正則化
+    reg = np.eye(6, dtype=np.float64) * 1e-12   # 特異回避の微小正則化
+    tree = cKDTree(Q)                           # dst は不変(torch.cdist と同じ最近傍)
     for it in range(int(iters)):
         n_iter = it + 1
-        idx = _nearest(cur, Q)
+        _, idx = tree.query(cur, k=1)
         q = Q[idx]
         n = Nn[idx]
-        resid = torch.einsum("ij,ij->i", cur - q, n)          # 符号付き点-面距離
+        resid = np.einsum("ij,ij->i", cur - q, n)             # 符号付き点-面距離
         if keep_n < n_src:                                    # Trimmed: 残差小さい keep_n 点のみ
-            sel = torch.argsort(resid.abs())[:keep_n]
+            sel = np.argsort(np.abs(resid))[:keep_n]
         else:
             sel = slice(None)
         p_s, q_s, n_s, r_s = cur[sel], q[sel], n[sel], resid[sel]
         # J_i = [p×n | n],  b_i = -(p-q)·n = -r_s  (正規方程式 (JᵀJ)x=Jᵀb を 6×6 で)
-        J = torch.cat([torch.linalg.cross(p_s, n_s), n_s], dim=1)   # (K,6)
-        x = torch.linalg.solve(J.T @ J + reg, J.T @ (-r_s))
-        R_inc = _rodrigues(x[:3], device)
+        J = np.concatenate([np.cross(p_s, n_s), n_s], axis=1)  # (K,6)
+        x = np.linalg.solve(J.T @ J + reg, J.T @ (-r_s))
+        R_inc = _rodrigues_np(x[:3])
         t_inc = x[3:]
         cur = cur @ R_inc.T + t_inc
         R_tot = R_inc @ R_tot
         t_tot = R_inc @ t_tot + t_inc
         # 更新後の点-面 RMSE(採用点のみで評価。同じ対応で単調性を判定)
-        rmse = float(torch.sqrt(torch.mean(
-            torch.einsum("ij,ij->i", cur[sel] - q_s, n_s) ** 2)))
+        rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - q_s, n_s) ** 2)))
         if abs(prev - rmse) < tol:
             break
         prev = rmse
 
-    R = R_tot.detach().cpu().numpy()
-    t = t_tot.detach().cpu().numpy()
-    aligned = cur.detach().cpu().numpy()
-    return R, t, aligned, rmse, n_iter
+    return R_tot, t_tot, cur, rmse, n_iter
 
 
 # ═══════════════════════════════════════════════════════════════════════════
