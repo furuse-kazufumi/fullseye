@@ -706,7 +706,7 @@ def section_sweep() -> dict:
     for name, sel in conds[:3]:
         hid = 0; wrong = 0; nh = 0
         for f in frames:
-            if f["d_true"] < S:
+            if f["d_true"] < S_GEOM:
                 nh += 1
                 k = int(np.argmin(f["per_part"]))
                 v = sel(f)

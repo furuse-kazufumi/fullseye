@@ -425,8 +425,8 @@ def section_stem_capsule():
         res = [max(4, int(round((q[1] - q[0]) / h))) for q in bounds]
         g = np.asarray(L3.grid_coords(bounds, res))
         sdf = np.asarray(L3.capsule_sdf(g, a, b, r))
-        if slice_keep is None:
-            slice_keep = sdf[:, :, sdf.shape[2] // 2]
+        # 縦断面(x, z)。上書きして**いちばん細かい格子**を残す。
+        slice_keep = np.repeat(np.repeat(sdf[:, sdf.shape[1] // 2, :].T, 3, 0), 3, 1)
         # voxel_to_mesh は voxel 単位の座標を返す。軸ごとの辺長を掛けて m に戻す。
         # ★``grid_coords`` は**ボクセル中心**を置く(中心間隔 = span/res であって
         #   span/(res-1) ではない)。最初 span/(res-1) を掛けて球で面積 +12 %、
