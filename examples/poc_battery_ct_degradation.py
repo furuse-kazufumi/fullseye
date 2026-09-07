@@ -1164,7 +1164,9 @@ def section_noise_streak(cells, sinos) -> dict:
                     ("空隙体積の誤差 [%]", n0s, v_err),
                     ("層間隔の散らばり x100 [mm]", n0s, [100 * s for s in sd])],
                    xlabel="log10(フォトン数 N0)", ylabel="誤差",
-                   title="雑音の崖 —— 空隙が先に壊れ、層数は後から壊れる")
+                   title="雑音では層は死なない —— 痩せるのは空隙だけ",
+                   caption="フォトン数を 1000 分の 1 にしても層数は 1 枚しか動かない。"
+                           "空隙体積は -10 % から -25 % へ悪化する。")
     figs.save_plot("sweep_beamhardening",
                    [("層厚の誤差 [%]", bhs, bh_terr),
                     ("空隙体積の誤差 [%]", bhs, bh_verr),
