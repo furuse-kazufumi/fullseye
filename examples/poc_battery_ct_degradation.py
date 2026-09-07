@@ -365,28 +365,44 @@ def _vidx(z_mm, y_mm, x_mm):
     return (z_mm / SZ - 0.5, y_mm / SY - 0.5, x_mm / SX - 0.5)
 
 
-def outer_metrics(vol: np.ndarray, thr: float = 1.55) -> dict:
+def outer_metrics(vol: np.ndarray) -> dict:
     """**ゼロ点** —— 缶の外形だけから劣化を測る(非破壊で誰でもできる方法)。
 
-    高いしきい値で缶(アルミ)だけを取り、端板のあいだの外形高さの場を
-    ``(z, x)`` ごとに出す。``caliper`` は中央の 1 点(ノギス)、``mean`` は
-    体積等価な平均。**op には「外形の囲む高さ」を出す口が無いので自前**。
+    外(空気)から内へ向かって最初に缶を横切る位置を、列ごとに**サブボクセルで**
+    出す。しきい値は缶の水準の半分(空気 0 と缶の中間 = 縁の半値)にとる ——
+    絶対値にするとビームハードニングで缶の水準が下がったときに破綻する。
+    電極が誤って明るく出ても、それは 2 つの交差の**あいだ**なので影響しない。
+
+    ``caliper`` は中央 3x3 の平均(ノギスで真ん中を挟む)、``mean`` は端板の面平均
+    (体積等価)。**「外形が囲む高さ」を出す op は公開経路に無いので自前**。
     """
-    can = np.asarray(vol) > thr
-    xx, zz, inside = _panel_grids()
-    heights = np.full((ND, NW), np.nan)
-    for k in range(ND):
-        for j in range(NW):
-            col = np.nonzero(can[k, :, j])[0]
-            if col.size >= 2:
-                heights[k, j] = (col[-1] - col[0] + 1) * SY
+    v = np.asarray(vol, float)
+    v_can = float(np.median(v[v > np.percentile(v, 98.0)]))
+    thr = 0.5 * v_can
+    above = v > thr
+    ok = above.any(axis=1)
+    first = np.argmax(above, axis=1)
+    last = NH - 1 - np.argmax(above[:, ::-1, :], axis=1)
+
+    def _sub(idx, back):
+        """しきい値交差のサブボクセル位置 [voxel]。``back`` なら 1 つ後ろ側と補間。"""
+        j = np.clip(idx + (1 if back else -1), 0, NH - 1)
+        a = np.take_along_axis(v, j[:, None, :], axis=1)[:, 0, :]
+        b = np.take_along_axis(v, idx[:, None, :], axis=1)[:, 0, :]
+        d = np.where(np.abs(b - a) < 1e-9, np.nan, b - a)
+        f = np.clip((thr - a) / d, 0.0, 1.0)
+        return j + f * (idx - j)
+
+    y_lo, y_hi = _sub(first, False), _sub(last, True)
+    heights = np.where(ok, (y_hi - y_lo) * SY, np.nan)
+    _, _, inside = _panel_grids()
     panel = inside.T & np.isfinite(heights)
     cz, cx = ND // 2, NW // 2
-    return {"height": heights, "panel": panel,
-            "caliper": float(np.nanmax(heights[max(0, cz - 1):cz + 2,
-                                               max(0, cx - 1):cx + 2])),
+    core = heights[cz - 1:cz + 2, cx - 1:cx + 2]
+    return {"height": heights, "panel": panel, "thr": thr,
+            "caliper": float(np.nanmean(core)),
             "mean": float(heights[panel].mean()),
-            "bbox": tuple(int(v) for v in np.asarray(L.vol_bounding_box(can)))}
+            "bbox": tuple(int(b) for b in np.asarray(L.vol_bounding_box(above)))}
 
 
 def _probe_points():
