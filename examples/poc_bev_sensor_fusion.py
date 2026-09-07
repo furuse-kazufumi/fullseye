@@ -915,6 +915,13 @@ def section_shaping(rig: Rig) -> dict:
 # --------------------------------------------------------------------------- #
 # 9. 図                                                                         #
 # --------------------------------------------------------------------------- #
+def far_cells(rig, idx: int) -> np.ndarray:
+    """``OBSTACLES[idx]`` の footprint(所見を固定する assert 用)。"""
+    o = OBSTACLES[idx]
+    return ((np.abs(rig.X - o["cx"]) <= o["lx"] / 2)
+            & (np.abs(rig.Y - o["cy"]) <= o["ly"] / 2))
+
+
 def bev_img(a) -> np.ndarray:
     """BEV 配列 (x,y) → 画像(上が前方、左が車の左)。"""
     return np.asarray(a, float)[::-1, ::-1]

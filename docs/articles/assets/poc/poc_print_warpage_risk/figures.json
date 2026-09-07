@@ -98,15 +98,25 @@
  {
   "file": "10_warp_map.png",
   "name": "warp_map",
-  "caption": "端が持ち上がる典型的な反り。同じ面積履歴の 2 つで大きさが違う。",
+  "caption": "端が基板から持ち上がる典型的な反り。層面積の履歴が同じ 3 つで、反り量が 26 % 開く。",
   "shape": [
-   808,
-   383,
+   766,
+   380,
    3
   ]
  },
  {
-  "file": "11_cliff_aspect.png",
+  "file": "11_warp_profile.png",
+  "name": "warp_profile",
+  "caption": "閉形式はこの 3 本に同じ 1 本しか返せない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_cliff_aspect.png",
   "name": "cliff_aspect",
   "caption": "首の細さでは崩れない(別図)。純曲げにはせん断が無いため。",
   "shape": [
@@ -116,7 +126,7 @@
   ]
  },
  {
-  "file": "12_cliff_neck.png",
+  "file": "13_cliff_neck.png",
   "name": "cliff_neck",
   "caption": "",
   "shape": [
@@ -126,7 +136,7 @@
   ]
  },
  {
-  "file": "13_controls.png",
+  "file": "14_controls.png",
   "name": "controls",
   "caption": "",
   "shape": [
@@ -134,11 +144,11 @@
    403,
    3
   ],
-  "csv": "13_controls.csv",
-  "tsv": "13_controls.tsv"
+  "csv": "14_controls.csv",
+  "tsv": "14_controls.tsv"
  },
  {
-  "file": "14_layer_thickness.png",
+  "file": "15_layer_thickness.png",
   "name": "layer_thickness",
   "caption": "",
   "shape": [
@@ -148,7 +158,7 @@
   ]
  },
  {
-  "file": "15_peel_profile.png",
+  "file": "16_peel_profile.png",
   "name": "peel_profile",
   "caption": "正 = 接着剤が引っ張られる。中央は押しつけられている。",
   "shape": [
@@ -158,7 +168,7 @@
   ]
  },
  {
-  "file": "16_peel_vs_moment.png",
+  "file": "17_peel_vs_moment.png",
   "name": "peel_vs_moment",
   "caption": "同じ EIκ でも端の作りしだいで 1 桁動く。",
   "shape": [
@@ -168,7 +178,7 @@
   ]
  },
  {
-  "file": "17_peel.png",
+  "file": "18_peel.png",
   "name": "peel",
   "caption": "",
   "shape": [
@@ -176,11 +186,11 @@
    480,
    3
   ],
-  "csv": "17_peel.csv",
-  "tsv": "17_peel.tsv"
+  "csv": "18_peel.csv",
+  "tsv": "18_peel.tsv"
  },
  {
-  "file": "18_risk_map.png",
+  "file": "19_risk_map.png",
   "name": "risk_map",
   "caption": "危険度 = 予測たわみ / 許容 0.20 mm。縦は層厚 1.00 -> 0.20 mm(上が厚い)、横は首の幅 16.0 -> 1.0 mm(右が細い)。明るいほど危ない。",
   "shape": [
@@ -189,7 +199,7 @@
   ]
  },
  {
-  "file": "19_risk_map_table.png",
+  "file": "20_risk_map_table.png",
   "name": "risk_map_table",
   "caption": "",
   "shape": [
@@ -197,7 +207,7 @@
    411,
    3
   ],
-  "csv": "19_risk_map_table.csv",
-  "tsv": "19_risk_map_table.tsv"
+  "csv": "20_risk_map_table.csv",
+  "tsv": "20_risk_map_table.tsv"
  }
 ]

@@ -451,10 +451,30 @@ def _up(img, fz, fx):
 
 
 def _side_view(occ):
-    """y 方向に投影した側面図(z,x)。上下を反転して「上」を上に描く。"""
+    """y 方向に**積算**した側面図(z,x)。上下を反転して「上」を上に描く。
+
+    ★``mode="mip"`` だと薄いフィンも太い板も同じ真っ白になる(y 方向の
+    厚みが消える)。``mode="xray"`` の減衰積算にすると、明るさが
+    **面外の厚み**になるので首の細さがそのまま見える。
+    """
     v = np.asarray(occ, float).transpose(1, 0, 2)      # (y,z,x)
-    p = np.asarray(L.render_volume_projection(v, mode="mip"))
+    p = np.asarray(L.render_volume_projection(v, mode="xray"))
     return np.flipud(np.asarray(p, float))
+
+
+def _deformed_view(case, mag=20.0):
+    """反った姿を描く(列ごとに z 変位ぶんずらす)。``mag`` 倍に誇張。"""
+    side = _side_view(case["occ"])
+    nz, nx_v = side.shape
+    r = case["fem"]
+    uz = np.interp(np.linspace(0.0, L_X, nx_v), r["xs"][np.isfinite(r["prof"])],
+                   r["prof"][np.isfinite(r["prof"])])
+    pad = int(np.ceil(np.abs(uz).max() * mag / case["h"])) + 2
+    out = np.zeros((nz + 2 * pad, nx_v))
+    for i in range(nx_v):
+        sft = int(round(-uz[i] * mag / case["h"]))     # 上下反転済みなので符号も反転
+        out[pad + sft:pad + sft + nz, i] = side[:, i]
+    return out
 
 
 # --------------------------------------------------------------------------- #
@@ -659,19 +679,22 @@ def section_predict_vs_measure(cases):
                      "予測たわみ mm", "実測たわみ mm"], rows,
                     title="予測と実測(1 層あたり ε = %.1e)" % EPS_LAYER)
 
+    mag = 20.0
     panels, caps = [], []
     for n in TRIO:
-        r = cases[n]["fem"]
-        uz = r["u"][1::2].reshape(r["nz"] + 1, r["nnx"])
-        m = r["act"].reshape(r["nz"] + 1, r["nnx"])
-        fld = np.where(m, uz, 0.0)
-        panels.append(_up(np.flipud(fld), 8, 3))
+        panels.append(_up(_deformed_view(cases[n], mag), 3, 3))
         caps.append("%s %.3f mm" % (n, cases[n]["dev_fem"]))
-    figs.save_grid("warp_map", panels, caps, ncols=1, signed=True,
-                   title="解いた反りの変位場 uz(青 = 下がる / 赤 = 上がる、"
-                         "z 方向は 8 倍に伸ばして表示)",
-                   caption="端が持ち上がる典型的な反り。同じ面積履歴の 2 つで"
-                           "大きさが違う。")
+    figs.save_grid("warp_map", panels, caps, ncols=1,
+                   title="反った姿(z 方向のずれを %.0f 倍に誇張、明るさ = 面外の厚み)"
+                         % mag,
+                   caption="端が基板から持ち上がる典型的な反り。層面積の履歴が"
+                           "同じ 3 つで、反り量が %.0f %% 開く。"
+                           % (100 * spread))
+    figs.save_plot("warp_profile",
+                   [(n, cases[n]["fem"]["xs"], cases[n]["fem"]["prof"]) for n in TRIO],
+                   xlabel="x [mm]", ylabel="底面の z 変位 [mm]",
+                   title="同じ層面積の履歴から出た 3 本の反り曲線",
+                   caption="閉形式はこの 3 本に同じ 1 本しか返せない。")
     return err, d1, d2
 
 

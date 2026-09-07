@@ -49,8 +49,11 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO_ROOT))
 
 from mesh_props import (  # noqa: E402  (sys.path 調整後に import)
+    boundary_vertices,
+    face_areas,
     face_normals,
     mesh_area,
+    mesh_volume,
     vertex_curvature,
     vertex_normals,
 )
@@ -388,6 +391,33 @@ def main() -> int:
     )
     out_png = _REPO_ROOT / "examples_3d" / "_gallery" / "mesh_props.png"
     render_gallery(sphere, vn, (Vt, Ft), tor_curv, bars, out_png)
+
+    # ── 2026-09-07 追加の 3 op を、同じ球の閉形式と突き合わせる ───────────
+    # 面ごとの面積(重みとして使う量)/ 符号付き体積(向きの検査にもなる)/
+    # 境界頂点(空なら水密)。いずれも球なら答えが式で分かる。
+    fa = face_areas(sphere)
+    assert fa.shape == (len(sphere[1]),), fa.shape
+    assert np.isclose(fa.sum(), area), (fa.sum(), area)      # 総和は mesh_area と一致
+    vol = mesh_volume(sphere)
+    vol_gt = 4.0 / 3.0 * np.pi * R ** 3
+    vol_relerr = abs(vol - vol_gt) / vol_gt
+    # ★巻き順を裏返すと体積の符号が反転する = 符号は向きの検査そのもの
+    vol_flipped = mesh_volume((sphere[0], sphere[1][:, ::-1]))
+    assert np.isclose(vol_flipped, -vol), (vol, vol_flipped)
+    bnd = boundary_vertices(sphere)
+    assert bnd.size == 0, f"閉じた球に境界頂点があってはいけない: {bnd.size}"
+    # 上半分だけ残した開いたメッシュには、赤道の輪が境界として出る
+    upper = sphere[1][sphere[0][sphere[1]].mean(axis=1)[:, 2] > 0]
+    bnd_open = boundary_vertices((sphere[0], upper))
+    assert bnd_open.size > 0, "開いたメッシュの境界が空になっている"
+    ring_z = sphere[0][bnd_open][:, 2]
+    print(f"  face_areas: {len(fa)} 面、総和 {fa.sum():.4f}(mesh_area と一致)、"
+          f"最大/最小 = {fa.max() / fa.min():.2f}")
+    print(f"  mesh_volume: {vol:.4f}(GT {vol_gt:.4f}、誤差 {vol_relerr:.3%})、"
+          f"巻き順を裏返すと {vol_flipped:+.4f} で符号だけ反転")
+    print(f"  boundary_vertices: 閉じた球は 0 個、上半球は {bnd_open.size} 個で "
+          f"z の範囲 {ring_z.min():+.3f}..{ring_z.max():+.3f}(赤道の輪)")
+    assert vol_relerr < 0.02, vol_relerr
 
     print(
         f"PASS: 球(R={R})で表面積 {area:.3f}(GT {area_gt:.3f}, 誤差 {area_relerr:.3%})・"
