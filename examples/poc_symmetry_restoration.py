@@ -236,20 +236,20 @@ def restore_symmetric(surv, p0, n, tau) -> dict:
     return {"fill": fill, "restored": np.vstack([surv, fill]) if len(fill) else surv}
 
 
-def score_restoration(gt_missing, restored, full_pts, fill, tau) -> dict:
+def score_restoration(gt_missing, restored, fill, deco=0.0, warp=0.0) -> dict:
     """壊れ方を **2 種類**に分けて数える。
 
     * 穴が埋まらない: 失われた真値の点から復元点群への距離 [mm]。
-    * 偽の面が生える: 足した点のうち、真の完全形から tau 以上離れているもの。
+    * 偽の面が生える: 足した点のうち、真の面から ``SPUR_TOL`` 以上浮いたもの。
     """
     d, _ = cKDTree(restored).query(np.asarray(gt_missing, float), k=1, workers=-1)
     out = {"rms": float(np.sqrt(np.mean(d ** 2))), "p95": float(np.percentile(d, 95)),
            "max": float(d.max()), "per_pt": d, "n_fill": int(len(fill))}
     if len(fill):
-        e, _ = cKDTree(np.asarray(full_pts, float)).query(fill, k=1, workers=-1)
-        bad = e > tau
+        e = off_surface(fill, deco, warp)
+        bad = e > SPUR_TOL
         out["spur_frac"] = float(bad.mean())
-        out["spur_rms"] = float(np.sqrt(np.mean(e[bad] ** 2))) if bad.any() else 0.0
+        out["spur_rms"] = float(np.sqrt(np.mean(np.minimum(e, 1e3) ** 2)))
     else:
         out["spur_frac"], out["spur_rms"] = 0.0, 0.0
     return out
