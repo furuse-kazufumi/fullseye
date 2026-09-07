@@ -458,7 +458,10 @@ def ground_truth(gsd: float = GSD) -> dict:
             | (fr(L["kill_shade"]) > 0.5)) & ~fault
     return {"panel": panel, "fault": fault, "nonfault": nonf,
             "hot": fr(L["hot"]) > 0.5, "string": fr(L["kill_fault"]) > 0.5,
-            "shade_warm": (fr(L["kill_shade"]) > 0.5) & (fr(L["shade"]) <= 0.5),
+            "shade": fr(L["shade"]) > 0.5,
+            "row_warm": (fr(L["kill_row"]) > 0.5) & (fr(L["shade_row"]) <= 0.5),
+            "pole_warm": (fr(L["kill_pole"]) > 0.5) & (fr(L["shade_pole"]) <= 0.5),
+            "soil": fr(L["soil"]) > 0.5,
             "mod_id": np.rint(fr(L["mod_id"].astype(np.float64))).astype(int),
             "healthy": panel & ~fault & ~nonf}
 
