@@ -154,10 +154,18 @@ def make_scene(warp_pv: float = WARP_PV, center_sag: float = 0.0,
 # 計測 —— 検出は op、天面の平均は自前(ラベルごとの gray 平均が公開経路に無い)   #
 # --------------------------------------------------------------------------- #
 def detect_bumps(height: np.ndarray) -> dict:
-    """そりを引いた画像から天面を拾う(``background_flatten`` -> 自動しきい値 -> blob)。"""
+    """そりを引いた画像から天面を拾う(``background_flatten`` -> 自動しきい値 -> blob)。
+
+    ★**進化 op の ``auto_threshold`` は画像を [0,1] とみなす**。µm 単位の高さ場を
+    そのまま渡すと Otsu が 0.5 の位置で切られ、しきい値が「0.5 µm」になって
+    背景の残差まで拾う(実測 390 個。正しくは 256 個)。ここで正規化するのは
+    そのため —— 単位を持った量を進化 op に渡すときの落とし穴。
+    """
     flat = np.asarray(_L.background_flatten(height, degree=2))
-    mask = np.asarray(fs.apply(flat, "auto_threshold")) > 0.5   # Otsu(進化 op)
-    thr = float(flat[mask].min()) if mask.any() else float("nan")
+    lo, hi = float(flat.min()), float(flat.max())
+    nrm = (flat - lo) / (hi - lo)
+    mask = np.asarray(fs.apply(nrm, "auto_threshold")) > 0.5   # Otsu(進化 op)
+    thr = lo + (hi - lo) * float(nrm[mask].min()) if mask.any() else float("nan")
     lab = _L.blob_label(mask)
     f = _L.blob_features(lab)
     return {"flat": flat, "thr": thr, "labels": lab,
