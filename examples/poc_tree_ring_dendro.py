@@ -737,28 +737,44 @@ def section_blur() -> dict:
     print("\n" + "=" * 78)
     print("6) 撮像ぼけ σ 0.5 → 4 px —— 晩材の縁が消える点")
     print("=" * 78)
-    print("   σ [px]   合意法: 年数 / 欠落   ゼロ点(θ=0): 年数 / 欠落   予測(幅 < 2σ_tot の年輪)")
-    sig, c_miss, z_miss, pred = [], [], [], []
+    print("  予測は 3 節と同じ閉形式モデルを年輪ごとの幅で評価する(合意法: 境界の勾配 < %.2f"
+          " /px なら欠落)。" % THR)
+    print("\n   σ [px]   合意法: 年数 / 欠落(過半数) / 扇形平均   ゼロ点 24 方向: 年数の中央値"
+          " / 欠落 / 偽輪   予測: 合意法 / ゼロ点")
+    sig, c_miss, c_mean, z_miss, z_false, pred_c, pred_z = [], [], [], [], [], [], []
     w = make_widths()
     for b in (0.5, 1.0, 1.5, 2.0, 3.0, 4.0):
         sc = make_scene(blur=b)
         c = run_consensus(sc)
-        z = run_zero(sc, thetas=[0.0])["per"][0]
-        p = int(np.sum(w < 2.0 * np.hypot(b, SIG_M)))
+        z = run_zero(sc)
+        zm = float(np.median([len(r["missed"]) for r in z["per"]]))
+        pc = int(sum(not predict_detectable(float(v), b, "consensus") for v in w))
+        pz = int(sum(not predict_detectable(float(v), b, "zero") for v in w))
         sig.append(b)
         c_miss.append(len(c["missing"]))
-        z_miss.append(len(z["missed"]))
-        pred.append(p)
-        print("   %4.1f        %3d / %2d               %3d / %2d                 %2d"
-              % (b, c["n_est"], len(c["missing"]), z["n_det"], len(z["missed"]), p))
-    print("\n  ★合意法の欠落 %s、予測 %s。" % (" / ".join(str(v) for v in c_miss),
-                                              " / ".join(str(v) for v in pred)))
+        c_mean.append(float(np.mean([len(r["missed"]) for r in c["per"]])))
+        z_miss.append(zm)
+        z_false.append(z["cons"]["false"])
+        pred_c.append(pc)
+        pred_z.append(pz)
+        print("   %4.1f        %3d / %2d / %5.1f                     %3d / %4.1f / %4.1f"
+              "          %2d / %2d"
+              % (b, c["n_est"], len(c["missing"]), c_mean[-1], z["cons"]["n_est"], zm,
+                 z["cons"]["false"], pc, pz))
+    print("\n  ★合意法の欠落(過半数)%s、モデルの予測 %s。"
+          % (" / ".join(str(v) for v in c_miss), " / ".join(str(v) for v in pred_c)))
+    print("     ゼロ点は σ %.0f px 以上で偽輪が増える(中央値 %.1f → %.1f)—— 段が消えて"
+          "平らになった所に雑音の山が立つ。欠落だけ数えると「ぼけに強い」と読み違える。"
+          % (sig[3], z_false[0], z_false[-1]))
     figs.save_plot("cliff_blur",
-                   [("合意法 欠落", sig, c_miss), ("ゼロ点 欠落", sig, z_miss),
-                    ("予測 幅 < 2σ_tot", sig, pred)],
-                   xlabel="撮像ぼけ σ [px]", ylabel="欠落 [年]",
+                   [("合意法 欠落(過半数の扇形)", sig, c_miss),
+                    ("合意法 欠落(扇形平均)", sig, c_mean),
+                    ("モデル予測(合意法)", sig, pred_c),
+                    ("ゼロ点 偽輪の中央値", sig, z_false)],
+                   xlabel="撮像ぼけ σ [px]", ylabel="年",
                    title="ぼけると細い年輪から順に消える")
-    return {"sig": sig, "c_miss": c_miss, "z_miss": z_miss, "pred": pred}
+    return {"sig": sig, "c_miss": c_miss, "c_mean": c_mean, "z_miss": z_miss,
+            "z_false": z_false, "pred_c": pred_c, "pred_z": pred_z}
 
 
 # --------------------------------------------------------------------------- #
