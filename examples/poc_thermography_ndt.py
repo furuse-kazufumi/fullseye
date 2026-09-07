@@ -424,15 +424,27 @@ def section4_aspect(depth_map, ts, masks, d_hat, cube, sound):
     cols = [(d, dia) for d in DEPTHS_MM for dia in (2.0, 4.0)]
     print("  %8s | %s" % ("窓 s", "  ".join("%5.1f/%-4.1f" % c for c in cols)))
     print("  " + "-" * 76)
+    win_err = {}
     for tmax in [1.0, 2.0, 4.0, T_END]:
         k = int(np.searchsorted(ts, tmax))
         dh, _ = tsr_depth(ts[:k], cube[:k])
-        cells = []
+        cells, vals = [], []
         for d, dia in cols:
             e = 1e3 * float(np.median(dh[masks[(d, dia)]]))
-            cells.append("%+8.0f%% " % (100 * (e / d - 1)))
+            vals.append(100 * (e / d - 1))
+            cells.append("%+8.0f%% " % vals[-1])
+        win_err[tmax] = vals
         print("  %8.1f | %s" % (tmax, "".join(cells)))
     print()
+    # ★この PoC のいちばん重い所見を固定する ——「縦横比の限界」は物理ではなく
+    #   **当てはめる時間窓の選び方**だった。
+    #   (1) 窓 4 秒なら小さい 8 個すべてが ±20 % に入る(実測の最悪 -14 %)。
+    assert max(abs(v) for v in win_err[4.0]) <= 20.0, [round(v) for v in win_err[4.0]]
+    #   (2) 同じデータ・同じ実装で窓を 25 秒にすると、いちばん浅い欠陥が 400 % 超ずれる。
+    assert max(win_err[T_END]) > 400.0, [round(v) for v in win_err[T_END]]
+    #   (3) 短すぎてもいけない: 1 秒窓では深い 2.0 mm 側が -50 % より悪くなる
+    #       (膝がまだ来ていない)。両側に崖があるから既定値を静かに選べない。
+    assert min(win_err[1.0]) < -50.0, [round(v) for v in win_err[1.0]]
     if figs.enabled():
         ts_lin = np.logspace(np.log10(ts[0]), np.log10(ts[-1]), 60)
         ser = []
