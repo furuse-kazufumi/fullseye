@@ -143,10 +143,14 @@ def fixed_mask(img: np.ndarray, roi: np.ndarray) -> tuple[np.ndarray, float]:
     """固定しきい値: ROI の中央値 + 3σ(σ は ``noise_sigma`` の MAD 推定)。
 
     σ は ROI の中で測る —— 視野全体に掛けると細胞の内外の 2 山が MAD に入って
-    雑音の 3 倍以上に膨らむ(ROI の外は中央値で埋めて op に渡す)。
+    雑音の 3 倍以上に膨らむ。``noise_sigma`` は 2-D しか受けないので ROI の画素を
+    正方形に詰め直して渡す(MAD は並びに依らない。最初 ROI の外を中央値で埋めて
+    渡したら、その定数が過半数を占めて MAD=0 になった —— 2026-09-07 実測)。
     """
-    med = float(np.median(img[roi]))
-    sig = float(_LAB.noise_sigma(np.where(roi, img, med), method="mad"))
+    v = img[roi]
+    med = float(np.median(v))
+    n = int(np.ceil(np.sqrt(v.size)))
+    sig = float(_LAB.noise_sigma(np.resize(v, (n, n)), method="mad"))
     thr = med + 3.0 * sig
     return img > thr, thr
 

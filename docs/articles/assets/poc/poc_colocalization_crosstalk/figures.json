@@ -1,0 +1,120 @@
+[
+ {
+  "file": "01_scene_channels.png",
+  "name": "scene_channels",
+  "caption": "",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "02_scene_unmixed.png",
+  "name": "scene_unmixed",
+  "caption": "",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "03_cytofluorogram.png",
+  "name": "cytofluorogram",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_zero_point.png",
+  "name": "zero_point",
+  "caption": "",
+  "shape": [
+   176,
+   642,
+   3
+  ],
+  "csv": "04_zero_point.csv",
+  "tsv": "04_zero_point.tsv"
+ },
+ {
+  "file": "05_costes_significance.png",
+  "name": "costes_significance",
+  "caption": "",
+  "shape": [
+   152,
+   382,
+   3
+  ],
+  "csv": "05_costes_significance.csv",
+  "tsv": "05_costes_significance.tsv"
+ },
+ {
+  "file": "06_crosstalk_sweep_pearson.png",
+  "name": "crosstalk_sweep_pearson",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_crosstalk_sweep_manders.png",
+  "name": "crosstalk_sweep_manders",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_psf_sweep.png",
+  "name": "psf_sweep",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_psf_masks.png",
+  "name": "psf_masks",
+  "caption": "",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "10_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   200,
+   535,
+   3
+  ],
+  "csv": "10_controls.csv",
+  "tsv": "10_controls.tsv"
+ },
+ {
+  "file": "11_threshold_table.png",
+  "name": "threshold_table",
+  "caption": "",
+  "shape": [
+   176,
+   479,
+   3
+  ],
+  "csv": "11_threshold_table.csv",
+  "tsv": "11_threshold_table.tsv"
+ }
+]
