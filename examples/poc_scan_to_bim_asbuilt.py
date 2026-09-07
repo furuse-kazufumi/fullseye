@@ -1306,8 +1306,10 @@ def main() -> int:
     print("  * 検出限界を決めるのはレジストレーション(1 mrad で偽の傾き %.3f mrad、"
           "雑音だけなら %.3f mrad)。"
           % (cr["bias"][cr["xs"].index(1.0)], cr["bias"][0]))
-    print("  * 混合画素は RANSAC の平面に効かず(%+.3f mrad)、min/max の obb に効く"
-          "(%+.2f mm)。" % (cm["dw"], cm["dwin"]))
+    print("  * 混合画素は RANSAC の平面に効かず(最大 %.3f mrad)、min/max の obb に"
+          "効く(最大 %.2f mm)。" % (cm["dw"], cm["dwin"]))
+    print("  * 判定の食い違い: 合わせない %d / 床+2 壁 %d / 全体 ICP %d 項目。"
+          % (vd["miss"]["none"], vd["miss"]["datum"], vd["miss"]["global"]))
 
     # --- 所見を固定する ------------------------------------------------------ #
     assert abs(g["rack"]) < 0.90 * RACK, ("全体 ICP が傾きを吸っていない", g["rack"])
