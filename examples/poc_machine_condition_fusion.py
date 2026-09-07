@@ -713,28 +713,39 @@ def section_redundancy(train_rows) -> dict:
 # --------------------------------------------------------------------------- #
 # 7. 崖 —— 掃引                                                                 #
 # --------------------------------------------------------------------------- #
-def sweep(name: str, values, kw_name: str, want, xlabel: str, title: str,
+def sweep(name: str, values, kw_name: str, want, solo, xlabel: str, title: str,
           caption: str, fmt: str = "%8.3f") -> dict:
-    """1 つの条件を振って、モード別識別率(3 センサ融合)を測る。"""
-    print("   %-10s " % xlabel + "総合    " + "".join("%-11s" % m for m in MODES))
-    rows, rates = [], []
+    """1 つの条件を振る。**崖はそのセンサ単独で測り**、融合も並べて出す。
+
+    掃引で変わるセンサだけ測り直し、他の 2 つは基準条件のまま重ねる ——
+    対照群の作法(その要因だけを動かす)。単独の列がそのセンサの崖、
+    融合の列が「他のセンサがどこまで肩代わりできるか」。
+    """
+    solo_name = [k for k, v in SENSORS.items() if v == solo][0]
+    print("   %-10s |%s単独: 総合  " % (xlabel, solo_name)
+          + "".join("%-11s" % m for m in MODES) + "| 融合 総合")
+    rows, solo_r, fuse_r, fuse_all = [], [], [], []
     for v in values:
         kw = {kw_name: v}
-        # 掃引で変わるセンサだけ測り直し、他の 2 つは基準条件のまま重ねる
-        # (対照群 = その要因だけを動かした条件)。
         tr = [{**a, **b} for a, b in zip(BASE_TRAIN, collect(0, N_TRAIN, want=want, **kw))]
         te = [{**a, **b} for a, b in zip(BASE_TEST, collect(1, N_TEST, want=want, **kw))]
-        cm = evaluate(ALL_FEATS, tr, te)
-        r = per_mode_rate(cm)
-        rates.append(r)
+        cs = evaluate(solo, tr, te)
+        cf = evaluate(ALL_FEATS, tr, te)
+        solo_r.append(per_mode_rate(cs))
+        fuse_r.append(per_mode_rate(cf))
+        fuse_all.append(np.trace(cf) / cf.sum())
         rows.append(v)
-        print("   " + (fmt + "   %5.1f %% ") % (v, 100 * np.trace(cm) / cm.sum())
-              + "".join("%-11.1f" % (100 * x) for x in r))
-    rates = np.asarray(rates)
-    figs.save_plot(name, [(m, np.asarray(rows, float), 100 * rates[:, i])
-                          for i, m in enumerate(FAULTS, start=1)],
-                   xlabel=xlabel, ylabel="識別率 [%]", title=title, caption=caption)
-    return {"x": np.asarray(rows, float), "rate": rates}
+        print("   " + (fmt + "   %5.1f %%  ") % (v, 100 * np.trace(cs) / cs.sum())
+              + "".join("%-11.1f" % (100 * x) for x in solo_r[-1])
+              + "  %5.1f %%" % (100 * fuse_all[-1]))
+    solo_r = np.asarray(solo_r)
+    fuse_r = np.asarray(fuse_r)
+    x = np.asarray(rows, float)
+    figs.save_plot(name, [(m, x, 100 * solo_r[:, MODES.index(m)])
+                          for m in ("芯ずれ", "アンバランス", "軸受外輪傷", "潤滑不良", "ゆるみ")],
+                   xlabel=xlabel, ylabel="%s単独の識別率 [%%]" % solo_name,
+                   title=title, caption=caption)
+    return {"x": x, "solo": solo_r, "fuse": fuse_r, "fuse_all": np.asarray(fuse_all)}
 
 
 BASE_TRAIN: list = []
