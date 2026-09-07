@@ -579,10 +579,14 @@ def section_voxel_cliff() -> dict:
           % gap_mid)
     print("     " + " / ".join("%.0fµm:%.0f 対 %.0f" % (v, m, i)
                                for v, m, i in zip(vx, g_mid, g_int)))
+    nv = [g / v for g, v in zip(g_int, vx)]
     print("     これも外れた —— 差が縮むのではなく**両方がボクセル刻みに量子化**され、"
-          "順序は最後まで残る。\n     壊れるのは判別ではなく**離隔の値そのもの**"
-          "(接触側は ESDF の下限 1 ボクセルに貼りつく: 真値 0 µm に対し %.0f µm)。"
-          % g_int[-1])
+          "順序は最後まで残る。\n     壊れるのは判別ではなく**離隔の値そのもの**: "
+          "接触側(真値 0 µm)の読みは ボクセル %.1f〜%.1f 個ぶんに貼りつき、"
+          "\n     層中央(真値 %.1f µm)は %.0f µm と %.1f 倍に膨らむ。"
+          "ESDF のゼロ交差はボクセル中心の中間に落ちるので、\n     "
+          "**「界面に接している」は判定できても「何 µm 離れている」は言えない**。"
+          % (min(nv), max(nv), gap_mid, g_mid[-1], g_mid[-1] / gap_mid))
 
     figs.save_plot("voxel_cliff_fraction",
                    [("球(径 %.0f µm)" % d_sph, vx, f_sph),
