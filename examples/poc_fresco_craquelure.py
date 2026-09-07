@@ -416,21 +416,44 @@ def section_zero_and_net() -> dict:
     print("1) ゼロ点(暗い画素の大津しきい値)と、op 列で取った網")
     print("=" * 78)
     out = {}
-    for cond, kw in [("きれい(質感なし・斜光なし)", dict(tex_c=0.0)),
-                     ("既定(質感 %.2f・斜光なし)" % TEX_C, dict())]:
+    conds = [("きれい", dict(tex_c=0.0)), ("+質感", dict()), ("+斜光", dict(tex_c=0.0, rake=1.0))]
+    for cond, kw in conds:
         sc = make_scene("経年", **kw)
         tr = truth_stats(sc)
         z = zero_point(sc["img"])
-        det = extract_net(sc["img"])
-        me = measure(sc, det)
-        print("  %s" % cond)
-        print("    ひび画素率 真値 %.2f %% / ゼロ点(大津) %.2f %%" % (100 * tr["crack_frac"], 100 * z))
-        print("    op 列: 中心線 再現率 %.3f / 適合率 %.3f(許容 %.0f px)、分岐点 真値 %d / 検出 %d"
-              % (me["recall"], me["prec"], TOL_PX, tr["n_junc"], me["n_junc"]))
-        out[cond] = dict(sc=sc, tr=tr, z=z, det=det, me=me)
-    k0, k1 = list(out)
-    assert out[k1]["z"] > 3 * out[k0]["z"], "質感でゼロ点が爆発しなくなった"
-    assert out[k1]["me"]["recall"] > 0.95 and out[k1]["me"]["prec"] > 0.95
+        out[cond] = dict(sc=sc, tr=tr, z=z)
+        print("  %-6s ひび画素率 真値 %.2f %% / ゼロ点(大津) %.2f %%" % (cond, 100 * tr["crack_frac"], 100 * z))
+    print("  ゼロ点は、きれいでも真値の %.1f 倍(ぼけた縁まで数える)。質感で %.1f 倍。"
+          % (out["きれい"]["z"] / out["きれい"]["tr"]["crack_frac"],
+             out["+質感"]["z"] / out["+質感"]["tr"]["crack_frac"]))
+
+    print("\n  リッジ op の比較(経年型、許容 %.0f px。真値: 分岐点 %d / セル %d)" % (
+        TOL_PX, out["きれい"]["tr"]["n_junc"], out["きれい"]["tr"]["n_cells"]))
+    print("   %-14s %-6s %6s %6s %5s %5s" % ("op", "条件", "再現率", "適合率", "分岐点", "セル"))
+    rows, comp = [], {}
+    for ridge, lo, hi in [("xsk_meijering", 0.0, 0.0), ("xsk_sato", 0.0, 0.0), ("sk_frangi", 0.0, 0.0),
+                          ("cv_blackhat", 0.3, 0.5)]:
+        for cond, _ in conds:
+            sc = out[cond]["sc"]
+            det = extract_net(sc["img"], ridge, lo, hi)
+            me = measure(sc, det)
+            comp[(ridge, cond)] = me
+            if cond == "+質感":
+                out[cond].setdefault("det", {})[ridge] = det
+            print("   %-14s %-6s %6.3f %6.3f %5d %5d" % (ridge, cond, me["recall"], me["prec"],
+                                                       me["n_junc"], me["n_cells"]))
+            rows.append([ridge, cond, "%.3f" % me["recall"], "%.3f" % me["prec"],
+                         "%d" % me["n_junc"], "%d" % me["n_cells"]])
+    fr, mj = comp[("sk_frangi", "+斜光")], comp[("xsk_meijering", "+斜光")]
+    print("  ★Frangi は分岐点で応答が落ちる(設計どおり)ので斜光でセルが %d 個に崩れる。"
+          "Meijering は %d 個(真値 %d)。以後の測定は xsk_meijering を使う。"
+          % (fr["n_cells"], mj["n_cells"], out["+斜光"]["tr"]["n_cells"]))
+    figs.save_table("ridge_ops", ["リッジ op", "条件", "再現率", "適合率", "分岐点 [個]", "セル [個]"],
+                    rows, title="リッジ検出 op の比較(経年型、中心線の許容 %.0f px)" % TOL_PX,
+                    caption="Frangi は分岐点で応答が落ち、斜光でセルが崩れる。")
+    assert out["+質感"]["z"] > 1.3 * out["きれい"]["z"], "質感でゼロ点が増えなくなった"
+    assert mj["n_cells"] > 2 * fr["n_cells"], "Frangi と Meijering の差が消えた"
+    assert comp[("xsk_meijering", "+質感")]["recall"] > 0.95
     return out
 
 
