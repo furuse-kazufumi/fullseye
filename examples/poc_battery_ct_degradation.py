@@ -884,16 +884,17 @@ def section_voidmap(cells, recs) -> dict:
           " しきい値は厚い中央しか拾えない(部分体積効果)。")
 
     # 疑似カラーの空隙地図: ラベルを y 方向へ最大値投影(z-x 平面の地図)
-    lab_map = lab.max(axis=1).astype(float)
-    truth_map = cells["gas"]["void"].max(axis=1).astype(float)
-    figs.save_grid("void_map",
-                   [np.repeat(truth_map, 3, axis=0), np.repeat(lab_map, 3, axis=0)],
-                   ["真値の空隙(y 方向の投影)", "CT から拾ったラベル"],
-                   title="空隙の 3-D 地図(縦 z を 3 倍に伸ばして表示)", ncols=2,
+    # 疑似カラーの空隙地図(z を 3 倍に伸ばして等方に見せる)
+    lab_map = _up(lab.max(axis=1), ky=6, kx=2)
+    truth_map = _up(cells["gas"]["void"].max(axis=1), ky=6, kx=2)
+    figs.save_grid("void_map", [truth_map, lab_map],
+                   ["真値の空隙", "CT のラベル"],
+                   title="空隙の 3-D 地図(y 方向の投影、縦 z は等方に伸ばした)",
+                   ncols=2,
                    caption="位置は当たる。縁が薄いところは落ちるので体積は過小。")
     figs.save_grid("void_slices",
-                   [recs["gas"][ND // 2], (dark.astype(float))[ND // 2]],
-                   ["CT 断面(ガス空隙)", "しきい値で拾った空隙"],
+                   [_up(recs["gas"][ND // 2]), _up(dark[ND // 2])],
+                   ["CT 断面", "拾った空隙"],
                    title="空隙のしきい値検出(z 中央の断面)", ncols=2)
     return {"est": est, "true": t["void_volume"], "n": len(big)}
 
