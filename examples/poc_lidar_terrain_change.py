@@ -785,7 +785,7 @@ def section_density() -> dict:
     print("   密度  セル内点数  DoD LoD95 [m] 予測   DoD 空セル  M3C2 LoD95 [m] 予測  "
           "M3C2 有効 core  C2C [m]")
     dens, ld, lm, pd_, pm, c2c, rate, emp = [], [], [], [], [], [], [], []
-    for rho in (0.5, 1.0, 2.0, 4.0, 8.0, 16.0):
+    for rho in (0.5, 1.0, 2.0, 5.0, 10.0, 20.0):
         rng = np.random.default_rng(SEED + 6)
         a, _ = make_cloud(rng, density=rho, with_change=False, occl=0.0)
         b, _ = make_cloud(rng, density=rho, with_change=False, occl=0.0)
