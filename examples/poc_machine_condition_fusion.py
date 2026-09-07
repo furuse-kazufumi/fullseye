@@ -353,7 +353,7 @@ def _block_mean(a: np.ndarray, p: int) -> np.ndarray:
 
 def thermal_frame(mode: str, sev: float, seed: int, pitch: int = PITCH) -> np.ndarray:
     """見かけの温度上昇 ΔT の地図 [K]。放射率むら・NETD・画素ピッチ込み。"""
-    q = np.asarray(mode_params(mode, sev)["heat"], dtype=np.float64)
+    q = np.asarray(mode_params(mode, sev)["heat"], dtype=np.float64) * nuisance(seed)[1]
     theta = np.tensordot(q, KERNELS, axes=(0, 0))
     eps = _EMIS[seed % _EMIS.shape[0]]
     t_abs = T_AMB + theta
