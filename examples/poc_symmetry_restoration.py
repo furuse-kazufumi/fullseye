@@ -336,11 +336,16 @@ def scatter_map(P, val, xs, ys, rmax=2.4, fill=0.0):
     return v.reshape(X.shape)
 
 
-def with_scalebar(img, s: float, wpx: int = 12):
-    """右端に ±s の色の目盛り帯(パネル間で色と値の対応を固定する)。"""
+def with_scalebar(img, s: float, wpx: int = 12, lo: float | None = None):
+    """右端に色の目盛り帯を足す(パネル間で色と値の対応を固定する)。
+
+    ``lo`` を渡すと [lo, s] の片側目盛り(距離のような符号なしの量)、
+    既定は ±s の両側目盛り(符号つきの量)。
+    """
     h = img.shape[0]
-    ramp = np.linspace(s, -s, h)[:, None] * np.ones((1, wpx))
-    return np.concatenate([np.clip(img, -s, s), np.zeros((h, 4)), ramp], axis=1)
+    a = lo if lo is not None else -s
+    ramp = np.linspace(s, a, h)[:, None] * np.ones((1, wpx))
+    return np.concatenate([np.clip(img, a, s), np.full((h, 4), a), ramp], axis=1)
 
 
 # --------------------------------------------------------------------------- #
