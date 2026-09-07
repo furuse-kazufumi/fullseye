@@ -530,7 +530,8 @@ def section_diameter_sweep() -> dict:
           "\n            (iii) (ii) に最小面積 %d px の条件(半径 %.2f px でしきい値)→ d₅₀ = %.2f mm。"
           % (d50_rose, cnr_pred(1.0, s_rel), K_SIGMA, d50_peak, A_MIN_PX, np.sqrt(A_MIN_PX / np.pi), d50_pred))
     print("     実測の 50 %% 交点 = %.2f mm(そこでの CNR = %.2f)。" % (d50, cnr_pred(d50, s_rel)))
-    cliff9 = [d for d, rt in zip(ds, rate["open9"]) if rt < 50 and d >= 0.6]
+    i_best = int(np.argmax(rate["open9"]))
+    cliff9 = [d for d, rt in list(zip(ds, rate["open9"]))[i_best:] if rt < 50]
     cliff36 = [d for d, ev in zip(ds, err["d_vol36"]) if np.isfinite(ev) and ev < -25 and d >= 0.6]
     print("  ★背景の天井: 9 px オープニングは %s mm から検出率 50 %% を割る(気孔が背景に食われる)。"
           "\n     中央値 36 px は検出は落ちないが体積径が %s mm から −25 %% を越えて縮む(3.0 mm で %+.0f %%)。"
