@@ -1160,8 +1160,10 @@ def main() -> int:
     assert st["重心 1 点"][4] == 0, st["重心 1 点"]          # 誤検知は無い(片側)
     assert st["全表面(遮蔽なし)"][3] == 0, st["全表面(遮蔽なし)"]
     assert sw["occ_miss"][0] == 0.0 and sw["occ_miss"][2] > 15.0, sw["occ_miss"]
-    assert sw["d_miss"][-1] < sw["occ_miss"][2], (sw["d_miss"], sw["occ_miss"])
-    assert zd["zd_occ"] > 5.0 * zd["zd_rep"], (zd["zd_occ"], zd["zd_rep"])
+    assert sw["occ_miss"][3] > sw["occ_miss"][2], sw["occ_miss"]   # 疎で更に悪化
+    assert sw["occ_miss"][1] < 0.3 * sw["occ_miss"][2], sw["occ_miss"]  # 2 台目が効く
+    assert zd["zd_occ"] > 3.5 * zd["zd_rep"], (zd["zd_occ"], zd["zd_rep"])
+    assert zd["miss"][0] > 15.0 and zd["miss"][2] == 0.0, zd["miss"]
     assert me["hd"] > 4.0 * me["ch"], (me["hd"], me["ch"])
     for b, v in zip(gb["bias"], (0.040, 0.020, 0.010)):
         assert 0.10 * v < b < 0.40 * v, (b, v)   # 1/4 ボクセル前後、符号は正

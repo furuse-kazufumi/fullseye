@@ -1,0 +1,109 @@
+[
+ {
+  "file": "01_conditions.png",
+  "name": "conditions",
+  "caption": "危険 = 真の距離 < 0.640 m、停止判定 = 推定 < 0.690 m。",
+  "shape": [
+   200,
+   531,
+   3
+  ],
+  "csv": "01_conditions.csv",
+  "tsv": "01_conditions.tsv"
+ },
+ {
+  "file": "02_frames_clearance.png",
+  "name": "frames_clearance",
+  "caption": "重心 1 点は手の伸びをまるごと見落とす。S を下回るのは真値だけ、という時間帯が見落とし。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_sweep_density.png",
+  "name": "sweep_density",
+  "caption": "見落としと誤検知を分けて数える。畳むと片側の壊れ方が消える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sweep_latency.png",
+  "name": "sweep_latency",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_sweep_occlusion.png",
+  "name": "sweep_occlusion",
+  "caption": "",
+  "shape": [
+   176,
+   552,
+   3
+  ],
+  "csv": "05_sweep_occlusion.csv",
+  "tsv": "05_sweep_occlusion.tsv"
+ },
+ {
+  "file": "06_map_visibility.png",
+  "name": "map_visibility",
+  "caption": "手の表面のうち背面センサから見えた割合。0 の帯 = リンクと治具台の影。",
+  "shape": [
+   60,
+   68
+  ]
+ },
+ {
+  "file": "07_metric_blindness.png",
+  "name": "metric_blindness",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_grid_bias.png",
+  "name": "grid_bias",
+  "caption": "",
+  "shape": [
+   152,
+   502,
+   3
+  ],
+  "csv": "08_grid_bias.csv",
+  "tsv": "08_grid_bias.tsv"
+ },
+ {
+  "file": "09_zd_budget.png",
+  "name": "zd_budget",
+  "caption": "",
+  "shape": [
+   176,
+   429,
+   3
+  ],
+  "csv": "09_zd_budget.csv",
+  "tsv": "09_zd_budget.tsv"
+ },
+ {
+  "file": "10_zd_tradeoff.png",
+  "name": "zd_tradeoff",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
