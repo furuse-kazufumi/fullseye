@@ -259,18 +259,42 @@ def est_argmax(img):
     return np.where(ok, k.astype(np.float64), np.nan)
 
 
-def est_centroid(img, frac=0.25, half=12):
-    """山の ``frac`` 以上の画素だけを使う輝度重心(窓は幅に自動で追従する)。"""
+def _centroid(img, weight):
     k, ok = _peak(img)
-    pk = img.max(axis=1)
     rows = np.arange(IMG_H)[None, :, None]
-    near = np.abs(rows - k[:, None, :]) <= half
-    thr = (BG + frac * np.clip(pk - BG, 0.0, None))[:, None, :]
-    w = np.where(near & (img >= thr), np.clip(img - BG, 0.0, None), 0.0)
+    w = weight(img, k, rows)
     s = w.sum(axis=1)
     with np.errstate(invalid="ignore", divide="ignore"):
         c = (w * rows).sum(axis=1) / np.maximum(s, 1e-12)
     return np.where(ok & (s > 0), c, np.nan)
+
+
+HALF_FIX = 8
+
+
+def est_centroid_fix(img):
+    """輝度重心・**固定窓**(±%d 行)。窓が固定なら Σ(r-c)² も固定で、
+    分母 ΣI ∝ σ だけが伸びるので誤差は **1/σ** —— 太い光条ほど良い。"""
+    return _centroid(img, lambda im, k, r: np.clip(im - BG, 0.0, None)
+                     * (np.abs(r - k[:, None, :]) <= HALF_FIX))
+
+
+def est_centroid_adapt(img, frac=0.25, half=12):
+    """輝度重心・**幅に追従する窓**(山の %.0f %% 以上の画素だけ)。窓が σ に
+    比例すると Σ(r-c)² ∝ σ³ で分母は σ² なので誤差は **√σ** —— 細いほど良い。"""
+    pk = img.max(axis=1)
+
+    def w(im, k, r):
+        thr = (BG + frac * np.clip(pk - BG, 0.0, None))[:, None, :]
+        return np.where((np.abs(r - k[:, None, :]) <= half) & (im >= thr),
+                        np.clip(im - BG, 0.0, None), 0.0)
+
+    return _centroid(img, w)
+
+
+est_centroid_fix.__doc__ = est_centroid_fix.__doc__ % HALF_FIX
+est_centroid_adapt.__doc__ = est_centroid_adapt.__doc__ % 25
+est_centroid = est_centroid_fix     # 以降の章で使う既定の推定量
 
 
 def est_log_parabola(img):
