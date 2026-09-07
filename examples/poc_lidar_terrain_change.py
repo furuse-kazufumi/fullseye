@@ -924,7 +924,8 @@ def section_systematic(tr: dict) -> dict:
 
     figs.save_plot("systematic",
                    [("予測 (delta_z + tan θ delta_y) x 面積", mags, pred),
-                    ("DoD 偽正味", mags, md), ("M3C2 偽正味", mags, mm),
+                    ("DoD 偽正味", mags, md), ("M3C2 偽正味(生値)", mags, mm),
+                    ("M3C2 有効率で補正", mags, mc),
                     ("位置合わせ後の DoD", mags, aft)],
                    xlabel="水平の系統ずれ [m]", ylabel="偽の正味土量 [m3]",
                    title="系統誤差が生む偽の土量は傾斜に比例する",
