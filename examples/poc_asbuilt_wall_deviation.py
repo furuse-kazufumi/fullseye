@@ -469,7 +469,7 @@ def section_outliers() -> dict:
         q = np.array([RW / 2, RD / 2, ZREF])
         off = 1e3 * (signed_offset(frb["point"], frb["normal"], q) - RW / 2)
         pred = 1e3 * predict_ls_tilt(frac, tau_eff)
-        fr.append(100 * frac)
+        fr.append(round(100 * frac, 1))
         ls_e.append(e_ls)
         ls_p.append(abs(pred))
         rs_e.append(e_rs)
