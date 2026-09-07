@@ -715,6 +715,12 @@ def section_budget(sw: dict, ss: dict) -> None:
         ["管種の変化(モデル誤り)", "%.3f" % abs(ss["mixed_x"] - X_LEAK),
          "どの単一音速を入れても直らない"],
     ]
+    short = ["標本化周期で決まる。補間で消える",
+             "CRLB の %.1f 倍。乱数なので平均で減る"
+             % (sw["fine"][ref][i0] / sw["crlb_num"][i0]),
+             "取り違え %.0f %%。窓いっぱいに飛ぶ" % sw["gross"][ref][-1],
+             "系統誤差。平均しても消えない",
+             "モデル誤り。音速では直らない"]
     print("   %-24s %10s   %s" % ("誤差の種類", "大きさ [m]", "性質"))
     for r in rows:
         print("   %-24s %10s   %s" % (r[0], r[1], r[2]))
