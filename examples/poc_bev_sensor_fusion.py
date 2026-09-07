@@ -551,12 +551,15 @@ def section_reprojection(rig: Rig) -> dict:
         uv1 = np.asarray(fs.ledger.project_points(corners, K, Re,
                                                   -Re @ CAM["C"]))
         px = float(np.mean(np.linalg.norm(uv1 - uv0, axis=1)))
+        pred_px = f * np.tan(np.radians(dy))
         shift = OBSTACLES[1]["cx"] * np.tan(np.radians(dy))
-        rows.append(["%.2f deg" % dy, "%.2f px" % px, "%.2f %%" % (100 * px / diag),
+        rows.append(["%.2f deg" % dy, "%.2f px" % px, "%.2f px" % pred_px,
+                     "%.2f %%" % (100 * px / diag),
                      "%.3f m" % shift, "%.1f" % (shift / CELL)])
         out[dy] = (px, shift)
-        print("   %5.2f deg    %8.2f px          %6.2f %%      %8.3f m"
-              "        %5.1f" % (dy, px, 100 * px / diag, shift, shift / CELL))
+        print("   %5.2f deg    %8.2f px      %8.2f px    %6.2f %%      %8.3f m"
+              "        %5.1f" % (dy, px, pred_px, 100 * px / diag, shift,
+                                 shift / CELL))
     px1, sh1 = out[1.0]
     print("\n  ★★yaw %.2f 度は画像で %.2f px(対角の %.2f %%)—— 校正レポートなら"
           "合格に見える。" % (1.0, px1, 100 * px1 / diag))
