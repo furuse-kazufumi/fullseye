@@ -694,7 +694,7 @@ def section_decoupled(thick, over):
     figs.save_table("decoupled", ["ボクセルの粗さ h [mm]", "肉厚の誤差", "NG 面積(誤差)"],
                     rows, title="肉厚の誤差と NG 面積の誤差は連動しない",
                     caption="単位が違うだけでなく、壊れ方の原因が別(量子化 vs 法線の丸め)。")
-    return {"rows": rows, "a_true": a_true}
+    return {"rows": rows, "a_true": a_true, "got": got}
 
 
 # --------------------------------------------------------------------------- #
