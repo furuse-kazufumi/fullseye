@@ -217,6 +217,11 @@ def bruggeman(eps: float) -> float:
     return float(eps ** -0.5)
 
 
+def _zoom(sl: np.ndarray, k: int = 5) -> np.ndarray:
+    """図のパネルを ``k`` 倍に拡大する(最近傍)。voxel の粗さを隠さない。"""
+    return np.kron(np.asarray(sl, np.float64), np.ones((k, k)))
+
+
 # --------------------------------------------------------------------------- #
 # 1. ゼロ点                                                                     #
 # --------------------------------------------------------------------------- #
