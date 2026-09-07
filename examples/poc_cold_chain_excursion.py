@@ -683,11 +683,11 @@ def section_controls(layout: dict) -> dict:
     air = layout["is_air"]
     out = {}
     rows = []
-    for name, kw in (("(a) 均一", dict(uniform=True, doors=True)),
-                     ("(b) 分布あり", dict(uniform=False, doors=False)),
-                     ("(c) 分布+扉", dict(uniform=False, doors=True)),
-                     ("(d) 壁なし+扉", dict(uniform=False, doors=True,
-                                            wall_scale=WALL_FIX))):
+    for name, kw in (("(a) 均一+扉", dict(uniform=True, doors=True)),
+                     ("(b) 壁だけ", dict(uniform=False, doors=False)),
+                     ("(c) 壁+扉", dict(uniform=False, doors=True)),
+                     ("(d) 扉だけ", dict(uniform=False, doors=True,
+                                         wall_scale=WALL_FIX))):
         sc = make_scene(layout=layout, **kw)
         vol = sc["vol"]
         exc_true = np.count_nonzero(vol > LIMIT_C, axis=0) * DT_MIN
