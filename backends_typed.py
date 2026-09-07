@@ -151,6 +151,16 @@ _OP_BRIDGE_SKIP = {
     # 「out に sort がある」というだけの理由でこの 1 本だけが橋に載っていた。
     # 台帳(`fullseye.ledger.angle_3points`)からは今までどおり 3 点を渡して使える。
     "angle_3points",
+    # 2026-09-08、同じ回に摘発。`indices_to_labels` は **1-D の選択マスク**
+    # (長さ = 最大添字 + 1)を返すが、宣言型 `labels` は TYPE_TO_SORT で
+    # `volume`(ndim == 3 の契約)に畳まれるので、橋は毎回
+    # 「op returned (93,) but declared out_sort 'volume'」で fail-soft していた。
+    # `labels` という 1 語が **1-D の選択マスク**(reprconv)と **3-D のラベル
+    # volume**(vol_label / label_components)の 2 つを指しているのが元。
+    # 逆向きの `labels_to_indices` は任意次元を受けるので橋に載ったままでよい。
+    # 全 sort 掃引で同類は他に無かった(宣言 out と実際の形が食い違う橋 op は
+    # レジストリ 901 本中この 1 件だけ)。
+    "indices_to_labels",
 }
 
 

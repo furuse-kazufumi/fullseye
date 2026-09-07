@@ -14,8 +14,8 @@
   "name": "hidden_void_section",
   "caption": "",
   "shape": [
-   244,
-   390,
+   303,
+   670,
    3
   ]
  },
@@ -70,6 +70,16 @@
   "shape": [
    360,
    560,
+   3
+  ]
+ },
+ {
+  "file": "08_free_space.png",
+  "name": "free_space",
+  "caption": "",
+  "shape": [
+   303,
+   670,
    3
   ]
  }
