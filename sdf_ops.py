@@ -37,6 +37,7 @@ import numpy as np
 __all__ = [
     "sdf_union", "sdf_intersect", "sdf_subtract", "sdf_smooth_union", "sdf_offset",
     "sphere_sdf", "box_sdf", "grid_coords",
+    "plane_sdf", "cylinder_sdf", "torus_sdf", "capsule_sdf",
 ]
 
 
@@ -284,3 +285,149 @@ def grid_coords(bounds, res):
     extent = (float(lo[0]), float(hi[0]), float(lo[1]), float(hi[1]),
               float(lo[2]), float(hi[2]))
     return coords, extent
+
+
+# --------------------------------------------------------------------------- #
+# 追加のプリミティブ(2026-09-07)                                              #
+#                                                                             #
+# ★足した理由は実測: `poc_dfm_thickness_overhang` と `poc_cad_scan_deviation` が    #
+# 「機械部品は円筒穴・面取り・フィレットでできているのに、プリミティブが球と       #
+# 直方体しか無いので CSG で組めない」と報告し、両方とも面ごとの解析式を自前で       #
+# 書いていた。ここにある 4 つは**すべて閉形式で厳密**(外側は最近表面までの        #
+# ユークリッド距離、内側は最近面までの負値)なので、真値を持つ合成部品を           #
+# CSG だけで組めるようになる。                                                  #
+# --------------------------------------------------------------------------- #
+def _axis_frame(axis):
+    """軸ベクトルを正規化して返す(退化は fail-closed)。"""
+    a = np.asarray(axis, np.float64).reshape(3)
+    n = np.linalg.norm(a)
+    if not np.isfinite(n) or n <= 0:            # fail-closed: 零ベクトル/NaN の軸
+        raise ValueError("axis must be a non-zero finite 3-vector")
+    return a / n
+
+
+def _split_axial_radial(g, center, axis):
+    """点を軸方向成分 ``t`` と軸からの半径 ``r`` に分ける(``(..., )`` の 2 つ)。"""
+    a = _axis_frame(axis)
+    c = np.asarray(center, np.float64).reshape(3)
+    d = g - c                                   # (..., 3)
+    t = d @ a                                   # 軸方向の符号つき距離
+    perp = d - t[..., None] * a                 # 軸に直交する成分
+    return t, np.linalg.norm(perp, axis=-1)
+
+
+def plane_sdf(grid, point, normal):
+    """半空間(平面で切った側)の**厳密**な符号付き距離場(内側負・外側正)。
+
+    ``sdf(p) = (p - point) · n̂``。法線 ``n̂`` の**指す側が外側(正)**で、反対側が内側。
+    面取り(chamfer)・切断・「基板から上だけ」のような**片側だけを残す**演算に使う。
+    ``sdf_intersect`` を重ねれば任意の凸多面体が作れる(6 枚で直方体 = ``box_sdf`` と一致)。
+
+    厳密性: 平面は全空間で勾配ノルム 1 なので、この値は**どこでも真の符号付き距離**
+    (``box_sdf`` のように角で切り替わる場合分けが要らない)。
+
+    引数と検証(``ValueError``):
+    - ``grid``: 最終軸が 3 の float 配列 ``(..., 3)``(``grid_coords`` の出力または点列)。
+    - ``point``: 平面上の 1 点(要素数 3)。
+    - ``normal``: 平面の法線(要素数 3、**零ベクトル・NaN は拒否**)。長さは自動で 1 に
+      正規化するので、大きさは結果に影響しない(向きだけが意味を持つ)。
+
+    返り値: ``grid.shape[:-1]`` の float64。法線側で正、反対側で負、平面上で 0。
+
+    使いどころ: ``sdf_subtract(part, plane_sdf(g, p, n))`` で「その平面より法線側を削る」。
+    向きを逆にしたいときは ``normal`` の符号を反転する(``-sdf`` でも同じ)。"""
+    g = _as_coords(grid)
+    p0 = np.asarray(point, np.float64).reshape(3)
+    n = _axis_frame(normal)
+    return (g - p0) @ n
+
+
+def cylinder_sdf(grid, center, axis, radius, height):
+    """有限長の円柱(両端が平らな蓋)の**厳密**な符号付き距離場(内側負・外側正)。
+
+    軸方向の距離 ``t`` と軸からの半径 ``r`` に分け、``q = (r - radius, |t| - height/2)``
+    として ``outside = ‖max(q, 0)‖``、``inside = min(max(q), 0)``、``sdf = outside + inside``。
+    これは ``box_sdf`` と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、
+    側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。
+
+    引数と検証(``ValueError``):
+    - ``grid``: 最終軸が 3 の float 配列 ``(..., 3)``。
+    - ``center``: 円柱の**中心**(端面ではなく重心。要素数 3)。
+    - ``axis``: 軸の向き(要素数 3、零ベクトル・NaN は拒否。長さは自動正規化)。
+    - ``radius``: 半径 > 0 相当のスカラ(``0`` は軸線そのもの、負は拒否)。
+    - ``height``: 全長のスカラ(``center`` から ±height/2。負は拒否)。
+
+    返り値: ``grid.shape[:-1]`` の float64。
+
+    使いどころ: **貫通穴は ``sdf_subtract(part, cylinder_sdf(...))``**(``height`` を部品より
+    長くして端面の縁を残さない)。ボス・ピン・シャフトは ``sdf_union``。無限長の円柱が
+    要るなら ``height`` を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。"""
+    g = _as_coords(grid)
+    R = float(radius)
+    H = float(height)
+    if R < 0 or H < 0:                          # fail-closed: 負の寸法は無意味
+        raise ValueError("radius and height must be non-negative")
+    t, r = _split_axial_radial(g, center, axis)
+    qr = r - R
+    qt = np.abs(t) - 0.5 * H
+    outside = np.sqrt(np.maximum(qr, 0.0) ** 2 + np.maximum(qt, 0.0) ** 2)
+    inside = np.minimum(np.maximum(qr, qt), 0.0)
+    return outside + inside
+
+
+def torus_sdf(grid, center, axis, major_radius, minor_radius):
+    """トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。
+
+    ``sdf(p) = ‖(r - major_radius, t)‖ - minor_radius``(``r`` は軸からの半径、``t`` は
+    軸方向の距離)。芯線が半径 ``major_radius`` の円で、その周りに半径 ``minor_radius``
+    の管が付いた形なので、**フィレット(隅の丸み)の解析形**としてそのまま使える。
+
+    引数と検証(``ValueError``):
+    - ``grid`` / ``center`` / ``axis``: :func:`cylinder_sdf` と同じ(軸はドーナツの穴の向き)。
+    - ``major_radius``: 芯線の半径(負は拒否)。
+    - ``minor_radius``: 管の半径(負は拒否)。``minor_radius >= major_radius`` だと穴が
+      潰れた形になるが、距離場としては正しいので**拒否しない**。
+
+    返り値: ``grid.shape[:-1]`` の float64。
+
+    使いどころ: ``sdf_subtract`` で内隅にフィレットを削り出す / ``sdf_union`` で O リング溝の
+    形を作る。角を丸めるだけなら ``sdf_smooth_union`` のほうが手軽だが、あちらは丸みの
+    半径が形状に依存する —— **半径を設計値として持ちたいときはこちら**。"""
+    g = _as_coords(grid)
+    Rm = float(major_radius)
+    rm = float(minor_radius)
+    if Rm < 0 or rm < 0:                        # fail-closed
+        raise ValueError("major_radius and minor_radius must be non-negative")
+    t, r = _split_axial_radial(g, center, axis)
+    return np.sqrt((r - Rm) ** 2 + t ** 2) - rm
+
+
+def capsule_sdf(grid, a, b, radius):
+    """線分 ``a``–``b`` を半径 ``radius`` で太らせたカプセルの**厳密**な符号付き距離場。
+
+    ``sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius``。
+    線分への最短距離そのものなので**全空間で勾配ノルム 1**(円柱と違い端が丸いぶん、
+    角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。
+
+    引数と検証(``ValueError``):
+    - ``grid``: 最終軸が 3 の float 配列 ``(..., 3)``。
+    - ``a`` / ``b``: 芯線の端点(要素数 3)。``a == b`` なら球(``sphere_sdf`` と一致)。
+    - ``radius``: 太さ(負は拒否)。
+
+    返り値: ``grid.shape[:-1]`` の float64。
+
+    使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具を
+    カプセルで置いて ``sdf_intersect`` の最小値が正かを見る。骨梁・血管・繊維の合成にも。"""
+    g = _as_coords(grid)
+    pa = np.asarray(a, np.float64).reshape(3)
+    pb = np.asarray(b, np.float64).reshape(3)
+    rr = float(radius)
+    if rr < 0:                                  # fail-closed
+        raise ValueError("radius must be non-negative")
+    ab = pb - pa
+    denom = float(ab @ ab)
+    d = g - pa                                  # (..., 3)
+    if denom <= 0:                              # a == b: 球に退化(厳密に正しい)
+        return np.linalg.norm(d, axis=-1) - rr
+    h = np.clip((d @ ab) / denom, 0.0, 1.0)
+    return np.linalg.norm(d - h[..., None] * ab, axis=-1) - rr

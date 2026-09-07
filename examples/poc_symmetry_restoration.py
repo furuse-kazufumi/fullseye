@@ -141,6 +141,14 @@ def break_off(pts, centre, radius) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 対称面の道具                                                                  #
 # --------------------------------------------------------------------------- #
+def _pca_axes_of(pts):
+    """PCA の 3 主軸(列)。``detect_reflection_symmetry`` が候補にするのと同じもの。"""
+    p = np.asarray(pts, float)
+    c = p - p.mean(axis=0)
+    _, _, vt = np.linalg.svd(c, full_matrices=False)
+    return vt.T
+
+
 def plane_from_v(v):
     """最適化変数 (ay, az, t) → (平面上の点, 単位法線)。"""
     n = np.array([1.0, float(v[0]), float(v[1])])
