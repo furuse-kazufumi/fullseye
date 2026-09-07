@@ -207,7 +207,7 @@ def bulge(fields) -> dict:
     return {"h": h, "excess": excess, "w": w, "w_max": w_max,
             "mean_excess": mean_excess,
             "dv_ext": float(excess[inside].sum() * area_cell),
-            "dv_int": float((h - np.where(_elec_footprint(xx, zz), H_BASE, 0.0)).sum()
+            "dv_int": float(np.where(_elec_footprint(xx, zz), h - H_BASE, 0.0).sum()
                             * area_cell),
             "panel_area": float(inside.sum() * area_cell)}
 
