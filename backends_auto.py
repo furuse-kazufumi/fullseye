@@ -1646,12 +1646,7 @@ SEED: list[tuple] = [
     ("hough_line_trans", "features", IMG, IMG, "hough", {"kind": "line"},
      '直線検出のための Hough 変換アキュムレータ。まず Sobel 勾配からエッジ\nマスクを作り、``skimage.transform.hough_line`` でアキュムレータ空間\n(角度×距離)を計算、正規化してから入力と同じ画素形状にリサイズして返す\n(アキュムレータそのものの座標系ではなく画像として可視化する形)。HALCON の\n``hough_line_trans``（Produce the Hough transform for lines within\nregions.）に相当。\n\n``a`` がエッジ抽出の閾値(0.2〜0.6)を振る。``b`` は未使用。半径・角度分解能\nは skimage の既定値に固定されている。'),
     ("hough_circle_trans", "features", IMG, IMG, "hough", {"kind": "circle"},
-     '円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の\n円テンプレート群で ``skimage.transform.hough_circle`` を計算し、全半径での\n最大応答を [0,1] に正規化して返す。HALCON の ``hough_circle_trans``\n（Return the Hough-Transform for circles with a given radius.）に相当\n(HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。\n\n``a`` がエッジ抽出の閾値を振り、``b`` が探索する半径の上限を決める
-(``radii = arange(4, max(7, round(4 + 32*b)), 3)``。既定の ``b=0.5`` は
-従来どおり半径 4〜19)。★**対象より小さい半径しか探していないと、
-この op は落ちずに意味の無い累算器を返す** ―― 実写のコイン(半径
-19〜31 px)は ``b=0.5`` では 1 枚も出ず、``b>=0.9`` で出る
-(``examples/poc_real_coin_metrology.py``)。'),
+     '円検出のための Hough 変換。エッジマスクに対して半径 4〜19(3 刻み)の\n円テンプレート群で ``skimage.transform.hough_circle`` を計算し、全半径での\n最大応答を [0,1] に正規化して返す。HALCON の ``hough_circle_trans``\n（Return the Hough-Transform for circles with a given radius.）に相当\n(HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。\n\n``a`` がエッジ抽出の閾値を振り、``b`` が探索する半径の上限を決める\n(``radii = arange(4, max(7, round(4 + 32*b)), 3)``。既定の ``b=0.5`` は\n従来どおり半径 4〜19)。★**対象より小さい半径しか探していないと、この op は\n落ちずに意味の無い累算器を返す** ―― 実写のコイン(半径 19〜31 px)は\n``b=0.5`` では 1 つも峰にならず、``b>=0.9`` で出る\n(``examples/poc_real_coin_metrology.py``)。'),
     ("threshold_sub_pix", "contour", IMG, CON, "xld", {"kind": "threshold_sub_pix"},
      'マーチングスクエア法(``skimage.measure.find_contours``)によるレベル\nクロッシング(等高線)抽出。指定した階調レベル(``0.2+0.5*a``)を横切る位置を\nサブピクセル精度で輪郭として返す。HALCON の ``threshold_sub_pix``\n（Extract level crossings from an image with subpixel accuracy.）に相当。\n\n``a`` がクロッシングを取るレベルを振る。``b`` は未使用。skimage が無い\n環境ではこの分岐は呼べない。'),
     ("zero_crossing_sub_pix", "contour", IMG, CON, "xld", {"kind": "zero_crossing_sub_pix"},
