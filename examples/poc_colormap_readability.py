@@ -481,17 +481,24 @@ def section_out_of_range() -> dict:
     print("6) 範囲外 —— 振り切れた画素を読み手は数えられるか")
     print("=" * 78)
 
+    # 広くて平らな丘(頂点 9.98 = 範囲内)+ 細い尖り(12.5 = 範囲外)+ 窪み(-0.6)
     y, x = np.mgrid[0:H, 0:W]
-    u = (x - W / 2.0) / (W / 4.0)
-    v = (y - H / 2.0) / (H / 4.0)
-    field = 5.0 + 9.0 * np.exp(-(u * u + v * v) / 2.0) - 4.0 * np.exp(
-        -((u + 2.2) ** 2 + (v - 1.2) ** 2) / 0.8)
+
+    def _bump(cy, cx, sig, amp):
+        return amp * np.exp(-(((y - cy) ** 2 + (x - cx) ** 2) / (2.0 * sig * sig)))
+
+    field = (2.0 + _bump(H * 0.5, W * 0.32, 46.0, 7.98)
+             + _bump(H * 0.45, W * 0.74, 9.0, 10.5)
+             - _bump(H * 0.80, W * 0.86, 14.0, 3.2))
     vmin, vmax = 0.0, 10.0
     n_over = int(np.count_nonzero(field > vmax))
     n_under = int(np.count_nonzero(field < vmin))
     n_true = n_over + n_under
+    print("  場: 広い丘(頂点 %.2f = 範囲内)+ 細い尖り(%.1f = 範囲外)+ 窪み(%.2f)"
+          % (2.0 + 7.98, field.max(), field.min()))
     print("  vmin=%.0f / vmax=%.0f、実際に範囲外なのは %d 画素"
-          "(上 %d / 下 %d)" % (vmin, vmax, n_true, n_over, n_under))
+          "(上 %d / 下 %d、全体の %.2f %%)"
+          % (vmin, vmax, n_true, n_over, n_under, 100.0 * n_true / field.size))
 
     plain = np.asarray(fs.apply_cmap(field, "viridis", vmin=vmin, vmax=vmax))
     sent = np.asarray(fs.apply_cmap(field, "viridis", vmin=vmin, vmax=vmax,
