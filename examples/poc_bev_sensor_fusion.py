@@ -541,8 +541,11 @@ def section_reprojection(rig: Rig) -> dict:
           "   セル数" % OBSTACLES[1]["cx"])
     rows, out = [], {}
     for dy in (0.1, 0.2, 0.5, 1.0, 2.0):
+        # ★誤差は **世界の z 軸まわり**(= place と同じ)。``R_wc @ rz`` と
+        #   書くと光軸まわりの roll になり、再投影誤差が 1/5 に化ける
+        #   (2026-09-07 に踏んだ: 0.98 px と出て、幾何の予測 f·tanθ と合わず発覚)。
         Rt = R_wc.T
-        Re = (R_wc @ rz(dy)).T
+        Re = (rz(dy) @ R_wc).T
         uv0 = np.asarray(fs.ledger.project_points(corners, K, Rt,
                                                   -Rt @ CAM["C"]))
         uv1 = np.asarray(fs.ledger.project_points(corners, K, Re,
