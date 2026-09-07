@@ -389,12 +389,13 @@ def section_bias() -> dict:
     kz_bot = int(np.argmin(np.abs(sc["zs"] - (sc["h_die"] - 3))))
     figs.save_grid(
         "scene",
-        [vol[kz_bot], vol[kz_top], vol[:, vol.shape[1] // 2, :],
+        [vol[kz_bot], vol[kz_top],
+         np.kron(vol[:, vol.shape[1] // 2, :], np.ones((2, 1))),
          np.asarray(_L.vol_label(vol > CU_THR, connectivity=6))[kz_top] > 0],
-        ["下ダイの上面近く(z = %.0f µm)" % sc["zs"][kz_bot],
-         "上ダイの上面近く(z = %.0f µm)" % sc["zs"][kz_top],
-         "縦断面(y = 0)—— 上ダイが %.2f° 傾いている" % sc["tilt_deg"][0],
-         "Cu のしきい値 %.2f で切った上ダイの開口" % CU_THR],
+        ["下ダイ上面 z=%.0f µm" % sc["zs"][kz_bot],
+         "上ダイ上面 z=%.0f µm" % sc["zs"][kz_top],
+         "縦断面 y=0(傾き %.2f°、縦 2 倍)" % sc["tilt_deg"][0],
+         "Cu の断面(傾きで端は終端済)"],
         title="測定は CT ボリューム 1 個(%d x %d x %d、%.1f µm/vox)"
               % (vol.shape + (VOX_UM,)), ncols=2)
 
