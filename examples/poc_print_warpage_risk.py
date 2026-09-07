@@ -679,22 +679,32 @@ def section_cliff():
     print("  予測(着手前): 「細長比 L/H が 3 を切ると端の効果(Saint-Venant)で外れる」")
 
     print("\n  (a) 首の細さを振る(L = %.0f mm, H = %.0f mm)" % (L_X, Z_SPAN))
-    print("     首 [mm]  予測 κ         実測 κ        比       たわみ [mm]")
-    wn_list, ratio_n, dev_n = [], [], []
-    for wn in (16.0, 8.0, 4.0, 2.0, 1.0, 0.5):
+    print("     設計の首  測った首  予測 κ         実測 κ        比       たわみ [mm]")
+    wn_list, ratio_n, dev_n, wn_meas = [], [], [], []
+    for wn in (16.0, 8.0, 4.0, 2.0, 1.0, 0.25):
         boxes = [(0.0, 2.0, 2.0, 18.0, 0.0, 60.0),
                  (2.0, 8.0, 10.0 - wn / 2, 10.0 + wn / 2, 0.0, 60.0),
                  (8.0, 12.0, 2.0, 18.0, 0.0, 60.0)]
         c = build_case(boxes, x_bin=2)
+        # 測った首 = 中ほどの層の断面積 / 長さ(2-D の領域 op が返した面積から)
+        wm = c["hist"]["area"][int(5.0 / H_LAYER)] / L_X
         wn_list.append(wn)
+        wn_meas.append(wm)
         ratio_n.append(c["kappa_fem"] / c["kappa_pred"])
         dev_n.append(c["dev_fem"])
-        print("     %5.2f   %.4e   %.4e   %.4f   %.4f"
-              % (wn, c["kappa_pred"], c["kappa_fem"], ratio_n[-1], c["dev_fem"]))
-    print("     ★予想は外れた —— 首を %.2f mm まで細くしても誤差は %.1f %% "
-          "しか出ない。" % (wn_list[-1], 100 * abs(ratio_n[-1] - 1)))
+        print("     %6.2f    %6.2f   %.4e   %.4e   %.4f   %.4f"
+              % (wn, wm, c["kappa_pred"], c["kappa_fem"], ratio_n[-1], c["dev_fem"]))
+    print("     ★予想は外れた —— 首を %.2f mm(実際に測れたのは %.2f mm)まで"
+          "細くしても誤差は %.1f %% しか出ない。"
+          % (wn_list[-1], wn_meas[-1], 100 * abs(ratio_n[-1] - 1)))
     print("     一様な層の収縮は**純曲げ**でせん断力が立たないので、"
           "細い首でもモーメントは伝わる。")
+    print("     ★ついでに: ボクセル %.2f mm では %.2f mm の首は %.2f mm としか"
+          "測れない(下から 2 番目と同じ値になる)。"
+          % (VOX, wn_list[-1], wn_meas[-1]))
+    print("     ★首を細くすると反りは**減る**(%.4f -> %.4f mm)—— 首は"
+          "「弱いから危ない」場所ではなく、\n     **縮む材料が少ない**場所。"
+          % (dev_n[0], dev_n[-1]))
 
     print("\n  (b) 細長比 L/H を振る(H = %.0f mm)" % Z_SPAN)
     print("     L [mm]  L/H   中実の比   首つきの比")
