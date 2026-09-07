@@ -960,12 +960,15 @@ def sensor_cloud(buf, rho, rng, sigma=0.005, dropout=0.05):
     return np.stack([x, y, z], 1)[keep], (buf["lid"][r, c] >= 0)[keep]
 
 
-def section_leaf_angle(can, buf_fine, k_true, mesh_stats):
+def section_leaf_angle(can, buf_fine):
     print("\n" + "=" * 78)
     print("7) 葉角の推定と受光 —— 正しい重みほど法線の雑音を増幅する")
     print("=" * 78)
 
-    inc, ar, nz = mesh_stats
+    # ★真値も葉角分布も**この節が見ている群落そのもの**から取る。基準条件
+    #   (葉 7 枚)の k を使い回すと、上位葉ほど立つ勾配のぶんだけ真値がずれる。
+    k_true = canopy_G(can)
+    inc, ar, nz = mesh_leaf_angles(canopy_mesh(can))
     rng = np.random.default_rng(SEED + 1)
     pts, is_veg = sensor_cloud(buf_fine, 4000.0, rng)
     print("  センサ点群 %d 点(4000 点/m^2、測距雑音 5 mm、欠測 5 %%)" % pts.shape[0])
