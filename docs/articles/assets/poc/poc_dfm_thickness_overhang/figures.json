@@ -1,6 +1,26 @@
 [
  {
-  "file": "01_thickness_cliff.png",
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "左 = 薄壁 2 枚とスロット、中 = 庇と三角補強(40/45/50 度)、右 = 下から見た面(ここが垂れる)。",
+  "shape": [
+   453,
+   1633,
+   3
+  ]
+ },
+ {
+  "file": "02_sections.png",
+  "name": "sections",
+  "caption": "上: 左端の 2 本が薄壁(1.500 mm)とそのあいだのスロット(1.500 mm)、右の三角が補強。下: リブと薄壁の footprint。",
+  "shape": [
+   855,
+   551,
+   3
+  ]
+ },
+ {
+  "file": "03_thickness_cliff.png",
   "name": "thickness_cliff",
   "caption": "右ほど粗い。侵食と内接球は階段、探針は連続だが 2 voxel を切ると壁を見失う。",
   "shape": [
@@ -10,7 +30,7 @@
   ]
  },
  {
-  "file": "02_threshold_cliff.png",
+  "file": "04_threshold_cliff.png",
   "name": "threshold_cliff",
   "caption": "解析は階段。測った側は等値面の取り方で段差の高さが変わる。",
   "shape": [
@@ -20,7 +40,7 @@
   ]
  },
  {
-  "file": "03_overhang_conditions.png",
+  "file": "05_overhang_conditions.png",
   "name": "overhang_conditions",
   "caption": "",
   "shape": [
@@ -28,11 +48,21 @@
    564,
    3
   ],
-  "csv": "03_overhang_conditions.csv",
-  "tsv": "03_overhang_conditions.tsv"
+  "csv": "05_overhang_conditions.csv",
+  "tsv": "05_overhang_conditions.tsv"
  },
  {
-  "file": "04_decoupled.png",
+  "file": "06_overhang_map.png",
+  "name": "overhang_map",
+  "caption": "左 = 水平からの傾き(暗い = 0 度 = 最悪、明るい = 90 度 = 垂直)。右 = 45 度未満で下を向いている面(白)。大きな白い帯が「ちょうど 45 度」の斜面で、しきい値をまたぐと丸ごと消える。",
+  "shape": [
+   453,
+   1092,
+   3
+  ]
+ },
+ {
+  "file": "07_decoupled.png",
   "name": "decoupled",
   "caption": "単位が違うだけでなく、壊れ方の原因が別(量子化 vs 法線の丸め)。",
   "shape": [
@@ -40,11 +70,11 @@
    420,
    3
   ],
-  "csv": "04_decoupled.csv",
-  "tsv": "04_decoupled.tsv"
+  "csv": "07_decoupled.csv",
+  "tsv": "07_decoupled.tsv"
  },
  {
-  "file": "05_reach_cliff.png",
+  "file": "08_reach_cliff.png",
   "name": "reach_cliff",
   "caption": "1.600 mm を超えると入らない工具を通し、1.200 mm を切ると入る工具を落とす。",
   "shape": [
@@ -54,7 +84,7 @@
   ]
  },
  {
-  "file": "06_orientation.png",
+  "file": "09_orientation.png",
   "name": "orientation",
   "caption": "どの向きでも 0 にならないのは 2 本の穴が直交しているから。最下行 = 向きではなく斜面の角度を 5 度ずらした場合。",
   "shape": [
@@ -62,7 +92,7 @@
    596,
    3
   ],
-  "csv": "06_orientation.csv",
-  "tsv": "06_orientation.tsv"
+  "csv": "09_orientation.csv",
+  "tsv": "09_orientation.tsv"
  }
 ]
