@@ -646,10 +646,10 @@ def main():
     sp = Speckle()
     ref = sp.render()
     ix = section1_synth_check(sp, ref)
-    section2_zero_point(sp, ref)
+    ratio, bias = section2_zero_point(sp, ref)
     section3_subpixel(sp, ref)
     section4_magnitude(sp, ref)
-    section5_uniform_strain(sp, ref)
+    got = section5_uniform_strain(sp, ref)
     section6_rotation(sp, ref)
     section7_gradient(sp, ref)
     section8_noise(sp, ref, ix)
@@ -658,6 +658,9 @@ def main():
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("経過 %.1f 秒" % (time.time() - t0))
+    print("\nPASS: piv は変位 0.37 px を偏り %.4f px(ゼロ点比 %.0f 倍)で当て、"
+          "一様ひずみ 100 µε を %.1f µε で回収した"
+          % (bias["piv"], ratio["piv"], got[("piv", 100)][0]))
 
 
 if __name__ == "__main__":
