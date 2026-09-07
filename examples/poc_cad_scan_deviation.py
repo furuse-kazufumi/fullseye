@@ -612,9 +612,9 @@ def section_align(ref: CadRef) -> dict:
                  1000 * np.abs(e).max()))
     a_false = out_of_tol_area(s1, scn["w"])
     a_false_ok = out_of_tol_area(s1[~ed1], scn["w"])
-    print("   ★**欠陥ゼロ・雑音ゼロ・姿勢は真値**の対照で、素朴に測ると"
+    print("   ★**欠陥ゼロ・雑音ゼロ・姿勢は真値**の対照で、素朴に測ると "
           "%.1f mm^2 の偽の公差外領域が出る" % a_false)
-    print("      (稜線帯を除くと %.1f mm^2)。最近傍が隣の面へ飛んだ対応が"
+    print("      (稜線帯を除くと %.1f mm^2)。最近傍が隣の面へ飛んだ対応が "
           "%.1f %% あり、" % (a_false_ok, 100 * cross))
     print("      その点では「隣の面の法線への射影」を偏差として報告している。")
     edge_naive = (100.0 * float(ed0.mean()), a_false)
