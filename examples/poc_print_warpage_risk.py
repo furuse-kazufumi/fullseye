@@ -480,8 +480,8 @@ def _labeled_map(grid, row_labels, col_labels, row_title, col_title,
                 else (1.0, 1.0, 1.0)))
     img = np.asarray(fs.text_box(img, row_title, (10, pt + h // 2), anchor="lm",
                                  font_size=11, box_alpha=0.0, border=0))
-    img = np.asarray(fs.text_box(img, col_title, (pl + w // 2, pt + h + 30),
-                                 anchor="cb", font_size=11, box_alpha=0.0, border=0))
+    img = np.asarray(fs.text_box(img, col_title, (pl + w // 2, pt + h + 28),
+                                 anchor="ct", font_size=11, box_alpha=0.0, border=0))
     return img
 
 
