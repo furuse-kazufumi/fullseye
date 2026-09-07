@@ -251,11 +251,13 @@ def section_orders() -> dict:
     print("\n  ★ゼロ点は誤検出 %d 本の裏で**本物の短小を %d 本見逃している**"
           "(そりが正の側に居ると、-20 µm でも平面から -%.0f µm を切らない)。"
           % (out[1]["fp"], out[1]["fn"], SPEC_UM))
-    print("  ★予想「高次ほど良い」は外れ: 3 次 %.2f µm は 2 次 %.2f µm と同じ"
-          "(仕込んだ高次成分が 4 次のロブなので 3 次の項では取れない)。"
-          % (out[3]["rms"], out[2]["rms"]))
+    print("  ★予想「高次ほど良い」は外れ: 3 次 %.2f µm は 2 次 %.2f µm より**悪い**"
+          "(%.2f 倍)。仕込んだ高次成分は 4 次のロブなので 3 次の項では 1 µm も"
+          "取れず、\n     増えた 4 項がバンプ個体差と雑音を余計に吸うぶんだけ損をする。"
+          % (out[3]["rms"], out[2]["rms"], out[3]["rms"] / out[2]["rms"]))
 
     assert out[1]["rms"] > 5.0 and out[2]["rms"] < 1.5, (out[1]["rms"], out[2]["rms"])
+    assert out[3]["rms"] > out[2]["rms"], (out[3]["rms"], out[2]["rms"])
     assert out[1]["fp"] > 20 and out[1]["fn"] >= 1, (out[1]["fp"], out[1]["fn"])
     assert out[2]["fp"] == 0 and out[2]["fn"] == 0, (out[2]["fp"], out[2]["fn"])
 
