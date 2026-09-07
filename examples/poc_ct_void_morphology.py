@@ -665,14 +665,25 @@ def section_threshold_noise() -> dict:
           "しか動かない。" % (nn_cnt[0], nn_cnt[-1], nf[0], nf[-1]))
 
     print("\n  連結半径の掃引 —— 連なりは幾何どおりの位置で捕まる")
-    gap_chain = 1000 * (0.15 * 2 * R_SPH)
-    gap_scat = 1000 * (0.30 - 2 * R_SPH)
-    print("   設計の隙間: 連なり %.1f µm -> 予測 %.1f µm / 散在 %.1f µm -> 予測 %.1f µm"
-          % (gap_chain, gap_chain / 2, gap_scat, gap_scat / 2))
+    # 予測は**設計値から**: 各ボイドの最近接すき間の中央値の半分で、塊の数が半分になる。
+    def _design_gap(voids):
+        c = np.array([v["center"] for v in voids])
+        d = np.linalg.norm(c[:, None, :] - c[None, :, :], axis=-1)
+        np.fill_diagonal(d, np.inf)
+        r = voids[0]["r"]
+        return float(np.median(d.min(axis=1))) - 2.0 * r
+
+    voids_s = make_voids("sphere", "scatter", "mid")
+    gap_chain = 1000 * _design_gap(voids_c)
+    gap_scat = 1000 * _design_gap(voids_s)
+    print("   設計の最近接すき間(中央値): 連なり %.1f µm -> 予測 %.1f µm / "
+          "散在 %.1f µm -> 予測 %.1f µm" % (gap_chain, gap_chain / 2,
+                                            gap_scat, gap_scat / 2))
     est_c = segment(obs_c, sc_c["layer"])
-    sc_s = build_scene(make_voids("sphere", "scatter", "mid"))
+    sc_s = build_scene(voids_s)
     est_s = segment(observe(sc_s["mu"], VOXEL), sc_s["layer"])
-    radii = [0.0, 0.005, 0.010, 0.015, 0.020, 0.030, 0.045, 0.060, 0.090, 0.120]
+    radii = [0.0, 0.005, 0.010, 0.015, 0.020, 0.030, 0.045, 0.060,
+             0.075, 0.090, 0.105, 0.120]
     nc_chain, nc_scat = [], []
     for rb in radii:
         for est, acc in ((est_c, nc_chain), (est_s, nc_scat)):
@@ -680,12 +691,15 @@ def section_threshold_noise() -> dict:
             m = est if k == 0 else np.asarray(
                 L.morph_dilate3d(est.astype(float), r=k, se="ball")) > 0.5
             acc.append(int(L.vol_label.raw(m.astype(float), connectivity=26)[1]))
-    r_chain = next((1000 * r for r, n in zip(radii, nc_chain) if n <= 4), float("nan"))
-    r_scat = next((1000 * r for r, n in zip(radii, nc_scat) if n <= 4), float("nan"))
-    print("   実測(塊が 4 個以下になる最初の半径): 連なり %.1f µm / 散在 %.1f µm"
-          % (r_chain, r_scat))
-    print("   ★どちらも予測から 1 ボクセル(%.0f µm)以内。"
-          "**ボイド率にはこの差が出ない**。" % (1000 * VOXEL))
+    half = N_VOID // 2
+    r_chain = next((1000 * r for r, n in zip(radii, nc_chain) if n <= half), float("nan"))
+    r_scat = next((1000 * r for r, n in zip(radii, nc_scat) if n <= half), float("nan"))
+    print("   実測(塊が %d 個以下 = 半減する最初の半径): 連なり %.1f µm / 散在 %.1f µm"
+          % (half, r_chain, r_scat))
+    print("   ★予測との差は 連なり %+.1f µm / 散在 %+.1f µm(掃引の刻みは %.0f µm)。"
+          % (r_chain - gap_chain / 2, r_scat - gap_scat / 2, 15.0))
+    print("   ★**ボイド率にはこの %.0f 倍の差がまったく出ない**(両条件とも 3 %% 台)。"
+          % (gap_scat / gap_chain))
 
     figs.save_plot("threshold_sweep",
                    [("ボイド率 [%]", thrs, tf),
