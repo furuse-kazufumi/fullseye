@@ -1147,14 +1147,12 @@ def bearing_pose(cloud: np.ndarray, idx: int = 0):
     pts = cloud[m]
     if pts.shape[0] < 40:
         return np.full(2, np.nan), float("nan"), 0
-    nrm = np.asarray(fs.ledger.estimate_normals(pts, k=15), float)
-    par, inl, info = fs.ledger.ransac_cylinder.raw(pts, nrm, thresh=0.005,
-                                                   iters=800, seed=0)
-    ax = np.asarray(par["axis"], float)
-    pt = np.asarray(par["point"], float)
-    t = (2.0 - pt[1]) / ax[1] if abs(ax[1]) > 1e-6 else 0.0
-    q = pt + t * ax
-    return np.array([q[0], q[2]]), float(par["radius"]), int(info["n_inliers"])
+    # 軸の向きは設計で既知(y 方向)なので、y を潰して**断面の円**として当てる。
+    flat = pts.copy()
+    flat[:, 1] = 2.0
+    cen, rad, _ = fs.ledger.fit_circle_3d(flat)
+    cen = np.asarray(cen, float)
+    return np.array([cen[0], cen[2]]), float(rad), int(pts.shape[0])
 
 
 def section_prism_and_crack(sc: dict) -> dict:
@@ -1222,7 +1220,7 @@ def section_prism_and_crack(sc: dict) -> dict:
     cen_b, nor_b, ok_b = core_normals(ref_b)
     tfb = truth_footprint(2)
     p_ref, r_ref, n_in = bearing_pose(ref_b, 0)
-    print("      支承の位置は ``ransac_cylinder`` で測る(inlier %d 点、"
+    print("      支承の位置は 断面の円として ``fit_circle_3d`` で測る(点 %d、"
           "推定半径 %.4f m / 真 %.4f m)。" % (n_in, r_ref, BEARING_R))
     print("      合わせ方              桁の面の偽の変化 RMS[mm]   支承の水平移動[mm]"
           "(真 0)  支承の沈下[mm](真 %.2f)" % SETTLE_MM[2])
