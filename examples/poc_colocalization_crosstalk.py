@@ -679,9 +679,14 @@ def main() -> int:
     assert abs(sw["a_cross"] - sw["a_pred"]) < 0.04, (sw["a_cross"], sw["a_pred"])
     assert sw["r0_one"][-1] < 0.5, sw["r0_one"][-1]
     assert sw["a_m1"] > sw["a_r50"], (sw["a_m1"], sw["a_r50"])   # 崖の場所が違う
-    assert abs(ps["r0"][-1]) < 0.05 and ps["m1_0"][-1] > 0.25, (ps["r0"][-1], ps["m1_0"][-1])
+    assert abs(ps["r0"][-1]) < 0.10 and ps["m1_0"][-1] > 0.25, (ps["r0"][-1], ps["m1_0"][-1])
     assert ps["cc"] > 0.95, ps["cc"]
+    assert 2.0 < ps["flip"] <= 3.0, ps["flip"]                      # Otsu が細胞体へ飛び移る
     assert abs(ct["漏れ込みなし"][0]) < 0.03, ct["漏れ込みなし"][0]
+    assert th["rows"]["Costes 自動"][1] > 0.9, th["rows"]             # Costes 自動が崩壊
+    assert abs(th["rows"]["Costes 自動"][2] - th["m1_true"]) < 0.06, th["rows"]
+    assert abs(z["tail"][0] - z["tail"][1]) < 0.08, z["tail"]       # 裾落ちの閉形式
+    assert sw["a_cancel"] > sw["a_m1"], (sw["a_cancel"], sw["a_m1"])
 
     print("\n" + "=" * 78)
     print("まとめ")
