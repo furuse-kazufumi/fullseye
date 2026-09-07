@@ -453,7 +453,6 @@ def section_phase() -> dict:
     print("4) 据え直しの半画素 —— 経路が水平だと全列の位相が揃って 1 px 跳ぶ")
     print("=" * 78)
     print("  幅は %.2f mm で凍結。ぼけと照明も止め、**据え直しだけ**動かす。" % FROZEN_MM)
-    print("\n   経路の傾き   1 列あたりの位相送り   積分法 σ [mm]   2 値化 σ [mm]")
 
     sch = schedule(seed=SEED + 1)
     tex = base_texture(SEED)
