@@ -674,7 +674,7 @@ def section_controls(layout: dict) -> dict:
                      ("(b) 分布あり", dict(uniform=False, doors=False)),
                      ("(c) 分布+扉", dict(uniform=False, doors=True)),
                      ("(d) 健全な荷+扉", dict(uniform=False, doors=True,
-                                              setpoint_shift=-2.5))):
+                                              wall_scale=WALL_FIX))):
         sc = make_scene(layout=layout, **kw)
         vol = sc["vol"]
         exc_true = np.count_nonzero(vol > LIMIT_C, axis=0) * DT_MIN
