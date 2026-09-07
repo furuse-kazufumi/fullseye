@@ -366,7 +366,7 @@ def section_zero(sc: dict) -> dict:
     cores = sc["cores"]
     a1, b1 = make_clouds(settle=True)
     a0, b0 = make_clouds(settle=False)
-    n_fit = fitted_normals(a1, cores)
+    n_fit, resid = fitted_normals(a1, cores)
     c1, c0 = c2c_map(a1, b1, cores) * 1000.0, c2c_map(a0, b0, cores) * 1000.0
     d1, l1 = m3c2(a1, b1, cores, n_fit)
 
@@ -392,7 +392,7 @@ def section_zero(sc: dict) -> dict:
              np.nanmean(d1) * 1000 - sc["s_mm"].mean()))
     assert abs(np.nanmedian(c1) - np.nanmedian(c0)) < 1.0
     assert abs(np.nanmean(d1) * 1000 - sc["s_mm"].mean()) < 0.5
-    return {"a1": a1, "b1": b1, "a0": a0, "b0": b0, "n_fit": n_fit,
+    return {"a1": a1, "b1": b1, "a0": a0, "b0": b0, "n_fit": n_fit, "resid": resid,
             "c2c_1": c1, "c2c_0": c0, "d1": d1, "l1": l1}
 
 
@@ -596,7 +596,7 @@ def section_registration(sc: dict, mult: dict) -> dict:
     print("=" * 78)
     cores, s_mm, nx, ny = sc["cores"], sc["s_mm"], sc["nx"], sc["ny"]
     a, b = make_clouds(settle=False, dz=DZ_BIAS)
-    n_fit = fitted_normals(a, cores)
+    n_fit, _ = fitted_normals(a, cores)
     d, lod = m3c2(a, b, cores, n_fit)
     d, lod = d * 1000.0, lod * 1000.0
     ok = np.isfinite(d)
@@ -699,7 +699,7 @@ def section_cliff(sc: dict) -> dict:
     smax_l, rate_l = [], []
     for s in (1.0, 2.0, 4.0, 8.0, 16.0):
         a, b = make_clouds(settle=True, s_max=s / 1000.0)
-        n_fit = fitted_normals(a, cores)
+        n_fit, _ = fitted_normals(a, cores)
         d, lod = m3c2(a, b, cores, n_fit)
         d, lod = d * 1000.0, lod * 1000.0
         s_mm = settlement(cores[:, 0], cores[:, 1], s / 1000.0) * 1000.0
@@ -717,7 +717,7 @@ def section_cliff(sc: dict) -> dict:
     lod_ref = None
     for f in (0.25, 0.5, 1.0, 2.0):
         a, b = make_clouds(settle=True, dens_scale=f)
-        n_fit = fitted_normals(a, cores)
+        n_fit, _ = fitted_normals(a, cores)
         d, lod = m3c2(a, b, cores, n_fit)
         d, lod = d * 1000.0, lod * 1000.0
         ok = np.isfinite(d)

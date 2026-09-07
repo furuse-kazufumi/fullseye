@@ -72,14 +72,37 @@ _IMAGE_MAKERS = (("sincos", _img), ("bank", _img_bank))
 _KNOBS = ((0.5, 0.5), (0.15, 0.85))
 
 
-def _inputs(maker):
+#: 画像から作れない sort の探針は ``op_probe`` から引く。
+#: ★2026-09-08 に足した。それまでこの門は image / region / color / volume の 4 つに
+#: しか入力を作っておらず、``contour`` 65 / ``points`` 57 / ``signal`` 26 / ``video`` 16 …
+#: **217 op(レジストリ 901 本の 24 %)を "uncallable" として素通り**させていた。
+#: 「門が正しい場所に立っている」ことと「門が全部を通す」ことは別 —— 広げた初回に
+#: ``tb_angle_3points`` が探針では一度も走れないこと(登録は points→feature なのに
+#: 実体は 3 本のベクトルを取る)が出た。
+_EXTRA_SORTS = ("contour", "points", "signal", "video", "qimage", "cimage",
+                "lightfield", "counts", "rgbimage", "matrix", "beatcube",
+                "keypoints", "any")
+
+
+def _inputs(maker, structured=True):
     g = maker()
-    return {
+    out = {
         "image": g,
         "region": (g > 0.55).astype(np.float64),
         "color": np.stack([g, np.roll(g, 5, 0), np.roll(g, 9, 1)], -1),
         "volume": np.stack([np.roll(maker(24), k, 0) for k in range(10)], 0),
     }
+    # 既存 4 sort の探針は 1 文字も変えない(変えると allowlist が総入れ替えになる)。
+    import op_probe as opb
+    for sort in _EXTRA_SORTS:
+        rng = np.random.default_rng(20260908 if structured else 71)
+        try:
+            v = opb.sample_input(sort, rng, structured=structured)
+        except Exception:                       # noqa: BLE001 - 生成器が無い sort
+            v = None
+        if v is not None:
+            out[sort] = v
+    return out
 
 
 def _probe():
