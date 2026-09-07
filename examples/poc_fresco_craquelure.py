@@ -708,7 +708,7 @@ def section_scene_figs(base: dict) -> None:
     ov[ndi.binary_dilation(det["junc"], np.ones((3, 3), bool))] = (1.0, 0.6, 0.0)
     ov[ndi.binary_dilation(det["ends"], np.ones((3, 3), bool))] = (0.0, 0.8, 0.2)
     figs.save_grid("map_stages", [sc_a["img"], det["resp"], det["mask"].astype(float), ov],
-                   ["入力(経年、既定条件)", "sk_frangi の応答", "ヒステリシス + 面積オープニング",
+                   ["入力(経年、既定条件)", "xsk_meijering の応答", "ヒステリシス + 面積オープニング",
                     "骨格(青)・分岐点(橙)・端点(緑)"],
                    ncols=2, title="op 列の段階(経年ひび)",
                    caption="分岐点 %d 個、セル %d 個を検出。" % (me["n_junc"], me["n_cells"]))
