@@ -174,7 +174,7 @@ def tau_phase_slope(rec: dict) -> float:
     tf = _LAB.transfer_function(rec["y1"], rec["y2"], FS_HZ, win=4096)
     f = np.asarray(tf["freqs"], np.float64)
     m = (f >= BAND[0]) & (f <= BAND[1])
-    ph = np.unwrap(np.asarray(tf["phase_rad"], np.float64))[m]
+    ph = np.unwrap(np.asarray(tf["phase_rad"], np.float64)[m])
     w = np.asarray(tf["coherence"], np.float64)[m] ** 2
     ff = f[m]
     a = np.vstack([ff, np.ones_like(ff)]).T
