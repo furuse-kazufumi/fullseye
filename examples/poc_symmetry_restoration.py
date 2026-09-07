@@ -797,11 +797,11 @@ def section_defect_sweep(S: dict) -> dict:
     if figs.enabled():
         figs.save_plot(
             "defect_size",
-            [("面の位置誤差 [mm](軸は正しい)", radii, offs),
+            [("面の位置誤差 [mm]", radii, offs),
              ("重心の x ずれ [mm]", radii, cx),
              ("復元 RMS [mm]", radii, rmss),
              ("面の角度誤差 [deg]", radii, angs)],
-            xlabel="欠損球の半径 [mm]", ylabel="誤差(単位は凡例のとおり)",
+            xlabel="欠損球の半径 [mm]", ylabel="誤差", size=(700, 430),
             title="欠損が大きいほど対称面がずれる —— 主因は重心の移動",
             caption="正しい軸に固定しても位置は重心のずれに引きずられる。"
                     "自動選択が軸を取り違えるのは失った点 %.1f %% 以上。"
