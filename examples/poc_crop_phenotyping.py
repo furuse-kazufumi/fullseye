@@ -385,45 +385,55 @@ def section_stem_capsule():
     vol_ex = np.pi * r ** 2 * float(np.linalg.norm(b - a)) + 4.0 / 3.0 * np.pi * r ** 3
     print("  閉形式: 表面積 %.6f m^2 / 体積 %.8f m^3(半径 %.3f m, 芯線長 %.3f m)"
           % (area_ex, vol_ex, r, float(np.linalg.norm(b - a))))
-    print("   h [mm]   面積 [m^2]   誤差      体積 [m^3]     誤差   水密")
-    rows, hs, aerr, verr = [], [], [], []
+    print("   経路           h [mm]   面積 [m^2]   誤差     体積 [m^3]    誤差   境界")
+    rows, aerr_b, aerr_s, hs = [], [], [], []
+    slice_keep = None
     for h in (0.0040, 0.0028, 0.0020, 0.0014):
         bounds = ((-0.03, 0.03), (-0.03, 0.03), (-0.03, 0.33))
         res = [max(4, int(round((q[1] - q[0]) / h))) for q in bounds]
         g = np.asarray(L3.grid_coords(bounds, res))
         sdf = np.asarray(L3.capsule_sdf(g, a, b, r))
-        occ = np.asarray(L3.sdf_to_occupancy(sdf))
-        mesh = L3.voxel_to_mesh.raw(occ.astype(np.float64), 0.5)
-        V = np.asarray(mesh[0], np.float64)
+        if slice_keep is None:
+            slice_keep = sdf[:, :, sdf.shape[2] // 2]
         # voxel_to_mesh は voxel 単位の座標を返す。軸ごとの辺長を掛けて m に戻す。
         step = np.array([(q[1] - q[0]) / (n - 1) for q, n in zip(bounds, res)])
-        V = V * step[None, :]
-        F = np.asarray(mesh[1], np.int64)
-        am = float(L3.mesh_area((V, F)))
-        vm = abs(float(L3.mesh_volume((V, F))))    # marching cubes は内向き巻き
-        nb = int(np.asarray(L3.boundary_vertices((V, F))).size)
-        rows.append(["%.1f" % (1000 * h), "%.6f" % am,
-                     "%+.2f %%" % (100 * (am - area_ex) / area_ex),
-                     "%.8f" % vm, "%+.2f %%" % (100 * (vm - vol_ex) / vol_ex),
-                     "水密" if nb == 0 else "縁 %d 点" % nb])
+        occ = np.asarray(L3.sdf_to_occupancy(sdf), np.float64)
+        for tag, vol, iso in (("2 値化してから", occ, 0.5), ("距離場のまま", sdf, 0.0)):
+            mesh = L3.voxel_to_mesh.raw(np.asarray(vol, np.float64), iso)
+            V = np.asarray(mesh[0], np.float64) * step[None, :]
+            F = np.asarray(mesh[1], np.int64)
+            am = float(L3.mesh_area((V, F)))
+            vm = abs(float(L3.mesh_volume((V, F))))   # marching cubes は内向き巻き
+            nb = int(np.asarray(L3.boundary_vertices((V, F))).size)
+            ea = 100 * (am - area_ex) / area_ex
+            ev = 100 * (vm - vol_ex) / vol_ex
+            rows.append([tag, "%.1f" % (1000 * h), "%.6f" % am, "%+.2f %%" % ea,
+                         "%.8f" % vm, "%+.2f %%" % ev,
+                         "水密" if nb == 0 else "縁 %d 点" % nb])
+            print("   %-12s   %5.1f   %.6f  %+6.2f %%  %.8f  %+6.2f %%  %s"
+                  % (tag, 1000 * h, am, ea, vm, ev, rows[-1][6]))
+            (aerr_b if iso == 0.5 else aerr_s).append(ea)
         hs.append(1000 * h)
-        aerr.append(100 * (am - area_ex) / area_ex)
-        verr.append(100 * (vm - vol_ex) / vol_ex)
-        print("   %5.1f   %.6f  %+6.2f %%   %.8f  %+6.2f %%   %s"
-              % (1000 * h, am, aerr[-1], vm, verr[-1], rows[-1][5]))
 
-    print("\n  ★**面積と体積は同じ向きに壊れない**: 体積は %+.2f -> %+.2f %% と"
-          "詰めれば当たるのに、\n     面積は %+.2f -> %+.2f %% で**一貫して過大**"
-          " —— marching cubes の階段面は\n     滑らかな円筒より長い。"
-          "カプセルの LAI 換算(稈の側面積)を voxel 経由で出すと\n     この分だけ"
-          "PAI が水増しされる。" % (verr[0], verr[-1], aerr[0], aerr[-1]))
+    print("\n  ★**2 値化してから等値面を取ると面積は一貫して過大**"
+          "(%+.2f / %+.2f / %+.2f / %+.2f %%)。" % tuple(aerr_b))
+    print("     しかも h を細かくしても**単調に減らない** —— 円筒の面が voxel 中心の"
+          "どこに\n     落ちるかで階段の刻み方が変わるため(位相の問題であって"
+          "分解能の問題ではない)。")
+    print("  ★距離場のまま等値面を取れば %+.2f / %+.2f / %+.2f / %+.2f %% まで縮む。"
+          % tuple(aerr_s))
+    print("     稈の側面積は PAI に直接効くので、この経路の選択がそのまま"
+          "「葉でないもの」の\n     水増し量になる。")
 
     figs.save_table("capsule_calibration",
-                    ["voxel h [mm]", "面積 [m^2]", "面積の誤差", "体積 [m^3]",
-                     "体積の誤差", "境界"], rows,
+                    ["経路", "voxel h [mm]", "面積 [m^2]", "面積の誤差",
+                     "体積 [m^3]", "体積の誤差", "境界"], rows,
                     title="稈(カプセル)の SDF -> voxel -> mesh の代償",
-                    caption="閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。")
-    return {"area_err": aerr, "vol_err": verr, "h": hs}
+                    caption="閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。"
+                            "2 値化を挟むと面積だけが一方向に膨らむ。")
+    figs.save("capsule_sdf_slice", slice_keep,
+              "稈カプセルの符号付き距離場(中央断面、青が内側)", signed=True)
+    return {"area_bin": aerr_b, "area_sdf": aerr_s, "h": hs}
 
 
 # --------------------------------------------------------------------------- #
