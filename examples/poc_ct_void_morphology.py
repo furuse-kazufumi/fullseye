@@ -722,7 +722,7 @@ def section_threshold_noise() -> dict:
                     ("界面欠損率 [%] の 1/5", thrs, [x / 5 for x in tai]),
                     ("連なりの塊の数 / 8", thrs, [x / 8 for x in tn]),
                     ("連なりの最近接 [µm] の 1/50", thrs, [x / 50 for x in tnn])],
-                   xlabel="2 値化のしきい値", ylabel="各指標(尺度を合わせてある)",
+                   xlabel="2 値化のしきい値", ylabel="各指標(尺度は凡例)",
                    title="しきい値 %.2f でボイドが融合し、最近接間隔の意味が変わる" % merge_thr,
                    caption="塊の数が %d から落ちた瞬間、最近接間隔は『隣のボイドまで』"
                            "から『隣の鎖まで』に黙って入れ替わる。" % N_VOID)
