@@ -429,8 +429,15 @@ def outer_metrics(vol: np.ndarray) -> dict:
 
 
 def _probe_points():
-    """内部を突くプローブの ``(z, x)`` [mm]。電極の内側だけを使う。"""
-    zs = np.linspace(ELEC_Z[0] + 0.10, ELEC_Z[1] - 0.10, 5)
+    """内部を突くプローブの ``(z, x)`` [mm]。電極の内側だけを使う。
+
+    ★``z`` は**スライスの中心**に置く。スライス間隔 0.12 mm は面内 0.04 mm の
+    3 倍粗く、隣り合うスライスで層の位相がずれていると、その間を補間した
+    プローブは縞を打ち消してしまう(実測: 空隙のあるセルでコントラストが
+    0.45 -> 0.25 に落ち、17 枚の層のうち 4 枚しか数えられなかった)。
+    """
+    zs = [(k + 0.5) * SZ for k in range(int(ELEC_Z[0] / SZ) + 1,
+                                        int(ELEC_Z[1] / SZ))]
     xs = np.linspace(ELEC_X[0] + 0.25, ELEC_X[1] - 0.25, 7)
     return [(float(z), float(x)) for z in zs for x in xs]
 
