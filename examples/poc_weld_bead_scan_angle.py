@@ -1237,7 +1237,7 @@ def main() -> int:
     sw = section5_angle_sweep(p, tru)
     opt = section6_optimum(sw, geo)
     cal = section7_calibration(p, tru, design)
-    occ = section8_occlusion_map(pf)
+    occ = section8_occlusion_map()
     section9_throat_esdf(pf)
     make_figures(pf, sw, geo, opt, est2, cal, occ)
     section10_tool_gaps()
