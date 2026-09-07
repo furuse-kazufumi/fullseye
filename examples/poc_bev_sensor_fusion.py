@@ -794,47 +794,83 @@ def section_translation(rig: Rig) -> dict:
 # --------------------------------------------------------------------------- #
 # 7. 距離帯別 —— 回転は遠くから、並進は一様に壊れる                             #
 # --------------------------------------------------------------------------- #
-BANDS = ((3.0, 5.0), (5.0, 12.0), (12.0, 18.0), (18.0, 28.0))
+BANDS = ((4.0, 9.0), (9.0, 14.0), (14.0, 20.0), (20.0, 28.0))
+#: 距離帯で比べるときは **BEV のずれ量を揃える**(回転 1.00 度は 20 m で
+#: 0.349 m なので、並進はその値を使う)。揃えないと「壊れ方の形」でなく
+#: 「壊した量」を比べてしまう。
+BAND_YAW = 1.0
+BAND_SHIFT = 20.0 * np.tan(np.radians(BAND_YAW))
+
+
+def _band_iou(occ, gt, evalm, X):
+    vals, ns = [], []
+    for b in BANDS:
+        sel = evalm & (X >= b[0]) & (X < b[1])
+        o, g = occ & sel, gt & sel
+        ns.append(int(g.sum()))
+        vals.append(float(fs.ledger.voxel_iou(o.astype(float), g.astype(float))))
+    return vals, ns
 
 
 def section_bands(rig: Rig) -> dict:
     print("\n" + "=" * 78)
     print("7) ★★距離帯で割る —— 同じ IoU 低下でも「どこが壊れたか」は正反対")
     print("=" * 78)
+    print("  比べるのは **BEV のずれ量を揃えた 2 条件**: yaw %.2f 度(20 m で"
+          " %.3f m)と 並進 %.0f mm。" % (BAND_YAW, BAND_SHIFT,
+                                          1000 * BAND_SHIFT))
 
-    conds = (("誤差なし", dict()), ("yaw 1.00 度", dict(dyaw=1.0)),
-             ("並進 150 mm", dict(dt=(0.0, 0.150, 0.0))))
-    out = {}
-    print("   条件            " + "  ".join("%5.0f-%2.0f m" % b for b in BANDS)
-          + "   遠 / 近の比")
-    rows = []
+    conds = (("誤差なし", dict()), ("回転 %.2f 度" % BAND_YAW, dict(dyaw=BAND_YAW)),
+             ("並進 %.0f mm" % (1000 * BAND_SHIFT),
+              dict(dt=(0.0, BAND_SHIFT, 0.0))))
+    out, rows = {}, []
+    hdr = "   誤差を持つセンサ(カメラ)単独  " + " ".join(
+        "%5.0f-%2.0f m" % b for b in BANDS) + "   遠 / 近の比"
+    print("\n" + hdr)
+    for cname, kw in conds:
+        ob, kb, _ = rig.sensor_b(**kw)
+        vals, ns = _band_iou(ob & kb, rig.gt_occ, rig.evalm, rig.X)
+        out[("cam", cname)] = vals
+        ratio = vals[3] / max(vals[1], 1e-9)
+        rows.append(["カメラ単独", cname] + ["%.4f" % v for v in vals]
+                    + ["%.2f" % ratio])
+        print("   %-28s" % cname + " ".join("%9.4f" % v for v in vals)
+              + "   %8.2f" % ratio)
+    print("   (帯ごとの真値セル数: %s)"
+          % " / ".join("%d" % n for n in ns))
+
+    print("\n   融合(最大値則)で同じことを見ると:")
     for cname, kw in conds:
         _, occ = rig.run("max", **kw)
-        vals = []
-        for b in BANDS:
-            sel = rig.evalm & (rig.X >= b[0]) & (rig.X < b[1])
-            o, g = occ & sel, rig.gt_occ & sel
-            vals.append(float(fs.ledger.voxel_iou(o.astype(float),
-                                                  g.astype(float))))
-        out[cname] = vals
-        ratio = vals[1] / max(vals[3], 1e-9)
-        rows.append([cname] + ["%.4f" % v for v in vals] + ["%.2f" % ratio])
-        print("   %-16s" % cname + "  ".join("%9.4f" % v for v in vals)
+        vals, _ = _band_iou(occ, rig.gt_occ, rig.evalm, rig.X)
+        out[("max", cname)] = vals
+        ratio = vals[3] / max(vals[1], 1e-9)
+        rows.append(["融合(最大値)", cname] + ["%.4f" % v for v in vals]
+                    + ["%.2f" % ratio])
+        print("   %-28s" % cname + " ".join("%9.4f" % v for v in vals)
               + "   %8.2f" % ratio)
 
-    print("\n  ★yaw 1 度は 5-12 m 帯 %.4f に対し 18-28 m 帯 %.4f(%.1f 倍の差)——"
-          "**遠方から壊れる**。"
-          % (out["yaw 1.00 度"][1], out["yaw 1.00 度"][3],
-             out["yaw 1.00 度"][1] / max(out["yaw 1.00 度"][3], 1e-9)))
-    print("  ★並進 150 mm は %.4f と %.4f(%.2f 倍)で**ほぼ平ら**。"
-          % (out["並進 150 mm"][1], out["並進 150 mm"][3],
-             out["並進 150 mm"][1] / max(out["並進 150 mm"][3], 1e-9)))
-    print("     校正の残差を 1 つの数字で受け取ると、**この違いが完全に消える**。")
-    figs.save_table("range_bands", ["条件"] + ["%.0f-%.0f m" % b for b in BANDS]
-                    + ["近 / 遠の比"], rows,
-                    title="距離帯別の占有 IoU(最大値則)",
+    rot, tra = out[("cam", conds[1][0])], out[("cam", conds[2][0])]
+    base = out[("cam", "誤差なし")]
+    dr = [1 - r / max(b, 1e-9) for r, b in zip(rot, base)]
+    dt_ = [1 - t / max(b, 1e-9) for t, b in zip(tra, base)]
+    print("\n  誤差なしからの低下率(カメラ単独): 回転 %s / 並進 %s"
+          % (" ".join("%.0f%%" % (100 * v) for v in dr),
+             " ".join("%.0f%%" % (100 * v) for v in dt_)))
+    print("  ★回転は近 %.0f %% -> 遠 %.0f %% と**遠方ほど大きく落ち**、"
+          "並進は %.0f %% -> %.0f %% と**帯によらない**。"
+          % (100 * dr[0], 100 * dr[3], 100 * dt_[0], 100 * dt_[3]))
+    print("  ★★融合すると LiDAR が遠方を埋めるので、この距離依存性は"
+          "**ほとんど見えなくなる**(遠 / 近の比 %.2f -> %.2f)。"
+          "融合は誤差を消さずに**隠す**。"
+          % (rot[3] / max(rot[1], 1e-9),
+             out[("max", conds[1][0])][3] / max(out[("max", conds[1][0])][1],
+                                                1e-9)))
+    figs.save_table("range_bands", ["手法", "条件"]
+                    + ["%.0f-%.0f m" % b for b in BANDS] + ["遠 / 近の比"],
+                    rows, title="距離帯別の占有 IoU(ずれ量を揃えた 2 条件)",
                     caption="回転誤差は距離に比例して効き、並進誤差は距離に"
-                            "依らない。比の列が 1 に近いほど一様な壊れ方。")
+                            "依らない。融合するとその差が隠れる。")
     return out
 
 
