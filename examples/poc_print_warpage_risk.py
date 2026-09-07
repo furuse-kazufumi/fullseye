@@ -445,6 +445,11 @@ def _spearman(a, b):
     return float(ra @ rb / np.sqrt((ra @ ra) * (rb @ rb)))
 
 
+def _up(img, fz, fx):
+    """図を見えるように整数倍で拡大する(補間しない = 画素の粗さを隠さない)。"""
+    return np.repeat(np.repeat(np.asarray(img, float), fz, axis=0), fx, axis=1)
+
+
 def _side_view(occ):
     """y 方向に投影した側面図(z,x)。上下を反転して「上」を上に描く。"""
     v = np.asarray(occ, float).transpose(1, 0, 2)      # (y,z,x)
@@ -476,7 +481,8 @@ def section_scene():
               % (name, n_layer, hst["area"][0], hst["area"].max(), vol,
                  hst["perimeter"].max(), hst["nblob"].max()))
 
-    figs.save_grid("scene", [_side_view(c["occ"]) for c in cases.values()],
+    figs.save_grid("scene", [_up(_side_view(c["occ"]), 3, 3)
+                             for c in cases.values()],
                    list(cases.keys()), ncols=3,
                    title="%d つの形の側面図(y 方向に投影、横 %.0f mm x 縦 %.0f mm)"
                          % (len(SHAPES), L_X, Z_SPAN),
@@ -484,8 +490,9 @@ def section_scene():
                            % (H_LAYER, VOX))
     occ = cases["首つき"]["occ"]
     ks = [0, 3, 6, 10, 14, 17, 20, 23]
-    figs.save_grid("layer_frames", [occ[k].astype(float) for k in ks],
-                   ["z = %.2f mm(面積 %.0f mm^2)"
+    figs.save_grid("layer_frames",
+                   [_up(occ[k].astype(float), 3, 3) for k in ks],
+                   ["z %.1f / %.0f mm^2"
                     % ((k + 0.5) * H_LAYER, cases["首つき"]["hist"]["area"][k])
                     for k in ks], ncols=4,
                    title="首つきの層の断面(スライス、縦 %.0f mm x 横 %.0f mm)"
@@ -658,8 +665,8 @@ def section_predict_vs_measure(cases):
         uz = r["u"][1::2].reshape(r["nz"] + 1, r["nnx"])
         m = r["act"].reshape(r["nz"] + 1, r["nnx"])
         fld = np.where(m, uz, 0.0)
-        panels.append(np.repeat(np.flipud(fld), 8, axis=0))
-        caps.append("%s(たわみ %.4f mm)" % (n, cases[n]["dev_fem"]))
+        panels.append(_up(np.flipud(fld), 8, 3))
+        caps.append("%s %.3f mm" % (n, cases[n]["dev_fem"]))
     figs.save_grid("warp_map", panels, caps, ncols=1, signed=True,
                    title="解いた反りの変位場 uz(青 = 下がる / 赤 = 上がる、"
                          "z 方向は 8 倍に伸ばして表示)",
