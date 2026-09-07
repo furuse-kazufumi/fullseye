@@ -184,6 +184,63 @@ except ValueError:
     pass
 
 # ── 総括: 4 指標が完全再構成では理想値、劣化では正しく低下(null を判別的に超える)────
+
+# ── 5) m3c2_distance: 法線方向に測る差分(最近傍距離が嘘をつく所) ──────────
+# 変化検出の現場の問い:「同じ斜面を 2 回測った。何 mm 動いたか」。最近傍距離
+# (C2C)は**面に沿ったずれまで距離に数える**ので、傾いた面では点の並び方が
+# 変わっただけで「変化」が出る。M3C2 は core 点ごとに法線方向へ射影して測る。
+#
+# 真値: 傾き 30 度の平面を 2 時点。時点 2 は**法線方向に厳密に +0.20** だけ動かす。
+# 面内の点の位置は両時点で独立に取り直す(= 測り直しの現実)。
+theta = np.deg2rad(30.0)
+nrm = np.array([-np.sin(theta), 0.0, np.cos(theta)])       # 斜面の単位法線
+SHIFT = 0.20                                                # 仕込んだ真値 [同じ長さ単位]
+rng_m = np.random.default_rng(20260907)
+
+
+def _slope_cloud(n_pts, shift, noise, rng):
+    """傾き 30 度の平面上に一様サンプルし、法線方向に shift だけ動かした点群。"""
+    u = rng.uniform(-5.0, 5.0, n_pts)                       # 斜面に沿う方向
+    v = rng.uniform(-5.0, 5.0, n_pts)                       # 斜面の横方向
+    e1 = np.array([np.cos(theta), 0.0, np.sin(theta)])      # 面内の直交基底
+    e2 = np.array([0.0, 1.0, 0.0])
+    P = u[:, None] * e1 + v[:, None] * e2
+    P = P + (shift + rng.normal(0.0, noise, n_pts))[:, None] * nrm
+    return P
+
+
+cloud_t0 = _slope_cloud(9000, 0.0, 0.02, rng_m)
+cloud_t1 = _slope_cloud(9000, SHIFT, 0.02, rng_m)           # 法線方向に +0.20
+cores_m = np.array([[0.0, 0.0, 0.0], [2.0, 1.5, 0.0], [-3.0, -2.0, 0.0]])
+cores_m = cores_m[:, 0:1] * np.array([np.cos(theta), 0, np.sin(theta)]) \
+    + cores_m[:, 1:2] * np.array([0, 1.0, 0])               # core も面上に置く
+normals_m = np.tile(nrm, (len(cores_m), 1))
+
+d_m3c2, lod_m3c2 = M.m3c2_distance(cloud_t0, cloud_t1, cores_m, normals_m,
+                                   radius=1.0, max_depth=2.0)
+# ゼロ点: 最近傍距離(符号を持たないので、動いた向きも分からない)
+c2c = M.chamfer_distance(cloud_t0, cloud_t1)
+err_m3c2 = float(np.max(np.abs(d_m3c2 - SHIFT)))
+print("m3c2  : 法線方向 %s (真値 %.3f, 最大誤差 %.4f)"
+      % (np.array2string(d_m3c2, precision=4), SHIFT, err_m3c2))
+print("        検出限界 lod %s(この値を超えない差は雑音と区別できない)"
+      % np.array2string(lod_m3c2, precision=4))
+print("null  : chamfer(最近傍・符号なし) = %.4f —— 面に沿ったずれを含むので"
+      " 真値 %.3f より大きく出る" % (c2c, SHIFT))
+assert err_m3c2 < 0.01, (d_m3c2, SHIFT)                     # 真値を 5 % 以内で回収
+assert np.all(lod_m3c2 < 0.02), lod_m3c2                    # 検出限界は仕込んだ差より小さい
+assert np.all(np.abs(d_m3c2) > lod_m3c2), (d_m3c2, lod_m3c2)  # 差は検出限界を超えている
+assert c2c > SHIFT, (c2c, SHIFT)                            # ★ゼロ点は必ず過大に出る
+# 法線の符号は呼び手の責任 —— 反転すると符号だけ反転する(大きさは同じ)
+d_flip, _ = M.m3c2_distance(cloud_t0, cloud_t1, cores_m, -normals_m,
+                            radius=1.0, max_depth=2.0)
+assert np.allclose(d_flip, -d_m3c2), (d_flip, d_m3c2)
+# 点が足りない core は 0 ではなく nan(「変化なし」に見せない)
+d_far, lod_far = M.m3c2_distance(cloud_t0, cloud_t1, np.array([[1e3, 1e3, 1e3]]),
+                                 np.array([nrm]), radius=1.0, max_depth=2.0)
+assert np.isnan(d_far[0]) and np.isnan(lod_far[0]), (d_far, lod_far)
+print("        円筒に点が入らない core は nan(0 を返して「変化なし」に見せない)")
+
 print("PASS: 4 評価指標を解析真値と 1e-9 で照合 — "
       "fscore(perfect f=1.0 / degraded f=%.4f=真値 / null≈%.3f), "
       "rmse(identity=0 / offset=%.3f=|v|), "
