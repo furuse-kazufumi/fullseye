@@ -942,8 +942,8 @@ def section_pull(ref: CadRef) -> dict:
         _, rb, _ = absorbed(big["pts"], big["nrm"], db)
         S = 0.40
         figs.save_grid("warp_maps",
-                       [render(big["pts"], db, scale=S),
-                        render(big["pts"], rb, scale=S)],
+                       [render(big["pts"], db, nrm=big["nrm"], scale=S),
+                        render(big["pts"], rb, nrm=big["nrm"], scale=S)],
                        ["真の反り(端で +%.2f、中央 0)" % WARP_A,
                         "位置合わせ後に残る(中央が偽のへこみ、同じ目盛り)"],
                        title="反りを剛体 6 自由度で最小二乗した残り"
