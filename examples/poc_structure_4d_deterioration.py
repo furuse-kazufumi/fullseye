@@ -753,8 +753,16 @@ def section_control(sc: dict) -> dict:
     tf = sc["truth_fp"]
     out = {}
     print("\n   しきい値 %.1f mm を超えた core(補修候補)を数える:" % thr)
+    print("     ★真値も**同じ数え方**で出す(同じ格子・同じしきい値・同じ符号)。"
+          "解析積分の %.3f L と比べると\n      たわみが逆符号に重なるぶん"
+          "小さくなるので、比べる相手を間違えると測定のせいにしてしまう。"
+          % sc["vol"][2])
     print("     条件                        面積 m2   欠損体積 L   真値との比")
-    v_true = sc["vol"][2]
+    neg_t = tf < -thr
+    v_true = float(-tf[neg_t].sum()) * 1e-3 * acell * 1e3
+    a_true = float(neg_t.sum()) * acell
+    print("     %-27s %8.3f %11.3f %11s"
+          % ("真値(同じ数え方)", a_true, v_true, "1.00"))
     for name in conds:
         d = conds[name]
         g = d["good"]
@@ -765,11 +773,14 @@ def section_control(sc: dict) -> dict:
         print("     %-27s %8.3f %11.3f %11s"
               % (name, area, vol,
                  "-" if "ゼロ" in name else "%.2f" % (vol / v_true)))
-    print("     真の欠損体積(t2)= %.3f L、真の欠損面積(|真値| > %.1f mm)= %.3f m2"
-          % (v_true, thr, float((np.abs(tf) > thr).sum()) * acell))
     fa, fv = out["(a) 劣化ゼロ・測り直しのみ"]
     print("  ★★劣化ゼロでも %.3f m2 / %.3f L が「補修候補」に挙がる —— "
           "本物の %.3f L の %.0f %%。" % (fa, fv, v_true, 100 * fv / v_true))
+    print("     ★(c) が真値の %.2f 倍になるのは、本物の欠損に**偽の劣化が上乗せ**"
+          "されるから —— \n     一見「よく合っている」1 個の数字が、"
+          "本物 %.2f + 偽 %.2f の和になっている。"
+          % (out["(c) 劣化 + 測り直し"][1] / v_true,
+             out["(b) 劣化のみ・測り方は同一"][1], fv))
 
     # 検出された劣化を塊にまとめて数える(euclidean_cluster)
     g = c["good"]
