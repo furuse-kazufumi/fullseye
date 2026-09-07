@@ -76,6 +76,11 @@ EXTEND: 実機に差し替えるなら :func:`make_geometry` が返す ``truth``
 (乗算 g、加算 a·u+c、水の深さ w、傾き θ)。重なりは奥から順に塗り潰すだけ
 なので、破片ごとの「全面積」と「可視面積」がどちらも数えられる。
 
+**公開経路に無かった処理**(道具の穴。9 節が実行時に検査つきで印字する):
+分光軸の平滑微分(この PoC の主役。scipy の ``savgol_filter`` で書いた)/
+混同行列・材質別再現率 / ライブラリ (K,B) をまとめて渡す SAM /
+``BandMeta.bad_bands`` でキューブとライブラリを同時に切る口。
+
 来歴(公開文献のみ): Kruse et al., *Remote Sensing of Environment* 44 (1993) 145
 —— Spectral Angle Mapper / Heinz & Chang, *IEEE TGRS* 39 (2001) 529 ——
 完全制約付き線形混合分解 / Savitzky & Golay, *Anal. Chem.* 36 (1964) 1627 ——
