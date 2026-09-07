@@ -801,20 +801,36 @@ def section_tool_gaps() -> None:
           "gaussian_filter を使った。" % float(np.abs(a - b).max()))
     assert float(np.abs(a - b).max()) < 1e-6
 
-    # (b) query_distance は立方格子しか受けない
+    # (b) query_distance の格子の契約 —— この PoC を書いた時点では立方限定だった
     occ = np.zeros((8, 8, 8)); occ[3:5, 3:5, 3:5] = 1
     e = L.esdf(occ, voxel_size=0.01)
     q = L.query_distance(e, ((0, 0.08),) * 3, 8, np.array([[0.04, 0.04, 0.04]]))
-    print("  (b) query_distance は立方格子専用(`int(res)` + shape == (res,res,res))。"
-          "薄い接合層のような\n      非立方ボリューム %s では引けない —— esdf 側は"
-          " 長さ 3 の voxel_size を受けるのに、片方だけ狭い。"
-          % (str((30, 180, 180)),))
+    # ★穴が塞がったら鳴る。2026-09-07 に鳴り、この節を書き換えた —— 「esdf は長さ 3 の
+    # voxel_size を受けるのに、その出力を引く側が立方限定」という指摘を受けて、
+    # query_distance(と occupancy_grid)が軸ごとの res を受けるようになった。
+    occ2 = np.zeros((6, 8, 10)); occ2[2:4, 3:5, 4:6] = 1
+    e2 = L.esdf(occ2, voxel_size=(0.01, 0.01, 0.01))
     try:
-        L.query_distance(e, ((0, 0.08),) * 3, (8, 8, 8), np.array([[0.04, 0.04, 0.04]]))
-        raise AssertionError("非立方が通った(この節を書き換えること)")
-    except TypeError:
-        pass
-    print("      立方なら通る(中心の値 %.4f mm)。" % float(q[0]))
+        q2 = L.query_distance(e2, ((0, 0.06), (0, 0.08), (0, 0.10)), (6, 8, 10),
+                              np.array([[0.03, 0.04, 0.05]]))
+        fixed = True
+    except (TypeError, ValueError):
+        q2, fixed = None, False
+    if fixed:
+        print("  (b) query_distance は**軸ごとの res を受けるようになった**"
+              "(2026-09-07 に修正)。指摘した時点では"
+              "\n      `int(res)` + shape == (res,res,res) の立方限定で、"
+              "esdf 側だけが長さ 3 の voxel_size を"
+              "\n      受ける片側だけ狭い契約だった —— 薄い接合層のような非立方"
+              "ボリューム %s では引けなかった。" % (str((30, 180, 180)),))
+        print("      いまは非立方でも引ける(中心の値 %.4f mm / 立方 %.4f mm)。"
+              % (float(q2[0]), float(q[0])))
+    else:
+        print("  (b) query_distance は立方格子専用(`int(res)` + shape == (res,res,res))。"
+              "薄い接合層のような\n      非立方ボリューム %s では引けない —— esdf 側は"
+              " 長さ 3 の voxel_size を受けるのに、片方だけ狭い。"
+              % (str((30, 180, 180)),))
+        print("      立方なら通る(中心の値 %.4f mm)。" % float(q[0]))
 
     # (c) 軸順が族で違う —— 混ぜると静かに間違う
     print("  (c) 軸順: grid_coords / sdf_* は (nx,ny,nz) で最終軸 (x,y,z)、"

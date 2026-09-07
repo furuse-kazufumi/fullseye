@@ -313,11 +313,13 @@ def observe(k: int, rng, density: float | None = None, deteriorate=True,
     phi = rng.uniform(math.pi, 2.0 * math.pi, n_b)
     tt = rng.uniform(-BEARING_LEN / 2, BEARING_LEN / 2, n_b)
     pb, nb = bearing_surface(phi, tt, idx)
+    pb_nom = pb.copy()
     if "settle" in parts:
         pb = pb + np.where((idx == 0)[:, None], disp_bearing(n_b, kk), 0.0)
 
     p = np.vstack([p, pb])
     n = np.vstack([n, nb])
+    p_nom = np.vstack([p_nom, pb_nom])
 
     # --- 可視性(入射角・自己遮蔽・仮設物)-------------------------------- #
     off = np.asarray(SETUP_SHIFT[k] if setup_shift else (0.0, 0.0, 0.0), float)
