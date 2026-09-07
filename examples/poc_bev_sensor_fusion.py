@@ -604,20 +604,17 @@ def section_rotation(rig: Rig) -> dict:
     print("=" * 78)
     print("  角度 θ の誤差は距離 R の点を Rθ 動かす。セル c=%.3f m を超えるのは "
           "R > c/θ。" % CELL)
-    print("  予測 = 評価窓の真値占有セルのうち R(カメラからの距離)が c/θ を"
-          "超えるものの割合。")
-    print("\n     yaw     c/θ [m]   予測ずれ率   実測ずれ率   "
+    print("  予測 = セル内の位置が一様なら index が変わる確率 "
+          "1-(1-|dx|/c)(1-|dy|/c)。実測 = 実際に index が変わった点の割合。")
+    print("\n     yaw     c/θ [m]   予測セル跨ぎ   実測セル跨ぎ   "
           + "   ".join("IoU:%s" % r for r in RULES))
 
-    gtc = rig.gt_occ & rig.evalm
-    Rb = rig.Rb[gtc]
     curves = {r: [] for r in RULES}
     pred_l, meas_l = [], []
     for dy in YAWS:
         th = np.radians(dy)
         rcrit = CELL / th if th > 0 else np.inf
-        pred = float(np.mean(Rb > rcrit))
-        meas = float(np.mean(Rb * th > CELL))
+        meas, pred = rig.cell_shift(dyaw=dy)
         pred_l.append(pred)
         meas_l.append(meas)
         row = []
@@ -625,15 +622,17 @@ def section_rotation(rig: Rig) -> dict:
             m, _ = rig.run(r, dyaw=dy)
             curves[r].append(m["iou"])
             row.append(m["iou"])
-        print("   %5.2f deg  %8.1f   %8.3f     %8.3f     %s"
+        print("   %5.2f deg  %8.1f   %10.3f     %10.3f     %s"
               % (dy, rcrit, pred, meas, "   ".join("%.4f" % v for v in row)))
 
     err = max(abs(p - m) for p, m in zip(pred_l, meas_l))
-    print("\n  予測と実測(同じ幾何を 2 通りに書いただけ)の最大差 %.4f。" % err)
+    print("\n  予測と実測の最大差 %.4f —— **量子化まで含めて幾何で当たる**。" % err)
     i1 = YAWS.index(1.0)
-    print("  ★崖は %.2f 度あたり: c/θ が評価窓の奥行き %.0f m を切ると、"
-          "占有セルの %.0f %% が 1 セル以上動く。"
-          % (0.5, WIN_X[1], 100 * pred_l[YAWS.index(0.5)]))
+    base = curves["max"][0]
+    fall = next((y for y, v in zip(YAWS, curves["max"]) if v < 0.9 * base), None)
+    print("  ★最大値則の IoU が誤差 0(%.4f)の 90 %% を切るのは yaw %.2f 度 —— "
+          "c/θ = %.1f m で、評価窓の奥 %.0f m の側から壊れ始める。"
+          % (base, fall, CELL / np.radians(fall), WIN_X[1]))
     print("  ★★yaw %.2f 度で 最大値則 %.4f / 平均則 %.4f —— 同じ誤差から"
           "**片方は偽物を作り、片方は本物を消す**(次節で内訳)。"
           % (1.0, curves["max"][i1], curves["mean"][i1]))
