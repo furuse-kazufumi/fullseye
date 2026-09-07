@@ -750,40 +750,48 @@ def section_wind() -> dict:
           "  |  予測ΔT(ストリング) 実測  |  本物 非故障 偽")
 
     gt = ground_truth()
-    rows, ph_p, ph_m, ps_p, ps_m, nf = [], [], [], [], [], []
-    det_hot_v, det_str_v = [], []
+    ph_p, ph_m, ps_p, ps_m, nf, ar_p, ar_m = [], [], [], [], [], [], []
+    det_hot_v, det_str_v, nonf_mean = [], [], []
     for v in WINDS:
         t_app = capture(thermal_field(v)["T"])
         det = detect(t_app, gt, "モジュール中央値")
         s = score(det, gt)
         a, b = predict_hotspot(v, GSD), predict_string(v)
+        ap = predict_blob_area_px(v, GSD)
         m1, m2 = peak_on(det, gt["hot"]), peak_on(det, gt["string"], "median")
+        am = int((det["labels"][_expand(gt["hot"], 6)] > 0).sum())
         ph_p.append(a), ph_m.append(m1), ps_p.append(b), ps_m.append(m2)
-        nf.append(s["n_false"])
+        ar_p.append(ap), ar_m.append(am), nf.append(s["n_false"])
         det_hot_v.append(s["recall"]["hot"] > 0.3)
         det_str_v.append(s["recall"]["string"] > 0.3)
-        print("     %5.1f  %5.1f   %6.2f      %6.2f  |   %6.2f       %6.2f"
-              "  |  %3d %5d %4d"
-              % (v, u_total(v), a, m1, b, m2,
+        nonf_mean.append(score(detect(t_app, gt, "全体平均"), gt)["n_nonfault"])
+        print("     %5.1f  %5.1f   %6.2f      %6.2f     %6.1f   %4d"
+              "  |   %6.2f       %6.2f  |  %3d %5d %4d"
+              % (v, u_total(v), a, m1, ap, am, b, m2,
                  s["n_fault"], s["n_nonfault"], s["n_false"]))
-        rows.append([v, m1, m2])
 
     last_hot = max([v for v, ok in zip(WINDS, det_hot_v) if ok], default=float("nan"))
     last_str = max([v for v, ok in zip(WINDS, det_str_v) if ok], default=float("nan"))
     print("\n  ★実測で検出できた最後の風速: ホットスポット %.1f m/s、"
           "ストリング %.1f m/s。" % (last_hot, last_str))
-    print("     予測 %.1f / %.1f と %s。**同じ日の朝と昼で、同じ故障が"
-          "出たり消えたりする**。"
-          % (v_hot, v_str,
-             "一致" if abs(last_hot - v_hot) <= 1.5 and abs(last_str - v_str) <= 1.5
-             else "ずれた"))
+    print("     ホットスポットの予測は**ピーク基準 %.1f / 面積基準 %.1f** ——"
+          " 実測 %.1f に合うのは %s のほう。"
+          % (v_hot, v_area, last_hot,
+             "面積基準" if abs(last_hot - v_area) < abs(last_hot - v_hot)
+             else "ピーク基準"))
+    print("     ストリングは面積が広いので面積の門が効かず、ピーク基準 %.1f と"
+          "実測 %.1f が一致する。" % (v_str, last_str))
+    print("     **同じ日の朝と昼で、同じ故障が出たり消えたりする**。")
     err = [abs(p - m) for p, m in zip(ph_p, ph_m)]
-    print("  予測と実測の差はホットスポットで %.2f〜%.2f K"
-          "(閉形式が実測を追えている)。" % (min(err), max(err)))
-    print("  ★低風速では逆向きに壊れる: v=%.1f で非故障の温度差(汚れの帯)が"
-          "%d 個上がる —— **弱い風は偽を増やし、強い風は本物を消す**。"
-          % (WINDS[0], score(detect(capture(thermal_field(WINDS[0])["T"]),
-                                    gt, "全体平均"), gt)["n_nonfault"]))
+    err2 = [abs(p - m) for p, m in zip(ps_p, ps_m)]
+    print("  予測と実測の差は ホットスポット %.2f〜%.2f K / ストリング"
+          " %.2f〜%.2f K(閉形式が実測を追えている)。"
+          % (min(err), max(err), min(err2), max(err2)))
+    print("  ★低風速では逆向きに壊れる: 全体平均基準の非故障の温度差は"
+          " v=%.1f で %d 個、v=%.1f で %d 個 —— "
+          % (WINDS[0], nonf_mean[0], WINDS[-1], nonf_mean[-1]))
+    print("     **弱い風は偽と紛らわしいものを増やし、強い風は本物を消す**。"
+          "両端で壊れる。")
 
     figs.save_plot("wind_sweep",
                    [("予測 ホットスポット", WINDS, ph_p),
