@@ -902,6 +902,21 @@ def section_maps(alignres: dict, zero: dict, seed: int = SEED) -> dict:
                    caption="左端の帯が色目盛り(上 +12 mm / 下 -12 mm)。"
                            "天井は無傷なのに東西方向の傾きが乗っている。")
 
+    # ★見出しの主張を 1 枚に: 無傷の天井が、合わせ方だけで傾いて見える
+    n = alignres["res"]["none"]
+    dm = alignres["res"]["datum"]
+    cpanels, ccaps = [], []
+    for m, name in ((n, "合わせない"), (dm, "床+2 壁を基準"), (g, "全体 ICP")):
+        pp = m["P"]
+        ee = m["elem"]
+        pan, _ = _dev_maps(pp, ee, clip=0.005, only=(CEIL,))
+        cpanels.append(pan[0])
+        ccaps.append("天井 / %s(勾配 %+.2f mrad)" % (name, 1000 * m["ceil_sx"]))
+    figs.save_grid("ceiling_false_tilt", cpanels, ccaps, ncols=3, signed=True,
+                   title="無傷の天井の偏差 [mm] —— 合わせ方だけで東西に傾く(真値 0.00 mrad)",
+                   caption="色は ±5 mm。天井は設計どおりに建っている。"
+                           "傾きは合わせが配ったもの。")
+
     surf0 = make_surface(0.0)
     s0 = scan(surf0, seed=seed)
     p0 = align(s0["P"], "global", seed=seed)
