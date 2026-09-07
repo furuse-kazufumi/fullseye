@@ -221,7 +221,10 @@ def measure_scene(sc: dict) -> dict:
     """既定の op 列(xsk_meijering)で測る。同じシーンは memo。"""
     key = id(sc)
     if key not in _MEAS:
-        _MEAS[key] = measure(sc, extract_net(sc["img"]))
+        det = extract_net(sc["img"])
+        me = measure(sc, det)
+        me["det"] = det
+        _MEAS[key] = me
     return _MEAS[key]
 
 
