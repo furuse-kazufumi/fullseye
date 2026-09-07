@@ -715,25 +715,36 @@ def section_scene(surf: dict, sc: dict) -> None:
                      1000 * sc["dev_true"][m].max()))
 
     if figs.enabled():
-        def occ(u, v, ru, rv, nu, nv, cap=5.0):
-            """点の**在る所**を数えた線画(平面図・断面図)。"""
+        def occ(u, v, ru, rv, nu, nv, marks=(), cap=4.0):
+            """点の**在る所**を数えた線画(平面図・断面図)。細線は 1 画素太らせる。"""
             c, _, _ = np.histogram2d(u, v, bins=(nu, nv), range=(ru, rv))
-            return np.repeat(np.repeat(np.minimum(c, cap).T[::-1], 3, 0), 3, 1)
+            c = np.minimum(c, cap).T[::-1]
+            d = c.copy()                        # 3x3 の最大値で 1 画素だけ太らせる
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    d = np.maximum(d, np.roll(np.roll(c, dy, 0), dx, 1))
+            for (mu, mv) in marks:              # スキャン位置の印
+                iu = int((mu - ru[0]) / (ru[1] - ru[0]) * nu)
+                iv = nv - 1 - int((mv - rv[0]) / (rv[1] - rv[0]) * nv)
+                d[max(iv - 2, 0):iv + 3, max(iu - 2, 0):iu + 3] = cap
+            return np.repeat(np.repeat(d, 3, 0), 3, 1)
 
         m = (P[:, 2] > 0.25) & (P[:, 2] < 2.60)      # 床と天井を抜いた平面図
-        plan = occ(P[m, 0], P[m, 1], (0, RX), (0, RY), 200, 134)
-        s1 = np.abs(P[:, 1] - 2.00) < 0.10           # 縦断面(柱 A の脇を通る)
+        plan = occ(P[m, 0], P[m, 1], (0, RX), (0, RY), 200, 134,
+                   marks=[(s[0], s[1]) for s in STATIONS])
+        s1 = np.abs(P[:, 1] - COL_XY[0][1]) < 0.10   # 縦断面(柱 A を通る)
         sec1 = occ(P[s1, 0], P[s1, 2], (0, RX), (0, RZ), 200, 100)
         s2 = np.abs(P[:, 0] - 2.95) < 0.10           # 横断面(戸を通る)
         sec2 = occ(P[s2, 1], P[s2, 2], (-DOOR_D, RY), (0, RZ), 140, 100)
         figs.save_grid("scene_plan_section", [plan, sec1, sec2],
-                       ["平面図(z=0.25〜2.60 m の点。壁・柱・柱の影)",
-                        "縦断面 y=2.00±0.10 m(床・天井・壁・幅木)",
+                       ["平面図(z=0.25〜2.60 m の点。□ = スキャン位置 3 か所)",
+                        "縦断面 y=%.2f±0.10 m(柱 A を通る。床・天井・壁・幅木)"
+                        % COL_XY[0][1],
                         "横断面 x=2.95±0.10 m(戸の開口と見込み)"],
                        title="部屋 6.0 x 4.0 x 3.0 m を 3 か所から走査した点群(明= 点が在る)",
                        ncols=3,
-                       caption="柱の後ろに扇形の影(欠測)が伸びる。断面の左右の白い帯は"
-                               "開口。単位は m。")
+                       caption="平面図で壁の線が切れている所が柱の影(欠測)。"
+                               "断面の切れ目は開口。単位は m。")
         cov = _bin_mean(surf["P"][:, 0], surf["P"][:, 1], surf["seen"].astype(float),
                         (0, RX), (0, RY), 66, 44)
         w = surf["elem"] == WY1
