@@ -969,7 +969,7 @@ def section7_calibration(p: dict, tru: dict, design: dict) -> dict:
           % (gotv["legL"], gotv["ucL"], gotv["legL"] + gotv["ucL"]))
     print("     右母材(37 度)は 脚長 %.3f + 溝 %.3f = %.3f —— **どちらも 1**。"
           % (gotv["legR"], gotv["ucR"], gotv["legR"] + gotv["ucR"]))
-    print("     「較正精度 1 %」だけでは、どの量が何 % ずれるかを言えない。")
+    print("     「較正精度 1 %%」だけでは、どの量が何 %% ずれるかを言えない。")
     # ★凸みだけ予測から外れた。原因はつま先の這い(τ が絶対値のしきい値だから)。
     dxl = float(np.nanmean(q1["xtl"] - q0["xtl"])) / eps
     dxr = float(np.nanmean(q1["xtr"] - q0["xtr"])) / eps
