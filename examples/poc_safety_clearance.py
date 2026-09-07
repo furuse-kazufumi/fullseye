@@ -868,15 +868,19 @@ def section_grid_bias(sw: dict) -> dict:
         d = np.asarray(_L.query_distance(E, bounds, res, Q))
         b = float(np.mean(d - exact))
         rows.append(["%.0f" % (1000 * vox), "x".join(map(str, res)),
-                     "%.4f" % (vox / 2), "%+.4f" % b,
+                     "%.4f" % (vox / 2), "%+.4f" % b, "%.2f" % (b / vox),
                      "%.4f" % float(np.std(d - exact))])
         xs.append(1000 * vox); bias.append(b)
         print("  ボクセル %2.0f mm  格子 %-14s  予想 +%.4f m  実測 %+.4f m"
-              "  (ばらつき %.4f m)"
-              % (1000 * vox, "x".join(map(str, res)), vox / 2, b,
+              "  (= %.2f ボクセル、ばらつき %.4f m)"
+              % (1000 * vox, "x".join(map(str, res)), vox / 2, b, b / vox,
                  float(np.std(d - exact))))
-    print("  ★これは雑音ではなく**既知の系統誤差**なので、Z_d に足すのではなく"
-          "\n     格子から引いた距離そのものを補正すべき量。")
+    print("  ★予想は「半ボクセル」(ゼロ交差が占有と自由のボクセル中心の中間に"
+          "落ちるから)。\n     実測は **約 1/4 ボクセル** —— 三線形補間が階段を"
+          "均すぶん、予想の半分で済んでいた。")
+    print("     ただし符号は必ず正(遠く言う)で、ボクセルに比例する。"
+          "**雑音ではなく既知の系統誤差**なので、\n     Z_d に足すのではなく"
+          "格子から引いた距離そのものを補正すべき量。")
     figs.save_table("grid_bias", ["ボクセル mm", "格子", "予想 m", "実測 m", "ばらつき m"],
                     rows, title="占有格子 + ESDF は距離を半ボクセルだけ遠く言う")
     return {"xs": xs, "bias": bias}
