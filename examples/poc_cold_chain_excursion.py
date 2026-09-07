@@ -1066,6 +1066,12 @@ def section_tool_gaps() -> None:
     print("  (f) 「各画素がしきい値を超えていた時間」を返す op が無い。"
           "`temporal_max/mean/median` はあるので、`temporal_count_above` は"
           "族の穴。")
+    print("  (g) ★穴ではなく**罠**: `vol_region_props` / "
+          "`vol_label_shape_stats` は spacing に (分, m, m) を渡せてしまう。"
+          "体積(= 曝露量)と bbox は意味を持つが、`surface_area` /"
+          " `sphericity` / `equivalent_diameter` / `linearity` は単位が"
+          "混ざって無意味になる。時間軸を含む体積では**どの列が使えるか**を"
+          "呼び手が知っている必要がある(台帳にその区別が無い)。")
 
 
 # --------------------------------------------------------------------------- #
