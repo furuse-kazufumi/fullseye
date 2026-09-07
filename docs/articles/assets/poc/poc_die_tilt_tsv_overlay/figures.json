@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_overlay_scatter.png",
+  "name": "overlay_scatter",
+  "caption": "雲ごと 2.42 µm ずれるのが傾きの偽装。散らばりの広がりは測定精度。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_estimator_table.png",
+  "name": "estimator_table",
+  "caption": "偽の回転の予測 +0.00733°、倍率の予測 -147.0 ppm(対照群との差で実測 +0.00696° / -144.5 ppm)。逆投影で両方が戻る。",
+  "shape": [
+   200,
+   383,
+   3
+  ],
+  "csv": "02_estimator_table.csv",
+  "tsv": "02_estimator_table.tsv"
+ },
+ {
+  "file": "03_tilt_cliff.png",
+  "name": "tilt_cliff",
+  "caption": "ゼロ点の誤差はダイ厚 x sin(傾き)。軸で下面へ引き直すと2° でも 0.0113 µm。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_rotation_vs_tilt.png",
+  "name": "rotation_vs_tilt",
+  "caption": "真の回転 0.01500° を超えるのは α ≈ 1.2°。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

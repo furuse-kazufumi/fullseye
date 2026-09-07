@@ -644,9 +644,12 @@ def main() -> None:
           % (a["e_raw"], SPEC_UM, float(np.hypot(*a["bias_pred"])),
              float(np.hypot(*a["bias_meas"])), a["e_ax"]))
     print("  * ★傾きは回転も偽装する(予測 %+.5f° / 実測 %+.5f°)。並進の補正では"
-          "消えず、\n    測った傾きで逆投影して初めて %+.5f°(真値 %+.5f°)に戻る。"
+          "消えず、\n    測った傾きで逆投影して初めて %+.5f° = 対照群 %+.5f° と"
+          "同じ値に戻る\n    (真値 %+.5f°。残る %+.5f° は傾きと無関係な推定器の"
+          "系統誤差)。"
           % (b["rot_pred"], b["rot_meas"], a["es"]["deprojected"]["theta_deg"],
-             a["sc"]["theta_deg"]))
+             a["es0"]["axis"]["theta_deg"], a["sc"]["theta_deg"],
+             a["es0"]["axis"]["theta_deg"] - a["sc"]["theta_deg"]))
     print("  * 崖は %.3f°(予測 %.3f°)。傾きを止めるより、測って外すほうが安い。"
           % (c["got"], c["pred"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
