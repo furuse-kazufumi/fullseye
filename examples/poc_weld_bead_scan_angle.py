@@ -1074,9 +1074,14 @@ def section9_throat_esdf(pf: dict) -> dict:
           % (float(d_true.mean()), float(d_esdf.mean())))
     print("  差 平均 %+.4f mm(最小 %+.4f / 最大 %+.4f)= ボクセル %.2f 個ぶん"
           % (float(dd.mean()), float(dd.min()), float(dd.max()), float(dd.mean()) / vs[0]))
-    print("  → 距離場は最近傍**ボクセル中心**までを測るので、薄い殻を張ると")
-    print("     必ず遠めに出る(%d 断面すべてで符号が正: %s)。"
-          % (len(dd), "はい" if np.all(dd > 0) else "いいえ"))
+    print("  → ★**符号が片側に寄る**(%d 断面すべてで %s: %s)。距離場は最近傍"
+          % (len(dd), "負" if dd.mean() < 0 else "正",
+             "はい" if np.all(np.sign(dd) == np.sign(dd.mean())) else "いいえ"))
+    print("     **ボクセル中心**までを測るので、面を離散化した時点で根に近い側の")
+    print("     中心が拾われ、のど厚は系統的に**短め**に出る(op の docstring どおり、")
+    print("     ゼロ交差は占有/自由セル中心の中間に落ちる = 約 1 ボクセルの床)。")
+    print("     %.1f %% の偏りなので、%.1f %% の合否判定に使うなら格子を細かくすること。"
+          % (100 * abs(float(dd.mean())) / float(d_true.mean()), 5.0))
     print("  → y を粗く(%.1f mm)しても のど厚は x-z 面内の量なので効かない ——"
           % vs[1])
     print("     軸ごとの res が要るのはこういう所(立方に縛ると 6 倍のボクセル)。")
