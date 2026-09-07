@@ -8,7 +8,8 @@ excluded here, not counted).
 
 ## Headline
 - **979 / 2313 distinct real HALCON operators implemented (42.3%)**
-  = 979 evolvable registry ops + 17 n-ary capability ops (disjoint).
+  = 979 evolvable registry ops (of which 17 are also reachable through the
+  n-ary capability tier — a subset, not an addition; 0 n-ary-only).
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)

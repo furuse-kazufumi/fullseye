@@ -74,8 +74,17 @@ def main() -> int:
         "## Headline",
         "- **%d / %d distinct real HALCON operators implemented (%.1f%%)**"
         % (len(total), n_real, 100.0 * len(total) / n_real),
-        "  = %d evolvable registry ops + %d n-ary capability ops (disjoint)."
-        % (len(reg_counted), len(nary_names)),
+        # ★2026-09-08: この行はこう書いてあった ——
+        #   "= %d evolvable registry ops + %d n-ary capability ops (disjoint)."
+        # 実測すると **979 + 17 = 979**、つまり n-ary の 17 本は
+        # ``reg_counted`` の**部分集合**(``nary_names - reg_counted`` は空)。
+        # 見出しの 979 は正しいのに、内訳の行だけが「足し算」に見え、読者が足すと
+        # 996 になる。数字が合っていても**説明が嘘をつく**形なので直した。
+        # 内訳が和として成り立つかは ``tests/test_honest_summary_arithmetic.py`` が毎回見る。
+        "  = %d evolvable registry ops (of which %d are also reachable through the"
+        % (len(reg_counted), len(reg_counted & nary_names)),
+        "  n-ary capability tier — a subset, not an addition; %d n-ary-only)."
+        % (len(nary_names - reg_counted)),
         "- dangling registry `Op.halcon` (fake names): **%d** (fail-closed)." % len(a["dangling"]),
         "",
         "## Evolvable registry (single-image pipeline, coverage-counted)",
