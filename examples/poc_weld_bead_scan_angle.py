@@ -411,12 +411,18 @@ def root_line(pl: dict, pr: dict, yv: np.ndarray):
 
 
 def _smooth_masked(v, ok):
-    """欠測を飛ばした移動平均(欠測は NaN のまま戻す)。"""
+    """移動平均。**窓が丸ごと有効な列だけ**返し、それ以外は NaN。
+
+    ★欠測を飛ばして「見えている分だけ平均」にすると、遮蔽の**境界の列**で
+    片側だけの平均になり、値が内側へ引っ張られる。最初にそう書いたら、溝が
+    ちょうど陰に入る角度でつま先の判定がしきい値を割り、脚長が **1.7 mm**
+    外へ飛んだ(16 断面のうち 1 本)。境界の列は素直に捨てるほうが安全。
+    """
     num = uniform_filter1d(np.where(ok, v, 0.0), SMOOTH)
     den = uniform_filter1d(ok.astype(float), SMOOTH)
     with np.errstate(invalid="ignore", divide="ignore"):
         s = num / den
-    return np.where(ok & (den > 0), s, np.nan)
+    return np.where(ok & (den > 0.999), s, np.nan)
 
 
 def _cross_tau(x, d, i, j):
