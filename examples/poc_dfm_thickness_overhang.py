@@ -534,14 +534,18 @@ def section_overhang(scene):
     b = np.array([0.0, 0.0, 1.0])
     F = analytic_faces()
 
-    down = [(n, a, c) for n, a, c in F if n[2] < -COS_C]
-    print("  解析: 下向きで寝ている平面(造形板の面を除く)")
+    print("  解析: 下を向いている平面(傾き = 水平からの角度。45 度未満ならサポートが要る)")
     smin = min(float(np.dot(c, b)) for _, _, c in F)
-    for n, a, c in down:
-        tag = "造形板にべた置き(除外)" if (n[2] < -0.999 and abs(c[2] - smin) < 0.6) else ""
-        print("    法線 (%.3f, %.3f, %.3f)  傾き %5.1f 度  面積 %8.3f mm^2  %s"
-              % (*n, np.degrees(np.arccos(min(1.0, abs(n[2])))) * 0 + np.degrees(np.arcsin(min(1.0, abs(n[2])))) * 0
-                 + 90 - np.degrees(np.arccos(min(1.0, -n[2]))), a, tag))
+    for n, a, c in sorted((f for f in F if f[0][2] < -1e-9), key=lambda f: f[0][2]):
+        tilt = float(np.degrees(np.arccos(min(1.0, abs(n[2])))))
+        if n[2] < -0.999 and abs(c[2] - smin) < 0.6:
+            tag = "造形板にべた置き(除外)"
+        elif abs(tilt - SELF_SUPPORT_DEG) < 1e-6:
+            tag = "★しきい値のちょうど上"
+        else:
+            tag = "要サポート" if tilt < SELF_SUPPORT_DEG else "自己支持"
+        print("    法線 (%6.3f, %6.3f, %6.3f)  傾き %5.1f 度  面積 %8.3f mm^2  %s"
+              % (*n, tilt, a, tag))
     a_hole = cylinder_support_area((0, 1, 0), HOLE_H[1], HOLE_H[2], b)
     print("    水平穴の天井(円筒の閉形式)          面積 %8.3f mm^2" % a_hole)
     print("    垂直穴(軸が造形方向と平行)          面積 %8.3f mm^2"
