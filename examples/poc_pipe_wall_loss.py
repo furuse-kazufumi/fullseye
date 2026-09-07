@@ -522,9 +522,10 @@ def section_offset_sweep() -> dict:
     sv = survey(CLEAN, offset=4.0)
     m = correct(sv["dist"])
     fl, _ = flag(m)
-    figs.save("map_false_loss", m, "腐食ゼロの管・軸ずれ %.1f mm のときの推定減肉 "
+    figs.save("map_false_loss", _big(m),
+              "腐食ゼロの管・軸ずれ %.1f mm のときの推定減肉 "
               "[mm](1 周期の正弦波)" % 4.0, signed=True)
-    figs.save_grid("map_false_flag", [m, fl.astype(float)],
+    figs.save_grid("map_false_flag", [_big(m, 2), _big(fl.astype(float), 2)],
                    ["推定減肉 [mm]", "旗が立った画素(%.1f %%)" % (100 * fl.mean())],
                    title="無い減肉が %.1f %% の面積に生まれる(縦 = z、横 = θ)"
                          % (100 * fl.mean()), signed=[True, False])
