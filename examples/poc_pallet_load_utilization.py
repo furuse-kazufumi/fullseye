@@ -441,16 +441,18 @@ def section_gsd_overhang(lb: list) -> dict:
         print("   %8.0f      %8.4f / %8.4f              %8.4f" % (
             gc, meas[-1], pred[-1], real[-1]))
 
-    cross = [g for g, m, r in zip(gcs, meas, real) if m > r]
+    cross = [g for g, m in zip(gcs, meas) if m > true_over]
     print("\n  ★予測は実測を %.0f〜%.0f %s で追う(オフセット平均)。"
           % (100 * min(m / p for m, p in zip(meas, pred)),
              100 * max(m / p for m, p in zip(meas, pred)), "%"))
     if cross:
-        print("  ★★g = %.0f mm を超えると、**はみ出していない荷 A の偽はみ出しが"
-              "\n     本当に %.0f mm 出ている荷 B の実測値を上回る**"
+        print("  ★★g = %.0f mm から、**1 mm も出ていない荷 A の偽はみ出しが、"
+              "\n     本当に %.0f mm 出ている荷 B の真のはみ出しを上回る**"
               "(%.4f > %.4f m3)。" % (
-                  cross[0], OVERHANG, meas[gcs.index(cross[0])],
-                  real[gcs.index(cross[0])]))
+                  cross[0], OVERHANG, meas[gcs.index(cross[0])], true_over))
+    print("  ★荷 B の実測も同じ偽の分を丸ごと含む(真値 %.4f に対し "
+          "g = 160 mm で %.4f m3)。\n     **粗い格子では、どちらの荷も"
+          "「はみ出している」で埋まる**。" % (true_over, real[-1]))
     print("  ★同じ 1 つのつまみ(セル寸法)が、**隙間は見えなくし、"
           "はみ出しは作る**。\n     どちらも「粗いほど積載率が良く見える」"
           "とは限らない —— 向きが逆。")
