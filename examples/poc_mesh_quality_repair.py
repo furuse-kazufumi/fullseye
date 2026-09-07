@@ -273,7 +273,7 @@ def inject_slivers(V, F, n, t, rng):
     ef = _edge_faces(F)
     keys = [k for k, v in ef.items() if len(v) == 2]
     Vl, Fl = list(V), [list(f) for f in F]
-    used, done, areas = set(), 0, []
+    used, done, areas, sliver = set(), 0, [], []
     for oi in rng.permutation(len(keys)):
         a, b = keys[oi]
         inc = ef[(a, b)]
@@ -291,12 +291,14 @@ def inject_slivers(V, F, n, t, rng):
                 Fl[fi] = [b, m, c]
                 Fl.append([m, a, c])
             used.add(fi)
+            sliver.append(int(fi))          # 潰れたのは**その場で置き換えた側**
             areas.append(0.5 * float(np.linalg.norm(
                 np.cross(V[c] - V[a], np.asarray(Vl[m]) - V[a]))))
         done += 1
         if done == n:
             break
-    return np.asarray(Vl), np.asarray(Fl, np.int64), 2 * done, float(np.mean(areas))
+    return (np.asarray(Vl), np.asarray(Fl, np.int64), 2 * done,
+            float(np.mean(areas)), np.asarray(sliver, np.int64))
 
 
 def inject_cracks(V, F, n, rng):
