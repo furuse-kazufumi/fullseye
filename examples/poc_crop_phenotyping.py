@@ -1058,15 +1058,20 @@ def section_volume(can, buf_fine):
           " 草冠は「面」ではない。" % (float(np.median(slope)),
                                       float(np.percentile(slope, 90))))
 
-    figs.save_grid("scene_xray", [side, nadir],
-                   ["側面からの積算投影(x 線)", "天頂からの積算投影"],
+    def up(a, f=5):
+        return np.repeat(np.repeat(np.asarray(a, np.float64), f, 0), f, 1)
+
+    figs.save_grid("scene_xray",
+                   [up(side), up(nadir), up(occ[:, occ.shape[1] // 2, :].T[::-1])],
+                   ["側面(積算投影)", "天頂(積算投影)", "鉛直断面"],
                    title="群落を体積として見る(占有格子 %s)" % "x".join(map(str, res)),
-                   caption="側面図では条(row)の構造が縞に見える。")
-    figs.save_grid("section_and_dsm",
-                   [occ[:, occ.shape[1] // 2, :].T[::-1], dsm, slope],
-                   ["鉛直断面(条に直交)", "草冠面の高さ [m]", "草冠面の傾斜 [度]"],
-                   title="断面と草冠面", ncols=3,
-                   caption="草冠面は連続面ではなく、葉ごとに切り立っている。")
+                   ncols=3,
+                   caption="側面図では条(row)の構造が縞に見える。断面は条に直交。")
+    figs.save_grid("canopy_surface", [dsm, slope],
+                   ["草冠面の高さ [m]", "草冠面の傾斜 [度]"],
+                   title="草冠面(DSM)とその傾斜",
+                   caption="草冠面は連続面ではなく、葉ごとに切り立っている"
+                           "(傾斜の 90 %% 点が 88 度)。")
     figs.save_plot("vertical_profile",
                    [("真値(閉形式)", prof_true, zmid),
                     ("占有格子(最大で規格化)", prof_occ, zmid)],
