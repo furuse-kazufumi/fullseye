@@ -457,9 +457,19 @@ def quantities_one(h, lineL, lineR, root) -> dict:
         c = np.nonzero(np.isfinite(s)
                        & ((X < inner) if side == "L" else (X > inner))
                        & (s >= -TAU))[0]
-        if c.size == 0:
+        # ★候補は「母材面の高さに戻った点」なので、**溝の外の平らな母材**も
+        #   全部候補になる。内側 CHECK_IN mm に溶接金属(母材面から
+        #   CHECK_DEV 以上の落ち込み)が在ることを確かめて初めてつま先と認める
+        #   —— この門が無いと、溝が陰に入った角度で候補が母材へ滑り落ちて
+        #   脚長が 1.7 mm 外へ飛ぶ。
+        step = int(round(CHECK_IN * M_PX_MM)) * (1 if side == "L" else -1)
+        raw = h - (a * X + b)
+        cand = [k for k in (c[::-1] if side == "L" else c)
+                if 0 <= k + step < N_COL and np.isfinite(raw[k + step])
+                and raw[k + step] < CHECK_DEV]
+        if not cand:
             continue
-        i = int(c.max()) if side == "L" else int(c.min())
+        i = int(cand[0])
         j = min(i + 1, N_COL - 1) if side == "L" else max(i - 1, 0)
         xt = _cross_tau(X, s, i, j)
         toe[side] = (xt, a * xt + b, a)
