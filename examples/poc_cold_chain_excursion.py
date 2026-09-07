@@ -201,18 +201,19 @@ def door_open(t_min: np.ndarray, events=DOOR_EVENTS) -> np.ndarray:
 
 
 def make_scene(uniform: bool = False, doors: bool = True,
-               layout: dict | None = None) -> dict:
+               layout: dict | None = None, setpoint_shift: float = 0.0) -> dict:
     """真の温度場 ``(t, y, x)`` [°C] とその来歴を返す。
 
     ``uniform=True`` は**荷が均一**(温度場が場所に依らない)対照群、
-    ``doors=False`` は**扉を開けない**対照群。
+    ``doors=False`` は**扉を開けない**対照群、``setpoint_shift`` は
+    吹き出し温度をずらす(負にすると荷が健全になる対照群)。
     """
     lay = layout or build_layout()
     t = np.arange(NT, dtype=np.float64) * DT_MIN
     amb = ambient(t)
     op = door_open(t) if doors else np.zeros_like(t)
 
-    t_sup = T_SET + G_DIST * lay["d_vent"]
+    t_sup = T_SET + setpoint_shift + G_DIST * lay["d_vent"]
     throw = 1.0 - np.exp(-lay["d_vent"] / L_THROW)
     gain = H_WALL * throw * lay["wall"]
     pulse = A_DOOR * np.exp(-lay["d_door"] / LAM_DOOR)
