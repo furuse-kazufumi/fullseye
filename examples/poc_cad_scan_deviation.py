@@ -637,7 +637,8 @@ def section_align(ref: CadRef) -> dict:
             caption="中央付近の広い青は「反り」ではなく、位置合わせが反りの平均を"
                     "吸ったために出た偽のへこみ(第 6 章)。")
     return {"scan": sc, "keep": keep, "a_true": a_true, "rows": rows,
-            "edge_k1": edge_k1, "edge_k6": edge_k6}
+            "edge_naive": edge_naive, "edge_fixed": edge_fixed,
+            "edge_frac": float(edge.mean()), "cross": cross}
 
 
 # --------------------------------------------------------------------------- #
