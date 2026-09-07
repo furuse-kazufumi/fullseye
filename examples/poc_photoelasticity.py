@@ -293,11 +293,11 @@ def section4_phase_shift(dsig, theta, delta, m):
     wrapped_true = np.mod(delta + np.pi, 2 * np.pi) - np.pi
     err = np.abs(np.mod(d_hat - wrapped_true + np.pi, 2 * np.pi) - np.pi)
     good = err < 0.05
-    print("  巻いたままの δ(-π, π] の一致率: %.1f %%(誤差 < 0.05 rad)"
-          % (100 * float(np.mean(good[IN_DISC]))))
+    agree = 100 * float(np.mean(good[IN_DISC]))
+    print("  巻いたままの δ(-π, π] の一致率: %.1f %%(誤差 < 0.05 rad)" % agree)
     print()
     print("  → ★残りの %.1f %% は**符号が反転**している。原因は光弾性で有名な"
-          % (100 * (1 - float(np.mean(good[IN_DISC])))))
+          % (100 - agree))
     print("     (δ, θ) ↔ (-δ, θ+90°) の二義性 —— 出てくる Stokes が同じなので、")
     print("     **1 波長の 1 回の測定では原理的に分けられない**。等傾角の")
     print("     復元も 4θ からなので θ は π/2 の周期しか決まらず、その飛びが")
