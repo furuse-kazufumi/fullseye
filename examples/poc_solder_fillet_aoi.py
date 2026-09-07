@@ -873,13 +873,15 @@ def section_roughness(v_thr: float) -> dict:
             r_red_gone_meas = rgh
         if abs(e) > 12 and r_err_cliff is None:
             r_err_cliff = rgh
-        print("   %.2f   %-13s   %5.1f°        %.4f      %.4f    %+6.1f %%   %4.1f      %4.0f %%"
-              % (rgh, "%.0f-%.0f°" % red_rng if red_rng else "無し", a_dark, hp, hm, e,
-                 np.mean(rp), 100 * np.mean(ins)))
+        print("   %.2f   %.2f/%.2f/%.2f   %-13s   %5.1f°        %.4f      %.4f    %+6.1f %%   %4.1f      %4.0f %%"
+              % (rgh, peaks[0], peaks[1], peaks[2], "%.0f-%.0f°" % red_rng if red_rng else "無し",
+                 a_dark, hp, hm, e, np.mean(rp), 100 * np.mean(ins)))
     print("\n  ★赤帯が消える粗さ: 表の予測 %s、実測 %s。" % (r_red_gone_pred, r_red_gone_meas))
-    print("  ★E2 の誤差が +12 %% を超えるのはそれより早く粗さ %s —— 暗部の始まりが %.0f° から"
-          "壁側へ動き、E2 はそれを %.0f° と読んで R を大きく見積もる。"
-          % (r_err_cliff, TILT_MAX, TILT_MAX))
+    print("  ★E2 の誤差が 12 %% を超える粗さ %s。全リングの応答が暗部しきい値 %.1f を割って"
+          "フィレット全体が暗部になる粗さ %s(利得は基準粗さで固定 = 露光一定)。"
+          % (r_err_cliff, V_DARK, r_all_dark))
+    print("     いちばん窓の狭い赤(傾き幅 10°)のピークが先に落ちる —— リングの分離より前に"
+          "**明るさ**が崩れる。")
     figs.save_plot("roughness", [("実測 E2 誤差", list(roughs), errs),
                                  ("表からの予測", list(roughs), [100 * (p / fR["h"] - 1) for p in pred_h])],
                    xlabel="GGX 粗さ", ylabel="E2 の相対誤差 [%]", title="粗さで暗部の定義が動く",
