@@ -803,10 +803,11 @@ def section_wind() -> dict:
                    title="同じ故障が風速で消える(予測は 1/U(v) の閉形式)",
                    caption="U(v) = 1.75·(5.7 + 3.8v + h_rad)。予測の線は"
                            "画像を一切見ずに引いてある。")
-    return {"v_hot": v_hot, "v_str": v_str, "winds": list(WINDS),
-            "pred_hot": ph_p, "meas_hot": ph_m, "pred_str": ps_p,
-            "meas_str": ps_m, "last_hot": last_hot, "last_str": last_str,
-            "n_false": nf}
+    return {"v_hot": v_hot, "v_str": v_str, "v_area": v_area,
+            "winds": list(WINDS), "pred_hot": ph_p, "meas_hot": ph_m,
+            "pred_str": ps_p, "meas_str": ps_m, "last_hot": last_hot,
+            "last_str": last_str, "n_false": nf, "area_pred": ar_p,
+            "area_meas": ar_m}
 
 
 # --------------------------------------------------------------------------- #
