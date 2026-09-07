@@ -1098,8 +1098,9 @@ def main() -> int:
           "クリアランスが飲む。" % (100 * ALPHA_UNIFORM, outer["frac"]))
     print("  * 中央のノギスは体積等価な平均の %.1f 倍を読む。" % outer["ratio"])
     print("  * 外形を揃えた 3 つのセルは、層厚・空隙率・平面度で分かれる。")
-    print("  * 分解能の崖は voxel/層厚 = %.2f(予測 %.2f)。周期の測定は"
-          " %.2f まで持つ。" % (resn["cliff"], resn["pred"], resn["fft_ok"]))
+    print("  * 分解能の崖は voxel/層厚 = %.2f。標本化定理からの予測 %.2f では"
+          "なく、**隙間から**の予測 %.2f が当たった。周期の測定は %.2f まで持つ。"
+          % (resn["cliff"], resn["pred_a"], resn["pred_b"], resn["fft_ok"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():
