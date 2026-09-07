@@ -205,7 +205,7 @@ def scene(Y, X, t: int, sigma=PSF, sizes: bool = False) -> np.ndarray:
         return S + (alb - S) * W
 
     for (y0, y1, x0, x1, alb) in FIELDS.values():
-        S = paint(S, rect(Y, X, y0, y1, x0, x1, sigma), alb)
+        S = paint(S, rect_px(Y, X, y0, y1, x0, x1, sigma), alb)
     fr = FIELD_ROT
     S = paint(S, rot_rect(Y, X, fr["cy"], fr["cx"], fr["h"], fr["w"], fr["deg"], sigma), fr["alb"])
     # 森林: 地 + 樹冠。伐採(t=2)は樹冠ごと土壌に戻す。
