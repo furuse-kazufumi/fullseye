@@ -669,7 +669,7 @@ def section_zero(obs: dict, sc: dict) -> dict:
     print("  ★まとめた 1 個の数字はもっと役に立たない: Chamfer %.2f mm / "
           "Hausdorff %.2f mm。" % (ch, hd))
     print("     Hausdorff は最悪値なので欠測の縁 1 点で決まり、Chamfer は"
-          "**面の 99 %% を占める健全部の点間隔**で決まる。どちらも"
+          "**面の大半を占める健全部の点間隔**で決まる。どちらも"
           "「どこがどれだけ劣化したか」を返さない。")
     return {"cen": cen, "nor": nor, "ok": ok, "L": ln, "sig": sg, "scat": scat,
             "c2c": c2c, "good": good, "chamfer": ch, "hausdorff": hd}
