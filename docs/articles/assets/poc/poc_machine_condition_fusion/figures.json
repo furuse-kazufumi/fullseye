@@ -1,0 +1,78 @@
+[
+ {
+  "file": "01_confusion_fusion.png",
+  "name": "confusion_fusion",
+  "caption": "対角が識別できた数。総合 100.0 %。",
+  "shape": [
+   224,
+   511,
+   3
+  ],
+  "csv": "01_confusion_fusion.csv",
+  "tsv": "01_confusion_fusion.tsv"
+ },
+ {
+  "file": "02_sensor_dropout.png",
+  "name": "sensor_dropout",
+  "caption": "総合の列だけを見ると差が小さく見える。壊れているのは特定のモードだけ。",
+  "shape": [
+   248,
+   687,
+   3
+  ],
+  "csv": "02_sensor_dropout.csv",
+  "tsv": "02_sensor_dropout.tsv"
+ },
+ {
+  "file": "03_redundancy_corr.png",
+  "name": "redundancy_corr",
+  "caption": "真値の重症度と 3 つの測定値がすべて 0.99 台で相関する。",
+  "shape": [
+   176,
+   424,
+   3
+  ],
+  "csv": "03_redundancy_corr.csv",
+  "tsv": "03_redundancy_corr.tsv"
+ },
+ {
+  "file": "04_sweep_vibration_noise.png",
+  "name": "sweep_vibration_noise",
+  "caption": "d' は特徴 1 個の情報量。識別率より先に落ちる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_sweep_record_length.png",
+  "name": "sweep_record_length",
+  "caption": "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。側帯波比の真値は変調度 0.55 の半分 = 0.275。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_sweep_pixel_pitch.png",
+  "name": "sweep_pixel_pitch",
+  "caption": "軸受(局所)と潤滑不良(全体)を分けているのは広がりだけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_sweep_rpm_variation.png",
+  "name": "sweep_rpm_variation",
+  "caption": "櫛(最大 6X)は 2X の 3 倍の速さで広がる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
