@@ -858,13 +858,15 @@ def section_metrics(scene: dict) -> dict:
                         ["判定", "12 °C に許す時間 [min]", "不合格になるセル数",
                          "何に鈍いか"], rows,
                         title="同じ「規定内」でも 3 つの指標は %.1f 倍ずれる" % spread)
-        vmap = (ok[0].astype(float) + 2.0 * ok[1] + 4.0 * ok[2])
+        dis = np.where(agree, 0.0, 1.0) + 0.35 * ok.all(0)
         figs.save_grid("verdict_maps",
-                       [np.where(lay["is_product"], exc, 0.0), mkt, deg, vmap],
+                       [plan_view(exc), plan_view(mkt), plan_view(deg),
+                        plan_view(dis)],
                        ["記録の逸脱時間 [min]", "記録の MKT [°C]",
-                        "記録の劣化 [-]", "合否の組合せ(7 = 3 つとも合格)"],
-                       title="全セルにロガーを置いたときの 3 指標", ncols=4,
-                       caption="4 枚目が一様でないところが「指標で答えが違う」場所。")
+                        "記録の劣化 [-]", "明=3 指標が食い違う場所"],
+                       title="全セルにロガーを置いたときの 3 指標", ncols=2,
+                       caption="4 枚目の明るいところが「同じ記録なのに指標で"
+                               "答えが違う」置き場所(%d セル)。" % n_dis)
     return {"eq": eq, "spread": spread, "n_dis": n_dis, "ok": ok,
             "exc": exc, "mkt": mkt, "deg": deg}
 
