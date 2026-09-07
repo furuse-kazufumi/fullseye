@@ -588,15 +588,7 @@ def reg_lk(I1, I2):
     sel = (wgt > 0.02) & valid_mask()
     q = np.c_[X[sel], Y[sel]]
     p = q + np.c_[np.asarray(u)[sel], np.asarray(v)[sel]]
-    keep = np.ones(len(q), bool)
-    th = dy = dx = 0.0
-    for _ in range(3):
-        th, dy, dx = fit_rigid_xy(q[keep], p[keep])
-        A, b = rigid_yx(th, dy, dx)
-        pred = (A @ np.c_[q[:, 1], q[:, 0]].T + b[:, None]).T
-        r = np.hypot(pred[:, 0] - p[:, 1], pred[:, 1] - p[:, 0])
-        mad = np.median(np.abs(r[keep] - np.median(r[keep]))) * 1.4826 + 1e-6
-        keep = r < np.median(r[keep]) + 3 * mad
+    th, dy, dx, keep = _trimmed_rigid(q, p, np.ones(len(q), bool), rounds=3)
     return th, dy, dx, {"n": int(keep.sum())}
 
 
