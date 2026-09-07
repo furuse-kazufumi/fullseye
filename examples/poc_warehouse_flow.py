@@ -119,7 +119,7 @@ PICKS = {
 # --- 天井カメラ ------------------------------------------------------------- #
 CAMS = ((12.0, 6.9), (12.0, 16.2))     # 主通路の上と下段通路の上、2 台
 H_CAM, H_AG = 6.0, 1.6                 # カメラ高さ / 追跡する標識の高さ [m]
-RACK_H = 3.6                           # 棚の高さ [m](6 節で振る)
+RACK_H = 2.0                           # 棚の高さ [m](8 節で振る)
 
 # --- 動くもの --------------------------------------------------------------- #
 R_AGENT = 0.45                  # 作業者・搬送機の半径 [m](3x3 マスの足跡)
@@ -142,7 +142,7 @@ POS_NOISE = 0.03                # 位置の雑音 σ [m]
 D_SWITCH = 1.2                  # ID 取り違えが起きる距離 [m]
 P_SWITCH = 0.0                  # 取り違え確率 /フレーム/近接対(公称)
 V_TH = 0.15                     # ゼロ点の「止まっている」しきい値 [m/s]
-K_SEC = 1.5                     # t 軸オープニングの線分長 [s]
+K_SEC = 2.5                     # t 軸オープニングの線分長 [s]
 MIN_SAMPLES = 3                 # 柱として認めるのに要る標本数
 PICK_CLEAR, NARROW_CLEAR = 0.75, 1.25   # esdf の空き幅による通路の区分 [m]
 LANDMARK_R = 1.5                # 作業台・払い出し口とみなす半径 [m]
@@ -731,8 +731,7 @@ def section_heatmap(base: dict) -> dict:
           "表面積 %.0f、符号 %s。"
           % (mvol, int(sub.sum()), marea, "正 = 外向き" if mvol > 0 else "負 = 裏返り"))
     return {"heat": heat, "n_wait_top": n_wait, "th_pillar": th_pillar,
-            "th_tube": th_tube, "mesh_vol": mvol, "n_all": int(n_all),
-            "pillar": pillar}
+            "th_tube": th_tube, "mesh_vol": mvol, "pillar": pillar}
 
 
 # --------------------------------------------------------------------------- #
