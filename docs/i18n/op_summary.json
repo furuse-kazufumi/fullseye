@@ -4448,14 +4448,6 @@
    "ko": "alpha shapes를 이용해 **경계점 인덱스**를 반환한다(점군 → 경계점).",
    "de": "Liefert die **Randpunkt-Indizes** mittels Alpha-Shapes (Punktwolke → Randpunkte)."
   },
-  "2d/tb_angle_3points": {
-   "fp": "ce3d1c2b436d",
-   "en": "Angle formed by three points (vertex b, in degrees). ∠ABC.",
-   "zh": "三点所成的角（顶点为 b，单位为度）。∠ABC。",
-   "tw": "三點所成的角（頂點為 b，單位為度）。∠ABC。",
-   "ko": "세 점이 이루는 각도(꼭짓점 b, 단위 도). ∠ABC.",
-   "de": "Von drei Punkten gebildeter Winkel (Scheitelpunkt b, in Grad). ∠ABC."
-  },
   "2d/tb_angular_spectrum_propagate": {
    "fp": "637b5f0dce9d",
    "ja": "複素場の厳密なスカラー自由空間伝搬（角スペクトル法）。",
@@ -4807,14 +4799,6 @@
    "tw": "巴特沃斯高通濾波。奈奎斯特頻率與長度約束與 :func:`lowpass` 相同。",
    "ko": "버터워스 고역통과 필터. 나이퀴스트/길이 조건은 :func:`lowpass`와 동일.",
    "de": "Butterworth-Hochpass. Gleicher Nyquist-/Längen-Vertrag wie :func:`lowpass`."
-  },
-  "2d/tb_indices_to_labels": {
-   "fp": "82df2a168366",
-   "en": "Indices ``(N,)`` -> selection mask ``labels``. An exit of ``indices`` (**reversible**).",
-   "zh": "索引 ``(N,)`` → 选择掩膜 ``labels``。``indices`` 的出口（**可逆**）。",
-   "tw": "索引 ``(N,)`` → 選擇遮罩 ``labels``。``indices`` 的出口（**可逆**）。",
-   "ko": "인덱스 ``(N,)`` → 선택 마스크 ``labels``. ``indices``의 출구(**가역적**).",
-   "de": "Indizes ``(N,)`` → Auswahlmaske ``labels``. Ein Ausgang von ``indices`` (**reversibel**)."
   },
   "2d/tb_inertia_tensor": {
    "fp": "681d42ee0ca6",

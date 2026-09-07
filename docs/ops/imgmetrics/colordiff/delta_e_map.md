@@ -4,7 +4,7 @@ dim: imgmetrics
 category: colordiff
 in: rgbimage × rgbimage
 out: image2d
-examples: [color_transport, image_quality_metrics, poc_pigment_unmixing, poc_white_balance]
+examples: [color_transport, image_quality_metrics, poc_colormap_readability, poc_pigment_unmixing, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ RGB の平均二乗誤差ではなく**知覚的な色差**で見るための入
 
 - [color_transport](../../../../examples/color_transport.py) — `py -3.11 examples/color_transport.py`
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
+- [poc_colormap_readability](../../../../examples/poc_colormap_readability.py) — `py -3.11 examples/poc_colormap_readability.py`
 - [poc_pigment_unmixing](../../../../examples/poc_pigment_unmixing.py) — `py -3.11 examples/poc_pigment_unmixing.py`
 - [poc_white_balance](../../../../examples/poc_white_balance.py) — `py -3.11 examples/poc_white_balance.py`
 

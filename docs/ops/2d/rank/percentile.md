@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: rank_image
-examples: [gallery2d_smoothing_rank]
+examples: [gallery2d_smoothing_rank, poc_colormap_readability]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -62,6 +62,7 @@ percentile 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [poc_colormap_readability](../../../../examples/poc_colormap_readability.py) — `py -3.11 examples/poc_colormap_readability.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

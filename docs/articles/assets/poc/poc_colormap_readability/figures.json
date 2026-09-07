@@ -126,7 +126,7 @@
  {
   "file": "13_categorical_overflow.png",
   "name": "categorical_overflow",
-  "caption": "同じ色の領域が隣り合っても、戻り値からは分からない。",
+  "caption": "同じ色の領域が隣り合っても、戻り値からは分からない。この PoC の指摘で、既定では ValueError で拒否するようになった(2026-09-08)。",
   "shape": [
    293,
    630,

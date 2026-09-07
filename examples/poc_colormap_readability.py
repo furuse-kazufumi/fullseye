@@ -729,17 +729,29 @@ def section_tool_gaps() -> None:
     assert len(lightness_reversals(lightness(rgb)[0])) == 0
     gain = _smooth(step_delta_e(rgb)[0], 11)
     assert float(gain.max() / np.median(gain)) > 1.5
-    print("  (d) PERCEPTUAL_SAFE に cividis が入っているが、明度は単調でも"
-          "色差の利得は\n      最大 / median = %.2f。**名簿の基準が明度だけ**。"
-          % float(gain.max() / np.median(gain)))
+    # ★この PoC の指摘で同日に直った。名簿の基準が「明度の単調さ」だけだったので、
+    #   明度は単調なのに色差の刻みが粗い cividis が「安全」と名乗っていた。
+    #   いまは色差の一様さも基準に入り、cividis は CVD_SAFE へ移っている。
+    assert "cividis" not in fs.PERCEPTUAL_SAFE, "名簿の基準が明度だけに戻っている"
+    assert "cividis" in fs.CVD_SAFE
+    print("  (d) cividis は明度こそ単調だが、色差の利得が 最大 / median = %.2f。"
+          "\n      **名簿の基準が明度だけだった** —— この PoC の指摘で色差の一様さも"
+          "\n      基準に入り、cividis は PERCEPTUAL_SAFE から CVD_SAFE へ移った"
+          "(2026-09-08)。" % float(gain.max() / np.median(gain)))
 
-    # (e) 質的パレットは色数を超えると黙って循環する(戻り値から分からない)
+    # (e) 質的パレットは色数を超えると循環する。既定では拒否するようになった
     lab = np.arange(1, 13).reshape(3, 4).astype(np.int32)
-    rgb = np.asarray(fs.colorize_categorical(lab, "tab10"))
+    try:
+        fs.colorize_categorical(lab, "tab10")
+        raise AssertionError("色数を超えたのに拒否しない(黙って循環に戻っている)")
+    except ValueError as exc:
+        refused = str(exc)[:56]
+    rgb = np.asarray(fs.colorize_categorical(lab, "tab10", cycle=True))
     assert np.allclose(rgb[0, 0], rgb[2, 2]), "ラベル 1 と 11 が同じ色"
-    print("  (e) colorize_categorical は色数(tab10 = 10)を超えると黙って循環し、"
-          "\n      ラベル 1 と 11 が同じ色になる(docstring には書いてある)。"
-          "循環したかを\n      返さないので、呼び手が気づく手段が無い。")
+    print("  (e) 色数(tab10 = 10)を超えると循環して**ラベル 1 と 11 が同じ色**に"
+          "\n      なり、循環したかは戻り値から分からない。この PoC の指摘で既定は"
+          "\n      拒否になった(cycle=True を明示したときだけ循環する):"
+          "\n      ValueError: %s..." % refused)
 
 
 # --------------------------------------------------------------------------- #

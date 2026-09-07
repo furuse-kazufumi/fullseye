@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(181 例)
+### 2-D 画像/信号/幾何(182 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -163,6 +163,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **見えない振動を見せる/測る(motionmag モーション増幅・位相変位)** — 0.2 画素の振動を帯域通過した局所位相から増幅表示し、同じ量からサブピクセル変位を数値で出して既知振幅と照合。 `py -3.11 examples/motion_magnification.py`
 - **動画を 1 フレームずつ流して処理する(videostream リング/状態つき op/パイプライン)** — uint8 リング(float64 の 1/8)で背景差分し既知速度の物体を追う。台帳の一括 op とストリーム版がフレーム単位で一致することを 6 op で確認。 `py -3.11 examples/video_streaming.py`
 - **四元数画像 op(quatimage)を閉形式の真値と突き合わせる** — 色の 3 次元回転とモノジェニック信号が本物の差で、それ以外(QFT 等)は差でないことを 19 op の GT 照合で示す(勝つ/勝たない/負ける を実測で分ける)。 `py -3.11 examples/quaternion_monogenic.py`
+- **疑似カラーの選び方と値の写し方(無い境目を数える / 崖を先に当てる)** — 段差ゼロと分かっている場を塗り、CIE L* と CIEDE2000 で偽の境目を数える —— jet 3 本 / hsv 4 本 / viridis 0 本。★★立つ位置は閉形式で当たる(jet の明度折返し 予測 0.3750/0.4490/0.6250 対 実測 0.3750/0.4492/0.6250、最大ずれ 0.0002)。本物の段差が偽の境目を追い越す崖は jet 0.296 %FS / viridis 0.050 %FS で、**画像を見ずに LUT だけから予測できる**(実測と一致)。★配色より写し方が効く: 4.3 桁の 1/r² で実効階調 linear 1.4 → rank 76.0、外れ値 1 個で log が -41 %(27.4 → 16.3)、percentile と rank は不変。★★明度が単調でも安全ではない —— cividis は L* 折返し 0 回なのに色差の山が 3 本。★勝てない側も: 質的パレットは色数(tab10=10)を超えると循環し、24 領域で隣接対の最小色差 0.0 —— 連続マップ (3.5) にも乱数 RGB (3.9〜13.0) にも負ける。 `py -3.11 examples/poc_colormap_readability.py`
 
 **flow**
 - **粒子追跡を (行, 列, 時刻) の体積として測る(誤リンクの向きは 1 種類ではない)** — ★★粒子 400 個で曖昧 0.1 %・欠測 24.5 %。位置を真値にして欠測だけ消すと拡散係数の比が3.429 → 0.925 —— **同じ「誤り率」でも D が 3.7 倍動く**。誤り率を 1 本の数字にまとめた時点で、検出を増やすのかリンクを厳しくするのかが決まらなくなる。★★1 歩は 1.7 px しか無いのに欠測誤リンクの飛距離は最近接距離(4〜21 px)で決まるので、曖昧が D を 7 % 下げるあいだに欠測は **240 % 上げる**。 `py -3.11 examples/poc_particle_tracking.py`
@@ -1133,7 +1134,7 @@ _計 899 ops / 48 categories。_
 - `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_colormap_readability`
 - `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
 - `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
 - `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
@@ -1531,7 +1532,7 @@ _計 899 ops / 48 categories。_
 - `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
