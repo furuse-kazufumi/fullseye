@@ -292,10 +292,53 @@ def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)
             rgb = apply_cmap(depth, "viridis", vmin=0.0, vmax=5.0)   # 常に同じ尺度
 
         1 点だけ色にしたい場合も同じ(``apply_cmap([[v]], vmin=lo, vmax=hi)``)。
+
+    ★**写し方(``norm``)はパレットと直交する軸**で、実務ではこちらのほうが効く
+    (2026-09-08 に追加。それまで線形しか無かった):
+
+    ==============  =======================================================
+    ``norm``        いつ使うか
+    ==============  =======================================================
+    ``linear``      既定。物理量をそのまま比べる
+    ``log``         強度・計数など**正の量で桁が広い**もの。負や 0 は
+                    下端へ寄せる(黙って持ち上げない)
+    ``symlog``      符号があって桁も広い(残差・流れの発散)
+    ``sqrt``        暗部を持ち上げる。``power`` は ``gamma`` で任意
+    ``percentile``  外れ値 1 個で全体が潰れるのを防ぐ(既定 2–98 %)
+    ``rank``        分位。**分布の形を捨てて順序だけ見せる**ので、
+                    「どこが高いか」は分かるが「どれだけ高いか」は分からない
+    ``symmetric``   0 を必ず中央に置く(発散マップと組で使う)
+    ==============  =======================================================
+
+    ``levels`` を与えると **n 段に量子化**する(計測の等高線・干渉縞のように
+    段を数えたいとき。連続で塗ると 1 段の差が読めない)。
+
+    ★``under`` / ``over`` を与えると、``[vmin, vmax]`` の**外側を別の色**にする。
+    既定(``None``)は今までどおり端の色へ丸める —— つまり**範囲外と正当な最小値が
+    同じ色になる**。実測(2026-09-08): ``vmin`` 省略でも ``-5`` は viridis の下端
+    ``(0.267, 0.005, 0.329)`` になり、区別する手段が無かった。図で「振り切れた」と
+    「ちょうど下端」を見分けたいときは必ず指定すること。
+
+    Args:
+        norm: 上の表。``NORMS`` のいずれか。
+        gamma: ``norm="power"`` の指数(既定 2.2)。
+        percentile: ``norm="percentile"`` の下端・上端 [%](既定 (2, 98))。
+        levels: 段数(``None`` で連続)。
+        under, over: 範囲外の色 ``(r, g, b)``。``None`` で丸める(従来どおり)。
+    Raises:
+        ValueError: 未知の ``name`` / ``norm``、``levels < 2``。
     """
     a = np.asarray(x, np.float64)
     fin = np.isfinite(a)
-    t = normalize(np.where(fin, a, 0.0), vmin, vmax)
+    if norm not in NORMS:
+        raise ValueError("unknown norm %r (have %s)" % (norm, NORMS))
+    safe = np.where(fin, a, 0.0)
+    t = _scale(safe, fin, vmin, vmax, norm, gamma, percentile)
+    if levels is not None:
+        n = int(levels)
+        if n < 2:
+            raise ValueError("levels must be >= 2 (got %r) — one band is not a map" % (levels,))
+        t = np.clip(np.floor(np.clip(t, 0, 1) * n), 0, n - 1) / (n - 1)
     if name in _ANALYTIC:
         rgb = _ANALYTIC[name](t)
     elif name in _LUTS:
@@ -303,6 +346,14 @@ def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)
     else:
         raise ValueError("unknown colormap %r (have %s)" % (name, COLORMAPS))
     rgb = np.clip(rgb, 0, 1).copy()
+    if under is not None or over is not None:
+        v = a[fin] if fin.any() else np.zeros(1)
+        lo = float(v.min()) if vmin is None else float(vmin)
+        hi = float(v.max()) if vmax is None else float(vmax)
+        if under is not None:
+            rgb[fin & (a < lo)] = np.asarray(under, np.float64)
+        if over is not None:
+            rgb[fin & (a > hi)] = np.asarray(over, np.float64)
     rgb[~fin] = np.asarray(invalid, np.float64)
     return rgb
 
