@@ -774,13 +774,24 @@ def section5_angle_sweep(p: dict, tru: dict) -> dict:
               for i, a in enumerate(ANGLES))
     print("  → 遮蔽なしの高さ RMS は 1/sin θ に**最大 %.1f %% で乗る**。"
           "分解能の側は予測どおり。" % (100 * dev))
-    print("  → 鏡面(飽和画素 平均 %.2f %%)は高さ RMS を %.4f -> %.4f mm へ。"
-          % (100 * float(np.mean(sat)), hgt["b 遮蔽あり"][I_REF],
-             hgt["c 遮蔽+鏡面"][I_REF]))
+    print()
+    print("  ★鏡面反射は**平均で見ると「良く」なる**(飽和画素 平均 %.2f %%、"
+          % (100 * float(np.mean(sat))))
+    print("     高さ RMS %.4f -> %.4f mm) —— 鏡面ローブは光量を足すので SNR が上がる。"
+          % (hgt["b 遮蔽あり"][I_REF], hgt["c 遮蔽+鏡面"][I_REF]))
+    print("     壊れているのは**飽和した列だけ**なので、そこを分けて数える:")
+    print("     θ=%.0f 度で 飽和列の偏り %+.4f mm / 非飽和列 %+.4f mm(%.0f 倍)。"
+          % (THETA_REF, sat_bias[I_REF], unsat_bias[I_REF],
+             abs(sat_bias[I_REF] / unsat_bias[I_REF])))
+    print("     ★飽和の起きる場所は θ とともに動く(鏡面条件 dh/dx = -tan(θ/2))ので、")
+    print("     θ=%.0f 度では溶接面、θ=%.0f 度では近側の母材面が光る。"
+          % (ANGLES[1], ANGLES[-1]))
     print()
 
     for title, field, fmt in (("測れた率 [%]", "got", "%11.0f "),
-                              ("平均|誤差| [mm](測れた断面だけ)", "mae", "%12s")):
+                              ("その量の区間の欠測率 [%](測れた断面の平均)",
+                               "miss", "%11.0f "),
+                              ("平均|誤差| [mm](3 種の乱数の平均)", "mae", "%12s")):
         print("  " + title)
         print("  %6s" % "θ", end="")
         for k in KEYS:
