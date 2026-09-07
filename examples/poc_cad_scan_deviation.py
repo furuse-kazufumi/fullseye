@@ -933,9 +933,17 @@ def section_pull(ref: CadRef) -> dict:
         db = defect_field(big["pts"], big["nrm"], dent_h=0.0, warp_a=WARP_A,
                           wear_w=0.0)["total"]
         _, rb, _ = absorbed(big["pts"], big["nrm"], db)
-        figs.save_grid("warp_maps", [render(big["pts"], db), render(big["pts"], rb)],
-                       ["真の反り [mm]", "位置合わせ後に残る [mm](中央が偽のへこみ)"],
-                       title="反りを剛体 6 自由度で最小二乗した残り", signed=True)
+        S = 0.40
+        figs.save_grid("warp_maps",
+                       [render(big["pts"], db, scale=S),
+                        render(big["pts"], rb, scale=S)],
+                       ["真の反り(端で +%.2f、中央 0)" % WARP_A,
+                        "位置合わせ後に残る(中央が偽のへこみ、同じ目盛り)"],
+                       title="反りを剛体 6 自由度で最小二乗した残り"
+                             "(だいだい = 足りない / 青 = 余る)",
+                       signed=True,
+                       caption="上面だけを見ている。右の中央がだいだいに"
+                               "変わるのが「無いへこみ」。")
     return {"cases": out, "slope": slope, "dzs": dzs, "reads": reads, "dil": dil}
 
 
