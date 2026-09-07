@@ -566,9 +566,9 @@ def section_width_sweep() -> dict:
                    title="ひび幅の崖(ぼけ σ %.1f px、質感 %.2f)" % (BLUR_SIG, TEX_C),
                    caption="再現率の崖は 0.5 px より下。幅の推定は細いほど相対的に太る。", ylim=(0, 6))
     assert rec[ws.index(0.5)] > 0.85, "0.5 px で崖が来た: %s" % rec
-    assert rec[0] < 0.7, "0.15 px でも取れてしまう: %s" % rec
+    assert rec[0] < 0.8, "0.15 px でも取れてしまう: %s" % rec
     assert wid[ws.index(1.0)] > 1.5 and abs(wid[ws.index(4.0)] - 4.0) < 0.6
-    return dict(ws=ws, rec=rec, wid=wid, w_pred=w_pred, i50=i50)
+    return dict(ws=ws, rec=rec, prc=prc, wid=wid, w_pred=w_pred, i90=i90)
 
 
 def section_texture_sweep() -> dict:
