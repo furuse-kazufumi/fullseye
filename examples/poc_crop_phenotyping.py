@@ -396,7 +396,10 @@ def section_stem_capsule():
         if slice_keep is None:
             slice_keep = sdf[:, :, sdf.shape[2] // 2]
         # voxel_to_mesh は voxel 単位の座標を返す。軸ごとの辺長を掛けて m に戻す。
-        step = np.array([(q[1] - q[0]) / (n - 1) for q, n in zip(bounds, res)])
+        # ★``grid_coords`` は**ボクセル中心**を置く(中心間隔 = span/res であって
+        #   span/(res-1) ではない)。最初 span/(res-1) を掛けて球で面積 +12 %、
+        #   体積 +18 % の誤差を出した —— 単位の取り違えは「もっともらしく間違える」。
+        step = np.array([(q[1] - q[0]) / n for q, n in zip(bounds, res)])
         occ = np.asarray(L3.sdf_to_occupancy(sdf), np.float64)
         for tag, vol, iso in (("2 値化してから", occ, 0.5), ("距離場のまま", sdf, 0.0)):
             mesh = L3.voxel_to_mesh.raw(np.asarray(vol, np.float64), iso)
