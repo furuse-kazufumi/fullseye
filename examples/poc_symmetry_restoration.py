@@ -351,7 +351,7 @@ def section_scene() -> dict:
     print("1) 仮面と欠損 —— 真値は「完全形」と「真の対称面 x = 0」")
     print("=" * 78)
     sc = sample_mask(N_WORK, SEED)
-    pts = sc["pts"]
+    pts, nrm = sc["pts"], sc["nrm"]
     # 対称性の検算: 高さ場が x について偶関数であることを直接確かめる
     xs, ys, X, Y = grid_xy()
     Z, ins = mask_height(X, Y)
