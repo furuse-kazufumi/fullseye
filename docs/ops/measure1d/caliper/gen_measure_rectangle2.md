@@ -4,7 +4,7 @@ dim: measure1d
 category: caliper
 in: 
 out: measurehandle
-examples: [poc_barcode_1d, poc_dimensional_inspection, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_tree_ring_dendro, poc_water_level, poc_weld_bead_profile, poc_weld_radiograph_porosity]
+examples: [poc_barcode_1d, poc_battery_electrode_breathing, poc_dimensional_inspection, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_tree_ring_dendro, poc_water_level, poc_weld_bead_profile, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_barcode_1d](../../../../examples/poc_barcode_1d.py) — `py -3.11 examples/poc_barcode_1d.py`
+- [poc_battery_electrode_breathing](../../../../examples/poc_battery_electrode_breathing.py) — `py -3.11 examples/poc_battery_electrode_breathing.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
 - [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`
 - [poc_solar_limb_darkening](../../../../examples/poc_solar_limb_darkening.py) — `py -3.11 examples/poc_solar_limb_darkening.py`

@@ -5,6 +5,20 @@ import os
 import examples2d as EX
 
 
+def _size_floor(key):
+    """``docs/COLLECTION_SIZES.json`` の記録値(床を 1 か所に集める)。
+
+    ★2026-09-08 まで、ここは「昔の小さい定数」だった。台帳と門の詳細は
+    ``tests/test_collection_sizes.py``。
+    """
+    import json as _json
+    import os as _os
+    _p = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                       "..", "docs", "COLLECTION_SIZES.json")
+    with open(_p, encoding="utf-8") as _fh:
+        return _json.load(_fh)["sizes"][key]
+
+
 def test_registry_ids_map_to_runnable_scripts():
     names = EX.names()
     assert len(names) >= 3
@@ -34,7 +48,8 @@ def test_registry_and_disk_agree_both_ways():
     assert disk - reg - exc == set(), sorted(disk - reg - exc)   # unlisted script on disk
     gaps = EX.registry_gaps()
     assert gaps == {"unregistered": [], "missing": [], "overlap": []}, gaps
-    assert len(reg) >= 57 and len(disk) == len(reg) + len(exc)
+    assert len(reg) >= _size_floor("examples2d.EXAMPLES")
+    assert len(disk) == len(reg) + len(exc)
 
 
 def test_exclusions_carry_an_honest_reason():

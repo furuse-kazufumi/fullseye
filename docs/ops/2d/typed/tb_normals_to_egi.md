@@ -52,10 +52,26 @@ version: 0.1.10  # fullseye lib version this note was generated for
         normals: (N, 3)。
         n_az: 方位の bin 数(既定 36 = 10 度刻み)。
         n_el: 仰角の bin 数(既定 18)。
+    ★**位置の点群を渡しても例外は出ない**。``backends_typed.TYPE_TO_SORT`` が
+    ``normals`` を ``points`` に畳んでいるので、進化器も台帳も両者を区別しない。
+    この op は方向しか見ない(長さは捨てる)ので、``(N,3)`` の座標を渡すと
+    「原点から各点を見た向き」のヒストグラムが**もっともらしく**返る。実測
+    (2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、
+    最大 bin が 200 → 44 に変わるだけで、**総和はどちらも 200**。
+    「総和が点数と合うから正しい」では区別がつかない。
+    ``fullseye.set_system("extra_checks", "on")`` にすると、単位長から外れた
+    ベクトルを**拒否**する(下の Raises)。
+
+    Args:
+        normals: (N, 3)。
+        n_az: 方位の bin 数(既定 36 = 10 度刻み)。
+        n_el: 仰角の bin 数(既定 18)。
     Returns:
         (n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。
     Raises:
         ValueError: bin 数が 1 未満 / 上限超 / 入力不正。
+        ValueError: ``extra_checks='on'`` で、長さが 1 から 1e-6 を超えて外れる
+            ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。
 
 2-D 進化レジストリへ橋渡しした reprconv の op ``normals_to_egi``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``n_az``(既定 36)、``b`` が ``n_el``(既定 18)を振る。
 
@@ -84,7 +100,7 @@ tb_normals_to_egi 0.50 0.50
 
 ## 同カテゴリ(`typed`)
 
-[tb_points_to_voxel](tb_points_to_voxel.md) · [tb_estimate_point_normals](tb_estimate_point_normals.md) · [tb_iss_keypoints](tb_iss_keypoints.md) · [tb_angle_3points](tb_angle_3points.md) · [tb_project_points](tb_project_points.md) · [tb_render_point_depth](tb_render_point_depth.md) · [tb_statistical_outlier_removal](tb_statistical_outlier_removal.md) · [tb_radius_outlier_removal](tb_radius_outlier_removal.md)
+[tb_points_to_voxel](tb_points_to_voxel.md) · [tb_estimate_point_normals](tb_estimate_point_normals.md) · [tb_iss_keypoints](tb_iss_keypoints.md) · [tb_project_points](tb_project_points.md) · [tb_render_point_depth](tb_render_point_depth.md) · [tb_statistical_outlier_removal](tb_statistical_outlier_removal.md) · [tb_radius_outlier_removal](tb_radius_outlier_removal.md) · [tb_voxel_grid_downsample](tb_voxel_grid_downsample.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

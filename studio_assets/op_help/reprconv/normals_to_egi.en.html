@@ -16,10 +16,25 @@
 <p>normals: (N, 3)。</p>
 <p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
 <p>n_el: 仰角の bin 数(既定 18)。</p>
+<p>★<b>位置の点群を渡しても例外は出ない</b>。`<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code>` が</p>
+<p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">points</code>` に畳んでいるので、進化器も台帳も両者を区別しない。</p>
+<p>この op は方向しか見ない(長さは捨てる)ので、`<code style="color:#22d3bf">(N,3)</code>` の座標を渡すと</p>
+<p>「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測</p>
+<p>(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、</p>
+<p>最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。</p>
+<p>「総和が点数と合うから正しい」では区別がつかない。</p>
+<p>`<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code>` にすると、単位長から外れた</p>
+<p>ベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>Args:</p>
+<p>normals: (N, 3)。</p>
+<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
+<p>n_el: 仰角の bin 数(既定 18)。</p>
 <p>Returns:</p>
 <p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
 <p>Raises:</p>
 <p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
+<p>ValueError: `<code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code>` で、長さが 1 から 1e-6 を超えて外れる</p>
+<p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -11,6 +11,12 @@
 <p>:func:<code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので</p>
 <p><b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、</p>
 <p>レートのように桁が広い量は相対で言う)。</p>
+<p>★<b>2 度掛けても例外は出ない</b>。`<code style="color:#22d3bf">TYPE_TO_SORT</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">countrate</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">counts</code>` に</p>
+<p>畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を</p>
+<p>gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts ——</p>
+<p><b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て</p>
+<p>「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく</p>
+<p><b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
 <p>Args:</p>
 <p>countrate: (N,) の非負レート [Hz]。</p>
 <p>gate_s: 積算窓 [s]。&gt; 0。</p>

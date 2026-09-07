@@ -27,6 +27,20 @@ import pytest
 
 import examplefig
 
+
+def _size_floor(key):
+    """``docs/COLLECTION_SIZES.json`` の記録値(床を 1 か所に集める)。
+
+    ★2026-09-08 まで、ここは「昔の小さい定数」だった。台帳と門の詳細は
+    ``tests/test_collection_sizes.py``。
+    """
+    import json as _json
+    import os as _os
+    _p = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                       "..", "docs", "COLLECTION_SIZES.json")
+    with open(_p, encoding="utf-8") as _fh:
+        return _json.load(_fh)["sizes"][key]
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -298,4 +312,5 @@ def test_every_poc_is_wired_to_emit_figures(path):
 
 def test_the_wiring_gate_actually_sees_all_of_them():
     """門が空振りしていないこと(``poc_*.py`` を数える側の検算)。"""
-    assert len(_poc_paths()) >= 31, [p.name for p in _poc_paths()]
+    assert len(_poc_paths()) >= _size_floor("examples_poc_files"), \
+        [p.name for p in _poc_paths()]

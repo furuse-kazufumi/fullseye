@@ -12,6 +12,13 @@
 <p>奥 −・未観測 +1)にも同じ `<code style="color:#22d3bf">iso=0.0</code>` で使えるが、未観測領域は 0 側(外)になる。</p>
 <p>入力の形は問わず、返り値は同形の float64(0.0 / 1.0)。NaN は比較が偽なので 0 になる</p>
 <p>(警告なし)。</p>
+<p>★<b>ラベル volume を渡すと背景が「内側」になる</b>。`<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code>` は</p>
+<p>`<code style="color:#22d3bf">sdf</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">voxel</code><code style="color:#22d3bf"> を同じ </code><code style="color:#22d3bf">volume</code>` に畳むので、</p>
+<p>`<code style="color:#22d3bf">label_components</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">vol_label</code>` の出力をそのまま繋いでも例外は出ない。</p>
+<p>ラベルは 0 が背景・1 以上が前景なので `<code style="color:#22d3bf">&lt;= 0</code>` は<b>背景そのもの</b>。実測</p>
+<p>(2026-09-08、24³ の立方体、真の内側 1,728 voxel): SDF を渡すと 1,728、</p>
+<p>同じ形の 0/1/2 ラベルを渡すと <b>9,504</b>(5.5 倍)—— 符号が反転している。</p>
+<p>ラベルから占有を作るなら `<code style="color:#22d3bf">iso</code><code style="color:#22d3bf"> でなく </code><code style="color:#22d3bf">labels &gt; 0</code>` を自分で書くこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

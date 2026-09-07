@@ -81,7 +81,7 @@ img_to_points 0.50 0.50
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[identity](../misc/identity.md) · [tb_points_to_voxel](../typed/tb_points_to_voxel.md) · [tb_estimate_point_normals](../typed/tb_estimate_point_normals.md) · [tb_iss_keypoints](../typed/tb_iss_keypoints.md) · [tb_angle_3points](../typed/tb_angle_3points.md) · [tb_project_points](../typed/tb_project_points.md) · [tb_render_point_depth](../typed/tb_render_point_depth.md) · [tb_statistical_outlier_removal](../typed/tb_statistical_outlier_removal.md)
+[identity](../misc/identity.md) · [tb_points_to_voxel](../typed/tb_points_to_voxel.md) · [tb_estimate_point_normals](../typed/tb_estimate_point_normals.md) · [tb_iss_keypoints](../typed/tb_iss_keypoints.md) · [tb_project_points](../typed/tb_project_points.md) · [tb_render_point_depth](../typed/tb_render_point_depth.md) · [tb_statistical_outlier_removal](../typed/tb_statistical_outlier_removal.md) · [tb_radius_outlier_removal](../typed/tb_radius_outlier_removal.md)
 
 ## 同カテゴリ(`bridge`)
 

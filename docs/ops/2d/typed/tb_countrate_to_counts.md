@@ -46,6 +46,13 @@ version: 0.1.10  # fullseye lib version this note was generated for
     **相対** 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、
     レートのように桁が広い量は相対で言う)。
 
+    ★**2 度掛けても例外は出ない**。``TYPE_TO_SORT`` が ``countrate`` を ``counts`` に
+    畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を
+    gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts ——
+    **1,000 倍の取り違えが、負の値も NaN も出さずに通る**。値だけを見て
+    「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく
+    **呼ぶ側の規律**で守るしかない(繋いだ経路を書き残すこと)。
+
     Args:
         countrate: (N,) の非負レート [Hz]。
         gate_s: 積算窓 [s]。> 0。
@@ -81,7 +88,7 @@ tb_countrate_to_counts 0.50 0.50
 
 ## 同カテゴリ(`typed`)
 
-[tb_points_to_voxel](tb_points_to_voxel.md) · [tb_estimate_point_normals](tb_estimate_point_normals.md) · [tb_iss_keypoints](tb_iss_keypoints.md) · [tb_angle_3points](tb_angle_3points.md) · [tb_project_points](tb_project_points.md) · [tb_render_point_depth](tb_render_point_depth.md) · [tb_statistical_outlier_removal](tb_statistical_outlier_removal.md) · [tb_radius_outlier_removal](tb_radius_outlier_removal.md)
+[tb_points_to_voxel](tb_points_to_voxel.md) · [tb_estimate_point_normals](tb_estimate_point_normals.md) · [tb_iss_keypoints](tb_iss_keypoints.md) · [tb_project_points](tb_project_points.md) · [tb_render_point_depth](tb_render_point_depth.md) · [tb_statistical_outlier_removal](tb_statistical_outlier_removal.md) · [tb_radius_outlier_removal](tb_radius_outlier_removal.md) · [tb_voxel_grid_downsample](tb_voxel_grid_downsample.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -1,9 +1,9 @@
 {
- "n_ops": 918,
+ "n_ops": 916,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 889
+  "registry": 887
  },
  "sorts": [
   "any",
@@ -4801,14 +4801,6 @@
    "tier": "registry"
   },
   {
-   "name": "tb_angle_3points",
-   "halcon": "",
-   "in_sort": "points",
-   "out_sort": "feature",
-   "category": "typed",
-   "tier": "registry"
-  },
-  {
    "name": "tb_angular_spectrum_propagate",
    "halcon": "",
    "in_sort": "cimage",
@@ -5181,14 +5173,6 @@
    "halcon": "",
    "in_sort": "signal",
    "out_sort": "signal",
-   "category": "typed",
-   "tier": "registry"
-  },
-  {
-   "name": "tb_indices_to_labels",
-   "halcon": "",
-   "in_sort": "signal",
-   "out_sort": "volume",
    "category": "typed",
    "tier": "registry"
   },

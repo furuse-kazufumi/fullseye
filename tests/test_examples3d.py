@@ -24,6 +24,20 @@ import pytest
 
 import examples3d as E
 
+
+def _size_floor(key):
+    """``docs/COLLECTION_SIZES.json`` の記録値(床を 1 か所に集める)。
+
+    ★2026-09-08 まで、ここは「昔の小さい定数」だった。台帳と門の詳細は
+    ``tests/test_collection_sizes.py``。
+    """
+    import json as _json
+    import os as _os
+    _p = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                       "..", "docs", "COLLECTION_SIZES.json")
+    with open(_p, encoding="utf-8") as _fh:
+        return _json.load(_fh)["sizes"][key]
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -34,7 +48,8 @@ def test_metadata_and_files_are_in_sync():
     assert meta == disk, (
         f"registry/disk mismatch — only in metadata: {sorted(meta - disk)}; "
         f"only on disk: {sorted(disk - meta)}")
-    assert len(meta) >= 20, f"gallery unexpectedly small: {len(meta)}"
+    assert len(meta) >= _size_floor("examples3d.gallery"), \
+        f"gallery unexpectedly small: {len(meta)}"
 
 
 def test_every_entry_has_required_metadata():

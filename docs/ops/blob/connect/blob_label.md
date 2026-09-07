@@ -4,7 +4,7 @@ dim: blob
 category: connect
 in: mask
 out: labels2d
-examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_pipe_wall_loss, poc_print_warpage_risk, poc_pv_thermal_survey, poc_sea_ice_concentration, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
+examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_pipe_wall_loss, poc_print_warpage_risk, poc_pv_thermal_survey, poc_sea_ice_concentration, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -54,6 +54,7 @@ Examples
 
 - [blob_split_tour](../../../../examples/blob_split_tour.py) — `py -3.11 examples/blob_split_tour.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
+- [poc_bump_coplanarity](../../../../examples/poc_bump_coplanarity.py) — `py -3.11 examples/poc_bump_coplanarity.py`
 - [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`

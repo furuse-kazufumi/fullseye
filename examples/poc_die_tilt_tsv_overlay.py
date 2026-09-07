@@ -605,7 +605,7 @@ def section_tool_gaps() -> None:
     print("=" * 78)
 
     assert not hasattr(_L, "vol_region_gray_props")
-    print("  (a) **gray 重み付きの領域統計**が無い。vol_region_props の centroid は"
+    print("  (a) **gray 重み付きの領域統計**が無い。vol_region_props の centroid は "
           "voxel の幾何重心\n      (等重み)で、docstring も『gray 重み付きが要るなら"
           "自分で計算する』と書いている。\n      サブボクセルの位置ずれを測る仕事では"
           "ここが本体なので、`measure_vias` は自前。")

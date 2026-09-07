@@ -176,7 +176,7 @@ def detect_bumps(height: np.ndarray) -> dict:
 
     ★**進化 op の ``auto_threshold`` は画像を [0,1] とみなす**。µm 単位の高さ場を
     そのまま渡すと Otsu が 0.5 の位置で切られ、しきい値が「0.5 µm」になって
-    背景の残差まで拾う(実測 390 個。正しくは 256 個)。ここで正規化するのは
+    背景の残差まで拾う(実測 387 個。正しくは 256 個)。ここで正規化するのは
     そのため —— 単位を持った量を進化 op に渡すときの落とし穴。
     """
     flat = np.asarray(_L.background_flatten(height, degree=2))
@@ -534,7 +534,7 @@ def section_tool_gaps() -> None:
     print("  (c) JEDEC の**着座平面 / 共平面性**そのものの口が無い"
           "(最小二乗平面は fit_plane3 で作れるが、規格の定義は別)。")
     assert hasattr(fs.ledger, "fit_poly_surface") and not hasattr(fs, "fit_poly_surface")
-    print("  (d) fit_poly_surface / surface_form_error / blob_* は"
+    print("  (d) fit_poly_surface / surface_form_error / blob_* は "
           "fullseye.ledger からしか呼べない(1 行ファサードに出ていない)。")
 
     # (e) ★台帳経由の surface_form_error は **PV の float しか返らない**

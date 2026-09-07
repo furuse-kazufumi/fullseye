@@ -136,6 +136,15 @@ def _compare(a_path: str, b_path: str) -> int:
                         "(同梱漏れ、または上流 backend の失敗で読まれなかった): %s" % missing)
     if b["failed_backends"]:
         problems.append("wheel 側で backend が失敗: %s" % (b["failed_backends"],))
+    # ★2026-09-08: editable 側も見る。それまで ``a["failed_backends"]`` は
+    # **集めるだけで誰も読んでいなかった** —— 同じ回に examplefig の図の失敗と
+    # 同じ型の穴として摘発した。editable の venv は optional 依存が**多い**ので、
+    # 版の食い違いで backend が import に失敗しうる。そのとき wheel 側は
+    # 「依存が無いから最初から居ない」だけで失敗を記録せず、この比較は緑のまま
+    # 通ってしまう。落ちた backend の op はレジストリから黙って消える。
+    if a.get("failed_backends"):
+        problems.append("editable 側で backend が失敗(その族の op がレジストリから"
+                        "黙って消えている): %s" % (a["failed_backends"],))
     if b.get("unshipped_present"):
         problems.append("同梱しないはずの資産が wheel に乗っている: %s "
                         "(pyproject の exclude-package-data を見る)" % b["unshipped_present"])

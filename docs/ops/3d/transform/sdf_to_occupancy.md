@@ -27,6 +27,14 @@ SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。
 入力の形は問わず、返り値は同形の float64(0.0 / 1.0)。NaN は比較が偽なので 0 になる
 (警告なし)。
 
+★**ラベル volume を渡すと背景が「内側」になる**。``backends_typed.TYPE_TO_SORT`` は
+``sdf`` / ``labels`` / ``voxel`` を同じ ``volume`` に畳むので、
+``label_components`` や ``vol_label`` の出力をそのまま繋いでも例外は出ない。
+ラベルは 0 が背景・1 以上が前景なので ``<= 0`` は**背景そのもの**。実測
+(2026-09-08、24³ の立方体、真の内側 1,728 voxel): SDF を渡すと 1,728、
+同じ形の 0/1/2 ラベルを渡すと **9,504**(5.5 倍)—— 符号が反転している。
+ラベルから占有を作るなら ``iso`` でなく ``labels > 0`` を自分で書くこと。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
