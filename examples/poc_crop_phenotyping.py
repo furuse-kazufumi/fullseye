@@ -145,9 +145,9 @@ def make_canopy(n_leaf=N_LEAF, row=ROW, in_row=IN_ROW, beta_deg=BETA_DEG,
     can["smax"] = ix_of(can["L"], can["beta"], can["kappa"])
     # 稈の側面積 = 2 pi r h(茎は葉ではない = LAI には入らない)
     can["stem_area"] = 2.0 * np.pi * STEM_R * stem_h * n_plant / PLOT_AREA
-    can["height"] = float(np.max(can["base"][:, 2]
-                                 + iz_of(np.minimum(can["beta"] / can["kappa"], can["L"]),
-                                         can["beta"], can["kappa"])))
+    can["height"] = float(max(stem_h, np.max(
+        can["base"][:, 2] + iz_of(np.minimum(can["beta"] / can["kappa"], can["L"]),
+                                  can["beta"], can["kappa"]))))
     return can
 
 
