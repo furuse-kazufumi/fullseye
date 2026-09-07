@@ -782,9 +782,11 @@ def section_sweeps() -> dict:
     print("=" * 78)
     out["noise"] = sweep("sweep_vibration_noise",
                          (0.02, 0.05, 0.10, 0.20, 0.40, 0.80, 1.60),
-                         "noise", ("v",), VIB_FEATS, "雑音 σ",
-                         "振動の雑音を上げる(熱・形状は据え置き)",
-                         "振動単独のモード別識別率。落ちる順番がモードで違う。",
+                         "noise", ("v",), VIB_FEATS,
+                         (("1X: アンバランス/正常", "v_o1", "アンバランス", "正常"),
+                          ("BPFO: 軸受/正常", "v_bpfo", "軸受外輪傷", "正常")),
+                         "雑音 σ", "振動の雑音を上げる(熱・形状は据え置き)",
+                         "d' は特徴 1 個の情報量。識別率より先に落ちる。",
                          fmt="%8.2f")
 
     print("\n" + "=" * 78)
@@ -793,28 +795,37 @@ def section_sweeps() -> dict:
     t_order = 2.0 / FR
     t_side = 1.0 / FTF
     print("   予測 (a) ゆるみの 0.5X: 次数分解能 = 1/(整数回転数) が 0.5 を切るのは")
-    print("            整数回転数 >= 2、すなわち **T > 2/f_r = %.1f ms**。" % (1000 * t_order))
+    print("            整数回転数 >= 2、すなわち **T > 2/f_r = %.1f ms**。それより短い")
+    print("            記録では 0.5 次のビンが存在せず、窓が 1X を巻き込む。")
     print("   予測 (b) 軸受の側帯波: 包絡線の分解能 1/T が側帯波間隔 FTF = %.2f Hz を" % FTF)
     print("            下回るのは **T > 1/FTF = %.1f ms**。" % (1000 * t_side))
     out["dur"] = sweep("sweep_record_length",
                        (0.04, 0.05, 0.07, 0.10, 0.15, 0.25, 0.50, 1.00),
-                       "dur", ("v",), VIB_FEATS, "記録長 T [s]",
-                       "記録長を縮める —— 予測した 2 つの崖",
+                       "dur", ("v",), VIB_FEATS,
+                       (("0.5X: ゆるみ/アンバランス", "v_o05", "ゆるみ", "アンバランス"),
+                        ("側帯波比: 軸受/正常", "v_sb", "軸受外輪傷", "正常")),
+                       "記録長 T [s]", "記録長を縮める —— 予測した 2 つの崖",
                        "予測は 68.6 ms(0.5X の次数ビン)と 86.1 ms(FTF 側帯波)。")
     out["t_order"], out["t_side"] = t_order, t_side
 
     print("\n" + "=" * 78)
     print("9) ★崖その 3 —— 熱画像の画素ピッチ(振動・形状は据え置き)")
     print("=" * 78)
-    rh = half_radius(SOURCES[1][1], SOURCES[1][2], SOURCES[1][3], 13.0)
-    print("   予測: 軸受の高温域の半値半径は %.1f mm。画素ピッチがこれを超えると" % rh)
-    print("         面積積分で峰がならされ、**広がり(t_spread)が測れなくなる**。")
-    out["pitch"] = sweep("sweep_pixel_pitch", (1, 2, 4, 8, 16, 32, 48), "pitch",
+    rh_b = half_radius(SOURCES[1][1], SOURCES[1][2], SOURCES[1][3], 11.0)
+    rh_g = half_radius(SOURCES[3][1], SOURCES[3][2], SOURCES[3][3], 9.0)
+    print("   予測: 高温域の半値半径は 軸受 %.1f mm / 機械全体 %.1f mm。"
+          % (rh_b, rh_g))
+    print("         画素ピッチが小さい方の半値**直径** %.0f mm を超えると軸受の峰が"
+          % (2 * rh_b))
+    print("         1 画素に潰れ、広がりの違いが数えられなくなる。")
+    out["pitch"] = sweep("sweep_pixel_pitch", (1, 2, 4, 8, 16, 32, 64, 96), "pitch",
                          ("t",), THR_FEATS,
+                         (("広がり: 軸受/潤滑不良", "t_spread", "軸受外輪傷", "潤滑不良"),
+                          ("最高温度: 軸受/潤滑不良", "t_max", "軸受外輪傷", "潤滑不良")),
                          "画素ピッチ [mm]", "熱画像の画素を粗くする",
                          "軸受(局所)と潤滑不良(全体)を分けているのは広がりだけ。",
                          fmt="%8.0f")
-    out["r_half"] = rh
+    out["r_half"], out["r_half_g"] = rh_b, rh_g
 
     print("\n" + "=" * 78)
     print("10) ★崖その 4 —— 回転数変動 δ。**次数に比例して先に壊れる**")
@@ -827,9 +838,11 @@ def section_sweeps() -> dict:
         print("           %-14s o = %5.3f -> δ < %.2f %%" % (tag, o, 100 / (2 * o * FR * DURATION)))
     out["jitter"] = sweep("sweep_rpm_variation",
                           (0.0, 0.0025, 0.005, 0.010, 0.020, 0.040, 0.080),
-                          "jitter", ("v",), VIB_FEATS, "回転数変動 δ",
-                          "回転数が揺れると高次から壊れる",
-                          "予測どおり櫛(6X)を使うゆるみが最初に落ちる。",
+                          "jitter", ("v",), VIB_FEATS,
+                          (("2X: 芯ずれ/正常", "v_o2", "芯ずれ", "正常"),
+                           ("櫛 3-6X: ゆるみ/正常", "v_comb", "ゆるみ", "正常")),
+                          "回転数変動 δ", "回転数が揺れると高次から壊れる",
+                          "櫛(最大 6X)は 2X の 3 倍の速さで広がる。",
                           fmt="%8.4f")
     return out
 
