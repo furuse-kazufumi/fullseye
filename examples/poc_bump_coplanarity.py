@@ -268,21 +268,24 @@ def section_orders() -> dict:
     assert out[2]["fp"] == 0 and out[2]["fn"] == 0, (out[2]["fp"], out[2]["fn"])
 
     # --- 図 ---------------------------------------------------------------- #
-    # ★`surface_form_error` は台帳経由だと **PV の float しか返らない**(節 7)ので、
-    #   残差の絵は fit_poly_surface + eval_poly_surface で自分で作る。
+    # 背景(バンプの無い画素)だけで見たそりの読み取り —— 天面は前景なので除く
+    bg = ~(det["labels"] > 0)
     hh, ww = sc["height"].shape
     gyy, gxx = np.mgrid[0:hh, 0:ww]
-    m_img = _L.fit_poly_surface(gxx / ww, gyy / hh, sc["height"], degree=2)
-    resid_img = sc["height"] - np.asarray(_L.eval_poly_surface(m_img, gxx / ww, gyy / hh))
+    m_bg = _L.fit_poly_surface(gxx[bg] / ww, gyy[bg] / hh, sc["height"][bg], degree=2)
+    warp_est = np.asarray(_L.eval_poly_surface(m_bg, gxx / ww, gyy / hh))
 
     figs.save_grid(
         "scene",
-        [sc["height"], sc["warp"], resid_img],
+        [sc["height"], sc["warp"], warp_est - warp_est.mean(),
+         _L.blob_overlay(det["flat"] / det["flat"].max(), det["labels"])],
         ["高さ場(そり PV %.0f µm + バンプ %.0f µm)" % (sc["warp_pv"], H_NOM),
          "仕込んだそり(真値、PV %.0f µm)" % sc["warp_pv"],
-         "2 次曲面を引いた残差 [µm]"],
+         "背景だけから当てた 2 次曲面(PV %.1f µm)"
+         % float(warp_est.max() - warp_est.min()),
+         "検出した天面 %d 本" % det["n"]],
         title="1 枚の高さ場に、そり(数十 µm)とバンプ個体差(数 µm)が重なる",
-        ncols=3, signed=[False, True, True])
+        ncols=2, signed=[False, True, True, False])
 
     def as_map(v):
         return np.kron(v.reshape(NB, NB), np.ones((14, 14)))
