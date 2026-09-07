@@ -1157,10 +1157,11 @@ def make_figures(pf, sw, geo, opt, est2, cal, occ) -> None:
                    caption="同じノブの表裏。2 本が交わるあたりが最適角。")
 
     figs.save_table("optimum",
-                    ["量", "予測 θ*", "実測 θ*", "θ* の |誤差| mm",
-                     "36 度での |誤差| mm", "倍率"], opt["rows"],
+                    ["量", "予測 θ*", "実測 θ*(全断面)", "|誤差| mm",
+                     "甘い θ*", "|誤差| mm", "測れた"], opt["rows"],
                     title="最適な三角測量角: 予測と実測(量ごと)",
-                    caption="予測 = 遮蔽だけの誤差と 1/sinθ の雑音の二乗和。")
+                    caption="予測 = 遮蔽だけの誤差と 1/sinθ の雑音の二乗和。"
+                            "「甘い θ*」= 測れた断面だけで数えたときの最小。")
 
     figs.save_table("calibration", ["量", "予測 [%]", "実測 [%]"], cal["rows"],
                     title="高さ倍率 +1 % の校正誤差が各量に出る大きさ",
