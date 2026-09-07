@@ -664,10 +664,13 @@ def _overhang_map(occ, sdf):
     tilt = np.where(seen, tilt, 90.0)
     need = seen & (nz < -COS_C) & (hit > 0)
     figs.save_grid("overhang_map",
-                   [tilt.T[::-1], need.T[::-1].astype(float)],
-                   ["下向き面の傾き [度](0 = 水平 = 最悪、90 = 垂直 = 安全)",
-                    "サポートが要る面(45 度未満で下を向いている)"],
-                   title="下から見た部品(オーバーハングの地図)", ncols=2)
+                   [_up(tilt.T[::-1]), _up(need.T[::-1].astype(float))],
+                   ["傾き [度]", "要サポート"],
+                   title="下から見た部品(オーバーハングの地図)", ncols=2,
+                   caption="左 = 水平からの傾き(暗い = 0 度 = 最悪、明るい = 90 度 = 垂直)。"
+                           "右 = 45 度未満で下を向いている面(白)。"
+                           "大きな白い帯が「ちょうど 45 度」の斜面で、"
+                           "しきい値をまたぐと丸ごと消える。")
 
 
 def section_orientation():
