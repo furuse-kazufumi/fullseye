@@ -1225,10 +1225,25 @@ def _up(img, k=4):
     return np.repeat(np.repeat(a, k, axis=0), k, axis=1)
 
 
+#: 印の大きさ。★同じ棚前で「補充待ち」と「欠品」が起きるので、**大きい印から
+#: 描いて小さい印を上に重ねる**。同じ大きさで描くと後から描いたほうが前のを
+#: 完全に隠し、図の上では 5 件が 2 件に見えた。
+TYPE_R = {"補充待ち": 2, "システム待ち": 2, "人待ち": 2, "作業": 2,
+          "通路の干渉": 1, "欠品": 0, "その他": 0}
+
+
 def _stamp(img, xm, ym, rgb, r=1):
-    iy = int(np.clip(ym / CELL, 1, NY - 2))
-    ix = int(np.clip(xm / CELL, 1, NX - 2))
+    iy = int(np.clip(ym / CELL, 2, NY - 3))
+    ix = int(np.clip(xm / CELL, 2, NX - 3))
     img[iy - r:iy + r + 1, ix - r:ix + r + 1] = rgb
+    return img
+
+
+def _stamp_events(img, events, key):
+    """種類つきの事象を、印の大きい順に重ねて描く。"""
+    for e in sorted(events, key=lambda e: -TYPE_R.get(e[key], 1)):
+        img = _stamp(img, e["x"], e["y"], TYPE_RGB.get(e[key], (0.7, 0.7, 0.7)),
+                     r=TYPE_R.get(e[key], 1))
     return img
 
 
@@ -1254,9 +1269,7 @@ def section_figures(base: dict, tru: dict, heat: dict, clear: np.ndarray) -> Non
     seen_img = _floor_rgb(racks)
     seen_img[~vis & ~racks] = (0.85, 0.35, 0.35)
 
-    truth_img = _floor_rgb(racks)
-    for e in base["scene"]["events"]:
-        truth_img = _stamp(truth_img, e["x"], e["y"], TYPE_RGB[e["cause"]], r=1)
+    truth_img = _stamp_events(_floor_rgb(racks), base["scene"]["events"], "cause")
 
     figs.save_grid("scene_layout",
                    [_up(plan), _up(paths), _up(seen_img), _up(truth_img)],
@@ -1294,10 +1307,7 @@ def section_figures(base: dict, tru: dict, heat: dict, clear: np.ndarray) -> Non
                            % K_SEC)
 
     # (c) 検出の型別地図(真値と並べる)
-    det_img = _floor_rgb(racks)
-    for d in base["det"]["events"]:
-        det_img = _stamp(det_img, d["x"], d["y"], TYPE_RGB.get(d["kind"],
-                                                               (0.7, 0.7, 0.7)), r=1)
+    det_img = _stamp_events(_floor_rgb(racks), base["det"]["events"], "kind")
     figs.save_grid("map_by_type", [_up(truth_img), _up(det_img)],
                    ["真値(仕込んだ待ち)", "提案(x-y-t の柱から読んだ型)"],
                    ncols=2, title="種類ごとの色分け地図",
