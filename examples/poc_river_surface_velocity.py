@@ -221,7 +221,8 @@ def build_frames(density=DENSITY, n_frames=N_FRAMES, refl_c=REFL_C, wave_amp=WAV
     amp = rng.uniform(0.6, 1.0, n_p)
     u_p = profile(y_m)
     sigma_hi = DIAM_PX / 2.0 * SS
-    refl = _reflection(rng)
+    refl = _reflection(rng, "smooth")
+    refl_fine = _reflection(rng, "fine")
     gy, gx = np.mgrid[0:hi_shape[0], 0:hi_shape[1]].astype(np.float64)
     phase0 = 2 * np.pi * ((gx * S_PX / SS) * np.cos(WAVE_THETA)
                           + (gy * S_PX / SS) * np.sin(WAVE_THETA)) / WAVE_LAMBDA
