@@ -890,11 +890,14 @@ def section_zd(sw: dict) -> dict:
     print("8) 不確かさ Z_d を測定から見積もると何が起きるか")
     print("=" * 78)
     rng = np.random.default_rng(SEED + 4)
-    f0 = sw["frames"][len(sw["frames"]) // 2]
+    # 繰り返し性は「危険なとき」の姿勢で測る(遠くで測っても意味が無い)
+    f0 = sw["frames"][int(np.argmin(sw["d_true"]))]
     reps = np.array([estimate(f0, f0["v_top"], rng, density=800) for _ in range(24)])
     zd_rep = 3.0 * float(np.std(reps))
-    print("  同じ姿勢を 24 回測り直したばらつき: σ = %.4f m -> Z_d(3σ) = %.4f m"
+    print("  最接近の姿勢を 24 回測り直したばらつき: σ = %.4f m -> Z_d(3σ) = %.4f m"
           % (float(np.std(reps)), zd_rep))
+    print("     —— 同じ点群を測り直しても**遮蔽の形は変わらない**ので、"
+          "繰り返し性には遮蔽が写らない。")
 
     over = sw["e_full"] - sw["d_true"]
     zd_occ = float(np.percentile(over, 95))
