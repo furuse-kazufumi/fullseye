@@ -458,7 +458,13 @@ def section_phase() -> dict:
     sch = schedule(seed=SEED + 1)
     tex = base_texture(SEED)
     frozen = np.full(N_EPOCH, FROZEN_MM)
-    slopes = (0.0, 0.02, 0.10, 0.35)
+    span = float(stations()[-1] - stations()[0])
+    m_crit = 1.0 / span
+    print("  ★予測を先に: 位相が混ざるには測る区間 %.0f 列で中心線が 1 px 以上"
+          "動けばよい → 臨界の傾き 1/%.0f = %.4f。" % (span, span, m_crit))
+    print("\n   経路の傾き   区間での上下差   積分法 σ [mm]   2 値化 σ [mm]")
+
+    slopes = (0.0, 0.002, 0.005, 0.02, 0.10, 0.35)
     sd_i, sd_b, rows = [], [], []
     for m in slopes:
         r = run_series(frozen, sch, tex=tex, path_slope=m, use_psf=False, use_lit=False,
