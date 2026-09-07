@@ -280,7 +280,6 @@ def ground_truth():
         inside = ((np.abs(X - o["cx"]) <= o["lx"] / 2)
                   & (np.abs(Y - o["cy"]) <= o["ly"] / 2))
         hgt = np.where(inside, np.maximum(hgt, o["h"]), hgt)
-    del zc
     return occ, hgt, X, Y
 
 
