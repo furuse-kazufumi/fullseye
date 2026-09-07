@@ -469,7 +469,7 @@ def resize_roundtrip(im: np.ndarray, s: float) -> np.ndarray:
     return np.clip(back[:N_PIX, :N_PIX], 0, 1)
 
 
-def section_resize(fp: np.ndarray, queries: dict, clean: dict) -> dict:
+def section_resize(cams: dict, fp: np.ndarray, queries: dict, clean: dict) -> dict:
     print("\n" + "=" * 78)
     print("5) 検査画像を縮小して戻してから照合")
     print("   予想: 0.5× は 2×2 箱平均で K との相関が 1/2 → PCE 25 %。非整数倍(0.9×)は"
