@@ -823,18 +823,24 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
     print("  過大評価の最大 %.3f m(真の距離 < 1.0 m の帯。手が完全に隠れて"
           "推定が胴へ飛んだところ)" % over_near)
 
+    def _up(a, k=3):
+        """図を見やすくするための画素の複製(数値は変えない)。"""
+        return np.repeat(np.repeat(np.asarray(a, np.float64), k, 0), k, 1)
+
     figs.save_grid("map_miss",
-                   [true_map.T, np.clip(over, 0.0, 0.6).T, miss.astype(float).T],
-                   ["真の分離距離 [m](手先の位置ごと)",
-                    "過大評価 [m](0〜0.6 で切った)",
-                    "危険なのに安全と出る領域"],
+                   [_up(true_map.T), _up(np.clip(over, 0.0, 0.6).T),
+                    _up(miss.astype(float).T)],
+                   ["真の分離距離 m", "過大評価 m", "止めない領域"],
                    ncols=3,
                    title="見落としの地図(背面センサ 1 台、指先の高さ %.2f m の水平面)" % z_h,
-                   caption="横 = x [%.1f, %.1f] m、縦 = y [%.1f, %.1f] m。"
-                           "白い帯はロボットのリンクが落とす影。"
+                   caption="横 = x [%.1f, %.1f] m、縦 = y [%.1f, %.1f] m。左 = 真の分離"
+                           "距離、中 = 推定 - 真値(0〜0.6 m で切った)、"
+                           "右 = 危険なのに止めない領域。中央の明るい帯 = "
+                           "ロボットのリンクと人の胴が落とす影。"
                            % (xs[0], xs[-1], ys[0], ys[-1]))
-    figs.save("map_visibility", vis_map.T,
-              "手の表面のうち背面センサから見えた割合。0 の帯 = リンクと治具台の影。")
+    figs.save("map_visibility", _up(vis_map.T),
+              "手の表面のうち背面センサから見えた割合。暗い帯 = リンク・治具台・"
+              "人の胴の影で 1 点も見えない場所。")
     return {"miss_area": float(cell * np.count_nonzero(miss)),
             "haz_area": float(cell * np.count_nonzero(true_map < S_GEOM)),
             "miss_frac": 100.0 * np.count_nonzero(miss)
