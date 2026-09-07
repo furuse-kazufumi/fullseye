@@ -57,6 +57,11 @@ CLEAN = {"pit": 0.0, "band": 0.0, "cres": 0.0, "weld": 0.0, "oval": 0.0,
          "bend": 0.0, "cres_z": (CRES_Z0, CRES_Z1)}
 
 
+def _big(a, k=3):
+    """図を見えるように整数倍で拡大する(展開図は 120x180 px しかない)。"""
+    return np.kron(np.asarray(a, float), np.ones((k, k)))
+
+
 def spec(**kw) -> dict:
     """既定から差分で条件を作る(対照群を 1 行で書くため)。"""
     s = dict(FULL)

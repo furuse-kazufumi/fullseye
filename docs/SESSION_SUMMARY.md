@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-07 23:06:20
+- **最終更新**: 2026-09-07 23:25:48
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-0ec0b7939 auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 23:06)
-fb13a97bb auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 23:05)
-dfb14a160 auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 23:04)
-200f448ba auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 23:04)
-5bedd2762 auto: poc_scan_to_bim_asbuilt.py 編集前 (2026-09-07 23:04)
-2e60bdaff auto: poc_scan_to_bim_asbuilt.py 編集前 (2026-09-07 23:03)
-7336d726a auto: poc_scan_to_bim_asbuilt.py 編集前 (2026-09-07 23:03)
-4e2262600 auto: poc_scan_to_bim_asbuilt.py 編集前 (2026-09-07 23:03)
-63cfdeccd auto: poc_structure_4d_deterioration.py 編集前 (2026-09-07 23:03)
-7a6bc7dc4 auto: poc_scan_to_bim_asbuilt.py 編集前 (2026-09-07 23:02)
+6aff234bf auto: poc_pipe_wall_loss.py 編集前 (2026-09-07 23:25)
+83682ceb7 auto: poc_pipe_wall_loss.py 編集前 (2026-09-07 23:24)
+2c16d0b65 auto: poc_pipe_wall_loss.py 編集前 (2026-09-07 23:24)
+9a33f2eb9 auto: poc_recycling_sorting.py 編集前 (2026-09-07 23:24)
+86b883dd9 auto: poc_recycling_sorting.py 編集前 (2026-09-07 23:24)
+d8df509ab auto: poc_pipe_wall_loss.py 編集前 (2026-09-07 23:24)
+dd759ce88 auto: poc_pipe_wall_loss.py 編集前 (2026-09-07 23:23)
+35168bdd1 auto: poc_recycling_sorting.py 編集前 (2026-09-07 23:23)
+d0c774566 auto: poc_scan_to_bim_asbuilt.py 編集前 (2026-09-07 23:21)
+5b0304718 auto: poc_scan_to_bim_asbuilt.py 編集前 (2026-09-07 23:20)
 ```
 
 ## 現在の git status
 
 ```
-M docs/KNOWN_ISSUES.md
- M examples/poc_structure_4d_deterioration.py
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-23:06 examples/poc_structure_4d_deterioration.py
-23:06 docs/KNOWN_ISSUES.md
-23:04 docs/SESSION_SUMMARY.md
-23:04 examples/poc_scan_to_bim_asbuilt.py
-23:02 examples/poc_battery_ct_degradation.py
-23:01 docs/articles/exhibits/poc_captions.json
-23:01 examples2d.py
-23:01 .ruff_cache/0.16.0/13906884550158051618
-23:00 examples/poc_ct_void_morphology.py
-22:59 docs/articles/assets/poc/poc_battery_ct_degradation/figures.json
-22:59 docs/articles/assets/poc/poc_battery_ct_degradation/16_sweep_beamhardening.png
-22:59 docs/articles/assets/poc/poc_battery_ct_degradation/15_sweep_noise.png
-22:59 docs/articles/assets/poc/poc_battery_ct_degradation/14_sweep_resolution_table.tsv
-22:59 docs/articles/assets/poc/poc_battery_ct_degradation/14_sweep_resolution_table.png
-22:59 docs/articles/assets/poc/poc_battery_ct_degradation/14_sweep_resolution_table.csv
+23:25 examples/poc_pipe_wall_loss.py
+23:25 CHANGELOG.md
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/figures.json
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/17_dc_bias.png
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/16_sweep_cres_extent.png
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/15_sweep_model_order.png
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/14_volume_table.tsv
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/14_volume_table.png
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/14_volume_table.csv
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/13_defect_table.tsv
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/13_defect_table.csv
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/13_defect_table.png
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/12_map_truth_vs_best.png
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/11_map_corrected.png
+23:25 docs/articles/assets/poc/poc_pipe_wall_loss/10_spectrum_table.tsv
 ```
 
 ---
