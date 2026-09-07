@@ -829,6 +829,8 @@ def section_wind() -> dict:
           % (WINDS[0], nonf_mean[0], WINDS[-1], nonf_mean[-1]))
     print("     **弱い風は偽と紛らわしいものを増やし、強い風は本物を消す**。"
           "両端で壊れる。")
+    assert abs(last_hot - v_area) <= 1.0, "面積基準の崖の予測が外れた"
+    assert abs(last_str - v_str) <= 1.5, "ストリングの崖の予測が外れた"
 
     figs.save_plot("wind_sweep",
                    [("予測 ホットスポット", WINDS, ph_p),
