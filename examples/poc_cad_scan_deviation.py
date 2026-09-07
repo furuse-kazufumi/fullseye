@@ -736,7 +736,7 @@ def section_density() -> dict:
     rows, rho_l, pl, ml = [], [], [], []
     for n in (2500, 5000, 10000, 20000, 40000, 80000):
         r = CadRef(n=n, seed=555)
-        d, s, _ = r.deviate(q_src["pts"])
+        d, s, _, _ = r.deviate(q_src["pts"])
         p = 0.5 / np.sqrt(r.rho)
         rho_l.append(r.rho)
         pl.append(1000 * p)
@@ -797,7 +797,7 @@ def section_pull(ref: CadRef) -> dict:
         sc = make_scan(n=20000, noise=0.0, occlude=False, **kw)
         R0, t0 = sc["R_true"], sc["t_true"]
         R, t = align(sc["pts"], ref, method="p2plane", init=(R0, t0), iters=25)
-        _, s, _ = ref.deviate(sc["pts"] @ R.T + t)
+        _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
         Pn = sc["nom"]
         if where == "部品の中央":
             m = (np.abs(Pn[:, 0]) < 3.0) & (Pn[:, 2] > H - 1e-6) & (sc["nrm"][:, 2] > 0.9)
@@ -845,7 +845,7 @@ def section_pull(ref: CadRef) -> dict:
         sc = make_scan(n=12000, noise=0.0, dent_h=0.0, warp_a=a, wear_w=0.0)
         R, t = align(sc["pts"], ref, method="p2plane",
                      init=(sc["R_true"], sc["t_true"]), iters=20, sub=12000)
-        _, s, _ = ref.deviate(sc["pts"] @ R.T + t)
+        _, s, _, ed = ref.deviate(sc["pts"] @ R.T + t)
         m = (np.abs(sc["nom"][:, 0]) < 3.0) & (sc["nom"][:, 2] > H - 1e-6)
         dzs.append(1000 * float((t - sc["t_true"])[2]))
         reads.append(1000 * float(np.mean(s[m])) if m.any() else np.nan)
@@ -916,7 +916,7 @@ def section_basin(ref: CadRef) -> dict:
         R, t = align(sc["pts"], ref, method="p2plane", init=(Rp, sc["t_true"]),
                      iters=40, sub=5000)
         q = sc["pts"] @ R.T + t
-        d, _, _ = ref.deviate(q)
+        d, _, _, _ = ref.deviate(q)
         e = rot_err_deg(R, sc["R_true"])
         mm = pose_shift_mm(R, t, sc["R_true"], sc["t_true"], ref.pts)
         ok = "収束" if e < 0.5 else ("別解(残差は小さい)" if d.mean() < 0.35
@@ -961,7 +961,7 @@ def section_controls(ref: CadRef) -> dict:
         R, t = align(sc["pts"], ref, method="p2plane",
                      init=(sc["R_true"], sc["t_true"]), iters=30)
         q = sc["pts"] @ R.T + t
-        _, s, _ = ref.deviate(q)
+        _, s, _, ed = ref.deviate(q)
         e = rot_err_deg(R, sc["R_true"])
         rms = 1000 * float(np.sqrt(np.mean((s - sc["dev_true"]) ** 2)))
         a_est = out_of_tol_area(s, sc["w"])

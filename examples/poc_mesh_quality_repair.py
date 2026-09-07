@@ -902,7 +902,7 @@ def section_sliver_threshold(scene: dict) -> dict:
                    xlabel="log10(潰し具合 t)", ylabel="親の面法線からのずれ [deg]",
                    title="潰れ面の法線は親の平面から離れていく(90°=法線が作れない)")
     return {"t": ts, "found": frac, "ang": angs, "ratio": ratios,
-            "broken": nbroken, "first": first, "fb": fb}
+            "broken": nbroken, "zero": nzero, "first": first, "fb": fb}
 
 
 # --------------------------------------------------------------------------- #
