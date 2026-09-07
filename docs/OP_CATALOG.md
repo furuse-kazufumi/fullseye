@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(152 例)
+### 2-D 画像/信号/幾何(156 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -27,6 +27,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **地形を測る(傾斜・水の流れ・日当たりを閉形式と突き合わせる)** — 平面・円錐・ガウス丘という解析曲面で傾斜と曲率を検算し、離散化の誤差と式の誤りを2 次収束で区別する。欠測(水面)の扱いで集水量がどう変わるかを 3 通り並べ、日当たりを向き別に出す。**この PoC が天空率の 18 倍の遅さを暴いた**。 `py -3.11 examples/poc_dem_terrain.py`
 - **地心座標と地球の丸み(測地⇄ECEF・地心格子・曲率落ち・緯度で変わるセル寸法)** — 赤道・極・楕円体方程式・法線移動で ECEF を検算し、3700 点の往復誤差を高さ別に印字する(楕円体面 2e-9 m、20 km で 4e-6 m —— docstring の 1e-7 m は地表付近の値)。地心緯度と測地緯度の差 0.19 度、曲率落ちの表、Web メルカトル分解能、等角度格子の東西傾斜が北緯 60 度で素朴計算だと半分になることを閉形式と突き合わせる。 `py -3.11 examples/dem_geodesy_tour.py`
 - **地形解析ツアー(粗さ・TPI・D8 流向・河道・地平線仰角・可視領域)** — 平面・柱・円錐・V 字谷・壁という答えを数えられる地形で 6 op を通す。TRI=√(3/4)|∇z|·cell、谷底の集水量 W(i+1) と河道マスクのセル単位一致、壁の仰角 atan(H/d)、壁の影の長さ e·d0/(e-H)。欠測の outlet 方針は「他に下る先が無いときだけ欠測へ」と実測。 `py -3.11 examples/dem_terrain_analysis_tour.py`
+- **斜面の土量を測る(縦に引くか法線で測るか、そして合わせすぎの罠)** — 既知体積の掘削 164.2 m3 と堆積 133.7 m3 を傾斜地に仕込み、2 時期の点群から DoD(格子の引き算)と M3C2(法線方向)で測り返す。★予想「斜面では cos だけ体積が縮む」は外れ ―― 水平投影面積で積むと cos は約分し、誤差は 0〜40 度でどれも -0.011 %。間違うのは体積でなく厚さで、深さの比は sec θ に一致する。★★変化なしの対照が偽掘削 83.8 m3(真値の 51 %)を出し、しきい値を入れて 18.1 m3 に落ちる ―― **しきい値は飾りではなく本体**。★★変化域が視野の 33 % あると位置合わせが変化を吸い、正味は真値の 12.6 % に潰れる(trim 0.6 で 101.1 % に復帰)。M3C2 の利得は傾斜からしか来ない(検出限界の比は平地 1.18、40 度 3.40)。 `py -3.11 examples/poc_lidar_terrain_change.py`
 
 **metrology**
 - **白色干渉によるナノメートルの段差計測(どこまで測れるか)** — 既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。 `py -3.11 examples/poc_interferometry_step.py`
@@ -49,6 +50,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **ねじのピッチ・フランク角・有効径(傾きは左右フランクに逆符号)** — ★列幅の FFT はピッチを**半分**と答える(単条ねじの上下輪郭は P/2 ずれる)。★★軸の傾き 3 度で左右フランク角は 33.18 / 26.74 度 ―― 半和が真のフランク角、半差が傾き。片側フランクのピッチは 1 次で ±3 % 狂い、頂点間隔は 2 次(-0.12 %)。★ぼけ σ=4 px で壊れるのは d2(-0.06 %)でなく α(-0.57 度)。★標本化の崖は α(8 px/山)→ d2(4 px/山)→ FFT の P(2 px/山 まで当たり、1.5 px/山 は 3.0 px に折り返す)の順。 `py -3.11 examples/poc_screw_thread_metrology.py`
 - **骨梁の厚さ Tb.Th・間隔 Tb.Sp・骨体積率(平板モデル vs 直接法)** — ★真値が複数ある: 幅の長さ加重平均 104.8 µm、面積加重 113.9、最大内接円の定義 121.6、平板モデル 118.4 µm ―― どれと比べるかで 9〜16 % 動く。★★解像度の崖は平均でなく分布に来る(60 µm 画素で重なり 0.83 → 0.09。平均は量子化 -29.5 % と大津の太り +27.1 % が打ち消す)。★★雑音は斑点(σ 0.10 から)と途切れ(σ 0.15 から)で Tb.Sp を逆向きに引き、opening r=1 は細い骨梁ごと切る(途切れ 5 → 16 本)が面積オープニングは斑点だけ消す。★カップ状バイアス β=0.6 は全体の BV/TV -0.5 % なのに中心/縁の Tb.Th が 84/112 µm ―― 場所で壊れる。log 域のまま大津を取ると +19.6 % 太る。 `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - **年輪年代学(年数の誤差と幅の相関は別に数える)** — ★髄から 1 本の放射線でピークを数えるゼロ点は 24 方向中 18 方向でしか年数が合わないが、**間違えた 6 方向でも幅系列の相関は中央値 0.900** ―― 年数と幅の相関は別の壊れ方をする。★★極座標展開(髄中心)→外縁で半径を正規化→θ 方向メディアン→24 扇形の測定線の合意で 36 年ちょうど・幅の相関 0.996。★髄の推定誤差 20 px でも幅の相関 0.994: 予想「偏心は幅を cos で変調する」は外れで、**cos が乗るのは半径(傾き -14.9 px)、幅は 1 次で打ち消す(-0.02 px)**。減るのは髄近くの年数で幾何の予測どおり 2 年。細い年輪の崖は合意法 2.5 px(閉形式モデルの予測 1.9 px)・ゼロ点 3.0 px(予測 2.9 px)。ぼけ σ 4 px でゼロ点は欠落でなく**偽輪 13 本**を数える。 `py -3.11 examples/poc_tree_ring_dendro.py`
+- **CAD と実測点群の差分検査(合わせた分だけ欠陥が消え、無い所にへこみが出る)** — 解析形状の部品に既知のへこみ・反り・摩耗を仕込み、ゼロ点(位置合わせなしの最近傍距離 19.03 mm)から粗合わせ→ICP→符号付き偏差→公差外面積まで通す。**位置合わせが吸えるのは J=[n|X×n] の 6 次元だけ**で、局所へこみの読みは 3.7 % しか薄まらないのに、★**反りでは真値 1.2 µm の中央に深さ 121 µm の偽のへこみが出る**(閉形式の予測 -a/3 = -120 µm、引かれ方の傾きは実測 -0.322 対 予測 -1/3)。★稜線で最近傍が隣の面へ飛び、欠陥ゼロ・雑音ゼロ・姿勢は真値の対照でも 66.5 mm^2 の偽の公差外領域が出る。崖は 4 本(初期姿勢・密度・雑音 σ√(2/π)・片面欠測)で測り、素の直方体を対照に置くと**対称形でだけ残差が別解を隠す**ことも分かる。 `py -3.11 examples/poc_cad_scan_deviation.py`
 
 **photometry**
 - **天体スタックの測光精度(何枚重ねるとどこまで正確に測れるか)** — 合成星野の既知フラックスを真値に、枚数を振って測光誤差が 1/√N で下がるかを測る。宇宙線汚染で単純平均 +5.89 % に対し κ-σ +0.30 %。**選別は雑音を √2 払って系統誤差を買う取引**であることも数字で示す。 `py -3.11 examples/poc_astro_photometry.py`
@@ -130,6 +132,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **geometry**
 - **パノラマの累積ドリフト(埋もれていた既存実装はゼロ点を上回らなかった)** — 既知の回転列から 36 枚を切り出して 360 度で閉じ、閉ループ誤差で測る。ドリフトの伸びは log-log の傾き **0.894**(√N の予想は外れ、1 段あたりの偏りが効く)。**純回転 3 自由度で当てはめると 8 自由度より 2.3 倍良い**(0.275 → 0.118 px)。既存の `bundle_adjust_mosaic` は 36 枚中 30 枚を単位行列のまま返す。 `py -3.11 examples/poc_panorama_drift.py`
 - **到達時刻面を (x, y, t) の等値面として取り出す(2-D の動画を 1 枚の 3-D の面として測る)** — ★★**放物線補間は線形より悪い。しかもしきい値の置き場所で反転する** —— θ=0.5 なら線形 0.0209 / 放物線 0.0406、θ=0.2 なら 0.0744 / 0.0205。ガウス波形の変曲点θ=exp(-1/2)=0.6065 で 2 次の項が消えるからで、閉形式で言える。★等値面(`marching_cubes`)の時間軸稜線の頂点は**線形補間そのもの**(最大差 9.9e-07 ms)。★★合流線の上では勾配が 0 に落ちて速度が 1e12 px/ms へ発散するが、その場所は双曲線 r_A-r_B=c·Δt で**撮る前に予測できる**(対照群の 1 源では発散しない)。 `py -3.11 examples/poc_xyt_event_surface.py`
+- **メッシュの健全性診断と修復(直した分だけ欠陥は消え、量は戻らない)** — ★オイラー標数は 6 種の欠陥のうち 5 種に盲目で、穴 6 個と重複面 6 枚を同時に入れると健全な部品と頂点・辺・面・χ が 1 つも違わなくなる。★★「水密になった」と「体積・表面積が戻った」は別の指標 —— 幅ゼロの割れは 2 通りに直せてどちらも水密になるが、表面積の誤差は 0.0000 % と +0.1201 % に分かれる。★穴埋め後の体積は球欠の閉形式で予測できる(θ=32° で予測 -1.644 % / 実測 -1.642 %)が、表面積は縁が階段なので予測 -2.145 % に対して実測 +6.868 % と符号すら逆。★★簡略化は体積より先に曲率を壊し(50 % 削減で体積 -0.019 %・曲率 p95 +31 %)、自己交差は水密・多様体・χ をすべて通り抜ける(表面積 +4.414 % / 体積 -0.332 %)。 `py -3.11 examples/poc_mesh_quality_repair.py`
+- **造形しやすさを形から測る(しきい値に貼りついた面と、丸めで飛ぶ判定)** — ★★サポートが要る面積はしきい値 45 度の両側で段差になり、44.9 度の 185.22 mm^2 が 45.1 度で 576.10 mm^2 —— 0.2 度で 3.11 倍。部品に「ちょうど 45 度の斜面」が 390.32 mm^2 あるため。★その段差は等値面の取り方で消える —— 距離場から取ると 390.88 → 0.87 mm^2(100 % 消失、44.9 度でも解析値の 195 % 過大)、平滑化 sigma=1.5 voxel でも 12 % 削れる。★肉厚は 2 voxel 刻みに潰れ、予想した「内接球なら 1 voxel 刻み」は外れて侵食と 12 点すべて同値。刻みを持たないのはグレー値の探針だけ(誤差の中央値 0.011 mm)だが、2 voxel を切ると壁 2 枚を 1 枚と数え 4.500 mm を返す。★工具の隙間は両方向に誤判定し、粗さ 0.500 mm で 1.500 → 2.000 mm と太って入らない工具を通す。★向きを 6 通り振っても最良で 0.86 倍にしかならず、効いたのは設計(斜面を 5 度ずらすと 0.28 倍)。 `py -3.11 examples/poc_dfm_thickness_overhang.py`
 
 **imaging_quality**
 - **パネル検査のモアレは「本物のムラ」と区別できるか(打ち消しと窓長)** — うなりの周期は 2 つの周期から閉形式で出る(予測 20.00/6.67/4.00 px 対 実測 19.69/6.65/4.00)。★★低域通過でならすと σ=8 px で**合計誤差 +0.9 %** —— 完璧に見えるが内訳は**漏れ +8.3 % / 減衰 -7.4 %**。対照群 2 本(縞だけ / ムラだけ)を置かないと見えない。★★素のノッチは **δ·L が整数のときだけ**効く(+0.7 % 対 +39.1 %)—— 原因はスペクトルリーケージで、**撮り直しではなく解析窓長という software 側の問題**。 `py -3.11 examples/poc_moire_screen.py`
@@ -1490,7 +1494,7 @@ _計 897 ops / 48 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_nuclei_ploidy`, `poc_river_surface_velocity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_river_surface_velocity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1519,7 +1523,7 @@ _計 897 ops / 48 categories。_
 - `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_open` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_close` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_leaf_disease_area`
-- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`
+- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`, `poc_cell_counting`, `poc_document_scan`, `poc_leaf_disease_area`, `poc_mesh_quality_repair`
 - `select_largest` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`, `poc_leaf_disease_area`
 - `remove_small` (halcon: `select_shape`) `region → region` · 例: `gallery2d_region`, `quickstart`
 - `invert_region` (halcon: `complement`) `region → region` · 例: `gallery2d_region`

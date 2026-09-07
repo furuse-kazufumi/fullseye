@@ -1347,9 +1347,19 @@ def section_tool_gaps(ref: CadRef) -> None:
           "公差 %.2f mm には %.1f 倍足りない。"
           % (v.mean(), v.std(), TOL, v.std() / TOL))
 
-    # (e) 公差外領域の面積を出す口が無い
+    # (e) SDF の原始形状が球と直方体しかない
+    import ops3d
+    prim = [n for n in ops3d.OPS3D if n.endswith("_sdf")]
+    assert sorted(prim) == ["box_sdf", "sphere_sdf"], prim
+    assert not any(hasattr(fs, n) for n in prim)
+    print("  (e) SDF の原始形状が %s の 2 つだけで、円柱・トーラス(フィレット)・"
+          "カプセルが無い。" % " / ".join(sorted(prim)))
+    print("      ボス + 貫通穴 + 根元フィレットという普通の機械部品は"
+          "この 2 つでは組めず、この PoC は面ごとの解析式を自前で書いた。")
+
+    # (f) 公差外領域の面積を出す口が無い
     assert not hasattr(fs.ledger, "out_of_tolerance_area")
-    print("  (e) 「公差外領域の面積」を出す op が無い。検査の合否はこの 1 個の"
+    print("  (f) 「公差外領域の面積」を出す op が無い。検査の合否はこの 1 個の"
           "数字で決まるので、族に入れる価値はある(面積重みは点群では"
           "自明でないため、点 -> 面積の対応を持つ入口が要る)。")
 

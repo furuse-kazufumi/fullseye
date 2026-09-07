@@ -42,6 +42,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   溶接 X 線の気孔と等級)。展示館 61 → 65。穴は §41.10。
 - **PoC 第 4 バッチ 4 本**(フレスコのひび割れ網 / 太陽電池 EL のクラック / 年輪年代学 /
   はんだフィレット AOI)。展示館 65 → 69。穴は §41.11(`otsu` の全前景バグを含む)。
+- **PoC 3-D バッチ 4 本**(メッシュの健全性診断と修復 / LiDAR 斜面の土量と変化検出 /
+  CAD と実測点群の差分 / 造形しやすさ(肉厚・オーバーハング・工具到達性))。展示館
+  69 → **73**、新しい部屋 `wing_threed`(主題「合わせてから測ると、合わせた分だけ
+  欠陥が消える」)。穴は §41.12 —— **台帳アダプタが複数戻り値を切り落とす**同型の
+  バグが `gicp` / `grid_coords` / `voxel_to_mesh` の 3 か所、軸順の規約が点
+  `(x,y,z)` とボリューム `(depth,row,col)` で割れている件を含む。
 - packaging: `sample_sources_ai/` を package の外へ、wheel 側の同梱検査 + CI のサイズ上限(70 MB)。
 - 修正: `imgmetrics` の int8/int16 `data_range`(255/65535 → 127/32767、PSNR 6 dB ずれ)、
   `tb_wetness` がノブの半分以上で必ず失敗していた(定義域つき引数の絶対範囲表
