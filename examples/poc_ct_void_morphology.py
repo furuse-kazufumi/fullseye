@@ -410,7 +410,7 @@ def section_controls() -> dict:
                      "%.1f" % r["gap"], "%.2f" % r["flat"], "%.1f" % r["nn"],
                      "%.2f" % r["a_int"], "%.2f" % r["a_cluster"], "%.1f" % r["span"]])
 
-    fr = np.array([out[k]["frac"] for k, *_ in CONDITIONS])
+    fr = np.array([out[c[0]]["frac"] for c in CONDITIONS])
     print("\n  ★ゼロ点は 5 条件を分けられない: ボイド率 %.2f 〜 %.2f %% "
           "(開き %.2f ポイント)。合否 5 %% なら**全条件 合格**、1 %% なら**全条件 不合格**。"
           % (fr.min(), fr.max(), fr.max() - fr.min()))
