@@ -143,8 +143,11 @@ def make_master(seed: int = SEED) -> dict:
         lengths.append(float(np.hypot(x1 - x0, y1 - y0) * inside.mean()))
         widths.append(w)
     lengths, widths = np.asarray(lengths), np.asarray(widths)
+    # 長さ加重 = 「骨梁 1 本 1 本の平均幅」。面積加重 = Σ L w² / Σ L w = 「骨の画素から
+    # 見た平均幅」—— 直接法の平均(前景画素の平均)はこちらに対応する。
     return {"master": master, "segs": segs,
             "width_mean_closed": float(np.sum(lengths * widths) / np.sum(lengths)),
+            "width_mean_area": float(np.sum(lengths * widths ** 2) / np.sum(lengths * widths)),
             "widths": widths, "bvtv": float(master.mean())}
 
 
