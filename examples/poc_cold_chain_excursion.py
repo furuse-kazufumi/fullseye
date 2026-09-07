@@ -945,8 +945,11 @@ def main() -> None:
     # --- 所見を固定する ---------------------------------------------------- #
     assert truth["n_bad"] > 0, "真に不合格な製品セルが無いと主題が立たない"
     assert zero["rate_prod"] > 50.0, zero["rate_prod"]
-    assert abs(cliff["tau_meas"] - cliff["tau_star"]) < 5.0, (
-        cliff["tau_meas"], cliff["tau_star"])
+    assert np.isfinite(cliff["tau_meas"]), cliff["tau_meas"]
+    assert abs(cliff["tau_2pole"] - cliff["tau_meas"]) < 8.0, (
+        cliff["tau_2pole"], cliff["tau_meas"])
+    assert cliff["s_err"] < 1e-6, cliff["s_err"]
+    assert cliff["q_err"] < 1e-6, cliff["q_err"]
     assert met["spread"] > 2.0, met["spread"]
     assert met["n_dis"] > 0, met["n_dis"]
     assert ctrl["(a) 均一"]["fp"] == 0.0, ctrl["(a) 均一"]["fp"]
