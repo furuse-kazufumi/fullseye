@@ -644,15 +644,18 @@ def section_dropout(train_rows, test_rows) -> dict:
           "届く最小のセンサ組):")
     need = {}
     for i, m in enumerate(MODES):
+        solos = [(l, k) for l, k in SUBSETS
+                 if len(k) == 1 and table[l]["rate"][i] >= full[i] - 0.01]
         best = None
         for label, keys in SUBSETS:
             if table[label]["rate"][i] >= full[i] - 0.01:
                 if best is None or len(keys) < len(best[1]):
                     best = (label, keys)
         need[m] = best
-        print("     * %-10s 3 センサ %.1f %% -> **%s だけで %.1f %%**(センサ %d 個)"
-              % (m, 100 * full[i], "+".join(best[1]),
-                 100 * table[best[0]]["rate"][i], len(best[1])))
+        print("     * %-10s 3 センサ %.1f %% -> 最小 %d 個。届く 1 個: %s"
+              % (m, 100 * full[i], len(best[1]),
+                 " / ".join("%s %.1f %%" % (k[0], 100 * table[l]["rate"][i])
+                            for l, k in solos) or "なし"))
     print("  ★**1 個で足りるモードが %d/%d**。融合の値打ちは平均正解率ではなく、"
           % (sum(1 for b in need.values() if len(b[1]) == 1), len(MODES)))
     print("     「1 個では足りないのはどれか」でしか測れない。")
