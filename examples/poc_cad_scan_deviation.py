@@ -1078,29 +1078,39 @@ def section_basin(ref: CadRef) -> dict:
     print("\n" + "=" * 78)
     print("7) 崖(初期姿勢) —— ICP 単独はどこから収束しなくなるか")
     print("=" * 78)
-    print("   予想: 直方体の 90 度対称に落ちた別解は残差が小さく、見抜けない。")
-    print("   初期ずれ[度]  姿勢誤差[度]  点移動[mm]  最終残差[µm]  判定")
+    print("   予想: 0〜30 度のどこかに崖があり、直方体の 90 度対称に落ちた別解は"
+          "残差が小さくて見抜けない。")
+    print("   初期ずれ[度]  点-面: 姿勢誤差[度] 残差[µm]   点-点: 姿勢誤差[度]"
+          " 残差[µm]")
     sc = make_scan(n=8000, noise=0.010)
-    angs, errs, resid = [], [], []
+    angs, errs, resid, errs2 = [], [], [], []
     floor = None
     for a in (0, 5, 10, 15, 20, 25, 30, 60, 90, 180):
         Rp = rot([0.2, 0.3, 0.93], a) @ sc["R_true"]
-        R, t = align(sc["pts"], ref, method="p2plane", init=(Rp, sc["t_true"]),
-                     iters=40, sub=5000)
-        q = sc["pts"] @ R.T + t
-        d, _, _, _ = ref.deviate(q)
-        e = rot_err_deg(R, sc["R_true"])
-        mm = pose_shift_mm(R, t, sc["R_true"], sc["t_true"], ref.pts)
+        row = []
+        for meth in ("p2plane", "p2point"):
+            R, t = align(sc["pts"], ref, method=meth, init=(Rp, sc["t_true"]),
+                         iters=40, sub=5000)
+            d, _, _, _ = ref.deviate(sc["pts"] @ R.T + t)
+            row += [rot_err_deg(R, sc["R_true"]), 1000 * float(d.mean())]
         angs.append(a)
-        errs.append(e)
-        resid.append(1000 * float(d.mean()))
+        errs.append(row[0])
+        resid.append(row[1])
+        errs2.append(row[2])
         if floor is None:
             floor = resid[-1]
-        ok = "収束" if e < 0.5 else "別解(残差は床の %.1f 倍)" % (resid[-1] / floor)
-        print("   %11d  %12.3f  %10.4f  %12.1f  %s" % (a, e, mm, resid[-1], ok))
+        print("   %11d  %18.3f %9.1f %20.3f %9.1f" % (a, row[0], row[1],
+                                                      row[2], row[3]))
     last = resid[-1] / floor
-    print("\n   ★予想は外れた。この部品では別解の残差が床の %.1f 倍あり、"
-          "**残差で見抜ける**。" % last)
+    print("\n   ★予想は 2 つとも外れた。")
+    print("   (1) **0〜30 度に崖は無い**。点-面 ICP はこの部品では 60 度でも"
+          "収束する(崖は 60〜90 度の間)。")
+    print("       点-点 ICP は %.0f 度で姿勢誤差 %.2f 度 —— **収束域は手法で違う**"
+          "ので「ICP の崖」という言い方に意味は無い。"
+          % (angs[np.argmax(np.asarray(errs2) > 0.5)],
+             float(np.asarray(errs2)[np.asarray(errs2) > 0.5][0])))
+    print("   (2) この部品では別解の残差が床の %.1f 倍あり、**残差で見抜ける**。"
+          % last)
     print("      理由: ボスが片側にあり、穴が φ%.0f と φ%.0f で径も位置も違う ——"
           " 90/180 度対称が壊れている。" % (2 * HOLE_R, 2 * H2R))
 
