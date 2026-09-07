@@ -930,8 +930,9 @@ def section_systematic(tr: dict) -> dict:
                    title="系統誤差が生む偽の土量は傾斜に比例する",
                    caption="変化ゼロの対照。DoD と M3C2 は体積では同じだけ間違える。"
                            "雑音は正味では打ち消すので予測と直接比べられる。")
-    return {"mag": mags, "pred": pred, "dod": md, "m3c2": mm, "abs": ma,
-            "after": aft, "plane": res, "eat": eat, "base_net": base_net}
+    return {"mag": mags, "pred": pred, "dod": md, "m3c2": mm, "m3c2_cov": mc,
+            "after": aft, "plane": res, "eat": eat, "base_net": base_net,
+            "rate": rate}
 
 
 # --------------------------------------------------------------------------- #
