@@ -561,8 +561,8 @@ def section_frangi_norm() -> dict:
     raw = crack_skeleton(s0, calibrate=False)
     cal = crack_skeleton(s0, calibrate=True)
     len_raw, len_cal = _skeleton_length(raw), _skeleton_length(cal)
-    print("  同じヒステリシス(0.2 / 0.5)で偽クラック: 校正線なし %.0f px / "
-          "校正線あり %.0f px" % (len_raw, len_cal))
+    print("  同じヒステリシス(%.2f / %.2f)で偽クラック: 校正線なし %.0f px / "
+          "校正線あり %.0f px" % (HYST_LOW, HYST_HIGH, len_raw, len_cal))
     sc = make_scene()
     s = degrid(flatten(sc["img"])[0])
     ridge1 = np.asarray(fs.apply(np.clip(s / 1.25, 0, 1), "sk_frangi", a=0.25, b=0.5))
