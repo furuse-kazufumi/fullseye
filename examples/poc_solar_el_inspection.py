@@ -589,34 +589,61 @@ def section_pipeline(sc: dict) -> dict:
 # --------------------------------------------------------------------------- #
 def section_frangi_norm() -> dict:
     print("\n" + "=" * 78)
-    print("3) ★sk_frangi は画像ごとの最大値で正規化する —— 欠陥ゼロの対照セル")
+    print("3) ★sk_frangi は画像ごとの最大値で正規化する —— 尺度は「いちばん強いもの」が決める")
     print("=" * 78)
-    sc0 = make_scene(defects=False)
-    s0 = degrid(flatten(sc0["img"])[0])
-    v = np.clip(s0 / 1.25, 0, 1)
-    ridge = np.asarray(fs.apply(v, "sk_frangi", a=0.25, b=0.5))
-    print("  欠陥ゼロの平坦化像に Frangi: 最大 %.3f / 99 %% 分位 %.3f / 中央値 %.4f"
-          % (ridge.max(), np.quantile(ridge, 0.99), np.median(ridge)))
-    raw = crack_skeleton(s0, calibrate=False)
-    cal = crack_skeleton(s0, calibrate=True)
-    len_raw, len_cal = _skeleton_length(raw), _skeleton_length(cal)
-    print("  同じヒステリシス(%.2f / %.2f)で偽クラック: 校正線なし %.0f px / "
-          "校正線あり %.0f px" % (HYST_LOW, HYST_HIGH, len_raw, len_cal))
-    sc = make_scene()
-    s = degrid(flatten(sc["img"])[0])
-    ridge1 = np.asarray(fs.apply(np.clip(s / 1.25, 0, 1), "sk_frangi", a=0.25, b=0.5))
-    print("  欠陥ありでは 99 %% 分位 %.3f —— 同じ op、同じ雑音でも欠陥の有無で"
-          "スケールが変わる。" % np.quantile(ridge1, 0.99))
-    print("  ★対処: 既知の深さ %.2f・幅 %.1f px の校正線を画像の下に貼り、"
-          "正規化の分母をそれに固定する。" % (CRACK_T, CRACK_W))
-    assert len_cal < 0.25 * max(len_raw, 1.0), (len_raw, len_cal)
-    figs.save_grid("frangi_norm", [ridge, raw.astype(np.float64), cal.astype(np.float64)],
-                   ["欠陥ゼロ: Frangi 応答(最大 1.0 に伸びる)",
-                    "校正線なし: 偽クラック %.0f px" % len_raw,
-                    "校正線あり: %.0f px" % len_cal],
-                   ncols=3, title="相対値しか返さない op は欠陥の有無で意味が変わる")
-    return {"len_raw": len_raw, "len_cal": len_cal, "q99_clean": float(np.quantile(ridge, 0.99)),
-            "q99_defect": float(np.quantile(ridge1, 0.99))}
+    scenes = (("欠陥ゼロ", make_scene(defects=False)), ("既定", make_scene()),
+              ("既定 + 深いクラック 1 本", make_scene(deep=True)))
+    print("  校正線(幅 %.0f px・透過 %.1f、ぼけを通す)の応答 = その画像で校正線が最大かどうか:"
+          % (REF_W, REF_T))
+    out = {}
+    for name, sc in scenes:
+        s = degrid(flatten(sc["img"])[0])
+        _, weak = ridge_map(s, ref_w=CRACK_W, ref_t=CRACK_T)
+        rm, strong = ridge_map(s)
+        raw, _ = ridge_map(s, calibrate=False)
+        anyt = np.zeros_like(rm, bool)
+        for m in sc["crack_lines"][:len(CRACKS)]:
+            anyt |= m
+        r_cal = analyze(sc, calibrate=True)
+        r_raw = analyze(sc, calibrate=False)
+        med_cal = float(np.median(rm[anyt])) if anyt.any() else float("nan")
+        med_raw = float(np.median(raw[anyt])) if anyt.any() else float("nan")
+        out[name] = {"weak": weak, "strong": strong, "false_cal": r_cal["false_len"],
+                     "false_raw": r_raw["false_len"],
+                     "rec_cal": float(np.mean(r_cal["recall"][:len(CRACKS)])) if anyt.any() else float("nan"),
+                     "rec_raw": float(np.mean(r_raw["recall"][:len(CRACKS)])) if anyt.any() else float("nan"),
+                     "med_cal": med_cal, "med_raw": med_raw}
+        print("   %-22s 校正線の応答: 実クラックと同じ線 %.2f / 強い線 %.2f"
+              % (name, weak, strong))
+    print("\n   場面                   クラック応答(中央値): 校正あり / なし   偽クラック [px]: あり / なし"
+          "   再現率(5 本平均): あり / なし")
+    for name, o in out.items():
+        print("   %-22s        %5.2f / %5.2f                 %5.0f / %5.0f              %s"
+              % (name, o["med_cal"], o["med_raw"], o["false_cal"], o["false_raw"],
+                 "  -  " if np.isnan(o["rec_cal"]) else "%.2f / %.2f" % (o["rec_cal"], o["rec_raw"])))
+    o0, o1, o2 = out.values()
+    print("\n  ★実クラックと同じ線を貼っても応答 %.2f で最大ではない —— 尺度はクラック"
+          "の側で決まり、校正線は何も固定しない。" % o1["weak"])
+    print("     幅 %.0f px・透過 %.1f の強い線なら 3 場面とも %.2f〜%.2f で最大 = 尺度が固定。"
+          % (REF_W, REF_T, min(o["strong"] for o in out.values()),
+             max(o["strong"] for o in out.values())))
+    print("  ★校正なしでは、欠陥ゼロで偽クラック %.0f px(雑音が 1.0 に伸びる)、深いクラックを"
+          "1 本足すと 5 本の再現率 %.2f → %.2f(1 本が他の 5 本を消す)。校正ありは "
+          "%.2f → %.2f。" % (o0["false_raw"], o1["rec_raw"], o2["rec_raw"],
+                            o1["rec_cal"], o2["rec_cal"]))
+    assert o1["weak"] < 0.9 and o1["strong"] > 0.99, (o1["weak"], o1["strong"])
+    assert o0["false_raw"] > 10 * max(o0["false_cal"], 1.0), (o0["false_raw"], o0["false_cal"])
+    sc2 = scenes[2][1]
+    s2 = degrid(flatten(sc2["img"])[0])
+    figs.save_grid("frangi_norm",
+                   [ridge_map(s2, calibrate=False)[0], ridge_map(s2)[0],
+                    analyze(sc2, calibrate=False)["sk"].astype(np.float64),
+                    analyze(sc2)["sk"].astype(np.float64)],
+                   ["校正なし: 深いクラックが 1.0、他は縮む", "校正あり: 強い校正線が 1.0",
+                    "校正なしの骨格(再現率 %.2f)" % o2["rec_raw"],
+                    "校正ありの骨格(再現率 %.2f)" % o2["rec_cal"]],
+                   ncols=2, title="最大値で正規化する op は、いちばん強い欠陥が尺度を決める")
+    return {"out": out}
 
 
 # --------------------------------------------------------------------------- #
