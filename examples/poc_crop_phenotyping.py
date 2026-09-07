@@ -490,7 +490,7 @@ def section_scene():
           % (cov, float(buf["layer"].mean()), k_true * can["lai"],
              100 * (float(buf["layer"].mean()) - k_true * can["lai"])
              / (k_true * can["lai"])))
-    return can, buf, k_true, (inc, ar, nz)
+    return can, buf, k_true
 
 
 # --------------------------------------------------------------------------- #
@@ -1071,7 +1071,7 @@ def section_leaf_angle(can, buf_fine):
                             "斜めで初めて葉角分布が要る。")
     return {"k_pts": k_pts, "k_naive": k_naive, "k_ref": k_ref, "h99": h99,
             "rows": rows, "n_pts": int(pts.shape[0]), "z_g": z_g,
-            "cov": cov, "turbid": turbid}
+            "cov": cov, "turbid": turbid, "k_c": k_true}
 
 
 # --------------------------------------------------------------------------- #
@@ -1221,13 +1221,13 @@ def main() -> int:
           % (PLOT, LEAF_L, LEAF_W, BETA_DEG))
     print("=" * 78)
 
-    can, buf_fine, k_true, mesh_stats = section_scene()
+    can, buf_fine, k_true = section_scene()
     cap = section_stem_capsule()
     zero = section_zero_point(k_true)
     cliff = section_cliff(k_true)
     ctrl = section_controls(k_true)
     sw = section_sweeps()
-    ang = section_leaf_angle(ctrl["can_c"], ctrl["buf_fine"], k_true, mesh_stats)
+    ang = section_leaf_angle(ctrl["can_c"], ctrl["buf_fine"])
     wind = section_wind(k_true)
     vol = section_volume(can, buf_fine)
     section_tool_gaps()
@@ -1259,7 +1259,7 @@ def main() -> int:
     assert all(p > m for p, m in zip(cliff["pred_l"], cliff["meas_l"])), "予測は楽観的"
     assert abs(wind["d_upd"]) < abs(wind["d_fix"]), "k の更新は片方しか直さない"
     assert ang["k_naive"] > ang["k_pts"], "推定法線に面積加重を掛けると崩れる"
-    assert 0.02 < abs(ang["k_ref"] - k_true) / k_true < 0.15, "真の法線でも最上面からは復元しきれない"
+    assert 0.02 < abs(ang["k_ref"] - ang["k_c"]) / ang["k_c"] < 0.15,         "真の法線でも最上面からは復元しきれない"
     assert ang["turbid"] > ang["cov"], "一様媒質モデルは受光を過大評価する"
     assert zero["lai_kt"][0] / zero["lai_true"][0] > 0.95, "薄い群落では当たる"
     assert all(abs(a) > abs(b) for a, b in zip(cap["area_sdf"], cap["area_sdf"][1:])), \
