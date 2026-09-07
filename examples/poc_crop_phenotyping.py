@@ -511,12 +511,18 @@ def section_cliff(k_true):
     vis = np.asarray(vis)
 
     pred_vis = (1.0 - np.exp(-k_true * lai_t)) / k_true
-    print("\n   真の LAI   見えている葉面積   予測(1-e^-kL)/k   比")
+    pred_vis2 = cover / k_true      # 精密版: 見える葉 = 植被率 x E[1/|n.z|](最上面)
+    print("\n   真の LAI   見えている葉面積   予測(1-e^-kL)/k   比   精密版 C/k   比")
     for i in (0, 3, 6, 11, 17, 23):
-        print("   %8.3f   %14.4f   %15.4f   %6.3f"
-              % (lai_t[i], vis[i], pred_vis[i], vis[i] / pred_vis[i]))
-    print("  ★天井の実測 %.4f m^2/m^2(LAI %.2f)、予測 1/k = %.4f —— 比 %.3f。"
-          % (vis[-1], lai_t[-1], 1.0 / k_true, vis[-1] * k_true))
+        print("   %8.3f   %14.4f   %15.4f  %5.3f   %9.4f  %5.3f"
+              % (lai_t[i], vis[i], pred_vis[i], vis[i] / pred_vis[i],
+                 pred_vis2[i], vis[i] / pred_vis2[i]))
+    print("  ★天井の実測 %.4f m^2/m^2(LAI %.2f、植被率 %.4f)。"
+          % (vis[-1], lai_t[-1], cover[-1]))
+    print("     予測 1/k = %.4f に対し実測は %.3f 倍 —— **予測は上限として正しく、"
+          "足りない分は\n     並び方(裸地が残る + 最上面が水平な葉に偏る)**。"
+          "精密版 C/k = %.4f なら比 %.3f。"
+          % (1.0 / k_true, vis[-1] * k_true, pred_vis2[-1], vis[-1] / pred_vis2[-1]))
     print("     LAI が %.2f -> %.2f と %.1f 倍になっても見える葉は %.2f 倍にしか"
           "ならない。" % (lai_t[5], lai_t[-1], lai_t[-1] / lai_t[5],
                           vis[-1] / vis[5]))
