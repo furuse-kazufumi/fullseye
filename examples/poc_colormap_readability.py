@@ -319,9 +319,11 @@ def section_cliff() -> dict:
         a = np.asarray(fs.apply_cmap(tt[None, :], name, vmin=0.0, vmax=1.0))
         b = np.asarray(fs.apply_cmap((tt + dt_px)[None, :], name, vmin=0.0, vmax=1.0))
         false_pred = float(np.asarray(fs.delta_e_map(a, b))[0].max())
+        # ★段差の列で読み取れる差は Δ **+ 画素 1 個ぶんのランプ** —— これを
+        #   忘れると崖を 2 倍高く見積もる(最初そう書いて 0.57 vs 実測 0.30 になった)
         rr = np.asarray(fs.apply_cmap(np.array([[t0]] * len(deltas)), name,
                                       vmin=0.0, vmax=1.0))
-        ss = np.asarray(fs.apply_cmap((t0 + deltas)[:, None], name,
+        ss = np.asarray(fs.apply_cmap((t0 + deltas + dt_px)[:, None], name,
                                       vmin=0.0, vmax=1.0))
         real_pred = np.asarray(fs.delta_e_map(rr, ss))[:, 0]
         pred[name] = _cross(deltas, real_pred, false_pred)
