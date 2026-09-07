@@ -1047,9 +1047,9 @@ def section_sweep_dt(clear: np.ndarray) -> dict:
                  ("%+.1f" % (c - pred[k])) if np.isfinite(c) else "-"))
     print("  ★崖の**順番**は予測どおり(短い待ちから消える)。")
     i2 = list(dts).index(2.0)
-    print("  ★★Δt=%.1f 秒では欠品が %.0f/%d まで落ちているのに、ゼロ点は "
-          "%.1f -> %.1f 秒(%+.1f %%)。"
-          % (dts[i2], rec["欠品"][i2] * 4, 4, zeros[1], zeros[i2],
+    print("  ★★Δt=%.1f 秒では欠品の検出率が %.2f、通路の干渉が %.2f まで"
+          "落ちているのに、ゼロ点は %.1f -> %.1f 秒(%+.1f %%)。"
+          % (dts[i2], rec["欠品"][i2], rec["通路の干渉"][i2], zeros[1], zeros[i2],
              100 * (zeros[i2] - zeros[1]) / zeros[1]))
     print("     しかもその %+.1f %% は「滞留が減った」としか読めない —— "
           "実際には**測れなくなっただけ**。"
