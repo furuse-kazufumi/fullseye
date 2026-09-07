@@ -594,7 +594,8 @@ def section_sweep(pair) -> dict:
         title="加算的な汚れ: 2 次微分だけが平ら", ylim=(0.0, 1.05))
     figs.save_plot(
         "sweep_methods_wet",
-        [(m.split(":")[0], LEVELS, out_det["wet"][k]) for k, m in SWEEP_METHODS],
+        [(m.split(":")[0], LEVELS, out_det["wet"][k])
+         for k, m in SWEEP_METHODS if k in out_det["wet"]],
         xlabel="水の深さ [-]", ylabel="検出画素の材質別再現率 [-]",
         title="濡れ: ★予測が外れた —— 2 次微分は水の広い帯を潰す", ylim=(0.0, 1.05))
     figs.save_plot(
