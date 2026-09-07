@@ -466,8 +466,8 @@ def _labeled_map(grid, row_labels, col_labels, row_title, col_title,
                                      anchor="rm", font_size=11, box_alpha=0.0,
                                      border=0))
     for b_, lab in enumerate(col_labels):
-        img = np.asarray(fs.text_box(img, lab, (pl + cell * b_ + cell // 2, pt + h + 6),
-                                     anchor="cb", font_size=11, box_alpha=0.0,
+        img = np.asarray(fs.text_box(img, lab, (pl + cell * b_ + cell // 2, pt + h + 5),
+                                     anchor="ct", font_size=11, box_alpha=0.0,
                                      border=0))
         # 数値もセルに焼く(見た目の色だけでは読み取れないため)
     for a_ in range(g.shape[0]):

@@ -959,7 +959,10 @@ def bev_img(a) -> np.ndarray:
     i1 = int((CROP_X[1] - BOUNDS[0][0]) / CELL)
     j0 = int((CROP_Y[0] - BOUNDS[1][0]) / CELL)
     j1 = int((CROP_Y[1] - BOUNDS[1][0]) / CELL)
-    return np.asarray(a, float)[i0:i1, j0:j1][::-1, ::-1]
+    v = np.asarray(a, float)[i0:i1, j0:j1][::-1, ::-1]
+    # パネルが小さすぎると題が入らない(annotate は切り詰めずに例外にする)ので
+    # 最近傍で 2 倍に伸ばす。BEV は格子そのものなので補間はしない。
+    return np.repeat(np.repeat(v, 2, axis=0), 2, axis=1)
 
 
 def _tri_color(occ, gt, evalm) -> np.ndarray:
