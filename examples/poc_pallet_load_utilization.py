@@ -601,7 +601,7 @@ def main() -> None:
             assert slots["series"][w][0][i] < 0.10, (w, slots["series"][w][0][i])
     # 4) 粗い格子は偽のはみ出しを作り、どこかで B の真のはみ出しを追い越す
     assert all(b >= a for a, b in zip(over["meas"], over["meas"][1:]))
-    assert any(m > r for m, r in zip(over["meas"], over["real"]))
+    assert any(m > over["true_over"] for m in over["meas"])
     assert all(0.5 < m / p < 1.5 for m, p in zip(over["meas"], over["pred"]))
     # 5) IoU は両方 0.9 台 —— 1 個の一致度は種類別の違いに盲目
     assert 0.90 < iou["iou"]["A"] < 0.99, iou["iou"]
