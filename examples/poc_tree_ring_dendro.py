@@ -463,8 +463,9 @@ def predict_detectable(w: float, blur: float, mode: str) -> bool:
     xs = np.arange(x[0], x[-1], 1.0 / OVS)
     sm = np.asarray(fs.smooth_funct_1d_gauss(np.interp(xs, x, prof), SIG_M * OVS))
     g = np.asarray(fs.derivate_funct_1d(sm)) * OVS
-    win = (xs > w - 1.5) & (xs < w + 1.5)
-    return bool(g[win].max() >= THR)
+    # 年輪の両側の境界(x=0 と x=w)が**別々の**勾配の山として THR 以上で立つこと
+    pk = np.asarray(fs.find_peaks(g, height=THR, distance=1), int)
+    return int(np.sum((xs[pk] >= -1.5) & (xs[pk] < w + 1.5))) >= 2
 
 
 def model_cliff(blur: float, mode: str) -> float:
