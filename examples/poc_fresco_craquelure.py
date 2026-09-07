@@ -194,7 +194,14 @@ def render(net: dict, rng, tex_c: float = TEX_C, rake: float = 0.0,
                 blur=blur)
 
 
+_SCENES: dict = {}
+
+
 def make_scene(kind: str, seed: int = SEED, **kw) -> dict:
+    """同じ引数なら同じシーン(決定的)。何度も呼ぶので memo する。"""
+    key = (kind, seed, tuple(sorted(kw.items())))
+    if key in _SCENES:
+        return _SCENES[key]
     rng = np.random.default_rng(seed)
     net = make_net(kind, rng, **{k: v for k, v in kw.items()
                                  if k in ("cell", "beta", "aspect", "warp_amp", "warp_len", "n")})
