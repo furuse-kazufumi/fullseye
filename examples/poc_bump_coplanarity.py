@@ -107,7 +107,7 @@ def _warp_modes(n_pix: int) -> tuple[np.ndarray, np.ndarray]:
     bowl = unit_pv(xi ** 2 + eta ** 2)
     saddle = unit_pv(xi ** 2 - eta ** 2)
     lobe = unit_pv(xi ** 4 + eta ** 4 - 6.0 * xi ** 2 * eta ** 2)
-    w = 0.55 * bowl + 0.33 * saddle + 0.08 * lobe
+    w = 0.50 * bowl + 0.30 * saddle + 0.20 * lobe
     w = w - w.mean()
     return w / (w.max() - w.min()), g
 
