@@ -900,7 +900,7 @@ def section_maps(alignres: dict, zero: dict, seed: int = SEED) -> dict:
 
     m0 = measure_elements(p0, seed=seed)
     rack0 = 0.5 * (m0["wx0"] + m0["wx1"])
-    splay0 = 0.5 * (m0["wy0"] - m0["wy1"])
+    splay0 = 0.5 * (m0["wy1"] - m0["wy0"])
     print("   誤差ゼロの建物を同じ手順で測ると: 壁の傾き %+.2f mrad / 開き %+.2f mrad /"
           % (1000 * rack0, 1000 * splay0))
     print("     床の勾配 %+.2f mrad / 天井の勾配 %+.2f mrad / 床の反り PV %.2f mm /"
