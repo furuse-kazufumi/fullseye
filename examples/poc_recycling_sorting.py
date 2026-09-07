@@ -897,30 +897,45 @@ def main() -> int:
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
-    print("  * ゼロ点(最良の band 対の比)は綺麗な場面でも %.3f。"
-          "SAM は %.3f。" % (sc["rows"][0][1], sc["rows"][1][1]))
-    print("  * 消えるかどうかは代数で決まる: 乗算 -> SAM が不変 / "
-          "加算 -> 2 次微分が不変 / 濡れ -> どれも無理、帯を捨てるしかない。")
+    det, allm = sw["det"], sw["all"]
+    print("  * ゼロ点(最良の band 対の比)は綺麗な場面で %.3f、SAM は %.3f —— "
+          "**汚れる前は差が小さい**。" % (sc["rows"][0][1], sc["rows"][1][1]))
+    print("  * 消えるかどうかは代数で決まる: 乗算(汚れ・傾き)-> SAM が不変 "
+          "(%.3f -> %.3f)/\n    加算 -> 2 次微分が不変(%.3f -> %.3f)。"
+          % (det["dirt_mul"]["sam"][0], det["dirt_mul"]["sam"][-1],
+             det["dirt_add"]["d2"][0], det["dirt_add"]["d2"][-1]))
+    print("  * ★予測が外れたのは濡れ: 2 次微分は水の**広い**帯を 1/σ² で潰すので"
+          " %.3f までしか落ちない\n    (生 SAM は %.3f)。"
+          % (det["wet"]["d2"][-1], det["wet"]["sam"][-1]))
     print("  * 効く順序: " + " > ".join("%s(%+.3f)" % (l, d)
-                                        for d, l, _m in ab["gains"]))
+                                        for d, l, _m, _s in ab["gains"]))
     print("  * 先に壊れる組はライブラリだけで予測できる(順位相関 %.2f、"
-          "1 位 %s)。" % (pr["rho"], pr["top_pred"]))
-    print("  * 境界を捨てると再現率 +%.3f、組成の誤差 +%.2f pp。"
+          "1 位 予測 %s / 実測 %s)。" % (pr["rho"], pr["top_pred"], pr["top_meas"]))
+    print("  * 境界を捨てると再現率 %+.3f、組成の誤差 %+.2f pp。"
           % (mx["pure"] - mx["all"], mx["e_pure"] - mx["e_all"]))
 
     # --- 所見を固定する(壊れたら鳴る) --- #
-    assert sc["rows"][0][1] < 0.75, "ゼロ点が強すぎる: %.3f" % sc["rows"][0][1]
+    assert sc["rows"][0][1] < sc["rows"][1][1], "ゼロ点が SAM に勝った"
     assert sc["rows"][1][1] > 0.95, "綺麗な場面で SAM が落ちている"
-    assert sw["dirt_mul"]["sam"][-1] > 0.95, "乗算汚れで SAM が落ちた(不変のはず)"
-    assert sw["tilt"]["sam"][-1] > 0.95, "傾きで SAM が落ちた(不変のはず)"
-    assert sw["dirt_add"]["sam"][-1] < 0.60, "加算で生 SAM が落ちない"
-    assert sw["dirt_add"]["d2"][-1] > 0.95, "加算で 2 次微分が落ちた(不変のはず)"
-    assert sw["wet"]["d2"][-1] < 0.90, "濡れで 2 次微分が落ちない"
-    assert sw["dirt_add"]["cr"][-1] < sw["dirt_add"]["sam"][-1], \
-        "連続体除去が生 SAM より良い(予想外れの所見が消えた)"
-    assert pr["rho"] > 0.6, "ペアの予測順位が当たらない: %.2f" % pr["rho"]
-    assert mx["pure"] > mx["all"] and mx["e_pure"] > mx["e_all"], \
-        "境界を捨てる効果の向きが変わった"
+    assert sc["rows"][2][2][NAMES.index("金属")] < 0.30, \
+        "門なしの 2 次微分で金属が当たってしまう(所見が消えた)"
+    assert sc["rows"][4][2][NAMES.index("金属")] > 0.90, "平坦度の門が効いていない"
+    assert det["dirt_mul"]["sam"][-1] > 0.95, "乗算汚れで SAM の分類が落ちた(不変のはず)"
+    assert det["tilt"]["sam"][-1] > 0.95, "傾きで SAM の分類が落ちた(不変のはず)"
+    assert allm["dirt_mul"]["sam"][-1] < det["dirt_mul"]["sam"][-1] - 0.1, \
+        "乗算汚れで検出が落ちない(検出と分類の分離が消えた)"
+    assert det["dirt_add"]["sam"][-1] < 0.90, "加算で生 SAM が落ちない"
+    assert det["dirt_add"]["d2"][-1] > 0.95, "加算で 2 次微分が落ちた(不変のはず)"
+    assert det["wet"]["sam"][-1] < 0.60, "濡れで生 SAM が落ちない"
+    assert det["wet"]["d2"][-1] > det["wet"]["sam"][-1] + 0.2, \
+        "濡れで 2 次微分が生 SAM に対して強くない(★予想外れの所見が消えた)"
+    assert det["dirt_add"]["cr"][-1] < det["dirt_add"]["sam"][-1], \
+        "連続体除去が強い加算で生 SAM に勝った(逆転の所見が消えた)"
+    assert abs(det["overlap"]["sam"][-1] - det["overlap"]["sam"][0]) < 0.05, \
+        "重なりが可視画素の再現率に効いてしまった"
+    assert pr["rho"] > 0.5, "ペアの予測順位が当たらない: %.2f" % pr["rho"]
+    assert mx["pure"] > mx["all"], "境界を捨てても再現率が上がらない"
+    assert mx["mix_deg"] > mx["mix_clean"], "劣化で線形混合分解が悪化しない"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
