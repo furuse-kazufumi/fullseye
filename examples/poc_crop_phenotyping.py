@@ -251,8 +251,8 @@ def canopy_buffers(can, cell=CELL, with_stem=True):
             flat = (rr * n + cc)[m]
             layer += np.bincount(flat, minlength=n * n)
             r, c = flat // n, flat % n
-            better = STEM_H > top[r, c]
-            top[r[better], c[better]] = STEM_H
+            better = can["stem_h"] > top[r, c]
+            top[r[better], c[better]] = can["stem_h"]
             nzb[r[better], c[better]] = 1.0        # 円板として扱う(先端の切り口)
 
     return {"top": top, "nz": nzb, "lid": lid,
