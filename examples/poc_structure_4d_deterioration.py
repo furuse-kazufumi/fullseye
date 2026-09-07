@@ -1221,22 +1221,26 @@ def section_prism_and_crack(sc: dict) -> dict:
     cur_b = observe(2, np.random.default_rng(SEED + 512))
     cen_b, nor_b, ok_b = core_normals(ref_b)
     tfb = truth_footprint(2)
+    p_ref, r_ref, n_in = bearing_pose(ref_b, 0)
+    print("      支承の位置は ``ransac_cylinder`` で測る(inlier %d 点、"
+          "推定半径 %.4f m / 真 %.4f m)。" % (n_in, r_ref, BEARING_R))
     print("      合わせ方              桁の面の偽の変化 RMS[mm]   支承の水平移動[mm]"
-          "   支承の沈下[mm](真 %.2f)" % SETTLE_MM[2])
-    prow = []
+          "(真 0)  支承の沈下[mm](真 %.2f)" % SETTLE_MM[2])
+    prow, fake_h = [], 0.0
     for name, msk in (("桁だけで合わせる", lambda v: v[:, 2] > -0.95),
                       ("支承も入れて合わせる", None)):
         q = register(cur_b, ref_b, mask=msk)[0]
         ln, _, _ = measure_normal(ref_b, q, cen_b, nor_b, ok_b)
         heal = np.isfinite(ln) & ~CORES["edge"] & (np.abs(tfb) < 0.3)
-        bl, _, _ = measure_normal(ref_b, q, bp, bn, np.ones(bp.shape[0], bool))
-        d0 = fit_translation(bn[bi == 0], bl[bi == 0])
+        p_cur, _, _ = bearing_pose(q, 0)
+        dxz = (p_cur - p_ref) * 1e3
         rms_h = float(np.sqrt(np.mean(ln[heal] ** 2)))
-        prow.append([name, "%.3f" % rms_h, "%+.2f" % d0[0], "%.2f" % (-d0[2])])
-        print("      %-20s %18.3f %21.2f %21.2f"
-              % (name, rms_h, d0[0], -d0[2]))
+        prow.append([name, "%.3f" % rms_h, "%+.2f" % dxz[0], "%.2f" % (-dxz[1])])
+        if not prow[:-1]:
+            fake_h = abs(float(dxz[0]))
+        print("      %-20s %18.3f %21.2f %25.2f"
+              % (name, rms_h, dxz[0], -dxz[1]))
     _CAMBER[0] = CAMBER
-    fake_h = abs(float(prow[0][2].replace("+", "")))
     print("      ★★桁の平面には**ほとんど嘘が出ない**(法線が x にほぼ直交するから)"
           "のに、支承の円柱は法線が ±x を\n         向くので、"
           "x の残差がそのまま「支承が %.2f mm 水平に動いた」という所見になる"
