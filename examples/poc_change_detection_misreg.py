@@ -350,8 +350,13 @@ def edge_inventory(seg_len: float = 4.0) -> list:
         for i in range(4):
             add_side(corners[i], corners[(i + 1) % 4], C)
 
+    def px_corners(y0, y1, x0, x1):
+        """画素矩形(rect_px)の縁 = 半整数。"""
+        y0, y1, x0, x1 = y0 - 0.5, y1 - 0.5, x0 - 0.5, x1 - 0.5
+        return [(y0, x0), (y0, x1), (y1, x1), (y1, x0)]
+
     for (y0, y1, x0, x1, alb) in FIELDS.values():
-        add_rect([(y0, x0), (y0, x1), (y1, x1), (y1, x0)], abs(alb - SOIL))
+        add_rect(px_corners(y0, y1, x0, x1), abs(alb - SOIL))
     fr = FIELD_ROT
     t = np.deg2rad(fr["deg"])
     R = np.array([[np.cos(t), np.sin(t)], [-np.sin(t), np.cos(t)]])
