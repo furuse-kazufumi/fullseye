@@ -857,8 +857,7 @@ def section_tool_gaps() -> None:
     assert sig.parameters["center"].default is None
     print("  (a) cylinder_unwrap の center は **z によらず 1 つ**"
           "(%s)。" % str(sig).replace("device='cpu'", "…"))
-    print("      "
-          "曲がった管や\n      斜めに走ったセンサには追随できない"
+    print("      曲がった管や斜めに走ったセンサには追随できない"
           "(この PoC の主題そのもの)。")
 
     assert not hasattr(fs.ledger, "fit_cylinder")
