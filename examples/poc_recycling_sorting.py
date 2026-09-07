@@ -473,12 +473,12 @@ def section_scene(pair) -> dict:
          "推定(2 次微分 + SAM)", "間違えた画素(色 = 誤った推定先)"],
         title="ベルト上の混合廃棄物 —— 視野 %.0f x %.0f mm"
               % (H * MM_PX, W * MM_PX), ncols=2)
+    lib5 = [spectrum(n) for n in FRAG_NAMES[:5]]
     figs.save_plot(
-        "library",
-        [(n, WL, spectrum(n)) for n in FRAG_NAMES[:5]],
-        xlabel="波長 [nm]", ylabel="反射率 [-]",
-        title="材質ライブラリ(ガウス吸収帯の閉形式)",
-        caption="PE と PVC は骨格が同じなのでわざと似せてある。")
+        "library", [(n, WL, s) for n, s in zip(FRAG_NAMES, lib5)],
+        xlabel="波長 [nm]", size=FIG_SIZE, ylim=_ylim(lib5),
+        title="材質ライブラリ(ガウス吸収帯の閉形式)/ 縦軸 = 反射率 [-]",
+        caption="PP と PE は骨格が同じ(-CH2-)なのでわざと似せてある。")
     return {"geo": geo, "clean": clean, "rows": rows}
 
 
