@@ -730,7 +730,8 @@ def main() -> int:
     assert res["overlap"][0] > 0.6 and res["overlap"][-1] < 0.3, res["overlap"]
     assert noi["speckle"][0] == 0 and noi["speckle"][-1] > 100, noi["speckle"]
     assert noi["i_sp"] is not None and noi["i_br"] is not None and noi["i_sp"] <= noi["i_br"]
-    assert noi["sp_err"][4] < -30.0 and noi["sp_err2"][-1] > 0.0, (noi["sp_err"], noi["sp_err2"])
+    assert noi["sp_err"][4] < -30.0 and -40.0 < noi["sp_err2"][-1] < 0.0, (noi["sp_err"], noi["sp_err2"])
+    assert noi["sp_err2"][4] > noi["sp_err"][4] + 30.0, "面積オープニングが Tb.Sp を救わなくなった"
     assert noi["rem"]["opening r=1"]["breaks"] > noi["rem"]["そのまま"]["breaks"]
     assert noi["rem"]["面積オープニング 16 px"]["speckle"] == 0
     assert thr["same"], "BV/TV と Tb.Th が逆向きに動いた"
