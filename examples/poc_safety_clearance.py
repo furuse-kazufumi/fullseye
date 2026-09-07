@@ -776,8 +776,9 @@ def section_sweep() -> dict:
                    [("見落とし率", list(dens), d_miss),
                     ("誤検知率", list(dens), d_fa)],
                    xlabel="測定点の数 [点/全身]", ylabel="率 [%]",
-                   title="点密度を 16 倍疎にしても崖は来ない",
-                   caption="見落としと誤検知を分けて数える。畳むと片側の壊れ方が消える。")
+                   title="点密度は見落としと誤検知を入れ替える(遮蔽なしの対照群)",
+                   caption="疎にするほど推定は遠くなるので、誤検知が減って見落としが"
+                           "増える。1 つの数字に畳むとこの入れ替わりが消える。")
     figs.save_plot("sweep_latency",
                    [("見落とし率", lat_x, lat_miss), ("誤検知率", lat_x, lat_fa)],
                    xlabel="更新間隔 [s]", ylabel="率 [%]",
