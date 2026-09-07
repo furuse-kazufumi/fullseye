@@ -555,13 +555,10 @@ def detect(meas: dict, clear: np.ndarray) -> dict:
             kind = "補充待ち" if dur >= LONG_WAIT else "欠品"
         else:
             kind = "その他"
-        evs.append({"kind": kind, "t0": t0[j] * dt + meas["frames"][0] * DT_BASE,
-                    "t1": t1[j] * dt, "x": xm, "y": ym, "zone": z,
-                    "dur": dur, "n_ids": n_ids[c], "comp": int(c),
-                    "vox": int(cnt[j])})
-    # 時刻を実時間へ(frames は 0 から step 刻みなので t = index * dt)
-    for e in evs:
-        e["t0"] = e["t0"] if e["t0"] < T_END else e["t0"]
+        # 時刻は実時間へ(frames は 0 から step 刻みなので t = index * dt)
+        evs.append({"kind": kind, "t0": t0[j] * dt, "t1": t1[j] * dt,
+                    "x": xm, "y": ym, "zone": z, "dur": dur,
+                    "n_ids": n_ids[c], "comp": int(c), "vox": int(cnt[j])})
     return {"vol": vol, "dwell": dwell, "labels": labels, "n": int(ncomp),
             "events": evs, "idvol": idvol}
 
