@@ -884,13 +884,14 @@ def section_voidmap(cells, recs) -> dict:
           " しきい値は厚い中央しか拾えない(部分体積効果)。")
 
     # 疑似カラーの空隙地図: ラベルを y 方向へ最大値投影(z-x 平面の地図)
-    # 疑似カラーの空隙地図(z を 3 倍に伸ばして等方に見せる)
-    lab_map = _up(lab.max(axis=1), ky=6, kx=2)
-    truth_map = _up(cells["gas"]["void"].max(axis=1), ky=6, kx=2)
-    figs.save_grid("void_map", [truth_map, lab_map],
-                   ["真値の空隙", "CT のラベル"],
-                   title="空隙の 3-D 地図(y 方向の投影、縦 z は等方に伸ばした)",
-                   ncols=2,
+    # 疑似カラーの空隙**厚み**地図 [mm](y 方向に積算。z は等方に伸ばす)
+    est_map = _up(dark.sum(axis=1) * SY, ky=6, kx=2)
+    truth_map = _up(cells["gas"]["void"].sum(axis=1) * SY, ky=6, kx=2)
+    print("     空隙の厚みの最大: 真値 %.3f mm / 推定 %.3f mm"
+          % (truth_map.max(), est_map.max()))
+    figs.save_grid("void_map", [truth_map, est_map],
+                   ["真値の厚み mm", "CT の厚み mm"],
+                   title="空隙の厚み地図(y 方向に積算、z は等方表示)", ncols=2,
                    caption="位置は当たる。縁が薄いところは落ちるので体積は過小。")
     figs.save_grid("void_slices",
                    [_up(recs["gas"][ND // 2]), _up(dark[ND // 2])],
