@@ -1203,45 +1203,50 @@ def section_prism_and_crack(sc: dict) -> dict:
              100 * BEARING_AREA / (GIRDER_AREA + BEARING_AREA)))
     ceil_x = abs(POSE_ERR[2][3]) * 1e3
 
-    print("\n      キャンバー[mm]  端の勾配 c'   予測 x 残差[mm]  実測 x[mm]  y,z[mm]")
-    print("      (予測 = 最小のキャンバーでの実測を 1/c' で伸ばし、"
-          "**仕込んだ x 誤差 %.1f mm で頭打ち**にしたもの)" % ceil_x)
+    print("\n      キャンバー[mm] 端の勾配 c'  Σn_x²/N   予測 σ_x[mm]  予測 σ_z[mm]"
+          "   実測 |x|[mm]  |y,z|[mm]")
     rows, cam_l, dx_l = [], [], []
-    base_slope = 4.0 * CAMBER / LSPAN
     for cval in (CAMBER, 0.010, 0.002):
         _CAMBER[0] = cval
-        r0 = np.random.default_rng(SEED + 501)
-        ref_c = observe(0, r0)
-        cur_c = observe(2, np.random.default_rng(SEED + 502), parts=("deflect",))
-        # 支承を合わせから外す(x を桁だけで決めさせる)
-        q, rot, tr, _ = register(cur_c, ref_c, mask=lambda v: v[:, 2] > -0.95)
+        ref_c = observe(0, np.random.default_rng(SEED + 501), parts=())
+        cur_c = observe(2, np.random.default_rng(SEED + 502), deteriorate=False,
+                        parts=())
+        q, rot, tr, info = register(cur_c, ref_c, mask=lambda v: v[:, 2] > -0.95)
         r2 = rodrigues(POSE_ERR[2][:3])
         t2 = np.asarray(POSE_ERR[2][3:]) + CENTER - r2 @ CENTER
         eff = (((rot @ r2) - np.eye(3)) @ CENTER + (rot @ t2 + tr)) * 1e3
+        # ★観測できる情報量そのものを点群から数える(正規方程式の対角成分)
+        d = np.asarray(fs.ledger.voxel_grid_downsample(ref_c, VOX), float)
+        d = d[d[:, 2] > -0.95]
+        nn = np.asarray(fs.ledger.estimate_normals(d, k=25), float)
+        nx2, nz2 = float(np.sum(nn[:, 0] ** 2)), float(np.sum(nn[:, 2] ** 2))
+        rmse = info["rmse"] * 1e3
         sl = 4.0 * cval / LSPAN
         cam_l.append(1e3 * cval)
         dx_l.append(abs(float(eff[0])))
-        pred = min(dx_l[0] * base_slope / sl, ceil_x) if dx_l else float("nan")
-        rows.append(["%.0f" % (1e3 * cval), "%.5f" % sl, "%.2f" % pred,
-                     "%.2f" % abs(eff[0]),
+        rows.append(["%.0f" % (1e3 * cval), "%.5f" % sl,
+                     "%.2e" % (nx2 / d.shape[0]), "%.3f" % (rmse / math.sqrt(nx2)),
+                     "%.4f" % (rmse / math.sqrt(nz2)), "%.2f" % abs(eff[0]),
                      "%.2f" % float(np.linalg.norm(eff[1:]))])
-        print("      %12.0f %13.5f %16.2f %12.2f %9.2f"
-              % (1e3 * cval, sl, pred, abs(eff[0]),
+        print("      %12.0f %11.5f %10.2e %12.3f %13.4f %13.2f %10.2f"
+              % (1e3 * cval, sl, nx2 / d.shape[0], rmse / math.sqrt(nx2),
+                 rmse / math.sqrt(nz2), abs(eff[0]),
                  float(np.linalg.norm(eff[1:]))))
     _CAMBER[0] = CAMBER
-    print("      ★キャンバーを %.0f -> %.0f mm(勾配 %.0f 分の 1)にすると x の残差は"
-          " %.2f -> %.2f mm(%.1f 倍)。" % (cam_l[0], cam_l[-1],
-                                            cam_l[0] / cam_l[-1], dx_l[0],
-                                            dx_l[-1], dx_l[-1] / max(dx_l[0], 1e-9)))
-    print("      ★予想は「1/c' に比例して %.0f 倍」だった。**実測は %.1f 倍で頭打ち**"
-          " —— 上限は仕込んだ x 誤差 %.1f mm、\n         つまり"
-          "**ICP が x を一度も動かさなかった場合の値**。"
-          "縮退は「際限なくずれる」のではなく\n         「合わせが x について何も"
-          "言わなくなる」のであって、そこが崖の底になる。"
-          % (cam_l[0] / cam_l[-1], dx_l[-1] / max(dx_l[0], 1e-9), ceil_x))
-    print("      ★y・z は %.2f -> %.2f mm でほとんど変わらない。"
-          "**壊れるのは 1 方向だけ**なので、\n         残差 RMS を 1 個見ている限り"
-          "気づけない。" % (float(rows[0][4]), float(rows[-1][4])))
+    print("      ★予測 σ_x は予測 σ_z の %.0f 〜 %.0f 倍 —— **1 方向だけが桁違いに"
+          "決まらない**。実測もそのとおりで、\n         x の残差 %.2f 〜 %.2f mm に対し"
+          " y・z は %.2f 〜 %.2f mm。"
+          % (float(rows[0][3]) / float(rows[0][4]),
+             float(rows[-1][3]) / float(rows[-1][4]),
+             min(dx_l), max(dx_l), min(float(r[6]) for r in rows),
+             max(float(r[6]) for r in rows)))
+    print("      ★予想は「x の残差もキャンバーに反比例して %.0f 倍になる」だった。"
+          "**外れ** —— 実測は %.2f, %.2f, %.2f mm と\n         単調ですらない。"
+          "情報がほとんど無い方向では、残差は**その方向の偶然の非対称**で決まり、"
+          "\n         上限は仕込んだ誤差 %.1f mm(ICP が x を一度も動かさない場合)。"
+          "崖の底は「際限なくずれる」ではなく\n         「合わせが x について何も"
+          "言わなくなる」ところにある。"
+          % (cam_l[0] / cam_l[-1], dx_l[0], dx_l[1], dx_l[2], ceil_x))
 
     # --- その x はどこに嘘として出るか --------------------------------------- #
     print("\n      その残差は**どこに嘘として出るか**。支承(円柱)の位置を"
