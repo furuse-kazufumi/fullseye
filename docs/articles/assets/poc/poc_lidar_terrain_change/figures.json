@@ -54,5 +54,27 @@
    560,
    3
   ]
+ },
+ {
+  "file": "06_occlusion.png",
+  "name": "occlusion",
+  "caption": "誤差はそのしきい値以上の真値に対する値。全滅セル = 地面点が 1 つも届かなかったセル。中央値では救えない。",
+  "shape": [
+   200,
+   1225,
+   3
+  ],
+  "csv": "06_occlusion.csv",
+  "tsv": "06_occlusion.tsv"
+ },
+ {
+  "file": "07_occlusion_lod.png",
+  "name": "occlusion_lod",
+  "caption": "取りこぼしは 1 % 未満でも、樹冠は数 m 高いので標準偏差だけが桁で跳ねる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
  }
 ]
