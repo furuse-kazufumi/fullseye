@@ -1060,10 +1060,10 @@ def section_resolution(cells, sinos) -> dict:
                      "%.3f" % m["fft_pitch"],
                      "%.2f" % m["void_fraction"], "%.0f" % (100 * theo)])
         print("   voxel %.3f mm (層厚比 %.2f)  層数 %2d (%2d..%2d)  層厚 %.3f mm  "
-              "層間隔 %.3f mm  FFT 周期 %.3f mm  空隙率 %.2f %%  予測振幅 %3.0f %%"
+              "層間隔 %.3f mm  FFT 周期 %.3f mm  空隙体積 %+6.1f %%  予測振幅 %3.0f %%"
               % (sp[1], ratio, m["n_layer"], m["n_layer_min"], m["n_layer_max"],
                  m["t_mean"], m["pitch_mean"], m["fft_pitch"],
-                 m["void_fraction"], 100 * theo))
+                 v_err[-1], 100 * theo))
 
     bad = [r for r, e in zip(ratios, n_err) if abs(e) > 1]
     cliff = min(bad) if bad else float("nan")
