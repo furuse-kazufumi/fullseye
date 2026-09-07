@@ -960,7 +960,7 @@ def section7_calibration(p: dict, tru: dict, design: dict) -> dict:
         print("  %-12s %14s %14.3f" % (LABEL[k], ps, 100 * g * eps))
     lo, hi = min(gotv.values()), max(gotv.values())
     print()
-    print("  → ★同じ 1 % の校正ずれが %.3f 〜 %.3f %% の幅(**%.1f 倍**)で出る。"
+    print("  → ★同じ 1 %% の校正ずれが %.3f 〜 %.3f %% の幅(**%.1f 倍**)で出る。"
           % (100 * lo * eps, 100 * hi * eps, hi / lo))
     print("     左母材(53 度)は 脚長 %.3f + 溝 %.3f = %.3f、"
           % (gotv["legL"], gotv["ucL"], gotv["legL"] + gotv["ucL"]))
