@@ -1034,6 +1034,7 @@ def section_sweep_occ(clear: np.ndarray) -> dict:
     hs = (1.6, 2.0, 2.2, 2.4, 2.6, 2.8, 3.2, 4.0)
     rec = {k: [] for k in LOSS_TYPES}
     lost = []
+    lost_at = {}                      # 事象 → 最初に見失った棚の高さ
     print("\n   棚の高さ [m]   欠測率 [%]   "
           + "  ".join("%-9s" % k for k in LOSS_TYPES))
     for h in hs:
@@ -1047,6 +1048,38 @@ def section_sweep_occ(clear: np.ndarray) -> dict:
             rec[k].append(v)
             line += "%-9s" % ("%.2f" % v)
         print(line)
+        for e in r["scene"]["events"]:
+            if e["cause"] != "補充待ち":
+                continue
+            key = (e["agent"], round(e["t0"], 2))
+            found = any(d["kind"] == e["cause"]
+                        and np.hypot(d["x"] - e["x"], d["y"] - e["y"]) <= 0.7
+                        and min(e["t1"], d["t1"]) - max(e["t0"], d["t0"])
+                        >= 0.4 * (e["t1"] - e["t0"])
+                        for d in r["det"]["events"])
+            if not found and key not in lost_at:
+                lost_at[key] = h
+
+    print("\n  ★事象ごとに予測と突き合わせる(補充待ち 5 件):")
+    print("   棚前          予測 h_crit [m]   実測で見失った高さ [m]")
+    occ_rows = []
+    for e in sorted((e for e in base_events_replen(clear)), key=lambda e: e["x"]):
+        key = (e["agent"], round(e["t0"], 2))
+        hc_e = critical_rack_height(e["x"], e["y"])
+        got = lost_at.get(key)
+        print("   (%5.1f,%5.1f)  %12s   %20s"
+              % (e["x"], e["y"],
+                 ("%.2f" % hc_e) if np.isfinite(hc_e) else "見え続ける",
+                 ("%.1f" % got) if got else "最後まで見えた"))
+        occ_rows.append(["(%.1f, %.1f)" % (e["x"], e["y"]),
+                         ("%.2f" % hc_e) if np.isfinite(hc_e) else "-",
+                         ("%.1f" % got) if got else "-"])
+    figs.save_table("occlusion_prediction",
+                    ["棚前の位置 [m]", "予測 h_crit [m]", "実測で消えた高さ [m]"],
+                    occ_rows,
+                    title="死角に入る棚の高さは撮る前に幾何で出せる",
+                    caption="h_crit = 光線が棚の縁を越える高さ。"
+                            "主通路側の棚前は 2 台のカメラのどちらかから見え続ける。")
     print("\n  ★補充待ち %.2f -> %.2f、通路の干渉 %.2f -> %.2f に対し、"
           "システム待ちは %.2f -> %.2f。"
           % (rec["補充待ち"][0], rec["補充待ち"][-1], rec["通路の干渉"][0],
