@@ -546,17 +546,17 @@ def assign_elements(pts: np.ndarray) -> np.ndarray:
                        np.maximum(np.abs(p[:, ax] - o) - BASE_T, 0.0))
         bb = np.minimum(bb, top)
     cand[:, BASE] = bb
-    # 部材の広がりの外は候補にしない(壁の面は部屋の中だけ)
-    for e, lim in ((WX0, 0), (WX1, 0), (WY0, 1), (WY1, 1)):
-        pass
     for e in (COL0, COL1):
-        k = e - COL0
         far = np.maximum(np.abs(p[:, 2] - RZ / 2) - RZ / 2, 0.0)
         cand[:, e] = np.hypot(cand[:, e], far)
+    # 開口は BIM の探索余裕 ``m`` を持たせる(施工誤差ぶん外へ出た点も拾う)
+    m = 0.06
     for e, rect, axes in ((WINR, (WIN_U[0], WIN_U[1], WIN_V[0], WIN_V[1]), (1, 2)),
                           (DOORR, (DOOR_U[0], DOOR_U[1], DOOR_V[0], DOOR_V[1]), (0, 2))):
-        du = np.maximum(np.maximum(rect[0] - p[:, axes[0]], p[:, axes[0]] - rect[1]), 0)
-        dv = np.maximum(np.maximum(rect[2] - p[:, axes[1]], p[:, axes[1]] - rect[3]), 0)
+        du = np.maximum(np.maximum(rect[0] - m - p[:, axes[0]],
+                                   p[:, axes[0]] - rect[1] - m), 0)
+        dv = np.maximum(np.maximum(rect[2] - m - p[:, axes[1]],
+                                   p[:, axes[1]] - rect[3] - m), 0)
         cand[:, e] = np.sqrt(cand[:, e] ** 2 + du ** 2 + dv ** 2)
     return np.argmin(cand, axis=1).astype(np.int32)
 
