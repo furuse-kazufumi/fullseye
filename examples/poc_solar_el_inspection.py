@@ -826,7 +826,7 @@ def section_snr_sweep() -> dict:
           "0.282/√(%.2f·K) がその半分になる K ≈ %.0f で帯が割れはじめる。"
           % (FI_T, T_FI, margin, FI_T * EXPOSURE, k_pred))
     print("\n     K      断線 一致/偽    クラック再現率(平均)   面積率誤差 [pt]   偽クラック [px]")
-    ks, fi_ok, rec, err = [], [], [], []
+    ks, fi_ok, rec, err, fl = [], [], [], [], []
     for k in (2000, 500, 200, 50, 20, 8):
         sc = make_scene(photons=k)
         r = analyze(sc)
@@ -834,6 +834,7 @@ def section_snr_sweep() -> dict:
         fi_ok.append(r["fi_matched"])
         rec.append(float(np.mean(r["recall"])))
         err.append(r["iso_err"])
+        fl.append(r["false_len"])
         print("   %5d       %d/%d  %2d         %.2f               %+6.2f          %6.0f"
               % (k, r["fi_matched"], len(FI_BANDS), r["fi_false"], rec[-1], r["iso_err"],
                  r["false_len"]))
