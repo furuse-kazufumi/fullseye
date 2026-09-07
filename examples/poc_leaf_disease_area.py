@@ -323,13 +323,32 @@ def specfree_g(img):
     return out[..., 1]
 
 
-def leaf_mask_chroma(img) -> np.ndarray:
-    """ExG + 大津 → 閉 → 穴埋め → 最大成分。病斑は穴として埋まる。"""
-    g = otsu_above(exg(img).ravel()).reshape(N, N).astype(np.float64)
-    g = np.asarray(fs.apply(g, "reg_close", a=0.5))
+def _leaf_post(green_mask: np.ndarray) -> np.ndarray:
+    """緑の画素 → 閉(reg_close)→ 穴埋め(fill_holes)→ 最大成分。病斑は穴として埋まる。"""
+    g = np.asarray(fs.apply(green_mask.astype(np.float64), "reg_close", a=0.5))
     g = np.asarray(fs.apply(g, "fill_holes"))
     g = np.asarray(fs.apply(g, "select_largest"))
     return g > 0.5
+
+
+def leaf_mask_chroma(img) -> np.ndarray:
+    """ExG **色度**(和で正規化)+ 大津。★暗い背景で発散する(3 節の表を参照)。"""
+    return _leaf_post(otsu_above(exg(img).ravel()).reshape(N, N))
+
+
+def proj_green(img):
+    """白色方向を射影で消した G 成分(sRGB 値のまま)= (2G - R - B)/3。ExG の**非正規化**版。
+
+    ``specular_free_transform`` を線形化せずに掛ける —— 物理(二色性モデル)ではなく
+    線形代数として使う。暗い画素で色度が発散しない(和で割らない)のが利点。
+    """
+    return np.asarray(_L.specular_free_transform(np.clip(img, 0.0, 1.0),
+                                                 illuminant_rgb=(1.0, 1.0, 1.0)))[..., 1]
+
+
+def leaf_mask_proj(img) -> np.ndarray:
+    """非正規化 ExG(射影 G)+ 大津。標準の葉マスク。"""
+    return _leaf_post(otsu_above(proj_green(img).ravel()).reshape(N, N))
 
 
 class Estimator:
@@ -381,11 +400,11 @@ def _feature_lesion(fn, invert=False):
 
 EST = {
     "ゼロ点(緑 固定)": Estimator("ゼロ点(緑 固定)", _zero_leaf, _zero_lesion),
-    "ExG 大津": Estimator("ExG 大津", leaf_mask_chroma, _feature_lesion(exg, invert=True)),
-    "色相 大津": Estimator("色相 大津", leaf_mask_chroma, _feature_lesion(hue_deg, invert=True)),
-    "a* 大津": Estimator("a* 大津", leaf_mask_chroma, _feature_lesion(lab_a)),
-    "a*(8bit) 大津": Estimator("a*(8bit) 大津", leaf_mask_chroma, _feature_lesion(lab_a_8bit)),
-    "鏡面除去 大津": Estimator("鏡面除去 大津", leaf_mask_chroma,
+    "ExG色度 大津": Estimator("ExG色度 大津", leaf_mask_chroma, _feature_lesion(exg, invert=True)),
+    "色相 大津": Estimator("色相 大津", leaf_mask_proj, _feature_lesion(hue_deg, invert=True)),
+    "a* 大津": Estimator("a* 大津", leaf_mask_proj, _feature_lesion(lab_a)),
+    "a*(8bit) 大津": Estimator("a*(8bit) 大津", leaf_mask_proj, _feature_lesion(lab_a_8bit)),
+    "鏡面除去 大津": Estimator("鏡面除去 大津", leaf_mask_proj,
                           _feature_lesion(specfree_g, invert=True)),
 }
 MAIN = "a* 大津"
@@ -449,8 +468,9 @@ def section_baseline() -> dict:
              ("鏡面 4 % だけ", dict(CTRL, spec=0.04)),
              ("影だけ", dict(CTRL, shadow=True)),
              ("標準(全部)", STD)]
-    names = ["ゼロ点(緑 固定)", "ExG 大津", "色相 大津", "a* 大津", "a*(8bit) 大津"]
+    names = ["ゼロ点(緑 固定)", "ExG色度 大津", "色相 大津", "a* 大津", "a*(8bit) 大津"]
     res = {}
+    leaf_lost = {}
     scenes = {}
     print("  真値の面積率 %.2f %%(葉 %d px)" % (ctrl["true_sev"], ctrl["n_leaf"]))
     print("  %-30s" % "条件" + "".join("%18s" % n for n in names))
@@ -475,6 +495,10 @@ def section_baseline() -> dict:
     print("  %-6s" % "" + "".join("%10s" % k for k in keys))
     for lab in ("FP", "FN"):
         print("  %-6s" % lab + "".join("%10d" % kinds[lab][k] for k in keys))
+    est_main = EST[MAIN](std["img"])
+    lost = std["leaf"] & ~est_main["leaf"]
+    print("  葉マスクの取りこぼし %d px のうち影の中 %d px、鏡面の下 %d px"
+          % (lost.sum(), (lost & std["shadow"]).sum(), (lost & std["spec"]).sum()))
     zero_ev = res["標準(全部)"]["ゼロ点(緑 固定)"]
     zero_k = error_kinds(std, zero_ev)
     print("  (ゼロ点は FP %d px のうち葉マスク外 %d px)"
@@ -483,15 +507,13 @@ def section_baseline() -> dict:
     # 図: 場面
     a_map = lab_a(std["img"])
     truth_rgb = np.stack([std["lesion"], std["leaf"] & ~std["lesion"], np.zeros((N, N))], -1).astype(float)
-    lab_img = _L.blob_label(ev["leaf"] & 0)  # 空ラベル(型合わせ)
     det = _L.blob_label(EST[MAIN](std["img"])["lesion"])
-    figs.save_grid("scene", [std["img"], truth_rgb, (a_map - a_map.min()) / (a_map.ptp() + 1e-9),
+    figs.save_grid("scene", [std["img"], truth_rgb, (a_map - a_map.min()) / (np.ptp(a_map) + 1e-9),
                              _L.blob_overlay(std["img"][..., 1], det)],
                    ["撮影画像(土・照明むら 30 %・鏡面・影)", "真値(赤 = 病斑、緑 = 健全葉)",
                     "Lab a*(緑 → 褐色)", "%s の病斑(%d 塊)" % (MAIN, int(det.max()))],
                    ncols=2, title="葉の病斑面積率(真値 %.1f %%、%d x %d px)" % (std["true_sev"], N, N),
                    caption="病斑と土は同じ褐色。葉を色度で切り、葉の中を a* で切る。")
-    del lab_img
     kind_map = np.zeros((N, N, 3))
     kind_map[..., 1] = std["img"][..., 1] * 0.6
     kind_map[ev["fp"]] = (1.0, 0.2, 0.2)
@@ -523,7 +545,7 @@ def section_illum(base: dict) -> dict:
     print("\n" + "=" * 78)
     print("3) 崖: 照明むら 0 → 50 % —— どこで ±5 pt を外れるか")
     print("=" * 78)
-    names = ["ゼロ点(緑 固定)", "ExG 大津", "色相 大津", "a* 大津"]
+    names = ["ゼロ点(緑 固定)", "ExG色度 大津", "色相 大津", "a* 大津"]
     ss = np.arange(0.0, 0.501, 0.05)
     ctrl = base["scenes"]["対照(黒布・均一・反射なし・影なし)"]
     rows = {n: [] for n in names}
@@ -596,7 +618,7 @@ def section_edge() -> dict:
     print("5) 崖: 病斑の縁のぼけ幅 0 → 8 px —— 面積の定義(不透明度 25/50/75 %)の幅")
     print("=" * 78)
     ws = [0.0, 1.0, 2.0, 4.0, 6.0, 8.0]
-    print("  %-8s %10s %10s %10s %10s %10s %10s" % ("w[px]", "真値50%", "25%線", "75%線", "予測±", MAIN, "ExG 大津"))
+    print("  %-8s %10s %10s %10s %10s %10s %10s" % ("w[px]", "真値50%", "25%線", "75%線", "予測±", MAIN, "ExG色度 大津"))
     rows = []
     for w in ws:
         sc = make_scene(12.0, **dict(CTRL, edge=w))
@@ -608,7 +630,7 @@ def section_edge() -> dict:
         perim = float(np.sum(f["perimeter"]))
         pred = 100.0 * perim * (w / 4.0) / n
         d_main = evaluate(sc, EST[MAIN](sc["img"]))["dsev"]
-        d_exg = evaluate(sc, EST["ExG 大津"](sc["img"]))["dsev"]
+        d_exg = evaluate(sc, EST["ExG色度 大津"](sc["img"]))["dsev"]
         rows.append((w, sc["true_sev"], s25 - sc["true_sev"], s75 - sc["true_sev"], pred, d_main, d_exg))
         print("  %-8.1f %10.2f %+10.2f %+10.2f %10.2f %+10.2f %+10.2f" % rows[-1])
     r = np.asarray(rows)
@@ -676,7 +698,7 @@ def section_grades() -> dict:
     print("\n" + "=" * 78)
     print("7) 等級の境目(0.5 / 5 / 25 / 50 %)±3 pt に置いた画像の誤等級(標準場面)")
     print("=" * 78)
-    names = ["ゼロ点(緑 固定)", "ExG 大津", "a* 大津"]
+    names = ["ゼロ点(緑 固定)", "ExG色度 大津", "a* 大津"]
     per_b = 12
     rng = np.random.default_rng(SEED + 11)
     table = {}
@@ -783,7 +805,7 @@ def main() -> int:
     print("  * 直径 2 px で検出率 %.2f、3 px で %.2f(予測の崖 %.1f px)。面積比は 4 px で %.2f。"
           % (sz["rows"][0, 2], sz["rows"][1, 2], sz["d_star"], sz["rows"][2, 3]))
     print("  * 等級境界 ±3 pt の %d 枚: 誤等級 ゼロ点 %d / ExG %d / a* %d 枚(a* は下へ %d、上へ %d)。"
-          % (gr["n_img"], gr["total"]["ゼロ点(緑 固定)"], gr["total"]["ExG 大津"], gr["total"][MAIN],
+          % (gr["n_img"], gr["total"]["ゼロ点(緑 固定)"], gr["total"]["ExG色度 大津"], gr["total"][MAIN],
              gr["signs"][MAIN]["down"], gr["signs"][MAIN]["up"]))
 
     # ---- 所見を固定する(壊れたら鳴る) ---------------------------------------- #

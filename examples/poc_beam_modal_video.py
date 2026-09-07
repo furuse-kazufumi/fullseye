@@ -168,7 +168,7 @@ def make_clip(a1: float, fps: float = FPS, noise: float = NOISE, flicker: bool =
             wn = 2 * np.pi * FN[n]
             z = ZETA[n]
             q = a1 * AMP_RATIO[n] * np.exp(-z * wn * ty) * np.cos(wn * np.sqrt(1 - z * z) * ty + THETA[n])
-            w += q * phi[None, :]
+            w += q * phi[n][None, :]
         # 手ぶれも行時刻で評価(全画面の並進)
         shx = shy = 0.0
         if shake:
@@ -258,10 +258,21 @@ def stations_piv(clip: dict, correct_shake: bool = True) -> dict:
 
 
 def zero_point(clip: dict) -> dict:
-    """ゼロ点: 梁の上縁 1 画素の輝度時系列(測点ごと)。"""
+    """ゼロ点: 梁の上縁 1 画素の輝度時系列(測点ごと)。
+
+    現場の人がやるとおり「縁のいちばんコントラストの強い画素」を選ぶ: 上縁
+    ±1 行のうち、時間平均画像の縦勾配が最大の行。
+    """
     v = clip["video"]
-    row = int(YC - HB)
-    u = np.stack([v[:, row, int(round(x))] for x in clip["stations"]], axis=1)
+    mean = v.mean(axis=0)
+    grad = np.abs(np.gradient(mean, axis=0))
+    r0 = int(YC - HB)
+    cols = []
+    for x in clip["stations"]:
+        c = int(round(x))
+        row = r0 - 1 + int(np.argmax(grad[r0 - 1:r0 + 2, c]))
+        cols.append(v[:, row, c])
+    u = np.stack(cols, axis=1)
     return {"u": u - u.mean(axis=0), "x": clip["stations"]}
 
 
@@ -305,8 +316,13 @@ def line_amplitude(u: np.ndarray, fps: float, f0: float) -> float:
 
 
 def bandpass_1d(u: np.ndarray, fps: float, f_lo: float, f_hi: float) -> np.ndarray:
-    """1-D 時系列を ``temporal_bandpass``(理想帯域通過)に通す。"""
-    return np.asarray(fs.temporal_bandpass(u.reshape(-1, 1, 1), f_lo, f_hi, fps))[:, 0, 0]
+    """1-D 時系列を ``temporal_bandpass``(理想帯域通過)に通す。
+
+    op は「4×4 以上のフレーム」を要求するので、同じ時系列を 4×4 に敷き詰めて
+    渡し、1 画素ぶんを取り出す(道具の穴 (d))。
+    """
+    v = np.broadcast_to(u.reshape(-1, 1, 1), (len(u), 4, 4))
+    return np.asarray(fs.temporal_bandpass(np.ascontiguousarray(v), f_lo, f_hi, fps))[:, 0, 0]
 
 
 def damping_envelope(u: np.ndarray, fps: float, f_hat: float, half_band: float) -> float:
