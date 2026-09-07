@@ -641,7 +641,7 @@ def trim_symmetric(pts, p0, n, tau, rounds=2):
     return P0, N, len(cur)
 
 
-def section_controls(S: dict, Z: dict) -> dict:
+def section_controls(S: dict, Z: dict, O: dict) -> dict:
     print("\n" + "=" * 78)
     print("5) 対照群 —— 欠損そのものが対称面の推定をどれだけ歪めるか")
     print("=" * 78)

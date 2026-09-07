@@ -4,7 +4,7 @@ dim: 3d
 category: sdf_csg
 in: sdf × sdf
 out: sdf
-examples: [gear_metrology, render_beauty]
+examples: [gear_metrology, render_beauty, sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ shape はブロードキャスト整合していればよく(不整合なら num
 
 - [gear_metrology](../../../../examples_3d/gear_metrology.py) — `py -3.11 examples_3d/gear_metrology.py`
 - [render_beauty](../../../../examples_3d/render_beauty.py) — `py -3.11 examples_3d/render_beauty.py`
+- [sdf_csg](../../../../examples_3d/sdf_csg.py) — `py -3.11 examples_3d/sdf_csg.py`
 
 ## 型が繋がる次の op(`sdf` を入力に取れる)
 
@@ -55,7 +56,7 @@ shape はブロードキャスト整合していればよく(不整合なら num
 
 ## 同カテゴリ(`sdf_csg`)
 
-[grid_coords](grid_coords.md) · [sphere_sdf](sphere_sdf.md) · [box_sdf](box_sdf.md) · [sdf_union](sdf_union.md) · [sdf_subtract](sdf_subtract.md) · [sdf_smooth_union](sdf_smooth_union.md) · [sdf_offset](sdf_offset.md)
+[grid_coords](grid_coords.md) · [sphere_sdf](sphere_sdf.md) · [box_sdf](box_sdf.md) · [plane_sdf](plane_sdf.md) · [cylinder_sdf](cylinder_sdf.md) · [torus_sdf](torus_sdf.md) · [capsule_sdf](capsule_sdf.md) · [sdf_union](sdf_union.md)
 
 ---
 *Provenance: sdf_ops.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
