@@ -486,6 +486,33 @@ def _stack_probes(vol, spacing):
     return out
 
 
+def detect_voids(vol, spacing, liq_level):
+    """層間ガス空隙の検出 —— 電解液の水準の半分より暗い連結成分。
+
+    しきい値を絶対値にすると、ビームハードニングで水準が下がったときに空隙が
+    まるごと消える。だから ``liq_level``(プローブが見た電解液の水準)に対する
+    比で切る。ROI は電極の内側だけ(缶の外の空気を空隙と数えないため)。
+    """
+    roi = np.zeros(vol.shape, bool)
+    z0, z1 = int(ELEC_Z[0] / spacing[0]) + 1, int(ELEC_Z[1] / spacing[0])
+    y0, y1 = int((CAN_Y[0] + 0.30) / spacing[1]), int((CAN_Y[1] - 0.30) / spacing[1])
+    x0, x1 = int(ELEC_X[0] / spacing[2]) + 2, int(ELEC_X[1] / spacing[2]) - 2
+    roi[z0:z1, y0:y1, x0:x1] = True
+    dark = (np.asarray(vol) < 0.5 * liq_level) & roi
+    lab = np.asarray(L.vol_label(dark, connectivity=26))
+    props = L.vol_region_props(lab, spacing=spacing)
+    cell_vol = float(spacing[0] * spacing[1] * spacing[2])
+    big = sorted([p for p in props if p["volume"] > max(0.004, 4.0 * cell_vol)],
+                 key=lambda p: -p["volume"])
+    return dark, lab, big, roi
+
+
+def liquid_level(vol, spacing=SPACING) -> float:
+    """プローブが見た電解液の水準(空隙のしきい値の基準)。"""
+    lows = [float(np.percentile(p[5][:, 1], 10)) for p in _stack_probes(vol, spacing)]
+    return float(np.median(lows)) if lows else MU_LIQ
+
+
 def internal_metrics(vol: np.ndarray, spacing=SPACING) -> dict:
     """内部指標 —— 層数・層厚・層間隔の散らばり・空隙率。"""
     counts, thicks, pitches, contrasts = [], [], [], []
