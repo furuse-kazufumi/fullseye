@@ -1093,13 +1093,13 @@ def section_occlusion(tr: dict, lod0: float) -> dict:
           % (truth(lod=lmad[0])["ero"], truth(lod=lmad[-1])["ero"],
              100 * (1 - truth(lod=lmad[-1])["ero"] / truth(lod=lmad[0])["ero"])))
     figs.save_table("occlusion",
-                    ["遮蔽 %", "地面点 %", "分類の取りこぼし %", "実効密度 pt/m2",
-                     "LoD std m", "LoD MAD m", "平均 DEM 掘削 m3", "誤差 %",
-                     "中央値 DEM 掘削 m3", "誤差 %",
+                    ["遮蔽 %", "地面点 %", "取りこぼし %", "全滅セル",
+                     "LoD std m", "LoD MAD m", "平均 DEM m3", "誤差 %",
+                     "中央値 DEM m3", "誤差 %", "3x3 窓 m3", "誤差 %", "空セル",
                      "しきい値以上の真値 m3", "分類なし m3"], rows,
-                    title="樹冠の遮蔽 —— 数十点の取りこぼしが標準偏差を飛ばす",
-                    caption="誤差はそのしきい値以上の真値に対する値。"
-                            "分類しない列は樹冠が標高に混ざった結果。")
+                    title="樹冠の遮蔽 —— 直すのは代表値ではなく分類の窓",
+                    caption="誤差はそのしきい値以上の真値に対する値。全滅セル = "
+                            "地面点が 1 つも届かなかったセル。中央値では救えない。")
     figs.save_plot("occlusion_lod",
                    [("LoD95(標準偏差)", occ, lstd),
                     ("LoD95(MAD、外れ値に強い)", occ, lmad),

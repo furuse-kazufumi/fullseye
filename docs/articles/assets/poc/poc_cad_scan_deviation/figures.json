@@ -102,5 +102,17 @@
    560,
    3
   ]
+ },
+ {
+  "file": "11_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   272,
+   757,
+   3
+  ],
+  "csv": "11_controls.csv",
+  "tsv": "11_controls.tsv"
  }
 ]
