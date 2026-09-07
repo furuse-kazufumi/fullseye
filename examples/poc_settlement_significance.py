@@ -759,7 +759,7 @@ def section_cliff(sc: dict) -> dict:
 
     print("   最大沈下 mm   舗装ゾーンの検出率   全体の有意率   平均 [mm]")
     smax_l, rate_l = [], []
-    for s in (1.0, 2.0, 4.0, 8.0, 16.0):
+    for s in (0.25, 0.5, 1.0, 2.0, 4.0, 8.0):
         a, b = make_clouds(settle=True, s_max=s / 1000.0)
         n_fit, _ = fitted_normals(a, cores)
         d, lod = m3c2(a, b, cores, n_fit)
