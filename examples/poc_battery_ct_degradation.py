@@ -258,13 +258,20 @@ def build_cell(kind: str, scale: float = 1.0) -> dict:
         L.sdf_intersect(L.sdf_intersect(inner_xz, lo_face), hi_face))) > 0.5
 
     # --- 積層電極: 面内の場から層ごとの y 区間を積み上げる ---
+    # ★積層が缶を突き抜けないように、たわんだ端板が許す高さまで**局所的に圧縮**する
+    #   (実セルでも電極は加圧されて縮む)。これをしないと、背の高いガス空隙のところで
+    #   端の層が缶に食われ、層数の比較が壊れる(最初そうなった)。
     X, Y, Z = g[..., 0], g[..., 1], g[..., 2]
     xx, zz, _ = _panel_grids()
     foot_base = _elec_footprint(xx, zz)
-    h = _xz_field(bl["h"])
+    h_demand = bl["h"]
+    allow = CAV_LEN + 2.0 * bl["w"]
+    squeeze = np.where(h_demand > 1e-9, np.minimum(1.0, allow / np.maximum(h_demand, 1e-9)), 1.0)
+    h_fit = h_demand * squeeze
+    h = _xz_field(h_fit)
     y_bot = 0.5 * (CAV_Y[0] + CAV_Y[1]) - 0.5 * h        # 積層は空洞の中央に座る
-    t_i = _xz_field(T_ELEC * (1.0 + fields["alpha"]))
-    void_by_gap = {k: _xz_field(hv) for k, hv in fields["voids"]}
+    t_i = _xz_field(T_ELEC * (1.0 + fields["alpha"]) * squeeze)
+    void_by_gap = {k: _xz_field(hv * squeeze) for k, hv in fields["voids"]}
 
     elec = np.zeros(X.shape, bool)
     voids = np.zeros(X.shape, bool)
