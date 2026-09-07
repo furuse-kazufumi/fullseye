@@ -188,8 +188,8 @@ def build_layout() -> dict:
 
 
 def ambient(t_min: np.ndarray) -> np.ndarray:
-    """外気温 [°C] —— 12 時間のあいだ 22 -> 34 °C へ上がる夏の輸送。"""
-    return 28.0 + 6.0 * np.sin(2.0 * np.pi * (t_min + 300.0) / 1440.0)
+    """外気温 [°C] —— 早朝に積んで昼過ぎに着く夏の輸送(20 -> 34 -> 32 °C)。"""
+    return 26.0 + 8.0 * np.sin(2.0 * np.pi * (t_min - 180.0) / 1440.0)
 
 
 def door_open(t_min: np.ndarray, events=DOOR_EVENTS) -> np.ndarray:
