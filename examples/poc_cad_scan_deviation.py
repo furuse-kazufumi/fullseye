@@ -439,22 +439,29 @@ def _cam_basis():
     return r, np.cross(c, r), c
 
 
-def render(P, val=None, nrm=None, res=(320, 250), pad=4.0, splat=1, scale=None):
+def render(P, val=None, nrm=None, shade=False, res=(320, 250), pad=4.0, splat=1,
+           scale=None):
     """斜め視点の正射影 + z バッファ。点を散らさず**面として**見せる。
 
-    ``nrm`` を渡すと Lambert 陰影の (H,W,3) を返す(形が読める絵になる)。
-    ``val`` を渡すと符号付きの誤差地図 (H,W)。``scale`` を渡すと ±scale で
-    切り、右端に**色の目盛り帯**を付ける(パネルごとに勝手な正規化がかかって
-    見比べられなくなるのを防ぐ)。
+    ``nrm`` を渡すとカメラに背を向けた点を落とす(裏面が透けない)。
+    ``shade=True`` なら Lambert 陰影の (H,W,3)、``val`` なら符号付きの誤差地図
+    (H,W)。``scale`` を渡すと ±scale で切り、右端に**色の目盛り帯**を付ける
+    (パネルごとに勝手な正規化がかかって見比べられなくなるのを防ぐ)。
     """
     r, up, c = _cam_basis()
+    P = np.asarray(P, float)
+    if nrm is not None:
+        keep = np.asarray(nrm, float) @ c > 0.02
+        P, nrm = P[keep], np.asarray(nrm, float)[keep]
+        if val is not None:
+            val = np.asarray(val, float)[keep]
     x, y = P @ r, P @ up
     dep = -(P @ c)                        # 小さいほど手前
     Wp, Hp = res
     s = max((x.max() - x.min() + 2 * pad) / Wp, (y.max() - y.min() + 2 * pad) / Hp)
     ix = np.clip(((x - x.min() + pad) / s).astype(int), 0, Wp - 1)
     iy = np.clip((Hp - 1 - (y - y.min() + pad) / s).astype(int), 0, Hp - 1)
-    if nrm is not None:
+    if shade:
         lam = np.asarray(nrm, float) @ (LIGHT / np.linalg.norm(LIGHT))
         v = 0.18 + 0.82 * np.clip(lam, 0.0, 1.0)
     else:
