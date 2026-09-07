@@ -809,9 +809,11 @@ def section_density() -> dict:
               % (rho, rho * CELL * CELL, s_d, pd_[-1], emp[-1],
                  ("%.3f" % s_m) if np.isfinite(s_m) else "測れず", pm[-1],
                  rate[-1], ch))
+    ratio = dens[-1] / dens[0]
     print("\n  ★DoD の LoD は %.3f m(%.1f pt/m2)-> %.3f m(%.1f pt/m2)。"
-          "密度 32 倍で %.2f 倍(予測 1/sqrt(32) = %.3f)。"
-          % (ld[0], dens[0], ld[-1], dens[-1], ld[-1] / ld[0], 1 / math.sqrt(32)))
+          "密度 %.0f 倍で %.2f 倍(予測 1/sqrt(%.0f) = %.3f)。"
+          % (ld[0], dens[0], ld[-1], dens[-1], ratio, ld[-1] / ld[0],
+             ratio, 1 / math.sqrt(ratio)))
     print("     %.1f pt/m2 では最小検出厚 %.3f m —— この崩壊の最大深さ %.2f m の %.0f %% で、"
           "**縁は丸ごと見えない**。" % (dens[0], ld[0], SCAR["amp"],
                                         100 * ld[0] / SCAR["amp"]))
