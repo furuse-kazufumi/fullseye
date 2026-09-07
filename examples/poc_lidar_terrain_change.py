@@ -1263,7 +1263,10 @@ def main() -> int:
     assert pl[1] > 0.5 * pl[0], "純平面の面内縮退が再現していない"
     assert max(abs(v[3]) for v in sy["plane"].values()) < 10.0, \
         "面内のずれが偽の正味土量を生んでいる"
-    assert oc["raw"][-1] > 1.5 * oc["filt"][-1], "地面分類の効果が出ていない"
+    assert oc["raw"][-1] > 1.5 * oc["adapt"][-1], "地面分類の効果が出ていない"
+    assert oc["lod"][-1] > 1.1 * oc["lod"][0], "遮蔽で LoD が上がっていない"
+    assert abs(oc["adapt"][-1] / truth(lod=oc["lod"][-1])["ero"] - 1) < 0.35, \
+        "その場で LoD を測り直しても遮蔽で土量が壊れる"
     assert nr["up_raw"] < 0.95, "開いた斜面で法線の符号が揃ってしまった"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))

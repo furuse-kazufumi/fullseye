@@ -62,5 +62,57 @@
   ],
   "csv": "06_density_bias_table.csv",
   "tsv": "06_density_bias_table.tsv"
+ },
+ {
+  "file": "07_defect_pull.png",
+  "name": "defect_pull",
+  "caption": "中央の読みは真値 0。位置合わせが吸った平均がそのまま偽のへこみになる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_warp_false_dent.png",
+  "name": "warp_false_dent",
+  "caption": "真値は中央 0。位置合わせが平均 a/3 を吸うので下へずれる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_warp_maps.png",
+  "name": "warp_maps",
+  "caption": "上面だけを見ている。右の中央がだいだいに変わるのが「無いへこみ」。",
+  "shape": [
+   343,
+   702,
+   3
+  ]
+ },
+ {
+  "file": "10_basin.png",
+  "name": "basin",
+  "caption": "この部品は 75 度まで収束する。90 度以降の別解は残差が床の数倍に上がるので見抜ける ——素の直方体ではそうならない(本文の対照群)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   272,
+   757,
+   3
+  ],
+  "csv": "11_controls.csv",
+  "tsv": "11_controls.tsv"
  }
 ]
