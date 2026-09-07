@@ -687,13 +687,17 @@ def section_shift(sc: dict) -> dict:
     i3 = deltas.index(3.0)
     print("  ★比例則は 3 px で実測の %.2f 倍 —— 大きなずれでは合うが、崖の位置を説明しない。"
           % (predA[i3] / fp_l[i3]))
-    ratios = [predB[i] / fp_l[i] for i in range(len(deltas)) if fp_l[i] > 0]
-    print("  PSF 込みの予測は δ=%.1f〜%.0f px で実測の %.2f〜%.2f 倍。足りない分は"
-          "**森林内部**(台帳に無い樹冠テクスチャ)。" % (first, deltas[-1], min(ratios), max(ratios)))
-    i15 = deltas.index(1.5)
+    idx = [i for i, d_ in enumerate(deltas) if d_ >= first]
+    rB = [predB[i] / fp_l[i] for i in idx]
+    rC = [predC[i] / fp_l[i] for i in idx]
+    print("  PSF+雑音込みの台帳予測は δ=%.1f〜%.0f px で実測の %.2f〜%.2f 倍。足りない分は"
+          "**森林内部**(台帳に無い樹冠テクスチャ)。" % (first, deltas[-1], min(rB), max(rB)))
+    i15, i3 = deltas.index(1.5), deltas.index(3.0)
     print("  ずれ 1.5 px の内訳: エッジ帯 %d / 森林内部 %d / その他 %d px。森林分の勾配予測 %.0f px、"
-          "足した予測は実測の %.2f 倍。"
-          % (*split_l[i15], predC[i15] - predB[i15], predC[i15] / fp_l[i15]))
+          "足した予測は実測の %.2f 倍。" % (*split_l[i15], predC[i15] - predB[i15], rC[idx.index(i15)]))
+    print("  ★ただし勾配則は 1 次近似なので δ が樹冠の σ(1.3〜2.2 px)に近づくと過大: 3 px では森林の"
+          "予測 %.0f px に対し実測 %d px、全体で %.2f 倍。台帳予測はエッジ帯だけなら 3 px で %.2f 倍。"
+          % (predC[i3] - predB[i3], split_l[i3][1], rC[idx.index(i3)], predB[i3] / split_l[i3][0]))
     print("  IoU は δ=0 の %.3f から 3 px で %.3f へ —— 変化そのものは残っているのに、"
           "偽陽性が和集合を膨らませる。" % (iou_l[0], iou_l[-1]))
 
