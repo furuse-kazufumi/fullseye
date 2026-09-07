@@ -693,8 +693,7 @@ def section_heatmap(base: dict) -> dict:
     print("  積算の上位 30 列のうち、真の待ち位置に当たるのは **%d 列**、"
           "残り %d 列は通路(人が通っただけ)。" % (n_wait, 30 - n_wait))
 
-    # 柱と管の分かれ目 = 列あたりの平均時間厚み。開く前の体積で数える。
-    lab_all, n_all = fs.ledger.vol_label.raw(vol, connectivity=26)
+    # 柱と管の分かれ目 = 列あたりの平均時間厚み。
     dwell_lab = base["det"]["labels"]
     def mean_thickness(labels, cid):
         m = labels == cid
