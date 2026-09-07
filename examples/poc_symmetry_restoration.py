@@ -691,6 +691,9 @@ def section_controls(S: dict, Z: dict) -> dict:
     e_icp = estimate_plane(surv, refine="icp", axis_hint=True)
     run("icp", "(e) (c')の軸 + 鏡映+ICP+中点面", e_icp["p0"], e_icp["n"])
 
+    e_c = estimate_plane(surv, refine="none", axis_hint=True)
+    run("coarse", "(f) 粗のみ(重心を通す面)", e_c["p0"], e_c["n"])
+
     print("\n  推定器そのものの偏り(b): 角度 %.3f deg / 位置 %.3f mm"
           "(完全形でもゼロにはならない)" % (res["full"]["ang"], res["full"]["off"]))
     print("  欠損が加える歪み(c' - b): 角度 %+.3f deg / 位置 %+.3f mm"
@@ -698,14 +701,25 @@ def section_controls(S: dict, Z: dict) -> dict:
              res["damaged"]["off"] - res["full"]["off"]))
     print("  軸を取り違えた場合(c)の代償: 復元 RMS %.2f -> %.2f mm"
           % (res["damaged"]["rms"], res["damaged_auto"]["rms"]))
-    print("  ★ 欠損は重心を x = %+.2f mm 動かすので、歪みの主因は**位置**。"
-          "対称トリミングで %.3f -> %.3f mm、RMS は %.2f -> %.2f mm。"
-          % (surv[:, 0].mean(), res["damaged"]["off"], res["trim"]["off"],
-             res["damaged"]["rms"], res["trim"]["rms"]))
-    print("  ★ ただし (c) の復元 RMS %.2f mm は「何もしない %.2f mm」より小さい ——"
+    print("  ★予想は外れた。欠損は重心を x = %+.2f mm 動かすので"
+          "「面もそれだけずれる」と踏んでいた —— " % surv[:, 0].mean())
+    print("    重心を通す粗い面 (f) は確かに %.2f mm ずれる(§4 の式から復元 RMS の予測"
+          " %.2f mm、実測 %.2f mm)が、" % (res["coarse"]["off"],
+                                          np.sqrt(Z["floor"] ** 2
+                                                  + (2 * res["coarse"]["off"] * O_COSB[0]) ** 2),
+                                          res["coarse"]["rms"]))
+    print("    残差を掃引する精緻化 (c') は重心を使わないので %.3f mm まで戻す"
+          "(欠損の 96 %% を吸う)。" % res["damaged"]["off"])
+    print("  ★ (e) 鏡映+ICP+中点面は**悪化した**(角度 %.2f deg / RMS %.2f mm)。"
+          % (res["icp"]["ang"], res["icp"]["rms"]))
+    print("    欠損側では対応が付かないまま偽の対が中点に混ざり、"
+          "最小二乗の面がそれに引かれる。")
+    print("  ★ (c) の復元 RMS %.2f mm は「何もしない %.2f mm」よりずっと小さい ——"
           % (res["damaged_auto"]["rms"], Z["none_rms"]))
-    print("    軸を 90 度取り違えても**もっともらしい面**が生えるので、"
-          "残差だけでは気づけない。")
+    print("    軸を 90 度取り違えても**もっともらしい面**が生える"
+          "(足した点の %.0f %% は真の面から %.1f mm 以上浮いている)ので、"
+          % (100 * res["damaged_auto"]["spur"], SPUR_TOL))
+    print("    復元誤差そのものでは気づけない。偽の面の割合を別に数えること。")
 
     if figs.enabled():
         figs.save_table(
