@@ -1305,8 +1305,9 @@ def main() -> int:
     assert oc["raw"][-1] > 1.5 * oc["adapt"][-1], "地面分類の効果が出ていない"
     assert oc["lstd"][-1] > 3 * oc["lstd"][0], "取りこぼしが標準偏差を飛ばしていない"
     assert oc["lmad"][-1] < 0.5 * oc["lstd"][-1], "MAD が外れ値を吸収できていない"
-    assert abs(oc["adapt"][-1] / truth(lod=oc["lmad"][-1])["ero"] - 1) < 0.4, \
-        "MAD で LoD を測り直しても遮蔽で土量が壊れる"
+    assert oc["median"][-1] < 0.7 * oc["adapt"][-1], "中央値 DEM が汚染を落とせていない"
+    assert abs(oc["median"][-1] / truth(lod=oc["lmad"][-1])["ero"] - 1) < 0.4, \
+        "中央値 DEM でも遮蔽で土量が壊れる"
     assert nr["up_raw"] < 0.95, "開いた斜面で法線の符号が揃ってしまった"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
