@@ -1052,7 +1052,6 @@ def section_volume(can, buf_fine):
                    ["側面からの積算投影(x 線)", "天頂からの積算投影"],
                    title="群落を体積として見る(占有格子 %s)" % "x".join(map(str, res)),
                    caption="側面図では条(row)の構造が縞に見える。")
-    mid = occ[:, :, occ.shape[2] // 2]
     figs.save_grid("section_and_dsm",
                    [occ[:, occ.shape[1] // 2, :].T[::-1], dsm, slope],
                    ["鉛直断面(条に直交)", "草冠面の高さ [m]", "草冠面の傾斜 [度]"],
