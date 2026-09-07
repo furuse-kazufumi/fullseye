@@ -910,8 +910,7 @@ def section_types(base: dict) -> dict:
           "畳んでいる。" % (len(base["det"]["events"]), base["det"]["n"],
                             base["zero"]))
     figs.save_table("types", ["種類", "真の件数", "検出", "検出率", "誤検出"], rows,
-                    title="種類別の検出成績(標本間隔 %.2f 秒 / 棚 %.1f m / "
-                          "ID 誤り 0)" % (DT_MEAS, RACK_H),
+                    title="種類別の検出成績",
                     caption="ゼロ点はこの表を 1 つの数字に畳む。畳んだ数字は"
                             "どの行が落ちても同じように動く。")
     return {"rows": rows, "other": other}
