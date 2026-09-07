@@ -697,6 +697,12 @@ def section_sweep() -> dict:
         print("     %5d      %.3f         %.3f          %+.3f    %5.1f %%   %5.1f %%"
               % (n, spacing, predicted, bias, m_, fa_))
 
+    print("      ★予想は最疎で %.3f m、実測 %+.3f m —— **%.1f 倍**外した。"
+          "予想 (s/2)²/(2r) は\n        「いちばん近い 1 点を必ず s/2 逃す」"
+          "最悪を仮定していて、実際には手の周りに数点残る。"
+          % (float(d_rows[-1][2]), d_bias[-1],
+             float(d_rows[-1][2]) / max(d_bias[-1], 1e-9)))
+
     # --- (ii) 遮蔽 --------------------------------------------------------- #
     print("\n  (ii) 遮蔽(点密度 800 で固定)")
     occ_rows, occ_miss, occ_fa = [], [], []
