@@ -502,9 +502,19 @@ def section_sweep() -> dict:
     print("7-8) 崖 —— 傾きを何度まで許せるか(先に幾何で予測)と 対照群")
     print("=" * 78)
 
-    pred_deg = float(np.rad2deg(np.arcsin(SPEC_UM / H_DIE_UM)))
-    print("  予測: ゼロ点の誤差 = ダイ厚 x sin(傾き) なので、仕様 ±%.1f µm を"
-          "超えるのは %.3f°。" % (SPEC_UM, pred_deg))
+    # 予測: ゼロ点の誤差 = ダイ厚 x |上面法線の横成分|。掃引は β = 0.6α なので
+    # 1 軸だけの asin(spec/L) では足りない —— 合成した |n_xy| で解く。
+    def bias_of(a_deg):
+        return H_DIE_UM * float(np.hypot(*tilt_matrix(a_deg, 0.6 * a_deg)[:2, 2]))
+
+    grid = np.linspace(0.0, 2.0, 4001)
+    vals = np.array([bias_of(t) for t in grid])
+    pred_deg = float(np.interp(SPEC_UM, vals, grid))
+    print("  予測: ゼロ点の誤差 = ダイ厚 x |上面法線の横成分|。1 軸だけなら"
+          " asin(%.1f/%.0f) = %.3f° だが、\n        この掃引は β = 0.6α の合成なので"
+          " %.3f° で仕様 ±%.1f µm を超える。"
+          % (SPEC_UM, H_DIE_UM, np.rad2deg(np.arcsin(SPEC_UM / H_DIE_UM)),
+             pred_deg, SPEC_UM))
 
     tilts = [0.0, 0.2, 0.4, 0.6, 1.0, 1.4, 2.0]
     e_raw, e_ax, rot_err = [], [], []
