@@ -1153,9 +1153,11 @@ def main() -> int:
     print("まとめ")
     print("=" * 78)
     px1, sh1 = rep[1.0]
-    print("  * 画像で %.2f px の yaw 誤差が、%.1f m の BEV では %.3f m(%.1f セル)。"
+    print("  * 再投影 1 px は %.1f m 先の BEV で %.3f m(%.2f セル)。"
+          "yaw 1 度 = %.2f px = %.3f m = %.1f セル —— "
           "**px と m は距離で換算される別の指標**。"
-          % (px1, OBSTACLES[1]["cx"], sh1, sh1 / CELL))
+          % (OBSTACLES[1]["cx"], OBSTACLES[1]["cx"] / CAM["f"],
+             OBSTACLES[1]["cx"] / CAM["f"] / CELL, px1, sh1, sh1 / CELL))
     print("  * 誤差 0: LiDAR 単独 %.4f / カメラ単独 %.4f / 融合 %.4f。"
           "勝ち幅 %+.4f はすべて**視界(先行車の陰)**から来ている。"
           % (zero["lidar"]["iou"], zero["cam"]["iou"], zero["max"]["iou"],
