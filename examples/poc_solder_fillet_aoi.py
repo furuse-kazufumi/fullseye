@@ -1027,14 +1027,19 @@ def section_confusion(v_thr: float, zp: ZeroPoint) -> dict:
     print("\n  ★E2 系の判定の正答: " + " / ".join("%s %.0f %%" % (KIND_JA[k], acc[k]) for k in KINDS))
     print("  ★ゼロ点(パッド平均色 ΔE)の NG 率: "
           + " / ".join("%s %.0f %%" % (KIND_JA[k], 100.0 * zp_ng[k] / n_each) for k in KINDS))
-    print("     ブリッジはパッドの外で起きるのでパッド平均色には出ない —— ゼロ点は原理的に見えない。")
+    print("     ブリッジはパッドの外で起きるのでパッド平均色には出ない。ブリッジの NG 率が良品の"
+          "偽 NG 率と同程度なら、それは**見えていない**ということ(基準条件で校正したしきい値が、"
+          "ずれ・粗さ・むらで動く)。")
+    psi_len = float(np.rad2deg(np.arccos(1.0 - BODY_LEN_TOL / (BODY_L - 2 * ELEC_L))))
+    print("  浮きの手掛かり 2 つ: 電極上面の色(傾き ≥ 15° で青でなくなる)と本体の前縮み"
+          "(1.0 cos ψ、許容 %.2f mm → ψ > %.1f° で拾える)。" % (BODY_LEN_TOL, psi_len))
     if miss_lift:
         angs = [a for a, _ in miss_lift]
-        print("  ★浮きの取りこぼし %d 件は持ち上がり角 %.1f°〜%.1f°(全て %.0f° 未満)、判定は %s。"
-              % (len(miss_lift), min(angs), max(angs), 15.0,
+        print("  ★浮きの取りこぼし %d 件は持ち上がり角 %.1f°〜%.1f°(予測の限界 %.1f°)、判定は %s。"
+              % (len(miss_lift), min(angs), max(angs), psi_len,
                  "/".join(sorted(set(KIND_JA.get(v, v) for _, v in miss_lift)))))
-        print("     電極上面の傾きが天頂リングの窓(0-15°)に収まっていて青のまま —— "
-              "不足と原理的に区別できない。")
+        print("     電極上面は天頂リングの窓(0-15°)の中で青のまま、前縮みも 1 画素級 —— "
+              "小さな浮きは「不足」と原理的に区別できない。")
     figs.save_table("confusion", header, rows, title="混同行列(各 50 個体)+ ゼロ点の NG 率")
     return {"acc": acc, "zp_ng": {k: 100.0 * zp_ng[k] / n_each for k in KINDS},
             "miss_lift": miss_lift}
