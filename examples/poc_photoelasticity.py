@@ -225,9 +225,14 @@ def section3_dark_field(dsig, theta, delta, naive, m):
     print("  暗視野画像の輝度: 最小 %.4f 最大 %.4f(理論 sin²(δ/2) と同形)"
           % (img[IN_DISC].min(), img[IN_DISC].max()))
     print("  最寄りの暗線の整数次数だけを読んだときの平均絶対誤差: %.4f MPa" % e)
+    gain = float(np.mean(np.abs(naive - dsig[m]))) / max(e, 1e-12)
     print("  ゼロ点 %.4f MPa に対して %.2f 倍。"
-          % (float(np.mean(np.abs(naive - dsig[m]))),
-             float(np.mean(np.abs(naive - dsig[m]))) / max(e, 1e-12)))
+          % (float(np.mean(np.abs(naive - dsig[m]))), gain))
+    # ★所見を固定する: 暗視野 1 枚から整数の縞だけ読む素朴な手順は、ゼロ点に
+    #   **2 倍も勝てない**。分解能が fσ/h = 1.78 MPa の刻みに律速されるため。
+    #   4 節の位相シフト(誤差が機械精度まで落ちる)との対比がこの PoC の骨格。
+    assert 1.5 < gain < 2.5, gain
+    assert e > 0.3, e
     bright = polariscope_image(delta, theta, analyser_deg=0.0)
     plane = plane_polariscope(delta, theta, 0.0)
     figs.save_grid("polariscope",
