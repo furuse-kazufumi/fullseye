@@ -1050,7 +1050,8 @@ def _machine_scene() -> np.ndarray:
     return img
 
 
-def section_figures(table) -> None:
+def section_scene_figures() -> None:
+    """場面の図(機械・熱画像・スペクトル・軸心)。数字より先に置く。"""
     if not figs.enabled():
         return
     figs.save("scene_machine", _machine_scene(),
