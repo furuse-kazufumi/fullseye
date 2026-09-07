@@ -496,7 +496,39 @@ def section_snr_cliff() -> dict:
                                          - QUANT_M ** 2 / 12.0, 0.0)))
                        / fine[names[1]][idx0] - 1.0)))
 
+    # ★予測 C の検定 —— 漏水位置を細かく振って小数部を散らす
+    xl = np.linspace(70.0, 86.0, 41)
+    frac, e_int, e_sub = [], [], []
+    for x in xl:
+        rq = make_records(20.0, SEED, x_leak=float(x))
+        frac.append(float((rq["tau_true"] * FS_HZ) % 1.0))
+        e_int.append(float(position(tau_raw(rq, False), C_TRUE)) - float(x))
+        e_sub.append(float(position(tau_bandlimited(rq), C_TRUE)) - float(x))
+    rms_int = float(np.sqrt(np.mean(np.asarray(e_int) ** 2)))
+    rms_sub = float(np.sqrt(np.mean(np.asarray(e_sub) ** 2)))
+    print("\n  ★予測 C の検定(漏水位置を %.0f-%.0f m で %d 点、SNR +20 dB):"
+          % (xl[0], xl[-1], len(xl)))
+    print("     整数ピークの RMS %.4f m —— 予測 %.4f m と %.0f %% 差。"
+          % (rms_int, QUANT_M / np.sqrt(12.0),
+             100 * abs(rms_int / (QUANT_M / np.sqrt(12.0)) - 1)))
+    print("     サブサンプルの RMS %.4f m —— %.0f 倍良い。**位置を 1 つに固定した"
+          "表(上)では\n     整数ピークが +10 dB で %.4f m しか外していないが、"
+          "それは偶然この τ の小数部が\n     %.2f だったから**。"
+          "誤差を「散らばり」と読むか「偏り」と読むかが、ここで分かれる。"
+          % (rms_sub, rms_int / rms_sub, fine[names[0]][0],
+             (make_records(0.0, SEED)["tau_true"] * FS_HZ) % 1.0))
+    assert abs(rms_int / (QUANT_M / np.sqrt(12.0)) - 1.0) < 0.35, rms_int
+
     lg = np.log10
+    figs.save_plot("quantization",
+                   [("整数ピーク", frac, e_int),
+                    ("帯域制限 + サブサンプル", frac, e_sub),
+                    ("誤差ゼロ", [0.0, 1.0], [0.0, 0.0])],
+                   xlabel="真の遅延の小数部 [標本]", ylabel="掘る場所のずれ [m]",
+                   title="量子化はのこぎり波 —— 「散らばり」ではなく位置で決まる偏り",
+                   caption="漏水位置を 41 点振った。整数ピークの誤差は小数部の"
+                           "関数で、同じ場所を何度測っても同じだけ外す。",
+                   kinds=["scatter", "scatter", "line"])
     figs.save_plot("snr_cliff",
                    [(n, list(snrs), lg(allrms[n])) for n in names]
                    + [("CRLB(この場面)", list(snrs), lg(crlb_num))],
@@ -828,7 +860,7 @@ def main() -> int:
     print("  * 崖は %s dB(予測 %.1f dB)。落ちるとピークの取り違えで"
           " %.0f m 級に飛ぶ。"
           % ("%+.1f" % sw["first"] if sw["first"] is not None else "?",
-             sw["thr"], L_M / 4.0))
+             sw["thr"], sw["allrms"][ref][-1]))
     print("  * 音速を 10 %% 間違えると %+.2f m。管種が途中で変わると %+.1f m で、"
           "\n    **どの単一音速でも直らない**。" % (ss["cases"][1][3],
                                                    ss["mixed_x"] - X_LEAK))
