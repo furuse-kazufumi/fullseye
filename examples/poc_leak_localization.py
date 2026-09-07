@@ -102,9 +102,9 @@ def make_records(snr_db: float, seed: int, x_leak: float = X_LEAK,
 # --------------------------------------------------------------------------- #
 # 推定器 —— どれも「遅延 τ [s]」を返す。位置は最後に 1 か所で作る               #
 # --------------------------------------------------------------------------- #
-def position(tau: float, c_assumed: float) -> float:
+def position(tau, c_assumed: float):
     """遅延から掘る場所 [m] を出す。``x = (L + c·τ)/2`` —— この 1 行が全部。"""
-    return 0.5 * (L_M + c_assumed * float(tau))
+    return 0.5 * (L_M + c_assumed * np.asarray(tau, np.float64))
 
 
 def _score_1d(a: np.ndarray, b: np.ndarray) -> np.ndarray:
