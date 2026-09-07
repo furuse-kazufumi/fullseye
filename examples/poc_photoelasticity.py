@@ -406,6 +406,7 @@ def section6_noise(dsig, theta, delta, m):
     print("6) 雑音と 8 bit 量子化")
     print("=" * 78)
     rng = np.random.default_rng(5)
+    rows = {}
     print("  %10s %10s | %14s %12s"
           % ("雑音 σ", "量子化", "δ 誤差 rad", "σ1-σ2 誤差"))
     print("  " + "-" * 54)
