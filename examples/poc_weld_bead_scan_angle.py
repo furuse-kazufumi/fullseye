@@ -779,11 +779,11 @@ def section5_angle_sweep(p: dict, tru: dict) -> dict:
                     unsat_bias.append(float(np.mean((hh - h_true)[good & ~hot])))
                 sc = score(measure_all(hh, p["y"]), tru)
                 for k in KEYS:
-                    for f in ("mae", "got", "miss"):
+                    for f in ("mae", "got", "miss", "tmean"):
                         acc[k][f].append(sc[k][f])
             hgt[gname].append(float(np.mean(hh_rms)))
             for k in KEYS:
-                for f in ("mae", "got", "miss"):
+                for f in ("mae", "got", "miss", "tmean"):
                     res[gname][k][f].append(float(np.nanmean(acc[k][f]))
                                             if np.any(np.isfinite(acc[k][f]))
                                             else float("nan"))
