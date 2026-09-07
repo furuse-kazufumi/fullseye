@@ -872,8 +872,8 @@ def section_false_symmetry(S: dict) -> dict:
                                "**消される**かが決まる(面は真値でもこうなる)。")
         figs.save_table(
             "false_symmetry_table",
-            ["欠損の側", "失った点", "復元 RMS [mm]", "捏造 [mm^3]", "消失 [mm^3]",
-             "高さの最大差 [mm]"], rows,
+            ["欠損の側", "失った点", "復元 RMS [mm]", "対称な形の対照 [mm]",
+             "捏造 [mm^3]", "消失 [mm^3]", "高さの最大差 [mm]"], rows,
             title="偽陽性: 実在しない対称性を作った量",
             caption="真の非対称 RMS %.2f mm。復元部は定義上ぴったり対称になるので、"
                     "見かけの非対称度は %.2f -> %.2f / %.2f mm に下がる。"
