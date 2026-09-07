@@ -466,7 +466,8 @@ def section_gsd_overhang(lb: list) -> dict:
                    xlabel="高さマップのセル寸法 g [mm]",
                    ylabel="はみ出し体積 [m3]",
                    title="粗い格子は、出ていない荷にはみ出しを作る")
-    return {"gc": gcs, "meas": meas, "pred": pred, "real": real}
+    return {"gc": gcs, "meas": meas, "pred": pred, "real": real,
+            "true_over": true_over}
 
 
 # --------------------------------------------------------------------------- #
