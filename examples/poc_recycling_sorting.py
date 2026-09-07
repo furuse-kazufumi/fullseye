@@ -266,6 +266,20 @@ def d2(x: np.ndarray) -> np.ndarray:
                          delta=float(WL[1] - WL[0]), axis=-1)
 
 
+#: グラフの大きさ。凡例の箱は高さが固定なので、小さい図だと**曲線に被さる**。
+#: 5 系列だと 360 px では線が隠れたので、縦を伸ばして上に余白を取る。
+FIG_SIZE = (760, 600)
+
+
+def _ylim(*arrays, frac: float = 0.62) -> tuple[float, float]:
+    """データが軸の下 ``frac`` に収まる y 範囲(上は凡例のための余白)。"""
+    v = np.concatenate([np.asarray(a, np.float64).ravel() for a in arrays])
+    v = v[np.isfinite(v)]
+    lo, hi = float(v.min()), float(v.max())
+    r = max(hi - lo, 1e-12)
+    return (lo - 0.05 * r, lo + r / frac)
+
+
 def flatness(x: np.ndarray) -> np.ndarray:
     """スペクトルの「特徴の多さ」= ``||2 次微分|| / 平均反射率``(明るさに不変)。
 
