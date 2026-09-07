@@ -665,7 +665,7 @@ def section_breakdown(rig: Rig) -> dict:
     print("5) ★★壊れ方を 1 つの数字に畳まない —— 規則ごとの内訳")
     print("=" * 78)
     print("   条件            規則       IoU     適合率   再現率   偽占有  見逃し"
-          "  偽占有の距離中央値")
+          "  偽占有の距離中央値  2 セル超の割合")
 
     conds = (("誤差なし", dict()),
              ("yaw 1.00 度", dict(dyaw=1.0)),
