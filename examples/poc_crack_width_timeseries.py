@@ -626,7 +626,7 @@ def section_cliff_width() -> dict:
 
     sch = schedule()
     tex = base_texture(SEED)
-    n = 6
+    n = N_EPOCH
     t = EPOCH_YEAR[:n]
     rows, w0s, gi, gb = [], [], [], []
     for w0 in (0.10, 0.15, 0.20, 0.24, 0.35, 0.55):
