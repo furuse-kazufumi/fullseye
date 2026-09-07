@@ -230,28 +230,68 @@ def detect_ray_peaks(img, center, theta: float, rho_end: float,
     return pk
 
 
-def polar_stack(img, center, r_out: float, med=(1.0, 0.0)):
-    """極座標展開(髄中心、1 px/列、1°/行)→ θ 方向に長いメディアン。"""
-    nr = int(round(r_out)) + 1
-    pol = np.asarray(fs.ledger.polar_unwrap(img, center=(float(center[0]), float(center[1])),
-                                            r_in=0.0, r_out=float(nr - 1), nr=nr,
-                                            ntheta=NTHETA), np.float64)
+def disc_edge(pol: np.ndarray) -> np.ndarray:
+    """展開図の行ごとに円板の外縁(暗い樹皮 → 明るい背景)の半径を返す。
+
+    外から内へ見て最初に 0.5 を割る位置 = 樹皮の外側。θ 方向に循環メディアン
+    (±4 行)を掛けて割れ目・雑音の飛びを落とす。真値は使わない。
+    """
+    nr = pol.shape[1]
+    out = np.zeros(pol.shape[0])
+    for i in range(pol.shape[0]):
+        sm = np.asarray(fs.smooth_funct_1d_gauss(pol[i], 1.5))
+        dark = np.nonzero(sm < 0.5)[0]
+        out[i] = dark[-1] + 0.5 if dark.size else nr - 1.0
+    return np.median(np.stack([np.roll(out, s) for s in range(-4, 5)]), axis=0)
+
+
+def polar_stack(img, center, med=(1.0, 0.0)) -> dict:
+    """極座標展開(髄中心、1 px/列、1°/行)→ 外縁で半径を正規化 → θ 方向メディアン。
+
+    ★角度一定の展開図では θ 窓の接線方向の長さが半径に比例して伸びる。偏心成長
+    (境界の傾き dR/dθ = S·E·sin)があると外側の年輪ほど θ 窓の中でにじむので、
+    先に**外縁の形で各行の半径を正規化**して年輪を縦にそろえてから θ 方向に
+    まとめる(年輪年代学の「外形で正規化する」作法)。正規化後の位置は扇形ごとに
+    外縁の半径で px へ戻す。
+    """
+    cy, cx = float(center[0]), float(center[1])
+    avail = int(min(cy, cx, N_PIX - 1 - cy, N_PIX - 1 - cx)) - 1
+    nr = avail + 1
+    pol = np.asarray(fs.ledger.polar_unwrap(img, center=(cy, cx), r_in=0.0,
+                                            r_out=float(nr - 1), nr=nr, ntheta=NTHETA),
+                     np.float64)
     pol = np.clip(pol, 0.0, 1.0)
-    fil = np.asarray(fs.apply(pol, "median_rect", a=med[0], b=med[1])) if med else pol
-    return pol, fil
+    r_disc = disc_edge(pol)
+    r_bar = float(np.median(r_disc))
+    nr2 = int(np.ceil(r_bar)) + 4
+    grid = np.arange(nr2, dtype=np.float64)
+    norm = np.empty((NTHETA, nr2))
+    cols = np.arange(nr, dtype=np.float64)
+    for i in range(NTHETA):
+        norm[i] = np.interp(grid, cols * (r_bar / r_disc[i]), pol[i])
+    fil = np.asarray(fs.apply(norm, "median_rect", a=med[0], b=med[1])) if med else norm
+    return {"pol": pol, "norm": norm, "fil": fil, "r_disc": r_disc, "r_bar": r_bar,
+            "avail": avail}
 
 
-def detect_sectors(fil, sigma: float = SIG_M, thr: float = THR) -> list[np.ndarray]:
-    """扇形ごとに r 方向の測定線を置き、正極性(暗→明 = 晩材→早材)の段を拾う。"""
+def detect_sectors(ps: dict, sigma: float = SIG_M, thr: float = THR) -> list[np.ndarray]:
+    """扇形ごとに r 方向の測定線を置き、正極性(暗→明 = 晩材→早材)の段を拾う。
+
+    位置は正規化した半径で出るので、扇形の外縁半径で px に戻す。樹皮 → 背景の
+    段(正極性)は外縁の 2.5 px 内側で切って落とす。
+    """
+    fil, r_disc, r_bar = ps["fil"], ps["r_disc"], ps["r_bar"]
     nr = fil.shape[1]
     out = []
     for s in range(N_SECT):
         row_c = (s + 0.5) * SECT_ROWS - 0.5
         m = fs.ledger.gen_measure_rectangle2(row_c, (nr - 1) / 2.0, 0.0,
-                                             (nr - 1) / 2.0, SECT_ROWS, fil.shape)
+                                             (nr - 1) / 2.0, MEAS_ROWS, fil.shape)
         edges = fs.ledger.measure_pos(fil, m, sigma=sigma, threshold=thr,
                                       transition="positive")
-        out.append(np.asarray([e["pos"] for e in edges], np.float64))
+        rd = float(np.median(r_disc[s * SECT_ROWS:(s + 1) * SECT_ROWS]))
+        pos = np.asarray([e["pos"] for e in edges], np.float64) * (rd / r_bar)
+        out.append(pos[pos < rd - 2.5])
     return out
 
 
