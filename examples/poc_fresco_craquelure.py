@@ -780,8 +780,10 @@ def main() -> int:
           "どれも 2 種を分けるが、斜光で動くのは次数 4 割合だけ(%.2f → %.2f)。"
           % (t_d["diam"], t_a["diam"], t_d["straight"], t_a["straight"], t_d["deg4"], t_a["deg4"],
              table[("経年", "きれい")]["deg4"], table[("経年", "+斜光")]["deg4"]))
-    print("  * 崖: 幅 %.2f px(予想 %.2f px)/ 質感 c ≈ %.2f(予想 %.2f)/ 斜光で幅 +%.2f px。"
-          % (sw["ws"][1], sw["w_pred"], tx["cs"][5], tx["c_pred"], rk["wid"][-1] - rk["wid"][0]))
+    print("  * 崖: 幅は再現率 0.9 を %.2f px まで保ち、%.2f px でも %.2f(予想の崖 %.2f px は来なかった)/ "
+          "質感は c = %.2f でも偽陽性 %.2f で爆発しない(予想 c ≈ %.2f)/ 斜光で幅 +%.2f px。"
+          % (sw["ws"][sw["i90"]], sw["ws"][0], sw["rec"][0], sw["w_pred"], tx["cs"][8], tx["fp"][8],
+             tx["c_pred"], rk["wid"][-1] - rk["wid"][0]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
