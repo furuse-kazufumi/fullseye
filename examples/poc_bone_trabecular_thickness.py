@@ -596,10 +596,10 @@ def section_bias_and_controls(sc: dict, tr: dict) -> dict:
 
     ce_t = center_edge(tb)
     print("  予想: 中心の骨は (1-β) 倍暗いので大津 1 本では中心の帯が痩せ、縁が太る。")
-    print("\n  β     | 大津 1 本: BV/TV    Tb.Th   中心/縁 [µm]  | retinex→大津: BV/TV   | retinex→exp→大津: BV/TV   Tb.Th")
+    print("\n  β     | 大津 1 本: BV/TV    Tb.Th   中心/縁 [µm]  | retinex→大津: BV/TV   | retinex→exp→大津: BV/TV   Tb.Th   中心/縁 [µm]")
     print("  真値  |             -       %6.1f   %5.0f / %5.0f  |" % (ref_d["tbth"], *ce_t))
     beta_ax, bv_o, bv_r, bv_e, ce_gap = [], [], [], [], []
-    keep = None
+    keep = ce_last = None
     for beta in (0.0, 0.2, 0.4, 0.6):
         img = observe(sc["master"], px, noise=NOISE_SIGMA, bias=beta)
         m_o = np.asarray(fs.apply(img, "otsu")) > 0.5
