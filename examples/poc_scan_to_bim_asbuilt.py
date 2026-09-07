@@ -928,7 +928,9 @@ def section_maps(alignres: dict, zero: dict, seed: int = SEED) -> dict:
 # --------------------------------------------------------------------------- #
 # 節 5 —— 要素ごとの判定表                                                     #
 # --------------------------------------------------------------------------- #
-TOL = {"wall": 3.0, "floor_slope": 3.0, "ceil_slope": 3.0,
+#: 許容値 —— 施工精度の目安(壁の倒れ 7.5 mm/3 m、床の水平 6 mm/6 m、
+#: 床の平面度 ±7 mm/3 m、柱の寸法 ±5 mm、開口の位置 ±20 mm)
+TOL = {"wall": 2.5, "floor_slope": 1.0, "ceil_slope": 1.0,
        "flatness": 7.0, "col": 5.0, "open": 20.0}
 
 
@@ -938,54 +940,70 @@ def section_verdicts(alignres: dict, false_m: dict) -> dict:
     print("=" * 78)
     g = alignres["res"]["global"]
     n = alignres["res"]["none"]
+    dm = alignres["res"]["datum"]
     f = false_m["false"]
-    items = [
-        ("東西の壁の傾き [mrad]", 1000 * RACK, 1000 * n["rack"], 1000 * g["rack"],
-         1000 * false_m["rack0"], TOL["wall"]),
-        ("南北の壁の開き [mrad]", 1000 * SPLAY, 1000 * n["splay"], 1000 * g["splay"],
-         1000 * false_m["splay0"], TOL["wall"]),
-        ("床の勾配 [mrad]", 1000 * FLOOR_SLOPE, 1000 * n["floor_sx"],
-         1000 * g["floor_sx"], 1000 * f["floor_sx"], TOL["floor_slope"]),
-        ("天井の勾配 [mrad]", 0.0, 1000 * n["ceil_sx"], 1000 * g["ceil_sx"],
-         1000 * f["ceil_sx"], TOL["ceil_slope"]),
-        ("床の平面度 PV [mm]", 1000 * SAG, 1000 * n["floor_pv"], 1000 * g["floor_pv"],
-         1000 * f["floor_pv"], TOL["flatness"]),
-        ("床の平面度 RMS [mm]", 1000 * SAG * 0.2948, 1000 * n["floor_rms"],
-         1000 * g["floor_rms"], 1000 * f["floor_rms"], TOL["flatness"] / 2),
-        ("柱 A の半径の狂い [mm]", 1000 * DCOL[0], 1000 * (n["col0"] - COL_R),
-         1000 * (g["col0"] - COL_R), 1000 * (f["col0"] - COL_R), TOL["col"]),
-        ("柱 B の半径の狂い [mm]", 1000 * DCOL[1], 1000 * (n["col1"] - COL_R),
-         1000 * (g["col1"] - COL_R), 1000 * (f["col1"] - COL_R), TOL["col"]),
-        ("窓の高さのずれ [mm]", 1000 * WIN_DZ,
-         1000 * (n["win_z"] - sum(WIN_V) / 2), 1000 * (g["win_z"] - sum(WIN_V) / 2),
-         1000 * (f["win_z"] - sum(WIN_V) / 2), TOL["open"]),
-        ("戸の位置のずれ [mm]", 1000 * DOOR_DX,
-         1000 * (n["door_x"] - sum(DOOR_U) / 2), 1000 * (g["door_x"] - sum(DOOR_U) / 2),
-         1000 * (f["door_x"] - sum(DOOR_U) / 2), TOL["open"]),
-    ]
+
+    def col(m, key):
+        return {"rack": 1000 * m["rack"], "splay": 1000 * m["splay"],
+                "floor_sx": 1000 * m["floor_sx"], "ceil_sx": 1000 * m["ceil_sx"],
+                "floor_pv": 1000 * m["floor_pv"], "floor_rms": 1000 * m["floor_rms"],
+                "col0": 1000 * (m["col0"] - COL_R), "col1": 1000 * (m["col1"] - COL_R),
+                "win": 1000 * (m["win_z"] - sum(WIN_V) / 2),
+                "door": 1000 * (m["door_x"] - sum(DOOR_U) / 2)}[key]
+
+    items = [("東西の壁の傾き [mrad]", "rack", 1000 * RACK, TOL["wall"]),
+             ("南北の壁の開き [mrad]", "splay", 1000 * SPLAY, TOL["wall"]),
+             ("床の勾配 [mrad]", "floor_sx", 1000 * FLOOR_SLOPE, TOL["floor_slope"]),
+             ("天井の勾配 [mrad]", "ceil_sx", 0.0, TOL["ceil_slope"]),
+             ("床の平面度 PV [mm]", "floor_pv", 1000 * SAG, TOL["flatness"]),
+             ("床の平面度 RMS [mm]", "floor_rms", 1000 * SAG * 0.2948, TOL["flatness"] / 2),
+             ("柱 A の半径の狂い [mm]", "col0", 1000 * DCOL[0], TOL["col"]),
+             ("柱 B の半径の狂い [mm]", "col1", 1000 * DCOL[1], TOL["col"]),
+             ("窓の高さのずれ [mm]", "win", 1000 * WIN_DZ, TOL["open"]),
+             ("戸の位置のずれ [mm]", "door", 1000 * DOOR_DX, TOL["open"])]
+
+    # 「偽の誤差」の判定に使う f には rack/splay が別名で入っている
+    f = dict(f)
+    f["rack"], f["splay"] = false_m["rack0"], false_m["splay0"]
+
     rows = []
-    print("   項目                      真値   合わせない  全体ICP   偽の誤差  許容  判定")
-    n_ok = n_miss = n_false = 0
-    for name, t, vn, vg, vf, tol in items:
+    print("   項目                      真値  合わせない 床+2壁  全体ICP  偽の誤差  許容"
+          "   判定 真/ICP")
+    miss = {"none": 0, "datum": 0, "global": 0}
+    n_false = 0
+    for name, key, t, tol in items:
+        vals = {"none": col(n, key), "datum": col(dm, key), "global": col(g, key)}
+        vf = col(f, key)
         jt = "不合格" if abs(t) > tol else "合格"
-        jg = "不合格" if abs(vg) > tol else "合格"
-        if jt != jg:
-            n_miss += 1
-        else:
-            n_ok += 1
+        for k, v in vals.items():
+            if (abs(v) > tol) != (abs(t) > tol):
+                miss[k] += 1
         if abs(t) <= tol and abs(vf) > tol:
             n_false += 1
-        rows.append([name, "%+.2f" % t, "%+.2f" % vn, "%+.2f" % vg, "%+.2f" % vf,
-                     "±%.1f" % tol, "%s / %s" % (jt, jg)])
-        print("   %-24s %+7.2f  %+8.2f  %+8.2f  %+8.2f  ±%.1f  真=%s 測=%s"
-              % (name, t, vn, vg, vf, tol, jt, jg))
-    print("\n   全体 ICP のあとの判定は %d 項目中 %d 項目が真値と食い違う。"
-          % (len(items), n_miss))
+        jg = "不合格" if abs(vals["global"]) > tol else "合格"
+        rows.append([name, "%+.2f" % t, "%+.2f" % vals["none"], "%+.2f" % vals["datum"],
+                     "%+.2f" % vals["global"], "%+.2f" % vf, "±%.1f" % tol,
+                     "%s / %s" % (jt, jg)])
+        print("   %-24s %+7.2f %+8.2f %+8.2f %+8.2f %+8.2f  ±%.1f  %s/%s"
+              % (name, t, vals["none"], vals["datum"], vals["global"], vf, tol, jt, jg))
+    print("\n   真値と食い違う判定の数: 合わせない %d / 床+2 壁を基準 %d / 全体 ICP %d"
+          "(%d 項目中)。" % (miss["none"], miss["datum"], miss["global"], len(items)))
+    print("   ★合わせるほど判定が壊れる —— 壁の傾き %.2f mrad(不合格)が"
+          "全体 ICP で %.2f mrad(合格)になる。" % (1000 * RACK, col(g, "rack")))
+    print("   ★天井は許容 ±%.1f mrad に対し全体 ICP で %+.2f(許容の %.0f %%)、"
+          % (TOL["ceil_slope"], col(g, "ceil_sx"),
+             100 * abs(col(g, "ceil_sx")) / TOL["ceil_slope"]))
+    print("     床と 2 壁を基準にすると %+.2f mrad で**無傷の天井が不合格になる**。"
+          % col(dm, "ceil_sx"))
     figs.save_table("element_verdicts",
-                    ["項目", "真値", "合わせない", "全体 ICP", "偽の誤差", "許容", "判定 真/測"],
+                    ["項目", "真値", "合わせない", "床+2 壁", "全体 ICP", "偽の誤差",
+                     "許容", "判定 真/ICP"],
                     rows, title="要素ごとの as-built 判定(許容値は施工精度の目安)",
-                    caption="「偽の誤差」列は設計どおりに建った建物を同じ手順で測った値。")
-    return {"n_miss": n_miss, "n_ok": n_ok, "rows": rows}
+                    caption="「偽の誤差」列は設計どおりに建った建物を同じ手順で測った値。"
+                            "食い違う判定は 合わせない %d / 床+2 壁 %d / 全体 ICP %d。"
+                            % (miss["none"], miss["datum"], miss["global"]))
+    return {"miss": miss, "n_false": n_false, "rows": rows,
+            "ceil_datum": col(dm, "ceil_sx"), "rack_global": col(g, "rack")}
 
 
 # --------------------------------------------------------------------------- #
