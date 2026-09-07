@@ -429,6 +429,58 @@ def run_consensus(scene: dict, center=None, sigma=SIG_M, thr=THR, med=(1.0, 0.0)
 
 
 # --------------------------------------------------------------------------- #
+# 崖の予測 —— 閉形式の 1-D モデル(年輪内の t^P プロファイル + ぼけ + 検出器)      #
+# --------------------------------------------------------------------------- #
+RESAMPLE_SIG = 0.3     # 双一次リサンプル 1 回ぶんのぼけの近似 [px](幅 1 px の箱 ≈ σ 0.29)
+
+
+def model_profile(w: float, blur: float, step: float = 0.05, w_nb: float = 6.0):
+    """幅 ``w`` の年輪を幅 ``w_nb`` の年輪 3 本ずつで挟んだ放射方向の輝度(ぼけ後)。"""
+    edges = [-3 * w_nb, -2 * w_nb, -w_nb, 0.0, w, w + w_nb, w + 2 * w_nb, w + 3 * w_nb]
+    x = np.arange(edges[0] - 4.0, edges[-1] + 4.0, step)
+    prof = np.full_like(x, I_EW)
+    for a, b in zip(edges[:-1], edges[1:]):
+        m = (x >= a) & (x < b)
+        t = (x[m] - a) / (b - a)
+        prof[m] = I_EW - (I_EW - I_LW) * t ** P_LATE
+    sig = float(np.hypot(blur, RESAMPLE_SIG)) / step
+    return x, gaussian_filter(prof, sig)
+
+
+def predict_detectable(w: float, blur: float, mode: str) -> bool:
+    """閉形式モデルで、幅 ``w`` の年輪が検出できるかを予測する。
+
+    ``mode="consensus"``: その年輪の外側の境界(次の年輪へ入る段)で、平滑化後の
+    勾配の山が :data:`THR` 以上。``mode="zero"``: 1 px 刻みの平滑化プロファイルで、
+    その年輪と次の年輪の輝度の山が**別々に**立つ(2 山)。
+    """
+    x, prof = model_profile(w, blur)
+    if mode == "zero":
+        xs = np.arange(x[0], x[-1], 1.0)
+        sm = np.asarray(fs.smooth_funct_1d_gauss(np.interp(xs, x, prof), SIG_M))
+        pk = np.asarray(fs.find_peaks(sm, distance=2), int)
+        return int(np.sum((xs[pk] >= -1.0) & (xs[pk] < w + 3.0))) >= 2
+    xs = np.arange(x[0], x[-1], 1.0 / OVS)
+    sm = np.asarray(fs.smooth_funct_1d_gauss(np.interp(xs, x, prof), SIG_M * OVS))
+    g = np.asarray(fs.derivate_funct_1d(sm)) * OVS
+    win = (xs > w - 1.5) & (xs < w + 1.5)
+    return bool(g[win].max() >= THR)
+
+
+def model_cliff(blur: float, mode: str) -> float:
+    """幅を 6 → 0.5 px と 0.1 px 刻みで細めて、モデルが最初に落とす幅。"""
+    for w in np.arange(6.0, 0.4, -0.1):
+        if not predict_detectable(float(w), blur, mode):
+            return float(round(w, 1))
+    return 0.0
+
+
+def thin_found(results: list[dict], k: int) -> bool:
+    """年輪 ``k`` の幅(両側の境界)が過半数の方向で取れたか。"""
+    return sum(k in r["widths"] for r in results) * 2 > len(results)
+
+
+# --------------------------------------------------------------------------- #
 # 1-2. ゼロ点と合意法                                                           #
 # --------------------------------------------------------------------------- #
 def section_baseline() -> dict:
