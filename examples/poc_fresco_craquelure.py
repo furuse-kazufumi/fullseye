@@ -531,34 +531,40 @@ def section_width_sweep() -> dict:
     print("\n" + "=" * 78)
     print("3) 崖: ひび幅 0.5 → 4 px(経年型、質感 %.2f、ぼけ σ %.1f px)" % (TEX_C, BLUR_SIG))
     print("=" * 78)
-    ws = [0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0]
+    ws = [0.15, 0.25, 0.35, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0]
     from scipy.special import erf
     print("   幅px  予測ｺﾝﾄﾗｽﾄ  再現率  適合率  推定幅px  偏りpx")
-    rec, wid, pred = [], [], []
+    rec, prc, wid, pred = [], [], [], []
     for w in ws:
         sc = make_scene("経年", width=w)
-        me = measure(sc, extract_net(sc["img"]))
+        me = measure_scene(sc)
         c = K_CRACK * erf(w / (2 * np.sqrt(2) * BLUR_SIG))
         rec.append(me["recall"])
+        prc.append(me["prec"])
         wid.append(me["width"])
         pred.append(c)
         print("   %4.2f   %8.3f   %6.3f  %6.3f   %6.2f   %+6.2f" % (
             w, c, me["recall"], me["prec"], me["width"], me["width"] - w))
-    # 幾何の予想: ぼけ後のコントラストが質感の 2 倍を割る幅
+    # 幾何の予想: ぼけ後の**点**コントラストが質感の 2 倍を割る幅
     from scipy.optimize import brentq
     w_pred = brentq(lambda w: K_CRACK * erf(w / (2 * np.sqrt(2) * BLUR_SIG)) - 2 * TEX_C, 0.05, 10)
     i50 = next((i for i, r in enumerate(rec) if r >= 0.5), len(ws) - 1)
-    print("  予想の崖(コントラスト = 質感 × 2): %.2f px。実測は %.2f px で再現率 %.2f、%.2f px で %.2f。"
-          % (w_pred, ws[max(0, i50 - 1)], rec[max(0, i50 - 1)], ws[i50], rec[i50]))
-    print("  幅の推定は細いほど太る(真値 1.0 px → %.1f px、4.0 px → %.1f px)。" % (wid[2], wid[6]))
-    figs.save_plot("width_cliff", [("中心線の再現率", ws, rec),
+    print("  ★予想の崖(点コントラスト = 質感 × 2)は %.2f px。実測は %.2f px でも再現率 %.2f、崖は %.2f px"
+          "(再現率 %.2f)まで来ない —— 線検出は線に沿って積分するので、点のコントラストでは予想できない。"
+          % (w_pred, 0.5, rec[ws.index(0.5)], ws[max(0, i50 - 1)], rec[max(0, i50 - 1)]))
+    print("  先に壊れるのは適合率(%.2f px で %.2f)と幅: 真値 0.5 px → %.1f px(%.1f 倍)、1.0 px → %.1f px、"
+          "4.0 px → %.1f px。ぼけ σ %.1f px の半値幅 %.1f px が下限。"
+          % (0.5, prc[ws.index(0.5)], wid[ws.index(0.5)], wid[ws.index(0.5)] / 0.5, wid[ws.index(1.0)],
+             wid[ws.index(4.0)], BLUR_SIG, 2.355 * BLUR_SIG))
+    figs.save_plot("width_cliff", [("中心線の再現率", ws, rec), ("適合率", ws, prc),
                                    ("推定幅 / 真値幅", ws, [v / w for v, w in zip(wid, ws)])],
-                   xlabel="ひび幅の真値 [px]", ylabel="再現率 / 幅の比",
+                   xlabel="ひび幅の真値 [px]", ylabel="再現率 / 適合率 / 幅の比",
                    title="ひび幅の崖(ぼけ σ %.1f px、質感 %.2f)" % (BLUR_SIG, TEX_C),
-                   caption="1 px 以上は取れる。幅の推定は細いほど相対的に太る。")
-    assert rec[0] < 0.5 < rec[2], "幅の崖の位置が動いた: %s" % rec
-    assert wid[2] > 2.0 and abs(wid[6] - 4.0) < 0.6
-    return dict(ws=ws, rec=rec, wid=wid, w_pred=w_pred)
+                   caption="再現率の崖は 0.5 px より下。幅の推定は細いほど相対的に太る。", ylim=(0, 6))
+    assert rec[ws.index(0.5)] > 0.85, "0.5 px で崖が来た: %s" % rec
+    assert rec[0] < 0.7, "0.15 px でも取れてしまう: %s" % rec
+    assert wid[ws.index(1.0)] > 1.5 and abs(wid[ws.index(4.0)] - 4.0) < 0.6
+    return dict(ws=ws, rec=rec, wid=wid, w_pred=w_pred, i50=i50)
 
 
 def section_texture_sweep() -> dict:
