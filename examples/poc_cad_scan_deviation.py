@@ -1150,10 +1150,11 @@ def section_basin(ref: CadRef) -> dict:
           % (b_rows[1][2] / b_rows[0][2]))
 
     figs.save_plot("basin",
-                   [("点-面 ICP の点移動 [mm]", angs[:7], mm1[:7]),
-                    ("点-点 ICP の点移動 [mm]", angs[:7], mm2[:7]),
-                    ("公差 %.2f mm" % TOL, angs[:7], [TOL] * 7)],
-                   xlabel="初期姿勢のずれ [度]", ylabel="姿勢由来の点の移動 [mm]",
+                   [("点-面 ICP", angs[:6], [m / TOL for m in mm1[:6]]),
+                    ("点-点 ICP", angs[:6], [m / TOL for m in mm2[:6]]),
+                    ("公差(= 1)", angs[:6], [1.0] * 6)],
+                   xlabel="初期姿勢のずれ [度]",
+                   ylabel="姿勢由来の点の移動 / 公差 [倍]",
                    title="崖は手法ごとに別の場所にある(点-点はなだらかな坂)",
                    caption="点-面は 60 度まで平ら。点-点は 0〜30 度で公差を"
                            "跨ぐが、残差だけ見ていると「収束した」ように見える。")
