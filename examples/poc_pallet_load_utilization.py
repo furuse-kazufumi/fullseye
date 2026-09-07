@@ -451,9 +451,12 @@ def section_gsd_overhang(lb: list) -> dict:
             gc, meas[-1], pred[-1], real[-1]))
 
     cross = [g for g, m in zip(gcs, meas) if m > true_over]
-    print("\n  ★予測は実測を %.0f〜%.0f %s で追う(オフセット平均)。"
-          % (100 * min(m / p for m, p in zip(meas, pred)),
-             100 * max(m / p for m, p in zip(meas, pred)), "%"))
+    ratio = [m / p for m, p in zip(meas, pred)]
+    print("\n  ★実測は予測の %.0f %s(g = %.0f mm)から %.0f %s(g = %.0f mm)へ"
+          "近づく —— \n     **g に比例して増える**という形は当たっており、"
+          "小さい g では格子が\n     パレット端にそろう場合の効きが相対的に"
+          "残るぶん低めに出る。"
+          % (100 * ratio[0], "%", gcs[0], 100 * ratio[-1], "%", gcs[-1]))
     if cross:
         print("  ★★g = %.0f mm から、**1 mm も出ていない荷 A の偽はみ出しが、"
               "\n     本当に %.0f mm 出ている荷 B の真のはみ出しを上回る**"
