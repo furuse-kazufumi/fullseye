@@ -1,0 +1,11 @@
+場面	塗り方	隣接対の色差の最小 ΔE	JND 未満の対
+8 領域	viridis(連続)	13.4	0
+8 領域	jet(連続)	23.3	0
+8 領域	categorical tab10	17.3	0
+8 領域	categorical wong	21.7	0
+8 領域	colorize_labels 種 0	15.5	0
+24 領域	viridis(連続)	3.5	0
+24 領域	jet(連続)	5.4	0
+24 領域	categorical tab10	0.0	3
+24 領域	categorical wong	0.0	3
+24 領域	colorize_labels 種 0	4.3	0

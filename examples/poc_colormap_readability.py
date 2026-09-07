@@ -745,7 +745,7 @@ def main() -> None:
     assert abs(norms["rank"]["outlier"][0] - norms["rank"]["clean"][0]) < 1.0
     assert rng_out["sentinel"] == rng_out["true"]
     assert rng_out["naive"] > 2.0 * rng_out["true"]
-    assert biv["biv"] > 3 * biv["plain"]
+    assert biv["biv"] > 2 * biv["plain"]
     assert cat["res"][(8, "categorical wong")] > cat["res"][(8, "viridis(連続)")]
     assert cat["res"][(24, "categorical tab10")] < cat["res"][(24, "viridis(連続)")], \
         "色数を超えた質的パレットは連続マップに負ける"

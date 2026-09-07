@@ -1,0 +1,148 @@
+[
+ {
+  "file": "01_gain_profile.png",
+  "name": "gain_profile",
+  "caption": "平らなら偽の境目は立たない。jet と hsv の山がそのまま『見えてしまう帯』になる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_lightness_profile.png",
+  "name": "lightness_profile",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_jet_prediction.png",
+  "name": "jet_prediction",
+  "caption": "予測は sRGB 伝達関数と CIE Y 係数だけから。",
+  "shape": [
+   152,
+   317,
+   3
+  ],
+  "csv": "03_jet_prediction.csv",
+  "tsv": "03_jet_prediction.tsv"
+ },
+ {
+  "file": "04_cliff.png",
+  "name": "cliff",
+  "caption": "偽の境目(水平線)より下では、本物の段差は配色の作った帯に埋もれる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_scene_maps.png",
+  "name": "scene_maps",
+  "caption": "jet と hsv には無いはずの帯が見える。",
+  "shape": [
+   615,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "06_false_edge_map.png",
+  "name": "false_edge_map",
+  "caption": "真の場に段差は 1 つも無い。線はすべて配色が作った。",
+  "shape": [
+   333,
+   748,
+   3
+  ]
+ },
+ {
+  "file": "07_norm_scene.png",
+  "name": "norm_scene",
+  "caption": "配色を変えたのではない。値 → 色の写し方だけ。",
+  "shape": [
+   535,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "08_norm_table.png",
+  "name": "norm_table",
+  "caption": "ρ(生 L*) の列が全部 1.000 なのが、素朴な指標の落とし穴。",
+  "shape": [
+   200,
+   451,
+   3
+  ],
+  "csv": "08_norm_table.csv",
+  "tsv": "08_norm_table.tsv"
+ },
+ {
+  "file": "09_range_sentinel.png",
+  "name": "range_sentinel",
+  "caption": "左は範囲外と『ちょうど端』が同じ色。数えると +358 % 過大になる。",
+  "shape": [
+   333,
+   750,
+   3
+  ]
+ },
+ {
+  "file": "10_bivariate.png",
+  "name": "bivariate",
+  "caption": "真の異常は左の 1 か所だけ。",
+  "shape": [
+   493,
+   830,
+   3
+  ]
+ },
+ {
+  "file": "11_bivariate_inputs.png",
+  "name": "bivariate_inputs",
+  "caption": "",
+  "shape": [
+   293,
+   430,
+   3
+  ]
+ },
+ {
+  "file": "12_categorical.png",
+  "name": "categorical",
+  "caption": "番号の大小に意味は無いのに、連続マップは『近い番号 = 近い領域』と読ませる。",
+  "shape": [
+   535,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "13_categorical_overflow.png",
+  "name": "categorical_overflow",
+  "caption": "同じ色の領域が隣り合っても、戻り値からは分からない。",
+  "shape": [
+   293,
+   630,
+   3
+  ]
+ },
+ {
+  "file": "14_categorical_table.png",
+  "name": "categorical_table",
+  "caption": "",
+  "shape": [
+   320,
+   445,
+   3
+  ],
+  "csv": "14_categorical_table.csv",
+  "tsv": "14_categorical_table.tsv"
+ }
+]
