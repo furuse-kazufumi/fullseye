@@ -128,9 +128,12 @@ def make_scene(warp_pv: float = WARP_PV, center_sag: float = 0.0,
     h = H_NOM + H_SD * rng.standard_normal(cy.size)
     short_idx = rng.choice(cy.size, N_SHORT, replace=False)
     h[short_idx] += SHORT_UM
-    if center_sag > 0.0:                     # ★本物の低次不良(中央が低い)
+    if center_sag > 0.0:
+        # ★本物の低次不良(ダイアタッチのボイド = 中央がなだらかに沈む)。
+        #   **わざと厳密な 2 次にしない** —— 2 次にすると当てはめが定義上 100 %
+        #   吸ってしまい、「どれだけ吸われるか」という問いが自明になる。
         rr = np.hypot(cy - (N_PIX - 1) / 2.0, cx - (N_PIX - 1) / 2.0)
-        h -= center_sag * (1.0 - (rr / rr.max()) ** 2)
+        h -= center_sag * np.exp(-(rr / (0.35 * rr.max())) ** 2)
 
     # 高さ場に描く: 平坦な天面 + 縁の丸み(ピラーの断面)
     z = warp.copy()
