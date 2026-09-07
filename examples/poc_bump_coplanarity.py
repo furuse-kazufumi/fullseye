@@ -340,7 +340,7 @@ def section_cliff() -> dict:
               "個体差 1σ=%.1f µm に並ぶのは PV = %.1f µm"
               % (deg, deg, ratio[deg], H_SD, pred[deg]))
 
-    pvs = [0.0, 10.0, 25.0, 50.0, 100.0, 200.0, 400.0]
+    pvs = [0.0, 10.0, 25.0, 50.0, 100.0, 150.0, 200.0, 300.0, 400.0]
     meas = {1: [], 2: []}
     print("\n  そり PV [µm]   1 次の RMS 誤差   2 次の RMS 誤差   不合格(1 次 / 2 次)")
     for pv in pvs:
