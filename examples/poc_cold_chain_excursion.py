@@ -1033,8 +1033,8 @@ def main() -> None:
     assert truth["n_bad"] > 0, "真に不合格な製品セルが無いと主題が立たない"
     assert zero["rate_prod"] > 50.0, zero["rate_prod"]
     assert np.isfinite(cliff["tau_meas"]), cliff["tau_meas"]
-    assert abs(cliff["tau_2pole"] - cliff["tau_meas"]) < 8.0, (
-        cliff["tau_2pole"], cliff["tau_meas"])
+    assert cliff["n_measurable"] >= 3, cliff["n_measurable"]
+    assert cliff["rel_2pole"] < 0.25, cliff["rel_2pole"]
     assert cliff["s_err"] < 1e-6, cliff["s_err"]
     assert cliff["q_err"] < 1e-6, cliff["q_err"]
     assert met["spread"] > 2.0, met["spread"]
