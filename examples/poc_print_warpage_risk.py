@@ -458,8 +458,10 @@ def _side_view(occ):
     **面外の厚み**になるので首の細さがそのまま見える。
     """
     v = np.asarray(occ, float).transpose(1, 0, 2)      # (y,z,x)
-    p = np.asarray(L.render_volume_projection(v, mode="xray"))
-    return np.flipud(np.asarray(p, float))
+    t = np.asarray(L.render_volume_projection(v, mode="xray"), float) * VOX
+    # 「材料が無い(0)」と「材料が薄い」を混ぜないため、材料側に下駄を履かせる。
+    # 明るさの目盛りは全パネル共通(y の最大幅 16 mm)。
+    return np.flipud(np.where(t > 0.0, 0.35 + 0.65 * t / 16.0, 0.0))
 
 
 def _deformed_view(case, mag=20.0):

@@ -70,5 +70,37 @@
    566,
    3
   ]
+ },
+ {
+  "file": "08_defect_size.png",
+  "name": "defect_size",
+  "caption": "重心は 11 mm も動くのに、残差を掃引した面の位置誤差はその数 % しか残らない。自動選択が軸を取り違えるのは失った点 3.1 % 以上。",
+  "shape": [
+   430,
+   700,
+   3
+  ]
+ },
+ {
+  "file": "09_false_symmetry.png",
+  "name": "false_symmetry",
+  "caption": "色は「鏡像 - 真値」。欠損がどちら側かで、装飾は**複製される**か**消される**かが決まる(対称面が真値でもこうなる)。",
+  "shape": [
+   795,
+   566,
+   3
+  ]
+ },
+ {
+  "file": "10_false_symmetry_table.png",
+  "name": "false_symmetry_table",
+  "caption": "真の非対称 RMS 0.75 mm。復元部は定義上ぴったり対称になるので、見かけの非対称度は 0.75 -> 0.61 / 0.61 mm に下がる。",
+  "shape": [
+   128,
+   758,
+   3
+  ],
+  "csv": "10_false_symmetry_table.csv",
+  "tsv": "10_false_symmetry_table.tsv"
  }
 ]

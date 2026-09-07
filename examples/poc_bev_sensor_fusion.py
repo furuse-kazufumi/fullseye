@@ -827,6 +827,27 @@ def section_bands(rig: Rig) -> dict:
     conds = (("誤差なし", dict()), ("回転 %.2f 度" % BAND_YAW, dict(dyaw=BAND_YAW)),
              ("並進 %.0f mm" % (1000 * BAND_SHIFT),
               dict(dt=(0.0, BAND_SHIFT, 0.0))))
+
+    # (a) まず「点が実際にどれだけ動いたか」を帯ごとに測る(IoU より直接的)
+    print("\n   カメラの点の平均移動量 [m]    "
+          + "  ".join("%5.0f-%2.0f m" % b for b in BANDS) + "   遠 / 近の比")
+    p0 = place(rig.pb, CAM["C"])
+    insl = (p0[:, 2] >= Z_LO) & (p0[:, 2] < Z_HI)
+    shift_ratio = {}
+    for cname, kw in conds[1:]:
+        p1 = place(rig.pb, CAM["C"], **kw)
+        d = np.linalg.norm((p1 - p0)[:, :2], axis=1)
+        vals = []
+        for b in BANDS:
+            sel = insl & (p0[:, 0] >= b[0]) & (p0[:, 0] < b[1])
+            vals.append(float(d[sel].mean()) if sel.any() else 0.0)
+        shift_ratio[cname] = vals[-1] / max(vals[0], 1e-9)
+        print("   %-26s" % cname + "  ".join("%9.3f" % v for v in vals)
+              + "   %8.2f" % shift_ratio[cname])
+    print("   ★回転は帯ごとに %.2f 倍(距離に比例)、並進は %.2f 倍(定数)—— "
+          "**原因はここで既に分かれている**。"
+          % (shift_ratio[conds[1][0]], shift_ratio[conds[2][0]]))
+
     out, rows = {}, []
     hdr = "   誤差を持つセンサ(カメラ)単独  " + " ".join(
         "%5.0f-%2.0f m" % b for b in BANDS) + "   遠 / 近の比"
