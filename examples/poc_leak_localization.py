@@ -715,8 +715,9 @@ def section_sound_speed() -> dict:
                     ("真値(対角線)", xs, xs)],
                    xlabel="真の漏水位置 [m]", ylabel="推定した掘る場所 [m]",
                    title="対照群 —— 3 つの条件で管路全体を走査",
-                   caption="(c) は相関がきれいでも折れ曲がる。単一の音速では"
-                           "どうやっても直せない。")
+                   caption="(c) は相関がきれいでも折れ曲がる。両端の暴れは"
+                           "真の遅延が探索窓の外に出て、窓の中の雑音を"
+                           "掴んだもの。")
     return {"cases": cases, "pred": pred, "mixed_tau": tau_mx,
             "mixed_x": position(tau_mx, C_TRUE), "err": (err_ideal, err_wrong,
                                                          err_mixed),
