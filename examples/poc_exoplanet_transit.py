@@ -190,8 +190,13 @@ def make_flat(flat_px: float, flat_lo: float, seed: int):
 
 def make_series(depth: float = DEPTH, cloud: bool = True, drift_px: float = DRIFT_PX,
                 flat_px: float = FLAT_PX, flat_lo: float = FLAT_LO, seed: int = SEED,
-                flat_seed: int | None = None, jitter_px: float = JITTER_PX) -> dict:
-    """画像列 + 真値。4 つの系統誤差はそれぞれ独立に止められる。"""
+                flat_seed: int | None = None, jitter_px: float = JITTER_PX,
+                photon: bool = True) -> dict:
+    """画像列 + 真値。4 つの系統誤差はそれぞれ独立に止められる。
+
+    ``photon=False`` は光子雑音も読み出し雑音も載せない期待値画像(5 節の
+    「系統分だけ」の予測に使う。検出は通らないので真の位置で測る)。
+    """
     rng = np.random.default_rng(seed)
     t = np.arange(T, dtype=np.float64)
     model = transit_model(t, depth, T0, T14)
@@ -222,7 +227,10 @@ def make_series(depth: float = DEPTH, cloud: bool = True, drift_px: float = DRIF
         flux[0] *= model[k]                                   # 目標星だけ減光
         exp_ = (render_stars(rows0 + shifts[k, 0], cols0 + shifts[k, 1], flux) + SKY) * gain
         # (d) 光子雑音 + 読み出し雑音
-        frames[k] = rng.poisson(exp_) + READ * rng.standard_normal(SHAPE)
+        if photon:
+            frames[k] = rng.poisson(exp_) + READ * rng.standard_normal(SHAPE)
+        else:
+            frames[k] = exp_
     return {"frames": frames, "model": model, "tau": tau, "shifts": shifts,
             "gain": gain, "rows": rows0, "cols": cols0, "ratio": ratio,
             "depth": depth, "t": t}
@@ -305,11 +313,20 @@ def lightcurve(flux, which=("sum",)):
     comps = flux[:, 1:]
     if which == ("sum",):
         ref = comps.sum(axis=1)
-    elif which == ("weighted",):
+    elif which == ("weighted_raw",):
+        # 生の分散で逆分散重み —— 雲(全星共通)が分散を支配するので**罠**(2 節)
         oot = oot_mask()
         var = comps[oot].var(axis=0)
-        w = comps[oot].mean(axis=0) / var                   # 逆分散(明るさで重み)
+        w = comps[oot].mean(axis=0) / var
         ref = comps @ w
+    elif which == ("weighted",):
+        # 共通モードを外した残差の分散で重み(各星を「他の星の和」で割ってから測る)
+        oot = oot_mask()
+        ens = comps.sum(axis=1, keepdims=True)
+        q = comps / (ens - comps)
+        q = q / np.median(q[oot], axis=0)
+        w = 1.0 / q[oot].var(axis=0)
+        ref = (comps / np.median(comps[oot], axis=0)) @ w
     elif which == ("zero",):
         return normalize(tgt)
     else:
@@ -318,13 +335,29 @@ def lightcurve(flux, which=("sum",)):
     return normalize(tgt / ref)
 
 
-def fit_transit(t, y):
+def fit_transit(t, y, fixed=None):
     """深さ・中心・継続時間 + 直線基線の 5 パラメータ最小二乗。
 
     初期値は粗い格子(t0 4 フレーム刻み × T14 10 刻み)の χ² 最小から取る
-    —— 真値を初期値に使わない。
+    —— 真値を初期値に使わない。``fixed=(t0, t14)`` なら暦を既知として
+    深さと基線 2 つだけを当てはめる(既知惑星の追観測に相当)。
     """
     tc = 0.5 * (T - 1)
+    if fixed is not None:
+        t0f, t14f = fixed
+
+        def resid_f(p):
+            d, c0, c1 = p
+            return y - (c0 + c1 * (t - tc) / T) * transit_model(t, d, t0f, t14f)
+
+        res = least_squares(resid_f, [0.01, 1.0, 0.0], bounds=([0.0, 0.5, -1.0], [0.3, 1.5, 1.0]),
+                            x_scale=[0.01, 1, 0.1])
+        n, k = y.size, 3
+        rss = float(res.fun @ res.fun)
+        cov = np.linalg.inv(res.jac.T @ res.jac) * rss / (n - k)
+        return {"depth": float(res.x[0]), "t0": t0f, "t14": t14f,
+                "sig_depth": float(np.sqrt(cov[0, 0])), "sig_t14": 0.0,
+                "rms": float(np.std(res.fun)), "resid": res.fun, "fit": y - res.fun}
     best = None
     for t14 in np.arange(20.0, 130.0, 10.0):
         for t0 in np.arange(40.0, 200.0, 4.0):
@@ -343,7 +376,7 @@ def fit_transit(t, y):
 
     p0 = [0.01, t0i, t14i, 1.0, 0.0]
     lo = [0.0, 30.0, 10.0, 0.5, -1.0]
-    hi = [0.05, 210.0, 160.0, 1.5, 1.0]
+    hi = [0.30, 210.0, 160.0, 1.5, 1.0]
     res = least_squares(resid, p0, bounds=(lo, hi), x_scale=[0.01, 10, 10, 1, 0.1])
     n, k = y.size, 5
     rss = float(res.fun @ res.fun)
@@ -367,12 +400,20 @@ def frac_in(r: float, sigma: float = SIGMA) -> float:
     return 1.0 - np.exp(-r * r / (2.0 * sigma * sigma))
 
 
-def theory_rel_noise(r: float, ratio, which=("sum",)) -> float:
-    """比 目標/アンサンブル の 1 フレーム相対雑音(Howell の CCD 式)。"""
+def theory_rel_noise(r: float, ratio, which=("sum",), r_in: float = R_IN,
+                     r_out: float = R_OUT) -> float:
+    """比 目標/アンサンブル の 1 フレーム相対雑音(Howell の CCD 式)。
+
+    背景を環の**中央値**で推定する雑音 ``A² σ_B² (π/2) / n_annulus`` も足す
+    (中央値の効率は平均の 2/π)。★最初はこれを忘れていて、大開口側で
+    実測が理論より 12 % 悪かった —— 開口の画素数 A が背景の誤差を A 倍する。
+    """
     f = frac_in(r)
     area = np.pi * r * r
+    n_ann = np.pi * (r_out ** 2 - r_in ** 2)
     fl = F_TARGET * np.asarray(ratio, np.float64)
-    var = f * fl + area * (SKY + READ ** 2)
+    var = (f * fl + area * (SKY + READ ** 2)
+           + area ** 2 * (SKY + READ ** 2) * (np.pi / 2.0) / n_ann)
     rel_t = var[0] / (f * fl[0]) ** 2
     if which == ("sum",):
         sel = np.arange(1, fl.size)
@@ -500,12 +541,13 @@ def section_comparison_choice(sec1: dict) -> dict:
                ("E(0.12 倍)1 星", ("比較E",)),
                ("A+B(明るい 2 星の和)", ("比較A", "比較B")),
                ("全 5 星の単純和", ("sum",)),
-               ("全 5 星の逆分散重み", ("weighted",))]
+               ("逆分散重み(生の分散)", ("weighted_raw",)),
+               ("逆分散重み(共通モード除去後)", ("weighted",))]
     rows, res = [], {}
     print("   %-24s 残差rms  理論   深さ誤差  σ(深さ)  T14誤差  σ(T14)" % "比較星")
     for name, which in choices:
         f = fit_transit(t, lightcurve(me["flux"], which))
-        th = theory_rel_noise(R_AP, sc["ratio"], which)
+        th = theory_rel_noise(R_AP, sc["ratio"], ("weighted",) if which == ("weighted_raw",) else which)
         res[name] = (f, th)
         print("   %-24s %5.2f  %5.2f   %+6.2f    %5.2f    %+5.1f    %4.1f  [ppt / fr]" % (
             name, 1e3 * f["rms"], 1e3 * th, 1e3 * (f["depth"] - DEPTH),
@@ -519,11 +561,17 @@ def section_comparison_choice(sec1: dict) -> dict:
                      "%.1f 倍" % (f["rms"] / best)])
     print("\n   ★最良 %.2f ppt / 最悪 %.2f ppt = **%.1f 倍**。深さの σ はその比で動くが、"
           "T14 の誤差はそうならない。" % (1e3 * best, 1e3 * worst, worst / best))
+    raw = res["逆分散重み(生の分散)"][0]["rms"]
+    good = res["逆分散重み(共通モード除去後)"][0]["rms"]
+    print("   ★逆分散重みは**生の分散で決めると罠**: 雲(全星共通)が明るい星の分散を支配し"
+          "重みが暗い星へ行く → %.2f ppt(単純和 %.2f の %.2f 倍)。共通モードを外して"
+          "測り直すと %.2f ppt。" % (1e3 * raw, 1e3 * res["全 5 星の単純和"][0]["rms"],
+                                   raw / res["全 5 星の単純和"][0]["rms"], 1e3 * good))
     figs.save_table("comparison_choice",
                     ["比較星", "残差 rms ppt", "理論 ppt", "深さ誤差 ppt", "σ深さ ppt",
                      "T14 誤差 fr", "σT14 fr", "最良比"],
                     rows, title="比較星の選び方(同じ画像列・開口 3σ)")
-    return {"res": res, "ratio": worst / best}
+    return {"res": res, "ratio": worst / best, "raw": raw, "good": good}
 
 
 # --------------------------------------------------------------------------- #
@@ -537,33 +585,44 @@ def section_aperture_sweep(sec1: dict) -> dict:
     t = np.arange(T, dtype=np.float64)
     ref, ctr = locate(sc["frames"], sc["rows"], sc["cols"])
     centers, _ = track(sc["frames"], ref, ctr)
+    # 対照群: 位置のジッタもドリフトも止める(星は画素に対して動かない)
+    sc0 = make_series(drift_px=0.0, jitter_px=0.0)
+    ref0, ctr0 = locate(sc0["frames"], sc0["rows"], sc0["cols"])
+    centers0, _ = track(sc0["frames"], ref0, ctr0)
     ks = np.array([1.0, 1.5, 2.0, 3.0, 4.0, 6.0])
-    meas, theo, derr, terr = [], [], [], []
-    print("   r/σ   r[px]  残差rms  理論   比    深さ誤差  T14誤差")
+    meas, theo, derr, terr, ctl = [], [], [], [], []
+    print("   r/σ   r[px]  残差rms  理論   比   対照(不動)  比    深さ誤差  T14誤差")
     for k in ks:
         r = k * SIGMA
         r_in = max(R_IN, r + 1.5)
         flux = photometry(sc["frames"], centers, r, r_in, r_in + 4.0)
         f = fit_transit(t, lightcurve(flux, ("sum",)))
-        th = theory_rel_noise(r, sc["ratio"])
-        meas.append(f["rms"]); theo.append(th)
+        f0 = fit_transit(t, lightcurve(photometry(sc0["frames"], centers0, r, r_in, r_in + 4.0),
+                                       ("sum",)))
+        th = theory_rel_noise(r, sc["ratio"], r_in=r_in, r_out=r_in + 4.0)
+        meas.append(f["rms"]); theo.append(th); ctl.append(f0["rms"])
         derr.append(f["depth"] - DEPTH); terr.append(f["t14"] - T14)
-        print("   %3.1f   %4.2f   %5.2f  %5.2f  %4.2f   %+6.2f    %+5.1f  [ppt / fr]" % (
-            k, r, 1e3 * f["rms"], 1e3 * th, f["rms"] / th, 1e3 * (f["depth"] - DEPTH),
-            f["t14"] - T14))
-    meas, theo = np.array(meas), np.array(theo)
-    # 重心誤差が明るさに化ける量: dF/F ≈ (r/σ²)·exp(-r²/2σ²)·ε·(PSF 縁の勾配)
-    print("\n   ★r=1σ で理論より %.0f %% 悪い。開口の縁の PSF 勾配が最大で、重心誤差 "
-          "(rms %.3f px)が明るさの誤差に化ける。" % (100 * (meas[0] / theo[0] - 1), sec1["shift_rms"]))
+        print("   %3.1f   %4.2f   %5.2f  %5.2f  %4.2f    %5.2f   %4.2f   %+6.2f    %+5.1f  [ppt / fr]"
+              % (k, r, 1e3 * f["rms"], 1e3 * th, f["rms"] / th, 1e3 * f0["rms"], f0["rms"] / th,
+                 1e3 * (f["depth"] - DEPTH), f["t14"] - T14))
+    meas, theo, ctl = np.array(meas), np.array(theo), np.array(ctl)
+    print("\n   ★予想は「r=1σ では重心誤差(rms %.3f px)が明るさに化けて理論より 27 %% 悪い」。"
+          "実測は %.0f %%、対照群(星が画素に対して不動)では %.0f %%。"
+          % (sec1["shift_rms"], 100 * (meas[0] / theo[0] - 1), 100 * (ctl[0] / theo[0] - 1)))
+    print("   開口が中心対称なので位置誤差 ε の効き目は 2 次(ε² ≈ %.4f px²)で、それ自体は"
+          "効かない。効いているのは**画素の位相**(副画素の位置で縁の画素平均が変わる)。"
+          % (sec1["shift_rms"] ** 2))
     figs.save_plot("aperture_sweep",
-                   [("実測 残差 rms", ks, 1e3 * meas), ("理論 CCD 式", ks, 1e3 * theo)],
+                   [("実測 残差 rms(ドリフト 1 px + ジッタ)", ks, 1e3 * meas),
+                    ("対照: 星が画素に対して不動", ks, 1e3 * ctl),
+                    ("理論 CCD 式(背景推定込み)", ks, 1e3 * theo)],
                    xlabel="開口半径 r / σ", ylabel="比の 1 フレーム雑音 [ppt]",
                    title="開口半径の掃引: 崖は小さい側(重心誤差)、緩い坂は大きい側(空)")
     figs.save_plot("aperture_depth_bias",
                    [("深さの誤差", ks, 1e3 * np.array(derr))],
                    xlabel="開口半径 r / σ", ylabel="深さの誤差 [ppt](真値 10 ppt)",
                    title="開口が小さいと深さも偏る")
-    return {"k": ks, "meas": meas, "theo": theo, "derr": np.array(derr),
+    return {"k": ks, "meas": meas, "theo": theo, "ctl": ctl, "derr": np.array(derr),
             "terr": np.array(terr)}
 
 
@@ -579,48 +638,57 @@ def section_depth_cliff() -> dict:
     seeds = (101, 102, 103)
     th_noise = theory_rel_noise(R_AP, np.array([STARS[n]["ratio"] for n in NAMES]))
     snr_m, snr_t, derr, terr, rms_m = [], [], [], [], []
-    print("   δ[ppt]  観測SNR(δ^/σ^)  真SNR(δ/σ^)  理論SNR  真/理論  深さ誤差[ppt]  |T14誤差|[fr]"
-          "(3 seed の平均)")
-    snr_true = []
+    print("   δ[ppt]  暦未知: SNR(δ^/σ^) 深さ誤差[ppt] |T14誤差|[fr]   暦既知: SNR  深さ誤差  "
+          "理論SNR  既知/理論   (3 seed の平均)")
+    snr_true, derr_k = [], []
     for d in depths:
-        sm, st_, de, te, rr = [], [], [], [], []
+        sm, st_, de, dk, te, rr = [], [], [], [], [], []
         for s in seeds:
             sc = make_series(depth=d, seed=s, drift_px=0.0, flat_px=0.0)
-            f = fit_transit(t, lightcurve(measure(sc)["flux"], ("sum",)))
-            sm.append(f["depth"] / f["sig_depth"]); st_.append(d / f["sig_depth"])
-            de.append(f["depth"] - d); te.append(abs(f["t14"] - T14)); rr.append(f["rms"])
+            y = lightcurve(measure(sc)["flux"], ("sum",))
+            f = fit_transit(t, y)                              # 暦未知(t0, T14 も探す)
+            fk = fit_transit(t, y, fixed=(T0, T14))            # 暦既知(深さだけ)
+            sm.append(f["depth"] / f["sig_depth"]); st_.append(fk["depth"] / fk["sig_depth"])
+            de.append(f["depth"] - d); dk.append(fk["depth"] - d)
+            te.append(abs(f["t14"] - T14)); rr.append(f["rms"])
         st = d / theory_sig_depth(th_noise, d)
         snr_m.append(np.mean(sm)); snr_true.append(np.mean(st_)); snr_t.append(st)
-        derr.append(np.mean(de)); terr.append(np.mean(te)); rms_m.append(np.mean(rr))
-        print("   %5.1f      %5.2f          %5.2f        %5.2f    %4.2f     %+6.2f        %6.1f" % (
-            1e3 * d, np.mean(sm), np.mean(st_), st, np.mean(st_) / st, 1e3 * np.mean(de),
-            np.mean(te)))
+        derr.append(np.mean(de)); derr_k.append(np.mean(dk)); terr.append(np.mean(te))
+        rms_m.append(np.mean(rr))
+        print("   %5.1f         %5.2f        %+6.2f       %6.1f          %5.2f    %+6.2f    %5.2f    %4.2f"
+              % (1e3 * d, np.mean(sm), 1e3 * np.mean(de), np.mean(te), np.mean(st_),
+                 1e3 * np.mean(dk), st, np.mean(st_) / st))
     snr_m, snr_t, snr_true = np.array(snr_m), np.array(snr_t), np.array(snr_true)
 
     def cross(snr):
         # SNR は δ にほぼ比例するので log-log で 5 を横切る δ を補間
         return float(np.exp(np.interp(np.log(5.0), np.log(snr), np.log(depths))))
     dm, dt_ = cross(snr_true), cross(snr_t)
-    print("\n   SNR = 5 の境目: 実測 %.2f ppt / 理論 %.2f ppt。真SNR/理論の比は %.2f〜%.2f。"
-          % (1e3 * dm, 1e3 * dt_, (snr_true / snr_t).min(), (snr_true / snr_t).max()))
-    print("   ★観測 SNR(δ^/σ^)は限界の下で理論より高く出る(δ^ が過大: δ=%.1f ppt で "
-          "%+.2f ppt)—— 雑音を惑星と呼んでいる。" % (1e3 * depths[0], 1e3 * derr[0]))
+    blind = [1e3 * d for d, e in zip(depths, terr) if e < 5.0]
+    blind_min = min(blind) if blind else float("nan")
+    print("\n   SNR = 5 の境目(暦既知): 実測 %.2f ppt / 理論(CCD 式 + Fisher)%.2f ppt。"
+          "既知/理論の比は %.2f〜%.2f。" % (1e3 * dm, 1e3 * dt_, (snr_true / snr_t).min(),
+                                        (snr_true / snr_t).max()))
+    print("   ★暦未知だと崖は %.1f ppt(|T14 誤差| < 5 fr になる最小の δ)—— Fisher 限界の "
+          "%.1f 倍。局所の下限は t0/T14 を知らない探索には効かない。" % (blind_min, blind_min / (1e3 * dt_)))
+    print("   ★暦未知の SNR(δ^/σ^)は限界の下でも %.1f〜%.1f と出る(δ^ が過大: δ=%.1f ppt で "
+          "%+.2f ppt)—— 雑音を惑星と呼んでいる。" % (snr_m[0], snr_m[2], 1e3 * depths[0], 1e3 * derr[0]))
     print("   ★検出できない δ=%.1f ppt では |T14 誤差| %.0f フレーム —— 深さより先に"
           "継続時間が壊れる。" % (1e3 * depths[0], terr[0]))
     figs.save_plot("depth_cliff",
-                   [("観測 SNR(推定深さ/σ、3 seed 平均)", 1e3 * depths, snr_m),
-                    ("真 SNR(真の深さ/σ)", 1e3 * depths, snr_true),
+                   [("暦未知の当てはめ(推定深さ/σ)", 1e3 * depths, snr_m),
+                    ("暦既知の当てはめ", 1e3 * depths, snr_true),
                     ("理論 CCD 式 + Fisher", 1e3 * depths, snr_t),
                     ("SNR = 5", 1e3 * depths, np.full(depths.size, 5.0))],
                    xlabel="深さ δ [ppt]", ylabel="深さの検出 SNR",
-                   title="深さの検出限界: 実測と理論が並ぶ(SNR=5 は 2.6 ppt)")
+                   title="深さの検出限界: 暦既知なら理論どおり、暦未知は限界の下で SNR が嘘をつく")
     figs.save_plot("depth_cliff_t14",
                    [("|T14 の誤差| [frame]", 1e3 * depths, np.array(terr)),
                     ("深さの誤差 [0.1 ppt]", 1e3 * depths, 1e4 * np.array(derr))],
                    xlabel="深さ δ [ppt]", ylabel="誤差",
                    title="検出限界の下では継続時間が先に壊れる")
     return {"depths": depths, "snr_m": snr_m, "snr_t": snr_t, "snr_true": snr_true,
-            "derr": np.array(derr),
+            "derr": np.array(derr), "derr_k": np.array(derr_k), "blind_min": blind_min,
             "terr": np.array(terr), "cross_m": dm, "cross_t": dt_}
 
 
@@ -638,50 +706,68 @@ def section_drift_flat() -> dict:
     print("5) ドリフト × フラット不均一 —— 単独では無害、掛け算で偽の深さ")
     print("=" * 78)
     t = np.arange(T, dtype=np.float64)
-    drifts = np.array([0.0, 0.5, 1.0, 2.0])
+    drifts = np.array([0.0, 1.0, 2.0, 4.0])
     flats = np.array([0.0, 0.01, 0.03])
     seeds = (201, 202, 203)
     coef = psf_weight_norm()
     print("   予測(上限): 偽の明るさ変化 rms ≈ a * sqrt(Σw²) = %.3f a → a=1 %% で %.2f ppt、"
           "a=3 %% で %.2f ppt" % (coef, 1e3 * 0.01 * coef, 1e3 * 0.03 * coef))
-    print("   ドリフト[px]  画素フラット  深さ誤差 rms[ppt]  平均  |T14誤差| rms[fr]  残差rms[ppt]"
-          "  (3 seed)")
+    print("   ドリフト[px]  画素フラット  深さ誤差 rms[ppt]  系統分の予測 rms  差の rms  "
+          "|T14誤差| rms[fr]  残差rms[ppt]  (3 seed)")
     grid = np.zeros((flats.size, drifts.size))       # 深さ誤差の rms(符号はフラット次第)
+    grid_p = np.zeros_like(grid)                     # 雑音なし・真の位置で測った系統分
     grid_t = np.zeros_like(grid)
     rows = []
     for i, a in enumerate(flats):
         for j, dpx in enumerate(drifts):
-            de, te, rr = [], [], []
+            de, dp, te, rr = [], [], [], []
             for s in seeds:
                 sc = make_series(drift_px=dpx, flat_px=a, cloud=False, seed=s,
                                  flat_seed=s * 13 + 5)
                 f = fit_transit(t, lightcurve(measure(sc)["flux"], ("sum",)))
                 de.append(f["depth"] - DEPTH); te.append(f["t14"] - T14); rr.append(f["rms"])
-            grid[i, j] = np.sqrt(np.mean(np.square(de)))
+                # 系統分の予測: 同じフラット・同じドリフトで雑音を切り、真の位置に開口を置く
+                sn = make_series(drift_px=dpx, flat_px=a, cloud=False, seed=s,
+                                 flat_seed=s * 13 + 5, photon=False)
+                ctr = np.stack([sn["rows"], sn["cols"]], axis=1)
+                fp = fit_transit(t, lightcurve(photometry(sn["frames"], ctr[None] + sn["shifts"][:, None, :]),
+                                               ("sum",)))
+                dp.append(fp["depth"] - DEPTH)
+            de, dp = np.array(de), np.array(dp)
+            grid[i, j] = np.sqrt(np.mean(de ** 2))
+            grid_p[i, j] = np.sqrt(np.mean(dp ** 2))
             grid_t[i, j] = np.sqrt(np.mean(np.square(te)))
+            resid = np.sqrt(np.mean((de - dp) ** 2))
             rows.append(["%.1f" % dpx, "%.0f %%" % (100 * a), "%.2f" % (1e3 * grid[i, j]),
-                         "%+.2f" % (1e3 * np.mean(de)),
+                         "%.2f" % (1e3 * grid_p[i, j]), "%.2f" % (1e3 * resid),
                          "%.1f" % grid_t[i, j], "%.2f" % (1e3 * np.mean(rr))])
-            print("   %5.1f         %4.0f %%         %5.2f        %+5.2f     %5.1f          %5.2f" % (
-                dpx, 100 * a, 1e3 * grid[i, j], 1e3 * np.mean(de), grid_t[i, j],
-                1e3 * np.mean(rr)))
+            print("   %5.1f         %4.0f %%         %5.2f            %5.2f         %5.2f       %5.1f"
+                  "          %5.2f" % (dpx, 100 * a, 1e3 * grid[i, j], 1e3 * grid_p[i, j],
+                                       1e3 * resid, grid_t[i, j], 1e3 * np.mean(rr)))
     print("\n   対照群(深さ誤差 rms): ドリフト 2 px・フラット均一 %.2f ppt / ドリフト 0・"
-          "フラット 3 %% %.2f ppt / 両方 %.2f ppt(真値 10 ppt の %.0f %%)"
-          % (1e3 * grid[0, -1], 1e3 * grid[-1, 0], 1e3 * grid[-1, -1],
-             100 * grid[-1, -1] / DEPTH))
-    print("   予測上限 %.2f ppt に対し実測 %.2f ppt = %.0f %%(直線基線が大半を吸う)"
-          % (1e3 * 0.03 * coef, 1e3 * grid[-1, -1], 100 * grid[-1, -1] / (0.03 * coef)))
+          "フラット 3 %% %.2f ppt / 両方 %.2f ppt(真値 10 ppt の %.0f %%)/ ドリフト 4 px・"
+          "3 %% %.2f ppt(%.0f %%)"
+          % (1e3 * grid[0, 2], 1e3 * grid[-1, 0], 1e3 * grid[-1, 2], 100 * grid[-1, 2] / DEPTH,
+             1e3 * grid[-1, -1], 100 * grid[-1, -1] / DEPTH))
+    print("   予測上限 %.2f ppt に対し 2 px で %.2f ppt = %.0f %%、4 px で %.0f %%"
+          "(直線基線が大半を吸う。動く量が PSF の幅を超えると吸えなくなる)"
+          % (1e3 * 0.03 * coef, 1e3 * grid[-1, 2], 100 * grid[-1, 2] / (0.03 * coef),
+             100 * grid[-1, -1] / (0.03 * coef)))
+    print("   雑音を切って真の位置で測った系統分の予測は、実測と seed ごとに一致する"
+          "(差の rms は雑音の床 %.2f ppt 程度)。" % (1e3 * np.sqrt(np.mean(grid[0] ** 2))))
     figs.save_table("drift_flat_table",
-                    ["ドリフト px", "画素フラット", "深さ誤差 rms ppt", "深さ誤差 平均 ppt",
-                     "|T14 誤差| rms fr", "残差 rms ppt"], rows,
+                    ["ドリフト px", "画素フラット", "深さ誤差 rms ppt", "系統分の予測 rms ppt",
+                     "差の rms ppt", "|T14 誤差| rms fr", "残差 rms ppt"], rows,
                     title="ドリフト × フラット不均一(雲なし・開口 3σ・3 seed)")
     figs.save_plot("drift_flat_map",
                    [("フラット均一(対照)", drifts, 1e3 * grid[0]),
                     ("画素フラット 1 %", drifts, 1e3 * grid[1]),
-                    ("画素フラット 3 %", drifts, 1e3 * grid[2])],
+                    ("画素フラット 3 %", drifts, 1e3 * grid[2]),
+                    ("3 % の系統分予測(雑音なし)", drifts, 1e3 * grid_p[2])],
                    xlabel="一晩のドリフト [px]", ylabel="深さの誤差 rms [ppt](真値 10 ppt)",
                    title="偽の深さはドリフトとフラットの積で生まれる")
-    return {"grid": grid, "grid_t": grid_t, "coef": coef, "drifts": drifts, "flats": flats}
+    return {"grid": grid, "grid_p": grid_p, "grid_t": grid_t, "coef": coef, "drifts": drifts,
+            "flats": flats}
 
 
 # --------------------------------------------------------------------------- #

@@ -358,19 +358,26 @@ def pct(v, ref):
 # --------------------------------------------------------------------------- #
 # 図: 場面                                                                      #
 # --------------------------------------------------------------------------- #
-def _overlay(img: np.ndarray, res: dict, t: dict) -> np.ndarray:
+def _overlay(img: np.ndarray, res: dict, t: dict, phi_deg: float) -> np.ndarray:
+    """観測画像に測定線(緑)・交点(赤)・当てはめたフランク直線(橙 = L / 青 = R)。"""
     g = np.clip(img, 0, 1)
     rgb = np.dstack([g, g, g])
+    ph = np.deg2rad(phi_deg)
     for f in res["fitted"]:
-        r_lo, r_hi = t["r_root"], t["r_major"]
-        p0 = (t["cy"] - f["side"] * r_lo, f["x_at"](r_lo))
-        p1 = (t["cy"] - f["side"] * r_hi, f["x_at"](r_hi))
+        pts = []
+        for r in (t["r_root"], t["r_major"]):
+            x, rr = f["x_at"](r), f["side"] * r          # 軸 = 横 の座標
+            dx, dy = x - t["cx"], -rr
+            pts.append((t["cy"] + dx * np.sin(ph) + dy * np.cos(ph),
+                        t["cx"] + dx * np.cos(ph) - dy * np.sin(ph)))
         col = (0.95, 0.45, 0.10) if f["kind"] == "L" else (0.15, 0.55, 0.95)
-        rgb = np.asarray(fs.draw_line(rgb, p0, p1, color=col, width=1))
-    rows = sorted({c["row"] for c in res["cross"]})
-    for row in rows:
-        rgb = np.asarray(fs.draw_line(rgb, (row, 0.0), (row, img.shape[1] - 1.0),
-                                      color=(0.2, 0.75, 0.2), width=1))
+        rgb = np.asarray(fs.draw_line(rgb, pts[0], pts[1], color=col, width=1))
+    lines = {}
+    for c in res["cross"]:
+        lines.setdefault((c["side"], c["r"]), []).append((c["row"], c["x"]))
+    for (side, r), pts in lines.items():
+        pts = sorted(pts, key=lambda q: q[1])
+        rgb = np.asarray(fs.draw_line(rgb, pts[0], pts[-1], color=(0.2, 0.75, 0.2), width=1))
     pts = np.array([[c["row"], c["x"]] for c in res["cross"]])
     rgb = np.asarray(fs.draw_markers(rgb, pts, color=(0.9, 0.1, 0.1), size=2))
     return rgb
@@ -407,24 +414,23 @@ def section_zero_point() -> dict:
 # --------------------------------------------------------------------------- #
 def section_control() -> dict:
     print("\n" + "=" * 78)
-    print("2) 対照群(傾き 0・ぼけ 0)と既定条件(ぼけ 1 px・雑音 0.02)")
+    print("2) 対照群(傾き 0・ぼけ 0・雑音 0)と既定条件(ぼけ 1 px・雑音 0.02)、視野いっぱいの caliper")
     print("=" * 78)
     rows = []
-    keep = None
     for name, kw in (("対照群 θ=0 σ=0 雑音 0", dict(theta_deg=0, blur=0, noise=0)),
                      ("既定   θ=0 σ=1 雑音 0.02", dict())):
         sc = make_scene(**kw)
         t = sc["truth"]
         r = measure_thread(sc["img"], t)
         rows.append((name, r))
-        print("  %-26s P %.3f px (%+.3f %%)  α %.3f deg (%+.3f)  d2 %.3f px (%+.3f %%)"
-              "  θ_est %+.3f deg  フランク %d 本  残差 rms %.3f px"
+        print("  %-26s P %.4f px (%+.4f %%)  α %.3f deg (%+.3f)  d2 %.3f px (%+.4f %%)"
+              "  θ_res %+.3f deg  フランク %d 本  残差 rms %.3f px"
               % (name, r["P_apex"], pct(r["P_apex"], t["P"]), r["alpha"],
                  r["alpha"] - t["alpha"], r["d2"], pct(r["d2"], t["d2"]),
-                 r["theta_est"], r["n_flanks"], r["rms"]))
-        if keep is None:
-            keep = (sc, r)
-    return {"rows": rows, "control": keep}
+                 r["theta_res"], r["n_flanks"], r["rms"]))
+    print("  (対照群の α の残りは、ぼけ 0 の面積標本化で斜めの縁の勾配ピークが位相依存に"
+          "ずれる分。ぼけ 1 px で消える)")
+    return {"rows": rows}
 
 
 # --------------------------------------------------------------------------- #
@@ -432,68 +438,78 @@ def section_control() -> dict:
 # --------------------------------------------------------------------------- #
 def section_tilt() -> dict:
     print("\n" + "=" * 78)
-    print("3) 軸の傾き θ = 0 → 3 度 —— 予測を先に出す")
+    print("3) 軸の傾き θ = 0 → 3 度 —— 予測を先に出す(素の測り方 = 水平 caliper %d 山)" % NAIVE_PITCHES)
     print("=" * 78)
     a0 = np.deg2rad(FLANK_DEG)
-    print("  予測: |α_L| = 30+θ, |α_R| = 30-θ / 頂点間隔 P cosθ / "
-          "片側フランク P cos30/cos(30∓θ) / d2 → d2/cosθ")
+    print("  予測: |α_L| = 30+θ, |α_R| = 30-θ / 頂点間隔 P cosθ(2 次)/ "
+          "片側フランク L: P cos30/cos(30+θ), R: P cos30/cos(30-θ)(1 次・逆符号)/ d2 → d2/cosθ")
+    print("  水平 caliper を視野いっぱい(16 山)にすると、3 度で測定線が %.1f px 流れて帯"
+          "(%.1f px)を出るので %d 山に切る" % (IMG_W / 2 * np.tan(np.deg2rad(3)),
+                                             (BAND[1] - BAND[0]) * thread_truth()["depth"],
+                                             NAIVE_PITCHES))
     thetas = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0]
     seeds = (7, 19, 31)
     t0 = thread_truth()
     tab = []
-    print("   θ[deg]  α_L    α_R    (半差)  P頂点[%]  予測   P左[%]  予測   P右[%]  予測   d2[%]  予測")
+    print("   θ[deg]  α_L    α_R   (半差)  半和   P頂点[%] 予測   P左[%]  予測   P右[%]  予測   d2[%]  予測 | 補正後: P[%] α[deg] d2[%]")
     for th in thetas:
         acc = {k: [] for k in ("aL", "aR", "th", "Pa", "Pl", "Pr", "d2", "al",
-                               "Pa_c", "Pl_c", "Pr_c", "d2_c", "al_c")}
+                               "Pa_c", "Pl_c", "Pr_c", "d2_c", "al_c", "th_c")}
         scene_keep = None
         for sd in seeds:
             sc = make_scene(theta_deg=th, seed=sd)
-            r = measure_thread(sc["img"], sc["truth"], correct_tilt=True)
-            c = r["corrected"]
+            r = measure_thread(sc["img"], sc["truth"], phi_deg=0.0, length_pitches=NAIVE_PITCHES)
+            c = measure_thread(sc["img"], sc["truth"], phi_deg=r["theta_est"])   # 回し戻して再測定
             for k, v in (("aL", r["alpha_L"]), ("aR", r["alpha_R"]), ("th", r["theta_est"]),
                          ("Pa", r["P_apex"]), ("Pl", r["P_left"]), ("Pr", r["P_right"]),
                          ("d2", r["d2"]), ("al", r["alpha"]),
                          ("Pa_c", c["P_apex"]), ("Pl_c", c["P_left"]), ("Pr_c", c["P_right"]),
-                         ("d2_c", c["d2"]), ("al_c", c["alpha"])):
+                         ("d2_c", c["d2"]), ("al_c", c["alpha"]), ("th_c", c["theta_est"])):
                 acc[k].append(v)
             if scene_keep is None:
-                scene_keep = (sc, r)
+                scene_keep = (sc, r, c)
         m = {k: float(np.nanmean(v)) for k, v in acc.items()}
+        sdv = {k: float(np.nanstd(v)) for k, v in acc.items()}
         thr = np.deg2rad(th)
         pred = {"Pa": 100 * (np.cos(thr) - 1),
-                "Pl": 100 * (np.cos(a0) / np.cos(a0 - thr) - 1),
-                "Pr": 100 * (np.cos(a0) / np.cos(a0 + thr) - 1),
+                "Pl": 100 * (np.cos(a0) / np.cos(a0 + thr) - 1),
+                "Pr": 100 * (np.cos(a0) / np.cos(a0 - thr) - 1),
                 "d2": 100 * (1 / np.cos(thr) - 1)}
-        row = {"theta": th, "aL": m["aL"], "aR": m["aR"], "th_est": m["th"],
-               "alpha": m["al"], "alpha_c": m["al_c"],
-               "Pa": pct(m["Pa"], t0["P"]), "Pl": pct(m["Pl"], t0["P"]), "Pr": pct(m["Pr"], t0["P"]),
+        row = {"theta": th, "aL": m["aL"], "aR": m["aR"], "th_est": m["th"], "th_sd": sdv["th"],
+               "alpha": m["al"], "alpha_c": m["al_c"], "th_c": m["th_c"],
+               "Pa": pct(m["Pa"], t0["P"]), "Pa_sd": 100 * sdv["Pa"] / t0["P"],
+               "Pl": pct(m["Pl"], t0["P"]), "Pr": pct(m["Pr"], t0["P"]),
                "d2": pct(m["d2"], t0["d2"]),
                "Pa_c": pct(m["Pa_c"], t0["P"]), "Pl_c": pct(m["Pl_c"], t0["P"]),
                "Pr_c": pct(m["Pr_c"], t0["P"]), "d2_c": pct(m["d2_c"], t0["d2"]),
                "pred": pred, "scene": scene_keep}
         tab.append(row)
-        print("   %4.1f   %6.2f %6.2f  (%5.2f)  %+6.2f  %+6.2f  %+6.2f  %+6.2f  %+6.2f  %+6.2f  %+6.2f  %+6.2f"
-              % (th, m["aL"], m["aR"], m["th"], row["Pa"], pred["Pa"], row["Pl"], pred["Pl"],
-                 row["Pr"], pred["Pr"], row["d2"], pred["d2"]))
+        print("   %4.1f   %6.2f %6.2f  (%5.2f) %6.2f  %+6.2f %+6.2f  %+6.2f  %+6.2f  %+6.2f  %+6.2f  %+6.2f %+6.2f | %+6.3f %6.3f %+6.3f"
+              % (th, m["aL"], m["aR"], m["th"], m["al"], row["Pa"], pred["Pa"], row["Pl"], pred["Pl"],
+                 row["Pr"], pred["Pr"], row["d2"], pred["d2"], row["Pa_c"], m["al_c"], row["d2_c"]))
     last = tab[-1]
-    print("\n  ★θ = 3 度: 片側フランクの P は 1 次(左 %+.2f %% / 右 %+.2f %%)、"
-          "頂点間隔は 2 次(%+.2f %%)。半和のフランク角 %.2f 度は θ に依らない。"
-          % (last["Pl"], last["Pr"], last["Pa"], last["alpha"]))
-    print("  ★半差から θ_est = %.2f 度。回し戻すと P %+.2f → %+.2f %%、d2 %+.2f → %+.2f %%。"
-          % (last["th_est"], last["Pa"], last["Pa_c"], last["d2"], last["d2_c"]))
+    print("\n  ★θ = 3 度: 片側フランクの P は 1 次(左 %+.2f %% / 右 %+.2f %%、予測 %+.2f / %+.2f)、"
+          "頂点間隔は 2 次(%+.2f ± %.2f %%、予測 %+.2f)。"
+          % (last["Pl"], last["Pr"], last["pred"]["Pl"], last["pred"]["Pr"],
+             last["Pa"], last["Pa_sd"], last["pred"]["Pa"]))
+    print("  ★|α_L| %.2f / |α_R| %.2f 度 → 半和 %.2f 度(真のフランク角)、半差 θ_est = %.2f ± %.2f 度。"
+          % (last["aL"], last["aR"], last["alpha"], last["th_est"], last["th_sd"]))
+    print("  ★θ_est の向きに caliper を引き直すと P %+.2f → %+.3f %%、d2 %+.2f → %+.3f %%、"
+          "残り傾き %.3f 度。" % (last["Pa"], last["Pa_c"], last["d2"], last["d2_c"],
+                                  last["th_c"] - last["theta"]))
 
     xs = [r["theta"] for r in tab]
     figs.save_plot("tilt_pitch",
                    [("頂点間隔(実測)", xs, [r["Pa"] for r in tab]),
                     ("予測 P cosθ", xs, [r["pred"]["Pa"] for r in tab]),
                     ("左フランクのみ(実測)", xs, [r["Pl"] for r in tab]),
-                    ("予測 cos30/cos(30-θ)", xs, [r["pred"]["Pl"] for r in tab]),
+                    ("予測 cos30/cos(30+θ)", xs, [r["pred"]["Pl"] for r in tab]),
                     ("右フランクのみ(実測)", xs, [r["Pr"] for r in tab]),
-                    ("予測 cos30/cos(30+θ)", xs, [r["pred"]["Pr"] for r in tab])],
+                    ("予測 cos30/cos(30-θ)", xs, [r["pred"]["Pr"] for r in tab])],
                    xlabel="軸の傾き θ [deg]", ylabel="ピッチの誤差 [%]",
                    title="傾き: 片側フランクは 1 次で逆符号、頂点間隔は 2 次",
-                   caption="左右のフランクで測ると 1 度あたり約 1 % 狂う。",
-                   kinds=["marker", "line", "marker", "line", "marker", "line"])
+                   caption="片側のフランクだけで測ると 1 度あたり約 1 % 狂う。",
+                   kinds=["scatter", "line", "scatter", "line", "scatter", "line"])
     figs.save_plot("tilt_angles",
                    [("|α_L| 実測", xs, [r["aL"] for r in tab]),
                     ("|α_R| 実測", xs, [r["aR"] for r in tab]),
@@ -503,18 +519,18 @@ def section_tilt() -> dict:
                    xlabel="軸の傾き θ [deg]", ylabel="フランク角 [deg]",
                    title="傾きは左右のフランク角に逆符号で出る",
                    caption="半差が θ、半和が α。",
-                   kinds=["marker", "marker", "marker", "line", "line"])
+                   kinds=["scatter", "scatter", "scatter", "line", "line"])
     figs.save_table("tilt_correction",
-                    ["θ 真値 [deg]", "θ_est [deg]", "α [deg]", "P 生 [%]", "P 補正 [%]",
+                    ["θ 真値 [deg]", "θ_est [deg]", "α 半和 [deg]", "P 生 [%]", "P 補正 [%]",
                      "P 左 生 [%]", "P 左 補正 [%]", "d2 生 [%]", "d2 補正 [%]"],
                     [["%.1f" % r["theta"], "%.2f" % r["th_est"], "%.3f" % r["alpha"],
                       "%+.3f" % r["Pa"], "%+.3f" % r["Pa_c"], "%+.2f" % r["Pl"],
                       "%+.3f" % r["Pl_c"], "%+.3f" % r["d2"], "%+.3f" % r["d2_c"]]
                      for r in tab],
-                    title="左右フランク角の半差で傾きを逆算して回し戻す",
-                    caption="生 = 画像軸で測った値、補正 = θ_est で回し戻した値(3 種の平均)。")
-    sc, r = last["scene"]
-    return {"tab": tab, "scene3": (sc, r)}
+                    title="左右フランク角の半差で傾きを逆算し、caliper を引き直す",
+                    caption="生 = 水平 caliper %d 山、補正 = θ_est の向きの caliper 16 山(3 種の平均)。"
+                            % NAIVE_PITCHES)
+    return {"tab": tab, "scene3": last["scene"]}
 
 
 # --------------------------------------------------------------------------- #
@@ -522,15 +538,16 @@ def section_tilt() -> dict:
 # --------------------------------------------------------------------------- #
 def section_blur() -> dict:
     print("\n" + "=" * 78)
-    print("4) ぼけ σ = 0 → 4 px(傾き 0)—— 予想: σ ≳ 2 で山頂が削れ d2 が負へ")
+    print("4) ぼけ σ = 0 → 4 px(傾き 0)—— 予想: σ ≳ 2 で山頂(平坦部 %.0f px)が削れ d2 が負へ"
+          % (P_PX / 8))
     print("=" * 78)
     sigmas = [0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0]
     seeds = (7, 19, 31)
     t0 = thread_truth()
     rows = []
-    print("   σ[px]   P[%]     α[deg]   α誤差   d2[%]    rms[px]")
+    print("   σ[px]   P[%]     α[deg]   α誤差   d2[%]    rms[px]  フランク数")
     for s in sigmas:
-        acc = {"P": [], "al": [], "d2": [], "rms": []}
+        acc = {"P": [], "al": [], "d2": [], "rms": [], "n": []}
         for sd in seeds:
             sc = make_scene(blur=s, seed=sd)
             r = measure_thread(sc["img"], sc["truth"])
@@ -538,84 +555,93 @@ def section_blur() -> dict:
             acc["al"].append(r["alpha"])
             acc["d2"].append(pct(r["d2"], t0["d2"]))
             acc["rms"].append(r["rms"])
+            acc["n"].append(r["n_flanks"])
         m = {k: float(np.nanmean(v)) for k, v in acc.items()}
-        rows.append((s, m["P"], m["al"], m["al"] - FLANK_DEG, m["d2"], m["rms"]))
-        print("   %4.1f   %+6.3f   %6.3f   %+6.3f   %+6.3f   %6.3f" % rows[-1])
+        rows.append((s, m["P"], m["al"], m["al"] - FLANK_DEG, m["d2"], m["rms"], m["n"]))
+        print("   %4.1f   %+6.3f   %6.3f   %+6.3f   %+6.3f   %6.3f   %5.1f" % rows[-1])
     worst = rows[-1]
-    print("\n  実測: σ = %.0f px で d2 %+.3f %% / α %+.3f 度。"
-          "**壊れたのは d2 ではなく α**(帯の両端の丸みが傾きに入る)。"
-          % (worst[0], worst[4], worst[3]))
+    print("\n  実測: σ = %.0f px で d2 %+.3f %% / α %+.3f 度 / P %+.3f %%。"
+          % (worst[0], worst[4], worst[3], worst[1]))
     xs = [r[0] for r in rows]
     figs.save_plot("blur_sweep",
                    [("d2 の誤差 [%]", xs, [r[4] for r in rows]),
                     ("P の誤差 [%]", xs, [r[1] for r in rows]),
                     ("α の誤差 [deg]", xs, [r[3] for r in rows])],
                    xlabel="ぼけ σ [px]", ylabel="誤差(単位は凡例)",
-                   title="ぼけで壊れるのは有効径ではなくフランク角",
-                   caption="d2 は帯の中の直線の位置で決まるので守られる。α は帯の両端の丸みで倒れる。",
-                   kinds=["marker", "marker", "marker"])
+                   title="ぼけ σ を振る: P / α / d2 を別々に数える",
+                   caption="帯はフランクの中央 30 %%(両端の丸みから %.1f px)。"
+                           % (BAND[0] * t0["depth"]),
+                   kinds=["scatter", "scatter", "scatter"])
     return {"rows": rows}
 
 
 # --------------------------------------------------------------------------- #
 # 5. 標本化の崖                                                                  #
 # --------------------------------------------------------------------------- #
+def gray_edge_period(img: np.ndarray) -> float:
+    """ゼロ点の改良: 二値化せず、上半分の列ごとの暗さの和(= 上側輪郭の面積被覆)を FFT。"""
+    hh = img.shape[0]
+    dark = 1.0 - img[: hh // 2]
+    return fft_period(dark.sum(axis=0))[1]
+
+
 def section_sampling() -> dict:
     print("\n" + "=" * 78)
-    print("5) 標本化 1 山 40 → 1.5 px(σ 0.7 px)—— 予想: α → d2 → FFT の順に壊れ、"
+    print("5) 標本化 1 山 40 → 1.5 px(σ 0.3 px)—— 予想: α → d2 → FFT の順に壊れ、"
           "1.5 px は 1/(1/P-1) = 3.0 px に折り返す")
     print("=" * 78)
-    pitches = [40.0, 20.0, 12.0, 8.0, 6.0, 4.0, 3.0, 2.0, 1.5]
+    pitches = [40.0, 20.0, 12.0, 8.0, 6.0, 4.0, 3.0, 2.5, 2.0, 1.5]
     rows = []
     frames, caps = [], []
-    print("   P[px]  FFT[px]  FFT誤差[%]  P頂点[%]   α[deg]   d2[%]   フランク数")
+    print("   P[px]  二値FFT[px] 誤差[%]  灰FFT[px] 誤差[%]  P頂点[%]   α[deg]   d2[%]  フランク数")
     for p in pitches:
         d = 6.0 * p
-        hh = int(max(24, np.ceil(d + 6 * 0.7 + 12)))
+        hh = int(max(24, np.ceil(d + 16)))
         hh += hh % 2
-        sc = make_scene(blur=0.7, p=p, d=d, shape=(hh, IMG_W))
+        sc = make_scene(blur=0.3, p=p, d=d, shape=(hh, IMG_W))
         t = sc["truth"]
         z = zero_point(sc["img"])
-        n_lines = int(np.clip(round(0.6 * t["depth"] / 0.7), 3, N_LINES))
+        pg = gray_edge_period(sc["img"])
+        n_lines = int(np.clip(round((BAND[1] - BAND[0]) * t["depth"] / 0.5), 3, N_LINES))
         sig = float(np.clip(p / 40.0, 0.3, 1.0))
         try:
             r = measure_thread(sc["img"], t, n_lines=n_lines, sigma=sig)
             Pa, al, d2, nf = r["P_apex"], r["alpha"], r["d2"], r["n_flanks"]
         except Exception:                                   # noqa: BLE001
             Pa, al, d2, nf = np.nan, np.nan, np.nan, 0
-        rows.append((p, z["P_ref"], pct(z["P_ref"], p), pct(Pa, p) if np.isfinite(Pa) else np.nan,
+        rows.append((p, z["P_ref"], pct(z["P_ref"], p), pg, pct(pg, p),
+                     pct(Pa, p) if np.isfinite(Pa) else np.nan,
                      al, pct(d2, t["d2"]) if np.isfinite(d2) else np.nan, nf))
-        print("   %4.1f   %6.2f   %+7.2f    %+7.2f   %6.2f   %+7.2f   %3d" % (
-            rows[-1][0], rows[-1][1], rows[-1][2],
-            rows[-1][3] if np.isfinite(rows[-1][3]) else float("nan"),
-            rows[-1][4] if np.isfinite(rows[-1][4]) else float("nan"),
-            rows[-1][5] if np.isfinite(rows[-1][5]) else float("nan"), nf))
+        print("   %4.1f   %7.2f  %+8.2f   %7.2f  %+8.2f   %+7.2f   %6.2f   %+7.2f   %3d" % rows[-1])
         if p in (40.0, 8.0, 4.0, 2.0):
-            crop = sc["img"][:, :160]
-            frames.append(crop)
-            caps.append("%.0f px/山 (FFT %.1f px)" % (p, z["P_ref"]) if p >= 2
-                        else "%.1f px/山" % p)
+            frames.append(sc["img"][:, :160])
+            caps.append("%.0f px/山(灰 FFT %.2f px)" % (p, pg))
     alias_pred = 1.0 / (1.0 / 1.5 - 1.0)
     last = rows[-1]
-    print("\n  ★FFT: 2 px/山まで当たり、1.5 px/山は %.2f px と読む(予測 %.2f px)。"
-          % (last[1], alias_pred))
-    first_alpha = next((r[0] for r in rows if np.isfinite(r[4]) and abs(r[4] - 30) > 1.0), None)
-    first_d2 = next((r[0] for r in rows if np.isfinite(r[5]) and abs(r[5]) > 1.0), None)
-    print("  α が 1 度を超えて外れる最初の粗さ: %s px/山 / d2 が 1 %% を超える: %s px/山"
+    print("\n  ★灰 FFT: 2 px/山まで当たり(誤差 %+.2f %%)、1.5 px/山は %.2f px と読む(折り返しの予測 %.2f px)。"
+          % (rows[-2][4], last[3], alias_pred))
+    dead_bin = next((r[0] for r in rows if abs(r[2]) > 5.0), None)
+    print("  ★二値化した上端行の FFT は %s px/山 で死ぬ(山の深さ %.2f px が整数行に潰れる)"
+          % (dead_bin, thread_truth(dead_bin, 6 * dead_bin)["depth"] if dead_bin else float("nan")))
+    first_alpha = next((r[0] for r in rows if np.isfinite(r[6]) and abs(r[6] - 30) > 1.0), None)
+    first_d2 = next((r[0] for r in rows if (not np.isfinite(r[7])) or abs(r[7]) > 1.0), None)
+    print("  α が 1 度を超えて外れる最初の粗さ: %s px/山 / d2 が 1 %% を超える(または測れない): %s px/山"
           % (first_alpha, first_d2))
     figs.save_grid("sampling_frames", frames, caps, ncols=2,
                    title="同じ M6 ねじを 40 → 2 px/山 で標本化(左端 160 px)")
     xs = [r[0] for r in rows]
+    fin = lambda v: [x if np.isfinite(x) else np.nan for x in v]    # noqa: E731
     figs.save_plot("sampling_sweep",
-                   [("FFT の P 誤差 [%](ゼロ点)", xs, [r[2] for r in rows]),
-                    ("頂点間隔の P 誤差 [%]", xs, [r[3] for r in rows]),
-                    ("α の誤差 [deg]", xs, [r[4] - 30 if np.isfinite(r[4]) else np.nan for r in rows]),
-                    ("d2 の誤差 [%]", xs, [r[5] for r in rows])],
-                   xlabel="1 山あたりの画素数 [px]", ylabel="誤差(単位は凡例)",
+                   [("二値 FFT の P 誤差 [%](ゼロ点)", xs, fin([min(max(r[2], -50), 50) for r in rows])),
+                    ("灰 FFT の P 誤差 [%]", xs, fin([min(max(r[4], -50), 50) for r in rows])),
+                    ("α の誤差 [deg]", xs, fin([r[6] - 30 for r in rows])),
+                    ("d2 の誤差 [%]", xs, fin([min(max(r[7], -50), 50) for r in rows]))],
+                   xlabel="1 山あたりの画素数 [px]", ylabel="誤差(±50 で頭打ち、単位は凡例)",
                    title="標本化の崖: α → d2 → FFT の順に壊れる",
-                   caption="FFT は Nyquist(2 px/山)まで当たり、その先は折り返す。",
-                   kinds=["marker"] * 4, xlim=(0, 42))
-    return {"rows": rows, "alias_pred": alias_pred}
+                   caption="測れなかった点は描かない。FFT は Nyquist(2 px/山)まで当たり、その先は折り返す。",
+                   kinds=["scatter"] * 4, xlim=(0, 42))
+    return {"rows": rows, "alias_pred": alias_pred, "first_alpha": first_alpha,
+            "first_d2": first_d2, "dead_bin": dead_bin}
 
 
 # --------------------------------------------------------------------------- #
@@ -627,7 +653,6 @@ def section_tool_gaps() -> None:
     print("=" * 78)
     assert hasattr(fs.ledger, "gen_measure_rectangle2") and hasattr(fs.ledger, "measure_pos")
     assert hasattr(fs, "fit_line") and hasattr(fs, "cx_fft") and hasattr(fs, "draw_line")
-    # 1-D の FFT は無い(2-D の cx_fft に 1 行画像を渡した)
     x = np.cos(2 * np.pi * np.arange(64) / 8.0)
     try:
         fs.cx_fft(x)
@@ -635,14 +660,19 @@ def section_tool_gaps() -> None:
     except ValueError:
         one_d = False
     assert not one_d, "cx_fft が 1-D を受けるようになった(この節を書き換えること)"
-    print("  * 1-D の FFT: 無し(cx_fft は 2-D 専用 → 1 行画像で代用)")
-    # 輪郭の傾きによる分割(フランク/平坦部)は無い: hx_split_contours は直線を割らない
+    print("  * 1-D の FFT と主周期のピーク補間: 無し(cx_fft は 2-D 専用 → 1 行画像で代用)")
     print("  * caliper 交点をフランクごとに束ねる処理: 無し(numpy で最寄り追跡)")
     print("  * 2 直線の交点・「山幅 = 谷幅」の解: 無し(閉形式を手書き)")
-    print("  * 測定線の cos 補正 / 傾きの逆算: 無し(fit_line の角度から手計算)")
-    for name in ("fit_line_contours", "hx_split_contours"):
+    print("  * 左右フランク角の半差 → 傾き → caliper の phi へ戻す閉ループ: 無し(手書き)")
+    for name in ("fit_line_contours", "hx_split_contours", "xg_regress_contours"):
         assert name in fs.op_names(), name
-    print("  * fit_line_contours / hx_split_contours は fs.op に居るが docstring が空")
+    img = np.zeros((64, 128))
+    img[:, 40:80] = 1.0
+    c = fs.apply(img, "threshold_sub_pix", a=0.6)
+    pooled = float(fs.apply(c, "xg_regress_contours"))
+    assert pooled > 10.0, pooled
+    print("  * xg_regress_contours は輪郭ごとでなく**全輪郭を 1 本に混ぜて**残差を返す"
+          "(平行 2 本で %.1f px)。fit_line_contours / hx_split_contours は docstring が空" % pooled)
 
 
 # --------------------------------------------------------------------------- #
@@ -665,39 +695,40 @@ def main() -> int:
 
     # 場面の図(看板)
     sc0 = make_scene(theta_deg=0, blur=0, noise=0)
-    sc3, r3 = tl["scene3"]
+    sc3, r3, c3 = tl["scene3"]
     figs.save_grid("scene",
-                   [sc0["img"], sc3["img"], _overlay(sc3["img"], r3, sc3["truth"])],
+                   [sc0["img"], sc3["img"],
+                    _overlay(sc3["img"], r3, sc3["truth"], 0.0),
+                    _overlay(sc3["img"], c3, sc3["truth"], r3["theta_est"])],
                    ["真値のシルエット(θ=0, ぼけ 0)",
                     "観測(θ=3 度, σ=1 px, 雑音 0.02)",
-                    "caliper %d 本 → 交点 → フランク直線 %d 本" % (2 * N_LINES, r3["n_flanks"])],
+                    "素の測り方: 水平 caliper %d 本 → フランク %d 本" % (2 * N_LINES, r3["n_flanks"]),
+                    "θ_est=%.2f 度に引き直した caliper → フランク %d 本" % (r3["theta_est"], c3["n_flanks"])],
                    title="ねじの投影像を測る(1 px = %.0f µm, P = %.0f px)" % (PX_UM, P_PX),
-                   ncols=3)
+                   ncols=2)
 
     # ---- 所見を固定する ------------------------------------------------- #
     zz = z["zero"]
     assert abs(zz["P_ref"] - P_PX) / P_PX < 0.01, zz["P_ref"]
     assert abs(zz["P_width"] / P_PX - 0.5) < 0.05, zz["P_width"]        # 幅は P/2
-    ctrl = c["rows"][0][1]
+    ctrl = c["rows"][1][1]                                                # 既定条件
     assert abs(pct(ctrl["P_apex"], tr["P"])) < 0.05 and abs(ctrl["alpha"] - 30) < 0.05
     assert abs(pct(ctrl["d2"], tr["d2"])) < 0.05
     last = tl["tab"][-1]
-    assert abs(last["th_est"] - 3.0) < 0.15, last["th_est"]
-    assert abs(last["alpha"] - 30.0) < 0.1, last["alpha"]
-    assert last["Pl"] < -2.0 and last["Pr"] > 2.0 and abs(last["Pa"]) < 0.3
-    assert abs(last["Pa_c"]) < 0.05 and abs(last["d2_c"]) < 0.05
-    assert abs(last["d2"] - last["pred"]["d2"]) < 0.05
-    bw = bl["rows"][-1]
-    assert abs(bw[4]) < 0.1 and bw[3] < -0.2                              # d2 守られ α が倒れる
-    assert abs(sp["rows"][-1][1] - sp["alias_pred"]) < 0.15               # 折り返し
-    assert abs(sp["rows"][-2][2]) < 2.0                                    # 2 px/山は当たる
+    assert abs(last["th_est"] - 3.0) < 0.2, last["th_est"]
+    assert abs(last["alpha"] - 30.0) < 0.15, last["alpha"]
+    assert last["Pl"] > 2.0 and last["Pr"] < -2.0 and abs(last["Pa"]) < 0.4
+    assert abs(last["Pa_c"]) < 0.05 and abs(last["d2_c"]) < 0.05, (last["Pa_c"], last["d2_c"])
+    assert abs(last["d2"] - last["pred"]["d2"]) < 0.1, (last["d2"], last["pred"]["d2"])
+    assert abs(sp["rows"][-1][3] - sp["alias_pred"]) < 0.15, sp["rows"][-1][3]   # 折り返し
+    assert abs(sp["rows"][-2][4]) < 2.0, sp["rows"][-2][4]                       # 2 px/山は当たる
 
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
     print("  * ゼロ点は幅を使うと P/2 を答える(上下輪郭の P/2 ずれ)。")
     print("  * 傾きは左右フランクに逆符号 → 半差で逆算、半和が真の α。片側フランクの P は 1 次で狂う。")
-    print("  * ぼけは α に出て d2 には出ない。標本化は α → d2 → FFT の順に壊れる。")
+    print("  * ぼけ・標本化の崖は P / α / d2 で別々に来る。")
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

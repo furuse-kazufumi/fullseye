@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""金属組織の結晶粒度を測る —— 面積法は途切れ 3 % で 1 段落ち、切片法は 29 % まで持つ。
+"""金属組織の結晶粒度を測る —— 面積法は途切れ数 % で 1 段落ち、切片法は 20 % まで持つ。
 
 金相写真(エッチングして粒界を黒く出した金属の断面)から **ASTM E112 の粒度番号 G**
 を出す仕事です。G は熱処理・強度の合否に直結する 1 つの数字で、**1 段(ΔG = 1)は
@@ -8,7 +8,7 @@
 同じ G が出ることになっていますが、**エッチングむらと粒界の途切れ**が入ると
 2 つの方法は**まるで違う壊れ方**をします。
 
-EXTEND: 実写に差し替えるなら :func:`make_scene` が返る辞書の ``img`` を顕微鏡画像に、
+EXTEND: 実写に差し替えるなら :func:`make_scene` が返す辞書の ``img`` を顕微鏡画像に、
 ``labels``(画素ごとの粒の番号)を EBSD の結晶方位マップなどの独立した真値に置き換えます。
 **粒界を手でなぞった線だけでは足りません** —— この PoC の中心的な軸は「途切れた
 粒界の向こうにも粒界はある」なので、真値は粒の**所属**(どの画素がどの粒か)で持つこと。
@@ -16,50 +16,61 @@ EXTEND: 実写に差し替えるなら :func:`make_scene` が返る辞書の ``i
 
 この PoC が示すこと(数字はいずれも実行時に印字される実測値):
 
-1. **真値の検算**: Poisson-Voronoi の閉形式 ℓ = π/(4√λ) は、真値粒界での実測
-   切片数え上げと {r_truth_dev:+.1f} % で一致する。ただし★**同じ真値組織で E112 の
-   2 つの式は一致しない**: 切片法 G {r_gl_true:.2f} / 面積法 G {r_ga_true:.2f}(差 {r_offset:+.2f})。
-   E112 の換算は「標準的な粒の形」を仮定していて、Voronoi は ℓ/√A = π/4 = 0.785
-   (E112 の暗黙値 0.891)なので **{r_offset_pred:+.2f} 段ずれる**と予測でき、実測と合う。
-2. ★★**ゼロ点(大津の二値化 + 連結成分の面積)はエッチングむらで死ぬ**。粒界が
-   完全でも、粒ごとの明るさが σ = 0.10 ばらつくだけで G の誤差は
-   {r_zero_clean:+.2f} → {r_zero_etch:+.2f}。しきい値が「粒界 vs 粒」ではなく
-   「暗い粒 vs 明るい粒」の谷に落ち、暗い粒が丸ごと消える(消えた粒 {r_lost_etch} 個)。
-   雑音だけなら {r_zero_noise:+.2f} で無事 —— **効いているのは雑音ではなくむら**。
-3. **粒界抽出(ボトムハット → しきい値)+ 切片数え上げは同じ条件で {r_int_etch:+.2f}**。
-   ボトムハットは「周りより暗い細い構造」だけを拾うので粒ごとの明るさに依らない。
-4. ★★**崖の位置が 10 倍違う**。粒界の途切れ率を 0 → 60 % で掃引すると、
-   面積法は **{r_cliff_area:.0f} %** で 1 段落ち(予想 3.1 %: Bethe 近似で
-   融合クラスタの平均が 2 粒になる点)、切片法(素)は **{r_cliff_raw:.0f} %**
-   (予想 29.3 %: 横切りの数が (1−f) 倍になるので ℓ が √2 倍 = 1 段になる点)。
-   切片法の実測曲線は予測 ΔG = 6.64·log10(1−f) と最大 {r_raw_pred_dev:.2f} 段で並走する。
-5. ★**隙間を閉じる(closing 9×9)と崖は {r_cliff_closed:.0f} % まで延びるが、代償がある**:
-   途切れ 0 % でも小さい粒が塗り潰されて偽の横切りが {r_false_closed0} 件
-   (素の {r_false_raw0} 件)。★予想では「閉じれば良くなる」だったが、
-   閉じた版は途切れ {r_closed_worse_from:.0f} % 以下では素の版より**悪い**。
-6. ★**壊れ方は 2 種類で、数が別**。切片法では見逃し(粒界はあるのに黒線が無い)が
-   途切れ率に比例して増え(60 % で {r_missed60} 件)、偽検出は {r_false60} 件のまま。
-   面積法では融合(1 塊に粒が 2 個以上)が {r_merged10} 塊 / 飲まれた粒 {r_swallowed10} 個
-   (途切れ 10 %)—— 融合は塊の数より**飲まれた粒の数**で効く。
+1. **真値の検算**: Poisson-Voronoi の閉形式 ℓ = π/(4√λ) は、真値粒界での切片数え上げと
+   +1.5 % で一致する。ただし★**同じ真値組織で E112 の 2 つの式は一致しない**:
+   切片法 G 6.96 / 面積法 G 6.64(差 +0.32)。E112 の換算は「標準的な粒の形」を
+   仮定していて、Voronoi は ℓ/√A = π/4 = 0.785(E112 の暗黙値 0.891)なので
+   **+0.36 段ずれる**と予測でき、実測と合う。★最初の版は種を 1.2 倍に水増しして
+   間引き忘れ、閉形式と -10.7 % ずれて発覚した —— 検算が無ければ「狙い G = 7」の
+   つもりで G 7.4 の組織を測っていた。
+2. ★★**ゼロ点(大津の二値化 + 連結成分)は「むら × 雑音」の相互作用で死ぬ**。
+   雑音だけなら +0.01、エッチングむら(粒ごとの明るさ σ 0.10)だけなら -0.36
+   (暗い粒が 53 個消える)。ところが**両方が入ると +3.68** —— しきい値が
+   「暗い粒 vs 明るい粒」の谷に落ち、しきい値付近の粒が雑音で粉々(種の無い塊
+   2,600 個超)になって N_A が 13 倍に化ける。**要因を 1 つずつ止めた対照群でしか
+   この相互作用は見えない**。
+3. ★**粒界抽出でも正規化の仕方で差が出る**。ボトムハット(最大値で正規化)は
+   むらのみで -0.57 —— 小さい暗い粒 1 個が最大値を決めて、しきい値が相対的に
+   上がり弱い粒界を落とす。局所しきい値(``invert_image`` → ``dyn_threshold``、
+   絶対オフセット 0.10)なら同じ条件で -0.02。**むらに強いのは「周りとの絶対差」**。
+4. ★★**崖の位置が 1 桁違う**。粒界の途切れ率を 0 → 60 % で掃引すると、
+   面積法(むらを止めた対照群)は **6.9 %** で 1 段落ち、切片法は **21.4 %**。
+   切片法の予想は「横切りが (1−f) 倍 → ℓ が √2 倍になる f = 29.3 %」だったが
+   **外れた**: 途切れ 0 % でも粒界の幅(2 px + ぼけ)より短い弦(頂点近く、
+   真値で 22 本)が 1 本の黒線に溶けて ΔG = -0.09 から始まるので、そのぶん手前の
+   20.4 % が正しい予測で、実測 21.4 % と合う。実測曲線は補正した予測と最大
+   0.12 段で並走する。
+5. ★面積法の予想は「1 本の途切れで 2 粒が融合 → 塊の数 N(1 − 3p)、p = 辺の
+   途切れ率で 1/6 なら 1 段」。相関長 8 px の乱数場で消した隙間は中央値 16 px
+   (辺の平均 24 px)なので p ≈ f と踏んだが、**隙間は頂点で 3 辺を同時に開く**
+   ので p は f の 1.7 倍で走り(f 5 % で p 8.6 %)、木近似の予測 1 段の点は f 9.5 %、
+   実測は 6.9 %(閉路の分だけ木近似より早い)。
+6. ★★**「隙間を閉じる」は何も買わない**。closing 9×9 で閉じられる隙間は 8 px 以下、
+   隙間の中央値は 16 px。閉じた版は途切れ 0 % で偽横切りを 33 → 20 に減らすが
+   小さい粒を塗り潰して見逃しを 33 → 99 に増やし、**掃引の全域で素の版より悪い**
+   (崖 21.4 → 17.7 %)。
 7. ★★**混粒(双峰)を 1 つの G に畳むと、その G の粒はどこにも無い**。左 45 % を
-   細粒(真値 G {r_gf:.1f})、右を粗粒(G {r_gc:.1f})にした組織の全体 G は {r_gmix:.2f}
-   —— 切片数の重みで**細粒側に寄る**(調和平均の予測 {r_gmix_pred:.2f})。
-   64 px のタイルで局所 G を測ると、全体 G ± 0.5 に入るタイルは
-   **{r_tiles_in} / {r_tiles_tot}**(単一組織では {r_tiles_in_single} / {r_tiles_tot})。
-   ★個々の切片長の累積分布には双峰が**出ない**(Voronoi の弦長分布は広いので
-   3 倍違う 2 集団が 1 本の滑らかな曲線に溶ける)—— 混粒は**地図**で見るしかない。
+   細粒(真値 G 9.01)、右を粗粒(G 6.15)にした組織の全体 G は 7.82 ——
+   切片数の重みで**細粒側に寄る**(調和平均の予測 7.79、面積で重みづけた G の平均
+   なら 7.44)。64 px のタイルで局所 G を測ると全体 G ± 0.5 に入るタイルは
+   **8 / 64**(単一組織では 43 / 64)。★個々の切片長の累積分布には双峰が**出ない**
+   (山 1 個)—— Voronoi の弦長分布は広いので 3 倍違う 2 集団が 1 本の滑らかな
+   曲線に溶ける。混粒は**地図**で見るしかない。
 
 【グラウンドトゥルース】
-粒は 2-D Voronoi 分割(種は視野の外まで一様に撒く)。粒界は種の所属が変わる画素で、
-幅 w = 2 px・コントラスト 0.35 で描き、粒ごとの明るさ(エッチングむら σ 0.10)、光学
-ぼけ σ 0.6 px、撮像雑音 σ 0.03 を乗せる。途切れは相関長 8 px の乱数場で粒界画素の
-f 割を消す(消えた割合は粒界画素で数えて f に合わせる)。真値 ℓ は**真値ラベルの
-変化を同じ試験線で数え上げ**た値で、閉形式 π/(4√λ) は検算にだけ使う。
+粒は 2-D Voronoi 分割(種は視野の外まで一様に撒く、Poisson 個数)。粒界は種の所属が
+変わる画素で、幅 w = 2 px・コントラスト 0.35 で描き、粒ごとの明るさ(エッチングむら
+σ 0.10)、光学ぼけ σ 0.6 px、撮像雑音 σ 0.03 を乗せる。途切れは相関長 8 px の乱数場で
+粒界画素の f 割を消す(消えた割合は粒界画素で数えて f に合わせる)。真値 ℓ は**真値
+ラベルの変化を同じ試験線で数え上げ**た値で、閉形式 π/(4√λ) は検算にだけ使う。
+幾何の乱数列と描画(むら・途切れ・雑音)の乱数列は分けてあるので、同じ種で
+「むらだけ止めた」対照群が**同じ粒・同じ途切れ**で作れる。
 
 来歴(公開文献のみ): ASTM E112-13 *Standard Test Methods for Determining Average
 Grain Size* / ASTM E1181 *Duplex Grain Sizes* / Underwood, *Quantitative
 Stereology* (Addison-Wesley, 1970) —— P_L = (2/π) L_A / Møller, *Lectures on
-Random Voronoi Tessellations* (Springer, 1994) —— Poisson-Voronoi の L_A = 2√λ。
+Random Voronoi Tessellations* (Springer, 1994) —— Poisson-Voronoi の L_A = 2√λ、
+辺の平均長 2/(3√λ)、1 粒あたり辺 6 本。
 """
 from __future__ import annotations
 
@@ -68,7 +79,7 @@ import time
 from pathlib import Path
 
 import numpy as np
-from scipy.ndimage import distance_transform_edt, gaussian_filter
+from scipy.ndimage import distance_transform_edt, gaussian_filter, label as nd_label
 from scipy.spatial import cKDTree
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -93,8 +104,10 @@ SEED = 7
 SWEEP_SEEDS = (7, 19, 31)
 FINE_FRAC = 0.45           # 混粒: 左からこの割合が細粒
 L_FINE_PX, L_COARSE_PX = 14.0, 40.0   # 混粒の 2 集団の平均切片長 [px]
+DYN_A, DYN_B = 0.5, 0.75   # dyn_threshold: 窓 7 px、オフセット (b-0.5)*0.4 = +0.10
 
 _LAB = fs.ledger           # blob 族の公開経路
+_GEOM_CACHE: dict = {}     # (seed, duplex) -> (labels, seeds)
 
 
 # --------------------------------------------------------------------------- #
@@ -122,12 +135,12 @@ def _voronoi(n_pix: int, lam_of_col, rng) -> tuple[np.ndarray, np.ndarray]:
     """種を視野の外まで撒き、画素ごとの最近傍の種番号を返す。
 
     ``lam_of_col(x)`` は列座標 x での種の密度 [1/px²]。混粒はこれで作る。
+    ★候補は Poisson(λ_max·面積)個。最初の版は 1.2 倍に水増しして間引かずに使い、
+    密度が 20 % 高い組織を「狙い G」だと思い込んだ(閉形式と -10.7 % ずれて発覚)。
     """
     pad = 3 * L_COARSE_PX
     lo, hi = -pad, n_pix + pad
     lam_max = max(lam_of_col(0.0), lam_of_col(float(n_pix)))
-    # ★候補は Poisson(λ_max·面積)個。最初 1.2 倍に水増しして間引かずに使い、
-    #   密度が 20 % 高い組織を「狙い G」だと思い込んだ(閉形式と -10.7 % ずれて発覚)。
     n_cand = int(rng.poisson(lam_max * (hi - lo) ** 2))
     cand = rng.uniform(lo, hi, (n_cand, 2))                # (y, x)
     keep = rng.uniform(0, lam_max, n_cand) < np.asarray([lam_of_col(x) for x in cand[:, 1]])
@@ -163,35 +176,67 @@ def _break_boundary(soft: np.ndarray, frac: float, rng, gap_len: float = GAP_LEN
     return out, removed
 
 
+def _edge_break_fraction(labels: np.ndarray, thin: np.ndarray, drawn: np.ndarray) -> float:
+    """隣り合う粒の対(= 粒界の辺)のうち、途切れを 1 画素でも含む対の割合 p。"""
+    gap = thin & ~(drawn > 0)
+    n = int(labels.max()) + 1
+    pairs, broken = [], []
+    for (a, b, ga, gb) in ((labels[:, :-1], labels[:, 1:], gap[:, :-1], gap[:, 1:]),
+                           (labels[:-1, :], labels[1:, :], gap[:-1, :], gap[1:, :])):
+        m = a != b
+        lo, hi = np.minimum(a[m], b[m]), np.maximum(a[m], b[m])
+        key = lo.astype(np.int64) * n + hi
+        pairs.append(key)
+        broken.append(key[ga[m] | gb[m]])
+    n_pairs = np.unique(np.concatenate(pairs)).size
+    n_broken = np.unique(np.concatenate(broken)).size
+    return n_broken / max(n_pairs, 1)
+
+
 def make_scene(seed: int = SEED, break_frac: float = 0.0, etch: float = ETCH_SIGMA,
                noise: float = NOISE, duplex: bool = False) -> dict:
-    """Voronoi 組織を描き、真値(ラベル・種・粒界)と一緒に返す。"""
-    rng = np.random.default_rng(seed)
-    if duplex:
-        lam_f = (np.pi / (4.0 * L_FINE_PX)) ** 2
-        lam_c = (np.pi / (4.0 * L_COARSE_PX)) ** 2
-        lam_of_col = lambda x: lam_f if x < FINE_FRAC * N_PIX else lam_c   # noqa: E731
-    else:
-        ell_px = ell_from_g(G_TARGET) / PX_MM
-        lam = (np.pi / (4.0 * ell_px)) ** 2
-        lam_of_col = lambda x: lam                                        # noqa: E731
-    labels, seeds = _voronoi(N_PIX, lam_of_col, rng)
-    thin = _thin_boundary(labels)
-    dist = distance_transform_edt(~thin)
-    soft = np.clip(BOUND_W / 2.0 + 0.5 - dist, 0.0, 1.0)     # 幅 w、縁 1 px で滑らか
-    drawn, removed = _break_boundary(soft, break_frac, rng)
+    """Voronoi 組織を描き、真値(ラベル・種・粒界)と一緒に返す。
 
+    幾何(種の配置)と描画(途切れ・むら・雑音)で乱数列を分けてあるので、同じ
+    ``seed`` なら ``etch`` を変えても**同じ粒・同じ途切れ**になる(対照群のため)。
+    """
+    key = (seed, duplex)
+    if key not in _GEOM_CACHE:
+        rng_geo = np.random.default_rng(seed)
+        if duplex:
+            lam_f = (np.pi / (4.0 * L_FINE_PX)) ** 2
+            lam_c = (np.pi / (4.0 * L_COARSE_PX)) ** 2
+            lam_of_col = lambda x: lam_f if x < FINE_FRAC * N_PIX else lam_c   # noqa: E731
+        else:
+            ell_px = ell_from_g(G_TARGET) / PX_MM
+            lam = (np.pi / (4.0 * ell_px)) ** 2
+            lam_of_col = lambda x: lam                                        # noqa: E731
+        labels, seeds = _voronoi(N_PIX, lam_of_col, rng_geo)
+        thin = _thin_boundary(labels)
+        dist = distance_transform_edt(~thin)
+        soft = np.clip(BOUND_W / 2.0 + 0.5 - dist, 0.0, 1.0)   # 幅 w、縁 1 px で滑らか
+        inside = ((seeds[:, 0] >= 0) & (seeds[:, 0] < N_PIX)
+                  & (seeds[:, 1] >= 0) & (seeds[:, 1] < N_PIX))
+        _GEOM_CACHE[key] = (labels, seeds[inside], thin, soft)
+    labels, seeds, thin, soft = _GEOM_CACHE[key]
+
+    rng = np.random.default_rng(seed + 1000)
+    drawn, removed = _break_boundary(soft, break_frac, rng)
     n_lab = int(labels.max()) + 1
     offs = etch * rng.standard_normal(n_lab)
     grain = np.clip(GRAIN_LEVEL + offs, 0.35, 0.95)[labels]
     img = grain - CONTRAST * drawn
     img = gaussian_filter(img, BLUR)
     img = img + noise * rng.standard_normal(img.shape)
-    inside = ((seeds[:, 0] >= 0) & (seeds[:, 0] < N_PIX)
-              & (seeds[:, 1] >= 0) & (seeds[:, 1] < N_PIX))
     return {"img": np.clip(img, 0.0, 1.0), "labels": labels, "thin": thin,
-            "drawn": drawn, "seeds": seeds[inside], "removed": removed,
-            "lam_of_col": lam_of_col}
+            "drawn": drawn, "seeds": seeds, "removed": removed}
+
+
+def gap_lengths(scene: dict) -> np.ndarray:
+    """途切れの塊ごとの画素数(8 近傍)。closing で閉じられる長さかを判断する材料。"""
+    gap = scene["thin"] & ~(scene["drawn"] > 0)
+    lab, n = nd_label(gap, structure=np.ones((3, 3)))
+    return np.bincount(lab.ravel())[1:] if n else np.zeros(0)
 
 
 # --------------------------------------------------------------------------- #
@@ -220,6 +265,18 @@ def test_lines(n_pix: int = N_PIX, margin: int = MARGIN, n_lines: int = N_LINES,
         ok = (c2 >= a) & (c2 < b)
         lines.append({"r": r2[ok] + r0, "c": c2[ok] + c0, "len": float(ok.sum()) * np.sqrt(2)})
     return [ln for ln in lines if ln["r"].size > 8]
+
+
+def _clip_lines(lines: list[dict], c_lo: int, c_hi: int) -> list[dict]:
+    """試験線を列の範囲 ``[c_lo, c_hi)`` に切り詰める(混粒の領域別 G 用)。"""
+    out = []
+    for ln in lines:
+        ok = (ln["c"] >= c_lo) & (ln["c"] < c_hi)
+        if ok.sum() < 5:
+            continue
+        step = np.sqrt(2) if (np.ptp(ln["r"][ok]) > 0 and np.ptp(ln["c"][ok]) > 0) else 1.0
+        out.append({"r": ln["r"][ok], "c": ln["c"][ok], "len": float(ok.sum()) * step})
+    return out
 
 
 def _truth_crossings(labels: np.ndarray, ln: dict) -> np.ndarray:
@@ -257,7 +314,7 @@ def intercept_stats(labels: np.ndarray, mask: np.ndarray | None, lines: list[dic
     """真値(ラベル変化)と推定(黒線の走り)の横切りを同じ線で数える。"""
     total_len = sum(ln["len"] for ln in lines)
     n_true = n_est = matched = missed = false = 0
-    seg_true, seg_est = [], []
+    seg_true = []
     for ln in lines:
         t = _truth_crossings(labels, ln)
         n_true += t.size
@@ -265,7 +322,6 @@ def intercept_stats(labels: np.ndarray, mask: np.ndarray | None, lines: list[dic
         if mask is not None:
             e = _run_centers(mask, ln)
             n_est += e.size
-            seg_est.extend(np.diff(e).tolist())
             m, mi, fa = _match_1d(t, e, TOL_PX)
             matched += m
             missed += mi
@@ -274,21 +330,32 @@ def intercept_stats(labels: np.ndarray, mask: np.ndarray | None, lines: list[dic
            "seg_true": np.asarray(seg_true)}
     if mask is not None:
         out.update({"n_est": n_est, "ell_est_px": total_len / max(n_est, 1),
-                    "matched": matched, "missed": missed, "false": false,
-                    "seg_est": np.asarray(seg_est)})
+                    "matched": matched, "missed": missed, "false": false})
     return out
+
+
+def g_intercept(labels: np.ndarray, mask: np.ndarray, lines: list[dict]) -> float:
+    return g_from_intercept(intercept_stats(labels, mask, lines)["ell_est_px"] * PX_MM)
 
 
 # --------------------------------------------------------------------------- #
 # 推定器                                                                       #
 # --------------------------------------------------------------------------- #
-def boundary_mask(img: np.ndarray, close_b: float | None = None) -> dict:
-    """fullseye の op で粒界を抜く: gray_bothat → threshold →(hx_close_edges)。"""
-    bh = np.asarray(fs.apply(img, "gray_bothat", a=0.5))          # 7x7、最大値で正規化
-    raw = np.asarray(fs.apply(bh, "threshold", a=0.5))
-    out = {"bothat": bh, "raw": raw}
+def boundary_masks(img: np.ndarray, close_b: float | None = None) -> dict:
+    """fullseye の op で粒界を抜く 2 通り。
+
+    * ``bothat``: ``gray_bothat``(7x7、**最大値で正規化**)→ ``threshold`` 0.5。
+    * ``dyn``: ``invert_image`` → ``dyn_threshold``(窓 7 px、局所平均 + 0.10 を
+      超えた画素 = 周りより **絶対値で** 0.10 以上暗い画素)。
+    ``close_b`` を渡すと ``dyn`` に ``hx_close_edges`` を掛けた ``closed`` も返す。
+    """
+    bh = np.asarray(fs.apply(img, "gray_bothat", a=0.5))
+    out = {"bothat_resp": bh, "bothat": np.asarray(fs.apply(bh, "threshold", a=0.5))}
+    inv = np.asarray(fs.apply(img, "invert_image"))
+    out["inv"] = inv
+    out["dyn"] = np.asarray(fs.apply(inv, "dyn_threshold", a=DYN_A, b=DYN_B))
     if close_b is not None:
-        out["closed"] = np.asarray(fs.apply(raw, "hx_close_edges", a=0.5, b=close_b))
+        out["closed"] = np.asarray(fs.apply(out["dyn"], "hx_close_edges", a=0.5, b=close_b))
     return out
 
 
@@ -299,9 +366,7 @@ def area_method(img: np.ndarray, scene: dict) -> dict:
     f = _LAB.blob_features(lab, spacing=PX_MM)
     touch = np.asarray(f["touches_border"], bool)
     n_eff = float((~touch).sum()) + 0.5 * float(touch.sum())
-    area_mm2 = (N_PIX * PX_MM) ** 2
-    n_a = n_eff / area_mm2
-    # 壊れ方: 種の入り方で分ける
+    n_a = n_eff / (N_PIX * PX_MM) ** 2
     sr = np.clip(np.round(scene["seeds"][:, 0]).astype(int), 0, N_PIX - 1)
     sc = np.clip(np.round(scene["seeds"][:, 1]).astype(int), 0, N_PIX - 1)
     owner = lab[sr, sc]
@@ -309,7 +374,8 @@ def area_method(img: np.ndarray, scene: dict) -> dict:
     cnt = np.bincount(owner[owner > 0], minlength=int(lab.max()) + 1)[1:]
     merged = int(np.count_nonzero(cnt >= 2))
     swallowed = int(np.sum(cnt[cnt >= 2] - 1))
-    fragments = int(np.count_nonzero(cnt == 0))
+    # 種の無い塊 = 粉々になった欠片。縁の塊は種が視野の外にあるだけなので除く。
+    fragments = int(np.count_nonzero((cnt == 0) & ~touch))
     return {"labels": lab, "n_blobs": int(f["n"]), "n_a": n_a, "g": g_from_area(n_a),
             "lost": lost, "merged": merged, "swallowed": swallowed, "fragments": fragments,
             "mask": bw}
@@ -317,9 +383,8 @@ def area_method(img: np.ndarray, scene: dict) -> dict:
 
 def truth_summary(scene: dict, lines: list[dict]) -> dict:
     st = intercept_stats(scene["labels"], None, lines)
-    ell_mm = st["ell_true_px"] * PX_MM
     n_a = scene["seeds"].shape[0] / (N_PIX * PX_MM) ** 2
-    return {"ell_px": st["ell_true_px"], "g_l": g_from_intercept(ell_mm),
+    return {"ell_px": st["ell_true_px"], "g_l": g_from_intercept(st["ell_true_px"] * PX_MM),
             "g_a": g_from_area(n_a), "n_true": st["n_true"], "seg": st["seg_true"]}
 
 
@@ -332,10 +397,10 @@ def section_truth() -> dict:
     print("=" * 78)
     lines = test_lines()
     devs, gl, ga = [], [], []
+    ell_pred = ell_from_g(G_TARGET) / PX_MM
     for sd in SWEEP_SEEDS:
         sc = make_scene(sd)
         tr = truth_summary(sc, lines)
-        ell_pred = ell_from_g(G_TARGET) / PX_MM
         devs.append(100 * (tr["ell_px"] - ell_pred) / ell_pred)
         gl.append(tr["g_l"])
         ga.append(tr["g_a"])
@@ -346,9 +411,14 @@ def section_truth() -> dict:
     print("\n  閉形式との差 平均 %+.1f %% / E112 の 2 式の差 G_L - G_A = %+.2f(予測 %+.2f: "
           "ℓ/√A が Voronoi では π/4、E112 の暗黙値は 0.891)"
           % (np.mean(devs), np.mean(gl) - np.mean(ga), offset_pred))
+    broken = make_scene(SEED, break_frac=0.30)
+    gl_px = gap_lengths(broken)
+    edge_mean = 2.0 / (3.0 * np.sqrt((np.pi / (4.0 * ell_pred)) ** 2))
+    print("  途切れ 30 %% の隙間: %d 塊、中央値 %.0f px、平均 %.1f px(粒界の辺の平均長は "
+          "2/(3√λ) = %.1f px)" % (gl_px.size, np.median(gl_px), gl_px.mean(), edge_mean))
+
     sc = make_scene(SEED)
     clean = make_scene(SEED, etch=0.0, noise=0.0)
-    broken = make_scene(SEED, break_frac=0.30)
     figs.save_grid("scene", [clean["img"], sc["img"], sc["thin"].astype(float), broken["img"]],
                    ["粒界完全・むら無し・雑音無し", "エッチングむら σ0.10 + 雑音 σ0.03",
                     "真値の粒界(所属が変わる画素)", "粒界の途切れ 30 %%(実測 %.1f %%)"
@@ -356,7 +426,8 @@ def section_truth() -> dict:
                    title="金相写真の合成場面(1 px = %.0f µm、狙い G = %.0f)"
                          % (PX_MM * 1000, G_TARGET))
     return {"dev": float(np.mean(devs)), "g_l": float(np.mean(gl)), "g_a": float(np.mean(ga)),
-            "offset": float(np.mean(gl) - np.mean(ga)), "offset_pred": float(offset_pred)}
+            "offset": float(np.mean(gl) - np.mean(ga)), "offset_pred": float(offset_pred),
+            "gap_median": float(np.median(gl_px)), "edge_mean": float(edge_mean)}
 
 
 # --------------------------------------------------------------------------- #
@@ -364,7 +435,7 @@ def section_truth() -> dict:
 # --------------------------------------------------------------------------- #
 def section_controls() -> dict:
     print("\n" + "=" * 78)
-    print("2-3) 対照群 —— 面積法(ゼロ点)と切片法を、要因を 1 つずつ止めて比べる")
+    print("2-3) 対照群 —— 面積法(ゼロ点)と切片法 2 通りを、要因を 1 つずつ止めて比べる")
     print("=" * 78)
     lines = test_lines()
     conds = [("完全・むら無し・雑音無し", dict(etch=0.0, noise=0.0)),
@@ -373,36 +444,50 @@ def section_controls() -> dict:
              ("+ むら + 雑音", dict()),
              ("+ むら + 雑音 + 途切れ 20 %", dict(break_frac=0.20))]
     rows, out = [], {}
-    print("  条件                          真値 G_L  面積法 G(誤差)   切片法 G(誤差)   消えた粒  見逃し/偽")
+    print("  条件                        真値G_L  面積法(誤差)   ボトムハット(誤差)  局所しきい値(誤差)  消えた粒/欠片  見逃し/偽(局所)")
     for name, kw in conds:
         sc = make_scene(SEED, **kw)
         tr = truth_summary(sc, lines)
         am = area_method(sc["img"], sc)
-        bm = boundary_mask(sc["img"])
-        st = intercept_stats(sc["labels"], bm["raw"], lines)
-        g_int = g_from_intercept(st["ell_est_px"] * PX_MM)
-        e_a, e_i = am["g"] - tr["g_a"], g_int - tr["g_l"]
-        out[name] = {"err_area": e_a, "err_int": e_i, "lost": am["lost"],
-                     "missed": st["missed"], "false": st["false"]}
+        bm = boundary_masks(sc["img"])
+        s_bh = intercept_stats(sc["labels"], bm["bothat"], lines)
+        s_dy = intercept_stats(sc["labels"], bm["dyn"], lines)
+        g_bh = g_from_intercept(s_bh["ell_est_px"] * PX_MM)
+        g_dy = g_from_intercept(s_dy["ell_est_px"] * PX_MM)
+        e_a, e_b, e_d = am["g"] - tr["g_a"], g_bh - tr["g_l"], g_dy - tr["g_l"]
+        short = int(np.count_nonzero(tr["seg"] < TOL_PX))
+        out[name] = {"err_area": e_a, "err_bothat": e_b, "err_dyn": e_d, "lost": am["lost"],
+                     "fragments": am["fragments"], "missed": s_dy["missed"],
+                     "false": s_dy["false"], "short": short}
         rows.append([name, "%.2f" % tr["g_l"], "%.2f (%+.2f)" % (am["g"], e_a),
-                     "%.2f (%+.2f)" % (g_int, e_i), str(am["lost"]),
-                     "%d / %d" % (st["missed"], st["false"])])
-        print("  %-28s   %.2f    %.2f (%+.2f)     %.2f (%+.2f)     %4d     %4d / %3d"
-              % (name, tr["g_l"], am["g"], e_a, g_int, e_i, am["lost"], st["missed"], st["false"]))
-    print("\n  ★面積法を殺すのは雑音ではなくエッチングむら: 大津のしきい値が「暗い粒 vs 明るい粒」"
-          "の谷に落ち、\n    暗い粒が丸ごと背景に消える。切片法はボトムハットが粒の明るさを"
-          "見ないので生き残る。")
-    figs.save_table("controls", ["条件", "真値 G_L", "面積法 G(誤差)", "切片法 G(誤差)",
-                                 "消えた粒", "見逃し / 偽"], rows,
-                    title="対照群: 要因を 1 つずつ止めたときの G(面積法は G_A 真値と比較)")
+                     "%.2f (%+.2f)" % (g_bh, e_b), "%.2f (%+.2f)" % (g_dy, e_d),
+                     "%d / %d" % (am["lost"], am["fragments"]),
+                     "%d / %d" % (s_dy["missed"], s_dy["false"])])
+        print("  %-26s  %.2f   %5.2f (%+.2f)   %5.2f (%+.2f)      %5.2f (%+.2f)       %3d / %4d      %3d / %3d"
+              % (name, tr["g_l"], am["g"], e_a, g_bh, e_b, g_dy, e_d, am["lost"],
+                 am["fragments"], s_dy["missed"], s_dy["false"]))
+    c0 = out["完全・むら無し・雑音無し"]
+    print("\n  ★面積法は「むら × 雑音」の相互作用で死ぬ: 雑音だけ %+.2f / むらだけ %+.2f / 両方 %+.2f。"
+          % (out["+ 雑音のみ"]["err_area"], out["+ むらのみ"]["err_area"],
+             out["+ むら + 雑音"]["err_area"]))
+    print("     大津のしきい値が「暗い粒 vs 明るい粒」の谷に落ち、しきい値付近の粒が雑音で"
+          "粉々になる(欠片 %d 個)。" % out["+ むら + 雑音"]["fragments"])
+    print("  ★ボトムハットはむらだけで %+.2f、局所しきい値は %+.2f —— 最大値で正規化すると"
+          "小さい暗い粒 1 個が\n     しきい値を決めて弱い粒界を落とす。むらに強いのは「周りとの絶対差」。"
+          % (out["+ むらのみ"]["err_bothat"], out["+ むらのみ"]["err_dyn"]))
+    print("  完全な粒界でも見逃し %d 件: 真値の弦のうち %d 本は %g px より短く、幅 %g px + ぼけの"
+          "黒線 1 本に溶ける。" % (c0["missed"], c0["short"], TOL_PX, BOUND_W))
+    figs.save_table("controls", ["条件", "真値 G_L", "面積法 G(誤差)", "切片・ボトムハット G(誤差)",
+                                 "切片・局所しきい値 G(誤差)", "消えた粒 / 欠片", "見逃し / 偽"],
+                    rows, title="対照群: 要因を 1 つずつ止めたときの G(面積法は G_A の真値と比較)")
 
     # 段階の図(むら + 雑音 + 途切れ 20 %)
     sc = make_scene(SEED, break_frac=0.20)
-    bm = boundary_mask(sc["img"], close_b=1.0)
+    bm = boundary_masks(sc["img"], close_b=1.0)
     am = area_method(sc["img"], sc)
     crop = (slice(64, 256), slice(64, 256))
     rgb = np.repeat(sc["img"][crop][..., None], 3, axis=-1)
-    m = bm["raw"][crop] > 0.5
+    m = bm["dyn"][crop] > 0.5
     rgb[m] = (0.95, 0.35, 0.2)
     for ln in test_lines(size=192, margin=4, n_lines=3):
         rgb[ln["r"], ln["c"]] = (0.2, 0.4, 1.0)
@@ -412,23 +497,23 @@ def section_controls() -> dict:
             rgb[max(r - 1, 0):r + 2, max(c - 1, 0):c + 2] = (0.1, 0.9, 0.2)
     zoom = np.kron(rgb, np.ones((2, 2, 1)))
     figs.save_grid("stages_intercept",
-                   [bm["bothat"], bm["raw"], bm["closed"], zoom],
-                   ["gray_bothat(7x7、最大値で正規化)", "threshold 0.5 → 粒界の候補",
-                    "hx_close_edges(9x9)で隙間を閉じる",
+                   [bm["bothat_resp"], bm["bothat"], bm["dyn"], zoom],
+                   ["gray_bothat(7x7、最大値で正規化)", "bothat → threshold 0.5",
+                    "invert_image → dyn_threshold(窓 7、+0.10)",
                     "試験線(青)・真値の横切り(緑)・抜いた粒界(赤)"],
                    title="切片法の段階(むら + 雑音 + 途切れ 20 %)")
     figs.save_grid("stages_area",
                    [am["mask"].astype(float), _LAB.blob_overlay(sc["img"], am["labels"])],
-                   ["bin_threshold(大津)で明るい側 = 粒", "連結成分 %d 個(消えた粒 %d・融合 %d)"
-                    % (am["n_blobs"], am["lost"], am["merged"])],
-                   title="面積法(ゼロ点)の段階 —— 暗い粒が背景に落ちる")
+                   ["bin_threshold(大津)で明るい側 = 粒", "連結成分 %d 個(消えた粒 %d・欠片 %d)"
+                    % (am["n_blobs"], am["lost"], am["fragments"])],
+                   title="面積法(ゼロ点)の段階 —— しきい値付近の粒が粉々になる")
     return out
 
 
 # --------------------------------------------------------------------------- #
 # 4-6. 崖 —— 途切れ率を掃引し、壊れ方を種類ごとに数える                          #
 # --------------------------------------------------------------------------- #
-def section_cliff() -> dict:
+def section_cliff(gap_median: float, edge_mean: float) -> dict:
     print("\n" + "=" * 78)
     print("4-6) 崖 —— 粒界の途切れ率 0 → 60 % で G が 1 段ずれる点")
     print("=" * 78)
@@ -437,17 +522,18 @@ def section_cliff() -> dict:
     keys = ("area", "raw", "closed")
     err = {k: [] for k in keys}
     fail = {"missed_raw": [], "false_raw": [], "missed_closed": [], "false_closed": [],
-            "merged": [], "swallowed": [], "lost": [], "fragments": []}
-    print("  途切れ   面積法 ΔG   切片(素) ΔG  切片(閉) ΔG  予測(素)   見逃し/偽(素)  見逃し/偽(閉)  融合/飲まれ/消失")
+            "merged": [], "swallowed": [], "lost": [], "p_edge": []}
+    print("  途切れ  面積法ΔG(むら無し)  切片(素)ΔG  切片(閉)ΔG   辺の途切れ率p  見逃し/偽(素)  見逃し/偽(閉)  融合/飲まれ")
     for f in fracs:
         acc = {k: [] for k in list(err) + list(fail)}
         for sd in SWEEP_SEEDS:
-            sc = make_scene(sd, break_frac=float(f))
+            sc = make_scene(sd, break_frac=float(f))                # むら + 雑音(本番)
+            sc0 = make_scene(sd, break_frac=float(f), etch=0.0)     # むらを止めた対照群
             tr = truth_summary(sc, lines)
-            am = area_method(sc["img"], sc)
-            bm = boundary_mask(sc["img"], close_b=1.0)
-            s_raw = intercept_stats(sc["labels"], bm["raw"], lines)
+            bm = boundary_masks(sc["img"], close_b=1.0)
+            s_raw = intercept_stats(sc["labels"], bm["dyn"], lines)
             s_cl = intercept_stats(sc["labels"], bm["closed"], lines)
+            am = area_method(sc0["img"], sc0)
             acc["area"].append(am["g"] - tr["g_a"])
             acc["raw"].append(g_from_intercept(s_raw["ell_est_px"] * PX_MM) - tr["g_l"])
             acc["closed"].append(g_from_intercept(s_cl["ell_est_px"] * PX_MM) - tr["g_l"])
@@ -458,19 +544,31 @@ def section_cliff() -> dict:
             acc["merged"].append(am["merged"])
             acc["swallowed"].append(am["swallowed"])
             acc["lost"].append(am["lost"])
-            acc["fragments"].append(am["fragments"])
+            acc["p_edge"].append(_edge_break_fraction(sc0["labels"], sc0["thin"], sc0["drawn"]))
         for k in err:
             err[k].append(float(np.mean(acc[k])))
         for k in fail:
             fail[k].append(float(np.mean(acc[k])))
-        pred = 6.6439 * np.log10(1.0 - f) if f < 1 else -np.inf
-        print("   %4.0f %%   %+6.2f      %+6.2f       %+6.2f      %+6.2f     %5.0f / %4.0f     %5.0f / %4.0f    %4.0f / %4.0f / %4.0f"
-              % (100 * f, err["area"][-1], err["raw"][-1], err["closed"][-1], pred,
-                 fail["missed_raw"][-1], fail["false_raw"][-1],
+        print("   %4.0f %%      %+6.2f          %+6.2f      %+6.2f        %5.1f %%       %5.0f / %4.0f     %5.0f / %4.0f    %4.0f / %4.0f"
+              % (100 * f, err["area"][-1], err["raw"][-1], err["closed"][-1],
+                 100 * fail["p_edge"][-1], fail["missed_raw"][-1], fail["false_raw"][-1],
                  fail["missed_closed"][-1], fail["false_closed"][-1],
-                 fail["merged"][-1], fail["swallowed"][-1], fail["lost"][-1]))
+                 fail["merged"][-1], fail["swallowed"][-1]))
 
-    pred_curve = 6.6439 * np.log10(1.0 - fracs)
+    # --- 予測 --------------------------------------------------------------- #
+    # 切片法: 横切りが (1-f) 倍 → ΔG = 6.64 log10(1-f)。素朴な崖は f = 1 - 1/√2。
+    #   ただし f = 0 でも短い弦が溶けて ΔG0 から始まるので、そこを足した予測が正しい。
+    dg0 = err["raw"][0]
+    pred_raw_naive = 6.6439 * np.log10(1.0 - fracs)
+    pred_raw = dg0 + pred_raw_naive
+    cliff_pred_raw_naive = 100 * (1.0 - 2 ** -0.5)
+    cliff_pred_raw = 100 * (1.0 - 10 ** ((-1.0 - dg0) / 6.6439))
+    # 面積法: 木近似で塊の数は N(1 - 3p)(1 粒あたり辺 6 本 = 辺 3N 本、途切れた辺で 2 粒が 1 塊)。
+    #   p は実測の「辺の途切れ率」。1 段 = 塊が半分 = p = 1/6。
+    p = np.asarray(fail["p_edge"])
+    pred_area = np.where(1.0 - 3.0 * p > 0.05, 3.3219 * np.log10(np.maximum(1.0 - 3.0 * p, 0.05)), np.nan)
+    cliff_pred_area = float(np.interp(1.0 / 6.0, p, 100 * fracs)) if p.max() > 1 / 6 else float("nan")
+    p_over_f = float(np.mean(p[1:4] / fracs[1:4]))
 
     def first_cliff(e):
         """|ΔG| が初めて 1 を超える途切れ率 [%](線形補間)。"""
@@ -486,31 +584,38 @@ def section_cliff() -> dict:
         return float(x0 + (1.0 - y0) / (y1 - y0) * (x1 - x0))
 
     cliff = {k: first_cliff(err[k]) for k in keys}
-    cliff_pred_raw = 100 * (1.0 - 2 ** -0.5)
-    # 面積法の予測: Bethe 近似(平均次数 6、辺あたり途切れ塊 3 個)で
-    # 融合クラスタの平均粒数 S = (1+p)/(1-5p) が 2 になる点 → p = 1/11、(1-f)^3 = 1-p
-    cliff_pred_area = 100 * (1.0 - (1.0 - 1.0 / 11.0) ** (1.0 / 3.0))
-    raw_dev = float(np.max(np.abs(np.asarray(err["raw"]) - pred_curve)))
+    raw_dev = float(np.max(np.abs(np.asarray(err["raw"]) - pred_raw)))
     worse = [100 * f for f, a, b in zip(fracs, err["raw"], err["closed"]) if abs(b) > abs(a)]
-    print("\n  ★崖(|ΔG| >= 1 になる途切れ率): 面積法 %.1f %%(予想 %.1f %%)/ 切片法(素) %.1f %%"
-          "(予想 %.1f %%)/ 切片法(閉) %.1f %%" % (cliff["area"], cliff_pred_area, cliff["raw"],
-                                                 cliff_pred_raw, cliff["closed"]))
-    print("     切片法(素)の実測は予測 ΔG = 6.64 log10(1-f) と最大 %.2f 段で並走。" % raw_dev)
-    print("     閉じた版は途切れ %s %% で素の版より悪い(途切れ 0 %% の偽横切り: 素 %.0f / 閉 %.0f)。"
-          % (("〜%.0f" % max(worse)) if worse else "無し", fail["false_raw"][0], fail["false_closed"][0]))
+    print("\n  ★崖(|ΔG| >= 1 になる途切れ率): 面積法 %.1f %% / 切片法(素) %.1f %% / 切片法(閉) %.1f %%"
+          % (cliff["area"], cliff["raw"], cliff["closed"]))
+    print("     切片法の予想は %.1f %%(横切り (1-f) 倍)だったが、途切れ 0 %% で既に ΔG = %+.2f"
+          "(短い弦が溶ける)なので\n     補正した予測は %.1f %%。実測曲線は補正した予測と最大 %.2f 段で並走。"
+          % (cliff_pred_raw_naive, dg0, cliff_pred_raw, raw_dev))
+    print("     面積法: 辺の途切れ率 p は f の %.1f 倍で走る(隙間 1 塊が頂点で 2〜3 辺を同時に開く)。"
+          "木近似 N(1-3p) で 1 段の点は f = %.1f %%、実測 %.1f %%(閉路の分だけ木近似と違う)。"
+          % (p_over_f, cliff_pred_area, cliff["area"]))
+    print("  ★閉じる(closing 9x9、閉じられる隙間 8 px 以下)は隙間の中央値 %.0f px に届かず、"
+          "小さい粒を塗り潰す:\n     途切れ 0 %% の見逃し %.0f → %.0f、偽 %.0f → %.0f。"
+          "掃引 %d 点中 %d 点で素の版より悪い。"
+          % (gap_median, fail["missed_raw"][0], fail["missed_closed"][0], fail["false_raw"][0],
+             fail["false_closed"][0], len(fracs), len(worse)))
 
     x = 100 * fracs
     figs.save_plot("cliff_break_sweep",
-                   [("面積法(大津 + 連結成分)", x, err["area"]),
-                    ("切片法(素)", x, err["raw"]),
-                    ("切片法(closing 9x9)", x, err["closed"]),
-                    ("予測 6.64·log10(1-f)", x, pred_curve),
+                   [("面積法(大津 + 連結成分、むら無し)", x, err["area"]),
+                    ("切片法(局所しきい値、素)", x, err["raw"]),
+                    ("切片法(+ closing 9x9)", x, err["closed"]),
                     ("1 段 = -1", x, [-1.0] * len(x))],
                    xlabel="粒界の途切れ率 f [%]", ylabel="G の誤差 ΔG [段]",
                    title="崖: 面積法は %.0f %%、切片法は %.0f %% で 1 段落ちる"
                          % (cliff["area"], cliff["raw"]),
                    ylim=(-4.5, 0.5),
-                   caption="面積法は 1 本の途切れで 2 粒が融合するので、切片法の 10 分の 1 の途切れで 1 段落ちる。")
+                   caption="面積法は 1 本の途切れで 2 粒が融合するので、切片法の 3 分の 1 の途切れで 1 段落ちる。")
+    figs.save_plot("cliff_prediction",
+                   [("切片法 実測", x, err["raw"]), ("切片法 予測 ΔG0 + 6.64 log10(1-f)", x, pred_raw),
+                    ("面積法 実測", x, err["area"]), ("面積法 予測 3.32 log10(1-3p)", x, pred_area)],
+                   xlabel="粒界の途切れ率 f [%]", ylabel="G の誤差 ΔG [段]",
+                   title="幾何で先に立てた予測との突き合わせ", ylim=(-4.5, 0.5))
     figs.save_plot("failure_intercept",
                    [("見逃し(素)", x, fail["missed_raw"]), ("偽(素)", x, fail["false_raw"]),
                     ("見逃し(閉)", x, fail["missed_closed"]), ("偽(閉)", x, fail["false_closed"])],
@@ -518,26 +623,25 @@ def section_cliff() -> dict:
                    title="切片法の壊れ方: 見逃しは f に比例、偽は平ら")
     figs.save_plot("failure_area",
                    [("融合した塊", x, fail["merged"]), ("飲まれた粒", x, fail["swallowed"]),
-                    ("消えた粒(背景に落ちた)", x, fail["lost"])],
-                   xlabel="粒界の途切れ率 f [%]", ylabel="件数(3 種の平均)",
+                    ("辺の途切れ率 p [%]", x, 100 * p)],
+                   xlabel="粒界の途切れ率 f [%]", ylabel="件数(3 種の平均)/ p [%]",
                    title="面積法の壊れ方: 融合は塊の数より飲まれた粒の数で効く")
-    return {"fracs": fracs, "err": err, "fail": fail, "cliff": cliff,
+    return {"fracs": fracs, "err": err, "fail": fail, "cliff": cliff, "dg0": dg0,
             "cliff_pred_area": cliff_pred_area, "cliff_pred_raw": cliff_pred_raw,
-            "raw_dev": raw_dev, "worse": worse}
+            "cliff_pred_raw_naive": cliff_pred_raw_naive, "raw_dev": raw_dev,
+            "n_worse": len(worse), "p_over_f": p_over_f}
 
 
 # --------------------------------------------------------------------------- #
 # 7. 混粒 —— 1 つの G に畳むと消えるもの                                          #
 # --------------------------------------------------------------------------- #
-def _tile_map(labels: np.ndarray, mask: np.ndarray | None, tile: int = 64) -> np.ndarray:
+def _tile_map(labels: np.ndarray, mask: np.ndarray, tile: int = 64) -> np.ndarray:
     n = N_PIX // tile
     out = np.full((n, n), np.nan)
     for i in range(n):
         for j in range(n):
             lines = test_lines(size=tile, margin=2, n_lines=3, r0=i * tile, c0=j * tile)
-            st = intercept_stats(labels, mask, lines)
-            ell = st["ell_est_px"] if mask is not None else st["ell_true_px"]
-            out[i, j] = g_from_intercept(ell * PX_MM)
+            out[i, j] = g_intercept(labels, mask, lines)
     return out
 
 
@@ -549,19 +653,16 @@ def section_duplex() -> dict:
     dup = make_scene(SEED, duplex=True)
     single = make_scene(SEED)
     tr = truth_summary(dup, lines)
-    bm = boundary_mask(dup["img"])
-    st = intercept_stats(dup["labels"], bm["raw"], lines)
+    tr_s = truth_summary(single, lines)
+    m_dup = boundary_masks(dup["img"])["dyn"]
+    m_single = boundary_masks(single["img"])["dyn"]
+    st = intercept_stats(dup["labels"], m_dup, lines)
     g_est = g_from_intercept(st["ell_est_px"] * PX_MM)
+    g_single = g_intercept(single["labels"], m_single, lines)
 
-    # 領域ごとの真値 G(左 45 % / 右)
-    def region_g(c_lo, c_hi):
-        sub = [{"r": ln["r"][(ln["c"] >= c_lo) & (ln["c"] < c_hi)],
-                "c": ln["c"][(ln["c"] >= c_lo) & (ln["c"] < c_hi)], "len": 0.0} for ln in lines]
-        sub = [dict(s, len=float(s["r"].size) * (np.sqrt(2) if (np.unique(s["r"]).size > 1 and np.unique(s["c"]).size > 1) else 1.0))
-               for s in sub if s["r"].size > 4]
-        return g_from_intercept(intercept_stats(dup["labels"], None, sub)["ell_true_px"] * PX_MM)
     split = int(FINE_FRAC * N_PIX)
-    g_f, g_c = region_g(0, split), region_g(split, N_PIX)
+    g_f = g_from_intercept(intercept_stats(dup["labels"], None, _clip_lines(lines, 0, split))["ell_true_px"] * PX_MM)
+    g_c = g_from_intercept(intercept_stats(dup["labels"], None, _clip_lines(lines, split, N_PIX))["ell_true_px"] * PX_MM)
     ell_f, ell_c = ell_from_g(g_f), ell_from_g(g_c)
     ell_mix_pred = 1.0 / (FINE_FRAC / ell_f + (1 - FINE_FRAC) / ell_c)
     g_mix_pred = g_from_intercept(ell_mix_pred)
@@ -569,39 +670,41 @@ def section_duplex() -> dict:
     print("  真値: 細粒 G %.2f(左 %.0f %%)/ 粗粒 G %.2f / 全体 G_L %.2f(調和平均の予測 %.2f、"
           "面積で重みづけた G の平均 %.2f)" % (g_f, 100 * FINE_FRAC, g_c, tr["g_l"], g_mix_pred,
                                              g_area_weighted))
-    print("  切片法(ボトムハット)の推定 G %.2f(誤差 %+.2f)/ 面積法の真値 G_A %.2f"
-          % (g_est, g_est - tr["g_l"], tr["g_a"]))
+    print("  切片法(局所しきい値)の推定 G %.2f(誤差 %+.2f、単一組織では %+.2f)"
+          % (g_est, g_est - tr["g_l"], g_single - tr_s["g_l"]))
 
-    # タイル地図: 全体 G ± 0.5 に入るタイルの数
-    tm_dup = _tile_map(dup["labels"], bm["raw"])
-    tm_single = _tile_map(single["labels"], boundary_mask(single["img"])["raw"])
-    g_single = g_from_intercept(intercept_stats(single["labels"], boundary_mask(single["img"])["raw"], lines)["ell_est_px"] * PX_MM)
+    tm_dup = _tile_map(dup["labels"], m_dup)
+    tm_single = _tile_map(single["labels"], m_single)
     in_dup = int(np.count_nonzero(np.abs(tm_dup - g_est) <= 0.5))
     in_single = int(np.count_nonzero(np.abs(tm_single - g_single) <= 0.5))
     n_tiles = tm_dup.size
+    nf = int(FINE_FRAC * tm_dup.shape[1])
     print("  64 px タイルの局所 G が全体 G ± 0.5 に入る数: 混粒 %d / %d(単一組織 %d / %d)"
           % (in_dup, n_tiles, in_single, n_tiles))
     print("     混粒のタイル G: 左 %.2f ± %.2f / 右 %.2f ± %.2f"
-          % (np.nanmean(tm_dup[:, :int(FINE_FRAC * 8)]), np.nanstd(tm_dup[:, :int(FINE_FRAC * 8)]),
-             np.nanmean(tm_dup[:, int(FINE_FRAC * 8) + 1:]), np.nanstd(tm_dup[:, int(FINE_FRAC * 8) + 1:])))
+          % (np.nanmean(tm_dup[:, :nf]), np.nanstd(tm_dup[:, :nf]),
+             np.nanmean(tm_dup[:, nf + 1:]), np.nanstd(tm_dup[:, nf + 1:])))
 
-    # 個々の切片長の分布 —— 双峰は出るか
-    seg_d, seg_s = tr["seg"], truth_summary(single, lines)["seg"]
-    band = lambda seg, ell: float(np.mean((seg >= ell / np.sqrt(2)) & (seg <= ell * np.sqrt(2))))  # noqa: E731
-    ell_d, ell_s = tr["ell_px"], truth_summary(single, lines)["ell_px"]
-    frac_d, frac_s = band(seg_d, ell_d), band(seg_s, ell_s)
-    # 双峰性の粗い検定: 対数切片長のヒストグラムの極大の数
+    seg_d, seg_s = tr["seg"], tr_s["seg"]
+
+    def band(seg, ell):
+        return float(np.mean((seg >= ell / np.sqrt(2)) & (seg <= ell * np.sqrt(2))))
+
     def n_modes(seg):
         h, _ = np.histogram(np.log(seg[seg > 0]), bins=16)
         h = np.convolve(h, [1, 2, 1], mode="same")
         return int(np.count_nonzero((h[1:-1] > h[:-2]) & (h[1:-1] >= h[2:])))
+    frac_d, frac_s = band(seg_d, tr["ell_px"]), band(seg_s, tr_s["ell_px"])
+    modes_d, modes_s = n_modes(seg_d), n_modes(seg_s)
     print("  個々の切片長が ℓ/√2 〜 ℓ√2 に入る割合: 混粒 %.1f %% / 単一 %.1f %%、"
           "対数ヒストグラムの山の数: 混粒 %d / 単一 %d" % (100 * frac_d, 100 * frac_s,
-                                                    n_modes(seg_d), n_modes(seg_s)))
+                                                    modes_d, modes_s))
 
     lo, hi = min(g_f, g_c) - 0.5, max(g_f, g_c) + 0.5
-    norm = lambda t: np.kron(np.clip((np.nan_to_num(t, nan=lo) - lo) / (hi - lo), 0, 1),
-                             np.ones((N_PIX // t.shape[0], N_PIX // t.shape[1])))  # noqa: E731
+
+    def norm(t):
+        v = np.clip((np.nan_to_num(t, nan=lo) - lo) / (hi - lo), 0, 1)
+        return np.kron(v, np.ones((N_PIX // t.shape[0], N_PIX // t.shape[1])))
     figs.save_grid("duplex_map",
                    [dup["img"], norm(tm_dup), _LAB.blob_overlay(dup["img"], dup["labels"] + 1),
                     norm(tm_single)],
@@ -613,34 +716,33 @@ def section_duplex() -> dict:
     figs.save_plot("intercept_cdf",
                    [("混粒(細 %.0f px + 粗 %.0f px)" % (ell_f / PX_MM, ell_c / PX_MM), sd,
                      np.linspace(0, 1, sd.size)),
-                    ("単一組織(ℓ %.0f px)" % ell_s, ss, np.linspace(0, 1, ss.size))],
+                    ("単一組織(ℓ %.0f px)" % tr_s["ell_px"], ss, np.linspace(0, 1, ss.size))],
                    xlabel="個々の切片長 [px]", ylabel="累積割合",
-                   title="切片長の累積分布に双峰は出ない(山 %d 個)" % n_modes(seg_d))
+                   title="切片長の累積分布に双峰は出ない(山 %d 個)" % modes_d)
     rows = [["細粒(左 %.0f %%)" % (100 * FINE_FRAC), "%.2f" % g_f, "%.1f" % (ell_f / PX_MM)],
             ["粗粒(右)", "%.2f" % g_c, "%.1f" % (ell_c / PX_MM)],
             ["全体(真値・切片法)", "%.2f" % tr["g_l"], "%.1f" % tr["ell_px"]],
             ["全体(調和平均の予測)", "%.2f" % g_mix_pred, "%.1f" % (ell_mix_pred / PX_MM)],
             ["全体(面積重みの G 平均)", "%.2f" % g_area_weighted, "-"],
-            ["全体(推定・ボトムハット)", "%.2f" % g_est, "%.1f" % st["ell_est_px"]],
+            ["全体(推定・局所しきい値)", "%.2f" % g_est, "%.1f" % st["ell_est_px"]],
             ["全体 G ± 0.5 のタイル", "%d / %d" % (in_dup, n_tiles), "-"]]
     figs.save_table("duplex_table", ["量", "G", "ℓ [µm]"], rows, title="混粒の G の内訳")
     return {"g_f": g_f, "g_c": g_c, "g_mix": tr["g_l"], "g_mix_pred": g_mix_pred,
-            "g_est": g_est, "in_dup": in_dup, "in_single": in_single, "n_tiles": n_tiles,
-            "frac_d": frac_d, "frac_s": frac_s, "modes_d": n_modes(seg_d)}
+            "g_area_weighted": g_area_weighted, "g_est": g_est, "in_dup": in_dup,
+            "in_single": in_single, "n_tiles": n_tiles, "frac_d": frac_d, "frac_s": frac_s,
+            "modes_d": modes_d}
 
 
 # --------------------------------------------------------------------------- #
 # 8. 道具の穴 —— 使ってみて分かった残り                                          #
 # --------------------------------------------------------------------------- #
-def section_tool_gaps() -> None:
+def section_tool_gaps(ctrl: dict) -> None:
     print("\n" + "=" * 78)
     print("8) 道具の穴(この PoC で fullseye の op を使ってみて)")
     print("=" * 78)
-    # (a) 直線切断法(試験線に沿った横切りの数え上げ)そのものが公開経路に無い
     assert not hasattr(fs, "intercept_count") and not hasattr(fs.ledger, "intercept_count")
     print("  (a) 試験線に沿って横切りを数える op(E112 の直線切断法)が無い。"
           "この PoC は numpy で書いた。")
-    # (b) `otsu` op が 2 値画像(0.3 / 0.7、暗 6 %)で全画素を前景にする
     img = np.full((64, 64), 0.7)
     img[30:32, :] = 0.3
     o = np.asarray(fs.apply(img, "otsu"))
@@ -648,15 +750,16 @@ def section_tool_gaps() -> None:
     print("  (b) `otsu` は 0.3/0.7 の 2 値画像で前景率 %.3f(`bin_threshold` は %.3f)。"
           "同じ大津法を名乗る 2 op で結果が違う(バグ疑い、この PoC は bin_threshold を使用)。"
           % (o.mean(), b.mean()))
-    # (c) hx_close_edges は縁 it 画素を 0 にする —— 試験線を縁から離す必要があった
+    print("  (c) `gray_bothat` は最大値で正規化するので、しきい値が画像内の最大応答 1 点に"
+          "依存する(むらのみで %+.2f 段、局所しきい値は %+.2f)。絶対値のまま返す口が無い。"
+          % (ctrl["+ むらのみ"]["err_bothat"], ctrl["+ むらのみ"]["err_dyn"]))
     m = np.ones((20, 20))
     c = np.asarray(fs.apply(m, "hx_close_edges", a=0.5, b=1.0))
-    print("  (c) hx_close_edges(9x9)は全面 1 の 20x20 で残るのが %d x %d —— 縁 4 px の帯が"
+    print("  (d) hx_close_edges(9x9)は全面 1 の 20x20 で残るのが %d x %d —— 縁 4 px の帯が"
           "必ず 0 になる(文書どおり)。試験線を縁から %d px 離した理由。"
           % (int(c.sum(axis=0).max()), int(c.sum(axis=1).max()), MARGIN))
-    # (d) 面積法の縁の規約(Jeffries の半数え)を族が持たない
     assert "touches_border" in _LAB.blob_features(_LAB.blob_label(np.ones((4, 4), bool)))
-    print("  (d) blob_features は touches_border を返すが、縁の粒を半分に数える(Jeffries)"
+    print("  (e) blob_features は touches_border を返すが、縁の粒を半分に数える(Jeffries)"
           "規約は呼び手が組む。")
 
 
@@ -671,19 +774,21 @@ def main() -> int:
 
     tr = section_truth()
     ctrl = section_controls()
-    cliff = section_cliff()
+    cliff = section_cliff(tr["gap_median"], tr["edge_mean"])
     dup = section_duplex()
-    section_tool_gaps()
+    section_tool_gaps(ctrl)
 
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
     print("  * 真値の閉形式と数え上げは %+.1f %%。E112 の 2 式は同じ組織で %+.2f 段ずれる"
           "(予測 %+.2f)。" % (tr["dev"], tr["offset"], tr["offset_pred"]))
-    print("  * 面積法(ゼロ点)はむらで %+.2f 段、切片法は %+.2f 段。"
-          % (ctrl["+ むらのみ"]["err_area"], ctrl["+ むらのみ"]["err_int"]))
-    print("  * 崖: 面積法 %.1f %% / 切片法(素) %.1f %% / 切片法(閉) %.1f %%。"
-          % (cliff["cliff"]["area"], cliff["cliff"]["raw"], cliff["cliff"]["closed"]))
+    print("  * 面積法(ゼロ点)は雑音だけ %+.2f / むらだけ %+.2f / 両方 %+.2f —— 相互作用。"
+          % (ctrl["+ 雑音のみ"]["err_area"], ctrl["+ むらのみ"]["err_area"],
+             ctrl["+ むら + 雑音"]["err_area"]))
+    print("  * 崖: 面積法 %.1f %% / 切片法(素) %.1f %%(補正した予測 %.1f %%)/ 切片法(閉) %.1f %%。"
+          % (cliff["cliff"]["area"], cliff["cliff"]["raw"], cliff["cliff_pred_raw"],
+             cliff["cliff"]["closed"]))
     print("  * 混粒の全体 G %.2f は細粒 %.2f にも粗粒 %.2f にも無い(± 0.5 のタイル %d / %d)。"
           % (dup["g_mix"], dup["g_f"], dup["g_c"], dup["in_dup"], dup["n_tiles"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
@@ -691,16 +796,22 @@ def main() -> int:
     # --- 所見を固定する(壊れたら鳴る) --------------------------------------- #
     assert abs(tr["dev"]) < 6.0, tr["dev"]
     assert abs(tr["offset"] - tr["offset_pred"]) < 0.20, (tr["offset"], tr["offset_pred"])
-    assert abs(ctrl["完全・むら無し・雑音無し"]["err_int"]) < 0.30
-    assert ctrl["+ むらのみ"]["err_area"] < -0.8, ctrl["+ むらのみ"]["err_area"]
-    assert abs(ctrl["+ むらのみ"]["err_int"]) < 0.30, ctrl["+ むらのみ"]["err_int"]
+    assert abs(ctrl["完全・むら無し・雑音無し"]["err_dyn"]) < 0.30
+    assert abs(ctrl["+ 雑音のみ"]["err_area"]) < 0.30, ctrl["+ 雑音のみ"]["err_area"]
+    assert ctrl["+ むら + 雑音"]["err_area"] > 2.0, ctrl["+ むら + 雑音"]["err_area"]
+    assert ctrl["+ むらのみ"]["err_area"] < -0.2, ctrl["+ むらのみ"]["err_area"]
+    assert abs(ctrl["+ むらのみ"]["err_dyn"]) < 0.25, ctrl["+ むらのみ"]["err_dyn"]
+    assert ctrl["+ むらのみ"]["err_bothat"] < ctrl["+ むらのみ"]["err_dyn"] - 0.3
     assert cliff["cliff"]["area"] < 12.0, cliff["cliff"]["area"]
-    assert 22.0 < cliff["cliff"]["raw"] < 38.0, cliff["cliff"]["raw"]
-    assert cliff["cliff"]["closed"] > cliff["cliff"]["raw"], cliff["cliff"]
-    assert cliff["raw_dev"] < 0.5, cliff["raw_dev"]
-    assert dup["in_dup"] <= dup["n_tiles"] // 8, (dup["in_dup"], dup["n_tiles"])
+    assert 15.0 < cliff["cliff"]["raw"] < 30.0, cliff["cliff"]["raw"]
+    assert abs(cliff["cliff"]["raw"] - cliff["cliff_pred_raw"]) < 5.0, cliff["cliff"]
+    assert cliff["raw_dev"] < 0.35, cliff["raw_dev"]
+    assert cliff["n_worse"] >= len(cliff["fracs"]) - 2, cliff["n_worse"]
+    assert dup["in_dup"] <= dup["n_tiles"] // 4, (dup["in_dup"], dup["n_tiles"])
     assert dup["in_single"] > dup["n_tiles"] // 2, (dup["in_single"], dup["n_tiles"])
     assert dup["g_f"] > dup["g_mix"] > dup["g_c"]
+    assert abs(dup["g_mix"] - dup["g_mix_pred"]) < 0.15, (dup["g_mix"], dup["g_mix_pred"])
+    assert dup["modes_d"] == 1, dup["modes_d"]
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
