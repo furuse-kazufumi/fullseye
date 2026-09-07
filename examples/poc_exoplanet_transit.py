@@ -272,12 +272,12 @@ def track(frames, ref, ctr):
 
 
 def photometry(frames, centers, r_ap: float = R_AP, r_in: float = R_IN,
-               r_out: float = R_OUT):
-    """開口測光。返りは ``(T, 星数)`` の flux [e-]。"""
+               r_out: float = R_OUT, supersample: int = 8):
+    """開口測光。返りは ``(T, 星数)`` の flux [e-]。``supersample`` は op の既定 8。"""
     out = np.empty(centers.shape[:2])
     for k, fr in enumerate(frames):
         ph = _AS.aperture_photometry(fr, centers[k], r_aperture=r_ap, r_inner=r_in,
-                                     r_outer=r_out, read_sigma=READ)
+                                     r_outer=r_out, read_sigma=READ, supersample=supersample)
         out[k] = [p["flux"] for p in ph]
     return out
 
@@ -338,9 +338,13 @@ def lightcurve(flux, which=("sum",)):
 def fit_transit(t, y, fixed=None):
     """深さ・中心・継続時間 + 直線基線の 5 パラメータ最小二乗。
 
-    初期値は粗い格子(t0 4 フレーム刻み × T14 10 刻み)の χ² 最小から取る
-    —— 真値を初期値に使わない。``fixed=(t0, t14)`` なら暦を既知として
-    深さと基線 2 つだけを当てはめる(既知惑星の追観測に相当)。
+    初期値は粗い格子(t0 2 フレーム刻み × T14 5 刻み)の χ² 最小から取る
+    —— 真値を初期値に使わない。各格子点では ``y ≈ c0 + c1 x + δ (m-1)/δ0``
+    の**線形**最小二乗で深さと基線を出す(★最初は ``y ≈ a m + c1 x`` と書いて
+    深さを基線に縛っていたので、δ が小さいほど格子が真の解を外し、局所解に
+    落ちて「暦未知だと崖は 10 ppt」という**偽の所見**を出しかけた。当てはめの
+    残差が暦既知より**大きい**ことがその印だった)。``fixed=(t0, t14)`` なら
+    暦を既知として深さと基線 2 つだけを当てはめる(既知惑星の追観測に相当)。
     """
     tc = 0.5 * (T - 1)
     if fixed is not None:
@@ -359,22 +363,24 @@ def fit_transit(t, y, fixed=None):
                 "sig_depth": float(np.sqrt(cov[0, 0])), "sig_t14": 0.0,
                 "rms": float(np.std(res.fun)), "resid": res.fun, "fit": y - res.fun}
     best = None
-    for t14 in np.arange(20.0, 130.0, 10.0):
-        for t0 in np.arange(40.0, 200.0, 4.0):
-            m = transit_model(t, 0.01, t0, t14)
-            a = np.stack([m, (t - tc) / T], axis=1)
+    d0 = 0.01
+    for t14 in np.arange(20.0, 130.0, 5.0):
+        for t0 in np.arange(40.0, 200.0, 2.0):
+            m = transit_model(t, d0, t0, t14)
+            a = np.stack([np.ones_like(t), (t - tc) / T, (m - 1.0) / d0], axis=1)
             coef, *_ = np.linalg.lstsq(a, y, rcond=None)
             r = y - a @ coef
             chi = float(r @ r)
             if best is None or chi < best[0]:
-                best = (chi, t0, t14)
-    _, t0i, t14i = best
+                best = (chi, t0, t14, coef[2])
+    _, t0i, t14i, di = best
+    di = float(np.clip(di, 1e-4, 0.29))
 
     def resid(p):
         d, t0, t14, c0, c1 = p
         return y - (c0 + c1 * (t - tc) / T) * transit_model(t, d, t0, t14)
 
-    p0 = [0.01, t0i, t14i, 1.0, 0.0]
+    p0 = [di, t0i, t14i, 1.0, 0.0]
     lo = [0.0, 30.0, 10.0, 0.5, -1.0]
     hi = [0.30, 210.0, 160.0, 1.5, 1.0]
     res = least_squares(resid, p0, bounds=(lo, hi), x_scale=[0.01, 10, 10, 1, 0.1])
@@ -590,31 +596,47 @@ def section_aperture_sweep(sec1: dict) -> dict:
     ref0, ctr0 = locate(sc0["frames"], sc0["rows"], sc0["cols"])
     centers0, _ = track(sc0["frames"], ref0, ctr0)
     ks = np.array([1.0, 1.5, 2.0, 3.0, 4.0, 6.0])
-    meas, theo, derr, terr, ctl = [], [], [], [], []
-    print("   r/σ   r[px]  残差rms  理論   比   対照(不動)  比    深さ誤差  T14誤差")
+    meas, theo, derr, terr, ctl, meas32, ctl32 = [], [], [], [], [], [], []
+    print("   r/σ   r[px]  理論   動く(ss8) 比    不動(ss8) 比    動く(ss32) 比   不動(ss32) 比"
+          "   深さ誤差  T14誤差")
     for k in ks:
         r = k * SIGMA
         r_in = max(R_IN, r + 1.5)
-        flux = photometry(sc["frames"], centers, r, r_in, r_in + 4.0)
-        f = fit_transit(t, lightcurve(flux, ("sum",)))
+        th = theory_rel_noise(r, sc["ratio"], r_in=r_in, r_out=r_in + 4.0)
+        f = fit_transit(t, lightcurve(photometry(sc["frames"], centers, r, r_in, r_in + 4.0),
+                                      ("sum",)))
         f0 = fit_transit(t, lightcurve(photometry(sc0["frames"], centers0, r, r_in, r_in + 4.0),
                                        ("sum",)))
-        th = theory_rel_noise(r, sc["ratio"], r_in=r_in, r_out=r_in + 4.0)
+        f32 = fit_transit(t, lightcurve(photometry(sc["frames"], centers, r, r_in, r_in + 4.0,
+                                                   supersample=32), ("sum",)))
+        f032 = fit_transit(t, lightcurve(photometry(sc0["frames"], centers0, r, r_in, r_in + 4.0,
+                                                    supersample=32), ("sum",)))
         meas.append(f["rms"]); theo.append(th); ctl.append(f0["rms"])
+        meas32.append(f32["rms"]); ctl32.append(f032["rms"])
         derr.append(f["depth"] - DEPTH); terr.append(f["t14"] - T14)
-        print("   %3.1f   %4.2f   %5.2f  %5.2f  %4.2f    %5.2f   %4.2f   %+6.2f    %+5.1f  [ppt / fr]"
-              % (k, r, 1e3 * f["rms"], 1e3 * th, f["rms"] / th, 1e3 * f0["rms"], f0["rms"] / th,
+        print("   %3.1f   %4.2f  %5.2f   %5.2f   %4.2f   %5.2f   %4.2f   %5.2f    %4.2f   %5.2f   %4.2f"
+              "   %+6.2f    %+5.1f  [ppt / fr]"
+              % (k, r, 1e3 * th, 1e3 * f["rms"], f["rms"] / th, 1e3 * f0["rms"], f0["rms"] / th,
+                 1e3 * f32["rms"], f32["rms"] / th, 1e3 * f032["rms"], f032["rms"] / th,
                  1e3 * (f["depth"] - DEPTH), f["t14"] - T14))
     meas, theo, ctl = np.array(meas), np.array(theo), np.array(ctl)
+    meas32, ctl32 = np.array(meas32), np.array(ctl32)
     print("\n   ★予想は「r=1σ では重心誤差(rms %.3f px)が明るさに化けて理論より 27 %% 悪い」。"
-          "実測は %.0f %%、対照群(星が画素に対して不動)では %.0f %%。"
+          "実測は %+.0f %%、対照群(星が画素に対して不動)では**%+.0f %%(逆に悪化)**。"
           % (sec1["shift_rms"], 100 * (meas[0] / theo[0] - 1), 100 * (ctl[0] / theo[0] - 1)))
-    print("   開口が中心対称なので位置誤差 ε の効き目は 2 次(ε² ≈ %.4f px²)で、それ自体は"
-          "効かない。効いているのは**画素の位相**(副画素の位置で縁の画素平均が変わる)。"
-          % (sec1["shift_rms"] ** 2))
+    print("   開口が中心対称なので位置誤差 ε の効き目は 2 次(ε² ≈ %.4f px²)で効かない。"
+          "効いていたのは **op の開口マスクの階段**: supersample=8 は縁の画素の重みを 1/64 刻みで"
+          "\n   量子化するので、r=1σ では縁の 1 画素が総光量の %.1f %% を持ち、1 段の跳びが %.2f ppt。"
+          "supersample=32 にすると 動く %.2f / 不動 %.2f ppt(理論比 %.2f / %.2f)に落ちる。"
+          % (sec1["shift_rms"] ** 2,
+             100 * float(render_stars([20.0], [20.0], [1.0], SIGMA, (41, 41))[20, 21]),
+             1e3 * float(render_stars([20.0], [20.0], [1.0], SIGMA, (41, 41))[20, 21]) / 64,
+             1e3 * meas32[0], 1e3 * ctl32[0], meas32[0] / theo[0], ctl32[0] / theo[0]))
     figs.save_plot("aperture_sweep",
-                   [("実測 残差 rms(ドリフト 1 px + ジッタ)", ks, 1e3 * meas),
-                    ("対照: 星が画素に対して不動", ks, 1e3 * ctl),
+                   [("動く星, supersample 8(op 既定)", ks, 1e3 * meas),
+                    ("不動の星, supersample 8", ks, 1e3 * ctl),
+                    ("動く星, supersample 32", ks, 1e3 * meas32),
+                    ("不動の星, supersample 32", ks, 1e3 * ctl32),
                     ("理論 CCD 式(背景推定込み)", ks, 1e3 * theo)],
                    xlabel="開口半径 r / σ", ylabel="比の 1 フレーム雑音 [ppt]",
                    title="開口半径の掃引: 崖は小さい側(重心誤差)、緩い坂は大きい側(空)")
@@ -622,8 +644,8 @@ def section_aperture_sweep(sec1: dict) -> dict:
                    [("深さの誤差", ks, 1e3 * np.array(derr))],
                    xlabel="開口半径 r / σ", ylabel="深さの誤差 [ppt](真値 10 ppt)",
                    title="開口が小さいと深さも偏る")
-    return {"k": ks, "meas": meas, "theo": theo, "ctl": ctl, "derr": np.array(derr),
-            "terr": np.array(terr)}
+    return {"k": ks, "meas": meas, "theo": theo, "ctl": ctl, "meas32": meas32,
+            "ctl32": ctl32, "derr": np.array(derr), "terr": np.array(terr)}
 
 
 # --------------------------------------------------------------------------- #

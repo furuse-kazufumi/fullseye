@@ -1,0 +1,96 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "02_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   200,
+   884,
+   3
+  ],
+  "csv": "02_controls.csv",
+  "tsv": "02_controls.tsv"
+ },
+ {
+  "file": "03_stages_intercept.png",
+  "name": "stages_intercept",
+  "caption": "",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "04_stages_area.png",
+  "name": "stages_area",
+  "caption": "",
+  "shape": [
+   605,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "05_failure_intercept.png",
+  "name": "failure_intercept",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_failure_area.png",
+  "name": "failure_area",
+  "caption": "融合した塊の数は f = 5 % を頂点に減る(塊どうしがさらに融合して 1 つになる)が、飲まれた粒の数は増え続ける。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_duplex_map.png",
+  "name": "duplex_map",
+  "caption": "",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "08_intercept_cdf.png",
+  "name": "intercept_cdf",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_duplex_table.png",
+  "name": "duplex_table",
+  "caption": "",
+  "shape": [
+   248,
+   298,
+   3
+  ],
+  "csv": "09_duplex_table.csv",
+  "tsv": "09_duplex_table.tsv"
+ }
+]

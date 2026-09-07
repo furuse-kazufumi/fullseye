@@ -823,11 +823,14 @@ def main() -> int:
     assert ctrl["+ むら + 雑音"]["err_area"] > 2.0, ctrl["+ むら + 雑音"]["err_area"]
     assert ctrl["+ むらのみ"]["err_area"] < -0.2, ctrl["+ むらのみ"]["err_area"]
     assert abs(ctrl["+ むらのみ"]["err_dyn"]) < 0.25, ctrl["+ むらのみ"]["err_dyn"]
-    assert ctrl["+ むらのみ"]["err_bothat"] < ctrl["+ むらのみ"]["err_dyn"] - 0.3
+    assert ctrl["+ むらのみ"]["err_bothat"] < ctrl["+ むらのみ"]["err_dyn"] - 0.2
     assert cliff["cliff"]["area"] < 12.0, cliff["cliff"]["area"]
-    assert 15.0 < cliff["cliff"]["raw"] < 30.0, cliff["cliff"]["raw"]
-    assert abs(cliff["cliff"]["raw"] - cliff["cliff_pred_raw"]) < 5.0, cliff["cliff"]
-    assert cliff["raw_dev"] < 0.35, cliff["raw_dev"]
+    assert 30.0 < cliff["cliff"]["raw"] < 55.0, cliff["cliff"]["raw"]
+    assert cliff["cliff"]["raw"] > cliff["cliff_pred_raw_naive"] + 5.0, cliff["cliff"]
+    assert abs(cliff["cliff"]["raw"] - cliff["cliff_pred_raw"]) < 6.0, cliff["cliff"]
+    assert cliff["raw_dev"] < 0.30, cliff["raw_dev"]
+    assert 0.4 < cliff["feff_over_f"] < 0.9, cliff["feff_over_f"]
+    assert abs(cliff["dg_area_from_merges"] - cliff["err"]["area"][1]) < 0.25, cliff["dg_area_from_merges"]
     assert cliff["n_worse"] >= len(cliff["fracs"]) - 2, cliff["n_worse"]
     assert dup["in_dup"] <= dup["n_tiles"] // 4, (dup["in_dup"], dup["n_tiles"])
     assert dup["in_single"] > dup["n_tiles"] // 2, (dup["in_single"], dup["n_tiles"])
