@@ -368,17 +368,27 @@ def section_scene_zero() -> dict:
     xs = position(-LAGS / FS_HZ, C_TRUE)
     keep = np.abs(LAGS) <= LAG_MAX
     order = np.argsort(xs[keep])
+    curves = [("生の相関", _score_1d(rec["y1"], rec["y2"])),
+              ("帯域制限", _score_1d(
+                  fs.bandpass(rec["y1"], FS_HZ, BAND[0], BAND[1], order=4),
+                  fs.bandpass(rec["y2"], FS_HZ, BAND[0], BAND[1], order=4))),
+              ("GCC-PHAT(帯域内)", _gcc(rec["y1"], rec["y2"], True, BAND))]
     series = []
-    for name, corr in (("生の相関", _score_1d(rec["y1"], rec["y2"])),
-                       ("GCC-PHAT(帯域内)", _gcc(rec["y1"], rec["y2"], True, BAND))):
+    for name, corr in curves:
         v = corr[keep][order]
         series.append((name, xs[keep][order], v / np.max(np.abs(v))))
-    series.append(("真の漏水位置", [X_LEAK, X_LEAK], [-0.4, 1.0]))
+    series.append(("真の漏水位置", [X_LEAK, X_LEAK], [-0.5, 1.05]))
     figs.save_plot("correlation_curves", series, xlabel="相関が指す位置 [m]",
                    ylabel="正規化した相関",
                    title="相関関数を「掘る場所」の軸で見る(SNR 0 dB)",
-                   caption="PHAT は白色化でピークが尖る。ただし尖ることと"
-                           "当たることは別。")
+                   caption="探索窓は管路 0-%.0f m のぶんだけ。ピークは 1 本しか"
+                           "立たないので、ここを見て安心してしまう。" % L_M)
+    figs.save_plot("correlation_zoom", series, xlabel="相関が指す位置 [m]",
+                   ylabel="正規化した相関", xlim=(X_LEAK - 3.0, X_LEAK + 3.0),
+                   ylim=(-0.5, 1.05),
+                   title="同じ相関のピーク近傍(±3 m)",
+                   caption="PHAT は白色化で主ローブが細くなる。ただし細いことと"
+                           "当たることは別 —— 3 節で反射を入れると分かる。")
     return {"rec": rec, "rows": rows}
 
 
