@@ -329,44 +329,56 @@ def _skeleton_length(sk: np.ndarray) -> float:
     return n_h + n_v + np.sqrt(2.0) * n_d
 
 
-def ridge_map(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W) -> np.ndarray:
-    """暗いリッジ(sk_frangi)の応答。
+def ridge_map(s: np.ndarray, calibrate: bool = True, ref_w: float = REF_W,
+              ref_t: float = REF_T) -> tuple[np.ndarray, float]:
+    """暗いリッジ(sk_frangi)の応答と、校正線の応答(= 尺度が固定できたかの証拠)。
 
     ``calibrate=True`` なら、既知の深さ・幅の**校正線**を画像の下に貼ってから
     Frangi を掛ける。``sk_frangi`` は出力を画像ごとの最大値で正規化するので、
     こうしないと「いちばん強いリッジ = 1.0」が雑音でも成り立ってしまう。
-    返す配列は校正線を切り落とした元の大きさ(校正線 = 1.0 の尺度)。
+    **校正線は画像中のどのリッジより強くなければならない**(最大値で割る
+    のだから、2 番目では尺度を決められない)。最初は実クラックと同じ
+    幅 1.5 px・透過 0.35 で貼って、校正線の応答が 0.69 —— 尺度はクラック
+    のほうで決まっていて、校正線は何も固定していなかった(3 節で測る)。
+    返す配列は校正線を切り落とした元の大きさ。
     """
     v = np.clip(s / 1.25, 0.0, 1.0)
     if calibrate:
         strip = np.ones((REF_ROWS, v.shape[1]))
         full = int(np.floor(ref_w))
         r0 = REF_ROWS // 2 - full // 2
-        strip[r0:r0 + full, :] = CRACK_T
+        strip[r0:r0 + full, :] = ref_t
         frac = ref_w - full
         if frac > 0:
-            strip[r0 + full, :] = 1.0 - frac * (1.0 - CRACK_T)
+            strip[r0 + full, :] = 1.0 - frac * (1.0 - ref_t)
         # ★校正線も**同じ撮像系(ぼけ)を通す**。ぼかさずに貼った校正線は実クラック
-        #   より 2.4 倍強く応答し、崖が太い側(1.25 px)へ寄った(2026-09-07 に踏んだ)。
+        #   より 2.4 倍強く応答し、崖が太い側へ寄った(2026-09-07 に踏んだ)。
         strip = np.asarray(fs.apply(strip, "gaussian", a=(BLUR - 0.3) / 2.7))
         v = np.vstack([v, strip / 1.25])
     ridge = np.asarray(fs.apply(v, "sk_frangi", a=0.25, b=0.5))
     if calibrate:
+        ref_resp = float(ridge[s.shape[0]:].max())
         ridge = ridge[:s.shape[0]].copy()
         ridge[-2:, :] = 0.0               # 校正線の縁の影響を落とす
-    return ridge
+        return ridge, ref_resp
+    return ridge, float("nan")
 
 
-def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = CRACK_W,
+def crack_skeleton(s: np.ndarray, calibrate: bool = True, ref_w: float = REF_W,
                    low: float = HYST_LOW, high: float = HYST_HIGH) -> np.ndarray:
     """リッジ応答 → ヒステリシス → 骨格(1 px 幅のクラック中心線)→ 最小長。
 
+    ``hysteresis_threshold`` op のしきい値は下 0.2〜0.5 / 上 0.5〜0.8 に固定
+    されているので、応答にゲイン ``0.5/high`` を掛けて上限を 0.5 に合わせる。
     バスバーの縁(設計値 ±4 px)は除く —— 列プロファイルで割っても縁の
     ぼけが 1 px の縦リッジとして残り、短い偽片になる。
     """
-    ridge = ridge_map(s, calibrate=calibrate, ref_w=ref_w)
-    hyst = np.asarray(fs.apply(ridge, "hysteresis_threshold",
-                               a=(low - 0.2) / 0.3, b=(high - 0.5) / 0.3))
+    ridge, _ = ridge_map(s, calibrate=calibrate, ref_w=ref_w)
+    gain = 0.5 / high
+    low_a = (low * gain - 0.2) / 0.3
+    assert 0.0 <= low_a <= 1.0, low_a
+    hyst = np.asarray(fs.apply(np.clip(ridge * gain, 0, 1), "hysteresis_threshold",
+                               a=low_a, b=0.0))
     sk = np.asarray(fs.apply(hyst, "sk_skeleton")) > 0.5
     cols = np.arange(s.shape[1])
     for bx in BUSBAR_X:
