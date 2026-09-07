@@ -172,11 +172,17 @@ def section1_check():
           % (load, P_N, 100 * abs(load / (-P_N) - 1)))
     sxx0, syy0, txy0 = disc_stress(np.array([0.0]), np.array([0.0]))
     d0, _ = principal_difference(sxx0, syy0, txy0)
-    print("      中心の主応力差 %.4f MPa(閉形式 8P/(πDh) = %.4f)"
-          % (d0[0], 8 * P_N / (np.pi * 2 * R_MM * H_MM)))
-    print("      中心の縞次数 N = h(σ1-σ2)/fσ = %.3f" % (H_MM * d0[0] / F_SIGMA))
+    closed = 8 * P_N / (np.pi * 2 * R_MM * H_MM)
+    n_centre = H_MM * float(d0[0]) / F_SIGMA
+    print("      中心の主応力差 %.4f MPa(閉形式 8P/(πDh) = %.4f)" % (d0[0], closed))
+    print("      中心の縞次数 N = h(σ1-σ2)/fσ = %.3f" % n_centre)
     print()
     print("  → ここまで近似ゼロ。以降のずれは全部『読み取り手順』のもの。")
+    # ★応力場そのものの検算も固定する。積分した力が荷重に一致しなければ
+    #   「真値」ではないし、中心値は閉形式 8P/(πDh) と代数的に同じはず。
+    assert abs(load / (-P_N) - 1.0) < 1e-4, "力の釣り合いが崩れた: %.4f N" % load
+    assert abs(float(d0[0]) / closed - 1.0) < 1e-9, (float(d0[0]), closed)
+    return n_centre
 
 
 def build_fields():
