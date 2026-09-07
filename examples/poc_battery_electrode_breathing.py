@@ -587,14 +587,15 @@ def section_cliff(noise_out: dict) -> dict:
     n_seed = 24
     cs, sds, preds, cnrs = [], [], [], []
     lost = {}
-    for c in (1.0, 0.5, 0.25, 0.12, 0.06):
-        vals, n_bad, n_extra = [], 0, 0
+    for c in (1.0, 0.7, 0.5, 0.35, 0.25, 0.12):
+        vals, n_bad, n_extra, n_miss = [], 0, 0, 0
         for s in range(n_seed):
             a = edges_gradient(render(False, noise=nz, contrast=c, seed=3000 + s))
             b = edges_gradient(render(True, noise=nz, contrast=c, seed=4000 + s))
             if a.size != n_boundary or b.size != n_boundary:
                 n_bad += 1
                 n_extra += int(a.size > n_boundary) + int(b.size > n_boundary)
+                n_miss += int(a.size < n_boundary) + int(b.size < n_boundary)
                 continue
             vals.append(strain_regression(a, b))
         cnr = noise_out["h_rms"] * c / nz
@@ -604,23 +605,31 @@ def section_cliff(noise_out: dict) -> dict:
         cnrs.append(cnr)
         sds.append(sd)
         preds.append(sd_at(c))
-        lost[c] = (n_bad, n_extra, len(vals))
-        print("      %.2f      %5.2f  %.2e  %.2e  %+.2e     %2d/%d       %d"
-              % (c, cnr, sd, sd_at(c), bias, n_bad, n_seed, n_extra))
+        lost[c] = (n_bad, n_extra, n_miss, len(vals))
+        print("      %.2f      %5.2f  %.2e  %.2e  %+.2e     %2d/%d    足りない %d / 余分 %d"
+              % (c, cnr, sd, sd_at(c), bias, n_bad, n_seed, n_miss, n_extra))
 
     first_break = next((c for c in cs if lost[c][0] > 0), None)
-    print("\n  ★★崖は 2 段だった。まず**数字が静かに悪くなり**"
-          "(CNR %.2f -> %.2f でばらつき %.1e -> %.1e)、" % (cnrs[0], cnrs[1], sds[0], sds[1]))
+    print("\n  ★★崖は 2 段で、しかも**予測を外した**。まず数字が静かに悪くなる"
+          "(CNR %.1f -> %.1f で\n     ばらつき %.1e -> %.1e、予測どおり 1/c に比例)。"
+          % (cnrs[0], cnrs[2], sds[0], sds[2]))
     if first_break is not None:
-        print("     次に **CNR %.2f で境界の本数が壊れる**(%d/%d 回)。"
-              % (noise_out["h_rms"] * first_break / nz, lost[first_break][0], n_seed))
-    print("  ★予測した 3σ の崖(CNR %.2f)と、本数が壊れる崖はほぼ同じ位置に来た。"
-          % (noise_out["h_rms"] * c_pred / nz))
-    print("     **どちらで死んだのかは本数を数えないと分からない** —— "
-          "ばらつきだけ見ていると\n     「雑音が増えた」と読んでしまう。")
+        print("     ところが **CNR %.1f で境界の本数が壊れ始め**(%d/%d 回)、"
+              "予測した 3σ の崖\n     (CNR %.2f)より **%.1f 倍手前**で死ぬ。"
+              % (noise_out["h_rms"] * first_break / nz, lost[first_break][0], n_seed,
+                 noise_out["h_rms"] * c_pred / nz,
+                 (noise_out["h_rms"] * first_break / nz)
+                 / (noise_out["h_rms"] * c_pred / nz)))
+    print("  ★★生き残りだけを見ると**逆に良く見える**ことがある —— "
+          "採用回数が減った行では\n     ばらつきが下がることすらある"
+          "(数え損ねた回が落ちるので、易しい乱数だけが残る)。")
+    print("     **1 つの数字に畳まず、足りない / 余分 / 数は合うが誤差、を分けて"
+          "数えること。**")
 
+    ok = [(x, y, p) for x, y, p in zip(cnrs, sds, preds) if np.isfinite(y)]
     figs.save_plot("contrast_cliff",
-                   [("ばらつき(実測)", cnrs, sds), ("予測(3 倍の割引つき下界)", cnrs, preds),
+                   [("ばらつき(実測)", [x for x, _, _ in ok], [y for _, y, _ in ok]),
+                    ("予測(下界 x %.1f)" % ratio, cnrs, preds),
                     ("3σ 検出限界", cnrs, [e_true / 3.0] * len(cnrs))],
                    xlabel="CNR = h_rms x コントラスト / σ_n [-]",
                    ylabel="積層全体のひずみのばらつき [-]",
