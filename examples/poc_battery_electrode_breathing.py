@@ -292,7 +292,7 @@ def section_zero_and_proposal() -> dict:
     prof0, prof1 = _column_profile(img0), _column_profile(img1)
     figs.save_grid("scene", [img0, img1],
                    ["放電状態", "充電状態(+%.3f µm)" % ((b1[-1] - b1[0]) - (b0[-1] - b0[0]))],
-                   title="積層電極の断面(縦 = 厚み方向 %d µm)" % H, ncols=2,
+                   title="積層電極の断面(縦が厚み方向)", ncols=2,
                    caption="負極(暗)・セパレータ(明)・正極(中)が 3 単位。"
                            "2 枚の違いは µm 級で、並べても見えない —— そこが主題。")
     rows = np.arange(H)
