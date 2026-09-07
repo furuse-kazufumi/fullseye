@@ -1173,13 +1173,12 @@ def section_sweep_id(clear: np.ndarray) -> dict:
     print("\n   取り違え率     ゼロ点 [s]   "
           + "  ".join("%-9s" % k for k in LOSS_TYPES))
     for p in ps:
-        r = pipeline(p_switch=p, clear=clear)
-        zeros.append(r["zero"])
-        line = "   %10.4g   %8.1f     " % (p, r["zero"])
+        rr, z, _ = rates(clear, p_switch=p)
+        zeros.append(z)
+        line = "   %10.4g   %8.1f     " % (p, z)
         for k in LOSS_TYPES:
-            v = r["score"]["hit"][k] / max(r["score"]["tot"][k], 1)
-            rec[k].append(v)
-            line += "%-9s" % ("%.2f" % v)
+            rec[k].append(rr[k])
+            line += "%-9s" % ("%.2f" % rr[k])
         print(line)
     print("\n  ★関係を読む型: 人待ち %.2f -> %.2f、通路の干渉 %.2f -> %.2f。"
           % (rec["人待ち"][0], rec["人待ち"][-1], rec["通路の干渉"][0],
