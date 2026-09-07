@@ -259,34 +259,34 @@ def window_mask(X, Y):
 # --------------------------------------------------------------------------- #
 # 見通し(known)—— 分母をここで決める                                          #
 # --------------------------------------------------------------------------- #
-#: 見通し判定に使う帯の中の高さ [m]。1 つでも見えれば「そのセルは既知」。
-LOS_Z = (0.35, 1.00, 1.65, 2.30)
+#: 「自由」と言い切るために見通せねばならない高さ [m](帯のいちばん下)。
+#: **上のほうだけ見えても自由とは言えない** —— 車の屋根の上は見通せても、
+#: その真下に車が居る。占有格子の 3 状態(占有 / 自由 / 未知)の「自由」は
+#: 帯の下端まで視線が通ったセルに限る。
+LOS_Z = Z_LO + 0.05
 LOS_TOL = 0.30                 # 手前の遮蔽をこの距離だけ許す(自分の前面のため)
 
 
-def known_mask(sensor: str, X, Y) -> np.ndarray:
-    """センサから見通せる BEV セル。**真の姿勢**で 1 回だけ作る。"""
+def free_mask(sensor: str, X, Y) -> np.ndarray:
+    """センサが「ここは空だ」と言い切れる BEV セル。**真の姿勢**で 1 回作る。"""
     C = LIDAR["C"] if sensor == "lidar" else CAM["C"]
-    vis = np.zeros(X.shape, bool)
     flat = np.stack([X.ravel(), Y.ravel()], 1)
-    for z in LOS_Z:
-        tgt = np.concatenate([flat, np.full((flat.shape[0], 1), z)], 1)
-        d = tgt - C
-        L = np.linalg.norm(d, axis=1)
-        u = d / L[:, None]
-        blocked = np.zeros(L.shape, bool)
-        for o in OBSTACLES:
-            lo, hi = _box_lohi(o)
-            tn, tf, hit = ray_box(C, u, lo, hi)
-            tb = np.where(tn > 0, tn, tf)
-            blocked |= hit & (tb > 1e-6) & (tb < L - LOS_TOL)
-        if sensor == "lidar":
-            az = np.degrees(np.abs(np.arctan2(d[:, 1], d[:, 0])))
-            ok = (~blocked) & (L <= LIDAR["rmax"]) & (az <= LIDAR["az"])
-        else:
-            ok = (~blocked) & in_camera(tgt)
-        vis |= ok.reshape(X.shape)
-    return vis
+    tgt = np.concatenate([flat, np.full((flat.shape[0], 1), LOS_Z)], 1)
+    d = tgt - C
+    L = np.linalg.norm(d, axis=1)
+    u = d / L[:, None]
+    blocked = np.zeros(L.shape, bool)
+    for o in OBSTACLES:
+        lo, hi = _box_lohi(o)
+        tn, tf, hit = ray_box(C, u, lo, hi)
+        tb = np.where(tn > 0, tn, tf)
+        blocked |= hit & (tb > 1e-6) & (tb < L - LOS_TOL)
+    if sensor == "lidar":
+        az = np.degrees(np.abs(np.arctan2(d[:, 1], d[:, 0])))
+        ok = (~blocked) & (L <= LIDAR["rmax"]) & (az <= LIDAR["az"])
+    else:
+        ok = (~blocked) & in_camera(tgt)
+    return ok.reshape(X.shape)
 
 
 def in_camera(pts_world: np.ndarray) -> np.ndarray:
