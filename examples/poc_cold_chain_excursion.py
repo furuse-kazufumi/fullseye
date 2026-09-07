@@ -936,14 +936,21 @@ def section_count_sweep(scene: dict, zero: dict) -> dict:
     ys, xs = np.nonzero(prod)
     ok_cells = says_pass[ys, xs]                 # 各製品セル 1 個の合否
     rng = np.random.default_rng(SEED)
-    ns, rates = [], []
-    print("   ロガー数   偽合格 [%]  (製品セルにランダムに置く、2000 通り)")
+    p1 = float(ok_cells.mean())
+    ns, rates, preds = [], [], []
+    print("   ロガー数   偽合格 [%]   予測 p1^n [%]  (製品セルにランダムに置く、"
+          "2000 通り、p1 = %.3f)" % p1)
     for n in (1, 2, 3, 5, 8, 12):
         idx = rng.integers(0, ys.size, size=(2000, n))
         allpass = ok_cells[idx].all(axis=1)      # 全部合格 -> 荷を通してしまう
         r = 100.0 * float(allpass.mean())
-        ns.append(n); rates.append(r)
-        print("      %2d        %6.1f" % (n, r))
+        ns.append(n); rates.append(r); preds.append(100.0 * p1 ** n)
+        print("      %2d        %6.1f       %6.1f" % (n, r, preds[-1]))
+    n_err = max(abs(a - b) for a, b in zip(rates, preds))
+    print("   ★予測(独立に n 回引く)との差は最大 %.1f 分ポイント —— "
+          "**ランダムに増やすのは独立試行と同じ**。位置に相関を入れない限り"
+          "偽合格は %.3f^n でしか減らず、10 %% を切るのに %d 個要る。"
+          % (n_err, p1, ns[-1]))
 
     # 慣用の 3 点: 扉に近い側 / 中央 / 吹き出し口に近い側、いずれも荷の中(製品セル)
     conv = [(NY - 4, 4), (NY // 2 + 2, 4), (4, 4)]
