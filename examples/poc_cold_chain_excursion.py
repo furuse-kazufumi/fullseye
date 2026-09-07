@@ -653,7 +653,8 @@ def section_cliffs(scene: dict) -> dict:
             "cell": (best["y"], best["x"]), "rows_t": rows_t, "rows_s": rows_s,
             "rows_q": rows_q, "s_err": s_err, "q_err": q_err,
             "err_1pole": e1, "err_2pole": e2,
-            "n_cells": len(cells)}
+            "rel_1pole": float(max(r1)), "rel_2pole": float(max(r2)),
+            "n_cells": len(cells), "n_measurable": len(ok_rows)}
 
 
 def _worst_product(scene: dict) -> tuple[int, int]:
