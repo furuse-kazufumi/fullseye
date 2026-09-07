@@ -468,7 +468,7 @@ def section_stem_capsule():
                     caption="閉形式 2 pi r h + 4 pi r^2 / pi r^2 h + 4/3 pi r^3 と比べる。"
                             "2 値化を挟むと面積だけが一方向に膨らむ。")
     figs.save("capsule_sdf_slice", slice_keep,
-              "稈カプセルの符号付き距離場(中央断面、青が内側)", signed=True)
+              "稈カプセルの符号付き距離場(縦断面、中心が内側 = 負)", signed=True)
     return {"area_bin": aerr_b, "area_sdf": aerr_s, "h": hs}
 
 
