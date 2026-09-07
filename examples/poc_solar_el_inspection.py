@@ -278,7 +278,9 @@ def flatten(img: np.ndarray, use_fit: bool = True) -> tuple[np.ndarray, tuple]:
     if not use_fit:
         return img, (np.nan, np.nan)
     env = np.asarray(fs.apply(img, "gray_closing", a=0.0))
-    a, R = fit_vignette(env)
+    rows = np.arange(img.shape[0])
+    span = (rows >= FINGER_Y0 - PITCH / 2) & (rows <= FINGER_Y0 + (N_FINGER - 1) * PITCH + PITCH / 2)
+    a, R = fit_vignette(env, valid=np.repeat(span[:, None], img.shape[1], axis=1))
     v = np.asarray(fs.apply(np.ones_like(img), "aug_vignette", a=a, b=(R - 0.35) / 1.15))
     return img / np.maximum(v, 1e-3), (a, R)
 
