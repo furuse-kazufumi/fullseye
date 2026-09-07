@@ -382,6 +382,19 @@ def spread(v: np.ndarray) -> float:
     return float(np.std(v)) if v.size > 1 else float("nan")
 
 
+def robust_spread(v: np.ndarray) -> float:
+    """外れ値に強い散らばり(1.4826 x MAD)。正規分布なら標準偏差と一致する。
+
+    ★樹冠の取りこぼしのように**数十点だけ数 m ずれる**汚染があると、標準偏差は
+    その少数に引きずられて桁で飛ぶ。LoD をそれで決めると、しきい値が現実離れする。
+    """
+    v = np.asarray(v, float)
+    v = v[np.isfinite(v)]
+    if v.size < 2:
+        return float("nan")
+    return float(1.4826 * np.median(np.abs(v - np.median(v))))
+
+
 # --------------------------------------------------------------------------- #
 # 真値(解析窓の中で数値積分)                                                   #
 # --------------------------------------------------------------------------- #
