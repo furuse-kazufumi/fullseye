@@ -657,6 +657,23 @@ def section_cliff_width() -> dict:
     print("     予測 1.349 で線を引くと %d/%d 枚しか外れない(誤り %.1f %%)。"
           % (wrong, len(pairs), 100 * wrong / len(pairs)))
     assert wrong <= 0.15 * len(pairs), (wrong, len(pairs))
+
+    # 実測の境界は予測より低い。理由を測る —— 「どれか 1 画素でも 0.5 を超えれば
+    # 検出」なので、**列方向に並んだ画素の最大値ぶん実効のしきい値が下がる**。
+    span = float(stations()[-1] - stations()[0])
+    sc = render(0.30, psf=1.0, tex=tex, noise_seed=2400)
+    d = deficit_map(sc["img"])
+    far = d[np.abs(np.arange(H_PX) - CY) > 18.0, :]
+    sd_d = float(far.std())
+    n_eff = span / 2.5                            # 地の模様の相関長 2.5 px
+    lift = _expected_max(n_eff) * sd_d
+    wc2 = 2.0 * math.sqrt(2.0) * erfinv(max(0.5 - lift, 1e-3))
+    print("     ★予測 1.349 は実測 %.3f より %.0f %% 高い。理由を測る: 地の欠損の"
+          "散らばりは σ_d=%.4f、独立な画素はおよそ %.0f 個(相関長 2.5 px)なので"
+          % (min(ratio_live), 100 * (1.349 / min(ratio_live) - 1.0), sd_d, n_eff))
+    print("     しきい値は最大値ぶん %.3f だけ下がる → 補正した予測 %.3f"
+          "(実測との差 %+.1f %%)。"
+          % (lift, wc2, 100 * (wc2 / min(ratio_live) - 1.0)))
     dead = [w for w, g in zip(w0s, gb) if abs(g) < 1e-9]
     live = [g for g in gb if abs(g) > 1e-9]
     print("  ★★**2 値化の成長率は初期の幅で %.4f 〜 %.4f mm/年 と %.0f 倍動く**"
