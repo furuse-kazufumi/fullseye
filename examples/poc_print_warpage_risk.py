@@ -1000,7 +1000,7 @@ def main() -> None:
     err, d1, d2 = section_predict_vs_measure(cases)
     wn_list, ratio_n, lh, r_solid, r_neck = section_cliff()
     lin, rc, rp = section_controls(cases)
-    smax, fedge, coef, cv = section_delamination(cases)
+    smax, fedge, cv, trio_spread = section_delamination(cases)
     grid = section_risk_map()
     section_tool_gaps()
 
