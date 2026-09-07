@@ -572,8 +572,8 @@ def section_overhang(scene):
           % (SELF_SUPPORT_DEG, step))
 
     # --- 測る側: 等値面の取り方を 3 通り(対照群) --------------------------- #
-    print("\n5) ★丸めると段差が消える —— 等値面の取り方だけを変えた 3 条件")
-    print("   条件                        NG 面積 44.9 度 / 45.1 度 [mm^2]   段差   誤差(45.1 度)")
+    print("\n5) ★面の出し方だけを変えた 3 条件 —— 同じ形・同じしきい値で答えが割れる")
+    print("   条件                        NG 面積 44.9 度 / 45.1 度 [mm^2]   段差    測った段差の比")
     conds = [("2 値から(ゼロ点)", occ.astype(np.float64), 0.5),
              ("距離場から", -sdf, 0.0),
              ("平滑化 sigma=1.5 voxel", ndimage.gaussian_filter(occ.astype(np.float64), 1.5), 0.5)]
