@@ -3,6 +3,7 @@ import numpy as np
 
 # torch は optional(gpu/threed extra)かつ import が重い(~700 ms)ため遅延。
 # torch_lazy が初回属性アクセスで実 torch を読み、不在なら同じ ImportError を出す。
+from torch_lazy import HAS_TORCH as _HAS_TORCH
 from torch_lazy import torch  # noqa: F401
 
 
@@ -300,10 +301,25 @@ def register_fpfh(src, dst, src_normals=None, dst_normals=None,
 
     src_idx, dst_idx = _match_fpfh_descriptors(fs, fd, mutual=mutual, ratio=ratio)
     n_corr = len(src_idx)
-    dev = torch.device(device)
+    # ★2026-09-07: 姿勢の計算は numpy(FPFH も RANSAC も Kabsch も numpy)で、torch は
+    # **返り値を包むためだけ**に使われていた。そのせいで torch を入れない CI(py3.10 /
+    # 3.12)ではこの op が丸ごと ImportError になり、PoC が落ちていた。torch があれば
+    # これまでどおり Tensor を返し、無ければ同じ値の numpy を返す(値は不変)。
+    if str(device) not in ("cpu", "None") and not _HAS_TORCH:
+        raise ValueError(
+            "register_fpfh: device=%r needs the optional 'torch' backend "
+            "(the numpy path runs on the CPU only)" % (device,))
+
+    def _wrap(R, t):
+        if not _HAS_TORCH:
+            return np.asarray(R, np.float64), np.asarray(t, np.float64)
+        dev = torch.device(device)
+        return (torch.as_tensor(np.asarray(R), dtype=torch.float64, device=dev),
+                torch.as_tensor(np.asarray(t), dtype=torch.float64, device=dev))
+
     if n_corr < 3:
-        return (torch.eye(3, dtype=torch.float64, device=dev),
-                torch.zeros(3, dtype=torch.float64, device=dev),
+        R0, t0 = _wrap(np.eye(3), np.zeros(3))
+        return (R0, t0,
                 {"n_corr": n_corr, "inliers": 0, "inlier_ratio": 0.0,
                  "fitness": 0.0, "rmse": float("inf"), "inlier_thr": inlier_thr,
                  "src_corr": src_idx, "dst_corr": dst_idx})
@@ -361,5 +377,5 @@ def register_fpfh(src, dst, src_normals=None, dst_normals=None,
             "inlier_ratio": float(best_mask.mean()) if best_mask is not None else 0.0,
             "fitness": best_score, "rmse": rmse, "inlier_thr": inlier_thr,
             "src_corr": src_idx, "dst_corr": dst_idx}
-    return (torch.as_tensor(best_R, dtype=torch.float64, device=dev),
-            torch.as_tensor(best_t, dtype=torch.float64, device=dev), info)
+    R_out, t_out = _wrap(best_R, best_t)
+    return R_out, t_out, info

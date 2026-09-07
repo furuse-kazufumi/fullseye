@@ -294,12 +294,19 @@ def match_phase_3d(a, b, device="cpu"):
         raise ValueError("match_phase_3d: both volumes must share one shape "
                          "(got %r vs %r) — this operator correlates them "
                          "voxel-for-voxel" % (_va.shape, _vb.shape))
-    A = torch.fft.fftn(torch.as_tensor(np.asarray(a, np.float32), device=device))
-    B = torch.fft.fftn(torch.as_tensor(np.asarray(b, np.float32), device=device))
+    # ★2026-09-07: numpy の FFT に置き換えた。式は同じ(float32 の fftn → 位相のみ →
+    # ifftn の実部 → argmax)で、torch でやる必要がどこにも無かった。torch を入れない
+    # CI(py3.10 / 3.12)ではこの op が ImportError になり PoC が落ちていた。
+    if str(device) not in ("cpu", "None") and not _HAS_TORCH:
+        raise ValueError(
+            "match_phase_3d: device=%r needs the optional 'torch' backend "
+            "(the numpy path runs on the CPU only)" % (device,))
+    A = np.fft.fftn(np.asarray(a, np.float32))
+    B = np.fft.fftn(np.asarray(b, np.float32))
     R = A * B.conj()
-    R = R / (R.abs() + 1e-9)
-    r = torch.fft.ifftn(R).real
-    pk = np.unravel_index(int(torch.argmax(r).item()), r.shape)
+    R = R / (np.abs(R) + 1e-9)
+    r = np.fft.ifftn(R).real
+    pk = np.unravel_index(int(np.argmax(r)), r.shape)
     shp = r.shape
     return tuple(int(p - s if p > s // 2 else p) for p, s in zip(pk, shp))   # 折り返し補正
 
