@@ -1001,7 +1001,9 @@ def main() -> None:
     assert cliff["q_err"] < 1e-6, cliff["q_err"]
     assert met["spread"] > 2.0, met["spread"]
     assert met["n_dis"] > 0, met["n_dis"]
-    assert ctrl["(a) 均一"]["fp"] == 0.0, ctrl["(a) 均一"]["fp"]
+    assert ctrl["(a) 均一+扉"]["fp"] == 0.0, ctrl["(a) 均一+扉"]["fp"]
+    assert ctrl["(a) 均一+扉"]["ff"] == 0.0, ctrl["(a) 均一+扉"]["ff"]
+    assert ctrl["(d) 扉だけ"]["ff"] > ctrl["(b) 壁だけ"]["ff"], "扉が偽不合格を生む"
     assert cnt["rates"][0] > cnt["rates"][-1], cnt["rates"]
 
     print("\n" + "=" * 78)
