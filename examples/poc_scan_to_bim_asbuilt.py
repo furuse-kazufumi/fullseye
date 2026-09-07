@@ -908,9 +908,12 @@ def section_maps(alignres: dict, zero: dict, seed: int = SEED) -> dict:
     print("     柱の半径 %+.2f / %+.2f mm。**これが偽の施工誤差の大きさ**。"
           % (1000 * (m0["col0"] - COL_R), 1000 * (m0["col1"] - COL_R)))
     d0 = design_dev(p0, e0)
-    print("   偽の偏差の大きさ: RMS %.2f mm / 95 %% %.2f mm / 最大 %.2f mm"
+    print("   偽の偏差の大きさ: RMS %.2f mm / 95 %% %.2f mm / 99.9 %% %.1f mm"
           % (1000 * np.sqrt(np.nanmean(d0 ** 2)),
-             1000 * np.nanpercentile(np.abs(d0), 95), 1000 * np.nanmax(np.abs(d0))))
+             1000 * np.nanpercentile(np.abs(d0), 95),
+             1000 * np.nanpercentile(np.abs(d0), 99.9)))
+    print("     (最大 %.0f mm は柱の影の混合画素 —— 数 m 後ろの壁まで飛ぶ。"
+          "分布の裾は別に数える。)" % (1000 * np.nanmax(np.abs(d0))))
     return {"false": m0, "rack0": rack0, "splay0": splay0}
 
 
