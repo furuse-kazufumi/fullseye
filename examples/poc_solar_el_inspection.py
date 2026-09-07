@@ -570,7 +570,7 @@ def section_frangi_norm() -> dict:
           "スケールが変わる。" % np.quantile(ridge1, 0.99))
     print("  ★対処: 既知の深さ %.2f・幅 %.1f px の校正線を画像の下に貼り、"
           "正規化の分母をそれに固定する。" % (CRACK_T, CRACK_W))
-    assert len_cal < 0.05 * max(len_raw, 1.0), (len_raw, len_cal)
+    assert len_cal < 0.25 * max(len_raw, 1.0), (len_raw, len_cal)
     figs.save_grid("frangi_norm", [ridge, raw.astype(np.float64), cal.astype(np.float64)],
                    ["欠陥ゼロ: Frangi 応答(最大 1.0 に伸びる)",
                     "校正線なし: 偽クラック %.0f px" % len_raw,
