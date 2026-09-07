@@ -254,7 +254,7 @@ def section_zero_point() -> dict:
         [_zoom(pore[:, mid, :]), _zoom(pore[mid]), _zoom(flake[:, mid, :])],
         ["球状 厚み方向 ε=%.3f" % tr["eps"], "球状 面内",
          "扁平4:1 ε=%.3f" % float(flake.mean())],
-        title="電極塗工層の多孔構造(白 = 空隙 / 黒 = 活物質)", ncols=3,
+        title="電極塗工層の多孔構造(明るい = 空隙 / 暗い = 活物質)", ncols=3,
         caption="左と中は同じ球状粒子床の直交する 2 断面。右はカレンダリングで"
                 "潰した粒子(空隙率はほぼ同じ、屈曲度は 3.7 倍)。")
 
