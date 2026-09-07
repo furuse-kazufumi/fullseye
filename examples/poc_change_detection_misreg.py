@@ -960,9 +960,12 @@ def section_controls(sc: dict) -> dict:
         print("   %-26s %8d    %8d       %8d                     "
               % (name, e0["fp"], e1["fp"], e2["fp"])
               + " / ".join("%.2f" % e0["recall"][k] for k in CHANGE_TYPES))
-    il, sh_only = res["照明差だけ"], res["ずれだけ(1.3/−0.8 px)"]
-    print("\n  ★照明差だけで偽陽性 %d px(明るい屋根・道路が丸ごと「変化」)。線形放射補正で %d px、"
-          "histogram_match で %d px。" % (il[0], il[1], il[2]))
+    il, sh_only, none = res["照明差だけ"], res["ずれだけ(1.3/−0.8 px)"], res["ずれ無し・照明差無し"]
+    print("\n  ★照明差だけで偽陽性 %d px(利得 1.15 で明るい畑・屋根・森林が丸ごと「変化」)。線形放射補正で %d px。"
+          % (il[0], il[1]))
+    print("  ★histogram_match は %d px —— ずれも照明差も無い対でも %d px 出る。順位で分布を合わせる写像は"
+          "**変化そのもの(水域拡大で暗い画素が増える)を分布差として消しにかかる**ので、変化検出の前処理には"
+          "向かない(水域の検出率も %.2f に落ちる)。" % (il[2], none[2], none[3][CHANGE_TYPES[2]]))
     print("  ★ずれだけは %d px で、放射補正しても %d px —— **同じ偽陽性でも直す道具が違う**。"
           "対照群を置かないと「照明を補正したのに直らない」で止まる。" % (sh_only[0], sh_only[1]))
     figs.save_table("table_controls", ["条件", "補正なし", "線形放射補正", "histogram_match"]
