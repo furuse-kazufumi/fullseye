@@ -817,23 +817,30 @@ def section_false_symmetry(S: dict) -> dict:
         c = damage_center((sx * DECO_X, DECO_Y), DECO_A, WARP_A)
         miss = break_off(pts, c, 30.0)
         surv = pts[~miss]
-        tau = 1.6 * float(np.median(cKDTree(surv).query(surv, k=2)[0][:, 1]))
+        tau = TAU_K * float(np.median(cKDTree(surv).query(surv, k=2)[0][:, 1]))
         r = restore_symmetric(surv, TRUE_P0, TRUE_N, tau)   # 面は真値(最良条件)
-        s = score_restoration(pts[miss], r["restored"], pts, r["fill"], tau)
+        s = score_restoration(pts[miss], r["restored"], r["fill"], DECO_A, WARP_A)
+        # 同じ欠損を **対称な形**に入れた対照(非対称そのものの寄与を分ける)
+        c0 = damage_center((sx * DECO_X, DECO_Y))
+        miss0 = break_off(S["pts"], c0, 30.0)
+        surv0 = S["pts"][~miss0]
+        tau0 = TAU_K * float(np.median(cKDTree(surv0).query(surv0, k=2)[0][:, 1]))
+        r0 = restore_symmetric(surv0, TRUE_P0, TRUE_N, tau0)
+        s0 = score_restoration(S["pts"][miss0], r0["restored"], r0["fill"])
         # 高さ場での捏造 / 消失(格子で積む)
         hole = (np.sqrt((X - c[0]) ** 2 + (Y - c[1]) ** 2 + (Z - c[2]) ** 2) <= 30.0) & ins
         dz = Zm - Z                     # 復元後(=鏡像)- 真値
         fab = float(np.clip(dz[hole], 0, None).sum() * px * py)     # 捏造 [mm^3]
         ers = float(np.clip(-dz[hole], 0, None).sum() * px * py)    # 消失 [mm^3]
         peak = float(np.abs(dz[hole]).max())
-        print("  %-16s 欠損 %d 点 -> 復元 RMS %5.2f mm(対称な形では %.2f mm)"
-              % (side, int(miss.sum()), s["rms"], 0.0))
+        print("  %-16s 欠損 %d 点 -> 復元 RMS %5.2f mm(対称な形の対照は %.2f mm)"
+              % (side, int(miss.sum()), s["rms"], s0["rms"]))
         print("       捏造された肉 %7.1f mm^3 / 消された肉 %7.1f mm^3 / 高さの最大差 %.2f mm"
               % (fab, ers, peak))
-        rows.append([side, "%d" % int(miss.sum()), "%.2f" % s["rms"],
+        rows.append([side, "%d" % int(miss.sum()), "%.2f" % s["rms"], "%.2f" % s0["rms"],
                      "%.1f" % fab, "%.1f" % ers, "%.2f" % peak])
-        out[side] = {"rms": s["rms"], "fab": fab, "ers": ers, "peak": peak,
-                     "hole": hole, "c": c}
+        out[side] = {"rms": s["rms"], "ctrl_rms": s0["rms"], "fab": fab, "ers": ers,
+                     "peak": peak, "hole": hole, "c": c}
 
     # 復元後の見かけの非対称度(欠損部は定義上ぴったり対称になる)
     for side in out:
