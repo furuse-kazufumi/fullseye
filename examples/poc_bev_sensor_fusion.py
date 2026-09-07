@@ -587,13 +587,15 @@ def section_zero(rig: Rig) -> dict:
     gain = res["max"]["iou"] - best
     print("\n  ★★融合(最大値則)は単センサの最良 %.4f を %+.4f 上回る。"
           % (best, gain))
-    far = OBSTACLES[1]
-    inside = ((np.abs(rig.X - far["cx"]) <= far["lx"] / 2)
-              & (np.abs(rig.Y - far["cy"]) <= far["ly"] / 2) & rig.evalm)
-    print("     勝ち幅の出どころは「%s」—— このセル %d 個のうち LiDAR が既知に"
-          "できるのは %d 個、カメラは %d 個。"
-          % (far["name"], int(inside.sum()), int((inside & rig.kn_a0).sum()),
-             int((inside & rig.kn_b0).sum())))
+    print("     勝ち幅の出どころ(遠方 2 台の占有セルを、どちらが取れたか):")
+    for far in OBSTACLES[1:3]:
+        inside = ((np.abs(rig.X - far["cx"]) <= far["lx"] / 2)
+                  & (np.abs(rig.Y - far["cy"]) <= far["ly"] / 2) & rig.win)
+        print("       %-12s 真値 %3d セル / LiDAR が占有と言えた %3d / "
+              "カメラ %3d / 融合 %3d"
+              % (far["name"], int(inside.sum()),
+                 int((inside & rig.occ_a).sum()), int((inside & rig.occ_b0).sum()),
+                 int((inside & (rig.occ_a | rig.occ_b0)).sum())))
     print("  ★カメラ単独 %.4f と LiDAR 単独 %.4f の差 %+.4f。深度雑音 %.4f z² は"
           "遠方で効くが、視界の広さがそれを上回る。"
           % (res["cam"]["iou"], res["lidar"]["iou"],
