@@ -786,12 +786,15 @@ def section_shift(v_thr: float) -> dict:
     shifts = np.round(np.arange(0.0, 0.301, 0.02), 3)
     print("  片側 V = %.4f mm³(ずれ無しで h = %.3f mm = %.2f H)" % (v, make_scene(volume=v)["h"][1],
                                                                   make_scene(volume=v)["h"][1] / H))
-    print("   Δx [mm]  爪先余地  段            真値 h    爪先傾き  予測(見える?)  E2 h    「不足」判定率")
-    frac, htrue, hest, pred_vis, truth_ins = [], [], [], [], []
+    print("   Δx [mm]  爪先余地  段            真値 h    爪先傾き  予測(緑帯/色帯)  E2 h    「不足」判定率")
+    frac, htrue, hest, pred_vis, pred_green, truth_ins = [], [], [], [], [], []
     for dx in shifts:
         sc = make_scene(volume=v, shift=dx)
         fR = sc["fillet"]["R"]
-        vis = fR["tilt_toe"] < TILT_MAX and fR["R"] * (np.sin(np.deg2rad(TILT_MAX)) - np.sin(np.deg2rad(fR["tilt_toe"]))) >= PX_MM
+        # 予測 1: 爪先の傾きが 30° を超えると緑帯が無くなり、E2 は青→緑境界を θ と読めない
+        # 予測 2: 40° を超えるとフィレット全体がどのリングにも照らされない
+        green = fR["L"] > 0 and fR["tilt_toe"] < 30.0
+        vis = fR["L"] > 0 and fR["tilt_toe"] < TILT_MAX
         ins = []
         hs = []
         for s in range(4):
