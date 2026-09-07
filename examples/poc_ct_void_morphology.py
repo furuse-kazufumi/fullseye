@@ -111,12 +111,13 @@ V_EACH = V_LAYER * VOID_FRAC / N_VOID
 R_SPH = (3.0 * V_EACH / (4.0 * np.pi)) ** (1.0 / 3.0)          # 球の半径 [mm]
 R_DISC = np.sqrt(V_EACH / (np.pi * DISC_H))                     # 扁平ボイドの半径 [mm]
 
+#: (キー, 表の名前, 図の短い名前, 形, 配置, 深さ)
 CONDITIONS = [
-    ("mid_sph_scatter", "球・散在・層中央", "sphere", "scatter", "mid"),
-    ("int_sph_scatter", "球・散在・界面接触", "sphere", "scatter", "interface"),
-    ("int_disc_scatter", "扁平・散在・界面接触", "disc", "scatter", "interface"),
-    ("mid_sph_chain", "球・連なり・層中央", "sphere", "chain", "mid"),
-    ("int_disc_chain", "扁平・連なり・界面接触", "disc", "chain", "interface"),
+    ("mid_sph_scatter", "球・散在・層中央", "球/中央/散", "sphere", "scatter", "mid"),
+    ("int_sph_scatter", "球・散在・界面接触", "球/界面/散", "sphere", "scatter", "interface"),
+    ("int_disc_scatter", "扁平・散在・界面接触", "扁平/界面/散", "disc", "scatter", "interface"),
+    ("mid_sph_chain", "球・連なり・層中央", "球/中央/連", "sphere", "chain", "mid"),
+    ("int_disc_chain", "扁平・連なり・界面接触", "扁平/界面/連", "disc", "chain", "interface"),
 ]
 
 
