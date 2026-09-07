@@ -592,9 +592,23 @@ def section_tool_gaps() -> None:
     print("  (d) ラベルごと・スライスごとの重心(点列)を返す口が無い。"
           "3 次元の細長い物体の\n      軸を測る定石なので、族に入れる価値はある。")
 
-    assert hasattr(_L, "vol_label") and not hasattr(fs, "vol_label")
-    print("  (e) vol_label / vol_region_props / fit_line3 / procrustes_fit は"
-          "fullseye.ledger からしか呼べない。")
+    assert hasattr(_L, "procrustes_fit") and not hasattr(fs, "procrustes_fit")
+    print("  (e) procrustes_fit は fullseye.ledger からしか呼べない"
+          "(1 行ファサードに出ていない)。")
+
+    # (f) ★同じ op が、呼ぶ経路によって**返り値の中身が違う**
+    z = np.zeros((6, 6, 6), bool)
+    z[1:4, 1:4, 1:4] = True
+    via_facade = fs.vol_label(z, connectivity=6)
+    via_ledger = _L.vol_label(z, connectivity=6)
+    assert isinstance(via_facade, tuple) and len(via_facade) == 2, type(via_facade)
+    assert isinstance(via_ledger, np.ndarray), type(via_ledger)
+    print("  (f) ★**同じ op なのに経路で返り値が違う**: fs.vol_label は docstring"
+          "どおり (labels, n) を\n      返すが、fs.ledger.vol_label は labels だけ"
+          "(個数 n が落ちる)。surface_form_error も同類で、\n      "
+          "台帳経由だと (residual, rms, pv) のうち pv しか返らない。"
+          "台帳の出力型を 1 個に決めた\n      副作用が、docstring と食い違ったまま"
+          "公開されている。")
 
 
 # --------------------------------------------------------------------------- #
