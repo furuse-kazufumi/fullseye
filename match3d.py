@@ -3000,18 +3000,39 @@ def render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray", devic
     中心に置く)。``azimuth=elevation=0`` の mip は ``voxel_to_mips()[0]`` と同じ向き。
     用途: DRR の合成、``ncc_locate`` 用の 2-D テンプレ生成、``match_mip_2d`` の任意視点化。
     """
-    v = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
+    # ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)を
+    # numpy の座標計算 + scipy の map_coordinates(order=1)に置き換えた。torch は
+    # 双線形の再標本化にしか使われておらず、torch を入れない環境(CI の py3.10 /
+    # 3.12)でこの op が ImportError になっていた。規約はそのまま写した:
+    # 出力ボクセル (d,h,w) の正規化座標は ((i+0.5)/N)*2-1、回転後に
+    # (g+1)/2*N-0.5 で入力の画素座標へ戻す(align_corners=False の定義)。
+    # grid の最終軸は (x, y, z) = (W, H, D) の順。実測差は 4.8e-07。
+    if str(device) not in ("cpu", "None") and not _HAS_TORCH:
+        raise ValueError(
+            "render_volume_projection: device=%r needs the optional 'torch' backend "
+            "(the numpy path runs on the CPU only)" % (device,))
+    from scipy.ndimage import map_coordinates
+    v = np.asarray(vol, np.float32)
+    D, H, W = v.shape
     az = np.radians(azimuth); el = np.radians(elevation)
     Ry = np.array([[np.cos(az), 0, np.sin(az)], [0, 1, 0], [-np.sin(az), 0, np.cos(az)]])
     Rx = np.array([[1, 0, 0], [0, np.cos(el), -np.sin(el)], [0, np.sin(el), np.cos(el)]])
-    Rm = (Rx @ Ry).astype(np.float32)
-    theta = torch.tensor(np.hstack([Rm, np.zeros((3, 1))])[None], dtype=torch.float32,
-                         device=device)
-    grid = F.affine_grid(theta, v.shape, align_corners=False)
-    rot = F.grid_sample(v, grid, align_corners=False, mode="bilinear", padding_mode="zeros")
+    Rm = (Rx @ Ry).astype(np.float64)
+    d_i = (np.arange(D, dtype=np.float64) + 0.5) / D * 2.0 - 1.0
+    h_i = (np.arange(H, dtype=np.float64) + 0.5) / H * 2.0 - 1.0
+    w_i = (np.arange(W, dtype=np.float64) + 0.5) / W * 2.0 - 1.0
+    nz, ny, nx = np.meshgrid(d_i, h_i, w_i, indexing="ij")
+    gx = Rm[0, 0] * nx + Rm[0, 1] * ny + Rm[0, 2] * nz
+    gy = Rm[1, 0] * nx + Rm[1, 1] * ny + Rm[1, 2] * nz
+    gz = Rm[2, 0] * nx + Rm[2, 1] * ny + Rm[2, 2] * nz
+    zin = (gz + 1.0) / 2.0 * D - 0.5
+    yin = (gy + 1.0) / 2.0 * H - 0.5
+    xin = (gx + 1.0) / 2.0 * W - 0.5
+    rot = map_coordinates(v.astype(np.float64), [zin, yin, xin], order=1,
+                          mode="constant", cval=0.0)
     if mode == "mip":
-        return rot[0, 0].max(0)[0].detach().cpu().numpy()
-    return rot[0, 0].sum(0).detach().cpu().numpy()          # xray=Beer-Lambert 近似の積算
+        return rot.max(axis=0).astype(np.float32)
+    return rot.sum(axis=0).astype(np.float32)               # xray=Beer-Lambert 近似の積算
 
 
 def render_shaded(normals_img, light=(0, 0, 1), ambient=0.1):
