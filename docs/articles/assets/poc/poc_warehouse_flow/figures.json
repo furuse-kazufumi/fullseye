@@ -1,0 +1,48 @@
+[
+ {
+  "file": "01_heat_ambiguity.png",
+  "name": "heat_ambiguity",
+  "caption": "ヒートマップは場所を当てるが、「1 人が長く待った」と「何人も短く止まった」を分けない。",
+  "shape": [
+   152,
+   443,
+   3
+  ],
+  "csv": "01_heat_ambiguity.csv",
+  "tsv": "01_heat_ambiguity.tsv"
+ },
+ {
+  "file": "02_control.png",
+  "name": "control",
+  "caption": "人待ちと通路の干渉は同じだけ動く。畳んだ数字からは原因が決まらない。",
+  "shape": [
+   200,
+   392,
+   3
+  ],
+  "csv": "02_control.csv",
+  "tsv": "02_control.tsv"
+ },
+ {
+  "file": "03_sweep_interval.png",
+  "name": "sweep_interval",
+  "caption": "短い待ち(通路の干渉・欠品)から先に消える。総滞留時間はこの間ほとんど動かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_cliff_interval.png",
+  "name": "cliff_interval",
+  "caption": "予測は幾何だけから立てたもの。",
+  "shape": [
+   200,
+   338,
+   3
+  ],
+  "csv": "04_cliff_interval.csv",
+  "tsv": "04_cliff_interval.tsv"
+ }
+]

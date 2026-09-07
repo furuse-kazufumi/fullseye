@@ -1274,14 +1274,18 @@ def section_figures(base: dict, tru: dict, heat: dict, clear: np.ndarray) -> Non
     vol = base["det"]["vol"].astype(np.float32)
     dw = base["det"]["dwell"].astype(np.float32)
     top = heatmap_2d(vol)
-    tilt1 = np.asarray(fs.ledger.render_volume_projection(
-        vol, azimuth=38.0, elevation=18.0, mode="xray"))
-    tilt2 = np.asarray(fs.ledger.render_volume_projection(
-        dw, azimuth=38.0, elevation=18.0, mode="xray"))
     dtop = heatmap_2d(dw)
-    figs.save_grid("xyt_projection", [top, tilt1, dtop, tilt2],
+    # 傾けた投影は t 軸(200 フレーム)が長すぎて回すと枠から出るので、
+    # **表示用にだけ** 3 フレームおきに間引いて奥行きを 67 にする。
+    sub_v, sub_d = vol[::3], dw[::3]
+    tilt1 = np.asarray(fs.ledger.render_volume_projection(
+        sub_v, azimuth=40.0, elevation=20.0, mode="xray"))
+    tilt2 = np.asarray(fs.ledger.render_volume_projection(
+        sub_d, azimuth=40.0, elevation=20.0, mode="xray"))
+    figs.save_grid("xyt_projection",
+                   [_up(top), _up(tilt1), _up(dtop), _up(tilt2)],
                    ["真上から見た積算(= 2-D ヒートマップ)",
-                    "傾けた投影(方位 38 度・仰角 18 度)",
+                    "傾けた投影(方位 40 度・仰角 20 度)",
                     "t 軸オープニング後の積算(柱だけ)",
                     "同じ視点で見た柱"],
                    ncols=2,
@@ -1295,14 +1299,15 @@ def section_figures(base: dict, tru: dict, heat: dict, clear: np.ndarray) -> Non
     for d in base["det"]["events"]:
         det_img = _stamp(det_img, d["x"], d["y"], TYPE_RGB.get(d["kind"],
                                                                (0.7, 0.7, 0.7)), r=1)
-    figs.save_grid("map_by_type", [truth_img, det_img],
+    figs.save_grid("map_by_type", [_up(truth_img), _up(det_img)],
                    ["真値(仕込んだ待ち)", "提案(x-y-t の柱から読んだ型)"],
                    ncols=2, title="種類ごとの色分け地図",
                    caption="橙 = 補充待ち / 青 = 人待ち / 赤 = 通路の干渉 / "
                            "緑 = システム待ち / 紫 = 欠品 / 灰 = 作業。")
 
     # (d) 通路の空き幅(esdf)—— 型を決める特徴量そのもの
-    figs.save_grid("clearance_map", [np.clip(clear, 0, 3.0), heat["heat"]],
+    figs.save_grid("clearance_map",
+                   [_up(np.clip(clear, 0, 3.0)), _up(heat["heat"])],
                    ["通路の空き幅 [m](esdf の外側)",
                     "滞留ヒートマップ(積算フレーム数)"],
                    ncols=2, title="型を決める 2 つの地図",
