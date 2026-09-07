@@ -1,5 +1,5 @@
 {
- "generated_for": 901,
+ "generated_for": 899,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -13156,11 +13156,6 @@
    "pseudocolor": false,
    "status": "ok"
   },
-  "tb_angle_3points": {
-   "in_sort": "points",
-   "reason": "3 点(頂点 b と両端)を取る op で、(N,3) の点群は定義域の外",
-   "status": "domain"
-  },
   "tb_angular_spectrum_propagate": {
    "color_ok": false,
    "extra": {
@@ -14294,11 +14289,6 @@
    "program": "img_to_signal 0.50 0.50\ntb_highpass 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
-  },
-  "tb_indices_to_labels": {
-   "in_sort": "signal",
-   "reason": "signal を整数の添字として読む op で、濃度プロファイルは定義域の外",
-   "status": "domain"
   },
   "tb_inertia_tensor": {
    "color_ok": false,
@@ -21098,7 +21088,7 @@
  },
  "size": 128,
  "stats": {
-  "domain": 4,
+  "domain": 2,
   "empty": 1,
   "failed": 0,
   "ok": 896,
