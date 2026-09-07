@@ -551,8 +551,9 @@ def section_cliff(gap_median: float, edge_mean: float) -> dict:
             err[k].append(float(np.mean(acc[k])))
         for k in fail:
             fail[k].append(float(np.mean(acc[k])))
-        print("   %4.0f %%      %+6.2f          %+6.2f      %+6.2f        %5.1f %%       %5.0f / %4.0f     %5.0f / %4.0f    %4.0f / %4.0f"
+        print("   %4.0f %%      %+6.2f          %+6.2f      %+6.2f       %5.1f %%         %5.1f %%       %5.0f / %4.0f     %5.0f / %4.0f    %4.0f / %4.0f"
               % (100 * f, err["area"][-1], err["raw"][-1], err["closed"][-1],
+                 100 * (fail["hole"][-1] - fail["hole"][0]),
                  100 * fail["p_edge"][-1], fail["missed_raw"][-1], fail["false_raw"][-1],
                  fail["missed_closed"][-1], fail["false_closed"][-1],
                  fail["merged"][-1], fail["swallowed"][-1]))
