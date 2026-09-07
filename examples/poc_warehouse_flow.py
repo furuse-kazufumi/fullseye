@@ -296,20 +296,25 @@ def missions(disabled=()):
     out = []
     # (a) 補充待ち 5 件: 棚が空 → 補充が来るまで棚前で待ち → 作業台で梱包。
     r_picks = ["M1", "N1", "N3", "M3", "N2"]
+    serve = []                      # 各作業台で「作業」が始まる実時刻
     for k, (pk, t0) in enumerate(zip(r_picks, (2.0, 9.0, 16.0, 23.0, 30.0))):
         p = PICKS[pk]
         ws = WS[k % 4]
         legs = [("at", DISPATCH)] + route_to(p) + [("wait", "補充待ち")] \
             + route_from(p, ws) + [("wait", "作業")]
         out.append(("R%d" % k, t0, V_AGV, legs, None, None))
-    # (b) 人待ち 4 件: 作業台の後ろに並び、前の人が終わるまで待って去る。
-    for k, t_q in enumerate((2.0 + 50.0, 9.0 + 50.0, 16.0 + 50.0, 23.0 + 50.0)):
+        # ★並ぶ人の到着時刻は**実際に作業が始まる時刻**から決める(見積りで
+        #   決めたら 20 秒ずれて、待ちの柱が作業の柱と重ならなかった)。
+        _, evs = build_track(t0, legs, V_AGV, dur_of)
+        serve.append(next((e["t0"] for e in evs if e["cause"] == "作業"), t0))
+    # (b) 人待ち 4 件: 作業台の斜め後ろに並び、前の人が終わるまで待って去る。
+    for k in range(4):
         ws = WS[k % 4]
-        q = (ws[0] + QUEUE_DX, ws[1])
+        q = (ws[0] + QUEUE_OFF[0], ws[1] + QUEUE_OFF[1])
         legs = [("at", DISPATCH), ("go", (X_C, Y_BOT)), ("go", (q[0], Y_BOT)),
                 ("go", q), ("wait", "人待ち"), ("go", (q[0], Y_BOT)),
                 ("go", (X_C, Y_BOT)), ("go", DISPATCH)]
-        out.append(("Q%d" % k, 0.0, V_WORK, legs, 0, t_q))
+        out.append(("Q%d" % k, 0.0, V_WORK, legs, 0, serve[k] + 2.0))
     # (c) 通路の干渉 5 組 = 10 件: 交差通路(幅 2.0 m)で正面から出会って止まる。
     for k, (t_enc, y_enc) in enumerate(zip((12.0, 28.0, 44.0, 60.0, 76.0),
                                            (4.5, 7.5, 9.4, 13.0, 15.0))):
