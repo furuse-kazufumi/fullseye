@@ -832,7 +832,7 @@ def section_shift(v_thr: float) -> dict:
     figs.save_plot("shift_verdict", [("「不足」判定率", shifts, frac)],
                    xlabel="部品の位置ずれ Δx [mm]", ylabel="不足と判定した割合 [%]",
                    title="良品が不足に化ける点(予測 %.2f mm)" % pred_cliff)
-    return {"pred": pred_cliff, "meas": meas_cliff, "truth": truth_cliff,
+    return {"pred": pred_cliff, "dark": dark_cliff, "meas": meas_cliff, "truth": truth_cliff,
             "h0": htrue[0], "h_at": htrue[i_p]}
 
 

@@ -1,0 +1,96 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "幅系列は AR(1) の気候信号、偏心成長 ±20 %、周方向のうねり、割れ目、腐朽、木目、ぼけ、雑音を仕込んである。",
+  "shape": [
+   733,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "02_polar_stages.png",
+  "name": "polar_stages",
+  "caption": "偏心成長で境界が θ とともに斜めに走るので、正規化しないとθ 窓の中で外側の年輪がにじむ。",
+  "shape": [
+   694,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "03_polar_edges_map.png",
+  "name": "polar_edges_map",
+  "caption": "展開図(横 = 半径 px、縦 = 角度)に、扇形ごとの測定線が拾った境界(赤、下)と真値(青、上)を重ねた。",
+  "shape": [
+   360,
+   601,
+   3
+  ]
+ },
+ {
+  "file": "04_ring_widths.png",
+  "name": "ring_widths",
+  "caption": "ゼロ点は θ=0 方向の局所幅なので偏心成長ぶん尺度がずれる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_cliff_thin_ring.png",
+  "name": "cliff_thin_ring",
+  "caption": "",
+  "shape": [
+   248,
+   398,
+   3
+  ],
+  "csv": "05_cliff_thin_ring.csv",
+  "tsv": "05_cliff_thin_ring.tsv"
+ },
+ {
+  "file": "06_cliff_pith_error.png",
+  "name": "cliff_pith_error",
+  "caption": "幅系列の相関はほぼ動かない。減るのは年数で、幾何で予測できる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_cliff_cracks.png",
+  "name": "cliff_cracks",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_cliff_blur.png",
+  "name": "cliff_blur",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_controls.png",
+  "name": "controls",
+  "caption": "",
+  "shape": [
+   200,
+   712,
+   3
+  ],
+  "csv": "09_controls.csv",
+  "tsv": "09_controls.tsv"
+ }
+]
