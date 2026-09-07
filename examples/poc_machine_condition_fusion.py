@@ -718,39 +718,57 @@ def section_redundancy(train_rows) -> dict:
 # --------------------------------------------------------------------------- #
 # 7. 崖 —— 掃引                                                                 #
 # --------------------------------------------------------------------------- #
-def sweep(name: str, values, kw_name: str, want, solo, xlabel: str, title: str,
-          caption: str, fmt: str = "%8.3f") -> dict:
-    """1 つの条件を振る。**崖はそのセンサ単独で測り**、融合も並べて出す。
+def dprime(rows, feat: str, a: str, b: str) -> float:
+    """2 モードのあいだの分離度 d' = |Δ平均| / 標準偏差(対数の上で)。
+
+    識別率と違って**特徴 1 個の情報量**を測る。予測した崖はここに出る ——
+    6 クラスの識別率には出ないことがあり、それは他の特徴が肩代わりしている
+    から(センサの中にも冗長性がある)。
+    """
+    def col(mode):
+        i = MODES.index(mode)
+        n = len(rows) // len(MODES)
+        return np.array([np.log10(max(r[feat], 1e-12)) for r in rows[i * n:(i + 1) * n]])
+    va, vb = col(a), col(b)
+    return float(abs(va.mean() - vb.mean()) / np.sqrt(0.5 * (va.var() + vb.var()) + 1e-24))
+
+
+def sweep(name: str, values, kw_name: str, want, solo, probes, xlabel: str,
+          title: str, caption: str, fmt: str = "%8.3f") -> dict:
+    """1 つの条件を振る。**崖は特徴 1 個の d' で測り**、識別率も並べて出す。
 
     掃引で変わるセンサだけ測り直し、他の 2 つは基準条件のまま重ねる ——
-    対照群の作法(その要因だけを動かす)。単独の列がそのセンサの崖、
-    融合の列が「他のセンサがどこまで肩代わりできるか」。
+    対照群の作法(その要因だけを動かす)。``probes`` は
+    ``(見出し, 特徴名, モードA, モードB)`` の並びで、そこに崖が出る。
     """
     solo_name = [k for k, v in SENSORS.items() if v == solo][0]
-    print("   %-10s |%s単独: 総合  " % (xlabel, solo_name)
-          + "".join("%-11s" % m for m in MODES) + "| 融合 総合")
-    rows, solo_r, fuse_r, fuse_all = [], [], [], []
+    print("   %-12s" % xlabel + "".join("%-24s" % p[0] for p in probes)
+          + "%s単独  融合" % solo_name)
+    rows, solo_r, fuse_r, fuse_all, dvals = [], [], [], [], []
     for v in values:
         kw = {kw_name: v}
         tr = [{**a, **b} for a, b in zip(BASE_TRAIN, collect(0, N_TRAIN, want=want, **kw))]
         te = [{**a, **b} for a, b in zip(BASE_TEST, collect(1, N_TEST, want=want, **kw))]
         cs = evaluate(solo, tr, te)
         cf = evaluate(ALL_FEATS, tr, te)
+        ds = [dprime(tr + te, f, a, b) for _, f, a, b in probes]
         solo_r.append(per_mode_rate(cs))
         fuse_r.append(per_mode_rate(cf))
         fuse_all.append(np.trace(cf) / cf.sum())
+        dvals.append(ds)
         rows.append(v)
-        print("   " + (fmt + "   %5.1f %%  ") % (v, 100 * np.trace(cs) / cs.sum())
-              + "".join("%-11.1f" % (100 * x) for x in solo_r[-1])
-              + "  %5.1f %%" % (100 * fuse_all[-1]))
+        print("   " + (fmt + "    ") % v
+              + "".join("%-24.2f" % d for d in ds)
+              + "%5.1f %%  %5.1f %%" % (100 * np.trace(cs) / cs.sum(), 100 * fuse_all[-1]))
     solo_r = np.asarray(solo_r)
-    fuse_r = np.asarray(fuse_r)
+    dvals = np.asarray(dvals)
     x = np.asarray(rows, float)
-    figs.save_plot(name, [(m, x, 100 * solo_r[:, MODES.index(m)])
-                          for m in ("芯ずれ", "アンバランス", "軸受外輪傷", "潤滑不良", "ゆるみ")],
-                   xlabel=xlabel, ylabel="%s単独の識別率 [%%]" % solo_name,
+    series = [("%s の d'" % p[0], x, dvals[:, i]) for i, p in enumerate(probes)]
+    series.append(("%s単独の識別率/20" % solo_name, x, 5.0 * solo_r.mean(axis=1)))
+    figs.save_plot(name, series, xlabel=xlabel, ylabel="分離度 d'",
                    title=title, caption=caption)
-    return {"x": x, "solo": solo_r, "fuse": fuse_r, "fuse_all": np.asarray(fuse_all)}
+    return {"x": x, "solo": solo_r, "fuse": np.asarray(fuse_r),
+            "fuse_all": np.asarray(fuse_all), "d": dvals}
 
 
 BASE_TRAIN: list = []
