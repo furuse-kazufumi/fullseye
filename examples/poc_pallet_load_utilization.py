@@ -257,11 +257,13 @@ def section_zero_points(lb: list) -> dict:
                          "%+.2f" % (u - 100 * v_true / V_ENV)])
             print("   %-4s  %-14s  %8.4f    %8.2f     %+8.2f" % (
                 name, how, v / 1e9, u, u - 100 * v_true / V_ENV))
+    hm_err = [float(r[4]) for r in rows if r[1] == "高さマップ"]
     print("\n  ★外形 3 通りはどれも**荷を 1 個の凸な塊とみなす**ので、"
           "隙間もはみ出しも\n     同じ向き(過大)に効く。荷 B の AABB は"
           "**積載率 100 %s を超える**\n     —— はみ出しと突出を体積として"
           "数え込んでしまうから。高さマップだけが\n     "
-          "**上から見える形**を保つ(A +3.6 pt / B +0.5 pt)。" % "%")
+          "**上から見える形**を保つ(A %+.2f pt / B %+.2f pt)。"
+          % ("%", hm_err[0], hm_err[1]))
     figs.save_table("zero_points", ["荷", "やり方", "体積 m3", "積載率 %",
                                     "真値との差 pt"], rows,
                     title="外形から出す積載率(高さ制限 %.0f mm を分母に)" % HMAX)
