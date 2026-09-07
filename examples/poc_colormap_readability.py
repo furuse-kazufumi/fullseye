@@ -284,57 +284,70 @@ def section_closed_form(meas: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 3. 崖 —— 本物の段差が偽の境目を上回るのはどこから                              #
 # --------------------------------------------------------------------------- #
-def section_cliff(meas: dict) -> dict:
+def _cross(deltas: np.ndarray, real: np.ndarray, false: float) -> float:
+    """``real(Δ) = false`` を対数補間で解く(崖の位置 [%FS])。"""
+    ok = np.nonzero(real > false)[0]
+    if not ok.size:
+        return float("nan")
+    i = int(ok[0])
+    if i == 0:
+        return 100.0 * float(deltas[0])
+    lr = np.log(real[i - 1:i + 1] / false)
+    w = lr[0] / (lr[0] - lr[1])
+    return 100.0 * float(np.exp(np.log(deltas[i - 1])
+                                + w * np.log(deltas[i] / deltas[i - 1])))
+
+
+def section_cliff() -> dict:
     print("\n" + "=" * 78)
     print("3) 崖 —— 本物の段差が『偽の境目』より目立つのは何 %FS から")
     print("=" * 78)
 
-    base = ramp_field()
-    dt_px = 1.0 / (W - 1)              # 画素あたりの真の変化量
-    x0 = W // 2                        # 段差を入れる列(そこの t ≈ 0.5)
+    top = 0.98                          # 段差を足しても [0,1] に収まるように
+    base = np.repeat(np.linspace(0.0, top, W)[None, :], H, axis=0)
+    dt_px = top / (W - 1)               # 画素あたりの真の変化量(厳密)
+    x0 = int(np.argmin(np.abs(base[0] - 0.5)))
+    t0 = float(base[0, x0])
     deltas = np.array([0.0005, 0.001, 0.002, 0.003, 0.005, 0.008, 0.012, 0.02])
+    print("  段差は t=%.3f の列に入れる。画素あたりの真の変化 %.5f(= %.3f %%FS)"
+          % (t0, dt_px, 100 * dt_px))
 
     curves, crit, pred = {}, {}, {}
     for name in ("jet", "viridis"):
-        # 予測: 偽の山の高さ = ratio_peak * gain_median * dt_px、
-        #       段差の色差 = gain(t0) * Δ  -> Δ* = 山の高さ / gain(t0)
-        t = np.linspace(0.0, 1.0, N_T)
-        rgb1 = np.asarray(fs.apply_cmap(t[None, :], name, vmin=0.0, vmax=1.0))
-        gain = _smooth(step_delta_e(rgb1)[0]) / (1.0 / (N_T - 1))   # ΔE / Δt
-        g_peak = float(gain.max())
-        g_t0 = float(gain[gain.size // 2])
-        pred[name] = 100.0 * (g_peak * dt_px) / g_t0
+        # ---- 予測: **1-D の LUT だけ**から出す(画像は見ない) ----------- #
+        tt = np.linspace(0.0, 1.0 - dt_px, 2000)
+        a = np.asarray(fs.apply_cmap(tt[None, :], name, vmin=0.0, vmax=1.0))
+        b = np.asarray(fs.apply_cmap((tt + dt_px)[None, :], name, vmin=0.0, vmax=1.0))
+        false_pred = float(np.asarray(fs.delta_e_map(a, b))[0].max())
+        rr = np.asarray(fs.apply_cmap(np.array([[t0]] * len(deltas)), name,
+                                      vmin=0.0, vmax=1.0))
+        ss = np.asarray(fs.apply_cmap((t0 + deltas)[:, None], name,
+                                      vmin=0.0, vmax=1.0))
+        real_pred = np.asarray(fs.delta_e_map(rr, ss))[:, 0]
+        pred[name] = _cross(deltas, real_pred, false_pred)
 
+        # ---- 実測: 2-D の画像から ---------------------------------------- #
         real, false = [], []
         for d in deltas:
             f = base.copy()
             f[:, x0:] += d
-            rgb = np.asarray(fs.apply_cmap(f, name, vmin=0.0, vmax=1.0 + d))
+            rgb = np.asarray(fs.apply_cmap(f, name, vmin=0.0, vmax=1.0))
             de = step_delta_e(rgb)
             real.append(float(np.median(de[:, x0 - 1])))
-            other = np.delete(de, x0 - 1, axis=1)
-            false.append(float(np.median(other, axis=0).max()))
+            false.append(float(np.median(np.delete(de, x0 - 1, axis=1), axis=0).max()))
         real, false = np.array(real), np.array(false)
         curves[name] = (real, false)
-        ok = np.nonzero(real > false)[0]
-        if ok.size:
-            i = ok[0]
-            if i == 0:
-                crit[name] = 100.0 * deltas[0]
-            else:                          # 対数補間で交点を出す
-                lr = np.log(real[i - 1:i + 1] / false[i - 1:i + 1])
-                w = lr[0] / (lr[0] - lr[1])
-                crit[name] = 100.0 * float(np.exp(np.log(deltas[i - 1])
-                                                  + w * np.log(deltas[i] / deltas[i - 1])))
-        else:
-            crit[name] = float("nan")
-        print("  %-8s 偽の境目 %.3f ΔE / 本物の段差(%.1f %%FS) %.3f ΔE"
-              % (name, false[-1], 100 * deltas[-1], real[-1]))
-        print("           崖: 予測 %.2f %%FS   実測 %.2f %%FS" % (pred[name], crit[name]))
+        crit[name] = _cross(deltas, real, float(false.max()))
+        print("  %-8s 偽の境目 %.3f ΔE(予測 %.3f)/ 段差 %.1f %%FS で %.3f ΔE"
+              % (name, false.max(), false_pred, 100 * deltas[-1], real[-1]))
+        print("           崖: 予測 %.3f %%FS   実測 %.3f %%FS   (ずれ %.3f)"
+              % (pred[name], crit[name], abs(pred[name] - crit[name])))
 
     print("\n  ★jet を選ぶと、本物の段差を見つけるのに **%.1f 倍**の高さが要る"
-          "(%.2f vs %.2f %%FS)。" % (crit["jet"] / crit["viridis"],
+          "(%.3f vs %.3f %%FS)。" % (crit["jet"] / crit["viridis"],
                                      crit["jet"], crit["viridis"]))
+    print("  予測は配色の LUT だけから出していて画像を見ていない —— "
+          "**配色を選んだ時点で崖の高さは決まっている**。")
 
     figs.save_plot("cliff",
                    [("jet: 本物の段差", 100 * deltas, curves["jet"][0]),
