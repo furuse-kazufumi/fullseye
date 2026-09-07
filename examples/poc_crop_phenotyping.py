@@ -132,18 +132,19 @@ def make_canopy(n_leaf=N_LEAF, row=ROW, in_row=IN_ROW, beta_deg=BETA_DEG,
             ww.append(leaf_w * rng.uniform(0.85, 1.15))
             plant.append(p)
 
+    stem_h = LEAF_Z0 + ((n_leaf - 0.5) / NESTED_MAX) * (LEAF_Z1 - LEAF_Z0) + 0.12
     can = {"base": np.asarray(base, np.float64), "phi": np.asarray(phi),
            "beta": np.asarray(beta), "kappa": np.asarray(kap),
            "L": np.asarray(ll), "W": np.asarray(ww),
            "plant": np.asarray(plant, np.int32),
-           "n_plant": n_plant, "n_leaf": n_leaf,
-           "stem_top": np.stack([px, py, np.full(n_plant, STEM_H)], 1),
+           "n_plant": n_plant, "n_leaf": n_leaf, "stem_h": stem_h,
+           "stem_top": np.stack([px, py, np.full(n_plant, stem_h)], 1),
            "stem_base": np.stack([px, py, np.zeros(n_plant)], 1)}
     can["area"] = leaf_area(can["L"], can["W"])
     can["lai"] = float(can["area"].sum() / PLOT_AREA)
     can["smax"] = ix_of(can["L"], can["beta"], can["kappa"])
     # 稈の側面積 = 2 pi r h(茎は葉ではない = LAI には入らない)
-    can["stem_area"] = 2.0 * np.pi * STEM_R * STEM_H * n_plant / PLOT_AREA
+    can["stem_area"] = 2.0 * np.pi * STEM_R * stem_h * n_plant / PLOT_AREA
     can["height"] = float(np.max(can["base"][:, 2]
                                  + iz_of(np.minimum(can["beta"] / can["kappa"], can["L"]),
                                          can["beta"], can["kappa"])))
