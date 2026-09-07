@@ -350,11 +350,12 @@ def classify(s: np.ndarray, crack_sk: np.ndarray) -> dict:
     return {"smooth": ss, "iso": iso, "fi": fi, "fi_blobs": fi_blobs}
 
 
-def analyze(sc: dict, use_fit: bool = True, calibrate: bool = True) -> dict:
+def analyze(sc: dict, use_fit: bool = True, calibrate: bool = True,
+            ref_w: float = CRACK_W) -> dict:
     """1 枚を通しで解析し、種類別に真値と突き合わせる。"""
     flat, fit = flatten(sc["img"], use_fit=use_fit)
     s = degrid(flat)
-    sk = crack_skeleton(s, calibrate=calibrate)
+    sk = crack_skeleton(s, calibrate=calibrate, ref_w=ref_w)
     cl = classify(s, sk)
 
     # クラック: 本ごとの再現率(真値中心線が骨格の 2 px 以内にある割合)
