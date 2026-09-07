@@ -832,10 +832,10 @@ def section_sliver_threshold(scene: dict) -> dict:
     print("  中央値の面積 %.3e mm^2。潰れ面の面積をその何倍にするかで振る。" % med)
     print("  ★潰れ面が乗る平面は元の面と同じなので、**正しい法線は分かっている**"
           "(= 親の面法線)。")
-    print("\n   t        面積比       検出 /%2d   法線が壊れた枚数  最大ずれ [deg]"
+    print("\n   t        面積比       検出 /%2d  法線 1°超  法線が作れない  最大ずれ [deg]"
           "  face_normals" % (2 * N_SLIVER))
 
-    ts, frac, angs, ratios, nbroken = [], [], [], [], []
+    ts, frac, angs, ratios, nbroken, nzero = [], [], [], [], [], []
     for t in (1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9):
         rng = np.random.default_rng(SEED)
         Vd, Fd, ndeg, ar, sl = inject_slivers(V0, F0, N_SLIVER, t, rng)
