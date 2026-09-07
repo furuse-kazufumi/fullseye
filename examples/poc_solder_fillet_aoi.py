@@ -600,7 +600,7 @@ def section_scene() -> dict:
     print("\n" + "=" * 78)
     print("2) 場面 —— 良品 / 不足 / ブリッジ / 浮き")
     print("=" * 78)
-    v_thr = volume_to_area(1.0) and area_for_height(IPC_MIN * H) * ELEC_W
+    v_thr = area_for_height(IPC_MIN * H) * ELEC_W
     v_pin = area_for_height(TOE) * ELEC_W
     print("  片側フィレットの体積: IPC 境界(h = %.4f mm)%.4f mm³ / 爪先が固定される %.4f mm³"
           % (IPC_MIN * H, v_thr, v_pin))
