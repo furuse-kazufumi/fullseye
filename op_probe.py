@@ -266,6 +266,69 @@ STRUCTURED_SORTS = ("image", "any", "region", "contour", "color", "rgbimage",
                     "counts", "keypoints", "matrix")
 
 
+# --------------------------------------------------------------------------- #
+# op 単位の探針上書き —— 「畳んだ型」の請求書                                     #
+# --------------------------------------------------------------------------- #
+# ``backends_typed.TYPE_TO_SORT`` は宣言型を進化側の sort に畳む
+# (``indices`` → ``signal``、``normals`` → ``points`` …。理由と実測は
+#  ``docs/TYPE_ALIAS_LEDGER.json``)。畳むと **sort だけでは正しい探針を作れない**
+# op が出る: 添字を取る op に連続な信号を渡せば当然拒否されるが、それは op が
+# 正しく fail-closed なのであって欠陥ではない。
+#
+# この表は、その「畳んだせいで sort 既定の探針では走れない op」を 1 行ずつ挙げる。
+# **表が伸びることが、畳んだことの費用**なので、伸ばすときは理由を書くこと。
+# ``tests/test_op_probe_ledger.py`` が (1) 既定の探針では本当に落ちること
+# (2) 上書きなら通ること の両方を毎回測るので、要らなくなった行は残せない。
+def _monogenic_probe(n: int = 32) -> np.ndarray:
+    """``(帯域通過像, R1, R2, 0)`` の本物のモノジェニック信号(Felsberg & Sommer 2001)。"""
+    import quatimage as Q                                  # noqa: PLC0415
+    return Q.monogenic_signal(structured_image(n), wavelength_px=9.0,
+                              bandwidth_octaves=1.125)
+
+
+def _pure_quaternion_probe(n: int = 32) -> np.ndarray:
+    """実部 0 の**純**四元数(色の四元数)。``quaternion_to_rgb`` の契約。"""
+    return structured_qimage(n)
+
+
+def _unit_normals_probe(m: int = 160) -> np.ndarray:
+    """単位法線(球面上の一様に近い向き)。位置の点群ではない。"""
+    i = np.arange(m, dtype=np.float64) + 0.5
+    phi = np.arccos(1.0 - 2.0 * i / m)
+    th = np.pi * (1.0 + 5.0 ** 0.5) * i
+    return np.stack([np.sin(phi) * np.cos(th), np.sin(phi) * np.sin(th),
+                     np.cos(phi)], axis=1)
+
+
+def _indices_probe(n: int = 24) -> np.ndarray:
+    """非負整数の添字(``indices``)。``signal`` の連続値では拒否される。"""
+    return np.arange(0, 4 * n, 4, dtype=np.float64)
+
+
+def _dichromatic_probe():
+    """二色性レンダ(単一材質 + ハイライト)。``specular_*` の契約。"""
+    return _generators()["rgbimage"](np.random.default_rng(20260908))
+
+
+#: ``op 名 -> (探針を作る関数, なぜ sort 既定では駄目か)``
+OP_PROBE_OVERRIDE = {
+    "tb_monogenic_amplitude": (_monogenic_probe,
+        "qimage は色の四元数とモノジェニック信号の 2 つを兼ねている。"
+        "前者は実部 0・k に青、後者は実部が帯域通過像で k が 0 —— 両立しない"),
+    "tb_monogenic_phase": (_monogenic_probe, "同上(qimage が 2 つの契約を兼ねている)"),
+    "tb_monogenic_orientation": (_monogenic_probe, "同上(qimage が 2 つの契約を兼ねている)"),
+    "tb_quaternion_to_rgb": (_pure_quaternion_probe,
+        "純四元数(実部 0)だけを受ける。乱数の qimage は実部が残るので拒否される"),
+    "tb_normals_to_egi": (_unit_normals_probe,
+        "normals は points に畳まれている。位置の雲を渡すと原点が零ベクトルになり拒否される"),
+    "tb_indices_to_labels": (_indices_probe,
+        "indices は signal に畳まれている。連続値は整数でないので正しく拒否される"),
+    "tb_specular_diffuse_split": (_dichromatic_probe,
+        "単一材質の面(照明直交成分の階数 1)を要求する。乱数の色画像は階数が立つ"),
+    "tb_specular_coefficient_map": (_dichromatic_probe, "同上(単一材質を要求する)"),
+}
+
+
 def sample_input(sort: str, rng=None, structured: bool = False):
     """``sort`` が運ぶ値を 1 つ返す。作れない sort は ``None``。
 
