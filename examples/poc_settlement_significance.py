@@ -362,11 +362,11 @@ def section_scene() -> dict:
 
     fld = rough_field()
     figs.save_grid("scene",
-                   [s_mm.reshape(nx, ny).T, fld * 1000.0,
+                   [as_map(s_mm, nx, ny), fld * 1000.0,
                     zone_of(np.arange(fld.shape[0]) * _GRID)[:, None]
                     * np.ones((1, fld.shape[1]))],
-                   ["真の沈下 [mm](青=沈下、%.1f mm まで)" % (S_MAX * 1000),
-                    "面の粗さ [mm](2 時期で同じ)", "ゾーン(0 砂利 / 1 舗装 / 2 平板)"],
+                   ["真の沈下 [mm](最大 %.1f)" % (S_MAX * 1000),
+                    "面の粗さ [mm]", "ゾーン 0 砂利/1 舗装/2 平板"],
                    ncols=1, signed=[True, True, False],
                    title="仕込んだ真値 —— 沈下は切羽 x=%.0f m の後ろだけ" % X_FACE,
                    caption="横軸 x [%.0f m]、縦軸 y [%.0f m]。粗さはゾーンで 10 倍"
@@ -453,10 +453,10 @@ def section_mean_vs_significant(sc: dict, z: dict) -> dict:
 
     nx, ny = sc["nx"], sc["ny"]
     figs.save_grid("map_change",
-                   [d.reshape(nx, ny).T, sig.reshape(nx, ny).T.astype(np.float64),
-                    (np.abs(s_mm) >= TRUE_POS_MM).reshape(nx, ny).T.astype(np.float64)],
-                   ["M3C2 の差 [mm](青=沈下)",
-                    "有意 |d| > LoD(%d core)" % int(sig.sum()),
+                   [as_map(d, nx, ny), as_map(sig.astype(np.float64), nx, ny),
+                    as_map((np.abs(s_mm) >= TRUE_POS_MM).astype(np.float64), nx, ny)],
+                   ["M3C2 の差 [mm]",
+                    "有意 %d core" % int(sig.sum()),
                     "真値 |S| >= %.1f mm(%d core)"
                     % (TRUE_POS_MM, int(np.count_nonzero(np.abs(s_mm) >= TRUE_POS_MM)))],
                    ncols=1, signed=[True, False, False],
@@ -464,8 +464,8 @@ def section_mean_vs_significant(sc: dict, z: dict) -> dict:
                    caption="有意の地図は真値の地図をよく復元する(TPR %.1f %% / "
                            "FPR %.1f %%)。ただし縁が痩せる —— そこが 7 節の体積の話。"
                            % (cm["tpr"], cm["fpr"]))
-    figs.save_grid("map_lod", [lod.reshape(nx, ny).T],
-                   ["LoD [mm](中央値 %.2f)" % np.nanmedian(lod)], ncols=1,
+    figs.save_grid("map_lod", [as_map(lod, nx, ny)],
+                   ["LoD [mm] 中央値 %.2f" % np.nanmedian(lod)], ncols=1,
                    title="検出限界の地図 —— 沈下ではなく粗さと密度の地図",
                    caption="上の帯(砂利の路肩)は粗さ %.0f mm・密度半分なので LoD が"
                            "跳ね上がる。同じ沈下でもここでは有意にならない。"
@@ -704,11 +704,11 @@ def section_registration(sc: dict, mult: dict) -> dict:
     assert int(sig_cal.sum()) < int(sig.sum())
 
     figs.save_grid("map_bias",
-                   [d.reshape(nx, ny).T, sig.reshape(nx, ny).T.astype(np.float64),
-                    sig_cal.reshape(nx, ny).T.astype(np.float64)],
-                   ["合わせ残差 %.2f mm だけの差 [mm]" % (DZ_BIAS * 1000),
-                    "有意 %d core(沈下は 0 なのに)" % int(sig.sum()),
-                    "安定域で較正した後 %d core" % int(sig_cal.sum())],
+                   [as_map(d, nx, ny), as_map(sig.astype(np.float64), nx, ny),
+                    as_map(sig_cal.astype(np.float64), nx, ny)],
+                   ["差 [mm](残差 %.2f mm だけ)" % (DZ_BIAS * 1000),
+                    "有意 %d core(沈下 0 なのに)" % int(sig.sum()),
+                    "較正後 %d core" % int(sig_cal.sum())],
                    ncols=1, signed=[True, False, False],
                    title="沈下ゼロ + 合わせ残差 %.2f mm の対照群" % (DZ_BIAS * 1000),
                    caption="LoD は雑音しか見ていないので、系統誤差はそのまま"
