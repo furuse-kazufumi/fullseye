@@ -505,6 +505,10 @@ def section_proxy(ctl: dict) -> dict:
     print("     閉形式の予測は %.2f / %.2f %%(比 %.2f)—— 実測との差は %.2f / %.2f "
           "ポイント。" % (pred_sph, pred_dsc, pred_dsc / pred_sph,
                           a - pred_sph, b - pred_dsc))
+    sp_lo = min(out[c[0]]["span"] for c in CONDITIONS)
+    sp_hi = max(out[c[0]]["span"] for c in CONDITIONS)
+    print("  ★割れ道のほうも同じ: 最大クラスタの跨ぎ率は 散在 %.1f %% に対し"
+          " 連なり %.1f %%(**%.1f 倍**)。" % (sp_lo, sp_hi, sp_hi / sp_lo))
     print("  ★正直に: **これは寿命ではない**。熱疲労寿命には Coffin-Manson 則と"
           "応力場が要る。\n     ここで示せたのは「合否 1 個の数字が形態に盲目である」"
           "ことまで。")
