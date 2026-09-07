@@ -1194,6 +1194,9 @@ def main() -> int:
           "消えず(疎で %.1f %%)、2 台目でだけ %.1f %% に落ちる。"
           % (sw["d_miss"][-1], sw["lat_miss"][-1], sw["occ_miss"][2],
              sw["occ_miss"][3], sw["occ_miss"][1]))
+    print("  * 遮蔽は誤りを片側へ移す: 理想の誤検知 %.1f %% -> 1 台で %.1f %%、"
+          "その代わり見落としが 0 -> %.1f %%。"
+          % (sw["occ_fa"][0], sw["occ_fa"][2], sw["occ_miss"][2]))
     print("  * Z_d を繰り返し性から出すと %.4f m。遮蔽の 95 %% 点は %.4f m で"
           "**%.0f 倍**足りない。" % (zd["zd_rep"], zd["zd_occ"],
                                      zd["zd_occ"] / max(zd["zd_rep"], 1e-9)))

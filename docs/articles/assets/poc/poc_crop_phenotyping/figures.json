@@ -31,5 +31,57 @@
   ],
   "csv": "03_zero_point.csv",
   "tsv": "03_zero_point.tsv"
+ },
+ {
+  "file": "04_cliff_ceilings.png",
+  "name": "cliff_ceilings",
+  "caption": "実測と閉形式 (1-e^-kL)/k が重なる。斜めの直線が真値。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_cliff_estimators.png",
+  "name": "cliff_estimators",
+  "caption": "重なりの枚数(遮蔽を無視して全部数えた場合)は真値に乗る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_cliff_density.png",
+  "name": "cliff_density",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_controls.png",
+  "name": "controls",
+  "caption": "「畳んだ分」は投影面積の単位、「奪われた分」は葉面積の単位。同じ量の言い換えではない。",
+  "shape": [
+   176,
+   599,
+   3
+  ],
+  "csv": "07_controls.csv",
+  "tsv": "07_controls.tsv"
+ },
+ {
+  "file": "08_scene_nadir.png",
+  "name": "scene_nadir",
+  "caption": "真ん中の図が「投影が畳む分」そのもの ——白いほど何枚も重なっている。",
+  "shape": [
+   543,
+   1390,
+   3
+  ]
  }
 ]
