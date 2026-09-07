@@ -843,7 +843,7 @@ def section_mixed(ab: dict, pair) -> dict:
                     ab_map.reshape(-1, K)[bnd] - true_frac[bnd]))))]
 
     rows = []
-    print("   材質    真値 %%   全画素   境界を捨てる   線形混合分解")
+    print("   材質    真値 %    全画素   境界を捨てる   線形混合分解")
     for i, n in enumerate(FRAG_NAMES):
         rows.append([n, "%.1f" % truth_pct[i], "%.1f" % est_all[i],
                      "%.1f" % est_pure[i], "%.1f" % est_unmix[i]])
