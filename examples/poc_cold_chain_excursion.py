@@ -462,93 +462,146 @@ def section_zero_point(scene: dict, truth: dict) -> dict:
 # --------------------------------------------------------------------------- #
 # 3-5. 崖 —— 先に予測してから掃引する                                           #
 # --------------------------------------------------------------------------- #
+def _cliff_cell(scene: dict) -> tuple[int, int, float, float]:
+    """扉パルスの崖を測るのに向いた空気セルを**基準で選ぶ**(手で決め打たない)。
+
+    条件: 空気セルで、いちばん長い扉開放の直前の底が 3.5〜6.0 °C(規定まで
+    余裕がある)。その中でパルスの振幅がいちばん大きいセル。扉のすぐ手前は
+    底が既に 7 °C 台で余裕 M が小さく、崖の τ が 300 分を超えて実務の
+    ロガーの範囲から外れてしまう(最初そこを選んで測れなかった)。
+    """
+    vol, lay = scene["vol"], scene["layout"]
+    a0, b0 = DOOR_EVENTS[2]
+    base = np.median(vol[a0 - 60:a0], axis=0)
+    amp = vol[a0:b0 + 30].max(axis=0) - base
+    cand = lay["is_air"] & (base > 3.5) & (base < 6.0)
+    if not cand.any():
+        cand = lay["is_air"]
+    iy, ix = np.unravel_index(int(np.argmax(np.where(cand, amp, -np.inf))), amp.shape)
+    return int(iy), int(ix), float(base[iy, ix]), float(amp[iy, ix])
+
+
 def section_cliffs(scene: dict) -> dict:
     print("\n" + "=" * 78)
     print("3-5) 崖 —— 時定数 / サンプリング間隔 / 量子化。**先に予測する**")
     print("=" * 78)
-    vol = scene["vol"]
-    # 扉前の空気セル: いちばん長い扉開放(3 回目)を見る
-    y, x = NY - 1, NX // 2
+    vol, lay = scene["vol"], scene["layout"]
+    y, x, base, amp = _cliff_cell(scene)
     tr = probe_true(vol, y, x)
     a0, b0 = DOOR_EVENTS[2]
     width = float(b0 - a0)
-    base = float(np.median(tr[a0 - 40:a0]))
-    peak = float(tr[a0:b0 + 30].max())
-    amp = peak - base
     margin = LIMIT_C - base
-    tau_star = width / np.log(amp / (amp - margin)) if amp > margin else np.inf
-    print("  (3) 時定数の崖")
-    print("      扉 3 回目: 幅 W=%.0f 分、直前の底 %.2f °C、真のピーク %.2f °C"
-          % (width, base, peak))
-    print("      -> 振幅 A=%.2f K、規定までの余裕 M=%.2f K" % (amp, margin))
-    print("      予測 τ* = W / ln(A/(A-M)) = %.1f 分" % tau_star)
+    print("  (3) 時定数の崖 —— 空気セル (y=%d, x=%d)、扉 3 回目 (幅 W=%.0f 分)"
+          % (y, x, width))
+    print("      直前の底 %.2f °C / 真のピーク %.2f °C -> 振幅 A=%.2f K、"
+          "余裕 M=%.2f K" % (base, base + amp, amp, margin))
+
+    # 予測 1: 教科書の 1 極公式(ロガーだけを 1 次遅れとみなす)
+    tau_1pole = width / np.log(amp / (amp - margin)) if amp > margin else np.inf
+    # 予測 2: 2 段の 1 次遅れ(荷室の空気 τ_air + ロガー τ)を**矩形パルスに対して**
+    #         解いたもの。場のシミュレーションは使わない = 紙の上の予測。
+    a_drive = A_DOOR * float(np.exp(-lay["d_door"][y, x] / LAM_DOOR))
+    rect = np.zeros(int(width) + 400)
+    rect[:int(width)] = a_drive
+    air_resp = first_order_lag(rect, TAU_AIR)
+
+    def _peak2(tau: float) -> float:
+        return float(first_order_lag(air_resp, tau).max())
 
     taus = np.arange(1.0, 121.0, 1.0)
-    seen, pred = [], []
+    pred2 = np.asarray([_peak2(float(t_)) for t_ in taus])
+    below2 = pred2 <= margin
+    tau_2pole = float(taus[np.argmax(below2)]) if below2.any() else np.inf
+    print("      予測(教科書 1 極)τ* = W / ln(A/(A-M))        = %.1f 分" % tau_1pole)
+    print("      予測(荷室の空気 τ=%.0f 分 と 2 段に重ねる)  = %.1f 分"
+          % (TAU_AIR, tau_2pole))
+
+    seen, pred1 = [], []
     for t_ in taus:
         lag = first_order_lag(tr, float(t_))
-        seen.append(float(lag[a0:b0 + 120].max()) - base)
-        pred.append(amp * (1.0 - np.exp(-width / t_)))
+        seen.append(float(lag[a0:b0 + 200].max()) - base)
+        pred1.append(amp * (1.0 - np.exp(-width / t_)))
     seen = np.asarray(seen)
-    pred = np.asarray(pred)
-    above = seen > margin
-    tau_meas = float(taus[np.argmax(~above)]) if (~above).any() else np.nan
-    print("      実測 τ* = %.1f 分(掃引 1 分刻み)。予測との差 %.1f 分"
-          % (tau_meas, abs(tau_meas - tau_star)))
-    print("      矩形パルス近似の誤差(見かけのピーク上昇 予測 vs 実測)"
-          " 最大 %.3f K" % float(np.max(np.abs(seen - pred))))
+    pred1 = np.asarray(pred1)
+    below = seen <= margin
+    tau_meas = float(taus[np.argmax(below)]) if below.any() else np.inf
+    print("      実測 τ* = %.1f 分(掃引 1 分刻み)" % tau_meas)
+    print("      -> 1 極の予測は %+.1f 分ずれ、2 段の予測は %+.1f 分。"
+          "**荷室の空気そのものが 1 次遅れ**なので、教科書の公式は"
+          "ロガーを実際より鈍く見積もる。" % (tau_1pole - tau_meas, tau_2pole - tau_meas))
+    print("      見かけのピーク上昇: 1 極の式との差 最大 %.3f K / "
+          "2 段の式との差 最大 %.3f K"
+          % (float(np.max(np.abs(seen - pred1))),
+             float(np.max(np.abs(seen - pred2)))))
+    print("      実務の τ=%.0f 分では %+.2f K 見えて検知できるが、"
+          "「製品模擬」の τ=60 分では %.2f K しか上がらない(余裕 %.2f K)。"
+          % (TAU_LOG, seen[int(TAU_LOG) - 1], seen[59], margin))
 
-    # (4) サンプリング間隔 —— 位相を全部試す
-    print("\n  (4) サンプリング間隔の崖")
-    print("      幅 %.0f 分のパルスは Δt > W で位相により丸ごと落ちる。"
-          "予測: 落ちる割合 = 1 - W/Δt" % width)
-    lag12 = first_order_lag(tr, TAU_LOG)
-    # ロガーの遅れで見かけの幅も変わる: 実効幅 = 記録が規定を超えている時間
-    eff = float(np.count_nonzero(lag12[a0 - 10:b0 + 200] > LIMIT_C) * DT_MIN)
+    # (4) サンプリング間隔 —— 位相を全部試す。**遅れは切って**間隔だけを見る。
+    print("\n  (4) サンプリング間隔の崖(対照: ロガーの遅れは 0 にして間隔だけを見る)")
+    hot = np.nonzero(tr[a0 - 5:b0 + 60] > LIMIT_C)[0]
+    w_eff = float(hot.size * DT_MIN)
+    lo = int(a0 - 5 + hot[0]); hi = int(a0 - 5 + hot[-1]) + 1
+    print("      真値がこのパルスで規定を超えている時間 W_eff = %.0f 分"
+          " (%d〜%d 分)。予測: 丸ごと落ちる位相の割合 = 1 - W_eff/Δt"
+          % (w_eff, lo, hi))
     rows_s = []
     for dts in (5.0, 10.0, 15.0, 30.0, 45.0, 60.0, 90.0):
         step = int(round(dts / DT_MIN))
         miss = 0
         for ph in range(step):
-            s = lag12[ph::step]
-            if not (s[(a0 - 10) // step: (b0 + 200) // step + 1] > LIMIT_C).any():
+            tt = np.arange(ph, NT, step)
+            sel = tt[(tt >= lo) & (tt < hi)]
+            if sel.size == 0 or not (tr[sel] > LIMIT_C).any():
                 miss += 1
         got = 100.0 * miss / step
-        want = 100.0 * max(0.0, 1.0 - eff / dts)
+        want = 100.0 * max(0.0, 1.0 - w_eff / dts)
         rows_s.append([("%.0f" % dts), ("%.1f" % want), ("%.1f" % got)])
-        print("      Δt = %5.0f 分  予測 %5.1f %%  実測 %5.1f %%"
-              % (dts, want, got))
+        print("      Δt = %5.0f 分  予測 %5.1f %%  実測 %5.1f %%" % (dts, want, got))
+    s_err = max(abs(float(r[1]) - float(r[2])) for r in rows_s)
+    print("      予測と実測の差 最大 %.1f 分ポイント。" % s_err)
 
     # (5) 量子化
     print("\n  (5) 量子化の崖 —— 実効しきい値が limit + q/2 に上がる")
     rows_q = []
     y2, x2 = _worst_product(scene)
     trp = probe_true(vol, y2, x2)
+    print("      最悪製品セル (y=%d, x=%d) の真の逸脱 %.0f 分を、"
+          "分解能だけ変えて数え直す。" % (y2, x2, excursion_minutes(trp, DT_MIN)))
     for q in (0.0, 0.1, 0.25, 0.5, 1.0, 2.0):
         got = excursion_minutes(quantize(trp, q), DT_MIN)
         want = float(np.count_nonzero(trp > LIMIT_C + q / 2.0) * DT_MIN)
         rows_q.append([("%.2f" % q), ("%.0f" % want), ("%.0f" % got)])
         print("      q = %4.2f K  予測 %4.0f 分  実測 %4.0f 分" % (q, want, got))
+    q_err = max(abs(float(r[1]) - float(r[2])) for r in rows_q)
+    print("      予測と実測の差 最大 %.0f 分。量子化は**必ず短くする側**にしか"
+          "効かない(切り上げの位相が無い)。" % q_err)
 
     if figs.enabled():
         figs.save_plot("sweep_tau",
                        [("実測: 見かけのピーク上昇", taus, seen),
-                        ("予測: A(1-e^(-W/τ))", taus, pred),
+                        ("予測 1 極: A(1-e^(-W/τ))", taus, pred1),
+                        ("予測 2 段: 空気 τ=%.0f 分 + ロガー" % TAU_AIR, taus, pred2),
                         ("規定までの余裕 M = %.2f K" % margin, taus,
                          np.full_like(taus, margin))],
                        xlabel="ロガーの時定数 τ [min]", ylabel="ピークの上昇 [K]",
-                       title="扉開閉(W=%.0f 分)が見えなくなる τ: 予測 %.1f / 実測 %.1f 分"
-                             % (width, tau_star, tau_meas))
+                       title="扉開閉(W=%.0f 分)が消える τ: 予測 %.0f / %.0f、実測 %.0f 分"
+                             % (width, tau_1pole, tau_2pole, tau_meas),
+                       caption="教科書の 1 極公式は荷室の空気の遅れを勘定に入れないので"
+                               "崖を遅く見積もる。")
         figs.save_table("sweep_sampling",
                         ["Δt [min]", "予測 落ちる割合 [%]", "実測 [%]"], rows_s,
-                        title="サンプリング間隔でパルスが丸ごと落ちる割合(位相を全部試す)")
+                        title="間隔でパルスが丸ごと落ちる割合(位相を全部試す、W_eff=%.0f 分)"
+                              % w_eff)
         figs.save_table("sweep_quant",
                         ["分解能 q [K]", "予測 逸脱 [min]", "実測 [min]"], rows_q,
                         title="量子化は実効しきい値を limit + q/2 に上げる")
-    return {"tau_star": tau_star, "tau_meas": tau_meas, "amp": amp,
-            "margin": margin, "width": width, "eff_width": eff,
-            "rows_s": rows_s, "rows_q": rows_q,
-            "pred_err": float(np.max(np.abs(seen - pred)))}
+    return {"tau_1pole": tau_1pole, "tau_2pole": tau_2pole, "tau_meas": tau_meas,
+            "amp": amp, "margin": margin, "width": width, "w_eff": w_eff,
+            "cell": (y, x), "rows_s": rows_s, "rows_q": rows_q,
+            "s_err": s_err, "q_err": q_err,
+            "pred1_err": float(np.max(np.abs(seen - pred1))),
+            "pred2_err": float(np.max(np.abs(seen - pred2)))}
 
 
 def _worst_product(scene: dict) -> tuple[int, int]:
