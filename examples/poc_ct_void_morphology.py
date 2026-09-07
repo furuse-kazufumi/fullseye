@@ -318,7 +318,7 @@ def morphology(void_est: np.ndarray, layer: np.ndarray, die_dist: np.ndarray,
 
 
 def die_distance(scene: dict) -> np.ndarray:
-    """ダイ(界面より上)までの符号付き距離場 [mm]。``esdf`` の公開経路。"""
+    """ダイ側の界面(半空間 z >= 層厚)までの符号付き距離場 [mm]。``esdf`` の公開経路。"""
     return np.asarray(L.esdf(scene["die"].astype(float), voxel_size=scene["voxel"]))
 
 
