@@ -14,12 +14,9 @@
 
 *↑ **周期のある地に埋もれた欠陥 ―― まとめた ROC が隠すもの** ―― 周期 8 px の織り地に線・斑点・ムラの 3 種の欠陥を埋め、検出器のスコア地図と種類別の ROC を並べた図。現場でいちばん普通の「格子除去 + 低周波除去」はまとめた AUC 0.8113 で合格に見えるのに、ムラだけは 0.4746 とでたらめ以下。低周波を落とす 1 行が照明ムラと一緒に欠陥のムラを消していた ―― 外すだけで 0.9998 に戻る。*
 
-[![auc_by_type](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/01_auc_by_type_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/01_auc_by_type.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/01_auc_by_type_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/01_auc_by_type.png)
 
-*↑ 測定の図 ―― auc_by_type*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fabric_defect/04_scene_720.jpg -->
-<!-- 生成: examples/poc_fabric_defect.py (FULLSEYE_FIGURE_DIR) / 04_scene.png / スコア 2 枚は 99.5 % 分位で切ってある。ゼロ点は地の格子がそのまま出る。 / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_fabric_defect.py
@@ -39,9 +36,6 @@ py -3.11 examples/poc_fabric_defect.py
 
 *↑ 測定の図 ―― 0 で埋めた線は影の区間で h=0 に張り付き、左のアンダーカットが消えて偽のつま先ができる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_bead_profile/01_laser_images_720.jpg -->
-<!-- 生成: examples/poc_weld_bead_profile.py (FULLSEYE_FIGURE_DIR) / 01_laser_images.png / row = r0 + K·h なので、**下にあるほど高い** ——ビードは画像では下に凸に見える。遮蔽 60 度では左つま先の輝線が消えている。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_weld_bead_profile.py
 ```
@@ -60,9 +54,6 @@ py -3.11 examples/poc_weld_bead_profile.py
 
 *↑ 測定の図 ―― 2 値化の 2 本は階段。0.20 mm(1 px)以下ではマスクが空になり 0(= 未検出)へ落ちる。積分法は 0.05 mm (0.25 px)まで直線 y=x に乗る。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_crack_width/02_scene_720.jpg -->
-<!-- 生成: examples/poc_crack_width.py (FULLSEYE_FIGURE_DIR) / 02_scene.png /  / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_crack_width.py
 ```
@@ -77,12 +68,9 @@ py -3.11 examples/poc_crack_width.py
 
 *↑ **迷光がコントラスト計測を壊す ―― MTF 合格・黒レベル不合格は両立する** ―― PSF の裾だけを重くした像で、刃のエッジの MTF と黒四角の黒レベルを同時に測った図。裾の割合 0 → 0.20 で MTF50 は 0.2347 → 0.2249 cyc/px(-4.2 %、合格のまま)なのに、黒レベルは 0.0 → 15.7 %(不合格)。±16 px の測定窓には裾のエネルギーの 6 % しか入らない ―― 迷光は測る範囲を宣言しないと数字にならない。*
 
-[![verdict](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/01_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/01_verdict.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/01_verdict_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/01_verdict.png)
 
-*↑ 測定の図 ―― verdict*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_veiling_glare/04_glare_scene_720.jpg -->
-<!-- 生成: examples/poc_veiling_glare.py (FULLSEYE_FIGURE_DIR) / 04_glare_scene.png / 2 画素に 1 つ間引いて表示。黒四角の中が 10.7 % 浮いている。 / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_veiling_glare.py
@@ -102,9 +90,6 @@ py -3.11 examples/poc_veiling_glare.py
 
 *↑ 測定の図 ―― σ≈8 px で漏れと減衰が釣り合う。合計だけ見ると「良い測り方」に見える。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_moire_screen/04_moire_scene_720.jpg -->
-<!-- 生成: examples/poc_moire_screen.py (FULLSEYE_FIGURE_DIR) / 04_moire_scene.png / 左上 256x256 px。(d) は (b)-(c)。周期 20 px のモアレがうっすら残り、同時にムラ自身も鈍っている。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_moire_screen.py
 ```
@@ -122,9 +107,6 @@ py -3.11 examples/poc_moire_screen.py
 [![どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、崖が悪い SNR 側へ動くだけ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/02_detection_sweep.png)
 
 *↑ 測定の図 ―― どちらも最悪条件では 0 に落ちる。包絡線は万能ではなく、崖が悪い SNR 側へ動くだけ。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bearing_diagnosis/01_envelope_vs_raw_720.jpg -->
-<!-- 生成: examples/poc_bearing_diagnosis.py (FULLSEYE_FIGURE_DIR) / 01_envelope_vs_raw.png / 雑音の床は同じ高さ。包絡線だけが BPFO とその高調波に峰を立てる。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_bearing_diagnosis.py
@@ -144,9 +126,6 @@ py -3.11 examples/poc_bearing_diagnosis.py
 
 *↑ 測定の図 ―― 右下三角(直径が深さの 4 倍以上)は数 %。左上は横拡散で壊れる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermography_ndt/02_depth_map_720.jpg -->
-<!-- 生成: examples/poc_thermography_ndt.py (FULLSEYE_FIGURE_DIR) / 02_depth_map.png / 欠陥 16 個。直径 2 mm の列(いちばん左)が壊れているのが見える。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_thermography_ndt.py
 ```
@@ -164,9 +143,6 @@ py -3.11 examples/poc_thermography_ndt.py
 [![焦点距離ドリフトは R に依らない。主点ドリフトは R に比例(歪みを外す中心がずれるため)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/01_separate_drifts_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/01_separate_drifts.png)
 
 *↑ 測定の図 ―― 焦点距離ドリフトは R に依らない。主点ドリフトは R に比例(歪みを外す中心がずれるため)。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_thermal_drift_metrology/04_error_maps_720.jpg -->
-<!-- 生成: examples/poc_thermal_drift_metrology.py (FULLSEYE_FIGURE_DIR) / 04_error_maps.png / 発散 LUT。**各パネルは自分の最大値で正規化される**ので色の濃さはパネル間で比べられない。(a)(b)(c) の実値は ±542 ppm、(d) は最大  / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_thermal_drift_metrology.py
@@ -186,9 +162,6 @@ py -3.11 examples/poc_thermal_drift_metrology.py
 
 *↑ 測定の図 ―― 小さい汚れは行が「読めてしまう」ので誤った票を投じる。大きい汚れは棄権するので多数決が効く。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_barcode_1d/01_misread_split_720.jpg -->
-<!-- 生成: examples/poc_barcode_1d.py (FULLSEYE_FIGURE_DIR) / 01_misread_split.png / 同じ画像・同じ二値化で、run 数を検査するかどうかだけが違う。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_barcode_1d.py
 ```
@@ -207,9 +180,6 @@ py -3.11 examples/poc_barcode_1d.py
 
 *↑ 測定の図 ―― 自力検出の線は sigma/m 0.50 を最後に途切れる(0.60 では位置検出パターンが見つからない)。標本化はそこでまだ BER 0.07 で読めている。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_matrix_code_reading/01_symbol_and_errors_720.jpg -->
-<!-- 生成: examples/poc_matrix_code_reading.py (FULLSEYE_FIGURE_DIR) / 01_symbol_and_errors.png / 誤り 41 モジュールのうち構造(位置検出・分離帯・タイミング・位置合わせ)は 7。1:1:3:1:1 はまだ読めるので、この段では定位が生き残る(落ちるのは  / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_matrix_code_reading.py
 ```
@@ -224,12 +194,9 @@ py -3.11 examples/poc_matrix_code_reading.py
 
 *↑ **溶接 X 線透過像の気孔 ―― 等級を 1 段間違える画像の割合で締める** ―― 板厚 10 mm + 円弧の余盛 + 球形気孔を Beer–Lambert で閉形式に描き、散乱・不鋭度・粒状雑音を足した透過像。固定しきい値のゼロ点は余盛のつま先を気孔に数える(塊 124 個、合計面積 15.19 mm²、真値 7.93)。検出の崖は CNR = 16.12·d² から先に予測でき、50 % 検出径は Rose の CNR = 4 では 0.50 mm と外れ、平滑化と最小面積 3 px を入れた予測 0.58 mm に対し実測 0.57 mm。背景推定 op の窓上限(矩形オープニング 9 px)は 2.0 mm から検出率 50 % を割り 2.5 mm で 0 % の崖になる ―― op を選ぶことが測定範囲を選ぶ。散乱 SPR=1 は体積径を (1+SPR)^(-1/3) で -22.6 %(予測 -20.6 %)縮める。等級を 1 段間違える画像はゼロ点 90 % → 体積径 23 %。*
 
-[![map_detections](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/02_map_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/02_map_detections.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/02_map_detections_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/02_map_detections.png)
 
-*↑ 測定の図 ―― map_detections*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_weld_radiograph_porosity/01_scene_radiograph_720.jpg -->
-<!-- 生成: examples/poc_weld_radiograph_porosity.py (FULLSEYE_FIGURE_DIR) / 01_scene_radiograph.png / 余盛は暗い帯、気孔は明るい斑点。背景を引いて対数を取ると弦長 × μ に戻る。 / numbers: log / added 2026-09-07 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_weld_radiograph_porosity.py
@@ -245,12 +212,9 @@ py -3.11 examples/poc_weld_radiograph_porosity.py
 
 *↑ **太陽電池セルの EL 画像から発電損失を推定する ―― 「暗い = 不活性」ではない** ―― 結晶シリコンセル(フィンガー 100 本・バスバー 3 本・結晶粒 70 個)の EL 画像を閉形式で合成し、孤立領域(真値 4.77 %)・クラック 5 本・断線 8 本を植えて cos^4 ビネッティングと光子雑音で観測した。ゼロ点の大域しきい値は暗画素率 21.7 % を不活性面積率と呼ぶが、その 42 % はフィンガー/バスバー、33 % は結晶粒とビネッティングで、本物の不活性領域は 20 %。行・列プロファイルで格子を割り、種別ごとの門で取ると面積率 4.61 %(誤差 -0.15 ポイント)、クラック再現率 0.88〜1.00、断線 8/8。sk_frangi は画像ごとの最大値で正規化するので、校正線は画像中でいちばん強くないと尺度を固定できず(実クラックと同じ線は応答 0.69、幅 3 px の強い線は 1.00)、校正なしは欠陥ゼロの良品で偽クラック 147 px を出す。結晶粒コントラスト c=0.24 から偽クラックと帯の飲み込みが同時に始まり、クラック幅の崖 1.25 px は「幅 × 深さ」の線形則(予測 1.38 px)で読める。*
 
-[![by_type](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/02_by_type.png)
 
-*↑ 測定の図 ―― by_type*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_el_inspection/01_zero_point_map_720.jpg -->
-<!-- 生成: examples/poc_solar_el_inspection.py (FULLSEYE_FIGURE_DIR) / 01_zero_point_map.png / 単位は % of セル面積。暗画素の 4 割はフィンガーとバスバー、3 割は結晶粒とビネッティング。 / numbers: log / added 2026-09-07 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_solar_el_inspection.py
@@ -269,9 +233,6 @@ py -3.11 examples/poc_solar_el_inspection.py
 [![鏡面なら窓の端が階段になる。傾き 40° を超えるとどのリングも届かない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/01_ring_lut_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/01_ring_lut.png)
 
 *↑ 測定の図 ―― 鏡面なら窓の端が階段になる。傾き 40° を超えるとどのリングも届かない。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solder_fillet_aoi/02_scene_grid_720.jpg -->
-<!-- 生成: examples/poc_solder_fillet_aoi.py (FULLSEYE_FIGURE_DIR) / 02_scene_grid.png / フィレットの壁側は暗い。ブリッジは隣のパッドへ渡る畝、浮きは電極上面の色で分かる。 / numbers: log / added 2026-09-07 -->
 
 ```
 py -3.11 examples/poc_solder_fillet_aoi.py
@@ -299,9 +260,6 @@ py -3.11 examples/poc_solder_fillet_aoi.py
 
 *↑ 測定の図 ―― 偏りはどちらも正(対が互いを押し広げる)。符号が一定なので繰り返し測っても消えない。下端 -4 は表示の打ち切り(|偏り| < 1e-4 px)。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dimensional_inspection/01_slot_bias_720.jpg -->
-<!-- 生成: examples/poc_dimensional_inspection.py (FULLSEYE_FIGURE_DIR) / 01_slot_bias.png / ゼロ点(整数幅)だけ偏りが 1 桁大きい。偏りは合否に、散らばりは繰り返し精度に効く。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_dimensional_inspection.py
 ```
@@ -316,12 +274,9 @@ py -3.11 examples/poc_dimensional_inspection.py
 
 *↑ **歯車の歯形を測る ―― 偏心は 1 次、歯は z 次** ―― インボリュートの閉形式で描いた歯車から偏心と歯形を読む図。ゼロ点の最小二乗円は直径 47.278 mm で、ピッチ円 48 / 歯先円 52 / 歯底円 43 のどれでもない。歯が 1 枚欠けると偏心 0.050 mm が 0.1285 mm(+157 %)に化けるが、歯ごとに 1 標本だけ読む伝統的な測り方なら 0.0501 mm(+0.2 %)。*
 
-[![profile](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/02_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/02_profile.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/02_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/02_profile.png)
 
-*↑ 測定の図 ―― profile*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_gear_tooth_metrology/01_scene_720.jpg -->
-<!-- 生成: examples/poc_gear_tooth_metrology.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_gear_tooth_metrology.py
@@ -341,9 +296,6 @@ py -3.11 examples/poc_gear_tooth_metrology.py
 
 *↑ 測定の図 ―― dx=8 µm では Sa が ±5 % 合格で Sz が不合格。同じデータでも見るパラメータで結論が反転する。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_surface_roughness/01_surface_components_720.jpg -->
-<!-- 生成: examples/poc_surface_roughness.py (FULLSEYE_FIGURE_DIR) / 01_surface_components.png / 左の面をそのまま rms すると真値の 20 倍になる。帯域を宣言しない粗さの数字は存在しない。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_surface_roughness.py
 ```
@@ -361,9 +313,6 @@ py -3.11 examples/poc_surface_roughness.py
 [![0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 0.15 µm の手前 0.14 µm で崖。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/02_zstep_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/02_zstep_sweep.png)
 
 *↑ 測定の図 ―― 0.02〜0.12 µm は 0.05 nm 以内で平ら。Nyquist 上限 0.15 µm の手前 0.14 µm で崖。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interferometry_step/01_interferogram_720.jpg -->
-<!-- 生成: examples/poc_interferometry_step.py (FULLSEYE_FIGURE_DIR) / 01_interferogram.png / 包絡線の中心が段差ぶんずれる。包絡線には周期が無いので巻き戻る対象が無い(7 節)。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_interferometry_step.py
@@ -383,9 +332,6 @@ py -3.11 examples/poc_interferometry_step.py
 
 *↑ 測定の図 ―― 変形は補間ではなく斑点の再描画。だから真値が厳密。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dic_strain/04_strain_map_720.jpg -->
-<!-- 生成: examples/poc_dic_strain.py (FULLSEYE_FIGURE_DIR) / 04_strain_map.png / どちらも同じ発散 LUT。0 が黒。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_dic_strain.py
 ```
@@ -403,9 +349,6 @@ py -3.11 examples/poc_dic_strain.py
 [![直接の偏りだけが伸びる。累積は偏りも散らばりも頭打ちで、しかも散らばりより偏りのほうが大きい ——ランダムウォークではない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/02_errors_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/02_errors.png)
 
 *↑ 測定の図 ―― 直接の偏りだけが伸びる。累積は偏りも散らばりも頭打ちで、しかも散らばりより偏りのほうが大きい ——ランダムウォークではない。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_strain_history/01_speckle_720.jpg -->
-<!-- 生成: examples/poc_strain_history.py (FULLSEYE_FIGURE_DIR) / 01_speckle.png / 粒子を動かしてから描き直しているので真値が厳密。差の像が中心から外へ向かって強くなるのが一様な伸び。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_strain_history.py
@@ -425,9 +368,6 @@ py -3.11 examples/poc_strain_history.py
 
 *↑ 測定の図 ―― 左下 2 枚が「壊れる予報」。どちらもマスクで外せる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_photoelasticity/01_polariscope_720.jpg -->
-<!-- 生成: examples/poc_photoelasticity.py (FULLSEYE_FIGURE_DIR) / 01_polariscope.png / 偏光系は fullseye の mueller_element / mueller_apply で組んだ。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_photoelasticity.py
 ```
@@ -445,9 +385,6 @@ py -3.11 examples/poc_photoelasticity.py
 [![完全対称な標本を測った残差。点対点は点間隔がそのまま床になる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/01_floor_vs_spacing_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/01_floor_vs_spacing.png)
 
 *↑ 測定の図 ―― 完全対称な標本を測った残差。点対点は点間隔がそのまま床になる。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bilateral_asymmetry/03_deviation_map_720.jpg -->
-<!-- 生成: examples/poc_bilateral_asymmetry.py (FULLSEYE_FIGURE_DIR) / 03_deviation_map.png / どちらも患部 + とその鏡像 - の二重ローブ。右は面が引きずられてローブが薄くなり、46 % が消えている。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_bilateral_asymmetry.py
@@ -467,9 +404,6 @@ py -3.11 examples/poc_bilateral_asymmetry.py
 
 *↑ 測定の図 ―― 薄いところで 0 なのは正確だから。濃いところで 0 をまたぐのは融合と縁切れが釣り合っただけ。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_sizing/01_scene_720.jpg -->
-<!-- 生成: examples/poc_particle_sizing.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_particle_sizing.py
 ```
@@ -484,12 +418,9 @@ py -3.11 examples/poc_particle_sizing.py
 
 *↑ **繊維の配向分布を測る ―― 角度は 180 度周期、素朴に平均すると 90 度ずれる** ―― フォン・ミーゼス分布から撒いた繊維 140 本の配向を構造テンソルで読む図。真の平均 177.9 度を算術平均は 105.55 度と報告し(-72.33 度)、2 倍角の円形平均なら +0.17 度 ―― 画像も測定も 1 ビットも変えていない。全画素を等しく数えると配向度が -31.3 % 落ちる。*
 
-[![wrap](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/02_wrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/02_wrap.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/02_wrap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/02_wrap.png)
 
-*↑ 測定の図 ―― wrap*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fiber_orientation/01_scene_720.jpg -->
-<!-- 生成: examples/poc_fiber_orientation.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_fiber_orientation.py
@@ -505,12 +436,9 @@ py -3.11 examples/poc_fiber_orientation.py
 
 *↑ **金属組織の結晶粒度 ―― 面積法と切片法は別の崖で落ちる** ―― 2-D Voronoi で粒を仕込み、粒界を幅 2 px で描いてエッチングむら・雑音・途切れを乗せ、ASTM E112 の面積法(大津 + 連結成分)と直線切断法(局所しきい値 + 4 方向の試験線)で G を測った図。面積法は雑音だけ -0.02・むらだけ -0.40 が両方で +3.82 と相互作用で死に、粒界の途切れでは 7.2 % で 1 段落ちる。切片法は 40.7 % まで持つが、予想の 29.3 % は外れ(マスク上で消える粒界は f の 0.76 倍)。混粒の全体 G 7.82 は細粒 9.01 にも粗粒 6.15 にも無く、64 タイル中 4 つしか ±0.5 に入らない。*
 
-[![controls](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/02_controls.png)
 
-*↑ 測定の図 ―― controls*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_metal_grain_size/01_scene_720.jpg -->
-<!-- 生成: examples/poc_metal_grain_size.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-07 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_metal_grain_size.py
@@ -529,9 +457,6 @@ py -3.11 examples/poc_metal_grain_size.py
 [![幅の系列は上下輪郭(P/2 ずれ)の和なので基本波が消える。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_screw_thread_metrology/01_zero_spectrum.png)
 
 *↑ 測定の図 ―― 幅の系列は上下輪郭(P/2 ずれ)の和なので基本波が消える。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_screw_thread_metrology/07_sampling_frames_720.jpg -->
-<!-- 生成: examples/poc_screw_thread_metrology.py (FULLSEYE_FIGURE_DIR) / 07_sampling_frames.png /  / numbers: log / added 2026-09-07 -->
 
 ```
 py -3.11 examples/poc_screw_thread_metrology.py
@@ -559,9 +484,6 @@ py -3.11 examples/poc_screw_thread_metrology.py
 
 *↑ 測定の図 ―― 誤り合計の谷と |偏り| の谷は同じ場所に来ない。どちらを最適と呼ぶかで答えが変わる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_cell_counting/01_scene_dense_720.jpg -->
-<!-- 生成: examples/poc_cell_counting.py (FULLSEYE_FIGURE_DIR) / 01_scene_dense.png / ゼロ点はコロニーが 1 色の大きな塊になる(過統合)。分水嶺はそこを割るが、代わりに過分割を出す。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_cell_counting.py
 ```
@@ -580,9 +502,6 @@ py -3.11 examples/poc_cell_counting.py
 
 *↑ 測定の図 ―― 累積分布。積分輝度の 4n は 2.1 付近に固まり、面積の 2 本は大きく重なる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_nuclei_ploidy/04_scene_720.jpg -->
-<!-- 生成: examples/poc_nuclei_ploidy.py (FULLSEYE_FIGURE_DIR) / 04_scene.png / 4 枚目は対数表示。裾がしきい値の外に出ているのが見える。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_nuclei_ploidy.py
 ```
@@ -597,12 +516,9 @@ py -3.11 examples/poc_nuclei_ploidy.py
 
 *↑ **血管網を抜いて分岐を測る ―― ヒゲ、分岐近傍の径の過大、そして指数の脆さ** ―― Murray の法則に厳密に従う合成血管木を細線化し、分岐点・径・指数を測った図。分岐画素をそのまま数えると 25 個の分岐に 47 画素、連結成分にまとめれば 25 個ちょうど。ヒゲを作るのは細線化ではなく境界のざらつきで(余分な分岐 0 → 72 個)、径は分岐から 3 px 未満で +26.2 % 過大。*
 
-[![prune](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/02_prune_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/02_prune.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/02_prune_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/02_prune.png)
 
-*↑ 測定の図 ―― prune*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vessel_network/01_scene_720.jpg -->
-<!-- 生成: examples/poc_vessel_network.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_vessel_network.py
@@ -622,9 +538,6 @@ py -3.11 examples/poc_vessel_network.py
 
 *↑ 測定の図 ―― ゼロ点の面積誤差。実測は閉形式の 2 乗則に乗り、線形近似からは外れる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_wound_area_tracking/02_scenes_720.jpg -->
-<!-- 生成: examples/poc_wound_area_tracking.py (FULLSEYE_FIGURE_DIR) / 02_scenes.png / 4 枚目は正対化した二値と真の二値の差(赤 = 余分、青 = 足りない)。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_wound_area_tracking.py
 ```
@@ -639,12 +552,9 @@ py -3.11 examples/poc_wound_area_tracking.py
 
 *↑ **蛍光の共局在は漏れ込みで嘘をつく ―― Pearson と Manders は別の場所で壊れる** ―― 細胞体に小胞状の点を 2 色ぶん撒き、B の点の 0 / 25 / 50 / 100 % を A と同位置に置いて真の共局在率を握る。漏れ込み行列 [[1, α], [β, 1]] と細胞質・PSF・光子雑音を掛けた観測に Pearson r と Otsu-Manders を当てると、無関係な 2 色が α=β=10 % で r=0.203、M1=0.133 になる。単染色対照から α を 0.0996(真値 0.10)と推定して線形分離すれば r は 0.007 に戻るが、Manders は 100 % でも 0.705(Otsu より下の裾が落ちる、閉形式の予想 0.756)。Pearson が 0.5 を超える崖は対称漏れ込み α=0.282(予想 2−√3=0.268)、ぼけの崖は Manders だけに来て σ=2.5 px で Otsu の前景が細胞体へ飛び移る。Costes のシャッフル検定は漏れ込みだけの r を p=0.000 で「有意」と言う。*
 
-[![scene_unmixed](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/02_scene_unmixed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/02_scene_unmixed.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/02_scene_unmixed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/02_scene_unmixed.png)
 
-*↑ 測定の図 ―― scene_unmixed*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_colocalization_crosstalk/01_scene_channels_720.jpg -->
-<!-- 生成: examples/poc_colocalization_crosstalk.py (FULLSEYE_FIGURE_DIR) / 01_scene_channels.png /  / numbers: log / added 2026-09-07 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_colocalization_crosstalk.py
@@ -664,9 +574,6 @@ py -3.11 examples/poc_colocalization_crosstalk.py
 
 *↑ 測定の図 ―― 雑音だけでは壊れず、場だけで GM と WM が逆向きに動く。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_mri_bias_field/02_scene_720.jpg -->
-<!-- 生成: examples/poc_mri_bias_field.py (FULLSEYE_FIGURE_DIR) / 02_scene.png /  / numbers: log / added 2026-09-07 -->
-
 ```
 py -3.11 examples/poc_mri_bias_field.py
 ```
@@ -684,9 +591,6 @@ py -3.11 examples/poc_mri_bias_field.py
 [![Tb.Th の平均は 2 px/骨梁でも持つが、BV/TV と分布は壊れている。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/02_resolution_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/02_resolution_sweep.png)
 
 *↑ 測定の図 ―― Tb.Th の平均は 2 px/骨梁でも持つが、BV/TV と分布は壊れている。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_bone_trabecular_thickness/01_scene_truth_720.jpg -->
-<!-- 生成: examples/poc_bone_trabecular_thickness.py (FULLSEYE_FIGURE_DIR) / 01_scene_truth.png /  / numbers: log / added 2026-09-07 -->
 
 ```
 py -3.11 examples/poc_bone_trabecular_thickness.py
@@ -714,9 +618,6 @@ py -3.11 examples/poc_bone_trabecular_thickness.py
 
 *↑ 測定の図 ―― 単純平均だけが 5.9 % 残る。κ-σ は汚染なしと区別できないところまで戻すが、棄却率はほとんど動かない。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_astro_photometry/01_stack_scaling_720.jpg -->
-<!-- 生成: examples/poc_astro_photometry.py (FULLSEYE_FIGURE_DIR) / 01_stack_scaling.png / 中央値の実測と 1/√N の外挿がほぼ重なる。段 0 の床 0.0126 % にはまだ遠い。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_astro_photometry.py
 ```
@@ -735,9 +636,6 @@ py -3.11 examples/poc_astro_photometry.py
 
 *↑ 測定の図 ―― 暗い端で素の重心が下限を割って見えるのは「動かない推定器」だから(感度 0.038)。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_star_astrometry/03_starfield_720.jpg -->
-<!-- 生成: examples/poc_star_astrometry.py (FULLSEYE_FIGURE_DIR) / 03_starfield.png / 一様 24 / 星団 10 / 二重星 6 / 飽和 2 個と宇宙線 25 発。乱数の一様分布だけでは出ない失敗を入れてある。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_star_astrometry.py
 ```
@@ -752,12 +650,9 @@ py -3.11 examples/poc_star_astrometry.py
 
 *↑ **縁が暗い天体の輪郭はどこか ―― 周辺減光があると「50 % 法」は半径を小さく見る** ―― 周辺減光つきの太陽面をシーイング越しに撮り、縁の半径を 50 % 法・勾配最大・モデル当てはめで測った図。「偏りは減光係数に比例」の予想は外れ、u = 0.8 で -12.76 px(幾何だけの予測 -13.14 px)。しきい値 0.26 付近でぼけの影響が消える打ち消し点は、u を変えると 0.38 へ動く。*
 
-[![bias_vs_u](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/02_bias_vs_u_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/02_bias_vs_u.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/02_bias_vs_u_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/02_bias_vs_u.png)
 
-*↑ 測定の図 ―― bias_vs_u*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_solar_limb_darkening/01_scene_720.jpg -->
-<!-- 生成: examples/poc_solar_limb_darkening.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_solar_limb_darkening.py
@@ -777,9 +672,6 @@ py -3.11 examples/poc_solar_limb_darkening.py
 
 *↑ 測定の図 ―― 画素数比は天頂で 0.81、地平線側で 1.17。重みを掛けると 1 に張り付く。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_allsky_cloud_cover/03_mask_sweep_720.jpg -->
-<!-- 生成: examples/poc_allsky_cloud_cover.py (FULLSEYE_FIGURE_DIR) / 03_mask_sweep.png / 真値はマスクの内側で定義しなおしている。重みつきだけが真値に張り付く。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_allsky_cloud_cover.py
 ```
@@ -794,12 +686,9 @@ py -3.11 examples/poc_allsky_cloud_cover.py
 
 *↑ **海氷密接度 ―― 混合画素をどう数えるかで答えが変わる** ―― PSF でぼかした海氷/水の 2 バンド像から密接度を硬い分類と線形混合分解で出した図。硬い分類は -4.2 ポイント、分解は +0.02 ポイント。偏りは周長率で説明がつき(R² = 0.984)、密接度 0.49 付近でゼロを横切る ―― そこだけで検証すると合格する。*
 
-[![bias_vs_threshold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/02_bias_vs_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/02_bias_vs_threshold.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/02_bias_vs_threshold_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/02_bias_vs_threshold.png)
 
-*↑ 測定の図 ―― bias_vs_threshold*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_sea_ice_concentration/01_scene_720.jpg -->
-<!-- 生成: examples/poc_sea_ice_concentration.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_sea_ice_concentration.py
@@ -819,9 +708,6 @@ py -3.11 examples/poc_sea_ice_concentration.py
 
 *↑ 測定の図 ―― 影ゼロならゼロ点も悪くない。影は『暗さ』を手掛かりにする手法に直接刺さる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_vegetation_cover/01_mixed_pixel_response_720.jpg -->
-<!-- 生成: examples/poc_vegetation_cover.py (FULLSEYE_FIGURE_DIR) / 01_mixed_pixel_response.png / 対角線に載っていれば分数で答えられている。二値手法は0 か 1 しか返せないので、途中で対角線を離れる。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_vegetation_cover.py
 ```
@@ -840,9 +726,6 @@ py -3.11 examples/poc_vegetation_cover.py
 
 *↑ 測定の図 ―― 参照線と平行 = 2 次収束 = 離散化の誤差。式が違えばセルを細かくしても誤差は下げ止まる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dem_terrain/01_cone_720.jpg -->
-<!-- 生成: examples/poc_dem_terrain.py (FULLSEYE_FIGURE_DIR) / 01_cone.png / 方位は北 0 度・東回り。中心で不連続に見えるのは「斜面の向きが決まらない点」で、定義どおり。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_dem_terrain.py
 ```
@@ -857,12 +740,9 @@ py -3.11 examples/poc_dem_terrain.py
 
 *↑ **河川の水位を斜め写真から測る ―― 透視を無視した「行番号」は弓なりに外れる** ―― 量水標を斜めから撮った像で水面線を検出し、水位に直した図。目盛り 2 点の線形換算は最大 -6.4 cm(水位 1.00 m)弓なりに外れ、符号は水位でなく内挿(-6.6 cm)か外挿(+16.3 cm)かで決まる。4 点ホモグラフィなら 0.2 cm 以下で、残るのは透視でなく水面線の検出誤差。*
 
-[![bias_vs_level](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/02_bias_vs_level_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/02_bias_vs_level.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/02_bias_vs_level_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/02_bias_vs_level.png)
 
-*↑ 測定の図 ―― bias_vs_level*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_water_level/01_scene_720.jpg -->
-<!-- 生成: examples/poc_water_level.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_water_level.py
@@ -882,9 +762,6 @@ py -3.11 examples/poc_water_level.py
 
 *↑ 測定の図 ―― 前/入/最深部/出/後の各段階で平均した画像からトランジット外の平均を引いた [e-]。4 倍拡大*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_exoplanet_transit/01_scene_starfield_720.jpg -->
-<!-- 生成: examples/poc_exoplanet_transit.py (FULLSEYE_FIGURE_DIR) / 01_scene_starfield.png / 112x112 px の星野を 2 倍に拡大。差分はトランジット外の平均との差 [e-]。前半の差分に見える双極子はドリフト(位置ずれ)で、最深部では目標星(中 / numbers: log / added 2026-09-07 -->
-
 ```
 py -3.11 examples/poc_exoplanet_transit.py
 ```
@@ -899,12 +776,9 @@ py -3.11 examples/poc_exoplanet_transit.py
 
 *↑ **河川表面流速を斜め動画から測る(LSPIV)―― 速度の誤差と流量の誤差は別に数える** ―― 幅 8 m・最大 1.5 m/s のべき乗則の流速分布を真値に、泡トレーサを毎コマ動かして描いた川面を岸の斜めカメラ(ホモグラフィ既知)で 60 コマ撮り、空の映り込み・波紋・雑音を別々に足して、fullseye の piv_cross_correlate → warp_by_plane(正射化)→ piv_to_velocity で u(y) と流量 Q = h∫u dy を出す。ゼロ点(斜めのまま 1 尺度で換算)は近岸 +0.31 / 遠岸 -0.28 m/s と符号が逆で、見かけの川幅が 3.3 m に化けて流量 -57 %。正射化で速度 RMS 0.074 m/s・流量 -7.8 % だが、対照群でも流量 -3.0 % のうち -2.5 % は岸の台形積分だけで生じ、速度とは無関係。密度の崖は nan ではなく外れ値で来る(0.05 % で旗 44 %、アンサンブル相関は外れ窓を救わない)。窓を広げても岸の速度は「窓幅×勾配」の予想より桁で小さく(-0.008 m/s)、代わりに流量が -1.1 → -7.0 % と崖になる。動かない映り込みは細かいときだけ効き、引かれてから(速度比 0.70)張り付く(0.03)、時間中央値引きで 0.998 に戻る。dt の崖は 1/4 則ではなく対の消失で、探索上限を外しても同じ k=4 に立つ。*
 
-[![frames_oblique](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/02_frames_oblique_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/02_frames_oblique.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/02_frames_oblique_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/02_frames_oblique.png)
 
-*↑ 測定の図 ―― frames_oblique*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_river_surface_velocity/01_scene_720.jpg -->
-<!-- 生成: examples/poc_river_surface_velocity.py (FULLSEYE_FIGURE_DIR) / 01_scene.png /  / numbers: log / added 2026-09-07 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_river_surface_velocity.py
@@ -924,9 +798,6 @@ py -3.11 examples/poc_river_surface_velocity.py
 
 *↑ 測定の図 ―― 0.35 px までゼロ、そこから立ち上がる。比例則は崖を説明しない。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_change_detection_misreg/03_map_fp_shift_720.jpg -->
-<!-- 生成: examples/poc_change_detection_misreg.py (FULLSEYE_FIGURE_DIR) / 03_map_fp_shift.png / ずれ 0 では変化だけ。0.5 px から強いエッジ(屋根・道路)が帯として出る。 / numbers: log / added 2026-09-07 -->
-
 ```
 py -3.11 examples/poc_change_detection_misreg.py
 ```
@@ -945,9 +816,6 @@ py -3.11 examples/poc_change_detection_misreg.py
 
 *↑ 測定の図 ―― FN(青)の大きな塊は影と鏡面反射が重なった病斑(葉マスクごと落ちる)。FP(赤)は鏡面反射の下と病斑の縁。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_leaf_disease_area/01_scene_720.jpg -->
-<!-- 生成: examples/poc_leaf_disease_area.py (FULLSEYE_FIGURE_DIR) / 01_scene.png / 病斑と土は同じ褐色。葉を色度で切り、葉の中を a* で切る。 / numbers: log / added 2026-09-07 -->
-
 ```
 py -3.11 examples/poc_leaf_disease_area.py
 ```
@@ -965,9 +833,6 @@ py -3.11 examples/poc_leaf_disease_area.py
 [![偏心成長で境界が θ とともに斜めに走るので、正規化しないとθ 窓の中で外側の年輪がにじむ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tree_ring_dendro/02_polar_stages_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tree_ring_dendro/02_polar_stages.png)
 
 *↑ 測定の図 ―― 偏心成長で境界が θ とともに斜めに走るので、正規化しないとθ 窓の中で外側の年輪がにじむ。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tree_ring_dendro/01_scene_720.jpg -->
-<!-- 生成: examples/poc_tree_ring_dendro.py (FULLSEYE_FIGURE_DIR) / 01_scene.png / 幅系列は AR(1) の気候信号、偏心成長 ±20 %、周方向のうねり、割れ目、腐朽、木目、ぼけ、雑音を仕込んである。 / numbers: log / added 2026-09-07 -->
 
 ```
 py -3.11 examples/poc_tree_ring_dendro.py
@@ -995,9 +860,6 @@ py -3.11 examples/poc_tree_ring_dendro.py
 
 *↑ 測定の図 ―― 4 枚目は「復元した」形をしているが、ゼロ点(観測そのもの)より悪い。絵の見た目では区別できない。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_shake_deblur/01_noise_ceiling_720.jpg -->
-<!-- 生成: examples/poc_camera_shake_deblur.py (FULLSEYE_FIGURE_DIR) / 01_noise_ceiling.png / 核が完全に分かっていても、SNR 20 dB では取り分が 2 dB を切る。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_camera_shake_deblur.py
 ```
@@ -1015,9 +877,6 @@ py -3.11 examples/poc_camera_shake_deblur.py
 [![鮮鋭化だけがナイキスト(周期 8)より細かい列にも縞を作る。それは分解能ではなく**無い縞**。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/01_upscale_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/01_upscale.png)
 
 *↑ 測定の図 ―― 鮮鋭化だけがナイキスト(周期 8)より細かい列にも縞を作る。それは分解能ではなく**無い縞**。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_superresolution_limits/03_multiframe_720.jpg -->
-<!-- 生成: examples/poc_superresolution_limits.py (FULLSEYE_FIGURE_DIR) / 03_multiframe.png / 単一画像で消えている右側の細かい列が、drizzle では立ち上がる。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_superresolution_limits.py
@@ -1037,9 +896,6 @@ py -3.11 examples/poc_superresolution_limits.py
 
 *↑ 測定の図 ―― 空では過大評価(明るい側)、近景では過小評価(暗い側)。全体の平均バイアスでは打ち消し合って見えない。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dehazing/01_scene_720.jpg -->
-<!-- 生成: examples/poc_dehazing.py (FULLSEYE_FIGURE_DIR) / 01_scene.png / 等化はいちばん派手に見えるが PSNR も SSIM も「何もしない」より悪い。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_dehazing.py
 ```
@@ -1057,9 +913,6 @@ py -3.11 examples/poc_dehazing.py
 [![左下の無テクスチャの四角だけ、誤差が掃引全域にばらけた乱数になっている(段差帯のハローも見える)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/02_depth_map_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/02_depth_map.png)
 
 *↑ 測定の図 ―― 左下の無テクスチャの四角だけ、誤差が掃引全域にばらけた乱数になっている(段差帯のハローも見える)。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_focus_stacking/01_stack_720.jpg -->
-<!-- 生成: examples/poc_focus_stacking.py (FULLSEYE_FIGURE_DIR) / 01_stack.png / どの 1 枚も一部しか合っていないが、融合は全面が合う。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_focus_stacking.py
@@ -1079,9 +932,6 @@ py -3.11 examples/poc_focus_stacking.py
 
 *↑ 測定の図 ―― RMSE で見ると 12 本は空白画像 0.2420 より悪い。相関とストリークは別のことを言う。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_ct_fidelity/01_recon_sweep_720.jpg -->
-<!-- 生成: examples/poc_ct_fidelity.py (FULLSEYE_FIGURE_DIR) / 01_recon_sweep.png / 12 本の FBP は RMSE では空白画像より悪いが、相関 0.61 で構造は残っている。零点 B はぼけるだけでストリークが出ない。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_ct_fidelity.py
 ```
@@ -1100,9 +950,6 @@ py -3.11 examples/poc_ct_fidelity.py
 
 *↑ 測定の図 ―― linear は 1.08/1.15 を 1.0 へ、1.85 を 2.0 側へ引く。cubic は恒等線に乗る。生成側の補間はゼロ(Fourier シフト)。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_lightfield_depth/01_scene_and_depth_720.jpg -->
-<!-- 生成: examples/poc_lightfield_depth.py (FULLSEYE_FIGURE_DIR) / 01_scene_and_depth.png / 差が立つのは深度不連続の縁だけ(5-b で距離ごとに数える)。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_lightfield_depth.py
 ```
@@ -1120,9 +967,6 @@ py -3.11 examples/poc_lightfield_depth.py
 [![背景が無ければ素の重心で足りる。背景が入ると 2 桁崩れ、docstring が勧める背景減算でも戻らない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_methods_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/02_methods.png)
 
 *↑ 測定の図 ―― 背景が無ければ素の重心で足りる。背景が入ると 2 桁崩れ、docstring が勧める背景減算でも戻らない。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dtof_ranging/01_histograms_720.jpg -->
-<!-- 生成: examples/poc_dtof_ranging.py (FULLSEYE_FIGURE_DIR) / 01_histograms.png / 背景は 256 ビン全体に一様に乗るので、総量では信号の山に勝つ。窓全体の重心が窓の中心へ引かれるのがこれ。ゲートは山の周り ±7 ビンだけを残す。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_dtof_ranging.py
@@ -1150,9 +994,6 @@ py -3.11 examples/poc_dtof_ranging.py
 
 *↑ 測定の図 ―― 縦が時間(下向き、4 倍に拡大)、横が列。2 本の管が合わさる高さがそのまま合体時刻。色は 3-D ラベル。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_timelapse_growth/01_frames_720.jpg -->
-<!-- 生成: examples/poc_timelapse_growth.py (FULLSEYE_FIGURE_DIR) / 01_frames.png / 拡散律速 r = k sqrt(t + 4)。左上の 2 個は t≈8 で、左下の 2 個は t≈30 で合体する。右の斜めに並んだ 2 個は最後まで接しない( / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_timelapse_growth.py
 ```
@@ -1167,12 +1008,9 @@ py -3.11 examples/poc_timelapse_growth.py
 
 *↑ **(x, y, t) で数える ―― 通過台数とオクルージョン、そして L/V という 1 つの定数** ―― 車を流した合成動画で、フレームごとの計数・仮想ループ・(t, x) スリット画像の連結成分を並べた図。フレームごとの最大値は通過 10 台に対し 7 ―― 別の量を測っている。破綻の条件は 3 つとも車長 ÷ 速度 = L/V(9.0 フレーム)で書け、フレーム間隔 16 では帯が千切れて 10 → 49 台。*
 
-[![scene](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/02_scene.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/02_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/02_scene.png)
 
-*↑ 測定の図 ―― scene*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_traffic_counting/01_per_frame_720.jpg -->
-<!-- 生成: examples/poc_traffic_counting.py (FULLSEYE_FIGURE_DIR) / 01_per_frame.png / 上の水平線が答えるべき数(通過 10 台)。下の 2 本は「いま写っている数」で、しかも検出側は融合で下振れする。 / numbers: log / added 2026-09-06 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_traffic_counting.py
@@ -1192,9 +1030,6 @@ py -3.11 examples/poc_traffic_counting.py
 
 *↑ 測定の図 ―― 変曲点 θ=0.6065 では線形が 3.8 倍勝ち、θ=0.2 では放物線が 3.6 倍勝つ。交点は θ≈0.35 と θ≈0.75。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_xyt_event_surface/01_dt_sweep_720.jpg -->
-<!-- 生成: examples/poc_xyt_event_surface.py (FULLSEYE_FIGURE_DIR) / 01_dt_sweep.png / 両対数。傾きがゼロ点 1.0 / 線形 2.3 / 放物線 2.7。放物線は傾きが急でも切片が悪く、Δt≧0.75 ms では線形に負ける。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_xyt_event_surface.py
 ```
@@ -1212,9 +1047,6 @@ py -3.11 examples/poc_xyt_event_surface.py
 [![縦軸は常用対数(0 が真値)。欠測は遠い他人を掴んで D を上げ、曖昧は近い相手を選んで D を下げる。上限距離のゲート 1 行で上向きの暴走が 1/2.6 に。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/02_density_bias_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/02_density_bias.png)
 
 *↑ 測定の図 ―― 縦軸は常用対数(0 が真値)。欠測は遠い他人を掴んで D を上げ、曖昧は近い相手を選んで D を下げる。上限距離のゲート 1 行で上向きの暴走が 1/2.6 に。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_particle_tracking/01_spacetime_720.jpg -->
-<!-- 生成: examples/poc_particle_tracking.py (FULLSEYE_FIGURE_DIR) / 01_spacetime.png / 時間最大投影では粒子が尾を引く(= 軌跡)。kymograph は行 90-101 の帯を縦(時間)へ積んだもので、筋の傾きがそのまま列方向の速度。縦は 5 倍 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_particle_tracking.py
@@ -1234,9 +1066,6 @@ py -3.11 examples/poc_particle_tracking.py
 
 *↑ 測定の図 ―― 同じ遮蔽率でも、そっくりな別物体が視野に居るだけで崖がはるかに手前へ来る。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_template_tracking/01_ncc_maps_720.jpg -->
-<!-- 生成: examples/poc_template_tracking.py (FULLSEYE_FIGURE_DIR) / 01_ncc_maps.png / 2 位の相関は 一意 0.556 / 繰返 1.000 / 直線縁 1.000 / 片側 0.998。繰返 は同じ高さの峰が周期的に並び、直線縁 は縁に沿った尾 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_template_tracking.py
 ```
@@ -1255,9 +1084,6 @@ py -3.11 examples/poc_template_tracking.py
 
 *↑ 測定の図 ―― 剛体を仮定する位相相関が返す 0.150 px は 0.30 と 0.00 の面積平均で、どの列の真値とも違う。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_motion_magnification/01_slit_scan_720.jpg -->
-<!-- 生成: examples/poc_motion_magnification.py (FULLSEYE_FIGURE_DIR) / 01_slit_scan.png / 拡大が買っているのは人間の目。縞のうねりが 3.7 Hz の振動そのもの。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_motion_magnification.py
 ```
@@ -1272,12 +1098,9 @@ py -3.11 examples/poc_motion_magnification.py
 
 *↑ **動画から固有振動数・減衰比・モード形状を同定する ―― f は最後まで生き残り、ζ が先に嘘をつく** ―― 片持ち梁(Euler–Bernoulli 閉形式)の 3 モード自由減衰を、雑音・照明ちらつき 100 Hz・手ぶれ・ローリングシャッター入りの動画に合成し、位相法(phase_displacement)と PIV(piv_cross_correlate)で f_n / ζ_n / MAC を測る。f_n は 3 モードとも 0.06 Hz 以内で当たるが、同じ時系列から出した ζ_1 は半値幅 0.0778 / 包絡線 0.0188 / 当てはめ 0.0181(真値 0.02)と方法で 3 通り。振幅を 0.02→2 px で掃引すると壊れる順番は f → ζ → MAC_2 → MAC_3 で、位相法は 0.02 px で f_1 誤差 +0.030 Hz のまま ζ_1 が真値の 0.23 倍になる。fps 48.5 では照明の折り返しがちょうど 3.00 Hz = f_1 に乗り、輝度のゼロ点は ζ を出せず位相法は 0.0191 で生き残る。*
 
-[![frames](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/02_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/02_frames.png)
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/02_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/02_frames.png)
 
-*↑ 測定の図 ―― frames*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_beam_modal_video/01_scene_720.jpg -->
-<!-- 生成: examples/poc_beam_modal_video.py (FULLSEYE_FIGURE_DIR) / 01_scene.png / 左上: 測る動画の 1 枚目(雑音・ちらつき・手ぶれ入り)。右上: 同じ梁を見える振幅で。下段: 位相法の変位場と重み(模様の無い所は票を持たない)。 / numbers: log / added 2026-09-07 -->
+*↑ 測定の図*
 
 ```
 py -3.11 examples/poc_beam_modal_video.py
@@ -1305,9 +1128,6 @@ py -3.11 examples/poc_beam_modal_video.py
 
 *↑ 測定の図 ―― RMS は 1.00 倍しか動かないのに fx 誤差は 281 倍動く。配置の良し悪しを映すのは sigma_fx のほう。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_camera_calibration/03_frame_fill_720.jpg -->
-<!-- 生成: examples/poc_camera_calibration.py (FULLSEYE_FIGURE_DIR) / 03_frame_fill.png / RMS はどの行も 0.067 px(= 0.05·√2)で動かない。歪みは半径の 2 乗以上でしか効かず、中央にその信号は無い。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_camera_calibration.py
 ```
@@ -1326,9 +1146,6 @@ py -3.11 examples/poc_camera_calibration.py
 
 *↑ 測定の図 ―― 系 2(等分)は閉ループ誤差を下げるのに姿勢はかえって悪化する。新しい観測を足さずに効くのは系 3。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_panorama_drift/01_seams_720.jpg -->
-<!-- 生成: examples/poc_panorama_drift.py (FULLSEYE_FIGURE_DIR) / 01_seams.png / 鎖はどの継ぎ目も綺麗なのに右端だけ跳ねる。解き方を変えると跳ねが消え、全体も下がる。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_panorama_drift.py
 ```
@@ -1346,9 +1163,6 @@ py -3.11 examples/poc_panorama_drift.py
 [![非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/02_pca_quadrant.png)
 
 *↑ 測定の図 ―― 非対称性が消えると 4 候補が形として区別できず、選択が崩れる(選ばれた解が第 1 候補から離れる)。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_registration_basin/01_basin_720.jpg -->
-<!-- 生成: examples/poc_registration_basin.py (FULLSEYE_FIGURE_DIR) / 01_basin.png / 100 % から 0 % へ落ちる位置が収束域の縁。並進ずれを足すと縁が左へ動く(15 試行/点)。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_registration_basin.py
@@ -1376,9 +1190,6 @@ py -3.11 examples/poc_registration_basin.py
 
 *↑ 測定の図 ―― 灰色世界はゼロ点(何もしない)の線を 0.1〜0.2 の間で上抜けする = そこから先は回すだけ損。白パッチ法には崖が無い。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_white_balance/01_casts_720.jpg -->
-<!-- 生成: examples/poc_white_balance.py (FULLSEYE_FIGURE_DIR) / 01_casts.png / いちばん右下(真の光源で割る)でも基準光源とは一致しない —— 11 節の対角モデルの床。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_white_balance.py
 ```
@@ -1397,9 +1208,6 @@ py -3.11 examples/poc_white_balance.py
 
 *↑ 測定の図 ―― 近赤外の差分は剥落部(楕円)で消え、近赤外 1 枚は面ごとに水準が違う。塗り分けは 1–99 分位でクリップした表示のみ。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pigment_unmixing/01_per_field_auc_720.jpg -->
-<!-- 生成: examples/poc_pigment_unmixing.py (FULLSEYE_FIGURE_DIR) / 01_per_field_auc.png / 平均すると全部消える。近赤外の差分は剥落部で盲目、近赤外 1 枚は面ごとには完璧でも全体では 1 本引けない。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_pigment_unmixing.py
 ```
@@ -1417,9 +1225,6 @@ py -3.11 examples/poc_pigment_unmixing.py
 [![実測と閉形式が重なる。70 度の絶対誤差は 20 度より悪いのに、ゼロ点比では 70 度が最良 —— 最適角は評価軸で割れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/02_angle_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/02_angle_error.png)
 
 *↑ 測定の図 ―― 実測と閉形式が重なる。70 度の絶対誤差は 20 度より悪いのに、ゼロ点比では 70 度が最良 —— 最適角は評価軸で割れる。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polarization_specular/01_fresnel_720.jpg -->
-<!-- 生成: examples/poc_polarization_specular.py (FULLSEYE_FIGURE_DIR) / 01_fresnel.png / R_p がブリュースター角で 0 を横切る。浅すぎても深すぎても偏光度は落ちる —— 使える窓は限られる。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_polarization_specular.py
@@ -1447,9 +1252,6 @@ py -3.11 examples/poc_polarization_specular.py
 
 *↑ 測定の図 ―― 凡例の数字は AUC。乱数が対角線に乗ることで測り方に偏りが無いと言える。ゴーストA は乱数と重なる。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_forensics_roc/01_score_maps_720.jpg -->
-<!-- 生成: examples/poc_forensics_roc.py (FULLSEYE_FIGURE_DIR) / 01_score_maps.png / ゴーストA は全画素が同じ値 = 何も言っていない(AUC ちょうど 0.500)。ELA と ゴーストV は貼付部が立つ。 / numbers: log / added 2026-09-06 -->
-
 ```
 py -3.11 examples/poc_forensics_roc.py
 ```
@@ -1467,9 +1269,6 @@ py -3.11 examples/poc_forensics_roc.py
 [![平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。窓 9 が fs.op で届く上限、窓 61 は自前。図の階調は真値で 217 段。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/02_shadow_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/02_shadow_tradeoff.png)
 
 *↑ 測定の図 ―― 平坦・薄字・誤検出なしを同時に満たす行は 1 つも無い。窓 9 が fs.op で届く上限、窓 61 は自前。図の階調は真値で 217 段。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_document_scan/01_rectify_zero_points_720.jpg -->
-<!-- 生成: examples/poc_document_scan.py (FULLSEYE_FIGURE_DIR) / 01_rectify_zero_points.png / 題に添えた数字は格子 RMS。アフィン(同名 op の取り違え)は例外を出さず、台形が残ったままそれらしい絵を返す。 / numbers: log / added 2026-09-06 -->
 
 ```
 py -3.11 examples/poc_document_scan.py
@@ -1489,9 +1288,6 @@ py -3.11 examples/poc_document_scan.py
 
 *↑ 測定の図 ―― 別カメラのピークは毎回別の位置に立つ((0,0) は 0/30)。*
 
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_prnu_camera_fingerprint/01_estimators_720.jpg -->
-<!-- 生成: examples/poc_prnu_camera_fingerprint.py (FULLSEYE_FIGURE_DIR) / 01_estimators.png / 場面が毎枚違えば生の平均でも指紋は出る。差は PCE の桁に出る。 / numbers: log / added 2026-09-07 -->
-
 ```
 py -3.11 examples/poc_prnu_camera_fingerprint.py
 ```
@@ -1509,9 +1305,6 @@ py -3.11 examples/poc_prnu_camera_fingerprint.py
 [![Frangi は分岐点で応答が落ち、斜光でセルが崩れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/01_ridge_ops_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/01_ridge_ops.png)
 
 *↑ 測定の図 ―― Frangi は分岐点で応答が落ち、斜光でセルが崩れる。*
-
-<!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_fresco_craquelure/07_scene_720.jpg -->
-<!-- 生成: examples/poc_fresco_craquelure.py (FULLSEYE_FIGURE_DIR) / 07_scene.png / 絵の具の色斑 + ニスの光沢むら + ぼけ + 雑音。斜光は溝の片側を影にする。 / numbers: log / added 2026-09-07 -->
 
 ```
 py -3.11 examples/poc_fresco_craquelure.py

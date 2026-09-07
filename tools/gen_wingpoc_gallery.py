@@ -239,14 +239,15 @@ def _exhibit_md(n: int, ex: dict, lang: str, pick: dict, thumb: str, byid: dict,
     if second is not None and thumb2 is not None:
         full2 = RAW + ex["id"] + "/" + second["file"]
         th2 = RAW + ex["id"] + "/" + thumb2
-        sub = second.get("caption") or second["name"]
-        lines += [
-            "[![%s](%s)](%s)" % (sub.replace("]", ")")[:120], th2, full2),
-            "",
-            ("*↑ 測定の図 ―― %s*" % sub if lang == "ja"
-             else "*↑ The measurement ―― %s (figure labels are in Japanese; the numbers are the same)*" % sub),
-            "",
-        ]
+        # 図に説明が付いていなければ機械名(`auc_by_type` など)は出さない
+        sub = (second.get("caption") or "").strip()
+        alt = (sub[:120] if sub else ("測定の図" if lang == "ja" else "measurement")).replace("]", ")")
+        if lang == "ja":
+            cap_line = ("*↑ 測定の図 ―― %s*" % sub) if sub else "*↑ 測定の図*"
+        else:
+            tail = "(figure labels are in Japanese; the numbers are the same)"
+            cap_line = ("*↑ The measurement ―― %s %s*" % (sub, tail)) if sub else ("*↑ The measurement %s*" % tail)
+        lines += ["[![%s](%s)](%s)" % (alt, th2, full2), "", cap_line, ""]
     # 生成の内幕(サムネ URL・FULLSEYE_FIGURE_DIR・数字の出所)は記事に出さない
     # (ユーザー指示 2026-09-07「読者の ROI と関係ない独自ルールは書かない」)。
     lines += [
