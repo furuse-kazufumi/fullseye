@@ -2,7 +2,7 @@
  {
   "file": "01_scene_plan_section.png",
   "name": "scene_plan_section",
-  "caption": "柱の後ろに扇形の影(欠測)が伸びる。断面の左右の白い帯は開口。単位は m。",
+  "caption": "平面図で壁の線が切れている所が柱の影(欠測)。断面の切れ目は開口。単位は m。",
   "shape": [
    495,
    1840,
@@ -66,7 +66,7 @@
  {
   "file": "07_ceiling_false_tilt.png",
   "name": "ceiling_false_tilt",
-  "caption": "色は ±5 mm。天井は設計どおりに建っている。傾きは合わせが配ったもの。",
+  "caption": "色は ±6 mm(左端が目盛り)。天井は設計どおりに建っている。傾きは合わせが配ったもの。",
   "shape": [
    249,
    922,

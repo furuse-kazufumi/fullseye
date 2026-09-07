@@ -925,7 +925,7 @@ def section_maps(alignres: dict, zero: dict, seed: int = SEED) -> dict:
         ccaps.append("天井 / %s(勾配 %+.2f mrad)" % (name, 1000 * m["ceil_sx"]))
     figs.save_grid("ceiling_false_tilt", cpanels, ccaps, ncols=3, signed=True,
                    title="無傷の天井の偏差 [mm] —— 合わせ方だけで東西に傾く(真値 0.00 mrad)",
-                   caption="色は ±5 mm。天井は設計どおりに建っている。"
+                   caption="色は ±6 mm(左端が目盛り)。天井は設計どおりに建っている。"
                            "傾きは合わせが配ったもの。")
 
     surf0 = make_surface(0.0)
