@@ -371,7 +371,7 @@ def section_peak_locking() -> dict:
 # --------------------------------------------------------------------------- #
 def section_controls() -> dict:
     print("\n" + "=" * 78)
-    print("3) 対照群 —— 伸びゼロのまま照明とぼけだけ変える(偽の伸びが出るか)")
+    print("4) 対照群 —— 伸びゼロのまま照明とぼけだけ変える(偽の伸びが出るか)")
     print("=" * 78)
     e_true = true_mean_strain()
     base = render(False)
@@ -379,6 +379,7 @@ def section_controls() -> dict:
              ("オフセット +0.10", dict(offset=0.10)),
              ("傾斜 +-30 %", dict(ramp=0.30)),
              ("ぼけ 1.6->2.4 px", dict(sig_psf=2.4)),
+             ("ぼけ 1.6->5.0 px", dict(sig_psf=5.0)),
              ("ぼけ 1.6->6.0 px", dict(sig_psf=6.0)))
     print("   条件               提案(勾配ピーク)      Z2(固定しきい値)")
     rows, out = [], {}
