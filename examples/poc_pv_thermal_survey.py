@@ -1109,15 +1109,20 @@ def section_netd() -> dict:
     print("     ★これは「雑音を減らせば見えるようになる」という直感が"
           "**この場面では成り立たない**ということ。カメラを買い替えても直らない。")
 
+    top = max(max(nn), max(a / 100.0 for a in ar))
     figs.save_plot("netd_sweep",
-                   [("偽の故障の数", xs, fa),
-                    ("ホットスポット再現率 x10", xs, [10 * v for v in rc]),
+                   [("非故障の塊の個数", xs, nn),
+                    ("塊の総面積 / 100 [px]", xs, [a / 100.0 for a in ar]),
+                    ("偽の故障の個数", xs, fa),
+                    ("実在のカメラの上限 50 mK", [50, 50], [0, top]),
                     ("予測の崖 %.0f mK" % (1e3 * nd_crit),
-                     [1e3 * nd_crit, 1e3 * nd_crit], [0, max(max(fa), 10)])],
-                   xlabel="NETD [mK]", ylabel="個数 / 再現率 x10",
-                   title="雑音の崖は実在のカメラの遥か外にある",
+                     [1e3 * nd_crit, 1e3 * nd_crit], [0, top])],
+                   xlabel="NETD [mK]", ylabel="個数 / 面積÷100 [px]",
+                   title="個数は雑音で増えるが、面積は変わらない",
                    caption="風速 %.1f m/s、モジュールごとの中央値を基準。"
-                           "実在の非冷却カメラは 20〜50 mK。" % V_REF)
+                           "個数が増えるのは同じ帯がちぎれているだけで、"
+                           "偽の故障は %.0f mK まで 0 個のまま。"
+                           % (V_REF, xs[-1]))
     return {"netd": xs, "false": fa, "recall": rc, "crit": 1e3 * nd_crit,
             "first": first, "n_nonfault": nn, "area": ar}
 
