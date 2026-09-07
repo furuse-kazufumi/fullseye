@@ -967,11 +967,12 @@ def section_noise_streak(cells, sinos) -> dict:
                  100.0 * truth["void_volume"] / m["roi_volume"], m["pitch_sd"]))
 
     print("\n  ビームハードニングを振る(硬さ比 1.0 = 単色 = むら無し):")
-    bhs, bh_terr, bh_verr, bh_cal = [], [], [], []
+    bhs, bh_terr, bh_verr, bh_cal, bh_contrast = [], [], [], [], []
     for bh in (1.0, 0.85, 0.70, 0.55, 0.40):
         rec = acquire(sinos["gas"], bh=bh)
         m = internal_metrics(rec)
         o = outer_metrics(rec)
+        bh_contrast.append(m["contrast"])
         bhs.append(bh)
         bh_terr.append(100.0 * (m["t_mean"] - truth["t_mean"]) / truth["t_mean"])
         bh_verr.append(100.0 * (m["void_volume"] - truth["void_volume"])
