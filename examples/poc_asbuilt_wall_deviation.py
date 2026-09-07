@@ -333,11 +333,15 @@ def section_aabb_n() -> dict:
         meas.append(1e3 * (hi[0] - lo[0] - RW))
         pred.append(1e3 * (pr["width"] - RW))
         print("   %8d        %+10.1f            %+10.1f" % (n, meas[-1], pred[-1]))
+    g_m, g_p = meas[-1] - meas[0], pred[-1] - pred[0]
     print("\n  ★点を 256 倍にすると AABB は %+.1f -> %+.1f mm と %.1f mm 広がる。"
-          % (meas[0], meas[-1], meas[-1] - meas[0]))
+          % (meas[0], meas[-1], g_m))
     print("     最大値統計は N で対数的にしか収束しないので、**測点を増やす**"
-          "という\n     普通の対策が逆に効く。予測との差は最大 %.1f mm。"
-          % max(abs(a - b) for a, b in zip(meas, pred)))
+          "という\n     普通の対策が逆に効く。")
+    print("     予測は**上界**なので絶対値は常に %.1f〜%.1f mm 大きく出るが、"
+          "**伸び方**は\n     当たっている(予測 %.1f mm / 実測 %.1f mm、差 %.1f mm)。"
+          % (min(p - m for m, p in zip(meas, pred)),
+             max(p - m for m, p in zip(meas, pred)), g_p, g_m, abs(g_p - g_m)))
 
     figs.save_plot("aabb_grows_with_points",
                    [("AABB の誤差(実測)", np.log10(ns), meas),
