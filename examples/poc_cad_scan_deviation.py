@@ -560,11 +560,15 @@ def section_align(ref: CadRef) -> dict:
     init = None
     for name, meth in (("なし(ゼロ点)", "none"), ("重心だけ", "centroid"),
                        ("FPFH 粗合わせ", "fpfh"), ("+ 点-点 ICP", "p2point"),
-                       ("+ 点-面 ICP", "p2plane"), ("+ GICP", "gicp")):
+                       ("+ 点-面 ICP", "p2plane"), ("+ GICP", "gicp"),
+                       ("真の姿勢を与える", "oracle")):
         if meth in ("p2point", "p2plane", "gicp") and init is None:
             raise RuntimeError("粗合わせが先")
-        R, t = align(sc["pts"], ref, method=meth,
-                     init=init if meth in ("p2point", "p2plane", "gicp") else None)
+        if meth == "oracle":
+            R, t = sc["R_true"], sc["t_true"]
+        else:
+            R, t = align(sc["pts"], ref, method=meth,
+                         init=init if meth in ("p2point", "p2plane", "gicp") else None)
         if meth == "fpfh":
             init = (R, t)
         q = sc["pts"] @ R.T + t
