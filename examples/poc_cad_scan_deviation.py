@@ -1097,6 +1097,7 @@ def section_basin(ref: CadRef) -> dict:
                     1000 * float(d.mean())]
         angs.append(a)
         errs.append(row[0])
+        mm1.append(row[1])
         resid.append(row[2])
         errs2.append(row[3])
         mm2.append(row[4])
