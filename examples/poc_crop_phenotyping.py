@@ -497,7 +497,7 @@ def section_cliff(k_true):
     print("     LAI とともに指数で鈍る。密度 rho 点/m^2 の標本雑音")
     print("     sigma_C = sqrt(C(1-C)/n) が LAI 差 0.5 の信号を飲む LAI が崖。")
 
-    n_leaves = list(range(1, 25))
+    n_leaves = list(range(1, NESTED_MAX + 1))
     lai_t, cover, vis, layers = [], [], [], []
     for n_leaf in n_leaves:
         can = make_canopy(n_leaf=n_leaf)
