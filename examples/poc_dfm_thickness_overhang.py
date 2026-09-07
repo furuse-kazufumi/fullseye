@@ -317,19 +317,26 @@ def section_scene():
 
     grad = np.stack(np.gradient(sdf, H_MESH), axis=0)     # 解析形状の法線(の格子近似)
     figs.save_grid("scene",
-                   [_shaded(occ, grad, 1, False), _shaded(occ, grad, 0, False),
-                    _shaded(occ, grad, 2, True)],
-                   ["-Y から(薄壁 2 枚とスロットが見える)",
-                    "-X から(庇と三角補強)",
-                    "下から(オーバーハングになる面)"],
-                   title="DFM を測る部品(板 60 x 40 x 8 mm)", ncols=3)
+                   [_up(_shaded(occ, grad, 1, False)), _up(_shaded(occ, grad, 0, False)),
+                    _up(_shaded(occ, grad, 2, True))],
+                   ["-Y から", "-X から", "下から"],
+                   title="DFM を測る部品(板 60 x 40 x 8 mm)", ncols=3,
+                   caption="左 = 薄壁 2 枚とスロット、中 = 庇と三角補強(40/45/50 度)、"
+                           "右 = 下から見た面(ここが垂れる)。")
     ix = int(round((30.0 - BOUNDS[0][0]) / H_MESH))
+    kz = int(round((14.0 - BOUNDS[2][0]) / H_MESH))
     figs.save_grid("sections",
-                   [occ[ix].T[::-1].astype(float), occ[:, :, int(round((14.0 + 1) / H_MESH))].T],
-                   ["x=30 mm の Y-Z 断面(左が薄壁 2 枚、右が三角補強)",
-                    "z=14 mm の X-Y 断面(リブと薄壁)"],
-                   title="断面(白 = 材料)", ncols=1)
+                   [_up(occ[ix].T[::-1].astype(float)), _up(occ[:, :, kz].T)],
+                   ["x=30 の Y-Z 断面", "z=14 の X-Y 断面"],
+                   title="断面(白 = 材料、単位 mm)", ncols=1,
+                   caption="上: 左端の 2 本が薄壁(1.500 mm)とそのあいだのスロット"
+                           "(1.500 mm)、右の三角が補強。下: リブと薄壁の footprint。")
     return {"g": g, "res": res, "sdf": sdf, "occ": occ, "a_true": a_true, "a_mesh": a_mesh}
+
+
+def _up(img, k=3):
+    """図を等倍整数倍で拡大(縮小・減色はしない)。細い壁を潰さないため。"""
+    return np.repeat(np.repeat(np.asarray(img), k, axis=0), k, axis=1)
 
 
 def _shaded(occ, grad, axis, reverse):
