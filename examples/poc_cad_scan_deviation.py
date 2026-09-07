@@ -574,11 +574,11 @@ def section_align(ref: CadRef) -> dict:
         if meth == "fpfh":
             init = (R, t)
         q = sc["pts"] @ R.T + t
-        dd, ss, _ = ref.deviate(q)
+        dd, ss, _, _ = ref.deviate(q)
         e_rot = rot_err_deg(R, sc["R_true"])
         e_mm = pose_shift_mm(R, t, sc["R_true"], sc["t_true"], ref.pts)
-        err = ss - tru
-        area = out_of_tol_area(ss, sc["w"])
+        err = (ss - tru)[ok]
+        area = out_of_tol_area(ss[ok], sc["w"])
         rows.append([name, "%.4f" % e_rot, "%.4f" % e_mm,
                      "%.1f" % (1000 * np.sqrt(np.mean(err ** 2))),
                      "%.1f" % (1000 * np.abs(err).max()),
