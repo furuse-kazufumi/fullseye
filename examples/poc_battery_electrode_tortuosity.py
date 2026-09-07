@@ -324,7 +324,7 @@ def section_porosity_sweep() -> dict:
                     ("測地 τ_geo", eps_l, tg_l),
                     ("測地 τ_geo^2", eps_l, [t * t for t in tg_l])],
                    xlabel="空隙率 ε [-]", ylabel="屈曲度 τ [-]",
-                   title="同じ構造から出る 3 つの「屈曲度」", ylim=(0.9, 6.0),
+                   title="同じ構造から出る 3 つの「屈曲度」",
                    caption="ε が下がるほど経験則と真値が開く。測地の 2 乗は"
                            "経験則に寄り添うが、真値には寄らない。")
     figs.save_plot("bruggeman_error",
