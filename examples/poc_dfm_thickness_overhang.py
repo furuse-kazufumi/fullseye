@@ -652,7 +652,7 @@ def section_overhang(scene):
                              "%.2f" % step, "%.2f" % (a_hi / a_lo)]],
                     title="同じ形・同じしきい値でも、面の出し方で NG 面積が変わる")
 
-    _overhang_map(occ, sdf)
+    _overhang_map(occ, sdf, scene["g"])
     return {"a_lo": a_lo, "a_hi": a_hi, "step": step, "steps": steps, "los": los,
             "rows": rows, "a_hole": a_hole, "spread": max(lo_vals) / min(lo_vals)}
 
@@ -679,11 +679,11 @@ def _overhang_map(occ, sdf, g):
     figs.save_grid("overhang_map",
                    [_up(tilt.T[::-1]), _up(need.T[::-1].astype(float))],
                    ["傾き [度]", "要サポート"],
-                   title="下から見た部品(オーバーハングの地図)", ncols=2,
+                   title="板の上だけを下から見た地図(オーバーハング)", ncols=2,
                    caption="左 = 水平からの傾き(暗い = 0 度 = 最悪、明るい = 90 度 = 垂直)。"
-                           "右 = 45 度未満で下を向いている面(白)。"
-                           "大きな白い帯が「ちょうど 45 度」の斜面で、"
-                           "しきい値をまたぐと丸ごと消える。")
+                           "右 = 45 度未満で下を向いている面(白)。中央の広い領域が"
+                           "「ちょうど 45 度」の斜面で、しきい値を 0.2 度またぐと"
+                           "丸ごと出入りする。板の中を通る水平穴の天井は写らない。")
 
 
 def section_orientation():
