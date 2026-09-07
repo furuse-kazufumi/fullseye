@@ -319,10 +319,11 @@ def section_scene():
     figs.save_grid("scene",
                    [_up(_shaded(occ, grad, 1, False)), _up(_shaded(occ, grad, 0, False)),
                     _up(_shaded(occ, grad, 2, True))],
-                   ["-Y から", "-X から", "下から"],
+                   ["-Y から", "-X から", "上から"],
                    title="DFM を測る部品(板 60 x 40 x 8 mm)", ncols=3,
-                   caption="左 = 薄壁 2 枚とスロット、中 = 庇と三角補強(40/45/50 度)、"
-                           "右 = 下から見た面(ここが垂れる)。")
+                   caption="左 = 薄壁 2 枚とスロット(と板の中を通る水平穴)、"
+                           "中 = 庇と三角補強(斜面 40/45/50 度)、"
+                           "右 = 上から見た footprint(リブ・薄壁・垂直穴)。")
     ix = int(round((30.0 - BOUNDS[0][0]) / H_MESH))
     kz = int(round((14.0 - BOUNDS[2][0]) / H_MESH))
     figs.save_grid("sections",
