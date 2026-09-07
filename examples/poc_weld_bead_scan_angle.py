@@ -544,24 +544,27 @@ def section2_estimators(p: dict) -> dict:
     print("2) ★ゼロ点(最大値の画素)と 3 つの対比 —— 光条の幅を振る")
     print("=" * 78)
     print("  θ = %.0f 度・雑音 %.1f %%・遮蔽なし。高さの RMS [mm]。" % (THETA_REF, 100 * NOISE))
-    print("  ★予想: 「太い光条ほど光量が増えて良い」。理論はその逆 ——")
-    print("     重心の分散は Σ(r-c)²/(ΣI)² ∝ σ³/σ² = σ なので**誤差は √σ で増える**。")
+    print("  ★予想: 「重心」は 1 つの推定量ではなく、**窓の決め方まで含めて**")
+    print("     初めて決まる。重心の分散 = σ_n²·Σ(r-c)²/(ΣI)²、ΣI ∝ A·σ なので")
+    print("     ・固定窓 : Σ(r-c)² が一定 -> 誤差 ∝ **1/σ**(太いほど良い)")
+    print("     ・追従窓 : Σ(r-c)² ∝ σ³   -> 誤差 ∝ **√σ**(細いほど良い)")
+    print("     同じ「重心」で**傾きの符号が逆**になるはず。")
     print()
     pe = bead_params(y_grid(4))
     h_true = profile_h(X, pe)
     widths = [0.5, 0.7, 1.0, 1.4, 2.0, 2.8]
     print("  %8s |" % "光条 1σ", end="")
     for name, _ in ESTIMATORS:
-        print(" %16s" % name, end="")
+        print(" %15s" % name, end="")
     print()
-    print("  " + "-" * (10 + 17 * len(ESTIMATORS)))
+    print("  " + "-" * (10 + 16 * len(ESTIMATORS)))
     table = {name: [] for name, _ in ESTIMATORS}
     for w in widths:
         img, _ = render(pe, THETA_REF, sigma=w, occlusion=False, seed=3)
         print("  %8.1f |" % w, end="")
         for name, fn in ESTIMATORS:
             table[name].append(_rms(to_height(fn(img), THETA_REF) - h_true))
-            print(" %16.4f" % table[name][-1], end="")
+            print(" %15.4f" % table[name][-1], end="")
         print()
     print()
     i14 = widths.index(1.4)
@@ -569,21 +572,25 @@ def section2_estimators(p: dict) -> dict:
     print("  1σ = %.1f px でのゼロ点比: " % widths[i14]
           + " / ".join("%s %.1f 倍" % (n, base / table[n][i14]) for n, _ in ESTIMATORS[1:]))
     i07, i28 = widths.index(0.7), widths.index(2.8)
-    got = table["重心"][i28] / table["重心"][i07]
-    print("  ★予想は外れ、理論が当たった: 重心は 1σ %.1f -> %.1f px で "
-          "%.4f -> %.4f mm(%.2f 倍)、" % (widths[i07], widths[i28],
-                                          table["重心"][i07], table["重心"][i28], got))
-    print("     √σ の予測は %.2f 倍。**太い光条は損**。" % np.sqrt(widths[i28] / widths[i07]))
+    ratio = np.log(widths[i28] / widths[i07])
+    print()
+    print("  1σ %.1f -> %.1f px での比と、実測から出した指数 σ^n:" % (widths[i07], widths[i28]))
+    for name in ("重心 固定窓", "重心 追従窓", "対数放物線"):
+        r = table[name][i28] / table[name][i07]
+        print("    %-12s %.4f -> %.4f mm(%.2f 倍、σ^%+.2f)"
+              % (name, table[name][i07], table[name][i28], r, np.log(r) / ratio))
+    print("    予測は 固定窓 σ^-1.00 / 追従窓 σ^+0.50。")
+    print("  → ★★**同じ「重心」で符号が逆**。窓の決め方を書かずに「重心を使った」")
+    print("     と言っても、光条が太る現場で良くなるのか悪くなるのかが決まらない。")
     lp = table["対数放物線"][i28] / table["対数放物線"][i07]
-    print("  ★3 点当てはめ(対数放物線)は幅への感度が桁違い: 同じ範囲で %.2f 倍"
-          % lp)
-    print("     (指数にすると σ^%.2f)。幅を知らずに 3 点で済ませる推定量は、"
-          % (np.log(lp) / np.log(widths[i28] / widths[i07])))
-    print("     光条が太る現場(斜面・拡散面)で静かに壊れる。")
-    print("  ★細い側には床がある: 1σ = %.1f px で重心 %.4f mm へ跳ね返る"
-          % (widths[0], table["重心"][0]))
-    print("     (山が 1 画素に収まって標本化できない)。最良は 1σ = %.1f px。"
-          % widths[int(np.argmin(table["重心"]))])
+    print("  → ★3 点当てはめ(対数放物線)は幅への感度が桁違い(σ^%+.2f)。"
+          % (np.log(lp) / ratio))
+    print("     3 点しか見ない推定量は、光条が太ると山の曲率が消えて壊れる。")
+    j = int(np.argmin(table["重心 追従窓"]))
+    print("  ★細い側には床がある: 追従窓は 1σ = %.1f px が最良(%.4f mm)で、"
+          % (widths[j], table["重心 追従窓"][j]))
+    print("     %.1f px では %.4f mm へ跳ね返る(山が 1 画素に収まって標本化できない)。"
+          % (widths[0], table["重心 追従窓"][0]))
     print("  ★op の `lines_gauss` は Frangi リッジの**二値化**で、中心を")
     print("     サブピクセルで返さない(%.4f mm = ゼロ点より悪い)。"
           % table["op lines_gauss"][i14])
