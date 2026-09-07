@@ -814,6 +814,17 @@ def section_translation(rig: Rig) -> dict:
               % (1000 * dt, 1000 * tr, yw, c_tr, c_rot,
                  c_tr / max(c_rot, 1e-9), m["iou"], mt["iou"], mr["iou"]))
 
+    w = OBSTACLES[1]["ly"]
+    base_t = curves["max"][0]
+    fall_t = next((t for t, v in zip(TRANS, curves["max"]) if v < 0.9 * base_t),
+                  None)
+    print("\n  ★実際には c/2 に崖は無い —— 0-150 mm では IoU が上下する"
+          "(%.4f -> %.4f -> %.4f)。**半セル以下のずれは、どのセルに丸められるかで"
+          "行ったり来たりするだけ**。" % (curves["max"][0], curves["max"][3],
+                                          curves["max"][4]))
+    print("     はっきり落ちるのは回転と同じく**物体の幅**に近づいてから: "
+          "IoU が 90 %% を切るのは %.0f mm(車幅 %.1f m の %.0f %%)。"
+          % (1000 * fall_t, w, 100 * fall_t / w))
     a, b, c, ctr, crot = mixed[0.040]
     print("\n  ★Δt=%.0f ms は「並進 %.0f mm + 回転 %.2f 度」。20 m 地点での寄与は"
           " %.1f 倍 並進が大きい。" % (40, 1000 * EGO_V * 0.040,
