@@ -171,12 +171,61 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
 
         sg = signed if isinstance(signed, (list, tuple)) else [signed] * len(panels)
         imgs = [_panel(v, bool(s)) for v, s in zip(panels, sg)]
-        fig = fs.annotate_figure_grid(imgs, captions=list(captions or []),
-                                      ncols=ncols, title=title)
-        return save(name, fig, caption)
+        caps = list(captions or [])
+        # ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が
+        # (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や
+        # 24×24 の縮小マップは PoC で普通に出るのに、エラーは
+        # 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。
+        # 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、
+        # 呼び手ごとに拡大を書かせず、ここで 1 度だけ最近傍拡大する。
+        # 最近傍にするのは、拡大で**値を作らない**ため(補間すると図の上で
+        # 存在しない中間値が生まれ、疑似カラーが嘘をつく)。
+        for factor in _grid_upscales(imgs, caps):
+            try:
+                fig = fs.annotate_figure_grid(_upscale(imgs, factor), captions=caps,
+                                              ncols=ncols, title=title)
+            except ValueError as exc:
+                if "does not fit" not in str(exc) or factor == _GRID_UPSCALES[-1]:
+                    raise
+                continue
+            return save(name, fig, caption)
+        return None
     except Exception as exc:                            # noqa: BLE001
         _errors.append("%s(grid): %s: %s" % (name, type(exc).__name__, exc))
         return None
+
+
+#: 題が入らないときに試す拡大率(最近傍。1 = そのまま)。
+_GRID_UPSCALES = (1, 2, 3, 4, 6, 8)
+
+
+def _grid_upscales(imgs, caps):
+    """最初から入りそうな倍率から試す(小さいパネルで無駄な往復をしない)。
+
+    ``annotate_figure_grid`` は概ね 1 文字 ≈ 8 px を要求するので、最長の題から
+    必要幅を見積もり、それを満たす最小の倍率から始める。
+    """
+    if not imgs:
+        return _GRID_UPSCALES
+    w = min(int(np.asarray(im).shape[1]) for im in imgs)
+    need = 8 * max((len(str(c)) for c in caps), default=0) + 24
+    start = 0
+    for i, f in enumerate(_GRID_UPSCALES):
+        if w * f >= need:
+            start = i
+            break
+    return _GRID_UPSCALES[start:]
+
+
+def _upscale(imgs, factor):
+    """最近傍で整数倍に拡大する(値を作らない)。``factor == 1`` は素通し。"""
+    if factor == 1:
+        return imgs
+    out = []
+    for im in imgs:
+        a = np.asarray(im)
+        out.append(np.repeat(np.repeat(a, factor, axis=0), factor, axis=1))
+    return out
 
 
 def save_plot(name: str, series, xlabel: str = "", ylabel: str = "", title: str = "",

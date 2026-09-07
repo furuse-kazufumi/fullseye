@@ -558,8 +558,9 @@ def section_sweep() -> dict:
                       for t in tilts])],
                    xlabel="傾き α [deg](β = 0.6α)", ylabel="位置ずれの誤差 [µm]",
                    title="崖は幾何どおり(実測 %.3f° / 予測 %.3f°)" % (got, pred_deg),
-                   caption="ゼロ点の誤差はダイ厚 x sin(傾き)。軸で下面へ引き直すと"
-                           "2° でも %.4f µm。" % e_ax[-1])
+                   caption="ゼロ点(青)と予測(赤)は重なっている —— 誤差は"
+                           "ダイ厚 x |法線の横成分| そのもの。軸で下面へ引き直すと"
+                           "2° でも %.4f µm(下端に貼りついた線)。" % e_ax[-1])
     figs.save_plot("rotation_vs_tilt",
                    [("軸補正後に残る回転の誤差", tilts, rot_err),
                     ("予測 |sinα sinβ|/2", tilts,
