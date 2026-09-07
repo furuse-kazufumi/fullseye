@@ -952,22 +952,29 @@ def main() -> int:
     print("  * 角度の効き方は 2 r sin(alpha) の**法線成分**で予測できる"
           "(相対誤差 %.1f %%)。素朴な 2 d sin(alpha) は %.1f %% 外す。"
           % (Aeng["rel"][2], Aeng["rel"][0]))
-    print("  * 欠損のまま面を推定すると位置が %.2f mm ずれる"
-          "(完全形なら %.2f mm)。対称トリミングで %.2f mm。"
+    print("  * 欠損は面を「ずらす」前に**軸ごと飛ばす**。失った点が %.1f %% を超えると"
+          "PCA の候補順位が入れ替わった。" % (D["frac"][D["first"] - 1] if D["first"] > 0
+                                              else float("nan")))
+    print("  * 軸を正しく選んでも、欠損のまま推定した面は位置が %.2f mm ずれる"
+          "(完全形なら %.3f mm)。対称トリミングで %.3f mm。"
           % (C["damaged"]["off"], C["full"]["off"], C["trim"]["off"]))
     print("  * 対称でない形では、欠損の側で装飾が %.0f mm^3 捏造されるか"
-          "%.0f mm^3 消されるかが決まる。"
+          " %.0f mm^3 消されるかが決まる(面が真値でも)。"
           % (F["out"]["無地の側(左)"]["fab"], F["out"]["装飾のある側(右)"]["ers"]))
 
     # 所見を固定する
     assert Z["true_rms"] < Z["zero_rms"], "面が真値なら対称復元が勝つはず"
     assert Aeng["cross"] < 3.0, "崖が甘すぎる"
     assert Aeng["rel"][2] < Aeng["rel"][0], "法線成分の予測が素朴式に負けた"
-    assert O["rel"] < 25.0, "位置ずれの予測 2t が外れた"
+    assert O["rel"] < O["rel_naive"], "位置ずれも法線成分のほうが当たるはず"
     assert C["damaged"]["off"] > 3 * C["full"]["off"] + 0.05, "欠損の歪みが出ていない"
     assert C["trim"]["off"] < C["damaged"]["off"], "対称トリミングが効いていない"
+    assert C["damaged_auto"]["ang"] > 45.0, "自動選択が軸を取り違える所見が消えた"
+    assert D["first"] > 0, "軸の取り違えが起きる境目が掃引の中に無い"
     assert F["out"]["無地の側(左)"]["fab"] > 100.0, "捏造が測れていない"
     assert F["out"]["装飾のある側(右)"]["ers"] > 100.0, "消失が測れていない"
+    assert F["out"]["装飾のある側(右)"]["rms"] > 3 * F["out"]["装飾のある側(右)"]["ctrl_rms"], \
+        "非対称そのものの寄与が対照より大きくない"
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():

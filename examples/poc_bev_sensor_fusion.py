@@ -419,6 +419,25 @@ class Rig:
                       self.wa, self.wb)
         return metrics(occ, h, self.gt_occ, self.gt_h, self.evalm, self.esdf), occ
 
+    def cell_shift(self, dyaw=0.0, dt=(0.0, 0.0, 0.0)):
+        """カメラの点が **実際に** BEV のセルを跨いだ割合と、その幾何予測。
+
+        予測は 1 - (1-|dx|/c)(1-|dy|/c)(それぞれ 1 で頭打ち)—— セル内の
+        位置が一様なら、ずれ ``d`` で index が変わる確率はこれ。
+        """
+        p0 = place(self.pb, CAM["C"])
+        p1 = place(self.pb, CAM["C"], dyaw, dt)
+        sel = (p0[:, 2] >= Z_LO) & (p0[:, 2] < Z_HI)
+        p0, p1 = p0[sel], p1[sel]
+        lo = np.array([BOUNDS[0][0], BOUNDS[1][0]])
+        i0 = np.floor((p0[:, :2] - lo) / CELL).astype(int)
+        i1 = np.floor((p1[:, :2] - lo) / CELL).astype(int)
+        meas = float(np.mean(np.any(i0 != i1, axis=1)))
+        d = np.abs(p1[:, :2] - p0[:, :2])
+        q = np.minimum(d / CELL, 1.0)
+        pred = float(np.mean(1.0 - (1.0 - q[:, 0]) * (1.0 - q[:, 1])))
+        return meas, pred
+
     def single(self, which):
         if which == "lidar":
             occ, h, kn = self.occ_a, self.h_a, self.kn_a0
