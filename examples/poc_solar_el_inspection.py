@@ -686,32 +686,48 @@ def section_vignette_sweep() -> dict:
     print("  予測(プロファイルだけ): a=1 で隅の残差 %.2f、辺の中央 %.2f、中心 %.2f "
           "—— 分離可能近似は隅を明るく戻し、辺の中央を暗く残す。"
           % (resid[0, 0], resid[N // 2, 0], resid[N // 2, N // 2]))
-    print("\n    強さ a   当てはめ a   面積率誤差 [pt]: 当てはめ込み / プロファイルだけ"
-          "   ゼロ点暗画素率 [%]")
-    as_, e_fit, e_grid, zero, ahat = [], [], [], [], []
+    seeds = (7, 3, 11, 23)
+    print("\n    強さ a   当てはめ a(%d 種の平均±散らばり)  面積率誤差 [pt]: 当てはめ込み / "
+          "プロファイルだけ   断線: 込み / だけ   ゼロ点暗画素率 [%%]" % len(seeds))
+    as_, e_fit, e_grid, zero, ahat, asd, fi_fit, fi_grid = [], [], [], [], [], [], [], []
     for a in (0.0, 0.25, 0.5, 0.75, 1.0):
-        sc = make_scene(vig_a=a)
-        r1 = analyze(sc, use_fit=True)
-        r2 = analyze(sc, use_fit=False)
-        dark = 100.0 * float((np.asarray(fs.apply(sc["img"], "otsu")) < 0.5).mean())
+        ah, ef, eg, ff, fg, zp = [], [], [], [], [], []
+        for sd in seeds:
+            sc = make_scene(vig_a=a, seed=sd)
+            r1 = analyze(sc, use_fit=True)
+            r2 = analyze(sc, use_fit=False)
+            ah.append(r1["fit"][0])
+            ef.append(r1["iso_err"])
+            eg.append(r2["iso_err"])
+            ff.append(r1["fi_matched"])
+            fg.append(r2["fi_matched"])
+            zp.append(100.0 * float((np.asarray(fs.apply(sc["img"], "otsu")) < 0.5).mean()))
         as_.append(a)
-        ahat.append(r1["fit"][0])
-        e_fit.append(r1["iso_err"])
-        e_grid.append(r2["iso_err"])
-        zero.append(dark)
-        print("    %4.2f       %.3f          %+6.2f            %+6.2f              %5.1f"
-              % (a, r1["fit"][0], r1["iso_err"], r2["iso_err"], dark))
+        ahat.append(float(np.mean(ah)))
+        asd.append(float(np.std(ah)))
+        e_fit.append(float(np.mean(ef)))
+        e_grid.append(float(np.mean(eg)))
+        fi_fit.append(float(np.mean(ff)))
+        fi_grid.append(float(np.mean(fg)))
+        zero.append(float(np.mean(zp)))
+        print("    %4.2f        %.2f ± %.2f                    %+6.2f            %+6.2f"
+              "            %.1f / %.1f         %5.1f"
+              % (a, ahat[-1], asd[-1], e_fit[-1], e_grid[-1], fi_fit[-1], fi_grid[-1],
+                 zero[-1]))
     print("\n  ★当てはめ込みは %+.2f〜%+.2f ポイントで動かない。プロファイルだけでも "
           "a=1.0 で %+.2f ポイント —— 予想「a>%.2f で隅が偽の孤立領域になる」は外れた。"
           % (min(e_fit), max(e_fit), e_grid[-1], a_iso))
-    print("     分離可能近似が隅を %.1f 倍に戻すので、暗く残るのは隅でなく辺の中央。"
-          % resid[0, 0])
+    print("     分離可能近似が隅を %.2f 倍に戻すので、暗く残るのは隅でなく辺の中央"
+          "(%.2f)—— それでも T_ISO=%.2f までは遠い。" % (resid[0, 0], resid[N // 2, 0], T_ISO))
+    print("  ★当てはめの強さは種で %.2f まで散る(粒の抽選がリングの明るさを決める)"
+          "が、面積率と断線はその誤差に鈍い。" % max(asd))
     figs.save_plot("vignette", [("cos^4 当てはめ込み", as_, e_fit),
                                 ("行列プロファイルだけ", as_, e_grid)],
                    xlabel="ビネッティングの強さ a", ylabel="不活性面積率の誤差 [pt]",
                    title="隅の孤立領域はビネッティングに食われない")
     return {"a": as_, "e_fit": e_fit, "e_grid": e_grid, "zero": zero, "ahat": ahat,
-            "a_iso": a_iso, "resid_corner": float(resid[0, 0])}
+            "asd": asd, "a_iso": a_iso, "resid_corner": float(resid[0, 0]),
+            "resid_edge": float(resid[N // 2, 0])}
 
 
 # --------------------------------------------------------------------------- #
