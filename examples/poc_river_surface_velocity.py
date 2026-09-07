@@ -248,7 +248,7 @@ def build_frames(density=DENSITY, n_frames=N_FRAMES, refl_c=REFL_C, wave_amp=WAV
     ty = np.zeros(ORTHO_SHAPE)
     tx = profile(np.arange(ORTHO_SHAPE[0])[:, None] * S_PX) * DT / S_PX * np.ones((1, ORTHO_SHAPE[1]))
     return {"obl": obl, "obl_clean": obl_clean, "ortho": ortho, "refl": refl,
-            "truth_px": np.stack([ty, tx])}
+            "refl_fine": refl_fine, "truth_px": np.stack([ty, tx])}
 
 
 def rectify(frame):
