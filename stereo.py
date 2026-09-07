@@ -159,13 +159,28 @@ def lr_consistency(disp_left, disp_right, max_diff: float = 1.0):
 
 
 def depth_from_disparity(disp, focal: float = 1.0, baseline: float = 1.0,
-                         min_disp: float = 1e-6) -> np.ndarray:
-    """Metric depth ``Z = focal * baseline / disparity``.
+                         min_disp: float = 1e-6, doffs: float = 0.0) -> np.ndarray:
+    """Metric depth ``Z = focal * baseline / (disparity + doffs)``.
 
-    Pixels with ``disparity <= min_disp`` (no measurable parallax -> infinitely
-    far / unmatched) are returned as ``inf``.
+    Pixels with ``disparity + doffs <= min_disp`` (no measurable parallax ->
+    infinitely far / unmatched) are returned as ``inf``.
+
+    ``doffs`` is the **principal-point offset** ``cx_right - cx_left`` in pixels.
+    It is 0 only when the two rectified cameras share a principal point; real
+    rectified benchmark data usually does not. Middlebury 2014, for instance,
+    ships a per-scene ``doffs`` and defines depth as
+    ``Z = baseline * f / (d + doffs)``.
+
+    ★**Leaving it out does not just scale the scene, it bends it.** Measured on
+    the Middlebury *motorcycle* pair (``f`` 994.978 px, ``baseline`` 193.001 mm,
+    ``doffs`` 31.086 px, ground-truth disparity 7.33 .. 59.91 px): dropping
+    ``doffs`` puts every point 1.519 .. 5.243x too far, and **the best single
+    scale factor cannot repair it** — after fitting the optimal 0.3733 the
+    residual is still 958.3 mm RMS on a 2889 mm depth range (33.2 %), with the
+    far surfaces pushed +1676 mm out and the near ones pulled -926 mm in.
+    A plane stops being a plane. See ``examples/poc_real_stereo_depth.py``.
     """
-    d = np.asarray(disp, np.float64)
+    d = np.asarray(disp, np.float64) + float(doffs)
     z = np.full_like(d, np.inf)
     m = d > min_disp
     z[m] = float(focal) * float(baseline) / d[m]
