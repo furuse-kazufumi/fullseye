@@ -611,7 +611,7 @@ def section_voxel_cliff() -> dict:
                    [("球の扁平度", vxo, [fl_sph[i] for i in ok]),
                     ("扁平ボイドの扁平度", vxo, [fl_dsc[i] for i in ok]),
                     ("扁平の界面欠損率 [%] の 1/20", vx, [x / 20.0 for x in ai_dsc])],
-                   xlabel="ボクセル寸法 [µm]", ylabel="扁平度(界面欠損は 1/20 倍)",
+                   xlabel="ボクセル寸法 [µm]", ylabel="扁平度",
                    title="先に死ぬのは形の指標のほう(扁平度は %.0f µm まで)" % max(vxo),
                    caption="%.0f µm では扁平度が測れない(nan なので描けない)。"
                            "界面欠損率は %.0f %% 減って『安全』に見える。"
