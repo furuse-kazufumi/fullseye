@@ -609,7 +609,7 @@ def section_sweep() -> dict:
     print("=" * 78)
     rng = np.random.default_rng(SEED + 1)
     ts = np.arange(0.0, T_END + 1e-9, DT)
-    S = required_separation()
+    S = trigger_distance()
 
     frames, dt_list = [], []
     for (y_h, t0, v) in TRIALS:
@@ -753,7 +753,7 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
     human = human_pose(t_ref, 0.22, REACH_T0)
     mach = machine_pose(t_ref)
     body = [h for h in human if h[0] not in ("右手", "右前腕")]
-    S = required_separation()
+    S = trigger_distance()
 
     nx, ny = 68, 60
     xs = np.linspace(-0.20, 2.20, nx)
@@ -1007,7 +1007,7 @@ def section_scene_figures() -> None:
     XX, YY = np.meshgrid(xs, ys, indexing="ij")
     P = np.stack([XX, YY, np.full_like(XX, z_h)], axis=-1)
     dm = hazard_sdf(P, mach)
-    S = required_separation()
+    S = trigger_distance()
     band = np.clip(dm, 0.0, 1.6)
     band[np.abs(dm - S) < 0.02] = 0.0          # S の等高線を黒く抜く
     figs.save("map_distance_slice", band.T,

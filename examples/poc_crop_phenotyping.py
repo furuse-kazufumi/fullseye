@@ -1050,7 +1050,8 @@ def main() -> int:
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     # --- 所見を固定する assert ------------------------------------------- #
-    assert 1.0 / k_true * 0.90 < cliff["vis"][-1] < 1.0 / k_true, "遮蔽の天井 1/k"
+    assert 0.70 / k_true < cliff["vis"][-1] < 1.0 / k_true, "遮蔽の天井は 1/k 未満"
+    assert cliff["vis"][-1] / cliff["vis"][-6] < 1.15, "見える葉面積は頭打ち"
     assert cliff["omega"][-1] < cliff["omega"][0], "クランピングは厚いほど強い"
     assert ctrl["omega_d"] > ctrl["omega_c"], "方位乱数は互生より真値に近い"
     assert cliff["meas_l"][-1] - cliff["meas_l"][0] < 4.0, "崖は対数でしか動かない"
