@@ -973,19 +973,22 @@ def section_noise_streak(cells, sinos) -> dict:
         m = internal_metrics(rec)
         o = outer_metrics(rec)
         bhs.append(bh)
-        bh_terr.append(100.0 * (m["t_mean"] - T_ELEC) / T_ELEC)
+        bh_terr.append(100.0 * (m["t_mean"] - truth["t_mean"]) / truth["t_mean"])
         bh_verr.append(100.0 * (m["void_volume"] - truth["void_volume"])
                        / truth["void_volume"])
         bh_cal.append(o["caliper"])
-        print("   硬さ比 %.2f  層厚 %.3f mm (%+.1f %%)  空隙率 %.2f %%  "
+        print("   硬さ比 %.2f  層厚 %.3f mm (%+.1f %%)  空隙率 %.2f %% (%+.1f %%)  "
               "外形 中央 %.3f mm  コントラスト %.3f"
-              % (bh, m["t_mean"], bh_terr[-1], m["void_fraction"],
+              % (bh, m["t_mean"], bh_terr[-1], m["void_fraction"], bh_verr[-1],
                  o["caliper"], m["contrast"]))
     print("  ★ビームハードニングは**外形指標をほとんど動かさない**"
-          "(中央 %.3f -> %.3f mm)。缶の縁は強い縁なので生き残る。"
-          % (bh_cal[0], bh_cal[-1]))
-    print("     壊れるのは中の指標のほう —— 缶に近い層のコントラストが"
-          "落ちて空隙体積が %+.1f %% -> %+.1f %% と動く。" % (bh_verr[0], bh_verr[-1]))
+          "(中央 %.3f -> %.3f mm、%+.3f mm)。缶と空気の縁は最も強い縁なので"
+          "生き残る。" % (bh_cal[0], bh_cal[-1], bh_cal[-1] - bh_cal[0]))
+    print("     層厚も動かない(%+.1f -> %+.1f %%)。壊れるのは**空隙**だけ"
+          "(%+.1f %% -> %+.1f %%)—— コントラストが %.3f -> %.3f に落ちると、"
+          "レンズ形の縁がしきい値を割る。"
+          % (bh_terr[0], bh_terr[-1], bh_verr[0], bh_verr[-1],
+             bh_contrast[0], bh_contrast[-1]))
 
     figs.save_plot("sweep_noise",
                    [("層数の誤差 [枚]", n0s, n_err),
