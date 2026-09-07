@@ -521,7 +521,7 @@ def section_count_by_type(scene: dict, defects: dict) -> dict:
     W, G, n_hole = inject_holes(V, F, N_HOLE, rng)
     W, G, n_flip = inject_flips(W, G, N_FLIP, rng)
     W, G, n_nm = inject_nonmanifold(W, G, N_NONMANIFOLD, rng)
-    W, G, n_deg, _ = inject_slivers(W, G, N_SLIVER, SLIVER_T, rng)
+    W, G, n_deg = inject_slivers(W, G, N_SLIVER, SLIVER_T, rng)[:3]
     W, G, n_dup = inject_cracks(W, G, N_CRACK, rng)
     W, G, n_spk, spk = inject_spikes(W, G, N_SPIKE, SPIKE_DEPTH, rng)
 
