@@ -1058,9 +1058,6 @@ def section_rate(obs: dict, sc: dict) -> dict:
     print("     劣化が直線でない(t1 %.1f mm -> t2 %.1f mm で加速している)ので、"
           "\n     真ん中の点を混ぜると**速度を過小評価する**。"
           % (SPALL_MM[1], SPALL_MM[2]))
-    figs.save_plot("rate",
-                   [("両端の差分", np.arange(g2.sum()) * 0 + 0, [0]),
-                    ], xlabel="", ylabel="", title="") if False else None
     return {"rate": rate, "rate_true": rate_true, "err_rms":
             float(np.sqrt(np.mean(err ** 2))), "detect": ok_rate,
             "e_two": e_two, "e_lin": e_lin, "L": ls, "cen": cen,
