@@ -232,19 +232,25 @@ def vignette_model(shape, a: float, R: float) -> np.ndarray:
 FIT_Q = 0.8                 # 半径ビンの代表値に使う分位(欠陥は暗くしかしないので上側)
 
 
-def fit_vignette(img: np.ndarray, nbins: int = 20) -> tuple[float, float]:
+def fit_vignette(img: np.ndarray, nbins: int = 20, valid=None) -> tuple[float, float]:
     """半径ビンの上側分位に cos^4 則を当てはめる。
 
     中央値ではなく **80 % 分位**を使う —— EL の欠陥は暗くしかしない(明るく
     する欠陥は無い)ので、上側の分位は暗い欠陥に頑健。隅のリングは 4 隅の
     小さな面積しか無く、そのうち 2 隅が孤立領域で暗いと**中央値は落ちる**
     (最初は中央値で書いて、強さ 0.5 を 1.0 と当ててしまった)。
+
+    ``valid`` は当てはめに使う画素(既定は全部)。フィンガーの無い上下の余白は
+    外側のリングにだけ混ざって分位を持ち上げるので、フィンガーの範囲
+    (設計値)に限る。
     """
     r = _radius(img.shape)
+    if valid is None:
+        valid = np.ones(img.shape, bool)
     edges = np.linspace(0, 1.0, nbins + 1)
     rc, med = [], []
     for k in range(nbins):
-        sel = (r >= edges[k]) & (r < edges[k + 1])
+        sel = (r >= edges[k]) & (r < edges[k + 1]) & valid
         if sel.sum() > 50:
             rc.append(0.5 * (edges[k] + edges[k + 1]))
             med.append(float(np.quantile(img[sel], FIT_Q)))
