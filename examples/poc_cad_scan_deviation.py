@@ -629,7 +629,8 @@ def section_align(ref: CadRef) -> dict:
             title="上面の偏差地図(青 = 足りない / 赤 = 余る)", ncols=2, signed=True,
             caption="中央付近の広い青は「反り」ではなく、位置合わせが反りの平均を"
                     "吸ったために出た偽のへこみ(第 6 章)。")
-    return {"scan": sc, "keep": keep, "a_true": a_true, "rows": rows}
+    return {"scan": sc, "keep": keep, "a_true": a_true, "rows": rows,
+            "edge_k1": edge_k1, "edge_k6": edge_k6}
 
 
 # --------------------------------------------------------------------------- #
