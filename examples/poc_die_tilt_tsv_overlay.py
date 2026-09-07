@@ -163,6 +163,12 @@ def make_volume(a_deg: float = TILT_A_DEG, b_deg: float = TILT_B_DEG,
                             * via_frac(ct * uu + st * vv, -st * uu + ct * vv))
         vol[k] = s
 
+    # ★CT の点像分布関数(PSF)。**これが無いと測れない** —— 半径 6 µm の円を
+    #   2.5 µm のボクセルで刻むと縁が帯域制限されず、スライスごとの重心に
+    #   周期的な標本化誤差が乗る。中心が高さとともに 1 ボクセルぶん動くので、
+    #   その誤差が**傾きの系統誤差**に化ける(実測 1.200° -> 1.273°、+6 %)。
+    #   ガウス PSF(σ = %.1f ボクセル)を掛けると帯域制限されて消える。
+    vol = ndimage.gaussian_filter(vol, PSF_SIG_VOX, mode="nearest")
     vol += (NOISE * rng.standard_normal(vol.shape)).astype(np.float32)
 
     # 真値: 上面の法線の横成分 x ダイ厚 = 見かけの並進(閉形式)
