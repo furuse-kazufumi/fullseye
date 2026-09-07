@@ -1100,15 +1100,14 @@ def section_sweep_occ(clear: np.ndarray) -> dict:
     print("\n   棚の高さ [m]   欠測率 [%]   "
           + "  ".join("%-9s" % k for k in LOSS_TYPES))
     for h in hs:
-        r = pipeline(rack_h=h, clear=clear)
+        rr, _, r = rates(clear, rack_h=h)
         me = r["meas"]
         drop = 100 * (1 - me["seen"] / max(me["total"], 1))
         lost.append(drop)
         line = "   %8.1f      %8.1f     " % (h, drop)
         for k in LOSS_TYPES:
-            v = r["score"]["hit"][k] / max(r["score"]["tot"][k], 1)
-            rec[k].append(v)
-            line += "%-9s" % ("%.2f" % v)
+            rec[k].append(rr[k])
+            line += "%-9s" % ("%.2f" % rr[k])
         print(line)
         for e in r["scene"]["events"]:
             if e["cause"] != "補充待ち":
