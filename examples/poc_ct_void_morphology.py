@@ -603,8 +603,12 @@ def section_voxel_cliff() -> dict:
                    title="予想と違い、ボイド率は粗いボクセルでも崩れない",
                    caption="線形の被覆率で積むと体積は保存される。合否の数字は"
                            "解像できなくなっても出続ける。")
+    # ★nan(測れなかった点)は落として引く —— 折れ線 op は非有限値を拒否する。
+    ok = [i for i, x in enumerate(fl_sph) if np.isfinite(x) and np.isfinite(fl_dsc[i])]
+    vxo = [vx[i] for i in ok]
     figs.save_plot("voxel_cliff_shape",
-                   [("球の扁平度", vx, fl_sph), ("扁平ボイドの扁平度", vx, fl_dsc),
+                   [("球の扁平度", vxo, [fl_sph[i] for i in ok]),
+                    ("扁平ボイドの扁平度", vxo, [fl_dsc[i] for i in ok]),
                     ("扁平の界面欠損率 [%] の 1/20", vx, [x / 20.0 for x in ai_dsc])],
                    xlabel="ボクセル寸法 [µm]", ylabel="扁平度(界面欠損は 1/20 倍)",
                    title="先に死ぬのは形の指標のほう",
