@@ -1120,11 +1120,16 @@ def main() -> int:
     print("  * 見える葉面積の天井は 1/k = %.3f m^2/m^2(予測)、実測 %.3f。"
           % (1.0 / k_true, cliff["vis"][-1]))
     print("  * 植被率からの LAI は LAI %.2f で %+.1f %%、LAI %.2f で %+.1f %%。"
+          "天井の予測 %.2f、実測 %.2f。"
           % (cliff["lai"][0], 100 * (cliff["omega"][0] - 1),
-             cliff["lai"][-1], 100 * (cliff["omega"][-1] - 1)))
-    print("  * 崖は点密度の対数でしか動かない(%.0f -> %.0f 点/m^2 で %.2f -> %.2f)。"
-          % (cliff["dens"][0], cliff["dens"][-1], cliff["meas_l"][0],
-             cliff["meas_l"][-1]))
+             cliff["lai"][-1], 100 * (cliff["omega"][-1] - 1),
+             cliff["lai_ceiling"],
+             float(lai_from_cover(cliff["cover"][-1], k_true))))
+    print("  * 崖は点密度の対数でしか動かない(4 倍ごとに +%.2f)。"
+          % cliff["step_gain"])
+    print("  * 壊れ方は 2 種類: 投影が畳む分 %.3f(投影 m^2/m^2)と"
+          " 遮蔽が奪う分 %.3f(葉 m^2/m^2)。"
+          % (ctrl["layer_c"] - ctrl["cover_c"], ctrl["lai_c"] - ctrl["vis_c"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     # --- 所見を固定する assert ------------------------------------------- #
