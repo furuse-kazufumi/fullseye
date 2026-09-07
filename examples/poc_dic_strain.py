@@ -560,6 +560,7 @@ def section9_speckle_quality():
     print("  %8s %8s %8s | %9s %9s" % ("1σ px", "直径", "斑点数", "lk 偏り", "lk 散らばり"))
     print("  " + "-" * 52)
     u0 = 0.37
+    biases = []
     for r in [0.6, 1.0, 1.6, 2.5, 4.0]:
         n_b = max(200, int(N_BLOB * (RADIUS / r) ** 2))
         sp = Speckle(n_blob=n_b, radius=r, seed=SEED)
@@ -567,8 +568,14 @@ def section9_speckle_quality():
         cur = sp.render(lambda x, y: x + u0, lambda x, y: y)
         uu, _ = est_lk(ref, cur)
         m, s = _stat(uu[_SL] - u0)
+        biases.append(m)
         print("  %8.1f %8.1f %8d | %9.4f %9.4f" % (r, 2.355 * r, n_b, m, s))
     print()
+    # ★所見を固定する: 偏りは斑点を太くすると**単調に減る**。3 節で見た lk の偏りは
+    #   推定器だけの性質ではなく、スペックルの標本化不足が半分を作っている。
+    #   ここが単調でなくなったら「0.01 px」の主張の根拠が 1 本崩れる。
+    assert all(a > b for a, b in zip(biases, biases[1:])), biases
+    assert biases[0] > 3.0 * biases[-1], biases
     print("  → 直径 1.4 px では偏りも散らばりも最悪(標本化が足りない)。")
     print("     **偏りは斑点を太くすると単調に減る** —— 3 節で見た 0.008 px の偏りは")
     print("     推定器だけの性質ではなく、スペックルの標本化不足が半分を作っている。")
