@@ -265,10 +265,12 @@ def section_zero_point() -> dict:
     act_vol[tr["flat_idx"]] = np.log10(act + 1e-12)
     act_vol = act_vol.reshape(tr["shape"])
     figs.save_grid("map_transport",
-                   [phi_vol[:, mid, :], act_vol[:, mid, :]],
-                   ["イオン濃度 φ(上端 1 / 下端 0)",
-                    "散逸 log10(働いている空隙ほど明るい)"],
-                   title="同じ断面で見た「遠回り」の中身")
+                   [_zoom(phi_vol[:, mid, :]), _zoom(act_vol[:, mid, :])],
+                   ["イオン濃度 φ", "散逸 log10"],
+                   title="同じ断面で見た「遠回り」の中身",
+                   caption="左: 上端 1 / 下端 0 の濃度場。等濃度線が固相を"
+                           "避けて曲がる分が遠回り。右: bond ごとの散逸"
+                           "(明るいほど流れが集中している = 首)。")
     return {"pore": pore, "tr": tr, "tg": tg, "br": br, "flake": flake}
 
 
