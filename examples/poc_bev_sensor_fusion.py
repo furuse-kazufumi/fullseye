@@ -1051,9 +1051,10 @@ def section_curves(rot: dict, tr: dict, zero: dict) -> None:
         series.append((RULE_JA[r].split("(")[0], list(YAWS), rot["curves"][r]))
     figs.save_plot("cliff_rotation", series, xlabel="カメラ側 yaw 誤差 [deg]",
                    ylabel="占有 IoU",
-                   title="回転の崖(c/θ が視野の奥行きを切ると落ちる)",
-                   caption="水平の 2 本は単センサのゼロ点。yaw 1 度では"
-                           "融合の 2 規則が LiDAR 単独を下回る。")
+                   title="回転誤差と占有 IoU(崖はセルでなく物体の大きさで決まる)",
+                   caption="水平の 2 本は単センサのゼロ点。点の 6 割以上が"
+                           "セルを跨ぐ yaw 0.5 度でも IoU はまだ落ちず、"
+                           "ずれが車幅に近づく数度で単センサに追い抜かれる。")
     ser2 = [("LiDAR 単独", [1000 * t for t in TRANS],
              [zero["lidar"]["iou"]] * len(TRANS))]
     for r in RULES:

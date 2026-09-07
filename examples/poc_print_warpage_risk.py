@@ -457,7 +457,7 @@ def _labeled_map(grid, row_labels, col_labels, row_title, col_title,
     norm = (g - lo) / (hi - lo if hi > lo else 1.0)
     body = np.asarray(fs.colorize_depth(_up(norm, cell, cell)), float)[..., :3]
     h, w = body.shape[:2]
-    pl, pt, pb, pr = 96, 34, 54, 118
+    pl, pt, pb, pr = 96, 34, 76, 118
     img = np.ones((h + pt + pb, w + pl + pr, 3))
     img[pt:pt + h, pl:pl + w] = np.clip(body, 0.0, 1.0)
     img = np.asarray(fs.text_box(img, title, (10, 8), anchor="lt", font_size=13))
@@ -480,7 +480,7 @@ def _labeled_map(grid, row_labels, col_labels, row_title, col_title,
                 else (1.0, 1.0, 1.0)))
     img = np.asarray(fs.text_box(img, row_title, (10, pt + h // 2), anchor="lm",
                                  font_size=11, box_alpha=0.0, border=0))
-    img = np.asarray(fs.text_box(img, col_title, (pl + w // 2, pt + h + 28),
+    img = np.asarray(fs.text_box(img, col_title, (pl + w // 2, pt + h + 40),
                                  anchor="ct", font_size=11, box_alpha=0.0, border=0))
     return img
 
