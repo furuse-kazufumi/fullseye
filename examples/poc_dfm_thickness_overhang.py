@@ -709,8 +709,9 @@ def section_orientation():
     figs.save_table("orientation",
                     ["造形方向", "サポート面積 [mm^2]", "Z+ 比", "水平穴 [mm^2]", "垂直穴 [mm^2]"],
                     rows, title="造形方向を変えるとサポート面積はどれだけ減るか(解析値)",
-                    caption="どの向きでも 0 にならないのは、2 本の穴が互いに直交しているから。")
-    return {"rows": out, "base": base, "best": best}
+                    caption="どの向きでも 0 にならないのは 2 本の穴が直交しているから。"
+                            "最下行 = 向きではなく斜面の角度を 5 度ずらした場合。")
+    return {"rows": out, "base": base, "best": best, "worst": worst, "a_fix": a_fix}
 
 
 # --------------------------------------------------------------------------- #
