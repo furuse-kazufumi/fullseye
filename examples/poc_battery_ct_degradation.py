@@ -302,21 +302,26 @@ def build_cell(kind: str, scale: float = 1.0) -> dict:
     mu[can] = MU_CAN                     # 缶が最後(食い込みは缶を優先)
 
     area_cell = SX * SZ
+    t_field = T_ELEC * (1.0 + fields["alpha"]) * squeeze
     truth = {
         "kind": kind, "scale": scale,
         "n_layer": N_LAYER, "t_elec": T_ELEC, "pitch": PITCH,
-        "t_mean": float(np.mean([T_ELEC * (1.0 + a) for a in
-                                 fields["alpha"][foot_base].ravel()])) if foot_base.any() else T_ELEC,
-        "h_mean": float(bl["h"][foot_base].mean()),
-        "dh_mean": float(bl["h"][foot_base].mean() - H_BASE),
-        "dv_int": bl["dv_int"], "dv_ext": bl["dv_ext"],
+        "t_mean": float(t_field[foot_base].mean()),
+        "h_mean": float(h_fit[foot_base].mean()),
+        "dh_mean": float(h_fit[foot_base].mean() - H_BASE),
+        "dv_int": float((h_fit[foot_base] - H_BASE).sum() * area_cell),
+        "dv_ext": bl["dv_ext"],
         "mean_excess": bl["mean_excess"], "w_max": bl["w_max"],
         "caliper_gain": 2.0 * bl["w_max"],
-        "void_volume": float(sum(np.sum(hv) for _, hv in fields["voids"]) * area_cell),
+        "squeeze_min": float(squeeze[foot_base].min()),
+        "void_volume": float(sum(np.sum(hv * squeeze) for _, hv in fields["voids"])
+                             * area_cell),
+        "void_peak": float(max((np.max(hv * squeeze) for _, hv in fields["voids"]),
+                               default=0.0)),
         "void_voxels": int(voids.sum()),
         "shift": fields["shift"],
-        "layer_center_mm": [float(np.mean(0.5 * (lo + hi))) for lo, hi in
-                            zip(layer_lo, layer_hi)],
+        "layer_center_mm": [float((0.5 * (lo + hi))[:, 0, :][foot_base].mean())
+                            for lo, hi in zip(layer_lo, layer_hi)],
     }
     return {"mu": to_volume(mu), "can": to_volume(can), "elec": to_volume(elec),
             "void": to_volume(voids), "cav": to_volume(cav),
