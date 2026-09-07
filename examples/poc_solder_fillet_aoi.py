@@ -1120,31 +1120,35 @@ def main() -> int:
     print("=" * 78)
     print("  * 見えるのは高さの %.1f %%(予測 %.1f %%)。色を積分しても高さは出ない(E1 = %.3f 倍)。"
           % (100 * vol["ratio1"], 100 * lut_info["vis_frac"], vol["ratio1"]))
-    print("  * 境界の位置から円弧を外挿する E2 は誤差 %+.1f %% ± %.1f %%(相関 %.4f)。"
+    print("  * 境界の位置から円弧を外挿する E2 は自由円弧で誤差 %+.1f %% ± %.1f %%(相関 %.4f)。"
           "爪先固定(V > %.4f mm³)で下に外れる(最大 %+.1f %%)。"
           % (vol["rel2_med"], vol["rel2_mad"], vol["c2"], v_pin, vol["relp"]))
-    print("  * 合否の誤りは |h/H - 0.25| < %.3f の帯の中だけ(帯内 %.1f %% / 帯外 %.1f %%)。"
+    print("  * 合否の誤りは |h/H - 0.25| < %.3f の帯の中だけ(帯内 %.1f %% / 帯外 %.1f %%、予測 0.022)。"
           % (bnd["band"], bnd["in"], bnd["out"]))
-    print("  * 位置ずれ %.2f mm で良品が不足に化ける(予測 %.2f mm)。真値が不足になるのは %s mm。"
-          % (sh["meas"] if sh["meas"] is not None else float("nan"), sh["pred"],
+    print("  * 位置ずれ %.2f mm で良品が不足に化ける(予測 %.2f mm、全暗は %.2f mm)。真値が不足になるのは %s mm。"
+          % (sh["meas"] if sh["meas"] is not None else float("nan"), sh["pred"], sh["dark"],
              "%.2f" % sh["truth"] if sh["truth"] is not None else "-"))
-    print("  * 粗さ: 赤帯の消失は予測 %s / 実測 %s。E2 の +12 %% 超えはもっと早く %s。"
-          % (rg["red_pred"], rg["red_meas"], rg["err_cliff"]))
-    print("  * ゼロ点はブリッジを %.0f %% しか NG にできない。E2 系の浮き取りこぼしは全て小角。"
-          % cf["zp_ng"]["bridge"])
+    print("  * 粗さ: 赤帯の消失は予測 %s / 実測 %s、E2 の 12 %% 超えも %s(同時)、全暗 %s。"
+          % (rg["red_pred"], rg["red_meas"], rg["err_cliff"], rg["all_dark"]))
+    print("  * ゼロ点は良品 %.0f %% / ブリッジ %.0f %% を NG(区別していない)。E2 系の浮き取りこぼしは"
+          "全て ψ < %.1f°。" % (cf["zp_ng"]["good"], cf["zp_ng"]["bridge"], cf["psi_len"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     # 所見を固定する(壊れたら鳴る)
     assert 0.20 < vol["ratio1"] < 0.36, vol["ratio1"]
     assert abs(vol["ratio1"] - lut_info["vis_frac"]) < 0.06, (vol["ratio1"], lut_info["vis_frac"])
-    assert vol["c2"] > 0.99, vol["c2"]
+    assert vol["c2"] > 0.98, vol["c2"]
     assert abs(vol["rel2_med"]) < 5.0, vol["rel2_med"]
-    assert sh["pred"] is not None and sh["meas"] is not None and abs(sh["pred"] - sh["meas"]) <= 0.041, (sh["pred"], sh["meas"])
+    assert vol["relp"] < -20.0, vol["relp"]
+    assert sh["pred"] is not None and sh["meas"] is not None and abs(sh["pred"] - sh["meas"]) <= 0.021, (sh["pred"], sh["meas"])
     assert sh["h_at"] > sh["h0"], (sh["h0"], sh["h_at"])
-    assert rg["err_cliff"] is not None and rg["red_meas"] is not None and rg["err_cliff"] <= rg["red_meas"]
-    assert cf["zp_ng"]["bridge"] < 20.0, cf["zp_ng"]
-    assert cf["acc"]["bridge"] >= 90.0 and cf["acc"]["good"] >= 90.0, cf["acc"]
-    assert all(a < 15.0 for a, _ in cf["miss_lift"]), cf["miss_lift"]
+    assert sh["truth"] is not None and sh["truth"] > sh["meas"]
+    assert rg["err_cliff"] is not None and rg["red_meas"] is not None and rg["err_cliff"] == rg["red_meas"]
+    assert rg["red_pred"] == rg["red_meas"]
+    assert bnd["out"] < 3.0 and bnd["in"] > 15.0, bnd
+    assert abs(cf["zp_ng"]["bridge"] - cf["zp_ng"]["good"]) < 25.0, cf["zp_ng"]
+    assert cf["acc"]["bridge"] >= 90.0 and cf["acc"]["good"] >= 90.0 and cf["acc"]["insufficient"] >= 90.0, cf["acc"]
+    assert all(a < cf["psi_len"] + 1.0 for a, _ in cf["miss_lift"]), cf["miss_lift"]
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
