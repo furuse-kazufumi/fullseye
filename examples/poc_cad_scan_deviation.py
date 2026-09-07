@@ -1162,7 +1162,10 @@ def main() -> int:
     assert abs(pl["cases"]["反りのみ"]["meas"] + WARP_A / 3) < 0.02, \
         pl["cases"]["反りのみ"]["meas"]
     assert abs(pl["dil"][0] - pl["dil"][-1]) < 0.3, pl["dil"]
-    assert al["edge_k6"][1] < al["edge_k1"][1], (al["edge_k1"], al["edge_k6"])
+    assert al["edge_naive"][1] > 50.0, al["edge_naive"]     # 偽の公差外領域が出る
+    assert al["edge_fixed"][0] < 5.0, al["edge_fixed"]      # 除外すればほぼ消える
+    assert ba["alt_ratio"] > 3.0, ba["alt_ratio"]           # 非対称なら別解は見える
+    assert ba["box"][1][1] > 170.0 and ba["box"][1][2] / ba["box"][0][2] < 1.2, ba["box"]
     assert ct["対照: 変換なし・欠陥なし・雑音なし"]["rms"] < 8.0, ct
 
     print("\n" + "=" * 78)
