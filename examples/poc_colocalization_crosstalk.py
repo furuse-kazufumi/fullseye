@@ -500,8 +500,9 @@ def section_psf_sweep() -> dict:
     print("6) PSF σ を 0.5 → 4 px に振る(漏れ込みなし)")
     print("=" * 78)
     sigmas = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0]
-    r0, m1_0, m1_pred, r50, m1_50, r0_nocyto = [], [], [], [], [], []
-    print("    σ [px]   r(0%)  M1(0%)  予想 M1=B領域の面積率   r(50%)  M1(50%)   r(0%, 細胞質なし)")
+    r0, m1_0, m1_pred, r50, m1_50, r0_nocyto, thr_b, peak_k = [], [], [], [], [], [], [], []
+    print("    σ [px]  ピーク比 k   T_B    r(0%)  M1(0%)  偶然の重なり=B領域の面積率   r(50%)  M1(50%)   r(0%, 細胞質なし)")
+    flip = float("nan")
     for sg in sigmas:
         s0 = make_scene(0.0, 0.0, 0.0, psf_sigma=sg)
         m0 = measure(s0["obs_a"], s0["obs_b"], s0["roi"])
@@ -510,14 +511,26 @@ def section_psf_sweep() -> dict:
         m5 = measure(s5["obs_a"], s5["obs_b"], s5["roi"])
         sn = make_scene(0.0, 0.0, 0.0, psf_sigma=sg, cyto=0.0)
         mn = measure(sn["obs_a"], sn["obs_b"], sn["roi"])
+        k = SIG_VES ** 2 / (SIG_VES ** 2 + sg ** 2)     # PSF で潰れた後の小胞ピーク
         r0.append(m0["r"]); m1_0.append(m0["m1"]); m1_pred.append(frac_b)
         r50.append(m5["r"]); m1_50.append(m5["m1"]); r0_nocyto.append(mn["r"])
-        print("    %.1f     %+.3f  %.3f        %.3f              %+.3f   %.3f      %+.3f" % (
-            sg, m0["r"], m0["m1"], frac_b, m5["r"], m5["m1"], mn["r"]))
+        thr_b.append(m0["thr_b"]); peak_k.append(k)
+        if np.isnan(flip) and m0["thr_b"] < CYTO + BG:
+            flip = sg
+        print("    %.1f      %.3f     %.3f   %+.3f  %.3f          %.3f                  %+.3f   %.3f      %+.3f" % (
+            sg, k, m0["thr_b"], m0["r"], m0["m1"], frac_b, m5["r"], m5["m1"], mn["r"]))
     cc = float(np.corrcoef(m1_0, m1_pred)[0, 1])
-    print("\n  ★r は動かない(0 %%: %+.3f → %+.3f)。M1 は %.3f → %.3f —— 「近接」が Otsu の"
-          "\n   領域の重なりに化ける。予想(B 領域の面積率)との相関 %.3f。"
-          % (r0[0], r0[-1], m1_0[0], m1_0[-1], cc))
+    print("\n  ★r はほとんど動かない(0 %%: %+.3f → %+.3f、細胞質なしなら %+.3f → %+.3f)。"
+          "\n   M1 は %.3f → %.3f —— 「近接」が Otsu の領域の重なりに化ける。"
+          "偶然の重なり(B 領域の面積率)との相関 %.3f。"
+          % (r0[0], r0[-1], r0_nocyto[0], r0_nocyto[-1], m1_0[0], m1_0[-1], cc))
+    print("  ★★崖は σ=%.1f px: Otsu のしきい値 T_B=%.3f が細胞質の台 %.2f を割り、前景が"
+          "「小胞」から「細胞体」に飛び移る。\n   小胞のピークは PSF で k=%.3f 倍(σ=%.1f)"
+          "→ %.3f 倍(σ=%.1f)に潰れ、細胞と外の 2 山の方が大きくなる。"
+          % (flip, thr_b[sigmas.index(flip)] if not np.isnan(flip) else float("nan"),
+             CYTO + BG, peak_k[sigmas.index(flip) - 1] if not np.isnan(flip) else float("nan"),
+             sigmas[sigmas.index(flip) - 1] if not np.isnan(flip) else float("nan"),
+             peak_k[sigmas.index(flip)] if not np.isnan(flip) else float("nan"), flip))
     figs.save_plot("psf_sweep",
                    [("M1(真の共局在 0 %)", sigmas, m1_0),
                     ("予想: B の Otsu 領域の面積率", sigmas, m1_pred),
