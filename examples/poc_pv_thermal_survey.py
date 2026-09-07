@@ -1149,10 +1149,11 @@ def section_figures(base: dict, norms: dict) -> None:
                    [np.asarray(fs.apply_cmap(t_app - T_AIR, "inferno",
                                              vmin=0.0, vmax=30.0)),
                     truth, dv(det["delta"]), over],
-                   ["見かけ温度 - 気温 [K]", "真値 3 値(赤=故障 黄=影と汚れ 青=健全)",
-                    "ΔT(モジュール中央値基準、±%.0f K で切る)" % clip,
+                   ["見かけ温度 - 気温 [K](0〜30 K)",
+                    "真値 3 値(赤=故障 黄=影と汚れ 青=健全)",
+                    "ΔT(モジュール中央値基準、±%.0f K)" % clip,
                     "検出された塊(白枠)"],
-                   ncols=2, signed=[False, False, True, False],
+                   ncols=2,
                    title="メガソーラーのドローン熱画像(GSD %.0f mm、風速 %.1f m/s)"
                          % (1e3 * GSD, V_REF),
                    caption="真値の赤はセル内ホットスポットとストリング故障、"
