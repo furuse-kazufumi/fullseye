@@ -1237,6 +1237,7 @@ def make_figures(pf, sw, geo, opt, est2, cal, occ) -> None:
 
     th45 = np.deg2rad(45.0)
     back = (occ["n"][..., 0] * np.sin(th45) - occ["n"][..., 2] * np.cos(th45)) < 0.0
+    back = np.repeat(back, N_COL // back.shape[1], axis=1)   # 粗格子を並べ直す
     figs.save_grid("map_visibility",
                    [(~visible(h, a)).astype(float) for a in (25.0, 35.0, 45.0)]
                    + [back.astype(float)],
