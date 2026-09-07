@@ -630,6 +630,17 @@ def section_zero(rig: Rig) -> dict:
              CAM["kz"]))
     print("     融合が両方を上回るのはこの**相補性**があるから —— "
           "同じ弱点の 2 台を足しても増えない。")
+    frac = float(np.mean(rig.wa[rig.evalm] > rig.wb[rig.evalm]))
+    both = rig.kn_a0 & rig.kn_b0 & rig.evalm
+    print("  ★信頼度重み則の正体: 宣言校正誤差 %.2f 度と雑音モデルから作った重みは"
+          "、評価セルの **%.1f %%** で LiDAR のほうが大きい。"
+          % (SIGMA_THETA_DEG, 100 * frac))
+    print("     つまり両方が見えている %d セル(評価セルの %.0f %%)では"
+          "**実質 LiDAR 優先の順位規則**に退化し、"
+          "カメラが効くのは片方しか見えていない所だけ。"
+          % (int(both.sum()), 100.0 * both.sum() / rig.evalm.sum()))
+    print("     ★予想は「距離に応じてなめらかに混ざる」だったが、"
+          "**雑音モデルが交差しないので混ざらない**。")
     print("\n  高さを物体ごとに(融合・最大値則、真値と中央値の差):")
     _, occ = rig.run("max")
     _, hf = fuse("max", rig.occ_a, rig.kn_a0, rig.h_a, rig.occ_b0, rig.kn_b0,
