@@ -460,46 +460,63 @@ def section_lod_is_roughness(sc: dict, z: dict, mv: dict) -> dict:
     print("\n" + "=" * 78)
     print("4) LoD の地図は粗さと点密度の地図 —— 閉形式と突き合わせる")
     print("=" * 78)
-    print("  予測: LoD = 1.96·σ·sqrt(1/na + 1/nb)、σ = sqrt(粗さ² + 測距雑音²)、"
+    print("  予測 A(素朴): LoD = 1.96·σ·sqrt(1/na + 1/nb)、σ = sqrt(粗さ² + 測距雑音²)、"
           "n = ρ·π·r²")
-    print("\n   ゾーン            粗さ mm   LoD 実測   LoD 予測   比    "
+    print("  予測 B: σ を**平面当てはめの残差 RMS**にする(円筒内の粗さのうち"
+          "平面で説明できる分は法線に吸われるので、A は上振れするはず)")
+    print("\n   ゾーン            粗さ mm  残差 mm  LoD 実測  予測 A  比A   予測 B  比B  "
           "|S| %.0f-%.0f mm の検出率" % (TRUE_POS_MM, 2 * TRUE_POS_MM))
 
     cores, s_mm = sc["cores"], sc["s_mm"]
-    lod, sig = mv["lod"], mv["sig"]
+    lod, sig, resid = mv["lod"], mv["sig"], z["resid"] * 1000.0
     zid = zone_of(cores[:, 1])
-    rows, meas, pred = [], [], []
+    rows, meas, pred, predb = [], [], [], []
     for k, (y0, name, rgh, dens) in enumerate(ZONES):
         m = zid == k
         sg = math.sqrt(rgh ** 2 + SIGMA_RANGE ** 2)
         na = RHO_A * dens * math.pi * RADIUS ** 2
         nb = RHO_B * dens * math.pi * RADIUS ** 2
-        p = 1.96 * sg * math.sqrt(1.0 / na + 1.0 / nb) * 1000.0
+        fac = math.sqrt(1.0 / na + 1.0 / nb)
+        p = 1.96 * sg * fac * 1000.0
+        rs = float(np.nanmedian(resid[m]))
+        pb = 1.96 * rs * fac
         mm = float(np.nanmedian(lod[m]))
         band = m & (np.abs(s_mm) >= TRUE_POS_MM) & (np.abs(s_mm) < 2 * TRUE_POS_MM)
         rate = 100.0 * np.count_nonzero(sig & band) / max(int(band.sum()), 1)
-        rows.append([name, "%.1f" % (rgh * 1000), "%.2f" % mm, "%.2f" % p,
-                     "%.2f" % (mm / p), "%.1f %% (%d core)" % (rate, int(band.sum()))])
+        rows.append([name, "%.1f" % (rgh * 1000), "%.1f" % rs, "%.2f" % mm,
+                     "%.2f" % p, "%.2f" % (mm / p), "%.2f" % pb, "%.2f" % (mm / pb),
+                     "%.1f %% (%d core)" % (rate, int(band.sum()))])
         meas.append(mm)
         pred.append(p)
-        print("   %-16s %6.1f    %6.2f     %6.2f    %.2f    %5.1f %% (%d core)"
-              % (name, rgh * 1000, mm, p, mm / p, rate, int(band.sum())))
+        predb.append(pb)
+        print("   %-16s %6.1f  %6.1f   %6.2f   %6.2f  %.2f  %6.2f  %.2f  %5.1f %% (%d core)"
+              % (name, rgh * 1000, rs, mm, p, mm / p, pb, mm / pb, rate, int(band.sum())))
 
     ratio = [a / b for a, b in zip(meas, pred)]
-    print("\n  ★LoD 実測 / 予測の比は %.2f 〜 %.2f。**LoD は粗さと密度だけで"
-          "先に計算できる**(沈下量は入っていない)。" % (min(ratio), max(ratio)))
+    ratio_b = [a / b for a, b in zip(meas, predb)]
+    print("\n  ★素朴な予測 A との比は %.2f 〜 %.2f と**一貫して 1 を下回る**。"
+          "予想どおり上振れしていた —— 局所平面を当てるので、円筒内の粗さのうち"
+          % (min(ratio), max(ratio)))
+    print("     平面で説明できる分(路肩なら %.1f -> %.1f mm)が法線に吸われるため。"
+          "残差を使う予測 B なら比 %.2f 〜 %.2f。"
+          % (ZONES[0][2] * 1000, float(np.nanmedian(resid[zid == 0])),
+             min(ratio_b), max(ratio_b)))
     print("  ★同じ %.0f〜%.0f mm の沈下が、舗装では %s、路肩では %s しか有意に"
-          "ならない。**測れるかどうかは場所の性質**。"
-          % (TRUE_POS_MM, 2 * TRUE_POS_MM, rows[1][5].split(" ")[0], rows[0][5].split(" ")[0]))
-    assert 0.85 < min(ratio) and max(ratio) < 1.15, ratio
+          "ならない。**測れるかどうかは場所の性質**で、沈下量では決まらない。"
+          % (TRUE_POS_MM, 2 * TRUE_POS_MM, rows[1][8].split(" ")[0], rows[0][8].split(" ")[0]))
+    assert 0.90 < min(ratio_b) and max(ratio_b) < 1.10, ratio_b
+    assert max(ratio) < 1.0, ratio
 
     figs.save_table("lod_by_zone",
-                    ["ゾーン", "粗さ mm", "LoD 実測 mm", "LoD 予測 mm", "比",
+                    ["ゾーン", "粗さ mm", "平面残差 mm", "LoD 実測 mm", "予測A mm",
+                     "比A", "予測B mm", "比B",
                      "%.0f-%.0f mm の検出率" % (TRUE_POS_MM, 2 * TRUE_POS_MM)], rows,
                     title="LoD はゾーンで %.1f 倍違う" % (max(meas) / min(meas)),
-                    caption="予測は 1.96·σ·sqrt(1/na+1/nb)。沈下量はこの式に"
-                            "入っていないので、LoD の地図は面の地図。")
-    return {"meas": meas, "pred": pred, "ratio": ratio}
+                    caption="予測は 1.96·σ·sqrt(1/na+1/nb)。σ に生の粗さを使うと"
+                            "上振れし、平面当てはめの残差を使うと合う。沈下量は"
+                            "この式に入っていない —— LoD の地図は面の地図。")
+    return {"meas": meas, "pred": pred, "predb": predb, "ratio": ratio,
+            "ratio_b": ratio_b}
 
 
 # --------------------------------------------------------------------------- #
