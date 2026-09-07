@@ -2732,7 +2732,7 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
     ys = cy + rr[None, :] * np.sin(th[:, None])
     xs = cx + rr[None, :] * np.cos(th[:, None])
     out = map_coordinates(np.asarray(img, np.float64), [ys, xs], order=1,
-                          mode="constant", cval=0.0)
+                          mode="grid-constant", cval=0.0)
     return out.astype(np.float32)
 
 
@@ -2770,7 +2770,7 @@ def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, d
     xs = cx + RR * np.cos(TH) + 0 * Z
     zs = Z + 0 * TH + 0 * RR
     out = map_coordinates(np.asarray(v, np.float64), [zs, ys, xs], order=1,
-                          mode="constant", cval=0.0)
+                          mode="grid-constant", cval=0.0)
     return out.astype(np.float32)
 
 
@@ -3006,7 +3006,7 @@ def render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray", devic
     # 3.12)でこの op が ImportError になっていた。規約はそのまま写した:
     # 出力ボクセル (d,h,w) の正規化座標は ((i+0.5)/N)*2-1、回転後に
     # (g+1)/2*N-0.5 で入力の画素座標へ戻す(align_corners=False の定義)。
-    # grid の最終軸は (x, y, z) = (W, H, D) の順。実測差は 4.8e-07。
+    # grid の最終軸は (x, y, z) = (W, H, D) の順。torch 版との実測差は最大 7.6e-06。
     if str(device) not in ("cpu", "None") and not _HAS_TORCH:
         raise ValueError(
             "render_volume_projection: device=%r needs the optional 'torch' backend "
