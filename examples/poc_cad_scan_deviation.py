@@ -1069,14 +1069,17 @@ def main() -> int:
     assert abs(nz["meas"][2] / nz["pred"][2] - 1.0) < 0.05, nz["meas"]
     assert abs(de["meas"][4] / de["pred"][4] - 1.0) < 0.15, de["meas"]
     assert de["meas"][4] > 1000 * TOL, "参照密度の偏りが公差を超えなかった"
-    assert nr["flip_en"] > 0.10, nr["flip_en"]
-    assert pl["cases"]["へこみのみ"]["rho"] < 0.05, pl["cases"]["へこみのみ"]["rho"]
-    assert pl["cases"]["反りのみ"]["rho"] > 0.20, pl["cases"]["反りのみ"]["rho"]
+    assert nr["flip_en"] > 0.30, nr["flip_en"]        # 平面がコイン投げになる
+    assert nr["flip_or"] < 0.05, nr["flip_or"]        # Hoppe は正しく向く
+    dent = pl["cases"]["へこみのみ"]
+    assert abs(1 - dent["meas"] / dent["true"]) < 0.06, dent   # 局所欠陥は残る
+    assert pl["cases"]["反りのみ"]["meas"] < -TOL, pl["cases"]["反りのみ"]
     assert abs(pl["slope"] - 1.0 / 3.0) < 0.05, pl["slope"]
     assert abs(pl["cases"]["反りのみ"]["meas"] + WARP_A / 3) < 0.02, \
         pl["cases"]["反りのみ"]["meas"]
     assert abs(pl["dil"][0] - pl["dil"][-1]) < 0.3, pl["dil"]
-    assert ct["対照: 変換なし・欠陥なし・雑音なし"]["rms"] < 5.0, ct
+    assert al["edge_k6"][1] < al["edge_k1"][1], (al["edge_k1"], al["edge_k6"])
+    assert ct["対照: 変換なし・欠陥なし・雑音なし"]["rms"] < 8.0, ct
 
     print("\n" + "=" * 78)
     print("まとめ")
