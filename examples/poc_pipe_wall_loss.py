@@ -687,15 +687,21 @@ def section_correction() -> dict:
           % (100 * scs[3]["cres_rate"], 100 * scs[3]["band_rate"],
              100 * scs[3]["pit_rate"], 100 * scs[3]["false"]))
 
-    figs.save_grid("map_corrected", maps,
+    # ★パネルごとに正規化されるので、**同じ範囲に切ってから**渡す
+    #   (切らないと E0 だけ ±4 mm、他は ±1 mm で塗られて比べられない)。
+    def _clip(a):
+        return np.clip(a, -3.0, 3.0)
+
+    figs.save_grid("map_corrected", [_clip(m) for m in maps],
                    [n for n, _ in EST], ncols=2, signed=True,
-                   title="同じ測定を 4 通りに補正した減肉地図 [mm]"
-                         "(縦 = z、横 = θ)")
+                   title="同じ測定を 4 通りに補正した減肉地図 [mm](±3 mm 共通尺度、"
+                         "縦 = z、横 = θ)")
     truth = loss_parts(sv["z_hit"], sv["th_hit"], FULL)["total"]
-    figs.save_grid("map_truth_vs_best", [truth, maps[0], maps[3]],
+    figs.save_grid("map_truth_vs_best",
+                   [_clip(truth), _clip(maps[0]), _clip(maps[3])],
                    ["真の減肉 [mm]", "E0 素朴", "E3 軸を直線とみなす"], ncols=3,
                    signed=True, title="真値と、いちばん素朴な推定と、"
-                                      "軸を直線に縛った推定")
+                                      "軸を直線に縛った推定(±3 mm 共通尺度)")
     figs.save_table("defect_table",
                     ["推定器", "孔食 検出率", "全周減肉 検出率", "管底腐食 検出率",
                      "偽陽性", "溶接ビード高さ"], rows,
