@@ -1,0 +1,74 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "高さ場 z=f(x,y) は x について厳密に偶関数(検算 RMS 0.0e+00 mm)。欠損は既知の球で削る。",
+  "shape": [
+   795,
+   534,
+   3
+  ]
+ },
+ {
+  "file": "02_restore_error_maps.png",
+  "name": "restore_error_maps",
+  "caption": "失われた真値の点から復元点群までの距離。対称復元だけが眼窩の形を取り戻す。",
+  "shape": [
+   423,
+   844,
+   3
+  ]
+ },
+ {
+  "file": "03_angle_cliff.png",
+  "name": "angle_cliff",
+  "caption": "崖は alpha = 1.39 deg(84 分角)。そこから先はゼロ点の穴埋め補間のほうが正しい。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_angle_spurious.png",
+  "name": "angle_spurious",
+  "caption": "真の面から 1.0 mm 以上浮いた鏡像点の割合。壊れ方は 2 種類あり、別々に数える必要がある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_offset_cliff.png",
+  "name": "offset_cliff",
+  "caption": "鏡像点は厳密に 2t 動くが、表面誤差になるのはその法線成分(|n.x| の RMS = 0.50)だけ。崖は t = 1.41 mm。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_controls.png",
+  "name": "controls",
+  "caption": "(b) と (c) の差が「欠損そのものが推定を歪める量」。ゼロ点(穴埋め補間)は RMS 1.60 mm。",
+  "shape": [
+   248,
+   711,
+   3
+  ],
+  "csv": "06_controls.csv",
+  "tsv": "06_controls.tsv"
+ },
+ {
+  "file": "07_controls_maps.png",
+  "name": "controls_maps",
+  "caption": "欠損のまま推定した面で復元すると、欠損部の全体が一様にずれる(位置ずれの署名)。",
+  "shape": [
+   795,
+   566,
+   3
+  ]
+ }
+]
