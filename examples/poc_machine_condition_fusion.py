@@ -624,20 +624,33 @@ def section_dropout(train_rows, test_rows) -> dict:
         rows.append([label, "%.1f" % (100 * table[label]["overall"])]
                     + ["%.1f" % (100 * v) for v in r])
     full = table["振動+熱+形状"]["rate"]
-    print("\n  ★★**3 つ束ねても 2 つと変わらないモード**(3 センサと最良の 2 センサの差 < 1 pt):")
+    print("\n  ★★**モードごとに「何個必要か」を数える**(3 センサの識別率に 1 pt 以内で"
+          "届く最小のセンサ組):")
+    need = {}
     for i, m in enumerate(MODES):
-        best2 = max(table[l]["rate"][i] for l, k in SUBSETS if len(k) == 2)
-        if full[i] - best2 < 0.01:
-            who = max((l for l, k in SUBSETS if len(k) == 2),
-                      key=lambda l: table[l]["rate"][i])
-            print("     * %-10s 3 センサ %.1f %% = %s %.1f %%"
-                  % (m, 100 * full[i], who.split("(")[0], 100 * best2))
+        best = None
+        for label, keys in SUBSETS:
+            if table[label]["rate"][i] >= full[i] - 0.01:
+                if best is None or len(keys) < len(best[1]):
+                    best = (label, keys)
+        need[m] = best
+        print("     * %-10s 3 センサ %.1f %% -> **%s だけで %.1f %%**(センサ %d 個)"
+              % (m, 100 * full[i], "+".join(best[1]),
+                 100 * table[best[0]]["rate"][i], len(best[1])))
+    print("  ★**1 個で足りるモードが %d/%d**。融合の値打ちは平均正解率ではなく、"
+          % (sum(1 for b in need.values() if len(b[1]) == 1), len(MODES)))
+    print("     「1 個では足りないのはどれか」でしか測れない。")
     print("  ★★**振動を抜くと壊れるモード**(3 センサ - 熱+形状):")
     drop = table["熱+形状(振動を抜く)"]["rate"]
     for i, m in enumerate(MODES):
         if full[i] - drop[i] > 0.05:
             print("     * %-10s %.1f %% -> %.1f %%(%+.1f pt)"
                   % (m, 100 * full[i], 100 * drop[i], 100 * (drop[i] - full[i])))
+    vo = table["振動のみ"]
+    print("  ★★そして**振動のみ %.1f %% = 3 センサ %.1f %%** —— 基準条件では"
+          "熱も形状も 1 pt も足していない。"
+          % (100 * vo["overall"], 100 * table["振動+熱+形状"]["overall"]))
+    table["_need"] = need
     figs.save_table("sensor_dropout", ["条件", "総合 %"] + ["%s %%" % m for m in MODES],
                     rows, title="センサを抜いた対照群(モード別識別率 %)",
                     caption="総合の列だけを見ると差が小さく見える。壊れているのは"
