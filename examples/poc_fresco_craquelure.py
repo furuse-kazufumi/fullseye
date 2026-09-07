@@ -156,7 +156,7 @@ def make_net(kind: str, rng, n: int = N_PIX, **over) -> dict:
         t = np.linspace(0, 1, m)[:, None]
         poly = inv_warp(a[None, :] * (1 - t) + b[None, :] * t)
         dense.append(poly)
-        edges.append(poly[:: max(1, m // max(2, int(L)))])       # 約 1 px おき
+    edges = dense
     verts = inv_warp(vor.vertices)
     # ひびの中心線までの距離(画像座標)。歪みがあっても幅は画像座標で厳密。
     pts = np.concatenate(dense, 0)
