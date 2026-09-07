@@ -788,8 +788,10 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
           " = %.1f %%"
           % (cell * np.count_nonzero(true_map < S), cell * np.count_nonzero(miss),
              100 * np.count_nonzero(miss) / max(1, np.count_nonzero(true_map < S))))
-    print("  過大評価の最大 %.3f m(手が完全に隠れて、推定が胴へ飛んだところ)"
-          % float(np.max(over[np.isfinite(over)])))
+    near = true_map < 1.0                      # 危険に関わる帯だけで最大を取る
+    over_near = float(np.max(over[near & np.isfinite(over)]))
+    print("  過大評価の最大 %.3f m(真の距離 < 1.0 m の帯。手が完全に隠れて"
+          "推定が胴へ飛んだところ)" % over_near)
 
     figs.save_grid("map_miss",
                    [true_map.T, np.clip(over, 0.0, 0.6).T, miss.astype(float).T],
