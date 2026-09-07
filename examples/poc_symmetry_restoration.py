@@ -703,13 +703,15 @@ def section_controls(S: dict, Z: dict, O: dict) -> dict:
           % (res["damaged"]["rms"], res["damaged_auto"]["rms"]))
     print("  ★予想は外れた。欠損は重心を x = %+.2f mm 動かすので"
           "「面もそれだけずれる」と踏んでいた —— " % surv[:, 0].mean())
-    print("    重心を通す粗い面 (f) は確かに %.2f mm ずれる(§4 の式から復元 RMS の予測"
-          " %.2f mm、実測 %.2f mm)が、" % (res["coarse"]["off"],
-                                          np.sqrt(Z["floor"] ** 2
-                                                  + (2 * res["coarse"]["off"] * O_COSB[0]) ** 2),
-                                          res["coarse"]["rms"]))
+    print("    重心を通す粗い面 (f) は確かに %.2f mm ずれる(4 節の式から復元 RMS の予測"
+          " %.2f mm、実測 %.2f mm)が、"
+          % (res["coarse"]["off"],
+             np.sqrt(O["meas"][0] ** 2 + (2 * res["coarse"]["off"] * O["cosb"]) ** 2),
+             res["coarse"]["rms"]))
     print("    残差を掃引する精緻化 (c') は重心を使わないので %.3f mm まで戻す"
-          "(欠損の 96 %% を吸う)。" % res["damaged"]["off"])
+          "(粗い面のずれの %.0f %% を吸う)。"
+          % (res["damaged"]["off"],
+             100 * (1 - res["damaged"]["off"] / res["coarse"]["off"])))
     print("  ★ (e) 鏡映+ICP+中点面は**悪化した**(角度 %.2f deg / RMS %.2f mm)。"
           % (res["icp"]["ang"], res["icp"]["rms"]))
     print("    欠損側では対応が付かないまま偽の対が中点に混ざり、"
