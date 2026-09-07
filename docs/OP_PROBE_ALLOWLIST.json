@@ -1,57 +1,65 @@
 {
- "_about": "Ops that return their input unchanged (identity) or a constant on the structured probe of tests/test_op_probe_ledger.py. The probe uses TWO structurally different images (sin/cos and gradient+disk+checker) at TWO knob settings; an op counts as degenerate only when it is degenerate on ALL of them. 2026-09-05: widening the probe from one image to two shrank this waiver list from 27 to 12 — the removed entries were not broken, their single probe input simply had nothing for them to do (no holes in the mask, and so on). The same widening caught xsitk_huang_thresh, which failed on EVERY knob of the second image and on none of the first. Each remaining entry was re-checked by a reviewer with other knobs and inputs; a new degenerate op fails the test rather than being added silently.",
- "ops": {
-  "select_shape": {
-   "kind": "identity",
-   "reason": "a=0.5 keeps every blob of the probe; a=0.9 removes small ones (sum 216)"
-  },
-  "abs_image": {
-   "kind": "identity",
-   "reason": "input is already non-negative; |x| == x by contract"
-  },
-  "it_change_format": {
-   "kind": "identity",
-   "reason": "HALCON change_format on an image already of the target size; values unchanged by contract"
-  },
-  "it_full_domain": {
-   "kind": "identity",
-   "reason": "HALCON full_domain: pixel values unchanged, only the (implicit) domain changes"
-  },
-  "r2_union1": {
-   "kind": "identity",
-   "reason": "union of a single region is that region"
-  },
-  "r3_label_to_region": {
-   "kind": "identity",
-   "reason": "label-reading op; a binary mask has one label so the selection is the whole foreground (fixed 2026-09-02 for multi-label input)"
-  },
-  "ncc_locate": {
-   "kind": "constant",
-   "reason": "no template set in the probe -> documented no-match vector [0,0,0]; pass template= via the facade"
-  },
-  "shape_locate": {
-   "kind": "constant",
-   "reason": "no template set in the probe -> documented no-match vector; pass template= via the facade"
-  },
-  "hx_full_domain": {
-   "kind": "constant",
-   "reason": "image -> region: the full domain is all ones by contract"
-  },
-  "hx_get_domain": {
-   "kind": "constant",
-   "reason": "image -> region: an image with a full domain yields all ones by contract"
-  },
-  "hx_gen_empty_region": {
-   "kind": "constant",
-   "reason": "generates the empty region by contract"
-  },
-  "hx_gen_image_proto": {
-   "kind": "constant",
-   "reason": "gen_image_proto fills a constant image by contract (value from a)"
-  },
-  "img_to_matrix": {
-   "kind": "identity",
-   "reason": "Entry op (category bridge, 2026-09-07): an image IS its pixel matrix, so image -> matrix is the identity by definition. The op exists only to give matrix-sort ops a reachable input; knobs a/b are documented as unused."
+  "_about": "Ops that return their input unchanged (identity) or a constant on the structured probe of tests/test_op_probe_ledger.py. The probe uses TWO structurally different images (sin/cos and gradient+disk+checker) at TWO knob settings; an op counts as degenerate only when it is degenerate on ALL of them. 2026-09-05: widening the probe from one image to two shrank this waiver list from 27 to 12 — the removed entries were not broken, their single probe input simply had nothing for them to do (no holes in the mask, and so on). The same widening caught xsitk_huang_thresh, which failed on EVERY knob of the second image and on none of the first. Each remaining entry was re-checked by a reviewer with other knobs and inputs; a new degenerate op fails the test rather than being added silently.",
+  "ops": {
+    "abs_image": {
+      "kind": "identity",
+      "reason": "input is already non-negative; |x| == x by contract"
+    },
+    "hx_full_domain": {
+      "kind": "constant",
+      "reason": "image -> region: the full domain is all ones by contract"
+    },
+    "hx_gen_empty_region": {
+      "kind": "constant",
+      "reason": "generates the empty region by contract"
+    },
+    "hx_gen_image_proto": {
+      "kind": "constant",
+      "reason": "gen_image_proto fills a constant image by contract (value from a)"
+    },
+    "hx_get_domain": {
+      "kind": "constant",
+      "reason": "image -> region: an image with a full domain yields all ones by contract"
+    },
+    "identity": {
+      "kind": "identity",
+      "reason": "contract: identity returns its input unchanged. Only visible now that the probe covers the any sort (2026-09-08); before that it was uncallable."
+    },
+    "img_to_matrix": {
+      "kind": "identity",
+      "reason": "Entry op (category bridge, 2026-09-07): an image IS its pixel matrix, so image -> matrix is the identity by definition. The op exists only to give matrix-sort ops a reachable input; knobs a/b are documented as unused."
+    },
+    "it_change_format": {
+      "kind": "identity",
+      "reason": "HALCON change_format on an image already of the target size; values unchanged by contract"
+    },
+    "it_full_domain": {
+      "kind": "identity",
+      "reason": "HALCON full_domain: pixel values unchanged, only the (implicit) domain changes"
+    },
+    "ncc_locate": {
+      "kind": "constant",
+      "reason": "no template set in the probe -> documented no-match vector [0,0,0]; pass template= via the facade"
+    },
+    "r2_union1": {
+      "kind": "identity",
+      "reason": "union of a single region is that region"
+    },
+    "r3_label_to_region": {
+      "kind": "identity",
+      "reason": "label-reading op; a binary mask has one label so the selection is the whole foreground (fixed 2026-09-02 for multi-label input)"
+    },
+    "select_shape": {
+      "kind": "identity",
+      "reason": "a=0.5 keeps every blob of the probe; a=0.9 removes small ones (sum 216)"
+    },
+    "shape_locate": {
+      "kind": "constant",
+      "reason": "no template set in the probe -> documented no-match vector; pass template= via the facade"
+    },
+    "tb_create_funct_1d_array": {
+      "kind": "identity",
+      "reason": "HALCON create_funct_1d_array is pure validation + float64 coercion: the returned array IS the function on the implicit index grid, so a valid float64 signal comes back unchanged."
+    }
   }
- }
 }

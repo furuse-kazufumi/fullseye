@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "横軸 x [24 m]、縦軸 y [16 m]。粗さはゾーンで 10 倍違い、これが LoD をゾーンごとに変える。",
+  "shape": [
+   1380,
+   621,
+   3
+  ]
+ },
+ {
+  "file": "02_lod_by_zone.png",
+  "name": "lod_by_zone",
+  "caption": "予測は 1.96·σ·sqrt(1/na+1/nb)。σ に生の粗さを使うと上振れし、平面当てはめの残差を使うと合う。沈下量はこの式に入っていない —— LoD の地図は面の地図。",
+  "shape": [
+   152,
+   782,
+   3
+  ],
+  "csv": "02_lod_by_zone.csv",
+  "tsv": "02_lod_by_zone.tsv"
+ },
+ {
+  "file": "03_cliff.png",
+  "name": "cliff",
+  "caption": "崖の位置はそのゾーンの LoD で決まる。粗い路肩なら同じ沈下でも崖はもっと右にある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_density.png",
+  "name": "density",
+  "caption": "4 倍撒くと LoD は半分。撒く量を決めるのはこの式。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
