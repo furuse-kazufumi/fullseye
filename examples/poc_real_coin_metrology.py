@@ -106,15 +106,27 @@ def section_truth(img):
     plateau = [(a, int((f["area"] >= a).sum()))
                for a in (0, 50, 100, 150, 200, 400, 800, 1200)]
 
-    # (b) Hough 円変換 —— 投票のしきいを振っても同じ数になるか
-    acc = np.asarray(fs.run_pipeline(img, ["hough_circle_trans"]), np.float64)
-    hough = []
-    for k in (0.30, 0.35, 0.40, 0.45, 0.50):
-        pk = acc >= k * acc.max()
-        lab, n = ndi.label(pk, structure=np.ones((3, 3)))
-        # 1 個の円が複数の峰に割れないよう、面積 1 の点は峰として数えない
-        sz = ndi.sum(pk, lab, range(1, n + 1))
-        hough.append((k, int((sz >= 1).sum())))
+    # (b) Hough 円変換(半径を明示して、fullseye の外の実装で)
+    #     ここだけ skimage を直に呼ぶ。真値の経路は**測る側から独立**である
+    #     ほど強い —— 同じ repo の中で 2 回数えても、同じ勘違いを 2 回する。
+    from skimage.transform import hough_circle, hough_circle_peaks
+    from skimage.feature import canny
+    edges = canny(img, sigma=3, low_threshold=0.1, high_threshold=0.2)
+    radii = np.arange(19, 32, 2)                 # 2 節で測る等価直径 37〜63 px
+    acc = hough_circle(edges, radii)
+    vote, _cx, _cy, _rr = hough_circle_peaks(acc, radii, total_num_peaks=40,
+                                             min_xdistance=25, min_ydistance=25)
+    hough = [(k, int((vote >= k * vote.max()).sum()))
+             for k in (0.30, 0.35, 0.40, 0.45, 0.50)]
+
+    # (d) fullseye 自身の hough_circle_trans は、この用途では真値に届かない
+    own = []
+    for b in (0.5, 0.7, 0.9, 1.0):
+        a = np.asarray(fs.apply(img, "hough_circle_trans", 0.5, b), np.float64)
+        mx = ndi.maximum_filter(a, size=61)      # 最小間隔 = コイン直径ぶん
+        pk = (a == mx) & (a > 0)
+        v = a[pk]
+        own.append((b, int((v >= 0.5 * a.max()).sum())))
 
     # (c) 勾配の大きさ(Sobel)からの閉領域 —— しきいの決め方が (a) と独立
     edge = np.asarray(fs.run_pipeline(img, ["sobel_amp"]), np.float64)
@@ -122,7 +134,7 @@ def section_truth(img):
     em = ndi.binary_fill_holes(em)
     fe = L.blob_features(np.asarray(L.blob_label(em)))
     n_sobel = int((fe["area"] >= AREA_MIN).sum())
-    return plateau, hough, n_sobel, f, m
+    return plateau, hough, n_sobel, own, f, m
 
 
 # --------------------------------------------------------------------------- #
@@ -189,12 +201,16 @@ def main() -> None:
           % (rows_bg[0], rows_bg[-1], cols_bg[0], cols_bg[-1]))
 
     # --- 1 ---------------------------------------------------------------- #
-    plateau, hough, n_sobel, f, mask = section_truth(img)
+    plateau, hough, n_sobel, own, f, mask = section_truth(img)
     print("\n1. 真値を 3 つの独立な経路の一致で決める")
     print("   (a) 面積の平坦域: "
           + " / ".join("%d->%d" % p for p in plateau))
-    print("   (b) Hough 円: " + " / ".join("%.2f->%d" % h for h in hough))
+    print("   (b) Hough 円(半径 19-31 を明示、skimage): "
+          + " / ".join("%.2f->%d" % h for h in hough))
     print("   (c) Sobel + 穴埋め: %d" % n_sobel)
+    print("   (d) fullseye の hough_circle_trans: "
+          + " / ".join("b=%.1f->%d 峰" % o for o in own)
+          + "  <- 真値に届かない")
     flat_counts = set(n for a, n in plateau if 50 <= a <= 800)
     hough_counts = set(n for _k, n in hough)
     print("   -> 平坦域 %s / Hough %s / Sobel %d"
