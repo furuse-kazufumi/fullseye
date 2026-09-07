@@ -62,5 +62,37 @@
   ],
   "csv": "06_proxy_table.csv",
   "tsv": "06_proxy_table.tsv"
+ },
+ {
+  "file": "07_voxel_cliff_fraction.png",
+  "name": "voxel_cliff_fraction",
+  "caption": "位相 3 通りの平均。線形の被覆率で積むと体積は保存されるので、合否の数字は解像できなくなっても出続ける(ただし位相の運で ±1.36 ポイント振れる)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_voxel_cliff_shape.png",
+  "name": "voxel_cliff_shape",
+  "caption": "60 µm では扁平度が測れない(nan なので描けない)。界面欠損率は 31 % 減って『安全』に見える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_voxel_cliff_table.png",
+  "name": "voxel_cliff_table",
+  "caption": "",
+  "shape": [
+   200,
+   732,
+   3
+  ],
+  "csv": "09_voxel_cliff_table.csv",
+  "tsv": "09_voxel_cliff_table.tsv"
  }
 ]

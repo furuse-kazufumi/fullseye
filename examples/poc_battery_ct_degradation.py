@@ -781,17 +781,7 @@ def section_voidmap(cells, recs) -> dict:
 
     vol = recs["gas"]
     t = cells["gas"]["truth"]
-    roi = np.zeros(vol.shape, bool)
-    z0, z1 = int(ELEC_Z[0] / SZ) + 1, int(ELEC_Z[1] / SZ)
-    y0, y1 = int((CAV_Y[0] + 0.10) / SY), int((CAV_Y[1] - 0.10) / SY)
-    x0, x1 = int(ELEC_X[0] / SX) + 2, int(ELEC_X[1] / SX) - 2
-    roi[z0:z1, y0:y1, x0:x1] = True
-    dark = (vol < 0.5 * (MU_GAS + MU_LIQ)) & roi
-    lab = np.asarray(L.vol_label(dark, connectivity=26))
-    props = L.vol_region_props(lab, spacing=SPACING)
-    cell_vol = SZ * SY * SX
-    big = sorted([p for p in props if p["volume"] > 20 * cell_vol],
-                 key=lambda p: -p["volume"])
+    dark, lab, big, roi = detect_voids(vol, SPACING, liquid_level(vol))
     est = float(sum(p["volume"] for p in big))
     print("  真値: 空隙 3 個 / 合計体積 %.4f mm3" % t["void_volume"])
     print("  推定: %d 個 / 合計体積 %.4f mm3 (%+.1f %%)"
