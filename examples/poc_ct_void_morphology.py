@@ -628,22 +628,31 @@ def section_threshold_noise() -> dict:
     obs_c = observe(sc_c["mu"], VOXEL)
     dc = die_distance(sc_c)
 
-    print("\n  しきい値   ボイド率%%   扁平度   界面欠損%%   連なりの最近接µm")
+    print("\n  しきい値   ボイド率%%   扁平度   界面欠損%%  | 連なり: 塊の数  最近接µm")
     thrs = [0.30, 0.35, 0.45, 0.50, 0.55, 0.60]
-    tf, tflat, tai, tnn = [], [], [], []
+    tf, tflat, tai, tnn, tn = [], [], [], [], []
     for t in thrs:
-        a = morphology(segment(obs_d, sc_d["layer"], t), sc_d["layer"], dd, VOXEL)
-        a["frac"] = void_fraction(segment(obs_d, sc_d["layer"], t), sc_d["layer"])
+        e_d = segment(obs_d, sc_d["layer"], t)
+        a = morphology(e_d, sc_d["layer"], dd, VOXEL)
+        a["frac"] = void_fraction(e_d, sc_d["layer"])
         b = morphology(segment(obs_c, sc_c["layer"], t), sc_c["layer"], dc, VOXEL)
         tf.append(a["frac"]); tflat.append(a["flat"]); tai.append(a["a_int"])
-        tnn.append(b["nn"])
-        print("   %6.2f    %7.2f   %6.2f   %8.2f   %12.1f"
-              % (t, a["frac"], a["flat"], a["a_int"], b["nn"]))
-    print("  ★ボイド率は %.2f -> %.2f %%(%+.0f %%)と単調に増えるのに、扁平度は "
-          "%.2f -> %.2f と**鈍り**、\n     連なりの最近接間隔は %.1f -> %.1f µm と"
-          "**縮む** —— 安全側にしきい値を上げると、形態の側は危険側に振れる。"
-          % (tf[0], tf[-1], 100 * (tf[-1] / tf[0] - 1), tflat[0], tflat[-1],
-             tnn[0], tnn[-1]))
+        tnn.append(b["nn"]); tn.append(b["n"])
+        print("   %6.2f    %7.2f   %6.2f   %8.2f  | %10d  %10.1f"
+              % (t, a["frac"], a["flat"], a["a_int"], b["n"], b["nn"]))
+    merge_thr = next((t for t, n in zip(thrs, tn) if n < N_VOID), float("nan"))
+    print("  ★ボイド率は %.2f -> %.2f %%(%+.0f %%)と単調に増え、界面欠損率も "
+          "%.2f -> %.2f %% と増える。\n     ところが★**連なり条件では しきい値 %.2f で"
+          "ボイドが融合し、塊が %d -> %d 個に落ちる**。"
+          % (tf[0], tf[-1], 100 * (tf[-1] / tf[0] - 1), tai[0], tai[-1],
+             merge_thr, N_VOID, min(tn)))
+    print("     その瞬間「最近接ボイド間隔」は %.0f -> %.0f µm に**跳ね上がる** —— "
+          "隣が近づいたのではなく、\n     隣が**同じ塊になって数え上げから消えた**から。"
+          "指標が壊れるのではなく、**測っている対象が黙って入れ替わる**。"
+          % (tnn[thrs.index(0.50)], max(tnn)))
+    print("     安全側に(率を大きく取る側に)しきい値を振ると、形態の側では"
+          "『連なっていない』ものが\n     連なりに見え始める。合否と形態で最適な"
+          "しきい値が違う。")
 
     print("\n  雑音 sigma  ボイド率%%   個数   界面欠損%%")
     noises = [0.0, 0.025, 0.05, 0.10, 0.15]
