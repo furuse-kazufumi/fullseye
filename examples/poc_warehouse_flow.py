@@ -1028,9 +1028,19 @@ def section_sweep_dt(clear: np.ndarray) -> dict:
         print("   %-14s %10.1f     %10s   %s"
               % (k, pred[k], ("%.1f" % c) if np.isfinite(c) else ">12",
                  ("%+.1f" % (c - pred[k])) if np.isfinite(c) else "-"))
-    print("  ★崖の**順番**は予測どおり(短い待ちから消える)。"
-          "ゼロ点は %.1f -> %.1f 秒(%.1f %%)しか動かず、警報にならない。"
-          % (zeros[0], zeros[-1], 100 * (zeros[-1] - zeros[0]) / zeros[0]))
+    print("  ★崖の**順番**は予測どおり(短い待ちから消える)。")
+    i2 = list(dts).index(2.0)
+    print("  ★★Δt=%.1f 秒では欠品が %.0f/%d まで落ちているのに、ゼロ点は "
+          "%.1f -> %.1f 秒(%+.1f %%)。"
+          % (dts[i2], rec["欠品"][i2] * 4, 4, zeros[1], zeros[i2],
+             100 * (zeros[i2] - zeros[1]) / zeros[1]))
+    print("     しかもその %+.1f %% は「滞留が減った」としか読めない —— "
+          "実際には**測れなくなっただけ**。"
+          % (100 * (zeros[i2] - zeros[1]) / zeros[1]))
+    print("  ★★カメラを 0.5 秒間隔から %.1f 秒間隔に替えるだけで %+.1f 秒 動く。"
+          % (dts[i2], zeros[i2] - zeros[1]))
+    print("     これは「人待ちを 1 件残らず無くす」のと同じ order の変化で、"
+          "畳んだ数字では区別がつかない。")
     figs.save_plot("sweep_interval",
                    [(k, list(dts), rec[k]) for k in LOSS_TYPES],
                    xlabel="標本間隔 Δt [秒]", ylabel="種類別の検出率",
