@@ -464,8 +464,18 @@ def section_snr_cliff() -> dict:
 
     ref = "帯域制限 + サブサンプル"
     first = next((snrs[i] for i in range(len(snrs)) if gross[ref][i] > 5.0), None)
-    print("\n  ★実測の崖(%s が 5 %% 以上取り違える最初の点): %s dB。予測は %.1f dB。"
-          % (ref, "%+.1f" % first if first is not None else "掃引内に無し", thr))
+    sat = float(np.sqrt(L_M ** 2 / 12.0 + (X_LEAK - L_M / 2.0) ** 2))
+    print("\n  ★実測の崖(%s が 5 %% 以上取り違える最初の点): %s dB。予測は %.1f dB "
+          "—— \n     予測は %.1f dB 楽観的だった。「σ_τ が主ローブ半幅に届く」は"
+          "**取り違えが始まる点でなく\n     支配的になる点**を指していて、"
+          "実際には隣のローブが本ローブを追い越す確率が\n     もっと手前から"
+          "効く(Ziv-Zakai 型の閾値効果)。"
+          % (ref, "%+.1f" % first if first is not None else "掃引内に無し", thr,
+             abs(first - thr) if first is not None else float("nan")))
+    print("  ★予測 B の後半は当たった: 崖の下(%.0f dB)の全試行 RMS は %.1f m で、"
+          "\n     探索窓に一様なら %.1f m —— %.0f %% 差。"
+          % (snrs[-1], allrms[ref][-1], sat,
+             100 * abs(allrms[ref][-1] / sat - 1)))
     idx0 = snrs.index(0.0)
     print("  ★0 dB での実測 RMS: 整数 %.4f m / サブサンプル %.4f m / "
           "帯域制限 %.4f m\n     —— CRLB は %.4f m(実測スペクトル %.4f m)。"
