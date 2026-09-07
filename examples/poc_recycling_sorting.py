@@ -421,13 +421,22 @@ def section_scene(pair) -> dict:
           % (WL[pair[0]], WL[pair[1]]))
 
     rows = []
-    for key, label in METHODS:
+    for key, label in METHODS[:2] + [("d2raw", "2 次微分 + SAM(門なし)")] + METHODS[2:]:
         s = score(geo, classify(clean, key, pair), det)
         rows.append((label, s["macro"], s["recall"]))
-        print("   %-26s 材質別再現率の平均 %.3f   (%s)"
+        print("   %-28s 材質別再現率の平均 %.3f   (%s)"
               % (label, s["macro"],
                  " ".join("%s %.2f" % (n, r) for n, r in
                           zip(FRAG_NAMES, s["recall"][1:]))))
+    raw_metal = rows[2][2][NAMES.index("金属")]
+    gate_metal = rows[4][2][NAMES.index("金属")]
+    print("\n  ★**特徴の無い材質は微分すると消える**。金属はほぼ平坦なので"
+          " 2 次微分が 0 に近づき、\n     方向しか見ない SAM は方向の無い相手に"
+          "無力になる: 金属の再現率 %.2f。" % raw_metal)
+    print("     平坦度 ||d2||/平均 の門(校正で決めた %.2e)を 1 本足すと %.2f に戻る。"
+          % (flat_threshold(), gate_metal))
+    print("  ★ゼロ点は思ったより強い(%.3f)。**汚れる前は**分光の作り込みが"
+          "ほとんど効かない。" % rows[0][1])
 
     # 図: 場面 / 真値 / 推定 / 誤りの地図
     pred = np.where(det, classify(clean, "d2", pair), 0)
