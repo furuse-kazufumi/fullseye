@@ -55,7 +55,7 @@
  {
   "file": "06_cliff_density.png",
   "name": "cliff_density",
-  "caption": "",
+  "caption": "点密度を 25 -> 1600 点/m^2 と 64 倍にしても崖は1.52 -> 7.28 にしか伸びない。",
   "shape": [
    360,
    560,

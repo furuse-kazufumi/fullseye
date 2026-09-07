@@ -647,10 +647,15 @@ def section_cliff(k_true):
                    xlabel="真の LAI [m^2/m^2]", ylabel="推定 LAI [m^2/m^2]",
                    title="植被率からの LAI は予測どおりの天井で止まる",
                    caption="重なりの枚数(遮蔽を無視して全部数えた場合)は真値に乗る。")
+    lg = list(np.log10(dens))
     figs.save_plot("cliff_density",
-                   [("予測(d'=1)", dens, pred_l), ("実測(判別率 84 %)", dens, meas_l)],
-                   xlabel="点密度 [点/m^2]", ylabel="判別できる上限 LAI",
-                   title="崖は点密度の対数でしか動かない")
+                   [("予測(d'=1)", lg, pred_l), ("実測(判別率 84 %)", lg, meas_l)],
+                   xlabel="log10(点密度 [点/m^2])", ylabel="判別できる上限 LAI",
+                   title="崖は点密度の対数でしか動かない(横軸が対数で直線)",
+                   caption="点密度を %.0f -> %.0f 点/m^2 と %.0f 倍にしても崖は"
+                           "%.2f -> %.2f にしか伸びない。"
+                           % (dens[0], dens[-1], dens[-1] / dens[0],
+                              meas_l[0], meas_l[-1]))
     return {"lai": lai_t, "cover": cover, "vis": vis, "layers": np.asarray(layers),
             "omega": omega, "pred_vis": pred_vis, "dens": dens,
             "pred_l": pred_l, "meas_l": meas_l, "k": k_true,

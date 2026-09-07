@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-08 01:16:03
+- **最終更新**: 2026-09-08 01:46:38
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-266a7f0ef PoC 2 本(庫内フロー / 設備の熱・振動・形状)+ CI の timeout と巻き順の相互参照
-e0e08e4f9 auto: poc_machine_condition_fusion.py 編集前 (2026-09-08 00:58)
-0e014fc03 auto: poc_warehouse_flow.py 編集前 (2026-09-08 00:58)
-a416a0ce4 auto: poc_warehouse_flow.py 編集前 (2026-09-08 00:57)
-f23c576bd auto: poc_machine_condition_fusion.py 編集前 (2026-09-08 00:56)
-d8ff45dd5 auto: poc_machine_condition_fusion.py 編集前 (2026-09-08 00:56)
-17c0a4be8 auto: poc_machine_condition_fusion.py 編集前 (2026-09-08 00:56)
-f0b86c638 auto: poc_warehouse_flow.py 編集前 (2026-09-08 00:56)
-7c442ebd1 auto: poc_warehouse_flow.py 編集前 (2026-09-08 00:55)
-dcdadd46c auto: poc_machine_condition_fusion.py 編集前 (2026-09-08 00:55)
+8a5131bec auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:46)
+f89e4cc05 auto: poc_safety_clearance.py 編集前 (2026-09-08 01:45)
+d7861d648 auto: poc_safety_clearance.py 編集前 (2026-09-08 01:45)
+6459022ef auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:45)
+bda0c8cfb auto: poc_safety_clearance.py 編集前 (2026-09-08 01:45)
+0b2f58d93 auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:45)
+82c2abea6 auto: poc_crop_phenotyping.py 編集前 (2026-09-08 01:45)
+89aa46fa6 auto: poc_safety_clearance.py 編集前 (2026-09-08 01:44)
+8c206a97a auto: poc_safety_clearance.py 編集前 (2026-09-08 01:44)
+1225bc713 auto: poc_safety_clearance.py 編集前 (2026-09-08 01:44)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M examples/poc_crop_phenotyping.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-01:13 .pytest_cache/v/cache/nodeids
-01:11 docs/SESSION_SUMMARY.md
-01:10 CHANGELOG.md
-01:10 .ruff_cache/0.16.0/13906884550158051618
-01:10 .ruff_cache/0.16.0/12943517194686254008
-01:05 docs/articles/fullseye_poc_museum_qiita_en.md
-01:05 docs/articles/exhibits/wingpoc.en.md
-01:05 docs/articles/fullseye_poc_museum_qiita_ja.md
-01:05 docs/articles/exhibits/wingpoc.ja.md
-01:05 docs/articles/assets/poc/poc_warehouse_flow/09_scene_layout_720.jpg
-01:05 docs/articles/assets/poc/poc_warehouse_flow/01_heat_ambiguity_720.jpg
-01:05 docs/articles/assets/poc/poc_machine_condition_fusion/02_thermal_maps_720.jpg
-01:05 docs/articles/assets/poc/poc_machine_condition_fusion/01_scene_machine_720.jpg
-01:05 fullseye/SENSOR_PLAYBOOK.md
-01:05 docs/SENSOR_PLAYBOOK.md
+01:46 examples/poc_crop_phenotyping.py
+01:46 docs/articles/assets/poc/poc_safety_clearance/figures.json
+01:46 docs/articles/assets/poc/poc_safety_clearance/14_scene_closest.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/13_map_distance_slice.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/12_scene.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/11_zd_tradeoff.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/10_zd_budget.tsv
+01:46 docs/articles/assets/poc/poc_safety_clearance/10_zd_budget.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/10_zd_budget.csv
+01:46 docs/articles/assets/poc/poc_safety_clearance/09_grid_bias.tsv
+01:46 docs/articles/assets/poc/poc_safety_clearance/09_grid_bias.csv
+01:46 docs/articles/assets/poc/poc_safety_clearance/09_grid_bias.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/08_metric_blindness.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/07_map_visibility.png
+01:46 docs/articles/assets/poc/poc_safety_clearance/06_map_miss.png
 ```
 
 ---
