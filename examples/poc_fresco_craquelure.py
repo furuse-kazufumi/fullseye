@@ -704,8 +704,7 @@ def section_scene_figs(base: dict) -> None:
                    caption="縁に触れるセルは統計から外す(真値も同じ規約)。")
     # 分岐次数のヒストグラム(真値 vs 検出、斜光あり/なし)
     tr = truth_stats(sc_a)
-    det_r = extract_net(sc_r["img"])
-    me_r = measure(sc_r, det_r)
+    me_r = measure_scene(sc_r)
     degs_x = [3, 4, 5]
     def hist(d):
         d = np.asarray(d)
