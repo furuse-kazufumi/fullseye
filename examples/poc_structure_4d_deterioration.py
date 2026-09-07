@@ -418,7 +418,9 @@ def core_normals(cloud: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         # ★``fit_plane_3d`` の法線は符号が任意。真の外向きに合わせる(走査器側)。
         if float(nv @ CORES["n"][i]) < 0:
             nv = -nv
+            flip[i] = True
         cen[i], nor[i], ok[i] = np.asarray(c, float), nv, True
+    core_normals.flipped = float(flip[ok].mean()) if ok.any() else float("nan")
     return cen, nor, ok
 
 
