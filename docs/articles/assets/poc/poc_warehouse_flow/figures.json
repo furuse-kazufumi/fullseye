@@ -44,5 +44,77 @@
   ],
   "csv": "04_cliff_interval.csv",
   "tsv": "04_cliff_interval.tsv"
+ },
+ {
+  "file": "05_occlusion_prediction.png",
+  "name": "occlusion_prediction",
+  "caption": "h_crit = 光線が棚の縁を越える高さ。主通路側の棚前は 2 台のカメラのどちらかから見え続ける。",
+  "shape": [
+   200,
+   366,
+   3
+  ],
+  "csv": "05_occlusion_prediction.csv",
+  "tsv": "05_occlusion_prediction.tsv"
+ },
+ {
+  "file": "06_sweep_occlusion.png",
+  "name": "sweep_occlusion",
+  "caption": "天井カメラ 2 台。死角に入る棚の高さは撮る前に幾何で出せる(狭通路の棚前で 2.68 m)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_sweep_idswitch.png",
+  "name": "sweep_idswitch",
+  "caption": "左端は併合なし(対数軸にできないので 1e-5 に置いた)。総滞留時間はこの掃引で 1 秒も動かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_scene_layout.png",
+  "name": "scene_layout",
+  "caption": "待ちは種類ごとに既知の時刻・長さ・場所で仕込んである。",
+  "shape": [
+   615,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "09_xyt_projection.png",
+  "name": "xyt_projection",
+  "caption": "上段は通路が明るい(人が通っただけ)。下段はt 軸の線分 2.5 秒で開いたあと —— 待ちだけが残る。",
+  "shape": [
+   615,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "10_map_by_type.png",
+  "name": "map_by_type",
+  "caption": "橙 = 補充待ち / 青 = 人待ち / 赤 = 通路の干渉 / 緑 = システム待ち / 紫 = 欠品 / 灰 = 作業。",
+  "shape": [
+   333,
+   670,
+   3
+  ]
+ },
+ {
+  "file": "11_clearance_map.png",
+  "name": "clearance_map",
+  "caption": "空き幅 0.75 m 以下 = 棚前、1.25 m 以下 = 狭い通路。右のヒートマップは通路が明るく、待ちが埋もれる。",
+  "shape": [
+   333,
+   670,
+   3
+  ]
  }
 ]
