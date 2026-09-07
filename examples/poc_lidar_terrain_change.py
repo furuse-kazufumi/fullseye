@@ -631,16 +631,15 @@ def section_m3c2(ctrl: dict, tr: dict) -> dict:
     ca, _ = make_cloud(r0, with_change=False, occl=0.0)
     cb, _ = make_cloud(r0, with_change=False, occl=0.0)
     false_ero = m3c2_volume(m3c2(ca, cb), lod=0.0)["ero"]
-    lost = tr["ero"] * (1 - res["rate"])
-    print("  ★★この -1.3 %% を「よく合っている」と読んではいけない。**逆向きの 2 つが"
-          "打ち消している**:")
-    print("     (i) 測れなかった core %.1f %% ぶんの土量 -%.1f m3(被覆の欠け)"
-          % (100 * (1 - res["rate"]), lost))
-    print("     (ii) 変化なしの対照で出る偽掘削 +%.1f m3(雑音の水増し)" % false_ero)
-    print("     足すと %+.1f m3、実測のずれ %+.1f m3 とほぼ同じ。有効率で割り戻した"
-          "掘削は %.3f m3(%+.1f %%)。"
-          % (false_ero - lost, raw["ero"] - tr["ero"], raw["ero_cov"],
-             100 * (raw["ero_cov"] / tr["ero"] - 1)))
+    print("  ★★この %+.1f %% を「よく合っている」と読んではいけない。"
+          "**逆向きの 2 つが効いている**:" % (100 * (raw["ero"] / tr["ero"] - 1)))
+    print("     (i) 測れなかった core %.1f %% —— その面積の土量は一度も足されない(被覆の欠け)"
+          % (100 * (1 - res["rate"])))
+    print("     (ii) 雑音の水増し —— 変化なしの対照で偽掘削 %+.1f m3 が出る" % false_ero)
+    print("     有効率で割り戻すと %.1f m3(%+.1f %%)。**生値が真値に近かったのは偶然**で、"
+          % (raw["ero_cov"], 100 * (raw["ero_cov"] / tr["ero"] - 1)))
+    print("     被覆と雑音を別々に報告しないと、打ち消し合った 1 個の数字が"
+          "「正確」に見えてしまう。")
     print("  core ごとの sigma で有意性判定: 掘削 %8.3f  堆積 %8.3f  変化面積 %.0f m2(真 %.0f)"
           % (sig["ero"], sig["dep"], sig["area"], tr["area"]))
     print("  ★★体積に直すとき **1 / cos(局所傾斜)** を掛けるのを忘れると:")
