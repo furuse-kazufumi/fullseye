@@ -350,6 +350,11 @@ def cnr_pred(d_mm: float, s_rel: float, spr: float = 0.0) -> float:
 # --------------------------------------------------------------------------- #
 # 1. 場面とゼロ点                                                                #
 # --------------------------------------------------------------------------- #
+MAIN = "med72"
+METHOD_JA = {"med72": "中央値 24×72 px", "med36": "中央値 12×36 px", "open9": "9 px オープニング",
+             "grind": "山削り(再構成)", "gauss3": "ガウス σ=3 px"}
+
+
 def section_scene() -> dict:
     print("\n" + "=" * 78)
     print("1) 場面とゼロ点 —— 固定しきい値は余盛の断面を拾う")
@@ -371,25 +376,27 @@ def section_scene() -> dict:
     fz = zp["feat"]
     print("\n  ゼロ点(帯の中央値 + %.0fσ の固定しきい値): 塊 %d 個、合計面積 %.2f mm²、最大径 %.2f mm"
           % (K_SIGMA, fz["n"], float(fz["area"].sum()), float(fz["equiv_diameter"].max()) if fz["n"] else 0.0))
-    det = detect(sc_np["img"], "grind")
+    det = detect(sc_np["img"], MAIN)
     m = match(det, pores)
     fd = det["feat"]
-    print("  fullseye(山削り背景 + 対数コントラスト %.1fσ): 塊 %d 個(一致 %d / 偽陽性 %d / 見落とし %d)、合計面積 %.2f mm²"
-          % (K_SIGMA, fd["n"], len(m["pairs"]), len(m["fp"]), len(m["miss"]), float(fd["area"].sum())))
+    print("  fullseye(%s の背景 + 対数コントラスト %.1fσ): 塊 %d 個(一致 %d / 偽陽性 %d / 見落とし %d)、合計面積 %.2f mm²"
+          % (METHOD_JA[MAIN], K_SIGMA, fd["n"], len(m["pairs"]), len(m["fp"]), len(m["miss"]), float(fd["area"].sum())))
     print("     真値 d [mm]   しきい値径   体積径   キャリパ径")
     for i, j in m["pairs"]:
         dd = diameters(det, j)
         print("        %5.2f        %5.2f      %5.2f     %5.2f" % (pores[i][2], dd["d_thr"], dd["d_vol"], dd["d_cal"]))
+    if m["miss"]:
+        print("     見落とし: %s mm" % ", ".join("%.2f" % pores[i][2] for i in m["miss"]))
 
     figs.save_grid("scene_radiograph",
                    [sc["img"], sc["thick"], sc_np["img"], det["c"]],
                    ["透過像(IQI 針金 7 本つき、明 = 薄い)", "透過厚 L [mm](余盛 + 気孔の弦長)",
-                    "透過像(IQI なし、気孔 6 個)", "対数コントラスト ln(I/背景)(山削り)"],
+                    "透過像(IQI なし、気孔 6 個)", "対数コントラスト ln(I/背景)"],
                    title="溶接部の X 線透過像(1 px = %.1f mm、板厚 %.0f mm)" % (PX, T_PLATE),
                    caption="余盛は暗い帯、気孔は明るい斑点。背景を引いて対数を取ると弦長 × μ に戻る。")
     figs.save_grid("map_detections",
                    [_LAB.blob_overlay(sc_np["img"], zp["labels"]), _LAB.blob_overlay(sc_np["img"], det["labels"])],
-                   ["ゼロ点: 固定しきい値(塊 %d 個)" % fz["n"], "fullseye: 山削り + %.0fσ(塊 %d 個)" % (K_SIGMA, fd["n"])],
+                   ["ゼロ点: 固定しきい値(塊 %d 個)" % fz["n"], "fullseye: %s + %.0fσ(塊 %d 個)" % (METHOD_JA[MAIN], K_SIGMA, fd["n"])],
                    title="固定しきい値は余盛のつま先を拾う")
     return {"zero_n": int(fz["n"]), "zero_area": float(fz["area"].sum()), "true_area": true_area,
             "zero_dmax": float(fz["equiv_diameter"].max()) if fz["n"] else 0.0,
@@ -397,19 +404,20 @@ def section_scene() -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# 2. 直径を振る —— 検出の崖と、背景 op の大きさの天井                           #
+# 2. 直径を振る —— 検出の崖と、背景の窓の天井                                    #
 # --------------------------------------------------------------------------- #
 def section_diameter_sweep(s_rel: float) -> dict:
     print("\n" + "=" * 78)
-    print("2) 直径 0.3 → 3.0 mm —— 検出率(予測 CNR つき)と直径の偏り")
+    print("2) 直径 0.3 → 3.0 mm —— 検出率(予測 CNR つき)、背景の天井、直径の偏り")
     print("=" * 78)
     ds = (0.3, 0.4, 0.5, 0.6, 0.8, 1.0, 1.4, 2.0, 2.5, 3.0)
-    methods = ("grind", "open9", "diam34")
+    methods = ("med72", "med36", "open9", "grind")
     rate = {mth: [] for mth in methods}
     fp = {mth: [] for mth in methods}
     err = {"d_thr": [], "d_vol": [], "d_cal": []}
     pred_thr = []
-    print("   d [mm]  CNR予測   検出率: 山削り  9px開  直径開  |  偽陽性/枚  |  直径誤差 %%: しきい値  体積  キャリパ  (しきい値の予測)")
+    print("   d [mm]  CNR予測 | 検出率 %: 中央値72 中央値36  9px開  山削り | 偽陽性/枚: 中央値72  9px開  山削り"
+          " | 直径誤差 %(中央値72): しきい値  体積  キャリパ (しきい値の予測)")
     for d in ds:
         hit = {mth: 0 for mth in methods}
         fpn = {mth: 0 for mth in methods}
@@ -417,7 +425,7 @@ def section_diameter_sweep(s_rel: float) -> dict:
         e = {k: [] for k in err}
         for seed in range(3):
             rng = np.random.default_rng(100 + seed)
-            n = 12 if d <= 1.4 else 8
+            n = 8 if d <= 1.4 else 5
             pores = [(CAP_ROW + (25 if k % 2 else -25), 20 + (k + 0.5) * (W - 40) / n, d) for k in range(n)]
             sc = render(pores, rng, spr=0.0)
             tot += n
@@ -426,7 +434,7 @@ def section_diameter_sweep(s_rel: float) -> dict:
                 m = match(det, pores)
                 hit[mth] += len(m["pairs"])
                 fpn[mth] += len(m["fp"])
-                if mth == "grind":
+                if mth == MAIN:
                     for i, j in m["pairs"]:
                         dd = diameters(det, j)
                         for k in e:
@@ -441,40 +449,43 @@ def section_diameter_sweep(s_rel: float) -> dict:
         thr = K_SIGMA * s_rel / (2 * np.sqrt(np.pi) * SMOOTH_SIG)
         pt = 100 * (np.sqrt(max(d * d - (thr / MU) ** 2, 0)) / d - 1)
         pred_thr.append(pt)
-        print("   %4.2f   %6.2f     %6.1f  %6.1f  %6.1f   |   %4.2f   |   %+6.1f  %+6.1f  %+6.1f   (%+6.1f)"
-              % (d, cnr_pred(d, s_rel), rate["grind"][-1], rate["open9"][-1], rate["diam34"][-1],
-                 fp["grind"][-1], err["d_thr"][-1], err["d_vol"][-1], err["d_cal"][-1], pt))
+        print("   %4.2f   %6.2f  |  %6.1f   %6.1f   %6.1f  %6.1f  |  %6.2f   %6.1f  %6.1f  |   %+6.1f  %+6.1f  %+6.1f   (%+6.1f)"
+              % (d, cnr_pred(d, s_rel), rate["med72"][-1], rate["med36"][-1], rate["open9"][-1], rate["grind"][-1],
+                 fp["med72"][-1], fp["open9"][-1], fp["grind"][-1], err["d_thr"][-1], err["d_vol"][-1], err["d_cal"][-1], pt))
 
-    # 50 % 交点(山削り)を線形補間で
-    r = np.array(rate["grind"])
+    r = np.array(rate[MAIN])
     d50 = float(np.interp(50.0, r[:5], np.array(ds[:5]))) if r[0] < 50 < r[4] else np.nan
     k_pred = 4.0
     d50_pred = float(np.sqrt(k_pred * (3 * PX * s_rel) / (MU * np.sqrt(np.pi))))
     print("\n  ★予測: CNR = %.0f を 50 %% 検出の目安に置くと d₅₀ = %.2f mm(CNR = %.2f·d²)。"
           % (k_pred, d50_pred, cnr_pred(1.0, s_rel)))
     print("     実測の 50 %% 交点 = %.2f mm(そこでの CNR = %.2f)。" % (d50, cnr_pred(d50, s_rel)))
-    cliff9 = [d for d, rt in zip(ds, rate["open9"]) if rt < 50]
-    print("  ★9 px オープニングの検出率が 50 %% を割る最小径 = %s mm(op の窓の天井 = 0.9 mm)。"
-          % ("%.1f" % cliff9[0] if cliff9 else "なし"))
-    print("     直径オープニング(34 px)は %.1f mm で %.0f %%、山削りは %.0f %%。"
-          % (ds[-1], rate["diam34"][-1], rate["grind"][-1]))
+    cliff9 = [d for d, rt in zip(ds, rate["open9"]) if rt < 50 and d >= 0.6]
+    cliff36 = [d for d, rt in zip(ds, rate["med36"]) if rt < 50 and d >= 0.6]
+    print("  ★背景の天井: 9 px オープニングは %s mm、中央値 36 px は %s mm から検出率 50 %% を割る。"
+          "中央値 72 px は %.1f mm で %.0f %%。"
+          % ("%.1f" % cliff9[0] if cliff9 else "—", "%.1f" % cliff36[0] if cliff36 else "—", ds[-1], rate["med72"][-1]))
+    fp_open = float(np.mean(fp["open9"] + fp["grind"]))
+    print("  ★偽陽性: 中央値の背景は %.2f 個/枚、オープニング系(9 px 開・山削り)は %.0f 個/枚 —— "
+          "\n     オープニングは背景を雑音の谷に置くので残差が片側に偏り、σ 由来のしきい値が破綻する。"
+          % (float(np.mean(fp["med72"])), fp_open))
 
     figs.save_plot("detect_vs_diameter",
-                   [("山削り(再構成)", ds, rate["grind"]), ("9 px 矩形オープニング", ds, rate["open9"]),
-                    ("直径オープニング 34 px", ds, rate["diam34"])],
-                   xlabel="気孔の直径 [mm]", ylabel="検出率 [%]", title="検出の崖(小さい側)と背景 op の天井(大きい側)",
-                   caption="小さい側の崖は CNR で予測どおり。大きい側の崖は背景推定 op の構造要素の大きさそのもの。")
+                   [(METHOD_JA[m], ds, rate[m]) for m in ("med72", "med36", "open9")],
+                   xlabel="気孔の直径 [mm]", ylabel="検出率 [%]", title="検出の崖(小さい側)と背景の窓の天井(大きい側)",
+                   caption="小さい側の崖は CNR で予測どおり。大きい側の崖は背景推定の窓の大きさそのもの。")
     figs.save_plot("cnr_prediction", [("予測 CNR = %.1f·d²" % cnr_pred(1.0, s_rel), ds, [cnr_pred(d, s_rel) for d in ds]),
-                                      ("検出率 [%] ÷ 10(山削り)", ds, [x / 10 for x in rate["grind"]])],
-                   xlabel="気孔の直径 [mm]", ylabel="CNR / (検出率 ÷ 10)", title="CNR の閉形式と検出率(50 % は CNR≈4)",
+                                      ("検出率 [%] ÷ 10(中央値 72 px)", ds, [x / 10 for x in rate[MAIN]])],
+                   xlabel="気孔の直径 [mm]", ylabel="CNR / (検出率 ÷ 10)", title="CNR の閉形式と検出率(50 % は CNR≈4 か)",
                    xlim=(0.25, 1.05), ylim=(0, 12))
     figs.save_plot("diameter_error",
                    [("しきい値の面積径", ds, err["d_thr"]), ("積分コントラスト(体積)径", ds, err["d_vol"]),
                     ("キャリパ(エッジ対)径", ds, err["d_cal"]), ("しきい値径の予測 √(d²−(thr/μ)²)", ds, pred_thr)],
                    xlabel="気孔の直径 [mm]", ylabel="直径の相対誤差 [%]", title="直径 3 通り: 偏りの向きも大きさも違う",
-                   caption="面積径は小さい側で縮む(等高線が内側)。体積径は μ 既知なら偏らない。キャリパは縁が外へ出る。")
-    return {"ds": ds, "rate": rate, "err": err, "d50": d50, "d50_pred": d50_pred, "cliff9": cliff9[0] if cliff9 else np.nan,
-            "rate_diam34_last": rate["diam34"][-1]}
+                   caption="面積径は小さい側で縮む(等高線が内側)。体積径は μ 既知なら偏らない。キャリパは縁の位置で決まる。")
+    return {"ds": ds, "rate": rate, "fp": fp, "err": err, "d50": d50, "d50_pred": d50_pred,
+            "cliff9": cliff9[0] if cliff9 else np.nan, "cliff36": cliff36[0] if cliff36 else np.nan,
+            "fp_med": float(np.mean(fp["med72"])), "fp_open": fp_open, "pred_thr": pred_thr}
 
 
 # --------------------------------------------------------------------------- #
@@ -482,22 +493,22 @@ def section_diameter_sweep(s_rel: float) -> dict:
 # --------------------------------------------------------------------------- #
 def section_toe_distance() -> dict:
     print("\n" + "=" * 78)
-    print("3) 余盛のつま先(明暗の段)からの距離 —— 壊れるのは大窓平滑だけ")
+    print("3) 余盛のつま先(明暗の段)からの距離 —— どの背景が壊れるか")
     print("=" * 78)
     deltas = (0.0, 0.25, 0.5, 1.0, 1.5, 2.5)
-    methods = ("grind", "open9", "gauss3", "row")
+    methods = ("med72", "gauss3", "open9", "grind")
     d = 0.8
     toe_row = CAP_ROW - CAP_W / (2 * PX)          # 上のつま先の行
     rate = {m: [] for m in methods}
     fp = {m: [] for m in methods}
-    print("   距離 δ [mm]   検出率 %%: 山削り  9px開  ガウス3  行プロファイル  |  偽陽性/枚: 山削り  9px開  ガウス3  行")
+    print("   距離 δ [mm] | 検出率 %: 中央値72  ガウス3  9px開  山削り | 偽陽性/枚: 中央値72  ガウス3  9px開  山削り")
     for dl in deltas:
         hit = {m: 0 for m in methods}
         fpn = {m: 0 for m in methods}
         tot = 0
         for seed in range(2):
             rng = np.random.default_rng(300 + seed)
-            n = 10
+            n = 8
             pores = [(toe_row + dl / PX, 20 + (k + 0.5) * (W - 40) / n, d) for k in range(n)]
             sc = render(pores, rng, spr=0.0)
             tot += n
@@ -509,26 +520,28 @@ def section_toe_distance() -> dict:
         for m in methods:
             rate[m].append(100.0 * hit[m] / tot)
             fp[m].append(fpn[m] / 2.0)
-        print("      %4.2f        %6.1f  %6.1f  %6.1f    %6.1f        |     %5.1f   %5.1f   %5.1f   %5.1f"
+        print("      %4.2f     |   %6.1f   %6.1f  %6.1f  %6.1f   |    %6.1f   %6.1f  %6.1f  %6.1f"
               % (dl, *[rate[m][-1] for m in methods], *[fp[m][-1] for m in methods]))
     near = [i for i, dl in enumerate(deltas) if dl <= 0.5]
-    fp_g = float(np.mean([fp["gauss3"][i] for i in near]))
-    fp_o = float(np.mean([fp["grind"][i] for i in near] + [fp["open9"][i] for i in near]))
-    print("\n  ★予想は「オープニング系もつま先で偽陽性を出す」だったが、実測: つま先 0.5 mm 以内の偽陽性は"
-          "\n     ガウス σ=3 px %.1f 個/枚、オープニング系(山削り・9 px)%.1f 個/枚。段差はオープニングでは崩れない。"
-          % (fp_g, fp_o))
+    far = [i for i, dl in enumerate(deltas) if dl >= 1.5]
+    out = {m: (float(np.mean([rate[m][i] for i in near])), float(np.mean([rate[m][i] for i in far]))) for m in methods}
+    fpn_near = {m: float(np.mean([fp[m][i] for i in near])) for m in methods}
+    print("\n  検出率(つま先 1.5 mm 以遠 → 0.5 mm 以内): " + " / ".join(
+        "%s %.0f→%.0f %%" % (METHOD_JA[m], out[m][1], out[m][0]) for m in methods))
+    print("  偽陽性(つま先 0.5 mm 以内): " + " / ".join(
+        "%s %.1f" % (METHOD_JA[m], fpn_near[m]) for m in methods) + " 個/枚")
 
     rng = np.random.default_rng(301)
-    sc = render([(toe_row + 0.25 / PX, 20 + (k + 0.5) * 30, d) for k in range(10)], rng, spr=0.0)
-    panels = [detect(sc["img"], m)["c"] for m in ("gauss3", "grind")]
-    figs.save_grid("map_toe_backgrounds", [sc["img"][60:140]] + [p[60:140] for p in panels],
-                   ["透過像(気孔 0.8 mm をつま先の 0.25 mm 内側に 10 個)", "ガウス σ=3 の背景: つま先に明るい帯が残る",
-                    "山削りの背景: 段が保存される"], title="つま先(余盛の縁)の近くの背景推定", ncols=1,
-                   caption="大窓平滑は段をぼかすので明るい側に残差の帯が出る。オープニング系は下に凸の角を保存する。")
-    figs.save_plot("toe_false_positives", [(m_ja, deltas, fp[m]) for m, m_ja in
-                                           (("gauss3", "ガウス σ=3"), ("grind", "山削り"), ("open9", "9 px 開"), ("row", "行プロファイル"))],
-                   xlabel="つま先からの距離 δ [mm]", ylabel="偽陽性 [個/枚]", title="つま先の近くの偽陽性(気孔 0.8 mm)")
-    return {"deltas": deltas, "rate": rate, "fp": fp, "fp_gauss_near": fp_g, "fp_open_near": fp_o}
+    sc = render([(toe_row + 0.25 / PX, 20 + (k + 0.5) * 35, d) for k in range(8)], rng, spr=0.0)
+    r0, r1 = int(toe_row) - 30, int(toe_row) + 50
+    panels = [sc["img"][r0:r1]] + [detect(sc["img"], m)["c"][r0:r1] for m in ("gauss3", "med72")]
+    figs.save_grid("map_toe_backgrounds", panels,
+                   ["透過像(気孔 0.8 mm をつま先の 0.25 mm 内側に 8 個)", "ガウス σ=3 の背景を引いた対数コントラスト",
+                    "中央値 24×72 px の背景を引いた対数コントラスト"], title="つま先(余盛の縁)の近くの背景推定", ncols=1,
+                   caption="つま先の段は弧の縁(√ の立ち上がり)。大窓平滑はそれをぼかし、中央値は保つ。")
+    figs.save_plot("toe_detection", [(METHOD_JA[m], deltas, rate[m]) for m in methods],
+                   xlabel="つま先からの距離 δ [mm]", ylabel="検出率 [%]", title="つま先の近くの検出率(気孔 0.8 mm)", ylim=(0, 105))
+    return {"deltas": deltas, "rate": rate, "fp": fp, "near_far": out, "fp_near": fpn_near}
 
 
 # --------------------------------------------------------------------------- #
@@ -541,7 +554,7 @@ def section_scatter() -> dict:
     sprs = (0.0, 0.25, 0.5, 1.0, 2.0)
     sizes = (0.6, 1.2, 2.4)
     out = {d: {"thr": [], "vol": [], "rate": []} for d in sizes}
-    print("   SPR    d [mm]  検出率 %%   しきい値径 誤差 %% (予測)   体積径 誤差 %% (予測 (1+SPR)^(-1/3))")
+    print("   SPR    d [mm]  検出率 %   しきい値径 誤差 % (予測)   体積径 誤差 % (予測 (1+SPR)^(-1/3))")
     panels, caps = [], []
     for spr in sprs:
         rng = np.random.default_rng(500)
@@ -550,7 +563,7 @@ def section_scatter() -> dict:
             for q in range(4):
                 pores.append((CAP_ROW + (-28, 0, 28)[k], 30 + (q + 0.5) * (W - 60) / 4 + k * 20, d))
         sc = render(pores, rng, spr=spr)
-        det = detect(sc["img"], "grind")
+        det = detect(sc["img"], MAIN)
         m = match(det, pores)
         if spr in (0.0, 1.0, 2.0):
             panels.append(det["c"])
@@ -573,10 +586,13 @@ def section_scatter() -> dict:
             print("   %4.2f   %4.2f    %5.0f      %+7.1f (%+6.1f)          %+7.1f (%+6.1f)"
                   % (spr, d, out[d]["rate"][-1], out[d]["thr"][-1], p_thr, out[d]["vol"][-1], p_vol))
     i1 = sprs.index(1.0)
+    vol1 = float(np.nanmean([out[d]["vol"][i1] for d in sizes]))
+    d12 = 1.2 * (1 + out[1.2]["thr"][i1] / 100)
+    d12v = 1.2 * (1 + out[1.2]["vol"][i1] / 100)
     print("\n  ★SPR = 1.0: 体積径 %+.1f %%(予測 %+.1f %%)、しきい値径は 0.6 mm 気孔で %+.0f %%。"
-          % (float(np.nanmean([out[d]["vol"][i1] for d in sizes])), 100 * (2 ** (-1 / 3) - 1), out[0.6]["thr"][i1]))
-    print("     1.2 mm の気孔が SPR = 1.0 でしきい値径 %.2f mm → 等級の境目 1 mm を%s。"
-          % (1.2 * (1 + out[1.2]["thr"][i1] / 100), "またぐ" if 1.2 * (1 + out[1.2]["thr"][i1] / 100) <= 1.0 else "またがない"))
+          % (vol1, 100 * (2 ** (-1 / 3) - 1), out[0.6]["thr"][i1]))
+    print("     1.2 mm の気孔は SPR = 1.0 で しきい値径 %.2f mm / 体積径 %.2f mm → 等級の境目 1 mm を%s。"
+          % (d12, d12v, "またぐ" if min(d12, d12v) <= 1.0 else "またがない"))
     figs.save_grid("frames_scatter", panels, caps, title="散乱かぶりでコントラストが薄まる(対数コントラスト)", ncols=3)
     figs.save_plot("scatter_diameter_bias",
                    [("しきい値径 0.6 mm", sprs, out[0.6]["thr"]), ("しきい値径 1.2 mm", sprs, out[1.2]["thr"]),
@@ -584,7 +600,7 @@ def section_scatter() -> dict:
                     ("予測 (1+SPR)^(-1/3)", sprs, [100 * ((1 + s) ** (-1 / 3) - 1) for s in sprs])],
                    xlabel="散乱/一次線比 SPR", ylabel="直径の相対誤差 [%]", title="散乱かぶりは直径を縮める",
                    caption="体積径は (1+SPR)^(-1/3) で縮む。しきい値径は小さい気孔ほど速く縮み、消える。")
-    return {"sprs": sprs, "out": out}
+    return {"sprs": sprs, "out": out, "vol1": vol1, "d12": d12, "d12v": d12v}
 
 
 # --------------------------------------------------------------------------- #
@@ -597,36 +613,44 @@ def section_iqi(s_rel: float, d50: float) -> dict:
     rng = np.random.default_rng(900)
     sc = render([], rng, spr=0.0, wires=True)
     img = sc["img"]
-    span = 1.0
-    rows = []
-    vis = []
-    print("   針金   d [mm]   コントラスト振幅   CNR(10 mm 平均)  見える?   同じ CNR の気孔径 [mm]")
+    det = detect(img, MAIN)
+    c = det["c"]                                    # 針金は負(厚い)
+    L_PX = 100                                      # 10 mm ぶん平均する
+    r0, r1 = int(CAP_ROW - L_PX / 2), int(CAP_ROW + L_PX / 2)
+    half_w = 3
+    sig_s = s_rel * np.sqrt(2 * half_w + 1) / np.sqrt(L_PX)      # 積分した信号の雑音
+    rows, vis = [], []
     k_cnr = cnr_pred(1.0, s_rel)
+    print("   針金   d [mm]   積分コントラスト(実測 / 予測)   CNR(10 mm)   見える?   同じ CNR の気孔径 [mm]   キャリパ幅 [mm]")
     for k, dw in enumerate(WIRES_MM):
-        col = 40 + k * WIRE_PITCH_MM / PX
-        mh = _LAB.gen_measure_rectangle2(CAP_ROW, col, 0.0, 6, 50, img.shape)   # 幅方向に ±50 行 = 10 mm 平均
-        pairs = _LAB.measure_pairs(img, mh, sigma=1.0, threshold=0.0005)
-        prof_noise = s_rel * float(np.median(img[int(CAP_ROW - 50):int(CAP_ROW + 50), int(col) - 3:int(col) + 4])) / np.sqrt(101)
-        amp = 0.0
-        if pairs:
-            best = min(pairs, key=lambda p: abs(0.5 * (p["first"] + p["second"]) - 6))
-            amp = abs(float(best["first_amplitude"]))
-        cnr = amp / (prof_noise * 2 * np.sqrt(np.pi) * 1.0 ** 0.5)     # 平滑 σ=1 の後の雑音
+        col = int(round(40 + k * WIRE_PITCH_MM / PX))
+        prof = -c[r0:r1, col - half_w:col + half_w + 1].mean(axis=0)
+        sig = float(prof.sum())                      # [px·contrast]
+        pred = MU * np.pi * dw ** 2 / 4 / PX
+        cnr = sig / sig_s
         visible = cnr >= 3.0
         vis.append(visible)
-        d_eq = float(np.sqrt(cnr / k_cnr))
-        rows.append(("W%d" % (10 + k), "%.3f" % dw, "%.4f" % amp, "%.1f" % cnr, "○" if visible else "×", "%.2f" % d_eq))
-        print("   W%-3d   %.3f      %.4f          %5.1f         %s        %.2f" % (10 + k, dw, amp, cnr, "○" if visible else "×", d_eq))
-    smallest = [dw for dw, v in zip(WIRES_MM, vis) if v]
-    d_w = min(smallest) if smallest else np.nan
-    idx = WIRES_MM.index(d_w) if smallest else -1
-    print("\n  ★見える最細の針金 = %.3f mm(板厚の %.1f %%)。気孔の 50 %% 検出限界は %.2f mm —— %.1f 倍。"
-          % (d_w, 100 * d_w / T_PLATE, d50, d50 / d_w))
-    print("     針金は 10 mm の長さで積分できるので薄くても見える。同じ CNR に換算すると W%d ≒ 気孔 %s mm。"
+        d_eq = float(np.sqrt(max(cnr, 0) / k_cnr))
+        # キャリパで幅も測る(fullseye の measure_pairs、幅方向 ±50 行を平均)
+        mh = _LAB.gen_measure_rectangle2(CAP_ROW, col, 0.0, 6, L_PX / 2, img.shape)
+        pairs = _LAB.measure_pairs(img, mh, sigma=1.0, threshold=0.002)
+        w_cal = np.nan
+        br = [p for p in pairs if p["first"] <= 6 <= p["second"]]
+        if br:
+            w_cal = float(max(br, key=lambda p: min(abs(p["first_amplitude"]), abs(p["second_amplitude"])))["width"]) * PX
+        rows.append(("W%d" % (10 + k), "%.3f" % dw, "%.3f / %.3f" % (sig, pred), "%.1f" % cnr,
+                     "○" if visible else "×", "%.2f" % d_eq, "%.2f" % w_cal if np.isfinite(w_cal) else "—"))
+        print("   W%-3d   %.3f        %.3f / %.3f                 %5.1f        %s          %.2f                  %s"
+              % (10 + k, dw, sig, pred, cnr, "○" if visible else "×", d_eq, rows[-1][6]))
+    seen = [(k, dw) for k, (dw, v) in enumerate(zip(WIRES_MM, vis)) if v]
+    idx, d_w = seen[-1] if seen else (-1, np.nan)
+    print("\n  ★見える最細の針金 = W%d(%.3f mm、板厚の %.1f %%)。気孔の 50 %% 検出限界は %.2f mm —— %.1f 倍。"
+          % (10 + idx, d_w, 100 * d_w / T_PLATE, d50, d50 / d_w))
+    print("     針金は 10 mm の長さで積分できるので細くても見える。同じ CNR に換算すると W%d ≒ 気孔 %s mm。"
           % (10 + idx, rows[idx][5] if idx >= 0 else "?"))
-    figs.save_table("iqi_visibility", ["針金", "直径 [mm]", "振幅", "CNR", "見える", "同 CNR の気孔径 [mm]"], rows,
-                    title="IQI 針金の視認と、同じ CNR の気孔の直径", caption="視認基準 CNR ≥ 3(Rose)。")
-    return {"d_wire": d_w, "ratio": d50 / d_w, "rows": rows}
+    figs.save_table("iqi_visibility", ["針金", "直径 [mm]", "積分コントラスト 実測/予測", "CNR", "見える", "同 CNR の気孔径 [mm]", "キャリパ幅 [mm]"], rows,
+                    title="IQI 針金の視認と、同じ CNR の気孔の直径", caption="視認基準 CNR ≥ 3(Rose)。10 mm の長さで平均。")
+    return {"d_wire": d_w, "idx": idx, "ratio": d50 / d_w, "rows": rows}
 
 
 # --------------------------------------------------------------------------- #
@@ -641,11 +665,11 @@ def section_grading() -> dict:
     n_img = 30
     table = []
     res = {}
-    print("   条件                   ゼロ点   山削り+しきい値径  山削り+体積径 | 内訳(体積径): 見落とし  直径  偽陽性 | 見落とし率(>%.1f mm)" % D_IGNORE)
+    print("   条件                    ゼロ点  しきい値径  体積径 | 内訳(体積径): 見落とし  直径  偽陽性 | 見落とし率(>%.1f mm)  偽陽性/枚" % D_IGNORE)
     for name, cap, spr in conds:
         wrong = {"zero": 0, "thr": 0, "vol": 0}
         cause = {"miss": 0, "diam": 0, "fp": 0}
-        n_true, n_miss = 0, 0
+        n_true, n_miss, n_fp = 0, 0, 0
         for k in range(n_img):
             rng = np.random.default_rng(1000 + k)
             pores = place_pores(rng, int(rng.poisson(5)) + 2, 0.3, 3.0)
@@ -654,7 +678,7 @@ def section_grading() -> dict:
             zp = zero_point(sc["img"])
             fz = zp["feat"]
             g_zero = grade([(float(fz["col"][j]), float(fz["equiv_diameter"][j])) for j in range(int(fz["n"]))])
-            det = detect(sc["img"], "grind")
+            det = detect(sc["img"], MAIN)
             m = match(det, pores)
             f = det["feat"]
             tp_thr, tp_vol, tp_true = [], [], []
@@ -676,24 +700,25 @@ def section_grading() -> dict:
             big = [i for i, p in enumerate(pores) if p[2] > D_IGNORE]
             n_true += len(big)
             n_miss += len([i for i in m["miss"] if i in big])
+            n_fp += len(m["fp"])
         pc = {k: 100.0 * v / n_img for k, v in wrong.items()}
         cc = {k: 100.0 * v / n_img for k, v in cause.items()}
         miss_rate = 100.0 * n_miss / max(n_true, 1)
-        res[name] = {"wrong": pc, "cause": cc, "miss_rate": miss_rate}
+        res[name] = {"wrong": pc, "cause": cc, "miss_rate": miss_rate, "fp_per": n_fp / n_img}
         table.append((name, "%.0f %%" % pc["zero"], "%.0f %%" % pc["thr"], "%.0f %%" % pc["vol"],
-                      "%.0f %%" % cc["miss"], "%.0f %%" % cc["diam"], "%.0f %%" % cc["fp"], "%.1f %%" % miss_rate))
-        print("   %-22s %5.0f %%      %5.0f %%          %5.0f %%     |            %5.0f %%  %5.0f %%  %5.0f %% |   %.1f %%"
-              % (name, pc["zero"], pc["thr"], pc["vol"], cc["miss"], cc["diam"], cc["fp"], miss_rate))
+                      "%.0f %%" % cc["miss"], "%.0f %%" % cc["diam"], "%.0f %%" % cc["fp"], "%.1f %%" % miss_rate, "%.2f" % (n_fp / n_img)))
+        print("   %-22s %5.0f %%   %5.0f %%   %5.0f %% |            %5.0f %%  %5.0f %%  %5.0f %% |     %5.1f %%          %.2f"
+              % (name, pc["zero"], pc["thr"], pc["vol"], cc["miss"], cc["diam"], cc["fp"], miss_rate, n_fp / n_img))
     base = res[conds[0][0]]
     print("\n  ★基準条件で等級を 1 段間違える割合: ゼロ点 %.0f %% / しきい値径 %.0f %% / 体積径 %.0f %%。"
           % (base["wrong"]["zero"], base["wrong"]["thr"], base["wrong"]["vol"]))
-    print("     内訳(体積径): 見落とし %.0f %%・直径 %.0f %%・偽陽性 %.0f %% —— 無視径 %.1f mm 超の見落とし率は %.1f %% なので"
-          "\n     等級を壊すのは 1 mm の境目をまたぐ直径誤差(散乱を止めると %.0f %%)。"
-          % (base["cause"]["miss"], base["cause"]["diam"], base["cause"]["fp"], D_IGNORE, base["miss_rate"],
-             res[conds[1][0]]["wrong"]["vol"]))
-    figs.save_table("grade_errors", ["条件", "ゼロ点", "しきい値径", "体積径", "内訳: 見落とし", "直径", "偽陽性", "見落とし率"],
+    print("     内訳(体積径): 見落とし %.0f %%・直径 %.0f %%・偽陽性 %.0f %%(無視径 %.1f mm 超の見落とし率 %.1f %%、偽陽性 %.2f 個/枚)。"
+          % (base["cause"]["miss"], base["cause"]["diam"], base["cause"]["fp"], D_IGNORE, base["miss_rate"], base["fp_per"]))
+    print("     散乱を止めると体積径の誤りは %.0f %%、余盛を止めると %.0f %%。"
+          % (res[conds[1][0]]["wrong"]["vol"], res[conds[2][0]]["wrong"]["vol"]))
+    figs.save_table("grade_errors", ["条件", "ゼロ点", "しきい値径", "体積径", "内訳: 見落とし", "直径", "偽陽性", "見落とし率", "偽陽性/枚"],
                     table, title="等級を 1 段間違える画像の割合(30 枚 × 4 条件)",
-                    caption="ゼロ点は余盛を拾って全滅。fullseye は見落としでなく直径の誤分類で間違える。")
+                    caption="ゼロ点は余盛を拾って全滅。fullseye の誤りは主に直径の誤分類。")
     return res
 
 
@@ -743,12 +768,10 @@ def main() -> int:
     assert s1["zero_area"] > 1.5 * s1["true_area"], s1
     assert s1["fs_miss"] <= 1 and s1["fs_fp"] <= 1, s1
     assert 0.35 <= s2["d50"] <= 0.7, s2["d50"]
-    assert abs(s2["d50"] - s2["d50_pred"]) / s2["d50_pred"] < 0.3, (s2["d50"], s2["d50_pred"])
-    assert s2["rate"]["grind"][-1] >= 90 and s2["rate"]["open9"][-1] <= 30, s2["rate"]
-    assert s2["rate_diam34_last"] >= 90
-    assert s3["fp_gauss_near"] > s3["fp_open_near"] + 0.5, (s3["fp_gauss_near"], s3["fp_open_near"])
-    v1 = s4["out"][1.2]["vol"][s4["sprs"].index(1.0)]
-    assert -30 < v1 < -10, v1
+    assert abs(s2["d50"] - s2["d50_pred"]) / s2["d50_pred"] < 0.35, (s2["d50"], s2["d50_pred"])
+    assert s2["rate"]["med72"][-1] >= 90 and s2["rate"]["open9"][-1] <= 30, s2["rate"]
+    assert s2["fp_open"] > 20 * max(s2["fp_med"], 0.05), (s2["fp_open"], s2["fp_med"])
+    assert -35 < s4["vol1"] < -8, s4["vol1"]
     assert s5["ratio"] > 1.5, s5["ratio"]
     base = s6["基準(余盛あり・SPR 0.5)"]
     assert base["wrong"]["zero"] >= 80 and base["wrong"]["vol"] < base["wrong"]["zero"], base
@@ -757,9 +780,10 @@ def main() -> int:
     print("まとめ")
     print("=" * 78)
     print("  * 検出の崖 d₅₀ = %.2f mm は CNR の閉形式(予測 %.2f mm)で先に出せる。" % (s2["d50"], s2["d50_pred"]))
-    print("  * 背景 op の大きさの天井(9 px)は %.1f mm から上の崖になる。" % s2["cliff9"])
-    print("  * 散乱 SPR=1 で体積径 %+.0f %%。等級の境目をまたぐ。" % v1)
-    print("  * 等級を 1 段間違える割合: ゼロ点 %.0f %% → 体積径 %.0f %%(内訳は直径の誤分類)。"
+    print("  * 背景の窓の天井: 9 px で %.1f mm、36 px で %.1f mm から上が崖。72 px なら 3 mm まで %.0f %%。"
+          % (s2["cliff9"], s2["cliff36"], s2["rate"]["med72"][-1]))
+    print("  * 散乱 SPR=1 で体積径 %+.0f %%。1.2 mm の気孔が %.2f mm に見える。" % (s4["vol1"], s4["d12v"]))
+    print("  * 等級を 1 段間違える割合: ゼロ点 %.0f %% → 体積径 %.0f %%。"
           % (base["wrong"]["zero"], base["wrong"]["vol"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():

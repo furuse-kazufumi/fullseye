@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "病斑と土は同じ褐色。葉を色度で切り、葉の中を a* で切る。",
+  "shape": [
+   583,
+   478,
+   3
+  ]
+ },
+ {
+  "file": "02_error_map.png",
+  "name": "error_map",
+  "caption": "FN(青)の大きな塊は影と鏡面反射が重なった病斑(葉マスクごと落ちる)。FP(赤)は鏡面反射の下と病斑の縁。",
+  "shape": [
+   317,
+   478,
+   3
+  ]
+ },
+ {
+  "file": "03_frames_conditions.png",
+  "name": "frames_conditions",
+  "caption": "",
+  "shape": [
+   583,
+   712,
+   3
+  ]
+ },
+ {
+  "file": "04_cliff_illumination.png",
+  "name": "cliff_illumination",
+  "caption": "ゼロ点は固定しきい値を葉が割る列から予測できる。色の手法は 50 % まで平ら。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_cliff_specular_area.png",
+  "name": "cliff_specular_area",
+  "caption": "FP は手法で桁が違う。FN は葉の縁の反射が葉マスクを欠くぶんで、手法によらない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_cliff_specular_amplitude.png",
+  "name": "cliff_specular_amplitude",
+  "caption": "色相は白を足しても動かない(定義)。a* は希釈で境界を跨ぐ。射影は飽和で壊れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

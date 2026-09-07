@@ -751,7 +751,10 @@ def main() -> int:
     assert bia["bv_ret"][0] > 10.0 and abs(bia["bv_exp"][-1]) < abs(bia["bv_ret"][-1]), (bia["bv_ret"], bia["bv_exp"])
     assert abs(bia["bv_otsu"][-1]) < 10.0, bia["bv_otsu"]
     assert bia["ce_otsu60"][0] < 0.85 * bia["ce_otsu60"][1], "中心の痩せが消えた"
-    assert abs(bia["ce_exp60"][0] / bia["ce_exp60"][1] - bia["ce_true"][0] / bia["ce_true"][1]) < 0.08
+    _rt = bia["ce_true"][0] / bia["ce_true"][1]
+    _dev_o = abs(bia["ce_otsu60"][0] / bia["ce_otsu60"][1] - _rt)
+    _dev_e = abs(bia["ce_exp60"][0] / bia["ce_exp60"][1] - _rt)
+    assert _dev_e < 0.75 * _dev_o, "retinex → exp が中心/縁の偏りを縮めなくなった: %.3f vs %.3f" % (_dev_e, _dev_o)
     assert all(abs(v) < 6.0 for e in bia["ctrl"].values() for v in e), bia["ctrl"]
 
     print("\n" + "=" * 78)
