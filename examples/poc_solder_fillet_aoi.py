@@ -986,7 +986,8 @@ def section_confusion(v_thr: float, zp: ZeroPoint) -> dict:
             kw = _random_case(kind, rng, v_thr)
             sc = make_scene(**kw)
             gains = tuple(1.0 + rng.uniform(-0.05, 0.05, 3))
-            im = render(sc, roughness=float(rng.uniform(0.10, 0.35)), gains=gains,
+            # 粗さは 6 段から引く(応答表は粗さごとに 0.3 秒かかるので、連続で振ると 1 分超える)
+            im = render(sc, roughness=float(rng.choice(ROUGH_SET)), gains=gains,
                         seed=5000 + 100 * KINDS.index(kind) + i)
             r = inspect_image(im)
             truth = sc["kind"]
