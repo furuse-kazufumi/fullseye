@@ -1251,10 +1251,145 @@ def section_prism_and_crack(sc: dict) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# 9. 図                                                                         #
+# --------------------------------------------------------------------------- #
+def dev_map(values: np.ndarray, ky: int = 7, kx: int = 3) -> np.ndarray:
+    """core の値 -> **断面を展開した地図**(行 = 断面まわり s、列 = 橋軸 x)。"""
+    a = np.asarray(values, float).reshape(CORES["shape"])
+    a = np.nan_to_num(a, nan=0.0, posinf=0.0, neginf=0.0)
+    return np.repeat(np.repeat(a, ky, axis=0), kx, axis=1)
+
+
+def cross_section_sdf(x0: float, ny: int = 240, nz: int = 130) -> np.ndarray:
+    """断面の符号つき距離場 —— **構造物を fullseye の sdf op だけで組む**。"""
+    g = np.asarray(fs.ledger.grid_coords(((x0 - 0.02, x0 + 0.02), (-0.45, 4.45),
+                                          (-1.35, 0.40)), (3, ny, nz)), float)
+    cz = float(camber(np.array([x0]))[0])
+    body = fs.ledger.box_sdf(g, (x0, 2.0, -0.45 + cz), (7.0, 1.30, 0.45))
+    for sgn in (-1.0, 1.0):
+        pt = (x0, 2.0 + sgn * 1.30, cz)
+        nvec = (0.0, sgn * 0.70710678, -0.70710678)
+        body = fs.ledger.sdf_intersect(body, fs.ledger.plane_sdf(g, pt, nvec))
+    deck = fs.ledger.box_sdf(g, (x0, 2.0, 0.125 + cz), (7.0, 2.0, 0.125))
+    part = fs.ledger.sdf_union(body, deck)
+    for bx in BEARING_X:
+        cyl = fs.ledger.cylinder_sdf(g, (bx, 2.0, -0.90 + float(camber(np.array([bx]))[0])
+                                         - BEARING_R), (0.0, 1.0, 0.0),
+                                     BEARING_R, BEARING_LEN)
+        part = fs.ledger.sdf_union(part, cyl)
+    return np.asarray(part)[1].T[::-1]        # (nz, ny) に直して上下を起こす
+
+
+def section_figures(sc: dict, obs: dict, zero: dict, ctrl: dict,
+                    rate: dict) -> None:
+    if not figs.enabled():
+        return
+    # (1) 場面: 断面 2 枚(支間中央と支承の上)+ 展開した真値
+    figs.save_grid("scene",
+                   [np.clip(cross_section_sdf(6.0), -0.35, 0.35),
+                    np.clip(cross_section_sdf(BEARING_X[0]), -0.35, 0.35),
+                    dev_map(sc["truth_fp"])],
+                   ["断面 x = 6.0 m(支間中央)", "断面 x = %.1f m(支承)"
+                    % BEARING_X[0], "展開した真の変化 t2 [mm](正 = 面が外へ)"],
+                   ncols=1, signed=[True, True, True],
+                   title="橋桁(平面 7 枚 + 円柱 2 本)と仕込んだ劣化",
+                   caption="断面は fullseye の sdf op(box/plane/cylinder + "
+                           "union/intersect)だけで組んである。展開図は"
+                           "行 = 断面まわり(下面左→腹板→下フランジ→腹板→下面右)、"
+                           "列 = 橋軸方向。")
+
+    # (2) 3 時点の真値(展開図)
+    figs.save_grid("frames",
+                   [dev_map(truth_footprint(1) * 0.0), dev_map(truth_footprint(1)),
+                    dev_map(sc["truth_fp"])],
+                   ["t0(基準)", "t1(1 年後)", "t2(2 年後)"],
+                   ncols=1, signed=True,
+                   title="真の法線方向変化 [mm] —— 3 時点",
+                   caption="下フランジ中央の暗い窪みが断面欠損、面全体の淡い"
+                           "変化がたわみ。腹板(法線が水平)にはたわみが出ない。")
+
+    # (3) 変化の地図: 真値 / 法線方向 / C2C / 偽の劣化
+    fa = ctrl["conds"]["(a) 劣化ゼロ・測り直しのみ"]
+    figs.save_grid("map_change",
+                   [dev_map(sc["truth_fp"]), dev_map(zero["L"]),
+                    dev_map(np.where(np.isfinite(zero["c2c"]), zero["c2c"], 0.0)),
+                    dev_map(fa["L"])],
+                   ["真値(足跡平均)[mm]", "法線方向に測る [mm]",
+                    "最近傍距離 C2C [mm](符号なし)", "偽の劣化 = 劣化ゼロの対照 [mm]"],
+                   ncols=2, signed=[True, True, False, True],
+                   title="t0 -> t2 の変化をどう測るか(展開図)",
+                   caption="C2C は面全体が点間隔ぶん明るく、欠損が背景に埋もれる。"
+                           "右下は**構造物が全く変わっていない**ときの地図。")
+
+    # (4) 速度の地図
+    figs.save_grid("map_rate",
+                   [dev_map(rate["rate_true"]), dev_map(rate["rate"]),
+                    dev_map(rate["rate"] - rate["rate_true"])],
+                   ["真の速度 [mm/年]", "測った速度 [mm/年]", "速度の誤差 [mm/年]"],
+                   ncols=1, signed=True,
+                   title="劣化速度(mm/年)の地図と、その誤差",
+                   caption="速度は差を年数で割っただけなので、位置合わせの"
+                           "残差がそのまま速度の嘘になる。")
+
+
+# --------------------------------------------------------------------------- #
+# 10. 道具の穴                                                                  #
+# --------------------------------------------------------------------------- #
+def section_tool_gaps() -> None:
+    print("\n" + "=" * 78)
+    print("10) 道具の穴(この PoC で fullseye を引いてみて)")
+    print("=" * 78)
+
+    assert hasattr(fs.ledger, "icp_point2plane") and hasattr(fs.ledger, "fit_plane_3d")
+    assert not hasattr(fs.ledger, "m3c2") and not hasattr(fs, "cloud_to_cloud")
+    print("  (a) **法線方向に測る差分(M3C2)が無い**。``chamfer_distance`` と"
+          " ``hausdorff_distance`` は\n      1 個のスカラを返すだけで、"
+          "``query_distance`` は ESDF への距離(符号はあるが格子に丸まる)。"
+          "\n      本 PoC は core + 局所平面 + 円柱の平均差を 60 行で自前実装した。"
+          "**符号つき・分布つきの面差分**は\n      橋・トンネル・擁壁・法面で"
+          "同じ形なので、族に入る価値がある。")
+
+    assert not hasattr(fs.ledger, "icp_trimmed_region") and not hasattr(fs, "icp_mask")
+    print("  (b) **位置合わせの「使う範囲」を指定する口が無い**。``icp_point2plane``"
+          " の ``trim`` は\n      距離で切るだけで、「この領域は変化しているから"
+          "合わせに使うな」を渡せない。5 節で測ったとおり\n      これは精度の話"
+          "ではなく**結論が変わる**話(たわみが 0.689 だけ消える)。"
+          "``mask`` 引数か、\n      合わせに使った点の割合を返す契約が要る。")
+
+    assert not hasattr(fs.ledger, "registration_uncertainty")
+    print("  (c) **位置合わせの残差「姿勢」を返す口が無い**。``icp_point2plane`` は"
+          " RMSE を返すが、\n      6 節で示したとおり効くのは"
+          "**残差の回転軸と大きさ**(面ごとに違う嘘をつく)。"
+          "\n      共分散(6x6)まで返せば、面ごとの検出限界を"
+          "**測る前に**出せる。")
+
+    assert not hasattr(fs.ledger, "developed_surface") and not hasattr(fs, "unroll_prism")
+    print("  (d) **押し出し形状を展開する口が無い**。断面の折れ線に沿って"
+          "(x, s)へ開く操作は\n      橋桁・配管・トンネル覆工・タンクで共通で、"
+          "開けば 3-D の地図が 2-D の画像 op で扱える"
+          "\n      (この PoC の図はすべてそれ)。``plane_segmentation`` で面は"
+          "取れるが、**面を並べて\n      1 枚に開く**ところが無い。")
+
+    assert not hasattr(fs.ledger, "point_spacing")
+    print("  (e) **点間隔を返す口が無い**。2・6 節で見たとおり C2C の偽の劣化は"
+          "ほぼ点間隔そのものなので、\n      「この点群で言える最小の変化」は"
+          "点間隔から直接出る。密度・最近傍距離の分位数を返す 1 本があれば、"
+          "\n      測ってから気づくのを防げる。")
+
+    print("  (f) 仕様どおりで穴ではないが、踏みやすい点を 3 つ: "
+          "``fit_plane_3d`` の法線は**符号が任意**(本 PoC は真の外向きに"
+          "\n      合わせている)/ ``icp_point2plane`` は台帳経由だと pose しか"
+          "返さないので ``.raw`` で 5 個受ける /\n      点の op は (N,3)=(x,y,z)、"
+          "体積の op は (depth,row,col) で軸の順が違う。")
+
+
+# --------------------------------------------------------------------------- #
 def main() -> int:
     t0 = time.perf_counter()
     print("=" * 78)
     print("構造物を年ごとに測り返す —— 測る場所がずれると、劣化は進んだように見える")
+    print("支間 %.0f m / 表面積 %.1f m2 / 点検 3 回 / core 間隔 %.2f m"
+          % (LSPAN, GIRDER_AREA + BEARING_AREA, CORE_SP))
     print("=" * 78)
     sc = section_scene()
     obs = section_observe()
@@ -1263,7 +1398,85 @@ def main() -> int:
     scope = section_scope()
     cliff = section_cliff(zero, sc)
     rate = section_rate(obs, sc)
+    pri = section_prism_and_crack(sc)
+    section_figures(sc, obs, zero, ctrl, rate)
+    section_tool_gaps()
+
+    print("\n" + "=" * 78)
+    print("まとめ")
+    print("=" * 78)
+    ga = ctrl["conds"]["(a) 劣化ゼロ・測り直しのみ"]["good"]
+    fa_c2c = ctrl["conds"]["(a) 劣化ゼロ・測り直しのみ"]["c2c"]
+    fa_l = ctrl["conds"]["(a) 劣化ゼロ・測り直しのみ"]["L"]
+    print("  * **劣化ゼロで測り直しただけ**で、C2C は 中央値 %.2f mm・最大 %.2f mm の"
+          "「劣化」を返す(真の最大劣化 %.1f mm)。\n    法線方向なら %.2f / %.2f mm。"
+          % (float(np.median(fa_c2c[ga])), float(np.nanmax(fa_c2c[ga])),
+             max(SPALL_MM), float(np.median(np.abs(fa_l[ga]))),
+             float(np.nanmax(np.abs(fa_l[ga])))))
+    print("  * その偽の劣化はしきい値 %.1f mm で数えると %.2f m2 / %.2f L の"
+          "「補修候補」になる —— 本物の %.2f L の %.0f %%。"
+          % (ctrl["thr"], ctrl["false_area"], ctrl["false_vol"], ctrl["v_true"],
+             100 * ctrl["false_vol"] / ctrl["v_true"]))
+    print("  * C2C の偽の劣化は**点間隔でほぼ決まる**: 密度 %.0f -> %.0f pt/m2 で "
+          "%.2f -> %.2f mm(予測 0.5/√ρ との比 %.3f 〜 %.3f)。"
+          % (cliff["dens"][0], cliff["dens"][-1], cliff["c2c"][0],
+             cliff["c2c"][-1],
+             min(m / p for m, p in zip(cliff["c2c"], cliff["c2c_pred"])),
+             max(m / p for m, p in zip(cliff["c2c"], cliff["c2c_pred"]))))
+    print("  * たわみを含めて全点で合わせると中央のたわみの %.3f が消え"
+          "(予測 %.3f)、支点付近に %+.3f mm の**逆符号**が出る。"
+          % (scope["eat_all"], scope["w_all"],
+             scope["prof"]["全点で合わせる"][scope["end"]]))
+    print("    変わっていない端だけで合わせても %.3f は吸われたまま(予測 %.3f)。"
+          % (scope["eat_end"], scope["w_end"]))
+    print("  * 残差回転の作る嘘は幾何で先に出せる((ω×(p-c))·n、雑音床と直交合成で"
+          "比 %.3f 〜 %.3f)。\n    最小検出深さは α = 0 -> %.1e rad で %.2f -> %.2f mm。"
+          % (min(m / t for m, t in zip(cliff["meas"], [math.hypot(p, cliff["meas"][0])
+                                                       for p in cliff["pred"]])),
+             max(m / t for m, t in zip(cliff["meas"], [math.hypot(p, cliff["meas"][0])
+                                                       for p in cliff["pred"]])),
+             cliff["alpha"][-1] * 1e-3, cliff["mindet"][0], cliff["mindet"][-1]))
+    print("  * 速度の誤差 RMS %.3f mm/年 —— 1 mm/年 の進行は 2σ = %.3f mm/年 の下。"
+          "★点検を 3 回に増やしても速度は良くならない\n    "
+          "(等間隔 3 点の傾きは両端の差分と厳密に同じ、差 %.1e mm/年)。"
+          "良くなるのは加速だけで、その誤差は %.3f mm/年²。"
+          % (rate["err_rms"], rate["detect"], rate["dmax"], rate["acc_err"]))
+    print("  * 押し出し形状は x が決まらない(支承を外すと残差 x %.2f -> %.2f mm)。"
+          "★その嘘は桁の平面には出ず、\n    法線が ±x を向く**支承の円柱にだけ**"
+          "「水平に動いた」として現れる。" % (pri["dx_all"], pri["dx_grd"]))
+    print("  * 幅 %.0f mm の溝は足跡平均では %.3f mm(閉形式 2dh/(πR) = %.3f)。"
+          "★密度は分母に入らないので、密度を上げても見えない。"
+          % (2000 * CRACK_HW, pri["num"][1], pri["pred"][1]))
+
+    # ---- 所見を固定する検査 ------------------------------------------------- #
+    tot = [math.hypot(p, cliff["meas"][0]) for p in cliff["pred"]]
+    assert float(np.median(fa_c2c[ga])) > max(SPALL_MM) * 0.5, \
+        "劣化ゼロの C2C が小さすぎる(場面が甘い)"
+    assert float(np.median(np.abs(fa_l[ga]))) < 0.2 * float(np.median(fa_c2c[ga])), \
+        "法線方向が C2C に対して優位でない"
+    assert ctrl["false_vol"] > 0.2 * ctrl["v_true"], "偽の劣化が小さすぎる"
+    assert all(0.85 < m / p < 1.15 for m, p in zip(cliff["c2c"], cliff["c2c_pred"])), \
+        "C2C が 0.5/√ρ の予測から外れた"
+    assert abs(scope["eat_all"] - scope["w_all"]) < 0.06, \
+        "全点で合わせたときの吸われ方が閉形式 2/3 から外れた"
+    assert scope["prof"]["全点で合わせる"][scope["end"]] < -0.5, \
+        "支点付近に逆符号の偽の変化が出ていない"
+    assert abs(scope["eat_end"] - scope["w_end"]) < 0.10, \
+        "端だけで合わせたときの吸われ方が閉形式から外れた"
+    assert all(0.9 < m / t < 1.12 for m, t in zip(cliff["meas"], tot)), \
+        "角度誤差の作る嘘が幾何の予測から外れた"
+    assert cliff["mindet"][-1] > 2.5 * cliff["mindet"][0], \
+        "角度誤差で検出限界が折れていない"
+    assert rate["dmax"] < 1e-9, "等間隔 3 点の傾きが両端の差分と一致しない"
+    assert rate["acc_err"] > 1.5 * rate["err_rms"], "加速の誤差が速度より粗くない"
+    assert pri["dx_grd"] > 3.0 * pri["dx_all"], "支承を外しても x が決まっている"
+    assert all(0.9 < n / p < 1.1 for n, p in zip(pri["num"][:4], pri["pred"][:4])), \
+        "溝の薄まりが閉形式 2dh/(πR) から外れた"
+    assert abs(pri["num"][1]) < 0.1 * CRACK_MM[2], "細い溝が薄まっていない"
+
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
     return 0
 
