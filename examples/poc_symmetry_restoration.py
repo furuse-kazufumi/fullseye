@@ -367,7 +367,7 @@ def section_scene() -> dict:
     print("  欠損: 中心 (%.0f, %.0f) mm・半径 %.0f mm -> %d 点(全体の %.1f %%)が失われた"
           % (centre[0], centre[1], DEF_R, int(miss.sum()), 100 * miss.mean()))
     print("  残った点の中央値間隔 %.3f mm(判定の閾値 tau = %.3f mm)"
-          % (spacing, 1.6 * spacing))
+          % (spacing, TAU_K * spacing))
     print("  欠損で重心が動く量: x = %+.3f mm(完全形は %+.3f mm)"
           % (surv[:, 0].mean(), pts[:, 0].mean()))
 
