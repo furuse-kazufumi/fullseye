@@ -721,22 +721,36 @@ def section_metrics(scene: dict) -> dict:
               % (nm, int(np.count_nonzero(~ok[i] & ok[(i + 1) % 3] & ok[(i + 2) % 3])),
                  int(np.count_nonzero(ok[i] & ~ok[(i + 1) % 3] & ~ok[(i + 2) % 3]))))
 
-    # MKT は集計窓で動く
-    y, x = _worst_product(scene)
-    tr = probe_true(vol, y, x)
-    hi = np.nonzero(tr > LIMIT_C)[0]
-    c = int(hi[len(hi) // 2]) if hi.size else NT // 2
-    a, b = max(0, c - 120), min(NT, c + 120)
-    print("\n  ★MKT は集計窓で動く(最悪製品セル y=%d, x=%d):" % (y, x))
-    print("      12 時間でまとめる: MKT %.2f °C(%s)、逸脱 %.0f 分"
-          % (mkt_celsius(tr), "合格" if mkt_celsius(tr) <= MKT_LIMIT_C else "不合格",
-             excursion_minutes(tr, DT_MIN)))
-    print("      逸脱を含む 4 時間 (%d〜%d 分) だけ: MKT %.2f °C(%s)、逸脱 %.0f 分"
-          % (a, b, mkt_celsius(tr[a:b]),
-             "合格" if mkt_celsius(tr[a:b]) <= MKT_LIMIT_C else "不合格",
-             excursion_minutes(tr[a:b], DT_MIN)))
-    print("      **同じ記録・同じ逸脱で合否が反転する。窓を書かない MKT に"
-          "意味は無い。**")
+    # MKT は集計窓で動く —— 反転する置き場所を**探して**報告する(無ければ無いと書く)
+    print("\n  ★MKT は集計窓の長さで動く(4 時間の窓を全セル・全位置で試す):")
+    win = 240
+    flip = None
+    for (yy, xx) in zip(*np.nonzero(lay["is_product"])):
+        tr = vol[:, yy, xx]
+        m_all = mkt_celsius(tr)
+        if m_all > MKT_LIMIT_C:
+            continue                      # 12 h でも不合格なら「反転」ではない
+        best = max(range(0, NT - win + 1, 10),
+                   key=lambda a_: float(tr[a_:a_ + win].mean()))
+        m_win = mkt_celsius(tr[best:best + win])
+        if m_win > MKT_LIMIT_C:
+            flip = (int(yy), int(xx), m_all, m_win, best,
+                    excursion_minutes(tr, DT_MIN),
+                    excursion_minutes(tr[best:best + win], DT_MIN))
+            break
+    if flip is None:
+        print("      反転する置き場所は**見つからなかった**(この場では"
+              "12 h の MKT と 4 h の MKT が同じ側に落ちる)。")
+    else:
+        yy, xx, m_all, m_win, a_, e_all, e_win = flip
+        print("      製品セル (y=%d, x=%d): 12 時間で MKT %.2f °C(合格)、"
+              "%d〜%d 分の 4 時間で %.2f °C(**不合格**)。"
+              % (yy, xx, m_all, a_, a_ + win, m_win))
+        print("      逸脱時間はどちらの窓でも数え方が変わらない"
+              "(12 h: %.0f 分 / 4 h: %.0f 分 —— 窓に入った分だけ)。"
+              % (e_all, e_win))
+        print("      **「MKT は %.1f °C 以下でした」は窓を書かないと意味が無い。**"
+              % MKT_LIMIT_C)
 
     # 逸脱時間は大きさに盲目
     mild = np.full(NT, 4.0); mild[:200] = 8.1
