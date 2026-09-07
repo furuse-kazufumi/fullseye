@@ -103,7 +103,8 @@ X_L, X_C, X_R = 1.2, 12.0, 22.8
 Y_TOP, Y_MAIN, Y_NARROW, Y_BOT = 1.8, 6.9, 11.1, 16.2
 
 DISPATCH = (12.0, 17.0)                                    # 払い出し(指示待ち)口
-WS = ((3.5, 17.0), (7.5, 17.0), (16.5, 17.0), (20.5, 17.0))  # 梱包作業台
+WS = ((3.0, 17.0), (6.5, 17.0), (15.5, 17.0), (19.0, 17.0),
+      (22.5, 17.0))             # 梱包作業台(5 台、同時に 2 人が同じ台に来ない)
 QUEUE_OFF = (0.6, -0.6)         # 作業台の斜め後ろに並ぶ位置 [m]
 
 #: ピッキング面(x, y, その面が向いている通路の中心線 y)。
@@ -146,6 +147,7 @@ K_SEC = 2.5                     # t 軸オープニングの線分長 [s]
 MIN_SAMPLES = 3                 # 柱として認めるのに要る標本数
 PICK_CLEAR, NARROW_CLEAR = 0.75, 1.25   # esdf の空き幅による通路の区分 [m]
 LANDMARK_R = 1.5                # 作業台・払い出し口とみなす半径 [m]
+EXTENT_MAX = 0.9                # 柱の中で「動かなかった」と認める広がり [m]
 LONG_WAIT = 8.0                 # 棚前の待ちを「補充待ち」と読む長さ [s]
 SEED = 7
 
@@ -299,7 +301,7 @@ def missions(disabled=()):
     serve = []                      # 各作業台で「作業」が始まる実時刻
     for k, (pk, t0) in enumerate(zip(r_picks, (2.0, 9.0, 16.0, 23.0, 30.0))):
         p = PICKS[pk]
-        ws = WS[k % 4]
+        ws = WS[k]
         legs = [("at", DISPATCH)] + route_to(p) + [("wait", "補充待ち")] \
             + route_from(p, ws) + [("wait", "作業")]
         out.append(("R%d" % k, t0, V_AGV, legs, None, None))
@@ -309,17 +311,20 @@ def missions(disabled=()):
         serve.append(next((e["t0"] for e in evs if e["cause"] == "作業"), t0))
     # (b) 人待ち 4 件: 作業台の斜め後ろに並び、前の人が終わるまで待って去る。
     for k in range(4):
-        ws = WS[k % 4]
+        ws = WS[k]
         q = (ws[0] + QUEUE_OFF[0], ws[1] + QUEUE_OFF[1])
         legs = [("at", DISPATCH), ("go", (X_C, Y_BOT)), ("go", (q[0], Y_BOT)),
                 ("go", q), ("wait", "人待ち"), ("go", (q[0], Y_BOT)),
                 ("go", (X_C, Y_BOT)), ("go", DISPATCH)]
         out.append(("Q%d" % k, 0.0, V_WORK, legs, 0, serve[k] + 2.0))
     # (c) 通路の干渉 5 組 = 10 件: 交差通路(幅 2.0 m)で正面から出会って止まる。
+    # ★出会う場所は**棚の列の真横**でなければならない。棚と棚の間でない交差通路は
+    #   両側が開けていて空き幅が 1.9 m あり、「狭い通路」に分類されない(最初の
+    #   実装は主通路の高さで出会わせてしまい、10 件中 4 件が「その他」に落ちた)。
     for k, (t_enc, y_enc) in enumerate(zip((12.0, 28.0, 44.0, 60.0, 76.0),
-                                           (4.5, 7.5, 9.4, 13.0, 15.0))):
-        a = (X_C, y_enc - 0.5)
-        b = (X_C, y_enc + 0.5)
+                                           (4.5, 9.3, 12.9, 4.5, 9.3))):
+        a = (X_C, y_enc - 0.45)
+        b = (X_C, y_enc + 0.45)
         legs_a = [("at", (X_C, Y_TOP)), ("go", a), ("wait", "通路の干渉"),
                   ("go", (X_C, Y_BOT))]
         legs_b = [("at", (X_C, Y_BOT)), ("go", b), ("wait", "通路の干渉"),
@@ -339,7 +344,7 @@ def missions(disabled=()):
     pairs = (("M1", "M2"), ("N1", "N4"), ("B1", "B2"), ("M3", "M4"))
     for k, (t0, (pa, pb)) in enumerate(zip((4.0, 20.0, 36.0, 52.0), pairs)):
         p1, p2 = PICKS[pa], PICKS[pb]
-        ws = WS[k % 4]
+        ws = WS[k]
         if "欠品" in disabled:
             legs = [("at", DISPATCH)] + route_to(p2) + route_from(p2, ws)
         else:
@@ -548,8 +553,17 @@ def _runs_in_components(meas: dict, labels: np.ndarray):
             cur["n"] += 1
         if cur is not None:
             runs.append(cur)
-    keep = [r for r in runs
-            if r["n"] >= MIN_SAMPLES and (r["f1"] - r["f0"] + 1) >= MIN_SAMPLES]
+    keep = []
+    for r in runs:
+        if r["n"] < MIN_SAMPLES or (r["f1"] - r["f0"] + 1) < MIN_SAMPLES:
+            continue
+        # 柱の中を**通り抜けた**人を落とす(柱の広がりより大きく動いた ID)。
+        ext = float(np.hypot(max(r["xs"]) - min(r["xs"]),
+                             max(r["ys"]) - min(r["ys"])))
+        if ext > EXTENT_MAX:
+            continue
+        r["ext"] = ext
+        keep.append(r)
     return keep
 
 

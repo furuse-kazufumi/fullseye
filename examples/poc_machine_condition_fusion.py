@@ -1077,38 +1077,51 @@ def main() -> int:
 
     # ---- 所見を固定する assert(壊れたら鳴る)---------------------------- #
     i_m = MODES.index("芯ずれ")
+    i_u, i_g = MODES.index("アンバランス"), MODES.index("ゆるみ")
     i_b, i_l = MODES.index("軸受外輪傷"), MODES.index("潤滑不良")
     full = table["振動+熱+形状"]["rate"]
     novib = table["熱+形状(振動を抜く)"]["rate"]
     shape_only = table["形状のみ"]["rate"]
+    thr_only = table["熱のみ"]["rate"]
     assert full[i_m] >= 0.9, full[i_m]
     assert novib[i_m] >= full[i_m] - 0.01           # 芯ずれは振動を抜いても落ちない
-    assert novib[i_b] < full[i_b] - 0.2             # 軸受は振動を抜くと壊れる
+    assert novib[i_u] < full[i_u] - 0.2             # アンバランスは振動が要る
+    assert novib[i_g] < full[i_g] - 0.2             # ゆるみも振動が要る
     assert shape_only[i_m] >= 0.9                   # 形状だけで芯ずれは当たる
     assert np.mean([shape_only[i] for i in range(len(MODES)) if i != i_m]) < 0.45
-    assert red["misalign"][0, 1] > 0.9 and red["misalign"][0, 2] > 0.9
-    assert sw["noise"]["solo"][0].mean() > sw["noise"]["solo"][-1].mean()
-    assert zero["振動 RMS"]["det"] < 1.0 or zero["振動 RMS"]["fa"] > 0.0 or True
+    assert thr_only[i_b] >= 0.75 and thr_only[i_g] < 0.5   # 熱は軸受を見て、ゆるみを見ない
+    assert red["misalign"][0, 1] > 0.5 and red["misalign"][0, 3] > 0.9
+    assert sw["noise"]["d"][0, 0] > 3.0 * sw["noise"]["d"][-1, 0]   # 1X の d' は崩れる
+    assert sw["dur"]["d"][0, 0] < sw["dur"]["d"][-1, 0]             # 0.5X は記録長で効く
+    assert sw["pitch"]["d"][0, 0] > sw["pitch"]["d"][-1, 0]         # 広がりは粗さで死ぬ
+    assert zero["振動 RMS"]["det"] > 0.5
 
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
-    print("  * 3 センサ融合の総合識別率 %.1f %%。しかし総合の 1 個は**モードごとの"
-          "差を隠す** —— 芯ずれ %.1f %% / 軸受外輪傷 %.1f %% / 潤滑不良 %.1f %%。"
+    print("  * 3 センサ融合の総合識別率 %.1f %%。しかし**振動のみ %.1f %%** ——"
+          " 基準条件では熱も形状も 1 pt も足していない。"
           % (100 * np.trace(base["cm"]) / base["cm"].sum(),
-             100 * full[i_m], 100 * full[i_b], 100 * full[i_l]))
+             100 * table["振動のみ"]["overall"]))
     print("  * **束ねる価値はモードごとに違う**。芯ずれは 3 センサ %.1f %% に対し"
-          "形状だけで %.1f %%(3 つは同じ潜在変数の別の顔、相関 %.3f)。"
-          % (100 * full[i_m], 100 * shape_only[i_m], red["misalign"][1, 3]))
-    print("    振動を抜くと軸受外輪傷 %.1f %% -> %.1f %%、潤滑不良 %.1f %% -> %.1f %% ——"
-          "**この対だけが融合を必要としている**。"
-          % (100 * full[i_b], 100 * novib[i_b], 100 * full[i_l], 100 * novib[i_l]))
-    print("  * ゼロ点(振動 RMS の 3σ)は異常検出 %.1f %% まで行くが、"
+          "形状だけで %.1f %%(3 つは同じ潜在変数の別の顔、重症度との相関 "
+          "2X %.3f / 継手温度 %.3f / 芯ずれ量 %.3f)。"
+          % (100 * full[i_m], 100 * shape_only[i_m],
+             red["misalign"][0, 1], red["misalign"][0, 2], red["misalign"][0, 3]))
+    print("    振動を抜くとアンバランス %.1f %% -> %.1f %%、ゆるみ %.1f %% -> %.1f %% ——"
+          "**熱でも形状でも同じ顔をする組だけが振動を必要としている**。"
+          % (100 * full[i_u], 100 * novib[i_u], 100 * full[i_g], 100 * novib[i_g]))
+    print("  * ゼロ点(振動 RMS の 3σ)は異常検出 %.1f %%(誤警報 %.1f %%)まで行くが、"
           "5 つの故障モードのどれも名指しできない。"
-          % (100 * zero["振動 RMS"]["det"]))
-    print("  * 崖は 4 つとも先に予測できた: 0.5X は T>%.1f ms、側帯波は T>%.1f ms、"
-          "熱の広がりは画素 < 半値半径 %.1f mm、回転数変動は δ<1/(2·o·f_r·T)。"
-          % (1000 * sw["t_order"], 1000 * sw["t_side"], sw["r_half"]))
+          % (100 * zero["振動 RMS"]["det"], 100 * zero["振動 RMS"]["fa"]))
+    print("  * 崖は 4 つとも**特徴 1 個の d' の上で先に予測できた**: 0.5X は T>%.1f ms"
+          "(実測 d' %.2f -> %.2f)、側帯波は T>%.1f ms、"
+          % (1000 * sw["t_order"], sw["dur"]["d"][0, 0], sw["dur"]["d"][-1, 0],
+             1000 * sw["t_side"]))
+    print("    熱の広がりは画素ピッチ > 半値直径 %.0f mm、回転数変動は δ<1/(2·o·f_r·T)。"
+          % (2 * sw["r_half"]))
+    print("    ★ただし**6 クラスの識別率はそこまで落ちない** —— 同じセンサの他の"
+          "特徴が肩代わりする。冗長性はセンサ間だけでなくセンサ内にもある。")
     print("  * 折り返した櫛は %.1f Hz(k=%d)に「機械にない線」を立てる。間隔は"
           " BPFO ちょうどなので**軸受らしく見える**。" % (al["peak"], al["k"]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
