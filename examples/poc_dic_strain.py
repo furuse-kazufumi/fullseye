@@ -266,6 +266,7 @@ def section3_subpixel(sp, ref):
     print()
     print("  " + "-" * (11 + 22 * (len(ESTIMATORS) - 1)))
     worst = {n: 0.0 for n, _ in ESTIMATORS[1:]}
+    swept = {}
     for u0 in np.arange(0.0, 1.001, 0.125):
         cur = sp.render(lambda x, y: x + u0, lambda x, y: y)
         print("  %8.3f |" % u0, end="")
@@ -273,10 +274,19 @@ def section3_subpixel(sp, ref):
             uu, _ = est(ref, cur)
             mm, ss = _stat(uu[_SL] - u0)
             worst[name] = max(worst[name], abs(mm))
+            swept[(name, round(float(u0), 3))] = mm
             print(" %10.4f %10.4f" % (mm, ss), end="")
         print()
     print()
     print("  最大の偏り: " + " / ".join("%s %.4f px" % (n, worst[n]) for n, _ in ESTIMATORS[1:]))
+    # ★所見を固定する。
+    #   (1) piv の偏りは掃引の全域で lk / hs より小さい。※「1 桁小さい」が成り立つのは
+    #       2 節の u=0.37 の 1 点(0.0002 vs 0.0042 = 21 倍)で、**掃引の最大どうし**では
+    #       6 倍程度(piv 0.0015 / lk 0.0088)。ここは最大どうしを 2 倍で固定する。
+    assert worst["piv"] < 0.004, worst
+    assert worst["piv"] < worst["lk"] / 2.0 and worst["piv"] < worst["hs"] / 2.0, worst
+    #   (2) lk の偏りは u=0.5 を境に符号が反転する(0.5 px 側へ寄る = peak locking の逆)。
+    assert swept[("lk", 0.125)] > 0.002 and swept[("lk", 0.75)] < -0.002, swept
     if figs.enabled():
         us = np.arange(0.0, 1.001, 0.0625)
         series = []
