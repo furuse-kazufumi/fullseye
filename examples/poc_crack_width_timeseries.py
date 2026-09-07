@@ -649,10 +649,22 @@ def section_cliff_width() -> dict:
     print("     予測の臨界幅 %.3f mm と %s。" % (
         wc_px * PX_MM,
         "整合" if (not dead or max(dead) <= wc_px * PX_MM + 0.05) else "食い違う"))
-    print("  ★積分法は %.2f mm(%.2f px)でも成長率 %.4f mm/年(真値 %.4f, %+.1f %%)。"
+    live = [g for g in gb if abs(g) > 1e-9]
+    print("  ★★**2 値化の成長率は初期の幅で %.4f 〜 %.4f mm/年 と %.0f 倍動く**"
+          "(真値はどれも %.4f)。" % (min(live), max(live), max(live) / max(min(live), 1e-9),
+                                     RATE_MM_YR))
+    print("     階段の段差が観測窓の中に来たかどうかで決まるので、**同じ速さで"
+          "開いているひび割れでも、初期幅が違うだけで報告が桁で変わる**。")
+    print("     2 節の 2 値化が %+.1f %% 外したのもこれ(0.24 mm から始めたから)。"
+          % (100 * (gb[w0s.index(0.24)] - RATE_MM_YR) / RATE_MM_YR))
+    err_i = [abs(g - RATE_MM_YR) / RATE_MM_YR for g in gi]
+    print("  ★積分法は %.2f mm(%.2f px)でも成長率 %.4f mm/年(真値 %.4f, %+.1f %%)、"
+          "全幅で誤差 %.1f 〜 %.1f %%。"
           % (w0s[0], w0s[0] / PX_MM, gi[0], RATE_MM_YR,
-             100 * (gi[0] - RATE_MM_YR) / RATE_MM_YR))
-    assert abs(gi[0] - RATE_MM_YR) < 0.015, gi[0]
+             100 * (gi[0] - RATE_MM_YR) / RATE_MM_YR,
+             100 * min(err_i), 100 * max(err_i)))
+    assert max(err_i) < 0.15, err_i
+    assert max(live) / max(min(live), 1e-9) > 3.0, live
 
     figs.save_plot("cliff_width",
                    [("真値", w0s, [RATE_MM_YR] * len(w0s)),
