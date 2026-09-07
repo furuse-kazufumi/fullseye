@@ -404,6 +404,8 @@ def section_scene(scene: dict) -> dict:
     print("  時定数: 空気 %.0f 分 / 製品 %.0f〜%.0f 分(潜り込み深さ 最大 %.2f m)"
           % (TAU_AIR, lay["tau"][lay["is_product"]].min(),
              lay["tau"][lay["is_product"]].max(), lay["depth"].max()))
+    print("  出発時(t=0)の最高 %.2f °C —— どのセルも規定内から始まる。"
+          % float(vol[0].max()))
 
     tmax = np.asarray(fs.temporal_max(vol))          # 各セルの最高温度
     exc = np.count_nonzero(vol > LIMIT_C, axis=0) * DT_MIN
