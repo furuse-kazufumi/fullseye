@@ -593,11 +593,13 @@ def section_count_by_type(scene: dict, defects: dict) -> dict:
                        [render(V, F), render(W, G), diff],
                        ["健全", "6 種の欠陥を注入(合計 %d 件)"
                         % (n_hole + n_flip + n_nm + n_deg + n_dup + n_spk),
-                        "深度差 [mm](符号つき)"],
+                        "深度差 [mm](±0.05 mm で飽和)"],
                        signed=[False, False, True], ncols=3,
                        title="欠陥は絵にほとんど出ない —— 出るのは自己交差だけ",
-                       caption="深度差が立つのは突き刺した %d 頂点の周りだけ。"
-                               "穴・裏返り・退化・重複頂点は同じ絵になる。" % n_spk)
+                       caption="右は ±0.05 mm で飽和させてある(素のままだと"
+                               "99 %% が 0 で真っ黒になる)。深度差が立つのは"
+                               "突き刺した %d 頂点の周りだけで、穴・裏返り・退化・"
+                               "重複頂点は健全と同じ絵になる。" % n_spk)
     return {"raw": raw, "welded": wel, "mesh": (W, G),
             "n": (n_hole, n_flip, n_nm, n_deg, n_dup, n_spk)}
 
