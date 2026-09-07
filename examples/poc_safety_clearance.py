@@ -786,7 +786,7 @@ def section_miss_map(t_ref: float = 4.6) -> dict:
     est_map = np.minimum(np.where(np.isfinite(d_hand_est), d_hand_est, np.inf),
                          d_body_est).reshape(nx, ny)
     over = est_map - true_map
-    miss = (true_map < S) & (est_map >= S)
+    miss = (true_map < S_GEOM) & (est_map >= S)      # 危険なのに止めない
     vis_map = vis_frac.reshape(nx, ny)
 
     cell = (xs[1] - xs[0]) * (ys[1] - ys[0])
