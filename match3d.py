@@ -2723,6 +2723,17 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
+    # ★2026-09-07: **輪が画像の外にあるなら fail-closed**。``r_in``/``r_out`` は
+    # 画素単位なので、mm のまま渡すと視野の外を読み、例外なしに**全部 0** が返る
+    # (`poc_pipe_wall_loss` が真っ黒な図を 1 枚出して発覚)。中心から画像の四隅
+    # までの最大距離より内側の半径が 1 つも無ければ、返るのは空以外にありえない。
+    _reach = max(np.hypot(cy - y, cx - x) for y in (0, H - 1) for x in (0, W - 1))
+    if float(min(r_in, r_out)) > _reach:
+        raise ValueError(
+            "polar_unwrap: the requested ring (r_in=%g..r_out=%g, **pixels**) lies "
+            "entirely outside the %dx%d image (the farthest corner is %.1f px from "
+            "the centre) — the result would be all zeros. If these are millimetres, "
+            "divide by the pixel size first." % (r_in, r_out, H, W, _reach))
     # ★2026-09-07: grid_sample(bilinear, align_corners=True, zeros padding)を
     # scipy の map_coordinates(order=1, mode="constant", cval=0)に置き換えた ——
     # 同じ双線形補間で、torch を入れない CI(py3.10 / 3.12)でも走る。
@@ -2760,6 +2771,14 @@ def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, d
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
+    # polar_unwrap と同じ fail-closed(半径は **voxel 単位**)。
+    _reach = max(np.hypot(cy - y, cx - x) for y in (0, H - 1) for x in (0, W - 1))
+    if float(min(r_in, r_out)) > _reach:
+        raise ValueError(
+            "cylinder_unwrap: the requested ring (r_in=%g..r_out=%g, **voxels**) lies "
+            "entirely outside the %dx%d slice (the farthest corner is %.1f voxels from "
+            "the centre) — the result would be all zeros. If these are millimetres, "
+            "divide by the voxel size first." % (r_in, r_out, H, W, _reach))
     # ★2026-09-07: polar_unwrap と同じ理由で map_coordinates に置き換え(双線形・
     # 範囲外 0)。torch 不在でも走る。実測差は最大 7.6e-06。
     if str(device) not in ("cpu", "None") and not _HAS_TORCH:

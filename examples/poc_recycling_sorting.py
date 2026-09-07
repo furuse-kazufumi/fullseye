@@ -688,6 +688,21 @@ def section_ablation(pair) -> dict:
           "可視画素の\n     再現率には原理的に効かないから(2-4 節の P5)。"
           "効くのは 7 節の**組成**。")
 
+    # 図: 全部入りの場面(綺麗な場面の誤り地図はほぼ空なので、こちらが本番)
+    rgb = np.asarray(fs.spec_rgb_composite(cube, bands=(50, 30, 10)))
+    lab = np.where(det, base_pred, 0)
+    wrong = np.where((geo["truth"] > 0) & (lab != geo["truth"]), lab + 1, 0)
+    figs.save_grid(
+        "scene_degraded",
+        [rgb, np.asarray(fs.overlay_labels(rgb, geo["truth"])),
+         np.asarray(fs.overlay_labels(rgb, lab)),
+         np.asarray(fs.overlay_labels(np.full_like(rgb, 0.85), wrong, alpha=0.9))],
+        ["全部入りの SWIR 合成(汚れ・濡れ・傾き)", "真値の材質ラベル",
+         "推定(2 次微分 + 水帯除外 + SAM)",
+         "間違えた画素(色 = 誤った推定先、白 = ベルト扱い)"],
+        title="全部入りの場面 —— 再現率 %.3f(誤分類 %.1f %% / 未検出 %.1f %%)"
+              % (base["macro"], 100 * (1 - base["macro"] - base["miss"]),
+                 100 * base["miss"]), ncols=2)
     figs.save_table("ablation", ["止めた要因", "再現率の平均", "改善", "未検出"], rows,
                     title="対照群: 全部入り %.3f から 1 つずつ止める" % base["macro"],
                     caption="濡れだけが大きく効く。加算汚れは符号が逆(検出を助けていた)。")
