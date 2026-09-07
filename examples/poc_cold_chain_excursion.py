@@ -573,7 +573,7 @@ def section_cliffs(scene: dict) -> dict:
     tr = probe_true(vol, y, x)
     print("\n  (4) サンプリング間隔の崖(対照: ロガーの遅れを 0 にして"
           "間隔だけを見る。y=%d, x=%d)" % (y, x))
-    hot = np.nonzero(tr[a0 - 5:b0 + 60] > LIMIT_C)[0]
+    hot = np.nonzero(tr[a0 - 5:t_end] > LIMIT_C)[0]
     w_eff = float(hot.size * DT_MIN)
     lo = int(a0 - 5 + hot[0]); hi = int(a0 - 5 + hot[-1]) + 1
     print("      真値がこのパルスで規定を超えている時間 W_eff = %.0f 分"
