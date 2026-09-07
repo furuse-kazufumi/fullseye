@@ -796,7 +796,7 @@ def section_heatmap(base: dict) -> dict:
         probe_rows.append([lbl, "%.0f" % heat[iy, ix], str(len(ids)),
                            "%.1f" % (longest * base["meas"]["dt"])])
         probe_rows_heat.append(float(heat[iy, ix]))
-      print("  ★★いちばん積算が大きいのは**誰も待っていない下段通路**(%.0f フレーム)で、"
+    print("  ★★いちばん積算が大きいのは**誰も待っていない下段通路**(%.0f フレーム)で、"
           % probe_rows_heat[2])
     print("     18 秒待っている棚前(%.0f)より大きい。3-D に戻すと、通路の柱は"
           " %s 秒、棚前は %s 秒。"
