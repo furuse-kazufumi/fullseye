@@ -185,17 +185,22 @@ def _void_sdf(grid: np.ndarray, res, voids: list[dict], voxel: float) -> np.ndar
     return out
 
 
-def build_scene(voids: list[dict], voxel: float = VOXEL) -> dict:
+def build_scene(voids: list[dict], voxel: float = VOXEL, phase: float = 0.0) -> dict:
     """真値のボリュームを組む。**返す配列はすべて ``(depth, row, col)`` = (z, y, x)**。
 
     ★格子の作り方に 3-D の落とし穴がある: ``grid_coords`` は ``(nx, ny, nz, 3)`` で
     最終軸が ``(x, y, z)`` なのに、ボリュームの op は ``(depth, row, col)`` を要求する。
     ここで 1 回だけ ``transpose(2, 1, 0)`` して以後は混ぜない。
+
+    ``phase`` は**格子の位相**(ボクセル単位)。物体は world 座標に固定したまま格子だけを
+    ずらす。粗いボクセルでは「たまたま境界に乗ったか」で結果が数割ぶれるので、
+    掃引は位相を振って平均と散らばりを分ける(1 本の位相だけを見た曲線は運)。
     """
+    p = phase * voxel
     nx = int(round(JOINT / voxel))
     nz = int(round((Z_HI - Z_LO) / voxel))
-    grid, _ = L.grid_coords.raw(((0.0, JOINT), (0.0, JOINT), (Z_LO, Z_HI)),
-                                (nx, nx, nz))
+    grid, _ = L.grid_coords.raw(((0.0 + p, JOINT + p), (0.0 + p, JOINT + p),
+                                 (Z_LO + p, Z_HI + p)), (nx, nx, nz))
     # 層・ダイ・基板 —— 横方向は領域より広く取り、側面が視野に入らないようにする
     s_layer = L.box_sdf(grid, (JOINT / 2, JOINT / 2, T_LAYER / 2),
                         (JOINT, JOINT, T_LAYER / 2))
