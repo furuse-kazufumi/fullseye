@@ -55,48 +55,64 @@ def travel_time(pipe, a: float, b: float) -> float:
     return t
 
 
-def make_records(snr_db: float, seed: int, x_leak: float = X_LEAK,
-                 pipe=PIPE_UNIFORM, echo: float = 0.0, band=BAND) -> dict:
-    """2 点の記録を合成する。**遅れも減衰も反射も既知**。
+#: 片側スペクトルの重み(Parseval で時間領域の平均二乗に戻すため)。
+_ONESIDE = np.full(FREQS.size, 2.0)
+_ONESIDE[0] = _ONESIDE[-1] = 1.0
+_INBAND = (FREQS >= BAND[0]) & (FREQS <= BAND[1])
 
-    源は帯域制限した白色雑音(漏水の噴流音は広帯域)。センサ i には
-    ``exp(-2πi f t_i)`` の**厳密な小数標本遅れ**と、距離に比例し周波数に
-    比例する減衰を掛けて届ける。反射はセンサの先の継手で折り返した往復路
-    (振幅 ``echo``)。雑音は**広帯域**(交通・ポンプ)で、帯域内 SNR が
-    ``snr_db`` になるように振幅を決める —— 帯域内だけの雑音にすると
-    「帯域制限」という前処理が無条件に無力になり、比較が嘘になる。
+
+def make_records(snr_db: float, seed: int, x_leak: float = X_LEAK,
+                 pipe=PIPE_UNIFORM, echo: float = 0.0,
+                 alpha: float = ALPHA_DB_1KHZ) -> dict:
+    """2 点の記録を合成する。**遅れも減衰も反射も雑音の密度も既知**。
+
+    源は「帯域内で振幅が平坦・位相が一様乱数」の広帯域雑音(漏水の噴流音)。
+    **時間領域で白色雑音を濾すのではなく周波数領域で組む** —— そうすると
+    信号のビンごとのパワーが乱数でなく**閉形式**になり、あとで CRLB を
+    推定でなく計算で出せる(1 回目は濾した版で書いて、実測 RMS が CRLB を
+    下回るという有り得ない結果になった。原因は周期グラム比の推定誤差)。
+
+    センサ i には ``exp(-2πi f t_i)`` の**厳密な小数標本遅れ**と、距離に
+    比例し周波数に比例する減衰を掛けて届ける。反射はセンサの先の継手で
+    折り返した往復路(振幅 ``echo``)。雑音は**広帯域**(交通・ポンプ)で、
+    帯域内 SNR が ``snr_db`` になるように振幅を決める —— 帯域内だけの
+    雑音にすると「帯域制限」という前処理が無条件に無力になり比較が嘘になる。
     """
     rng = np.random.default_rng(seed)
-    src = fs.bandpass(rng.standard_normal(N), FS_HZ, band[0], band[1], order=4)
-    spec = np.fft.rfft(src)
+    spec = np.where(_INBAND, np.exp(2j * np.pi * rng.random(FREQS.size)), 0.0)
     d1, d2 = float(x_leak), float(L_M - x_leak)
     t1 = travel_time(pipe, 0.0, x_leak)
     t2 = travel_time(pipe, x_leak, L_M)
 
-    def prop(delay_s: float, dist_m: float, amp: float = 1.0) -> np.ndarray:
-        att = 10.0 ** (-(ALPHA_DB_1KHZ * (FREQS / 1000.0) * dist_m) / 20.0)
-        return np.fft.irfft(spec * amp * att
-                            * np.exp(-2j * np.pi * FREQS * delay_s), N)
+    def leg(delay_s: float, dist_m: float, amp: float = 1.0) -> np.ndarray:
+        att = 10.0 ** (-(alpha * (FREQS / 1000.0) * dist_m) / 20.0)
+        return spec * amp * att * np.exp(-2j * np.pi * FREQS * delay_s)
 
-    clean = [prop(t1, d1), prop(t2, d2)]
+    ys = [leg(t1, d1), leg(t2, d2)]
     if echo > 0.0:
         c_end = (pipe[0][1], pipe[-1][1])
         for k, (tt, dd, extra) in enumerate(((t1, d1, ECHO_M[0]),
                                              (t2, d2, ECHO_M[1]))):
-            clean[k] = clean[k] + prop(tt + extra / c_end[k], dd + extra, echo)
+            ys[k] = ys[k] + leg(tt + extra / c_end[k], dd + extra, echo)
 
-    noise, recs = [], []
     snr = 10.0 ** (snr_db / 10.0)
-    for y in clean:
-        p_sig = float(np.mean(fs.bandpass(y, FS_HZ, band[0], band[1], order=4) ** 2))
-        w = rng.standard_normal(N)
-        p_w = float(np.mean(fs.bandpass(w, FS_HZ, band[0], band[1], order=4) ** 2))
-        g = float(np.sqrt(p_sig / (p_w * snr)))
-        noise.append(g * w)
-        recs.append(y + g * w)
+    clean, noise, recs, rho = [], [], [], []
+    for spec_i in ys:
+        # 帯域内の信号パワー(Parseval)/ 白色雑音のビンあたり期待パワー N
+        p_sig = float(np.sum(_ONESIDE[_INBAND]
+                             * np.abs(spec_i[_INBAND]) ** 2)) / N ** 2
+        g2 = p_sig * N / (snr * float(np.sum(_ONESIDE[_INBAND])))
+        g = float(np.sqrt(g2))
+        y = np.fft.irfft(spec_i, N)
+        w = g * rng.standard_normal(N)
+        clean.append(y)
+        noise.append(w)
+        recs.append(y + w)
+        rho.append(np.abs(spec_i) ** 2 / (g2 * N))     # ビンごとの SNR(閉形式)
     return {"y1": recs[0], "y2": recs[1], "clean1": clean[0], "clean2": clean[1],
-            "n1": noise[0], "n2": noise[1], "t1": t1, "t2": t2,
-            "tau_true": t1 - t2, "x_leak": float(x_leak), "pipe": pipe}
+            "n1": noise[0], "n2": noise[1], "rho1": rho[0], "rho2": rho[1],
+            "t1": t1, "t2": t2, "tau_true": t1 - t2, "x_leak": float(x_leak),
+            "pipe": pipe}
 
 
 # --------------------------------------------------------------------------- #
