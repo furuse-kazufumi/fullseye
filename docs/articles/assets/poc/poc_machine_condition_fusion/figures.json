@@ -74,5 +74,67 @@
    560,
    3
   ]
+ },
+ {
+  "file": "08_scene_machine.png",
+  "name": "scene_machine",
+  "caption": "同じ機械を 3 つのセンサで同時に見る。故障モードによって、身元を持っているセンサが違う。",
+  "shape": [
+   340,
+   860,
+   3
+  ]
+ },
+ {
+  "file": "09_thermal_maps.png",
+  "name": "thermal_maps",
+  "caption": "軸受外輪傷は狭く熱く、潤滑不良は広く熱い。最高温度だけ見ると同じ顔になる。",
+  "shape": [
+   406,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "10_order_spectra.png",
+  "name": "order_spectra",
+  "caption": "芯ずれは 2X、アンバランスは 1X、ゆるみは 0.5X と櫛。軸受と潤滑不良はこの図では見えない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_envelope_spectra.png",
+  "name": "envelope_spectra",
+  "caption": "軸受だけが BPFO とその側帯波に線を立てる。潤滑不良は同じ帯域を持ち上げるが線を作らない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_misalignment_geometry.png",
+  "name": "misalignment_geometry",
+  "caption": "平行ずれ(切片)と角度ずれ(傾き)を fit_line3 で分けて取る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_confusion_without_vibration.png",
+  "name": "confusion_without_vibration",
+  "caption": "芯ずれは無傷。壊れるのは軸受外輪傷と潤滑不良の対。",
+  "shape": [
+   224,
+   511,
+   3
+  ],
+  "csv": "13_confusion_without_vibration.csv",
+  "tsv": "13_confusion_without_vibration.tsv"
  }
 ]

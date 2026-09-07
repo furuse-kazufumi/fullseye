@@ -795,8 +795,12 @@ def section_heatmap(base: dict) -> dict:
               % (lbl, heat[iy, ix], len(ids), longest * base["meas"]["dt"]))
         probe_rows.append([lbl, "%.0f" % heat[iy, ix], str(len(ids)),
                            "%.1f" % (longest * base["meas"]["dt"])])
-    print("  ★積算だけを見ると区別がつかないが、3-D に戻すと"
-          "「1 本の長い柱」と「短い柱が何本も」に分かれる。")
+        probe_rows_heat.append(float(heat[iy, ix]))
+      print("  ★★いちばん積算が大きいのは**誰も待っていない下段通路**(%.0f フレーム)で、"
+          % probe_rows_heat[2])
+    print("     18 秒待っている棚前(%.0f)より大きい。3-D に戻すと、通路の柱は"
+          " %s 秒、棚前は %s 秒。"
+          % (probe_rows_heat[0], probe_rows[2][3], probe_rows[0][3]))
     figs.save_table("heat_ambiguity",
                     ["場所", "積算 [フレーム]", "3-D の柱の数", "最長の柱 [s]"],
                     probe_rows,
@@ -810,9 +814,14 @@ def section_heatmap(base: dict) -> dict:
         m = labels == cid
         cols = m.any(axis=0).sum()
         return float(m.sum()) / max(int(cols), 1)
-    sizes = np.bincount(dwell_lab.ravel())
-    sizes[0] = 0
-    pillar = int(np.argmax(sizes))
+    # 代表の「柱」= **いちばん長く続いた**成分(いちばん大きい成分ではない ——
+    # 2 人ぶんの足跡で太いだけの短い柱が選ばれてしまう)。
+    ext_t = {}
+    for c in range(1, int(dwell_lab.max()) + 1):
+        zs = np.nonzero((dwell_lab == c).any(axis=(1, 2)))[0]
+        if zs.size:
+            ext_t[c] = int(zs[-1] - zs[0] + 1)
+    pillar = max(ext_t, key=ext_t.get)
     th_pillar = mean_thickness(dwell_lab, pillar)
     # 管の代表 = 開いた後に何も残らなかった成分のうち最大のもの
     moved = vol & ~base["det"]["dwell"]

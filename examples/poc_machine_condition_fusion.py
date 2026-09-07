@@ -1009,38 +1009,34 @@ def section_alias() -> dict:
 # --------------------------------------------------------------------------- #
 def _machine_scene() -> np.ndarray:
     """機械の場面図 —— fullseye の annotate 族だけで組む。"""
-    img = np.full((300, 760, 3), 1.0)
-    img = np.asarray(fs.rounded_rect(img, (40, 120, 170, 90), radius=10,
-                                     color="neutral", width=2, fill=True, alpha=0.18))
-    img = np.asarray(fs.rounded_rect(img, (40, 120, 170, 90), radius=10,
-                                     color="neutral", width=2))
-    img = np.asarray(fs.rounded_rect(img, (520, 120, 190, 90), radius=10,
-                                     color="neutral", width=2, fill=True, alpha=0.18))
-    img = np.asarray(fs.rounded_rect(img, (520, 120, 190, 90), radius=10,
-                                     color="neutral", width=2))
-    img = np.asarray(fs.rounded_rect(img, (210, 158, 310, 14), radius=6,
+    img = np.full((340, 860, 3), 1.0)
+    for rect in ((60, 150, 180, 90), (540, 150, 200, 90)):
+        img = np.asarray(fs.rounded_rect(img, rect, radius=10, color="neutral",
+                                         width=2, fill=True, alpha=0.18))
+        img = np.asarray(fs.rounded_rect(img, rect, radius=10, color="neutral", width=2))
+    img = np.asarray(fs.rounded_rect(img, (240, 188, 300, 14), radius=6,
                                      color="reference", width=2, fill=True, alpha=0.55))
-    img = np.asarray(fs.ellipse(img, (330, 165), (16, 30), color="emphasis",
+    img = np.asarray(fs.ellipse(img, (360, 195), (18, 32), color="emphasis",
                                 width=2, fill=True, alpha=0.35))
-    img = np.asarray(fs.ellipse(img, (330, 165), (16, 30), color="emphasis", width=2))
-    for cx in (250, 430, 480):
-        img = np.asarray(fs.ellipse(img, (cx, 165), (11, 20), color="neutral", width=2))
-    img = np.asarray(fs.text_box(img, "電動機", (125, 165), anchor="ct", font_size=13))
-    img = np.asarray(fs.text_box(img, "ポンプ", (615, 165), anchor="ct", font_size=13))
-    img = np.asarray(fs.text_box(img, "たわみ軸継手", (330, 210), anchor="ct", font_size=11))
-    img = np.asarray(fs.text_box(img, "軸受 A", (430, 210), anchor="ct", font_size=11))
-    img = np.asarray(fs.arrow(img, (250, 60), (250, 140), color="emphasis", width=2))
-    img = np.asarray(fs.text_box(img, "① 加速度計(半径・軸方向)", (250, 44),
+    img = np.asarray(fs.ellipse(img, (360, 195), (18, 32), color="emphasis", width=2))
+    for cx in (280, 460, 505):
+        img = np.asarray(fs.ellipse(img, (cx, 195), (11, 20), color="neutral", width=2))
+    img = np.asarray(fs.text_box(img, "電動機", (150, 195), anchor="ct", font_size=13))
+    img = np.asarray(fs.text_box(img, "ポンプ", (640, 195), anchor="ct", font_size=13))
+    img = np.asarray(fs.text_box(img, "たわみ軸継手", (360, 246), anchor="ct", font_size=11))
+    img = np.asarray(fs.text_box(img, "軸受 A", (470, 246), anchor="ct", font_size=11))
+    img = np.asarray(fs.arrow(img, (280, 80), (280, 168), color="emphasis", width=2))
+    img = np.asarray(fs.text_box(img, "① 加速度計(半径・軸方向)", (280, 66),
                                  anchor="cb", font_size=12, color="emphasis"))
-    img = np.asarray(fs.arrow(img, (600, 262), (470, 200), color="right", width=2))
-    img = np.asarray(fs.text_box(img, "② 熱画像(320×240 mm)", (610, 272),
-                                 anchor="lb", font_size=12, color="right"))
-    img = np.asarray(fs.arrow(img, (120, 262), (300, 190), color="wrong", width=2))
-    img = np.asarray(fs.text_box(img, "③ 軸心のずれ(レーザ)", (110, 272),
+    img = np.asarray(fs.arrow(img, (700, 296), (520, 236), color="right", width=2))
+    img = np.asarray(fs.text_box(img, "② 熱画像(%d×%d mm)" % (VIEW_W, VIEW_H),
+                                 (848, 330), anchor="rb", font_size=12, color="right"))
+    img = np.asarray(fs.arrow(img, (160, 296), (338, 228), color="wrong", width=2))
+    img = np.asarray(fs.text_box(img, "③ 軸心のずれ(レーザ)", (14, 330),
                                  anchor="lb", font_size=12, color="wrong"))
     img = np.asarray(fs.text_box(img,
                                  "%.0f min-1 / f_r %.2f Hz / BPFO %.2f Hz / FTF %.2f Hz"
-                                 % (RPM, FR, BPFO, FTF), (10, 10), anchor="lt", font_size=12))
+                                 % (RPM, FR, BPFO, FTF), (12, 12), anchor="lt", font_size=12))
     return img
 
 
