@@ -156,6 +156,10 @@ _OP_BRIDGE_SKIP = {
 _OP_SORT_OVERRIDE = {
     "sphere_sdf": ("points", "volume"),
     "box_sdf": ("points", "volume"),
+    "plane_sdf": ("points", "volume"),
+    "cylinder_sdf": ("points", "volume"),
+    "torus_sdf": ("points", "volume"),
+    "capsule_sdf": ("points", "volume"),
 }
 
 
@@ -296,6 +300,10 @@ def _points_to_grid(v, res=16, margin=0.15):
 INPUT_ADAPTERS = {
     "box_sdf": _points_to_grid,
     "sphere_sdf": _points_to_grid,
+    "plane_sdf": _points_to_grid,
+    "cylinder_sdf": _points_to_grid,
+    "torus_sdf": _points_to_grid,
+    "capsule_sdf": _points_to_grid,
 }
 
 

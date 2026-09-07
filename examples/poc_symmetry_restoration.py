@@ -485,9 +485,8 @@ def section_angle_cliff(S: dict, Z: dict) -> dict:
     print("=" * 78)
     pts, surv, miss, tau = S["pts"], S["surv"], S["miss"], S["tau"]
     gt = pts[miss]
-    nrm = sample_mask(N_WORK, SEED)["nrm"][~miss]
+    nrm = S["nrm"][~miss]
     # 真値の面で「穴を埋めた鏡像」の元になった点(予測はこの集合で立てる)
-    base = restore_symmetric(surv, TRUE_P0, TRUE_N, tau)
     mir0 = np.asarray(_L.reflect_points(surv, TRUE_P0, TRUE_N), float)
     d0, _ = cKDTree(surv).query(mir0, k=1, workers=-1)
     src = d0 > tau                                # 穴を埋める鏡像の元になる点
@@ -497,16 +496,19 @@ def section_angle_cliff(S: dict, Z: dict) -> dict:
     for a in alphas:
         n = np.array([np.cos(np.radians(a)), 0.0, np.sin(np.radians(a))])
         r = restore_symmetric(surv, TRUE_P0, n, tau)
-        s = score_restoration(gt, r["restored"], pts, r["fill"], tau)
+        s = score_restoration(gt, r["restored"], r["fill"])
         p = predict_angle(surv, src, a, nrm)
         meas.append(s["rms"]); spur.append(100 * s["spur_frac"])
         pn.append(p["naive"]); pf.append(p["full"]); pnorm.append(p["normal"])
     meas = np.array(meas); pn = np.array(pn); pf = np.array(pf); pnorm = np.array(pnorm)
+    floor = float(meas[0])                       # alpha=0 での標本間隔の床
+    pnorm = np.sqrt(floor ** 2 + pnorm ** 2)     # 床と独立に足す
 
     print("  予測は 3 通り立てた(いずれも実行前に幾何から):")
     print("    (i)  2 d sin(alpha)        —— 面からの距離 d だけを見る素朴な式")
     print("    (ii) 2 r sin(alpha)        —— 回転軸からの距離 r = sqrt(d^2+e^2)(厳密な変位)")
-    print("    (iii) 変位の**法線成分**    —— 面に沿った分は面が吸う")
+    print("    (iii) 変位の**法線成分** (+ 標本の床 %.3f mm)—— 面に沿った分は面が吸う"
+          % floor)
     print("  alpha[deg] |  実測 RMS |  (i) 素朴 |  (ii) 変位 | (iii) 法線 | 偽の面 [%]")
     for a, m, x1, x2, x3, sp in zip(alphas, meas, pn, pf, pnorm, spur):
         print("     %5.2f   |  %7.3f  |  %7.3f  |  %7.3f  |  %7.3f  |  %6.2f"
@@ -516,6 +518,10 @@ def section_angle_cliff(S: dict, Z: dict) -> dict:
     rel = lambda p: float(np.mean(np.abs(p[sel] - meas[sel]) / meas[sel]) * 100)
     print("  予測の平均相対誤差(alpha >= 0.5 deg): 素朴 %.1f %% / 変位 %.1f %% / 法線 %.1f %%"
           % (rel(pn), rel(pf), rel(pnorm)))
+    big = alphas >= 3.0
+    print("  ★残る系統差: alpha >= 3 deg で法線予測は実測より %+.1f %% 上振れする ——"
+          % float(np.mean((pnorm[big] - meas[big]) / meas[big]) * 100))
+    print("    最近傍距離は**多数の候補の最小値**なので、対応点の変位より必ず小さくなる。")
 
     # 崖 = ゼロ点に負ける alpha
     zr = Z["zero_rms"]

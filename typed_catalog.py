@@ -437,6 +437,21 @@ OP_PARAM_HINTS = {
     ("fuse", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("geodesic_distances", "source"): lambda rng: 0,
     ("box_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
+    # 2026-09-07 追加のプリミティブ。grid_coords の既定 bounds (0..10)^3 の中に
+    # 収まる寸法にして、探針が「内側も外側も持つ」場を得られるようにする。
+    ("plane_sdf", "point"): lambda rng: np.array([5.0, 5.0, 5.0]),
+    ("plane_sdf", "normal"): lambda rng: np.array([0.0, 0.0, 1.0]),
+    ("cylinder_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
+    ("cylinder_sdf", "axis"): lambda rng: np.array([0.0, 0.0, 1.0]),
+    ("cylinder_sdf", "radius"): lambda rng: 2.0,
+    ("cylinder_sdf", "height"): lambda rng: 6.0,
+    ("torus_sdf", "center"): lambda rng: np.array([5.0, 5.0, 5.0]),
+    ("torus_sdf", "axis"): lambda rng: np.array([0.0, 0.0, 1.0]),
+    ("torus_sdf", "major_radius"): lambda rng: 3.0,
+    ("torus_sdf", "minor_radius"): lambda rng: 1.0,
+    ("capsule_sdf", "a"): lambda rng: np.array([3.0, 5.0, 5.0]),
+    ("capsule_sdf", "b"): lambda rng: np.array([7.0, 5.0, 5.0]),
+    ("capsule_sdf", "radius"): lambda rng: 1.5,
     ("box_sdf", "half_extents"): lambda rng: np.array([2.0, 2.0, 2.0]),
     # sphere_sdf(grid, center, R) の R は**半径のスカラ**。名前ヒントの "R" は
     # 回転行列 eye(3) なので、そのままだと op 側の番人

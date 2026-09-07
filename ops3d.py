@@ -704,6 +704,13 @@ _CATALOG = {
         ("grid_coords", "sdf_ops", [], "coordgrid", False),
         ("sphere_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
         ("box_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
+        # 2026-09-07 追加。機械部品は円筒穴・面取り・フィレットでできているのに
+        # プリミティブが球と直方体だけで、DFM / CAD 差分の PoC が面ごとの解析式を
+        # 自前で書いていた(KNOWN_ISSUES §41.12)。4 つとも閉形式で厳密。
+        ("plane_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
+        ("cylinder_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
+        ("torus_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
+        ("capsule_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
         ("sdf_union", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_intersect", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_subtract", "sdf_ops", ["sdf", "sdf"], "sdf", False),
