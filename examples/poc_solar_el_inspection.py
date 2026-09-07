@@ -676,18 +676,22 @@ def section_grain_sweep() -> dict:
               % (c, r["false_len"], r["fi_false"], r["fi_matched"], len(FI_BANDS),
                  r["iso_err"], r["grain_as_iso"]))
     onset = next((c for c, f in zip(cs, false_len) if f > 30.0), None)
-    print("\n  ★偽クラックが 30 px を超えるのは c=%s(予測 %.2f)。偽の断線は最大 %d 本 —— "
-          "暗い粒は c>%.2f で T_FI を割るが、「細長く水平」の形の門が塊を落とす。"
-          % (onset, c_pred, max(fi_false), 1 - T_FI))
-    print("     面積率の誤差は c=%.2f でも %+.2f ポイント。" % (cs[-1], iso_err[-1]))
+    fi_drop = next((c for c, n in zip(cs, fi_ok) if n < len(FI_BANDS)), None)
+    print("\n  ★偽クラックが 30 px を超えるのは c=%s(予測 %.2f)。偽の断線は最大 %d 本だが"
+          "**一致が %d/%d → %d/%d に落ちる**(落ちはじめ c=%s、予測 c>%.2f)—— 暗い粒が"
+          "帯を飲み込み、「細長く水平」の形の門が塊ごと落とす。"
+          % (onset, c_pred, max(fi_false), fi_ok[0], len(FI_BANDS), fi_ok[-1], len(FI_BANDS),
+             fi_drop, 1 - T_FI))
+    print("     面積率の誤差は c=%.2f でも %+.2f ポイント(T_ISO を割る粒は無い、予測どおり)。"
+          % (cs[-1], iso_err[-1]))
     figs.save_plot("grain_contrast", [("偽クラック長 [px]", cs, false_len),
-                                      ("偽の断線 [本] x 100", cs, [100 * v for v in fi_false]),
+                                      ("一致した断線 [本] x 50", cs, [50 * v for v in fi_ok]),
                                       ("面積率誤差 [pt] x 100", cs, [100 * v for v in iso_err])],
-                   xlabel="結晶粒のコントラスト c", ylabel="偽検出",
-                   title="粒のコントラストを上げると先に壊れるのはクラック",
-                   caption="断線と面積率は c=0.40 でも壊れない。形の門と面積の門が効く。")
-    return {"c": cs, "false_len": false_len, "fi_false": fi_false, "iso_err": iso_err,
-            "onset": onset, "c_pred": c_pred}
+                   xlabel="結晶粒のコントラスト c", ylabel="偽クラック長 [px] / 断線 x50 / 誤差 x100",
+                   title="粒のコントラストを上げると、クラックは偽が出て断線は飲まれる",
+                   caption="面積率は c=0.60 でも 3 ポイント以内。壊れ方は 3 種で別々。")
+    return {"c": cs, "false_len": false_len, "fi_false": fi_false, "fi_ok": fi_ok,
+            "iso_err": iso_err, "onset": onset, "c_pred": c_pred, "fi_drop": fi_drop}
 
 
 # --------------------------------------------------------------------------- #
