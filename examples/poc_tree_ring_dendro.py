@@ -952,6 +952,21 @@ def main() -> None:
                             bl["sig"][-1], bl["c_miss"][-1], bl["pred_c"][-1]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
+    # --- 所見を固定する(壊れたら鳴る) ------------------------------------ #
+    assert b["c"]["n_est"] == N_RINGS and not b["c"]["missing"], b["c"]["n_est"]
+    assert b["cs"]["corr"] > 0.99 and b["cs"]["mae"] < 0.25, (b["cs"]["corr"], b["cs"]["mae"])
+    assert b["z24"]["exact"] < N_SECT and b["wrong_n"] >= 3, b["z24"]["exact"]
+    assert b["wrong_med"] > 0.85, b["wrong_med"]             # 年数を間違えても幅は合う
+    assert th["c_cliff"] is not None and 2.0 <= th["c_cliff"] <= 3.0, th["c_cliff"]
+    assert th["z_cliff"] is not None and th["z_cliff"] >= th["c_cliff"], th["z_cliff"]
+    assert pe["corr"][-1] > 0.98, pe["corr"][-1]             # 髄 20 px ずれても幅は歪まない
+    assert pe["lost_meas"][-1] == pe["lost_pred"][-1] == 2, (pe["lost_pred"], pe["lost_meas"])
+    assert abs(pe["slope_r"] + 15.0) < 1.5 and abs(pe["slope_w"]) < 0.3, (pe["slope_r"], pe["slope_w"])
+    assert max(cr["c_false"]) == 0.0, cr["c_false"]           # 割れ目 16 本でも合意法は偽輪 0
+    assert bl["c_miss"][0] == 0 and bl["c_miss"][-1] == N_RINGS, bl["c_miss"]
+    assert bl["z_false"][-1] > bl["z_false"][0] + 5, bl["z_false"]
+    assert all(v["c"]["n_est"] == N_RINGS for v in ct.values())
+
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS")
