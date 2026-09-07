@@ -633,7 +633,10 @@ def align(scan_p: np.ndarray, mode: str, seed: int = 0) -> np.ndarray:
         dp, dn = dp[m], dn[m]
     else:
         dp, dn = bim_samples(0.09)
-    R, t, _, _, _ = L.icp_point2plane.raw(src, dp, dn, iters=25, trim=0.9)
+    # ★trim を掛けると「よく合う点だけ」を選び続けて RMSE 0.13 mm の別解へ落ちる
+    #   (実測: trim=0.9 で吸う角が 0.17 mrad、trim なしで 0.62 mrad)。
+    #   as-built 検査では欠陥そのものが大きい残差なので、trim は欠陥を捨てる。
+    R, t, _, _, _ = L.icp_point2plane.raw(src, dp, dn, iters=40)
     return np.asarray(scan_p) @ np.asarray(R).T + np.asarray(t)
 
 
