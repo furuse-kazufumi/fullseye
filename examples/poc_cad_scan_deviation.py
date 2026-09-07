@@ -911,7 +911,8 @@ def section_basin(ref: CadRef) -> dict:
         d, _, _ = ref.deviate(q)
         e = rot_err_deg(R, sc["R_true"])
         mm = pose_shift_mm(R, t, sc["R_true"], sc["t_true"], ref.pts)
-        ok = "収束" if e < 0.5 else ("別解" if d.mean() < 0.35 else "発散")
+        ok = "収束" if e < 0.5 else ("別解(残差は小さい)" if d.mean() < 0.35
+                                       else "発散")
         angs.append(a)
         errs.append(e)
         resid.append(1000 * float(d.mean()))
