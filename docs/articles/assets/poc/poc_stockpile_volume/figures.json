@@ -1,0 +1,68 @@
+[
+ {
+  "file": "01_base_offset.png",
+  "name": "base_offset",
+  "caption": "A = 906.5 m^2。閉形式は測る前に印字してある。",
+  "shape": [
+   248,
+   445,
+   3
+  ],
+  "csv": "01_base_offset.csv",
+  "tsv": "01_base_offset.tsv"
+ },
+ {
+  "file": "02_base_offset_line.png",
+  "name": "base_offset_line",
+  "caption": "2 本は重なる。傾き = 底面積。底面積が大きいほど、同じ 1 cm が重い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_occlusion_closed_form.png",
+  "name": "occlusion_closed_form",
+  "caption": "可視率 = arccos((H-h_s)/(D tanφ))/π。単一円錐・平らな地面の対照群。",
+  "shape": [
+   224,
+   382,
+   3
+  ],
+  "csv": "03_occlusion_closed_form.csv",
+  "tsv": "03_occlusion_closed_form.tsv"
+ },
+ {
+  "file": "04_scan_sweep.png",
+  "name": "scan_sweep",
+  "caption": "3 か所で遮蔽は 1.4 % まで落ちるが、うねり由来の +1.8 % は何か所測っても消えない(底面は誰も測っていない)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_scene.png",
+  "name": "scene",
+  "caption": "補間のずれは -0.64 〜 +5.23 m(0 の所が暗い = 触っていない)。外周の高さも +0.728 m 持ち上がる —— 山も底も同じ向きにずれるので、引き算で見えなくなる。",
+  "shape": [
+   537,
+   432,
+   3
+  ]
+ },
+ {
+  "file": "06_summary.png",
+  "name": "summary",
+  "caption": "対照群(平ら/全周)で 2 つを切り分けてから、両方入れる。",
+  "shape": [
+   224,
+   309,
+   3
+  ],
+  "csv": "06_summary.csv",
+  "tsv": "06_summary.tsv"
+ }
+]

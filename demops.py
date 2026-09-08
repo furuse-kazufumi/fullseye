@@ -683,6 +683,16 @@ def dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7,
     # 各セルへの視線を等間隔で標本化し、途中の地形が視線より高ければ遮蔽。
     with np.errstate(invalid="ignore", divide="ignore"):
         need = (a + float(target_height_m) - eye) / np.where(dist > 0, dist, 1.0)
+    # ★2026-09-08 修正(`poc_stockpile_volume` が発見)。視線の標本が
+    # ``np.rint`` で**目標セル自身**に丸まると、そのセルの高さを「途中の地形」
+    # として自分と比べることになる。t < 1 なので分母 dist*t が小さく、
+    # ``(z-eye)/(dist*t) > (z-eye)/dist`` は z > eye なら必ず真 ——
+    # **目線より高いセルが軒並み自己遮蔽**されていた。実測(修正前):
+    # 平地に立てた高さ 10 m の柱は 25 m 先・目線 2 m から「見えない」と返り、
+    # 目線より低い 1 m の柱だけが「見える」。凸な立体の最高点は外から必ず
+    # 見えるので、これは幾何として誤り。標本が目標セルに乗った回は数えない。
+    ry = yy.astype(np.int64)
+    rx = xx.astype(np.int64)
     for s in range(1, n_steps):
         t = s / n_steps
         sy = np.rint(r0 + dy * t).astype(np.int64)
@@ -692,7 +702,8 @@ def dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7,
         seg = dist * t
         with np.errstate(invalid="ignore", divide="ignore"):
             slope_here = (a[sy, sx] - eye) / np.where(seg > 0, seg, 1.0)
-        blocked = (seg > 0) & (slope_here > need)
+        on_target = (sy == ry) & (sx == rx)
+        blocked = (seg > 0) & (slope_here > need) & ~on_target
         vis[blocked] = 0.0
     vis[dist > far] = 0.0
     vis[r0, c0] = 1.0

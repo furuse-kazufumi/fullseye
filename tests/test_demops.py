@@ -250,6 +250,55 @@ def test_a_wall_hides_what_is_behind_it():
     assert v[10, 3] == 1.0
 
 
+def test_a_hill_taller_than_the_eye_is_visible_from_the_open():
+    """★目線より高いセルが**自分自身で遮蔽**されていた(2026-09-08 に修正)。
+
+    `poc_stockpile_volume` が見つけた。視線の標本が ``np.rint`` で目標セル自身に
+    丸まると、そのセルの高さを「途中の地形」として自分と比べる。t < 1 なので
+    分母が小さく、``(z-eye)/(dist*t) > (z-eye)/dist`` は z > eye なら必ず真 ——
+    **平地に立てた高さ 10 m の柱が、25 m 先・目線 2 m から「見えない」**と
+    返っていた(目線より低い 1 m の柱だけが「見える」)。凸な立体の最高点は
+    外から必ず見えるので、これは幾何として誤り。
+
+    それまでの門がこれを通したのは、**平地(何も目線より高くない)と
+    「壁の向こう側」しか見ていなかった**から —— 壁**そのもの**が見えるか、を
+    一度も確かめていなかった。
+    """
+    n = 41
+    for height in (1.0, 3.0, 10.0, 40.0):
+        z = np.zeros((n, n))
+        z[20, 30] = height
+        v = D.dem_viewshed(z, 1.0, (20, 5), observer_height_m=2.0)
+        assert v[20, 30] == 1.0, ("開けた平地の高さ %.0f m が見えない" % height)
+
+
+def test_the_wall_itself_is_visible_even_though_its_far_side_is_not():
+    """壁の**手前の面**は見える。以前はここが 0 だった(上と同じバグ)。"""
+    wall = np.zeros((21, 21))
+    wall[:, 14] = 40.0
+    v = D.dem_viewshed(wall, 5.0, (10, 3))
+    assert np.all(v[:, 14] == 1.0), "壁そのものが見えていない"
+    assert np.all(v[:, 18] == 0.0), "壁の向こうが見えている"
+
+
+def test_a_hill_is_hidden_only_when_the_sight_line_passes_below_the_wall():
+    """遮蔽は緩めていない —— 壁を越えられる高さでだけ見える(閉形式と一致)。
+
+    観測点は (20, 5) の目線 2.0 m、壁は列 15 で高さ 8.0 m、目標は列 30。
+    視線が壁の位置(距離 10)で取る高さは ``2 + (H-2)/25*10`` なので、
+    これが 8.0 を超える H だけが見える。実測: 12 m は不可視(視線高 6.00 m)、
+    20 m は可視(9.20 m)、25 m は可視(11.20 m)。
+    """
+    n = 41
+    for height in (12.0, 20.0, 25.0):
+        z = np.zeros((n, n))
+        z[20, 30] = height
+        z[:, 15] = 8.0
+        line_at_wall = 2.0 + (height - 2.0) / 25.0 * 10.0
+        v = D.dem_viewshed(z, 1.0, (20, 5), observer_height_m=2.0)
+        assert v[20, 30] == float(line_at_wall > 8.0), (height, line_at_wall)
+
+
 def test_the_observer_cell_is_always_visible():
     rng = np.random.default_rng(2)
     z = rng.random((17, 17)) * 20

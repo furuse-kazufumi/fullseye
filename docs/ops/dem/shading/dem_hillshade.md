@@ -4,7 +4,7 @@ dim: dem
 category: shading
 in: depth
 out: image2d
-examples: [poc_dem_terrain]
+examples: [poc_dem_terrain, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -38,6 +38,7 @@ Lambert の余弦則そのもので、**遮蔽は考えない**(自分より手�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_dem_terrain](../../../../examples/poc_dem_terrain.py) — `py -3.11 examples/poc_dem_terrain.py`
+- [poc_stockpile_volume](../../../../examples/poc_stockpile_volume.py) — `py -3.11 examples/poc_stockpile_volume.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

@@ -77,14 +77,22 @@ EXTEND: 実スキャンに差し替えるなら :func:`surface_of` の戻り値(
     上なら ``dem_slope`` で 36.971 度と読めますが、傾いた地面の上に同じ山を置くと
     **38.163 度**になります(地面の勾配が斜面の勾配にベクトルとして足される)。
     現場で法面の角度から材料を推定するときの罠です。
-12. ★**道具の穴を 1 つ見つけました**。:func:`fullseye.ledger.dem_viewshed` は、
-    **観測者の目線より高いセルを軒並み「見えない」と返します**。平地に置いた
-    円錐の**頂点**が、開けた平地の観測者から見えないと出ます(実測 0.0)。
-    原因は実装の刻み: 視線を ``ceil(hypot(H,W))`` 等分した最後の標本が
-    ``np.rint`` で**目標セル自身**に丸まり、``(z-eye)/(d*t) > (z-eye)/d``
-    (t<1、z>eye で必ず真)で自己遮蔽します。この PoC の遮蔽は
-    :func:`visible_from`(目標の 1 セル手前で打ち切る自前の視線判定)で測り、
-    §4 の閉形式で妥当性を確かめました。
+12. ★★**道具の穴を 1 つ見つけて、その場で直しました**。
+    :func:`fullseye.ledger.dem_viewshed` は、**観測者の目線より高いセルを軒並み
+    「見えない」と返していました** —— 平地に置いた円錐の**頂点**が、開けた平地の
+    観測者から見えないと出る(実測 0.0。凸な立体の最高点は外から必ず見えるので、
+    幾何として誤り)。底面の遮蔽率は 0.8863(閉形式 0.5710)、目線より高い
+    1541 セルの可視は 0 個でした。原因は実装の刻み: 視線を ``ceil(hypot(H,W))``
+    等分した最後の標本が ``np.rint`` で**目標セル自身**に丸まり、
+    ``(z-eye)/(d*t) > (z-eye)/d``(t<1、z>eye で必ず真)で自己遮蔽します。
+    **標本が目標セルに乗った回を数えないように直しました**(``demops.py``)。
+    直後の実測は 頂点の可視 1.0、底面の遮蔽率 0.5900(自前 0.5539 / 閉形式
+    0.5710 —— **閉形式を挟んで両側**に分かれる。別々の離散化なので一致は求めない)、
+    目線より高い 1541 セルのうち可視 657 個。
+    ★**それまでの門がこれを通した理由**が、この件のいちばんの収穫です:
+    可視領域の試験は「平地(何も目線より高くない)」と「壁の**向こう側**」しか
+    見ておらず、**壁そのものが見えるか**を一度も確かめていませんでした。
+    門は事故の起きる場所に立てる —— :file:`tests/test_demops.py` に 3 本足しました。
 
 【グラウンドトゥルース】山は**安息角 37 度の円錐 3 個の和**
 (:data:`CONES`、高さ 12.0 / 5.5 / 3.5 m)で置きました。和にしたのは、
@@ -605,7 +613,7 @@ def section_toe_contamination(truth):
 
 
 def section_op_hole():
-    print("\n=== 8. 道具の穴 —— dem_viewshed は目線より高いセルを見えないと言う ===")
+    print("\n=== 8. 道具の穴 —— 見つけて、その場で直した ===")
     peak = CONES[0][0]
     xs = np.arange(N) * CELL
     gx, gy = np.meshgrid(xs, xs)
@@ -617,18 +625,28 @@ def section_op_hole():
     own = visible_from(surf, CELL, obs, 2.0)
     apex = (int(round(60.0 / CELL)), int(round(60.0 / CELL)))
     pred = occluded_fraction_closed_form(peak, 2.0, 60.0)
-    print(f"  平地に置いた円錐 1 個、観測者は 60 m 先の開けた平地(目線 2.0 m)。")
-    print(f"  **円錐の頂点**の可視: dem_viewshed {op_vis[apex]:.1f} / "
-          f"自前 {float(own[apex]):.1f} / 幾何 1.0(凸な立体の最高点は外から必ず見える)")
-    print(f"  底面の遮蔽率: dem_viewshed {1 - op_vis[foot].mean():.4f} / "
-          f"自前 {1 - own[foot].mean():.4f} / 閉形式 {pred:.4f}")
     above = surf > (surf[obs] + 2.0)
-    print(f"  目線(標高 {surf[obs] + 2.0:.1f} m)より高いセル {int(above.sum())} 個のうち、"
-          f"dem_viewshed が可視と言うのは {int(op_vis[above].sum())} 個")
-    print("  → 原因: 視線を ceil(hypot(H,W)) 等分した最後の標本が np.rint で")
-    print("     **目標セル自身**に丸まり、(z-eye)/(d*t) > (z-eye)/d(t<1)が")
-    print("     z>eye なら必ず真になる。目標は「途中の地形」ではないので、")
-    print("     打ち切りを 1 セル手前にすれば直る(この PoC は他ファイルを触らない)。")
+    print("  平地に置いた円錐 1 個、観測者は 60 m 先の開けた平地(目線 2.0 m)。")
+    print("  ★**発見時**: dem_viewshed は目線より高いセルを軒並み"
+          "「見えない」と返していた ——")
+    print("     円錐の頂点の可視 0.0(幾何では 1.0。凸な立体の最高点は"
+          "外から必ず見える)、")
+    print("     底面の遮蔽率 0.8863(閉形式 %.4f)、目線より高い 1541 セルの"
+          "可視は 0 個。" % pred)
+    print("     原因は実装の刻み —— 視線を ceil(hypot(H,W)) 等分した最後の標本が")
+    print("     np.rint で**目標セル自身**に丸まり、(z-eye)/(d*t) > (z-eye)/d"
+          "(t<1)が z>eye なら必ず真。")
+    print("  ★**直した**(2026-09-08、demops.py): 標本が目標セルに乗った回は"
+          "数えない。")
+    print("     いまの実測 —— 頂点の可視 %.1f(自前 %.1f)、底面の遮蔽率 %.4f"
+          "(自前 %.4f / 閉形式 %.4f)、"
+          % (op_vis[apex], float(own[apex]), 1 - op_vis[foot].mean(),
+             1 - own[foot].mean(), pred))
+    print("     目線より高い %d セルのうち可視 %d 個。"
+          % (int(above.sum()), int(op_vis[above].sum())))
+    print("  ★**それまでの門がこれを通した理由**: 平地(何も目線より高くない)と")
+    print("     「壁の**向こう側**」しか見ておらず、**壁そのものが見えるか**を")
+    print("     一度も確かめていなかった。門は事故の起きる場所に立てる。")
     return {"apex_op": float(op_vis[apex]), "apex_own": float(own[apex]),
             "occ_op": float(1 - op_vis[foot].mean()),
             "occ_own": float(1 - own[foot].mean()), "pred": pred,
@@ -707,10 +725,20 @@ def main():
     assert toe["TLS"]["got"]["vol"] < toe["clean"]["vol"] < toe["RANSAC"]["got"]["vol"]
     # ★道具の穴。dem_viewshed が直ったらここが鳴る(それが目的)
     assert hole["apex_own"] == 1.0
-    assert hole["apex_op"] == 0.0, "dem_viewshed が直った —— §8 の記述を更新すること"
-    assert hole["occ_op"] > hole["occ_own"] + 0.25, (hole["occ_op"], hole["occ_own"])
-    assert abs(hole["occ_own"] - hole["pred"]) < 0.03
-    assert hole["above_vis"] == 0, hole["above_vis"]
+    # ★2026-09-08: この PoC の指摘で op を直したので、いまは**見える**のが正しい。
+    #   自前の視線判定と一致し、閉形式にも近いことを固定する(また壊れたら鳴る)。
+    assert hole["apex_op"] == 1.0, "dem_viewshed の自己遮蔽が戻った"
+    assert hole["apex_own"] == 1.0
+    # 遮蔽率は op 0.5900 / 自前 0.5539 / 閉形式 0.5710 —— **閉形式を挟んで両側**に
+    # 分かれる(op は 1 セル刻みの視線標本、自前は目標の 1 セル手前で打ち切る)。
+    # どちらも 0.04 以内。**一致は求めない**: 別々の離散化なので、差が閉形式の
+    # まわりに収まっていることのほうが意味がある。
+    assert abs(hole["occ_op"] - hole["pred"]) < 0.04, (hole["occ_op"], hole["pred"])
+    assert abs(hole["occ_own"] - hole["pred"]) < 0.04, (hole["occ_own"], hole["pred"])
+    assert hole["occ_own"] < hole["pred"] < hole["occ_op"], hole
+    # 目線より高いセルが「全部見えない」ではなくなった(657 / 1541)。全部見える
+    # わけでもない —— 峰の裏は本当に見えないので、0 でも全数でもないのが正しい。
+    assert 0 < hole["above_vis"] < hole["above"], (hole["above_vis"], hole["above"])
 
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))

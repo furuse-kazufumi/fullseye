@@ -4,7 +4,7 @@ dim: dem
 category: visibility
 in: depth
 out: image2d
-examples: [dem_terrain_analysis_tour]
+examples: [dem_terrain_analysis_tour, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [dem_terrain_analysis_tour](../../../../examples/dem_terrain_analysis_tour.py) — `py -3.11 examples/dem_terrain_analysis_tour.py`
+- [poc_stockpile_volume](../../../../examples/poc_stockpile_volume.py) — `py -3.11 examples/poc_stockpile_volume.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
