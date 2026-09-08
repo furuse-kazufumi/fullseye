@@ -604,22 +604,29 @@ def section_cliff(pred: dict) -> dict:
     c, nb, dc, l_crit = pred["C"], pred["neighbour"], pred["dC"], pred["L_crit"]
     print("   予測(2 節): L < %.0f mm で %s と %s は同じビンに入る。"
           % (l_crit, CULPRIT, nb))
-    print("\n   L [mm]   ΔC=C²/L   ビン当て 誤差   ビン当て 成功率   "
-          "補間あり 誤差   補間あり 成功率   取り違え先")
+    print("   ★崖は 2 つある。**検出の崖**(山が雑音に埋もれて何も報告できない)と、"
+          "**分解の崖**\n     (報告はできるが隣のロールと区別がつかない)。"
+          "Rayleigh が言っているのは後者だけ。")
+    print("
+   L [mm]   ΔC=C²/L   報告率   ビン当て 誤差  成功率   "
+          "補間あり 誤差  成功率   取り違え先")
     Ls = [3000.0, 4000.0, 6000.0, 8000.0, 10000.0, 12000.0, 14000.0, 17000.0,
           20000.0]
-    res = {"L": [], "bin_err": [], "bin_hit": [], "int_err": [], "int_hit": []}
+    res = {"L": [], "bin_err": [], "bin_hit": [], "int_err": [], "int_hit": [],
+           "rep": []}
     rows = []
     for L in Ls:
         eb, ei = [], []
-        hb = hi = 0
+        hb = hi = rep = 0
         wrong = {}
         for s in range(SEEDS):
             sc = scene(SEED0 + s, length=L)
             b = spec_estimate(sc["md"], L, interp=False)
             i = spec_estimate(sc["md"], L, interp=True)
-            eb.append(abs(b["C"] - c))
-            ei.append(abs(i["C"] - c))
+            if np.isfinite(b["C"]):
+                rep += 1
+                eb.append(abs(b["C"] - c))
+                ei.append(abs(i["C"] - c))
             nb_name = identify(b["C"])
             hb += int(nb_name == CULPRIT)
             hi += int(identify(i["C"]) == CULPRIT)
@@ -627,16 +634,20 @@ def section_cliff(pred: dict) -> dict:
                 wrong[nb_name] = wrong.get(nb_name, 0) + 1
         top = max(wrong, key=wrong.get) if wrong else "—"
         res["L"].append(L)
-        res["bin_err"].append(float(np.median(eb)))
+        res["rep"].append(100.0 * rep / SEEDS)
+        res["bin_err"].append(float(np.median(eb)) if eb else np.nan)
         res["bin_hit"].append(100.0 * hb / SEEDS)
-        res["int_err"].append(float(np.median(ei)))
+        res["int_err"].append(float(np.median(ei)) if ei else np.nan)
         res["int_hit"].append(100.0 * hi / SEEDS)
-        rows.append(["%.0f" % L, "%.1f" % (c * c / L), "%.1f" % res["bin_err"][-1],
+        rows.append(["%.0f" % L, "%.1f" % (c * c / L),
+                     "%.0f %%" % res["rep"][-1], "%.1f" % res["bin_err"][-1],
                      "%.0f %%" % res["bin_hit"][-1], "%.1f" % res["int_err"][-1],
                      "%.0f %%" % res["int_hit"][-1], top])
-        print("   %6.0f %9.1f %14.1f %16.0f %% %14.1f %16.0f %%   %s"
-              % (L, c * c / L, res["bin_err"][-1], res["bin_hit"][-1],
-                 res["int_err"][-1], res["int_hit"][-1], top))
+        print("   %6.0f %9.1f %7.0f %% %13.1f %7.0f %% %13.1f %7.0f %%   %s"
+              % (L, c * c / L, res["rep"][-1], res["bin_err"][-1],
+                 res["bin_hit"][-1], res["int_err"][-1], res["int_hit"][-1], top))
+    print("   (誤差は報告できた試行だけの中央値 [mm]。成功率は全試行に対する割合"
+          " —— 未報告は失敗に数える)")
 
     def first_fail(hits):
         ok = [L for L, h in zip(Ls, hits) if h >= 100.0]
@@ -680,8 +691,9 @@ def section_cliff(pred: dict) -> dict:
                    xlabel="記録長 L [mm]", ylabel="周長の推定誤差 |ΔC| [mm]",
                    title="周長の推定誤差と Rayleigh 分解能")
     figs.save_table("cliff_table",
-                    ["L [mm]", "ΔC=C²/L", "ビン当て 誤差", "ビン当て 成功率",
-                     "補間あり 誤差", "補間あり 成功率", "取り違え先"], rows,
+                    ["L [mm]", "ΔC=C²/L", "報告率", "ビン当て 誤差",
+                     "ビン当て 成功率", "補間あり 誤差", "補間あり 成功率",
+                     "取り違え先"], rows,
                     title="記録長の掃引(%d 試行)" % SEEDS)
     res["L_bin"], res["L_int"] = lb, li
     return res
@@ -796,9 +808,9 @@ def main() -> None:
           "レーンに残る周期欠陥が %.0f %% になる。MD スペクトルは無傷。"
           % (MEANDER_A, mea["蛇行あり・補正なし"][0],
              mea["蛇行あり・補正なし"][2]))
-    print("  * 健全ロールだけの床は %.2f 倍、本物の谷は %.2f 倍。"
-          "しきい値 %.1f 倍で偽陽性 %.1f %%。"
-          % (flo["floor"], flo["valley"], PEAK_K, 100 * flo["fp"]))
+    print("  * 健全ロールだけ %d 試行で偽陽性 %.1f %%(単独のしきい値なら床が "
+          "%.2f 倍まで来るので止まらない。止めているのは高調波の全数要求)。"
+          % (flo["n"], 100 * flo["fp"], flo["floor"]))
     print("  * 崖: 予測 C²/ΔC = %.0f mm に対し実測は ビン当て %s / 補間あり %s。"
           % (pred["L_crit"],
              "%.0f mm" % cli["L_bin"] if cli["L_bin"] else "(全滅)",
@@ -816,7 +828,7 @@ def main() -> None:
     assert mea["蛇行あり・補正なし"][0] >= 2.0
     assert mea["蛇行あり・補正あり"][0] == 1.0
     assert flo["fp"] == 0.0 and flo["tp"] == 1.0
-    assert flo["valley"] > flo["floor"]
+    assert flo["floor"] > PEAK_K
     assert cli["bin_hit"][-1] == 100.0 and cli["int_hit"][-1] == 100.0
     assert cli["L_int"] is not None and cli["L_bin"] is not None
     assert cli["L_int"] < cli["L_bin"]
