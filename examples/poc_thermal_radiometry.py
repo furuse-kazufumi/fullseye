@@ -731,10 +731,10 @@ def coverage_run(tab, cam, t_true, eps, u_eps, rho_reality, rho_assumed,
     包んだかを数える。★**区間は測定ごとに作り直さない** —— 現場の不確かさ
     予算は日ごと・機器ごとに 1 回作るものだから。
     """
-    inputs = budget_inputs(eps, u_eps, u_refl)
+    inputs = budget_inputs(eps, u_eps, cam.sigma_dn, u_refl)
     nominal = [v for _, v, _ in inputs]
     u_vec = [u for _, _, u in inputs]
-    steps = [0.002, 0.5, 0.002, 0.5, 0.001, 1.0]
+    steps = [0.002, 0.5, 0.002, 0.5, 0.001, 1.0, 1.0]
     # 公称の測定(雑音・量子化なし)。区間の中心はここから。
     l_nom = forward_radiance(tab, t_true, eps, T_REFL_REF, TAU_REF, T_ATM_REF)
     dn_nom = float(cam.to_dn(l_nom, quantize=False))
