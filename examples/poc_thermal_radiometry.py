@@ -530,6 +530,7 @@ def section_cliff(scene):
     print(f"  {'帯域':>6}{'T [K]':>8}{'ε':>7}{'Δε/ε':>8}{'予測 ΔT':>11}"
           f"{'実測 ΔT':>11}{'差':>9}{'上昇比 |ΔT|/(T−T_r)':>22}")
     rows, worst_pred, rise_ratio, abs_dt = [], 0.0, {}, {}
+    worst_rel, worst_where = 0.0, ""
     for band in ("LWIR", "MWIR"):
         tab = tabs[band]
         for t in (305.0, 350.0, 400.0, 800.0):
