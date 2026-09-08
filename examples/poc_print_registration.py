@@ -1196,8 +1196,13 @@ def section8_metrics(sweep_am, zero):
     print("  ★相関 FM は素材を替えるだけで両方勝つ(%.4f px / %.1f %%)。"
           % (res["相関 FM"]["rms"], res["相関 FM"]["rate"]))
     print("     **物差しを 2 つ置いて初めてこの順位が見える**。")
-    res["coarse_max"] = max(coarse_err)
+    res["coarse_max"] = float(ce.max())
+    res["coarse_median"] = float(np.median(ce))
     res["two_stage_broken"] = broke
+    res["bad_coarse"] = int(bad_c.sum())
+    res["bad_two"] = int(bad_t.sum())
+    # ★二段が壊れた点は、必ず粗がセルの半径を超えた点(包含関係を固定する)
+    res["subset_ok"] = bool(np.all(~bad_t | bad_c))
     figs.save_table("metrics", ["手法", "RMS 誤差 px", "最大 誤差 px",
                                 "判定一致率", "見落とし"], rows,
                     title="物差し 2 つ(公差 %.1f px)" % TOL_PX, col_w=104)
