@@ -86,8 +86,12 @@ def test_inverting_twice_puts_the_image_back():
     img = rng.random((24, 32))
     m = np.zeros((24, 32), bool)
     m[6:18, 8:24] = True
-    once = A.annotate_invert(img, m)
-    twice = A.annotate_invert(once, m)
+    with warnings.catch_warnings():
+        # 一様乱数の地には中間調の画素が必ず混じるので警告は出る(それが正しい)。
+        # ここで見たいのは可逆性なので黙らせる。
+        warnings.simplefilter("ignore", RuntimeWarning)
+        once = A.annotate_invert(img, m)
+        twice = A.annotate_invert(once, m)
     assert np.allclose(twice, img, atol=1e-12)
     assert not np.allclose(once, img)                        # 何もしていない、ではない
 
