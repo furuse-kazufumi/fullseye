@@ -678,8 +678,9 @@ def section_floor(scene):
                        xlabel="ビーム軸からのずれ ÷ そのビームのエコー長",
                        ylabel="正規化した受信包絡線",
                        title="外側ビームのエコーは長く、そして非対称",
-                       caption="長さは %s µs。直下は左右対称、70 度は右へ長く尾を引く。"
-                               "振幅検出の頂点はビーム軸より手前(浅い側)に来る。"
+                       caption="長さは %s µs(170 倍の開き)。直下はほぼ左右対称、"
+                               "外側は頂点がビーム軸より**手前**へずれる —— "
+                               "振幅検出はその頂点を取るので、深さが浅く出る。"
                                % " / ".join("%.0f" % v for v in lens))
     return {"lam": lam, "d": d, "ang_rows": rows, "err_ang": max(err_ang),
             "dz_ang": dz_ang, "err_echo": max(err_t), "bw0": bw0}
