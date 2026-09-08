@@ -202,13 +202,16 @@ def ground_step_rectilinear(alt: float, focal: float = FOCAL_PX) -> np.ndarray:
 
 
 def ground_step_ftheta(alt: float, focal: float = FOCAL_PX) -> np.ndarray:
-    """f-theta(魚眼)の横方向の地上画素間隔[m/px]、列ごと。
+    """f-theta(魚眼)の横方向の地上画素間隔[m/px]、列ごと。**同じ画角で比べる**。
 
-    こちらは**画角**が j に線形(``theta = (j-j0)/focal``)なので、地上では
+    こちらは**画角**が j に線形(``theta = (j-j0)*delta``)なので、地上では
     ``x = alt*tan(theta)`` となり、間隔は ``alt*delta*sec^2(theta)`` で端ほど粗い。
+    比較を公平にするため、``delta`` は中心投影と**同じ半画角**を同じ画素数で
+    覆うように取る(そうしないと視野の広さの違いを分解能の違いと読んでしまう)。
     """
+    delta = math.atan(HALF_PX / focal) / HALF_PX      # 端が同じ画角に来る角度刻み
     j = np.arange(COLS, dtype=np.float64) - HALF_PX
-    x = alt * np.tan(j / focal)
+    x = alt * np.tan(j * delta)
     return np.diff(x)
 
 
