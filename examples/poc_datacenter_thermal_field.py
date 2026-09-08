@@ -620,21 +620,34 @@ def section_methods_cliff(hi=1) -> dict:
           "どちらも節点の値を\n     超えないので、最悪位相での最大値は"
           "どちらも「いちばん近いセンサの読み」になる。")
 
-    # 上向きの外れは無料ではない —— 何も無いところにも旗を立てる
+    # 上向きの外れは無料か —— 何も無いところに立つ旗の高さを測る
+    a = HOTSPOTS[hi][5]
     print("\n   ---- その持ち上がりは無料か(背景だけの場に立つ旗の高さ)----")
-    print("   手法       回復(d=%.2f m)  床(背景+雑音)  比 = 信号 / 偽物" % 0.60)
-    ratio = {}
+    print("   予想: 節点を超える手法は**背景の誤差も同じだけ持ち上げる**はずで、"
+          "信号 / 偽物の比は\n   変わらない。以下は実測(d=%.2f m、雑音 σ=%.2f °C)。"
+          % (0.60, NOISE))
+    print("   手法       回復        床         床 [°C]   雑音との比   信号/偽物")
+    ratio, floor_c = {}, {}
     for m in ("nearest", "linear", "rbf"):
         r = recover(hi, 0.60, "worst", m, NOISE)
         ratio[m] = r["geo"] / r["floor"]
-        print("   %-9s %12.4f %14.4f %14.2f"
-              % (MET_LABEL[m].split("(")[0], r["geo"], r["floor"], ratio[m]))
-    print("  ★RBF は山を %.0f %% 高く戻すが、**背景の誤差も同じだけ持ち上げる**"
-          "ので、\n     信号と偽物の比は %.2f → %.2f と%s。"
-          "持ち上がりは検出力を買っていない。"
-          % (100 * (gains["rbf"] - 1), ratio["nearest"], ratio["rbf"],
-             "ほぼ変わらない" if abs(ratio["rbf"] - ratio["nearest"]) < 0.5
-             else "変わる"))
+        floor_c[m] = r["floor"] * a
+        print("   %-9s %8.4f %10.4f %10.3f °C %10.1f x %10.2f"
+              % (MET_LABEL[m].split("(")[0], r["geo"], r["floor"],
+                 floor_c[m], floor_c[m] / NOISE, ratio[m]))
+    print("  ★★**この予想は外した**。RBF の床は %.4f で、最近傍の床 %.4f より"
+          "**低い**。\n     信号 / 偽物の比は 最近傍 %.2f → 線形 %.2f → RBF %.2f "
+          "と、持ち上がる側のほうが良い。"
+          % (recover(hi, 0.60, "worst", "rbf", NOISE)["floor"],
+             recover(hi, 0.60, "worst", "nearest", NOISE)["floor"],
+             ratio["nearest"], ratio["linear"], ratio["rbf"]))
+    print("     理由は測れば分かる: 最近傍の床は %.3f °C = 雑音 %.2f °C の "
+          "%.1f 倍で、**雑音ではなく\n     背景勾配を階段で近似した段差**。"
+          "線形と RBF は滑らかな背景を追えるので床は雑音並み"
+          "(%.3f / %.3f °C)。\n     **この場面では上向きの外れに代償が無かった**"
+          " —— 代償が出るのは背景がもっと荒れているとき。"
+          % (floor_c["nearest"], NOISE, floor_c["nearest"] / NOISE,
+             floor_c["linear"], floor_c["rbf"]))
 
     figs.save_plot(
         "cliff_by_method",
