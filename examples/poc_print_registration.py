@@ -449,27 +449,43 @@ def section2_zero_point():
     print("     真値 %.3f px の Y 版で %.3f px。これは雑音でもドットゲインでもない。"
           % (np.hypot(*PLATES[2][3]), max(err_b)))
     print()
-    print("  ★★重心の応答を掃引で測る(0〜%.1f px を %.1f px 刻み)。" % (2 * PITCH, 1.0))
-    name, ang, blob, _d = PLATES[0]
+    print("  ★★仕組みを**先に式で出す**。窓 W を固定したまま場を d だけ動かすと")
+    print("     重心 = d + C(W-d)。一様な成分は窓をずらしても中心が -d だけ動くので")
+    print("     ちょうど打ち消し、**残るのは絵柄の非一様成分だけ**。したがって")
+    print()
+    print("         応答の傾き k = 1 - β,  β = (下地だけのインク量)/(実際のインク量)")
+    print()
+    name, ang, blob, _d = PLATES[2]
     des = design_plate(ang, blob)
+    flat = (blob[0], blob[1], 0.0)
+    m_tot = float(np.clip(1.0 - des, 0.0, None).sum())
+    m_base = float(np.clip(1.0 - design_plate(ang, flat), 0.0, None).sum())
+    beta = m_base / m_tot
+    k_pred = 1.0 - beta
+    print("     %s 版のインク量: 全体 %.3e / 下地だけ %.3e → β = %.4f"
+          % (name, m_tot, m_base, beta))
+    print("     **予測 k = %.4f**(まだ何も掃引していない)。" % k_pred)
+    print()
     ts = np.arange(0.0, 2 * PITCH + 1e-9, 1.0)
     gx = ink_centroid(des)[1]
     resp = np.array([ink_centroid(am_sheet(ang, blob, 0.0, float(t), seed=22))[1] - gx
                      for t in ts])
     k_art = float(np.polyfit(ts, resp, 1)[0])
-    # 対照群: 絵柄を下地だけ(一様)にする
-    flat = (blob[0], blob[1], 0.0)
+    # 対照群: 絵柄を下地だけ(一様)にする → 予測は k = 0
     gxf = ink_centroid(design_plate(ang, flat))[1]
     resp_f = np.array([ink_centroid(am_sheet(ang, flat, 0.0, float(t), seed=22))[1] - gxf
                        for t in ts])
     k_flat = float(np.polyfit(ts, resp_f, 1)[0])
-    print("     絵柄あり: 応答の傾き k = **%.4f**(1.0 なら正しく追えている)。" % k_art)
-    print("     対照群(絵柄を下地だけの一様な網点にする): k = **%.4f**。" % k_flat)
-    print("  → ★仕組みが分かる: **窓を固定したまま一様な場を動かしても、窓の中の**")
-    print("     **重心は動かない**(出ていく量と入ってくる量が釣り合う)。重心が")
-    print("     追えるのは絵柄の非一様な成分だけなので、下地の割合だけ**縮尺が**")
-    print("     **狂う**。誤差は折り返しではなく **(1-k)·|d| = %.3f·|d|**。"
+    print("     実測(0〜%.1f px を %.1f px 刻み): 絵柄あり k = **%.4f**"
+          % (2 * PITCH, 1.0, k_art))
+    print("       —— 予測との差 **%.4f**。" % abs(k_art - k_pred))
+    print("     対照群(絵柄を下地だけの一様な網点にする): 予測 k=0、実測 **%.4f**。"
+          % k_flat)
+    print("  → ★**重心は折り返さないが、縮尺が狂う**。誤差は %.3f·|d| で"
           % (1 - k_art))
+    print("     真値に比例して増える。★これは「絵柄しだいで倍率が変わる」という")
+    print("     ことでもある —— 版ごとに絵柄が違えば倍率も違う(2 節の表の誤差 B が")
+    print("     版ごとにばらつくのはこのため)。")
     print("     **以降の手法は、この %.4f px(と、折り返さないという性質)を"
           % max(err_b))
     print("     上回らなければ意味がありません。**")
