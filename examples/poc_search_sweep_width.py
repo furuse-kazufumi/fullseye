@@ -171,6 +171,11 @@ N_CAL, N_MAIN, N_CTRL, N_ALT = 160, 160, 150, 70
 #: 高度の掃引[m]。
 ALTITUDES = (100.0, 150.0, 220.0, 300.0, 420.0, 600.0, 850.0)
 
+#: 「低高度では減速が要る機体」の仮定。対地角速度 v/h を一定に保つ運用で、
+#: この高度で巡航速度に達するとする(``v = v_max * min(1, h/ALT_CRUISE_M)``)。
+#: **これは置いた仮定**で、値を変えれば最適高度も動く(§7 でそう書く)。
+ALT_CRUISE_M = 600.0
+
 
 # --------------------------------------------------------------------------- #
 # 表示 —— 全角を 2 桁と数えて桁を合わせる                                        #
@@ -418,7 +423,7 @@ def threshold_for_fa(fa_z, n_frames: int, per_frame: float = FA_PER_FRAME) -> fl
     want = int(round(per_frame * n_frames))
     zs = np.sort(np.asarray(fa_z, np.float64))[::-1]
     if zs.size <= want:
-        return BASE_SIGMA
+        return -np.inf if zs.size == 0 else float(zs[-1]) - 1e-9
     if want <= 0:
         return float(zs[0]) + 1e-9
     return float(0.5 * (zs[want - 1] + zs[want]))
@@ -487,24 +492,27 @@ def curve_area(f, span: float, n: int = 200001) -> float:
 # 5. 意思決定側 —— 被覆率 C と検出確率                                           #
 # --------------------------------------------------------------------------- #
 def sweep_mc(curve, width_m: float, area_w: float, n_track: int, *, random_tracks: bool,
-             n_target: int = 40000, n_rep: int = 6, seed: int = 0) -> float:
+             n_target: int = 60000, n_rep: int = 4, seed: int = 0) -> float:
     """平行 / ランダム捜索の検出確率をモンテカルロで。``C = width_m*n_track/area_w``。
 
     海域は幅 ``area_w`` の帯を**環状**につないだもの(端の効果を消すため)。
-    航跡は ``n_track`` 本、平行なら等間隔、ランダムなら独立一様。目標は一様。
+    航跡は ``n_track`` 本、平行なら等間隔、ランダムなら独立一様。目標も一様。
     航跡ごとの検出は独立なので、``1-Π(1-p_k)`` の Bernoulli を 1 回引く。
+
+    ★**ランダム捜索では航跡を目標ごとに引き直す**。最初は 1 回の反復で
+    航跡を 1 組だけ引いて全目標に使い回していたが、それだと目標どうしが
+    同じ航跡配置を共有して相関し、推定が閉形式から 0.02 もずれた
+    (C=2 で 0.886 対 0.865)。**反復数を増やすのではなく、独立にすべき所を
+    独立にする**のが直し方だった。
     """
     rng = np.random.default_rng(seed)
     hit = 0
     tot = 0
     for _ in range(n_rep):
         x = rng.uniform(0.0, area_w, n_target)
-        if random_tracks:
-            tracks = rng.uniform(0.0, area_w, n_track)
-        else:
-            tracks = (np.arange(n_track) + 0.5) * (area_w / n_track)
         miss = np.ones(n_target)
-        for tk in tracks:
+        for k in range(n_track):
+            tk = rng.uniform(0.0, area_w, n_target) if random_tracks                 else (k + 0.5) * (area_w / n_track)
             d = np.abs(x - tk)
             d = np.minimum(d, area_w - d)             # 環状距離
             miss *= 1.0 - curve(d)
@@ -554,7 +562,7 @@ def section_floor():
           f"**{FA_PER_FRAME:.1f} 件/フレーム**に揃う閾値を求める。")
     out = {}
     print(f"  {'検出器':>22}{'誤検出の総数':>14}{'閾値':>10}{'その閾値での実測':>18}")
-    for mode, label in (("naive", "生画像(ゼロ点)"), ("tophat", "白色トップハット")):
+    for mode, label in DETECTORS:
         run = sweep_frames(N_CAL, mode, seed0=90000, targets=False)
         thr = threshold_for_fa(run["fa_z"], N_CAL)
         out[mode] = {"thr": thr, "n_fa": int(run["fa_z"].size),
@@ -569,7 +577,7 @@ def section_floor():
 
 def section_lateral_curve(floor):
     print("\n=== 3. 横距離曲線 p(x) —— 目標を植えて測る ===")
-    runs = {m: sweep_frames(N_MAIN, m, seed0=0) for m in ("naive", "tophat")}
+    runs = {m: sweep_frames(N_MAIN, m, seed0=0) for m, _ in DETECTORS}
     gsd = runs["tophat"]["gsd"]
     print(f"  {N_MAIN} フレーム x 左右 2 個 = **{2 * N_MAIN} 試行/帯**、"
           f"帯の幅 {BIN_PX * gsd:.0f} m、横距離 0-{N_BIN * BIN_PX * gsd:.0f} m")
@@ -579,7 +587,7 @@ def section_lateral_curve(floor):
     header += pad("W [m]", 12)
     print("  " + pad("横距離 [m] →", 22, right=False))
     print(header)
-    for mode, label in (("naive", "生画像(ゼロ点)"), ("tophat", "白色トップハット")):
+    for mode, label in DETECTORS:
         thr = floor[mode]["thr"]
         p, w, se = curve_at(runs[mode], thr)
         out[mode] = {"p": p, "w": w, "se": se, "thr": thr,
@@ -588,11 +596,16 @@ def section_lateral_curve(floor):
               + pad("%.2f" % out[mode]["fa"], 12)
               + "".join(pad("%.2f" % v, 7) for v in p)
               + pad("%.1f ± %.1f" % (w, se), 12))
-    print("  → **同じ誤検出率で比べている**。整合フィルタ(トップハット)は"
-          f" {out['tophat']['w'] / max(out['naive']['w'], 1e-9):.1f} 倍。")
-    print("     ゼロ点を置かないと『検出できた』としか書けない —— 生画像でも"
-          f" {out['naive']['w']:.0f} m は出るので、")
-    print("     大事なのは**零点をどれだけ上回ったか**のほう。")
+    print("  → **3 つとも同じ誤検出率(1.0 件/枚)で比べている**。揃えないと閾値を")
+    print("     下げるだけで走査幅が伸びるので、比較にならない。")
+    print(f"     ゼロ点(明るさだけ){out['bright']['w']:.0f} m → 背景を引く"
+          f" {out['naive']['w']:.0f} m → 整合フィルタ {out['tophat']['w']:.0f} m。")
+    print(f"     整合フィルタはゼロ点の "
+          f"{out['tophat']['w'] / max(out['bright']['w'], 1e-9):.1f} 倍。★"
+          "**「明るさだけ」が弱いのは雑音のせいではなく**")
+    print("     **cos^4 のせい** —— 端の目標は、直下の海面より暗い。"
+          "背景を引く 1 手を足すだけで")
+    print(f"     {out['naive']['w'] / max(out['bright']['w'], 1e-9):.1f} 倍になる。")
     print(f"  → いちばん外の帯で p = {out['tophat']['p'][-1]:.3f}。ここが 0 に近いので、")
     print("     視野で切られた分の取りこぼし(打ち切り)は無視できる。§7 の低高度は"
           "そうならない。")
@@ -804,11 +817,12 @@ def section_altitude():
     print("     高高度側は目標が暗くなって(cos^4 と大気と、画素あたりの面積比)消える。")
     # 速度が高度に依らない機体と、低高度で減速が要る機体。
     v_fixed = np.ones_like(ws)
-    v_scaled = np.clip(np.array(ALTITUDES) / 300.0, 0.0, 1.0)
+    v_scaled = np.clip(np.array(ALTITUDES) / ALT_CRUISE_M, 0.0, 1.0)
     best_fixed = int(np.argmax(ws * v_fixed))
     best_scaled = int(np.argmax(ws * v_scaled))
     print(f"  → 掃引速度 W·v: v 一定なら最適 {ALTITUDES[best_fixed]:.0f} m、"
-          f"v ∝ min(1, h/300) なら **{ALTITUDES[best_scaled]:.0f} m** へ動く。")
+          f"v ∝ min(1, h/{ALT_CRUISE_M:.0f}) なら "
+          f"**{ALTITUDES[best_scaled]:.0f} m** へ動く。")
     print("     ★『高度を下げて W を上げる』は成り立たない —— 下げると掃引幅が縮み、")
     print("     機体によっては速度まで落ちるので、W·v は二重に損をする。")
     figs.save_table("altitude_sweep",
@@ -822,7 +836,7 @@ def section_altitude():
         figs.save_plot("altitude_sweep_line",
                        [("走査幅 W", alt, ws),
                         ("W·v(v 一定)", alt, ws * v_fixed),
-                        ("W·v(v ∝ min(1,h/300))", alt, ws * v_scaled),
+                        ("W·v(低高度で減速する機体)", alt, ws * v_scaled),
                         ("掃引半幅(視野)", alt, np.array([o["half"] for o in out]))],
                        xlabel="高度 h [m]", ylabel="[m] / [m·(相対速度)]",
                        title="最適高度は内点 —— 下げても上げても損をする",
