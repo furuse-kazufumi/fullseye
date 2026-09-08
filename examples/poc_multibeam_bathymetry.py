@@ -1133,8 +1133,8 @@ def section_dtm(scene):
     if figs.enabled():
         figs.save_grid("dtm",
                        [dtm1_fill, filled, filled - DEPTH_REF, slope],
-                       ["(a) 測線 1 本だけ(右半分は未測)", "(b) 測線 2 本",
-                        "(c) 真の海底との差 [m]", "(d) 見かけの勾配 [度]"],
+                       ["測線 1 本だけ(右半分は未測)", "測線 2 本",
+                        "真の海底との差 [m]", "見かけの勾配 [度]"],
                        ncols=2, signed=[False, False, True, False],
                        title="平らな海底の DTM —— 重なり帯が縞になる",
                        caption=f"測線 2 本、間隔 {spacing:.0f} m。差は "
