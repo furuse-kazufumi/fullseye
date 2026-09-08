@@ -559,33 +559,39 @@ def section_cliff(scene):
     # ---- 予測を印字してから、温度・帯域・放射率を振って実測する ---------------
     print("\n  ★予測(印字してから測る): 崖は **低温ほど急** —— のはず。")
     print("     根拠として書いたのは「n = c2/(λT) は低温ほど大きく…」だった。")
-    print(f"  {'帯域':>6}{'T [K]':>8}{'ε':>7}{'Δε/ε':>8}{'予測 ΔT':>11}"
-          f"{'実測 ΔT':>11}{'差':>9}{'上昇比 |ΔT|/(T−T_r)':>22}")
+    print("  ★もう 1 つ、測る前に分かること: **この式に ε は現れない**。")
+    print("     Δε/ε(相対)で見ると ε は約分で消えるので、下の表に ε の列は無い。")
+    print("     ε が効くのは Δε が**絶対**で来るときだけ —— その表はこの後に出す。")
+    print(f"  {'帯域':>6}{'T [K]':>8}{'Δε/ε':>8}{'予測(素朴)':>13}"
+          f"{'予測(Wien補正)':>16}{'実測 ΔT':>11}{'補正後の差':>12}"
+          f"{'上昇比 |ΔT|/(T−T_r)':>22}")
     rows, worst_pred, rise_ratio, abs_dt = [], 0.0, {}, {}
-    worst_rel, worst_where = 0.0, ""
+    worst_rel, worst_where, worst_rel_corr = 0.0, "", 0.0
     for band in ("LWIR", "MWIR"):
         tab = tabs[band]
         for t in (305.0, 350.0, 400.0, 800.0):
-            for eps in (EPS_PAINT, EPS_POLISH):
-                delta = 0.05
-                pred = predict_dt_from_eps(tab, band, t, eps, delta)
-                meas = measure_dt_from_eps(tab, t, eps, delta)
-                worst_pred = max(worst_pred, abs(pred - meas))
-                if abs(pred / meas - 1.0) > worst_rel:
-                    worst_rel = abs(pred / meas - 1.0)
-                    worst_where = f"{band} {t:.0f} K ε={eps:.2f}"
-                rise = abs(meas) / (t - T_REFL_REF)
-                if eps == EPS_PAINT:
-                    rise_ratio[(band, t)] = rise
-                    abs_dt[(band, t)] = abs(meas)
-                rows.append((band, f"{t:.0f}", f"{eps:.2f}", f"{delta:.2f}",
-                             f"{pred:+.3f}", f"{meas:+.3f}", f"{meas-pred:+.4f}",
-                             f"{100*rise:.1f} %"))
-                print(f"  {band:>6}{t:>8.0f}{eps:>7.2f}{delta:>8.2f}{pred:>11.3f}"
-                      f"{meas:>11.3f}{meas-pred:>9.4f}{100*rise:>21.1f} %")
-    print(f"  → 予測と実測の差は最大 {worst_pred:.4f} K、相対では "
-          f"{100*worst_rel:.1f} %({worst_where})。**1 次展開なので、"
-          f"ΔT が大きい所ほど当たらない**。")
+            delta = 0.05
+            pred = predict_dt_from_eps(tab, band, t, EPS_PAINT, delta)
+            pred_c = predict_dt_from_eps(tab, band, t, EPS_PAINT, delta,
+                                         wien_corr=True)
+            meas = measure_dt_from_eps(tab, t, EPS_PAINT, delta)
+            worst_pred = max(worst_pred, abs(pred - meas))
+            worst_rel_corr = max(worst_rel_corr, abs(pred_c / meas - 1.0))
+            if abs(pred / meas - 1.0) > worst_rel:
+                worst_rel = abs(pred / meas - 1.0)
+                worst_where = f"{band} {t:.0f} K"
+            rise = abs(meas) / (t - T_REFL_REF)
+            rise_ratio[(band, t)] = rise
+            abs_dt[(band, t)] = abs(meas)
+            rows.append((band, f"{t:.0f}", f"{delta:.2f}", f"{pred:+.3f}",
+                         f"{pred_c:+.3f}", f"{meas:+.3f}", f"{meas-pred_c:+.4f}",
+                         f"{100*rise:.1f} %"))
+            print(f"  {band:>6}{t:>8.0f}{delta:>8.2f}{pred:>13.3f}{pred_c:>16.3f}"
+                  f"{meas:>11.3f}{meas-pred_c:>12.4f}{100*rise:>21.1f} %")
+    print(f"  → 素朴な予測と実測の差は最大 {worst_pred:.4f} K = 相対 "
+          f"{100*worst_rel:.1f} %({worst_where})。")
+    print(f"     Wien 因子を入れると相対 {100*worst_rel_corr:.1f} % まで縮む ——")
+    print("     **残りが 1 次展開の残差**で、そこは ΔT が大きいほど大きい。")
     print("  → ★★**予測を外した**: 絶対誤差は **高温ほど大きい**。")
     print(f"     LWIR・ε=0.95 で 300 K 級 {abs_dt[('LWIR', 305.0)]:.2f} K → "
           f"800 K {abs_dt[('LWIR', 800.0)]:.2f} K。")
