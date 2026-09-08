@@ -1176,12 +1176,12 @@ def section8_metrics(sweep_am, zero):
         fy, fx, _q = corr_shift(des_f, cur, cm)
         ly, lx, _q2 = corr_shift(des_f_lp, lowpass_image(cur), bm)
         sy, sx = snap_to_lattice((fy, fx), (ly, lx), ang)
-        ce = float(np.hypot(ly - 0.0, lx - t))
+        ce_row = float(np.hypot(ly - 0.0, lx - t))
         se = float(np.hypot(sy - 0.0, sx - t))
         tested += 1
         broke += int(se > 1.0)
         print("  %7.2f %12.3f %12.3f %14s %10s"
-              % (t, ce, se, "(%+.1f,%+.1f)" % (sy, sx),
+              % (t, ce_row, se, "(%+.1f,%+.1f)" % (sy, sx),
                  "★1 格子ずれ" if se > 1.0 else "正しい"))
     print()
     print("  → 絵柄を薄くすると粗の誤差が %.2f px(セルの半径)を常時超え、二段は"
