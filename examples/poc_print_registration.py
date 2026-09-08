@@ -155,11 +155,15 @@ _Y, _X = np.mgrid[0:L, 0:L].astype(np.float64)
 # 真値 —— 網点を式で置く                                                        #
 # --------------------------------------------------------------------------- #
 def tone(py, px, blob) -> np.ndarray:
-    """版の絵柄(被覆率)。**版座標**で定義する —— 版と一緒に動く量。"""
+    """版の絵柄(被覆率)。**版座標**で定義する —— 版と一緒に動く量。
+
+    ``blob`` は ``(中心 y 比, 中心 x 比)`` か ``(中心 y 比, 中心 x 比, 山の高さ)``。
+    高さ 0 を渡すと**一様な下地だけ**の対照群になる。
+    """
     cy, cx = blob[0] * L, blob[1] * L
-    a = BASE_TONE + BLOB_PEAK * np.exp(
+    peak = blob[2] if len(blob) > 2 else BLOB_PEAK
+    return BASE_TONE + peak * np.exp(
         -((py - cy) ** 2 + (px - cx) ** 2) / (2.0 * BLOB_SIGMA ** 2))
-    return a
 
 
 def dot_gain(sheet_x) -> np.ndarray:
