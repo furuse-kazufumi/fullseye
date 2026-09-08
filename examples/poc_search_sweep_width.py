@@ -539,7 +539,7 @@ def section_floor():
     out = {}
     print(f"  {'検出器':>22}{'誤検出の総数':>14}{'閾値':>10}{'その閾値での実測':>18}")
     for mode, label in (("naive", "生画像(ゼロ点)"), ("tophat", "白色トップハット")):
-        run = sweep_frames(N_CAL, mode, seed0=90000, target_cols=())
+        run = sweep_frames(N_CAL, mode, seed0=90000, targets=False)
         thr = threshold_for_fa(run["fa_z"], N_CAL)
         out[mode] = {"thr": thr, "n_fa": int(run["fa_z"].size),
                      "got": fa_per_frame(run, thr)}
