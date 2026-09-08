@@ -458,15 +458,11 @@ def section2_zero_point():
                      for t in ts])
     k_art = float(np.polyfit(ts, resp, 1)[0])
     # 対照群: 絵柄を下地だけ(一様)にする
-    flat = (blob[0], blob[1])
-    _saved = globals()["BLOB_PEAK"]
-    globals()["BLOB_PEAK"] = 0.0
-    des_f = design_plate(ang, flat)
-    gxf = ink_centroid(des_f)[1]
+    flat = (blob[0], blob[1], 0.0)
+    gxf = ink_centroid(design_plate(ang, flat))[1]
     resp_f = np.array([ink_centroid(am_sheet(ang, flat, 0.0, float(t), seed=22))[1] - gxf
                        for t in ts])
     k_flat = float(np.polyfit(ts, resp_f, 1)[0])
-    globals()["BLOB_PEAK"] = _saved
     print("     絵柄あり: 応答の傾き k = **%.4f**(1.0 なら正しく追えている)。" % k_art)
     print("     対照群(絵柄を下地だけの一様な網点にする): k = **%.4f**。" % k_flat)
     print("  → ★仕組みが分かる: **窓を固定したまま一様な場を動かしても、窓の中の**")
