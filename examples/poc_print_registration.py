@@ -738,7 +738,7 @@ def section6_control_fm(sweep_am):
         cur = fm_sheet(cen, rad, 0.0, float(t), seed=61)
         # ★ FM 側は探索範囲を **絞らない**(絞っても結果は変わらないが、
         #   「AM の折り返しは探索範囲のせいだ」という言い逃れを塞ぐため)。
-        my, mx, _r = corr_shift(ref_fm, cur, 2.0 * PITCH)
+        my, mx, _r = corr_shift(ref_fm, cur, box_mask(L, 2.0 * PITCH))
         e_fm = float(np.hypot(my - 0.0, mx - t))
         a = am_by_t[round(float(t), 3)]
         e_am = float(np.hypot(a["corr"][0] - 0.0, a["corr"][1] - t))
