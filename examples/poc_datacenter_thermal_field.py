@@ -903,9 +903,16 @@ def main() -> int:
     assert mc["sl_spread"] < 0.05 * abs(mc["slope_pred"]), mc["slopes"]
     assert mc["gains"]["rbf"] > 1.2 and mc["spread"] > 0.05, mc["gains"]
     assert abs(mc["curves"]["nearest"][2] - mc["curves"]["linear"][2]) < 1e-9
-    # (5) 乱数は死角を消さない(Poisson の予測に載る)。
+    # (5) 乱数は死角を消さない(Poisson の予測に載る)。格子は幾何の下限を割らない。
     assert abs(gr["frac"] - gr["p_worse"]) < 0.02, (gr["frac"], gr["p_worse"])
     assert gr["dr_max"] > gr["r_grid"] and gr["dg_max"] <= gr["r_grid"] + 1e-9
+    for _hi, _h in enumerate(HOTSPOTS):
+        assert gr["grid_min"][_hi] >= visible(0.60, _h[4]) - 1e-9, gr["grid_min"]
+    assert gr["below"] >= 1, gr["below"]
+    # (5b) 上向きに外れる手法が偽の峰を増やす、という予想は外れた(床で確認)。
+    assert mc["floor_c"]["nearest"] > 3 * NOISE, mc["floor_c"]
+    assert mc["floor_c"]["rbf"] < mc["floor_c"]["nearest"], mc["floor_c"]
+    assert mc["ratio"]["rbf"] > 3 * mc["ratio"]["nearest"], mc["ratio"]
     # (6) ゼロ点は 1 台も見つけない / 手法はゼロ点を大きく上回る。
     assert zp["res"]["null"]["miss"] == len(HOTSPOTS), zp["res"]["null"]
     assert zp["res"]["rbf"]["rmse"] < 0.5 * zp["res"]["null"]["rmse"]
