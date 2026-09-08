@@ -167,12 +167,27 @@ def test_contrast_mode_does_not_warn_on_the_background_that_kills_complement():
     assert set(np.unique(out)) <= {0.0, 1.0}
 
 
-def test_half_alpha_complement_is_reported_as_invisible_because_it_is():
-    """★alpha=0.5 の補色は**必ず**中間調になる —— 道理どおり警告が出ること。"""
-    img = np.zeros((16, 16))
-    with pytest.warns(RuntimeWarning, match="invisible"):
-        out = A.annotate_invert(img, np.ones((16, 16), bool), alpha=0.5)
+def test_half_alpha_is_judged_on_what_landed_not_on_the_ideal_inverted_colour():
+    """★見え方は「反転色」ではなく**実際に置かれた色**で測る。
+
+    同じ ``alpha=0.5`` の補色でも、黒地なら中間調が乗って比 5.28 で見え、
+    中間調の地なら消える。理想の反転色(白 / ほぼ同じ灰)で測ると、前者を
+    「見えない」、後者を「見える」と、**両方とも逆に**答えてしまう。
+    """
+    m = np.ones((16, 16), bool)
+    black = np.zeros((16, 16))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")                        # 警告が出たら失敗
+        out = A.annotate_invert(black, m, alpha=0.5)
     assert np.allclose(out, 0.5)
+
+    grey = np.full((16, 16), 128 / 255.0)
+    with pytest.warns(RuntimeWarning, match="invisible"):
+        A.annotate_invert(grey, m, alpha=0.5)
+
+    # 理想の色で測っていたら、この 2 つは同じ答えになっていた
+    assert A.annotate_invert_visibility(black, m, alpha=0.5)["min_contrast"] > 5.0
+    assert A.annotate_invert_visibility(grey, m, alpha=0.5)["min_contrast"] < 1.1
 
 
 # --------------------------------------------------------------------------- #
