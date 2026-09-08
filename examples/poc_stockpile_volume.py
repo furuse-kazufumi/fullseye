@@ -350,7 +350,7 @@ def section_truth():
     print("     安息角より急になるが、体積の真値は厳密。")
     return {"exact": v_exact, "grid": v_grid, "fine": fine_volume(0.025),
             "area": area_fine, "cx": tcx, "cy": tcy,
-            "flank": float(slope[flank].mean())}
+            "flank": s_flat, "flank_tilted": s_real}
 
 
 def section_base_offset(truth):
