@@ -607,16 +607,19 @@ def section_cliff(pred: dict) -> dict:
     print("   ★崖は 2 つある。**検出の崖**(山が雑音に埋もれて何も報告できない)と、"
           "**分解の崖**\n     (報告はできるが隣のロールと区別がつかない)。"
           "Rayleigh が言っているのは後者だけ。")
-    print("\n   L [mm]   ΔC=C²/L   報告率   ビン当て 誤差  成功率   "
-          "補間あり 誤差  成功率   取り違え先")
+    print("   分解の崖は「推定が隣のロールの側へ落ちる」= |Ĉ - C| > ΔC/2 = "
+          "%.2f mm で数える\n     (報告できた試行だけで数える —— "
+          "検出の崖と混ぜないため)。" % (dc / 2.0))
+    print("\n   L [mm]   ΔC=C²/L   報告率   ビン当て 誤差  隣へ落ちる   "
+          "補間 誤差  隣へ落ちる   特定成功率  取り違え先")
     Ls = [3000.0, 4000.0, 6000.0, 8000.0, 10000.0, 12000.0, 14000.0, 17000.0,
           20000.0]
-    res = {"L": [], "bin_err": [], "bin_hit": [], "int_err": [], "int_hit": [],
-           "rep": []}
+    res = {"L": [], "bin_err": [], "int_err": [], "bin_out": [], "int_out": [],
+           "rep": [], "hit": []}
     rows = []
     for L in Ls:
         eb, ei = [], []
-        hb = hi = rep = 0
+        hit = rep = 0
         wrong = {}
         for s in range(SEEDS):
             sc = scene(SEED0 + s, length=L)
@@ -626,54 +629,73 @@ def section_cliff(pred: dict) -> dict:
                 rep += 1
                 eb.append(abs(b["C"] - c))
                 ei.append(abs(i["C"] - c))
-            nb_name = identify(b["C"])
-            hb += int(nb_name == CULPRIT)
-            hi += int(identify(i["C"]) == CULPRIT)
-            if nb_name != CULPRIT:
-                wrong[nb_name] = wrong.get(nb_name, 0) + 1
+            name = identify(i["C"])
+            hit += int(name == CULPRIT)
+            if name != CULPRIT and np.isfinite(i["C"]):
+                wrong[name] = wrong.get(name, 0) + 1
         top = max(wrong, key=wrong.get) if wrong else "—"
+        eb, ei = np.asarray(eb), np.asarray(ei)
         res["L"].append(L)
         res["rep"].append(100.0 * rep / SEEDS)
-        res["bin_err"].append(float(np.median(eb)) if eb else np.nan)
-        res["bin_hit"].append(100.0 * hb / SEEDS)
-        res["int_err"].append(float(np.median(ei)) if ei else np.nan)
-        res["int_hit"].append(100.0 * hi / SEEDS)
+        res["bin_err"].append(float(np.median(eb)) if eb.size else np.nan)
+        res["int_err"].append(float(np.median(ei)) if ei.size else np.nan)
+        res["bin_out"].append(100.0 * float(np.mean(eb > dc / 2.0))
+                              if eb.size else np.nan)
+        res["int_out"].append(100.0 * float(np.mean(ei > dc / 2.0))
+                              if ei.size else np.nan)
+        res["hit"].append(100.0 * hit / SEEDS)
         rows.append(["%.0f" % L, "%.1f" % (c * c / L),
                      "%.0f %%" % res["rep"][-1], "%.1f" % res["bin_err"][-1],
-                     "%.0f %%" % res["bin_hit"][-1], "%.1f" % res["int_err"][-1],
-                     "%.0f %%" % res["int_hit"][-1], top])
-        print("   %6.0f %9.1f %7.0f %% %13.1f %7.0f %% %13.1f %7.0f %%   %s"
+                     "%.0f %%" % res["bin_out"][-1], "%.1f" % res["int_err"][-1],
+                     "%.0f %%" % res["int_out"][-1], "%.0f %%" % res["hit"][-1],
+                     top])
+        print("   %6.0f %9.1f %7.0f %% %13.1f %10.0f %% %10.1f %10.0f %% "
+              "%10.0f %%  %s"
               % (L, c * c / L, res["rep"][-1], res["bin_err"][-1],
-                 res["bin_hit"][-1], res["int_err"][-1], res["int_hit"][-1], top))
-    print("   (誤差は報告できた試行だけの中央値 [mm]。成功率は全試行に対する割合"
-          " —— 未報告は失敗に数える)")
+                 res["bin_out"][-1], res["int_err"][-1], res["int_out"][-1],
+                 res["hit"][-1], top))
+    print("   (誤差・隣へ落ちる割合は報告できた試行だけ。特定成功率は全試行に"
+          "対する割合 —— 未報告も失敗に数える)")
 
-    def first_fail(hits):
-        ok = [L for L, h in zip(Ls, hits) if h >= 100.0]
+    def shortest_clean(col):
+        ok = [L for L, v in zip(Ls, res[col]) if v == 0.0]
         return min(ok) if ok else None
 
-    lb, li = first_fail(res["bin_hit"]), first_fail(res["int_hit"])
-    print("\n   成功率が 100 %% を保つ最短の L: ビン当て %s / 補間あり %s"
+    lb, li = shortest_clean("bin_out"), shortest_clean("int_out")
+    print("\n   「隣へ落ちる」が 0 %% を保つ最短の L: ビン当て %s / 補間あり %s"
           % ("%.0f mm" % lb if lb else "(全滅)",
              "%.0f mm" % li if li else "(全滅)"))
-    if lb is not None:
-        print("  ★予測 L_crit = %.0f mm(= C²/ΔC)に対し、**ビン当ての実測は "
-              "%.0f mm** —— 比 %.2f。" % (l_crit, lb, lb / l_crit))
-        print("     %s。Rayleigh はビン幅の議論なので、山をビンに丸める推定器"
-              "とは直接比べられる。"
-              % ("予測は当たった" if 0.6 <= lb / l_crit <= 1.6
-                 else "予測は外した"))
-    if li is not None:
-        print("  ★★**放物線補間を入れると崖は %.0f mm まで下がる**"
-              "(予測の %.2f 倍)。" % (li, li / l_crit))
-        print("     Rayleigh 分解能は「2 本の山を分ける」条件であって、"
-              "「1 本の山の位置を測る」条件ではない。\n     山が 1 本しか無い"
-              "と分かっているなら、その頂点は S/N の許すかぎりビンより細かく"
-              "決まる。\n     **予測は保守的すぎた** —— 外れ方の向きまで含めて"
-              "記録しておく。")
-    print("     取り違え先はほぼ %s(周長差 %.2f mm)。"
-          % (rows[0][-1], abs(CIRC[rows[0][-1]] - c) if rows[0][-1] in CIRC
-             else np.nan))
+    print("  ★予測 L_crit = %.0f mm(= C²/ΔC)に対し、実測の分解の崖は "
+          "ビン当て %s・補間あり %s。"
+          % (l_crit, "%.0f mm" % lb if lb else "—",
+             "%.0f mm" % li if li else "—"))
+    if lb is not None and li is not None:
+        print("     **予測は %s** —— 比はそれぞれ %.2f / %.2f 倍。"
+              % ("当たった" if 0.6 <= lb / l_crit <= 1.6 else "外した",
+                 lb / l_crit, li / l_crit))
+        print("     Rayleigh の 1/L は「2 本の山を**分ける**」条件であって、"
+              "「1 本の山の位置を**測る**」\n     条件ではない。山が 1 本しか"
+              "無いと分かっているなら、その頂点は S/N の許すかぎりビンより"
+              "細かく決まる —— \n     ★だから**予測は保守的すぎた**"
+              "(実測のほうが短い記録で足りる)。")
+    rep_cliff = min((L for L, v in zip(Ls, res["rep"]) if v >= 100.0),
+                    default=None)
+    print("  ★★**先に来たのは分解の崖ではなく検出の崖だった**。報告率が "
+          "100 %% を保つ最短の L は %s で、\n     それより短い記録では"
+          "「取り違える」のではなく「何も言えない」。予測は"
+          "**壊れ方の種類**を外していた。"
+          % ("%.0f mm" % rep_cliff if rep_cliff else "(無し)"))
+    bad = {k: v for k, v in
+           ((r[-1], r) for r in rows) if k in CIRC}
+    if bad:
+        nm = list(bad)[0]
+        print("  ★取り違え先は予測した %s ではなく %s(C = %.2f mm)が出た。"
+              % (nb, nm, CIRC[nm]))
+        print("     %.2f / %.2f = %.3f —— **台帳の中で 3:2 の関係にある 2 本**"
+              "なので、基本波が\n     しきい値を割ったときに"
+              "「高調波を共有する別のロール」へ滑る。"
+              "台帳に整数比があると\n     櫛法にも固有の取り違えがある。"
+              % (c, CIRC[nm], c / CIRC[nm]))
 
     figs.save_plot("cliff_length",
                    [("ビン当て", res["L"], res["bin_hit"]),
