@@ -346,7 +346,7 @@ def section_zero_point(d=0.6) -> dict:
         pe = [peak_error(f, hi) for hi in range(len(HOTSPOTS))]
         vol = rec.reshape(GX.size, GY.size, GZ.size).transpose(2, 1, 0)
         dl, ms, sp = loc_error(locate(vol))
-        out[m] = {"rmse": rmse, "peak": pe, "loc": dl, "miss": ms}
+        out[m] = {"rmse": rmse, "peak": pe, "loc": dl, "miss": ms, "spur": sp}
         print("   %-26s %7.3f °C %12.2f °C %14s %8d"
               % (MET_LABEL[m], rmse, float(np.mean(pe)),
                  ("%.3f m" % dl) if np.isfinite(dl) else "—", ms))
