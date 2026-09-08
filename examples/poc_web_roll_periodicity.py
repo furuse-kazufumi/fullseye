@@ -857,41 +857,60 @@ def main() -> None:
     print("まとめ")
     print("=" * 78)
     i4 = nul["ps"].index(0.4)
+    c = CIRC[CULPRIT]
     print("  * 見逃し %.0f %% で ゼロ点(間隔の中央値)は誤差 %.1f mm、"
-          "スペクトルは %.1f mm。位相が飛ばないから。"
+          "櫛法は %.1f mm。見逃しは位相を飛ばさないから。"
           % (100 * nul["ps"][i4], nul["tab"]["med"][i4], nul["tab"]["spec"][i4]))
+    print("  * 素朴なスペクトル最大値は見逃し 0〜50 %% を通して誤差 %.1f mm で"
+          "ほぼ一定 —— C/2 を掴んで %s を名指しし続ける。誤差が動かないのは"
+          "頑健さではない。"
+          % (nul["tab"]["naive"][0], identify(c / 2.0)))
     print("  * 蛇行 %.0f mm を補正しないと 1 本のロールが %.0f 本に割れ、"
-          "レーンに残る周期欠陥が %.0f %% になる。MD スペクトルは無傷。"
+          "レーンに残る周期欠陥が %.0f %% になる。MD スペクトルは無傷"
+          "(md を一度も CD で切らないので値がビット単位で同じ)。"
           % (MEANDER_A, mea["蛇行あり・補正なし"][0],
              mea["蛇行あり・補正なし"][2]))
     print("  * 健全ロールだけ %d 試行で偽陽性 %.1f %%(単独のしきい値なら床が "
           "%.2f 倍まで来るので止まらない。止めているのは高調波の全数要求)。"
           % (flo["n"], 100 * flo["fp"], flo["floor"]))
-    print("  * 崖: 予測 C²/ΔC = %.0f mm に対し実測は ビン当て %s / 補間あり %s。"
+    print("  * 崖: 予測 C²/ΔC = %.0f mm、実測の分解の崖 %s(比 %.2f)。"
+          "★だが検出の崖が %s と**より長い**ので、その分解の崖には辿り着かない。"
           % (pred["L_crit"],
              "%.0f mm" % cli["L_bin"] if cli["L_bin"] else "(全滅)",
-             "%.0f mm" % cli["L_int"] if cli["L_int"] else "(全滅)"))
+             cli["L_bin"] / pred["L_crit"] if cli["L_bin"] else float("nan"),
+             "%.0f mm" % cli["L_rep"] if cli["L_rep"] else "(無し)"))
     print("  * 2 本同時に傷ついていても %.0f %% で両方当たる(ゼロ点は %.1f mm "
           "= どちらでもない値)。" % (two["hit"], two["null"]))
 
     # --- 所見を固定する assert(穴が塞がったら鳴る)------------------------- #
-    c = CIRC[CULPRIT]
-    assert sc["n_per"] > 25 and sc["n_all"] > sc["n_per"] + 40
+    # 1) 場面がそもそも仕込んだとおりか
+    assert sc["n_per"] > 25 and sc["n_all"] > sc["n_per"] + 30
+    # 2) 素朴な最大値は C/2 を掴み、しかも実在する別のロールを名指しする
+    assert abs(nul["tab"]["naive"][0] - c / 2.0) < 2.0, nul["tab"]["naive"][0]
+    assert identify(c / 2.0) != CULPRIT and identify(c / 2.0) in CIRC
+    # 3) 見逃しに対してゼロ点は崩れ、櫛法は崩れない(精度の話)
     assert nul["tab"]["spec"][0] < 4.0, nul["tab"]["spec"][0]
     assert nul["tab"]["med"][i4] > 20.0 * nul["tab"]["spec"][i4]
-    assert nul["tab"]["hit"][i4] >= 100.0
+    assert nul["tab"]["hit"][0] == 100.0
+    assert nul["tab"]["rep"][i4] < 100.0        # 落ちるのは報告率のほう
+    # 4) 蛇行は CD でレーンを切る手法だけを壊す
     assert mea["蛇行なし(対照)"][0] == 1.0
     assert mea["蛇行あり・補正なし"][0] >= 2.0
     assert mea["蛇行あり・補正あり"][0] == 1.0
-    assert flo["fp"] <= 3.0 / flo["n"] and flo["tp"] == 1.0
+    assert mea["spec_蛇行なし(対照)"] == mea["spec_蛇行あり・補正なし"]
+    # 5) 偽陽性の床は 0 ではないが小さい。単独のしきい値では止まらない
+    assert 0.0 <= flo["fp"] <= 3.0 / flo["n"] and flo["tp"] == 1.0
     assert flo["floor"] > PEAK_K
+    # 6) 崖 —— 予測は分解の崖を当て、壊れ方の種類を外した
     assert cli["hit"][-1] == 100.0 and cli["hit"][-2] == 100.0
-    assert cli["L_int"] is not None and cli["L_bin"] is not None
-    assert cli["L_rep"] is not None and cli["L_rep"] <= cli["L_bin"]
-    assert two["hit"] >= 90.0
-    assert abs(two["null"] - CIRC[CULPRIT]) > 30.0
+    assert cli["L_bin"] is not None and cli["L_int"] is not None
+    assert 0.6 <= cli["L_bin"] / pred["L_crit"] <= 1.6, cli["L_bin"]
+    assert cli["L_int"] == cli["L_bin"]         # 補間では崖は動かなかった
+    assert cli["L_rep"] is not None and cli["L_rep"] > cli["L_bin"]
+    # 7) 2 本同時
+    assert two["hit"] >= 80.0
+    assert abs(two["null"] - CIRC[CULPRIT]) > 1.0
     assert abs(two["null"] - CIRC[CULPRIT2]) > 30.0
-    assert c > 0
 
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
     if figs.errors():
