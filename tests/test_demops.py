@@ -550,3 +550,60 @@ def test_the_geocentric_ops_are_validated():
         D.dem_cell_size_webmercator(15, 89.0)
     with pytest.raises(ValueError, match="d_lat_deg"):
         D.dem_geodetic_slope(np.zeros((9, 9)), 35.0, 0.0, 1.0)
+
+
+def test_ecef_to_geodetic_refuses_the_region_where_latitude_is_not_unique():
+    """★自分の逆関数が拒否する値を、自分が黙って産んでいた(2026-09-08 に修正)。
+
+    `poc_geodetic_height_frames` が見つけた。地球の中心付近を渡すと
+    ``dem_ecef_to_geodetic`` は **lat = 180 度**を返していた —— 緯度として存在
+    しない値で、しかも ``dem_geodetic_to_ecef`` 自身が
+    「lat_deg must be within [-90, 90]」で拒否する値。例外は出ず、下流は
+    「もっともらしい数字」を受け取る。
+
+    原因は Bowring の式の分母 ``r - e²a·cos³θ`` が負に回ること。負になるのは
+    楕円体の**縮閉線**(evolute)の内側 —— そこでは楕円体面から立てた法線が
+    1 本に決まらず、測地緯度がそもそも一意でない。境界は閉形式で
+    ``(a·r)^(2/3) + (b·|z|)^(2/3) = (a²-b²)^(2/3)``、赤道面で 42697.7 m。
+    実測でも 42600 m は不可視の 180 度、42700 m は 0 度でちょうど切り替わる。
+    """
+    a = D.WGS84_A
+    b = a * (1.0 - D.WGS84_F)
+    edge = (a ** 2 - b ** 2) / a                       # 赤道面での境界 = e²a
+
+    # 内側: 拒否する(境界のすぐ内も含む)
+    for xyz in ([0.0, 0.0, 0.0],                        # 地心
+                [1.0e3, 0.0, 0.0],
+                [edge - 100.0, 0.0, 0.0],
+                [1.0e3, 0.0, 1.0e4]):                   # 極軸寄りの内部
+        with pytest.raises(ValueError, match="evolute"):
+            D.dem_ecef_to_geodetic(np.array([xyz]))
+
+    # 外側: 通る。境界のすぐ外は緯度 0 度
+    out = D.dem_ecef_to_geodetic(np.array([[edge + 100.0, 0.0, 0.0]]))[0]
+    assert abs(out[0]) < 1e-9, out
+
+    # 1 点でも内側なら配列全体を拒否する(黙って混ぜない)
+    with pytest.raises(ValueError, match="evolute"):
+        D.dem_ecef_to_geodetic(np.array([[a, 0.0, 0.0], [0.0, 0.0, 0.0]]))
+
+
+def test_ecef_to_geodetic_never_returns_a_latitude_its_own_inverse_rejects():
+    """★門は事故の起きる場所に立てる —— 往復できることまで確かめる。
+
+    「範囲外の緯度を返さない」だけでは弱い。返した値を **逆関数へ入れ直せる**
+    ことまで見る(以前の 180 度は、まさにここで拒否された)。
+    """
+    rng = np.random.default_rng(7)
+    lat = rng.uniform(-89.9, 89.9, 400)
+    lon = rng.uniform(-180.0, 180.0, 400)
+    h = rng.uniform(-11_000.0, 40_000.0, 400)
+    xyz = np.stack([np.asarray(D.dem_geodetic_to_ecef(float(p), float(q), float(r))).ravel()
+                    for p, q, r in zip(lat, lon, h)])
+    back = D.dem_ecef_to_geodetic(xyz)
+    assert np.all(np.abs(back[:, 0]) <= 90.0), back[np.abs(back[:, 0]) > 90.0]
+    for p, q, r in back:                                # 逆関数が受け取れること
+        D.dem_geodetic_to_ecef(float(p), float(q), float(r))
+    # 往復の床(docstring の数字と同じ標本・同じ量)
+    assert np.abs(back[:, 0] - lat).max() < 1e-9, np.abs(back[:, 0] - lat).max()
+    assert np.abs(back[:, 2] - h).max() < 1e-3, np.abs(back[:, 2] - h).max()
