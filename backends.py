@@ -315,8 +315,18 @@ DOCS: dict[str, str] = {
         "HALCON に直接対応するものは無い。実装は "
         "``feature.local_binary_pattern(v, 8, 1+int(a*3))`` を正規化したもの —— "
         "近傍点数 P=8 は固定、a は半径 R を 1〜4 に振る(半径が大きいほど粗いスケール"
-        "のテクスチャを拾う)。b は未使用。method は既定の ``'default'``(回転不変では"
-        "ない、最も基本的な符号化)。"
+        "のテクスチャを拾う)。★``b`` は符号化 ``method`` を選ぶ ―― "
+        "``b<0.60`` で ``'default'``(既定。回転不変ではない)、``<0.75`` で "
+        "``'ror'``、``<0.90`` で ``'uniform'``、それ以上で ``'nri_uniform'``。
+
+"
+        "実写のテクスチャで測ると、**回転不変な符号化にしても異方な素材は救えない** ―― "
+        "brick / grass / gravel で、回転による自分自身からのずれを素材間の最小距離で"
+        "割った比は ``'default'`` で 9.64 / 0.17 / 0.19、``'uniform'`` で "
+        "**1.72** / 0.02 / 0.01。等方な 2 つは 10 倍良くなるのに、brick は 1 を割らない"
+        "(回した自分より別の素材のほうが近い)。LBP の回転不変性は**局所パターンの"
+        "巡回**に対するもので、**素材そのものの向きの分布**は消せないため。"
+        "詳細 = ``examples/poc_real_texture_invariance.py``。"
     ),
     "sk_entropy": (
         "局所エントロピー。各画素の周辺(円盤状の近傍)にあるグレー値分布の"
@@ -800,6 +810,24 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
 
         def _u8s(v):
             return _u8(v)                     # 2026-09-06: 飽和の穴を 1 か所へ
+
+        #: LBP の符号化。★2026-09-08 まで `b` は本当に何もしておらず、
+        #: `method` は `'default'`(回転不変でない)に固定だった。実写の
+        #: テクスチャ(brick / grass / gravel)で測ると、異方な素材では
+        #: 回転で動く量が素材間の距離の 9.64 倍になり、`'uniform'` に替えると
+        #: 1.72 倍まで下がる(`examples/poc_real_texture_invariance.py`)。
+        #: 選べないと**下げようがない**ので `b` を割り当てた。閾値の表にして
+        #: あるのは、同じ軸で分岐が増えるときの規約(入れ子の if にしない)。
+        #: `b=0.5`(既定)は従来どおり `'default'`。
+        _LBP_METHODS = ((0.60, "default"), (0.75, "ror"),
+                        (0.90, "uniform"), (2.00, "nri_uniform"))
+
+        def _lbp_method(b):
+            x = float(b)
+            for hi, name in _LBP_METHODS:
+                if x < hi:
+                    return name
+            return _LBP_METHODS[-1][1]
 
         sk = [
             ("sk_scharr", "edges", "edges_image", IMAGE, IMAGE, lambda v, a, b: norm(filters.scharr(v))),
