@@ -62,6 +62,7 @@ from __future__ import annotations
 
 import functools
 import math
+import warnings
 
 import numpy as np
 
@@ -96,6 +97,7 @@ __all__ = [
     "annotate_inset_layout", "annotate_inset",
     "annotate_outline_layout", "annotate_outline",
     "annotate_text_path_layout", "annotate_text_path",
+    "annotate_invert_visibility", "annotate_invert", "annotate_invert_path",
     "annotate_colorbar",
     "annotate_panel_label",
     "annotate_figure_grid_layout", "annotate_figure_grid",
@@ -204,14 +206,42 @@ def _channel_color(a, color, scheme="okabe_ito"):
     return np.asarray(tuple(rgb) + (1.0,) * (c - 3), dtype=np.float64)[:c]
 
 
+def _srgb_linear(x):
+    """sRGB の逆ガンマ(配列可)。**この曲線はここ 1 か所**。
+
+    輝度の式が 2 つに増えると、片方だけ直した日に「文字は読めるのに反転色は
+    消える」のような、原因の判らない食い違いが出る。
+    """
+    c = np.asarray(x, dtype=np.float64)
+    return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+
+
 def _relative_luminance(rgb):
     """WCAG の相対輝度(sRGB 逆ガンマつき)。"""
     out = 0.0
     for c, w in zip(rgb, (0.2126, 0.7152, 0.0722)):
-        c = float(c)
-        lin = c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-        out += w * lin
+        out += w * float(_srgb_linear(float(c)))
     return out
+
+
+def _luma_field(a):
+    """画像の相対輝度 ``(H,W)``。
+
+    グレースケール ``(H,W)`` はその値を輝度そのものとして扱う。4 チャンネル
+    以上は先頭 3 本を RGB とみなす(α は輝度に混ぜない)。
+    """
+    lin = _srgb_linear(a)
+    if a.ndim == 2:
+        return lin
+    if a.shape[2] == 1:
+        return lin[..., 0]
+    return np.tensordot(lin[..., :3], np.array([0.2126, 0.7152, 0.0722]), axes=([2], [0]))
+
+
+def _contrast_field(a, b):
+    """画素ごとの WCAG コントラスト比 ``(H,W)`` ∈ [1, 21]。"""
+    la, lb = _luma_field(a), _luma_field(b)
+    return (np.maximum(la, lb) + 0.05) / (np.minimum(la, lb) + 0.05)
 
 
 def _contrast_ratio(rgb_a, rgb_b):
@@ -1468,6 +1498,27 @@ def plot_series(img, axes, x, y, kind="line", color="reference", width=2,
 # 重ね(α 合成)
 # ------------------------------------------------------------------ #
 
+def _mask_weights(a, mask):
+    """マスクを [0,1] の重み ``(H,W)`` にする。**形も値域もここで死ぬ**。
+
+    :func:`overlay_mask` と :func:`annotate_invert` が同じ規則を使うための
+    共有ヘルパ。片方だけ緩い、が起きないようにここ 1 か所に置く。
+    """
+    m = np.asarray(mask)
+    if m.shape != a.shape[:2]:
+        raise ValueError(
+            f"mask shape {m.shape} does not match the image {a.shape[:2]} — if you passed "
+            "an (x,y)-shaped array, transpose it: masks are indexed [row, col]")
+    if m.dtype == bool:
+        return m.astype(np.float64)
+    wgt = np.asarray(m, dtype=np.float64)
+    if not np.all(np.isfinite(wgt)):
+        raise ValueError("mask holds non-finite values")
+    if wgt.min() < 0.0 or wgt.max() > 1.0:
+        raise ValueError(f"mask weights must be within [0,1] (got: [{wgt.min()}, {wgt.max()}])")
+    return wgt
+
+
 def overlay_mask(img, mask, color="wrong", alpha=0.45, outline=0,
                  outline_color=None, scheme="okabe_ito", style=None):
     """2 値マスクを α で重ねる。**厳密に ``a*f + (1-a)*b``**。
@@ -1488,19 +1539,7 @@ def overlay_mask(img, mask, color="wrong", alpha=0.45, outline=0,
         形の不一致 / alpha が [0,1] の外 / mask に非有限。
     """
     a = _prep(img)
-    m = np.asarray(mask)
-    if m.shape != a.shape[:2]:
-        raise ValueError(
-            f"mask shape {m.shape} does not match the image {a.shape[:2]} — if you passed "
-            "an (x,y)-shaped array, transpose it: masks are indexed [row, col]")
-    if m.dtype == bool:
-        wgt = m.astype(np.float64)
-    else:
-        wgt = np.asarray(m, dtype=np.float64)
-        if not np.all(np.isfinite(wgt)):
-            raise ValueError("mask holds non-finite values")
-        if wgt.min() < 0.0 or wgt.max() > 1.0:
-            raise ValueError(f"mask weights must be within [0,1] (got: [{wgt.min()}, {wgt.max()}])")
+    wgt = _mask_weights(a, mask)
     if not (0.0 <= float(alpha) <= 1.0):
         raise ValueError(f"alpha must be within [0,1] (got: {alpha})")
     col = _channel_color(a, color, scheme)
@@ -3040,6 +3079,280 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
 
 
 # ---------------------------------------------------------------- 色分け重ね + カラーバー
+
+# ---------------------------------------------------------------- 反転色
+
+#: 反転のしかた。**2 つしか無いのは、どちらにも言い切れる保証があるから**。
+#: 3 つめを足すと「たぶん見える」が混ざる。
+#:
+#: * ``"complement"`` —— 素直な補色 ``1 - v``。地の模様がそのまま残るので、
+#:   何の上に線が乗っているかが判る。ただし**中間調で消える**(下記)。
+#: * ``"contrast"`` —— 画素ごとに白か黒へ倒す(相対輝度が
+#:   :data:`_CONTRAST_PIVOT` 未満なら白)。地の模様は失われるが、
+#:   **どんな地の上でもコントラスト比 4.58 以上**が出る。
+INVERT_MODES = ("complement", "contrast")
+
+#: 「見えない」と判定するコントラスト比。8bit グレーの中間調 v=128 で補色
+#: (v=127)とのコントラスト比は **1.014**(実測 2026-09-08)—— 比 1.0 が
+#: 「同じ色」なので、実質不可視。1.5 未満になるのは v ∈ [113, 142] の
+#: 30/256 階調 = 全階調の 12 %。
+INVERT_MIN_CONTRAST = 1.5
+
+#: ``mode="contrast"`` で白へ倒すか黒へ倒すかの境目(相対輝度)。白との比と
+#: 黒との比が等しくなる点、すなわち ``(L+0.05)**2 == 0.05*1.05`` の解。
+#: ここを境に選ぶので、最悪でも ``1.05/(L+0.05) = 4.583`` が保証される
+#: (8bit の格子で実測すると v=117 の 4.61 が最小)。
+_CONTRAST_PIVOT = math.sqrt(0.0525) - 0.05
+
+#: 反転が見えないと判ったときの振る舞い。
+INVISIBLE_POLICIES = ("warn", "raise", "ignore")
+
+
+def _inverted(a, mode):
+    """``a``(float64 [0,1])を反転した画像。形とチャンネル数はそのまま。
+
+    4 チャンネル以上のときは**先頭 3 本だけ**を反転する。α を反転すると
+    「見えるようにしたつもりが透明になる」ので、そこは触らない。
+    """
+    if mode not in INVERT_MODES:
+        raise ValueError(f"mode must be one of {INVERT_MODES} (got: {mode!r})")
+    out = a.copy()
+    n = None if a.ndim == 2 else min(3, a.shape[2])
+    if mode == "complement":
+        if n is None:
+            out[...] = 1.0 - out
+        else:
+            out[..., :n] = 1.0 - out[..., :n]
+        return out
+    flip = np.where(_luma_field(a) < _CONTRAST_PIVOT, 1.0, 0.0)
+    if n is None:
+        out[...] = flip
+    else:
+        out[..., :n] = flip[..., None]
+    return out
+
+
+def _invert_report(a, inv, claim):
+    """反転が乗る画素 ``claim`` での見え方。``claim`` は [0,1] の重み。"""
+    cr = _contrast_field(a, inv)
+    take = claim >= 0.5
+    n = int(np.count_nonzero(take))
+    if n == 0:
+        return {"pixels": 0, "min_contrast": float("nan"),
+                "median_contrast": float("nan"), "invisible_fraction": 0.0,
+                "worst_xy": None}
+    vals = cr[take]
+    idx = np.argmin(np.where(take, cr, np.inf))
+    y, x = np.unravel_index(int(idx), cr.shape)
+    return {"pixels": n,
+            "min_contrast": float(vals.min()),
+            "median_contrast": float(np.median(vals)),
+            "invisible_fraction": float(np.mean(vals < INVERT_MIN_CONTRAST)),
+            "worst_xy": (int(x), int(y))}
+
+
+def _invert_guard(rep, mode, min_contrast, on_invisible, op):
+    """見えない反転を黙って通さない。``on_invisible`` で強さを選ぶ。"""
+    if on_invisible not in INVISIBLE_POLICIES:
+        raise ValueError(
+            f"on_invisible must be one of {INVISIBLE_POLICIES} (got: {on_invisible!r})")
+    if on_invisible == "ignore" or rep["pixels"] == 0:
+        return
+    if not (rep["min_contrast"] < float(min_contrast)):
+        return
+    msg = ("%s(mode=%r): the inverted colour is invisible against what is actually "
+           "underneath — %.1f %% of the %d drawn pixels fall below contrast %.2f "
+           "(worst %.3f at %r). A mid-grey background is the classic case: at 8-bit "
+           "v=128 the complement is v=127, contrast 1.014. Use mode=\"contrast\" "
+           "(white/black per pixel, guaranteed >= 4.58), or draw in a fixed colour."
+           % (op, mode, 100.0 * rep["invisible_fraction"], rep["pixels"],
+              float(min_contrast), rep["min_contrast"], rep["worst_xy"]))
+    if on_invisible == "raise":
+        raise ValueError(msg)
+    warnings.warn(msg, RuntimeWarning, stacklevel=3)
+
+
+def _invert_blend(a, claim, mode):
+    """``out = a*(1-w) + inverted(a)*w``。**この順が正典**(:func:`_blend` と同じ)。"""
+    inv = _inverted(a, mode)
+    w = np.clip(np.asarray(claim, dtype=np.float64), 0.0, 1.0)
+    if a.ndim == 2:
+        return a * (1.0 - w) + inv * w
+    return a * (1.0 - w)[..., None] + inv * w[..., None]
+
+
+def annotate_invert_visibility(img, mask, mode="complement"):
+    """反転色が**その地の上で本当に見えるか**を、描く前に測る。
+
+    反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、
+    しかも致命的 —— **中間調では反転しても同じ色になる**。8bit グレーの
+    v=128 に対する補色は v=127 で、WCAG のコントラスト比は **1.014**
+    (比 1.0 が「同じ色」。実測 2026-09-08)。比 1.5 を下回る帯は
+    v ∈ [113, 142] の 30/256 階調 = 全階調の 12 % に及ぶ。
+
+    :func:`annotate_invert` と :func:`annotate_invert_path` は内部でこれを
+    呼んで警告するが、**自分で fail-closed にしたいとき**はこの op で測って
+    から描く(``min_contrast`` を見て、低ければ ``mode="contrast"`` に倒す)。
+
+    Parameters
+    ----------
+    img : (H,W) または (H,W,C)
+        地。値域 [0,1]。
+    mask : (H,W)
+        反転を乗せるところ。真偽か [0,1] の重み。**形が違えば例外**。
+    mode : str
+        :data:`INVERT_MODES` のいずれか。
+
+    Returns
+    -------
+    dict
+        ``pixels``(重み >= 0.5 の画素数) / ``min_contrast`` /
+        ``median_contrast`` / ``invisible_fraction``(比が
+        :data:`INVERT_MIN_CONTRAST` 未満の割合) / ``worst_xy``(最悪の画素、
+        無ければ ``None``)。
+
+    Examples
+    --------
+    >>> import numpy as np, annotate
+    >>> flat = np.full((8, 8), 128 / 255.0)          # 中間調 —— 反転が消える地
+    >>> rep = annotate.annotate_invert_visibility(flat, np.ones((8, 8), bool))
+    >>> round(rep["min_contrast"], 3)
+    1.014
+    >>> rep["invisible_fraction"]
+    1.0
+    >>> annotate.annotate_invert_visibility(flat, np.ones((8, 8), bool),
+    ...                                     mode="contrast")["min_contrast"] > 4.5
+    True
+    """
+    a = _prep(img)
+    claim = _mask_weights(a, mask)
+    return _invert_report(a, _inverted(a, mode), claim)
+
+
+def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=1.0,
+                    min_contrast=INVERT_MIN_CONTRAST, on_invisible="warn"):
+    """領域(region)を**反転色**で塗る/縁取る。
+
+    「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」という
+    ときの古典手。塗り色を決めずに済むかわりに、**中間調で消える**ので
+    :func:`annotate_invert_visibility` の測定を内側で必ず通す。
+
+    Parameters
+    ----------
+    mask : (H,W)
+        領域。真偽か [0,1] の重み。**画像と形が違えば例外**。
+    draw : {"fill", "margin"}
+        HALCON の ``set_draw`` と同じ語。``"fill"`` は中身ごと、``"margin"``
+        は**輪郭だけ**を反転する。輪郭は太さ ``width`` 画素(整数に丸める)の
+        帯で、領域の内外へ半分ずつ広がる。
+    width : float
+        ``draw="margin"`` のときの帯の太さ(画素)。
+    mode : str
+        :data:`INVERT_MODES`。``"complement"`` は地の模様を残し、
+        ``"contrast"`` は白黒に倒して見えることを保証する。
+    alpha : float
+        反転の効き。1.0 で完全に反転、0.5 なら地と反転色の中間
+        (**``mode="complement"`` の 0.5 は必ず中間調になる** —— 反転色を
+        半分にすると消えるのは道理なので、警告はそれを拾う)。
+    min_contrast, on_invisible :
+        見えないと判ったときの扱い。``"warn"``(既定)/ ``"raise"``(fail-closed)
+        / ``"ignore"``。
+
+    Returns
+    -------
+    (H,W[,C]) float64
+        反転を乗せた複製。**入力は書き換えない**。
+
+    Raises
+    ------
+    ValueError
+        形の不一致 / 値域外 / 未知の ``draw`` ``mode`` ``on_invisible`` /
+        ``on_invisible="raise"`` で不可視。
+
+    Examples
+    --------
+    >>> import numpy as np, annotate
+    >>> img = np.zeros((16, 16)); img[4:12, 4:12] = 1.0
+    >>> m = np.zeros((16, 16), bool); m[6:10, 6:10] = True
+    >>> out = annotate.annotate_invert(img, m)
+    >>> float(out[7, 7]), float(out[1, 1])
+    (0.0, 0.0)
+    >>> ring = annotate.annotate_invert(img, m, draw="margin", width=1)
+    >>> float(ring[7, 7])                      # 中身は触らない
+    1.0
+    """
+    a = _prep(img)
+    wgt = _mask_weights(a, mask)
+    if draw not in ("fill", "margin"):
+        raise ValueError(f'draw must be "fill" or "margin" (got: {draw!r})')
+    if not (0.0 <= float(alpha) <= 1.0):
+        raise ValueError(f"alpha must be within [0,1] (got: {alpha})")
+    if draw == "margin":
+        from scipy import ndimage
+        n = max(1, int(round(_num(width, "width", lo=0.0) / 2.0)))
+        b = wgt > 0.5
+        ring = ndimage.binary_dilation(b, iterations=n) ^ ndimage.binary_erosion(b, iterations=n)
+        wgt = ring.astype(np.float64)
+    claim = wgt * float(alpha)
+    inv = _inverted(a, mode)
+    _invert_guard(_invert_report(a, inv, claim), mode, min_contrast, on_invisible,
+                  "annotate_invert")
+    return _invert_blend(a, claim, mode)
+
+
+def annotate_invert_path(img, points, width=1.5, closed=False, dash=None,
+                         mode="complement", alpha=1.0,
+                         min_contrast=INVERT_MIN_CONTRAST, on_invisible="warn"):
+    """折れ線(line)を**反転色**で描く。アンチエイリアスつき。
+
+    線は領域より不利で、そこがこの op を分けている理由 —— 太さ 1.5 画素の
+    線は端の画素の被覆率が 0.3 程度しかないため、**反転しても被覆の分しか
+    動かない**。中間調の地では領域よりさらに先に消える。判定は「被覆率
+    0.5 以上の画素」で行う(それ未満は元から半透明なので、見えなくても
+    それは反転のせいではない)。
+
+    Parameters
+    ----------
+    points : (N,2)
+        折れ線の頂点 ``(x, y)``(画素座標)。
+    width : float
+        線の太さ(画素、0.5 以上)。
+    closed : bool
+        真なら最後の点と最初の点を結ぶ。
+    dash : (on, off) or None
+        破線の刻み(画素)。:func:`_dash_pieces` と同じ規則。
+    mode, alpha, min_contrast, on_invisible :
+        :func:`annotate_invert` と同じ。
+
+    Returns
+    -------
+    (H,W[,C]) float64
+        反転を乗せた複製。
+
+    Examples
+    --------
+    >>> import numpy as np, annotate
+    >>> img = np.zeros((16, 32))
+    >>> out = annotate.annotate_invert_path(img, [(2, 8), (29, 8)], width=3)
+    >>> float(out[8, 15])                       # 黒地の上なので白い線になる
+    1.0
+    >>> float(out[2, 15])                       # 線から離れたところは元のまま
+    0.0
+    """
+    pts = _pts(points, "points", min_n=2)
+    a = _prep(img)
+    w = _num(width, "width", lo=0.5)
+    if not (0.0 <= float(alpha) <= 1.0):
+        raise ValueError(f"alpha must be within [0,1] (got: {alpha})")
+    cov = np.zeros(a.shape[:2], dtype=np.float64)
+    for p, q in _dash_pieces(pts, bool(closed), dash):
+        cov = np.maximum(cov, _segment_coverage(a.shape[:2], p, q, w))
+    claim = cov * float(alpha)
+    inv = _inverted(a, mode)
+    _invert_guard(_invert_report(a, inv, claim), mode, min_contrast, on_invisible,
+                  "annotate_invert_path")
+    return _invert_blend(a, claim, mode)
+
 
 def annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6,
                       mask=None, unit="", label_fmt="{:.3g}", orientation="vertical",
