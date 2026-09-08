@@ -311,8 +311,14 @@ class BandTable:
             raise ValueError("校正表が単調でない: %s" % band)
 
     def radiance(self, t_k):
-        """T [K] → 帯域放射輝度 [W·m⁻²·sr⁻¹](表引き)。"""
-        return fs.interp_linear(self.t_grid, self.l_grid, np.asarray(t_k, np.float64))
+        """T [K] → 帯域放射輝度 [W·m⁻²·sr⁻¹](表引き)。
+
+        ★`fs.interp_linear` は **1-D の問い合わせしか受けない**ので、画像
+        ``(H, W)`` を渡すには呼び手が平らにして戻す。§7 の穴の 1 つ。
+        """
+        arr = np.asarray(t_k, np.float64)
+        got = fs.interp_linear(self.t_grid, self.l_grid, arr.ravel())
+        return float(got) if arr.ndim == 0 else np.asarray(got).reshape(arr.shape)
 
     def temperature(self, l_w, allow_out: bool = False):
         """帯域放射輝度 → T [K]。``allow_out=True`` なら範囲外を NaN で返す。
