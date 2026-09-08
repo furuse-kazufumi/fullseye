@@ -24,6 +24,9 @@
    ``v=128`` では比 1.014 —— ほぼ同じ色。明 → 暗の傾斜の上に線を引くと、消える列は
    ``x = (1 - v)(W-1)`` の予測どおり 97-122 に出る。逃げ道 ``mode="contrast"`` は
    全 256 階調で最悪 4.61(連続の下界 ``1.05/√0.0525 = 4.583``)。
+7. 表(``annotate_table``): 桁幅 = その桁の全セルを**実フォントで測った最大**、
+   桁間 = 行高 ×0.6(``font_size`` を 2 倍にすると桁間も 2.00 倍)、``align="auto"`` は
+   数の桁だけ右そろえで、右そろえの桁は全部が同じ縁で終わる。
 
 【読み方】各節の印字は「真値 / 実測 / 差」。PASS 行が出れば全部通っている。
 """
@@ -227,12 +230,57 @@ def section_invert():
              "dead_columns": int(dead.size)})
 
 
+def section_table():
+    """7. タブ区切り → 表。桁幅は**実フォントで測る**、桁間はサイズに比例。
+
+    文字数で数えると和文 1 字と英数 1 字が同じ扱いになり、和英混在の表は
+    必ず崩れる。ここでは「桁幅 = その桁の全セルを実フォントで測った最大」
+    「桁間 = 行高 ×0.6」を、layout の返り値と突き合わせる。
+    """
+    tsv = ("項目\t実測\t予測\n"
+           "面積 [mm^2]\t12.50\t12.48\n"
+           "周長 [mm]\t9.75\t9.80\n"
+           "真円度\t0.9931\t0.9940")
+    fs = 12
+    lay = A.annotate_table_layout(tsv, (10, 10), font_size=fs, header=True)
+    cells = [r.split("\t") for r in tsv.split("\n")]
+    for c in range(lay["ncols"]):
+        want = max(A.measure_text(cells[r][c], font_size=fs,
+                                  bold=(r == 0))["width"] for r in range(len(cells)))
+        assert lay["col_w"][c] == want, (c, lay["col_w"][c], want)
+    assert lay["col_gap"] == int(round(lay["row_h"] * A._COL_GAP_RATIO))
+    assert lay["align"] == ["left", "right", "right"], lay["align"]
+    # 右そろえの桁は、全部が同じ縁で終わる
+    for c in (1, 2):
+        ends = {it["xy"][0] + it["width"] for it in lay["cells"]
+                if it["col"] == c and it["row"] > 0}
+        assert ends == {lay["col_x"][c] + lay["col_w"][c]}, (c, ends)
+    print(f"7) 表: 桁幅 {lay['col_w']}(実フォント実測と一致)、桁間 {lay['col_gap']} px "
+          f"= 行高 {lay['row_h']}×{A._COL_GAP_RATIO}、そろえ {lay['align']}"
+          f"(数の桁だけ右)、外形 {lay['rect'][2]}x{lay['rect'][3]}")
+
+    # フォントを変えると桁間も一緒に動く(比例していることを印字)
+    big = A.annotate_table_layout(tsv, (10, 10), font_size=fs * 2, header=True)
+    ratio = big["col_gap"] / lay["col_gap"]
+    assert 1.6 < ratio < 2.4, ratio
+    print(f"   font_size を 2 倍にすると桁間は {lay['col_gap']} -> {big['col_gap']} px"
+          f"({ratio:.2f} 倍)")
+
+    panel = np.full((PH, PW, 3), 0.06)
+    panel[:, :] = np.linspace(0.02, 0.22, PW)[None, :, None]   # 板の半透明が判る地
+    panel = A.annotate_table(panel, tsv, (PW // 2, PH // 2 + 6), anchor="cm",
+                             font_size=fs, header=True)
+    return panel, {"table_cols": lay["col_w"], "table_gap": lay["col_gap"],
+                   "table_align": lay["align"], "gap_ratio": float(ratio)}
+
+
 def run() -> dict:
-    """全 6 節を回し、真値との照合結果と組んだ図を返す(失敗は assert で落ちる)。"""
+    """全 7 節を回し、真値との照合結果と組んだ図を返す(失敗は assert で落ちる)。"""
     t0 = time.perf_counter()
     panel_a, r1 = section_text_path()
     r2 = section_panel_label()
     panel_c, r3 = section_invert()
+    panel_d, r4 = section_table()
     # 2 パネルの図: (a) 経路に沿う文字、(b) 目盛りつきの空の枠 —— それぞれ隅に文字を置く
     panel_b = np.full((PH, PW, 3), 0.08)
     ax = A.axes_transform((40, 20, 160, 90), (0.0, 1.0), (0.0, 1.0))
@@ -241,12 +289,14 @@ def run() -> dict:
     panel_a = A.annotate_panel_label(panel_a, 0, corner="lt", margin=6)
     panel_b = A.annotate_panel_label(panel_b, 1, corner="lt", margin=6)
     panel_c = A.annotate_panel_label(panel_c, 2, corner="lt", margin=6)
-    sheet = A.panel_grid([panel_a, panel_b, panel_c], ncols=3, pad=10, label_h=0,
+    panel_d = A.annotate_panel_label(panel_d, 3, corner="lt", margin=6)
+    sheet = A.panel_grid([panel_a, panel_b, panel_c, panel_d], ncols=2, pad=10, label_h=0,
                          background=0.04)
     out = {"sheet": sheet}
     out.update(r1)
     out.update(r2)
     out.update(r3)
+    out.update(r4)
     out["elapsed_s"] = time.perf_counter() - t0
     return out
 
@@ -256,7 +306,8 @@ def main(save=None):
     print(f"\nPASS: annotate_text_path_layout(弧長・位置・傾き・used の閉形式一致、L 字で 0/90 度)、"
           f"annotate_panel_label(板の縁 = margin、text_box と画素同一)、"
           f"annotate_invert(消える帯 {r['invisible_levels']}/256 階調、傾斜の上で消える "
-          f"{r['dead_columns']} 列が閉形式と一致、逃げ道は最悪 {r['escape_min_contrast']:.2f})。"
+          f"{r['dead_columns']} 列が閉形式と一致、逃げ道は最悪 {r['escape_min_contrast']:.2f})、"
+          f"annotate_table(桁幅 {r['table_cols']} が実フォント実測と一致、桁間はサイズに比例して {r['gap_ratio']:.2f} 倍)。"
           f" 実行 {r['elapsed_s']:.2f} 秒")
     if save:
         from PIL import Image
