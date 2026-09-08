@@ -1362,11 +1362,14 @@ def main() -> int:
           % fm["fm_err"])
     print("  * レジストマークは当たる(誤差 %.4f px)が、%.0f px 離れると公差外。"
           % (mk["spots"][0]["err"], mk["r_meas"]))
-    print("  * 物差しで勝者が入れ替わる: 精度 1 位は素の相関 %.4f px(低域通過は"
-          % met["相関 AM(素)"]["rms"])
-    print("    %.4f px)、判定一致率 1 位は低域通過 %.1f %%(素の相関は %.1f %%)。"
-          % (met["相関 AM(低域通過)"]["rms"], met["相関 AM(低域通過)"]["rate"],
-             met["相関 AM(素)"]["rate"]))
+    print("  * 物差しで勝者が入れ替わる: 精度は素の相関 %.4f px(低域通過 %.4f px)、"
+          % (met["相関 AM(素)"]["rms"], met["相関 AM(低域通過)"]["rms"]))
+    print("    判定は素の相関 %.1f %%(低域通過 %.1f %%)。二段にすると両方取れる"
+          % (met["相関 AM(素)"]["rate"], met["相関 AM(低域通過)"]["rate"]))
+    print("    (%.4f px / %.1f %%)が、粗の誤差がセルの半径を超えた %d 点で"
+          % (met["★二段(粗+密)"]["rms"], met["★二段(粗+密)"]["rate"],
+             met["bad_two"]))
+    print("    1 格子ぶん跳ぶ。")
     print()
     print("  所要 %.1f 秒" % (time.perf_counter() - t0))
 
