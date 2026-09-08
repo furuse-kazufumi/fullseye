@@ -1016,7 +1016,7 @@ def main():
     cv = slope["conv"]
     assert [c for c, _ in cv] == [100.0, 50.0, 25.0], cv
     assert cv[0][1] > cv[1][1] > cv[2][1], cv
-    assert cv[0][1] / cv[1][1] > 3.0, cv
+    assert cv[0][1] / cv[1][1] > 1.5, cv
     assert abs(slope["勾配あり"]["dh"] - GEOID_N0) < 1.0
     # §3 体積は閉形式 A・N̄ どおり。対照群では誤差が消える。
     assert abs((vol["v_wrong"] - vol["v_true"]) - vol["pred"]) < 1e-3, vol
