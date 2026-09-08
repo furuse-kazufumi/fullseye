@@ -248,7 +248,12 @@ def locate(vol) -> np.ndarray:
 
 
 def loc_error(peaks) -> tuple:
-    """各ホットスポットに最も近い検出ピークまでの距離 [m]。1.5 m 超は見失い。"""
+    """各ホットスポットに最も近い検出ピークまでの距離 [m]。1.5 m 超は見失い。
+
+    3 つ目を返す ``spur`` は**どのラックからも 1.5 m 以上離れた峰**の数
+    = 偽の熱源。見失いと偽物は別の失敗なので、1 つの数字に畳まない。
+    """
+    peaks = np.asarray(peaks, float).reshape(-1, 3)
     out, miss = [], 0
     for hi in range(len(HOTSPOTS)):
         if len(peaks) == 0:
@@ -259,7 +264,12 @@ def loc_error(peaks) -> tuple:
             miss += 1
         else:
             out.append(dd)
-    return (float(np.mean(out)) if out else float("nan")), miss
+    spur = 0
+    for p in peaks:
+        if min(float(np.linalg.norm(p - centre(hi)))
+               for hi in range(len(HOTSPOTS))) > 1.5:
+            spur += 1
+    return (float(np.mean(out)) if out else float("nan")), miss, spur
 
 
 # --------------------------------------------------------------------------- #
@@ -286,7 +296,7 @@ def section_scene() -> dict:
     vol = t.reshape(GX.size, GY.size, GZ.size).transpose(2, 1, 0)
     assert vol.shape == VOL_SHAPE, vol.shape
     pk = locate(vol)
-    d_loc, miss = loc_error(pk)
+    d_loc, miss, spur = loc_error(pk)
     print("\n   真値の体積に vol_local_maxima(しきい値 %.1f °C)をかけると "
           "%d 個の峰、位置誤差 %.3f m、見失い %d 個"
           % (DETECT, len(pk), d_loc, miss))
@@ -335,7 +345,7 @@ def section_zero_point(d=0.6) -> dict:
         rmse = float(np.sqrt(np.mean((rec - truth) ** 2)))
         pe = [peak_error(f, hi) for hi in range(len(HOTSPOTS))]
         vol = rec.reshape(GX.size, GY.size, GZ.size).transpose(2, 1, 0)
-        dl, ms = loc_error(locate(vol))
+        dl, ms, sp = loc_error(locate(vol))
         out[m] = {"rmse": rmse, "peak": pe, "loc": dl, "miss": ms}
         print("   %-26s %7.3f °C %12.2f °C %14s %8d"
               % (MET_LABEL[m], rmse, float(np.mean(pe)),
@@ -621,7 +631,7 @@ def section_metrics(ds=(0.50, 0.80, 1.20)) -> dict:
             rmse = float(np.sqrt(np.mean((rec - truth) ** 2)))
             pe = [peak_error(f, hi) for hi in range(len(HOTSPOTS))]
             vol = rec.reshape(GX.size, GY.size, GZ.size).transpose(2, 1, 0)
-            dl, ms = loc_error(locate(vol))
+            dl, ms, sp = loc_error(locate(vol))
             out[(d, m)] = {"rmse": rmse, "peak": float(np.mean(np.abs(pe))),
                            "loc": dl, "miss": ms, "n": len(pts)}
             rows.append(["%.2f (%d 本)" % (d, len(pts)), MET_LABEL[m],
