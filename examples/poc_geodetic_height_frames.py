@@ -800,8 +800,7 @@ def section_axis_order():
     rows, out = [], {}
     for name, mutate in (
             ("緯経の入れ替え", lambda: (lo, la, hh)),
-            ("度をラジアンとして渡す", lambda: (np.degrees(np.radians(la) * 0.0
-                                                + np.radians(la)), np.radians(lo), hh)),
+            ("ラジアンを度として渡す", lambda: (np.radians(la), np.radians(lo), hh)),
             ("経度の符号反転", lambda: (la, -lo, hh)),
             ("高さがフィート(m と誤認)", lambda: (la, lo, hh / 0.3048)),
     ):
