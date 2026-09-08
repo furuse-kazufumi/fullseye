@@ -3209,6 +3209,9 @@ def annotate_invert_visibility(img, mask, mode="complement", alpha=1.0):
         反転を乗せるところ。真偽か [0,1] の重み。**形が違えば例外**。
     mode : str
         :data:`INVERT_MODES` のいずれか。
+    alpha : float
+        反転の効き。描くときと同じ値を渡すこと —— 見え方は「反転色」ではなく
+        **実際に置かれる色**で決まるので、``alpha`` を落とすと答えが変わる。
 
     Returns
     -------
