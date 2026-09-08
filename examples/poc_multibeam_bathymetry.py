@@ -1244,11 +1244,12 @@ def section_thermocline(scene):
     print(f"  → 等音速だと最大 {e_const:.3f} m、2 点の一定勾配だと "
           f"{e_fit:.3f} m。**減るが消えない**"
           f"({100*(1-e_fit/e_const):.0f} % しか取れない)。")
-    print(f"  → ★しかも一定勾配の当てはめは**直下で {float(z_fit[int(np.argmin(np.abs(BEAM_DEG)))] - DEPTH_REF):+.3f} m** ——")
-    print("     等音速のほうは直下較正済みなので直下は 0 だった。**外側を良くする"
-          "代わりに、\n     いちばん検査される所を悪くしている**。")
     print("     当てはめた形(直線)と真の形(段)が違うので、"
           "自由度を 1 つ増やしても偏りは残る。")
+    nadir_fit = float(z_fit[int(np.argmin(np.abs(BEAM_DEG)))] - DEPTH_REF)
+    print(f"  → ★しかも一定勾配の当てはめは**直下で {nadir_fit:+.3f} m** ——")
+    print("     等音速のほうは直下較正済みなので直下は 0 だった。")
+    print("     **外側を良くする代わりに、いちばん検査される所を悪くしている**。")
     print("  → ★対照群として、**真のプロファイルで処理すれば** 誤差は")
     _, z_ok, _ = trace_for_time(true_prof, BEAM_DEG, t1)
     print(f"     最大 {float(np.max(np.abs(z_ok - DEPTH_REF))):.2e} m "
