@@ -701,8 +701,7 @@ def section_metrics(mc_gain: float, ds=(0.50, 0.80, 1.20)) -> dict:
     print("   —— 壁・床・天井際は**必ず**外に出る。センサを部屋の内側にしか"
           "置けない以上、\n      外挿しない手法は端で必ず別の手法に化ける。")
 
-    print("
-   ---- 物差しごとの勝者(ゼロ点を除く。同率は「同率」と書く)----")
+    print("\n   ---- 物差しごとの勝者(ゼロ点を除く。同率は「同率」と書く)----")
     cand = [m for m in METHODS if m != "null"]
 
     def short(m):
@@ -727,17 +726,13 @@ def section_metrics(mc_gain: float, ds=(0.50, 0.80, 1.20)) -> dict:
                  "/".join(short(m) for m in w_peak),
                  "/".join(short(m) for m in w_loc)))
     swapped = any(not (set(a) & set(b) & set(c)) for a, b, c in winners.values())
-    print("
-  ★3 つの物差しを**同時に勝つ手法は%s**。"
+    print("\n  ★3 つの物差しを**同時に勝つ手法は%s**。"
           % ("無い" if swapped else "在る"))
     print("     RMSE とピーク誤差は RBF、位置誤差は最近傍。"
-          "1 つの数字に畳めば、どちらか一方の
-     失敗が見えなくなる。")
+          "1 つの数字に畳めば、どちらか一方の\n     失敗が見えなくなる。")
     print("  ★RBF がピーク誤差で勝つのは**原理的に正しいからではない**: "
-          "§5 で測った %.2f 倍の
-     持ち上がりが、サンプリングによる減衰を"
-          "たまたま逆向きに打ち消しているだけ
-     "
+          "§5 で測った %.2f 倍の\n     持ち上がりが、サンプリングによる減衰を"
+          "たまたま逆向きに打ち消しているだけ\n     "
           "(d=%.2f m で 最近傍 %.2f °C 低く出る → RBF %.2f °C。どちらも真値に届かない)。"
           % (mc_gain, ds[1], out[(ds[1], "nearest")]["peak"],
              out[(ds[1], "rbf")]["peak"]))
@@ -752,10 +747,8 @@ def section_metrics(mc_gain: float, ds=(0.50, 0.80, 1.20)) -> dict:
         _, _, sp_low = loc_error(locate(vol))
     finally:
         DETECT = keep_thr
-    print("
-  ★「偽の峰 0」は数え忘れではない: しきい値を %.1f → %.1f °C へ"
-          "下げると、同じ体積から
-     偽の峰が %d 個出る"
+    print("\n  ★「偽の峰 0」は数え忘れではない: しきい値を %.1f → %.1f °C へ"
+          "下げると、同じ体積から\n     偽の峰が %d 個出る"
           "(ホットアイルの帯そのものが峰になる)。門を壊して確かめた。"
           % (DETECT, T_AMB + 4.0, sp_low))
     assert sp_low > 0, sp_low
@@ -773,8 +766,7 @@ def section_metrics(mc_gain: float, ds=(0.50, 0.80, 1.20)) -> dict:
 # 7. 図 —— 同じ測定を 4 通りに復元した断面                                       #
 # --------------------------------------------------------------------------- #
 def section_maps(d=0.80) -> None:
-    print("
-" + "=" * 78)
+    print("\n" + "=" * 78)
     print("7) 図 —— 同じ測定を 4 通りに復元した断面(間隔 %.2f m)" % d)
     print("=" * 78)
     truth = field(GRID)

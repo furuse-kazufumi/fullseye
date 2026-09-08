@@ -822,10 +822,12 @@ def section_tool_gaps(cli: dict) -> None:
           "Lomb-Scargle か単純な binned periodogram が 1 本あると良い。")
 
     assert not hasattr(fs, "peak_interpolate") and not hasattr(fs, "parabolic_peak")
-    print("  (b) **山の頂点をサブビンで求める口が無い**。find_peaks は"
-          "整数の添字しか返さない。6 節で測ったとおり、放物線補間を入れるだけで"
-          "崖が %.1f 倍短い記録長まで下がる —— 補間の有無は"
-          "「分解能」の議論そのものを変えるので、族に入れる価値がある。" % 1.0)
+    print("  (b) **山の頂点をサブビンで求める口が無い**。find_peaks は整数の"
+          "添字しか返さないので、この PoC は _peak_freq を自前で書いている。"
+          "効き目は測った —— L=%.0f mm で誤差の中央値 %.1f -> %.1f mm"
+          "(崖そのものは動かない、6 節)。20 行だが、"
+          "「どこを頂点と呼ぶか」は再現性に直結するので族に入る価値がある。"
+          % (cli["L"][-1], cli["bin_err"][-1], cli["int_err"][-1]))
 
     assert not hasattr(fs, "roll_periodicity") and not hasattr(fs, "web_defect_map")
     print("  (c) ロール周期の逆算(周長台帳への当てはめ)そのものは道具ではなく"
