@@ -668,7 +668,7 @@ def section_methods_cliff(hi=1) -> dict:
 # --------------------------------------------------------------------------- #
 # 6. 物差し 3 つ —— 勝者は入れ替わるか                                          #
 # --------------------------------------------------------------------------- #
-def section_metrics(ds=(0.50, 0.80, 1.20)) -> dict:
+def section_metrics(mc_gain: float, ds=(0.50, 0.80, 1.20)) -> dict:
     print("\n" + "=" * 78)
     print("6) 物差しを 3 つ置く —— 場の RMSE / ピーク温度の誤差 / 位置の誤差")
     print("=" * 78)
@@ -701,24 +701,64 @@ def section_metrics(ds=(0.50, 0.80, 1.20)) -> dict:
     print("   —— 壁・床・天井際は**必ず**外に出る。センサを部屋の内側にしか"
           "置けない以上、\n      外挿しない手法は端で必ず別の手法に化ける。")
 
-    print("\n   ---- 物差しごとの勝者(ゼロ点を除く)----")
+    print("
+   ---- 物差しごとの勝者(ゼロ点を除く。同率は「同率」と書く)----")
+    cand = [m for m in METHODS if m != "null"]
+
+    def short(m):
+        return MET_LABEL.get(m, m).split("(")[0]
+
+    def best(d, key, tol):
+        """``key`` が最小の手法。差が ``tol`` 未満なら同率として並べる。"""
+        v = {m: key(out[(d, m)]) for m in cand if np.isfinite(key(out[(d, m)]))}
+        if not v:
+            return ["—"]
+        lo = min(v.values())
+        return [m for m in cand if m in v and v[m] - lo < tol]
+
     winners = {}
     for d in ds:
-        cand = [m for m in METHODS if m != "null"]
-        w_rmse = min(cand, key=lambda m: out[(d, m)]["rmse"])
-        w_peak = min(cand, key=lambda m: out[(d, m)]["peak"])
-        fin = [m for m in cand if np.isfinite(out[(d, m)]["loc"])]
-        w_loc = (min(fin, key=lambda m: (out[(d, m)]["miss"], out[(d, m)]["loc"]))
-                 if fin else "—")
-        winners[d] = (w_rmse, w_peak, w_loc)
-        print("     d=%.2f m   RMSE: %-12s ピーク誤差: %-12s 位置誤差: %s"
-              % (d, MET_LABEL.get(w_rmse, w_rmse).split("(")[0],
-                 MET_LABEL.get(w_peak, w_peak).split("(")[0],
-                 MET_LABEL.get(w_loc, w_loc).split("(")[0]))
-    n_distinct = len({tuple(v) for v in winners.values()})
-    swapped = any(len(set(v)) > 1 for v in winners.values())
-    print("\n  ★3 つの物差しで勝者は%s。"
-          % ("**入れ替わる**" if swapped else "入れ替わらなかった"))
+        w_rmse = best(d, lambda r: r["rmse"], 0.005)
+        w_peak = best(d, lambda r: r["peak"], 0.05)
+        w_loc = best(d, lambda r: r["miss"] * 10.0 + r["loc"], 0.01)
+        winners[d] = (tuple(w_rmse), tuple(w_peak), tuple(w_loc))
+        print("     d=%.2f m   RMSE: %-14s ピーク誤差: %-14s 位置誤差: %s"
+              % (d, "/".join(short(m) for m in w_rmse),
+                 "/".join(short(m) for m in w_peak),
+                 "/".join(short(m) for m in w_loc)))
+    swapped = any(not (set(a) & set(b) & set(c)) for a, b, c in winners.values())
+    print("
+  ★3 つの物差しを**同時に勝つ手法は%s**。"
+          % ("無い" if swapped else "在る"))
+    print("     RMSE とピーク誤差は RBF、位置誤差は最近傍。"
+          "1 つの数字に畳めば、どちらか一方の
+     失敗が見えなくなる。")
+    print("  ★RBF がピーク誤差で勝つのは**原理的に正しいからではない**: "
+          "§5 で測った %.2f 倍の
+     持ち上がりが、サンプリングによる減衰を"
+          "たまたま逆向きに打ち消しているだけ
+     "
+          "(d=%.2f m で 最近傍 %.2f °C 低く出る → RBF %.2f °C。どちらも真値に届かない)。"
+          % (mc_gain, ds[1], out[(ds[1], "nearest")]["peak"],
+             out[(ds[1], "rbf")]["peak"]))
+
+    # ★「偽の峰 0」が本当に数えているのか、門を壊して確かめる
+    global DETECT
+    keep_thr, DETECT = DETECT, T_AMB + 4.0
+    try:
+        pts, _ = lattice(ds[0])
+        rec = fit(pts, read(pts, noise=NOISE), "rbf")(GRID)
+        vol = rec.reshape(GX.size, GY.size, GZ.size).transpose(2, 1, 0)
+        _, _, sp_low = loc_error(locate(vol))
+    finally:
+        DETECT = keep_thr
+    print("
+  ★「偽の峰 0」は数え忘れではない: しきい値を %.1f → %.1f °C へ"
+          "下げると、同じ体積から
+     偽の峰が %d 個出る"
+          "(ホットアイルの帯そのものが峰になる)。門を壊して確かめた。"
+          % (DETECT, T_AMB + 4.0, sp_low))
+    assert sp_low > 0, sp_low
     figs.save_table(
         "metric_table",
         ["間隔 d", "手法", "RMSE [°C]", "ピーク誤差 [°C]", "位置誤差 [m]",
@@ -733,6 +773,10 @@ def section_metrics(ds=(0.50, 0.80, 1.20)) -> dict:
 # 7. 図 —— 同じ測定を 4 通りに復元した断面                                       #
 # --------------------------------------------------------------------------- #
 def section_maps(d=0.80) -> None:
+    print("
+" + "=" * 78)
+    print("7) 図 —— 同じ測定を 4 通りに復元した断面(間隔 %.2f m)" % d)
+    print("=" * 78)
     truth = field(GRID)
     pts, _ = lattice(d)
     vals = read(pts, noise=NOISE)
@@ -810,7 +854,7 @@ def main() -> int:
     cl = section_cliff()
     gr = section_grid_vs_random()
     mc = section_methods_cliff()
-    mt = section_metrics()
+    mt = section_metrics(mc["gains"]["rbf"])
     section_maps()
     section_tool_gaps()
 

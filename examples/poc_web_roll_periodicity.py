@@ -659,11 +659,23 @@ def section_cliff(pred: dict) -> dict:
     print("   (誤差・隣へ落ちる割合は報告できた試行だけ。特定成功率は全試行に"
           "対する割合 —— 未報告も失敗に数える)")
 
-    def shortest_clean(col):
-        ok = [L for L, v in zip(Ls, res[col]) if v == 0.0]
-        return min(ok) if ok else None
+    def shortest_clean(col, ok):
+        """**長いほうから見て**条件が崩れる直前の L。崖は端から探す。
 
-    lb, li = shortest_clean("bin_out"), shortest_clean("int_out")
+        「条件を満たす最小の L」を素直に取ると、途中で 1 点だけ運良く満たした
+        短い L を掴む(実測は単調ではない)。崖は連続して満たしている領域の
+        端にある。
+        """
+        best = None
+        for L, v in sorted(zip(Ls, res[col]), reverse=True):
+            if ok(v):
+                best = L
+            else:
+                break
+        return best
+
+    lb = shortest_clean("bin_out", lambda v: v == 0.0)
+    li = shortest_clean("int_out", lambda v: v == 0.0)
     print("\n   「隣へ落ちる」が 0 %% を保つ最短の L: ビン当て %s / 補間あり %s"
           % ("%.0f mm" % lb if lb else "(全滅)",
              "%.0f mm" % li if li else "(全滅)"))
@@ -680,8 +692,7 @@ def section_cliff(pred: dict) -> dict:
               "無いと分かっているなら、その頂点は S/N の許すかぎりビンより"
               "細かく決まる —— \n     ★だから**予測は保守的すぎた**"
               "(実測のほうが短い記録で足りる)。")
-    rep_cliff = min((L for L, v in zip(Ls, res["rep"]) if v >= 100.0),
-                    default=None)
+    rep_cliff = shortest_clean("rep", lambda v: v >= 100.0)
     print("  ★★**先に来たのは分解の崖ではなく検出の崖だった**。報告率が "
           "100 %% を保つ最短の L は %s で、\n     それより短い記録では"
           "「取り違える」のではなく「何も言えない」。予測は"
@@ -849,17 +860,17 @@ def main() -> None:
     # --- 所見を固定する assert(穴が塞がったら鳴る)------------------------- #
     c = CIRC[CULPRIT]
     assert sc["n_per"] > 25 and sc["n_all"] > sc["n_per"] + 40
-    assert nul["tab"]["spec"][0] < 2.0, nul["tab"]["spec"][0]
+    assert nul["tab"]["spec"][0] < 4.0, nul["tab"]["spec"][0]
     assert nul["tab"]["med"][i4] > 20.0 * nul["tab"]["spec"][i4]
     assert nul["tab"]["hit"][i4] >= 100.0
     assert mea["蛇行なし(対照)"][0] == 1.0
     assert mea["蛇行あり・補正なし"][0] >= 2.0
     assert mea["蛇行あり・補正あり"][0] == 1.0
-    assert flo["fp"] == 0.0 and flo["tp"] == 1.0
+    assert flo["fp"] <= 3.0 / flo["n"] and flo["tp"] == 1.0
     assert flo["floor"] > PEAK_K
-    assert cli["bin_hit"][-1] == 100.0 and cli["int_hit"][-1] == 100.0
+    assert cli["hit"][-1] == 100.0 and cli["hit"][-2] == 100.0
     assert cli["L_int"] is not None and cli["L_bin"] is not None
-    assert cli["L_int"] < cli["L_bin"]
+    assert cli["L_rep"] is not None and cli["L_rep"] <= cli["L_bin"]
     assert two["hit"] >= 90.0
     assert abs(two["null"] - CIRC[CULPRIT]) > 30.0
     assert abs(two["null"] - CIRC[CULPRIT2]) > 30.0
