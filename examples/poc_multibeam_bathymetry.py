@@ -575,38 +575,45 @@ def section_floor(scene):
     # (b) エコー検出の床 —— find_peaks + peak_subbin
     prof = scene["prof"]
     rows_e, err_t = [], []
-    lam_b = half_power_width(beam_pattern(0.0, lam, d))
-    for th in (0.0, 30.0, 60.0, 70.0):
-        _, t1, _ = trace_to_depth(prof, np.array([th]), DEPTH_REF)
-        tau = 2.0 * float(t1[0])
-        # フットプリントの時間広がり(手前側と奥側の往復時間差)
-        bw = lam_b / math.cos(math.radians(th))
-        lo = max(0.0, th - 0.5 * bw)
-        hi = min(89.0, th + 0.5 * bw)
-        _, t_lo, _ = trace_to_depth(prof, np.array([lo]), DEPTH_REF)
-        _, t_hi, _ = trace_to_depth(prof, np.array([hi]), DEPTH_REF)
-        spread = 2.0 * abs(float(t_hi[0]) - float(t_lo[0]))
-        n = int(2.0 * tau * ECHO_FS)
-        env = echo_envelope(tau, spread, n)
-        got = detect_two_way(env)
-        dz = 0.5 * scene["ca"] * (got - tau) * math.cos(math.radians(th))
+    bw0 = half_power_width(beam_pattern(0.0, lam, d))
+    print(f"  {'ビーム [度]':>12}{'往復 [µs]':>12}{'エコー長 [µs]':>14}"
+          f"{'検出のずれ [µs]':>16}{'深さ換算 [m]':>14}")
+    for th in (0.0, 30.0, 45.0, 60.0, 70.0):
+        env, t0e, tau_axis = echo_envelope(prof, th, lam, d, bw0)
+        got = detect_two_way(env, t0e)
+        # エコーの長さ(半値幅)を測る。ビームが照らす帯の往復時間の幅。
+        above = np.where(env > 0.5)[0]
+        length = (float(above[-1] - above[0]) / ECHO_FS) if above.size else 0.0
+        dz = 0.5 * scene["ca"] * (got - tau_axis) * math.cos(math.radians(th))
         err_t.append(abs(dz))
-        rows_e.append((f"{th:.0f}", f"{1e6*tau:.2f}", f"{1e6*spread:.2f}",
-                       f"{1e9*(got-tau):+.1f}", f"{dz:+.6f}"))
-        print(f"  ビーム {th:5.1f} 度: 往復 {1e6*tau:9.2f} µs、"
-              f"フットプリントの広がり {1e6*spread:7.2f} µs、"
-              f"検出誤差 {1e9*(got-tau):+7.1f} ns = 深さ {dz:+.6f} m")
+        rows_e.append((f"{th:.0f}", f"{1e6*tau_axis:.1f}", f"{1e6*length:.1f}",
+                       f"{1e6*(got-tau_axis):+.2f}", f"{dz:+.5f}"))
+        print(f"  {th:>12.0f}{1e6*tau_axis:>12.1f}{1e6*length:>14.1f}"
+              f"{1e6*(got-tau_axis):>16.2f}{dz:>14.5f}")
     print(f"  → 標本間隔 {1e6/ECHO_FS:.2f} µs(深さ {0.5*C_MID/ECHO_FS*100:.2f} cm)を、"
           f"peak_subbin が標本の間へ落としている。")
-    print(f"  ★**床は角度 {dz_ang:.4f} m / エコー {max(err_t):.4f} m**。"
-          f"以降で出る屈折の誤差(m の単位)とは 3〜4 桁違う。")
-    figs.save_table("floor", ["ビーム角 [度]", "往復時間 [µs]", "広がり [µs]",
-                              "検出誤差 [ns]", "深さ換算 [m]"], rows_e,
-                    title="測定系の床 —— エコー検出は深さに何 m 効くか",
-                    caption="find_peaks で山を拾い peak_subbin で標本の間へ。"
-                            "屈折の誤差より 3 桁以上小さい。")
+    print(f"  ★**床は角度 {dz_ang:.4f} m / エコー {max(err_t):.4f} m**。")
+    print("     ★エコーの床は直下では µs 未満だが、外側では**ビームが照らす帯**が")
+    print("     長くなり、しかも往復時間が角度に対して凸なのでエコーが非対称になる。")
+    print("     振幅検出の頂点はビーム軸からずれる —— 外側で位相検出へ切り替える理由。")
+    figs.save_table("floor", ["ビーム角 [度]", "往復時間 [µs]", "エコー長 [µs]",
+                              "検出のずれ [µs]", "深さ換算 [m]"], rows_e,
+                    title="測定系の床 —— 角度推定とエコー検出は深さに何 m 効くか",
+                    caption="エコーは beamform_delay_sum の角度応答 × Lambert 後方散乱で"
+                            "海底の帯を足し上げて合成。find_peaks + peak_subbin で検出。")
+    if figs.enabled():
+        series = []
+        for th in (0.0, 45.0, 70.0):
+            env, t0e, tau_axis = echo_envelope(prof, th, lam, d, bw0)
+            tt = 1e6 * ((np.arange(env.size) / ECHO_FS + t0e) - tau_axis)
+            series.append((f"ビーム {th:.0f} 度", tt, env))
+        figs.save_plot("echo", series, xlabel="ビーム軸の往復時間からのずれ [µs]",
+                       ylabel="正規化した受信包絡線",
+                       title="外側ビームのエコーは長く、そして非対称",
+                       caption="直下は 1 本のパルス。70 度では帯が数十 µs に伸び、"
+                               "頂点がビーム軸からずれる。")
     return {"lam": lam, "d": d, "ang_rows": rows, "err_ang": max(err_ang),
-            "dz_ang": dz_ang, "err_echo": max(err_t), "bw0": lam_b}
+            "dz_ang": dz_ang, "err_echo": max(err_t), "bw0": bw0}
 
 
 # --------------------------------------------------------------------------- #
