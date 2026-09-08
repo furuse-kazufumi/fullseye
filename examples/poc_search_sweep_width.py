@@ -1007,8 +1007,8 @@ def section_tool_holes():
     for q in queries:
         names = [r["op"] for r in fs.op_find(q)]
         ranks[q] = (names.index("star_detect") + 1) if "star_detect" in names else 0
-    print("
-  (d) ★**点状目標の座標を返す 2-D op は star_detect だけで、"
+    print()
+    print("  (d) ★**点状目標の座標を返す 2-D op は star_detect だけで、"
           "名前が天文に閉じている**。")
     print(f"      {'op_find の語':>26}{'件数':>8}{'star_detect の順位':>22}")
     for q in queries:
