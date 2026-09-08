@@ -172,7 +172,8 @@ def collect() -> dict:
         })
 
     all_2d = [e["id"] for e in EX2.EXAMPLES]
-    unrun = [i for i in all_2d if not i.startswith("poc_")]
+    poc = [i for i in all_2d if i.startswith("poc_")]
+    other = [i for i in all_2d if not i.startswith("poc_")]
     return {
         "generated_by": "tools/gen_maturity.py",
         "how_to_read": "ladder の判定は capabilities[].examples と ops_named_in_tests から "
