@@ -4,7 +4,7 @@ dim: acoustics
 category: bearing
 in: signal
 out: table
-examples: [acoustic_condition_monitoring]
+examples: [acoustic_condition_monitoring, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -100,6 +100,7 @@ samples.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
+- [poc_web_roll_periodicity](../../../../examples/poc_web_roll_periodicity.py) — `py -3.11 examples/poc_web_roll_periodicity.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

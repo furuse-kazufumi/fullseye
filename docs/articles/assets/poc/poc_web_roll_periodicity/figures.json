@@ -1,0 +1,108 @@
+[
+ {
+  "file": "01_scene_web.png",
+  "name": "scene_web",
+  "caption": "ロール傷の列は機械座標では真っ直ぐ 1 本。web 端基準では蛇行のぶん左右に振れる。",
+  "shape": [
+   393,
+   940,
+   3
+  ]
+ },
+ {
+  "file": "02_null_vs_spectrum.png",
+  "name": "null_vs_spectrum",
+  "caption": "見逃しは位相を飛ばさないので、櫛の山は低くなるだけで動かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_null_table.png",
+  "name": "null_table",
+  "caption": "",
+  "shape": [
+   296,
+   640,
+   3
+  ],
+  "csv": "03_null_table.csv",
+  "tsv": "03_null_table.tsv"
+ },
+ {
+  "file": "04_meander_lanes.png",
+  "name": "meander_lanes",
+  "caption": "真の傷は機械座標 CD 190 mm の 1 か所だけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_meander_table.png",
+  "name": "meander_table",
+  "caption": "",
+  "shape": [
+   152,
+   618,
+   3
+  ],
+  "csv": "05_meander_table.csv",
+  "tsv": "05_meander_table.tsv"
+ },
+ {
+  "file": "06_false_floor.png",
+  "name": "false_floor",
+  "caption": "櫛法の報告件数は 1 / 60 件。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_cliff_length.png",
+  "name": "cliff_length",
+  "caption": "縦線が閉形式の予測 C²/ΔC。補間ありはそれより短い L でも当てられる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_cliff_error.png",
+  "name": "cliff_error",
+  "caption": "",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_cliff_table.png",
+  "name": "cliff_table",
+  "caption": "",
+  "shape": [
+   296,
+   788,
+   3
+  ],
+  "csv": "09_cliff_table.csv",
+  "tsv": "09_cliff_table.tsv"
+ },
+ {
+  "file": "10_spectrum_two.png",
+  "name": "spectrum_two",
+  "caption": "下の点が台帳の 5 本。山は 第1ニップロール と 巻取りロール に立つ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

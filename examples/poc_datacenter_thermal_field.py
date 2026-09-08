@@ -634,6 +634,13 @@ def section_grid_vs_random(d=0.60, ntrial=12) -> dict:
              res["一様乱数(同じ本数)"]["dist"].max()))
     print("     同じ本数でも、格子は「最悪でもここまで見える」と設計時に"
           "言える。乱数は言えない。")
+    print("     (σ=%.2f m の行で乱数の最悪が下限とほぼ同値なのは偶然 —— "
+          "この種のいちばん悪い\n     引きが %.5f m で、格子の保証最悪 %.5f m に"
+          "たまたま近かっただけ。)"
+          % (HOTSPOTS[0][4], np.sqrt(-2 * HOTSPOTS[0][4] ** 2
+                                     * np.log(max(res["一様乱数(同じ本数)"]
+                                                  ["per"][0].min(), 1e-12))),
+             r_grid))
 
     rr = np.linspace(0.0, 1.0, 80)
     figs.save_plot(

@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-examples: [gallery2d_edges, poc_colormap_readability]
+examples: [gallery2d_edges, poc_colormap_readability, poc_datacenter_thermal_field]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ log 0.40 0.50
 
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
 - [poc_colormap_readability](../../../../examples/poc_colormap_readability.py) — `py -3.11 examples/poc_colormap_readability.py`
+- [poc_datacenter_thermal_field](../../../../examples/poc_datacenter_thermal_field.py) — `py -3.11 examples/poc_datacenter_thermal_field.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

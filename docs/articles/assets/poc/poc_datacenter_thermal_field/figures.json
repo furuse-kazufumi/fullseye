@@ -1,0 +1,85 @@
+[
+ {
+  "file": "01_scene_truth.png",
+  "name": "scene_truth",
+  "caption": "横=x 0..12 m、縦=y 0..8.4 m(左端)/ z 0..3.0 m(中央)。中央のパネルは室高 3.0 m ぶんしか無いので上下の白は余白。",
+  "shape": [
+   229,
+   628,
+   3
+  ]
+ },
+ {
+  "file": "02_cliff_prediction.png",
+  "name": "cliff_prediction",
+  "caption": "幾何の実測は予測と最大 1.2e-15 しか違わない。素朴な実測が上に浮くぶんが背景の復元誤差。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_cliff_table.png",
+  "name": "cliff_table",
+  "caption": "",
+  "shape": [
+   224,
+   934,
+   3
+  ],
+  "csv": "03_cliff_table.csv",
+  "tsv": "03_cliff_table.tsv"
+ },
+ {
+  "file": "04_grid_vs_random.png",
+  "name": "grid_vs_random",
+  "caption": "格子の最悪距離 0.520 m を乱数の 6.17 % が超えた(予測 6.58 %)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_cliff_by_method.png",
+  "name": "cliff_by_method",
+  "caption": "最近傍と線形は予測に重なる。RBF は 1.37 倍持ち上がるだけで、傾きは同じ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_metric_table.png",
+  "name": "metric_table",
+  "caption": "",
+  "shape": [
+   368,
+   934,
+   3
+  ],
+  "csv": "06_metric_table.csv",
+  "tsv": "06_metric_table.tsv"
+ },
+ {
+  "file": "07_map_reconstruction.png",
+  "name": "map_reconstruction",
+  "caption": "横=x 0..12 m、縦=y 0..8.4 m。3 台の過負荷ラックのうち何台が残るか。",
+  "shape": [
+   370,
+   481,
+   3
+  ]
+ },
+ {
+  "file": "08_map_residual.png",
+  "name": "map_residual",
+  "caption": "RBF 復元の残差 [°C](正 = 高く出た。z=2.30 m)",
+  "shape": [
+   34,
+   49
+  ]
+ }
+]

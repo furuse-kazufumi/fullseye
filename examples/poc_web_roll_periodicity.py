@@ -59,18 +59,23 @@ CD 位置 = 画素列)に置き換えます。:data:`ROLLS` は機械図面の�
 6. ★★**崖は 2 つあり、予測は片方しか当たらなかった**。予測は先に立てました:
    記録長 L の分解能は Δf = 1/L、周長では ΔC = C²/L。犯人(471.24)と隣の
    第2ニップロール(455.53)の差 15.71 mm から **L_crit = C²/ΔC = 14137 mm**。
-   実測の**分解の崖**(推定が隣のロール側へ落ちる割合が 0 % でなくなる L)は
-   **14000 mm** —— 比 0.99、**予測は当たりました**。
+   ★★判定をやり直しました。最初は「隣のロール側へ落ちる割合が **0 %** でなくなる L」
+   で崖を数えていて、24 試行ではそれが 14000 mm を返しました。試行を 120 に増やすと
+   **いちばん長い 20000 mm でも 2 % 残り、0 % はどこにも無くなります** ——
+   0 % は床ではなく小標本の産物でした。床(2 %)を先に測り、その 3 倍と 10 % の
+   大きいほうを崖と呼ぶことにすると、実測の**分解の崖**は **14000 mm**(ビン当て・
+   補間あり とも)—— 比 0.99 で**予測は当たりました**。同じ理由で「最長 2 点の
+   特定成功率は 100 %」も 24 試行の産物で、120 試行では 97 / 98 % です。
    ★外したのは「補間を入れれば崖が下がる」のほう: 放物線補間は L=20000 mm での
-   誤差中央値を 5.0 → 2.7 mm に縮めるのに、崖はどちらも 14000 mm で動きません
+   誤差中央値を 5.0 → 3.0 mm に縮めるのに、崖はどちらも 14000 mm で動きません
    でした。崖の手前では「頂点をどれだけ細かく読むか」ではなく「どの山を選ぶか」で
    外れているので、補間は選んだ山の中でしか効きません。
    ★★もっと大きく外したのは**壊れ方の種類**です。報告率が 100 % を保つ最短の L
    (=**検出の崖**)は **17000 mm** で、分解の崖 14000 mm より**長い**。記録を
    短くしていくと、「隣のロールと取り違える」より先に「何も言えなくなる」——
    Rayleigh は分解の崖の位置を正しく当てましたが、**その崖には辿り着けません**。
-   ★取り違え先も予測を外しました。出たのは第2ニップロールではなく**冷却ロール**
-   (314.16 mm)で、471.24 / 314.16 = 1.500 —— **台帳の中で 3:2 の関係にある 2 本**
+   ★取り違え先も予測を外しました。掃引 9 点のうち 7 点で最多だったのは
+   第2ニップロールではなく**冷却ロール**(314.16 mm)で、471.24 / 314.16 = 1.500 —— **台帳の中で 3:2 の関係にある 2 本**
    です。基本波がしきい値を割ると「高調波を共有する別のロール」へ滑ります。
    台帳に整数比があると、櫛法にも固有の取り違えがある。
 7. **2 本同時に傷ついていても分けられる**。2 巻ぶん(40000 mm)で 第1ニップ
@@ -150,6 +155,11 @@ LANE_HALF = 15.0                 # CD レーンの半幅 [mm](現場の定番の
 KMAX = 3                         # 櫛法が「全部立っている」ことを要求する高調波の数
 PEAK_K = 2.5                     # 「ロールを 1 本報告する」高調波の高さ倍率(帯域の中央値比)
 SEEDS = 24                       # 掃引 1 点あたりの試行数
+#: 6 節(崖)だけ試行数を上げる。★24 試行では報告率が 12000 mm で 100 %、
+#: 14000 mm で 88 % という**非単調**が出て、「検出の崖」の位置が小標本の揺らぎで
+#: 動いた(120 試行では 12000 mm が 93 % に落ち着き、100 % を保つのは 17000 mm 以上)。
+#: 崖の位置を主張する節だけは、床が揺れない試行数で測る。
+CLIFF_SEEDS = 120
 SEED0 = 1000
 
 
@@ -731,7 +741,7 @@ def section_cliff(pred: dict) -> dict:
         eb, ei = [], []
         hit = rep = 0
         wrong = {}
-        for s in range(SEEDS):
+        for s in range(CLIFF_SEEDS):
             sc = scene(SEED0 + s, length=L)
             b = spec_estimate(sc["md"], L, interp=False)
             i = spec_estimate(sc["md"], L, interp=True)
@@ -746,14 +756,14 @@ def section_cliff(pred: dict) -> dict:
         top = max(wrong, key=wrong.get) if wrong else "—"
         eb, ei = np.asarray(eb), np.asarray(ei)
         res["L"].append(L)
-        res["rep"].append(100.0 * rep / SEEDS)
+        res["rep"].append(100.0 * rep / CLIFF_SEEDS)
         res["bin_err"].append(float(np.median(np.abs(eb))) if eb.size else np.nan)
         res["int_err"].append(float(np.median(np.abs(ei))) if ei.size else np.nan)
         res["bin_out"].append(100.0 * float(np.mean(eb < -dc / 2.0))
                               if eb.size else np.nan)
         res["int_out"].append(100.0 * float(np.mean(ei < -dc / 2.0))
                               if ei.size else np.nan)
-        res["hit"].append(100.0 * hit / SEEDS)
+        res["hit"].append(100.0 * hit / CLIFF_SEEDS)
         rows.append(["%.0f" % L, "%.1f" % (c * c / L),
                      "%.0f %%" % res["rep"][-1], "%.1f" % res["bin_err"][-1],
                      "%.0f %%" % res["bin_out"][-1], "%.1f" % res["int_err"][-1],
@@ -782,10 +792,16 @@ def section_cliff(pred: dict) -> dict:
                 break
         return best
 
-    lb = shortest_clean("bin_out", lambda v: v == 0.0)
-    li = shortest_clean("int_out", lambda v: v == 0.0)
-    print("\n   「隣へ落ちる」が 0 %% を保つ最短の L: ビン当て %s / 補間あり %s"
-          % ("%.0f mm" % lb if lb else "(全滅)",
+    # ★床は 0 ではない。24 試行では最長 2 点が偶然 0 % になり「0 % を保つ最短の L」
+    #   という判定が通ってしまったが、120 試行では最長 20000 mm でも 2 % 残る。
+    #   **床を先に測ってから、床の何倍で崖と呼ぶかを決める**(0 % は判定に使わない)。
+    floor = max(res["bin_out"][-1], res["int_out"][-1])
+    thr = max(3.0 * floor, 10.0)
+    print('\n   ★「隣へ落ちる」の床は 0 %% ではない —— いちばん長い L=%.0f mm でも %.0f %%。\n     床の 3 倍と 10 %% の大きいほう = **%.0f %%** を超えた所を分解の崖と呼ぶ。' % (Ls[-1], floor, thr))
+    lb = shortest_clean("bin_out", lambda v: v <= thr)
+    li = shortest_clean("int_out", lambda v: v <= thr)
+    print("   「隣へ落ちる」が %.0f %% 以下を保つ最短の L: ビン当て %s / 補間あり %s"
+          % (thr, "%.0f mm" % lb if lb else "(全滅)",
              "%.0f mm" % li if li else "(全滅)"))
     print("  ★予測 L_crit = %.0f mm(= C²/ΔC)に対し、実測の分解の崖は "
           "ビン当て %s・補間あり %s。"
@@ -810,17 +826,32 @@ def section_cliff(pred: dict) -> dict:
           "Rayleigh は分解の崖の位置を正しく当てたが、**その崖には辿り着けない**。"
           % ("%.0f mm" % rep_cliff if rep_cliff else "(無し)",
              "%.0f mm" % lb if lb else "—"))
-    bad = {k: v for k, v in
-           ((r[-1], r) for r in rows) if k in CIRC}
-    if bad:
-        nm = list(bad)[0]
-        print("  ★取り違え先は予測した %s ではなく %s(C = %.2f mm)が出た。"
-              % (nb, nm, CIRC[nm]))
-        print("     %.2f / %.2f = %.3f —— **台帳の中で 3:2 の関係にある 2 本**"
-              "なので、基本波が\n     しきい値を割ったときに"
-              "「高調波を共有する別のロール」へ滑る。"
-              "台帳に整数比があると\n     櫛法にも固有の取り違えがある。"
-              % (c, CIRC[nm], c / CIRC[nm]))
+    # 取り違え先は試行数で変わる(24 試行では 冷却ロール が最多だった)。
+    # **名前を先に決め打ちせず、出た比から説明を選ぶ。**
+    tally = {}
+    for r in rows:
+        if r[-1] in CIRC:
+            tally[r[-1]] = tally.get(r[-1], 0) + 1
+    if tally:
+        nm = max(tally, key=tally.get)
+        ratio = c / CIRC[nm]
+        simple = min(((abs(ratio - n / m), n, m)
+                      for n in range(1, 7) for m in range(1, 7)),
+                     key=lambda t: t[0])
+        print("  ★取り違え先(掃引 %d 点で最多)は %s(C = %.2f mm)、"
+              "比 %.2f / %.2f = %.3f。"
+              % (tally[nm], nm, CIRC[nm], c, CIRC[nm], ratio))
+        if simple[0] < 0.02:
+            print("     これは %d:%d の整数比 —— 基本波がしきい値を割ると"
+                  "**高調波を共有する別のロール**へ滑る。"
+                  % (simple[1], simple[2]))
+            print("     台帳に整数比があると、櫛法にも固有の取り違えがある。")
+        else:
+            print("     整数比ではない(いちばん近い %d:%d でも差 %.3f)—— "
+                  "この滑りは高調波の共有ではなく、"
+                  % (simple[1], simple[2], simple[0]))
+            print("     単に**周長が近い**(差 %.2f mm)ため。台帳の隣どうしは"
+                  "分解能でしか分けられない。" % abs(c - CIRC[nm]))
 
     figs.save_plot("cliff_length",
                    [("報告率(検出の崖)", res["L"], res["rep"]),
@@ -840,7 +871,7 @@ def section_cliff(pred: dict) -> dict:
                     ["L [mm]", "ΔC=C²/L", "報告率", "ビン当て 誤差",
                      "ビン当て 隣へ落ちる", "補間 誤差", "補間 隣へ落ちる",
                      "特定成功率", "取り違え先"], rows,
-                    title="記録長の掃引(%d 試行)" % SEEDS)
+                    title="記録長の掃引(%d 試行)" % CLIFF_SEEDS)
     res["L_bin"], res["L_int"], res["L_rep"] = lb, li, rep_cliff
     return res
 
@@ -999,7 +1030,9 @@ def main() -> None:
     assert 0.0 <= flo["fp"] <= 3.0 / flo["n"] and flo["tp"] == 1.0
     assert flo["floor"] > PEAK_K
     # 6) 崖 —— 予測は分解の崖を当て、壊れ方の種類を外した
-    assert cli["hit"][-1] == 100.0 and cli["hit"][-2] == 100.0
+    # ★120 試行にしたら 100 % ちょうどではなくなった(97 / 98 %)。
+    #   24 試行の「100 %」は分母が小さかっただけ。床を見て 95 % に置く。
+    assert cli["hit"][-1] >= 95.0 and cli["hit"][-2] >= 95.0, cli["hit"][-2:]
     assert cli["L_bin"] is not None and cli["L_int"] is not None
     assert 0.6 <= cli["L_bin"] / pred["L_crit"] <= 1.6, cli["L_bin"]
     assert cli["L_int"] == cli["L_bin"]         # 補間では崖は動かなかった

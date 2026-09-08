@@ -4,7 +4,7 @@ dim: imgmetrics
 category: fidelity
 in: image2d × image2d
 out: scalar
-examples: [grasp_pose, image_quality_metrics, physical_ai_perception, poc_ct_fidelity, poc_polarization_specular, poc_registration_basin, poc_structure_4d_deterioration]
+examples: [grasp_pose, image_quality_metrics, physical_ai_perception, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_registration_basin, poc_structure_4d_deterioration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 - [image_quality_metrics](../../../../examples/image_quality_metrics.py) — `py -3.11 examples/image_quality_metrics.py`
 - [physical_ai_perception](../../../../examples/physical_ai_perception.py) — `py -3.11 examples/physical_ai_perception.py`
 - [poc_ct_fidelity](../../../../examples/poc_ct_fidelity.py) — `py -3.11 examples/poc_ct_fidelity.py`
+- [poc_datacenter_thermal_field](../../../../examples/poc_datacenter_thermal_field.py) — `py -3.11 examples/poc_datacenter_thermal_field.py`
 - [poc_polarization_specular](../../../../examples/poc_polarization_specular.py) — `py -3.11 examples/poc_polarization_specular.py`
 - [poc_registration_basin](../../../../examples/poc_registration_basin.py) — `py -3.11 examples/poc_registration_basin.py`
 - [poc_structure_4d_deterioration](../../../../examples/poc_structure_4d_deterioration.py) — `py -3.11 examples/poc_structure_4d_deterioration.py`
