@@ -758,8 +758,9 @@ def coverage_run(tab, cam, t_true, eps, u_eps, rho_reality, rho_assumed,
     tau_t = TAU_REF + dev_r[:, 2]
     ta_t = T_ATM_REF + dev_r[:, 3]
     lm = forward_radiance(tab, t_true, eps_t, tr_t, tau_t, ta_t)
-    dn = cam.to_dn(lm * (1.0 + dev_r[:, 4]) + 0.0, rng, quantize=True)
-    dn = dn + dev_r[:, 5]
+    # 現実: a_true = a₀(1+δa)、b_true = b₀ + δb、そこへ NETD の雑音が乗る。
+    dn = cam.to_dn(lm * (1.0 + dev_r[:, 4]), None, quantize=False)
+    dn = np.clip(np.rint(dn + dev_r[:, 5] + dev_r[:, 6]), 0.0, cam.dn_max)
     t_hat = np.asarray(invert_radiance(tab, cam.to_radiance(dn), eps,
                                        T_REFL_REF, TAU_REF, T_ATM_REF,
                                        allow_out=True), np.float64)
