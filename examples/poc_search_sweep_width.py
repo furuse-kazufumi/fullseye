@@ -966,8 +966,9 @@ def section_tool_holes():
 
     # (a) 位置を指定して点源を描く公開 op が無い。
     import astrostack
-    has_public = hasattr(fs, "gaussian_star_exact") or hasattr(fs.ledger,
-                                                               "gaussian_star_exact")
+    private_exact = hasattr(astrostack, "_gaussian_star_exact")
+    has_public = any(hasattr(o, n) for o in (fs, fs.op) for n in
+                     ("gaussian_star_exact", "draw_point_sources", "render_points"))
     print("\n  (a) **位置を指定して点源を描く公開 op が無い**。")
     print(f"      astrostack._gaussian_star_exact(erf で画素を厳密積分)は非公開"
           f"(公開されている: {has_public})。")
@@ -1000,27 +1001,37 @@ def section_tool_holes():
           "点状目標には向かない。")
 
     # (d) 名前が天文に閉じている。
-    hits = {r["op"] for r in fs.op_find("小さい目標 検出")} | \
-           {r["op"] for r in fs.op_find("point target detection")}
-    print("\n  (d) ★**点状目標の座標を返す 2-D op は star_detect だけで、"
+    queries = ("小さい目標 検出", "点 検出", "スポット 検出", "漂流 捜索",
+               "point target detection", "peak detect")
+    ranks = {}
+    for q in queries:
+        names = [r["op"] for r in fs.op_find(q)]
+        ranks[q] = (names.index("star_detect") + 1) if "star_detect" in names else 0
+    print("
+  (d) ★**点状目標の座標を返す 2-D op は star_detect だけで、"
           "名前が天文に閉じている**。")
-    print(f"      「小さい目標 検出」「point target detection」で引いても "
-          f"star_detect は{'出る' if 'star_detect' in hits else '出ない'}。")
+    print(f"      {'op_find の語':>26}{'件数':>8}{'star_detect の順位':>22}")
+    for q in queries:
+        n = len(fs.op_find(q))
+        pos = "出ない" if ranks[q] == 0 else ("%d / %d 番目" % (ranks[q], n))
+        print(f"      {q:>26}{n:>8}{pos:>22}")
+    print("      日本語では 1 語も当たらない。英語の一般語でようやく 20 件中 14 番目。")
+    print("      中身は「背景 + kσ を超える局所最大 + 重心」で分野に依らないのに、")
     print("      捜索・欠陥・粒子・医用の文脈から辿り着けない。"
-          "中身は「背景 + kσ を超える局所最大 + 重心」で")
-    print("      分野に依らないので、``peak_detect`` のような中立な別名を"
-          "台帳に足すのが筋。")
-    print("\n  ★埋めるべき op(具体案): (1) 位置指定の点源描画 "
+          "``peak_detect`` のような")
+    print("      分野中立な別名と、和文の説明語を台帳に足すのが筋。")
+    print("
+  ★埋めるべき op(具体案): (1) 位置指定の点源描画 "
           "``draw_point_sources(shape, rows, cols, flux, sigma)``、")
     print("     (2) 相関マップを返す ``ncc_map(image, template)``、")
-    print("     (3) 分野中立な ``peak_detect``(star_detect の別名)、")
+    print("     (3) 分野中立な ``peak_detect``(star_detect の別名 + 和文の説明語)、")
     print("     (4) 横距離曲線 → 走査幅の ``sweep_width(p, dx)`` と")
     print("         被覆率則 ``search_detection_probability(W, v, t, A, law)``。")
     print("     (4) は画像 op ではないので台帳の外だが、"
           "**画像から意思決定へ渡す最後の 1 段**がここに無い。")
     return {"loc_shape": tuple(loc.shape), "blob_shape": tuple(b_log.shape),
-            "star_in_hits": "star_detect" in hits, "has_public_point": has_public,
-            "n_target_probe": len(trow)}
+            "ranks": ranks, "has_public_point": has_public,
+            "n_target_probe": len(trow), "private_exact": private_exact}
 
 
 # --------------------------------------------------------------------------- #
@@ -1112,7 +1123,10 @@ def main() -> int:
     assert holes["loc_shape"] == (3,), holes["loc_shape"]
     assert holes["blob_shape"] == (), holes["blob_shape"]
     assert holes["n_target_probe"] == 2, holes["n_target_probe"]
-    assert not holes["star_in_hits"], "op_find で star_detect が引けるようになった"
+    assert holes["private_exact"], "astrostack._gaussian_star_exact が消えた"
+    # 日本語の語では 1 つも当たらない(和文の説明語が足されたらここが鳴る)
+    for q in ("小さい目標 検出", "点 検出", "スポット 検出", "漂流 捜索"):
+        assert holes["ranks"][q] == 0, (q, holes["ranks"][q])
     assert not holes["has_public_point"], "点源描画が公開された"
 
     if figs.errors():

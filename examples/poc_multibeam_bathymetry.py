@@ -1121,16 +1121,17 @@ def section_dtm(scene):
     inner = slope[2:-2, 2:-2]
     print(f"  グリッド {dtm.shape[0]}x{dtm.shape[1]}(セル {cell:.1f} m)、"
           f"凸包の外 {100*outside:.1f} %")
-    # 測線 1 本だけの DTM(継ぎ目なし)—— スマイルの曲がりだけを見る
+    # 測線 1 本だけの DTM(継ぎ目なし)—— スマイルの曲がりだけを見る。
+    # 同じ格子に載せる(右半分は測線 1 の外なので「未測」= 真の深さで埋める)。
     n1 = along.size * beams.size
-    gx1 = np.arange(-half_swath, half_swath + 0.001, cell)
-    qx1, qy1 = np.meshgrid(gx1, gy)
     got1 = fs.interp_scattered(pts[:n1], vals[:n1],
-                               np.column_stack([qx1.ravel(), qy1.ravel()]),
+                               np.column_stack([qx.ravel(), qy.ravel()]),
                                method="linear", fill_value=np.nan)
-    dtm1 = np.nan_to_num(np.asarray(got1["value"], np.float64).reshape(qx1.shape),
-                         nan=DEPTH_REF)
-    slope1 = np.asarray(fs.ledger.dem_slope(dtm1, cell), np.float64)[2:-2, 2:-2]
+    dtm1 = np.asarray(got1["value"], np.float64).reshape(qx.shape)
+    covered = int(np.searchsorted(gx, half_swath))     # 測線 1 が届く列まで
+    dtm1_fill = np.nan_to_num(dtm1, nan=DEPTH_REF)
+    slope1 = np.asarray(fs.ledger.dem_slope(dtm1_fill, cell),
+                        np.float64)[2:-2, 2:covered - 2]
     flat_slope = float(np.asarray(fs.ledger.dem_slope(
         np.full_like(filled, DEPTH_REF), cell))[2:-2, 2:-2].max())
     print(f"  見かけの勾配(dem_slope、**測線 1 本・継ぎ目なし**): "
