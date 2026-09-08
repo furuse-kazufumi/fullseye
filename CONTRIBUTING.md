@@ -66,6 +66,41 @@ Worked example of the rule: `FULLSEYE_FAST` stays **off** by default even though
 and that silently breaks the SHA-256 reproducibility pins (`docs/NEXT_SESSION.md`).
 Turning it on is not a tuning change — **it is 0.2.0**.
 
+## Cutting a release (GitHub Release, fixed format)
+
+Pushing a tag publishes to PyPI (`.github/workflows/release.yml`). **A tag is not a
+release**: until v0.1.10 this repository had eleven tags and zero GitHub Releases, so
+an outside engineer could not tell *what was usable, and verified how, at a given point
+in time*. Every tag now gets a Release, and it uses the same headings every time —
+a release note whose shape changes from version to version cannot be compared.
+
+Order of operations:
+
+1. Suite green locally, then `master` green in CI. **Never tag a red tree.**
+2. Bump `version` in `pyproject.toml` **and** `CITATION.cff` (`version`, `date-released`).
+3. `git tag vX.Y.Z && git push origin vX.Y.Z` — this publishes to PyPI.
+4. Wait for the PyPI job to succeed, then publish the Release with the sections below.
+
+The sections, in this order (see the v0.1.10 release for a worked example):
+
+| Section | What goes in it |
+|---|---|
+| Title | `Fullseye vX.Y.Z — <short capability line>` |
+| Scope | Which areas this release covers (2-D, 3-D, point cloud, mesh, CT, optics, interferometry, acoustics, RAG, workbench) |
+| Added / Changed / Fixed / Breaking | Four separate headings. **Breaking says "None" explicitly** when there is none — silence reads as "unknown" |
+| Minimum environment | Python floor, OS, required dependencies, the full list of optional extras, whether a GPU is needed |
+| Quickstart | Must **run as written** on a clean install with no data files. Run it before pasting it |
+| Verification & known limitations | How the release is checked (which gates), representative measured numbers, and what is *not* covered |
+| Maturity | Which parts are verified, which are validated on real data, which are research prototypes |
+| Citation | Per `CITATION.cff`; state plainly if no DOI has been minted rather than writing a placeholder |
+| Links | Docs site, PyPI, operator corpus, articles, changelog, known issues, Zenodo (or "not yet registered") |
+
+Two rules that matter more than the format:
+
+- **Numbers in a release note are measured, not remembered.** If a figure cannot be
+  reproduced by running something in the repository, leave it out.
+- **A citation that does not resolve is worse than none.** No placeholder DOIs.
+
 ## Dev quickstart
 
 ```bash
