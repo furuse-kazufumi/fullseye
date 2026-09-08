@@ -1008,8 +1008,13 @@ def main():
     # §2 対照群(N 一定)は傾斜に**厳密に**効かない。勾配ありでも上限を超えない。
     assert slope["N 一定(対照群)"]["meas"] < 1e-9, slope["N 一定(対照群)"]["meas"]
     assert slope["勾配あり"]["meas"] <= slope["勾配あり"]["bound"] + 1e-9
-    assert slope["勾配あり"]["gap"] < 1e-6, slope["勾配あり"]["gap"]
+    assert slope["勾配あり"]["gap_med"] < 1e-5, slope["勾配あり"]["gap_med"]
     assert slope["勾配あり"]["meas"] < 0.01, "傾斜への影響が 0.01 度を超えた"
+    # 予測と実測の最大差は離散化(2 次収束)。セルを半分にすると 3 倍以上縮む。
+    cv = slope["conv"]
+    assert [c for c, _ in cv] == [100.0, 50.0, 25.0], cv
+    assert cv[0][1] > cv[1][1] > cv[2][1], cv
+    assert cv[0][1] / cv[1][1] > 3.0, cv
     assert abs(slope["勾配あり"]["dh"] - GEOID_N0) < 1.0
     # §3 体積は閉形式 A・N̄ どおり。対照群では誤差が消える。
     assert abs((vol["v_wrong"] - vol["v_true"]) - vol["pred"]) < 1e-3, vol
