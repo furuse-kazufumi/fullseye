@@ -3034,7 +3034,10 @@ def snell_angle(theta_i_deg, eta1=1.0, eta2=1.5):
     None は ValueError)。符号は保たれる(負の入射角は負の屈折角)。``|(eta1/eta2) sin θi| > 1`` なら
     ``nan``(全反射。``eta1 > eta2`` のときだけ起きる)。臨界角は ``degrees(arcsin(eta2/eta1))``。
     ``eta1 == eta2`` なら入射角そのまま。
-    ベクトルで曲げるなら ``refract``、反射率は ``fresnel_reflectance(cos(radians(θi)))``。
+    ベクトルで曲げるなら ``refract``(バッチは :func:`glassmirror.refract_rays`。
+    ``refract`` は 1 本でも TIR があるとバッチ全体が ``None`` になる)、反射率は
+    ``fresnel_reflectance(cos(radians(θi)))``。**角度を配列でまとめて曲げる口は無い** ——
+    音響のように屈折率でなく速度で考える場合は ``eta = 1/c`` を渡す(n ∝ 1/c)。
     """
     try:
         theta_i_deg = float(theta_i_deg)

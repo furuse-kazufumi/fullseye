@@ -940,17 +940,6 @@ def section_figures(truth, pers):
                    caption="近似平行投影。K=4 は外接長方形そのもの(比 4/π = 1.273)。"
                            "角が丸く見えるのは voxel の刻み。")
 
-    diff = occ8.astype(float) - occ_t.astype(float)
-    figs.save_grid("excess",
-                   [side(occ_t), diff.sum(axis=1).T[::-1],
-                    diff[:, :, zi], diff.max(axis=1).T[::-1]],
-                   ["真の占有(側面)", "余分の厚み(y 方向の積算)",
-                    "余分(水平断面 z = 1.05 m)", "余分の有無(側面)"],
-                   ncols=2, signed=[False, True, True, True],
-                   title="K=8 で余った分はどこに付いているか",
-                   caption="腹の下と脚の間(前後方向に張り出す)と、背中のくぼみ。"
-                           "符号つきなので 0 が暗い。")
-
 
 # --------------------------------------------------------------------------- #
 def main():
@@ -987,9 +976,9 @@ def main():
     print("     その先は**前景抽出の 1 画素**と**輪郭に出ない凹み**が残り、")
     print("     どちらもカメラを足しても動かない。")
     figs.save_table("summary", ["条件", "体積の誤差"], rows,
-                    title="視体積交差の誤差収支 —— 台数で買える分と買えない分",
-                    caption=f"真値 {truth['true']:.4f} m^3 / {truth['weight']:.0f} kg。"
-                            "同じ voxel 格子の占有数で比べている。")
+                    title="誤差収支",
+                    caption=f"台数で買える分と買えない分。真値 {truth['true']:.4f} m^3 / "
+                            f"{truth['weight']:.0f} kg。同じ voxel 格子の占有数で比べている。")
 
     # ---- 自己検査(所見を固定する。壊れたら鳴る)----------------------------- #
     # 1. 真値: 3 通りの積分が一致し、格子の偏りは 0.1 % 未満
