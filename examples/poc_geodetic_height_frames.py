@@ -441,9 +441,32 @@ def section_geoid_slope():
                       "dh": float((h_ell - h_true).mean()),
                       "h_true": h_true, "n_fld": n_fld, "h_ell": h_ell,
                       "s_diff": s_wrong - s_true}
-    print("  → ★**36 m 間違っているのに、傾斜は 0.007 度しか間違わない**。")
+    print("  → ★**36 m 間違っているのに、傾斜は 0.009 度しか間違わない**。")
     print("     傾斜は差なので N の**定数部が丸ごと消える**(N 一定の対照群は厳密に 0)。")
     print("     残るのは勾配 ∇N だけで、それも atan|∇N| で頭打ち。")
+    # ★予測と実測の最大差は「模型の誤り」か「離散化」かを分ける。セルを細かくする。
+    conv = []
+    for cell in (100.0, 50.0, 25.0):
+        n = int(round(12000.0 / cell)) + 1
+        xs = np.arange(n) * cell
+        cx, cy = np.meshgrid(xs, xs[::-1])
+        h_t = terrain_hilly(cx, cy)
+        h_e = h_t + geoid_height(cx, cy)
+        dhx, dhy = grad_hilly(cx, cy)
+        dnx, dny = grad_geoid(cx, cy)
+        p = (np.degrees(np.arctan(np.hypot(dhx + dnx, dhy + dny)))
+             - np.degrees(np.arctan(np.hypot(dhx, dhy))))
+        m = (np.asarray(fs.ledger.dem_slope(h_e, cell))
+             - np.asarray(fs.ledger.dem_slope(h_t, cell)))
+        inner = (slice(2, -2), slice(2, -2))
+        conv.append((cell, float(np.abs(m[inner] - p[inner]).max())))
+    print("  → 予測と実測の最大差は**離散化**。セル寸法を変えて確かめる:")
+    for cell, err in conv:
+        print(f"     セル {cell:5.1f} m: 最大差 {err:.3e} 度")
+    print(f"     セルを半分にすると差は {conv[0][1] / conv[1][1]:.1f} 分の 1 → "
+          f"**2 次収束**(Horn の 3x3 は勾配の 2 次の項を落とす)。")
+    print("     ★差が出るのは |∇H| の小さいセル(尾根・鞍部)—— そこでは傾斜の向きが")
+    print("     決まらないので、解析勾配と 3x3 差分がいちばん食い違う。")
     print("  → **消えない量はこの後の §3(体積)・§4(浸水)・§5(流向)に出る**。")
     if figs.enabled():
         a = out["勾配あり"]
