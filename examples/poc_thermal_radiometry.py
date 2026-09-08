@@ -1073,9 +1073,13 @@ def section_guard_band(tab, cam, eps, u_eps, base, head, n_trials: int = 40000):
           f"真に合格 {int((~truly_bad).sum())}、逆算破綻 {int((~ok).sum())} 件")
     print(f"  {'判定の仕方':>34}{'guard band [K]':>16}{'誤合格率':>12}"
           f"{'誤不合格率':>12}{'合格率':>10}")
+    # ★guard band に使うのは**上側**の張り出し。合格と言いたいのは
+    #   「真値が閾値**より上**でない」ことなので、区間の上端で切る。
+    #   下側 off[0] を使うと(分布が右に歪んでいる分だけ)浅く切ってしまう ——
+    #   1 度そう書いて、誤合格が減らないので気づいた。
     rules = [("不確かさを無視(T̂ ≤ 閾値)", 0.0),
              ("独立 RSS の guard band", base["half_rss"]),
-             ("相関つき MC の guard band", -head["off"][0])]
+             ("相関つき MC の guard band", head["off"][1])]
     rows, out = [], {}
     for name, band in rules:
         passed = ok & (t_hat + band <= limit_k)
