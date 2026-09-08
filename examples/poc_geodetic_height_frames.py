@@ -659,13 +659,17 @@ def section_line_of_sight():
             drops.append(float(np.max(np.asarray(
                 fs.ledger.dem_earth_curvature_drop(d, REFRACTION_K)))))
     print(f"  組数 {pairs}(2 km 以上離れた組だけ)、目線 {eye:.1f} m")
-    print(f"  遮蔽余裕の変化 最大 {worst:.2f} m(予測の上限 {bound:.2f} m 以内)")
+    print(f"  遮蔽余裕の変化 最大 {worst:.3f} m")
+    print(f"     素朴な上限 {bound:.2f} m の {bound / max(worst, 1e-9):.0f} 分の 1、"
+          f"絞った上限 {tight:.3f} m の {100.0 * worst / tight:.0f} %")
     print(f"  判定が変わった組 {flips} / {pairs} = {100.0 * flips / pairs:.2f} %")
     print(f"  参考: 同じ距離の地球曲率落ち(k={REFRACTION_K})は最大 "
-          f"{max(drops):.1f} m —— **こちらが 10 倍効く**")
-    print("  → 視通は 2 点の**差**なので、N の定数部は消える。残るのは ∇N・d だけ。")
+          f"{max(drops):.1f} m —— **こちらが {max(drops) / max(worst, 1e-9):.0f} 倍効く**")
+    print("  → ★はじめ ∇N・d(2.60 m)を上限に置いたが、実測はその 50 分の 1。")
+    print("     **線形な下駄は視線にも同じだけ乗る**ので、傾いた板を挟んでも")
+    print("     見通しは変わらない。残るのは N の**曲率**だけ —— 予測を絞り直した。")
     return {"pairs": pairs, "flips": flips, "worst": worst, "bound": bound,
-            "drop_max": max(drops)}
+            "tight": tight, "drop_max": max(drops)}
 
 
 def section_datum():
