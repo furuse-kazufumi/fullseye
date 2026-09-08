@@ -474,6 +474,11 @@ def echo_envelope(prof, theta_deg: float, wavelength: float, spacing: float,
 
     往復時間 τ(φ) は角度に対して**凸**なので、対称なビームでも
     エコーは非対称になり、振幅検出の頂点はビーム軸の τ とずれる。
+
+    作り方は「到来時間の密度をヒストグラムに積んでから、パルスで畳む」。
+    部分角ごとにガウスを足す素直な書き方だと、外側では隣り合う部分角の
+    到来時間がパルス幅より離れて**櫛**になる(:data:`ECHO_N_SUB` 参照)。
+
     返り値は ``(包絡線, 窓の先頭の時刻 [s], ビーム軸の往復時間 [s])``。
     """
     bw = bw0 / math.cos(math.radians(theta_deg))
@@ -489,10 +494,14 @@ def echo_envelope(prof, theta_deg: float, wavelength: float, spacing: float,
     tau_axis = 2.0 * float(t_ax[0])
     half = int(1.4 * float(np.max(np.abs(tau - tau_axis))) * ECHO_FS) + 64
     i0 = int(round(tau_axis * ECHO_FS)) - half
-    idx = np.arange(i0, i0 + 2 * half + 1, dtype=np.float64) / ECHO_FS
-    sigma = PULSE_S / 2.355
-    env = (w[:, None] * np.exp(-0.5 * ((idx[None, :] - tau[:, None]) / sigma) ** 2)
-           ).sum(axis=0)
+    n = 2 * half + 1
+    bins = np.rint(tau * ECHO_FS).astype(np.int64) - i0
+    keep = (bins >= 0) & (bins < n)
+    hist = np.zeros(n, np.float64)
+    np.add.at(hist, bins[keep], w[keep])
+    sig_s = PULSE_S / 2.355 * ECHO_FS                 # パルス幅 [標本]
+    k = np.arange(-int(4 * sig_s) - 1, int(4 * sig_s) + 2, dtype=np.float64)
+    env = np.convolve(hist, np.exp(-0.5 * (k / sig_s) ** 2), mode="same")
     return env / max(float(env.max()), 1e-300), i0 / ECHO_FS, tau_axis
 
 
