@@ -620,7 +620,13 @@ def section_line_of_sight():
     dnx, dny = grad_geoid(gx, gy)
     span = float(np.hypot(gx.max() - gx.min(), gy.max() - gy.min()))
     bound = float(np.hypot(dnx, dny).max()) * span
-    print(f"  予測(閉形式)の上限: |∇N| 最大 x 対角長 {span:.0f} m = {bound:.2f} m")
+    # ★2 つ目の(こちらが本命の)閉形式。視線は両端の h で引くので、N の**線形部**は
+    #   視線にも地面にも同じだけ乗って消える。残るのは N が弦から離れる量 =
+    #   |N''| d^2 / 8。この場の N'' は 2C(cos^2θ - sin^2θ) なので |N''| <= 2C。
+    tight = 2.0 * GEOID_CURV * span * span / 8.0
+    print(f"  予測(素朴)の上限: |∇N| 最大 x 対角長 {span:.0f} m = {bound:.2f} m")
+    print(f"  ★予測(絞った): N の**線形部は視線にも同じだけ乗って消える**ので、")
+    print(f"     残るのは弦からのずれ |N''|d^2/8 = {tight:.3f} m だけ。50 倍違う。")
     eye = 3.0
     pairs = 0
     flips = 0
