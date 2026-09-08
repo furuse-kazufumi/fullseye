@@ -120,6 +120,10 @@ py-modules = [
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
   # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
   "api", "param_specs", "ops", "backend_safe", "torch_lazy",
+  # realdata: 実写サンプルの取り口(2026-09-08 追加)。examples/poc_real_*.py が
+  # import する。ライブラリ本体は使わないが、**wheel から落ちると PoC が
+  # 動かない** —— core CI の packaging 門が実際に捕まえた。
+  "realdata",
   # fsthreads: 分解のあいだだけ BLAS のスレッド数を絞る層。出荷モジュールが
   # import するので、落とすと ImportError になる(2026-09-06 追加)。
   "fsthreads",

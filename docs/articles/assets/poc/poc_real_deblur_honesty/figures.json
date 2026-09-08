@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_restore.png",
+  "name": "restore",
+  "caption": "長さを間違えた PSF は勾配エネルギーが真値の 1.54 倍。",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "02_nsr.png",
+  "name": "nsr",
+  "caption": "固定した nsr で比べると、正しい PSF でもゼロ点に負ける。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_cliffs.png",
+  "name": "cliffs",
+  "caption": "σ=0 で +1.52 dB、σ=0.016 で +0.05 dB。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_metrics.png",
+  "name": "metrics",
+  "caption": "参照なし指標が選ぶ手法は PSNR で 3〜5 dB 劣る。",
+  "shape": [
+   272,
+   504,
+   3
+  ],
+  "csv": "04_metrics.csv",
+  "tsv": "04_metrics.tsv"
+ }
+]

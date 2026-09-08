@@ -41,6 +41,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   閉形式 4.2)/ `poc_real_stain_unmix`(**残差は平面内の誤りに構造的に
   盲目** —— 染色ベクトルを ±20 度回すと濃度は 2.86 倍動くのに残差の
   絶対中央値は 0.0345 のまま幅 3.3e-16)。
+- ★実写 PoC 5 本目 `poc_real_deblur_honesty`(展示 104)。真値を実写にして
+  劣化だけ自分で作る。**3 つの物差しに 3 人の勝者** —— PSNR は正しい PSF の
+  Wiener、勾配エネルギーは `iv_motion_deblur`(真値の 1.54 倍鋭い絵)、
+  `sk_blur_effect` は `iv_unsharp_deblur`。参照なし指標が選ぶ手法は PSNR で
+  4.98 / 3.26 dB 損。★**ノブ(`nsr`)で動く 6.22 dB は、脱畳み込みの利得
+  1.36 dB の 4.6 倍** —— 固定したノブで比べるのは比較ではない。
 - CI で赤になった自分の門を 2 つ直した(`docs/KNOWN_ISSUES.md` §44.8):
   リポジトリ非同梱の `data/halcon_operators.json` を無条件に読んでいた /
   探針を全 sort に広げた初回に torch 必須 op へ到達し、**「壊れている」と
