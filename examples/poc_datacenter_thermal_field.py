@@ -803,29 +803,43 @@ def main() -> int:
     print("\n" + "=" * 78)
     print("まとめ")
     print("=" * 78)
-    print("  * 幾何の予測 exp(-3d²/8σ²) と実測(最悪位相)の差は最大 %.4f。"
+    print("  * 閉形式 exp(-3d²/8σ²) と幾何だけの実測は %.1e で一致する。"
           "崖は**測る前に言える**。" % cl["err"])
-    print("  * σ=%.2f m のラックは間隔 %.2f m で回復 %.4f まで落ちる"
-          "(半減間隔 d* = %.3f m)。"
-          % (HOTSPOTS[2][4], 0.60, cl["meas"][(0.60, 2)],
-             half_spacing(HOTSPOTS[2][4])))
-    print("  * 補間法を 3 つ入れ替えても崖の位置は %.4f m しか動かない —— "
-          "**手法ではなく\n    サンプリングの問題**。" % mc["spread"])
-    print("  * 乱数配置は死角を消さない: %.1f %% が格子の最悪距離を超えた"
-          "(Poisson の予測 %.1f %%)。"
+    print("  * ★外れたのは「現場で測れる量」のほう: 素朴なピーク測定は予測を"
+          "最大 %+.4f 超過する\n    —— 超過ぶんは背景の復元誤差で、"
+          "**崖は実際より浅く見える**。" % cl["excess"])
+    print("  * ★もう 1 つ外した: 「崖の位置は手法で動かない」は言い過ぎで、"
+          "RBF は半減間隔を %.4f m\n    ずらす(係数 %.2f 倍の持ち上がり)。"
+          "動かないのは**指数**のほう(予測との差 %.4f /m²)。"
+          % (mc["spread"], mc["gains"]["rbf"], mc["sl_spread"]))
+    print("  * 乱数配置は死角を消さない: %.2f %% が格子の最悪距離を超えた"
+          "(Poisson の予測 %.2f %%)。"
           % (100 * gr["frac"], 100 * gr["p_worse"]))
     print("  * 3 つの物差しで勝者は%s。"
           % ("入れ替わる" if mt["swapped"] else "入れ替わらない"))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     # --- 所見を固定する(穴が塞がったら鳴る)--- #
-    assert cl["err"] < 0.02, cl["err"]
-    assert cl["meas"][(0.30, 2)] > 0.3 and cl["meas"][(0.80, 2)] < 0.05, cl["meas"]
-    assert mc["spread"] < 0.10, mc["spread"]
-    assert abs(gr["frac"] - gr["p_worse"]) < 0.12, (gr["frac"], gr["p_worse"])
+    # (1) 閉形式は幾何そのもの。ずれたら field / lattice / recover のどれかが壊れた。
+    assert cl["err"] < 1e-6, cl["err"]
+    # (2) 崖は本当に落ちる(σ=0.22 m のラックは d=0.80 m でほぼ消える)。
+    assert cl["geo"][(0.30, 2)] > 0.4 and cl["geo"][(0.80, 2)] < 0.02, cl["geo"]
+    # (3) 現場で測れる量は予測より必ず上に出る(背景の誤差が同じ場所に載る)。
+    assert cl["excess"] > 0.15, cl["excess"]
+    assert cl["naive"][(1.20, 2)] > 10 * cl["geo"][(1.20, 2)], cl["naive"]
+    # (4) 指数は手法で動かない / 係数は動く(RBF は節点を超える)。
+    assert mc["sl_spread"] < 0.05 * abs(mc["slope_pred"]), mc["slopes"]
+    assert mc["gains"]["rbf"] > 1.2 and mc["spread"] > 0.05, mc["gains"]
+    assert abs(mc["curves"]["nearest"][2] - mc["curves"]["linear"][2]) < 1e-9
+    # (5) 乱数は死角を消さない(Poisson の予測に載る)。
+    assert abs(gr["frac"] - gr["p_worse"]) < 0.02, (gr["frac"], gr["p_worse"])
+    assert gr["dr_max"] > gr["r_grid"] and gr["dg_max"] <= gr["r_grid"] + 1e-9
+    # (6) ゼロ点は 1 台も見つけない / 手法はゼロ点を大きく上回る。
     assert zp["res"]["null"]["miss"] == len(HOTSPOTS), zp["res"]["null"]
     assert zp["res"]["rbf"]["rmse"] < 0.5 * zp["res"]["null"]["rmse"]
+    # (7) 真値そのものは評価格子の刻みの範囲で正しく見つかる(測定系の検算)。
     assert sc["miss"] == 0 and sc["loc"] <= EV * np.sqrt(3) + 1e-9, sc
+    # (8) 物差しで勝者が入れ替わる。
     assert mt["swapped"], mt["winners"]
 
     if figs.errors():
