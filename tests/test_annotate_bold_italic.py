@@ -5,7 +5,7 @@
       色付きで描けるのかとかも気になる。」
 
 色は前からできた。字体は入口が ``font_path`` だけだったので、**合成**の
-太字(輪郭を太らせる)と斜体(せん断)を足した。
+太字(同じ字を 1 px ずらして重ね打ち)と斜体(せん断)を足した。
 
 ★ここで一番効く門は 2 つ:
 
@@ -56,19 +56,21 @@ def test_bold_puts_down_more_ink_and_says_so_in_the_measurement():
     mb = A.measure_text(TXT, font_size=FS, bold=True)
     stroke = A._bold_px(m0["font"], True)
     assert stroke >= 1
-    assert mb["width"] - m0["width"] == 2 * stroke
-    assert mb["height"] - m0["height"] == 2 * stroke
+    # ★重ね打ちは**横にだけ**太る。上下に太る縁取りだと和文のふところが埋まる
+    #   (2026-09-09 実測: 11pt の「量 値 面積」が黒い塊になった)。
+    assert mb["width"] - m0["width"] == stroke
+    assert mb["height"] - m0["height"] == 0
 
 
 def test_the_stroke_width_follows_the_font_size():
-    """小さい字で 1 px、大きい字で太く —— 比で決まるので figure ごとに整う。"""
+    """小さい字で 1 回、大きい字で厚く —— 比で決まるので figure ごとに整う。"""
     got = {s: A._bold_px(A._font(s), True) for s in (10, 14, 27, 40)}
     assert got[10] == 1 and got[14] == 1
     assert got[27] == 2 and got[40] == 3
     assert all(a <= b for a, b in zip(got.values(), list(got.values())[1:]))
 
 
-def test_an_explicit_pixel_width_is_taken_literally():
+def test_an_explicit_repeat_count_is_taken_literally():
     font = A._font(FS)
     assert A._bold_px(font, 3) == 3
     assert A._bold_px(font, 0) == 0 and A._bold_px(font, False) == 0

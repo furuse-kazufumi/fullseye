@@ -215,6 +215,58 @@ def test_unknown_mode_and_draw_are_refused():
     img = np.zeros((8, 8))
     m = np.ones((8, 8), bool)
     with pytest.raises(ValueError, match="mode"):
-        A.annotate_invert(img, m, mode="xor")
+        A.annotate_invert(img, m, mode="negate")
     with pytest.raises(ValueError, match="draw"):
         A.annotate_invert(img, m, draw="outline")
+
+# --------------------------------------------------------------------------- #
+# 8. bit マスク(XOR)—— 著者が実際に使っていたやり方
+# --------------------------------------------------------------------------- #
+def test_xor_with_all_bits_is_exactly_the_complement():
+    """★族が矛盾していないことの確認: 0xFF の XOR は補色そのもの(崖ごと同じ)。"""
+    img = np.tile(ALL_LEVELS, (4, 1))
+    m = np.ones(img.shape, bool)
+    comp = A.annotate_invert_visibility(img, m, mode="complement")
+    xff = A.annotate_invert_visibility(img, m, mode="xor", bits=0xFF)
+    assert xff["min_contrast"] == pytest.approx(comp["min_contrast"], rel=1e-12)
+    assert xff["invisible_fraction"] == pytest.approx(comp["invisible_fraction"])
+
+
+def test_flipping_only_the_top_bit_never_disappears():
+    """★既定 0x80 の保証。値は必ず 128 階調跳ぶので、どの地でも消えない。"""
+    img = np.tile(ALL_LEVELS, (4, 1))
+    rep = A.annotate_invert_visibility(img, np.ones(img.shape, bool), mode="xor")
+    assert rep["min_contrast"] >= 4.0
+    assert rep["invisible_fraction"] == 0.0
+    # そして**地の模様は残る**(白か黒に潰れる contrast との違い)
+    out = A._inverted(img, "xor")
+    assert len(np.unique(out)) == 256
+    assert len(np.unique(A._inverted(img, "contrast"))) == 2
+
+
+def test_a_low_bit_mask_is_invisible_everywhere_and_says_so():
+    """★下位 bit だけの XOR は**どの階調でも**見えない —— 警告が出ること。"""
+    img = np.tile(ALL_LEVELS, (4, 1))
+    rep = A.annotate_invert_visibility(img, np.ones(img.shape, bool), mode="xor", bits=0x0F)
+    assert rep["min_contrast"] < 1.02 and rep["invisible_fraction"] == 1.0
+    with pytest.warns(RuntimeWarning, match="invisible"):
+        A.annotate_invert(img, np.ones(img.shape, bool), mode="xor", bits=0x0F)
+
+
+def test_xor_round_trips_and_refuses_a_no_op_mask():
+    rng = np.random.default_rng(3)
+    img = np.rint(rng.random((16, 16)) * 255.0) / 255.0      # 8bit 格子の上の値
+    m = np.ones((16, 16), bool)
+    twice = A.annotate_invert(A.annotate_invert(img, m, mode="xor"), m, mode="xor")
+    assert np.allclose(twice, img, atol=1e-12)
+    for bad in (0, 256, 1.5, -1):
+        with pytest.raises(ValueError, match="bits"):
+            A.annotate_invert(img, m, mode="xor", bits=bad)
+
+
+def test_xor_leaves_the_alpha_channel_alone_too():
+    img = np.zeros((8, 8, 4))
+    img[..., 3] = 1.0
+    out = A.annotate_invert(img, np.ones((8, 8), bool), mode="xor")
+    assert np.all(out[..., 3] == 1.0)
+    assert np.allclose(out[..., :3], 128.0 / 255.0)

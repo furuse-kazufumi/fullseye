@@ -477,8 +477,9 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
         **合成**の太字・斜体(:func:`_bold_px` / :func:`_italic_tile`)。本物の
         Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは
         ``font_path`` にその書体のファイルを渡すこと。``bold`` に整数を渡すと
-        縁取りの画素数を直に指定できる。**太さと傾きのぶんは ``width`` /
-        ``height`` に入る**ので、板や表の桁はそのまま広がる。
+        重ね打ちの回数を直に指定できる。**太さと傾きのぶんは ``width`` に入る**
+        ので、板や表の桁はそのまま広がる(重ね打ちは横にだけ太るので
+        ``height`` は変わらない)。
     wrap : bool
         True(既定)なら ``max_width`` で**折り返す**。False なら折り返さず
         **行を増やさずフォントを縮めて**収める(格子のラベルのように、2 行に
@@ -527,13 +528,13 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
         w = max(widths) if widths else 0.0
         lh = int(round(_line_height(font) * line_spacing))
         stroke = _bold_px(font, bold)
-        # 太さは左右・上下に、傾きは**行送りの高さぶん**だけ右に伸びる。
-        block_h = lh * max(0, len(lines) - 1) + _line_height(font) + 2 * stroke
-        w = w + 2 * stroke + (ITALIC_SHEAR * block_h if italic else 0.0)
+        # 重ね打ちは**横にだけ**太る(高さは増えない)。傾きは行送りの高さぶん
+        # だけ右に伸びる。
+        block_h = lh * max(0, len(lines) - 1) + _line_height(font)
+        w = w + stroke + (ITALIC_SHEAR * block_h if italic else 0.0)
         if max_width is None or w <= max_width:
             return {"lines": lines, "font": font, "font_size": size,
-                    "width": int(math.ceil(w)),
-                    "height": int(lh * len(lines) + 2 * stroke),
+                    "width": int(math.ceil(w)), "height": int(lh * len(lines)),
                     "line_height": lh}
     raise ValueError(
         f"text {text!r} does not fit in {max_width}px even at font size {min_font_size} "
@@ -541,8 +542,9 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
         "not an option: a machine check cannot see clipped text)")
 
 
-#: 合成 Bold の太さを決める係数(フォントサイズに対する比)。14pt で 1 px、
-#: 27pt で 2 px。太さを自分で決めたいときは ``bold=2`` のように画素数を渡す。
+#: 合成 Bold の**重ね打ちの回数**を決める係数(フォントサイズに対する比)。
+#: 14pt で 1 回、27pt で 2 回、40pt で 3 回。自分で決めたいときは ``bold=2`` の
+#: ように回数を直に渡す。
 _BOLD_RATIO = 1.0 / 13.5
 
 #: 合成 Italic の傾き ``tan(theta)``。theta = 12 度は本物の斜体(8-16 度)の
@@ -551,10 +553,17 @@ ITALIC_SHEAR = 0.2126
 
 
 def _bold_px(font, bold):
-    """合成ボールドの縁取り幅 [px](``bold`` が偽なら 0)。
+    """合成ボールドの**重ね打ちの回数** [px](``bold`` が偽なら 0)。
 
-    ★**本物の Bold 書体ではない**。輪郭を太らせているだけなので字形が違い、
-    細い横画は潰れやすく、和文では特に差が出る。本物が要るときは
+    同じ字を右へ 1 px ずつずらして ``n+1`` 回打つ ―― 古い Windows の GDI が
+    やっていた合成ボールドと同じ手。**横にだけ太る**ので、字の内側の空き
+    (ふところ)が残る。
+
+    ★輪郭を縁取る(Pillow の ``stroke_width``)やり方は採らない: 上下左右に
+    太るので**ふところまで埋まり**、11pt の和文が黒い塊になる(2026-09-09 に
+    `量 値 面積 周囲長 円形度` を 11/14/20pt で並べて実測)。
+
+    ★**本物の Bold 書体ではない**。字形は Bold 書体と違う。本物が要るときは
     ``font_path=`` に Bold のフォントファイルを渡すこと ―― そちらは
     「フォントを選ぶ」話で、この関数は通らない。
     """
@@ -603,15 +612,16 @@ def _text_mask(shape, lines, font, x, y, line_height, bold=False, italic=False):
             if line:
                 d.text((int(x), int(y + i * line_height)), line, fill=255, font=font)
         return np.asarray(im, dtype=np.float64) / 255.0
-    pad = stroke + 2
-    tw = int(math.ceil(max([_text_width(s, font) for s in lines] or [0.0]))) + 2 * pad
+    pad = 2
+    tw = int(math.ceil(max([_text_width(s, font) for s in lines] or [0.0]))) + stroke + 2 * pad
     th = int(round(line_height * max(0, len(lines) - 1) + _line_height(font))) + 2 * pad
     tile = Image.new("L", (max(1, tw), max(1, th)), 0)
     d = ImageDraw.Draw(tile)
     for i, line in enumerate(lines):
-        if line:
-            d.text((pad, int(round(i * line_height)) + pad), line, fill=255, font=font,
-                   stroke_width=stroke, stroke_fill=255)
+        if not line:
+            continue
+        for dx in range(stroke + 1):            # 重ね打ち(横にだけ太る)
+            d.text((pad + dx, int(round(i * line_height)) + pad), line, fill=255, font=font)
     if italic:
         tile, _lean = _italic_tile(tile)
     out = Image.new("L", (W, H), 0)
@@ -3084,6 +3094,19 @@ TEXT_PATH_ANCHORS = ("start", "center", "end")
 #: 音引き・波ダッシュ・三点リーダ・各種括弧は**回して縦に伸ばす**のが組版の作法。
 #: ★句読点(。、)は回さず**右上へ寄せる**のが本来だが、ここでは寄せない ——
 #: できないことを黙って近似せず、docstring に書いて残す。
+#: 縦書きで**右上へ寄せる**字(句読点)。横組みでは字の左下に来る点が、
+#: 縦組みでは右上に来る —— 回すのではなく**位置を動かす**のが組版の作法。
+#: Windows の ``@`` 付きフォント(GDI が face 名で選ぶ縦組み用の顔)は、これを
+#: font 側でやってくれていた。Pillow はフォントを**ファイルパス**で開くので
+#: ``@`` の顔には到達できず、HarfBuzz の ``direction="ttb"`` も Raqm が入って
+#: いる環境と入っていない環境で結果が変わる(この機械の Pillow 12.3.0 は
+#: ``features.check("raqm")`` が False)。**プラットフォームで揃うほうを選ぶ**
+#: という方針に従い、ここは合成で寄せる。
+VERTICAL_SHIFTED_CHARS = frozenset("、。，．")
+
+#: 上の寄せ量(送り = 全角の高さに対する比)。読み手から見て右へ、列の上へ。
+_VPUNCT_SHIFT = 0.33
+
 VERTICAL_ROTATED_CHARS = frozenset(
     "\u30fc\u301c\uff5e\u2026\u2025\uff08\uff09()\u300c\u300d"
     "\u300e\u300f\u3010\u3011\u3014\u3015\uff3b\uff3d[]{}\uff5b\uff5d"
@@ -3114,8 +3137,15 @@ def annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=
       (始点→終点の |dy| > |dx|)なら送りを字幅でなく**字高**にするので、
       これが**縦書き**になる。``VERTICAL_ROTATED_CHARS`` の字だけは 90 度回す。
 
-    ★**縦書きで実装していないこと**(黙って近似しない): 句読点の右上寄せ、
-    小書き仮名の位置補正、縦中横。短い注記のための機能で、本文組版ではない。
+    句読点(``、。，．``)は縦組みの作法どおり**右上へ寄せる**
+    (:data:`VERTICAL_SHIFTED_CHARS`、寄せ量は送りの :data:`_VPUNCT_SHIFT` 倍)。
+    Windows の ``@`` 付きフォントが font 側でやっていたことを、ここでは合成で行う
+    —— Pillow はフォントをファイルパスで開くので ``@`` の顔に到達できず、
+    HarfBuzz の ``direction="ttb"`` も Raqm の有無で結果が変わるため、
+    **プラットフォームで揃うほう**を採った。
+
+    ★**縦書きで実装していないこと**(黙って近似しない): 小書き仮名の位置補正、
+    縦中横、行末の禁則。短い注記のための機能で、本文組版ではない。
 
     Returns
     -------
@@ -3194,8 +3224,15 @@ def annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=
             # 進行方向の右(画面座標、y 下向き)。行送りもオフセットもこの向き。
             nx, ny = -math.sin(ang), math.cos(ang)
             d = off + li * lstep
-            xy = (float(p[k, 0] + t * (p[k + 1, 0] - p[k, 0]) + d * nx),
-                  float(p[k, 1] + t * (p[k + 1, 1] - p[k, 1]) + d * ny))
+            px = p[k, 0] + t * (p[k + 1, 0] - p[k, 0]) + d * nx
+            py = p[k, 1] + t * (p[k + 1, 1] - p[k, 1]) + d * ny
+            if vertical and ch in VERTICAL_SHIFTED_CHARS:
+                # 送りの逆(列の上)と、法線の逆(読み手から見た右)へ寄せる。
+                # 経路が斜めでも同じ式で効く。
+                q = _VPUNCT_SHIFT * adv
+                px += -q * math.cos(ang) - q * nx
+                py += -q * math.sin(ang) - q * ny
+            xy = (float(px), float(py))
             if up:
                 draw_ang = 90.0 if (vertical and ch in VERTICAL_ROTATED_CHARS) else 0.0
             else:
@@ -3252,9 +3289,10 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
         if ch.strip() == "":
             continue
         cw = max(1, int(math.ceil(_text_width(ch, font))))
-        glyph = Image.new("L", (cw + 4 + 2 * stroke, lh + 4 + 2 * stroke), 0)
-        ImageDraw.Draw(glyph).text((2 + stroke, 2 + stroke), ch, fill=255, font=font,
-                                   stroke_width=stroke, stroke_fill=255)
+        glyph = Image.new("L", (cw + 4 + stroke, lh + 4), 0)
+        gd = ImageDraw.Draw(glyph)
+        for dx in range(stroke + 1):            # 重ね打ち
+            gd.text((2 + dx, 2), ch, fill=255, font=font)
         if italic:
             glyph, _lean = _italic_tile(glyph)
         rot = glyph.rotate(-it["angle_deg"], expand=True, resample=Image.BICUBIC)
@@ -3273,15 +3311,33 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
 
 # ---------------------------------------------------------------- 反転色
 
-#: 反転のしかた。**2 つしか無いのは、どちらにも言い切れる保証があるから**。
-#: 3 つめを足すと「たぶん見える」が混ざる。
+#: 反転のしかた。**どれにも言い切れる保証がある**ものだけを置く
+#: (「たぶん見える」は入れない)。最悪のコントラスト比は 8bit の全 256 階調で
+#: 実測した値(2026-09-08):
+#:
+#: =============== ================== ==================
+#: mode            地の模様           最悪コントラスト比
+#: =============== ================== ==================
+#: ``complement``  残る               **1.014**(v=128 で消える)
+#: ``xor``         残る(下位 bit)   **4.004**(``bits=0x80``)
+#: ``contrast``    失われる           **4.583**
+#: =============== ================== ==================
 #:
 #: * ``"complement"`` —— 素直な補色 ``1 - v``。地の模様がそのまま残るので、
 #:   何の上に線が乗っているかが判る。ただし**中間調で消える**(下記)。
+#: * ``"xor"`` —— 8bit に量子化して ``bits`` と排他的論理和を取る。著者が
+#:   実際に使っていた「反転色を bit マスクで掛ける」やり方で、既定の
+#:   ``bits=0x80`` は**最上位 bit だけ**を反転する。値は必ず 128 階調跳ぶので
+#:   消えず(最悪 4.004)、下位 7 bit が残るので**地の模様も残る** ——
+#:   ``complement`` の利点を保ったまま崖だけ無くしたもの。
+#:   ``bits=0xFF`` は ``complement`` と同じ(崖ごと同じ)。
 #: * ``"contrast"`` —— 画素ごとに白か黒へ倒す(相対輝度が
 #:   :data:`_CONTRAST_PIVOT` 未満なら白)。地の模様は失われるが、
 #:   **どんな地の上でもコントラスト比 4.58 以上**が出る。
-INVERT_MODES = ("complement", "contrast")
+INVERT_MODES = ("complement", "xor", "contrast")
+
+#: ``mode="xor"`` の既定の bit マスク。最上位 bit だけを反転する。
+DEFAULT_XOR_BITS = 0x80
 
 #: 「見えない」と判定するコントラスト比。8bit グレーの中間調 v=128 で補色
 #: (v=127)とのコントラスト比は **1.014**(実測 2026-09-08)—— 比 1.0 が
@@ -3299,11 +3355,25 @@ _CONTRAST_PIVOT = math.sqrt(0.0525) - 0.05
 INVISIBLE_POLICIES = ("warn", "raise", "ignore")
 
 
-def _inverted(a, mode):
+def _xor_bits(bits):
+    """``mode="xor"`` の bit マスクを検算する。**0 は拒否**(何も起きない)。"""
+    n = int(bits)
+    if n != bits or not (1 <= n <= 255):
+        raise ValueError(
+            f"bits must be an integer in 1..255 (got: {bits!r}) — 0 would leave the "
+            "image untouched, which is a drawing that silently does nothing")
+    return n
+
+
+def _inverted(a, mode, bits=DEFAULT_XOR_BITS):
     """``a``(float64 [0,1])を反転した画像。形とチャンネル数はそのまま。
 
     4 チャンネル以上のときは**先頭 3 本だけ**を反転する。α を反転すると
     「見えるようにしたつもりが透明になる」ので、そこは触らない。
+
+    ``mode="xor"`` は 8bit に量子化してから排他的論理和を取る ——
+    ``[0,1]`` の実数のままでは「bit を反転する」に意味が無いので、
+    **ここだけは 8bit の話**であることを隠さない(往復で最大 1/255 丸まる)。
     """
     if mode not in INVERT_MODES:
         raise ValueError(f"mode must be one of {INVERT_MODES} (got: {mode!r})")
@@ -3314,6 +3384,15 @@ def _inverted(a, mode):
             out[...] = 1.0 - out
         else:
             out[..., :n] = 1.0 - out[..., :n]
+        return out
+    if mode == "xor":
+        m = np.uint8(_xor_bits(bits))
+        if n is None:
+            q = np.clip(np.rint(a * 255.0), 0.0, 255.0).astype(np.uint8)
+            out[...] = (q ^ m).astype(np.float64) / 255.0
+        else:
+            q = np.clip(np.rint(a[..., :n] * 255.0), 0.0, 255.0).astype(np.uint8)
+            out[..., :n] = (q ^ m).astype(np.float64) / 255.0
         return out
     flip = np.where(_luma_field(a) < _CONTRAST_PIVOT, 1.0, 0.0)
     if n is None:
@@ -3361,7 +3440,8 @@ def _invert_guard(rep, mode, min_contrast, on_invisible, op):
     msg = ("%s(mode=%r): the inverted colour is invisible against what is actually "
            "underneath — %.1f %% of the %d drawn pixels fall below contrast %.2f "
            "(worst %.3f at %r). A mid-grey background is the classic case: at 8-bit "
-           "v=128 the complement is v=127, contrast 1.014. Use mode=\"contrast\" "
+           "v=128 the complement is v=127, contrast 1.014. Use mode=\"xor\" (flips the "
+           "top bit, keeps the texture, guaranteed >= 4.00) or mode=\"contrast\" "
            "(white/black per pixel, guaranteed >= 4.58), or draw in a fixed colour."
            % (op, mode, 100.0 * rep["invisible_fraction"], rep["pixels"],
               float(min_contrast), rep["min_contrast"], rep["worst_xy"]))
@@ -3370,16 +3450,17 @@ def _invert_guard(rep, mode, min_contrast, on_invisible, op):
     warnings.warn(msg, RuntimeWarning, stacklevel=3)
 
 
-def _invert_blend(a, claim, mode):
+def _invert_blend(a, claim, mode, bits=DEFAULT_XOR_BITS):
     """``out = a*(1-w) + inverted(a)*w``。**この順が正典**(:func:`_blend` と同じ)。"""
-    inv = _inverted(a, mode)
+    inv = _inverted(a, mode, bits)
     w = np.clip(np.asarray(claim, dtype=np.float64), 0.0, 1.0)
     if a.ndim == 2:
         return a * (1.0 - w) + inv * w
     return a * (1.0 - w)[..., None] + inv * w[..., None]
 
 
-def annotate_invert_visibility(img, mask, mode="complement", alpha=1.0):
+def annotate_invert_visibility(img, mask, mode="complement", alpha=1.0,
+                               bits=DEFAULT_XOR_BITS):
     """反転色が**その地の上で本当に見えるか**を、描く前に測る。
 
     反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、
@@ -3429,11 +3510,12 @@ def annotate_invert_visibility(img, mask, mode="complement", alpha=1.0):
     if not (0.0 <= float(alpha) <= 1.0):
         raise ValueError(f"alpha must be within [0,1] (got: {alpha})")
     claim = _mask_weights(a, mask) * float(alpha)
-    return _invert_report(a, _invert_blend(a, claim, mode), claim)
+    return _invert_report(a, _invert_blend(a, claim, mode, bits), claim)
 
 
 def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=1.0,
-                    min_contrast=INVERT_MIN_CONTRAST, on_invisible="warn"):
+                    bits=DEFAULT_XOR_BITS, min_contrast=INVERT_MIN_CONTRAST,
+                    on_invisible="warn"):
     """領域(region)を**反転色**で塗る/縁取る。
 
     「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」という
@@ -3451,8 +3533,14 @@ def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=
     width : float
         ``draw="margin"`` のときの帯の太さ(画素)。
     mode : str
-        :data:`INVERT_MODES`。``"complement"`` は地の模様を残し、
-        ``"contrast"`` は白黒に倒して見えることを保証する。
+        :data:`INVERT_MODES`。``"complement"`` は地の模様を残し、``"xor"`` は
+        模様を残したまま消えないことを保証し、``"contrast"`` は白黒に倒して
+        見えることを保証する。
+    bits : int
+        ``mode="xor"`` の bit マスク(1..255)。既定 ``0x80`` は最上位 bit だけを
+        反転する ―― **必ず 128 階調跳ぶので消えない**。``0xFF`` にすると
+        ``complement`` と同じ(崖ごと同じ)、``0x0F`` のような下位だけの
+        マスクは**どの階調でも見えない**(実測: 全 256 階調で比 1.5 未満)。
     alpha : float
         反転の効き。1.0 で完全に反転、0.5 なら地と反転色の中間
         (**``mode="complement"`` の 0.5 は必ず中間調になる** —— 反転色を
@@ -3497,14 +3585,14 @@ def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=
         ring = ndimage.binary_dilation(b, iterations=n) ^ ndimage.binary_erosion(b, iterations=n)
         wgt = ring.astype(np.float64)
     claim = wgt * float(alpha)
-    out = _invert_blend(a, claim, mode)
+    out = _invert_blend(a, claim, mode, bits)
     _invert_guard(_invert_report(a, out, claim), mode, min_contrast, on_invisible,
                   "annotate_invert")
     return out
 
 
 def annotate_invert_path(img, points, width=1.5, closed=False, dash=None,
-                         mode="complement", alpha=1.0,
+                         mode="complement", alpha=1.0, bits=DEFAULT_XOR_BITS,
                          min_contrast=INVERT_MIN_CONTRAST, on_invisible="warn"):
     """折れ線(line)を**反転色**で描く。アンチエイリアスつき。
 
@@ -3551,7 +3639,7 @@ def annotate_invert_path(img, points, width=1.5, closed=False, dash=None,
     for p, q in _dash_pieces(pts, bool(closed), dash):
         cov = np.maximum(cov, _segment_coverage(a.shape[:2], p, q, w))
     claim = cov * float(alpha)
-    out = _invert_blend(a, claim, mode)
+    out = _invert_blend(a, claim, mode, bits)
     _invert_guard(_invert_report(a, out, claim), mode, min_contrast, on_invisible,
                   "annotate_invert_path")
     return out

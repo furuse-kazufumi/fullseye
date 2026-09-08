@@ -158,6 +158,97 @@ def save(name: str, image, caption: str = "", signed: bool = False) -> Path | No
         return None
 
 
+#: GIF 1 本のコマ数の上限。これを超えたら**書かずに理由を残す**
+#: (何百コマも書いて数十 MB になるほうが困る)。
+MAX_GIF_FRAMES = 300
+
+#: GIF 1 本の大きさの目安 [byte]。超えたら警告として `errors()` に残す
+#: (消しはしない —— 見えないより大きいほうがまし)。
+GIF_SIZE_WARN = 8 * 1024 * 1024
+
+
+def _frames_to_rgb8(frames, signed: bool):
+    """コマ列 → uint8 RGB の列。**尺度は全コマで 1 つ**。
+
+    ★1 枚ずつ min-max で伸ばすと、中身が動いていなくても明るさがちらつき、
+    本当に動いた量が見えなくなる([[feedback_ran_is_not_meaningful_output]] の
+    「尺度違い」)。float のコマは全体の min/max で 1 度だけ [0,1] に写す。
+    """
+    arrs = [np.asarray(f) for f in frames]
+    shapes = {a.shape[:2] for a in arrs}
+    if len(shapes) != 1:
+        raise ValueError(
+            "save_gif: コマの大きさがそろっていない %r —— GIF は黙って詰めるので、"
+            "ここで止める" % (sorted(shapes),))
+    if all(a.dtype == np.uint8 for a in arrs):
+        return [a[..., :3] if a.ndim == 3 else np.repeat(a[..., None], 3, 2) for a in arrs]
+    fl = [np.nan_to_num(np.asarray(a, np.float64), nan=0.0, posinf=0.0, neginf=0.0)
+          for a in arrs]
+    lo = min(float(a.min()) for a in fl)
+    hi = max(float(a.max()) for a in fl)
+    if hi > 1.0 or lo < 0.0:
+        rng = hi - lo
+        fl = [(a - lo) / rng if rng > 1e-12 else np.zeros_like(a) for a in fl]
+    return [_to_rgb8(np.clip(a, 0.0, 1.0), signed) for a in fl]
+
+
+def save_gif(name: str, frames, caption: str = "", fps: float = 8.0,
+             signed: bool = False, loop: int = 0):
+    """動く図を 1 本書く。``FULLSEYE_FIGURE_DIR`` が無ければ**何もせず ``None``**。
+
+    Parameters
+    ----------
+    frames : sequence
+        ``(H,W)`` か ``(H,W,3|4)`` のコマ。**全部同じ大きさ**であること
+        (違えば ValueError —— GIF は黙って詰めてしまうので、ここで止める)。
+    fps : float
+        1 秒あたりのコマ数(GIF の刻みは 10 ms 単位に丸まる)。
+    signed : bool
+        0 を中心に塗る(符号つきの量)。
+
+    Notes
+    -----
+    尺度は**全コマで 1 つ**。1 枚ずつ伸ばすと、動いていないものがちらついて
+    見え、動いているものが見えなくなる。
+    """
+    d = target_dir()
+    if d is None:
+        return None
+    if len(_manifest) >= MAX_FIGURES:
+        _errors.append("上限 %d 枚に達したので %r は書かなかった" % (MAX_FIGURES, name))
+        return None
+    try:
+        from PIL import Image
+
+        seq = list(frames)
+        if not seq:
+            raise ValueError("save_gif: コマが 1 枚も無い")
+        if len(seq) > MAX_GIF_FRAMES:
+            raise ValueError("save_gif: コマが %d 枚(上限 %d)—— 間引いてから渡すこと"
+                             % (len(seq), MAX_GIF_FRAMES))
+        if not (fps > 0.0):
+            raise ValueError("save_gif: fps は正であること(来たのは %r)" % (fps,))
+        rgb = _frames_to_rgb8(seq, signed)
+        ims = [Image.fromarray(a) for a in rgb]
+        path = d / ("%02d_%s.gif" % (len(_manifest) + 1, name))
+        ims[0].save(str(path), save_all=True, append_images=ims[1:],
+                    duration=max(20, int(round(1000.0 / float(fps)))), loop=int(loop),
+                    disposal=2, optimize=True)
+        size = path.stat().st_size
+        if size > GIF_SIZE_WARN:
+            _errors.append("%s: GIF が %.1f MB(目安 %.0f MB)—— コマ数か大きさを減らす"
+                           % (name, size / 1e6, GIF_SIZE_WARN / 1e6))
+        _manifest.append({"file": path.name, "name": name, "caption": caption,
+                          "shape": list(np.shape(rgb[0])), "animated": True,
+                          "frames": len(ims), "fps": float(fps)})
+        (d / "figures.json").write_text(
+            json.dumps(_manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+        return path
+    except Exception as exc:                            # noqa: BLE001
+        _errors.append("%s: %s: %s" % (name, type(exc).__name__, exc))
+        return None
+
+
 def manifest() -> list[dict]:
     """この実行で書いた図の一覧。"""
     return list(_manifest)
