@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import sys
 import time
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -228,10 +229,13 @@ def run() -> dict:
     panel_b = A.ticks(panel_b, ax, tick_len=4, font_size=9)
     panel_a = A.annotate_panel_label(panel_a, 0, corner="lt", margin=6)
     panel_b = A.annotate_panel_label(panel_b, 1, corner="lt", margin=6)
-    sheet = A.panel_grid([panel_a, panel_b], ncols=2, pad=10, label_h=0, background=0.04)
+    panel_c = A.annotate_panel_label(panel_c, 2, corner="lt", margin=6)
+    sheet = A.panel_grid([panel_a, panel_b, panel_c], ncols=3, pad=10, label_h=0,
+                         background=0.04)
     out = {"sheet": sheet}
     out.update(r1)
     out.update(r2)
+    out.update(r3)
     out["elapsed_s"] = time.perf_counter() - t0
     return out
 
