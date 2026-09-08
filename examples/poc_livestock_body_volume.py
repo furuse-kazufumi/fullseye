@@ -845,12 +845,14 @@ def section_controls(truth):
              ("軸周り等間隔 8 台", np.array([0.0, float(vals.size - 1)]),
               np.array([100 * (base - 1), 100 * (base - 1)]))],
             xlabel="試行", ylabel="体積の過大率 [%]",
-            title="配置の乱れは台数では買い戻せない",
-            caption=f"120 試行で等間隔を下回ったのは {win} 件。"
+            title="ランダム配置は平均では互角、裾で負ける",
+            caption=f"{vals.size} 試行で等間隔を下回ったのは {win} 件"
+                    f"({100 * win / vals.size:.0f} %、0.5 と区別できない)。"
+                    "危ないのは平均ではなく上側の裾。"
                     "解像度を落とした台なので絶対値は §4 より大きい。",
             kinds=["scatter", "line"])
     return {"dil": dil, "per_px": per_px, "steiner": 100 * sv * px,
-            "base": base, "vals": vals, "win": win}
+            "base": base, "vals": vals, "win": win, "se": se}
 
 
 def section_op_hole(truth):
