@@ -1287,9 +1287,9 @@ def section_image(scene):
                                         T_ATM_REF, allow_out=True), np.float64)
     bolt = np.zeros(t_true.shape, bool)
     yy, xx = np.mgrid[0:t_true.shape[0], 0:t_true.shape[1]].astype(np.float64)
-    bolt[np.hypot(xx - 120.0, yy - 92.0) < 11.0] = True
-    ring = (np.hypot(xx - 120.0, yy - 92.0) > 19.0) & (np.hypot(xx - 120.0,
-                                                                yy - 92.0) < 26.0)
+    rad = np.hypot(xx - 120.0, yy - 92.0)
+    bolt[rad < 11.0] = True
+    ring = (rad > 19.0) & (rad < 27.0)          # 台の上、ボルトのすぐ外
     print(f"  発熱部の真上のボルト(ε={EPS_POLISH}): 真 "
           f"{float(t_true[bolt].mean()):.1f} K / 見かけ(ε=1) "
           f"{float(t_apparent[bolt].mean()):.1f} K / 補正後 "
