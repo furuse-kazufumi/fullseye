@@ -11,7 +11,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Computes the Haralick texture feature `<code style="color:#22d3bf">energy</code><code style="color:#22d3bf"> (angular second moment, i.e., how concentrated the matrix values are = texture uniformity) from a gray-level co-occurrence matrix (GLCM, </code><code style="color:#22d3bf">skimage.feature.graycomatrix</code><code style="color:#22d3bf">, quantized to 16 levels, distance </code><code style="color:#22d3bf">1+3*a</code><code style="color:#22d3bf">, angle 0 degrees). Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">cooc_feature_matrix</code>` (Calculate gray value features from a co-occurrence matrix.) (HALCON can return multiple features and multiple angles simultaneously, but this is simplified to energy at a fixed 0-degree angle).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。★</code><code style="color:#22d3bf">b &gt;= 0.75</code><code style="color:#22d3bf"> で **0/45/90/135 度の 4 方向を平均**する(既定 </code><code style="color:#22d3bf">b=0.5</code>` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。</p>
+<p>実写テクスチャ(brick / grass / gravel)を 12 角度回して測ると(`<code style="color:#22d3bf">poc_texture_rotation_identity</code><code style="color:#22d3bf">)、**効くかどうかは </code><code style="color:#22d3bf">a</code>` で決まる**:</p>
+<p style="margin:2px 0 2px 12px">• 距離 1(`<code style="color:#22d3bf">a=0</code>`): 取り違え <b>3/36 -&gt; 0/36</b>。効く。</p>
+<p style="margin:2px 0 2px 12px">• 距離 2(既定 `<code style="color:#22d3bf">a=0.5</code>`): どちらも 0/36 だが、brick の振れ幅は素材間差の <b>1.36 -&gt; 0.63 倍</b>に下がる。余裕が増える。</p>
+<p style="margin:2px 0 2px 12px">• 距離 4(`<code style="color:#22d3bf">a=1</code>`): <b>3/36 -&gt; 8/36 と悪化する</b>。</p>
+<p>悪化の原因は平均そのものではなく<b>分母</b>: 距離を伸ばすと 3 素材の 0 度での差そのものが 0.0448 -&gt; 0.0221 と半分に潰れる。残り少ない差を平均すると、先に消える。<b>長い距離で使うときは、平均を掛ける前に素材が分かれているかを確かめること。</b></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
@@ -23,6 +28,7 @@
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cooc_feature_matrix 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cooc_feature_matrix%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cooc_feature_matrix%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_texture_rotation_identity">poc_texture_rotation_identity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_texture_rotation_identity.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">feature</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">texture</code>)</h3>

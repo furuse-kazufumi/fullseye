@@ -1,0 +1,26 @@
+[
+ {
+  "file": "01_texture_rotations.png",
+  "name": "texture_rotations",
+  "caption": "上から brick / grass / gravel、左から 0 / 45 / 90 度。brick だけ**向きが手がかり**になっているのが目で判る。",
+  "shape": [
+   360,
+   360,
+   3
+  ]
+ },
+ {
+  "file": "02_texture_turning.gif",
+  "name": "texture_turning",
+  "caption": "3 素材を同時に回す。GLCM は角度 0 度固定なので、回すと grass が 12 角度中 3 回「別の素材のほうが近い」と答える。",
+  "shape": [
+   120,
+   360,
+   3
+  ],
+  "animated": true,
+  "frames": 12,
+  "frames_written": 12,
+  "fps": 4.0
+ }
+]

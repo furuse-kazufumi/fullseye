@@ -11,7 +11,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이레벨 동시발생 행렬(GLCM, `<code style="color:#22d3bf">skimage.feature.graycomatrix</code><code style="color:#22d3bf">, 16계조로 양자화, 거리 </code><code style="color:#22d3bf">1+3*a</code><code style="color:#22d3bf">, 각도 0°)로부터 Haralick 텍스처 특징 </code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf">(각 2차 모멘트, 행렬 값의 집중도=텍스처의 균일성)를 계산한다. HALCON의 </code><code style="color:#22d3bf">cooc_feature_matrix</code>`(Calculate gray value features from a co-occurrence matrix.)에 해당(HALCON은 여러 특징·여러 각도를 동시에 반환할 수 있지만, 여기서는 energy·각도 0° 고정으로 단순화).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。★</code><code style="color:#22d3bf">b &gt;= 0.75</code><code style="color:#22d3bf"> で **0/45/90/135 度の 4 方向を平均**する(既定 </code><code style="color:#22d3bf">b=0.5</code>` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。</p>
+<p>実写テクスチャ(brick / grass / gravel)を 12 角度回して測ると(`<code style="color:#22d3bf">poc_texture_rotation_identity</code><code style="color:#22d3bf">)、**効くかどうかは </code><code style="color:#22d3bf">a</code>` で決まる**:</p>
+<p style="margin:2px 0 2px 12px">• 距離 1(`<code style="color:#22d3bf">a=0</code>`): 取り違え <b>3/36 -&gt; 0/36</b>。効く。</p>
+<p style="margin:2px 0 2px 12px">• 距離 2(既定 `<code style="color:#22d3bf">a=0.5</code>`): どちらも 0/36 だが、brick の振れ幅は素材間差の <b>1.36 -&gt; 0.63 倍</b>に下がる。余裕が増える。</p>
+<p style="margin:2px 0 2px 12px">• 距離 4(`<code style="color:#22d3bf">a=1</code>`): <b>3/36 -&gt; 8/36 と悪化する</b>。</p>
+<p>悪化の原因は平均そのものではなく<b>分母</b>: 距離を伸ばすと 3 素材の 0 度での差そのものが 0.0448 -&gt; 0.0221 と半分に潰れる。残り少ない差を平均すると、先に消える。<b>長い距離で使うときは、平均を掛ける前に素材が分かれているかを確かめること。</b></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
@@ -23,6 +28,7 @@
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cooc_feature_matrix 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cooc_feature_matrix%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cooc_feature_matrix%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_texture_rotation_identity">poc_texture_rotation_identity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_texture_rotation_identity.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">feature</code> 를 입력으로 받는 것)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">texture</code>)</h3>

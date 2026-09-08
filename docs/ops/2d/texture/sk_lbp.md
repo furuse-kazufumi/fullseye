@@ -4,7 +4,7 @@ dim: 2d
 category: texture
 in: image
 out: image
-examples: [gallery2d_texture_freq, poc_real_texture_invariance]
+examples: [gallery2d_texture_freq, poc_real_texture_invariance, poc_texture_rotation_identity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -63,6 +63,7 @@ sk_lbp 0.50 0.50
 
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
 - [poc_real_texture_invariance](../../../../examples/poc_real_texture_invariance.py) — `py -3.11 examples/poc_real_texture_invariance.py`
+- [poc_texture_rotation_identity](../../../../examples/poc_texture_rotation_identity.py) — `py -3.11 examples/poc_texture_rotation_identity.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 
