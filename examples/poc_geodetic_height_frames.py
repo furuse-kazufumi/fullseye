@@ -426,15 +426,18 @@ def section_geoid_slope():
         inner = (slice(2, -2), slice(2, -2))                 # 端は pad="edge" なので外す
         meas = (s_wrong - s_true)[inner]
         gap = float(np.abs(meas - pred[inner]).max())
+        gap_med = float(np.median(np.abs(meas - pred[inner])))
         print(f"  [{label}]  |∇N| 最大 {float(np.hypot(dnx, dny).max()):.3e}"
               f"  → 予測の上限 atan|∇N| = {bound:.6f} 度")
         print(f"     高さの誤差 h-H:  {float((h_ell - h_true).min()):+.3f} 〜 "
               f"{float((h_ell - h_true).max()):+.3f} m(平均 "
               f"{float((h_ell - h_true).mean()):+.3f} m)")
         print(f"     傾斜の誤差:  予測 最大 {float(np.abs(pred[inner]).max()):.6f} 度 / "
-              f"実測 最大 {float(np.abs(meas).max()):.6f} 度 / 差 {gap:.2e} 度")
+              f"実測 最大 {float(np.abs(meas).max()):.6f} 度")
+        print(f"     予測と実測の差: 中央値 {gap_med:.2e} 度 / 最大 {gap:.2e} 度")
         out[label] = {"bound": bound, "pred": float(np.abs(pred[inner]).max()),
                       "meas": float(np.abs(meas).max()), "gap": gap,
+                      "gap_med": gap_med,
                       "dh": float((h_ell - h_true).mean()),
                       "h_true": h_true, "n_fld": n_fld, "h_ell": h_ell,
                       "s_diff": s_wrong - s_true}
