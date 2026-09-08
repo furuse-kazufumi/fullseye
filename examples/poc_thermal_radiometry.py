@@ -692,7 +692,10 @@ def section_cliff(scene):
                     caption="放射率の誤差は上昇で割ると Δε/ε に収束して発散しない。"
                             "発散するのは反射見かけ温度の誤差と雑音の床。")
     if figs.enabled():
-        tt = np.linspace(301.0, 800.0, 60)
+        # ★横軸は**周囲からの上昇**。T_obj のままだと発散が左端の 1 本の縦線に
+        #   潰れて、肝心の「どこから跳ねるか」が読めない。
+        rises = np.linspace(1.0, 60.0, 120)
+        tt = T_REFL_REF + rises
         r_eps = np.array([abs(measure_dt_from_eps(tab_l, t, EPS_PAINT, 0.05))
                           / (t - T_REFL_REF) * 100.0 for t in tt])
         r_ref = np.array([abs(float(invert_radiance(
@@ -701,17 +704,18 @@ def section_cliff(scene):
             / (t - T_REFL_REF) * 100.0 for t in tt])
         # ★``plot_series`` は枠外の点を**拒否する**(枠に貼り付いて本物の
         #   データに見えるから)。発散する側は呼び手が先に切る。
-        keep = r_ref <= 60.0
+        keep = r_ref <= 40.0
         figs.save_plot("rise_ratio_curve",
-                       [("放射率 5 % の誤差 / 上昇", tt, r_eps),
-                        ("T_refl 5 K の誤差 / 上昇", tt[keep], r_ref[keep])],
-                       ylim=(0.0, 60.0),
-                       xlabel="対象の温度 T_obj [K](T_refl = 300 K)",
+                       [("放射率 5 % の誤差 / 上昇", rises, r_eps),
+                        ("T_refl 5 K の誤差 / 上昇", rises[keep], r_ref[keep])],
+                       ylim=(0.0, 40.0),
+                       xlabel="周囲からの上昇 T_obj − T_refl [K]",
                        ylabel="誤差 ÷ 周囲からの上昇 [%]",
                        title="上昇が小さいほど跳ねるのは、放射率ではなく反射",
-                       caption="放射率の曲線は Δε/ε = 5 % に収束して発散しない。"
-                               "反射見かけ温度の曲線は上昇 → 0 で発散する。"
-                               "★縦軸は 60 % で切ってある(発散する側は枠外)。")
+                       caption="放射率の曲線(青)は Δε/ε = 5 % に収束して発散しない。"
+                               "反射見かけ温度の曲線(橙)は上昇 → 0 で発散する。"
+                               "★縦軸は 40 % で切ってある(それより上は枠外)。"
+                               "上昇 10 K を切ると、反射のほうが放射率より重くなる。")
     figs.save_table("emissivity_cliff",
                     ["帯域", "T [K]", "Δε/ε", "予測(素朴)[K]",
                      "予測(Wien 補正)[K]", "実測 ΔT [K]", "補正後の差",
