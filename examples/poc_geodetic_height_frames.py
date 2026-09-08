@@ -827,8 +827,18 @@ def section_enu():
              ("実測(東西)", dd, np.asarray(es))],
             xlabel="局所 ENU 原点からの距離 [m]", ylabel="真の高さ(ENU の up)[m]",
             title="「地球は平ら」の崖は d^2/(2R) —— 10 km で 7.8 m",
-            caption="3 本はほぼ重なる。差は曲率半径が方位で違うぶんで、"
-                    "30 km で 0.32 m。★崖は測る前に閉形式で出る。")
+            caption="3 本はほぼ重なる(それが言いたいこと: 崖は測る前に閉形式で出る)。"
+                    "★重なって見えない差は次の図で。")
+        figs.save_plot(
+            "enu_residual",
+            [("実測(南北) - 閉形式", dd, np.asarray(ns) - np.asarray(pr)),
+             ("実測(東西) - 閉形式", dd, np.asarray(es) - np.asarray(pr))],
+            xlabel="距離 [m]", ylabel="閉形式との差 [m]",
+            title="平均半径 1 本では当たらない —— 予測は南北と東西のあいだ",
+            caption=f"子午線 {m_r:.0f} m / 卯酉線 {n_r:.0f} m / 平均 "
+                    f"{EARTH_MEAN_R:.0f} m。30 km で南北と東西が "
+                    f"{abs(ns[-1] - es[-1]):.3f} m 開く。★「閉形式で出る」は"
+                    "「1 つの数字で出る」ではない。")
     return {"dists": dists, "north": ns, "east": es, "pred": pr,
             "gap30": ns[-1] - es[-1], "ratio": ratio, "m_r": m_r, "n_r": n_r}
 
