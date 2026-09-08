@@ -1351,6 +1351,7 @@ def section_image(scene):
                        caption="谷は温度の谷ではなく**放射率の谷**。"
                                "補正すると平らな山に戻る。")
     return {"gap": gap, "rms": rms, "rms_app": rms_app,
+            "rms_bolt": rms_bolt, "rms_ring": rms_ring,
             "bolt_true": float(t_true[bolt].mean()),
             "bolt_app": float(t_apparent[bolt].mean()),
             "bolt_corr": float(t_corr[bolt].mean()),
