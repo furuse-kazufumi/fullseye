@@ -273,11 +273,33 @@ def tie_margin(dy: float, dx: float, angle_deg: float) -> float:
 # --------------------------------------------------------------------------- #
 # 推定器                                                                        #
 # --------------------------------------------------------------------------- #
-def ink_centroid(img) -> tuple[float, float]:
-    """インク量の重心 (y, x) [px]。1 次モーメントなので周期性に影響されない。"""
+def ink_centroid(img, taper=None) -> tuple[float, float]:
+    """インク量の重心 (y, x) [px]。1 次モーメントなので**折り返さない**。
+
+    ``taper`` を渡すとその重みを掛ける(窓の縁で網点が出入りする効果を
+    抑える対照群に使う)。
+    """
     w = np.clip(1.0 - np.asarray(img, float), 0.0, None)
+    if taper is not None:
+        w = w * taper
     s = float(w.sum())
     return float((w * _Y).sum() / s), float((w * _X).sum() / s)
+
+
+def lowpass_image(img, cutoff=LP_CUT) -> np.ndarray:
+    """等方ガウス低域通過。**網点の周期成分を落として絵柄だけ残す**。
+
+    :func:`fullseye.cx_fft` → :func:`fullseye.cx_apply_transfer_function`
+    → :func:`fullseye.cx_ifft`。``cutoff`` は 1/e^0.5 になる空間周波数
+    [cyc/px]。網点の基本周波数 1/p に対して ``exp(-(1/p)^2/(2 cutoff^2))``
+    まで落ちる(既定 cutoff = 1/(4p) で **%.1e 倍**)。
+    """
+    f = np.fft.fftshift(np.fft.fftfreq(L))
+    r2 = f[:, None] ** 2 + f[None, :] ** 2
+    h = np.exp(-r2 / (2.0 * cutoff ** 2))
+    return np.asarray(fs.cx_ifft(
+        fs.cx_apply_transfer_function(fs.cx_fft(np.asarray(img, float)), h),
+        real=True))
 
 
 def corr_map(a, b) -> np.ndarray:
