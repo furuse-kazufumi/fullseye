@@ -698,8 +698,8 @@ def section_cliff(pred: dict) -> dict:
               % (c, CIRC[nm], c / CIRC[nm]))
 
     figs.save_plot("cliff_length",
-                   [("ビン当て", res["L"], res["bin_hit"]),
-                    ("放物線補間あり", res["L"], res["int_hit"]),
+                   [("報告率(検出の崖)", res["L"], res["rep"]),
+                    ("特定成功率(補間あり)", res["L"], res["hit"]),
                     ("予測 L_crit = %.0f mm" % l_crit, [l_crit, l_crit], [0, 100])],
                    xlabel="記録長 L [mm]", ylabel="犯人ロールの特定成功率 [%]",
                    title="記録長の崖 —— 予測を先に立ててから測った",
@@ -713,10 +713,10 @@ def section_cliff(pred: dict) -> dict:
                    title="周長の推定誤差と Rayleigh 分解能")
     figs.save_table("cliff_table",
                     ["L [mm]", "ΔC=C²/L", "報告率", "ビン当て 誤差",
-                     "ビン当て 成功率", "補間あり 誤差", "補間あり 成功率",
-                     "取り違え先"], rows,
+                     "ビン当て 隣へ落ちる", "補間 誤差", "補間 隣へ落ちる",
+                     "特定成功率", "取り違え先"], rows,
                     title="記録長の掃引(%d 試行)" % SEEDS)
-    res["L_bin"], res["L_int"] = lb, li
+    res["L_bin"], res["L_int"], res["L_rep"] = lb, li, rep_cliff
     return res
 
 
@@ -729,13 +729,19 @@ def section_two_rolls() -> dict:
     print("=" * 78)
     both = (CULPRIT, CULPRIT2)
     cs = [CIRC[n] for n in both]
+    L2 = 2.0 * L_FULL
     print("   %s C=%.2f mm と %s C=%.2f mm を同時に傷つける。"
           % (both[0], cs[0], both[1], cs[1]))
+    print("   ★この節だけ記録長を **2 巻ぶん %.0f mm** にする —— 周長の長い"
+          "ロールほど 1 巻に打つ回数が
+     少なく(%.0f 回 vs %.0f 回)、"
+          "6 節の検出の崖に先に当たるから。"
+          % (L2, L2 / cs[1], L2 / cs[0]))
     hits = 0
     errs = [[], []]
     nrep = []
     for s in range(SEEDS):
-        sc = scene(SEED0 + s, culprits=both)
+        sc = scene(SEED0 + s, length=L2, culprits=both)
         found = comb_peaks(sc["md"], sc["length"])["C"]
         nrep.append(len(found))
         for i, cc in enumerate(cs):
@@ -751,13 +757,13 @@ def section_two_rolls() -> dict:
           "同じ 1 回の走査で 2 本とも立つ。\n     間隔法は「間隔の分布が"
           "2 つの周期の混合」になるので、中央値も平均も**どちらの周長でもない"
           "値**を返す。")
-    e0 = null_estimate(scene(SEED0, culprits=both)["md"],
-                       scene(SEED0, culprits=both)["cd"])
+    sc2 = scene(SEED0, length=L2, culprits=both)
+    e0 = null_estimate(sc2["md"], sc2["cd"])
     print("     実際、同じ場面でゼロ点(レーン + 中央値)は %.1f mm "
           "—— %s(%.2f)でも %s(%.2f)でもない。"
           % (e0["C"], both[0], cs[0], both[1], cs[1]))
 
-    sc = scene(SEED0, culprits=both)
+    sc = scene(SEED0, length=L2, culprits=both)
     sp = md_spectrum(sc["md"], sc["length"])
     band = sp["band"]
     cc = 1.0 / sp["f"][band]

@@ -708,7 +708,7 @@ def section_metrics(ds=(0.50, 0.80, 1.20)) -> dict:
     figs.save_table(
         "metric_table",
         ["間隔 d", "手法", "RMSE [°C]", "ピーク誤差 [°C]", "位置誤差 [m]",
-         "見失い"], rows,
+         "見失い", "偽の峰"], rows,
         title="物差し 3 つ(1 つの数字に畳まない)", col_w=130)
     return {"out": {("%.2f|%s" % k): v for k, v in out.items()},
             "winners": {("%.2f" % k): v for k, v in winners.items()},
