@@ -122,7 +122,7 @@ def anisotropy(a):
 
 def main() -> None:
     t0 = time.perf_counter()
-    imgs = dict((m, realdata.load_gray(m)) for m in MATERIALS)
+    imgs = dict((m, realdata.sample_photo(m)) for m in MATERIALS)
     print("実写テクスチャ 3 枚(scikit-image、CC0)")
     for m in MATERIALS:
         print("  %-8s %s  平均 %.3f  標準偏差 %.3f"

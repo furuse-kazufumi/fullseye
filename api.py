@@ -252,6 +252,12 @@ from specops import (  # noqa: E402,F401
     spec_pansharpen, spec_decorrelation_stretch, spec_fuse,
     stain_unmix, stain_recompose, stain_vectors_from_patches, STAIN_VECTORS,
 )
+# realdata: 実写サンプルの取り口。PoC の EXTEND が利用者にこれを指すので、
+# **公開経路に載せる**(埋もれた実装を作らない)。
+from realdata import (  # noqa: E402,F401
+    SAMPLE_PHOTOS, sample_photo, sample_photo_rgb, sample_photo_raw,
+    sample_stereo_pair, sample_photo_credit,
+)
 from deformreg import (  # noqa: E402,F401
     warp_by_field, demons_register, field_magnitude, residual_ssd,
 )
@@ -758,6 +764,8 @@ __all__ = [
     "cx_log_magnitude", "cx_from_mag_phase", "phase_unwrap", "cx_wiener_deconvolve",
     "cx_apply_transfer_function", "cx_bandpass",
     "specops", "stain_unmix", "stain_recompose", "stain_vectors_from_patches",
+    "SAMPLE_PHOTOS", "sample_photo", "sample_photo_rgb", "sample_photo_raw",
+    "sample_stereo_pair", "sample_photo_credit",
     "STAIN_VECTORS",
     "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
     "spec_nearest_band", "spec_band_ratio", "spec_index", "spec_angle_mapper", "spec_pca",

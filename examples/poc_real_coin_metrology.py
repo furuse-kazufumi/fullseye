@@ -91,7 +91,7 @@ TRUE_N = 24
 
 def load():
     """実写のコイン写真。無ければ fail-closed で落ちる。"""
-    return realdata.load_gray("coins")
+    return realdata.sample_photo("coins")
 
 
 def segment(a, flatten=False):

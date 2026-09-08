@@ -1849,3 +1849,29 @@ restrictions のものだけ(Middlebury は研究・教育目的の引用付き�
 回転不変で、異方な素材については向きの情報がそのまま残る」** ——
 前者は回転不変性が要らない場面、後者は要る場面。
 [[feedback_invariance_claims_break_at_the_helper]] の新しい形。
+
+### §44.12 CI の到達性の門が「埋もれた新モジュール」を捕まえた(修正済)
+
+py3.11 の全体スイートだけが落ちた(py3.10 / 3.12 / core / lint は緑)。
+`tests/test_public_reachability.py` の 2 件:
+
+* `test_no_new_module_becomes_invisible` —— **`realdata` が公開経路
+  (`fullseye.<名前>` / `.ledger` / `.op`)のどこからも呼べない**。
+* `test_hidden_function_total_does_not_grow` —— 隠れ関数 1229 -> 1231。
+
+この門は「配布物側から数える」設計(`pyproject.toml` の `py-modules` を
+走査する)なので、§44.7 で `realdata` を出荷対象にした瞬間に**正しく反応した**。
+[[feedback_registered_only_gates_miss_unregistered]] で入れた仕組みが働いた形。
+
+**逃げ道(`_INTERNAL` に理由つきで足す)を取らなかった**。PoC の EXTEND は
+利用者に `realdata` を指しており、内部専用ではないから ——
+門のメッセージ自身が「利用者に出すなら台帳へ、内部専用なら `_INTERNAL` へ」と
+二択を示している。公開する側を選び、ついでに**名前を公開に耐えるものへ改めた**:
+
+    CATALOGUE   -> SAMPLE_PHOTOS          load_gray   -> sample_photo
+    require     -> sample_photo_raw       load_rgb    -> sample_photo_rgb
+    stereo_pair -> sample_stereo_pair     attribution -> sample_photo_credit
+
+`fullseye.require` や `fullseye.load_gray` は公開名として悪い(何の require か
+分からない)。**門に通すためだけの最小変更をせず、通したうえで名前を直す**。
+実写 PoC 6 本の呼び出しも合わせて更新し、6 本とも PASS を再確認した。

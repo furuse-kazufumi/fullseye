@@ -82,7 +82,7 @@ ANGLES = (-20.0, -10.0, -5.0, -2.0, 0.0, 2.0, 5.0, 10.0, 20.0)
 
 def load():
     """実写の免疫染色像。無ければ fail-closed で落ちる。"""
-    return realdata.load_rgb("immunohistochemistry")
+    return realdata.sample_photo_rgb("immunohistochemistry")
 
 
 def base_vectors():

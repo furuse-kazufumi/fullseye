@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-08 10:23:02
+- **最終更新**: 2026-09-08 11:24:41
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+491894b65 実写 PoC 6 本目(展示 105)+ sk_lbp の未使用 b を符号化の選択へ配線
 2d3a16026 auto: backends.py 編集前 (2026-09-08 10:14)
 501e2670f auto: backends.py 編集前 (2026-09-08 10:13)
 de48e6ec1 fill_disparity の docstring が実装と食い違っていた(実写の +inf で発覚)
@@ -19,17 +20,13 @@ ba1699f87 実写 PoC 5 本目(展示 104)+ realdata を py-modules へ(core CI �
 3a8ae18b5 auto: test_op_probe_ledger.py 編集前 (2026-09-08 09:18)
 521347d86 実写を初めて通した ―― 合成では作れない型の躓きが 5 件(展示 99→101)
 e49c72d41 auto: poc_real_coin_metrology.py 編集前 (2026-09-08 08:53)
-b69c7b7b1 auto: poc_real_coin_metrology.py 編集前 (2026-09-08 08:48)
 ```
 
 ## 現在の git status
 
 ```
-M CHANGELOG.md
- M backends.py
- M docs/COLLECTION_SIZES.json
+M api.py
  M docs/KNOWN_ISSUES.md
- M docs/OP_CATALOG.md
  M docs/README.de.md
  M docs/README.en.md
  M docs/README.ko.md
@@ -37,43 +34,34 @@ M CHANGELOG.md
  M docs/README.tw.md
  M docs/README.zh.md
  M docs/SESSION_SUMMARY.md
- M docs/articles/exhibits/poc_captions.json
- M docs/articles/exhibits/wingpoc.en.md
- M docs/articles/exhibits/wingpoc.ja.md
- M docs/articles/fullseye_poc_museum_qiita_en.md
- M docs/articles/fullseye_poc_museum_qiita_ja.md
- M docs/ops/2d/texture/sk_lbp.md
- M examples/README.md
- M examples2d.py
- M fullseye/OP_CATALOG.md
- M studio_assets/op_help/sk_lbp.de.html
- M studio_assets/op_help/sk_lbp.en.html
- M studio_assets/op_help/sk_lbp.html
- M studio_assets/op_help/sk_lbp.ko.html
- M studio_assets/op_help/sk_lbp.tw.html
- M studio_assets/op_help/sk_lbp.zh.html
-?? docs/articles/assets/poc/poc_real_texture_invariance/
-?? examples/poc_real_texture_invariance.py
+ M examples/poc_real_coin_metrology.py
+ M examples/poc_real_deblur_honesty.py
+ M examples/poc_real_sky_photometry.py
+ M examples/poc_real_stain_unmix.py
+ M examples/poc_real_stereo_depth.py
+ M examples/poc_real_texture_invariance.py
+ M fullseye/__init__.py
+ M realdata.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-10:22 docs/SESSION_SUMMARY.md
-10:21 CHANGELOG.md
-10:21 docs/KNOWN_ISSUES.md
-10:20 docs/OP_INDEX.json
-10:20 docs/articles/README.md
-10:20 docs/README.de.md
-10:19 docs/README.ko.md
-10:19 docs/README.tw.md
-10:19 docs/README.zh.md
-10:19 docs/README.en.md
-10:18 docs/README.md
-10:18 fullseye/OP_CATALOG.md
-10:18 docs/OP_CATALOG.md
-10:18 studio_assets/op_help/fig/zoom_region.png
-10:18 studio_assets/op_help/fig/zoom_image_size.png
+11:24 docs/KNOWN_ISSUES.md
+11:23 .ruff_cache/0.16.0/17073292267110453001
+11:23 .ruff_cache/0.16.0/13906884550158051618
+11:23 .ruff_cache/0.16.0/12943517194686254008
+11:23 docs/articles/README.md
+11:23 docs/README.de.md
+11:23 docs/README.ko.md
+11:23 docs/README.tw.md
+11:23 docs/README.zh.md
+11:22 docs/README.en.md
+11:22 docs/README.md
+11:22 docs/OP_INDEX.json
+11:22 fullseye/OP_CATALOG.md
+11:22 docs/OP_CATALOG.md
+11:21 studio_assets/op_help/fig/zoom_region.png
 ```
 
 ---

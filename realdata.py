@@ -10,21 +10,21 @@
 
 そこでこの module は、**追加ダウンロード無しで手元にある実写**だけを
 返します。出どころは ``scikit-image`` に同梱されている小さな部分集合で、
-ライセンスは下の :data:`CATALOGUE` に 1 件ずつ書いてあります(CC0 /
+ライセンスは下の :data:`SAMPLE_PHOTOS` に 1 件ずつ書いてあります(CC0 /
 public domain / no known copyright restrictions のものだけを公開図に使う)。
 
 ## fail-closed
 
-**データが無いときに黙って通さない**。:func:`require` は理由を印字して
+**データが無いときに黙って通さない**。:func:`sample_photo_raw` は理由を印字して
 ``SystemExit(1)`` します —— 「実データが無かったので何も検査せず PASS」は、
 この repo がいちばん嫌う形(記録は在るのに誰も読まない門)そのものなので。
 
 CI では ``skimage`` extra が 3 つの matrix 全部に入るので、実データ PoC は
 **必ず走ります**。手元で extra を入れていない場合だけ落ちます。
 
-EXTEND: 自前の撮影に差し替えるなら :func:`load_gray` の戻り値
+EXTEND: 自前の撮影に差し替えるなら :func:`sample_photo` の戻り値
 (float64 / [0, 1] / 2 次元)に合わせてください。ステレオは
-:func:`stereo_pair` が ``(左, 右, 真値視差)`` を返す形で、真値の NaN は
+:func:`sample_stereo_pair` が ``(左, 右, 真値視差)`` を返す形で、真値の NaN は
 「真値が無い画素」を表します(Middlebury の規約)。
 """
 from __future__ import annotations
@@ -37,7 +37,7 @@ import numpy as np
 #:
 #: ★公開する図に使ってよいのは ``public`` の列が真のものだけ。
 #: 研究・教育目的の引用付き利用に留めるものは ``cite`` を持つ。
-CATALOGUE = {
+SAMPLE_PHOTOS = {
     "coins": ("coins", "gray", "No known copyright restrictions",
               "scikit-image (Greek coins from Pompeii, British Museum)", True, None),
     "camera": ("camera", "gray", "CC0 (Lav Varshney)",
@@ -76,13 +76,13 @@ def _data():
     return _d
 
 
-def require(name: str):
+def sample_photo_raw(name: str):
     """実写を 1 つ返す。無ければ**理由を印字して落ちる**(fail-closed)。"""
-    if name not in CATALOGUE:
+    if name not in SAMPLE_PHOTOS:
         print("未登録の実データ名: %r (登録済み: %s)"
-              % (name, ", ".join(sorted(CATALOGUE))))
+              % (name, ", ".join(sorted(SAMPLE_PHOTOS))))
         raise SystemExit(1)
-    fn = CATALOGUE[name][0]
+    fn = SAMPLE_PHOTOS[name][0]
     d = _data()
     try:
         return getattr(d, fn)()
@@ -96,9 +96,9 @@ def require(name: str):
         raise SystemExit(1)
 
 
-def load_gray(name: str) -> np.ndarray:
+def sample_photo(name: str) -> np.ndarray:
     """実写を **float64 / [0, 1] / 2 次元**で返す。"""
-    a = np.asarray(require(name))
+    a = np.asarray(sample_photo_raw(name))
     if a.ndim == 3:
         a = a[..., :3] @ np.array([0.2125, 0.7154, 0.0721])
     a = a.astype(np.float64)
@@ -107,9 +107,9 @@ def load_gray(name: str) -> np.ndarray:
     return np.clip(a, 0.0, 1.0)
 
 
-def load_rgb(name: str) -> np.ndarray:
+def sample_photo_rgb(name: str) -> np.ndarray:
     """実写を **float64 / [0, 1] / (H, W, 3)** で返す。"""
-    a = np.asarray(require(name)).astype(np.float64)
+    a = np.asarray(sample_photo_raw(name)).astype(np.float64)
     if a.ndim == 2:
         a = np.dstack([a] * 3)
     a = a[..., :3]
@@ -118,7 +118,7 @@ def load_rgb(name: str) -> np.ndarray:
     return np.clip(a, 0.0, 1.0)
 
 
-def stereo_pair():
+def sample_stereo_pair():
     """Middlebury 2014 motorcycle: ``(左, 右, 真値視差)``。
 
     真値の NaN は「真値が無い画素」(実測 27,226 / 370,500 = 7.3 %)。
@@ -127,7 +127,7 @@ def stereo_pair():
     ★skimage の docstring は ``disp`` を ``(500, 741, 3)`` と書いているが、
     実際に返るのは ``(500, 741)`` —— 実データは注記も含めて確かめること。
     """
-    L, R, disp = require("stereo_motorcycle")
+    L, R, disp = sample_photo_raw("stereo_motorcycle")
     L = np.asarray(L, np.float64)[..., :3] @ np.array([0.2125, 0.7154, 0.0721])
     R = np.asarray(R, np.float64)[..., :3] @ np.array([0.2125, 0.7154, 0.0721])
     disp = np.asarray(disp, np.float64)
@@ -136,11 +136,11 @@ def stereo_pair():
     return L / 255.0, R / 255.0, disp
 
 
-def attribution(names) -> str:
+def sample_photo_credit(names) -> str:
     """公開図に添える帰属表記を組み立てる。"""
     out = []
     for n in names:
-        _fn, _k, lic, src, _pub, cite = CATALOGUE[n]
+        _fn, _k, lic, src, _pub, cite = SAMPLE_PHOTOS[n]
         line = "%s — %s (%s)" % (n, src, lic)
         if cite:
             line += " [%s]" % cite
@@ -150,9 +150,9 @@ def attribution(names) -> str:
 
 if __name__ == "__main__":                                      # pragma: no cover
     ok, ng = [], []
-    for name in sorted(CATALOGUE):
+    for name in sorted(SAMPLE_PHOTOS):
         try:
-            require(name)
+            sample_photo_raw(name)
             ok.append(name)
         except SystemExit:
             ng.append(name)

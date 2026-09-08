@@ -83,7 +83,7 @@ FLUXES = (2e3, 5e3, 1e4, 3e4, 1e5)
 
 def load_sky():
     """実写の深宇宙画像を**電子**に直して返す。無ければ fail-closed。"""
-    return realdata.load_gray("hubble_deep_field") * FULL_WELL_E
+    return realdata.sample_photo("hubble_deep_field") * FULL_WELL_E
 
 
 def robust_sigma(a):

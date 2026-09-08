@@ -66,7 +66,7 @@
    bad2 26.75 %、uint8 で 26.74 % —— 量子化のぶんだけ違う。落ちないので
    気づきにくい。**入力の型は測定条件**。
 
-EXTEND: 自前の撮影に差し替えるなら ``realdata.stereo_pair()`` を
+EXTEND: 自前の撮影に差し替えるなら ``realdata.sample_stereo_pair()`` を
 ``(左, 右, 真値視差)`` を返す関数に置き換えます。真値が無い場合、2〜5 節は
 そのまま(真値の要らない量 = 信頼度・左右整合・被覆率)で回せますが、
 6 節の距離は **校正値 focal / baseline / doffs が要ります** ——
@@ -105,7 +105,7 @@ BAD_THR = 2.0
 
 def load():
     """実写のステレオ対を切り出して返す。無ければ fail-closed で落ちる。"""
-    L, R, G = realdata.stereo_pair()
+    L, R, G = realdata.sample_stereo_pair()
     a, b = ROWS
     return L[a:b], R[a:b], G[a:b]
 

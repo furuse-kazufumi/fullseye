@@ -79,7 +79,7 @@ NSR_NAIVE = 0.005
 
 def load():
     """真値にする実写。無ければ fail-closed で落ちる。"""
-    return realdata.load_gray("camera")
+    return realdata.sample_photo("camera")
 
 
 def motion_psf(length, angle_deg):
