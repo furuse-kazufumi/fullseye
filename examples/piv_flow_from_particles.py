@@ -19,9 +19,18 @@ EXTEND: 実験の粒子画像を読み込んで差し替えるなら ``a``/``b``
 """
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import numpy as np
 
-import pivops
+# ★repo 直下のモジュール(pivops)を import するので、チェックアウトから
+# そのまま走らせても通るように repo 直下を先頭に置く。他の例と同じ作法。
+# これが無いと `py -3.11 examples/<name>.py` が ModuleNotFoundError で落ちる
+# (2026-09-09 実測: 走らせる門が無かった 83 本のうち、落ちたのはこの型の 2 本だけ)。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import pivops  # noqa: E402
 
 H = W = 256
 CY, CX = (H - 1) / 2.0, (W - 1) / 2.0

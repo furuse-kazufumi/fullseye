@@ -70,7 +70,15 @@ def _poc_paths() -> list[Path]:
 
 
 def _run_one(path: Path) -> tuple[str, int, str]:
-    env = dict(os.environ, PYTHONUTF8="1", PYTHONPATH=str(ROOT))
+    # ★``PYTHONPATH`` は**渡さない**(2026-09-09)。長らく ``PYTHONPATH=<repo>`` を
+    # 渡していたが、それは利用者がしない設定で、門が事故の起きる場所から 1 歩ずれる
+    # ことを意味していた —— 同じ盲点で `examples/piv_flow_from_particles.py` などが
+    # 「チェックアウトからそのまま走らせると ModuleNotFoundError」のまま残っていた
+    # (あちらは走らせる門すら無かったので気づかれなかった。`test_example_scripts_run.py`)。
+    # PoC 側は 116 本中 108 本が自分で repo 直下を ``sys.path`` に足しており、残り 8 本は
+    # ``fullseye`` しか import しないので、外しても全数が通る(実測済み)。
+    env = dict(os.environ, PYTHONUTF8="1")
+    env.pop("PYTHONPATH", None)
     # 図は書かせない(この門が見るのは数値の側。図の配線は
     # `test_example_figures.py` が別に見る)。
     env.pop("FULLSEYE_FIGURE_DIR", None)

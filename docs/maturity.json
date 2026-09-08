@@ -1,0 +1,459 @@
+{
+ "generated_by": "tools/gen_maturity.py",
+ "how_to_read": "ladder の判定は capabilities[].examples と ops_with_tests から 機械的に決まる。生の事実を残してあるので判定を再現できる。",
+ "ladder": [
+  {
+   "id": "research-prototype",
+   "ja": "実装はあるが、名指しの op に試験が揃っておらず、走る例も無い",
+   "en": "Implemented, but not every named operator is exercised by a test and no linked example is executed by a gate."
+  },
+  {
+   "id": "verified-synthetic",
+   "ja": "真値を持つ合成データで自動検証済み(名指しの op 全部に試験があるか、走る例がある)",
+   "en": "Automatically verified against ground truth that is synthesised or computed in closed form."
+  },
+  {
+   "id": "validated-public-real-data",
+   "ja": "公開された実写・実測データを使う例が、門で実際に走っている",
+   "en": "At least one linked example that runs in CI is driven by real, publicly available measured data."
+  },
+  {
+   "id": "validated-hardware",
+   "ja": "実機センサ・装置につないで検証済み(★CI に実機が無いのでこの段は決して出ない)",
+   "en": "Validated against physical sensors or instruments. Never emitted: there is no hardware in CI."
+  }
+ ],
+ "capabilities": [
+  {
+   "id": "align-and-stack",
+   "title": "位置を合わせて重ねる",
+   "title_en": "Align and stack",
+   "category": "組み立てる",
+   "note": "docs/capabilities/align-and-stack.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_astro_photometry",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_registration_basin",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "beamforming-and-range-doppler",
+   "title": "配列で方向を測り、距離と速度を分ける",
+   "title_en": "Beamform for direction, separate range from velocity",
+   "category": "波と信号",
+   "note": "docs/capabilities/beamforming-and-range-doppler.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_multibeam_bathymetry",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_bev_sensor_fusion",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "blob-and-region",
+   "title": "領域を切り出して、選んで、数える",
+   "title_en": "Segment regions, select them, and count",
+   "category": "見つける",
+   "note": "docs/capabilities/blob-and-region.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 3,
+   "ops_without_tests": [
+    "watersheds"
+   ],
+   "examples": [
+    {
+     "id": "poc_cell_counting",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_particle_sizing",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "colour-and-delta-e",
+   "title": "色を測る(XYZ / Lab / 色差)",
+   "title_en": "Measure colour (XYZ / Lab / colour difference)",
+   "category": "光と色",
+   "note": "docs/capabilities/colour-and-delta-e.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_white_balance",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_pigment_unmixing",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "figures-and-annotation",
+   "title": "結果を人が読める図にする",
+   "title_en": "Turn results into figures people can read",
+   "category": "見せる",
+   "note": "docs/capabilities/figures-and-annotation.md",
+   "status": "verified-synthetic",
+   "ops_total": 3,
+   "ops_with_tests": 3,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_colormap_readability",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_dem_terrain",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "geodetic-frames",
+   "title": "地球規模の座標に載せる(ECEF と測地座標)",
+   "title_en": "Put measurements on the Earth (ECEF and geodetic)",
+   "category": "測る",
+   "note": "docs/capabilities/geodetic-frames.md",
+   "status": "verified-synthetic",
+   "ops_total": 2,
+   "ops_with_tests": 2,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_geodetic_height_frames",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "dem_geodesy_tour",
+     "data": "synthetic",
+     "gate": null,
+     "executed": false,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "inverted-colour-overlays",
+   "title": "地の色を知らずに線と領域を描く(反転色)",
+   "title_en": "Draw lines and regions without knowing the background colour",
+   "category": "見せる",
+   "note": "docs/capabilities/inverted-colour-overlays.md",
+   "status": "verified-synthetic",
+   "ops_total": 3,
+   "ops_with_tests": 3,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "annotate_paper_tour",
+     "data": "synthetic",
+     "gate": null,
+     "executed": false,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "optics-and-materials",
+   "title": "光の反射・屈折・干渉を計算する",
+   "title_en": "Compute reflection, refraction and interference",
+   "category": "光と色",
+   "note": "docs/capabilities/optics-and-materials.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "glass_and_mirror_optics",
+     "data": "synthetic",
+     "gate": null,
+     "executed": false,
+     "registry": "examples2d"
+    },
+    {
+     "id": "appearance_structural_colour",
+     "data": "synthetic",
+     "gate": null,
+     "executed": false,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "point-target-detection",
+   "title": "小さな点状の目標を見つけて、副画素で位置を出す",
+   "title_en": "Find small point-like targets and locate them below the pixel",
+   "category": "見つける",
+   "note": "docs/capabilities/point-target-detection.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_search_sweep_width",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_astro_photometry",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "subpixel-2d-metrology",
+   "title": "画像から寸法をサブピクセルで測る",
+   "title_en": "Measure dimensions from an image, below the pixel",
+   "category": "測る",
+   "note": "docs/capabilities/subpixel-2d-metrology.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_dimensional_inspection",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_screw_thread_metrology",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "terrain-and-visibility",
+   "title": "地形の傾き・水の流れ・見通しを測る",
+   "title_en": "Slope, flow and line of sight on a terrain",
+   "category": "測る",
+   "note": "docs/capabilities/terrain-and-visibility.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_dem_terrain",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "dem_terrain_analysis_tour",
+     "data": "synthetic",
+     "gate": null,
+     "executed": false,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "text-and-tables-on-images",
+   "title": "画像の上に、文字と表を置きたい場所へ置く",
+   "title_en": "Put text and tables exactly where you want them on an image",
+   "category": "見せる",
+   "note": "docs/capabilities/text-and-tables-on-images.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_with_tests": 6,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "annotate_paper_tour",
+     "data": "synthetic",
+     "gate": null,
+     "executed": false,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "tomography-reconstruction",
+   "title": "投影から断面を再構成する(CT)",
+   "title_en": "Reconstruct slices from projections (CT)",
+   "category": "形にする",
+   "note": "docs/capabilities/tomography-reconstruction.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 3,
+   "ops_without_tests": [
+    "marching_cubes"
+   ],
+   "examples": [
+    {
+     "id": "poc_ct_fidelity",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_ct_void_morphology",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "vibration-and-acoustics",
+   "title": "振動と音から異常を診断する",
+   "title_en": "Diagnose faults from vibration and sound",
+   "category": "波と信号",
+   "note": "docs/capabilities/vibration-and-acoustics.md",
+   "status": "verified-synthetic",
+   "ops_total": 5,
+   "ops_with_tests": 5,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "poc_bearing_diagnosis",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_rail_corrugation",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "visual-hull-from-silhouettes",
+   "title": "シルエットから立体を彫り出す(視体積交差)",
+   "title_en": "Carve a solid out of silhouettes (visual hull)",
+   "category": "形にする",
+   "note": "docs/capabilities/visual-hull-from-silhouettes.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 4,
+   "ops_without_tests": [],
+   "examples": [
+    {
+     "id": "space_carving",
+     "data": "synthetic",
+     "gate": "examples3d.py (suite runs a smoke subset)",
+     "executed": true,
+     "registry": "examples3d"
+    },
+    {
+     "id": "poc_livestock_body_volume",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "volume-from-3d-scan",
+   "title": "3-D スキャンから体積・土量を出す",
+   "title_en": "Turn a 3-D scan into a volume",
+   "category": "測る",
+   "note": "docs/capabilities/volume-from-3d-scan.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_with_tests": 3,
+   "ops_without_tests": [
+    "mesh_volume"
+   ],
+   "examples": [
+    {
+     "id": "poc_stockpile_volume",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_lidar_terrain_change",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  }
+ ],
+ "example_execution": {
+  "examples2d_total": 199,
+  "run_by_a_gate": 116,
+  "not_run_by_any_gate": 83,
+  "gate_for_poc": "tests/test_poc_scripts_run.py",
+  "note": "2-D 台帳のうち poc_* 以外は、どの門も実行していない(2026-09-09 に数えた)。"
+ }
+}

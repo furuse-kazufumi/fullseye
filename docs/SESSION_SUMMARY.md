@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-09 07:30:07
+- **最終更新**: 2026-09-09 07:59:18
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+7394a372b Zenodo の書庫メタデータと、DOI が古びないための門
 5f0a81d40 CI 修正: 字幅の試験がフォントに依存していた(Linux でだけ落ちた)
 c11074059 auto: test_annotate_text_path2.py 編集前 (2026-09-09 03:45)
 8f393e3da 重複した展示 117 を取り下げ、GLCM の話を既存の実写テクスチャ PoC に畳み込む
@@ -19,29 +20,20 @@ ad005dee5 展示の動く図を JPEG サムネに落とさず、GIF のまま埋
 08595c6d7 図注に「反転色 / 表 / 置き場所 / 字体」を足し、回転成分の監査 PoC を新設(展示 116)
 4e12fce0d auto: examplefig.py 編集前 (2026-09-09 00:37)
 7068c6e82 auto: examplefig.py 編集前 (2026-09-09 00:35)
-74148594b auto: examplefig.py 編集前 (2026-09-09 00:35)
 ```
 
 ## 現在の git status
 
 ```
-M CHANGELOG.md
- M CITATION.cff
- M CONTRIBUTING.md
- M README.md
- M docs/README.md
- M docs/SESSION_SUMMARY.md
- M docs/articles/exhibits/qiita_items.json
- M tests/test_packaging_foundation.py
-?? .zenodo.json
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:28 docs/SESSION_SUMMARY.md
+07:47 docs/SESSION_SUMMARY.md
+07:40 .pytest_cache/v/cache/nodeids
 07:27 .ruff_cache/0.16.0/15563442506313268617
-07:27 .pytest_cache/v/cache/nodeids
 07:27 CHANGELOG.md
 07:27 tests/test_packaging_foundation.py
 07:27 CONTRIBUTING.md

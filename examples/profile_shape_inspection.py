@@ -17,9 +17,18 @@ EXTEND: 実測の輪郭(3D スキャンの断面、撮影した影絵の輪郭�
 """
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import numpy as np
 
-import profileops
+# ★repo 直下のモジュール(profileops)を import するので、チェックアウトから
+# そのまま走らせても通るように repo 直下を先頭に置く。他の例と同じ作法。
+# これが無いと `py -3.11 examples/<name>.py` が ModuleNotFoundError で落ちる
+# (2026-09-09 実測: 走らせる門が無かった 83 本のうち、落ちたのはこの型の 2 本だけ)。
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import profileops  # noqa: E402
 
 
 def main():
