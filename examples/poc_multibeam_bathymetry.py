@@ -578,8 +578,25 @@ def section_scene():
         print(f"  層 {n_layer:>4} 枚に切ったレイトレース: 走時の差 "
               f"{float(np.max(np.abs(t_l - t_ref))):.3e} s")
     print("  → 層内の音速が 1 次なら、層に切っても走時は動かない(円弧が厳密だから)。")
+    # 層内を**等音速**とみなす粗い実装(境界の曲がりは fs.ledger.snell_angle)
+    th_probe = 65.0
+    i65 = int(np.argmin(np.abs(BEAM_DEG - th_probe)))
+    print(f"  層内を**等音速**とみなす古い実装(境界で snell_angle)は、"
+          f"{th_probe:.0f} 度で:")
+    conv = []
+    for n_layer in (2, 4, 8, 16, 32):
+        xc, tc = trace_const_layers(prof, th_probe, DEPTH_REF, n_layer)
+        dz = ca * (tc - float(t_ref[i65])) * math.cos(math.radians(th_probe))
+        conv.append((n_layer, abs(dz)))
+        print(f"    層 {n_layer:>3} 枚: 走時の差 {tc - float(t_ref[i65]):+.3e} s "
+              f"= 深さ {dz:+.4f} m、水平 {xc - float(x_ref[i65]):+.4f} m")
+    ratio = conv[0][1] / conv[-1][1]
+    print(f"  → 層を 2 → 32 枚に細かくすると誤差は {ratio:.1f} 倍小さくなる"
+          f"(層数 16 倍で {ratio:.1f} 倍 = ほぼ **1 次収束**)。")
+    print(f"     ★2 枚だと {conv[0][1]:.3f} m —— TVU {tvu(DEPTH_REF):.3f} m を"
+          f"**実装の刻みだけで**割る。キャストの層の切り方は精度の一部。")
     return {"prof": prof, "c0": c0, "cb": cb, "g": g, "ca": ca,
-            "x": x_ref, "t": t_ref, "layer_worst": worst}
+            "x": x_ref, "t": t_ref, "layer_worst": worst, "conv": conv}
 
 
 # --------------------------------------------------------------------------- #
