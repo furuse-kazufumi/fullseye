@@ -3,38 +3,39 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-08 16:28:18
+- **最終更新**: 2026-09-08 16:58:39
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-f9e163d30 op +3(散在補間・点列スペクトル・副ビン頂点)と ops1d のノート 39 枚
-a4ec70ffa PoC 3 本追加(展示 105→108): 鉄道の弦測定・ロール周期・データセンター熱場
-cbc7edccc auto: poc_datacenter_thermal_field.py 編集前 (2026-09-08 13:10)
-728fbad09 auto: poc_datacenter_thermal_field.py 編集前 (2026-09-08 13:10)
-8dcdbf6a6 auto: poc_datacenter_thermal_field.py 編集前 (2026-09-08 13:10)
-41c65a245 auto: poc_web_roll_periodicity.py 編集前 (2026-09-08 13:09)
-c4ad84798 auto: poc_web_roll_periodicity.py 編集前 (2026-09-08 13:09)
-55aa92cad auto: poc_web_roll_periodicity.py 編集前 (2026-09-08 13:07)
-69a889259 auto: poc_datacenter_thermal_field.py 編集前 (2026-09-08 13:07)
-d84f387ef auto: poc_datacenter_thermal_field.py 編集前 (2026-09-08 13:06)
+a474c771b auto: poc_print_registration.py 編集前 (2026-09-08 16:58)
+6c7e21d8f auto: poc_print_registration.py 編集前 (2026-09-08 16:58)
+f69848354 auto: poc_print_registration.py 編集前 (2026-09-08 16:58)
+fba9fe0d6 auto: poc_print_registration.py 編集前 (2026-09-08 16:58)
+ccbb35a27 auto: poc_print_registration.py 編集前 (2026-09-08 16:57)
+cf3877ea8 auto: poc_print_registration.py 編集前 (2026-09-08 16:57)
+850a047d8 auto: poc_print_registration.py 編集前 (2026-09-08 16:57)
+d5cbbbf18 auto: poc_print_registration.py 編集前 (2026-09-08 16:57)
+2ba0b650f auto: poc_print_registration.py 編集前 (2026-09-08 16:56)
+a1be81825 auto: poc_print_registration.py 編集前 (2026-09-08 16:56)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M examples/poc_print_registration.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+16:58 examples/poc_print_registration.py
+16:28 docs/SESSION_SUMMARY.md
 16:25 .pytest_cache/v/cache/lastfailed
 16:25 .pytest_cache/v/cache/nodeids
 16:07 data/auto_functional_gate.json
-15:57 docs/SESSION_SUMMARY.md
 15:55 docs/articles/fullseye_poc_museum_qiita_en.md
 15:55 docs/articles/exhibits/wingpoc.en.md
 15:55 docs/articles/fullseye_poc_museum_qiita_ja.md
@@ -45,7 +46,6 @@ d84f387ef auto: poc_datacenter_thermal_field.py 編集前 (2026-09-08 13:06)
 15:55 docs/articles/assets/poc/poc_machine_condition_fusion/01_scene_machine_720.jpg
 15:55 docs/articles/assets/poc/poc_machine_condition_fusion/figures.json
 15:55 docs/articles/assets/poc/poc_machine_condition_fusion/13_sweep_rpm_variation.png
-15:55 docs/articles/assets/poc/poc_machine_condition_fusion/12_sweep_pixel_pitch.png
 ```
 
 ---

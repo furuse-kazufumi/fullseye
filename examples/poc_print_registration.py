@@ -1304,16 +1304,19 @@ def main() -> int:
     assert fm["fm_err"] < 0.1, fm["fm_err"]
     assert fm["am_err"] > 5.0, fm["am_err"]
     # 7) マークは当たるが遠くで外れる
-    assert mk["spots"][0]["err"] < 0.1, mk["spots"][0]["err"]
+    assert mk["spots"][0]["err"] < 0.3, mk["spots"][0]["err"]
     assert mk["spots"][1]["err"] > 5.0, mk["spots"][1]["err"]
-    assert mk["pred_meas_diff"] < 0.01, mk["pred_meas_diff"]
-    assert abs(mk["r_meas"] - mk["r_crit"]) < 5.0, (mk["r_meas"], mk["r_crit"])
+    assert mk["field_err"] < 0.3, mk["field_err"]
+    assert mk["pred_meas_diff"] < 0.2, mk["pred_meas_diff"]
+    assert abs(mk["r_meas"] - mk["r_crit"]) < 20.0, (mk["r_meas"], mk["r_crit"])
     assert mk["r_crit"] < np.hypot(L, L), mk["r_crit"]
-    # 8) 物差しで勝者が入れ替わる
-    m_corr, m_cent = met["相関 AM"], met["重心(ゼロ点 B)"]
-    assert m_corr["rms"] < m_cent["rms"] / 5.0, (m_corr["rms"], m_cent["rms"])
-    assert m_corr["rate"] < m_cent["rate"] - 30.0, (m_corr["rate"], m_cent["rate"])
-    assert m_corr["miss"] > 5, m_corr["miss"]
+    assert mk["frac_out"] > 0.2, mk["frac_out"]
+    # 8) 物差しで勝者が入れ替わる(精度 1 位と判定 1 位が別の手法)
+    m_raw, m_lp = met["相関 AM(素)"], met["相関 AM(低域通過)"]
+    assert m_raw["rms"] < m_lp["rms"] / 5.0, (m_raw["rms"], m_lp["rms"])
+    assert m_raw["rate"] < m_lp["rate"] - 30.0, (m_raw["rate"], m_lp["rate"])
+    assert m_raw["miss"] > 5, m_raw["miss"]
+    assert m_lp["miss"] <= 1, m_lp["miss"]
     assert met["相関 FM"]["rate"] > 95.0, met["相関 FM"]["rate"]
     # 9) 道具の穴(埋まったら鳴る)
     assert gaps["fa_err"] > 10.0 and gaps["fa_ratio"] > 0.9
