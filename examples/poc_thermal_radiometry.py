@@ -1577,6 +1577,8 @@ def main() -> int:
     assert abs(image["bolt_corr"] - image["bolt_true"]) < 0.5, image
     assert image["rms"] < 0.5 < image["rms_app"], image
     assert image["jensen_img"] > 0.0, image["jensen_img"]
+    # ★補正は偏りを消す代わりに雑音を 1/ε 倍にする(ε の比 9.5 に近い)
+    assert image["rms_bolt"] > 4.0 * image["rms_ring"], image
     # 11. 道具の穴: 熱放射測定そのものの op は 4 層のどこにも無い
     for name in ("planck", "emissiv", "temperature", "radiom", "thermal",
                  "infrared", "stefan", "kelvin", "atmos", "guard"):
