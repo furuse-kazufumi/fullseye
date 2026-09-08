@@ -1125,10 +1125,10 @@ def section_thermocline(scene):
     for th in (0.0, 30.0, 45.0, 60.0, 65.0, 70.0):
         i = int(np.argmin(np.abs(BEAM_DEG - th)))
         a, b = z_const[i] - DEPTH_REF, z_fit[i] - DEPTH_REF
-        rows.append((f"{th:.0f}", f"{a:+.4f}", f"{b:+.4f}",
-                     f"{100*(1-abs(b)/max(abs(a), 1e-12)):.0f} %"))
-        print(f"  {th:>8.0f}{a:>+16.4f}{b:>+18.4f}"
-              f"{100*(1-abs(b)/max(abs(a),1e-12)):>9.0f}%")
+        # 直下は等音速側が(較正済みなので)厳密に 0。比を取ると発散するので出さない。
+        gain = "—" if abs(a) < 1e-6 else f"{100*(1-abs(b)/abs(a)):.0f} %"
+        rows.append((f"{th:.0f}", f"{a:+.4f}", f"{b:+.4f}", gain))
+        print(f"  {th:>8.0f}{a:>+16.4f}{b:>+18.4f}{gain:>10}")
     e_const = float(np.max(np.abs(z_const - DEPTH_REF)))
     e_fit = float(np.max(np.abs(z_fit - DEPTH_REF)))
     print(f"  → 等音速だと最大 {e_const:.3f} m、2 点の一定勾配だと "
