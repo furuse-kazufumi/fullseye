@@ -485,7 +485,7 @@ def section_scene():
 # --------------------------------------------------------------------------- #
 def predict_dt_from_eps(tab: BandTable, band: str, t_obj: float, eps: float,
                         rel_deps: float, t_refl: float = T_REFL_REF,
-                        lam_eff: float | None = None) -> float:
+                        lam_eff: float | None = None, wien_corr: bool = False) -> float:
     """放射率を **相対** ``rel_deps`` だけ取り違えたときの温度誤差 [K](予測)。
 
     ε₀ = ε(1+δ) と仮定して逆算すると、L_bb(T̂) = L_bb(T_o)(1 − δ(1 − L_r/L_o))
