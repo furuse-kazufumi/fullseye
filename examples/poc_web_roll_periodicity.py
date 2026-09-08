@@ -370,74 +370,90 @@ def section_null() -> dict:
     for lab, kw in (("間隔の中央値", dict(stat="median")),
                     ("間隔の平均", dict(stat="mean"))):
         e = null_estimate(sc0["md"], sc0["cd"], lane=True, **kw)
-        print("     %-12s %8.2f mm(真値 %.2f、誤差 %+.2f)"
+        print("     %-16s %8.2f mm(真値 %.2f、誤差 %+8.2f)"
               % (lab, e["C"], c, e["C"] - c))
-    e = spec_estimate(sc0["md"], sc0["length"])
-    print("     %-12s %8.2f mm(真値 %.2f、誤差 %+.2f)"
-          % ("スペクトル", e["C"], c, e["C"] - c))
+    for lab, fn in (("スペクトル 最大値", naive_spec_estimate),
+                    ("スペクトル 櫛", spec_estimate)):
+        e = fn(sc0["md"], sc0["length"])
+        print("     %-16s %8.2f mm(真値 %.2f、誤差 %+8.2f)-> %s"
+              % (lab, e["C"], c, e["C"] - c, identify(e["C"])))
     print("   -> 検出が完璧ならゼロ点は当たる。**問題はそこから先**。")
+    print("   ★★そして**素朴なスペクトル(帯域内の最大値)はここで既に外れて"
+          "いる** —— 周期欠陥の列は\n      インパルス列なので"
+          "スペクトルは f = k/C の櫛になり、高調波は基本波とほぼ同じ高さ。\n"
+          "      最大値は C/2 = %.2f mm を掴み、**それが台帳の %s "
+          "(%.2f mm)の近くに落ちる**。\n      無いロールを名指しするのでは"
+          "なく、**実在する無実のロールを名指しする**。"
+          % (c / 2.0, identify(c / 2.0), CIRC[identify(c / 2.0)]))
+    print("      以下「スペクトル」は櫛法(k=1..3 が全部立っている最低周波数、"
+          "fail-closed)を指す。")
 
     print("\n   見逃し率を上げる(ランダム欠陥 %d 個・蛇行あり、%d 試行の中央値):"
           % (int(L_FULL * CLUTTER_PER_MM), SEEDS))
-    print("   見逃し   間隔の中央値      間隔の平均       スペクトル      "
-          "ケプストラム    特定成功率")
+    print("   見逃し  間隔の中央値   間隔の平均  スペクトル最大値  スペクトル櫛"
+          "  ケプストラム  櫛の特定成功率")
     ps = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
-    rows, tab = [], {k: [] for k in ("med", "mean", "spec", "cep", "hit")}
+    keys = ("med", "mean", "naive", "spec", "cep")
+    rows, tab = [], {k: [] for k in keys + ("hit",)}
     for p in ps:
-        errs = {k: [] for k in ("med", "mean", "spec", "cep")}
+        errs = {k: [] for k in keys}
         hit = 0
         for s in range(SEEDS):
             sc = scene(SEED0 + s, p_miss=p)
             errs["med"].append(null_estimate(sc["md"], sc["cd"])["C"] - c)
             errs["mean"].append(
                 null_estimate(sc["md"], sc["cd"], stat="mean")["C"] - c)
+            errs["naive"].append(
+                naive_spec_estimate(sc["md"], sc["length"])["C"] - c)
             se = spec_estimate(sc["md"], sc["length"])
             errs["spec"].append(se["C"] - c)
             errs["cep"].append(cepstrum_estimate(sc["md"], sc["length"])["C"] - c)
             hit += int(identify(se["C"]) == CULPRIT)
         med = {k: float(np.nanmedian(np.abs(v))) for k, v in errs.items()}
         rate = 100.0 * hit / SEEDS
-        for k in med:
+        for k in keys:
             tab[k].append(med[k])
         tab["hit"].append(rate)
         rows.append(["%.0f %%" % (100 * p)]
-                    + ["%.1f" % med[k] for k in ("med", "mean", "spec", "cep")]
-                    + ["%.0f %%" % rate])
-        print("   %4.0f %%  %12.1f %14.1f %15.1f %15.1f %12.0f %%"
-              % (100 * p, med["med"], med["mean"], med["spec"], med["cep"], rate))
-    print("   (数字は |推定 - 真値| の中央値 [mm]。特定成功率 = スペクトル法が"
+                    + ["%.1f" % med[k] for k in keys] + ["%.0f %%" % rate])
+        print("   %4.0f %% %11.1f %12.1f %16.1f %13.1f %13.1f %12.0f %%"
+              % ((100 * p,) + tuple(med[k] for k in keys) + (rate,)))
+    print("   (数字は |推定 - 真値| の中央値 [mm]。特定成功率 = 櫛法が"
           "%s を当てた割合)" % CULPRIT)
 
     i4 = ps.index(0.4)
     print("\n  ★見逃し %.0f %% で 間隔の中央値は誤差 %.1f mm、間隔の平均は %.1f mm、"
-          "**スペクトルは %.1f mm**。" % (100 * ps[i4], tab["med"][i4],
-                                          tab["mean"][i4], tab["spec"][i4]))
+          "**櫛法は %.1f mm**。" % (100 * ps[i4], tab["med"][i4],
+                                    tab["mean"][i4], tab["spec"][i4]))
     print("     見逃しは**位相を飛ばさない** —— 抜けた山は振幅を減らすだけで、"
           "周波数は動かない。\n     間隔法は 1 個抜けるたびに間隔が 2C・3C に"
-          "化けるので、中央値は見逃しが半分を越えた所で 2 倍へ跳ぶ。")
+          "化けるので、中央値は見逃しが増えるほど上へ引きずられる。")
     print("  ★間隔の平均は見逃しゼロでも既に外れている(%.1f mm)—— "
           "ランダム欠陥が短い間隔を差し込むから。\n     平均は clutter に、"
-          "中央値は見逃しに弱い。**どちらの弱点もスペクトルには無い**。"
+          "中央値は見逃しに弱い。**どちらの弱点も櫛法には無い**。"
           % tab["mean"][0])
-    print("  ★ケプストラムは誤差 %.1f 〜 %.1f mm と大きい —— "
-          "op の docstring が警告しているとおり\n     「族」を返すので、"
-          "最大値だけ読むと %s の整数倍を掴む(この場面では実際に起きた)。"
-          % (min(tab["cep"]), max(tab["cep"]), CULPRIT))
+    print("  ★ケプストラムは誤差 %.1f 〜 %.1f mm。op の docstring が警告して"
+          "いるとおり\n     「族」を返すので、最大値だけ読むと整数倍を掴む"
+          "(見逃し 0 %% で %.1f mm = %.2f C を返した)。"
+          % (min(tab["cep"]), max(tab["cep"]), tab["cep"][0] + c,
+             (tab["cep"][0] + c) / c))
 
     figs.save_plot("null_vs_spectrum",
                    [("間隔の中央値", [100 * p for p in ps], tab["med"]),
                     ("間隔の平均", [100 * p for p in ps], tab["mean"]),
-                    ("スペクトル", [100 * p for p in ps], tab["spec"])],
+                    ("スペクトル 最大値", [100 * p for p in ps], tab["naive"]),
+                    ("スペクトル 櫛", [100 * p for p in ps], tab["spec"])],
                    xlabel="欠陥検出の見逃し率 [%]",
                    ylabel="周長の推定誤差 |ΔC| の中央値 [mm]",
                    title="見逃しを上げるとゼロ点だけが崩れる",
-                   caption="見逃しは位相を飛ばさないので、スペクトルの山は"
+                   caption="見逃しは位相を飛ばさないので、櫛の山は"
                            "低くなるだけで動かない。")
     figs.save_table("null_table",
-                    ["見逃し率", "間隔の中央値", "間隔の平均", "スペクトル",
-                     "ケプストラム", "特定成功率"], rows,
+                    ["見逃し率", "間隔の中央値", "間隔の平均",
+                     "スペクトル最大値", "スペクトル櫛", "ケプストラム",
+                     "櫛の特定成功率"], rows,
                     title="周長の推定誤差 [mm](%d 試行の中央値)" % SEEDS)
-    return {"ps": ps, "tab": tab}
+    return {"ps": ps, "tab": tab, "half": c / 2.0}
 
 
 # --------------------------------------------------------------------------- #
