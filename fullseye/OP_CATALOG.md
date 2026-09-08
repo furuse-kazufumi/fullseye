@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(186 例)
+### 2-D 画像/信号/幾何(187 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -134,6 +134,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **restoration**
 - **手ブレ除去はどこまで戻せるか(核が既知でも雑音が上限を決める)** — ブレ核を自分で決めて掛け、復元して元と比べる。核が厳密に既知でも取り分は無雑音 34.0 dB → SNR 20 dB で **1.8 dB**。最良の雑音対信号比は理論値と同じ桁で動く。核が **5.0 度**ずれると取り分が半減、**19.4 度**でゼロ点に負ける。アンシャープはどの条件でも 0.03 dB しか稼げない。 `py -3.11 examples/poc_camera_shake_deblur.py`
 - **霞除去(律速は大気光ではなく透過率。薄い霞では除霞が害になる)** — 大気散乱モデルで合成するので透過率もシーンも真値が既知。大気光を真値に差し替えても +0.01 dB、**透過率を真値にすると +3.07 dB** = 伸びしろの全部。帯別では近景 **-1.49 dB(害)**・遠景 +11.28 dB。視程 782 m 以上では全体でも負に転じる(beta 0.0025 で -3.39 dB)。 `py -3.11 examples/poc_dehazing.py`
+- **実写のブレを取る(3 つの物差しに 3 人の勝者/ノブが手法より 4.6 倍効く)** — 真値を実写(scikit-image camera 512x512、CC0)にして劣化だけ自分で作る(直線ブレ 11 px・20 度 + 雑音 σ=0.004)。★ゼロ点 24.04 dB に対し、よく使う nsr=0.005 の Wiener は 23.66 dB で負ける。★★nsr を振ると 19.18〜25.40 dB で、最良ならゼロ点を +1.36 dB 上回る ―― **ノブを固定した比較は比較ではない**(相手を弱く見せない)。★★ノブで動く幅 6.22 dB は脱畳み込みの利得 1.36 dB の 4.6 倍。★★3 指標で 3 手法が 1 位: PSNR = Wiener 正しい PSF(25.40 dB)/ 勾配エネルギー = motion_deblur(0.2986 = 真値 0.1936 の 1.54 倍)/ blur_effect = unsharp。参照なし指標が選ぶ手法は PSNR で 4.98 dB・3.26 dB 損。★ただし blur_effect は真値そのもの(0.2885)を全手法より良いと正しく判定する ―― 「ぼけているか」は測れていて、それでも選ばせると損をする。★長さ違い PSF(21 px)は 18.56 dB でゼロ点より -5.48 dB なのに勾配は真値の 1.37 倍。★崖(雑音): +1.52 dB(σ=0)→ +0.05 dB(σ=0.016)。★崖(ブレ長): L=3 +0.86 / L=5 +1.59(山)/ L=25 +0.52 で両端で落ちる。 `py -3.11 examples/poc_real_deblur_honesty.py`
 
 **upscaling**
 - **超解像は情報を増やすか(単一画像では増えない)** — 縮小してから戻して元と比べる。★**bicubic というゼロ点を上回れたのは最大 +0.036 dB** で、分解能は全手法が低解像側のナイキストで揃って死ぬ。鮮鋭化は勾配エネルギーを真値ちょうどに戻すが PSNR は 1.57 dB 落ちる。副画素ずれの16 枚合成は**標本化が足りないときだけ** +13.96 dB で本当に増える。 `py -3.11 examples/poc_superresolution_limits.py`
@@ -1214,7 +1215,7 @@ _計 899 ops / 48 categories。_
 - `vol_count` `volume → feature` · 例: `gallery2d_features`
 - `sk_euler` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `sk_entropy_feat` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
-- `sk_blur_effect` `image → feature` · 例: `gallery2d_features`
+- `sk_blur_effect` `image → feature` · 例: `gallery2d_features`, `poc_real_deblur_honesty`
 - `cv_cc_count` (halcon: `connection`) `region → feature` · 例: `gallery2d_features`
 - `cv_hough_lines` (halcon: `hough_lines`) `image → feature` · 例: `gallery2d_features`
 - `cv_hough_circles` (halcon: `hough_circles`) `image → feature` · 例: `gallery2d_features`
@@ -1650,10 +1651,10 @@ _計 899 ops / 48 categories。_
 - `xcv_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xsk2_wiener` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xcv3_inpaint_ns` `image → image` · 例: `gallery2d_smoothing_rank`
-- `iv_richardson_lucy` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_richardson_lucy` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
 - `iv_wiener_deconv_spatial` `image → image` · 例: `gallery2d_smoothing_rank`
-- `iv_unsharp_deblur` `image → image` · 例: `gallery2d_smoothing_rank`
-- `iv_motion_deblur` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_unsharp_deblur` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
+- `iv_motion_deblur` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_real_deblur_honesty`
 - `iv_backproject_superres` `image → image` · 例: `gallery2d_smoothing_rank`
 - `iv_gradient_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
 
@@ -1729,7 +1730,7 @@ _計 899 ops / 48 categories。_
 - `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `video_streaming`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
-- `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_superresolution_limits`
+- `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
 - `sk_tv` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `sk_wavelet` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `sk_rolling_ball` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_weld_radiograph_porosity`

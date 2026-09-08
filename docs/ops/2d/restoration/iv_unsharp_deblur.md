@@ -4,7 +4,7 @@ dim: 2d
 category: restoration
 in: image
 out: image
-examples: [gallery2d_smoothing_rank]
+examples: [gallery2d_smoothing_rank, poc_real_deblur_honesty]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ iv_unsharp_deblur 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
+- [poc_real_deblur_honesty](../../../../examples/poc_real_deblur_honesty.py) — `py -3.11 examples/poc_real_deblur_honesty.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

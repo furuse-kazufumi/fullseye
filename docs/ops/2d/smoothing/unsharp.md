@@ -5,7 +5,7 @@ category: smoothing
 in: image
 out: image
 halcon: emphasize
-examples: [gallery2d_smoothing_rank, poc_camera_shake_deblur, poc_superresolution_limits]
+examples: [gallery2d_smoothing_rank, poc_camera_shake_deblur, poc_real_deblur_honesty, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -67,6 +67,7 @@ unsharp 0.35 0.50
 
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
 - [poc_camera_shake_deblur](../../../../examples/poc_camera_shake_deblur.py) — `py -3.11 examples/poc_camera_shake_deblur.py`
+- [poc_real_deblur_honesty](../../../../examples/poc_real_deblur_honesty.py) — `py -3.11 examples/poc_real_deblur_honesty.py`
 - [poc_superresolution_limits](../../../../examples/poc_superresolution_limits.py) — `py -3.11 examples/poc_superresolution_limits.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

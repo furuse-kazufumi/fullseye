@@ -374,8 +374,14 @@ def fill_disparity(disp, valid=None) -> np.ndarray:
     For each invalid pixel takes the nearer of its left/right valid neighbours in
     the same row and keeps the *smaller* disparity (the farther, background surface)
     — the standard hole-filling for occlusion gaps left by an L/R consistency check
-    or :func:`speckle_filter`. ``valid`` is the trust mask (default: finite &
-    positive). Rows with no valid pixel stay ``NaN``. Returns the filled map."""
+    or :func:`speckle_filter`. ``valid`` is the trust mask; **the default is
+    ``np.isfinite(disp)`` alone** — a measured 0 (a far surface) is legitimate and
+    is kept, and ``+inf`` / ``-inf`` count as holes just like ``NaN``. (★The line
+    here used to say "finite & positive", which the code never did; the mismatch
+    was found on 2026-09-08 while feeding it real Middlebury ground truth, whose
+    holes are ``+inf`` rather than the ``NaN`` its distributor documents. See
+    ``examples/poc_real_stereo_depth.py``.) Rows with no valid pixel stay ``NaN``.
+    Returns the filled map."""
     d = np.asarray(disp, np.float64).copy()
     if d.ndim != 2:
         raise ValueError("disp must be a 2-D (H, W) map")
