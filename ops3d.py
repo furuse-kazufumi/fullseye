@@ -606,6 +606,10 @@ _CATALOG = {
         ("carve", "visualhull", ["images"], "voxel", False),
         ("visual_hull", "visualhull", ["images"], "voxel", False),
         ("synthesize_silhouette", "visualhull", ["points"], "image2d", False),
+        # ★2026-09-08 追加。それまで彫刻用の姿勢ヘルパ(visualhull.look_at)は
+        #   どの公開層からも引けず、同名の render3d.look_at(gluLookAt・−Z 前方)を
+        #   掴むと **例外なく空の hull** になった(poc_livestock_body_volume)。
+        ("carve_look_at", "visualhull", ["vector"], "pose", False),
     ],
     "superquadric": [  # スーパー2次曲面フィット(把持・物体モデリングの汎用形状族)
         ("fit_superquadric", "superquadric", ["points"], "primitive", False),

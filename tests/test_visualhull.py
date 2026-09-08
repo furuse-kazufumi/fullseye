@@ -9,6 +9,7 @@
 tolerance の根拠は各アサート脇のコメントに明記。近似手法(離散化)の系統誤差のみ許容。
 """
 import numpy as np
+import pytest
 
 import visualhull as vh
 
@@ -102,8 +103,12 @@ def test_synthesize_filters_points_behind_camera():
     K = _K(200.0, 64.0, 64.0)
     R = np.eye(3)
     t = np.array([0.0, 0.0, -2.0])                   # 点は z=-2 (カメラ後方) へ
-    sil = vh.synthesize_silhouette(np.array([[0.0, 0.0, 0.0]]), K, R, t,
-                                   size=(128, 128), fill=False, dilate=0)
+    # 2026-09-08 以降、点が 1 つ残らず後方なら警告が鳴る(規約違いを黙らせない)。
+    # ここは「後方の点を棄却する」ことを意図して確かめている試験なので、警告が
+    # **鳴ること**まで含めて固定する(pytest の警告ノイズにしない)。
+    with pytest.warns(RuntimeWarning, match="カメラ後方"):
+        sil = vh.synthesize_silhouette(np.array([[0.0, 0.0, 0.0]]), K, R, t,
+                                       size=(128, 128), fill=False, dilate=0)
     assert sil.sum() == 0                            # depth<=0 は棄却 -> 空
 
 
@@ -193,3 +198,59 @@ def test_carve_zero_cameras_fails_closed():
     bounds = ((-1.0, 1.0), (-1.0, 1.0), (-1.0, 1.0))
     with pytest.raises(ValueError):
         vh.carve([], [], [], [], bounds, 8)
+
+
+def test_the_public_look_at_is_the_other_convention_and_says_so():
+    """★同じ名前で規約が逆 —— 掴み間違えると**例外を出さずに空の hull** が返る。
+
+    `poc_livestock_body_volume` が踏んだ(2026-09-08)。空間彫刻が要求する姿勢は
+    OpenCV 規約(``X_cam = R X + t``、+Z 前方)で、それを作るのは
+    :func:`visualhull.carve_look_at`。ところが 2026-09-08 まで、この関数は
+    ``fs.`` / ``fs.op.`` / ``fs.ledger.`` のどこからも引けず ``op_find("look")`` も
+    0 件で、**公開層で ``look_at`` の名を持つのは render3d の gluLookAt 版**
+    (4x4・−Z 前方)だけだった。その ``M[:3,:3], M[:3,3]`` を渡すと全点が
+    カメラ後方に落ちるが、``carve`` が fail-closed なのはカメラ 0 台のときだけで、
+    規約違いは無言で空を返す。
+
+    ここで固定するのは 3 つ: (1) 正しい姿勢では前景が出る (2) 逆規約では 0 画素
+    (3) そのとき**警告が鳴る**(黙って空を返さない)。
+    """
+    import warnings
+
+    import render3d
+
+    pts = np.stack(np.meshgrid(*[np.linspace(-0.3, 0.3, 12)] * 3,
+                               indexing="ij"), -1).reshape(-1, 3)
+    pts[:, 2] += 0.75
+    K = _K(600.0, 320.0, 240.0)
+    eye, tgt = (8.0, 0.0, 0.75), (0.0, 0.0, 0.75)
+
+    R, t = vh.carve_look_at(eye, tgt)
+    good = vh.synthesize_silhouette(pts, K, R, t, (480, 640))
+    assert good.sum() > 1000, "正しい規約なのに前景が出ない"
+
+    M = np.asarray(render3d.look_at(eye, tgt))            # gluLookAt: -Z 前方
+    with warnings.catch_warnings(record=True) as rec:
+        warnings.simplefilter("always")
+        bad = vh.synthesize_silhouette(pts, K, M[:3, :3], M[:3, 3], (480, 640))
+    assert bad.sum() == 0, "逆規約なのに前景が出た(この試験の前提が崩れている)"
+    assert any(w.category is RuntimeWarning for w in rec), (
+        "全点がカメラ後方なのに黙って空を返した —— 空の hull と「彫り切った」が"
+        "区別できなくなる")
+
+
+def test_carve_look_at_is_reachable_from_the_public_tiers():
+    """★『無い』と言う前に 4 層を引く —— その 4 層に**出しておく**側の門。
+
+    ``op_find("look")`` が 0 件だったせいで、正しいヘルパが在るのに自前で書き直す
+    ことになった。名前で引けることを固定する(``fs.look_at`` は render3d の別物で、
+    こちらは名前を譲らない —— 同名にすると今度は逆向きに静かに壊れる)。
+    """
+    import fullseye as fs
+
+    assert hasattr(fs.ledger, "carve_look_at")
+    assert "carve_look_at" in [h["op"] for h in fs.op_find("look")]
+    R, t = fs.ledger.carve_look_at((5.0, 0.0, 0.0), (0.0, 0.0, 0.0))
+    assert np.allclose(R @ np.array([5.0, 0.0, 0.0]) + t, 0.0, atol=1e-9), (
+        "カメラ中心が eye に来ていない(t = -R eye)")
+    assert R[2] @ np.array([-1.0, 0.0, 0.0]) > 0.99, "+Z 前方になっていない"

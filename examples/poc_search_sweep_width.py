@@ -682,7 +682,7 @@ def section_lateral_curve(floor):
     print(f"     整合フィルタ(トップハット)は {out['tophat']['w']:.1f} m = "
           f"ゼロ点の {out['tophat']['w'] / max(out['bright']['w'], 1e-9):.2f} 倍。")
     print("     ★**零点をどれだけ上回ったか**でしか腕は測れない —— "
-          "ゼロ点でも 180 m は出る。")
+          f"ゼロ点でも {out['bright']['w']:.0f} m は出る。")
     print(f"  → いちばん外の帯で p = {out['tophat']['p'][-1]:.3f}。ここが 0 に近いので、")
     print("     視野で切られた分の取りこぼし(打ち切り)は無視できる。§7 の低高度は"
           "そうならない。")
@@ -924,8 +924,14 @@ def section_altitude():
                      "%.1f ± %.1f" % (w, se), "%.3f" % p[-1]))
     ws = np.array([o["w"] for o in out])
     best = int(np.argmax(ws))
-    print(f"  → 最適高度 **{ALTITUDES[best]:.0f} m**(W = {ws[best]:.1f} m)。"
-          f"両端ではなく**内点**に来た。")
+    ses = np.array([o["se"] for o in out])
+    flat = [ALTITUDES[k] for k in range(len(ws))
+            if ws[k] > ws[best] - 1.5 * math.hypot(ses[k], ses[best])]
+    print(f"  → 最適高度 **{ALTITUDES[best]:.0f} m**(W = {ws[best]:.1f} ± "
+          f"{ses[best]:.1f} m)。両端ではなく**内点**に来た。")
+    print(f"     ★ただし山の頂は平ら —— 標準誤差の 1.5 倍以内で並ぶのは "
+          + " / ".join("%.0f m" % a for a in flat)
+          + " で、この 3 択は測り分けられていない。")
     print("     低高度側の理由は解像度ではなく**掃引幅そのもの** —— 高度 100 m では")
     print(f"     視野の端でも p = {out[0]['p_end']:.2f} のまま切れており、W は下限値。")
     print("     高高度側は目標が暗くなって(cos^4 と大気と、画素あたりの面積比)消える。")
@@ -1048,7 +1054,8 @@ def section_controls(curve_out):
              ("軸外ぼけを止める", {"blur": False}),
              ("白波を止める", {"whitecaps": False}),
              ("うねりを止める", {"swell": False}))
-    print(f"  {'条件':>24}{'閾値':>8}{'W [m]':>16}{'基準との差':>14}{'端の p':>10}")
+    print(f"  {'条件':>24}{'閾値':>8}{'W [m]':>16}{'基準との差 ± σ':>18}"
+          f"{'端の p':>10}")
     rows, out = [], {}
     base_w = None
     for name, kw in conds:
@@ -1058,10 +1065,12 @@ def section_controls(curve_out):
         out[name] = {"w": w, "se": se, "thr": thr, "p": p}
         if base_w is None:                        # 先頭が基準。差はこの行が原点。
             base_w = w
+        dse = math.hypot(se, out["基準(全部入り)"]["se"])
+        out[name]["dse"] = dse
         print(f"  {name:>24}{thr:>8.2f}{w:>11.1f} ± {se:.1f}"
-              f"{w - base_w:>+13.1f} m{p[-1]:>10.3f}")
+              f"{w - base_w:>+9.1f} ± {dse:.1f}{p[-1]:>10.3f}")
         rows.append((name, "%.2f" % thr, "%.1f ± %.1f" % (w, se),
-                     "%+.1f" % (w - base_w), "%.3f" % p[-1]))
+                     "%+.1f ± %.1f" % (w - base_w, dse), "%.3f" % p[-1]))
     # ★再現性の検査: §3 とは種もフレーム数も別なので、同じ条件でどれだけ動くか。
     d_rep = base_w - curve_out["tophat"]["w"]
     sig_rep = math.hypot(out["基準(全部入り)"]["se"], curve_out["tophat"]["se"])
@@ -1071,10 +1080,11 @@ def section_controls(curve_out):
     tot = sum(out[n]["w"] - base_w for n, _ in conds[1:5])
     big = max(conds[1:5], key=lambda c: out[c[0]]["w"])[0]
     print(f"  → いちばん効くのは **{big}**"
-          f"({out[big]['w'] - base_w:+.0f} m)。差はどれも再現性 "
-          f"{abs(d_rep):.1f} m より大きい。")
-    print(f"  → ★**大気だけは止めても再現性の幅({abs(d_rep):.1f} m)と同じ程度しか"
-          f"動かない**({out['大気を止める']['w'] - base_w:+.1f} m)。")
+          f"({out[big]['w'] - base_w:+.0f} m = "
+          f"{(out[big]['w'] - base_w) / out[big]['dse']:.0f}σ)。")
+    atm = out["大気を止める"]
+    print(f"  → ★**大気だけはほとんど動かない**({atm['w'] - base_w:+.1f} m = "
+          f"{(atm['w'] - base_w) / atm['dse']:.1f}σ)。")
     print("     端と中央の透過率の**比**が 0.76 しかない上に、大気を止めると")
     print("     かすみの路程放射(= 光子雑音の源)も一緒に消えるので、頑健 sigma が")
     print(f"     下がって閾値が {out['基準(全部入り)']['thr']:.2f} → "
@@ -1082,10 +1092,13 @@ def section_controls(curve_out):
     print(f"  → ★**足し算にならない**: 4 つの差を足すと {tot:+.0f} m だが、")
     print("     止めると誤検出も減って閾値が下がるので、原因どうしが絡む。")
     print("     「cos^4 で x m、大気で y m 損している」と足し上げる報告はここで嘘になる。")
-    print(f"  → うねりを止めても W は {out['うねりを止める']['w'] - base_w:+.1f} m しか")
+    sw = out["うねりを止める"]
+    print(f"  → うねりを止めても W は {sw['w'] - base_w:+.1f} m "
+          f"({(sw['w'] - base_w) / sw['dse']:.1f}σ)しか")
     print("     動かない。トップハットがうねりをほぼ全部落とすからで、")
     print("     §2 で海面のぼけを軸上 1 本で近似したことが走査幅に効かない根拠になる。")
-    figs.save_table("controls", ["条件", "閾値", "W [m]", "基準との差", "端の p"], rows,
+    figs.save_table("controls",
+                    ["条件", "閾値", "W [m]", "基準との差 ± σ", "端の p"], rows,
                     title="原因を 1 つずつ止める —— ただし足し算にはならない",
                     caption="止めると誤検出も減るので閾値が下がる。"
                             "各条件で誤検出率を揃え直してある。")
@@ -1271,8 +1284,10 @@ def main() -> int:
     for name in ("cos^4 の減光を止める", "大気を止める", "軸外ぼけを止める",
                  "白波を止める"):
         assert ctrl[name]["w"] > base, (name, ctrl[name]["w"], base)
-    # うねりは効かない(§2 の近似の根拠)
-    assert abs(ctrl["うねりを止める"]["w"] - base) < 0.15 * base, ctrl["うねりを止める"]
+    # うねりと大気は効かない(§2 の近似の根拠 / 透過率の比が小さいこと)
+    for name in ("うねりを止める", "大気を止める"):
+        assert abs(ctrl[name]["w"] - base) < 0.06 * base, (name, ctrl[name]["w"], base)
+        assert abs(ctrl[name]["w"] - base) < 2.0 * ctrl[name]["dse"], (name, ctrl[name])
     # (10) 道具の穴。埋まったらここが鳴る(それが目的)
     assert holes["loc_shape"] == (3,), holes["loc_shape"]
     assert holes["blob_shape"] == (), holes["blob_shape"]

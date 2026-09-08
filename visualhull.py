@@ -29,10 +29,13 @@ from __future__ import annotations
 
 from typing import Sequence, Tuple
 
+import warnings
+
 import numpy as np
 from scipy import ndimage
 
-__all__ = ["synthesize_silhouette", "carve", "visual_hull", "look_at"]
+__all__ = ["synthesize_silhouette", "carve", "visual_hull", "look_at",
+           "carve_look_at"]
 
 Bounds = Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float]]
 
@@ -117,6 +120,19 @@ def synthesize_silhouette(points, K, R, t, size: Tuple[int, int],
     uv, depth = _project(P, K, R, t)
     valid = depth > 0                                  # 前方の点のみ
     if not np.any(valid):
+        # ★点が **1 つ残らず** カメラ後方 = ほぼ確実に姿勢の規約違い(2026-09-08、
+        #   poc_livestock_body_volume が踏んだ)。この関数は OpenCV 規約(+Z 前方)を
+        #   要求するが、公開層で ``look_at`` の名を持つのは render3d の gluLookAt 版
+        #   (−Z 前方の 4x4)。その ``M[:3,:3], M[:3,3]`` を渡すと全 voxel が後方判定に
+        #   なり、**例外なく空のシルエット**が返って空の hull になる。黙って空を返すと
+        #   「彫り切った」と見分けが付かないので、ここだけは声を上げる(有効な場面 ——
+        #   物体が画角の後ろにある —— もあるので raise ではなく警告に留める)。
+        warnings.warn(
+            "synthesize_silhouette: %d 点すべてがカメラ後方(depth<=0)で、空の"
+            "シルエットを返す。R,t は OpenCV 規約(+Z 前方)。render3d.look_at "
+            "(= fs.look_at) は gluLookAt 規約(−Z 前方)なので、その 4x4 を割って"
+            "渡すとここに落ちる —— carve_look_at を使うこと。" % P.shape[0],
+            RuntimeWarning, stacklevel=2)
         return sil
     # nearest-pixel: 連続座標 (u,v) を整数画素中心へ丸める
     px = np.rint(uv[valid]).astype(np.int64)
@@ -250,3 +266,28 @@ def look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0)) -> Tuple[np.ndarray
     R = np.stack([r, d, f], axis=0)                        # rows = camera axes in world
     t = -R @ eye
     return R, t
+
+def carve_look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0)):
+    """``carve`` / ``synthesize_silhouette`` に渡せるカメラ姿勢 ``(R, t)`` を作る。
+
+    :func:`look_at` と同じ実装の、**公開層から引ける名前**。2026-09-08 に追加した ——
+    それまで空間彫刻の正しい姿勢ヘルパは ``fs.`` / ``fs.op.`` / ``fs.ledger.`` の
+    どこからも引けず、``fs.op_find("look")`` も 0 件だった。一方で ``fs.look_at`` は
+    **別物**(``render3d`` の gluLookAt 版、4x4・**−Z 前方**)なので、その ``M[:3,:3]``
+    と ``M[:3,3]`` を渡すと全点がカメラ後方に落ち、**例外を出さずに空のシルエット**が
+    返る。同じ名前で規約が逆という、いちばん静かに間違える組み合わせだった。
+
+    こちらは OpenCV 規約(``X_cam = R X + t``、+Z 前方・+X 右・+Y 下)。
+
+    Parameters
+    ----------
+    eye : (3,) array_like       カメラ中心(ワールド座標)。
+    target : (3,) array_like    注視点(既定は原点)。
+    up : (3,) array_like        上方向(視線とほぼ平行なら自動で代替軸へ切り替える)。
+
+    Returns
+    -------
+    (R (3,3), t (3,))  ``synthesize_silhouette(pts, K, R, t, size)`` にそのまま渡せる。
+    """
+    return look_at(eye, target, up)
+
