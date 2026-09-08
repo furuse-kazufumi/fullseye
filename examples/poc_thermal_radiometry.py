@@ -1056,7 +1056,7 @@ def section_uncertainty(scene):
                                "この歪みを対称には外さない —— 取りこぼしが片側に寄る。")
 
     # --- guard band(合否判定)----------------------------------------------- #
-    guard = section_guard_band(tab, cam, eps, u_eps, base, sweep[0.7]["corr"])
+    guard = section_guard_band(tab, cam, eps, u_eps, base, head)
     return {"base": base, "sweep": sweep, "head": head, "guard": guard,
             "corr_measured": float(cor[0, 1]), "desc": desc, "n_trials": n_trials}
 
