@@ -31,16 +31,21 @@ def _open(path):
     return Image.open(str(path))
 
 
-def test_a_still_sequence_stays_still(_fresh):
-    """★同じ絵を 5 コマ渡したら、GIF の中でも 5 コマとも同じであること。
+def test_every_frame_shares_one_scale(_fresh):
+    """★尺度は全コマで 1 つ。1 枚だけ外れ値が入っても、他のコマは動かない。
 
-    コマごとに正規化していると、雑音の最大値が動くだけで明るさが揺れる。
+    コマごとに min-max で伸ばしていると、外れ値のあるコマが混ざった瞬間に
+    **他の全コマの明るさが変わる**(中身は何も動いていないのに)。
     """
     rng = np.random.default_rng(0)
     base = rng.random((24, 32)) * 0.4 + 0.3
-    frames = [base.copy() for _ in range(5)]
-    frames[2][0, 0] += 3.0                      # ★1 コマだけ外れ値(尺度を動かす罠)
-    p = figs.save_gif("still", frames, fps=5)
+    frames = []
+    for i in range(5):
+        f = base.copy()
+        f[0, 0] = 0.3 + 0.02 * i          # コマごとに 1 画素だけ違う(畳ませない)
+        frames.append(f)
+    frames[2][23, 31] += 3.0              # ★1 コマだけ外れ値(尺度を動かす罠)
+    p = figs.save_gif("scale", frames, fps=5)
     assert p is not None and p.suffix == ".gif"
     im = _open(p)
     assert im.n_frames == 5
@@ -48,9 +53,22 @@ def test_a_still_sequence_stays_still(_fresh):
     for i in range(5):
         im.seek(i)
         seen.append(np.asarray(im.convert("L"), dtype=np.int16))
-    # 外れ値を仕込んだコマ以外は、互いに完全に同じ(尺度が 1 つだから)
+    body = np.s_[1:23, 1:31]              # 仕掛けた 2 画素を外した本体
     for k in (1, 3, 4):
-        assert np.array_equal(seen[0], seen[k]), k
+        assert np.array_equal(seen[0][body], seen[k][body]), k
+
+
+def test_identical_frames_are_merged_by_pillow_and_the_ledger_says_so(_fresh):
+    """★Pillow は**直前と同じコマを 1 枚に畳む**(その分の時間は前に足される)。
+
+    畳まれること自体は害が無い(動きの速さは変わらない)が、「72 コマの GIF」と
+    言いながら中身が 40 コマ、を黙って通さないために**両方**記録する。
+    """
+    figs.save_gif("still", [np.zeros((8, 8))] * 5, fps=5)
+    m = figs.manifest()[-1]
+    assert m["frames"] == 5
+    assert m["frames_written"] < 5              # 実測: 畳まれる
+    assert _open(figs.target_dir() / m["file"]).n_frames == m["frames_written"]
 
 
 def test_frames_of_different_sizes_are_refused_not_padded(_fresh):
@@ -73,6 +91,7 @@ def test_the_manifest_records_it_as_animated(_fresh):
     assert [m["file"] for m in man] == ["01_still_one.png", "02_moving.gif"]
     assert man[0].get("animated") is None and man[1]["animated"] is True
     assert man[1]["frames"] == 2 and man[1]["fps"] == 4.0
+    assert man[1]["frames_written"] == 2      # 中身が違うので畳まれない
     on_disk = json.loads(io.open(os.path.join(str(_fresh), "figures.json"),
                                  encoding="utf-8").read())
     assert on_disk == man                        # figures.json と一致している
