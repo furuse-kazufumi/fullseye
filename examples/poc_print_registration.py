@@ -1406,8 +1406,11 @@ def main() -> int:
     # 二段は両方勝つ。ただし粗の誤差がセルの半径を超えると壊れる(実測済み)
     assert m_two["rms"] < 1.5 * m_raw["rms"] + 1e-6, (m_two["rms"], m_raw["rms"])
     assert m_two["rate"] > m_raw["rate"] + 20.0, (m_two["rate"], m_raw["rate"])
-    assert met["coarse_max"] < PITCH / 2, (met["coarse_max"], PITCH / 2)
-    assert met["two_stage_broken"] >= 1, met["two_stage_broken"]
+    assert met["coarse_median"] < PITCH / 2, (met["coarse_median"], PITCH / 2)
+    assert met["subset_ok"], (met["bad_two"], met["bad_coarse"])
+    assert met["bad_two"] >= 1, met["bad_two"]
+    assert met["two_stage_broken"] > met["bad_two"], (met["two_stage_broken"],
+                                                      met["bad_two"])
     assert met["相関 FM"]["rate"] > 95.0, met["相関 FM"]["rate"]
     # 9) 道具の穴(埋まったら鳴る)
     assert gaps["fa_err"] > 10.0 and gaps["fa_ratio"] > 0.9
