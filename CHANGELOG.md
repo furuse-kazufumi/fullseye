@@ -430,6 +430,21 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
   閉形式 0.5710)。★それまでの門は「平地」と「壁の**向こう側**」しか見ておらず、
   **壁そのものが見えるか**を一度も確かめていなかった —— `tests/test_demops.py` に
   3 本足した。
+- ★**Zenodo の書庫メタデータを積んだ**(`.zenodo.json`)。DOI は**まだ取っていない**
+  ので README には「未取得」と書いた —— 解決しない DOI は書かないより悪い。
+  ★門を生まれた日に立てた理由: Zenodo が読むのは**タグを打った瞬間**のこの
+  ファイルで、しかも **DOI は発行後に直せない**。版が 1 つ古いまま登録されると
+  引用した人には永久に違う版が伝わる(`CITATION.cff` が 5 版ぶん取り残されていた
+  前科と同じ型)。`pyproject` / `CITATION.cff` と版・題・ライセンス・著者を突き合わせる
+  試験を `tests/test_packaging_foundation.py` に追加。ライセンス ID は Zenodo の語彙で
+  あって SPDX ではなく、**誤ると無言で CC-BY に落ちる**ので、初回登録前に
+  `/api/licenses` で実在を確かめる手順を `CONTRIBUTING.md` に書いた。
+  `CITATION.cff` に `repository-code` / `url` / `repository-artifact` を追加。
+  ★調べて分かった一番効く事実(公式ドキュメント、2026-09-09 確認): 両方あると
+  Zenodo は **`.zenodo.json` だけを読み `CITATION.cff` を完全に無視する**。つまり
+  書庫の記述は `.zenodo.json` 単独で成り立っていなければならない。手順・失敗時の
+  エラー文字列・DOI を事前予約できないことは `CONTRIBUTING.md` の "Zenodo" に。
+  ライセンス ID `apache-2.0` の実在は `/api/licenses` で確認済み(2026-09-09)。
 
 ## 0.1.10 — 2026-09-06
 

@@ -6,6 +6,9 @@ authors:
   - family-names: "Furuse"
     given-names: "Kazufumi"
 license: Apache-2.0
+repository-code: "https://github.com/furuse-kazufumi/fullseye"
+url: "https://furuse.work/"
+repository-artifact: "https://pypi.org/project/fullseye/"
 version: 0.1.10
 date-released: "2026-09-06"
 abstract: >-

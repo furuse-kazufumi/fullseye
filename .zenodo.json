@@ -1,0 +1,34 @@
+{
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "apache-2.0",
+  "title": "Fullseye: an explainable classical-vision operator library and workbench for Physical AI",
+  "version": "0.1.10",
+  "language": "eng",
+  "creators": [
+    {
+      "name": "Furuse, Kazufumi"
+    }
+  ],
+  "description": "<p>Fullseye is a numpy-native library of typed classical image-processing and geometric-vision operators (2-D and 3-D), with an evolutionary pipeline-design mode evaluated under held-out gates, a Physical-AI perception stack (stereo &rarr; depth &rarr; point cloud &rarr; 6-DoF pose), and an HDevelop-style IDE (Fullseye Studio).</p><p>Every operator carries a machine-readable Markdown note (call contract, references, licence, version fingerprint) designed to double as a retrieval corpus for AI assistants and as a reproducible, citable methods reference. The repository also carries a series of worked proof-of-concept studies, each of which holds its ground truth in closed form or in synthesis and reports the null (do-nothing) result beside the method, so that a reader can see where a measurement breaks rather than only where it succeeds.</p><p>Documentation: <a href=\"https://furuse.work/\">https://furuse.work/</a> &middot; Distribution: <a href=\"https://pypi.org/project/fullseye/\">https://pypi.org/project/fullseye/</a></p>",
+  "keywords": [
+    "image processing",
+    "machine vision",
+    "explainable algorithms",
+    "metrology",
+    "robotics perception",
+    "point cloud",
+    "computed tomography",
+    "evolutionary computation"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://furuse.work/",
+      "relation": "isDocumentedBy"
+    },
+    {
+      "identifier": "https://pypi.org/project/fullseye/",
+      "relation": "isIdenticalTo"
+    }
+  ]
+}

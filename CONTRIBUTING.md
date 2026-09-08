@@ -101,6 +101,58 @@ Two rules that matter more than the format:
   reproduced by running something in the repository, leave it out.
 - **A citation that does not resolve is worse than none.** No placeholder DOIs.
 
+### Zenodo (a DOI that outlives the repository)
+
+A GitHub Release says *what was usable when*; a DOI says *this exact thing is still
+retrievable in ten years, whoever owns the account*. Checked against Zenodo's and
+GitHub's own documentation on 2026-09-09; re-read it before the first run, because the
+GitHub integration is on Zenodo's 2026 roadmap.
+
+**The one thing that surprises people:** if a repository has **both** `.zenodo.json` and
+`CITATION.cff`, Zenodo uses **only** `.zenodo.json` and ignores `CITATION.cff` entirely
+(<https://help.zenodo.org/docs/github/describe-software/zenodo-json/>). This repository
+has both, so the archived record is described by `.zenodo.json` alone —
+`tests/test_packaging_foundation.py` keeps the two from drifting apart, because a DOI
+**cannot be edited after minting** and a stale version there is permanent.
+
+One-time hookup (browser + account owner; it cannot be scripted):
+
+1. Sign in at <https://zenodo.org/> with GitHub and authorise it. The repository must be
+   **public** and carry a licence; for an organisation-owned repository the org owner has
+   to approve Zenodo's OAuth access
+   (<https://docs.github.com/en/repositories/archiving-a-github-repository/referencing-and-citing-content>).
+2. Profile menu → **GitHub** → **Sync now** → find `furuse-kazufumi/fullseye` → flip the
+   toggle **On**. "Once connected, new releases from the repository will be automatically
+   ingested and archived."
+3. Confirm the licence id in `.zenodo.json` resolves. Done on 2026-09-09:
+   `curl -L 'https://zenodo.org/api/licenses/?q=apache&size=50'` returns four ids, of which
+   **`apache-2.0` = "Apache License 2.0"** — our spelling is correct. Worth re-checking if
+   the licence ever changes: the id is Zenodo's own vocabulary, not SPDX (its documented
+   example is lower-case, `"license": "mit"`), and what an *unknown* id does is undocumented
+   — it may fail the release with "Extra metadata load failed" or fall back to a default.
+   Note the `-L`: the API answers 301 without it.
+
+Then, per release:
+
+4. **Publishing the Release fires the ingest** — a bare tag does not. Zenodo archives the
+   repository as of that tag and mints a *version* DOI plus a *concept* DOI that always
+   resolves to the newest version. A DOI **cannot be pre-reserved** through the GitHub
+   integration (only through a manual upload), so the release note cannot contain its own
+   DOI — put it in on the next edit of the note.
+5. If the release fails, the error text names the file: **"Extra metadata load failed."**
+   is `.zenodo.json`, **"Citation metadata load failed."** is `CITATION.cff`; an *empty*
+   error is a known Zenodo bug. There is no in-place fix — correct the file and cut
+   another release.
+6. Put the **concept** DOI in the README badge and the **version** DOI in the release
+   note, add both to `CITATION.cff` (`doi:` plus an `identifiers:` entry) and re-run the
+   packaging gate. Check **External resources → Archived in** on the record: Zenodo passes
+   software records on to Software Heritage.
+
+Two limits worth writing down: only releases published **after** the toggle are ingested
+— v0.1.10 will not be archived retroactively unless it is uploaded by hand — and Zenodo
+takes the repository *as of the tag*, so anything uncommitted at that moment is not in
+the DOI.
+
 ## Dev quickstart
 
 ```bash

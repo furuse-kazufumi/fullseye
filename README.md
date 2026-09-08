@@ -204,6 +204,12 @@ registry fingerprint with a CI drift test, and evaluation follows the honest
 held-out discipline above. If you use it in academic work, please cite via
 `CITATION.cff`.
 
+**Archival status, stated plainly:** no DOI has been minted yet. The Zenodo
+archival metadata is committed (`.zenodo.json`, kept in step with `CITATION.cff`
+and `pyproject.toml` by a CI gate), and the first version and concept DOIs will be
+issued with the next release — see "Zenodo" in `CONTRIBUTING.md`. Until then, cite
+the version and the git tag; a DOI that does not resolve is worse than none.
+
 ## Documentation map
 
 Everything below lives in the repo — start at the guide that matches what you want to do:

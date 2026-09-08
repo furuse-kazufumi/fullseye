@@ -2,6 +2,11 @@
 
 **Language:** [日本語](README.md) · [English](README.en.md) · [简体中文](README.zh.md) · [繁體中文](README.tw.md) · [한국어](README.ko.md) · [Deutsch](README.de.md)
 
+> **Fullseye is an open, explainable vision-and-measurement foundation for
+> industrial inspection and Physical AI** — from image and signal acquisition to
+> geometry, measurement, inspection evidence, and robot action.
+> Apache-2.0 · `pip install fullseye` · **[English index →](README.en.md)**
+
 
 ![実際のオペレータ出力だけで作った 6 幕(エッジと方位 / 連結成分の選別 / サブピクセル計測 / SDF からのメッシュ化 / 点群クラスタリング / レンズのデフォーカス)。](articles/assets/fullseye_hero.gif)
 

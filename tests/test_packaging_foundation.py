@@ -189,6 +189,49 @@ def test_citation_metadata_matches_the_released_version():
             % (rel.group(1), head.group(2)))
 
 
+def test_zenodo_metadata_agrees_with_the_citation_and_the_package():
+    """``.zenodo.json`` が ``CITATION.cff`` / ``pyproject.toml`` と食い違わないこと。
+
+    Zenodo は **タグを打った瞬間の書庫**をこのファイルの記述で登録する。つまり
+    事故が起きるのは「リリース手順」ではなく **DOI が発行された後**で、しかも
+    DOI は書き換えられない —— 版が 1 つ古いまま登録されると、引用した人には
+    永久に違う版が伝わる。``CITATION.cff`` が 5 版ぶん取り残されていた前科
+    (2026-09-05、上の試験)と同じ型なので、生まれた日に門を立てておく。
+
+    ★ ``license`` の ID は Zenodo の語彙であって SPDX そのものではない(公式の例は
+    小文字の ``"mit"``)。``apache-2.0`` が実在することは ``/api/licenses`` で確認済み
+    (2026-09-09、"Apache License 2.0")。誤った ID の扱いは公開文書に無いので、
+    ライセンスを変えるときは**綴りを確かめてから**出す(手順は CONTRIBUTING.md の
+    "Zenodo")。ここで見張れるのは綴りの型と、CITATION.cff との一致だけ。
+    """
+    import json
+    raw = _read(".zenodo.json")
+    assert not raw.startswith("﻿"), ".zenodo.json に BOM がある(Zenodo が読めない)"
+    meta = json.loads(raw)
+
+    proj = re.search(r'^version\s*=\s*"([^"]+)"', _read("pyproject.toml"), re.M).group(1)
+    assert meta["version"] == proj, (
+        ".zenodo.json の version %s が pyproject の %s と違う "
+        "(この版で DOI が発行されると直せない)" % (meta["version"], proj))
+
+    cff = _read("CITATION.cff")
+    title = re.search(r'^title:\s*"([^"]+)"', cff, re.M).group(1)
+    assert meta["title"] == title, (
+        ".zenodo.json と CITATION.cff で題が違う —— DOI の記録と引用文が食い違う")
+
+    assert meta["upload_type"] == "software"
+    assert meta["access_right"] == "open"
+    lic = re.search(r"^license:\s*(\S+)", cff, re.M).group(1)
+    assert meta["license"] == lic.lower(), (
+        ".zenodo.json の license %r が CITATION.cff の %r と違う" % (meta["license"], lic))
+    assert meta["license"] == meta["license"].lower(), "Zenodo のライセンス ID は小文字"
+
+    fam = re.search(r"^\s*-\s*family-names:\s*\"([^\"]+)\"", cff, re.M).group(1)
+    giv = re.search(r'^\s*given-names:\s*"([^"]+)"', cff, re.M).group(1)
+    assert meta["creators"][0]["name"] == "%s, %s" % (fam, giv), (
+        "Zenodo の creators は \"Family, Given\" 形式で CITATION.cff と揃える")
+
+
 #: レジストリを組み上げる子プロセスで走らせる断片。**静的な `import X` 探索では
 #: 見えない**動的読み込みまで拾うのが目的。
 _LOADED_ROOTS_SNIPPET = """
