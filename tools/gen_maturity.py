@@ -161,8 +161,11 @@ def collect() -> dict:
             "note": "docs/capabilities/%s" % os.path.basename(path),
             "status": _status(len(ops), len(tested), examples),
             "ops_total": len(ops),
-            "ops_with_tests": len(tested),
-            "ops_without_tests": sorted(set(ops) - set(tested)),
+            "ops_named_in_tests": len(tested),
+            "ops_not_named_in_tests": sorted(set(ops) - set(tested)),
+            "ops_count_is_a_lower_bound":
+                "tests/ に op 名が literal で現れるかだけを見ている"
+                "(台帳を舐める掃引型の試験は数えない)",
             "examples": examples,
         })
 
