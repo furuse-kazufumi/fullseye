@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_separation.png",
+  "name": "separation",
+  "caption": "残差はモデルの外に出た量。だが平面内の誤りには盲目(下の図)。",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "02_blind.png",
+  "name": "blind",
+  "caption": "H の中央値は 0.0656 -> 0.1348。残差の絶対中央値は 0.0345 のまま。",
+  "shape": [
+   1159,
+   1054,
+   3
+  ]
+ },
+ {
+  "file": "03_diagnostics.png",
+  "name": "diagnostics",
+  "caption": "残差と自分の負率は平坦。動くのは相方の負率だけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sweep.png",
+  "name": "sweep",
+  "caption": "濃度は 2.9 倍動くのに残差は 4 桁目まで同じ。",
+  "shape": [
+   296,
+   549,
+   3
+  ],
+  "csv": "04_sweep.csv",
+  "tsv": "04_sweep.tsv"
+ }
+]

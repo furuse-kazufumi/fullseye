@@ -250,6 +250,7 @@ from specops import (  # noqa: E402,F401
     spec_band_ratio, spec_index, spec_angle_mapper, spec_pca, spec_mnf, spec_unmix,
     spec_endmembers_ppi, spec_continuum_removal,
     spec_pansharpen, spec_decorrelation_stretch, spec_fuse,
+    stain_unmix, stain_recompose, stain_vectors_from_patches, STAIN_VECTORS,
 )
 from deformreg import (  # noqa: E402,F401
     warp_by_field, demons_register, field_magnitude, residual_ssd,
@@ -756,7 +757,9 @@ __all__ = [
     "complexops", "cx_fft", "cx_ifft", "cx_magnitude", "cx_phase", "cx_real", "cx_imag",
     "cx_log_magnitude", "cx_from_mag_phase", "phase_unwrap", "cx_wiener_deconvolve",
     "cx_apply_transfer_function", "cx_bandpass",
-    "specops", "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
+    "specops", "stain_unmix", "stain_recompose", "stain_vectors_from_patches",
+    "STAIN_VECTORS",
+    "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
     "spec_nearest_band", "spec_band_ratio", "spec_index", "spec_angle_mapper", "spec_pca",
     "spec_mnf", "spec_unmix", "spec_endmembers_ppi", "spec_continuum_removal",
     "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",

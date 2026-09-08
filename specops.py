@@ -112,6 +112,7 @@ __all__ = [
     "spec_angle_mapper",
     "spec_pca", "spec_mnf",
     "spec_unmix", "spec_endmembers_ppi",
+    "stain_unmix", "stain_recompose", "stain_vectors_from_patches", "STAIN_VECTORS",
     "spec_continuum_removal",
     "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",
     "SPECTRALOPS",
@@ -801,6 +802,134 @@ def spec_unmix(cube, endmembers, constrained: bool = True,
         y[:B] = P[idx]
         A[idx], _ = nnls(M, y)
     return A.reshape(H, W, K)
+
+
+#: 色分離でよく使う染色ベクトル(Ruifrok & Johnston 2001 の値)。
+#:
+#: 各行は「その染色が単位濃度のときの光学密度の向き」で、正規化してある。
+#: ★これは**染色と撮像系の両方に依存する**値で、万能の定数ではない ——
+#: 自前のスライドで定量するなら、単染色のスライドを撮って
+#: :func:`stain_vectors_from_patches` で測り直すこと。
+STAIN_VECTORS = {
+    "H&E": ((0.644211, 0.716556, 0.266844),      # ヘマトキシリン
+            (0.092789, 0.954111, 0.283111)),     # エオジン
+    "H-DAB": ((0.650, 0.704, 0.286),             # ヘマトキシリン
+              (0.268, 0.570, 0.776)),            # DAB
+    "H&E-DAB": ((0.650, 0.704, 0.286),
+                (0.072, 0.990, 0.105),
+                (0.268, 0.570, 0.776)),
+}
+
+
+def _stain_matrix(stains, complete: bool = True) -> np.ndarray:
+    """染色ベクトルを ``(K, 3)`` の正規化行列にする。2 本なら外積で 3 本目を足す。"""
+    if isinstance(stains, str):
+        if stains not in STAIN_VECTORS:
+            raise ValueError("unknown stain preset %r — known: %s"
+                             % (stains, ", ".join(sorted(STAIN_VECTORS))))
+        stains = STAIN_VECTORS[stains]
+    M = np.asarray(stains, np.float64)
+    if M.ndim != 2 or M.shape[1] != 3:
+        raise ValueError("stains must be (K, 3) optical-density directions, got %r"
+                         % (M.shape,))
+    if not (1 <= M.shape[0] <= 3):
+        raise ValueError("RGB carries at most 3 stains, got K=%d" % M.shape[0])
+    n = np.linalg.norm(M, axis=1, keepdims=True)
+    if np.any(n <= 0):
+        raise ValueError("a stain vector is all zeros")
+    M = M / n
+    if complete and M.shape[0] == 2:
+        # ★3 本目は「残り」。2 本だけだと 2x3 で逆行列が無く、擬似逆を使うと
+        #   残差が黙って 2 本へ配られる。直交な 3 本目を立てて、行き場のない
+        #   密度を**そこに集める**(= あとで残差として読める)。
+        third = np.cross(M[0], M[1])
+        nn = np.linalg.norm(third)
+        if nn <= 1e-12:
+            raise ValueError("the two stain vectors are parallel — they cannot be separated")
+        M = np.vstack([M, third / nn])
+    return M
+
+
+def stain_unmix(rgb, stains="H-DAB", i0: float = 1.0, complete: bool = True,
+                clip: bool = True, eps: float = 1e-6) -> np.ndarray:
+    """色分離(colour deconvolution、Ruifrok & Johnston 2001)。``(H, W, K)`` の濃度。
+
+    染色したスライドの RGB を、**染めた色素ごとの濃度地図**に分ける。
+    Beer-Lambert より光学密度 ``OD = -log10(I / i0)`` は濃度の**線形和**に
+    なるので、染色ベクトルの行列を解けばよい ——
+    :func:`spec_unmix` の分光キューブ版に対する **RGB 版**。
+
+    ``stains`` は :data:`STAIN_VECTORS` のキー(``"H&E"`` / ``"H-DAB"`` /
+    ``"H&E-DAB"``)か、``(K, 3)`` の光学密度方向。``i0`` は染まっていない
+    ところの明るさ(白色点)。``complete=True`` は 2 本の染色に**直交な
+    3 本目**を足して正方行列にする —— 返り値の 3 枚目は「どの染色でも
+    説明できなかった量」で、**残差として読める**。
+
+    ★``spec_unmix`` は 3 チャネルを**設計上拒否する**(色と分光キューブを
+    取り違えないため)。RGB の染色分離はこちらを使うこと。
+
+    Honest limits:
+
+    * **染色ベクトルは定数ではない**。装置・ロット・スライド厚で動く。
+      既定の値は Ruifrok & Johnston の公表値で、**自分のスライドで測り直す
+      のが本筋**(:func:`stain_vectors_from_patches`)。
+    * **H と DAB は直交しない**(既定ベクトルの内積 0.7979、行列の条件数
+      2.98)。分離は原理的に悪条件で、**片方の濃い所がもう片方に漏れる**。
+    * ``clip=True`` は負の濃度を 0 に丸める(物理的にありえないため)。
+      **丸めた量は再構成誤差として出てくる**ので、検算するなら
+      ``clip=False`` で解いて :func:`stain_recompose` と突き合わせること。
+    """
+    a = np.asarray(rgb, np.float64)
+    if a.ndim != 3 or a.shape[2] != 3:
+        raise ValueError("stain_unmix needs an (H, W, 3) RGB image, got %r" % (a.shape,))
+    if not np.isfinite(i0) or i0 <= 0:
+        raise ValueError("i0 (the unstained white level) must be finite and positive")
+    M = _stain_matrix(stains, complete=complete)
+    od = -np.log10(np.clip(a / float(i0), eps, None))
+    flat = od.reshape(-1, 3)
+    conc = flat @ np.linalg.pinv(M)                       # (N, K)
+    if clip:
+        conc = np.maximum(conc, 0.0)
+    return conc.reshape(a.shape[0], a.shape[1], M.shape[0])
+
+
+def stain_recompose(conc, stains="H-DAB", i0: float = 1.0,
+                    complete: bool = True) -> np.ndarray:
+    """:func:`stain_unmix` の逆。濃度地図から RGB を組み直す(検算用)。
+
+    ``clip=False`` で解いた濃度なら、元の RGB を**丸め誤差の範囲で**復元する。
+    復元誤差は「モデルで説明できなかった分」そのものなので、
+    **分離が効いているかを出力だけから確かめられる**数少ない検算になる。
+    """
+    c = np.asarray(conc, np.float64)
+    if c.ndim != 3:
+        raise ValueError("conc must be (H, W, K), got %r" % (c.shape,))
+    M = _stain_matrix(stains, complete=complete)
+    if c.shape[2] != M.shape[0]:
+        raise ValueError("conc has K=%d but the stain matrix has %d rows"
+                         % (c.shape[2], M.shape[0]))
+    od = c @ M
+    return float(i0) * np.power(10.0, -od)
+
+
+def stain_vectors_from_patches(patches) -> np.ndarray:
+    """単染色の小片から染色ベクトルを**測る**。``patches`` は RGB 配列の列。
+
+    各小片の光学密度の平均を正規化して返す ``(K, 3)``。既定の公表値を
+    そのまま使わず、**自分の装置で測る**ための入口。
+    """
+    out = []
+    for p in patches:
+        a = np.asarray(p, np.float64)
+        if a.ndim != 3 or a.shape[2] != 3:
+            raise ValueError("each patch must be (h, w, 3) RGB, got %r" % (a.shape,))
+        od = -np.log10(np.clip(a, 1e-6, None))
+        v = od.reshape(-1, 3).mean(0)
+        n = np.linalg.norm(v)
+        if n <= 0:
+            raise ValueError("a patch has zero optical density (is it unstained?)")
+        out.append(v / n)
+    return np.asarray(out, np.float64)
 
 
 def spec_endmembers_ppi(cube, n_endmembers: int, n_projections: int = 1000,

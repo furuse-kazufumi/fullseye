@@ -4,7 +4,7 @@ dim: astrostack
 category: photometry
 in: image2d × keypoints
 out: table
-examples: [astro_stacking, poc_astro_photometry, poc_exoplanet_transit, poc_nuclei_ploidy]
+examples: [astro_stacking, poc_astro_photometry, poc_exoplanet_transit, poc_nuclei_ploidy, poc_real_sky_photometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -78,6 +78,7 @@ r_outer`` でない / *supersample* が 1 未満 / *gain* が非正 /
 - [poc_astro_photometry](../../../../examples/poc_astro_photometry.py) — `py -3.11 examples/poc_astro_photometry.py`
 - [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
+- [poc_real_sky_photometry](../../../../examples/poc_real_sky_photometry.py) — `py -3.11 examples/poc_real_sky_photometry.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

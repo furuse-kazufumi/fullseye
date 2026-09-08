@@ -30,6 +30,21 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   - **答えが合っていても余裕があるとは限らない**: 実写のコインは素の大域 Otsu で
     真値 24 枚ちょうどなのに、勾配をあと 0.05 足すと 22 枚。面積の中央値が
     -0.27 % しか動かない条件で最悪のコインは -24.20 %、ずれは行位置と r=-0.90。
+- ★**色分離(colour deconvolution)の入口を新設**: `stain_unmix` /
+  `stain_recompose` / `stain_vectors_from_patches` + `STAIN_VECTORS`
+  (H&E / H-DAB / H&E-DAB)。`spec_unmix` は 3 チャネルを**設計上拒否**する
+  (色と分光キューブを取り違えないため)ので、RGB の染色分離には入口が
+  無かった。実写の免疫染色 PoC(下記)がこの穴を炙り出した。
+- ★実写 PoC をさらに 2 本(展示 101 -> 103)。`poc_real_sky_photometry`
+  (Hubble Deep Field の本物の背景に既知の星を仕込む —— 空でも開口 1 つ
+  あたり 6,677 e- 混入し、**S/N も同じ向きに膨らむ**: op の 19.2 対
+  閉形式 4.2)/ `poc_real_stain_unmix`(**残差は平面内の誤りに構造的に
+  盲目** —— 染色ベクトルを ±20 度回すと濃度は 2.86 倍動くのに残差の
+  絶対中央値は 0.0345 のまま幅 3.3e-16)。
+- CI で赤になった自分の門を 2 つ直した(`docs/KNOWN_ISSUES.md` §44.8):
+  リポジトリ非同梱の `data/halcon_operators.json` を無条件に読んでいた /
+  探針を全 sort に広げた初回に torch 必須 op へ到達し、**「壊れている」と
+  「この環境に無い」を混ぜていた**。
   - 新規 `realdata.py`(実写の取り口、**fail-closed**。データが無ければ理由を
     印字して `SystemExit(1)` —— 「実データが無かったので何も検査せず PASS」に
     しない)。CI は 3 matrix すべてに `skimage` extra を入れているので必ず走る。
