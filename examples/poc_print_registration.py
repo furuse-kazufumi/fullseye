@@ -964,7 +964,8 @@ def section7_marks():
                        caption="十字は非周期なので相関のピークが 1 つに決まる。"
                                "周りの網点は %.1f px 周期で何度でも合う" % PITCH)
     return {"spots": spots, "grad": grad, "r_crit": r_crit, "r_meas": r_meas,
-            "pred_meas_diff": d_pred_meas}
+            "pred_meas_diff": d_pred_meas, "field_err": max(field_e),
+            "frac_out": frac_out}
 
 
 # --------------------------------------------------------------------------- #
