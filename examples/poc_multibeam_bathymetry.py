@@ -745,12 +745,8 @@ def section_controls(scene, floor):
         _, t1, _ = trace_to_depth(prof, np.array([th_edge]), DEPTH_REF)
         tau = 2.0 * float(t1[0])
         if use_echo:
-            bw = floor["bw0"] / math.cos(math.radians(th_edge))
-            _, tl, _ = trace_to_depth(prof, np.array([th_edge - 0.5 * bw]), DEPTH_REF)
-            _, thh, _ = trace_to_depth(prof, np.array([th_edge + 0.5 * bw]), DEPTH_REF)
-            tau = detect_two_way(echo_envelope(
-                tau, 2.0 * abs(float(thh[0]) - float(tl[0])),
-                int(2.0 * tau * ECHO_FS)))
+            env, t0e, _ = echo_envelope(prof, th_edge, lam, d, floor["bw0"], DEPTH_REF)
+            tau = detect_two_way(env, t0e)
         return 0.5 * ca * tau * math.cos(math.radians(th_m)) - DEPTH_REF
 
     flat = profile_constant(C_MID)
