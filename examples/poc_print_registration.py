@@ -549,17 +549,21 @@ def section4_sweep():
     print("  各版について、+x 方向のずれ t を %.1f px 刻みで %d 点。"
           % (SWEEP[1] - SWEEP[0], SWEEP.size))
     print("  推定器は 2 つ。どちらも**「ずれは小さいはずだ」という現場の仮定**を")
-    print("  探索範囲 ±p/2 = ±%.1f px として入れてある:" % (PITCH / 2))
-    print("    (1) 全画面の相互相関(fs.cx_fft/cx_ifft + fs.peak_subbin)")
-    print("    (2) 窓ごとの相互相関の中央値(fs.ledger.piv_cross_correlate)")
+    print("  探索範囲として入れてあるが、その置き方が違う:")
+    print("    (1) 全画面の相互相関(fs.cx_fft/cx_ifft + fs.peak_subbin)。")
+    print("        探すのは**格子 Λ_θ の基本セルの中だけ**(素材に合わせた仮定)。")
+    print("    (2) 窓ごとの相互相関の中央値(fs.ledger.piv_cross_correlate)。")
+    print("        op が持つのは**正方形の探索箱**なので ±p/2 = ±%.1f px。"
+          % (PITCH / 2))
     print()
     out = {}
     for name, ang, blob, _d in PLATES:
         ref = design_plate(ang, blob)
+        cm = cell_mask(L, ang)
         rows = []
         for t in SWEEP:
             cur = am_sheet(ang, blob, 0.0, float(t), seed=31)
-            cy, cx, _r = corr_shift(ref, cur, PITCH / 2)
+            cy, cx, _r = corr_shift(ref, cur, cm)
             py, px, _vf = piv_shift(ref, cur, limit=PITCH / 2)
             ry, rx, _u, _v = reduce_to_cell(0.0, float(t), ang)
             rows.append({
