@@ -534,9 +534,10 @@ def section_grid_vs_random(d=0.60, ntrial=12) -> dict:
         gmin = float(res["格子(位相を振る)"]["per"][hi].min())
         rmin = float(res["一様乱数(同じ本数)"]["per"][hi].min())
         bound = visible(d, h[4])
-        below += int(rmin < bound)
-        print("   σ=%.2f  %11.4f %20.4f %14.4f%s"
-              % (h[4], gmin, bound, rmin, "  ← 下限を割った" if rmin < bound else ""))
+        below += int(rmin < bound - 1e-4)
+        print("   σ=%.2f  %11.5f %20.5f %14.5f%s"
+              % (h[4], gmin, bound, rmin,
+                 "  ← 下限を割った" if rmin < bound - 1e-4 else ""))
     print("  ★★**違うのは平均ではなく「言い切れるかどうか」**。格子の回復は"
           "幾何の下限を 1 度も\n     割らない(位相をどう振っても割れない)。"
           "乱数は %d 台で下限を割った —— 最近傍距離に\n     上限が無いので、"
