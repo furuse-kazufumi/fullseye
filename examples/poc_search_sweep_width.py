@@ -569,7 +569,8 @@ def sweep_mc(curve, width_m: float, area_w: float, n_track: int, *, random_track
         x = rng.uniform(0.0, area_w, n_target)
         miss = np.ones(n_target)
         for k in range(n_track):
-            tk = rng.uniform(0.0, area_w, n_target) if random_tracks                 else (k + 0.5) * (area_w / n_track)
+            tk = (rng.uniform(0.0, area_w, n_target) if random_tracks
+                  else (k + 0.5) * (area_w / n_track))
             d = np.abs(x - tk)
             d = np.minimum(d, area_w - d)             # 環状距離
             miss *= 1.0 - curve(d)
