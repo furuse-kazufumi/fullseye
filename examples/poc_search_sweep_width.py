@@ -391,7 +391,8 @@ def _response(img, mode: str):
         for k in range(N_NORM_BAND):
             sl = x[:, edges[k]:edges[k + 1]]
             sig = float(fs.noise_sigma(sl, "mad"))
-            out[:, edges[k]:edges[k + 1]] = (sl - float(np.median(sl)))                 / (sig if sig > 0.0 else 1.0)
+            out[:, edges[k]:edges[k + 1]] = ((sl - float(np.median(sl)))
+                                             / (sig if sig > 0.0 else 1.0))
         return out
     # 白色トップハット(元画像 - オープニング)。5x5 の矩形構造要素は
     # ``a`` が {3,5,7,9} を刻むので a=0.3 -> 5。目標の FWHM は 2.6-3.7 px。
