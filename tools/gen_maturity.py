@@ -173,7 +173,7 @@ def collect() -> dict:
     unrun = [i for i in all_2d if not i.startswith("poc_")]
     return {
         "generated_by": "tools/gen_maturity.py",
-        "how_to_read": "ladder の判定は capabilities[].examples と ops_with_tests から "
+        "how_to_read": "ladder の判定は capabilities[].examples と ops_named_in_tests から "
                        "機械的に決まる。生の事実を残してあるので判定を再現できる。",
         "ladder": [{"id": i, "ja": ja, "en": en} for i, ja, en in LADDER],
         "capabilities": rows,
