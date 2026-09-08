@@ -268,8 +268,10 @@ def section_table():
 
     panel = np.full((PH, PW, 3), 0.06)
     panel[:, :] = np.linspace(0.02, 0.22, PW)[None, :, None]   # 板の半透明が判る地
-    panel = A.annotate_table(panel, tsv, (PW // 2, PH // 2 + 6), anchor="cm",
-                             font_size=fs, header=True)
+    # パネル文字 (d) と重ならないよう右下へ寄せる(重ねると読めないので、
+    # 「置ける場所に置く」ところまで例で見せる)
+    panel = A.annotate_table(panel, tsv, (PW - 6, PH - 6), anchor="rb",
+                             font_size=fs - 1, header=True)
     return panel, {"table_cols": lay["col_w"], "table_gap": lay["col_gap"],
                    "table_align": lay["align"], "gap_ratio": float(ratio)}
 
