@@ -71,10 +71,18 @@ _CATALOG = {
         ("ticks", "annotate", ["image2d", "axes"], "image2d"),
         ("plot_series", "annotate", ["image2d", "axes", "signal", "signal"], "image2d"),
     ],
-    # 重ね(α 合成)
+    # 重ね(α 合成)。反転色(2026-09-08、著者の要望「Line や Region を反転色で
+    # 描く機能もあるといいかもしれない」)もここ —— 色を指定せず**地をひっくり
+    # 返して**乗せるので、paper 族(作法)ではなく重ねの一種。
+    # ``annotate_invert_visibility`` だけ table を返すが ``*_layout`` ではない:
+    # 返すのは幾何ではなく**見え方の実測**(コントラスト比)なので、名前で嘘を
+    # つかないためにこの名前にしている。
     "overlay": [
         ("overlay_mask", "annotate", ["image2d", "mask"], "image2d"),
         ("overlay_labels", "annotate", ["image2d", "labels"], "image2d"),
+        ("annotate_invert_visibility", "annotate", ["image2d", "mask"], "table"),
+        ("annotate_invert", "annotate", ["image2d", "mask"], "image2d"),
+        ("annotate_invert_path", "annotate", ["image2d", "pairs"], "image2d"),
     ],
     # 組み立て
     "compose": [
