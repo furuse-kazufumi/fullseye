@@ -1459,17 +1459,22 @@ def main() -> int:
     # Simpson は節点を増やすと収束する(33 → 513 で 3 桁以上)
     for band, conv in scene["conv"].items():
         assert conv[0][1] > conv[-1][1] * 100.0, (band, conv)
-    # 2. 閉形式の予測: λ_eff を 1/λ 重みで取れば 5 % 以内、帯の中央だと外す
-    assert cliff["worst_eff"] < 0.05, cliff["worst_eff"]
-    assert cliff["worst_mid"] > 2.0 * cliff["worst_eff"], (cliff["worst_mid"],
-                                                           cliff["worst_eff"])
-    assert cliff["worst_rel"] < 0.35, cliff["worst_rel"]    # 1 次展開の残差
-    # 「T² で増える」は主張でなく実測の傾き(λ_eff(T) の分だけ 2 を下回る)
-    assert 1.6 < cliff["slope"] < 2.0, cliff["slope"]
-    # 3. ★外した予測: 絶対誤差は**高温ほど大きい**(T² で増える)
+    # 2. 閉形式の予測: 1/λ 重みは帯中央より良いが、外れの正体は Wien 因子の欠け
+    assert cliff["worst_eff"] < cliff["worst_mid"], (cliff["worst_eff"],
+                                                     cliff["worst_mid"])
+    assert cliff["worst_corr"] < 1e-3, cliff["worst_corr"]   # 補正すれば厳密
+    assert cliff["worst_rel"] > 0.15, cliff["worst_rel"]     # 素朴な形は外す
+    assert cliff["worst_rel_corr"] < 0.10, cliff["worst_rel_corr"]
+    # 「T² で増える」は主張でなく実測の傾き。内訳の和と一致する
+    assert 2.0 < cliff["slope"] < 3.2, cliff["slope"]
+    assert abs(cliff["slope_tn"] + cliff["slope_fac"] - cliff["slope"]) < 0.05, cliff
+    # 3. ★外した予測: 絶対誤差は**高温ほど大きい**
     assert cliff["abs_dt"][("LWIR", 800.0)] > 5.0 * cliff["abs_dt"][("LWIR", 305.0)]
-    # ★物差しを変えると予測どおり(上昇に対する比は低温ほど大きい)
-    assert cliff["rise"][("LWIR", 305.0)] > 3.0 * cliff["rise"][("LWIR", 800.0)]
+    # ★物差しを変えても、放射率の誤差は上昇比で**発散しない**(Δε/ε で頭打ち)
+    assert cliff["ratio_eps"][0] < 2.0 * cliff["ratio_eps"][-1], cliff["ratio_eps"]
+    assert cliff["ratio_eps"][0] < 0.06, cliff["ratio_eps"][0]   # δ=0.05 で頭打ち
+    # ★発散するのは反射見かけ温度のほう(上昇が小さいほど跳ねる)
+    assert cliff["ratio_refl"][0] > 10.0 * cliff["ratio_refl"][-1], cliff["ratio_refl"]
     # 4. 低放射率は無条件に急(同じ絶対 Δε で 10 倍以上)
     assert cliff["ratio"] > 10.0, cliff["ratio"]
     # MWIR は放射率に強い(n が大きい)が、反射の効きは帯で消えない
