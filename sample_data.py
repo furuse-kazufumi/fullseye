@@ -143,6 +143,120 @@ MANIFEST = [
         attribution="Open SciVis Datasets (per-dataset provenance on source page)",
         doc="Classic CT/simulation volumes; try marching_cubes, vol_watershed, render_beauty.",
     ),
+    # ---- 外部規格の参照値・公開データ(2026-09-08 追加。すべてポインタのみ) ----
+    # ★入れた理由: 展示 111-113 で「合成は自分が知っている壊れ方しか作れない」
+    #   (実写 6 本で 9 件の不具合が出た前例)ことが改めて出た。PoC はオフラインで
+    #   閉じたまま、**実データに差し替える入口**だけを台帳に置く。
+    #   commercial="check" 以上は源のページを読んでから使うこと。
+    dict(
+        id="nist-thermography-calib", name="NIST: 高倍率サーモグラフィの校正・計測手順 (NIST.IR.8098)",
+        category="reference", fmt="pdf", url=None, archive=None, member=None,
+        dest="nist/", sha256=None, bytes=None,
+        license="U.S. Government work (NIST publication)", commercial="yes", access="info",
+        source_page="https://nvlpubs.nist.gov/nistpubs/ir/2016/NIST.IR.8098.pdf",
+        attribution="National Institute of Standards and Technology (NIST)",
+        doc=("熱画像は温度画像ではない —— 放射率・反射見かけ温度・校正系を一体で扱う手順書。"
+             "放射測温 PoC の外部根拠(DN / 放射輝度 / 温度 の 3 規約が食い違う所)。"),
+    ),
+    dict(
+        id="nist-radiance-temperature", name="NIST: Radiance Temperature Calibrations (SP 250-43)",
+        category="reference", fmt="pdf", url=None, archive=None, member=None,
+        dest="nist/", sha256=None, bytes=None,
+        license="U.S. Government work (NIST publication)", commercial="yes", access="info",
+        source_page="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication250-43.pdf",
+        attribution="National Institute of Standards and Technology (NIST)",
+        doc="黒体温度と放射温度の校正系・数値表。Planck 逆変換の突き合わせに使う。",
+    ),
+    dict(
+        id="nist-uncertainty-machine", name="NIST Uncertainty Machine (GUM + 相関つき Monte Carlo)",
+        category="reference", fmt="html", url=None, archive=None, member=None,
+        dest="nist/", sha256=None, bytes=None,
+        license="U.S. Government work (NIST service)", commercial="yes", access="info",
+        source_page="https://uncertainty.nist.gov/",
+        attribution="National Institute of Standards and Technology (NIST)",
+        doc=("入力量の分布と**相関**を指定して Monte Carlo を回し、出力の標本と区間を返す。"
+             "『誤差は足し算にならない』(展示 110 で実測: 底面 +1.79 % / 遮蔽 +23.42 % / "
+             "両方 +0.51 %)を外部参照つきで示すための照合先。"),
+    ),
+    dict(
+        id="nist-spectral-reflectance", name="NIST: Spectral Reflectance (SP 250-48) と SRM 2044a 証明書",
+        category="reference", fmt="pdf", url=None, archive=None, member=None,
+        dest="nist/", sha256=None, bytes=None,
+        license="U.S. Government work (NIST publication)", commercial="yes", access="info",
+        source_page="https://tsapps.nist.gov/srmext/certificates/archives/2044a.pdf",
+        attribution="National Institute of Standards and Technology (NIST)",
+        doc=("250-2500 nm の白色拡散反射率の実値表。分光反射率 → XYZ/Lab → ΔE の"
+             "閉形式 PoC に、参照値として直接使える。"),
+    ),
+    dict(
+        id="middlebury-stereo", name="Middlebury Stereo Datasets (真値視差 + calib.txt)",
+        category="image", fmt="png", url=None, archive=None, member=None,
+        dest="middlebury/", sha256=None, bytes=None,
+        license="research use (see source page)", commercial="check", access="info",
+        source_page="https://vision.middlebury.edu/stereo/data/",
+        attribution="Middlebury College — Middlebury Stereo Datasets",
+        doc=("ステレオ対 + 校正 + PFM の真値視差 + 遮蔽マスク。Z = fB/d の閉形式が使えるので、"
+             "左右順・基線符号・pixel center・歪み補正前後といった**規約の取り違え**を"
+             "実データで炙り出せる。"),
+    ),
+    dict(
+        id="eth3d", name="ETH3D Datasets (高精度多視点 + 校正 + 固定パターンノイズ)",
+        category="image", fmt="png", url=None, archive=None, member=None,
+        dest="eth3d/", sha256=None, bytes=None,
+        license="see source page", commercial="check", access="info",
+        source_page="https://www.eth3d.net/datasets",
+        attribution="ETH Zurich — ETH3D",
+        doc="歪みあり/なしの画像と地上真値、生の校正データ。カメラ規約の往復検査に。",
+    ),
+    dict(
+        id="asf-sentinel1", name="ASF: Sentinel-1 SAR / 干渉コヒーレンス・後方散乱",
+        category="image", fmt="geotiff", url=None, archive=None, member=None,
+        dest="asf/", sha256=None, bytes=None,
+        license="Copernicus open data (see source page)", commercial="check", access="info",
+        source_page="https://search.asf.alaska.edu/",
+        attribution="ESA Copernicus / NASA ASF DAAC",
+        doc=("InSAR の位相 → LOS 変位。Δφ = (4π/λ)·d_LOS の往復係数 2、rad と cycle、"
+             "LOS と鉛直変位、wrap 境界 —— 二重規約の宝庫。"),
+    ),
+    dict(
+        id="gsi-kiban-dem", name="国土地理院 基盤地図情報 数値標高モデル (1m/5m/10m)",
+        category="volume", fmt="xml", url=None, archive=None, member=None,
+        dest="gsi/", sha256=None, bytes=None,
+        license="国土地理院コンテンツ利用規約 (出典明示)", commercial="check", access="gated",
+        source_page="https://service.gsi.go.jp/kiban/app/map/",
+        attribution="国土地理院 (Geospatial Information Authority of Japan)",
+        doc=("DEM。**利用者登録が要る**ので自動 DL しない。楕円体高と標高、datum、"
+             "軸順(lat/lon)—— fullseye は ECEF↔geodetic だけ在ってジオイド・ENU が無い"
+             "(2026-09-08 実測: op_find('geoid')=0, ('enu')=0, ('datum')=0)。"),
+    ),
+    dict(
+        id="dicom-test-data", name="DICOM Sample Data Sets (CT/MR/RTSTRUCT/multi-frame)",
+        category="volume", fmt="dcm", url=None, archive=None, member=None,
+        dest="dicom/", sha256=None, bytes=None,
+        license="per-dataset (see source page)", commercial="check", access="info",
+        source_page="https://www.aliza-dicom-viewer.com/download/datasets",
+        attribution="Aliza DICOM viewer — sample data set index",
+        doc=("LPS/RAS、Image Orientation、Pixel Spacing と Slice Thickness / Spacing "
+             "Between Slices —— 体積が静かに間違う所。真値は球・楕円体で植えられる。"),
+    ),
+    dict(
+        id="empiar", name="EMPIAR (電子顕微鏡 raw / tilt series / トモグラム)",
+        category="volume", fmt="mrc", url=None, archive=None, member=None,
+        dest="empiar/", sha256=None, bytes=None,
+        license="per-entry (mostly CC0/CC-BY; see entry)", commercial="check", access="info",
+        source_page="https://www.ebi.ac.uk/empiar/",
+        attribution="EMBL-EBI — EMPIAR",
+        doc="トモグラム。iso-value 1 段で体積・肉厚の合否が反転する所を実データで。",
+    ),
+    dict(
+        id="rspid-piv", name="RSPID: 合成粒子画像データセット (既知速度場)",
+        category="image", fmt="tif", url=None, archive=None, member=None,
+        dest="piv/", sha256=None, bytes=None,
+        license="see Zenodo record", commercial="check", access="info",
+        source_page="https://zenodo.org/records/7832205",
+        attribution="RSPID — Raw Synthetic Particle Image Dataset (Zenodo)",
+        doc="真値速度場つきの粒子画像。pixel/s → m/s の換算規約(Δt・スケール・Y 軸)の検査に。",
+    ),
     dict(
         id="mvtec-ad", name="MVTec Anomaly Detection (registration required)",
         category="image", fmt="png", url=None, archive=None, member=None,
