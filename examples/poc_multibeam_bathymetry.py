@@ -241,6 +241,33 @@ def trace_to_depth(prof, theta_deg, z_target: float):
     return x, t, ok
 
 
+def trace_const_layers(prof, theta_deg: float, z_target: float, n_layers: int):
+    """層内を**等音速**とみなす粗いレイトレース。境界の曲がりは op に任せる。
+
+    現場の古い実装(と多くの教科書)はこれ —— キャストを層に切り、層の中は
+    直線、境界で Snell。曲がりの計算に :func:`fullseye.ledger.snell_angle` を
+    そのまま使う。**音響では屈折率が音速の逆数に比例する**(n ∝ 1/c)ので、
+    ``eta1 = 1/c₁`` / ``eta2 = 1/c₂`` を渡す —— ここは読む人が必ず躓く所。
+
+    返り値 ``(x, t)``。層の切り方が粗いと **1 次で**誤差が残る(§1 で測る)。
+    """
+    edges = np.linspace(0.0, z_target, n_layers + 1)
+    c_mid = np.interp(0.5 * (edges[:-1] + edges[1:]), prof[0], prof[1])
+    th = float(theta_deg)
+    x = t = 0.0
+    for k in range(n_layers):
+        h = float(edges[k + 1] - edges[k])
+        c = float(c_mid[k])
+        r = math.radians(th)
+        x += h * math.tan(r)
+        t += h / (c * math.cos(r))
+        if k + 1 < n_layers:
+            th = float(fs.ledger.snell_angle(th, 1.0 / c, 1.0 / float(c_mid[k + 1])))
+            if not math.isfinite(th):
+                return float("nan"), float("nan")
+    return x, t
+
+
 def trace_for_time(prof, theta_deg, t_one_way):
     """**処理側**の光線: 片道走時 ``t_one_way`` だけ進んだ点 ``(x, z, ok)``。
 
