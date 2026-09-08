@@ -248,7 +248,7 @@ def trace_for_time(prof, theta_deg, t_one_way):
     プロファイルの中を、その時間だけ進んだ先」として出す。これが実務の
     レイトレース処理そのもの。仮定が等音速なら直線 z = c t cosθ に退化する。
     """
-    zn, cn = prof
+    zn, _cn = prof
     z1a, z2a, c1a, c2a = _segments(prof, float(zn[-1]))
     th = np.radians(np.asarray(theta_deg, float))
     p = np.sin(th) / float(c1a[0])
@@ -264,19 +264,18 @@ def trace_for_time(prof, theta_deg, t_one_way):
             continue
         g = (c2 - c1) / dz
         s2 = p * c2
-        turned = np.abs(s2) >= 1.0
         u2 = np.sqrt(np.clip(1.0 - s2 * s2, 0.0, 1.0))
         if abs(g) > G_TINY:
-            dt_full = np.log((c2 / c1) * (1.0 + u) / (1.0 + u2)) / g
+            with np.errstate(divide="ignore", invalid="ignore"):
+                dt_full = np.log((c2 / c1) * (1.0 + u) / (1.0 + u2)) / g
         else:
             dt_full = dz / (c1 * np.maximum(u, 1e-12))
-        dt_full = np.where(turned, np.inf, dt_full)
+        # 層の底まで届かない(反転する)列は、残り時間をこの層で使い切る。
+        dt_full = np.where(np.abs(s2) >= 1.0, np.inf, dt_full)
         dt = np.minimum(rem, np.where(np.isfinite(dt_full), dt_full, rem))
-        ok &= ~(turned & (rem > 0.0))
-        c_now = np.where(vertical, c1, np.sin(np.arccos(np.clip(u, -1, 1)))
-                         / np.maximum(np.abs(p), 1e-300))
+        live = dt > 0.0                           # まだ走時が残っている列だけ動かす
         if abs(g) > G_TINY:
-            # 層内で dt だけ進んだ後の cosθ は arctanh(cosθ) - g dt の tanh。
+            # 層内で dt だけ進んだ後の cosθ は tanh(arctanh(cosθ) − g·dt)。
             a = np.arctanh(np.clip(u, -1.0 + 1e-14, 1.0 - 1e-14))
             u_new = np.tanh(a - g * dt)
             c_new = np.where(vertical, c1 * np.exp(g * dt),
@@ -285,17 +284,16 @@ def trace_for_time(prof, theta_deg, t_one_way):
             u_new = np.where(vertical, 1.0, u_new)
             dz_step = (c_new - c1) / g
         else:
-            u_new, c_new = u, c1
+            u_new = u
+            c_new = np.full_like(u, c1)
             dz_step = c1 * dt * u
+        dz_step = np.where(live, dz_step, 0.0)
         den = np.where(u + u_new > 1e-12, u + u_new, 1.0)
-        x = x + np.abs(p) * np.sign(np.where(p == 0.0, 1.0, p)) \
-            * (c_now * 0.0 + (c1 + c_new)) * dz_step / den * np.sign(1.0) \
-            * np.where(p >= 0.0, 1.0, 1.0)
-        x = x  # (符号は p に入っている。上の式の p は絶対値ではない)
+        x = x + np.where(live, p * (c1 + c_new) * dz_step / den, 0.0)
         z = z + dz_step
+        ok &= ~(live & (u_new <= 1e-9))            # 反転した = 下へ進んでいない
+        u = np.where(live, u_new, u)
         rem = np.maximum(rem - dt, 0.0)
-        u, c1_next = u_new, c_new
-        del c1_next
     return x, z, ok
 
 
