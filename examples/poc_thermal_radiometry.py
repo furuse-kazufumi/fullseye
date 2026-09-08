@@ -182,8 +182,15 @@ TAB_LO, TAB_HI, TAB_STEP = 220.0, 1400.0, 0.05
 #: 放射率の代表値(**出典のある定数ではなく、この PoC のための仮定**)。
 EPS_PAINT, EPS_OXIDE, EPS_POLISH = 0.95, 0.60, 0.10
 
-#: 場面の既定値: 反射見かけ温度 / 大気温度 [K] と大気透過率。
-T_REFL_REF, T_ATM_REF, TAU_REF = 300.0, 293.15, 0.95
+#: 場面の既定値: 反射見かけ温度 / 大気温度 [K]。
+T_REFL_REF, T_ATM_REF = 300.0, 293.15
+
+#: 大気の消散係数 [1/mm] と光路長 [mm]。σ は**この PoC のために置いた仮定**
+#: (実際の大気の消散は帯域・水蒸気量・エアロゾルで決まる)。
+ATM_SIGMA_PER_MM, ATM_PATH_MM = 2.6e-5, 2000.0
+
+#: 大気透過率。定数を書き写さず :func:`fullseye.beer_lambert_transmittance` で出す。
+TAU_REF = float(fs.beer_lambert_transmittance(ATM_PATH_MM, ATM_SIGMA_PER_MM))
 
 #: カメラの雑音等価温度差 [K] と量子化ビット数(仕様値として置いた仮定)。
 NETD_K, ADC_BITS = 0.030, 14
