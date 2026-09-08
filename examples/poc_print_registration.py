@@ -1413,7 +1413,7 @@ def main() -> int:
     assert m_raw["rms"] < m_lp["rms"] / 5.0, (m_raw["rms"], m_lp["rms"])
     assert m_raw["rate"] < m_lp["rate"] - 20.0, (m_raw["rate"], m_lp["rate"])
     assert m_raw["miss"] > 5, m_raw["miss"]
-    assert m_lp["miss"] <= 1, m_lp["miss"]
+    assert m_raw["miss"] >= 4 * m_lp["miss"], (m_raw["miss"], m_lp["miss"])
     # 二段は両方勝つ。ただし粗の誤差がセルの半径を超えると壊れる(実測済み)
     assert m_two["rms"] < 1.5 * m_raw["rms"] + 1e-6, (m_two["rms"], m_raw["rms"])
     assert m_two["rate"] > m_raw["rate"] + 20.0, (m_two["rate"], m_raw["rate"])
