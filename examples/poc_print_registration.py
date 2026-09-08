@@ -291,8 +291,8 @@ def lowpass_image(img, cutoff=LP_CUT) -> np.ndarray:
 
     :func:`fullseye.cx_fft` → :func:`fullseye.cx_apply_transfer_function`
     → :func:`fullseye.cx_ifft`。``cutoff`` は 1/e^0.5 になる空間周波数
-    [cyc/px]。網点の基本周波数 1/p に対して ``exp(-(1/p)^2/(2 cutoff^2))``
-    まで落ちる(既定 cutoff = 1/(4p) で **%.1e 倍**)。
+    [cyc/px]。網点の基本周波数 1/p は ``exp(-(1/p)^2/(2 cutoff^2))`` 倍に
+    なる —— 既定 ``cutoff = 1/(4p)`` なら ``exp(-8)`` = 3.4e-4 倍。
     """
     f = np.fft.fftshift(np.fft.fftfreq(L))
     r2 = f[:, None] ** 2 + f[None, :] ** 2
