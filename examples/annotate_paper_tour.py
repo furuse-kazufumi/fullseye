@@ -248,8 +248,11 @@ def run() -> dict:
 
 def main(save=None):
     r = run()
-    print(f"\nPASS: annotate_text_path_layout(弧長・位置・傾き・used の閉形式一致、L 字で 0/90 度)と "
-          f"annotate_panel_label(板の縁 = margin、text_box と画素同一)。 実行 {r['elapsed_s']:.2f} 秒")
+    print(f"\nPASS: annotate_text_path_layout(弧長・位置・傾き・used の閉形式一致、L 字で 0/90 度)、"
+          f"annotate_panel_label(板の縁 = margin、text_box と画素同一)、"
+          f"annotate_invert(消える帯 {r['invisible_levels']}/256 階調、傾斜の上で消える "
+          f"{r['dead_columns']} 列が閉形式と一致、逃げ道は最悪 {r['escape_min_contrast']:.2f})。"
+          f" 実行 {r['elapsed_s']:.2f} 秒")
     if save:
         from PIL import Image
         Path(save).parent.mkdir(parents=True, exist_ok=True)
