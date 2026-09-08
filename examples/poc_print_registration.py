@@ -1100,7 +1100,9 @@ def section9_tool_gaps():
 
     # (c) 用途外の登録 op に食わせると、確信度 1.00 で外す
     ang, blob = PLATES[0][1], PLATES[0][2]
-    ref = design_plate(ang, blob)
+    # ★ 基準にも雑音を入れる —— 雑音ゼロの像だと star_detect が
+    #   「星 0 個」で ValueError になる(それはそれで正しい fail-closed)。
+    ref = am_sheet(ang, blob, 0.0, 0.0, seed=90)
     t = 1.30
     cur = am_sheet(ang, blob, 0.0, t, seed=91)
     _m, fa = fs.frame_align(1.0 - ref, 1.0 - cur, model="translation")
