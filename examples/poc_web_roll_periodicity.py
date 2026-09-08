@@ -406,13 +406,13 @@ def section_null() -> dict:
     print("\n   見逃し率を上げる(ランダム欠陥 %d 個・蛇行あり、%d 試行の中央値):"
           % (int(L_FULL * CLUTTER_PER_MM), SEEDS))
     print("   見逃し  間隔の中央値   間隔の平均  スペクトル最大値  スペクトル櫛"
-          "  ケプストラム  櫛の特定成功率")
+          "  ケプストラム  櫛の報告率  櫛の特定成功率")
     ps = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
     keys = ("med", "mean", "naive", "spec", "cep")
-    rows, tab = [], {k: [] for k in keys + ("hit",)}
+    rows, tab = [], {k: [] for k in keys + ("hit", "rep")}
     for p in ps:
         errs = {k: [] for k in keys}
-        hit = 0
+        hit = rep = 0
         for s in range(SEEDS):
             sc = scene(SEED0 + s, p_miss=p)
             errs["med"].append(null_estimate(sc["md"], sc["cd"])["C"] - c)
@@ -423,18 +423,21 @@ def section_null() -> dict:
             se = spec_estimate(sc["md"], sc["length"])
             errs["spec"].append(se["C"] - c)
             errs["cep"].append(cepstrum_estimate(sc["md"], sc["length"])["C"] - c)
+            rep += int(np.isfinite(se["C"]))
             hit += int(identify(se["C"]) == CULPRIT)
         med = {k: float(np.nanmedian(np.abs(v))) for k, v in errs.items()}
-        rate = 100.0 * hit / SEEDS
+        rate, rrate = 100.0 * hit / SEEDS, 100.0 * rep / SEEDS
         for k in keys:
             tab[k].append(med[k])
         tab["hit"].append(rate)
+        tab["rep"].append(rrate)
         rows.append(["%.0f %%" % (100 * p)]
-                    + ["%.1f" % med[k] for k in keys] + ["%.0f %%" % rate])
-        print("   %4.0f %% %11.1f %12.1f %16.1f %13.1f %13.1f %12.0f %%"
-              % ((100 * p,) + tuple(med[k] for k in keys) + (rate,)))
-    print("   (数字は |推定 - 真値| の中央値 [mm]。特定成功率 = 櫛法が"
-          "%s を当てた割合)" % CULPRIT)
+                    + ["%.1f" % med[k] for k in keys]
+                    + ["%.0f %%" % rrate, "%.0f %%" % rate])
+        print("   %4.0f %% %11.1f %12.1f %16.1f %13.1f %13.1f %10.0f %% %12.0f %%"
+              % ((100 * p,) + tuple(med[k] for k in keys) + (rrate, rate)))
+    print("   (誤差は |推定 - 真値| の中央値 [mm]、櫛法は報告できた試行だけ。"
+          "特定成功率は全試行に対する割合 —— 未報告も失敗に数える)")
 
     i4 = ps.index(0.4)
     print("\n  ★見逃し %.0f %% で 間隔の中央値は誤差 %.1f mm、間隔の平均は %.1f mm、"
