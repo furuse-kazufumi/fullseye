@@ -1,0 +1,202 @@
+[
+ {
+  "file": "01_floor.png",
+  "name": "floor",
+  "caption": "LWIR・350 K・ε=0.95。校正表と直接積分の相対差は最大 8.9e-16。以下の誤差はすべてこの床の上。",
+  "shape": [
+   200,
+   297,
+   3
+  ],
+  "csv": "01_floor.csv",
+  "tsv": "01_floor.tsv"
+ },
+ {
+  "file": "02_planck_index.png",
+  "name": "planck_index",
+  "caption": "n = d ln L_bb/d ln T。重みを 1/λ で取ると帯中央より良くなるが、x が小さい(高温・長波)ところではe^x/(e^x−1) の欠けが残る。",
+  "shape": [
+   224,
+   711,
+   3
+  ],
+  "csv": "02_planck_index.csv",
+  "tsv": "02_planck_index.tsv"
+ },
+ {
+  "file": "03_rise_ratio.png",
+  "name": "rise_ratio",
+  "caption": "放射率の誤差は上昇で割ると Δε/ε に収束して発散しない。発散するのは反射見かけ温度の誤差と雑音の床。",
+  "shape": [
+   248,
+   667,
+   3
+  ],
+  "csv": "03_rise_ratio.csv",
+  "tsv": "03_rise_ratio.tsv"
+ },
+ {
+  "file": "04_rise_ratio_curve.png",
+  "name": "rise_ratio_curve",
+  "caption": "放射率の曲線(青)は Δε/ε = 5 % に収束して発散しない。反射見かけ温度の曲線(橙)は上昇 → 0 で発散する。★縦軸は 40 % で切ってある(それより上は枠外)。上昇 10 K を切ると、反射のほうが放射率より重くなる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_emissivity_cliff.png",
+  "name": "emissivity_cliff",
+  "caption": "予測は測る前に印字した閉形式。絶対誤差は高温ほど大きく、周囲からの上昇に対する比は低温ほど大きい —— 同じ数字が割る相手で逆の結論を出す。",
+  "shape": [
+   272,
+   680,
+   3
+  ],
+  "csv": "05_emissivity_cliff.csv",
+  "tsv": "05_emissivity_cliff.tsv"
+ },
+ {
+  "file": "06_cliff_curves.png",
+  "name": "cliff_curves",
+  "caption": "LWIR・T_obj = 350 K・T_refl = 300 K。傾きは −(T/n)(1−L_r/L_o)/ε で **1/ε**。★相対誤差 Δε/ε を横軸に取ると 3 本は完全に重なる ——現場で表から拾う ε の誤差は**絶対**値で来る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_cliff_vs_temperature.png",
+  "name": "cliff_vs_temperature",
+  "caption": "Δε/ε = 5 % 固定。傾きは log-log で 2.72(§2)。素朴な閉形式は高温側で過大に出る —— 外れの正体は実効波長ではなく e^x/(e^x−1) の欠け。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_nulls.png",
+  "name": "nulls",
+  "caption": "LWIR・T_obj = 350 K・T_refl = 300 K・τ = 0.95。対照群(全部正しく入れる)は量子化も雑音も無しなので床のまま。",
+  "shape": [
+   176,
+   441,
+   3
+  ],
+  "csv": "08_nulls.csv",
+  "tsv": "08_nulls.tsv"
+ },
+ {
+  "file": "09_budget.png",
+  "name": "budget",
+  "caption": "LWIR・353.1 K・ε = 0.6。感度は中心差分の実測。合成 u_c = 4.5086 K。★この表には**相関の行が無い**——そこが穴。",
+  "shape": [
+   248,
+   550,
+   3
+  ],
+  "csv": "09_budget.csv",
+  "tsv": "09_budget.tsv"
+ },
+ {
+  "file": "10_coverage_rho.png",
+  "name": "coverage_rho",
+  "caption": "20000 試行 / 点。ρ=0 では両方 95 %(=床)。ρ>0 で RSS は足りず、ρ<0 では過剰。**どちらも 95 % ではない**。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_propagated.png",
+  "name": "propagated",
+  "caption": "ε で割る非線形が右に裾を作る。±k·u の対称な区間はこの歪みを対称には外さない —— 取りこぼしが片側に寄る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_guardband.png",
+  "name": "guardband",
+  "caption": "真値は閾値 ±15 K の一様分布(分母 40000)。ε=0.60±0.05、ρ(ε,T_refl)=0.7。guard band は「合格と言う前に閾値から何 K 手前で切るか」。",
+  "shape": [
+   152,
+   503,
+   3
+  ],
+  "csv": "12_guardband.csv",
+  "tsv": "12_guardband.tsv"
+ },
+ {
+  "file": "13_guardband_tradeoff.png",
+  "name": "guardband_tradeoff",
+  "caption": "同じ k でも u が違えば切る位置が違う。RSS の u は小さいので、同じ k の名目でも実際には浅くしか切れていない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_units.png",
+  "name": "units",
+  "caption": "止まるのは校正表の範囲外に落ちたときだけ。範囲内に収まる取り違えは、何の兆候も出さない。",
+  "shape": [
+   272,
+   633,
+   3
+  ],
+  "csv": "14_units.csv",
+  "tsv": "14_units.tsv"
+ },
+ {
+  "file": "15_scene.png",
+  "name": "scene",
+  "caption": "塗装面(ε=0.95)の上に研磨ボルト(ε=0.1)。ボルトと周りは**同じ温度**なのに、見かけの絵では62 K 低く写る。補正後の残差 rms 0.106 K。",
+  "shape": [
+   495,
+   510,
+   3
+  ]
+ },
+ {
+  "file": "16_scene_profile.png",
+  "name": "scene_profile",
+  "caption": "谷は温度の谷ではなく**放射率の谷**。補正すると平らな山に戻る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "17_op_holes.png",
+  "name": "op_holes",
+  "caption": "○ = 在る。件数が 0 でなくても中身は無関係(blackbody → cv_blackhat のモルフォロジ)。展示は 2 本あるのに、支える op がゼロ。",
+  "shape": [
+   392,
+   605,
+   3
+  ],
+  "csv": "17_op_holes.csv",
+  "tsv": "17_op_holes.tsv"
+ },
+ {
+  "file": "18_summary.png",
+  "name": "summary",
+  "caption": "ゼロ点はどれも失格。★中心は包含率 ——「95 % 区間」が95 % を包まないこと。",
+  "shape": [
+   416,
+   439,
+   3
+  ],
+  "csv": "18_summary.csv",
+  "tsv": "18_summary.tsv"
+ }
+]

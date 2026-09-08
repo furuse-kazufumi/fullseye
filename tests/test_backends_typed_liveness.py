@@ -87,8 +87,25 @@ IDENTITY_BY_CONTRACT = {
 }
 
 
-def _sample_for(sort, rng):
-    """その in_sort が実際に運ぶ値を 1 つ作る(生成器は chain_fuzz が正本)。"""
+def _sample_for(sort, rng, op_name=None):
+    """その in_sort が実際に運ぶ値を 1 つ作る(生成器は chain_fuzz が正本)。
+
+    ★``op_name`` を渡すと ``op_probe.OP_PROBE_OVERRIDE`` の**op 専用の探針**を
+    優先する(2026-09-08)。それまでこの門と ``tests/test_op_probe_ledger.py`` は
+    **別々の探針**を持っていて、片方だけが現実に合わせられていた ——
+    `tb_dem_ecef_to_geodetic` に原点近くの乱数を渡すと「地球の中心付近」を
+    意味し、fail-closed で拒否されて **fallback が恒等の顔をする**。
+    探針の知識は 1 か所に置き、両方の門が同じものを見る。
+    """
+    if op_name:
+        try:
+            import op_probe
+
+            ovr = op_probe.OP_PROBE_OVERRIDE.get(op_name)
+        except Exception:                                # noqa: BLE001
+            ovr = None
+        if ovr is not None:
+            return ovr[0]()
     gens = cf.make_generators()
     by_sort = {
         "points": "points", "volume": "voxel", "image": "image2d",
@@ -157,11 +174,11 @@ def _identity_report(trials=3, seed=11):
     for op in ops.REGISTRY:
         if not op.name.startswith("tb_") or op.in_sort != op.out_sort:
             continue
-        if _sample_for(op.in_sort, rng) is None:
+        if _sample_for(op.in_sort, rng, op.name) is None:
             continue
         same = 0
         for a, b in ((0.2, 0.3), (0.5, 0.5), (0.8, 0.9))[:trials]:
-            v = _sample_for(op.in_sort, rng)
+            v = _sample_for(op.in_sort, rng, op.name)
             try:
                 r = op.fn(v, a, b)
             except Exception:                            # noqa: BLE001

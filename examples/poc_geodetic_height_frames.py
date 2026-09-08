@@ -956,6 +956,22 @@ def section_tool_gap():
     print("     楕円体の順変換を自前で書いた(ref_geodetic_to_ecef の a / inv_f)。")
     print("  → ★**件数だけ見て「在る」と言ってはいけない**: ecef / geodetic は")
     print("     op_find が 3 / 4 件を返すが、中身は同じ 2 本(+ typed ラッパ)。")
+    print("  ★★**この PoC が本体の不具合を 1 件見つけ、その場で直した**:")
+    print("     `dem_ecef_to_geodetic` が地球の中心付近で **緯度 180 度**を返していた ——")
+    print("     緯度として存在しない値で、しかも**自分の逆関数**")
+    print("     `dem_geodetic_to_ecef` が「lat_deg must be within [-90, 90]」で")
+    print("     拒否する値。例外は出ないので、下流は「もっともらしい数字」を受け取る。")
+    print("     原因は Bowring の式の分母 `r - e^2 a cos^3 θ` が負に回ること。負になるのは")
+    print("     楕円体の**縮閉線(evolute)の内側**で、そこでは楕円体面から立てた法線が")
+    print("     1 本に決まらず、**測地緯度がそもそも一意でない**。")
+    print("     閉形式 `(a r)^(2/3) + (b |z|)^(2/3) < (a^2-b^2)^(2/3)` で判定して")
+    print("     fail-closed にした(2026-09-08、demops.py)。境界は赤道面で")
+    print("     `e^2 a = 42697.7 m`、極軸上で `(a^2-b^2)/b = 42841.3 m` ——")
+    print("     実測でも 42600 m が 180 度、42700 m が 0 度でちょうど切り替わる。")
+    print("     ★ついでに docstring の往復誤差も測り直した: 「1e-12 度未満 /")
+    print("     1e-7 m 未満」は**中央値であって最大値ではなく**、緯度 ±85 度の")
+    print("     4000 点で既に 6.4e-12 度 / 8.5e-07 m を超えていた。")
+    print("     詳しくは `docs/HARDENING.md`(PoC が上げた堅牢性の台帳)。")
     figs.save_table("tool_gap",
                     ["語幹", "fs.", "fs.op.", "fs.ledger.", "op_find", "中身"], rows,
                     title="変換の鎖はどこで切れているか(4 層すべてを引いた結果)",

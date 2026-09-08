@@ -82,6 +82,10 @@ def _measure():
         "imgio.COLORMAPS": len(imgio.COLORMAPS),
         "comm.protocols": len(comm.protocols()),
         "poc_exhibits": exhibits,
+        # ★2026-09-08 追加: 説明を貯める 2 つの台帳。**説明ほど静かに減る**ので
+        #   ここで数える(docs/CAPABILITIES.md と docs/HARDENING.md の元)。
+        "capabilities": len(glob.glob(os.path.join(ROOT, "docs", "capabilities", "*.md"))),
+        "hardening_findings": len(glob.glob(os.path.join(ROOT, "docs", "hardening", "*.md"))),
     }
 
 

@@ -91,6 +91,8 @@ gain と読み出しノイズをそのまま受け取る既存 op が
 """
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
 from scipy import ndimage
 from scipy.optimize import least_squares
@@ -741,8 +743,20 @@ def star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200,
 
     bkg, sig = _robust_background(img, method)
     if sig <= 0.0:
-        # 完全に平坦 = 雑音が測れない。しきい値が定義できないので何も返さない
-        # (0 で割って全画素を「星」にする方が遥かに悪い)。
+        # ★この門のコメントは 2026-09-08 まで「完全に平坦 = 雑音が測れない」と
+        #   書いていた。**前提のほうが間違っていた** —— σ が 0 になる道はもう 1 本
+        #   あって、整数の DN で MAD が潰れる場合(σ=0.5 相当の実写で 0.0)。
+        #   平坦でない画像で空を返すのは保守的な答えではなく**誤った答え**で、
+        #   実際 200x200 の整数フレームに植えた 2 個の点目標が 0 個と返っていた。
+        #   平坦なら空(星は無い)、平坦でないなら拒否する、と道を分ける。
+        if float(np.ptp(img)) > 0.0:
+            raise ValueError(
+                "%s: the robust noise estimate came out 0 on an image that is "
+                "not constant (range %.6g) — the threshold would collapse onto "
+                "the background. With method='mad' this happens on quantised "
+                "(integer DN) data; pass method='clip' instead, or add dither. "
+                "Returning an empty list here would be a wrong answer, not a "
+                "cautious one." % (op, float(np.ptp(img))))
         return np.empty((0, 2), dtype=np.float64)
     thresh = bkg + thr_s * sig
     mx = ndimage.maximum_filter(img, size=2 * sep + 1, mode="nearest")

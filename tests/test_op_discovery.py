@@ -256,3 +256,31 @@ def test_ledger_namespace_exposes_the_raw_return_through_dot_raw():
     # adapter が無い op でも .raw は同じものを返す(呼び分けを覚えなくてよい)
     plain = fs.ledger.dem_slope(np.zeros((8, 8)), 5.0)
     assert np.array_equal(fs.ledger.dem_slope.raw(np.zeros((8, 8)), 5.0), plain)
+
+
+def test_op_find_answers_japanese_queries():
+    """★和文の複数語クエリが構造的に 0 件だった(2026-09-08 に修正)。
+
+    `poc_search_sweep_width` が踏んだ。語の切り出しが ``[a-z0-9]+`` の ASCII
+    限定で ``_WORD_RE.findall("点 検出") == []`` になり、語幹の段が空回り、
+    部分一致は空白ごと含む文字列を探すので当たらない。採点対象の doc も
+    docstring の**1 行目だけ**だった。docstring の大半が日本語で、6 言語を
+    配っている製品でこれが立っていた。
+
+    ここで固定するのは 3 つ: (1) 和文で当たること (2) 副画素重心つきの点目標
+    検出 ``star_detect`` が**上位**に出ること (3) ★**英語の並び順を変えて
+    いない**こと —— 和文の段は「既存の点が 0 のときだけ」参照する追加の段。
+    """
+    import fullseye as fs
+
+    for q in ("スポット 検出", "小さい目標 検出", "漂流 捜索"):
+        hits = [h["op"] for h in fs.op_find(q)]
+        assert hits, "和文クエリ %r が 0 件" % q
+        assert "star_detect" in hits[:3], (q, hits[:5])
+
+    # 英語の既存の並びは変わらない(語幹の段より下に足しただけ)
+    en = [h["op"] for h in fs.op_find("erosion")]
+    assert en and any("erosion" in n for n in en[:3]), en[:5]
+
+    # 当たらない和文は 0 件のまま(何でも拾う段にしていない)
+    assert fs.op_find("寿司 天丼") == []

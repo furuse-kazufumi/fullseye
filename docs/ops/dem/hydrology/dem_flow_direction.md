@@ -4,7 +4,7 @@ dim: dem
 category: hydrology
 in: depth
 out: labels
-examples: [dem_terrain_analysis_tour]
+examples: [dem_terrain_analysis_tour, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -38,6 +38,7 @@ D8 流向。O'Callaghan & Mark (1984)。
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [dem_terrain_analysis_tour](../../../../examples/dem_terrain_analysis_tour.py) — `py -3.11 examples/dem_terrain_analysis_tour.py`
+- [poc_geodetic_height_frames](../../../../examples/poc_geodetic_height_frames.py) — `py -3.11 examples/poc_geodetic_height_frames.py`
 
 ## 型が繋がる次の op(`labels` を入力に取れる)
 

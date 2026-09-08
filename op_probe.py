@@ -300,6 +300,29 @@ def _unit_normals_probe(m: int = 160) -> np.ndarray:
                      np.cos(phi)], axis=1)
 
 
+def _ecef_on_earth_probe(m: int = 160) -> np.ndarray:
+    """WGS84 楕円体**面上**の ECEF 点(地球規模の座標)。
+
+    ★2026-09-08 に足した。それまでの探針は ``points`` の一般形(原点近くの
+    乱数)を渡していて、``dem_ecef_to_geodetic`` にとっては**地球の中心付近**を
+    意味していた。そこは楕円体の縮閉線の内側で、**測地緯度がそもそも一意に
+    決まらない** —— 以前は緯度 180 度という存在しない値が黙って返っており、
+    探針は「通った」と数えていた。op を fail-closed に直した結果ここが鳴ったので、
+    **免除台帳を伸ばすのではなく探針の側を現実に合わせる**
+    (`poc_geodetic_height_frames`)。
+    """
+    a = 6378137.0
+    b = a * (1.0 - 1.0 / 298.257223563)
+    i = np.arange(m, dtype=np.float64) + 0.5
+    lat = np.arcsin(1.0 - 2.0 * i / m)                  # -90..90 に近い分布
+    lon = np.pi * (1.0 + 5.0 ** 0.5) * i                # 黄金角で経度を散らす
+    e2 = 1.0 - (b / a) ** 2
+    n = a / np.sqrt(1.0 - e2 * np.sin(lat) ** 2)
+    return np.stack([n * np.cos(lat) * np.cos(lon),
+                     n * np.cos(lat) * np.sin(lon),
+                     n * (1.0 - e2) * np.sin(lat)], axis=1)
+
+
 def _dichromatic_probe():
     """二色性レンダ(単一材質 + ハイライト)。``specular_*` の契約。"""
     return _generators()["rgbimage"](np.random.default_rng(20260908))
@@ -319,6 +342,10 @@ OP_PROBE_OVERRIDE = {
     "tb_specular_diffuse_split": (_dichromatic_probe,
         "単一材質の面(照明直交成分の階数 1)を要求する。乱数の色画像は階数が立つ"),
     "tb_specular_coefficient_map": (_dichromatic_probe, "同上(単一材質を要求する)"),
+    "tb_dem_ecef_to_geodetic": (_ecef_on_earth_probe,
+        "points の一般形(原点近くの乱数)は、この op には**地球の中心付近**を"
+        "意味する。そこは楕円体の縮閉線の内側で測地緯度が一意でない —— "
+        "2026-09-08 に op を fail-closed へ直したので、探針の側を地球面上へ直す"),
 }
 
 

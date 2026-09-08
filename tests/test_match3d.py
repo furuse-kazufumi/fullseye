@@ -836,3 +836,20 @@ def test_polar_unwrap_rejects_degenerate_shape():
         X.polar_unwrap(rng.random((4, 4, 4)))
     # 正常系は不変(既定 ntheta=360, nr=64)
     assert X.polar_unwrap(rng.random((32, 32))).shape == (360, 64)
+
+
+def test_refract_points_at_the_per_ray_version_it_used_to_hide():
+    """★片道の参照 —— 名前の見つけやすい側から入った人だけが遠回りする。
+
+    `poc_multibeam_bathymetry` の検証中に出た(2026-09-08)。``refract`` は
+    「(N,3) バッチも通るが 1 本でも TIR なら全体が None。**1 本ずつ回すこと**」
+    とだけ書いていて、**光線ごとに TIR を判定して (方向, マスク) を返す
+    ``glassmirror.refract_rays`` が既にある**ことに触れていなかった
+    (逆向きの参照は在った)。参照は両方向に張る。
+    """
+    import glassmirror
+
+    assert "refract_rays" in (X.refract.__doc__ or ""), "refract が per-ray 版を指していない"
+    assert "refract" in (glassmirror.refract_rays.__doc__ or "")
+    # 音響で使うときの読み替え(eta = 1/c)も、角度版の説明に在ること
+    assert "1/c" in (X.snell_angle.__doc__ or "")

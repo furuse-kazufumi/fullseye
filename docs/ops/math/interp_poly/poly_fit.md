@@ -4,7 +4,7 @@ dim: math
 category: interp_poly
 in: signal × signal
 out: table
-examples: [math_metrology, poc_strain_history, signal_filter]
+examples: [math_metrology, poc_strain_history, poc_thermal_radiometry, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 - [math_metrology](../../../../examples/math_metrology.py) — `py -3.11 examples/math_metrology.py`
 - [poc_strain_history](../../../../examples/poc_strain_history.py) — `py -3.11 examples/poc_strain_history.py`
+- [poc_thermal_radiometry](../../../../examples/poc_thermal_radiometry.py) — `py -3.11 examples/poc_thermal_radiometry.py`
 - [signal_filter](../../../../examples/signal_filter.py) — `py -3.11 examples/signal_filter.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

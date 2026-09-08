@@ -4,7 +4,7 @@ dim: dem
 category: geodesy
 in: 
 out: measurement
-examples: [dem_geodesy_tour]
+examples: [dem_geodesy_tour, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [dem_geodesy_tour](../../../../examples/dem_geodesy_tour.py) — `py -3.11 examples/dem_geodesy_tour.py`
+- [poc_geodetic_height_frames](../../../../examples/poc_geodetic_height_frames.py) — `py -3.11 examples/poc_geodetic_height_frames.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

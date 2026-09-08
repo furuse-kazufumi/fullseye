@@ -29,6 +29,7 @@
 """
 import os
 import sys
+import warnings
 
 import numpy as np
 import pytest
@@ -1093,3 +1094,99 @@ def test_drizzle_maps_input_pixel_centres_by_scale_and_half_offset():
             gr, gc = index_centroid(sci)
             assert gr == pytest.approx(r * scale + (scale - 1.0) / 2.0, abs=1e-9)
             assert gc == pytest.approx(c * scale + (scale - 1.0) / 2.0, abs=1e-9)
+
+
+def test_mad_warns_when_quantisation_collapses_it_to_zero():
+    """★MAD が 0 に潰れるのは「平坦」ではなく「量子化」のことがある(2026-09-08)。
+
+    `poc_thermal_radiometry` が踏んだ。整数の DN では ``|x - median|`` も整数に
+    なるので、``method="mad"`` が返せる sigma は **1.4826 の倍数だけ**。実測で
+    σ=0.5 相当の整数フレームは **0.0**、σ=1.0 と σ=1.983 は**同じ 1.4826** に
+    なる。14 bit の生 DN はまさに整数なので、これは特殊な入力ではない。
+
+    値を返す入口なので拒否はせず、**声を上げる**(呼び手が ``method="clip"`` を
+    選べる)。拒否するのは答えを出す側の :func:`star_detect` の役目。
+    """
+    rng = np.random.default_rng(3)
+    img = np.rint(1000.0 + rng.normal(0.0, 0.5, (128, 128)))
+    with pytest.warns(RuntimeWarning, match="quantisation"):
+        sig = A.noise_sigma(img, method="mad")
+    assert sig == 0.0
+    # clip はこの場合のために書かれている(コード内コメントにそう在った)
+    assert A.noise_sigma(img, method="clip") > 0.2
+
+    # 本当に平坦なら警告は出さない(sigma 0 が正しい答え)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        assert A.noise_sigma(np.full((32, 32), 7.0), method="mad") == 0.0
+
+
+def test_star_detect_refuses_instead_of_silently_finding_nothing():
+    """★『何も無い』と『測れない』を分ける —— 空を返すのが誤答になる場合。
+
+    ``sigma <= 0`` の門は前からあったが、コメントは「完全に平坦 = 雑音が
+    測れない」と書いていた。**前提のほうが間違っていた** —— σ が 0 になる道は
+    もう 1 本あり(整数 DN で MAD が潰れる)、そのとき画像は平坦ではない。
+    実測: 200x200 の整数フレームに植えた**点目標 2 個が 0 個**と返っていた。
+
+    平坦なら空(星が無いのは正当な答え)、平坦でないなら拒否する。
+    """
+    rng = np.random.default_rng(3)
+    img = np.rint(1000.0 + rng.normal(0.0, 0.5, (200, 200)))
+    img[50, 50] += 8.0
+    img[120, 30] += 8.0
+
+    with pytest.raises(ValueError, match="not constant"):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            A.star_detect(img, threshold_sigma=5.0)
+
+    # 指示どおり clip に替えれば、植えた 2 個がちゃんと出る
+    pts = A.star_detect(img, threshold_sigma=5.0, method="clip")
+    assert pts.shape[0] == 2, pts
+    # 重心は量子化した雑音に引かれる —— 実測で最大 0.7 px ずれる。丸めて
+    # 「ぴったり」に見せず、許容差で書く(0 個だったものが 2 個出るのが要点)。
+    got = sorted(tuple(p) for p in pts)
+    want = [(50.0, 50.0), (120.0, 30.0)]
+    for (gr, gc), (wr, wc) in zip(got, want):
+        assert abs(gr - wr) < 1.5 and abs(gc - wc) < 1.5, (got, want)
+
+    # 真に平坦なフレームは今も空(星が無い、は正当な答え)
+    assert A.star_detect(np.full((32, 32), 7.0)).shape == (0, 2)
+
+
+def _halftone(shape=(256, 256), pitch=16.0, shift=(0.0, 0.0), seed=0):
+    """網点(周期格子)の合成。位置合わせが**一意に決まらない**入力を作る。"""
+    r = np.arange(shape[0])[:, None] - shift[0]
+    c = np.arange(shape[1])[None, :] - shift[1]
+    g = np.cos(2 * np.pi * r / pitch) * np.cos(2 * np.pi * c / pitch)
+    return (np.clip(g, 0.0, None) ** 2 * 3000.0 + 60.0
+            + np.random.default_rng(seed).normal(0.0, 5.0, shape))
+
+
+def test_inlier_ratio_is_not_a_probability_that_the_answer_is_right():
+    """★賛成率 1.00 のまま 48 px 外す —— 多数決が満場一致でも投票所が間違っている。
+
+    `poc_print_registration` が見つけた(2026-09-08)。網点のような**周期格子**では
+    ずれが格子の周期を跨いだ瞬間に別の格子点へ吸い込まれ、そこでも点は**完全に**
+    対応する。`inlier_ratio` は「同じ答えに賛成した点の割合」であって、
+    **「答えが正しい確率」ではない**。
+
+    ここで固定するのは 2 つ: (1) 賛成率が 1.00 でも答えが大きく外れうること
+    (2) そのとき **`vote_margin`(2 番手の山 / 1 番手)が高く出る**こと ——
+    星野なら単峰なので小さい。賛成率だけを信頼指標として読ませない。
+    """
+    a = _halftone(seed=1)
+    b = _halftone(shift=(0.0, 6.0), seed=2)
+    _, info = A.frame_align(a, b)
+
+    err = np.hypot(info["shift_row"] + 0.0, info["shift_col"] + 6.0)
+    assert err > 10.0, ("この試験の前提(周期格子で大きく外す)が崩れている", info)
+    assert info["inlier_ratio"] >= 0.99, info      # 外しているのに満場一致
+    assert info["vote_margin"] > 0.5, info         # 2 番手が肉薄している = 危険信号
+
+    # 対照: 星野は単峰なので margin が小さい(同じ数字が別の意味を持たない)
+    frames, _ = A.synth_frame_series(shape=(128, 128), n_frames=2, dither_px=3.0,
+                                     n_stars=40, sky=60.0, read_sigma=5.0, seed=5)
+    _, star_info = A.frame_align(frames[0], frames[1])
+    assert star_info["vote_margin"] < 0.5, star_info

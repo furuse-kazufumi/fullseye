@@ -60,7 +60,7 @@ def _test_function_names() -> set:
         if not (fn.startswith("test_") and fn.endswith(".py")):
             continue
         text = io.open(os.path.join(tdir, fn), encoding="utf-8").read()
-        names.update(re.findall(r"^def (test_\w+)", text, re.M))
+        names.update(re.findall(r"^\s*def (test_\w+)", text, re.M))
     return names
 
 

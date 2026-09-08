@@ -1,0 +1,144 @@
+[
+ {
+  "file": "01_geoid_frames.png",
+  "name": "geoid_frames",
+  "caption": "h と H は平均 +36.00 m 違うが、**塗り分けの絵はほとんど同じ**(自動で伸縮するので)。右下だけが実害の大きさで、傾斜の誤差は最大 0.0086 度 —— つまり傾斜には効かない。",
+  "shape": [
+   1099,
+   994,
+   3
+  ]
+ },
+ {
+  "file": "02_flood_masks.png",
+  "name": "flood_masks",
+  "caption": "分母 58081 セル。真値 24325(41.9 %)に対し、誤用は 0 と 58081。**どちらの絵も「もっともらしい」**(全面浸水は津波の図に見える)。",
+  "shape": [
+   617,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "03_flow_flip.png",
+  "name": "flow_flip",
+  "caption": "真の勾配の中央値 9.15e-05 に対し |∇N| は 1.2e-04。90 度以上回ったセルは 42787 / 56169 (76.2 %)。**方位の絵は 2 枚とも「地形図らしく」見える**。",
+  "shape": [
+   617,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "04_epoch_tolerance.png",
+  "name": "epoch_tolerance",
+  "caption": "プレート運動 2.5 cm/年 は代表値として置いた仮定。Scan-to-BIM の許容差は 3 か月で割る。",
+  "shape": [
+   200,
+   457,
+   3
+  ],
+  "csv": "04_epoch_tolerance.csv",
+  "tsv": "04_epoch_tolerance.tsv"
+ },
+ {
+  "file": "05_epoch_drift.png",
+  "name": "epoch_drift",
+  "caption": "2.5 cm/年(代表値)。Scan-to-BIM の 5 mm は 0.2 年、土木の出来形 25 mm は 1.0 年で割る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_datum_shift.png",
+  "name": "datum_shift",
+  "caption": "日本の 1200 点。**例外は 1 件も出ず、緯度経度は妥当な範囲に収まる**。相対検査で見えるのは 1 km あたり 0.106 m だけ。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_enu_tolerance.png",
+  "name": "enu_tolerance",
+  "caption": "d = sqrt(2R・tol/(1-k))。許容差は代表値として置いた仮定。Scan-to-BIM の 5 mm は 270 m で割る。",
+  "shape": [
+   200,
+   557,
+   3
+  ],
+  "csv": "07_enu_tolerance.csv",
+  "tsv": "07_enu_tolerance.tsv"
+ },
+ {
+  "file": "08_enu_drop.png",
+  "name": "enu_drop",
+  "caption": "真の ECEF(dem_geodetic_to_ecef)を自前の ENU 回転に通して測った。曲率半径が方位で違うので一致はしない。",
+  "shape": [
+   224,
+   400,
+   3
+  ],
+  "csv": "08_enu_drop.csv",
+  "tsv": "08_enu_drop.tsv"
+ },
+ {
+  "file": "09_enu_curvature.png",
+  "name": "enu_curvature",
+  "caption": "3 本はほぼ重なる(それが言いたいこと: 崖は測る前に閉形式で出る)。★重なって見えない差は次の図で。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_enu_residual.png",
+  "name": "enu_residual",
+  "caption": "子午線 6357143 m / 卯酉線 6385412 m / 平均 6371009 m。30 km で南北と東西が 0.316 m 開く。★「閉形式で出る」は「1 つの数字で出る」ではない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_axis_order.png",
+  "name": "axis_order",
+  "caption": "全球 3600 点。例外が出るのは緯度が [-90, 90] を外れたときだけ。**それ以外は全部「もっともらしい」座標**。",
+  "shape": [
+   200,
+   550,
+   3
+  ],
+  "csv": "11_axis_order.csv",
+  "tsv": "11_axis_order.tsv"
+ },
+ {
+  "file": "12_tool_gap.png",
+  "name": "tool_gap",
+  "caption": "geoid / enu / datum / ortho / vertical / epoch / crs / utm は 4 層とも 0 件。ECEF の出入口だけが在る。",
+  "shape": [
+   416,
+   628,
+   3
+  ],
+  "csv": "12_tool_gap.csv",
+  "tsv": "12_tool_gap.tsv"
+ },
+ {
+  "file": "13_summary.png",
+  "name": "summary",
+  "caption": "同じ 36 m が、差を取る量ではほぼ消え、絶対量では全部効き、平地の向きでは逆転する。**例外はほとんど出ない**。",
+  "shape": [
+   344,
+   558,
+   3
+  ],
+  "csv": "13_summary.csv",
+  "tsv": "13_summary.tsv"
+ }
+]

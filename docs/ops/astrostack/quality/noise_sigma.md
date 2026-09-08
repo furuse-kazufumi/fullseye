@@ -4,7 +4,7 @@ dim: astrostack
 category: quality
 in: image2d
 out: measurement
-examples: [acoustic_condition_monitoring, astro_stacking, poc_colocalization_crosstalk, poc_search_sweep_width, poc_star_astrometry]
+examples: [acoustic_condition_monitoring, astro_stacking, poc_colocalization_crosstalk, poc_search_sweep_width, poc_star_astrometry, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -49,6 +49,7 @@ Returns ``float``(*image* と同じ単位)。
 - [poc_colocalization_crosstalk](../../../../examples/poc_colocalization_crosstalk.py) — `py -3.11 examples/poc_colocalization_crosstalk.py`
 - [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
+- [poc_thermal_radiometry](../../../../examples/poc_thermal_radiometry.py) — `py -3.11 examples/poc_thermal_radiometry.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

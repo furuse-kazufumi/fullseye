@@ -66,6 +66,7 @@ tb_stat_covariance 0.50 0.50
 
 次の例は元の台帳 op `stat_covariance` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [math_metrology](../../../../examples/math_metrology.py) — `py -3.11 examples/math_metrology.py`
+- [poc_thermal_radiometry](../../../../examples/poc_thermal_radiometry.py) — `py -3.11 examples/poc_thermal_radiometry.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

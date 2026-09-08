@@ -4,7 +4,7 @@ dim: 3d
 category: space_carving
 in: vector
 out: pose
-examples: []
+examples: [space_carving]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -49,7 +49,7 @@ Returns
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [space_carving](../../../../examples_3d/space_carving.py) — `py -3.11 examples_3d/space_carving.py`
 
 ## 型が繋がる次の op(`pose` を入力に取れる)
 

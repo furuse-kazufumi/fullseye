@@ -8,6 +8,11 @@
 **Documentation: [furuse.work](https://furuse.work/)** — the operator index (1,500+
 ops with per-operator notes), the family guides, and the release notes.
 
+**What it can do: [CAPABILITIES.md](docs/CAPABILITIES.md)** — an index organised by
+*what you want to do*, every entry tied to operators that exist and an example that runs.
+**What the PoCs hardened: [HARDENING.md](docs/HARDENING.md)** — the ledger of defects
+the PoC series found, what changed, and which gate now stops each one coming back.
+
 <!-- Banner: real Fullseye outputs only (no mockups). Regenerate with
      `py -3.11 tools/gen_banner.py`. Absolute raw URL for PyPI compatibility. -->
 <!-- Animated hero: 6 acts of real operator output (edge orientation, blob
