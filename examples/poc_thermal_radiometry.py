@@ -615,25 +615,92 @@ def section_cliff(scene):
     print(f"     Wien 因子を入れると相対 {100*worst_rel_corr:.1f} % まで縮む ——")
     print("     **残りが 1 次展開の残差**で、そこは ΔT が大きいほど大きい。")
     print("  → ★★**予測を外した**: 絶対誤差は **高温ほど大きい**。")
-    print(f"     LWIR・ε=0.95 で 300 K 級 {abs_dt[('LWIR', 305.0)]:.2f} K → "
-          f"800 K {abs_dt[('LWIR', 800.0)]:.2f} K。")
-    print("     ΔT = (λ_eff T²/c2)·(Δε/ε)·(1−L_r/L_o) は **T の 2 乗**で増える ——")
-    print("     閉形式は最初からそう言っていて、自分の式を読み違えていた。")
-    print("  → ★ただし**物差しを変えると予測は当たる**: 現場が使うのは絶対温度でなく")
-    print(f"     周囲からの上昇 (T−T_refl) で、その比は "
-          f"{100*rise_ratio[('LWIR', 305.0)]:.1f} %(305 K)→ "
-          f"{100*rise_ratio[('LWIR', 800.0)]:.1f} %(800 K)で**低温ほど急**。")
-    # 「T の 2 乗で増える」を主張のまま置かず、傾きを実測する(fs.poly_fit)。
+    print(f"     LWIR・Δε/ε=5 % で 305 K の {abs_dt[('LWIR', 305.0)]:.2f} K → "
+          f"800 K の {abs_dt[('LWIR', 800.0)]:.2f} K。")
+    print("     ΔT = (T/n)·δ·(1−L_r/L_o) の n は T とともに小さくなるので、")
+    print("     **閉形式は最初からそう言っていた**。自分の式を読み違えていた。")
+    # 「T の何乗で増えるか」を主張のまま置かず、傾きを実測して**内訳に分ける**。
     ts_fit = np.linspace(310.0, 900.0, 25)
-    dt_fit = np.array([abs(measure_dt_from_eps(tabs["LWIR"], t, EPS_PAINT, 0.05))
+    tab_l = tabs["LWIR"]
+    dt_fit = np.array([abs(measure_dt_from_eps(tab_l, t, EPS_PAINT, 0.05))
                        for t in ts_fit])
+    tn_fit = np.array([t / band_index_numeric("LWIR", t) for t in ts_fit])
+    fac_fit = np.array([1.0 - float(tab_l.radiance(T_REFL_REF))
+                        / float(tab_l.radiance(t)) for t in ts_fit])
     fit = fs.poly_fit(np.log(ts_fit), np.log(dt_fit), 1)
+    fit_tn = fs.poly_fit(np.log(ts_fit), np.log(tn_fit), 1)
+    fit_fac = fs.poly_fit(np.log(ts_fit), np.log(fac_fit), 1)
     slope = float(np.asarray(fit["coeffs"])[0])
+    s_tn = float(np.asarray(fit_tn["coeffs"])[0])
+    s_fac = float(np.asarray(fit_fac["coeffs"])[0])
     print(f"  → 「T² で増える」を主張のまま置かない: log|ΔT| を log T に "
           f"fs.poly_fit(次数 1)で当てると **傾き {slope:.3f}**"
           f"(条件数 {float(fit['cond']):.1f}、残差 rms {float(fit['rms_residual']):.4f})。")
-    print("     厳密に 2 でないのは λ_eff が温度とともに短波側へ動くから ——")
-    print("     ΔT = (λ_eff(T)·T²/c2)·δ·(1−L_r/L_o) の λ_eff(T) の分だけ 2 を下回る。")
+    print(f"     ★2 でも 2 未満でもなく **{slope:.2f}**。内訳も同じやり方で分けると "
+          f"T/n が {s_tn:.3f}、反射因子 (1−L_r/L_o) が {s_fac:.3f} で、"
+          f"足すと {s_tn+s_fac:.3f}(実測 {slope:.3f})。")
+    print("     T/n が 2 を超えるのは n が 1/T より速く落ちるから(Wien 因子)、")
+    print("     反射因子は T_refl から離れるほど 1 に飽和するので正の寄与を足す。")
+
+    # ---- 「低温ほど急」を、正しい物差しで測り直す --------------------------- #
+    print("\n  ★では「低温ほど急」はどこで正しいのか —— **周囲からの上昇で割る**:")
+    print(f"  {'T_obj [K]':>10}{'上昇 [K]':>10}{'ε 誤差 5 %':>13}"
+          f"{'/上昇':>9}{'T_refl 誤差 5 K':>17}{'/上昇':>9}{'NETD の床':>12}{'/上昇':>9}")
+    rise_rows, ratio_eps, ratio_refl = [], [], []
+    for t in (302.0, 305.0, 310.0, 330.0, 400.0, 600.0, 800.0):
+        rise = t - T_REFL_REF
+        d_eps = abs(measure_dt_from_eps(tab_l, t, EPS_PAINT, 0.05))
+        lm = forward_radiance(tab_l, t, EPS_PAINT, T_REFL_REF, 1.0, T_ATM_REF)
+        d_ref = abs(float(invert_radiance(tab_l, lm, EPS_PAINT, T_REFL_REF + 5.0,
+                                          1.0, T_ATM_REF)) - t)
+        # 雑音の床: NETD 相当の放射輝度ゆらぎが温度に化ける量(ε で割る分だけ増える)
+        d_noise = float(scene["cam"].sigma_l / EPS_PAINT
+                        / (float(tab_l.radiance(t + 0.05))
+                           - float(tab_l.radiance(t - 0.05))) * 0.1)
+        ratio_eps.append(d_eps / rise)
+        ratio_refl.append(d_ref / rise)
+        rise_rows.append((f"{t:.0f}", f"{rise:.0f}", f"{d_eps:.3f}",
+                          f"{100*d_eps/rise:.1f} %", f"{d_ref:.3f}",
+                          f"{100*d_ref/rise:.1f} %", f"{d_noise:.4f}",
+                          f"{100*d_noise/rise:.2f} %"))
+        print(f"  {t:>10.0f}{rise:>10.0f}{d_eps:>13.3f}{100*d_eps/rise:>8.1f}%"
+              f"{d_ref:>17.3f}{100*d_ref/rise:>8.1f}%{d_noise:>12.4f}"
+              f"{100*d_noise/rise:>8.2f}%")
+    print(f"  → ★**放射率の誤差は上昇で割ると発散しない**: "
+          f"{100*ratio_eps[0]:.1f} % → {100*ratio_eps[-1]:.1f} % "
+          f"(比 {ratio_eps[0]/ratio_eps[-1]:.2f})。")
+    print("     T_obj → T_refl の極限で ΔT/(T−T_refl) → Δε/ε に収束する ——")
+    print("     **上限が Δε/ε で押さえられている**。これは予測していなかった。")
+    print(f"  → ★★発散するのは **T_refl の取り違えと雑音の床**: "
+          f"{100*ratio_refl[0]:.1f} % → {100*ratio_refl[-1]:.1f} % "
+          f"(比 {ratio_refl[0]/ratio_refl[-1]:.0f} 倍)。")
+    print("     これらは上昇の大きさに依らない絶対量なので、上昇が小さいほど比が跳ねる。")
+    print("     **「低温ほど危ない」は正しかったが、犯人は放射率ではなかった**。")
+    figs.save_table("rise_ratio",
+                    ["T_obj [K]", "上昇 [K]", "ε 誤差 5 % [K]", "/上昇",
+                     "T_refl 誤差 5 K [K]", "/上昇", "NETD の床 [K]", "/上昇"],
+                    rise_rows,
+                    title="周囲からの上昇で割ると、危ない相手が入れ替わる",
+                    caption="放射率の誤差は上昇で割ると Δε/ε に収束して発散しない。"
+                            "発散するのは反射見かけ温度の誤差と雑音の床。")
+    if figs.enabled():
+        tt = np.linspace(301.0, 800.0, 60)
+        r_eps = np.array([abs(measure_dt_from_eps(tab_l, t, EPS_PAINT, 0.05))
+                          / (t - T_REFL_REF) * 100.0 for t in tt])
+        r_ref = np.array([abs(float(invert_radiance(
+            tab_l, forward_radiance(tab_l, t, EPS_PAINT, T_REFL_REF, 1.0, T_ATM_REF),
+            EPS_PAINT, T_REFL_REF + 5.0, 1.0, T_ATM_REF)) - t)
+            / (t - T_REFL_REF) * 100.0 for t in tt])
+        figs.save_plot("rise_ratio_curve",
+                       [("放射率 5 % の誤差 / 上昇", tt, r_eps),
+                        ("T_refl 5 K の誤差 / 上昇", tt, r_ref)],
+                       ylim=(0.0, 60.0),
+                       xlabel="対象の温度 T_obj [K](T_refl = 300 K)",
+                       ylabel="誤差 ÷ 周囲からの上昇 [%]",
+                       title="上昇が小さいほど跳ねるのは、放射率ではなく反射",
+                       caption="放射率の曲線は Δε/ε = 5 % に収束して発散しない。"
+                               "反射見かけ温度の曲線は上昇 → 0 で発散する。"
+                               "★縦軸は 60 % で切ってある(発散する側は枠外)。")
     figs.save_table("emissivity_cliff",
                     ["帯域", "T [K]", "Δε/ε", "予測(素朴)[K]",
                      "予測(Wien 補正)[K]", "実測 ΔT [K]", "補正後の差",
