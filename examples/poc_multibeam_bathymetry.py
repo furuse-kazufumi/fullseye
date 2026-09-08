@@ -996,13 +996,21 @@ def section_dtm(scene):
     line_id = np.concatenate(line_id)
     print(f"  測線 2 本 × ping {along.size} 発 × ビーム {beams.size} 本 = "
           f"{pts.shape[0]} 測点、測線間隔 {spacing:.1f} m")
-    # 重なりの食い違い: 同じ航跡直交位置を、測線 1 の外側と測線 2 の内側が測る
-    over_lo, over_hi = spacing - half_swath, half_swath
-    mid = 0.5 * (over_lo + over_hi)
-    a = np.interp(mid, y_meas, z_meas)                       # 測線 1(外側寄り)
-    b = np.interp(mid - spacing, y_meas, z_meas)             # 測線 2(内側寄り)
-    print(f"  重なりの中央 x = {mid:.2f} m を、測線 1 は {a:.3f} m、"
-          f"測線 2 は {b:.3f} m と測る → **食い違い {abs(a-b):.3f} m**")
+    # 重なりの食い違い: 同じ航跡直交位置を、測線 1 の外側と測線 2 の内側が測る。
+    # ★重なりの**真ん中**を見てはいけない —— そこは両測線とも同じ振れ角なので、
+    #   誤差が同じだけ乗って差がゼロになる。**帯全体で最大**を取る。
+    ys = np.linspace(spacing - half_swath, half_swath, 401)
+    d1 = np.interp(ys, y_meas, z_meas)                       # 測線 1(外側寄り)
+    d2 = np.interp(ys - spacing, y_meas, z_meas)             # 測線 2(内側寄り)
+    diff = np.abs(d1 - d2)
+    k = int(np.argmax(diff))
+    mid = 0.5 * (ys[0] + ys[-1])
+    a, b = float(d1[k]), float(d2[k])
+    print(f"  重なりの帯 x = {ys[0]:.1f} 〜 {ys[-1]:.1f} m。")
+    print(f"  ★真ん中(x = {mid:.1f} m)では差 {abs(float(d1[200]-d2[200])):.4f} m —— "
+          f"両測線とも同じ振れ角なので**誤差が同じだけ乗って消える**。")
+    print(f"  帯の端 x = {ys[k]:.1f} m では、測線 1 が {a:.3f} m(振れ角の外側)、"
+          f"測線 2 が {b:.3f} m(内側)→ **食い違い {abs(a-b):.3f} m**")
     print(f"     (TVU {tvu(DEPTH_REF):.3f} m の {abs(a-b)/tvu(DEPTH_REF):.1f} 倍)")
     print("  → ★これが**実データでもできる唯一の検査**。真の海底は誰も知らないが、"
           "\n     同じ海底を 2 度測った差なら、真値なしで出る。")
