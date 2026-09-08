@@ -451,25 +451,56 @@ def half_power_width(power, grid=ANGLE_GRID) -> float:
 # --------------------------------------------------------------------------- #
 # エコー検出 —— 1-D 信号の op をそのまま使う                                    #
 # --------------------------------------------------------------------------- #
-def echo_envelope(t_two_way: float, spread_s: float, n: int, fs_hz: float = ECHO_FS):
-    """受信包絡線。パルス(ガウス)を**フットプリントの時間広がり**で畳んだ形。
+#: ビーム軸から何ビーム幅ぶんの海底をエコーに入れるか(片側)。
+ECHO_SPAN_BW = 1.5
 
-    外側ビームではフットプリントが伸び、海底の手前側と奥側で往復時間が
-    違うので、エコーは横に広がる。振幅検出はその広がった山の頂点を取る。
+#: エコーを合成する部分角の本数。
+ECHO_N_SUB = 61
+
+
+def echo_envelope(prof, theta_deg: float, wavelength: float, spacing: float,
+                  bw0: float, depth: float = DEPTH_REF):
+    """受信包絡線を**ビームが照らす海底を足し上げて**作る。
+
+    ★ここが素直な「τ にガウスを 1 個置く」との違い。ビームは 1 点でなく
+    **帯**を照らすので、エコーはその帯の往復時間の分布になる。重みは
+
+    * 配列の角度応答 —— :func:`beam_pattern`(= ``beamform_delay_sum``)を
+      そのまま部分角の位置で読む。**自分の配列の実測パターンを使う**。
+    * 後方散乱の Lambert 則 cosθ —— 斜めに当たるほど返りが弱い。
+
+    往復時間 τ(φ) は角度に対して**凸**なので、対称なビームでも
+    エコーは非対称になり、振幅検出の頂点はビーム軸の τ とずれる。
+    返り値は ``(包絡線, 窓の先頭の時刻 [s], ビーム軸の往復時間 [s])``。
     """
-    idx = np.arange(n, dtype=np.float64) / fs_hz
-    sigma = math.hypot(PULSE_S / 2.355, spread_s / 2.355)
-    return np.exp(-0.5 * ((idx - t_two_way) / sigma) ** 2)
+    bw = bw0 / math.cos(math.radians(theta_deg))
+    lo = max(0.0, theta_deg - ECHO_SPAN_BW * bw)
+    hi = min(88.0, theta_deg + ECHO_SPAN_BW * bw)
+    sub = np.linspace(lo, hi, ECHO_N_SUB)
+    _, t_sub, ok_sub = trace_to_depth(prof, sub, depth)
+    patt = beam_pattern(theta_deg, wavelength, spacing)
+    w = np.interp(sub, ANGLE_GRID, patt) * np.cos(np.radians(sub))
+    w = np.where(ok_sub, w, 0.0)
+    tau = 2.0 * t_sub
+    _, t_ax, _ = trace_to_depth(prof, np.array([theta_deg]), depth)
+    tau_axis = 2.0 * float(t_ax[0])
+    half = int(1.4 * float(np.max(np.abs(tau - tau_axis))) * ECHO_FS) + 64
+    i0 = int(round(tau_axis * ECHO_FS)) - half
+    idx = np.arange(i0, i0 + 2 * half + 1, dtype=np.float64) / ECHO_FS
+    sigma = PULSE_S / 2.355
+    env = (w[:, None] * np.exp(-0.5 * ((idx[None, :] - tau[:, None]) / sigma) ** 2)
+           ).sum(axis=0)
+    return env / max(float(env.max()), 1e-300), i0 / ECHO_FS, tau_axis
 
 
-def detect_two_way(env, fs_hz: float = ECHO_FS) -> float:
+def detect_two_way(env, t_start: float, fs_hz: float = ECHO_FS) -> float:
     """振幅検出 —— ``find_peaks`` で山を拾い、``peak_subbin`` で標本の間へ。"""
     idx = np.asarray(fs.ledger.find_peaks(env, height=0.5), np.int64)
     if idx.size == 0:
         return float("nan")
     best = int(idx[int(np.argmax(env[idx]))])
     sub = float(np.asarray(fs.peak_subbin(env, np.array([best]), mode="gauss"))[0])
-    return sub / fs_hz
+    return t_start + sub / fs_hz
 
 
 # --------------------------------------------------------------------------- #
