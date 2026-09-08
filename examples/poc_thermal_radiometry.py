@@ -419,6 +419,19 @@ def section_scene():
     print(f"        NETD {NETD_K*1000:.0f} mK = {cam.sigma_dn:.3f} DN"
           f"(dL/dT({cam.t_ref:.0f} K) = {cam.dldt_ref:.4f})、"
           f"量子化 1 DN = {1.0/cam.a/cam.dldt_ref*1000:.1f} mK")
+    # (b') 大気の透過率は定数を書き写さず、Beer–Lambert の op から出す。
+    dists_m = np.array([0.5, 2.0, 10.0, 30.0])
+    taus = np.asarray(fs.beer_lambert_transmittance(dists_m * 1000.0,
+                                                    ATM_SIGMA_PER_MM), np.float64)
+    tau_err = [float(invert_radiance(tab, forward_radiance(tab, 350.0, eps,
+                                                           T_REFL_REF, tv, T_ATM_REF),
+                                     eps, T_REFL_REF, 1.0, T_ATM_REF)) - 350.0
+               for tv in taus]
+    print("  大気透過率(fs.beer_lambert_transmittance、σ = "
+          f"{ATM_SIGMA_PER_MM:.1e} /mm): "
+          + " / ".join(f"{d:.1f} m → τ={t:.4f}" for d, t in zip(dists_m, taus)))
+    print("        τ を 1 と仮定したときの温度誤差: "
+          + " / ".join(f"{e:+.2f} K" for e in tau_err))
     l_true = float(forward_radiance(tab, t_true, eps, T_REFL_REF, TAU_REF, T_ATM_REF))
     rng = np.random.default_rng(20260908)
     cases = []
