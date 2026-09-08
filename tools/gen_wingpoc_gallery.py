@@ -110,7 +110,16 @@ def _figure_for(ex):
 
 
 def _thumb(poc_id: str, file: str) -> str:
-    """幅 720 px の JPEG サムネを作り、ファイル名を返す(既にあれば作り直さない)。"""
+    """幅 720 px の JPEG サムネを作り、ファイル名を返す(既にあれば作り直さない)。
+
+    ★**動く図(.gif)はそのまま返す**。JPEG に落とすと 1 コマ目の静止画になり、
+    記事では「クリックしないと動かない絵」になってしまう ―― 動きが主題の図で
+    それをやると、展示の意味が消える(2026-09-09、回転の展示で気づいた)。
+    静止の完成形は別の図として同じ展示に並んでいるので、静的な受け皿もある。
+    """
+    if file.lower().endswith(".gif"):
+        return file
+
     from PIL import Image
 
     src = os.path.join(ASSETS, poc_id, file)

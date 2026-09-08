@@ -60,3 +60,46 @@ def test_exhibit_set_matches_poc_examples(cap):
     shown = sorted(e["id"] for e in c["exhibits"])
     assert shown == pocs, ("展示に無い PoC / PoC に無い展示: %s"
                            % sorted(set(pocs) ^ set(shown)))
+
+
+def test_an_animated_figure_is_embedded_as_the_gif_itself():
+    """★動く図を JPEG サムネに落とすと、記事では「クリックしないと動かない絵」になる。
+
+    動きが主題の展示でそれをやると意味が消えるので、``.gif`` はそのまま埋める
+    (静止の完成形は同じ展示の別の図として並んでいるので、受け皿はある)。
+    2026-09-09、回転の展示を足したときに気づいた。
+    """
+    import io
+    import json
+    import os
+    import sys
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, os.path.join(root, "tools"))
+    import gen_wingpoc_gallery as G
+
+    assets = os.path.join(root, "docs", "articles", "exhibits")
+    cap = json.load(io.open(os.path.join(assets, "poc_captions.json"), encoding="utf-8"))
+    animated = []
+    for ex in cap["exhibits"]:
+        mp = os.path.join(G.ASSETS, ex["id"], "figures.json")
+        if not os.path.exists(mp):
+            continue
+        for fig in json.load(io.open(mp, encoding="utf-8")):
+            if fig.get("animated"):
+                animated.append((ex["id"], fig["file"]))
+    assert animated, "動く図が 1 つも無い(この門は空を通している)"
+
+    # サムネ関数は .gif をそのまま返す
+    for poc_id, name in animated:
+        assert G._thumb(poc_id, name) == name, (poc_id, name)
+
+    # 記事にも .gif として埋まっている(JPEG に化けていない)
+    for lang in ("ja", "en"):
+        text = io.open(os.path.join(root, "docs", "articles",
+                                    "fullseye_poc_museum_qiita_%s.md" % lang),
+                       encoding="utf-8").read()
+        for poc_id, name in animated:
+            stem = os.path.splitext(name)[0]
+            assert "![" in text and name in text, (lang, poc_id, name)
+            assert stem + "_720.jpg" not in text, (lang, poc_id, "GIF が JPEG に化けている")
