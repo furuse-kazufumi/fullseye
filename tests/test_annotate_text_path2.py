@@ -168,11 +168,16 @@ def test_used_keeps_its_old_meaning_even_though_span_was_added():
 
     新しく足したのは ``span`` —— 最後の字の後ろの送りを含まない、実際に
     占める幅。アンカーはこちらで揃える(``used`` で揃えると右へずれる)。
+
+    ★字幅は layout が返す ``chars[i]["width"]``(``_text_width`` の**実数**)で
+    突き合わせる。``measure_text`` で測り直すと ``int(ceil(w))`` に丸められるので、
+    1 字ずつ切り上げた和は実数の和と一致しない —— Windows の Meiryo は送りが
+    整数なので偶然一致したが、Linux の DejaVu では 53.0 対 50.33 とずれ、
+    **CI でだけ落ちた**(2026-09-09)。フォントに依存する試験にしない。
     """
     for sp in (1.0, 1.5):
         lay = A.annotate_text_path_layout("fullseye", HORZ, font_size=FS, spacing=sp)
-        w = np.array([A.measure_text(c["char"], font_size=FS, min_font_size=1)["width"]
-                      for c in lay["chars"]])
+        w = np.array([c["width"] for c in lay["chars"]], dtype=np.float64)
         assert lay["used"] == pytest.approx(float((w * sp).sum()), abs=1e-6)
         assert lay["span"] == pytest.approx(float(w[:-1].sum() * sp + w[-1]), abs=1e-6)
     assert A.annotate_text_path_layout("abc", HORZ, font_size=FS)["span"] <= \
