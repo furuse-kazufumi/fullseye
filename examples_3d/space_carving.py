@@ -114,7 +114,11 @@ def main() -> None:
     # --- 3) 各視点で GT シルエットを合成(synthesize_silhouette)---
     sils, Ks, Rs, ts = [], [], [], []
     for eye in eyes:
-        R, t = vh.look_at(eye, target=(0.0, 0.0, 0.0))
+        # ★``carve_look_at`` を使う(2026-09-08)。``look_at`` と同じ実装だが、
+        #   **公開層から引ける名前**はこちら —— ``fs.look_at`` は render3d の
+        #   gluLookAt 版(4x4・−Z 前方)という**別物**で、その ``M[:3,:3], M[:3,3]``
+        #   を渡すと全点がカメラ後方に落ち、例外を出さずに**空の hull** が返る。
+        R, t = vh.carve_look_at(eye, target=(0.0, 0.0, 0.0))
         sil = vh.synthesize_silhouette(surf, K, R, t, size)  # fill+dilate 既定
         sils.append(sil)
         Ks.append(K)
