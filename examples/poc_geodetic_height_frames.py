@@ -950,7 +950,7 @@ def section_tool_gap():
                                                or "curvature_drop" in n
                                                or "webmercator" in n))
     print(f"  → 在るのは 6 本だけ: {', '.join(have)}")
-    print("  → ★**どれも WGS84 決め打ち**(demops.WGS84_A / WGS84_F を直接参照。")
+    print("  → ★**楕円体を使う 4 本は WGS84 決め打ち**(demops.WGS84_A / WGS84_F を直接参照。")
     print("     楕円体を引数で渡す口が無い)。だから §7 の測地成果の取り違えは、")
     print("     **fullseye の op だけでは再現すらできない** —— この PoC は Bessel")
     print("     楕円体の順変換を自前で書いた(ref_geodetic_to_ecef の a / inv_f)。")
