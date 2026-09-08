@@ -496,14 +496,16 @@ def section2_zero_point():
     if figs.enabled():
         figs.save_plot(
             "centroid_response",
-            [("真値", ts, ts), ("重心(絵柄あり) k=%.3f" % k_art, ts, resp),
-             ("重心(下地だけ) k=%.3f" % k_flat, ts, resp_f)],
+            [("真値", ts, ts), ("予測 k=%.3f" % k_pred, ts, k_pred * ts),
+             ("実測(絵柄あり) k=%.3f" % k_art, ts, resp),
+             ("実測(下地だけ) k=%.3f" % k_flat, ts, resp_f)],
             xlabel="仕込んだずれ t [px]", ylabel="重心の動き dx [px]",
             title="重心は折り返さないが、縮尺が狂う",
-            caption="一様な網点は、窓を固定すると重心を動かさない。"
-                    "重心が追うのは絵柄の非一様成分だけ")
+            caption="一様な網点は、窓を固定すると重心を動かさない。重心が追うのは"
+                    "絵柄の非一様成分だけで、傾きは 1-β の閉形式で出る")
     return {"err_a": max(err_a), "err_b": max(err_b), "k_art": k_art,
-            "k_flat": k_flat, "prints": prints, "designs": designs}
+            "k_flat": k_flat, "k_pred": k_pred, "beta": beta,
+            "prints": prints, "designs": designs}
 
 
 # --------------------------------------------------------------------------- #
