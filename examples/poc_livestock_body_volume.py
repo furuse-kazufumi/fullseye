@@ -740,8 +740,11 @@ def section_metrics(truth, nulls, pers):
     best_z = min(res, key=lambda k: abs(res[k]["z"] - z_true))
     print(f"  → 勝者: 体重(体積)= **{best_vol}** / 体重(アロメトリ)= **{best_allo}** / "
           f"重心 = **{best_z}**")
-    print("  ★アロメトリで凸包が強いのは偶然ではない —— **巻尺は凸包を測る道具**なので、")
-    print("     背中のくぼみはアロメトリには最初から効かない(体積には効く)。")
+    print("  ★**巻尺は凸包を測る道具**なので、背中のくぼみはアロメトリには最初から")
+    print("     効かない(体積には効く)—— だが 3-D の凸包は**その代役にならない**。")
+    print(f"     凸包の胸囲は {_pct(res['凸包']['girth'], g_true):+.1f} % ——")
+    print("     体全体の凸包は**腹の下を埋める**ので、x=0 の縦断面が地面まで伸びる。")
+    print("     欲しいのは『断面の凸包』で、『凸包の断面』ではない。★予想を外した所。")
     v24 = res["視体積交差 K=24"]
     pred = 2 * _pct(v24["girth"], g_true) + _pct(v24["len"], l_true)
     print(f"  ★2 倍則の検算(K=24): 胸囲 {_pct(v24['girth'], g_true):+.2f} % ・"
