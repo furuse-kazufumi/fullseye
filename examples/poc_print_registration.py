@@ -279,25 +279,47 @@ def corr_map(a, b) -> np.ndarray:
     return np.fft.fftshift(np.asarray(fs.cx_ifft(np.conj(A) * B, real=True)))
 
 
-def corr_shift(a, b, limit: float) -> tuple[float, float, float]:
-    """相関でずれを測る。``limit`` [px] より遠いラグは**探さない**。
+def box_mask(n: int, limit: float) -> np.ndarray:
+    """``|dy| <= limit`` かつ ``|dx| <= limit`` のラグだけ探す(素朴な探索範囲)。"""
+    lag = np.arange(n) - n // 2
+    return (np.abs(lag)[:, None] <= limit) & (np.abs(lag)[None, :] <= limit)
 
-    現場の作法(「ずれは小さいはずだ」)をそのまま置いたもの。返り値は
-    ``(dy, dx, ピーク比)``。小数の詰めは :func:`fullseye.peak_subbin`。
+
+def cell_mask(n: int, angle_deg: float) -> np.ndarray:
+    """格子 Λ_θ の**基本セル(Voronoi 領域)**の中のラグだけ探す。
+
+    「ずれは小さいはずだ」という現場の仮定を、**素材の格子に合わせて**置いた
+    形。セルは 1 辺 p の正方形を θ だけ回したものなので、素朴な正方形の箱
+    (:func:`box_mask`)とは違う —— 箱で切ると、セルの外の格子等価な答えが
+    箱の角から入り込む。
+    """
+    th = np.deg2rad(angle_deg)
+    lag = (np.arange(n) - n // 2).astype(np.float64)
+    ly, lx = lag[:, None], lag[None, :]
+    u = lx * np.cos(th) + ly * np.sin(th)
+    v = -lx * np.sin(th) + ly * np.cos(th)
+    return (np.abs(u) <= PITCH / 2 + 1e-9) & (np.abs(v) <= PITCH / 2 + 1e-9)
+
+
+def corr_shift(a, b, mask) -> tuple[float, float, float]:
+    """相関でずれを測る。``mask`` が ``True`` のラグだけ探す。
+
+    返り値は ``(dy, dx, ピーク比)``。小数の詰めは :func:`fullseye.peak_subbin`
+    (符号つきの相関なので ``mode="gauss"`` は使えず、放物線)。
     """
     c = corr_map(a, b)
     n = c.shape[0]
     c0 = n // 2
-    lim = int(np.floor(limit))
-    sub = c[c0 - lim:c0 + lim + 1, c0 - lim:c0 + lim + 1]
-    k = int(np.argmax(sub))
-    i, j = k // sub.shape[1], k % sub.shape[1]
-    gi, gj = c0 - lim + i, c0 - lim + j
-    # 3 点放物線で軸ごとに詰める(符号つきの相関なので mode="gauss" は使えない)
+    m = np.asarray(mask, bool)
+    if m.shape != c.shape:                       # 窓の大きさに合わせて作り直す
+        raise ValueError("mask %r != corr %r" % (m.shape, c.shape))
+    masked = np.where(m, c, -np.inf)
+    k = int(np.argmax(masked))
+    gi, gj = k // n, k % n
     dy = fs.peak_subbin(c[:, gj], gi) - c0
     dx = fs.peak_subbin(c[gi, :], gj) - c0
-    second = np.sort(sub.ravel())[-2] if sub.size > 1 else 0.0
-    ratio = float(sub.ravel()[k] / second) if second > 0 else float("inf")
+    vals = np.sort(masked[np.isfinite(masked)])
+    ratio = float(vals[-1] / vals[-2]) if vals.size > 1 and vals[-2] > 0 else float("inf")
     return float(dy), float(dx), ratio
 
 
