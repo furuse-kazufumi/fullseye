@@ -497,7 +497,9 @@ def section_scene():
         caption=f"LWIR・{t_true:.0f} K・ε={eps}。校正表と直接積分の相対差は"
                 f"最大 {tab_gap:.1e}。以下の誤差はすべてこの床の上。")
     return {"tabs": tabs, "cam": cam, "cases": dict(cases), "tab_gap": tab_gap,
-            "conv": conv, "l_true": l_true, "netd_measured": sig}
+            "conv": conv, "l_true": l_true, "netd_cont": sig_c, "netd_quant": sig_q,
+            "netd_clip": sig_qc, "netd_tiny": sig_tiny, "tau_err": tau_err,
+            "taus": taus}
 
 
 # --------------------------------------------------------------------------- #
