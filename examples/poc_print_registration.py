@@ -551,6 +551,7 @@ def section2_zero_point():
                     "絵柄の非一様成分だけで、傾きは 1-β の閉形式で出る")
     return {"err_a": max(err_a), "err_b": max(err_b), "k_art": k_art,
             "k_flat": k_flat, "k_pred": k_pred, "beta": beta,
+            "ripple": rip_art, "ripple_taper": rip_tap,
             "prints": prints, "designs": designs}
 
 
