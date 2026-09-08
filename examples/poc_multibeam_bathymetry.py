@@ -669,7 +669,11 @@ def section_floor(scene):
             # ★横軸を**そのビーム自身のエコー長**で割る。生の µs で重ねると
             #   70 度(21 ms)が軸を独占して、直下と 45 度が縦線 1 本になる。
             tt = ((np.arange(env.size) / ECHO_FS + t0e) - tau_axis) / ln
-            series.append((f"ビーム {th:.0f} 度(長さ {1e6*ln:.0f} µs)", tt, env))
+            # ★``plot_series`` は xlim の外の点を**拒否する**(枠に貼り付いて
+            #   本物のデータに見えるから)。切るのは呼び手の仕事なので先に切る。
+            m = np.abs(tt) <= 1.6
+            series.append((f"ビーム {th:.0f} 度(長さ {1e6*ln:.0f} µs)",
+                           tt[m], env[m]))
         figs.save_plot("echo", series, xlim=(-1.6, 1.6),
                        xlabel="ビーム軸からのずれ ÷ そのビームのエコー長",
                        ylabel="正規化した受信包絡線",
