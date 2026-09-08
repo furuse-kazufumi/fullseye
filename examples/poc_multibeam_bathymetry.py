@@ -1345,11 +1345,17 @@ def main() -> int:
                     caption="直下較正は誤差を消さず、検査されない外側へ移す。")
 
     # --- 所見を固定する(穴が塞がったら鳴る)--------------------------------- #
-    # 1. 層に切ったレイトレースは閉形式と一致する(円弧が厳密だから)
+    # 1. 一定勾配の層に切ったレイトレースは閉形式と一致する(円弧が厳密だから)
     assert scene["layer_worst"] < 1e-12, scene["layer_worst"]
-    # 2. 測定系の床は屈折より 3 桁以上小さい
-    assert floor["dz_ang"] < 1e-2, floor["dz_ang"]
-    assert floor["err_echo"] < 1e-2, floor["err_echo"]
+    # 等音速の層に切る古い実装は 1 次収束(層数 16 倍で誤差 1/12〜1/20)
+    n_lo, e_lo = scene["conv"][0]
+    n_hi, e_hi = scene["conv"][-1]
+    assert (n_hi / n_lo) == 16.0
+    assert 12.0 < e_lo / e_hi < 20.0, scene["conv"]
+    assert e_lo > tvu(DEPTH_REF), scene["conv"]     # 2 層だと実装だけで TVU を割る
+    # 2. 角度推定は完全。エコー検出は**直下では無視できるが外側では効く**
+    assert floor["dz_ang"] < 1e-3, floor["dz_ang"]
+    assert floor["err_echo"] > 0.1, floor["err_echo"]
     # 3. ゼロ点は直下からもう TVU の半分以上を食う
     assert abs(null["表面音速 c₀"]["nadir"]) > 0.5 * cliff["lim"]
     # 4. 直下較正は直下を厳密に 0 にし、外側には残す(誤差の「移動」)
