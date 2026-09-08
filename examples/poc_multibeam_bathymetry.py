@@ -454,8 +454,11 @@ def half_power_width(power, grid=ANGLE_GRID) -> float:
 #: ビーム軸から何ビーム幅ぶんの海底をエコーに入れるか(片側)。
 ECHO_SPAN_BW = 1.5
 
-#: エコーを合成する部分角の本数。
-ECHO_N_SUB = 61
+#: エコーを合成する部分角の本数。★これを 61 にすると、70 度では隣り合う
+#: 部分角の到来時間が 330 µs 離れ、パルス幅 64 µs より広くなるので、包絡線が
+#: **櫛**になって振幅検出が歯を 1 本拾う(検出のずれが -1131 µs と出た)。
+#: 到来時間の密度をヒストグラムで作り、パルスで畳むほうが正しい。
+ECHO_N_SUB = 4001
 
 
 def echo_envelope(prof, theta_deg: float, wavelength: float, spacing: float,
