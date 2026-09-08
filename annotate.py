@@ -3360,10 +3360,10 @@ def annotate_invert_path(img, points, width=1.5, closed=False, dash=None,
     for p, q in _dash_pieces(pts, bool(closed), dash):
         cov = np.maximum(cov, _segment_coverage(a.shape[:2], p, q, w))
     claim = cov * float(alpha)
-    inv = _inverted(a, mode)
-    _invert_guard(_invert_report(a, inv, claim), mode, min_contrast, on_invisible,
+    out = _invert_blend(a, claim, mode)
+    _invert_guard(_invert_report(a, out, claim), mode, min_contrast, on_invisible,
                   "annotate_invert_path")
-    return _invert_blend(a, claim, mode)
+    return out
 
 
 def annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6,
