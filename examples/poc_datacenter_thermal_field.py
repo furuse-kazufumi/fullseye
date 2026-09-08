@@ -560,6 +560,11 @@ def section_grid_vs_random(d=0.60, ntrial=12) -> dict:
                 % (r_grid, 100 * frac, 100 * p_worse))
     return {"n": n, "p_worse": p_worse, "frac": frac, "r_grid": r_grid,
             "dg_max": float(dg.max()), "dr_max": float(dr.max()),
+            "below": below,
+            "grid_min": {hi: float(res["格子(位相を振る)"]["per"][hi].min())
+                         for hi in range(len(HOTSPOTS))},
+            "rand_min": {hi: float(res["一様乱数(同じ本数)"]["per"][hi].min())
+                         for hi in range(len(HOTSPOTS))},
             "res": {k: {"att": v["att"].tolist(), "dist": v["dist"].tolist()}
                     for k, v in res.items()}}
 
