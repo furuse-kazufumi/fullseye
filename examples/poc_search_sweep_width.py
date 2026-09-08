@@ -330,9 +330,15 @@ def make_frame(seed: int, alt: float = ALT_M, target_cols=(), *,
 # --------------------------------------------------------------------------- #
 # 3. 検出器 —— どちらも fullseye の op で組む                                    #
 # --------------------------------------------------------------------------- #
+#: 検出器の 3 段。上ほど素朴。表の見出しと本文はここを正本にする。
+DETECTORS = (("bright", "明るさだけ(ゼロ点)"),
+             ("naive", "生画像 + 背景を引く"),
+             ("tophat", "白色トップハット"))
+
+
 def _response(img, mode: str):
-    """検出に掛ける応答マップ。``"naive"`` は生画像そのもの(ゼロ点)。"""
-    if mode == "naive":
+    """検出に掛ける応答マップ。``"tophat"`` だけが整合フィルタ。"""
+    if mode in ("naive", "bright"):
         return np.asarray(img, np.float64)
     # 白色トップハット(元画像 - オープニング)。5x5 の矩形構造要素は
     # ``a`` が {3,5,7,9} を刻むので a=0.3 -> 5。目標の FWHM は 2.6-3.7 px。
@@ -340,22 +346,32 @@ def _response(img, mode: str):
 
 
 def detect_with_z(img, mode: str):
-    """``(検出座標 (N,2), その z 値 (N,))``。z = (応答 - 中央値)/頑健 sigma。
+    """``(検出座標 (N,2), その点数 (N,))``。点数が高いほど「目標らしい」。
 
-    :func:`fullseye.star_detect` を ``BASE_SIGMA`` で 1 回だけ走らせ、閾値の掃引は
-    z 値の比較で済ませる —— 高い閾値の検出集合は低い閾値の**部分集合**なので、
+    * ``"bright"`` —— **ゼロ点**。点数は**画素の明るさそのもの**。背景も引かず、
+      場所ごとの明るさの違いも見ない。「明るく見えたから目標だ」という手で、
+      cos^4 で暗くなった端は原理的に上位に来ない。
+    * ``"naive"`` —— 生画像のまま、点数は ``(値 - 中央値)/頑健 sigma``。
+      背景は引くが整合フィルタは掛けない。
+    * ``"tophat"`` —— 白色トップハットに掛けてから同じ点数。
+
+    :func:`fullseye.star_detect` を低い閾値で 1 回だけ走らせ、閾値の掃引は
+    点数の比較で済ませる —— 高い閾値の検出集合は低い閾値の**部分集合**なので、
     画像を測り直す必要がない。背景と sigma は ``star_detect`` 内部と同じ定義
     (中央値と MAD x 1.4826 = :func:`fullseye.noise_sigma`)。
     """
     w = _response(img, mode)
-    pts = np.asarray(fs.star_detect(w, threshold_sigma=BASE_SIGMA, min_separation=3,
+    base = 0.5 if mode == "bright" else BASE_SIGMA
+    pts = np.asarray(fs.star_detect(w, threshold_sigma=base, min_separation=3,
                                     max_stars=4000), np.float64)
     if pts.size == 0:
         return pts.reshape(0, 2), np.zeros(0)
-    bkg = float(np.median(w))
-    sig = float(fs.noise_sigma(w, "mad"))
     rr = np.clip(np.rint(pts[:, 0]).astype(np.int64), 0, w.shape[0] - 1)
     cc = np.clip(np.rint(pts[:, 1]).astype(np.int64), 0, w.shape[1] - 1)
+    if mode == "bright":
+        return pts, w[rr, cc]
+    bkg = float(np.median(w))
+    sig = float(fs.noise_sigma(w, "mad"))
     return pts, (w[rr, cc] - bkg) / (sig if sig > 0.0 else 1.0)
 
 

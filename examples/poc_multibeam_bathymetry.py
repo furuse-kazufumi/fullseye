@@ -931,7 +931,7 @@ def section_sweep():
                        caption="どの曲線も 2·b·c₀/|Δc| の漸近値へ落ちる。"
                                "浅い所ほど広い swath が使える。")
     return {"deltas": deltas, "depths": depths, "cliffs": cliffs,
-            "asym": asym, "shallow": shallow, "deep": deep,
+            "asym": asym, "shallow": shallow, "deep": deep, "gaps": gaps,
             "fail": fail, "total": total}
 
 
@@ -1385,7 +1385,9 @@ def main() -> int:
     # 7. 掃引: 200 ケース、崖は深いほど浅い角度へ寄り漸近値に近づく
     assert sweep["total"] == 200, sweep["total"]
     assert sweep["shallow"] > sweep["deep"] > sweep["asym"], sweep
-    assert sweep["deep"] - sweep["asym"] < 0.5, (sweep["deep"], sweep["asym"])
+    # 漸近値へ**単調に**近づく(ぴったり乗るとは言わない: TVU の定数項が残る)
+    assert all(x > y > 0.0 for x, y in zip(sweep["gaps"], sweep["gaps"][1:])),         sweep["gaps"]
+    assert sweep["deep"] - sweep["asym"] < 1.0, (sweep["deep"], sweep["asym"])
     assert sweep["fail"] > 100, sweep["fail"]
     # 8. 上向き屈折: 予測した反転角は「届いた最後」と「届かない最初」の間
     assert frown["last"] < frown["pred"] < frown["first_bad"], frown
