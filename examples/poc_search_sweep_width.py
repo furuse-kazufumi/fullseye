@@ -275,13 +275,21 @@ def psf_sigma_px(rows, cols, focal: float = FOCAL_PX):
 # 2. 素材 —— 真値つきのフレームを作る                                            #
 # --------------------------------------------------------------------------- #
 def _blobs(shape, rows, cols, flux, sigma, half_win: int = 9):
-    """ガウス斑を足し込む。**画素中心での標本**ではなく総和が flux になる規格化。
+    """ガウス斑を足し込む。**画素を erf で厳密に積分**する(中心の 1 点標本ではない)。
 
-    :func:`fullseye.astrostack` の ``_gaussian_star_exact``(erf で画素を厳密に
-    積分する)が非公開なので、ここでは同じ考え方をガウス核の標本で書いている
-    —— sigma >= 0.9 px なので画素内の曲率による誤差は総和で 0.3 % 以下。
-    ★道具の穴 (a): **位置を指定して点源を描く公開 op が無い**(§10)。
+    画素 ``(i, j)`` は ``[i-0.5, i+0.5) x [j-0.5, j+0.5)`` を占め(整数座標が画素の
+    中心)、1 次元のガウス積分は誤差関数そのものなので分離できる。
+
+    ★**最初は画素中心の 1 点標本で書いていて、それだと山が高く出た**。総和
+    (= 総フラックス)の誤差は 4.6e-07 で無視できるのに、**ピーク値は sigma=0.9 px
+    で最大 10.6 % 過大**になる。検出はピークで決まるうえ、sigma は直下 0.9 px /
+    端 1.9 px と**横距離で変わる**ので、この偏りは横距離曲線を直下側へ**傾ける**
+    —— つまり測りたいものそのものを汚す。総和が合っているだけでは足りない。
+    :func:`fullseye.astrostack` の ``_gaussian_star_exact`` が同じことを
+    しているが**非公開**なので、ここで書き直した(★道具の穴 (a)、§10)。
     """
+    from scipy.special import erf
+
     out = np.zeros(shape, np.float64)
     h, w = shape
     for r0, c0, f0, s0 in zip(rows, cols, flux, sigma):
@@ -289,10 +297,12 @@ def _blobs(shape, rows, cols, flux, sigma, half_win: int = 9):
         j0, j1 = int(max(0, c0 - half_win)), int(min(w, c0 + half_win + 1))
         if i1 <= i0 or j1 <= j0:
             continue
+        s2 = s0 * math.sqrt(2.0)
         rr = np.arange(i0, i1, dtype=np.float64) - r0
         cc = np.arange(j0, j1, dtype=np.float64) - c0
-        k = np.exp(-0.5 * (rr[:, None] ** 2 + cc[None, :] ** 2) / (s0 * s0))
-        out[i0:i1, j0:j1] += (f0 / (2.0 * math.pi * s0 * s0)) * k
+        fr = 0.5 * (erf((rr + 0.5) / s2) - erf((rr - 0.5) / s2))
+        fc = 0.5 * (erf((cc + 0.5) / s2) - erf((cc - 0.5) / s2))
+        out[i0:i1, j0:j1] += f0 * np.outer(fr, fc)
     return out
 
 
