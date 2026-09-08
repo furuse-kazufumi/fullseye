@@ -659,7 +659,7 @@ def section_false_floor() -> dict:
     print("\n" + "=" * 78)
     print("5) 対照群 (b) 健全ロールだけ —— 偽陽性の床")
     print("=" * 78)
-    print("   周期欠陥をゼロにし、ランダム欠陥だけ %d 個。櫛法は "
+    print("   周期欠陥をゼロにし、ランダム欠陥だけ 平均 %d 個。櫛法は "
           "k=1..3 の高調波が**全部** %.1f 倍を超えたときだけ 1 本報告する。"
           % (int(L_FULL * CLUTTER_PER_MM), PEAK_K))
     n = 60
