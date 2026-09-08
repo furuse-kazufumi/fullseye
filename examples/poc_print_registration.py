@@ -655,7 +655,7 @@ def section5_per_plate():
     for name, ang, blob, _d in PLATES:
         ref = design_plate(ang, blob)
         cur = am_sheet(ang, blob, dy, dx, seed=41)
-        my, mx, _r = corr_shift(ref, cur, PITCH / 2)
+        my, mx, _r = corr_shift(ref, cur, cell_mask(L, ang))
         ry, rx, _u, _v = reduce_to_cell(dy, dx, ang)
         d = float(np.hypot(my - ry, mx - rx))
         mags.append(float(np.hypot(my, mx)))
