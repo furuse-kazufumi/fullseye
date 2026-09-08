@@ -1098,9 +1098,9 @@ def section8_metrics(sweep_am, zero):
         cur_fm = fm_sheet(cen, rad, 0.0, float(t), seed=61)
         my, mx, _ratio = corr_shift(ref_fm, cur_fm, bm)
         methods["相関 FM"].append((my, mx))
-    print("  %-18s %14s %14s %14s %14s"
+    print("  %-22s %13s %13s %12s %12s"
           % ("手法", "RMS 誤差 px", "最大 誤差 px", "判定一致率", "見落とし"))
-    print("  " + "-" * 76)
+    print("  " + "-" * 78)
     rows, res = [], {}
     for label, ests in methods.items():
         errs, agree, miss = [], 0, 0
