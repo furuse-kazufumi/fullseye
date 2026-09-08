@@ -1182,8 +1182,15 @@ def section_units(scene):
     #     つまり「止まるか静かに間違うか」は取り違えではなく**場面**で決まる。
     lm = forward_radiance(tab, 350.0, EPS_PAINT, T_REFL_REF, 1.0, T_ATM_REF)
     hot = float(invert_radiance(tab, lm, EPS_PAINT, 295.0 + T0_C, 1.0, T_ATM_REF))
-    record("T_refl を 295 K のつもりで 295 ℃", "静かに間違う",
+    record("T_refl を 295 ℃ と書く(ε=0.95 の面)", "静かに間違う",
            f"{hot-350.0:+.1f} K ずれるが**例外は出ない**(568 K は表の中)")
+    try:
+        lm2 = forward_radiance(tab, 350.0, EPS_POLISH, T_REFL_REF, 1.0, T_ATM_REF)
+        invert_radiance(tab, lm2, EPS_POLISH, 295.0 + T0_C, 1.0, T_ATM_REF)
+        record("同じ取り違えを ε=0.10 の面で", "静かに間違う", "通ってしまった")
+    except Exception as exc:                          # noqa: BLE001
+        record("同じ取り違えを ε=0.10 の面で", "例外で止まる",
+               f"{type(exc).__name__}((1−ε)/ε が 9 倍で L_obj が負に落ちる)")
 
     # (4) DN を平均してから温度に直す(Jensen の不等式)。
     grad = np.linspace(320.0, 400.0, 4096)
