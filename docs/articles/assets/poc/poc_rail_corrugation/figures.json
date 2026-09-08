@@ -14,7 +14,7 @@
  {
   "file": "02_transfer.png",
   "name": "transfer",
-  "caption": "10 m 弦は λ=5.0 / 2.5 / 1.67 / 1.25 / 1.0 m で厳密に 0、λ=10 / 3.33 / 2.0 m で 2 倍。2 本の弦の谷は重なる所がある",
+  "caption": "10 m 弦のゼロは 0.2 刻み、6 m 弦は 1/3 刻み。両方が 0 になるのは整数 1/λ = 1, 2, 3 …(λ = 1.000/k)—— 波長で見ると短波長ほど詰まる",
   "shape": [
    360,
    560,
@@ -22,7 +22,17 @@
   ]
  },
  {
-  "file": "03_profile_vs_versine.png",
+  "file": "03_transfer_zoom.png",
+  "name": "transfer_zoom",
+  "caption": "10 m 弦は λ=5.0 / 2.5 / 1.67 / 1.25 / 1.0 m で厳密に 0、λ=10 / 3.33 m で 2 倍。6 m 弦の 0 は 3.0 / 1.5 / 1.0 m",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_profile_vs_versine.png",
   "name": "profile_vs_versine",
   "caption": "長波長ほど弦は小さく読む。正矢どうしも一致しない",
   "shape": [
@@ -32,7 +42,7 @@
   ]
  },
  {
-  "file": "04_octave_bands.png",
+  "file": "05_octave_bands.png",
   "name": "octave_bands",
   "caption": "",
   "shape": [
@@ -40,11 +50,11 @@
    392,
    3
   ],
-  "csv": "04_octave_bands.csv",
-  "tsv": "04_octave_bands.tsv"
+  "csv": "05_octave_bands.csv",
+  "tsv": "05_octave_bands.tsv"
  },
  {
-  "file": "05_deconvolution.png",
+  "file": "06_deconvolution.png",
   "name": "deconvolution",
   "caption": "",
   "shape": [
@@ -52,11 +62,11 @@
    354,
    3
   ],
-  "csv": "05_deconvolution.csv",
-  "tsv": "05_deconvolution.tsv"
+  "csv": "06_deconvolution.csv",
+  "tsv": "06_deconvolution.tsv"
  },
  {
-  "file": "06_dual_chord.png",
+  "file": "07_dual_chord.png",
   "name": "dual_chord",
   "caption": "",
   "shape": [
@@ -64,11 +74,11 @@
    519,
    3
   ],
-  "csv": "06_dual_chord.csv",
-  "tsv": "06_dual_chord.tsv"
+  "csv": "07_dual_chord.csv",
+  "tsv": "07_dual_chord.tsv"
  },
  {
-  "file": "07_aliasing.png",
+  "file": "08_aliasing.png",
   "name": "aliasing",
   "caption": "",
   "shape": [
@@ -76,11 +86,11 @@
    377,
    3
   ],
-  "csv": "07_aliasing.csv",
-  "tsv": "07_aliasing.tsv"
+  "csv": "08_aliasing.csv",
+  "tsv": "08_aliasing.tsv"
  },
  {
-  "file": "08_aliasing_wave.png",
+  "file": "09_aliasing_wave.png",
   "name": "aliasing_wave",
   "caption": "標本の点だけを見ると、長い波が 1 本あるようにしか見えない",
   "shape": [
@@ -90,7 +100,7 @@
   ]
  },
  {
-  "file": "09_asymmetric_chord.png",
+  "file": "10_asymmetric_chord.png",
   "name": "asymmetric_chord",
   "caption": "",
   "shape": [
@@ -98,7 +108,7 @@
    339,
    3
   ],
-  "csv": "09_asymmetric_chord.csv",
-  "tsv": "09_asymmetric_chord.tsv"
+  "csv": "10_asymmetric_chord.csv",
+  "tsv": "10_asymmetric_chord.tsv"
  }
 ]

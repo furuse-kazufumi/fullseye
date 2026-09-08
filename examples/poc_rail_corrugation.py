@@ -204,16 +204,28 @@ def section_scene():
                      "|H| 非対称", "覚え書き"], rows,
                     title="仕込んだ凹凸と弦の伝達関数(予測)")
     if figs.enabled():
-        lam = np.geomspace(0.3, 30.0, 1200)
+        f = np.linspace(0.02, 3.5, 2000)          # 空間周波数 [1/m]
+        lam = 1.0 / f
         figs.save_plot(
             "transfer",
-            [("10 m 弦", lam, h_sym(lam, CHORD_A)),
-             ("6 m 弦", lam, h_sym(lam, CHORD_B)),
-             ("非対称 3.7/6.3 m", lam, h_asym(lam))],
-            xlabel="波長 λ [m]", ylabel="|H(λ)|",
-            title="弦(正矢)の伝達関数 —— 谷は「何 mm あっても 0 mm」",
+            [("10 m 弦", f, h_sym(lam, CHORD_A)),
+             ("6 m 弦", f, h_sym(lam, CHORD_B)),
+             ("非対称 3.7/6.3 m", f, h_asym(lam))],
+            xlabel="空間周波数 1/λ [1/m](右ほど短い波)", ylabel="|H|",
+            title="弦の伝達関数 —— ゼロは**周波数で等間隔**に並ぶ",
+            caption="10 m 弦のゼロは 0.2 刻み、6 m 弦は 1/3 刻み。"
+                    "両方が 0 になるのは整数 1/λ = 1, 2, 3 …(λ = 1.000/k)—— "
+                    "波長で見ると短波長ほど詰まる")
+        figs.save_plot(
+            "transfer_zoom",
+            [("10 m 弦", np.linspace(0.8, 12.0, 1500),
+              h_sym(np.linspace(0.8, 12.0, 1500), CHORD_A)),
+             ("6 m 弦", np.linspace(0.8, 12.0, 1500),
+              h_sym(np.linspace(0.8, 12.0, 1500), CHORD_B))],
+            xlabel="波長 λ [m]", ylabel="|H|",
+            title="長波長側だけ波長軸で見る",
             caption="10 m 弦は λ=5.0 / 2.5 / 1.67 / 1.25 / 1.0 m で厳密に 0、"
-                    "λ=10 / 3.33 / 2.0 m で 2 倍。2 本の弦の谷は重なる所がある")
+                    "λ=10 / 3.33 m で 2 倍。6 m 弦の 0 は 3.0 / 1.5 / 1.0 m")
         y = profile()
         m = (X >= 40.0) & (X <= 80.0)
         figs.save_plot(

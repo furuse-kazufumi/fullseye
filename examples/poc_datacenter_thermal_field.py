@@ -184,9 +184,18 @@ def recover(hi: int, d: float, phase="worst", method="nearest", noise=0.0,
     閉形式が当たるはずの場所)、``"node"`` はセンサの真上(最良)、``"room"``
     は部屋の格子をそのまま使う(現場の位相 = 制御できない)。
 
-    ``rec`` は「そのホットスポットが在る場」と「その 1 個だけ消した真値」の差の
-    最大。``floor`` は**そのホットスポットを消したセンサ読みから**同じ量を測った
-    もの = 背景の復元誤差と雑音が作る床。
+    3 つの量を別々に返す(1 つに畳むと何が効いているか言えなくなる):
+
+    ``geo``
+        **幾何だけ**の回復 ``max(T̂[全部] - T̂[そのラックだけ消した])``。3 手法とも
+        補間はセンサ値に**線形**なので、この差は「そのラックのガウスだけを
+        センサで拾って補間したもの」に厳密に等しい。閉形式が予言するのはこれ。
+    ``naive``
+        現場で測れる量 ``max(T̂[全部] - 真の背景)``。背景の復元誤差が同じ場所に
+        載るので **``geo`` より必ず大きく出る**。
+    ``floor``
+        ラックを消したセンサ読みから測った ``max(T̂[背景] - 真の背景)``
+        = 背景モデルの誤差 + 雑音。**何も無いところに立つ旗の高さ**。
     """
     c = centre(hi)
     a = HOTSPOTS[hi][5]
@@ -203,9 +212,13 @@ def recover(hi: int, d: float, phase="worst", method="nearest", noise=0.0,
     pts = pts[keep]
     q = local_grid(c, half)
     bg = field(q, drop=hi)
-    rec = float(np.max(fit(pts, read(pts, None, noise, seed), method)(q) - bg))
-    flo = float(np.max(fit(pts, read(pts, hi, noise, seed), method)(q) - bg))
-    return {"rec": rec, "floor": flo, "att": rec / a, "floor_att": flo / a,
+    v_full = fit(pts, read(pts, None, 0.0), method)(q)
+    v_bg = fit(pts, read(pts, hi, 0.0), method)(q)
+    v_bgn = fit(pts, read(pts, hi, noise, seed), method)(q)
+    geo = float(np.max(v_full - v_bg))
+    naive = float(np.max(v_full - bg))
+    flo = float(np.max(v_bgn - bg))
+    return {"geo": geo / a, "naive": naive / a, "floor": flo / a,
             "n_local": int(pts.shape[0]), "nz": ns[2], "origin": o,
             "bracketed": bool(c[2] + 0.5 * d <= LZ + 1e-9)}
 
