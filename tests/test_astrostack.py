@@ -1049,9 +1049,12 @@ class TestBugsFoundByMeasurement:
                                          flux_min=20000.0, flux_max=40000.0,
                                          sky=60.0, read_sigma=5.0, seed=71,
                                          margin_px=12.0)
-        centre, votes = A._vote_translation(A.star_detect(frames[2]),
-                                            A.star_detect(frames[0]), 16.0)
+        # ★2026-09-08: 3 つ目の戻り値 vote_margin(2 番手の山 / 1 番手)が増えた。
+        #   星野なら山は 1 つなので小さいはず —— それもここで固定する。
+        centre, votes, margin = A._vote_translation(A.star_detect(frames[2]),
+                                                    A.star_detect(frames[0]), 16.0)
         assert votes >= 7                        # 修正前は 0
+        assert 0.0 <= margin < 0.6, margin       # 単峰(繰り返し構造なら 1 に近づく)
         assert centre[0] == pytest.approx(-0.087, abs=0.15)
         assert centre[1] == pytest.approx(+0.996, abs=0.15)
         # そして align_frames が例外ではなく答えを返す

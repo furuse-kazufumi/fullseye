@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal
 out: measurement
-examples: [lens_design_demo, lightfield_depth, piv_field_analysis_tour, piv_flow_from_particles, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_panorama_drift, poc_real_stereo_depth, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_water_level, profile_shape_inspection]
+examples: [lens_design_demo, lightfield_depth, piv_field_analysis_tour, piv_flow_from_particles, poc_battery_electrode_breathing, poc_bilateral_asymmetry, poc_bump_coplanarity, poc_cad_scan_deviation, poc_camera_calibration, poc_dimensional_inspection, poc_exoplanet_transit, poc_fabric_defect, poc_focus_stacking, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_panorama_drift, poc_print_registration, poc_real_stereo_depth, poc_river_surface_velocity, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_strain_history, poc_surface_roughness, poc_symmetry_restoration, poc_water_level, profile_shape_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -44,6 +44,7 @@ is given (a vibration/energy envelope over time).
 - [poc_gear_tooth_metrology](../../../../examples/poc_gear_tooth_metrology.py) — `py -3.11 examples/poc_gear_tooth_metrology.py`
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`
 - [poc_panorama_drift](../../../../examples/poc_panorama_drift.py) — `py -3.11 examples/poc_panorama_drift.py`
+- [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
 - [poc_real_stereo_depth](../../../../examples/poc_real_stereo_depth.py) — `py -3.11 examples/poc_real_stereo_depth.py`
 - [poc_river_surface_velocity](../../../../examples/poc_river_surface_velocity.py) — `py -3.11 examples/poc_river_surface_velocity.py`
 - [poc_screw_thread_metrology](../../../../examples/poc_screw_thread_metrology.py) — `py -3.11 examples/poc_screw_thread_metrology.py`

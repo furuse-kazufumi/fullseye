@@ -1587,7 +1587,19 @@ def _vote_translation(src, dst, max_shift, bin_px=1.0):
             break                       # 締めすぎたら**直前の結果を保つ**
         centre = d[near].mean(axis=0)
         votes = n
-    return centre, votes
+    # ★2026-09-08: **2 番手の山の高さ**も返す。星野なら山は 1 つだが、
+    # 繰り返し構造(網点・格子・織物)では格子ベクトルぶんずれた所に**同じ高さの
+    # 山**が並び、そのどれを選んでも「全員が賛成する」= inlier_ratio が 1.00 に
+    # なる。賛成率は「答えが正しい確率」ではないので、**山が 1 つだったのか**を
+    # 別の数で出す(0 = 単峰、1 に近い = 等価な候補が他にもある)。
+    win = float(smooth[p])
+    rest = smooth.copy()
+    r0, r1 = max(0, p[0] - 3), min(nb, p[0] + 4)
+    c0, c1 = max(0, p[1] - 3), min(nb, p[1] + 4)
+    rest[r0:r1, c0:c1] = 0.0
+    runner = float(rest.max()) if rest.size else 0.0
+    margin = float(runner / win) if win > 0.0 else 0.0
+    return centre, votes, margin
 
 
 def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
@@ -1612,6 +1624,25 @@ def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
        :func:`fit_transform.vector_to_similarity`(``model`` に応じて
        ``vector_to_rigid`` / ``vector_to_hom_mat2d``)で当てはめる。
        RANSAC ループも Umeyama もここには書いていない。
+
+    ★**繰り返し構造には使えない**(2026-09-08、`poc_print_registration` が発見)。
+    ``inlier_ratio`` は「同じ答えに賛成した対応の割合」であって「答えが正しい
+    確率」ではない。網点・織物・格子のように**同じ形が周期的に並ぶ**画像では、
+    格子ベクトルぶんずれた対応づけも全員が賛成するので、賛成率は 1.00 のまま
+    答えだけが格子 1 個ぶん(あるいは何個ぶんも)ずれる。
+
+    実測: 256x256 の 133 lpi 相当・15 度の網点を **(0.00, +1.30) px** だけ
+    ずらした対で、``inlier_ratio`` **1.00** / ``rms_px`` 0.78 を返しながら
+    推定は **(+54.24, +30.12) px**。星野(128x128、40 星、真値
+    (+0.59, -0.54))では ``inlier_ratio`` は同じ 1.00 で推定は正しい。
+    **賛成率では 2 つを区別できない**。
+
+    区別できるのは ``vote_margin`` —— 投票の**2 番手の山**の高さを 1 番手で
+    割った値で、0 なら山は 1 つ、1 に近いほど「同じくらいもっともらしい答えが
+    他にもある」。同じ 2 例で **網点 0.857 / 星野 0.143**。周期構造を渡す
+    かもしれない経路では、``inlier_ratio`` ではなくこちらを見ること。
+    平行移動そのものが要るだけなら :func:`piv_cross_correlate` の相関面を
+    見るほうが素直で、そちらは山が何本立っているかを自分で数えられる。
 
     *model* ``"translation"`` は対応の差の中央値だけを使う(星が 1 個でも動く)。
     ``"rigid"`` = 回転 + 並進、``"similarity"`` = + 等方スケール、
@@ -1658,7 +1689,7 @@ def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
                          "threshold_sigma, or the field is empty)"
                          % (op, p_ref.shape[0], p_src.shape[0]))
 
-    coarse, votes = _vote_translation(p_src, p_ref, ms)
+    coarse, votes, vote_margin = _vote_translation(p_src, p_ref, ms)
     if coarse is None or votes == 0:
         raise ValueError("%s: no translation got any votes within "
                          "max_shift_px=%g — the frames may not overlap"
@@ -1718,7 +1749,7 @@ def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
             "shift_row": float(M[0, 2]), "shift_col": float(M[1, 2]),
             "rotation_deg": rot, "scale": scale_est, "rms_px": rms,
             "model": model, "coarse_row": float(coarse[0]),
-            "coarse_col": float(coarse[1]), "votes": int(votes)}
+            "coarse_col": float(coarse[1]), "votes": int(votes), "vote_margin": vote_margin}
     return np.ascontiguousarray(M), info
 
 

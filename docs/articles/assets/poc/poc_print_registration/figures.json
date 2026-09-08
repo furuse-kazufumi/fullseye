@@ -1,0 +1,140 @@
+[
+ {
+  "file": "01_plates.png",
+  "name": "plates",
+  "caption": "スクリーン角が違うので格子の向きが違う。ピッチはどれも 9.02 px。同じ物理的なずれでも、この格子の違いが「見かけのずれ」を版ごとに変える(5 節)",
+  "shape": [
+   422,
+   286,
+   3
+  ]
+ },
+ {
+  "file": "02_zero_point.png",
+  "name": "zero_point",
+  "caption": "",
+  "shape": [
+   176,
+   732,
+   3
+  ],
+  "csv": "02_zero_point.csv",
+  "tsv": "02_zero_point.tsv"
+ },
+ {
+  "file": "03_centroid_response.png",
+  "name": "centroid_response",
+  "caption": "一様な網点は、窓を固定すると重心を動かさない。重心が追うのは絵柄の非一様成分だけで、傾きは 1-β の閉形式で出る",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_sweep_wrap.png",
+  "name": "sweep_wrap",
+  "caption": "真値は直線、実測はのこぎり。t = 9.0 px の版が「0 px、合格」と出る。予測(閉形式)と実測はセル境界のタイを除いて重なる",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_sweep_all_plates.png",
+  "name": "sweep_all_plates",
+  "caption": "スクリーン角が違えば格子も違う。t を同じだけ動かしても 4 版の「見かけ」は一致しない —— これが 5 節",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_per_plate.png",
+  "name": "per_plate",
+  "caption": "",
+  "shape": [
+   176,
+   794,
+   3
+  ],
+  "csv": "06_per_plate.csv",
+  "tsv": "06_per_plate.tsv"
+ },
+ {
+  "file": "07_corr_maps.png",
+  "name": "corr_maps",
+  "caption": "AM は 9.0 px 周期でピークが並ぶ(どれが真値か決められない)。FM はピークが 1 つで、真値 (0, 9.00) に立つ",
+  "shape": [
+   903,
+   798,
+   3
+  ]
+ },
+ {
+  "file": "08_control_fm.png",
+  "name": "control_fm",
+  "caption": "絵柄も推定器も同じ。FM に替えるだけで崖が消える",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_mark_distance.png",
+  "name": "mark_distance",
+  "caption": "",
+  "shape": [
+   224,
+   648,
+   3
+  ],
+  "csv": "09_mark_distance.csv",
+  "tsv": "09_mark_distance.tsv"
+ },
+ {
+  "file": "10_mark_distance_plot.png",
+  "name": "mark_distance_plot",
+  "caption": "紙が 0.60 % 伸びて 0.120° 回っているとき、誤差は距離に比例。公差 2.0 px を超えるのは 316 px から",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_mark_scene.png",
+  "name": "mark_scene",
+  "caption": "十字は非周期なので相関のピークが 1 つに決まる。周りの網点は 9.0 px 周期で何度でも合う",
+  "shape": [
+   285,
+   616,
+   3
+  ]
+ },
+ {
+  "file": "12_metrics.png",
+  "name": "metrics",
+  "caption": "",
+  "shape": [
+   200,
+   544,
+   3
+  ],
+  "csv": "12_metrics.csv",
+  "tsv": "12_metrics.tsv"
+ },
+ {
+  "file": "13_metrics_sweep.png",
+  "name": "metrics_sweep",
+  "caption": "素の相関だけが折り返して公差の線を何度も下に横切る = 不合格の版を合格と言う",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

@@ -4,7 +4,7 @@ dim: astrostack
 category: align
 in: image2d × image2d
 out: matrix
-examples: [astro_stacking, poc_exoplanet_transit]
+examples: [astro_stacking, poc_exoplanet_transit, poc_print_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -39,6 +39,25 @@ version: 0.1.10  # fullseye lib version this note was generated for
    ``vector_to_rigid`` / ``vector_to_hom_mat2d``)で当てはめる。
    RANSAC ループも Umeyama もここには書いていない。
 
+★**繰り返し構造には使えない**(2026-09-08、`poc_print_registration` が発見)。
+``inlier_ratio`` は「同じ答えに賛成した対応の割合」であって「答えが正しい
+確率」ではない。網点・織物・格子のように**同じ形が周期的に並ぶ**画像では、
+格子ベクトルぶんずれた対応づけも全員が賛成するので、賛成率は 1.00 のまま
+答えだけが格子 1 個ぶん(あるいは何個ぶんも)ずれる。
+
+実測: 256x256 の 133 lpi 相当・15 度の網点を **(0.00, +1.30) px** だけ
+ずらした対で、``inlier_ratio`` **1.00** / ``rms_px`` 0.78 を返しながら
+推定は **(+54.24, +30.12) px**。星野(128x128、40 星、真値
+(+0.59, -0.54))では ``inlier_ratio`` は同じ 1.00 で推定は正しい。
+**賛成率では 2 つを区別できない**。
+
+区別できるのは ``vote_margin`` —— 投票の**2 番手の山**の高さを 1 番手で
+割った値で、0 なら山は 1 つ、1 に近いほど「同じくらいもっともらしい答えが
+他にもある」。同じ 2 例で **網点 0.857 / 星野 0.143**。周期構造を渡す
+かもしれない経路では、``inlier_ratio`` ではなくこちらを見ること。
+平行移動そのものが要るだけなら :func:`piv_cross_correlate` の相関面を
+見るほうが素直で、そちらは山が何本立っているかを自分で数えられる。
+
 *model* ``"translation"`` は対応の差の中央値だけを使う(星が 1 個でも動く)。
 ``"rigid"`` = 回転 + 並進、``"similarity"`` = + 等方スケール、
 ``"affine"`` = 6 自由度。**視野が広くなければ ``"similarity"`` で足りる**
@@ -70,6 +89,7 @@ Returns ``(matrix, info)``:
 
 - [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 - [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`
+- [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

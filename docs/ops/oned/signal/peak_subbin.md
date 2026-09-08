@@ -4,7 +4,7 @@ dim: oned
 category: signal
 in: signal × indices
 out: measurement
-examples: [poc_web_roll_periodicity]
+examples: [poc_print_registration, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -88,6 +88,7 @@ find_peaks : which indices to refine.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
 - [poc_web_roll_periodicity](../../../../examples/poc_web_roll_periodicity.py) — `py -3.11 examples/poc_web_roll_periodicity.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
