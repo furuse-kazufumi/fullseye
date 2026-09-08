@@ -894,7 +894,8 @@ def section_guard_band(tab, cam, eps, u_eps, base, head, n_trials: int = 40000):
     dev = correlated_draws(rng, [u for _, _, u in base["inputs"]], 0.7, n_trials)
     lm = forward_radiance(tab, t_true, eps + dev[:, 0], T_REFL_REF + dev[:, 1],
                           TAU_REF + dev[:, 2], T_ATM_REF + dev[:, 3])
-    dn = cam.to_dn(lm * (1.0 + dev[:, 4]), rng, quantize=True) + dev[:, 5]
+    dn = cam.to_dn(lm * (1.0 + dev[:, 4]), None, quantize=False)
+    dn = np.clip(np.rint(dn + dev[:, 5] + dev[:, 6]), 0.0, cam.dn_max)
     t_hat = np.asarray(invert_radiance(tab, cam.to_radiance(dn), eps, T_REFL_REF,
                                        TAU_REF, T_ATM_REF, allow_out=True), np.float64)
     ok = np.isfinite(t_hat)
