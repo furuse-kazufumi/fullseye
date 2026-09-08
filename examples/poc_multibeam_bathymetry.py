@@ -1283,10 +1283,12 @@ def section_op_holes():
     print("    5. `snell_angle` の配列版(+ 音速で受ける薄いラッパ)。")
     print("    6. `crossline_discrepancy(soundings_a, soundings_b)` —— 真値なしで")
     print("       できる唯一の検査(§9)。測量では標準の受入検査。")
-    figs.save_table("op_holes", ["語幹", "fs", "fs.op", "fs.ledger", "op_find",
-                                 "何が欲しかったか"], rows,
+    figs.save_table("op_holes", ["語幹", "fs", "fs.op", "fs.ledger",
+                                 "op_find 件数(先頭)", "何が欲しかったか"], rows,
                     title="4 層すべて引いた結果 —— 音響測深の op は 1 つも無い",
-                    caption="○ = 在る。`beamform_*` は電波レーダの語彙のまま流用した。")
+                    caption="○ = 在る。件数が 0 でなくても中身は無関係"
+                            "(footprint → sk_median_disk)。`beamform_*` は"
+                            "電波レーダの語彙のまま流用した。")
     return {"holes": holes, "rows": rows, "used": used}
 
 
