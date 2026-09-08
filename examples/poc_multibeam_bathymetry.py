@@ -1131,8 +1131,12 @@ def section_dtm(scene):
     print(f"  重なりの帯 x = {ys[0]:.1f} 〜 {ys[-1]:.1f} m。")
     print(f"  ★真ん中(x = {mid:.1f} m)では差 {abs(float(d1[200]-d2[200])):.4f} m —— "
           f"両測線とも同じ振れ角なので**誤差が同じだけ乗って消える**。")
-    print(f"  帯の端 x = {ys[k]:.1f} m は、片方が**直下ビーム**({min(a, b):.3f} m)、"
-          f"もう片方が**最外ビーム**({max(a, b):.3f} m)で測る点。")
+    # どちらの測線がその点を「直下」で測っているかは、振れ角の小さいほう。
+    off1, off2 = abs(float(ys[k])), abs(float(ys[k] - spacing))
+    near, far = (a, b) if off1 < off2 else (b, a)
+    print(f"  帯の端 x = {ys[k]:.1f} m は、片方が**ほぼ直下**(振れ "
+          f"{min(off1, off2):.0f} m)で {near:.3f} m、もう片方が**最外ビーム**"
+          f"(振れ {max(off1, off2):.0f} m)で {far:.3f} m と測る点。")
     print(f"     → **食い違い {abs(a-b):.3f} m**")
     print(f"     (TVU {tvu(DEPTH_REF):.3f} m の {abs(a-b)/tvu(DEPTH_REF):.1f} 倍)")
     print("  → ★これが**実データでもできる唯一の検査**。真の海底は誰も知らないが、"
