@@ -3235,8 +3235,10 @@ def annotate_invert_visibility(img, mask, mode="complement", alpha=1.0):
     True
     """
     a = _prep(img)
-    claim = _mask_weights(a, mask)
-    return _invert_report(a, _inverted(a, mode), claim)
+    if not (0.0 <= float(alpha) <= 1.0):
+        raise ValueError(f"alpha must be within [0,1] (got: {alpha})")
+    claim = _mask_weights(a, mask) * float(alpha)
+    return _invert_report(a, _invert_blend(a, claim, mode), claim)
 
 
 def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=1.0,
