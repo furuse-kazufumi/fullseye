@@ -363,13 +363,15 @@ def detect_with_z(img, mode: str):
 BIN_CENTERS_PX = np.array([BIN_PX * k + BIN_PX / 2.0 for k in range(N_BIN)])
 
 
-def sweep_frames(n_frames: int, mode: str, seed0: int = 0, **kw):
+def sweep_frames(n_frames: int, mode: str, seed0: int = 0, targets: bool = True, **kw):
     """``n_frames`` 枚まわして、帯ごとの当たりの z と、誤検出の z・横距離を集める。
 
     戻り値の ``hit_z`` は ``(N_BIN, 2*n_frames)``。目標が拾えなかった試行は
     ``-inf`` なので、どの閾値でも「拾えなかった」ままになる。
+    ``targets=False`` は**目標を 1 個も置かない**較正用(§2 の床の測定)。
     """
-    cols = np.r_[HALF_PX - BIN_CENTERS_PX[::-1], HALF_PX + BIN_CENTERS_PX]
+    cols = np.r_[HALF_PX - BIN_CENTERS_PX[::-1], HALF_PX + BIN_CENTERS_PX] \
+        if targets else np.zeros(0)
     hit_z = np.full((N_BIN, 2 * n_frames), -np.inf)
     fa_z, fa_x = [], []
     gsd = 0.0
