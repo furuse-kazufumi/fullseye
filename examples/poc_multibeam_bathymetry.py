@@ -1242,14 +1242,18 @@ def section_op_holes():
     rows, holes = [], []
     for name, note in wanted:
         tiers = (hasattr(fs, name), hasattr(fs.op, name), hasattr(fs.ledger, name))
-        n_find = len(fs.op_find(name))
+        hits = [d["op"] for d in fs.op_find(name)]
+        # ★``op_find`` は語幹の部分一致で拾うので、件数が 0 でなくても中身は
+        #   無関係なことがある("footprint" → ``sk_median_disk``)。**最上位の
+        #   名前まで見て**から「無い」と言う。
+        top = hits[0] if hits else "—"
         rows.append((name, "○" if tiers[0] else "-", "○" if tiers[1] else "-",
-                     "○" if tiers[2] else "-", str(n_find), note))
+                     "○" if tiers[2] else "-", f"{len(hits)} ({top})", note))
         print(f"  {name:<16} fs:{'○' if tiers[0] else '-'} "
               f"fs.op:{'○' if tiers[1] else '-'} "
               f"fs.ledger:{'○' if tiers[2] else '-'} "
-              f"op_find:{n_find:>2} 件   {note}")
-        if not any(tiers) and n_find == 0:
+              f"op_find:{len(hits):>2} 件 (先頭 {top:<24}) {note}")
+        if not any(tiers) and name not in hits:
             holes.append(name)
     used = ["beamform_delay_sum", "beamform_doa", "find_peaks", "peak_subbin",
             "snell_angle", "interp_scattered", "dem_slope"]
