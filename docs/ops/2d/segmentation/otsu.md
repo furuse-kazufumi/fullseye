@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [ct_inspection, gallery2d_segmentation, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify]
+examples: [ct_inspection, gallery2d_segmentation, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ otsu 0.50 0.50
 - [poc_fresco_craquelure](../../../../examples/poc_fresco_craquelure.py) — `py -3.11 examples/poc_fresco_craquelure.py`
 - [poc_matrix_code_reading](../../../../examples/poc_matrix_code_reading.py) — `py -3.11 examples/poc_matrix_code_reading.py`
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
+- [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_vegetation_cover](../../../../examples/poc_vegetation_cover.py) — `py -3.11 examples/poc_vegetation_cover.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`

@@ -179,3 +179,54 @@ def test_confidence_high_on_texture_low_on_flat():
     flat = conf[20:-20, 10:30].mean()
     textured = conf[20:-20, 60:-10].mean()
     assert textured > flat + 0.2                             # texture is more trustworthy
+
+
+def test_depth_from_disparity_honours_the_principal_point_offset():
+    """★doffs は「効かせても効かせなくても近い」ではない —— 形が反り返る。
+
+    2026-09-08、実写(Middlebury 2014 motorcycle)を通して見つけた穴。
+    ``depth_from_disparity`` は ``Z = f*B/d`` しか持っておらず、実写の
+    rectified データが必ず配る主点オフセット ``doffs = cx_right - cx_left``
+    を受け取れなかった。無視すると**距離が視差ごとに違う倍率でずれる**ので、
+    後から 1 つの係数を掛けても直らない。ここではその 2 つを固定する:
+
+    * ``doffs`` を渡した結果は閉形式 ``f*B/(d+doffs)`` と厳密一致
+    * ``doffs`` を落とした結果は**単一のスケールでは真値に戻らない**
+      (最良の係数を当てはめても残差が残る = 単なる拡大縮小ではない)
+    """
+    focal, baseline, doffs = 994.978, 193.001, 31.086     # 実写の校正値
+    disp = np.array([[7.33, 20.0, 42.55, 59.91]])
+
+    z_fix = stereo.depth_from_disparity(disp, focal=focal, baseline=baseline,
+                                        doffs=doffs)
+    z_ref = focal * baseline / (disp + doffs)
+    assert np.allclose(z_fix, z_ref, rtol=0, atol=0)
+
+    # 既定は従来どおり(後方互換)
+    z_no = stereo.depth_from_disparity(disp, focal=focal, baseline=baseline)
+    assert np.allclose(z_no, focal * baseline / disp)
+
+    # 単一のスケールでは直らない: 最良の係数を当てても残差が残る
+    a, b = z_no.ravel(), z_ref.ravel()
+    scale = float((a * b).sum() / (a * a).sum())
+    resid = np.abs(scale * a - b)
+    span = float(b.max() - b.min())
+    assert resid.max() > 0.1 * span, (scale, resid, span)
+    # しかも符号が入れ替わる(遠い側は押し出され、近い側は引き込まれる)
+    signed = scale * a - b
+    assert signed[0] > 0.0 > signed[-1], signed
+
+
+def test_census_window_is_capped_by_the_64_bit_packing():
+    """census の窓が 7 で頭打ちなのは**実装の天井**で、黙って劣化はしない。
+
+    実写では 3/5/7 と窓を広げるほど良くなり続ける(75.27 / 48.62 / 35.44 %
+    bad2、``examples/poc_real_stereo_depth.py``)。9x9 は 80 近傍で 64 bit に
+    入らないので **ValueError で断る** —— 勝手に切り詰めて静かに悪い答えを
+    返さないこと、をここで固定する。
+    """
+    left = _textured(seed=3)
+    right = _shift_left_by(left, 4)
+    stereo.disparity_census(left, right, max_disp=8, window=7)   # 通る
+    with pytest.raises(ValueError, match="64 bits"):
+        stereo.disparity_census(left, right, max_disp=8, window=9)

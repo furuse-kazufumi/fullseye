@@ -344,12 +344,13 @@ def main() -> None:
     figs.save_table(
         "truth",
         ["決め方", "結果"],
-        [["面積の平坦域 (50〜800)", "%d 枚" % sorted(flat_counts)[0]],
-         ["Hough 円 (投票 0.30〜0.50)", "%d 個" % sorted(hough_counts)[0]],
-         ["Sobel + 穴埋め", "%d 枚" % n_sobel],
-         ["4 近傍で数えた生の個数", "%d" % n4],
-         ["8 近傍で数えた生の個数", "%d" % n8]],
-        title="真値は 3 つの独立な経路の一致で決める",
+        [["面積の平坦域", "%d 枚" % sorted(flat_counts)[0]],
+         ["Hough 円", "%d 個" % sorted(hough_counts)[0]],
+         ["Sobel+穴埋め", "%d 枚" % n_sobel],
+         ["生の個数 4 近傍", "%d" % n4],
+         ["生の個数 8 近傍", "%d" % n8]],
+        col_w=150,
+        title="真値は 3 経路の一致で決める",
         caption="生の個数は近傍の規約で 3 割違う。")
 
     print("\n所見")

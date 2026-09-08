@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: fill_up
-examples: [gallery2d_region, poc_cell_counting, poc_document_scan, poc_leaf_disease_area, poc_mesh_quality_repair, poc_symmetry_restoration]
+examples: [gallery2d_region, poc_cell_counting, poc_document_scan, poc_leaf_disease_area, poc_mesh_quality_repair, poc_real_coin_metrology, poc_symmetry_restoration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ fill_holes 0.50 0.50
 - [poc_document_scan](../../../../examples/poc_document_scan.py) — `py -3.11 examples/poc_document_scan.py`
 - [poc_leaf_disease_area](../../../../examples/poc_leaf_disease_area.py) — `py -3.11 examples/poc_leaf_disease_area.py`
 - [poc_mesh_quality_repair](../../../../examples/poc_mesh_quality_repair.py) — `py -3.11 examples/poc_mesh_quality_repair.py`
+- [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
 - [poc_symmetry_restoration](../../../../examples/poc_symmetry_restoration.py) — `py -3.11 examples/poc_symmetry_restoration.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)

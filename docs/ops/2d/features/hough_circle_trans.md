@@ -5,7 +5,7 @@ category: features
 in: image
 out: image
 halcon: hough_circle_trans
-examples: [gallery2d_features]
+examples: [gallery2d_features, poc_real_coin_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -43,8 +43,14 @@ version: 0.1.10  # fullseye lib version this note was generated for
 （Return the Hough-Transform for circles with a given radius.）に相当
 (HALCON は半径を明示指定するが、ここでは固定レンジを総当たりする近似)。
 
-``a`` がエッジ抽出の閾値を振る。``b`` は未使用 ―― 探索する半径レンジは
-コード側に固定されており、``b`` で半径を選ぶことはできない。
+``a`` がエッジ抽出の閾値を振り、``b`` が探索する半径の上限を決める
+(``radii = arange(4, max(7, round(4 + 32*b)), 3)``。既定の ``b=0.5`` は
+従来どおり半径 4〜19)。★**対象より小さい半径しか探していないと、この op は
+落ちずに意味の無い累算器を返す**。実写のコイン 24 枚(半径 19〜31 px)で
+非極大抑制して数えると ``b=0.5`` で 13 峰、上限まで広げた ``b=1.0`` でも
+19 峰にしかならない ―― 半径の刻みが 3 で、しかも全半径の最大に潰して
+いるため。**半径を明示できる HALCON の同名 op の代わりにはならない**
+(``examples/poc_real_coin_metrology.py`` が数字で示す)。
 
 ## 詳しい使い方ガイド
 
@@ -67,6 +73,7 @@ hough_circle_trans 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

@@ -28,5 +28,17 @@
    560,
    3
   ]
+ },
+ {
+  "file": "04_truth.png",
+  "name": "truth",
+  "caption": "生の個数は近傍の規約で 3 割違う。",
+  "shape": [
+   200,
+   324,
+   3
+  ],
+  "csv": "04_truth.csv",
+  "tsv": "04_truth.tsv"
  }
 ]

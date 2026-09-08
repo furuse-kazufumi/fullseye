@@ -5,7 +5,7 @@ category: features
 in: region
 out: feature
 halcon: circularity
-examples: [draw_annotate, gallery2d_features, poc_cell_counting, poc_particle_sizing]
+examples: [draw_annotate, gallery2d_features, poc_cell_counting, poc_particle_sizing, poc_real_coin_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -63,6 +63,7 @@ circularity 0.50 0.50
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 - [poc_cell_counting](../../../../examples/poc_cell_counting.py) — `py -3.11 examples/poc_cell_counting.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
+- [poc_real_coin_metrology](../../../../examples/poc_real_coin_metrology.py) — `py -3.11 examples/poc_real_coin_metrology.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

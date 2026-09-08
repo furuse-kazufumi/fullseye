@@ -15,8 +15,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用於圓偵測的 Hough 變換。對邊緣遮罩使用半徑 4〜19（步長 3）的一組圓模板計算 `<code style="color:#22d3bf">skimage.transform.hough_circle</code><code style="color:#22d3bf">，並把所有半徑中的最大響應歸一化到 [0,1] 後回傳。相當於 HALCON 的 </code><code style="color:#22d3bf">hough_circle_trans</code>`（Return the Hough-Transform for circles with a given radius.）（HALCON 會明確指定半徑，此處則以固定範圍做窮舉的近似）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値を振る。</code><code style="color:#22d3bf">b</code>` は未使用 ―― 探索する半径レンジは</p>
-<p>コード側に固定されており、`<code style="color:#22d3bf">b</code>` で半径を選ぶことはできない。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値を振り、</code><code style="color:#22d3bf">b</code>` が探索する半径の上限を決める</p>
+<p>(`<code style="color:#22d3bf">radii = arange(4, max(7, round(4 + 32*b)), 3)</code><code style="color:#22d3bf">。既定の </code><code style="color:#22d3bf">b=0.5</code>` は</p>
+<p>従来どおり半径 4〜19)。★**対象より小さい半径しか探していないと、この op は</p>
+<p>落ちずに意味の無い累算器を返す**。実写のコイン 24 枚(半径 19〜31 px)で</p>
+<p>非極大抑制して数えると `<code style="color:#22d3bf">b=0.5</code><code style="color:#22d3bf"> で 13 峰、上限まで広げた </code><code style="color:#22d3bf">b=1.0</code>` でも</p>
+<p>19 峰にしかならない ―― 半径の刻みが 3 で、しかも全半径の最大に潰して</p>
+<p>いるため。<b>半径を明示できる HALCON の同名 op の代わりにはならない</b></p>
+<p>(`<code style="color:#22d3bf">examples/poc_real_coin_metrology.py</code>` が数字で示す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
@@ -28,6 +34,7 @@
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hough_circle_trans 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hough_circle_trans%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hough_circle_trans%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_coin_metrology">poc_real_coin_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_coin_metrology.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">features</code>)</h3>
