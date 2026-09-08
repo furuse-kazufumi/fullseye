@@ -190,13 +190,19 @@ def section_invert():
         panel = A.annotate_invert_path(ramp, line, width=3.0)
     assert any("invisible" in str(w.message) for w in caught), "傾斜の中央で警告が出るはず"
     row = int(round(PH * 0.35))
-    delta = np.abs(panel[row] - ramp[row])
-    dead = np.where(delta < 1.0 / 255.0)[0]
+    la, lb = wcag(ramp[row]), wcag(panel[row])
+    cr_row = (np.maximum(la, lb) + 0.05) / (np.minimum(la, lb) + 0.05)
+    dead = np.where(cr_row < A.INVERT_MIN_CONTRAST)[0]
     dead = dead[(dead >= 6) & (dead <= PW - 7)]              # 線が乗る範囲だけ見る
-    want = int(round((1.0 - 128.0 / 255.0) * (PW - 1)))      # v=128 になる列(閉形式)
-    assert abs(int(np.median(dead)) - want) <= 2, (np.median(dead), want)
-    print(f"  傾斜の上の線: 消える列の中央は {int(np.median(dead))}(閉形式の予測 {want})、"
-          f"消える幅 {dead.size} 列")
+    # 閉形式の予測: 地の値が 8bit の消える帯 [113,142]/255 に入る列。
+    # 傾斜は左が明るいので x = (1 - v) * (PW - 1)。
+    x_lo = (1.0 - 142.0 / 255.0) * (PW - 1)
+    x_hi = (1.0 - 113.0 / 255.0) * (PW - 1)
+    want = int(round((1.0 - 128.0 / 255.0) * (PW - 1)))      # v=128 になる列
+    assert dead.size and abs(int(np.median(dead)) - want) <= 2, (dead, want)
+    assert x_lo - 2 <= dead.min() and dead.max() <= x_hi + 2, (dead.min(), dead.max(), x_lo, x_hi)
+    print(f"  傾斜の上の線: 消えるのは列 {dead.min()}-{dead.max()}({dead.size} 列)、"
+          f"閉形式の予測 {x_lo:.0f}-{x_hi:.0f}、中央 {int(np.median(dead))}(予測 {want})")
 
     # 同じ地に、領域を fill と margin で。margin は中身を触らない
     m = np.zeros((PH, PW), bool)
