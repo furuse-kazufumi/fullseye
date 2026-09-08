@@ -730,10 +730,8 @@ def section_enu():
         pred_r = -float(fs.ledger.dem_earth_curvature_drop(d, REFRACTION_K))
         lat_n = SITE_LAT + math.degrees(d / m_r)
         lon_e = SITE_LON + math.degrees(d / (n_r * math.cos(math.radians(SITE_LAT))))
-        up_n = float(rot @ (np.asarray(fs.ledger.dem_geodetic_to_ecef(
-            lat_n, SITE_LON, 0.0), np.float64)[0] - origin))[2] if False else float(
-            (rot @ (np.asarray(fs.ledger.dem_geodetic_to_ecef(
-                lat_n, SITE_LON, 0.0), np.float64)[0] - origin))[2])
+        up_n = float((rot @ (np.asarray(fs.ledger.dem_geodetic_to_ecef(
+            lat_n, SITE_LON, 0.0), np.float64)[0] - origin))[2])
         up_e = float((rot @ (np.asarray(fs.ledger.dem_geodetic_to_ecef(
             SITE_LAT, lon_e, 0.0), np.float64)[0] - origin))[2])
         print(f"  {d:>8.0f}{pred_c:>18.4f}{pred_r:>18.4f}{up_n:>12.4f}{up_e:>12.4f}"
@@ -923,7 +921,7 @@ def main():
                            f"{axis['cases']['緯経の入れ替え']['median']:.0f} m",
          "半分だけ露見", "半分うるさい"),
         ("度/ラジアン取り違え",
-         f"{axis['cases']['度をラジアンとして渡す']['median']:.0f} m", "消えない", "静か"),
+         f"{axis["cases"]["ラジアンを度として渡す"]['median']:.0f} m", "消えない", "静か"),
     ]
     print(f"  {'量':>22}{'誤りの大きさ':>26}{'伝播':>14}{'壊れ方':>20}")
     for a, b, c, d in rows:
@@ -998,7 +996,7 @@ def main():
     # §9 うるさく壊れるのは緯経の入れ替えの半分だけ。あとは例外 0 件。
     swap = axis["cases"]["緯経の入れ替え"]
     assert abs(swap["raised"] / axis["total"] - 0.5) < 0.02, swap
-    for name in ("度をラジアンとして渡す", "経度の符号反転",
+    for name in ("ラジアンを度として渡す", "経度の符号反転",
                  "高さがフィート(m と誤認)", "ECEF の軸入れ替え"):
         assert axis["cases"][name]["raised"] == 0, name
     assert axis["cases"]["ECEF の軸入れ替え"]["inrange"] == axis["total"]
