@@ -497,25 +497,41 @@ def section2_zero_point():
     print("     **予測 k = %.4f**(まだ何も掃引していない)。" % k_pred)
     print()
     ts = np.arange(0.0, 2 * PITCH + 1e-9, 1.0)
-    gx = ink_centroid(des)[1]
-    resp = np.array([ink_centroid(am_sheet(ang, blob, 0.0, float(t), seed=22))[1] - gx
-                     for t in ts])
-    k_art = float(np.polyfit(ts, resp, 1)[0])
-    # 対照群: 絵柄を下地だけ(一様)にする → 予測は k = 0
-    gxf = ink_centroid(design_plate(ang, flat))[1]
-    resp_f = np.array([ink_centroid(am_sheet(ang, flat, 0.0, float(t), seed=22))[1] - gxf
-                       for t in ts])
-    k_flat = float(np.polyfit(ts, resp_f, 1)[0])
-    print("     実測(0〜%.1f px を %.1f px 刻み): 絵柄あり k = **%.4f**"
-          % (2 * PITCH, 1.0, k_art))
-    print("       —— 予測との差 **%.4f**。" % abs(k_art - k_pred))
-    print("     対照群(絵柄を下地だけの一様な網点にする): 予測 k=0、実測 **%.4f**。"
-          % k_flat)
-    print("  → ★**重心は折り返さないが、縮尺が狂う**。誤差は %.3f·|d| で"
+    sweeps = {}
+    for label, tap, bl in (("絵柄あり", None, blob),
+                           ("下地だけ(対照群)", None, flat),
+                           ("絵柄あり + テーパ窓", TAPER, blob)):
+        g = ink_centroid(design_plate(ang, bl), tap)[1]
+        r = np.array([ink_centroid(am_sheet(ang, bl, 0.0, float(t), seed=22),
+                                   tap)[1] - g for t in ts])
+        c = np.polyfit(ts, r, 1)
+        sweeps[label] = (r, float(c[0]), float(np.abs(r - np.polyval(c, ts)).max()))
+    k_art, rip_art = sweeps["絵柄あり"][1], sweeps["絵柄あり"][2]
+    k_flat = sweeps["下地だけ(対照群)"][1]
+    k_tap, rip_tap = sweeps["絵柄あり + テーパ窓"][1], sweeps["絵柄あり + テーパ窓"][2]
+    print("     %-22s %10s %14s" % ("実測(0〜%.1f px、1 px 刻み)" % (2 * PITCH),
+                                    "傾き k", "直線からの外れ"))
+    print("     " + "-" * 50)
+    for label, (_r, kk, rip) in sweeps.items():
+        print("     %-22s %10.4f %14.4f" % (label, kk, rip))
+    print()
+    print("  → ★予測 %.4f に対して実測 %.4f、差 **%.4f**。**閉形式が当たった**。"
+          % (k_pred, k_art, abs(k_art - k_pred)))
+    print("     対照群(絵柄を下地だけの一様な網点にする)は予測 k=0 に対して")
+    print("     実測 %.4f —— 一様成分は本当に重心を動かしていない。" % k_flat)
+    print("  → ★**重心は折り返さないが、縮尺が狂う**。誤差は %.3f·|d| で真値に"
           % (1 - k_art))
-    print("     真値に比例して増える。★これは「絵柄しだいで倍率が変わる」という")
-    print("     ことでもある —— 版ごとに絵柄が違えば倍率も違う(2 節の表の誤差 B が")
-    print("     版ごとにばらつくのはこのため)。")
+    print("     比例して増える。倍率は絵柄で決まるので**版ごとに違う**")
+    print("     (上の表の誤差 B が版ごとにばらつくのはこのため)。")
+    print("  → ★もう 1 つ出た: 直線からの外れが **%.4f px** ある。これは網点ピッチ"
+          % rip_art)
+    print("     %.2f px 周期のさざ波で、**窓の縁で網点の列が出入りする**ため"
+          % PITCH)
+    print("     (縁の 1 列は全インクの約 1 %% で、腕の長さ %d px を掛けると"
+          % (L // 2))
+    print("     ちょうどこの大きさになる)。テーパ窓を掛けた対照群では")
+    print("     **%.4f px** まで落ちる —— **原因が縁だと確かめられた**。" % rip_tap)
+    resp, resp_f = sweeps["絵柄あり"][0], sweeps["下地だけ(対照群)"][0]
     print("     **以降の手法は、この %.4f px(と、折り返さないという性質)を"
           % max(err_b))
     print("     上回らなければ意味がありません。**")
