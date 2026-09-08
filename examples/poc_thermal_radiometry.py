@@ -1209,18 +1209,22 @@ def section_units(scene):
     twice = float(invert_radiance(tab, lm, EPS_PAINT, T_REFL_REF,
                                   TAU_REF ** 2, T_ATM_REF))
     record("τ を大気と窓で二重に掛ける", "静かに間違う",
-           f"{twice-once:+.3f} K(正しい {once-350.0:+.3f} K に対して)")
+           f"{twice-once:+.3f} K(1 回だけ掛けた正解は誤差 {once-350.0:.3f} K)")
 
     # (7) 感度 ΔT/T をセ氏で計算する。
-    n_k = band_index_predicted("LWIR", 350.0)
+    n_k = band_index_numeric("LWIR", 350.0)
     n_c = C2_UM / (band_effective_lambda("LWIR", 350.0) * (350.0 - T0_C))
     record("ΔT/T をセ氏で計算して n を出す", "静かに間違う",
-           f"感度が {n_k/n_c:.2f} 倍(n が {n_k:.3f} → {n_c:.3f})")
+           f"n を {n_c/n_k:.2f} 倍に見積もる(= 感度を 1/{n_c/n_k:.2f} に過小評価)")
 
     print(f"  → **例外で止まる {loud} 件 / 静かに間違う {quiet} 件**。")
     print("     止まったのはどちらも `fs.interp_linear(out_of_range='raise')` が")
     print("     「校正表の外だ」と言った場合 —— **fail-closed が効いた地点**。")
-    print("     静かに間違う 4 件は、絵も単位も数字の桁も、全部もっともらしい。")
+    print(f"     静かに間違う {quiet} 件は、絵も単位も数字の桁も、全部もっともらしい。")
+    print("  → ★**止まるかどうかは取り違えの種類でなく「場面」で決まる**: (3) の")
+    print("     T_refl を ℃ で書く取り違えは ε=0.95 では通るが、ε=0.10 の面では")
+    print("     (1−ε)/ε の重みが 9 倍になって L_obj が負に落ち、**例外になる**。")
+    print("     **放射率が高い = 現場で安心な面ほど、間違いが静かに通る**。")
     figs.save_table("units", ["取り違え", "どうなるか", "実測"], rows,
                     title="単位・規約の崖 —— 止まる 2 件、静かに間違う 4 件",
                     caption="止まるのは校正表の範囲外に落ちたときだけ。"
