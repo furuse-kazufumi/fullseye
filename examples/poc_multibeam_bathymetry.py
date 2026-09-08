@@ -916,38 +916,46 @@ def section_footprint(scene, floor):
     print(f"  → **ビーム幅は 1/cosθ で広がる**(比は 1.0 前後、最大の外れ "
           f"{max(abs(float(r[3])-1.0) for r in rows_bw)*100:.1f} %)。")
     print("     電子的に振った配列は、開口が cosθ に縮んで見えるから。")
-    # フットプリントの 3 通り
+    # フットプリント 4 通り。**等音速(対照群)と屈折込みを分けて測る**。
     prof = scene["prof"]
-    print(f"  {'θ₀ [度]':>8}{'cos² 式':>12}{'cos³ 式':>12}{'光線から実測':>14}"
-          f"{'cos² の外し':>14}")
-    rows, foot_meas, foot2, foot3 = [], [], [], []
+    iso = profile_constant(scene["ca"])
+    print(f"  {'θ₀ [度]':>8}{'cos² 式':>12}{'cos³ 式':>12}"
+          f"{'実測(等音速)':>16}{'実測(屈折込み)':>18}{'cos² の外し':>13}")
+    rows, foot_meas, foot_iso, foot2, foot3 = [], [], [], [], []
     for th in (0.0, 30.0, 45.0, 60.0, 65.0, 70.0):
         bw = bw0 / math.cos(math.radians(th))       # 実測した広がりを使う
         f2 = DEPTH_REF * math.radians(bw0) / math.cos(math.radians(th)) ** 2
         f3 = DEPTH_REF * math.radians(bw0) / math.cos(math.radians(th)) ** 3
         # 実測: ビームの縁 2 本を実際に撃って、海底での水平距離の差を取る
         edges = np.array([max(0.0, th - 0.5 * bw), min(88.0, th + 0.5 * bw)])
-        xe, _, ok = trace_to_depth(prof, edges, DEPTH_REF)
-        assert bool(np.all(ok))
-        fm = float(abs(xe[1] - xe[0]))
+        xr, _, ok_r = trace_to_depth(prof, edges, DEPTH_REF)
+        xi, _, ok_i = trace_to_depth(iso, edges, DEPTH_REF)
+        assert bool(np.all(ok_r) and np.all(ok_i))
+        fm, fi = float(abs(xr[1] - xr[0])), float(abs(xi[1] - xi[0]))
         foot_meas.append(fm)
+        foot_iso.append(fi)
         foot2.append(f2)
         foot3.append(f3)
-        rows.append((f"{th:.0f}", f"{f2:.3f}", f"{f3:.3f}", f"{fm:.3f}",
-                     f"{100*(f2-fm)/fm:+.1f} %"))
-        print(f"  {th:>8.0f}{f2:>12.3f}{f3:>12.3f}{fm:>14.3f}"
-              f"{100*(f2-fm)/fm:>13.1f}%")
-    print(f"  → ★70 度で cos² 式 {foot2[-1]:.2f} m、cos³ 式 {foot3[-1]:.2f} m、"
-          f"実測 {foot_meas[-1]:.2f} m。")
-    print(f"     **cos² 式は実測の {100*foot2[-1]/foot_meas[-1]:.0f} %** —— "
-          f"ビーム幅の広がりを勘定に入れていないから。")
-    print(f"     残る差(cos³ 式と実測で {100*(foot3[-1]-foot_meas[-1])/foot_meas[-1]:+.1f} %)"
-          f"は光線が曲がるぶん。")
+        rows.append((f"{th:.0f}", f"{f2:.3f}", f"{f3:.3f}", f"{fi:.3f}", f"{fm:.3f}",
+                     f"{100*(f2-fi)/fi:+.1f} %"))
+        print(f"  {th:>8.0f}{f2:>12.3f}{f3:>12.3f}{fi:>16.3f}{fm:>18.3f}"
+              f"{100*(f2-fi)/fi:>12.1f}%")
+    print(f"  → ★70 度、**等音速の対照群**で cos² 式 {foot2[-1]:.2f} m、"
+          f"cos³ 式 {foot3[-1]:.2f} m、実測 {foot_iso[-1]:.2f} m。")
+    print(f"     **cos² 式は実測の {100*foot2[-1]/foot_iso[-1]:.0f} %** —— "
+          f"ビーム幅の広がりを勘定に入れていないから。cos³ 式は "
+          f"{100*(foot3[-1]/foot_iso[-1]-1):+.1f} % で当たる。")
+    print(f"  → 屈折を入れると 70 度のフットプリントは {foot_meas[-1]:.2f} m へ "
+          f"{100*(foot_meas[-1]/foot_iso[-1]-1):+.1f} %。光線が鉛直側へ曲がって"
+          f"届く先が縮む。")
+    print("     ★**分解能の崖と深さの崖は別の量**: 深さは外側で浅く出て、"
+          "分解能は外側でぼやける。片方だけ直しても swath は広がらない。")
     figs.save_table("footprint", ["θ₀ [度]", "cos² 式 [m]", "cos³ 式 [m]",
-                                  "光線から実測 [m]", "cos² の外し"], rows,
+                                  "実測 等音速 [m]", "実測 屈折込み [m]",
+                                  "cos² の外し"], rows,
                     title="海底フットプリント —— 教科書の cos² 式は 3 分の 1",
                     caption=f"深さ {DEPTH_REF:.0f} m、ビーム幅 {bw0:.3f} 度(実測)。"
-                            "電子的に振ると幅も 1/cosθ で広がる。")
+                            "等音速が対照群。電子的に振ると幅も 1/cosθ で広がる。")
     figs.save_table("beamwidth", ["ステア [度]", "実測 -3dB [度]",
                                   "予測 [度]", "比"], rows_bw,
                     title="ビーム幅は 1/cosθ で広がる(op で実測)",
