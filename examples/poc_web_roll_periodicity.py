@@ -710,11 +710,11 @@ def section_two_rolls() -> dict:
           % (e0["C"], both[0], cs[0], both[1], cs[1]))
 
     sc = scene(SEED0, culprits=both)
-    e = spec_estimate(sc["md"], sc["length"])
-    band = e["band"]
-    cc = 1.0 / e["f"][band]
+    sp = md_spectrum(sc["md"], sc["length"])
+    band = sp["band"]
+    cc = 1.0 / sp["f"][band]
     figs.save_plot("spectrum_two",
-                   [("MD スペクトル", cc, e["m"][band]),
+                   [("MD スペクトル", cc, sp["m"][band]),
                     ("ロール台帳", [CIRC[n] for n, _ in ROLLS],
                      [float(e["m"][band].max()) * 0.06] * len(ROLLS))],
                    xlabel="周長 C = 1/f [mm]", ylabel="振幅",
