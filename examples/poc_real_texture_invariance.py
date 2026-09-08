@@ -240,6 +240,65 @@ def main() -> None:
         title="向きの偏りが、そのまま壊れやすさ", col_w=115,
         caption="単位はどれも「分解能に対する比」。1 を超えたら分類は成り立たない。")
 
+    # ----------------------------------------------------------------- GLCM
+    # 6. 角度を持つ記述子なら、平均して均せるか(2026-09-09 追加)
+    #    GLCM(`cooc_feature_matrix`)は角度 0 度固定だった。`b` が未使用だったので
+    #    4 方向平均(0/45/90/135 度)に配線し、**効くかどうか**をここで数える。
+    print("\n6) GLCM を 4 方向平均にすると救えるか(角度を持つ記述子の場合)")
+    glcm_rows = []
+    for a_knob in (0.0, 0.5, 1.0):
+        dist = 1 + int(a_knob * 3)
+        for b_knob, tag in ((0.5, "0 度固定"), (0.8, "4 方向平均")):
+            def g(img, _a=a_knob, _b=b_knob):
+                return float(fs.apply(img, "cooc_feature_matrix", _a, _b))
+
+            base = {m: g(rotate(imgs[m], 0)) for m in MATERIALS}
+            sep = min(abs(base[x] - base[y])
+                      for i, x in enumerate(MATERIALS) for y in MATERIALS[i + 1:])
+            wrong, swing = 0, {}
+            for m in MATERIALS:
+                vals = [g(rotate(imgs[m], d)) for d in ANGLES]
+                swing[m] = max(vals) - min(vals)
+                for v in vals:
+                    if min(abs(v - base[o]) for o in MATERIALS if o != m) < abs(v - base[m]):
+                        wrong += 1
+            glcm_rows.append((dist, tag, sep, wrong, swing))
+            print("   距離 %d  %-10s 分解能 %.4f  取り違え %2d/%2d  振れ幅/分解能 %s"
+                  % (dist, tag, sep, wrong, len(ANGLES) * len(MATERIALS),
+                     " / ".join("%.2f" % (swing[m] / max(sep, 1e-12)) for m in MATERIALS)))
+
+    by = {(r[0], r[1]): r for r in glcm_rows}
+    rat = {(d, tag): by[(d, tag)][4]["brick"] / max(by[(d, tag)][2], 1e-12)
+           for d in (1, 2, 4) for tag in ("0 度固定", "4 方向平均")}
+    sep1, sep4 = by[(1, "0 度固定")][2], by[(4, "0 度固定")][2]
+    print("   -> \u2605\u2605**分解能そのものが距離で潰れる**: %.4f -> %.4f(%.1f 分の 1)。"
+          "brick の振れ幅は分解能の %.2f -> %.2f 倍へ膨らむ。"
+          % (sep1, sep4, sep1 / max(sep4, 1e-12), rat[(1, "0 度固定")], rat[(4, "0 度固定")]))
+    print("      4 方向平均は**等方な 2 つには短中距離で効き**、brick には距離 4 で効く"
+          "(%.2f -> %.2f)が、距離 1 では**逆に悪化する**(%.2f -> %.2f)。"
+          % (rat[(4, "0 度固定")], rat[(4, "4 方向平均")],
+             rat[(1, "0 度固定")], rat[(1, "4 方向平均")]))
+    print("      \u2605**取り違えはこの手順では 1 度も起きない**(どの設定でも 0/%d)。"
+          % (len(ANGLES) * len(MATERIALS)))
+    print("      別の手順(線形補間 + 固定 120 px 切り出し + 12 角度)では距離 1 で 3/36 起きた ——"
+          "**取り違えの回数は手順に敏感**で、比(振れ幅 / 分解能)のほうが安定した統計量。")
+    print("      どちらの手順でも動かないのは「距離を伸ばすと分解能が潰れる」ほうなので、"
+          "**長い距離で平均を掛ける前に、素材がまだ分かれているかを確かめること**。")
+    assert sep4 < sep1 * 0.6, (sep1, sep4)
+    assert rat[(4, "0 度固定")] > rat[(1, "0 度固定")] * 2.0, rat
+    assert rat[(4, "4 方向平均")] < rat[(4, "0 度固定")] * 0.7, rat
+    assert rat[(1, "4 方向平均")] > rat[(1, "0 度固定")], rat
+    for d in (1, 2):                          # 等方な 2 つは短中距離で必ず改善する
+        for m in ("grass", "gravel"):
+            a = by[(d, "0 度固定")][4][m] / max(by[(d, "0 度固定")][2], 1e-12)
+            b_ = by[(d, "4 方向平均")][4][m] / max(by[(d, "4 方向平均")][2], 1e-12)
+            assert b_ <= a + 1e-9, (d, m, a, b_)
+    # 距離 4 では等方な素材ですら改善しない(grass は 0.17 -> 0.19 と悪化)——
+    # 分解能が潰れたあとは、平均しても取り返せない。これも消さずに数えておく。
+    g4a = by[(4, "0 度固定")][4]["grass"] / by[(4, "0 度固定")][2]
+    g4b = by[(4, "4 方向平均")][4]["grass"] / by[(4, "4 方向平均")][2]
+    assert g4b > g4a, (g4a, g4b)
+
     print("\n所見")
     print("  * 分解能(草と砂利の距離)%.5f。brick は 60 度で %.4f = %.1f 倍。"
           % (res, drift["brick"][4], drift["brick"][4] / res))
@@ -252,6 +311,11 @@ def main() -> None:
     print("  * 等方な 2 つは %.2f -> %.2f / %.2f -> %.2f 倍。"
           % (ratios["default"][1], ratios["uniform"][1],
              ratios["default"][2], ratios["uniform"][2]))
+    print("  * GLCM は距離を伸ばすと分解能が %.4f -> %.4f と潰れ、brick の振れ幅は"
+          "分解能の %.2f -> %.2f 倍へ。4 方向平均は等方な 2 つには短中距離で効き、brick には"
+          "距離 4 でだけ効く(%.2f -> %.2f)。"
+          % (sep1, sep4, rat[(1, "0 度固定")], rat[(4, "0 度固定")],
+             rat[(4, "0 度固定")], rat[(4, "4 方向平均")]))
     print("\n  所要 %.1f 秒" % (time.perf_counter() - t0))
 
     if figs.errors():

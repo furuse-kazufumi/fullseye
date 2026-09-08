@@ -4,7 +4,7 @@ dim: annotate
 category: paper
 in: image2d × text
 out: image2d
-examples: [annotate_paper_tour, poc_rotation_invariance_audit, poc_texture_rotation_identity]
+examples: [annotate_paper_tour, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -79,7 +79,6 @@ True
 
 - [annotate_paper_tour](../../../../examples/annotate_paper_tour.py) — `py -3.11 examples/annotate_paper_tour.py`
 - [poc_rotation_invariance_audit](../../../../examples/poc_rotation_invariance_audit.py) — `py -3.11 examples/poc_rotation_invariance_audit.py`
-- [poc_texture_rotation_identity](../../../../examples/poc_texture_rotation_identity.py) — `py -3.11 examples/poc_texture_rotation_identity.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

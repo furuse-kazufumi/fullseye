@@ -4,7 +4,7 @@ dim: annotate
 category: text
 in: image2d × text
 out: image2d
-examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_leak_localization, poc_machine_condition_fusion, poc_print_warpage_risk, poc_rotation_invariance_audit, poc_texture_rotation_identity]
+examples: [annotate_gallery, annotate_paper_tour, drawlist_deferred, poc_leak_localization, poc_machine_condition_fusion, poc_print_warpage_risk, poc_rotation_invariance_audit]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -95,7 +95,6 @@ ValueError
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`
 - [poc_print_warpage_risk](../../../../examples/poc_print_warpage_risk.py) — `py -3.11 examples/poc_print_warpage_risk.py`
 - [poc_rotation_invariance_audit](../../../../examples/poc_rotation_invariance_audit.py) — `py -3.11 examples/poc_rotation_invariance_audit.py`
-- [poc_texture_rotation_identity](../../../../examples/poc_texture_rotation_identity.py) — `py -3.11 examples/poc_texture_rotation_identity.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

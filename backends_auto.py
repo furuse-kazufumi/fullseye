@@ -1216,11 +1216,11 @@ def _sh_cooc(p):
         xq = (np.clip(np.asarray(v, np.float64), 0, 1) * (lv - 1)).astype(np.uint8)
         # ★b >= 0.75 で 4 方向(0/45/90/135 度)の平均を取る。既定 b=0.5 は
         #   従来どおり 0 度だけなので、**既存の結果は 1 ビットも変わらない**。
-        #   効くかどうかは a(共起距離)で決まる(poc_texture_rotation_identity、
-        #   実写 3 素材 x 12 角度): 距離 1 で取り違え 3/36 -> 0/36 と効き、
-        #   距離 2(既定)では両方 0/36 だが brick の余裕が増え、距離 4 では
-        #   3/36 -> 8/36 と**悪化**する。悪化の原因は平均ではなく分母 ——
-        #   距離を伸ばすと 3 素材の差そのものが 0.0448 -> 0.0221 に潰れる。
+        #   効くかどうかは a(共起距離)で変わる(poc_real_texture_invariance
+        #   の節 6、実写 3 素材): 等方な素材には短中距離で効き、異方な brick には
+        #   距離 4 でだけ効く(振れ幅/分解能 3.13 -> 1.54)。距離 1 では brick は
+        #   逆に悪化(0.30 -> 0.56)。★根っこは距離を伸ばすと分解能そのものが
+        #   0.0328 -> 0.0122 と潰れること。
         angles = [0.0, np.pi / 4, np.pi / 2, 3 * np.pi / 4] if b >= 0.75 else [0.0]
         glcm = skfeat.graycomatrix(xq, distances=[1 + int(a * 3)], angles=angles,
                                    levels=lv, symmetric=True, normed=True)
@@ -1564,7 +1564,7 @@ SEED: list[tuple] = [
      'Hu の第 1 不変モーメント(``skimage.measure.moments_hu`` の\n``hu[0]``)の絶対値。回転・スケール・平行移動に対して不変な形状記述子。\nHALCON の ``moments_region_2nd_invar``（Geometric moments of regions.）\nに相当する近似(HALCON 独自の相対不変モーメント定義とは厳密には異なり、\n古典的な Hu モーメントで代用している)。\n\n``a``, ``b`` は未使用。'),
     # Haralick texture (image -> feature)
     ("cooc_feature_matrix", "texture", IMG, FEA, "cooc", {"prop": "energy"},
-     'グレーレベル共起行列(GLCM、``skimage.feature.graycomatrix``、16 階調\nに量子化、距離 ``1+3*a``、角度 0°)から Haralick テクスチャ特徴量\n``energy``(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算\nする。HALCON の ``cooc_feature_matrix``（Calculate gray value features\nfrom a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を\n同時に返せるが、ここでは energy・角度 0° 固定に単純化)。\n\n``a`` が共起を取る画素間距離を 1〜4 の範囲で振る。\u2605``b >= 0.75`` で **0/45/90/135 度の 4 方向を平均**する(既定 ``b=0.5`` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。\n\n実写テクスチャ(brick / grass / gravel)を 12 角度回して測ると(``poc_texture_rotation_identity``)、**効くかどうかは ``a`` で決まる**:\n\n* 距離 1(``a=0``): 取り違え **3/36 -> 0/36**。効く。\n* 距離 2(既定 ``a=0.5``): どちらも 0/36 だが、brick の振れ幅は素材間差の **1.36 -> 0.63 倍**に下がる。余裕が増える。\n* 距離 4(``a=1``): **3/36 -> 8/36 と悪化する**。\n\n悪化の原因は平均そのものではなく**分母**: 距離を伸ばすと 3 素材の 0 度での差そのものが 0.0448 -> 0.0221 と半分に潰れる。残り少ない差を平均すると、先に消える。**長い距離で使うときは、平均を掛ける前に素材が分かれているかを確かめること。**'),
+     'グレーレベル共起行列(GLCM、``skimage.feature.graycomatrix``、16 階調\nに量子化、距離 ``1+3*a``、角度 0°)から Haralick テクスチャ特徴量\n``energy``(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算\nする。HALCON の ``cooc_feature_matrix``（Calculate gray value features\nfrom a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を\n同時に返せるが、ここでは energy・角度 0° 固定に単純化)。\n\n``a`` が共起を取る画素間距離を 1〜4 の範囲で振る。\u2605``b >= 0.75`` で **0/45/90/135 度の 4 方向を平均**する(既定 ``b=0.5`` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。\n\n実写テクスチャ(brick / grass / gravel)を回して測ると(``poc_real_texture_invariance`` の節 6)、**効くかどうかは距離 ``a`` で変わる**:\n\n* まず ``a`` を伸ばすと**素材どうしの分解能そのものが潰れる**(0.0328 -> 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の **0.30 -> 3.13 倍**へ膨らむ。\n* 4 方向平均は**等方な素材には短中距離で効く**(grass 0.23 -> 0.12、gravel 0.20 -> 0.11)。\n* 異方な brick には**距離 4 でだけ効き**(3.13 -> 1.54)、**距離 1 では逆に悪化する**(0.30 -> 0.56)。\n* 距離 4 まで来ると等方な grass すら改善しない(0.17 -> 0.19)—— 分解能が潰れたあとは平均しても取り返せない。\n\n**長い距離で使うときは、平均を掛ける前に素材がまだ分かれているかを確かめること。**なお「取り違えの回数」で測ると手順(補間の次数・切り出し方・角度の刻み)に敏感で、比(振れ幅 / 分解能)のほうが安定する。'),
     # windowed histogram equalisation
     ("equ_histo_image_rect", "gray", IMG, IMG, "lut", {"kind": "equalize_local"},
      'ブロック単位のヒストグラム平坦化。画像を ``nb x nb``(``nb=2+4*a``)\n個のブロックに分割し、各ブロックごとに独立して(64 ビンの)ヒストグラム\n平坦化を行う ―― 局所的な照明ムラに対して ``equ_histo_image``(画像全体を\n一括処理)より頑健だが、ブロック境界に段差(ブロックアーティファクト)が\n出ることがある。HALCON の ``equ_histo_image_rect``（Histogram\nlinearization within a rectangluar mask.）に相当。\n\n``a`` がブロック分割数を 2〜6 の範囲で振る。``b`` は未使用。'),
