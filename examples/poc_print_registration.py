@@ -1282,9 +1282,12 @@ def main() -> int:
     # 1) 合成器: 仕込んだスクリーン角と線数がスキャンから読める
     assert sc["ang_err"] < 1.0, sc["ang_err"]
     assert sc["lpi_err"] < 3.0, sc["lpi_err"]
-    # 2) ゼロ点 A は壊れ、B は壊れない
+    # 2) ゼロ点 A は壊れ、B は折り返さない。重心の傾きは閉形式で予測できる
     assert zero["err_a"] > 20.0, zero["err_a"]
-    assert zero["err_b"] < 1.0, zero["err_b"]
+    assert abs(zero["k_art"] - zero["k_pred"]) < 0.06, (zero["k_art"], zero["k_pred"])
+    assert abs(zero["k_flat"]) < 0.02, zero["k_flat"]
+    assert zero["ripple"] > 10.0 * zero["ripple_taper"], (zero["ripple"],
+                                                          zero["ripple_taper"])
     # 3) Y 版だけが折り返す予測
     assert np.hypot(*pred["Y"]) < np.hypot(*PLATES[2][3]) - 1.0, pred["Y"]
     assert np.hypot(*pred["Y"]) < TOL_PX < np.hypot(*PLATES[2][3])
