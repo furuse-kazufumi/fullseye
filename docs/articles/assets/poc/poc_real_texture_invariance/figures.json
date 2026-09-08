@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_textures.png",
+  "name": "textures",
+  "caption": "分解能(草と砂利の距離)は 0.01250。brick はその 9.6 倍動く。",
+  "shape": [
+   859,
+   754,
+   3
+  ]
+ },
+ {
+  "file": "02_drift.png",
+  "name": "drift",
+  "caption": "brick だけが 1 を大きく超える(最大 9.6 倍)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_methods.png",
+  "name": "methods",
+  "caption": "等方な 2 つは 10 倍良くなる。異方性は符号化では消せない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_summary.png",
+  "name": "summary",
+  "caption": "単位はどれも「分解能に対する比」。1 を超えたら分類は成り立たない。",
+  "shape": [
+   152,
+   484,
+   3
+  ],
+  "csv": "04_summary.csv",
+  "tsv": "04_summary.tsv"
+ }
+]

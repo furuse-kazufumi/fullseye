@@ -47,6 +47,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `sk_blur_effect` は `iv_unsharp_deblur`。参照なし指標が選ぶ手法は PSNR で
   4.98 / 3.26 dB 損。★**ノブ(`nsr`)で動く 6.22 dB は、脱畳み込みの利得
   1.36 dB の 4.6 倍** —— 固定したノブで比べるのは比較ではない。
+- ★実写 PoC 6 本目 `poc_real_texture_invariance`(展示 105)。実写テクスチャを
+  既知の角度で回し、**素材間の距離を基準にして**ずれを測る。異方な brick は
+  分解能の 9.64 倍動き(等方な grass / gravel は 0.17 / 0.19 倍)、補間ゼロの
+  厳密 90 度でも 6.80 倍 —— 補間のせいではない。**回転不変な符号化に替えても
+  1.72 倍までしか下がらない**(1 を割らない)。
+- ★`sk_lbp` の `b` が未使用で `method` が `'default'` 固定だったので、
+  `b` を符号化(`default` / `ror` / `uniform` / `nri_uniform`)の選択に配線
+  (`b=0.5` は従来と完全に同一)。`hough_circle_trans` と同じ形が同日 2 件目。
+- `fill_disparity` の docstring が実装と食い違っていた(既定マスクは
+  `isfinite` だけ。「finite & positive」は誤り)。実写の +inf で発覚。
 - CI で赤になった自分の門を 2 つ直した(`docs/KNOWN_ISSUES.md` §44.8):
   リポジトリ非同梱の `data/halcon_operators.json` を無条件に読んでいた /
   探針を全 sort に広げた初回に torch 必須 op へ到達し、**「壊れている」と

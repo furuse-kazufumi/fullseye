@@ -4,7 +4,7 @@ dim: 2d
 category: texture
 in: image
 out: image
-examples: [gallery2d_texture_freq]
+examples: [gallery2d_texture_freq, poc_real_texture_invariance]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -37,7 +37,9 @@ version: 0.1.10  # fullseye lib version this note was generated for
 
 LBP(Local Binary Pattern、局所二値パターン)。各画素を中心に円周上の近傍画素と大小比較して 2 進コードを作る、照明変化に強いテクスチャ記述子。
 
-HALCON に直接対応するものは無い。実装は ``feature.local_binary_pattern(v, 8, 1+int(a*3))`` を正規化したもの —— 近傍点数 P=8 は固定、a は半径 R を 1〜4 に振る(半径が大きいほど粗いスケールのテクスチャを拾う)。b は未使用。method は既定の ``'default'``(回転不変ではない、最も基本的な符号化)。
+HALCON に直接対応するものは無い。実装は ``feature.local_binary_pattern(v, 8, 1+int(a*3))`` を正規化したもの —— 近傍点数 P=8 は固定、a は半径 R を 1〜4 に振る(半径が大きいほど粗いスケールのテクスチャを拾う)。★``b`` は符号化 ``method`` を選ぶ ―― ``b<0.60`` で ``'default'``(既定。回転不変ではない)、``<0.75`` で ``'ror'``、``<0.90`` で ``'uniform'``、それ以上で ``'nri_uniform'``。
+
+実写のテクスチャで測ると、**回転不変な符号化にしても異方な素材は救えない** ―― brick / grass / gravel で、回転による自分自身からのずれを素材間の最小距離で割った比は ``'default'`` で 9.64 / 0.17 / 0.19、``'uniform'`` で **1.72** / 0.02 / 0.01。等方な 2 つは 10 倍良くなるのに、brick は 1 を割らない(回した自分より別の素材のほうが近い)。LBP の回転不変性は**局所パターンの巡回**に対するもので、**素材そのものの向きの分布**は消せないため。詳細 = ``examples/poc_real_texture_invariance.py``。
 
 ## 詳しい使い方ガイド
 
@@ -60,6 +62,7 @@ sk_lbp 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
+- [poc_real_texture_invariance](../../../../examples/poc_real_texture_invariance.py) — `py -3.11 examples/poc_real_texture_invariance.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(187 例)
+### 2-D 画像/信号/幾何(188 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -181,6 +181,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **shape_descriptors**
 - **輪郭の楕円フーリエ記述子(平滑化・不変マッチング)** — 閉輪郭をフーリエ級数で表し、高調波打ち切りで平滑化、回転/拡大/移動/始点に不変な記述子で形状検索する(EFD, Kuhl-Giardina)。 `py -3.11 examples/contour_fourier.py`
 - **XLD 輪郭 → 不変記述子 → 対応点ワープ(区分アフィン / TPS)を真値つきで一巡** — from_xld で (row,col) 点列を取り、invariants の回転/拡大/移動/始点不変を 1e-9 で確かめ、add_frame_corners + 2 種のワープで恒等・平行移動・1 点の着地・面積比 1.25^2 を検算する。(row,col) のまま渡す座標順の事故が例外なく黙って外れることも示す。 `py -3.11 examples/shape2d_morph_descriptor_tour.py`
+- **実写テクスチャを回す(回転不変は等方な素材でだけ成り立つ)** — scikit-image 同梱の実写テクスチャ brick / grass / gravel(いずれも CC0)を既知の角度で回し、sk_lbp のヒストグラム χ² 距離で自分自身からのずれを測る。★基準を先に置く: 素材間の最小距離(草と砂利)0.01250 が分解能。★★brick は 5 度で 0.0433、60 度で 0.1205 = 分解能の 9.64 倍 ―― 回した自分より別の素材のほうが近い。grass / gravel は 0.17 / 0.19 倍で実質不変。★対照群 2 つ: 補間だけ(+7/-7 度往復)brick 0.03685、補間ゼロの厳密 90 度(np.rot90)でも 0.08501 = 6.80 倍 ―― 補間のせいではない。★異方性は独立に測れる: 局所一貫性 中央 0.917 / 0.308 / 0.320、勾配方向の大域的な偏り R = 0.309 / 0.027 / 0.029 で、10 倍違うのは brick だけ。★★回転不変な符号化に替えると default 9.64 → ror 5.49 → uniform 1.72 だが 1 を割らない(等方な 2 つは 0.17 → 0.02)。nri_uniform は 4.24 なので「uniform だから」ではなく「回転不変だから」効いている。★sk_lbp の b が未使用で method が 'default' 固定だったので、b を符号化の選択に配線した(b=0.5 は従来と完全に同一)。 `py -3.11 examples/poc_real_texture_invariance.py`
 
 **drawing**
 - **画像にマーカー/線/円/輪郭を直接描く(ラスタ描画)** — 作業者が指定した対応点を画像そのものに焼き込むラスタ描画op(imagedraw)。描いた既知シーンを検出器が回収し結果を描き返す(描画→検出→注釈)。 `py -3.11 examples/draw_annotate.py`
@@ -1798,7 +1799,7 @@ _計 899 ops / 48 categories。_
 - `sk_meijering` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`
 - `sk_hessian` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`
 - `sk_gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
-- `sk_lbp` `image → image` · 例: `gallery2d_texture_freq`
+- `sk_lbp` `image → image` · 例: `gallery2d_texture_freq`, `poc_real_texture_invariance`
 - `sk_entropy` (halcon: `entropy_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `sk_shape_index` `image → image` · 例: `gallery2d_texture_freq`
 - `deviation_image` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
