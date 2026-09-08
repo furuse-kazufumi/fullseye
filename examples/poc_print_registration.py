@@ -1095,29 +1095,43 @@ def section8_metrics(sweep_am, zero):
         print("  %-18s %14.4f %14.3f %13.1f %% %10d / %d"
               % (label, rms, mx_e, rate, miss, SWEEP.size))
     print()
-    a, b = res["相関 AM"], res["重心(ゼロ点 B)"]
+    a, lp, b = res["相関 AM(素)"], res["相関 AM(低域通過)"], res["重心(ゼロ点 B)"]
     print("  → ★★**勝者が入れ替わる**。")
-    print("     物差し 1(精度)では 相関 AM %.4f px 対 重心 %.4f px —— "
-          % (a["rms"], b["rms"]))
-    print("     **相関が %.1f 倍の勝ち**。" % (b["rms"] / a["rms"]))
-    print("     物差し 2(判定)では 重心 %.1f %% 対 相関 AM %.1f %% —— "
-          % (b["rate"], a["rate"]))
-    print("     **重心の勝ち**。相関 AM は不合格の版を %d 回「合格」と言った。"
-          % a["miss"])
+    print("     物差し 1(精度)の 1 位は **相関 AM(素)の %.4f px**。低域通過は"
+          % a["rms"])
+    print("     %.4f px(**%.0f 倍**悪い)、重心は %.4f px。"
+          % (lp["rms"], lp["rms"] / a["rms"], b["rms"]))
+    print("     物差し 2(判定)の 1 位は **相関 AM(低域通過)の %.1f %%**。"
+          % lp["rate"])
+    print("     素の相関は **%.1f %%** で最下位 —— 不合格の版を %d/%d 回"
+          % (a["rate"], a["miss"], SWEEP.size))
+    print("     「合格」と言った(重心は %d 回)。" % b["miss"])
     print("     どちらの数字も正しく、どちらか 1 つだけを見た人は反対の結論を出す。")
     print()
-    print("  ★★1 つに畳むなら **判定の方を採るべき**: 精度の差は %.4f px"
-          % (b["rms"] - a["rms"]))
-    print("     (= %.1f µm)で、そもそも公差 %.1f px の **%.1f %%** しかない。"
-          % ((b["rms"] - a["rms"]) * UM_PER_PX, TOL_PX,
-             100 * (b["rms"] - a["rms"]) / TOL_PX))
-    print("     一方、判定の差は「刷り直しになる紙」そのもの。")
-    print("  ★相関 FM は両方で勝つ(%.4f px / %.1f %%)—— **物差しを増やして"
+    print("  ★★**崖を避ける代償は精度**。網点を低域通過で消すと折り返しは")
+    print("     無くなるが(絵柄しか残らないので格子が消える)、相関のピークが")
+    print("     鈍って精度は %.0f 倍落ちる。それでも公差 %.1f px = %.0f µm に対しては"
+          % (lp["rms"] / a["rms"], TOL_PX, TOL_PX * UM_PER_PX))
+    print("     %.4f px = %.1f µm なので**まだ十分**。**精度の桁は余っていて、"
+          % (lp["rms"], lp["rms"] * UM_PER_PX))
+    print("     足りないのは一意性の方だった**。")
+    print("  ★相関 FM は両方で勝つ(%.4f px / %.1f %%)—— 素材を替えられるなら"
           % (res["相関 FM"]["rms"], res["相関 FM"]["rate"]))
-    print("     初めて「スクリーンを替える」が正解だと分かる**。")
+    print("     それが最善。**物差しを 2 つ置いて初めてこの順位が見える**。")
     figs.save_table("metrics", ["手法", "RMS 誤差 px", "最大 誤差 px",
                                 "判定一致率", "見落とし"], rows,
                     title="物差し 2 つ(公差 %.1f px)" % TOL_PX, col_w=104)
+    if figs.enabled():
+        figs.save_plot(
+            "metrics_sweep",
+            [("真値", SWEEP, SWEEP)]
+            + [(lab, SWEEP, np.array([np.hypot(*e) for e in ests]))
+               for lab, ests in methods.items()]
+            + [("公差 %.1f px" % TOL_PX, SWEEP, np.full(SWEEP.size, TOL_PX))],
+            xlabel="仕込んだずれ t [px]", ylabel="推定した |ずれ| [px]",
+            title="4 つの手法(Y 版 0°)",
+            caption="素の相関だけが折り返して公差の線を何度も下に横切る = "
+                    "不合格の版を合格と言う")
     return res
 
 
