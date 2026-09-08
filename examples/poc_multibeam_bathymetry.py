@@ -1404,7 +1404,9 @@ def main() -> int:
     assert thermo["e_true"] < 1e-6, thermo["e_true"]
     assert 0.05 * thermo["e_const"] < thermo["e_fit"] < 0.9 * thermo["e_const"], thermo
     # 12. 道具の穴: 音響測深そのものの op は 4 層のどこにも無い
-    for name in ("sonar", "swath", "bathym", "sound_speed", "tvu"):
+    #     (op_find が語幹で拾う件数は 0 でないことがあるので、名前まで見る)
+    for name in ("sonar", "swath", "bathym", "sound_speed", "tvu", "footprint",
+                 "crossline", "raytrace_layers"):
         assert name in holes["holes"], (name, holes["holes"])
 
     print(f"\n所要 {time.perf_counter() - t0:.1f} s")
