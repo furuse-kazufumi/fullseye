@@ -445,7 +445,8 @@ def sweep_frames(n_frames: int, modes, seed0: int = 0, targets: bool = True, **k
     """
     if isinstance(modes, str):
         modes = (modes,)
-    cols = np.r_[HALF_PX - BIN_CENTERS_PX[::-1], HALF_PX + BIN_CENTERS_PX]         if targets else np.zeros(0)
+    cols = (np.r_[HALF_PX - BIN_CENTERS_PX[::-1], HALF_PX + BIN_CENTERS_PX]
+            if targets else np.zeros(0))
     hit_z = {m: np.full((N_BIN, 2 * n_frames), -np.inf) for m in modes}
     fa_z = {m: [] for m in modes}
     fa_x = {m: [] for m in modes}
