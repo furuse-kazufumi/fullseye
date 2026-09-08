@@ -812,7 +812,8 @@ def section_cliff(scene):
                            for d in abs_d])
             series.append((f"ε = {eps:.2f}", abs_d, ys))
         figs.save_plot("cliff_curves", series,
-                       xlabel="放射率の**絶対**誤差 Δε", ylabel="温度の誤差 ΔT [K]",
+                       xlabel="放射率の絶対誤差 Δε(相対ではない)",
+                       ylabel="温度の誤差 ΔT [K]",
                        title="崖 —— 同じ Δε でも ε が小さいほど落ちる",
                        caption="LWIR・T_obj = 350 K・T_refl = 300 K。傾きは "
                                "−(T/n)(1−L_r/L_o)/ε で **1/ε**。"
