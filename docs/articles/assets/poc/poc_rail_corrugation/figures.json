@@ -1,0 +1,104 @@
+[
+ {
+  "file": "01_planted_components.png",
+  "name": "planted_components",
+  "caption": "",
+  "shape": [
+   320,
+   547,
+   3
+  ],
+  "csv": "01_planted_components.csv",
+  "tsv": "01_planted_components.tsv"
+ },
+ {
+  "file": "02_transfer.png",
+  "name": "transfer",
+  "caption": "10 m 弦は λ=5.0 / 2.5 / 1.67 / 1.25 / 1.0 m で厳密に 0、λ=10 / 3.33 / 2.0 m で 2 倍。2 本の弦の谷は重なる所がある",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_profile_vs_versine.png",
+  "name": "profile_vs_versine",
+  "caption": "長波長ほど弦は小さく読む。正矢どうしも一致しない",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_octave_bands.png",
+  "name": "octave_bands",
+  "caption": "",
+  "shape": [
+   296,
+   392,
+   3
+  ],
+  "csv": "04_octave_bands.csv",
+  "tsv": "04_octave_bands.tsv"
+ },
+ {
+  "file": "05_deconvolution.png",
+  "name": "deconvolution",
+  "caption": "",
+  "shape": [
+   296,
+   354,
+   3
+  ],
+  "csv": "05_deconvolution.csv",
+  "tsv": "05_deconvolution.tsv"
+ },
+ {
+  "file": "06_dual_chord.png",
+  "name": "dual_chord",
+  "caption": "",
+  "shape": [
+   320,
+   519,
+   3
+  ],
+  "csv": "06_dual_chord.csv",
+  "tsv": "06_dual_chord.tsv"
+ },
+ {
+  "file": "07_aliasing.png",
+  "name": "aliasing",
+  "caption": "",
+  "shape": [
+   152,
+   377,
+   3
+  ],
+  "csv": "07_aliasing.csv",
+  "tsv": "07_aliasing.tsv"
+ },
+ {
+  "file": "08_aliasing_wave.png",
+  "name": "aliasing_wave",
+  "caption": "標本の点だけを見ると、長い波が 1 本あるようにしか見えない",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_asymmetric_chord.png",
+  "name": "asymmetric_chord",
+  "caption": "",
+  "shape": [
+   320,
+   339,
+   3
+  ],
+  "csv": "09_asymmetric_chord.csv",
+  "tsv": "09_asymmetric_chord.tsv"
+ }
+]

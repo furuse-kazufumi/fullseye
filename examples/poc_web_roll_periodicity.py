@@ -716,7 +716,7 @@ def section_two_rolls() -> dict:
     figs.save_plot("spectrum_two",
                    [("MD スペクトル", cc, sp["m"][band]),
                     ("ロール台帳", [CIRC[n] for n, _ in ROLLS],
-                     [float(e["m"][band].max()) * 0.06] * len(ROLLS))],
+                     [float(sp["m"][band].max()) * 0.06] * len(ROLLS))],
                    xlabel="周長 C = 1/f [mm]", ylabel="振幅",
                    title="2 本傷つけた web の MD スペクトル",
                    caption="下の点が台帳の 5 本。山は %s と %s に立つ。"

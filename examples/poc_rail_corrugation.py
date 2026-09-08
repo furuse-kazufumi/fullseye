@@ -203,6 +203,27 @@ def section_scene():
                     ["波長 [m]", "振幅 [mm]", "|H| 10m 弦", "|H| 6m 弦",
                      "|H| 非対称", "覚え書き"], rows,
                     title="仕込んだ凹凸と弦の伝達関数(予測)")
+    if figs.enabled():
+        lam = np.geomspace(0.3, 30.0, 1200)
+        figs.save_plot(
+            "transfer",
+            [("10 m 弦", lam, h_sym(lam, CHORD_A)),
+             ("6 m 弦", lam, h_sym(lam, CHORD_B)),
+             ("非対称 3.7/6.3 m", lam, h_asym(lam))],
+            xlabel="波長 λ [m]", ylabel="|H(λ)|",
+            title="弦(正矢)の伝達関数 —— 谷は「何 mm あっても 0 mm」",
+            caption="10 m 弦は λ=5.0 / 2.5 / 1.67 / 1.25 / 1.0 m で厳密に 0、"
+                    "λ=10 / 3.33 / 2.0 m で 2 倍。2 本の弦の谷は重なる所がある")
+        y = profile()
+        m = (X >= 40.0) & (X <= 80.0)
+        figs.save_plot(
+            "profile_vs_versine",
+            [("真値 y(x)", X[m], y[m]),
+             ("10 m 弦の正矢", X[m], chord_versine(y, CHORD_A)[m]),
+             ("6 m 弦の正矢", X[m], chord_versine(y, CHORD_B)[m])],
+            xlabel="キロ程 x [m]", ylabel="高さ [mm]",
+            title="同じレールを 2 本の弦で読む(40–80 m)",
+            caption="長波長ほど弦は小さく読む。正矢どうしも一致しない")
     return {"rows": rows}
 
 
@@ -400,6 +421,27 @@ def section_sampling():
     figs.save_table("aliasing", ["真の波長 [m]", "振幅 [mm]",
                                  "化けた波長 [m]", "実測 [mm]"], rows,
                     title="0.25 m 標本では短波長が長波長に化ける")
+    if figs.enabled():
+        s30 = {c[0]: (1.0 if abs(c[0] - 0.030) < 1e-9 else 0.0) for c in COMPONENTS}
+        y30 = profile(scale=s30)
+        m = (X >= 60.0) & (X <= 66.0)
+        mc = (xc >= 60.0) & (xc <= 66.0)
+        la = _alias(0.030, CAR_DX)
+        # 標本点に最小二乗で当てた「化けた波」を描く(位相も推測しない)
+        xs, ys = xc, y30[::step]
+        a = np.column_stack([np.cos(2 * np.pi * xs / la),
+                             np.sin(2 * np.pi * xs / la), np.ones_like(xs)])
+        cf = np.linalg.lstsq(a, ys, rcond=None)[0]
+        ghost_wave = (cf[0] * np.cos(2 * np.pi * X[m] / la)
+                      + cf[1] * np.sin(2 * np.pi * X[m] / la) + cf[2])
+        figs.save_plot(
+            "aliasing_wave",
+            [("真値(30 mm の波状摩耗)", X[m], y30[m]),
+             ("0.25 m 標本の点", xc[mc], ys[mc]),
+             ("標本点に当てた %.2f m の波" % la, X[m], ghost_wave)],
+            xlabel="キロ程 x [m]", ylabel="高さ [mm]",
+            title="30 mm の波状摩耗が 0.75 m のうねりに化ける",
+            caption="標本の点だけを見ると、長い波が 1 本あるようにしか見えない")
     s = {c[0]: (1.0 if c[0] >= 2 * CAR_DX else 0.0) for c in COMPONENTS}
     yc0 = profile(scale=s)[::step]
     la30 = _alias(0.030, CAR_DX)
