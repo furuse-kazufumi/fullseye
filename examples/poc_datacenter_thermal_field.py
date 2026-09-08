@@ -661,7 +661,8 @@ def section_methods_cliff(hi=1) -> dict:
                 "傾きは同じ。" % gains["rbf"])
     return {"curves": curves, "cross": cross, "spread": spread,
             "cross_pred": cross_pred, "slopes": slopes, "gains": gains,
-            "slope_pred": slope_pred, "sl_spread": sl_spread, "ratio": ratio}
+            "slope_pred": slope_pred, "sl_spread": sl_spread, "ratio": ratio,
+            "floor_c": floor_c}
 
 
 # --------------------------------------------------------------------------- #
