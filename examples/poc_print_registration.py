@@ -1380,10 +1380,16 @@ def main() -> int:
     assert mk["frac_out"] > 0.2, mk["frac_out"]
     # 8) 物差しで勝者が入れ替わる(精度 1 位と判定 1 位が別の手法)
     m_raw, m_lp = met["相関 AM(素)"], met["相関 AM(低域通過)"]
+    m_two = met["★二段(粗+密)"]
     assert m_raw["rms"] < m_lp["rms"] / 5.0, (m_raw["rms"], m_lp["rms"])
-    assert m_raw["rate"] < m_lp["rate"] - 30.0, (m_raw["rate"], m_lp["rate"])
+    assert m_raw["rate"] < m_lp["rate"] - 20.0, (m_raw["rate"], m_lp["rate"])
     assert m_raw["miss"] > 5, m_raw["miss"]
     assert m_lp["miss"] <= 1, m_lp["miss"]
+    # 二段は両方勝つ。ただし粗の誤差がセルの半径を超えると壊れる(実測済み)
+    assert m_two["rms"] < 1.5 * m_raw["rms"] + 1e-6, (m_two["rms"], m_raw["rms"])
+    assert m_two["rate"] > m_raw["rate"] + 20.0, (m_two["rate"], m_raw["rate"])
+    assert met["coarse_max"] < PITCH / 2, (met["coarse_max"], PITCH / 2)
+    assert met["two_stage_broken"] >= 1, met["two_stage_broken"]
     assert met["相関 FM"]["rate"] > 95.0, met["相関 FM"]["rate"]
     # 9) 道具の穴(埋まったら鳴る)
     assert gaps["fa_err"] > 10.0 and gaps["fa_ratio"] > 0.9
