@@ -1145,16 +1145,17 @@ def section_dtm(scene):
           "どちらも「地形」に見える。")
     if figs.enabled():
         figs.save_grid("dtm",
-                       [np.full_like(dtm, DEPTH_REF), filled,
-                        filled - DEPTH_REF, slope],
-                       ["真の海底(平ら、%.0f m)" % DEPTH_REF,
-                        "測った DTM [m]", "差 [m](0 が中間色)", "見かけの勾配 [度]"],
+                       [dtm1_fill, filled, filled - DEPTH_REF, slope],
+                       ["(a) 測線 1 本だけ(右半分は未測)", "(b) 測線 2 本",
+                        "(c) 真の海底との差 [m]", "(d) 見かけの勾配 [度]"],
                        ncols=2, signed=[False, False, True, False],
-                       title="平らな海底の DTM —— 測線の継ぎ目に段差が立つ",
+                       title="平らな海底の DTM —— 重なり帯が縞になる",
                        caption=f"測線 2 本、間隔 {spacing:.0f} m。差は "
                                f"{float(np.nanmin(filled-DEPTH_REF)):+.2f} 〜 "
-                               f"{float(np.nanmax(filled-DEPTH_REF)):+.2f} m、"
-                               f"見かけの勾配は最大 {float(inner.max()):.1f} 度。")
+                               f"{float(np.nanmax(filled-DEPTH_REF)):+.2f} m。"
+                               f"重なり帯では 2 本の値が最大 {abs(a-b):.2f} m 食い違うので、"
+                               f"格子化すると**どちらの測線の三角形を踏んだか**で"
+                               f"値が飛び、縞になる(勾配は最大 {float(inner.max()):.0f} 度)。")
         figs.save_plot(
             "across_track",
             [("測った深さ", y_meas, z_meas),
