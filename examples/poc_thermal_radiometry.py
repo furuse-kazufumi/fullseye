@@ -479,6 +479,16 @@ def section_scene():
         err = float(np.sqrt(np.mean((got - t_true) ** 2)))
         cases.append((label, err))
         print(f"  {label:<24} 往復誤差 rms = {err:.3e} K")
+    # ★Case-0 が**厳密に 0** なのは 350.0 K がたまたま表の節点に乗るから。
+    #   節点を外すと補間の誤差が見える —— **0 を床と呼ぶのは嘘**になる。
+    t_off = 350.017
+    l_off = float(_fwd(t_off))
+    err_off = abs(float(invert_radiance(tab, l_off, eps, T_REFL_REF, TAU_REF,
+                                        T_ATM_REF)) - t_off)
+    cases.append(("Case-0 節点を外した温度", err_off))
+    print(f"  ★{t_true:.1f} K は表の節点にちょうど乗るので上は**厳密に 0**。"
+          f"節点を外した {t_off} K では {err_off:.3e} K ——")
+    print(f"     これが表の刻み {TAB_STEP} K に由来する本当の床(2 次補間誤差)。")
     # NETD が本当に仕様どおり効いているか、`fs.noise_sigma` で逆に測り返す。
     flat_c = cam.to_dn(np.full((64, 64), l_true), rng, quantize=False)
     flat_q = np.rint(flat_c)
