@@ -3188,7 +3188,7 @@ def _invert_blend(a, claim, mode):
     return a * (1.0 - w)[..., None] + inv * w[..., None]
 
 
-def annotate_invert_visibility(img, mask, mode="complement"):
+def annotate_invert_visibility(img, mask, mode="complement", alpha=1.0):
     """反転色が**その地の上で本当に見えるか**を、描く前に測る。
 
     反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、
