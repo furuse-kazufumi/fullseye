@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "実写の空は平坦ではない。頑健 σ 1474 e- に対し素の std は 6698 e-。",
+  "shape": [
+   965,
+   3040,
+   3
+  ]
+ },
+ {
+  "file": "02_recovery.png",
+  "name": "recovery",
+  "caption": "開口 1 つあたり C = 6677 e- の足し算として説明できる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_snr_lies.png",
+  "name": "snr_lies",
+  "caption": "SNR は測ったフラックスから作るので、混入で分子が膨らむと S/N も膨らむ(F=2000 で 19.2 対 4.2)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_recovery_table.png",
+  "name": "recovery_table",
+  "caption": "混雑側は桁が変わる。中央値は「外れ値に強い」のであって、視野の半分が汚染されていたら中央値こそが汚染。",
+  "shape": [
+   200,
+   574,
+   3
+  ],
+  "csv": "04_recovery_table.csv",
+  "tsv": "04_recovery_table.tsv"
+ }
+]

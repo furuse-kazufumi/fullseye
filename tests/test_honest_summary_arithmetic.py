@@ -36,6 +36,20 @@ ROOT = Path(__file__).resolve().parents[1]
 PARITY = ROOT / "docs" / "HALCON_PARITY.md"
 
 
+#: HALCON の全 operator 表。**リポジトリには入れていない**(549 KB の外部由来
+#: コーパスで、再配布の可否を確かめていない)。手元にしか無いので、この門は
+#: 「無ければ理由を言って skip」にする —— ★2026-09-08 の CI がここで赤に
+#: なった: 手元にあるものを CI にも在ると思い込むと、手元だけ緑になる
+#: (`feedback_gate_computed_a_verdict_then_discarded_it` と同じ型)。
+HALCON_TABLE = ROOT / "data" / "halcon_operators.json"
+
+requires_halcon_table = pytest.mark.skipif(
+    not HALCON_TABLE.exists(),
+    reason="data/halcon_operators.json が無い(リポジトリ非同梱の外部コーパス)"
+            " —— parity の内訳はこの表が要る",
+)
+
+
 def _counts():
     """``honest_summary`` と同じ集合を、同じ手順で数え直す。"""
     warnings.filterwarnings("ignore")
@@ -56,6 +70,7 @@ def _counts():
     return reg_counted, nary, a["n_real"]
 
 
+@requires_halcon_table
 @pytest.mark.slow
 def test_the_headline_equals_the_union_of_its_parts():
     pytest.importorskip("cv2", reason="満杯の環境でだけ意味がある")
@@ -70,6 +85,7 @@ def test_the_headline_equals_the_union_of_its_parts():
     assert int(m.group(2)) == n_real, (m.group(2), n_real)
 
 
+@requires_halcon_table
 @pytest.mark.slow
 def test_the_breakdown_does_not_claim_a_sum_that_is_not_one():
     """内訳の行が「A + B」を名乗るなら、A と B は本当に交わらないこと。"""
