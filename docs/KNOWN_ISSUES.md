@@ -1727,3 +1727,27 @@ Otsu + 穴埋め + 面積 150 が真値 24 枚をちょうど当てる**(面積�
 CI は 3 つの matrix すべてに `skimage` extra を入れているので、実データ PoC は
 **必ず走る**。公開する図に使うのは CC0 / public domain / no known copyright
 restrictions のものだけ(Middlebury は研究・教育目的の引用付き利用、GCPR 2014)。
+
+### §44.8 前日の門が CI で赤になった 2 件(自分の回帰・修正済)
+
+実データ作業とは別に、§42 で入れた門が Linux CI で落ちた。**どちらも
+「手元にあるものが CI にも在る」と思い込んだ形**で、
+[[feedback_gate_computed_a_verdict_then_discarded_it]] の言う
+「手元緑・CI 赤」そのもの。
+
+1. **`tests/test_honest_summary_arithmetic.py`(2 件)** ——
+   `data/halcon_operators.json` は 549 KB の外部由来コーパスで**リポジトリに
+   入れていない**(再配布の可否を確かめていない)。手元にしか無いものを
+   無条件に読んでいた。ファイルが無ければ**理由を言って skip** するようにした。
+2. **`tests/test_op_probe_ledger.py::test_no_op_falls_back_or_raises_on_the_structured_probe`**
+   —— 探針を全 sort に広げた初回に、torch を要る op(`tb_points_to_voxel`)へ
+   **初めて到達した**。torch を入れない py3.10 / py3.12 では
+   `ImportError: needs the optional 'torch' backend` になる。
+   ★**「壊れている」と「この環境に無い」は別の判定**で、混ぜると環境差が
+   実装のバグに化ける。optional backend 起因は非 strict 環境では判定対象外にし、
+   満杯の環境(`FULLSEYE_REQUIRE_OPTIONAL=1`)では従来どおり失敗にする
+   (両方向に門が立つ、という ci.yml の既存の設計に合わせた)。
+
+**教訓**: 門の到達範囲を広げたら、**広げた先が環境依存でないかを同時に見る**。
+到達率 76 % -> 100 % は良い変更だったが、その 24 % には
+「この環境には無いから走らない op」も混ざっていた。

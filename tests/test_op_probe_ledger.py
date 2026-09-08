@@ -188,8 +188,24 @@ def test_probe_reaches_every_op_in_the_registry(probe):
         + "\n".join(f"  {n} [{s}]" for n, s in missing[:40]))
 
 
+#: 「optional backend が入っていない」だけの失敗は、この門の対象ではない。
+#: ★2026-09-08 の CI(py3.10 / py3.12、torch なし)がここで赤になった ——
+#: 探針を全 sort に広げた初回に、torch を要る op(``tb_points_to_voxel``)へ
+#: 初めて到達したため。**「壊れている」と「この環境に無い」は別の判定**で、
+#: 混ぜると環境差が実装のバグに化ける。満杯の環境
+#: (``FULLSEYE_REQUIRE_OPTIONAL=1``)では従来どおり失敗にする。
+_OPTIONAL_BACKEND = "needs the optional"
+
+
 def test_no_op_falls_back_or_raises_on_the_structured_probe(probe):
+    strict = os.environ.get("FULLSEYE_REQUIRE_OPTIONAL") == "1"
     bad = {k: v for k, v in probe.items() if v[0] in ("fallback", "raised")}
+    if not strict:
+        skipped = sorted(k for k, v in bad.items() if _OPTIONAL_BACKEND in v[1])
+        bad = {k: v for k, v in bad.items() if k not in skipped}
+        if skipped:
+            print("optional backend が無いので判定しなかった op %d 本: %s"
+                  % (len(skipped), ", ".join(skipped)))
     assert not bad, "ops that FAIL on the structured probe inputs (dead or broken):\n" + \
         "\n".join("  %s: %s" % (k, v[1]) for k, v in sorted(bad.items()))
 
