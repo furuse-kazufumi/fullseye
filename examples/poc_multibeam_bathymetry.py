@@ -509,7 +509,9 @@ def echo_envelope(prof, theta_deg: float, wavelength: float, spacing: float,
     返り値は ``(包絡線, 窓の先頭の時刻 [s], ビーム軸の往復時間 [s])``。
     """
     bw = bw0 / math.cos(math.radians(theta_deg))
-    lo = max(0.0, theta_deg - ECHO_SPAN_BW * bw)
+    # ★下限を 0 でクリップしない —— 直下ビームは片側だけになり、照らす帯が
+    #   半分になってしまう(フットプリントが半分に出る形で 1 度踏んだ)。
+    lo = theta_deg - ECHO_SPAN_BW * bw
     hi = min(88.0, theta_deg + ECHO_SPAN_BW * bw)
     sub = np.linspace(lo, hi, ECHO_N_SUB)
     _, t_sub, ok_sub = trace_to_depth(prof, sub, depth)
@@ -717,56 +719,71 @@ def section_cliff(scene, floor):
     lam, d = floor["lam"], floor["d"]
     # 全経路: ビーム形成で角度 → レイトレースで走時 → エコー検出 → 等音速で処理
     ths = np.arange(0.0, 71.0, 1.0)
-    meas, exact, tan2 = [], [], []
+    meas, noecho, exact, tan2 = [], [], [], []
     for th in ths:
         cube = as_beat_cube(array_snapshot(th, lam, d))
         r = fs.ledger.beamform_doa(cube, wavelength_m=lam, element_spacing_m=d,
                                    angles_deg=ANGLE_GRID)
         th_m = float(r["angles_deg"][0])
-        env, t0e, _ = echo_envelope(prof, th, lam, d, floor["bw0"])
+        env, t0e, tau_ax = echo_envelope(prof, th, lam, d, floor["bw0"])
         tau_m = detect_two_way(env, t0e)
-        meas.append(0.5 * scene["ca"] * tau_m * math.cos(math.radians(th_m)) - DEPTH_REF)
+        cth = math.cos(math.radians(th_m))
+        meas.append(0.5 * scene["ca"] * tau_m * cth - DEPTH_REF)
+        # 対照群: エコー検出を止め、走時をそのまま渡す(角度だけ op 経由)
+        noecho.append(0.5 * scene["ca"] * tau_ax * cth - DEPTH_REF)
         exact.append(float(smile_exact(th, DELTA_C_REF, DEPTH_REF)))
         tan2.append(float(smile_tan2(th, DELTA_C_REF, DEPTH_REF)))
     meas = np.array(meas)
+    noecho = np.array(noecho)
     exact = np.array(exact)
     tan2 = np.array(tan2)
     lim = tvu(DEPTH_REF)
-    # 実測の崖は 0.01 度刻みで補間して読む(1 度刻みの格子で崖を切らないため)
-    fine = np.arange(0.0, 70.001, 0.01)
-    meas_i = np.interp(fine, ths, np.abs(meas))
-    cliff_meas = float(fine[int(np.argmax(meas_i > lim))]) if (meas_i > lim).any() \
-        else float("inf")
-    print(f"  {'θ₀ [度]':>8}{'実測 Δz [m]':>14}{'厳密式':>12}{'展開式':>12}"
-          f"{'展開の外し':>12}")
+
+    def cliff_of(curve):
+        """0.01 度刻みに補間して |Δz| が TVU を越える最初の角度 [度]。"""
+        fine = np.arange(0.0, 70.001, 0.01)
+        v = np.interp(fine, ths, np.abs(curve))
+        return float(fine[int(np.argmax(v > lim))]) if (v > lim).any() else float("inf")
+
+    cliff_meas, cliff_noecho = cliff_of(meas), cliff_of(noecho)
+    print(f"  {'θ₀ [度]':>8}{'実測 全経路':>14}{'実測 検出なし':>16}{'厳密式':>12}"
+          f"{'展開式':>12}{'展開の外し':>12}")
     rows = []
     for th in (0.0, 20.0, 40.0, 45.0, 50.0, 60.0, 65.0, 70.0):
         i = int(np.argmin(np.abs(ths - th)))
-        rows.append((f"{th:.0f}", f"{meas[i]:+.4f}", f"{exact[i]:+.4f}",
-                     f"{tan2[i]:+.4f}", f"{100*(tan2[i]-exact[i])/exact[i]:+.1f} %"
-                     if exact[i] != 0 else "—"))
-        print(f"  {th:>8.0f}{meas[i]:>14.4f}{exact[i]:>12.4f}{tan2[i]:>12.4f}"
-              f"{(100*(tan2[i]-exact[i])/exact[i] if exact[i] else 0.0):>11.1f}%")
-    print(f"  → 実測の崖 **{cliff_meas:.2f} 度**。厳密式の予測 {pred_exact:.2f} 度 は"
-          f"**当たり**、展開式の予測 {pred_tan2:.2f} 度 は "
-          f"**{pred_exact - pred_tan2:+.2f} 度 外した**。")
-    ratio70 = abs(tan2[-1] / exact[-1])
-    print(f"  → ★展開式は 45 度までは "
-          f"{abs(100*(tan2[45]-exact[45])/exact[45]):.1f} % 以内だが、"
-          f"70 度では {100*(ratio70-1):.1f} % 過大。"
+        off = f"{100*(tan2[i]-exact[i])/exact[i]:+.1f} %" if exact[i] else "—"
+        rows.append((f"{th:.0f}", f"{meas[i]:+.4f}", f"{noecho[i]:+.4f}",
+                     f"{exact[i]:+.4f}", f"{tan2[i]:+.4f}", off))
+        print(f"  {th:>8.0f}{meas[i]:>14.4f}{noecho[i]:>16.4f}{exact[i]:>12.4f}"
+              f"{tan2[i]:>12.4f}{off:>12}")
+    print(f"  → **エコー検出を止めた経路の崖は {cliff_noecho:.2f} 度** —— "
+          f"厳密式の予測 {pred_exact:.2f} 度 と "
+          f"{abs(cliff_noecho - pred_exact):.2f} 度 差。**閉形式は当たっている**。")
+    print(f"  → ★**全経路の崖は {cliff_meas:.2f} 度**、予測より "
+          f"{pred_exact - cliff_meas:.2f} 度 **早い**。差は閉形式に入っていない量 ——")
+    print("     振幅検出がビームの照らす帯の非対称なエコーの頂点を取り、")
+    print("     外側ほど浅い側へ引っ張るから(§2)。**予測は「屈折だけ」で正しく、")
+    print("     機械を通すと崖はもう少し手前に来る**。")
+    print(f"  → 展開式の予測 {pred_tan2:.2f} 度 は厳密式より "
+          f"{pred_exact - pred_tan2:.2f} 度 手前。45 度までは "
+          f"{abs(100*(tan2[45]-exact[45])/exact[45]):.1f} % 以内だが、70 度では "
+          f"{100*(abs(tan2[-1]/exact[-1])-1):.1f} % 過大 —— "
           f"**「tan² で効く」は外側で崩れる**。")
-    print(f"  → 実測(全経路)と厳密式の差は最大 "
-          f"{float(np.max(np.abs(meas - exact))):.5f} m —— §2 で測った床の大きさ。")
-    figs.save_table("cliff", ["θ₀ [度]", "実測 Δz [m]", "厳密式 [m]", "展開式 [m]",
-                              "展開の外し"], rows,
+    print(f"  → 検出なしの経路と厳密式の差は最大 "
+          f"{float(np.max(np.abs(noecho - exact))):.2e} m、"
+          f"全経路との差は最大 {float(np.max(np.abs(meas - exact))):.4f} m。")
+    figs.save_table("cliff", ["θ₀ [度]", "実測 全経路 [m]", "実測 検出なし [m]",
+                              "厳密式 [m]", "展開式 [m]", "展開の外し"], rows,
                     title="スマイルの大きさ —— 実測 / 厳密式 / ラフな展開式",
                     caption=f"深さ {DEPTH_REF:.0f} m・音速差 {DELTA_C_REF:+.0f} m/s。"
-                            f"TVU = {lim:.3f} m を割るのは {cliff_meas:.2f} 度から。")
+                            f"TVU = {lim:.3f} m を割るのは全経路で {cliff_meas:.2f} 度、"
+                            f"屈折だけなら {cliff_noecho:.2f} 度 から。")
     if figs.enabled():
         x_at = DEPTH_REF * np.tan(np.radians(ths))
         figs.save_plot(
             "smile",
             [("実測(全経路)", x_at, meas),
+             ("実測(エコー検出なし)", x_at, noecho),
              ("厳密な円弧の閉形式", x_at, exact),
              ("ラフな展開 tan²", x_at, tan2),
              ("IHO %s の許容(-)" % ORDER, x_at, np.full_like(x_at, -lim))],
@@ -775,9 +792,10 @@ def section_cliff(scene, floor):
             caption=f"直下は較正済みで 0。{cliff_meas:.1f} 度(直交距離 "
                     f"{DEPTH_REF*math.tan(math.radians(cliff_meas)):.1f} m)から "
                     f"IHO {ORDER} を割る。展開式は外側で過大に予測する。")
-    return {"ths": ths, "meas": meas, "exact": exact, "tan2": tan2,
+    return {"ths": ths, "meas": meas, "noecho": noecho, "exact": exact, "tan2": tan2,
             "pred_tan2": pred_tan2, "pred_exact": pred_exact,
-            "cliff": cliff_meas, "lim": lim,
+            "cliff": cliff_meas, "cliff_noecho": cliff_noecho, "lim": lim,
+            "gap_noecho": float(np.max(np.abs(noecho - exact))),
             "path_gap": float(np.max(np.abs(meas - exact)))}
 
 
@@ -973,7 +991,7 @@ def section_footprint(scene, floor):
         f2 = DEPTH_REF * math.radians(bw0) / math.cos(math.radians(th)) ** 2
         f3 = DEPTH_REF * math.radians(bw0) / math.cos(math.radians(th)) ** 3
         # 実測: ビームの縁 2 本を実際に撃って、海底での水平距離の差を取る
-        edges = np.array([max(0.0, th - 0.5 * bw), min(88.0, th + 0.5 * bw)])
+        edges = np.array([th - 0.5 * bw, min(88.0, th + 0.5 * bw)])
         xr, _, ok_r = trace_to_depth(prof, edges, DEPTH_REF)
         xi, _, ok_i = trace_to_depth(iso, edges, DEPTH_REF)
         assert bool(np.all(ok_r) and np.all(ok_i))
@@ -1077,8 +1095,10 @@ def section_dtm(scene):
     print(f"  重なりの帯 x = {ys[0]:.1f} 〜 {ys[-1]:.1f} m。")
     print(f"  ★真ん中(x = {mid:.1f} m)では差 {abs(float(d1[200]-d2[200])):.4f} m —— "
           f"両測線とも同じ振れ角なので**誤差が同じだけ乗って消える**。")
-    print(f"  帯の端 x = {ys[k]:.1f} m では、測線 1 が {a:.3f} m(振れ角の外側)、"
-          f"測線 2 が {b:.3f} m(内側)→ **食い違い {abs(a-b):.3f} m**")
+    print(f"  帯の端 x = {ys[k]:.1f} m は、片方が**直下ビーム**({min(a, b):.3f} m)、"
+          f"もう片方が**最外ビーム**({max(a, b):.3f} m)で測る点。"
+          f"
+     → **食い違い {abs(a-b):.3f} m**")
     print(f"     (TVU {tvu(DEPTH_REF):.3f} m の {abs(a-b)/tvu(DEPTH_REF):.1f} 倍)")
     print("  → ★これが**実データでもできる唯一の検査**。真の海底は誰も知らないが、"
           "\n     同じ海底を 2 度測った差なら、真値なしで出る。")
