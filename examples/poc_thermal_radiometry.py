@@ -772,7 +772,8 @@ def section_cliff(scene):
             "worst_mid": worst_mid, "by_eps": by_eps, "ratio": ratio,
             "rise": rise_ratio, "abs_dt": abs_dt, "refl": refl_rows,
             "worst_rel": worst_rel, "worst_rel_corr": worst_rel_corr,
-            "worst_corr": worst_corr, "slope": slope}
+            "worst_corr": worst_corr, "slope": slope, "slope_tn": s_tn,
+            "slope_fac": s_fac, "ratio_eps": ratio_eps, "ratio_refl": ratio_refl}
 
 
 # --------------------------------------------------------------------------- #
