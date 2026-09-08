@@ -369,9 +369,13 @@ class Camera:
         return dn
 
     def to_radiance(self, dn, a=None, b=None):
-        """DN → 放射輝度。``a`` / ``b`` を渡すと**取り違えた校正係数**で戻す。"""
-        aa = self.a if a is None else float(a)
-        bb = self.b if b is None else float(b)
+        """DN → 放射輝度。``a`` / ``b`` を渡すと**取り違えた校正係数**で戻す。
+
+        ``a`` / ``b`` は配列でもよい(Monte Carlo で試行ごとに校正係数を
+        振るため)—— ここを ``float()`` で受けていて 1 度落ちた。
+        """
+        aa = self.a if a is None else np.asarray(a, np.float64)
+        bb = self.b if b is None else np.asarray(b, np.float64)
         return (np.asarray(dn, np.float64) - bb) / aa
 
 
