@@ -190,20 +190,23 @@ def section_bands():
     print("    真値の全帯域の和 %.6f mm^2、正矢の和 %.6f mm^2(Parseval の一致 %.4f)"
           % (rt["total_power"], np.sum(pv), np.sum(pt) / rt["total_power"]))
     ratio = np.sqrt(np.where(pt > 1e-12, pv / np.maximum(pt, 1e-12), np.nan))
-    rows = []
+    rows, keep = [], []
     for i in np.argsort(lam)[::-1]:
-        if pt[i] < 1e-6:
+        a_true = np.sqrt(2 * pt[i])
+        if a_true < 0.02:                     # 中身のない帯は比を語らない
             continue
-        rows.append([f"{lam[i]:.3f}", f"{np.sqrt(2*pt[i]):.4f}",
+        keep.append(ratio[i])
+        rows.append([f"{lam[i]:.3f}", f"{a_true:.4f}",
                      f"{np.sqrt(2*pv[i]):.4f}", f"{ratio[i]:.3f}"])
         print("    帯 λ≈%7.3f m  真値 %.4f mm  正矢 %.4f mm  比 %.3f"
-              % (lam[i], np.sqrt(2 * pt[i]), np.sqrt(2 * pv[i]), ratio[i]))
+              % (lam[i], a_true, np.sqrt(2 * pv[i]), ratio[i]))
     figs.save_table("octave_bands",
                     ["帯の中心 λ [m]", "真値 [mm]", "10m 弦の正矢 [mm]", "比"],
                     rows, title="1/3 オクターブ波長帯: 真値と 10 m 弦の読み")
-    fin = ratio[np.isfinite(ratio)]
-    print("    → 帯ごとの比は %.3f 〜 %.3f。**1 つの数字に丸めた「波状摩耗レベル」は、"
-          "どの帯が効いたかで %.1f 倍動く**" % (fin.min(), fin.max(), fin.max() / max(fin.min(), 1e-9)))
+    fin = np.array(keep)
+    print("    → 中身のある %d 帯だけを見ても比は %.3f 〜 %.3f。**1 つの数字に丸めた"
+          "「波状摩耗レベル」は、どの帯が効いたかで %.0f 倍動く**"
+          % (fin.size, fin.min(), fin.max(), fin.max() / max(fin.min(), 1e-9)))
     return {"lam": lam, "ratio": ratio, "min": float(fin.min()),
             "max": float(fin.max())}
 
