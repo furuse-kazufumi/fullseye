@@ -982,22 +982,25 @@ def section8_metrics(sweep_am, zero):
     print("  物差し 2(**判定**): 0 〜 %.1f px の全域で、「|d| <= %.1f px なら合格」"
           % (2 * PITCH, TOL_PX))
     print("               の判定が真値と一致した割合 [%]。")
+    print("  題材は **Y 版(スクリーン角 0°)** —— 掃引の向き(+x)が格子の軸")
+    print("  そのものなので、折り返しがいちばん素直に出る。")
     print()
-    name, ang, blob, _d = PLATES[0]
+    name, ang, blob, _d = PLATES[2]
     cen, rad = fm_centres(blob)
     ref_fm = fm_sheet(cen, rad, seed=None)
     des = design_plate(ang, blob)
+    gy0, gx0 = ink_centroid(des)
+    bm = box_mask(L, 2.0 * PITCH)
 
     methods = {"重心(ゼロ点 B)": [], "相関 AM": [], "相関 FM": []}
     for t in SWEEP:
         r = [x for x in sweep_am[name] if abs(x["t"] - t) < 1e-9][0]
         cur_am = am_sheet(ang, blob, 0.0, float(t), seed=31)
         cy, cx = ink_centroid(cur_am)
-        gy, gx = ink_centroid(des)
-        methods["重心(ゼロ点 B)"].append((cy - gy, cx - gx))
+        methods["重心(ゼロ点 B)"].append((cy - gy0, cx - gx0))
         methods["相関 AM"].append(r["corr"])
         cur_fm = fm_sheet(cen, rad, 0.0, float(t), seed=61)
-        my, mx, _ratio = corr_shift(ref_fm, cur_fm, 2.0 * PITCH)
+        my, mx, _ratio = corr_shift(ref_fm, cur_fm, bm)
         methods["相関 FM"].append((my, mx))
     print("  %-18s %14s %14s %14s %14s"
           % ("手法", "RMS 誤差 px", "最大 誤差 px", "判定一致率", "見落とし"))
