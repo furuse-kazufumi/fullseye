@@ -456,12 +456,12 @@ def _wrap(text, font, max_width):
 def measure_text(text, font_size=14, font_path=None, max_width=None,
                  min_font_size=9, line_spacing=1.15, wrap=True, bold=False,
                  italic=False):
-    """文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。
+    r"""文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。
 
     Parameters
     ----------
     text : str
-        測る文字列(``\\n`` で改行)。
+        測る文字列(``\n`` で改行)。
     font_size : int
         希望のサイズ。``max_width`` に入らなければ 1pt ずつ縮める。
     font_path : str or None
@@ -3093,7 +3093,7 @@ VERTICAL_ROTATED_CHARS = frozenset(
 def annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0,
                               start=0.0, anchor="start", offset=0.0, upright=False,
                               line_spacing=1.15):
-    """table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。
+    r"""table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。
 
     文字 i の中心は弧長 ``s_i = s0 + Σ_{j<i} a_j*spacing + a_i/2``、傾きは
     その位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。
@@ -3214,7 +3214,7 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
                        start=0.0, draw_path=False, width=1.0, scheme="okabe_ito",
                        font_path=None, layout=None, anchor="start", offset=0.0,
                        upright=False, line_spacing=1.15, bold=False, italic=False):
-    """画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。
+    r"""画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。
 
     文字の板は敷かない(経路の上に載せる用途なので)。配置と、
     ``anchor`` / ``offset`` / ``upright``(縦書き)/ ``\n`` による改行の意味は
@@ -3614,7 +3614,7 @@ def _table_cells(text):
 def annotate_table_layout(text, xy, anchor="lt", font_size=13, font_path=None, pad=6,
                           col_gap=None, row_gap=0, align="auto", header=False,
                           bold=False, italic=False, line_spacing=1.15):
-    """table(dict)を返す: タブ区切りの文字列を**表**として置く桁と行の位置。
+    r"""table(dict)を返す: タブ区切りの文字列を**表**として置く桁と行の位置。
 
     行は ``\n``、桁は ``\t`` で切る。桁幅は**指定されたサイズの実フォントで
     1 セルずつ測った幅の最大**で決まる —— 文字数で数えると和文と英数字で
@@ -3743,7 +3743,7 @@ def annotate_table(img, text, xy, anchor="lt", font_size=13, color="neutral",
                    border=0, border_color=None, font_path=None, scheme="okabe_ito",
                    min_contrast=DEFAULT_MIN_CONTRAST, bold=False, italic=False,
                    line_spacing=1.15, style=None, layout=None):
-    """画像(image2d)を返す: タブ区切りの文字列を**表**として描く(半透明の板つき)。
+    r"""画像(image2d)を返す: タブ区切りの文字列を**表**として描く(半透明の板つき)。
 
     桁幅は :func:`annotate_table_layout` が実フォントで測って決める。既定の
     桁間は行高の 0.6 倍なので、``font_size`` を変えれば間隔も一緒に動く。
@@ -3779,11 +3779,11 @@ def annotate_table(img, text, xy, anchor="lt", font_size=13, color="neutral",
     Examples
     --------
     >>> import numpy as np, annotate
-    >>> img = np.zeros((80, 220, 3))
+    >>> img = np.zeros((120, 260, 3))
     >>> out = annotate.annotate_table(img, "項目\t値\n面積\t12.5\n周長\t9.75",
     ...                               (10, 10), header=True)
     >>> out.shape
-    (80, 220, 3)
+    (120, 260, 3)
     >>> float(np.abs(out - img).max()) > 0.1
     True
     """

@@ -701,20 +701,22 @@ def test_measure_text_newlines_work_without_a_width():
 # ------------------------------------------------------------------ #
 
 def test_ledger_paper_category_counts():
-    """台帳: 8 カテゴリ / 49 op、paper 族は 21 op(描く 13 + layout 8)。
+    """台帳: 8 カテゴリ / 51 op、paper 族は 23 op(描く 14 + layout 9)。
 
-    2026-09-08: 反転色 3 op を **overlay** に足して 46 -> 49。paper 族に入れ
-    なかったのは、``annotate_invert_visibility`` が table を返すのに
-    ``*_layout`` ではない(返すのは幾何ではなく見え方の実測)ため —— 名前の
-    規約を曲げるより、カテゴリを正しく選ぶほうが嘘が少ない。
+    2026-09-08: 反転色 3 op を **overlay** に、表 2 op を **paper** に足して
+    46 -> 51。反転色を paper に入れなかったのは、
+    ``annotate_invert_visibility`` が table を返すのに ``*_layout`` では
+    ない(返すのは幾何ではなく見え方の実測)ため —— 名前の規約を曲げるより、
+    カテゴリを正しく選ぶほうが嘘が少ない。表のほうは
+    ``annotate_table_layout`` が桁と行の**幾何**を返すので規約どおり。
     """
     assert len(opsannotate.categories()) == 8
-    assert len(opsannotate.OPSANNOTATE) == 49
+    assert len(opsannotate.OPSANNOTATE) == 51
     assert len(opsannotate.list_ops("overlay")) == 5
     paper = opsannotate.list_ops("paper")
-    assert len(paper) == 21
+    assert len(paper) == 23
     layouts = [n for n in paper if n.endswith("_layout")]
-    assert len(layouts) == 8
+    assert len(layouts) == 9
     for n in layouts:
         assert opsannotate.info(n)["out"] == "table", n
     for n in paper:
