@@ -701,9 +701,16 @@ def test_measure_text_newlines_work_without_a_width():
 # ------------------------------------------------------------------ #
 
 def test_ledger_paper_category_counts():
-    """台帳: 8 カテゴリ / 46 op、paper 族は 21 op(描く 13 + layout 8)。"""
+    """台帳: 8 カテゴリ / 49 op、paper 族は 21 op(描く 13 + layout 8)。
+
+    2026-09-08: 反転色 3 op を **overlay** に足して 46 -> 49。paper 族に入れ
+    なかったのは、``annotate_invert_visibility`` が table を返すのに
+    ``*_layout`` ではない(返すのは幾何ではなく見え方の実測)ため —— 名前の
+    規約を曲げるより、カテゴリを正しく選ぶほうが嘘が少ない。
+    """
     assert len(opsannotate.categories()) == 8
-    assert len(opsannotate.OPSANNOTATE) == 46
+    assert len(opsannotate.OPSANNOTATE) == 49
+    assert len(opsannotate.list_ops("overlay")) == 5
     paper = opsannotate.list_ops("paper")
     assert len(paper) == 21
     layouts = [n for n in paper if n.endswith("_layout")]

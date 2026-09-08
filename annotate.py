@@ -453,7 +453,8 @@ def _wrap(text, font, max_width):
 
 
 def measure_text(text, font_size=14, font_path=None, max_width=None,
-                 min_font_size=9, line_spacing=1.15, wrap=True):
+                 min_font_size=9, line_spacing=1.15, wrap=True, bold=False,
+                 italic=False):
     """文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。
 
     Parameters
@@ -471,6 +472,12 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
         ここまで縮めても入らなければ **ValueError**(黙って切らない)。
     line_spacing : float
         行送り係数。
+    bold, italic : bool or int
+        **合成**の太字・斜体(:func:`_bold_px` / :func:`_italic_tile`)。本物の
+        Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは
+        ``font_path`` にその書体のファイルを渡すこと。``bold`` に整数を渡すと
+        縁取りの画素数を直に指定できる。**太さと傾きのぶんは ``width`` /
+        ``height`` に入る**ので、板や表の桁はそのまま広がる。
     wrap : bool
         True(既定)なら ``max_width`` で**折り返す**。False なら折り返さず
         **行を増やさずフォントを縮めて**収める(格子のラベルのように、2 行に
@@ -517,10 +524,15 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
             lines = _wrap(text, font, max_width)
         widths = [_text_width(s, font) for s in lines]
         w = max(widths) if widths else 0.0
+        lh = int(round(_line_height(font) * line_spacing))
+        stroke = _bold_px(font, bold)
+        # 太さは左右・上下に、傾きは**行送りの高さぶん**だけ右に伸びる。
+        block_h = lh * max(0, len(lines) - 1) + _line_height(font) + 2 * stroke
+        w = w + 2 * stroke + (ITALIC_SHEAR * block_h if italic else 0.0)
         if max_width is None or w <= max_width:
-            lh = int(round(_line_height(font) * line_spacing))
             return {"lines": lines, "font": font, "font_size": size,
-                    "width": int(math.ceil(w)), "height": int(lh * len(lines)),
+                    "width": int(math.ceil(w)),
+                    "height": int(lh * len(lines) + 2 * stroke),
                     "line_height": lh}
     raise ValueError(
         f"text {text!r} does not fit in {max_width}px even at font size {min_font_size} "
@@ -528,15 +540,82 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
         "not an option: a machine check cannot see clipped text)")
 
 
-def _text_mask(shape, lines, font, x, y, line_height):
-    """文字を [0,1] のマスクとして焼く(アンチエイリアスを重みとして使う)。"""
+#: 合成 Bold の太さを決める係数(フォントサイズに対する比)。14pt で 1 px、
+#: 27pt で 2 px。太さを自分で決めたいときは ``bold=2`` のように画素数を渡す。
+_BOLD_RATIO = 1.0 / 13.5
+
+#: 合成 Italic の傾き ``tan(theta)``。theta = 12 度は本物の斜体(8-16 度)の
+#: 真ん中あたり。
+ITALIC_SHEAR = 0.2126
+
+
+def _bold_px(font, bold):
+    """合成ボールドの縁取り幅 [px](``bold`` が偽なら 0)。
+
+    ★**本物の Bold 書体ではない**。輪郭を太らせているだけなので字形が違い、
+    細い横画は潰れやすく、和文では特に差が出る。本物が要るときは
+    ``font_path=`` に Bold のフォントファイルを渡すこと ―― そちらは
+    「フォントを選ぶ」話で、この関数は通らない。
+    """
+    if bold is False or bold is None or bold == 0:
+        return 0
+    if bold is True:
+        return max(1, int(round(float(getattr(font, "size", 14)) * _BOLD_RATIO)))
+    n = int(round(float(bold)))
+    if n < 0:
+        raise ValueError(f"bold must be True/False or a pixel width >= 0 (got: {bold!r})")
+    return n
+
+
+def _italic_tile(im, shear=None):
+    """タイルを斜体にする。返りは ``(画像, 右に伸びた画素数)``。
+
+    出力画素 ``(x, y)`` が入力の ``(x + shear*y, y)`` を拾うので、**下ほど左**
+    へ寄る = 右に傾く(=通常の斜体)。左端が切れないよう、あらかじめ左に
+    ``pad`` 空けてから戻す。
+    """
+    Image, _, _ = _pil()
+    sh = ITALIC_SHEAR if shear is None else float(shear)
+    w, h = im.size
+    pad = int(math.ceil(abs(sh) * h))
+    wide = Image.new("L", (w + pad, h), 0)
+    wide.paste(im, (pad, 0))
+    out = wide.transform((w + pad, h), Image.AFFINE, (1.0, sh, 0.0, 0.0, 1.0, 0.0),
+                         resample=Image.BILINEAR)
+    return out, pad
+
+
+def _text_mask(shape, lines, font, x, y, line_height, bold=False, italic=False):
+    """文字を [0,1] のマスクとして焼く(アンチエイリアスを重みとして使う)。
+
+    ``bold`` / ``italic`` は**合成**(:func:`_bold_px` / :func:`_italic_tile`)。
+    どちらも無いときは従来どおり画布へ直接焼く —— 経路を分けているのは、
+    既存の図が**画素単位で変わらない**ことを保証するため。
+    """
     Image, ImageDraw, _ = _pil()
-    im = Image.new("L", (int(shape[1]), int(shape[0])), 0)
-    d = ImageDraw.Draw(im)
+    H, W = int(shape[0]), int(shape[1])
+    stroke = _bold_px(font, bold)
+    if not stroke and not italic:
+        im = Image.new("L", (W, H), 0)
+        d = ImageDraw.Draw(im)
+        for i, line in enumerate(lines):
+            if line:
+                d.text((int(x), int(y + i * line_height)), line, fill=255, font=font)
+        return np.asarray(im, dtype=np.float64) / 255.0
+    pad = stroke + 2
+    tw = int(math.ceil(max([_text_width(s, font) for s in lines] or [0.0]))) + 2 * pad
+    th = int(round(line_height * max(0, len(lines) - 1) + _line_height(font))) + 2 * pad
+    tile = Image.new("L", (max(1, tw), max(1, th)), 0)
+    d = ImageDraw.Draw(tile)
     for i, line in enumerate(lines):
         if line:
-            d.text((int(x), int(y + i * line_height)), line, fill=255, font=font)
-    return np.asarray(im, dtype=np.float64) / 255.0
+            d.text((pad, int(round(i * line_height)) + pad), line, fill=255, font=font,
+                   stroke_width=stroke, stroke_fill=255)
+    if italic:
+        tile, _lean = _italic_tile(tile)
+    out = Image.new("L", (W, H), 0)
+    out.paste(tile, (int(x) - pad, int(y) - pad))
+    return np.asarray(out, dtype=np.float64) / 255.0
 
 
 def _anchor_origin(anchor, x, y, w, h):
@@ -553,7 +632,7 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
              box_alpha=0.72, anchor="lt", pad=5, font_size=14, min_font_size=9,
              max_width=None, font_path=None, line_spacing=1.15, scheme="okabe_ito",
              min_contrast=DEFAULT_MIN_CONTRAST, border=0, border_color=None,
-             style=None, wrap=True):
+             style=None, wrap=True, bold=False, italic=False):
     """下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。
 
     Parameters
@@ -627,7 +706,7 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         raise ValueError(f"max_width {max_width} leaves no room for text after pad={pad}")
     m = measure_text(text, font_size=font_size, font_path=font_path,
                      max_width=inner_max, min_font_size=min_font_size,
-                     line_spacing=line_spacing, wrap=wrap)
+                     line_spacing=line_spacing, wrap=wrap, bold=bold, italic=italic)
     bw, bh = m["width"] + 2 * pad, m["height"] + 2 * pad
     x0, y0 = _anchor_origin(anchor, int(round(xy[0])), int(round(xy[1])), bw, bh)
     _check_inside(a, (x0, y0, bw, bh), name="text box", what="text plate")
@@ -662,7 +741,8 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
             f"(minimum {min_contrast}) — the label would be there but unreadable; "
             "raise box_alpha, darken the plate, or pick a lighter text colour")
 
-    mask = _text_mask(a.shape[:2], m["lines"], m["font"], x0 + pad, y0 + pad, m["line_height"])
+    mask = _text_mask(a.shape[:2], m["lines"], m["font"], x0 + pad, y0 + pad,
+                      m["line_height"], bold=bold, italic=italic)
     a = _blend(a, mask, _channel_color(a, ink, scheme), 1.0)
 
     if border > 0:
@@ -3118,7 +3198,7 @@ def annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=
 def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1.0,
                        start=0.0, draw_path=False, width=1.0, scheme="okabe_ito",
                        font_path=None, layout=None, anchor="start", offset=0.0,
-                       upright=False, line_spacing=1.15):
+                       upright=False, line_spacing=1.15, bold=False, italic=False):
     """画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。
 
     文字の板は敷かない(経路の上に載せる用途なので)。配置と、
@@ -3127,6 +3207,10 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
 
     ``layout`` を渡した場合、そちらが**そのまま使われる** ——
     ``anchor`` などは無視されるので、両方を渡さないこと。
+
+    ``bold`` / ``italic`` は**合成**(:func:`_bold_px` / :func:`_italic_tile`)。
+    1 字ずつ焼いてから回すので、傾きは**字の縦軸に対して**掛かる(経路が
+    斜めでも斜体が経路の向きに歪まない)。
 
     Raises
     ------
@@ -3147,13 +3231,17 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
         a = _aa_polyline(a, _pts(path, "path", 2), color, width=width, scheme=scheme)
     mask = np.zeros((H, W), dtype=np.float64)
     lh = _line_height(font)
+    stroke = _bold_px(font, bold)
     for it in layout["chars"]:
         ch = it["char"]
         if ch.strip() == "":
             continue
         cw = max(1, int(math.ceil(_text_width(ch, font))))
-        glyph = Image.new("L", (cw + 4, lh + 4), 0)
-        ImageDraw.Draw(glyph).text((2, 2), ch, fill=255, font=font)
+        glyph = Image.new("L", (cw + 4 + 2 * stroke, lh + 4 + 2 * stroke), 0)
+        ImageDraw.Draw(glyph).text((2 + stroke, 2 + stroke), ch, fill=255, font=font,
+                                   stroke_width=stroke, stroke_fill=255)
+        if italic:
+            glyph, _lean = _italic_tile(glyph)
         rot = glyph.rotate(-it["angle_deg"], expand=True, resample=Image.BICUBIC)
         g = np.asarray(rot, dtype=np.float64) / 255.0
         gh, gw = g.shape
