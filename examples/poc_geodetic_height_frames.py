@@ -412,8 +412,7 @@ def section_geoid_slope():
         # ★予測(測る前に印字する): 傾斜は atan|∇H|。h を使うと atan|∇H+∇N|。
         pred = (np.degrees(np.arctan(np.hypot(dhx + dnx, dhy + dny)))
                 - np.degrees(np.arctan(np.hypot(dhx, dhy))))
-        bound = math.degrees(math.atan(math.hypot(*np.array(
-            [np.abs(dnx).max(), np.abs(dny).max()]))))
+        bound = math.degrees(math.atan(float(np.hypot(dnx, dny).max())))
         s_true = np.asarray(fs.ledger.dem_slope(h_true, CELL_M))
         s_wrong = np.asarray(fs.ledger.dem_slope(h_ell, CELL_M))
         inner = (slice(2, -2), slice(2, -2))                 # 端は pad="edge" なので外す
