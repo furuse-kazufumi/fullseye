@@ -480,6 +480,7 @@ def section_geoid_slope():
             caption=f"h と H は平均 {a['dh']:+.2f} m 違うが、**塗り分けの絵は"
                     f"ほとんど同じ**(自動で伸縮するので)。右下だけが実害の大きさで、"
                     f"傾斜の誤差は最大 {a['meas']:.4f} 度 —— つまり傾斜には効かない。")
+    out["conv"] = conv
     return out
 
 
