@@ -329,12 +329,14 @@ class BandTable:
         """
         arr = np.asarray(l_w, np.float64)
         if not allow_out:
-            return fs.interp_linear(self.l_grid, self.t_grid, arr)
-        ok = np.isfinite(arr) & (arr >= self.l_grid[0]) & (arr <= self.l_grid[-1])
-        out = np.full(arr.shape, np.nan)
+            got = np.asarray(fs.interp_linear(self.l_grid, self.t_grid, arr.ravel()))
+            return float(got[0]) if arr.ndim == 0 else got.reshape(arr.shape)
+        flat = np.atleast_1d(arr).ravel()
+        ok = np.isfinite(flat) & (flat >= self.l_grid[0]) & (flat <= self.l_grid[-1])
+        out = np.full(flat.shape, np.nan)
         if ok.any():
-            out[ok] = fs.interp_linear(self.l_grid, self.t_grid, arr[ok])
-        return out
+            out[ok] = np.asarray(fs.interp_linear(self.l_grid, self.t_grid, flat[ok]))
+        return float(out[0]) if arr.ndim == 0 else out.reshape(arr.shape)
 
 
 # --------------------------------------------------------------------------- #
