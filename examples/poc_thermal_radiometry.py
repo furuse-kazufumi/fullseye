@@ -1312,6 +1312,15 @@ def section_image(scene):
     rms_app = float(np.sqrt(np.mean((t_apparent - t_true) ** 2)))
     print(f"  補正後の残差 rms = {rms:.3f} K(雑音の床)。見かけ温度の rms = "
           f"{rms_app:.3f} K。")
+    # ★補正は偏りを消すが、雑音を 1/ε 倍にする。図(d)でボルトだけざらつく理由。
+    rms_bolt = float(np.sqrt(np.mean((t_corr - t_true)[bolt] ** 2)))
+    rms_ring = float(np.sqrt(np.mean((t_corr - t_true)[ring] ** 2)))
+    print(f"  ★**補正は偏りを消す代わりに雑音を増やす**: 補正後の残差 rms は"
+          f"塗装面 {rms_ring:.4f} K に対しボルト {rms_bolt:.4f} K "
+          f"(**{rms_bolt/rms_ring:.1f} 倍**、ε の比 "
+          f"{EPS_PAINT/EPS_POLISH:.1f} に近い)。")
+    print("     同じ温度・同じ画素数・同じ雑音なのに、低放射率の面は")
+    print("     **補正しても信用できない** —— 偏りと分散を交換しただけ。")
     # 領域平均の取り方(§5 の Jensen をこの絵の上で数える)。放射率が同じ画素
     # だけを取る —— ε が混ざった領域を平均するのは別の間違いで、混ぜない。
     shoulder = (eps_map == EPS_PAINT) & (t_true > 315.0) & (t_true < 372.0)
