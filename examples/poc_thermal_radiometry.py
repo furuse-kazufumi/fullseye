@@ -639,7 +639,8 @@ def section_cliff(scene):
                                "★どちらも同じ実験の同じ数字。")
     return {"idx_rows": idx_rows, "worst_pred": worst_pred, "worst_eff": worst_eff,
             "worst_mid": worst_mid, "by_eps": by_eps, "ratio": ratio,
-            "rise": rise_ratio, "abs_dt": abs_dt, "refl": refl_rows}
+            "rise": rise_ratio, "abs_dt": abs_dt, "refl": refl_rows,
+            "worst_rel": worst_rel, "slope": slope}
 
 
 # --------------------------------------------------------------------------- #
