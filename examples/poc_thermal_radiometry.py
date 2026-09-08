@@ -1004,14 +1004,14 @@ def section_uncertainty(scene):
         print(f"  {rho:>10.1f}{r['u_corr']:>13.4f}{100*r0['cov_rss']:>12.2f}%"
               f"{100*r['cov_mc']:>12.2f}%"
               f"{100*r0['miss_lo']:>13.2f}% /{100*r0['miss_hi']:>7.2f}%")
-    head = sweep[0.7]
+    head = sweep[0.7]["corr"]
     print(f"  → ★★ρ=+0.7 の現実で、独立 RSS の「95 % 区間」は "
           f"**{100*sweep[0.7]['indep']['cov_rss']:.2f} %** しか包まない。")
-    print(f"     相関つき MC は {100*head['corr']['cov_mc']:.2f} %。差は "
-          f"{100*(head['corr']['cov_mc']-sweep[0.7]['indep']['cov_rss']):.2f} ポイント。")
-    print(f"     真の合成不確かさ {head['corr']['u_corr']:.4f} K に対し RSS は "
+    print(f"     相関つき MC は {100*head['cov_mc']:.2f} %。差は "
+          f"{100*(head['cov_mc']-sweep[0.7]['indep']['cov_rss']):.2f} ポイント。")
+    print(f"     真の合成不確かさ {head['u_corr']:.4f} K に対し RSS は "
           f"{base['u_rss']:.4f} K —— **区間が "
-          f"{100*(1-base['u_rss']/head['corr']['u_corr']):.1f} % 狭い**。")
+          f"{100*(1-base['u_rss']/head['u_corr']):.1f} % 狭い**。")
     print(f"  → ★取りこぼしは片側に寄る: 下側 "
           f"{100*sweep[0.7]['indep']['miss_lo']:.2f} % / 上側 "
           f"{100*sweep[0.7]['indep']['miss_hi']:.2f} %。逆算が ε で割る非線形なので")
