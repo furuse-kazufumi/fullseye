@@ -106,7 +106,7 @@ def scene(seed: int, length: float = L_FULL, p_miss: float = P_MISS,
 # 推定器 —— どれも「周長 [mm]」を 1 個返す                                      #
 # --------------------------------------------------------------------------- #
 def md_signal(md, length: float) -> np.ndarray:
-    """MD 位置の一覧 → 等間隔の占有信号(1 ビン = %.0f mm)。""" % MD_BIN
+    """MD 位置の一覧 → 等間隔の占有信号(1 ビン = :data:`MD_BIN` mm)。"""
     n = max(int(round(length / MD_BIN)), 8)
     s, _ = np.histogram(np.asarray(md, float), bins=n, range=(0.0, length))
     return s.astype(np.float64)
