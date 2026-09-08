@@ -466,60 +466,78 @@ def section_grid_vs_random(d=0.60, ntrial=12) -> dict:
     print("       つまり乱数は死角を**消さない。どのラックが死角に落ちるかを"
           "振るだけ**。")
 
-    print("\n   ---- 実測(位相 %d 通り × ラック 3 台 = %d 例)----"
-          % (ntrial, ntrial * len(HOTSPOTS)))
+    # --- 距離の分布は安く大量に取れる(復元は要らない)--- #
     rng = np.random.default_rng(SEED)
+    nq = 20000
+    marg = 0.8
+    qq = (rng.uniform(0.0, 1.0, (nq, 3)) * np.array([LX - 2 * marg, LY - 2 * marg,
+                                                     LZ - 2 * marg]) + marg)
+    dg = cKDTree(pts0).query(qq)[0]
+    dr = np.concatenate([cKDTree(cloud(n, 3000 + k)).query(qq[k::4])[0]
+                         for k in range(4)])
+    frac = float(np.mean(dr > r_grid))
+    print("\n   ---- 実測(壁から %.1f m 内側の一様な %d 点で距離を数えた)----"
+          % (marg, nq))
+    print("   格子   最近傍距離 中央値 %.4f m / 最大 %.4f m(幾何の上限 %.4f m)"
+          % (np.median(dg), dg.max(), r_grid))
+    print("   乱数   最近傍距離 中央値 %.4f m(予測 %.4f m) / 最大 %.4f m"
+          % (np.median(dr), r_med, dr.max()))
+    print("   ★乱数配置の **%.2f %%** が格子の最悪距離 %.4f m を超えた"
+          "(予測 %.2f %%、差 %.2f ポイント)。"
+          % (100 * frac, r_grid, 100 * p_worse, 100 * abs(frac - p_worse)))
+
+    print("\n   ---- 回復の実測(位相/種を %d 通り × ラック 3 台 = %d 例、幾何の回復)"
+          "----" % (ntrial, ntrial * len(HOTSPOTS)))
     res = {}
     for kind in ("格子(位相を振る)", "一様乱数(同じ本数)"):
         atts, dists = [], []
         for k in range(ntrial):
             if kind.startswith("格子"):
-                o = rng.uniform(0.0, d, 3)
-                pts, _ = lattice(d, o)
+                pts, _ = lattice(d, rng.uniform(0.0, d, 3))
             else:
                 pts = cloud(n, 1000 + k)
-            f = fit(pts, read(pts, noise=0.0), "nearest")
             for hi in range(len(HOTSPOTS)):
                 c = centre(hi)
                 s = HOTSPOTS[hi][4]
                 q = local_grid(c, max(1.6 * s, 0.9 * d))
-                atts.append(float(np.max(f(q) - field(q, drop=hi)))
-                            / HOTSPOTS[hi][5])
+                near = np.all(np.abs(pts - c) <= max(1.6 * s, 0.9 * d) + 2.6 * d,
+                              axis=1)
+                sub = pts[near]
+                f1 = fit(sub, read(sub, None, 0.0), "nearest")
+                f0 = fit(sub, read(sub, hi, 0.0), "nearest")
+                atts.append(float(np.max(f1(q) - f0(q))) / HOTSPOTS[hi][5])
                 dists.append(nearest_dist(hi, pts))
-        atts = np.array(atts)
-        dists = np.array(dists)
-        res[kind] = {"att": atts, "dist": dists}
+        res[kind] = {"att": np.array(atts), "dist": np.array(dists)}
         print("   %-20s 最近傍距離 中央値 %.4f m / 最悪 %.4f m   "
               "回復 中央値 %.4f / 最悪 %.4f"
-              % (kind, np.median(dists), dists.max(),
-                 np.median(atts), atts.min()))
-    frac = float(np.mean(res["一様乱数(同じ本数)"]["dist"] > r_grid))
-    print("\n  ★乱数配置のうち **%.1f %%** が格子の最悪距離 %.4f m を超えた"
-          "(予測 %.1f %%、差 %.1f ポイント)。"
-          % (100 * frac, r_grid, 100 * p_worse, 100 * abs(frac - p_worse)))
-    print("  ★格子の回復は位相で %.4f 〜 %.4f に散らばり、乱数は %.4f 〜 %.4f。"
+              % (kind, np.median(res[kind]["dist"]), res[kind]["dist"].max(),
+                 np.median(res[kind]["att"]), res[kind]["att"].min()))
+    print("\n  ★格子の回復は位相で %.4f 〜 %.4f に散らばり、乱数は %.4f 〜 %.4f。"
           % (res["格子(位相を振る)"]["att"].min(),
              res["格子(位相を振る)"]["att"].max(),
              res["一様乱数(同じ本数)"]["att"].min(),
              res["一様乱数(同じ本数)"]["att"].max()))
-    print("     **格子の下限は幾何で言い切れる(必ず %.4f 以上)。乱数の下限は"
-          "言い切れない**\n     —— 同じ本数でも「保証できる最悪値」が違う。"
-          % min(visible(d, h[4]) for h in HOTSPOTS))
+    print("     **違うのは平均ではなく「言い切れるかどうか」**。格子の下限は"
+          "幾何で決まる(σ=%.2f m の\n     ラックなら必ず %.4f 以上)。"
+          "乱数は下限を持たない —— 最近傍距離に上限が無いので、\n     "
+          "運が悪ければいくらでも見えなくなる(この %d 例の最悪は %.4f m 離れた)。"
+          % (HOTSPOTS[2][4], visible(d, HOTSPOTS[2][4]),
+             ntrial * len(HOTSPOTS), res["一様乱数(同じ本数)"]["dist"].max()))
 
+    rr = np.linspace(0.0, 1.0, 80)
     figs.save_plot(
         "grid_vs_random",
-        [("格子(位相を振る)", np.sort(res["格子(位相を振る)"]["dist"]),
-          np.linspace(0, 1, len(res["格子(位相を振る)"]["dist"]))),
-         ("一様乱数(同じ本数)", np.sort(res["一様乱数(同じ本数)"]["dist"]),
-          np.linspace(0, 1, len(res["一様乱数(同じ本数)"]["dist"]))),
-         ("Poisson の予測 exp(-4πλr³/3)",
-          np.linspace(0, 1.2, 60),
-          1.0 - np.exp(-(4 * np.pi / 3) * lam * np.linspace(0, 1.2, 60) ** 3))],
-        xlabel="ラック中心から最も近いセンサまでの距離 [m]",
+        [("格子(%d 本)" % n, np.sort(dg), np.linspace(0, 1, dg.size)),
+         ("一様乱数(%d 本)" % n, np.sort(dr), np.linspace(0, 1, dr.size)),
+         ("Poisson の予測 1-exp(-4πλr³/3)", rr,
+          1.0 - np.exp(-(4 * np.pi / 3) * lam * rr ** 3)),
+         ("格子の幾何上限 d√3/2", [r_grid, r_grid], [0.0, 1.0])],
+        xlabel="最も近いセンサまでの距離 [m](間隔 %.2f m 相当)" % d,
         ylabel="累積割合", title="格子は死角を決め打ち、乱数は死角を振る",
-        caption="格子の最悪距離 %.3f m を乱数の %.1f %% が超えた(予測 %.1f %%)。"
+        caption="格子の最悪距離 %.3f m を乱数の %.2f %% が超えた(予測 %.2f %%)。"
                 % (r_grid, 100 * frac, 100 * p_worse))
     return {"n": n, "p_worse": p_worse, "frac": frac, "r_grid": r_grid,
+            "dg_max": float(dg.max()), "dr_max": float(dr.max()),
             "res": {k: {"att": v["att"].tolist(), "dist": v["dist"].tolist()}
                     for k, v in res.items()}}
 
