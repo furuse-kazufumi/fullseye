@@ -1320,7 +1320,9 @@ def main() -> int:
     assert cliff["worst_eff"] < 0.05, cliff["worst_eff"]
     assert cliff["worst_mid"] > 2.0 * cliff["worst_eff"], (cliff["worst_mid"],
                                                            cliff["worst_eff"])
-    assert cliff["worst_pred"] < 0.6, cliff["worst_pred"]   # 1 次展開の残差
+    assert cliff["worst_rel"] < 0.35, cliff["worst_rel"]    # 1 次展開の残差
+    # 「T² で増える」は主張でなく実測の傾き(λ_eff(T) の分だけ 2 を下回る)
+    assert 1.6 < cliff["slope"] < 2.0, cliff["slope"]
     # 3. ★外した予測: 絶対誤差は**高温ほど大きい**(T² で増える)
     assert cliff["abs_dt"][("LWIR", 800.0)] > 5.0 * cliff["abs_dt"][("LWIR", 305.0)]
     # ★物差しを変えると予測どおり(上昇に対する比は低温ほど大きい)
