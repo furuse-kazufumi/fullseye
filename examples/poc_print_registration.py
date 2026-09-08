@@ -441,17 +441,53 @@ def section2_zero_point():
     print("     しないので、「大外れだと気づける」種類の失敗。")
     print("  → ゼロ点 B の誤差は最大 **%.4f px**。同じ絵柄どうしを比べるので筋が"
           % max(err_b))
-    print("     良い。残る誤差はドットゲインの勾配(紙の上で ±%.1f %%、版と一緒に"
-          % (100 * GAIN_GRAD / 2))
-    print("     動かない)と雑音。**以降の手法は、この %.4f px を上回らなければ"
+    print("     良く、折り返しもしない。ただし**誤差が真値に比例して増える**:")
+    print("     真値 %.3f px の Y 版で %.3f px。これは雑音でもドットゲインでもない。"
+          % (np.hypot(*PLATES[2][3]), max(err_b)))
+    print()
+    print("  ★★重心の応答を掃引で測る(0〜%.1f px を %.1f px 刻み)。" % (2 * PITCH, 1.0))
+    name, ang, blob, _d = PLATES[0]
+    des = design_plate(ang, blob)
+    ts = np.arange(0.0, 2 * PITCH + 1e-9, 1.0)
+    gx = ink_centroid(des)[1]
+    resp = np.array([ink_centroid(am_sheet(ang, blob, 0.0, float(t), seed=22))[1] - gx
+                     for t in ts])
+    k_art = float(np.polyfit(ts, resp, 1)[0])
+    # 対照群: 絵柄を下地だけ(一様)にする
+    flat = (blob[0], blob[1])
+    _saved = globals()["BLOB_PEAK"]
+    globals()["BLOB_PEAK"] = 0.0
+    des_f = design_plate(ang, flat)
+    gxf = ink_centroid(des_f)[1]
+    resp_f = np.array([ink_centroid(am_sheet(ang, flat, 0.0, float(t), seed=22))[1] - gxf
+                       for t in ts])
+    k_flat = float(np.polyfit(ts, resp_f, 1)[0])
+    globals()["BLOB_PEAK"] = _saved
+    print("     絵柄あり: 応答の傾き k = **%.4f**(1.0 なら正しく追えている)。" % k_art)
+    print("     対照群(絵柄を下地だけの一様な網点にする): k = **%.4f**。" % k_flat)
+    print("  → ★仕組みが分かる: **窓を固定したまま一様な場を動かしても、窓の中の**")
+    print("     **重心は動かない**(出ていく量と入ってくる量が釣り合う)。重心が")
+    print("     追えるのは絵柄の非一様な成分だけなので、下地の割合だけ**縮尺が**")
+    print("     **狂う**。誤差は折り返しではなく **(1-k)·|d| = %.3f·|d|**。"
+          % (1 - k_art))
+    print("     **以降の手法は、この %.4f px(と、折り返さないという性質)を"
           % max(err_b))
-    print("     意味がありません。**")
+    print("     上回らなければ意味がありません。**")
     figs.save_table("zero_point",
                     ["版", "真値 (dy,dx)", "ゼロ点 A", "誤差 A [px]",
                      "ゼロ点 B", "誤差 B [px]"], rows,
                     title="2 つのゼロ点(インク重心)", col_w=118)
-    return {"err_a": max(err_a), "err_b": max(err_b),
-            "prints": prints, "designs": designs}
+    if figs.enabled():
+        figs.save_plot(
+            "centroid_response",
+            [("真値", ts, ts), ("重心(絵柄あり) k=%.3f" % k_art, ts, resp),
+             ("重心(下地だけ) k=%.3f" % k_flat, ts, resp_f)],
+            xlabel="仕込んだずれ t [px]", ylabel="重心の動き dx [px]",
+            title="重心は折り返さないが、縮尺が狂う",
+            caption="一様な網点は、窓を固定すると重心を動かさない。"
+                    "重心が追うのは絵柄の非一様成分だけ")
+    return {"err_a": max(err_a), "err_b": max(err_b), "k_art": k_art,
+            "k_flat": k_flat, "prints": prints, "designs": designs}
 
 
 # --------------------------------------------------------------------------- #
