@@ -1170,8 +1170,10 @@ def section_units(scene):
                f"{type(exc).__name__}(22 K は校正表 {TAB_LO:.0f}–{TAB_HI:.0f} K の外)")
 
     # (3) T_refl を「295 K のつもりで 295 ℃」と書く —— 範囲内なので通る。
-    lm = forward_radiance(tab, 350.0, EPS_POLISH, T_REFL_REF, 1.0, T_ATM_REF)
-    hot = float(invert_radiance(tab, lm, EPS_POLISH, 295.0 + T0_C, 1.0, T_ATM_REF))
+    #     ★同じ取り違えでも ε=0.10 の面では L_obj が負に落ちて**例外になる**。
+    #     つまり「止まるか静かに間違うか」は取り違えではなく**場面**で決まる。
+    lm = forward_radiance(tab, 350.0, EPS_PAINT, T_REFL_REF, 1.0, T_ATM_REF)
+    hot = float(invert_radiance(tab, lm, EPS_PAINT, 295.0 + T0_C, 1.0, T_ATM_REF))
     record("T_refl を 295 K のつもりで 295 ℃", "静かに間違う",
            f"{hot-350.0:+.1f} K ずれるが**例外は出ない**(568 K は表の中)")
 
