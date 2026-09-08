@@ -667,14 +667,8 @@ def section_cliff(scene, floor):
         r = fs.ledger.beamform_doa(cube, wavelength_m=lam, element_spacing_m=d,
                                    angles_deg=ANGLE_GRID)
         th_m = float(r["angles_deg"][0])
-        _, t1, _ = trace_to_depth(prof, np.array([th]), DEPTH_REF)
-        tau = 2.0 * float(t1[0])
-        n = int(2.0 * tau * ECHO_FS)
-        bw = floor["bw0"] / math.cos(math.radians(th))
-        _, t_lo, _ = trace_to_depth(prof, np.array([max(0.0, th - 0.5 * bw)]), DEPTH_REF)
-        _, t_hi, _ = trace_to_depth(prof, np.array([min(89.0, th + 0.5 * bw)]), DEPTH_REF)
-        tau_m = detect_two_way(echo_envelope(
-            tau, 2.0 * abs(float(t_hi[0]) - float(t_lo[0])), n))
+        env, t0e, _ = echo_envelope(prof, th, lam, d, floor["bw0"])
+        tau_m = detect_two_way(env, t0e)
         meas.append(0.5 * scene["ca"] * tau_m * math.cos(math.radians(th_m)) - DEPTH_REF)
         exact.append(float(smile_exact(th, DELTA_C_REF, DEPTH_REF)))
         tan2.append(float(smile_tan2(th, DELTA_C_REF, DEPTH_REF)))
