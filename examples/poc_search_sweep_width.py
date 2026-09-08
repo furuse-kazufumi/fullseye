@@ -827,7 +827,8 @@ def section_altitude():
           f"{'W [m]':>16}{'端の p':>10}")
     rows, out = [], []
     for alt in ALTITUDES:
-        run = sweep_frames(N_ALT, "tophat", seed0=20000 + int(alt), alt=alt)
+        run = sweep_frames(N_ALT, "tophat", seed0=20000 + int(alt),
+                           alt=alt)["tophat"]
         thr = threshold_for_fa(run["fa_z"], N_ALT)
         p, w, se = curve_at(run, thr)
         half = HALF_PX * run["gsd"]
@@ -958,7 +959,7 @@ def section_controls(curve_out):
     print(f"  {'条件':>24}{'閾値':>8}{'W [m]':>16}{'基準との差':>14}{'端の p':>10}")
     rows, out = [], {}
     for name, kw in conds:
-        run = sweep_frames(N_CTRL, "tophat", seed0=50000, **kw)
+        run = sweep_frames(N_CTRL, "tophat", seed0=50000, **kw)["tophat"]
         thr = threshold_for_fa(run["fa_z"], N_CTRL)
         p, w, se = curve_at(run, thr)
         out[name] = {"w": w, "se": se, "thr": thr, "p": p}

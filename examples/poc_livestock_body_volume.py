@@ -328,21 +328,17 @@ def ring_ratio_ellipse(a: float, b: float, K: int, phase: float = 0.0) -> float:
 
 
 def ring_ratio_circle(K: int) -> float:
-    """円断面のときの過大率 ``(n/π)tan(π/n)``(n = 接線の本数)。現場の目安。"""
+    """円断面のときの過大率 ``(n/π)tan(π/n)``。n = **接線の本数**(K ではない)。"""
     n = len(ring_normals(K))
     return (n / math.pi) * math.tan(math.pi / n)
 
 
-def pear_support(th) -> np.ndarray:
-    """前後で太さの違う断面(半径 0.30 と 0.42 の 2 円の凸包)の支持関数。
+def naive_ratio_circle(K: int) -> float:
+    """現場の素朴な読み ``(K/π)tan(π/K)``。「K 台なら K 角形」という数え方。
 
-    §3 末尾の対照 —— **点対称でない断面**では偶数台の無駄が消えることを示す。
+    ★偶数 K では正しく、**奇数 K では厳しすぎる**(実際は 2K 本の接線が立つ)。
     """
-    th = np.asarray(th)
-    n = np.stack([np.cos(th), np.sin(th)], axis=1)
-    c1, r1 = np.array([0.55, 0.0]), 0.30
-    c2, r2 = np.array([-0.50, 0.0]), 0.42
-    return np.maximum(n @ c1 + r1, n @ c2 + r2)
+    return (K / math.pi) * math.tan(math.pi / K)
 
 
 # --------------------------------------------------------------------------- #
