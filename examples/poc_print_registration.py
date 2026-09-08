@@ -264,6 +264,19 @@ def lattice_residual(dy: float, dx: float, angle_deg: float) -> float:
     return float(np.hypot(ry, rx))
 
 
+def snap_to_lattice(fine, coarse, angle_deg: float) -> tuple[float, float]:
+    """``fine``(格子で不定な精密解)を、``coarse`` にいちばん近い代表元へ移す。
+
+    格子の不定性そのものは消せないので、**別の情報で代表元を 1 つ選ぶ**のが
+    唯一の手。``coarse`` の誤差が p/2 = %.2f px を超えると隣の代表元を選ぶ
+    ——**静かに 1 格子ぶん間違える**。
+    """
+    ry, rx, _u, _v = reduce_to_cell(coarse[0] - fine[0], coarse[1] - fine[1],
+                                    angle_deg)
+    return (fine[0] + (coarse[0] - fine[0]) - ry,
+            fine[1] + (coarse[1] - fine[1]) - rx)
+
+
 def tie_margin(dy: float, dx: float, angle_deg: float) -> float:
     """基本セルの境界までの余裕 [px]。0 に近いほど「どちらでもよい」。"""
     _ry, _rx, ur, vr = reduce_to_cell(dy, dx, angle_deg)
