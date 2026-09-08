@@ -1324,13 +1324,19 @@ def main() -> int:
         ("直下較正だけした(直下)", f"{null['直下較正(調和平均)']['nadir']:+.3f} m"),
         ("直下較正だけした(70 度)", f"{null['直下較正(調和平均)']['edge']:+.3f} m"),
         ("角度推定の床(65 度)", f"{ctrl['角度推定だけ入れる']:+.6f} m"),
-        ("エコー検出の床(65 度)", f"{ctrl['エコー検出だけ入れる']:+.6f} m"),
-        (f"IHO {ORDER} を割る角度(実測)", f"{cliff['cliff']:.2f} 度"),
+        ("エコー検出の床(65 度)", f"{ctrl['エコー検出だけ入れる']:+.4f} m"),
+        ("等音速 2 層の実装誤差(65 度)", f"{scene['conv'][0][1]:+.4f} m"),
+        (f"IHO {ORDER} を割る角度(全経路)", f"{cliff['cliff']:.2f} 度"),
+        ("同(屈折だけ = 検出なし)", f"{cliff['cliff_noecho']:.2f} 度"),
         ("同(厳密式の予測)", f"{cliff['pred_exact']:.2f} 度"),
         ("同(ラフな展開式の予測)", f"{cliff['pred_tan2']:.2f} 度"),
+        ("±65 度 swath が失格になる割合",
+         f"{100*sweep['fail']/sweep['total']:.1f} %"),
         ("隣接測線の重なりの食い違い", f"{dtm['mismatch']:.3f} m"),
-        ("平らな海底の見かけの勾配(最大)", f"{dtm['slope_max']:.2f} 度"),
-        ("70 度のフットプリント(実測)", f"{foot['foot_meas'][-1]:.2f} m"),
+        ("見かけの勾配(測線 1 本 / 継ぎ目あり)",
+         f"{dtm['slope1_max']:.2f} / {dtm['slope_max']:.1f} 度"),
+        ("70 度のフットプリント(cos² 式 / 実測)",
+         f"{foot['foot2'][-1]:.2f} / {foot['foot_iso'][-1]:.2f} m"),
     ]
     for name, val in rows:
         print(f"  {name:<38}{val:>14}")
