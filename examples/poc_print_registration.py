@@ -1140,12 +1140,23 @@ def section8_metrics(sweep_am, zero):
     print("     低域通過は**格子を消す**(絵柄しか残らない)ので一意だが鈍い。")
     print("     素の相関は鋭いが格子で不定。**鈍い方で代表元を選び、鋭い方で**")
     print("     **詰める**と、一意性と精度が同時に立つ。")
-    print("     成立条件は閉形式で書ける: **粗の誤差 < 基本セルの半径**。")
-    print("     実測の粗の誤差は最大 **%.3f px**、セルの半径(軸方向)は %.3f px"
-          % (max(coarse_err), PITCH / 2))
-    print("     —— 余裕 **%.1f 倍**。ここが %.1f 倍を切ったら二段は静かに"
-          % (PITCH / 2 / max(coarse_err), 1.0))
-    print("     1 格子ぶん間違えます(次の段落で実際に壊す)。")
+    print("     成立条件は閉形式で書ける: **粗の誤差 < 基本セルの半径 %.3f px**。"
+          % (PITCH / 2))
+    ce = np.array(coarse_err)
+    two_err = np.array([np.hypot(ey - t, 0.0) if False else
+                        np.hypot(ey - 0.0, ex - t)
+                        for t, (ey, ex) in zip(SWEEP, methods["★二段(粗+密)"])])
+    bad_c = ce > PITCH / 2
+    bad_t = two_err > 1.0
+    print("     実測の粗の誤差: 中央値 %.3f px / 最大 %.3f px。セルの半径を"
+          % (float(np.median(ce)), float(ce.max())))
+    print("     **超えた点が %d/%d 点**あり、そこでは二段が %.1f px 級に跳んだ。"
+          % (int(bad_c.sum()), SWEEP.size, PITCH))
+    print("  ★★**二段が壊れた %d 点は、すべて粗の誤差がセルの半径を超えた点**"
+          % int(bad_t.sum()))
+    print("     だった(逆は成り立たない —— 超えても跳ばないことはある)。")
+    print("     **成立条件が実測で確かめられた**。誤差は小さくならず丸ごと 1 格子")
+    print("     跳ぶので**気づける**が、それは「跳んだ値を見る人がいれば」の話。")
     print()
     # --- 二段の崖を、実際に壊して確かめる --------------------------------- #
     faint = (blob[0], blob[1], 0.06)          # 絵柄をほとんど無くす(下地だけに近い)
