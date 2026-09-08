@@ -536,49 +536,47 @@ def section_false_floor() -> dict:
     print("\n" + "=" * 78)
     print("5) 対照群 (b) 健全ロールだけ —— 偽陽性の床")
     print("=" * 78)
-    print("   周期欠陥をゼロにし、ランダム欠陥だけ %d 個。"
-          "「山の高さ / 帯域の中央値」が %.1f 倍を超えたらロールを 1 本報告する。"
+    print("   周期欠陥をゼロにし、ランダム欠陥だけ %d 個。櫛法は "
+          "k=1..3 の高調波が**全部** %.1f 倍を超えたときだけ 1 本報告する。"
           % (int(L_FULL * CLUTTER_PER_MM), PEAK_K))
     n = 60
-    ratios_h, ratios_t = [], []
+    rep_h, rep_t, naive_h = [], [], []
     for s in range(n):
-        e = spec_estimate(scene(9000 + s, culprits=())["md"], L_FULL)
-        ratios_h.append(e["ratio"])
-    for s in range(n):
-        e = spec_estimate(scene(SEED0 + s)["md"], L_FULL)
-        ratios_t.append(e["ratio"])
-    ratios_h = np.asarray(ratios_h)
-    ratios_t = np.asarray(ratios_t)
-    fp = float(np.mean(ratios_h >= PEAK_K))
-    tp = float(np.mean(ratios_t >= PEAK_K))
-    print("\n   健全ロールだけ %d 試行: 山の倍率 中央値 %.2f / 最大 %.2f "
-          "-> 偽陽性 %.1f %%" % (n, np.median(ratios_h), ratios_h.max(),
-                                 100 * fp))
-    print("   傷ありロール   %d 試行: 山の倍率 中央値 %.2f / 最小 %.2f "
-          "-> 検出 %.1f %%" % (n, np.median(ratios_t), ratios_t.min(),
-                               100 * tp))
-    print("   ★健全な床(最大 %.2f)と本物の谷(最小 %.2f)のあいだは %.2f 倍"
-          "あいている。\n     しきい値 %.1f 倍はその隙間の中にある —— "
-          "**この場面では偽の周期を 1 度も報告しない**。"
-          % (ratios_h.max(), ratios_t.min(), ratios_t.min() / ratios_h.max(),
-             PEAK_K))
-    if ratios_h.max() >= PEAK_K:
-        print("   ★ただし床がしきい値を越えている。この床は"
-              "「ランダム点過程のスペクトルの最大値」で、\n     "
-              "探索帯域を広く取るほど上がる(帯域 %.0f..%.0f mm)。"
-              % (C_MIN, C_MAX))
+        md = scene(9000 + s, culprits=())["md"]
+        r = comb_peaks(md, L_FULL)
+        rep_h.append(r["C"][0] if r["C"] else np.nan)
+        naive_h.append(naive_spec_estimate(md, L_FULL)["ratio"])
+        rt = comb_peaks(scene(SEED0 + s)["md"], L_FULL)
+        rep_t.append(rt["C"][0] if rt["C"] else np.nan)
+    rep_h = np.asarray(rep_h, float)
+    rep_t = np.asarray(rep_t, float)
+    fp = float(np.mean(np.isfinite(rep_h)))
+    tp = float(np.mean(np.isfinite(rep_t)))
+    hit = float(np.mean([identify(v) == CULPRIT for v in rep_t
+                         if np.isfinite(v)])) if tp > 0 else 0.0
+    print("\n   健全ロールだけ %d 試行: 報告 %d 件 -> **偽陽性 %.1f %%**"
+          % (n, int(np.isfinite(rep_h).sum()), 100 * fp))
+    print("   傷ありロール   %d 試行: 報告 %d 件 -> 検出 %.1f %%"
+          "(うち犯人を当てた割合 %.1f %%)"
+          % (n, int(np.isfinite(rep_t).sum()), 100 * tp, 100 * hit))
+    print("   健全側で「帯域内の最大値 / 中央値」は 中央値 %.2f / 最大 %.2f 倍 —— "
+          "しきい値 %.1f 倍に対して\n   %s。偽の周期を止めているのは"
+          "しきい値だけでなく、**高調波を全部要求する fail-closed のほう**。"
+          % (float(np.median(naive_h)), float(np.max(naive_h)), PEAK_K,
+             "床のほうが低い" if np.max(naive_h) < PEAK_K
+             else "**床のほうが高い**(単独のしきい値では止まらない)"))
 
     figs.save_plot("false_floor",
-                   [("健全ロールだけ", np.arange(n), np.sort(ratios_h)),
-                    ("傷ありロール", np.arange(n), np.sort(ratios_t)),
+                   [("健全ロールだけ 最大値/中央値", np.arange(n),
+                     np.sort(naive_h)),
                     ("しきい値 %.1f" % PEAK_K, [0, n - 1], [PEAK_K, PEAK_K])],
                    xlabel="試行(倍率の小さい順)",
-                   ylabel="山の高さ / 帯域の中央値 [倍]",
-                   title="偽陽性の床と本物の谷のあいだ",
-                   caption="健全な床の最大 %.2f、本物の谷の最小 %.2f。"
-                           % (ratios_h.max(), ratios_t.min()))
-    return {"floor": float(ratios_h.max()), "valley": float(ratios_t.min()),
-            "fp": fp, "tp": tp}
+                   ylabel="帯域内の最大値 / 中央値 [倍]",
+                   title="偽陽性の床(周期欠陥ゼロ、ランダム欠陥だけ)",
+                   caption="櫛法の報告件数は %d / %d 件。" % (
+                       int(np.isfinite(rep_h).sum()), n))
+    return {"fp": fp, "tp": tp, "hit": hit,
+            "floor": float(np.max(naive_h)), "n": n}
 
 
 # --------------------------------------------------------------------------- #
