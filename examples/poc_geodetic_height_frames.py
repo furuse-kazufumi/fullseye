@@ -1055,9 +1055,13 @@ def main():
         assert axis["cases"][name]["raised"] == 0, name
     assert axis["cases"]["ECEF の軸入れ替え"]["inrange"] == axis["total"]
     # §10 穴。geoid / enu / datum は 4 層とも 0 件(埋まったらここが鳴る = 目的)。
-    for stem in ("geoid", "enu", "datum", "ortho", "vertical", "epoch", "crs", "utm"):
+    for stem in ("geoid", "enu", "datum", "ortho", "epoch", "crs", "utm",
+                 "msl", "wgs84", "tokyo", "jgd"):
         assert len(fs.op_find(stem)) == 0, f"{stem} の op が増えた(嬉しい)"
         assert not [n for n in dir(fs) if stem in n.lower() and not n.startswith("_")], stem
+    # ★``vertical`` だけは op_find が 5 件返す。**中身は 1 つも関係ない**
+    #   (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。
+    assert not [r for r in fs.op_find("vertical") if "vertical" in r["op"].lower()]
     assert len(gap["have"]) == 6, gap["have"]
 
     if figs.errors():
