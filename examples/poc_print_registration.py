@@ -268,8 +268,8 @@ def snap_to_lattice(fine, coarse, angle_deg: float) -> tuple[float, float]:
     """``fine``(格子で不定な精密解)を、``coarse`` にいちばん近い代表元へ移す。
 
     格子の不定性そのものは消せないので、**別の情報で代表元を 1 つ選ぶ**のが
-    唯一の手。``coarse`` の誤差が p/2 = %.2f px を超えると隣の代表元を選ぶ
-    ——**静かに 1 格子ぶん間違える**。
+    唯一の手。``coarse`` の誤差が基本セルの半径(軸方向で p/2)を超えると
+    隣の代表元を選ぶ ——**静かに 1 格子ぶん間違える**。
     """
     ry, rx, _u, _v = reduce_to_cell(coarse[0] - fine[0], coarse[1] - fine[1],
                                     angle_deg)
