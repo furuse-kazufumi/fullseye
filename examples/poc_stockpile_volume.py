@@ -334,14 +334,18 @@ def section_truth():
     print(f"  底面積 A = {area_fine:.2f} m^2(細格子)/ {yard.area:.2f} m^2(作業格子)")
     tcx, tcy = exact_centroid()
     print(f"  真の重心 ({tcx:.3f}, {tcy:.3f}) m —— 円錐の体積で重み付けた平均")
-    slope = fs.ledger.dem_slope(yard.surf, CELL)
     r_main = np.hypot(yard.x - 60.0, yard.y - 60.0)
     az = np.degrees(np.arctan2(yard.y - 60.0, yard.x - 60.0))
     # 主円錐だけの法面を取る。副円錐は方位 23 度と -138 度にあるので、
-    # 95〜145 度の扇形はどちらからも 18 m 離れていて混ざらない。
+    # 95〜145 度の扇形はどちらからも 18 m 以上離れていて混ざらない。
     flank = (r_main > 4.0) & (r_main < 12.0) & (az > 95.0) & (az < 145.0)
-    print(f"  主円錐の法面の傾斜 {slope[flank].mean():.3f} 度(仕込んだ安息角 "
-          f"{REPOSE_DEG} 度、dem_slope で確認)")
+    flat_yard = Yard(flat=True)
+    s_flat = float(fs.ledger.dem_slope(flat_yard.surf, CELL)[flank].mean())
+    s_real = float(fs.ledger.dem_slope(yard.surf, CELL)[flank].mean())
+    print(f"  主円錐の法面の傾斜 {s_flat:.3f} 度(仕込んだ安息角 {REPOSE_DEG} 度、"
+          f"平らな地面の上で dem_slope 確認)")
+    print(f"  同じ法面を傾いた地面の上で測ると {s_real:.3f} 度 —— **地面の勾配が"
+          f"安息角に足し算される**。安息角を現場で読むときの罠。")
     print("  → 円錐の**和**にしたので体積が解析的に閉じる。重なった所は斜面が")
     print("     安息角より急になるが、体積の真値は厳密。")
     return {"exact": v_exact, "grid": v_grid, "fine": fine_volume(0.025),
