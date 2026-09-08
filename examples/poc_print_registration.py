@@ -1119,7 +1119,7 @@ def section8_metrics(sweep_am, zero):
         res[label] = {"rms": rms, "max": mx_e, "rate": rate, "miss": miss}
         rows.append([label, "%.4f" % rms, "%.3f" % mx_e, "%.1f %%" % rate,
                      "%d / %d" % (miss, SWEEP.size)])
-        print("  %-18s %14.4f %14.3f %13.1f %% %10d / %d"
+        print("  %-22s %13.4f %13.3f %11.1f %% %8d / %d"
               % (label, rms, mx_e, rate, miss, SWEEP.size))
     print()
     a, lp, b = res["相関 AM(素)"], res["相関 AM(低域通過)"], res["重心(ゼロ点 B)"]
