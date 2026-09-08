@@ -879,38 +879,68 @@ def section7_marks():
     print("    公差 %.1f px を超えるのは距離 **%.1f px(= %.2f mm)** から。"
           % (TOL_PX, r_crit, r_crit * UM_PER_PX / 1000))
     print()
-    mk_y, mk_x = float(ty[my_c, mx_c]), float(tx[my_c, mx_c])
-    print("  %10s %18s %18s %12s %12s"
-          % ("距離 px", "真値 d(x)", "マークの値を適用", "予測 誤差", "実測 誤差"))
-    print("  " + "-" * 74)
-    dist_rows, pred_e, meas_e = [], [], []
-    for frac in (0.0, 0.15, 0.3, 0.5, 0.7, 0.85, 1.0):
-        qy = my_c + frac * (L - 1 - my_c)
-        qx = mx_c + frac * (L - 1 - mx_c)
-        iy, ix = int(round(qy)), int(round(qx))
+    print("  ★実測は**閉形式と別の道**で取る: 同じ版・同じ紙の伸びと回転で FM")
+    print("  (非周期)スクリーンを刷り、窓ごとの相関で**ずれ場を測る**。")
+    print("  FM なら 6 節のとおり折り返さないので、測った場をそのまま使える。")
+    print()
+    cen, rad = fm_centres(blob)
+    ref_fm = fm_sheet(cen, rad, seed=None)
+    th = np.deg2rad(SHEET_ROT)
+    c = L / 2.0
+    ey_, ex_ = np.asarray(cen)[:, 0] - c, np.asarray(cen)[:, 1] - c
+    warped = np.column_stack([
+        c + D0[0] + SHEET_SCALE * (ey_ * np.cos(th) + ex_ * np.sin(th)),
+        c + D0[1] + SHEET_SCALE * (-ey_ * np.sin(th) + ex_ * np.cos(th))])
+    cur_fm = fm_sheet(warped, rad, seed=72)
+
+    hw = 64
+    bm2 = box_mask(2 * hw, 2.0 * PITCH)
+
+    def measure_at(iy, ix):
+        sl = np.s_[iy - hw:iy + hw, ix - hw:ix + hw]
+        ey, ex, _r = corr_shift(ref_fm[sl], cur_fm[sl], bm2)
+        return float(ey), float(ex)
+
+    mk_y, mk_x = measure_at(my_c, mx_c)
+    print("  マークの場所での実測 (%+.3f, %+.3f) / 真値 (%+.3f, %+.3f)"
+          % (mk_y, mk_x, float(ty[my_c, mx_c]), float(tx[my_c, mx_c])))
+    print()
+    print("  %8s %18s %18s %11s %11s %11s"
+          % ("距離 px", "真値 d(x)", "実測 d(x)", "場の誤差", "予測 誤差", "実測 誤差"))
+    print("  " + "-" * 80)
+    dist_rows, pred_e, meas_e, field_e = [], [], [], []
+    for frac in (0.0, 0.2, 0.4, 0.6, 0.8, 1.0):
+        iy = int(round(my_c + frac * (L - hw - 1 - my_c)))
+        ix = int(round(mx_c + frac * (L - hw - 1 - mx_c)))
         r = float(np.hypot(iy - my_c, ix - mx_c))
         gy, gx = float(ty[iy, ix]), float(tx[iy, ix])
-        e_meas = float(np.hypot(mk_y - gy, mk_x - gx))
-        e_pred = grad * r
+        ey, ex = measure_at(iy, ix)
+        field_e.append(float(np.hypot(ey - gy, ex - gx)))
+        e_meas = float(np.hypot(mk_y - ey, mk_x - ex))    # マークの値を当てた誤差
+        e_pred = grad * r                                  # 閉形式
         dist_rows.append(["%.1f" % r, "(%+.2f,%+.2f)" % (gy, gx),
-                          "(%+.2f,%+.2f)" % (mk_y, mk_x),
+                          "(%+.2f,%+.2f)" % (ey, ex), "%.4f" % field_e[-1],
                           "%.4f" % e_pred, "%.4f" % e_meas])
         pred_e.append(e_pred)
         meas_e.append(e_meas)
-        print("  %10.1f (%+7.3f,%+7.3f) (%+7.3f,%+7.3f) %12.4f %12.4f"
-              % (r, gy, gx, mk_y, mk_x, e_pred, e_meas))
+        print("  %8.1f (%+7.3f,%+7.3f) (%+7.3f,%+7.3f) %11.4f %11.4f %11.4f"
+              % (r, gy, gx, ey, ex, field_e[-1], e_pred, e_meas))
     d_pred_meas = max(abs(p - m) for p, m in zip(pred_e, meas_e))
     print()
-    print("  → 予測と実測の差は最大 %.5f px(閉形式が厳密に合う)。" % d_pred_meas)
-    # 実測から臨界距離を線形補間で出す
+    print("  → 測ったずれ場そのものの誤差は最大 %.4f px(FM なので折り返さない)。"
+          % max(field_e))
+    print("  → **マークの値を当てた誤差**は、予測(閉形式)と実測で最大 %.4f px しか"
+          % d_pred_meas)
+    print("     違わない。**誤差は距離に比例する**という予測が実データで立った。")
     rr = np.array([float(x[0]) for x in dist_rows])
-    ee = np.array(meas_e)
-    r_meas = float(np.interp(TOL_PX, ee, rr))
-    print("  ★**公差を超えるのは 予測 %.1f px / 実測 %.1f px から**。"
-          % (r_crit, r_meas))
-    print("     版の対角は %.1f px あるので、マーク 1 か所では**紙の %.0f %% が"
-          % (np.hypot(L - 1, L - 1), 100 * (1 - (np.pi * r_crit ** 2) / (L * L))))
-    print("     公差外**。マークを増やして内挿するか、面で測るしかない。")
+    r_meas = float(np.interp(TOL_PX, np.array(meas_e), rr))
+    dist_map = np.hypot(_Y - my_c, _X - mx_c)
+    frac_out = float((dist_map > r_crit).mean())
+    print("  ★**公差 %.1f px を超えるのは 予測 %.1f px / 実測 %.1f px から**。"
+          % (TOL_PX, r_crit, r_meas))
+    print("     マークからその距離より遠い画素は紙の **%.0f %%**。マーク 1 か所では"
+          % (100 * frac_out))
+    print("     そこが全部公差外 —— **マークを増やして内挿するか、面で測るしかない**。")
     figs.save_table("mark_distance",
                     ["距離 px", "真値 d(x)", "マークの値", "予測 誤差 px",
                      "実測 誤差 px"], dist_rows,
