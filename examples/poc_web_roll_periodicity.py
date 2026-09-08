@@ -685,23 +685,17 @@ def section_two_rolls() -> dict:
           % (both[0], cs[0], both[1], cs[1]))
     hits = 0
     errs = [[], []]
+    nrep = []
     for s in range(SEEDS):
         sc = scene(SEED0 + s, culprits=both)
-        e = spec_estimate(sc["md"], sc["length"])
-        m, f, band = e["m"], e["f"], e["band"]
-        pk = np.asarray(fs.find_peaks(m[band],
-                                      height=float(PEAK_K * np.median(m[band])),
-                                      distance=3), int)
-        found = sorted(1.0 / f[band[pk]]) if pk.size else []
-        got = []
-        for cc in cs:
-            got.append(min((abs(v - cc) for v in found), default=np.inf))
-        errs[0].append(got[0])
-        errs[1].append(got[1])
-        names = {identify(v) for v in found}
-        hits += int(set(both) <= names)
+        found = comb_peaks(sc["md"], sc["length"])["C"]
+        nrep.append(len(found))
+        for i, cc in enumerate(cs):
+            errs[i].append(min((abs(v - cc) for v in found), default=np.inf))
+        hits += int(set(both) <= {identify(v) for v in found})
     print("   %d 試行で **両方のロールを同時に当てた割合 %.0f %%**"
-          % (SEEDS, 100.0 * hits / SEEDS))
+          "(報告したロールの本数 中央値 %.0f)"
+          % (SEEDS, 100.0 * hits / SEEDS, float(np.median(nrep))))
     print("   周長の誤差(中央値): %s %.1f mm / %s %.1f mm"
           % (both[0], float(np.median(errs[0])), both[1],
              float(np.median(errs[1]))))
