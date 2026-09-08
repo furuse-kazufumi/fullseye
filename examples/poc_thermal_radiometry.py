@@ -1102,9 +1102,15 @@ def section_guard_band(tab, cam, eps, u_eps, base, head, n_trials: int = 40000):
     fa0 = out["不確かさを無視(T̂ ≤ 閾値)"]["fa"]
     fa1 = out["独立 RSS の guard band"]["fa"]
     fa2 = out["相関つき MC の guard band"]["fa"]
-    print(f"  → ★★誤合格は {100*fa0:.2f} % → {100*fa1:.2f} % → {100*fa2:.2f} %。")
+    print(f"  → ★★誤合格は {100*fa0:.2f} % → {100*fa1:.2f} % → {100*fa2:.2f} %"
+          f"(実数で {int(round(fa0*n_trials))} → {int(round(fa1*n_trials))} → "
+          f"{int(round(fa2*n_trials))} 件 / 分母 {n_trials})。")
     print(f"     RSS の guard band は MC の {fa1/fa2:.1f} 倍の誤合格を残す —— ")
     print("     **安全なつもりで、区間が狭い分だけ通してしまっている**。")
+    print(f"     ★MC の band が広いのは相関(u が {base['u_rss']:.2f} → "
+          f"{head['u_corr']:.2f} K)**だけでなく**、分布が右に歪んでいる分もある ——")
+    print(f"     対称な 1.96·u なら {1.96*head['u_corr']:.2f} K のところ、"
+          f"上側の 97.5 百分位は {head['off'][1]:.2f} K。")
     print("  → 代償は誤不合格: "
           + " → ".join(f"{100*out[n]['fr']:.2f} %" for n, _ in rules)
           + "。**誤合格を減らす唯一の代償が誤不合格**で、選べるのは交換レートだけ。")
