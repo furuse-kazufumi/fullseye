@@ -106,16 +106,24 @@ def test_margin_inverts_the_rim_and_leaves_the_inside_alone():
 
 
 def test_a_thin_line_is_judged_only_on_the_pixels_it_really_claims():
-    """★細い線の端は元から半透明。そこを『見えない』に数えると常に警告になる。"""
+    """★細い線の端は元から半透明。そこを『見えない』に数えると常に警告になる。
+
+    太さ 1.5 の水平線の被覆は ``clip(1.25 - |y - 8|, 0, 1)`` なので、
+    触るのは 3 行(1.0 / 0.25 / 0.25)、判定に数えるのは芯の 1 行だけ。
+    """
     img = np.zeros((16, 40))
-    out = A.annotate_invert_path(img, [(2.0, 8.0), (37.0, 8.0)], width=3.0)
-    assert out[8, 20] == 1.0                                  # 芯は完全反転
-    assert out[2, 20] == 0.0                                  # 離れたところは無傷
-    rep = A.annotate_invert_visibility(img, np.ones(img.shape, bool))
-    assert rep["pixels"] == img.size                          # 参考: 全面なら全画素
-    # 線が claim するのは被覆 0.5 以上の帯だけ(高さ 4 画素 = r+0.5 の切り上げ)
-    band = int(np.count_nonzero(np.abs(np.arange(16) - 8.0) <= 1.5))
-    assert band == 4
+    out = A.annotate_invert_path(img, [(2.0, 8.0), (37.0, 8.0)], width=1.5)
+    col = out[:, 20]
+    assert float(col[8]) == 1.0                               # 芯は完全反転
+    assert float(col[7]) == pytest.approx(0.25)               # 端は元から半透明
+    assert float(col[2]) == 0.0                               # 離れたところは無傷
+    assert (int(np.count_nonzero(col > 0.0)), int(np.count_nonzero(col >= 0.5))) == (3, 1)
+
+    # 中間調の地では警告が出る。数える画素は「芯の 1 行 × x=2..37 の 36 画素」
+    grey = np.full((16, 40), 128 / 255.0)
+    with pytest.warns(RuntimeWarning, match="invisible") as rec:
+        A.annotate_invert_path(grey, [(2.0, 8.0), (37.0, 8.0)], width=1.5)
+    assert "of the 36 drawn pixels" in str(rec[0].message)
 
 
 def test_alpha_channel_is_never_inverted():
