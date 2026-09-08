@@ -696,8 +696,9 @@ def section_cliff(pred: dict) -> dict:
           % (l_crit, "%.0f mm" % lb if lb else "—",
              "%.0f mm" % li if li else "—"))
     if lb is not None:
-        print("     **予測は当たった** —— 比 %.2f 倍(掃引の刻みは %.0f mm 幅な"
-              "ので、これは 1 段以内)。" % (lb / l_crit, 17000 - 14000))
+        step = min(b - a for a, b in zip(Ls, Ls[1:]))
+        print("     **予測は当たった** —— 比 %.2f 倍(掃引のいちばん細かい刻みが "
+              "%.0f mm なので、\n     これは 1 段より内側)。" % (lb / l_crit, step))
     if lb is not None and li is not None:
         print("  ★**外したのは「補間を入れれば崖が下がる」のほう**。放物線補間は"
               "誤差の中央値を\n     L=%.0f mm で %.1f -> %.1f mm に縮めるのに、"
