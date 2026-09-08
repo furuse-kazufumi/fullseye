@@ -752,17 +752,20 @@ def section_cliff(scene):
           f"MWIR も {refl_rows[('MWIR', EPS_POLISH)]:+.1f} K で、**同じ桁**。")
 
     if figs.enabled():
-        deltas = np.linspace(-0.30, 0.30, 61)
+        # ★横軸は**絶対**の Δε。相対 Δε/ε で描くと 3 本が完全に重なる
+        #   (§2 のとおり式から ε が消えるので)—— 図として何も言わない。
+        abs_d = np.linspace(-0.04, 0.04, 41)
         series = []
         for eps in (EPS_PAINT, EPS_OXIDE, EPS_POLISH):
-            ys = np.array([measure_dt_from_eps(tab, 350.0, eps, d) for d in deltas])
-            series.append((f"ε = {eps:.2f}", deltas, ys))
+            ys = np.array([measure_dt_from_eps(tab, 350.0, eps, d / eps)
+                           for d in abs_d])
+            series.append((f"ε = {eps:.2f}", abs_d, ys))
         figs.save_plot("cliff_curves", series,
-                       xlabel="放射率の相対誤差 Δε/ε", ylabel="温度の誤差 ΔT [K]",
-                       title="崖 —— 同じ相対誤差でも ε が小さいほど落ちる",
+                       xlabel="放射率の**絶対**誤差 Δε", ylabel="温度の誤差 ΔT [K]",
+                       title="崖 —— 同じ Δε でも ε が小さいほど落ちる",
                        caption="LWIR・T_obj = 350 K・T_refl = 300 K。傾きは "
-                               "−(T/n)(1−L_r/L_o)/1。3 本は原点で交わるが、"
-                               "傾きが ε に依らないのは**相対**誤差で見たときだけ ——"
+                               "−(T/n)(1−L_r/L_o)/ε で **1/ε**。"
+                               "★相対誤差 Δε/ε を横軸に取ると 3 本は完全に重なる ——"
                                "現場で表から拾う ε の誤差は**絶対**値で来る。")
         ts = np.linspace(302.0, 900.0, 61)
         meas = np.array([abs(measure_dt_from_eps(tab, t, EPS_PAINT, 0.05)) for t in ts])
