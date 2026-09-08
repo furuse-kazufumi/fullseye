@@ -112,34 +112,97 @@ def md_signal(md, length: float) -> np.ndarray:
     return s.astype(np.float64)
 
 
-def spec_estimate(md, length: float, interp: bool = True) -> dict:
-    """**スペクトル法** —— MD 占有信号の振幅スペクトルの山から周長を逆算する。
+def md_spectrum(md, length: float) -> dict:
+    """MD 占有信号の片側振幅スペクトル(``fs.spectrum``)と探索帯域。
 
-    ``fs.spectrum`` は片側振幅スペクトル。窓は掛けない(矩形窓のままにすると
-    分解能が Rayleigh の 1/L ちょうどになり、2 節の予測と直接比べられる)。
-    ``interp`` は山の頂点を放物線で補間するかどうか —— **予測が当たるのは
-    補間しないほう**(6 節)。
+    窓は掛けない —— 矩形窓のままにすると分解能が Rayleigh の 1/L ちょうどに
+    なり、2 節の予測と直接比べられる。
     """
     s = md_signal(md, length)
     if s.size < 16 or s.sum() < 3:
-        return {"C": np.nan, "ratio": 0.0}
+        return {}
     s = s - s.mean()
     f, m = fs.spectrum(s, rate=1.0 / MD_BIN)
     f, m = np.asarray(f, float), np.asarray(m, float)
     band = np.nonzero((f >= 1.0 / C_MAX) & (f <= 1.0 / C_MIN))[0]
-    if band.size < 3:
-        return {"C": np.nan, "ratio": 0.0}
-    i = int(band[np.argmax(m[band])])
-    df = float(f[1] - f[0])
+    if band.size < 4:
+        return {}
+    return {"f": f, "m": m, "band": band, "df": float(f[1] - f[0]),
+            "med": float(max(np.median(m[band]), 1e-12))}
+
+
+def _peak_freq(f, m, i: int, interp: bool) -> float:
+    """ビン ``i`` の山の頂点の周波数。``interp`` なら放物線で補間する。"""
     fh = float(f[i])
     if interp and 0 < i < m.size - 1:
         a, b, c = m[i - 1], m[i], m[i + 1]
         den = a - 2.0 * b + c
         if abs(den) > 1e-12:
-            fh += float(np.clip(0.5 * (a - c) / den, -0.5, 0.5)) * df
-    ratio = float(m[i] / max(np.median(m[band]), 1e-12))
-    return {"C": 1.0 / fh if fh > 0 else np.nan, "ratio": ratio,
-            "f": f, "m": m, "band": band, "i": i, "df": df}
+            fh += float(np.clip(0.5 * (a - c) / den, -0.5, 0.5)) * float(f[1] - f[0])
+    return fh
+
+
+def naive_spec_estimate(md, length: float) -> dict:
+    """**素朴なスペクトル法** —— 帯域内の最大値をそのまま周長に直す。
+
+    周期欠陥の列はインパルス列なので、スペクトルは **f = k/C の櫛**になる。
+    高調波は基本波とほぼ同じ高さなので、最大値を読むと ``C/2`` や ``C/3`` を
+    掴む。しかも掴んだ値が**台帳の別のロールの近く**に落ちると、
+    「無実のロールを名指しする」ところまで行く(3 節で実測)。
+    """
+    sp = md_spectrum(md, length)
+    if not sp:
+        return {"C": np.nan, "ratio": 0.0}
+    f, m, band = sp["f"], sp["m"], sp["band"]
+    i = int(band[np.argmax(m[band])])
+    fh = _peak_freq(f, m, i, True)
+    return {"C": 1.0 / fh if fh > 0 else np.nan, "ratio": float(m[i] / sp["med"])}
+
+
+def comb_peaks(md, length: float, kmax: int = 3, max_rolls: int = 4,
+               interp: bool = True) -> dict:
+    """**櫛(comb)法** —— 高調波が **k=1..kmax すべて**立っている最低周波数。
+
+    fail-closed にしてある: 1 本でも欠けている候補は基本波として採らない。
+    さらに、既に採った周長の 1/2, 1/3, ... に当たる候補は「同じロールの
+    高調波」として篩い落とす。候補の拾い出しは :func:`fullseye.find_peaks`。
+    """
+    sp = md_spectrum(md, length)
+    if not sp:
+        return {"C": [], "ratio": [], "spec": {}}
+    f, m, band, med = sp["f"], sp["m"], sp["band"], sp["med"]
+    pk = np.asarray(fs.find_peaks(m[band], height=PEAK_K * med, distance=2), int)
+    cands = band[pk] if pk.size else np.zeros(0, int)
+    cs, rs = [], []
+    for j in cands:
+        if kmax * int(j) + 4 >= m.size:
+            continue
+        # 高調波 k の位置は基本波のビン丸め誤差が k 倍されるので窓も k で広げる
+        strength = min(
+            float(m[max(k * j - (k // 2 + 1), 0):k * j + (k // 2 + 2)].max())
+            for k in range(1, kmax + 1))
+        if strength < PEAK_K * med:
+            continue
+        fh = _peak_freq(f, m, int(j), interp)
+        if fh <= 0:
+            continue
+        chat = 1.0 / fh
+        if any(abs(chat - c0 / k) <= 0.04 * c0 / k
+               for c0 in cs for k in range(2, 7)):
+            continue
+        cs.append(chat)
+        rs.append(float(m[j] / med))
+        if len(cs) >= max_rolls:
+            break
+    return {"C": cs, "ratio": rs, "spec": sp}
+
+
+def spec_estimate(md, length: float, interp: bool = True) -> dict:
+    """櫛法が返す**いちばん低い周波数の基本波** = 1 本目のロールの周長。"""
+    r = comb_peaks(md, length, interp=interp)
+    if not r["C"]:
+        return {"C": np.nan, "ratio": 0.0, "spec": r["spec"]}
+    return {"C": r["C"][0], "ratio": r["ratio"][0], "spec": r["spec"]}
 
 
 def cepstrum_estimate(md, length: float) -> dict:
