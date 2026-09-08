@@ -942,8 +942,8 @@ def section7_marks():
           % (100 * frac_out))
     print("     そこが全部公差外 —— **マークを増やして内挿するか、面で測るしかない**。")
     figs.save_table("mark_distance",
-                    ["距離 px", "真値 d(x)", "マークの値", "予測 誤差 px",
-                     "実測 誤差 px"], dist_rows,
+                    ["距離 px", "真値 d(x)", "実測 d(x)", "場の誤差 px",
+                     "予測 誤差 px", "実測 誤差 px"], dist_rows,
                     title="マーク 1 か所の値を版全体へ当てた誤差", col_w=104)
     if figs.enabled():
         figs.save_plot(
