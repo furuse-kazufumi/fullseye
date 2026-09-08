@@ -659,13 +659,13 @@ def section_metrics(ds=(0.50, 0.80, 1.20)) -> dict:
     print("6) 物差しを 3 つ置く —— 場の RMSE / ピーク温度の誤差 / 位置の誤差")
     print("=" * 78)
     truth = field(GRID)
-    rows, out = [], {}
+    rows, out, hulls = [], {}, {}
     print("   間隔  手法                      場の RMSE   ピーク誤差(平均)  "
-          "位置誤差   見失い  凸包外")
+          "位置誤差   見失い  偽の峰")
     for d in ds:
         pts, ns = lattice(d)
         vals = read(pts, noise=NOISE)
-        miss_hull = hull_miss(pts, GRID)
+        hulls[d] = hull_miss(pts, GRID)
         for m in METHODS:
             f = fit(pts, vals, m)
             rec = f(GRID)
@@ -674,14 +674,18 @@ def section_metrics(ds=(0.50, 0.80, 1.20)) -> dict:
             vol = rec.reshape(GX.size, GY.size, GZ.size).transpose(2, 1, 0)
             dl, ms, sp = loc_error(locate(vol))
             out[(d, m)] = {"rmse": rmse, "peak": float(np.mean(np.abs(pe))),
-                           "loc": dl, "miss": ms, "n": len(pts)}
+                           "loc": dl, "miss": ms, "spur": sp, "n": len(pts)}
             rows.append(["%.2f (%d 本)" % (d, len(pts)), MET_LABEL[m],
                          "%.3f" % rmse, "%+.2f" % float(np.mean(pe)),
-                         ("%.3f" % dl) if np.isfinite(dl) else "—", str(ms)])
-            print("   %.2f  %-26s %7.3f °C %10.2f °C %11s %6d %8.1f %%"
+                         ("%.3f" % dl) if np.isfinite(dl) else "—",
+                         str(ms), str(sp)])
+            print("   %.2f  %-26s %7.3f °C %10.2f °C %11s %6d %7d"
                   % (d, MET_LABEL[m], rmse, float(np.mean(pe)),
-                     ("%.3f m" % dl) if np.isfinite(dl) else "—", ms,
-                     100 * miss_hull if m == "linear" else 0.0))
+                     ("%.3f m" % dl) if np.isfinite(dl) else "—", ms, sp))
+    print("\n   線形補間が凸包の外へ出て最近傍に落ちた割合: "
+          + " / ".join("d=%.2f → %.1f %%" % (d, 100 * hulls[d]) for d in ds))
+    print("   —— 壁・床・天井際は**必ず**外に出る。センサを部屋の内側にしか"
+          "置けない以上、\n      外挿しない手法は端で必ず別の手法に化ける。")
 
     print("\n   ---- 物差しごとの勝者(ゼロ点を除く)----")
     winners = {}
