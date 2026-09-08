@@ -769,7 +769,7 @@ def section5_per_plate():
                                   "実測 見かけ", "|実測| px", "差 px"], rows,
                     title="同じずれ (%+.2f,%+.2f) px を 4 版に掛けた" % (dy, dx),
                     col_w=110)
-    return {"mags": mags, "diffs": diffs}
+    return {"mags": mags, "diffs": diffs, "n_ok": n_ok}
 
 
 # --------------------------------------------------------------------------- #
