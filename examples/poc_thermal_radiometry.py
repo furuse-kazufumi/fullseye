@@ -263,6 +263,24 @@ def band_index_predicted(band: str, t_k: float, lam_eff: float | None = None) ->
     return C2_UM / (lam * float(t_k))
 
 
+def band_index_wien_corrected(band: str, t_k: float) -> float:
+    """同じ指数を**Wien 近似を外して**予測する。
+
+    dL_λ/dT = L_λ·(c2/(λT))·(1/T)·e^x/(e^x−1)、x = c2/(λT) なので、正しい
+    重み付き平均は ``⟨(c2/(λT))·e^x/(e^x−1)⟩``(重み = L_λ)。
+    n = c2/(λ_eff T) という素朴な形は **e^x/(e^x−1) → 1**、つまり
+    **Wien 側(λT が小さい = 短波・低温)でだけ厳密**。長波・高温では
+    この因子が 1 を超えるので、素朴な形は必ず**過小**に出る。
+    """
+    lo, hi = BANDS[band]
+    lam, w = _simpson_nodes(lo, hi)
+    t = float(t_k)
+    li = planck_spectral(lam, t)
+    x = C2_UM / (lam * t)
+    kernel = x / (-np.expm1(-x))                  # x·e^x/(e^x−1)、桁落ちしない形
+    return float(np.dot(li * kernel, w) / np.dot(li, w))
+
+
 def band_index_numeric(band: str, t_k: float, rel_h: float = 1e-4) -> float:
     """同じ指数の**実測** n = d ln L_bb / d ln T(中心差分)。"""
     t = float(t_k)
