@@ -586,10 +586,11 @@ def section_flow_direction():
         out[label] = {"pred": pred_rate, "flips": flips, "valid": valid,
                       "d8": d8_diff, "d8_total": int(d8_true.size), "gmed": gmed,
                       "a_true": a_true, "a_wrong": a_wrong, "h_true": h_true}
-    print("  → ★**傾斜の誤差 0.007 度は無視できても、向きは逆になる**。平地では")
-    print("     ∇H が ∇N と同じ桁なので、ベクトルとして足すと反転する。")
+    print("  → ★**傾斜の誤差 0.009 度は無視できても、向きは逆になる**。平地では")
+    print("     ∇H が ∇N と同じ桁で、この土地では**向きが逆**なので、足すと反転する。")
     print("     灌漑・下水・内水氾濫の計算はここで壊れる —— 例外は出ない。")
-    print("  → 対照群(N 一定)は 0 セル。丘陵地は 0.6 % だけ。**平らさが効いている**。")
+    print("  → 対照群(N 一定)は 0 セル。丘陵地(勾配 60 倍)もほぼ 0。")
+    print("     ★**平らさと、向きが逆であることの両方**が要る。どちらか欠けると起きない。")
     if figs.enabled():
         a = out["氾濫原・勾配あり"]
         d = angular_diff(a["a_true"], a["a_wrong"])
