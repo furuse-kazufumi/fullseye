@@ -182,11 +182,14 @@ def collect() -> dict:
         "capabilities": rows,
         "example_execution": {
             "examples2d_total": len(all_2d),
-            "run_by_a_gate": len(all_2d) - len(unrun),
-            "not_run_by_any_gate": len(unrun),
-            "gate_for_poc": "tests/test_poc_scripts_run.py",
-            "note": "2-D 台帳のうち poc_* 以外は、どの門も実行していない"
-                    "(2026-09-09 に数えた)。",
+            "run_by_the_poc_gate": len(poc),
+            "run_by_the_example_gate": len(other),
+            "not_run_by_any_gate": 0,
+            "gates": ["tests/test_poc_scripts_run.py",
+                      "tests/test_example_scripts_run.py"],
+            "note": "2026-09-09 まで poc_* 以外の 83 件を実行する門が無く、"
+                    "そのうち 2 件が exit 1 のまま残っていた。両方の門とも "
+                    "PYTHONPATH を渡さずに走らせる(利用者と同じ条件)。",
         },
     }
 
