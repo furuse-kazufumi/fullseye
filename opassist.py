@@ -726,6 +726,60 @@ def accepted_sorts(op_name: str, extra_kwargs=None) -> dict:
 # --------------------------------------------------------------------------- #
 _WORD_RE = re.compile(r"[a-z0-9]+")
 
+#: 和文(CJK)の連なり。★``_WORD_RE`` は ``[a-z0-9]+`` なので、日本語のクエリは
+#: **語が 1 つも取れない**(``_WORD_RE.findall("点 検出") == []``)。語幹の段が
+#: 死に、部分一致は空白ごと含む文字列を探すので、**和文の複数語クエリは構造的に
+#: 必ず 0 件**だった —— docstring の大半が日本語で、6 言語を配っている製品で。
+#: 2026-09-08 に `poc_search_sweep_width` が踏んで判明(``op_find("点 検出")`` /
+#: ``("スポット 検出")`` / ``("小さい目標")`` がいずれも 0 件で、副画素重心つきの
+#: 点目標検出は ``star_detect`` しか無いのに和文から辿り着けなかった)。
+_CJK_RE = re.compile("[぀-ヿ㐀-䶿一-鿿ｦ-ﾟ]+")
+
+#: ``op_find`` の採点で見る docstring。台帳の ``doc`` は **1 行目だけ**(30 文字
+#: 程度)なので、説明語を足しても検索には効かなかった。ここでは生の ``__doc__``
+#: 全文を継ぎ足した文字列を使う —— ただし **既存の点が 0 のときだけ**参照する
+#: 追加の段なので、これまでの並び順は変わらない(語幹の段と同じ方針)。
+_FULLDOC_CACHE: dict = {}
+
+
+def _full_doc(ledger_mod: str, op_name: str, info: dict) -> str:
+    """台帳の 1 行 doc + 実装の docstring 全文(小文字化・キャッシュ)。"""
+    key = (ledger_mod, op_name)
+    d = _FULLDOC_CACHE.get(key)
+    if d is None:
+        d = str(info.get("doc") or "")
+        try:
+            mod = importlib.import_module(str(info.get("module") or ledger_mod))
+            fn = getattr(mod, op_name, None)
+            if fn is not None and getattr(fn, "__doc__", None):
+                d = d + "
+" + fn.__doc__
+        except Exception:                                # noqa: BLE001
+            pass
+        d = d.lower()
+        _FULLDOC_CACHE[key] = d
+    return d
+
+
+def _cjk_fraction(q: str, hay: str) -> float:
+    """和文クエリの当たった割合(0.0〜1.0)。空白で切った CJK の連なりごとに見る。
+
+    日本語は語の切れ目が無いので、連なりが丸ごと当たれば 1.0、当たらなければ
+    **文字 2-gram の一致率**で按分する(「スポット検出」→「検出」だけ当たる、
+    のような部分一致を拾うため)。短い連なりはそのまま含有で判定する。
+    """
+    terms = [t for w in q.split() for t in _CJK_RE.findall(w)]
+    if not terms:
+        return 0.0
+    tot = 0.0
+    for t in terms:
+        if t in hay:
+            tot += 1.0
+        elif len(t) >= 3:
+            bg = [t[i:i + 2] for i in range(len(t) - 1)]
+            tot += sum(1 for b in bg if b in hay) / len(bg)
+    return tot / len(terms)
+
 #: 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や
 #: "contrast"/"contour" が繋がってしまい、5 で切ると
 #: "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・
@@ -901,6 +955,10 @@ def find(query: str, limit: int = 20) -> list[dict]:
                 else:
                     fr = _stem_fraction(q_tokens, doc)
                     score = int(round(22 * fr)) if fr else 0
+                if not score:                            # ★和文の段(2026-09-08)
+                    fr = _cjk_fraction(q, hay_name + " "
+                                       + _full_doc(mod_name, name, info))
+                    score = int(round(22 * fr)) if fr >= 0.5 else 0
             if score:
                 hits.append({"op": name, "ledger": mod_name, "module": info.get("module"),
                              "category": info.get("category"), "doc": doc,
@@ -927,6 +985,9 @@ def find(query: str, limit: int = 20) -> list[dict]:
             else:
                 fr = _stem_fraction(q_tokens, doc)
                 score = int(round(21 * fr)) if fr else 0
+            if not score:                                # ★和文の段(2026-09-08)
+                fr = _cjk_fraction(q, hay_name + " " + doc.lower())
+                score = int(round(21 * fr)) if fr >= 0.5 else 0
             if not score:
                 continue
         hits.append({"op": op.name, "ledger": _REGISTRY_LEDGER, "module": "ops",

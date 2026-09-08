@@ -701,6 +701,16 @@ def star_detect(image, threshold_sigma=5.0, min_separation=3, max_stars=200,
 
     **Raises** ``ValueError``: 2-D でない / 非有限を含む / *threshold_sigma* が
     非正 / *min_separation* が 1 未満 / *max_stars* が 1 未満の場合。
+
+    ★**名前は天体だが、中身は分野中立**(頑健な背景推定 + kσ 超えの局所最大 +
+    重心)。**点状目標 / 輝点 / スポット / 小さい目標 / 微小欠陥 / 粒子**の
+    検出と副画素位置決めに、そのまま使える —— 捜索救難の空撮で漂流物を拾う、
+    蛍光顕微鏡の輝点を数える、といった用途はこれが正解の入口。2026-09-08 に
+    この段を足した: それまで ``op_find("点 検出")`` / ``("スポット 検出")`` /
+    ``("小さい目標")`` はいずれも **0 件**で、副画素重心つきの座標列を返す
+    2-D op はこれしか無いのに、和文からは辿り着けなかった
+    (``poc_search_sweep_width`` が踏んだ)。領域の重心が要るなら
+    :func:`blob_label` 系、極大の**マスク**だけなら ``sk_local_maxima``。
     """
     op = "star_detect"
     img = _require_image(image, "image", op)

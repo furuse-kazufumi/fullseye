@@ -1249,7 +1249,7 @@ def main() -> int:
     assert p[-1] < 0.05, p
     assert p[0] - p[-1] > 0.5, p
     # ★ゼロ点を上回っていること(誤検出率を揃えた上で)。倍率は控えめ ——
-    #   「ゼロ点でも 180 m 出る」ほうがこの節の所見なので、そこを固定する。
+    #   「ゼロ点でも 174 m 出る」ほうがこの節の所見なので、そこを固定する。
     assert curve["tophat"]["w"] > 1.3 * curve["bright"]["w"], (curve["tophat"]["w"],
                                                                curve["bright"]["w"])
     assert curve["band"]["w"] > 1.2 * curve["bright"]["w"], (curve["band"]["w"],
