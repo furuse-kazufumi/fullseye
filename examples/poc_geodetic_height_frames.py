@@ -599,7 +599,8 @@ def section_flow_direction():
         figs.save_grid(
             "flow_flip",
             [a["h_true"], a["a_true"], a["a_wrong"], np.nan_to_num(d, nan=0.0)],
-            ["氾濫原の標高 H [m](起伏 0.4 m)", "真の斜面方位 [度]",
+            [f"氾濫原の標高 H [m](起伏 "
+             f"{float(a['h_true'].max() - a['h_true'].min()):.1f} m)", "真の斜面方位 [度]",
              "楕円体高で出した方位 [度]", "方位の差 [度](明るいほど逆向き)"],
             ncols=2,
             title="平らな土地では、ジオイドの勾配が水を逆に流す",
