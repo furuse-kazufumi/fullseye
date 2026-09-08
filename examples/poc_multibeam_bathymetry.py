@@ -1389,11 +1389,15 @@ def main() -> int:
         pred = math.degrees(0.886 * floor["lam"] / (N_ELEM * floor["d"])) \
             / math.cos(math.radians(th))
         assert abs(foot["widths"][th] / pred - 1.0) < 0.10, (th, foot["widths"][th])
-    assert foot["foot2"][-1] < 0.5 * foot["foot_meas"][-1], foot
-    assert abs(foot["foot3"][-1] / foot["foot_meas"][-1] - 1.0) < 0.10, foot
+    # cos² 式は等音速の対照群の半分以下、cos³ 式は 5 % 以内で当たる
+    assert foot["foot2"][-1] < 0.5 * foot["foot_iso"][-1], foot
+    assert abs(foot["foot3"][-1] / foot["foot_iso"][-1] - 1.0) < 0.05, foot
+    # 屈折を入れるとフットプリントは縮む(別の要因なので混ぜない)
+    assert foot["foot_meas"][-1] < 0.85 * foot["foot_iso"][-1], foot
     # 10. DTM: 重なりの段差が TVU を超え、平らな海底に見かけの勾配が立つ
     assert dtm["mismatch"] > cliff["lim"], dtm["mismatch"]
-    assert dtm["slope_max"] > 5.0, dtm["slope_max"]
+    assert dtm["slope1_max"] > 1.0, dtm["slope1_max"]        # 継ぎ目なしでも数度
+    assert dtm["slope_max"] > 10.0 * dtm["slope1_max"], dtm  # 継ぎ目は桁違い
     assert dtm["slope_flat"] < 1e-6, dtm["slope_flat"]
     assert dtm["outside"] == 0.0, dtm["outside"]
     # 11. サーモクライン: 一定勾配の当てはめは減らすが消さない
