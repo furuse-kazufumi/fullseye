@@ -736,8 +736,12 @@ def section_cliff(scene):
             got = float(invert_radiance(tb, lm, eps, T_REFL_REF + 10.0, 1.0, T_ATM_REF))
             refl_rows[(band, eps)] = got - 350.0
             print(f"    {band} ε={eps:.2f}: ΔT = {got-350.0:+.3f} K")
-    print("  → ★**帯を変えても「反射が効く」順位は変わらない**。MWIR は放射率には")
-    print("     強い(n が 2.7 倍)が、(1−ε) の重みは帯に依らない。")
+    n_ratio_band = (band_index_numeric("MWIR", 350.0)
+                    / band_index_numeric("LWIR", 350.0))
+    print(f"  → ★**帯を変えても「反射が効く」順位は変わらない**。MWIR は放射率には")
+    print(f"     強い(n が {n_ratio_band:.2f} 倍)が、(1−ε)/ε の重みは帯に依らない ——")
+    print(f"     ε=0.10 の面では LWIR {refl_rows[('LWIR', EPS_POLISH)]:+.1f} K に対し "
+          f"MWIR も {refl_rows[('MWIR', EPS_POLISH)]:+.1f} K で、**同じ桁**。")
 
     if figs.enabled():
         deltas = np.linspace(-0.30, 0.30, 61)
