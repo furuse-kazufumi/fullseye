@@ -450,7 +450,14 @@ def section_scene():
           + " / ".join(f"{d:.1f} m → τ={t:.4f}" for d, t in zip(dists_m, taus)))
     print("        τ を 1 と仮定したときの温度誤差: "
           + " / ".join(f"{e:+.2f} K" for e in tau_err))
-    l_true = float(forward_radiance(tab, t_true, eps, T_REFL_REF, TAU_REF, T_ATM_REF))
+    # ★前向きは**直接積分**、逆は**校正表**。同じ表で往復させると誤差 0 が
+    #   自明に出てしまい、床を測ったことにならない。
+    def _fwd(t_obj):
+        return (TAU_REF * (eps * band_radiance_direct("LWIR", t_obj)
+                           + (1.0 - eps) * band_radiance_direct("LWIR", T_REFL_REF))
+                + (1.0 - TAU_REF) * band_radiance_direct("LWIR", T_ATM_REF))
+
+    l_true = float(_fwd(t_true))
     rng = np.random.default_rng(20260908)
     cases = []
     for label, quant, noise in (("Case-0 雑音も量子化も無し", False, False),
