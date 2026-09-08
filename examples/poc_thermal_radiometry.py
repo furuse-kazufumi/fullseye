@@ -551,7 +551,9 @@ def section_cliff(scene):
                              f"{100*rise:.1f} %"))
                 print(f"  {band:>6}{t:>8.0f}{eps:>7.2f}{delta:>8.2f}{pred:>11.3f}"
                       f"{meas:>11.3f}{meas-pred:>9.4f}{100*rise:>21.1f} %")
-    print(f"  → 予測と実測の差は最大 {worst_pred:.4f} K(1 次展開の残差)。")
+    print(f"  → 予測と実測の差は最大 {worst_pred:.4f} K、相対では "
+          f"{100*worst_rel:.1f} %({worst_where})。**1 次展開なので、"
+          f"ΔT が大きい所ほど当たらない**。")
     print("  → ★★**予測を外した**: 絶対誤差は **高温ほど大きい**。")
     print(f"     LWIR・ε=0.95 で 300 K 級 {abs_dt[('LWIR', 305.0)]:.2f} K → "
           f"800 K {abs_dt[('LWIR', 800.0)]:.2f} K。")
