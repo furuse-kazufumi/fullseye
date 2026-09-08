@@ -231,9 +231,16 @@ def save_gif(name: str, frames, caption: str = "", fps: float = 8.0,
         rgb = _frames_to_rgb8(seq, signed)
         ims = [Image.fromarray(a) for a in rgb]
         path = d / ("%02d_%s.gif" % (len(_manifest) + 1, name))
+        # ★`optimize=True` は**同じ絵が続くコマを黙って 1 枚に畳む**(5 コマ渡して
+        #   3 コマになる)。動かない区間があるのは実験の結果であって、削ってよい
+        #   冗長ではないので畳ませない。畳まれていないことは書いた後で数える。
         ims[0].save(str(path), save_all=True, append_images=ims[1:],
                     duration=max(20, int(round(1000.0 / float(fps)))), loop=int(loop),
-                    disposal=2, optimize=True)
+                    disposal=2, optimize=False)
+        with Image.open(str(path)) as chk:
+            if getattr(chk, "n_frames", 1) != len(ims):
+                raise ValueError("save_gif: %d コマ渡したのに %d コマしか書けていない"
+                                 % (len(ims), getattr(chk, "n_frames", 1)))
         size = path.stat().st_size
         if size > GIF_SIZE_WARN:
             _errors.append("%s: GIF が %.1f MB(目安 %.0f MB)—— コマ数か大きさを減らす"
