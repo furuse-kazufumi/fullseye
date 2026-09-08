@@ -759,7 +759,7 @@ def section_metrics(mc_gain: float, ds=(0.50, 0.80, 1.20)) -> dict:
         title="物差し 3 つ(1 つの数字に畳まない)", col_w=130)
     return {"out": {("%.2f|%s" % k): v for k, v in out.items()},
             "winners": {("%.2f" % k): v for k, v in winners.items()},
-            "swapped": swapped, "n_distinct": n_distinct, "raw": out}
+            "swapped": swapped, "spur_low": sp_low, "hulls": hulls, "raw": out}
 
 
 # --------------------------------------------------------------------------- #
