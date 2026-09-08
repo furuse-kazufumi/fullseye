@@ -501,6 +501,7 @@ def section_grid_vs_random(d=0.60, ntrial=12) -> dict:
     res = {}
     for kind in ("格子(位相を振る)", "一様乱数(同じ本数)"):
         atts, dists = [], []
+        per = {hi: [] for hi in range(len(HOTSPOTS))}
         for k in range(ntrial):
             if kind.startswith("格子"):
                 pts, _ = lattice(d, rng.uniform(0.0, d, 3))
@@ -515,24 +516,35 @@ def section_grid_vs_random(d=0.60, ntrial=12) -> dict:
                 sub = pts[near]
                 f1 = fit(sub, read(sub, None, 0.0), "nearest")
                 f0 = fit(sub, read(sub, hi, 0.0), "nearest")
-                atts.append(float(np.max(f1(q) - f0(q))) / HOTSPOTS[hi][5])
+                v = float(np.max(f1(q) - f0(q))) / HOTSPOTS[hi][5]
+                atts.append(v)
+                per[hi].append(v)
                 dists.append(nearest_dist(hi, pts))
-        res[kind] = {"att": np.array(atts), "dist": np.array(dists)}
+        res[kind] = {"att": np.array(atts), "dist": np.array(dists),
+                     "per": {hi: np.array(v) for hi, v in per.items()}}
         print("   %-20s 最近傍距離 中央値 %.4f m / 最悪 %.4f m   "
               "回復 中央値 %.4f / 最悪 %.4f"
               % (kind, np.median(res[kind]["dist"]), res[kind]["dist"].max(),
                  np.median(res[kind]["att"]), res[kind]["att"].min()))
-    print("\n  ★格子の回復は位相で %.4f 〜 %.4f に散らばり、乱数は %.4f 〜 %.4f。"
-          % (res["格子(位相を振る)"]["att"].min(),
-             res["格子(位相を振る)"]["att"].max(),
-             res["一様乱数(同じ本数)"]["att"].min(),
-             res["一様乱数(同じ本数)"]["att"].max()))
-    print("     **違うのは平均ではなく「言い切れるかどうか」**。格子の下限は"
-          "幾何で決まる(σ=%.2f m の\n     ラックなら必ず %.4f 以上)。"
-          "乱数は下限を持たない —— 最近傍距離に上限が無いので、\n     "
+
+    print("\n   ---- ラック別の最悪回復(%d 例中)と、格子の幾何下限 ----" % ntrial)
+    print("   ラック     格子の最悪   幾何の下限 exp(-3d²/8σ²)   乱数の最悪")
+    below = 0
+    for hi, h in enumerate(HOTSPOTS):
+        gmin = float(res["格子(位相を振る)"]["per"][hi].min())
+        rmin = float(res["一様乱数(同じ本数)"]["per"][hi].min())
+        bound = visible(d, h[4])
+        below += int(rmin < bound)
+        print("   σ=%.2f  %11.4f %20.4f %14.4f%s"
+              % (h[4], gmin, bound, rmin, "  ← 下限を割った" if rmin < bound else ""))
+    print("  ★★**違うのは平均ではなく「言い切れるかどうか」**。格子の回復は"
+          "幾何の下限を 1 度も\n     割らない(位相をどう振っても割れない)。"
+          "乱数は %d 台で下限を割った —— 最近傍距離に\n     上限が無いので、"
           "運が悪ければいくらでも見えなくなる(この %d 例の最悪は %.4f m 離れた)。"
-          % (HOTSPOTS[2][4], visible(d, HOTSPOTS[2][4]),
-             ntrial * len(HOTSPOTS), res["一様乱数(同じ本数)"]["dist"].max()))
+          % (below, ntrial * len(HOTSPOTS),
+             res["一様乱数(同じ本数)"]["dist"].max()))
+    print("     同じ本数でも、格子は「最悪でもここまで見える」と設計時に"
+          "言える。乱数は言えない。")
 
     rr = np.linspace(0.0, 1.0, 80)
     figs.save_plot(
