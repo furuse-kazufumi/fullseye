@@ -114,6 +114,7 @@ from __future__ import annotations
 import math
 import sys
 import time
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -122,7 +123,6 @@ from scipy.spatial import ConvexHull
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import examplefig as figs                                        # noqa: E402
 import fullseye as fs                                            # noqa: E402
-import visualhull as _visualhull                                 # noqa: E402
 
 #: 3-D op の公開経路(ファサード ``fs.`` には出ていないものが多い)。
 _L = fs.ledger
@@ -357,12 +357,12 @@ def ring_rig(K: int, *, dist: float = D_RING, f: float = F_RING, phase: float = 
              size=(IMG_H, IMG_W), look_z: float = LOOK_Z):
     """軸周りに等間隔 K 台。返り値 ``(Ks, Rs, ts, size)``。
 
-    ★``visualhull.look_at`` を使う。``fs.look_at`` は**別物**(§7)。
+    ★``fs.ledger.carve_look_at`` を使う。``fs.look_at`` は**別物**(§7)。
     """
     Km = _intrinsics(f, size)
     Rs, ts = [], []
     for a in phase + 2 * math.pi * np.arange(K) / K:
-        R, t = _visualhull.look_at((dist * math.cos(a), dist * math.sin(a), look_z),
+        R, t = _L.carve_look_at((dist * math.cos(a), dist * math.sin(a), look_z),
                                    (0.0, 0.0, look_z))
         Rs.append(R)
         ts.append(t)
@@ -379,7 +379,7 @@ def hemisphere_rig(K: int, rng, *, dist: float = D_RING, f: float = F_RING,
         el = math.radians(rng.uniform(0.0, 75.0))
         eye = (dist * math.cos(el) * math.cos(az), dist * math.cos(el) * math.sin(az),
                look_z + dist * math.sin(el))
-        R, t = _visualhull.look_at(eye, (0.0, 0.0, look_z))
+        R, t = _L.carve_look_at(eye, (0.0, 0.0, look_z))
         Rs.append(R)
         ts.append(t)
     return [Km] * K, Rs, ts, size
@@ -861,26 +861,36 @@ def section_controls(truth):
 
 def section_op_hole(per_px: float):
     print("\n=== 7. 道具の穴 —— 4 層すべて引いてから言う ===")
-    print("  ★(1) ``look_at`` の名前衝突。``fs.op_find('look')`` は **0 件**、")
-    print("     ``fs.look_at`` は render3d の gluLookAt 版(4x4・**-Z 前方**)。")
-    print("     ``carve`` が要る OpenCV 版 ``(R, t)``・**+Z 前方** は")
-    print("     ``visualhull.look_at`` にあるが、``fs.`` / ``fs.op.`` / ``fs.ledger.`` /")
-    print("     ``op_find`` のどれからも出てこない。実演 ——")
+    print("  ★(1) ``look_at`` の名前衝突 —— **見つけて、その場で埋めた**。")
+    print("     **発見時**: ``fs.op_find('look')`` は **0 件**、``fs.look_at`` は")
+    print("     render3d の gluLookAt 版(4x4・**-Z 前方**)。``carve`` が要る")
+    print("     OpenCV 版 ``(R, t)``・**+Z 前方** は ``visualhull.look_at`` に在るのに、")
+    print("     ``fs.`` / ``fs.op.`` / ``fs.ledger.`` / ``op_find`` のどれからも出てこない。")
+    print("     **同じ名前で規約が逆**という、いちばん静かに間違える組み合わせ。実演 ——")
     cloud = surface_cloud(legs=True, hollow=True, n=120_000)
     M = np.asarray(fs.look_at((D_RING, 0.0, LOOK_Z), (0.0, 0.0, LOOK_Z)), np.float64)
     Km = _intrinsics(F_RING, (IMG_H, IMG_W))
     bad_R, bad_t = M[:3, :3], M[:3, 3]
-    bad_sil = np.asarray(_L.synthesize_silhouette(cloud, Km, bad_R, bad_t,
-                                                  (IMG_H, IMG_W)), bool)
-    good_R, good_t = _visualhull.look_at((D_RING, 0.0, LOOK_Z), (0.0, 0.0, LOOK_Z))
+    with warnings.catch_warnings(record=True) as rec:
+        warnings.simplefilter("always")
+        bad_sil = np.asarray(_L.synthesize_silhouette(cloud, Km, bad_R, bad_t,
+                                                      (IMG_H, IMG_W)), bool)
+    n_warn = sum(1 for w in rec if w.category is RuntimeWarning)
+    good_R, good_t = _L.carve_look_at((D_RING, 0.0, LOOK_Z), (0.0, 0.0, LOOK_Z))
     good_sil = np.asarray(_L.synthesize_silhouette(cloud, Km, good_R, good_t,
                                                    (IMG_H, IMG_W)), bool)
     bad_occ = np.asarray(_L.carve([bad_sil], [Km], [bad_R], [bad_t], BOUNDS, 48))
     print(f"     fs.look_at 由来 (R,t): 前景画素 {int(bad_sil.sum())} 個、"
           f"1 台の hull の占有 **{int(bad_occ.sum())} voxel**")
-    print(f"     visualhull.look_at 由来: 前景画素 {int(good_sil.sum())} 個")
+    print(f"     carve_look_at 由来: 前景画素 {int(good_sil.sum())} 個")
     print("     全 voxel が『カメラ後方』と判定されるだけなので、**例外は出ない**。")
-    print("     0 台は ``ValueError`` で fail-closed なのに、**規約違いは黙って空**。")
+    print("     0 台は ``ValueError`` で fail-closed なのに、**規約違いは黙って空**だった。")
+    print("     ★**直した**(2026-09-08): ① ``carve_look_at`` を台帳に載せて")
+    print("     ``fs.ledger`` / ``op_find('look')`` から引けるようにし(名前は譲らない ——")
+    print("     同名にすると今度は逆向きに静かに壊れる)、② 点が 1 つ残らず後方なら")
+    print(f"     警告を出すようにした。いまの実測: 悪い経路で RuntimeWarning **{n_warn} 件**")
+    print(f"     、``op_find('look')`` は {[h['op'] for h in fs.op_find('look')]}。")
+    print("     ③ ``render3d.look_at`` の docstring にも「彫刻には渡すな」と書いた。")
     print("  (2) 2-D の凸包の周囲長を**実寸で**返す op が無い。``shape_trans`` は領域の")
     print("     凸包を返すが、``contlength`` は regionprops の周囲長を 2(H+W) で")
     print("     正規化した値。``shape_trans_xld`` に画像を渡すと fallback 警告つきで")
@@ -889,11 +899,11 @@ def section_op_hole(per_px: float):
     print("     (``a`` が半径 1〜4 の bucket)に取りに行く。既定 ``dilate=1`` は recall の")
     print(f"     ための保守側で docstring も明言しているが、体積用途では "
           f"{per_px:+.2f} % の下駄になる —— そこは書かれていない。")
-    print("  → 次に埋めるべき op: ``vh_look_at``(OpenCV 規約の (R,t) を公開層へ)/ ")
+    print("  → 次に埋めるべき op(``carve_look_at`` は上で埋めた): ")
     print("     ``visual_hull_ring(K, dist, f)`` のリグ生成 / ``silhouette_erode`` /")
     print("     ``voxel_volume(occ, spacing)``(3 軸 spacing 込み)/ 2-D の ``convex_perimeter``。")
     return {"bad_sil": int(bad_sil.sum()), "bad_occ": int(bad_occ.sum()),
-            "good_sil": int(good_sil.sum())}
+            "good_sil": int(good_sil.sum()), "n_warn": int(n_warn)}
 
 
 def section_figures(truth, pers):

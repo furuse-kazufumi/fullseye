@@ -198,7 +198,13 @@ def look_at(eye, target, up=(0.0, 0.0, 1.0)) -> np.ndarray:
     Follows the ``gluLookAt`` construction: the camera looks down its local
     ``-Z``, with local ``+X`` right and ``+Y`` up. Returns float64 (4, 4). Raises
     ``ValueError`` if *eye* and *target* coincide or *up* is parallel to the view
-    direction (the frame would be degenerate)."""
+    direction (the frame would be degenerate).
+
+    ★**空間彫刻には渡さないこと**。``carve`` / ``synthesize_silhouette`` は OpenCV
+    規約(``X_cam = R X + t``、**+Z 前方**)なので、ここが返す 4x4 を ``M[:3,:3]``,
+    ``M[:3,3]`` と割って渡すと全点がカメラ後方に落ち、**例外なく空のシルエット**が
+    返る。あちらには :func:`visualhull.carve_look_at`(= ``fs.ledger.carve_look_at``)
+    を使う。"""
     e = np.asarray(eye, np.float64).reshape(3)
     t = np.asarray(target, np.float64).reshape(3)
     u = np.asarray(up, np.float64).reshape(3)
