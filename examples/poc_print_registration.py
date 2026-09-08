@@ -675,14 +675,21 @@ def section4_sweep():
           % (len(ties), max(r["margin"] for r in ties) if ties else 0.0))
     print("     予測式の round() がどちらへ転んでもよい場所で、雑音が決める。")
     print()
-    print("  ★★**格子で簡約した残差**なら全点が合う: 最大 %.4f px。"
+    print("  ★★**格子で簡約した残差**なら全点が合う: 最大 %.4f px、うち境界の"
           % max(r["lat_err"] for r in allr))
+    print("     タイを除けば %.4f px。**境界では 2 つの代表元が拮抗してピークが"
+          % max(r["lat_err"] for r in good))
+    print("     割れる**ので、小数の詰めもそのぶん鈍る(正直な内訳)。")
     print("     つまり推定器は間違えていない —— **格子で等価な答えのどれかを**")
     print("     **返している**。「どれか」を選ぶ材料が、この素材には無い。")
     print()
-    print("  推定器 (2)(窓ごとの相関)でも同じ: 格子で簡約した残差の最大 %.4f px。"
-          % max(r["piv_lat"] for r in allr))
-    print("  **2 つの独立な推定器が同じ折り返しをする** —— 原因は推定器ではない。")
+    pl = np.array([r["piv_lat"] for r in allr])
+    print("  推定器 (2)(窓ごとの相関)でも同じ: 格子で簡約した残差は中央値 %.4f px /"
+          % float(np.median(pl)))
+    print("  最大 %.4f px(探索が**正方形の箱**なので、セルの角で representative を"
+          % float(pl.max()))
+    print("  取り違えた窓が中央値に混じる)。**2 つの独立な推定器が同じ折り返しを")
+    print("  する** —— 原因は推定器ではない。")
     if figs.enabled():
         rows = out[name0]
         xs = np.array([r["t"] for r in rows])
