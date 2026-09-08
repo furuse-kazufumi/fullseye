@@ -893,9 +893,15 @@ def section_sweep():
     asym = cliff_deep_asymptote(-40.0)
     j40 = int(np.argmin(np.abs(deltas + 40.0)))
     shallow, deep = cliffs[j40, 0], cliffs[j40, -1]
+    gaps = [float(cliffs[j40, j] - asym) for j in range(depths.size)]
     print(f"  → ★Δc = -40 m/s で、崖は 10 m の {shallow:.2f} 度 から "
           f"200 m の {deep:.2f} 度 へ**単調に浅い角度へ寄り**、"
-          f"漸近値 {asym:.2f} 度 に近づく(差 {deep - asym:+.2f} 度)。")
+          f"漸近値 {asym:.2f} 度 に近づく。")
+    print("     漸近値との差 " + " → ".join("%.2f" % g for g in gaps)
+          + " 度(深さ 10 → 200 m)。")
+    print(f"     ★ぴったりには乗らない({deep - asym:+.2f} 度 残る)—— 漸近値は "
+          f"TVU の定数項 a = {IHO_ORDERS[ORDER][0]} m を捨てた形で、200 m でも "
+          f"a はまだ b·d = {IHO_ORDERS[ORDER][1]*200:.2f} m の 2 割ある。")
     print("     **浅い所のほうが swath を広く使える**。深い所は許容 TVU も"
           "大きくなるが、屈折の誤差も同じだけ大きくなるので相殺する。")
     # 65 度 swath で何 % のケースが失格になるか(率を出すので分母を明示)
