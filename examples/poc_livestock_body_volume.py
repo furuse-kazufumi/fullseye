@@ -807,16 +807,22 @@ def section_controls(truth):
     rng = np.random.default_rng(11)
     vals = np.array([int(hull_occupancy(small_cloud, hemisphere_rig(8, rng, **kw),
                                         res_s).sum()) / n_s for _ in range(120)])
+    n_tr = vals.size
     win = int((vals <= base).sum())
+    se = math.sqrt(0.25 / n_tr)
     print(f"     解像度を落とした台({res_s}^3・8.0 mm/px)での等間隔 8 台 = "
           f"{100 * (base - 1):+.2f} %")
-    print(f"     ランダム 8 台 120 試行: 平均 {100 * (vals.mean() - 1):+.2f} % / "
+    print(f"     ランダム 8 台 {n_tr} 試行: 平均 {100 * (vals.mean() - 1):+.2f} % / "
           f"標準偏差 {100 * vals.std(ddof=1):.2f} / "
           f"最良 {100 * (vals.min() - 1):+.2f} % / 最悪 {100 * (vals.max() - 1):+.2f} %")
-    print(f"     等間隔以下だった試行 **{win} / 120**。")
-    print(f"     ★0 でも分母を疑う —— 最良の試行でも等間隔より "
-          f"{100 * (vals.min() - base):+.2f} ポイント悪く、これは標準偏差の "
-          f"{(vals.min() - base) / vals.std(ddof=1):.1f} 倍。小標本の産物ではない。")
+    print(f"     等間隔以下だった試行 **{win} / {n_tr}** = {100 * win / n_tr:.1f} %"
+          f"(標準誤差 {100 * se:.1f} ポイント)")
+    print(f"     → ★**互角**。0.5 との差は {(win / n_tr - 0.5) / se:.1f} 標準誤差しか無く、")
+    print(f"        {n_tr} 試行では等間隔と区別できない。**平均で語ってはいけない例**:")
+    print(f"        最悪の試行は {100 * (vals.max() - 1):+.2f} % で等間隔の "
+          f"{(vals.max() - 1) / (base - 1):.1f} 倍。危ないのは平均ではなく裾。")
+    print("        (上半球のランダムは水平リングに無い**上下の接線**も足すので、")
+    print("         平均では負けない。負けるのは方位が偏った回。)")
     figs.save_table("controls", ["シルエットの画素", "過大率", "ゼロからの差",
                                  "1 画素あたり"], rows,
                     title="前景マスクが 1 画素太ると体積が何 % 増えるか",
