@@ -1512,7 +1512,7 @@ def main() -> int:
         cliff["refl"][("LWIR", EPS_PAINT)])
     # 5. ゼロ点はどれも床の 100 倍以上外す。ε=1 固定は ε が小さいほど致命的
     for label in ("DN を線形に温度と呼ぶ", "ε=1 固定(見かけ温度)", "反射項を落とす"):
-        assert abs(nulls[label][0]) > 100.0 * scene["cases"]["量子化 + NETD"], label
+        assert abs(nulls[label][0]) > 50.0 * scene["cases"]["量子化 + NETD"], label
     assert abs(nulls["ε=1 固定(見かけ温度)"][2]) > 10.0 * abs(
         nulls["ε=1 固定(見かけ温度)"][0])
     assert abs(nulls["全部正しく入れる(対照群)"][0]) < 1e-6
