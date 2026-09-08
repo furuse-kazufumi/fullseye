@@ -1093,6 +1093,7 @@ def section_dtm(scene):
                     f"{float(z_meas[-1]-DEPTH_REF):+.2f} m 浅く出る。")
     return {"half_swath": half_swath, "spacing": spacing, "mismatch": abs(a - b),
             "slope_max": float(inner.max()), "slope_flat": flat_slope,
+            "slope1_max": float(slope1.max()), "slope1_mean": float(slope1.mean()),
             "outside": outside, "n_points": int(pts.shape[0]),
             "y_shift": float(y_meas[-1] - x_true[-1]), "lines": int(line_id.max()) + 1}
 
