@@ -583,19 +583,58 @@ def section_methods_cliff(hi=1) -> dict:
 
     cross = {m: crossing(curves[m]) for m in curves}
     cross_pred = crossing([visible(d, s) for d in DS])
-    print("\n   半減する間隔 d(0.5 を横切る点を線形補間):")
-    print("     閉形式 %.4f m / 折れ線で読んだ予測 %.4f m / 最近傍 %.4f m / "
-          "線形 %.4f m / RBF %.4f m"
-          % (half_spacing(s), cross_pred, cross["nearest"], cross["linear"],
-             cross["rbf"]))
     spread = max(cross.values()) - min(cross.values())
-    print("  ★3 手法の崖の位置の開きは %.4f m(%.1f %%)。**崖は手法ではなく"
-          "サンプリングの問題**\n     —— 補間はセンサが取らなかった値を"
-          "作れない。" % (spread, 100 * spread / np.mean(list(cross.values()))))
-    print("     RBF だけ細かいところで予測を超える(最大 %+.4f)—— "
-          "薄板スプラインは節点の外へ\n     **行き過ぎる**ので、たまたま"
-          "山を高く戻す。当たっているのではなく、外れ方が上向き。"
-          % max(curves["rbf"][i] - visible(DS[i], s) for i in range(len(DS))))
+
+    # --- 減り方(指数)と持ち上がり(係数)を分けて数える --- #
+    d2 = np.array(DS) ** 2
+    slope_pred = -3.0 / (8.0 * s * s)
+    print("\n   ---- 崖を「指数」と「係数」に分ける ----")
+    print("   log(回復) を d² に対して直線で当てると、傾きが崖の急さ、"
+          "切片が持ち上がり。")
+    print("   予測の傾きは -3/(8σ²) = %+.4f /m²。" % slope_pred)
+    print("   手法       傾き        予測との差   係数 exp(切片)   半減間隔 d*")
+    slopes, gains = {}, {}
+    for m in ("nearest", "linear", "rbf"):
+        k, b = np.polyfit(d2, np.log(np.array(curves[m])), 1)
+        slopes[m], gains[m] = float(k), float(np.exp(b))
+        print("   %-9s %+9.4f /m²  %+9.4f    %8.4f      %8.4f m"
+              % (MET_LABEL[m].split("(")[0], k, k - slope_pred,
+                 np.exp(b), cross[m]))
+    print("   %-9s %+9.4f /m²  %9s    %8.4f      %8.4f m"
+          % ("閉形式", slope_pred, "—", 1.0, half_spacing(s)))
+
+    sl_spread = max(abs(v - slope_pred) for v in slopes.values())
+    print("\n  ★**動かないのは指数、動くのは係数**。3 手法の傾きは予測と"
+          "最大 %.4f /m² しか違わない\n     (%.2f %%)—— 崖の急さは"
+          "サンプリングだけで決まる。補間はセンサが取らなかった値を作れない。"
+          % (sl_spread, 100 * sl_spread / abs(slope_pred)))
+    print("  ★★**「崖の位置は手法で動かない」という予測は外した**。"
+          "半減間隔は 最近傍 %.4f / 線形 %.4f /\n     RBF %.4f m で、"
+          "RBF だけ %.4f m(%.0f %%)ずれる。原因は係数 %.3f —— "
+          "**薄板スプラインは\n     節点の値を超える**(内挿でありながら"
+          "上に行き過ぎる)ので、山を一律 %.0f %% 高く戻す。"
+          % (cross["nearest"], cross["linear"], cross["rbf"], spread,
+             100 * spread / cross["nearest"], gains["rbf"],
+             100 * (gains["rbf"] - 1)))
+    print("     最近傍と線形が**小数点以下まで一致する**のは偶然ではない: "
+          "どちらも節点の値を\n     超えないので、最悪位相での最大値は"
+          "どちらも「いちばん近いセンサの読み」になる。")
+
+    # 上向きの外れは無料ではない —— 何も無いところにも旗を立てる
+    print("\n   ---- その持ち上がりは無料か(背景だけの場に立つ旗の高さ)----")
+    print("   手法       回復(d=%.2f m)  床(背景+雑音)  比 = 信号 / 偽物" % 0.60)
+    ratio = {}
+    for m in ("nearest", "linear", "rbf"):
+        r = recover(hi, 0.60, "worst", m, NOISE)
+        ratio[m] = r["geo"] / r["floor"]
+        print("   %-9s %12.4f %14.4f %14.2f"
+              % (MET_LABEL[m].split("(")[0], r["geo"], r["floor"], ratio[m]))
+    print("  ★RBF は山を %.0f %% 高く戻すが、**背景の誤差も同じだけ持ち上げる**"
+          "ので、\n     信号と偽物の比は %.2f → %.2f と%s。"
+          "持ち上がりは検出力を買っていない。"
+          % (100 * (gains["rbf"] - 1), ratio["nearest"], ratio["rbf"],
+             "ほぼ変わらない" if abs(ratio["rbf"] - ratio["nearest"]) < 0.5
+             else "変わる"))
 
     figs.save_plot(
         "cliff_by_method",
@@ -604,10 +643,12 @@ def section_methods_cliff(hi=1) -> dict:
          ("線形(Delaunay)", DS, curves["linear"]),
          ("RBF(薄板スプライン)", DS, curves["rbf"])],
         xlabel="センサ格子の間隔 d [m]", ylabel="回復したピークの割合",
-        title="崖の位置は補間法で動かない(σ=%.2f m のラック)" % s,
-        caption="3 手法の半減間隔の開きは %.4f m。" % spread)
+        title="崖の急さは手法で動かない(σ=%.2f m のラック)" % s,
+        caption="最近傍と線形は予測に重なる。RBF は %.2f 倍持ち上がるだけで、"
+                "傾きは同じ。" % gains["rbf"])
     return {"curves": curves, "cross": cross, "spread": spread,
-            "cross_pred": cross_pred}
+            "cross_pred": cross_pred, "slopes": slopes, "gains": gains,
+            "slope_pred": slope_pred, "sl_spread": sl_spread, "ratio": ratio}
 
 
 # --------------------------------------------------------------------------- #
