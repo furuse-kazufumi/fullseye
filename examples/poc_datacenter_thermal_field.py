@@ -406,7 +406,8 @@ def section_scene() -> dict:
         title="真の温度場 [%.0f-%.0f °C、turbo](過負荷ラック 3 台をアイルに仕込んだ)"
               % (lo, hi_),
         caption="横=x 0..%.0f m、縦=y 0..%.1f m(左端)/ z 0..%.1f m(中央)。"
-                % (LX, LY, LZ))
+                "中央のパネルは室高 %.1f m ぶんしか無いので上下の白は余白。"
+                % (LX, LY, LZ, LZ))
     return {"tmin": float(t.min()), "tmax": float(t.max()), "n_peak": len(pk),
             "loc": d_loc, "miss": miss}
 
