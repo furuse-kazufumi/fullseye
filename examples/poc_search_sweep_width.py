@@ -765,6 +765,39 @@ def section_cliff(curve_out, defn):
     print("     裾を引く実曲線では隣の航跡と裾が重なり、その重なりぶん取りこぼす。")
     print(f"     実曲線は平行 {out['par_real'][i1]:.4f} と"
           f" ランダム {out['rnd_real'][i1]:.4f} の**あいだ**に落ちた。")
+    # ★形の効き方は捜索の型で違う。走査幅を揃えて、曲線の形だけを比べる。
+    w_band = curve_out["band"]["w"]
+    band = step_curve(curve_out["band"]["p"], curve_out["gsd"] * w / max(w_band, 1e-9))
+    area_w = w * n_track / 1.0
+    pv_band = sweep_mc(band, w, area_w, n_track, random_tracks=False, seed=907)
+    rv_band = sweep_mc(band, w, area_w, n_track, random_tracks=True, seed=908)
+    out["par_band"], out["rnd_band"] = pv_band, rv_band
+    sup_top = N_BIN * BIN_PX * curve_out["gsd"]
+    sup_band = sup_top * w / max(w_band, 1e-9)
+    print("  → ★**走査幅が同じでも、平行捜索では曲線の形が効く**。§3 の 2 本を")
+    print(f"     走査幅 {w:.0f} m に揃えて C=1(航跡間隔 = {w:.0f} m)で比べると:")
+    print("     " + pad("曲線", 30, right=False) + pad("直下の p", 10)
+          + pad("支持域/W", 10) + pad("平行", 10) + pad("ランダム", 12))
+    print("     " + pad("白色トップハット", 30, right=False)
+          + pad("%.2f" % curve_out["tophat"]["p"][0], 10)
+          + pad("%.2f" % (2 * sup_top / w), 10)
+          + pad("%.4f" % out["par_real"][i1], 10)
+          + pad("%.4f" % out["rnd_real"][i1], 12))
+    print("     " + pad("横距離ごとの背景(平ら)", 30, right=False)
+          + pad("%.2f" % curve_out["band"]["p"][0], 10)
+          + pad("%.2f" % (2 * sup_band / w), 10)
+          + pad("%.4f" % pv_band, 10) + pad("%.4f" % rv_band, 12))
+    print("     ランダム捜索は §4 のとおり**面積しか見ない**ので 2 本は一致する。")
+    print("  → ★**ここでも予測を外した**。「平らな曲線のほうが矩形に近いから"
+          "平行捜索に強い」")
+    print("     と予測したが、逆だった。**矩形に近いとは『平ら』ではなく"
+          "『W の内側に立ち、')")
+    print("     外へ裾を引かない』こと** —— 支持域が航跡間隔より広いと、"
+          "どの目標も 2 本以上の")
+    print(f"     航跡に**重なって**数えられ、その分だけ取りこぼす"
+          f"(支持域/W が {2 * sup_top / w:.2f} と {2 * sup_band / w:.2f})。")
+    print("     直下を捨てて端を拾う検出器は、走査幅は同じでも"
+          "**平行捜索では損をする**。")
     figs.save_table("coverage_table",
                     ["C", "min(1,C)", "1-exp(-C)", "MC 平行(矩形)",
                      "MC ランダム(矩形)", "MC 平行(実測 p)", "MC ランダム(実測 p)"],
@@ -1082,8 +1115,9 @@ def main() -> int:
     print("\n=== 11. まとめ ===")
     rows = [
         ("横距離曲線から出した走査幅 W", "%.1f m" % defn["w"]),
-        ("ゼロ点(生画像)の走査幅", "%.1f m" % curve["naive"]["w"]),
-        ("誤検出率(両者そろえた運用点)", "%.1f 件/枚" % FA_PER_FRAME),
+        ("ゼロ点(生の明るさ)の走査幅", "%.1f m" % curve["bright"]["w"]),
+        ("横距離ごとに背景を引いた走査幅", "%.1f m" % curve["band"]["w"]),
+        ("誤検出率(全検出器でそろえた運用点)", "%.1f 件/枚" % FA_PER_FRAME),
         ("C=1 の検出確率(閉形式・平行/ランダム)", "1.0000 / 0.6321"),
         ("C=1 の検出確率(実測 p・平行/ランダム)",
          "%.4f / %.4f" % (cliff["par_real"][4], cliff["rnd_real"][4])),
@@ -1106,16 +1140,22 @@ def main() -> int:
     assert geo["ftheta_edge_ratio"] > 2.0, geo["ftheta_edge_ratio"]
     assert geo["ri_gap"] < 1e-12, geo["ri_gap"]
     # (2) 床: 較正した閾値が本当にその誤検出率を出す
-    for mode in ("naive", "tophat"):
-        assert abs(floor[mode]["got"] - FA_PER_FRAME) < 0.3, floor[mode]
+    for mode, _ in DETECTORS:
+        assert abs(floor[mode]["got"] - FA_PER_FRAME) < 0.3, (mode, floor[mode])
     # (3) 横距離曲線: 単調に落ち、外の帯でほぼ 0(打ち切りが無視できる)
     p = curve["tophat"]["p"]
     assert p[0] > 0.80, p
     assert p[-1] < 0.05, p
     assert p[0] - p[-1] > 0.5, p
-    # ★ゼロ点を上回っていること(誤検出率を揃えた上で)
-    assert curve["tophat"]["w"] > 2.0 * curve["naive"]["w"], (curve["tophat"]["w"],
-                                                              curve["naive"]["w"])
+    # ★ゼロ点を上回っていること(誤検出率を揃えた上で)。倍率は控えめ ——
+    #   「ゼロ点でも 180 m 出る」ほうがこの節の所見なので、そこを固定する。
+    assert curve["tophat"]["w"] > 1.3 * curve["bright"]["w"], (curve["tophat"]["w"],
+                                                               curve["bright"]["w"])
+    assert curve["band"]["w"] > 1.2 * curve["bright"]["w"], (curve["band"]["w"],
+                                                             curve["bright"]["w"])
+    # ★外した予測: 全体の背景を引くのはアフィン変換なので、ゼロ点と実質同じ
+    assert abs(curve["naive"]["w"] - curve["bright"]["w"]) < 0.05 * curve["bright"]["w"], (
+        curve["naive"]["w"], curve["bright"]["w"])
     # 較正フレームで決めた閾値と、計測フレーム自身で決めた閾値が近い
     assert abs(curve["self_thr"] - floor["tophat"]["thr"]) < 1.5, curve["self_thr"]
     # (4) 定義: 形の違う 4 本が、面積が同じなら同じ検出数を出す
@@ -1131,6 +1171,11 @@ def main() -> int:
     assert cliff["par_real"][i1] < 0.97, cliff["par_real"][i1]
     assert cliff["par_real"][i1] > cliff["rnd_real"][i1], (cliff["par_real"][i1],
                                                            cliff["rnd_real"][i1])
+    # ★形は平行捜索にだけ効く: 走査幅を揃えると、ランダムは一致し平行は割れる
+    assert abs(cliff["rnd_band"] - cliff["rnd_real"][i1]) < 0.01, (cliff["rnd_band"],
+                                                                   cliff["rnd_real"][i1])
+    assert cliff["par_band"] > cliff["par_real"][i1] + 0.01, (cliff["par_band"],
+                                                              cliff["par_real"][i1])
     # (6) ★W 2 倍 と t 2 倍 は等価
     assert equiv["d_par"] < 0.01, equiv["d_par"]
     assert equiv["d_rnd"] < 0.01, equiv["d_rnd"]
