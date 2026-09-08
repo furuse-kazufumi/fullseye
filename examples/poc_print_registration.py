@@ -846,11 +846,11 @@ def section7_marks():
     print("  %-22s %18s %18s %10s" % ("窓", "真値 (dy,dx)", "実測 (dy,dx)", "誤差"))
     print("  " + "-" * 72)
     spots = []
+    bm = box_mask(2 * half, 2.0 * PITCH)
     for label, (cy, cx) in (("マークを含む窓", (my_c, mx_c)),
                             ("網点だけの窓(対角)", (fy_c, fx_c))):
-        sl = np.s_[max(cy - half, 0):min(cy + half, L),
-                   max(cx - half, 0):min(cx + half, L)]
-        ey, ex, _r = corr_shift(ref[sl], cur[sl], 2.0 * PITCH)
+        sl = np.s_[cy - half:cy + half, cx - half:cx + half]
+        ey, ex, _r = corr_shift(ref[sl], cur[sl], bm)
         gy, gx = float(ty[sl].mean()), float(tx[sl].mean())
         err = float(np.hypot(ey - gy, ex - gx))
         spots.append({"label": label, "true": (gy, gx), "meas": (ey, ex),
