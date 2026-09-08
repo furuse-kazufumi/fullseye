@@ -1,13 +1,21 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>領域(region)を<b>反転色</b>で塗る/縁取る。</p>
 <p>「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」という</p>
 <p>ときの古典手。塗り色を決めずに済むかわりに、<b>中間調で消える</b>ので</p>
 <p>:func:<code style="color:#22d3bf">annotate_invert_visibility</code> の測定を内側で必ず通す。</p>
+<p>★<b>地がモノクロ(グレー)なら、まず彩度のある色を検討すること</b>。灰色には</p>
+<p>彩度が無いので、彩度のある色はどの階調とも<b>色相で</b>区別がつく —— 反転色</p>
+<p>より確実で、しかも「これは重ねた線だ」と一目で判る</p>
+<p>(:func:<code style="color:#22d3bf">annotate_outline</code> / :func:<code style="color:#22d3bf">overlay_mask</code> に役割色を渡す)。</p>
+<p>反転色が本領を発揮するのは、地がカラーで<b>どの色を選んでも衝突しうる</b>とき。</p>
+<p>なお :func:<code style="color:#22d3bf">annotate_invert_visibility</code> が測るのは WCAG の<b>輝度</b>比なので、</p>
+<p>「輝度は同じだが色相が違う」ような見え方は評価できない —— 色で描くなら、</p>
+<p>この op の数字は当てにしないこと。</p>
 <p>Parameters</p>
 <p>----------</p>
 <p>mask : (H,W)</p>
@@ -19,8 +27,14 @@
 <p>width : float</p>
 <p>`<code style="color:#22d3bf">draw=&quot;margin&quot;</code>` のときの帯の太さ(画素)。</p>
 <p>mode : str</p>
-<p>:data:<code style="color:#22d3bf">INVERT_MODES</code>。`<code style="color:#22d3bf">&quot;complement&quot;</code>` は地の模様を残し、</p>
-<p>`<code style="color:#22d3bf">&quot;contrast&quot;</code>` は白黒に倒して見えることを保証する。</p>
+<p>:data:<code style="color:#22d3bf">INVERT_MODES</code>。`<code style="color:#22d3bf">&quot;complement&quot;</code><code style="color:#22d3bf"> は地の模様を残し、</code><code style="color:#22d3bf">&quot;xor&quot;</code>` は</p>
+<p>模様を残したまま消えないことを保証し、`<code style="color:#22d3bf">&quot;contrast&quot;</code>` は白黒に倒して</p>
+<p>見えることを保証する。</p>
+<p>bits : int</p>
+<p>`<code style="color:#22d3bf">mode=&quot;xor&quot;</code><code style="color:#22d3bf"> の bit マスク(1..255)。既定 </code><code style="color:#22d3bf">0x80</code>` は最上位 bit だけを</p>
+<p>反転する ―― <b>必ず 128 階調跳ぶので消えない</b>。`<code style="color:#22d3bf">0xFF</code>` にすると</p>
+<p>`<code style="color:#22d3bf">complement</code><code style="color:#22d3bf"> と同じ(崖ごと同じ)、</code><code style="color:#22d3bf">0x0F</code>` のような下位だけの</p>
+<p>マスクは<b>どの階調でも見えない</b>(実測: 全 256 階調で比 1.5 未満)。</p>
 <p>alpha : float</p>
 <p>反転の効き。1.0 で完全に反転、0.5 なら地と反転色の中間</p>
 <p>(**`<code style="color:#22d3bf">mode=&quot;complement&quot;</code>` の 0.5 は必ず中間調になる** —— 反転色を</p>

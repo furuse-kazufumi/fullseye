@@ -21,7 +21,7 @@
 - [VOLCOLOR operators](./volcolor/INDEX.md) — 11 ops / 7 categories
 - [REPRCONV operators](./reprconv/INDEX.md) — 42 ops / 10 categories
 - [CADMAP operators](./cadmap/INDEX.md) — 4 ops / 4 categories
-- [ANNOTATE operators](./annotate/INDEX.md) — 54 ops / 8 categories
+- [ANNOTATE operators](./annotate/INDEX.md) — 51 ops / 8 categories
 - [GFX2D operators](./gfx2d/INDEX.md) — 32 ops / 8 categories
 - [IMGMETRICS operators](./imgmetrics/INDEX.md) — 24 ops / 6 categories
 - [ONED operators](./oned/INDEX.md) — 39 ops / 3 categories

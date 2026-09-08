@@ -21,8 +21,14 @@
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">upright</code>` —— 字を接線角に回さず<b>正立</b>させる。経路が主に縦向き</p>
 <p>(始点→終点の |dy| &gt; |dx|)なら送りを字幅でなく<b>字高</b>にするので、</p>
 <p>これが<b>縦書き</b>になる。`<code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code>` の字だけは 90 度回す。</p>
-<p>★<b>縦書きで実装していないこと</b>(黙って近似しない): 句読点の右上寄せ、</p>
-<p>小書き仮名の位置補正、縦中横。短い注記のための機能で、本文組版ではない。</p>
+<p>句読点(`<code style="color:#22d3bf">、。，．</code>`)は縦組みの作法どおり<b>右上へ寄せる</b></p>
+<p>(:data:<code style="color:#22d3bf">VERTICAL_SHIFTED_CHARS</code>、寄せ量は送りの :data:<code style="color:#22d3bf">_VPUNCT_SHIFT</code> 倍)。</p>
+<p>Windows の `<code style="color:#22d3bf">@</code>` 付きフォントが font 側でやっていたことを、ここでは合成で行う</p>
+<p>—— Pillow はフォントをファイルパスで開くので `<code style="color:#22d3bf">@</code>` の顔に到達できず、</p>
+<p>HarfBuzz の `<code style="color:#22d3bf">direction=&quot;ttb&quot;</code>` も Raqm の有無で結果が変わるため、</p>
+<p><b>プラットフォームで揃うほう</b>を採った。</p>
+<p>★<b>縦書きで実装していないこと</b>(黙って近似しない): 小書き仮名の位置補正、</p>
+<p>縦中横、行末の禁則。短い注記のための機能で、本文組版ではない。</p>
 <p>Returns</p>
 <p>-------</p>
 <p>dict</p>

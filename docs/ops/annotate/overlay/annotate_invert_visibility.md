@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_invert_visibility — ANNOTATE `overlay` op
 
 - **データ種**: `image2d × mask` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode='complement', alpha=1.0)` (実装を直接呼ぶなら `import annotate; annotate.annotate_invert_visibility(img, mask, mode='complement', alpha=1.0)`、台帳から引くなら `opsannotate.get("annotate_invert_visibility")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode='complement', alpha=1.0, bits=128)` (実装を直接呼ぶなら `import annotate; annotate.annotate_invert_visibility(img, mask, mode='complement', alpha=1.0, bits=128)`、台帳から引くなら `opsannotate.get("annotate_invert_visibility")`)
 
 ## 使い方
 

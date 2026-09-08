@@ -23,8 +23,9 @@
 <p><b>合成</b>の太字・斜体(:func:<code style="color:#22d3bf">_bold_px</code> / :func:<code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
 <p>Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは</p>
 <p>`<code style="color:#22d3bf">font_path</code><code style="color:#22d3bf"> にその書体のファイルを渡すこと。</code><code style="color:#22d3bf">bold</code>` に整数を渡すと</p>
-<p>縁取りの画素数を直に指定できる。**太さと傾きのぶんは `<code style="color:#22d3bf">width</code>` /</p>
-<p>`<code style="color:#22d3bf">height</code>` に入る**ので、板や表の桁はそのまま広がる。</p>
+<p>重ね打ちの回数を直に指定できる。**太さと傾きのぶんは `<code style="color:#22d3bf">width</code>` に入る**</p>
+<p>ので、板や表の桁はそのまま広がる(重ね打ちは横にだけ太るので</p>
+<p>`<code style="color:#22d3bf">height</code>` は変わらない)。</p>
 <p>wrap : bool</p>
 <p>True(既定)なら `<code style="color:#22d3bf">max_width</code>` で<b>折り返す</b>。False なら折り返さず</p>
 <p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>

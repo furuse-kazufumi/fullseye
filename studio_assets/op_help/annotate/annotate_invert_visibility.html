@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_visibility — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_visibility — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>反転色が<b>その地の上で本当に見えるか</b>を、描く前に測る。</p>
 <p>反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、</p>
@@ -54,8 +54,8 @@
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
 <p>—</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">paper</code>)</h3>
-<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">overlay</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:overlay_mask">overlay_mask</a> · <a style="color:#22d3bf" href="opannotate:overlay_labels">overlay_labels</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert">annotate_invert</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert_path">annotate_invert_path</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: annotate.py — ANNOTATE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

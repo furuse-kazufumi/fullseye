@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_invert_path — ANNOTATE `overlay` op
 
 - **データ種**: `image2d × pairs` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode='complement', alpha=1.0, min_contrast=1.5, on_invisible='warn')` (実装を直接呼ぶなら `import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode='complement', alpha=1.0, min_contrast=1.5, on_invisible='warn')`、台帳から引くなら `opsannotate.get("annotate_invert_path")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode='complement', alpha=1.0, bits=128, min_contrast=1.5, on_invisible='warn')` (実装を直接呼ぶなら `import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode='complement', alpha=1.0, bits=128, min_contrast=1.5, on_invisible='warn')`、台帳から引くなら `opsannotate.get("annotate_invert_path")`)
 
 ## 使い方
 

@@ -3522,6 +3522,15 @@ def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=
     ときの古典手。塗り色を決めずに済むかわりに、**中間調で消える**ので
     :func:`annotate_invert_visibility` の測定を内側で必ず通す。
 
+    ★**地がモノクロ(グレー)なら、まず彩度のある色を検討すること**。灰色には
+    彩度が無いので、彩度のある色はどの階調とも**色相で**区別がつく —— 反転色
+    より確実で、しかも「これは重ねた線だ」と一目で判る
+    (:func:`annotate_outline` / :func:`overlay_mask` に役割色を渡す)。
+    反転色が本領を発揮するのは、地がカラーで**どの色を選んでも衝突しうる**とき。
+    なお :func:`annotate_invert_visibility` が測るのは WCAG の**輝度**比なので、
+    「輝度は同じだが色相が違う」ような見え方は評価できない —— 色で描くなら、
+    この op の数字は当てにしないこと。
+
     Parameters
     ----------
     mask : (H,W)
