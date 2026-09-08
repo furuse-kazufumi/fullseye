@@ -333,31 +333,48 @@ def make_frame(seed: int, alt: float = ALT_M, target_cols=(), *,
 
 
 # --------------------------------------------------------------------------- #
-# 3. 検出器 —— どちらも fullseye の op で組む                                    #
+# 3. 検出器 —— すべて fullseye の op で組む                                      #
 # --------------------------------------------------------------------------- #
-#: 検出器の 3 段。上ほど素朴。表の見出しと本文はここを正本にする。
-DETECTORS = (("bright", "明るさだけ(ゼロ点)"),
-             ("naive", "生画像 + 背景を引く"),
+#: 検出器の 4 段。上ほど素朴。表の見出しも本文もここを正本にする。
+DETECTORS = (("bright", "生の明るさ(ゼロ点)"),
+             ("naive", "生画像 - 全体の背景"),
+             ("band", "生画像 - 横距離ごとの背景"),
              ("tophat", "白色トップハット"))
+
+#: 横距離ごとに背景を引くときの帯の本数(``"band"`` 用)。
+N_NORM_BAND = 16
 
 
 def _response(img, mode: str):
     """検出に掛ける応答マップ。``"tophat"`` だけが整合フィルタ。"""
+    x = np.asarray(img, np.float64)
     if mode in ("naive", "bright"):
-        return np.asarray(img, np.float64)
+        return x
+    if mode == "band":
+        # 横距離ごとに中央値と頑健 sigma を測って正規化する。cos^4 で端が
+        # 暗くなる分をここで打ち消す —— 全体で 1 つの背景を引くのとは違う。
+        out = np.empty_like(x)
+        edges = np.linspace(0, COLS, N_NORM_BAND + 1).astype(int)
+        for k in range(N_NORM_BAND):
+            sl = x[:, edges[k]:edges[k + 1]]
+            sig = float(fs.noise_sigma(sl, "mad"))
+            out[:, edges[k]:edges[k + 1]] = (sl - float(np.median(sl)))                 / (sig if sig > 0.0 else 1.0)
+        return out
     # 白色トップハット(元画像 - オープニング)。5x5 の矩形構造要素は
     # ``a`` が {3,5,7,9} を刻むので a=0.3 -> 5。目標の FWHM は 2.6-3.7 px。
-    return np.asarray(fs.op.gray_tophat(np.asarray(img, np.float64), a=0.3))
+    return np.asarray(fs.op.gray_tophat(x, a=0.3))
 
 
 def detect_with_z(img, mode: str):
     """``(検出座標 (N,2), その点数 (N,))``。点数が高いほど「目標らしい」。
 
     * ``"bright"`` —— **ゼロ点**。点数は**画素の明るさそのもの**。背景も引かず、
-      場所ごとの明るさの違いも見ない。「明るく見えたから目標だ」という手で、
-      cos^4 で暗くなった端は原理的に上位に来ない。
-    * ``"naive"`` —— 生画像のまま、点数は ``(値 - 中央値)/頑健 sigma``。
-      背景は引くが整合フィルタは掛けない。
+      場所ごとの違いも見ない。「明るく見えたから目標だ」という手。
+    * ``"naive"`` —— 生画像のまま、点数は ``(値 - 画像全体の中央値)/頑健 sigma``。
+      ★これは ``"bright"`` の**アフィン変換**なので、**順位は 1 つも変わらない**。
+      §3 でそれを実測で確かめる —— 「背景を引いた」が効くのは、それが
+      **場所ごと**であるときだけ。
+    * ``"band"`` —— 横距離ごとに背景と sigma を引いてから同じ点数。
     * ``"tophat"`` —— 白色トップハットに掛けてから同じ点数。
 
     :func:`fullseye.star_detect` を低い閾値で 1 回だけ走らせ、閾値の掃引は
@@ -366,8 +383,7 @@ def detect_with_z(img, mode: str):
     (中央値と MAD x 1.4826 = :func:`fullseye.noise_sigma`)。
     """
     w = _response(img, mode)
-    base = 0.5 if mode == "bright" else BASE_SIGMA
-    pts = np.asarray(fs.star_detect(w, threshold_sigma=base, min_separation=3,
+    pts = np.asarray(fs.star_detect(w, threshold_sigma=BASE_SIGMA, min_separation=3,
                                     max_stars=4000), np.float64)
     if pts.size == 0:
         return pts.reshape(0, 2), np.zeros(0)
@@ -384,38 +400,44 @@ def detect_with_z(img, mode: str):
 BIN_CENTERS_PX = np.array([BIN_PX * k + BIN_PX / 2.0 for k in range(N_BIN)])
 
 
-def sweep_frames(n_frames: int, mode: str, seed0: int = 0, targets: bool = True, **kw):
-    """``n_frames`` 枚まわして、帯ごとの当たりの z と、誤検出の z・横距離を集める。
+def sweep_frames(n_frames: int, modes, seed0: int = 0, targets: bool = True, **kw):
+    """``n_frames`` 枚まわして、検出器ごとに当たりの点数と誤検出を集める。
 
-    戻り値の ``hit_z`` は ``(N_BIN, 2*n_frames)``。目標が拾えなかった試行は
-    ``-inf`` なので、どの閾値でも「拾えなかった」ままになる。
+    **1 枚の画像を全検出器で共有する** —— 検出器ごとにフレームを作り直すと
+    素材の乱数が変わってしまい、差が検出器の差なのか素材の差なのか分からない。
+    戻り値は ``{mode: {"hit_z", "fa_z", "fa_x", "gsd", "frames"}}``。
+    ``hit_z`` は ``(N_BIN, 2*n_frames)`` で、拾えなかった試行は ``-inf``。
     ``targets=False`` は**目標を 1 個も置かない**較正用(§2 の床の測定)。
     """
-    cols = np.r_[HALF_PX - BIN_CENTERS_PX[::-1], HALF_PX + BIN_CENTERS_PX] \
-        if targets else np.zeros(0)
-    hit_z = np.full((N_BIN, 2 * n_frames), -np.inf)
-    fa_z, fa_x = [], []
+    if isinstance(modes, str):
+        modes = (modes,)
+    cols = np.r_[HALF_PX - BIN_CENTERS_PX[::-1], HALF_PX + BIN_CENTERS_PX]         if targets else np.zeros(0)
+    hit_z = {m: np.full((N_BIN, 2 * n_frames), -np.inf) for m in modes}
+    fa_z = {m: [] for m in modes}
+    fa_x = {m: [] for m in modes}
     gsd = 0.0
     for n in range(n_frames):
         img, trow, tcol, gsd = make_frame(seed0 + n, target_cols=cols, **kw)
-        pts, z = detect_with_z(img, mode)
-        claimed = np.zeros(pts.shape[0], bool)
-        for m in range(trow.size):
-            if pts.size == 0:
-                continue
-            near = np.hypot(pts[:, 0] - trow[m], pts[:, 1] - tcol[m]) < MATCH_TOL_PX
-            if near.any():
-                # 左半分は帯番号が逆順(中心から数えるので折り返す)。
-                b = (N_BIN - 1 - m) if m < N_BIN else (m - N_BIN)
-                side = 0 if m < N_BIN else 1
-                hit_z[b, 2 * n + side] = z[near].max()
-                claimed |= near
-        if pts.size:
-            fa_z.append(z[~claimed])
-            fa_x.append(np.abs(pts[~claimed, 1] - HALF_PX))
-    fz = np.concatenate(fa_z) if fa_z else np.zeros(0)
-    fx = np.concatenate(fa_x) if fa_x else np.zeros(0)
-    return {"hit_z": hit_z, "fa_z": fz, "fa_x": fx, "gsd": gsd, "frames": n_frames}
+        for m in modes:
+            pts, z = detect_with_z(img, m)
+            claimed = np.zeros(pts.shape[0], bool)
+            for k in range(trow.size):
+                if pts.size == 0:
+                    continue
+                near = np.hypot(pts[:, 0] - trow[k], pts[:, 1] - tcol[k]) < MATCH_TOL_PX
+                if near.any():
+                    # 左半分は帯番号が逆順(中心から数えるので折り返す)。
+                    b = (N_BIN - 1 - k) if k < N_BIN else (k - N_BIN)
+                    side = 0 if k < N_BIN else 1
+                    hit_z[m][b, 2 * n + side] = z[near].max()
+                    claimed |= near
+            if pts.size:
+                fa_z[m].append(z[~claimed])
+                fa_x[m].append(np.abs(pts[~claimed, 1] - HALF_PX))
+    return {m: {"hit_z": hit_z[m],
+                "fa_z": np.concatenate(fa_z[m]) if fa_z[m] else np.zeros(0),
+                "fa_x": np.concatenate(fa_x[m]) if fa_x[m] else np.zeros(0),
+                "gsd": gsd, "frames": n_frames} for m in modes}
 
 
 def threshold_for_fa(fa_z, n_frames: int, per_frame: float = FA_PER_FRAME) -> float:
@@ -562,14 +584,16 @@ def section_floor():
     print(f"  目標を 1 個も置かない {N_CAL} フレームで誤検出だけを数え、"
           f"**{FA_PER_FRAME:.1f} 件/フレーム**に揃う閾値を求める。")
     out = {}
-    print(f"  {'検出器':>22}{'誤検出の総数':>14}{'閾値':>10}{'その閾値での実測':>18}")
+    runs = sweep_frames(N_CAL, [m for m, _ in DETECTORS], seed0=90000, targets=False)
+    print("  " + pad("検出器", 24, right=False) + pad("誤検出の総数", 16)
+          + pad("閾値", 10) + pad("その閾値での実測", 20))
     for mode, label in DETECTORS:
-        run = sweep_frames(N_CAL, mode, seed0=90000, targets=False)
+        run = runs[mode]
         thr = threshold_for_fa(run["fa_z"], N_CAL)
         out[mode] = {"thr": thr, "n_fa": int(run["fa_z"].size),
                      "got": fa_per_frame(run, thr)}
-        print(f"  {label:>22}{run['fa_z'].size:>13d} 件{thr:>10.2f}"
-              f"{out[mode]['got']:>15.2f} 件/枚")
+        print("  " + pad(label, 24, right=False) + pad("%d 件" % run["fa_z"].size, 16)
+              + pad("%.3f" % thr, 10) + pad("%.2f 件/枚" % out[mode]["got"], 20))
     print(f"  → 閾値は「{N_CAL} フレーム中 {N_CAL} 番目に強い誤検出」の高さなので、")
     print(f"     相対精度はおよそ 1/sqrt({N_CAL}) = {1 / math.sqrt(N_CAL):.1%}。")
     print("     **0 件だった/100 % 見えた、で閾値を決めない** —— 分母を先に置く。")
@@ -578,35 +602,41 @@ def section_floor():
 
 def section_lateral_curve(floor):
     print("\n=== 3. 横距離曲線 p(x) —— 目標を植えて測る ===")
-    runs = {m: sweep_frames(N_MAIN, m, seed0=0) for m, _ in DETECTORS}
+    runs = sweep_frames(N_MAIN, [m for m, _ in DETECTORS], seed0=0)
     gsd = runs["tophat"]["gsd"]
     print(f"  {N_MAIN} フレーム x 左右 2 個 = **{2 * N_MAIN} 試行/帯**、"
           f"帯の幅 {BIN_PX * gsd:.0f} m、横距離 0-{N_BIN * BIN_PX * gsd:.0f} m")
     out = {}
-    header = "  " + pad("検出器", 22, right=False) + pad("閾値", 8) + pad("誤検出/枚", 12)
+    header = "  " + pad("検出器", 24, right=False) + pad("閾値", 9) + pad("誤検出/枚", 11)
     header += "".join(pad("%.0f" % ((k + 0.5) * BIN_PX * gsd), 7) for k in range(N_BIN))
     header += pad("W [m]", 12)
-    print("  " + pad("横距離 [m] →", 22, right=False))
+    print("  " + pad("(列見出しは帯の中心の横距離 [m])", 24, right=False))
     print(header)
     for mode, label in DETECTORS:
         thr = floor[mode]["thr"]
         p, w, se = curve_at(runs[mode], thr)
         out[mode] = {"p": p, "w": w, "se": se, "thr": thr,
                      "fa": fa_per_frame(runs[mode], thr)}
-        print("  " + pad(label, 22, right=False) + pad("%.2f" % thr, 8)
-              + pad("%.2f" % out[mode]["fa"], 12)
+        print("  " + pad(label, 24, right=False) + pad("%.3f" % thr, 9)
+              + pad("%.2f" % out[mode]["fa"], 11)
               + "".join(pad("%.2f" % v, 7) for v in p)
               + pad("%.1f ± %.1f" % (w, se), 12))
-    print("  → **3 つとも同じ誤検出率(1.0 件/枚)で比べている**。揃えないと閾値を")
-    print("     下げるだけで走査幅が伸びるので、比較にならない。")
-    print(f"     ゼロ点(明るさだけ){out['bright']['w']:.0f} m → 背景を引く"
-          f" {out['naive']['w']:.0f} m → 整合フィルタ {out['tophat']['w']:.0f} m。")
-    print(f"     整合フィルタはゼロ点の "
-          f"{out['tophat']['w'] / max(out['bright']['w'], 1e-9):.1f} 倍。★"
-          "**「明るさだけ」が弱いのは雑音のせいではなく**")
-    print("     **cos^4 のせい** —— 端の目標は、直下の海面より暗い。"
-          "背景を引く 1 手を足すだけで")
-    print(f"     {out['naive']['w'] / max(out['bright']['w'], 1e-9):.1f} 倍になる。")
+    print(f"  → **4 つとも同じ誤検出率({FA_PER_FRAME:.1f} 件/枚)で比べている**。"
+          "揃えないと閾値を")
+    print("     下げるだけで走査幅が伸びるので、比較にならない(§8)。")
+    print(f"  → ★**予測を外した**: ゼロ点(生の明るさ){out['bright']['w']:.1f} m と、"
+          f"全体の背景を引いた {out['naive']['w']:.1f} m が**ほぼ同じ**。")
+    print("     当然だった —— 画像全体で 1 つの中央値と sigma で割るのは"
+          "**アフィン変換**なので、")
+    print("     検出の順位が 1 つも変わらない(残る差は検出上限 4000 個の"
+          "打ち切りだけ)。")
+    print(f"  → 「背景を引く」が効くのは**場所ごと**であるときだけ: "
+          f"横距離ごとに引くと {out['band']['w']:.1f} m"
+          f"(ゼロ点の {out['band']['w'] / max(out['bright']['w'], 1e-9):.2f} 倍)。")
+    print(f"     整合フィルタ(トップハット)は {out['tophat']['w']:.1f} m = "
+          f"ゼロ点の {out['tophat']['w'] / max(out['bright']['w'], 1e-9):.2f} 倍。")
+    print("     ★**零点をどれだけ上回ったか**でしか腕は測れない —— "
+          "ゼロ点でも 180 m は出る。")
     print(f"  → いちばん外の帯で p = {out['tophat']['p'][-1]:.3f}。ここが 0 に近いので、")
     print("     視野で切られた分の取りこぼし(打ち切り)は無視できる。§7 の低高度は"
           "そうならない。")
