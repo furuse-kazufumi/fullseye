@@ -1057,13 +1057,17 @@ def section8_metrics(sweep_am, zero):
     gy0, gx0 = ink_centroid(des)
     bm = box_mask(L, 2.0 * PITCH)
 
-    methods = {"重心(ゼロ点 B)": [], "相関 AM": [], "相関 FM": []}
+    des_lp = lowpass_image(des)
+    methods = {"重心(ゼロ点 B)": [], "相関 AM(素)": [],
+               "相関 AM(低域通過)": [], "相関 FM": []}
     for t in SWEEP:
         r = [x for x in sweep_am[name] if abs(x["t"] - t) < 1e-9][0]
         cur_am = am_sheet(ang, blob, 0.0, float(t), seed=31)
         cy, cx = ink_centroid(cur_am)
         methods["重心(ゼロ点 B)"].append((cy - gy0, cx - gx0))
-        methods["相関 AM"].append(r["corr"])
+        methods["相関 AM(素)"].append(r["corr"])
+        ly, lx, _q = corr_shift(des_lp, lowpass_image(cur_am), bm)
+        methods["相関 AM(低域通過)"].append((ly, lx))
         cur_fm = fm_sheet(cen, rad, 0.0, float(t), seed=61)
         my, mx, _ratio = corr_shift(ref_fm, cur_fm, bm)
         methods["相関 FM"].append((my, mx))
