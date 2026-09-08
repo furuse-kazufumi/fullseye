@@ -751,14 +751,20 @@ def section5_per_plate():
         print("  %-4s %7.0f° (%+7.3f,%+7.3f) %10.3f (%+7.3f,%+7.3f) %10.3f %10.4f"
               % (name, ang, ry, rx, np.hypot(ry, rx), my, mx, np.hypot(my, mx), d))
     print()
+    n_ok = sum(1 for m in mags if m <= TOL_PX)
     print("  → 1 つの物理的なずれ %.3f px が、版ごとに **%.2f 〜 %.2f px** に化ける"
           % (np.hypot(dy, dx), min(mags), max(mags)))
     print("     (予測との差は最大 %.4f px)。**「どの版が何 px ずれているか」を"
           % max(diffs))
     print("     版ごとの相関で並べた表は、そのままでは物理量の表になっていない**。")
-    print("     4 版とも公差 %.1f px を超えて見えるので**この例では不合格は出る**が、"
-          % TOL_PX)
-    print("     どの方向にどれだけ紙を動かせばよいかは、この表からは読めない。")
+    print("  ★★真値 %.2f px は公差 %.1f px の %.1f 倍なのに、**4 版中 %d 版が"
+          % (np.hypot(dy, dx), TOL_PX, np.hypot(dy, dx) / TOL_PX, n_ok))
+    print("     「合格」に見える**(%s)。しかも同じ紙が同じだけずれた結果です。"
+          % ", ".join("%s %.2f px" % (n, m)
+                      for (n, _a, _b, _d), m in zip(PLATES, mags) if m <= TOL_PX))
+    print("     残りの %d 版は不合格に見えるが、その値も物理量ではないので、"
+          % (len(PLATES) - n_ok))
+    print("     **どの方向にどれだけ紙を動かせばよいかはこの表からは読めない**。")
     figs.save_table("per_plate", ["版", "角度", "予測 見かけ", "|予測| px",
                                   "実測 見かけ", "|実測| px", "差 px"], rows,
                     title="同じずれ (%+.2f,%+.2f) px を 4 版に掛けた" % (dy, dx),
