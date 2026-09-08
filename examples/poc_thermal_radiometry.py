@@ -514,33 +514,42 @@ def section_cliff(scene):
     print("\n=== 2. 崖 —— 閉形式を先に印字してから測る ===")
     tabs = scene["tabs"]
     print("  予測: ΔT = −(T/n)·(Δε/ε)·(1 − L(T_refl)/L(T_obj))、n = c2/(λ_eff·T)")
-    print(f"  {'帯域':>6}{'T [K]':>8}{'λ_eff [µm]':>12}{'λ中央':>8}"
-          f"{'n(予測)':>10}{'n(中央)':>10}{'n(実測)':>10}{'差':>9}")
-    idx_rows, worst_eff, worst_mid = [], 0.0, 0.0
+    print(f"  {'帯域':>6}{'T [K]':>8}{'λ_eff':>9}{'x=c2/λT':>10}{'n(中央)':>10}"
+          f"{'n(1/λ重み)':>12}{'n(Wien補正)':>13}{'n(実測)':>10}{'素朴の誤差':>12}")
+    idx_rows, worst_eff, worst_mid, worst_corr = [], 0.0, 0.0, 0.0
     for band in BANDS:
         lo, hi = BANDS[band]
         for t in (300.0, 350.0, 800.0):
             lam_eff = band_effective_lambda(band, t)
             n_pred = band_index_predicted(band, t)
             n_mid = band_index_predicted(band, t, 0.5 * (lo + hi))
+            n_cor = band_index_wien_corrected(band, t)
             n_num = band_index_numeric(band, t)
+            x_eff = C2_UM / (lam_eff * t)
             worst_eff = max(worst_eff, abs(n_pred / n_num - 1.0))
             worst_mid = max(worst_mid, abs(n_mid / n_num - 1.0))
-            idx_rows.append((band, f"{t:.0f}", f"{lam_eff:.3f}", f"{0.5*(lo+hi):.1f}",
-                             f"{n_pred:.3f}", f"{n_mid:.3f}", f"{n_num:.3f}",
-                             f"{100*(n_pred/n_num-1):+.1f} %"))
-            print(f"  {band:>6}{t:>8.0f}{lam_eff:>12.3f}{0.5*(lo+hi):>8.1f}"
-                  f"{n_pred:>10.3f}{n_mid:>10.3f}{n_num:>10.3f}"
-                  f"{100*(n_pred/n_num-1):>8.1f}%")
-    print(f"  → 放射輝度で重み付けた 1/λ の平均を λ_eff にすると誤差 "
-          f"{100*worst_eff:.1f} % 以内。帯の中央を使うと {100*worst_mid:.1f} % "
-          f"—— **どこを実効波長と呼ぶかで 1 割違う**。")
+            worst_corr = max(worst_corr, abs(n_cor / n_num - 1.0))
+            idx_rows.append((band, f"{t:.0f}", f"{lam_eff:.3f}", f"{x_eff:.2f}",
+                             f"{n_mid:.3f}", f"{n_pred:.3f}", f"{n_cor:.3f}",
+                             f"{n_num:.3f}", f"{100*(n_pred/n_num-1):+.1f} %"))
+            print(f"  {band:>6}{t:>8.0f}{lam_eff:>9.3f}{x_eff:>10.2f}{n_mid:>10.3f}"
+                  f"{n_pred:>12.3f}{n_cor:>13.3f}{n_num:>10.3f}"
+                  f"{100*(n_pred/n_num-1):>11.1f}%")
+    print(f"  → 帯の中央を λ_eff と呼ぶと誤差 {100*worst_mid:.1f} %、放射輝度で"
+          f"重み付けた **1/λ** の平均にすると {100*worst_eff:.1f} %。")
+    print(f"     ★どちらも**高温・長波で必ず過小**に出る。素朴な n = c2/(λ_eff T) は")
+    print(f"     **Wien 側(x = c2/λT ≫ 1)でだけ厳密**で、実際は e^x/(e^x−1) が掛かる。")
+    print(f"     その因子を入れると誤差は {100*worst_corr:.2f} % —— **式の欠けであって")
+    print("     実効波長の選び方ではなかった**(MWIR 300 K は x=10.9 でほぼ Wien、")
+    print("     LWIR 800 K は x=1.8 で Rayleigh–Jeans 寄り。同じ式の当たり外れの正体)。")
     figs.save_table("planck_index",
-                    ["帯域", "T [K]", "λ_eff [µm]", "λ 中央", "n(予測)",
-                     "n(中央で予測)", "n(実測)", "予測の誤差"], idx_rows,
-                    title="実効 Planck 指数 —— 重みを 1/λ で取る",
-                    caption="n = d ln L_bb/d ln T。温度微分が 1/λ に比例するので、"
-                            "重みも 1/λ で取らないと 1 割ずれる。")
+                    ["帯域", "T [K]", "λ_eff [µm]", "x = c2/λT", "n(帯中央)",
+                     "n(1/λ 重み)", "n(Wien 補正)", "n(実測)", "素朴な予測の誤差"],
+                    idx_rows,
+                    title="実効 Planck 指数 —— 外れるのは重みではなく式の欠け",
+                    caption="n = d ln L_bb/d ln T。重みを 1/λ で取ると帯中央より"
+                            "良くなるが、x が小さい(高温・長波)ところでは"
+                            "e^x/(e^x−1) の欠けが残る。")
 
     # ---- 予測を印字してから、温度・帯域・放射率を振って実測する ---------------
     print("\n  ★予測(印字してから測る): 崖は **低温ほど急** —— のはず。")
