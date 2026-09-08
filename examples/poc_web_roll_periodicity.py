@@ -39,7 +39,7 @@ MD_JITTER = 1.5          # 転写位置の MD ゆらぎ [mm](スリップ・伸�
 CD_JITTER = 3.0          # 転写位置の CD ゆらぎ [mm]
 P_MISS = 0.15            # 欠陥検出の見逃し率(既定)
 
-CLUTTER_PER_MM = 1.0 / 250.0     # 無関係な欠陥の発生率 [個/mm] = 80 個/20 m
+CLUTTER_PER_MM = 1.0 / 400.0     # 無関係な欠陥の発生率 [個/mm] = 50 個/20 m
 
 #: web の蛇行(meander)。**欠陥地図は web 端基準で記録される** —— 下流の
 #: 断裁位置に紐づけたいから。その座標系では、機械に固定されたロール傷のほうが
@@ -51,7 +51,8 @@ MEANDER_PHI = 0.7
 # --- 解析の諸元 -------------------------------------------------------------- #
 C_MIN, C_MAX = 200.0, 1000.0     # 周長の探索範囲 [mm](台帳を覆う)
 LANE_HALF = 15.0                 # CD レーンの半幅 [mm](現場の定番の絞り込み)
-PEAK_K = 6.0                     # 「ロールを 1 本報告する」ピーク高さの倍率
+KMAX = 3                         # 櫛法が「全部立っている」ことを要求する高調波の数
+PEAK_K = 2.5                     # 「ロールを 1 本報告する」高調波の高さ倍率(帯域の中央値比)
 SEEDS = 24                       # 掃引 1 点あたりの試行数
 SEED0 = 1000
 
@@ -159,31 +160,45 @@ def naive_spec_estimate(md, length: float) -> dict:
     return {"C": 1.0 / fh if fh > 0 else np.nan, "ratio": float(m[i] / sp["med"])}
 
 
-def comb_peaks(md, length: float, kmax: int = 3, max_rolls: int = 4,
-               interp: bool = True) -> dict:
-    """**櫛(comb)法** —— 高調波が **k=1..kmax すべて**立っている最低周波数。
+def comb_score(sp: dict, kmax: int = KMAX) -> np.ndarray:
+    """帯域の各ビンを「基本波だと仮定したときの櫛の強さ」で採点する。
 
-    fail-closed にしてある: 1 本でも欠けている候補は基本波として採らない。
-    さらに、既に採った周長の 1/2, 1/3, ... に当たる候補は「同じロールの
-    高調波」として篩い落とす。候補の拾い出しは :func:`fullseye.find_peaks`。
+    点数は **k=1..kmax のうちいちばん弱い高調波**の高さ(min)。和ではなく min
+    にするのは fail-closed のため —— 1 本でも欠けていれば、その候補は基本波
+    ではない。高調波 k の位置は基本波のビン丸め誤差が k 倍されるので、
+    窓も k に応じて広げる。
+    """
+    m, band = sp["m"], sp["band"]
+    out = np.zeros(band.size)
+    for a, j in enumerate(band):
+        j = int(j)
+        if kmax * j + kmax >= m.size:
+            continue
+        out[a] = min(
+            float(m[max(k * j - (k // 2 + 1), 0):k * j + (k // 2 + 2)].max())
+            for k in range(1, kmax + 1))
+    return out
+
+
+def comb_peaks(md, length: float, max_rolls: int = 4,
+               interp: bool = True) -> dict:
+    """**櫛(comb)法** —— 高調波が k=1..KMAX すべて立っている最低周波数から採る。
+
+    既に採った周長の 1/2, 1/3, ... に当たる候補は「同じロールの高調波」として
+    篩い落とす —— インパルス列のスペクトルは櫛なので、これをしないと 1 本の
+    ロールを 3 本にも 4 本にも報告する。候補の拾い出しは
+    :func:`fullseye.find_peaks`。
     """
     sp = md_spectrum(md, length)
     if not sp:
         return {"C": [], "ratio": [], "spec": {}}
     f, m, band, med = sp["f"], sp["m"], sp["band"], sp["med"]
-    pk = np.asarray(fs.find_peaks(m[band], height=PEAK_K * med, distance=2), int)
-    cands = band[pk] if pk.size else np.zeros(0, int)
+    sco = comb_score(sp)
+    pk = np.asarray(fs.find_peaks(sco, height=PEAK_K * med, distance=2), int)
     cs, rs = [], []
-    for j in cands:
-        if kmax * int(j) + 4 >= m.size:
-            continue
-        # 高調波 k の位置は基本波のビン丸め誤差が k 倍されるので窓も k で広げる
-        strength = min(
-            float(m[max(k * j - (k // 2 + 1), 0):k * j + (k // 2 + 2)].max())
-            for k in range(1, kmax + 1))
-        if strength < PEAK_K * med:
-            continue
-        fh = _peak_freq(f, m, int(j), interp)
+    for a in pk:                      # find_peaks は昇順 = 低い周波数から
+        j = int(band[a])
+        fh = _peak_freq(f, m, j, interp)
         if fh <= 0:
             continue
         chat = 1.0 / fh
@@ -191,10 +206,10 @@ def comb_peaks(md, length: float, kmax: int = 3, max_rolls: int = 4,
                for c0 in cs for k in range(2, 7)):
             continue
         cs.append(chat)
-        rs.append(float(m[j] / med))
+        rs.append(float(sco[a] / med))
         if len(cs) >= max_rolls:
             break
-    return {"C": cs, "ratio": rs, "spec": sp}
+    return {"C": cs, "ratio": rs, "spec": sp, "score": sco}
 
 
 def spec_estimate(md, length: float, interp: bool = True) -> dict:
