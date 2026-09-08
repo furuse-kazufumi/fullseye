@@ -376,67 +376,72 @@ def section_cliff() -> dict:
     print("   半減間隔 d*  " + "".join("  %6.3f m " % half_spacing(h[4])
                                        for h in HOTSPOTS))
 
-    print("\n   ---- 実測(最悪位相 = ホットスポットをセルの中心に置く)----")
-    print("   間隔 d   ラック     予測    実測(雑音なし)  差     実測(σ=%.2f °C)"
-          "   床(背景の復元誤差)" % NOISE)
-    meas, meas_n, floors, diffs = {}, {}, {}, []
+    print("\n   ---- 実測(最悪位相 = ホットスポットをセルの中心に置く、最近傍補間)----")
+    print("   間隔 d   ラック     予測   幾何の実測    差    素朴な実測  超過   "
+          "床(背景+雑音)")
+    geo, naive, floors, diffs, excess = {}, {}, {}, [], []
     for d in DS:
         for hi, h in enumerate(HOTSPOTS):
-            r0 = recover(hi, d, "worst", "nearest", 0.0)
-            r1 = recover(hi, d, "worst", "nearest", NOISE)
-            assert r0["bracketed"], (d, hi)
-            meas[(d, hi)] = r0["att"]
-            meas_n[(d, hi)] = r1["att"]
-            floors[(d, hi)] = r1["floor_att"]
-            diffs.append(abs(r0["att"] - pred[d][hi]))
-            print("    %5.2f   σ=%.2f  %8.4f  %10.4f  %+8.4f  %10.4f  %12.4f"
-                  % (d, h[4], pred[d][hi], r0["att"], r0["att"] - pred[d][hi],
-                     r1["att"], r1["floor_att"]))
+            r = recover(hi, d, "worst", "nearest", NOISE)
+            assert r["bracketed"], (d, hi)
+            geo[(d, hi)] = r["geo"]
+            naive[(d, hi)] = r["naive"]
+            floors[(d, hi)] = r["floor"]
+            diffs.append(abs(r["geo"] - pred[d][hi]))
+            excess.append(r["naive"] - pred[d][hi])
+            print("    %5.2f   σ=%.2f  %8.4f %9.4f %+9.6f %9.4f %+7.4f %10.4f"
+                  % (d, h[4], pred[d][hi], r["geo"], r["geo"] - pred[d][hi],
+                     r["naive"], r["naive"] - pred[d][hi], r["floor"]))
     err = max(diffs)
-    print("\n  ★予測と実測(雑音なし・最悪位相)の差は最大 %.4f(割合)。"
-          "閉形式はここでは**外れない**\n     —— 最近傍補間は最悪位相でセルの角の"
-          "値をそのまま返し、それはちょうど d√3/2 の点だから。" % err)
-    print("  ★崖の床は雑音が決める。σ=%.2f °C の雑音は振幅 %.0f °C のラックに対して"
-          " %.4f の\n     見かけの回復を作る —— d が大きいところの「実測」は"
-          "**信号ではなく雑音**。"
-          % (NOISE, HOTSPOTS[2][5], floors[(DS[-1], 2)]))
+    print("\n  ★閉形式と「幾何だけの実測」の差は最大 %.2e —— **一致する**。"
+          "最近傍補間は最悪位相で\n     セルの角の値を返し、その角はちょうど"
+          " d√3/2 の点だから。ここは幾何の検算であって発見ではない。" % err)
+    print("  ★★**外れるのは閉形式ではなく「測り方」**。現場で測れるのは"
+          "「復元した場のピーク」\n     であって「そのラックの寄与」ではないので、"
+          "**背景の復元誤差が同じ場所に載る**。\n     素朴な実測は予測を最大 "
+          "%+.4f 超過し(d=%.2f m、σ=%.2f m)、その超過は床 %.4f と\n     ほぼ同じ"
+          " —— つまり**崖は実際より浅く見える**。"
+          % (max(excess), DS[-1], HOTSPOTS[0][4], floors[(DS[-1], 0)]))
+    print("     σ=%.2f m のラックは d=%.2f m で幾何の回復 %.6f(ほぼ消滅)なのに、"
+          "素朴に測ると\n     %.4f 残って見える。**残っているのは背景の誤差**。"
+          % (HOTSPOTS[2][4], DS[-1], geo[(DS[-1], 2)], naive[(DS[-1], 2)]))
 
-    print("\n   ---- 位相を変えると何が起きるか(d = %.2f m)----" % 0.60)
+    print("\n   ---- 位相を変えると何が起きるか(d = %.2f m、幾何の回復)----" % 0.60)
     d0 = 0.60
     print("   ラック    最悪位相(セル中心)  現場の位相(部屋の格子)  最良位相"
           "(センサ直上)")
     phase_rows = []
     for hi, h in enumerate(HOTSPOTS):
-        a = recover(hi, d0, "worst", "nearest", 0.0)["att"]
-        b = recover(hi, d0, "room", "nearest", 0.0)["att"]
-        c = recover(hi, d0, "node", "nearest", 0.0)["att"]
+        a = recover(hi, d0, "worst", "nearest", 0.0)["geo"]
+        b = recover(hi, d0, "room", "nearest", 0.0)["geo"]
+        c = recover(hi, d0, "node", "nearest", 0.0)["geo"]
         phase_rows.append((h[0], a, b, c))
         print("   σ=%.2f  %14.4f %20.4f %18.4f" % (h[4], a, b, c))
     print("  ★★**閉形式は曲線ではなく床**。ラックが格子のどこに落ちるかは"
-          "設計で決まらないので、\n     同じ d でも回復は最悪位相の値から 1.0 まで"
-          "跳ぶ。設計に使えるのは最悪位相の値だけ。")
+          "設計で決まらないので、\n     同じ d でも回復は最悪位相の値から 1.0 "
+          "(センサ直上)まで跳ぶ。設計に使えるのは\n     最悪位相の値だけ —— "
+          "「うちは平均すればこれくらい見える」は、そのラックには通じない。")
 
     figs.save_plot(
         "cliff_prediction",
         [("予測 σ=%.2f m" % HOTSPOTS[0][4], DS, [pred[d][0] for d in DS]),
-         ("実測 σ=%.2f m" % HOTSPOTS[0][4], DS, [meas[(d, 0)] for d in DS]),
-         ("予測 σ=%.2f m" % HOTSPOTS[1][4], DS, [pred[d][1] for d in DS]),
-         ("実測 σ=%.2f m" % HOTSPOTS[1][4], DS, [meas[(d, 1)] for d in DS]),
-         ("実測 σ=%.2f m(雑音つき)" % HOTSPOTS[2][4], DS,
-          [meas_n[(d, 2)] for d in DS])],
+         ("幾何の実測 σ=%.2f m" % HOTSPOTS[0][4], DS, [geo[(d, 0)] for d in DS]),
+         ("素朴な実測 σ=%.2f m" % HOTSPOTS[0][4], DS, [naive[(d, 0)] for d in DS]),
+         ("予測 σ=%.2f m" % HOTSPOTS[2][4], DS, [pred[d][2] for d in DS]),
+         ("素朴な実測 σ=%.2f m" % HOTSPOTS[2][4], DS, [naive[(d, 2)] for d in DS])],
         xlabel="センサ格子の間隔 d [m]", ylabel="回復したピークの割合",
-        title="崖 —— 先に予測 exp(-3d²/8σ²)、あとで実測",
-        caption="差は最大 %.4f。σ=%.2f m の曲線が雑音の床 %.3f で止まっている。"
-                % (err, HOTSPOTS[2][4], floors[(DS[-1], 2)]))
+        title="崖 —— 閉形式は当たる。外れるのは「ピークがどれだけ残ったか」の測り方",
+        caption="幾何の実測は予測と最大 %.1e しか違わない。素朴な実測が上に"
+                "浮くぶんが背景の復元誤差。" % err)
     figs.save_table(
         "cliff_table",
         ["間隔 d [m]"] + ["σ=%.2f 予測" % h[4] for h in HOTSPOTS]
-        + ["σ=%.2f 実測" % h[4] for h in HOTSPOTS],
+        + ["σ=%.2f 素朴な実測" % h[4] for h in HOTSPOTS],
         [["%.2f" % d] + ["%.4f" % pred[d][i] for i in range(3)]
-         + ["%.4f" % meas[(d, i)] for i in range(3)] for d in DS],
-        title="幾何の予測と実測(最悪位相、雑音なし)", col_w=110)
-    return {"pred": pred, "meas": meas, "meas_n": meas_n, "floors": floors,
-            "err": err, "phase": phase_rows}
+         + ["%.4f" % naive[(d, i)] for i in range(3)] for d in DS],
+        title="幾何の予測と、現場で測れる量(最悪位相)", col_w=130)
+    return {"pred": pred, "geo": geo, "naive": naive, "floors": floors,
+            "err": err, "excess": max(excess), "phase": phase_rows}
 
 
 # --------------------------------------------------------------------------- #

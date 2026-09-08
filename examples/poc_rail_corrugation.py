@@ -204,7 +204,7 @@ def section_scene():
                      "|H| 非対称", "覚え書き"], rows,
                     title="仕込んだ凹凸と弦の伝達関数(予測)")
     if figs.enabled():
-        f = np.linspace(0.02, 3.5, 2000)          # 空間周波数 [1/m]
+        f = np.linspace(0.02, 1.25, 2000)         # 空間周波数 [1/m]
         lam = 1.0 / f
         figs.save_plot(
             "transfer",
@@ -212,9 +212,9 @@ def section_scene():
              ("6 m 弦", f, h_sym(lam, CHORD_B)),
              ("非対称 3.7/6.3 m", f, h_asym(lam))],
             xlabel="空間周波数 1/λ [1/m](右ほど短い波)", ylabel="|H|",
-            title="弦の伝達関数 —— ゼロは**周波数で等間隔**に並ぶ",
-            caption="10 m 弦のゼロは 0.2 刻み、6 m 弦は 1/3 刻み。"
-                    "両方が 0 になるのは整数 1/λ = 1, 2, 3 …(λ = 1.000/k)—— "
+            title="弦の伝達関数 —— ゼロは周波数で等間隔に並ぶ",
+            caption="10 m 弦のゼロは 0.2 刻み、6 m 弦は 1/3 刻み。両方が 0 になる"
+                    "のは 1/λ = 1(λ=1.000 m)で、以降 2, 3, … と続く —— "
                     "波長で見ると短波長ほど詰まる")
         figs.save_plot(
             "transfer_zoom",
