@@ -629,8 +629,8 @@ def section_cliff(pred: dict) -> dict:
             i = spec_estimate(sc["md"], L, interp=True)
             if np.isfinite(b["C"]):
                 rep += 1
-                eb.append(abs(b["C"] - c))
-                ei.append(abs(i["C"] - c))
+                eb.append(b["C"] - c)
+                ei.append(i["C"] - c)
             name = identify(i["C"])
             hit += int(name == CULPRIT)
             if name != CULPRIT and np.isfinite(i["C"]):
