@@ -374,6 +374,21 @@ def _robust_background(image, method="mad", kappa=3.0, iters=5):
     if method == "mad":
         med = float(np.median(x))
         mad = float(np.median(np.abs(x - med)))
+        # ★MAD が 0 に潰れたのに画像は平坦でない = **量子化**(2026-09-08、
+        #   poc_thermal_radiometry が踏んだ)。整数の DN では |x-med| も整数に
+        #   なるので、返せる sigma は 1.4826 の倍数だけ —— σ=0.5 の実写相当で
+        #   **0.0**、σ=1.0 と σ=1.983 が**同じ 1.4826**。黙って 0 を返すと
+        #   しきい値が背景と同じになり、下流(star_detect)が何も見つけない。
+        #   ここは値を返す入口なので raise せず声を上げる(呼び手が method="clip"
+        #   を選べる)。refuse するのは答えを出す側 = star_detect の役目。
+        if mad == 0.0 and x.size > 1 and float(np.ptp(x)) > 0.0:
+            warnings.warn(
+                "noise_sigma(method='mad'): MAD collapsed to 0 on data that is "
+                "not constant (range %.6g). This is quantisation — with integer "
+                "DN the estimate can only take multiples of %.4f. Use "
+                "method='clip' (which was written for exactly this case) or add "
+                "dither." % (float(np.ptp(x)), MAD_TO_SIGMA),
+                RuntimeWarning, stacklevel=3)
         return med, mad * MAD_TO_SIGMA
     # "clip": 対称な κ-σ クリップ(MAD が 0 に潰れる量子化された画像向け)
     keep = np.ones(x.size, bool)
