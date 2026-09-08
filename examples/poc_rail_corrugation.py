@@ -245,7 +245,11 @@ def section_deconv():
 def section_dual():
     print("\n[6] 弦を 2 本(10 m と 6 m)にして、|H| の大きい方を採る")
     print("    予測: 共通の死角は λ = L_A/(2n) = L_B/(2m) を満たす所 —— "
-          "5/n = 3/m の最小解 n=5, m=3 で **λ = 1.000 m**")
+          "5/n = 3/m の最小解 n=5, m=3 で **λ = 1.000 m**。")
+    print("    ★ただしこれは 1 点ではなく **λ = 1.000/k の櫛**(k=1,2,3,...)。"
+          "隣り合う死角の間隔は λ²/1.000 なので、")
+    print("    **波長に対する相対間隔はそのまま λ** —— λ=0.100 m では 10 %% 刻み、"
+          "1/3 オクターブ帯(幅 23 %%)に 2 本入る")
     y = profile(noise=SIGMA)
     va, vb = chord_versine(y, CHORD_A), chord_versine(y, CHORD_B)
     rows, out = [], []
