@@ -496,8 +496,13 @@ def predict_dt_from_eps(tab: BandTable, band: str, t_obj: float, eps: float,
     第 2 因子は**反射がある分だけ崖が緩む**という意味で、T_refl → T_obj では
     ゼロになる(全部が同じ温度なら ε は効かない)。逆に T_refl > T_obj では
     符号が反転する —— **周囲が対象より熱いと、放射率の取り違えは逆向きに効く**。
+
+    ★**この式に ε は現れない** —— 相対誤差 Δε/ε で見ると ε が約分で消える。
+    現場が「放射率を ±2 % で入れた」と言うときの ±2 % が**相対**なのか
+    **絶対**なのかで、意味がまったく違うのはこのため。
     """
-    n = band_index_predicted(band, t_obj, lam_eff)
+    n = (band_index_wien_corrected(band, t_obj) if wien_corr
+         else band_index_predicted(band, t_obj, lam_eff))
     ratio = float(tab.radiance(t_refl)) / float(tab.radiance(t_obj))
     return -(t_obj / n) * rel_deps * (1.0 - ratio)
 
