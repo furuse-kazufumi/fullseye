@@ -122,6 +122,8 @@ _CATALOG = {
         ("annotate_outline", "annotate", ["image2d", "mask"], "image2d"),
         ("annotate_text_path_layout", "annotate", ["text"], "table"),
         ("annotate_text_path", "annotate", ["image2d", "text"], "image2d"),
+        ("annotate_table_layout", "annotate", ["text"], "table"),
+        ("annotate_table", "annotate", ["image2d", "text"], "image2d"),
         ("annotate_colorbar", "annotate", ["image2d", "image2d"], "image2d"),
         ("annotate_panel_label", "annotate", ["image2d"], "image2d"),
         ("annotate_figure_grid_layout", "annotate", [], "table"),

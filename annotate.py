@@ -97,6 +97,7 @@ __all__ = [
     "annotate_inset_layout", "annotate_inset",
     "annotate_outline_layout", "annotate_outline",
     "annotate_text_path_layout", "annotate_text_path",
+    "annotate_table_layout", "annotate_table",
     "annotate_invert_visibility", "annotate_invert", "annotate_invert_path",
     "annotate_colorbar",
     "annotate_panel_label",
@@ -628,6 +629,41 @@ def _anchor_origin(anchor, x, y, w, h):
     return int(ox), int(oy)
 
 
+def _under_rgb(a, rect):
+    """``rect`` の下に**実際に出ている色**の平均 RGB。"""
+    x0, y0, w, h = (int(v) for v in rect)
+    under = a[y0:y0 + h, x0:x0 + w]
+    if a.ndim == 2:
+        return (float(np.mean(under)),) * 3
+    v = tuple(float(c) for c in np.mean(under.reshape(-1, under.shape[-1]), axis=0)[:3])
+    return v if len(v) >= 3 else (v[0],) * 3
+
+
+def _pick_ink(a, rect, ink, min_contrast, scheme, what="label"):
+    """文字色を決め、**読めないなら例外**にする(:func:`text_box` と表で共有)。
+
+    既定は明るい文字。板が無い/薄い/明るい場所ではそれが地に溶けるので、
+    既定色が ``min_contrast`` を割るときだけ暗い文字へ切り替える(両方駄目
+    なら良い方を選び、そのあとの検査が例外にする)。既定色が読める限り
+    従来と同じ色を出すので、通っていた絵はバイト単位で変わらない。
+    """
+    under_rgb = _under_rgb(a, rect)
+    if ink is None:
+        light, dark = _rgb(_INK_RGB, scheme), _rgb(_PLATE_RGB, scheme)
+        ink = light
+        if (_contrast_ratio(light, under_rgb) < float(min_contrast)
+                and _contrast_ratio(dark, under_rgb) > _contrast_ratio(light, under_rgb)):
+            ink = dark
+    ratio = _contrast_ratio(ink, under_rgb)
+    if ratio < float(min_contrast):
+        raise ValueError(
+            f"text colour {tuple(round(c, 3) for c in ink)} sits at contrast {ratio:.2f} "
+            f"against what is actually under it {tuple(round(c, 3) for c in under_rgb)} "
+            f"(minimum {min_contrast}) — the {what} would be there but unreadable; "
+            "raise box_alpha, darken the plate, or pick a lighter text colour")
+    return ink
+
+
 def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
              box_alpha=0.72, anchor="lt", pad=5, font_size=14, min_font_size=9,
              max_width=None, font_path=None, line_spacing=1.15, scheme="okabe_ito",
@@ -718,28 +754,7 @@ def text_box(img, text, xy, color="neutral", text_color=None, box_color=None,
         a = _blend(a, w, _channel_color(a, plate, scheme), box_alpha)
 
     # 実際に文字の下に出る色でコントラストを測る(板が半透明なら下地が透ける)。
-    under = a[y0:y0 + bh, x0:x0 + bw]
-    under_rgb = (float(np.mean(under)),) * 3 if a.ndim == 2 else \
-        tuple(float(v) for v in np.mean(under.reshape(-1, under.shape[-1]), axis=0)[:3])
-    if len(under_rgb) < 3:
-        under_rgb = (under_rgb[0],) * 3
-    if ink is None:
-        # 既定は明るい文字。ただし板が無い/薄い/明るい場所ではそれが地に溶ける
-        # ので、既定色が min_contrast を割るときだけ暗い文字へ切り替える(両方
-        # 駄目なら良い方を選び、下の検査が例外にする)。既定色が読める限り
-        # 従来と同じ色を出すので、通っていた絵はバイト単位で変わらない。
-        light, dark = _rgb(_INK_RGB, scheme), _rgb(_PLATE_RGB, scheme)
-        ink = light
-        if (_contrast_ratio(light, under_rgb) < float(min_contrast)
-                and _contrast_ratio(dark, under_rgb) > _contrast_ratio(light, under_rgb)):
-            ink = dark
-    ratio = _contrast_ratio(ink, under_rgb)
-    if ratio < float(min_contrast):
-        raise ValueError(
-            f"text colour {tuple(round(c, 3) for c in ink)} sits at contrast {ratio:.2f} "
-            f"against what is actually under it {tuple(round(c, 3) for c in under_rgb)} "
-            f"(minimum {min_contrast}) — the label would be there but unreadable; "
-            "raise box_alpha, darken the plate, or pick a lighter text colour")
+    ink = _pick_ink(a, (x0, y0, bw, bh), ink, min_contrast, scheme, "label")
 
     mask = _text_mask(a.shape[:2], m["lines"], m["font"], x0 + pad, y0 + pad,
                       m["line_height"], bold=bold, italic=italic)
@@ -3540,6 +3555,294 @@ def annotate_invert_path(img, points, width=1.5, closed=False, dash=None,
     _invert_guard(_invert_report(a, out, claim), mode, min_contrast, on_invisible,
                   "annotate_invert_path")
     return out
+
+
+# ---------------------------------------------------------------- 表
+
+#: 桁のそろえ方。``"auto"`` は**数に見える桁だけ右そろえ**にする(表で数を
+#: 読むときに桁が縦に並ぶのは、そろえ方が右のときだけ)。
+TABLE_ALIGNS = ("auto", "left", "center", "right")
+
+#: 桁間の既定を決める係数(行高に対する比)。**フォントサイズに比例**するので、
+#: サイズを変えれば間隔も一緒に動く。
+_COL_GAP_RATIO = 0.6
+
+
+def _looks_numeric(s):
+    """「数として読む桁か」の判定。表示のための記号は落として float に掛ける。
+
+    ``1,234`` ``-3.2`` ``±0.5`` ``12 %`` は数、``N/A`` ``12 mm`` は数でない
+    (単位つきは**桁が揃わない**ので左そろえのほうが読みやすい)。
+    """
+    t = str(s).strip().replace(",", "").replace("\u00a0", "")
+    if t.endswith("%"):
+        t = t[:-1].strip()
+    if t[:1] in ("+", "-", "\u00b1"):
+        t = t[1:]
+    if not t:
+        return False
+    try:
+        float(t)
+    except ValueError:
+        return False
+    return True
+
+
+def _table_cells(text):
+    """タブ区切りの文字列を ``[[cell, ...], ...]`` にする。**歯抜けは例外**。
+
+    足りない桁を黙って空で埋めると、**表は出るが列がずれる** —— 数字が 1 つ
+    隣の見出しの下に並ぶので、図としては最悪の壊れ方をする。
+    """
+    body = str(text)
+    while body.endswith("\n"):
+        body = body[:-1]
+    rows = body.split("\n")
+    if not rows or not any(r for r in rows):
+        raise ValueError("table text is empty")
+    cells = [r.split("\t") for r in rows]
+    n = len(cells[0])
+    bad = [(i, len(c)) for i, c in enumerate(cells) if len(c) != n]
+    if bad:
+        raise ValueError(
+            f"row {bad[0][0]} has {bad[0][1]} columns but row 0 has {n} — every row needs "
+            "the same number of tabs (padding it out silently would put the numbers under "
+            "the wrong headings)")
+    return cells
+
+
+def annotate_table_layout(text, xy, anchor="lt", font_size=13, font_path=None, pad=6,
+                          col_gap=None, row_gap=0, align="auto", header=False,
+                          bold=False, italic=False, line_spacing=1.15):
+    """table(dict)を返す: タブ区切りの文字列を**表**として置く桁と行の位置。
+
+    行は ``\n``、桁は ``\t`` で切る。桁幅は**指定されたサイズの実フォントで
+    1 セルずつ測った幅の最大**で決まる —— 文字数で数えると和文と英数字で
+    必ずずれるので、測る以外に正しくやりようがない。
+
+    Parameters
+    ----------
+    text : str
+        タブ区切り。全行の桁数が同じであること(違えば **ValueError**)。
+    xy : (x, y)
+        ``anchor`` で指す位置(**x=col, y=row**)。
+    anchor : str
+        ``'lt','ct','rt','lm','cm','rm','lb','cb','rb'`` の 9 通り。
+    pad : int
+        表の内側余白 [px]。
+    col_gap : int or None
+        桁の間 [px]。**None(既定)なら行高 ×0.6 を四捨五入**するので、
+        フォントサイズを変えれば間隔も一緒に動く。
+    row_gap : int
+        行の間に足す [px](0 なら行送りのまま)。
+    align : str or sequence
+        :data:`TABLE_ALIGNS` のいずれか、または桁ごとの並び。``"auto"``
+        (既定)は**その桁の値がすべて数に見えるときだけ右そろえ**にする。
+        ``header=True`` なら見出し行は判定から外す。
+    header : bool
+        真なら 1 行目を見出しとして**太字**にし、下に罫を 1 本引く。
+    bold, italic : bool or int
+        合成字体(:func:`_bold_px` / :func:`_italic_tile`)。``header`` の
+        太字はこれとは別で、見出し行にだけ掛かる。
+
+    Returns
+    -------
+    dict
+        ``{"rect": (x,y,w,h), "ncols", "nrows", "col_w": [...], "col_x": [...],
+        "row_y": [...], "row_h", "col_gap", "align": [...], "header",
+        "rule_y": 見出しの罫の y(header が偽なら None),
+        "cells": [{"text","row","col","xy","width","bold"}]}``。
+        ``col_x`` / ``row_y`` / ``cells[i]["xy"]`` はすべて**画像座標**。
+
+    Raises
+    ------
+    ValueError
+        桁数が行でそろわない / 空 / 未知の ``align`` ``anchor`` /
+        ``align`` の長さが桁数と違う。
+
+    Examples
+    --------
+    >>> import annotate
+    >>> lay = annotate.annotate_table_layout("名前\t値\nA\t1.5\nB\t22.25", (10, 10))
+    >>> lay["ncols"], lay["nrows"], lay["align"]
+    (2, 3, ['left', 'left'])
+    >>> lay2 = annotate.annotate_table_layout("名前\t値\nA\t1.5\nB\t22.25", (10, 10),
+    ...                                       header=True)
+    >>> lay2["align"]                        # 見出しを外すと 2 桁目は数だけ
+    ['left', 'right']
+    """
+    cells = _table_cells(text)
+    nrows, ncols = len(cells), len(cells[0])
+    pad = int(_num(pad, "pad", lo=0))
+    row_gap = int(_num(row_gap, "row_gap", lo=0))
+    hdr = _flag(header, "header")
+    if isinstance(align, str):
+        if align not in TABLE_ALIGNS:
+            raise ValueError(f"align must be one of {TABLE_ALIGNS} (got: {align!r})")
+        aligns = [align] * ncols
+    else:
+        aligns = [str(v) for v in align]
+        if len(aligns) != ncols:
+            raise ValueError(
+                f"align has {len(aligns)} entries but the table has {ncols} columns")
+        for v in aligns:
+            if v not in TABLE_ALIGNS:
+                raise ValueError(f"align must be one of {TABLE_ALIGNS} (got: {v!r})")
+
+    # 1 セルずつ**実フォントで**測る。見出しは太字ぶん広い。
+    meas = [[measure_text(c, font_size=font_size, font_path=font_path,
+                          line_spacing=line_spacing,
+                          bold=(True if (hdr and r == 0) else bold), italic=italic)
+             for c in row] for r, row in enumerate(cells)]
+    col_w = [int(max(meas[r][c]["width"] for r in range(nrows))) for c in range(ncols)]
+    lh = int(max(m["line_height"] for row in meas for m in row))
+    gap = int(round(lh * _COL_GAP_RATIO)) if col_gap is None else int(
+        _num(col_gap, "col_gap", lo=0))
+    row_h = lh + row_gap
+    rule = lh // 3 if hdr else 0                       # 見出しの罫のぶんの隙間
+
+    # auto: その桁が(見出しを除いて)すべて数に見えるなら右そろえ
+    start = 1 if (hdr and nrows > 1) else 0
+    for c in range(ncols):
+        if aligns[c] != "auto":
+            continue
+        vals = [cells[r][c] for r in range(start, nrows) if cells[r][c].strip()]
+        aligns[c] = "right" if (vals and all(_looks_numeric(v) for v in vals)) else "left"
+
+    w = 2 * pad + sum(col_w) + gap * (ncols - 1)
+    h = 2 * pad + row_h * nrows + rule
+    x0, y0 = _anchor_origin(anchor, int(round(xy[0])), int(round(xy[1])), w, h)
+
+    col_x, x = [], x0 + pad
+    for c in range(ncols):
+        col_x.append(int(x))
+        x += col_w[c] + gap
+    row_y, out = [], []
+    for r in range(nrows):
+        y = y0 + pad + r * row_h + (rule if (hdr and r > 0) else 0)
+        row_y.append(int(y))
+        for c in range(ncols):
+            cw = int(meas[r][c]["width"])
+            al = aligns[c]
+            cx = col_x[c] if al == "left" else (
+                col_x[c] + col_w[c] - cw if al == "right"
+                else col_x[c] + (col_w[c] - cw) // 2)
+            out.append({"text": cells[r][c], "row": r, "col": c,
+                        "xy": (int(cx), int(y)), "width": cw,
+                        "bold": (True if (hdr and r == 0) else bold)})
+    return {"rect": (int(x0), int(y0), int(w), int(h)), "ncols": ncols, "nrows": nrows,
+            "col_w": col_w, "col_x": col_x, "row_y": row_y, "row_h": int(row_h),
+            "col_gap": int(gap), "align": aligns, "header": hdr,
+            "rule_y": (int(row_y[0] + row_h + rule // 2) if hdr else None),
+            "cells": out}
+
+
+def annotate_table(img, text, xy, anchor="lt", font_size=13, color="neutral",
+                   text_color=None, box_color=None, box_alpha=0.72, pad=6,
+                   col_gap=None, row_gap=0, align="auto", header=False, grid=False,
+                   border=0, border_color=None, font_path=None, scheme="okabe_ito",
+                   min_contrast=DEFAULT_MIN_CONTRAST, bold=False, italic=False,
+                   line_spacing=1.15, style=None, layout=None):
+    """画像(image2d)を返す: タブ区切りの文字列を**表**として描く(半透明の板つき)。
+
+    桁幅は :func:`annotate_table_layout` が実フォントで測って決める。既定の
+    桁間は行高の 0.6 倍なので、``font_size`` を変えれば間隔も一緒に動く。
+    板は既定で半透明(``box_alpha=0.72``、0 で板なし)。
+
+    Parameters
+    ----------
+    box_alpha : float
+        板の不透明度 [0,1]。**0 で板を描かない**。半透明にすると下の絵が
+        透けるので、文字色は「実際に下に出る色」に対して検査される。
+    grid : bool
+        真なら桁と行の境に薄い罫を引く。既定は引かない(罫の無い表のほうが
+        読みやすいことが多く、必要なときだけ足せばよい)。
+    header : bool
+        真なら 1 行目を太字にし、下に罫を 1 本引く。
+    align : str or sequence
+        :data:`TABLE_ALIGNS`。既定 ``"auto"`` は数の桁だけ右そろえ。
+    layout : dict or None
+        :func:`annotate_table_layout` の返りを渡すと再計算しない。
+        **渡した場合、``anchor`` などは無視される**(両方渡さないこと)。
+
+    Returns
+    -------
+    (H,W[,C]) float64
+        表を描いた複製。**入力は書き換えない**。
+
+    Raises
+    ------
+    ValueError
+        :func:`annotate_table_layout` と同じ + 表が画像からはみ出す +
+        文字が下地に対して ``min_contrast`` を割る(**黙って切らない**)。
+
+    Examples
+    --------
+    >>> import numpy as np, annotate
+    >>> img = np.zeros((80, 220, 3))
+    >>> out = annotate.annotate_table(img, "項目\t値\n面積\t12.5\n周長\t9.75",
+    ...                               (10, 10), header=True)
+    >>> out.shape
+    (80, 220, 3)
+    >>> float(np.abs(out - img).max()) > 0.1
+    True
+    """
+    a = _prep(img)
+    if layout is None:
+        layout = annotate_table_layout(text, xy, anchor=anchor, font_size=font_size,
+                                       font_path=font_path, pad=pad, col_gap=col_gap,
+                                       row_gap=row_gap, align=align, header=header,
+                                       bold=bold, italic=italic,
+                                       line_spacing=line_spacing)
+    if not (0.0 <= float(box_alpha) <= 1.0):
+        raise ValueError(f"box_alpha must be within [0,1] (got: {box_alpha})")
+    x0, y0, w, h = layout["rect"]
+    _check_inside(a, (x0, y0, w, h), name="table", what="table plate")
+
+    ink = None if text_color is None else _rgb(text_color, scheme)
+    plate = _rgb(_PLATE_RGB if box_color is None else box_color, scheme)
+    edge = _rgb(color if border_color is None else border_color, scheme)
+
+    if box_alpha > 0.0:                                # 板 -> 罫 -> 文字 の順
+        wgt = np.zeros(a.shape[:2], dtype=np.float64)
+        wgt[y0:y0 + h, x0:x0 + w] = 1.0
+        a = _blend(a, wgt, _channel_color(a, plate, scheme), float(box_alpha))
+    ink = _pick_ink(a, (x0, y0, w, h), ink, min_contrast, scheme, "table")
+
+    rules = np.zeros(a.shape[:2], dtype=np.float64)
+    if layout["header"] and layout["rule_y"] is not None:
+        ry = int(layout["rule_y"])
+        rules[ry:ry + 1, x0 + pad:x0 + w - pad] = 1.0
+    if _flag(grid, "grid"):
+        for c in range(1, layout["ncols"]):            # 桁の境は桁間の中央
+            gx = layout["col_x"][c] - int(round(layout["col_gap"] / 2.0))
+            rules[y0 + pad:y0 + h - pad, gx:gx + 1] = np.maximum(
+                rules[y0 + pad:y0 + h - pad, gx:gx + 1], 0.45)
+        for r in range(1, layout["nrows"]):
+            gy = int(layout["row_y"][r]) - 1
+            rules[gy:gy + 1, x0 + pad:x0 + w - pad] = np.maximum(
+                rules[gy:gy + 1, x0 + pad:x0 + w - pad], 0.45)
+    if rules.any():
+        a = _blend(a, rules, _channel_color(a, ink, scheme), 1.0)
+
+    tile = np.zeros((h, w), dtype=np.float64)          # 表の大きさぶんだけ焼く
+    for cell in layout["cells"]:
+        if not cell["text"].strip():
+            continue
+        m = measure_text(cell["text"], font_size=font_size, font_path=font_path,
+                         line_spacing=line_spacing, bold=cell["bold"], italic=italic)
+        tile = np.maximum(tile, _text_mask(
+            (h, w), m["lines"], m["font"], cell["xy"][0] - x0, cell["xy"][1] - y0,
+            m["line_height"], bold=cell["bold"], italic=italic))
+    mask = np.zeros(a.shape[:2], dtype=np.float64)
+    mask[y0:y0 + h, x0:x0 + w] = tile
+    a = _blend(a, mask, _channel_color(a, ink, scheme), 1.0)
+
+    if border > 0:
+        pts = [(x0, y0), (x0 + w - 1, y0), (x0 + w - 1, y0 + h - 1), (x0, y0 + h - 1)]
+        a = imagedraw.draw_polyline(a, pts, color=_channel_color(a, edge, scheme),
+                                    closed=True, **_style(style, border))
+    return a
 
 
 def annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6,

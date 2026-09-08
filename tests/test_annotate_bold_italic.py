@@ -80,22 +80,31 @@ def test_an_explicit_pixel_width_is_taken_literally():
 # --------------------------------------------------------------------------- #
 # 3. 斜体
 # --------------------------------------------------------------------------- #
-def test_italic_leans_right_which_means_the_top_is_further_right():
-    """★向きを取り違えると「左に倒れた字」になる。重心で向きを測る。"""
+def test_italic_leans_right_by_the_shear_the_constant_promises():
+    """★向きを取り違えると「左に倒れた字」になる。重心で向きと**量**を測る。
+
+    素の字も上下で重心がずれる(F や ll は上、g の下ろしは下)ので、絶対値を
+    見ても何も判らない —— 見るのは**斜体にしたことで増えた分**で、それは
+    ``ITALIC_SHEAR × (上下の重心の高さの差)`` に一致するはず。
+    """
     plain, ital = _ink(TXT), _ink(TXT, italic=True)
 
     def halves(img):
         rows = np.nonzero(img.sum(axis=1) > 1e-9)[0]
         mid = (rows.min() + rows.max()) // 2
-        top, bot = img[rows.min():mid + 1], img[mid + 1:rows.max() + 1]
-        cx = lambda p: float((p.sum(0) * np.arange(p.shape[1])).sum() / p.sum())  # noqa: E731
-        return cx(top), cx(bot)
+        out = []
+        for part, off in ((img[rows.min():mid + 1], rows.min()), (img[mid + 1:rows.max() + 1], mid + 1)):
+            w = part.sum()
+            out.append((float((part.sum(0) * np.arange(part.shape[1])).sum() / w),
+                        float((part.sum(1) * (np.arange(part.shape[0]) + off)).sum() / w)))
+        return out                                   # [(cx, cy) 上, (cx, cy) 下]
 
-    pt, pb = halves(plain)
-    it, ib = halves(ital)
-    assert abs(pt - pb) < 3.0                       # 立った字は上下の重心がほぼ同じ
-    assert it - ib > 2.0                            # 斜体は上が右
-    assert (it - ib) > (pt - pb) + 2.0
+    (px_t, py_t), (px_b, py_b) = halves(plain)
+    (ix_t, iy_t), (ix_b, iy_b) = halves(ital)
+    gained = (ix_t - ix_b) - (px_t - px_b)
+    want = A.ITALIC_SHEAR * ((py_b - py_t) + (iy_b - iy_t)) / 2.0
+    assert gained > 0.0, "斜体が左に倒れている"
+    assert gained == pytest.approx(want, rel=0.35), (gained, want)
 
 
 def test_italic_widens_the_measured_box_by_the_lean():
