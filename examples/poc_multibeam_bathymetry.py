@@ -660,16 +660,23 @@ def section_floor(scene):
                     caption="エコーは beamform_delay_sum の角度応答 × Lambert 後方散乱で"
                             "海底の帯を足し上げて合成。find_peaks + peak_subbin で検出。")
     if figs.enabled():
-        series = []
+        series, lens = [], []
         for th in (0.0, 45.0, 70.0):
             env, t0e, tau_axis = echo_envelope(prof, th, lam, d, bw0)
-            tt = 1e6 * ((np.arange(env.size) / ECHO_FS + t0e) - tau_axis)
-            series.append((f"ビーム {th:.0f} 度", tt, env))
-        figs.save_plot("echo", series, xlabel="ビーム軸の往復時間からのずれ [µs]",
+            above = np.where(env > 0.5)[0]
+            ln = max(float(above[-1] - above[0]) / ECHO_FS, 1.0 / ECHO_FS)
+            lens.append(1e6 * ln)
+            # ★横軸を**そのビーム自身のエコー長**で割る。生の µs で重ねると
+            #   70 度(21 ms)が軸を独占して、直下と 45 度が縦線 1 本になる。
+            tt = ((np.arange(env.size) / ECHO_FS + t0e) - tau_axis) / ln
+            series.append((f"ビーム {th:.0f} 度(長さ {1e6*ln:.0f} µs)", tt, env))
+        figs.save_plot("echo", series, xlim=(-1.6, 1.6),
+                       xlabel="ビーム軸からのずれ ÷ そのビームのエコー長",
                        ylabel="正規化した受信包絡線",
                        title="外側ビームのエコーは長く、そして非対称",
-                       caption="直下は 1 本のパルス。70 度では帯が数十 µs に伸び、"
-                               "頂点がビーム軸からずれる。")
+                       caption="長さは %s µs。直下は左右対称、70 度は右へ長く尾を引く。"
+                               "振幅検出の頂点はビーム軸より手前(浅い側)に来る。"
+                               % " / ".join("%.0f" % v for v in lens))
     return {"lam": lam, "d": d, "ang_rows": rows, "err_ang": max(err_ang),
             "dz_ang": dz_ang, "err_echo": max(err_t), "bw0": bw0}
 
