@@ -215,7 +215,7 @@ def render(d: dict) -> str:
             for e in r["examples"])
         out.append("| [%s](capabilities/%s) | %s | %s | `%s` | %d/%d | %s |" % (
             r["title"], os.path.basename(r["note"]), r["title_en"], r["category"],
-            r["status"], r["ops_with_tests"], r["ops_total"], ex))
+            r["status"], r["ops_named_in_tests"], r["ops_total"], ex))
     e = d["example_execution"]
     out += ["", "## 例が実際に走っているか", "",
             "| | 件数 |", "|---|---|",
