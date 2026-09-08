@@ -59,6 +59,8 @@ _CATALOG = {
     "interp_poly": [
         ("interp_linear", "mathops", ["signal", "signal", "signal"], "signal"),
         ("interp_cubic", "mathops", ["signal", "signal", "signal"], "signal"),
+        # 散在点 -> 任意の問い合わせ点(凸包の外に出た割合も返す)。
+        ("interp_scattered", "mathops", ["points", "signal", "points"], "table"),
         ("poly_fit", "mathops", ["signal", "signal"], "table"),
         ("poly_eval", "mathops", ["signal", "signal"], "signal"),
         ("poly_roots", "mathops", ["signal"], "roots"),

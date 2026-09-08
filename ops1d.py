@@ -69,6 +69,8 @@ _CATALOG = {
         ("spectrogram", "dsp", ["signal"], "image2d"),
         ("zero_crossing_rate", "dsp", ["signal"], "measurement"),
         ("find_peaks", "dsp", ["signal"], "indices"),
+        ("peak_subbin", "dsp", ["signal", "indices"], "measurement"),
+        ("point_spectrum", "dsp", ["positions"], "table"),
         ("signal_features", "dsp", ["signal"], "table"),
     ],
     "io": [  # 音声/波形の入出力

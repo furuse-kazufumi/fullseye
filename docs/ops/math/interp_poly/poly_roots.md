@@ -68,7 +68,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 同カテゴリ(`interp_poly`)
 
-[interp_linear](interp_linear.md) · [interp_cubic](interp_cubic.md) · [poly_fit](poly_fit.md) · [poly_eval](poly_eval.md)
+[interp_linear](interp_linear.md) · [interp_cubic](interp_cubic.md) · [interp_scattered](interp_scattered.md) · [poly_fit](poly_fit.md) · [poly_eval](poly_eval.md)
 
 ---
 *Provenance: mathops.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

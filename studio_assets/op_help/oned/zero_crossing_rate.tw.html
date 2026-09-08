@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">zero_crossing_rate — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zero_crossing_rate(x)</code>(要直接呼叫實作,<code style="color:#22d3bf">import dsp; dsp.zero_crossing_rate(x)</code>;從台帳取用則 <code style="color:#22d3bf">ops1d.get(&quot;zero_crossing_rate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.</p>
+<p>Exact zeros are neither a crossing nor a sign: a crossing is counted only when</p>
+<p>the sign changes between consecutive *non-zero* samples, and the rate divides</p>
+<p>by the number of adjacent sample pairs `<code style="color:#22d3bf">len(x) - 1</code><code style="color:#22d3bf">. So </code><code style="color:#22d3bf">[1, 0, 1, 0, 1]</code>` is</p>
+<p>`<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">[1, 0, -1]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">0.5</code><code style="color:#22d3bf"> (before 2026-09-02 </code><code style="color:#22d3bf">diff(sign(x))</code>` counted</p>
+<p>every touch of zero as a crossing: `<code style="color:#22d3bf">1.0</code>` for both).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">measurement</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a> · <a style="color:#22d3bf" href="oponed:spectrum">spectrum</a> · <a style="color:#22d3bf" href="oponed:spectrogram">spectrogram</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

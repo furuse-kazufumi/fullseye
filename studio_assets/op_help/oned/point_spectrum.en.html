@@ -1,0 +1,58 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">point_spectrum — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">positions</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method=&#x27;direct&#x27;, weights=None, bins_per_period=8)</code> (to call the implementation directly, <code style="color:#22d3bf">import dsp; dsp.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method=&#x27;direct&#x27;, weights=None, bins_per_period=8)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;point_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Periodogram of <b>event positions</b> — defects, impacts, counts, arrivals.</p>
+<p>:func:<code style="color:#22d3bf">spectrum</code> needs an evenly sampled signal, but a great deal of</p>
+<p>industrial data arrives as a *list of positions*: where each defect was on</p>
+<p>the web, when each particle was counted, at what angle each dent sits. The</p>
+<p>usual workaround is to histogram the positions and FFT the histogram, which</p>
+<p>works but hides two choices — bin width and record length — that decide the</p>
+<p>answer. This operator makes both explicit and returns them.</p>
+<p>*method* picks the estimator:</p>
+<p>`<code style="color:#22d3bf">&quot;direct&quot;</code>`</p>
+<p>the point-process (Bartlett) periodogram</p>
+<p>`<code style="color:#22d3bf">|sum_j w_j exp(-2 pi i f x_j) - rate * integral|^2 / sum_j w_j</code>`,</p>
+<p>evaluated at each requested frequency. <b>No binning at all</b>, so no bin</p>
+<p>width to choose and no aliasing from one. The subtracted term is the</p>
+<p>contribution a *uniform* process of the same rate would make; without it</p>
+<p>every spectrum peaks at f -&gt; 0 simply because events exist.</p>
+<p>`<code style="color:#22d3bf">&quot;binned&quot;</code>`</p>
+<p>histogram the positions, then `<code style="color:#22d3bf">rfft</code>`, with the bin width set so the</p>
+<p>finest frequency asked for still gets `<code style="color:#22d3bf">bins_per_period</code>` samples per</p>
+<p>cycle. Cheaper for very many events, and the result is what a</p>
+<p>histogram-and-FFT pipeline would have produced.</p>
+<p><b>The frequency resolution is a property of the record, not of the method.</b></p>
+<p>Two periods closer than `<code style="color:#22d3bf">1/extent</code>` apart cannot be told apart by either</p>
+<p>estimator, and the returned dict says so in `<code style="color:#22d3bf">resolution</code>`: read it before</p>
+<p>reading a peak, not after.</p>
+<p><b>A periodic train of events is a comb, not a line.</b> Its harmonics at</p>
+<p>`<code style="color:#22d3bf">k/period</code><code style="color:#22d3bf"> are as tall as the fundamental, so </code><code style="color:#22d3bf">argmax</code>` of this spectrum</p>
+<p>routinely returns `<code style="color:#22d3bf">period/k</code>` rather than the period. Measured on 93 events</p>
+<p>(43 spaced 471.24 apart with 1.5 of jitter, plus 50 uniformly random) over a</p>
+<p>record of 20000: the global maximum lands on `<code style="color:#22d3bf">58.90</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">direct</code>` (the</p>
+<p>8th harmonic) and `<code style="color:#22d3bf">52.35</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">binned</code>` (the 9th), while the fundamental</p>
+<p>is present and prominent in both — `<code style="color:#22d3bf">direct</code>` puts 0.947 of the maximum</p>
+<p>power at `<code style="color:#22d3bf">1/471.24</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">binned</code>` 0.379. Take the lowest frequency whose</p>
+<p>first few harmonics *all* stand, rather than the tallest line — see</p>
+<p>`<code style="color:#22d3bf">examples/poc_web_roll_periodicity.py</code>`, which is what this operator was</p>
+<p>added for.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">freq</code><code style="color:#22d3bf"> (cycles per unit of *positions*), </code><code style="color:#22d3bf">power</code>`,</p>
+<p>`<code style="color:#22d3bf">resolution</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">1/extent</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">extent</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_events</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">method</code>`, and</p>
+<p>`<code style="color:#22d3bf">bin_width</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">None</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">&quot;direct&quot;</code>`).</p>
+<p>Fail-closed: fewer than two events raises `<code style="color:#22d3bf">ValueError</code>` — a periodogram of</p>
+<p>one point is not a weak measurement, it is not a measurement.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_web_roll_periodicity">poc_web_roll_periodicity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_web_roll_periodicity.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a> · <a style="color:#22d3bf" href="oponed:spectrum">spectrum</a> · <a style="color:#22d3bf" href="oponed:spectrogram">spectrogram</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

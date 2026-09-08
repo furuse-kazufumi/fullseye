@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sample_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sample_funct_1d(y, step=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import funct1d; funct1d.sample_funct_1d(y, step=2)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;sample_funct_1d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>*step* 個おきに標本を取る(HALCON `<code style="color:#22d3bf">sample_funct_1d</code>`)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>Keeps samples `<code style="color:#22d3bf">0, step, 2*step, ...</code>` — decimation without an</p>
+<p>anti-aliasing filter (smooth first if the signal has content above the new</p>
+<p>Nyquist rate).</p>
+<p>:param y: 1-D function (may be empty).</p>
+<p>:param step: truncated to int, must be &gt;= 1 (`<code style="color:#22d3bf">step=1</code>` copies).</p>
+<p>:raises ValueError: non-1-D / NaN / Inf input, or `<code style="color:#22d3bf">step &lt; 1</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cold_chain_excursion">poc_cold_chain_excursion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cold_chain_excursion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_funct1d">signal_funct1d</a> — <code style="color:#22d3bf">py -3.11 examples/signal_funct1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">function</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: funct1d.py — ONED operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

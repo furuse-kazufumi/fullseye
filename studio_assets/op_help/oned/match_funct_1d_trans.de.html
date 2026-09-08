@@ -1,0 +1,119 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_funct_1d_trans — ONED <code style="color:#22d3bf">function</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_funct_1d_trans(y1, y2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import funct1d; funct1d.match_funct_1d_trans(y1, y2)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;match_funct_1d_trans&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Best integer translation between two functions by correlation</p>
+<p>(HALCON `<code style="color:#22d3bf">match_funct_1d_trans</code>`, translation only).</p>
+<p>The returned `<code style="color:#22d3bf">shift</code>` uses the convention</p>
+<p>`<code style="color:#22d3bf">y1[i] ~= y2[i - shift]</code>`</p>
+<p>i.e. if *y2* is *y1* delayed (rolled right) by `<code style="color:#22d3bf">s</code><code style="color:#22d3bf"> samples, </code><code style="color:#22d3bf">shift</code>` is</p>
+<p>`<code style="color:#22d3bf">-s</code>`.</p>
+<p><b>Scoring convention.</b> `<code style="color:#22d3bf">score</code>` is the Pearson correlation coefficient</p>
+<p>between *y1* and the shifted *y2* over the fixed reference window</p>
+<p>`<code style="color:#22d3bf">i = 0 .. len(y1) - 1</code>` — <b>the same window for every candidate lag</b>.</p>
+<p>Where the shifted *y2* falls outside its own domain it is *end-held* at</p>
+<p>`<code style="color:#22d3bf">y2[0]</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">y2[-1]</code>`, which is this module&#x27;s out-of-domain convention</p>
+<p>already (:func:<code style="color:#22d3bf">compose_funct_1d</code>, :func:<code style="color:#22d3bf">get_y_value_funct_1d</code>,</p>
+<p>:func:<code style="color:#22d3bf">get_pair_funct_1d</code> all clamp). So `<code style="color:#22d3bf">score</code><code style="color:#22d3bf"> is in </code><code style="color:#22d3bf">[-1, 1]</code>`,</p>
+<p>`<code style="color:#22d3bf">1.0</code>` means the two agree up to a positive scale and offset, it is</p>
+<p>comparable between lags *and* between calls, and it does not grow with</p>
+<p>amplitude or with the length of the inputs. A lag that pushes *y2* entirely</p>
+<p>off the window leaves a constant there and scores `<code style="color:#22d3bf">0.0</code>`.</p>
+<p>When several lags score within `<code style="color:#22d3bf">1e-6</code>` of the best, the <b>smallest</b></p>
+<p>`<code style="color:#22d3bf">|shift|</code>` among them is returned: if the data cannot tell the translations</p>
+<p>apart, this operator does not invent a large one.</p>
+<p><b>The bug this convention fixes.</b> Until 2026-09 the score was</p>
+<p>`<code style="color:#22d3bf">np.correlate(y1 - mean, y2 - mean, &quot;full&quot;).max()</code>` — an unnormalised sum</p>
+<p>over whatever happened to overlap at that lag. A shorter overlap simply</p>
+<p>stops accumulating the mismatch, so edge lags win *without any exception,</p>
+<p>NaN or warning*, and the caveat that used to sit here (&quot;compare scores only</p>
+<p>between candidates of the same length&quot;) does not save you: the inputs below</p>
+<p>are the <b>same length</b>. A 400-sample record with Gaussian peaks (sigma 9)</p>
+<p>at 60, 150, 245, 330 matched against a 400-sample template holding one such</p>
+<p>peak at 60 — already aligned, so `<code style="color:#22d3bf">shift</code>` must be 0 — measured:</p>
+<p>====== ======= ========= =========== ========</p>
+<p>lag    overlap old (sum) old/overlap  new (r)</p>
+<p>====== ======= ========= =========== ========</p>
+<p>0          400 10.862705    0.027157 0.430110</p>
+<p>90         310 10.989277    0.035449 0.430110</p>
+<p>185        215 11.053477    0.051412 0.430110</p>
+<p>270        130 11.240300    0.086464 0.430110</p>
+<p>====== ======= ========= =========== ========</p>
+<p>The old code returned `<code style="color:#22d3bf">shift 270, score 11.2403</code>`; it now returns</p>
+<p>`<code style="color:#22d3bf">shift 0, score 0.430110</code>`. The four lags are the four ways the single</p>
+<p>template peak can sit on a record peak, and under the new convention they</p>
+<p>are *exactly* as equivalent as they look — the four scores agree to</p>
+<p>`<code style="color:#22d3bf">2.804e-10</code><code style="color:#22d3bf">, the next-best lag (269) is </code><code style="color:#22d3bf">0.428164</code>`, and the tie is</p>
+<p>broken by the smallest `<code style="color:#22d3bf">|shift|</code>`. The score also stops flattering the</p>
+<p>answer: `<code style="color:#22d3bf">0.43</code><code style="color:#22d3bf">, not </code><code style="color:#22d3bf">11.24</code>`, is what one template peak explains of a</p>
+<p>four-peak record.</p>
+<p><b>The obvious cures were tried and measured, and they do not work</b> —</p>
+<p>recorded so the next person does not spend the afternoon on them. Dividing</p>
+<p>the overlap sum by the overlap length makes it *worse* (column 3 above: lag</p>
+<p>270 now wins by 3.2x instead of 1.03x, and on a clean roll-by-7 the argmax</p>
+<p>moves to lag -8). Renormalising to a coefficient over the overlap alone</p>
+<p>(local means and local norms) rates lag 270 at `<code style="color:#22d3bf">0.999964</code>` against</p>
+<p>`<code style="color:#22d3bf">0.430110</code>` at lag 0 — the fit really is near perfect once you throw away</p>
+<p>two thirds of the data — and it detonates on the degenerate end, scoring a</p>
+<p>2-sample overlap at exactly `<code style="color:#22d3bf">1.0</code><code style="color:#22d3bf"> (on </code><code style="color:#22d3bf">y1</code><code style="color:#22d3bf"> vs </code><code style="color:#22d3bf">y1</code>` it picks lag -398</p>
+<p>over lag 0). Multiplying that coefficient by the overlap fraction does fix</p>
+<p>this case, but it biases every honest answer toward zero: on the damped sine</p>
+<p>of `<code style="color:#22d3bf">test_match_funct_1d_trans_recovers_known_shift_and_is_scale_invariant</code>`</p>
+<p>it returns -6 for a true shift of -7. A fixed window and an explicit border</p>
+<p>are what make the lags comparable; nothing weaker did.</p>
+<p><b>What the change costs.</b> The old truncation is not merely wrong at the</p>
+<p>edges — it *shrinks the answer toward lag 0*, because the samples a</p>
+<p>non-zero lag drops are the ones that would have contributed. That shrinkage</p>
+<p>is free accuracy when the true shift happens to be 0 and a systematic error</p>
+<p>everywhere else. Measured on 400 independent noise draws, an 81-sample</p>
+<p>window of a sigma-9 Gaussian peak against an 81-sample template of the same</p>
+<p>peak, noise sigma 0.20:</p>
+<p>========== ============== ========= ============== =========</p>
+<p>true shift old mean shift old exact new mean shift new exact</p>
+<p>========== ============== ========= ============== =========</p>
+<p>0                   -0.00     0.865          +0.01     0.547</p>
+<p>-5                  -4.21     0.295          -4.99     0.547</p>
+<p>+12                +11.22     0.307         +12.01     0.547</p>
+<p>========== ============== ========= ============== =========</p>
+<p>The new estimator is unbiased and equally accurate at every true shift; the</p>
+<p>old one is biased by about 0.8 samples toward zero and its exact-hit rate</p>
+<p>is a function of the answer it is looking for. Mean absolute error over the</p>
+<p>three rows: 0.66 samples old, 0.48 new. The price is variance — with a true</p>
+<p>shift of 0 and this much noise the new score really cannot separate lag 0</p>
+<p>from lag +-1 (219 exact of 400 against 346), and it says so instead of</p>
+<p>being rescued by a bias that points the right way by accident.</p>
+<p>:func:<code style="color:#22d3bf">match_funct_1d_trans</code> still does not make an ill-posed match</p>
+<p>well-posed. On a record of four random, well-separated peaks matched</p>
+<p>against a template holding one of them, the four alignments are a genuine</p>
+<p>tie and the answer is a convention, not a measurement: measured over 200</p>
+<p>such records, the returned shift is 0 in 68.5% of them (old: 17.5%), the</p>
+<p>rest being records where peak cross-talk breaks the tie for real.</p>
+<p>Honest limitations: integer lag only (no sub-sample refinement), no x-scale</p>
+<p>model, and no y-offset model beyond the mean subtraction that Pearson</p>
+<p>implies. The window is *y1*&#x27;s domain, so the operator is asymmetric when the</p>
+<p>lengths differ — it answers &quot;where does *y2* sit inside *y1*&quot;, and</p>
+<p>`<code style="color:#22d3bf">match(y1, y2)[&quot;shift&quot;]</code><code style="color:#22d3bf"> is not in general </code><code style="color:#22d3bf">-match(y2, y1)[&quot;shift&quot;]</code>`.</p>
+<p>A length-1 input has no variance and degenerates to `<code style="color:#22d3bf">shift 0, score 0.0</code>`.</p>
+<p>End-holding assumes the functions stay flat outside their domain; for a</p>
+<p>signal with a strong trend or envelope, whiten first (match the</p>
+<p>:func:<code style="color:#22d3bf">derivate_funct_1d</code> of both) — `<code style="color:#22d3bf">examples/signal_funct1d.py</code>`</p>
+<p>recovers a 25-sample delay exactly this way.</p>
+<p>:param y1: 1-D function, at least 1 sample. Defines the reference window.</p>
+<p>:param y2: 1-D function, at least 1 sample (lengths may differ).</p>
+<p>:returns: dict `<code style="color:#22d3bf">{&quot;shift&quot;: int, &quot;score&quot;: float}</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">score</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[-1, 1]</code>`.</p>
+<p>:raises ValueError: non-1-D / NaN / Inf input, or empty input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_funct1d">signal_funct1d</a> — <code style="color:#22d3bf">py -3.11 examples/signal_funct1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">function</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: funct1d.py — ONED Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

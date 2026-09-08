@@ -27,8 +27,8 @@ import numpy as np
 __all__ = [
     "read_wav", "write_wav", "read_audio",
     "spectrum", "spectrogram", "bandpass", "lowpass", "highpass",
-    "envelope", "rms", "zero_crossing_rate", "find_peaks", "resample",
-    "signal_features",
+    "envelope", "rms", "zero_crossing_rate", "find_peaks", "peak_subbin",
+    "resample", "signal_features", "point_spectrum",
 ]
 
 
@@ -288,6 +288,204 @@ def find_peaks(x, height=None, distance=None):
     from scipy.signal import find_peaks as _fp
     idx, _ = _fp(_require_finite(x), height=height, distance=distance)
     return idx
+
+
+def peak_subbin(x, idx=None, mode="parabola"):
+    """Peak position **between** samples — the vertex of a fit through 3 points.
+
+    :func:`find_peaks` returns integer indices, so the position of a spectral
+    line or a correlation peak is quantised to the bin grid no matter how
+    finely the peak itself is resolved. This refines each index to a float by
+    fitting the sample and its two neighbours.
+
+    *mode* picks what is fitted:
+
+    ``"parabola"``
+        ``a x^2 + b x + c`` through the three raw values. The classic estimator;
+        exact for a genuinely parabolic top and cheap.
+    ``"gauss"``
+        the same parabola through ``log`` of the three values, which is exact for
+        a Gaussian peak. **Requires all three values positive** — a magnitude
+        spectrum qualifies, a signed correlation does not. Non-positive
+        neighbourhoods raise ``ValueError`` rather than silently returning the
+        integer index, because "the refinement quietly did nothing" is the
+        failure this operator exists to remove.
+
+    Measured on a Gaussian of width 1.7 bins centred at 40.37: the integer
+    argmax gives 40 (error 0.37 bins), ``parabola`` gives 40.3553 (error
+    **0.0147**) and ``gauss`` gives 40.3700 (error 0, to machine precision).
+    **The parabola is biased on a Gaussian, and the bias grows as the peak gets
+    narrower** — the same measurement at widths 6.0 / 3.0 / 1.7 / 1.0 bins errs
+    by 0.0012 / 0.0047 / 0.0147 / 0.0434. That is the whole reason ``gauss``
+    exists: for a spectral line the log-parabola is not an approximation, it is
+    the exact model.
+
+    The refinement is still an assumption about shape, not a measurement of it.
+    On a triangular peak, whose top is not smooth, ``parabola`` errs by 0.0857
+    bins where the integer index errs by 0.30 — better, but three times worse
+    than on the Gaussian it was designed for.
+
+    **The shift is not clamped.** A vertex more than half a sample away from the
+    index means the index was not a local maximum in the first place, and that is
+    information: clamping it to +/-0.5 would return a plausible number for a bin
+    that has no peak in it. Run :func:`find_peaks` first, or clamp deliberately
+    at the call site when evaluating bins that are not maxima (a harmonic comb,
+    for instance).
+
+    A peak sitting on the first or last sample has no neighbour on one side and
+    keeps its integer position (there is nothing to interpolate against); the
+    returned array says so by being exactly equal to the input index there.
+
+    Parameters
+    ----------
+    x : array_like
+        The 1-D signal the peaks were found in.
+    idx : int, sequence of int, or None
+        Peak indices. ``None`` means "the argmax", so ``peak_subbin(mag)`` is the
+        one-liner for a single line.
+    mode : {"parabola", "gauss"}
+
+    Returns
+    -------
+    float or ndarray
+        Refined position(s) in samples. Scalar in, scalar out.
+
+    See also
+    --------
+    find_peaks : which indices to refine.
+    """
+    x = _require_finite(x)
+    if x.size < 3:
+        raise ValueError("peak_subbin needs at least 3 samples, got %d" % x.size)
+    if mode not in ("parabola", "gauss"):
+        raise ValueError("mode must be 'parabola' or 'gauss', got %r" % (mode,))
+    scalar = np.ndim(idx) == 0 and idx is not None
+    if idx is None:
+        idx, scalar = np.array([int(np.argmax(x))]), True
+    ii = np.atleast_1d(np.asarray(idx, np.int64))
+    if ii.ndim != 1:
+        raise ValueError("idx must be scalar or 1-D, got shape %r" % (ii.shape,))
+    if ii.size and (ii.min() < 0 or ii.max() >= x.size):
+        raise ValueError("peak index out of range for a signal of %d samples"
+                         % x.size)
+    out = ii.astype(np.float64)
+    inner = (ii > 0) & (ii < x.size - 1)
+    if inner.any():
+        j = ii[inner]
+        y0, y1, y2 = x[j - 1], x[j], x[j + 1]
+        if mode == "gauss":
+            if np.min([y0, y1, y2]) <= 0.0:
+                raise ValueError(
+                    "mode='gauss' needs all three samples positive around every "
+                    "peak (log of a non-positive value); use mode='parabola' for "
+                    "signed data")
+            y0, y1, y2 = np.log(y0), np.log(y1), np.log(y2)
+        denom = y0 - 2.0 * y1 + y2
+        # denom == 0 -> the three points are collinear: no vertex exists, so the
+        # honest answer is the sample itself, not a division by zero.
+        shift = np.where(denom != 0.0, 0.5 * (y0 - y2) / np.where(denom == 0.0, 1.0, denom), 0.0)
+        out[inner] = j + shift
+    return float(out[0]) if scalar else out
+
+
+def point_spectrum(positions, extent=None, n_freq=2048, f_max=None,
+                   method="direct", weights=None, bins_per_period=8):
+    """Periodogram of **event positions** — defects, impacts, counts, arrivals.
+
+    :func:`spectrum` needs an evenly sampled signal, but a great deal of
+    industrial data arrives as a *list of positions*: where each defect was on
+    the web, when each particle was counted, at what angle each dent sits. The
+    usual workaround is to histogram the positions and FFT the histogram, which
+    works but hides two choices — bin width and record length — that decide the
+    answer. This operator makes both explicit and returns them.
+
+    *method* picks the estimator:
+
+    ``"direct"``
+        the point-process (Bartlett) periodogram
+        ``|sum_j w_j exp(-2 pi i f x_j) - rate * integral|^2 / sum_j w_j``,
+        evaluated at each requested frequency. **No binning at all**, so no bin
+        width to choose and no aliasing from one. The subtracted term is the
+        contribution a *uniform* process of the same rate would make; without it
+        every spectrum peaks at f -> 0 simply because events exist.
+    ``"binned"``
+        histogram the positions, then ``rfft``, with the bin width set so the
+        finest frequency asked for still gets ``bins_per_period`` samples per
+        cycle. Cheaper for very many events, and the result is what a
+        histogram-and-FFT pipeline would have produced.
+
+    **The frequency resolution is a property of the record, not of the method.**
+    Two periods closer than ``1/extent`` apart cannot be told apart by either
+    estimator, and the returned dict says so in ``resolution``: read it before
+    reading a peak, not after.
+
+    **A periodic train of events is a comb, not a line.** Its harmonics at
+    ``k/period`` are as tall as the fundamental, so ``argmax`` of this spectrum
+    routinely returns ``period/k`` rather than the period. Measured on 93 events
+    (43 spaced 471.24 apart with 1.5 of jitter, plus 50 uniformly random) over a
+    record of 20000: the global maximum lands on ``58.90`` with ``direct`` (the
+    8th harmonic) and ``52.35`` with ``binned`` (the 9th), while the fundamental
+    is present and prominent in both — ``direct`` puts 0.947 of the maximum
+    power at ``1/471.24``, ``binned`` 0.379. Take the lowest frequency whose
+    first few harmonics *all* stand, rather than the tallest line — see
+    ``examples/poc_web_roll_periodicity.py``, which is what this operator was
+    added for.
+
+    Returns a dict: ``freq`` (cycles per unit of *positions*), ``power``,
+    ``resolution`` (``1/extent``), ``extent``, ``n_events``, ``method``, and
+    ``bin_width`` (``None`` for ``"direct"``).
+
+    Fail-closed: fewer than two events raises ``ValueError`` — a periodogram of
+    one point is not a weak measurement, it is not a measurement.
+    """
+    pos = _require_finite(positions, "positions")
+    if pos.size < 2:
+        raise ValueError("point_spectrum needs at least 2 events, got %d"
+                         % pos.size)
+    if extent is None:
+        lo, hi = float(pos.min()), float(pos.max())
+    else:
+        lo, hi = 0.0, float(extent)
+    span = hi - lo
+    if not span > 0.0:
+        raise ValueError("the events span zero length; pass extent= explicitly")
+    if weights is not None:
+        w = _require_finite(weights, "weights")
+        if w.shape != pos.shape:
+            raise ValueError("weights must match positions (%r vs %r)"
+                             % (w.shape, pos.shape))
+    else:
+        w = np.ones_like(pos)
+    fmax = float(f_max) if f_max is not None else 0.5 * pos.size / span
+    if not fmax > 0.0:
+        raise ValueError("f_max must be positive, got %r" % (f_max,))
+    freq = np.linspace(1.0 / span, fmax, int(n_freq))
+    x = pos - lo
+    if method == "direct":
+        wsum = float(w.sum())
+        # exp(-2 pi i f x) summed over events, minus what a uniform process of
+        # the same rate would give: that difference is the periodic structure.
+        ph = np.exp(-2j * np.pi * np.outer(freq, x))
+        raw = ph @ w
+        u = np.where(freq != 0.0,
+                     (1.0 - np.exp(-2j * np.pi * freq * span))
+                     / (2j * np.pi * np.where(freq == 0.0, 1.0, freq)),
+                     span)
+        power = np.abs(raw - (wsum / span) * u) ** 2 / max(wsum, 1e-12)
+        bin_width = None
+    elif method == "binned":
+        nb = max(8, int(np.ceil(span * fmax * float(bins_per_period))))
+        hist, _ = np.histogram(x, bins=nb, range=(0.0, span), weights=w)
+        mag = np.abs(np.fft.rfft(hist - hist.mean()))
+        fb = np.fft.rfftfreq(nb, d=span / nb)
+        power = np.interp(freq, fb, mag ** 2, left=0.0, right=0.0)
+        bin_width = span / nb
+    else:
+        raise ValueError("method must be 'direct' or 'binned', got %r"
+                         % (method,))
+    return {"freq": freq, "power": np.asarray(power, np.float64),
+            "resolution": 1.0 / span, "extent": span, "n_events": int(pos.size),
+            "method": method, "bin_width": bin_width}
 
 
 def resample(x, rate, new_rate):

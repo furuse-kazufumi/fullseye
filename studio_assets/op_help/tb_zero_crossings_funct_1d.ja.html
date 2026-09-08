@@ -20,7 +20,8 @@
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<p>次の例は元の台帳 op <code style="color:#22d3bf">zero_crossings_funct_1d</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_funct1d">signal_funct1d</a> — <code style="color:#22d3bf">py -3.11 examples/signal_funct1d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_negate_funct_1d">tb_negate_funct_1d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>

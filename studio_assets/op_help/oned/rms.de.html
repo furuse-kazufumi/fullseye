@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rms — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms(x, frame=None, hop=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.rms(x, frame=None, hop=None)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;rms&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>RMS level. Scalar for the whole signal, or a framewise array when *frame*</p>
+<p>is given (a vibration/energy envelope over time).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_design_demo">lens_design_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_design_demo.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_electrode_breathing">poc_battery_electrode_breathing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_electrode_breathing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bilateral_asymmetry">poc_bilateral_asymmetry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bilateral_asymmetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bump_coplanarity">poc_bump_coplanarity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bump_coplanarity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cad_scan_deviation">poc_cad_scan_deviation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cad_scan_deviation.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_camera_calibration">poc_camera_calibration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_camera_calibration.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_exoplanet_transit">poc_exoplanet_transit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_exoplanet_transit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fabric_defect">poc_fabric_defect</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fabric_defect.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_focus_stacking">poc_focus_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_focus_stacking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gear_tooth_metrology">poc_gear_tooth_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gear_tooth_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_machine_condition_fusion">poc_machine_condition_fusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_machine_condition_fusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_panorama_drift">poc_panorama_drift</a> — <code style="color:#22d3bf">py -3.11 examples/poc_panorama_drift.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_stereo_depth">poc_real_stereo_depth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_stereo_depth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_river_surface_velocity">poc_river_surface_velocity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_river_surface_velocity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_screw_thread_metrology">poc_screw_thread_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_screw_thread_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solar_limb_darkening">poc_solar_limb_darkening</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solar_limb_darkening.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_strain_history">poc_strain_history</a> — <code style="color:#22d3bf">py -3.11 examples/poc_strain_history.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_symmetry_restoration">poc_symmetry_restoration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_symmetry_restoration.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_water_level">poc_water_level</a> — <code style="color:#22d3bf">py -3.11 examples/poc_water_level.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_shape_inspection">profile_shape_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/profile_shape_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">measurement</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a> · <a style="color:#22d3bf" href="oponed:spectrum">spectrum</a> · <a style="color:#22d3bf" href="oponed:spectrogram">spectrogram</a> · <a style="color:#22d3bf" href="oponed:zero_crossing_rate">zero_crossing_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -94,7 +94,6 @@ import time
 from pathlib import Path
 
 import numpy as np
-from scipy.interpolate import LinearNDInterpolator, RBFInterpolator
 from scipy.spatial import cKDTree
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -216,29 +215,39 @@ def fit(pts, vals, method: str):
         tree = cKDTree(pts)
         return lambda q: vals[tree.query(np.asarray(q, float))[1]]
     if method == "linear":
-        li = LinearNDInterpolator(pts, vals)
         tree = cKDTree(pts)
 
         def f(q):
+            # ★2026-09-08: この PoC が「散らばった点から場を作る口が無い」と
+            #   記録したので `fs.interp_scattered` を足した。凸包の外に出た点は
+            #   op が **マスクで返す** ので、isfinite で当てずに済む
+            #   (fill_value を有限値にしても壊れない)。
             q = np.asarray(q, float)
-            a = np.asarray(li(q), float)
-            bad = ~np.isfinite(a)
-            if bad.any():
-                a[bad] = vals[tree.query(q[bad])[1]]
+            r = fs.interp_scattered(pts, vals, q, method="linear")
+            a = np.asarray(r["value"], float)
+            out = np.asarray(r["outside"], bool)
+            if out.any():
+                a[out] = vals[tree.query(q[out])[1]]
             return a
         return f
     if method == "rbf":
-        rb = RBFInterpolator(pts, vals, neighbors=min(48, len(pts)),
-                             kernel="thin_plate_spline")
-        return lambda q: np.asarray(rb(np.asarray(q, float)), float)
+        return lambda q: np.asarray(
+            fs.interp_scattered(pts, vals, np.asarray(q, float), method="rbf",
+                                neighbors=min(48, len(pts)))["value"], float)
     raise ValueError(method)
 
 
 def hull_miss(pts, q) -> float:
-    """線形補間が凸包の外に出て最近傍に落ちた割合。"""
-    li = LinearNDInterpolator(np.asarray(pts, float),
-                              np.zeros(len(pts)))
-    return float(np.mean(~np.isfinite(np.asarray(li(np.asarray(q, float)), float))))
+    """線形補間が凸包の外に出て最近傍に落ちた割合。
+
+    ★これは `fs.interp_scattered` の返り値 ``outside_fraction`` そのもの ——
+    「答えのうちどれだけが補間ではなかったか」を op に持たせたのは、この
+    PoC が 71.2 % という数字を測ったからで、黙って NaN や別手法に化ける量が
+    それだけ大きいなら**返り値に居るべき**だった。
+    """
+    return float(fs.interp_scattered(np.asarray(pts, float), np.zeros(len(pts)),
+                                     np.asarray(q, float),
+                                     method="linear")["outside_fraction"])
 
 
 # --------------------------------------------------------------------------- #
@@ -913,15 +922,26 @@ def section_maps(d=0.80) -> None:
 # --------------------------------------------------------------------------- #
 def section_tool_gaps() -> None:
     print("\n" + "=" * 78)
-    print("8) 道具の穴(この PoC で使ってみて)")
+    print("8) 道具の穴 —— この PoC が炙り出して、その場で埋めた 1 本")
     print("=" * 78)
-    for n in ("griddata", "interp_nd", "scatter_to_grid", "idw", "kriging",
-              "natural_neighbor", "rbf_interpolate"):
-        assert not hasattr(fs.ledger, n), n
-    assert hasattr(fs.ledger, "interp_linear") and hasattr(fs.ledger, "interp_cubic")
-    print("  (a) 補間の op は **1-D だけ**(interp_linear / interp_cubic)。"
-          "散らばった 3-D の点から\n      場を作る口が無いので、"
-          "scipy を直に呼んだ。センサ網・地質・気象はどれもこの形。")
+    assert hasattr(fs, "interp_scattered"), "interp_scattered が公開経路に無い"
+    pp, _ = lattice(1.20)
+    pv = read(pp, noise=NOISE)
+    probe = fs.interp_scattered(pp, pv, GRID, method="linear")
+    print("  (a) **補間の op が 1-D だけだった**(interp_linear / interp_cubic)。"
+          "散らばった 3-D の点から\n      場を作る口が無く、scipy を直に呼んで"
+          "いた —— センサ網・地質・気象はどれもこの形。")
+    print("      ★`fs.interp_scattered` を足した(2026-09-08)。この PoC の "
+          "linear / rbf / hull_miss は\n      いまその op を通る。"
+          "★設計で効いたのは**凸包の外に出た割合を返り値に入れた**こと ——"
+          "\n      いまの %d 本のセンサとこの評価格子で %.1f %% が外に出ており、"
+          "黙って NaN か\n      別手法に化ける量がそれだけ大きいなら、"
+          "戻り値に居るべきだった(6 節の 71.2 %% はこの量)。"
+          % (len(pp), 100.0 * probe["outside_fraction"]))
+    print("      ★使ってみて分かって足した引数が 1 つある: `neighbors`"
+          "(RBF を近傍だけで解く)。\n      全体解は O(n³) で、5000 点を"
+          "問い合わせると 1400 / 4000 / 8000 本で 0.55 / 1.76 / 7.53 秒。"
+          "\n      **op は使って初めて足りない引数が分かる**。")
 
     assert hasattr(fs.ledger, "vol_local_maxima")
     pk = np.asarray(_L.vol_local_maxima(np.zeros((8, 8, 8)), min_distance=1))

@@ -278,3 +278,85 @@ def test_write_wav_accepts_column_and_refuses_matrix(tmp_path):
     assert len(y) == len(x) and np.max(np.abs(y - x)) < 1e-3
     with pytest.raises(ValueError, match="1-D signal"):
         dsp.write_wav(str(tmp_path / "bad.wav"), np.ones((8, 2)), rate)
+
+# --------------------------------------------------------------------------- #
+# peak_subbin / point_spectrum — 2026-09-08 に足した(PoC が穴を炙り出した)     #
+# --------------------------------------------------------------------------- #
+def test_peak_subbin_beats_the_integer_index_and_gauss_beats_parabola():
+    """★放物線は Gauss の峰に対して**偏る**。偏りは峰が細いほど大きい。
+
+    `examples/poc_web_roll_periodicity.py` が「1-D の山をサブビンで読む口が
+    無い」と記録したので足した op。ここで固定するのは 2 つ:
+    (1) どちらのモードも整数の argmax より良い、(2) **gauss は Gauss に対して
+    厳密**で、parabola は厳密ではない —— 「両方だいたい同じ」で済ませると
+    mode を選べる意味が消える。
+    """
+    x = np.arange(120.0)
+    true = 40.37
+    err = {}
+    for sigma in (1.0, 1.7, 3.0, 6.0):
+        y = np.exp(-((x - true) ** 2) / (2.0 * sigma * sigma))
+        assert int(np.argmax(y)) == 40                     # 整数は 0.37 ずれる
+        err[sigma] = abs(dsp.peak_subbin(y) - true)
+        assert abs(dsp.peak_subbin(y, mode="gauss") - true) < 1e-9
+    # 偏りは単調に増える(細い峰ほど放物線が合わない)
+    assert err[6.0] < err[3.0] < err[1.7] < err[1.0]
+    assert err[1.7] < 0.37                                  # それでも整数より良い
+    assert err[1.0] > 1e-3                                  # が、厳密ではない
+
+
+def test_peak_subbin_is_fail_closed_where_the_estimator_does_not_apply():
+    y = np.array([0.0, 1.0, 0.5, -2.0, 3.0])
+    with pytest.raises(ValueError, match="positive"):
+        dsp.peak_subbin(y, [3], mode="gauss")               # log(負)
+    with pytest.raises(ValueError, match="out of range"):
+        dsp.peak_subbin(y, [99])
+    with pytest.raises(ValueError, match="at least 3 samples"):
+        dsp.peak_subbin(np.array([1.0, 2.0]))
+    # 端の峰は補間相手が居ないので整数のまま(黙って動かさない)
+    assert dsp.peak_subbin(y, [0]) == 0.0
+    assert dsp.peak_subbin(y, [4]) == 4.0
+    # 平らな 3 点は頂点が存在しない -> 標本そのもの(0 除算しない)
+    assert dsp.peak_subbin(np.array([1.0, 1.0, 1.0]), [1]) == 1.0
+
+
+def test_point_spectrum_finds_the_period_and_reports_its_own_resolution():
+    """点列から周期を取る。★櫛なので argmax は高調波を掴む —— それも固定する。"""
+    rng = np.random.default_rng(3)
+    period, extent = 471.2389, 20000.0
+    base = np.arange(37.0, extent, period)
+    pos = np.sort(np.concatenate([base + rng.normal(0.0, 1.5, base.size),
+                                  rng.uniform(0.0, extent, 50)]))
+    pos = pos[(pos > 0.0) & (pos < extent)]
+    for method in ("direct", "binned"):
+        r = dsp.point_spectrum(pos, extent=extent, f_max=0.02, method=method)
+        assert r["resolution"] == pytest.approx(1.0 / extent)
+        j = int(np.argmin(np.abs(r["freq"] - 1.0 / period)))
+        top = float(r["power"].max())
+        # 基本波は立っている(最大とは限らない)
+        assert r["power"][j] > 0.30 * top
+        # ★最大は高調波: period / (1/f_max_bin) が整数の近くに来る
+        k = period * r["freq"][int(np.argmax(r["power"]))]
+        assert abs(k - round(k)) < 0.05 and round(k) >= 2
+    assert dsp.point_spectrum(pos, extent=extent, method="direct")["bin_width"] is None
+    assert dsp.point_spectrum(pos, extent=extent, method="binned")["bin_width"] > 0.0
+
+
+def test_point_spectrum_is_fail_closed():
+    with pytest.raises(ValueError, match="at least 2 events"):
+        dsp.point_spectrum([1.0])
+    with pytest.raises(ValueError, match="zero length"):
+        dsp.point_spectrum([2.0, 2.0])
+    with pytest.raises(ValueError, match="method must be"):
+        dsp.point_spectrum([1.0, 2.0, 3.0], method="lombscargle")
+    with pytest.raises(ValueError, match="weights must match"):
+        dsp.point_spectrum([1.0, 2.0, 3.0], weights=[1.0, 2.0])
+
+
+def test_point_spectrum_does_not_peak_at_zero_for_a_uniform_process():
+    """★平均レートを引かないと、事象があるというだけで f->0 が最大になる。"""
+    rng = np.random.default_rng(11)
+    pos = np.sort(rng.uniform(0.0, 5000.0, 400))
+    r = dsp.point_spectrum(pos, extent=5000.0, f_max=0.05, method="direct")
+    lo = r["power"][:20].mean()                 # いちばん低い周波数側
+    assert lo < 3.0 * float(np.median(r["power"]))

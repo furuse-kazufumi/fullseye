@@ -60,11 +60,11 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[mat_solve](../linalg/mat_solve.md) · [mat_lstsq](../linalg/mat_lstsq.md) · [stat_describe](../stats/stat_describe.md) · [stat_histogram](../stats/stat_histogram.md) · [stat_zscore](../stats/stat_zscore.md) · [interp_cubic](interp_cubic.md) · [poly_fit](poly_fit.md) · [poly_eval](poly_eval.md)
+[mat_solve](../linalg/mat_solve.md) · [mat_lstsq](../linalg/mat_lstsq.md) · [stat_describe](../stats/stat_describe.md) · [stat_histogram](../stats/stat_histogram.md) · [stat_zscore](../stats/stat_zscore.md) · [interp_cubic](interp_cubic.md) · [interp_scattered](interp_scattered.md) · [poly_fit](poly_fit.md)
 
 ## 同カテゴリ(`interp_poly`)
 
-[interp_cubic](interp_cubic.md) · [poly_fit](poly_fit.md) · [poly_eval](poly_eval.md) · [poly_roots](poly_roots.md)
+[interp_cubic](interp_cubic.md) · [interp_scattered](interp_scattered.md) · [poly_fit](poly_fit.md) · [poly_eval](poly_eval.md) · [poly_roots](poly_roots.md)
 
 ---
 *Provenance: mathops.py — MATH operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

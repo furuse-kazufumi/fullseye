@@ -514,7 +514,8 @@ def test_histogram_bins_capped():
 # facade / registry wiring                                                     #
 # --------------------------------------------------------------------------- #
 def test_mathops_registry_names_resolve():
-    assert len(mathops.MATHOPS) == 26            # tier1 16 + tier2 complex 10
+    # tier1 16 + tier2 complex 10 + interp_scattered(2026-09-08、散在点)
+    assert len(mathops.MATHOPS) == 27
     for name in mathops.MATHOPS:
         assert callable(getattr(mathops, name)), name
         assert name in mathops.__all__
@@ -932,3 +933,69 @@ def test_opsmath_complex_category_is_registered():
     from tools.chain_fuzz import TYPE_CHECKS
     for n in names:
         assert opsmath.OPSMATH[n]["out"] in TYPE_CHECKS, n
+
+# --------------------------------------------------------------------------- #
+# interp_scattered — 2026-09-08 に足した(PoC が穴を炙り出した)                 #
+# --------------------------------------------------------------------------- #
+def test_interp_scattered_returns_how_much_was_not_interpolation():
+    """★凸包の外に出た割合を**返す**ことがこの op の要点。
+
+    `examples/poc_datacenter_thermal_field.py` が「散らばった 3-D 点から場を
+    作る口が無い」と記録したので足した。同 PoC は d=1.20 m で評価点の 71.2 %
+    が凸包の外に出ることを測っており、その量が黙って `fill_value` に化けると
+    「線形補間の結果」という名前のまま別物になる。
+    """
+    rng = np.random.default_rng(0)
+    pts = rng.uniform(0.0, 1.0, (200, 3))
+    val = np.sin(3.0 * pts[:, 0]) + pts[:, 1] ** 2 - pts[:, 2]
+    g = np.stack(np.meshgrid(*[np.linspace(-0.1, 1.1, 8)] * 3, indexing="ij"), -1)
+    truth = np.sin(3.0 * g[..., 0]) + g[..., 1] ** 2 - g[..., 2]
+
+    rmse = {}
+    for method in ("nearest", "linear", "rbf"):
+        r = mathops.interp_scattered(pts, val, g, method=method)
+        assert r["value"].shape == g.shape[:-1]
+        assert r["outside"].shape == g.shape[:-1]
+        assert 0.60 < r["outside_fraction"] < 0.70      # 角は必ず外に出る
+        inside = ~r["outside"] & np.isfinite(r["value"])
+        rmse[method] = float(np.sqrt(np.mean((r["value"][inside]
+                                              - truth[inside]) ** 2)))
+    # 滑らかな場では 階段 < 線形 < RBF の順に良くなる
+    assert rmse["rbf"] < rmse["linear"] < rmse["nearest"]
+    # linear は外で fill_value、nearest / rbf は外でも有限
+    out = mathops.interp_scattered(pts, val, g, method="linear")
+    assert np.isnan(out["value"][out["outside"]]).all()
+    for method in ("nearest", "rbf"):
+        r = mathops.interp_scattered(pts, val, g, method=method)
+        assert np.isfinite(r["value"]).all()
+
+
+def test_interp_scattered_rbf_overshoots_its_own_nodes():
+    """★薄板スプラインは内挿なのに節点の値を超える(PoC の 1.37 倍の正体)。"""
+    rng = np.random.default_rng(5)
+    pts = rng.uniform(-1.0, 1.0, (120, 2))
+    val = np.exp(-(pts ** 2).sum(1) / (2 * 0.25 ** 2))
+    q = np.stack(np.meshgrid(np.linspace(-1, 1, 61), np.linspace(-1, 1, 61),
+                             indexing="ij"), -1)
+    hi = {m: float(np.nanmax(mathops.interp_scattered(pts, val, q,
+                                                      method=m)["value"]))
+          for m in ("nearest", "linear", "rbf")}
+    node_max = float(val.max())
+    assert hi["nearest"] <= node_max + 1e-12
+    assert hi["linear"] <= node_max + 1e-12
+    assert hi["rbf"] > node_max * 1.02            # 節点を超える
+
+
+def test_interp_scattered_is_fail_closed():
+    pts = np.random.default_rng(1).uniform(0, 1, (10, 3))
+    val = np.arange(10.0)
+    with pytest.raises(ValueError, match="at least d\\+1"):
+        mathops.interp_scattered(pts[:3], val[:3], pts)
+    with pytest.raises(ValueError, match="values has"):
+        mathops.interp_scattered(pts, val[:5], pts)
+    with pytest.raises(ValueError, match="non-finite"):
+        mathops.interp_scattered(pts, np.r_[np.nan, val[1:]], pts)
+    with pytest.raises(ValueError, match="query last axis"):
+        mathops.interp_scattered(pts, val, np.zeros((4, 2)))
+    with pytest.raises(ValueError, match="method must be"):
+        mathops.interp_scattered(pts, val, pts, method="kriging")

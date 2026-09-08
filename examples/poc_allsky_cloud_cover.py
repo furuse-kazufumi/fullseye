@@ -521,8 +521,13 @@ def section7_gaps():
                  "solid_angle_map", "sky_view_weights", "red_blue_ratio", "cloud_cover"):
         assert not hasattr(fs, name), "%s が生えた(良い変化。この節を書き換えること)" % name
         assert not hasattr(fs.ledger, name), "%s が台帳に出た(良い変化)" % name
-    assert fs.op_find("fisheye") == [] and fs.op_find("equidistant") == [], \
-        "魚眼の op が生えた(この節を書き換えること)"
+    # ★2026-09-08: "equidistant" は 1-D の `create_funct_1d_array`(等間隔の標本
+    #   から関数を作る)に当たるようになった —— ops1d を op_find から引けるように
+    #   した副作用で、**投影モデルとは無関係**。語が同じだけで穴は埋まっていない
+    #   ので、「投影の族に無いこと」を見る形に直した(語の一致で判定しない)。
+    hits = fs.op_find("fisheye") + fs.op_find("equidistant")
+    proj = [h for h in hits if h.get("ledger") != "ops1d"]
+    assert not proj, "魚眼・等距離投影の op が生えた(この節を書き換えること): %s" % proj
     # (a) Brown 歪みは 90 度を表せない —— 実測で固定する
     k = np.array([[F_PX, 0, CTR], [0, F_PX, CTR], [0, 0, 1.0]])
     th = np.deg2rad(88.0)

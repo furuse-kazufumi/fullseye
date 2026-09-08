@@ -13863,6 +13863,166 @@
    "tw": "產生影像的單尺度單演訊號(四元數場 (H,W,4)，sort ``qimage``)。",
    "ko": "영상의 단일 스케일 모노제닉 신호(사원수장 (H,W,4), sort ``qimage``)를 만든다.",
    "de": "Baut das monogene Signal des Bildes auf einer Skala (Quaternionenfeld (H,W,4), Sort ``qimage``)."
+  },
+  "math/interp_scattered": {
+   "fp": "d4b14e0217bb",
+   "ja": "**散らばった**標本から *query* の位置の値を求める —— センサ網・ボーリング・気象。"
+  },
+  "oned/create_funct_1d_array": {
+   "fp": "cf07817de1af",
+   "ja": "等間隔の標本から 1-D 関数を作る(HALCON ``create_funct_1d_array``)。"
+  },
+  "oned/create_funct_1d_pairs": {
+   "fp": "9ebc290e4d34",
+   "ja": "任意の ``(x, y)`` の対から 1-D 関数を作り、等間隔の格子へ再標本化する(HALCON ``create_funct_1d_pairs``)。"
+  },
+  "oned/smooth_funct_1d_gauss": {
+   "fp": "ec333b182f0b",
+   "ja": "1-D 関数のガウス平滑化(HALCON ``smooth_funct_1d_gauss``)。"
+  },
+  "oned/smooth_funct_1d_mean": {
+   "fp": "668c93edcc8f",
+   "ja": "移動平均の反復による平滑化(HALCON ``smooth_funct_1d_mean``)。"
+  },
+  "oned/derivate_funct_1d": {
+   "fp": "b8ae40e96ee9",
+   "ja": "中心差分による 1 階微分(HALCON ``derivate_funct_1d``)。"
+  },
+  "oned/integrate_funct_1d": {
+   "fp": "f6470b527a61",
+   "ja": "台形則による累積積分(HALCON ``integrate_funct_1d``)。"
+  },
+  "oned/zero_crossings_funct_1d": {
+   "fp": "7162f24b56c1",
+   "ja": "関数の符号が変わる位置の添字(HALCON ``zero_crossings_funct_1d``)。"
+  },
+  "oned/local_min_max_funct_1d": {
+   "fp": "77fe88b63165",
+   "ja": "厳密な極大・極小の添字(HALCON ``local_min_max_funct_1d``)。"
+  },
+  "oned/abs_funct_1d": {
+   "fp": "aa034a6277fd",
+   "ja": "y 値の絶対値(HALCON ``abs_funct_1d``)。"
+  },
+  "oned/negate_funct_1d": {
+   "fp": "eb39395fca66",
+   "ja": "y 値の符号を反転する(HALCON ``negate_funct_1d``)。"
+  },
+  "oned/invert_funct_1d": {
+   "fp": "1431d1e16243",
+   "ja": "x と y の役割を入れ替える(``x = f^-1(y)``、HALCON ``invert_funct_1d``)。"
+  },
+  "oned/scale_y_funct_1d": {
+   "fp": "4cbd70ed1613",
+   "ja": "y 値の線形変換 ``mult * y + add``(HALCON ``scale_y_funct_1d``)。"
+  },
+  "oned/transform_funct_1d": {
+   "fp": "46baf8a31865",
+   "ja": "x と y をそれぞれ独立にアフィン変換する(HALCON ``transform_funct_1d``)。"
+  },
+  "oned/compose_funct_1d": {
+   "fp": "26abe882531c",
+   "ja": "合成 ``y1(y2)`` —— *y2* の値を *y1* への位置として使う(HALCON ``compose_funct_1d``)。"
+  },
+  "oned/sample_funct_1d": {
+   "fp": "4903a80ffa34",
+   "ja": "*step* 個おきに標本を取る(HALCON ``sample_funct_1d``)。"
+  },
+  "oned/match_funct_1d_trans": {
+   "fp": "1817d68efe5f",
+   "ja": "相関による 2 つの関数の最良の整数平行移動量(HALCON ``match_funct_1d_trans``、平行移動のみ)。"
+  },
+  "oned/distance_funct_1d": {
+   "fp": "4caa8f0ae1cb",
+   "ja": "同じ格子の上に載る 2 つの関数の距離(HALCON ``distance_funct_1d``)。"
+  },
+  "oned/num_points_funct_1d": {
+   "fp": "44c9d0d3d9f8",
+   "ja": "標本の個数(HALCON ``num_points_funct_1d``)。"
+  },
+  "oned/x_range_funct_1d": {
+   "fp": "f85c48780107",
+   "ja": "x の定義域 ``(0.0, n - 1.0)``(HALCON ``x_range_funct_1d``)。"
+  },
+  "oned/y_range_funct_1d": {
+   "fp": "7680ad99812c",
+   "ja": "値域 ``(min(y), max(y))``(HALCON ``y_range_funct_1d``)。"
+  },
+  "oned/get_pair_funct_1d": {
+   "fp": "9e6f9945fec7",
+   "ja": "*index* の位置の ``(x, y)`` の対(HALCON ``get_pair_funct_1d``)。"
+  },
+  "oned/get_y_value_funct_1d": {
+   "fp": "550fbf126e6e",
+   "ja": "(小数を含む)位置 *x* における y 値(HALCON ``get_y_value_funct_1d``)。"
+  },
+  "oned/funct_1d_to_pairs": {
+   "fp": "47dddaf87ca3",
+   "ja": "関数を明示的な ``(x, y)`` の対として取り出す(HALCON ``funct_1d_to_pairs``)。"
+  },
+  "oned/lowpass": {
+   "fp": "3ad5efd11b87",
+   "ja": "バターワース低域通過(scipy、零位相 filtfilt)。*cutoff* は ``(0, rate/2)`` の内側でなければならず、ナイキストの外を指定すると**信号を素通しせずに例外**を上げる。零位相 filtfilt に対して短すぎる信号も同様に例外(必要な最小長をメッセージに書く)—— 黙って未フィルタのまま返らない。"
+  },
+  "oned/highpass": {
+   "fp": "e91dc922a2dd",
+   "ja": "バターワース高域通過。ナイキストと信号長の契約は :func:`lowpass` と同じ。"
+  },
+  "oned/bandpass": {
+   "fp": "8760397dbd2c",
+   "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。"
+  },
+  "oned/envelope": {
+   "fp": "ceccfeaa24f6",
+   "ja": "解析信号(ヒルベルト変換)による振幅包絡 —— 打音・衝撃・アコースティックエミッションのバーストの「形」。"
+  },
+  "oned/rms": {
+   "fp": "c283ed572b29",
+   "ja": "RMS レベル。信号全体なら 1 個のスカラー、*frame* を与えるとフレームごとの配列(時間軸に沿った振動・エネルギーの包絡)。"
+  },
+  "oned/resample": {
+   "fp": "d007dc2f0408",
+   "ja": "信号を *new_rate* へ再標本化する(フーリエ法)。"
+  },
+  "oned/spectrum": {
+   "fp": "34853709b697",
+   "ja": "片側の生の振幅スペクトル ``(freqs, magnitude)``(``np.fft.rfft``)。"
+  },
+  "oned/spectrogram": {
+   "fp": "8d14f3e7aa28",
+   "ja": "STFT の振幅スペクトログラム ``(freqs, times, S)``。``S`` の形は ``(n_freqs, n_frames)``。ハン窓つきで、*hop* の既定は ``win//2``。"
+  },
+  "oned/zero_crossing_rate": {
+   "fp": "c081a4f906ad",
+   "ja": "隣り合う標本のうち符号が変わる割合 —— 安価なピッチ・雑音らしさの手がかり。"
+  },
+  "oned/find_peaks": {
+   "fp": "6af0683861be",
+   "ja": "山の添字(scipy.signal.find_peaks)—— 衝撃・欠陥のエコー。"
+  },
+  "oned/peak_subbin": {
+   "fp": "f87546928107",
+   "ja": "標本と標本の**あいだ**の山の位置 —— 3 点に当てた曲線の頂点。"
+  },
+  "oned/point_spectrum": {
+   "fp": "ad6ca2731439",
+   "ja": "**事象の位置**の周期図 —— 欠陥・打痕・計数・到着。"
+  },
+  "oned/signal_features": {
+   "fp": "49eddaa57dc9",
+   "ja": "異常検知向けの音響・振動の特徴量ベクトル: ``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。すべて有限 —— NaN / Inf の標本は ``ValueError`` を上げ、NaN の特徴量を作らない。空の信号はゼロを返す。"
+  },
+  "oned/read_wav": {
+   "fp": "afcd4aad0fef",
+   "ja": "WAV ファイルを読む(標準ライブラリ)—— ``(x float64 [-1,1], rate)``。多チャンネルは平均してモノラルにする。8/16/32-bit PCM に対応。"
+  },
+  "oned/write_wav": {
+   "fp": "bc667bda4b78",
+   "ja": "float ``[-1,1]`` のモノラル信号を 16-bit PCM の WAV に書く(標準ライブラリ)。非有限の標本は例外(そのまま書くと壊れた PCM になるため)。"
+  },
+  "oned/read_audio": {
+   "fp": "5fd7396c4066",
+   "ja": "任意の音声形式を読む —— ``(x, rate)``。``soundfile`` があればそれを使い(mp3/flac/ogg/…)、無ければ標準ライブラリの WAV 読み込みへ落ちる。"
   }
  }
 }

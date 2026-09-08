@@ -46,6 +46,10 @@ _LEDGERS = (
     ("opsshape2d", "OPSSHAPE2D"),
     ("opsroughness", "OPSROUGHNESS"),
     ("opsmeasure1d", "OPSMEASURE1D"),
+    # ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに、docs にも
+    #   op_run / op_assist / op_find にも出ていなかった —— 「登録した」と
+    #   「引ける」は別。opdocs に足したら、この門が引けない側を鳴らした。
+    ("ops1d", "OPS1D"),
     ("opsblob", "OPSBLOB"),
 )
 

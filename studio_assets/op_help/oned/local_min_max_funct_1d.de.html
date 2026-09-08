@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">local_min_max_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.local_min_max_funct_1d(y)</code> (die Implementierung direkt: <code style="color:#22d3bf">import funct1d; funct1d.local_min_max_funct_1d(y)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;local_min_max_funct_1d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Indices of strict local maxima / minima (HALCON `<code style="color:#22d3bf">local_min_max_funct_1d</code>`).</p>
+<p>`<code style="color:#22d3bf">{&quot;max&quot;: indices, &quot;min&quot;: indices}</code><code style="color:#22d3bf"> where index </code><code style="color:#22d3bf">i</code>` is a maximum iff</p>
+<p>`<code style="color:#22d3bf">y[i] &gt; y[i-1] and y[i] &gt; y[i+1]</code>` (mirrored for minima). Inputs shorter</p>
+<p>than 3 samples have no interior point and return two empty arrays</p>
+<p>(degenerate case, not an error).</p>
+<p>Honest limitation: inequalities are <b>strict</b> — plateau extrema (equal</p>
+<p>neighbouring samples at the top/bottom) are not reported, and the boundary</p>
+<p>samples `<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">n-1</code>` are never extrema.</p>
+<p>:param y: 1-D function (may be empty).</p>
+<p>:returns: dict `<code style="color:#22d3bf">{&quot;max&quot;: int array, &quot;min&quot;: int array}</code>`.</p>
+<p>:raises ValueError: non-1-D / NaN / Inf input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_web_roll_periodicity">poc_web_roll_periodicity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_web_roll_periodicity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_funct1d">signal_funct1d</a> — <code style="color:#22d3bf">py -3.11 examples/signal_funct1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">function</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:abs_funct_1d">abs_funct_1d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: funct1d.py — ONED Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

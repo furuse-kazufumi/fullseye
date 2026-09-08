@@ -1,0 +1,90 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">interp_scattered — MATH <code style="color:#22d3bf">interp_poly</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × signal × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;interp_scattered&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Values at *query* from <b>scattered</b> samples — sensor nets, boreholes, weather.</p>
+<p>:func:<code style="color:#22d3bf">interp_linear</code> and :func:<code style="color:#22d3bf">interp_cubic</code> need samples on a sorted 1-D</p>
+<p>axis. A great deal of measurement does not arrive that way: temperature</p>
+<p>sensors bolted wherever a rack allowed, boreholes drilled where access</p>
+<p>permitted, weather stations placed by history. This is the N-D scattered</p>
+<p>entry point (`<code style="color:#22d3bf">scipy.interpolate</code>`), and it returns **how much of the answer</p>
+<p>was not interpolation at all**.</p>
+<p>*method*:</p>
+<p>`<code style="color:#22d3bf">&quot;nearest&quot;</code>`</p>
+<p>the value of the closest sample. Defined everywhere, and never</p>
+<p>overshoots, but it is a staircase: on a smooth field the step itself</p>
+<p>becomes a false feature. Measured on a smooth 3-D field sampled at 0.60,</p>
+<p>the nearest-neighbour reconstruction leaves a residual of 0.975 units</p>
+<p>where the sensor noise is only 0.15 — 6.5 times the noise, and none of</p>
+<p>it is noise.</p>
+<p>`<code style="color:#22d3bf">&quot;linear&quot;</code>`</p>
+<p>barycentric interpolation on a Delaunay triangulation. Never exceeds the</p>
+<p>surrounding samples, and is <b>undefined outside their convex hull</b>.</p>
+<p>`<code style="color:#22d3bf">&quot;rbf&quot;</code>`</p>
+<p>a thin-plate radial basis function through every sample. Smooth and</p>
+<p>defined everywhere, but it <b>overshoots its own nodes</b>: measured on the</p>
+<p>same field it returns peaks 1.372 times the sampled height, which is a</p>
+<p>37 % over-statement of a hot spot that no interpolation of the data can</p>
+<p>justify.</p>
+<p>**The point of the `<code style="color:#22d3bf">outside</code>` return value.** Sensors sit inside a room, a</p>
+<p>site, a country; the corners are always outside their hull. Ask a linear</p>
+<p>interpolator there and it returns `<code style="color:#22d3bf">fill_value</code>`, or, if a caller quietly</p>
+<p>falls back to nearest, it returns a different method&#x27;s answer under the</p>
+<p>first method&#x27;s name. Measured on a 12 x 8.4 x 3.0 m room sampled at 1.20 m</p>
+<p>spacing, <b>71.2 %</b> of the evaluation grid lay outside the hull. A number</p>
+<p>that large has to be visible, so it is returned rather than logged.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : (n, d) array_like</p>
+<p>Sample coordinates. 1-D input is accepted and treated as `<code style="color:#22d3bf">(n, 1)</code>`.</p>
+<p>values : (n,) array_like</p>
+<p>query : (m, d) or (..., d) array_like</p>
+<p>Where to evaluate. The leading shape is preserved in the result.</p>
+<p>method : {&quot;linear&quot;, &quot;nearest&quot;, &quot;rbf&quot;}</p>
+<p>fill_value : float</p>
+<p>Returned outside the convex hull for `<code style="color:#22d3bf">&quot;linear&quot;</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">&quot;nearest&quot;</code>` and</p>
+<p>`<code style="color:#22d3bf">&quot;rbf&quot;</code>` are defined everywhere and ignore it.</p>
+<p>rescale : bool</p>
+<p>Normalise each axis before triangulating. Needed when the axes have very</p>
+<p>different units (metres against millimetres); ignored by `<code style="color:#22d3bf">&quot;rbf&quot;</code>`.</p>
+<p>neighbors : int or None</p>
+<p>`<code style="color:#22d3bf">&quot;rbf&quot;</code>` only: solve against the *k* nearest samples instead of all of</p>
+<p>them. The global solve is O(n^3); measured on 5000 query points in 3-D,</p>
+<p>it costs 0.55 / 1.76 / 7.53 s at 1400 / 4000 / 8000 samples, while</p>
+<p>`<code style="color:#22d3bf">neighbors=48</code>` costs 0.38 / 0.55 / 0.81 s. Below a few thousand</p>
+<p>samples the global solve is fine and exact — the knob earns its place</p>
+<p>above that. `<code style="color:#22d3bf">None</code>` keeps the exact global solution.</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>`<code style="color:#22d3bf">value</code><code style="color:#22d3bf"> (query shape), </code><code style="color:#22d3bf">outside</code>` (bool mask, query shape, of query</p>
+<p>points beyond the convex hull of the samples), `<code style="color:#22d3bf">outside_fraction</code>`,</p>
+<p>`<code style="color:#22d3bf">method</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_points</code>`.</p>
+<p>Fail-closed: fewer samples than `<code style="color:#22d3bf">d + 1</code>` cannot define a simplex, and</p>
+<p>raises `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf"> rather than returning a field made of </code><code style="color:#22d3bf">fill_value</code>`.</p>
+<p>See also</p>
+<p>--------</p>
+<p>interp_linear : the sorted 1-D case, which is cheaper and needs no hull.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every mathops op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
+<p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_datacenter_thermal_field">poc_datacenter_thermal_field</a> — <code style="color:#22d3bf">py -3.11 examples/poc_datacenter_thermal_field.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">interp_poly</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a> · <a style="color:#22d3bf" href="opmath:poly_eval">poly_eval</a> · <a style="color:#22d3bf" href="opmath:poly_roots">poly_roots</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

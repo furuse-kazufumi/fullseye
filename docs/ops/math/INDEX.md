@@ -1,4 +1,4 @@
-# MATH operator help — 26 ops in 4 categories
+# MATH operator help — 27 ops in 4 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/math/<category>/<op>.md` を走査。
 
@@ -17,9 +17,9 @@
 
 [cplx_argument_principle](complex/cplx_argument_principle.md) · [cplx_cauchy_value](complex/cplx_cauchy_value.md) · [cplx_contour_circle](complex/cplx_contour_circle.md) · [cplx_contour_integral](complex/cplx_contour_integral.md) · [cplx_cr_residual](complex/cplx_cr_residual.md) · [cplx_joukowski](complex/cplx_joukowski.md) · [cplx_laurent_coeffs](complex/cplx_laurent_coeffs.md) · [cplx_mobius](complex/cplx_mobius.md) · [cplx_poly_eval](complex/cplx_poly_eval.md) · [cplx_winding_number](complex/cplx_winding_number.md)
 
-### interp_poly (5)
+### interp_poly (6)
 
-[interp_cubic](interp_poly/interp_cubic.md) · [interp_linear](interp_poly/interp_linear.md) · [poly_eval](interp_poly/poly_eval.md) · [poly_fit](interp_poly/poly_fit.md) · [poly_roots](interp_poly/poly_roots.md)
+[interp_cubic](interp_poly/interp_cubic.md) · [interp_linear](interp_poly/interp_linear.md) · [interp_scattered](interp_poly/interp_scattered.md) · [poly_eval](interp_poly/poly_eval.md) · [poly_fit](interp_poly/poly_fit.md) · [poly_roots](interp_poly/poly_roots.md)
 
 ### linalg (6)
 

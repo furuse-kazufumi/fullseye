@@ -64,7 +64,11 @@ tb_smooth_funct_1d_gauss 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+次の例は元の台帳 op `smooth_funct_1d_gauss` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [poc_fiber_orientation](../../../../examples/poc_fiber_orientation.py) — `py -3.11 examples/poc_fiber_orientation.py`
+- [poc_tree_ring_dendro](../../../../examples/poc_tree_ring_dendro.py) — `py -3.11 examples/poc_tree_ring_dendro.py`
+- [poc_web_roll_periodicity](../../../../examples/poc_web_roll_periodicity.py) — `py -3.11 examples/poc_web_roll_periodicity.py`
+- [signal_funct1d](../../../../examples/signal_funct1d.py) — `py -3.11 examples/signal_funct1d.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

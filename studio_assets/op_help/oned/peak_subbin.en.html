@@ -1,0 +1,70 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">peak_subbin — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × indices</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import dsp; dsp.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;peak_subbin&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Peak position <b>between</b> samples — the vertex of a fit through 3 points.</p>
+<p>:func:<code style="color:#22d3bf">find_peaks</code> returns integer indices, so the position of a spectral</p>
+<p>line or a correlation peak is quantised to the bin grid no matter how</p>
+<p>finely the peak itself is resolved. This refines each index to a float by</p>
+<p>fitting the sample and its two neighbours.</p>
+<p>*mode* picks what is fitted:</p>
+<p>`<code style="color:#22d3bf">&quot;parabola&quot;</code>`</p>
+<p>`<code style="color:#22d3bf">a x^2 + b x + c</code>` through the three raw values. The classic estimator;</p>
+<p>exact for a genuinely parabolic top and cheap.</p>
+<p>`<code style="color:#22d3bf">&quot;gauss&quot;</code>`</p>
+<p>the same parabola through `<code style="color:#22d3bf">log</code>` of the three values, which is exact for</p>
+<p>a Gaussian peak. <b>Requires all three values positive</b> — a magnitude</p>
+<p>spectrum qualifies, a signed correlation does not. Non-positive</p>
+<p>neighbourhoods raise `<code style="color:#22d3bf">ValueError</code>` rather than silently returning the</p>
+<p>integer index, because &quot;the refinement quietly did nothing&quot; is the</p>
+<p>failure this operator exists to remove.</p>
+<p>Measured on a Gaussian of width 1.7 bins centred at 40.37: the integer</p>
+<p>argmax gives 40 (error 0.37 bins), `<code style="color:#22d3bf">parabola</code>` gives 40.3553 (error</p>
+<p><b>0.0147</b>) and `<code style="color:#22d3bf">gauss</code>` gives 40.3700 (error 0, to machine precision).</p>
+<p>**The parabola is biased on a Gaussian, and the bias grows as the peak gets</p>
+<p>narrower** — the same measurement at widths 6.0 / 3.0 / 1.7 / 1.0 bins errs</p>
+<p>by 0.0012 / 0.0047 / 0.0147 / 0.0434. That is the whole reason `<code style="color:#22d3bf">gauss</code>`</p>
+<p>exists: for a spectral line the log-parabola is not an approximation, it is</p>
+<p>the exact model.</p>
+<p>The refinement is still an assumption about shape, not a measurement of it.</p>
+<p>On a triangular peak, whose top is not smooth, `<code style="color:#22d3bf">parabola</code>` errs by 0.0857</p>
+<p>bins where the integer index errs by 0.30 — better, but three times worse</p>
+<p>than on the Gaussian it was designed for.</p>
+<p><b>The shift is not clamped.</b> A vertex more than half a sample away from the</p>
+<p>index means the index was not a local maximum in the first place, and that is</p>
+<p>information: clamping it to +/-0.5 would return a plausible number for a bin</p>
+<p>that has no peak in it. Run :func:<code style="color:#22d3bf">find_peaks</code> first, or clamp deliberately</p>
+<p>at the call site when evaluating bins that are not maxima (a harmonic comb,</p>
+<p>for instance).</p>
+<p>A peak sitting on the first or last sample has no neighbour on one side and</p>
+<p>keeps its integer position (there is nothing to interpolate against); the</p>
+<p>returned array says so by being exactly equal to the input index there.</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>x : array_like</p>
+<p>The 1-D signal the peaks were found in.</p>
+<p>idx : int, sequence of int, or None</p>
+<p>Peak indices. `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> means &quot;the argmax&quot;, so </code><code style="color:#22d3bf">peak_subbin(mag)</code>` is the</p>
+<p>one-liner for a single line.</p>
+<p>mode : {&quot;parabola&quot;, &quot;gauss&quot;}</p>
+<p>Returns</p>
+<p>-------</p>
+<p>float or ndarray</p>
+<p>Refined position(s) in samples. Scalar in, scalar out.</p>
+<p>See also</p>
+<p>--------</p>
+<p>find_peaks : which indices to refine.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_web_roll_periodicity">poc_web_roll_periodicity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_web_roll_periodicity.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">measurement</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a> · <a style="color:#22d3bf" href="oponed:spectrum">spectrum</a> · <a style="color:#22d3bf" href="oponed:spectrogram">spectrogram</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

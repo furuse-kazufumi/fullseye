@@ -324,7 +324,8 @@ from mathops import (  # noqa: E402,F401
     mat_solve, mat_lstsq, mat_svd, mat_eigh, mat_pinv, mat_cond,
     stat_describe, stat_histogram, stat_covariance, stat_correlation,
     stat_zscore,
-    interp_linear, interp_cubic, poly_fit, poly_eval, poly_roots,    cplx_contour_circle, cplx_poly_eval, cplx_contour_integral,
+    interp_linear, interp_cubic, interp_scattered,
+    poly_fit, poly_eval, poly_roots,    cplx_contour_circle, cplx_poly_eval, cplx_contour_integral,
     cplx_winding_number, cplx_cauchy_value, cplx_argument_principle,
     cplx_laurent_coeffs, cplx_joukowski, cplx_mobius, cplx_cr_residual,
 )
@@ -400,7 +401,8 @@ from pose_quat import (  # noqa: E402,F401
 import dsp  # noqa: E402  (1-D signal / acoustic / vibration)
 from dsp import (  # noqa: E402,F401
     read_wav, write_wav, read_audio, spectrum, spectrogram, lowpass,
-    highpass, bandpass, envelope, rms, find_peaks, signal_features,
+    highpass, bandpass, envelope, rms, find_peaks, peak_subbin,
+    point_spectrum, signal_features,
     resample, zero_crossing_rate,
 )
 # FMCW レンジ-ドップラー: 既存の lidar_* が幾何(レイキャスト)だけで信号処理層が
@@ -807,7 +809,8 @@ __all__ = [
     "mathops", "mat_solve", "mat_lstsq", "mat_svd", "mat_eigh", "mat_pinv", "mat_cond",
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
-    "interp_linear", "interp_cubic", "poly_fit", "poly_eval", "poly_roots",
+    "interp_linear", "interp_cubic", "interp_scattered",
+    "poly_fit", "poly_eval", "poly_roots",
     "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
     "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
     "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
@@ -831,6 +834,7 @@ __all__ = [
     "dsp",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
+    "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
     "acoustics", "interferometry",

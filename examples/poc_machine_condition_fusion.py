@@ -1025,8 +1025,11 @@ def section_alias() -> dict:
           "「軸受らしい」姿をしている。" % BPFO)
 
     d = rad[::dec]
-    sp = np.abs(np.fft.rfft(d * np.hanning(d.size)))
-    f2 = np.fft.rfftfreq(d.size, dec / RATE)
+    # ★2026-09-08: ここは numpy の rfft を自前で書いていた —— 「片側振幅
+    #   スペクトルの口が台帳に無い」と読んだためだが、`fs.spectrum` は
+    #   **前から在った**(台帳に出ていなかっただけ)。1 つの層だけ見て
+    #   「無い」と決めた例なので、op を使う形に直す。
+    f2, sp = fs.spectrum(d * np.hanning(d.size), RATE / dec)
     sel = (f2 >= 20.0) & (f2 <= 400.0)
     fp = float(f2[sel][np.argmax(sp[sel])])
     near = min(pred, key=lambda kf: abs(kf[1] - fp))
@@ -1156,12 +1159,24 @@ def section_tool_gaps() -> None:
     print("12) 道具の穴(この PoC で fullseye を引いてみて)")
     print("=" * 78)
     assert hasattr(fs.ledger, "order_spectrum") and hasattr(fs.ledger, "envelope_spectrum")
-    assert not hasattr(fs.ledger, "spectrum") and not hasattr(fs, "amplitude_spectrum")
-    print("  (a) **1 本の記録の片側振幅スペクトルを返す口が台帳に無い**。"
-          "order_spectrum は 1 回転以上を要求し(角度再標本化)、"
-          "octave_spectrum は帯域に潰し、stft は逆変換の COLA 制約で"
-          "「1 枠 = 記録全体」を取れない(hann + hop=win が拒否される)。"
-          "11 節のエイリアスの図は numpy の rfft で書いた。")
+    # ★2026-09-08: ここは「台帳に spectrum が無い」と書いていたが、
+    #   **`fs.spectrum` は最初から在った**(dsp の 1-D 層)。無かったのは
+    #   「台帳(`fs.ledger`)に出ていること」と「op ごとのノート」だけで、
+    #   この PoC は 1 つの層しか引かずに「無い」と決め、numpy の rfft を
+    #   自前で書いていた。ops1d を台帳へ繋いだのでいまは両方から引ける。
+    assert hasattr(fs, "spectrum") and hasattr(fs.ledger, "spectrum")
+    assert not hasattr(fs, "amplitude_spectrum")
+    print("  (a) ★**この節はもともと「片側振幅スペクトルの口が台帳に無い」と"
+          "書いていたが、それは私の探し方の穴だった**。"
+          "`fs.spectrum` は dsp の 1-D 層に最初から在り、"
+          "台帳(`fs.ledger`)に出ていなかっただけ —— 1 つの層だけ引いて"
+          "「無い」と決め、11 節の図を numpy の rfft で書いていた。"
+          "2026-09-08 に ops1d を台帳へ繋いだので、いまは両方から引ける"
+          "(この PoC も `fs.spectrum` を呼ぶよう直した)。"
+          "残る本当の穴は order_spectrum が 1 回転以上を要求し、"
+          "octave_spectrum が帯域に潰し、stft が COLA 制約で"
+          "「1 枠 = 記録全体」を取れないこと —— つまり**代わりの口が"
+          "どれも別の制約を持つ**という形のほう。")
     assert not hasattr(fs.ledger, "confusion_matrix") and not hasattr(fs.ledger, "lda_fit")
     print("  (b) **分類の評価器(混同行列)と線形判別が無い**。この PoC は"
           "LDA を自前 15 行で書いている(mat_pinv は台帳の口を使った)。"

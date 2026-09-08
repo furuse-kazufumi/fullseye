@@ -188,16 +188,51 @@ def test_ledger_namespace_is_fail_closed_and_points_at_the_other_tier():
         _ = fs.ledger.definitely_not_a_ledger_op
 
 
-def test_the_two_namespaces_overlap_in_exactly_one_name():
-    """台帳 894 と 2-D レジストリ 882 で同名は ``fill_holes`` の **1 つだけ**。
+def test_the_two_namespaces_overlap_in_exactly_three_names():
+    """台帳と 2-D レジストリで同名なのは ``fill_holes`` / ``lowpass`` / ``highpass``。
 
-    そしてそれは別物である(``fs.ledger.fill_holes`` は網の境界ループを閉じ、
-    ``fs.op.fill_holes`` は 2-D 領域の穴を埋める)。1 つに増減したら、名前空間を
-    分けている前提が変わったということなので、ここで気づく。
+    ★2026-09-08 に 1 -> 3 へ増えた。``ops1d``(dsp 16 + funct1d 23)を台帳へ
+    繋いだためで、**衝突そのものは前からあった** —— `fs.lowpass` は以前から
+    dsp の 1-D バターワースで、`fs.op.lowpass` は 2-D 画像の周波数フィルタ。
+    台帳に出したことで、この門が初めてそれを見えるようにした。
+
+    ★★重要なのは名前の数ではなく**取り違えたときの挙動**なので、そちらを固定する:
+
+    * `fs.ledger.lowpass`(1-D)に 2-D 画像を渡す → **ValueError**(正しく鳴る)。
+    * `fs.op.lowpass`(2-D)に 1-D 信号を渡す → **鳴らない**。警告 1 本を出して
+      **入力をそのまま返す**(fail-soft の恒等)。フィルタしていない信号は
+      フィルタした信号に見えるので、これは黙って嘘をつく方向。
+      ファサードの既定方針(`on_error`)がそうなっているためで、
+      `on_error="raise"` を渡せば鳴る。ここではその**非対称**を固定して、
+      方針が変わったら気づけるようにする。
     """
     both = _ledger_names() & {o.name for o in ops.REGISTRY}
-    assert both == {"fill_holes"}, sorted(both)
+    assert both == {"fill_holes", "lowpass", "highpass"}, sorted(both)
     assert fs.ledger.fill_holes is not fs.op.fill_holes
+    assert fs.ledger.lowpass is not fs.op.lowpass
+
+    img = np.zeros((32, 32))
+    sig = np.sin(np.linspace(0.0, 20.0, 256))
+
+    # 1-D の op に 2-D を渡すと鳴る
+    for name in ("lowpass", "highpass"):
+        with pytest.raises(ValueError):
+            getattr(fs.ledger, name)(img, rate=100.0, cutoff=10.0)
+
+    # 2-D の op に 1-D を渡しても鳴らない —— 素通しで返る(この非対称が本体)
+    import warnings
+    for name in ("lowpass", "highpass"):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            out = getattr(fs.op, name)(sig)
+        assert np.shape(out) == sig.shape
+        # ★素通しですらない: フォールバックは画像の契約 [0,1] へ**切り詰めて**返す。
+        #   負の半分が 0 になった信号は「フィルタした信号」に見えるので、
+        #   これは黙って嘘をつく。max|差| = 1.0、最小値 -1.0 -> 0.0。
+        assert out.min() == 0.0 and sig.min() < -0.9
+        assert np.max(np.abs(out - sig)) > 0.9
+        assert np.allclose(out[sig > 0.0], sig[sig > 0.0])   # 正の側は素通し
+        assert any("degraded to a fallback" in str(x.message) for x in w)
 
 
 def test_ledger_namespace_exposes_the_raw_return_through_dot_raw():

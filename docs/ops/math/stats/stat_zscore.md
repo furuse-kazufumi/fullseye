@@ -62,7 +62,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 
-[mat_solve](../linalg/mat_solve.md) · [mat_lstsq](../linalg/mat_lstsq.md) · [stat_describe](stat_describe.md) · [stat_histogram](stat_histogram.md) · [interp_linear](../interp_poly/interp_linear.md) · [interp_cubic](../interp_poly/interp_cubic.md) · [poly_fit](../interp_poly/poly_fit.md) · [poly_eval](../interp_poly/poly_eval.md)
+[mat_solve](../linalg/mat_solve.md) · [mat_lstsq](../linalg/mat_lstsq.md) · [stat_describe](stat_describe.md) · [stat_histogram](stat_histogram.md) · [interp_linear](../interp_poly/interp_linear.md) · [interp_cubic](../interp_poly/interp_cubic.md) · [interp_scattered](../interp_poly/interp_scattered.md) · [poly_fit](../interp_poly/poly_fit.md)
 
 ## 同カテゴリ(`stats`)
 

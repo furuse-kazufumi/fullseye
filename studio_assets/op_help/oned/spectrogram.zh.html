@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spectrogram — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrogram(x, rate=1.0, win=256, hop=None)</code>(要直接调用实现,<code style="color:#22d3bf">import dsp; dsp.spectrogram(x, rate=1.0, win=256, hop=None)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;spectrogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.spectrogram(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.spectrogram.raw(...)</code>,或直接调用 <code style="color:#22d3bf">dsp.spectrogram</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(freqs, times, S) — S が本体</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>STFT magnitude spectrogram -&gt; `<code style="color:#22d3bf">(freqs, times, S)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">S</code>` shape</p>
+<p>`<code style="color:#22d3bf">(n_freqs, n_frames)</code><code style="color:#22d3bf">. Hann-windowed; *hop* defaults to </code><code style="color:#22d3bf">win//2</code>`.</p>
+<p>**Same raw convention as :func:<code style="color:#22d3bf">spectrum</code>, but a different divisor.** Each</p>
+<p>column is the unnormalised `<code style="color:#22d3bf">|rfft(frame * hann(win))|</code>`, so it is not an</p>
+<p>amplitude either — and dividing by `<code style="color:#22d3bf">2/win</code>` is *wrong* here, because the</p>
+<p>Hann window has already thrown away part of the signal. The correct one-sided</p>
+<p>amplitude conversion divides by the window&#x27;s coherent gain::</p>
+<p>w = np.hanning(win)</p>
+<p>amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()</p>
+<p>Measured on a unit sine at a bin centre (`<code style="color:#22d3bf">rate = 16000</code>` Hz, 1000 Hz,</p>
+<p>amplitude exactly 1.0, `<code style="color:#22d3bf">win = 256</code>`): the raw column peak is</p>
+<p>`<code style="color:#22d3bf">63.7497786196906</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">* 2/win</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">0.49804514546633283</code>` (too small by</p>
+<p>exactly the Hann coherent gain `<code style="color:#22d3bf">sum(w)/win = 0.498046875</code>`), while</p>
+<p>`<code style="color:#22d3bf">* 2/sum(w)</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">0.9999965273676957</code>`. Only the second one is the</p>
+<p>amplitude that was actually in the signal.</p>
+<p>Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected</p>
+<p>by either factor. This function returns magnitudes only — the phase is</p>
+<p>discarded, so it cannot be inverted; use `<code style="color:#22d3bf">acoustics.stft</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">acoustics.istft</code>`</p>
+<p>for a round-trip.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a> · <a style="color:#22d3bf" href="oponed:spectrum">spectrum</a> · <a style="color:#22d3bf" href="oponed:zero_crossing_rate">zero_crossing_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

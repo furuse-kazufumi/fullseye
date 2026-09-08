@@ -253,6 +253,14 @@ def make_generators():
         "normals": lambda rng: (lambda v: v / np.linalg.norm(v, axis=1, keepdims=True))(
             rng.standard_normal((160, 3))),
         "signal": lambda rng: np.sin(np.linspace(0, 8 * np.pi, 256)) + 0.1 * rng.standard_normal(256),
+        # 事象の位置(点過程)—— point_spectrum の入口。★**一様乱数だけにしない**:
+        # 周期成分が無いと「周期を見つける op」の意味のある挙動を一度も踏まないので、
+        # 周期 17.0 の列に 12 個の無関係な事象を混ぜた**構造データ**を種にする
+        # (乱数だけの試験は構造の欠陥を隠す、というこの repo の規律)。
+        "positions": lambda rng: np.sort(np.concatenate([
+            np.arange(3.0, 200.0, 17.0)
+            + rng.normal(0.0, 0.4, np.arange(3.0, 200.0, 17.0).size),
+            rng.uniform(0.0, 200.0, 12)])),
         "vector": lambda rng: (lambda v: v / np.linalg.norm(v))(rng.standard_normal(3)),
         "pose": lambda rng: (np.eye(3), np.zeros(3)),
         "measurement": lambda rng: float(rng.random()),

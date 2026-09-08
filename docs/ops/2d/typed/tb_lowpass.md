@@ -58,7 +58,9 @@ tb_lowpass 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+次の例は元の台帳 op `lowpass` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
+- [signal_filter](../../../../examples/signal_filter.py) — `py -3.11 examples/signal_filter.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

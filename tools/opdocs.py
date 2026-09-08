@@ -98,6 +98,12 @@ LEDGER_DIMS = {
               "module": "gfx2d", "family": "game_graphics_2d"},
     "imgmetrics": {"registry": "opsimgmetrics", "table": "OPSIMGMETRICS",
                    "module": "imgmetrics", "family": "image_difference_metrics"},
+    # ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに **docs/ops に
+    #   1 枚もノートを持っていなかった** —— OP_CATALOG には出るのに、op ごとの
+    #   ノート(型契約・罠・関連 op)が無いので RAG コーパスから丸ごと欠けていた。
+    #   `poc_web_roll_periodicity` が dsp に 2 本足したときに気づいた。
+    "oned": {"registry": "ops1d", "table": "OPS1D", "module": "dsp",
+             "family": "signal_1d"},
     "colortransport": {"registry": "opscolortransport", "table": "OPSCOLORTRANSPORT",
                        "module": "colortransport", "family": "optimal_transport"},
     "imgforensics": {"registry": "opsimgforensics", "table": "OPSIMGFORENSICS",

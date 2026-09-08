@@ -19,7 +19,8 @@
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
-<p style="margin:2px 0 2px 12px">• (none yet)</p>
+<p>The examples below call the underlying ledger op <code style="color:#22d3bf">zero_crossings_funct_1d</code>. This bridge op is the same implementation adapted to the <code style="color:#22d3bf">fn(v, a, b)</code> convention, so the behaviour carries over unchanged (only the call form differs).</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_funct1d">signal_funct1d</a> — <code style="color:#22d3bf">py -3.11 examples/signal_funct1d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">signal</code> as input)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_negate_funct_1d">tb_negate_funct_1d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">typed</code>)</h3>

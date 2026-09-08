@@ -166,6 +166,8 @@ def test_opsmath_call_returns_declared_types():
         "stat_zscore": (y,),
         "interp_linear": (x, y, x[:8] + 0.01),
         "interp_cubic": (x, y, x[:8] + 0.01),
+        # 散在点は 1-D でも成立する(points は (n, d)、1-D は (n, 1) と読む)
+        "interp_scattered": (x[:, None], y, x[:8, None] + 0.01),
         "poly_fit": (x, y, 3), "poly_eval": (np.array([1.0, 0.0, -1.0]), x),
         "poly_roots": (np.array([1.0, 0.0, -1.0]),),
     }

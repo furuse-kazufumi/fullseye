@@ -262,6 +262,29 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   (1-D の `interp_linear` / `interp_cubic` だけ)/ 点列(イベント位置)から直接
   スペクトルを取る口が無い / 1-D の山をサブビンで読む口が無い(`refine_peak_newton`
   は在るが torch 必須で CI では使えない)。
+- ★**その穴を同じ日に埋めた**(op +3)。詳細は `docs/KNOWN_ISSUES.md` §45.6–45.8。
+  - `interp_scattered`(mathops)—— 散在 N-D 点 → 任意の問い合わせ点
+    (nearest / linear / rbf)。**凸包の外に出た割合を返り値に入れた**のが設計の要点で、
+    PoC が測った 71.2 % は黙って `NaN` か別手法に化ける量だった。使ってみて
+    `neighbors`(RBF を近傍だけで解く)も足した(全体解 O(n³) は 8000 点で 7.53 秒)。
+  - `point_spectrum`(dsp)—— 点列(事象位置)の周期図。ビン幅を選ばない点過程
+    (Bartlett)推定量と、histogram+FFT の 2 通り。分解能 `1/記録長` を返り値に持つ。
+    ★最初 `lombscargle` で書いたが**点過程には誤り**(重み定数で平均除去がゼロ)。
+  - `peak_subbin`(dsp)—— 1-D の山を副ビンで読む。`gauss` は Gauss 峰に厳密、
+    `parabola` は偏る(幅 6.0/3.0/1.7/1.0 で誤差 0.0012/0.0047/0.0147/0.0434)。
+    頂点は**丸めずに返す**(±0.5 超は「そこは極大でない」という情報)。
+- ★**`ops1d` の 39 op(dsp 16 + funct1d 23)が `docs/ops` にノートを 1 枚も持って
+  いなかった**のを解消(登録済みで `OP_CATALOG` には出るのに、op ごとのノートを持つ
+  RAG コーパスから丸ごと欠けていた)。`opdocs` に次元 `oned` を足し、日本語要約 40 本を
+  書いた。`opassist._LEDGERS` にも無く `op_run` / `op_assist` / `op_find` から引けな
+  かったので、そちらも繋いだ。
+- ★門が 4 つ鳴って直したもの: 誰も産まない型 `positions` の種(構造つき)/
+  `interp_scattered` が **1-D で落ちていた**(docstring は受けると書いていた ——
+  Delaunay も LinearND も NearestND も 2-D 以上しか受けない。1-D 専用経路を追加)/
+  `ops1d` の到達性 / RAG ガイドのノート枚数 1,866 → 1,906。
+- ★記録: 台帳と 2-D レジストリの同名が 1 → 3 に(`fill_holes` に `lowpass` /
+  `highpass` が加わった)。数より挙動が重要で、**`fs.op.lowpass` に 1-D 信号を渡すと
+  鳴らずに画像の契約 [0,1] へ切り詰めて返す**(負の半分が消える)。門で固定した。
 
 ## 0.1.10 — 2026-09-06
 

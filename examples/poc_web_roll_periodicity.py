@@ -239,14 +239,21 @@ def md_spectrum(md, length: float) -> dict:
 
 
 def _peak_freq(f, m, i: int, interp: bool) -> float:
-    """ビン ``i`` の山の頂点の周波数。``interp`` なら放物線で補間する。"""
-    fh = float(f[i])
-    if interp and 0 < i < m.size - 1:
-        a, b, c = m[i - 1], m[i], m[i + 1]
-        den = a - 2.0 * b + c
-        if abs(den) > 1e-12:
-            fh += float(np.clip(0.5 * (a - c) / den, -0.5, 0.5)) * float(f[1] - f[0])
-    return fh
+    """ビン ``i`` の山の頂点の周波数。``interp`` なら副ビンまで読む。
+
+    ★この PoC を書いたとき fullseye には「1-D の山をサブビンで読む口」が無く、
+    ここに放物線当てはめを自前で書いていた(:func:`fullseye.find_peaks` は整数の
+    添字しか返さない)。**それを見つけたので op にした** —— いまは
+    :func:`fullseye.peak_subbin` を呼ぶ。数値は自前版と一致する(どちらも同じ
+    3 点放物線)が、頂点の定義が 1 か所に集まり、端の扱い(補間相手が居ない
+    ときは整数のまま)も op 側で決まる。
+    """
+    if not interp:
+        return float(f[i])
+    # ★op は頂点を**丸めずに**返す(±0.5 を超えたら「そこは極大でない」という
+    #   情報)。この PoC は櫛の高調波ビンも評価するので、ここで明示的に丸める。
+    sub = float(np.clip(fs.peak_subbin(m, i) - i, -0.5, 0.5))
+    return float(f[i]) + sub * float(f[1] - f[0])
 
 
 def naive_spec_estimate(md, length: float) -> dict:
@@ -938,30 +945,47 @@ def section_two_rolls() -> dict:
 # --------------------------------------------------------------------------- #
 def section_tool_gaps(cli: dict) -> None:
     print("\n" + "=" * 78)
-    print("8) 道具の穴(この PoC で fullseye を引いてみて)")
+    print("8) 道具の穴 —— この PoC が炙り出して、その場で埋めた 2 本")
     print("=" * 78)
 
-    assert hasattr(fs, "spectrum") and hasattr(fs, "cepstrum")
-    assert not hasattr(fs, "lomb_scargle") and not hasattr(fs.ledger, "lomb_scargle")
-    print("  (a) **点の一覧(イベント時刻)から直接スペクトルを取る口が無い**。"
-          "spectrum / cepstrum はどちらも等間隔の信号を要求するので、"
-          "この PoC は自分でヒストグラムに落としている。欠陥地図・"
-          "パーティクルカウンタ・打痕は全部この形なので、"
-          "Lomb-Scargle か単純な binned periodogram が 1 本あると良い。")
+    # (a) 点列 -> スペクトル。2026-09-08 に fs.point_spectrum として足した。
+    assert hasattr(fs, "point_spectrum"), "point_spectrum が公開経路に無い"
+    md = scene(SEED0)["md"]
+    r = fs.point_spectrum(md, extent=L_FULL, f_max=1.0 / 200.0,
+                          method="direct")
+    k = int(np.argmax(r["power"]))
+    c_top = 1.0 / r["freq"][k]
+    print("  (a) **点の一覧から直接スペクトルを取る口が無かった** —— spectrum も"
+          " cepstrum も等間隔の信号を要求するので、\n      この PoC は自分で"
+          "ヒストグラムに落としていた。欠陥地図・パーティクルカウンタ・打痕は"
+          "全部この形。\n      ★`fs.point_spectrum` を足した(2026-09-08)。"
+          "ビン幅を選ばない点過程の周期図で、同じ %d 個の欠陥から"
+          % r["n_events"])
+    print("      分解能 %.3e /mm(= 1/記録長)を**返り値に持って**返す。"
+          "最大値は %.2f mm = 真値の 1/%.0f\n      —— 櫛の高調波を掴むという"
+          "この PoC の中心的な所見は、op を使っても**変わらない**"
+          "(道具ではなく読み方の問題)。" % (r["resolution"], c_top,
+                                             round(CIRC[CULPRIT] / c_top)))
 
-    assert not hasattr(fs, "peak_interpolate") and not hasattr(fs, "parabolic_peak")
-    print("  (b) **山の頂点をサブビンで求める口が無い**。find_peaks は整数の"
-          "添字しか返さないので、この PoC は _peak_freq を自前で書いている。"
-          "効き目は測った —— L=%.0f mm で誤差の中央値 %.1f -> %.1f mm"
-          "(崖そのものは動かない、6 節)。20 行だが、"
-          "「どこを頂点と呼ぶか」は再現性に直結するので族に入る価値がある。"
+    # (b) 山の副ビン。2026-09-08 に fs.peak_subbin として足した。
+    assert hasattr(fs, "peak_subbin"), "peak_subbin が公開経路に無い"
+    print("  (b) **山の頂点をサブビンで求める口が無かった** —— find_peaks は"
+          "整数の添字しか返さないので、\n      この PoC は放物線当てはめを"
+          "自前で書いていた。★`fs.peak_subbin` を足し、:func:`_peak_freq` は"
+          "それを呼ぶ。\n      効き目は測ってある —— L=%.0f mm で誤差の中央値"
+          " %.1f -> %.1f mm(崖そのものは動かない、6 節)。"
           % (cli["L"][-1], cli["bin_err"][-1], cli["int_err"][-1]))
+    print("      ★op 側は頂点を**丸めずに**返す: ±0.5 を超えたら「そこは極大で"
+          "ない」という情報で、\n      丸めると峰の無いビンにもっともらしい数字が"
+          "出る。丸めるのは呼ぶ側の判断(ここは櫛の高調波を\n      評価するので"
+          "明示的に丸めている)。")
 
+    # (c) これは道具にしない、という判断。
     assert not hasattr(fs, "roll_periodicity") and not hasattr(fs, "web_defect_map")
-    print("  (c) ロール周期の逆算(周長台帳への当てはめ)そのものは道具ではなく"
-          "作法。ただし「候補の台帳」と「分解能 C²/L」を引数で強制する設計に"
-          "しておかないと、区別できない 2 本を平気で 1 本に決めてしまう。")
-
+    print("  (c) ロール周期の逆算(周長台帳への当てはめ)そのものは**道具に"
+          "しない**。台帳は現場ごとに違い、\n      「候補の台帳」と「分解能 C²/L」"
+          "を引数で強制しない設計にすると、区別できない 2 本を\n      平気で 1 本に"
+          "決めてしまう —— 作法のほうが本体なので、PoC として置く。")
 
 # --------------------------------------------------------------------------- #
 def main() -> None:
