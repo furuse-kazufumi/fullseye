@@ -764,22 +764,22 @@ def section_cliff(scene):
                                "−(T/n)(1−L_r/L_o)/1。3 本は原点で交わるが、"
                                "傾きが ε に依らないのは**相対**誤差で見たときだけ ——"
                                "現場で表から拾う ε の誤差は**絶対**値で来る。")
-        ts = np.linspace(300.0, 900.0, 61)
+        ts = np.linspace(302.0, 900.0, 61)
+        meas = np.array([abs(measure_dt_from_eps(tab, t, EPS_PAINT, 0.05)) for t in ts])
         pred = np.array([abs(predict_dt_from_eps(tab, "LWIR", t, EPS_PAINT, 0.05))
                          for t in ts])
-        meas = np.array([abs(measure_dt_from_eps(tab, t, EPS_PAINT, 0.05)) for t in ts])
-        rise = np.array([abs(measure_dt_from_eps(tab, t, EPS_PAINT, 0.05))
-                         / (t - T_REFL_REF) * 100.0 for t in ts])
+        pred_c = np.array([abs(predict_dt_from_eps(tab, "LWIR", t, EPS_PAINT, 0.05,
+                                                   wien_corr=True)) for t in ts])
         figs.save_plot("cliff_vs_temperature",
-                       [("|ΔT| [K](左の物差し)", ts, meas),
-                        ("閉形式の予測 [K]", ts, pred),
-                        ("|ΔT|/(T−T_refl) [%]", ts, rise)],
-                       xlabel="対象の温度 T_obj [K]",
-                       ylabel="温度の誤差(K と % を重ねて描いている)",
-                       title="物差しを変えると「低温ほど危ない」が反転する",
-                       caption="Δε/ε = 5 % 固定。絶対誤差(青・橙)は T² で増え、"
-                               "周囲からの上昇に対する比(緑)は低温ほど大きい。"
-                               "★どちらも同じ実験の同じ数字。")
+                       [("実測 |ΔT|", ts, meas),
+                        ("素朴な閉形式 n = c2/(λ_eff T)", ts, pred),
+                        ("Wien 因子を入れた閉形式", ts, pred_c)],
+                       xlabel="対象の温度 T_obj [K](T_refl = 300 K)",
+                       ylabel="放射率 5 % の取り違えによる温度誤差 [K]",
+                       title="絶対誤差は高温ほど大きい —— 予測を外した所",
+                       caption="Δε/ε = 5 % 固定。傾きは log-log で 2.72(§2)。"
+                               "素朴な閉形式は高温側で過大に出る —— "
+                               "外れの正体は実効波長ではなく e^x/(e^x−1) の欠け。")
     return {"idx_rows": idx_rows, "worst_pred": worst_pred, "worst_eff": worst_eff,
             "worst_mid": worst_mid, "by_eps": by_eps, "ratio": ratio,
             "rise": rise_ratio, "abs_dt": abs_dt, "refl": refl_rows,

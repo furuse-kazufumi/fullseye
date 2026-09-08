@@ -781,6 +781,20 @@ def dem_ecef_to_geodetic(xyz):
     b = WGS84_A * (1.0 - WGS84_F)
     ep2 = (WGS84_A ** 2 - b ** 2) / (b ** 2)
     r = np.hypot(x, y)
+    # ★縮閉線の内側は測地緯度が一意でない -> 黙って範囲外の緯度を返さず拒否する。
+    #   楕円 x²/a² + z²/b² = 1 の縮閉線は (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3)。
+    #   等号の外側だけが「法線が 1 本に決まる」領域(2/3 乗は非負なので符号は |z|)。
+    _inside = ((WGS84_A * r) ** (2.0 / 3.0) + (b * np.abs(z)) ** (2.0 / 3.0)
+               < (WGS84_A ** 2 - b ** 2) ** (2.0 / 3.0))
+    if np.any(_inside):
+        raise ValueError(
+            "dem_ecef_to_geodetic: %d point(s) lie inside the ellipsoid's evolute "
+            "(within %.1f m of the Earth's centre in the equatorial plane, %.1f m "
+            "along the polar axis), where the geodetic latitude is not uniquely "
+            "defined. Returning a value here would be a latitude outside [-90, 90] "
+            "that dem_geodetic_to_ecef itself rejects."
+            % (int(np.count_nonzero(_inside)),
+               (WGS84_A ** 2 - b ** 2) / WGS84_A, (WGS84_A ** 2 - b ** 2) / b))
     theta = np.arctan2(z * WGS84_A, r * b)
     phi = np.arctan2(z + ep2 * b * np.sin(theta) ** 3,
                      r - e2 * WGS84_A * np.cos(theta) ** 3)
