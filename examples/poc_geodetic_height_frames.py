@@ -124,8 +124,10 @@ GNSS の楕円体高は受信機の生ログ(または RINEX を処理した解)
     —— 件数で「在る」と言ってはいけません。
     在るのは ``dem_geodetic_to_ecef`` / ``dem_ecef_to_geodetic`` /
     ``dem_earth_curvature_drop`` / ``dem_geocentric_grid`` /
-    ``dem_geodetic_slope`` / ``dem_cell_size_webmercator`` の 6 本だけで、
-    **どれも WGS84 決め打ち**(``demops.WGS84_A`` / ``WGS84_F`` を直接参照)。
+    ``dem_geodetic_slope`` / ``dem_cell_size_webmercator`` の 6 本だけ。
+    ★このうち**楕円体を使う 4 本は WGS84 決め打ち**(``demops.WGS84_A`` /
+    ``WGS84_F`` を直接参照し、楕円体を渡す引数が無い)。残る 2 本も
+    平均半径 / Web メルカトル固定です。
     ★つまり **この PoC の §3(測地成果の取り違え)は、fullseye の op だけでは
     再現すらできません** —— Bessel 楕円体を渡す口が無いからです。
     次に入れるべき op は §7 に具体案として並べました。
