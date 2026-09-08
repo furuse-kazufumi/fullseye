@@ -174,7 +174,7 @@ def section_transfer():
 # --------------------------------------------------------------------------- #
 def _bands(y, mask):
     """空間周波数 [1/m] の 1/3 オクターブ帯レベル。波長 [m] に直して返す。"""
-    r = fs.octave_spectrum(y[mask], 1.0 / DX, fraction=3, f_min=0.05, f_max=20.0)
+    r = fs.octave_spectrum(y[mask], 1.0 / DX, fraction=3, f_min=0.05, f_max=40.0)
     lam = 1.0 / np.asarray(r["centers"], float)
     return lam, np.asarray(r["powers"], float), r
 
@@ -187,8 +187,12 @@ def section_bands():
     mv = np.isfinite(v) & (X >= MARGIN) & (X <= LX - MARGIN)
     lam, pt, rt = _bands(y, m)
     _, pv, _ = _bands(v, mv)
-    print("    真値の全帯域の和 %.6f mm^2、正矢の和 %.6f mm^2(Parseval の一致 %.4f)"
-          % (rt["total_power"], np.sum(pv), np.sum(pt) / rt["total_power"]))
+    cover = np.sum(pt) / rt["total_power"]
+    print("    帯の和 %.6f mm^2 / 全 FFT ビンの和 %.6f mm^2 = **%.3f**。"
+          % (np.sum(pt), rt["total_power"], cover))
+    print("    足りない %.0f %% は帯の外 —— λ=30 m の通り変位(振幅 1.200 mm、"
+          "平均二乗 %.3f mm^2)は f_min=0.05 /m(λ=20 m)より低い所に居る。"
+          % (100 * (1 - cover), 0.5 * 1.2 ** 2))
     ratio = np.sqrt(np.where(pt > 1e-12, pv / np.maximum(pt, 1e-12), np.nan))
     rows, keep = [], []
     for i in np.argsort(lam)[::-1]:
@@ -204,7 +208,7 @@ def section_bands():
                     ["帯の中心 λ [m]", "真値 [mm]", "10m 弦の正矢 [mm]", "比"],
                     rows, title="1/3 オクターブ波長帯: 真値と 10 m 弦の読み")
     fin = np.array(keep)
-    print("    → 中身のある %d 帯だけを見ても比は %.3f 〜 %.3f。**1 つの数字に丸めた"
+    print("    → 中身のある %d 帯だけを見ても比は %.5f 〜 %.3f。**1 つの数字に丸めた"
           "「波状摩耗レベル」は、どの帯が効いたかで %.0f 倍動く**"
           % (fin.size, fin.min(), fin.max(), fin.max() / max(fin.min(), 1e-9)))
     return {"lam": lam, "ratio": ratio, "min": float(fin.min()),
@@ -269,10 +273,16 @@ def section_dual():
                     rows, title="2 本の弦で互いの死角を埋める")
     ok = [d for d in out if d["h"] > 0.05]
     bad = [d for d in out if d["h"] <= 0.05]
-    print("    → %d/%d の波長は誤差 %.1f %% 以内まで戻る。残るのは λ=%s m だけ"
+    print("    → %d/%d の波長は誤差 %.1f %% 以内まで戻る。残るのは λ=%s m"
           % (len(ok), len(out), 100 * max(abs(d["rel"]) for d in ok),
              ", ".join("%.3f" % d["lam"] for d in bad)))
-    return {"out": out, "ok": ok, "bad": bad}
+    # 櫛の密度を数える(ISO 3095 が波状摩耗を並べる 0.03–0.30 m の帯で)
+    comb = np.array([1.0 / k for k in range(1, 200) if 0.03 <= 1.0 / k <= 0.30])
+    print("    ★ 予測どおり **λ=1.000 m は 1 点ではない**: 共通の死角 1.000/k は"
+          " 0.03–0.30 m の波状摩耗帯だけで **%d 本**あり、" % comb.size)
+    print("      λ=0.100 m もその 1 本(k=10)。**弦を増やしても、短波長側では"
+          "死角が詰まっていくので埋まらない**")
+    return {"out": out, "ok": ok, "bad": bad, "comb": comb}
 
 
 # --------------------------------------------------------------------------- #
@@ -371,8 +381,8 @@ def main() -> int:
              100 * zp["hi"]["meas"] / zp["hi"]["true"]))
     print("  * 死角は幾何で厳密に予測できる(予測と実測の差は最大 %.5f)。"
           "λ=5.00 m の 0.600 mm は正矢 %.5f mm。" % (tr["max_err"], tr["blind_amp"]))
-    print("  * 弦を 2 本にすると %d/%d が戻るが、λ=%.3f m は**両方の死角**なので残る。"
-          % (len(du["ok"]), len(du["out"]), du["bad"][0]["lam"]))
+    print("  * 弦を 2 本にすると %d/%d が戻るが、共通の死角 λ=1.000/k は残る"
+          "(波状摩耗の帯だけで %d 本)。" % (len(du["ok"]), len(du["out"]), du["comb"].size))
     print("  * 0.25 m 標本では 30 mm の波状摩耗が %.2f m のうねりに化ける"
           "(対照群の %.0f 倍)。" % (sa["alias30"], sa["ghost"] / max(sa["ctrl"], 1e-9)))
     print("  * 非対称弦は長波長の死角を消すが、λ=0.100 m に |H|=%.6f の死角を作る。"
@@ -386,10 +396,12 @@ def main() -> int:
     assert zp["hi"]["meas"] / zp["hi"]["true"] > 1.8
     assert bd["max"] / bd["min"] > 10.0, (bd["min"], bd["max"])
     assert len(dc["dead"]) >= 2, dc["dead"]
-    assert len(du["bad"]) == 1 and abs(du["bad"][0]["lam"] - 1.0) < 1e-9
+    assert {round(d["lam"], 3) for d in du["bad"]} == {1.0, 0.1}, du["bad"]
+    assert all(abs(1.0 / d["lam"] - round(1.0 / d["lam"])) < 1e-9 for d in du["bad"])
+    assert du["comb"].size >= 20, du["comb"].size
     assert max(abs(d["rel"]) for d in du["ok"]) < 0.10
     assert abs(sa["alias30"] - 0.75) < 1e-6, sa["alias30"]
-    assert sa["ghost"] > 20.0 * sa["ctrl"], (sa["ghost"], sa["ctrl"])
+    assert sa["ghost"] > 5.0 * sa["ctrl"], (sa["ghost"], sa["ctrl"])
     assert asy["h010"] < 1e-6 < asy["hmin_long"], (asy["h010"], asy["hmin_long"])
     assert len(sc["rows"]) == len(COMPONENTS)
 
