@@ -7,7 +7,10 @@
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>透明体を通る光線の曲がりを厳密に。全反射(TIR)なら None。ガラス/レンズ/水中の像歪み計算に。</p>
 <p>契約は単一ベクトル。(N,3) バッチも通るが、<b>1 本でも TIR ならバッチ全体が None</b></p>
-<p>(per-ray マスクはしない)— バッチで使うなら呼び出し側で 1 本ずつ回すこと。</p>
+<p>(per-ray マスクはしない)。★<b>バッチなら 1 本ずつ回すのではなく</b></p>
+<p>:func:<code style="color:#22d3bf">glassmirror.refract_rays</code> を使うこと —— あちらは光線ごとに TIR を判定して</p>
+<p>`<code style="color:#22d3bf">(方向, TIR マスク)</code>` を返す(TIR の光線は鏡面反射で埋める)。この関数は</p>
+<p>「1 本でも欠けたら答えを出さない」fail-closed 側の口として残してある。</p>
 <p>`<code style="color:#22d3bf">d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> は最後の軸をベクトルとして単位化する。</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> は入射側(</code><code style="color:#22d3bf">d·n &lt; 0</code>` になる向き)で</p>
 <p>渡すこと。逆向きに渡すと `<code style="color:#22d3bf">cos θi</code>` が負になり、例外なく誤った方向が返る。返り値は単位ベクトル</p>
 <p>(`<code style="color:#22d3bf">eta·d + (eta·cosθi − cosθt)·n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">eta = eta1/eta2</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">eta1 == eta2</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">d</code>` がそのまま</p>

@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">carve_look_at — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carve_look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))</code>(要直接调用实现,<code style="color:#22d3bf">import visualhull; visualhull.carve_look_at(eye, target=(0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;carve_look_at&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>`<code style="color:#22d3bf">carve</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">synthesize_silhouette</code><code style="color:#22d3bf"> に渡せるカメラ姿勢 </code><code style="color:#22d3bf">(R, t)</code>` を作る。</p>
+<p>:func:<code style="color:#22d3bf">look_at</code> と同じ実装の、<b>公開層から引ける名前</b>。2026-09-08 に追加した ——</p>
+<p>それまで空間彫刻の正しい姿勢ヘルパは `<code style="color:#22d3bf">fs.</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fs.op.</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fs.ledger.</code>` の</p>
+<p>どこからも引けず、`<code style="color:#22d3bf">fs.op_find(&quot;look&quot;)</code><code style="color:#22d3bf"> も 0 件だった。一方で </code><code style="color:#22d3bf">fs.look_at</code>` は</p>
+<p><b>別物</b>(`<code style="color:#22d3bf">render3d</code><code style="color:#22d3bf"> の gluLookAt 版、4x4・**−Z 前方**)なので、その </code><code style="color:#22d3bf">M[:3,:3]</code>`</p>
+<p>と `<code style="color:#22d3bf">M[:3,3]</code>` を渡すと全点がカメラ後方に落ち、<b>例外を出さずに空のシルエット</b>が</p>
+<p>返る。同じ名前で規約が逆という、いちばん静かに間違える組み合わせだった。</p>
+<p>こちらは OpenCV 規約(`<code style="color:#22d3bf">X_cam = R X + t</code>`、+Z 前方・+X 右・+Y 下)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>eye : (3,) array_like       カメラ中心(ワールド座標)。</p>
+<p>target : (3,) array_like    注視点(既定は原点)。</p>
+<p>up : (3,) array_like        上方向(視線とほぼ平行なら自動で代替軸へ切り替える)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(R (3,3), t (3,))  `<code style="color:#22d3bf">synthesize_silhouette(pts, K, R, t, size)</code>` にそのまま渡せる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">pose</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">space_carving</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:carve">carve</a> · <a style="color:#22d3bf" href="op3d:visual_hull">visual_hull</a> · <a style="color:#22d3bf" href="op3d:synthesize_silhouette">synthesize_silhouette</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: visualhull.py — 3D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

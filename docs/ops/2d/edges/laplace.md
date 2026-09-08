@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace
-examples: [gallery2d_edges, poc_focus_stacking, poc_white_balance]
+examples: [gallery2d_edges, poc_focus_stacking, poc_search_sweep_width, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -65,6 +65,7 @@ laplace 0.40 0.50
 
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
 - [poc_focus_stacking](../../../../examples/poc_focus_stacking.py) — `py -3.11 examples/poc_focus_stacking.py`
+- [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [poc_white_balance](../../../../examples/poc_white_balance.py) — `py -3.11 examples/poc_white_balance.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

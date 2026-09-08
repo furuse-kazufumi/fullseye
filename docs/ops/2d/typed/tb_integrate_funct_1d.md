@@ -64,6 +64,7 @@ tb_integrate_funct_1d 0.50 0.50
 
 次の例は元の台帳 op `integrate_funct_1d` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [poc_cold_chain_excursion](../../../../examples/poc_cold_chain_excursion.py) — `py -3.11 examples/poc_cold_chain_excursion.py`
+- [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [signal_funct1d](../../../../examples/signal_funct1d.py) — `py -3.11 examples/signal_funct1d.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

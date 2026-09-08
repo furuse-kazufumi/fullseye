@@ -1,0 +1,144 @@
+[
+ {
+  "file": "01_null_baseline.png",
+  "name": "null_baseline",
+  "caption": "真値 0.7238 m^3 / 738 kg。外接直方体と OBB は上界の中でもいちばん粗い。",
+  "shape": [
+   176,
+   427,
+   3
+  ],
+  "csv": "01_null_baseline.csv",
+  "tsv": "01_null_baseline.tsv"
+ },
+ {
+  "file": "02_closed_form.png",
+  "name": "closed_form",
+  "caption": "法線は方位 ± 90 度。向かい合う 2 台は同じ接線なので、奇数 K だけが 2K 本になる。実測は近似平行投影(60 m・4.0 mm/px)・凸な胴だけの対照群。",
+  "shape": [
+   296,
+   551,
+   3
+  ],
+  "csv": "02_closed_form.csv",
+  "tsv": "02_closed_form.tsv"
+ },
+ {
+  "file": "03_closed_form_curve.png",
+  "name": "closed_form_curve",
+  "caption": "のこぎり刃は偶数/奇数の差(奇数は接線が 2 倍立つ)。素朴な読みに沿って台数を決めると、偶数台のリグでは届かない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_persistent.png",
+  "name": "persistent",
+  "caption": "くぼみ(輪郭に出ない凹み)は台数に鈍感、脚の間(輪郭に出る凹み)は台数に敏感。",
+  "shape": [
+   272,
+   423,
+   3
+  ],
+  "csv": "04_persistent.csv",
+  "tsv": "04_persistent.tsv"
+ },
+ {
+  "file": "05_persistent_curve.png",
+  "name": "persistent_curve",
+  "caption": "同じ 1 本の掃引で 2 本の曲線。上が平ら = 何台置いても埋まったまま。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_metrics.png",
+  "name": "metrics",
+  "caption": "真値 738 kg / 胸囲 2.483 m / 重心 1.010 m。アロメトリの係数は真値で較正済み。",
+  "shape": [
+   248,
+   484,
+   3
+  ],
+  "csv": "06_metrics.csv",
+  "tsv": "06_metrics.tsv"
+ },
+ {
+  "file": "07_controls.png",
+  "name": "controls",
+  "caption": "K=12・4.0 mm/px。Steiner の予測 +3.09 %/px は**上限**として使うべきだった(§6 に理由)。",
+  "shape": [
+   248,
+   378,
+   3
+  ],
+  "csv": "07_controls.csv",
+  "tsv": "07_controls.tsv"
+ },
+ {
+  "file": "08_dilate_line.png",
+  "name": "dilate_line",
+  "caption": "予測の傾きは実測より急。膨張は画像で等方でも、水平リングでは世界の全方向を押し広げない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_hemisphere_scatter.png",
+  "name": "hemisphere_scatter",
+  "caption": "120 試行で等間隔を下回ったのは 69 件(58 %、0.5 と区別できない)。危ないのは平均ではなく上側の裾。解像度を落とした台なので絶対値は §4 より大きい。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_scene.png",
+  "name": "scene",
+  "caption": "符号つきなので 0 が暗い。横腹の帯(接線の多角形)は K=8 → 24 で細るのに、背中のくぼみを塞ぐ蓋は**そのまま残る**。",
+  "shape": [
+   753,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "11_silhouettes.png",
+  "name": "silhouettes",
+  "caption": "脚の間の空隙はどの 1 枚にも写っている(だから彫れる)。背中のくぼみは**どの 1 枚にも写らない**(だから彫れない)。",
+  "shape": [
+   1095,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "12_slice_polygon.png",
+  "name": "slice_polygon",
+  "caption": "近似平行投影。K=4 は外接長方形そのもの(比 4/π = 1.273)。縦横比は実寸に合わせてある(voxel は非等方)。",
+  "shape": [
+   519,
+   990,
+   3
+  ]
+ },
+ {
+  "file": "13_summary.png",
+  "name": "summary",
+  "caption": "台数で買える分と買えない分。真値 0.7238 m^3 / 738 kg。同じ voxel 格子の占有数で比べている。",
+  "shape": [
+   320,
+   257,
+   3
+  ],
+  "csv": "13_summary.csv",
+  "tsv": "13_summary.tsv"
+ }
+]

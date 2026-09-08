@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(193 例)
+### 2-D 画像/信号/幾何(196 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -64,6 +64,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **実写のコインを数えて測る(答えは合っているが余裕は 0.05)** — scikit-image 同梱の実写 coins(303x384)。真値 24 枚を 3 経路の一致で決め(面積の平坦域 50〜800 で 24、半径 19〜31 を明示した Hough が投票しきい 0.30〜0.50 で 24、Sobel+穴埋めで 24)、★円 1 個が成分 1 個に収まる 1 対 1 の検算も通す(数が合っていても同じものを数えているとは限らない)。★背景は行 0.427→0.161 と確かに傾くのに素の大域 Otsu が 24 枚を当てる ―― 前処理は要らなかった。★★ただし余裕は 0.05(同じ勾配をわずかに足すと 22 枚)。★★+0.30 で面積の中央値は -0.27 % しか動かないのに最悪のコインは -24.20 %、+0.40 で -46.02 %。ずれと行位置の相関は -0.878 / -0.901 で、真の面積は置き場所に依らないからこの相関はまるごと誤差。★24 個のうち 1 個は面積 9076(中央 1501 の 6 倍、Hough 半径上限からの上限 3019 の 3 倍)で背景へにじんでいる ―― 枚数が合うことと領域が正しいことは別。★gray_tophat は枚数を粘らせるが面積を 0.29 倍にする。★連結成分は 4 近傍 126 / 8 近傍 96(blob_count は 8 近傍)。円形度 0.7 で絞ると 21 枚に減る。★hough_circle_trans は半径レンジが直書きで b が未使用だったので b を半径上限に配線したが(b=0.5 は従来と同一)、峰は b=1.0 でも 19 止まり ―― 引数を足しても足りないことがある。 `py -3.11 examples/poc_real_coin_metrology.py`
 - **疎な温度センサから 3-D 熱場を復元する(格子の死角がラックを消す)** — サーバ室 12 x 8.4 x 3.0 m の温度場を式で置き、格子状の温度センサから復元してホットスポットを探す。★ゼロ点(全センサの平均 = 場は平らとみなす)は RMSE 2.192 °C でホットスポットを 1 台も見つけない。最良の RBF は 0.214 °C で 10.2 倍。★★崖は測る前に閉形式で言える: 間隔 d の 3-D 格子ではピークからいちばん遠い点がセル中心 = d√3/2 なので、見えるピークは exp(-3d²/8σ²) 倍。半減間隔 d* = 1.3596σ。幾何だけを取り出した実測との差は最大 1.2e-15 —— 完全一致。★外れたのは閉形式ではなく「現場で測れる量」のほう: 復元した場のピークには背景の復元誤差が同じ場所に載るので、素朴な実測は予測を最大 +0.2598 超過し、**崖は実際より浅く見える**。σ=0.22 m のラックは d=1.20 m で幾何の回復 0.000014(消滅)なのに素朴には 0.1609 残って見える —— 残っているのは背景の誤差。★閉形式は曲線ではなく床: 同じ d=0.60 m でも位相次第で回復は 0.0615(セル中心)から 1.0(センサ直上)まで跳ぶ。設計に使えるのは最悪位相の値だけ。★対照群 a(格子 vs 乱数、同本数): 乱数は死角を消さず、どのラックが死角に落ちるかを振るだけ。格子の最悪距離を超える乱数点は実測 6.17 %(Poisson の予測 6.58 %)。格子は幾何の下限を 1 度も割らないが乱数は 2 台で割った —— 同じ本数でも「最悪でもここまで見える」と言い切れるかが違う。★★対照群 b(補間法 3 種): 動かないのは指数(log 回復 vs d² の傾きは予測 -3.0612 に対し最大 3.05 % 差)、動くのは係数。「崖の位置は手法で動かない」という予測を外した —— 薄板スプラインは内挿なのに節点値を超えて 1.372 倍持ち上がり、半減間隔を 0.4777 → 0.6015 m(26 %)ずらす。★「持ち上がる手法は偽の峰も同じだけ立てる」も外れた: 床は最近傍 0.975 °C(雑音の 6.5 倍 = 滑らかな背景を階段で近似した段差)に対し線形 0.132 / RBF 0.164。★物差し 3 つ(場の RMSE / ピーク温度誤差 / 位置誤差)を同時に勝つ手法は無い。線形補間は d=1.20 m で評価点の 71.2 % が凸包の外に出て最近傍に化ける。★この PoC が炙り出した道具の穴を、その場で埋めた: 散らばった N-D 点から場を作る `fs.interp_scattered`(nearest / linear / rbf)。設計で効いたのは**凸包の外に出た割合を返り値に入れた**こと —— この PoC が測った 71.2 % は黙って NaN か別手法に化ける量なので、戻り値に居るべきだった。使ってみて `neighbors`(RBF を近傍だけで解く)も足した —— 全体解は O(n³) で1400 / 4000 / 8000 点が 0.55 / 1.76 / 7.53 秒。**op は使って初めて足りない引数が分かる**。 `py -3.11 examples/poc_datacenter_thermal_field.py`
 - **堆積物の在庫量(誰も測っていない山の下の地面が答えを決める)** — 鉱山・骨材・港湾の堆積物(ストックパイル)の在庫量を 3-D スキャンから出す。山と地面を別々の式で置き(安息角 37 度の円錐 3 個の和で体積が解析的に閉じる: 3572.6089 m^3)、★★**在庫量という 1 個の数字は、誰も測っていない面(山の下の地面)の仮定で決まる**ことを測る。★崖 (a) 底面: ΔV = -A・Δh の閉形式を先に印字してから実測 —— 7 通りで差 0.0000 m^3。驚きは一致ではなく大きさで、**測量では誤差とも呼ばない 5 cm が 1.269 % = かさ 1.6 t/m^3 で 72.5 t**(トラック 3 台)。★崖 (b) 遮蔽: 円錐は線織面なので可視率 = arccos((H-h_s)/(D tanφ))/π。6 通りで差 ≤ 0.0201、しかもその差はセルを 1.2→0.6→0.4 m にすると 0.0339→0.0171→0.0120 と **1 次で縮む** = 模型の誤りでなく離散化と切り分けた。★★予測を外した: 遮蔽部を補間すると体積は過小に出ると思っていた(円錐面は凹だから弦は下を通る)が、実測は **+17.20 % の過大**。裏側が法尻まで丸ごと見えないので三角形の相手が「山の上」でなく**山の外の地面**になり、稜線から 30 m 先へ張った弦の勾配 0.37 m/m が真の斜面 0.75 m/m の上を通る。「凹だから過小」は両端が山の上にあるときの話だった。★★相殺の罠: 同じ 1 か所スキャンで真の地面を底面にすると +17.20 %、現場の手(外周平均の水平底面)だと **+0.51 %**。良くなったのではなく、外周の高さも同じ補間で +0.728 m 持ち上がって引き算で消えているだけ —— **実際に見えた点だけ**で底面を決めると +12.05 % に戻る。**汚染された物差しで汚染された対象を測ると誤差は消えたように見える**。★同じ形の罠がもう 1 つ: 法尻に残土の土手を混ぜると RANSAC のほうが数字は悪い(+2.48 % vs TLS +0.61 %)が、RANSAC は土手を正しく捨てて土手なしの答え +1.91 % へ戻っただけで、TLS が良く見えるのは土手の持ち上げがうねりの偏りを打ち消したから。★外周平均の水平底面は footprint が対称なら地面の**傾きを勝手に打ち消す**(平らな対照群 +0.01 %)。残る +1.79 % は全部うねりで、**傾いた平面を当てはめると悪化する**(+1.91 %)—— 自由度を増やせば良くなる、は成立しない。★物差しで勝者が入れ替わる: 体積は水平底面が僅かに良く、重心は平面当てはめが 6 分の 1(0.07 m vs 0.42 m)。★2 つの誤差は足し算にならない(-0.70 % のはずが +0.51 %)—— 遮蔽の補間が底面を決める外周まで動かすため。★★道具のバグを見つけて直した: dem_viewshed が**目線より高いセルを軒並み「見えない」と返していた**(平地の円錐の頂点が可視 0.0、目線より高い 1541 セルの可視 0 個)。視線の標本が np.rint で目標セル自身に丸まる自己遮蔽。標本が目標セルに乗った回を数えないよう修正し、頂点 1.0 / 遮蔽率 0.5900(閉形式 0.5710)に。それまでの門が通した理由は「平地」と「壁の**向こう側**」しか見ておらず、**壁そのものが見えるか**を確かめていなかったから。★副産物: 仕込んだ安息角 37.0 度は平らな地面なら dem_slope で 36.971 度と読めるが、傾いた地面の上では 38.163 度(地面の勾配がベクトルとして足される)。 `py -3.11 examples/poc_stockpile_volume.py`
+- **多ビーム測深(音速を取り違えると外側ビームだけが壊れる)** — 多ビーム音響測深(マルチビーム)で、水柱の音速プロファイルを取り違えると**平らな海底が外側ビームで反り返る**(smile / frown)ことを、真値を自分で植えて測る。深さ 50 m の完全な水平面、音速 1520 → 1480 m/s、ビーム ±70 度 141 本、判定は実在規格 **IHO S-44 Order 1a**(TVU(50 m) = 0.8201 m)。★崖を測る前に 2 通り印字した: ラフな展開式 Δz ≈ (gD^2/2c0)tan^2θ の予測 48.15 度と、一定勾配層で光線が円弧になることから出る厳密な閉形式 48.68 度。**厳密式は当たり**(エコー検出を止めた経路の実測 48.68 度、差 2.0e-11 m)、**展開式は 0.53 度手前に外した**(45 度まで 3.0 % 以内だが 70 度で 19.4 % 過大)。★★予測を 1 つ外した: 「エコー検出は無視できる床」と見込んでいたが、**全経路の崖は 47.95 度**で 0.73 度早い。70 度でビームが照らす帯のエコー長が 21396 µs(直下の 171 倍)に伸びて非対称になり、振幅検出の頂点が手前へ寄る(-0.725 m)—— 実機が外側で位相検出に切り替える理由が出た。★対照群で犯人を切り分ける: 屈折だけ -2.6974 m に対し、角度推定の床 0.000000 m / エコー検出の床 -0.2221 m。スマイルは角度誤差でもエコー検出誤差でもなく屈折そのもの。★教科書式が実測の 34 % しかない: 70 度のフットプリントは cos^2 式 8.21 m 対 実測 24.14 m。ビーム幅が 1/cosθ で広がるので指数は 3(cos^3 式は -0.6 % で当たる)。★層内を等音速とみなす古い実装は、キャストを 2 層に切っただけで 65 度に +1.2994 m —— **実装の刻みだけで TVU を割る**(層数 16 倍で 1 次収束)。★真値なしでできる唯一の検査: 隣接測線の重なりで 2.697 m(TVU の 3.3 倍)の食い違いが出るが、**帯の真ん中では差 0.0000 m**(同じ振れ角で誤差が相殺)—— 端まで見ないと見つからない。★上向き屈折(frown)では外側ビームが海底に届かず、**深さが誤るのではなく何も記録されない**(限界角の予測 73.90 度、実測は 73.0 と 74.0 度の間)。★掃引 200 ケース(音速差 25 × 深さ 8 の格子)で ±65 度 swath の 78.0 % が Order 1a を割る。★道具の穴として beamform_snapshot / svp_ray_trace / iho_s44_tvu / crossline_discrepancy を列挙し、検証中に見つけた**片道の穴**(ベクトル版 refract の docstring が per-ray 版 refract_rays に触れていなかった)を直した。 `py -3.11 examples/poc_multibeam_bathymetry.py`
+- **家畜の体積計測(視体積交差は上界。凹みはカメラを増やしても埋まらない)** — 多視点シルエットの交差(visual hull)から家畜の体積を出し、体重へ換算する。視体積交差は**必ず上界**なので、問題は「良いか」ではなく「必ず上に出る」こと。★★閉形式の崖が**現場の目安を訂正した**: 「K 台なら K 角形」は正しくない。平行投影ではカメラ 1 台が視線に**直交する接線 2 本**を与え、しかも**向かい合う 2 台は同じ 2 本**しか与えないので、接線の本数は偶数 K なら K 本、**奇数 K なら 2K 本**。よって **3 台と 6 台は幾何としてまったく同じ**で、**13 台(実測 1.03056)が 16 台(1.04768)に勝つ**。「体重 2 % 以内」なら奇数 13 台 / 偶数 24 台 —— 円の素朴な読み (K/π)tan(π/K) は 13 台と出るので、**偶数台で組む現場は 11 台足りない見積り**を持つ。支持関数から出した楕円(a/b=2.76)の厳密値と実測は全 K で **閉形式のすぐ上**に乗り(差 +0.002〜+0.018)、下界として的中。★対照: この縮退は平行投影の性質で、距離 8 m まで近づけると 3 台 1.20699 / 6 台 1.11211 と差が 7.1 倍に開く。★★展示の中心は**消える誤差と消えない誤差を分けて数える**こと: 脚の間の幽霊は K=4 → 48 で 7.13 % → 1.37 %(5.2 倍)と素直に減るのに、**背中のくぼみはカメラ 12 倍で 3.8 ポイントしか減らない**(56.4 % → 52.6 %)。分かれ目は「凹みが輪郭に出るか」。K=48 の残差 +3.4 % の内訳はくぼみ +1.00 % / 幽霊 +1.76 %、取りこぼしは全 K で 0。★シルエット 1 画素で **+3.21 %/px**(体重 +23.7 kg)。Steiner の ΔV/V=(S/V)δ の予測 +3.09 %/px と比 1.04 で当たる(ただし押し上げ要因と押し下げ要因が偶然釣り合った旨を明記)。★物差しで勝者が変わる: 体積由来体重とアロメトリ体重は「K=24 + 2 画素収縮」が最良だが、**重心の高さでは収縮なしが勝つ**(細い脚が先に消える)。★★予想を外した: 「巻尺は凸包を測るので胸囲では 3-D 凸包が強い」と踏んだが実測 **+55.2 %** で最悪の部類 —— 体全体の凸包は腹の下を埋めるため縦断面が地面まで伸びる。**『断面の凸包』と『凸包の断面』は別物**。★上半球ランダム 8 台は等間隔と平均では互角(120 試行で 57.5 %)だが、**最悪は +30.20 %(等間隔の 2.4 倍)** —— 危ないのは平均でなく裾。★★道具の穴を見つけてその場で埋めた: 空間彫刻が要る OpenCV 規約の姿勢ヘルパが 4 層のどこからも引けず、同名の `fs.look_at`(gluLookAt・-Z 前方)を掴むと**例外なく空の hull** が返っていた。`carve_look_at` を台帳に載せ、全点がカメラ後方なら警告を出すようにした。 `py -3.11 examples/poc_livestock_body_volume.py`
 
 **photometry**
 - **天体スタックの測光精度(何枚重ねるとどこまで正確に測れるか)** — 合成星野の既知フラックスを真値に、枚数を振って測光誤差が 1/√N で下がるかを測る。宇宙線汚染で単純平均 +5.89 % に対し κ-σ +0.30 %。**選別は雑音を √2 払って系統誤差を買う取引**であることも数字で示す。 `py -3.11 examples/poc_astro_photometry.py`
@@ -285,6 +287,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **blob_analysis**
 - **融合した 2 円板を距離変換 → h-maxima の種 → 分水嶺で割る(閉形式で検算)** — blob_distance の中心値=半径、blob_seeds の種を h-maxima 閉形式と画素単位で照合、blob_split の 4 領域・前景保存を確かめる。h より低い塊にも種が立つ点と、割れ目が番号の大きい種の側へ食い込む偏りを隠さず印字する。 `py -3.11 examples/blob_split_tour.py`
+
+**detection**
+- **捜索救難の走査幅(画像から測った 1 本の数字が計画を決める)** — 空撮画像から**横距離曲線**(機体直下からの横方向距離ごとの検出確率)を測り、その面積 W = ∫p dx を**走査幅**として捜索計画へ渡す。画像処理と意思決定を 1 本の数字でつなぐ展示。★走査幅の定義そのものを実証: 形の違う 4 本の曲線(実測 p / 幅 W の矩形 / 底辺 2W の三角形 / 二峰形)を同じ面積 256.2 m に揃えると、検出割合は 0.2559 / 0.2563 / 0.2556 / 0.2566 —— **4 つとも予測 0.2562 の 0.8σ 以内**。**形は消え、面積だけが残る**。★崖は C = W v t / A = 1。閉形式を先に印字して min(1,C) = 1.0000 / 1-exp(-C) = 0.6321、矩形の対照で実測 1.0000 / 0.6348(+0.005 は航跡が有限本 n=64 のためで、厳密 1-(1-W/Wd)^64 = 0.6350)。★★予測を外した 1: 実測の p を入れると平行捜索は **0.8464** で 1.000 に届かない。min(1,C) は p が幅 W の**矩形**であること(定値域則)に依存していて、裾を引く実曲線では隣の航跡と裾が重なる。★★予測を外した 2: 「平らな曲線のほうが矩形に近く平行捜索に強い」と予測したが**逆**(0.7705 対 0.8464)。矩形に近いとは『平ら』ではなく『W の内側に立ち、外へ裾を引かない』こと(支持域/W が 2.40 対 2.25)。同条件でも**ランダム捜索では 2 本が一致する**(面積しか見ない)。★★予測を外した 3: 「端は解像度が落ちる」—— ナディア向き中心投影では**地上分解能は端まで一定**(相対ばらつき 0.0e+00)。落ちるのは cos^4・大気・軸外ぼけのほうで、f-theta なら 2.132 倍粗くなる。★★予測を外した 4: 「背景を引けば良くなる」—— 画像全体の中央値と σ で割るのは**アフィン変換で順位が変わらない**(174.4 → 172.0 m)。効くのは**場所ごと**に引いたときだけ(239.6 m)。★最適高度は内点(220 m で W = 258.1 ± 4.0 m)。ただし 220 m と 300 m は標準誤差内で**測り分けられていない**と明記。掃引速度 W·v で見ると、v ∝ min(1,h/600) の機体では最適が 420 m へ動く。★見張り役: **誤検出は端ではなく直下に集中**(0-32 m 帯 113 件 / 最外帯 0 件)—— 目標も白波も同じ cos^4 で暗くなるので、いちばんよく見える所がいちばん吠える。閾値だけで W は 406 → 170 m 動くので、**『走査幅 400 m』は誤検出率と対でなければ何も言っていない**。★素材側の穴も 1 つ: 点源を画素中心 1 点標本で描くと総フラックス誤差 4.6e-07 なのに**ピークが σ=0.9 px で 10.6 % 過大**になり、σ が横距離で変わるので横距離曲線そのものが傾く。erf で画素を厳密積分するよう直した。★★道具の穴を 4 つ見つけ、うち 1 つはその場で埋めた: op_find の語の切り出しが ASCII 限定で、**和文の複数語クエリは構造的に必ず 0 件**だった(採点する doc も docstring の 1 行目だけ)。CJK の段を足し、star_detect の docstring に分野中立の説明語を書いた。 `py -3.11 examples/poc_search_sweep_width.py`
 
 ### 3-D 点群/体積/曲面(117 例)
 
@@ -510,7 +515,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 356 ops / 66 categories。_
+_計 357 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -933,10 +938,11 @@ _計 356 ops / 66 categories。_
 - `describe` (`points → descriptor`) — D2 + A3 + extent を連結した大域形状記述子を返す。 · 例: `denoise_evolution`, `shape_desc_pose`, `shape_retrieval`
 - `shape_distance` (`descriptor, descriptor → measurement`) — 2 つの記述子間の距離。小さいほど同形状。 · 例: `moment_invariants`, `shape_desc_pose`, `shape_retrieval`
 
-### space_carving(3)
+### space_carving(4)
 - `carve` (`images → voxel`) — bounds を res^3 voxel に離散化し、全シルエット内に射影される voxel を残す(空間彫刻)。 · 例: `space_carving`
 - `visual_hull` (`images → voxel`) — 多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。 · 例: `space_carving`
 - `synthesize_silhouette` (`points → image2d`) — 3-D 点群を (K,R,t) カメラへ射影し占有画素 True のシルエット(H,W bool)を返す。 · 例: `space_carving`
+- `carve_look_at` (`vector → pose`) — ``carve`` / ``synthesize_silhouette`` に渡せるカメラ姿勢 ``(R, t)`` を作る。 · 例: なし
 
 ### structured_light(7)
 - `wrapped_phase` (`images → image2d`) — N-step 位相シフト縞画像から wrapped phase (-π, π] を求める。 · 例: `structured_light`, `structured_light_scan`
@@ -1169,7 +1175,7 @@ _計 899 ops / 48 categories。_
 - `kirsch_dir` (halcon: `kirsch_dir`) `image → image` · 例: `gallery2d_edges`
 - `frei_amp` (halcon: `frei_amp`) `image → image` · 例: `gallery2d_edges`
 - `robinson_amp` (halcon: `robinson_amp`) `image → image` · 例: `gallery2d_edges`
-- `laplace` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`, `poc_focus_stacking`, `poc_white_balance`
+- `laplace` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`, `poc_focus_stacking`, `poc_search_sweep_width`, `poc_white_balance`
 - `points_foerstner` (halcon: `points_foerstner`) `image → image` · 例: `gallery2d_edges`
 - `points_harris_binomial` (halcon: `points_harris_binomial`) `image → image` · 例: `gallery2d_edges`
 - `dots_image` (halcon: `dots_image`) `image → image` · 例: `gallery2d_edges`
@@ -1269,7 +1275,7 @@ _計 899 ops / 48 categories。_
 - `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` · 例: `gallery2d_features`
 - `elliptic_axis` (halcon: `elliptic_axis`) `region → feature` · 例: `gallery2d_features`
 - `count_channels` (halcon: `count_channels`) `color → feature` · 例: `gallery2d_features`
-- `xsk_blob_log` `image → feature` · 例: `gallery2d_features`
+- `xsk_blob_log` `image → feature` · 例: `gallery2d_features`, `poc_search_sweep_width`
 - `xsk_blob_dog` `image → feature` · 例: `gallery2d_features`
 - `xsk_blob_doh` `image → feature` · 例: `gallery2d_features`
 - `xsk_orb_count` `image → feature` · 例: `gallery2d_features`
@@ -1476,7 +1482,7 @@ _計 899 ops / 48 categories。_
 - `macro_vol_denoise` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 
 ### matching(2)
-- `ncc_locate` (halcon: `find_ncc_model`) `image → match` · 例: `gallery2d_contour_measure`, `poc_template_tracking`
+- `ncc_locate` (halcon: `find_ncc_model`) `image → match` · 例: `gallery2d_contour_measure`, `poc_search_sweep_width`, `poc_template_tracking`
 - `shape_locate` (halcon: `find_shape_model`) `image → match` · 例: `gallery2d_contour_measure`, `poc_template_tracking`
 
 ### measure1d(5)
@@ -1494,7 +1500,7 @@ _計 899 ops / 48 categories。_
 - `gdilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
 - `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
 - `gclose` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
-- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`
+- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_search_sweep_width`
 - `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
 - `sk_area_opening` `image → image` · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`, `poc_fresco_craquelure`
@@ -1511,7 +1517,7 @@ _計 899 ops / 48 categories。_
 - `gray_closing` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`, `poc_solar_el_inspection`
 - `gray_opening_shape` (halcon: `gray_opening_shape`) `image → image` · 例: `gallery2d_morphology`
 - `gray_closing_shape` (halcon: `gray_closing_shape`) `image → image` · 例: `gallery2d_morphology`
-- `gray_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_document_scan`, `poc_real_coin_metrology`
+- `gray_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_document_scan`, `poc_real_coin_metrology`, `poc_search_sweep_width`
 - `gray_bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `gray_erosion_shape` (halcon: `gray_erosion_shape`) `image → image` · 例: `gallery2d_morphology`
 - `gray_dilation_shape` (halcon: `gray_dilation_shape`) `image → image` · 例: `gallery2d_morphology`
@@ -1584,7 +1590,7 @@ _計 899 ops / 48 categories。_
 - `sk_clear_border` `region → region` · 例: `gallery2d_region`
 - `sk_find_boundaries` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
 - `cv_dist` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`
-- `erosion_circle` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`
+- `erosion_circle` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`, `poc_livestock_body_volume`
 - `dilation_circle` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`, `poc_focus_stacking`
 - `opening_circle` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_document_scan`
 - `closing_circle` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`, `poc_bev_sensor_fusion`
@@ -1749,7 +1755,7 @@ _計 899 ops / 48 categories。_
 - `cv_sharpen` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `dl_guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_solar_limb_darkening`, `poc_vessel_network`, `poc_white_balance`
+- `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_cell_counting`, `poc_document_scan`, `poc_focus_stacking`, `poc_gear_tooth_metrology`, `poc_pv_thermal_survey`, `poc_sea_ice_concentration`, `poc_search_sweep_width`, `poc_solar_limb_darkening`, `poc_vessel_network`, `poc_white_balance`
 - `gauss_image` (halcon: `gauss_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colocalization_crosstalk`, `poc_moire_screen`, `poc_prnu_camera_fingerprint`, `poc_weld_radiograph_porosity`
 - `mean_image` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_document_scan`, `poc_focus_stacking`, `poc_white_balance`
 - `binomial_filter` (halcon: `binomial_filter`) `image → image` · 例: `gallery2d_smoothing_rank`

@@ -101,12 +101,16 @@ EXTEND: 実飛行に差し替えるなら :func:`make_frame` の戻り値
     sigma は直下 0.9 px / 端 1.9 px と**横距離で変わる**ので、この偏りは
     横距離曲線そのものを傾けます。**総和が合っていることは、山の高さが
     合っている証拠になりません**。いまは erf で画素を厳密に積分しています。
-14. ★**道具の穴を 4 つ見つけました**(本体は直していません、報告のみ)。要点は
+14. ★**道具の穴を 4 つ見つけ、うち 1 つはその場で埋めました**。要点は
     「**2-D 画像から点状目標の座標を返す公開 op は :func:`fullseye.star_detect`
-    しかなく、その名前と説明が天文に閉じている**」こと —— 「小さい目標 検出」
-    「点 検出」「スポット 検出」「漂流 捜索」では ``op_find`` が **0 件**、
-    英語の "point target detection" でようやく 20 件中 14 番目に出ます。
-    残り 3 件と、埋めるべき op の具体案は §10。
+    しかなく、その名前と説明が天文に閉じている**」こと。ところが掛けて見ると
+    原因は名前ではなく **``op_find`` 側**にありました —— 語の切り出しが
+    ``[a-z0-9]+`` の ASCII 限定で、和文のクエリは語が 1 つも取れず
+    (``_WORD_RE.findall("点 検出") == []``)、しかも採点する doc は
+    docstring の **1 行目だけ**(30 文字)だったので、**和文の複数語
+    クエリは構造的に必ず 0 件**になります。docstring の大半が日本語で、
+    6 言語を配っている製品です。2026-09-08 に直しました(§10)。
+    残り 3 件と、埋めるべき op の具体案も §10。
 
 【グラウンドトゥルース】目標は**自分で植えます**。海面は
 :func:`fullseye.ledger.surface_synth_psd`(帯域 λ∈[16,120] px、Sq=0.03 の
@@ -1180,16 +1184,27 @@ def section_tool_holes():
         n = len(fs.op_find(q))
         pos = "出ない" if ranks[q] == 0 else ("%d / %d 番目" % (ranks[q], n))
         print(f"      {q:>26}{n:>8}{pos:>22}")
-    print("      日本語では 1 語も当たらない。英語の一般語でようやく 20 件中 14 番目。")
-    print("      中身は「背景 + kσ を超える局所最大 + 重心」で分野に依らないのに、")
-    print("      捜索・欠陥・粒子・医用の文脈から辿り着けない。"
-          "``peak_detect`` のような")
-    print("      分野中立な別名と、和文の説明語を台帳に足すのが筋。")
+    print("      ★**発見時は日本語で 1 語も当たらず**、英語の一般語で")
+    print("      ようやく 20 件中 14 番目だった。中身は「背景 + kσ を超える")
+    print("      局所最大 + 重心」で分野に依らないのに、捜索・欠陥・粒子・")
+    print("      医用の文脈から辿り着けない。")
+    print("      ★**原因を掛けて見たら、名前ではなく op_find 側だった**:")
+    print("        (1) 語の切り出しが ``[a-z0-9]+`` の **ASCII 限定**で、")
+    print("            ``_WORD_RE.findall('点 検出') == []`` —— 語幹の段が死に、")
+    print("            部分一致は空白ごと含む文字列を探すので必ず 0 件になる。")
+    print("        (2) 採点する doc が docstring の **1 行目だけ**(30 文字)だった。")
+    print("            説明語を本文に足しても検索には届かない。")
+    print("      ★**直した**(2026-09-08、opassist.py): CJK の連なりを語として取り、")
+    print("      当たらなければ文字 2-gram で按分する段を、**既存の点が 0 のときだけ**")
+    print("      参照する形で足した(並び順は変わらない)。採点の対象も docstring 全文へ。")
+    print("      その上で star_detect の docstring に「名前は天体だが中身は分野中立」と")
+    print("      点状目標 / 輝点 / スポット / 微小欠陥 / 粒子 の語を書いた。実測は上の表。")
     print()
     print("  ★埋めるべき op(具体案): (1) 位置指定の点源描画 "
           "``draw_point_sources(shape, rows, cols, flux, sigma)``、")
     print("     (2) 相関マップを返す ``ncc_map(image, template)``、")
-    print("     (3) 分野中立な ``peak_detect``(star_detect の別名 + 和文の説明語)、")
+    print("     (3) 分野中立な ``peak_detect``(star_detect の別名。和文の説明語と")
+    print("         op_find の和文対応は上で埋めたので、残るのは別名だけ)、")
     print("     (4) 横距離曲線 → 走査幅の ``sweep_width(p, dx)`` と")
     print("         被覆率則 ``search_detection_probability(W, v, t, A, law)``。")
     print("     (4) は画像 op ではないので台帳の外だが、"
@@ -1304,9 +1319,15 @@ def main() -> int:
     assert holes["blob_shape"] == (), holes["blob_shape"]
     assert holes["n_target_probe"] == 2, holes["n_target_probe"]
     assert holes["private_exact"], "astrostack._gaussian_star_exact が消えた"
-    # 日本語の語では 1 つも当たらない(和文の説明語が足されたらここが鳴る)
-    for q in ("小さい目標 検出", "点 検出", "スポット 検出", "漂流 捜索"):
-        assert holes["ranks"][q] == 0, (q, holes["ranks"][q])
+    # ★穴を埋めた側の門(2026-09-08)。op_find に和文の段を足し、star_detect の
+    #   docstring に分野中立の説明語を書いたので、**和文で上位に出ること**を
+    #   固定する。退行するとここが鳴る。
+    for q in ("小さい目標 検出", "スポット 検出", "漂流 捜索"):
+        assert 0 < holes["ranks"][q] <= 3, (q, holes["ranks"][q])
+    # ★「点 検出」だけは今も出ない —— 「点」1 文字は cv_canny / frei_amp のような
+    #   輪郭 op の説明にも必ず出るので、同点が並んで押し出される。和文の段が
+    #   拾えるのは「2 文字以上の語が効く」場合だけ、という限界を隠さない。
+    assert holes["ranks"]["点 検出"] == 0, holes["ranks"]["点 検出"]
     assert not holes["has_public_point"], "点源描画が公開された"
 
     if figs.errors():

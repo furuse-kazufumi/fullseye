@@ -752,8 +752,7 @@ def _full_doc(ledger_mod: str, op_name: str, info: dict) -> str:
             mod = importlib.import_module(str(info.get("module") or ledger_mod))
             fn = getattr(mod, op_name, None)
             if fn is not None and getattr(fn, "__doc__", None):
-                d = d + "
-" + fn.__doc__
+                d = d + chr(10) + fn.__doc__
         except Exception:                                # noqa: BLE001
             pass
         d = d.lower()
@@ -956,9 +955,14 @@ def find(query: str, limit: int = 20) -> list[dict]:
                     fr = _stem_fraction(q_tokens, doc)
                     score = int(round(22 * fr)) if fr else 0
                 if not score:                            # ★和文の段(2026-09-08)
+                    # 全文で拾い、**要約(名前 + 1 行 doc)に当たった分を重く**する。
+                    # 深い本文の一致だけだと同点が並び、並び順が名前のアルファベット
+                    # 順になって「どれでもよい 20 件」に見える。
                     fr = _cjk_fraction(q, hay_name + " "
                                        + _full_doc(mod_name, name, info))
-                    score = int(round(22 * fr)) if fr >= 0.5 else 0
+                    if fr >= 0.5:
+                        fs_ = _cjk_fraction(q, hay_name + " " + doc.lower())
+                        score = int(round(16 * fr + 6 * fs_))
             if score:
                 hits.append({"op": name, "ledger": mod_name, "module": info.get("module"),
                              "category": info.get("category"), "doc": doc,

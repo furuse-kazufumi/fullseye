@@ -4,7 +4,7 @@ dim: math
 category: interp_poly
 in: points × signal × points
 out: table
-examples: [poc_datacenter_thermal_field, poc_stockpile_volume]
+examples: [poc_datacenter_thermal_field, poc_multibeam_bathymetry, poc_stockpile_volume]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -112,6 +112,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_datacenter_thermal_field](../../../../examples/poc_datacenter_thermal_field.py) — `py -3.11 examples/poc_datacenter_thermal_field.py`
+- [poc_multibeam_bathymetry](../../../../examples/poc_multibeam_bathymetry.py) — `py -3.11 examples/poc_multibeam_bathymetry.py`
 - [poc_stockpile_volume](../../../../examples/poc_stockpile_volume.py) — `py -3.11 examples/poc_stockpile_volume.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

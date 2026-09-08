@@ -59,7 +59,7 @@ fail-closed: リスト長の不一致、カメラ 0 台、``res <= 0``、退化 
 
 ## 同カテゴリ(`space_carving`)
 
-[carve](carve.md) · [synthesize_silhouette](synthesize_silhouette.md)
+[carve](carve.md) · [synthesize_silhouette](synthesize_silhouette.md) · [carve_look_at](carve_look_at.md)
 
 ---
 *Provenance: visualhull.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

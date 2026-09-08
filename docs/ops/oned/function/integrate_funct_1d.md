@@ -4,7 +4,7 @@ dim: oned
 category: function
 in: signal
 out: signal
-examples: [poc_cold_chain_excursion, signal_funct1d]
+examples: [poc_cold_chain_excursion, poc_search_sweep_width, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ samples** (multiply by the physical sample spacing ``dt`` yourself);
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_cold_chain_excursion](../../../../examples/poc_cold_chain_excursion.py) — `py -3.11 examples/poc_cold_chain_excursion.py`
+- [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [signal_funct1d](../../../../examples/signal_funct1d.py) — `py -3.11 examples/signal_funct1d.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

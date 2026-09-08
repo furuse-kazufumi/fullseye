@@ -54,7 +54,7 @@ Returns
 
 ## 同カテゴリ(`space_carving`)
 
-[visual_hull](visual_hull.md) · [synthesize_silhouette](synthesize_silhouette.md)
+[visual_hull](visual_hull.md) · [synthesize_silhouette](synthesize_silhouette.md) · [carve_look_at](carve_look_at.md)
 
 ---
 *Provenance: visualhull.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

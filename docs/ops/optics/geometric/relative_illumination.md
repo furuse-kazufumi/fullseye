@@ -4,7 +4,7 @@ dim: optics
 category: geometric
 in: 
 out: pairs
-examples: [optics_imaging]
+examples: [optics_imaging, poc_search_sweep_width]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -71,6 +71,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

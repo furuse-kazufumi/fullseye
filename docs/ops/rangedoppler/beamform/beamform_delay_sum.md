@@ -4,7 +4,7 @@ dim: rangedoppler
 category: beamform
 in: beatcube
 out: signal
-examples: [fmcw_range_doppler]
+examples: [fmcw_range_doppler, poc_multibeam_bathymetry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -68,6 +68,7 @@ scalar refusals.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [fmcw_range_doppler](../../../../examples/fmcw_range_doppler.py) — `py -3.11 examples/fmcw_range_doppler.py`
+- [poc_multibeam_bathymetry](../../../../examples/poc_multibeam_bathymetry.py) — `py -3.11 examples/poc_multibeam_bathymetry.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

@@ -1,4 +1,4 @@
-# 3D operator help — 356 ops in 66 categories
+# 3D operator help — 357 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -237,9 +237,9 @@
 
 [a3_distribution](shape_descriptor/a3_distribution.md) · [d2_distribution](shape_descriptor/d2_distribution.md) · [describe](shape_descriptor/describe.md) · [extent_signature](shape_descriptor/extent_signature.md) · [shape_distance](shape_descriptor/shape_distance.md)
 
-### space_carving (3)
+### space_carving (4)
 
-[carve](space_carving/carve.md) · [synthesize_silhouette](space_carving/synthesize_silhouette.md) · [visual_hull](space_carving/visual_hull.md)
+[carve](space_carving/carve.md) · [carve_look_at](space_carving/carve_look_at.md) · [synthesize_silhouette](space_carving/synthesize_silhouette.md) · [visual_hull](space_carving/visual_hull.md)
 
 ### structured_light (7)
 

@@ -1,0 +1,9 @@
+﻿語幹,fs,fs.op,fs.ledger,op_find 件数(先頭),何が欲しかったか
+sonar,-,-,-,0 (—),音響測深そのもの
+swath,-,-,-,0 (—),swath(扇状の帯)の処理
+bathym,-,-,-,0 (—),測深・海底地形
+sound_speed,-,-,-,4 (flow_speed),音速プロファイル
+raytrace_layers,-,-,-,3 (layer_stack),層に切ったレイトレース
+tvu,-,-,-,0 (—),測量の不確かさ規格(IHO S-44)
+footprint,-,-,-,2 (sk_local_maxima),ビームの海底フットプリント
+crossline,-,-,-,9 (piv_cross_correlate),測線交差点の食い違い

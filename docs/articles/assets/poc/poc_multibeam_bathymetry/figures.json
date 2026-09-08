@@ -1,0 +1,180 @@
+[
+ {
+  "file": "01_floor.png",
+  "name": "floor",
+  "caption": "エコーは beamform_delay_sum の角度応答 × Lambert 後方散乱で海底の帯を足し上げて合成。find_peaks + peak_subbin で検出。",
+  "shape": [
+   200,
+   493,
+   3
+  ],
+  "csv": "01_floor.csv",
+  "tsv": "01_floor.tsv"
+ },
+ {
+  "file": "02_echo.png",
+  "name": "echo",
+  "caption": "長さは 125 / 2271 / 21396 µs(170 倍の開き)。直下はほぼ左右対称、外側は頂点がビーム軸より**手前**へずれる —— 振幅検出はその頂点を取るので、深さが浅く出る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_cliff.png",
+  "name": "cliff",
+  "caption": "深さ 50 m・音速差 -40 m/s。TVU = 0.820 m を割るのは全経路で 47.95 度、屈折だけなら 48.68 度 から。",
+  "shape": [
+   272,
+   543,
+   3
+  ],
+  "csv": "03_cliff.csv",
+  "tsv": "03_cliff.tsv"
+ },
+ {
+  "file": "04_smile.png",
+  "name": "smile",
+  "caption": "直下は較正済みで 0。48.0 度(直交距離 55.4 m)から IHO Order 1a を割る。展開式は外側で過大に予測する。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_controls.png",
+  "name": "controls",
+  "caption": "勾配ゼロ + 真の平均音速がゼロ点。屈折だけが m の単位で効く。",
+  "shape": [
+   224,
+   369,
+   3
+  ],
+  "csv": "05_controls.csv",
+  "tsv": "05_controls.tsv"
+ },
+ {
+  "file": "06_sweep.png",
+  "name": "sweep",
+  "caption": "Δc = -40 m/s の深水漸近値は 44.83 度。深さと一緒に許容も誤差も増えるので、比が止まる。",
+  "shape": [
+   272,
+   349,
+   3
+  ],
+  "csv": "06_sweep.csv",
+  "tsv": "06_sweep.tsv"
+ },
+ {
+  "file": "07_sweep_cliff.png",
+  "name": "sweep_cliff",
+  "caption": "どの曲線も 2·b·c₀/|Δc| の漸近値へ落ちる。浅い所ほど広い swath が使える。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_footprint.png",
+  "name": "footprint",
+  "caption": "深さ 50 m、ビーム幅 1.100 度(実測)。等音速が対照群。電子的に振ると幅も 1/cosθ で広がる。",
+  "shape": [
+   224,
+   558,
+   3
+  ],
+  "csv": "08_footprint.csv",
+  "tsv": "08_footprint.tsv"
+ },
+ {
+  "file": "09_beamwidth.png",
+  "name": "beamwidth",
+  "caption": "beamform_delay_sum の角度スペクトルの -3 dB 幅。",
+  "shape": [
+   200,
+   333,
+   3
+  ],
+  "csv": "09_beamwidth.csv",
+  "tsv": "09_beamwidth.tsv"
+ },
+ {
+  "file": "10_beam_pattern.png",
+  "name": "beam_pattern",
+  "caption": "素子 96 本・λ/2 間隔。振るほど主ローブが太る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_dtm.png",
+  "name": "dtm",
+  "caption": "測線 2 本、間隔 101 m。差は -2.70 〜 -0.00 m。重なり帯では 2 本の値が最大 2.70 m 食い違うので、格子化すると**どちらの測線の三角形を踏んだか**で値が飛び、縞になる(勾配は最大 49 度)。",
+  "shape": [
+   257,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "12_across_track.png",
+  "name": "across_track",
+  "caption": "直下は較正済みで一致。端 65 度で +2.70 m 持ち上がる —— 平らな海底が口角を上げた形に記録される。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_thermocline.png",
+  "name": "thermocline",
+  "caption": "2 点キャスト(表層と海底だけ)の一定勾配当てはめ。誤差は減るが消えない。",
+  "shape": [
+   224,
+   376,
+   3
+  ],
+  "csv": "13_thermocline.csv",
+  "tsv": "13_thermocline.tsv"
+ },
+ {
+  "file": "14_svp.png",
+  "name": "svp",
+  "caption": "等音速(水色)は直下の走時が真と一致するよう較正してある。2 点の一定勾配(橙)は平均としては近いが、混合層の段を持たないので直下ですら合わない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "15_op_holes.png",
+  "name": "op_holes",
+  "caption": "○ = 在る。件数が 0 でなくても中身は無関係(footprint → sk_median_disk)。`beamform_*` は電波レーダの語彙のまま流用した。",
+  "shape": [
+   272,
+   639,
+   3
+  ],
+  "csv": "15_op_holes.csv",
+  "tsv": "15_op_holes.tsv"
+ },
+ {
+  "file": "16_summary.png",
+  "name": "summary",
+  "caption": "直下較正は誤差を消さず、検査されない外側へ移す。",
+  "shape": [
+   440,
+   353,
+   3
+  ],
+  "csv": "16_summary.csv",
+  "tsv": "16_summary.tsv"
+ }
+]

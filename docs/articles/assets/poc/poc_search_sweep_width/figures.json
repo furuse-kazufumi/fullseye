@@ -1,0 +1,134 @@
+[
+ {
+  "file": "01_scene.png",
+  "name": "scene",
+  "caption": "左右の端が暗いのは cos^4 の減光と大気。真値の丸が空なら取りこぼし、小丸だけなら誤検出。",
+  "shape": [
+   859,
+   661,
+   3
+  ]
+ },
+ {
+  "file": "02_sweep_width_equivalence.png",
+  "name": "sweep_width_equivalence",
+  "caption": "半幅 500 m に一様に撒いた 400000 個。予測 W/2X = 0.2562、モンテカルロの標準偏差 0.0007。",
+  "shape": [
+   176,
+   420,
+   3
+  ],
+  "csv": "02_sweep_width_equivalence.csv",
+  "tsv": "02_sweep_width_equivalence.tsv"
+ },
+ {
+  "file": "03_curve_shapes.png",
+  "name": "curve_shapes",
+  "caption": "4 本とも面積 = W = 256 m。一様に撒いた目標の検出数は 4 本とも同じになる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_coverage_table.png",
+  "name": "coverage_table",
+  "caption": "W = 256 m、航跡 64 本、目標 24 万個/点。C=1 で 1.000 と 0.632 に割れる。",
+  "shape": [
+   272,
+   676,
+   3
+  ],
+  "csv": "04_coverage_table.csv",
+  "tsv": "04_coverage_table.tsv"
+ },
+ {
+  "file": "05_coverage_curves.png",
+  "name": "coverage_curves",
+  "caption": "完全平行は C=1 でちょうど 0 に落ちるが、実測の横距離曲線では 0.154 残る(裾が隣の航跡と重なるため)。ランダムは 2 本が重なる—— そちらは面積しか見ない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_altitude_sweep.png",
+  "name": "altitude_sweep",
+  "caption": "端の p が 0 でない行は視野で切られている = W は下限値。誤検出率は全高度で 1.0 件/枚に揃えてある。",
+  "shape": [
+   248,
+   483,
+   3
+  ],
+  "csv": "06_altitude_sweep.csv",
+  "tsv": "06_altitude_sweep.tsv"
+ },
+ {
+  "file": "07_altitude_sweep_line.png",
+  "name": "altitude_sweep_line",
+  "caption": "低高度では掃引幅そのものが W を縛り(表の「端の p」が0 でない行)、高高度では目標が暗くなって消える。減速する機体では最適が 220 m から 420 m へ動く。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_threshold_tradeoff.png",
+  "name": "threshold_tradeoff",
+  "caption": "だから走査幅は必ず誤検出率と対で報告する。この PoC の運用点は 1.0 件/枚。",
+  "shape": [
+   248,
+   340,
+   3
+  ],
+  "csv": "08_threshold_tradeoff.csv",
+  "tsv": "08_threshold_tradeoff.tsv"
+ },
+ {
+  "file": "09_detection_vs_false_alarm.png",
+  "name": "detection_vs_false_alarm",
+  "caption": "閾値 4.5σ、160 フレーム。よく見える所ほどよく吠える —— 検出率だけの表はこれを隠す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_lateral_range_curves.png",
+  "name": "lateral_range_curves",
+  "caption": "3 本とも誤検出 1.0 件/枚。曲線の下の面積が走査幅で、174 / 240 / 256 m。★真ん中の曲線は直下を捨てて端を拾っている —— 面積は近いが、平行捜索では損をする(§5)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_controls.png",
+  "name": "controls",
+  "caption": "止めると誤検出も減るので閾値が下がる。各条件で誤検出率を揃え直してある。",
+  "shape": [
+   224,
+   463,
+   3
+  ],
+  "csv": "11_controls.csv",
+  "tsv": "11_controls.tsv"
+ },
+ {
+  "file": "12_summary.png",
+  "name": "summary",
+  "caption": "走査幅は誤検出率と対でしか意味を持たない。C=1 の崖は 1.000 対 0.632、実曲線はそのあいだ。",
+  "shape": [
+   296,
+   366,
+   3
+  ],
+  "csv": "12_summary.csv",
+  "tsv": "12_summary.tsv"
+ }
+]

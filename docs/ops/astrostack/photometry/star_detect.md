@@ -4,7 +4,7 @@ dim: astrostack
 category: photometry
 in: image2d
 out: keypoints
-examples: [astro_stacking, poc_exoplanet_transit, poc_star_astrometry]
+examples: [astro_stacking, poc_exoplanet_transit, poc_search_sweep_width, poc_star_astrometry]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.10  # fullseye lib version this note was generated for
@@ -38,6 +38,16 @@ Returns ``(N, 2)`` float64 ``keypoints``。1 個も無ければ ``(0, 2)``
 **Raises** ``ValueError``: 2-D でない / 非有限を含む / *threshold_sigma* が
 非正 / *min_separation* が 1 未満 / *max_stars* が 1 未満の場合。
 
+★**名前は天体だが、中身は分野中立**(頑健な背景推定 + kσ 超えの局所最大 +
+重心)。**点状目標 / 輝点 / スポット / 小さい目標 / 微小欠陥 / 粒子**の
+検出と副画素位置決めに、そのまま使える —— 捜索救難の空撮で漂流物を拾う、
+蛍光顕微鏡の輝点を数える、といった用途はこれが正解の入口。2026-09-08 に
+この段を足した: それまで ``op_find("点 検出")`` / ``("スポット 検出")`` /
+``("小さい目標")`` はいずれも **0 件**で、副画素重心つきの座標列を返す
+2-D op はこれしか無いのに、和文からは辿り着けなかった
+(``poc_search_sweep_width`` が踏んだ)。領域の重心が要るなら
+:func:`blob_label` 系、極大の**マスク**だけなら ``sk_local_maxima``。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
@@ -48,6 +58,7 @@ Returns ``(N, 2)`` float64 ``keypoints``。1 個も無ければ ``(0, 2)``
 
 - [astro_stacking](../../../../examples/astro_stacking.py) — `py -3.11 examples/astro_stacking.py`
 - [poc_exoplanet_transit](../../../../examples/poc_exoplanet_transit.py) — `py -3.11 examples/poc_exoplanet_transit.py`
+- [poc_search_sweep_width](../../../../examples/poc_search_sweep_width.py) — `py -3.11 examples/poc_search_sweep_width.py`
 - [poc_star_astrometry](../../../../examples/poc_star_astrometry.py) — `py -3.11 examples/poc_star_astrometry.py`
 
 ## 型が繋がる次の op(`keypoints` を入力に取れる)
