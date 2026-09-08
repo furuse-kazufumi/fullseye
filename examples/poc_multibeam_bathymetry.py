@@ -779,11 +779,13 @@ def section_controls(scene, floor):
     only_ang = abs(out["角度推定だけ入れる"])
     only_echo = abs(out["エコー検出だけ入れる"])
     only_ref = abs(out["屈折だけ入れる(直下較正)"])
+    floor_here = max(only_ang, only_echo)
     print(f"  → ★屈折 {only_ref:.4f} m に対し、角度 {only_ang:.6f} m / "
-          f"エコー {only_echo:.6f} m。比は "
-          f"{only_ref/max(only_ang, 1e-12):.0f} 倍 / "
-          f"{only_ref/max(only_echo, 1e-12):.0f} 倍。")
-    print("     **スマイルは角度誤差でもエコー検出誤差でもない**。屈折そのもの。")
+          f"エコー {only_echo:.6f} m。")
+    print(f"     大きいほうの床でも屈折の 1/{only_ref/max(floor_here, 1e-9):.0f}。"
+          f"**スマイルは角度誤差でもエコー検出誤差でもない**。屈折そのもの。")
+    print("     ただし §2 のとおり**エコーの床は角度とともに増える**ので、"
+          "「床は一定」と書いてはいけない。")
     figs.save_table("controls", ["止めずに入れた要因", "65 度での深さ誤差 [m]"], rows,
                     title="対照群 —— 要因を 1 つずつ入れる",
                     caption="勾配ゼロ + 真の平均音速がゼロ点。屈折だけが m の単位で効く。")
