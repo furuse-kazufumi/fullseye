@@ -539,6 +539,9 @@ def section_cliff(scene):
                 pred = predict_dt_from_eps(tab, band, t, eps, delta)
                 meas = measure_dt_from_eps(tab, t, eps, delta)
                 worst_pred = max(worst_pred, abs(pred - meas))
+                if abs(pred / meas - 1.0) > worst_rel:
+                    worst_rel = abs(pred / meas - 1.0)
+                    worst_where = f"{band} {t:.0f} K ε={eps:.2f}"
                 rise = abs(meas) / (t - T_REFL_REF)
                 if eps == EPS_PAINT:
                     rise_ratio[(band, t)] = rise
