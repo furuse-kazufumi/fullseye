@@ -691,9 +691,12 @@ def section_cliff(scene):
             tab_l, forward_radiance(tab_l, t, EPS_PAINT, T_REFL_REF, 1.0, T_ATM_REF),
             EPS_PAINT, T_REFL_REF + 5.0, 1.0, T_ATM_REF)) - t)
             / (t - T_REFL_REF) * 100.0 for t in tt])
+        # ★``plot_series`` は枠外の点を**拒否する**(枠に貼り付いて本物の
+        #   データに見えるから)。発散する側は呼び手が先に切る。
+        keep = r_ref <= 60.0
         figs.save_plot("rise_ratio_curve",
                        [("放射率 5 % の誤差 / 上昇", tt, r_eps),
-                        ("T_refl 5 K の誤差 / 上昇", tt, r_ref)],
+                        ("T_refl 5 K の誤差 / 上昇", tt[keep], r_ref[keep])],
                        ylim=(0.0, 60.0),
                        xlabel="対象の温度 T_obj [K](T_refl = 300 K)",
                        ylabel="誤差 ÷ 周囲からの上昇 [%]",
