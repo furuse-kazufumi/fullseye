@@ -124,6 +124,8 @@ def _example_facts(eid: str) -> dict:
     data = entry.get("data", "unknown")
     if e2 is not None and eid.startswith("poc_"):
         gate = "tests/test_poc_scripts_run.py"
+    elif e2 is not None:
+        gate = "tests/test_example_scripts_run.py"
     elif e3 is not None:
         gate = "examples3d.py (suite runs a smoke subset)"
     else:
