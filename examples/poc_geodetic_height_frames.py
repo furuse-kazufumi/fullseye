@@ -557,7 +557,7 @@ def section_flow_direction():
     for label, terr, grad, constant in (
             ("氾濫原・勾配あり", terrain_flat, grad_flat, False),
             ("氾濫原・N 一定(対照群)", terrain_flat, grad_flat, True),
-            ("丘陵地(勾配 10 倍)", terrain_hilly, grad_hilly, False)):
+            ("丘陵地(勾配 60 倍)", terrain_hilly, grad_hilly, False)):
         h_true = terr(gx, gy)
         h_ell = h_true + geoid_height(gx, gy, constant)
         dhx, dhy = grad(gx, gy)
@@ -1028,11 +1028,12 @@ def main():
     assert fp["flips"] / fp["valid"] > 0.5, fp
     assert abs(fp["flips"] / fp["valid"] - fp["pred"]) < 0.02, fp
     assert flow["氾濫原・N 一定(対照群)"]["flips"] == 0
-    assert flow["丘陵地(勾配 10 倍)"]["flips"] / \
-        flow["丘陵地(勾配 10 倍)"]["valid"] < 0.05
-    # §6 視通は閉形式の上限を超えない。曲率のほうが 1 桁効く。
-    assert los["worst"] <= los["bound"] + 1e-6, los
-    assert los["drop_max"] > 5.0 * los["worst"], los
+    assert flow["丘陵地(勾配 60 倍)"]["flips"] / \
+        flow["丘陵地(勾配 60 倍)"]["valid"] < 0.05
+    # §6 視通は**絞ったほうの**上限を超えない(素朴な上限は 50 倍ゆるい)。
+    assert los["worst"] <= los["tight"] + 1e-6, los
+    assert los["worst"] < 0.1 * los["bound"], "素朴な上限が実は妥当だった"
+    assert los["drop_max"] > 50.0 * los["worst"], los
     assert los["flips"] / los["pairs"] < 0.05, los
     # §7 測地成果は数百 m。相対検査は 3 桁分盲目。ppm は長半径の差で説明できる。
     assert 250.0 < datum["mean"] < 700.0, datum["mean"]
