@@ -557,6 +557,17 @@ def section_cliff(scene):
     print(f"     周囲からの上昇 (T−T_refl) で、その比は "
           f"{100*rise_ratio[('LWIR', 305.0)]:.1f} %(305 K)→ "
           f"{100*rise_ratio[('LWIR', 800.0)]:.1f} %(800 K)で**低温ほど急**。")
+    # 「T の 2 乗で増える」を主張のまま置かず、傾きを実測する(fs.poly_fit)。
+    ts_fit = np.linspace(310.0, 900.0, 25)
+    dt_fit = np.array([abs(measure_dt_from_eps(tabs["LWIR"], t, EPS_PAINT, 0.05))
+                       for t in ts_fit])
+    coef, cond = fs.poly_fit(np.log(ts_fit), np.log(dt_fit), 1)
+    slope = float(np.asarray(coef)[0])
+    print(f"  → 「T² で増える」を主張のまま置かない: log|ΔT| を log T に "
+          f"fs.poly_fit(次数 1)で当てると **傾き {slope:.3f}**"
+          f"(条件数 {float(cond):.1f})。")
+    print("     厳密に 2 でないのは λ_eff が温度とともに短波側へ動くから ——")
+    print("     ΔT = (λ_eff(T)·T²/c2)·δ·(1−L_r/L_o) の λ_eff(T) の分だけ 2 を下回る。")
     figs.save_table("emissivity_cliff",
                     ["帯域", "T [K]", "ε", "Δε/ε", "予測 ΔT [K]", "実測 ΔT [K]",
                      "差", "|ΔT|/(T−T_refl)"], rows,
