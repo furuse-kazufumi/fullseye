@@ -3132,9 +3132,16 @@ def _inverted(a, mode):
     return out
 
 
-def _invert_report(a, inv, claim):
-    """反転が乗る画素 ``claim`` での見え方。``claim`` は [0,1] の重み。"""
-    cr = _contrast_field(a, inv)
+def _invert_report(a, out, claim):
+    """反転が乗る画素 ``claim`` での見え方。``claim`` は [0,1] の重み。
+
+    ★測るのは「地 ``a``」と「**実際に置かれた色** ``out``」の比であって、
+    「地」と「理想の反転色」の比ではない。この 2 つは ``alpha`` や被覆率が
+    1 未満のときに逆の答えを出す —— 黒地に ``alpha=0.5`` の補色は中間調に
+    なるが、黒の上では比 5.28 で十分見える。理想の色で測ると、そこを
+    「見えない」と言ってしまう(逆に、中間調の地では本当に消える)。
+    """
+    cr = _contrast_field(a, out)
     take = claim >= 0.5
     n = int(np.count_nonzero(take))
     if n == 0:
