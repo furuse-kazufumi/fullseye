@@ -317,8 +317,8 @@ class BandTable:
         ``(H, W)`` を渡すには呼び手が平らにして戻す。§7 の穴の 1 つ。
         """
         arr = np.asarray(t_k, np.float64)
-        got = fs.interp_linear(self.t_grid, self.l_grid, arr.ravel())
-        return float(got) if arr.ndim == 0 else np.asarray(got).reshape(arr.shape)
+        got = np.asarray(fs.interp_linear(self.t_grid, self.l_grid, arr.ravel()))
+        return float(got[0]) if arr.ndim == 0 else got.reshape(arr.shape)
 
     def temperature(self, l_w, allow_out: bool = False):
         """帯域放射輝度 → T [K]。``allow_out=True`` なら範囲外を NaN で返す。
