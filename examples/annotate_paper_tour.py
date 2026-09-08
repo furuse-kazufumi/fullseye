@@ -147,11 +147,80 @@ def section_panel_label():
             "upper_ok": same_up, "bad_corner_rejected": bad_corner}
 
 
+def section_invert():
+    """反転色(annotate_invert 族)—— 崖の位置を閉形式で当ててから描く。
+
+    反転色は「地の明暗を知らなくても見える色で描く」ための古典手だが、
+    **中間調では反転しても同じ色になる**。ここでは
+
+    1. 全 256 階調で補色とのコントラスト比を測り、消える帯を特定する
+       (WCAG の式を**この場で書き下して**照合 —— op で op を測らない)、
+    2. 逃げ道 ``mode="contrast"`` が全階調で 4.58 以上を出すことを確かめる、
+    3. 左右に明→暗の傾斜を持つ地に線と領域を反転色で描き、**帯の位置が
+       予測どおり**であることを画素で確かめる
+
+    の 3 つを行う。
+    """
+    def wcag(v):                              # op の実装とは別に書き下した零点
+        v = np.asarray(v, dtype=np.float64)
+        return np.where(v <= 0.04045, v / 12.92, ((v + 0.055) / 1.055) ** 2.4)
+
+    levels = np.arange(256) / 255.0
+    lo, hi = wcag(levels), wcag(1.0 - levels)
+    cr = (np.maximum(lo, hi) + 0.05) / (np.minimum(lo, hi) + 0.05)
+    bad = np.where(cr < A.INVERT_MIN_CONTRAST)[0]
+    assert (int(bad.min()), int(bad.max()), int(bad.size)) == (113, 142, 30), bad
+    assert round(float(cr[128]), 3) == 1.014, cr[128]
+    print(f"  補色が消える帯: v ∈ [{bad.min()}, {bad.max()}] の {bad.size}/256 階調 "
+          f"({100.0 * bad.size / 256:.1f} %)、v=128 の比は {cr[128]:.3f}(1.0 = 同じ色)")
+
+    strip = np.tile(levels, (4, 1))
+    esc = A.annotate_invert_visibility(strip, np.ones(strip.shape, bool), mode="contrast")
+    assert esc["min_contrast"] >= 4.58, esc
+    assert esc["invisible_fraction"] == 0.0, esc
+    print(f'  逃げ道 mode="contrast": 全 256 階調で最悪 {esc["min_contrast"]:.2f} '
+          f"(連続の下界 1.05/√0.0525 = 4.583)")
+
+    # 明 → 暗の横傾斜。x が真ん中に来るところで補色が消える
+    ramp = np.tile(np.linspace(1.0, 0.0, PW), (PH, 1))
+    line = [(6.0, PH * 0.35), (PW - 7.0, PH * 0.35)]
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        panel = A.annotate_invert_path(ramp, line, width=3.0)
+    assert any("invisible" in str(w.message) for w in caught), "傾斜の中央で警告が出るはず"
+    row = int(round(PH * 0.35))
+    delta = np.abs(panel[row] - ramp[row])
+    dead = np.where(delta < 1.0 / 255.0)[0]
+    dead = dead[(dead >= 6) & (dead <= PW - 7)]              # 線が乗る範囲だけ見る
+    want = int(round((1.0 - 128.0 / 255.0) * (PW - 1)))      # v=128 になる列(閉形式)
+    assert abs(int(np.median(dead)) - want) <= 2, (np.median(dead), want)
+    print(f"  傾斜の上の線: 消える列の中央は {int(np.median(dead))}(閉形式の予測 {want})、"
+          f"消える幅 {dead.size} 列")
+
+    # 同じ地に、領域を fill と margin で。margin は中身を触らない
+    m = np.zeros((PH, PW), bool)
+    m[int(PH * 0.55):int(PH * 0.85), 20:PW - 20] = True
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        panel = A.annotate_invert(panel, m, draw="margin", width=2)
+        inside = A.annotate_invert(ramp, m, draw="fill")
+    cy, cx = int(PH * 0.70), PW // 2
+    assert panel[cy, cx] == ramp[cy, cx], "margin は中身を触らない"
+    assert not np.isclose(inside[cy, cx], ramp[cy, cx], atol=1e-6) or \
+        abs(ramp[cy, cx] - 0.5) < 1e-3, "fill は中身を反転する(中間調は除く)"
+    panel = A.annotate_invert(panel, m, draw="margin", width=2, mode="contrast")
+    return (np.repeat(panel[..., None], 3, axis=2),
+            {"invisible_levels": int(bad.size), "cr_at_128": float(cr[128]),
+             "escape_min_contrast": float(esc["min_contrast"]),
+             "dead_columns": int(dead.size)})
+
+
 def run() -> dict:
-    """全 5 節を回し、真値との照合結果と組んだ図を返す(失敗は assert で落ちる)。"""
+    """全 6 節を回し、真値との照合結果と組んだ図を返す(失敗は assert で落ちる)。"""
     t0 = time.perf_counter()
     panel_a, r1 = section_text_path()
     r2 = section_panel_label()
+    panel_c, r3 = section_invert()
     # 2 パネルの図: (a) 経路に沿う文字、(b) 目盛りつきの空の枠 —— それぞれ隅に文字を置く
     panel_b = np.full((PH, PW, 3), 0.08)
     ax = A.axes_transform((40, 20, 160, 90), (0.0, 1.0), (0.0, 1.0))
