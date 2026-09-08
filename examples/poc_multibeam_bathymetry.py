@@ -984,8 +984,8 @@ def section_footprint(scene, floor):
             xlim=(-90.0, 90.0),
             title="配列の角度スペクトル(beamform_delay_sum)",
             caption=f"素子 {N_ELEM} 本・λ/2 間隔。振るほど主ローブが太る。")
-    return {"widths": widths, "foot_meas": foot_meas, "foot2": foot2,
-            "foot3": foot3, "rows_bw": rows_bw}
+    return {"widths": widths, "foot_meas": foot_meas, "foot_iso": foot_iso,
+            "foot2": foot2, "foot3": foot3, "rows_bw": rows_bw}
 
 
 # --------------------------------------------------------------------------- #
