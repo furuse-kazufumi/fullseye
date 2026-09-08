@@ -1474,7 +1474,7 @@ def section_op_holes(unc, units):
     print("      method='mad')` → 0.0(`method='clip'` なら 0.567)。")
     print("  ★次に埋めるべき op(この PoC を書いていて欲しかった順):")
     print("    1. `planck_radiance(wavelength_um, temperature_k)` —— 分光放射輝度。")
-    print("       λ の単位を**引数名で強制**する(§5 の例外 2 件はこれで消える)。")
+    print("       λ の単位を**引数名で強制**する(§5 の λ 取り違えはこれで消える)。")
     print("    2. `band_radiance(band, temperature_k)` / `radiance_to_temperature` ——")
     print("       帯域積分と、その単調な逆変換。校正範囲の外は fail-closed。")
     print("    3. `emissivity_correct(l_meas, eps, t_refl, tau, t_atm)` —— 現場の式。")
