@@ -3306,10 +3306,10 @@ def annotate_invert(img, mask, draw="fill", width=1.5, mode="complement", alpha=
         ring = ndimage.binary_dilation(b, iterations=n) ^ ndimage.binary_erosion(b, iterations=n)
         wgt = ring.astype(np.float64)
     claim = wgt * float(alpha)
-    inv = _inverted(a, mode)
-    _invert_guard(_invert_report(a, inv, claim), mode, min_contrast, on_invisible,
+    out = _invert_blend(a, claim, mode)
+    _invert_guard(_invert_report(a, out, claim), mode, min_contrast, on_invisible,
                   "annotate_invert")
-    return _invert_blend(a, claim, mode)
+    return out
 
 
 def annotate_invert_path(img, points, width=1.5, closed=False, dash=None,
