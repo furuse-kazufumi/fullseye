@@ -472,10 +472,23 @@ def section_scene():
         cases.append((label, err))
         print(f"  {label:<24} 往復誤差 rms = {err:.3e} K")
     # NETD が本当に仕様どおり効いているか、`fs.noise_sigma` で逆に測り返す。
-    flat = cam.to_dn(np.full((64, 64), l_true), rng, quantize=True)
-    sig = float(fs.noise_sigma(flat.astype(np.float64), method="mad"))
-    print(f"  平坦面 64x64 の DN 雑音を fs.noise_sigma(MAD) で測り返すと "
-          f"{sig:.3f} DN(注入 {cam.sigma_dn:.3f} DN、量子化 +1/√12 込みで整合)")
+    flat_c = cam.to_dn(np.full((64, 64), l_true), rng, quantize=False)
+    flat_q = np.rint(flat_c)
+    sig_c = float(fs.noise_sigma(flat_c, method="mad"))
+    sig_q = float(fs.noise_sigma(flat_q, method="mad"))
+    sig_qc = float(fs.noise_sigma(flat_q, method="clip"))
+    tiny = np.rint(1000.0 + rng.normal(0.0, 0.5, (64, 64)))
+    sig_tiny = float(fs.noise_sigma(tiny, method="mad"))
+    print(f"  平坦面 64x64 の DN 雑音を測り返す(注入 {cam.sigma_dn:.3f} DN): "
+          f"連続値 {sig_c:.3f} / **整数に丸めた後 {sig_q:.3f}** / "
+          f"clip 法なら {sig_qc:.3f}")
+    print(f"  ★**道具の穴を 1 つ見つけた**: `fs.noise_sigma(method='mad')` は"
+          f"整数値の画像で階段状になる ——")
+    print("     MAD は |x−中央値| の中央値なので、値が整数なら MAD も整数、"
+          "推定値は 1.4826 の倍数しか取れない。")
+    print(f"     σ=0.5 の整数画像で試すと返り値は **{sig_tiny:.1f}**"
+          " —— 「この画像に雑音は無い」と読める、もっともらしい嘘。")
+    print("     (`method='clip'` は同じ画像で正しく出る。修正はしない = 報告のみ。)")
     print("  → **ここが床**。以下で見る誤差はすべてこの 3 桁以上 上にある。")
     figs.save_table(
         "floor", ["条件", "往復誤差 rms [K]"],
