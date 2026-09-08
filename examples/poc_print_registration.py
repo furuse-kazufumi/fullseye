@@ -1227,7 +1227,7 @@ def section8_metrics(sweep_am, zero):
                for lab, ests in methods.items()]
             + [("公差 %.1f px" % TOL_PX, SWEEP, np.full(SWEEP.size, TOL_PX))],
             xlabel="仕込んだずれ t [px]", ylabel="推定した |ずれ| [px]",
-            title="4 つの手法(Y 版 0°)",
+            title="5 つの手法(Y 版 0°)",
             caption="素の相関だけが折り返して公差の線を何度も下に横切る = "
                     "不合格の版を合格と言う")
     return res
