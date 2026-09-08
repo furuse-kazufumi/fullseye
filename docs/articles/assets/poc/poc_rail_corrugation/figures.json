@@ -90,9 +90,9 @@
   "tsv": "08_aliasing.tsv"
  },
  {
-  "file": "09_aliasing_wave.png",
-  "name": "aliasing_wave",
-  "caption": "標本の点だけを見ると、長い波が 1 本あるようにしか見えない",
+  "file": "09_aliasing_seen.png",
+  "name": "aliasing_seen",
+  "caption": "0.750 m の周期がきれいに立つ。振幅 0.05 mm の「長いうねり」があるようにしか見えない",
   "shape": [
    360,
    560,
@@ -100,7 +100,17 @@
   ]
  },
  {
-  "file": "10_asymmetric_chord.png",
+  "file": "10_aliasing_truth.png",
+  "name": "aliasing_truth",
+  "caption": "25 周期ぶんの波状摩耗の上を、標本は 4 点しか通らない。点だけ見れば上の図の滑らかなうねりになる",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_asymmetric_chord.png",
   "name": "asymmetric_chord",
   "caption": "",
   "shape": [
@@ -108,7 +118,7 @@
    339,
    3
   ],
-  "csv": "10_asymmetric_chord.csv",
-  "tsv": "10_asymmetric_chord.tsv"
+  "csv": "11_asymmetric_chord.csv",
+  "tsv": "11_asymmetric_chord.tsv"
  }
 ]

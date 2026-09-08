@@ -558,7 +558,7 @@ def section_methods_cliff(hi=1) -> dict:
     for d in DS:
         row = [visible(d, s)]
         for m in curves:
-            v = recover(hi, d, "worst", m, 0.0)["att"]
+            v = recover(hi, d, "worst", m, 0.0)["geo"]
             curves[m].append(v)
             row.append(v)
         print("     %5.2f    %8.4f %8.4f %8.4f %8.4f" % tuple([d] + row))

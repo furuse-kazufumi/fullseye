@@ -447,13 +447,23 @@ def section_sampling():
         ghost_wave = (cf[0] * np.cos(2 * np.pi * X[m] / la)
                       + cf[1] * np.sin(2 * np.pi * X[m] / la) + cf[2])
         figs.save_plot(
-            "aliasing_wave",
-            [("真値(30 mm の波状摩耗)", X[m], y30[m]),
-             ("0.25 m 標本の点", xc[mc], ys[mc]),
+            "aliasing_seen",
+            [("0.25 m 標本の点", xc[mc], ys[mc]),
              ("標本点に当てた %.2f m の波" % la, X[m], ghost_wave)],
             xlabel="キロ程 x [m]", ylabel="高さ [mm]",
-            title="30 mm の波状摩耗が 0.75 m のうねりに化ける",
-            caption="標本の点だけを見ると、長い波が 1 本あるようにしか見えない")
+            title="検測車の記録に見えるもの(0.25 m 標本)",
+            caption="0.750 m の周期がきれいに立つ。振幅 0.05 mm の"
+                    "「長いうねり」があるようにしか見えない")
+        mt = (X >= 60.0) & (X <= 60.75)
+        mtc = (xc >= 60.0) & (xc <= 60.75)
+        figs.save_plot(
+            "aliasing_truth",
+            [("実際にそこにあるもの(λ=30 mm)", X[mt], y30[mt]),
+             ("0.25 m 標本の点", xc[mtc], ys[mtc])],
+            xlabel="キロ程 x [m]", ylabel="高さ [mm]",
+            title="同じ区間を 0.75 m だけ拡大する",
+            caption="25 周期ぶんの波状摩耗の上を、標本は 4 点しか通らない。"
+                    "点だけ見れば上の図の滑らかなうねりになる")
     s = {c[0]: (1.0 if c[0] >= 2 * CAR_DX else 0.0) for c in COMPONENTS}
     yc0 = profile(scale=s)[::step]
     la30 = _alias(0.030, CAR_DX)
