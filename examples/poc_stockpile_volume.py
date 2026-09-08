@@ -542,14 +542,17 @@ def section_cancellation(truth):
     if figs.enabled():
         shade = np.asarray(fs.ledger.dem_hillshade(yard.surf, CELL, azimuth_deg=135.0,
                                                    altitude_deg=45.0))
+        lift = dsm - yard.surf
         figs.save_grid("scene",
-                       [shade, vis.astype(float), dsm - yard.surf,
+                       [shade, vis.astype(float), lift,
                         np.where(yard.foot, dsm - yard.ground, 0.0)],
-                       ["表面(陰影)", "1 か所から見えた所(白)",
-                        "補間の誤差 [m]", "測った厚み [m]"],
+                       ["表面(陰影・南東の光)", "見えた所(明)/ 遮蔽(暗)",
+                        "補間のずれ [m](0 が暗)", "測った厚み [m]"],
                        ncols=2, signed=[False, False, True, False],
                        title="1 か所スキャン —— 見えない裏側は測定でなく補間",
-                       caption=f"外周の高さが {ring_fill - ring_true:+.3f} m 持ち上がる。"
+                       caption=f"補間のずれは {lift.min():+.2f} 〜 {lift.max():+.2f} m"
+                               f"(0 の所が暗い = 触っていない)。外周の高さも"
+                               f" {ring_fill - ring_true:+.3f} m 持ち上がる —— "
                                "山も底も同じ向きにずれるので、引き算で見えなくなる。")
     return out
 
