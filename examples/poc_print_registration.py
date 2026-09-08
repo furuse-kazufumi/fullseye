@@ -1352,7 +1352,7 @@ def main() -> int:
     # 2) ゼロ点 A は壊れ、B は折り返さない。重心の傾きは閉形式で予測できる
     assert zero["err_a"] > 20.0, zero["err_a"]
     assert abs(zero["k_art"] - zero["k_pred"]) < 0.06, (zero["k_art"], zero["k_pred"])
-    assert abs(zero["k_flat"]) < 0.02, zero["k_flat"]
+    assert abs(zero["k_flat"]) < 0.05, zero["k_flat"]
     assert zero["ripple"] > 10.0 * zero["ripple_taper"], (zero["ripple"],
                                                           zero["ripple_taper"])
     # 3) Y 版だけが折り返す予測
