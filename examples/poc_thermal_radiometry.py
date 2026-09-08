@@ -567,11 +567,11 @@ def section_cliff(scene):
     ts_fit = np.linspace(310.0, 900.0, 25)
     dt_fit = np.array([abs(measure_dt_from_eps(tabs["LWIR"], t, EPS_PAINT, 0.05))
                        for t in ts_fit])
-    coef, cond = fs.poly_fit(np.log(ts_fit), np.log(dt_fit), 1)
-    slope = float(np.asarray(coef)[0])
+    fit = fs.poly_fit(np.log(ts_fit), np.log(dt_fit), 1)
+    slope = float(np.asarray(fit["coeffs"])[0])
     print(f"  → 「T² で増える」を主張のまま置かない: log|ΔT| を log T に "
           f"fs.poly_fit(次数 1)で当てると **傾き {slope:.3f}**"
-          f"(条件数 {float(cond):.1f})。")
+          f"(条件数 {float(fit['cond']):.1f}、残差 rms {float(fit['rms_residual']):.4f})。")
     print("     厳密に 2 でないのは λ_eff が温度とともに短波側へ動くから ——")
     print("     ΔT = (λ_eff(T)·T²/c2)·δ·(1−L_r/L_o) の λ_eff(T) の分だけ 2 を下回る。")
     figs.save_table("emissivity_cliff",
