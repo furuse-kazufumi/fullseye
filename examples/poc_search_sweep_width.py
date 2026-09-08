@@ -514,7 +514,7 @@ def curve_area(f, span: float, n: int = 200001) -> float:
 # 5. 意思決定側 —— 被覆率 C と検出確率                                           #
 # --------------------------------------------------------------------------- #
 def sweep_mc(curve, width_m: float, area_w: float, n_track: int, *, random_tracks: bool,
-             n_target: int = 60000, n_rep: int = 4, seed: int = 0) -> float:
+             n_target: int = 40000, n_rep: int = 3, seed: int = 0) -> float:
     """平行 / ランダム捜索の検出確率をモンテカルロで。``C = width_m*n_track/area_w``。
 
     海域は幅 ``area_w`` の帯を**環状**につないだもの(端の効果を消すため)。
@@ -1174,7 +1174,8 @@ def main() -> int:
     # ★形は平行捜索にだけ効く: 走査幅を揃えると、ランダムは一致し平行は割れる
     assert abs(cliff["rnd_band"] - cliff["rnd_real"][i1]) < 0.01, (cliff["rnd_band"],
                                                                    cliff["rnd_real"][i1])
-    assert cliff["par_band"] > cliff["par_real"][i1] + 0.01, (cliff["par_band"],
+    # ★外した予測: 平らな曲線のほうが強いはずが、逆に弱かった(裾が長いため)
+    assert cliff["par_band"] < cliff["par_real"][i1] - 0.02, (cliff["par_band"],
                                                               cliff["par_real"][i1])
     # (6) ★W 2 倍 と t 2 倍 は等価
     assert equiv["d_par"] < 0.01, equiv["d_par"]

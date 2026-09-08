@@ -855,7 +855,7 @@ def section_controls(truth):
             "base": base, "vals": vals, "win": win, "se": se}
 
 
-def section_op_hole():
+def section_op_hole(per_px: float):
     print("\n=== 7. 道具の穴 —— 4 層すべて引いてから言う ===")
     print("  ★(1) ``look_at`` の名前衝突。``fs.op_find('look')`` は **0 件**、")
     print("     ``fs.look_at`` は render3d の gluLookAt 版(4x4・**-Z 前方**)。")
@@ -884,7 +884,7 @@ def section_op_hole():
     print("  (3) ``synthesize_silhouette`` は膨張しかできず、収縮は ``fs.op.erosion_circle``")
     print("     (``a`` が半径 1〜4 の bucket)に取りに行く。既定 ``dilate=1`` は recall の")
     print(f"     ための保守側で docstring も明言しているが、体積用途では "
-          f"{'+2.6' if True else ''} % 級の下駄になる —— そこは書かれていない。")
+          f"{per_px:+.2f} % の下駄になる —— そこは書かれていない。")
     print("  → 次に埋めるべき op: ``vh_look_at``(OpenCV 規約の (R,t) を公開層へ)/ ")
     print("     ``visual_hull_ring(K, dist, f)`` のリグ生成 / ``silhouette_erode`` /")
     print("     ``voxel_volume(occ, spacing)``(3 軸 spacing 込み)/ 2-D の ``convex_perimeter``。")
@@ -961,7 +961,7 @@ def main():
     pers = section_persistent(truth)
     mets = section_metrics(truth, nulls, pers)
     ctl = section_controls(truth)
-    hole = section_op_hole()
+    hole = section_op_hole(ctl["per_px"])
     section_figures(truth, pers)
 
     print("\n=== 8. まとめ —— 何がどれだけ効いたか ===")
@@ -969,7 +969,7 @@ def main():
         ("ゼロ点: 外接直方体", f"{_pct(occ_volume(nulls['外接直方体']), truth['true']):+.1f} %"),
         ("ゼロ点: 1 枚 x 一定奥行き",
          f"{_pct(occ_volume(nulls['1 枚 x 一定奥行き']), truth['true']):+.1f} %"),
-        ("凸包(巻尺が測るもの)", f"{_pct(occ_volume(nulls['凸包']), truth['true']):+.1f} %"),
+        ("凸包(腹の下まで埋まる)", f"{_pct(occ_volume(nulls['凸包']), truth['true']):+.1f} %"),
         ("視体積交差 K=4", f"{100 * (pers['out'][4]['ratio'] - 1):+.1f} %"),
         ("視体積交差 K=8", f"{100 * (pers['out'][8]['ratio'] - 1):+.1f} %"),
         ("視体積交差 K=24", f"{100 * (pers['out'][24]['ratio'] - 1):+.1f} %"),
