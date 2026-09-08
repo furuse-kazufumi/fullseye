@@ -1324,10 +1324,10 @@ def section9_tool_gaps():
     print("  次にやるべきこと: (a) の穴を `halftone_screen(image, lpi, angle)` と")
     print("  `screen_angle_estimate(image)` で埋めるなら、**3 節の不定性を")
     print("  docstring に測った数字で書くこと**。「相関で版ずれが測れます」とだけ")
-    print("  書いた op を出すと、利用者は 8 節の見落とし(%d 回中 %d 回)を静かに"
-          % (SWEEP.size, 0))
-    print("  踏みます。返り値には**必ず不定性の格子**(p と θ から作れる)を")
-    print("  添えて、「この答えは Λ_θ を法とする」と型で言うのが正しい。")
+    print("  書いた op を出すと、利用者は 8 節の見落とし(不合格の版を「合格」と")
+    print("  言った回)を静かに踏みます。返り値には**必ず不定性の格子**")
+    print("  (p と θ から作れる)と、8 節の二段で使った**粗の誤差 / セルの半径**")
+    print("  の比を入れて、「この答えは Λ_θ を法とする」と型で言うのが正しい。")
     return {"fa_err": fa_err, "fa_ratio": float(fa["inlier_ratio"]),
             "fa_lat": fa_lat}
 
