@@ -579,9 +579,12 @@ def section_null(truth):
 
 def section_closed_form(truth):
     print("\n=== 3. 崖 —— 必要な台数は測る前に閉形式で出る ===")
-    print("  カメラ 1 台 = 視線に直交する接線 2 本。法線は**方位 ± 90 度**。")
-    print("  奇数 K だと 2 群が重ならず 2K 本 = 偶数より得をする。")
-    print(f"  {'K':>4}{'接線':>6}{'閉形式(楕円)':>16}{'目安(円)':>12}{'実測(60 m)':>14}{'差':>10}")
+    print("  ★「K 台なら K 角形」は正しくない。**平行投影ではカメラ 1 台が視線に")
+    print("     直交する接線 2 本**を与え、法線は方位 ± 90 度。しかも**向かい合う")
+    print("     2 台は同じ 2 本**しか与えない(平行投影の輪郭は裏表で一致する)ので、")
+    print("     接線の本数は偶数 K なら K 本、奇数 K なら **2K 本**になる。")
+    print(f"  {'K':>4}{'接線':>6}{'閉形式(楕円)':>16}{'円 n 角形':>12}"
+          f"{'素朴な読み':>12}{'実測(60 m)':>14}{'差':>10}")
     cloud = surface_cloud(legs=False, hollow=False)
     n_true = int(truth["conv"].sum())
     rows, meas, worst = [], {}, 0.0
@@ -592,47 +595,59 @@ def section_closed_form(truth):
         meas[K] = r
         worst = max(worst, abs(r - pred))
         rows.append((str(K), str(len(ring_normals(K))), f"{pred:.5f}",
-                     f"{ring_ratio_circle(K):.5f}", f"{r:.5f}", f"{r - pred:+.5f}"))
+                     f"{ring_ratio_circle(K):.5f}", f"{naive_ratio_circle(K):.5f}",
+                     f"{r:.5f}", f"{r - pred:+.5f}"))
         print(f"  {K:>4}{len(ring_normals(K)):>6}{pred:>16.5f}"
-              f"{ring_ratio_circle(K):>12.5f}{r:>14.5f}{r - pred:>10.5f}")
-    print(f"  → 実測は閉形式の**すぐ上**(差 0 〜 {worst:+.5f}、符号は一貫して正)。")
-    print("     差が K とともに増えるのは §6 の被覆マージン(1 画素太る側の丸め)。")
-    print(f"  ★3 台 {meas[3]:.5f} と 6 台 {meas[6]:.5f} が**同じ**。閉形式でも "
-          f"{ring_ratio_ellipse(A, B, 3):.5f} / {ring_ratio_ellipse(A, B, 6):.5f} で一致。")
-    print("     胴の断面が点対称なので、向かい合うカメラの接線が同じ 2 本になる。")
+              f"{ring_ratio_circle(K):>12.5f}{naive_ratio_circle(K):>12.5f}"
+              f"{r:>14.5f}{r - pred:>10.5f}")
+    print(f"  → 実測は**全 K で閉形式の上**(差 +0.002 〜 +{worst:.5f})。")
+    print("     差の正体は §6 の被覆マージン(1 画素触れば前景 = 太る側の丸め)。")
+    print("     **閉形式は下界として当たった**。")
+    print(f"  ★3 台 {meas[3]:.5f} と 6 台 {meas[6]:.5f}。閉形式は "
+          f"{ring_ratio_ellipse(A, B, 3):.5f} と {ring_ratio_ellipse(A, B, 6):.5f} で "
+          "**厳密に同数**")
+    print("     —— 接線の集合が完全に一致するから(3 台の ±90 度 = 6 台の ±90 度)。")
+    print(f"     実測が {meas[6] - meas[3]:+.5f} だけ違うのは幾何ではなく離散化: ")
+    print("     6 台では同じ接線を 2 回測るので、量子化の厳しい方が採られる。")
+    print("     **情報としては 3 台と 6 台は同じ**。")
+    # 有限距離だと向かい合う 2 台は別の楔になる(平行投影の縮退が解ける)
+    near = {}
+    for K in (3, 6):
+        near[K] = int(hull_occupancy(cloud, ring_rig(K)).sum()) / n_true
+    print(f"  ★対照(有限距離 {D_RING:.0f} m): 3 台 {near[3]:.5f} / 6 台 {near[6]:.5f} —— ")
+    print(f"     差が {near[3] - near[6]:.5f} と平行投影の {meas[3] - meas[6]:.5f} の "
+          f"{(near[3] - near[6]) / max(meas[3] - meas[6], 1e-9):.1f} 倍に開く。")
+    print("     **縮退は平行投影の性質**で、近づけると解ける(視錐は楔で、裏表が別物になる)。")
     print(f"  ★13 台 {meas[13]:.5f} < 16 台 {meas[16]:.5f} —— **奇数のほうが効く**。")
     k_odd = next(K for K in range(3, 200) if ring_ratio_ellipse(A, B, K) <= 1.02)
     k_even = next(K for K in range(4, 200, 2) if ring_ratio_ellipse(A, B, K) <= 1.02)
-    k_circ = next(K for K in range(3, 200) if ring_ratio_circle(K) <= 1.02)
-    print(f"  ★**体重 2 % 以内**を要求すると: 楕円の厳密解で {k_odd} 台(奇数可)、")
-    print(f"     偶数に限ると {k_even} 台。円の目安だと {k_circ} 台と読めるので、")
-    print(f"     偶数リグでは **{k_even - k_circ} 台足りない**見積りになる。")
-    print("  ★対照(点対称でない断面): 前後で太さの違う断面だと偶数の無駄が消える ——")
-    p3 = polygon_over_area(pear_support(ring_normals(3)), ring_normals(3))
-    p6 = polygon_over_area(pear_support(ring_normals(6)), ring_normals(6))
-    p_area = polygon_over_area(pear_support(np.linspace(0, 2 * math.pi, 2001)[:-1]),
-                               np.linspace(0, 2 * math.pi, 2001)[:-1])
-    print(f"     3 台 {p3 / p_area:.5f} / 6 台 {p6 / p_area:.5f}(こちらは別物)。")
-    figs.save_table("closed_form", ["K", "接線の本数", "閉形式(楕円)", "目安(円)",
-                                    "実測(60 m)", "差"], rows,
+    k_naive = next(K for K in range(3, 200) if naive_ratio_circle(K) <= 1.02)
+    print(f"  ★**体重 2 % 以内**を要求すると: 細長い胴の厳密解で **{k_odd} 台**(奇数可)、")
+    print(f"     偶数リグに限ると **{k_even} 台**。円の素朴な読み (K/π)tan(π/K) だと "
+          f"{k_naive} 台と出る")
+    print(f"     ので、**偶数台で組む現場は {k_even - k_naive} 台足りない**見積りを持つ。")
+    figs.save_table("closed_form", ["K", "接線の本数", "閉形式(楕円)", "円 n 角形",
+                                    "素朴な読み", "実測(60 m)", "差"], rows,
                     title="必要な台数は測る前に出る —— 接線がつくる多角形",
-                    caption="法線は方位 ± 90 度。奇数 K は 2K 本になるので得。"
-                            "実測は近似平行投影(60 m・4.0 mm/px)、凸な胴だけの対照群。")
+                    caption="法線は方位 ± 90 度。向かい合う 2 台は同じ接線なので、"
+                            "奇数 K だけが 2K 本になる。実測は近似平行投影"
+                            "(60 m・4.0 mm/px)・凸な胴だけの対照群。")
     if figs.enabled():
         ks = np.arange(3, 33)
         figs.save_plot(
             "closed_form_curve",
             [("閉形式(楕円 a/b=2.76)", ks, np.array([ring_ratio_ellipse(A, B, int(k))
                                                      for k in ks])),
-             ("目安(円)", ks, np.array([ring_ratio_circle(int(k)) for k in ks])),
-             ("実測(60 m)", np.array(sorted(meas)),
+             ("素朴な読み(円 K 角形)", ks,
+              np.array([naive_ratio_circle(int(k)) for k in ks])),
+             ("実測(60 m)", np.array(sorted(meas), float),
               np.array([meas[k] for k in sorted(meas)]))],
             xlabel="カメラ台数 K", ylabel="体積の過大率(真値 = 1)",
             title="細長い体では、円の目安が台数を少なく見積もる",
-            caption="のこぎり刃は偶数/奇数の差。円の目安に沿って台数を決めると、"
-                    "偶数台のリグでは足りない。")
+            caption="のこぎり刃は偶数/奇数の差(奇数は接線が 2 倍立つ)。"
+                    "素朴な読みに沿って台数を決めると、偶数台のリグでは届かない。")
     return {"meas": meas, "worst": worst, "k_odd": k_odd, "k_even": k_even,
-            "k_circ": k_circ, "pear3": p3 / p_area, "pear6": p6 / p_area}
+            "k_naive": k_naive, "near": near}
 
 
 def section_persistent(truth):

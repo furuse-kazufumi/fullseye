@@ -1422,7 +1422,8 @@ def main() -> int:
     assert sweep["total"] == 200, sweep["total"]
     assert sweep["shallow"] > sweep["deep"] > sweep["asym"], sweep
     # 漸近値へ**単調に**近づく(ぴったり乗るとは言わない: TVU の定数項が残る)
-    assert all(x > y > 0.0 for x, y in zip(sweep["gaps"], sweep["gaps"][1:])),         sweep["gaps"]
+    gaps = sweep["gaps"]
+    assert all(x > y > 0.0 for x, y in zip(gaps, gaps[1:])), gaps
     assert sweep["deep"] - sweep["asym"] < 1.0, (sweep["deep"], sweep["asym"])
     assert sweep["fail"] > 100, sweep["fail"]
     # 8. 上向き屈折: 予測した反転角は「届いた最後」と「届かない最初」の間
