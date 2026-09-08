@@ -1253,12 +1253,13 @@ def section_thermocline(scene):
                             "誤差は減るが消えない。")
     if figs.enabled():
         zz = np.linspace(0.0, 60.0, 200)
+        # ★縦軸は −深さ。深さのまま描くと海面が下、海底が上の逆さ図になる。
         figs.save_plot(
             "svp",
-            [("真(混合層 + サーモクライン)", sound_speed(true_prof, zz), zz),
-             ("2 点の一定勾配当てはめ", sound_speed(fit, zz), zz),
-             ("等音速(直下較正)", np.full_like(zz, ca_true), zz)],
-            xlabel="音速 [m/s]", ylabel="深さ [m](下向き)",
+            [("真(混合層 + サーモクライン)", sound_speed(true_prof, zz), -zz),
+             ("2 点の一定勾配当てはめ", sound_speed(fit, zz), -zz),
+             ("等音速(直下較正)", np.full_like(zz, ca_true), -zz)],
+            xlabel="音速 [m/s]", ylabel="−深さ [m](0 が海面、下へ −60 m)",
             title="音速プロファイル —— 平均が合っていても形が違う",
             caption="3 本とも直下の走時は同じになるが、外側ビームの光線は違う道を通る。")
     return {"e_const": e_const, "e_fit": e_fit, "ca": ca_true,
