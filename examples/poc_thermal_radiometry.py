@@ -666,19 +666,25 @@ def section_nulls(scene):
 # --------------------------------------------------------------------------- #
 #: 不確かさ予算の入力。``(名前, 公称値, 標準不確かさ)``。
 #: **すべてこの PoC のために置いた仮定**(機器仕様・現場の相場からの想定値)。
-def budget_inputs(eps: float, u_eps: float, u_refl: float = 5.0):
+def budget_inputs(eps: float, u_eps: float, sigma_dn: float, u_refl: float = 5.0):
     return [("ε", eps, u_eps),
             ("T_refl [K]", T_REFL_REF, u_refl),
             ("τ", TAU_REF, 0.02),
             ("T_atm [K]", T_ATM_REF, 3.0),
             ("a(校正利得, 相対)", 1.0, 0.005),
-            ("b(校正切片, DN)", 0.0, 2.0)]
+            ("b(校正切片, DN)", 0.0, 2.0),
+            ("DN 雑音(NETD, DN)", 0.0, sigma_dn)]
 
 
 def _invert_with(tab: BandTable, cam: Camera, dn, vec, allow_out: bool = True):
-    """入力ベクトル ``vec = (ε, T_refl, τ, T_atm, a係数, bずれ)`` で逆算 [K]。"""
-    eps, t_refl, tau, t_atm, a_rel, b_off = vec
-    lm = cam.to_radiance(dn, a=cam.a * a_rel, b=cam.b + b_off)
+    """入力ベクトル ``vec = (ε, T_refl, τ, T_atm, a係数, bずれ, DN雑音)`` で逆算 [K]。
+
+    ``b ずれ``(校正の系統誤差)と ``DN 雑音``(NETD の偶然誤差)は数式では
+    同じ場所に入るが、**予算表では別の行**にしておく —— 片方は日ごとに固定、
+    片方は画素ごとに振れる量で、平均を取ったときの振る舞いが違うから。
+    """
+    eps, t_refl, tau, t_atm, a_rel, b_off, dn_noise = vec
+    lm = cam.to_radiance(dn, a=cam.a * a_rel, b=cam.b + b_off + dn_noise)
     return invert_radiance(tab, lm, eps, t_refl, tau, t_atm, allow_out=allow_out)
 
 
