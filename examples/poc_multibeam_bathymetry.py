@@ -1031,19 +1031,6 @@ def section_footprint(scene, floor):
                     title="ビーム幅は 1/cosθ で広がる(op で実測)",
                     caption="beamform_delay_sum の角度スペクトルの -3 dB 幅。")
     if figs.enabled():
-        ths = np.arange(0.0, 71.0, 1.0)
-        cs = np.cos(np.radians(ths))
-        figs.save_plot(
-            "footprint",
-            [("cos² 式(教科書)", ths, DEPTH_REF * math.radians(bw0) / cs ** 2),
-             ("cos³ 式(幅の広がり込み)", ths, DEPTH_REF * math.radians(bw0) / cs ** 3),
-             ("実測(等音速の対照群)", np.array([0.0, 30.0, 45.0, 60.0, 65.0, 70.0]),
-              np.array(foot_iso)),
-             ("実測(屈折込み)", np.array([0.0, 30.0, 45.0, 60.0, 65.0, 70.0]),
-              np.array(foot_meas))],
-            xlabel="ビーム角 θ₀ [度]", ylabel="海底フットプリント [m]",
-            title="外側ビームは「大きく間違える」前に「大きくぼやける」",
-            caption="幅の広がりを入れないと 70 度で 3 分の 1 に見積もる。")
         grid = ANGLE_GRID
         figs.save_plot(
             "beam_pattern",

@@ -548,8 +548,9 @@ def section_geometry():
     # cos^4 則は op が閉形式で持っている。自前の式と突き合わせておく。
     tab = np.asarray(fs.relative_illumination(half_fov, 64))
     own = 1.0 / (1.0 + np.tan(np.radians(tab[:, 0])) ** 2) ** 2
-    print(f"  ({'fullseye.relative_illumination'} と自前の cos^4 の最大差 "
-          f"{float(np.max(np.abs(tab[:, 1] - own))):.2e})")
+    print("  (fullseye.relative_illumination と自前の cos^4 の最大差 "
+          "%.2e —— op と閉形式が同じものを指していることの確認)"
+          % float(np.max(np.abs(tab[:, 1] - own))))
     return {"half_fov": half_fov, "spread": spread,
             "rect_edge_ratio": float(rect[0] / rect[HALF_PX]),
             "ftheta_edge_ratio": float(fth[0] / fth[HALF_PX]),
@@ -760,7 +761,6 @@ def section_equivalence(curve_out, defn):
     w = defn["w"]
     n_track = 64
     step = step_curve(curve_out["tophat"]["p"], curve_out["gsd"])
-    step2 = step_curve(curve_out["tophat"]["p"], curve_out["gsd"])
     print("  C = W·v·t/A なので、W を 2 倍にしても t を 2 倍にしても C は 2 倍。")
     print("  基準を C=0.5 に取り、W だけ 2 倍 / t だけ 2 倍 を別々に測る。")
     print(f"  {'条件':>26}{'C':>8}{'平行':>10}{'ランダム':>12}")
@@ -775,8 +775,8 @@ def section_equivalence(curve_out, defn):
             rv = sweep_mc(f, 2 * w, area_w, n_track, random_tracks=True, seed=72)
         elif name == "t を 2 倍":
             area_w = w * n_track * 2 / c
-            pv = sweep_mc(step2, w, area_w, 2 * n_track, random_tracks=False, seed=71)
-            rv = sweep_mc(step2, w, area_w, 2 * n_track, random_tracks=True, seed=72)
+            pv = sweep_mc(step, w, area_w, 2 * n_track, random_tracks=False, seed=71)
+            rv = sweep_mc(step, w, area_w, 2 * n_track, random_tracks=True, seed=72)
         else:
             pv = sweep_mc(step, w, area_w, n_track, random_tracks=False, seed=71)
             rv = sweep_mc(step, w, area_w, n_track, random_tracks=True, seed=72)
