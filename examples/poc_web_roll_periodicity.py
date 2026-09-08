@@ -851,7 +851,7 @@ def main() -> None:
     flo = section_false_floor()
     cli = section_cliff(pred)
     two = section_two_rolls()
-    section_tool_gaps()
+    section_tool_gaps(cli)
 
     print("\n" + "=" * 78)
     print("まとめ")
