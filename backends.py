@@ -859,7 +859,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
                               "cs": [c for c in measure.find_contours(v, 0.2 + 0.5 * a) if len(c) >= 3]}),
             # more image->image
             ("sk_lbp", "texture", "", IMAGE, IMAGE,
-             lambda v, a, b: norm(feature.local_binary_pattern(v, 8, 1 + int(a * 3)))),
+             lambda v, a, b: norm(feature.local_binary_pattern(
+                 v, 8, 1 + int(a * 3), _lbp_method(b)))),
             ("sk_entropy", "texture", "entropy_image", IMAGE, IMAGE,
              lambda v, a, b: norm(filters.rank.entropy(_u8s(v), _disk(a)).astype(np.float64))),
             ("sk_enhance_contrast", "gray", "", IMAGE, IMAGE,
