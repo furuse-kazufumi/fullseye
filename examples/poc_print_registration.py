@@ -1123,28 +1123,68 @@ def section8_metrics(sweep_am, zero):
               % (label, rms, mx_e, rate, miss, SWEEP.size))
     print()
     a, lp, b = res["相関 AM(素)"], res["相関 AM(低域通過)"], res["重心(ゼロ点 B)"]
-    print("  → ★★**勝者が入れ替わる**。")
+    two = res["★二段(粗+密)"]
+    print("  → ★★**物差しを変えると勝者が入れ替わる**。")
     print("     物差し 1(精度)の 1 位は **相関 AM(素)の %.4f px**。低域通過は"
           % a["rms"])
     print("     %.4f px(**%.0f 倍**悪い)、重心は %.4f px。"
           % (lp["rms"], lp["rms"] / a["rms"], b["rms"]))
-    print("     物差し 2(判定)の 1 位は **相関 AM(低域通過)の %.1f %%**。"
-          % lp["rate"])
-    print("     素の相関は **%.1f %%** で最下位 —— 不合格の版を %d/%d 回"
-          % (a["rate"], a["miss"], SWEEP.size))
-    print("     「合格」と言った(重心は %d 回)。" % b["miss"])
+    print("     物差し 2(判定)では素の相関が **%.1f %%** で最下位 —— 不合格の版を"
+          % a["rate"])
+    print("     %d/%d 回「合格」と言った(低域通過 %.1f %% / 重心 %.1f %%)。"
+          % (a["miss"], SWEEP.size, lp["rate"], b["rate"]))
     print("     どちらの数字も正しく、どちらか 1 つだけを見た人は反対の結論を出す。")
     print()
-    print("  ★★**崖を避ける代償は精度**。網点を低域通過で消すと折り返しは")
-    print("     無くなるが(絵柄しか残らないので格子が消える)、相関のピークが")
-    print("     鈍って精度は %.0f 倍落ちる。それでも公差 %.1f px = %.0f µm に対しては"
-          % (lp["rms"] / a["rms"], TOL_PX, TOL_PX * UM_PER_PX))
-    print("     %.4f px = %.1f µm なので**まだ十分**。**精度の桁は余っていて、"
-          % (lp["rms"], lp["rms"] * UM_PER_PX))
-    print("     足りないのは一意性の方だった**。")
-    print("  ★相関 FM は両方で勝つ(%.4f px / %.1f %%)—— 素材を替えられるなら"
+    print("  ★★**2 つを組み合わせれば両方取れる**(二段: %.4f px / %.1f %%)。"
+          % (two["rms"], two["rate"]))
+    print("     低域通過は**格子を消す**(絵柄しか残らない)ので一意だが鈍い。")
+    print("     素の相関は鋭いが格子で不定。**鈍い方で代表元を選び、鋭い方で**")
+    print("     **詰める**と、一意性と精度が同時に立つ。")
+    print("     成立条件は閉形式で書ける: **粗の誤差 < 基本セルの半径**。")
+    print("     実測の粗の誤差は最大 **%.3f px**、セルの半径(軸方向)は %.3f px"
+          % (max(coarse_err), PITCH / 2))
+    print("     —— 余裕 **%.1f 倍**。ここが %.1f 倍を切ったら二段は静かに"
+          % (PITCH / 2 / max(coarse_err), 1.0))
+    print("     1 格子ぶん間違えます(次の段落で実際に壊す)。")
+    print()
+    # --- 二段の崖を、実際に壊して確かめる --------------------------------- #
+    faint = (blob[0], blob[1], 0.06)          # 絵柄をほとんど無くす(下地だけに近い)
+    des_f = design_plate(ang, faint)
+    des_f_lp = lowpass_image(des_f)
+    cm = cell_mask(L, ang)
+    print("  ★崖を実際に踏む: **絵柄の山を %.2f → %.2f に下げる**(ベタ近くの"
+          % (BLOB_PEAK, 0.06))
+    print("  一様な面 —— 印刷では珍しくない)。低域通過に残る手がかりが減る。")
+    print()
+    print("  %7s %12s %12s %14s %10s"
+          % ("t px", "粗 の誤差", "二段 の誤差", "選んだ代表元", "判定"))
+    print("  " + "-" * 62)
+    broke, tested = 0, 0
+    for t in (0.0, 2.0, 5.0, 9.0, 13.0, 18.0):
+        cur = am_sheet(ang, faint, 0.0, float(t), seed=31)
+        fy, fx, _q = corr_shift(des_f, cur, cm)
+        ly, lx, _q2 = corr_shift(des_f_lp, lowpass_image(cur), bm)
+        sy, sx = snap_to_lattice((fy, fx), (ly, lx), ang)
+        ce = float(np.hypot(ly - 0.0, lx - t))
+        se = float(np.hypot(sy - 0.0, sx - t))
+        tested += 1
+        broke += int(se > 1.0)
+        print("  %7.2f %12.3f %12.3f %14s %10s"
+              % (t, ce, se, "(%+.1f,%+.1f)" % (sy, sx),
+                 "★1 格子ずれ" if se > 1.0 else "正しい"))
+    print()
+    print("  → 粗の誤差が %.2f px(セルの半径)を超えた行で、二段は**丸ごと 1 格子**"
+          % (PITCH / 2))
+    print("     **ずれた答え**を返す(%d/%d 行)。誤差は小さくならず %.1f px 級に"
+          % (broke, tested, PITCH))
+    print("     跳ぶので**気づける**が、それは「跳んだ値を見る人がいれば」の話。")
+    print("     ★op にするなら、**粗の誤差とセルの半径の比を返り値に入れる**べき。")
+    print()
+    print("  ★相関 FM は素材を替えるだけで両方勝つ(%.4f px / %.1f %%)。"
           % (res["相関 FM"]["rms"], res["相関 FM"]["rate"]))
-    print("     それが最善。**物差しを 2 つ置いて初めてこの順位が見える**。")
+    print("     **物差しを 2 つ置いて初めてこの順位が見える**。")
+    res["coarse_max"] = max(coarse_err)
+    res["two_stage_broken"] = broke
     figs.save_table("metrics", ["手法", "RMS 誤差 px", "最大 誤差 px",
                                 "判定一致率", "見落とし"], rows,
                     title="物差し 2 つ(公差 %.1f px)" % TOL_PX, col_w=104)
