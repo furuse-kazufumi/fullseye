@@ -148,6 +148,9 @@ def collect() -> dict:
     for path in sorted(glob.glob(os.path.join(SRC_DIR, "*.md"))):
         meta = _front_matter(io.open(path, encoding="utf-8").read(), path)
         ops = list(meta["ops"])
+        # ★これは**下界**。``tests/`` に op 名が literal で現れるかしか見ていないので、
+        # 台帳を舐めて全 op を回す掃引型の試験(``for name in ledger: ...``)は数えない。
+        # 「試験が無い」ではなく「**名指しの試験が無い**」と読むこと。
         tested = [o for o in ops if re.search(r"\b%s\b" % re.escape(o), tests)]
         examples = [_example_facts(e) for e in meta["examples"]]
         rows.append({
