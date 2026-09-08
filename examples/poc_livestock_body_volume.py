@@ -708,6 +708,9 @@ def section_metrics(truth, nulls, pers):
     est = dict(nulls)
     est["視体積交差 K=8"] = pers["out"][8]["occ"]
     est["視体積交差 K=24"] = pers["out"][24]["occ"]
+    # 実務の「縮小補正」—— 太る側の丸めを 2 画素引いて戻す(§6 の 1 画素則の応用)
+    est["K=24 + 2 画素収縮"] = hull_occupancy(surface_cloud(legs=True, hollow=True),
+                                              ring_rig(24), erode=2)
     g_true = truth["girth"]
     l_true = occ_length(truth["occ"])
     z_true = occ_centroid_z(truth["occ"])
