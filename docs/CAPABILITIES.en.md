@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 14 capabilities**
+**Currently 15 capabilities**
 
 ## 測る (4)
 
@@ -135,7 +135,7 @@ Operators: `frame_align`, `drizzle_resample`, `icp_point2point_3d`, `interp_scat
 
 Runnable: `poc_astro_photometry`, `poc_registration_basin`
 
-## 見せる (1)
+## 見せる (2)
 
 ### [Turn results into figures people can read](capabilities/figures-and-annotation.md)
 
@@ -144,3 +144,11 @@ Panel grids, dimension and pointer annotations, height pseudo-colour, and a full
 Operators: `annotate_figure_grid`, `colorize_height`, `render_beauty`
 
 Runnable: `poc_colormap_readability`, `poc_dem_terrain`
+
+### [Draw lines and regions without knowing the background colour](capabilities/inverted-colour-overlays.md)
+
+Draw a polyline or a region in the inverse of whatever is underneath, so the overlay stays visible without knowing the background. `draw="margin"` outlines instead of filling. The one real failure mode — mid-grey, where the complement equals the original — is measured rather than assumed: `annotate_invert_visibility` reports the per-pixel WCAG contrast, and the drawing ops warn (or refuse) when the mark would be invisible.
+
+Operators: `annotate_invert`, `annotate_invert_path`, `annotate_invert_visibility`
+
+Runnable: `annotate_paper_tour`

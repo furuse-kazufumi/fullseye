@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_path — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_path&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>折れ線(line)を<b>反転色</b>で描く。アンチエイリアスつき。</p>
+<p>線は領域より不利で、そこがこの op を分けている理由 —— 太さ 1.5 画素の</p>
+<p>線は端の画素の被覆率が 0.3 程度しかないため、**反転しても被覆の分しか</p>
+<p>動かない**。中間調の地では領域よりさらに先に消える。判定は「被覆率</p>
+<p>0.5 以上の画素」で行う(それ未満は元から半透明なので、見えなくても</p>
+<p>それは反転のせいではない)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>points : (N,2)</p>
+<p>折れ線の頂点 `<code style="color:#22d3bf">(x, y)</code>`(画素座標)。</p>
+<p>width : float</p>
+<p>線の太さ(画素、0.5 以上)。</p>
+<p>closed : bool</p>
+<p>真なら最後の点と最初の点を結ぶ。</p>
+<p>dash : (on, off) or None</p>
+<p>破線の刻み(画素)。:func:<code style="color:#22d3bf">_dash_pieces</code> と同じ規則。</p>
+<p>mode, alpha, min_contrast, on_invisible :</p>
+<p>:func:<code style="color:#22d3bf">annotate_invert</code> と同じ。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(H,W[,C]) float64</p>
+<p>反転を乗せた複製。</p>
+<p>Examples</p>
+<p>--------</p>
+<p>&gt;&gt;&gt; import numpy as np, annotate</p>
+<p>&gt;&gt;&gt; img = np.zeros((16, 32))</p>
+<p>&gt;&gt;&gt; out = annotate.annotate_invert_path(img, [(2, 8), (29, 8)], width=3)</p>
+<p>&gt;&gt;&gt; float(out[8, 15])                       # 黒地の上なので白い線になる</p>
+<p>1.0</p>
+<p>&gt;&gt;&gt; float(out[2, 15])                       # 線から離れたところは元のまま</p>
+<p>0.0</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -183,7 +183,7 @@ FULLSEYE_FIGURE_DIR=out/figs py -3.11 examples/<name>.py
 | script | 何を示すか |
 |---|---|
 | [`annotate_gallery.py`](annotate_gallery.py)<br>図注(annotate)op を一枚の図で全部使い真値と突き合わせる | 文字下敷き/矢印/凡例/カラーバー/目盛り/拡大差し込みの annotate 全 op を 1 枚の図に載せ、配置と画素値を GT と照合する。 |
-| [`annotate_paper_tour.py`](annotate_paper_tour.py)<br>経路に沿う文字の配置表とパネル文字 (a)(b) を閉形式で検算 | annotate_text_path_layout の弧長・位置・傾き・used を閉形式と突き合わせ(L 字経路で 0/90 度)、annotate_panel_label の板の縁が margin に乗ること・text_box と画素同一であることを確かめる。 |
+| [`annotate_paper_tour.py`](annotate_paper_tour.py)<br>経路に沿う文字の配置表とパネル文字 (a)(b)、反転色の崖を閉形式で検算 | annotate_text_path_layout の弧長・位置・傾き・used を閉形式と突き合わせ(L 字経路で 0/90 度)、annotate_panel_label の板の縁が margin に乗ること・text_box と画素同一であることを確かめる。★反転色の崖: 補色は中間調で消える(8bit で v ∈ [113,142] の 30/256 階調 = 11.7 %、v=128 の比は 1.014 = ほぼ同じ色)。明→暗の傾斜に線を引くと消える列は x=(1-v)(W-1) の予測どおり 97-122。逃げ道 mode="contrast" は全階調で最悪 4.61(連続の下界 4.583)。 |
 | [`draw_annotate.py`](draw_annotate.py)<br>画像にマーカー/線/円/輪郭を直接描く(ラスタ描画) | 作業者が指定した対応点を画像そのものに焼き込むラスタ描画op(imagedraw)。描いた既知シーンを検出器が回収し結果を描き返す(描画→検出→注釈)。 |
 | [`drawlist_deferred.py`](drawlist_deferred.py)<br>描画を「ためてから流す」(drawlist 蓄積描画) | imagedraw の即時描画に対し drawlist はコマンド列を保持し flush() で絵にする。絵になる前の列を検査・差分・変換できることを、同じ絵を両経路で描いて数値で確かめる。 |
 | [`gfx2d_scene.py`](gfx2d_scene.py)<br>リアルタイム 2-D グラフィックス(gfx2d)で 1 枚の画面を組み立てる | 背景/タイル/スプライト/パーティクル/光/影/ポスト処理を合成し、ストレート α と乗算済み α の取り違え(この族が黙って間違う唯一の場所)を同じ絵の上で数値化する。 |

@@ -1,0 +1,66 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>領域(region)を<b>反転色</b>で塗る/縁取る。</p>
+<p>「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」という</p>
+<p>ときの古典手。塗り色を決めずに済むかわりに、<b>中間調で消える</b>ので</p>
+<p>:func:<code style="color:#22d3bf">annotate_invert_visibility</code> の測定を内側で必ず通す。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>mask : (H,W)</p>
+<p>領域。真偽か [0,1] の重み。<b>画像と形が違えば例外</b>。</p>
+<p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
+<p>HALCON の `<code style="color:#22d3bf">set_draw</code><code style="color:#22d3bf"> と同じ語。</code><code style="color:#22d3bf">&quot;fill&quot;</code><code style="color:#22d3bf"> は中身ごと、</code><code style="color:#22d3bf">&quot;margin&quot;</code>`</p>
+<p>は<b>輪郭だけ</b>を反転する。輪郭は太さ `<code style="color:#22d3bf">width</code>` 画素(整数に丸める)の</p>
+<p>帯で、領域の内外へ半分ずつ広がる。</p>
+<p>width : float</p>
+<p>`<code style="color:#22d3bf">draw=&quot;margin&quot;</code>` のときの帯の太さ(画素)。</p>
+<p>mode : str</p>
+<p>:data:<code style="color:#22d3bf">INVERT_MODES</code>。`<code style="color:#22d3bf">&quot;complement&quot;</code>` は地の模様を残し、</p>
+<p>`<code style="color:#22d3bf">&quot;contrast&quot;</code>` は白黒に倒して見えることを保証する。</p>
+<p>alpha : float</p>
+<p>反転の効き。1.0 で完全に反転、0.5 なら地と反転色の中間</p>
+<p>(**`<code style="color:#22d3bf">mode=&quot;complement&quot;</code>` の 0.5 は必ず中間調になる** —— 反転色を</p>
+<p>半分にすると消えるのは道理なので、警告はそれを拾う)。</p>
+<p>min_contrast, on_invisible :</p>
+<p>見えないと判ったときの扱い。`<code style="color:#22d3bf">&quot;warn&quot;</code><code style="color:#22d3bf">(既定)/ </code><code style="color:#22d3bf">&quot;raise&quot;</code>`(fail-closed)</p>
+<p>/ `<code style="color:#22d3bf">&quot;ignore&quot;</code>`。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>(H,W[,C]) float64</p>
+<p>反転を乗せた複製。<b>入力は書き換えない</b>。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>形の不一致 / 値域外 / 未知の `<code style="color:#22d3bf">draw</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">on_invisible</code>` /</p>
+<p>`<code style="color:#22d3bf">on_invisible=&quot;raise&quot;</code>` で不可視。</p>
+<p>Examples</p>
+<p>--------</p>
+<p>&gt;&gt;&gt; import numpy as np, annotate</p>
+<p>&gt;&gt;&gt; img = np.zeros((16, 16)); img[4:12, 4:12] = 1.0</p>
+<p>&gt;&gt;&gt; m = np.zeros((16, 16), bool); m[6:10, 6:10] = True</p>
+<p>&gt;&gt;&gt; out = annotate.annotate_invert(img, m)</p>
+<p>&gt;&gt;&gt; float(out[7, 7]), float(out[1, 1])</p>
+<p>(0.0, 0.0)</p>
+<p>&gt;&gt;&gt; ring = annotate.annotate_invert(img, m, draw=&quot;margin&quot;, width=1)</p>
+<p>&gt;&gt;&gt; float(ring[7, 7])                      # 中身は触らない</p>
+<p>1.0</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

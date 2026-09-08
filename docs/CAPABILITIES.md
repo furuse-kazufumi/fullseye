@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 14 項目**
+**収録 15 項目**
 
 ## 測る (4)
 
@@ -134,7 +134,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `poc_astro_photometry`, `poc_registration_basin`
 
-## 見せる (1)
+## 見せる (2)
 
 ### [結果を人が読める図にする](capabilities/figures-and-annotation.md)
 
@@ -143,3 +143,11 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 使う op: `annotate_figure_grid`, `colorize_height`, `render_beauty`
 
 動く例: `poc_colormap_readability`, `poc_dem_terrain`
+
+### [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md)
+
+検査画像に測定線や ROI を重ねるとき、**地が明るいか暗いか分からない**のが普通です。白で描けば白飛びの上で消え、黒で描けば影の上で消えます。反転色は「その場の色をひっくり返して描く」ことでこれを避ける古典手で、`annotate_invert_path` が折れ線(アンチエイリアス・破線可)、`annotate_invert` が領域を、`draw="fill"` で中身ごと、`draw="margin"` で輪郭だけ反転します(HALCON の `set_draw` と同じ語)。
+
+使う op: `annotate_invert`, `annotate_invert_path`, `annotate_invert_visibility`
+
+動く例: `annotate_paper_tour`

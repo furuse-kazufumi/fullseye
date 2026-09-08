@@ -2982,27 +2982,67 @@ def annotate_outline(img, mask, label=None, color="emphasis", width=1.5, alpha=1
 
 # ---------------------------------------------------------------- 経路に沿う文字
 
+#: :func:`annotate_text_path` の**行のそろえ方**(経路に沿った向き)。
+TEXT_PATH_ANCHORS = ("start", "center", "end")
+
+#: 縦書きのときだけ **90 度回す**字。縦組みでは字を正立させるのが原則だが、
+#: 音引き・波ダッシュ・三点リーダ・各種括弧は**回して縦に伸ばす**のが組版の作法。
+#: ★句読点(。、)は回さず**右上へ寄せる**のが本来だが、ここでは寄せない ——
+#: できないことを黙って近似せず、docstring に書いて残す。
+VERTICAL_ROTATED_CHARS = frozenset(
+    "\u30fc\u301c\uff5e\u2026\u2025\uff08\uff09()\u300c\u300d"
+    "\u300e\u300f\u3010\u3011\u3014\u3015\uff3b\uff3d[]{}\uff5b\uff5d"
+    "\u3008\u3009\u300a\u300b\u2014\u2015\u2010\u2212-\uff1d=")
+
+
 def annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0,
-                              start=0.0):
+                              start=0.0, anchor="start", offset=0.0, upright=False,
+                              line_spacing=1.15):
     """table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。
 
-    文字 i の中心は弧長 ``s_i = start + Σ_{j<i} w_j*spacing + w_i/2``、傾きは
+    文字 i の中心は弧長 ``s_i = s0 + Σ_{j<i} a_j*spacing + a_i/2``、傾きは
     その位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。
+
+    **位置の決め方**(2026-09-08 に追加。既定はそれまでの動作と同じ):
+
+    * ``anchor`` —— 経路に沿ったそろえ方。``"start"``(既定・従来どおり)/
+      ``"center"``(経路の中央にそろえる)/ ``"end"``(終端にそろえる)。
+      ``start`` はアンカーで決めた位置から**さらにずらす**量として効く。
+    * ``offset`` —— 経路に**垂直**なずらし [px]。正が**進行方向の右**
+      (画面座標。y が下向きなので、左→右に進む文字なら「下」)。
+      線に触れさせずに脇へ置く用途。
+    * ``\n`` で**改行**。2 行目以降は ``line_spacing`` を掛けた行高だけ
+      ``offset`` と同じ向き(進行方向の右)へずれる。★この 1 つの規則で、
+      横書きは「下へ」、縦書きは「左へ」と**どちらも組版どおり**になる
+      (縦書きは進行方向が下なので、その右は画面の左)。
+    * ``upright`` —— 字を接線角に回さず**正立**させる。経路が主に縦向き
+      (始点→終点の |dy| > |dx|)なら送りを字幅でなく**字高**にするので、
+      これが**縦書き**になる。``VERTICAL_ROTATED_CHARS`` の字だけは 90 度回す。
+
+    ★**縦書きで実装していないこと**(黙って近似しない): 句読点の右上寄せ、
+    小書き仮名の位置補正、縦中横。短い注記のための機能で、本文組版ではない。
 
     Returns
     -------
     dict
-        ``{"chars": [{"char","s","xy","angle_deg","width"}], "length": 経路長,
-        "used": 文字が占める弧長}``。
+        ``{"chars": [{"char","s","xy","angle_deg","width","advance","line"}],
+        "length": 経路長, "used": 最も長い行の**送りの合計**(従来どおり
+        ``Σ advance*spacing``), "span": 最も長い行が**実際に占める**弧長
+        (最後の字の後ろの送りを含まない —— アンカーはこちらで揃える),
+        "lines": 行数, "line_height": 行送り [px], "vertical": 縦書きか}``。
 
     Raises
     ------
     ValueError
-        文字が空、経路が 2 点未満か長さゼロ、非有限、文字列が経路より長い。
+        文字が空、経路が 2 点未満か長さゼロ、非有限、行が経路より長い、
+        アンカーと ``start`` の組み合わせで行が経路から外れる場合。
     """
     text = str(text)
     if not text:
         raise ValueError("text is empty")
+    rows = text.split("\n")
+    if not any(r for r in rows):
+        raise ValueError("text is empty (only line breaks)")
     p = _pts(path, "path", min_n=2)
     seg = np.hypot(np.diff(p[:, 0]), np.diff(p[:, 1]))
     cum = np.concatenate([[0.0], np.cumsum(seg)])
@@ -3011,36 +3051,82 @@ def annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=
         raise ValueError("path has zero length")
     sp = _num(spacing, "spacing", lo=0.1)
     s0 = _num(start, "start", lo=0.0)
+    off = _num(offset, "offset")
+    ls = _num(line_spacing, "line_spacing", lo=0.1)
+    if anchor not in TEXT_PATH_ANCHORS:
+        raise ValueError(f"anchor must be one of {TEXT_PATH_ANCHORS} (got: {anchor!r})")
+    up = _flag(upright, "upright")
     m = measure_text("x", font_size=font_size, font_path=font_path, min_font_size=1)
     font = m["font"]
-    chars, s = [], s0
-    for ch in text:
-        w = _text_width(ch, font) if ch != " " else _text_width("n", font)
-        mid = s + w / 2.0
-        if s + w > total + 1e-9:
+    lh = float(_line_height(font))
+    lstep = lh * ls
+    # 縦書きかどうかは**始点→終点**で決める(区間ごとに変えると、折れ線の途中で
+    # 送りの意味が変わって読めなくなる)。
+    vertical = bool(up and abs(p[-1, 1] - p[0, 1]) > abs(p[-1, 0] - p[0, 0]))
+
+    chars, used, span_max = [], 0.0, 0.0
+    for li, row in enumerate(rows):
+        if not row:
+            continue                                     # 空行は 1 行ぶん送るだけ
+        advs = [lh if vertical else
+                (_text_width(ch, font) if ch != " " else _text_width("n", font))
+                for ch in row]
+        # ``span`` = 実際に占める弧長(最後の字の後ろの送りは入れない)。
+        # ``used`` = 送りの合計 —— **従来の意味のまま**(壊さないため)。
+        span = float(sum(a * sp for a in advs[:-1]) + advs[-1])
+        span_max = max(span_max, span)
+        used = max(used, float(sum(a * sp for a in advs)))
+        if span > total + 1e-9:
             raise ValueError(
-                f"text {text!r} needs {s + w - s0:.1f}px of path from start={s0:g} but the "
-                f"path is {total:.1f}px long — shorten the text, lower font_size or "
-                "lengthen the path (letters piling up at the end would be unreadable)")
-        k = int(np.searchsorted(cum, mid, side="right") - 1)
-        k = min(max(k, 0), len(seg) - 1)
-        t = 0.0 if seg[k] < 1e-12 else (mid - cum[k]) / seg[k]
-        xy = (float(p[k, 0] + t * (p[k + 1, 0] - p[k, 0])),
-              float(p[k, 1] + t * (p[k + 1, 1] - p[k, 1])))
-        ang = math.degrees(math.atan2(p[k + 1, 1] - p[k, 1], p[k + 1, 0] - p[k, 0]))
-        chars.append({"char": ch, "s": float(mid), "xy": xy, "angle_deg": ang,
-                      "width": float(w)})
-        s += w * sp
-    return {"chars": chars, "length": total, "used": float(s - s0)}
+                f"line {li} {row!r} needs {span:.1f}px along the path but the path is "
+                f"{total:.1f}px long — shorten the text, lower font_size or lengthen "
+                "the path (letters piling up at the end would be unreadable)")
+        base = {"start": 0.0, "center": (total - span) / 2.0,
+                "end": total - span}[anchor]
+        begin = base + s0
+        if begin < -1e-9 or begin + span > total + 1e-9:
+            raise ValueError(
+                f"line {li} {row!r} with anchor={anchor!r} and start={s0:g} would run from "
+                f"{begin:.1f} to {begin + span:.1f} px, outside the {total:.1f}px path — "
+                "lower start, use anchor='start', or lengthen the path")
+        s = begin
+        for ch, adv in zip(row, advs):
+            mid = s + adv / 2.0
+            k = int(np.searchsorted(cum, mid, side="right") - 1)
+            k = min(max(k, 0), len(seg) - 1)
+            t = 0.0 if seg[k] < 1e-12 else (mid - cum[k]) / seg[k]
+            ang = math.atan2(p[k + 1, 1] - p[k, 1], p[k + 1, 0] - p[k, 0])
+            # 進行方向の右(画面座標、y 下向き)。行送りもオフセットもこの向き。
+            nx, ny = -math.sin(ang), math.cos(ang)
+            d = off + li * lstep
+            xy = (float(p[k, 0] + t * (p[k + 1, 0] - p[k, 0]) + d * nx),
+                  float(p[k, 1] + t * (p[k + 1, 1] - p[k, 1]) + d * ny))
+            if up:
+                draw_ang = 90.0 if (vertical and ch in VERTICAL_ROTATED_CHARS) else 0.0
+            else:
+                draw_ang = math.degrees(ang)
+            chars.append({"char": ch, "s": float(mid), "xy": xy,
+                          "angle_deg": float(draw_ang),
+                          "width": float(_text_width(ch, font)),
+                          "advance": float(adv), "line": li})
+            s += adv * sp
+    return {"chars": chars, "length": total, "used": float(used),
+            "span": float(span_max), "lines": len(rows),
+            "line_height": float(lstep), "vertical": vertical}
 
 
 def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1.0,
                        start=0.0, draw_path=False, width=1.0, scheme="okabe_ito",
-                       font_path=None, layout=None):
+                       font_path=None, layout=None, anchor="start", offset=0.0,
+                       upright=False, line_spacing=1.15):
     """画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。
 
-    文字の板は敷かない(経路の上に載せる用途なので)。配置は
-    :func:`annotate_text_path_layout`。
+    文字の板は敷かない(経路の上に載せる用途なので)。配置と、
+    ``anchor`` / ``offset`` / ``upright``(縦書き)/ ``\n`` による改行の意味は
+    :func:`annotate_text_path_layout` に書いてある。
+
+    ``layout`` を渡した場合、そちらが**そのまま使われる** ——
+    ``anchor`` などは無視されるので、両方を渡さないこと。
 
     Raises
     ------
@@ -3049,11 +3135,13 @@ def annotate_text_path(img, text, path, font_size=13, color="neutral", spacing=1
     """
     a = _prep(img)
     if layout is None:
-        layout = annotate_text_path_layout(text, path, font_size=font_size,
-                                           font_path=font_path, spacing=spacing, start=start)
+        layout = annotate_text_path_layout(
+            text, path, font_size=font_size, font_path=font_path, spacing=spacing,
+            start=start, anchor=anchor, offset=offset, upright=upright,
+            line_spacing=line_spacing)
     Image, ImageDraw, _ = _pil()
     font = _font(int(font_size), font_path)
-    _require_glyphs(font, text, font_path)
+    _require_glyphs(font, str(text).replace("\n", ""), font_path)
     H, W = a.shape[:2]
     if _flag(draw_path, "draw_path"):
         a = _aa_polyline(a, _pts(path, "path", 2), color, width=width, scheme=scheme)
