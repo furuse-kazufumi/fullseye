@@ -1070,9 +1070,21 @@ def section8_metrics(sweep_am, zero):
     gy0, gx0 = ink_centroid(des)
     bm = box_mask(L, 2.0 * PITCH)
 
+    print("  手法は 5 つ。3 つ目までが「1 つの手」、4 つ目が**その組合せ**、")
+    print("  5 つ目は**素材を替える**手:")
+    print("    ・重心(ゼロ点 B)")
+    print("    ・相関 AM(素) —— 探すのは基本セルの中だけ")
+    print("    ・相関 AM(低域通過) —— 遮断 1/(3p) = %.4f cyc/px で網点を消す"
+          % LP_CUT)
+    print("      (網点の基本波は exp(-4.5) = 1.1e-2 倍。絵柄だけが残る)")
+    print("    ・★二段(低域通過で**代表元を選び**、素の相関で**詰める**)")
+    print("    ・相関 FM")
+    print()
     des_lp = lowpass_image(des)
-    methods = {"重心(ゼロ点 B)": [], "相関 AM(素)": [],
-               "相関 AM(低域通過)": [], "相関 FM": []}
+    keys = ["重心(ゼロ点 B)", "相関 AM(素)", "相関 AM(低域通過)",
+            "★二段(粗+密)", "相関 FM"]
+    methods = {k: [] for k in keys}
+    coarse_err = []
     for t in SWEEP:
         r = [x for x in sweep_am[name] if abs(x["t"] - t) < 1e-9][0]
         cur_am = am_sheet(ang, blob, 0.0, float(t), seed=31)
@@ -1081,6 +1093,8 @@ def section8_metrics(sweep_am, zero):
         methods["相関 AM(素)"].append(r["corr"])
         ly, lx, _q = corr_shift(des_lp, lowpass_image(cur_am), bm)
         methods["相関 AM(低域通過)"].append((ly, lx))
+        coarse_err.append(float(np.hypot(ly - 0.0, lx - t)))
+        methods["★二段(粗+密)"].append(snap_to_lattice(r["corr"], (ly, lx), ang))
         cur_fm = fm_sheet(cen, rad, 0.0, float(t), seed=61)
         my, mx, _ratio = corr_shift(ref_fm, cur_fm, bm)
         methods["相関 FM"].append((my, mx))
