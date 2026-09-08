@@ -13,7 +13,7 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # text_box — ANNOTATE `text` op
 
 - **データ種**: `image2d × text` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.text_box(img, text, xy, color='neutral', text_color=None, box_color=None, box_alpha=0.72, anchor='lt', pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme='okabe_ito', min_contrast=2.0, border=0, border_color=None, style=None, wrap=True)` (実装を直接呼ぶなら `import annotate; annotate.text_box(img, text, xy, color='neutral', text_color=None, box_color=None, box_alpha=0.72, anchor='lt', pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme='okabe_ito', min_contrast=2.0, border=0, border_color=None, style=None, wrap=True)`、台帳から引くなら `opsannotate.get("text_box")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.text_box(img, text, xy, color='neutral', text_color=None, box_color=None, box_alpha=0.72, anchor='lt', pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme='okabe_ito', min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)` (実装を直接呼ぶなら `import annotate; annotate.text_box(img, text, xy, color='neutral', text_color=None, box_color=None, box_alpha=0.72, anchor='lt', pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme='okabe_ito', min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)`、台帳から引くなら `opsannotate.get("text_box")`)
 
 ## 使い方
 

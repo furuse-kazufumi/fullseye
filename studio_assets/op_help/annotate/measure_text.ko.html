@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">measure_text — ANNOTATE <code style="color:#22d3bf">text</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;measure_text&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;measure_text&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>글자를 <b>그리기 전에</b> 잽니다. 들어가지 않으면 접거나 줄이고, 그래도 안 되면 예외.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
@@ -20,13 +20,18 @@
 <p>ここまで縮めても入らなければ <b>ValueError</b>(黙って切らない)。</p>
 <p>line_spacing : float</p>
 <p>行送り係数。</p>
+<p>bold, italic : bool or int</p>
+<p><b>合成</b>の太字・斜体(:func:<code style="color:#22d3bf">_bold_px</code> / :func:<code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
+<p>Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは</p>
+<p>`<code style="color:#22d3bf">font_path</code><code style="color:#22d3bf"> にその書体のファイルを渡すこと。</code><code style="color:#22d3bf">bold</code>` に整数を渡すと</p>
+<p>縁取りの画素数を直に指定できる。**太さと傾きのぶんは `<code style="color:#22d3bf">width</code>` /</p>
+<p>`<code style="color:#22d3bf">height</code>` に入る**ので、板や表の桁はそのまま広がる。</p>
 <p>wrap : bool</p>
 <p>True(既定)なら `<code style="color:#22d3bf">max_width</code>` で<b>折り返す</b>。False なら折り返さず</p>
 <p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
 <p>なると版が崩れる場所で使う ―― `<code style="color:#22d3bf">exhibit_tile._fit_label</code>` と同じ流儀)。</p>
 <p>どちらでも `<code style="color:#22d3bf">min_font_size</code>` まで来て入らなければ例外。</p>
-<p>``</p>
-<p>`<code style="color:#22d3bf"> の改行は </code><code style="color:#22d3bf">max_width</code><code style="color:#22d3bf"> の有無・</code><code style="color:#22d3bf">wrap</code>` の値に<b>よらず常に</b>効く</p>
+<p>`<code style="color:#22d3bf">\n</code><code style="color:#22d3bf"> の改行は </code><code style="color:#22d3bf">max_width</code><code style="color:#22d3bf"> の有無・</code><code style="color:#22d3bf">wrap</code>` の値に<b>よらず常に</b>効く</p>
 <p>(幅を与えないと 1 行に潰れる、という事故は起きない)。</p>
 <p>Returns</p>
 <p>-------</p>

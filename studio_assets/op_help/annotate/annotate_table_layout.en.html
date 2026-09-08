@@ -1,0 +1,74 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_table_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>table(dict)を返す: タブ区切りの文字列を<b>表</b>として置く桁と行の位置。</p>
+<p>行は `<code style="color:#22d3bf">\n</code><code style="color:#22d3bf">、桁は </code><code style="color:#22d3bf">\t</code>` で切る。桁幅は**指定されたサイズの実フォントで</p>
+<p>1 セルずつ測った幅の最大**で決まる —— 文字数で数えると和文と英数字で</p>
+<p>必ずずれるので、測る以外に正しくやりようがない。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>text : str</p>
+<p>タブ区切り。全行の桁数が同じであること(違えば <b>ValueError</b>)。</p>
+<p>xy : (x, y)</p>
+<p>`<code style="color:#22d3bf">anchor</code>` で指す位置(<b>x=col, y=row</b>)。</p>
+<p>anchor : str</p>
+<p>`<code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>` の 9 通り。</p>
+<p>pad : int</p>
+<p>表の内側余白 [px]。</p>
+<p>col_gap : int or None</p>
+<p>桁の間 [px]。<b>None(既定)なら行高 ×0.6 を四捨五入</b>するので、</p>
+<p>フォントサイズを変えれば間隔も一緒に動く。</p>
+<p>row_gap : int</p>
+<p>行の間に足す [px] (0 なら行送りのまま)。</p>
+<p>align : str or sequence</p>
+<p>:data:<code style="color:#22d3bf">TABLE_ALIGNS</code> のいずれか、または桁ごとの並び。`<code style="color:#22d3bf">&quot;auto&quot;</code>`</p>
+<p>(既定)は<b>その桁の値がすべて数に見えるときだけ右そろえ</b>にする。</p>
+<p>`<code style="color:#22d3bf">header=True</code>` なら見出し行は判定から外す。</p>
+<p>header : bool</p>
+<p>真なら 1 行目を見出しとして<b>太字</b>にし、下に罫を 1 本引く。</p>
+<p>bold, italic : bool or int</p>
+<p>合成字体(:func:<code style="color:#22d3bf">_bold_px</code> / :func:<code style="color:#22d3bf">_italic_tile</code>)。`<code style="color:#22d3bf">header</code>` の</p>
+<p>太字はこれとは別で、見出し行にだけ掛かる。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict</p>
+<p>``{&quot;rect&quot;: (x,y,w,h), &quot;ncols&quot;, &quot;nrows&quot;, &quot;col_w&quot;: [...], &quot;col_x&quot;: [...],</p>
+<p>&quot;row_y&quot;: [...], &quot;row_h&quot;, &quot;col_gap&quot;, &quot;align&quot;: [...], &quot;header&quot;,</p>
+<p>&quot;rule_y&quot;: 見出しの罫の y(header が偽なら None),</p>
+<p>&quot;cells&quot;: [{&quot;text&quot;,&quot;row&quot;,&quot;col&quot;,&quot;xy&quot;,&quot;width&quot;,&quot;bold&quot;}]}``。</p>
+<p>`<code style="color:#22d3bf">col_x</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">row_y</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cells[i][&quot;xy&quot;]</code>` はすべて<b>画像座標</b>。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError</p>
+<p>桁数が行でそろわない / 空 / 未知の `<code style="color:#22d3bf">align</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">anchor</code>` /</p>
+<p>`<code style="color:#22d3bf">align</code>` の長さが桁数と違う。</p>
+<p>Examples</p>
+<p>--------</p>
+<p>&gt;&gt;&gt; import annotate</p>
+<p>&gt;&gt;&gt; lay = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10))</p>
+<p>&gt;&gt;&gt; lay[&quot;ncols&quot;], lay[&quot;nrows&quot;], lay[&quot;align&quot;]</p>
+<p>(2, 3, [&#x27;left&#x27;, &#x27;left&#x27;])</p>
+<p>&gt;&gt;&gt; lay2 = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10),</p>
+<p>...                                       header=True)</p>
+<p>&gt;&gt;&gt; lay2[&quot;align&quot;]                        # 見出しを外すと 2 桁目は数だけ</p>
+<p>[&#x27;left&#x27;, &#x27;right&#x27;]</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

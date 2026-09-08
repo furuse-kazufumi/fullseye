@@ -1,21 +1,41 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_text_path_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path_layout&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): the position and slope of each glyph along a polyline (set by arc length).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>文字 i の中心は弧長 `<code style="color:#22d3bf">s_i = start + Σ_{j&lt;i} w_j*spacing + w_i/2</code>`、傾きは</p>
+<p>文字 i の中心は弧長 `<code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code>`、傾きは</p>
 <p>その位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。</p>
+<p><b>位置の決め方</b>(2026-09-08 に追加。既定はそれまでの動作と同じ):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">anchor</code><code style="color:#22d3bf"> —— 経路に沿ったそろえ方。</code><code style="color:#22d3bf">&quot;start&quot;</code>`(既定・従来どおり)/</p>
+<p>`<code style="color:#22d3bf">&quot;center&quot;</code><code style="color:#22d3bf">(経路の中央にそろえる)/ </code><code style="color:#22d3bf">&quot;end&quot;</code>`(終端にそろえる)。</p>
+<p>`<code style="color:#22d3bf">start</code>` はアンカーで決めた位置から<b>さらにずらす</b>量として効く。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">offset</code>` —— 経路に<b>垂直</b>なずらし [px]。正が<b>進行方向の右</b></p>
+<p>(画面座標。y が下向きなので、左→右に進む文字なら「下」)。</p>
+<p>線に触れさせずに脇へ置く用途。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">\n</code><code style="color:#22d3bf"> で**改行**。2 行目以降は </code><code style="color:#22d3bf">line_spacing</code>` を掛けた行高だけ</p>
+<p>`<code style="color:#22d3bf">offset</code>` と同じ向き(進行方向の右)へずれる。★この 1 つの規則で、</p>
+<p>横書きは「下へ」、縦書きは「左へ」と<b>どちらも組版どおり</b>になる</p>
+<p>(縦書きは進行方向が下なので、その右は画面の左)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">upright</code>` —— 字を接線角に回さず<b>正立</b>させる。経路が主に縦向き</p>
+<p>(始点→終点の |dy| &gt; |dx|)なら送りを字幅でなく<b>字高</b>にするので、</p>
+<p>これが<b>縦書き</b>になる。`<code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code>` の字だけは 90 度回す。</p>
+<p>★<b>縦書きで実装していないこと</b>(黙って近似しない): 句読点の右上寄せ、</p>
+<p>小書き仮名の位置補正、縦中横。短い注記のための機能で、本文組版ではない。</p>
 <p>Returns</p>
 <p>-------</p>
 <p>dict</p>
-<p>``{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;}], &quot;length&quot;: 経路長,</p>
-<p>&quot;used&quot;: 文字が占める弧長}``。</p>
+<p>``{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;,&quot;advance&quot;,&quot;line&quot;}],</p>
+<p>&quot;length&quot;: 経路長, &quot;used&quot;: 最も長い行の<b>送りの合計</b>(従来どおり</p>
+<p>`<code style="color:#22d3bf">Σ advance*spacing</code>`), &quot;span&quot;: 最も長い行が<b>実際に占める</b>弧長</p>
+<p>(最後の字の後ろの送りを含まない —— アンカーはこちらで揃える),</p>
+<p>&quot;lines&quot;: 行数, &quot;line_height&quot;: 行送り [px], &quot;vertical&quot;: 縦書きか}``。</p>
 <p>Raises</p>
 <p>------</p>
 <p>ValueError</p>
-<p>文字が空、経路が 2 点未満か長さゼロ、非有限、文字列が経路より長い。</p>
+<p>文字が空、経路が 2 点未満か長さゼロ、非有限、行が経路より長い、</p>
+<p>アンカーと `<code style="color:#22d3bf">start</code>` の組み合わせで行が経路から外れる場合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

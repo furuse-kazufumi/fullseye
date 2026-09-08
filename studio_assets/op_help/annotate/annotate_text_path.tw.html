@@ -1,12 +1,18 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">annotate_text_path — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × text</code> → <code style="color:#22d3bf">image2d</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳影像(image2d):沿折線排布文字(每個字按切線角旋轉)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>文字の板は敷かない(経路の上に載せる用途なので)。配置は</p>
-<p>:func:<code style="color:#22d3bf">annotate_text_path_layout</code>。</p>
+<p>文字の板は敷かない(経路の上に載せる用途なので)。配置と、</p>
+<p>`<code style="color:#22d3bf">anchor</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">offset</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">upright</code><code style="color:#22d3bf">(縦書き)/ </code><code style="color:#22d3bf">\n</code>` による改行の意味は</p>
+<p>:func:<code style="color:#22d3bf">annotate_text_path_layout</code> に書いてある。</p>
+<p>`<code style="color:#22d3bf">layout</code>` を渡した場合、そちらが<b>そのまま使われる</b> ——</p>
+<p>`<code style="color:#22d3bf">anchor</code>` などは無視されるので、両方を渡さないこと。</p>
+<p>`<code style="color:#22d3bf">bold</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">italic</code><code style="color:#22d3bf"> は**合成**(:func:</code>_bold_px<code style="color:#22d3bf"> / :func:</code>_italic_tile`)。</p>
+<p>1 字ずつ焼いてから回すので、傾きは<b>字の縦軸に対して</b>掛かる(経路が</p>
+<p>斜めでも斜体が経路の向きに歪まない)。</p>
 <p>Raises</p>
 <p>------</p>
 <p>ValueError</p>

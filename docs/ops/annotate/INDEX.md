@@ -1,4 +1,4 @@
-# ANNOTATE operator help — 49 ops in 8 categories
+# ANNOTATE operator help — 54 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/annotate/<category>/<op>.md` を走査。
 
@@ -20,13 +20,13 @@
 
 [color_bar](furniture/color_bar.md) · [legend_box](furniture/legend_box.md) · [scale_bar](furniture/scale_bar.md)
 
-### overlay (2)
+### overlay (5)
 
-[overlay_labels](overlay/overlay_labels.md) · [overlay_mask](overlay/overlay_mask.md)
+[annotate_invert](overlay/annotate_invert.md) · [annotate_invert_path](overlay/annotate_invert_path.md) · [annotate_invert_visibility](overlay/annotate_invert_visibility.md) · [overlay_labels](overlay/overlay_labels.md) · [overlay_mask](overlay/overlay_mask.md)
 
-### paper (24)
+### paper (26)
 
-[annotate_angle](paper/annotate_angle.md) · [annotate_angle_layout](paper/annotate_angle_layout.md) · [annotate_colorbar](paper/annotate_colorbar.md) · [annotate_dimension](paper/annotate_dimension.md) · [annotate_dimension_layout](paper/annotate_dimension_layout.md) · [annotate_figure_grid](paper/annotate_figure_grid.md) · [annotate_figure_grid_layout](paper/annotate_figure_grid_layout.md) · [annotate_inset](paper/annotate_inset.md) · [annotate_inset_layout](paper/annotate_inset_layout.md) · [annotate_invert](paper/annotate_invert.md) · [annotate_invert_path](paper/annotate_invert_path.md) · [annotate_invert_visibility](paper/annotate_invert_visibility.md) · [annotate_leader](paper/annotate_leader.md) · [annotate_leader_layout](paper/annotate_leader_layout.md) · [annotate_legend](paper/annotate_legend.md) · [annotate_markers](paper/annotate_markers.md) · [annotate_orientation](paper/annotate_orientation.md) · [annotate_outline](paper/annotate_outline.md) · [annotate_outline_layout](paper/annotate_outline_layout.md) · [annotate_panel_label](paper/annotate_panel_label.md) · [annotate_scale_bar](paper/annotate_scale_bar.md) · [annotate_scale_bar_layout](paper/annotate_scale_bar_layout.md) · [annotate_text_path](paper/annotate_text_path.md) · [annotate_text_path_layout](paper/annotate_text_path_layout.md)
+[annotate_angle](paper/annotate_angle.md) · [annotate_angle_layout](paper/annotate_angle_layout.md) · [annotate_colorbar](paper/annotate_colorbar.md) · [annotate_dimension](paper/annotate_dimension.md) · [annotate_dimension_layout](paper/annotate_dimension_layout.md) · [annotate_figure_grid](paper/annotate_figure_grid.md) · [annotate_figure_grid_layout](paper/annotate_figure_grid_layout.md) · [annotate_inset](paper/annotate_inset.md) · [annotate_inset_layout](paper/annotate_inset_layout.md) · [annotate_invert](paper/annotate_invert.md) · [annotate_invert_path](paper/annotate_invert_path.md) · [annotate_invert_visibility](paper/annotate_invert_visibility.md) · [annotate_leader](paper/annotate_leader.md) · [annotate_leader_layout](paper/annotate_leader_layout.md) · [annotate_legend](paper/annotate_legend.md) · [annotate_markers](paper/annotate_markers.md) · [annotate_orientation](paper/annotate_orientation.md) · [annotate_outline](paper/annotate_outline.md) · [annotate_outline_layout](paper/annotate_outline_layout.md) · [annotate_panel_label](paper/annotate_panel_label.md) · [annotate_scale_bar](paper/annotate_scale_bar.md) · [annotate_scale_bar_layout](paper/annotate_scale_bar_layout.md) · [annotate_table](paper/annotate_table.md) · [annotate_table_layout](paper/annotate_table_layout.md) · [annotate_text_path](paper/annotate_text_path.md) · [annotate_text_path_layout](paper/annotate_text_path_layout.md)
 
 ### plot (7)
 

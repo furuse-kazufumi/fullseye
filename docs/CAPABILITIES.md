@@ -16,7 +16,7 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 15 項目**
+**収録 16 項目**
 
 ## 測る (4)
 
@@ -134,7 +134,7 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 
 動く例: `poc_astro_photometry`, `poc_registration_basin`
 
-## 見せる (2)
+## 見せる (3)
 
 ### [結果を人が読める図にする](capabilities/figures-and-annotation.md)
 
@@ -149,5 +149,13 @@ Fresnel の反射率、薄膜干渉の色、回折格子の色、ベクトル形
 検査画像に測定線や ROI を重ねるとき、**地が明るいか暗いか分からない**のが普通です。白で描けば白飛びの上で消え、黒で描けば影の上で消えます。反転色は「その場の色をひっくり返して描く」ことでこれを避ける古典手で、`annotate_invert_path` が折れ線(アンチエイリアス・破線可)、`annotate_invert` が領域を、`draw="fill"` で中身ごと、`draw="margin"` で輪郭だけ反転します(HALCON の `set_draw` と同じ語)。
 
 使う op: `annotate_invert`, `annotate_invert_path`, `annotate_invert_visibility`
+
+動く例: `annotate_paper_tour`
+
+### [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md)
+
+検査画像や解析結果に、**位置を指定して**文字を焼き込めます。`text_box` は 9 方向のアンカー・半透明の板・折り返し、`annotate_text_path` は折れ線に沿った配置で、**斜め**(接線角に 1 字ずつ回す)・**縦書き**(`upright=True`)・**改行**(`\n`)・経路に沿ったそろえ(`anchor="start"/"center"/"end"`)・線に触れさせない**法線オフセット**が使えます。字は色(役割名または RGB)に加えて、合成の **Bold / Italic** も指定できます。
+
+使う op: `text_box`, `annotate_text_path`, `annotate_text_path_layout`, `annotate_table`, `annotate_table_layout`, `measure_text`
 
 動く例: `annotate_paper_tour`

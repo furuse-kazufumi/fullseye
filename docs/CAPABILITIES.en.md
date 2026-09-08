@@ -17,7 +17,7 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 15 capabilities**
+**Currently 16 capabilities**
 
 ## 測る (4)
 
@@ -135,7 +135,7 @@ Operators: `frame_align`, `drizzle_resample`, `icp_point2point_3d`, `interp_scat
 
 Runnable: `poc_astro_photometry`, `poc_registration_basin`
 
-## 見せる (2)
+## 見せる (3)
 
 ### [Turn results into figures people can read](capabilities/figures-and-annotation.md)
 
@@ -150,5 +150,13 @@ Runnable: `poc_colormap_readability`, `poc_dem_terrain`
 Draw a polyline or a region in the inverse of whatever is underneath, so the overlay stays visible without knowing the background. `draw="margin"` outlines instead of filling. The one real failure mode — mid-grey, where the complement equals the original — is measured rather than assumed: `annotate_invert_visibility` reports the per-pixel WCAG contrast, and the drawing ops warn (or refuse) when the mark would be invisible.
 
 Operators: `annotate_invert`, `annotate_invert_path`, `annotate_invert_visibility`
+
+Runnable: `annotate_paper_tour`
+
+### [Put text and tables exactly where you want them on an image](capabilities/text-and-tables-on-images.md)
+
+Place text on an image where you actually want it: nine-way anchors, translucent plates, wrapping, and — along a polyline — slanted, vertical (`upright=True`), multi-line (`\n`), start/centre/end alignment and a perpendicular offset. Colour, plus synthetic bold and italic. `annotate_table` turns a tab-separated string into a table whose column widths are **measured with the real font at the requested size**, with a font-size-proportional column gap, automatic right-alignment for numeric columns and a translucent plate. Every one has a `*_layout` twin that returns the geometry so you can check the placement before drawing.
+
+Operators: `text_box`, `annotate_text_path`, `annotate_text_path_layout`, `annotate_table`, `annotate_table_layout`, `measure_text`
 
 Runnable: `annotate_paper_tour`

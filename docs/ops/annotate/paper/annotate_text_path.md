@@ -13,14 +13,22 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_text_path — ANNOTATE `paper` op
 
 - **データ種**: `image2d × text` → `image2d`
-- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None)`、台帳から引くなら `opsannotate.get("annotate_text_path")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None, anchor='start', offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color='neutral', spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme='okabe_ito', font_path=None, layout=None, anchor='start', offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)`、台帳から引くなら `opsannotate.get("annotate_text_path")`)
 
 ## 使い方
 
 画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。
 
-文字の板は敷かない(経路の上に載せる用途なので)。配置は
-:func:`annotate_text_path_layout`。
+文字の板は敷かない(経路の上に載せる用途なので)。配置と、
+``anchor`` / ``offset`` / ``upright``(縦書き)/ ``\n`` による改行の意味は
+:func:`annotate_text_path_layout` に書いてある。
+
+``layout`` を渡した場合、そちらが**そのまま使われる** ——
+``anchor`` などは無視されるので、両方を渡さないこと。
+
+``bold`` / ``italic`` は**合成**(:func:`_bold_px` / :func:`_italic_tile`)。
+1 字ずつ焼いてから回すので、傾きは**字の縦軸に対して**掛かる(経路が
+斜めでも斜体が経路の向きに歪まない)。
 
 Raises
 ------

@@ -58,7 +58,7 @@ ValueError
 
 ## 同カテゴリ(`overlay`)
 
-[overlay_mask](overlay_mask.md)
+[overlay_mask](overlay_mask.md) · [annotate_invert_visibility](annotate_invert_visibility.md) · [annotate_invert](annotate_invert.md) · [annotate_invert_path](annotate_invert_path.md)
 
 ---
 *Provenance: annotate.py — ANNOTATE operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

@@ -69,7 +69,7 @@ Notes
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[label_points](../pointer/label_points.md) · [filled_polygon](../shape/filled_polygon.md) · [annotate_invert_path](../paper/annotate_invert_path.md)
+[label_points](../pointer/label_points.md) · [annotate_invert_path](../overlay/annotate_invert_path.md) · [filled_polygon](../shape/filled_polygon.md)
 
 ## 同カテゴリ(`plot`)
 

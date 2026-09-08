@@ -1,5 +1,5 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_path — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_path — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
@@ -47,8 +47,8 @@
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
 <p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">paper</code>)</h3>
-<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">overlay</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:overlay_mask">overlay_mask</a> · <a style="color:#22d3bf" href="opannotate:overlay_labels">overlay_labels</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert_visibility">annotate_invert_visibility</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert">annotate_invert</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: annotate.py — ANNOTATE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

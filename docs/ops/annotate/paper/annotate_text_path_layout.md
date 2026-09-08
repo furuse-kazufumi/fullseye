@@ -13,25 +13,48 @@ version: 0.1.10  # fullseye lib version this note was generated for
 # annotate_text_path_layout — ANNOTATE `paper` op
 
 - **データ種**: `text` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0)`、台帳から引くなら `opsannotate.get("annotate_text_path_layout")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor='start', offset=0.0, upright=False, line_spacing=1.15)` (実装を直接呼ぶなら `import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor='start', offset=0.0, upright=False, line_spacing=1.15)`、台帳から引くなら `opsannotate.get("annotate_text_path_layout")`)
 
 ## 使い方
 
 table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。
 
-文字 i の中心は弧長 ``s_i = start + Σ_{j<i} w_j*spacing + w_i/2``、傾きは
+文字 i の中心は弧長 ``s_i = s0 + Σ_{j<i} a_j*spacing + a_i/2``、傾きは
 その位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。
+
+**位置の決め方**(2026-09-08 に追加。既定はそれまでの動作と同じ):
+
+* ``anchor`` —— 経路に沿ったそろえ方。``"start"``(既定・従来どおり)/
+  ``"center"``(経路の中央にそろえる)/ ``"end"``(終端にそろえる)。
+  ``start`` はアンカーで決めた位置から**さらにずらす**量として効く。
+* ``offset`` —— 経路に**垂直**なずらし [px]。正が**進行方向の右**
+  (画面座標。y が下向きなので、左→右に進む文字なら「下」)。
+  線に触れさせずに脇へ置く用途。
+* ``\n`` で**改行**。2 行目以降は ``line_spacing`` を掛けた行高だけ
+  ``offset`` と同じ向き(進行方向の右)へずれる。★この 1 つの規則で、
+  横書きは「下へ」、縦書きは「左へ」と**どちらも組版どおり**になる
+  (縦書きは進行方向が下なので、その右は画面の左)。
+* ``upright`` —— 字を接線角に回さず**正立**させる。経路が主に縦向き
+  (始点→終点の |dy| > |dx|)なら送りを字幅でなく**字高**にするので、
+  これが**縦書き**になる。``VERTICAL_ROTATED_CHARS`` の字だけは 90 度回す。
+
+★**縦書きで実装していないこと**(黙って近似しない): 句読点の右上寄せ、
+小書き仮名の位置補正、縦中横。短い注記のための機能で、本文組版ではない。
 
 Returns
 -------
 dict
-    ``{"chars": [{"char","s","xy","angle_deg","width"}], "length": 経路長,
-    "used": 文字が占める弧長}``。
+    ``{"chars": [{"char","s","xy","angle_deg","width","advance","line"}],
+    "length": 経路長, "used": 最も長い行の**送りの合計**(従来どおり
+    ``Σ advance*spacing``), "span": 最も長い行が**実際に占める**弧長
+    (最後の字の後ろの送りを含まない —— アンカーはこちらで揃える),
+    "lines": 行数, "line_height": 行送り [px], "vertical": 縦書きか}``。
 
 Raises
 ------
 ValueError
-    文字が空、経路が 2 点未満か長さゼロ、非有限、文字列が経路より長い。
+    文字が空、経路が 2 点未満か長さゼロ、非有限、行が経路より長い、
+    アンカーと ``start`` の組み合わせで行が経路から外れる場合。
 
 ## 詳しい使い方ガイド
 
