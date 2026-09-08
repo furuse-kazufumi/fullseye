@@ -15,7 +15,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 * Organised by what you want to do → [CAPABILITIES.en.md](CAPABILITIES.en.md)
 * Full narrative and numbers → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**7 findings (7 fixed), from 7 PoCs.**
+**8 findings (8 fixed), from 8 PoCs.**
 
 ## By kind
 
@@ -23,7 +23,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 |---|---:|---:|
 | Silently wrong (no exception) | 3 | 3 |
 | Implementation defect | 1 | 1 |
-| Present but unreachable | 2 | 2 |
+| Present but unreachable | 3 | 3 |
 | Documentation hole (one-way reference, stale number) | 1 | 1 |
 
 ## By the PoC that found it
@@ -34,6 +34,7 @@ become a place where 'we fixed it' is recorded with nothing stopping a relapse.
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
 | [`poc_print_registration`](../examples/poc_print_registration.py) | 1 |
+| [`poc_rotation_invariance_audit`](../examples/poc_rotation_invariance_audit.py) | 1 |
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
@@ -81,6 +82,12 @@ Found by: `poc_livestock_body_volume` / Changed: `visualhull.py`, `ops3d.py`, `r
 副画素重心つきで点状目標の座標を返す 2-D op は `star_detect` だけなのに、`op_find("小さい目標 検出")` / `("スポット 検出")` / `("漂流 捜索")` は**いずれも 0 件**。英語の "point target detection" でようやく 20 件中 14 番目。名前が天文に閉じているせいだと思って docstring に説明語を足したが、**それでも 0 件のままだった**。
 
 Found by: `poc_search_sweep_width` / Changed: `opassist.py`, `astrostack.py` / Gate: `test_op_find_answers_japanese_queries` / Status: fixed
+
+#### [「モーメント不変量」が 2 つの族にあり、名前だけで選ぶと落ちる](hardening/moment-invariants-two-families-same-name.md)
+
+回転不変性を監査する PoC を書くとき、「回転不変なモーメント」を探して `moment_invariants` を見つけ、`(H,W)` の二値領域を渡した。返ってきたのは
+
+Found by: `poc_rotation_invariance_audit` / Changed: `moments3d.py` / Gate: `test_the_three_d_moment_op_points_at_the_two_d_region_family` / Status: fixed
 
 ### Documentation hole (one-way reference, stale number)
 

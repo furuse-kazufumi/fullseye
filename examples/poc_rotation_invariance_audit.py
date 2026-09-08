@@ -292,6 +292,8 @@ def main():
     section_square_anchor()
     verdict, base, frames, grey = section_real_coins()
     n = make_figures(frames, grey, verdict)
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
     print("\nPASS: 回転不変の監査(実写 `coins` 72 角度 + 合成正方形の錨)。"
           "現場(灰を補間して二値化)で 面積 %.2f %% / 周囲長 %.2f %% / 円形度 %.2f %%、"
           "厳密回転では全量が 0.00 %% ―― 揺れは測り方でなく格子への置き直し。GIF %d コマ。"

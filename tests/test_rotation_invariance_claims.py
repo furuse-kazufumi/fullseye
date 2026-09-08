@@ -128,3 +128,30 @@ def test_the_sweep_has_teeth_orientation_tracks_the_angle():
         near = min(abs((got - d) % 180.0), abs((got + d) % 180.0),
                    180.0 - abs((got - d) % 180.0), 180.0 - abs((got + d) % 180.0))
         assert near < 1.0, (d, got)
+
+
+# --------------------------------------------------------------------------- #
+# 3. 同じ趣旨の量が 2 つの族にある —— 名前だけで選ぶと落ちる
+# --------------------------------------------------------------------------- #
+def test_the_three_d_moment_op_points_at_the_two_d_region_family():
+    """★`moment_invariants` は 3-D 点群用。2-D 領域用の名前を docstring が言うこと。
+
+    どちらの op も正しいのに、互いを知らないと探す側が「回転不変量は 3-D に
+    しか無い」と誤って結論する(この PoC を書いたときに実際にそうなりかけた)。
+    """
+    import moments3d
+
+    doc = moments3d.moment_invariants.__doc__ or ""
+    for name in ("moments_region_2nd_invar", "moments_region_central_invar",
+                 "moments_region_3rd_invar"):
+        assert name in doc, name
+        assert hasattr(fs.op, name), name          # 名指しした先が実在すること
+    assert "(N,3)" in doc
+
+
+def test_passing_an_image_to_the_point_cloud_op_fails_loudly():
+    """★落ちること自体は良い設計。黙って何かを返すほうが困る。"""
+    import moments3d
+
+    with pytest.raises(ValueError, match="point cloud"):
+        moments3d.moment_invariants(np.zeros((32, 32)))

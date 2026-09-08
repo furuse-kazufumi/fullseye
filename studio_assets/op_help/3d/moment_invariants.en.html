@@ -5,6 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A shape feature vector invariant to translation, rotation and scale (Sadjadi–Hall style, plus higher-order radial distributions).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
+<p>★入力は **`<code style="color:#22d3bf">(N,3)</code>` の点群<b>。2-D の</b>領域**(画像)から同じ趣旨の量が欲しい</p>
+<p>ときは、この op ではなく HALCON 流の `<code style="color:#22d3bf">moments_region_2nd_invar</code>` /</p>
+<p>`<code style="color:#22d3bf">moments_region_central_invar</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">moments_region_3rd_invar</code>`(Hu モーメント)</p>
+<p>を使う。名前が似ているので取り違えやすく、`<code style="color:#22d3bf">(H,W)</code>` を渡すと</p>
+<p>「points must be a point cloud of shape (N,3)」で落ちる</p>
+<p>(2026-09-09、`<code style="color:#22d3bf">poc_rotation_invariance_audit</code>` を書くときに実際に踏んだ)。</p>
 <p>処方:</p>
 <p>1. 重心中心化(並進を除去)。</p>
 <p>2. RMS 半径 R = sqrt(mean‖p-c‖²) で割ってスケール正規化(R→1)。</p>

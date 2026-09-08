@@ -174,22 +174,45 @@ def _frames_to_rgb8(frames, signed: bool):
     本当に動いた量が見えなくなる([[feedback_ran_is_not_meaningful_output]] の
     「尺度違い」)。float のコマは全体の min/max で 1 度だけ [0,1] に写す。
     """
+    import fullseye as fs
+
     arrs = [np.asarray(f) for f in frames]
     shapes = {a.shape[:2] for a in arrs}
     if len(shapes) != 1:
         raise ValueError(
             "save_gif: コマの大きさがそろっていない %r —— GIF は黙って詰めるので、"
             "ここで止める" % (sorted(shapes),))
+    dims = {a.ndim for a in arrs}
+    if len(dims) != 1:
+        raise ValueError("save_gif: 灰色のコマとカラーのコマが混ざっている %r" % (sorted(dims),))
     if all(a.dtype == np.uint8 for a in arrs):
         return [a[..., :3] if a.ndim == 3 else np.repeat(a[..., None], 3, 2) for a in arrs]
     fl = [np.nan_to_num(np.asarray(a, np.float64), nan=0.0, posinf=0.0, neginf=0.0)
           for a in arrs]
     lo = min(float(a.min()) for a in fl)
     hi = max(float(a.max()) for a in fl)
-    if hi > 1.0 or lo < 0.0:
+
+    # ★ここで :func:`_to_rgb8` に丸投げしてはいけない。あれは (H,W) を
+    #   `colorize_depth` に渡すが、**その中で 1 枚ずつ正規化される**ので、
+    #   全コマ 0 の画と全コマ 1 の画が同じ色になる(2026-09-09 に試験が捕まえた)。
+    #   値域を明示して渡すことで、初めて尺度が 1 つになる。
+    if fl[0].ndim == 3:
         rng = hi - lo
-        fl = [(a - lo) / rng if rng > 1e-12 else np.zeros_like(a) for a in fl]
-    return [_to_rgb8(np.clip(a, 0.0, 1.0), signed) for a in fl]
+        scale = (hi > 1.0 or lo < 0.0) and rng > 1e-12
+        return [(np.clip(((a - lo) / rng if scale else a)[..., :3], 0.0, 1.0) * 255
+                 ).astype(np.uint8) for a in fl]
+    if signed:
+        m = max(float(np.max(np.abs(a))) for a in fl) or 1.0
+        lut = np.asarray(fs.diverging_lut(256))
+        out = []
+        for a in fl:
+            idx = np.clip(((a / m) * 0.5 + 0.5) * 255.0, 0, 255).astype(np.int32)
+            out.append((np.clip(lut[idx], 0, 1) * 255).astype(np.uint8))
+        return out
+    if hi - lo < 1e-12:                      # 全コマ一定 —— 割らずに 1 色で出す
+        hi = lo + 1.0
+    return [(np.clip(np.asarray(fs.colorize_depth(a, vmin=lo, vmax=hi), np.float64)[..., :3],
+                     0.0, 1.0) * 255).astype(np.uint8) for a in fl]
 
 
 def save_gif(name: str, frames, caption: str = "", fps: float = 8.0,

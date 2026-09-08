@@ -188,6 +188,13 @@ def principal_moments(points) -> np.ndarray:
 def moment_invariants(points) -> np.ndarray:
     """並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流 + 高次半径分布)。
 
+    ★入力は **``(N,3)`` の点群**。2-D の**領域**(画像)から同じ趣旨の量が欲しい
+    ときは、この op ではなく HALCON 流の ``moments_region_2nd_invar`` /
+    ``moments_region_central_invar`` / ``moments_region_3rd_invar``(Hu モーメント)
+    を使う。名前が似ているので取り違えやすく、``(H,W)`` を渡すと
+    「points must be a point cloud of shape (N,3)」で落ちる
+    (2026-09-09、``poc_rotation_invariance_audit`` を書くときに実際に踏んだ)。
+
     処方:
         1. 重心中心化(並進を除去)。
         2. RMS 半径 R = sqrt(mean‖p-c‖²) で割ってスケール正規化(R→1)。

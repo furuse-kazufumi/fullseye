@@ -14,7 +14,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 * できることから引くなら → [CAPABILITIES.md](CAPABILITIES.md)
 * 詳しい経緯と数字は → [KNOWN_ISSUES.md](KNOWN_ISSUES.md)
 
-**7 件(うち直したもの 7 件)。見つけた PoC は 7 本。**
+**8 件(うち直したもの 8 件)。見つけた PoC は 8 本。**
 
 ## 種別ごと
 
@@ -22,7 +22,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 |---|---:|---:|
 | 静かに間違う(例外が出ない) | 3 | 3 |
 | 実装の誤り | 1 | 1 |
-| 在るのに引けない | 2 | 2 |
+| 在るのに引けない | 3 | 3 |
 | 説明の穴(片道の参照・古い数字) | 1 | 1 |
 
 ## 見つけた PoC ごと
@@ -33,6 +33,7 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 | [`poc_livestock_body_volume`](../examples/poc_livestock_body_volume.py) | 1 |
 | [`poc_multibeam_bathymetry`](../examples/poc_multibeam_bathymetry.py) | 1 |
 | [`poc_print_registration`](../examples/poc_print_registration.py) | 1 |
+| [`poc_rotation_invariance_audit`](../examples/poc_rotation_invariance_audit.py) | 1 |
 | [`poc_search_sweep_width`](../examples/poc_search_sweep_width.py) | 1 |
 | [`poc_stockpile_volume`](../examples/poc_stockpile_volume.py) | 1 |
 | [`poc_thermal_radiometry`](../examples/poc_thermal_radiometry.py) | 1 |
@@ -80,6 +81,12 @@ PoC は展示であると同時に **不具合発見器**です。ここはそ�
 副画素重心つきで点状目標の座標を返す 2-D op は `star_detect` だけなのに、`op_find("小さい目標 検出")` / `("スポット 検出")` / `("漂流 捜索")` は**いずれも 0 件**。英語の "point target detection" でようやく 20 件中 14 番目。名前が天文に閉じているせいだと思って docstring に説明語を足したが、**それでも 0 件のままだった**。
 
 見つけた PoC: `poc_search_sweep_width` / 直した所: `opassist.py`, `astrostack.py` / 門: `test_op_find_answers_japanese_queries` / 状態: fixed
+
+#### [「モーメント不変量」が 2 つの族にあり、名前だけで選ぶと落ちる](hardening/moment-invariants-two-families-same-name.md)
+
+回転不変性を監査する PoC を書くとき、「回転不変なモーメント」を探して `moment_invariants` を見つけ、`(H,W)` の二値領域を渡した。返ってきたのは
+
+見つけた PoC: `poc_rotation_invariance_audit` / 直した所: `moments3d.py` / 門: `test_the_three_d_moment_op_points_at_the_two_d_region_family` / 状態: fixed
 
 ### 説明の穴(片道の参照・古い数字)
 
