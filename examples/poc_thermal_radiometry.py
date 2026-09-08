@@ -1238,7 +1238,7 @@ def section_units(scene):
                             "範囲内に収まる取り違えは、何の兆候も出さない。")
     return {"rows": rows, "loud": loud, "quiet": quiet, "jensen": jensen,
             "apparent": app - 350.0, "tau_twice": twice - once,
-            "n_ratio": n_k / n_c}
+            "n_ratio": n_c / n_k}
 
 
 # --------------------------------------------------------------------------- #
