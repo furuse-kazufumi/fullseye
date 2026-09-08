@@ -1020,8 +1020,8 @@ def section_tool_holes():
     print("      捜索・欠陥・粒子・医用の文脈から辿り着けない。"
           "``peak_detect`` のような")
     print("      分野中立な別名と、和文の説明語を台帳に足すのが筋。")
-    print("
-  ★埋めるべき op(具体案): (1) 位置指定の点源描画 "
+    print()
+    print("  ★埋めるべき op(具体案): (1) 位置指定の点源描画 "
           "``draw_point_sources(shape, rows, cols, flux, sigma)``、")
     print("     (2) 相関マップを返す ``ncc_map(image, template)``、")
     print("     (3) 分野中立な ``peak_detect``(star_detect の別名 + 和文の説明語)、")
