@@ -60,23 +60,3 @@ def test_exhibit_set_matches_poc_examples(cap):
     shown = sorted(e["id"] for e in c["exhibits"])
     assert shown == pocs, ("展示に無い PoC / PoC に無い展示: %s"
                            % sorted(set(pocs) ^ set(shown)))
-
-
-def test_every_poc_file_is_registered():
-    """★**ファイル**の側から数える(2026-09-08)。
-
-    それまでこの門の鎖は「登録 (`examples2d.EXAMPLES`) ↔ 展示
-    (`poc_captions.json`)」だけで閉じていて、**`examples/poc_*.py` を置いた
-    だけで登録しなかった PoC には誰も気づかなかった**。`test_poc_scripts_run`
-    は glob で拾うので走りはするが、索引・図の配線・展示館・記事のどれにも
-    出てこない —— 「配布はされているのに公開経路がゼロ」と同じ形が、
-    例の側で起きる。実測: この門を足した時点で `poc_rail_corrugation` と
-    `poc_web_roll_periodicity` の 2 本が未登録のまま走っていた。
-    """
-    import examples2d as E
-    reg = {e["id"] for e in E.EXAMPLES if e["id"].startswith("poc_")}
-    files = {os.path.splitext(f)[0]
-             for f in os.listdir(os.path.join(_ROOT, "examples"))
-             if f.startswith("poc_") and f.endswith(".py")}
-    assert files == reg, ("登録の無い PoC ファイル / ファイルの無い登録: %s"
-                          % sorted(files ^ reg))

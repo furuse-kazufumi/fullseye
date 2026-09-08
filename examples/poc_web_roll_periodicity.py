@@ -511,9 +511,9 @@ def section_meander() -> dict:
     sc = scene(SEED0)
     per = sc["periodic"]
     _, h_raw, _ = cd_peak_count(sc["cd"][per])
-    _, h_cor, _ = cd_peak_count(sc["cd"][per] + meander(sc["md"], True))
-    _, h_off, _ = cd_peak_count(scene(SEED0, meander_on=False)["cd"][
-        scene(SEED0, meander_on=False)["periodic"]])
+    _, h_cor, _ = cd_peak_count(sc["cd"][per] + meander(sc["md"][per], True))
+    sc_off = scene(SEED0, meander_on=False)
+    _, h_off, _ = cd_peak_count(sc_off["cd"][sc_off["periodic"]])
     xs = (np.arange(h_raw.size) + 0.5) * CD_BIN
     figs.save_plot("meander_lanes",
                    [("蛇行なし", xs, h_off), ("蛇行あり・補正なし", xs, h_raw),
