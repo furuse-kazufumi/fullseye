@@ -585,6 +585,38 @@ def _records():
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),
         })
+    # ★n-ary(多入力)層。2026-09-09 まで **17 op がノートを 1 枚も持っていなかった**
+    # (`add_image` `sub_image` `bit_and` `reduce_domain` `union2` …)。`OP_INDEX.json`
+    # には tier=`nary` で載るのに `docs/ops/` に無いので、**RAG コーパスからは
+    # 永久に引けない**状態だった。見落とした理由もはっきりしている: ここが
+    # `ops.REGISTRY` だけを歩いていて、`ops.REGISTRY`(899)と 2-D ノート(899)は
+    # 一致するので「欠落ゼロ」に見えた。層をまたいで数えて初めて出る
+    # (memory: feedback_search_all_tiers_before_declaring_a_gap)。
+    #
+    # 握り潰さない —— `imgops_nary` は numpy/scipy しか要らない一次モジュールで、
+    # import に失敗するのは「壊れた checkout」であって「その環境に無い機能」ではない
+    # (`imgevolve._all_ops` が同じ理由で except を外している)。
+    import imgops_nary as _NA
+    _nary = _NA.build_nary()
+    assert _nary, "nary 層が空(build_nary が何も返さない)"
+    for o in _nary:
+        try:
+            sig = str(inspect.signature(o.fn))
+        except (TypeError, ValueError):
+            sig = "(inputs, a, b)"
+        recs.append({
+            "dim": "2d", "name": o.name, "category": "nary",
+            # 入力が複数あることを型で見せる —— 連鎖を組む側はここだけを見る。
+            "in": " × ".join(o.in_sorts), "out": o.out_sort,
+            "halcon": (o.halcon or "").strip(),
+            "doc": _defuse_pseudolinks(
+                inspect.cleandoc(o.desc or o.fn.__doc__ or "").strip()),
+            "module": "imgops_nary", "sig": sig,
+            "examples": sorted(idx2d.get(o.name, [])),
+            "family": op_fam.get(o.name),
+            "arity": o.arity,
+        })
+
     try:
         import ops3d
         for name, info in ops3d.OPS3D.items():
