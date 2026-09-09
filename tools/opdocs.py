@@ -1118,9 +1118,13 @@ def samples_md() -> str:
     out.append("---")
     out.append(_COPYRIGHT)
     out.append("")
+    return "\n".join(out)
+
+
+def cmd_samples():
     os.makedirs(DOCS, exist_ok=True)
     with open(os.path.join(DOCS, "SAMPLES.md"), "w", encoding="utf-8") as f:
-        f.write("\n".join(out))
+        f.write(samples_md())
     print(f"opdocs samples: wrote {os.path.join(DOCS, 'SAMPLES.md')}")
 
 
