@@ -136,8 +136,23 @@ def collect():
     return blocks
 
 
+_KANA = re.compile(r"[ぁ-んァ-ヶ]")
+
+
+def _has_kana(s: str) -> bool:
+    return bool(_KANA.search(s))
+
+
 def _translated(text: str, lang: str) -> bool:
-    return T(text, lang) != text
+    """訳済み = レンダ結果に**かなが残っていない**こと(i18n_status と同じ判定)。
+
+    `T != text` ではなく「かな消滅」で数える理由:
+    ① 英語で書かれた ★ コメント(かな無し)は en では原文のまま=既に訳済み
+       (以前は `T==text` で「未訳」と誤カウントし、英語に `_(ja)_` が付いていた)。
+    ② かなが残る中途半端な訳を「未訳」と正しく捕まえる。
+    zh/tw(漢字)・ko(ハングル)・de はいずれもかな非使用なので正しく訳済みになる。
+    """
+    return not _has_kana(T(text, lang))
 
 
 def render(blocks, lang: str) -> str:
