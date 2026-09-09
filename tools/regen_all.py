@@ -163,8 +163,11 @@ def main(argv=None) -> int:
         for i, (args, what) in enumerate(CHAIN, 1):
             print("%2d. %-42s %s" % (i, " ".join(args), what))
         print("\n--- CHAIN に入れないもの(回さなくてよい、ではなく門にできない) ---")
-        for what, why in EXCLUDED:
-            print("  %s\n      %s" % (what, why))
+        for what in sorted(EXCLUDED):
+            print("  %-40s %s" % (what, EXCLUDED[what][:70]))
+        rest = unclassified()
+        if rest:
+            print("\n★どちらの表にも無い生成器(分類してください): %s" % ", ".join(rest))
         return 0
 
     before = _dirty() if a.check else []
