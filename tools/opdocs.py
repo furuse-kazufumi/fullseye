@@ -1303,7 +1303,7 @@ def skill_corpus_map() -> str:
         "`docs/MATURITY.md`, `docs/maturity.json` |",
         "| Ground-truth-checked runnable examples | `examples/*.py`, `examples_3d/*.py` |",
         "",
-        "**The 32 families, by size:**",
+        f"**The {len(fams)} families, by size:**",
         "",
         listing + ".",
         "",
