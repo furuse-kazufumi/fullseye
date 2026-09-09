@@ -13,6 +13,17 @@ op の動作確認・デバッグに使える**実在**のサンプルデータ�
 | `itokawa` | mesh | info | <https://sbn.psi.edu/pds/resource/itokawashape.html> |
 | `google-scanned` | mesh | info | <https://app.gazebosim.org/GoogleResearch/fuel/collections/Scanned%20Objects%20by%20Google%20Research> |
 | `open-scivis` | volume | info | <https://klacansky.com/open-scivis-datasets/> |
+| `nist-thermography-calib` | reference | info | <https://nvlpubs.nist.gov/nistpubs/ir/2016/NIST.IR.8098.pdf> |
+| `nist-radiance-temperature` | reference | info | <https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication250-43.pdf> |
+| `nist-uncertainty-machine` | reference | info | <https://uncertainty.nist.gov/> |
+| `nist-spectral-reflectance` | reference | info | <https://tsapps.nist.gov/srmext/certificates/archives/2044a.pdf> |
+| `middlebury-stereo` | image | info | <https://vision.middlebury.edu/stereo/data/> |
+| `eth3d` | image | info | <https://www.eth3d.net/datasets> |
+| `asf-sentinel1` | image | info | <https://search.asf.alaska.edu/> |
+| `gsi-kiban-dem` | volume | gated | <https://service.gsi.go.jp/kiban/app/map/> |
+| `dicom-test-data` | volume | info | <https://www.aliza-dicom-viewer.com/download/datasets> |
+| `empiar` | volume | info | <https://www.ebi.ac.uk/empiar/> |
+| `rspid-piv` | image | info | <https://zenodo.org/records/7832205> |
 | `mvtec-ad` | image | gated | <https://www.mvtec.com/company/research/datasets/mvtec-ad> |
 
 取得: `py -3.11 -c "import sample_data; sample_data.download('bunny', yes=True)"` (`access=direct` のみ自動 DL、`gated`/`info` は出典ページから手動)。
