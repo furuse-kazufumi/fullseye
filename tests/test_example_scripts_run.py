@@ -123,6 +123,7 @@ def test_the_example_runs_from_a_bare_checkout(example_results, name):
     主張を assert するものではないから。ここで見るのは「利用者が打つとおりに
     打って、最後まで走るか」だけ。
     """
+    requires_backend(*_needs(name[:-3]))      # 足りなければ skip / 完全環境なら失敗
     code, tail = example_results[name]
     assert code == 0, "examples/%s が exit %s\n%s" % (name, code, tail)
 
