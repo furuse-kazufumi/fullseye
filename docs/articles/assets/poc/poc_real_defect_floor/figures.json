@@ -2,19 +2,20 @@
  {
   "file": "01_defect_floor_panels.png",
   "name": "defect_floor_panels",
-  "caption": "左=地のまま、右=検出限界ちょうどの欠陥を中央に仕込んだところ(上から brick / grass / gravel)。限界の振幅は brick 0.475 / grass 0.560 / gravel 0.590。",
+  "caption": "左=地のまま、右=**検出限界ちょうど**の欠陥を中央に仕込んだところ(上から brick / grass / gravel)。隅の枠は同じ場所の 2 倍拡大 ——限界の振幅では、拡大して初めて見える。限界は brick 0.475 / grass 0.560 / gravel 0.590。",
   "shape": [
-   576,
-   384
+   596,
+   394,
+   3
   ]
  },
  {
   "file": "02_defect_floor_sweep.gif",
   "name": "defect_floor_sweep",
-  "caption": "同じ欠陥を、振幅 0.02 から 1.20 まで上げていく。左=実写の brick、右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、右のほうが先に見えてくる。",
+  "caption": "同じ欠陥を振幅 0.02 から 1.20 まで上げていく。左=実写の brick、右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、右のほうが先に見えてくる。",
   "shape": [
    192,
-   384,
+   394,
    3
   ],
   "animated": true,

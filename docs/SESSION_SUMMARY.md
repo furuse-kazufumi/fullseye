@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-09 11:02:22
+- **最終更新**: 2026-09-09 11:30:08
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+be9b499f0 auto: poc_real_defect_floor.py 編集前 (2026-09-09 11:26)
 26a29f10c auto: test_example_scripts_run.py 編集前 (2026-09-09 10:19)
 ea8870025 auto: test_example_scripts_run.py 編集前 (2026-09-09 10:19)
 d60111c94 auto: test_example_scripts_run.py 編集前 (2026-09-09 10:19)
@@ -19,44 +20,40 @@ d60111c94 auto: test_example_scripts_run.py 編集前 (2026-09-09 10:19)
 4a974f360 auto: poc_real_defect_floor.py 編集前 (2026-09-09 09:57)
 460b573d7 auto: poc_real_defect_floor.py 編集前 (2026-09-09 09:56)
 edc4b41ec auto: poc_real_defect_floor.py 編集前 (2026-09-09 09:56)
-0aa3ad5ab auto: poc_real_defect_floor.py 編集前 (2026-09-09 09:55)
 ```
 
 ## 現在の git status
 
 ```
-M CHANGELOG.md
- M docs/OP_CATALOG.md
- M docs/SESSION_SUMMARY.md
- M docs/ops/2d/edges/laplace_of_gauss.md
- M fullseye/OP_CATALOG.md
- M studio_assets/op_help/laplace_of_gauss.de.html
- M studio_assets/op_help/laplace_of_gauss.en.html
- M studio_assets/op_help/laplace_of_gauss.html
- M studio_assets/op_help/laplace_of_gauss.ko.html
- M studio_assets/op_help/laplace_of_gauss.tw.html
- M studio_assets/op_help/laplace_of_gauss.zh.html
- M tests/test_example_scripts_run.py
+M docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels.png
+ M docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels_720.jpg
+ M docs/articles/assets/poc/poc_real_defect_floor/02_defect_floor_sweep.gif
+ M docs/articles/assets/poc/poc_real_defect_floor/figures.json
+ M docs/articles/exhibits/wingpoc.en.md
+ M docs/articles/exhibits/wingpoc.ja.md
+ M docs/articles/fullseye_poc_museum_qiita_en.md
+ M docs/articles/fullseye_poc_museum_qiita_ja.md
+ M examples/poc_real_defect_floor.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-10:54 .pytest_cache/v/cache/nodeids
+11:27 docs/articles/fullseye_poc_museum_qiita_en.md
+11:27 docs/articles/exhibits/wingpoc.en.md
+11:27 docs/articles/fullseye_poc_museum_qiita_ja.md
+11:27 docs/articles/exhibits/wingpoc.ja.md
+11:27 docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels_720.jpg
+11:27 docs/articles/assets/poc/poc_real_defect_floor/figures.json
+11:27 docs/articles/assets/poc/poc_real_defect_floor/02_defect_floor_sweep.gif
+11:27 docs/articles/assets/poc/poc_real_defect_floor/01_defect_floor_panels.png
+11:26 .ruff_cache/0.16.0/13906884550158051618
+11:26 examples/poc_real_defect_floor.py
+11:25 .pytest_cache/v/cache/nodeids
+11:07 data/auto_functional_gate.json
+11:02 docs/SESSION_SUMMARY.md
 10:54 .pytest_cache/v/cache/lastfailed
 10:53 fullseye/OP_CATALOG.md
-10:53 docs/OP_CATALOG.md
-10:53 studio_assets/op_help/fig/zoom_region.png
-10:53 studio_assets/op_help/fig/zoom_image_size.png
-10:53 studio_assets/op_help/fig/zoom_image_factor.png
-10:53 studio_assets/op_help/fig/zero_crossing_sub_pix.png
-10:53 studio_assets/op_help/fig/zero_crossing.png
-10:53 studio_assets/op_help/fig/xwt_visushrink.png
-10:53 studio_assets/op_help/fig/xwt_subband_tile.png
-10:53 studio_assets/op_help/fig/xwt_packet_entropy.png
-10:53 studio_assets/op_help/fig/xwt_mra_component.png
-10:53 studio_assets/op_help/fig/xwt_lf_reconstruct.png
-10:53 studio_assets/op_help/fig/xwt_hf_reconstruct.png
 ```
 
 ---

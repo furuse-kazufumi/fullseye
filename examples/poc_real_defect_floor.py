@@ -301,28 +301,68 @@ def section_null(real):
 # --------------------------------------------------------------------------- #
 # 図
 # --------------------------------------------------------------------------- #
+GAP = 10          #: 左右・上下の仕切り[px]
+ZOOM_R = 16       #: 拡大して差し込む正方形の半辺[px]
+
+
+def _pair_rgb(left, right):
+    """2 枚を仕切りつきで横に並べ、**固定の尺度**で疑似カラーにする。
+
+    ★``colorize_depth`` は既定で 1 枚ずつ正規化する。``vmin``/``vmax`` を渡さないと、
+    コマごとに明るさが動いて「振幅を上げると見えてくる」という主張そのものが壊れる。
+    """
+    pair = np.concatenate([np.clip(left, 0.0, 1.0), np.zeros((N, GAP)),
+                           np.clip(right, 0.0, 1.0)], axis=1)
+    return np.asarray(fs.colorize_depth(pair, vmin=0.0, vmax=1.0),
+                      dtype=np.float64)[..., :3]
+
+
 def make_figures(real, table):
-    """限界の振幅で仕込んだ姿を並べ、振幅を上げていく GIF を書く。"""
-    tiles = []
+    """限界の振幅で仕込んだ姿を並べ、振幅を上げていく GIF を書く。
+
+    ★最初の版は地と欠陥をただ並べただけで、**仕込んだ欠陥がどこにあるか読み手に
+    分からなかった**(2026-09-09、書いたあと自分で開いて気づいた)。限界ちょうどの
+    欠陥は「言われれば見える」大きさなので、**位置を示して拡大しないと図が主張を
+    運ばない**。素材名と限界値は背景板つきの凡例に、地と欠陥の同じ場所は 2 倍に
+    拡大して隅へ差し込む(``annotate_inset`` は最近傍の整数倍 = 元の画素のまま)。
+    """
+    cx = cy = N // 2
+    rows = []
     for name, g in real.items():
         amp = table[name][1]
-        tiles.append(np.concatenate([g, g + blob(g.shape, N // 2, N // 2, amp)], axis=1))
-    figs.save("defect_floor_panels", np.concatenate(tiles, axis=0),
-              caption="左=地のまま、右=検出限界ちょうどの欠陥を中央に仕込んだところ"
-                      "(上から brick / grass / gravel)。"
-                      "限界の振幅は %s。"
+        rgb = _pair_rgb(g, g + blob(g.shape, cx, cy, amp))
+        rgb = np.asarray(fs.annotate_inset(rgb, (cx - ZOOM_R, cy - ZOOM_R,
+                                                 2 * ZOOM_R, 2 * ZOOM_R),
+                                           corner="lb", factor=2, label="地"),
+                         dtype=np.float64)
+        rgb = np.asarray(fs.annotate_inset(rgb, (N + GAP + cx - ZOOM_R, cy - ZOOM_R,
+                                                 2 * ZOOM_R, 2 * ZOOM_R),
+                                           corner="rb", factor=2, label="欠陥"),
+                         dtype=np.float64)
+        rgb = np.asarray(fs.annotate_legend(
+            rgb, ["%s: 左=地のまま / 右=限界 %.3f の欠陥" % (name, amp)],
+            (6, 6), anchor="lt", font_size=11, radius=5.0), dtype=np.float64)
+        rows += [rgb, np.ones((GAP, rgb.shape[1], 3))]
+    figs.save("defect_floor_panels", np.concatenate(rows[:-1], axis=0),
+              caption="左=地のまま、右=**検出限界ちょうど**の欠陥を中央に仕込んだところ"
+                      "(上から brick / grass / gravel)。隅の枠は同じ場所の 2 倍拡大 ——"
+                      "限界の振幅では、拡大して初めて見える。限界は %s。"
                       % " / ".join("%s %.3f" % (n, table[n][1]) for n in real))
-    frames, amps = [], np.round(np.geomspace(0.02, 1.2, 18), 4)
-    g = real["brick"]
-    syn = table["brick"][5]
+
+    amps = np.round(np.geomspace(0.02, 1.2, 18), 4)
+    g, syn = real["brick"], table["brick"][5]
+    frames = []
     for amp in amps:
-        frames.append(np.concatenate(
-            [g + blob(g.shape, N // 2, N // 2, amp),
-             syn + blob(syn.shape, N // 2, N // 2, amp)], axis=1))
+        rgb = _pair_rgb(g + blob(g.shape, cx, cy, amp),
+                        syn + blob(syn.shape, cx, cy, amp))
+        rgb = np.asarray(fs.annotate_legend(
+            rgb, ["左=実写 brick / 右=残差 σ を揃えた合成", "振幅 %.3f" % amp],
+            (6, 6), anchor="lt", font_size=11, radius=5.0), dtype=np.float64)
+        frames.append((np.clip(rgb, 0.0, 1.0) * 255).astype(np.uint8))
     figs.save_gif("defect_floor_sweep", frames, fps=6,
-                  caption="同じ欠陥を、振幅 %.2f から %.2f まで上げていく。"
-                          "左=実写の brick、右=**残差 σ を揃えた**合成の地。"
-                          "雑音の量は同じなのに、右のほうが先に見えてくる。"
+                  caption="同じ欠陥を振幅 %.2f から %.2f まで上げていく。左=実写の brick、"
+                          "右=**残差 σ を揃えた**合成の地。雑音の量は同じなのに、"
+                          "右のほうが先に見えてくる。"
                           % (amps[0], amps[-1]))
     return len(frames)
 
