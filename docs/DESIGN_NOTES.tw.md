@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：11 / 609 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：19 / 609 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel_match.py`
@@ -39,11 +39,11 @@
 
 ## `backend_safe.py`
 
-- **L436** _(ja)_ — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
+- **L436** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
 
 ## `backends.py`
 
-- **L23** _(ja)_ — ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a wrapper whose library call raises on every input looks to evolution / difftest / coverage like a working identity op instead of a failure. Runtime robustness is kept, but the degradation is DETECTABLE: every swallowed exception is recorded in the shared fallback ledger and strict mode re-raises instead. 2026-09-02: the ledger / strict switch moved DOWN into ``backend_safe`` so that the 23 other backend files (each with a private ``_safe``) report to the SAME place — before, this module was the only one of 24 wrapper families that recorded anything. The names below are kept as thin aliases for callers and tests that import them from here.
+- **L23** — ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a wrapper whose library call raises on every input looks to evolution / difftest / coverage like a working identity op instead of a failure. Runtime robustness is kept, but the degradation is DETECTABLE: every swallowed exception is recorded in the shared fallback ledger and strict mode re-raises instead. 2026-09-02: the ledger / strict switch moved DOWN into ``backend_safe`` so that the 23 other backend files (each with a private ``_safe``) report to the SAME place — before, this module was the only one of 24 wrapper families that recorded anything. The names below are kept as thin aliases for callers and tests that import them from here.
 - **L812** _(ja)_ — LBP の符号化。★2026-09-08 まで `b` は本当に何もしておらず、 `method` は `'default'`(回転不変でない)に固定だった。実写の テクスチャ(brick / grass / gravel)で測ると、異方な素材では 回転で動く量が素材間の距離の 9.64 倍になり、`'uniform'` に替えると 1.72 倍まで下がる(`examples/poc_real_texture_invariance.py`)。 選べないと**下げようがない**ので `b` を割り当てた。閾値の表にして あるのは、同じ軸で分岐が増えるときの規約(入れ子の if にしない)。 `b=0.5`(既定)は従来どおり `'default'`。
 - **L1028** _(ja)_ — ★cv2 に **bool 配列**を渡すと `cv2.Laplacian` がヒープを壊し、後続の無関係な op でプロセスが死ぬ(2026-09-05 Fable レビュー、Windows で 100 回中に SIGSEGV を 自分でも再現、exit 127)。facade は dtype を契約に揃えるが、`op.fn` 直接経路 (テスト・coverage・進化ループ)は素通しだった。族の入口で float64 に揃える。
 
@@ -93,7 +93,7 @@
 
 ## `champion_to_macro.py`
 
-- **L193** _(ja)_ — ★Enforce the headline honesty claim ("a DNA op is added only when it beats the hand baseline on a LOCKED holdout") — previously this flag was printed but never gated, so a worse-than-hand macro could be registered and then selected by the next evolution. The gate refuses that unless it is explicitly overridden.
+- **L193** — ★Enforce the headline honesty claim ("a DNA op is added only when it beats the hand baseline on a LOCKED holdout") — previously this flag was printed but never gated, so a worse-than-hand macro could be registered and then selected by the next evolution. The gate refuses that unless it is explicitly overridden.
 
 ## `deform3d.py`
 
@@ -544,7 +544,7 @@
 - **L252** _(ja)_ — 3. ★★塊の大きさ(周長)が偏りを決める # --------------------------------------------------------------------------- #
 - **L291** _(ja)_ — 4. ★★密接度で偏りの符号が反転する(打ち消し点) # --------------------------------------------------------------------------- #
 - **L353** _(ja)_ — 6. ★端成分が 5 % ずれたとき # --------------------------------------------------------------------------- #
-- **L380** _(ja)_ — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
+- **L380** — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
 - **L490** _(ja)_ — (b) spec_unmix は在った(★「無い」と書く前に 3 層引いた)
 
 ## `examples/poc_search_sweep_width.py`
@@ -754,7 +754,7 @@
 ## `examples/voxel_labels_color.py`
 
 - **L81** _(ja)_ — 1) ★色の安定性 —— この族の存在理由 # ------------------------------------------------------------------ #
-- **L152** _(ja)_ — 4) ★異方 spacing # ------------------------------------------------------------------ #
+- **L152** — 4) ★異方 spacing # ------------------------------------------------------------------ #
 
 ## `examples_3d/alpha_shape_topology.py`
 
@@ -807,7 +807,7 @@
 
 ## `fsruntime.py`
 
-- **L284** _(ja)_ — ★A judging recipe may use ONLY the curated fslib-backed builtins, under EVERY profile (not just industrial). Any other call is a 650-op evolution-registry op resolved through fscript._call_registry_op → api.RT, whose _safe wrapper is fail-OPEN (it swallows an op failure and returns a benign "no defects" value). That surface must never be a recipe's operator — a studio/reference runtime judges parts too — so a recipe that uses it is rejected at load (docs/FSCRIPT_DECISION.md 1.6b).
+- **L284** — ★A judging recipe may use ONLY the curated fslib-backed builtins, under EVERY profile (not just industrial). Any other call is a 650-op evolution-registry op resolved through fscript._call_registry_op → api.RT, whose _safe wrapper is fail-OPEN (it swallows an op failure and returns a benign "no defects" value). That surface must never be a recipe's operator — a studio/reference runtime judges parts too — so a recipe that uses it is rejected at load (docs/FSCRIPT_DECISION.md 1.6b).
 
 ## `fullseye/__init__.py`
 
@@ -820,7 +820,7 @@
 
 ## `honest_summary.py`
 
-- **L58** _(ja)_ — ★Exclude auto ops that FAILED the functional gate from the headline — they were previously only [warn]-printed while still counted, inflating the "functionally gated" parity number with ops the gate rejects.
+- **L58** — ★Exclude auto ops that FAILED the functional gate from the headline — they were previously only [warn]-printed while still counted, inflating the "functionally gated" parity number with ops the gate rejects.
 - **L77** _(ja)_ — ★2026-09-08: この行はこう書いてあった —— "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 実測すると **979 + 17 = 979**、つまり n-ary の 17 本は ``reg_counted`` の**部分集合**(``nary_names - reg_counted`` は空)。 見出しの 979 は正しいのに、内訳の行だけが「足し算」に見え、読者が足すと 996 になる。数字が合っていても**説明が嘘をつく**形なので直した。 内訳が和として成り立つかは ``tests/test_honest_summary_arithmetic.py`` が毎回見る。
 
 ## `imgevolve.py`
@@ -939,7 +939,7 @@
 
 ## `problems.py`
 
-- **L147** _(ja)_ — ★A deterministic global shuffle (fixed base, so train/holdout/locked index the SAME permutation) split into three DISJOINT bands keyed by the seed's role (evolve.run draws train=seed, holdout=seed+10000, locked=seed+20000, so seed//10000 mod 3 picks the band). The old `off = seed % pool` collapsed all three windows to the SAME frames whenever pool divided 10000 — a silent train↔holdout↔locked leak that made a train-overfit champion look like it "beat hand on a pure holdout". A pure 3-way split needs pool >= 3n; a smaller pool cannot yield a clean holdout, so we refuse rather than leak silently.
+- **L147** — ★A deterministic global shuffle (fixed base, so train/holdout/locked index the SAME permutation) split into three DISJOINT bands keyed by the seed's role (evolve.run draws train=seed, holdout=seed+10000, locked=seed+20000, so seed//10000 mod 3 picks the band). The old `off = seed % pool` collapsed all three windows to the SAME frames whenever pool divided 10000 — a silent train↔holdout↔locked leak that made a train-overfit champion look like it "beat hand on a pure holdout". A pure 3-way split needs pool >= 3n; a smaller pool cannot yield a clean holdout, so we refuse rather than leak silently.
 
 ## `profileops.py`
 
@@ -1153,10 +1153,10 @@
 ## `tools/gen_design_notes.py`
 
 - **L45** — ★對照表放在**與運算子文件不同的檔案**裡。若用 `opdocs.T`，取用的原文會進入 `opdocs.SEEN_STRINGS`，現有的「框架譯文有缺口」門就會把這 604 條全部算作缺口而使 CI 變紅——那道門是為了讓框架文案在五種語言上齊全，而這裡是「譯到哪算哪」的性質。**混在同一張表裡，會讓一邊的規矩毀掉另一邊。**
-- **L74** _(ja)_ — 1 塊 = ★ を含む行から始まり、同じ字下げで続く `#` コメント行の連なり。 Sphinx 風の `#:` コメントも拾う。`#` と空白だけを剥ぐと先頭に `:` が
-- **L76** _(ja)_ — 残り、生成物に「: ★…」と出る(実際に出た)。`:` もここで剥ぐ。
-- **L100** _(ja)_ — 次の ★ が来たら別の塊として切る(1 塊 1 主張に保つ)。
-- **L164** _(ja)_ — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
+- **L79** _(ja)_ — 1 塊 = ★ を含む行から始まり、同じ字下げで続く `#` コメント行の連なり。 Sphinx 風の `#:` コメントも拾う。`#` と空白だけを剥ぐと先頭に `:` が
+- **L81** _(ja)_ — 残り、生成物に「: ★…」と出る(実際に出た)。`:` もここで剥ぐ。
+- **L105** _(ja)_ — 次の ★ が来たら別の塊として切る(1 塊 1 主張に保つ)。
+- **L184** _(ja)_ — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
 
 ## `tools/gen_docs_index_ops.py`
 

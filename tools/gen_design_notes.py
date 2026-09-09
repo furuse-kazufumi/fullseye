@@ -185,7 +185,7 @@ def render(blocks, lang: str) -> str:
         #   —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、
         #   印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。
         #   `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
-        mark = "" if (lang == "ja" or t != b["text"]) else " _(ja)_"
+        mark = "" if (lang == "ja" or not _has_kana(t)) else " _(ja)_"
         body.append("- **L%d**%s — %s" % (b["line"], mark, t))
     return "\n".join(head + body + ["", "---", OD._COPYRIGHT, ""])
 
