@@ -223,25 +223,59 @@ def section_position(real, rng):
     return spread
 
 
+def floors_discriminated(ground, detector, pos, amps, sigma=DEFECT_SIGMA,
+                         tol=TOL, quantile=99.99, **kw):
+    """「当てた」に加えて、**地だけで決めた閾値を超える**ことも求める限界。
+
+    ★閾値は無欠陥の地だけから決める(その検出器が「何も無いのに鳴る」水準)。
+    ここでは per-image 正規化をしない検出器(生・整合フィルタ)にだけ使う。
+    """
+    base = detector(ground, **kw)
+    thr = float(np.percentile(base, quantile))
+    out = []
+    for (r, c) in pos:
+        got = np.inf
+        for amp in amps:
+            s = detector(ground + blob(ground.shape, r, c, amp, sigma), **kw)
+            pr, pc = np.unravel_index(np.argmax(s), s.shape)
+            if s[pr, pc] > thr and (pr - r) ** 2 + (pc - c) ** 2 <= tol ** 2:
+                got = amp
+                break
+        out.append(got)
+    return np.array(out, dtype=np.float64)
+
+
 def section_null(real):
     """節 4: ゼロ点 —— 背景を引かず、生の画素の最大点を取る。
 
-    ★予想を外した(2026-09-09)。「ゼロ点は何も見つけない」と書こうとしたが、
-    **振幅を上げれば当たる** —— 地の最大値を超えればよいだけだから。ゼロ点は
-    「できない」のではなく「**限界がずっと高い**」。だから比で語る。
+    ★予想を 2 回外した(2026-09-09)。まず「ゼロ点は何も見つけない」と書こうと
+    したが、**振幅を上げれば当たる**(地の最大値を超えればよいだけ)。次に
+    「当てる限界」で比べたら**ゼロ点のほうが低かった** —— 整合フィルタは地の
+    構造も一緒に増幅するから。
+
+    ★★ここが要点: **1 つの指標だと、役に立たない検出器が勝つ**。ゼロ点には
+    「何も無い」と言う手段が無い —— 無欠陥の地でも必ずどこかを最大点として
+    指す。だから「当てる(位置)」と「**弁別する(地だけで決めた閾値を超える)**」を
+    別々に数える。
     """
     pos = positions(step=48)
-    print("\n4) ゼロ点(背景を引かず、生の画素の最大点)")
-    print("   %-8s %10s %10s %8s" % ("地", "ゼロ点", "整合フィルタ", "何倍楽になるか"))
+    print("\n4) ゼロ点(背景を引かず、生の画素の最大点)—— 2 つの物差しで")
+    print("   %-8s | %-19s | %-19s" % ("", "当てる(位置だけ)", "弁別する(閾値も)"))
+    print("   %-8s | %8s %8s | %8s %8s %6s"
+          % ("地", "ゼロ点", "整合", "ゼロ点", "整合", "比"))
     gain = {}
     for name, g in real.items():
-        f0 = float(np.median(floors(g, raw, pos, AMPS)))
-        f1 = float(np.median(floors(g, matched, pos, AMPS)))
-        gain[name] = f0 / f1
-        print("   %-8s %10.4f %10.4f %8.2f" % (name, f0, f1, f0 / f1))
-    print("   → 背景を引くという 1 行が、限界を %.1f〜%.1f 倍下げる。"
-          "ゼロ点は「見つけられない」のではなく、**地のいちばん明るい所を"
-          "超えるまで待たされる**。" % (min(gain.values()), max(gain.values())))
+        l0 = float(np.median(floors(g, raw, pos, AMPS)))
+        l1 = float(np.median(floors(g, matched, pos, AMPS)))
+        d0 = float(np.median(floors_discriminated(g, raw, pos, AMPS)))
+        d1 = float(np.median(floors_discriminated(g, matched, pos, AMPS)))
+        gain[name] = d0 / d1
+        print("   %-8s | %8.4f %8.4f | %8.4f %8.4f %5.2fx"
+              % (name, l0, l1, d0, d1, d0 / d1))
+    print("   → ★位置だけで見るとゼロ点が勝つ(整合フィルタは地の構造も増幅する)。"
+          "弁別まで求めると逆転し、背景を引く 1 行が限界を %.1f〜%.1f 倍下げる。"
+          % (min(gain.values()), max(gain.values())))
+    print("   → **どちらか 1 つだけを報告すれば、どちらの検出器でも勝たせられる。**")
     return gain
 
 
