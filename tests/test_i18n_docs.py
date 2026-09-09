@@ -31,8 +31,8 @@ def test_the_ledger_sees_the_docs():
     """散文ドキュメントの列挙が空になれば門は無言で通る ——「空を通す」を封じる。"""
     docs = D.prose_docs()
     assert len(docs) >= 40, (
-        "散文ドキュメントが %d 本しか見えない(2026-09-09 実測は 68 本)—— "
-        "列挙が壊れていないか" % len(docs))
+        "散文ドキュメントが %d 本しか見えない(2026-09-10 実測は 65 本 —— "
+        "生成物 3 本を GENERATED に移した後)—— 列挙が壊れていないか" % len(docs))
 
 
 def test_at_least_one_translation_exists():
