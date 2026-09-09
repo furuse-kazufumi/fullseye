@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-09 20:33:02
+- **最終更新**: 2026-09-09 21:15:01
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+519873500 auto: regen_all.py 編集前 (2026-09-09 21:05)
+494c0ea9f auto: regen_all.py 編集前 (2026-09-09 21:05)
 d2c5bb2ad RAG skill が自分のコーパスを半分しか指していなかったのを生成に直す
 3c0b88855 auto: opdocs.py 編集前 (2026-09-09 18:35)
 d5271f259 auto: opdocs.py 編集前 (2026-09-09 18:35)
@@ -18,34 +20,34 @@ d5271f259 auto: opdocs.py 編集前 (2026-09-09 18:35)
 0f8336f2b auto: opdocs.py 編集前 (2026-09-09 18:26)
 374cf29b5 auto: opdocs.py 編集前 (2026-09-09 18:26)
 b637f2e7e auto: SKILL.md 編集前 (2026-09-09 18:25)
-65d88b75c auto: opdocs.py 編集前 (2026-09-09 18:25)
-41aaaed4b auto: opdocs.py 編集前 (2026-09-09 18:25)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M .github/workflows/ci.yml
+ M CHANGELOG.md
+ M tools/regen_all.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:03 docs/SESSION_SUMMARY.md
-19:13 fullseye/SENSOR_PLAYBOOK.md
-19:13 docs/SENSOR_PLAYBOOK.md
-19:13 docs/articles/README.md
-19:13 docs/README.de.md
-19:13 docs/README.ko.md
-19:13 docs/README.tw.md
-19:12 docs/README.zh.md
-19:12 docs/README.en.md
-19:12 docs/README.md
-19:11 examples/README.md
-19:11 docs/maturity.json
-19:11 docs/MATURITY.md
-19:11 docs/HARDENING.md
-19:11 docs/HARDENING.en.md
+21:14 .pytest_cache/v/cache/nodeids
+21:13 CHANGELOG.md
+21:13 docs/OP_INDEX.json
+21:13 fullseye/SENSOR_PLAYBOOK.md
+21:13 docs/SENSOR_PLAYBOOK.md
+21:13 docs/EXAMPLES_3D.md
+21:13 docs/articles/README.md
+21:13 docs/README.de.md
+21:12 docs/README.ko.md
+21:12 docs/README.tw.md
+21:12 docs/README.zh.md
+21:11 docs/README.en.md
+21:11 docs/README.md
+21:11 examples/README.md
+21:10 docs/maturity.json
 ```
 
 ---

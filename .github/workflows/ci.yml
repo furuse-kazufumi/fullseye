@@ -168,6 +168,13 @@ jobs:
         # `-ra` = 合格以外を全部要約に出す。`-rs`(skip だけ)だと**どのテストが
         # 失敗したのか要約に出ず**、生ログを掘る羽目になる(2026-09-05 に実際に踏んだ)。
         run: pytest -q -ra --cov --cov-report=xml --cov-report=term
+      # 生成物の回し忘れは、これまで**人が手で `--check` を回すかどうか**に
+      # かかっていた —— つまり門はあっても経路が通っていなかった。実測でも
+      # `docs/EXAMPLES_3D.md` が `ops3d = 347 op` のまま古びていた(実際は 357)。
+      # 全部作り直したあと作業ツリーがきれいであること、を CI で問う。
+      - name: 生成物の回し忘れ (regen_all --check)
+        if: matrix.python-version == '3.11'
+        run: python tools/regen_all.py --check
       - name: Coverage summary (job summary page)
         if: matrix.python-version == '3.11'
         run: |

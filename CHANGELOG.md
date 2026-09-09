@@ -528,6 +528,32 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
 - `docs/ops/INDEX.md` の assistant 向け手順も `2d/guides/` だけを指していたので、
   **まずファミリを選ぶ**手順に直した(30 ファミリのガイドへ読み手を送っていなかった)。
 
+- ★★**`regen_all` の CHAIN 自体が手選びだった**(= この道具が潰したはずの失敗)。
+  `tools/` の生成器を数え直したら、CHAIN に入っていたのは 7 本で、**`gen_examples3d_doc`
+  が漏れており `docs/EXAMPLES_3D.md` は `ops3d = 347 op` と書いたまま古びていた**
+  (実際は 357)。`tools/` の外にある `imgevolve.py index`(`docs/OP_INDEX.json`)も、
+  生成器を `tools/*.py` で探す限り**永久に見つからない**位置にあった。両方 CHAIN へ。
+  そして**入れないものと理由を `EXCLUDED` に書き残した** —— 書き残さないと CHAIN は
+  「人が思い出せた集合」に戻る。`--list` が除外理由も出す。
+- ★★**CI が `regen_all --check` を回していなかった**。門はあったが、回すかどうかは
+  人任せだった(仕組みがあることと全経路が通ることは別)。py3.11 のジョブに足した。
+- ★除外の理由は実測で書いた: 記事の生成器は図と GIF を描き直すのでバイトが変わり
+  (`wing1d_aliasing.gif` 1,135,171 → 1,130,583)、ベンチ実測値を書き込み
+  (`seconds_per_search` 2.383 → 2.395)、**そして画像リンクを絶対 URL から相対パスに
+  戻す**(42 行)。Qiita は相対パスだと画像が出ないので、生成器だけを回すと公開記事が
+  壊れる。**回すなら公開手順まで通しでやること。**
+
+### 分かっているが直していないこと
+
+- **n-ary 層の 17 op にノートが無い**(`add_image` `sub_image` `mult_image` `div_image`
+  `abs_diff_image` `min_image` `max_image` `convol_image` `bit_and` `bit_or`
+  `difference` `intersection` `union2` `symm_difference` `reduce_domain`
+  `overpaint_region` `paint_gray`)。`imgops_nary` の多入力 op で、`OP_INDEX.json`
+  には載る(tier=`nary`)が `docs/ops/` にノートが無いため、**RAG コーパスから引けない**。
+  ★見つけ方も記録しておく: `ops.REGISTRY`(899)だけを見ると「欠落ゼロ」に見え、
+  一度そう結論して間違えた。層をまたいで数えて初めて出る
+  (memory `feedback_search_all_tiers_before_declaring_a_gap`)。
+
 ## 0.1.10 — 2026-09-06
 
 **PoC シリーズが道具の穴を掘り当てた回。** 真値を作れる実問題を **53 本**解いて、

@@ -50,6 +50,9 @@ CHAIN = [
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
     (["tools/gen_examples3d_doc.py"], "docs/EXAMPLES_3D.md(3-D 例の一覧)"),
     (["tools/gen_sensor_playbook.py"], "センサー playbook"),
+    # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
+    # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
+    (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
 ]
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
@@ -78,8 +81,6 @@ EXCLUDED = [
      "同上(記事片の生成。図の再描画を伴う)"),
     ("tools/gen_sample_images.py / gen_itokawa_turntable.py",
      "サンプル素材の再生成。入力が変わらない限り回す必要がない"),
-    ("imgevolve.py index(docs/OP_INDEX.json)",
-     "tools/ の外にあるので取りこぼしやすい。現状はレジストリと一致(実測 916)"),
 ]
 
 
@@ -106,6 +107,9 @@ def main(argv=None) -> int:
     if a.list:
         for i, (args, what) in enumerate(CHAIN, 1):
             print("%2d. %-42s %s" % (i, " ".join(args), what))
+        print("\n--- CHAIN に入れないもの(回さなくてよい、ではなく門にできない) ---")
+        for what, why in EXCLUDED:
+            print("  %s\n      %s" % (what, why))
         return 0
 
     before = _dirty() if a.check else []
