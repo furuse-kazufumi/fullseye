@@ -7,7 +7,7 @@ out: image2d
 examples: [poc_dem_terrain, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # dem_aspect — DEM `surface` op

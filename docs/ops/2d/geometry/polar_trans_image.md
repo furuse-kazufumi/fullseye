@@ -8,7 +8,7 @@ halcon: polar_trans_image
 examples: [gallery2d_geometry, poc_allsky_cloud_cover, poc_gear_tooth_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # polar_trans_image — 2D `geometry` op

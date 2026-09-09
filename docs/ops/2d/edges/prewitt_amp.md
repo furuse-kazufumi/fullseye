@@ -8,7 +8,7 @@ halcon: prewitt_amp
 examples: [gallery2d_edges, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # prewitt_amp — 2D `edges` op

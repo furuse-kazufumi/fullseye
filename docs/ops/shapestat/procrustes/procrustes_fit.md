@@ -7,7 +7,7 @@ out: matrix
 examples: [poc_change_detection_misreg, poc_die_tilt_tsv_overlay, shapestat_landmark_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # procrustes_fit — SHAPESTAT `procrustes` op

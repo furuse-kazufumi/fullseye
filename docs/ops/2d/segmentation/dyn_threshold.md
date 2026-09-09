@@ -8,7 +8,7 @@ halcon: dyn_threshold
 examples: [gallery2d_segmentation, poc_metal_grain_size]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # dyn_threshold — 2D `segmentation` op

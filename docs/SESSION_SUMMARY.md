@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-09 14:58:27
+- **最終更新**: 2026-09-09 20:33:02
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-da68ac135 生成物を全部作り直す 1 コマンド + SAMPLES.md の中身を見る門
-9fac5c451 auto: test_opdocs.py 編集前 (2026-09-09 13:00)
-ca19cfedf auto: opdocs.py 編集前 (2026-09-09 13:00)
-63c39db72 auto: opdocs.py 編集前 (2026-09-09 13:00)
-7e1c17e17 展示 117(実写の検出限界)+ 例の門に optional backend の宣言を足す
-be9b499f0 auto: poc_real_defect_floor.py 編集前 (2026-09-09 11:26)
-26a29f10c auto: test_example_scripts_run.py 編集前 (2026-09-09 10:19)
-ea8870025 auto: test_example_scripts_run.py 編集前 (2026-09-09 10:19)
-d60111c94 auto: test_example_scripts_run.py 編集前 (2026-09-09 10:19)
-4a837068a auto: poc_real_defect_floor.py 編集前 (2026-09-09 09:59)
+d2c5bb2ad RAG skill が自分のコーパスを半分しか指していなかったのを生成に直す
+3c0b88855 auto: opdocs.py 編集前 (2026-09-09 18:35)
+d5271f259 auto: opdocs.py 編集前 (2026-09-09 18:35)
+5a2f92831 auto: regen_all.py 編集前 (2026-09-09 18:28)
+2bb958be4 auto: opdocs.py 編集前 (2026-09-09 18:26)
+0f8336f2b auto: opdocs.py 編集前 (2026-09-09 18:26)
+374cf29b5 auto: opdocs.py 編集前 (2026-09-09 18:26)
+b637f2e7e auto: SKILL.md 編集前 (2026-09-09 18:25)
+65d88b75c auto: opdocs.py 編集前 (2026-09-09 18:25)
+41aaaed4b auto: opdocs.py 編集前 (2026-09-09 18:25)
 ```
 
 ## 現在の git status
 
 ```
 M docs/SESSION_SUMMARY.md
- M docs/articles/exhibits/qiita_items.json
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-14:58 docs/articles/exhibits/qiita_items.json
-14:42 docs/SESSION_SUMMARY.md
-13:39 fullseye/SENSOR_PLAYBOOK.md
-13:39 docs/SENSOR_PLAYBOOK.md
-13:39 docs/articles/README.md
-13:39 docs/README.de.md
-13:38 docs/README.ko.md
-13:38 docs/README.tw.md
-13:38 docs/README.zh.md
-13:37 docs/README.en.md
-13:37 docs/README.md
-13:37 examples/README.md
-13:36 docs/maturity.json
-13:36 docs/MATURITY.md
-13:36 docs/HARDENING.md
+20:03 docs/SESSION_SUMMARY.md
+19:13 fullseye/SENSOR_PLAYBOOK.md
+19:13 docs/SENSOR_PLAYBOOK.md
+19:13 docs/articles/README.md
+19:13 docs/README.de.md
+19:13 docs/README.ko.md
+19:13 docs/README.tw.md
+19:12 docs/README.zh.md
+19:12 docs/README.en.md
+19:12 docs/README.md
+19:11 examples/README.md
+19:11 docs/maturity.json
+19:11 docs/MATURITY.md
+19:11 docs/HARDENING.md
+19:11 docs/HARDENING.en.md
 ```
 
 ---

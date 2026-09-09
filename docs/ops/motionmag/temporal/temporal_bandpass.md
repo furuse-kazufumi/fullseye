@@ -7,7 +7,7 @@ out: video
 examples: [motion_magnification, poc_beam_modal_video, poc_motion_magnification]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # temporal_bandpass — MOTIONMAG `temporal` op

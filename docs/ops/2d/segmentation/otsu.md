@@ -8,7 +8,7 @@ halcon: binary_threshold
 examples: [ct_inspection, gallery2d_segmentation, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # otsu — 2D `segmentation` op

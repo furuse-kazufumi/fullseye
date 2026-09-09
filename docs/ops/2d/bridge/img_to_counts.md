@@ -7,7 +7,7 @@ out: counts
 examples: [gallery2d_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # img_to_counts — 2D `bridge` op

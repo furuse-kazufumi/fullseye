@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_gallery, annotate_paper_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # panel_grid — ANNOTATE `compose` op

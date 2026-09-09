@@ -8,7 +8,7 @@ halcon: median_image
 examples: [astro_stacking, blas_thread_budget, ct_reconstruction, gallery2d_smoothing_rank, lightfield_depth, photon_timeresolved, piv_flow_from_particles, poc_astro_photometry, poc_dtof_ranging, poc_geodetic_height_frames, poc_lidar_terrain_change, poc_nuclei_ploidy, poc_pv_thermal_survey, poc_river_surface_velocity, poc_web_roll_periodicity, poc_weld_bead_profile, quickstart, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # median — 2D `rank` op

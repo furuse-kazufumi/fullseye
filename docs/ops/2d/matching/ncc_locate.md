@@ -8,7 +8,7 @@ halcon: find_ncc_model
 examples: [gallery2d_contour_measure, poc_search_sweep_width, poc_template_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # ncc_locate — 2D `matching` op

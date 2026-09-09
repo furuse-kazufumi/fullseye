@@ -7,7 +7,7 @@ out: lab
 examples: [image_quality_metrics, poc_colormap_readability, poc_leaf_disease_area, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # rgb_to_lab — IMGMETRICS `colorspace` op

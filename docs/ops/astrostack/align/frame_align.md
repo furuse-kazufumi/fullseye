@@ -7,7 +7,7 @@ out: matrix
 examples: [astro_stacking, poc_exoplanet_transit, poc_print_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # frame_align — ASTROSTACK `align` op

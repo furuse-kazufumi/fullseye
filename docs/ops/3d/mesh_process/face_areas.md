@@ -7,7 +7,7 @@ out: signal
 examples: [mesh_props]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # face_areas — 3D `mesh_process` op

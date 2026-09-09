@@ -8,7 +8,7 @@ halcon: intensity
 examples: [gallery2d_features, optics_imaging, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # intensity — 2D `features` op

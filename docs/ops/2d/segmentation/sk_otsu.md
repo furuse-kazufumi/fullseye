@@ -8,7 +8,7 @@ halcon: binary_threshold
 examples: [gallery2d_segmentation, poc_cell_counting, poc_fresco_craquelure, poc_leaf_disease_area, poc_nuclei_ploidy, poc_vegetation_cover]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # sk_otsu — 2D `segmentation` op

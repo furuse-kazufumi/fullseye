@@ -7,7 +7,7 @@ out: measurement
 examples: [acoustic_condition_monitoring, astro_stacking, poc_colocalization_crosstalk, poc_search_sweep_width, poc_star_astrometry, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # noise_sigma — ASTROSTACK `quality` op

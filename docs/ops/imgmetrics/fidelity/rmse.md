@@ -7,7 +7,7 @@ out: scalar
 examples: [grasp_pose, image_quality_metrics, physical_ai_perception, poc_ct_fidelity, poc_datacenter_thermal_field, poc_polarization_specular, poc_registration_basin, poc_structure_4d_deterioration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # rmse — IMGMETRICS `fidelity` op

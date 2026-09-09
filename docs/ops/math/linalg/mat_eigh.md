@@ -7,7 +7,7 @@ out: table
 examples: [math_metrology, poc_thermal_radiometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # mat_eigh — MATH `linalg` op

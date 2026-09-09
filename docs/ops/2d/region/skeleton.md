@@ -8,7 +8,7 @@ halcon: skeleton
 examples: [gallery2d_region, poc_crack_width, poc_fresco_craquelure, poc_vessel_network]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # skeleton — 2D `region` op

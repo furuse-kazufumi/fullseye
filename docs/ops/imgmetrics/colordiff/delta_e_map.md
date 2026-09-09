@@ -7,7 +7,7 @@ out: image2d
 examples: [color_transport, image_quality_metrics, poc_colormap_readability, poc_pigment_unmixing, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # delta_e_map — IMGMETRICS `colordiff` op

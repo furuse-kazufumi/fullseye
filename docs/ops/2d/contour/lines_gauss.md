@@ -8,7 +8,7 @@ halcon: lines_gauss
 examples: [gallery2d_contour_measure, poc_solar_el_inspection, poc_weld_bead_scan_angle]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # lines_gauss — 2D `contour` op

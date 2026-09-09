@@ -7,7 +7,7 @@ out: signal
 examples: [poc_tree_ring_dendro, poc_veiling_glare, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # derivate_funct_1d — ONED `function` op

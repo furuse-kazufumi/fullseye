@@ -8,7 +8,7 @@ halcon: fill_up
 examples: [gallery2d_region, poc_bev_sensor_fusion]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # fill_up — 2D `region` op

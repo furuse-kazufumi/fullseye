@@ -7,7 +7,7 @@ out: rgb
 examples: [poc_bump_coplanarity, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # blob_overlay — BLOB `extract` op

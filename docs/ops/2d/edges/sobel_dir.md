@@ -8,7 +8,7 @@ halcon: sobel_dir
 examples: [gallery2d_edges, poc_document_scan, poc_fiber_orientation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # sobel_dir — 2D `edges` op

@@ -7,7 +7,7 @@ out: labels2d
 examples: [blob_split_tour, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_pipe_wall_loss, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # blob_label — BLOB `connect` op

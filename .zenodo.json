@@ -3,7 +3,7 @@
   "access_right": "open",
   "license": "apache-2.0",
   "title": "Fullseye: an explainable classical-vision operator library and workbench for Physical AI",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "language": "eng",
   "creators": [
     {

@@ -8,7 +8,7 @@ halcon: gauss_filter
 examples: [gallery2d_smoothing_rank, poc_cell_counting, poc_document_scan, poc_focus_stacking, poc_gear_tooth_metrology, poc_pv_thermal_survey, poc_sea_ice_concentration, poc_search_sweep_width, poc_solar_limb_darkening, poc_vessel_network, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # gauss_filter — 2D `smoothing` op

@@ -7,7 +7,7 @@ out: sdf
 examples: [gear_metrology, render_beauty, sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # sdf_intersect — 3D `sdf_csg` op

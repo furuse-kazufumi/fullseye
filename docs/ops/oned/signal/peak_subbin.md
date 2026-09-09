@@ -7,7 +7,7 @@ out: measurement
 examples: [poc_multibeam_bathymetry, poc_print_registration, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # peak_subbin — ONED `signal` op

@@ -8,7 +8,7 @@ halcon: highpass_image
 examples: [gallery2d_texture_freq, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # highpass_image — 2D `frequency` op

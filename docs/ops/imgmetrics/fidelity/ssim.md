@@ -7,7 +7,7 @@ out: scalar
 examples: [image_quality_metrics, poc_camera_shake_deblur, poc_ct_fidelity, poc_dehazing, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # ssim — IMGMETRICS `fidelity` op

@@ -7,7 +7,7 @@ out: pairs
 examples: [signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # funct_1d_to_pairs — ONED `function` op

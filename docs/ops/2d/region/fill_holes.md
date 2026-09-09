@@ -8,7 +8,7 @@ halcon: fill_up
 examples: [gallery2d_region, poc_cell_counting, poc_document_scan, poc_leaf_disease_area, poc_mesh_quality_repair, poc_real_coin_metrology, poc_symmetry_restoration]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # fill_holes — 2D `region` op

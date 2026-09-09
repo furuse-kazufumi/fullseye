@@ -7,7 +7,7 @@ out: flow2d
 examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_beam_modal_video, poc_change_detection_misreg, poc_dic_strain, poc_print_registration, poc_river_surface_velocity, poc_strain_history, poc_superresolution_limits]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # piv_cross_correlate — PIV `estimate` op

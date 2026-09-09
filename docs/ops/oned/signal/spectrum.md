@@ -7,7 +7,7 @@ out: pairs
 examples: [acoustic_condition_monitoring, poc_bearing_diagnosis, poc_gear_tooth_metrology, poc_machine_condition_fusion, poc_pipe_wall_loss, poc_recycling_sorting, poc_web_roll_periodicity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # spectrum — ONED `signal` op

@@ -7,7 +7,7 @@ out: table
 examples: [piv_field_analysis_tour, piv_flow_from_particles, poc_river_surface_velocity, poc_strain_history]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # piv_error_stats — PIV `assess` op

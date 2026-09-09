@@ -7,7 +7,7 @@ out: table
 examples: [studio_raytrace_scene, vision_layout_from_catalog]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # scene_box — OPTICS `scene` op

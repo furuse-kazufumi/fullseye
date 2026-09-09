@@ -8,7 +8,7 @@ halcon: select_shape_std
 examples: [gallery2d_region, poc_document_scan, poc_leaf_disease_area]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # select_largest — 2D `region` op

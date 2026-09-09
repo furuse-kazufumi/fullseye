@@ -7,7 +7,7 @@ out: signal
 examples: [coherence_scanning, poc_beam_modal_video]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # envelope — ONED `signal` op

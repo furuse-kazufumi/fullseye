@@ -7,7 +7,7 @@ out: mask
 examples: [piv_flow_from_particles, poc_change_detection_misreg, poc_river_surface_velocity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # piv_outlier_mask — PIV `validate` op

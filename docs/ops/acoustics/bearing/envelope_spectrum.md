@@ -7,7 +7,7 @@ out: table
 examples: [acoustic_condition_monitoring, poc_bearing_diagnosis]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # envelope_spectrum — ACOUSTICS `bearing` op

@@ -7,7 +7,7 @@ out: labels
 examples: [dem_terrain_analysis_tour, poc_geodetic_height_frames]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # dem_flow_direction — DEM `hydrology` op

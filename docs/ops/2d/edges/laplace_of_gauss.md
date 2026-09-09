@@ -8,7 +8,7 @@ halcon: laplace_of_gauss
 examples: [gallery2d_edges, poc_real_defect_floor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # laplace_of_gauss — 2D `edges` op

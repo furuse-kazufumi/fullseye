@@ -7,7 +7,7 @@ out: table
 examples: [motion_magnification, poc_beam_modal_video, poc_motion_magnification, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # phase_displacement — MOTIONMAG `measure` op

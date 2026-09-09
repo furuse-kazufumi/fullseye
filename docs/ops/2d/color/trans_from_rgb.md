@@ -8,7 +8,7 @@ halcon: trans_from_rgb
 examples: [gallery2d_color_artistic, poc_leaf_disease_area, poc_solder_fillet_aoi]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # trans_from_rgb — 2D `color` op

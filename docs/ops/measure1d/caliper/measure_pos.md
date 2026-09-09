@@ -7,7 +7,7 @@ out: table
 examples: [poc_barcode_1d, poc_battery_electrode_breathing, poc_dimensional_inspection, poc_screw_thread_metrology, poc_solar_limb_darkening, poc_tree_ring_dendro, poc_water_level, poc_weld_bead_profile, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.10  # fullseye lib version this note was generated for
+version: 0.1.11  # fullseye lib version this note was generated for
 ---
 
 # measure_pos — MEASURE1D `caliper` op
