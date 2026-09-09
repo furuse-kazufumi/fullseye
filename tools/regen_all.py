@@ -74,14 +74,68 @@ CHAIN = [
 #:     画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを
 #:     回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで
 #:     通しでやること。**
-EXCLUDED = [
-    ("tools/gen_wing*_gallery.py(wingpoc を除く 10 本)",
-     "図・GIF を描き直し、ベンチ実測値を書き込み、画像リンクを相対パスに戻す"),
-    ("tools/gen_academic_gallery.py / gen_industrial_gallery.py / gen_science_gallery.py",
-     "同上(記事片の生成。図の再描画を伴う)"),
-    ("tools/gen_sample_images.py / gen_itokawa_turntable.py",
-     "サンプル素材の再生成。入力が変わらない限り回す必要がない"),
-]
+#: 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」)
+#: 機械で照合できず、下の `unclassified()` が働かない。
+_ARTICLE_REASON = ("記事の生成器。図と GIF を描き直すのでバイトが変わり、ベンチ実測値を "
+                   "書き込み、画像リンクを絶対 URL から相対パスに戻す —— drift 検査に "
+                   "混ぜると毎回赤になる。回すなら記事の公開手順まで通しで。")
+EXCLUDED = {
+    "tools/gen_wing1d_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wing2d_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wing3d_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wingastro_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wingconv_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wingct_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wingevo_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wingopt_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wingstudio_gallery.py": _ARTICLE_REASON,
+    "tools/gen_wingvox_gallery.py": _ARTICLE_REASON,
+    "tools/gen_academic_gallery.py": _ARTICLE_REASON,
+    "tools/gen_industrial_gallery.py": _ARTICLE_REASON,
+    "tools/gen_science_gallery.py": _ARTICLE_REASON,
+    "tools/gen_ai_inputs.py": "記事用の入力素材づくり。API キーを読むので CI では回さない。",
+    "tools/gen_backmatter_figs.py": _ARTICLE_REASON,
+    "tools/gen_article_assets.py": _ARTICLE_REASON,
+    "tools/gen_newops_media.py": _ARTICLE_REASON,
+    "tools/gen_sample_images.py": "サンプル素材の再生成。入力が変わらない限り回す必要がない。",
+    "tools/gen_sample_3d.py": "同上(3-D サンプル)。",
+    "tools/gen_itokawa_turntable.py": "実データのターンテーブル動画。素材が変わらない限り不要。",
+}
+
+#: 生成器を**ファイルの側から**列挙する。CHAIN と EXCLUDED は人が書く表なので、
+#: 放っておけば必ず現実から遅れる —— 実際 `gen_examples3d_doc` が漏れていた。
+#: この関数と `unclassified()` を `tests/test_regen_all.py` が呼び、
+#: **どちらの表にも無い生成器があればテストが落ちる**。新しい生成器を足した人は、
+#: 「CHAIN に入れる」か「理由つきで EXCLUDED に入れる」かを迫られる。
+#: どちらでもよいが、**黙って増やすことだけができない**。
+_WRITES = re.compile(r'open\([^)]*["\']w["\']|\.write_text\(|savefig\(|json\.dump\(')
+
+
+def discover_generators() -> list[str]:
+    """`tools/` 以下でファイルを書くスクリプト + `tools/` の外にある既知の生成器。"""
+    found = []
+    for name in sorted(os.listdir(os.path.join(_ROOT, "tools"))):
+        if not name.endswith(".py") or name == "regen_all.py":
+            continue
+        path = os.path.join(_ROOT, "tools", name)
+        try:
+            with open(path, encoding="utf-8", errors="replace") as f:
+                src = f.read()
+        except OSError:
+            continue
+        if _WRITES.search(src):
+            found.append("tools/" + name)
+    # ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない**
+    #   位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
+    found.append("imgevolve.py")
+    return found
+
+
+def unclassified() -> list[str]:
+    """CHAIN にも EXCLUDED にも入っていない生成器。"""
+    in_chain = {args[0] for args, _ in CHAIN}
+    return [g for g in discover_generators()
+            if g not in in_chain and g not in EXCLUDED]
 
 
 def _run(args: list[str]) -> int:
