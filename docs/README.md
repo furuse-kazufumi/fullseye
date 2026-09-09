@@ -62,15 +62,15 @@
 
 ## オペレータを探す
 
-**1,912 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **49 本の族ガイド**があります。次元ごとの入口:
+**1,929 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **49 本の族ガイド**があります。次元ごとの入口:
 
 **網羅の実測**: 進化 op 899/899、型つき台帳 1009/1021、1 行ファサード `fullseye.<名前>` 544/1117。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 1912 本のうち、実行できる例が付いているのは **1894 本**(18 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1907 本**(5 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1912 本すべてにある。
+**ノートの中身の実測**: 1934 本のうち、実行できる例が付いているのは **1894 本**(40 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1915 本**(19 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1934 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
-| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 899 | [INDEX](ops/2d/INDEX.md) |
+| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 916 | [INDEX](ops/2d/INDEX.md) |
 | `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 357 | [INDEX](ops/3d/INDEX.md) |
 | `optics` — レンズ・収差・光線追跡・照明設計 | 124 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
 | `annotate` — 図注(軸・凡例・注記) | 51 | [INDEX](ops/annotate/INDEX.md) · [ガイド](ops/annotate/guides/figure_annotation.md) |
@@ -199,9 +199,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 100 本
+## ドキュメント地図 — 全 107 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,912 本と族ガイド 49 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,929 本と族ガイド 49 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -324,14 +324,21 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(29)
+**そのほか**(36)
 
 | 文書 | 内容 |
 |---|---|
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
 | [`CAPABILITIES.md`](CAPABILITIES.md) | Fullseye でできること |
+| [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
+| [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |
+| [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) |
+| [`DESIGN_NOTES.md`](DESIGN_NOTES.md) | Fullseye 設計判断集(ソース中の ★ コメントから生成) |
+| [`DESIGN_NOTES.tw.md`](DESIGN_NOTES.tw.md) | Fullseye 設計判斷集（由原始碼中的 ★ 註解產生） |
+| [`DESIGN_NOTES.zh.md`](DESIGN_NOTES.zh.md) | Fullseye 设计判断集（由源码中的 ★ 注释生成） |
 | [`HARDENING.en.md`](HARDENING.en.md) | What the PoCs hardened — found, fixed, and gated |
 | [`HARDENING.md`](HARDENING.md) | PoC が上げた堅牢性 —— 見つけて直した記録 |
+| [`I18N_PLAN.md`](I18N_PLAN.md) | 完全な多言語化 — 計画と現在地 |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) |
 | [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
 | [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |

@@ -34,6 +34,16 @@ CATEGORY_ORDER = [
     "測る", "見つける", "形にする", "光と色", "波と信号", "組み立てる", "見せる",
 ]
 
+#: 区分の英語名。★英語版でも見出しだけ日本語のままだった(実測 7 行)——
+#: 中身は `title_en` / `_summary_en` で訳してあるのに、見出しを訳し忘れていて
+#: 「切り替えたのに日本語が混ざる」の典型になっていた。ここに無い区分は
+#: 原文のまま出す(勝手に訳を作らない)。
+CATEGORY_EN = {
+    "測る": "Measure", "見つける": "Detect", "形にする": "Shape",
+    "光と色": "Light and colour", "波と信号": "Waves and signals",
+    "組み立てる": "Compose", "見せる": "Show",
+}
+
 REQUIRED_KEYS = ("id", "title", "title_en", "category", "ops", "examples", "version")
 REQUIRED_HEADINGS = ("## できること", "## 向くところ / 向かないところ", "## 最初の 1 本")
 
@@ -174,7 +184,8 @@ def _render(caps: list[dict], lang: str) -> str:
                             "項目" if ja else "capabilities"), ""]
     for cat in _ordered_categories(caps):
         rows = [c for c in caps if c["category"] == cat]
-        L += ["## %s (%d)" % (cat, len(rows)), ""]
+        head = cat if ja else CATEGORY_EN.get(cat, cat)
+        L += ["## %s (%d)" % (head, len(rows)), ""]
         for c in sorted(rows, key=lambda x: x["id"]):
             title = c["title"] if ja else c["title_en"]
             summary = c["_summary_ja"] if ja else (c["_summary_en"] or c["_summary_ja"])

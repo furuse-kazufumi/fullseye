@@ -191,8 +191,13 @@ def _render(rows: list[dict], lang: str) -> str:
             continue
         L += ["### %s" % (KINDS if ja else KINDS_EN)[k], ""]
         for r in sel:
-            L += ["#### [%s](hardening/%s)" % (r["_title"], r["_file"]), "",
-                  r["_symptom"], "",
+            # ★リンク先(`docs/hardening/*.md`)は日本語で書かれている。英題に
+            #   差し替えるのは嘘になるので、題はそのまま出して `(ja)` を添える ——
+            #   非日本語版の読者に要るのは「訳された題」ではなく「これは読めない」
+            #   という事実。印は `tools/i18n_status.py` が数える形に固定する。
+            _mark = "" if ja else " _(ja)_"
+            L += ["#### [%s](hardening/%s)%s" % (r["_title"], r["_file"], _mark), "",
+                  r["_symptom"] + _mark, "",
                   "%s `%s` / %s %s / %s %s / %s %s"
                   % ("見つけた PoC:" if ja else "Found by:", r["found_by"],
                      "直した所:" if ja else "Changed:",

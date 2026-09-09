@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import io
 import os
+import re
 import sys
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -77,6 +78,43 @@ TASK_L = {"metrology": ("計測", "metrology"), "diagnostics": ("診断", "diagn
           "appearance": ("見え方", "appearance")}
 
 
+#: 展示の字幕(`docs/articles/exhibits/poc_captions.json`)。ja/en の題を持つ。
+_CAPTIONS = None
+
+
+def _poc_titles() -> dict:
+    """id -> {"ja": 題, "en": 題}。無ければ空。"""
+    global _CAPTIONS
+    if _CAPTIONS is None:
+        import json
+        path = os.path.join(_ROOT, "docs", "articles", "exhibits", "poc_captions.json")
+        try:
+            with io.open(path, encoding="utf-8") as f:
+                data = json.load(f)
+            _CAPTIONS = {e["id"]: {"ja": e.get("title_ja", ""), "en": e.get("title_en", "")}
+                         for e in data.get("exhibits", []) if e.get("id")}
+        except (OSError, ValueError, KeyError):
+            _CAPTIONS = {}
+    return _CAPTIONS
+
+
+def _poc_name(rec, lang: str) -> str:
+    """PoC 1 件の 1 行説明を、その言語で。
+
+    ★`examples2d.EXAMPLES` の ``name`` は日本語しか無い。それをどの言語版にも
+    そのまま出していたので、英語版 README の PoC 表 27 行が丸ごと日本語だった
+    (2026-09-09 実測)。展示の字幕には ``title_en`` が 117 件そろっているので
+    そちらを使う。英語すら無いものは日本語のまま出し、`(ja)` を添える ——
+    黙って日本語に落ちると「訳したつもり」になる。
+    """
+    if lang == "":
+        return rec["name"]
+    en = _poc_titles().get(rec["id"], {}).get("en", "").strip()
+    if en:
+        return en
+    return rec["name"] + " _(ja)_"
+
+
 def build_poc(lang: str = "") -> str:
     import examples2d as EX
 
@@ -93,7 +131,7 @@ def build_poc(lang: str = "") -> str:
         items = []
         for r in sorted(by[t], key=lambda x: x["id"]):
             items.append("[**%s**](%s) — %s" % (r["name"], GH % r["id"], r["name"]))
-        cell = "<br>".join("[`%s`](%s) %s" % (r["id"], GH % r["id"], r["name"])
+        cell = "<br>".join("[`%s`](%s) %s" % (r["id"], GH % r["id"], _poc_name(r, lang))
                            for r in sorted(by[t], key=lambda x: x["id"]))
         out.append("| %s (%d) | %s |" % (label, len(by[t]), cell))
     out += ["", PEND]
@@ -448,6 +486,24 @@ def _doc_title(rel: str) -> str:
     return ""
 
 
+#: かな = 日本語であることの確実な印(漢字だけだと中国語版と区別がつかない)。
+_KANA = re.compile(r"[぀-ヿ]")
+
+
+def _doc_label(rel: str, lang: str) -> str:
+    """地図に出す 1 行。**日本語だけの文書には印を付ける**。
+
+    ★英題に差し替えるのは嘘になる —— リンク先は本当に日本語で書かれている。
+    非日本語版の読者に必要なのは「訳された題」ではなく「これは読めない」という
+    事実なので、題はそのまま出し、`(ja)` を添える。実測 2026-09-09: 英語版
+    README の 71 行の日本語のうち、44 行がこの地図(残りは PoC 表)。
+    """
+    title = _doc_title(rel)
+    if lang != "" and _KANA.search(title):
+        return title + " _(ja)_"
+    return title
+
+
 #: 地図から外す部分木。**それぞれ専用の節が面倒を見る**もの以外は外さない。
 _DOCMAP_SKIP = ("ops", "articles")
 
@@ -516,7 +572,7 @@ def build_docmap(lang: str = "") -> str:
         out.append("| %s | %s |" % cols)
         out.append("|---|---|")
         for n in rows:
-            out.append("| [`%s`](%s) | %s |" % (n, n, _doc_title(n)))
+            out.append("| [`%s`](%s) | %s |" % (n, n, _doc_label(n, lang)))
         out.append("")
     out.append(DEND)
     return chr(10).join(out)

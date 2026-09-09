@@ -19,7 +19,7 @@ do not edit it by hand).
 
 **Currently 16 capabilities**
 
-## 測る (4)
+## Measure (4)
 
 ### [Put measurements on the Earth (ECEF and geodetic)](capabilities/geodetic-frames.md)
 
@@ -53,7 +53,7 @@ Operators: `mesh_volume`, `vol_rle_volume`, `interp_scattered`, `dem_slope`
 
 Runnable: `poc_stockpile_volume`, `poc_lidar_terrain_change`
 
-## 見つける (2)
+## Detect (2)
 
 ### [Segment regions, select them, and count](capabilities/blob-and-region.md)
 
@@ -71,7 +71,7 @@ Operators: `star_detect`, `peak_subbin`, `find_peaks`, `noise_sigma`
 
 Runnable: `poc_search_sweep_width`, `poc_astro_photometry`
 
-## 形にする (2)
+## Shape (2)
 
 ### [Reconstruct slices from projections (CT)](capabilities/tomography-reconstruction.md)
 
@@ -89,7 +89,7 @@ Operators: `synthesize_silhouette`, `carve`, `visual_hull`, `carve_look_at`
 
 Runnable: `space_carving`, `poc_livestock_body_volume`
 
-## 光と色 (2)
+## Light and colour (2)
 
 ### [Measure colour (XYZ / Lab / colour difference)](capabilities/colour-and-delta-e.md)
 
@@ -107,7 +107,7 @@ Operators: `fresnel_dielectric`, `thin_film_reflectance`, `grating_rgb`, `refrac
 
 Runnable: `glass_and_mirror_optics`, `appearance_structural_colour`
 
-## 波と信号 (2)
+## Waves and signals (2)
 
 ### [Beamform for direction, separate range from velocity](capabilities/beamforming-and-range-doppler.md)
 
@@ -125,7 +125,7 @@ Operators: `signal_features`, `envelope_spectrum`, `bearing_defect_frequencies`,
 
 Runnable: `poc_bearing_diagnosis`, `poc_rail_corrugation`
 
-## 組み立てる (1)
+## Compose (1)
 
 ### [Align and stack](capabilities/align-and-stack.md)
 
@@ -135,7 +135,7 @@ Operators: `frame_align`, `drizzle_resample`, `icp_point2point_3d`, `interp_scat
 
 Runnable: `poc_astro_photometry`, `poc_registration_basin`
 
-## 見せる (3)
+## Show (3)
 
 ### [Turn results into figures people can read](capabilities/figures-and-annotation.md)
 

@@ -54,6 +54,8 @@ CHAIN = [
     # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
     # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    (["tools/conversion_matrix.py"], "docs/CONVERSION_MATRIX.md(表現の変換表)"),
+    (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
 ]
 
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
@@ -99,8 +101,33 @@ EXCLUDED = {
     "tools/gen_article_assets.py": _ARTICLE_REASON,
     "tools/gen_newops_media.py": _ARTICLE_REASON,
     "tools/gen_sample_images.py": "サンプル素材の再生成。入力が変わらない限り回す必要がない。",
-    "tools/gen_sample_3d.py": "同上(3-D サンプル)。",
+    "tools/gen_sample_3d.py": "3-D サンプル素材の再生成。入力が変わらない限り回す必要がない。",
     "tools/gen_itokawa_turntable.py": "実データのターンテーブル動画。素材が変わらない限り不要。",
+    "tools/gen_op_figures.py": ("op ノートの図を描く。画像なので回すたびにバイトが変わり、"
+                                "drift 検査にできない(図が古いかは目で見る)。"),
+    "tools/gen_sample_thumbs.py": "サンプル画像のサムネ。同上(画像)。",
+    "tools/build_exhibits.py": ("展示の素材づくり(図の再描画を伴う)。目次側の生成は "
+                                "gen_wingpoc_gallery / gen_op_catalog が担う。"),
+}
+
+#: **そもそも生成器ではないもの。** `discover_generators()` は「ファイルを書く」
+#: という粗い印で拾うので、ベンチ・門・公開スクリプト・実験も一緒に釣れる。
+#: それらを黙って無視すると印を緩めることになり、本物の生成器まで漏れる ——
+#: だから**釣れたものは全部ここに名前と理由を書いて外す**(印は緩めない)。
+NOT_A_GENERATOR = {
+    "tools/algo_gate.py": "門(algo 層の合否を出す)。出力は out/ へ。",
+    "tools/bench_ops.py": "ベンチ。実測値なので回すたびに変わる。",
+    "tools/bench_realtime.py": "ベンチ(実時間)。",
+    "tools/bench_soak.py": "ベンチ(長時間)。",
+    "tools/chain_fuzz.py": "ファザー。out/ に結果を落とす。",
+    "tools/chain_mine.py": "連鎖の探索(実験)。",
+    "tools/ci_wheel_check.py": "門(wheel の完全性を配布物の側から数える)。",
+    "tools/evolve_loop.py": "進化ループ(実験)。",
+    "tools/preflight.py": "門(コミット前の一括確認)。",
+    "tools/promote_gate.py": "門(昇格の可否)。",
+    "tools/qiita_patch_overview.py": "公開スクリプト(Qiita への PATCH)。",
+    "tools/qiita_post_poc.py": "公開スクリプト(Qiita への投稿)。",
+    "tools/studio_ui_harness.py": "Studio の UI テスト用ハーネス。",
 }
 
 #: 生成器を**ファイルの側から**列挙する。CHAIN と EXCLUDED は人が書く表なので、
@@ -136,7 +163,8 @@ def unclassified() -> list[str]:
     """CHAIN にも EXCLUDED にも入っていない生成器。"""
     in_chain = {args[0] for args, _ in CHAIN}
     return [g for g in discover_generators()
-            if g not in in_chain and g not in EXCLUDED]
+            if g not in in_chain and g not in EXCLUDED
+            and g not in NOT_A_GENERATOR]
 
 
 def _run(args: list[str]) -> int:

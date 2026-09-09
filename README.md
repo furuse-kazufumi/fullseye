@@ -244,6 +244,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Understand the language policy and what is *not* translated | `docs/I18N.md` |
 | Update a checkout safely | `tools/update_fullseye.py --check` |
 | **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
+| **Read why it is built this way** | `docs/DESIGN_NOTES.md` — 606 load-bearing `★` comments collected from the source, in 6 languages (translated as we go; untranslated entries are shown as such) |
 | Cite Fullseye | `CITATION.cff` |
 
 ## Design principles
