@@ -1224,8 +1224,8 @@ def cmd_toc():
     top.append("1. まず上の一覧で**ファミリ**を選ぶ(`2d`/`3d` だけでなく、光学・PIV・"
                "トモグラフィ等の計測ファミリにそれぞれ固有の op がある)。")
     top.append("2. そのファミリの**使い方ガイド**(`<family>/guides/`)を読む。")
-    top.append("2. 各 op ノートの**データ種 `in → out`** が繋がるように連鎖を組む。")
-    top.append("3. 挙動が不確かなら、そのノートの**実行できる例**を走らせて GT 出力で確かめる。")
+    top.append("3. 各 op ノートの**データ種 `in → out`** が繋がるように連鎖を組む。")
+    top.append("4. 挙動が不確かなら、そのノートの**実行できる例**を走らせて GT 出力で確かめる。")
     top.append("")
     top.append("---")
     top.append(_COPYRIGHT)
