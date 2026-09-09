@@ -1292,7 +1292,15 @@ def skill_corpus_map() -> str:
                   key=lambda f: (-f[1], f[0]))
     core_n = sum(f[1] for f in core)
     listing = " · ".join("**%s** %d" % (f[0], f[1]) for f in core + spec)
-    headline = spec[:6]
+    sizes = {f[0]: f[1] for f in fams}
+    missing = [n for n in _MEASUREMENT_FAMILIES if n not in sizes]
+    if missing:
+        raise SystemExit(
+            "corpus map names families that are not in docs/ops: %s — a family was "
+            "renamed or removed; update _MEASUREMENT_FAMILIES (fail-closed: refusing "
+            "to describe a corpus that is not there)" % ", ".join(missing))
+    headline = sorted(_MEASUREMENT_FAMILIES, key=lambda n: (-sizes[n], n))
+    headline_n = sum(sizes[n] for n in headline)
     return "\n".join([
         _SKILL_BEGIN,
         "",
