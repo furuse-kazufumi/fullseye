@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 299 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 379 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -25,17 +25,17 @@ This repository records *why* things are the way they are in **comments in the s
 ## `api.py`
 
 - **L572** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
-- **L1330** _(ja)_ — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
+- **L1330** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
-- **L156** _(ja)_ — ★仮説の検定: 「1 キャッシュライン(64B)に収まるあいだは移す価値が無い」を 予想したが **外れた**。float32 は境目 K≈17-19 で 64B(K=16)に近いものの、 float64 は予測 K=8 に対し実際は K≈23-25(約 200B)。バイト数ではなく **要素数**で決まっている —— 1 要素あたりの取り出し費用が支配している。 枚数が少ないうちに移すと**逆に遅い**(float64 K=5 で 1.4 倍遅い)ので、 境目は必ず要る。
-- **L379** _(ja)_ — ★MAD が 0 に潰れたのに画像は平坦でない = **量子化**(2026-09-08、 poc_thermal_radiometry が踏んだ)。整数の DN では |x-med| も整数に なるので、返せる sigma は 1.4826 の倍数だけ —— σ=0.5 の実写相当で **0.0**、σ=1.0 と σ=1.983 が**同じ 1.4826**。黙って 0 を返すと しきい値が背景と同じになり、下流(star_detect)が何も見つけない。 ここは値を返す入口なので raise せず声を上げる(呼び手が method="clip" を選べる)。refuse するのは答えを出す側 = star_detect の役目。
-- **L586** _(ja)_ — ★ ショットノイズの唯一の入口。photons_per_unit=1 で「期待値 = lambda」。
-- **L675** _(ja)_ — ★ field_seed は固定(同じ空)、seed だけ振る(別の観測)。
-- **L746** _(ja)_ — ★この門のコメントは 2026-09-08 まで「完全に平坦 = 雑音が測れない」と 書いていた。**前提のほうが間違っていた** —— σ が 0 になる道はもう 1 本 あって、整数の DN で MAD が潰れる場合(σ=0.5 相当の実写で 0.0)。 平坦でない画像で空を返すのは保守的な答えではなく**誤った答え**で、 実際 200x200 の整数フレームに植えた 2 個の点目標が 0 個と返っていた。 平坦なら空(星は無い)、平坦でないなら拒否する、と道を分ける。
-- **L1606** _(ja)_ — ★ 同点のときは**生の票が多いビン**を選ぶ。3x3 の平滑は真の山の左右 どちらから見ても同じ和になるので、平滑値だけで argmax を取ると 「山の隣の空ビン」が選ばれうる —— 実測でまさにそれが起き、真のずれ (-0.087, +0.996) の票 7 + 4 が bin 境界で 2 分されたうえ、中心が 1 ビン ずれて**票 0** になった(frame_align が「重なっていない」と誤って fail-closed した)。1e-6 の重みは平滑値の刻み(1/9)よりはるかに小さい ので、本当に差があるときの順位は動かさない。
-- **L1629** _(ja)_ — ★2026-09-08: **2 番手の山の高さ**も返す。星野なら山は 1 つだが、 繰り返し構造(網点・格子・織物)では格子ベクトルぶんずれた所に**同じ高さの 山**が並び、そのどれを選んでも「全員が賛成する」= inlier_ratio が 1.00 に なる。賛成率は「答えが正しい確率」ではないので、**山が 1 つだったのか**を 別の数で出す(0 = 単峰、1 に近い = 等価な候補が他にもある)。
+- **L156** — ★Hypothesis test: we predicted that "there is no value in moving as long as it fits in one cache line (64B)" but were **wrong**. For float32 the crossover is at K≈17-19, close to 64B (K=16), but for float64 the actual crossover is K≈23-25 (about 200B) against a predicted K=8. It is decided by the **number of elements**, not the byte count —— the per-element fetch cost dominates. Moving while there are only a few is **actually slower** (1.4x slower at float64 K=5), so the crossover point is essential.
+- **L379** — ★MAD collapsing to 0 while the image is not flat = **quantization** (2026-09-08, hit by poc_thermal_radiometry). With integer DN, |x-med| is also an integer, so the sigma we can return is only a multiple of 1.4826 —— **0.0** for a real-image equivalent of σ=0.5, and σ=1.0 and σ=1.983 both give the **same 1.4826**. Silently returning 0 makes the threshold equal to the background, and downstream (star_detect) finds nothing. This is an entry point that returns a value, so instead of raising it speaks up (the caller can pick method="clip"). Refusing is the job of the side that produces the answer = star_detect.
+- **L586** — ★ The sole entry point for shot noise. With photons_per_unit=1, "expected value = lambda".
+- **L675** — ★ field_seed is fixed (the same sky), only seed is varied (a different observation).
+- **L746** — ★Until 2026-09-08 this gate's comment said "perfectly flat = noise cannot be measured". **It was the premise that was wrong** —— there is one more path by which σ becomes 0: when MAD collapses under integer DN (0.0 for a real image equivalent to σ=0.5). Returning empty for a non-flat image is not a conservative answer but a **wrong answer**; in fact, 2 point targets planted in a 200x200 integer frame were being returned as 0. We split the paths: if flat, return empty (no stars); if not flat, refuse.
+- **L1606** — ★On a tie, pick the **bin with more raw votes**. A 3x3 smoothing gives the same sum whether seen from the left or the right of the true peak, so taking argmax on the smoothed value alone can pick "an empty bin next to the peak" —— exactly that happened in measurement: the true shift (-0.087, +0.996) had its votes 7 + 4 split in two at the bin boundary, and its centre, off by one bin, ended up with **0 votes** (frame_align wrongly fail-closed as "not overlapping"). A weight of 1e-6 is far smaller than the smoothed value's step (1/9), so it does not change the ranking when there is a real difference.
+- **L1629** — ★2026-09-08: also return the **height of the second-place peak**. For a star field there is one peak, but for repetitive structures (halftone dots, gratings, textiles) **peaks of the same height** line up shifted by a lattice vector, and whichever you pick "everyone agrees" = inlier_ratio becomes 1.00. The agreement rate is not "the probability the answer is correct", so we report **whether there was a single peak** as a separate number (0 = single peak, close to 1 = there are other equivalent candidates).
 
 ## `backend_safe.py`
 
@@ -44,52 +44,52 @@ This repository records *why* things are the way they are in **comments in the s
 ## `backends.py`
 
 - **L23** — ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a wrapper whose library call raises on every input looks to evolution / difftest / coverage like a working identity op instead of a failure. Runtime robustness is kept, but the degradation is DETECTABLE: every swallowed exception is recorded in the shared fallback ledger and strict mode re-raises instead. 2026-09-02: the ledger / strict switch moved DOWN into ``backend_safe`` so that the 23 other backend files (each with a private ``_safe``) report to the SAME place — before, this module was the only one of 24 wrapper families that recorded anything. The names below are kept as thin aliases for callers and tests that import them from here.
-- **L812** _(ja)_ — LBP の符号化。★2026-09-08 まで `b` は本当に何もしておらず、 `method` は `'default'`(回転不変でない)に固定だった。実写の テクスチャ(brick / grass / gravel)で測ると、異方な素材では 回転で動く量が素材間の距離の 9.64 倍になり、`'uniform'` に替えると 1.72 倍まで下がる(`examples/poc_real_texture_invariance.py`)。 選べないと**下げようがない**ので `b` を割り当てた。閾値の表にして あるのは、同じ軸で分岐が増えるときの規約(入れ子の if にしない)。 `b=0.5`(既定)は従来どおり `'default'`。
-- **L1028** _(ja)_ — ★cv2 に **bool 配列**を渡すと `cv2.Laplacian` がヒープを壊し、後続の無関係な op でプロセスが死ぬ(2026-09-05 Fable レビュー、Windows で 100 回中に SIGSEGV を 自分でも再現、exit 127)。facade は dtype を契約に揃えるが、`op.fn` 直接経路 (テスト・coverage・進化ループ)は素通しだった。族の入口で float64 に揃える。
+- **L812** — LBP encoding. ★Until 2026-09-08 `b` really did nothing, and `method` was fixed at `'default'` (not rotation-invariant). Measuring on real textures (brick / grass / gravel), for anisotropic materials the amount moved by rotation is 9.64x the distance between materials, and switching to `'uniform'` brings it down to 1.72x (`examples/poc_real_texture_invariance.py`). Without a choice there is **no way to lower it**, so we assigned `b`. It is made into a threshold table as the convention for when branches increase along the same axis (not nested ifs). `b=0.5` (default) is `'default'` as before.
+- **L1028** — ★Passing a **bool array** to cv2 makes `cv2.Laplacian` corrupt the heap, and the process dies at a later unrelated op (2026-09-05 Fable review; I reproduced the SIGSEGV myself within 100 runs on Windows, exit 127). The facade coerces dtype to the contract, but the direct `op.fn` path (tests, coverage, evolution loop) passed it through. We coerce to float64 at the family's entry.
 
 ## `backends_auto.py`
 
-- **L551** _(ja)_ — ★キャンバスを変えない(reshape=False)+ 枠外は鏡映(mode="reflect")。 角度は -45°..+45°(a=0.5 で 0°)。四隅には元画像が **折り返して** 写り込むので、帳票の傾き補正 (deskew) のように「枠外は背景色で 埋めたい」用途にはそのままでは向かない(既知の設計判断であって バグではない — 詳細と使い分けは `ops._rotate_img` の docstring)。
-- **L574** _(ja)_ — ★ただし戻り値の shape は **入力と同じキャンバス**に保つ。この registry の image は「段間で無条件に繋がる」契約で、shape を変えると評価器が 目標画像と突き合わせられずに落ちる(実測: 目標サイズ版が (70,50) を 返した瞬間 `test_evolve_is_reproducible_given_seed` が "operands could not be broadcast together with shapes (70,50) (64,64)" で失敗した)。そこで Ht x Wt にリサンプルした像をキャンバス左上に置き、 余白は 0、はみ出す分は切る —— 「画像が今 Ht x Wt 画素である」ことは そのまま見える。
-- **L1058** _(ja)_ — ★2026-09-02: 返していたのは `np.where` の **整数画素座標** そのもので、 `sub_pix` を名乗りながらサブピクセル精度が無かった。放物線当てはめ による法線方向の精密化を追加(core `ops._edges_sub_pix` と同じ 共有ヘルパ。同名 op はレジストリで後勝ちなので、実際に走るのは こちら —— core だけ直しても効かない)。 実測(真の位置が列 20.37 の合成ステップエッジ、a=0.2): 旧実装の 返す列は {20.0, 21.0} で平均絶対誤差 0.500 px、精密化後は {20.324, 20.370} で 0.0228 px(約 22 倍改善)。 点の個数・連結成分の分け方は不変(座標が 1 px 未満動くだけ)。
-- **L1217** _(ja)_ — ★b >= 0.75 で 4 方向(0/45/90/135 度)の平均を取る。既定 b=0.5 は 従来どおり 0 度だけなので、**既存の結果は 1 ビットも変わらない**。 効くかどうかは a(共起距離)で変わる(poc_real_texture_invariance の節 6、実写 3 素材): 等方な素材には短中距離で効き、異方な brick には 距離 4 でだけ効く(振れ幅/分解能 3.13 -> 1.54)。距離 1 では brick は
-- **L1222** _(ja)_ — 逆に悪化(0.30 -> 0.56)。★根っこは距離を伸ばすと分解能そのものが 0.0328 -> 0.0122 と潰れること。
-- **L1429** _(ja)_ — ★2026-09-02: この 2 つは `{"kind": "zoom"}` を共有していたため **完全に同一 の実装**で、しかも 2 つとも b を使っていなかった(実測: 同一入力に対する 最大差 0.0、b=0 と b=1 の差 0.0)。HALCON では factor 版が 2 つの倍率、 size 版が目標サイズを取る **別物** なので、kind を分けて実態を名前に合わせた。
-- **L1502** _(ja)_ — ★2026-09-02: 旧仕様は out_sort=feature / metric="area" で、実体は `np.mean(mask)` = **画像に占める面積比**。HALCON の `area_center` は (Area, Row, Column) を返す op なので、(1) 中心を返さない (2) 面積が画素数 ではなく比率(= 解像度依存)という二重の食い違いがあった。1 スカラでは 名前を満たせないため、`ncc_locate` と同じ **match sort の 1-D ベクトル** にして (面積比, 行, 列) を返す。match / feature はどちらも終端 sort (候補は identity のみ)なので、ゲノム→op の写像は動かない。
+- **L551** — ★Do not change the canvas (reshape=False) + reflect outside the frame (mode="reflect"). Angle is -45°..+45° (0° at a=0.5). The original image is **folded back** into the four corners, so this is not directly suited to uses that want to "fill outside the frame with a background colour" such as deskewing forms (this is a known design decision, not a bug — for details and how to choose, see the docstring of `ops._rotate_img`).
+- **L574** — ★However, keep the return shape on the **same canvas as the input**. The image in this registry has a contract that it "connects unconditionally between stages", so changing the shape makes the evaluator fail because it cannot match the target image (measured: the moment the target-size version returned (70,50), `test_evolve_is_reproducible_given_seed` failed with "operands could not be broadcast together with shapes (70,50) (64,64)"). So we place the image resampled to Ht x Wt at the top-left of the canvas, pad the margin with 0, and crop the overflow —— the fact that "the image is now Ht x Wt pixels" stays visible as is.
+- **L1058** — ★2026-09-02: what it returned was the **integer pixel coordinates** of `np.where` themselves, so despite calling itself `sub_pix` it had no sub-pixel precision. We added refinement along the normal via parabola fitting (the same shared helper as core `ops._edges_sub_pix`; a same-named op wins last in the registry, so this is what actually runs —— fixing only core has no effect). Measured (a synthetic step edge whose true position is column 20.37, a=0.2): the old implementation returned columns {20.0, 21.0} with mean absolute error 0.500 px, and after refinement {20.324, 20.370} with 0.0228 px (about 22x improvement). The number of points and how connected components are split are unchanged (coordinates just move less than 1 px).
+- **L1217** — ★At b >= 0.75 it averages over 4 directions (0/45/90/135 degrees). The default b=0.5 is only 0 degrees as before, so **existing results do not change by a single bit**. Whether it helps depends on a (co-occurrence distance) (poc_real_texture_invariance section 6, 3 real materials): it helps isotropic materials at short-to-medium distances, and helps anisotropic brick only at distance 4 (swing/resolution 3.13 -> 1.54). At distance 1, brick
+- **L1222** — conversely worsens (0.30 -> 0.56). ★The root cause is that extending the distance collapses the resolution itself, 0.0328 -> 0.0122.
+- **L1429** — ★2026-09-02: these two shared `{"kind": "zoom"}` and were therefore a **completely identical implementation**, and neither used b (measured: max difference 0.0 for the same input, difference 0.0 between b=0 and b=1). In HALCON the factor version takes two scale factors and the size version takes a target size, which are **different things**, so we split the kind to match the reality to the names.
+- **L1502** — ★2026-09-02: the old spec was out_sort=feature / metric="area", but the reality was `np.mean(mask)` = the **area ratio occupied in the image**. Since HALCON's `area_center` is an op that returns (Area, Row, Column), there was a double discrepancy: (1) it does not return the centre, (2) the area is a ratio rather than a pixel count (= resolution-dependent). A single scalar cannot satisfy the name, so we make it the **1-D vector of the match sort**, the same as `ncc_locate`, and return (area ratio, row, column). Both match and feature are terminal sorts (candidates are identity only), so the genome->op mapping does not move.
 
 ## `backends_decomp.py`
 
-- **L142** _(ja)_ — ★BLAS のスレッド上限をループの**外に 1 回**掛ける。ここは work_max=64 に 抑えた正方行列を最大 60 回 SVD する場所で、この repo で分解時間の大半を 使う(スイート 1 回で 30.7 秒 / 分解合計 31.4 秒、svd 23,987 回 = 98%)。 64x64 の SVD は 24 スレッドだと 1 スレッドの 3.9 倍遅い —— 分解の中の GEMM が 小さすぎて同期の費用が計算量を上回るため(表は fsthreads の docstring)。 1 回ごとに囲むと仕掛けの 2.4us を 60 回払うので、ループの外に置く。
+- **L142** — ★Apply the BLAS thread cap **once outside** the loop. This is where a square matrix capped at work_max=64 is SVD'd up to 60 times, using most of the decomposition time in this repo (30.7 s per suite run / 31.4 s total decomposition, svd 23,987 times = 98%). A 64x64 SVD is 3.9x slower with 24 threads than with 1 thread —— because the GEMM inside the decomposition is too small and the synchronization cost exceeds the computation (table in the docstring of fsthreads). Wrapping it each time pays the 2.4us of the mechanism 60 times, so we place it outside the loop.
 
 ## `backends_extra.py`
 
-- **L206** _(ja)_ — ★``ev[0]`` は**代数的**に最大の固有値であって、絶対値最大ではない。 明るい稜線では主曲率が負なので ev[0] は絶対値の小さい方になり、 稜線上で 0・両脇で 1 という**逆**の応答だった(2026-09-05 Fable レビュー、 実測 [1, .64, 0, 0, 0, 0, .64, 1])。説明どおり絶対値最大を取る。
+- **L206** — ★``ev[0]`` is the **algebraically** largest eigenvalue, not the one with the largest absolute value. On a bright ridge the principal curvature is negative, so ev[0] becomes the one with the smaller absolute value, giving the **inverted** response of 0 on the ridge and 1 on either side (2026-09-05 Fable review, measured [1, .64, 0, 0, 0, 0, .64, 1]). We take the largest absolute value as described.
 
 ## `backends_r3.py`
 
-- **L46** _(ja)_ — ★2026-09-05 まで ``except Exception: out = None`` で**握り潰していた**。 登録時に外側へ ``backend_safe.guard`` が掛かるが、内側で例外を消すと外側は 何も見ない —— strict mode でも例外が出ず、台帳にも残らない。 2026-09-02 の「24 族中 1 族しか台帳に届いていなかった」監査の**取りこぼし** (Fable の敵対レビューが 5 族目として指摘)。例外はそのまま外へ出す: 外側の guard が記録し、sort に合う値へ落とし、strict なら再送出する。
+- **L46** — ★Until 2026-09-05 it was **swallowing** exceptions with ``except Exception: out = None``. At registration an outer ``backend_safe.guard`` is applied, but if the exception is erased inside, the outer sees nothing —— even in strict mode no exception is raised and nothing remains in the ledger. This was a **miss** of the 2026-09-02 audit of "only 1 of 24 families reached the ledger" (Fable's adversarial review flagged it as the 5th family). Let the exception out as is: the outer guard records it, coerces it to a value matching the sort, and re-raises if strict.
 
 ## `backends_scipy.py`
 
-- **L198** _(ja)_ — ★lambda >= ~12 で scipy が「boundary conditions did not converge」を投げ、 guard の fallback = **恒等**になっていた(旧 1+40a は a>=0.3、既定 0.5 を 含む 7 割が恒等。2026-09-05 Fable レビュー)。説明も 1〜11 に合わせた。
+- **L198** — ★At lambda >= ~12 scipy throws "boundary conditions did not converge", and the guard's fallback was the **identity** (the old 1+40a made 70% identity for a>=0.3, including the default 0.5. 2026-09-05 Fable review). We aligned the description to 1-11 as well.
 
 ## `backends_typed.py`
 
-- **L505** _(ja)_ — ★2026-09-05 まで ``tools/chain_fuzz``(非同梱)を sys.path 操作で読んでいた。 wheel では失敗し、下の build() が黙って [] を返すので tb_* 143 op が消えていた。
+- **L505** — ★Until 2026-09-05 it read ``tools/chain_fuzz`` (not shipped) via sys.path manipulation. It failed in the wheel, and since the build() below silently returned [], the tb_* 143 ops were disappearing.
 
 ## `blob2d.py`
 
-- **L287** _(ja)_ — ★符号に注意: 頂点は (row, col) の順で並んでいるので、``_monotone_chain`` が返す向きは (row を x と見た) 反時計回り = 画面では時計回り。内側は 外積が**非負**の側になる(``<= 0`` と書いて全物体 solidity 0 を出した)。
-- **L587** _(ja)_ — ★収縮だけでは**片側しか出ない**。番号の小さい物体は、隣に番号の大きい 物体が来ても近傍の最小値が自分のままなので「内部」と判定される (2026-09-06 実測: 1 と 2 が接する列で 1 の側の輪郭が消えた)。 膨張と両方見れば「近傍に自分と違う番号がある」の対称な判定になる。
+- **L287** — ★Mind the sign: vertices are ordered as (row, col), so the orientation returned by ``_monotone_chain`` is counter-clockwise (viewing row as x) = clockwise on screen. The inside is the side where the cross product is **non-negative** (writing ``<= 0`` produced solidity 0 for all objects).
+- **L587** — ★Erosion alone **produces only one side**. An object with a smaller label, even when a larger-labelled object is adjacent, keeps itself as the neighbourhood minimum and is judged "interior" (2026-09-06 measured: at the column where 1 and 2 touch, the contour on the 1 side disappeared). Looking at both erosion and dilation gives the symmetric judgment of "there is a different label in the neighbourhood".
 
 ## `calib.py`
 
-- **L178** _(ja)_ — ★ この門が**実カメラでは発火しない**ことを 2026-09-06 に実測した。歪みの 無い合成では設計どおり働く(傾き 0 度で比 3.8e-14、0.05 度で 8.6e-10、 どちらも拒否)。ところが現実的な樽型歪み k1=-0.18 を入れると、平面 ホモグラフィのモデルがそもそも合わなくなり、比が**傾きに関係なく 1.9e-06 前後に張り付く**(0 度 1.916e-06 / 0.05 度 1.935e-06 / 0.2 度 2.005e-06)。
-- **L184** _(ja)_ — ★ 条件は 2 つ揃ったときだけ: **歪みがある**ことと、**視点間で板が横に 動く**こと。どちらか片方なら門は設計どおり鳴る(切り分けは tests/test_calib.py の 3 本)。そして実際の校正セッションは、板を手で 動かして撮るのだから必ず両方が揃う。 しきい値を上げれば済む話でもない —— 歪みありでは 完全退化 1.92e-06 と傾き 2 度 4.42e-06 の差が 2.3 倍しかなく、 分ける線が引けない。よって: * しきい値はそのまま(歪み補正済みの点なら正しく効く) * 比そのものを ``orientation_rank_ratio`` として**返す** * 実際に止めている後段の門に「板を傾けよ」を言わせる(下) 直せない代わりに、判断材料を利用者に渡す。
+- **L178** — ★On 2026-09-06 we measured that this gate **does not fire on a real camera**. On distortion-free synthetic data it works as designed (ratio 3.8e-14 at 0 degrees tilt, 8.6e-10 at 0.05 degrees, both refused). But with realistic barrel distortion k1=-0.18, the planar-homography model no longer fits in the first place, and the ratio **sticks around 1.9e-06 regardless of tilt** (0 degrees 1.916e-06 / 0.05 degrees 1.935e-06 / 0.2 degrees 2.005e-06).
+- **L184** — ★Only when two conditions are met together: that **there is distortion** and that **the board moves sideways between viewpoints**. With either one alone the gate rings as designed (the separation is the 3 in tests/test_calib.py). And an actual calibration session always has both, since you shoot while moving the board by hand. Nor is it enough to just raise the threshold —— with distortion, the gap between full degeneracy 1.92e-06 and 2 degrees tilt 4.42e-06 is only 2.3x, and no dividing line can be drawn. Therefore: * leave the threshold as is (it works correctly for distortion-corrected points) * **return** the ratio itself as ``orientation_rank_ratio`` * let the later gate that actually stops things say "tilt the board" (below). Instead of fixing it, we hand the user the material for judgment.
 
 ## `caltab.py`
 
-- **L188** _(ja)_ — ★このゲートが**捕まえないもの**: 一枚の平面ターゲットに対する内部パラメータの 誤り(特に fx/fy の比)。平面 1 枚の homography は内部パラメータに 2 つしか 拘束を与えない(Zhang 2000)ので、誤った fy はここで解いている姿勢 6 自由度に ほとんど吸収され、残差はしきい値の下に留まりうる。 実測 2026-09-05: fy を 500 → 300 と誤らせても Linux/scipy 1.18 では RMS 0.90 px (正しい K なら 0.14 px)。同じ入力が Windows/旧 scipy では 6.39 px になり、 **最適化の収束先の違いだけで「検出できたりできなかったり」する**。 内部パラメータを検証したいなら、視点を 3 枚以上取るか非平面のターゲットを使う。 ここが効くのは「姿勢では吸収できない」不整合(対応付けの誤り、非平面の板)。
+- **L188** — ★What this gate **does not catch**: errors in the intrinsic parameters for a single planar target (especially the fx/fy ratio). A single-plane homography places only two constraints on the intrinsics (Zhang 2000), so a wrong fy is mostly absorbed into the 6 DoF pose being solved here, and the residual can stay below the threshold. Measured 2026-09-05: even setting fy wrong from 500 -> 300 gives RMS 0.90 px on Linux/scipy 1.18 (0.14 px with the correct K). The same input becomes 6.39 px on Windows/old scipy, so **it "detects or not" purely by the difference in where the optimization converges**. If you want to verify the intrinsics, take 3 or more viewpoints or use a non-planar target. Where this works is inconsistencies that "cannot be absorbed by the pose" (wrong correspondences, a non-planar board).
 
 ## `champion_to_macro.py`
 
@@ -97,31 +97,31 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `deform3d.py`
 
-- **L87** _(ja)_ — ★**ビット一致は保証しない**(2026-09-05 に訂正)。数学は行ごとに独立だが、 ``U @ w`` は BLAS の GEMM なので、行数 M によって縮約の分割やベクトル化 経路が変わり、丸めが変わりうる。実測: CI の py3.11 ジョブに torch を入れた 途端(= 別の OpenMP 実行時が載った途端)にチャンク有無で結果が食い違った。 保証するのは**数値的な一致**(数 ULP)であって bit 一致ではない。
+- **L87** — ★**Bit-exactness is not guaranteed** (corrected 2026-09-05). The math is independent per row, but ``U @ w`` is a BLAS GEMM, so the reduction splitting and vectorization path change with the row count M, and the rounding can change. Measured: the moment torch was added to CI's py3.11 job (= the moment a different OpenMP runtime was loaded), the results diverged between chunked and non-chunked. What is guaranteed is **numerical agreement** (a few ULP), not bit-exactness.
 
 ## `demops.py`
 
-- **L97** _(ja)_ — ★ 中央値などで**埋める**選択肢は用意しない。埋めると存在しない平原ができ、 例外を出さずに水を通す。 ただし効果の大きさは正直に書いておく。同じ実データ(東京湾岸 1024x1024、 欠測 3.83%)で 3 通りを比べた最大集水セル数: 流出口 312,108 (29.8%) / 中央値で穴埋め 338,188 (32.3%) / 壁 315,023 (30.0%) 穴埋めは 8% ほど水増しするが、**「1 セルが全体の 3 割を集める」こと自体は この地形の実際**である(平坦な埋立地は実際に一箇所へ集まる)。 最初に穴埋めだけを見て「この数字は穴埋めの産物だ」と書いたのは誇張で、 対照を取ったら効果は縮んだ。埋める選択肢を置かないのは、 **どこが実際の地形でどこが穴埋めか区別できなくなる**からであって、 数字が桁で変わるからではない。
-- **L605** _(ja)_ — ★ この遅さは PoC(examples/poc_dem_terrain.py)で 513^2 の天空率に 41.9 秒 かかって初めて気づいた。テストは小さい格子しか使っておらず、 「動く」ことは確かめていたが「使える」ことは確かめていなかった。
-- **L686** _(ja)_ — ★2026-09-08 修正(`poc_stockpile_volume` が発見)。視線の標本が ``np.rint`` で**目標セル自身**に丸まると、そのセルの高さを「途中の地形」 として自分と比べることになる。t < 1 なので分母 dist*t が小さく、 ``(z-eye)/(dist*t) > (z-eye)/dist`` は z > eye なら必ず真 —— **目線より高いセルが軒並み自己遮蔽**されていた。実測(修正前): 平地に立てた高さ 10 m の柱は 25 m 先・目線 2 m から「見えない」と返り、 目線より低い 1 m の柱だけが「見える」。凸な立体の最高点は外から必ず 見えるので、これは幾何として誤り。標本が目標セルに乗った回は数えない。
-- **L746** _(ja)_ — ★ 台帳の宣言は ``points`` = (N, 3)。スカラを渡すと (3,) になって宣言と 食い違うので、常に (N, 3) へ畳む(2026-09-06 にファザーの TYPEMISS で 露見。地心座標 6 op を足したあとファザーを回していなかった)。 格子のまま (H, W, 3) が欲しいときは :func:`dem_geocentric_grid` を使う。
-- **L795** _(ja)_ — ★縮閉線の内側は測地緯度が一意でない -> 黙って範囲外の緯度を返さず拒否する。 楕円 x²/a² + z²/b² = 1 の縮閉線は (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3)。 等号の外側だけが「法線が 1 本に決まる」領域(2/3 乗は非負なので符号は |z|)。
+- **L97** — ★We do not provide the option to **fill** with the median or the like. Filling creates a plain that does not exist and lets water through without raising an exception. But the size of the effect we record honestly. On the same real data (Tokyo bayfront 1024x1024, 3.83% missing), the max catchment cell count compared across 3 ways: outlet 312,108 (29.8%) / median fill 338,188 (32.3%) / wall 315,023 (30.0%). Filling inflates by about 8%, but **the fact that "one cell gathers 30% of the whole" is itself the reality of this terrain** (a flat reclaimed land really does converge to one spot). Writing at first, from looking only at the fill, "this figure is a product of filling" was an exaggeration; taking a control shrank the effect. We do not provide a fill option because **it becomes impossible to distinguish where the terrain is real and where it is fill**, not because the figure changes by orders of magnitude.
+- **L605** — ★We first noticed this slowness when the sky-view factor for 513^2 took 41.9 seconds in the PoC (examples/poc_dem_terrain.py). The tests used only small grids, so they confirmed it "works" but not that it is "usable".
+- **L686** — ★Fixed 2026-09-08 (found by `poc_stockpile_volume`). When a line-of-sight sample rounds via ``np.rint`` to the **target cell itself**, that cell's height gets compared against itself as "intervening terrain". Since t < 1 the denominator dist*t is small, and ``(z-eye)/(dist*t) > (z-eye)/dist`` is always true when z > eye —— so **cells higher than eye level were self-occluding across the board**. Measured (before fix): a 10 m column on flat ground was returned as "not visible" from 25 m away at eye 2 m, and only a 1 m column below eye level was "visible". The highest point of a convex solid is always visible from outside, so this is geometrically wrong. We do not count the iterations where the sample landed on the target cell.
+- **L746** — ★The ledger declares ``points`` = (N, 3). Passing a scalar yields (3,), which conflicts with the declaration, so we always fold to (N, 3) (surfaced by the fuzzer's TYPEMISS on 2026-09-06; the fuzzer had not been run after adding the 6 geocentric-coordinate ops). When you want (H, W, 3) as a grid, use :func:`dem_geocentric_grid`.
+- **L795** — ★Inside the evolute the geodetic latitude is not unique -> instead of silently returning an out-of-range latitude, refuse. The evolute of the ellipse x²/a² + z²/b² = 1 is (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Only outside the equality is the region where "the normal is uniquely determined" (since the 2/3 power is non-negative, the sign is |z|).
 
 ## `examplefig.py`
 
-- **L127** _(ja)_ — ★`colorize_depth` は **float [0,1]** を返す。`np.asarray(..., np.uint8)` で 受けると 0.x が全部 0 に切り捨てられて真っ黒になる(2026-09-06 に踏んだ)。
-- **L156** _(ja)_ — ★例の本文を落とさない。図が出ないのは残念だが、数字は出さねばならない。
-- **L195** _(ja)_ — ★ここで :func:`_to_rgb8` に丸投げしてはいけない。あれは (H,W) を `colorize_depth` に渡すが、**その中で 1 枚ずつ正規化される**ので、 全コマ 0 の画と全コマ 1 の画が同じ色になる(2026-09-09 に試験が捕まえた)。 値域を明示して渡すことで、初めて尺度が 1 つになる。
-- **L260** _(ja)_ — ★Pillow は**直前とまったく同じコマを 1 枚に畳む**(その分の時間は前の コマの表示時間に足されるので、動きの速さは変わらない)。書いた後で 数え、渡した数と違えば台帳に**両方**残す —— 「72 コマの GIF」と 言いながら中身が 40 コマ、を黙って通さないため。
-- **L320** _(ja)_ — ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や 24×24 の縮小マップは PoC で普通に出るのに、エラーは 「題を短くしろ」と言う —— 実際の直し方は「パネルを大きくしろ」。 2 人の担当が独立に同じ穴に落ちた(看板の scene 図が 1 枚消えた例あり)ので、 呼び手ごとに拡大を書かせず、ここで 1 度だけ最近傍拡大する。 最近傍にするのは、拡大で**値を作らない**ため(補間すると図の上で 存在しない中間値が生まれ、疑似カラーが嘘をつく)。
+- **L127** — ★`colorize_depth` returns **float [0,1]**. Receiving it with `np.asarray(..., np.uint8)` truncates every 0.x to 0 and turns it pitch black (hit on 2026-09-06).
+- **L156** — ★Do not drop the body of the example. It is a pity that the figure does not appear, but the numbers must be shown.
+- **L195** — ★Do not just hand off to :func:`_to_rgb8` here. That passes (H,W) to `colorize_depth`, but **inside it each frame is normalized individually**, so a frame that is all 0 and a frame that is all 1 come out the same colour (caught by a test on 2026-09-09). Only by passing the value range explicitly does the scale become a single one.
+- **L260** — ★Pillow **folds a frame identical to the previous one into a single frame** (that time is added to the previous frame's display time, so the speed of motion does not change). We count after writing and, if it differs from the number passed, record **both** in the ledger —— so as not to silently pass off "a 72-frame GIF" whose content is 40 frames.
+- **L320** — ★2026-09-08: when the panel is small the title does not fit, and ``annotate_figure_grid`` (correctly) refuses, so **one figure was silently disappearing**. A 29×19 core grid or a 24×24 reduced map appears routinely in PoCs, yet the error says "shorten the title" —— the actual fix is "enlarge the panel". Two people fell into the same hole independently (there is a case where one scene figure on the signboard disappeared), so instead of making each caller write the enlargement, we do a nearest-neighbour enlargement once here. We use nearest neighbour so as **not to create values** by enlarging (interpolation would create intermediate values that do not exist on the figure, and the pseudo-colour would lie).
 
 ## `examples/acoustic_condition_monitoring.py`
 
-- **L467** _(ja)_ — ★放物線補間には**整数へ引く偏り**が残る(ピークが sinc 状なので二次で近似 しきれない)。0 から 1 まで振って偏りを実測し、S 字になることを示す —— 「サブ標本まで読めた」で終わらせると、この偏りが黙って結果に乗る。
+- **L467** — ★Parabolic interpolation retains a **bias that pulls toward integers** (because the peak is sinc-like and cannot be fully approximated by a quadratic). We sweep from 0 to 1, measure the bias, and show that it forms an S-curve —— if we stop at "we could read down to the sub-sample", this bias silently rides along in the result.
 
 ## `examples/annotate_paper_tour.py`
 
-- **L51** _(ja)_ — ★EXTEND: text と path を自分の図の文字と折れ線 (x, y) に差し替える
+- **L51** — ★EXTEND: replace text and path with the text and polyline (x, y) of your own figure
 
 ## `examples/blas_thread_budget.py`
 
@@ -639,67 +639,67 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L61** — ★Take the observation time **long enough — beyond the healthy part's t\* (6.8 s)**. Too short and the healthy part's knee goes outside the window, and TSR answers the healthy part as "the depth at the window edge" (in practice it stuck at 2.82 mm).
 - **L126** — ★This part alone is an approximation. Since the 1-D solution has no lateral diffusion, at each time we blur in-plane with a Gaussian of diffusion length σ(t)=√(2αt). The physical scaling law is correct, but it does not satisfy mass conservation at the boundary.
-- **L142** _(ja)_ — TSR で t* を探す範囲。★端を除くのは飾りではない —— 高次多項式の 2 階微分は 端で必ず暴れる(Runge)。除かないと argmax が最初か最後のフレームに張り付き、 深さが窓端の 2 値に張り付く(実測、2026-09-06)。次数は 4〜11 を掃いて 8 で 決めた(4〜5 では 1.5 mm 以深が端に張り付き、8 以上は 9/11 と同じ答え)。
-- **L177** _(ja)_ — ★格子の刻みで t* を丸めると、深さが階段状に量子化される(64 点だと 5 % 刻み)。 放物線を 3 点に当てて ln t のサブ格子位置まで出す。
-- **L235** _(ja)_ — ★所見を固定する。ここは**近似ゼロの検算**なので、崩れたら実装が壊れている。
-- **L249** _(ja)_ — ★推定器そのものの偏り。**画像を一切通さず**、厳密な 1 次元曲線に `tsr_depth` を掛ける。ここで出る誤差が「多項式当てはめの床」で、 3 節以降のずれからこれを引いた分だけが横拡散・雑音の寄与。
-- **L267** _(ja)_ — ★所見を固定する: 床は**ゼロではないが小さい**。両側を押さえる —— ゼロになったら「画像を通さない曲線でも数 % ずれる」という 3 節の 読み替え(±5 % は床とほぼ同じ)が成り立たなくなり、大きくなったら 3 節以降のずれを横拡散のせいにできなくなる。
-- **L302** _(ja)_ — ★所見を固定する。この 2 行が同時に成り立つことがこの節の主張そのもの。 (1) 16 個を 1 本の平均にまとめると、TSR は「常に 1.50 mm と答える」ゼロ点に負ける。
-- **L332** _(ja)_ — ★所見を固定する。 (1) 直径が深さの 4 倍以上ある右下三角は数 % で当たる(1 節の床とほぼ同じ)。
-- **L362** _(ja)_ — ★対照群: **横拡散を切った**同じ場面。これで「横拡散のせい」と 「画素が足りない/マスクが取れないせい」を分けられる。片方だけ見て 物理のせいにするのが、この種の実験でいちばんよくある間違い。
-- **L409** _(ja)_ — ★対照群の所見を固定する: **横拡散を切ると 16 個すべてが ±8 % に入る**。 この 1 行が「壊れている原因は横拡散ただ 1 つで、画素の粗さでもマスクの 取り方でもない」の根拠。緩めると 3 節の結論が『解像度を上げれば直る』 という誤読に戻る。
-- **L419** _(ja)_ — ★上の推論(窓の終わりの拡散長が効く)が正しいなら、**窓を切れば直る**。 仮説を立てたら、それが外れる形の実験を必ず 1 つ置く。 ------------------------------------------------------------------ #
-- **L440** _(ja)_ — ★この PoC のいちばん重い所見を固定する ——「縦横比の限界」は物理ではなく **当てはめる時間窓の選び方**だった。 (1) 窓 4 秒なら小さい 8 個すべてが ±20 % に入る(実測の最悪 -14 %)。
-- **L528** _(ja)_ — ★所見を固定する: 加熱が一様なら**生の 1 枚が最多**で、TSR の 2 階微分は 1 個も出さない。「深さの推定には効くが検出には向かない」= 同じ道具が 両方に効くとは限らない、というこの節の主張そのもの。
-- **L575** _(ja)_ — ★ランプの映り込み。**欠陥と同じスケール**の構造を持つのがこちら。
-- **L602** _(ja)_ — ★所見を固定する。 (1) 壊れるのは (c) の**欠陥と同じスケールのむら**だけ。(b) のなだらかな 傾斜は生の 1 枚をほとんど壊さない —— ここが「予想が外れた」所なので、 (b) が (a) を割り込まないことを明示的に押さえる。
-- **L683** _(ja)_ — ★既定のキューブにも NETD を入れる。雑音ゼロだと健全部の面内ばらつきが 厳密に 0 になり、SNR が 1e9 のような無意味な数になる(実測して直した)。
+- **L142** — The range over which TSR searches for t*. ★Excluding the ends is not decoration —— the 2nd derivative of a high-order polynomial always blows up at the ends (Runge). Without it the argmax sticks to the first or last frame, and depth sticks to the 2 values at the window ends (measured, 2026-09-06). We swept degrees 4–11 and settled on 8 (at 4–5, depths beyond 1.5 mm stuck to the ends; 8 and above give the same answer as 9/11).
+- **L177** — ★Rounding t* to the grid step quantizes depth into staircase steps (with 64 points, 5 % steps). We fit a parabola to 3 points to recover the sub-grid position of ln t.
+- **L235** — ★Pin down the observation. This is a **near-zero sanity check**, so if it breaks the implementation is broken.
+- **L249** — ★The bias of the estimator itself. **Without passing through any image**, we apply `tsr_depth` to an exact 1-D curve. The error here is the "floor of the polynomial fit," and only what remains after subtracting it from the deviations in Section 3 onward is the contribution of lateral diffusion and noise.
+- **L267** — ★Pin down the observation: the floor is **not zero but small**. We bound it on both sides —— if it became zero, the reinterpretation in Section 3 ("even a curve that doesn't pass through an image deviates by a few %"; ±5 % is roughly the same as the floor) would no longer hold, and if it grew large we could no longer attribute the deviations from Section 3 onward to lateral diffusion.
+- **L302** — ★Pin down the observation. That these 2 lines hold simultaneously is the very claim of this section. (1) When the 16 items are collapsed into a single average, TSR loses to the null baseline that "always answers 1.50 mm."
+- **L332** — ★Pin down the observation. (1) The lower-right triangle, where the diameter is 4 times or more the depth, is hit within a few % (roughly the same as the floor in Section 1).
+- **L362** — ★Control group: the same scene with **lateral diffusion turned off**. This separates "blame lateral diffusion" from "blame insufficient pixels / a mask that can't be extracted." Looking at only one side and blaming physics is the most common mistake in this kind of experiment.
+- **L409** — ★Pin down the control group's observation: **with lateral diffusion off, all 16 fall within ±8 %**. This one line is the evidence that "the only cause of breakage is lateral diffusion, not pixel coarseness nor how the mask is taken." Loosen it and the conclusion of Section 3 reverts to the misreading that 'raising the resolution fixes it'.
+- **L419** — ★If the reasoning above (the diffusion length at the end of the window matters) is correct, then **cutting the window fixes it**. When you form a hypothesis, always place one experiment shaped to disprove it. ------------------------------------------------------------------ #
+- **L440** — ★Pin down the heaviest observation of this PoC —— the "aspect-ratio limit" was not physics but **how the fitting time window is chosen**. (1) With a 4-second window, all 8 small ones fall within ±20 % (measured worst case -14 %).
+- **L528** — ★Pin down the observation: if heating is uniform, **the raw single frame detects the most**, while the 2nd derivative of TSR detects none. "It works for depth estimation but is unsuited to detection" = the same tool does not necessarily work for both, which is exactly this section's claim.
+- **L575** — ★Lamp reflection. This is the one with structure at **the same scale as the defect**.
+- **L602** — ★Pin down the observation. (1) The only thing that breaks it is (c)'s **unevenness at the same scale as the defect**. (b)'s gentle gradient barely breaks the raw single frame —— since this is where "the prediction was off," we explicitly confirm that (b) does not undercut (a).
+- **L683** — ★Put NETD into the default cube as well. With zero noise, the in-plane variation of the sound region becomes exactly 0 and the SNR turns into a meaningless number like 1e9 (measured and fixed).
 
 ## `examples/poc_timelapse_growth.py`
 
-- **L472** _(ja)_ — ★格子の位相を 5 通り振り、**偏り(平均)と ばらつき(幅)を分けて**数える。
-- **L610** _(ja)_ — 2) ★Y 字 —— 合体する組の中心を通る行で体積を切る
+- **L472** — ★Vary the grid phase in 5 ways and count **separating bias (mean) from spread (width)**.
+- **L610** — 2) ★Y-shape —— slice the volume along the row passing through the center of the merging pair
 
 ## `examples/poc_traffic_counting.py`
 
-- **L256** _(ja)_ — ★画面の左右で切れている行は重心が引っ張られる。落とした版も測る。
+- **L256** — ★Rows cut off at the left or right of the frame have their centroid pulled. We also measure the version with them dropped.
 
 ## `examples/poc_tree_ring_dendro.py`
 
-- **L229** _(ja)_ — ★画素地図を斜めに読むと境界で番号が k, k+1, k, k+1 と震える(最近傍の階段)。 5 標本(1.25 px)未満の短い走りは直前の値に吸収する —— 放置すると真値の 境界が 1〜2 本増え、「年数が合う方向 18 + 合わない 13 = 31 > 24」になった。
-- **L336** _(ja)_ — ★threshold=0 で全部取り、段の高さは自分で測る。measure_pos の amplitude (勾配ローブの両端差)は木目で勾配が単調でなくなると段の途中で止まり、 0.14 の段を 0.05 と返す(8 節で数える)。
-- **L345** _(ja)_ — ★px へ戻す外縁半径は**測った行**のもの。扇形 15° 全体の中央値を使うと 偏心成長で外縁が扇形の中で 10 px 以上動くので外側の年輪が全部ずれる (最初そう書いて年輪 18〜35 を丸ごと落とした)。
-- **L543** _(ja)_ — ★年数を間違えた方向でも幅の相関は高いか —— 年数と幅の相関は別の量
+- **L229** — ★Reading the pixel map diagonally makes the numbers flicker as k, k+1, k, k+1 at the boundary (nearest-neighbor staircase). Short runs of fewer than 5 samples (1.25 px) are absorbed into the preceding value —— left alone, the ground-truth boundaries increase by 1–2 and it became "18 in the direction where the year count matches + 13 that don't = 31 > 24."
+- **L336** — ★Take everything with threshold=0 and measure the step height yourself. The amplitude of measure_pos (the difference between the two ends of the gradient lobe) stops midway up the step when the grain makes the gradient non-monotonic, returning a 0.14 step as 0.05 (counted in Section 8).
+- **L345** — ★The outer-edge radius used to convert back to px is that of **the measured row**. Using the median over the whole 15° sector makes the outer edge move by more than 10 px within the sector due to eccentric growth, so all the outer rings shift (I first wrote it that way and dropped rings 18–35 entirely).
+- **L543** — ★Is the width correlation high even in the direction where the year count is wrong —— the year count and the width correlation are separate quantities
 
 ## `examples/poc_vegetation_cover.py`
 
-- **L320** _(ja)_ — ので、ここでは緑・赤の 2 バンドに落として解く。★道具の穴。
-- **L543** _(ja)_ — ★対角線に載っているかどうかが「分数のまま答えられるか」そのもの。 二値手法の線は階段になり、混合画素の帯で対角線から大きく離れる。
-- **L755** _(ja)_ — ★「数字だけ合っている」を絵で見せる。3 枚目と 2 枚目に共通の画素がほぼ無い のに、白い画素の**数**だけが釣り合っている。
-- **L953** _(ja)_ — (7) ★PPI は雑音で壊れる —— 純画素が 6 割以上あっても葉を拾わない。 一方で雑音ゼロなら同じ場面で当てる = 崖の原因は純画素の不足ではない。
-- **L993** _(ja)_ — (11) ★この PoC が見つけて **fullseye 0.1.10 で直した**穴。 3 つの大津が同じ入力に違う答えを返していた —— 同じ画像を 4095 倍 しただけで判定が otsu 13.34 pp / cv_otsu 13.92 pp ずれ、sk_otsu だけが アフィン不変だった。原因は `ops._otsu` と `backends._u8` の `np.clip(v, 0, 1)`(0..255 の float が全画素飽和して「全部前景」になる)。 いまは 3 つとも倍率で動かない。残っている `cv_otsu` の 0.5 pp は OpenCV が内部で 8 bit に量子化するためで、これは docstring どおりの挙動。 門は `tests/test_value_range_saturation.py`。
-- **L1007** _(ja)_ — (12) ★道具の穴:spec_unmix は B=3(色画像)を拒否する = RGB を解く経路が無い
-- **L1013** _(ja)_ — (12b) ★被覆率の数字だけが合っていて画素が 1 つも当たっていない場面が実在する。 この 1 行が「1 つの数字に丸めない」のいちばん強い根拠。
+- **L320** — so here we reduce it to the 2 bands green and red to solve it. ★A gap in the tooling.
+- **L543** — ★Whether it lies on the diagonal is precisely "whether it can answer in fractions." The line of a binary method becomes a staircase and departs far from the diagonal in the band of mixed pixels.
+- **L755** — ★Show "only the numbers match" as a picture. The 3rd and 2nd frames share almost no common pixels, yet only the **count** of white pixels is balanced.
+- **L953** — (7) ★PPI breaks under noise —— even with 60 % or more pure pixels it fails to pick up the leaf. Meanwhile with zero noise it hits on the same scene = the cause of the cliff is not a shortage of pure pixels.
+- **L993** — (11) ★A gap this PoC found and **fixed in fullseye 0.1.10**. Three Otsus were returning different answers for the same input —— merely multiplying the same image by 4095 shifted the verdict by otsu 13.34 pp / cv_otsu 13.92 pp, and only sk_otsu was affine-invariant. The cause was the `np.clip(v, 0, 1)` in `ops._otsu` and `backends._u8` (floats in 0..255 saturate every pixel, making it "all foreground"). Now all three are invariant to scaling. The remaining 0.5 pp in `cv_otsu` is because OpenCV internally quantizes to 8 bit, which is behavior as documented in the docstring. The gate is `tests/test_value_range_saturation.py`.
+- **L1007** — (12) ★A gap in the tooling: spec_unmix rejects B=3 (color images) = there is no path to solve RGB
+- **L1013** — (12b) ★There really exist scenes where only the coverage-ratio number matches while not a single pixel is hit. This one line is the strongest evidence for "do not round down to a single number."
 
 ## `examples/poc_veiling_glare.py`
 
-- **L229** _(ja)_ — ★fullseye 側の突き合わせ: エアリー像 → psf_to_mtf が閉形式と合うか
+- **L229** — ★Cross-check on the fullseye side: Airy pattern → does psf_to_mtf agree with the closed form
 
 ## `examples/poc_vessel_network.py`
 
-- **L263** _(ja)_ — ★揺らぎは **ぼけたあと** に足す。先に足すと PSF が均してしまい、 しきい値の境界はきれいなままになる(最初そう書いていて、 振幅 0.35 まで上げてもヒゲが 1 本も出なかった)。
-- **L452** _(ja)_ — 節 2-3. ★★ヒゲはどこから来るか / 刈るしきい値は解像度に依存する # --------------------------------------------------------------------------- #
-- **L560** _(ja)_ — 節 4. ★★径の推定 —— 分岐の近くで必ず過大 # --------------------------------------------------------------------------- #
-- **L620** _(ja)_ — 節 5. ★★Murray の指数 —— 径の 1 割が指数の 1 になる # --------------------------------------------------------------------------- #
-- **L751** _(ja)_ — 節 6. ★交差の対照群 / 解像度で失われる枝 # --------------------------------------------------------------------------- #
-- **L890** _(ja)_ — (c) ★skeleton_prune3d は「短い枝を刈る」ではなく「全部の枝を短くする」
-- **L903** _(ja)_ — (d) ★fs.skeleton_nodes は docstring が「座標」と言うのに端点しか返さない
+- **L263** — ★Add the fluctuation **after blurring**. Adding it first lets the PSF smooth it out, leaving the threshold boundary clean (I first wrote it that way, and even raising the amplitude to 0.35 produced not a single whisker).
+- **L452** — Section 2-3. ★★Where do the whiskers come from / the pruning threshold depends on resolution # --------------------------------------------------------------------------- #
+- **L560** — Section 4. ★★Diameter estimation —— always overestimated near branches # --------------------------------------------------------------------------- #
+- **L620** — Section 5. ★★Murray's exponent —— a 10 % in diameter becomes a 1 in the exponent # --------------------------------------------------------------------------- #
+- **L751** — Section 6. ★Control group for crossings / branches lost to resolution # --------------------------------------------------------------------------- #
+- **L890** — (c) ★skeleton_prune3d does not "prune short branches" but "shortens all branches"
+- **L903** — (d) ★fs.skeleton_nodes returns only endpoints even though its docstring says "coordinates"
 
 ## `examples/poc_warehouse_flow.py`
 
-- **L145** _(ja)_ — ★「人待ち」4 件 x (7.5 + 徐行 2.5) と「通路の干渉」8 件 x (2.5 + 徐行 2.5) は どちらも**ゼロ点に 40.0 秒**を足す —— わざと揃えてある。現実に一致するとは 限らないが、「同じ数字が違う原因から出る」ことは 1 例で示せる。
-- **L160** _(ja)_ — ゼロ点の「止まっている」しきい値 [m/s]。★雑音の作る見かけの速さ (σ√2/Δt = 0.085 m/s @ Δt=0.25 秒)より十分上に置かないと、**止まっている人を 動いていると誤判定してゼロ点が減る**(0.15 m/s だと Δt=0.25 秒でゼロ点が 半分になり、「細かく撮るほど滞留が減る」という嘘の結論が出た)。
-- **L239** _(ja)_ — ★どちらか 1 台でも見えれば見えるので、死角に入るのは**全カメラが遮られる** 高さ = 各カメラの限界の**最大**。ここを min にしていて予測が 0.5 m 外れた。
+- **L145** — ★"Waiting for people" 4 cases x (7.5 + slow-down 2.5) and "aisle interference" 8 cases x (2.5 + slow-down 2.5) both add **40.0 seconds to the null baseline** —— deliberately matched. It won't necessarily agree with reality, but that "the same number arises from different causes" can be shown with one example.
+- **L160** — The null baseline's "stationary" threshold [m/s]. ★Unless it is placed well above the apparent speed created by noise (σ√2/Δt = 0.085 m/s @ Δt=0.25 s), **stationary people are misjudged as moving and the null baseline shrinks** (at 0.15 m/s the null baseline halves at Δt=0.25 s, yielding the false conclusion that "the finer you sample, the less dwell there is").
+- **L239** — ★Since it is visible if even one of the cameras can see it, entering the blind spot means the height at which **all cameras are blocked** = the **maximum** of each camera's limit. I had this as min and the prediction was off by 0.5 m.
 - **L329** _(ja)_ — ★並ぶ人の到着時刻は**実際に作業が始まる時刻**から決める(見積りで 決めたら 20 秒ずれて、待ちの柱が作業の柱と重ならなかった)。
 - **L342** _(ja)_ — ★出会う場所は**棚の列の真横**でなければならない。棚と棚の間でない交差通路は 両側が開けていて空き幅が 1.9 m あり、「狭い通路」に分類されない(最初の 実装は主通路の高さで出会わせてしまい、10 件中 4 件が「その他」に落ちた)。
 - **L435** _(ja)_ — ★入れ替え(swap)ではなく併合にしてある —— 入れ替えは「同じ柱の中で 遅く始まったほうが待ち」という時間の入れ子を壊さない(役が入れ替わるだけ で、両方の役が正しく埋まる)。壊れるのは **2 人が 1 人に見えたとき**。
