@@ -48,7 +48,38 @@ CHAIN = [
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
+    (["tools/gen_examples3d_doc.py"], "docs/EXAMPLES_3D.md(3-D 例の一覧)"),
     (["tools/gen_sensor_playbook.py"], "センサー playbook"),
+]
+
+#: **CHAIN に入れないものと、その理由**(2026-09-09)。
+#:
+#: この表が無いと CHAIN は「人が思い出せた生成器の集合」に逆戻りする ——
+#: それはこの道具が潰したはずの失敗そのもの。実際、初版の CHAIN は手で選ばれて
+#: いて `gen_examples3d_doc` が漏れており、`docs/EXAMPLES_3D.md` は
+#: **`ops3d = 347 op` と書いたまま古びていた**(実際は 357)。
+#:
+#: 除外は「回さなくてよい」ではなく「**--check の門にできない**」の意味。
+#: 記事の生成器は回すたびに出力が変わるので、drift 検査に混ぜると毎回赤になる:
+#:
+#:   * 図と GIF を描き直す → 同じ入力でもバイトが変わる(SHA-256 も、kB 表示も)。
+#:     実測: `wing1d_aliasing.gif` は 1,135,171 → 1,130,583 バイト。
+#:   * ベンチ由来の数値を書き込む(`_wing2d_meta.json` の `seconds_per_search`
+#:     2.383 → 2.395)。これは**測定値**なので一致するはずがない。
+#:   * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は
+#:     `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと
+#:     画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを
+#:     回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで
+#:     通しでやること。**
+EXCLUDED = [
+    ("tools/gen_wing*_gallery.py(wingpoc を除く 10 本)",
+     "図・GIF を描き直し、ベンチ実測値を書き込み、画像リンクを相対パスに戻す"),
+    ("tools/gen_academic_gallery.py / gen_industrial_gallery.py / gen_science_gallery.py",
+     "同上(記事片の生成。図の再描画を伴う)"),
+    ("tools/gen_sample_images.py / gen_itokawa_turntable.py",
+     "サンプル素材の再生成。入力が変わらない限り回す必要がない"),
+    ("imgevolve.py index(docs/OP_INDEX.json)",
+     "tools/ の外にあるので取りこぼしやすい。現状はレジストリと一致(実測 916)"),
 ]
 
 
