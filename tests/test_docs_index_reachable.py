@@ -54,6 +54,12 @@ INDEX = DOCS / "README.md"
 #: 索引の言語版。ja(README.md)以外は同じ生成ブロックを持つ。
 LANGS = ["", "en", "zh", "tw", "ko", "de"]
 
+#: op ノートではない索引ファイル —— `INDEX.md` と、その言語訳(`INDEX.en.md` 等)。
+#: op ノートは `<op>.md` であって `INDEX` にはならないので、ノート走査から外す。
+#: 訳版索引の鮮度は生成器側(regen_all --check)が別に見る。ここで拾うと
+#: 「台帳に無い」「構造が欠けた」と誤検出する(2026-09-10 に 5 言語ぶん検出)。
+_INDEX_RE = re.compile(r"^INDEX(\.[a-z]{2})?\.md$")
+
 #: 生成ブロックのマーカー。**外したら索引が腐る**ので存在も確かめる。
 MARKERS = ["<!-- ops-index:start -->", "<!-- ops-index:end -->",
            "<!-- poc-index:start -->", "<!-- poc-index:end -->",
