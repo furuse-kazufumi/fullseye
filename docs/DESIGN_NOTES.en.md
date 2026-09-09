@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 19 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 17 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -544,7 +544,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L252** _(ja)_ — 3. ★★塊の大きさ(周長)が偏りを決める # --------------------------------------------------------------------------- #
 - **L291** _(ja)_ — 4. ★★密接度で偏りの符号が反転する(打ち消し点) # --------------------------------------------------------------------------- #
 - **L353** _(ja)_ — 6. ★端成分が 5 % ずれたとき # --------------------------------------------------------------------------- #
-- **L380** — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
+- **L380** _(ja)_ — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
 - **L490** _(ja)_ — (b) spec_unmix は在った(★「無い」と書く前に 3 層引いた)
 
 ## `examples/poc_search_sweep_width.py`
@@ -754,7 +754,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/voxel_labels_color.py`
 
 - **L81** _(ja)_ — 1) ★色の安定性 —— この族の存在理由 # ------------------------------------------------------------------ #
-- **L152** — 4) ★異方 spacing # ------------------------------------------------------------------ #
+- **L152** _(ja)_ — 4) ★異方 spacing # ------------------------------------------------------------------ #
 
 ## `examples_3d/alpha_shape_topology.py`
 
@@ -1156,7 +1156,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L79** _(ja)_ — 1 塊 = ★ を含む行から始まり、同じ字下げで続く `#` コメント行の連なり。 Sphinx 風の `#:` コメントも拾う。`#` と空白だけを剥ぐと先頭に `:` が
 - **L81** _(ja)_ — 残り、生成物に「: ★…」と出る(実際に出た)。`:` もここで剥ぐ。
 - **L105** _(ja)_ — 次の ★ が来たら別の塊として切る(1 塊 1 主張に保つ)。
-- **L184** _(ja)_ — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
+- **L197** _(ja)_ — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
 
 ## `tools/gen_docs_index_ops.py`
 

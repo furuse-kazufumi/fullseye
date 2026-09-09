@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 19 / 609 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 17 / 609 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel_match.py`
@@ -39,11 +39,11 @@
 
 ## `backend_safe.py`
 
-- **L436** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
+- **L436** — ★feature op 는 ndarray 가 아니라 numpy **스칼라**를 반환하므로 위 분기는 한 번도 그것을 보지 못했다: NaN/Inf 측정값(예를 들어 퇴화 프레임에 대한 sk_blur_effect 내부의 0/0)이 api.apply 에서 그대로 흘러나갔다. 비유한 스칼라도 sort 폴백으로 씻어내어, 선언한 "유한·sort 로 유효" 보증이 feature/contour 스칼라에도 실제로 성립하도록 한다.
 
 ## `backends.py`
 
-- **L23** — ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a wrapper whose library call raises on every input looks to evolution / difftest / coverage like a working identity op instead of a failure. Runtime robustness is kept, but the degradation is DETECTABLE: every swallowed exception is recorded in the shared fallback ledger and strict mode re-raises instead. 2026-09-02: the ledger / strict switch moved DOWN into ``backend_safe`` so that the 23 other backend files (each with a private ``_safe``) report to the SAME place — before, this module was the only one of 24 wrapper families that recorded anything. The names below are kept as thin aliases for callers and tests that import them from here.
+- **L23** — ★`_safe` 폴백은 **최후의 수단**이며 **죽은 op 를 감출 수 있다**. out_sort=="image" 에서는 `backend_safe.fallback` 이 클립한 **입력**을 반환하므로, 어떤 입력에도 라이브러리 호출이 예외를 던지는 wrapper 가 진화 / difftest / coverage 에는 실패가 아니라 "동작하는 항등 op" 로 보인다. 실행 시 견고성은 유지하지만 열화는 **검출 가능**하게 해 두었다: 삼켜버린 예외는 모두 공유 폴백 대장에 기록하고, strict 모드에서는 대신 다시 던진다. 2026-09-02: 대장 / strict 스위치를 `backend_safe` 로 **내려서**, 다른 23 개 backend 파일(각자 private 한 `_safe` 를 가짐)이 **같은 곳**으로 보고하도록 했다 —— 그 전에는 24 개 wrapper 족 중 이 모듈만이 무언가를 기록했다. 아래 이름들은 여기서 import 하는 호출자와 테스트를 위한 얇은 별칭으로 남긴다.
 - **L812** _(ja)_ — LBP の符号化。★2026-09-08 まで `b` は本当に何もしておらず、 `method` は `'default'`(回転不変でない)に固定だった。実写の テクスチャ(brick / grass / gravel)で測ると、異方な素材では 回転で動く量が素材間の距離の 9.64 倍になり、`'uniform'` に替えると 1.72 倍まで下がる(`examples/poc_real_texture_invariance.py`)。 選べないと**下げようがない**ので `b` を割り当てた。閾値の表にして あるのは、同じ軸で分岐が増えるときの規約(入れ子の if にしない)。 `b=0.5`(既定)は従来どおり `'default'`。
 - **L1028** _(ja)_ — ★cv2 に **bool 配列**を渡すと `cv2.Laplacian` がヒープを壊し、後続の無関係な op でプロセスが死ぬ(2026-09-05 Fable レビュー、Windows で 100 回中に SIGSEGV を 自分でも再現、exit 127)。facade は dtype を契約に揃えるが、`op.fn` 直接経路 (テスト・coverage・進化ループ)は素通しだった。族の入口で float64 に揃える。
 
@@ -93,7 +93,7 @@
 
 ## `champion_to_macro.py`
 
-- **L193** — ★Enforce the headline honesty claim ("a DNA op is added only when it beats the hand baseline on a LOCKED holdout") — previously this flag was printed but never gated, so a worse-than-hand macro could be registered and then selected by the next evolution. The gate refuses that unless it is explicitly overridden.
+- **L193** — ★간판이 되는 정직성 주장("DNA op 은 **잠긴 holdout** 에서 수작업 베이스라인을 이겼을 때만 추가한다")을 강제한다 —— 이전에는 이 플래그가 출력되기만 하고 문이 되지 않아, 수작업보다 나쁜 매크로가 등록되어 다음 진화에서 선택될 수 있었다. 문은 명시적으로 재정의하지 않는 한 그것을 거부한다.
 
 ## `deform3d.py`
 
@@ -544,7 +544,7 @@
 - **L252** _(ja)_ — 3. ★★塊の大きさ(周長)が偏りを決める # --------------------------------------------------------------------------- #
 - **L291** _(ja)_ — 4. ★★密接度で偏りの符号が反転する(打ち消し点) # --------------------------------------------------------------------------- #
 - **L353** _(ja)_ — 6. ★端成分が 5 % ずれたとき # --------------------------------------------------------------------------- #
-- **L380** — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
+- **L380** _(ja)_ — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
 - **L490** _(ja)_ — (b) spec_unmix は在った(★「無い」と書く前に 3 層引いた)
 
 ## `examples/poc_search_sweep_width.py`
@@ -754,7 +754,7 @@
 ## `examples/voxel_labels_color.py`
 
 - **L81** _(ja)_ — 1) ★色の安定性 —— この族の存在理由 # ------------------------------------------------------------------ #
-- **L152** — 4) ★異方 spacing # ------------------------------------------------------------------ #
+- **L152** _(ja)_ — 4) ★異方 spacing # ------------------------------------------------------------------ #
 
 ## `examples_3d/alpha_shape_topology.py`
 
@@ -807,7 +807,7 @@
 
 ## `fsruntime.py`
 
-- **L284** — ★A judging recipe may use ONLY the curated fslib-backed builtins, under EVERY profile (not just industrial). Any other call is a 650-op evolution-registry op resolved through fscript._call_registry_op → api.RT, whose _safe wrapper is fail-OPEN (it swallows an op failure and returns a benign "no defects" value). That surface must never be a recipe's operator — a studio/reference runtime judges parts too — so a recipe that uses it is rejected at load (docs/FSCRIPT_DECISION.md 1.6b).
+- **L284** — ★판정 recipe 는 **모든 프로파일**(산업용에 국한되지 않음)에서 엄선된 fslib 기반 builtin **만** 사용할 수 있다. 그 외의 호출은 `fscript._call_registry_op → api.RT` 를 통해 해석되는 650-op 진화 레지스트리 op 이며, 그 `_safe` wrapper 는 **fail-OPEN**(op 실패를 삼키고 무해한 "결함 없음" 값을 반환)이다. 이 표면은 결코 recipe 의 연산자여서는 안 된다 —— studio / 레퍼런스 런타임도 부품을 판정하므로 —— 따라서 그것을 사용하는 recipe 는 로드 시 거부된다(docs/FSCRIPT_DECISION.md 1.6b).
 
 ## `fullseye/__init__.py`
 
@@ -820,7 +820,7 @@
 
 ## `honest_summary.py`
 
-- **L58** — ★Exclude auto ops that FAILED the functional gate from the headline — they were previously only [warn]-printed while still counted, inflating the "functionally gated" parity number with ops the gate rejects.
+- **L58** — ★기능 게이트에 **떨어진** auto op 를 간판 수치에서 제외한다 —— 이전에는 [warn] 으로 출력되기만 하고 수에는 들어가, 게이트가 거부하는 op 로 "기능 게이트 통과" parity 수를 부풀리고 있었다.
 - **L77** _(ja)_ — ★2026-09-08: この行はこう書いてあった —— "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 実測すると **979 + 17 = 979**、つまり n-ary の 17 本は ``reg_counted`` の**部分集合**(``nary_names - reg_counted`` は空)。 見出しの 979 は正しいのに、内訳の行だけが「足し算」に見え、読者が足すと 996 になる。数字が合っていても**説明が嘘をつく**形なので直した。 内訳が和として成り立つかは ``tests/test_honest_summary_arithmetic.py`` が毎回見る。
 
 ## `imgevolve.py`
@@ -939,7 +939,7 @@
 
 ## `problems.py`
 
-- **L147** — ★A deterministic global shuffle (fixed base, so train/holdout/locked index the SAME permutation) split into three DISJOINT bands keyed by the seed's role (evolve.run draws train=seed, holdout=seed+10000, locked=seed+20000, so seed//10000 mod 3 picks the band). The old `off = seed % pool` collapsed all three windows to the SAME frames whenever pool divided 10000 — a silent train↔holdout↔locked leak that made a train-overfit champion look like it "beat hand on a pure holdout". A pure 3-way split needs pool >= 3n; a smaller pool cannot yield a clean holdout, so we refuse rather than leak silently.
+- **L147** — ★결정적 전역 셔플(기점을 고정하여 train/holdout/locked 가 **같은** 순열을 색인)을 seed 의 역할로 키를 준 세 개의 **서로소** 밴드로 나눈다(evolve.run 은 train=seed·holdout=seed+10000·locked=seed+20000 을 뽑으므로 seed//10000 mod 3 이 밴드를 고른다). 옛 `off = seed % pool` 은 pool 이 10000 을 나눌 때마다 세 창을 **같은** 프레임으로 붕괴시켰다 —— train↔holdout↔locked 의 침묵의 누출로, train 에 과적합된 champion 이 "순수 holdout 에서 수작업을 이긴" 것처럼 보이게 했다. 순수한 3-분할에는 pool >= 3n 이 필요하다. 그보다 작은 pool 은 깨끗한 holdout 을 낼 수 없으므로, 조용히 누출하기보다 거부한다.
 
 ## `profileops.py`
 
@@ -1156,7 +1156,7 @@
 - **L79** _(ja)_ — 1 塊 = ★ を含む行から始まり、同じ字下げで続く `#` コメント行の連なり。 Sphinx 風の `#:` コメントも拾う。`#` と空白だけを剥ぐと先頭に `:` が
 - **L81** _(ja)_ — 残り、生成物に「: ★…」と出る(実際に出た)。`:` もここで剥ぐ。
 - **L105** _(ja)_ — 次の ★ が来たら別の塊として切る(1 塊 1 主張に保つ)。
-- **L184** _(ja)_ — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
+- **L197** _(ja)_ — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
 
 ## `tools/gen_docs_index_ops.py`
 

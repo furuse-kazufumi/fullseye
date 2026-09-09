@@ -37,11 +37,11 @@
 
 ## `backend_safe.py`
 
-- **L436** — ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a degenerate frame) used to flow straight out of api.apply. Scrub non-finite scalars to the sort fallback so the declared "finite, sort-valid" guarantee actually holds for feature/contour scalars too.
+- **L436** — ★feature op は ndarray でなく numpy の **スカラ**を返すので、上の分岐は一度もそれを見ていなかった: NaN/Inf の測定値(例えば退化フレームに対する sk_blur_effect 内の 0/0)が api.apply からそのまま流れ出ていた。非有限のスカラも sort フォールバックへ洗い流し、宣言している「有限・sort として妥当」の保証が feature/contour のスカラにも実際に効くようにする。
 
 ## `backends.py`
 
-- **L23** — ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a wrapper whose library call raises on every input looks to evolution / difftest / coverage like a working identity op instead of a failure. Runtime robustness is kept, but the degradation is DETECTABLE: every swallowed exception is recorded in the shared fallback ledger and strict mode re-raises instead. 2026-09-02: the ledger / strict switch moved DOWN into ``backend_safe`` so that the 23 other backend files (each with a private ``_safe``) report to the SAME place — before, this module was the only one of 24 wrapper families that recorded anything. The names below are kept as thin aliases for callers and tests that import them from here.
+- **L23** — ★`_safe` フォールバックは**最後の手段**であり、**死んだ op を隠しうる**。out_sort=="image" では `backend_safe.fallback` がクリップした**入力**を返すので、どんな入力でもライブラリ呼び出しが例外を投げる wrapper が、進化 / difftest / coverage には失敗ではなく「動く恒等 op」に見えてしまう。実行時の頑健性は保つが、劣化は**検出可能**にしてある: 握り潰した例外はすべて共有のフォールバック台帳に記録し、strict モードでは代わりに再送出する。2026-09-02: 台帳 / strict スイッチを `backend_safe` へ**下ろし**、他の 23 個の backend ファイル(各自の private な `_safe` を持つ)が**同じ場所**へ報告するようにした —— それ以前は、24 の wrapper 族のうちこのモジュールだけが記録していた。以下の名前は、ここから import する呼び手やテストのための薄い別名として残す。
 - **L812** — LBP の符号化。★2026-09-08 まで `b` は本当に何もしておらず、 `method` は `'default'`(回転不変でない)に固定だった。実写の テクスチャ(brick / grass / gravel)で測ると、異方な素材では 回転で動く量が素材間の距離の 9.64 倍になり、`'uniform'` に替えると 1.72 倍まで下がる(`examples/poc_real_texture_invariance.py`)。 選べないと**下げようがない**ので `b` を割り当てた。閾値の表にして あるのは、同じ軸で分岐が増えるときの規約(入れ子の if にしない)。 `b=0.5`(既定)は従来どおり `'default'`。
 - **L1028** — ★cv2 に **bool 配列**を渡すと `cv2.Laplacian` がヒープを壊し、後続の無関係な op でプロセスが死ぬ(2026-09-05 Fable レビュー、Windows で 100 回中に SIGSEGV を 自分でも再現、exit 127)。facade は dtype を契約に揃えるが、`op.fn` 直接経路 (テスト・coverage・進化ループ)は素通しだった。族の入口で float64 に揃える。
 
@@ -91,7 +91,7 @@
 
 ## `champion_to_macro.py`
 
-- **L193** — ★Enforce the headline honesty claim ("a DNA op is added only when it beats the hand baseline on a LOCKED holdout") — previously this flag was printed but never gated, so a worse-than-hand macro could be registered and then selected by the next evolution. The gate refuses that unless it is explicitly overridden.
+- **L193** — ★看板の正直さの主張(「DNA op は**ロックされた holdout** で手作りベースラインに勝ったときだけ追加する」)を強制する —— 以前はこのフラグは表示されるだけで門になっておらず、手作りより悪いマクロが登録され、次の進化で選ばれえた。門は、明示的に上書きしない限りそれを拒否する。
 
 ## `deform3d.py`
 
@@ -805,7 +805,7 @@
 
 ## `fsruntime.py`
 
-- **L284** — ★A judging recipe may use ONLY the curated fslib-backed builtins, under EVERY profile (not just industrial). Any other call is a 650-op evolution-registry op resolved through fscript._call_registry_op → api.RT, whose _safe wrapper is fail-OPEN (it swallows an op failure and returns a benign "no defects" value). That surface must never be a recipe's operator — a studio/reference runtime judges parts too — so a recipe that uses it is rejected at load (docs/FSCRIPT_DECISION.md 1.6b).
+- **L284** — ★判定レシピは、**あらゆるプロファイル**(産業用に限らない)で、厳選された fslib 由来の builtin **のみ**を使える。それ以外の呼び出しは `fscript._call_registry_op → api.RT` を通して解決される 650 op の進化レジストリ op であり、その `_safe` wrapper は **fail-OPEN**(op の失敗を握り潰して無害な「欠陥なし」の値を返す)。この面はレシピの演算子であってはならない —— studio / リファレンスのランタイムも部品を判定するため —— ので、それを使うレシピはロード時に拒否する(docs/FSCRIPT_DECISION.md 1.6b)。
 
 ## `fullseye/__init__.py`
 
@@ -818,7 +818,7 @@
 
 ## `honest_summary.py`
 
-- **L58** — ★Exclude auto ops that FAILED the functional gate from the headline — they were previously only [warn]-printed while still counted, inflating the "functionally gated" parity number with ops the gate rejects.
+- **L58** — ★機能ゲートに**落ちた** auto op を看板の数字から除外する —— 以前は [warn] 表示されるだけで数には入っており、ゲートが拒否する op で「機能ゲート済み」の parity 数を水増ししていた。
 - **L77** — ★2026-09-08: この行はこう書いてあった —— "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 実測すると **979 + 17 = 979**、つまり n-ary の 17 本は ``reg_counted`` の**部分集合**(``nary_names - reg_counted`` は空)。 見出しの 979 は正しいのに、内訳の行だけが「足し算」に見え、読者が足すと 996 になる。数字が合っていても**説明が嘘をつく**形なので直した。 内訳が和として成り立つかは ``tests/test_honest_summary_arithmetic.py`` が毎回見る。
 
 ## `imgevolve.py`
@@ -937,7 +937,7 @@
 
 ## `problems.py`
 
-- **L147** — ★A deterministic global shuffle (fixed base, so train/holdout/locked index the SAME permutation) split into three DISJOINT bands keyed by the seed's role (evolve.run draws train=seed, holdout=seed+10000, locked=seed+20000, so seed//10000 mod 3 picks the band). The old `off = seed % pool` collapsed all three windows to the SAME frames whenever pool divided 10000 — a silent train↔holdout↔locked leak that made a train-overfit champion look like it "beat hand on a pure holdout". A pure 3-way split needs pool >= 3n; a smaller pool cannot yield a clean holdout, so we refuse rather than leak silently.
+- **L147** — ★決定的な大域シャッフル(基点を固定し、train/holdout/locked が**同じ**置換を索引する)を、seed の役割で鍵付けした 3 つの**互いに素な**帯に分ける(evolve.run は train=seed・holdout=seed+10000・locked=seed+20000 を引くので、seed//10000 mod 3 が帯を選ぶ)。旧来の `off = seed % pool` は、pool が 10000 を割り切るときは常に 3 つの窓を**同じ**フレームへ潰していた —— train↔holdout↔locked の沈黙のリークで、train に過適合した champion が「純粋な holdout で手作りに勝った」ように見えていた。純粋な 3 分割には pool >= 3n が要る。それより小さい pool では綺麗な holdout を作れないので、黙ってリークするより拒否する。
 
 ## `profileops.py`
 
@@ -1154,7 +1154,7 @@
 - **L79** — 1 塊 = ★ を含む行から始まり、同じ字下げで続く `#` コメント行の連なり。 Sphinx 風の `#:` コメントも拾う。`#` と空白だけを剥ぐと先頭に `:` が
 - **L81** — 残り、生成物に「: ★…」と出る(実際に出た)。`:` もここで剥ぐ。
 - **L105** — 次の ★ が来たら別の塊として切る(1 塊 1 主張に保つ)。
-- **L184** — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
+- **L197** — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
 
 ## `tools/gen_docs_index_ops.py`
 
