@@ -373,7 +373,7 @@ def test_the_note_files_on_disk_match_the_ledger_exactly():
 
     want = {Path(OD._op_path(r)).resolve() for r in G._records()}
     have = {p.resolve() for p in (DOCS / "ops").rglob("*.md")
-            if p.name != "INDEX.md" and "guides" not in p.parts
+            if not _INDEX_RE.match(p.name) and "guides" not in p.parts
             and p.name not in NOT_A_NOTE}
     extra = sorted(str(p.relative_to(ROOT)) for p in have - want)
     gone = sorted(str(p.relative_to(ROOT)) for p in want - have)
