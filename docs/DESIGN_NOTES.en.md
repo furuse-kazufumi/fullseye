@@ -5,26 +5,26 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 5 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 11 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
 
-- **L170** _(ja)_ — ★窓はテンプレより大きくないと full-overlap 位置がゼロになる → r = T//2 + f(粗誤差) + win。
+- **L170** — ★The window must be larger than the template or the count of full-overlap positions goes to zero → r = T//2 + f(coarse error) + win.
 
 ## `acoustics.py`
 
-- **L1173** _(ja)_ — ★``med == 0`` を一律 inf にしていた —— **``peak`` も 0 のとき(無音・帯域に 何も無い)まで「無限に卓越したピーク」と報告していた**。この 2 つの数は docstring のとおり「何も無くてもピーク周波数を返してしまう」ことへの 正直さの指標なのに、いちばん嘘になる向きに振れていた。0/0 は 0.0 が答え。 (2026-09-05: Linux / numpy 2.5.2 で表面化。旧版はフィルタの残差が わずかに残って med > 0 になっていただけで、**不具合は前からあった**。)
-- **L1181** _(ja)_ — ★ 大域中央値は**帯域を狭めると順序が逆転する**(純雑音 11375 対 本物の欠陥 9433。2026-09-06 実測、_local_prominence の表を見よ)。 帯域幅に依らない判定にはこちらを使う。既存の 2 つは意味を変えずに残す —— 名前が同じで中身が変わるほうが、増えるより危ない。
-- **L1789** _(ja)_ — ★``med == 0`` を一律 inf にしていた —— **``peak`` も 0 のとき(無音・帯域に 何も無い)まで「無限に卓越したピーク」と報告していた**。この 2 つの数は docstring のとおり「何も無くてもピーク周波数を返してしまう」ことへの 正直さの指標なのに、いちばん嘘になる向きに振れていた。0/0 は 0.0 が答え。 (2026-09-05: Linux / numpy 2.5.2 で表面化。旧版はフィルタの残差が わずかに残って med > 0 になっていただけで、**不具合は前からあった**。)
+- **L1173** — ★``med == 0`` was unconditionally treated as inf —— **it reported "an infinitely dominant peak" even when ``peak`` was also 0 (silence, nothing in the band)**. As the docstring says, these two numbers are an honesty indicator for "it returns a peak frequency even when there is nothing there", yet it was swinging in the most dishonest direction. The answer for 0/0 is 0.0. (2026-09-05: surfaced on Linux / numpy 2.5.2. The old version merely had a slight filter residual left so med > 0; **the bug was there all along**.)
+- **L1181** — ★The global median **reverses its order when you narrow the band** (pure noise 11375 vs a real defect 9433; measured 2026-09-06, see the _local_prominence table). Use this one for a bandwidth-independent verdict. The existing two are kept with their meaning unchanged —— a same name whose content changes is more dangerous than adding one.
+- **L1789** — ★``med == 0`` was unconditionally treated as inf —— **it reported "an infinitely dominant peak" even when ``peak`` was also 0 (silence, nothing in the band)**. As the docstring says, these two numbers are an honesty indicator for "it returns a peak frequency even when there is nothing there", yet it was swinging in the most dishonest direction. The answer for 0/0 is 0.0. (2026-09-05: surfaced on Linux / numpy 2.5.2. The old version merely had a slight filter residual left so med > 0; **the bug was there all along**.)
 
 ## `annotate.py`
 
-- **L3095** _(ja)_ — ★句読点(。、)は回さず**右上へ寄せる**のが本来だが、ここでは寄せない —— できないことを黙って近似せず、docstring に書いて残す。 縦書きで**右上へ寄せる**字(句読点)。横組みでは字の左下に来る点が、 縦組みでは右上に来る —— 回すのではなく**位置を動かす**のが組版の作法。 Windows の ``@`` 付きフォント(GDI が face 名で選ぶ縦組み用の顔)は、これを font 側でやってくれていた。Pillow はフォントを**ファイルパス**で開くので ``@`` の顔には到達できず、HarfBuzz の ``direction="ttb"`` も Raqm が入って いる環境と入っていない環境で結果が変わる(この機械の Pillow 12.3.0 は ``features.check("raqm")`` が False)。**プラットフォームで揃うほうを選ぶ** という方針に従い、ここは合成で寄せる。
+- **L3095** — ★Punctuation (。、) should not be rotated but **shifted to the upper right**, but here we don't shift it —— rather than silently approximating what we can't do, we write it in the docstring and leave it. Characters (punctuation) that **shift to the upper right** in vertical writing. A dot that sits at the lower left of the glyph in horizontal setting comes to the upper right in vertical setting —— the typographic manner is to **move the position**, not to rotate. Windows' ``@``-prefixed fonts (the vertical-writing face GDI selects by face name) did this on the font side. Pillow opens a font by **file path** so it can't reach the ``@`` face, and HarfBuzz's ``direction="ttb"`` also gives different results with and without Raqm installed (this machine's Pillow 12.3.0 has ``features.check("raqm")`` False). Following the policy **choose what is consistent across platforms**, here we shift by composition.
 
 ## `api.py`
 
-- **L572** _(ja)_ — ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も 意味も違う(imgio = 生 RGB・mask>0.5・fill/margin / annotate = 役割名の色・ 重み [0,1] も可・形の不一致を拒否)。同じ名前に別の約束を載せると、呼び手は 例外ではなく**もっともらしく違う絵**を受け取る。公開 API の破壊的変更は 独断でしないので、役割つきの方は ``fs.annotate.overlay_mask`` で引く。
+- **L572** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
 - **L1330** _(ja)_ — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
 
 ## `astrostack.py`
