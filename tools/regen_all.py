@@ -40,7 +40,7 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: 入力になる。足したら、ここに 1 行足す。
 CHAIN = [
     (["tools/opdocs.py", "all"],
-     "op ノート + SAMPLES + TOC + Studio help HTML(6 言語)"),
+     "op ノート + SAMPLES + TOC + RAG skill のコーパス地図 + Studio help HTML(6 言語)"),
     (["tools/gen_op_catalog.py"], "1 ページの op カタログ"),
     (["tools/gen_capabilities_index.py"], "能力索引(docs/capabilities/*.md から)"),
     (["tools/gen_hardening_index.py"], "堅牢性台帳"),
