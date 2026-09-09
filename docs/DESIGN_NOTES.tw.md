@@ -1243,7 +1243,7 @@
 
 - **L54** — ★唯一位於 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找產生器，就永遠找不到它。
 - **L75** _(ja)_ — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
-- **L156** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L159** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `typed_catalog.py`
 

@@ -66,4 +66,4 @@ def test_untranslated_entries_are_marked_not_hidden():
         en = f.read()
     meta = _meta()
     if meta["translated"]["en"] < meta["total"]:
-        assert "not translated" in en, "未訳の印が英語版に出ていない"
+        assert "_(ja)_" in en, "未訳の印 (ja) が英語版に出ていない"

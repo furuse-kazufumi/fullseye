@@ -128,6 +128,9 @@ NOT_A_GENERATOR = {
     "tools/qiita_patch_overview.py": "公開スクリプト(Qiita への PATCH)。",
     "tools/qiita_post_poc.py": "公開スクリプト(Qiita への投稿)。",
     "tools/studio_ui_harness.py": "Studio の UI テスト用ハーネス。",
+    "tools/i18n_status.py": "門(非日本語版に黙って混ざる日本語を数える)。",
+    "tools/i18n_docs.py": ("門 + スタンプ(散文ドキュメントの訳が日本語から古びて"
+                           "いないか)。--stamp が訳ファイルを書くが生成物ではない。"),
 }
 
 #: 生成器を**ファイルの側から**列挙する。CHAIN と EXCLUDED は人が書く表なので、
