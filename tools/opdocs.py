@@ -1280,9 +1280,8 @@ def skill_corpus_map() -> str:
     spec = sorted((f for f in fams if f[0] not in ("2d", "3d")),
                   key=lambda f: (-f[1], f[0]))
     core_n = sum(f[1] for f in core)
-    listing = " · ".join(f"**{n}** {c}" for n, c, _cat, _g in
-                         [(f[0], f[1], f[2], f[3]) for f in core + spec])
-    headline = sorted(spec, key=lambda f: (-f[1], f[0]))[:6]
+    listing = " · ".join("**%s** %d" % (f[0], f[1]) for f in core + spec)
+    headline = spec[:6]
     return "\n".join([
         _SKILL_BEGIN,
         "",
