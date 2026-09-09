@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 259 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 299 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -431,85 +431,85 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_pallet_load_utilization.py`
 
-- **L232** _(ja)_ — ★デッキの点は雑音で +3σ まで浮くので、床のしきい値で切る。これを 入れないと、はみ出しゼロの荷にも 0.006 m3 の「はみ出し」が出る。
-- **L479** _(ja)_ — ★g = w ちょうどは「格子が偶然そろうかどうか」の勝負になる。
+- **L232** — ★Deck points float up to +3σ from noise, so cut them with a floor threshold. Without it, even a load with zero overhang gets a spurious 0.006 m3 of "overhang".
+- **L479** — ★When g = w exactly, it comes down to "whether the grid happens to line up".
 
 ## `examples/poc_panorama_drift.py`
 
-- **L108** _(ja)_ — ★ 穴 (a): 以下 4 つはどれも fs ファサードにも fs.op にも出ていない
+- **L108** — ★Gap (a): none of the following 4 appear in the fs facade or in fs.op
 
 ## `examples/poc_particle_sizing.py`
 
-- **L213** _(ja)_ — ★種を 1 本だけにすると、この曲線の上下は**ただの揺らぎ**になる。 4 本の種で平均と散らばりを分けてから「横切った」と言う。
-- **L428** _(ja)_ — ★対照群 —— 融合も縁切れもしていない塊だけを、**その塊が写している 粒子そのもの**と 1 対 1 で突き合わせる。真値の側を全粒子にすると 「大きい粒子ほど融合しやすい」という選び方の偏りが混ざって、 標本化の偏りと区別がつかなくなる(最初そう書いて取り違えた)。
+- **L213** — ★With only a single seed, the ups and downs of this curve become **just noise**. Use 4 seeds to separate the mean from the spread before saying it "crossed over".
+- **L428** — ★Control group —— match only blobs that are neither merged nor split, one-to-one against **the very particle that blob images**. If the ground-truth side is all particles, the selection bias that "bigger particles merge more easily" creeps in and becomes indistinguishable from sampling bias (I first wrote it that way and got it wrong).
 
 ## `examples/poc_particle_tracking.py`
 
-- **L702** _(ja)_ — ★返りは**マスクではなく (N, 3) の (z, y, x) 座標**(2-D の `local_max` / `sk_local_maxima` は画像を返すので族の中で不揃い。 10 節の穴 (g))。最初 `count_nonzero` で数えて桁を間違えた。
-- **L777** _(ja)_ — ★上へ 3.4 倍・下へ 0.93 倍を 1 枚に収めるので、**縦軸は log10 の比**。 0 が「真値ちょうど」。線形のままだと下向きの外れが潰れて見えない。
-- **L792** _(ja)_ — ★生の MSD を重ねると 4Dτ の直線が全部を支配して差が見えない。 **真値で割った比**にすると、1.0 からの離れ方(= 壊れ方)が形で読める。
+- **L702** — ★The return is **not a mask but (N, 3) (z, y, x) coordinates** (the 2-D `local_max` / `sk_local_maxima` return an image, so the family is inconsistent. Section 10 gap (g)). At first I counted with `count_nonzero` and got the order of magnitude wrong.
+- **L777** — ★To fit 3.4× up and 0.93× down on one plot, **the vertical axis is the log10 ratio**. 0 is "exactly the ground truth". Kept linear, downward deviations get crushed and become invisible.
+- **L792** — ★Overlaying the raw MSD, the 4Dτ line dominates everything and the differences are invisible. Taking **the ratio divided by the ground truth**, the departure from 1.0 (= how it breaks) can be read from the shape.
 
 ## `examples/poc_photoelasticity.py`
 
-- **L160** _(ja)_ — ★所見を固定する: これは fullseye の Mueller op に対する**厳密な**検算で、 δ を 15 度刻みで一周・θ を 5 通り振っても機械精度で一致する(実測 2.2e-16)。 ここが緩んだら 3 節以降で測っているのは「読み取り手順」ではなく op のバグ。
-- **L181** _(ja)_ — ★応力場そのものの検算も固定する。積分した力が荷重に一致しなければ 「真値」ではないし、中心値は閉形式 8P/(πDh) と代数的に同じはず。
-- **L207** _(ja)_ — ★ゼロ点の水準を固定する。以降の「◯倍」はすべてこの 1.09 MPa を分母にしている ので、ここが動くと比較の意味が変わる。
-- **L231** _(ja)_ — ★所見を固定する: 暗視野 1 枚から整数の縞だけ読む素朴な手順は、ゼロ点に **2 倍も勝てない**。分解能が fσ/h = 1.78 MPa の刻みに律速されるため。 4 節の位相シフト(誤差が機械精度まで落ちる)との対比がこの PoC の骨格。
-- **L286** _(ja)_ — ★雑音ゼロで同じ強度式から解き戻しているので、θ は**厳密に**戻るはず (4 枚の平面偏光から 4θ を出す代数がそのまま逆写像になっている)。
-- **L308** _(ja)_ — ★所見を固定する。 (1) 一致率は 95 % を超えるが、**100 % にはならない**。残りは (δ,θ) ↔ (-δ,θ+90°) の二義性で符号が反転した画素で、1 波長 1 回の測定では原理的に消せない。 「ほぼ合う」でも「完全に合う」でもない、という所見をそのまま固定する。
-- **L371** _(ja)_ — ★所見を固定する。 (1) 減偏光は無い(Stokes の大きさが厳密に 1)。変調が落ちるのは光量ではなく **位相の感度**のほうだ、という 5 節の主張の根拠。
-- **L377** _(ja)_ — (2) ★★実測は「マスクを渡すと直る」という素朴な期待の**逆**を言っている: マスク無し 97.0 % / 標本化不足を外して 97.1 % / **低変調まで外すと 81.9 %**。 低変調の画素を抜くと領域が分断され、skimage の unwrap が島ごとに 別の 2π オフセットを選ぶため。「どちらもマスクで外せる」は **予報としては正しいが、処方としては誤り**。実測のほうを固定しておく。
-- **L442** _(ja)_ — ★所見を固定する。 (1) 雑音も量子化も無ければ、明視野/暗視野の比から δ は**厳密に**戻る。
-- **L445** _(ja)_ — (2) ★8 bit 量子化「だけ」の誤差が、雑音 σ=0.002 だけの誤差と同オーダー (実測 0.00277 vs 0.00305)。カメラの bit 深さは雑音と同じ重さで効く。
+- **L160** — ★Pin the finding: this is an **exact** cross-check against fullseye's Mueller op, agreeing to machine precision even sweeping δ once around in 15-degree steps and θ over 5 values (measured 2.2e-16). If this loosens, what Section 3 onward measures is not the "readout procedure" but a bug in the op.
+- **L181** — ★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the "ground truth", and the central value should be algebraically identical to the closed form 8P/(πDh).
+- **L207** — ★Pin the level of the zero point. Every subsequent "N×" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.
+- **L231** — ★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.
+- **L286** — ★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).
+- **L308** — ★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single measurement at one wavelength. Pin the finding as-is: neither "nearly matches" nor "fully matches".
+- **L371** — ★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.
+- **L377** — (2) ★★The measurement says the **opposite** of the naive expectation that "passing a mask fixes it": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. "Both can be excluded by a mask" is **correct as a forecast but wrong as a prescription**. Pin the measured value.
+- **L442** — ★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.
+- **L445** — (2) ★The error from 8 bit quantization "alone" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.
 
 ## `examples/poc_pigment_unmixing.py`
 
-- **L860** _(ja)_ — ★「1 つの数字にまとめない」の根拠そのもの。同じ行の中で 1.000 と 0.013 が並ぶ。
-- **L1082** _(ja)_ — ★勝てなかったことを図でも残す。ゼロ点の線より下に来ている復元が 1 本も無い。
+- **L860** — ★The very basis for "do not collapse into a single number". Within the same row, 1.000 and 0.013 sit side by side.
+- **L1082** — ★Record the failure to win in the figure too. Not a single reconstruction comes below the zero-point line.
 
 ## `examples/poc_pipe_wall_loss.py`
 
-- **L423** _(ja)_ — ★健全部は「欠陥が 1 つも掛からない z」を選ぶこと。最初 z=20..60 を 健全部と書いたが、そこは管底腐食の真上だった(肉厚 4.5 mm)。
-- **L471** _(ja)_ — ★r_in/r_out は **画素(ボクセル)単位**。mm のまま渡すと視野の外を サンプルして返り値が全部 0 になる(黙って。最初これで真っ黒な図が出た)。
-- **L817** _(ja)_ — ★パネルごとに正規化されるので、**同じ範囲に切ってから**渡す (切らないと E0 だけ ±4 mm、他は ±1 mm で塗られて比べられない)。
-- **L1040** _(ja)_ — ★穴が塞がったら鳴る。2026-09-07 に鳴り、この節を書き換えた —— 「mm のまま渡すと 例外なしに全部 0 が返る」という指摘を受けて、輪が視野の外なら fail-closed に なった。空を返して黙る側から、拒否して教える側へ変わったことを記録する。
+- **L423** — ★For the sound region, choose a "z where not a single defect falls". At first I wrote z=20..60 as the sound region, but that was right above the bottom-of-tube corrosion (wall thickness 4.5 mm).
+- **L471** — ★r_in/r_out are in **pixel (voxel) units**. Passing them in mm samples outside the field of view and makes the return all 0 (silently. At first this produced a pitch-black figure).
+- **L817** — ★It is normalized per panel, so **clip to the same range before** passing (without clipping, only E0 gets painted at ±4 mm and the others at ±1 mm, and they can't be compared).
+- **L1040** — ★Rings when the gap is closed. It rang on 2026-09-07 and I rewrote this section —— following the note that "passing in mm returns all 0 with no exception", it became fail-closed when the ring is outside the field of view. Record that it changed from returning empty and staying silent to rejecting and telling.
 
 ## `examples/poc_print_registration.py`
 
-- **L151** _(ja)_ — 網点の線数 [lpi](商業印刷の慣行値)。★**わざと整数比を避けている**: 1200/150 = 8.00 px にすると全部の網点が同じ小数位置に落ち、標本化の 位相が揃って合成器に人工物が出る(実測で重心が小数ずれごとに 1.4 px 跳ねた)。 実際のスキャンでも解像度が線数の整数倍になることはまずない。
-- **L405** _(ja)_ — ★ 台帳の口は宣言 out 型に合わせて info を捨てるので `.raw` を使う (fullseye/__init__.py のコメントに実測つきで書いてある落とし穴)。
-- **L855** _(ja)_ — ★ FM 側は探索範囲を **絞らない**(絞っても結果は変わらないが、 「AM の折り返しは探索範囲のせいだ」という言い逃れを塞ぐため)。
-- **L1242** _(ja)_ — ★二段が壊れた点は、必ず粗がセルの半径を超えた点(包含関係を固定する)
-- **L1309** _(ja)_ — ★ 基準にも雑音を入れる —— 雑音ゼロの像だと star_detect が 「星 0 個」で ValueError になる(それはそれで正しい fail-closed)。
-- **L1332** _(ja)_ — ★2026-09-08: この PoC の指摘を受けて op 側を直した。docstring に 「繰り返し構造には使えない」を測った数字つきで書き、投票の **2 番手の山 / 1 番手** を `vote_margin` として返すようにした。 賛成率では区別できない 2 つを、この数なら区別できる。
+- **L151** — Halftone screen ruling [lpi] (a conventional value in commercial printing). ★**Deliberately avoiding an integer ratio**: at 1200/150 = 8.00 px every halftone dot falls at the same fractional position, the sampling phase aligns and the compositor produces artifacts (measured, the centroid jumped by 1.4 px per fractional offset). In real scans, too, the resolution is almost never an integer multiple of the screen ruling.
+- **L405** — ★The ledger's port discards info to match the declared out type, so use `.raw` (a pitfall documented with measurements in the comment of fullseye/__init__.py).
+- **L855** — ★On the FM side, **do not narrow** the search range (narrowing doesn't change the result, but it forecloses the excuse that "AM's aliasing is due to the search range").
+- **L1242** — ★A point where the two-stage broke is always a point where the coarse exceeded the cell radius (pin the inclusion relation)
+- **L1309** — ★Add noise to the reference too —— with a zero-noise image, star_detect gives "0 stars" and a ValueError (which is itself a correct fail-closed).
+- **L1332** — ★2026-09-08: Following this PoC's note, I fixed the op side. I wrote "cannot be used on repetitive structures" with measured numbers in the docstring, and made it return the **runner-up peak / top peak** of the vote as `vote_margin`. This number can distinguish two cases that the approval rate cannot.
 
 ## `examples/poc_print_warpage_risk.py`
 
-- **L364** _(ja)_ — ★生まれた層は「そのとき既に反っている面の上」に置かれる(要素誕生は 変形後の配置で行う)。ここを初期化し忘れると、後から生えた層だけ 変位ゼロのまま残り、**列平均で測った反りが 1/4 になる** (2026-09-07 に踏んだ)。力学(K と f)は公称格子上なので不変。
-- **L808** _(ja)_ — ★首が丸ごと消える。部品が 2 つに分かれるので解いてはいけない。
+- **L364** — ★A newly born layer is placed "on the surface that is already warped at that time" (element birth is done in the deformed configuration). Forget to initialize this, and only the later-grown layers stay at zero displacement, and **the warp measured by column average becomes 1/4** (stepped on it 2026-09-07). The mechanics (K and f) are on the nominal grid, so they are unchanged.
+- **L808** — ★The neck vanishes entirely. The part splits into two, so it must not be solved.
 
 ## `examples/poc_pv_thermal_survey.py`
 
-- **L381** _(ja)_ — ★MOD_SHELTER は**健全なのに風が当たらない**モジュール。3 節でこれが 全体平均基準では「故障」に化ける。
-- **L482** _(ja)_ — ★モジュール番号は**番号ごとに面積比で**決める。番号の平均を丸めると 境界の画素が隣の番号(や 0)に化け、モジュールごとの処理が壊れる。
-- **L711** _(ja)_ — ★モジュール中央値の代償 —— モジュール丸ごとの異常に盲目
-- **L1169** _(ja)_ — ★``apply_cmap`` は vmin/vmax を渡さないと**その配列の min/max**で 正規化する(条件ごとに色の意味が変わってしまう)ので必ず渡す。
+- **L381** — ★MOD_SHELTER is a module that is **sound but not exposed to wind**. In Section 3 it turns into a "fault" under the whole-average criterion.
+- **L482** — ★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.
+- **L711** — ★The cost of the module median —— blind to a whole-module anomaly
+- **L1169** — ★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.
 
 ## `examples/poc_real_coin_metrology.py`
 
-- **L136** _(ja)_ — ★数が合っていても、同じものを数えているとは限らない。円 1 個が成分 1 個に きっちり収まるか(1 対 1)を確かめる —— これをやらないと「24 = 24」は 偶然でも成立する(2 枚くっついた塊 1 個 + ごみ 1 個、でも 24)。
+- **L136** — ★Even if the counts match, you are not necessarily counting the same thing. Verify that one circle fits exactly into one component (one-to-one) —— without this, "24 = 24" holds even by chance (one blob of two stuck together + one piece of garbage, still 24).
 
 ## `examples/poc_real_deblur_honesty.py`
 
-- **L199** _(ja)_ — ★守るのは「どれが勝つか」ではなく**勝者が物差しごとに違う**こと。 手法名を固定すると、実装が良くなっただけで落ちる門になる。
+- **L199** — ★What we protect is not "which one wins" but **that the winner differs per metric**. Fix the method name, and it becomes a gate that fails merely because the implementation improved.
 
 ## `examples/poc_real_defect_floor.py`
 
-- **L156** _(ja)_ — 振幅の刻み。★これ自体がノブ。粗いと限界が同じ格子点に丸まって、 「σ が大きいほど差が開く」のような**刻みが作った差**を本物と誤読する (2026-09-09、34 段では σ=1.5 と σ=3.0 の中央値がどちらも 3.20 に丸まった)。
+- **L156** — Amplitude step. ★This itself is a knob. If coarse, the limit rounds to the same grid point, and one misreads a **difference created by the step**, like "the larger σ, the wider the gap", as real (2026-09-09; at 34 levels the median of σ=1.5 and σ=3.0 both rounded to 3.20).
 
 ## `examples/poc_recycling_sorting.py`
 
-- **L520** _(ja)_ — ★掃引の**前に**、代数から予測を立てて印字する。
+- **L520** — ★**Before** the sweep, form a prediction from the algebra and print it.
 
 ## `examples/poc_registration_basin.py`
 

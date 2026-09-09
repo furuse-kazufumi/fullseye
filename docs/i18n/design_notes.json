@@ -1820,6 +1820,286 @@
    "tw": "★僅此處為近似。由於一維解不含橫向擴散，故在每個時刻以擴散長 σ(t)=√(2αt) 的高斯在面內做模糊。物理的標度律是對的，但不滿足邊界處的質量守恆。",
    "ko": "★여기만 근사. 1차원 해에는 횡확산이 들어 있지 않으므로 시각마다 확산 길이 σ(t)=√(2αt)의 가우시안으로 면내를 흐린다. 물리의 스케일 법칙은 옳지만, 경계에서의 질량 보존까지는 만족하지 않는다.",
    "de": "★Nur diese Stelle ist eine Näherung. Da die 1-D-Lösung keine laterale Diffusion enthält, verschmieren wir zu jedem Zeitpunkt in der Ebene mit einer Gauß-Funktion der Diffusionslänge σ(t)=√(2αt). Das physikalische Skalierungsgesetz ist korrekt, aber die Massenerhaltung am Rand wird nicht erfüllt."
+  },
+  "★デッキの点は雑音で +3σ まで浮くので、床のしきい値で切る。これを 入れないと、はみ出しゼロの荷にも 0.006 m3 の「はみ出し」が出る。": {
+   "en": "★Deck points float up to +3σ from noise, so cut them with a floor threshold. Without it, even a load with zero overhang gets a spurious 0.006 m3 of \"overhang\".",
+   "zh": "★甲板上的点会因噪声上浮到 +3σ，所以用地板阈值截断。不加这一步，即使是零溢出的货物也会出现 0.006 m3 的“溢出”。",
+   "tw": "★甲板上的點會因雜訊上浮到 +3σ，所以用地板閾值截斷。不加這一步，即使是零溢出的貨物也會出現 0.006 m3 的「溢出」。",
+   "ko": "★갑판의 점은 노이즈로 +3σ까지 떠오르므로 바닥 임계값으로 잘라낸다. 이를 넣지 않으면 튀어나옴이 0인 하물에도 0.006 m3의 \"튀어나옴\"이 나온다.",
+   "de": "★Deckpunkte steigen durch Rauschen bis +3σ auf, also mit einer Bodenschwelle abschneiden. Ohne sie erhält selbst eine Ladung mit null Überstand einen falschen \"Überstand\" von 0.006 m3."
+  },
+  "★g = w ちょうどは「格子が偶然そろうかどうか」の勝負になる。": {
+   "en": "★When g = w exactly, it comes down to \"whether the grid happens to line up\".",
+   "zh": "★g = w 正好相等时，就变成了“格子是否碰巧对齐”的赌局。",
+   "tw": "★g = w 正好相等時，就變成了「格子是否碰巧對齊」的賭局。",
+   "ko": "★g = w가 정확히 같으면 \"격자가 우연히 맞아떨어지는지\"의 승부가 된다.",
+   "de": "★Bei g = w genau wird es zur Frage, \"ob das Gitter zufällig zusammenpasst\"."
+  },
+  "★ 穴 (a): 以下 4 つはどれも fs ファサードにも fs.op にも出ていない": {
+   "en": "★Gap (a): none of the following 4 appear in the fs facade or in fs.op",
+   "zh": "★缺口 (a)：以下 4 个在 fs 门面和 fs.op 中都没有出现",
+   "tw": "★缺口 (a)：以下 4 個在 fs 門面和 fs.op 中都沒有出現",
+   "ko": "★구멍 (a): 아래 4개는 어느 것도 fs 파사드에도 fs.op에도 나오지 않는다",
+   "de": "★Lücke (a): keines der folgenden 4 erscheint in der fs-Fassade oder in fs.op"
+  },
+  "★種を 1 本だけにすると、この曲線の上下は**ただの揺らぎ**になる。 4 本の種で平均と散らばりを分けてから「横切った」と言う。": {
+   "en": "★With only a single seed, the ups and downs of this curve become **just noise**. Use 4 seeds to separate the mean from the spread before saying it \"crossed over\".",
+   "zh": "★只用一个种子时，这条曲线的起伏就**只是波动**。用 4 个种子把均值和离散度分开后，再说它“越过”了。",
+   "tw": "★只用一個種子時，這條曲線的起伏就**只是波動**。用 4 個種子把均值和離散度分開後，再說它「越過」了。",
+   "ko": "★씨앗을 하나만 쓰면 이 곡선의 오르내림은 **그저 요동**이 된다. 4개의 씨앗으로 평균과 산포를 분리한 뒤에 \"가로질렀다\"고 말한다.",
+   "de": "★Mit nur einem einzigen Seed wird das Auf und Ab dieser Kurve **bloßes Rauschen**. Erst mit 4 Seeds Mittelwert und Streuung trennen, bevor man sagt, sie habe \"gekreuzt\"."
+  },
+  "★対照群 —— 融合も縁切れもしていない塊だけを、**その塊が写している 粒子そのもの**と 1 対 1 で突き合わせる。真値の側を全粒子にすると 「大きい粒子ほど融合しやすい」という選び方の偏りが混ざって、 標本化の偏りと区別がつかなくなる(最初そう書いて取り違えた)。": {
+   "en": "★Control group —— match only blobs that are neither merged nor split, one-to-one against **the very particle that blob images**. If the ground-truth side is all particles, the selection bias that \"bigger particles merge more easily\" creeps in and becomes indistinguishable from sampling bias (I first wrote it that way and got it wrong).",
+   "zh": "★对照组 —— 只把既未融合也未断裂的团块，与**该团块所成像的那个粒子本身**一对一地比对。若真值一侧用全部粒子，“越大的粒子越容易融合”这种选取偏差就会混入，与采样偏差无法区分（起初就是这么写的，弄错了）。",
+   "tw": "★對照組 —— 只把既未融合也未斷裂的團塊，與**該團塊所成像的那個粒子本身**一對一地比對。若真值一側用全部粒子，「越大的粒子越容易融合」這種選取偏差就會混入，與取樣偏差無法區分（起初就是這麼寫的，弄錯了）。",
+   "ko": "★대조군 —— 융합도 분리도 되지 않은 덩어리만을 **그 덩어리가 찍고 있는 입자 그 자체**와 1대1로 대조한다. 참값 쪽을 전체 입자로 하면 \"큰 입자일수록 융합하기 쉽다\"는 선택 편향이 섞여 표본화 편향과 구별할 수 없게 된다(처음에 그렇게 썼다가 잘못 짚었다).",
+   "de": "★Kontrollgruppe —— nur Blobs, die weder verschmolzen noch getrennt sind, eins zu eins mit **genau dem Partikel abgleichen, das dieser Blob abbildet**. Nimmt man auf der Ground-Truth-Seite alle Partikel, mischt sich der Auswahl-Bias \"größere Partikel verschmelzen leichter\" hinein und wird vom Sampling-Bias ununterscheidbar (zuerst so geschrieben und verwechselt)."
+  },
+  "★返りは**マスクではなく (N, 3) の (z, y, x) 座標**(2-D の `local_max` / `sk_local_maxima` は画像を返すので族の中で不揃い。 10 節の穴 (g))。最初 `count_nonzero` で数えて桁を間違えた。": {
+   "en": "★The return is **not a mask but (N, 3) (z, y, x) coordinates** (the 2-D `local_max` / `sk_local_maxima` return an image, so the family is inconsistent. Section 10 gap (g)). At first I counted with `count_nonzero` and got the order of magnitude wrong.",
+   "zh": "★返回的**不是掩膜，而是 (N, 3) 的 (z, y, x) 坐标**（2-D 的 `local_max` / `sk_local_maxima` 返回图像，所以族内不一致。第 10 节的缺口 (g)）。起初用 `count_nonzero` 计数，把数量级搞错了。",
+   "tw": "★返回的**不是遮罩，而是 (N, 3) 的 (z, y, x) 座標**（2-D 的 `local_max` / `sk_local_maxima` 返回影像，所以族內不一致。第 10 節的缺口 (g)）。起初用 `count_nonzero` 計數，把數量級搞錯了。",
+   "ko": "★반환값은 **마스크가 아니라 (N, 3)의 (z, y, x) 좌표**(2-D의 `local_max` / `sk_local_maxima`는 이미지를 반환하므로 계열 안에서 제각각. 10절의 구멍 (g)). 처음에 `count_nonzero`로 세다가 자릿수를 틀렸다.",
+   "de": "★Der Rückgabewert ist **keine Maske, sondern (N, 3)-Koordinaten (z, y, x)** (die 2-D-`local_max` / `sk_local_maxima` geben ein Bild zurück, also ist die Familie uneinheitlich. Abschnitt 10, Lücke (g)). Zuerst mit `count_nonzero` gezählt und die Größenordnung verfehlt."
+  },
+  "★上へ 3.4 倍・下へ 0.93 倍を 1 枚に収めるので、**縦軸は log10 の比**。 0 が「真値ちょうど」。線形のままだと下向きの外れが潰れて見えない。": {
+   "en": "★To fit 3.4× up and 0.93× down on one plot, **the vertical axis is the log10 ratio**. 0 is \"exactly the ground truth\". Kept linear, downward deviations get crushed and become invisible.",
+   "zh": "★为把向上 3.4 倍、向下 0.93 倍装进一张图，**纵轴取 log10 比值**。0 表示“正好是真值”。若保持线性，向下的偏差会被压扁而看不见。",
+   "tw": "★為把向上 3.4 倍、向下 0.93 倍裝進一張圖，**縱軸取 log10 比值**。0 表示「正好是真值」。若保持線性，向下的偏差會被壓扁而看不見。",
+   "ko": "★위로 3.4배·아래로 0.93배를 한 장에 담으므로 **세로축은 log10 비**. 0이 \"참값 그대로\". 선형 그대로라면 아래쪽 이탈이 뭉개져 보이지 않는다.",
+   "de": "★Um 3.4× nach oben und 0.93× nach unten in ein Diagramm zu bringen, ist **die vertikale Achse das log10-Verhältnis**. 0 ist \"genau der wahre Wert\". Linear belassen werden Abweichungen nach unten zerdrückt und unsichtbar."
+  },
+  "★生の MSD を重ねると 4Dτ の直線が全部を支配して差が見えない。 **真値で割った比**にすると、1.0 からの離れ方(= 壊れ方)が形で読める。": {
+   "en": "★Overlaying the raw MSD, the 4Dτ line dominates everything and the differences are invisible. Taking **the ratio divided by the ground truth**, the departure from 1.0 (= how it breaks) can be read from the shape.",
+   "zh": "★叠加原始 MSD 时，4Dτ 的直线支配一切，看不出差异。改用**除以真值的比值**后，偏离 1.0 的方式（＝损坏方式）就能从形状上读出。",
+   "tw": "★疊加原始 MSD 時，4Dτ 的直線支配一切，看不出差異。改用**除以真值的比值**後，偏離 1.0 的方式（＝損壞方式）就能從形狀上讀出。",
+   "ko": "★생 MSD를 겹치면 4Dτ의 직선이 전부를 지배해 차이가 보이지 않는다. **참값으로 나눈 비**로 하면 1.0에서 벗어나는 방식(＝망가지는 방식)을 형태로 읽을 수 있다.",
+   "de": "★Legt man die rohen MSD übereinander, dominiert die 4Dτ-Gerade alles und die Unterschiede sind unsichtbar. Als **durch den wahren Wert geteiltes Verhältnis** lässt sich die Abweichung von 1.0 (= wie es bricht) an der Form ablesen."
+  },
+  "★所見を固定する: これは fullseye の Mueller op に対する**厳密な**検算で、 δ を 15 度刻みで一周・θ を 5 通り振っても機械精度で一致する(実測 2.2e-16)。 ここが緩んだら 3 節以降で測っているのは「読み取り手順」ではなく op のバグ。": {
+   "en": "★Pin the finding: this is an **exact** cross-check against fullseye's Mueller op, agreeing to machine precision even sweeping δ once around in 15-degree steps and θ over 5 values (measured 2.2e-16). If this loosens, what Section 3 onward measures is not the \"readout procedure\" but a bug in the op.",
+   "zh": "★固定所见：这是对 fullseye 的 Mueller op 的**严格**验算，即使让 δ 以 15 度步长走一圈、θ 取 5 种，也在机器精度上一致（实测 2.2e-16）。若此处松动，第 3 节之后测的就不是“读取流程”，而是 op 的 bug。",
+   "tw": "★固定所見：這是對 fullseye 的 Mueller op 的**嚴格**驗算，即使讓 δ 以 15 度步長走一圈、θ 取 5 種，也在機器精度上一致（實測 2.2e-16）。若此處鬆動，第 3 節之後測的就不是「讀取流程」，而是 op 的 bug。",
+   "ko": "★소견을 고정한다: 이것은 fullseye의 Mueller op에 대한 **엄밀한** 검산으로, δ를 15도 간격으로 한 바퀴·θ를 5가지로 흔들어도 기계 정밀도로 일치한다(실측 2.2e-16). 여기가 느슨해지면 3절 이후에서 재는 것은 \"판독 절차\"가 아니라 op의 버그다.",
+   "de": "★Den Befund festhalten: Dies ist eine **exakte** Gegenrechnung zu fullseyes Mueller-op, die selbst bei einem vollen δ-Durchlauf in 15-Grad-Schritten und 5 θ-Werten auf Maschinengenauigkeit übereinstimmt (gemessen 2.2e-16). Lockert sich das, misst man ab Abschnitt 3 nicht das \"Ausleseverfahren\", sondern einen Bug im op."
+  },
+  "★応力場そのものの検算も固定する。積分した力が荷重に一致しなければ 「真値」ではないし、中心値は閉形式 8P/(πDh) と代数的に同じはず。": {
+   "en": "★Pin the cross-check of the stress field itself too. If the integrated force does not match the load it is not the \"ground truth\", and the central value should be algebraically identical to the closed form 8P/(πDh).",
+   "zh": "★也固定应力场本身的验算。若积分得到的力与载荷不一致，就不是“真值”；中心值应在代数上等同于闭式 8P/(πDh)。",
+   "tw": "★也固定應力場本身的驗算。若積分得到的力與載荷不一致，就不是「真值」；中心值應在代數上等同於閉式 8P/(πDh)。",
+   "ko": "★응력장 그 자체의 검산도 고정한다. 적분한 힘이 하중과 일치하지 않으면 \"참값\"이 아니며, 중심값은 닫힌 형식 8P/(πDh)와 대수적으로 같아야 한다.",
+   "de": "★Auch die Gegenrechnung des Spannungsfelds selbst festhalten. Stimmt die integrierte Kraft nicht mit der Last überein, ist es nicht der \"wahre Wert\", und der Zentralwert muss algebraisch mit der geschlossenen Form 8P/(πDh) identisch sein."
+  },
+  "★ゼロ点の水準を固定する。以降の「◯倍」はすべてこの 1.09 MPa を分母にしている ので、ここが動くと比較の意味が変わる。": {
+   "en": "★Pin the level of the zero point. Every subsequent \"N×\" uses this 1.09 MPa as the denominator, so if it moves the meaning of the comparison changes.",
+   "zh": "★固定零点的水平。之后所有的“◯倍”都以这 1.09 MPa 作分母，所以此处一动，比较的含义就变了。",
+   "tw": "★固定零點的水平。之後所有的「◯倍」都以這 1.09 MPa 作分母，所以此處一動，比較的含義就變了。",
+   "ko": "★영점 수준을 고정한다. 이후의 \"◯배\"는 모두 이 1.09 MPa를 분모로 하므로, 여기가 움직이면 비교의 의미가 바뀐다.",
+   "de": "★Das Niveau des Nullpunkts festhalten. Jedes folgende \"N-fach\" verwendet diese 1.09 MPa als Nenner, verschiebt sich das, ändert sich die Bedeutung des Vergleichs."
+  },
+  "★所見を固定する: 暗視野 1 枚から整数の縞だけ読む素朴な手順は、ゼロ点に **2 倍も勝てない**。分解能が fσ/h = 1.78 MPa の刻みに律速されるため。 4 節の位相シフト(誤差が機械精度まで落ちる)との対比がこの PoC の骨格。": {
+   "en": "★Pin the finding: the naive procedure of reading only integer fringes from a single dark-field image **cannot even beat the zero point by 2×**. Because the resolution is rate-limited by the fσ/h = 1.78 MPa step. The contrast with Section 4's phase shift (whose error drops to machine precision) is the backbone of this PoC.",
+   "zh": "★固定所见：从单张暗场图只读整数条纹的朴素方法，**连零点的 2 倍都赢不了**。因为分辨率被 fσ/h = 1.78 MPa 的步长所限。与第 4 节相移（误差降到机器精度）的对比是本 PoC 的骨架。",
+   "tw": "★固定所見：從單張暗場圖只讀整數條紋的樸素方法，**連零點的 2 倍都贏不了**。因為解析度被 fσ/h = 1.78 MPa 的步長所限。與第 4 節相移（誤差降到機器精度）的對比是本 PoC 的骨架。",
+   "ko": "★소견을 고정한다: 암시야 1장에서 정수 줄무늬만 읽는 소박한 절차는 영점을 **2배도 이기지 못한다**. 분해능이 fσ/h = 1.78 MPa의 간격에 율속되기 때문. 4절의 위상 시프트(오차가 기계 정밀도까지 떨어진다)와의 대비가 이 PoC의 골격.",
+   "de": "★Den Befund festhalten: Das naive Verfahren, aus einem einzigen Dunkelfeldbild nur ganzzahlige Streifen abzulesen, **schlägt den Nullpunkt nicht einmal um das 2-fache**. Weil die Auflösung durch den Schritt fσ/h = 1.78 MPa begrenzt ist. Der Kontrast zur Phasenverschiebung in Abschnitt 4 (deren Fehler auf Maschinengenauigkeit fällt) ist das Rückgrat dieses PoC."
+  },
+  "★雑音ゼロで同じ強度式から解き戻しているので、θ は**厳密に**戻るはず (4 枚の平面偏光から 4θ を出す代数がそのまま逆写像になっている)。": {
+   "en": "★Since we invert from the same intensity equation with zero noise, θ should come back **exactly** (the algebra that produces 4θ from the 4 plane-polarization images is itself the inverse map).",
+   "zh": "★因为在零噪声下从同一强度公式反解，θ 应**严格**还原（从 4 张平面偏振求 4θ 的代数本身就是逆映射）。",
+   "tw": "★因為在零雜訊下從同一強度公式反解，θ 應**嚴格**還原（從 4 張平面偏振求 4θ 的代數本身就是逆映射）。",
+   "ko": "★잡음 제로로 같은 강도식에서 역산하므로 θ는 **엄밀하게** 돌아와야 한다(4장의 평면 편광에서 4θ를 내는 대수가 그대로 역사상이 된다).",
+   "de": "★Da wir bei null Rauschen aus derselben Intensitätsgleichung zurückrechnen, muss θ **exakt** zurückkommen (die Algebra, die 4θ aus den 4 planpolarisierten Bildern erzeugt, ist selbst die Umkehrabbildung)."
+  },
+  "★所見を固定する。 (1) 一致率は 95 % を超えるが、**100 % にはならない**。残りは (δ,θ) ↔ (-δ,θ+90°) の二義性で符号が反転した画素で、1 波長 1 回の測定では原理的に消せない。 「ほぼ合う」でも「完全に合う」でもない、という所見をそのまま固定する。": {
+   "en": "★Pin the finding. (1) The agreement exceeds 95 % but **never reaches 100 %**. The rest are pixels sign-flipped by the (δ,θ) ↔ (-δ,θ+90°) ambiguity, which cannot in principle be removed by a single measurement at one wavelength. Pin the finding as-is: neither \"nearly matches\" nor \"fully matches\".",
+   "zh": "★固定所见。(1) 一致率超过 95 %，但**达不到 100 %**。其余是被 (δ,θ) ↔ (-δ,θ+90°) 二义性翻转符号的像素，单波长单次测量原理上无法消除。就把“既非几乎吻合，也非完全吻合”这个所见原样固定下来。",
+   "tw": "★固定所見。(1) 一致率超過 95 %，但**達不到 100 %**。其餘是被 (δ,θ) ↔ (-δ,θ+90°) 二義性翻轉符號的像素，單波長單次測量原理上無法消除。就把「既非幾乎吻合，也非完全吻合」這個所見原樣固定下來。",
+   "ko": "★소견을 고정한다. (1) 일치율은 95 %를 넘지만 **100 %가 되지는 않는다**. 나머지는 (δ,θ) ↔ (-δ,θ+90°)의 이중성으로 부호가 반전된 화소로, 1파장 1회 측정으로는 원리적으로 없앨 수 없다. \"거의 맞는다\"도 \"완전히 맞는다\"도 아니라는 소견을 그대로 고정한다.",
+   "de": "★Den Befund festhalten. (1) Die Übereinstimmung übersteigt 95 %, erreicht aber **nie 100 %**. Der Rest sind Pixel, deren Vorzeichen durch die Mehrdeutigkeit (δ,θ) ↔ (-δ,θ+90°) umgekehrt ist, die sich mit einer einzigen Messung bei einer Wellenlänge prinzipiell nicht beseitigen lässt. Den Befund unverändert festhalten: weder \"nahezu übereinstimmend\" noch \"vollständig übereinstimmend\"."
+  },
+  "★所見を固定する。 (1) 減偏光は無い(Stokes の大きさが厳密に 1)。変調が落ちるのは光量ではなく **位相の感度**のほうだ、という 5 節の主張の根拠。": {
+   "en": "★Pin the finding. (1) There is no depolarization (the Stokes magnitude is exactly 1). This is the basis for Section 5's claim that what drops in the modulation is not the light level but **the phase sensitivity**.",
+   "zh": "★固定所见。(1) 没有退偏（Stokes 幅值严格为 1）。这是第 5 节主张“调制下降的不是光量，而是**相位灵敏度**”的依据。",
+   "tw": "★固定所見。(1) 沒有退偏（Stokes 幅值嚴格為 1）。這是第 5 節主張「調變下降的不是光量，而是**相位靈敏度**」的依據。",
+   "ko": "★소견을 고정한다. (1) 편광 감소는 없다(Stokes 크기가 엄밀히 1). 변조가 떨어지는 것은 광량이 아니라 **위상의 감도** 쪽이라는 5절 주장의 근거.",
+   "de": "★Den Befund festhalten. (1) Es gibt keine Depolarisation (der Stokes-Betrag ist exakt 1). Das ist die Grundlage für die Behauptung in Abschnitt 5, dass in der Modulation nicht die Lichtmenge, sondern **die Phasenempfindlichkeit** abfällt."
+  },
+  "(2) ★★実測は「マスクを渡すと直る」という素朴な期待の**逆**を言っている: マスク無し 97.0 % / 標本化不足を外して 97.1 % / **低変調まで外すと 81.9 %**。 低変調の画素を抜くと領域が分断され、skimage の unwrap が島ごとに 別の 2π オフセットを選ぶため。「どちらもマスクで外せる」は **予報としては正しいが、処方としては誤り**。実測のほうを固定しておく。": {
+   "en": "(2) ★★The measurement says the **opposite** of the naive expectation that \"passing a mask fixes it\": no mask 97.0 % / excluding undersampling 97.1 % / **excluding low modulation as well drops to 81.9 %**. Because removing the low-modulation pixels fragments the region and skimage's unwrap picks a different 2π offset per island. \"Both can be excluded by a mask\" is **correct as a forecast but wrong as a prescription**. Pin the measured value.",
+   "zh": "(2) ★★实测说的恰恰是“传入掩膜就能修好”这一朴素期待的**反面**：无掩膜 97.0 % / 排除欠采样 97.1 % / **连低调制也排除则降到 81.9 %**。因为抽掉低调制像素会使区域被割裂，skimage 的 unwrap 会为每个岛选取不同的 2π 偏移。“两者都可用掩膜排除”**作为预报正确，作为处方却错误**。固定实测值。",
+   "tw": "(2) ★★實測說的恰恰是「傳入遮罩就能修好」這一樸素期待的**反面**：無遮罩 97.0 % / 排除欠取樣 97.1 % / **連低調變也排除則降到 81.9 %**。因為抽掉低調變像素會使區域被割裂，skimage 的 unwrap 會為每個島選取不同的 2π 偏移。「兩者都可用遮罩排除」**作為預報正確，作為處方卻錯誤**。固定實測值。",
+   "ko": "(2) ★★실측은 \"마스크를 넘기면 고쳐진다\"는 소박한 기대의 **반대**를 말하고 있다: 마스크 없음 97.0 % / 표본화 부족을 제외하면 97.1 % / **저변조까지 제외하면 81.9 %**. 저변조 화소를 빼면 영역이 분단되고 skimage의 unwrap이 섬마다 다른 2π 오프셋을 고르기 때문. \"둘 다 마스크로 제외할 수 있다\"는 **예보로는 옳지만 처방으로는 틀렸다**. 실측 쪽을 고정해 둔다.",
+   "de": "(2) ★★Die Messung sagt das **Gegenteil** der naiven Erwartung, \"eine Maske zu übergeben behebt es\": ohne Maske 97.0 % / bei Ausschluss der Unterabtastung 97.1 % / **schließt man auch die niedrige Modulation aus, fällt es auf 81.9 %**. Weil das Entfernen der niedrig modulierten Pixel die Region zerteilt und skimages unwrap pro Insel einen anderen 2π-Offset wählt. \"Beides lässt sich per Maske ausschließen\" ist **als Vorhersage richtig, als Rezept aber falsch**. Den Messwert festhalten."
+  },
+  "★所見を固定する。 (1) 雑音も量子化も無ければ、明視野/暗視野の比から δ は**厳密に**戻る。": {
+   "en": "★Pin the finding. (1) With neither noise nor quantization, δ comes back **exactly** from the bright-field/dark-field ratio.",
+   "zh": "★固定所见。(1) 若既无噪声也无量化，δ 从明场/暗场之比中**严格**还原。",
+   "tw": "★固定所見。(1) 若既無雜訊也無量化，δ 從明場/暗場之比中**嚴格**還原。",
+   "ko": "★소견을 고정한다. (1) 잡음도 양자화도 없으면 명시야/암시야의 비에서 δ는 **엄밀하게** 돌아온다.",
+   "de": "★Den Befund festhalten. (1) Ohne Rauschen und ohne Quantisierung kommt δ aus dem Hellfeld/Dunkelfeld-Verhältnis **exakt** zurück."
+  },
+  "(2) ★8 bit 量子化「だけ」の誤差が、雑音 σ=0.002 だけの誤差と同オーダー (実測 0.00277 vs 0.00305)。カメラの bit 深さは雑音と同じ重さで効く。": {
+   "en": "(2) ★The error from 8 bit quantization \"alone\" is the same order as the error from noise σ=0.002 alone (measured 0.00277 vs 0.00305). The camera's bit depth weighs as heavily as noise.",
+   "zh": "(2) ★“仅” 8 bit 量化的误差，与“仅”噪声 σ=0.002 的误差同量级（实测 0.00277 vs 0.00305）。相机的位深与噪声一样重要。",
+   "tw": "(2) ★「僅」8 bit 量化的誤差，與「僅」雜訊 σ=0.002 的誤差同量級（實測 0.00277 vs 0.00305）。相機的位元深度與雜訊一樣重要。",
+   "ko": "(2) ★8 bit 양자화 \"만\"의 오차가 잡음 σ=0.002만의 오차와 같은 오더(실측 0.00277 vs 0.00305). 카메라의 bit 깊이는 잡음과 같은 무게로 작용한다.",
+   "de": "(2) ★Der Fehler durch \"reine\" 8-Bit-Quantisierung ist von derselben Größenordnung wie der Fehler durch reines Rauschen σ=0.002 (gemessen 0.00277 vs 0.00305). Die Bit-Tiefe der Kamera wiegt so schwer wie das Rauschen."
+  },
+  "★「1 つの数字にまとめない」の根拠そのもの。同じ行の中で 1.000 と 0.013 が並ぶ。": {
+   "en": "★The very basis for \"do not collapse into a single number\". Within the same row, 1.000 and 0.013 sit side by side.",
+   "zh": "★“不要归结为一个数字”的根据本身。同一行中 1.000 与 0.013 并列。",
+   "tw": "★「不要歸結為一個數字」的根據本身。同一行中 1.000 與 0.013 並列。",
+   "ko": "★\"하나의 숫자로 뭉뚱그리지 않는다\"의 근거 그 자체. 같은 행 안에서 1.000과 0.013이 나란히 놓인다.",
+   "de": "★Genau die Grundlage für \"nicht auf eine einzige Zahl reduzieren\". In derselben Zeile stehen 1.000 und 0.013 nebeneinander."
+  },
+  "★勝てなかったことを図でも残す。ゼロ点の線より下に来ている復元が 1 本も無い。": {
+   "en": "★Record the failure to win in the figure too. Not a single reconstruction comes below the zero-point line.",
+   "zh": "★把没能取胜这件事也留在图里。没有任何一条复原落在零点线以下。",
+   "tw": "★把沒能取勝這件事也留在圖裡。沒有任何一條復原落在零點線以下。",
+   "ko": "★이기지 못했다는 것을 그림으로도 남긴다. 영점 선보다 아래로 오는 복원이 한 개도 없다.",
+   "de": "★Auch im Diagramm festhalten, dass es nicht gewonnen hat. Keine einzige Rekonstruktion liegt unter der Nullpunktlinie."
+  },
+  "★健全部は「欠陥が 1 つも掛からない z」を選ぶこと。最初 z=20..60 を 健全部と書いたが、そこは管底腐食の真上だった(肉厚 4.5 mm)。": {
+   "en": "★For the sound region, choose a \"z where not a single defect falls\". At first I wrote z=20..60 as the sound region, but that was right above the bottom-of-tube corrosion (wall thickness 4.5 mm).",
+   "zh": "★健全区要选“没有任何缺陷落入的 z”。起初我把 z=20..60 写成健全区，但那正好在管底腐蚀的正上方（壁厚 4.5 mm）。",
+   "tw": "★健全區要選「沒有任何缺陷落入的 z」。起初我把 z=20..60 寫成健全區，但那正好在管底腐蝕的正上方（壁厚 4.5 mm）。",
+   "ko": "★건전부는 \"결함이 하나도 걸리지 않는 z\"를 고를 것. 처음에 z=20..60을 건전부로 썼지만, 그곳은 관 바닥 부식의 바로 위였다(살두께 4.5 mm).",
+   "de": "★Für den intakten Bereich ein \"z, in das kein einziger Defekt fällt\" wählen. Zuerst schrieb ich z=20..60 als intakten Bereich, doch das lag direkt über der Korrosion am Rohrboden (Wandstärke 4.5 mm)."
+  },
+  "★r_in/r_out は **画素(ボクセル)単位**。mm のまま渡すと視野の外を サンプルして返り値が全部 0 になる(黙って。最初これで真っ黒な図が出た)。": {
+   "en": "★r_in/r_out are in **pixel (voxel) units**. Passing them in mm samples outside the field of view and makes the return all 0 (silently. At first this produced a pitch-black figure).",
+   "zh": "★r_in/r_out 以**像素（体素）为单位**。若按 mm 传入，会采样到视野之外，返回值全为 0（无声无息。起初就因此出了一张全黑的图）。",
+   "tw": "★r_in/r_out 以**像素（體素）為單位**。若按 mm 傳入，會取樣到視野之外，返回值全為 0（無聲無息。起初就因此出了一張全黑的圖）。",
+   "ko": "★r_in/r_out은 **화소(복셀) 단위**. mm 그대로 넘기면 시야 밖을 샘플링해 반환값이 전부 0이 된다(조용히. 처음에 이것으로 새까만 그림이 나왔다).",
+   "de": "★r_in/r_out sind in **Pixel- (Voxel-)Einheiten**. Übergibt man sie in mm, wird außerhalb des Sichtfelds abgetastet und der Rückgabewert wird komplett 0 (stillschweigend. Zuerst entstand dadurch ein pechschwarzes Bild)."
+  },
+  "★パネルごとに正規化されるので、**同じ範囲に切ってから**渡す (切らないと E0 だけ ±4 mm、他は ±1 mm で塗られて比べられない)。": {
+   "en": "★It is normalized per panel, so **clip to the same range before** passing (without clipping, only E0 gets painted at ±4 mm and the others at ±1 mm, and they can't be compared).",
+   "zh": "★由于按每个面板归一化，**先裁到同一范围再**传入（不裁的话只有 E0 按 ±4 mm、其余按 ±1 mm 上色，无法比较）。",
+   "tw": "★由於按每個面板歸一化，**先裁到同一範圍再**傳入（不裁的話只有 E0 按 ±4 mm、其餘按 ±1 mm 上色，無法比較）。",
+   "ko": "★패널마다 정규화되므로 **같은 범위로 자른 뒤** 넘긴다(자르지 않으면 E0만 ±4 mm, 나머지는 ±1 mm로 칠해져 비교할 수 없다).",
+   "de": "★Es wird pro Panel normiert, also **vor** dem Übergeben **auf denselben Bereich beschneiden** (ohne Beschneiden wird nur E0 mit ±4 mm und der Rest mit ±1 mm eingefärbt und sie sind nicht vergleichbar)."
+  },
+  "★穴が塞がったら鳴る。2026-09-07 に鳴り、この節を書き換えた —— 「mm のまま渡すと 例外なしに全部 0 が返る」という指摘を受けて、輪が視野の外なら fail-closed に なった。空を返して黙る側から、拒否して教える側へ変わったことを記録する。": {
+   "en": "★Rings when the gap is closed. It rang on 2026-09-07 and I rewrote this section —— following the note that \"passing in mm returns all 0 with no exception\", it became fail-closed when the ring is outside the field of view. Record that it changed from returning empty and staying silent to rejecting and telling.",
+   "zh": "★缺口一被堵上就会响。2026-09-07 响了，于是重写了本节 —— 因收到“按 mm 传入会毫无异常地全返回 0”的指摘，当环落在视野之外时改为 fail-closed。记录它从“返回空并沉默”变为“拒绝并告知”。",
+   "tw": "★缺口一被堵上就會響。2026-09-07 響了，於是重寫了本節 —— 因收到「按 mm 傳入會毫無例外地全返回 0」的指摘，當環落在視野之外時改為 fail-closed。記錄它從「返回空並沉默」變為「拒絕並告知」。",
+   "ko": "★구멍이 막히면 울린다. 2026-09-07에 울려 이 절을 다시 썼다 —— \"mm 그대로 넘기면 예외 없이 전부 0이 반환된다\"는 지적을 받아, 링이 시야 밖이면 fail-closed가 되었다. 비어 있는 값을 반환하고 침묵하는 쪽에서 거부하고 알려주는 쪽으로 바뀌었음을 기록한다.",
+   "de": "★Klingelt, wenn die Lücke geschlossen ist. Am 2026-09-07 klingelte es und ich schrieb diesen Abschnitt um —— dem Hinweis folgend, dass \"Übergabe in mm ausnahmslos alles als 0 zurückgibt\", wurde es fail-closed, wenn der Ring außerhalb des Sichtfelds liegt. Festhalten, dass es sich vom leer-zurückgeben-und-schweigen zum ablehnen-und-melden gewandelt hat."
+  },
+  "網点の線数 [lpi](商業印刷の慣行値)。★**わざと整数比を避けている**: 1200/150 = 8.00 px にすると全部の網点が同じ小数位置に落ち、標本化の 位相が揃って合成器に人工物が出る(実測で重心が小数ずれごとに 1.4 px 跳ねた)。 実際のスキャンでも解像度が線数の整数倍になることはまずない。": {
+   "en": "Halftone screen ruling [lpi] (a conventional value in commercial printing). ★**Deliberately avoiding an integer ratio**: at 1200/150 = 8.00 px every halftone dot falls at the same fractional position, the sampling phase aligns and the compositor produces artifacts (measured, the centroid jumped by 1.4 px per fractional offset). In real scans, too, the resolution is almost never an integer multiple of the screen ruling.",
+   "zh": "网点线数 [lpi]（商业印刷的惯用值）。★**故意避开整数比**：取 1200/150 = 8.00 px 时，所有网点都落在相同的小数位置，采样相位对齐，合成器就出现伪影（实测重心每个小数偏移跳动 1.4 px）。实际扫描中，分辨率也几乎不会是线数的整数倍。",
+   "tw": "網點線數 [lpi]（商業印刷的慣用值）。★**故意避開整數比**：取 1200/150 = 8.00 px 時，所有網點都落在相同的小數位置，取樣相位對齊，合成器就出現偽影（實測重心每個小數偏移跳動 1.4 px）。實際掃描中，解析度也幾乎不會是線數的整數倍。",
+   "ko": "망점 선수 [lpi](상업 인쇄의 관행값). ★**일부러 정수비를 피하고 있다**: 1200/150 = 8.00 px로 하면 모든 망점이 같은 소수 위치에 떨어져 표본화 위상이 맞아 합성기에 인공물이 나온다(실측에서 무게중심이 소수 어긋남마다 1.4 px 튀었다). 실제 스캔에서도 해상도가 선수의 정수배가 되는 일은 거의 없다.",
+   "de": "Rasterweite des Halbtons [lpi] (üblicher Wert im kommerziellen Druck). ★**Absichtlich ein ganzzahliges Verhältnis vermeiden**: bei 1200/150 = 8.00 px fällt jeder Rasterpunkt auf dieselbe Nachkommaposition, die Abtastphase richtet sich aus und der Compositor erzeugt Artefakte (gemessen sprang der Schwerpunkt pro Nachkomma-Versatz um 1.4 px). Auch bei echten Scans ist die Auflösung fast nie ein ganzzahliges Vielfaches der Rasterweite."
+  },
+  "★ 台帳の口は宣言 out 型に合わせて info を捨てるので `.raw` を使う (fullseye/__init__.py のコメントに実測つきで書いてある落とし穴)。": {
+   "en": "★The ledger's port discards info to match the declared out type, so use `.raw` (a pitfall documented with measurements in the comment of fullseye/__init__.py).",
+   "zh": "★台账的入口会为匹配声明的 out 类型而丢弃 info，所以要用 `.raw`（这个坑在 fullseye/__init__.py 的注释里带实测记着）。",
+   "tw": "★臺帳的入口會為匹配宣告的 out 型別而丟棄 info，所以要用 `.raw`（這個坑在 fullseye/__init__.py 的註解裡帶實測記著）。",
+   "ko": "★대장의 입구는 선언된 out 형에 맞춰 info를 버리므로 `.raw`를 쓴다(fullseye/__init__.py의 주석에 실측과 함께 적혀 있는 함정).",
+   "de": "★Der Eingang des Registers verwirft info, um dem deklarierten out-Typ zu entsprechen, also `.raw` verwenden (eine im Kommentar von fullseye/__init__.py mit Messwerten dokumentierte Falle)."
+  },
+  "★ FM 側は探索範囲を **絞らない**(絞っても結果は変わらないが、 「AM の折り返しは探索範囲のせいだ」という言い逃れを塞ぐため)。": {
+   "en": "★On the FM side, **do not narrow** the search range (narrowing doesn't change the result, but it forecloses the excuse that \"AM's aliasing is due to the search range\").",
+   "zh": "★FM 一侧**不收窄**搜索范围（收窄也不改变结果，但为了堵住“AM 的折返是因为搜索范围”这种借口）。",
+   "tw": "★FM 一側**不收窄**搜尋範圍（收窄也不改變結果，但為了堵住「AM 的折返是因為搜尋範圍」這種藉口）。",
+   "ko": "★FM 쪽은 탐색 범위를 **좁히지 않는다**(좁혀도 결과는 바뀌지 않지만, \"AM의 접힘은 탐색 범위 탓이다\"라는 변명을 막기 위해).",
+   "de": "★Auf der FM-Seite den Suchbereich **nicht einengen** (Einengen ändert das Ergebnis nicht, verhindert aber die Ausrede, \"das Aliasing von AM liege am Suchbereich\")."
+  },
+  "★二段が壊れた点は、必ず粗がセルの半径を超えた点(包含関係を固定する)": {
+   "en": "★A point where the two-stage broke is always a point where the coarse exceeded the cell radius (pin the inclusion relation)",
+   "zh": "★两级失效的点，必定是粗略值超过单元半径的点（固定包含关系）",
+   "tw": "★兩級失效的點，必定是粗略值超過單元半徑的點（固定包含關係）",
+   "ko": "★2단이 무너진 점은 반드시 coarse가 셀 반경을 넘은 점(포함 관계를 고정한다)",
+   "de": "★Ein Punkt, an dem die zweistufige Stufe brach, ist stets ein Punkt, an dem das Grobe den Zellradius überschritt (die Inklusionsbeziehung festhalten)"
+  },
+  "★ 基準にも雑音を入れる —— 雑音ゼロの像だと star_detect が 「星 0 個」で ValueError になる(それはそれで正しい fail-closed)。": {
+   "en": "★Add noise to the reference too —— with a zero-noise image, star_detect gives \"0 stars\" and a ValueError (which is itself a correct fail-closed).",
+   "zh": "★基准也加入噪声 —— 零噪声图像会让 star_detect 因“0 颗星”而抛出 ValueError（这本身就是正确的 fail-closed）。",
+   "tw": "★基準也加入雜訊 —— 零雜訊影像會讓 star_detect 因「0 顆星」而拋出 ValueError（這本身就是正確的 fail-closed）。",
+   "ko": "★기준에도 잡음을 넣는다 —— 잡음 제로 영상이면 star_detect가 \"별 0개\"로 ValueError가 된다(그것은 그것대로 올바른 fail-closed).",
+   "de": "★Auch der Referenz Rauschen hinzufügen —— bei einem rauschfreien Bild ergibt star_detect \"0 Sterne\" und einen ValueError (was für sich genommen ein korrektes fail-closed ist)."
+  },
+  "★2026-09-08: この PoC の指摘を受けて op 側を直した。docstring に 「繰り返し構造には使えない」を測った数字つきで書き、投票の **2 番手の山 / 1 番手** を `vote_margin` として返すようにした。 賛成率では区別できない 2 つを、この数なら区別できる。": {
+   "en": "★2026-09-08: Following this PoC's note, I fixed the op side. I wrote \"cannot be used on repetitive structures\" with measured numbers in the docstring, and made it return the **runner-up peak / top peak** of the vote as `vote_margin`. This number can distinguish two cases that the approval rate cannot.",
+   "zh": "★2026-09-08：因本 PoC 的指摘而修正了 op 一侧。在 docstring 中带实测数字写明“不能用于重复结构”，并让它把投票的**第二高峰 / 最高峰**作为 `vote_margin` 返回。用赞成率无法区分的两者，用这个数就能区分。",
+   "tw": "★2026-09-08：因本 PoC 的指摘而修正了 op 一側。在 docstring 中帶實測數字寫明「不能用於重複結構」，並讓它把投票的**第二高峰 / 最高峰**作為 `vote_margin` 返回。用贊成率無法區分的兩者，用這個數就能區分。",
+   "ko": "★2026-09-08: 이 PoC의 지적을 받아 op 쪽을 고쳤다. docstring에 \"반복 구조에는 쓸 수 없다\"를 측정한 숫자와 함께 적고, 투표의 **2위 봉우리 / 1위**를 `vote_margin`으로 반환하도록 했다. 찬성률로는 구별할 수 없는 둘을 이 수라면 구별할 수 있다.",
+   "de": "★2026-09-08: Dem Hinweis dieses PoC folgend habe ich die op-Seite korrigiert. Ich schrieb \"für repetitive Strukturen nicht verwendbar\" mit gemessenen Zahlen in den docstring und ließ den **zweithöchsten Peak / höchsten Peak** der Abstimmung als `vote_margin` zurückgeben. Diese Zahl kann zwei Fälle unterscheiden, die die Zustimmungsrate nicht unterscheiden kann."
+  },
+  "★生まれた層は「そのとき既に反っている面の上」に置かれる(要素誕生は 変形後の配置で行う)。ここを初期化し忘れると、後から生えた層だけ 変位ゼロのまま残り、**列平均で測った反りが 1/4 になる** (2026-09-07 に踏んだ)。力学(K と f)は公称格子上なので不変。": {
+   "en": "★A newly born layer is placed \"on the surface that is already warped at that time\" (element birth is done in the deformed configuration). Forget to initialize this, and only the later-grown layers stay at zero displacement, and **the warp measured by column average becomes 1/4** (stepped on it 2026-09-07). The mechanics (K and f) are on the nominal grid, so they are unchanged.",
+   "zh": "★新生成的层被放在“当时已经翘曲的面上”（单元的诞生在变形后的构型中进行）。若忘了在此初始化，只有后长出的层保持零位移，**用列平均测得的翘曲变成 1/4**（2026-09-07 踩过）。力学（K 与 f）在公称格子上，故不变。",
+   "tw": "★新生成的層被放在「當時已經翹曲的面上」（單元的誕生在變形後的構型中進行）。若忘了在此初始化，只有後長出的層保持零位移，**用列平均測得的翹曲變成 1/4**（2026-09-07 踩過）。力學（K 與 f）在公稱格子上，故不變。",
+   "ko": "★새로 생긴 층은 \"그때 이미 휘어 있는 면 위\"에 놓인다(요소 탄생은 변형 후의 배치로 행한다). 여기를 초기화하는 것을 잊으면 나중에 자란 층만 변위 제로인 채로 남아 **열 평균으로 측정한 휨이 1/4이 된다**(2026-09-07에 밟았다). 역학(K와 f)은 공칭 격자 위이므로 불변.",
+   "de": "★Eine neu entstehende Schicht wird \"auf die zu diesem Zeitpunkt bereits verwölbte Fläche\" gelegt (die Elementgeburt erfolgt in der verformten Konfiguration). Vergisst man, dies zu initialisieren, bleiben nur die später gewachsenen Schichten bei null Verschiebung und **die per Spaltenmittel gemessene Verwölbung wird 1/4** (am 2026-09-07 hineingetreten). Die Mechanik (K und f) liegt auf dem nominalen Gitter, ist also unverändert."
+  },
+  "★首が丸ごと消える。部品が 2 つに分かれるので解いてはいけない。": {
+   "en": "★The neck vanishes entirely. The part splits into two, so it must not be solved.",
+   "zh": "★颈部整个消失。部件会分成两块，所以不能求解。",
+   "tw": "★頸部整個消失。部件會分成兩塊，所以不能求解。",
+   "ko": "★목이 통째로 사라진다. 부품이 둘로 갈라지므로 풀면 안 된다.",
+   "de": "★Der Hals verschwindet vollständig. Das Bauteil zerfällt in zwei, daher darf es nicht gelöst werden."
+  },
+  "★MOD_SHELTER は**健全なのに風が当たらない**モジュール。3 節でこれが 全体平均基準では「故障」に化ける。": {
+   "en": "★MOD_SHELTER is a module that is **sound but not exposed to wind**. In Section 3 it turns into a \"fault\" under the whole-average criterion.",
+   "zh": "★MOD_SHELTER 是一个**健全但吹不到风**的模块。在第 3 节，它在全局平均基准下会变成“故障”。",
+   "tw": "★MOD_SHELTER 是一個**健全但吹不到風**的模組。在第 3 節，它在全域平均基準下會變成「故障」。",
+   "ko": "★MOD_SHELTER는 **건전한데 바람이 닿지 않는** 모듈. 3절에서 이것이 전체 평균 기준에서는 \"고장\"으로 둔갑한다.",
+   "de": "★MOD_SHELTER ist ein Modul, das **intakt ist, aber keinem Wind ausgesetzt** wird. In Abschnitt 3 verwandelt es sich unter dem Gesamtmittel-Kriterium in einen \"Defekt\"."
+  },
+  "★モジュール番号は**番号ごとに面積比で**決める。番号の平均を丸めると 境界の画素が隣の番号(や 0)に化け、モジュールごとの処理が壊れる。": {
+   "en": "★Decide the module number **by area fraction per number**. Rounding the average of the numbers turns boundary pixels into a neighboring number (or 0) and breaks the per-module processing.",
+   "zh": "★模块编号要**按每个编号的面积比**决定。对编号取平均再取整，会使边界像素变成相邻编号（或 0），从而破坏逐模块处理。",
+   "tw": "★模組編號要**按每個編號的面積比**決定。對編號取平均再取整，會使邊界像素變成相鄰編號（或 0），從而破壞逐模組處理。",
+   "ko": "★모듈 번호는 **번호마다 면적비로** 정한다. 번호의 평균을 반올림하면 경계 화소가 이웃 번호(나 0)로 둔갑해 모듈별 처리가 망가진다.",
+   "de": "★Die Modulnummer **pro Nummer über den Flächenanteil** bestimmen. Rundet man den Mittelwert der Nummern, werden Randpixel zu einer Nachbarnummer (oder 0) und die modulweise Verarbeitung bricht."
+  },
+  "★モジュール中央値の代償 —— モジュール丸ごとの異常に盲目": {
+   "en": "★The cost of the module median —— blind to a whole-module anomaly",
+   "zh": "★模块中位数的代价 —— 对整个模块的异常盲目",
+   "tw": "★模組中位數的代價 —— 對整個模組的異常盲目",
+   "ko": "★모듈 중앙값의 대가 —— 모듈 통째의 이상에 맹목",
+   "de": "★Der Preis des Modulmedians —— blind für eine Anomalie eines ganzen Moduls"
+  },
+  "★``apply_cmap`` は vmin/vmax を渡さないと**その配列の min/max**で 正規化する(条件ごとに色の意味が変わってしまう)ので必ず渡す。": {
+   "en": "★``apply_cmap`` normalizes by **that array's min/max** if vmin/vmax are not passed (making the color's meaning change per condition), so always pass them.",
+   "zh": "★``apply_cmap`` 若不传 vmin/vmax，就会按**该数组的 min/max**归一化（导致每个条件下颜色含义不同），所以务必传入。",
+   "tw": "★``apply_cmap`` 若不傳 vmin/vmax，就會按**該陣列的 min/max**歸一化（導致每個條件下顏色含義不同），所以務必傳入。",
+   "ko": "★``apply_cmap``은 vmin/vmax를 넘기지 않으면 **그 배열의 min/max**로 정규화한다(조건마다 색의 의미가 바뀌어 버린다)므로 반드시 넘긴다.",
+   "de": "★``apply_cmap`` normiert nach **min/max dieses Arrays**, wenn vmin/vmax nicht übergeben werden (wodurch sich die Bedeutung der Farbe je Bedingung ändert), also stets übergeben."
+  },
+  "★数が合っていても、同じものを数えているとは限らない。円 1 個が成分 1 個に きっちり収まるか(1 対 1)を確かめる —— これをやらないと「24 = 24」は 偶然でも成立する(2 枚くっついた塊 1 個 + ごみ 1 個、でも 24)。": {
+   "en": "★Even if the counts match, you are not necessarily counting the same thing. Verify that one circle fits exactly into one component (one-to-one) —— without this, \"24 = 24\" holds even by chance (one blob of two stuck together + one piece of garbage, still 24).",
+   "zh": "★即使数目相符，也未必数的是同一样东西。要确认 1 个圆恰好落入 1 个成分（一对一）—— 不做这一步，“24 = 24”也会碰巧成立（1 个两片粘连的团块 + 1 个杂点，仍是 24）。",
+   "tw": "★即使數目相符，也未必數的是同一樣東西。要確認 1 個圓恰好落入 1 個成分（一對一）—— 不做這一步，「24 = 24」也會碰巧成立（1 個兩片黏連的團塊 + 1 個雜點，仍是 24）。",
+   "ko": "★수가 맞아도 같은 것을 세고 있다고는 할 수 없다. 원 1개가 성분 1개에 정확히 들어가는지(1대1)를 확인한다 —— 이걸 하지 않으면 \"24 = 24\"는 우연히도 성립한다(2개가 붙은 덩어리 1개 + 쓰레기 1개, 그래도 24).",
+   "de": "★Auch wenn die Anzahlen übereinstimmen, zählt man nicht zwangsläufig dasselbe. Prüfen, ob genau ein Kreis in genau eine Komponente fällt (eins zu eins) —— ohne das gilt \"24 = 24\" auch zufällig (ein Blob aus zwei zusammenklebenden + ein Stück Müll, trotzdem 24)."
+  },
+  "★守るのは「どれが勝つか」ではなく**勝者が物差しごとに違う**こと。 手法名を固定すると、実装が良くなっただけで落ちる門になる。": {
+   "en": "★What we protect is not \"which one wins\" but **that the winner differs per metric**. Fix the method name, and it becomes a gate that fails merely because the implementation improved.",
+   "zh": "★要守护的不是“谁获胜”，而是**获胜者随度量而不同**这件事。若把方法名固定，就会变成“仅因实现变好”就失败的门。",
+   "tw": "★要守護的不是「誰獲勝」，而是**獲勝者隨度量而不同**這件事。若把方法名固定，就會變成「僅因實作變好」就失敗的門。",
+   "ko": "★지키는 것은 \"어느 것이 이기는가\"가 아니라 **승자가 척도마다 다르다**는 것. 기법 이름을 고정하면 구현이 좋아졌을 뿐인데 떨어지는 문이 된다.",
+   "de": "★Zu schützen ist nicht \"welches gewinnt\", sondern **dass der Sieger je Maßstab verschieden ist**. Fixiert man den Methodennamen, wird es ein Tor, das schon deshalb fällt, weil sich die Implementierung verbessert hat."
+  },
+  "振幅の刻み。★これ自体がノブ。粗いと限界が同じ格子点に丸まって、 「σ が大きいほど差が開く」のような**刻みが作った差**を本物と誤読する (2026-09-09、34 段では σ=1.5 と σ=3.0 の中央値がどちらも 3.20 に丸まった)。": {
+   "en": "Amplitude step. ★This itself is a knob. If coarse, the limit rounds to the same grid point, and one misreads a **difference created by the step**, like \"the larger σ, the wider the gap\", as real (2026-09-09; at 34 levels the median of σ=1.5 and σ=3.0 both rounded to 3.20).",
+   "zh": "振幅的步长。★它本身就是一个旋钮。若太粗，极限会被舍入到同一格点，从而把“σ 越大差距越大”这类**由步长制造的差异**误读为真实（2026-09-09，在 34 级时 σ=1.5 与 σ=3.0 的中位数都舍入到 3.20）。",
+   "tw": "振幅的步長。★它本身就是一個旋鈕。若太粗，極限會被捨入到同一格點，從而把「σ 越大差距越大」這類**由步長製造的差異**誤讀為真實（2026-09-09，在 34 級時 σ=1.5 與 σ=3.0 的中位數都捨入到 3.20）。",
+   "ko": "진폭의 간격. ★이것 자체가 노브. 거칠면 한계가 같은 격자점으로 반올림되어 \"σ가 클수록 차이가 벌어진다\" 같은 **간격이 만든 차이**를 진짜로 오독한다(2026-09-09, 34단에서는 σ=1.5와 σ=3.0의 중앙값이 둘 다 3.20으로 반올림되었다).",
+   "de": "Amplitudenschritt. ★Dies selbst ist ein Regler. Ist er grob, rundet das Limit auf denselben Gitterpunkt und man liest eine **vom Schritt erzeugte Differenz** wie \"je größer σ, desto größer der Abstand\" als echt (2026-09-09; bei 34 Stufen rundeten die Mediane von σ=1.5 und σ=3.0 beide auf 3.20)."
+  },
+  "★掃引の**前に**、代数から予測を立てて印字する。": {
+   "en": "★**Before** the sweep, form a prediction from the algebra and print it.",
+   "zh": "★在扫描**之前**，先从代数给出预测并打印出来。",
+   "tw": "★在掃描**之前**，先從代數給出預測並列印出來。",
+   "ko": "★스윕 **전에** 대수로부터 예측을 세워 인쇄한다.",
+   "de": "★**Vor** dem Sweep aus der Algebra eine Vorhersage bilden und ausdrucken."
   }
  }
 }
