@@ -195,8 +195,7 @@ def section_knobs(real, rng):
     small, large = np.median(by_sigma[1.5]), np.median(by_sigma[3.0])
     print("   → %d 通り全部で 1 を超える(%.2f〜%.2f)。"
           % (len(by_sigma[1.5]) + len(by_sigma[3.0]), worst, best))
-    print("   → 欠陥が大きいほど差が開く: σ=1.5 で中央 %.2f 倍、σ=3.0 で %.2f 倍 ——"
-          " 大きい欠陥ほど、地が同じ空間周波数に持つ構造と正面から競合する。"
+    print("   → 欠陥の大きさ別の中央: σ=1.5 で %.2f 倍、σ=3.0 で %.2f 倍。"
           % (small, large))
     return worst, best, small, large
 
