@@ -226,11 +226,16 @@ def render(d: dict) -> str:
     out += ["", "## 例が実際に走っているか", "",
             "| | 件数 |", "|---|---|",
             "| 2-D 台帳の例 | %d |" % e["examples2d_total"],
-            "| 門が走らせている(`poc_*`) | %d |" % e["run_by_a_gate"],
+            "| `tests/test_poc_scripts_run.py` が走らせる | %d |" % e["run_by_the_poc_gate"],
+            "| `tests/test_example_scripts_run.py` が走らせる | %d |"
+            % e["run_by_the_example_gate"],
             "| **どの門も走らせていない** | **%d** |" % e["not_run_by_any_gate"],
             "",
-            "走らせない門は、実行時の壊れに盲目です(2026-09-06 に PoC 側で同じ形の穴が",
-            "見つかり、31 本のうち 4 本が exit 1 のまま放置されていました)。",
+            "走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり",
+            "(31 本のうち 4 本が exit 1 のまま放置)、**2026-09-09 に同じ穴が 1 つ内側で",
+            "再演していた**ことが分かりました —— 門を作ったのに、対象を数え直さなかったので",
+            "`poc_*` 以外の 83 件が外に残り、そのうち 2 件が落ちていました。",
+            "どちらの門も `PYTHONPATH` を渡さずに走らせます(利用者と同じ条件)。",
             "機械可読版は [`maturity.json`](maturity.json)。", ""]
     return "\n".join(out)
 

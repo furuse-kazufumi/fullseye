@@ -60,7 +60,7 @@
 
 使う op: `blob_label`, `blob_select`, `blob_count`, `watersheds`
 
-動く例: `poc_cell_counting`, `poc_particle_sizing`
+動く例: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
 
 ### [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md)
 

@@ -49,6 +49,22 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 > **[English](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md)** ·
 > **[日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md)**
 
+## Three ways in
+
+Fullseye is wide; the hard part is picking the first file to open. These are not new
+demos — every command below is an example a gate already runs on each push, so if one
+of them breaks, CI goes red.
+
+| Course | For | Run this first (5 min) | Then read (30 min) |
+|---|---|---|---|
+| **Explainable inspection** | inspection / QA engineers | `py -3.11 examples/poc_solder_fillet_aoi.py` — solder-fillet AOI | `examples/poc_fabric_defect.py` — misses and false alarms counted separately |
+| **3-D vision for robotics** | robotics / 3-D metrology | `py -3.11 examples/perception_pipeline.py` — stereo → depth → point cloud → traversability | `examples/grasp_pose.py` — register a cloud to a model, get 6-DoF pose and approach |
+| **Physics-based NDT** | X-ray / optics / measurement | `py -3.11 examples/ct_reconstruction.py` — projections → reconstruction → dimensions in mm and a void count | `examples/poc_ct_void_morphology.py` — why one pass/fail number is blind to shape |
+
+Every one of them carries a ground truth and prints the null (do-nothing) result beside
+the method. How far each capability is actually verified is a generated ledger:
+[`docs/MATURITY.md`](docs/MATURITY.md).
+
 ## Install
 
 ```bash
@@ -227,6 +243,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Read the Studio and its operator help in your language | Studio ▸ Tools ▸ Language — **日本語 / English / 简体中文 / 繁體中文 / 한국어 / Deutsch** |
 | Understand the language policy and what is *not* translated | `docs/I18N.md` |
 | Update a checkout safely | `tools/update_fullseye.py --check` |
+| **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
 | Cite Fullseye | `CITATION.cff` |
 
 ## Design principles

@@ -4,7 +4,7 @@ title: 領域を切り出して、選んで、数える
 title_en: Segment regions, select them, and count
 category: 見つける
 ops: [blob_label, blob_select, blob_count, watersheds]
-examples: [poc_cell_counting, poc_particle_sizing]
+examples: [poc_cell_counting, poc_particle_sizing, poc_real_coin_metrology]
 version: 0.1.11
 ---
 

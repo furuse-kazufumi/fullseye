@@ -1,6 +1,6 @@
 {
  "generated_by": "tools/gen_maturity.py",
- "how_to_read": "ladder の判定は capabilities[].examples と ops_with_tests から 機械的に決まる。生の事実を残してあるので判定を再現できる。",
+ "how_to_read": "ladder の判定は capabilities[].examples と ops_named_in_tests から 機械的に決まる。生の事実を残してあるので判定を再現できる。",
  "ladder": [
   {
    "id": "research-prototype",
@@ -32,8 +32,9 @@
    "note": "docs/capabilities/align-and-stack.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_astro_photometry",
@@ -59,8 +60,9 @@
    "note": "docs/capabilities/beamforming-and-range-doppler.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_multibeam_bathymetry",
@@ -84,12 +86,13 @@
    "title_en": "Segment regions, select them, and count",
    "category": "見つける",
    "note": "docs/capabilities/blob-and-region.md",
-   "status": "verified-synthetic",
+   "status": "validated-public-real-data",
    "ops_total": 4,
-   "ops_with_tests": 3,
-   "ops_without_tests": [
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [
     "watersheds"
    ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_cell_counting",
@@ -104,6 +107,13 @@
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
      "registry": "examples2d"
+    },
+    {
+     "id": "poc_real_coin_metrology",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
     }
    ]
   },
@@ -115,8 +125,9 @@
    "note": "docs/capabilities/colour-and-delta-e.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_white_balance",
@@ -142,8 +153,9 @@
    "note": "docs/capabilities/figures-and-annotation.md",
    "status": "verified-synthetic",
    "ops_total": 3,
-   "ops_with_tests": 3,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_colormap_readability",
@@ -169,8 +181,9 @@
    "note": "docs/capabilities/geodetic-frames.md",
    "status": "verified-synthetic",
    "ops_total": 2,
-   "ops_with_tests": 2,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 2,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_geodetic_height_frames",
@@ -182,8 +195,8 @@
     {
      "id": "dem_geodesy_tour",
      "data": "synthetic",
-     "gate": null,
-     "executed": false,
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
      "registry": "examples2d"
     }
    ]
@@ -196,14 +209,15 @@
    "note": "docs/capabilities/inverted-colour-overlays.md",
    "status": "verified-synthetic",
    "ops_total": 3,
-   "ops_with_tests": 3,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "annotate_paper_tour",
      "data": "synthetic",
-     "gate": null,
-     "executed": false,
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
      "registry": "examples2d"
     }
    ]
@@ -216,21 +230,22 @@
    "note": "docs/capabilities/optics-and-materials.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "glass_and_mirror_optics",
      "data": "synthetic",
-     "gate": null,
-     "executed": false,
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
      "registry": "examples2d"
     },
     {
      "id": "appearance_structural_colour",
      "data": "synthetic",
-     "gate": null,
-     "executed": false,
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
      "registry": "examples2d"
     }
    ]
@@ -243,8 +258,9 @@
    "note": "docs/capabilities/point-target-detection.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_search_sweep_width",
@@ -270,8 +286,9 @@
    "note": "docs/capabilities/subpixel-2d-metrology.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_dimensional_inspection",
@@ -297,8 +314,9 @@
    "note": "docs/capabilities/terrain-and-visibility.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_dem_terrain",
@@ -310,8 +328,8 @@
     {
      "id": "dem_terrain_analysis_tour",
      "data": "synthetic",
-     "gate": null,
-     "executed": false,
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
      "registry": "examples2d"
     }
    ]
@@ -324,14 +342,15 @@
    "note": "docs/capabilities/text-and-tables-on-images.md",
    "status": "verified-synthetic",
    "ops_total": 6,
-   "ops_with_tests": 6,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "annotate_paper_tour",
      "data": "synthetic",
-     "gate": null,
-     "executed": false,
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
      "registry": "examples2d"
     }
    ]
@@ -344,10 +363,11 @@
    "note": "docs/capabilities/tomography-reconstruction.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 3,
-   "ops_without_tests": [
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [
     "marching_cubes"
    ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_ct_fidelity",
@@ -373,8 +393,9 @@
    "note": "docs/capabilities/vibration-and-acoustics.md",
    "status": "verified-synthetic",
    "ops_total": 5,
-   "ops_with_tests": 5,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_bearing_diagnosis",
@@ -400,8 +421,9 @@
    "note": "docs/capabilities/visual-hull-from-silhouettes.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 4,
-   "ops_without_tests": [],
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "space_carving",
@@ -427,10 +449,11 @@
    "note": "docs/capabilities/volume-from-3d-scan.md",
    "status": "verified-synthetic",
    "ops_total": 4,
-   "ops_with_tests": 3,
-   "ops_without_tests": [
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [
     "mesh_volume"
    ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
    "examples": [
     {
      "id": "poc_stockpile_volume",
@@ -451,9 +474,13 @@
  ],
  "example_execution": {
   "examples2d_total": 199,
-  "run_by_a_gate": 116,
-  "not_run_by_any_gate": 83,
-  "gate_for_poc": "tests/test_poc_scripts_run.py",
-  "note": "2-D 台帳のうち poc_* 以外は、どの門も実行していない(2026-09-09 に数えた)。"
+  "run_by_the_poc_gate": 116,
+  "run_by_the_example_gate": 83,
+  "not_run_by_any_gate": 0,
+  "gates": [
+   "tests/test_poc_scripts_run.py",
+   "tests/test_example_scripts_run.py"
+  ],
+  "note": "2026-09-09 まで poc_* 以外の 83 件を実行する門が無く、そのうち 2 件が exit 1 のまま残っていた。両方の門とも PYTHONPATH を渡さずに走らせる(利用者と同じ条件)。"
  }
 }

@@ -61,7 +61,7 @@ Label connected components, select them by area, shape or position, and count th
 
 Operators: `blob_label`, `blob_select`, `blob_count`, `watersheds`
 
-Runnable: `poc_cell_counting`, `poc_particle_sizing`
+Runnable: `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`
 
 ### [Find small point-like targets and locate them below the pixel](capabilities/point-target-detection.md)
 

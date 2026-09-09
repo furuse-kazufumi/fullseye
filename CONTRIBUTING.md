@@ -91,7 +91,7 @@ The sections, in this order (see the v0.1.10 release for a worked example):
 | Minimum environment | Python floor, OS, required dependencies, the full list of optional extras, whether a GPU is needed |
 | Quickstart | Must **run as written** on a clean install with no data files. Run it before pasting it |
 | Verification & known limitations | How the release is checked (which gates), representative measured numbers, and what is *not* covered |
-| Maturity | Which parts are verified, which are validated on real data, which are research prototypes |
+| Maturity | **Copy it from `docs/MATURITY.md`** — that ledger is generated from what the repository can actually prove (which examples a gate runs, which of those are driven by real measured data). Do not retype it from memory: the v0.1.10 note claimed real-data validation that did not exist at the tag |
 | Citation | Per `CITATION.cff`; state plainly if no DOI has been minted rather than writing a placeholder |
 | Links | Docs site, PyPI, operator corpus, articles, changelog, known issues, Zenodo (or "not yet registered") |
 

@@ -1,5 +1,22 @@
 # はじめかた（5分で動かす）
 
+## どれが自分の仕事か(3 つの入口)
+
+Fullseye は広いので、**最初に開く 1 本**を決められないと止まります。ここに挙げるのは
+新しく書いたデモではなく、**すでに門が毎回走らせている例**です(落ちたら CI が赤くなる)。
+
+| 入口 | 想定する人 | 5 分:まず動かす | 30 分:中を追う | 半日:自分のデータで |
+|---|---|---|---|---|
+| **説明できる外観検査** | 検査・品質保証 | `py -3.11 examples/poc_solder_fillet_aoi.py` はんだフィレットの AOI | `py -3.11 examples/poc_fabric_defect.py` 見逃しと誤検出を分けて数える | [CAPABILITIES.md](CAPABILITIES.md) の「見つける」→ Studio で自分の画像に |
+| **ロボットのための 3-D** | ロボット・3-D 計測 | `py -3.11 examples/perception_pipeline.py` ステレオ→深度→点群→通行可能性 | `py -3.11 examples/grasp_pose.py` 点群をモデルに合わせて 6-DoF 姿勢と把持方向 | [EXAMPLES_3D.md](EXAMPLES_3D.md) → 自分の点群・メッシュを入れる |
+| **物理に基づく非破壊検査** | X 線・光学・計測 | `py -3.11 examples/ct_reconstruction.py` 投影→再構成→寸法 mm と欠陥数 | `py -3.11 examples/poc_ct_void_morphology.py` 合否 1 個の数字が形に盲目な理由 | [CAPABILITIES.md](CAPABILITIES.md) の「形にする」→ 自分のボリューム |
+
+どの例も**真値を持っています**(閉形式か合成)。ゼロ点(何もしない場合)を必ず併記するので、
+「効いた」と言えるかどうかを自分で確かめられます。どこまで検証できているかの台帳は
+[MATURITY.md](MATURITY.md) —— 手で書かず、走る門と実データの有無から数えて出しています。
+
+---
+
 Fullseye（作業名 imgevolve）を最短で動かすためのガイドです。**インストール → 最初のパイプラインを作る → 実行する → 結果を見る** の順に、詰まらない導線で進めます。より詳しい環境構築は [INSTALL.md](INSTALL.md)、Studio の全機能は [STUDIO_GUIDE.md](STUDIO_GUIDE.md)、コードからの実行は [ENGINE.md](ENGINE.md) を参照してください。
 
 Fullseye は **numpy 配列を入力・出力とする画像処理オペレータ・ライブラリ**であり、その上に **HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）** と **実行ランタイム（FullseyeEngine）** が載っています。HALCON/HDevelop で言えば「HDevelop で手順を組み、HDevEngine で自分のアプリから呼ぶ」という 2 段構えを、そのまま Python + numpy で再現したものです。
