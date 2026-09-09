@@ -28,9 +28,13 @@
 
 ## 順序(外から来た人が実際に辿る順)
 
-1. **入口の 10 本** — `GETTING_STARTED` / `AI_RAG_GUIDE` / `MATURITY` / `EXAMPLES_3D` /
-   `SENSOR_PLAYBOOK` / `STUDIO_GUIDE` / `OPERATORS` / `GENERAL_ALGORITHMS` /
-   `ENGINE` / `3DGS_USAGE`
+1. **入口の 10 本** — 手書き 7 本は英訳済み(2026-09-10):
+   `GETTING_STARTED` ✓ / `AI_RAG_GUIDE` ✓ / `INSTALL` ✓ / `STUDIO_GUIDE` ✓ /
+   `GENERAL_ALGORITHMS` ✓ / `ENGINE` ✓ / `3DGS_USAGE` ✓。
+   残り: `MATURITY`(生成物・表内で既に日英併記)/ `EXAMPLES_3D`・`SENSOR_PLAYBOOK`
+   (生成物 —— 生成器側 i18n が必要。本文は登録内容=op ノート由来ゆえ step 2 の
+   ★/op ノート訳ウェーブに依存)/ `OPERATORS`(既に全文英語)。
+   = 手訳可能な入口文書は完了。生成物 3 本は登録内容の訳(step 2)後に生成器で英語化。
 2. **`DESIGN_NOTES` の ★ 606 件** — 巡回で 20〜40 件ずつ
 3. **残りの文書** — `KNOWN_ISSUES`(2,475 行)のような内部記録は最後。
    読み手が少なく、更新が速いので、先に訳すと真っ先に古びる
