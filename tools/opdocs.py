@@ -1706,9 +1706,11 @@ def main(argv):
         cmd_samples()
     if cmd in ("toc", "all"):
         cmd_toc()
+    if cmd in ("skill", "all"):
+        cmd_skill()
     if cmd in ("html", "all"):
         cmd_html()
-    if cmd not in ("md", "samples", "toc", "html", "all"):
+    if cmd not in ("md", "samples", "toc", "skill", "html", "all"):
         print(__doc__)
         return 2
     return 0
