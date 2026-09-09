@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Multiply two images.
+2 枚の画像を画素ごとに掛ける。HALCON の ``mult_image`` に相当。``out = clip(I1 * I2 * (0.5 + 1.5a) + (b - 0.5), 0, 1)``。積は必ず暗くなるので ``a`` のゲイン幅を広く取ってある。
 
 ## 参考(サンプルデータ・文献)
 

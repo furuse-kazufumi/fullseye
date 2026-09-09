@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">div_image — 2D <code style="color:#22d3bf">nary</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image × image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:此運算子有 2 個輸入,<code style="color:#22d3bf">fullseye.apply</code> 無法呼叫它(那是單張影像的模型)。<code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;div_image&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code>(以 <code style="color:#22d3bf">$</code> 開頭的名稱是從外部傳入的輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">div_image</code>(其含義與參數可參考 HALCON 手冊)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>2 枚の画像を画素ごとに割る。HALCON の `<code style="color:#22d3bf">div_image</code><code style="color:#22d3bf"> に相当。</code><code style="color:#22d3bf">out = clip(I1 / max(I2, 1e-3) * (0.1 + 0.9a), 0, 1)</code><code style="color:#22d3bf"> —— ゼロ割を避けるため分母に下限 </code><code style="color:#22d3bf">1e-3</code><code style="color:#22d3bf"> を敷く(そこでは商が最大 1000 倍になり飽和する)。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">nary</code>)</h3>
+<p><a style="color:#22d3bf" href="op:add_image">add_image</a> · <a style="color:#22d3bf" href="op:sub_image">sub_image</a> · <a style="color:#22d3bf" href="op:mult_image">mult_image</a> · <a style="color:#22d3bf" href="op:abs_diff_image">abs_diff_image</a> · <a style="color:#22d3bf" href="op:max_image">max_image</a> · <a style="color:#22d3bf" href="op:min_image">min_image</a> · <a style="color:#22d3bf" href="op:bit_and">bit_and</a> · <a style="color:#22d3bf" href="op:bit_or">bit_or</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgops_nary.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

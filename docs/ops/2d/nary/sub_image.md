@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Subtract two images.
+2 枚の画像を減算する。HALCON の ``sub_image`` に相当。``out = clip((I1 - I2) * (0.5 + a) + b, 0, 1)`` —— 負になる差を ``b`` で持ち上げないと 0 に潰れる(既定 ``b=0.5`` で中央値が灰色になる)。
 
 ## 参考(サンプルデータ・文献)
 

@@ -1,4 +1,4 @@
-# 2D operator help — 899 ops in 48 categories
+# 2D operator help — 916 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
@@ -137,6 +137,10 @@
 ### morphology_markers (1)
 
 [xmh_regmin](morphology_markers/xmh_regmin.md)
+
+### nary (17)
+
+[abs_diff_image](nary/abs_diff_image.md) · [add_image](nary/add_image.md) · [bit_and](nary/bit_and.md) · [bit_or](nary/bit_or.md) · [convol_image](nary/convol_image.md) · [difference](nary/difference.md) · [div_image](nary/div_image.md) · [intersection](nary/intersection.md) · [max_image](nary/max_image.md) · [min_image](nary/min_image.md) · [mult_image](nary/mult_image.md) · [overpaint_region](nary/overpaint_region.md) · [paint_gray](nary/paint_gray.md) · [reduce_domain](nary/reduce_domain.md) · [sub_image](nary/sub_image.md) · [symm_difference](nary/symm_difference.md) · [union2](nary/union2.md)
 
 ### noise (2)
 

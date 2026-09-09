@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Difference of two regions.
+2 つの領域の差(第 1 に入り第 2 に入らない画素)。HALCON の ``difference`` に相当。**順序が意味を持つ**(引く側と引かれる側を入れ替えると別の結果)。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Bitwise AND of two images.
+2 枚の画像のビット単位 AND。HALCON の ``bit_and`` に相当。★一度 8bit 整数に量子化してから演算し 255 で割って戻すので、**浮動小数の階調は失われる**(0.501 と 0.503 は同じ値になる)。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Pixelwise minimum of two images.
+2 枚の画像の画素ごとの最小値。HALCON の ``min_image`` に相当。``a``, ``b`` は未使用。暗い方を残すので、反射ハイライトの抑制に使う。
 
 ## 参考(サンプルデータ・文献)
 

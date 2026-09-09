@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Union of two regions.
+2 つの領域の和(どちらかに入る画素)。HALCON の ``union2`` に相当。入力は ``> 0.5`` で二値化する。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

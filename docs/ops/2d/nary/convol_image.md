@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Convolve an image with a filter mask.
+第 2 入力をフィルタマスクとして畳み込む。HALCON の ``convol_image`` に相当。★HALCON と同じく**相関**(マスクを書いたまま重ねる)で計算する —— scipy の ``convolve`` はマスクを反転するので、非対称なマスクだと画像が逆向きにずれる。マスクは絶対値の総和で正規化し、端は ``reflect``。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Absolute difference of two images.
+2 枚の画像の差の絶対値。HALCON の ``abs_diff_image`` に相当。``out = clip(|I1 - I2| * (0.5 + 1.5a), 0, 1)``。変化検出の基本形で、符号を捨てる代わりに明暗どちらの変化も拾う。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

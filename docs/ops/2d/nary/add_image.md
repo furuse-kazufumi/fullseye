@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Add two images.
+2 枚の画像を加算する。HALCON の ``add_image`` に相当。``out = clip((I1 + I2) * (0.5 + a) + (b - 0.5), 0, 1)`` —— ``a`` がゲイン(0.5〜1.5 倍)、``b`` がオフセット(-0.5〜+0.5)。飽和は 0/1 で切る。
 
 ## 参考(サンプルデータ・文献)
 

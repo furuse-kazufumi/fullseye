@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">bit_and — 2D <code style="color:#22d3bf">nary</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image × image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: 入力 2 枚の op なので <code style="color:#22d3bf">fullseye.apply</code> では呼べない(あれは 1 画像モデル)。<code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;bit_and&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code> (<code style="color:#22d3bf">$</code> 始まりが外から渡す入力)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">bit_and</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>2 枚の画像のビット単位 AND。HALCON の `<code style="color:#22d3bf">bit_and</code><code style="color:#22d3bf"> に相当。★一度 8bit 整数に量子化してから演算し 255 で割って戻すので、**浮動小数の階調は失われる**(0.501 と 0.503 は同じ値になる)。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">nary</code>)</h3>
+<p><a style="color:#22d3bf" href="op:add_image">add_image</a> · <a style="color:#22d3bf" href="op:sub_image">sub_image</a> · <a style="color:#22d3bf" href="op:mult_image">mult_image</a> · <a style="color:#22d3bf" href="op:div_image">div_image</a> · <a style="color:#22d3bf" href="op:abs_diff_image">abs_diff_image</a> · <a style="color:#22d3bf" href="op:max_image">max_image</a> · <a style="color:#22d3bf" href="op:min_image">min_image</a> · <a style="color:#22d3bf" href="op:bit_or">bit_or</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgops_nary.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

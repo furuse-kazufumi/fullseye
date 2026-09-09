@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Reduce the domain of an image.
+画像の定義域を領域で絞る。HALCON の ``reduce_domain`` に相当。この層は明示的な定義域を持たないので、**領域外を 0 にする**(画像に領域を掛ける)ことで表す。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Bitwise OR of two images.
+2 枚の画像のビット単位 OR。HALCON の ``bit_or`` に相当。★``bit_and`` と同じく 8bit へ量子化してから演算するため階調が落ちる。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

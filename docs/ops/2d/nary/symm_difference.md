@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Symmetric difference of two regions.
+2 つの領域の対称差(どちらか一方だけに入る画素)。HALCON の ``symm_difference`` に相当。重なりを消すので、2 つのマスクのずれを見るのに使う。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

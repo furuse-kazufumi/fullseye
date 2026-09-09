@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Paint gray values into an image.
+第 2 画像(source)の濃淡を第 1 画像へ塗り込む。HALCON の ``paint_gray`` に相当。★塗る範囲は source の**非ゼロ画素すべて**(この層の約束「定義域の外は 0」に合わせた)。2026-09-03 までは ``> 0.5`` の画素だけを塗っていたため、**暗い source が消えていた**。``a``, ``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

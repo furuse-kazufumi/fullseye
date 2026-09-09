@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Divide two images.
+2 枚の画像を画素ごとに割る。HALCON の ``div_image`` に相当。``out = clip(I1 / max(I2, 1e-3) * (0.1 + 0.9a), 0, 1)`` —— ゼロ割を避けるため分母に下限 ``1e-3`` を敷く(そこでは商が最大 1000 倍になり飽和する)。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 

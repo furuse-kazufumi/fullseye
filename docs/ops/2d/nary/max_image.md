@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Pixelwise maximum of two images.
+2 枚の画像の画素ごとの最大値。HALCON の ``max_image`` に相当。``a``, ``b`` は未使用。明るい方を残すので、複数露光の合成や欠損の穴埋めに使う。
 
 ## 参考(サンプルデータ・文献)
 

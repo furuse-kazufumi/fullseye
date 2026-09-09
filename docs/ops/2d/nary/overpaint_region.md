@@ -19,7 +19,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Overpaint regions in an image.
+画像の領域の中を一定値で塗りつぶす。HALCON の ``overpaint_region`` に相当。塗る値は ``a``(0〜1)。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)
 
