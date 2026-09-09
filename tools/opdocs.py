@@ -1253,6 +1253,17 @@ _SKILL_END = "<!-- opdocs:corpus-map end -->"
 _SKILL_MD = os.path.join(_ROOT, "skills", "fullseye-ops", "SKILL.md")
 _SKILL_TEMPLATE_MD = os.path.join(_ROOT, "fullseye", "skill_template", "SKILL.md")
 
+#: Families whose subject is *physical measurement* rather than generic image
+#: manipulation — the reason to reach for this library instead of OpenCV.
+#: Authored on purpose: size cannot tell you what a family is *about* (ranking by
+#: note count nominates `annotate` and `gfx2d`, which are drawing utilities).
+#: ``cmd_skill`` fails closed if one of these names is no longer in the corpus,
+#: so a rename cannot leave the claim standing over an empty directory.
+_MEASUREMENT_FAMILIES = ("optics", "piv", "tomography", "interferometry",
+                         "lightfield", "photon", "rangedoppler", "acoustics",
+                         "specular", "dem", "astrostack", "motionmag",
+                         "imgforensics", "roughness", "quat")
+
 
 def corpus_families():
     """Walk ``docs/ops/`` → ``[(family, ops, categories, guides), ...]``.
