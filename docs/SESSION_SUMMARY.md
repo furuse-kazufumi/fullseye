@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-09 08:32:07
+- **最終更新**: 2026-09-09 09:04:53
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+c4db741e4 成熟度は書かずに数える + 走らせる門を、走っていなかった 83 本へ広げる
 4d9e45485 auto: gen_maturity.py 編集前 (2026-09-09 08:15)
 57002a74d auto: gen_maturity.py 編集前 (2026-09-09 08:15)
 e25452263 auto: gen_maturity.py 編集前 (2026-09-09 08:15)
@@ -19,35 +20,20 @@ e25452263 auto: gen_maturity.py 編集前 (2026-09-09 08:15)
 5aaf4be89 auto: gen_maturity.py 編集前 (2026-09-09 08:14)
 ed30a4f00 auto: gen_maturity.py 編集前 (2026-09-09 08:14)
 6eaf6eb57 auto: gen_maturity.py 編集前 (2026-09-09 08:14)
-7394a372b Zenodo の書庫メタデータと、DOI が古びないための門
 ```
 
 ## 現在の git status
 
 ```
-M CHANGELOG.md
- M CONTRIBUTING.md
- M README.md
- M docs/CAPABILITIES.en.md
- M docs/CAPABILITIES.md
- M docs/GETTING_STARTED.md
- M docs/MATURITY.md
- M docs/README.de.md
- M docs/README.en.md
- M docs/README.ko.md
- M docs/README.md
- M docs/README.tw.md
- M docs/README.zh.md
- M docs/capabilities/blob-and-region.md
- M docs/maturity.json
- M tools/gen_maturity.py
-?? tests/test_maturity.py
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:31 .pytest_cache/v/cache/nodeids
+09:01 .pytest_cache/v/cache/nodeids
+08:43 data/auto_functional_gate.json
+08:32 docs/SESSION_SUMMARY.md
 08:30 README.md
 08:30 docs/GETTING_STARTED.md
 08:27 CHANGELOG.md
@@ -60,8 +46,6 @@ M CHANGELOG.md
 08:22 docs/README.tw.md
 08:22 docs/README.zh.md
 08:22 docs/README.en.md
-08:17 docs/CAPABILITIES.md
-08:17 docs/CAPABILITIES.en.md
 ```
 
 ---
