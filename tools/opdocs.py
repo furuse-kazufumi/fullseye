@@ -1070,7 +1070,14 @@ def cmd_md():
 # sample-data catalog  (real download URLs / licences)
 # ------------------------------------------------------------------ #
 
-def cmd_samples():
+def samples_md() -> str:
+    """``docs/ops/SAMPLES.md`` の中身を**書かずに**組み立てて返す。
+
+    ★書き出しと分けてある理由(2026-09-09): 分けていないと「コミット済み ==
+    生成物」の drift 検査が書けない。実際 ``tests/test_opdocs.py`` は SAMPLES.md
+    について**存在と著作権行しか見ておらず**、中身が古びても素通りしていた ——
+    すぐ下の fingerprint と同じ「主張だけあって実装が無い検査」の形。
+    """
     out = ["# Fullseye サンプルデータ カタログ", "",
            "op の動作確認・デバッグに使える**実在**のサンプルデータ源(DL URL / ライセンス / 取得法)。"
            "同梱はせず**ユーザー DL 方式**(`fullseye` の `sample_data` / `sample_images`)。fail-closed"
