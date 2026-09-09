@@ -874,12 +874,12 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
         # モデル。ここに 1 画像の呼び方を書くと、**ノートが嘘をつく**(この
         # ノートの唯一の仕事は「どう呼ぶか」なので、それは無いより悪い)。
         # 公開経路は `fullseye.FullseyeGraph`。
+        _ins = ", ".join('"in%d"' % (i + 1) for i in range(int(rec["arity"])))
         lines.append(T('- **呼び出し**: 入力 {a1} 枚の op なので `fullseye.apply` では'
-                       '呼べない。`g = fullseye.FullseyeGraph(); '
-                       'g.add("out", "{a0}", ["in1", "in2"][:{a1}], a=0.5, b=0.5)` '
-                       '(実装は `import imgops_nary; '
-                       '{{o.name: o for o in imgops_nary.build_nary()}}["{a0}"].fn(inputs, a, b)`)',
-                       lang).format(a0=name, a1=rec["arity"]))
+                       '呼べない(あれは 1 画像モデル)。`g = fullseye.FullseyeGraph(); '
+                       'g.add("out", "{a0}", [{a2}], a=0.5, b=0.5)` —— '
+                       '入力ノードは先に `g.add("in1", ...)` で置く',
+                       lang).format(a0=name, a1=rec["arity"], a2=_ins))
     elif dim == "2d":
         lines.append(T('- **呼び出し**: `fullseye.apply(img, "{a0}", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)', lang).format(a0=name))
     else:
