@@ -91,6 +91,26 @@ def test_index_and_samples_generated():
     assert "fingerprint" in top and "fullseye" in top, "version/fingerprint linkage missing in top INDEX"
 
 
+def test_samples_catalog_matches_generator_no_drift():
+    """``docs/ops/SAMPLES.md`` の**中身**がコミット済みと一致すること。
+
+    ★2026-09-09 まで、この生成物を見ていたのは上の
+    ``test_index_and_samples_generated`` だけで、**存在と著作権行しか**確かめて
+    いなかった。だから ``sample_data`` の台帳が増えても SAMPLES.md は古いまま
+    素通りし、実際に 11 行ぶん古びていた(``tools/regen_all.py`` を作った日に、
+    その初回実行が見つけた)。
+
+    すぐ下の fingerprint と同じ形 —— **主張だけあって実装が無い検査は、無い検査
+    より悪い**。「生成している」と読める文言が残るぶん、誰も見に行かなくなる。
+    """
+    requires_full_registry()
+    with open(os.path.join(ROOT, "docs", "ops", "SAMPLES.md"), encoding="utf-8") as f:
+        on_disk = f.read()
+    assert on_disk == OD.samples_md(), (
+        "docs/ops/SAMPLES.md が古い —— `py -3.11 tools/opdocs.py samples`"
+        "(または `py -3.11 tools/regen_all.py`)で作り直す")
+
+
 def test_index_fingerprint_matches_the_live_registry():
     """目次の fingerprint が **live レジストリと実際に一致**すること。
 
