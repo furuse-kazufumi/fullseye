@@ -140,7 +140,10 @@ def floors(ground, detector, pos, amps, sigma=DEFECT_SIGMA, tol=TOL, **kw):
     return np.array(out, dtype=np.float64)
 
 
-AMPS = np.round(np.geomspace(0.005, 3.0, 34), 5)
+#: 振幅の刻み。★これ自体がノブ。粗いと限界が同じ格子点に丸まって、
+#: 「σ が大きいほど差が開く」のような**刻みが作った差**を本物と誤読する
+#: (2026-09-09、34 段では σ=1.5 と σ=3.0 の中央値がどちらも 3.20 に丸まった)。
+AMPS = np.round(np.geomspace(0.005, 3.0, 60), 5)
 
 
 def section_floor(real, rng):
