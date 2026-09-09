@@ -223,15 +223,19 @@ def section_position(real, rng):
     return spread
 
 
-def false_alarms(train, test, detector, quantile=99.99, **kw):
+#: 検査中に起きる照明のずれ(ランプの劣化・絞りの個体差)。2 % は控えめな値。
+LAMP_DRIFT = 0.02
+
+
+def false_alarms(train, test, detector, quantile=99.99, offset=0.0, **kw):
     """**別の無欠陥画像**で決めた閾値が、無欠陥の検査画像で何回鳴るか(1 万画素あたり)。
 
     ★同じ画像から閾値を決めると、定義上その分位数ぶんしか超えないので**弁別を
     測れない**。現場では閾値は別のロットで決めるので、ここでも同じ素材の
-    **重ならない切り出し**で決める。
+    **重ならない切り出し**で決める。``offset`` は照明のずれ(全体を一律に持ち上げる)。
     """
     thr = float(np.percentile(detector(train, **kw), quantile))
-    s = detector(test, **kw)
+    s = detector(test + offset, **kw)
     return float((s > thr).sum()) * 1e4 / s.size, thr
 
 
