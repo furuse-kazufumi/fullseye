@@ -1326,13 +1326,12 @@ def skill_corpus_map() -> str:
         "",
         listing + ".",
         "",
-        f"★ `2d` and `3d` hold {core_n} of the {total} notes. The other "
-        f"{len(spec)} families hold the rest — and they are what this library has that a "
-        "general-purpose CV package does not: "
-        + ", ".join(f"`{f[0]}` ({f[1]})" for f in headline)
-        + ", and more. **Grepping only `2d/` and `3d/` misses "
-        f"{total - core_n} notes** and every differentiator. Start at "
-        "`docs/ops/INDEX.md`, which lists all of them.",
+        f"★ `2d` and `3d` hold {core_n} of the {total} notes, so **grepping only those "
+        f"two directories misses {total - core_n}**. Among what it misses are the "
+        f"{len(headline)} physical-measurement families ({headline_n} notes) that are "
+        "the reason to reach for this library instead of a general-purpose CV package: "
+        + ", ".join("`%s` (%d)" % (n, sizes[n]) for n in headline)
+        + ". Start at `docs/ops/INDEX.md`, which lists every family with its size.",
         "",
         _SKILL_END,
     ])

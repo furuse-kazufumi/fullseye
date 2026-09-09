@@ -44,7 +44,7 @@ Fullseye ships **1912 operator notes** in **32 families** — one generated Mark
 
 **2d** 899 · **3d** 357 · **optics** 124 · **annotate** 51 · **reprconv** 42 · **oned** 39 · **gfx2d** 32 · **math** 27 · **piv** 26 · **imgmetrics** 24 · **acoustics** 20 · **dem** 19 · **quat** 19 · **lightfield** 17 · **photon** 17 · **tomography** 17 · **imgforensics** 16 · **shapestat** 16 · **videostream** 16 · **astrostack** 14 · **measure1d** 14 · **shape2d** 13 · **specular** 13 · **profile** 12 · **colortransport** 11 · **volcolor** 11 · **blob** 10 · **interferometry** 9 · **motionmag** 9 · **rangedoppler** 8 · **roughness** 6 · **cadmap** 4.
 
-★ `2d` and `3d` hold 1256 of the 1912 notes. The other 30 families hold the rest — and they are what this library has that a general-purpose CV package does not: `optics` (124), `annotate` (51), `reprconv` (42), `oned` (39), `gfx2d` (32), `math` (27), and more. **Grepping only `2d/` and `3d/` misses 656 notes** and every differentiator. Start at `docs/ops/INDEX.md`, which lists all of them.
+★ `2d` and `3d` hold 1256 of the 1912 notes, so **grepping only those two directories misses 656**. Among what it misses are the 15 physical-measurement families (334 notes) that are the reason to reach for this library instead of a general-purpose CV package: `optics` (124), `piv` (26), `acoustics` (20), `dem` (19), `quat` (19), `lightfield` (17), `photon` (17), `tomography` (17), `imgforensics` (16), `astrostack` (14), `specular` (13), `interferometry` (9), `motionmag` (9), `rangedoppler` (8), `roughness` (6). Start at `docs/ops/INDEX.md`, which lists every family with its size.
 
 <!-- opdocs:corpus-map end -->
 
