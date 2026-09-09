@@ -445,7 +445,7 @@ def test_the_notes_have_actual_content_not_just_structure():
 def test_every_note_carries_the_structural_parts():
     """構造は**全数**。1 本でも欠けたら落とす(こちらは ratchet にしない)。"""
     notes = [p for p in (DOCS / "ops").rglob("*.md")
-             if p.name not in ("INDEX.md", "SAMPLES.md")
+             if not _INDEX_RE.match(p.name) and p.name != "SAMPLES.md"
              and "guides" not in p.parts]
     need = ("**呼び出し**", "**データ種**", "## 実行できる例",
             "型が繋がる次の op")
