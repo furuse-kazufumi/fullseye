@@ -223,26 +223,16 @@ def section_position(real, rng):
     return spread
 
 
-def floors_discriminated(ground, detector, pos, amps, sigma=DEFECT_SIGMA,
-                         tol=TOL, quantile=99.99, **kw):
-    """「当てた」に加えて、**地だけで決めた閾値を超える**ことも求める限界。
+def false_alarms(train, test, detector, quantile=99.99, **kw):
+    """**別の無欠陥画像**で決めた閾値が、無欠陥の検査画像で何回鳴るか(1 万画素あたり)。
 
-    ★閾値は無欠陥の地だけから決める(その検出器が「何も無いのに鳴る」水準)。
-    ここでは per-image 正規化をしない検出器(生・整合フィルタ)にだけ使う。
+    ★同じ画像から閾値を決めると、定義上その分位数ぶんしか超えないので**弁別を
+    測れない**。現場では閾値は別のロットで決めるので、ここでも同じ素材の
+    **重ならない切り出し**で決める。
     """
-    base = detector(ground, **kw)
-    thr = float(np.percentile(base, quantile))
-    out = []
-    for (r, c) in pos:
-        got = np.inf
-        for amp in amps:
-            s = detector(ground + blob(ground.shape, r, c, amp, sigma), **kw)
-            pr, pc = np.unravel_index(np.argmax(s), s.shape)
-            if s[pr, pc] > thr and (pr - r) ** 2 + (pc - c) ** 2 <= tol ** 2:
-                got = amp
-                break
-        out.append(got)
-    return np.array(out, dtype=np.float64)
+    thr = float(np.percentile(detector(train, **kw), quantile))
+    s = detector(test, **kw)
+    return float((s > thr).sum()) * 1e4 / s.size, thr
 
 
 def section_null(real):
