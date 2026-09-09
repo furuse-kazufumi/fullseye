@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 139 von 609. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 259 von 609. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -358,76 +358,76 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L408** — ★Ein Hin- und Rücklauf kann "beide in dieselbe Richtung falsch" nicht ausschließen. Gegen eine unabhängige Implementierung abgleichen.
 - **L437** — ★Vorhersage (vor dem Messen gedruckt): Die Neigung ist atan|∇H|. Mit h wird es atan|∇H+∇N|.
-- **L464** _(ja)_ — ★予測と実測の最大差は「模型の誤り」か「離散化」かを分ける。セルを細かくする。
-- **L584** _(ja)_ — ★予測(閉形式): 下り方向が 90 度以上回る ⇔ ∇H・(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H・∇N < 0。測る前に率を出しておく。
-- **L644** _(ja)_ — ★2 つ目の(こちらが本命の)閉形式。視線は両端の h で引くので、N の**線形部**は 視線にも地面にも同じだけ乗って消える。残るのは N が弦から離れる量 = |N''| d^2 / 8。この場の N'' は 2C(cos^2θ - sin^2θ) なので |N''| <= 2C。
-- **L1106** _(ja)_ — ★``vertical`` だけは op_find が 5 件返す。**中身は 1 つも関係ない** (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。
+- **L464** — ★Trenne die maximale Differenz zwischen Vorhersage und Messung in 'Modellfehler' vs. 'Diskretisierung'. Verfeinere die Zellen.
+- **L584** — ★Vorhersage (geschlossene Form): die Abwärtsrichtung dreht sich um mehr als 90 Grad ⇔ ∇H·(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H·∇N < 0. Berechne die Rate vor der Messung.
+- **L644** — ★Die zweite (und eigentlich entscheidende) geschlossene Form. Da die Sichtlinie durch h an beiden Enden gezogen wird, liegt der **lineare Anteil** von N gleichermassen auf Sichtlinie und Boden und hebt sich auf. Es bleibt der Betrag, um den N von der Sehne abweicht = |N''| d^2 / 8. Hier ist N'' gleich 2C(cos^2θ - sin^2θ), also |N''| <= 2C.
+- **L1106** — ★Nur bei ``vertical`` liefert op_find 5 Treffer. **Kein einziger ist relevant** (Stamm-Übereinstimmungen wie ``boundary_vertices``) —— behaupte nie anhand der Anzahl, es 'existiere'.
 
 ## `examples/poc_interferometry_step.py`
 
-- **L159** _(ja)_ — 3) ★繰り返し測定 — 偏りと散らばりを分ける # ------------------------------------------------------------------ #
-- **L202** _(ja)_ — 4) ★ゼロ点(包絡線の最大サンプル)との比較 # ------------------------------------------------------------------ #
-- **L274** _(ja)_ — 6) ★雑音掃引 — どこで測れなくなるか # ------------------------------------------------------------------ #
-- **L314** _(ja)_ — ★散らばりが小さいことは正しさの証拠にならない
+- **L159** — 3) ★Wiederholte Messung — Verzerrung von Streuung trennen # ------------------------------------------------------------------ #
+- **L202** — 4) ★Vergleich mit dem Nullpunkt (die maximale Probe der Einhüllenden) # ------------------------------------------------------------------ #
+- **L274** — 6) ★Rausch-Sweep — wo die Messung zusammenbricht # ------------------------------------------------------------------ #
+- **L314** — ★Eine kleine Streuung ist kein Beleg für Korrektheit
 
 ## `examples/poc_leak_localization.py`
 
-- **L591** _(ja)_ — ★予測 C の検定 —— 漏水位置を細かく振って小数部を散らす
-- **L726** _(ja)_ — ★対照群 —— 反射だけを左右入れ替える。偏りの向きが反転すれば 「遠いほうの継手が偏りの向きを決める」が原因だと言える。
+- **L591** — ★Test von Vorhersage C —— variiere die Leckposition fein, um den Nachkommaanteil zu streuen
+- **L726** — ★Kontrollgruppe —— vertausche nur die Reflexionen links/rechts. Kehrt sich die Richtung der Verzerrung um, lässt sich sagen, die Ursache ist 'die weiter entfernte Verbindung bestimmt die Richtung der Verzerrung'.
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L406** _(ja)_ — ★測れなかった core の面積は土量に一切入らない。有効率で割り戻した値も返す —— 割り戻さないと「静かに欠けた土量」を正しい値だと思ってしまう。
-- **L694** _(ja)_ — ★真値に近い数字が「正しい」とは限らない —— 逆向きの 2 つの誤差を分けて数える
-- **L823** _(ja)_ — ★有効 core が少なすぎるときの LoD は「測った」ことにしない (2 点の標準偏差は数字にはなるが意味を持たない)。
-- **L826** _(ja)_ — ★ここで間引くと C2C が「間引き後の点間隔」を測ってしまい、密度依存が消える (最初に 6000 点へ揃えて書いたら、どの密度でも 0.42 m の一定値になった)。
-- **L946** _(ja)_ — --- ★ 合わせた分だけ変化が消える -------------------------------------- #
+- **L406** — ★Die Fläche der nicht messbaren Cores geht überhaupt nicht in die Erdmenge ein. Gib auch den durch die effektive Rate zurückgerechneten Wert zurück —— ohne Zurückrechnen hält man die 'still fehlende Erdmenge' für den korrekten Wert.
+- **L694** — ★Eine Zahl nahe am wahren Wert ist nicht zwangsläufig 'korrekt' —— zähle die zwei entgegengesetzten Fehler getrennt
+- **L823** — ★Wenn zu wenige gültige Cores vorliegen, gilt die LoD nicht als 'gemessen' (die Standardabweichung von 2 Punkten ergibt eine Zahl, hat aber keine Bedeutung).
+- **L826** — ★Wenn du hier ausdünnst, misst C2C am Ende den 'Punktabstand nach dem Ausdünnen', und die Dichteabhängigkeit verschwindet (als ich es zuerst auf 6000 Punkte angeglichen schrieb, ergab sich bei jeder Dichte ein konstanter Wert von 0.42 m).
+- **L946** — --- ★ Genau um den Betrag, den du wegjustierst, verschwindet die Änderung -------------------------------------- #
 
 ## `examples/poc_lightfield_depth.py`
 
-- **L594** _(ja)_ — 2b. ★ 穴 (d): docstring は 0-d と言うが実際は (1,)
-- **L610** _(ja)_ — 6. ★ 穴 (a): 既定 linear は 1.15 を 1.0 側へ引く、cubic は引かない
-- **L634** _(ja)_ — 10. ★ 穴 (e) は 2026-09-06 に塞がった。**塞がった状態を固定する**側へ 書き換えてある(以前は「警告が出ること」を assert していた)。
+- **L594** — 2b. ★ Lücke (d): der docstring sagt 0-d, tatsächlich ist es (1,)
+- **L610** — 6. ★ Lücke (a): das voreingestellte linear zieht 1.15 in Richtung 1.0, cubic nicht
+- **L634** — 10. ★ Lücke (e) wurde am 2026-09-06 geschlossen. Sie wurde auf die Seite umgeschrieben, die **den geschlossenen Zustand festhält** (zuvor wurde per assert geprüft, dass 'eine Warnung ausgegeben wird').
 
 ## `examples/poc_livestock_body_volume.py`
 
-- **L1032** _(ja)_ — ★3 台と 6 台は接線の集合が完全に一致する(平行投影では向かい合う 2 台が同じ)
-- **L1040** _(ja)_ — ★奇数 13 台が偶数 16 台に勝つ
-- **L1054** _(ja)_ — ★3-D の凸包は「断面の凸包」の代役にならない(胸囲を大きく外す)
-- **L1057** _(ja)_ — ★2 倍則: 胸囲の誤差が体重で 2 倍になる(残差は 2 次項)
+- **L1032** — ★3 und 6 Kameras liefern exakt dieselbe Menge an Tangenten (in Parallelprojektion fallen zwei gegenüberliegende zusammen)
+- **L1040** — ★Ungerade 13 Kameras schlagen gerade 16
+- **L1054** — ★Eine 3-D-konvexe Hülle ist kein Ersatz für die 'konvexe Hülle des Querschnitts' (sie verfehlt den Brustumfang deutlich)
+- **L1057** — ★Verdopplungsgesetz: der Brustumfangfehler verdoppelt sich mit dem Körpergewicht (der Rest ist ein Term 2. Ordnung)
 
 ## `examples/poc_machine_condition_fusion.py`
 
-- **L184** _(ja)_ — (継手, 軸受A, 軸受B, 機械全体) の発熱 [W]。★正常・アンバランス・ゆるみは **わざと同じ**にしてある —— 熱では原理的に分けられない 3 モード。
-- **L202** _(ja)_ — ★軸受と同じくらい熱い。違うのは**広がり**だけ(両軸受 + 機械全体)。
-- **L1028** _(ja)_ — ★2026-09-08: ここは numpy の rfft を自前で書いていた —— 「片側振幅 スペクトルの口が台帳に無い」と読んだためだが、`fs.spectrum` は **前から在った**(台帳に出ていなかっただけ)。1 つの層だけ見て 「無い」と決めた例なので、op を使う形に直す。
-- **L1162** _(ja)_ — ★2026-09-08: ここは「台帳に spectrum が無い」と書いていたが、 **`fs.spectrum` は最初から在った**(dsp の 1-D 層)。無かったのは 「台帳(`fs.ledger`)に出ていること」と「op ごとのノート」だけで、 この PoC は 1 つの層しか引かずに「無い」と決め、numpy の rfft を 自前で書いていた。ops1d を台帳へ繋いだのでいまは両方から引ける。
+- **L184** — Wärmeentwicklung [W] von (Kupplung, Lager A, Lager B, Gesamtmaschine). ★Normal, Unwucht und Lockerheit sind **absichtlich identisch** gemacht —— 3 Modi, die sich prinzipiell nicht anhand der Wärme trennen lassen.
+- **L202** — ★So heiss wie die Lager. Der einzige Unterschied ist die **Ausbreitung** (beide Lager + Gesamtmaschine).
+- **L1028** — ★2026-09-08: hier hatten wir numpys rfft selbst geschrieben —— weil wir es als 'kein Eintrag für ein einseitiges Amplitudenspektrum im Register' gelesen hatten, aber `fs.spectrum` **war von Anfang an da** (es tauchte nur nicht im Register auf). Das ist ein Fall, in dem 'existiert nicht' entschieden wurde, nachdem nur eine Schicht betrachtet wurde, also auf die op-Nutzung umschreiben.
+- **L1162** — ★2026-09-08: hier stand geschrieben 'kein spectrum im Register', aber **`fs.spectrum` war von Anfang an da** (die 1-D-Schicht von dsp). Es fehlte nur 'das Erscheinen im Register (`fs.ledger`)' und 'die Notizen je op'; dieses PoC zog nur aus einer Schicht, entschied 'existiert nicht' und schrieb numpys rfft selbst. Da ops1d nun ins Register eingebunden ist, lässt es sich jetzt aus beiden nachschlagen.
 
 ## `examples/poc_mesh_quality_repair.py`
 
-- **L602** _(ja)_ — ★飽和させて見せる。素の差は最大 %.2f mm で、そのまま塗ると 99 %% の画素が 0 の真っ黒になり「走ったが何も出ていない」図になる。
-- **L816** _(ja)_ — ★両対数で描く。線形軸だと誤差が粗い側の 1 点に潰れて、傾き(=誤差則)が まったく読めない図になる(2026-09-07 に一度そう描いた)。
-- **L832** _(ja)_ — ★累積分布をそのまま重ねると 4 本とも 0.9 以上で潰れて何も読めない。 動いているのは**上の裾**なので、分位点 0.5〜0.99 を横軸にして 「その分位点の曲率」を縦に描く(逆累積の上半分)。
+- **L602** — ★Zeige es gesättigt. Der reine Unterschied beträgt höchstens %.2f mm, und färbt man ihn unverändert, werden 99 %% der Pixel 0 und pechschwarz — eine Abbildung nach dem Motto 'lief, aber nichts ist zu sehen'.
+- **L816** — ★Zeichne log-log. Auf linearen Achsen kollabiert der Fehler auf einen einzigen Punkt auf der groben Seite, sodass sich die Steigung (= Fehlergesetz) gar nicht ablesen lässt (am 2026-09-07 einmal so gezeichnet).
+- **L832** — ★Legt man die kumulativen Verteilungen unverändert übereinander, drängen sich alle 4 über 0.9 und nichts ist ablesbar. Was sich bewegt, ist der **obere Rand**, also lege die Quantile 0.5–0.99 auf die x-Achse und zeichne 'die Krümmung an diesem Quantil' auf die y-Achse (die obere Hälfte der inversen Kumulierten).
 
 ## `examples/poc_metal_grain_size.py`
 
-- **L568** _(ja)_ — ★実測はそれより遅い。マスク上で実際に消えている粒界画素の割合 f_eff は f より 小さい(ぼけが隙間の両端 1 px に隣の黒を漏らし、局所しきい値がそれを拾う)ので、 f_eff で引き直した予測 ΔG0 + 6.64 log10(1-f_eff) と突き合わせる。
+- **L568** — ★Die Messung ist langsamer als das. Der Anteil der auf der Maske tatsächlich getilgten Korngrenzen-Pixel, f_eff, ist kleiner als f (die Unschärfe lässt das benachbarte Schwarz in die 1 px an beiden Enden des Spalts durchsickern, und die lokale Schwelle greift es auf), also vergleiche mit der über f_eff neu abgeleiteten Vorhersage ΔG0 + 6.64 log10(1-f_eff).
 
 ## `examples/poc_multibeam_bathymetry.py`
 
-- **L518** _(ja)_ — エコーを合成する部分角の本数。★これを 61 にすると、70 度では隣り合う 部分角の到来時間が 330 µs 離れ、パルス幅 64 µs より広くなるので、包絡線が **櫛**になって振幅検出が歯を 1 本拾う(検出のずれが -1131 µs と出た)。 到来時間の密度をヒストグラムで作り、パルスで畳むほうが正しい。
-- **L546** _(ja)_ — ★下限を 0 でクリップしない —— 直下ビームは片側だけになり、照らす帯が 半分になってしまう(フットプリントが半分に出る形で 1 度踏んだ)。
-- **L703** _(ja)_ — ★横軸を**そのビーム自身のエコー長**で割る。生の µs で重ねると 70 度(21 ms)が軸を独占して、直下と 45 度が縦線 1 本になる。
-- **L706** _(ja)_ — ★``plot_series`` は xlim の外の点を**拒否する**(枠に貼り付いて 本物のデータに見えるから)。切るのは呼び手の仕事なので先に切る。
-- **L1125** _(ja)_ — ★重なりの**真ん中**を見てはいけない —— そこは両測線とも同じ振れ角なので、 誤差が同じだけ乗って差がゼロになる。**帯全体で最大**を取る。
-- **L1196** _(ja)_ — ★縦軸は**高さ**(= −深さ)にする。深さのまま描くと上下が逆さになり、 「笑っている」形が「しかめ面」に見えてしまう。
-- **L1267** _(ja)_ — ★縦軸は −深さ。深さのまま描くと海面が下、海底が上の逆さ図になる。
-- **L1301** _(ja)_ — ★``op_find`` は語幹の部分一致で拾うので、件数が 0 でなくても中身は 無関係なことがある("footprint" → ``sk_median_disk``)。**最上位の 名前まで見て**から「無い」と言う。
-- **L1428** _(ja)_ — ★全経路の崖は**予測より手前**。差は振幅検出の偏り(閉形式に無い量)
+- **L518** — Die Anzahl der Teilwinkel, die das Echo synthetisieren. ★Setzt man dies auf 61, liegen bei 70 Grad die Ankunftszeiten benachbarter Teilwinkel 330 µs auseinander, breiter als die Pulsbreite von 64 µs, sodass die Einhüllende zu einem **Kamm** wird und die Amplitudendetektion einen Zahn aufgreift (der Detektionsversatz ergab -1131 µs). Korrekter ist es, ein Histogramm der Ankunftszeitdichte zu bilden und mit dem Puls zu falten.
+- **L546** — ★Klemme die Untergrenze nicht bei 0 —— der Nadir-Strahl wird dann einseitig und das beleuchtete Band halbiert sich (bin einmal darauf hereingefallen, wobei der Footprint halb herauskam).
+- **L703** — ★Teile die x-Achse durch **die eigene Echolänge des Strahls**. Legt man in rohen µs übereinander, monopolisiert 70 Grad (21 ms) die Achse, und Nadir und 45 Grad fallen zu einer einzigen senkrechten Linie zusammen.
+- **L706** — ★``plot_series`` **verweigert** Punkte ausserhalb von xlim (weil sie am Rahmen kleben und wie echte Daten aussehen). Das Beschneiden ist Aufgabe des Aufrufers, also vorher beschneiden.
+- **L1125** — ★Schau nicht auf die **Mitte** der Überlappung —— dort haben beide Messlinien denselben Schwenkwinkel, sodass derselbe Fehler auf beiden liegt und die Differenz null wird. Nimm das **Maximum über das gesamte Band**.
+- **L1196** — ★Mach die y-Achse zur **Höhe** (= −Tiefe). Zeichnet man die Tiefe unverändert, kippen oben und unten, und eine 'lächelnde' Form sieht aus wie ein 'Stirnrunzeln'.
+- **L1267** — ★Die y-Achse ist −Tiefe. Zeichnet man die Tiefe unverändert, ergibt sich eine auf dem Kopf stehende Abbildung mit der Meeresoberfläche unten und dem Meeresboden oben.
+- **L1301** — ★``op_find`` trifft über partielle Stämme, daher können die Inhalte auch bei einer Anzahl ungleich 0 irrelevant sein ("footprint" → ``sk_median_disk``). **Schau bis zum Namen der obersten Ebene**, bevor du 'existiert nicht' sagst.
+- **L1428** — ★Die Klippe des Alle-Pfade-Falls liegt **früher als vorhergesagt**. Der Unterschied ist die Verzerrung der Amplitudendetektion (eine Grösse, die in der geschlossenen Form fehlt)
 
 ## `examples/poc_nuclei_ploidy.py`
 
-- **L686** _(ja)_ — ★逆向きの 2 つの失敗が打ち消して「真値ぴったり」に化ける行が実在する
+- **L686** — ★Es gibt tatsächlich Zeilen, in denen sich zwei entgegengesetzte Fehlschläge aufheben und sich als 'exakt der wahre Wert' tarnen
 
 ## `examples/poc_pallet_load_utilization.py`
 
@@ -513,132 +513,132 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_registration_basin.py`
 
-- **L656** _(ja)_ — ★利用者が「法線なら在るじゃないか」と `estimate_normals` を明示的に渡した場合。 ここが穴の**残り**で、既定より 14 桁悪い。
-- **L836** _(ja)_ — ★2026-09-06 に穴 1 が塞がった。この assert は**塞がった状態を固定する** 側へ書き換えてある(以前は `d_fixed < 1e-6 < d_default` = 壊れている ことを固定していた)。壊れ方が戻ってきたらここが落ちる。
-- **L847** _(ja)_ — ★2026-09-06 に穴 2 が塞がった。以前は `< 0.9 * len(ka)`(壊れていることを 固定)だった。いまは**既定のままで完全一致する**ことを固定する。
+- **L656** — ★Wenn der Nutzer `estimate_normals` explizit uebergibt, im Glauben, die Normalen seien doch vorhanden. Das ist der **Rest** der Luecke, 14 Groessenordnungen schlechter als der Standard.
+- **L836** — ★Luecke 1 wurde am 2026-09-06 geschlossen. Dieses assert wurde so umgeschrieben, dass es **den geschlossenen Zustand fixiert** (frueher fixierte es den defekten Zustand: `d_fixed < 1e-6 < d_default` = defekt). Kehrt der Defekt zurueck, schlaegt es hier fehl.
+- **L847** — ★Luecke 2 wurde am 2026-09-06 geschlossen. Frueher war es `< 0.9 * len(ka)` (den defekten Zustand fixierend). Jetzt fixiert es, dass **der Standard eine exakte Uebereinstimmung liefert**.
 
 ## `examples/poc_rotation_invariance_audit.py`
 
-- **L115** _(ja)_ — ★HALCON 流の**領域**モーメント不変量。3-D 点群用の `moment_invariants` とは 別物(名前だけで選ぶと (N,3) を要求されて落ちる)。
-- **L208** _(ja)_ — ★相対ばらつきは分母がほぼ 0 だと意味を失う。Hu[1] は円に近い形では 真値がほぼ 0 なので、ここを黙って % で語ると「30 % ずれた」に化ける。
-- **L220** _(ja)_ — ★予測が外れたところ。書いた時点では「灰を補間して二値化し直すほうが荒れる」と 思っていたが、周囲長まわりは**逆**だった。
-- **L262** _(ja)_ — ★地がモノクロなので、輪郭は**彩度のある色**で描く。灰色には彩度が 無いので、彩度のある色はどの階調とも色相で区別がつく ―― 反転色より 確実で、しかも「これは重ねた線だ」と一目で判る。反転色が本領を 発揮するのは、地がカラーで「どの色を選んでも衝突しうる」とき。
+- **L115** — ★Momenten-Invarianten fuer **Regionen** im HALCON-Stil. Verschieden von `moment_invariants` fuer 3-D-Punktwolken (allein nach dem Namen gewaehlt, verlangt es (N,3) und schlaegt fehl).
+- **L208** — ★Die relative Streuung verliert ihre Bedeutung, wenn der Nenner nahe 0 liegt. Bei nahezu kreisfoermigen Formen ist der wahre Wert von Hu[1] nahe 0, sodass eine stillschweigende Angabe in % zu "um 30 % abweichend" wird.
+- **L220** — ★Wo die Vorhersage danebenlag. Beim Schreiben dachte ich "das Interpolieren des Grauwerts und erneute Binarisieren ist rauer", aber beim Umfang war es **umgekehrt**.
+- **L262** — ★Da der Hintergrund monochrom ist, wird die Kontur in einer **gesaettigten Farbe** gezeichnet. Grau hat keine Saettigung, sodass sich eine gesaettigte Farbe von jedem Tonwert im Farbton unterscheidet -- zuverlaessiger als eine invertierte Farbe, und man erkennt auf einen Blick, dass "dies eine ueberlagerte Linie ist". Invertierte Farben spielen ihre Staerke aus, wenn der Hintergrund farbig ist und "jede gewaehlte Farbe kollidieren koennte".
 
 ## `examples/poc_safety_clearance.py`
 
-- **L114** _(ja)_ — ★胴は**カプセル 2 本を並べて**作る。1 本の円柱にすると断面が円になり、 肩(体幹中心から ±0.19 m)が胴の影から外れてしまう —— 実際の胴は幅 0.50 m / 奥行き 0.30 m の扁平な断面で、伸ばした腕は背後から見ると胴に隠れる。
-- **L126** _(ja)_ — ★X0 と速度は「どの試行でも真の分離距離が正のまま(接触しない)」かつ 「危険な帯に十分な時間とどまる」ように選んである —— 速く歩かせると 危険な帯を数フレームで通り抜けてしまい、見落としを数える標本が足りない。
-- **L673** _(ja)_ — ★遮蔽を入れたまま密度を振ると、遮蔽の偏り(+0.12 m)が全部の行に乗って 密度の効きが見えなくなる。要因を 1 つずつ止めるのが対照群の役目。
-- **L683** _(ja)_ — ★雑音と間引きの引きが 1 回だと見落とし率が数 % 上下する。3 回まわして平均。
-- **L840** _(ja)_ — ★行ごとにまとめて評価する(1 セルずつの Python ループだと 15000 回まわる)。
-- **L1079** _(ja)_ — ★ボリューム op は (depth,row,col)。grid_coords は (nx,ny,nz) なので転置する。
+- **L114** — ★Der Rumpf wird gebaut, indem **zwei Kapseln nebeneinander** gesetzt werden. Ein einzelner Zylinder macht den Querschnitt kreisrund, und die Schultern (±0.19 m von der Rumpfmitte) fallen aus dem Schatten des Rumpfs -- der reale Rumpf hat einen flachen Querschnitt von 0.50 m Breite / 0.30 m Tiefe, und ein ausgestreckter Arm wird von hinten gesehen vom Rumpf verdeckt.
+- **L126** — ★X0 und die Geschwindigkeit sind so gewaehlt, dass "der wahre Trennabstand in jedem Versuch positiv bleibt (kein Kontakt)" und "lange genug im Gefahrenband verweilt" -- schnelles Gehen durchquert das Gefahrenband in wenigen Frames, sodass zu wenige Stichproben zum Zaehlen der uebersehenen Detektionen bleiben.
+- **L673** — ★Variiert man die Dichte, waehrend die Verdeckung eingeschaltet bleibt, legt sich der Verdeckungs-Bias (+0.12 m) auf jede Zeile und verdeckt die Wirkung der Dichte. Die Aufgabe der Kontrollgruppe ist es, jeweils einen Faktor abzuschalten.
+- **L683** — ★Bei einer einzigen Ziehung von Rauschen und Ausduennung schwankt die Fehlerrate um einige %. Dreimal laufen lassen und mitteln.
+- **L840** — ★Zeilenweise gebuendelt auswerten (eine Python-Schleife pro Zelle liefe 15000 Mal).
+- **L1079** — ★Volumen-Ops sind (depth,row,col). grid_coords ist (nx,ny,nz), also transponieren.
 
 ## `examples/poc_scan_to_bim_asbuilt.py`
 
-- **L658** _(ja)_ — ★trim を掛けると「よく合う点だけ」を選び続けて RMSE 0.13 mm の別解へ落ちる (実測: trim=0.9 で吸う角が 0.17 mrad、trim なしで 0.62 mrad)。 as-built 検査では欠陥そのものが大きい残差なので、trim は欠陥を捨てる。
-- **L950** _(ja)_ — ★見出しの主張を 1 枚に: 無傷の天井が、合わせ方だけで傾いて見える
+- **L658** — ★Das Anwenden von trim waehlt weiterhin nur "die gut passenden Punkte" und faellt in eine andere Loesung mit RMSE 0.13 mm (gemessen: der eingezogene Winkel betraegt 0.17 mrad bei trim=0.9, 0.62 mrad ohne trim). Bei der As-built-Pruefung ist der Defekt selbst das grosse Residuum, sodass trim den Defekt verwirft.
+- **L950** — ★Die Kernaussage in einem Bild: eine unversehrte Decke erscheint allein durch die Art der Ausrichtung geneigt
 
 ## `examples/poc_sea_ice_concentration.py`
 
-- **L232** _(ja)_ — 2. ★ゼロ点 vs 線形混合分解 # --------------------------------------------------------------------------- #
-- **L252** _(ja)_ — 3. ★★塊の大きさ(周長)が偏りを決める # --------------------------------------------------------------------------- #
-- **L291** _(ja)_ — 4. ★★密接度で偏りの符号が反転する(打ち消し点) # --------------------------------------------------------------------------- #
-- **L353** _(ja)_ — 6. ★端成分が 5 % ずれたとき # --------------------------------------------------------------------------- #
+- **L232** — 2. ★Nulllinie vs lineare Mischungszerlegung # --------------------------------------------------------------------------- #
+- **L252** — 3. ★★Die Blob-Groesse (Umfang) bestimmt den Bias # --------------------------------------------------------------------------- #
+- **L291** — 4. ★★Das Vorzeichen des Bias kippt mit der Naehe (Aufhebungspunkt) # --------------------------------------------------------------------------- #
+- **L353** — 6. ★Wenn das Endglied um 5 % abweicht # --------------------------------------------------------------------------- #
 - **L380** _(ja)_ — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
-- **L490** _(ja)_ — (b) spec_unmix は在った(★「無い」と書く前に 3 層引いた)
+- **L490** — (b) spec_unmix existierte doch (★vor dem Schreiben von "nicht vorhanden" 3 Ebenen durchsucht)
 
 ## `examples/poc_search_sweep_width.py`
 
-- **L829** _(ja)_ — ★形の効き方は捜索の型で違う。走査幅を揃えて、曲線の形だけを比べる。
-- **L869** _(ja)_ — ★取りこぼし 1-P で描く。P そのものだと右上に貼りつき、凡例の箱に 隠れて見えない(実際に 1 度隠して気づいた)。**図は「読めるか」を 見てから決める** —— 数字が合っていても、隠れていれば伝わらない。
-- **L1089** _(ja)_ — ★再現性の検査: §3 とは種もフレーム数も別なので、同じ条件でどれだけ動くか。
-- **L1266** _(ja)_ — ★ゼロ点を上回っていること(誤検出率を揃えた上で)。倍率は控えめ —— 「ゼロ点でも 174 m 出る」ほうがこの節の所見なので、そこを固定する。
-- **L1272** _(ja)_ — ★外した予測: 全体の背景を引くのはアフィン変換なので、ゼロ点と実質同じ
-- **L1286** _(ja)_ — ★外した予測: 実測の p では平行捜索が C=1 で 1.000 に届かない
-- **L1290** _(ja)_ — ★形は平行捜索にだけ効く: 走査幅を揃えると、ランダムは一致し平行は割れる
-- **L1293** _(ja)_ — ★外した予測: 平らな曲線のほうが強いはずが、逆に弱かった(裾が長いため)
-- **L1296** _(ja)_ — (6) ★W 2 倍 と t 2 倍 は等価
-- **L1304** _(ja)_ — (8) ★見張り役: 誤検出は直下に集中する。閾値だけで W が大きく動く
-- **L1322** _(ja)_ — ★穴を埋めた側の門(2026-09-08)。op_find に和文の段を足し、star_detect の docstring に分野中立の説明語を書いたので、**和文で上位に出ること**を 固定する。退行するとここが鳴る。
-- **L1327** _(ja)_ — ★「点 検出」だけは今も出ない —— 「点」1 文字は cv_canny / frei_amp のような 輪郭 op の説明にも必ず出るので、同点が並んで押し出される。和文の段が 拾えるのは「2 文字以上の語が効く」場合だけ、という限界を隠さない。
+- **L829** — ★Wie die Form wirkt, haengt vom Suchtyp ab. Die Abtastbreite angleichen und nur die Kurvenform vergleichen.
+- **L869** — ★Mit der Fehlerrate 1-P zeichnen. P selbst klebt oben rechts und verschwindet hinter der Legendenbox, unsichtbar (ich habe es einmal tatsaechlich verdeckt und es bemerkt). **Die Abbildung erst festlegen, nachdem geprueft ist, ob sie "lesbar" ist** -- selbst wenn die Zahlen stimmen, vermittelt eine verdeckte Darstellung nichts.
+- **L1089** — ★Reproduzierbarkeitspruefung: da sowohl der Seed als auch die Frame-Anzahl von §3 abweichen, wie stark es sich unter denselben Bedingungen bewegt.
+- **L1266** — ★Dass es die Nulllinie uebertrifft (bei angeglichener Falsch-Positiv-Rate). Der Gewinn ist bescheiden -- "selbst die Nulllinie erreicht 174 m" ist der Befund dieses Abschnitts, und genau das wird fixiert.
+- **L1272** — ★Eine danebenliegende Vorhersage: das Subtrahieren des globalen Hintergrunds ist eine affine Transformation, also praktisch dasselbe wie die Nulllinie
+- **L1286** — ★Eine danebenliegende Vorhersage: mit dem gemessenen p erreicht die parallele Suche bei C=1 nicht 1.000
+- **L1290** — ★Die Form wirkt nur bei der parallelen Suche: bei angeglichener Abtastbreite stimmt der Zufall ueberein, waehrend die parallele sich aufspaltet
+- **L1293** — ★Eine danebenliegende Vorhersage: die flache Kurve sollte staerker sein, war aber stattdessen schwaecher (wegen ihres langen Auslaeufers)
+- **L1296** — (6) ★W verdoppeln und t verdoppeln sind aequivalent
+- **L1304** — (8) ★Waechter: Falsch-Positive konzentrieren sich direkt darunter. W bewegt sich allein durch den Schwellenwert stark
+- **L1322** — ★Das Gate auf der aufgefuellten Seite (2026-09-08). Da op_find eine japanische Textebene erhielt und in den docstring von star_detect domainneutrale Beschreibungsbegriffe geschrieben wurden, fixiert es, dass **es bei japanischen Anfragen weit oben rangiert**. Bei einer Regression schlaegt es hier an.
+- **L1327** — ★Nur "Punkt-Detektion" taucht weiterhin nicht auf -- das einzelne Zeichen "Punkt" erscheint zwangslaeufig auch in den Beschreibungen von Kontur-Ops wie cv_canny / frei_amp, sodass Gleichstaende sich aufreihen und es verdraengen. Es verschweigt nicht die Grenze, dass die japanische Textebene nur hilft, wenn "Woerter aus zwei oder mehr Zeichen greifen".
 
 ## `examples/poc_solar_el_inspection.py`
 
-- **L366** _(ja)_ — ★校正線も**同じ撮像系(ぼけ)を通す**。ぼかさずに貼った校正線は実クラック より 2.4 倍強く応答し、崖が太い側へ寄った(2026-09-07 に踏んだ)。
+- **L366** — ★Die Kalibrierlinie wird ebenfalls **durch dasselbe Abbildungssystem (Unschaerfe) gefuehrt**. Eine ohne Unschaerfe eingefuegte Kalibrierlinie reagiert 2.4x staerker als ein echter Riss und zog die Kante zur dicken Seite (am 2026-09-07 hineingetreten).
 
 ## `examples/poc_solar_limb_darkening.py`
 
-- **L317** _(ja)_ — 2. ★ゼロ点(50 % 法)vs 勾配最大 vs 減光モデル # --------------------------------------------------------------------------- #
-- **L367** _(ja)_ — 3. ★★減光係数 u を振る —— 比例ではなく折れ曲がる # --------------------------------------------------------------------------- #
-- **L391** _(ja)_ — ★対照群 —— ぼけを切ると、残るのは幾何(50 % 面の位置)だけ
-- **L427** _(ja)_ — 4. ★★ぼけの効き方はしきい値で符号が変わる(打ち消し点) # --------------------------------------------------------------------------- #
-- **L488** _(ja)_ — 5. ★黒点 —— 3 % の外れ点で半径が動く # --------------------------------------------------------------------------- #
+- **L317** — 2. ★Nulllinie (50 %-Methode) vs maximaler Gradient vs Abschwaechungsmodell # --------------------------------------------------------------------------- #
+- **L367** — 3. ★★Den Abschwaechungskoeffizienten u durchfahren -- er knickt ab, statt proportional zu skalieren # --------------------------------------------------------------------------- #
+- **L391** — ★Kontrollgruppe -- schaltet man die Unschaerfe ab, bleibt nur die Geometrie (die Position der 50 %-Flaeche)
+- **L427** — 4. ★★Das Vorzeichen der Unschaerfewirkung aendert sich mit dem Schwellenwert (Aufhebungspunkt) # --------------------------------------------------------------------------- #
+- **L488** — 5. ★Schwarze Punkte -- 3 % Ausreisserpunkte bewegen den Radius # --------------------------------------------------------------------------- #
 
 ## `examples/poc_star_astrometry.py`
 
-- **L264** _(ja)_ — 画像の合成(★ 穴: 指定座標に星を置く公開 op が fullseye に無い) # ------------------------------------------------------------------------- #
-- **L1243** _(ja)_ — ★ 「1 回あたり小さい」と「総当たりで小さい」は別の主張。
-- **L1348** _(ja)_ — ★ 「一様・孤立」の偏りが 0.0000 なのは当たり前 —— プレート解を その 24 個で当てたので、最小二乗が残差の平均を 0 にしている。 使わなかった星での誤差を見るには 1 個ずつ抜いて解き直す。
+- **L264** — Bildsynthese (★ Luecke: fullseye hat keine oeffentliche op, die einen Stern an angegebenen Koordinaten platziert) # ------------------------------------------------------------------------- #
+- **L1243** — ★ "klein pro Durchlauf" und "klein in Summe" sind verschiedene Aussagen.
+- **L1348** — ★Dass der Bias von "uniform/isoliert" 0.0000 ist, versteht sich von selbst -- die Plate-Lösung wurde an diese 24 angepasst, also treibt die Methode der kleinsten Quadrate den Mittelwert der Residuen auf 0. Um den Fehler an nicht genutzten Sternen zu sehen, jeweils einen weglassen und neu lösen.
 
 ## `examples/poc_stockpile_volume.py`
 
-- **L698** _(ja)_ — ★物差しで勝者が入れ替わる: 体積は水平底面、重心は平面当てはめ
-- **L714** _(ja)_ — ★外した予測: 補間は過小ではなく**過大**
-- **L717** _(ja)_ — ★相殺: 補間込みの外周だと誤差が小さく見え、見えた点だけだと戻る
-- **L726** _(ja)_ — ★道具の穴。dem_viewshed が直ったらここが鳴る(それが目的)
-- **L728** _(ja)_ — ★2026-09-08: この PoC の指摘で op を直したので、いまは**見える**のが正しい。 自前の視線判定と一致し、閉形式にも近いことを固定する(また壊れたら鳴る)。
+- **L698** — ★Je nach Maßstab wechselt der Sieger: Volumen nutzt eine horizontale Grundfläche, der Schwerpunkt eine Ebenenanpassung
+- **L714** — ★Eine Vorhersage, die danebenlag: die Interpolation unterschätzt nicht, sondern **überschätzt**
+- **L717** — ★Auslöschung: mit dem interpolierten Umfang wirkt der Fehler klein, mit nur den sichtbaren Punkten kehrt er zurück
+- **L726** — ★Eine Lücke im Werkzeug. Diese Stelle schlägt an, sobald dem_viewshed behoben ist (das ist der Zweck)
+- **L728** — ★2026-09-08: aufgrund des Befunds dieses PoC wurde der op behoben, also ist **sichtbar** jetzt korrekt. Wir fixieren, dass es mit unserer eigenen Sichtlinienprüfung übereinstimmt und nahe an der geschlossenen Form liegt (es schlägt erneut an, wenn es kaputtgeht).
 
 ## `examples/poc_strain_history.py`
 
-- **L507** _(ja)_ — ★閉形式の予測。中央 = (w²-1)/24 x d²(速度)/dt²(平滑化のなまり)、 因果 = 遅れ (w-1)/2 ぶん過去の速度を返す。
-- **L578** _(ja)_ — ★履歴そのものを重ねた図は作らない —— 真値・累積・直接が目では 区別できず(誤差は真値の 0.1〜3 %)、「よく合っています」に見えるだけの 図になる。**測ったものが見える図だけを出す**。
+- **L507** — ★Vorhersage in geschlossener Form. Zentral = (w²-1)/24 x d²(Geschwindigkeit)/dt² (die Abstumpfung durch Glättung), kausal = gibt die um (w-1)/2 verzögerte Geschwindigkeit zurück.
+- **L578** — ★Kein Diagramm erstellen, das die Verläufe selbst überlagert -- Wahrheit, kumuliert und direkt sind mit dem Auge nicht unterscheidbar (der Fehler beträgt 0.1-3 % der Wahrheit), und es wird ein Diagramm, das bloß "gut übereinstimmend" aussieht. **Nur Diagramme ausgeben, in denen das Gemessene sichtbar ist**.
 
 ## `examples/poc_structure_4d_deterioration.py`
 
-- **L349** _(ja)_ — ★遮蔽は**設計形状**(``p_nom``)で判定する。数 mm〜数十 mm の劣化で surface が自己遮蔽の箱の内側に入ると、欠損のいちばん深いところが **まるごと欠測**になり「深い欠損ほど見えない」という嘘の場面ができる (2026-09-07 に踏んだ: 欠損の谷 -21 mm の core が全部 NaN になった)。
-- **L437** _(ja)_ — ★``fit_plane_3d`` の法線は符号が任意。真の外向きに合わせる(走査器側)。
-- **L507** _(ja)_ — ★台帳経由は宣言 out 型(pose)しか返さないので ``.raw`` で全部受ける。
-- **L696** _(ja)_ — ★「密度が違うのが悪いなら揃えればよい」を実際に試す(voxel_grid_downsample)
-- **L1257** _(ja)_ — ★観測できる情報量そのものを点群から数える(正規方程式の対角成分)
-- **L1299** _(ja)_ — ★まず測り方そのものの床を取る —— 劣化も姿勢誤差も無しで 2 回測るだけ。
+- **L349** — ★Verdeckung wird über die **Sollform** (``p_nom``) beurteilt. Drückt eine Degradation von wenigen mm bis einigen zehn mm die surface ins Innere der selbstverdeckenden Box, wird die tiefste Stelle des Defekts **komplett nicht gemessen**, was die falsche Szene "je tiefer der Defekt, desto unsichtbarer" erzeugt (am 2026-09-07 erlebt: der core der Defektmulde bei -21 mm wurde vollständig NaN).
+- **L437** — ★Die Normale von ``fit_plane_3d`` hat ein beliebiges Vorzeichen. An die echte Außenrichtung angleichen (auf der Scanner-Seite).
+- **L507** — ★Über das Register wird nur der deklarierte out-Typ (pose) zurückgegeben, daher alles über ``.raw`` entgegennehmen.
+- **L696** — ★"Wenn unterschiedliche Dichte das Problem ist, dann vereinheitliche sie" tatsächlich ausprobieren (voxel_grid_downsample)
+- **L1257** — ★Den beobachtbaren Informationsgehalt selbst aus der Punktwolke zählen (die Diagonale der Normalgleichungen)
+- **L1299** — ★Zuerst den Boden der Messmethode selbst nehmen -- einfach zweimal messen, ohne Degradation und ohne Lagefehler.
 
 ## `examples/poc_surface_roughness.py`
 
-- **L272** _(ja)_ — ★真値は **帯域を宣言したうえで** 定義する。粗さ成分そのものではなく、 「λc で切ったあとの粗さ成分」が真値。ここを生の rough_true にすると、 正しい手順で測っても -23% ずれ、その 23% が標本化の誤差と混ざる。 帯域を含まない「粗さの真値」は存在しない —— これが 2 節の主張でもある。
+- **L272** — ★Die Wahrheit wird **erst nach Deklaration des Bandes** definiert. Nicht die Rauheitskomponente selbst, sondern "die Rauheitskomponente nach dem Schnitt bei λc" ist die Wahrheit. Nimmt man hier das rohe rough_true, weicht selbst eine Messung nach korrektem Verfahren um -23% ab, und diese 23% vermischen sich mit dem Abtastfehler. Eine "Rauheitswahrheit" ohne Band existiert nicht -- das ist zugleich die Aussage von Abschnitt 2.
 
 ## `examples/poc_template_tracking.py`
 
-- **L93** _(ja)_ — ★ 穴 (a): 相関マップを返す公開 op が無いので private を借りる。 第 0 章で公開 op ``fs.op.ncc_locate`` と一致することを検算してから使う。
-- **L326** _(ja)_ — ★ 穴 (d): 公開 op ならここで黙って [0,0,0] が返る。明示的に失敗を返す。
-- **L1138** _(ja)_ — (2) ゼロ点には床がある —— 整数座標の量子化(★ 穴 b)
-- **L1168** _(ja)_ — (9) ★ 主題: 信頼度は条件で得意・不得意が逆転する
-- **L1172** _(ja)_ — ★ 得意な崖が逆である = どちらか一方を信頼度に選ぶことはできない
+- **L93** — ★ Lücke (a): es gibt keinen öffentlichen op, der eine Korrelationskarte zurückgibt, daher leihen wir einen privaten. Erst verwenden, nachdem in Kapitel 0 verifiziert wurde, dass er mit dem öffentlichen op ``fs.op.ncc_locate`` übereinstimmt.
+- **L326** — ★ Lücke (d): ein öffentlicher op würde hier stillschweigend [0,0,0] zurückgeben. Stattdessen explizit einen Fehler zurückgeben.
+- **L1138** — (2) Der Nullpunkt hat einen Boden -- Quantisierung ganzzahliger Koordinaten (★ Lücke b)
+- **L1168** — (9) ★ Thema: Stärken und Schwächen der Konfidenz kehren sich je nach Bedingung um
+- **L1172** — ★ Die Kanten, an denen sie jeweils gut sind, sind entgegengesetzt = man kann nicht eines von beiden als Konfidenz wählen
 
 ## `examples/poc_thermal_radiometry.py`
 
-- **L507** _(ja)_ — ★前向きは**直接積分**、逆は**校正表**。同じ表で往復させると誤差 0 が 自明に出てしまい、床を測ったことにならない。
-- **L528** _(ja)_ — ★Case-0 が**厳密に 0** なのは 350.0 K がたまたま表の節点に乗るから。 節点を外すと補間の誤差が見える —— **0 を床と呼ぶのは嘘**になる。
-- **L757** _(ja)_ — ★横軸は**周囲からの上昇**。T_obj のままだと発散が左端の 1 本の縦線に 潰れて、肝心の「どこから跳ねるか」が読めない。
-- **L767** _(ja)_ — ★``plot_series`` は枠外の点を**拒否する**(枠に貼り付いて本物の データに見えるから)。発散する側は呼び手が先に切る。
-- **L821** _(ja)_ — ★横軸は**絶対**の Δε。相対 Δε/ε で描くと 3 本が完全に重なる (§2 のとおり式から ε が消えるので)—— 図として何も言わない。
-- **L1154** _(ja)_ — ★guard band に使うのは**上側**の張り出し。合格と言いたいのは 「真値が閾値**より上**でない」ことなので、区間の上端で切る。 下側 off[0] を使うと(分布が右に歪んでいる分だけ)浅く切ってしまう —— 1 度そう書いて、誤合格が減らないので気づいた。
-- **L1257** _(ja)_ — ★同じ取り違えでも ε=0.10 の面では L_obj が負に落ちて**例外になる**。 つまり「止まるか静かに間違うか」は取り違えではなく**場面**で決まる。
-- **L1331** _(ja)_ — ★発熱部は**平らな台**にする。山にすると「ボルトと周りが同じ温度」が 成り立たず、見かけの谷が放射率のせいなのか温度のせいなのか分けられない。
-- **L1378** _(ja)_ — ★補正は偏りを消すが、雑音を 1/ε 倍にする。図(d)でボルトだけざらつく理由。
-- **L1450** _(ja)_ — ★``op_find`` は語幹の部分一致で拾う。``blackbody`` は 4 件返すが中身は ``cv_blackhat`` などのモルフォロジで、**熱放射とは何の関係も無い**。 件数を見て「在る」と読むと外す。**先頭の名前まで見てから**言う。
-- **L1600** _(ja)_ — 3. ★外した予測: 絶対誤差は**高温ほど大きい**
-- **L1602** _(ja)_ — ★物差しを変えても、放射率の誤差は上昇比で**発散しない**(Δε/ε で頭打ち)
-- **L1605** _(ja)_ — ★発散するのは反射見かけ温度のほう(上昇が小さいほど跳ねる)
-- **L1618** _(ja)_ — 6. ★★包含率。床(ρ=0)では RSS も MC も 95 %、相関を入れると RSS が落ちる
-- **L1622** _(ja)_ — ★MC 側は 94.4〜94.6 % に落ち着く(95 % ぴったりではない)。区間の端は 40000 試行の百分位で決めているので標本誤差があり、現実には量子化も 混じっている。**そこまで含めて「MC は当たる」と言う**。
-- **L1638** _(ja)_ — 7. ★取りこぼしは片側に寄る(対称な ±k·u が歪んだ分布を外す)
-- **L1642** _(ja)_ — 8. ★★guard band: 誤合格は 無視 > RSS > MC、誤不合格はその逆
-- **L1662** _(ja)_ — ★補正は偏りを消す代わりに雑音を 1/ε 倍にする(ε の比 9.5 に近い)
+- **L507** — ★Vorwärts ist **direkte Integration**, invers ist eine **Kalibriertabelle**. Ein Hin-und-Zurück durch dieselbe Tabelle liefert trivialerweise Fehler 0 und gilt nicht als Messung des Bodens.
+- **L528** — ★Dass Case-0 **exakt 0** ist, liegt daran, dass 350.0 K zufällig auf einem Tabellenknoten liegt. Weg vom Knoten zeigt sich der Interpolationsfehler -- **0 als Boden zu bezeichnen ist eine Lüge**.
+- **L757** — ★Die x-Achse ist der **Anstieg über die Umgebung**. Bleibt es bei T_obj, kollabiert die Divergenz zu einer einzigen senkrechten Linie am linken Rand, und das entscheidende "ab wo es springt" ist nicht ablesbar.
+- **L767** — ★``plot_series`` **weist** Punkte außerhalb des Rahmens **ab** (weil sie am Rahmen kleben und wie echte Daten aussehen). Die divergierende Seite schneidet der Aufrufer vorher ab.
+- **L821** — ★Die x-Achse ist das **absolute** Δε. Als relatives Δε/ε geplottet überlappen sich die drei Kurven exakt (weil ε gemäß §2 aus der Gleichung herausfällt) -- das Diagramm sagt nichts aus.
+- **L1154** — ★Das Guard-Band nutzt den **oberen** Überstand. Da wir als Bestehen behaupten wollen, dass "die Wahrheit nicht **über** dem Schwellwert liegt", schneiden wir am oberen Ende des Intervalls. Nimmt man das untere off[0], schneidet man zu flach (genau um die Rechtsschiefe der Verteilung) -- einmal so geschrieben und daran gemerkt, dass die Falsch-Bestehen nicht abnahmen.
+- **L1257** — ★Bei derselben Verwechslung fällt L_obj auf der ε=0.10-Fläche ins Negative und **löst eine Ausnahme aus**. Das heißt, "anhalten oder still danebenliegen" entscheidet nicht die Verwechslung, sondern die **Szene**.
+- **L1331** — ★Die Wärmequelle als **flaches Plateau** ausführen. Als Berg gilt "Schraube und Umgebung bei gleicher Temperatur" nicht, und man kann nicht trennen, ob die scheinbare Mulde vom Emissionsgrad oder von der Temperatur kommt.
+- **L1378** — ★Die Korrektur beseitigt den Bias, vervielfacht aber das Rauschen um 1/ε. Deshalb ist in Abbildung (d) nur die Schraube körnig.
+- **L1450** — ★``op_find`` greift über Teiltreffer am Wortstamm. ``blackbody`` liefert 4 Treffer, deren Inhalt aber Morphologie wie ``cv_blackhat`` ist und **nichts mit Wärmestrahlung zu tun hat**. Aus der Trefferzahl "es existiert" abzulesen, geht daneben. Erst **nach Blick auf den führenden Namen** sagen.
+- **L1600** — 3. ★Eine Vorhersage, die danebenlag: der absolute Fehler ist **bei höherer Temperatur größer**
+- **L1602** — ★Selbst bei geändertem Maßstab **divergiert** der Emissionsgradfehler nicht mit dem Anstiegsverhältnis (er sättigt in Δε/ε)
+- **L1605** — ★Was divergiert, ist die reflektierte scheinbare Temperatur (je kleiner der Anstieg, desto stärker springt sie)
+- **L1618** — 6. ★★Überdeckungsrate. Am Boden (ρ=0) sind RSS und MC beide 95 %; mit Korrelation fällt RSS ab
+- **L1622** — ★Die MC-Seite pendelt sich bei 94.4-94.6 % ein (nicht exakt 95 %). Die Intervallenden werden über Perzentile aus 40000 Versuchen bestimmt, es gibt also Stichprobenfehler, und in der Realität ist auch Quantisierung beigemischt. **Genau das einschließend sagt man "MC trifft"**.
+- **L1638** — 7. ★Die Fehltreffer neigen zu einer Seite (symmetrisches ±k·u verfehlt eine schiefe Verteilung)
+- **L1642** — 8. ★★guard band: Falsch-Bestehen ist Ignorieren > RSS > MC, Falsch-Durchfallen umgekehrt
+- **L1662** — ★Die Korrektur beseitigt den Bias, vervielfacht dafür aber das Rauschen um 1/ε (nahe am ε-Verhältnis von 9.5)
 
 ## `examples/poc_thermography_ndt.py`
 
-- **L61** _(ja)_ — ★観測時間は**健全部の t\* (6.8 s) より十分長く**取る。短いと健全部の膝が 窓の外に出て、TSR が健全部を「窓の端の深さ」と答える(実測で 2.82 mm に張り付いた)。
-- **L126** _(ja)_ — ★ここだけ近似。1 次元解に横拡散は入っていないので、時刻ごとに 拡散長 σ(t)=√(2αt) のガウスで面内をぼかす。物理のスケール則は 正しいが、境界での質量保存までは満たさない。
+- **L61** — ★Die Beobachtungszeit **lang genug — über das t\* (6.8 s) des gesunden Bereichs hinaus** wählen. Zu kurz, und das Knie des gesunden Bereichs rutscht aus dem Fenster, und TSR beantwortet den gesunden Bereich als "Tiefe am Fensterrand" (in der Messung blieb es bei 2.82 mm kleben).
+- **L126** — ★Nur diese Stelle ist eine Näherung. Da die 1-D-Lösung keine laterale Diffusion enthält, verschmieren wir zu jedem Zeitpunkt in der Ebene mit einer Gauß-Funktion der Diffusionslänge σ(t)=√(2αt). Das physikalische Skalierungsgesetz ist korrekt, aber die Massenerhaltung am Rand wird nicht erfüllt.
 - **L142** _(ja)_ — TSR で t* を探す範囲。★端を除くのは飾りではない —— 高次多項式の 2 階微分は 端で必ず暴れる(Runge)。除かないと argmax が最初か最後のフレームに張り付き、 深さが窓端の 2 値に張り付く(実測、2026-09-06)。次数は 4〜11 を掃いて 8 で 決めた(4〜5 では 1.5 mm 以深が端に張り付き、8 以上は 9/11 と同じ答え)。
 - **L177** _(ja)_ — ★格子の刻みで t* を丸めると、深さが階段状に量子化される(64 点だと 5 % 刻み)。 放物線を 3 点に当てて ln t のサブ格子位置まで出す。
 - **L235** _(ja)_ — ★所見を固定する。ここは**近似ゼロの検算**なので、崩れたら実装が壊れている。

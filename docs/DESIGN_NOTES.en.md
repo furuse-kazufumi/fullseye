@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 139 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 259 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -358,76 +358,76 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L408** — ★A round trip cannot rule out "both wrong in the same direction". Cross-check against an independent implementation.
 - **L437** — ★Prediction (printed before measuring): the slope is atan|∇H|. Using h it becomes atan|∇H+∇N|.
-- **L464** _(ja)_ — ★予測と実測の最大差は「模型の誤り」か「離散化」かを分ける。セルを細かくする。
-- **L584** _(ja)_ — ★予測(閉形式): 下り方向が 90 度以上回る ⇔ ∇H・(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H・∇N < 0。測る前に率を出しておく。
-- **L644** _(ja)_ — ★2 つ目の(こちらが本命の)閉形式。視線は両端の h で引くので、N の**線形部**は 視線にも地面にも同じだけ乗って消える。残るのは N が弦から離れる量 = |N''| d^2 / 8。この場の N'' は 2C(cos^2θ - sin^2θ) なので |N''| <= 2C。
-- **L1106** _(ja)_ — ★``vertical`` だけは op_find が 5 件返す。**中身は 1 つも関係ない** (``boundary_vertices`` などの語幹一致)—— 件数で「在る」と言ってはいけない。
+- **L464** — ★Split the max difference between prediction and measurement into 'model error' vs 'discretisation'. Refine the cells.
+- **L584** — ★Prediction (closed form): the downhill direction turns by more than 90 degrees ⇔ ∇H·(∇H+∇N) < 0 ⇔ |∇H|^2 + ∇H·∇N < 0. Compute the rate before measuring.
+- **L644** — ★The second (and the real) closed form. Since the line of sight is drawn through h at both ends, the **linear part** of N rides equally on both the line of sight and the ground and cancels. What remains is the amount N departs from the chord = |N''| d^2 / 8. Here N'' is 2C(cos^2θ - sin^2θ), so |N''| <= 2C.
+- **L1106** — ★Only for ``vertical`` does op_find return 5 hits. **Not one of them is relevant** (stem matches like ``boundary_vertices``) —— never claim it 'exists' from the count.
 
 ## `examples/poc_interferometry_step.py`
 
-- **L159** _(ja)_ — 3) ★繰り返し測定 — 偏りと散らばりを分ける # ------------------------------------------------------------------ #
-- **L202** _(ja)_ — 4) ★ゼロ点(包絡線の最大サンプル)との比較 # ------------------------------------------------------------------ #
-- **L274** _(ja)_ — 6) ★雑音掃引 — どこで測れなくなるか # ------------------------------------------------------------------ #
-- **L314** _(ja)_ — ★散らばりが小さいことは正しさの証拠にならない
+- **L159** — 3) ★Repeated measurement — separate bias from spread # ------------------------------------------------------------------ #
+- **L202** — 4) ★Comparison with the zero point (the max sample of the envelope) # ------------------------------------------------------------------ #
+- **L274** — 6) ★Noise sweep — where measurement breaks down # ------------------------------------------------------------------ #
+- **L314** — ★A small spread is no evidence of correctness
 
 ## `examples/poc_leak_localization.py`
 
-- **L591** _(ja)_ — ★予測 C の検定 —— 漏水位置を細かく振って小数部を散らす
-- **L726** _(ja)_ — ★対照群 —— 反射だけを左右入れ替える。偏りの向きが反転すれば 「遠いほうの継手が偏りの向きを決める」が原因だと言える。
+- **L591** — ★Test of prediction C —— vary the leak position finely to scatter the fractional part
+- **L726** — ★Control group —— swap only the reflections left/right. If the direction of the bias reverses, we can say the cause is 'the farther joint determines the direction of the bias'.
 
 ## `examples/poc_lidar_terrain_change.py`
 
-- **L406** _(ja)_ — ★測れなかった core の面積は土量に一切入らない。有効率で割り戻した値も返す —— 割り戻さないと「静かに欠けた土量」を正しい値だと思ってしまう。
-- **L694** _(ja)_ — ★真値に近い数字が「正しい」とは限らない —— 逆向きの 2 つの誤差を分けて数える
-- **L823** _(ja)_ — ★有効 core が少なすぎるときの LoD は「測った」ことにしない (2 点の標準偏差は数字にはなるが意味を持たない)。
-- **L826** _(ja)_ — ★ここで間引くと C2C が「間引き後の点間隔」を測ってしまい、密度依存が消える (最初に 6000 点へ揃えて書いたら、どの密度でも 0.42 m の一定値になった)。
-- **L946** _(ja)_ — --- ★ 合わせた分だけ変化が消える -------------------------------------- #
+- **L406** — ★The area of cores that could not be measured contributes nothing to the earth volume. Also return the value divided back by the effective rate —— without dividing back, you take the 'silently missing earth volume' for the correct value.
+- **L694** — ★A number close to the true value is not necessarily 'correct' —— count the two opposing errors separately
+- **L823** — ★When there are too few valid cores, do not treat the LoD as 'measured' (the standard deviation of 2 points is a number but carries no meaning).
+- **L826** — ★If you decimate here, C2C ends up measuring the 'post-decimation point spacing' and the density dependence vanishes (when I first wrote it aligned to 6000 points, it came out a constant 0.42 m at every density).
+- **L946** — --- ★ Change vanishes exactly by the amount you align away -------------------------------------- #
 
 ## `examples/poc_lightfield_depth.py`
 
-- **L594** _(ja)_ — 2b. ★ 穴 (d): docstring は 0-d と言うが実際は (1,)
-- **L610** _(ja)_ — 6. ★ 穴 (a): 既定 linear は 1.15 を 1.0 側へ引く、cubic は引かない
-- **L634** _(ja)_ — 10. ★ 穴 (e) は 2026-09-06 に塞がった。**塞がった状態を固定する**側へ 書き換えてある(以前は「警告が出ること」を assert していた)。
+- **L594** — 2b. ★ Gap (d): the docstring says 0-d but it is actually (1,)
+- **L610** — 6. ★ Gap (a): the default linear pulls 1.15 toward 1.0, cubic does not
+- **L634** — 10. ★ Gap (e) was closed on 2026-09-06. It has been rewritten toward **pinning the closed state** (previously it asserted that 'a warning is raised').
 
 ## `examples/poc_livestock_body_volume.py`
 
-- **L1032** _(ja)_ — ★3 台と 6 台は接線の集合が完全に一致する(平行投影では向かい合う 2 台が同じ)
-- **L1040** _(ja)_ — ★奇数 13 台が偶数 16 台に勝つ
-- **L1054** _(ja)_ — ★3-D の凸包は「断面の凸包」の代役にならない(胸囲を大きく外す)
-- **L1057** _(ja)_ — ★2 倍則: 胸囲の誤差が体重で 2 倍になる(残差は 2 次項)
+- **L1032** — ★3 cameras and 6 cameras give exactly the same set of tangents (in parallel projection two opposing cameras coincide)
+- **L1040** — ★An odd 13 cameras beat an even 16
+- **L1054** — ★A 3-D convex hull is no substitute for the 'convex hull of the cross-section' (it misses the chest girth by a wide margin)
+- **L1057** — ★Doubling law: the chest-girth error doubles with body weight (the residual is a 2nd-order term)
 
 ## `examples/poc_machine_condition_fusion.py`
 
-- **L184** _(ja)_ — (継手, 軸受A, 軸受B, 機械全体) の発熱 [W]。★正常・アンバランス・ゆるみは **わざと同じ**にしてある —— 熱では原理的に分けられない 3 モード。
-- **L202** _(ja)_ — ★軸受と同じくらい熱い。違うのは**広がり**だけ(両軸受 + 機械全体)。
-- **L1028** _(ja)_ — ★2026-09-08: ここは numpy の rfft を自前で書いていた —— 「片側振幅 スペクトルの口が台帳に無い」と読んだためだが、`fs.spectrum` は **前から在った**(台帳に出ていなかっただけ)。1 つの層だけ見て 「無い」と決めた例なので、op を使う形に直す。
-- **L1162** _(ja)_ — ★2026-09-08: ここは「台帳に spectrum が無い」と書いていたが、 **`fs.spectrum` は最初から在った**(dsp の 1-D 層)。無かったのは 「台帳(`fs.ledger`)に出ていること」と「op ごとのノート」だけで、 この PoC は 1 つの層しか引かずに「無い」と決め、numpy の rfft を 自前で書いていた。ops1d を台帳へ繋いだのでいまは両方から引ける。
+- **L184** — Heat generation [W] of (coupling, bearing A, bearing B, whole machine). ★Normal, unbalance and looseness are made **deliberately identical** —— 3 modes that are fundamentally indistinguishable by heat.
+- **L202** — ★As hot as the bearings. The only difference is the **spread** (both bearings + whole machine).
+- **L1028** — ★2026-09-08: here we had hand-written numpy's rfft —— because we read it as 'no entry for a one-sided amplitude spectrum in the ledger', but `fs.spectrum` **was there all along** (it just did not show in the ledger). This is a case of deciding 'it does not exist' after looking at only one tier, so rewrite it to use the op.
+- **L1162** — ★2026-09-08: here we had written 'no spectrum in the ledger', but **`fs.spectrum` was there from the start** (dsp's 1-D tier). What was missing was only 'showing in the ledger (`fs.ledger`)' and 'the per-op notes'; this PoC pulled from only one tier, decided 'it does not exist', and hand-wrote numpy's rfft. Now that ops1d is wired into the ledger, both can be looked up.
 
 ## `examples/poc_mesh_quality_repair.py`
 
-- **L602** _(ja)_ — ★飽和させて見せる。素の差は最大 %.2f mm で、そのまま塗ると 99 %% の画素が 0 の真っ黒になり「走ったが何も出ていない」図になる。
-- **L816** _(ja)_ — ★両対数で描く。線形軸だと誤差が粗い側の 1 点に潰れて、傾き(=誤差則)が まったく読めない図になる(2026-09-07 に一度そう描いた)。
-- **L832** _(ja)_ — ★累積分布をそのまま重ねると 4 本とも 0.9 以上で潰れて何も読めない。 動いているのは**上の裾**なので、分位点 0.5〜0.99 を横軸にして 「その分位点の曲率」を縦に描く(逆累積の上半分)。
+- **L602** — ★Show it saturated. The raw difference is at most %.2f mm, and painting it as-is makes 99 %% of the pixels 0, a pitch-black 'it ran but nothing shows' figure.
+- **L816** — ★Plot log-log. On linear axes the error collapses to a single point on the coarse side, giving a figure where the slope (= error law) cannot be read at all (I once plotted it that way on 2026-09-07).
+- **L832** — ★Overlaying the cumulative distributions as-is crushes all 4 above 0.9 and nothing is readable. What moves is the **upper tail**, so put quantiles 0.5–0.99 on the x-axis and plot 'the curvature at that quantile' on the y-axis (the upper half of the inverse cumulative).
 
 ## `examples/poc_metal_grain_size.py`
 
-- **L568** _(ja)_ — ★実測はそれより遅い。マスク上で実際に消えている粒界画素の割合 f_eff は f より 小さい(ぼけが隙間の両端 1 px に隣の黒を漏らし、局所しきい値がそれを拾う)ので、 f_eff で引き直した予測 ΔG0 + 6.64 log10(1-f_eff) と突き合わせる。
+- **L568** — ★The measurement is slower than that. The fraction of grain-boundary pixels actually erased on the mask, f_eff, is smaller than f (the blur leaks the neighbouring black into the 1 px at both ends of the gap, and the local threshold picks it up), so compare against the prediction re-derived with f_eff, ΔG0 + 6.64 log10(1-f_eff).
 
 ## `examples/poc_multibeam_bathymetry.py`
 
-- **L518** _(ja)_ — エコーを合成する部分角の本数。★これを 61 にすると、70 度では隣り合う 部分角の到来時間が 330 µs 離れ、パルス幅 64 µs より広くなるので、包絡線が **櫛**になって振幅検出が歯を 1 本拾う(検出のずれが -1131 µs と出た)。 到来時間の密度をヒストグラムで作り、パルスで畳むほうが正しい。
-- **L546** _(ja)_ — ★下限を 0 でクリップしない —— 直下ビームは片側だけになり、照らす帯が 半分になってしまう(フットプリントが半分に出る形で 1 度踏んだ)。
-- **L703** _(ja)_ — ★横軸を**そのビーム自身のエコー長**で割る。生の µs で重ねると 70 度(21 ms)が軸を独占して、直下と 45 度が縦線 1 本になる。
-- **L706** _(ja)_ — ★``plot_series`` は xlim の外の点を**拒否する**(枠に貼り付いて 本物のデータに見えるから)。切るのは呼び手の仕事なので先に切る。
-- **L1125** _(ja)_ — ★重なりの**真ん中**を見てはいけない —— そこは両測線とも同じ振れ角なので、 誤差が同じだけ乗って差がゼロになる。**帯全体で最大**を取る。
-- **L1196** _(ja)_ — ★縦軸は**高さ**(= −深さ)にする。深さのまま描くと上下が逆さになり、 「笑っている」形が「しかめ面」に見えてしまう。
-- **L1267** _(ja)_ — ★縦軸は −深さ。深さのまま描くと海面が下、海底が上の逆さ図になる。
-- **L1301** _(ja)_ — ★``op_find`` は語幹の部分一致で拾うので、件数が 0 でなくても中身は 無関係なことがある("footprint" → ``sk_median_disk``)。**最上位の 名前まで見て**から「無い」と言う。
-- **L1428** _(ja)_ — ★全経路の崖は**予測より手前**。差は振幅検出の偏り(閉形式に無い量)
+- **L518** — The number of partial angles that synthesise the echo. ★Setting this to 61 makes, at 70 degrees, the arrival times of adjacent partial angles 330 µs apart, wider than the 64 µs pulse width, so the envelope becomes a **comb** and amplitude detection picks up one tooth (the detection offset came out as -1131 µs). It is more correct to build a histogram of the arrival-time density and convolve it with the pulse.
+- **L546** — ★Do not clip the lower bound at 0 —— the nadir beam then becomes one-sided and the illuminated band halves (stepped on this once, with the footprint coming out at half).
+- **L703** — ★Divide the x-axis by **the beam's own echo length**. Overlaying in raw µs lets 70 degrees (21 ms) monopolise the axis, collapsing nadir and 45 degrees into a single vertical line.
+- **L706** — ★``plot_series`` **rejects** points outside xlim (because they stick to the frame and look like real data). Clipping is the caller's job, so clip first.
+- **L1125** — ★Do not look at the **middle** of the overlap —— there both survey lines have the same swing angle, so the same error rides on both and the difference goes to zero. Take the **maximum over the whole band**.
+- **L1196** — ★Make the y-axis **height** (= −depth). Plotting depth as-is flips top and bottom, making a 'smiling' shape look like a 'frown'.
+- **L1267** — ★The y-axis is −depth. Plotting depth as-is gives an upside-down figure with the sea surface at the bottom and the seabed at the top.
+- **L1301** — ★``op_find`` matches on partial stems, so even when the count is non-zero the contents can be irrelevant ("footprint" → ``sk_median_disk``). **Look all the way to the top-level name** before saying 'it does not exist'.
+- **L1428** — ★The cliff of the all-paths case is **earlier than predicted**. The difference is the bias of amplitude detection (a quantity absent from the closed form)
 
 ## `examples/poc_nuclei_ploidy.py`
 
-- **L686** _(ja)_ — ★逆向きの 2 つの失敗が打ち消して「真値ぴったり」に化ける行が実在する
+- **L686** — ★There really exist rows where two opposing failures cancel and masquerade as 'exactly the true value'
 
 ## `examples/poc_pallet_load_utilization.py`
 
@@ -513,132 +513,132 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_registration_basin.py`
 
-- **L656** _(ja)_ — ★利用者が「法線なら在るじゃないか」と `estimate_normals` を明示的に渡した場合。 ここが穴の**残り**で、既定より 14 桁悪い。
-- **L836** _(ja)_ — ★2026-09-06 に穴 1 が塞がった。この assert は**塞がった状態を固定する** 側へ書き換えてある(以前は `d_fixed < 1e-6 < d_default` = 壊れている ことを固定していた)。壊れ方が戻ってきたらここが落ちる。
-- **L847** _(ja)_ — ★2026-09-06 に穴 2 が塞がった。以前は `< 0.9 * len(ka)`(壊れていることを 固定)だった。いまは**既定のままで完全一致する**ことを固定する。
+- **L656** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
+- **L836** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
+- **L847** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
 
 ## `examples/poc_rotation_invariance_audit.py`
 
-- **L115** _(ja)_ — ★HALCON 流の**領域**モーメント不変量。3-D 点群用の `moment_invariants` とは 別物(名前だけで選ぶと (N,3) を要求されて落ちる)。
-- **L208** _(ja)_ — ★相対ばらつきは分母がほぼ 0 だと意味を失う。Hu[1] は円に近い形では 真値がほぼ 0 なので、ここを黙って % で語ると「30 % ずれた」に化ける。
-- **L220** _(ja)_ — ★予測が外れたところ。書いた時点では「灰を補間して二値化し直すほうが荒れる」と 思っていたが、周囲長まわりは**逆**だった。
-- **L262** _(ja)_ — ★地がモノクロなので、輪郭は**彩度のある色**で描く。灰色には彩度が 無いので、彩度のある色はどの階調とも色相で区別がつく ―― 反転色より 確実で、しかも「これは重ねた線だ」と一目で判る。反転色が本領を 発揮するのは、地がカラーで「どの色を選んでも衝突しうる」とき。
+- **L115** — ★HALCON-style **region** moment invariants. Different from `moment_invariants` for 3-D point clouds (choosing by name alone will demand (N,3) and fail).
+- **L208** — ★Relative variation loses meaning when the denominator is near 0. For near-circular shapes the true value of Hu[1] is near 0, so silently reporting it in % turns into "off by 30 %".
+- **L220** — ★Where the prediction was wrong. When writing it I thought "interpolating the grey and re-thresholding is rougher", but for the perimeter it was the **opposite**.
+- **L262** — ★Since the background is monochrome, the contour is drawn in a **saturated color**. Grey has no saturation, so a saturated color is distinguishable from any tone by hue -- more reliable than an inverted color, and it is instantly clear that "this is an overlaid line". Inverted colors come into their own when the background is colored and "any chosen color could collide".
 
 ## `examples/poc_safety_clearance.py`
 
-- **L114** _(ja)_ — ★胴は**カプセル 2 本を並べて**作る。1 本の円柱にすると断面が円になり、 肩(体幹中心から ±0.19 m)が胴の影から外れてしまう —— 実際の胴は幅 0.50 m / 奥行き 0.30 m の扁平な断面で、伸ばした腕は背後から見ると胴に隠れる。
-- **L126** _(ja)_ — ★X0 と速度は「どの試行でも真の分離距離が正のまま(接触しない)」かつ 「危険な帯に十分な時間とどまる」ように選んである —— 速く歩かせると 危険な帯を数フレームで通り抜けてしまい、見落としを数える標本が足りない。
-- **L673** _(ja)_ — ★遮蔽を入れたまま密度を振ると、遮蔽の偏り(+0.12 m)が全部の行に乗って 密度の効きが見えなくなる。要因を 1 つずつ止めるのが対照群の役目。
-- **L683** _(ja)_ — ★雑音と間引きの引きが 1 回だと見落とし率が数 % 上下する。3 回まわして平均。
-- **L840** _(ja)_ — ★行ごとにまとめて評価する(1 セルずつの Python ループだと 15000 回まわる)。
-- **L1079** _(ja)_ — ★ボリューム op は (depth,row,col)。grid_coords は (nx,ny,nz) なので転置する。
+- **L114** — ★The torso is built by **placing two capsules side by side**. A single cylinder makes the cross-section circular, and the shoulders (±0.19 m from the trunk center) fall outside the torso's shadow -- the real torso has a flat cross-section 0.50 m wide / 0.30 m deep, and an outstretched arm is hidden by the torso when seen from behind.
+- **L126** — ★X0 and the speed are chosen so that "the true separation distance stays positive in every trial (no contact)" and "it stays in the danger band long enough" -- walking fast passes through the danger band in a few frames, leaving too few samples to count missed detections.
+- **L673** — ★If you vary the density while occlusion is left in, the occlusion bias (+0.12 m) rides on every row and hides the effect of density. The control group's job is to turn off one factor at a time.
+- **L683** — ★With a single draw of noise and decimation, the miss rate swings by a few %. Run it 3 times and average.
+- **L840** — ★Evaluate row by row in bulk (a per-cell Python loop would run 15000 times).
+- **L1079** — ★Volume ops are (depth,row,col). grid_coords is (nx,ny,nz), so transpose it.
 
 ## `examples/poc_scan_to_bim_asbuilt.py`
 
-- **L658** _(ja)_ — ★trim を掛けると「よく合う点だけ」を選び続けて RMSE 0.13 mm の別解へ落ちる (実測: trim=0.9 で吸う角が 0.17 mrad、trim なしで 0.62 mrad)。 as-built 検査では欠陥そのものが大きい残差なので、trim は欠陥を捨てる。
-- **L950** _(ja)_ — ★見出しの主張を 1 枚に: 無傷の天井が、合わせ方だけで傾いて見える
+- **L658** — ★Applying trim keeps selecting only "the well-fitting points" and falls into another solution with RMSE 0.13 mm (measured: the pulled-in angle is 0.17 mrad at trim=0.9, 0.62 mrad without trim). In as-built inspection the defect itself is the large residual, so trim throws the defect away.
+- **L950** — ★The headline claim in one image: an intact ceiling appears tilted purely from how it is aligned
 
 ## `examples/poc_sea_ice_concentration.py`
 
-- **L232** _(ja)_ — 2. ★ゼロ点 vs 線形混合分解 # --------------------------------------------------------------------------- #
-- **L252** _(ja)_ — 3. ★★塊の大きさ(周長)が偏りを決める # --------------------------------------------------------------------------- #
-- **L291** _(ja)_ — 4. ★★密接度で偏りの符号が反転する(打ち消し点) # --------------------------------------------------------------------------- #
-- **L353** _(ja)_ — 6. ★端成分が 5 % ずれたとき # --------------------------------------------------------------------------- #
+- **L232** — 2. ★Zero baseline vs linear mixture decomposition # --------------------------------------------------------------------------- #
+- **L252** — 3. ★★The blob size (perimeter) determines the bias # --------------------------------------------------------------------------- #
+- **L291** — 4. ★★The bias sign flips with closeness (cancellation point) # --------------------------------------------------------------------------- #
+- **L353** — 6. ★When the endmember is off by 5 % # --------------------------------------------------------------------------- #
 - **L380** _(ja)_ — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
-- **L490** _(ja)_ — (b) spec_unmix は在った(★「無い」と書く前に 3 層引いた)
+- **L490** — (b) spec_unmix did exist (★checked 3 tiers before writing "not present")
 
 ## `examples/poc_search_sweep_width.py`
 
-- **L829** _(ja)_ — ★形の効き方は捜索の型で違う。走査幅を揃えて、曲線の形だけを比べる。
-- **L869** _(ja)_ — ★取りこぼし 1-P で描く。P そのものだと右上に貼りつき、凡例の箱に 隠れて見えない(実際に 1 度隠して気づいた)。**図は「読めるか」を 見てから決める** —— 数字が合っていても、隠れていれば伝わらない。
-- **L1089** _(ja)_ — ★再現性の検査: §3 とは種もフレーム数も別なので、同じ条件でどれだけ動くか。
-- **L1266** _(ja)_ — ★ゼロ点を上回っていること(誤検出率を揃えた上で)。倍率は控えめ —— 「ゼロ点でも 174 m 出る」ほうがこの節の所見なので、そこを固定する。
-- **L1272** _(ja)_ — ★外した予測: 全体の背景を引くのはアフィン変換なので、ゼロ点と実質同じ
-- **L1286** _(ja)_ — ★外した予測: 実測の p では平行捜索が C=1 で 1.000 に届かない
-- **L1290** _(ja)_ — ★形は平行捜索にだけ効く: 走査幅を揃えると、ランダムは一致し平行は割れる
-- **L1293** _(ja)_ — ★外した予測: 平らな曲線のほうが強いはずが、逆に弱かった(裾が長いため)
-- **L1296** _(ja)_ — (6) ★W 2 倍 と t 2 倍 は等価
-- **L1304** _(ja)_ — (8) ★見張り役: 誤検出は直下に集中する。閾値だけで W が大きく動く
-- **L1322** _(ja)_ — ★穴を埋めた側の門(2026-09-08)。op_find に和文の段を足し、star_detect の docstring に分野中立の説明語を書いたので、**和文で上位に出ること**を 固定する。退行するとここが鳴る。
-- **L1327** _(ja)_ — ★「点 検出」だけは今も出ない —— 「点」1 文字は cv_canny / frei_amp のような 輪郭 op の説明にも必ず出るので、同点が並んで押し出される。和文の段が 拾えるのは「2 文字以上の語が効く」場合だけ、という限界を隠さない。
+- **L829** — ★The way shape matters differs by search type. Match the sweep width and compare only the curve shape.
+- **L869** — ★Plot the miss rate 1-P. P itself sticks to the top-right and hides behind the legend box, invisible (I actually hid it once and noticed). **Decide the figure after checking whether it "can be read"** -- even if the numbers are right, a hidden plot conveys nothing.
+- **L1089** — ★Reproducibility check: since both the seed and the frame count differ from §3, how much it moves under the same conditions.
+- **L1266** — ★That it exceeds the zero baseline (with the false-positive rate matched). The gain is modest -- "even the zero baseline reaches 174 m" is the finding of this section, so that is what gets pinned.
+- **L1272** — ★A missed prediction: subtracting the global background is an affine transform, so effectively the same as the zero baseline
+- **L1286** — ★A missed prediction: with the measured p, the parallel search does not reach 1.000 at C=1
+- **L1290** — ★Shape matters only for the parallel search: with the sweep width matched, random agrees while parallel splits
+- **L1293** — ★A missed prediction: the flat curve was supposed to be stronger, but was weaker instead (because of its long tail)
+- **L1296** — (6) ★Doubling W and doubling t are equivalent
+- **L1304** — (8) ★Watchdog: false positives concentrate directly below. W moves a lot with the threshold alone
+- **L1322** — ★The gate on the filled-in side (2026-09-08). Since a Japanese-text tier was added to op_find and domain-neutral descriptive terms were written into star_detect's docstring, it pins that **it ranks near the top for Japanese queries**. If it regresses, this fires.
+- **L1327** — ★Only "point detection" still does not surface -- the single character "point" inevitably appears in the descriptions of contour ops like cv_canny / frei_amp too, so ties line up and push it out. It does not hide the limitation that the Japanese-text tier only helps when "words of two or more characters take effect".
 
 ## `examples/poc_solar_el_inspection.py`
 
-- **L366** _(ja)_ — ★校正線も**同じ撮像系(ぼけ)を通す**。ぼかさずに貼った校正線は実クラック より 2.4 倍強く応答し、崖が太い側へ寄った(2026-09-07 に踏んだ)。
+- **L366** — ★The calibration line is also **passed through the same imaging system (blur)**. A calibration line pasted without blurring responds 2.4x stronger than a real crack and pulled the cliff toward the thick side (stepped on this on 2026-09-07).
 
 ## `examples/poc_solar_limb_darkening.py`
 
-- **L317** _(ja)_ — 2. ★ゼロ点(50 % 法)vs 勾配最大 vs 減光モデル # --------------------------------------------------------------------------- #
-- **L367** _(ja)_ — 3. ★★減光係数 u を振る —— 比例ではなく折れ曲がる # --------------------------------------------------------------------------- #
-- **L391** _(ja)_ — ★対照群 —— ぼけを切ると、残るのは幾何(50 % 面の位置)だけ
-- **L427** _(ja)_ — 4. ★★ぼけの効き方はしきい値で符号が変わる(打ち消し点) # --------------------------------------------------------------------------- #
-- **L488** _(ja)_ — 5. ★黒点 —— 3 % の外れ点で半径が動く # --------------------------------------------------------------------------- #
+- **L317** — 2. ★Zero baseline (50 % method) vs max gradient vs attenuation model # --------------------------------------------------------------------------- #
+- **L367** — 3. ★★Sweeping the attenuation coefficient u -- it bends rather than scaling proportionally # --------------------------------------------------------------------------- #
+- **L391** — ★Control group -- with the blur turned off, all that remains is the geometry (the position of the 50 % surface)
+- **L427** — 4. ★★The sign of the blur's effect changes with the threshold (cancellation point) # --------------------------------------------------------------------------- #
+- **L488** — 5. ★Black spots -- 3 % outlier points move the radius # --------------------------------------------------------------------------- #
 
 ## `examples/poc_star_astrometry.py`
 
-- **L264** _(ja)_ — 画像の合成(★ 穴: 指定座標に星を置く公開 op が fullseye に無い) # ------------------------------------------------------------------------- #
-- **L1243** _(ja)_ — ★ 「1 回あたり小さい」と「総当たりで小さい」は別の主張。
-- **L1348** _(ja)_ — ★ 「一様・孤立」の偏りが 0.0000 なのは当たり前 —— プレート解を その 24 個で当てたので、最小二乗が残差の平均を 0 にしている。 使わなかった星での誤差を見るには 1 個ずつ抜いて解き直す。
+- **L264** — Image synthesis (★ gap: fullseye has no public op that places a star at specified coordinates) # ------------------------------------------------------------------------- #
+- **L1243** — ★ "small per run" and "small in aggregate" are different claims.
+- **L1348** — ★ The bias of "uniform/isolated" being 0.0000 is a given -- the plate solution was fit to those 24, so least squares drives the mean of the residuals to 0. To see the error on unused stars, leave one out at a time and re-solve.
 
 ## `examples/poc_stockpile_volume.py`
 
-- **L698** _(ja)_ — ★物差しで勝者が入れ替わる: 体積は水平底面、重心は平面当てはめ
-- **L714** _(ja)_ — ★外した予測: 補間は過小ではなく**過大**
-- **L717** _(ja)_ — ★相殺: 補間込みの外周だと誤差が小さく見え、見えた点だけだと戻る
-- **L726** _(ja)_ — ★道具の穴。dem_viewshed が直ったらここが鳴る(それが目的)
-- **L728** _(ja)_ — ★2026-09-08: この PoC の指摘で op を直したので、いまは**見える**のが正しい。 自前の視線判定と一致し、閉形式にも近いことを固定する(また壊れたら鳴る)。
+- **L698** — ★The winner flips depending on the yardstick: volume uses a horizontal base plane, the centroid uses a plane fit
+- **L714** — ★A prediction that missed: interpolation is not under- but **over**estimating
+- **L717** — ★Cancellation: with the interpolated perimeter the error looks small, and with only the visible points it comes back
+- **L726** — ★A gap in the tooling. This spot will fire once dem_viewshed is fixed (that's the intent)
+- **L728** — ★2026-09-08: the op was fixed on the strength of this PoC's finding, so being **visible** now is correct. We pin that it matches our own line-of-sight test and is close to the closed form (it will fire again if it breaks).
 
 ## `examples/poc_strain_history.py`
 
-- **L507** _(ja)_ — ★閉形式の予測。中央 = (w²-1)/24 x d²(速度)/dt²(平滑化のなまり)、 因果 = 遅れ (w-1)/2 ぶん過去の速度を返す。
-- **L578** _(ja)_ — ★履歴そのものを重ねた図は作らない —— 真値・累積・直接が目では 区別できず(誤差は真値の 0.1〜3 %)、「よく合っています」に見えるだけの 図になる。**測ったものが見える図だけを出す**。
+- **L507** — ★Closed-form prediction. Central = (w²-1)/24 x d²(velocity)/dt² (the blunting from smoothing), causal = returns the velocity delayed by (w-1)/2.
+- **L578** — ★Do not make a plot that overlays the histories themselves -- truth, cumulative, and direct are indistinguishable to the eye (the error is 0.1-3 % of the truth), and it becomes a plot that merely looks "well matched". **Only produce plots where what was measured is visible**.
 
 ## `examples/poc_structure_4d_deterioration.py`
 
-- **L349** _(ja)_ — ★遮蔽は**設計形状**(``p_nom``)で判定する。数 mm〜数十 mm の劣化で surface が自己遮蔽の箱の内側に入ると、欠損のいちばん深いところが **まるごと欠測**になり「深い欠損ほど見えない」という嘘の場面ができる (2026-09-07 に踏んだ: 欠損の谷 -21 mm の core が全部 NaN になった)。
-- **L437** _(ja)_ — ★``fit_plane_3d`` の法線は符号が任意。真の外向きに合わせる(走査器側)。
-- **L507** _(ja)_ — ★台帳経由は宣言 out 型(pose)しか返さないので ``.raw`` で全部受ける。
-- **L696** _(ja)_ — ★「密度が違うのが悪いなら揃えればよい」を実際に試す(voxel_grid_downsample)
-- **L1257** _(ja)_ — ★観測できる情報量そのものを点群から数える(正規方程式の対角成分)
-- **L1299** _(ja)_ — ★まず測り方そのものの床を取る —— 劣化も姿勢誤差も無しで 2 回測るだけ。
+- **L349** — ★Occlusion is judged by the **design shape** (``p_nom``). If degradation of a few mm to a few tens of mm pushes the surface inside the self-occluding box, the deepest part of the defect goes **entirely unmeasured**, creating the false scene of "the deeper the defect, the less visible" (hit on 2026-09-07: the core of the defect trough at -21 mm all went NaN).
+- **L437** — ★The normal of ``fit_plane_3d`` has an arbitrary sign. Align it to the true outward direction (on the scanner side).
+- **L507** — ★Going through the ledger returns only the declared out type (pose), so receive everything via ``.raw``.
+- **L696** — ★Actually try "if differing density is the problem, then just make it uniform" (voxel_grid_downsample)
+- **L1257** — ★Count the observable information content itself from the point cloud (the diagonal of the normal equations)
+- **L1299** — ★First take the floor of the measurement method itself -- just measure twice with no degradation and no pose error.
 
 ## `examples/poc_surface_roughness.py`
 
-- **L272** _(ja)_ — ★真値は **帯域を宣言したうえで** 定義する。粗さ成分そのものではなく、 「λc で切ったあとの粗さ成分」が真値。ここを生の rough_true にすると、 正しい手順で測っても -23% ずれ、その 23% が標本化の誤差と混ざる。 帯域を含まない「粗さの真値」は存在しない —— これが 2 節の主張でもある。
+- **L272** — ★The truth is defined **only after declaring the band**. Not the roughness component itself, but "the roughness component after cutting at λc" is the truth. If you make this the raw rough_true, even measuring by the correct procedure is off by -23%, and that 23% mixes with the sampling error. There is no "roughness truth" that does not include a band -- this is also the claim of Section 2.
 
 ## `examples/poc_template_tracking.py`
 
-- **L93** _(ja)_ — ★ 穴 (a): 相関マップを返す公開 op が無いので private を借りる。 第 0 章で公開 op ``fs.op.ncc_locate`` と一致することを検算してから使う。
-- **L326** _(ja)_ — ★ 穴 (d): 公開 op ならここで黙って [0,0,0] が返る。明示的に失敗を返す。
-- **L1138** _(ja)_ — (2) ゼロ点には床がある —— 整数座標の量子化(★ 穴 b)
-- **L1168** _(ja)_ — (9) ★ 主題: 信頼度は条件で得意・不得意が逆転する
-- **L1172** _(ja)_ — ★ 得意な崖が逆である = どちらか一方を信頼度に選ぶことはできない
+- **L93** — ★ Gap (a): there is no public op that returns a correlation map, so we borrow a private one. Use it only after verifying in Chapter 0 that it matches the public op ``fs.op.ncc_locate``.
+- **L326** — ★ Gap (d): a public op would silently return [0,0,0] here. Return an explicit failure instead.
+- **L1138** — (2) The zero point has a floor -- quantization of integer coordinates (★ gap b)
+- **L1168** — (9) ★ Theme: the confidence's strengths and weaknesses reverse with conditions
+- **L1172** — ★ The cliffs each is good at are opposite = you cannot pick either one as the confidence
 
 ## `examples/poc_thermal_radiometry.py`
 
-- **L507** _(ja)_ — ★前向きは**直接積分**、逆は**校正表**。同じ表で往復させると誤差 0 が 自明に出てしまい、床を測ったことにならない。
-- **L528** _(ja)_ — ★Case-0 が**厳密に 0** なのは 350.0 K がたまたま表の節点に乗るから。 節点を外すと補間の誤差が見える —— **0 を床と呼ぶのは嘘**になる。
-- **L757** _(ja)_ — ★横軸は**周囲からの上昇**。T_obj のままだと発散が左端の 1 本の縦線に 潰れて、肝心の「どこから跳ねるか」が読めない。
-- **L767** _(ja)_ — ★``plot_series`` は枠外の点を**拒否する**(枠に貼り付いて本物の データに見えるから)。発散する側は呼び手が先に切る。
-- **L821** _(ja)_ — ★横軸は**絶対**の Δε。相対 Δε/ε で描くと 3 本が完全に重なる (§2 のとおり式から ε が消えるので)—— 図として何も言わない。
-- **L1154** _(ja)_ — ★guard band に使うのは**上側**の張り出し。合格と言いたいのは 「真値が閾値**より上**でない」ことなので、区間の上端で切る。 下側 off[0] を使うと(分布が右に歪んでいる分だけ)浅く切ってしまう —— 1 度そう書いて、誤合格が減らないので気づいた。
-- **L1257** _(ja)_ — ★同じ取り違えでも ε=0.10 の面では L_obj が負に落ちて**例外になる**。 つまり「止まるか静かに間違うか」は取り違えではなく**場面**で決まる。
-- **L1331** _(ja)_ — ★発熱部は**平らな台**にする。山にすると「ボルトと周りが同じ温度」が 成り立たず、見かけの谷が放射率のせいなのか温度のせいなのか分けられない。
-- **L1378** _(ja)_ — ★補正は偏りを消すが、雑音を 1/ε 倍にする。図(d)でボルトだけざらつく理由。
-- **L1450** _(ja)_ — ★``op_find`` は語幹の部分一致で拾う。``blackbody`` は 4 件返すが中身は ``cv_blackhat`` などのモルフォロジで、**熱放射とは何の関係も無い**。 件数を見て「在る」と読むと外す。**先頭の名前まで見てから**言う。
-- **L1600** _(ja)_ — 3. ★外した予測: 絶対誤差は**高温ほど大きい**
-- **L1602** _(ja)_ — ★物差しを変えても、放射率の誤差は上昇比で**発散しない**(Δε/ε で頭打ち)
-- **L1605** _(ja)_ — ★発散するのは反射見かけ温度のほう(上昇が小さいほど跳ねる)
-- **L1618** _(ja)_ — 6. ★★包含率。床(ρ=0)では RSS も MC も 95 %、相関を入れると RSS が落ちる
-- **L1622** _(ja)_ — ★MC 側は 94.4〜94.6 % に落ち着く(95 % ぴったりではない)。区間の端は 40000 試行の百分位で決めているので標本誤差があり、現実には量子化も 混じっている。**そこまで含めて「MC は当たる」と言う**。
-- **L1638** _(ja)_ — 7. ★取りこぼしは片側に寄る(対称な ±k·u が歪んだ分布を外す)
-- **L1642** _(ja)_ — 8. ★★guard band: 誤合格は 無視 > RSS > MC、誤不合格はその逆
-- **L1662** _(ja)_ — ★補正は偏りを消す代わりに雑音を 1/ε 倍にする(ε の比 9.5 に近い)
+- **L507** — ★Forward is **direct integration**, inverse is a **calibration table**. Round-tripping through the same table trivially yields error 0 and does not count as measuring the floor.
+- **L528** — ★Case-0 being **exactly 0** is because 350.0 K happens to land on a table node. Move off the node and the interpolation error shows -- **calling 0 the floor is a lie**.
+- **L757** — ★The x-axis is the **rise above the surroundings**. Left as T_obj, the divergence collapses into a single vertical line at the left edge, and the crucial "where it jumps from" cannot be read.
+- **L767** — ★``plot_series`` **rejects** points outside the frame (because they stick to the frame and look like real data). The caller clips the diverging side first.
+- **L821** — ★The x-axis is the **absolute** Δε. Plotted as relative Δε/ε the three curves overlap exactly (because ε drops out of the equation, per §2) -- the plot says nothing.
+- **L1154** — ★What the guard band uses is the **upper** overhang. Since what we want to assert as a pass is that "the truth is not **above** the threshold", we clip at the upper end of the interval. Using the lower off[0] clips too shallow (by however much the distribution is right-skewed) -- wrote it that way once and noticed because the false passes did not decrease.
+- **L1257** — ★For the same mix-up, on the ε=0.10 surface L_obj drops negative and **raises an exception**. In other words, "halt or fail silently" is decided not by the mix-up but by the **scene**.
+- **L1331** — ★Make the heat source a **flat plateau**. As a peak, "the bolt and its surroundings at the same temperature" does not hold, and you cannot separate whether the apparent trough is due to emissivity or to temperature.
+- **L1378** — ★The correction removes the bias but multiplies the noise by 1/ε. That is why only the bolt is grainy in figure (d).
+- **L1450** — ★``op_find`` matches on partial stems. ``blackbody`` returns 4 hits, but their contents are morphology such as ``cv_blackhat`` and have **nothing to do with thermal radiation**. Reading "it exists" from the count misses. Say it only **after looking at the leading name**.
+- **L1600** — 3. ★A prediction that missed: the absolute error is **larger at higher temperature**
+- **L1602** — ★Even changing the yardstick, the emissivity error does **not diverge** with the rise ratio (it plateaus in Δε/ε)
+- **L1605** — ★What diverges is the reflected apparent temperature (the smaller the rise, the more it jumps)
+- **L1618** — 6. ★★Coverage rate. At the floor (ρ=0) both RSS and MC are 95 %; adding correlation makes RSS drop
+- **L1622** — ★The MC side settles at 94.4-94.6 % (not exactly 95 %). The interval ends are set by percentiles over 40000 trials, so there is sampling error, and in reality quantization is mixed in too. **Say "MC hits" including all of that**.
+- **L1638** — 7. ★The misses lean to one side (symmetric ±k·u misses a skewed distribution)
+- **L1642** — 8. ★★guard band: false passes are ignore > RSS > MC, false fails the reverse
+- **L1662** — ★The correction removes the bias but in exchange multiplies the noise by 1/ε (close to the ε ratio of 9.5)
 
 ## `examples/poc_thermography_ndt.py`
 
-- **L61** _(ja)_ — ★観測時間は**健全部の t\* (6.8 s) より十分長く**取る。短いと健全部の膝が 窓の外に出て、TSR が健全部を「窓の端の深さ」と答える(実測で 2.82 mm に張り付いた)。
-- **L126** _(ja)_ — ★ここだけ近似。1 次元解に横拡散は入っていないので、時刻ごとに 拡散長 σ(t)=√(2αt) のガウスで面内をぼかす。物理のスケール則は 正しいが、境界での質量保存までは満たさない。
+- **L61** — ★Take the observation time **long enough — beyond the healthy part's t\* (6.8 s)**. Too short and the healthy part's knee goes outside the window, and TSR answers the healthy part as "the depth at the window edge" (in practice it stuck at 2.82 mm).
+- **L126** — ★This part alone is an approximation. Since the 1-D solution has no lateral diffusion, at each time we blur in-plane with a Gaussian of diffusion length σ(t)=√(2αt). The physical scaling law is correct, but it does not satisfy mass conservation at the boundary.
 - **L142** _(ja)_ — TSR で t* を探す範囲。★端を除くのは飾りではない —— 高次多項式の 2 階微分は 端で必ず暴れる(Runge)。除かないと argmax が最初か最後のフレームに張り付き、 深さが窓端の 2 値に張り付く(実測、2026-09-06)。次数は 4〜11 を掃いて 8 で 決めた(4〜5 では 1.5 mm 以深が端に張り付き、8 以上は 9/11 と同じ答え)。
 - **L177** _(ja)_ — ★格子の刻みで t* を丸めると、深さが階段状に量子化される(64 点だと 5 % 刻み)。 放物線を 3 点に当てて ln t のサブ格子位置まで出す。
 - **L235** _(ja)_ — ★所見を固定する。ここは**近似ゼロの検算**なので、崩れたら実装が壊れている。
