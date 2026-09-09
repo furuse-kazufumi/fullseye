@@ -1163,3 +1163,68 @@ def test_the_help_translation_coverage_does_not_regress():
     assert not low, (
         "ヘルプ本文の翻訳が減っている(いま / 床): %s —— 訳を消したなら床も"
         "一緒に動かす理由を書くこと。総ページ数: %s" % (low, dict(total)))
+
+
+# --------------------------------------------------------------------------- #
+# 機械可読索引の側から数える門(2026-09-09)
+#
+# `docs/OP_INDEX.json` は RAG skill が「レジストリの機械可読索引」として案内する
+# ファイル。そこに載っているのにノートが無い op は、**索引で見つかるのに使い方が
+# どこにも無い**という一番たちの悪い状態になる。実際 n-ary 層の 17 op
+# (`add_image` `bit_and` `reduce_domain` …)がその状態で放置されていた。
+#
+# ★見つからなかった理由: `ops.REGISTRY`(899)と 2-D ノート(899)は一致するので、
+# **レジストリ側から数える限り「欠落ゼロ」に見える**。一度そう結論して間違えた。
+# だからこの門は tier をまたぐ索引の側から数える
+# (memory: feedback_search_all_tiers_before_declaring_a_gap)。
+# --------------------------------------------------------------------------- #
+
+_DOCS = Path(ROOT) / "docs"
+
+
+def _op_index():
+    with open(_DOCS / "OP_INDEX.json", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def test_every_op_in_the_machine_index_has_a_note():
+    requires_full_registry()
+    idx = _op_index()
+    notes = {p.stem for p in (_DOCS / "ops").rglob("*.md")
+             if p.name != "INDEX.md" and p.parent.name != "guides"}
+    missing = sorted(o["name"] for o in idx["ops"] if o["name"] not in notes)
+    assert not missing, (
+        "OP_INDEX.json に載っているのに docs/ops にノートが無い op %d 件: %s —— "
+        "索引で見つかるのに使い方がどこにも無い状態" % (len(missing), ", ".join(missing[:20])))
+
+
+def test_nary_notes_document_a_call_form_that_actually_runs():
+    """n-ary ノートに書いた呼び方を**実行して**確かめる。
+
+    ここを「ノートに文字列が入っているか」で見ると意味が無い —— 実際、最初に
+    生成したノートは `fullseye.apply(img, "add_image", ...)` と書いていた。
+    それは 1 画像モデルなので **n-ary op では動かない**。ノートの唯一の仕事が
+    「どう呼ぶか」である以上、動かない呼び方は無いより悪い。
+    """
+    requires_full_registry()
+    import numpy as np
+    import fullseye
+    import imgops_nary as NA
+
+    rng = np.random.default_rng(0)
+    nary = NA.build_nary()
+    assert nary, "nary 層が空"
+    for o in nary:
+        note = _DOCS / "ops" / "2d" / "nary" / (o.name + ".md")
+        assert note.is_file(), f"{o.name} のノートが無い"
+        text = note.read_text(encoding="utf-8")
+        assert "FullseyeGraph" in text, f"{o.name}: 公開の呼び出し経路が書かれていない"
+        assert "fullseye.apply(img" not in text, \
+            f"{o.name}: 1 画像モデルの呼び方が書いてある(この op では動かない)"
+
+        ims = [rng.random((6, 6)) for _ in range(o.arity)]
+        g = fullseye.FullseyeGraph()
+        g.add("out", o.name, ["$in%d" % (i + 1) for i in range(o.arity)], a=0.5, b=0.5)
+        got = g.run({"$in%d" % (i + 1): im for i, im in enumerate(ims)}, terminal="out")
+        assert np.allclose(got, o.fn(ims, 0.5, 0.5)), \
+            f"{o.name}: ノート記載の経路と実装が食い違う"

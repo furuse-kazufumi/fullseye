@@ -14,7 +14,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 # reduce_domain — 2D `nary` op
 
 - **データ種**: `image × region` → `image`
-- **呼び出し**: 入力 2 枚の op なので `fullseye.apply` では呼べない。`g = fullseye.FullseyeGraph(); g.add("out", "reduce_domain", ["in1", "in2"][:2], a=0.5, b=0.5)` (実装は `import imgops_nary; {o.name: o for o in imgops_nary.build_nary()}["reduce_domain"].fn(inputs, a, b)`)
+- **呼び出し**: 入力 2 枚の op なので `fullseye.apply` では呼べない(あれは 1 画像モデル)。`g = fullseye.FullseyeGraph(); g.add("out", "reduce_domain", ["$in1", "$in2"], a=0.5, b=0.5); g.run({"$in1": img1, "$in2": img2}, terminal="out")` (`$` 始まりが外から渡す入力)
 - **HALCON 相当**: `reduce_domain`(意味・パラメータは HALCON リファレンスが参考になる)
 
 ## 使い方
