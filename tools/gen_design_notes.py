@@ -137,22 +137,35 @@ def collect():
 
 
 _KANA = re.compile(r"[ぁ-んァ-ヶ]")
+#: かな・ハングル・CJK 漢字のいずれも含まない = ラテン主体の英語原文。
+_CJK = re.compile(r"[぀-ヿ㐀-鿿가-힣豈-﫿]")
 
 
 def _has_kana(s: str) -> bool:
     return bool(_KANA.search(s))
 
 
-def _translated(text: str, lang: str) -> bool:
-    """訳済み = レンダ結果に**かなが残っていない**こと(i18n_status と同じ判定)。
+def _is_english_source(s: str) -> bool:
+    """ソース ★ コメントが英語で書かれている(かな/漢字/ハングル無し・ラテン有り)。"""
+    return bool(re.search(r"[A-Za-z]", s)) and not _CJK.search(s)
 
-    `T != text` ではなく「かな消滅」で数える理由:
-    ① 英語で書かれた ★ コメント(かな無し)は en では原文のまま=既に訳済み
-       (以前は `T==text` で「未訳」と誤カウントし、英語に `_(ja)_` が付いていた)。
-    ② かなが残る中途半端な訳を「未訳」と正しく捕まえる。
-    zh/tw(漢字)・ko(ハングル)・de はいずれもかな非使用なので正しく訳済みになる。
+
+def _translated(text: str, lang: str) -> bool:
+    """訳済み判定。
+
+    - 表に訳エントリがあれば訳済み(ただしかなが残る中途半端な訳は未訳扱い)。
+    - エントリが無い場合、**英語で書かれた原文は en では既に訳済み**
+      (英語コメントに `_(ja)_` を付けない)。zh/tw/ko/de は実エントリを要する
+      (英語はドイツ語/韓国語/中国語の訳ではない)。
+    - `ja` はソースが英語のとき実エントリ(日本語訳)を要する。
     """
-    return not _has_kana(T(text, lang))
+    t = T(text, lang)
+    if t != text:
+        return not _has_kana(t)
+    # 表エントリ無し(原文のまま)
+    if lang == "en":
+        return _is_english_source(text)
+    return False
 
 
 def render(blocks, lang: str) -> str:
