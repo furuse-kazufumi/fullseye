@@ -225,18 +225,25 @@ def section_position(real, rng):
 
 
 def section_null(real):
-    """節 4: ゼロ点 —— 背景を引かずに生の最大点を取ると、何も見つからない。"""
+    """節 4: ゼロ点 —— 背景を引かず、生の画素の最大点を取る。
+
+    ★予想を外した(2026-09-09)。「ゼロ点は何も見つけない」と書こうとしたが、
+    **振幅を上げれば当たる** —— 地の最大値を超えればよいだけだから。ゼロ点は
+    「できない」のではなく「**限界がずっと高い**」。だから比で語る。
+    """
     pos = positions(step=48)
     print("\n4) ゼロ点(背景を引かず、生の画素の最大点)")
-    found = {}
+    print("   %-8s %10s %10s %8s" % ("地", "ゼロ点", "整合フィルタ", "何倍楽になるか"))
+    gain = {}
     for name, g in real.items():
-        f = floors(g, raw, pos, AMPS)
-        found[name] = int(np.isfinite(f).sum())
-        print("   %-8s 振幅 %.1f まで上げても当てられた位置 %d/%d"
-              % (name, AMPS[-1], found[name], len(pos)))
-    print("   → 生の最大点は地のいちばん明るい所を指し続ける。"
-          "背景を引くという 1 行が、この仕事の全部。")
-    return found
+        f0 = float(np.median(floors(g, raw, pos, AMPS)))
+        f1 = float(np.median(floors(g, matched, pos, AMPS)))
+        gain[name] = f0 / f1
+        print("   %-8s %10.4f %10.4f %8.2f" % (name, f0, f1, f0 / f1))
+    print("   → 背景を引くという 1 行が、限界を %.1f〜%.1f 倍下げる。"
+          "ゼロ点は「見つけられない」のではなく、**地のいちばん明るい所を"
+          "超えるまで待たされる**。" % (min(gain.values()), max(gain.values())))
+    return gain
 
 
 # --------------------------------------------------------------------------- #
