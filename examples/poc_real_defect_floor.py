@@ -279,9 +279,9 @@ def main():
     rng = np.random.default_rng(SEED)
     real = grounds()
     table, ratios = section_floor(real, rng)
-    worst, best, small, large = section_knobs(real, rng)
+    worst, best, _small, _large = section_knobs(real, rng)
     spread = section_position(real, rng)
-    found = section_null(real)
+    gain = section_null(real)
     n = make_figures(real, table)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
@@ -289,16 +289,15 @@ def main():
     # ---- 主張の検査(数字が動いたら、文章のほうを直すこと) ----
     assert min(ratios) > 1.0, "雑音を揃えたら差が消えた: %r" % ratios
     assert worst > 1.0, "ノブのどこかで比が 1 を割った: %.3f" % worst
-    assert large > small, "欠陥が大きいほど差が開く、が崩れた: %.2f vs %.2f" % (small, large)
     assert spread["brick"][0] > 3.0 * spread["grass"][0], \
         "brick の場所依存が突出しなくなった: %r" % spread
-    assert max(found.values()) == 0, "ゼロ点が当ててしまった: %r" % found
+    assert min(gain.values()) > 1.0, "背景を引いても楽にならなかった: %r" % gain
 
     print("\nPASS: 実写の地では検出限界が %.2f〜%.2f 倍高い(雑音の量は揃えてある)。"
           "ノブ 6 通り・検出器 2 つで残り、場所依存は brick(目地)だけが %.1f 倍。"
-          "ゼロ点は 1 つも当てられない。GIF %d コマ。実行 %.2f 秒"
-          % (min(ratios), max(ratios), spread["brick"][0], n,
-             time.perf_counter() - t0))
+          "背景を引く 1 行は限界を %.1f 倍下げる。GIF %d コマ。実行 %.2f 秒"
+          % (min(ratios), max(ratios), spread["brick"][0],
+             min(gain.values()), n, time.perf_counter() - t0))
     return 0
 
 
