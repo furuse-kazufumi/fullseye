@@ -39,3 +39,31 @@ def test_at_least_one_translation_exists():
     """1 本も訳が無ければ、そもそも仕組みが動いていない疑い。"""
     rows, fresh, stale, missing = D.status()
     assert fresh >= 1, "fresh な訳が 1 本も無い(第一陣 GETTING_STARTED.en が消えた?)"
+
+
+def test_generated_stems_are_produced_by_the_chain():
+    """★`GENERATED` と `regen_all.CHAIN` が drift しないこと。
+
+    生成物を散文と誤認すると、再生成で**消える並行訳**を作りかねない
+    (逆に散文を生成物扱いすると訳が鮮度門から外れる)。ここでは
+    `GENERATED` に挙げた stem が、CHAIN のどれかの生成器ソースに実際に
+    現れることを照合する —— GENERATED に幽霊(もう誰も書かない名前)が
+    残るのを止める。逆向き(新しい生成物を GENERATED に足し忘れる)は
+    静的には確実に検出できないため、鮮度門(source-sha)を最後の砦にする。
+    """
+    import regen_all as R
+
+    srcs = [(R.ROOT / cmd[0]).read_text(encoding="utf-8", errors="replace")
+            if hasattr(R, "ROOT") else
+            open(os.path.join(ROOT, cmd[0]), encoding="utf-8", errors="replace").read()
+            for cmd, _desc in R.CHAIN]
+    ghosts = [stem for stem in D.GENERATED
+              if not any(stem in src for src in srcs)]
+    assert not ghosts, (
+        "GENERATED にあるが CHAIN のどの生成器も書かない stem: %s —— "
+        "生成器を消したなら GENERATED からも外すこと" % ghosts)
+
+    #: 生成物は散文列挙に混ざってはならない(混ざると並行訳の対象になる)。
+    prose = set(D.prose_docs())
+    leaked = sorted(D.GENERATED & prose)
+    assert not leaked, "生成物が散文として数えられている: %s" % leaked
