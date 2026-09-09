@@ -249,24 +249,28 @@ def section_null(real):
     別々に数える。
     """
     pos = positions(step=48)
-    print("\n4) ゼロ点(背景を引かず、生の画素の最大点)—— 2 つの物差しで")
-    print("   %-8s | %-19s | %-19s" % ("", "当てる(位置だけ)", "弁別する(閾値も)"))
-    print("   %-8s | %8s %8s | %8s %8s %6s"
-          % ("地", "ゼロ点", "整合", "ゼロ点", "整合", "比"))
-    gain = {}
+    print("\n4) ゼロ点(背景を引かず、生の画素の最大点)—— 物差しを 2 つに分ける")
+    print("   %-8s | %-17s | %-24s" % ("", "当てる(位置)", "空振り(無欠陥で何回鳴るか)"))
+    print("   %-8s | %8s %8s | %10s %10s"
+          % ("地", "ゼロ点", "整合", "ゼロ点", "整合"))
+    loc, fa = {}, {}
     for name, g in real.items():
+        held = realdata.sample_photo(name)[-N:, -N:].astype(np.float64)   # 重ならない切り出し
         l0 = float(np.median(floors(g, raw, pos, AMPS)))
         l1 = float(np.median(floors(g, matched, pos, AMPS)))
-        d0 = float(np.median(floors_discriminated(g, raw, pos, AMPS)))
-        d1 = float(np.median(floors_discriminated(g, matched, pos, AMPS)))
-        gain[name] = d0 / d1
-        print("   %-8s | %8.4f %8.4f | %8.4f %8.4f %5.2fx"
-              % (name, l0, l1, d0, d1, d0 / d1))
-    print("   → ★位置だけで見るとゼロ点が勝つ(整合フィルタは地の構造も増幅する)。"
-          "弁別まで求めると逆転し、背景を引く 1 行が限界を %.1f〜%.1f 倍下げる。"
-          % (min(gain.values()), max(gain.values())))
-    print("   → **どちらか 1 つだけを報告すれば、どちらの検出器でも勝たせられる。**")
-    return gain
+        a0, _ = false_alarms(g, held, raw)
+        a1, _ = false_alarms(g, held, matched)
+        loc[name], fa[name] = l0 / l1, (a0, a1)
+        print("   %-8s | %8.4f %8.4f | %10.1f %10.1f" % (name, l0, l1, a0, a1))
+    print("   ★単位は 1 万画素あたりの誤検出。閾値は**同じ素材の別の切り出し**で決めた"
+          "(同じ画像から決めると、定義上その分位数ぶんしか超えないので弁別を測れない)。")
+    print("   → ★位置だけで見るとゼロ点が %.2f〜%.2f 倍**良い** —— 整合フィルタは"
+          "地の構造も一緒に増やすから。ところが空振りは %.0f 対 %.0f(brick)で、"
+          "ゼロ点は無欠陥の面で鳴り続ける。"
+          % (min(loc.values()), max(loc.values()), fa["brick"][0], fa["brick"][1]))
+    print("   → **1 つの数字だけを報告すれば、どちらの検出器でも勝たせられる。**"
+          "当てる力と空振りは別々に数えること。")
+    return loc, fa
 
 
 # --------------------------------------------------------------------------- #
@@ -305,7 +309,7 @@ def main():
     table, ratios = section_floor(real, rng)
     worst, best, _small, _large = section_knobs(real, rng)
     spread = section_position(real, rng)
-    gain = section_null(real)
+    loc, fa = section_null(real)
     n = make_figures(real, table)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
@@ -315,13 +319,16 @@ def main():
     assert worst > 1.0, "ノブのどこかで比が 1 を割った: %.3f" % worst
     assert spread["brick"][0] > 3.0 * spread["grass"][0], \
         "brick の場所依存が突出しなくなった: %r" % spread
-    assert min(gain.values()) > 1.0, "背景を引いても楽にならなかった: %r" % gain
+    assert max(loc.values()) < 1.0, "位置だけの物差しでゼロ点が負けた: %r" % loc
+    assert all(a0 > a1 for a0, a1 in fa.values()),         "空振りでゼロ点が勝ってしまった: %r" % fa
 
     print("\nPASS: 実写の地では検出限界が %.2f〜%.2f 倍高い(雑音の量は揃えてある)。"
           "ノブ 6 通り・検出器 2 つで残り、場所依存は brick(目地)だけが %.1f 倍。"
-          "背景を引く 1 行は限界を %.1f 倍下げる。GIF %d コマ。実行 %.2f 秒"
+          "ゼロ点は位置だけなら勝つが(%.2f 倍)、無欠陥の面で 1 万画素あたり %.0f 回"
+          "空振りする(整合フィルタは %.0f 回)。GIF %d コマ。実行 %.2f 秒"
           % (min(ratios), max(ratios), spread["brick"][0],
-             min(gain.values()), n, time.perf_counter() - t0))
+             min(loc.values()), fa["brick"][0], fa["brick"][1],
+             n, time.perf_counter() - t0))
     return 0
 
 
