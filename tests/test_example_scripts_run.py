@@ -104,8 +104,12 @@ def _run_one(path: Path) -> tuple[str, int, str]:
 def example_results() -> dict:
     """対象をまとめて並列に走らせ、``{名前: (exit, 抜粋)}`` を返す。"""
     out: dict = {}
+    # backend が足りない例は**走らせない**(走らせれば必ず ImportError で落ちる)。
+    # 合否は各テスト先頭の `requires_backend` が決める —— skip として正直に出る。
+    runnable = [p for p in _targets()
+                if all(_have_backend(b) for b in _needs(p.stem))]
     with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as ex:
-        for name, code, tail in ex.map(_run_one, _targets()):
+        for name, code, tail in ex.map(_run_one, runnable):
             out[name] = (code, tail)
     return out
 
