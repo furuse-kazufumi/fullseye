@@ -22,7 +22,8 @@ TABLE = os.path.join(ROOT, "docs", "i18n", "design_notes.json")
 
 KANA = re.compile(r"[ぁ-んァ-ヶ]")
 HANGUL = re.compile(r"[가-힣]")
-CJK = re.compile(r"[㐀-鿿豈-﫿]")
+#: CJK 漢字(拡張A + 基本 + 互換)。ハングル(U+AC00-D7A3)は含めない。
+CJK = re.compile(r"[㐀-䶿一-鿿豈-﫿]")
 
 
 def _bad(lang, s):
