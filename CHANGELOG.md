@@ -543,6 +543,18 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
   戻す**(42 行)。Qiita は相対パスだと画像が出ないので、生成器だけを回すと公開記事が
   壊れる。**回すなら公開手順まで通しでやること。**
 
+### 多言語化(i18n、2026-09-10 継続)
+
+- **入口の手書き文書 7 本を英訳**: `GETTING_STARTED` / `AI_RAG_GUIDE` / `INSTALL` /
+  `STUDIO_GUIDE` / `GENERAL_ALGORITHMS` / `ENGINE` / `3DGS_USAGE`。多言語版 4 → 11 本。
+  未訳は `_(ja)_` の印つきで残り、黙って日本語に落ちない(`tools/i18n_status.py` /
+  `tests/test_i18n*.py` が exit 1 で止める)。指紋(`i18n-source-sha`)で日本語が
+  変われば訳が stale になり CI が落ちる。
+- **`DESIGN_NOTES` の ★ コメント訳を開始**(生成物 `docs/DESIGN_NOTES.<lang>.md`、
+  6 言語)。訳は `docs/i18n/design_notes.json` に一元化し、生成器が引く。
+  `tests/test_design_notes.py` の ratchet(`MIN_TRANSLATED`)で本数が減れば CI が落ちる。
+  ★印は言語ごとに訳さず `_(ja)_` に固定(訳すと機械が数えられなくなる)。
+
 ### 分かっているが直していないこと
 
 - **n-ary 層の 17 op にノートが無い**(`add_image` `sub_image` `mult_image` `div_image`
