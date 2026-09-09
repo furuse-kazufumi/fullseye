@@ -33,10 +33,16 @@ _DOCS = os.path.join(_ROOT, "docs")
 LANGS = ("en", "zh", "tw", "ko", "de")
 
 #: 生成物。並行訳を置かず、生成器の側で多言語化する(置くと再生成で消える)。
-#: CHAIN(tools/regen_all.py)が作る docs/ 直下のファイルと一致させること。
+#: **`regen_all.CHAIN` が docs/ 直下に書く .md と一致させること。**手書きの
+#: 散文リスト(prose_docs)と GENERATED の 2 つが drift すると、生成物を散文と
+#: 誤認して**再生成で消える並行訳**を作りかねない(2026-09-10 に MATURITY /
+#: SENSOR_PLAYBOOK / CONVERSION_MATRIX の 3 本が漏れていた)。
+#: `tests/test_i18n_docs.py::test_generated_stems_are_produced_by_the_chain`
+#: が「ここに挙げた stem は CHAIN の生成器が実際に書く」ことを照合する。
 GENERATED = {
     "README", "CAPABILITIES", "HARDENING", "DESIGN_NOTES",
     "OP_CATALOG", "EXAMPLES_3D",
+    "MATURITY", "SENSOR_PLAYBOOK", "CONVERSION_MATRIX",
 }
 
 _SHA_RE = re.compile(r"<!--\s*i18n-source-sha:\s*([0-9a-f]{12})\s*-->")
