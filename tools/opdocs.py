@@ -869,7 +869,18 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
         lines.append(T('- **データ種**: `{a0}` → `{a1}`(引数だけで決まる op —— '
                        '画像やデータの入力を取らない)', lang)
                      .format(a0=T("なし", lang), a1=out))
-    if dim == "2d":
+    if dim == "2d" and rec.get("arity"):
+        # ★n-ary(多入力)op は `fullseye.apply` では呼べない —— あれは 1 画像
+        # モデル。ここに 1 画像の呼び方を書くと、**ノートが嘘をつく**(この
+        # ノートの唯一の仕事は「どう呼ぶか」なので、それは無いより悪い)。
+        # 公開経路は `fullseye.FullseyeGraph`。
+        lines.append(T('- **呼び出し**: 入力 {a1} 枚の op なので `fullseye.apply` では'
+                       '呼べない。`g = fullseye.FullseyeGraph(); '
+                       'g.add("out", "{a0}", ["in1", "in2"][:{a1}], a=0.5, b=0.5)` '
+                       '(実装は `import imgops_nary; '
+                       '{{o.name: o for o in imgops_nary.build_nary()}}["{a0}"].fn(inputs, a, b)`)',
+                       lang).format(a0=name, a1=rec["arity"]))
+    elif dim == "2d":
         lines.append(T('- **呼び出し**: `fullseye.apply(img, "{a0}", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)', lang).format(a0=name))
     else:
         reg_mod = ({"3d": "ops3d"}.get(dim)

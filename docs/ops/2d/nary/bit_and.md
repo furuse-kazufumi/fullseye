@@ -14,7 +14,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 # bit_and — 2D `nary` op
 
 - **データ種**: `image × image` → `image`
-- **呼び出し**: `fullseye.apply(img, "bit_and", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **呼び出し**: 入力 2 枚の op なので `fullseye.apply` では呼べない。`g = fullseye.FullseyeGraph(); g.add("out", "bit_and", ["in1", "in2"][:2], a=0.5, b=0.5)` (実装は `import imgops_nary; {o.name: o for o in imgops_nary.build_nary()}["bit_and"].fn(inputs, a, b)`)
 - **HALCON 相当**: `bit_and`(意味・パラメータは HALCON リファレンスが参考になる)
 
 ## 使い方

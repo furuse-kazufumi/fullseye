@@ -14,7 +14,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 # intersection — 2D `nary` op
 
 - **データ種**: `region × region` → `region`
-- **呼び出し**: `fullseye.apply(img, "intersection", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
+- **呼び出し**: 入力 2 枚の op なので `fullseye.apply` では呼べない。`g = fullseye.FullseyeGraph(); g.add("out", "intersection", ["in1", "in2"][:2], a=0.5, b=0.5)` (実装は `import imgops_nary; {o.name: o for o in imgops_nary.build_nary()}["intersection"].fn(inputs, a, b)`)
 - **HALCON 相当**: `intersection`(意味・パラメータは HALCON リファレンスが参考になる)
 
 ## 使い方
