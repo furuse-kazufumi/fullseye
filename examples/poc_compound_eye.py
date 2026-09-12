@@ -295,6 +295,9 @@ def main():
     assert occ_med < occ_mean, "median が mean より隠れ背景に近くない"
     assert occ_med < occ_center, "median が中心1枚より隠れ背景に近くない"
 
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     print("\nOK: 複眼=光場、神経重ね合わせの N-スケーリング(膝つき)、"
           "アレイの距離画像、median の透視 —— すべて実測で確認。")
 
