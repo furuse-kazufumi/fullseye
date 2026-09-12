@@ -227,9 +227,9 @@ def chapter_depth_needs_the_array():
 # ---------------------------------------------------------------------------- #
 def chapter_pooling_is_not_free():
     """少数視点を塞ぐ遮蔽者は median なら貫けるが、半数を超えると保証は消える。"""
-    # 背景(遠, slope 0.3)+ 手前の遮蔽者(近, slope 3.0)。手前が中心視点の一部を塞ぐ。
-    lf, truth = ommatidial_scene((0.3, 3.0), occlusion=True, seed=7)
+    # 背景(遠, slope 0.3)+ 手前の遮蔽者(近, slope 3.0)を低 coverage で = 少数派の遮蔽。
     bg_slope = 0.3
+    lf, truth = ommatidial_scene((bg_slope, 3.0), occlusion=True, seed=7, coverage=0.25)
     center = np.asarray(L.lf_subaperture(lf, v=V_C, u=U_C))
     hidden = (np.abs(truth - bg_slope) > 1e-6)   # 中心視点で前景に隠れた背景画素
     mask = np.asarray(L.lf_aperture_mask(angular=ANGULAR, shape="circle",
