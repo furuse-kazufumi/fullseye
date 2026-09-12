@@ -305,11 +305,11 @@ def reset() -> None:
 # --------------------------------------------------------------------------- #
 # 図の組み立て —— すべて fullseye の annotate 族で作る                          #
 # --------------------------------------------------------------------------- #
-def _panel(v, signed=False, title=""):
+def _panel(v, signed=False, title="", gray=False):
     """1 枚のパネル(uint8 RGB)。題を左上に置く。"""
     import fullseye as fs
 
-    rgb = _to_rgb8(v, signed).astype(np.float64) / 255.0
+    rgb = _to_rgb8(v, signed, gray).astype(np.float64) / 255.0
     if title:
         rgb = np.asarray(fs.text_box(rgb, title, (6, 6), anchor="lt", font_size=12))
     return rgb
