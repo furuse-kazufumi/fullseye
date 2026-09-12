@@ -186,39 +186,40 @@ def chapter_superposition_scaling():
 #  第 3 章 —— アレイでこそ距離が出る(1 個眼には視差が無い)                        #
 # ---------------------------------------------------------------------------- #
 def chapter_depth_needs_the_array():
-    """深度は光場アレイの性質。ノイズ下でも焦点度スイープで距離画像と全焦点像が出る。"""
-    scene = (-1.0, 0.5, 2.0)   # 3 層 = 3 距離。手前ほど |slope| 大
-    lf, truth = ommatidial_scene(scene, occlusion=True, seed=3)
-    noisy, _sig, _n = add_photoreceptor_noise(lf, per_view_snr=3.0, seed=5)
+    """深度は光場アレイの性質。手前/奥の 2 領域をノイズ下でも距離画像として分離する。"""
+    near_slope, far_slope = 2.0, 0.5     # 手前=視差大, 奥=視差小
+    lf, truth, half = two_depth_scene(near_slope, far_slope, seed_near=11, seed_far=22)
+    noisy, _sig, _n = add_photoreceptor_noise(lf, per_view_snr=6.0, seed=5)
 
-    sweep = tuple(np.linspace(-2.0, 2.5, 19))
+    sweep = tuple(np.linspace(-0.5, 2.5, 31))
     dmap, sharp = L.lf_depth_from_focus(noisy, slopes=sweep, window=9,
                                         measure="laplacian", subpixel=True)
     dmap = np.asarray(dmap); sharp = np.asarray(sharp)
-    # 真値の各層に最も近いスイープ点へスナップして層ごとの誤差を測る(信頼できる画素のみ)
-    conf = sharp > np.median(sharp)
-    err = float(np.sqrt(np.mean((dmap[conf] - truth[conf]) ** 2)))
-    layer_hit = {}
-    for s in sorted(set(scene), key=abs):
-        m = (np.abs(truth - s) < 1e-6) & conf
-        if m.any():
-            layer_hit[s] = float(np.median(dmap[m]))
+    conf = sharp > np.percentile(sharp, 50)
+    # 境界 ±8px は視差でにじむので内部だけで層を測る
+    near_m = np.zeros(SHAPE, bool); near_m[8:-8, 8:half - 8] = True
+    far_m = np.zeros(SHAPE, bool); far_m[8:-8, half + 8:-8] = True
+    err = float(np.sqrt(np.mean((dmap[(near_m | far_m) & conf]
+                                 - truth[(near_m | far_m) & conf]) ** 2)))
+    layer_hit = {near_slope: float(np.median(dmap[near_m & conf])),
+                 far_slope: float(np.median(dmap[far_m & conf]))}
 
     aif = np.asarray(L.lf_all_in_focus(noisy, dmap, n_levels=16))
 
-    print("\n== 第3章: アレイでこそ距離が出る ==")
-    print("  焦点度スイープ深度 RMSE(信頼画素) : %.3f  [px/view]" % err)
+    print("\n== 第3章: アレイでこそ距離が出る(手前部品/奥基板) ==")
+    print("  焦点度スイープ深度 RMSE(領域内部・信頼画素) : %.3f  [px/view]" % err)
     for s, hit in layer_hit.items():
-        print("    真値 slope=%+.2f -> 推定中央値 %+.3f" % (s, hit))
+        tag = "手前" if s == near_slope else "奥"
+        print("    %s slope=%+.2f -> 推定中央値 %+.3f" % (tag, s, hit))
 
     figs.save_grid(
         "compound_eye_depth",
         [truth, dmap, aif],
-        captions=["真の距離(スロープ地図)", "推定距離(焦点度スイープ)",
+        captions=["真の距離(手前=左/奥=右)", "推定距離(焦点度スイープ)",
                   "全焦点像(各画素を自分の距離で合焦)"],
         title="ノイズ下でもアレイは距離画像を出す",
         signed=[True, True, False], gray=[False, False, True])
-    return err, layer_hit
+    return err, layer_hit, near_slope, far_slope
 
 
 # ---------------------------------------------------------------------------- #
