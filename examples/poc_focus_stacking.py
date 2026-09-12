@@ -213,7 +213,7 @@ def psnr(a, b):
 def main():
     depth, tex = ground_truth()
     flat, band, plain = masks(depth)
-    n_frames = 15
+    n_frames = 17
     focus_mm = np.linspace(depth.min(), depth.max(), n_frames)
 
     t0 = time.perf_counter()
