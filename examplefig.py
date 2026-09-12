@@ -142,10 +142,13 @@ def _to_rgb8(v, signed: bool, gray: bool = False):
     return (np.clip(rgb, 0, 1) * 255).astype(np.uint8)
 
 
-def save(name: str, image, caption: str = "", signed: bool = False) -> Path | None:
+def save(name: str, image, caption: str = "", signed: bool = False,
+         gray: bool = False) -> Path | None:
     """図を 1 枚書く。``FULLSEYE_FIGURE_DIR`` が無ければ**何もせず ``None``**。
 
     ``signed=True`` は 0 を中心に塗る(ひずみ・残差・位相差のような符号つきの量)。
+    ``gray=True`` は疑似カラーにせずグレースケールで塗る(強度そのものを絵として
+    見せる量。詳細は :func:`_to_rgb8`)。
     """
     d = target_dir()
     if d is None:
@@ -156,7 +159,7 @@ def save(name: str, image, caption: str = "", signed: bool = False) -> Path | No
     try:
         import fullseye as fs
 
-        rgb = _to_rgb8(image, signed)
+        rgb = _to_rgb8(image, signed, gray)
         path = d / ("%02d_%s.png" % (len(_manifest) + 1, name))
         fs.write_image(str(path), rgb)     # uint8 はそのまま画素値(api.write_image)
         _manifest.append({"file": path.name, "name": name, "caption": caption,
