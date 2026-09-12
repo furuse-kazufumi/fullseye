@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — 설계한 파이프라인을 실행하는 런타임
 
 [日本語](./ENGINE.md) · [English](./ENGINE.en.md) · [简体中文](./ENGINE.zh.md) · [繁體中文](./ENGINE.tw.md) · **한국어** · [Deutsch](./ENGINE.de.md)

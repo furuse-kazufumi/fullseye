@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: bd321cfbdaaa -->
 # Allgemeine Algorithmen implementierbar machen — algo-c Kompatibilitäts-Roadmap
 
 [日本語](./GENERAL_ALGORITHMS.md) · [English](./GENERAL_ALGORITHMS.en.md) · [简体中文](./GENERAL_ALGORITHMS.zh.md) · [繁體中文](./GENERAL_ALGORITHMS.tw.md) · [한국어](./GENERAL_ALGORITHMS.ko.md) · **Deutsch**

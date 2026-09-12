@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: bd321cfbdaaa -->
 # 범용 알고리즘을 구현 가능하게 만들기 — algo-c 대응 로드맵
 
 [日本語](./GENERAL_ALGORITHMS.md) · [English](./GENERAL_ALGORITHMS.en.md) · [简体中文](./GENERAL_ALGORITHMS.zh.md) · [繁體中文](./GENERAL_ALGORITHMS.tw.md) · **한국어** · [Deutsch](./GENERAL_ALGORITHMS.de.md)
@@ -701,7 +702,7 @@ fail-soft, 빈/단일→0.0. 등가는 전도가 아니다(tie로 좌측을 먼�
   명시적 상한), `m ≤ 2147483000`, Python/C 모두.
 - 끝점을 `(int)`로 캐스트한 후 범위검사(float→int overflow UB, UBSan 트랩) → raw double로 범위·정수성을 먼저 검사.
   UBSan 트랩 3 → 0, 39/39 비트 일치.
-- **번인값의 변경(ABI)**: 「0.0이 정당한 답이기도 한」 op의 fail-soft 번인값을 **0.0 → −1.0**으로 변경 —
+- **센티널 값의 변경(ABI)**: 「0.0이 정당한 답이기도 한」 op의 fail-soft 센티널 값을 **0.0 → −1.0**으로 변경 —
   `is_prime` / `segments_intersect` / `edit_distance` / `point_in_polygon` / `lcs_length`(P13〜P18과 같은 규약).
   예: `is_prime([4294967311])`(정의역 외)는 0.0「합성수」가 아니라 −1.0. 미변경(충돌 가능성 있음, 검토 필요):
   `pow_mod` / `gcd_seq` / `popcount_total` / `polygon_area2`.

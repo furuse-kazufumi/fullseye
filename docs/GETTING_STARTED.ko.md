@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: d72686b2f766 -->
 # 시작하기 (5분 만에 실행하기)
 
 [日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · **한국어** · [Deutsch](./GETTING_STARTED.de.md)

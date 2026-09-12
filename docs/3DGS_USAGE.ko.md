@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: 37bc63784e56 -->
 # Fullseye 3DGS — 사용법(명령어 한 줄)
 
 [日本語](./3DGS_USAGE.md) · [English](./3DGS_USAGE.en.md) · [简体中文](./3DGS_USAGE.zh.md) · [繁體中文](./3DGS_USAGE.tw.md) · **한국어** · [Deutsch](./3DGS_USAGE.de.md)

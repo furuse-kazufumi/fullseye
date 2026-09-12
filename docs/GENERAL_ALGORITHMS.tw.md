@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: bd321cfbdaaa -->
 # 讓通用演算法也能實作 — algo-c 對應路線圖
 
 [日本語](./GENERAL_ALGORITHMS.md) · [English](./GENERAL_ALGORITHMS.en.md) · [简体中文](./GENERAL_ALGORITHMS.zh.md) · **繁體中文** · [한국어](./GENERAL_ALGORITHMS.ko.md) · [Deutsch](./GENERAL_ALGORITHMS.de.md)

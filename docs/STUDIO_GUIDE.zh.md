@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: a77086926760 -->
 # Fullseye Studio 完全指南
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · **简体中文** · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)

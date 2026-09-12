@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — 執行已設計管線的執行環境
 
 [日本語](./ENGINE.md) · [English](./ENGINE.en.md) · [简体中文](./ENGINE.zh.md) · **繁體中文** · [한국어](./ENGINE.ko.md) · [Deutsch](./ENGINE.de.md)
