@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：483 / 609 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：484 / 609 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel_match.py`
@@ -880,7 +880,7 @@
 ## `opsastrostack.py`
 
 - **L85** — ★ 作為替代，我們**明確拒絕原始的 (N,H,W) ndarray**。無論是 video (T,H,W) / voxel (D,H,W) / histcube (H,W,T) / zscan，3-D 陣列都能通過同一結構檢查，即使弄錯也不會拋異常，而是返回一個「看似合理卻錯誤的合成結果」——這與 photon 族將 histcube 從 voxel 中分離是**完全相同的危險**。但這裡並非增加類型，而是透過要求它「必須是 list」來獲得同樣的防禦。一旦寫成 list(volume)，呼叫方就宣告了「首軸是幀軸」。 * image2d —— 合成結果、drizzle 輸出、單幀。均為 2-D 的 float64，現有的 2-D op（濾波、閾值、morphology、psf_to_mtf）可保持語義不變地使用。它**甚至並非非負**（會出現 κ-σ 合成的殘差以及樣條插值的負值邊緣），所以自稱為 counts 反而是謊言。 * keypoints —— ``star_detect`` 的返回是 (N, 2) 的 (row, col)。TYPE_CHECKS 中的 keypoints 是「(N,3) 或任意 2-D 陣列」，故直接適用，並由 ``psf_fit`` / ``aperture_photometry`` 消費。
-- **L101** _(ja)_ — ★ ここは pairs ではない: pairs の正典は reprconv 側の 6 op が決めた 「(x, y) の対」で、こちらは画像座標の (row, col) であり fit_transform / mosaic と同じ規約。混ぜると行と列が入れ替わる (features.match_keypoints が (x,y) を返すのに fit_transform が (row,col) を要求する、というこの repo 既知の罠と同じ形)。 keypoints を名乗れば、少なくとも「画像上の点」という約束は共有される。 * indices —— ``lucky_select`` が返す採用フレームの添字(1-D int)。 既存語彙そのもの。``[frames[i] for i in idx]`` で images に戻る。 * measurement —— ``noise_sigma`` は実スカラ 1 つ。 * matrix —— ``frame_align`` の (3,3) 同次変換。transforms / fit_transform / mosaic が扱っているのと同じ物で、専用語を作る理由が無い。 * table —— dict / list of dict(品質、PSF 当てはめ、測光)。 TYPE_CHECKS の table は list|dict なのでどちらも該当。 分けなかったことの代償(honest): ``images`` プールに天体でない画像列が 入ると、``frame_align`` は星が見つからず ValueError で止まる。これは fail-closed なので「発見ゼロ」ではなく「到達したが正しく拒否した」だが、 連鎖ファザーから見ると align 系 2 op が CONTRACT にしかならない可能性がある。 photon 族が counts を分けた理由(7/17 が一度も実行されない)と同じ症状が 出うるので、**もし実測でそうなったら**、そのときは「点像を含む画像列」を 別プールにする判断が正当化される —— 先回りして型を増やすことはしない (型は「混ぜると嘘になる」証拠が出てから増やす、が本 repo の順序)。
+- **L101** — ★ 這裡不是 pairs：pairs 的正典是 reprconv 側的 6 個 op 所確定的「(x, y) 對」，而這裡是圖像座標的 (row, col)，與 fit_transform / mosaic 是同一規約。混用會導致列與行互換（與本 repo 已知的陷阱同形：features.match_keypoints 返回 (x,y)，而 fit_transform 要求 (row,col)）。自稱 keypoints 至少能共享「圖像上的點」這一約定。 * indices —— ``lucky_select`` 返回的採用幀的索引（1-D int）。就是既有詞彙本身。``[frames[i] for i in idx]`` 即可還原為 images。 * measurement —— ``noise_sigma`` 是單個實純量。 * matrix —— ``frame_align`` 的 (3,3) 齊次變換。與 transforms / fit_transform / mosaic 所處理的是同一物，沒有理由另造專用詞。 * table —— dict / list of dict（品質、PSF 擬合、測光）。TYPE_CHECKS 中的 table 為 list|dict，故兩者都適用。不分離的代價（honest）：若非天體圖像序列進入 ``images`` 池，``frame_align`` 找不到星，會以 ValueError 停止。由於這是 fail-closed，所以不是「發現為零」，而是「到達了但被正確拒絕」，但從鏈式 fuzzer 的角度看，align 系的 2 個 op 可能只淪為 CONTRACT。由於會出現與 photon 族分離 counts 的原因相同的症狀（7/17 從未被執行），**若實測確實如此**，那時將「含點像的圖像序列」另立一池的判斷才被正當化——不預先增加類型（在本 repo，順序是：只有在出現「混用會變成謊言」的證據之後才增加類型）。
 
 ## `opsdem.py`
 

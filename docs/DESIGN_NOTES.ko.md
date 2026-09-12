@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 483 / 609 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 484 / 609 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel_match.py`
@@ -880,7 +880,7 @@
 ## `opsastrostack.py`
 
 - **L85** — ★ 대신 **원시 (N,H,W) ndarray를 명시적으로 거부**했다. 3-D 배열은 video (T,H,W) / voxel (D,H,W) / histcube (H,W,T) / zscan 어느 것이든 동일한 구조 검사를 통과하므로, 잘못 넣어도 예외가 나지 않고 "그럴듯하게 틀린 합성 결과"를 반환한다 —— photon 족이 histcube를 voxel에서 분리한 것과 **완전히 같은 위험**이다. 다만 여기서는 타입을 늘리는 것이 아니라 "list일 것"을 요구함으로써 같은 방어를 얻었다. list(volume)라고 쓴 순간, 호출하는 쪽이 "선두 축이 프레임 축이다"라고 선언한 것이 된다. * image2d —— 합성 결과, drizzle 출력, 단일 프레임. 모두 2-D float64로, 기존 2-D op(필터·임계값·morphology·psf_to_mtf)가 의미를 유지한 채 쓸 수 있다. **비음수도 아니**며(κ-σ 합성의 잔차나 스플라인 보간의 음의 가장자리가 나타난다), counts를 자칭하는 것은 오히려 거짓이 된다. * keypoints —— ``star_detect``의 반환값은 (N, 2)의 (row, col)이다. TYPE_CHECKS의 keypoints는 "(N,3) 또는 임의의 2-D 배열"이므로 그대로 해당되어 ``psf_fit`` / ``aperture_photometry``가 소비한다.
-- **L101** _(ja)_ — ★ ここは pairs ではない: pairs の正典は reprconv 側の 6 op が決めた 「(x, y) の対」で、こちらは画像座標の (row, col) であり fit_transform / mosaic と同じ規約。混ぜると行と列が入れ替わる (features.match_keypoints が (x,y) を返すのに fit_transform が (row,col) を要求する、というこの repo 既知の罠と同じ形)。 keypoints を名乗れば、少なくとも「画像上の点」という約束は共有される。 * indices —— ``lucky_select`` が返す採用フレームの添字(1-D int)。 既存語彙そのもの。``[frames[i] for i in idx]`` で images に戻る。 * measurement —— ``noise_sigma`` は実スカラ 1 つ。 * matrix —— ``frame_align`` の (3,3) 同次変換。transforms / fit_transform / mosaic が扱っているのと同じ物で、専用語を作る理由が無い。 * table —— dict / list of dict(品質、PSF 当てはめ、測光)。 TYPE_CHECKS の table は list|dict なのでどちらも該当。 分けなかったことの代償(honest): ``images`` プールに天体でない画像列が 入ると、``frame_align`` は星が見つからず ValueError で止まる。これは fail-closed なので「発見ゼロ」ではなく「到達したが正しく拒否した」だが、 連鎖ファザーから見ると align 系 2 op が CONTRACT にしかならない可能性がある。 photon 族が counts を分けた理由(7/17 が一度も実行されない)と同じ症状が 出うるので、**もし実測でそうなったら**、そのときは「点像を含む画像列」を 別プールにする判断が正当化される —— 先回りして型を増やすことはしない (型は「混ぜると嘘になる」証拠が出てから増やす、が本 repo の順序)。
+- **L101** — ★ 여기는 pairs가 아니다: pairs의 정전은 reprconv 쪽의 6개 op가 정한 "(x, y)의 쌍"이고, 이쪽은 이미지 좌표의 (row, col)로 fit_transform / mosaic와 같은 규약이다. 섞으면 행과 열이 뒤바뀐다(features.match_keypoints가 (x,y)를 반환하는데 fit_transform이 (row,col)을 요구하는, 이 repo에 알려진 함정과 같은 형태). keypoints를 자칭하면 적어도 "이미지 위의 점"이라는 약속은 공유된다. * indices —— ``lucky_select``가 반환하는 채택 프레임의 인덱스(1-D int). 기존 어휘 그 자체. ``[frames[i] for i in idx]``로 images로 되돌린다. * measurement —— ``noise_sigma``는 실수 스칼라 하나. * matrix —— ``frame_align``의 (3,3) 동차 변환. transforms / fit_transform / mosaic가 다루는 것과 같은 것이라 전용어를 만들 이유가 없다. * table —— dict / list of dict(품질, PSF 피팅, 측광). TYPE_CHECKS의 table은 list|dict이므로 둘 다 해당된다. 분리하지 않은 대가(honest): ``images`` 풀에 천체가 아닌 이미지 열이 들어오면 ``frame_align``은 별을 찾지 못해 ValueError로 멈춘다. 이것은 fail-closed이므로 "발견 제로"가 아니라 "도달했지만 올바르게 거부했다"이지만, 연쇄 퍼저 관점에서는 align 계열 2 op가 CONTRACT에 그칠 가능성이 있다. photon 족이 counts를 분리한 이유(7/17이 한 번도 실행되지 않음)와 같은 증상이 나올 수 있으므로, **만약 실측에서 그러하다면** 그때는 "점상을 포함한 이미지 열"을 별도 풀로 두는 판단이 정당화된다 —— 미리 타입을 늘리지는 않는다(타입은 "섞으면 거짓이 된다"는 증거가 나온 뒤에 늘린다, 가 이 repo의 순서다).
 
 ## `opsdem.py`
 
