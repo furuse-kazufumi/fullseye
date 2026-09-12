@@ -355,7 +355,7 @@ def main():
     ref = np.array([float(np.var(-4.0 * s + np.roll(s, 1, 0) + np.roll(s, -1, 0)
                                  + np.roll(s, 1, 1) + np.roll(s, -1, 1))) for s in stack_hc])
     n_tied = int((af >= 1.0).sum())
-    print("  高コントラストの被写体で {n_frames} 枚を掃引し、フレームごとの合焦指標を見る:")
+    print(f"  高コントラストの被写体で {n_frames} 枚を掃引し、フレームごとの合焦指標を見る:")
     print(f"  {'合焦距離 [mm]':>14}{'xcv2_lap_var':>14}{'クリップ前の分散':>18}")
     for f_mm, v, rv in zip(focus_mm, af, ref):
         mark = "  <- 同点" if v >= 1.0 else ""
