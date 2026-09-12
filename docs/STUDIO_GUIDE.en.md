@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: a77086926760 -->
 # The complete guide to Fullseye Studio
 
-[日本語](./STUDIO_GUIDE.md) · **English**
+[日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
 
 **Fullseye Studio** is an HDevelop-style visual pipeline workbench. You search for operators and
 line them up, turn two knobs with sliders, run one stage at a time while looking at the

@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: d72686b2f766 -->
 # Getting started (running in 5 minutes)
 
-[日本語](./GETTING_STARTED.md) · **English**
+[日本語](./GETTING_STARTED.md) · **English** · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md)
 
 ## Which one is your job? (three ways in)
 

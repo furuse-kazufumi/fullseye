@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: 8d925234d62d -->
 # FullseyeEngine — the runtime that executes a pipeline you designed
 
-[日本語](./ENGINE.md) · **English**
+[日本語](./ENGINE.md) · **English** · [简体中文](./ENGINE.zh.md) · [繁體中文](./ENGINE.tw.md) · [한국어](./ENGINE.ko.md) · [Deutsch](./ENGINE.de.md)
 
 `FullseyeEngine` (`engine.py`) is the runtime for **executing** — from your own code or the CLI —
 an image-operator pipeline you **built** in Fullseye Studio. It is the counterpart of MVTec's

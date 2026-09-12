@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: bd321cfbdaaa -->
 # Making general algorithms implementable — the algo-c support roadmap
 
-[日本語](./GENERAL_ALGORITHMS.md) · **English**
+[日本語](./GENERAL_ALGORITHMS.md) · **English** · [简体中文](./GENERAL_ALGORITHMS.zh.md) · [繁體中文](./GENERAL_ALGORITHMS.tw.md) · [한국어](./GENERAL_ALGORITHMS.ko.md) · [Deutsch](./GENERAL_ALGORITHMS.de.md)
 
 > User request (2026-08-16): make **general algorithms** like those in
 > <https://github.com/okumuralab/algo-c> (Haruhiko Okumura, *[Revised new edition] A Dictionary of

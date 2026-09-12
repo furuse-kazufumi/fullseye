@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: 37bc63784e56 -->
 # Fullseye 3DGS — how to use it (one command)
 
-[日本語](./3DGS_USAGE.md) · **English**
+[日本語](./3DGS_USAGE.md) · **English** · [简体中文](./3DGS_USAGE.zh.md) · [繁體中文](./3DGS_USAGE.tw.md) · [한국어](./3DGS_USAGE.ko.md) · [Deutsch](./3DGS_USAGE.de.md)
 
 Turn a MuJoCo sim scene into a **3D Gaussian Splatting** model and produce a GIF you can spin
 all the way around plus novel-view images. Camera poses come from the sim's ground truth, so
