@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 484 von 609. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 609 von 609. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -544,7 +544,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L252** — 3. ★★Die Blob-Groesse (Umfang) bestimmt den Bias # --------------------------------------------------------------------------- #
 - **L291** — 4. ★★Das Vorzeichen des Bias kippt mit der Naehe (Aufhebungspunkt) # --------------------------------------------------------------------------- #
 - **L353** — 6. ★Wenn das Endglied um 5 % abweicht # --------------------------------------------------------------------------- #
-- **L380** _(ja)_ — 7. ★★第 3 成分(薄氷) # --------------------------------------------------------------------------- #
+- **L380** — 7. ★★Dritte Komponente (dünnes Eis) # --------------------------------------------------------------------------- #
 - **L490** — (b) spec_unmix existierte doch (★vor dem Schreiben von "nicht vorhanden" 3 Ebenen durchsucht)
 
 ## `examples/poc_search_sweep_width.py`
@@ -700,110 +700,110 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L145** — ★"Warten auf Personen" 4 Fälle x (7.5 + Langsamfahrt 2.5) und "Gang-Interferenz" 8 Fälle x (2.5 + Langsamfahrt 2.5) addieren beide **40.0 Sekunden zur Null-Basislinie** —— bewusst angeglichen. Es stimmt nicht zwangsläufig mit der Realität überein, aber dass "dieselbe Zahl aus verschiedenen Ursachen entsteht", lässt sich an einem Beispiel zeigen.
 - **L160** — Der "stationär"-Schwellenwert der Null-Basislinie [m/s]. ★Wird er nicht deutlich über die durch Rauschen erzeugte Scheingeschwindigkeit (σ√2/Δt = 0.085 m/s @ Δt=0.25 s) gelegt, werden **stationäre Personen fälschlich als bewegt eingestuft und die Null-Basislinie schrumpft** (bei 0.15 m/s halbiert sich die Null-Basislinie bei Δt=0.25 s, was zu dem falschen Schluss führt, dass "je feiner man abtastet, desto weniger Verweildauer").
 - **L239** — ★Da es sichtbar ist, sobald auch nur eine der Kameras es sieht, bedeutet das Eintreten in den toten Winkel die Höhe, bei der **alle Kameras verdeckt sind** = das **Maximum** der Grenzen jeder Kamera. Ich hatte hier min und die Vorhersage lag um 0.5 m daneben.
-- **L329** _(ja)_ — ★並ぶ人の到着時刻は**実際に作業が始まる時刻**から決める(見積りで 決めたら 20 秒ずれて、待ちの柱が作業の柱と重ならなかった)。
-- **L342** _(ja)_ — ★出会う場所は**棚の列の真横**でなければならない。棚と棚の間でない交差通路は 両側が開けていて空き幅が 1.9 m あり、「狭い通路」に分類されない(最初の 実装は主通路の高さで出会わせてしまい、10 件中 4 件が「その他」に落ちた)。
-- **L435** _(ja)_ — ★入れ替え(swap)ではなく併合にしてある —— 入れ替えは「同じ柱の中で 遅く始まったほうが待ち」という時間の入れ子を壊さない(役が入れ替わるだけ で、両方の役が正しく埋まる)。壊れるのは **2 人が 1 人に見えたとき**。
-- **L594** _(ja)_ — ★止まっている**芯**だけを残す。柱は 2 人ぶんの足跡で 1.8 m あるので、 通り抜ける人の中心も 2〜3 フレーム柱の中に入る(実測でそれが 「1 人しか居ない干渉」を作り、10 件中 8 件を落とした)。 中央値から :data:`CORE_R` 以内に居続けた最長の連なりを芯とする。
-- **L846** _(ja)_ — ★複数人の成分で数えると「通路を 10 人が通った列」が厚くなって混ざるので、 同じ 1 人の中で「待っている間」と「歩いている間」を比べる。
-- **L1257** _(ja)_ — 印の大きさ。★同じ棚前で「補充待ち」と「欠品」が起きるので、**大きい印から 描いて小さい印を上に重ねる**。同じ大きさで描くと後から描いたほうが前のを 完全に隠し、図の上では 5 件が 2 件に見えた。
+- **L329** — ★Die Ankunftszeit der Wartenden aus **dem Zeitpunkt, zu dem die Arbeit tatsächlich beginnt** ableiten (aus einer Schätzung abgeleitet lag sie um 20 Sekunden daneben, sodass der Wartebalken den Arbeitsbalken nicht überlappte).
+- **L342** — ★Der Treffpunkt muss **direkt neben einer Regalreihe** liegen. Ein Quergang, der nicht zwischen zwei Regalen liegt, ist zu beiden Seiten offen, hat 1.9 m freie Breite und wird nicht als "enger Gang" eingestuft (die erste Implementierung ließ sie auf Höhe des Hauptgangs treffen, und 4 von 10 fielen in "Sonstiges").
+- **L435** — ★Es ist ein Zusammenführen, kein Vertauschen (swap) —— ein Vertauschen bricht die zeitliche Verschachtelung "innerhalb desselben Balkens ist der später Begonnene der Wartende" nicht (nur die Rollen tauschen, und beide Rollen werden korrekt gefüllt). Was es bricht, ist **wenn zwei Personen wie eine aussehen**.
+- **L594** — ★Nur den ruhenden **Kern** behalten. Ein Balken misst durch die Fußabdrücke zweier Personen 1.8 m, sodass auch das Zentrum einer durchgehenden Person für 2-3 Frames in den Balken fällt (in Messungen erzeugte das eine "Interferenz mit nur einer Person" und ließ 8 von 10 wegfallen). Als Kern gilt die längste Folge, die innerhalb von :data:`CORE_R` um den Median blieb.
+- **L846** — ★Zählt man nach Mehrpersonen-Komponenten, wird "eine Spalte, durch deren Gang 10 Personen gingen" dick und vermischt sich, deshalb vergleicht man "während des Wartens" und "während des Gehens" innerhalb derselben einzelnen Person.
+- **L1257** — Markergröße. ★Da vor demselben Regal "warten auf Nachschub" und "nicht vorrätig" auftreten, **vom größten Marker aus zeichnen und die kleineren darüberlegen**. Bei gleicher Größe verdeckt der zuletzt gezeichnete den vorherigen vollständig, und im Diagramm sahen 5 wie 2 aus.
 
 ## `examples/poc_water_level.py`
 
-- **L346** _(ja)_ — 2. ★ゼロ点 vs ホモグラフィ # --------------------------------------------------------------------------- #
-- **L389** _(ja)_ — 3. ★アンカーの位置で符号が変わる # --------------------------------------------------------------------------- #
-- **L422** _(ja)_ — 4. ★波立ち —— ロバストが効くのは外れ値があるときだけ # --------------------------------------------------------------------------- #
-- **L459** _(ja)_ — 5. ★★反射 —— 系統的に低く出る # --------------------------------------------------------------------------- #
-- **L622** _(ja)_ — (d) キャリパーは在った(★「無い」と書きかけて 3 層引いて見つけた)
+- **L346** — 2. ★Nullpunkt vs Homographie # --------------------------------------------------------------------------- #
+- **L389** — 3. ★Das Vorzeichen ändert sich mit der Ankerposition # --------------------------------------------------------------------------- #
+- **L422** — 4. ★Welligkeit —— Robustheit hilft nur, wenn es Ausreißer gibt # --------------------------------------------------------------------------- #
+- **L459** — 5. ★★Reflexion —— fällt systematisch zu niedrig aus # --------------------------------------------------------------------------- #
+- **L622** — (d) Der Messschieber war vorhanden (★ich wollte schon "nicht vorhanden" schreiben, zog dann 3 Ebenen und fand ihn)
 
 ## `examples/poc_web_roll_periodicity.py`
 
-- **L123** _(ja)_ — ★第1ニップと第2ニップの周長差はわざと 15.7 mm しかない(6 節の崖のため)。
-- **L158** _(ja)_ — 6 節(崖)だけ試行数を上げる。★24 試行では報告率が 12000 mm で 100 %、 14000 mm で 88 % という**非単調**が出て、「検出の崖」の位置が小標本の揺らぎで 動いた(120 試行では 12000 mm が 93 % に落ち着き、100 % を保つのは 17000 mm 以上)。 崖の位置を主張する節だけは、床が揺れない試行数で測る。
-- **L253** _(ja)_ — ★op は頂点を**丸めずに**返す(±0.5 を超えたら「そこは極大でない」という 情報)。この PoC は櫛の高調波ビンも評価するので、ここで明示的に丸める。
-- **L802** _(ja)_ — ★床は 0 ではない。24 試行では最長 2 点が偶然 0 % になり「0 % を保つ最短の L」 という判定が通ってしまったが、120 試行では最長 20000 mm でも 2 % 残る。 **床を先に測ってから、床の何倍で崖と呼ぶかを決める**(0 % は判定に使わない)。
-- **L1057** _(ja)_ — ★120 試行にしたら 100 % ちょうどではなくなった(97 / 98 %)。 24 試行の「100 %」は分母が小さかっただけ。床を見て 95 % に置く。
+- **L123** — ★Der Umfangsunterschied zwischen dem 1. Nip und dem 2. Nip beträgt absichtlich nur 15.7 mm (wegen der Klippe in Abschnitt 6).
+- **L158** — Nur für Abschnitt 6 (die Klippe) die Anzahl der Versuche erhöhen. ★Bei 24 Versuchen war die Meldequote **nichtmonoton** — 100 % bei 12000 mm und 88 % bei 14000 mm — und die Position der "Detektionsklippe" verschob sich durch die Schwankung kleiner Stichproben (bei 120 Versuchen pendelte sich 12000 mm bei 93 % ein, und 100 % hält erst ab 17000 mm). Nur der Abschnitt, der die Klippenposition behauptet, wird mit einer Versuchszahl gemessen, bei der der Boden nicht wackelt.
+- **L253** — ★Die op gibt den Scheitelpunkt **ohne Rundung** zurück (ein Überschreiten von ±0.5 ist die Information, dass "dort kein Maximum ist"). Da dieses PoC auch die harmonischen Bins des Kamms auswertet, runden wir hier explizit.
+- **L802** — ★Der Boden ist nicht 0. Bei 24 Versuchen waren die längsten 2 Punkte zufällig 0 %, und das Urteil "das kürzeste L, das 0 % hält" ging durch, doch bei 120 Versuchen bleiben selbst bei den längsten 20000 mm noch 2 %. **Zuerst den Boden messen, dann entscheiden, ab welchem Vielfachen des Bodens man es Klippe nennt** (0 % nicht für das Urteil verwenden).
+- **L1057** — ★Mit 120 Versuchen war es nicht mehr genau 100 % (97 / 98 %). Die "100 %" bei 24 Versuchen waren nur ein kleiner Nenner. Am Boden orientiert auf 95 % setzen.
 
 ## `examples/poc_weld_bead_scan_angle.py`
 
-- **L485** _(ja)_ — ★候補は「母材面の高さに戻った点」なので、**溝の外の平らな母材**も 全部候補になる。内側 CHECK_IN mm に溶接金属(母材面から CHECK_DEV 以上の落ち込み)が在ることを確かめて初めてつま先と認める —— この門が無いと候補が母材へ滑り落ちて脚長が 1.7 mm 外へ飛ぶ。
-- **L489** _(ja)_ — ★門の深さは**いちばん深い溝より深く**取ること。最初 -0.6 mm に したら、深さ 0.45 mm(垂直では 0.74 mm)の溝が門を通ってしまい、 16 断面のうち 1 本で 2.2 mm 外れた。
-- **L572** _(ja)_ — ★生き残った断面だけの真値の平均。集計から何が抜けたかを見る。
-- **L999** _(ja)_ — ★凸みだけ予測から外れた。原因はつま先の這い(τ が絶対値のしきい値だから)。
-- **L1193** _(ja)_ — ★溝が角度とともに消えていく様子(母材面からの落ち込みで見る)
+- **L485** — ★Kandidaten sind "Punkte, die auf die Höhe der Grundwerkstoffoberfläche zurückgekehrt sind", daher wird auch **der gesamte flache Grundwerkstoff außerhalb der Naht** zum Kandidaten. Erst wenn bestätigt ist, dass innerhalb der inneren CHECK_IN mm Schweißgut (ein Abfall von mindestens CHECK_DEV gegenüber der Grundwerkstoffoberfläche) vorhanden ist, wird es als Nahtübergang (toe) anerkannt —— ohne dieses Gate rutschen Kandidaten auf den Grundwerkstoff ab und die Schenkellänge springt um 1.7 mm nach außen.
+- **L489** — ★Die Gate-Tiefe **tiefer als die tiefste Rille** wählen. Zuerst auf -0.6 mm gesetzt, ließ es eine Rille der Tiefe 0.45 mm (vertikal 0.74 mm) durch das Gate, und bei 1 der 16 Querschnitte lag es um 2.2 mm daneben.
+- **L572** — ★Der Mittelwert der Wahrwerte nur der überlebenden Querschnitte. Sehen, was aus der Aggregation herausgefallen ist.
+- **L999** — ★Nur die Wölbung wich von der Vorhersage ab. Die Ursache ist das Kriechen des Nahtübergangs (weil τ ein Betragsschwellwert ist).
+- **L1193** — ★Wie die Rille mit dem Winkel verschwindet (betrachtet am Abfall gegenüber der Grundwerkstoffoberfläche)
 
 ## `examples/profile_shape_inspection.py`
 
-- **L25** _(ja)_ — ★repo 直下のモジュール(profileops)を import するので、チェックアウトから そのまま走らせても通るように repo 直下を先頭に置く。他の例と同じ作法。 これが無いと `py -3.11 examples/<name>.py` が ModuleNotFoundError で落ちる (2026-09-09 実測: 走らせる門が無かった 83 本のうち、落ちたのはこの型の 2 本だけ)。
+- **L25** — ★Da ein Modul direkt unter dem Repo (profileops) importiert wird, den Repo-Stamm nach vorne stellen, damit es direkt aus einem Checkout läuft. Gleiche Konvention wie die anderen Beispiele. Ohne dies scheitert `py -3.11 examples/<name>.py` mit ModuleNotFoundError (gemessen 2026-09-09: von den 83 ohne Gate zum Ausführen scheiterten nur 2 dieses Typs).
 
 ## `examples/representation_roundtrip.py`
 
-- **L175** _(ja)_ — (c) ガウシアン -> voxel の質量。★一度間違えた数字
+- **L175** — (c) Gauß -> voxel-Masse. ★Eine Zahl, die ich einmal falsch hatte
 
 ## `examples/shape2d_morph_descriptor_tour.py`
 
-- **L64** _(ja)_ — ★EXTEND: 自分の輪郭抽出結果(``{"shape": (H,W), "cs": [ (N,2) (row,col), ... ]}``)に差し替える
+- **L64** — ★EXTEND: durch das eigene Konturextraktionsergebnis (``{"shape": (H,W), "cs": [ (N,2) (row,col), ... ]}``) ersetzen
 
 ## `examples/shapestat_landmark_tour.py`
 
-- **L71** _(ja)_ — ★EXTEND: 自分のランドマーク (N,3) を s に入れる(点の並びが対応していること)
-- **L123** _(ja)_ — ★EXTEND: 自分の群 (K,N,3) を scrambled に入れる(位置・向き・大きさがばらばらでよい)
-- **L221** _(ja)_ — ★EXTEND: 自分のランドマークを「左を全部、次に右を同じ順で」並べて lm に入れる
-- **L276** _(ja)_ — ★EXTEND: surf を自分の面の点(メッシュ頂点・点群)、normals をその向き付き法線にする
-- **L299** _(ja)_ — ★EXTEND: 自分の群 (K,N,3) に差し替える(点の並びが個体間で対応していること)
+- **L71** — ★EXTEND: die eigenen Landmarken (N,3) in s einsetzen (die Punktreihenfolge muss übereinstimmen)
+- **L123** — ★EXTEND: die eigene Gruppe (K,N,3) in scrambled einsetzen (Position, Ausrichtung und Größe dürfen beliebig sein)
+- **L221** — ★EXTEND: die eigenen Landmarken als "erst alle linken, dann die rechten in derselben Reihenfolge" anordnen und in lm einsetzen
+- **L276** — ★EXTEND: surf zu den eigenen Oberflächenpunkten (Mesh-Vertices, Punktwolke) und normals zu deren orientierten Normalen machen
+- **L299** — ★EXTEND: durch die eigene Gruppe (K,N,3) ersetzen (die Punktreihenfolge muss zwischen den Individuen übereinstimmen)
 
 ## `examples/voxel_labels_color.py`
 
-- **L81** _(ja)_ — 1) ★色の安定性 —— この族の存在理由 # ------------------------------------------------------------------ #
-- **L152** _(ja)_ — 4) ★異方 spacing # ------------------------------------------------------------------ #
+- **L81** — 1) ★Farbstabilität —— der Grund, warum diese Familie existiert # ------------------------------------------------------------------ #
+- **L152** — 4) ★Anisotropes spacing # ------------------------------------------------------------------ #
 
 ## `examples_3d/alpha_shape_topology.py`
 
-- **L149** _(ja)_ — ★判別的アサート: alpha shape は穴を保つ=軸プローブをほぼ内包しない。 null 手法(凸包)は内包率 ≈1 でこの条件に FAIL する(=判別的)。
+- **L149** — ★Diskriminierende Assertion: die alpha shape bewahrt Löcher = sie enthält die Achsen-Probe kaum. Die Null-Methode (konvexe Hülle) FAILt diese Bedingung mit einer Einschlussrate von ≈1 (= diskriminierend).
 
 ## `examples_3d/ct_hand_radiograph.py`
 
-- **L34** _(ja)_ — 実際に呼んで確かめる。★2026-09-05 まで、この例は「azimuth=elevation=0 なら np.sum(axis=0) と一致」と書きながら**一度も確かめていなかった**。しかも op → example の索引が hasattr の文字列を呼び出しと誤認していたため、 「例が 1 つも無い op」が 100% カバレッジの中に隠れていた。
+- **L34** — Tatsächlich aufrufen und verifizieren. ★Bis 2026-09-05 schrieb dieses Beispiel "stimmt mit np.sum(axis=0) überein, wenn azimuth=elevation=0", **hatte es aber kein einziges Mal verifiziert**. Zudem verwechselte der op → example-Index die hasattr-Zeichenkette mit einem Aufruf, sodass "ops ohne ein einziges Beispiel" innerhalb der 100%-Abdeckung verborgen waren.
 
 ## `examples_3d/geometry_metrology.py`
 
-- **L186** _(ja)_ — ★無限直線版との差を数字で出す（同じ 2 線分）
+- **L186** — ★Den Unterschied zur Version mit unendlicher Gerade als Zahl ausgeben (dieselben 2 Segmente)
 
 ## `examples_3d/hull_bounds.py`
 
-- **L237** _(ja)_ — --- パネル C: ★新規 min_enclosing_sphere(密着)vs 素朴球(過大)---
-- **L272** _(ja)_ — ★(1) 新規 op — min_enclosing_sphere: 既知球で半径復元 + 全点内包 + ほぼ最小 ============================================================
-- **L296** _(ja)_ — ★(2) 新規 op の beat-null — 非対称点群で素朴球より小さく・ほぼ最小・安全側 ============================================================
+- **L237** — --- Panel C: ★neu min_enclosing_sphere (eng anliegend) vs naive Kugel (überdimensioniert) ---
+- **L272** — ★(1) neue op — min_enclosing_sphere: Radiuswiederherstellung an bekannter Kugel + enthält alle Punkte + nahezu minimal ============================================================
+- **L296** — ★(2) beat-null der neuen op — bei einer asymmetrischen Punktwolke kleiner als die naive Kugel, nahezu minimal, auf der sicheren Seite ============================================================
 
 ## `examples_3d/mesh_props.py`
 
-- **L404** _(ja)_ — ★巻き順を裏返すと体積の符号が反転する = 符号は向きの検査そのもの
+- **L404** — ★Das Umkehren der Umlaufrichtung kehrt das Vorzeichen des Volumens um = das Vorzeichen ist selbst eine Orientierungsprüfung
 
 ## `examples_3d/metrics_eval.py`
 
-- **L234** _(ja)_ — ★最近傍距離が嘘をつくのは「変化ゼロで測り返しただけ」のとき。同じ斜面を別の 密度・別の位置で取り直すと、最近傍は面に沿って隣の点を掴むので**点間隔ぶんの 偽の変化**が出る。M3C2 は法線方向に射影するので、その成分は落ちる。 (この PoC を書く前の予想「C2C は法線シフトでも過大に出る」は**外れた** —— 平行な面を法線方向に動かすだけなら最近傍距離もほぼ真値。嘘が出るのは 面に沿った取り直しのほうだった。)
+- **L234** — ★Der Nächste-Nachbar-Abstand lügt, wenn er "bei null Änderung nur nachgemessen" wurde. Nimmt man denselben Hang mit anderer Dichte oder Position erneut auf, greift der nächste Nachbar entlang der Oberfläche einen benachbarten Punkt und erzeugt **eine Scheinänderung in der Größenordnung des Punktabstands**. M3C2 projiziert auf die Normalenrichtung, sodass diese Komponente wegfällt. (Die Vorhersage vor dem Schreiben dieses PoC, "C2C fällt auch bei einer Normalenverschiebung zu groß aus", war **falsch** —— bewegt man parallele Flächen nur entlang der Normalenrichtung, bleibt auch der Nächste-Nachbar-Abstand nahezu beim Wahrwert. Die Lüge trat bei der Neuaufnahme entlang der Oberfläche auf.)
 
 ## `examples_3d/sdf_csg.py`
 
-- **L167** _(ja)_ — ★罠: ``res`` はスカラでも**軸ごとのボクセル数**なので、bounds が非等方だと ボクセルは立方体にならない(ここは x,y が 0.125、z が 0.0625)。体積を ``h**3`` で出すと**ちょうど 2 倍**ずれる —— 実際この例で 295.00 と出て 閉形式 148.03 に対し 99 % の誤差になり、下の assert が鳴いた。
+- **L167** — ★Falle: ``res`` ist selbst als Skalar **die Anzahl der Voxel pro Achse**, sodass das Voxel bei anisotropen bounds kein Würfel ist (hier ist x,y 0.125 und z 0.0625). Das Volumen mit ``h**3`` zu berechnen liegt um **genau den Faktor 2** daneben —— in diesem Beispiel ergab es tatsächlich 295.00, ein Fehler von 99 % gegenüber der geschlossenen Form 148.03, und die assert unten schlug an.
 
 ## `examples_3d/space_carving.py`
 
-- **L117** _(ja)_ — ★``carve_look_at`` を使う(2026-09-08)。``look_at`` と同じ実装だが、 **公開層から引ける名前**はこちら —— ``fs.look_at`` は render3d の gluLookAt 版(4x4・−Z 前方)という**別物**で、その ``M[:3,:3], M[:3,3]`` を渡すと全点がカメラ後方に落ち、例外を出さずに**空の hull** が返る。
+- **L117** — ★``carve_look_at`` verwenden (2026-09-08). Dieselbe Implementierung wie ``look_at``, aber **der aus der öffentlichen Schicht erreichbare Name** ist dieser —— ``fs.look_at`` ist **etwas anderes**, die gluLookAt-Version von render3d (4x4, −Z nach vorne), und die Übergabe von deren ``M[:3,:3], M[:3,3]`` lässt alle Punkte hinter die Kamera fallen und gibt ohne Ausnahme **eine leere hull** zurück.
 
 ## `examples_3d/structured_light_scan.py`
 
-- **L122** _(ja)_ — ★ 座標系の落とし穴: `look_at` は gluLookAt 規約(カメラは -Z を向き +Y が上)で 姿勢を作るが、`render_mesh` はその Vc を (x, -y, -z) に直してから K を掛ける (= depth_to_points / K と同じ CV 規約、depth は +Z 前方)。三角測量は CV 規約の 側で閉じているので、姿勢も FLIP を掛けてから合成する。ここを飛ばすと投影機が カメラの背後を向き、深度は「もっともらしい大きさ」のまま全部間違う (最初の実行がまさにそれで、RMSE 78 mm = 零点と見分けがつかなかった)。
+- **L122** — ★ Fallstrick des Koordinatensystems: `look_at` erzeugt die Pose in der gluLookAt-Konvention (Kamera blickt entlang -Z, +Y ist oben), aber `render_mesh` schreibt dieses Vc erst zu (x, -y, -z) um, bevor mit K multipliziert wird (= dieselbe CV-Konvention wie depth_to_points / K, depth ist +Z nach vorn). Die Triangulation ist auf der CV-Konventions-Seite geschlossen, also muss auch die Pose vor dem Zusammensetzen mit FLIP versehen werden. Ueberspringt man dies, blickt der Projektor hinter die Kamera, und die depth bleibt bei einer 'plausiblen Groessenordnung', ist aber vollstaendig falsch (der allererste Lauf tat genau das: RMSE 78 mm = nicht von Null zu unterscheiden).
 
 ## `fast.py`
 
-- **L254** _(ja)_ — ★uint8 の gaussian は **置かない**。``cv2.GaussianBlur`` の 8U 経路は 8 bit 固定小数 のカーネルを使うので、float64 の core との差が **1.174/255**(実測、この module の ゲート画像 6 枚 × PARITY_AB 5 点の最大)になり「1/255 まで一致」を満たさない。 box は 0.494/255、median / モルフォロジは 0.000/255 なのでそちらだけ載せる。 uint8 の高速 gaussian が要るなら「2/255 まで」という別の契約で明示的に足すこと。
-- **L294** _(ja)_ — ★ここに載っているのは全て :func:`parity` のゲートを通ったものだけ。 追加するときは「実装 → ゲートを回す → 通ったら載せる」の順を必ず守る。
-- **L320** _(ja)_ — ★``edges_image``(HALCON 名としては canny と同じ)は載せない。registry の その名前は backends_auto の **skimage canny**(本物の hysteresis つき)で、 core の ``canny`` とは別のアルゴリズム。不一致率 1.0(実測)。 ── HALCON 名の twin(registry に同一実装で別名登録されている op)────────── accel._TWIN_ALIASES と同じ発想。ゲートは registry の**その名前の実装**に 対して回すので、実装がずれていれば落ちて載らない。
-- **L372** _(ja)_ — ★「観測した出力が {0,1} だったか」で判定してはいけない —— 連続 op でも定数画像 では出力が全 0 になり、二値と誤判定して基準が勝手に厳しくなる(実装中に踏んだ)。 判定は registry の **宣言された out_sort** で行う。
+- **L254** — ★Das uint8-gaussian **nicht** ausliefern. Der 8U-Pfad von ``cv2.GaussianBlur`` verwendet einen 8-Bit-Festkomma-Kernel, sodass die Abweichung vom float64-core **1.174/255** betraegt (gemessen, das Maximum ueber die 6 Gate-Bilder dieses module x 5 PARITY_AB-Punkte) und damit 'Uebereinstimmung bis 1/255' nicht erfuellt. box ist 0.494/255, median / Morphologie sind 0.000/255, daher werden nur diese ausgeliefert. Wird ein schnelles uint8-gaussian benoetigt, fuege es explizit unter einem separaten Vertrag von 'bis 2/255' hinzu.
+- **L294** — ★Alles hier Aufgefuehrte hat das :func:`parity`-Gate bestanden. Beim Hinzufuegen stets die Reihenfolge 'implementieren -> Gate laufen lassen -> bei Bestehen aufnehmen' einhalten.
+- **L320** — ★``edges_image`` (als HALCON-Name identisch mit canny) nicht aufnehmen. Dieser Name in der registry ist das **skimage canny** von backends_auto (mit echter hysteresis), ein anderer Algorithmus als das core-``canny``. Nichtuebereinstimmungsrate 1.0 (gemessen). -- HALCON-Namens-Twin (ein op, der in der registry unter einem Alias mit identischer Implementierung registriert ist) ---------- dieselbe Idee wie accel._TWIN_ALIASES. Das Gate laeuft gegen **die Implementierung unter diesem Namen** in der registry, also faellt es bei abweichender Implementierung durch und wird nicht aufgenommen.
+- **L372** — ★Nicht anhand von 'war die beobachtete Ausgabe {0,1}' entscheiden -- selbst ein kontinuierlicher op liefert auf einem konstanten Bild eine reine 0-Ausgabe, die faelschlich als binaer eingestuft wird und das Kriterium stillschweigend verschaerft (bei der Implementierung darauf gestossen). Entscheide anhand des **deklarierten out_sort** in der registry.
 
 ## `feat_fpfh.py`
 
-- **L304** _(ja)_ — ★2026-09-07: 姿勢の計算は numpy(FPFH も RANSAC も Kabsch も numpy)で、torch は **返り値を包むためだけ**に使われていた。そのせいで torch を入れない CI(py3.10 / 3.12)ではこの op が丸ごと ImportError になり、PoC が落ちていた。torch があれば これまでどおり Tensor を返し、無ければ同じ値の numpy を返す(値は不変)。
+- **L304** — ★2026-09-07: Die Pose-Berechnung ist numpy (FPFH, RANSAC und Kabsch sind alle numpy), und torch wurde **nur zum Umhuellen des Rueckgabewerts** verwendet. Dadurch wurde dieser op auf CI ohne torch (py3.10 / 3.12) zu einem kompletten ImportError, und der PoC schlug fehl. Ist torch vorhanden, gibt es wie bisher einen Tensor zurueck; andernfalls numpy mit denselben Werten (Werte unveraendert).
 
 ## `fsruntime.py`
 
@@ -811,71 +811,71 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/__init__.py`
 
-- **L531** _(ja)_ — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L531** — ★Der Adapter, der sich an den deklarierten out-Typ haelt, **verwirft alles ab dem 2. Element** eines op, der ein Tupel zurueckgibt (``wht`` von ``drizzle_resample``, ``info`` von ``piv_cross_correlate``). Wird die verworfene Seite benoetigt, war sie ueber den Eingang des ledger nicht erreichbar. Am 2026-09-06 schrieb ein Superaufloesungs-PoC ``flow, info = fs.ledger.piv_cross_correlate(...)``, entpackte das (2,R,C) entlang der 1. Achse, nutzte die 2. Zeile von dy als dx und machte die Verschiebungsschaetzung von 0.12 -> 0.74 px (ohne Ausnahme). Mit ``.raw`` erreicht man die rohe Rueckgabe: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
 
 ## `g1_policy_bridge.py`
 
-- **L33** _(ja)_ — ★配布物にローカル絶対パスを焼き込まない(2026-09-05 の監査で、非公開の兄弟 プロジェクト名が PyPI の wheel に載っていた)。既定は環境変数で与える。 Unitree G1 のシーン XML。MuJoCo Menagerie の `unitree_g1/scene.xml` を指す。
-- **L61** _(ja)_ — ★セキュリティ境界。`pickle` は load 中に任意の callable を呼べるので、 `find_class` を素通しにすると **チェックポイントを開いただけでコードが走る**。 RL のチェックポイントは他人から貰う前提の成果物なので、これは現実的な脅威。 (2026-09-05 実測: 素通し版は `os.system` / `subprocess.Popen` / `builtins.eval` をそのまま返し、`load()` 中に実際にファイルを作れた。) ここに載っているのは、brax PPO のチェックポイントが実際に参照する数値系だけ。 足りないものが出たら**このリストに足す**(例外メッセージがモジュール名を出す)。
+- **L33** — ★Keinen lokalen absoluten Pfad in die Distribution einbrennen (im Audit vom 2026-09-05 fuhr ein nicht oeffentlicher Geschwisterprojektname im PyPI-wheel mit). Den Default ueber eine Umgebungsvariable geben. Das Szenen-XML des Unitree G1. Verweist auf `unitree_g1/scene.xml` der MuJoCo Menagerie.
+- **L61** — ★Sicherheitsgrenze. `pickle` kann waehrend des load ein beliebiges callable aufrufen, also bedeutet ein Durchreichen von `find_class`, dass **allein das Oeffnen eines Checkpoints Code ausfuehrt**. Ein RL-Checkpoint ist ein Artefakt, das von anderen empfangen werden soll, also ist dies eine reale Bedrohung. (Gemessen 2026-09-05: die Durchreich-Variante gab `os.system` / `subprocess.Popen` / `builtins.eval` direkt zurueck und konnte waehrend `load()` tatsaechlich eine Datei anlegen.) Hier sind nur die numerischen Klassen aufgefuehrt, die ein brax-PPO-Checkpoint tatsaechlich referenziert. Fehlt etwas, **fuege es dieser Liste hinzu** (die Ausnahmemeldung nennt den Modulnamen).
 
 ## `honest_summary.py`
 
 - **L58** — ★Auto-Ops, die das Funktions-Gate **nicht bestanden** haben, aus der Schlagzeile ausschließen — zuvor wurden sie nur per [warn] ausgegeben, aber weiter mitgezählt, was die „funktional gegatterte“ Paritätszahl mit Ops aufblähte, die das Gate ablehnt.
-- **L77** _(ja)_ — ★2026-09-08: この行はこう書いてあった —— "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." 実測すると **979 + 17 = 979**、つまり n-ary の 17 本は ``reg_counted`` の**部分集合**(``nary_names - reg_counted`` は空)。 見出しの 979 は正しいのに、内訳の行だけが「足し算」に見え、読者が足すと 996 になる。数字が合っていても**説明が嘘をつく**形なので直した。 内訳が和として成り立つかは ``tests/test_honest_summary_arithmetic.py`` が毎回見る。
+- **L77** — ★2026-09-08: Diese Zeile lautete -- "= %d evolvable registry ops + %d n-ary capability ops (disjoint)." Gemessen: **979 + 17 = 979**, d. h. die 17 n-ary-ops sind eine **Teilmenge** von ``reg_counted`` (``nary_names - reg_counted`` ist leer). Die 979 der Ueberschrift stimmt, doch allein die Aufschluesselungszeile sieht nach 'Addition' aus, und wer sie addiert, erhaelt 996. Die Zahlen stimmen, aber **die Erklaerung luegt**, daher wurde es korrigiert. Ob die Aufschluesselung als Summe aufgeht, prueft jedes Mal ``tests/test_honest_summary_arithmetic.py``.
 
 ## `imgevolve.py`
 
-- **L50** _(ja)_ — ★握り潰さない(2026-09-06 の敵対的レビュー)。`imgops_nary` は numpy と scipy しか要らない一次モジュールなので、import に失敗するのは「壊れた checkout」であって「その環境には無い機能」ではない。以前は `except Exception: pass` で、**この関数が生成器と検査の両方を兼ねている** ため、17 op が丸ごと消えた索引を CI が緑のまま公開できた。
+- **L50** — ★Nicht verschlucken (adversariales Review 2026-09-06). `imgops_nary` ist ein primaeres Modul, das nur numpy und scipy braucht, daher bedeutet ein fehlgeschlagener Import einen 'kaputten checkout', nicht 'eine in dieser Umgebung fehlende Funktion'. Zuvor war es `except Exception: pass`, und weil **diese Funktion zugleich Generator und Pruefer ist**, konnte CI einen Index mit komplett verschwundenen 17 ops gruen veroeffentlichen.
 
 ## `imgio.py`
 
-- **L99** _(ja)_ — ★**判定は 2 つ**(2026-09-08、同日中に直した)。最初は「CIE L* の折返しが 0 回」 だけで選んでいたが、``poc_colormap_readability`` が **``cividis`` は折返し 0 回 なのに色差の尾根を立てる**ことを実測した。明度が単調でも、色差の刻みが不均一なら なめらかな場に**無い境目**が見える —— 片側の基準で「安全」と名乗っていた。 実測(512 段、隣接色差の max / median と、中央値の 1.6 倍を超える局所最大の数): ========== ========== ============== ========== マップ L* 折返し ΔE max/median 尾根の本数 ========== ========== ============== ========== ``gray`` 0 1.33 0 ``viridis`` 0 1.38 0 ``plasma`` 0 1.38 0 ``magma`` 0 1.48 0 ``inferno`` 0 1.50 0 ``cividis`` 0 **2.23** **1** ``turbo`` 1 1.78 1 ========== ========== ============== ========== ``cividis`` を外したのは**この repo の近似 LUT が粗いから**で、公開されている cividis そのものの問題ではない(制御点 6 個は逐次マップの中で最少)。 色覚特性への配慮で選びたい向きには :data:`CVD_SAFE` を用意した。 ``tests/test_pseudocolour_family.py`` が両方の基準を毎回測る。
-- **L124** _(ja)_ — 色覚特性(P/D 型)でも順序が読めるとされるマップ。★``cividis`` の近似 LUT は 制御点が 6 個で色差の刻みが粗く、:data:`PERCEPTUAL_SAFE` の基準は満たさない (実測 ΔE max/median 2.23)。制御点を増やせば両方に入れられる —— 一次情報の値を手で写すと誤記の前科があるので、出典を確認できるまで保留。
+- **L99** — ★**Zwei Kriterien** (2026-09-08, am selben Tag behoben). Zunaechst wurde nur nach 'CIE L* hat 0 Umkehrungen' ausgewaehlt, doch ``poc_colormap_readability`` mass, dass **``cividis`` trotz 0 Umkehrungen einen Farbdifferenz-Grat aufwirft**. Selbst bei monotoner Helligkeit erscheint bei ungleichmaessiger Farbdifferenz-Schrittweite eine **nicht vorhandene Grenze** in einem glatten Feld -- es gab sich nach einem einseitigen Kriterium als 'sicher' aus. Gemessen (512 Stufen, max / median der benachbarten Farbdifferenz sowie die Anzahl der lokalen Maxima, die das 1.6-fache des Medians ueberschreiten): ========== ========== ============== ========== Map / L*-Umkehrungen / dE max/median / Gratanzahl ========== ========== ============== ========== ``gray`` 0 1.33 0 ``viridis`` 0 1.38 0 ``plasma`` 0 1.38 0 ``magma`` 0 1.48 0 ``inferno`` 0 1.50 0 ``cividis`` 0 **2.23** **1** ``turbo`` 1 1.78 1 ========== ========== ============== ========== ``cividis`` wurde entfernt, **weil die approximierte LUT dieses repo grob ist**, nicht wegen eines Problems des veroeffentlichten cividis selbst (seine 6 Kontrollpunkte sind die wenigsten unter den sequenziellen Maps). Fuer alle, die mit Blick auf Farbsehschwaechen waehlen wollen, steht :data:`CVD_SAFE` bereit. ``tests/test_pseudocolour_family.py`` misst jedes Mal beide Kriterien.
+- **L124** — Maps, denen nachgesagt wird, dass ihre Reihenfolge auch bei Farbsehschwaeche (P/D-Typ) lesbar bleibt. ★Die approximierte LUT von ``cividis`` hat 6 Kontrollpunkte und eine grobe Farbdifferenz-Schrittweite und erfuellt das :data:`PERCEPTUAL_SAFE`-Kriterium nicht (gemessen dE max/median 2.23). Mit mehr Kontrollpunkten liesse es sich in beide aufnehmen -- da das haendische Abschreiben von Primaerquellenwerten eine Vorgeschichte von Tippfehlern hat, wird dies bis zur Bestaetigung der Quelle zurueckgestellt.
 
 ## `matappear.py`
 
-- **L167** _(ja)_ — ★ 0 次元(スカラ)を渡すと `r.shape[-1]` が**素の IndexError** を投げていた (2026-09-04 の敵対的監査で摘発)。分光反射率は最低でも波長軸を持つ ―― スカラは「波長ごとの値」ではないので、番人で明示的に断る。
-- **L296** _(ja)_ — ★ 実際の格子は**両側**に回折する(溝が対称なら ±m の効率はほぼ同じ)。ここで ±両方を入れないと、光源と視線の位置関係によっては解が全部負になり、 「正の λ だけ残す」フィルタが**全部落として真っ黒**になる。実測: 溝に直交して 照らした CD(Δsin = −0.55)は m=+1,+2 が λ<0 で全消え、m=−2 の 440 nm が本命だった。
+- **L167** — ★Das Uebergeben eines 0-dimensionalen (skalaren) Werts liess `r.shape[-1]` einen **nackten IndexError** werfen (im adversarialen Audit vom 2026-09-04 aufgedeckt). Ein spektraler Reflexionsgrad hat mindestens eine Wellenlaengenachse -- ein Skalar ist kein 'Wert pro Wellenlaenge', daher weist der Waechter ihn ausdruecklich ab.
+- **L296** — ★Ein reales Gitter beugt auf **beiden Seiten** (bei symmetrischen Furchen sind die +/-m-Effizienzen nahezu gleich). Bindet man hier nicht beide +/- ein, koennen je nach Geometrie von Lichtquelle und Blickrichtung alle Loesungen negativ werden, und der Filter 'nur positives lambda behalten' **verwirft alles und wird pechschwarz**. Gemessen: eine senkrecht zu den Furchen beleuchtete CD (delta-sin = -0.55) hatte m=+1,+2 bei lambda<0 komplett verschwunden, und die 440 nm von m=-2 waren die eigentliche Loesung.
 
 ## `match3d.py`
 
-- **L297** _(ja)_ — ★2026-09-07: numpy の FFT に置き換えた。式は同じ(float32 の fftn → 位相のみ → ifftn の実部 → argmax)で、torch でやる必要がどこにも無かった。torch を入れない CI(py3.10 / 3.12)ではこの op が ImportError になり PoC が落ちていた。
-- **L1633** _(ja)_ — ★2026-09-07: 本体を numpy に書き換えた。この ICP は **最近傍探索が cKDTree、 姿勢の更新が 3x3 の SVD** で、torch でやる仕事が 1 つも無いのに torch を 必須にしていた。torch を入れない CI(py3.10 / 3.12)で PoC 4 本が `ImportError: this operator needs the optional 'torch' backend` で落ちて 発覚(手元には torch があるので気づけなかった —— 門は事故の起きる場所に 立てる、の実例)。数値は float64 の同じ式なので**環境で結果が変わらない**。 返り値の型は互換のため据え置き: torch があれば torch.Tensor、無ければ numpy.ndarray(値は同一)。device に "cpu" 以外を頼まれたら fail-closed。
-- **L1848** _(ja)_ — ★2026-09-07: 本体を numpy に書き換えた。最近傍探索・6x6 の正規方程式・ Rodrigues のどれも CPU の小さい線形代数で、torch でやる必要が無かったのに 必須になっていた。torch を入れない CI(py3.10 / 3.12)で PoC が ImportError で落ちて発覚。式は同じ float64 なので結果は変わらない (torch 版との差は R/t で 0、RMSE で 0 を実測)。
-- **L2810** _(ja)_ — ★2026-09-07: **輪が画像の外にあるなら fail-closed**。``r_in``/``r_out`` は 画素単位なので、mm のまま渡すと視野の外を読み、例外なしに**全部 0** が返る (`poc_pipe_wall_loss` が真っ黒な図を 1 枚出して発覚)。中心から画像の四隅 までの最大距離より内側の半径が 1 つも無ければ、返るのは空以外にありえない。
-- **L2821** _(ja)_ — ★2026-09-07: grid_sample(bilinear, align_corners=True, zeros padding)を scipy の map_coordinates(order=1, mode="constant", cval=0)に置き換えた —— 同じ双線形補間で、torch を入れない CI(py3.10 / 3.12)でも走る。 実測差は最大 6.0e-06(値域 0..1 の乱数画像。float32 と float64 の丸めぶん)。
-- **L2866** _(ja)_ — ★2026-09-07: polar_unwrap と同じ理由で map_coordinates に置き換え(双線形・ 範囲外 0)。torch 不在でも走る。実測差は最大 7.6e-06。
-- **L3117** _(ja)_ — ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)を numpy の座標計算 + scipy の map_coordinates(order=1)に置き換えた。torch は 双線形の再標本化にしか使われておらず、torch を入れない環境(CI の py3.10 / 3.12)でこの op が ImportError になっていた。規約はそのまま写した: 出力ボクセル (d,h,w) の正規化座標は ((i+0.5)/N)*2-1、回転後に (g+1)/2*N-0.5 で入力の画素座標へ戻す(align_corners=False の定義)。 grid の最終軸は (x, y, z) = (W, H, D) の順。torch 版との実測差は最大 7.6e-06。
+- **L297** — ★2026-09-07: Durch numpys FFT ersetzt. Die Formel ist dieselbe (float32 fftn -> nur Phase -> Realteil von ifftn -> argmax), und torch war nirgends noetig. Auf CI ohne torch (py3.10 / 3.12) wurde dieser op zu einem ImportError, und der PoC schlug fehl.
+- **L1633** — ★2026-09-07: Den Rumpf in numpy neu geschrieben. Dieses ICP ist **Naechste-Nachbarn-Suche per cKDTree und Pose-Aktualisierung per 3x3-SVD**, ohne eine einzige Aufgabe fuer torch, machte torch aber zur Pflicht. Auf CI ohne torch (py3.10 / 3.12) fielen 4 PoCs mit `ImportError: this operator needs the optional 'torch' backend` durch und es kam ans Licht (lokal war torch vorhanden, daher unbemerkt -- ein Beispiel fuer 'das Gate dort aufstellen, wo der Unfall passiert'). Die Zahlen sind dieselbe float64-Formel, also **aendert sich das Ergebnis mit der Umgebung nicht**. Der Rueckgabetyp bleibt aus Kompatibilitaetsgruenden erhalten: torch.Tensor, wenn torch vorhanden, sonst numpy.ndarray (Werte identisch). Wird ein anderes device als "cpu" verlangt, fail-closed.
+- **L1848** — ★2026-09-07: Den Rumpf in numpy neu geschrieben. Naechste-Nachbarn-Suche, die 6x6-Normalgleichungen und Rodrigues sind allesamt kleine CPU-Lineare-Algebra ohne Bedarf an torch, waren aber zur Pflicht gemacht worden. Auf CI ohne torch (py3.10 / 3.12) fiel der PoC mit einem ImportError durch und es kam ans Licht. Die Formel ist dasselbe float64, also bleibt das Ergebnis unveraendert (die Abweichung von der torch-Version wurde als 0 in R/t und 0 in RMSE gemessen).
+- **L2810** — ★2026-09-07: **fail-closed, wenn der Ring ausserhalb des Bildes liegt**. ``r_in``/``r_out`` sind in Pixeln, also liest ein Uebergeben in mm ausserhalb des Sichtfelds und gibt ohne Ausnahme **komplett 0** zurueck (kam ans Licht, als `poc_pipe_wall_loss` eine pechschwarze Abbildung erzeugte). Liegt kein einziger Radius innerhalb der maximalen Distanz vom Zentrum zu den vier Bildecken, kann die Rueckgabe nur leer sein.
+- **L2821** — ★2026-09-07: grid_sample (bilinear, align_corners=True, zeros padding) durch scipys map_coordinates(order=1, mode="constant", cval=0) ersetzt -- dieselbe bilineare Interpolation, und es laeuft auch auf CI ohne torch (py3.10 / 3.12). Die gemessene Abweichung betraegt hoechstens 6.0e-06 (Zufallsbild im Bereich 0..1; die Rundungsdifferenz zwischen float32 und float64).
+- **L2866** — ★2026-09-07: Aus demselben Grund wie polar_unwrap durch map_coordinates ersetzt (bilinear, ausserhalb des Bereichs 0). Laeuft auch ohne torch. Die gemessene Abweichung betraegt hoechstens 7.6e-06.
+- **L3117** — ★2026-09-07: affine_grid + grid_sample (align_corners=False, zeros padding) durch numpy-Koordinatenberechnung + scipys map_coordinates(order=1) ersetzt. torch wurde nur fuer das bilineare Resampling verwendet, und in einer Umgebung ohne torch (CI py3.10 / 3.12) wurde dieser op zu einem ImportError. Die Konvention wurde wortgetreu uebernommen: die normierte Koordinate eines Ausgabe-Voxels (d,h,w) ist ((i+0.5)/N)*2-1, und nach der Rotation wird sie per (g+1)/2*N-0.5 auf Eingabe-Pixelkoordinaten zurueckgefuehrt (die Definition von align_corners=False). Die letzte Achse von grid ist in der Reihenfolge (x, y, z) = (W, H, D). Die gemessene Abweichung von der torch-Version betraegt hoechstens 7.6e-06.
 
 ## `occupancy.py`
 
-- **L223** _(ja)_ — ★2026-09-07: ``res`` は**軸ごと**を受けるようにした(長さ 3 も可)。立方限定だと 鳥瞰格子(薄い z × 広い xy)のような扁平な体積で、要らない軸まで同じ刻みを 強いられる(`poc_bev_sensor_fusion` の実測: 409.6 万ボクセルのうち使うのは 8.1 %)。 同じ族の `grid_coords` は最初から軸ごとの res を受けていた —— **入口と出口で 契約の広さが違う**のを合わせた。スカラを渡す既存の呼び手は不変。
-- **L317** _(ja)_ — ★2026-09-07: ``res`` は**軸ごと**を受けるようにした(長さ 3 も可)。それまでは ``int(res)`` で立方格子だけを許しており、``esdf`` が長さ 3 の異方 ``voxel_size`` を 受け付けるのに、その出力を world 座標で引くこちらが立方限定という**片側だけ狭い 契約**になっていた。CT の薄い接合層 (30,180,180) のような格子でそのまま詰まる (`poc_ct_void_morphology` で実測)。スカラを渡す既存の呼び手は不変。
+- **L223** — ★2026-09-07: ``res`` so gemacht, dass es **pro Achse** Werte annimmt (Laenge 3 ebenfalls erlaubt). Auf wuerfelfoermig beschraenkt wird bei einem flachen Volumen wie einem Vogelperspektive-Gitter (duennes z x breites xy) auch auf der nicht benoetigten Achse dieselbe Schrittweite erzwungen (`poc_bev_sensor_fusion` gemessen: von 4,096 Millionen Voxeln werden nur 8.1 % genutzt). Das `grid_coords` derselben Familie nahm von Anfang an per-Achse-res an -- die Diskrepanz, bei der **die Breite des Vertrags an Eingang und Ausgang unterschiedlich ist**, wurde angeglichen. Bestehende Aufrufer, die einen Skalar uebergeben, bleiben unberuehrt.
+- **L317** — ★2026-09-07: ``res`` so gemacht, dass es **pro Achse** Werte annimmt (Laenge 3 ebenfalls erlaubt). Zuvor erlaubte ``int(res)`` nur ein wuerfelfoermiges Gitter, und waehrend ``esdf`` ein laengen-3-anisotropes ``voxel_size`` annimmt, war diese Seite -- die dessen Ausgabe in world-Koordinaten subtrahiert -- auf wuerfelfoermig beschraenkt, ein **nur auf einer Seite enger Vertrag**. Sie klemmt direkt bei einem Gitter wie CTs duenner Verbindungsschicht (30,180,180) (gemessen in `poc_ct_void_morphology`). Bestehende Aufrufer, die einen Skalar uebergeben, bleiben unberuehrt.
 
 ## `opassist.py`
 
-- **L49** _(ja)_ — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに、docs にも op_run / op_assist / op_find にも出ていなかった —— 「登録した」と 「引ける」は別。opdocs に足したら、この門が引けない側を鳴らした。
-- **L241** _(ja)_ — ★ 設計(2026-09-04、ユーザー「色々なコンテナ型は扱えるほうが良いけど、統一感も 大事です」): 最初は `kind` に "seq" や "matrix" を混ぜていた ―― つまり**値の型** (数値か整数か選択肢か)と**容器の形**(1 個かベクトルか行列か)が 1 つの欄で 競合していた。UI から見ると「int の 3 ベクトル」が表現できず、行列だけ構造が `seq` キーの下にあるなど、扱いがばらける。ここを直交させ、`kind` は値型だけ、 容器は常に `container` に入れる形へ統一した。スカラも例外にしない (`{"form": "scalar", "shape": ()}`)ので、UI は分岐を 1 本に書ける。
-- **L356** _(ja)_ — ★ 最長一致。短い順に見ると `sigma_per_mm` が `_mm` に当たって "mm" になる (実際は 1/mm)。単位を間違えると UI の数字が黙って別物になる。
-- **L453** _(ja)_ — ★ ここが要点: **既定値が tuple で与えられていない**引数がある。 `center=None`(省略可の (row,col))、必須の `trans`(3 ベクトル)、 `k_cam`(3x3 行列)…… 既定値だけを見ると「数値 1 個」に見えてしまい、 UI が spin box を 1 個出して破綻する。名前で構造を補う。
-- **L609** _(ja)_ — ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと 「波長は正の値」で弾かれ、**サンプルが動かない op** になっていた。単位が分かる なら、その量として妥当な範囲を種にする方が「押せば動く」に近い。
-- **L729** _(ja)_ — 和文(CJK)の連なり。★``_WORD_RE`` は ``[a-z0-9]+`` なので、日本語のクエリは **語が 1 つも取れない**(``_WORD_RE.findall("点 検出") == []``)。語幹の段が 死に、部分一致は空白ごと含む文字列を探すので、**和文の複数語クエリは構造的に 必ず 0 件**だった —— docstring の大半が日本語で、6 言語を配っている製品で。 2026-09-08 に `poc_search_sweep_width` が踏んで判明(``op_find("点 検出")`` / ``("スポット 検出")`` / ``("小さい目標")`` がいずれも 0 件で、副画素重心つきの 点目標検出は ``star_detect`` しか無いのに和文から辿り着けなかった)。
-- **L782** _(ja)_ — 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や "contrast"/"contour" が繋がってしまい、5 で切ると "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・ "rotation"/"rotate"(5)・"gaussian"/"gauss"(5) は拾えて、上の 2 組は拾わない。
-- **L792** _(ja)_ — 共通接頭辞の**後ろに許す語尾**。★接頭辞の長さだけで判定すると "median"/"medial" が繋がる(共通 "media" が 5 文字ある)。語尾が 屈折語尾らしいかどうかを見ると、"correlation"/"correlate"(ion / e)は 通り、"median"/"medial"(n / l)と "corner"/"cornea"(r / a)は落ちる。
-- **L888** _(ja)_ — ★床。無い状態だと "zzz-nothing-matches" が `histogram_match` を返す ("matches" が `match_*` に語幹一致するため)。当たった語の重みが クエリ全体の 15 % に満たなければ「当たっていない」とみなす。 実測: "digital image correlation" は 0.19(通す)、 "zzz-nothing-matches" は 0.10(落とす)。
+- **L49** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) war registriert, erschien aber weder in docs noch in op_run / op_assist / op_find -- 'registriert' und 'abrufbar' sind verschieden. Nach dem Hinzufuegen zu opdocs schlug dieses Gate auf der nicht abrufbaren Seite an.
+- **L241** — ★Design (2026-09-04, Nutzer: 'Verschiedene Container-Typen behandeln zu koennen ist besser, aber Einheitlichkeit ist auch wichtig'): Anfangs mischte `kind` "seq" und "matrix" hinein -- das heisst, der **Werttyp** (numerisch, ganzzahlig oder Auswahl) und die **Container-Form** (einzeln, Vektor oder Matrix) konkurrierten in einem Feld. Aus Sicht der UI liess sich ein 'int-3-Vektor' nicht ausdruecken, und nur Matrizen hatten ihre Struktur unter dem `seq`-Schluessel, sodass die Handhabung zerstreut war. Dies wurde orthogonalisiert: `kind` enthaelt nur den Werttyp, und der Container kommt stets in `container`. Auch ein Skalar wird nicht zur Ausnahme (`{"form": "scalar", "shape": ()}`), sodass die UI ihre Verzweigung als einen einzigen Pfad schreiben kann.
+- **L356** — ★Laengste Uebereinstimmung. Beim Durchsuchen von kurz nach lang trifft `sigma_per_mm` auf `_mm` und wird zu "mm" (tatsaechlich ist es 1/mm). Bei falscher Einheit wird die Zahl der UI stillschweigend zu etwas anderem.
+- **L453** — ★Der springende Punkt: Manche Argumente **haben ihren Default nicht als Tupel angegeben**. `center=None` (ein optionales (row,col)), das erforderliche `trans` (3-Vektor), `k_cam` (3x3-Matrix)... allein am Default betrachtet erscheinen sie als 'eine einzelne Zahl', und die UI bricht, indem sie eine spin box anzeigt. Die Struktur wird ueber den Namen ergaenzt.
+- **L609** — ★Durch Messung festgestellt: Uebergibt man ein generisches 0..1-signal an die Wellenlaengeneingabe von `prism_min_deviation_deg`, wird es von 'Wellenlaenge muss positiv sein' abgewiesen, was es zu einem **op macht, dessen Beispiel nicht laeuft**. Ist die Einheit bekannt, kommt es dem 'laeuft auf Knopfdruck' naeher, es mit einem fuer diese Groesse plausiblen Bereich zu initialisieren.
+- **L729** — Eine Folge japanischen (CJK-)Textes. ★``_WORD_RE`` ist ``[a-z0-9]+``, sodass eine japanische Anfrage **kein einziges Wort ergibt** (``_WORD_RE.findall(...) == []`` bei japanischer Eingabe). Die Stemming-Stufe stirbt, und da die Teiluebereinstimmung nach einer Zeichenkette samt Leerraum sucht, war eine **mehrwortige japanische Anfrage strukturell stets 0 Treffer** -- in einem Produkt, dessen docstrings ueberwiegend japanisch sind und das in 6 Sprachen ausgeliefert wird. Am 2026-09-08 durch `poc_search_sweep_width` aufgedeckt (die japanischen Anfragen fuer 'Punkterkennung' / 'Spot-Erkennung' / 'kleines Ziel' ueber ``op_find`` ergaben allesamt 0 Treffer, und obwohl die Subpixel-Schwerpunkt-Punktziel-Erkennung nur ``star_detect`` ist, war sie vom Japanischen aus nicht erreichbar).
+- **L782** — Die als Stamm-Uebereinstimmung geltende gemeinsame Praefixlaenge. ★Bei 4 werden "median"/"medial" und "contrast"/"contour" verknuepft; schneidet man bei 5, werden "correlation"/"correlate" (8), "segmentation"/"segment" (7), "rotation"/"rotate" (5) und "gaussian"/"gauss" (5) erfasst, die beiden obigen Paare hingegen nicht.
+- **L792** — Die **nach dem gemeinsamen Praefix erlaubte Endung**. ★Entscheidet man allein nach der Praefixlaenge, werden "median"/"medial" verknuepft (sie teilen ein 5-Zeichen-"media"). Prueft man, ob die Endung nach einer Flexionsendung aussieht, kommt "correlation"/"correlate" (ion / e) durch, waehrend "median"/"medial" (n / l) und "corner"/"cornea" (r / a) herausfallen.
+- **L888** — ★Untergrenze. Ohne sie gibt "zzz-nothing-matches" `histogram_match` zurueck (weil "matches" mit `match_*` stamm-uebereinstimmt). Liegt das Gewicht der getroffenen Woerter unter 15 % der gesamten Anfrage, gilt es als 'kein Treffer'. Gemessen: "digital image correlation" ist 0.19 (besteht), "zzz-nothing-matches" ist 0.10 (verworfen).
 
 ## `ops.py`
 
-- **L580** _(ja)_ — ★端は**端の値で**埋める。以前は ``np.convolve(x, k, "same")`` で、 これは両端の w 点を**ゼロと**平均する —— 輪郭の始点と終点が 原点 (0,0) の方向へ最大 50 px 以上引きずられ、輪郭 140 本ぶんの 赤い筋が左上へ収束する図になった(2026-09-06、op ごとの図を初めて 作ったときに発見。数値テストでは平均ずれ 0.3 px で見えなかった)。
-- **L1383** _(ja)_ — ★**ネイティブ側が退化入力でプロセスごと落ちる op の台帳**(2026-09-05)。 `guard` は Python の例外しか捕まえられない。C/C++ の中で境界の外へ書き込まれたら そこで終わりで、利用者のパイプラインごと消える —— fail-soft の最悪の破れ方。 入口で弾く以外に手が無いので、**理由つきでここに載せて登録時に関門を掛ける**。 **プラットフォームで挙動が違う**のがこの台帳の存在理由。下の 3 本は Linux(Ubuntu 24.04 / Python 3.12 / PyPI の wheel)では落ちるが、 **Windows では同じ入力で 1 件も再現しなかった**。ネイティブのビルドが違えば 境界の壊れ方も違うということなので、「この種類の入力なら大丈夫」という 細かい線引きは信用できない —— **退化入力はまとめて拒否する**。 直したら消す、ではなく**上流が直ったことを確認できたら**消す(こちらは 自分のコードではないので、消す条件が違う)。
+- **L580** — ★Die Raender **mit dem Randwert** auffuellen. Zuvor war es ``np.convolve(x, k, "same")``, was die w Punkte an beiden Enden **mit Null** mittelt -- Anfang und Ende einer Kontur wurden um bis zu 50 px oder mehr Richtung Ursprung (0,0) gezogen, was eine Abbildung ergab, in der die roten Streifen von 140 Konturen nach oben links konvergierten (gefunden 2026-09-06, als erstmals Abbildungen pro op erstellt wurden; in numerischen Tests betrug die mittlere Abweichung 0.3 px und war unsichtbar).
+- **L1383** — ★**Ein Verzeichnis von ops, die auf der nativen Seite bei einer degenerierten Eingabe den ganzen Prozess zum Absturz bringen** (2026-09-05). `guard` kann nur Python-Ausnahmen abfangen. Sobald innerhalb von C/C++ ausserhalb der Grenzen geschrieben wird, ist es dort vorbei, und die gesamte Pipeline des Nutzers verschwindet -- die schlimmste Art, wie fail-soft bricht. Es bleibt nur die Abweisung am Eingang, also **hier mit Begruendung auffuehren und zur Registrierungszeit eine Schranke setzen**. **Das Verhalten unterscheidet sich je nach Plattform** -- das ist der Existenzgrund dieses Verzeichnisses. Die 3 unten stuerzen unter Linux (Ubuntu 24.04 / Python 3.12 / PyPI-wheel) ab, aber **unter Windows reproduzierte sich mit derselben Eingabe kein einziger**. Ein anderer nativer Build bedeutet, dass die Grenze anders bricht, also ist eine feine Trennlinie 'diese Art von Eingabe ist in Ordnung' nicht vertrauenswuerdig -- **degenerierte Eingaben pauschal ablehnen**. Nicht 'entfernen, sobald behoben', sondern **entfernen, sobald bestaetigt werden kann, dass der Upstream behoben ist** (dies ist nicht unser eigener Code, also unterscheidet sich die Entfernungsbedingung).
 
 ## `ops3d.py`
 
-- **L375** _(ja)_ — ★ out は image2d ではなく **rgbimage**(2026-09-02 実測)。docstring も 実装も「RGB (size, size, 3) float [0,1]」で、この行だけが 2-D の 輝度画像を名乗っていた。mesh の種を入れて初めてこの op が実行され、 型述語が「declared 'image2d' but returned ndarray(512,512,3)」と TYPEMISS を出して顕在化した(それまでは (V,F) を 2 位置引数に割る 形のせいで**一度も実行されていなかった**)。他の render_* 3 op (ambient_occlusion / cast_shadow / supersample_mesh)は実測どおり 2-D なので image2d のままでよい ― 嘘だったのはここ 1 行だけ。
-- **L609** _(ja)_ — ★2026-09-08 追加。それまで彫刻用の姿勢ヘルパ(visualhull.look_at)は どの公開層からも引けず、同名の render3d.look_at(gluLookAt・−Z 前方)を 掴むと **例外なく空の hull** になった(poc_livestock_body_volume)。
-- **L710** _(ja)_ — ★ 保留していた理由(a)「points 候補リストが短くなり既存 champion を黙って 書き換える」は、backends_typed.TYPE_TO_SORT で coordgrid → points へ畳む ことで消えている: 2-D 橋の tb_sphere_sdf / tb_box_sdf には INPUT_ADAPTERS._points_to_grid が付いていて **点群から座標場を実際に作って いる**ので、あちらの "points" 宣言は嘘ではない(実測: (64,3) を渡すと (16,16,16) が返る = 生きている)。嘘だったのは 3-D 台帳の側だけだった。
-- **L865** _(ja)_ — ★ axis=1。`pairs` の正典は **(N,2)**(消費側 6 op が (2,N) を名指しで 拒否することを実測)。述語が `lambda v: True` だった間、ここは (2,n) を 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
-- **L903** _(ja)_ — ★ position の正典は **[z, y, x] の 3 成分**。多数決ではなく**消費側を実行 して**決めた: refine_translation_lk / refine_lm は 4 成分を渡すと "init_pos must have exactly 3 components [z, y, x] (got 4)" で fail-closed する(実測)。生成器も (8.0, 8.0, 8.0) の 3 成分。ところが match_* 系は docstring どおり **[score, d, h, w] の 4 成分**を返しており、宣言 out が "position" のまま流すと後段の精緻化 op が全滅する = 型の嘘。 score 自体は正直な情報なので**関数側は削らず**(get() は 4 成分のまま)、 台帳の型を名乗る call() 側で座標だけを取り出す(project_points と同じ扱い)。
+- **L375** — ★out ist nicht image2d, sondern **rgbimage** (gemessen 2026-09-02). Sowohl der docstring als auch die Implementierung sagen 'RGB (size, size, 3) float [0,1]', und nur diese Zeile gab sich als 2-D-Luminanzbild aus. Dieser op lief erst, nachdem ein mesh-Seed geliefert wurde, und das Typpraedikat deckte es mit einem TYPEMISS auf: "declared 'image2d' but returned ndarray(512,512,3)" (bis dahin war er wegen der Form, die (V,F) auf 2 Positionsargumente aufteilt, **nie ein einziges Mal gelaufen**). Die anderen 3 render_*-ops (ambient_occlusion / cast_shadow / supersample_mesh) sind wie gemessen 2-D, also bleibt image2d fuer sie in Ordnung -- die Luege war nur diese eine Zeile.
+- **L609** — ★Hinzugefuegt 2026-09-08. Bis dahin war der Pose-Helfer fuers Schnitzen (visualhull.look_at) aus keiner oeffentlichen Schicht erreichbar, und das Greifen des gleichnamigen render3d.look_at (gluLookAt, -Z nach vorn) ergab **ausnahmslos ein leeres hull** (poc_livestock_body_volume).
+- **L710** — ★Der Grund (a) fuer das Zurueckhalten -- 'die points-Kandidatenliste wird kuerzer und ueberschreibt stillschweigend den bestehenden champion' -- ist verschwunden, seit backends_typed.TYPE_TO_SORT coordgrid -> points faltet: Die 2-D-Bruecken tb_sphere_sdf / tb_box_sdf tragen INPUT_ADAPTERS._points_to_grid und **bauen tatsaechlich ein Koordinatenfeld aus der Punktwolke**, also ist deren "points"-Deklaration keine Luege (gemessen: das Uebergeben von (64,3) gibt (16,16,16) zurueck = lebendig). Die Luege war nur auf der 3-D-Verzeichnis-Seite.
+- **L865** — ★axis=1. Die kanonische Form von `pairs` ist **(N,2)** (gemessen: die 6 konsumierenden ops lehnen (2,N) ausdruecklich ab). Solange das Praedikat `lambda v: True` war, erzeugte dies (2,n) und gab als seinen Typ 'eine Form, die kein Konsument akzeptieren kann' aus
+- **L903** — ★Die kanonische Form von position ist **3 Komponenten [z, y, x]**. Nicht per Mehrheitsentscheid, sondern durch **Ausfuehren der Konsumenten** entschieden: refine_translation_lk / refine_lm sind fail-closed mit "init_pos must have exactly 3 components [z, y, x] (got 4)", wenn 4 Komponenten uebergeben werden (gemessen). Auch der Generator hat 3 Komponenten (8.0, 8.0, 8.0). Die match_*-Familie gibt jedoch gemaess docstring **4 Komponenten [score, d, h, w]** zurueck, sodass ein Durchleiten mit einem deklarierten out von "position" die nachgelagerten Verfeinerungs-ops ausloescht = eine Typ-Luege. Da score selbst eine ehrliche Information ist, **wird die Funktionsseite nicht beschnitten** (get() bleibt bei 4 Komponenten), und auf der call()-Seite, die den Typ des ledger ausgibt, werden nur die Koordinaten extrahiert (dieselbe Behandlung wie project_points).
 
 ## `opsastrostack.py`
 
@@ -884,7 +884,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `opsdem.py`
 
-- **L35** _(ja)_ — ★ 正直な限界: ``depth`` プールにはカメラの透視投影による深度も入りうる。 透視深度は 1 px が地上で何メートルかが深さとともに変わるので、一定の ``cell_size`` を当てた傾斜は**もっともらしく間違う**。ではなぜ型を 分けないか —— これは型の取り違えではなく ``cell_size`` の与え方の 誤りと同じ種類の誤りで、``cell_size`` は既に**必須引数**(既定値を置か ない)にしてある。型を増やしても正射でない深度は防げず(述語は 「2-D の実数配列」までしか見られない)、代わりに種を持つ op が 1 つも 無い ``dem`` プールができて **13 op すべてが永久に未実行**になる。 防げないものを型で防いだことにするより、必須引数と docstring で明示し、 ファザーには実際に走らせるほうを採った。 * ``dem_fill_sinks`` の出力だけ ``depth`` —— 窪地を埋めた結果は**まだ 標高格子**で、そのまま ``dem_flow_direction`` へ入る。ここを ``image2d`` と宣言すると族内の連鎖(埋める → 流す)が型で切れる。 * ``dem_flow_direction`` は ``labels`` —— 返りは int8 の 0-7 と -1(流出先 なし)で、**順序に意味が無い符号**である。``mask`` を名乗ると二値の ように扱われ、``image2d`` を名乗ると 3 と 4 の平均に意味があることに なってしまう。``labels`` の述語(整数 dtype の 1-3 次元)にそのまま該当。 * ``dem_stream_network`` は二値だが ``image2d`` —— 中身は 0.0/1.0 に加えて **欠測の nan** を持つ float64 で、``mask`` の述語(bool か整数 dtype)を 満たさない。bool にすると「河道でない」と「そもそも値が無い」が 区別できなくなるので、型のほうを実装に合わせた。 * 残りはすべて ``image2d`` —— 傾斜[度]・方位[度]・曲率[1/m]・陰影[0,1]・ 起伏[m]・地平線仰角[度]・天空率[0,1]・可視[0/1]。どれも 2-D の実数場で、 既存の 2-D op(平滑化・閾値・morphology・疑似カラー・図注)が意味を 保ったまま使える。**値域は [0,1] とは限らない**が、それは ``astrostack`` の合成結果と同じ立場で、``image2d`` は輝度の約束では なく「2-D の実数場」の約束としてこの repo では使われている。 カテゴリ → [(op 名, module, [入力種別], 出力種別)]
+- **L35** — ★ Ehrliche Grenze: der ``depth``-Pool kann auch Tiefe aus der perspektivischen Projektion einer Kamera enthalten. Bei perspektivischer Tiefe ändert sich mit der Tiefe, wie vielen Bodenmetern 1 px entspricht, sodass eine mit konstantem ``cell_size`` berechnete Neigung **plausibel falsch** ist. Warum also den Typ nicht trennen —— dies ist keine Typverwechslung, sondern dieselbe Art Fehler wie eine falsche Angabe von ``cell_size``, und ``cell_size`` ist bereits ein **Pflichtargument** (kein Standardwert). Einen Typ hinzuzufügen kann nicht-orthographische Tiefe nicht verhindern (das Prädikat sieht nur bis zu "ein 2-D reelles Array"), und stattdessen entstünde ein ``dem``-Pool ohne einen einzigen Op mit Seed, wodurch **alle 13 Ops dauerhaft unausgeführt** blieben. Statt vorzugeben, ein Typ verhindere, was er nicht kann, machten wir es mit einem Pflichtargument und Docstring explizit und wählten, es im Fuzzer tatsächlich laufen zu lassen. * nur die Ausgabe von ``dem_fill_sinks`` ist ``depth`` —— das Ergebnis des Senkenfüllens ist **immer noch ein Höhengitter** und geht direkt in ``dem_flow_direction``. Es hier als ``image2d`` zu deklarieren würde die familieninterne Kette (füllen -> fließen) per Typ trennen. * ``dem_flow_direction`` ist ``labels`` —— die Rückgabe ist int8 0-7 und -1 (kein Abflussziel), ein **Vorzeichen ohne Ordnungsbedeutung**. Es ``mask`` zu nennen würde es als binär behandeln, und es ``image2d`` zu nennen würde den Mittelwert von 3 und 4 bedeutungsvoll machen. Es trifft direkt auf das ``labels``-Prädikat zu (Integer-dtype, 1-3 Dimensionen). * ``dem_stream_network`` ist binär, aber ``image2d`` —— sein Inhalt ist float64 mit 0.0/1.0 plus **nan für fehlende Daten** und erfüllt das ``mask``-Prädikat (bool oder Integer-dtype) nicht. Es bool zu machen würde "kein Gerinne" und "gar kein Wert" ununterscheidbar machen, also passten wir den Typ an die Implementierung an. * alles Übrige ist ``image2d`` —— Neigung[Grad], Exposition[Grad], Krümmung[1/m], Schummerung[0,1], Relief[m], Horizont-Höhenwinkel[Grad], Himmelssichtfaktor[0,1], Sichtbarkeit[0/1]. Alle sind 2-D reelle Felder, sodass bestehende 2-D-Ops (Glättung, Schwellenwert, morphology, Pseudofarbe, Beschriftung) mit erhaltener Bedeutung nutzbar sind. Der **Wertebereich ist nicht notwendigerweise [0,1]**, aber das ist derselbe Stand wie das Komposit von ``astrostack``: in diesem Repo wird ``image2d`` nicht als Helligkeitsversprechen, sondern als Versprechen "ein 2-D reelles Feld" verwendet. Kategorie -> [(Op-Name, module, [Eingabetypen], Ausgabetyp)]
 
 ## `opsimgforensics.py`
 
@@ -946,7 +946,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L269** — ★ Zunächst schrieben wir es als "die mit größerer Krümmung" und **beurteilten die Hinterkante als Vorderkante** bei NACA 2412. Die Krümmung des 3-Punkte-Kreises fällt an der Hinterkante, wo Ober- und Unterseite sich fast berühren, größer aus als an der Rundung der Vorderkante —— die Intuition "die Vorderkante ist rund" kehrt sich um, wenn man mit 3 Punkten auf der Kontur misst.
 - **L276** — ★ Wenn die Hinterkante offen ist, greifen die 2 entferntesten Punkte **eine der Ecken** der Hinterkante und die Sehne kippt. Wir nehmen sie am Mittelpunkt des Spalts neu, dann bestimmen wir die Vorderkante als "den Punkt, der am weitesten von diesem Mittelpunkt entfernt ist". Ohne dies zeigt selbst ein symmetrisches Profil eine Wölbung um den halben Spalt der Hinterkante (gemessen 0.001257).
 - **L642** — ★ Vor dem Vergleichen **mit derselben Methode neu nehmen**. Der Sehnenrahmen (besonders der Mittelpunkt der Hinterkante) hängt leicht von der Platzierung der Punkte ab, sodass das Abgleichen einer rohen Kontur gegen eine neu genommene Kontur selbst bei identischer Form eine Rotation von 0.02 Grad und eine Translation von 7.8e-4 einbringt —— das selbst wurde zum Boden der Abweichung (gemessen rms 6.05e-4). Stelle das, was du vergleichst, auf denselben Boden.
-- **L653** _(ja)_ — ★ 点対点ではなく**点対折れ線**で測る。等弧長に取り直しても両者の位相は 一致しないので、対応を番号で取ると位相のずれがそのまま偏差になる (実測: 同じ形を自分と比べて rms 6.05e-4 —— 検出したい欠陥と同じ桁)。
+- **L653** — ★ Miss nicht Punkt-zu-Punkt, sondern **Punkt-zu-Polylinie**. Selbst nach Neunahme bei gleicher Bogenlänge stimmen die Phasen der beiden nicht überein, sodass das Herstellen der Korrespondenz per Index die Phasenverschiebung direkt zur Abweichung macht (gemessen: dieselbe Form mit sich selbst zu vergleichen ergibt rms 6.05e-4 —— dieselbe Größenordnung wie der Defekt, den wir erkennen wollen).
 
 ## `realdata.py`
 
@@ -988,7 +988,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_astrostack.py`
 
-- **L1053** _(ja)_ — ★2026-09-08: 3 つ目の戻り値 vote_margin(2 番手の山 / 1 番手)が増えた。 星野なら山は 1 つなので小さいはず —— それもここで固定する。
+- **L1053** — ★ 2026-09-08: ein 3. Rückgabewert, vote_margin (Peak Platz 2 / Platz 1), wurde hinzugefügt. Für ein Sternfeld sollte der Peak einzeln und somit klein sein —— fixiere auch das hier.
 
 ## `tests/test_backends_typed_liveness.py`
 
@@ -1110,98 +1110,98 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_studio.py`
 
 - **L920** — ★`setDefaultFormat` wirkt nur auf den argumentlosen Konstruktor, und Studios `QSettings("Fullseye", "Studio")` war fest auf die Registry gesetzt —— diese fixture isolierte nichts (2026-09-05; pytests Pfade blieben in der Registry). Den hauptseitigen Einstieg `studio._settings()` per Umgebungsvariable auf eine ini richten.
-- **L2029** _(ja)_ — ★`QSettings("Fullseye", "Studio")` を直に組むと隔離を迂回して**利用者の レジストリ**に書く(2026-09-05 の監査で実害を確認)。設定入口は 1 つに保つ。
+- **L2029** — ★Ein direktes `QSettings("Fullseye", "Studio")` umgeht die Isolierung und schreibt in **die Registry des Nutzers** (im Audit vom 2026-09-05 als realer Schaden bestaetigt). Halte den Einstiegspunkt fuer Einstellungen bei genau einem.
 
 ## `tests/test_studio_logic.py`
 
-- **L22** _(ja)_ — ★旧 setDefaultFormat 方式は Studio の QSettings(org, app) に効かなかった。 本体の入口 studio._settings() を ini に向ける(session 全体)。
+- **L22** — ★Der alte setDefaultFormat-Ansatz hatte keine Wirkung auf Studios QSettings(org, app). Richte den Haupteinstiegspunkt studio._settings() auf die ini aus (fuer die gesamte session).
 
 ## `tests/test_studio_ops_browser.py`
 
-- **L11** _(ja)_ — ★素の import だと matplotlib 不在の環境で**収集ごと中断**する (pytest は 1 本の import 失敗で残り全部を走らせない)。2026-09-05 実測。
+- **L11** — ★Ein nacktes import **bricht die gesamte Collection ab** in einer Umgebung ohne matplotlib (pytest fuehrt nach einem einzigen Import-Fehler den Rest nicht mehr aus). Gemessen am 2026-09-05.
 
 ## `tests/test_videostream.py`
 
-- **L319** _(ja)_ — ★Collins (VSAM 2000): **両方とも現フレーム基準**。2026-09-05 までこのテストは 連続ペア |f[t-1]-f[t-2]| を期待していて、実装の誤りを仕様として固定していた (等速で動く一様な物体で常に全ゼロ —— 下の回帰テスト)。
+- **L319** — ★Collins (VSAM 2000): **beide beziehen sich auf den aktuellen Frame**. Bis 2026-09-05 erwartete dieser Test das aufeinanderfolgende Paar |f[t-1]-f[t-2]| und zementierte damit einen Implementierungsfehler als Spezifikation (stets komplett null fuer ein gleichfoermig mit konstanter Geschwindigkeit bewegtes Objekt -- der Regressionstest unten).
 
 ## `tools/chain_fuzz.py`
 
-- **L43** _(ja)_ — ★カタログ・ヒント・アダプタは出荷モジュール ``typed_catalog`` が正本(2026-09-05)。 以前はここに住んでいて、backends_typed が tools/ を sys.path に足して読んでいた —— その結果 wheel では tb_* 143 op が黙って消えていた。向きを逆にした。
-- **L256** _(ja)_ — 事象の位置(点過程)—— point_spectrum の入口。★**一様乱数だけにしない**: 周期成分が無いと「周期を見つける op」の意味のある挙動を一度も踏まないので、 周期 17.0 の列に 12 個の無関係な事象を混ぜた**構造データ**を種にする (乱数だけの試験は構造の欠陥を隠す、というこの repo の規律)。
-- **L864** _(ja)_ — ★ 非有限が混じった点群は **KD 木の構築そのものが生の ValueError で落ちる** (scipy: "data must be finite")。プールは NONFINITE を記録したうえで値を 残す設計なので、汚れた点群がここへ来るのは想定内 —— 建てる側が防ぐ。 2026-09-06 に実際に踏んだ: 新しい族が増えて連鎖の歩き方が変わり、 seed 3_000_0xx でこの経路に当たってファザー自身が停止した(op の欠陥では なく**道具の欠陥**。束縛できない入力は例外ではなくスキップが約束)。
-- **L1468** _(ja)_ — ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で None / 42 / 文字列 / dict まで通していた。 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、 それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
-- **L1578** _(ja)_ — ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件 (face_normals / vertex_normals / mesh_area / vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。 つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+- **L43** — ★Fuer Katalog, Hints und Adapter ist das ausgelieferte Modul ``typed_catalog`` die Quelle der Wahrheit (2026-09-05). Frueher lebten sie hier, und backends_typed las sie, indem es tools/ zu sys.path hinzufuegte -- dadurch verschwanden im wheel tb_* 143 op stillschweigend. Die Richtung wurde umgekehrt.
+- **L256** — Ereignispositionen (Punktprozess) -- der Einstiegspunkt von point_spectrum. ★**Nicht nur gleichverteilten Zufall verwenden**: ohne eine periodische Komponente wird das sinnvolle Verhalten einer "op, die Perioden findet" kein einziges Mal ausgeuebt, daher als Keim **strukturierte Daten** verwenden, die 12 unabhaengige Ereignisse in eine Reihe mit Periode 17.0 mischen (die Disziplin dieses repo, dass rein zufaellige Tests strukturelle Defekte verbergen).
+- **L864** — ★Eine Punktwolke mit nicht-endlichen Werten **bringt die KD-Baum-Konstruktion selbst mit einem rohen ValueError zum Absturz** (scipy: "data must be finite"). Der Pool ist so ausgelegt, dass er NONFINITE protokolliert und die Werte behaelt, daher ist eine verunreinigte Punktwolke hier erwartbar -- die bauende Seite muss absichern. Am 2026-09-06 real getroffen: eine neue Familie kam hinzu, die Art, wie Ketten durchlaufen werden, aenderte sich, und bei seed 3_000_0xx wurde dieser Pfad getroffen und der fuzzer selbst hielt an (kein Defekt der op, sondern **ein Defekt des Werkzeugs**. Die Zusage ist, dass nicht bindbare Eingabe uebersprungen und nicht geworfen wird).
+- **L1468** — ★Bis 2026-09-02 war es ``lambda v: True`` = **da das Praedikat als "vorhanden" gezaehlt wird, ist es schlimmer als gar keins** (auch das Pruefskript zaehlt es als "hat ein Praedikat"). Gemessen liess es sogar None / 42 / einen String / ein dict durch. Der Kanon wurde festgelegt, indem alle 6 konsumierenden op (reprconvs pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar) **vollstaendig ausgefuehrt** wurden: alle 6 op akzeptieren nur die beiden obigen Formen, alles andere wird zu einem namentlichen fail-closed mit "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (gemessen). Da **(2,N) nicht akzeptiert wird**, wurden die 3 adapter, die ein 2-tuple mit np.stack zu (2,N) zusammendrueckten, auf axis=1 korrigiert. Zwei Arrays unterschiedlicher Laenge (histograms counts/edges) sind ebenfalls kein "Paar" und werden abgewiesen.
+- **L1578** — ★"Genau 2 Elemente" ist **absichtlich anders** als pose (das via `len >= 2` info erlaubt). Gemessen 2026-09-02: die 4 bestehenden consumer, die ein mesh als ein Argument nehmen (face_normals / vertex_normals / mesh_area / vertex_curvature), geben fuer ein 3-tuple "mesh must be a 2-element tuple (vertices, faces)" aus, und cadmaps `_mesh` und render3d._mesh_arrays akzeptieren ebenfalls nur 2 Elemente. Das heisst **der Kanon fuer den mesh sort dieses repo ist ein 2-tuple**, und ein zusaetzliches Element ist nicht "mehr Information", sondern eine Luege auf Typ-Ebene, die alles Nachgelagerte ausloescht. Die einzige Ausnahme `voxel_to_mesh` (die (v, f, n) zurueckgibt) laesst jetzt die kanonische Reihenfolge in ops3d.RESULT_ADAPTERS extrahieren (gleich behandelt wie gicp / vol_label).
 
 ## `tools/ci_wheel_check.py`
 
-- **L25** _(ja)_ — ★**このスクリプト自身の置き場所を sys.path から外す。** Python はスクリプトの ディレクトリを sys.path[0] に載せるので、checkout の `tools/` から起動すると wheel 側の venv でも `tools/` 配下(非同梱の chain_fuzz 等)が import できてしまい、 「wheel に無いものが見える」状態で数えることになる。2026-09-05 のレビューで、 この門が **tb_* 143 op の欠落を見逃していた**のはまさにこれ。 併せて cwd も空の一時ディレクトリへ移す(cwd が checkout だと同じことが起きる)。
-- **L34** _(ja)_ — ★cwd を移す**前に**元の cwd を覚え、以後すべての引数パスをここへ解決する。 2026-09-05 実測: preflight は絶対パスで渡すので手元では通り、ci.yml は相対パスで 渡すので dump が一時 dir に書き捨てられ、compare が FileNotFoundError で落ちた —— **門が本番の呼び出し経路では一度も比較を実行していなかった**。 「門は事故の起きる場所に立てる」の 3 度目。呼ぶ側を直すのではなく、 相対パスで呼ばれても正しく動くようにして、この型ごと閉じる。
-- **L139** _(ja)_ — ★2026-09-08: editable 側も見る。それまで ``a["failed_backends"]`` は **集めるだけで誰も読んでいなかった** —— 同じ回に examplefig の図の失敗と 同じ型の穴として摘発した。editable の venv は optional 依存が**多い**ので、 版の食い違いで backend が import に失敗しうる。そのとき wheel 側は 「依存が無いから最初から居ない」だけで失敗を記録せず、この比較は緑のまま 通ってしまう。落ちた backend の op はレジストリから黙って消える。
+- **L25** — ★**Entferne den eigenen Speicherort dieses Skripts aus sys.path.** Python legt das Verzeichnis des Skripts auf sys.path[0], sodass beim Start aus dem `tools/` des checkout selbst im venv des wheel Dinge unter `tools/` (das nicht mitgelieferte chain_fuzz usw.) importierbar werden und man in einem Zustand zaehlt, in dem "Dinge sichtbar sind, die nicht im wheel liegen". Im Review vom 2026-09-05 hat dieses Gate **das Fehlen von tb_* 143 op uebersehen** genau deswegen. Verschiebe zugleich auch cwd in ein leeres temporaeres Verzeichnis (dasselbe passiert, wenn cwd der checkout ist).
+- **L34** — ★Merke dir **vor** dem Verschieben von cwd das urspruengliche cwd und loese fortan alle Argumentpfade dagegen auf. Gemessen 2026-09-05: preflight uebergibt absolute Pfade und ging daher lokal durch, waehrend ci.yml relative Pfade uebergibt, sodass der dump in ein temp-dir weggeschrieben wurde und compare mit FileNotFoundError scheiterte -- **das Gate fuehrte den Vergleich auf dem produktiven Aufrufpfad kein einziges Mal aus**. Das 3. Mal fuer "stelle das Gate dorthin, wo der Unfall passiert". Statt den Aufrufer zu korrigieren, sorge dafuer, dass es auch bei Aufruf mit relativen Pfaden korrekt funktioniert, und schliesse diese ganze Klasse.
+- **L139** — ★2026-09-08: schau auch auf die editable-Seite. Bis dahin wurde ``a["failed_backends"]`` **nur gesammelt und von niemandem gelesen** -- in derselben Runde als Loch derselben Art wie examplefigs Abbildungs-Fehler aufgedeckt. Das editable-venv hat **viele** optionale Abhaengigkeiten, sodass ein backend wegen einer Versionsabweichung beim import scheitern kann. Dann ist die wheel-Seite bloss "von Anfang an nicht da, weil die Abhaengigkeit fehlt", protokolliert keinen Fehler, und dieser Vergleich geht gruen durch. Die op des gefallenen backend verschwinden stillschweigend aus der Registry.
 
 ## `tools/conversion_matrix.py`
 
-- **L92** _(ja)_ — ★ここは 2 度間違えられる。ファザーの ``run_chain`` は (1) 入力型 ``any`` を「常に揃っている」として扱い(プールから任意に引く)、 (2) ``OP_ARG_BUILDERS`` に登録された op は引数を自前で組み立てる。 この 2 つを数えないと、実際には毎回走っている op を「構造的に到達不能」と 報告してしまう(実際に ``fuse_to_voxel`` / ``register_cross`` で誤報した)。 到達可能性は「型だけ」では決まらない ―― 到達経路の一部はコードの側にある。
+- **L92** — ★Hier kann man sich zweimal irren. Die ``run_chain`` des fuzzer (1) behandelt den Eingabetyp ``any`` als "immer verfuegbar" (zieht beliebig aus dem Pool) und (2) in ``OP_ARG_BUILDERS`` registrierte op bauen ihre Argumente selbst. Zaehlt man diese beiden nicht, wird eine op, die tatsaechlich jedes Mal laeuft, als "strukturell nicht erreichbar" gemeldet (tatsaechlich falsch gemeldet fuer ``fuse_to_voxel`` / ``register_cross``). Erreichbarkeit wird nicht durch "den Typ allein" bestimmt -- ein Teil des Erreichbarkeitspfads liegt auf der Code-Seite.
 
 ## `tools/gen_blas_article_figs.py`
 
-- **L93** _(ja)_ — ★1 スレッドが最速だった範囲を半透明で敷く。線を隠さないよう先に置き、 alpha を低く保つ(帯そのものが主張しすぎると、線の比較が読みにくくなる)。
+- **L93** — ★Lege den Bereich, in dem 1 Thread am schnellsten war, halbtransparent aus. Platziere ihn zuerst, damit er die Linien nicht verdeckt, und halte alpha niedrig (wenn das Band selbst zu sehr in den Vordergrund tritt, wird der Vergleich der Linien schwer lesbar).
 
 ## `tools/gen_capabilities_index.py`
 
-- **L37** _(ja)_ — 区分の英語名。★英語版でも見出しだけ日本語のままだった(実測 7 行)—— 中身は `title_en` / `_summary_en` で訳してあるのに、見出しを訳し忘れていて 「切り替えたのに日本語が混ざる」の典型になっていた。ここに無い区分は 原文のまま出す(勝手に訳を作らない)。
+- **L37** — Englische Namen der Kategorien. ★Selbst in der englischen Version blieben nur die Ueberschriften auf Japanisch (gemessen 7 Zeilen) -- der Inhalt war mit `title_en` / `_summary_en` uebersetzt, aber die Ueberschriften wurden vergessen, ein Musterbeispiel fuer "umgeschaltet, aber Japanisch mischt sich ein". Hier nicht vorhandene Kategorien werden unveraendert ausgegeben (keine Uebersetzungen erfinden).
 
 ## `tools/gen_design_notes.py`
 
 - **L45** — ★Die Übersetzungstabelle liegt in **einer anderen Datei als die Operatordokumentation**. Mit `opdocs.T` landete jeder abgefragte Originaltext in `opdocs.SEEN_STRINGS`, und das bestehende Tor „Löcher in den Rahmenübersetzungen“ würde alle 604 als Löcher zählen und die CI rot färben — jenes Tor sorgt dafür, dass Rahmentexte in allen fünf Sprachen vollständig sind, während dies hier eine nach und nach gefüllte Sammlung ist. **In einer gemeinsamen Tabelle zerstört die eine Disziplin die andere.**
-- **L79** _(ja)_ — 1 塊 = ★ を含む行から始まり、同じ字下げで続く `#` コメント行の連なり。 Sphinx 風の `#:` コメントも拾う。`#` と空白だけを剥ぐと先頭に `:` が
-- **L81** _(ja)_ — 残り、生成物に「: ★…」と出る(実際に出た)。`:` もここで剥ぐ。
-- **L105** _(ja)_ — 次の ★ が来たら別の塊として切る(1 塊 1 主張に保つ)。
-- **L197** _(ja)_ — ★印は訳さず `_(ja)_` に固定する。言語ごとに訳すと**機械が数えられない** —— `tools/i18n_status.py` が「印の無い日本語」を数える道具なので、 印が言語ごとに変わると 593 行が「隠れた日本語」に化ける(実際に化けた)。 `ja` は言語コードで、読み手にも「これは日本語」と伝わる。
+- **L79** — ★Ein Block = eine Folge von `#`-Kommentarzeilen, die von einer Zeile mit ★ ausgeht und mit derselben Einrueckung fortfaehrt. Auch Kommentare im Sphinx-Stil `#:` werden aufgenommen. Streift man nur `#` und Leerraum ab, bleibt vorne ein `:`
+- **L81** — uebrig, und im Artefakt erscheint "‎: ★…" (ist tatsaechlich passiert). Streife `:` hier ebenfalls ab.
+- **L105** — ★Wenn das naechste ★ kommt, schneide es als separaten Block ab (ein Anspruch pro Block).
+- **L197** — ★Uebersetze die Markierung nicht; fixiere sie auf `_(ja)_`. Sie pro Sprache zu uebersetzen macht sie **fuer die Maschine unzaehlbar** -- `tools/i18n_status.py` ist ein Werkzeug, das "Japanisch ohne Markierung" zaehlt, sodass 593 Zeilen zu "verstecktem Japanisch" mutieren, wenn sich die Markierung pro Sprache aendert (ist tatsaechlich passiert). `ja` ist ein Sprachcode und vermittelt dem Leser zugleich "dies ist Japanisch".
 
 ## `tools/gen_docs_index_ops.py`
 
-- **L280** _(ja)_ — ★ノートの集合は**台帳から**取る(ファイルを数え上げない)。 2026-09-06 の敵対的レビュー(Codex)で、ファイルを glob して stem を 数える版が `docs/ops/SAMPLES.md`(op ノートではない)を 1 本混ぜており、 索引は 1,842、RAG ガイドは 1,843 と**食い違う数を同時に公開**していた。 ノートは records から 1:1 で生成されるので、records の名前が「ノートの ある名前」の定義そのもの。ファイルとの一致は `tests/test_docs_index_reachable.py` が別に見る(消えた/余った を検出)。
-- **L290** _(ja)_ — ★`dir(fullseye)` ではなく `__all__`。dir はモジュール属性(os / sys / warnings / annotations)を含み、しかも**他のテストが import した後は 1 つ増える**(1094 → 1095)ので、全体スイートでだけドリフト門が落ちた (2026-09-06)。公開面はファサードが `__all__` で宣言している 1,091 名。
-- **L339** _(ja)_ — ★索引は人だけでなく **AI の検索面**でもある(2026-09-06 のユーザーの指摘 「索引って RAG としても使われる部分だよね?」)。op ノートは AI コーディング 支援の検索コーパスを兼ねるので、**機械が読む入口**を索引に明示する。 半分しか無いものを「全 op」と書くと、RAG は残り半分について自信満々に 間違える —— だから `_honest()` の実測行はこの節から外さない。
+- **L280** — ★Nimm die Menge der Notizen **aus dem Register** (zaehle nicht die Dateien auf). Im adversarialen Review vom 2026-09-06 (Codex) mischte eine Version, die Dateien globt und Stems zaehlt, ein `docs/ops/SAMPLES.md` (keine op-Notiz) hinein, und der Index nannte 1,842, der RAG-Leitfaden 1,843 -- **es wurden gleichzeitig widerspruechliche Zahlen veroeffentlicht**. Notizen werden 1:1 aus records erzeugt, daher ist ein Name in records selbst die Definition von "ein Name, der eine Notiz hat". Die Uebereinstimmung mit den Dateien prueft separat `tests/test_docs_index_reachable.py` (erkennt Fehlende / Ueberzaehlige).
+- **L290** — ★`__all__`, nicht `dir(fullseye)`. dir enthaelt Modulattribute (os / sys / warnings / annotations) und **erhoeht sich zudem um eins, nachdem ein anderer Test importiert hat** (1094 → 1095), sodass das Drift-Gate nur in der Gesamt-Suite fiel (2026-09-06). Die oeffentliche Oberflaeche sind die 1,091 Namen, die die Fassade in `__all__` deklariert.
+- **L339** — ★Der Index ist nicht nur fuer Menschen, sondern auch **die Suchoberflaeche der KI** (die Bemerkung des Nutzers vom 2026-09-06 "der Index ist doch auch der Teil, der als RAG genutzt wird, oder?"). Da op-Notizen zugleich der Suchkorpus fuer KI-Coding-Unterstuetzung sind, mache den **maschinenlesbaren Einstiegspunkt** im Index explizit. Schreibt man "alle op" fuer etwas, das nur die Haelfte hat, irrt sich das RAG ueber die andere Haelfte selbstsicher -- deshalb werden die gemessenen Zeilen aus `_honest()` nicht aus diesem Abschnitt entfernt.
 
 ## `tools/gen_hardening_index.py`
 
-- **L94** _(ja)_ — ★status=fixed なのに門が無いのは通さない —— 直したという記録だけが 残って再発を止められない状態を、この台帳自身が作らないため。
-- **L194** _(ja)_ — ★リンク先(`docs/hardening/*.md`)は日本語で書かれている。英題に 差し替えるのは嘘になるので、題はそのまま出して `(ja)` を添える —— 非日本語版の読者に要るのは「訳された題」ではなく「これは読めない」 という事実。印は `tools/i18n_status.py` が数える形に固定する。
+- **L94** — ★Lass status=fixed ohne Gate nicht durch -- damit dieses Register nicht selbst einen Zustand erzeugt, in dem nur der Vermerk, es behoben zu haben, bleibt, waehrend ein Wiederauftreten nicht gestoppt werden kann.
+- **L194** — ★Die Linkziele (`docs/hardening/*.md`) sind auf Japanisch geschrieben. Sie durch einen englischen Titel zu ersetzen waere eine Luege, also gib den Titel unveraendert aus und haenge `(ja)` an -- was ein Leser der nicht-japanischen Version braucht, ist kein "uebersetzter Titel", sondern die Tatsache "das ist nicht lesbar". Fixiere die Markierung auf die Form, die `tools/i18n_status.py` zaehlt.
 
 ## `tools/gen_hero_ct.py`
 
-- **L41** _(ja)_ — ★ここは「ただの定数」ではない: 線積分 p = Σ μ·Δx が 10 を超えると exp(-p) が 光子数 1 を割り、対数が飽和して **p が頭打ち**になる(photon starvation)。 最初の版は μ を 0.55–1.0「/画素」で置いてしまい、p が 30 に達して復元 μ が 50–84% 低く出た。零点(単純逆投影)の方が Dice で勝ってしまい、そこで気づいた。
-- **L166** _(ja)_ — ★材質ごとの数字は **再現率(recall)**。「その材質のラベル内で拾えた割合」であって Dice ではない(ラベルの外に出た偽陽性を数えないので、Dice と名乗ると必ず 1.0 に 近づく)。全体の取りこぼし/拾いすぎは下の precision / recall で別に出す。
+- **L41** — ★Das ist keine "blosse Konstante": sobald das Linienintegral p = Σ μ·Δx 10 uebersteigt, faellt exp(-p) unter eine Photonenzahl von 1, der Logarithmus saettigt und **p stoesst an eine Decke** (photon starvation). Die erste Version setzte μ auf 0.55–1.0 "pro Pixel", sodass p 30 erreichte und das rekonstruierte μ um 50–84% zu niedrig ausfiel. Die Null-Baseline (einfache Rueckprojektion) gewann beim Dice, und da fiel es auf.
+- **L166** — ★Die Zahlen pro Material sind **Recall**. Sie sind "der Anteil, der innerhalb des Labels dieses Materials erfasst wurde", nicht Dice (da falsch-positive ausserhalb des Labels nicht gezaehlt werden, wuerde es sich als Dice stets an 1.0 annaehern). Das insgesamt Uebersehene / Ueberfassen wird unten separat als precision / recall angegeben.
 
 ## `tools/gen_hero_materials.py`
 
-- **L65** _(ja)_ — ★ 巻き順は外向き。逆にすると法線が内を向き、render_beauty が **例外を出さずに真っ黒**を返す(最初の版がそれで、薄膜の球だけ黒かった)。
+- **L65** — ★Die Wicklungsreihenfolge ist nach aussen. Kehrt man sie um, zeigen die Normalen nach innen, und render_beauty gibt **ohne eine Exception auszuloesen reines Schwarz** zurueck (so war die erste Version, und nur die Duennschicht-Kugel war schwarz).
 
 ## `tools/gen_maturity.py`
 
-- **L153** _(ja)_ — ★これは**下界**。``tests/`` に op 名が literal で現れるかしか見ていないので、 台帳を舐めて全 op を回す掃引型の試験(``for name in ledger: ...``)は数えない。 「試験が無い」ではなく「**名指しの試験が無い**」と読むこと。
+- **L153** — ★Dies ist eine **untere Schranke**. Da nur geprueft wird, ob der op-Name als Literal in ``tests/`` erscheint, werden Sweep-artige Tests, die das Register durchlaufen und alle op ausfuehren (``for name in ledger: ...``), nicht gezaehlt. Lies es als "**kein namentlicher Test**", nicht als "kein Test".
 
 ## `tools/gen_op_figures.py`
 
-- **L105** _(ja)_ — ★2026-09-08: この表に居た `tb_angle_3points` と `tb_indices_to_labels` は、 「図の定義域の外」ではなく **橋に載せてはいけない op** だった。前者は 3 本の ベクトルを取るので点群 1 本では呼べず、後者は 1-D を返すのに宣言 out が `labels`(→ volume = ndim 3)。どちらも登録されたまま**一度も走ったことが無く**、 fail-soft がもっともらしい値を返していた。`backends_typed._OP_BRIDGE_SKIP` へ 移し、この表からは外した —— 図が出ないことの記録は在ったのに、走れないこと 自体の記録がどこにも無かった(門が 2 つあって、片方だけが気づいていた)。
-- **L123** _(ja)_ — ★2026-09-07(ユーザー指示「1 枚に纏める必要はない。段階的なもの・条件が複数 あるものは分けて出す」「物によっては疑似カラーのほうが分かりやすい」「複雑なものは アニメーション GIF でも」)。主図 `<op>.png` に加えて、 `<op>.a.jpg` / `<op>.b.jpg` — つまみを 0.1 / 0.5 / 0.9 に振った 3 枚(**出力が 変わるときだけ**。変わらなければ manifest に理由) `<op>.chain.jpg` — 前置き op がある op の段階図(画像 → 中間 → 出力) `<op>.gif` — 出力が動画 / ライトフィールド / 体積のとき、フレーム / 視点 / スライスを順に見せる(静止画 `<op>.png` が完成形で GIF は追加。Studio の QTextBrowser は 1 コマ目を出す) 疑似カラーは**量の場**(距離・位相・向き・深度・曲率 …)の出力にだけ掛け、 キャプションに `(viridis)` と書く。フィルタ系はグレーのまま(色が変わる op に 見せない)。
-- **L726** _(ja)_ — ★「走った」と「意味のある出力が出た」は別(2026-09-07、ユーザー 指摘「out が真っ黒なのはなんだ?」)。空配列を「図あり」に数えると 黒い板が図になる。空は空と記録し、ノートに理由を書く。
+- **L105** — ★2026-09-08: `tb_angle_3points` und `tb_indices_to_labels`, die in dieser Tabelle standen, waren nicht "ausserhalb des Definitionsbereichs der Abbildung", sondern **op, die nicht auf die Bruecke gehoeren**. Ersteres nimmt 3 Vektoren, kann also nicht mit einer einzigen Punktwolke aufgerufen werden, und letzteres gibt 1-D zurueck, deklariert out aber als `labels` (→ volume = ndim 3). Beide waren zwar registriert, aber **nie ein einziges Mal gelaufen**, und fail-soft gab plausible Werte zurueck. Nach `backends_typed._OP_BRIDGE_SKIP` verschoben und aus dieser Tabelle entfernt -- es gab einen Vermerk, dass keine Abbildung herauskam, aber nirgends einen Vermerk ueber die Unfaehigkeit zu laufen selbst (es gab zwei Gates, und nur eines hatte es bemerkt).
+- **L123** — ★2026-09-07 (Nutzeranweisung "es besteht kein Bedarf, alles in ein Bild zusammenzufassen; Stufenweises oder solches mit mehreren Bedingungen getrennt ausgeben", "bei manchem ist eine Falschfarbe verstaendlicher", "Komplexes gerne auch als animiertes GIF"). Zusaetzlich zur Hauptabbildung `<op>.png`: `<op>.a.jpg` / `<op>.b.jpg` — 3 Bilder mit dem Regler auf 0.1 / 0.5 / 0.9 gestellt (**nur wenn sich die Ausgabe aendert**; aendert sie sich nicht, kommt der Grund ins manifest) `<op>.chain.jpg` — eine Stufenabbildung fuer eine op mit vorgeschalteter op (Bild → Zwischenschritt → Ausgabe) `<op>.gif` — wenn die Ausgabe Video / Lichtfeld / Volumen ist, Frames / Blickpunkte / Slices der Reihe nach zeigen (das Standbild `<op>.png` ist die fertige Form und das GIF ist zusaetzlich; Studios QTextBrowser zeigt das erste Frame). Wende Falschfarbe nur auf die Ausgabe eines **Feldes einer Groesse** an (Abstand, Phase, Orientierung, Tiefe, Kruemmung …) und schreibe `(viridis)` in die Bildunterschrift. Filter-Typen bleiben grau (nicht als farbwechselnde op darstellen).
+- **L726** — ★"Es lief" und "eine sinnvolle Ausgabe kam heraus" sind zweierlei (2026-09-07, Bemerkung des Nutzers "was soll das pechschwarze out?"). Zaehlt man ein leeres Array als "hat eine Abbildung", wird eine schwarze Platte zur Abbildung. Erfasse Leeres als leer und schreibe den Grund in die Notiz.
 
 ## `tools/gen_wing2d_gallery.py`
 
-- **L592** _(ja)_ — ★2026-09-02: highpass / bandpass_image は「0 を 0.5 に写した [0,1]」を 返す規約になった。以前は符号つき配列を image と称して返しており、 保存・段間 clip で負の半分 (画素の約 50%) が無言で 0 に潰れていた。 直ったことを**推測でなく実測で**残す: 最小値と負画素の割合。
-- **L727** _(ja)_ — ★2026-09-02: estimate_noise は σ の単位で返るようになった (以前は σ>=0.08 で 1.0 に張り付き、3 倍違う σ に同じ値を返していた)。 直線 y=x を並べて「返り値が σ そのものか」を目で確かめられるようにする。
-- **L840** _(ja)_ — ★_panel_grid のラベルは折り返さず、幅を超えると隣とぶつかって読めなく なる (tile 262px / font 19-17px なので 1 行 ≈ 全角 12 文字が限度)。 倍率の意味は表題と副題に逃がし、パネルには短い名前と数字だけ置く。
-- **L1184** _(ja)_ — ★2026-09-02: `area_center` は名前どおり (面積比, 行, 列) の 3 成分を返す ようになった (それまでは面積比 1 スカラだけで、**中心を返していなかった**)。 3 成分とも解像度に依らないよう [0,1] 正規化されているので、画素に戻すには 行 ×(H-1) / 列 ×(W-1)。ここでは戻した中心を絵に打って、返り値が本当に 中心であることを見て分かる形にする。
-- **L1712** _(ja)_ — ★1 点ずつ apply_cmap を呼ぶと、その 1 点の中で正規化されて全部同じ色になる。 0..1 を張った LUT を 1 回だけ作り、そこから引く。
-- **L1950** _(ja)_ — ★2026-09-02: gabor はカーネルの L1 ノルムで割る固定スケールになり、 **op を跨いで比べられる絶対値**を返すようになった。それまでは 「その画像での最大絶対値」で割っていたので、向きごとに別の除数で 割ることになり、応答の大小そのもの = 向きの識別力が潰れていた。 その代わり返り値は [0,1] のうち下端の狭い範囲 (この 3 模様では平均 0.007〜0.030) に収まるので、**そのまま貼ると 3 枚とも真っ黒**になる。 絵は 1〜99%tile で伸長して見せ、ラベルの数字は伸長前の実測値を出す (freq_sweep の highpass パネルと同じ約束)。
-- **L2065** _(ja)_ — ★2026-09-02: 3 op は別実装になった。以前は 3 つとも geom "zoom" に相乗りで 相互の最大差が 0.0 / 4.9e-14(= 同一)、しかも 3 つとも b が死んでいた。 いまは zoom_image_factor=縦横 2 倍率 / zoom_image_size=目標サイズ / rescale_img=等方倍率 + 補間次数。キャンバス shape はどれも入力のまま。
+- **L592** — ★2026-09-02: highpass / bandpass_image folgen nun der Konvention, "[0,1] mit 0 auf 0.5 abgebildet" zurueckzugeben. Zuvor gaben sie ein vorzeichenbehaftetes Array zurueck, das als image bezeichnet wurde, und beim Speichern / Zwischenstufen-clip wurde die negative Haelfte (etwa 50% der Pixel) stillschweigend auf 0 gedrueckt. Halte die Behebung **durch Messung statt Vermutung** fest: den Minimalwert und den Anteil negativer Pixel.
+- **L727** — ★2026-09-02: estimate_noise gibt jetzt in Einheiten von σ zurueck (zuvor blieb es bei σ>=0.08 bei 1.0 haengen und gab fuer σ, die sich um das 3-fache unterschieden, denselben Wert zurueck). Lege die Gerade y=x an, damit man visuell pruefen kann, "ob der Rueckgabewert σ selbst ist".
+- **L840** — ★Die Labels von _panel_grid brechen nicht um, und sobald sie die Breite ueberschreiten, stossen sie mit dem Nachbarn zusammen und werden unlesbar (bei tile 262px / font 19-17px sind pro Zeile ≈ 12 Vollbreiten-Zeichen das Maximum). Verlagere die Bedeutung des Skalierungsfaktors in Titel und Untertitel und platziere auf dem Panel nur einen kurzen Namen und Zahlen.
+- **L1184** — ★2026-09-02: `area_center` gibt nun, wie der Name sagt, die 3 Komponenten (Flaechenverhaeltnis, Zeile, Spalte) zurueck (bis dahin war es nur der einzelne Skalar Flaechenverhaeltnis und **gab das Zentrum nicht zurueck**). Alle 3 Komponenten sind [0,1]-normiert, um nicht von der Aufloesung abzuhaengen, also zum Zurueckrechnen in Pixel: Zeile ×(H-1) / Spalte ×(W-1). Hier zeichnen wir das zurueckgerechnete Zentrum in das Bild ein, sodass sichtbar wird, dass der Rueckgabewert wirklich das Zentrum ist.
+- **L1712** — ★Ruft man apply_cmap Punkt fuer Punkt auf, wird innerhalb dieses einen Punkts normiert, sodass alles dieselbe Farbe wird. Erstelle einmal eine LUT, die 0..1 aufspannt, und schlage darin nach.
+- **L1950** — ★2026-09-02: gabor verwendet nun eine feste Skala, die durch die L1-Norm des Kernels teilt, und gibt einen **ueber op hinweg vergleichbaren Absolutwert** zurueck. Zuvor teilte es durch "den maximalen Absolutwert in diesem Bild", also pro Orientierung durch einen anderen Divisor, was die Groesse der Antwort selbst = die Unterscheidungskraft ueber Orientierungen zunichtemachte. Im Gegenzug faellt der Rueckgabewert in ein schmales Band am unteren Ende von [0,1] (Mittel 0.007–0.030 bei diesen 3 Mustern), sodass **ein direktes Einfuegen alle 3 pechschwarz macht**. Zeige das Bild auf das 1–99%tile gestreckt und gib in den Label-Zahlen die vor der Streckung gemessenen Werte an (dieselbe Konvention wie das highpass-Panel von freq_sweep).
+- **L2065** — ★2026-09-02: die 3 op wurden zu getrennten Implementierungen. Zuvor ritten alle 3 auf geom "zoom" mit einer gegenseitigen maximalen Differenz von 0.0 / 4.9e-14 (= identisch), und zudem war b in allen 3 tot. Jetzt zoom_image_factor = 2 Skalierungsfaktoren (Hoehe/Breite) / zoom_image_size = Zielgroesse / rescale_img = isotroper Skalierungsfaktor + Interpolationsordnung. Die canvas shape bleibt bei allen wie die Eingabe.
 
 ## `tools/gen_wingastro_gallery.py`
 
-- **L411** _(ja)_ — ★ 雑音は :func:`astrostack.noise_sigma`(背景の頑健 σ)で測る。 「真値との残差 RMS」を使うと**PSF のずれまで残差に入る** —— この実験は わざとフレームごとに FWHM を変えているので、選び方を変えると合成後の PSF が変わり、残差が増えたのが雑音のせいなのか像が変わったせいなのか 区別できなくなる(実測でその値は 25.2 -> 61.3 と動いたが、その大半は 雑音ではなかった)。背景 σ は星の形に依らない。
-- **L471** _(ja)_ — ★ 「最大差」は単一フレームでは動かない —— 再現率が 1 未満である限り、 見逃した 1 画素が最大値をそのまま押さえてしまうから。**何画素が正解から 大きく外れたままか**と**外れの総量**なら、除去の効き目がそのまま出る。
+- **L411** — ★Miss das Rauschen mit :func:`astrostack.noise_sigma` (ein robustes Hintergrund-σ). Verwendet man "RMS des Residuums gegen den Ground Truth", gehen **sogar PSF-Verschiebungen ins Residuum ein** -- dieses Experiment variiert absichtlich FWHM pro Frame, sodass eine andere Auswahl die PSF nach dem Stacken aendert und man nicht mehr unterscheiden kann, ob das gestiegene Residuum vom Rauschen oder von der Bildaenderung kommt (gemessen bewegte sich der Wert von 25.2 -> 61.3, aber das meiste davon war kein Rauschen). Das Hintergrund-σ haengt nicht von der Form der Sterne ab.
+- **L471** — ★Die "maximale Differenz" bewegt sich bei einem einzelnen Frame nicht -- denn solange der Recall unter 1 liegt, haelt ein einziges uebersehenes Pixel das Maximum unveraendert fest. **Wie viele Pixel weiterhin stark vom Ground Truth abweichen** und **die Gesamtmenge der Abweichung** spiegeln die Wirkung der Entfernung direkt wider.
 - **L713** — ★ In Originalgröße nebeneinandergestellt lässt sich "2 detektiert" **mit bloßem Auge nicht bestätigen** (innerhalb von 44x44 ist ein Paar im Abstand von 1.6 Pixeln nur ein Klumpen von wenigen Pixeln). Um keine Abbildung zu erzeugen, die den Leser allein der Behauptung des Detektors vertrauen lässt, schneide um jedes Paar denselben physischen Bereich aus und vergrößere ihn.
 - **L844** — ★ Die Fehlerkarte färbt **die Größe, nicht das Vorzeichen**. Die erste Version verwendete eine divergierende Farbskala, aber der Fehler in diesem Experiment ist stets positiv, sodass "positiv = das Blau von right" entstand und sich die umgekehrte Bedeutung ergab, bei der **ein defekter Zustand mit der "korrekten" Farbe eingefärbt wird**. Hier soll dem Leser nicht die Richtung, sondern "wie falsch es ist" vermittelt werden, also variiere nur die Intensität einer einzigen wrong-Farbe (und zeige zusätzlich Symbole und Zahlen, damit die Bedeutung nicht allein an der Farbe hängt).
 

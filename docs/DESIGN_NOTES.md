@@ -37,7 +37,7 @@
 
 ## `backend_safe.py`
 
-- **L436** — ★feature op は ndarray でなく numpy の **スカラ**を返すので、上の分岐は一度もそれを見ていなかった: NaN/Inf の測定値(例えば退化フレームに対する sk_blur_effect 内の 0/0)が api.apply からそのまま流れ出ていた。非有限のスカラも sort フォールバックへ洗い流し、宣言している「有限・sort として妥当」の保証が feature/contour のスカラにも実際に効くようにする。
+- **L436** — ★feature op は ndarray でなく numpy の **スカラ**を返すので、上の分岐は一度もそれを見ていなかった: NaN/Inf の測定値(例えば退化フレームに対する sk_blur_effect 内の 0/0)が api.apply からそのまま流れ出ていた。非有限のスカラも sort フォールバックへ洗い流し、宣言している「有限·sort として妥当」の保証が feature/contour のスカラにも実際に効くようにする。
 
 ## `backends.py`
 
@@ -937,7 +937,7 @@
 
 ## `problems.py`
 
-- **L147** — ★決定的な大域シャッフル(基点を固定し、train/holdout/locked が**同じ**置換を索引する)を、seed の役割で鍵付けした 3 つの**互いに素な**帯に分ける(evolve.run は train=seed・holdout=seed+10000・locked=seed+20000 を引くので、seed//10000 mod 3 が帯を選ぶ)。旧来の `off = seed % pool` は、pool が 10000 を割り切るときは常に 3 つの窓を**同じ**フレームへ潰していた —— train↔holdout↔locked の沈黙のリークで、train に過適合した champion が「純粋な holdout で手作りに勝った」ように見えていた。純粋な 3 分割には pool >= 3n が要る。それより小さい pool では綺麗な holdout を作れないので、黙ってリークするより拒否する。
+- **L147** — ★決定的な大域シャッフル(基点を固定し、train/holdout/locked が**同じ**置換を索引する)を、seed の役割で鍵付けした 3 つの**互いに素な**帯に分ける(evolve.run は train=seed·holdout=seed+10000·locked=seed+20000 を引くので、seed//10000 mod 3 が帯を選ぶ)。旧来の `off = seed % pool` は、pool が 10000 を割り切るときは常に 3 つの窓を**同じ**フレームへ潰していた —— train↔holdout↔locked の沈黙のリークで、train に過適合した champion が「純粋な holdout で手作りに勝った」ように見えていた。純粋な 3 分割には pool >= 3n が要る。それより小さい pool では綺麗な holdout を作れないので、黙ってリークするより拒否する。
 
 ## `profileops.py`
 
