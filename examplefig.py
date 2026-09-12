@@ -103,8 +103,15 @@ def _report_errors_at_exit():
 atexit.register(_report_errors_at_exit)
 
 
-def _to_rgb8(v, signed: bool):
-    """(H,W) か (H,W,3|4) → uint8 RGB。**値域の伸ばし方をここに 1 か所だけ持つ**。"""
+def _to_rgb8(v, signed: bool, gray: bool = False):
+    """(H,W) か (H,W,3|4) → uint8 RGB。**値域の伸ばし方をここに 1 か所だけ持つ**。
+
+    ``gray=True`` は (H,W) を**グレースケール**で塗る(疑似カラーにしない)。
+    強度そのもの —— 焦点合成の全焦点画像やレンズのボケ列のように「絵」として
+    見せる量 —— は疑似カラーにすると「ボケ→シャープ」が読み取れず、ヒートマップに
+    見えてしまう(2026-09-13、焦点合成 PoC で踏んだ)。深度・位相・残差のような
+    「場」は従来どおり疑似カラー/発散色のままにする。
+    """
     import fullseye as fs
 
     a = np.asarray(v)
@@ -119,6 +126,11 @@ def _to_rgb8(v, signed: bool):
         return (np.clip(a[..., :3], 0, 1) * 255).astype(np.uint8)
     if a.ndim != 2:
         raise ValueError("examplefig.save: (H,W) か (H,W,3|4) のみ。来たのは %r" % (a.shape,))
+    if gray:
+        lo, hi = float(a.min()), float(a.max())
+        g = (a - lo) / (hi - lo) if hi - lo > 1e-12 else np.zeros_like(a)
+        g = np.clip(g, 0.0, 1.0)
+        return (np.repeat(g[..., None], 3, axis=2) * 255).astype(np.uint8)
     if signed:
         m = float(np.max(np.abs(a))) or 1.0
         lut = np.asarray(fs.diverging_lut(256))
