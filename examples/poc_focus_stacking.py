@@ -244,13 +244,14 @@ def main():
     print(f"  {'参考: 単独で最良のフレーム':<28}{max(p_single):>12.2f}")
     print(f"  → ゼロ点比 {psnr(fused, tex) - p_single[n_frames // 2]:+.2f} dB。"
           "絵の側は文句なく効いている。")
+    sel = np.unique(np.linspace(0, n_frames - 1, 8).round().astype(int))
     figs.save_grid("stack",
-                   [stack[0], stack[n_frames // 2], stack[-1], fused],
-                   [f"焦点 {focus_mm[0]:.1f} mm", f"焦点 {focus_mm[n_frames // 2]:.1f} mm",
-                    f"焦点 {focus_mm[-1]:.1f} mm", "融合した全焦点画像"],
-                   title="焦点をずらした画像列と、その融合", gray=True,
-                   caption="どの 1 枚も一部しか合っていないが、融合は全面が合う"
-                           "(強度画像なのでグレースケール。ボケ→シャープが素直に見える)。")
+                   [stack[i] for i in sel] + [fused],
+                   [f"焦点 {focus_mm[i]:.1f} mm" for i in sel] + ["融合(全焦点)"],
+                   title="焦点をずらした画像列と、その融合", gray=True, ncols=3,
+                   caption=f"{n_frames} 枚のうち {len(sel)} 枚と融合結果。どの 1 枚も一部しか"
+                           "合っていないが、融合は全面が合う(強度画像なのでグレースケール。"
+                           "ボケ→シャープが素直に見える)。")
 
     print("\n=== 3. 深度地図 —— 同じ融合が出した、もう一つの答え ===")
     err = dmap - depth
@@ -354,7 +355,7 @@ def main():
     ref = np.array([float(np.var(-4.0 * s + np.roll(s, 1, 0) + np.roll(s, -1, 0)
                                  + np.roll(s, 1, 1) + np.roll(s, -1, 1))) for s in stack_hc])
     n_tied = int((af >= 1.0).sum())
-    print("  高コントラストの被写体で 15 枚を掃引し、フレームごとの合焦指標を見る:")
+    print("  高コントラストの被写体で {n_frames} 枚を掃引し、フレームごとの合焦指標を見る:")
     print(f"  {'合焦距離 [mm]':>14}{'xcv2_lap_var':>14}{'クリップ前の分散':>18}")
     for f_mm, v, rv in zip(focus_mm, af, ref):
         mark = "  <- 同点" if v >= 1.0 else ""
