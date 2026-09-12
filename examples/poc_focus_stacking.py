@@ -360,7 +360,7 @@ def main():
     for f_mm, v, rv in zip(focus_mm, af, ref):
         mark = "  <- 同点" if v >= 1.0 else ""
         print(f"  {f_mm:>14.2f}{v:>14.6f}{rv:>18.6f}{mark}")
-    print(f"  → 15 枚中 {n_tied} 枚が厳密に 1.000000 で並び、順位が付かない"
+    print(f"  → {n_frames} 枚中 {n_tied} 枚が厳密に 1.000000 で並び、順位が付かない"
           "(``min(1.0, 分散 * 20)`` のクリップ)。")
     print(f"     クリップ前の分散なら最良は {focus_mm[int(np.argmax(ref))]:.2f} mm と一意に決まる。")
     print("     オートフォーカスで順位が要るのはまさに鮮鋭な側なので、そこで使えない。")
