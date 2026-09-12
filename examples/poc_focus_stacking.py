@@ -481,9 +481,11 @@ def main():
     print("  → 律速は合成側(層ごとにガウスを 2 回掛ける)。評価と融合は 1 桁安い。")
 
     # ---- 自己検査(速さは assert しない)---------------------------------
-    # 1. 絵は効いている
-    assert psnr(fused, tex) > p_single[n_frames // 2] + 10.0, "全焦点画像がゼロ点に勝てていない"
-    assert psnr(fused, tex) > psnr(stack.mean(axis=0), tex) + 10.0, "平均のゼロ点に勝てていない"
+    # 1. 絵は効いている。★閾値は +3 dB —— 半導体の実画像は平滑金属(ダイ・リード)が
+    #    大半で、そこは単一フレームでも合焦しているため、全面が高周波な合成パターンほど
+    #    AIF の伸びは大きくない(現場の正直な姿。旧・全面テクスチャ場では +14 dB 出た)。
+    assert psnr(fused, tex) > p_single[n_frames // 2] + 3.0, "全焦点画像がゼロ点に勝てていない"
+    assert psnr(fused, tex) > psnr(stack.mean(axis=0), tex) + 3.0, "平均のゼロ点に勝てていない"
     # 2. 深度はテクスチャのある所でだけゼロ点に勝つ
     assert rms(err[plain]) < 0.5 * rms(depth - null_const), "有テクスチャでも定数に勝てていない"
     assert rms(err[flat]) > 2.0 * float(depth[flat].std()), \
