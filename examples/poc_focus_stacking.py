@@ -248,8 +248,9 @@ def main():
                    [stack[0], stack[n_frames // 2], stack[-1], fused],
                    [f"焦点 {focus_mm[0]:.1f} mm", f"焦点 {focus_mm[n_frames // 2]:.1f} mm",
                     f"焦点 {focus_mm[-1]:.1f} mm", "融合した全焦点画像"],
-                   title="焦点をずらした画像列と、その融合",
-                   caption="どの 1 枚も一部しか合っていないが、融合は全面が合う。")
+                   title="焦点をずらした画像列と、その融合", gray=True,
+                   caption="どの 1 枚も一部しか合っていないが、融合は全面が合う"
+                           "(強度画像なのでグレースケール。ボケ→シャープが素直に見える)。")
 
     print("\n=== 3. 深度地図 —— 同じ融合が出した、もう一つの答え ===")
     err = dmap - depth
