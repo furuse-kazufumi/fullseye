@@ -434,9 +434,9 @@ def main():
     t_fm = 1e3 * (time.perf_counter() - t1)
     t1 = time.perf_counter(); fuse(stack, fmz, focus_mm)
     t_fuse = 1e3 * (time.perf_counter() - t1)
-    print(f"  画像列の合成(15 枚 x {SIZE}x{SIZE}、24 層){t_stack:>9.1f} ms"
+    print(f"  画像列の合成({n_frames} 枚 x {SIZE}x{SIZE}、24 層){t_stack:>9.1f} ms"
           f"  ({t_stack / n_frames:.1f} ms/枚)")
-    print(f"  焦点評価(15 枚 x {SIZE}x{SIZE}、5x5 窓)   {t_fm:>9.1f} ms")
+    print(f"  焦点評価({n_frames} 枚 x {SIZE}x{SIZE}、5x5 窓)   {t_fm:>9.1f} ms")
     print(f"  融合 + 深度                              {t_fuse:>9.1f} ms")
     print("  → 律速は合成側(層ごとにガウスを 2 回掛ける)。評価と融合は 1 桁安い。")
 
