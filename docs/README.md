@@ -14,6 +14,8 @@
 
 **Fullseye**（作業名 imgevolve）は、numpy-native な画像処理オペレータ・ライブラリと、HDevelop 風のビジュアル・パイプライン設計環境（Fullseye Studio）+ 実行ランタイム（FullseyeEngine）を備えた、HALCON/HDevelop 級の実用ツールです。オペレータは約 **899**（レジストリ）、実 HALCON オペレータ **979/2313** を genuine 実装、48 カテゴリをカバーします。
 
+★ **画像処理ライブラリでは珍しく「仮想の光学設計」まで内蔵** —— 薄肉/厚肉レンズ・光線追跡・Seidel 収差・PSF/MTF に加え、damped-least-squares（Levenberg–Marquardt）でレンズ処方そのものを最適化（`optimize_lens`）。**撮像系を設計して、その像を上のオペレータで検査するまでを一気通貫**でできる（半導体・精密計測で効く差別化）。
+
 > **まずはここから → [GETTING_STARTED.md](GETTING_STARTED.md)（5 分で動かす）**
 
 > **できること一覧 → [CAPABILITIES.md](CAPABILITIES.md)**（何をしたいかで引く索引）／**PoC が上げた堅牢性 → [HARDENING.md](HARDENING.md)**（見つけて直した記録）／**どこまで検証できているか → [MATURITY.md](MATURITY.md)**（手で書かず数えて出す成熟度台帳）
