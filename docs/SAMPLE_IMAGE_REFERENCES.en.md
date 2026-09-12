@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: b2e247e3558a -->
 # Sample images — provenance, source papers & public repositories
 
 [日本語](./SAMPLE_IMAGE_REFERENCES.md) · **English**

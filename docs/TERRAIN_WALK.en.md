@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: de960d71d9b6 -->
 # Walking a Character Over Terrain (sim-native, no GPU required)
 
 [日本語](./TERRAIN_WALK.md) · **English**

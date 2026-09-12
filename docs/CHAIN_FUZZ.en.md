@@ -1,4 +1,7 @@
+<!-- i18n-source-sha: 54e2143f95c2 -->
 # Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains
+
+[日本語](./CHAIN_FUZZ.md) · **English**
 
 `tools/chain_fuzz.py`. The third layer, following unit tests and adversarial validation. The defects it targets are
 **"the ones that pass everything in isolation but surface only when ops are wired into a chain."**

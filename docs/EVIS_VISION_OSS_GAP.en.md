@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: 673abba3a20e -->
 # evis Vision Components — OSS/ROS2 Gap Analysis (2026-08-17)
 
 [日本語](./EVIS_VISION_OSS_GAP.md) · **English**
