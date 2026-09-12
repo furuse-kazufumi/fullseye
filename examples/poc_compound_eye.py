@@ -73,11 +73,32 @@ U_C = (ANGULAR[1] - 1) // 2
 # ---------------------------------------------------------------------------- #
 #  シーン(差し替え点)                                                          #
 # ---------------------------------------------------------------------------- #
-def ommatidial_scene(slopes, *, occlusion, seed):
+def ommatidial_scene(slopes, *, occlusion, seed, coverage=0.55):
     """既知スロープの層から光場を作る。返り値 = ((V,U,H,W), 真値スロープ地図(H,W))。"""
     lf, smap = L.lf_synthesize(slopes=slopes, angular=ANGULAR, shape=SHAPE,
-                               occlusion=occlusion, seed=seed)
+                               occlusion=occlusion, coverage=coverage, seed=seed)
     return np.asarray(lf), np.asarray(smap)
+
+
+def two_depth_scene(near_slope, far_slope, *, seed_near, seed_far):
+    """手前/奥の 2 深度を左右に貼り合わせた光場(細かい交錯の無い、曖昧さの小さい距離).
+
+    ``lf_synthesize`` の遮蔽合成は細かいランダムマスクで焦点度窓が深度をまたぎ、
+    強い視差の前景に引きずられる(実測: 全画素が最大スロープに張り付く)。ここでは
+    半導体の「手前の部品/奥の基板」のように **大きく分かれた 2 領域** にして、
+    アレイが領域ごとの距離を出せることを見る(境界±数画素は視差でにじむ)。
+    """
+    near, _ = L.lf_synthesize(slopes=(near_slope,), angular=ANGULAR, shape=SHAPE,
+                              occlusion=False, seed=seed_near)
+    far, _ = L.lf_synthesize(slopes=(far_slope,), angular=ANGULAR, shape=SHAPE,
+                             occlusion=False, seed=seed_far)
+    near = np.asarray(near); far = np.asarray(far)
+    half = SHAPE[1] // 2
+    lf = far.copy()
+    lf[..., :half] = near[..., :half]     # 左=手前, 右=奥
+    truth = np.full(SHAPE, far_slope, dtype=float)
+    truth[:, :half] = near_slope
+    return lf, truth, half
 
 
 def add_photoreceptor_noise(lf, per_view_snr, *, seed):
