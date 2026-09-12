@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-13 07:35:47
+- **最終更新**: 2026-09-13 07:42:01
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+9ad9f98d6 i18n step3: 読み手向け文書 6 本を英訳(第2波)
+ca30247f9 auto: CHAIN_FUZZ.en.md 編集前 (2026-09-13 07:36)
 4e239c0c4 i18n step3: 翻訳スコープ確定 + 読み手向け文書 4 本を英訳(第1波)
 bc81c19b9 auto: I18N_PLAN.md 編集前 (2026-09-13 07:31)
 fe5270eb1 docs: 「仮想の光学設計」を差別化として README 冒頭に明記(6 言語)
@@ -18,37 +20,37 @@ fe5270eb1 docs: 「仮想の光学設計」を差別化として README 冒頭�
 d4537702b auto: README.tw.md 編集前 (2026-09-13 07:22)
 1bd11c453 auto: README.zh.md 編集前 (2026-09-13 07:22)
 0bb025220 auto: README.en.md 編集前 (2026-09-13 07:22)
-8cfd2335b 焦点合成 PoC: 場面を半導体ワイヤ・ボンディングに(ユーザーの実応用)
-1fc482eb4 auto: poc_focus_stacking.py 編集前 (2026-09-13 07:19)
 ```
 
 ## 現在の git status
 
 ```
 M docs/SESSION_SUMMARY.md
-?? docs/GSPLAT_NATIVE_WINDOWS.en.md
-?? docs/SAMPLE_IMAGE_REFERENCES.en.md
-?? docs/TERRAIN_WALK.en.md
+?? docs/EVOLUTION_ENVIRONMENT.en.md
+?? docs/FSCRIPT_LANGUAGE.en.md
+?? docs/GALLERY.en.md
+?? docs/GPU_OPTIMIZATION_PATTERNS.en.md
+?? docs/UNIFIED_API_REQUIREMENTS.en.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:35 docs/SESSION_SUMMARY.md
-07:35 docs/SAMPLE_IMAGE_REFERENCES.en.md
-07:35 docs/GSPLAT_NATIVE_WINDOWS.en.md
-07:35 docs/TERRAIN_WALK.en.md
-07:34 .pytest_cache/v/cache/nodeids
-07:34 docs/articles/README.md
-07:34 docs/README.de.md
-07:34 docs/README.ko.md
-07:33 docs/README.tw.md
-07:33 docs/README.zh.md
-07:33 docs/README.en.md
-07:32 docs/README.md
-07:32 docs/HDEVELOP_FIDELITY.en.md
-07:32 docs/HDEVELOP_DEV_OPS.en.md
-07:31 docs/HALCON_COVERAGE_HONEST.en.md
+07:41 docs/SESSION_SUMMARY.md
+07:41 docs/UNIFIED_API_REQUIREMENTS.en.md
+07:41 docs/FSCRIPT_LANGUAGE.en.md
+07:41 docs/GPU_OPTIMIZATION_PATTERNS.en.md
+07:41 docs/GALLERY.en.md
+07:41 docs/EVOLUTION_ENVIRONMENT.en.md
+07:38 .pytest_cache/v/cache/nodeids
+07:38 docs/articles/README.md
+07:38 docs/README.de.md
+07:38 docs/README.ko.md
+07:38 docs/README.tw.md
+07:38 docs/README.zh.md
+07:37 docs/README.en.md
+07:37 docs/README.md
+07:36 docs/OP_COMBINATION_MATRIX.en.md
 ```
 
 ---
