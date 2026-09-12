@@ -48,6 +48,8 @@
    `FSCRIPT_LANGUAGE` / `GPU_OPTIMIZATION_PATTERNS` / `UNIFIED_API_REQUIREMENTS` /
    `EVOLUTION_ENVIRONMENT` / `GALLERY` / `MATCH_3D_MATRIX` / `OP_COMBINATION_MATRIX`。
    入口文書と同じく `<name>.en.md`(言語ナビ + 指紋)を作る。英語が済んだら zh/tw/ko/de。
+   **✓ (A) 16 本すべて英訳完了(2026-09-13)。かな 0、指紋、索引反映、test_i18n(_docs) 緑。
+   = step 3 の翻訳対象を訳し切った = i18n 計画の英語版が完了。** zh/tw/ko/de は次段。
 
    **(B) 既に英語で書かれている(訳不要)** —— `PERCEPTION` / `PERCEPTION_REALDATA` /
    `PERCEPTION_PHYSICAL_AI` / `EXAMPLES` / `ADDING_OPS` / `REPRODUCE` / `REFERENCES` /
