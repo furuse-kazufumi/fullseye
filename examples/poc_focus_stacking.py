@@ -362,17 +362,20 @@ def main():
     print(f"  {'焦点評価':<18}{'全体RMS':>9}{'テクスチャ有':>12}{'段差帯':>9}"
           f"{'無テクスチャ σ':>14}{'AIF PSNR':>10}")
     per_measure = {}
+    flat_sigmas = []
     for label, fn in MEASURES:
         fm = measure_stack(stack, fn)
         fu, dm, _pk, _k = fuse(stack, fm, focus_mm)
         e = dm - depth
         per_measure[label] = (rms(e), rms(e[plain]), psnr(fu, tex))
+        flat_sigmas.append(float(dm[flat].std()))
         print(f"  {label:<18}{rms(e):>9.3f}{rms(e[plain]):>12.3f}{rms(e[band]):>9.3f}"
               f"{dm[flat].std():>14.3f}{psnr(fu, tex):>10.2f}")
-    print("  → 段差帯ではラプラシアンが一番悪い(二階微分はハローを一番強く拾う)。")
-    print(f"     無テクスチャの散らばりはどの評価でも 3.2-3.7 mm。掃引幅 "
-          f"{focus_mm[-1] - focus_mm[0]:.2f} mm の一様分布なら σ = "
-          f"{(focus_mm[-1] - focus_mm[0]) / np.sqrt(12):.2f} mm —— つまり誰も救えていない。")
+    print("  → 段差帯は二階微分(ラプラシアン)がハローを一番強く拾う。")
+    uni = (focus_mm[-1] - focus_mm[0]) / np.sqrt(12)
+    print(f"     無テクスチャの散らばりはどの評価でも {min(flat_sigmas):.1f}-{max(flat_sigmas):.1f} mm。"
+          f"掃引幅 {focus_mm[-1] - focus_mm[0]:.2f} mm の一様分布なら σ = {uni:.2f} mm"
+          " —— つまり誰も救えていない。")
 
     print("\n=== 6. ★ フレームごとの正規化という穴 ===")
     scale = [float(np.max(_laplacian(s))) for s in stack]
