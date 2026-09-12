@@ -316,10 +316,12 @@ def _panel(v, signed=False, title="", gray=False):
 
 
 def save_grid(name: str, panels, captions=None, title=None, ncols=2,
-              signed=False, caption: str = "") -> Path | None:
+              signed=False, caption: str = "", gray=False) -> Path | None:
     """複数の画像を 1 枚の多パネル図に組んで書く(:func:`annotate_figure_grid`)。
 
-    ``signed`` は 1 個の bool でも、パネルごとの列でもよい。
+    ``signed`` と ``gray`` は 1 個の bool でも、パネルごとの列でもよい。
+    ``gray=True`` のパネルは疑似カラーにせずグレースケールで塗る(強度そのもの
+    を「絵」として見せる量に使う。詳細は :func:`_to_rgb8`)。
     """
     if target_dir() is None:
         return None
@@ -327,7 +329,9 @@ def save_grid(name: str, panels, captions=None, title=None, ncols=2,
         import fullseye as fs
 
         sg = signed if isinstance(signed, (list, tuple)) else [signed] * len(panels)
-        imgs = [_panel(v, bool(s)) for v, s in zip(panels, sg)]
+        gr = gray if isinstance(gray, (list, tuple)) else [gray] * len(panels)
+        imgs = [_panel(v, bool(s), gray=bool(g))
+                for v, s, g in zip(panels, sg, gr)]
         caps = list(captions or [])
         # ★2026-09-08: パネルが小さいと題が入らず、``annotate_figure_grid`` が
         # (正しく)拒否して**図が 1 枚黙って消えていた**。29×19 の core 格子や
