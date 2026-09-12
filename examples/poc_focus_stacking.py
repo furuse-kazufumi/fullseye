@@ -128,13 +128,21 @@ def ground_truth(size=SIZE, seed=7):
     rng = np.random.default_rng(seed)
     yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
 
-    # ダイ(左・遠い 203 mm・わずかに傾く)/ リードフレーム(右・段差で近い 201.5 mm)
-    depth = np.where(xx < STEP_X, 203.0 - 0.010 * yy, 201.5)
+    # ダイ(左・傾いた面 203→約 198.5 mm)/ リードフレーム(右・段差で近い、緩く傾く)。
+    # 実機でも試料はわずかに傾く。傾きが無いと面の高さが一定になり「どのノブでも
+    # 死なない」場になる(平面の最良定数に負けようが無い)ので、必ず傾けておく。
+    depth = np.where(xx < STEP_X, 203.0 - 0.028 * yy, 201.2 - 0.010 * yy)
 
-    # 金属面の下地(微細粒)。ダイは暗め、リードは中庸。
+    # 金属面の下地(微細粒)。実ダイは回路配線で強くテクスチャが乗る —— これを
+    # 入れないと合焦点法が拾う高周波が無く、面の高さが読めない(現場でも無地な
+    # 金属は苦手なのが正直な姿)。ダイに回路格子、リードに微細粒を敷く。
     grain = fs.op.gauss_filter(rng.random((size, size)), a=0.10)
     grain = (grain - grain.min()) / np.ptp(grain)
-    tex = np.where(xx < STEP_X, 0.22 + 0.12 * grain, 0.50 + 0.12 * grain)
+    routing = (((xx // 6).astype(int) % 2) ^ ((yy // 11).astype(int) % 2)).astype(np.float64)
+    tex = np.where(xx < STEP_X,
+                   0.18 + 0.16 * grain + 0.16 * routing,   # ダイ = 暗め + 回路格子
+                   0.50 + 0.12 * grain)                     # リード = 中庸の金属
+    tex = np.clip(tex, 0.0, 1.0)
 
     # ボンドパッド(ダイ端の明るい四角)+ そこから伸びるワイヤ。
     for y0 in WIRE_ROWS:
@@ -142,7 +150,7 @@ def ground_truth(size=SIZE, seed=7):
         tex[r0:r1, 30:48] = 0.82 + 0.06 * grain[r0:r1, 30:48]
         _draw_wire(depth, tex, y0, size)
 
-    # ベアダイの無地な金属(焦点評価が死ぬ場所)。
+    # ベアダイの無地な金属(回路も配線も無い場所 = 焦点評価が死ぬ)。
     tex[FLAT_BOX] = 0.35
     return depth, tex
 
