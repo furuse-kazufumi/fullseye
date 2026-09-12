@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: da764c32164c -->
 # imgevolve GPU op vs OpenCV (CPU) throughput benchmark
 
 [日本語](./BENCH_VS_OPENCV.md) · **English**

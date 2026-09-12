@@ -1,3 +1,4 @@
+<!-- i18n-source-sha: ce86068760f5 -->
 # HALCON Coverage — the honest denominator (updated 2026-08-18)
 
 [日本語](./HALCON_COVERAGE_HONEST.md) · **English**
