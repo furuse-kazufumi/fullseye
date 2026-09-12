@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 379 von 609. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 404 von 609. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -1202,62 +1202,62 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L411** _(ja)_ — ★ 雑音は :func:`astrostack.noise_sigma`(背景の頑健 σ)で測る。 「真値との残差 RMS」を使うと**PSF のずれまで残差に入る** —— この実験は わざとフレームごとに FWHM を変えているので、選び方を変えると合成後の PSF が変わり、残差が増えたのが雑音のせいなのか像が変わったせいなのか 区別できなくなる(実測でその値は 25.2 -> 61.3 と動いたが、その大半は 雑音ではなかった)。背景 σ は星の形に依らない。
 - **L471** _(ja)_ — ★ 「最大差」は単一フレームでは動かない —— 再現率が 1 未満である限り、 見逃した 1 画素が最大値をそのまま押さえてしまうから。**何画素が正解から 大きく外れたままか**と**外れの総量**なら、除去の効き目がそのまま出る。
-- **L713** _(ja)_ — ★ 原寸で並べると「2 個検出した」が**目では確かめられない**(44x44 の 中で 1.6 画素の対は数画素の塊にしかならない)。検出器の言い分だけを 信じさせる図にしないため、対の周りを同じ物理範囲だけ切って拡大する。
-- **L844** _(ja)_ — ★ 誤差図は**符号ではなく大きさ**を塗る。最初の版は発散配色で塗って いたが、この実験の誤差は常に正なので「正 = right の青」になり、 **壊れている状態が「正しい」色で塗られる**という逆の意味になった。 ここで読者に伝えたいのは向きではなく「どれだけ間違っているか」なので、 wrong の 1 色で濃さだけを変える(色だけに意味を載せないよう、 記号と数値も併記する)。
+- **L713** — ★ In Originalgröße nebeneinandergestellt lässt sich "2 detektiert" **mit bloßem Auge nicht bestätigen** (innerhalb von 44x44 ist ein Paar im Abstand von 1.6 Pixeln nur ein Klumpen von wenigen Pixeln). Um keine Abbildung zu erzeugen, die den Leser allein der Behauptung des Detektors vertrauen lässt, schneide um jedes Paar denselben physischen Bereich aus und vergrößere ihn.
+- **L844** — ★ Die Fehlerkarte färbt **die Größe, nicht das Vorzeichen**. Die erste Version verwendete eine divergierende Farbskala, aber der Fehler in diesem Experiment ist stets positiv, sodass "positiv = das Blau von right" entstand und sich die umgekehrte Bedeutung ergab, bei der **ein defekter Zustand mit der "korrekten" Farbe eingefärbt wird**. Hier soll dem Leser nicht die Richtung, sondern "wie falsch es ist" vermittelt werden, also variiere nur die Intensität einer einzigen wrong-Farbe (und zeige zusätzlich Symbole und Zahlen, damit die Bedeutung nicht allein an der Farbe hängt).
 
 ## `tools/gen_wingconv_gallery.py`
 
-- **L573** _(ja)_ — 5. ★表現をまたいで一周(変換の連鎖こそが嘘の出る場所) # --------------------------------------------------------------------------- #
-- **L599** _(ja)_ — ★「殻であって立体ではない」を **最大値投影で言ってはいけない** —— MIP は奥行き方向の最大値なので、薄い殻でも中が詰まって見える(実際に一度 そう描いて「体積 5768 -> 殻 5608」というほとんど差の無い数字を出しかけた)。 中身が残っているかは **中心断面** と **内部の充填率** で言う。
+- **L573** — 5. ★Eine volle Runde über die Darstellungen hinweg (die Kette der Umwandlungen ist genau der Ort, an dem Lügen entstehen) # --------------------------------------------------------------------------- #
+- **L599** — ★ "Eine Schale, kein Volumenkörper" **darf nicht mit einer Maximum-Intensity-Projektion behauptet werden** —— MIP ist das Maximum entlang der Tiefenrichtung, sodass selbst eine dünne Schale innen gefüllt aussieht (tatsächlich haben wir es einmal so gezeichnet und beinahe die kaum unterschiedlichen Zahlen "Volumen 5768 -> Schale 5608" berichtet). Ob das Innere erhalten bleibt, sagt man mit dem **Mittelschnitt** und dem **inneren Füllgrad**.
 
 ## `tools/gen_wingopt_gallery.py`
 
-- **L896** _(ja)_ — ★バーが張る像面の実寸。1.0 mm にしていたとき 208 標本 / mm = Nyquist 104 cyc/mm となり、200 cyc/mm のバーが **8 cyc/mm の太縞に化けていた** (図が自分でエイリアスしていた)。0.25 mm なら 832 標本/mm、最高周波数 200 cyc/mm でも 1 周期 4.16 画素で足りる。
-- **L1151** _(ja)_ — ★2 つの量を 1 枚の図に重ねると、**尺度の取り方しだいで 2 本の曲線が 偶然ぴったり重なる**(最初の版がまさにそうで、「独立な 2 軸」という主張の 真逆に見えていた)。尺度をいじって離すのは誤魔化しなので、**パネルを縦に 分ける** — 図の構造そのものが「別の軸だ」と言う。
-- **L1299** _(ja)_ — ★ピークは**行全体**から取る。以前は ``line[c - s : c + s + 1]`` と 書いていて、s が c を超えると **開始が負のインデックスになり**、 Python が末尾 56 画素だけを切り出して 0.6167 を「ピーク」として返して いた(実際の最大は 0.9834)。正規化が崩れて曲線が 1.0 で頭打ちになり、 dip/peak も 1.9x Rayleigh で 0.0067 と誤って出ていた。
-- **L1581** _(ja)_ — ★「ぼけ 1 画素以内」の範囲は**格子から拾わない**。掃引の刻みは 3.9 mm で、 被写界深度は 0.74 mm しかないので、格子には 1 点も入らない(最初の版は そこで min() が空になって落ちた)。二分法で境界そのものを解く。
-- **L1600** _(ja)_ — ★誇張倍率は **縦の画素/mm ÷ 横の画素/mm**。最初の版は逆数を書いていて、 8 倍に伸ばした図に「0.13 倍」と表示していた(読者に真逆を伝える)。
-- **L2090** _(ja)_ — ★上下 2 段に分ける。1 枚に重ねると、単位の違う 2 本(画素数と検出率)が 同じ縦軸に乗っているように読めてしまう(実際そう見えていた)。
+- **L896** — ★ Die tatsächliche Größe der Bildebene, die die Balken aufspannen. Auf 1.0 mm eingestellt ergibt 208 Abtastungen/mm = Nyquist 104 cyc/mm, sodass ein Balken mit 200 cyc/mm **sich in einen groben Streifen von 8 cyc/mm verwandelte** (die Abbildung aliaste sich selbst). Bei 0.25 mm sind es 832 Abtastungen/mm, und selbst bei der höchsten Frequenz von 200 cyc/mm reicht eine Periode mit 4.16 Pixeln aus.
+- **L1151** — ★ Zwei Größen in einer Abbildung zu überlagern bedeutet, dass **je nach Wahl der Skalen die beiden Kurven zufällig genau zusammenfallen können** (die erste Version tat genau das und sah wie das Gegenteil der Behauptung "zwei unabhängige Achsen" aus). Die Skalen zu manipulieren, um sie zu trennen, ist Augenwischerei, also **teile die Panels vertikal** — die Struktur der Abbildung selbst sagt "das sind verschiedene Achsen".
+- **L1299** — ★ Nimm den Peak aus **der gesamten Zeile**. Früher stand dort ``line[c - s : c + s + 1]``, und wenn s größer als c wird, **wird der Start zu einem negativen Index**, sodass Python nur die letzten 56 Pixel herausschnitt und 0.6167 als "Peak" zurückgab (das tatsächliche Maximum ist 0.9834). Die Normierung brach zusammen, die Kurve deckelte bei 1.0, und dip/peak kam ebenfalls falsch mit 0.0067 bei 1.9x Rayleigh heraus.
+- **L1581** — ★ Der Bereich "Unschärfe innerhalb von 1 Pixel" wird **nicht aus dem Gitter entnommen**. Die Schrittweite des Sweeps beträgt 3.9 mm, während die Schärfentiefe nur 0.74 mm ist, sodass kein einziger Punkt auf das Gitter fällt (die erste Version stürzte dort ab, weil min() leer wurde). Löse die Grenze selbst per Bisektion.
+- **L1600** — ★ Der Überhöhungsfaktor ist **vertikale Pixel/mm ÷ horizontale Pixel/mm**. Die erste Version schrieb den Kehrwert und zeigte "0.13x" auf einer um das 8-fache gestreckten Abbildung an (was dem Leser genau das Gegenteil vermittelt).
+- **L2090** — ★ In zwei Zeilen aufteilen, oben und unten. In einer Abbildung überlagert, lesen sich die beiden Linien mit unterschiedlichen Einheiten (Pixelzahl und Detektionsrate) so, als lägen sie auf derselben vertikalen Achse (genau so sah es tatsächlich aus).
 
 ## `tools/op_example_index.py`
 
-- **L42** _(ja)_ — ★ここを持たなかったあいだ、:func:`_called` が (op 名 × example) の**全組合せ**で :func:`_strip_prose` を呼び、そのたびに ``ast.parse`` + ``tokenize`` でソース全体を 解析し直していた。実測 2026-09-05: 2-D 881 op × 73 本 + 3-D 347 op × 118 本 + ledger 494 op × 73 本 = **約 14 万回**のフルパースで、``opdocs.py md`` 1 回に 10 分かかっていた(``toc`` も ``html`` も同じ索引を作り直すのでフル再生成は 30 分級)。 散文落としは**ソースごとに 1 回**あれば足りる ―― op 名に依存しないので。
+- **L42** — ★ Solange dies fehlte, rief :func:`_called` :func:`_strip_prose` für **jede Kombination** von (op-Name × example) auf und parste dabei jedes Mal die gesamte Quelle mit ``ast.parse`` + ``tokenize`` neu. Gemessen am 2026-09-05: 2-D 881 op × 73 Beispiele + 3-D 347 op × 118 Beispiele + ledger 494 op × 73 Beispiele = **etwa 140.000** vollständige Parses, sodass ein einzelnes ``opdocs.py md`` 10 Minuten dauerte (``toc`` und ``html`` bauen denselben Index ebenfalls neu auf, sodass eine vollständige Neugenerierung in der Größenordnung von 30 Minuten liegt). Das Entfernen von Prosa muss nur **einmal pro Quelle** geschehen —— da es nicht vom op-Namen abhängt.
 
 ## `tools/opdocs.py`
 
-- **L101** _(ja)_ — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに **docs/ops に 1 枚もノートを持っていなかった** —— OP_CATALOG には出るのに、op ごとの ノート(型契約・罠・関連 op)が無いので RAG コーパスから丸ごと欠けていた。 `poc_web_roll_periodicity` が dsp に 2 本足したときに気づいた。
+- **L101** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) war registriert, hatte aber **nicht eine einzige Notiz unter docs/ops** —— es erscheint in OP_CATALOG, aber ohne Notiz je op (Typvertrag, Fallstricke, verwandte ops) fehlte es vollständig im RAG-Korpus. Aufgefallen ist es, als `poc_web_roll_periodicity` dsp um 2 ergänzte.
 - **L588** — ★Die n-äre (mehreingabige) Schicht. Bis zum 2026-09-09 hatten **17 Operatoren keine einzige Notiz** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2` …). In `OP_INDEX.json` stehen sie als Tier `nary`, doch ohne Notiz unter `docs/ops/` waren sie **aus dem RAG-Korpus heraus nie auffindbar**. Der Grund für das Übersehen ist klar: hier wurde nur `ops.REGISTRY` durchlaufen, und `ops.REGISTRY` (899) stimmt mit der Zahl der 2-D-Notizen (899) überein — von der Registry aus gezählt sah es vollständig aus. Erst schichtübergreifendes Zählen zeigt es.
-- **L630** _(ja)_ — ★2026-09-07: ``OPS3D[...]["doc"]`` は登録時に **docstring の 1 行目だけ** を切り出したもの(ops3d._build)。ノートの「使い方」にそれを使うと、 実装が何段落書いていても 1 行に化ける —— 「使い方が 1 行の op 494 本」 の 3-D ぶんはこの切り詰めが原因だった(docstring 自体は長い op が多数)。 台帳 dim と同じく関数の docstring を丸ごと読む。
-- **L653** _(ja)_ — ★橋渡し op(``tb_<name>``)は台帳の ``<name>`` と実装が同一で、例は台帳名で 書かれる。2026-09-06 まで 147 本が「例ゼロ」だったが、それは**同じ実装を 呼ぶ例が別名で存在する**のを数えていなかっただけ。台帳側の例を継承し、 ノートには「元 op の例」と明記する(嘘にならないように)。
+- **L630** — ★2026-09-07: ``OPS3D[...]["doc"]`` ist zum Registrierungszeitpunkt nur **die erste Zeile des Docstrings**, herausgeschnitten (ops3d._build). Verwendet man es für die "Verwendung" einer Notiz, wird es zu einer einzigen Zeile, egal wie viele Absätze die Implementierung schreibt —— der 3-D-Anteil von "494 ops mit einzeiliger Verwendung" war durch dieses Abschneiden verursacht (viele ops haben selbst lange Docstrings). Lies den Docstring der Funktion vollständig, wie bei der ledger-dim.
+- **L653** — ★ Ein Brücken-op (``tb_<name>``) hat dieselbe Implementierung wie das ``<name>`` des Ledgers, und Beispiele werden unter dem Ledger-Namen geschrieben. Bis zum 2026-09-06 galten 147 davon als "null Beispiele", aber das bedeutete nur, dass wir nicht gezählt hatten, dass **Beispiele, die dieselbe Implementierung aufrufen, unter einem anderen Namen existieren**. Erbe die Beispiele der Ledger-Seite und vermerke in der Notiz ausdrücklich, dass es "Beispiele des ursprünglichen op" sind (um nicht zu lügen).
 - **L873** — ★Ein n-ärer Operator lässt sich nicht über `fullseye.apply` aufrufen — das ist das Ein-Bild-Modell. Die Ein-Bild-Aufrufform hier hinzuschreiben lässt **die Notiz lügen**; die einzige Aufgabe dieser Notiz ist zu sagen, wie man aufruft, also ist eine falsche Aufrufform schlimmer als gar keine. Der öffentliche Weg ist `fullseye.FullseyeGraph`.
-- **L892** _(ja)_ — ★2026-09-07: **公開経路を先に書く**。ここは実装モジュールの直 import しか 書いておらず、利用者が実際に使う `fullseye.ledger.<名>` が出ていなかった (2-D 以外の 1,244 op すべて)。PoC が繰り返し「fs.<名> に無い」と報告して いたのは、名前が無いことではなく**入口が書かれていないこと**の問題だった。
-- **L1253** _(ja)_ — ★入口は 6 言語で出す(2026-09-09)。葉(Studio の op ヘルプ)は 6 言語 10,191 ページあるのに、**そこへ導く索引が日本語だけ**だった —— 訳は 在るのに辿り着けない、という形の欠落。枠の文言は `T()` に載せるので、 対訳の穴は既存の門(test_chrome_translation_table_has_no_holes)が見る。
-- **L1298** _(ja)_ — ★ここは長く `2d/guides/` だけを指していて、光学・PIV・トモグラフィ等 30 ファミリのガイドへ読み手を一度も送っていなかった(2026-09-09 修正)。
+- **L892** — ★2026-09-07: **Schreibe zuerst den öffentlichen Pfad**. Hier stand nur ein direkter Import des Implementierungsmoduls, und `fullseye.ledger.<name>`, das Nutzer tatsächlich verwenden, tauchte nicht auf (alle 1.244 ops außer 2-D). Dass PoCs wiederholt "nicht in fs.<name>" meldeten, lag nicht daran, dass der Name fehlte, sondern daran, dass **der Einstiegspunkt nicht geschrieben war**.
+- **L1253** — ★ Gib die Einstiegspunkte in 6 Sprachen aus (2026-09-09). Die Blätter (Studios op-Hilfe) haben 10.191 Seiten in 6 Sprachen, doch **der Index, der dorthin führt, war nur Japanisch** —— eine Lücke der Form, dass die Übersetzungen existieren, aber nicht erreichbar sind. Der Wortlaut des Rahmens kommt in `T()`, sodass Löcher in den Paralleltexten vom bestehenden Gate (test_chrome_translation_table_has_no_holes) überwacht werden.
+- **L1298** — ★ Dies zeigte lange nur auf `2d/guides/` und schickte die Leser kein einziges Mal zu den Leitfäden der 30 Familien wie Optik, PIV und Tomographie (behoben 2026-09-09).
 
 ## `tools/preflight.py`
 
-- **L119** _(ja)_ — ★`build/lib` に前回の staging コピーが残っていると、setuptools はそれを **そのまま wheel に詰める**(2026-09-05 実測: py-modules から外したモジュールが wheel に入ったままで、門の変異テストが通ってしまった)。release.yml が clean checkout から建てる理由と同じ。ここでも建てる前に必ず捨てる。
-- **L313** _(ja)_ — ★`--only suite` を `--full` 無しで呼ぶと 0 項目になり、以前は 「すべて PASS」と言って rc=0 で帰っていた(2026-09-05 レビューで実測)。 **何も検査していないのに通す門**は、無い門より悪い。
+- **L119** — ★ Bleibt in `build/lib` eine vorherige Staging-Kopie zurück, **packt setuptools sie unverändert ins wheel** (gemessen 2026-09-05: ein aus py-modules entferntes Modul blieb im wheel, und der Mutationstest des Gates ging durch). Derselbe Grund, aus dem release.yml aus einem sauberen Checkout baut. Auch hier vor dem Bauen unbedingt verwerfen.
+- **L313** — ★ `--only suite` ohne `--full` aufzurufen ergibt 0 Elemente, und früher meldete es "alles PASS" und kehrte mit rc=0 zurück (gemessen im Review vom 2026-09-05). **Ein Gate, das durchlässt, während es nichts prüft**, ist schlimmer als gar kein Gate.
 
 ## `tools/regen_all.py`
 
 - **L54** — ★Das einzige generierte Artefakt außerhalb von `tools/`. Genau deshalb wurde es übersehen — wer Generatoren unter `tools/*.py` sucht, findet dieses nie.
-- **L75** _(ja)_ — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
+- **L75** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
 - **L159** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `typed_catalog.py`
 
-- **L217** _(ja)_ — ★ 既定値そのものが重い件は別扱い —— docstring に費用表を書き、 docs/KNOWN_ISSUES.md に「解いていない」として残した。ここで軽くするのは 検査を通すためであって、遅さを隠すためではない。 fourier_smooth(points, keep) の keep は既定が無い必須引数。束縛できないと 「引数が組めない」で永久にスキップされ、カバレッジ表には未到達として しか出ない(2026-09-06 の初回計測で 13 op 中この 1 本だけ落ちた)。 表面粗さ。制約は 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8。 サブピクセル計測。測定線の生成 op は入力を取らないので全引数にヒントが要る。
-- **L271** _(ja)_ — ★ここを入れないと surface_params は毎回 fail-closed で拒否され、 カバレッジ 1 数字では「呼べた」に見えて実体は未実行になる。
-- **L459** _(ja)_ — ★法線は**軸に平行にしない**。軸平行だと距離場が 1 軸にしか変化せず、 図の生成器が作る「スライスを並べた GIF」が 1 コマに潰れる(2026-09-08 実測)。 傾けた法線なら全スライスが変わる。長さは効かない(op が正規化する)ので、 正規化していないベクトルを渡してその仕様も見せる。
+- **L217** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
+- **L271** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
+- **L459** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
 
 ## `visionlab.py`
 
-- **L53** _(ja)_ — ★``float("50")`` は成功するので、``float()`` を通すだけでは文字列が ミリメートルとして通り抜ける。``visiondesign`` 側は弾くが、ここで先に float 化してしまうと **その検証に届く前に数値になってしまう** (敵対的検証で実測: VisionSystem(focal_mm="50") が通った)。 器の側でも同じ規律を持つ。
+- **L53** — ★ ``float("50")`` gelingt, sodass ein bloßes Durchreichen durch ``float()`` einen String als Millimeter durchschlüpfen lässt. Die ``visiondesign``-Seite weist ihn ab, aber wenn man hier zuerst in float umwandelt, **wird er zu einer Zahl, bevor er jene Validierung erreicht** (unter adversarialer Prüfung gemessen: VisionSystem(focal_mm="50") ging durch). Halte auch auf der Container-Seite dieselbe Disziplin.
 
 ## `visualhull.py`
 
-- **L123** _(ja)_ — ★点が **1 つ残らず** カメラ後方 = ほぼ確実に姿勢の規約違い(2026-09-08、 poc_livestock_body_volume が踏んだ)。この関数は OpenCV 規約(+Z 前方)を 要求するが、公開層で ``look_at`` の名を持つのは render3d の gluLookAt 版 (−Z 前方の 4x4)。その ``M[:3,:3], M[:3,3]`` を渡すと全 voxel が後方判定に なり、**例外なく空のシルエット**が返って空の hull になる。黙って空を返すと 「彫り切った」と見分けが付かないので、ここだけは声を上げる(有効な場面 —— 物体が画角の後ろにある —— もあるので raise ではなく警告に留める)。
+- **L123** — ★ **Ausnahmslos jeder** Punkt hinter der Kamera = fast sicher eine Konventionsabweichung in der Pose (2026-09-08, von poc_livestock_body_volume ausgelöst). Diese Funktion verlangt die OpenCV-Konvention (+Z nach vorn), aber was in der öffentlichen Schicht den Namen ``look_at`` trägt, ist die gluLookAt-Version von render3d (−Z nach vorn, eine 4x4). Übergibt man deren ``M[:3,:3], M[:3,3]``, wird jeder voxel als hinten liegend beurteilt, und **ausnahmslos eine leere Silhouette** wird zurückgegeben, was einen leeren hull ergibt. Stillschweigend leer zurückzugeben ist nicht von "vollständig herausgeschnitzt" zu unterscheiden, also erheben wir allein hier die Stimme (es gibt gültige Fälle —— das Objekt liegt hinter dem Sichtfeld —— daher belassen wir es bei einer Warnung statt einem raise).
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

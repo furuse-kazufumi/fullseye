@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 379 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 404 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -1202,62 +1202,62 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L411** _(ja)_ — ★ 雑音は :func:`astrostack.noise_sigma`(背景の頑健 σ)で測る。 「真値との残差 RMS」を使うと**PSF のずれまで残差に入る** —— この実験は わざとフレームごとに FWHM を変えているので、選び方を変えると合成後の PSF が変わり、残差が増えたのが雑音のせいなのか像が変わったせいなのか 区別できなくなる(実測でその値は 25.2 -> 61.3 と動いたが、その大半は 雑音ではなかった)。背景 σ は星の形に依らない。
 - **L471** _(ja)_ — ★ 「最大差」は単一フレームでは動かない —— 再現率が 1 未満である限り、 見逃した 1 画素が最大値をそのまま押さえてしまうから。**何画素が正解から 大きく外れたままか**と**外れの総量**なら、除去の効き目がそのまま出る。
-- **L713** _(ja)_ — ★ 原寸で並べると「2 個検出した」が**目では確かめられない**(44x44 の 中で 1.6 画素の対は数画素の塊にしかならない)。検出器の言い分だけを 信じさせる図にしないため、対の周りを同じ物理範囲だけ切って拡大する。
-- **L844** _(ja)_ — ★ 誤差図は**符号ではなく大きさ**を塗る。最初の版は発散配色で塗って いたが、この実験の誤差は常に正なので「正 = right の青」になり、 **壊れている状態が「正しい」色で塗られる**という逆の意味になった。 ここで読者に伝えたいのは向きではなく「どれだけ間違っているか」なので、 wrong の 1 色で濃さだけを変える(色だけに意味を載せないよう、 記号と数値も併記する)。
+- **L713** — ★ Laid out at native size, "2 detected" **cannot be confirmed by eye** (within 44x44, a pair 1.6 px apart is only a blob a few pixels wide). To avoid a figure that forces the reader to trust the detector's claim alone, crop the same physical extent around each pair and zoom in.
+- **L844** — ★ The error map colors **magnitude, not sign**. The first version used a diverging colormap, but the error in this experiment is always positive, so "positive = the blue of right" resulted, giving the reverse meaning where **a broken state is painted with the "correct" color**. What we want to convey here is not direction but "how wrong it is," so vary only the intensity of a single wrong color (and, so that meaning is not carried by color alone, also show symbols and numbers).
 
 ## `tools/gen_wingconv_gallery.py`
 
-- **L573** _(ja)_ — 5. ★表現をまたいで一周(変換の連鎖こそが嘘の出る場所) # --------------------------------------------------------------------------- #
-- **L599** _(ja)_ — ★「殻であって立体ではない」を **最大値投影で言ってはいけない** —— MIP は奥行き方向の最大値なので、薄い殻でも中が詰まって見える(実際に一度 そう描いて「体積 5768 -> 殻 5608」というほとんど差の無い数字を出しかけた)。 中身が残っているかは **中心断面** と **内部の充填率** で言う。
+- **L573** — 5. ★A full loop across representations (the chain of conversions is exactly where lies appear) # --------------------------------------------------------------------------- #
+- **L599** — ★ "A shell, not a solid" **must not be argued with a maximum-intensity projection** —— MIP is the maximum along the depth direction, so even a thin shell looks filled inside (indeed we once drew it that way and nearly reported the barely-different numbers "volume 5768 -> shell 5608"). Whether the interior remains is stated by the **central cross-section** and the **interior fill ratio**.
 
 ## `tools/gen_wingopt_gallery.py`
 
-- **L896** _(ja)_ — ★バーが張る像面の実寸。1.0 mm にしていたとき 208 標本 / mm = Nyquist 104 cyc/mm となり、200 cyc/mm のバーが **8 cyc/mm の太縞に化けていた** (図が自分でエイリアスしていた)。0.25 mm なら 832 標本/mm、最高周波数 200 cyc/mm でも 1 周期 4.16 画素で足りる。
-- **L1151** _(ja)_ — ★2 つの量を 1 枚の図に重ねると、**尺度の取り方しだいで 2 本の曲線が 偶然ぴったり重なる**(最初の版がまさにそうで、「独立な 2 軸」という主張の 真逆に見えていた)。尺度をいじって離すのは誤魔化しなので、**パネルを縦に 分ける** — 図の構造そのものが「別の軸だ」と言う。
-- **L1299** _(ja)_ — ★ピークは**行全体**から取る。以前は ``line[c - s : c + s + 1]`` と 書いていて、s が c を超えると **開始が負のインデックスになり**、 Python が末尾 56 画素だけを切り出して 0.6167 を「ピーク」として返して いた(実際の最大は 0.9834)。正規化が崩れて曲線が 1.0 で頭打ちになり、 dip/peak も 1.9x Rayleigh で 0.0067 と誤って出ていた。
-- **L1581** _(ja)_ — ★「ぼけ 1 画素以内」の範囲は**格子から拾わない**。掃引の刻みは 3.9 mm で、 被写界深度は 0.74 mm しかないので、格子には 1 点も入らない(最初の版は そこで min() が空になって落ちた)。二分法で境界そのものを解く。
-- **L1600** _(ja)_ — ★誇張倍率は **縦の画素/mm ÷ 横の画素/mm**。最初の版は逆数を書いていて、 8 倍に伸ばした図に「0.13 倍」と表示していた(読者に真逆を伝える)。
-- **L2090** _(ja)_ — ★上下 2 段に分ける。1 枚に重ねると、単位の違う 2 本(画素数と検出率)が 同じ縦軸に乗っているように読めてしまう(実際そう見えていた)。
+- **L896** — ★ The physical size of the image plane the bars span. When set to 1.0 mm, 208 samples/mm = Nyquist 104 cyc/mm, so a 200 cyc/mm bar **turned into a thick 8 cyc/mm stripe** (the figure was aliasing itself). At 0.25 mm, 832 samples/mm, and even at the top frequency of 200 cyc/mm one period is 4.16 px, which is enough.
+- **L1151** — ★ Overlaying two quantities on one figure means that **depending on how the scales are chosen, the two curves can coincide exactly by chance** (the first version did exactly that, looking like the opposite of the claim of "two independent axes"). Tweaking the scales to separate them is a fudge, so **split the panels vertically** — the very structure of the figure says "these are different axes."
+- **L1299** — ★ Take the peak from **the entire row**. It used to be written ``line[c - s : c + s + 1]``, and when s exceeds c, **the start becomes a negative index**, so Python sliced out only the last 56 pixels and returned 0.6167 as the "peak" (the actual maximum is 0.9834). Normalization broke, the curve capped at 1.0, and dip/peak also came out wrongly as 0.0067 at 1.9x Rayleigh.
+- **L1581** — ★ The range of "blur within 1 pixel" is **not picked from the grid**. The sweep step is 3.9 mm while the depth of field is only 0.74 mm, so not a single point falls on the grid (the first version crashed there because min() went empty). Solve for the boundary itself by bisection.
+- **L1600** — ★ The exaggeration factor is **vertical pixels/mm ÷ horizontal pixels/mm**. The first version wrote the reciprocal and displayed "0.13x" on a figure stretched 8x (conveying the exact opposite to the reader).
+- **L2090** — ★ Split into two rows, top and bottom. Overlaid on one figure, the two lines with different units (pixel count and detection rate) read as if they sit on the same vertical axis (which is how it actually looked).
 
 ## `tools/op_example_index.py`
 
-- **L42** _(ja)_ — ★ここを持たなかったあいだ、:func:`_called` が (op 名 × example) の**全組合せ**で :func:`_strip_prose` を呼び、そのたびに ``ast.parse`` + ``tokenize`` でソース全体を 解析し直していた。実測 2026-09-05: 2-D 881 op × 73 本 + 3-D 347 op × 118 本 + ledger 494 op × 73 本 = **約 14 万回**のフルパースで、``opdocs.py md`` 1 回に 10 分かかっていた(``toc`` も ``html`` も同じ索引を作り直すのでフル再生成は 30 分級)。 散文落としは**ソースごとに 1 回**あれば足りる ―― op 名に依存しないので。
+- **L42** — ★ While this was missing, :func:`_called` called :func:`_strip_prose` for **every combination** of (op name × example), each time re-parsing the whole source with ``ast.parse`` + ``tokenize``. Measured 2026-09-05: 2-D 881 op × 73 examples + 3-D 347 op × 118 examples + ledger 494 op × 73 examples = **about 140,000** full parses, so a single ``opdocs.py md`` took 10 minutes (``toc`` and ``html`` rebuild the same index too, so a full regeneration is on the order of 30 minutes). Prose stripping needs to happen only **once per source** —— since it does not depend on the op name.
 
 ## `tools/opdocs.py`
 
-- **L101** _(ja)_ — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに **docs/ops に 1 枚もノートを持っていなかった** —— OP_CATALOG には出るのに、op ごとの ノート(型契約・罠・関連 op)が無いので RAG コーパスから丸ごと欠けていた。 `poc_web_roll_periodicity` が dsp に 2 本足したときに気づいた。
+- **L101** — ★2026-09-08: ops1d (dsp 16 + funct1d 23) was registered yet **had not a single note under docs/ops** —— it appears in OP_CATALOG, but with no per-op note (type contract, pitfalls, related ops) it was entirely missing from the RAG corpus. We noticed when `poc_web_roll_periodicity` added 2 to dsp.
 - **L588** — ★The n-ary (multi-input) tier. Until 2026-09-09 **17 operators had no note at all** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2`…). They appear in `OP_INDEX.json` as tier `nary`, but with no note under `docs/ops/` they could **never be retrieved from the RAG corpus**. The reason it went unnoticed is plain: this code walked only `ops.REGISTRY`, and `ops.REGISTRY` (899) matches the 2-D note count (899) — so counting from the registry side it looked complete. It only shows when you count across tiers.
-- **L630** _(ja)_ — ★2026-09-07: ``OPS3D[...]["doc"]`` は登録時に **docstring の 1 行目だけ** を切り出したもの(ops3d._build)。ノートの「使い方」にそれを使うと、 実装が何段落書いていても 1 行に化ける —— 「使い方が 1 行の op 494 本」 の 3-D ぶんはこの切り詰めが原因だった(docstring 自体は長い op が多数)。 台帳 dim と同じく関数の docstring を丸ごと読む。
-- **L653** _(ja)_ — ★橋渡し op(``tb_<name>``)は台帳の ``<name>`` と実装が同一で、例は台帳名で 書かれる。2026-09-06 まで 147 本が「例ゼロ」だったが、それは**同じ実装を 呼ぶ例が別名で存在する**のを数えていなかっただけ。台帳側の例を継承し、 ノートには「元 op の例」と明記する(嘘にならないように)。
+- **L630** — ★2026-09-07: ``OPS3D[...]["doc"]`` is, at registration time, just **the first line of the docstring** cut out (ops3d._build). Using it for a note's "usage" turns it into a single line no matter how many paragraphs the implementation writes —— the 3-D share of "494 ops with a one-line usage" was caused by this truncation (many ops have long docstrings themselves). Read the function's docstring in full, as for the ledger dim.
+- **L653** — ★ A bridging op (``tb_<name>``) has the same implementation as the ledger's ``<name>``, and examples are written under the ledger name. Until 2026-09-06, 147 of them were "zero examples," but that only meant we had not counted that **examples calling the same implementation exist under a different name**. Inherit the ledger-side examples and note explicitly in the note that they are "examples of the original op" (so as not to lie).
 - **L873** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
-- **L892** _(ja)_ — ★2026-09-07: **公開経路を先に書く**。ここは実装モジュールの直 import しか 書いておらず、利用者が実際に使う `fullseye.ledger.<名>` が出ていなかった (2-D 以外の 1,244 op すべて)。PoC が繰り返し「fs.<名> に無い」と報告して いたのは、名前が無いことではなく**入口が書かれていないこと**の問題だった。
-- **L1253** _(ja)_ — ★入口は 6 言語で出す(2026-09-09)。葉(Studio の op ヘルプ)は 6 言語 10,191 ページあるのに、**そこへ導く索引が日本語だけ**だった —— 訳は 在るのに辿り着けない、という形の欠落。枠の文言は `T()` に載せるので、 対訳の穴は既存の門(test_chrome_translation_table_has_no_holes)が見る。
-- **L1298** _(ja)_ — ★ここは長く `2d/guides/` だけを指していて、光学・PIV・トモグラフィ等 30 ファミリのガイドへ読み手を一度も送っていなかった(2026-09-09 修正)。
+- **L892** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
+- **L1253** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
+- **L1298** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
 
 ## `tools/preflight.py`
 
-- **L119** _(ja)_ — ★`build/lib` に前回の staging コピーが残っていると、setuptools はそれを **そのまま wheel に詰める**(2026-09-05 実測: py-modules から外したモジュールが wheel に入ったままで、門の変異テストが通ってしまった)。release.yml が clean checkout から建てる理由と同じ。ここでも建てる前に必ず捨てる。
-- **L313** _(ja)_ — ★`--only suite` を `--full` 無しで呼ぶと 0 項目になり、以前は 「すべて PASS」と言って rc=0 で帰っていた(2026-09-05 レビューで実測)。 **何も検査していないのに通す門**は、無い門より悪い。
+- **L119** — ★ If a previous staging copy remains in `build/lib`, setuptools **packs it into the wheel as-is** (measured 2026-09-05: a module removed from py-modules stayed in the wheel, and the gate's mutation test passed). Same reason release.yml builds from a clean checkout. Here too, always discard it before building.
+- **L313** — ★ Calling `--only suite` without `--full` yields 0 items, and it used to say "all PASS" and return with rc=0 (measured in the 2026-09-05 review). **A gate that passes while checking nothing** is worse than no gate.
 
 ## `tools/regen_all.py`
 
 - **L54** — ★The only generated artifact outside `tools/`. That is exactly why it was missed — as long as you look for generators under `tools/*.py`, this one is never found.
-- **L75** _(ja)_ — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
+- **L75** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
 - **L159** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `typed_catalog.py`
 
-- **L217** _(ja)_ — ★ 既定値そのものが重い件は別扱い —— docstring に費用表を書き、 docs/KNOWN_ISSUES.md に「解いていない」として残した。ここで軽くするのは 検査を通すためであって、遅さを隠すためではない。 fourier_smooth(points, keep) の keep は既定が無い必須引数。束縛できないと 「引数が組めない」で永久にスキップされ、カバレッジ表には未到達として しか出ない(2026-09-06 の初回計測で 13 op 中この 1 本だけ落ちた)。 表面粗さ。制約は 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8。 サブピクセル計測。測定線の生成 op は入力を取らないので全引数にヒントが要る。
-- **L271** _(ja)_ — ★ここを入れないと surface_params は毎回 fail-closed で拒否され、 カバレッジ 1 数字では「呼べた」に見えて実体は未実行になる。
-- **L459** _(ja)_ — ★法線は**軸に平行にしない**。軸平行だと距離場が 1 軸にしか変化せず、 図の生成器が作る「スライスを並べた GIF」が 1 コマに潰れる(2026-09-08 実測)。 傾けた法線なら全スライスが変わる。長さは効かない(op が正規化する)ので、 正規化していないベクトルを渡してその仕様も見せる。
+- **L217** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
+- **L271** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L459** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
 
 ## `visionlab.py`
 
-- **L53** _(ja)_ — ★``float("50")`` は成功するので、``float()`` を通すだけでは文字列が ミリメートルとして通り抜ける。``visiondesign`` 側は弾くが、ここで先に float 化してしまうと **その検証に届く前に数値になってしまう** (敵対的検証で実測: VisionSystem(focal_mm="50") が通った)。 器の側でも同じ規律を持つ。
+- **L53** — ★ ``float("50")`` succeeds, so merely passing through ``float()`` lets a string slip through as millimeters. The ``visiondesign`` side rejects it, but converting to float first here means **it becomes a number before it reaches that validation** (measured under adversarial testing: VisionSystem(focal_mm="50") passed). Hold the same discipline on the container side too.
 
 ## `visualhull.py`
 
-- **L123** _(ja)_ — ★点が **1 つ残らず** カメラ後方 = ほぼ確実に姿勢の規約違い(2026-09-08、 poc_livestock_body_volume が踏んだ)。この関数は OpenCV 規約(+Z 前方)を 要求するが、公開層で ``look_at`` の名を持つのは render3d の gluLookAt 版 (−Z 前方の 4x4)。その ``M[:3,:3], M[:3,3]`` を渡すと全 voxel が後方判定に なり、**例外なく空のシルエット**が返って空の hull になる。黙って空を返すと 「彫り切った」と見分けが付かないので、ここだけは声を上げる(有効な場面 —— 物体が画角の後ろにある —— もあるので raise ではなく警告に留める)。
+- **L123** — ★ **Every single** point behind the camera = almost certainly a convention mismatch in the pose (2026-09-08, hit by poc_livestock_body_volume). This function requires the OpenCV convention (+Z forward), but what bears the name ``look_at`` in the public layer is render3d's gluLookAt version (−Z forward, a 4x4). Passing its ``M[:3,:3], M[:3,3]`` makes every voxel judged as behind, and **an empty silhouette without exception** is returned, giving an empty hull. Silently returning empty is indistinguishable from "fully carved," so here alone we raise our voice (there are valid cases —— the object being behind the field of view —— so keep it to a warning rather than a raise).
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.
