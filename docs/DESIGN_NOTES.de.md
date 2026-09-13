@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 610. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 611. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -259,6 +259,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L406** — ★Durch den wahren Gradienten teilen. Ohne zu teilen, zählt man am Ende "Stellen, wo das Feld steil ist" als Grenzen
 - **L657** — ★Wird die Anzahl der Farben überschritten, wird es standardmäßig abgewiesen (dieser PoC hat darauf hingewiesen, und es wurde am selben Tag fail-closed). Hier ist das Ziel, zu messen "was passiert, wenn man zyklisch fortsetzt", daher setzen wir cycle=True **explizit** —— diese Explizitheit zu erzwingen ist selbst die Gegenmaßnahme.
 - **L732** — ★Am selben Tag dank des Hinweises dieses PoC behoben. Das Kriterium der Liste war nur "Monotonie der Helligkeit", weshalb cividis—monoton in der Helligkeit, aber grob in den Farbdifferenz-Schritten—sich als "sicher" ausgab. Jetzt gehört auch die Gleichmäßigkeit der Farbdifferenz zum Kriterium, und cividis ist zu CVD_SAFE verschoben.
+
+## `examples/poc_compound_eye.py`
+
+- **L301** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、 台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
 
 ## `examples/poc_crop_phenotyping.py`
 

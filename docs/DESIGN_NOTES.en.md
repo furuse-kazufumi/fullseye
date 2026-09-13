@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 610 of 610. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 610 of 611. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -259,6 +259,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L406** — ★Divide by the true gradient. Without dividing, you end up counting "places where the field is steep" as boundaries
 - **L657** — ★Exceeding the number of colors is rejected by default (this PoC pointed it out and it became fail-closed the same day). Here the goal is to measure "what happens if you cycle", so we set cycle=True **explicitly** —— forcing that explicitness is itself the countermeasure.
 - **L732** — ★Fixed the same day thanks to this PoC's note. The roster's criterion was only "monotonicity of lightness", so cividis—monotonic in lightness but coarse in color-difference steps—was calling itself "safe". Now uniformity of color difference is also part of the criterion, and cividis has moved to CVD_SAFE.
+
+## `examples/poc_compound_eye.py`
+
+- **L301** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、 台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
 
 ## `examples/poc_crop_phenotyping.py`
 
