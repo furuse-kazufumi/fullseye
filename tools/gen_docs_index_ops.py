@@ -644,14 +644,32 @@ def build_articles() -> str:
 def _articles_title(rel: str) -> str:
     path = os.path.join(_ROOT, "docs", "articles", rel)
     with io.open(path, encoding="utf-8") as f:
-        for line in f:
-            t = line.strip()
-            if t.startswith("#"):
-                t = t.lstrip("#").strip()
-            elif (not t) or t.startswith(("<!--", "---", "!", "[", ">")):   # > は言語切替行
-                continue
-            t = t.replace("|", "/")
-            return t if len(t) <= 120 else t[:117] + "..."
+        lines = f.read().splitlines()
+    start = 0
+    # ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は
+    #   下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって
+    #   しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+    if lines and lines[0].strip() == "---":
+        for j in range(1, len(lines)):
+            if lines[j].strip() == "---":
+                start = j + 1
+                break
+    in_comment = False
+    for line in lines[start:]:
+        t = line.strip()
+        if in_comment:                      # 複数行 HTML コメントの途中(追記手順など)
+            if "-->" in t:
+                in_comment = False
+            continue
+        if t.startswith("<!--") and "-->" not in t:
+            in_comment = True
+            continue
+        if t.startswith("#"):
+            t = t.lstrip("#").strip()
+        elif (not t) or t.startswith(("<!--", "---", "!", "[", ">")):   # > は言語切替行
+            continue
+        t = t.replace("|", "/")
+        return t if len(t) <= 120 else t[:117] + "..."
     return ""
 
 
