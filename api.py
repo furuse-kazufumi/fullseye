@@ -429,6 +429,12 @@ from flyvision import (  # noqa: E402,F401
     fly_lgmd_eta, fly_tau_from_expansion,
     fly_hs_readout, fly_sky_1f, fly_dsi,
 )
+# 統計的工程管理: マシンビジョンの計測(measure1d/shapestat/imgmetrics/blob)に
+# 「工程が管理下か・能力があるか」の判定を足す。管理図・CUSUM・工程能力・多変量 T²。
+import spc  # noqa: E402  (statistical process control)
+from spc import (  # noqa: E402,F401
+    spc_xbar_r, spc_cusum, spc_capability, spc_hotelling_t2,
+)
 # 画像 → CAD 面の**逆写像**: 既存の align_cad_to_scan / ICP / ppf は「姿勢は出す」
 # が、2-D 画像上で見つけた欠陥が CAD 面のどの座標かに落とす経路が空だった。
 # 姿勢は**既知として受け取る**側で、一度も推定しない(推定は pipeline3d /
