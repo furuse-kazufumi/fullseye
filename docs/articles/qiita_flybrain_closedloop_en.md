@@ -302,11 +302,21 @@ The EMD implementation and the image-processing operators come from **Fullseye**
 
 ---
 
-### What comes next
+## Appendix: later experiments
 
-Two runs are in progress. A **shuffled-connectome control** (rewiring while preserving degree, then evolving from the same initialisation on the same task) to measure the wiring's share from the evolutionary side as well. And a **developmental ladder** that silences cell types stage by stage, to line up which function disappears at which stage.
+<!-- Append new experiments here as `### <one line> (YYYY-MM-DD)`, in date order. Do not move the chapters above. -->
 
-The open question is the dissociation in section 6. If a behavioural objective alone will not produce direction selectivity, will a **staged curriculum** (contrast → ON/OFF → direction → rotation)? A pilot showed **forgetting**: after learning a later stage, earlier-stage scores fell from 0.044 to 0.017. Whether a cumulative objective removes that is the next measurement.
+Nothing yet. What is currently running is listed below.
+
+### What we measure next
+
+When a result lands, it gains a row in "Experiments so far" and loses its line here.
+
+- [ ] **Shuffled-connectome control** —— rewire while preserving degree, then evolve from the same initialisation on the same task, to measure the wiring's share (§4) from the evolutionary side too. Running.
+- [ ] **Developmental ladder** —— silence cell types stage by stage and line up which function disappears where. A pilot showed that silencing all of T4 drops self-rotation estimation from 0.95 to 0.52, and that of the four T5 types only T5d loses its selectivity. Running.
+- [ ] **Staged curriculum** (contrast → ON/OFF → direction → rotation) —— the countermeasure to the dissociation in §6. If a behavioural objective alone will not produce direction selectivity, will a task sequence that demands discrimination? A pilot showed **forgetting**: after learning a later stage, earlier-stage scores fell from 0.044 to 0.017.
+- [ ] **Cumulative objective** —— does that forgetting disappear if stage *k*'s objective is the mean over stages 1…*k*?
+- [ ] **Homing with deceleration** —— the 7.4 % that remains even with a perfect compass (§7) comes from constant forward speed circling over the nest. Deceleration interferes with the memory update, so it needs its own experiment.
 
 ### About the author
 
