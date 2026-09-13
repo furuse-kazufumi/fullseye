@@ -13685,8 +13685,8 @@
   },
   "tb_dem_ecef_to_geodetic": {
    "in_sort": "points",
-   "reason": "ValueError: dem_ecef_to_geodetic: 4096 point(s) lie inside the ellipsoid's evolute (within 42697.7 m of the Earth's centre in the equatorial plane, 42841.3 m along the pola",
-   "status": "failed"
+   "reason": "ECEF は地球表面座標(中心から ~6.4M m)を要るが、画像由来の合成点は原点付近で楕円体の evolute 内に落ち必ず拒否される",
+   "status": "domain"
   },
   "tb_derivate_funct_1d": {
    "color_ok": false,
@@ -21116,11 +21116,10 @@
  },
  "size": 128,
  "stats": {
-  "domain": 2,
+  "domain": 3,
   "empty": 1,
-  "failed": 1,
+  "failed": 0,
   "ok": 897,
-  "pruned": 3,
   "unreachable": 0,
   "with_chain": 366,
   "with_gif": 40,

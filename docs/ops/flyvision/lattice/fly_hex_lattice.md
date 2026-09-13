@@ -4,7 +4,7 @@ dim: flyvision
 category: lattice
 in: 
 out: table
-examples: [poc_fly_vision]
+examples: [poc_fly_vision, poc_print_registration]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.11  # fullseye lib version this note was generated for
@@ -58,6 +58,7 @@ unknown *geometry*.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_fly_vision](../../../../examples/poc_fly_vision.py) — `py -3.11 examples/poc_fly_vision.py`
+- [poc_print_registration](../../../../examples/poc_print_registration.py) — `py -3.11 examples/poc_print_registration.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

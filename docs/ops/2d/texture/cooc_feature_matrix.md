@@ -25,7 +25,9 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ![cooc_feature_matrix: knob a sweep](../../_fig/cooc_feature_matrix.a.jpg)
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![cooc_feature_matrix: knob b sweep](../../_fig/cooc_feature_matrix.b.jpg)
 
 ## 使い方
 

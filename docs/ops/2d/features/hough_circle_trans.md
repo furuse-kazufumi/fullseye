@@ -27,7 +27,9 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 ![hough_circle_trans: knob a sweep](../../_fig/hough_circle_trans.a.jpg)
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![hough_circle_trans: knob b sweep](../../_fig/hough_circle_trans.b.jpg)
 
 **別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
 
