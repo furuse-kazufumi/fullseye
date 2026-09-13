@@ -1,5 +1,21 @@
 # It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained Fly Visual Model on a Body
 
+<!--
+  This article is the readable form of a running experiment ledger: one more entry is appended
+  every time an experiment finishes. How to append (do it in BOTH ja and en, never one only):
+    1. Add one row to the "Experiments so far" table — question / current answer / section.
+    2. If it fits the narrative, add it to that chapter. If it does not, append
+       `### <one line> (YYYY-MM-DD)` under "## Appendix: later experiments", in date order.
+       Never reorder existing chapters — section numbers are referenced from the table.
+    3. If the result is strong, add one TL;DR bullet. Keep TL;DR at 6-8 bullets: drop a weak one.
+    4. Remove the finished item from "What we measure next" (a stale plan reads as a lie).
+    5. Figures go in docs/articles/assets/fly/ and are referenced by raw absolute URL
+       (never a relative path). Japanese labels in figures are fine — say so in the caption.
+    6. Every number comes from a measured json. Nothing that is not in the ledger. Retractions
+       are never deleted; they stay in section 8.
+    7. After appending, PATCH the Qiita item (check on purpose if the body would shrink).
+-->
+
 ![What the compound eye sees](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/eye_view_skyband.png)
 
 *↑ The world as seen by a fly's compound eye (721 ommatidia, 4.63° between optical axes). Left: brightness per ommatidium. Right: the salience of "something dark above the horizon". The sky carries a synthetic cloud band (elevation 20–60°) — whether that band exists changes the rotation estimate described below from 0.06 to 0.98. Figure labels are in Japanese; every number is repeated in the text.*
