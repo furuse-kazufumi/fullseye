@@ -338,7 +338,15 @@ The EMD implementation and the image-processing operators come from **Fullseye**
 
 <!-- Append new experiments here as `### <one line> (YYYY-MM-DD)`, in date order. Do not move the chapters above. -->
 
-Nothing yet. What is currently running is listed below.
+### Where flies and vertebrates do the same job (2026-09-14)
+
+"Which part of a human brain is this?" is a natural question. But the last common ancestor of insects and vertebrates lived **550 million years ago**, and their visual circuits share no cell lineage. So every answer below is **convergence, not homology** — two lineages arriving at the same solution separately. Only correspondences that could be checked against primary literature are drawn.
+
+![Fly and vertebrate correspondences](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/fly_vertebrate_correspondence.png)
+
+*↑ Fly on the left, vertebrate on the right. **A dotted line means "a correspondence that is not homology."** The red row (photoreceptors) shares a role but not a lineage — and the response polarity is opposite as well: fly photoreceptors depolarise to light, vertebrate rods and cones hyperpolarise. The safest correspondence is **L1 (ON) / L2 (OFF) with ON / OFF bipolar cells**; the strongest computational match is **the central-complex ring with the head-direction system**, where a ring attractor has been measured on both sides. The lower right lists what was researched and then deliberately left out — an insect version of grid cells, or homology between the central complex and the basal ganglia, would be speculation. Figure labels are in Japanese.*
+
+This reframes the first half of the article slightly. **Splitting ON from OFF in the lamina, multiplying two inputs of different dynamics offset in space, then pooling the result in wide-field cells to stabilise posture** — none of that is "how flies do it". It is a design adopted twice, independently, across 550 million years. The 0.14–0.20 measured in §4 is then the premium that having that design in *measured* wiring buys over writing the textbook equation yourself.
 
 ### What we measure next
 
