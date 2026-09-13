@@ -1274,17 +1274,24 @@ def section9_tool_gaps():
     print()
 
     # (a) 印刷・網点の語彙が 4 層のどこにも無い
+    # ★2026-09-13: 'lattice' だけ例外を 1 つ許す。flyvision 族の `fly_hex_lattice`(複眼の六角格子)が
+    #   この語を含んで CI で鳴った(run 34751219513)。あれは網点の格子ではないので印刷の穴は
+    #   残ったまま —— 例外は名指しで 1 件に限り、それ以外が現れたら今までどおり鳴る。
+    #   「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
+    allowed = {"lattice": {"fly_hex_lattice"}}
     missing = {}
     for kw in ("halftone", "screen", "rosette", "misregist", "lpi", "moire",
                "trapping", "lattice"):
-        hit = sorted(n for n in allnames if kw in n.lower())
-        found = fs.op_find(kw)
+        hit = sorted(n for n in allnames if kw in n.lower() and n not in allowed.get(kw, set()))
+        found = [f for f in fs.op_find(kw)
+                 if not any(a in str(f) for a in allowed.get(kw, set()))]
         missing[kw] = (hit, found)
         assert not hit, (kw, hit)
         assert not found, (kw, found)
     print("  (a) ★**印刷の語彙が 4 層のどこにも無い**: 'halftone' / 'screen' /")
     print("      'rosette' / 'misregist' / 'lpi' / 'moire' / 'trapping' /")
-    print("      'lattice' の 8 語すべてで名前 0 件・op_find 0 件。網点の合成、")
+    print("      'lattice' の 8 語で名前 0 件・op_find 0 件(例外は複眼の")
+    print("      `fly_hex_lattice` 1 件のみ = 網点の格子ではない)。網点の合成、")
     print("      スクリーン角の推定、版ずれの測定はどれも産業用画像処理の定番で、")
     print("      入口が 1 つも無いのは大きい。この PoC は合成器を numpy で書いた。")
 
