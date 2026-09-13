@@ -83,6 +83,8 @@ LEDGER_DIMS = {
                        "module": "interferometry", "family": "coherence_scanning"},
     "flyvision": {"registry": "opsflyvision", "table": "OPSFLYVISION",
                   "module": "flyvision", "family": "fly_vision"},
+    "spc": {"registry": "opsspc", "table": "OPSSPC",
+            "module": "spc", "family": "statistical_process_control"},
     # --- 2026-09-02 に登録した族。ここに載っていなかったあいだ、これらの op は
     #     docs/ops に 1 枚もノートを持っていなかった(RAG コーパスから丸ごと
     #     欠けていた)。ガイドは未執筆で、リンクは実在するときだけ張られる。
