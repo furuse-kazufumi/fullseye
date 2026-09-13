@@ -1,5 +1,5 @@
 {
- "generated_for": 899,
+ "generated_for": 901,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -1639,12 +1639,11 @@
   },
   "cooc_feature_matrix": {
    "extra": {
-    "a": "cooc_feature_matrix.a.jpg"
+    "a": "cooc_feature_matrix.a.jpg",
+    "b": "cooc_feature_matrix.b.jpg"
    },
    "fig": "cooc_feature_matrix.png",
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "float",
    "program": "cooc_feature_matrix 0.50 0.50",
    "pseudocolor": false,
@@ -5024,6 +5023,7 @@
    "color_ok": true,
    "extra": {
     "a": "hough_circle_trans.a.jpg",
+    "b": "hough_circle_trans.b.jpg",
     "inputs": "hough_circle_trans.inputs.jpg"
    },
    "fig": "hough_circle_trans.png",
@@ -5037,9 +5037,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "hough_circle_trans 0.50 0.50",
    "pseudocolor": true,
@@ -12005,6 +12003,7 @@
    "color_ok": true,
    "extra": {
     "a": "sk_lbp.a.jpg",
+    "b": "sk_lbp.b.jpg",
     "inputs": "sk_lbp.inputs.jpg"
    },
    "fig": "sk_lbp.png",
@@ -12018,9 +12017,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "sk_lbp 0.50 0.50",
    "pseudocolor": true,
@@ -13687,30 +13684,9 @@
    "status": "ok"
   },
   "tb_dem_ecef_to_geodetic": {
-   "color_ok": false,
-   "extra": {
-    "chain": "tb_dem_ecef_to_geodetic.chain.jpg",
-    "inputs": "tb_dem_ecef_to_geodetic.inputs.jpg"
-   },
-   "fig": "tb_dem_ecef_to_geodetic.png",
-   "inputs": [
-    "scene",
-    "photo",
-    "coins",
-    "beans",
-    "label",
-    "part",
-    "pcb",
-    "color"
-   ],
-   "knob_dead": [
-    "a",
-    "b"
-   ],
-   "out_kind": "ndarray",
-   "program": "img_to_points 0.50 0.50\ntb_dem_ecef_to_geodetic 0.50 0.50",
-   "pseudocolor": false,
-   "status": "ok"
+   "in_sort": "points",
+   "reason": "ValueError: dem_ecef_to_geodetic: 4096 point(s) lie inside the ellipsoid's evolute (within 42697.7 m of the Earth's centre in the equatorial plane, 42841.3 m along the pola",
+   "status": "failed"
   },
   "tb_derivate_funct_1d": {
    "color_ok": false,
@@ -14116,6 +14092,58 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_points 0.50 0.50\ntb_fit_spline_curve 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_fly_lgmd_eta": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_fly_lgmd_eta.a.jpg",
+    "chain": "tb_fly_lgmd_eta.chain.jpg",
+    "inputs": "tb_fly_lgmd_eta.inputs.jpg"
+   },
+   "fig": "tb_fly_lgmd_eta.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_fly_lgmd_eta 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_fly_tau_from_expansion": {
+   "color_ok": false,
+   "extra": {
+    "chain": "tb_fly_tau_from_expansion.chain.jpg",
+    "inputs": "tb_fly_tau_from_expansion.inputs.jpg"
+   },
+   "fig": "tb_fly_tau_from_expansion.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_fly_tau_from_expansion 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21090,11 +21118,12 @@
  "stats": {
   "domain": 2,
   "empty": 1,
-  "failed": 0,
-  "ok": 896,
+  "failed": 1,
+  "ok": 897,
+  "pruned": 3,
   "unreachable": 0,
-  "with_chain": 365,
+  "with_chain": 366,
   "with_gif": 40,
-  "with_sweep": 546
+  "with_sweep": 547
  }
 }

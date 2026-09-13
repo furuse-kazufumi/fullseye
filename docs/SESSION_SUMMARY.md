@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-13 19:23:51
+- **最終更新**: 2026-09-13 21:36:30
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-22edbc401 flyvision: ハエ視覚経路の op 族 8 本(六角複眼・HR 相関器・LGMD η・τ・HS 読み出し・1/f 空・DSI)
-31196f3d0 auto: test_public_reachability.py 編集前 (2026-09-13 18:41)
-49880dcc2 auto: test_flyvision.py 編集前 (2026-09-13 18:40)
-0d03c4c98 auto: __init__.py 編集前 (2026-09-13 18:36)
-41fb7115f auto: __init__.py 編集前 (2026-09-13 18:35)
-609bcfc43 auto: api.py 編集前 (2026-09-13 18:35)
-21f22739b auto: api.py 編集前 (2026-09-13 18:35)
-3a4ba4871 auto: opassist.py 編集前 (2026-09-13 18:35)
-d23af97d5 auto: opdocs.py 編集前 (2026-09-13 18:35)
-b14b3c307 auto: chain_fuzz.py 編集前 (2026-09-13 18:35)
+2e99565d2 展示館の目次と博物館記事を再生成(poc_fly_vision の展示 + 印刷 PoC の op 参照)
+952e60260 poc_print_registration: 'lattice' の穴の固定に複眼の fly_hex_lattice を名指しで例外(CI の赤 1 件)
+6f4ece12f auto: poc_print_registration.py 編集前 (2026-09-13 20:15)
+6027fb56e auto: poc_print_registration.py 編集前 (2026-09-13 20:15)
+f420c29f4 auto: poc_captions.json 編集前 (2026-09-13 19:31)
+aa5569f46 auto: COLLECTION_SIZES.json 編集前 (2026-09-13 19:30)
+a6890f6fd auto: COLLECTION_SIZES.json 編集前 (2026-09-13 19:30)
+9043e47aa auto: examples2d.py 編集前 (2026-09-13 19:30)
+6c3250d97 auto: poc_fly_vision.py 編集前 (2026-09-13 19:30)
+068d51680 auto: poc_fly_vision.py 編集前 (2026-09-13 19:30)
 ```
 
 ## 現在の git status
 
 ```
 M docs/SESSION_SUMMARY.md
-?? examples/poc_fly_vision.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-19:22 docs/SESSION_SUMMARY.md
-19:21 examples/poc_fly_vision.py
-19:11 docs/design_notes.json
-19:11 docs/DESIGN_NOTES.zh.md
-19:11 docs/DESIGN_NOTES.tw.md
-19:11 docs/DESIGN_NOTES.md
-19:11 docs/DESIGN_NOTES.ko.md
-19:11 docs/DESIGN_NOTES.en.md
-19:11 docs/DESIGN_NOTES.de.md
-19:11 docs/OP_INDEX.json
-19:11 fullseye/SENSOR_PLAYBOOK.md
-19:11 docs/SENSOR_PLAYBOOK.md
-19:11 docs/EXAMPLES_3D.md
-19:11 docs/articles/README.md
-19:11 docs/README.de.md
+21:16 docs/SESSION_SUMMARY.md
+20:33 .pytest_cache/v/cache/nodeids
+20:33 .pytest_cache/v/cache/lastfailed
+20:26 docs/articles/fullseye_poc_museum_qiita_en.md
+20:26 docs/articles/exhibits/wingpoc.en.md
+20:26 docs/articles/fullseye_poc_museum_qiita_ja.md
+20:26 docs/articles/exhibits/wingpoc.ja.md
+20:15 docs/design_notes.json
+20:15 docs/DESIGN_NOTES.de.md
+20:15 docs/DESIGN_NOTES.ko.md
+20:15 docs/DESIGN_NOTES.tw.md
+20:15 docs/DESIGN_NOTES.zh.md
+20:15 docs/DESIGN_NOTES.md
+20:15 docs/DESIGN_NOTES.en.md
+20:15 docs/OP_INDEX.json
 ```
 
 ---

@@ -9,7 +9,7 @@
 
 *여섯 장면 모두 실제 연산자 출력입니다: 에지 방향 / 연결 성분 선별 / 서브픽셀 계측 / SDF에서 메시로 / 포인트 클라우드 클러스터링 / 렌즈 디포커스.*
 
-**Fullseye**(작업명 imgevolve)는 HALCON/HDevelop 급의 실용 도구입니다. numpy 네이티브 이미지 처리 연산자 라이브러리에, HDevelop 스타일의 비주얼 파이프라인 설계 환경(Fullseye Studio)과 실행 런타임(FullseyeEngine)을 갖추고 있습니다. 연산자는 약 **899**개(레지스트리 기준), 실제 HALCON 연산자 **979/2313**개를 genuine(이름만이 아니라 진짜로 같은 동작을 하는) 구현으로 제공하며, 48개 카테고리를 아우릅니다.
+**Fullseye**(작업명 imgevolve)는 HALCON/HDevelop 급의 실용 도구입니다. numpy 네이티브 이미지 처리 연산자 라이브러리에, HDevelop 스타일의 비주얼 파이프라인 설계 환경(Fullseye Studio)과 실행 런타임(FullseyeEngine)을 갖추고 있습니다. 연산자는 약 **901**개(레지스트리 기준), 실제 HALCON 연산자 **979/2313**개를 genuine(이름만이 아니라 진짜로 같은 동작을 하는) 구현으로 제공하며, 48개 카테고리를 아우릅니다.
 
 ★ **이미지 처리 라이브러리에서는 드물게, Fullseye 는 「가상 광학 설계」까지 내장** —— 얇은/두꺼운 렌즈·광선 추적·Seidel 수차·PSF/MTF 에 더해, damped-least-squares(Levenberg–Marquardt)로 렌즈 처방 자체를 최적화(`optimize_lens`). **촬상계를 설계하고 그 상을 위 연산자로 검사하기까지 일관되게** 할 수 있다 —— 반도체·정밀 계측에서 효과적인 차별화.
 

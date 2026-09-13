@@ -9,7 +9,7 @@
 
 *Six acts, all real operator output: edge orientation, blob selection, sub-pixel calipers, SDF to mesh, LiDAR clustering, lens defocus.*
 
-**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **899** operators (as counted in the registry), provides genuine implementations of **979/2313** actual HALCON operators, and spans 48 categories.
+**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **901** operators (as counted in the registry), provides genuine implementations of **979/2313** actual HALCON operators, and spans 48 categories.
 
 ★ **Rare for an image-processing library, Fullseye also includes virtual optical design** — thin/thick lenses, ray tracing, Seidel aberrations and PSF/MTF, plus damped-least-squares (Levenberg–Marquardt) optimisation of the lens prescription itself (`optimize_lens`). You can **design the imaging system and then inspect its image with the operators above, end to end** — a differentiator that matters for semiconductor and precision metrology.
 

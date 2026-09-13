@@ -9,7 +9,7 @@
 
 *六幕，全部是真實的運算子輸出：邊緣方向 / 連通域篩選 / 次像素量測 / SDF 轉網格 / 點雲分群 / 鏡頭離焦。*
 
-**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **899** 個（以 registry 計），其中 **979/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
+**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **901** 個（以 registry 計），其中 **979/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
 
 ★ **在影像處理函式庫中少見，Fullseye 還內建「虛擬光學設計」** —— 薄/厚透鏡、光線追蹤、Seidel 像差與 PSF/MTF，並以阻尼最小二乘（Levenberg–Marquardt）最佳化透鏡處方本身（`optimize_lens`）。可從**設計成像系統，到用上述運算子檢查其成像，一氣呵成** —— 在半導體與精密計量中是明確的差異化。
 
