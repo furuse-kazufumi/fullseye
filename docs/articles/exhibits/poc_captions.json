@@ -624,6 +624,17 @@
    "run": "py -3.11 examples/poc_lightfield_depth.py"
   },
   {
+   "id": "poc_compound_eye",
+   "wing": "wing_imaging",
+   "added": "2026-09-13",
+   "numbers_source": "log",
+   "title_ja": "ハエの複眼は光場センサ ―― 神経重ね合わせの「重ねると頑健」は膝の手前まで",
+   "title_en": "The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee",
+   "caption_ja": "個眼アレイを 9×9 のプレノプティック系として合成し、同じ点を N 個眼で重ねたときの SNR 利得を測った図。小開口では √N がほぼ厳密(N=5 で 2.25 対 2.24)だが、大開口では補間誤差が平均で消えず飽和する(N=49 で 5.33 対 7.00)。ハエの R1–R6 の 6 重の重ね合わせは膝の手前にある。距離はアレイでこそ出て(手前 +1.998・奥 +0.499、真値 2.00 / 0.50)、少数派の遮蔽者は median 重ねなら貫ける(隠れ画素の RMS: 中心 1 枚 0.237 → mean 0.065 → median 0.025)。",
+   "caption_en": "A 9×9 plenoptic synthesis of the ommatidial array, measuring the SNR gain when the same point is pooled over N ommatidia. For small apertures √N holds almost exactly (N=5: 2.25 vs 2.24), but for large ones the interpolation error does not average out and the gain saturates (N=49: 5.33 vs 7.00). The fly's six-fold pooling of R1–R6 sits below the knee. Depth comes from the array (near +1.998, far +0.499 against true 2.00 / 0.50), and a minority occluder is seen through by median pooling (RMS on hidden pixels: single view 0.237 → mean 0.065 → median 0.025).",
+   "run": "py -3.11 examples/poc_compound_eye.py"
+  },
+  {
    "id": "poc_dtof_ranging",
    "wing": "wing_imaging",
    "added": "2026-09-06",

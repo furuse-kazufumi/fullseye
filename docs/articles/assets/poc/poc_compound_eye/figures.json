@@ -1,0 +1,42 @@
+[
+ {
+  "file": "01_compound_eye_scaling.png",
+  "name": "compound_eye_scaling",
+  "caption": "ハエの神経重ね合わせ ~6(半径1)は √N が厳密に成り立つ領域。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_compound_eye_superposition.png",
+  "name": "compound_eye_superposition",
+  "caption": "",
+  "shape": [
+   519,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "03_compound_eye_depth.png",
+  "name": "compound_eye_depth",
+  "caption": "",
+  "shape": [
+   519,
+   414,
+   3
+  ]
+ },
+ {
+  "file": "04_compound_eye_occlusion.png",
+  "name": "compound_eye_occlusion",
+  "caption": "",
+  "shape": [
+   550,
+   414,
+   3
+  ]
+ }
+]
