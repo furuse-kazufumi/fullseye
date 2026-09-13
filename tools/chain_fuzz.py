@@ -1178,6 +1178,11 @@ OP_ARG_BUILDERS = {
     "fly_tau_from_expansion": _b_fly_tau,
     "fly_hs_readout": _b_fly_hs,
     "fly_dsi": _b_fly_dsi,
+    # --- SPC(統計的工程管理)の 4 op(形の噛み合う入力を組む) --------------- #
+    "spc_xbar_r": _b_spc_xbar_r,
+    "spc_cusum": _b_spc_cusum,
+    "spc_capability": _b_spc_capability,
+    "spc_hotelling_t2": _b_spc_hotelling_t2,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #
     "text_box": _b_draw(["image2d", "text"]),
     "leader_line": _b_leader_line,
