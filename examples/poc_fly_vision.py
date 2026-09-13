@@ -464,6 +464,7 @@ def chapter_forward(lattice, dirs_eye, pairs, sky):
          ("上半視野 el>2Δρ・空を 20 m のドームに", t, lowpass(out["upper_dome"], TAU_HS, DT))],
         xlabel="時間 [s]", ylabel="HS 読み出し(対向比、膜 LP 0.1 s)",
         title="前進: 床の流れは回転に化ける、上半視野に限れば消える",
+        ylim=(-1.0, 0.45),                                        # 凡例の下に曲線を出す
         caption="偏り: 全視野 %+.3f / 上半 el>0 %+.3f / el>2Δρ %+.3f / ドーム %+.3f"
                 % (bias["full"], bias["upper"], bias["upper_clear"], bias["upper_dome"]))
     return bias
