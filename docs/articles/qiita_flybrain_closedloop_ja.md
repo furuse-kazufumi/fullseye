@@ -25,7 +25,11 @@ public_id: 331af639c2b9a1493576
     5. 図は docs/articles/assets/fly/ に置き、raw 絶対 URL で参照する(相対パス禁止)。
        図中の文字は日本語のままでよい —— 英語版はキャプションで断る。
     6. 数字の出典は必ず実測 json。台帳に無い数字は書かない。撤回したものは消さず §8 に残す。
-    7. 追記したら Qiita へ PATCH(本文が縮むときは意図的か確認する)。
+    7. 追記したら Qiita へ PATCH(本文が縮むときは意図的か確認する)。投稿器は
+       fullsense の tools/qiita_public_post.py(公開 qiita.com の正本、冪等キー = public_id)。
+         py -3.11 qiita_public_post.py post <file> --yes --private
+    8. 限定共有のうちは相手言語のリンクが /private/<id>。**公開へ倒したら両方の記事で
+       /private/ を /items/ に張り替える**(限定共有 URL は他人から開けない)。
 -->
 
 ![複眼で見た空](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/eye_view_skyband.png)
