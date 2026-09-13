@@ -463,45 +463,75 @@ ALPHA = 4.7
 DT_LOOM = 0.001
 
 
+def sphere_eta_peak_ratio(alpha):
+    """球の厳密な見込み角 θ = 2asin(l/d) で η = θ'·exp(−αθ) が最大になる d/l(閉じた式)。
+
+    d ln η/dd = 0 は ``2x² − 1 = 2α√(x²−1)``(x = d/l)、両辺を 2 乗して x² の 2 次式
+    ``4x⁴ − (4+4α²)x² + (1+4α²) = 0`` → 大きい根。α=4.7 で x = 4.699(≈ α だが厳密には違う)。
+    円板の tan 形 θ = 2atan(l/d) なら d = αl が厳密(Gabbiani et al. 1999, Eq. 5)。"""
+    A = 4.0 + 4.0 * alpha * alpha
+    B = 1.0 + 4.0 * alpha * alpha
+    x2 = (A + np.sqrt(A * A - 16.0 * B)) / 8.0
+    return float(np.sqrt(x2))
+
+
 def chapter_looming():
-    """半径 1 cm の球が 30 cm/s で迫る θ(t) に η と τ を当て、閉じた式と突き合わせる。"""
+    """半径 1 cm の球が 30 cm/s で迫る θ(t) に η と τ を当て、閉じた式と突き合わせる。
+
+    η は Gabbiani の幾何(半幅 l の正面物体、θ = 2atan(l/d))で 2atan(1/α) = 24.0° が
+    厳密。球の見込み角 2asin(l/d) では 4 次式の根 x* で θ = 2asin(1/x*) = 24.6°。両方測る。"""
     t = np.arange(-1.0, -0.05 + 0.5 * DT_LOOM, DT_LOOM)      # 衝突 t=0、d=1.5 cm で止める
     d = -V_APPROACH * t
-    theta = 2.0 * np.arcsin(L_SPHERE / d)
-    eta = FV.fly_lgmd_eta(theta, DT_LOOM, alpha=ALPHA)
-    k = int(np.argmax(eta))
-    t_peak, th_peak = float(t[k]), float(np.degrees(theta[k]))
+    theta_disk = 2.0 * np.arctan(L_SPHERE / d)
+    theta_sph = 2.0 * np.arcsin(L_SPHERE / d)
     t_pred = -ALPHA * L_SPHERE / V_APPROACH
     th_pred = float(np.degrees(2.0 * np.arctan(1.0 / ALPHA)))
-    tau_s = FV.fly_tau_from_expansion(theta, DT_LOOM, shape="sphere")
-    tau_d = FV.fly_tau_from_expansion(theta, DT_LOOM, shape="disk")
+    xs = sphere_eta_peak_ratio(ALPHA)
+    t_pred_s = -xs * L_SPHERE / V_APPROACH
+    th_pred_s = float(np.degrees(2.0 * np.arcsin(1.0 / xs)))
+    eta = FV.fly_lgmd_eta(theta_disk, DT_LOOM, alpha=ALPHA)
+    eta_s = FV.fly_lgmd_eta(theta_sph, DT_LOOM, alpha=ALPHA)
+    k = int(np.argmax(eta))
+    ks = int(np.argmax(eta_s))
+    t_peak, th_peak = float(t[k]), float(np.degrees(theta_disk[k]))
+    t_peak_s, th_peak_s = float(t[ks]), float(np.degrees(theta_sph[ks]))
+    tau_s = FV.fly_tau_from_expansion(theta_sph, DT_LOOM, shape="sphere")
+    tau_d = FV.fly_tau_from_expansion(theta_sph, DT_LOOM, shape="disk")
     truth = d / V_APPROACH
     inner = slice(2, -2)                                       # 端の片側差分は除く
     rms_s = float(np.sqrt(np.mean((tau_s[inner] - truth[inner]) ** 2)))
-    k60 = int(np.argmin(np.abs(np.degrees(theta) - 60.0)))
+    k60 = int(np.argmin(np.abs(np.degrees(theta_sph) - 60.0)))
     ratio60 = float(tau_d[k60] / tau_s[k60])
-    print("\n== 第4章: ルーミング(球 r=%.0f cm、%.0f cm/s、α=%.1f)==" % (100 * L_SPHERE, 100 * V_APPROACH, ALPHA))
-    print("  η のピーク時刻 : %+.3f s(予測 α·l/|v| = %+.3f s)" % (t_peak, t_pred))
-    print("  η ピークの θ    : %.1f°(予測 2atan(1/α) = %.1f°)" % (th_peak, th_pred))
-    print("  τ(球) vs d/|v| の RMS : %.4f s" % rms_s)
-    print("  θ=%.1f° で 円板式/球式 : %.3f(予測 cos²(θ/2) = %.3f)"
-          % (np.degrees(theta[k60]), ratio60, float(np.cos(theta[k60] / 2) ** 2)))
+    ratio60_pred = float(np.cos(theta_sph[k60] / 2) ** 2)
+    print("\n== 第4章: ルーミング(球 r=%.0f cm、%.0f cm/s、α=%.1f、dt %.0f ms)=="
+          % (100 * L_SPHERE, 100 * V_APPROACH, ALPHA, 1000 * DT_LOOM))
+    print("  η のピーク時刻(tan 形 θ)  : %+.4f s(予測 α·l/|v| = %+.4f s)" % (t_peak, t_pred))
+    print("  η ピークの θ(tan 形 θ)    : %.2f°(予測 2atan(1/α) = %.2f°)" % (th_peak, th_pred))
+    print("  同、球の厳密な θ=2asin(l/d) : ピーク %+.4f s(予測 x*·l/|v|、x*=%.3f → %+.4f s)、"
+          "θ %.2f°(予測 2asin(1/x*) = %.2f°)" % (t_peak_s, xs, t_pred_s, th_peak_s, th_pred_s))
+    print("  τ(球式) vs d/|v| の RMS     : %.5f s" % rms_s)
+    print("  θ=%.1f° で 円板式/球式      : %.4f(予測 cos²(θ/2) = %.4f)"
+          % (np.degrees(theta_sph[k60]), ratio60, ratio60_pred))
     figs.save_plot(
         "fly_vision_looming_eta",
-        [("η(t) / max", t, eta / eta.max()), ("θ(t) / 180°", t, np.degrees(theta) / 180.0),
+        [("η(t) / max(tan 形 θ)", t, eta / eta.max()), ("θ(t) / 180°", t, np.degrees(theta_disk) / 180.0),
          ("予測ピーク α·l/|v|", np.array([t_pred]), np.array([1.0]))],
         xlabel="衝突までの時間 [s](衝突 = 0)", ylabel="正規化",
         title="LGMD η は衝突の α·l/|v| 前、θ = 24.0° で最大",
         kinds=["line", "line", "scatter"],
-        caption="ピーク %+.3f s(予測 %+.3f s)、θ_peak %.1f°(予測 %.1f°)" % (t_peak, t_pred, th_peak, th_pred))
+        caption="ピーク %+.3f s(予測 %+.3f s)、θ_peak %.1f°(予測 %.1f°)。球の厳密な θ なら %.1f°。"
+                % (t_peak, t_pred, th_peak, th_pred, th_peak_s))
     figs.save_plot(
         "fly_vision_looming_tau",
         [("真値 d/|v|", t[inner], truth[inner]), ("τ 球式 2tan(θ/2)/θ'", t[inner], tau_s[inner]),
          ("τ 円板式 sin θ/θ'(球に誤用)", t[inner], tau_d[inner])],
         xlabel="衝突までの時間 [s]", ylabel="衝突余裕 τ [s]",
         title="τ: 物体モデルを取り違えると θ=60° で 0.75 倍",
-        caption="球式は RMS %.4f s で真値に乗る。円板式は cos²(θ/2) 倍に縮む。" % rms_s)
-    return t_peak, t_pred, th_peak, th_pred, rms_s, ratio60
+        caption="球式は RMS %.5f s で真値に乗る。円板式は cos²(θ/2) 倍に縮む。" % rms_s)
+    return {"t_peak": t_peak, "t_pred": t_pred, "th_peak": th_peak, "th_pred": th_pred,
+            "t_peak_s": t_peak_s, "t_pred_s": t_pred_s, "th_peak_s": th_peak_s,
+            "th_pred_s": th_pred_s, "rms_tau": rms_s, "ratio60": ratio60,
+            "ratio60_pred": ratio60_pred}
 
 
 # ---------------------------------------------------------------------------- #
