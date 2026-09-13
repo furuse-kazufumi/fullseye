@@ -22,7 +22,7 @@ import gen_design_notes as G  # noqa: E402
 
 #: 訳の下限。**増やしたらこの数も上げる**(下げるときは理由をコミットに書く)。
 #: 2026-09-09 の第一陣は 5 件 —— 外から来た人が最初に当たる場所から埋めている。
-MIN_TRANSLATED = 609
+MIN_TRANSLATED = 610
 
 
 def _meta():
