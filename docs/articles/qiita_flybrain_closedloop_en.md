@@ -28,6 +28,10 @@ public_id: 638f0b0aa7865e17c67c
     6. Every number comes from a measured json. Nothing that is not in the ledger. Retractions
        are never deleted; they stay in section 8.
     7. After appending, PATCH the Qiita item (check on purpose if the body would shrink).
+       The poster is fullsense's tools/qiita_public_post.py (canonical for public qiita.com,
+       idempotency key = public_id):  py -3.11 qiita_public_post.py post <file> --yes --private
+    8. While unlisted, the other language links to /private/<id>. **When either goes public,
+       swap /private/ for /items/ in BOTH articles** — an unlisted URL does not open for others.
 -->
 
 ![What the compound eye sees](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/eye_view_skyband.png)
