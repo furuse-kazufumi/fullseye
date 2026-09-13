@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_emd_response — FLYVISION <code style="color:#22d3bf">motion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_emd_response(signal_a, signal_b, tau_s=0.05, dt_s=0.001)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_emd_response(signal_a, signal_b, tau_s=0.05, dt_s=0.001)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_emd_response&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Hassenstein-Reichardt correlator between two adjacent ommatidial signals.</p>
+<p>The opponent elementary motion detector::</p>
+<p>R(t) = LP(a)(t) * b(t) - a(t) * LP(b)(t)</p>
+<p>where `<code style="color:#22d3bf">LP</code>` is a first-order low-pass of time constant *tau_s*. Delaying one</p>
+<p>channel and multiplying it against the other, then subtracting the mirror</p>
+<p>pair, gives a signal whose sign is the direction of motion and whose</p>
+<p>steady-state mean encodes the temporal frequency.</p>
+<p>signal_a / signal_b: the two 1-D input time series (same length).</p>
+<p>tau_s:  the low-pass time constant, seconds.</p>
+<p>dt_s:   the sample interval, seconds.</p>
+<p>Returns a 1-D float64 array `<code style="color:#22d3bf">R(t)</code>` of the same length.</p>
+<p>Ground truth: for two sinusoids of temporal frequency `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">omega = 2 pi f</code>`)</p>
+<p>with a spatial phase `<code style="color:#22d3bf">psi = 2 pi dphi/lambda</code>` between them, the steady-state</p>
+<p>mean is `<code style="color:#22d3bf">R_bar = dI^2 * sin(psi) * omega tau/(1 + (omega tau)^2)</code>` (to 5%),</p>
+<p>which is zero at `<code style="color:#22d3bf">lambda = 2 dphi</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">psi = pi</code>`) and maximal at</p>
+<p>`<code style="color:#22d3bf">f = 1/(2 pi tau)</code><code style="color:#22d3bf"> independent of </code><code style="color:#22d3bf">lambda</code>` (pinned in the tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 2) / non-finite</p>
+<p>*signal_a* or *signal_b*, mismatched lengths, a signal over</p>
+<p>:data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, and a non-positive *tau_s* / *dt_s*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">motion</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

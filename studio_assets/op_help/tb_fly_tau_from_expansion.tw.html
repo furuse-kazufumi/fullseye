@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_fly_tau_from_expansion — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_fly_tau_from_expansion&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Time-to-contact from optical expansion — the tau margin.</p>
+<p>From the subtended angle and its rate::</p>
+<p>shape=&quot;disk&quot;:   tau = sin(theta) / theta&#x27;</p>
+<p>shape=&quot;sphere&quot;: tau = 2*tan(theta/2) / theta&#x27;</p>
+<p>`<code style="color:#22d3bf">theta_signal</code>` is the full subtended angle over time, radians.</p>
+<p>★ The two object models differ by 33% at a 60-degree subtense (`<code style="color:#22d3bf">sin 60 = 0.866</code>`</p>
+<p>vs `<code style="color:#22d3bf">2 tan 30 = 1.155</code>`); using the wrong one silently mis-times a landing, so</p>
+<p>the model is a required, named choice rather than a default guess.</p>
+<p>theta_signal: the full subtended angle per sample, radians.</p>
+<p>dt_s:  the sample interval, seconds.</p>
+<p>shape: `<code style="color:#22d3bf">&quot;disk&quot;</code><code style="color:#22d3bf"> (a frontal circular disk) or </code><code style="color:#22d3bf">&quot;sphere&quot;</code>`.</p>
+<p>Returns a 1-D float64 array of the time-to-contact per sample, seconds.</p>
+<p>Non-expanding samples (`<code style="color:#22d3bf">theta&#x27; &lt;= 0</code><code style="color:#22d3bf">) return </code><code style="color:#22d3bf">NaN</code>` — a documented</p>
+<p>non-finite, because a contracting or static angle has no time-to-contact and</p>
+<p>inventing one would be a plausible-wrong number.</p>
+<p>Ground truth: for the model&#x27;s own object geometry (`<code style="color:#22d3bf">theta = 2 asin(l/d)</code>` for a</p>
+<p>sphere, `<code style="color:#22d3bf">theta = 2 atan(l/d)</code><code style="color:#22d3bf"> for a disk) approaching at speed </code><code style="color:#22d3bf">|v|</code>`, the</p>
+<p>returned tau equals the true distance-over-speed `<code style="color:#22d3bf">d/|v|</code>` (pinned in the</p>
+<p>tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite</p>
+<p>*theta_signal*, a signal over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*,</p>
+<p>and an unknown *shape*. A non-expanding angle is <b>not</b> an error — it is the</p>
+<p>documented `<code style="color:#22d3bf">NaN</code>` return above.</p>
+<p>Typed bridge of the flyvision op `<code style="color:#22d3bf">fly_tau_from_expansion</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">signal</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

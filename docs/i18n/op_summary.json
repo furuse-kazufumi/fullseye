@@ -14023,6 +14023,46 @@
   "oned/read_audio": {
    "fp": "5fd7396c4066",
    "ja": "任意の音声形式を読む —— ``(x, rate)``。``soundfile`` があればそれを使い(mp3/flac/ogg/…)、無ければ標準ライブラリの WAV 読み込みへ落ちる。"
+  },
+  "flyvision/fly_hex_lattice": {
+   "fp": "6ebc935312b8",
+   "ja": "複眼の六角個眼格子 —— 各個眼の方位・仰角と体座標の視線単位ベクトル。"
+  },
+  "flyvision/fly_sky_1f": {
+   "fp": "cfdb20d5eaa3",
+   "ja": "帯状の 1/f 方位テクスチャを持つ合成等距円筒の空パノラマ。"
+  },
+  "flyvision/fly_hex_resample": {
+   "fp": "7b31d83b2020",
+   "ja": "ピンホール画像を個眼格子へ再標本化(眼が見た像)—— ガウス受容野で空間低域化する。"
+  },
+  "flyvision/fly_emd_response": {
+   "fp": "ef47e0e0ff07",
+   "ja": "隣り合う個眼信号間の Hassenstein–Reichardt 相関(初等運動検出器)。"
+  },
+  "flyvision/fly_lgmd_eta": {
+   "fp": "5a06e38ccd39",
+   "ja": "膨張する見込み角からの LGMD looming 応答 —— 角速度に exp(−αθ) を掛ける。"
+  },
+  "flyvision/fly_tau_from_expansion": {
+   "fp": "e9a202014496",
+   "ja": "光学的膨張からの衝突時間(τ マージン)—— 円板と球で式が 33% 違う。"
+  },
+  "flyvision/fly_hs_readout": {
+   "fp": "4d9904070315",
+   "ja": "水平系の広視野読み出し —— 上半視野での好み方向 対 反対方向の opponent 和。"
+  },
+  "flyvision/fly_dsi": {
+   "fp": "58870fdff4cc",
+   "ja": "刺激方向ごとの応答から方向選択性指数と好み方向(円周上のベクトル和)。"
+  },
+  "2d/tb_fly_lgmd_eta": {
+   "fp": "5a06e38ccd39",
+   "ja": "膨張する見込み角からの LGMD looming 応答 —— 角速度に exp(−αθ) を掛ける。"
+  },
+  "2d/tb_fly_tau_from_expansion": {
+   "fp": "e9a202014496",
+   "ja": "光学的膨張からの衝突時間(τ マージン)—— 円板と球で式が 33% 違う。"
   }
  }
 }

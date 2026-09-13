@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_dsi — FLYVISION <code style="color:#22d3bf">tuning</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_dsi(responses, angles_deg)</code>(要直接呼叫實作,<code style="color:#22d3bf">import flyvision; flyvision.fly_dsi(responses, angles_deg)</code>;從台帳取用則 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_dsi&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Direction-selectivity index and preferred direction from tuning responses.</p>
+<p>A vector sum on the circle::</p>
+<p>DSI = |sum_k r_k exp(i theta_k)| / (sum_k r_k + 1e-9)</p>
+<p>preferred = angle(sum_k r_k exp(i theta_k))</p>
+<p>where `<code style="color:#22d3bf">r_k &gt;= 0</code>` is the response to a stimulus moving at angle</p>
+<p>`<code style="color:#22d3bf">theta_k = angles_deg[k]</code>` (negatives clipped to 0).</p>
+<p>responses:  a 1-D array of responses, one per direction.</p>
+<p>angles_deg: the stimulus directions in degrees, same length.</p>
+<p>Returns a dict `<code style="color:#22d3bf">{&quot;dsi&quot;: float, &quot;pref_deg&quot;: float}</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">pref_deg</code>` in</p>
+<p>`<code style="color:#22d3bf">[-180, 180]</code>`.</p>
+<p>Ground truth: a response at a single direction gives `<code style="color:#22d3bf">dsi == 1</code>`; an isotropic</p>
+<p>response over directions evenly spanning the circle gives `<code style="color:#22d3bf">dsi == 0</code>` (pinned</p>
+<p>in the tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / non-finite *responses* or</p>
+<p>*angles_deg*, mismatched lengths, an array over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, and</p>
+<p>an all-zero *responses* (no direction tuning to report).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">tuning</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

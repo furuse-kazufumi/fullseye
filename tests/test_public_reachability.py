@@ -196,7 +196,9 @@ def test_pending_exposure_shrinks_when_fixed():
 #: `geometry2d` 21/22、`filters_arith` 16/20 —— 名前が 1 つ出ているせいで
 #: 島の検査には掛からない)。この総数が増えないことだけを見張り、減らす作業は
 #: 上の `_PENDING_EXPOSURE` と一緒に進める。
-_HIDDEN_FUNCTIONS_TODAY = 1229
+#: 2026-09-13: 1229 -> 1231。opsflyvision 台帳の内部 API(get/call/info/missing)を
+#: 足したぶん(既存の各 ops<族> 台帳と同じ機構で、`fs.ledger` から op 自体は引ける)。
+_HIDDEN_FUNCTIONS_TODAY = 1231
 
 
 def _hidden_total():

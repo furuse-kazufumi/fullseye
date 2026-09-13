@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_dsi — FLYVISION <code style="color:#22d3bf">tuning</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_dsi(responses, angles_deg)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_dsi(responses, angles_deg)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_dsi&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Direction-selectivity index and preferred direction from tuning responses.</p>
+<p>A vector sum on the circle::</p>
+<p>DSI = |sum_k r_k exp(i theta_k)| / (sum_k r_k + 1e-9)</p>
+<p>preferred = angle(sum_k r_k exp(i theta_k))</p>
+<p>where `<code style="color:#22d3bf">r_k &gt;= 0</code>` is the response to a stimulus moving at angle</p>
+<p>`<code style="color:#22d3bf">theta_k = angles_deg[k]</code>` (negatives clipped to 0).</p>
+<p>responses:  a 1-D array of responses, one per direction.</p>
+<p>angles_deg: the stimulus directions in degrees, same length.</p>
+<p>Returns a dict `<code style="color:#22d3bf">{&quot;dsi&quot;: float, &quot;pref_deg&quot;: float}</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">pref_deg</code>` in</p>
+<p>`<code style="color:#22d3bf">[-180, 180]</code>`.</p>
+<p>Ground truth: a response at a single direction gives `<code style="color:#22d3bf">dsi == 1</code>`; an isotropic</p>
+<p>response over directions evenly spanning the circle gives `<code style="color:#22d3bf">dsi == 0</code>` (pinned</p>
+<p>in the tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / non-finite *responses* or</p>
+<p>*angles_deg*, mismatched lengths, an array over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, and</p>
+<p>an all-zero *responses* (no direction tuning to report).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">tuning</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

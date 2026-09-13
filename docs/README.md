@@ -65,15 +65,15 @@
 
 ## オペレータを探す
 
-**1,929 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **49 本の族ガイド**があります。次元ごとの入口:
+**1,939 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **49 本の族ガイド**があります。次元ごとの入口:
 
-**網羅の実測**: 進化 op 899/899、型つき台帳 1009/1021、1 行ファサード `fullseye.<名前>` 544/1117。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
+**網羅の実測**: 進化 op 901/901、型つき台帳 1017/1029、1 行ファサード `fullseye.<名前>` 544/1118。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 1934 本のうち、実行できる例が付いているのは **1894 本**(40 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1915 本**(19 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1934 本すべてにある。
+**ノートの中身の実測**: 1944 本のうち、実行できる例が付いているのは **1894 本**(50 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1925 本**(19 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1944 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
-| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 916 | [INDEX](ops/2d/INDEX.md) |
+| `2d` — 進化する 2-D op(`fullseye.op.<名前>`) | 918 | [INDEX](ops/2d/INDEX.md) |
 | `3d` — 点群 / メッシュ / 体積 / SDF / 6-DoF | 357 | [INDEX](ops/3d/INDEX.md) |
 | `optics` — レンズ・収差・光線追跡・照明設計 | 124 | [INDEX](ops/optics/INDEX.md) · [ガイド](ops/optics/guides/optics_imaging.md) |
 | `annotate` — 図注(軸・凡例・注記) | 51 | [INDEX](ops/annotate/INDEX.md) · [ガイド](ops/annotate/guides/figure_annotation.md) |
@@ -102,6 +102,7 @@
 | `blob` — 2-D の連結成分解析 | 10 | [INDEX](ops/blob/INDEX.md) · [ガイド](ops/blob/guides/blob_analysis.md) |
 | `interferometry` — 干渉計 | 9 | [INDEX](ops/interferometry/INDEX.md) · [ガイド](ops/interferometry/guides/coherence_scanning.md) |
 | `motionmag` — モーション拡大 | 9 | [INDEX](ops/motionmag/INDEX.md) · [ガイド](ops/motionmag/guides/motion_magnification.md) |
+| `flyvision` | 8 | [INDEX](ops/flyvision/INDEX.md) |
 | `rangedoppler` — FMCW レンジドップラー | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [ガイド](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` — 表面粗さ | 6 | [INDEX](ops/roughness/INDEX.md) · [ガイド](ops/roughness/guides/surface_roughness.md) |
 | `cadmap` — CAD 対応づけ | 4 | [INDEX](ops/cadmap/INDEX.md) |
@@ -204,7 +205,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## ドキュメント地図 — 全 159 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,929 本と族ガイド 49 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,939 本と族ガイド 49 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 

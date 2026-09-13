@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_tau_from_expansion — FLYVISION <code style="color:#22d3bf">looming</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_tau_from_expansion(theta_signal, dt_s, shape=&#x27;sphere&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_tau_from_expansion(theta_signal, dt_s, shape=&#x27;sphere&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_tau_from_expansion&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Time-to-contact from optical expansion — the tau margin.</p>
+<p>From the subtended angle and its rate::</p>
+<p>shape=&quot;disk&quot;:   tau = sin(theta) / theta&#x27;</p>
+<p>shape=&quot;sphere&quot;: tau = 2*tan(theta/2) / theta&#x27;</p>
+<p>`<code style="color:#22d3bf">theta_signal</code>` is the full subtended angle over time, radians.</p>
+<p>★ The two object models differ by 33% at a 60-degree subtense (`<code style="color:#22d3bf">sin 60 = 0.866</code>`</p>
+<p>vs `<code style="color:#22d3bf">2 tan 30 = 1.155</code>`); using the wrong one silently mis-times a landing, so</p>
+<p>the model is a required, named choice rather than a default guess.</p>
+<p>theta_signal: the full subtended angle per sample, radians.</p>
+<p>dt_s:  the sample interval, seconds.</p>
+<p>shape: `<code style="color:#22d3bf">&quot;disk&quot;</code><code style="color:#22d3bf"> (a frontal circular disk) or </code><code style="color:#22d3bf">&quot;sphere&quot;</code>`.</p>
+<p>Returns a 1-D float64 array of the time-to-contact per sample, seconds.</p>
+<p>Non-expanding samples (`<code style="color:#22d3bf">theta&#x27; &lt;= 0</code><code style="color:#22d3bf">) return </code><code style="color:#22d3bf">NaN</code>` — a documented</p>
+<p>non-finite, because a contracting or static angle has no time-to-contact and</p>
+<p>inventing one would be a plausible-wrong number.</p>
+<p>Ground truth: for the model&#x27;s own object geometry (`<code style="color:#22d3bf">theta = 2 asin(l/d)</code>` for a</p>
+<p>sphere, `<code style="color:#22d3bf">theta = 2 atan(l/d)</code><code style="color:#22d3bf"> for a disk) approaching at speed </code><code style="color:#22d3bf">|v|</code>`, the</p>
+<p>returned tau equals the true distance-over-speed `<code style="color:#22d3bf">d/|v|</code>` (pinned in the</p>
+<p>tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite</p>
+<p>*theta_signal*, a signal over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*,</p>
+<p>and an unknown *shape*. A non-expanding angle is <b>not</b> an error — it is the</p>
+<p>documented `<code style="color:#22d3bf">NaN</code>` return above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">looming</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

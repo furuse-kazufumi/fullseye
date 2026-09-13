@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_lgmd_eta — FLYVISION <code style="color:#22d3bf">looming</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_lgmd_eta&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>LGMD/eta looming response from an expanding subtended angle.</p>
+<p>The multiplicative looming model::</p>
+<p>eta(t) = theta&#x27;(t - delay) * exp(-alpha * theta(t - delay))</p>
+<p>where *theta_signal* is the object&#x27;s full subtended angle over time, in</p>
+<p>radians. The product of the angular expansion rate and an exponentially</p>
+<p>decaying gain gives a response that peaks a fixed time before collision.</p>
+<p>theta_signal: the full subtended angle per sample, radians.</p>
+<p>dt_s:  the sample interval, seconds.</p>
+<p>alpha: the gain-decay constant.</p>
+<p>delay_s: a fixed neural delay, seconds.</p>
+<p>Returns a 1-D float64 array `<code style="color:#22d3bf">eta(t)</code>` of the same length.</p>
+<p>Ground truth: for an object of half-size `<code style="color:#22d3bf">l</code><code style="color:#22d3bf"> approaching at speed </code><code style="color:#22d3bf">|v|</code>`,</p>
+<p>`<code style="color:#22d3bf">eta</code><code style="color:#22d3bf"> peaks at a time-to-contact of </code><code style="color:#22d3bf">alpha*l/|v| - delay_s</code>` (Gabbiani et</p>
+<p>al. Eq. 5), where the subtended angle is exactly `<code style="color:#22d3bf">2*atan(1/alpha)</code>` (Eq. 6;</p>
+<p>24.0 degrees for `<code style="color:#22d3bf">alpha = 4.7</code>`) — both pinned in the tests.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite</p>
+<p>*theta_signal*, a signal over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*</p>
+<p>/ *alpha*, and a negative *delay_s*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• (noch keine)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">looming</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

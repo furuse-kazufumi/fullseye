@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_resample — FLYVISION <code style="color:#22d3bf">sample</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_resample(image2d, lattice, drho_deg=8.23, fov_deg=90.0, mode=&#x27;pinhole&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import flyvision; flyvision.fly_hex_resample(image2d, lattice, drho_deg=8.23, fov_deg=90.0, mode=&#x27;pinhole&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_resample&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Resample a pinhole image onto an ommatidial lattice (the eye&#x27;s view).</p>
+<p>Each ommatidium integrates the image under a Gaussian acceptance function of</p>
+<p>full width at half maximum *drho_deg* weighted by the pixel solid angle::</p>
+<p>signal_i = sum_p w_ip * image_p / sum_p w_ip</p>
+<p>w_ip = exp(-4 ln2 * a_ip^2 / drho_deg^2) * (1 + X_p^2 + Y_p^2)^(-3/2)</p>
+<p>with `<code style="color:#22d3bf">a_ip</code>` the angular distance between ommatidium *i* and pixel *p*, cut</p>
+<p>off at `<code style="color:#22d3bf">a &lt;= 2*drho_deg</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">X, Y</code>` the pinhole-normalised pixel</p>
+<p>coordinates. The image is a perspective (pinhole) view whose optical axis is</p>
+<p>the lattice centre and whose *fov_deg* is the full <b>vertical</b> field of view.</p>
+<p>image2d:  a 2-D `<code style="color:#22d3bf">(H, W)</code>` pinhole image.</p>
+<p>lattice:  the dict returned by :func:<code style="color:#22d3bf">fly_hex_lattice</code>.</p>
+<p>drho_deg: the acceptance FWHM in degrees.</p>
+<p>fov_deg:  the full vertical field of view in degrees.</p>
+<p>mode:     `<code style="color:#22d3bf">&quot;pinhole&quot;</code>` (the only projection implemented).</p>
+<p>Returns a 1-D float64 signal of `<code style="color:#22d3bf">n</code>` ommatidial intensities.</p>
+<p>Ground truth: an azimuthal sinusoid of angular wavelength `<code style="color:#22d3bf">lambda</code>` is</p>
+<p>sampled with its amplitude scaled by the analytic modulation transfer</p>
+<p>`<code style="color:#22d3bf">exp(-pi^2 drho_deg^2 nu^2 / (4 ln2))</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nu = 1/lambda</code>`, to within 0.05</p>
+<p>over `<code style="color:#22d3bf">lambda</code>` from 15 to 80 degrees at equatorial ommatidia (pinned in the</p>
+<p>tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / empty / non-finite *image2d*, an image</p>
+<p>over the element cap, a *lattice* that is not a :func:<code style="color:#22d3bf">fly_hex_lattice</code> result,</p>
+<p>a non-positive *drho_deg* / *fov_deg*, a *fov_deg* not below 180, an unknown</p>
+<p>*mode*, a `<code style="color:#22d3bf">n_ommatidia * n_pixels</code><code style="color:#22d3bf"> product over :data:</code>MAX_RESAMPLE_ELEMENTS`,</p>
+<p>and — this is the field-of-view guard — any ommatidium whose nearest pixel is</p>
+<p>farther than `<code style="color:#22d3bf">dphi_rad/2</code>` away (the eye is looking outside the image).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">sample</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

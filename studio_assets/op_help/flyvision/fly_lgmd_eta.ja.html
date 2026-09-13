@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_lgmd_eta — FLYVISION <code style="color:#22d3bf">looming</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_lgmd_eta&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>膨張する見込み角からの LGMD looming 応答 —— 角速度に exp(−αθ) を掛ける。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>The multiplicative looming model::</p>
+<p>eta(t) = theta&#x27;(t - delay) * exp(-alpha * theta(t - delay))</p>
+<p>where *theta_signal* is the object&#x27;s full subtended angle over time, in</p>
+<p>radians. The product of the angular expansion rate and an exponentially</p>
+<p>decaying gain gives a response that peaks a fixed time before collision.</p>
+<p>theta_signal: the full subtended angle per sample, radians.</p>
+<p>dt_s:  the sample interval, seconds.</p>
+<p>alpha: the gain-decay constant.</p>
+<p>delay_s: a fixed neural delay, seconds.</p>
+<p>Returns a 1-D float64 array `<code style="color:#22d3bf">eta(t)</code>` of the same length.</p>
+<p>Ground truth: for an object of half-size `<code style="color:#22d3bf">l</code><code style="color:#22d3bf"> approaching at speed </code><code style="color:#22d3bf">|v|</code>`,</p>
+<p>`<code style="color:#22d3bf">eta</code><code style="color:#22d3bf"> peaks at a time-to-contact of </code><code style="color:#22d3bf">alpha*l/|v| - delay_s</code>` (Gabbiani et</p>
+<p>al. Eq. 5), where the subtended angle is exactly `<code style="color:#22d3bf">2*atan(1/alpha)</code>` (Eq. 6;</p>
+<p>24.0 degrees for `<code style="color:#22d3bf">alpha = 4.7</code>`) — both pinned in the tests.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite</p>
+<p>*theta_signal*, a signal over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*</p>
+<p>/ *alpha*, and a negative *delay_s*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">looming</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_tau_from_expansion">fly_tau_from_expansion</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

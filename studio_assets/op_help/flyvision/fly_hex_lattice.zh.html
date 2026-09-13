@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_hex_lattice — FLYVISION <code style="color:#22d3bf">lattice</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_lattice(radius=15, dphi_deg=4.63, az0_deg=0.0, el0_deg=0.0, geometry=&#x27;regular&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import flyvision; flyvision.fly_hex_lattice(radius=15, dphi_deg=4.63, az0_deg=0.0, el0_deg=0.0, geometry=&#x27;regular&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_lattice&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>Hexagonal ommatidial lattice: viewing directions of a compound eye.</p>
+<p>A hexagon of `<code style="color:#22d3bf">n = 3*radius*(radius+1)+1</code>` ommatidia on axial coordinates</p>
+<p>`<code style="color:#22d3bf">(u, v)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">-radius &lt;= u &lt;= radius</code>` and</p>
+<p>`<code style="color:#22d3bf">max(-radius, -radius-u) &lt;= v &lt;= min(radius, radius-u)</code>` (u outer, v inner),</p>
+<p>each given an azimuth, an elevation and a unit viewing direction in body</p>
+<p>coordinates (x forward, y left, z up; `<code style="color:#22d3bf">az = atan2(y, x)</code>` left positive,</p>
+<p>`<code style="color:#22d3bf">el = asin(z)</code>`).</p>
+<p>`<code style="color:#22d3bf">geometry=&quot;regular&quot;</code><code style="color:#22d3bf">:  </code><code style="color:#22d3bf">az = az0 + dphi*(v + u/2)</code>`,</p>
+<p>`<code style="color:#22d3bf">el = el0 + dphi*(sqrt(3)/2)*u</code>` — an isotropic hexagon.</p>
+<p>`<code style="color:#22d3bf">geometry=&quot;boxeye&quot;</code>`:   the pixel-grid distortion of the connectome-derived</p>
+<p>models, `<code style="color:#22d3bf">pixel (y, x) = (13*(u + v/2), 13*v)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">13 px = dphi</code>`, so</p>
+<p>`<code style="color:#22d3bf">az = az0 - v*dphi</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">el = el0 - (u + v/2)*dphi</code>`; the diagonal neighbour</p>
+<p>is 1.118x the axial spacing.</p>
+<p>radius:    the hexagon radius in ommatidia.</p>
+<p>dphi_deg:  the inter-ommatidial angle in degrees.</p>
+<p>az0_deg / el0_deg: the direction of the lattice centre (the optical axis).</p>
+<p>geometry:  one of :data:<code style="color:#22d3bf">GEOMETRIES</code>.</p>
+<p>Returns a dict ``{&quot;uv&quot;: (n,2) int, &quot;az_rad&quot;: (n,), &quot;el_rad&quot;: (n,),</p>
+<p>&quot;dirs&quot;: (n,3) unit vectors, &quot;dphi_rad&quot;: float, &quot;geometry&quot;: str}``.</p>
+<p>Ground truth: `<code style="color:#22d3bf">n == 3*radius*(radius+1)+1</code><code style="color:#22d3bf"> exactly, every </code><code style="color:#22d3bf">dirs</code>` row is a</p>
+<p>unit vector, and for `<code style="color:#22d3bf">&quot;boxeye&quot;</code>` the ratio of the diagonal to the axial</p>
+<p>nearest-neighbour angular spacing is 1.118 (both pinned in the tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: a *radius* outside </code><code style="color:#22d3bf">[1, MAX_LATTICE_RADIUS]</code>`, a</p>
+<p>non-positive *dphi_deg*, a non-real / non-finite / string / bool angle, and an</p>
+<p>unknown *geometry*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">lattice</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

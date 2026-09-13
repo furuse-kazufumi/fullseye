@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_sky_1f — FLYVISION <code style="color:#22d3bf">stimulus</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">image2d</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import flyvision; flyvision.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsflyvision.get(&quot;fly_sky_1f&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>帯状の 1/f 方位テクスチャを持つ合成等距円筒の空パノラマ。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>An equirectangular image (row = elevation +90 deg down to -90 deg, column =</p>
+<p>azimuth 0 to 360 deg). Luminance is a vertical backlight gradient</p>
+<p>(0.62 at the zenith to 0.95 at the nadir) modulated in azimuth by a 1/f</p>
+<p>texture confined to an elevation band with cosine edges::</p>
+<p>L = gradient(el) * (1 + amp * band(el) * noise(az))   clipped to [0, 1]</p>
+<p>where `<code style="color:#22d3bf">noise</code>` has unit std, is clipped to +-2, and drops azimuthal</p>
+<p>frequencies below 2 cycles per revolution; `<code style="color:#22d3bf">band</code>` is 1 inside</p>
+<p>`<code style="color:#22d3bf">[band_lo_deg, band_hi_deg]</code>` with raised-cosine edges of width *edge_deg*.</p>
+<p>width / height: the panorama size in pixels.</p>
+<p>band_lo_deg / band_hi_deg / edge_deg: the textured elevation band.</p>
+<p>amp:  the texture contrast on the backlight.</p>
+<p>seed: integer seed for the azimuth noise (no `<code style="color:#22d3bf">None</code>`).</p>
+<p>Returns a float64 `<code style="color:#22d3bf">(height, width)</code><code style="color:#22d3bf"> image in </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p>Ground truth: the standard deviation across azimuth of a row inside the band</p>
+<p>exceeds that of a row outside it by more than 5x, and the log-log slope of the</p>
+<p>azimuthal power spectrum of an in-band row is `<code style="color:#22d3bf">-2 +- 0.4</code>` (both pinned in the</p>
+<p>tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *width* / *height* outside their caps, a non-real /</p>
+<p>string / bool parameter, a negative *amp*, a non-positive *edge_deg*, and a</p>
+<p>band that does not satisfy `<code style="color:#22d3bf">-90 &lt;= band_lo_deg &lt; band_hi_deg &lt;= 90</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">stimulus</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
