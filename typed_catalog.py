@@ -719,6 +719,17 @@ def catalog():
     for n, m in opsinterferometry.OPSINTERFEROMETRY.items():
         if m["func"] is not None:
             ops.append((n, "interferometry", list(m["in"]), m["out"], m["func"]))
+    # ハエ視葉の視覚処理経路(opsflyvision 台帳)。**新しい型語彙を 1 つも作らない**
+    # 判断: 8 op の入出力は既存の table(六角格子・DSI の dict)/ image2d(空パノラマ・
+    # ピンホール画像)/ signal(個眼の 1-D)/ matrix((k,n) 応答行列)/ measurement に
+    # そのまま収まる。格子を食う 2 op は dict の鍵を実行時に検証するので、csi_design や
+    # fly_dsi の table を「格子」と取り違えても黙って通らず fail-closed する。個眼×画素の
+    # 重み行列は lru_cache で内部にだけ持ち、型プールへは出さない(出すと下流の 2-D op が
+    # 画像と取り違える = zscan を video に渡すと通るのと同じ事故)
+    import opsflyvision
+    for n, m in opsflyvision.OPSFLYVISION.items():
+        if m["func"] is not None:
+            ops.append((n, "flyvision", list(m["in"]), m["out"], m["func"]))
     # 欠陥 → CAD 面の逆写像(opscadmap 台帳)。**新しい型語彙を 1 つも作らない**
     # 判断: 4 op の入出力は既存の mesh / keypoints / points / labels / table /
     # indices にそのまま収まる。代わりにこの族が持ち込んだのは
