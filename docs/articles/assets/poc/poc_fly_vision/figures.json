@@ -1,0 +1,62 @@
+[
+ {
+  "file": "01_fly_vision_scene.png",
+  "name": "fly_vision_scene",
+  "caption": "",
+  "shape": [
+   675,
+   2038,
+   3
+  ]
+ },
+ {
+  "file": "02_fly_vision_rotation.png",
+  "name": "fly_vision_rotation",
+  "caption": "相関 +0.785(膜 LP つき +0.880、ラミナ段なし +0.504)。対向比は符号の一致度なので、尺度 k は最小二乗で合わせてある。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_fly_vision_forward.png",
+  "name": "fly_vision_forward",
+  "caption": "偏り: 全視野 -0.689 / 上半 el>0 -0.221 / el>2Δρ +0.000 / ドーム -0.612",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_fly_vision_looming_eta.png",
+  "name": "fly_vision_looming_eta",
+  "caption": "ピーク -0.157 s(予測 -0.157 s)、θ_peak 24.0°(予測 24.0°)。球の厳密な θ なら 24.5°。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_fly_vision_looming_tau.png",
+  "name": "fly_vision_looming_tau",
+  "caption": "球式は RMS 0.00001 s で真値に乗る。円板式は cos²(θ/2) 倍に縮む。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_fly_vision_dsi.png",
+  "name": "fly_vision_dsi",
+  "caption": "負の応答(逆向き)は fly_dsi が 0 に切る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]
