@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 616 of 618. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 616 of 620. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -346,6 +346,11 @@ This repository records *why* things are the way they are in **comments in the s
 - **L499** — ★Because angle is a periodic quantity, coloring it with colorize_depth makes 0 degrees and 179 degrees opposite colors. fullseye has no name for a cyclic LUT, but passing (cos2θ, sin2θ) to colorize_flow gives a double-angle cyclic LUT (see "tool gaps" (f) at the end).
 - **L693** — ★The name "coherence" exists, but it is the two-signal coherence of signal processing (a different thing).
 - **L724** — (e) ★Two members of the same family disagree in their input checks.
+
+## `examples/poc_fly_vision.py`
+
+- **L623** _(ja)_ — ★ラミナ段(DC 落とし)を省くと相関が落ちる、を固定する。落ちなくなったら fly_emd_response の側で DC が消えている(仕様変更)なので、この対照を見直す。
+- **L650** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。
 
 ## `examples/poc_focus_stacking.py`
 

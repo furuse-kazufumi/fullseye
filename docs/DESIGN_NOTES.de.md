@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 618. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 620. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -346,6 +346,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L499** — ★Da der Winkel eine periodische Größe ist, macht das Einfärben mit colorize_depth 0 Grad und 179 Grad zu entgegengesetzten Farben. fullseye hat keinen Namen für eine zyklische LUT, aber übergibt man (cos2θ, sin2θ) an colorize_flow, ergibt sich eine zyklische LUT des doppelten Winkels (siehe "Werkzeuglücken" (f) am Ende).
 - **L693** — ★Der Name "coherence" existiert, aber es ist die Zwei-Signal-Kohärenz aus der Signalverarbeitung (etwas anderes).
 - **L724** — (e) ★Zwei Vertreter derselben Familie weichen in ihren Eingabeprüfungen voneinander ab.
+
+## `examples/poc_fly_vision.py`
+
+- **L623** _(ja)_ — ★ラミナ段(DC 落とし)を省くと相関が落ちる、を固定する。落ちなくなったら fly_emd_response の側で DC が消えている(仕様変更)なので、この対照を見直す。
+- **L650** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。
 
 ## `examples/poc_focus_stacking.py`
 

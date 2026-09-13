@@ -21,7 +21,7 @@
 
 <!-- poc-index:start -->
 
-## PoC-Serie — 118 reale Aufgaben mit Grundwahrheit
+## PoC-Serie — 119 reale Aufgaben mit Grundwahrheit
 
 Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. Fehlerarten werden getrennt gezählt. Vollständige Liste: [examples/README.md](../examples/README.md).
 
@@ -45,13 +45,13 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 | detection (2) | [`poc_real_defect_floor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py) How Faint a Defect Can Still Be Found — Planting a Known Truth in a Real Background<br>[`poc_search_sweep_width`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) Sweep Width — One Number Measured from Aerial Images Decides Whether the Search Works |
 | forensics (2) | [`poc_forensics_roc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_forensics_roc.py) Forgery Detection as an ROC — Not the One Image Found, but Detection at a Fixed False-Positive Rate<br>[`poc_fresco_craquelure`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fresco_craquelure.py) Craquelure networks — of three indicators, only junction degree breaks under imaging conditions |
 | morphology (2) | [`poc_bilateral_asymmetry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bilateral_asymmetry.py) Measuring Bilateral Asymmetry — The Symmetry Plane Gets Dragged by the Deformation<br>[`poc_vessel_network`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vessel_network.py) Extracting a Vessel Network — Spurs, Overestimated Radii Near Branches, and a Fragile Exponent |
+| optics (2) | [`poc_compound_eye`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compound_eye.py) The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee<br>[`poc_fly_vision`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fly_vision.py) The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read |
 | perception_templates (2) | [`poc_bev_sensor_fusion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py) Fusing two sensors into a bird's-eye grid — a calibration that passes in pixels turns into metres at range<br>[`poc_safety_clearance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_safety_clearance.py) Human-machine clearance — swap the body for a point, and the hazard vanishes with it |
 | ranging (2) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) Ranging by Counting Photons — How Many for How Many Millimetres?<br>[`poc_leak_localization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leak_localization.py) Digging Where the Sound Says — A Clean Correlation Still Digs in the Wrong Place |
 | shape_descriptors (2) | [`poc_real_texture_invariance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_texture_invariance.py) Rotating Real Textures — Rotation Invariance Holds Only Where It Is Not Needed<br>[`poc_rotation_invariance_audit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rotation_invariance_audit.py) Which Quantities Really Survive a Rotation — Auditing Invariance on a Real Coin |
 | signal_processing (2) | [`poc_rail_corrugation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py) Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero<br>[`poc_web_roll_periodicity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_web_roll_periodicity.py) Naming the Damaged Roller from a Period — You Run Out of Evidence Before You Reach the Cliff |
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
-| optics (1) | [`poc_compound_eye`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compound_eye.py) The Fly's Compound Eye Is a Light-Field Sensor — Neural Superposition Pays Only Up to the Knee |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
 | super-resolution (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count |
@@ -66,7 +66,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **Gemessene Abdeckung**: evolvierbare Ops 901/901, typisiertes Ledger 1017/1029, Fassade `fullseye.<name>` 544/1118 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 1944 Notizen verweisen **1894** auf mindestens ein lauffähiges Beispiel (50 ohne), **1925** haben einen Nutzungsabschnitt ab 120 Zeichen (19 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1944.
+**Gemessener Inhalt**: von 1944 Notizen verweisen **1904** auf mindestens ein lauffähiges Beispiel (40 ohne), **1925** haben einen Nutzungsabschnitt ab 120 Zeichen (19 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1944.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|

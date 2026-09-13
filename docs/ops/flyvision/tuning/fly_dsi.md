@@ -4,7 +4,7 @@ dim: flyvision
 category: tuning
 in: signal
 out: table
-examples: []
+examples: [poc_fly_vision]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.11  # fullseye lib version this note was generated for
@@ -49,7 +49,7 @@ an all-zero *responses* (no direction tuning to report).
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_fly_vision](../../../../examples/poc_fly_vision.py) — `py -3.11 examples/poc_fly_vision.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

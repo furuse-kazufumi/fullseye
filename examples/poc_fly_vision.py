@@ -106,7 +106,7 @@ DOME_R_M = 20.0        # 「遠景を有限距離にすると」の空ドーム�
 # ---------------------------------------------------------------------------- #
 #  小道具                                                                        #
 # ---------------------------------------------------------------------------- #
-def lowpass(x, tau_s, dt_s):
+def lp_first_order(x, tau_s, dt_s):
     """一次低域(τ y' + y = x)を厳密な指数平滑で。"""
     x = np.asarray(x, float)
     alpha = 1.0 - np.exp(-dt_s / tau_s)
@@ -263,7 +263,7 @@ def lamina_highpass(signals, tau_s=TAU_HP, dt_s=DT):
     R の std 2.1e-2 対 平均 3.6e-3)。回転の相関は 0.50 に落ち、前進の偏りは 0.02 に
     埋もれる。ハエでは L1/L2 が帯域通過なのでこの項は最初から無い。
     """
-    return signals - np.apply_along_axis(lowpass, 0, signals, tau_s, dt_s)
+    return signals - np.apply_along_axis(lp_first_order, 0, signals, tau_s, dt_s)
 
 
 def emd_map(signals, pairs, n, highpass=True):
@@ -379,7 +379,7 @@ def chapter_rotation(lattice, dirs_eye, pairs, sky, sky_flat):
     """回りながら空を見ると、EMD → HS は自己回転の向きと波形を読む(速さの尺度は失う)。"""
     t = np.arange(int(round(T_END / DT))) * DT
     yaw_deg, rate = yaw_trajectory(t)
-    truth = lowpass(rate, TAU_TRUTH, DT)
+    truth = lp_first_order(rate, TAU_TRUTH, DT)
     n = lattice["dirs"].shape[0]
     still = [(0.0, 0.0, 0.0)] * t.size
     keep = t >= T_SKIP
@@ -391,7 +391,7 @@ def chapter_rotation(lattice, dirs_eye, pairs, sky, sky_flat):
     R_flat = emd_map(sig_flat, pairs, n)
     R_dc = emd_map(sig, pairs, n, highpass=False)          # ラミナ段を省いた対照
     est = hs_series(R, lattice, el_min_deg=0.0)
-    est_hs = lowpass(est, TAU_HS, DT)
+    est_hs = lp_first_order(est, TAU_HS, DT)
     est_flat = hs_series(R_flat, lattice, el_min_deg=0.0)
     est_dc = hs_series(R_dc, lattice, el_min_deg=0.0)
     c_band = corr(est[keep], truth[keep])
@@ -445,7 +445,7 @@ def chapter_forward(lattice, dirs_eye, pairs, sky):
     sig_d = see(scene_dome, lattice, dirs_eye, yaws, pos)
     R_d = emd_map(sig_d, pairs, n)
     out["upper_dome"] = hs_series(R_d, lattice, el_min_deg=el_clear)
-    bias = {k: float(lowpass(v, TAU_HS, DT)[keep].mean()) for k, v in out.items()}
+    bias = {k: float(lp_first_order(v, TAU_HS, DT)[keep].mean()) for k, v in out.items()}
     dome_flow = np.degrees(V_FWD / DOME_R_M)
     print("\n== 第3章: 前進の混入(%.1f m/s、眼の高さ %.2f m、回転なし)==" % (V_FWD, H_EYE))
     print("  全視野(el>−90)の読み出しの平均                  : %+.3f(床の前→後の流れが「右回り」に化ける)"
@@ -458,10 +458,10 @@ def chapter_forward(lattice, dirs_eye, pairs, sky):
           % (DOME_R_M, dome_flow, bias["upper_dome"]))
     figs.save_plot(
         "fly_vision_forward",
-        [("全視野(床が入る)", t, lowpass(out["full"], TAU_HS, DT)),
-         ("上半視野 el>0(空は無限遠)", t, lowpass(out["upper"], TAU_HS, DT)),
-         ("上半視野 el>2Δρ", t, lowpass(out["upper_clear"], TAU_HS, DT)),
-         ("上半視野 el>2Δρ・空を 20 m のドームに", t, lowpass(out["upper_dome"], TAU_HS, DT))],
+        [("全視野(床が入る)", t, lp_first_order(out["full"], TAU_HS, DT)),
+         ("上半視野 el>0(空は無限遠)", t, lp_first_order(out["upper"], TAU_HS, DT)),
+         ("上半視野 el>2Δρ", t, lp_first_order(out["upper_clear"], TAU_HS, DT)),
+         ("上半視野 el>2Δρ・空を 20 m のドームに", t, lp_first_order(out["upper_dome"], TAU_HS, DT))],
         xlabel="時間 [s]", ylabel="HS 読み出し(対向比、膜 LP 0.1 s)",
         title="前進: 床の流れは回転に化ける、上半視野に限れば消える",
         ylim=(-1.0, 0.45),                                        # 凡例の下に曲線を出す

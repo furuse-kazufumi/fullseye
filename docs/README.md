@@ -24,7 +24,7 @@
 
 <!-- poc-index:start -->
 
-## PoC シリーズ — 真値つきで実問題を解いた 118 本
+## PoC シリーズ — 真値つきで実問題を解いた 119 本
 
 どれも**真値を閉形式か合成で厳密に持ち、ゼロ点(何もしない場合)を必ず併記**します。壊れ方は 1 つの指標に畳まず別々に数え、原因は対照群で分けます。全文と実行手順は [examples/README.md](../examples/README.md)。
 
@@ -48,13 +48,13 @@
 | detection (2) | [`poc_real_defect_floor`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_defect_floor.py) 薄い欠陥はどこまで見えるか(実写の地に真値を仕込んで検出限界を測る)<br>[`poc_search_sweep_width`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) 捜索救難の走査幅(画像から測った 1 本の数字が計画を決める) |
 | 改ざん検出 (2) | [`poc_forensics_roc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_forensics_roc.py) 画像改ざん検出の ROC(保存ボタン 1 回で何が消えるか)<br>[`poc_fresco_craquelure`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fresco_craquelure.py) 絵画のひび割れ網(壊れるのは分岐次数だけ) |
 | 形態 (2) | [`poc_bilateral_asymmetry`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bilateral_asymmetry.py) 左右非対称性の定量(対称面そのものが変形に引きずられる)<br>[`poc_vessel_network`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_vessel_network.py) 血管網を抜いて分岐を測る(ヒゲ、分岐近傍の径の過大、指数の脆さ) |
+| optics (2) | [`poc_compound_eye`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compound_eye.py) ハエの複眼は光場センサ(神経重ね合わせで「重ねると頑健」を光学で測る)<br>[`poc_fly_vision`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_fly_vision.py) ハエの視覚前段を op の連鎖で(合成の空を回る/前進すると何が読めて何が読めないか) |
 | perception_templates (2) | [`poc_bev_sensor_fusion`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py) 鳥瞰図への多センサ融合(px で合格の校正が、遠くでは長さになる)<br>[`poc_safety_clearance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_safety_clearance.py) 人と機械の安全距離(「近い」を測る点を置き換えると危険が消える) |
 | 測距 (2) | [`poc_dtof_ranging`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dtof_ranging.py) 光子計数 dToF の距離精度(理論限界に乗るか、どこで崩れるか)<br>[`poc_leak_localization`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_leak_localization.py) 音で漏水を位置決めする(音速を誤ると掘る場所がずれる) |
 | shape_descriptors (2) | [`poc_real_texture_invariance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_texture_invariance.py) 実写テクスチャを回す(回転不変は等方な素材でだけ成り立つ)<br>[`poc_rotation_invariance_audit`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rotation_invariance_audit.py) 「回転しても同じ」と言える量はどれか(実写の硬貨を 72 角度で監査) |
 | signal_processing (2) | [`poc_rail_corrugation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py) レールの波状摩耗を弦で測る(伝達関数が 0 になる波長は 0 mm と出る)<br>[`poc_web_roll_periodicity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_web_roll_periodicity.py) 搬送ロールの傷を周期から名指しする(崖に着く前に何も言えなくなる) |
 | 振動 (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) 動画からのモード同定(f は当たる、ζ が先に嘘をつく)<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) モーション拡大の振幅精度(拡大は測るための道具か) |
 | 色 (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) 色恒常性(どの手法にも「効く条件」があり、勝ち続ける手法は無い) |
-| optics (1) | [`poc_compound_eye`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_compound_eye.py) ハエの複眼は光場センサ(神経重ね合わせで「重ねると頑健」を光学で測る) |
 | 正対化 (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) 書類スキャンの台形補正と影除去(良いところ取りは無い) |
 | 断層 (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) CT 再構成の忠実度(投影数を減らすとどこで壊れるか) |
 | 超解像 (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) 超解像は情報を増やすか(単一画像では増えない) |
@@ -69,7 +69,7 @@
 
 **網羅の実測**: 進化 op 901/901、型つき台帳 1017/1029、1 行ファサード `fullseye.<名前>` 544/1118。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 1944 本のうち、実行できる例が付いているのは **1894 本**(50 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1925 本**(19 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1944 本すべてにある。
+**ノートの中身の実測**: 1944 本のうち、実行できる例が付いているのは **1904 本**(40 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1925 本**(19 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1944 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|

@@ -635,6 +635,17 @@
    "run": "py -3.11 examples/poc_compound_eye.py"
   },
   {
+   "id": "poc_fly_vision",
+   "wing": "wing_imaging",
+   "added": "2026-09-13",
+   "numbers_source": "log",
+   "title_ja": "ハエの視覚前段を op の連鎖で ―― 合成の空を回る/前進すると、何が読めて何が読めないか",
+   "title_en": "The Fly's Visual Front End as a Chain of Operators — Turning and Walking Through a Synthetic Sky, What Can and Cannot Be Read",
+   "caption_ja": "六角格子 721 個眼 → 受容野 → ラミナの DC 落とし → Hassenstein-Reichardt 相関器 → HS 対向和を繋いだ 1 匹の眼で、1/f の帯つき空を回る図。自己回転の向きと波形は読める(真の角速度との相関 +0.785、膜 LP つき +0.880、符号一致 0.92)が、ラミナ段の DC 落としを省くと相関器は DC × 高域通過の揺れを出して +0.504 に落ちる。回転せずに前進すると全視野の読み出しは −0.689 の「回転」に化け、上半視野に限っても受容野が地平線をまたぐぶん −0.221 が漏れる(el>2Δρ で 0.000)。対向比は速さを落とすので、20 m 先のドームの 1.4°/s の流れも −0.612 に読む。LGMD η のピークは衝突の α·l/|v| 前(−0.1570 s、予測 −0.1567 s)で θ=23.97°(予測 24.02°、球の厳密な見込み角なら 4 次式の根で 24.6°)、τ 球式は d/|v| に RMS 1e-5 s で乗り、円板式の誤用は θ=60° で cos²(θ/2)=0.75 倍。12 方位の縞で DSI 0.798、好む向き 0°。",
+   "caption_en": "One eye assembled from a 721-ommatidium hexagonal lattice → acceptance function → lamina DC removal → Hassenstein-Reichardt correlators → HS opponent sum, turning under a 1/f banded sky. The direction and waveform of self-rotation are readable (correlation with the true yaw rate +0.785, +0.880 with a membrane low-pass, sign agreement 0.92), but skipping the lamina DC removal makes the correlator emit a DC × high-pass ripple and the correlation drops to +0.504. Walking forward without turning, the full-field readout turns into a −0.689 'rotation'; restricting to the upper field still leaks −0.221 because acceptance functions straddle the horizon (0.000 above el = 2Δρ). The opponent ratio discards speed, so a 1.4°/s flow from a dome 20 m away reads −0.612. The LGMD η peak comes α·l/|v| before collision (−0.1570 s, predicted −0.1567 s) at θ = 23.97° (predicted 24.02°; 24.6° for the exact subtense of a sphere, a quartic root), the sphere τ rides d/|v| with RMS 1e-5 s, and the disk formula misapplied to a sphere reads cos²(θ/2) = 0.75× at 60°. Twelve grating directions give DSI 0.798 with preferred direction 0°.",
+   "run": "py -3.11 examples/poc_fly_vision.py"
+  },
+  {
    "id": "poc_dtof_ranging",
    "wing": "wing_imaging",
    "added": "2026-09-06",
