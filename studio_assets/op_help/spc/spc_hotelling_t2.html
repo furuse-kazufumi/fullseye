@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_hotelling_t2 — SPC <code style="color:#22d3bf">multivariate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;spc_hotelling_t2&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Multivariate SPC by Hotelling&#x27;s T² with an F-distributed control limit.</p>
+<p>`<code style="color:#22d3bf">data</code><code style="color:#22d3bf"> is a 2-D array of shape </code><code style="color:#22d3bf">(m, p)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">m</code><code style="color:#22d3bf"> observations of </code><code style="color:#22d3bf">p</code>`</p>
+<p>correlated features. With the sample mean vector `<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> and covariance </code><code style="color:#22d3bf">S</code>`</p>
+<p>(unless passed in explicitly), each row&#x27;s statistic is::</p>
+<p>T^2_i = (x_i - mu)&#x27; S^-1 (x_i - mu)</p>
+<p>charted against the phase-II control limit::</p>
+<p>UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}</p>
+<p>at false-alarm rate `<code style="color:#22d3bf">alpha</code>` (default 0.0027, the 3-sigma-equivalent). Returns</p>
+<p>a dict with the per-row `<code style="color:#22d3bf">t2</code><code style="color:#22d3bf"> array, the </code><code style="color:#22d3bf">ucl</code>`, the integer indices</p>
+<p>`<code style="color:#22d3bf">out_of_control</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">in_control</code><code style="color:#22d3bf">. The mean row (</code><code style="color:#22d3bf">x == mu</code>`) has</p>
+<p>`<code style="color:#22d3bf">T^2 == 0</code>` (pinned in the tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / empty *data*, fewer observations than</p>
+<p>features plus one (covariance not invertible), `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">(0, 1)</code>`, a</p>
+<p>singular covariance, or non-finite / mislabelled input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">multivariate</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

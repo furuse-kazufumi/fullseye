@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_hotelling_t2 — SPC <code style="color:#22d3bf">multivariate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;spc_hotelling_t2&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Multivariate SPC by Hotelling&#x27;s T² with an F-distributed control limit.</p>
+<p>`<code style="color:#22d3bf">data</code><code style="color:#22d3bf"> is a 2-D array of shape </code><code style="color:#22d3bf">(m, p)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">m</code><code style="color:#22d3bf"> observations of </code><code style="color:#22d3bf">p</code>`</p>
+<p>correlated features. With the sample mean vector `<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> and covariance </code><code style="color:#22d3bf">S</code>`</p>
+<p>(unless passed in explicitly), each row&#x27;s statistic is::</p>
+<p>T^2_i = (x_i - mu)&#x27; S^-1 (x_i - mu)</p>
+<p>charted against the phase-II control limit::</p>
+<p>UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}</p>
+<p>at false-alarm rate `<code style="color:#22d3bf">alpha</code>` (default 0.0027, the 3-sigma-equivalent). Returns</p>
+<p>a dict with the per-row `<code style="color:#22d3bf">t2</code><code style="color:#22d3bf"> array, the </code><code style="color:#22d3bf">ucl</code>`, the integer indices</p>
+<p>`<code style="color:#22d3bf">out_of_control</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">in_control</code><code style="color:#22d3bf">. The mean row (</code><code style="color:#22d3bf">x == mu</code>`) has</p>
+<p>`<code style="color:#22d3bf">T^2 == 0</code>` (pinned in the tests).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / empty *data*, fewer observations than</p>
+<p>features plus one (covariance not invertible), `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">(0, 1)</code>`, a</p>
+<p>singular covariance, or non-finite / mislabelled input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">multivariate</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -14063,6 +14063,22 @@
   "2d/tb_fly_tau_from_expansion": {
    "fp": "e9a202014496",
    "ja": "光学的膨張からの衝突時間(τ マージン)—— 円板と球で式が 33% 違う。"
+  },
+  "spc/spc_xbar_r": {
+   "fp": "232365db9c7c",
+   "ja": "部分群計測からの Shewhart Xbar-R 管理図(ISO 8258 定数で管理限界と逸脱を出す)。"
+  },
+  "spc/spc_cusum": {
+   "fp": "815b50a0d9e5",
+   "ja": "個別計測の表形式 CUSUM 管理図 —— 小さな持続ドリフトを Shewhart より早く捕らえる。"
+  },
+  "spc/spc_capability": {
+   "fp": "b1fb992a47e7",
+   "ja": "計測と仕様限界からの工程能力指数 Cp / Cpk(中心なら Cpk = Cp)。"
+  },
+  "spc/spc_hotelling_t2": {
+   "fp": "9c8badfbf811",
+   "ja": "Hotelling の T² による多変量 SPC(F 分布由来の管理限界で相関する計測を同時に判定)。"
   }
  }
 }

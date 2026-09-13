@@ -35,9 +35,13 @@ Kane 1986(Cp,Cpk)/ Hotelling 1947(多変量 T²)。
 """
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import numpy as np
 
-import spc
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import spc  # noqa: E402
 
 
 def main() -> None:

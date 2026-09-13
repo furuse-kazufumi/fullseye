@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_capability — SPC <code style="color:#22d3bf">capability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_capability(signal, lsl, usl, sigma=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.spc_capability(signal, lsl, usl, sigma=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;spc_capability&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>計測と仕様限界からの工程能力指数 Cp / Cpk(中心なら Cpk = Cp)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>`<code style="color:#22d3bf">signal</code><code style="color:#22d3bf"> is a 1-D series of individual measurements; </code><code style="color:#22d3bf">lsl</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">usl</code>` are the</p>
+<p>lower / upper specification limits (`<code style="color:#22d3bf">lsl &lt; usl</code><code style="color:#22d3bf">). With the sample mean </code><code style="color:#22d3bf">mu</code>`</p>
+<p>and standard deviation `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> (sample std, </code><code style="color:#22d3bf">ddof=1</code>`, unless one is passed</p>
+<p>in explicitly)::</p>
+<p>Cp  = (USL - LSL) / (6 sigma)</p>
+<p>Cpk = min(USL - mu, mu - LSL) / (3 sigma)</p>
+<p>Returns a dict with `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cp</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cpk</code>` and the echoed spec</p>
+<p>limits and midpoint. `<code style="color:#22d3bf">Cpk &lt;= Cp</code>` always, with equality exactly when the</p>
+<p>process is centred (`<code style="color:#22d3bf">mu</code>` at the spec midpoint) — pinned in the tests.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty *signal*, fewer than two points</p>
+<p>(no spread to estimate), `<code style="color:#22d3bf">lsl &gt;= usl</code>`, non-finite limits, or a non-positive</p>
+<p>standard deviation (a constant series has no capability to report).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">capability</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

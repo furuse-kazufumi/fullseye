@@ -62,11 +62,11 @@
 
 ## 연산자 찾기
 
-**1,939개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **49개의 패밀리 가이드**가 있습니다. 차원별 입구:
+**1,943개의 연산자 노트**(호출 형식, 타입 계약, HALCON 대응, 참고문헌, 출처)와 **49개의 패밀리 가이드**가 있습니다. 차원별 입구:
 
-**실측 커버리지**: 진화 연산자 901/901, 타입 台帳 1017/1029, 한 줄 파사드 `fullseye.<이름>` 544/1118 — **파사드는 아직 절반**.
+**실측 커버리지**: 진화 연산자 901/901, 타입 台帳 1021/1033, 한 줄 파사드 `fullseye.<이름>` 544/1119 — **파사드는 아직 절반**.
 
-**내용 실측**: 1944건 중 실행 가능한 예제가 붙은 것은 **1904**건(40건은 없음), 사용법이 120자 이상인 것은 **1925**건(19건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 1944건 모두.
+**내용 실측**: 1948건 중 실행 가능한 예제가 붙은 것은 **1904**건(44건은 없음), 사용법이 120자 이상인 것은 **1929**건(19건은 한 줄 요약). 구조(호출 형식·타입·다음 연산자)는 1948건 모두.
 
 | 차원 | 연산자 수 | 입구 |
 |---|---:|---|
@@ -103,6 +103,7 @@
 | `rangedoppler` | 8 | [INDEX](ops/rangedoppler/INDEX.md) · [guide](ops/rangedoppler/guides/fmcw_range_doppler.md) |
 | `roughness` | 6 | [INDEX](ops/roughness/INDEX.md) · [guide](ops/roughness/guides/surface_roughness.md) |
 | `cadmap` | 4 | [INDEX](ops/cadmap/INDEX.md) |
+| `spc` | 4 | [INDEX](ops/spc/INDEX.md) |
 
 이름으로 찾으려면 `py -3.11 imgevolve.py ops --search edge`, 전체 대응표는 [OP_CATALOG.md](OP_CATALOG.md), 차원을 가로지르는 입구는 [ops/INDEX.md](ops/INDEX.md).
 
@@ -202,7 +203,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## 문서 지도 — 전 159건
 
-**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 1,939건과 패밀리 가이드 49건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
+**색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 1,943건과 패밀리 가이드 49건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
 **Getting started**(12)
 

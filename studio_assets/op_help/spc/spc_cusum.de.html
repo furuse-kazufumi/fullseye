@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_cusum — SPC <code style="color:#22d3bf">change</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_cusum(signal, target, k=0.5, h=5.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.spc_cusum(signal, target, k=0.5, h=5.0)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;spc_cusum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Tabular CUSUM chart for individual measurements.</p>
+<p>`<code style="color:#22d3bf">signal</code>` is a 1-D series of individual measurements. With a reference value</p>
+<p>`<code style="color:#22d3bf">target</code><code style="color:#22d3bf">, a slack </code><code style="color:#22d3bf">k</code>` (in the same units as the measurements — commonly half</p>
+<p>the shift you want to catch) and a decision interval `<code style="color:#22d3bf">h</code>`::</p>
+<p>C+_i = max(0, C+_{i-1} + (x_i - target) - k)</p>
+<p>C-_i = max(0, C-_{i-1} - (x_i - target) - k)</p>
+<p>starting from `<code style="color:#22d3bf">C+_0 = C-_0 = 0</code><code style="color:#22d3bf">, alarming at index </code><code style="color:#22d3bf">i</code><code style="color:#22d3bf"> when </code><code style="color:#22d3bf">C+_i &gt; h</code>` or</p>
+<p>`<code style="color:#22d3bf">C-_i &gt; h</code><code style="color:#22d3bf">. Returns a dict with the </code><code style="color:#22d3bf">c_plus</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">c_minus</code>` arrays, the</p>
+<p>integer `<code style="color:#22d3bf">alarms</code><code style="color:#22d3bf"> indices, the first alarm index (or </code><code style="color:#22d3bf">-1</code>`), and the echoed</p>
+<p>`<code style="color:#22d3bf">target</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">h</code>`.</p>
+<p>Ground truth (pinned in the tests): a series constant at `<code style="color:#22d3bf">target</code>` keeps</p>
+<p>`<code style="color:#22d3bf">C+ == C- == 0</code><code style="color:#22d3bf">; after a sustained upward step of size </code><code style="color:#22d3bf">d &gt; k</code>` the upper sum</p>
+<p>grows at exactly `<code style="color:#22d3bf">d - k</code>` per sample.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty *signal*, a non-finite</p>
+<p>*target* / *k* / *h*, a negative *k*, or a non-positive *h*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">change</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

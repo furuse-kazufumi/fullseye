@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_capability — SPC <code style="color:#22d3bf">capability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_capability(signal, lsl, usl, sigma=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.spc_capability(signal, lsl, usl, sigma=None)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;spc_capability&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Process capability indices Cp and Cpk from measurements and spec limits.</p>
+<p>`<code style="color:#22d3bf">signal</code><code style="color:#22d3bf"> is a 1-D series of individual measurements; </code><code style="color:#22d3bf">lsl</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">usl</code>` are the</p>
+<p>lower / upper specification limits (`<code style="color:#22d3bf">lsl &lt; usl</code><code style="color:#22d3bf">). With the sample mean </code><code style="color:#22d3bf">mu</code>`</p>
+<p>and standard deviation `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> (sample std, </code><code style="color:#22d3bf">ddof=1</code>`, unless one is passed</p>
+<p>in explicitly)::</p>
+<p>Cp  = (USL - LSL) / (6 sigma)</p>
+<p>Cpk = min(USL - mu, mu - LSL) / (3 sigma)</p>
+<p>Returns a dict with `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cp</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cpk</code>` and the echoed spec</p>
+<p>limits and midpoint. `<code style="color:#22d3bf">Cpk &lt;= Cp</code>` always, with equality exactly when the</p>
+<p>process is centred (`<code style="color:#22d3bf">mu</code>` at the spec midpoint) — pinned in the tests.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty *signal*, fewer than two points</p>
+<p>(no spread to estimate), `<code style="color:#22d3bf">lsl &gt;= usl</code>`, non-finite limits, or a non-positive</p>
+<p>standard deviation (a constant series has no capability to report).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">capability</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
