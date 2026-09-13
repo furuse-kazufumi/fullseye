@@ -97,6 +97,10 @@ With rotation readable, the estimate was fed into steering. Three conditions, tw
 
 *↑ Twelve trajectories per condition. The coloured disc at the centre is the target; grey discs are distractors (gear, lattice sphere). Left to right: fixation only / + optomotor / + efference copy. Arrivals: 7 / 6 / 6.*
 
+![Walking in closed loop](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/flyvis_loop2_000_noise0.30_00_om_efc.gif)
+
+*↑ The same thing, actually walking (3× speed, external camera), in the condition with the optic lobe estimate and efference copy in the steering loop. The legs look like a tripod gait, but as stated above **walking is kinematic here** — it is not walking by leg dynamics. Approaching the brown target is the hand-written fixation behaviour; the optic lobe only contributes a steering correction.*
+
 The result: **7 / 6 / 6**. With the disturbance tripled it became **7 / 4 / 6**, meaning feedback **without** efference copy actively hurt (the agent's own turns were mistaken for disturbance and cancelled).
 
 So a sensor with correlation 0.98 changed behaviour not at all on this task. Fixation dominated; the optomotor path was redundant.

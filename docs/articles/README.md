@@ -25,11 +25,11 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 43 本 —— 生成)
+## この下にあるもの(全 45 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(7) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(9) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
@@ -40,6 +40,8 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 | [`fullseye_poc_museum_qiita_ja.md`](fullseye_poc_museum_qiita_ja.md) | 紙面の計測館 ―― 真値を自分で仕込んで、画像計測の「壊れる場所」を先に知る |
 | [`qiita_3dgs_sim_native.md`](qiita_3dgs_sim_native.md) | 物理シミュレーションを、そのまま3D Gaussian Splattingにする ―― 「姿勢推定いらず」の3DGSを純PyTorchでRTX 5090に実装した話 |
 | [`qiita_blas_threads_ja.md`](qiita_blas_threads_ja.md) | 24 コアが 1 コアに負ける ―― 行列分解の速さを、仮説ではなく測定で決めるまで |
+| [`qiita_flybrain_closedloop_en.md`](qiita_flybrain_closedloop_en.md) | It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained ... |
+| [`qiita_flybrain_closedloop_ja.md`](qiita_flybrain_closedloop_ja.md) | 静止した検査に全部通ったモデルが、歩き出した瞬間に全滅した ―― ハエの視覚モデルを体に載せて測る |
 
 **展示(exhibits)**(28) —— 記事の「紙面の科学館」章の単一真実源。`<id>.ja.md` / `<id>.en.md` の 2 枚組で、本文は `tools/build_exhibits.py` が組み立てる。`wingpoc.*` だけは `poc_captions.json` + 各 PoC の図から `tools/gen_wingpoc_gallery.py` が生成する(PoC 展示館の記事も同時に出る)。
 
