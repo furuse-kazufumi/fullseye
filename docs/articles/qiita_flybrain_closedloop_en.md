@@ -34,9 +34,9 @@ public_id: 638f0b0aa7865e17c67c
        swap /private/ for /items/ in BOTH articles** — an unlisted URL does not open for others.
 -->
 
-![What the compound eye sees](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/eye_view_skyband.png)
+![Walking](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/flyvis_loop2_000_noise0.30_00_om_efc.gif)
 
-*↑ The world as seen by a fly's compound eye (721 ommatidia, 4.63° between optical axes). Left: brightness per ommatidium. Right: the salience of "something dark above the horizon". The sky carries a synthetic cloud band (elevation 20–60°) — whether that band exists changes the rotation estimate described below from 0.06 to 0.98. Figure labels are in Japanese; every number is repeated in the text.*
+*↑ The moving picture first. A physically simulated *Drosophila* walks towards the brown target guided by **nothing but the image on its compound eye** (3× speed, external camera). The steering correction comes from an optic lobe model whose wiring is fixed by the measured connectome. The legs look like a tripod gait, but **walking here is kinematic**, not leg dynamics — the table below states exactly what is real and what was written by hand before any numbers appear.*
 
 ## TL;DR
 
