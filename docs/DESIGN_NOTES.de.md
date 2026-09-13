@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 609 von 610. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 610. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -345,7 +345,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/poc_focus_stacking.py`
 
-- **L491** _(ja)_ — 1. 絵は効いている。★閾値は +3 dB —— 半導体の実画像は平滑金属(ダイ・リード)が 大半で、そこは単一フレームでも合焦しているため、全面が高周波な合成パターンほど AIF の伸びは大きくない(現場の正直な姿。旧・全面テクスチャ場では +14 dB 出た)。
+- **L491** — 1. Das Bild wirkt. ★Die Schwelle liegt bei +3 dB — reale Halbleiterbilder bestehen größtenteils aus glattem Metall (Die, Leads), das schon in einem einzelnen Bild scharf ist; daher fällt der AIF-Gewinn kleiner aus als bei einem synthetischen Muster, das überall hochfrequent ist (das ehrliche Bild aus der Praxis; das alte vollflächige Texturfeld ergab +14 dB).
 
 ## `examples/poc_forensics_roc.py`
 
@@ -1247,7 +1247,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L54** — ★Das einzige generierte Artefakt außerhalb von `tools/`. Genau deshalb wurde es übersehen — wer Generatoren unter `tools/*.py` sucht, findet dieses nie.
 - **L75** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L159** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L165** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `typed_catalog.py`
 

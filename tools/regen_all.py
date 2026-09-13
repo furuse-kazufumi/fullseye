@@ -131,6 +131,12 @@ NOT_A_GENERATOR = {
     "tools/i18n_status.py": "門(非日本語版に黙って混ざる日本語を数える)。",
     "tools/i18n_docs.py": ("門 + スタンプ(散文ドキュメントの訳が日本語から古びて"
                            "いないか)。--stamp が訳ファイルを書くが生成物ではない。"),
+    "tools/_dn_merge.py": ("i18n 作業用の一時ヘルパ。DESIGN_NOTES の訳バッチを人が書く"
+                           "訳の表 docs/i18n/design_notes.json に merge する(表は入力で"
+                           "あって生成物ではない)。生成物は gen_design_notes が作る。"),
+    "tools/_dn_verify_merge.py": ("i18n 作業用の一時ヘルパ。Agent が出した訳バッチの字種を"
+                                  "検査してから _dn_merge と同じ表へ merge する。同上で"
+                                  "生成物ではない。"),
 }
 
 #: 生成器を**ファイルの側から**列挙する。CHAIN と EXCLUDED は人が書く表なので、

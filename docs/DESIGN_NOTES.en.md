@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 609 of 610. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 610 of 610. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -345,7 +345,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_focus_stacking.py`
 
-- **L491** _(ja)_ — 1. 絵は効いている。★閾値は +3 dB —— 半導体の実画像は平滑金属(ダイ・リード)が 大半で、そこは単一フレームでも合焦しているため、全面が高周波な合成パターンほど AIF の伸びは大きくない(現場の正直な姿。旧・全面テクスチャ場では +14 dB 出た)。
+- **L491** — 1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).
 
 ## `examples/poc_forensics_roc.py`
 
@@ -1247,7 +1247,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L54** — ★The only generated artifact outside `tools/`. That is exactly why it was missed — as long as you look for generators under `tools/*.py`, this one is never found.
 - **L75** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
-- **L159** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
+- **L165** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `typed_catalog.py`
 

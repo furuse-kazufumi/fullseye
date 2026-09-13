@@ -4249,6 +4249,13 @@
    "tw": "4) ★各向異性 spacing # ------------------------------------------------------------------ #",
    "ko": "4) ★이방성 spacing # ------------------------------------------------------------------ #",
    "de": "4) ★Anisotropes spacing # ------------------------------------------------------------------ #"
+  },
+  "1. 絵は効いている。★閾値は +3 dB —— 半導体の実画像は平滑金属(ダイ・リード)が 大半で、そこは単一フレームでも合焦しているため、全面が高周波な合成パターンほど AIF の伸びは大きくない(現場の正直な姿。旧・全面テクスチャ場では +14 dB 出た)。": {
+   "en": "1. The picture works. ★The threshold is +3 dB — real semiconductor images are mostly smooth metal (die, leads), which is already in focus in a single frame, so the AIF gain is smaller than with a synthetic pattern that is high-frequency everywhere (the honest picture of the shop floor; the old full-texture field gave +14 dB).",
+   "zh": "1. 图是有效的。★阈值为 +3 dB——半导体实拍图像大部分是平滑金属(芯片、引线)，这些区域单帧就已合焦，因此 AIF 的提升不如全面高频的合成图案那么大(这是现场的真实情况；旧的全面纹理场景曾得到 +14 dB)。",
+   "tw": "1. 圖是有效的。★門檻為 +3 dB——半導體實拍影像大部分是平滑金屬(晶粒、引線)，這些區域單張就已合焦，因此 AIF 的提升不如全面高頻的合成圖樣那麼大(這是現場的真實情況；舊的全面紋理場景曾得到 +14 dB)。",
+   "ko": "1. 그림은 효과가 있다. ★임계값은 +3 dB — 반도체 실제 영상은 대부분 매끄러운 금속(다이, 리드)이고, 그 부분은 한 프레임만으로도 초점이 맞아 있으므로, 전면이 고주파인 합성 패턴만큼 AIF 향상이 크지 않다(현장의 정직한 모습. 이전의 전면 텍스처 장면에서는 +14 dB 가 나왔다).",
+   "de": "1. Das Bild wirkt. ★Die Schwelle liegt bei +3 dB — reale Halbleiterbilder bestehen größtenteils aus glattem Metall (Die, Leads), das schon in einem einzelnen Bild scharf ist; daher fällt der AIF-Gewinn kleiner aus als bei einem synthetischen Muster, das überall hochfrequent ist (das ehrliche Bild aus der Praxis; das alte vollflächige Texturfeld ergab +14 dB)."
   }
  }
 }
