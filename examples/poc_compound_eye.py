@@ -298,7 +298,10 @@ def main():
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
 
-    print("\nOK: 複眼=光場、神経重ね合わせの N-スケーリング(膝つき)、"
+    # ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を
+    #   要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、
+    #   台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
+    print("\nPASS: 複眼=光場、神経重ね合わせの N-スケーリング(膝つき)、"
           "アレイの距離画像、median の透視 —— すべて実測で確認。")
 
 
