@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-13 11:59:26
+- **最終更新**: 2026-09-13 12:15:42
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+f71934f39 examples2d: poc_compound_eye を台帳に登録(全スイートの赤 1 件)
+80c737296 auto: examples2d.py 編集前 (2026-09-13 12:06)
 147b56d5c CI 赤 3 件を直す(i18n 作業の後始末漏れ)
 c54f431ea auto: test_design_notes.py 編集前 (2026-09-13 11:51)
 c7597ed2b auto: regen_all.py 編集前 (2026-09-13 11:49)
@@ -18,34 +20,32 @@ c7597ed2b auto: regen_all.py 編集前 (2026-09-13 11:49)
 4c722d3c2 i18n: 入口7本を zh/tw/ko/de 化(28ファイル)+指紋・かな門緑
 c5a1e1436 auto: GENERAL_ALGORITHMS.ko.md 編集前 (2026-09-13 08:48)
 81d938301 PoC 追加: 複眼=光場センサ、神経重ね合わせの N-スケーリングを光学で実測
-98c005ad7 auto: poc_compound_eye.py 編集前 (2026-09-13 08:31)
-142d8fb3c auto: GENERAL_ALGORITHMS.de.md 編集前 (2026-09-13 08:28)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-11:54 docs/SESSION_SUMMARY.md
-11:52 .hypothesis/constants/05cca0ef551dde4e
-11:52 .hypothesis/constants/9e1459aef70b2087
-11:52 .hypothesis/constants/02b4dd99ee352fed
-11:52 .hypothesis/constants/f89799a2990ce658
-11:51 tests/test_design_notes.py
-11:51 docs/design_notes.json
-11:51 docs/DESIGN_NOTES.de.md
-11:51 docs/DESIGN_NOTES.ko.md
-11:51 docs/DESIGN_NOTES.tw.md
-11:51 docs/DESIGN_NOTES.zh.md
-11:51 docs/DESIGN_NOTES.en.md
-11:51 docs/DESIGN_NOTES.md
-11:51 docs/i18n/design_notes.json
-11:49 tools/regen_all.py
+12:10 .hypothesis/constants/81538e8dec87360f
+12:10 docs/design_notes.json
+12:10 docs/DESIGN_NOTES.de.md
+12:10 docs/DESIGN_NOTES.ko.md
+12:10 docs/DESIGN_NOTES.zh.md
+12:10 docs/DESIGN_NOTES.tw.md
+12:10 docs/DESIGN_NOTES.md
+12:10 docs/DESIGN_NOTES.en.md
+12:10 docs/OP_INDEX.json
+12:10 fullseye/SENSOR_PLAYBOOK.md
+12:10 docs/SENSOR_PLAYBOOK.md
+12:10 docs/EXAMPLES_3D.md
+12:10 docs/articles/README.md
+12:10 docs/README.de.md
+12:09 docs/README.ko.md
 ```
 
 ---
