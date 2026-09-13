@@ -402,7 +402,7 @@ py -3.11 examples/poc_print_registration.py
 
 Source: [examples/poc_print_registration.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_registration.py)
 
-Ops used (notes): [`frame_align`](https://furuse.work/ops/astrostack/align/frame_align.html) · [`inlier_ratio`](https://furuse.work/ops/3d/registration_metrics/inlier_ratio.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html)
+Ops used (notes): [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/fly_hex_lattice.html) · [`frame_align`](https://furuse.work/ops/astrostack/align/frame_align.html) · [`inlier_ratio`](https://furuse.work/ops/3d/registration_metrics/inlier_ratio.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html)
 
 ## 23. A Thermal Image Is Not a Temperature Image — Emissivity, Reflection, and an Uncertainty That Does Not Add
 

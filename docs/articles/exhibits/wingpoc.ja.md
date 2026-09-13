@@ -402,7 +402,7 @@ py -3.11 examples/poc_print_registration.py
 
 ソース: [examples/poc_print_registration.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_print_registration.py)
 
-使用 op(ノートへ): [`frame_align`](https://furuse.work/ops/astrostack/align/frame_align.html) · [`inlier_ratio`](https://furuse.work/ops/3d/registration_metrics/inlier_ratio.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html)
+使用 op(ノートへ): [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/fly_hex_lattice.html) · [`frame_align`](https://furuse.work/ops/astrostack/align/frame_align.html) · [`inlier_ratio`](https://furuse.work/ops/3d/registration_metrics/inlier_ratio.html) · [`peak_subbin`](https://furuse.work/ops/oned/signal/peak_subbin.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html)
 
 ## 23. 熱画像は温度画像ではない ―― 放射率・反射・透過を取り違えたまま「温度」と呼ぶ
 
