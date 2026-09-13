@@ -368,32 +368,44 @@ def chapter_rotation(lattice, dirs_eye, pairs, sky, sky_flat):
     truth = lowpass(rate, TAU_TRUTH, DT)
     n = lattice["dirs"].shape[0]
     still = [(0.0, 0.0, 0.0)] * t.size
-    est = {}
-    for tag, pano in (("帯あり", sky), ("帯なし(amp=0)", sky_flat)):
-        scene = {"sky": pano, "dome_r": None, "floor": None}
-        sig = see(scene, lattice, dirs_eye, np.deg2rad(yaw_deg), still)
-        R = emd_map(sig, pairs, n)
-        est[tag] = hs_series(R, lattice, el_min_deg=0.0)
     keep = t >= T_SKIP
-    c_band = corr(est["帯あり"][keep], truth[keep])
-    c_flat = corr(est["帯なし(amp=0)"][keep], truth[keep])
-    agree = float(np.mean(np.sign(est["帯あり"][keep]) == np.sign(truth[keep])))
-    gain = float(np.sum(est["帯あり"][keep] * truth[keep]) / max(np.sum(est["帯あり"][keep] ** 2), 1e-12))
+    sig = see({"sky": sky, "dome_r": None, "floor": None}, lattice, dirs_eye,
+              np.deg2rad(yaw_deg), still)
+    sig_flat = see({"sky": sky_flat, "dome_r": None, "floor": None}, lattice, dirs_eye,
+                   np.deg2rad(yaw_deg), still)
+    R = emd_map(sig, pairs, n)
+    R_flat = emd_map(sig_flat, pairs, n)
+    R_dc = emd_map(sig, pairs, n, highpass=False)          # ラミナ段を省いた対照
+    est = hs_series(R, lattice, el_min_deg=0.0)
+    est_hs = lowpass(est, TAU_HS, DT)
+    est_flat = hs_series(R_flat, lattice, el_min_deg=0.0)
+    est_dc = hs_series(R_dc, lattice, el_min_deg=0.0)
+    c_band = corr(est[keep], truth[keep])
+    c_hs = corr(est_hs[keep], truth[keep])
+    c_flat = corr(est_flat[keep], truth[keep])
+    c_dc = corr(est_dc[keep], truth[keep])
+    r_flat_max = float(np.abs(R_flat).max())
+    agree = float(np.mean(np.sign(est[keep]) == np.sign(truth[keep])))
+    gain = float(np.sum(est_hs[keep] * truth[keep]) / max(np.sum(est_hs[keep] ** 2), 1e-12))
     print("\n== 第2章: 回転を読む(ヨー = %s Hz の正弦 4 本、最大 %.0f°/s)=="
           % ("/".join("%.1f" % f for f in FREQS_HZ), np.abs(rate).max()))
-    print("  HS 読み出し vs 真の角速度(LP %.2f s)の相関 : %+.3f" % (TAU_TRUTH, c_band))
-    print("  符号の一致率                                : %.3f" % agree)
-    print("  帯なし(amp=0)の対照: 応答の最大絶対値 %.2e → 相関 %+.3f"
-          % (np.abs(est["帯なし(amp=0)"]).max(), c_flat))
-    print("  最小二乗の尺度 k(真値 ≈ k × 読み出し)          : %.1f °/s(対向比は速さを落とす)" % gain)
+    print("  HS 読み出し vs 真の角速度(LP %.2f s)の相関      : %+.3f" % (TAU_TRUTH, c_band))
+    print("  同、読み出しに HS の膜 LP %.2f s を掛けて         : %+.3f" % (TAU_HS, c_hs))
+    print("  符号の一致率                                     : %.3f" % agree)
+    print("  帯なし(amp=0)の対照: EMD 応答の最大絶対値 %.1e → 読み出し %.1e、相関 %+.3f"
+          % (r_flat_max, float(np.abs(est_flat).max()), c_flat))
+    print("  ★ラミナ段(DC 落とし)を省くと相関                : %+.3f(DC × 高域通過の揺れが平均を埋める)" % c_dc)
+    print("  最小二乗の尺度 k(真値 ≈ k × 読み出し)              : %.1f °/s(対向比は速さを落とす)" % gain)
     figs.save_plot(
         "fly_vision_rotation",
         [("真のヨー角速度(LP 0.1 s)[°/s]", t, truth),
-         ("HS 読み出し × k", t, est["帯あり"] * gain)],
+         ("HS 読み出し(膜 LP 0.1 s)× k", t, est_hs * gain),
+         ("ラミナ段なし × k", t, est_dc * gain)],
         xlabel="時間 [s]", ylabel="角速度 [°/s]",
         title="回転: EMD → HS の読み出しは向きと波形を追う",
-        caption="相関 %+.3f。対向比は符号の一致度なので、尺度 k は最小二乗で合わせてある。" % c_band)
-    return c_band, c_flat, agree, gain
+        caption="相関 %+.3f(膜 LP つき %+.3f、ラミナ段なし %+.3f)。対向比は符号の一致度なので、"
+                "尺度 k は最小二乗で合わせてある。" % (c_band, c_hs, c_dc))
+    return c_band, c_hs, c_flat, c_dc, r_flat_max, agree, gain
 
 
 # ---------------------------------------------------------------------------- #
