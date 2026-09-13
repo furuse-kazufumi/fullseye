@@ -1093,7 +1093,74 @@ def _b_watermark(with_bits):
     return build
 
 
+# --------------------------------------------------------------------------- #
+# flyvision(ハエ視葉)の消費 6 op。どれも「形の噛み合う入力」が要る:
+#   * fly_hex_resample / fly_hs_readout — 格子(table)を引数から作らないと、
+#     プールの table には csi_design / fly_dsi の dict も混ざっており、格子を
+#     取り違えて fail-closed(CONTRACT)になる。列数が格子と合う入力を組む。
+#   * fly_dsi / fly_hs_readout — 必須引数(angles_deg / n_pref)に名前ヒントが
+#     無いので、builder が無いと **一度も実行されない**(_bind_args が None)。
+#   * fly_emd_response — signal プールは長さがまちまち(256 の正弦、格子サイズの
+#     resample 出力…)で、2 本を一様に引くと長さ不一致で CONTRACT。同長の
+#     位相ずれ正弦を組んで実 HR 経路を通す。
+#   * fly_lgmd_eta / fly_tau_from_expansion — 接近物体の**単調膨張角**を組む。
+#     素の signal(正弦)は theta'<=0 の区間で fly_tau が NaN を返し NONFINITE に
+#     数えられるので、膨張だけの角度にして意味のある経路を通す。
+def _b_fly_resample(pool, rng):
+    fv = __import__("flyvision")
+    lat = fv.fly_hex_lattice(radius=4, dphi_deg=4.63)
+    img = rng.random((64, 64))
+    return (img, lat), {"fov_deg": 120.0, "drho_deg": 8.23}
+
+
+def _b_fly_emd(pool, rng):
+    dt, tau = 0.001, 0.05
+    f = 1.0 / (2.0 * np.pi * tau)
+    t = np.arange(256) * dt
+    a = np.cos(2.0 * np.pi * f * t)
+    b = np.cos(2.0 * np.pi * f * t - 0.6)
+    return (a, b), {"tau_s": tau, "dt_s": dt}
+
+
+def _b_fly_lgmd(pool, rng):
+    dt = 0.002
+    t = np.arange(0.0, 0.98, dt)
+    ttc = 1.0 - t
+    theta = 2.0 * np.arctan(0.05 / ttc)
+    return (theta, dt), {}
+
+
+def _b_fly_tau(pool, rng):
+    dt = 0.002
+    t = np.arange(0.0, 0.95, dt)
+    d = 1.0 - t
+    theta = 2.0 * np.arcsin(np.clip(0.05 / d, 0.0, 0.999))
+    return (theta, dt), {"shape": "sphere"}
+
+
+def _b_fly_hs(pool, rng):
+    fv = __import__("flyvision")
+    lat = fv.fly_hex_lattice(radius=3, dphi_deg=4.63)
+    n = lat["dirs"].shape[0]
+    resp = np.abs(rng.standard_normal((4, n)))
+    return (resp, lat, 2), {"el_min_deg": 0.0}
+
+
+def _b_fly_dsi(pool, rng):
+    nd = 8
+    ang = np.linspace(0.0, 360.0, nd, endpoint=False)
+    resp = np.abs(rng.standard_normal(nd))
+    return (resp, ang), {}
+
+
 OP_ARG_BUILDERS = {
+    # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
+    "fly_hex_resample": _b_fly_resample,
+    "fly_emd_response": _b_fly_emd,
+    "fly_lgmd_eta": _b_fly_lgmd,
+    "fly_tau_from_expansion": _b_fly_tau,
+    "fly_hs_readout": _b_fly_hs,
+    "fly_dsi": _b_fly_dsi,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #
     "text_box": _b_draw(["image2d", "text"]),
     "leader_line": _b_leader_line,
