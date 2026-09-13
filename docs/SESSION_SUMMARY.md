@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-13 21:36:30
+- **最終更新**: 2026-09-14 00:19:49
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-2e99565d2 展示館の目次と博物館記事を再生成(poc_fly_vision の展示 + 印刷 PoC の op 参照)
-952e60260 poc_print_registration: 'lattice' の穴の固定に複眼の fly_hex_lattice を名指しで例外(CI の赤 1 件)
-6f4ece12f auto: poc_print_registration.py 編集前 (2026-09-13 20:15)
-6027fb56e auto: poc_print_registration.py 編集前 (2026-09-13 20:15)
-f420c29f4 auto: poc_captions.json 編集前 (2026-09-13 19:31)
-aa5569f46 auto: COLLECTION_SIZES.json 編集前 (2026-09-13 19:30)
-a6890f6fd auto: COLLECTION_SIZES.json 編集前 (2026-09-13 19:30)
-9043e47aa auto: examples2d.py 編集前 (2026-09-13 19:30)
-6c3250d97 auto: poc_fly_vision.py 編集前 (2026-09-13 19:30)
-068d51680 auto: poc_fly_vision.py 編集前 (2026-09-13 19:30)
+19c070c19 spc: 統計的工程管理の op 族 4 本(llmesh の SPC を Fullseye へ移植)
+5dad0d291 auto: poc_spc.py 編集前 (2026-09-13 22:55)
+5b5ff382d auto: chain_fuzz.py 編集前 (2026-09-13 22:53)
+e3594a28f auto: chain_fuzz.py 編集前 (2026-09-13 22:53)
+b42d6637b auto: api.py 編集前 (2026-09-13 22:51)
+cf8329ca1 auto: api.py 編集前 (2026-09-13 22:51)
+04d8bdaaa auto: opdocs.py 編集前 (2026-09-13 22:51)
+6060f764e auto: opassist.py 編集前 (2026-09-13 22:51)
+81390567f auto: pyproject.toml 編集前 (2026-09-13 22:51)
+bce373d86 auto: typed_catalog.py 編集前 (2026-09-13 22:50)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ M docs/SESSION_SUMMARY.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:16 docs/SESSION_SUMMARY.md
-20:33 .pytest_cache/v/cache/nodeids
-20:33 .pytest_cache/v/cache/lastfailed
-20:26 docs/articles/fullseye_poc_museum_qiita_en.md
-20:26 docs/articles/exhibits/wingpoc.en.md
-20:26 docs/articles/fullseye_poc_museum_qiita_ja.md
-20:26 docs/articles/exhibits/wingpoc.ja.md
-20:15 docs/design_notes.json
-20:15 docs/DESIGN_NOTES.de.md
-20:15 docs/DESIGN_NOTES.ko.md
-20:15 docs/DESIGN_NOTES.tw.md
-20:15 docs/DESIGN_NOTES.zh.md
-20:15 docs/DESIGN_NOTES.md
-20:15 docs/DESIGN_NOTES.en.md
-20:15 docs/OP_INDEX.json
+00:09 docs/SESSION_SUMMARY.md
+23:27 .pytest_cache/v/cache/nodeids
+23:27 .pytest_cache/v/cache/lastfailed
+23:26 studio_assets/op_help/fig/zoom_region.png
+23:26 studio_assets/op_help/fig/zoom_image_size.png
+23:26 studio_assets/op_help/fig/zoom_image_factor.png
+23:26 studio_assets/op_help/fig/zero_crossing_sub_pix.png
+23:26 studio_assets/op_help/fig/zero_crossing.png
+23:26 studio_assets/op_help/fig/xwt_visushrink.png
+23:26 studio_assets/op_help/fig/xwt_subband_tile.png
+23:26 studio_assets/op_help/fig/xwt_packet_entropy.png
+23:26 studio_assets/op_help/fig/xwt_mra_component.png
+23:26 studio_assets/op_help/fig/xwt_lf_reconstruct.png
+23:26 studio_assets/op_help/fig/xwt_hf_reconstruct.png
+23:26 studio_assets/op_help/fig/xwt_firm_denoise.png
 ```
 
 ---
