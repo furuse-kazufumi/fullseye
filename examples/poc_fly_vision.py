@@ -439,7 +439,8 @@ def chapter_forward(lattice, dirs_eye, pairs, sky):
     print("  上半視野だけ(el>0、空は無限遠)                  : %+.3f(受容野が地平線をまたぐぶん床が漏れる)"
           % bias["upper"])
     print("  上半視野・受容野の裾まで上(el>2Δρ=%.1f°)         : %+.3f" % (el_clear, bias["upper_clear"]))
-    print("  同・空を %.0f m のドームに(流れ ≤ %.1f°/s)         : %+.3f(対向比は速さを落とすので小さな流れでも読める)"
+    print("  同・空を %.0f m のドームに(流れ ≤ %.1f°/s)         : %+.3f(対向比は速さを落とす: "
+          "1°/s 台の流れが床の 100°/s 台と同じ大きさに読める)"
           % (DOME_R_M, dome_flow, bias["upper_dome"]))
     figs.save_plot(
         "fly_vision_forward",
