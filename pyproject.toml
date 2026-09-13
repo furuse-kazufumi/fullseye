@@ -172,7 +172,7 @@ py-modules = [
   # flyvision: ハエ視葉の視覚処理経路(六角格子・EMD 運動・LGMD looming・水平系読み出し)。
   # 設計側(optics/visiondesign)と処理側(sceneflow)はあったが、複眼の視覚処理経路が
   # 無かった(2026-09-13 追加)。opsflyvision がレジストリ台帳。
-  "flyvision", "opsflyvision", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem",
+  "flyvision", "opsflyvision", "spc", "opsspc", "cadmap", "opscadmap", "volcolor", "opsvolcolor", "tomography", "opstomography", "palette", "annotate", "opsannotate", "reprconv", "opsreprconv", "imgmetrics", "opsimgmetrics", "colortransport", "opscolortransport", "imgforensics", "opsimgforensics", "astrostack", "opsastrostack", "meshres", "videostream", "opsvideostream", "annotate3d", "contours_xld", "metriccontract", "fssystem",
   "recipes", "measure", "studio", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
