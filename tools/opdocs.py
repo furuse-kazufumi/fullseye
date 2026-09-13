@@ -81,6 +81,8 @@ LEDGER_DIMS = {
                   "module": "acoustics", "family": "acoustic_condition_monitoring"},
     "interferometry": {"registry": "opsinterferometry", "table": "OPSINTERFEROMETRY",
                        "module": "interferometry", "family": "coherence_scanning"},
+    "flyvision": {"registry": "opsflyvision", "table": "OPSFLYVISION",
+                  "module": "flyvision", "family": "fly_vision"},
     # --- 2026-09-02 に登録した族。ここに載っていなかったあいだ、これらの op は
     #     docs/ops に 1 枚もノートを持っていなかった(RAG コーパスから丸ごと
     #     欠けていた)。ガイドは未執筆で、リンクは実在するときだけ張られる。
