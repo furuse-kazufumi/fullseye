@@ -7,6 +7,7 @@ tags:
   - シミュレーション
   - MuJoCo
 public_private: true
+public_id: 638f0b0aa7865e17c67c
 ---
 
 # It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained Fly Visual Model on a Body
