@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 609 von 609. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 609 von 610. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -342,6 +342,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L499** — ★Da der Winkel eine periodische Größe ist, macht das Einfärben mit colorize_depth 0 Grad und 179 Grad zu entgegengesetzten Farben. fullseye hat keinen Namen für eine zyklische LUT, aber übergibt man (cos2θ, sin2θ) an colorize_flow, ergibt sich eine zyklische LUT des doppelten Winkels (siehe "Werkzeuglücken" (f) am Ende).
 - **L693** — ★Der Name "coherence" existiert, aber es ist die Zwei-Signal-Kohärenz aus der Signalverarbeitung (etwas anderes).
 - **L724** — (e) ★Zwei Vertreter derselben Familie weichen in ihren Eingabeprüfungen voneinander ab.
+
+## `examples/poc_focus_stacking.py`
+
+- **L491** _(ja)_ — 1. 絵は効いている。★閾値は +3 dB —— 半導体の実画像は平滑金属(ダイ・リード)が 大半で、そこは単一フレームでも合焦しているため、全面が高周波な合成パターンほど AIF の伸びは大きくない(現場の正直な姿。旧・全面テクスチャ場では +14 dB 出た)。
 
 ## `examples/poc_forensics_roc.py`
 

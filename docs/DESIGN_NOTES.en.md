@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 609 of 609. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 609 of 610. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -342,6 +342,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L499** — ★Because angle is a periodic quantity, coloring it with colorize_depth makes 0 degrees and 179 degrees opposite colors. fullseye has no name for a cyclic LUT, but passing (cos2θ, sin2θ) to colorize_flow gives a double-angle cyclic LUT (see "tool gaps" (f) at the end).
 - **L693** — ★The name "coherence" exists, but it is the two-signal coherence of signal processing (a different thing).
 - **L724** — (e) ★Two members of the same family disagree in their input checks.
+
+## `examples/poc_focus_stacking.py`
+
+- **L491** _(ja)_ — 1. 絵は効いている。★閾値は +3 dB —— 半導体の実画像は平滑金属(ダイ・リード)が 大半で、そこは単一フレームでも合焦しているため、全面が高周波な合成パターンほど AIF の伸びは大きくない(現場の正直な姿。旧・全面テクスチャ場では +14 dB 出た)。
 
 ## `examples/poc_forensics_roc.py`
 
