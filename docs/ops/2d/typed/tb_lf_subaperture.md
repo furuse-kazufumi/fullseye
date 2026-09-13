@@ -64,6 +64,7 @@ tb_lf_subaperture 0.50 0.50
 
 次の例は元の台帳 op `lf_subaperture` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
+- [poc_compound_eye](../../../../examples/poc_compound_eye.py) — `py -3.11 examples/poc_compound_eye.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
 

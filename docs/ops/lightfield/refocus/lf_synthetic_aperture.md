@@ -4,7 +4,7 @@ dim: lightfield
 category: refocus
 in: lightfield
 out: image2d
-examples: [lightfield_depth]
+examples: [lightfield_depth, poc_compound_eye]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.11  # fullseye lib version this note was generated for
@@ -63,6 +63,7 @@ a non-finite or over-large *slope*, unknown *reduce* / *interp* / *edge*.
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [lightfield_depth](../../../../examples/lightfield_depth.py) — `py -3.11 examples/lightfield_depth.py`
+- [poc_compound_eye](../../../../examples/poc_compound_eye.py) — `py -3.11 examples/poc_compound_eye.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

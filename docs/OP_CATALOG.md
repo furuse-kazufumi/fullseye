@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(200 例)
+### 2-D 画像/信号/幾何(201 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -100,6 +100,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **ライトフィールドの深度(81 視点は 2 眼に勝てるのか)** — 既知の深度から合成ライトフィールドを作り、EPI 傾き・焦点度・2 眼を並べる。定数ゼロ点に 22 倍だが、**2 眼には既定設定だと 3.0 倍負ける**(cubic 補間にして初めて 1.6 倍勝つ)。圧勝するのは鏡面ハイライトの場面だけ、という切り分けまで数字で置く。 `py -3.11 examples/poc_lightfield_depth.py`
 - **深度合成(絵は圧勝、深度はゼロ点に負ける場所がある)** — 既知の深度地図から焦点位置を変えた画像列を作り、全焦点画像と深度を**別々に**評価する。絵は +14.9 dB の圧勝。だが深度は段差帯でゼロ点比 1.10(引き分け)、★**無テクスチャでは 0.13(8 倍負け)**。しかも突出度の信頼度は嘘の側が高く出る(0.9923 対 0.9630)—— 峰の絶対値で棄却すると RMS が 1.505 → 0.878 mm。 `py -3.11 examples/poc_focus_stacking.py`
 - **実写のステレオ対で視差と距離を測る(この博物館で初めての実データ)** — Middlebury 2014 motorcycle(1/4 縮小、真値視差つき)を 240x741 に切り出して通す。★真値の穴は NaN ではなく +inf(15,927 個)で、np.nanmedian は中央視差を 44.97 px と答える(正しくは 42.55 px)―― isfinite で判定する fill_disparity / apply_cmap は正しく穴として扱った。★既定 max_disp=16 は bad2 95.06 %、崖は 48(46.79 %)と 64(26.75 %)の間、80 では 27.11 % と戻る。★ゼロ点 94.04 % に対し SGM 15.81 % / NCC 21.47 % / SAD 26.75 % / census 48.62 %。census は 64 bit パックで窓が 7 止まり(3/5/7 = 75.27/48.62/35.44 %)、block は 21 まで広げて 23.59 %。★★disparity_confidence の下位 4 割を捨てると bad2 26.75 → 6.80 %(残り 60.6 %)。★★depth_from_disparity に doffs が無く、実写の 31.086 px を無視すると距離が 1.519〜5.243 倍にばらけ、最良の単一スケールでも残差 958.3 mm RMS(レンジの 33.2 %)、遠 +1676 / 近 -926 mm と反り返る ―― この PoC で引数を追加(最大差 0 mm)。★実写の視差レンジでの L* 折返しは jet 3 / turbo 1 / viridis 0 だが、段の均一さは jet 1.73 が turbo 2.57・viridis 3.26 より良い(「悪い配色」とひとまとめにすると何が悪いのか言い損なう)。★uint8 をそのまま渡しても落ちないが float と同じ数字は返らない(26.74 対 26.75 %)。 `py -3.11 examples/poc_real_stereo_depth.py`
+
+**optics**
+- **ハエの複眼は光場センサ(神経重ね合わせで「重ねると頑健」を光学で測る)** — 個眼アレイをプレノプティック系として設計し、同一点を N 個眼で重ねたときのSNR 利得を測る。★小開口では √N がほぼ厳密(N=5 で 2.25 対 √5=2.24)、大開口では補間誤差が平均化されず**飽和する**(N=49 で 5.33 対 7.00)—— ハエの ~6 重ねは膝の手前。アレイでこそ距離画像が出ること、少数派の遮蔽者は median 重ねなら貫けることも実測する。 `py -3.11 examples/poc_compound_eye.py`
+- **検査セルの光学デジタルツインから学習画像を真値つきで生成** — 視野25.875mmと深度294.000mmが閉じた式に厳密一致、透過照明のシルエット19552画素=πr²と1%以内で部品は厳密に0。色を1画素も変えない凹凸だけの欠陥が拡散+3.41%対低角+93.46%=27倍、ラベルは照明によらず273画素。個体別bbox 4個の合計が合成マスクと一致。絞るほど高周波が残る。18,994枚/時。 `py -3.11 examples/virtual_machine_vision.py`
+- **ガラスと鏡面の光学を閉じた式で解く** — 垂直入射0.0422=((n1-n2)/(n1+n2))²、Brewster 56.6°でp偏光が1e-15未満、臨界角超は厳密1.0、平板0.9191=2n/(n²+1)、Beer-Lambertがexp(-1)、Snell残差1e-12未満で全反射は光線ごと、プリズム最小偏角F/d/C=39.14/38.65/38.43°。金の色(1.00,0.67,0.38)はn,kから出る。 `py -3.11 examples/glass_and_mirror_optics.py`
 
 **separation**
 - **偏光による鏡面分離(分けた「拡散」は本当に拡散か)** — 拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。返る拡散は常に真値より **R_p·E** だけ高いという閉形式の偏りを実測 (差 3.5e-18)。ブリュースター角が最良なのは R_p が消えるからで、**最適角は評価指標で動く**。飽和だけが例外を出さずに壊す。 `py -3.11 examples/poc_polarization_specular.py`
@@ -246,10 +251,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **appearance**
 - **構造色を波長から作る(回折・薄膜干渉・異方性)** — 色を塗らず分光反射率→CIE等色関数→線形sRGB。等色関数ȳピーク554nm、反射率1が白(1,1,1)、膜厚0が基板フレネルに厳密一致、λ/4が解析値0.077113、CD 1.6µm・Δsin0.35の1次が560nm、異方性ローブの伸び39:5。同条件でBD 0.32µmは可視域に届かず総量が1/3以下。 `py -3.11 examples/appearance_structural_colour.py`
 - **加工された金属表面と素材(粗い拡散・上塗り・布・木・濡れ・腐食)** — Oren-Nayarがσ=0でLambertと厳密一致し端は1.35倍、上塗りは下地の寄与を単調に減らす、布の縁光沢は鏡面と逆(正面1e-6/縁0.09)、濡れは0.50→0.357、腐食面積0.30→実測0.2995、すりガラスは直進+拡散=平板の透過率0.923077でエネルギー保存。接線場は同心円が半径と直交。 `py -3.11 examples/machined_metal_and_materials.py`
-
-**optics**
-- **検査セルの光学デジタルツインから学習画像を真値つきで生成** — 視野25.875mmと深度294.000mmが閉じた式に厳密一致、透過照明のシルエット19552画素=πr²と1%以内で部品は厳密に0。色を1画素も変えない凹凸だけの欠陥が拡散+3.41%対低角+93.46%=27倍、ラベルは照明によらず273画素。個体別bbox 4個の合計が合成マスクと一致。絞るほど高周波が残る。18,994枚/時。 `py -3.11 examples/virtual_machine_vision.py`
-- **ガラスと鏡面の光学を閉じた式で解く** — 垂直入射0.0422=((n1-n2)/(n1+n2))²、Brewster 56.6°でp偏光が1e-15未満、臨界角超は厳密1.0、平板0.9191=2n/(n²+1)、Beer-Lambertがexp(-1)、Snell残差1e-12未満で全反射は光線ごと、プリズム最小偏角F/d/C=39.14/38.65/38.43°。金の色(1.00,0.67,0.38)はn,kから出る。 `py -3.11 examples/glass_and_mirror_optics.py`
 
 **tomography_3d**
 - **CT で 1 本の試料をスキャンし、寸法 mm と欠陥の数まで出す** — 楕円ファントムの閉形式サイノグラム→FBP 再構成→外径測定→空洞計数。真値(30.00 mm / 1 個)との誤差を印字し断定する。 `py -3.11 examples/ct_reconstruction.py`
@@ -1550,7 +1551,7 @@ _計 899 ops / 48 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
+- `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`

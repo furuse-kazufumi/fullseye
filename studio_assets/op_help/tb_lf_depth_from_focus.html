@@ -48,6 +48,7 @@ tb_lf_depth_from_focus 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:i
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">lf_depth_from_focus</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_compound_eye">poc_compound_eye</a> — <code style="color:#22d3bf">py -3.11 examples/poc_compound_eye.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_lightfield_depth">poc_lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_lightfield_depth.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
