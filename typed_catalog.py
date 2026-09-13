@@ -605,7 +605,7 @@ def _registry_adapters():
                  "opsgfx2d", "opsimgmetrics", "opscolortransport",
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
-                 "opsmeasure1d", "opsblob", "opsflyvision"):
+                 "opsmeasure1d", "opsblob", "opsflyvision", "opsspc"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
