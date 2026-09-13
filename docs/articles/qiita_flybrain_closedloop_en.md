@@ -132,6 +132,10 @@ The fix was one line: **read only above the horizon.** Distant flow has a large 
 
 There is a second trap here. Reading above the horizon helps only if **the distant background has texture at all**. The first world had a smoothly graded sky, so everything above the horizon was nearly uniform and carried no cue whatsoever. Only after adding a cloud band at 20–60° elevation (1/f in azimuth, amplitude 0.12) did the 0.98 appear. Without the band: 0.06.
 
+![What the compound eye sees](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/eye_view_skyband.png)
+
+*↑ What the compound eye (721 ommatidia, 4.63° between optical axes) sees at that moment. Left: brightness per ommatidium. Right: the salience of "something dark above the horizon". Whether the sky band exists changes the rotation estimate from 0.06 to 0.98. Figure labels are in Japanese; every number is repeated in the text.*
+
 > **A defect in the world looks exactly like a defect in the brain.** Before measuring a model, measure whether the cue exists in the stimulus.
 
 To be honest about it: adding texture to the sky is a convenient modification. The justification is that real outdoor scenes contain clouds, canopies and terrain silhouettes, and a perfectly uniform distance is the unusual case. Still, since the amount of texture was chosen here, **0.98 is a number that includes the world setting** — it is not the model's performance in isolation.
