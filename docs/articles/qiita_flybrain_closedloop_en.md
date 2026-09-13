@@ -1,3 +1,14 @@
+---
+title: 'It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained Fly Visual Model on a Body'
+tags:
+  - Python
+  - 機械学習
+  - 神経科学
+  - シミュレーション
+  - MuJoCo
+public_private: true
+---
+
 # It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained Fly Visual Model on a Body
 
 <!--
