@@ -736,6 +736,15 @@ def catalog():
     for n, m in opsflyvision.OPSFLYVISION.items():
         if m["func"] is not None:
             ops.append((n, "flyvision", list(m["in"]), m["out"], m["func"]))
+    # 統計的工程管理(opsspc 台帳)。**新しい型語彙を 1 つも作らない**判断: 4 op の
+    # 入出力は既存の matrix((m,n) 部分群 /(m,p) 観測)/ signal(1-D 計測列)/ table
+    # (管理限界・統計量・逸脱添字の dict)にそのまま収まる。マシンビジョンが出す計測
+    # (measure1d / shapestat / imgmetrics / blob)に「工程が管理下か・能力があるか」の
+    # 判定を足す族で、計測そのものは再実装しない
+    import opsspc
+    for n, m in opsspc.OPSSPC.items():
+        if m["func"] is not None:
+            ops.append((n, "spc", list(m["in"]), m["out"], m["func"]))
     # 欠陥 → CAD 面の逆写像(opscadmap 台帳)。**新しい型語彙を 1 つも作らない**
     # 判断: 4 op の入出力は既存の mesh / keypoints / points / labels / table /
     # indices にそのまま収まる。代わりにこの族が持ち込んだのは
