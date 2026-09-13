@@ -243,13 +243,25 @@ def horizontal_pairs(lattice):
     return pairs
 
 
-def emd_map(signals, pairs, n):
+def lamina_highpass(signals, tau_s=TAU_HP, dt_s=DT):
+    """ラミナ段: 個眼ごとの輝度から一次低域(τ)を引いて DC を落とす (T, n) → (T, n)。
+
+    ★これを省くと相関器は DC × 高域通過 の項 ``D·(b − LP b)`` を出す。輝度 0.8 に
+    コントラスト 0.1 の縞なら、その揺れは運動の平均応答の **10 倍**(実測: 純正弦でも
+    R の std 2.1e-2 対 平均 3.6e-3)。回転の相関は 0.50 に落ち、前進の偏りは 0.02 に
+    埋もれる。ハエでは L1/L2 が帯域通過なのでこの項は最初から無い。
+    """
+    return signals - np.apply_along_axis(lowpass, 0, signals, tau_s, dt_s)
+
+
+def emd_map(signals, pairs, n, highpass=True):
     """各対に EMD を当て、右向きを好む応答を対の右側の個眼の列に置く (T, n)。
     右向き = 方位が減る向き。左隣 j を先に通るので a = 左隣、b = 右(自分)。"""
     T = signals.shape[0]
+    s = lamina_highpass(signals) if highpass else signals
     R = np.zeros((T, n))
     for i, j in pairs:
-        R[:, i] = FV.fly_emd_response(signals[:, j], signals[:, i], tau_s=TAU_EMD, dt_s=DT)
+        R[:, i] = FV.fly_emd_response(s[:, j], s[:, i], tau_s=TAU_EMD, dt_s=DT)
     return R
 
 
