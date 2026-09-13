@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 620. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 621. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -493,8 +493,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L405** — ★Der Eingang des Registers verwirft info, um dem deklarierten out-Typ zu entsprechen, also `.raw` verwenden (eine im Kommentar von fullseye/__init__.py mit Messwerten dokumentierte Falle).
 - **L855** — ★Auf der FM-Seite den Suchbereich **nicht einengen** (Einengen ändert das Ergebnis nicht, verhindert aber die Ausrede, "das Aliasing von AM liege am Suchbereich").
 - **L1242** — ★Ein Punkt, an dem die zweistufige Stufe brach, ist stets ein Punkt, an dem das Grobe den Zellradius überschritt (die Inklusionsbeziehung festhalten)
-- **L1309** — ★Auch der Referenz Rauschen hinzufügen —— bei einem rauschfreien Bild ergibt star_detect "0 Sterne" und einen ValueError (was für sich genommen ein korrektes fail-closed ist).
-- **L1332** — ★2026-09-08: Dem Hinweis dieses PoC folgend habe ich die op-Seite korrigiert. Ich schrieb "für repetitive Strukturen nicht verwendbar" mit gemessenen Zahlen in den docstring und ließ den **zweithöchsten Peak / höchsten Peak** der Abstimmung als `vote_margin` zurückgeben. Diese Zahl kann zwei Fälle unterscheiden, die die Zustimmungsrate nicht unterscheiden kann.
+- **L1277** _(ja)_ — ★2026-09-13: 'lattice' だけ例外を 1 つ許す。flyvision 族の `fly_hex_lattice`(複眼の六角格子)が この語を含んで CI で鳴った(run 34751219513)。あれは網点の格子ではないので印刷の穴は 残ったまま —— 例外は名指しで 1 件に限り、それ以外が現れたら今までどおり鳴る。 「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
+- **L1316** — ★Auch der Referenz Rauschen hinzufügen —— bei einem rauschfreien Bild ergibt star_detect "0 Sterne" und einen ValueError (was für sich genommen ein korrektes fail-closed ist).
+- **L1339** — ★2026-09-08: Dem Hinweis dieses PoC folgend habe ich die op-Seite korrigiert. Ich schrieb "für repetitive Strukturen nicht verwendbar" mit gemessenen Zahlen in den docstring und ließ den **zweithöchsten Peak / höchsten Peak** der Abstimmung als `vote_margin` zurückgeben. Diese Zahl kann zwei Fälle unterscheiden, die die Zustimmungsrate nicht unterscheiden kann.
 
 ## `examples/poc_print_warpage_risk.py`
 

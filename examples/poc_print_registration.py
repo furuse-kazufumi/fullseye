@@ -1278,13 +1278,13 @@ def section9_tool_gaps():
     #   この語を含んで CI で鳴った(run 34751219513)。あれは網点の格子ではないので印刷の穴は
     #   残ったまま —— 例外は名指しで 1 件に限り、それ以外が現れたら今までどおり鳴る。
     #   「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
-    allowed = {"lattice": {"fly_hex_lattice"}}
+    allowed_names = {"lattice": {"fly_hex_lattice"}}          # 名前に語を含んでよい op(名指し)
+    allowed_ledger = {"lattice": "opsflyvision"}              # op_find が拾ってよい台帳(docstring が語を含む)
     missing = {}
     for kw in ("halftone", "screen", "rosette", "misregist", "lpi", "moire",
                "trapping", "lattice"):
-        hit = sorted(n for n in allnames if kw in n.lower() and n not in allowed.get(kw, set()))
-        found = [f for f in fs.op_find(kw)
-                 if not any(a in str(f) for a in allowed.get(kw, set()))]
+        hit = sorted(n for n in allnames if kw in n.lower() and n not in allowed_names.get(kw, set()))
+        found = [f for f in fs.op_find(kw) if f.get("ledger") != allowed_ledger.get(kw)]
         missing[kw] = (hit, found)
         assert not hit, (kw, hit)
         assert not found, (kw, found)

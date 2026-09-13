@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 616 of 620. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 616 of 621. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -493,8 +493,9 @@ This repository records *why* things are the way they are in **comments in the s
 - **L405** — ★The ledger's port discards info to match the declared out type, so use `.raw` (a pitfall documented with measurements in the comment of fullseye/__init__.py).
 - **L855** — ★On the FM side, **do not narrow** the search range (narrowing doesn't change the result, but it forecloses the excuse that "AM's aliasing is due to the search range").
 - **L1242** — ★A point where the two-stage broke is always a point where the coarse exceeded the cell radius (pin the inclusion relation)
-- **L1309** — ★Add noise to the reference too —— with a zero-noise image, star_detect gives "0 stars" and a ValueError (which is itself a correct fail-closed).
-- **L1332** — ★2026-09-08: Following this PoC's note, I fixed the op side. I wrote "cannot be used on repetitive structures" with measured numbers in the docstring, and made it return the **runner-up peak / top peak** of the vote as `vote_margin`. This number can distinguish two cases that the approval rate cannot.
+- **L1277** _(ja)_ — ★2026-09-13: 'lattice' だけ例外を 1 つ許す。flyvision 族の `fly_hex_lattice`(複眼の六角格子)が この語を含んで CI で鳴った(run 34751219513)。あれは網点の格子ではないので印刷の穴は 残ったまま —— 例外は名指しで 1 件に限り、それ以外が現れたら今までどおり鳴る。 「語で引く穴の固定」は、無関係の族が同じ語を使った瞬間に偽陽性になる、という実例。
+- **L1316** — ★Add noise to the reference too —— with a zero-noise image, star_detect gives "0 stars" and a ValueError (which is itself a correct fail-closed).
+- **L1339** — ★2026-09-08: Following this PoC's note, I fixed the op side. I wrote "cannot be used on repetitive structures" with measured numbers in the docstring, and made it return the **runner-up peak / top peak** of the vote as `vote_margin`. This number can distinguish two cases that the approval rate cannot.
 
 ## `examples/poc_print_warpage_risk.py`
 
