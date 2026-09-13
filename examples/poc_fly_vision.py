@@ -348,7 +348,9 @@ def chapter_eye_sees_the_sky(lattice, dirs_eye, sky):
     print("  個眼輝度の帯内(25–40°)/帯外(≤5°)の方位ばらつき比 : %.1f 倍" % ratio)
     figs.save_grid(
         "fly_vision_scene",
-        [pano_window(sky, AZ0_DEG), img[:, ::-1], hex_raster(lattice, sig)],
+        # ピンホール像は 128 px なので最近傍で 2 倍(値は作らない)にして他の 2 枚と並べる。
+        [pano_window(sky, AZ0_DEG), np.repeat(np.repeat(img[:, ::-1], 2, axis=0), 2, axis=1),
+         hex_raster(lattice, sig)],
         captions=["1/f の帯つき空(眼の周り ±60°)", "眼が見るピンホール像(fov 90°)",
                   "721 個眼に写した輝度(六角格子)"],
         title="空 → ピンホール像 → 個眼格子", gray=True, ncols=3)
