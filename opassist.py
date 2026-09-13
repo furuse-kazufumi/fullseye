@@ -35,6 +35,7 @@ _LEDGERS = (
     ("opsspecular", "OPSSPECULAR"), ("opsmotionmag", "OPSMOTIONMAG"),
     ("opsquat", "OPSQUAT"), ("opsrangedoppler", "OPSRANGEDOPPLER"),
     ("opsacoustics", "OPSACOUSTICS"), ("opsinterferometry", "OPSINTERFEROMETRY"),
+    ("opsflyvision", "OPSFLYVISION"),
     ("opstomography", "OPSTOMOGRAPHY"), ("opsvolcolor", "OPSVOLCOLOR"),
     ("opsreprconv", "OPSREPRCONV"), ("opscadmap", "OPSCADMAP"),
     ("opsannotate", "OPSANNOTATE"), ("opsgfx2d", "OPSGFX2D"),
