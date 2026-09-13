@@ -405,7 +405,7 @@ DOC_GROUPS = [
     ("perception", "知覚・センサ", "Perception and sensors", [
         "PERCEPTION.md", "PERCEPTION_PHYSICAL_AI.md", "PERCEPTION_REALDATA.md",
         "SENSOR_PLAYBOOK.md", "HIGHSPEED_VISION.md",
-        "SAMPLE_IMAGE_REFERENCES.md"]),
+        "SAMPLE_IMAGE_REFERENCES.md", "BBB_SENSING.md"]),
     ("halcon", "HALCON との対応", "HALCON correspondence", [
         "HALCON_PARITY.md", "HALCON_COVERAGE.md", "HALCON_COVERAGE_HONEST.md",
         "HDEVELOP_FIDELITY.md", "HDEVELOP_DEV_OPS.md", "LIB_COVERAGE.md"]),
