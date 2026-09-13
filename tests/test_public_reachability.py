@@ -198,7 +198,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 上の `_PENDING_EXPOSURE` と一緒に進める。
 #: 2026-09-13: 1229 -> 1231。opsflyvision 台帳の内部 API(get/call/info/missing)を
 #: 足したぶん(既存の各 ops<族> 台帳と同じ機構で、`fs.ledger` から op 自体は引ける)。
-_HIDDEN_FUNCTIONS_TODAY = 1231
+#: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
+#: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
+#: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
+_HIDDEN_FUNCTIONS_TODAY = 1235
 
 
 def _hidden_total():

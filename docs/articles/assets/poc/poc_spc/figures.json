@@ -1,0 +1,22 @@
+[
+ {
+  "file": "01_spc_xbar_chart.png",
+  "name": "spc_xbar_chart",
+  "caption": "末尾 4 群が管理限界の外(A2=0.577)。管理図は大きな逸脱を即座に捕らえる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "02_spc_cusum_chart.png",
+  "name": "spc_cusum_chart",
+  "caption": "Shewhart 3σ は 0 件、CUSUM は #46(ドリフト開始の直後)で h=5 を超えて警報。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ }
+]

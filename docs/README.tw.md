@@ -21,7 +21,7 @@
 
 <!-- poc-index:start -->
 
-## PoC 系列 — 帶真值求解的 119 個實際問題
+## PoC 系列 — 帶真值求解的 120 個實際問題
 
 每一個都具有閉式或合成的真值，並必定附上零點(什麼都不做)。失敗方式分開計數，原因以對照組區分。完整列表: [examples/README.md](../examples/README.md)。
 
@@ -52,6 +52,7 @@
 | signal_processing (2) | [`poc_rail_corrugation`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py) Measuring Rail with a Chord — At the Wavelengths Where the Transfer Function Is Zero, Any Amplitude Reads Zero<br>[`poc_web_roll_periodicity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_web_roll_periodicity.py) Naming the Damaged Roller from a Period — You Run Out of Evidence Before You Reach the Cliff |
 | vibration (2) | [`poc_beam_modal_video`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beam_modal_video.py) Modal identification from video — frequency survives to the end, damping lies first<br>[`poc_motion_magnification`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_motion_magnification.py) Micro-Vibration of a Structure From Video — Does Motion Magnification Help You Measure? |
 | colour (1) | [`poc_white_balance`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) Colour Constancy (White Balance) — No Method Works, Only Conditions Do |
+| imgmetrics (1) | [`poc_spc`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spc.py) 統計的工程管理を op の連鎖で(検査計測が管理下か・能力があるか) _(ja)_ |
 | rectification (1) | [`poc_document_scan`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_document_scan.py) Straightening a Hand-Held Document Photo — Keystone Correction and Shadow Removal Against Ground Truth |
 | tomography (1) | [`poc_ct_fidelity`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) Where CT Reconstruction Starts to Break as Projections Are Removed |
 | super-resolution (1) | [`poc_superresolution_limits`](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_superresolution_limits.py) Does Super-Resolution Add Information? Downsample With the Truth in Hand, Restore, Count |
@@ -66,7 +67,7 @@
 
 **實測涵蓋**: 演化運算子 901/901、型別台帳 1021/1033、單行門面 `fullseye.<名稱>` 544/1119 —— **門面側僅涵蓋一半**。
 
-**內容實測**: 1948 篇中，附有可執行範例的 **1904** 篇(44 篇沒有)，用法說明 120 字以上的 **1929** 篇(19 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)1948 篇全有。
+**內容實測**: 1948 篇中，附有可執行範例的 **1908** 篇(40 篇沒有)，用法說明 120 字以上的 **1929** 篇(19 篇僅一行)。結構(呼叫形式、型別、可銜接運算子)1948 篇全有。
 
 | 維度 | 運算子數 | 入口 |
 |---|---:|---|
