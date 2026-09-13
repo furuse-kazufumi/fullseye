@@ -101,6 +101,10 @@ This table comes first. Without it, a reader will assume the fly's brain did all
 
 *↑ The signal path and the boundary between real and hand-written. Only the blue box is wired by the measured connectome — the flyvis optic lobe, 65 cell types, in the order light travels: receptors R1–R6 → lamina L1/L2/L3 → medulla (ON: Mi1, Tm3 / OFF: Tm1, Tm2, Tm4, Tm9 / modulatory: Mi4, Mi9) → T4a–d (ON) → T5a–d (OFF). Every orange box was written here. Evolution moves only the continuous values inside the blue box; not one new connection is ever added. Figure labels are in Japanese; the same content is in the table above.*
 
+![The columnar structure of the optic lobe in 3-D](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/flybrain_columns_3d.gif)
+
+*↑ The same optic lobe, rotating in 3-D. **The 721 columns keep their arrangement through all seven stages** — that is the columnar organisation — with one colour per stage (receptors → lamina → medulla ON / OFF / modulatory → T4, the ON direction-selective cells → T5, the OFF ones). Column positions are the **real hexagonal lattice**, but **the depth between stages is schematic**: flyvis is a columns × cell-types network and carries no anatomical 3-D coordinates. When section 5 talks about "folding the degrees of freedom per cell type", these colours are the unit it folds along.*
+
 So **only the optic lobe is genuinely connectome-derived**; everything before and after it (eye geometry, readout, behaviour) was written by hand. Every number below describes "the optic lobe wired up this particular way".
 
 ## 1. It passed every static test, then failed while walking
