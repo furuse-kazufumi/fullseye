@@ -25,15 +25,16 @@ All figures are regenerable with `py -3.11 tools/gen_article_assets.py`
 
 <!-- articles:start -->
 
-## この下にあるもの(全 45 本 —— 生成)
+## この下にあるもの(全 46 本 —— 生成)
 
 `py -3.11 tools/gen_docs_index_ops.py` が `docs/articles/` を歩いて作ります。**ここから辿れない文書を作らない**ための一覧なので、手で足し引きしないでください。
 
-**記事**(9) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
+**記事**(10) —— 記事本文。長文の原稿はここが正本で、Qiita などへはここから出す。
 
 | ファイル | 見出し |
 |---|---|
 | [`LINKEDIN_POST.md`](LINKEDIN_POST.md) | LinkedIn 投稿キット(Fullseye) |
+| [`LINKEDIN_POST_flybrain.md`](LINKEDIN_POST_flybrain.md) | LinkedIn 投稿キット(ハエの視覚モデルを体に載せた話) |
 | [`fullseye_overview_qiita_en.md`](fullseye_overview_qiita_en.md) | Carrying ~1,000 Explainable Classical Vision Algorithms as "Skills" — Building Fullseye, a Self-Made Vision Workshop ... |
 | [`fullseye_overview_qiita_ja.md`](fullseye_overview_qiita_ja.md) | 説明できる古典画像処理を「スキル」として1000個持ち歩く ―― Physical AI のための自作ビジョン工房 **Fullseye** をつくっている話 |
 | [`fullseye_poc_museum_qiita_en.md`](fullseye_poc_museum_qiita_en.md) | A Metrology Museum on Paper — Planting Your Own Ground Truth to Find Where Image Measurement Breaks |
