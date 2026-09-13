@@ -266,8 +266,8 @@ class TestDSI:
         r = np.zeros(8)
         r[2] = 1.0
         out = fv.fly_dsi(r, ang)
-        assert abs(out["dsi"] - 1.0) < 1e-9
-        assert abs(out["pref_deg"] - ang[2]) < 1e-9
+        assert abs(out["dsi"] - 1.0) < 1e-6      # the 1e-9 denominator eps floors it
+        assert abs(out["pref_deg"] - ang[2]) < 1e-6
 
     def test_isotropic_response_is_not_selective(self):
         ang = np.linspace(0.0, 360.0, 8, endpoint=False)
