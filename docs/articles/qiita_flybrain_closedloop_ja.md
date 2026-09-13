@@ -10,6 +10,8 @@ public_private: true
 public_id: 331af639c2b9a1493576
 ---
 
+> **言語 / Language**: **日本語** · [English](https://qiita.com/furuse-kazufumi/private/638f0b0aa7865e17c67c)
+
 # 静止した検査に全部通ったモデルが、歩き出した瞬間に全滅した ―― ハエの視覚モデルを体に載せて測る
 
 <!--
