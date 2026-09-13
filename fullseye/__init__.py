@@ -180,7 +180,7 @@ with warnings.catch_warnings():
         tcspc_stats, dtof_depth, dtof_cube_simulate, dtof_cube_depth,
         lifetime_fit, lifetime_phasor,
         specularity, motionmag, pose_quat, quatimage, rangedoppler,
-        acoustics, interferometry, flyvision,
+        acoustics, interferometry, flyvision, spc,
         gfx2d, alpha_composite, alpha_composite_premul, blend_mode, bloom,
         chromatic_aberration, color_grade, color_lut, dither, film_grain,
         layer_stack, light_mask, linear_to_srgb, nine_slice, normal_map_decode,
@@ -729,7 +729,7 @@ __all__ = [
     # 漏れていた 2 つだけ(2026-09-01: 全部足して重複させた回帰)
     "dsp", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision",
+    "acoustics", "interferometry", "flyvision", "spc",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",
