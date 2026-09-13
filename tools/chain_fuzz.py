@@ -1153,6 +1153,23 @@ def _b_fly_dsi(pool, rng):
     return (resp, ang), {}
 
 
+# --- SPC(統計的工程管理)の 4 op。形の制約(部分群 2..10 列 / 観測 m>=p+1)を満たす --- #
+def _b_spc_xbar_r(pool, rng):
+    return (rng.normal(10.0, 1.0, size=(20, 5)),), {}
+
+
+def _b_spc_cusum(pool, rng):
+    return (rng.normal(0.0, 1.0, size=50),), {"target": 0.0, "k": 0.5, "h": 5.0}
+
+
+def _b_spc_capability(pool, rng):
+    return (rng.normal(10.0, 1.0, size=200),), {"lsl": 6.0, "usl": 14.0}
+
+
+def _b_spc_hotelling_t2(pool, rng):
+    return (rng.normal(0.0, 1.0, size=(50, 3)),), {}
+
+
 OP_ARG_BUILDERS = {
     # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
     "fly_hex_resample": _b_fly_resample,
