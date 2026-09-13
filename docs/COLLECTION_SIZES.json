@@ -13,11 +13,11 @@
   "手元は 885 で**環境に依って正しく変わる**ため(docs/README の数字は",
   "tests/test_docs_index_numbers.py が満杯の環境でだけ厳密一致を見る)。"
  ],
- "measured": "2026-09-08",
+ "measured": "2026-09-13",
  "tolerance_note": "実測が記録の 1.25 倍を超えたら、この台帳を更新する(増えたことを記録に残すため)。",
  "sizes": {
-  "examples2d.EXAMPLES": 199,
-  "examples_poc_files": 117,
+  "examples2d.EXAMPLES": 200,
+  "examples_poc_files": 118,
   "ops3d.OPS3D": 357,
   "examples3d.gallery": 117,
   "recipes.RECIPES": 20,
