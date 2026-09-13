@@ -38,6 +38,10 @@ public_id: 638f0b0aa7865e17c67c
 
 *↑ The moving picture first. A physically simulated *Drosophila* walks towards the brown target guided by **nothing but the image on its compound eye** (3× speed, external camera). The steering correction comes from an optic lobe model whose wiring is fixed by the measured connectome. The legs look like a tripod gait, but **walking here is kinematic**, not leg dynamics — the table below states exactly what is real and what was written by hand before any numbers appear.*
 
+![What the fly is asked to do](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/task_setup.png)
+
+*↑ The whole task in one picture. **① The input is the compound-eye image alone** — no GPS, no inertial sensor, no map. **② Read your own rotation while walking**, steer to the target with it, then return to the nest from the heading and distance you accumulated. **③ Scoring is the correlation against the imposed rotation**, and 2 of the 12 places (C and D) are never used for selection or tuning. The null baseline is the textbook motion detector of 1956. Figure labels are in Japanese; every item is repeated in the text.*
+
 ## TL;DR
 
 - A pretrained visual model of the fruit fly optic lobe — one whose **wiring is fixed by the measured connectome** — was mounted on a physically simulated fly body and run in closed loop: compound eye → optic lobe → steering. **It passed every test built by rotating the fly in place (monotonicity, symmetry, latency), and then failed completely (correlation 0.06–0.51) when asked to read the same quantity while walking.** A test built under different motion conditions than the deployment guarantees nothing.
