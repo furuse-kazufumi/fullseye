@@ -32,9 +32,9 @@ public_id: 331af639c2b9a1493576
        /private/ を /items/ に張り替える**(限定共有 URL は他人から開けない)。
 -->
 
-![複眼で見た空](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/eye_view_skyband.png)
+![歩いているところ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/flyvis_loop2_000_noise0.30_00_om_efc.gif)
 
-*↑ ハエの複眼(個眼 721 個、視軸の間隔 4.63°)に映った世界。左が個眼ごとの輝度、右が「地平線より上で暗いもの」の顕著さ。空に模様(仰角 20〜60° の雲の帯)を入れてある ―― この帯があるかないかで、後述する回転の読み取りが 0.06 から 0.98 に変わる。*
+*↑ まず動いているところから。物理シミュレータ上のショウジョウバエが、**複眼に映る像だけ**を頼りに茶色の的へ歩いていきます(3 倍速、外から撮影)。舵を足しているのは、コネクトームで配線を固定した視葉モデルの出力。脚の運びは三脚歩容に見えますが、**歩行は運動学**で脚の力学で歩いているのではありません —— どこまでが実物でどこからが手書きかは、下の表で先に開示します。*
 
 ## TL;DR
 
