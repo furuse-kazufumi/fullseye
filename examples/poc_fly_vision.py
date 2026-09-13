@@ -588,9 +588,10 @@ def main():
         sky_flat = FV.fly_sky_1f(PANO_W, PANO_H, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.0, seed=0)
 
         band_ratio = chapter_eye_sees_the_sky(lattice, dirs_eye, sky)
-        c_band, c_flat, agree, gain = chapter_rotation(lattice, dirs_eye, pairs, sky, sky_flat)
+        c_band, c_hs, c_flat, c_dc, r_flat_max, agree, gain = \
+            chapter_rotation(lattice, dirs_eye, pairs, sky, sky_flat)
         bias = chapter_forward(lattice, dirs_eye, pairs, sky)
-        t_peak, t_pred, th_peak, th_pred, rms_tau, ratio60 = chapter_looming()
+        loom = chapter_looming()
         dsi, _resp, _angles = chapter_dsi(lattice, pairs)
 
     # ---- 自己検査 ---------------------------------------------------------- #
@@ -599,22 +600,29 @@ def main():
     assert band_ratio > 3.0, "1/f の帯が個眼輝度に写っていない"
 
     # 第2章: 相関は正(左回り → 眼の像は右へ → 右向き検出器が鳴る)、帯なしより高い。
-    #         値そのもの(0.9 台)は主張しない —— 実測をそのまま報告する。
+    #         値そのもの(0.8 台)は主張しない —— 実測をそのまま報告する。
     assert c_band > 0.0, "回転の向きが読めていない(相関の符号が負)"
     assert c_band > c_flat, "帯ありが帯なし(応答 0)より高くない"
-    assert abs(c_flat) < 1e-9, "帯なしの空で応答が出た(何かが動いている)"
+    assert r_flat_max < 1e-6, "帯なしの空で EMD 応答が出た(何かが動いている)"
+    # ★ラミナ段(DC 落とし)を省くと相関が落ちる、を固定する。落ちなくなったら
+    #   fly_emd_response の側で DC が消えている(仕様変更)なので、この対照を見直す。
+    assert c_dc < c_band - 0.1, "ラミナ段を省いても相関が落ちない(EMD が DC を落とすようになった?)"
 
-    # 第3章: 上半視野に限ると前進の混入は消え、全視野では「回転」に化ける。
+    # 第3章: 上半視野に限ると前進の混入は減り、全視野では「回転」に化ける。
     assert abs(bias["upper"]) < abs(bias["full"]), "上半視野に限っても前進の混入が減らない"
+    assert abs(bias["upper_clear"]) < abs(bias["upper"]), \
+        "受容野の裾まで上げても地平線の漏れが減らない"
     assert bias["full"] < 0.0, "左眼の前進の流れは前→後(=右回り、負)のはず"
-    assert abs(bias["upper_dome"]) > 0.1, \
-        "有限距離のドームで対向比が飽和しなくなった(読めないものが読めるようになった?)"
+    assert abs(bias["upper_dome"]) > abs(bias["upper_clear"]), \
+        "有限距離のドームの流れ(≈1.4°/s)が読み出しに出ない"
 
-    # 第4章: 閉じた式との一致(η のピーク時刻・角、τ 球式、円板式の cos²(θ/2))。
-    assert abs(t_peak - t_pred) <= 2 * DT_LOOM, "η のピーク時刻が α·l/|v| と合わない"
-    assert abs(th_peak - th_pred) < 0.3, "η ピークの θ が 2atan(1/α) と合わない"
-    assert rms_tau < 5e-3, "τ 球式が d/|v| に乗らない"
-    assert abs(ratio60 - 0.75) < 0.02, "円板式/球式が cos²(30°)=0.75 から外れた"
+    # 第4章: 閉じた式との一致(η のピーク時刻・角、球の 4 次式、τ 球式、円板式の cos²(θ/2))。
+    assert abs(loom["t_peak"] - loom["t_pred"]) <= 2 * DT_LOOM, "η のピーク時刻が α·l/|v| と合わない"
+    assert abs(loom["th_peak"] - loom["th_pred"]) < 0.1, "η ピークの θ が 2atan(1/α) と合わない"
+    assert abs(loom["t_peak_s"] - loom["t_pred_s"]) <= 2 * DT_LOOM, "球の η ピーク時刻が 4 次式の根と合わない"
+    assert abs(loom["th_peak_s"] - loom["th_pred_s"]) < 0.1, "球の η ピーク θ が 2asin(1/x*) と合わない"
+    assert loom["rms_tau"] < 1e-3, "τ 球式が d/|v| に乗らない"
+    assert abs(loom["ratio60"] - loom["ratio60_pred"]) < 5e-3, "円板式/球式が cos²(θ/2) から外れた"
 
     # 第5章: 好む向きは右向き(0°)の ±30°、DSI は 0 と 1 の間で意味のある値。
     assert abs(dsi["pref_deg"]) < 30.0, "好む向きが右向きではない"
@@ -625,10 +633,11 @@ def main():
 
     # ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を
     #   要求する(合否を計算したのに捨てる門を防ぐ規約)。
-    print("\nPASS: 回転の相関 %+.3f、前進の偏り 上半 %+.3f / 全視野 %+.3f、"
+    print("\nPASS: 回転の相関 %+.3f(ラミナ段なし %+.3f)、前進の偏り 上半 %+.3f / 全視野 %+.3f、"
           "η ピーク θ %.1f°(予測 %.1f°)、DSI %.2f(好む向き %+.0f°)—— "
           "ハエの視覚前段は閉じた式で検査できる op の連鎖で書けた。"
-          % (c_band, bias["upper"], bias["full"], th_peak, th_pred, dsi["dsi"], dsi["pref_deg"]))
+          % (c_band, c_dc, bias["upper"], bias["full"], loom["th_peak"], loom["th_pred"],
+             dsi["dsi"], dsi["pref_deg"]))
 
 
 if __name__ == "__main__":
