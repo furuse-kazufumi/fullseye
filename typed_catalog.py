@@ -508,6 +508,12 @@ OP_PARAM_HINTS = {
     ("fmcw_beat_simulate", "n_antennas"): lambda rng: 4,
     # 生成器の走査範囲と辻褄を合わせる(既定 2.8 でも動くが端切れが増える)
     ("csi_stack_simulate", "envelope_fwhm_um"): lambda rng: 2.8258,
+    # flyvision の生成 op。どちらも全引数に既定があるので束縛は不要だが、既定の
+    # 寸法(radius 15 = 721 個眼 / 1024x512 パノラマ = 4 MB)は連鎖では大きすぎて
+    # 遅いので、小さく上書きする(検査は型と契約であって性能ではない)。
+    # 消費側 6 op は shape の噛み合う入力が要るので chain_fuzz.OP_ARG_BUILDERS で組む。
+    ("fly_hex_lattice", "radius"): lambda rng: 6,
+    ("fly_sky_1f", "width"): lambda rng: 128, ("fly_sky_1f", "height"): lambda rng: 64,
     # 構造化光の三角測量。名前ヒントの "K"/"R"/"t" と綴りが違う(k_cam/k_proj/rot/
     # trans)ので、書かないと必須引数が組めず **一度も実行されない**まま
     # 「発見ゼロ」に化ける。基線は x 方向 60 mm 相当(実機の投影機オフセット)。
