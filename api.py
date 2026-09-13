@@ -420,6 +420,15 @@ from interferometry import (  # noqa: E402,F401
     csi_contrast_map, csi_design, csi_envelope, csi_height_map,
     csi_peak_position, csi_signal_simulate, csi_stack_simulate,
 )
+# ハエ視葉の視覚処理経路: 設計側(optics/visiondesign)と処理側(sceneflow)は
+# あったが、広視野・低解像度の複眼から運動・衝突時間・進行方向を出す**視覚処理**の
+# 経路が空だった。六角格子・EMD 運動・LGMD looming・水平系読み出しを閉形式で埋める。
+import flyvision  # noqa: E402  (fly optic-lobe vision pathway)
+from flyvision import (  # noqa: E402,F401
+    fly_hex_lattice, fly_hex_resample, fly_emd_response,
+    fly_lgmd_eta, fly_tau_from_expansion,
+    fly_hs_readout, fly_sky_1f, fly_dsi,
+)
 # 画像 → CAD 面の**逆写像**: 既存の align_cad_to_scan / ICP / ppf は「姿勢は出す」
 # が、2-D 画像上で見つけた欠陥が CAD 面のどの座標かに落とす経路が空だった。
 # 姿勢は**既知として受け取る**側で、一度も推定しない(推定は pipeline3d /
