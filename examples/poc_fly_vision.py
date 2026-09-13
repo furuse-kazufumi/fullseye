@@ -533,7 +533,7 @@ def chapter_looming():
          ("予測ピーク α·l/|v|", np.array([t_pred]), np.array([1.0]))],
         xlabel="衝突までの時間 [s](衝突 = 0)", ylabel="正規化",
         title="LGMD η は衝突の α·l/|v| 前、θ = 24.0° で最大",
-        kinds=["line", "line", "scatter"],
+        kinds=["line", "line", "scatter"], ylim=(0.0, 1.6),      # 凡例の下にピークを出す
         caption="ピーク %+.3f s(予測 %+.3f s)、θ_peak %.1f°(予測 %.1f°)。球の厳密な θ なら %.1f°。"
                 % (t_peak, t_pred, th_peak, th_pred, th_peak_s))
     figs.save_plot(
