@@ -98,6 +98,29 @@ def main() -> None:
     assert abs(float(t2_mu)) < 1e-9, "T² の平均行が 0 でない"
     assert ht["ucl"] > 0 and np.isfinite(ht["ucl"]), "T² の UCL が F 分布から出ていない"
 
+    # ---- 図(Studio の Figures タブ。--figures-dir 指定時のみ書く) ----------
+    jx = np.arange(1, chart_bad["xbar"].size + 1, dtype=float)
+    ones = np.ones_like(jx)
+    figs.save_plot(
+        "spc_xbar_chart",
+        [("Xbar", jx, chart_bad["xbar"]),
+         ("UCL", jx, ones * chart_bad["xbar_ucl"]),
+         ("CL", jx, ones * chart_bad["xbar_cl"]),
+         ("LCL", jx, ones * chart_bad["xbar_lcl"])],
+        xlabel="部分群", ylabel="部分群平均 Xbar", title="Shewhart Xbar 管理図(末尾 3 群を +4σ)",
+        caption="末尾 %d 群が管理限界の外(A2=%.3f)。管理図は大きな逸脱を即座に捕らえる。"
+                % (len(chart_bad["out_of_control"]), chart_bad["a2"]))
+    jc = np.arange(1, cu["c_plus"].size + 1, dtype=float)
+    figs.save_plot(
+        "spc_cusum_chart",
+        [("C+", jc, cu["c_plus"]), ("C-", jc, cu["c_minus"]),
+         ("h", jc, np.ones_like(jc) * cu["h"])],
+        xlabel="計測 #", ylabel="累積和", title="CUSUM(前半 0σ → 後半 +0.8σ の持続ドリフト)",
+        caption="Shewhart 3σ は 0 件、CUSUM は #%d(ドリフト開始の直後)で h=%.0f を超えて警報。"
+                % (cu["first_alarm"] + 1, cu["h"]))
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+
     print("\nPASS: Xbar-R n=5 定数 %.3f/%.3f/%.3f、+4σ で逸脱 %d 群、"
           "CUSUM 初警報 %d(Shewhart 3σ ヒット %d)、CUSUM ステップ傾き %.3f、"
           "Cpk 中心=%.3f(=Cp)/ずらし=%.3f(<Cp %.3f)、T² 平均行 %.1e / UCL %.2f —— "
