@@ -6,7 +6,7 @@ tags:
   - 神経科学
   - シミュレーション
   - MuJoCo
-public_private: true
+public_private: false
 public_id: 638f0b0aa7865e17c67c
 ---
 
