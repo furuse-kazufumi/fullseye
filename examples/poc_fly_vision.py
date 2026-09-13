@@ -420,32 +420,37 @@ def chapter_forward(lattice, dirs_eye, pairs, sky):
     yaws = np.zeros(t.size)
     keep = t >= T_SKIP
     out = {}
+    el_clear = 2.0 * DRHO_DEG                        # 受容野の裾(2Δρ)が地平線をまたがない高さ
     scene_inf = {"sky": sky, "dome_r": None, "floor": tex, "floor_z": -H_EYE}
     sig = see(scene_inf, lattice, dirs_eye, yaws, pos)
     R = emd_map(sig, pairs, n)
     out["upper"] = hs_series(R, lattice, el_min_deg=0.0)
+    out["upper_clear"] = hs_series(R, lattice, el_min_deg=el_clear)
     out["full"] = hs_series(R, lattice, el_min_deg=-90.0)
     scene_dome = {"sky": sky, "dome_r": DOME_R_M, "floor": tex, "floor_z": -H_EYE}
     sig_d = see(scene_dome, lattice, dirs_eye, yaws, pos)
     R_d = emd_map(sig_d, pairs, n)
-    out["upper_dome"] = hs_series(R_d, lattice, el_min_deg=0.0)
-    bias = {k: float(v[keep].mean()) for k, v in out.items()}
-    dome_flow = np.degrees(V_FWD * T_END / DOME_R_M) / T_END
+    out["upper_dome"] = hs_series(R_d, lattice, el_min_deg=el_clear)
+    bias = {k: float(lowpass(v, TAU_HS, DT)[keep].mean()) for k, v in out.items()}
+    dome_flow = np.degrees(V_FWD / DOME_R_M)
     print("\n== 第3章: 前進の混入(%.1f m/s、眼の高さ %.2f m、回転なし)==" % (V_FWD, H_EYE))
-    print("  上半視野だけ(el>0、空は無限遠)の読み出しの平均 : %+.3f" % bias["upper"])
     print("  全視野(el>−90)の読み出しの平均                  : %+.3f(床の前→後の流れが「右回り」に化ける)"
           % bias["full"])
-    print("  上半視野・空を %.0f m のドームに(流れ ≤ %.1f°/s)   : %+.3f(対向比は速さを落とすので小さな流れでも飽和する)"
+    print("  上半視野だけ(el>0、空は無限遠)                  : %+.3f(受容野が地平線をまたぐぶん床が漏れる)"
+          % bias["upper"])
+    print("  上半視野・受容野の裾まで上(el>2Δρ=%.1f°)         : %+.3f" % (el_clear, bias["upper_clear"]))
+    print("  同・空を %.0f m のドームに(流れ ≤ %.1f°/s)         : %+.3f(対向比は速さを落とすので小さな流れでも読める)"
           % (DOME_R_M, dome_flow, bias["upper_dome"]))
     figs.save_plot(
         "fly_vision_forward",
-        [("上半視野だけ(空は無限遠)", t, out["upper"]),
-         ("全視野(床が入る)", t, out["full"]),
-         ("上半視野・空を 20 m のドームに", t, out["upper_dome"])],
-        xlabel="時間 [s]", ylabel="HS 読み出し(対向比)",
+        [("全視野(床が入る)", t, lowpass(out["full"], TAU_HS, DT)),
+         ("上半視野 el>0(空は無限遠)", t, lowpass(out["upper"], TAU_HS, DT)),
+         ("上半視野 el>2Δρ", t, lowpass(out["upper_clear"], TAU_HS, DT)),
+         ("上半視野 el>2Δρ・空を 20 m のドームに", t, lowpass(out["upper_dome"], TAU_HS, DT))],
+        xlabel="時間 [s]", ylabel="HS 読み出し(対向比、膜 LP 0.1 s)",
         title="前進: 床の流れは回転に化ける、上半視野に限れば消える",
-        caption="偏り: 上半 %+.3f / 全視野 %+.3f / 上半・ドーム %+.3f"
-                % (bias["upper"], bias["full"], bias["upper_dome"]))
+        caption="偏り: 全視野 %+.3f / 上半 el>0 %+.3f / el>2Δρ %+.3f / ドーム %+.3f"
+                % (bias["full"], bias["upper"], bias["upper_clear"], bias["upper_dome"]))
     return bias
 
 
