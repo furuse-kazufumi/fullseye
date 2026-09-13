@@ -10,6 +10,8 @@ public_private: true
 public_id: 638f0b0aa7865e17c67c
 ---
 
+> **Language**: [日本語](https://qiita.com/furuse-kazufumi/private/331af639c2b9a1493576) · **English**
+
 # It Passed Every Static Test, Then Failed Completely the Moment It Started Walking — Putting a Connectome-Constrained Fly Visual Model on a Body
 
 <!--
