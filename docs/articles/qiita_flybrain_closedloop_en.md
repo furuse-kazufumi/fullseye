@@ -31,6 +31,23 @@
 
 This is not an article about reproducing a fly brain. It is about **where a pretrained model starts lying once you mount it in your own system** — stated in numbers. The same traps appear when you put someone else's pretrained model on your robot or your production line.
 
+## Experiments so far (this table grows)
+
+One experiment = one question. **This article is appended to every time an experiment finishes.** The "current answer" column is the measurement as it stands, and it can be overturned — one entry already was, and the retraction is kept in §8.
+
+| Question | Current answer | Section |
+|---|---|---|
+| Does a test built by rotating in place predict performance while walking? | No. Correlation 0.06–0.51 — a total failure | §1 |
+| Does texture in the distance make rotation readable while walking? | Yes. Correlation 0.98 (0.06 without the band) | §2 |
+| Does a better sensor mean better behaviour? | No change. Arrivals 7 → 6 of 12 | §3 |
+| How many points of performance is the connectome wiring worth? | 0.14–0.20. Preprocessing alone takes 0.6 → 0.8 | §4 |
+| Does evolving all 734 free parameters generalise? | 2 scenes overfit (−0.25); 10 scenes generalise (+0.92) | §5 |
+| What if the search is compressed to 260 per-cell-type dims? | Wins on little data (+0.71), ties on plenty (+0.91) | §5 |
+| What if the readout is solved by regression instead? | Same shape: 80 weights ≫ 5768 weights | §5 |
+| Does better behaviour bring biological realism with it? | The opposite. Direction selectivity 3/8 → 1/8; untrained is 0/8 | §6 |
+| Can the visual estimate drive central-complex homing? | Yes, but the limit is readout correlation, not gain | §7 |
+| Does enlarging the eye break it? | No — and the first conclusion here was retracted | §8 |
+
 ## Glossary (worth reading first)
 
 - **Connectome** —— The map of which neuron connects to which, reconstructed from serial electron microscopy. For *Drosophila* this now exists at whole-brain scale, so "which cell type contacts which, and with how many synapses" is known.
