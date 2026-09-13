@@ -93,6 +93,10 @@ This table comes first. Without it, a reader will assume the fly's brain did all
 | Behaviour | Fixate on something darker than the sky, plus optomotor feedback and efference copy | **Hand-written** |
 | World | Floor, sky, a target (organic shape), distractors (gear, lattice sphere). The sky texture is synthetic | Hand-written |
 
+![Signal path of the fly brain model](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/flybrain_model_map.png)
+
+*↑ The signal path and the boundary between real and hand-written. Only the blue box is wired by the measured connectome — the flyvis optic lobe, 65 cell types, in the order light travels: receptors R1–R6 → lamina L1/L2/L3 → medulla (ON: Mi1, Tm3 / OFF: Tm1, Tm2, Tm4, Tm9 / modulatory: Mi4, Mi9) → T4a–d (ON) → T5a–d (OFF). Every orange box was written here. Evolution moves only the continuous values inside the blue box; not one new connection is ever added. Figure labels are in Japanese; the same content is in the table above.*
+
 So **only the optic lobe is genuinely connectome-derived**; everything before and after it (eye geometry, readout, behaviour) was written by hand. Every number below describes "the optic lobe wired up this particular way".
 
 ## 1. It passed every static test, then failed while walking
