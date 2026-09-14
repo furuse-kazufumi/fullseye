@@ -276,13 +276,16 @@ def test_tools_list_declares_closed_schemas(cat):
 # --------------------------------------------------------------------------- #
 def test_the_validator_actually_checks_each_rule():
     from fullseye.mcp.server import _validate
+    # 1 ケースにつき**破る規則は 1 つだけ**にする。最初 `"bbb"` で enum と maxLength を
+    # 同時に破り、先に当たった enum の表明で落ちて「maxLength が効いた」と読めなかった。
     s = {"type": "object", "properties": {"n": {"type": "integer", "minimum": 1, "maximum": 3},
-                                          "s": {"type": "string", "maxLength": 2, "enum": ["a", "bb"]}},
+                                          "s": {"type": "string", "enum": ["a", "bb"]},
+                                          "t": {"type": "string", "maxLength": 2}},
          "required": ["n"], "additionalProperties": False}
-    assert _validate(s, {"n": 2, "s": "a"}) == {"n": 2, "s": "a"}
+    assert _validate(s, {"n": 2, "s": "a", "t": "xy"}) == {"n": 2, "s": "a", "t": "xy"}
     for bad, why in [({}, "必須"), ({"n": 0}, "以上"), ({"n": 4}, "以下"), ({"n": "2"}, "整数"),
                      ({"n": True}, "整数"), ({"n": 2, "s": "c"}, "どれか"),
-                     ({"n": 2, "s": "bbb"}, "文字以下"), ({"n": 2, "z": 1}, "知らない引数"),
+                     ({"n": 2, "t": "xyz"}, "文字以下"), ({"n": 2, "z": 1}, "知らない引数"),
                      ([], "オブジェクト")]:
         with pytest.raises(ArgError) as ei:
             _validate(s, bad)
