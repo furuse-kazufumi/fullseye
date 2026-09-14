@@ -81,30 +81,34 @@ def verdict_of(st: dict, *, op_name: str | None, out_sort: str | None) -> dict:
 
     nf_ok = op_name in ops.NONFINITE_IS_MEANINGFUL
     range_ok = op_name in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT
+    outside = st["min"] < -1e-9 or st["max"] > 1 + 1e-9
+    picture = out_sort in ("image", "region", "color")
+
+    # ★順序が答えを変える(2026-09-15 実測): `ones + inf` は有限部の std が 0 なので
+    #   「定数」が先に当たり、0..715 の配列は 99.9 % が ≥ 1 なので「飽和」が先に当たった。
+    #   より根本的な異常を先に言う: 非有限 → 定数 → 範囲外 → 飽和 → 平坦。
     if st["nonfinite"] > 0 and not nf_ok:
         reasons.append("非有限が %d 画素(%.3g%%)" % (st["nonfinite"], st["nonfinite_pct"]))
-    if st["nonfinite"] > 0 and nf_ok:
+        return {"verdict": "nonfinite", "reasons": reasons, "escalate": True}
+    if st["nonfinite"] > 0:
         reasons.append("非有限 %d 画素はこの op の答え(%s)" % (st["nonfinite"], ops.NONFINITE_IS_MEANINGFUL[op_name][:40]))
     if st["std"] == 0.0:
         reasons.append("定数(std=0, 値=%g)" % st["min"])
         return {"verdict": "constant", "reasons": reasons, "escalate": True}
-    if st["zero_pct"] + st["one_pct"] >= 100.0 * SATURATED and out_sort in ("image", "color") and not range_ok:
-        reasons.append("飽和(0 が %.1f%%、1 が %.1f%%)" % (st["zero_pct"], st["one_pct"]))
-        return {"verdict": "saturated", "reasons": reasons, "escalate": True}
-    if st["range"] < LOW_RANGE and out_sort in ("image", "color") and not range_ok:
-        reasons.append("値域が狭い(range=%.3g < %.1f)" % (st["range"], LOW_RANGE))
-        return {"verdict": "flat", "reasons": reasons, "escalate": True}
-    if st["nonfinite"] > 0 and not nf_ok:
-        return {"verdict": "nonfinite", "reasons": reasons, "escalate": True}
-    outside = st["min"] < -1e-9 or st["max"] > 1 + 1e-9
     if outside and range_ok:
         reasons.append("[0,1] の外だがこの op は物理量を運ぶ(%s)" % ops.UNIT_RANGE_IS_NOT_THE_CONTRACT[op_name][:40])
-    elif outside and out_sort in ("image", "region", "color"):
+    elif outside and picture:
         # `test_every_image_op_stays_in_the_unit_range` と同じ契約を、実行時にも当てる。
         # 台帳に無い op が [0,1] を出たら、それは下流で黙って意味を失う値。
         reasons.append("image を名乗るのに [0,1] の外(min=%.4g max=%.4g)で、台帳に免除が無い"
                        % (st["min"], st["max"]))
         return {"verdict": "out_of_range", "reasons": reasons, "escalate": True}
+    if picture and not range_ok and st["zero_pct"] + st["one_pct"] >= 100.0 * SATURATED:
+        reasons.append("飽和(0 が %.1f%%、1 が %.1f%%)" % (st["zero_pct"], st["one_pct"]))
+        return {"verdict": "saturated", "reasons": reasons, "escalate": True}
+    if picture and not range_ok and st["range"] < LOW_RANGE:
+        reasons.append("値域が狭い(range=%.3g < %.1f)" % (st["range"], LOW_RANGE))
+        return {"verdict": "flat", "reasons": reasons, "escalate": True}
     reasons.append("std=%.3g range=%.3g" % (st["std"], st["range"]))
     return {"verdict": "ok", "reasons": reasons, "escalate": False}
 
