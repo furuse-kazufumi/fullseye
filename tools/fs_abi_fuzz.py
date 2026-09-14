@@ -332,6 +332,11 @@ def compare(r: dict, p: dict) -> str | None:
         if rv != pv:
             return "%s: Rust %s / Python %s" % (
                 k, "拒否" if rv else "受理", "拒否" if pv else "受理")
+        # ★**コードの値**まで見る。「どちらも拒否した」で止めていたので、
+        #   契約が FS_E_INVALID_ARG(1)と決めている所で Python が FS_E_TYPE(2)
+        #   相当を投げていても素通りしていた(2026-09-14 に実際そうだった)。
+        if rv and pv and r.get(k) != p.get(k):
+            return "%s: 状態コードが Rust %s / Python %s" % (k, r.get(k), p.get(k))
     if "gauss" in r and "gauss" in p:
         finite = np.isfinite(r["gauss"]) & np.isfinite(p["gauss"])
         if finite.any():
