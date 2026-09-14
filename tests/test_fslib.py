@@ -12,7 +12,7 @@ import numpy as np
 import pytest
 
 import fslib
-from fslib import FImage, Region, FsBackendError, FsTypeError
+from fslib import FImage, Region, FsBackendError, FsTypeError, FsValueError  # noqa: F401
 
 HAVE_CV2 = "cv2" in fslib.backends_for("gauss")
 needs_cv2 = pytest.mark.skipif(not HAVE_CV2, reason="OpenCV not installed")
