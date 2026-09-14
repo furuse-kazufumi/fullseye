@@ -295,7 +295,10 @@ def test_out_of_range_image_output_is_flagged_unless_the_ledger_exempts_it():
 
 def test_nonfinite_is_flagged_unless_the_ledger_says_inf_is_the_answer():
     from fullseye.mcp.diagnose import stats_of, verdict_of
-    a = np.ones((16, 16)); a[0, 0] = np.inf
+    # ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり
+    #   落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と
+    #   言わない」だけなので、有限部に変化のある入力にする。
+    a = np.linspace(0.0, 1.0, 256).reshape(16, 16); a[0, 0] = np.inf
     st = stats_of(a)
     assert st["nonfinite"] == 1
     plain = verdict_of(st, op_name="gaussian", out_sort="image")

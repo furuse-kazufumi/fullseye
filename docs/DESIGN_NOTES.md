@@ -853,6 +853,14 @@
 - **L44** — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
 - **L204** — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
+## `fullseye/mcp/diagnose.py`
+
+- **L87** — ★順序が答えを変える(2026-09-15 実測): `ones + inf` は有限部の std が 0 なので 「定数」が先に当たり、0..715 の配列は 99.9 % が ≥ 1 なので「飽和」が先に当たった。 より根本的な異常を先に言う: 非有限 → 定数 → 範囲外 → 飽和 → 平坦。
+
+## `fullseye/mcp/handles.py`
+
+- **L47** — ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。 小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
+
 ## `g1_policy_bridge.py`
 
 - **L33** — ★配布物にローカル絶対パスを焼き込まない(2026-09-05 の監査で、非公開の兄弟 プロジェクト名が PyPI の wheel に載っていた)。既定は環境変数で与える。 Unitree G1 のシーン XML。MuJoCo Menagerie の `unitree_g1/scene.xml` を指す。
@@ -1136,11 +1144,15 @@
 
 - **L41** — 「無ければ理由を言って skip」にする —— ★2026-09-08 の CI がここで赤に なった: 手元にあるものを CI にも在ると思い込むと、手元だけ緑になる (`feedback_gate_computed_a_verdict_then_discarded_it` と同じ型)。
 
+## `tests/test_mcp_images.py`
+
+- **L298** — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
+
 ## `tests/test_mcp_server.py`
 
 - **L57** — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
 - **L105** — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
-- **L303** — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L306** — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
 
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
