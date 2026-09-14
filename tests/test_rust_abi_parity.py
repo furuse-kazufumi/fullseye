@@ -393,9 +393,12 @@ def test_select_shape_rejects_what_the_contract_calls_a_caller_error(rust):
 
     py_objs = fslib.connection(fslib.threshold(
         fslib.FImage(a, value_range=(0.0, 1.0)), 0.5, 1.0))
-    with pytest.raises(fslib.FsTypeError):
+    # ★契約では **FS_E_INVALID_ARG**(引数が定義域の外)であって FS_E_TYPE ではない。
+    #   `FsValueError` を足すまでは両方 `FsTypeError` で、Rust が 1 を返すのに
+    #   Python は 2 相当を投げる、という**状態コードの食い違い**が残っていた。
+    with pytest.raises(fslib.FsValueError):
         fslib.select_shape(py_objs, "area", 20.0, 5.0)
-    with pytest.raises(fslib.FsTypeError):
+    with pytest.raises(fslib.FsValueError):
         fslib.select_shape(py_objs, "perimeter", 0.0, 1.0)
 
 
