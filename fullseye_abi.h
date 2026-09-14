@@ -161,7 +161,29 @@ void        fs_tuple_release(fs_tuple_t *t);
  * outputs in the same order.  tests/test_abi_conformance.py enforces this.
  * -------------------------------------------------------------------------- */
 
-/* @fslib gauss */
+/* @fslib gauss
+ *
+ * The kernel is the sampled Gaussian truncated at FOUR standard deviations:
+ * radius = (int)(4.0 * sigma + 0.5), weights normalised to sum to one, applied
+ * separably.  Left unstated, two implementations pick different radii and the
+ * results differ everywhere by a little.
+ *
+ * Pixels outside the image are obtained by reflecting ON the border:
+ * `(d c b a | a b c d)` — index -1 reads pixel 0, index -2 reads pixel 1.  This
+ * is scipy's `mode='reflect'` and OpenCV's `BORDER_REFLECT`.  It is NOT
+ * OpenCV's default `BORDER_REFLECT_101` (`d c b | a b c d`), which reflects
+ * about the border pixel instead.  Both are called "reflect"; they differ by
+ * half a pixel, and the difference appears ONLY within `radius` of the edge.
+ * (Measured 2026-09-14 on a 32x32 random image at sigma=1.0: the interior of the
+ * two agreed to 4.6e-08 while the border differed by up to 0.13 — 13% of the
+ * declared range.  A test that samples the interior cannot see this.)
+ *
+ * `sigma <= 0` is FS_E_INVALID_ARG, not a pass-through: R-1 again.
+ *
+ * NOTE (open): this header exposes no way to READ PIXELS BACK, so the output of
+ * `fs_gauss` is observable across the ABI only by thresholding it.  Adding a
+ * pixel accessor is a real decision (it fixes a memory layout at the boundary),
+ * so it is deliberately NOT made here. */
 fs_status_t fs_gauss(const fs_image_t *in, double sigma, fs_image_t **out);
 
 /* @fslib threshold  — lo/hi are RELATIVE (0..1) and resolved through the
