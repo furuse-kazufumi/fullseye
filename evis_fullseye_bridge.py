@@ -65,11 +65,21 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     import mujoco
     from PIL import Image
 
-    qpos = np.load(qpos_npy)
+    qpos = np.load(qpos_npy) if isinstance(qpos_npy, (str, os.PathLike)) else np.asarray(qpos_npy)
     if qpos.ndim != 2:
         raise ValueError(f"qpos npy must be (T, nq); got {qpos.shape}")
     if len(qpos) == 0:
         raise ValueError(f"empty rollout: {qpos_npy} has 0 frames (nothing to perceive)")
+    if model is not None:
+        # An already-assembled world (floor, sky, props, lights) handed over as a compiled
+        # MjModel. A bare body XML often carries no floor, no sky and only weak tracking
+        # lights — rendering it gives black panels that look like a broken renderer rather
+        # than like a fly walking (measured 2026-09-14 with the Drosophila body alone).
+        m = model
+        if qpos.shape[1] != m.nq:
+            raise ValueError(f"qpos nq {qpos.shape[1]} != model nq {m.nq} (wrong model for this rollout)")
+        return _perceive(m, qpos, out_gif, width, height, max_frames, fps, body, ego_body,
+                         ego_h, ego_dist, ego_camera, third_person_z, third_person_distance, log)
     # Two loading regimes, chosen by inspecting the file (measured, both real):
     #  * evis scene_full_mjx.xml bakes WSL-absolute asset paths (/mnt/c/...) that Windows
     #    py311 can't resolve -> rewrite to drive letters and load from the patched STRING;
