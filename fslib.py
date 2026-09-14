@@ -538,7 +538,16 @@ def _gauss_numpy(img: FImage, sigma: float) -> FImage:
 @op("gauss", "cv2")
 def _gauss_cv2(img: FImage, sigma: float) -> FImage:
     import cv2
-    return img.with_pixels(cv2.GaussianBlur(img.pixels, (0, 0), float(sigma)))
+    # ★2026-09-14: ここは長らく borderType 既定 = ``BORDER_REFLECT_101``
+    #   (``d c b | a b c d`` — 境界の画素を重複させない折り返し)だった。numpy backend の
+    #   ``ndi.gaussian_filter`` の既定は ``mode='reflect'`` = ``d c b a | a b c d``
+    #   (境界の**上**で折り返す)で、**同じ「reflect」という語が別物を指す**。
+    #   実測(512x512, sigma=1.0, 乱数): 内部は 4.6e-08 まで一致するのに、**端の画素だけ
+    #   最大 0.13 = 値域の 13% ずれていた**。内部しか見ない検査では原理的に出ない。
+    #   ``connection`` の 4/8 連結と同じクラスの欠陥(兄弟コードを一掃した 2 件目)。
+    #   契約は numpy 側(既存の進化レシピのオラクル)に合わせて ``BORDER_REFLECT``。
+    return img.with_pixels(cv2.GaussianBlur(img.pixels, (0, 0), float(sigma),
+                                            borderType=cv2.BORDER_REFLECT))
 
 
 @op("threshold", "numpy")
