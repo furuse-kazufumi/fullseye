@@ -119,7 +119,7 @@ def _python_run(px, lo, hi, vrange):
     img = fslib.FImage(np.ascontiguousarray(px, dtype=np.float64), value_range=vrange)
     try:
         reg = fslib.threshold(img, lo, hi)
-    except fslib.FsTypeError:
+    except (fslib.FsValueError, fslib.FsTypeError):
         return {"status": 1}          # 契約の FS_E_INVALID_ARG に対応
     objs = fslib.connection(reg)
     areas = sorted(int(objs.region(i).area()) for i in range(len(objs.ids)))
