@@ -3,7 +3,7 @@ op: tb_project
 dim: 2d
 category: typed
 in: points
-out: image
+out: keypoints
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.11  # fullseye lib version this note was generated for
 
 # tb_project — 2D `typed` op
 
-- **データ種**: `points` → `image`
+- **データ種**: `points` → `keypoints`
 - **呼び出し**: `fullseye.apply(img, "tb_project", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
 ![tb_project: input → output](../../_fig/tb_project.png)
@@ -66,9 +66,9 @@ tb_project 0.50 0.50
 次の例は元の台帳 op `project` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
 - [bundle_adjust](../../../../examples_3d/bundle_adjust.py) — `py -3.11 examples_3d/bundle_adjust.py`
 
-## 型が繋がる次の op(`image` を入力に取れる)
+## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[identity](../misc/identity.md) · [gaussian](../smoothing/gaussian.md) · [mean_box](../smoothing/mean_box.md) · [bilateral](../smoothing/bilateral.md) · [unsharp](../smoothing/unsharp.md) · [median](../rank/median.md) · [min_filter](../rank/min_filter.md) · [max_filter](../rank/max_filter.md)
+[identity](../misc/identity.md) · [tb_keypoints_uv_to_points](tb_keypoints_uv_to_points.md) · [tb_keypoints_to_image2d](tb_keypoints_to_image2d.md)
 
 ## 同カテゴリ(`typed`)
 

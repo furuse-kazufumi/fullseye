@@ -640,6 +640,53 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
   `#include` する小さな `.c` / `.cpp` を作って初めて検査が走る
   ([[feedback_ran_is_not_meaningful_output]] の 4 度目)。
 
+- ★**10 件目 —— `tb_project` が画素座標を `image` と名乗っていた。** 実返りは
+  (N,3) の点群に対する **(N,2) の像面座標**(実測: 入力 (160,3) → 出力 (160,2)、
+  値域 16.0 .. 47.9 の画素座標)。`ops3d.py` の宣言は `image2d` だった。
+  例外にならないのは `_sort_ok` が image に `ndim == 2` しか求めないので、
+  **(N,2) が「幅 2 の画像」として黙って通る**から。image を名乗る限り、下流の
+  閾値・合成・目標画像との差分に渡ると意味を失う。`keypoints`(像面上の (N,2) 点)
+  へ直した。
+  ★**同じ型の嘘を同じファイルで 2026-09-02 に既に直していた** ——
+  `render` 節の `project_points` に「旧宣言 'image2d' は型の嘘で、pnp3d 側の
+  'image2d' 宣言と噛み合って PnP を壊していた」と書いてある。兄弟一掃が
+  **この 1 行にだけ届いていなかった**([[feedback_same_bug_class_recurs_check_siblings]])。
+  見つけたのは探針を 151 op ぶん広げた副産物で、**門が届く範囲を広げると、
+  古い掃き出しの取りこぼしが出てくる**。
+
+- ★**探針の知識が 1 経路に届いていなかった。** `op_probe.OP_PROBE_OVERRIDE`
+  (9 op の専用探針と「なぜ sort 既定では駄目か」の理由)を、
+  `test_backends_typed_liveness` と `test_op_probe_ledger` は 2026-09-08 から
+  引いていたのに、**`conftest.inputs_for` だけが繋がっていなかった**。探針を
+  広げた結果 `tb_normals_to_egi` に sort 既定(位置の雲)が届き、「原点が零ベクトル
+  になり拒否される」という**既に書いてある理由**を踏み抜いて赤くなった。
+  `inputs_for(in_sort, op_name)` にして、契約ゲートの 4 経路すべてが同じ正本を見る。
+
+- ★**`image` が 2 つの契約を兼ねていることを台帳に出した**
+  (`ops.UNIT_RANGE_IS_NOT_THE_CONTRACT`、11 op)。探針が届いて初めて分かったのは、
+  419 op が名乗る `image` の中に「[0,1] の絵」と「**物理量/生の大きさを運ぶ
+  2 次元配列**」が混ざっていること —— `tb_project_spherical`(slant range、メートル)、
+  `tb_project_cylindrical`(水平半径、実測 0 .. 715.0)、`tb_spectrogram`
+  (unnormalised |rfft|。docstring が `2/win` で割るのを**誤りと名指し**している)、
+  `tb_range_doppler_map`(生の FFT 振幅、`normalize=True` が既定でない)、
+  `tb_keypoints_to_image2d`(**計数**画像)、`tb_cx_real` / `tb_cx_imag`(『raw, not
+  clamped』)、`tb_cx_ifft`(負が信号)、`tb_lf_depth_from_focus` / `tb_lf_epi_slope`
+  (符号つき EPI 傾き)、`tb_quat_norm`(『Raw / unnormalised』)、
+  `tb_monogenic_phase` / `tb_monogenic_orientation`(**ラジアン**。docstring が
+  `[0, pi]` / `[0, pi)` と明記し、`display=True` で [0,1] 版を返す道を持ちながら
+  **既定を生の角度にしている**理由まで書いている)。
+  **これは免罪符ではなく未決の記録**で、正しい決着は物理量の 2 次元配列に別の
+  sort を与えること([[feedback_split_types_when_mixing_lies_silently]])。
+  台帳が腐らないよう、**載っている op が実際に [0,1] を外れること**を検査する門を
+  同時に置いた —— 直って範囲に収まったら門が落ちて台帳から外させる。
+  ★その門自身を**壊して確かめた**: [0,1] に収まる実在の op(`gaussian`)を偽の
+  免除として入れると狙った表明で落ちる。最初 `gauss` で試して落ちたのを合格と
+  読みかけたが、落ちた理由は「そんな名前の op は無い」で、検査したい経路は
+  1 行も走っていなかった([[feedback_ran_is_not_meaningful_output]] の 5 度目)。
+
+- **探針の網羅が本当に効いていること**: `PROBELESS_OPS_BUDGET = 0` のまま、
+  契約ゲート `test_op_contracts.py` は **3776 passed / 2 skipped**。
+
 ### 分かっているが直していないこと
 
 - **n-ary 層の 17 op にノートが無い**(`add_image` `sub_image` `mult_image` `div_image`

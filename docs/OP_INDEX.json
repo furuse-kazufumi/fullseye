@@ -5524,7 +5524,7 @@
    "name": "tb_project",
    "halcon": "",
    "in_sort": "points",
-   "out_sort": "image",
+   "out_sort": "keypoints",
    "category": "typed",
    "tier": "registry"
   },

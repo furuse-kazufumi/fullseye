@@ -558,7 +558,7 @@ _計 357 ops / 66 categories。_
 ### bundle_adjust(3)
 - `bundle_adjust` (`pose, points → table`) — 再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。 · 例: `bundle_adjust`
 - `mean_reprojection_error` (`pose, points → measurement`) — 再投影 RMS 誤差(ピクセル)。 · 例: `bundle_adjust`
-- `project` (`points → image2d`) — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: `bundle_adjust`
+- `project` (`points → keypoints`) — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: `bundle_adjust`
 
 ### curvature(5)
 - `principal_curvatures` (`points → curvature`) — 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。 · 例: `curvature_grasp`, `itokawa_curvature`
@@ -1879,7 +1879,7 @@ _計 901 ops / 48 categories。_
 - `tb_synthesize_silhouette` `points → image` · 例: なし
 - `tb_inside_outside` `points → signal` · 例: なし
 - `tb_superquadric_residual` `points → feature` · 例: なし
-- `tb_project` `points → image` · 例: なし
+- `tb_project` `points → keypoints` · 例: なし
 - `tb_jitter` `points → points` · 例: なし
 - `tb_random_rotation` `points → points` · 例: なし
 - `tb_random_scale` `points → points` · 例: なし
