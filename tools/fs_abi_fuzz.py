@@ -72,7 +72,11 @@ def load_rust():
 # --------------------------------------------------------------------------- #
 # 入力の文法 —— 「乱数の画像」ではなく「構造を重ねた画像」
 # --------------------------------------------------------------------------- #
-SHAPES = ("rect", "checker", "diag_touch", "frame", "stripes", "dot", "const", "ramp")
+SHAPES = ("rect", "checker", "diag_touch", "frame", "stripes", "dot", "const", "ramp",
+          # ★2026-09-14 追加。45,000 ケースを 3 秒で「食い違いなし」と言われたとき、
+          #   信じるのではなく**自分が printf で挙げた「踏んでいない座標」**を足す。
+          #   一致したときこそ探針を疑う([[feedback_one_probe_input_is_not_coverage]])。
+          "ring", "nested", "comb", "spiral", "hline_pair", "corner_chain")
 
 
 def _paint(a: np.ndarray, kind: str, rng: np.random.Generator) -> None:
