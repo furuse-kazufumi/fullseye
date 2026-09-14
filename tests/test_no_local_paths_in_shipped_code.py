@@ -44,11 +44,20 @@ _SEP = "[\\\\/]"
 _WIN_ABS = re.compile(r"[A-Za-z]:" + _SEP + r"[\w .\-]+" + _SEP + r"[^\s\"'`)\]]*")
 _NIX_HOME = re.compile(r"/(?:home|Users)/[\w.\-]+/[^\s\"'`)\]]*")
 
-#: 正当な絶対パス。OS が置き場所を決めているものだけ。
+#: 正当な絶対パス。**この機械の作業物でなく、OS か処理系が置き場所を決めているもの**だけ。
+#: 許すものは列挙する —— 黙って通す道は作らない。
 _ALLOWED_PREFIXES = (
     "c:\\windows\\fonts\\",
     "/usr/share/fonts/",
     "/system/library/fonts/",
+    # ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が
+    #   `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を
+    #   指している」のではなく「Visual Studio インストーラが決める場所」なので、
+    #   環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が
+    #   効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに
+    #   なっていることを確認済み。
+    "c:\\program files\\microsoft visual studio\\",
+    "c:\\program files (x86)\\microsoft visual studio\\",
 )
 
 
