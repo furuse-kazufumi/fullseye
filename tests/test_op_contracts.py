@@ -53,15 +53,21 @@ def _equal(x, y) -> bool:
 #: しただけで緑を返していた —— 「門が判定を計算した直後に捨てる」の親戚で、
 #: こちらは **判定を一度も計算しない**。まず skip で見えるようにし、
 #: ``test_probeless_ops_do_not_grow`` で本数を台帳に固定する(減る分には通る)。
-#: ★2026-09-14: **本来の直しを入れて 151 → 48 に下げた。** 上に「本来の直しは
+#: ★2026-09-14: **本来の直しを入れて 151 → 0 にした。** 上に「本来の直しは
 #: ``conftest.BANKS`` を全 in_sort へ広げること」と自分で書いておきながら、
-#: ラチェットで本数を凍結したまま 9 日が過ぎていた —— **台帳は免罪符になりやすい**。
-#: 足したのは points(56) / signal(27) / counts(8) / rgbimage(6) / matrix(4) /
-#: keypoints(2) の 6 sort = 103 op。形は推測ではなく
-#: ``backends_bridge._EMPTY_OF``(12 sort すべての正準の最小値)と ``problems.py``
-#: の入力生成器から取った。残る 48 は video(16) / qimage(11) / cimage(9) /
-#: lightfield(8) / beatcube(4) —— 複素・4-D で退化形の設計に手間が要るので次の段。
-PROBELESS_OPS_BUDGET = 48
+#: ラチェットで本数を凍結したまま 9 日が過ぎていた —— **台帳は免罪符になりやすい**
+#: ([[feedback_never_weaken_the_probe_to_get_green]])。
+#:
+#: 足したのは 11 sort: points(56) / signal(27) / video(16) / qimage(11) /
+#: cimage(9) / counts(8) / lightfield(8) / rgbimage(6) / matrix(4) / beatcube(4) /
+#: keypoints(2) = 151 op。形は推測ではなく ``backends_bridge._EMPTY_OF``
+#: (12 sort すべての**正準の最小値**)と ``problems.py`` の入力生成器から取った。
+#: これで **901 op すべてが 3 つの契約ゲートを実際に通る**。
+#:
+#: **0 になった以上、このラチェットの役目は「増えたら落とす」に変わった。**
+#: 新しい in_sort を足した人は ``conftest.BANKS`` に探針も足すこと —— 足さないと
+#: その op たちは「登録されているのに一度も実行されない」状態に戻る。
+PROBELESS_OPS_BUDGET = 0
 
 
 def _probes(op):
