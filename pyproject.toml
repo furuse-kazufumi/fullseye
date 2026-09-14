@@ -114,7 +114,11 @@ fullseye-rag = "fullseye.rag_setup:main"      # Claude Code RAG skill installer 
 # `studio_assets` is a data-only package (i18n / op help / sample images) — it is
 # declared here so package-data below carries its files into the wheel; the Studio
 # loads them by path relative to studio.py, which resolves to the shipped copy.
-packages = ["fullseye", "studio_assets", "examples_3d", "examples"]
+# ★明示列挙は**サブパッケージを自動で含めない**。`fullseye.mcp` を足さずに wheel を
+# 作ったら `fullseye/mcp/*` は 0 エントリだった(2026-09-15 実測)。import は通り、
+# テストは緑、wheel からは丸ごと消える —— root モジュールが落ちた事故 3 回と同じ族。
+# サブパッケージを足したらここにも足す(tests/test_packaging_subpackages.py が数える)。
+packages = ["fullseye", "fullseye.mcp", "studio_assets", "examples_3d", "examples"]
 py-modules = [
   # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
   # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
