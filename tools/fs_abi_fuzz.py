@@ -40,6 +40,11 @@ LIBNAME = {"win32": "fullseye_core.dll", "darwin": "libfullseye_core.dylib"}.get
 LIB = ROOT / "rust" / "fullseye_core" / "target" / "release" / LIBNAME
 
 
+class FsRun(C.Structure):
+    """`fs_run_t` —— 契約が公開する**唯一の**領域表現の窓(row, col_begin, col_end)。"""
+    _fields_ = [("row", C.c_int32), ("col_begin", C.c_int32), ("col_end", C.c_int32)]
+
+
 def load_rust():
     if not LIB.exists():
         raise SystemExit(
