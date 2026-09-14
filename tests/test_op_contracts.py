@@ -99,11 +99,32 @@ def test_op_is_deterministic(op):
     (e.g. cv2 warp on unmapped pixels) are flaky, so a single input/pair can
     miss them. A correct op is identical across all of them.
     """
-    for iname, iv in inputs_for(op.in_sort):
+    probes = _probes(op)
+    if not probes:
+        pytest.skip("in_sort '%s' に探針が無い(BANKS 未対応)" % op.in_sort)
+    for iname, iv in probes:
         ref = op.fn(copy_input(iv), 0.5, 0.5)
         for _ in range(3):
             again = op.fn(copy_input(iv), 0.5, 0.5)
             assert _equal(ref, again), f"{op.name} is nondeterministic on input '{iname}'"
+
+
+def test_probeless_ops_do_not_grow():
+    """探針の当たらない op を**台帳で固定**する(減る分には通る)。
+
+    上の 3 つの契約ゲートは、探針が無い op に対しては何も検査できない。skip に
+    したので見えるようにはなったが、**skip は緑**なので放っておくと増える。
+    ここで本数を上限として押さえ、新しい in_sort を足した人が探針も足すよう促す。
+    ★本来の直しは ``conftest.BANKS`` を全 in_sort へ広げること(``op_probe`` の
+    探針生成を流用できる)。この台帳はその作業までの見張りであって、代わりではない。
+    """
+    from collections import Counter
+    probeless = Counter(op.in_sort for op in ALL_OPS if not _probes(op))
+    total = sum(probeless.values())
+    assert total <= PROBELESS_OPS_BUDGET, (
+        "探針の無い op が %d 本に増えた(上限 %d)。内訳 %s —— "
+        "新しい in_sort を足したなら conftest.BANKS に探針も足すこと"
+        % (total, PROBELESS_OPS_BUDGET, dict(probeless)))
 
 
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
