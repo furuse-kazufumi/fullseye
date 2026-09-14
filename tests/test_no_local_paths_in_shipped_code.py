@@ -56,8 +56,13 @@ _ALLOWED_PREFIXES = (
     #   環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が
     #   効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに
     #   なっていることを確認済み。
-    "c:\\program files\\microsoft visual studio\\",
-    "c:\\program files (x86)\\microsoft visual studio\\",
+    #   ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は
+    #      `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に
+    #      合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
+    "c:\\program files\\microsoft visual studio",
+    "c:\\program files (x86)\\microsoft visual studio",
+    "c:\\program files\\microsoft",
+    "c:\\program files (x86)\\microsoft",
 )
 
 
