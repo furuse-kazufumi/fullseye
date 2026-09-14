@@ -217,10 +217,9 @@ class Catalog:
         """知識層のノートと図を引く。無ければ**理由つきで** found=False。"""
         e = self.entries.get(name)
         if e is None:
-            near = [r["name"] for r in self.search(name, limit=5)["ops"]]
             return {"found": False, "name": name,
-                    "reason": "どの層にも無い op 名(索引 / レジストリ / ノート / facade)",
-                    "nearest": near}
+                    "reason": "どの層にも無い op 名(%s)" % " / ".join(SOURCES),
+                    "nearest": self.nearest(name)}
         out: dict = {"found": True, **e.row()}
         body, fmt, src = None, None, None
         if e.note_paths:
