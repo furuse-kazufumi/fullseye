@@ -227,6 +227,16 @@ def observe_rust(lib, c: dict, ops: set) -> dict:
         return {"image": st}
     # 許容差を値域相対で取るために、値域の幅を観測に添える(比較専用の私的な鍵)。
     out: dict = {"image": 0, "_span": abs(c["vrange"][1] - c["vrange"][0]) or 1.0}
+    # ★R-3 の相対→絶対の写像と画像の形。契約の関数なのに観測していなかった。
+    absv = []
+    for t in (0.0, 0.25, 0.5, 1.0):
+        v = C.c_double()
+        absv.append(float(v.value) if lib.fs_image_absolute(img, t, C.byref(v)) == 0
+                    else float("nan"))
+    out["absolute"] = absv
+    hh, ww = C.c_int32(), C.c_int32()
+    if lib.fs_image_shape(img, C.byref(hh), C.byref(ww)) == 0:
+        out["shape"] = (int(hh.value), int(ww.value))
     if "gauss" in ops:
         g = C.c_void_p()
         sg = lib.fs_gauss(img, c["sigma"], C.byref(g))
