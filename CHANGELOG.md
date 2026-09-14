@@ -707,6 +707,27 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
   接頭辞が違う)。「無い」と言う前に全層を引く。被覆は tool で LLM にも見せる。
 - **索引 918 − レジストリ 901 = 17 は n-ary 層**(`abs_diff_image` … `union2`)。
   `fullseye.apply` はリストを受けて n-ary を走らせるので実行はできる。
+- ★**MCP 段取り 2 + 3: 画像を扱う 5 tool**(`fullseye_list_samples` / `fullseye_load_image` /
+  `fullseye_apply` / `fullseye_pipeline` / `fullseye_inspect`、計 8 tool)。
+  画像は `fullseye://img/<sha16>` の**ハンドル**で行き来し、LLM はバイト列を見ない。
+  代わりに返り値が**数値統計 + 判定 + 劣化台帳**を必ず運ぶ(TRIZ #25 セルフサービス:
+  「意味のある出力か」は画像処理の問いなので fullseye 自身が数値で答える)。判定は
+  `ok / constant / flat / saturated / nonfinite / out_of_range / empty` で、**必ず生の数値と
+  併記**(言葉だけだと判定器が中身を見ていなくても「健全」と言える)。免除は
+  `NONFINITE_IS_MEANINGFUL` と `UNIT_RANGE_IS_NOT_THE_CONTRACT` を正本として引く。
+  判定が ok でないときだけ入出力対比の 96 px 小図を `resource_link` で**自動昇格**
+  (時間分離 / #22 災い転じて福)。パイプラインは**走らせる前に**型連鎖を検査し、strict は
+  失敗した段で止まり、小図は**最初に割れた段**の 1 枚だけ。既定は strict
+  (`on_error="raise"`)、`allow_degraded=true` で fail-soft を許すと `degraded` に必ず載る。
+  サンドボックス: 既定の根は同梱サンプルだけ、`FULLSEYE_MCP_ROOT` で追加、`..` と
+  シンボリックリンクは `realpath` で潰してから比べる。`--demo` が Quickstart で、
+  テストからも走らせる(貼る前に実行)。docs: `docs/MCP.md`、`docs/INTEGRATION.md` に
+  MCP と C ABI(多言語)の節、README に 2 つの入口。
+  ★作りながら拾った欠陥 3 つ: `HandleStore(thumb_dir=…)` がディレクトリを作らず小図の保存で
+  落ちる / **二値の region を「飽和」と判定して小図を昇格**(0/1 は region の契約。`--demo`
+  で発覚)/ 判定の順序で `ones + inf` が「定数」、`0..715` が「飽和」になる(非有限 → 定数 →
+  範囲外 → 飽和 → 平坦、の順に)。テスト 66 件(実 stdio 連鎖、根の外・型不一致・strict
+  拒否・昇格 4 条件・小図を開いて高さと非黒)。
 
 - ★**CI が赤だった原因を 3 つ潰した**(2026-09-15)。
   1. **packaging 門が `pyproject.toml` を誤読していた。** `_py_modules()` は非貪欲の
