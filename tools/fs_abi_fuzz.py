@@ -152,8 +152,14 @@ def _paint(a: np.ndarray, kind: str, rng: np.random.Generator) -> None:
 
 
 def gen_case(rng: np.random.Generator) -> dict:
-    h = int(rng.integers(1, 17))
-    w = int(rng.integers(1, 17))
+    # 大きい盤面も少し混ぜる。小さい画像だけだと「端の効果が支配的で内部が無い」
+    # 状態ばかりになり、カーネル半径や run の連結が長く伸びる経路を踏まない。
+    if rng.random() < 0.12:
+        h = int(rng.integers(24, 65))
+        w = int(rng.integers(24, 65))
+    else:
+        h = int(rng.integers(1, 17))
+        w = int(rng.integers(1, 17))
     a = np.zeros((h, w))
     for _ in range(int(rng.integers(1, 4))):
         _paint(a, str(rng.choice(SHAPES)), rng)
