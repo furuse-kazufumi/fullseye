@@ -165,11 +165,37 @@ void        fs_tuple_release(fs_tuple_t *t);
 fs_status_t fs_gauss(const fs_image_t *in, double sigma, fs_image_t **out);
 
 /* @fslib threshold  — lo/hi are RELATIVE (0..1) and resolved through the
- * image's declared range, which is what makes the operator frame-independent. */
+ * image's declared range, which is what makes the operator frame-independent.
+ *
+ * The interval is CLOSED on both ends: a pixel is selected when
+ * `absolute(lo) <= v <= absolute(hi)`.  Left unstated, this is exactly the kind
+ * of thing two implementations settle differently and nobody notices.
+ *
+ * `lo > hi` is FS_E_INVALID_ARG, not an empty region.  Rule R-1 says a failed
+ * operator must be distinguishable from one that found nothing, and an inverted
+ * interval is a caller mistake, not a legitimate way to ask for nothing.
+ * (Measured 2026-09-14: a Rust implementation of this header rejected it while
+ * `fslib` silently returned an empty region — found by running both on the same
+ * inputs.  That is what a second implementation is for.)
+ *
+ * Pixels outside the image's DECLARED range are compared as they are: the range
+ * is a declaration by the acquisition layer (R-3), not a claim about the data,
+ * and clamping here would hide a mis-declared range. */
 fs_status_t fs_threshold(const fs_image_t *in, double lo, double hi,
                          fs_region_t **out);
 
-/* @fslib connection */
+/* @fslib connection
+ *
+ * Connectivity is EIGHT-CONNECTED: pixels touching at a corner belong to the
+ * same object.  This follows HALCON's default and is what a 3x3 morphological
+ * neighbourhood implies.  An implementation that uses four-connectivity reports
+ * a different object COUNT on the same region — a checkerboard is one object at
+ * eight and N/2 objects at four — so this cannot be left to the backend.
+ *
+ * The objects are ordered by the position of their first run: increasing row,
+ * then increasing column.  Ordering is part of the contract because callers
+ * index into the set (`fs_objectset_region`), and an unspecified order makes a
+ * recipe's output depend on which backend happened to run. */
 fs_status_t fs_connection(const fs_region_t *in, fs_objectset_t **out);
 
 /* @fslib measure_all — every live object measured in one pass. */
