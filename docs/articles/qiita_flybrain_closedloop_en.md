@@ -416,6 +416,27 @@ Three reasons the sensitivity is missing. **(1)** The search had effectively col
 
 The next step is not to write a conclusion; it is to raise the sensitivity — floored scales, at least three seeds per condition, and more shuffles.
 
+### A staged curriculum can build direction selectivity — and the last stage destroys it (2026-09-14)
+
+§6 reported that optimising for behaviour alone breaks direction selectivity — the property that makes T4/T5 discriminate motion direction. The obvious countermeasure is to **demand discrimination explicitly, in stages**: brightness → ON/OFF → direction → rotation, 400 evaluations each, every stage starting from the previous stage's solution. Two starting points were run.
+
+| Stage | From untrained | From the trained start (007) |
+|---|---|---|
+| S1 brightness | 0.353 | 1.000 |
+| S2 ON/OFF | 0.796 | 0.964 |
+| S3 direction (DSI) | **0.002** | **0.377** (**5 of 8** types pass) |
+| S4 rotation (M4) | 0.061 | **0.799** (held-out C 0.823 / D 0.811, **1/8** pass) |
+
+Two things follow.
+
+**(1) The curriculum can build direction selectivity — but only from a trained starting point.** From 007 the direction stage takes it from 0/8 to **5/8**. From the untrained start, four stages of climbing leave it at 0/8, and the direction stage itself scores 0.002 — no climb at all. Wiring is the scaffold, but **you cannot climb the scaffold alone**. That is the same statement as the shuffle appendix above and as §6's "0/8 before training", arrived at from a third direction.
+
+**(2) What the curriculum builds, the final behavioural stage destroys.** The 5/8 earned in the direction stage falls to **1/8** once the rotation stage is learned — while rotation estimation itself climbs to 0.82 on scenes never used. **The performance-versus-realism trade-off is running inside a single search, over time.** Earlier stages decay too (ON/OFF 0.874 → 0.536).
+
+The remedy is known — make stage *k*'s objective the **mean over stages 1…k** — and it is the next thing to run.
+
+One more thing: this is the first experiment to run **after the scale collapse described above was fixed**. Its report file records "the time-constant scale was 3.75e-09, so the floor of 0.001 was used" — the fix is visible in the output, not just in the diff.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
