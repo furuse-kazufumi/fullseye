@@ -752,7 +752,8 @@ def select_shape(objs: ObjectSet, feature: str, vmin: float, vmax: float) -> Obj
     areas, rows, cols = region_features(objs)
     values = {"area": areas, "row": rows, "column": cols}.get(feature)
     if values is None:
-        raise FsTypeError("unknown feature %r (have: area, row, column)" % feature)
+        # 名前が定義域の外 = FS_E_INVALID_ARG(`fs_select_shape` の註)
+        raise FsValueError("unknown feature %r (have: area, row, column)" % feature)
     return objs.select((values >= float(vmin)) & (values <= float(vmax)))
 
 
