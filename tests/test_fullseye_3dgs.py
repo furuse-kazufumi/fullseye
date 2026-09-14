@@ -72,9 +72,16 @@ def test_render_walk_gif_op_registered():
 def test_render_walk_gif_headless(tmp_path):
     """headless GIF 生成が go2 トロット×rolling で通る(GPU 不要・MuJoCo offscreen)。"""
     import importlib.util
+    import pytest
     if importlib.util.find_spec("mujoco") is None:
-        import pytest
         pytest.skip("mujoco 未インストール")
+    # ★**道具の有無と資産の有無は別**。ここは mujoco の有無だけを見ていたので、
+    #   Menagerie が無い環境では `scene_registry.resolve()` が返す None を掴んで
+    #   `TypeError` になった。同ファイルの `test_scene_resolution_via_registry` は
+    #   既に資産の skip を持っており、作法が兄弟に適用されていなかった。
+    if R.resolve("go2") is None:
+        pytest.skip("mujoco_menagerie(go2) 未取得 —— 環境変数 MUJOCO_MENAGERIE が "
+                    "指す資産チェックアウトが無い")
     import world_render as WR
     out = str(tmp_path / "walk.gif")
     r = WR.render_walk_gif(out, walker="go2", terrain="rolling", gait="trot",
