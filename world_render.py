@@ -66,6 +66,15 @@ def _walk_qpos(walker, motion=None, gait=None, n_frames=90, travel=0.0):
     import mujoco
     import scene_registry as R
     spec = R.resolve(walker)
+    # ★`resolve()` は**実在しない場面に None を返す**(資産が無い環境では正しい)。
+    #   検査せずに `spec["xml"]` を引くと `TypeError: 'NoneType' object is not
+    #   subscriptable` という、原因を何も語らない例外になる —— 呼び手には
+    #   「何が無いのか」と「どう直すのか」を返す。
+    if spec is None:
+        raise ValueError(
+            "場面 %r を解決できない。名前が登録済みか、あるいは環境変数 "
+            "MUJOCO_MENAGERIE / ONOCOLLO_MUSCULO が指す資産があるかを確かめること "
+            "(scene_registry.resolve は実在しない場面に None を返す)。" % (walker,))
     mpath = R.motion(walker, motion) if (motion or not gait) else None
     if mpath:
         return np.load(mpath).astype(float)
