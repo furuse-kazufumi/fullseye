@@ -44,6 +44,11 @@ def restore():
         fslib._REGISTRY[k] = dict(v)
     fslib.threshold = _orig_threshold
     fslib.select_shape = _orig_select
+    # クラス属性の差し替えは辞書の入れ替えでは戻らない。覚えておいた分を戻す。
+    while _PATCHED:
+        what, orig = _PATCHED.pop()
+        cls, attr = what.split(".")
+        setattr(getattr(fslib, cls), attr, orig)
 
 
 # --- 変異 ------------------------------------------------------------------
