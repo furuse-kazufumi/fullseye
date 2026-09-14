@@ -31,3 +31,14 @@ out/ui_harness_shots/
 .gsplat-cuda/
 .coverage
 coverage.xml
+
+# --- Rust / C の呼び出し口(2026-09-14 追加)-------------------------------
+# 契約の第 2 実装と各言語の呼び出し例は**ソースだけ**を追う。生成物は追わない
+# (.dll / .exe は環境依存で、コミットすると「手元で動いた版」が混ざる)。
+rust/**/target/
+rust/fullseye_core/examples/c/*.exe
+rust/fullseye_core/examples/c/*.dll
+rust/fullseye_core/examples/c/*.so
+rust/fullseye_core/examples/c/*.dylib
+rust/fullseye_core/examples/csharp/bin/
+rust/fullseye_core/examples/csharp/obj/
