@@ -364,13 +364,20 @@ def test_connection_is_eight_connected_on_every_backend():
 
 
 def test_threshold_rejects_an_inverted_interval():
-    """lo > hi は失敗であって「空を寄こせ」ではない(ABI R-1)。"""
+    """lo > hi は失敗であって「空を寄こせ」ではない(ABI R-1)。
+
+    種別は **`FS_E_INVALID_ARG`**(引数が定義域の外)であって `FS_E_TYPE` ではない。
+    `FsValueError` を足すまで両方 `FsTypeError` だったので、Rust が 1 を返すのに
+    Python は 2 相当を投げる **状態コードの食い違い**が残っていた。
+    """
     import numpy as np
     import pytest
     import fslib
     img = fslib.FImage(np.full((4, 4), 0.5), value_range=(0.0, 1.0))
-    with pytest.raises(fslib.FsTypeError):
+    with pytest.raises(fslib.FsValueError):
         fslib.threshold(img, 0.8, 0.2)
+    # 型の誤りと混ざらないこと(混ざると 10 種に分けた意味が消える)
+    assert not issubclass(fslib.FsValueError, fslib.FsTypeError)
 
 
 def test_select_shape_rejects_an_inverted_interval():
