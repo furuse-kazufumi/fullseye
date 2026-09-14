@@ -116,15 +116,18 @@ def m6_half_open_select():
 
 
 def m7_reverse_order():
+    """★これも 1 度書き直している(m1 と同型の失敗)。
+
+    最初は `o.ids = o.ids[::-1]` と代入していたが、`ObjectSet` は **frozen
+    dataclass** なので `FrozenInstanceError`。ファザーが「1 ケース目で検出」と
+    言っていたのは**並びの違いではなく注入のバグ**だった。
+    正しくは**新しい ObjectSet を作る**。
+    """
     base = ORIG["connection"]["numpy"]
 
     def bad(reg):
         o = base(reg)
-        return o.select(np.ones(len(o.ids), dtype=bool)[::-1] | True) if False else _rev(o)
-
-    def _rev(o):
-        o.ids = o.ids[::-1].copy()
-        return o
+        return fslib.ObjectSet(o.labels, o.ids[::-1].copy(), dict(o.feats))
     for be in fslib._REGISTRY["connection"]:
         fslib._REGISTRY["connection"][be] = bad
 
