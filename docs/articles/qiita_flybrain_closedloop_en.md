@@ -397,6 +397,24 @@ Conversely, **the body, the physics and the connectome model stay external depen
 
 This reframes the first half of the article slightly. **Splitting ON from OFF in the lamina, multiplying two inputs of different dynamics offset in space, then pooling the result in wide-field cells to stabilise posture** — none of that is "how flies do it". It is a design adopted twice, independently, across 550 million years. The 0.14–0.20 measured in §4 is then the premium that having that design in *measured* wiring buys over writing the textbook equation yourself.
 
+### Shuffling the wiring changed nothing — and "nothing" is not what I get to write (2026-09-14)
+
+§4 measured the wiring's share by swapping the wiring underneath *pretrained* weights: 0.14–0.20. This is the harder version of that question. From the **same untrained initialisation**, evolve **the real wiring** and **two degree-preserving shuffles** of it on the same task with the same budget (734 dimensions, 1500 evaluations, about three hours per condition). Starting untrained removes the confound of the pretrained point.
+
+| Condition | Train | Held-out mean | C | D |
+|---|---|---|---|---|
+| Real wiring | +0.196 | +0.171 | −0.292 | +0.633 |
+| Shuffle 0 | +0.205 | +0.198 | −0.138 | +0.535 |
+| Shuffle 1 | +0.145 | +0.039 | −0.215 | +0.294 |
+
+Real minus the shuffle mean is **+0.052** on held-out scenes. But **the two shuffles differ from each other by 0.159 — three times that**. **This experiment does not have the sensitivity to measure what it was built to measure.**
+
+Worth recording is where this nearly went wrong. With only the first shuffle finished, the numbers said the shuffle was *slightly better* (−0.028) — exactly the shape that invites writing "the wiring is worth nothing". The second shuffle flips the sign. **At n = 1 you cannot trust the magnitude of a difference, and you cannot trust its sign either.**
+
+Three reasons the sensitivity is missing. **(1)** The search had effectively collapsed to biases alone. Normalising each tensor by its standard deviation drove the scale to **3.75e-09** for a near-constant initialisation (all time constants start at 0.05), and the guard only tested `std > 0`, so it sailed through. In all three conditions the time constants moved by 1e-8 — not at all. An effective floor now fixes this, but **the three runs above are from the old code**, so the caveat stays.  **(2)** One seed per condition: no error bars. **(3)** As §6 shows, direction selectivity is 0/8 before training — **wiring alone produces no function**, so any difference due to wiring may be swamped by differences in learning before it can appear.
+
+The next step is not to write a conclusion; it is to raise the sensitivity — floored scales, at least three seeds per condition, and more shuffles.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
