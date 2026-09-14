@@ -205,6 +205,8 @@ def test_every_declared_tool_has_a_body(cat):
             a = {"handle": ctx["handle"], "op": "gaussian", "vision": "none"}
         elif n == "fullseye_inspect":
             a = {"handle": ctx["handle_out"], "vision": "none"}
+        elif n == "fullseye_pipeline":
+            a = {"handle": ctx["handle"], "stages": [{"op": "gaussian"}, {"op": "otsu"}], "vision": "none"}
         else:
             a = {}
         res = call_tool(n, a, cat, store)
