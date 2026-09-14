@@ -233,8 +233,7 @@ def test_strict_refuses_a_degrading_op_and_says_why(cat, store, root):
 
 
 def test_allow_degraded_returns_a_value_but_puts_the_degradation_on_the_record(cat, store, root):
-    h = call_tool("fullseye_load_image", {"path": str(root / "tiny.png")}, cat, store)["structuredContent"]["handle"]
-    op = _degrading_op(cat)
+    op, h = _degrading_op(cat, store, root)
     res = call_tool("fullseye_apply", {"handle": h, "op": op, "allow_degraded": True}, cat, store)
     assert res["isError"] is False, res["content"][0]["text"][:300]
     sc = res["structuredContent"]
