@@ -371,3 +371,53 @@ def test_threshold_rejects_an_inverted_interval():
     img = fslib.FImage(np.full((4, 4), 0.5), value_range=(0.0, 1.0))
     with pytest.raises(fslib.FsTypeError):
         fslib.threshold(img, 0.8, 0.2)
+
+
+def test_select_shape_rejects_an_inverted_interval():
+    """`threshold` で直したのと**同じ欠陥が兄弟に残っていた**(R-1)。
+
+    面積の下限と上限を取り違えたレシピが、黙って「該当なし」= 良品として通る。
+    Rust 実装が `FS_E_INVALID_ARG` を返すのに `fslib` が 0 個を返す差分で発見。
+    """
+    import numpy as np
+    import pytest
+    import fslib
+    a = np.zeros((12, 12))
+    a[1:4, 1:4] = 1.0
+    objs = fslib.connection(fslib.threshold(
+        fslib.FImage(a, value_range=(0.0, 1.0)), 0.5, 1.0))
+    with pytest.raises(fslib.FsTypeError):
+        fslib.select_shape(objs, "area", 20.0, 5.0)
+
+
+def test_gauss_agrees_to_the_border_on_every_backend():
+    """`fs_gauss` は backend で変わってはいけない —— **端の画素も含めて**。
+
+    ここも実際に壊れていた: numpy backend は `ndi.gaussian_filter` の既定
+    `mode='reflect'`(`d c b a | a b c d`、境界の**上**で折り返す)、cv2 backend は
+    `GaussianBlur` の既定 `BORDER_REFLECT_101`(`d c b | a b c d`、境界画素を
+    重複させない)。**同じ「reflect」という語が別物を指していた**。
+    実測(32x32 乱数, sigma=1.0): 内部は 4.6e-08 まで一致するのに端は最大 0.13、
+    つまり値域の 13%。**内部だけを見る検査では原理的に出ない**ので、ここでは
+    端を明示的に見る([[feedback_drift_gate_passes_empty_output]] の「図が数値
+    テストの盲点(端だけ壊れる)を暴く」と同じ場所)。
+    """
+    import numpy as np
+    import fslib
+    rng = np.random.default_rng(0)
+    img = fslib.FImage(rng.random((32, 32)), value_range=(0.0, 1.0))
+    impls = fslib._REGISTRY["gauss"]
+    backends = [b for b in fslib.backends_for("gauss") if b in impls]
+    outs = {b: np.asarray(impls[b](img, 1.0).pixels, dtype=np.float64) for b in backends}
+    assert len(outs) == len(fslib.backends_for("gauss")) >= 2, (
+        "backend を全部引けていない(引けた %s)—— 突き合わせが目的の門なので "
+        "1 つしか動かないなら無意味" % sorted(outs))
+    ref_name, ref = next(iter(outs.items()))
+    border = np.ones(ref.shape, dtype=bool)
+    border[5:-5, 5:-5] = False          # sigma=1.0 のカーネル半径 4 より外
+    for b, v in outs.items():
+        d = np.abs(v - ref)
+        assert d[border].max() < 1e-5, (
+            "backend %s と %s が**端で** %.3g 違う(内部は %.3g)—— 折り返しの流儀が "
+            "違う。契約は numpy 側(既存レシピのオラクル)の `reflect` = "
+            "cv2 の BORDER_REFLECT" % (b, ref_name, d[border].max(), d[~border].max()))
