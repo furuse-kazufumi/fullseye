@@ -184,7 +184,7 @@ def test_op_honours_declared_sort(op):
 @pytest.mark.parametrize("op", [o for o in ALL_OPS if o.out_sort == "region"],
                          ids=[o.name for o in ALL_OPS if o.out_sort == "region"])
 def test_region_output_in_unit_range(op):
-    for iname, iv in inputs_for(op.in_sort):
+    for iname, iv in inputs_for(op.in_sort, op.name):
         out = op.fn(copy_input(iv), 0.5, 0.5)
         if isinstance(out, np.ndarray) and out.size:
             mn, mx = float(np.min(out)), float(np.max(out))
