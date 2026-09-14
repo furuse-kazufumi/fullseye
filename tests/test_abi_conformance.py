@@ -246,6 +246,18 @@ def test_fslib_error_types_map_onto_declared_status_codes():
     img = _scene()
     with pytest.raises(fslib.FsTypeError):          # -> FS_E_TYPE
         fslib.connection(img)
+    # 定義域の外は **FS_E_INVALID_ARG**(FS_E_TYPE と混ぜない)。
+    with pytest.raises(fslib.FsValueError):
+        fslib.threshold(img, 0.8, 0.2)
+    objs = fslib.connection(fslib.threshold(img, 0.0, 1.0))
+    with pytest.raises(fslib.FsValueError):
+        fslib.select_shape(objs, "area", 20.0, 5.0)
+    with pytest.raises(fslib.FsValueError):
+        fslib.select_shape(objs, "perimeter", 0.0, 1.0)
+    # 逆向きも固定する: 値の誤りが型の誤りとして報告されないこと。
+    assert not issubclass(fslib.FsValueError, fslib.FsTypeError), (
+        "FsValueError が FsTypeError の一種だと、呼び手は 2 つを区別できない "
+        "—— 状態コードを 10 種に分けた意味が消える")
     with fslib.profile("industrial"):               # -> FS_E_NO_BACKEND
         @fslib.op("abi_probe_no_native", "numpy")
         def _impl(x):
