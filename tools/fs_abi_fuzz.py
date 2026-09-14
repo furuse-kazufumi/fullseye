@@ -389,6 +389,13 @@ def compare(r: dict, p: dict) -> str | None:
                 return "gauss: 最大差 %.3g(値域比 %.3g)" % (d, d / span)
         if (np.isfinite(r["gauss"]) != np.isfinite(p["gauss"])).any():
             return "gauss: 非有限の位置が違う"
+    if "shape" in r and "shape" in p and r["shape"] != p["shape"]:
+        return "shape: Rust %s / Python %s" % (r["shape"], p["shape"])
+    if "absolute" in r and "absolute" in p:
+        span = abs(r.get("_span", 1.0)) or 1.0
+        for t, x, y in zip((0.0, 0.25, 0.5, 1.0), r["absolute"], p["absolute"]):
+            if abs(x - y) / span > 1e-12:
+                return "absolute(%g): Rust %r / Python %r" % (t, x, y)
     for k in ("area", "n_runs", "n_comp", "n_select"):
         if k in r and k in p and r[k] != p[k]:
             return "%s: Rust %s / Python %s" % (k, r[k], p[k])
