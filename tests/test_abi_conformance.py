@@ -231,7 +231,13 @@ def test_region_runs_are_the_representation_independent_view():
 # R-1: errors are status codes, and fslib's exceptions map onto them
 # --------------------------------------------------------------------------- #
 def test_fslib_error_types_map_onto_declared_status_codes():
-    mapping = {fslib.FsTypeError: "FS_E_TYPE", fslib.FsBackendError: "FS_E_NO_BACKEND"}
+    # ★2026-09-14: `FsValueError` を足した。それまで例外は 2 種しか無く、
+    #   **種の違う失敗が同じ status に潰れていた** —— 逆さの区間は契約では
+    #   `FS_E_INVALID_ARG` なのに `FsTypeError`(= FS_E_TYPE)を投げていた。
+    #   差分テストが「どちらも拒否した」までしか見ていなかったので素通りした。
+    mapping = {fslib.FsValueError: "FS_E_INVALID_ARG",
+               fslib.FsTypeError: "FS_E_TYPE",
+               fslib.FsBackendError: "FS_E_NO_BACKEND"}
     codes = status_codes()
     for exc, code in mapping.items():
         assert code in codes, "%s maps to %s, which the ABI does not declare" % (
