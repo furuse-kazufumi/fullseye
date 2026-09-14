@@ -109,7 +109,17 @@ This table comes first. Without it, a reader will assume the fly's brain did all
 
 *↑ The same optic lobe, rotating in 3-D. **The 721 columns keep their arrangement through all seven stages** — that is the columnar organisation — with one colour per stage (receptors → lamina → medulla ON / OFF / modulatory → T4, the ON direction-selective cells → T5, the OFF ones). Column positions are the **real hexagonal lattice**, but **the depth between stages is schematic**: flyvis is a columns × cell-types network and carries no anatomical 3-D coordinates. When section 5 talks about "folding the degrees of freedom per cell type", these colours are the unit it folds along.*
 
+So what *is* that measured wiring, concretely? **Here it is, drawn.**
+
+![The optic lobe connectome](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/flybrain_connectome_graph.png)
+
+*↑ **Left: the measured connectome** (fib25-fib19; 65 cell types, 605 type-to-type connections). Nodes are cell types, laid out in the order light travels through them. **Blue is excitatory, red inhibitory**; line width is synapses per receiving cell. **Right: a degree-preserving shuffle** — every type keeps its in-degree, out-degree and sign, and only the targets are swapped. Same edge count, same degrees, but **the direction profile changes**: within-layer connections fall from 179 to 99, while backward ones (against the direction of light) rise from 148 to 208. Figure labels are in Japanese.*
+
+Those red lines criss-crossing the layers on the right are what the "shuffled-connectome control" later in this article actually destroyed. **Same edges, same degrees — the layered structure is not preserved.**
+
 So **only the optic lobe is genuinely connectome-derived**; everything before and after it (eye geometry, readout, behaviour) was written by hand. Every number below describes "the optic lobe wired up this particular way".
+
+One more thing worth stating plainly: **an insect's central nervous system is not confined to its head.** The thorax carries a ventral nerve cord (VNC) of roughly 23,000 neurons, and **that is where walking is generated** — the brain sends roughly 1,328 descending neurons to it. A decapitated fly can still walk (reported in 1997). When this article says "walking is kinematic", what it means is that **something the VNC would normally produce is hand-written here instead**. Brain-plus-VNC connectomes (BANC, MaleCNS) were published in 2026, so this part can get closer to the real thing later.
 
 ## 0. Designing the eye itself — compound-eye optics as closed-form operators
 
