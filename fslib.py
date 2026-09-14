@@ -615,8 +615,9 @@ def _tables_cv2(objs: ObjectSet) -> dict:
     cents = objs.feats.get("_cc_centroids")
     if stats is None:
         # No stats were carried from `connection` — measure now.
+        # 連結性はキーワードで渡す(位置引数では効かない。`_connection_cv2` の註を参照)
         _n, _lbl, stats, cents = cv2.connectedComponentsWithStats(
-            (objs.labels > 0).astype(np.uint8), 8, cv2.CV_32S)
+            (objs.labels > 0).astype(np.uint8), connectivity=8, ltype=cv2.CV_32S)
     return {"area": stats[:, cv2.CC_STAT_AREA].astype(np.float64),
             "row": cents[:, 1].astype(np.float64),
             "column": cents[:, 0].astype(np.float64)}
