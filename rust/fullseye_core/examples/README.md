@@ -19,7 +19,11 @@
 |---|---|---|
 | `c/`(clang) | clang 22.1.8 / target `x86_64-pc-windows-msvc`(`winget install LLVM.LLVM`)。`target/release/fullseye_core.dll.lib` をリンク | **実行して確認済み** |
 | `c/`(gcc) | gcc 16.1.0 MinGW-W64 ucrt-posix-seh(`winget install BrechtSanders.WinLibs.POSIX.UCRT`、実体は `%LOCALAPPDATA%\Microsoft\WinGet\Packages\BrechtSanders...\mingw64\bin`)。**`.dll` を直リンク** | **実行して確認済み** |
-| MSVC(`cl.exe`) | `winget install Microsoft.VisualStudio.2022.BuildTools` が **失敗**(`Installer failed with exit code: 1`、winget 自体は exit 0 を返す) | **未確認** |
+| MSVC(`cl.exe`) | MSVC 14.44.35207(Build Tools 2022)。`winget` の一発インストールは **失敗**(`Installer failed with exit code: 1` を返すのに **winget 自体は exit 0**)—— 本体は入っていて **C++ ワークロードだけが欠けていた**ので、`setup.exe modify --add Microsoft.VisualStudio.Workload.VCTools` で追加した | **ヘッダ検査は C / C++ とも通過** |
+
+★ MSVC の件は今日 3 度目の「**exit 0 なのに失敗**」だった(あとの 2 つは
+pytest の collection 中断と、`head` にパイプした `$?` の読み違い)。
+**終了コードを信じず、成果物の実在で確かめる。**
 | `csharp/` | .NET SDK 9.0.318(`winget install Microsoft.DotNet.SDK.9`) | **実行して確認済み** |
 | `luajit_ffi.lua` | LuaJIT 2.1.19907(`winget install DEVCOM.LuaJIT`、実体は `%LOCALAPPDATA%\Programs\LuaJIT\bin`) | **実行して確認済み** |
 
