@@ -238,6 +238,17 @@ def observe_rust(lib, c: dict, ops: set) -> dict:
     lib.fs_region_area(reg, C.byref(area))
     lib.fs_region_run_count(reg, C.byref(nrun))
     out["area"], out["n_runs"] = int(area.value), int(nrun.value)
+    # ★`fs_region_runs` は契約が「領域表現の**唯一の窓**」と呼ぶもの。それを
+    #   観測していなかった —— 面積と本数が合っていても、**run の切り方**が違えば
+    #   run-length と dense mask は別物として振る舞う(隣接 run を結合するか、
+    #   行内の並びは昇順か)。観測していない性質はケース数では出ない。
+    if int(nrun.value) > 0:
+        buf = (FsRun * int(nrun.value))()
+        written = C.c_int64()
+        if lib.fs_region_runs(reg, buf, int(nrun.value), C.byref(written)) == 0:
+            out["runs"] = [(r.row, r.col_begin, r.col_end) for r in buf]
+    else:
+        out["runs"] = []
     objs = C.c_void_p()
     lib.fs_connection(reg, C.byref(objs))
     cnt = C.c_int64()
