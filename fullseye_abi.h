@@ -224,7 +224,20 @@ fs_status_t fs_connection(const fs_region_t *in, fs_objectset_t **out);
 fs_status_t fs_measure_all(const fs_objectset_t *in,
                            fs_tuple_t **area, fs_tuple_t **row, fs_tuple_t **column);
 
-/* @fslib select_shape — filters ids, sharing the label image and measurements. */
+/* @fslib select_shape — filters ids, sharing the label image and measurements.
+ *
+ * The interval is CLOSED on both ends, like `fs_threshold`, and the surviving
+ * objects keep the input's order.
+ *
+ * `vmin > vmax` is FS_E_INVALID_ARG.  This is the same rule `fs_threshold`
+ * already states, and it had to be written here too because the implementation
+ * that obeyed it there did NOT obey it here: a recipe that swapped an area's
+ * lower and upper bound silently selected nothing, which on a line reads as
+ * "no defects".  (Found 2026-09-14 by running a second implementation of this
+ * header against `fslib` — the same way the connectivity split was found.)
+ *
+ * An unrecognised `feature` is FS_E_INVALID_ARG.  The known names are
+ * "area", "row" and "column" — the three `fs_measure_all` produces. */
 fs_status_t fs_select_shape(const fs_objectset_t *in, const char *feature,
                             double vmin, double vmax, fs_objectset_t **out);
 
