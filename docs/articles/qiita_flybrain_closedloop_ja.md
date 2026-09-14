@@ -358,7 +358,23 @@ D がこの節のいちばんの見どころです。入力は λ = 6.5° の細
 - **Stone et al. (2017)** —— 解剖学的制約つきの経路積分モデル(ハチの中枢複合体)。第 7 節の経路積分はこの構造に倣っています。
 - **Zador (2019)** —— ゲノム的ボトルネック。第 5 節の「細胞型ごとに畳む」の根拠。
 
-EMD の実装と画像処理の op は、自作のビジョンライブラリ **Fullseye** のものを使いました。評価台として使うことで、「コネクトーム拘束モデルの配線の取り分」のような**先行実装に無い定量比較**ができています。
+### この PoC は Fullseye の何を使い、何を Fullseye に返したか
+
+視覚の前段は、自作のビジョンライブラリ **Fullseye** の `flyvision` 族(8 op)で組んであります。**どれも閉じた式で、真値つきの検査が付いています**:
+
+| op | 役割 | 本記事での出番 |
+|---|---|---|
+| [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/fly_hex_lattice.html) | 六角格子の視軸(n = 3R(R+1)+1) | §0 の A、複眼の幾何 |
+| [`fly_hex_resample`](https://furuse.work/ops/flyvision/sample/fly_hex_resample.html) | ガウス受容野で像を個眼に落とす | §0 の C・D(MTF と折り返し) |
+| [`fly_sky_1f`](https://furuse.work/ops/flyvision/stimulus/fly_sky_1f.html) | 1/f の帯を持つ合成の空 | §2 の「遠景の模様」 |
+| [`fly_emd_response`](https://furuse.work/ops/flyvision/motion/fly_emd_response.html) | Hassenstein–Reichardt 相関器 | §4 の**ゼロ点** |
+| [`fly_hs_readout`](https://furuse.work/ops/flyvision/integrate/fly_hs_readout.html) | 広視野の対向和(HS 型) | 読み出しの形 |
+| [`fly_dsi`](https://furuse.work/ops/flyvision/tuning/fly_dsi.html) | 方向選択性指数 | §6 の 8 型の検査 |
+| [`fly_lgmd_eta`](https://furuse.work/ops/flyvision/looming/fly_lgmd_eta.html) / [`fly_tau_from_expansion`](https://furuse.work/ops/flyvision/looming/fly_tau_from_expansion.html) | 衝突検出(η と余裕時間 τ) | 本記事では未使用(同じ眼から測れる) |
+
+**Fullseye に返したもの**は 2 つです。**(1) 評価台**: 運動検出器を差し替えても刺激・読み出し・採点が同じままになるので、§4 の「コネクトーム拘束モデルは教科書の式に対して何ポイント上乗せするか(0.14〜0.20)」という比較が成立しました。先行実装は「モデルを動かす」ことはできても、**同じ刺激で別の検出器と並べる**ようには作られていません。**(2) 反例**: §0 の折り返しや §2 の床の流れは、op の検査を「静止した合成画像」から「歩行中の実測」に引き上げるべきだ、という具体的な要求として戻ってきます。
+
+逆に、**体・物理・コネクトームモデルは外部依存のまま**です(flybody / flyvis)。ここを自作する予定はありません —— 価値があるのは「載せて測る台」の側だからです。
 
 ---
 
