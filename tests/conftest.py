@@ -405,8 +405,30 @@ def copy_input(x):
     return np.array(x, copy=True)
 
 
-def inputs_for(in_sort: str):
-    """Yield (name, value) edge inputs matching a sort. Unknown sort -> empty."""
+def inputs_for(in_sort: str, op_name: str | None = None):
+    """Yield (name, value) edge inputs matching a sort. Unknown sort -> empty.
+
+    ★``op_name`` を渡すと ``op_probe.OP_PROBE_OVERRIDE`` の **op 専用の探針**を
+    優先する(2026-09-15)。``tests/test_backends_typed_liveness._sample_for`` と
+    ``tests/test_op_probe_ledger`` は 2026-09-08 から既にそうしていたのに、
+    **この関数だけがその知識に繋がっていなかった** —— 2026-09-14 に探針を
+    151 op ぶん広げたとき、`tb_normals_to_egi` に sort 既定の探針(位置の雲)が
+    届き、「原点が零ベクトルになり拒否される」という**既に書いてある理由**を
+    踏み抜いて赤くなった。探針の知識は 1 か所に置き、全部の門が同じものを見る。
+
+    sort 既定は「その sort が運びうる値」の帯を張るので、**override がある op でも
+    帯を捨てない** —— 専用探針を先頭に置き、sort 既定を後ろに続ける。
+    """
+    if op_name:
+        try:
+            import op_probe
+
+            ovr = op_probe.OP_PROBE_OVERRIDE.get(op_name)
+        except Exception:                                    # noqa: BLE001
+            ovr = None
+        if ovr is not None:
+            yield "override", ovr[0]()
+            return
     bank = BANKS.get(in_sort)
     if bank is None:
         return
