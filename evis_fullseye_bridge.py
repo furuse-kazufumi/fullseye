@@ -119,9 +119,14 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
         cy = float(d.xpos[pel][1]) if pel >= 0 else 0.0
         if fwd0 is None:
             fwd0 = cx
-        cam.lookat[:] = [cx, cy, 0.9]
+        cam.lookat[:] = [cx, cy, third_person_z]
         rgb.update_scene(d, camera=cam); rimg = rgb.render().copy()
-        if ego >= 0:
+        if ego_camera is not None:
+            # the body's OWN eye camera (authored in the model: mount, fovy, everything)
+            rgb.update_scene(d, camera=ego_camera); eimg = rgb.render().copy()
+            dep.update_scene(d, camera=ego_camera); dimg = dep.render().copy()
+            sens = eimg
+        elif ego >= 0:
             # robot's-eye sensors: RGB + depth + DVS all from the head-mounted camera
             _ego_cam(d)
             rgb.update_scene(d, camera=ecam); eimg = rgb.render().copy()
