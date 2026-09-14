@@ -15,9 +15,14 @@ typedef struct fs_region    fs_region_t;
 typedef struct fs_objectset fs_objectset_t;
 
 int  fs_abi_version(int32_t *major, int32_t *minor);
+/* ★fs_dtype_t は契約の第 5 引数。ここが抜けていた(2026-09-14)——
+   ヘッダは 8 引数、実装と 3 つの FFI 宣言は 7 引数だった。FFI で宣言を
+   書き写す言語どうしを突き合わせても、全員が同じ写し間違いをしていれば
+   一致してしまう。C から #include して初めて型検査が働く。 */
 int  fs_image_create(const void *pixels, int32_t height, int32_t width,
-                     int64_t row_stride_bytes, double range_lo, double range_hi,
-                     fs_image_t **out);
+                     int64_t row_stride_bytes, int32_t dtype,
+                     double range_lo, double range_hi, fs_image_t **out);
+int  fs_image_dtype(const fs_image_t *img, int32_t *out);
 int  fs_threshold(const fs_image_t *img, double lo, double hi, fs_region_t **out);
 int  fs_region_area(const fs_region_t *reg, int64_t *out);
 int  fs_region_run_count(const fs_region_t *reg, int64_t *out);
