@@ -1,0 +1,44 @@
+[
+ {
+  "file": "01_aoi_and_ct.png",
+  "name": "aoi_and_ct",
+  "caption": "AOI は全数・2-D、CT は抜き取り・3-D。番号も座標系も装置ごとに違う。",
+  "shape": [
+   3495,
+   3390,
+   3
+  ]
+ },
+ {
+  "file": "02_area_vs_volume.png",
+  "name": "area_vs_volume",
+  "caption": "直線は「面積率に比例する」という素朴な仮定。点はそこから両側へ離れる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_interface_voids.png",
+  "name": "interface_voids",
+  "caption": "AOI の面積率が大きい接合部が、界面に接するボイドを持つとは限らない。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_worst_first.png",
+  "name": "worst_first",
+  "caption": "同じロットを同じ「悪い順」で並べても、順位は一致しない。",
+  "shape": [
+   272,
+   413,
+   3
+  ],
+  "csv": "04_worst_first.csv",
+  "tsv": "04_worst_first.tsv"
+ }
+]

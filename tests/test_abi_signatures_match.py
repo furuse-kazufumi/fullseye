@@ -186,12 +186,17 @@ def test_the_header_compiles_under_msvc():
             src = os.path.join(td, "probe" + ext)
             with open(src, "w", encoding="ascii") as f:
                 f.write('#include "%s"\n' % HEADER.replace("\\", "\\\\"))
-            # cmd の引用は 1 段だけ。`call` を使い、vcvars の出力は捨てずに読む。
-            cmd = 'call "%s" >nul && cl /nologo /std:%s /W4 /WX /Zs "%s"' % (
-                vcvars[0], std, src)
+            # ★引用は **1 段も挟まない**。`subprocess` にリストで渡すと Python が
+            #   引数を再クォートし、内側の `"` が `\"` に化けて cmd に届く
+            #   (実測のエラー: `'\"C:\Program Files...\vcvars64.bat\"' は認識されて
+            #    いません`)。バッチファイルに書き出して、それを叩くのが確実。
+            bat = os.path.join(td, "probe%s.bat" % ext.replace(".", "_"))
+            with open(bat, "w", encoding="cp932") as f:
+                f.write('@echo off\r\ncall "%s" >nul\r\n'
+                        'cl /nologo /std:%s /W4 /WX /Zs "%s"\r\n' % (vcvars[0], std, src))
             # 出力は cp932(日本語)。`text=True` だと UTF-8 復号に失敗して
             # **stdout/stderr が空になり「rc だけあって理由が無い」**になる。
-            r = subprocess.run(["cmd", "/c", cmd], capture_output=True)
+            r = subprocess.run(["cmd", "/c", bat], capture_output=True)
             out = ((r.stdout or b"") + (r.stderr or b"")).decode("cp932", "replace")
             assert r.returncode == 0, (
                 "fullseye_abi.h が MSVC(/std:%s)で通らない:\n%s" % (std, out[:2000]))

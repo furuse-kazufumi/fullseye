@@ -1,4 +1,4 @@
-/* fullseye_abi.h — the Fullseye L1 contract.
+/* fullseye_abi.h -- the Fullseye L1 contract.
  *
  * SPECIFICATION ONLY.  There is no C implementation of this header yet, and
  * writing one is NOT the point.  The point is that `fslib.py` must be a
@@ -6,7 +6,7 @@
  * that can be lowered to a C ABI" from a discipline into a machine check
  * (tests/test_abi_conformance.py).
  *
- * Why this file exists before any C code — docs/FSCRIPT_DECISION.md:
+ * Why this file exists before any C code -- docs/FSCRIPT_DECISION.md:
  *   - The point of no return is the PUBLISHED SEMANTICS, not the implementation
  *     language.  Freezing the contract early is what keeps the language, the
  *     backends, and eventually a native core interchangeable.
@@ -16,14 +16,14 @@
  *
  * Rules this header encodes, in order of importance:
  *   R-1  Every operator returns fs_status_t.  Results travel through out-params.
- *        There are no exceptions, no sentinel values, and NO BENIGN FALLBACKS —
+ *        There are no exceptions, no sentinel values, and NO BENIGN FALLBACKS --
  *        a failed operator must be distinguishable from an operator that found
  *        nothing.  (The 650-op evolution registry deliberately does the
  *        opposite; that behaviour must never reach a line.  See
  *        docs/FSCRIPT_DECISION.md section 1.6b.)
  *   R-2  Iconic values are OPAQUE HANDLES.  Callers never see the storage, so
- *        Region can move from a dense mask to run-length encoding — the
- *        representation HALCON actually uses — without breaking anyone.
+ *        Region can move from a dense mask to run-length encoding -- the
+ *        representation HALCON actually uses -- without breaking anyone.
  *   R-3  An image carries its VALUE RANGE.  A threshold therefore means the same
  *        thing on every frame, which the current fscript path does not manage
  *        (one hot pixel changes a part's measured area from 256 to 1).
@@ -45,7 +45,7 @@ extern "C" {
 #endif
 
 /* --------------------------------------------------------------------------
- * Versioning — a recipe records the ABI version it was validated against, and a
+ * Versioning -- a recipe records the ABI version it was validated against, and a
  * runtime refuses to load a recipe from a different major version.
  * -------------------------------------------------------------------------- */
 #define FULLSEYE_ABI_VERSION_MAJOR 0
@@ -77,7 +77,7 @@ typedef enum fs_dtype {
     FS_DTYPE_F64 = 4
 } fs_dtype_t;
 
-/* Tuple element type — HALCON's control values are heterogeneous tuples. */
+/* Tuple element type -- HALCON's control values are heterogeneous tuples. */
 typedef enum fs_elem {
     FS_ELEM_INT    = 1,
     FS_ELEM_REAL   = 2,
@@ -123,7 +123,7 @@ fs_status_t fs_image_reduce_domain(const fs_image_t *img, const fs_region_t *dom
 void        fs_image_release(fs_image_t *img);
 
 /* --------------------------------------------------------------------------
- * Region — no dense mask is ever exposed (R-2).
+ * Region -- no dense mask is ever exposed (R-2).
  * -------------------------------------------------------------------------- */
 fs_status_t fs_region_area(const fs_region_t *reg, int64_t *out);
 fs_status_t fs_region_run_count(const fs_region_t *reg, int64_t *out);
@@ -132,7 +132,7 @@ fs_status_t fs_region_runs(const fs_region_t *reg, fs_run_t *buf,
 void        fs_region_release(fs_region_t *reg);
 
 /* --------------------------------------------------------------------------
- * ObjectSet — labels + live ids + measurements that TRAVEL WITH THE SET.
+ * ObjectSet -- labels + live ids + measurements that TRAVEL WITH THE SET.
  * Measuring the label image is one pass; an API that recomputes it per query
  * turned a 10 ms cycle into a 40 ms one during the PoC.
  * -------------------------------------------------------------------------- */
@@ -142,13 +142,13 @@ fs_status_t fs_objectset_region(const fs_objectset_t *objs, int64_t index,
 void        fs_objectset_release(fs_objectset_t *objs);
 
 /* --------------------------------------------------------------------------
- * Tuple — HALCON's control model: one tuple may mix ints, reals and strings.
+ * Tuple -- HALCON's control model: one tuple may mix ints, reals and strings.
  * -------------------------------------------------------------------------- */
 fs_status_t fs_tuple_length(const fs_tuple_t *t, int64_t *out);
 fs_status_t fs_tuple_elem_type(const fs_tuple_t *t, int64_t i, fs_elem_t *out);
 /* The element type is carried by the tuple, not chosen by the caller: fetching
  * a FS_ELEM_REAL element with `fs_tuple_get_int` is FS_E_TYPE, not a silent
- * truncation.  This is the same stance `fslib`'s `_require` takes — a sort that
+ * truncation.  This is the same stance `fslib`'s `_require` takes -- a sort that
  * can be coerced away stops being a sort. */
 fs_status_t fs_tuple_get_real(const fs_tuple_t *t, int64_t i, double *out);
 fs_status_t fs_tuple_get_int(const fs_tuple_t *t, int64_t i, int64_t *out);
@@ -167,16 +167,16 @@ void        fs_tuple_release(fs_tuple_t *t);
 
 /* NOTE on placement: the `@fslib <name>` tag must sit in the comment block that
  * IMMEDIATELY precedes its declaration, and nothing between the tag and the
- * declaration may contain a `;` — tests/test_abi_conformance.py reads from the
+ * declaration may contain a `;` -- tests/test_abi_conformance.py reads from the
  * tag to the first semicolon.  Prose that needs semicolons goes ABOVE the tag.
  * (Learned 2026-09-14: a long comment written between the gauss tag and
  * `fs_gauss(...)` killed COLLECTION of that test file, which aborted the WHOLE
- * suite — pytest reported `Interrupted: 1 error during collection` and the
+ * suite -- pytest reported `Interrupted: 1 error during collection` and the
  * runner still exited 0.  Same family as [[feedback_test_import_kills_collection]]:
  * one file's parse error silently takes every other test with it.
  * Do NOT write the tag spelling itself in prose: the scanner is a plain regex
  * over this file, so a mention in a comment BECOMES a second declaration.
- * That is what happened while fixing the first problem — the operator count
+ * That is what happened while fixing the first problem -- the operator count
  * went 5 -> 6 and nothing noticed, which is why the count is now a gate.)
  *
  * The kernel is the sampled Gaussian truncated at FOUR standard deviations:
@@ -185,13 +185,13 @@ void        fs_tuple_release(fs_tuple_t *t);
  * results differ everywhere by a little.
  *
  * Pixels outside the image are obtained by reflecting ON the border:
- * `(d c b a | a b c d)` — index -1 reads pixel 0, index -2 reads pixel 1.  This
+ * `(d c b a | a b c d)` -- index -1 reads pixel 0, index -2 reads pixel 1.  This
  * is scipy's `mode='reflect'` and OpenCV's `BORDER_REFLECT`.  It is NOT
  * OpenCV's default `BORDER_REFLECT_101` (`d c b | a b c d`), which reflects
  * about the border pixel instead.  Both are called "reflect"; they differ by
  * half a pixel, and the difference appears ONLY within `radius` of the edge.
  * (Measured 2026-09-14 on a 32x32 random image at sigma=1.0: the interior of the
- * two agreed to 4.6e-08 while the border differed by up to 0.13 — 13% of the
+ * two agreed to 4.6e-08 while the border differed by up to 0.13 -- 13% of the
  * declared range.  A test that samples the interior cannot see this.)
  *
  * `sigma <= 0` is FS_E_INVALID_ARG, not a pass-through: R-1 again.
@@ -204,7 +204,7 @@ void        fs_tuple_release(fs_tuple_t *t);
 /* @fslib gauss */
 fs_status_t fs_gauss(const fs_image_t *in, double sigma, fs_image_t **out);
 
-/* @fslib threshold  — lo/hi are RELATIVE (0..1) and resolved through the
+/* @fslib threshold  -- lo/hi are RELATIVE (0..1) and resolved through the
  * image's declared range, which is what makes the operator frame-independent.
  *
  * The interval is CLOSED on both ends: a pixel is selected when
@@ -215,7 +215,7 @@ fs_status_t fs_gauss(const fs_image_t *in, double sigma, fs_image_t **out);
  * operator must be distinguishable from one that found nothing, and an inverted
  * interval is a caller mistake, not a legitimate way to ask for nothing.
  * (Measured 2026-09-14: a Rust implementation of this header rejected it while
- * `fslib` silently returned an empty region — found by running both on the same
+ * `fslib` silently returned an empty region -- found by running both on the same
  * inputs.  That is what a second implementation is for.)
  *
  * Pixels outside the image's DECLARED range are compared as they are: the range
@@ -229,8 +229,8 @@ fs_status_t fs_threshold(const fs_image_t *in, double lo, double hi,
  * Connectivity is EIGHT-CONNECTED: pixels touching at a corner belong to the
  * same object.  This follows HALCON's default and is what a 3x3 morphological
  * neighbourhood implies.  An implementation that uses four-connectivity reports
- * a different object COUNT on the same region — a checkerboard is one object at
- * eight and N/2 objects at four — so this cannot be left to the backend.
+ * a different object COUNT on the same region -- a checkerboard is one object at
+ * eight and N/2 objects at four -- so this cannot be left to the backend.
  *
  * The objects are ordered by the position of their first run: increasing row,
  * then increasing column.  Ordering is part of the contract because callers
@@ -238,11 +238,11 @@ fs_status_t fs_threshold(const fs_image_t *in, double lo, double hi,
  * recipe's output depend on which backend happened to run. */
 fs_status_t fs_connection(const fs_region_t *in, fs_objectset_t **out);
 
-/* @fslib measure_all — every live object measured in one pass. */
+/* @fslib measure_all -- every live object measured in one pass. */
 fs_status_t fs_measure_all(const fs_objectset_t *in,
                            fs_tuple_t **area, fs_tuple_t **row, fs_tuple_t **column);
 
-/* @fslib select_shape — filters ids, sharing the label image and measurements.
+/* @fslib select_shape -- filters ids, sharing the label image and measurements.
  *
  * The interval is CLOSED on both ends, like `fs_threshold`, and the surviving
  * objects keep the input's order.
@@ -252,10 +252,10 @@ fs_status_t fs_measure_all(const fs_objectset_t *in,
  * that obeyed it there did NOT obey it here: a recipe that swapped an area's
  * lower and upper bound silently selected nothing, which on a line reads as
  * "no defects".  (Found 2026-09-14 by running a second implementation of this
- * header against `fslib` — the same way the connectivity split was found.)
+ * header against `fslib` -- the same way the connectivity split was found.)
  *
  * An unrecognised `feature` is FS_E_INVALID_ARG.  The known names are
- * "area", "row" and "column" — the three `fs_measure_all` produces. */
+ * "area", "row" and "column" -- the three `fs_measure_all` produces. */
 fs_status_t fs_select_shape(const fs_objectset_t *in, const char *feature,
                             double vmin, double vmax, fs_objectset_t **out);
 
