@@ -107,6 +107,34 @@ This table comes first. Without it, a reader will assume the fly's brain did all
 
 So **only the optic lobe is genuinely connectome-derived**; everything before and after it (eye geometry, readout, behaviour) was written by hand. Every number below describes "the optic lobe wired up this particular way".
 
+## 0. Designing the eye itself — compound-eye optics as closed-form operators
+
+The table above files "the eye" under hand-written. Here is what that hand-written part actually is. **A compound eye is a design**, and it has exactly three knobs:
+
+- **Δφ (inter-ommatidial angle)** — how many degrees apart the viewing axes sit. The sampling pitch.
+- **Δρ (acceptance angle)** — how wide a cone one ommatidium integrates over (Gaussian, full width at half maximum). The blur.
+- **radius** — how many you place (n = 3R(R+1)+1; R = 15 gives 721).
+
+Fix those three and **what the eye can and cannot see follows from a formula**. The `flyvision` family in **Fullseye**, my own vision library, implements that path as closed-form operators, so changing the design and re-measuring it takes a few lines.
+
+```python
+import flyvision as fv
+
+lat = fv.fly_hex_lattice(radius=15, dphi_deg=4.63, geometry="boxeye")  # 721 viewing axes
+sky = fv.fly_sky_1f(width=1440, height=720, amp=0.45, seed=7)          # a synthetic 1/f sky
+sig = fv.fly_hex_resample(img, lat, drho_deg=8.23, fov_deg=110)        # what the eye sees: 721 values
+```
+
+![Compound-eye optics](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/compound_eye_optics.png)
+
+*↑ Every panel is the operators actually run — there is no schematic anywhere in this figure. **A** the 721 viewing axes (inset: the central ±12°, orange = the acceptance width). Matched to the pixel grid of the published model, the diagonal spacing is 1.118× the axial one, and that distortion is reproduced. **B** how much neighbours overlap. At the fly's ratio Δρ/Δφ = 1.78 the summed sensitivity ripples by **0.0052 %** — no holes and no bumps across the field. **C** what a given acceptance angle throws away: the line is the closed form exp(−π²Δρ²/(4 ln2 λ²)), the dots are the operator, and **they differ by at most 0.0017**. **D** what happens with a grating finer than the sampling limit (λ = 2Δφ = 9.26°).*
+
+D is the part worth stopping at. The input is a 6.5° grating (D1). Narrow the acceptance to 2° and the row of ommatidia reports **a coarse ripple that is not in the input at all** (red, D2). That is aliasing, and its wavelength is predictable: λ = 1/|1/6.5 − 1/4.63| = **16.1°**. Measured: **16.2°** (D3). At the fly's own 8.23°, the same false grating is **223× smaller** (0.357 → 0.0016).
+
+So **Δρ/Δφ ≈ 1.8 is not "blurry" — it is the acceptance angle tuned to the sampling limit so that false signal dies**. Narrower looks sharper and invents patterns that were never there; wider kills those but dissolves the real ones too (the magenta curve in C).
+
+This section comes first because **before blaming the brain for what it could not read, you need to know what the eye already discarded** — which is exactly what section 2 turns on. And none of this is fly-specific: change Δφ and Δρ and the same operators design and measure a bee's eye, or an ant's.
+
 ## 1. It passed every static test, then failed while walking
 
 The first step was to calibrate the optic lobe output by rotating the fly in place. Three tests were built:
