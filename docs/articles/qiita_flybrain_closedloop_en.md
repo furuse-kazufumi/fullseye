@@ -97,7 +97,7 @@ This table comes first. Without it, a reader will assume the fly's brain did all
 | Optic lobe | 65 cell types, wiring fixed, 734 free parameters, pretrained | Public model (flyvis) |
 | Readout | One expression: "above the horizon, (preferred − opposite) ÷ sum" | **Hand-written**, zero parameters |
 | Behaviour | Fixate on something darker than the sky, plus optomotor feedback and efference copy | **Hand-written** |
-| World | Floor, sky, a target (organic shape), distractors (gear, lattice sphere). The sky texture is synthetic | Hand-written |
+| World | Floor, sky, a target, distractors. **The target stands in for dung: a knot implicit surface** (`knot_sdf` — an organic shape whose silhouette changes from every viewing angle); the distractors are a gear (`gear_sdf`) and a gyroid sphere (`gyroid_sphere_sdf`). The sky texture is synthetic | Hand-written |
 
 ![Signal path of the fly brain model](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/flybrain_model_map.png)
 
