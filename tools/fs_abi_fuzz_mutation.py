@@ -132,6 +132,56 @@ def m7_reverse_order():
         fslib._REGISTRY["connection"][be] = bad
 
 
+def m8_wrong_status_code():
+    """逆さの区間を `FS_E_TYPE` で拒む(契約は `FS_E_INVALID_ARG`)。
+
+    ★**実在した欠陥**(2026-09-14)。`fslib` の例外は 2 種しか無く、「引数が定義域の
+    外」も「型が違う」も同じ `FsTypeError` に潰れていた。差分テストが
+    「**どちらも拒否した**」までしか見ていなかったので、Rust が 1 を返し Python が
+    2 相当を投げても素通りしていた。
+    """
+    def bad(objs, feature, vmin, vmax):
+        ar, ro, co = fslib.measure_all(objs)
+        vals = {"area": ar, "row": ro, "column": co}.get(feature)
+        if vals is None or not (float(vmin) <= float(vmax)):
+            raise fslib.FsTypeError("wrong code on purpose")   # 契約は FsValueError
+        return objs.select((np.asarray(vals) >= float(vmin))
+                           & (np.asarray(vals) <= float(vmax)))
+    fslib.select_shape = bad
+
+
+def m9_split_runs():
+    """run を 1 画素ずつに割る(面積も本数の合計も同じ、**切り方だけ**が違う)。
+
+    契約は `fs_region_runs` を「領域表現の唯一の窓」と呼ぶので、切り方は観測される
+    べき。面積と連結成分数だけ見ていると素通りする種類の壊れ方。
+    """
+    orig_runs = fslib.Region.runs
+
+    def bad(self):
+        out = []
+        for r, cb, ce in orig_runs(self):
+            out.extend([(int(r), int(c), int(c) + 1) for c in range(int(cb), int(ce))])
+        return np.array(out, dtype=np.int32).reshape(-1, 3) if out else \
+            np.zeros((0, 3), dtype=np.int32)
+    fslib.Region.runs = bad
+    _PATCHED.append(("Region.runs", orig_runs))
+
+
+def m10_absolute_off_by_range():
+    """相対→絶対の写像を値域の下端ではなく 0 から取る(R-3 違反)。"""
+    orig = fslib.FImage.absolute
+
+    def bad(self, relative):
+        return float(relative) * (self.value_range[1] - self.value_range[0])
+    fslib.FImage.absolute = bad
+    _PATCHED.append(("FImage.absolute", orig))
+
+
+#: クラス属性への差し替えは `restore()` では戻らないので、ここで覚えておく。
+_PATCHED: list = []
+
+
 MUTANTS = [
     ("m1 連結性を 4 連結に(実在した欠陥)", m1_four_connected),
     ("m2 しきい値の上端を開区間に", m2_open_upper),
@@ -139,7 +189,10 @@ MUTANTS = [
     ("m4 gauss の端を REFLECT_101 に(実在した欠陥)", m4_reflect101),
     ("m5 重心を 0.5 画素ずらす", m5_centroid_shift),
     ("m6 select_shape を半開区間に", m6_half_open_select),
-    ("m7 物体の並びを逆順に", m7_reverse_order),
+    ("m7 物体の並びを逆順に(実在した欠陥)", m7_reverse_order),
+    ("m8 逆区間を FS_E_TYPE で拒む(実在した欠陥)", m8_wrong_status_code),
+    ("m9 run を 1 画素ずつに割る", m9_split_runs),
+    ("m10 相対→絶対を値域の下端抜きで写す", m10_absolute_off_by_range),
 ]
 
 BUDGET = 3000
