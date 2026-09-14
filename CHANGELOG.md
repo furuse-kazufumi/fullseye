@@ -5,7 +5,7 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
-## 0.1.11 — unreleased
+## 0.1.11 — 2026-09-15
 
 **図注の層に「置き場所」と「表」と「反転色」を足した回**(著者の要望、2026-09-08)。
 op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足したつまみは全部 opt-in で、
