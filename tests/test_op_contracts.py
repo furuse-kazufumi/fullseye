@@ -47,9 +47,26 @@ def _equal(x, y) -> bool:
         return repr(x) == repr(y)
 
 
+#: 探針バンク(``conftest.BANKS``)が持たない in_sort。ここに載る op は下の 3 つの
+#: 契約ゲート(例外を投げない / 非有限を出さない / 決定的)を **一度も実行されない**。
+#: ★2026-09-14 実測: 901 op 中 **151 本(16.8 %)** がこの状態で、空ループを 1 周
+#: しただけで緑を返していた —— 「門が判定を計算した直後に捨てる」の親戚で、
+#: こちらは **判定を一度も計算しない**。まず skip で見えるようにし、
+#: ``test_probeless_ops_do_not_grow`` で本数を台帳に固定する(減る分には通る)。
+PROBELESS_OPS_BUDGET = 151
+
+
+def _probes(op):
+    """この op に当てられる探針。空なら契約ゲートは何も検査できない。"""
+    return list(inputs_for(op.in_sort))
+
+
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
 def test_op_runs_without_exception(op):
-    for iname, iv in inputs_for(op.in_sort):
+    probes = _probes(op)
+    if not probes:
+        pytest.skip("in_sort '%s' に探針が無い(BANKS 未対応)" % op.in_sort)
+    for iname, iv in probes:
         for a, b in KNOBS:
             op.fn(copy_input(iv), a, b)  # must not raise
 
