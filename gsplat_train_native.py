@@ -125,7 +125,15 @@ def train(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
 
 
 if __name__ == "__main__":
-    scene = sys.argv[1] if len(sys.argv) > 1 else "C:/dev/projects/mujoco_menagerie/unitree_go2/scene.xml"
+    # 配布物にローカル絶対パスを焼き込まない。場面は引数で渡すか、
+    # `MUJOCO_MENAGERIE` が指す Menagerie の中から組み立てる。
+    _mg = os.environ.get("MUJOCO_MENAGERIE", "")
+    _default = os.path.join(_mg, "unitree_go2", "scene.xml") if _mg else ""
+    scene = sys.argv[1] if len(sys.argv) > 1 else _default
+    if not scene:
+        raise SystemExit(
+            "場面が決まらない。第 1 引数で scene.xml を渡すか、環境変数 "
+            "MUJOCO_MENAGERIE に MuJoCo Menagerie の場所を設定すること。")
     out = sys.argv[2] if len(sys.argv) > 2 else "gsplat_native_out"
     train(scene, out, res=256, iters=1000, n_gauss=20000, log=lambda m: print(m, flush=True))
 
