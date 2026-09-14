@@ -67,7 +67,15 @@ def rust():
     lib.fs_objectset_count.argtypes = [C.c_void_p, C.POINTER(C.c_int64)]
     lib.fs_objectset_region.argtypes = [C.c_void_p, C.c_int64, C.POINTER(C.c_void_p)]
     lib.fs_abi_version.argtypes = [C.POINTER(C.c_int32), C.POINTER(C.c_int32)]
-    for n in ("fs_image_release", "fs_region_release", "fs_objectset_release"):
+    lib.fs_gauss.argtypes = [C.c_void_p, C.c_double, C.POINTER(C.c_void_p)]
+    lib.fs_measure_all.argtypes = [C.c_void_p] + [C.POINTER(C.c_void_p)] * 3
+    lib.fs_select_shape.argtypes = [C.c_void_p, C.c_char_p, C.c_double, C.c_double,
+                                    C.POINTER(C.c_void_p)]
+    lib.fs_tuple_length.argtypes = [C.c_void_p, C.POINTER(C.c_int64)]
+    lib.fs_tuple_get_real.argtypes = [C.c_void_p, C.c_int64, C.POINTER(C.c_double)]
+    lib.fs_debug_copy_pixels.argtypes = [C.c_void_p, C.POINTER(C.c_double), C.c_int64]
+    for n in ("fs_image_release", "fs_region_release", "fs_objectset_release",
+              "fs_tuple_release"):
         getattr(lib, n).argtypes = [C.c_void_p]
         getattr(lib, n).restype = None
     return lib
