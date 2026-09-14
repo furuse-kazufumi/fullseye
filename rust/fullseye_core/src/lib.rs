@@ -378,6 +378,297 @@ pub extern "C" fn fs_objectset_release(objs: *mut FsObjectSet) {
     }
 }
 
+// --- タプル(制御値) --------------------------------------------------------
+
+#[no_mangle]
+pub extern "C" fn fs_tuple_length(t: *const FsTuple, out: *mut i64) -> c_int {
+    if t.is_null() || out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    unsafe { *out = (*t).vals.len() as i64 };
+    FS_OK
+}
+
+#[no_mangle]
+pub extern "C" fn fs_tuple_elem_type(t: *const FsTuple, i: i64, out: *mut c_int) -> c_int {
+    if t.is_null() || out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    let tp = unsafe { &*t };
+    if i < 0 || i as usize >= tp.elem.len() {
+        return FS_E_INVALID_ARG;
+    }
+    unsafe { *out = tp.elem[i as usize] };
+    FS_OK
+}
+
+#[no_mangle]
+pub extern "C" fn fs_tuple_get_real(t: *const FsTuple, i: i64, out: *mut c_double) -> c_int {
+    if t.is_null() || out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    let tp = unsafe { &*t };
+    if i < 0 || i as usize >= tp.vals.len() {
+        return FS_E_INVALID_ARG;
+    }
+    unsafe { *out = tp.vals[i as usize] };
+    FS_OK
+}
+
+/// ★契約が黙っている点: **real の要素を int として引けるか**。
+/// ここでは **引けない**(`FS_E_TYPE`)。種別は型が運ぶのであって、呼び手の
+/// 期待で決まるものではない —— `fslib` の `_require` と同じ立場を取った。
+#[no_mangle]
+pub extern "C" fn fs_tuple_get_int(t: *const FsTuple, i: i64, out: *mut i64) -> c_int {
+    if t.is_null() || out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    let tp = unsafe { &*t };
+    if i < 0 || i as usize >= tp.vals.len() {
+        return FS_E_INVALID_ARG;
+    }
+    if tp.elem[i as usize] != FS_ELEM_INT {
+        return FS_E_TYPE;
+    }
+    unsafe { *out = tp.vals[i as usize] as i64 };
+    FS_OK
+}
+
+#[no_mangle]
+pub extern "C" fn fs_tuple_release(t: *mut FsTuple) {
+    if !t.is_null() {
+        unsafe { drop(Box::from_raw(t)) };
+    }
+}
+
+fn real_tuple(vals: Vec<f64>) -> *mut FsTuple {
+    let n = vals.len();
+    Box::into_raw(Box::new(FsTuple {
+        vals,
+        elem: vec![FS_ELEM_REAL; n],
+    }))
+}
+
+// --- gauss ------------------------------------------------------------------
+
+/// scipy の `gaussian_filter1d` と同じ半径の取り方: `lw = int(truncate*sigma + 0.5)`、
+/// truncate は既定の 4.0。**ヘッダは半径も端の扱いも決めていない** —— だからここは
+/// 「片方の実装がたまたま選んだ値」であり、差が出たらそれは仕様の穴の場所。
+fn gauss_kernel(sigma: f64) -> Vec<f64> {
+    let lw = (4.0 * sigma + 0.5) as i64;
+    let s2 = sigma * sigma;
+    let mut w: Vec<f64> = (-lw..=lw)
+        .map(|x| (-0.5 * (x as f64) * (x as f64) / s2).exp())
+        .collect();
+    let s: f64 = w.iter().sum();
+    for v in w.iter_mut() {
+        *v /= s;
+    }
+    w
+}
+
+/// scipy の `mode='reflect'` = `(d c b a | a b c d)`。境界の**上**で折り返す。
+///
+/// ★ OpenCV の既定は `BORDER_REFLECT_101` = `(d c b | a b c d)` で、折り返しの
+/// 軸が半画素ずれる。同じ「reflect」という語で別物を指すので、端の画素だけ
+/// 静かに違う —— 内部だけ見る検査では絶対に出ない種類の食い違い。
+fn reflect(mut i: i64, n: i64) -> usize {
+    let n2 = 2 * n;
+    loop {
+        if i < 0 {
+            i = -i - 1;
+        } else if i >= n {
+            i = n2 - i - 1;
+        } else {
+            return i as usize;
+        }
+    }
+}
+
+/// `@fslib gauss` —— 分離可能な 1 次元たたみ込みを行 → 列の順に適用する。
+///
+/// ★契約が黙っている点: `sigma <= 0`。ここでは **無効引数**として拒む
+/// (`threshold` の `lo > hi` と同じ立場 —— R-1 は「失敗」と「何も無い」を分ける)。
+#[no_mangle]
+pub extern "C" fn fs_gauss(img: *const FsImage, sigma: c_double, out: *mut *mut FsImage) -> c_int {
+    if img.is_null() || out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    if !sigma.is_finite() || sigma <= 0.0 {
+        return FS_E_INVALID_ARG;
+    }
+    let im = unsafe { &*img };
+    let (h, w) = (im.h as i64, im.w as i64);
+    let k = gauss_kernel(sigma);
+    let lw = (k.len() as i64 - 1) / 2;
+
+    // 行方向(列インデックスに沿って)
+    let mut tmp = vec![0.0f64; (h * w) as usize];
+    for r in 0..h {
+        for c in 0..w {
+            let mut acc = 0.0;
+            for (t, kv) in k.iter().enumerate() {
+                let cc = reflect(c + t as i64 - lw, w) as i64;
+                acc += kv * im.px[(r * w + cc) as usize];
+            }
+            tmp[(r * w + c) as usize] = acc;
+        }
+    }
+    // 列方向(行インデックスに沿って)
+    let mut px = vec![0.0f64; (h * w) as usize];
+    for r in 0..h {
+        for c in 0..w {
+            let mut acc = 0.0;
+            for (t, kv) in k.iter().enumerate() {
+                let rr = reflect(r + t as i64 - lw, h) as i64;
+                acc += kv * tmp[(rr * w + c) as usize];
+            }
+            px[(r * w + c) as usize] = acc;
+        }
+    }
+    unsafe {
+        *out = Box::into_raw(Box::new(FsImage {
+            h: im.h,
+            w: im.w,
+            px,
+            lo: im.lo,
+            hi: im.hi,
+        }))
+    };
+    FS_OK
+}
+
+// --- measure_all ------------------------------------------------------------
+
+/// `@fslib measure_all` —— 生きている物体を 1 度で測る。`row` / `column` は
+/// 画素インデックスの重心(画素の中心が整数)。
+#[no_mangle]
+pub extern "C" fn fs_measure_all(
+    objs: *const FsObjectSet,
+    area: *mut *mut FsTuple,
+    row: *mut *mut FsTuple,
+    column: *mut *mut FsTuple,
+) -> c_int {
+    if objs.is_null() || area.is_null() || row.is_null() || column.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    let s = unsafe { &*objs };
+    let (mut a, mut rr, mut cc) = (Vec::new(), Vec::new(), Vec::new());
+    for o in &s.objs {
+        let mut n = 0.0f64;
+        let (mut sr, mut sc) = (0.0f64, 0.0f64);
+        for run in &o.runs {
+            let len = (run.col_end - run.col_begin) as f64;
+            n += len;
+            sr += (run.row as f64) * len;
+            // cb..ce-1 の総和 = (cb + ce - 1) * len / 2
+            sc += ((run.col_begin + run.col_end - 1) as f64) * len / 2.0;
+        }
+        a.push(n);
+        // 面積 0 の物体は `connection` からは出ない。出たなら重心は決められない。
+        rr.push(if n > 0.0 { sr / n } else { 0.0 });
+        cc.push(if n > 0.0 { sc / n } else { 0.0 });
+    }
+    unsafe {
+        *area = real_tuple(a);
+        *row = real_tuple(rr);
+        *column = real_tuple(cc);
+    }
+    FS_OK
+}
+
+// --- select_shape -----------------------------------------------------------
+
+/// `@fslib select_shape` —— 測った特徴で絞る。区間は **両端を含む**
+/// (`threshold` と揃える)。並びは入力の並びを保つ。
+///
+/// ★契約が黙っている点 2 つ:
+///   1. 知らない `feature` —— ここでは `FS_E_INVALID_ARG`。
+///   2. `vmin > vmax` —— ここでは `FS_E_INVALID_ARG`。ヘッダが `threshold` について
+///      「逆さの区間は呼び手の間違いであって、空を寄こせという指定ではない」と
+///      書いた以上、**同じ理屈は select_shape にも効くはず**。効いていないなら
+///      直すのは実装ではなくヘッダのほう。
+#[no_mangle]
+pub extern "C" fn fs_select_shape(
+    objs: *const FsObjectSet,
+    feature: *const c_char,
+    vmin: c_double,
+    vmax: c_double,
+    out: *mut *mut FsObjectSet,
+) -> c_int {
+    if objs.is_null() || feature.is_null() || out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    if !vmin.is_finite() || !vmax.is_finite() || vmax < vmin {
+        return FS_E_INVALID_ARG;
+    }
+    let name = match unsafe { std::ffi::CStr::from_ptr(feature) }.to_str() {
+        Ok(s) => s,
+        Err(_) => return FS_E_INVALID_ARG,
+    };
+    let s = unsafe { &*objs };
+    let (mut ta, mut tr, mut tc) = (
+        std::ptr::null_mut(),
+        std::ptr::null_mut(),
+        std::ptr::null_mut(),
+    );
+    let st = fs_measure_all(objs, &mut ta, &mut tr, &mut tc);
+    if st != FS_OK {
+        return st;
+    }
+    let pick: &Vec<f64> = unsafe {
+        match name {
+            "area" => &(*ta).vals,
+            "row" => &(*tr).vals,
+            "column" => &(*tc).vals,
+            _ => {
+                fs_tuple_release(ta);
+                fs_tuple_release(tr);
+                fs_tuple_release(tc);
+                return FS_E_INVALID_ARG;
+            }
+        }
+    };
+    let kept: Vec<FsRegion> = s
+        .objs
+        .iter()
+        .zip(pick.iter())
+        .filter(|(_, v)| **v >= vmin && **v <= vmax)
+        .map(|(o, _)| FsRegion {
+            runs: o.runs.clone(),
+            h: o.h,
+            w: o.w,
+        })
+        .collect();
+    fs_tuple_release(ta);
+    fs_tuple_release(tr);
+    fs_tuple_release(tc);
+    unsafe { *out = Box::into_raw(Box::new(FsObjectSet { objs: kept })) };
+    FS_OK
+}
+
+// --- 契約の外(テスト専用) --------------------------------------------------
+
+/// ★これは **`fullseye_abi.h` の一部ではない**。
+///
+/// ヘッダには **画素を読み返す関数が無い**(`fs_image_shape` / `_dtype` / `_range` /
+/// `_absolute` / `_domain` / `_reduce_domain` / `_release` だけ)。つまり
+/// `fs_gauss` の出力は、契約の中では `fs_threshold` を通してしか観測できない。
+/// 差分テストで画素そのものを突き合わせるために置いた抜け道であり、
+/// **契約に足すべきかどうかは別に決めること**(ここで足すと仕様になってしまう)。
+#[no_mangle]
+pub extern "C" fn fs_debug_copy_pixels(img: *const FsImage, buf: *mut c_double, buf_len: i64) -> c_int {
+    if img.is_null() || buf.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    let im = unsafe { &*img };
+    if buf_len < im.px.len() as i64 {
+        return FS_E_INVALID_ARG;
+    }
+    unsafe { std::ptr::copy_nonoverlapping(im.px.as_ptr(), buf, im.px.len()) };
+    FS_OK
+}
+
 /// ABI の版(ヘッダの FULLSEYE_ABI_VERSION_*)。呼び手が食い違いを検出できるように。
 #[no_mangle]
 pub extern "C" fn fs_abi_version(major: *mut i32, minor: *mut i32) -> c_int {
@@ -390,7 +681,3 @@ pub extern "C" fn fs_abi_version(major: *mut i32, minor: *mut i32) -> c_int {
     }
     FS_OK
 }
-
-// 使わない型を参照して警告を消す(c_char は将来 select_shape の feature 名で使う)
-#[allow(dead_code)]
-fn _unused(_: *const c_char) {}
