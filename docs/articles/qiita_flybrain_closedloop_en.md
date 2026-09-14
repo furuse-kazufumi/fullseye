@@ -441,9 +441,8 @@ One more thing: this is the first experiment to run **after the scale collapse d
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
-- [ ] **Developmental ladder** —— silence cell types stage by stage and line up which function disappears where. A pilot showed that silencing all of T4 drops self-rotation estimation from 0.95 to 0.52, and that of the four T5 types only T5d loses its selectivity. Running.
-- [ ] **Staged curriculum** (contrast → ON/OFF → direction → rotation) —— the countermeasure to the dissociation in §6. If a behavioural objective alone will not produce direction selectivity, will a task sequence that demands discrimination? A pilot showed **forgetting**: after learning a later stage, earlier-stage scores fell from 0.044 to 0.017.
-- [ ] **Cumulative objective** —— does that forgetting disappear if stage *k*'s objective is the mean over stages 1…*k*?
+- [ ] **Developmental ladder** —— silence cell types stage by stage and line up which function disappears where. A pilot showed that silencing all of T4 drops self-rotation estimation from 0.95 to 0.52, and that of the four T5 types only T5d loses its selectivity. **The full run failed once**: with one cell type silenced the responses went non-finite, and the check refused to compute direction selectivity from them (returning 0 silently is not an option, so stopping was the correct behaviour). It will be re-run once each condition can be recorded as "not measurable" without taking the other 33 down with it.
+- [ ] **Cumulative objective** —— does the forgetting seen above (ON/OFF 0.874 → 0.536, selectivity 5/8 → 1/8) disappear if stage *k*'s objective is the mean over stages 1…*k*?
 - [ ] **Homing with deceleration** —— the 7.4 % that remains even with a perfect compass (§7) comes from constant forward speed circling over the nest. Deceleration interferes with the memory update, so it needs its own experiment.
 
 ### About the author
