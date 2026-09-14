@@ -68,6 +68,17 @@ _INTERNAL = {
     "param_specs": 10, "parity": 2, "problems": 2, "recipes": 4, "references": 2,
     "report": 1, "robust": 3, "samples": 2, "shapematch_gpu": 3, "sim_source": 9,
     "studio": 65, "sweep": 1, "typed_catalog": 1, "verify_auto": 2,
+    # ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、
+    #   py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が
+    #   `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には
+    #   `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口
+    #   (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。
+    #   —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という
+    #   二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+    "bin_pick": 1, "event_camera": 1, "focus_stack": 1, "fullseye_3dgs": 3,
+    "gaits": 2, "gsplat_sugar": 3, "lidar_sim": 1, "pick_render": 1,
+    "polar_cam": 1, "sensor_fusion": 1, "stereo_sim": 1, "walk_physics": 6,
+    "world_render": 1,
 }
 
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
