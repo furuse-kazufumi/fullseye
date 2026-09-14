@@ -212,6 +212,28 @@ class Catalog:
         return {"query": query, "total": total, "returned": len(rows),
                 "truncated": total > len(rows), "by_sources": by_sources, "ops": rows}
 
+    # ---------------------------------------------------------------- nearest
+    def nearest(self, name: str, n: int = 5) -> list[str]:
+        """typo に効く近い名前(編集距離)。
+
+        ★最初は部分一致検索を流用していて、``gaussy`` → ``[]`` だった。部分一致は
+        「打ち間違い」という**いちばん使う場面で必ず空**になる(2026-09-15 の実 stdio
+        往復で発覚)。名前の完全一致は ``entries`` が答え、近さは編集距離が答える。
+        """
+        import difflib
+        pool = list(self.entries)
+        hits = difflib.get_close_matches(name, pool, n=n, cutoff=0.6)
+        if len(hits) < n:
+            # 接頭辞つき/なし(`project` ↔ `tb_project`)も拾う
+            low = name.lower()
+            for k in pool:
+                kl = k.lower()
+                if k not in hits and (kl.endswith("_" + low) or low.endswith("_" + kl)):
+                    hits.append(k)
+                if len(hits) >= n:
+                    break
+        return hits[:n]
+
     # ------------------------------------------------------------------- help
     def help(self, name: str) -> dict:
         """知識層のノートと図を引く。無ければ**理由つきで** found=False。"""
