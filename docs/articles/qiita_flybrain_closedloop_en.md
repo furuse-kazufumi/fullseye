@@ -443,7 +443,7 @@ Two things follow.
 
 **(2) What the curriculum builds, the final behavioural stage destroys.** The 5/8 earned in the direction stage falls to **1/8** once the rotation stage is learned — while rotation estimation itself climbs to 0.82 on scenes never used. **The performance-versus-realism trade-off is running inside a single search, over time.** Earlier stages decay too (ON/OFF 0.874 → 0.536).
 
-The remedy is known — make stage *k*'s objective the **mean over stages 1…k** — and it is the next thing to run.
+The remedy is known — make stage *k*'s objective the **mean over stages 1…k**. **It has now been run; the result is in "Forgetting disappeared when the objective was written differently" below — point (2) of this section is one I go on to overturn myself.**
 
 One more thing: this is the first experiment to run **after the scale collapse described above was fixed**. Its report file records "the time-constant scale was 3.75e-09, so the floor of 0.001 was used" — the fix is visible in the output, not just in the diff.
 
