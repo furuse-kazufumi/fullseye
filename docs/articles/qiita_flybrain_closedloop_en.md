@@ -437,6 +437,20 @@ The remedy is known — make stage *k*'s objective the **mean over stages 1…k*
 
 One more thing: this is the first experiment to run **after the scale collapse described above was fixed**. Its report file records "the time-constant scale was 3.75e-09, so the floor of 0.001 was used" — the fix is visible in the output, not just in the diff.
 
+### Looking at the fly's own world through other sensors (2026-09-14)
+
+§0 designed the optics. Here is **what that eye actually sees**: the walk replayed, rendered from the eye camera that the published *Drosophila* model already carries (140° field of view).
+
+![Fly's-eye perception](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/fly_pov_perception.gif)
+
+*↑ From the left: **① the fly in its world** (the small orange dot at centre), **② the view from its compound eye** (the thick bars in front are its own legs, the black combs above are the antennae, the mass past the horizon is the target), **③ depth** (blue-green near → amber far; the sky is excluded from the colour range), **④ synthetic events** (pixels that brightened in blue-green, pixels that darkened in red). One viewpoint, three sensors, at once.*
+
+Panel ④ connects back to §0. As the fly advances, **the floor texture streams outward from below** and shows up as events — the same flow that §2 measured at 330–1000°/s, past the passband of the motion detectors. An event camera transmits only change, so that flow *is* the sensor's output.
+
+And the interference pattern on the floor in ① and ② is not a rendering defect — **it is the aliasing measured in §0**. The floor texture is finer than the pixel spacing, so the renderer's sampling invents a coarse pattern that is not there. Exactly what D3 predicted and measured by wavelength, happening in an ordinary render: **any eye that tries to see detail finer than it samples will manufacture detail that does not exist.**
+
+Honest notes: the body's trajectory is the real one the closed loop produced, but **the leg motion is a cosmetic tripod gait** — it is not walking by leg dynamics (as the first table in this article says). Depth and events are **synthesised from the render**, not the output of a physical sensor.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
