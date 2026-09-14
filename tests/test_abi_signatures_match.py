@@ -78,9 +78,19 @@ def ctypes_argtypes() -> dict[str, dict[str, int]]:
         src = open(path, encoding="utf-8").read()
         # コメントを落としてから括弧の中の要素を数える
         got = {}
-        for m in re.finditer(r"\.(fs_\w+)\.argtypes\s*=\s*\[(.*?)\]", src, re.S):
+        # ★`[A] + [B] * 3` のような**式**で書かれた argtypes がある。最初この形を
+        #   数えられず `fs_measure_all` を「1 引数」と誤読して門が 3 件赤になった ——
+        #   **門のパーサが弱いのを実装の欠陥と読まない。** 行末までを 1 宣言として
+        #   取り、`[...]` の各塊の要素数に `* N` の倍数を掛けて合計する。
+        for m in re.finditer(r"\.(fs_\w+)\.argtypes\s*=\s*(.+?)(?=\n\s*(?:lib|getattr|for|return|#|$))",
+                             src, re.S):
             body = re.sub(r"#[^\n]*", "", m.group(2))
-            got[m.group(1)] = len([x for x in body.split(",") if x.strip()])
+            total = 0
+            for part in re.finditer(r"\[([^\[\]]*)\]\s*(?:\*\s*(\d+))?", body):
+                items = [x for x in part.group(1).split(",") if x.strip()]
+                total += len(items) * int(part.group(2) or 1)
+            if total:
+                got[m.group(1)] = total
         if got:
             out[rel] = got
     return out
