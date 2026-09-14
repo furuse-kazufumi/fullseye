@@ -17,7 +17,9 @@
 
 | 例 | 手元の環境(2026-09-14 実測) | 状態 |
 |---|---|---|
-| `c/` | clang 22.1.8(`winget install LLVM.LLVM`) | **実行して確認済み** |
+| `c/`(clang) | clang 22.1.8 / target `x86_64-pc-windows-msvc`(`winget install LLVM.LLVM`)。`target/release/fullseye_core.dll.lib` をリンク | **実行して確認済み** |
+| `c/`(gcc) | gcc 16.1.0 MinGW-W64 ucrt-posix-seh(`winget install BrechtSanders.WinLibs.POSIX.UCRT`、実体は `%LOCALAPPDATA%\Microsoft\WinGet\Packages\BrechtSanders...\mingw64\bin`)。**`.dll` を直リンク** | **実行して確認済み** |
+| MSVC(`cl.exe`) | `winget install Microsoft.VisualStudio.2022.BuildTools` が **失敗**(`Installer failed with exit code: 1`、winget 自体は exit 0 を返す) | **未確認** |
 | `csharp/` | .NET SDK 9.0.318(`winget install Microsoft.DotNet.SDK.9`) | **実行して確認済み** |
 | `luajit_ffi.lua` | LuaJIT 2.1.19907(`winget install DEVCOM.LuaJIT`、実体は `%LOCALAPPDATA%\Programs\LuaJIT\bin`) | **実行して確認済み** |
 
