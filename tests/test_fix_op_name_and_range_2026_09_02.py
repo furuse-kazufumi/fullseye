@@ -98,6 +98,50 @@ def test_every_image_op_stays_in_the_unit_range(op):
                 f"min={mn:.4f} max={mx:.4f}")
 
 
+def test_the_unit_range_exemptions_are_all_still_earning_their_place():
+    """★免除台帳が**腐っていない**こと。載っている op は実際に [0,1] を外れる。
+
+    免除は書いた瞬間から嘘になりうる —— op が直って [0,1] に収まっても、台帳に
+    名前が残っていれば門は永久にその op を飛ばす。**免罪符の恒久化**で、
+    ``PROBELESS_OPS_BUDGET`` を 151 から 0 へ下げたのと同じ理屈をここにも置く:
+    使われなくなった免除は**落として気づかせる**。
+
+    ここで落ちたら台帳から消すこと(直った証拠なので、めでたい失敗)。
+    逆に「探針が弱くて外れ値に届かなくなった」場合も落ちる —— そちらは探針を
+    直す合図で、**台帳を広げて黙らせてはいけない**。
+    """
+    from conftest import copy_input, inputs_for
+
+    unused = []
+    for name, why in sorted(ops.UNIT_RANGE_IS_NOT_THE_CONTRACT.items()):
+        op = BY.get(name)
+        assert op is not None, f"台帳に居ない op が載っている: {name}"
+        assert op.out_sort == "image", (
+            f"{name} は image を出さない(out_sort={op.out_sort})—— "
+            "この台帳は「image を名乗るが [0,1] でない」もの専用")
+        assert why.strip(), f"{name} に理由が書かれていない"
+        escaped = False
+        for _iname, iv in inputs_for(op.in_sort, op.name):
+            for a, b in ((0.2, 0.5), (0.5, 0.5), (0.8, 0.3)):
+                out = op.fn(copy_input(iv), a, b)
+                if not isinstance(out, np.ndarray) or not out.size or out.dtype.kind not in "fiu":
+                    continue
+                if float(np.min(out)) < -1e-9 or float(np.max(out)) > 1 + 1e-9:
+                    escaped = True
+                    break
+            if escaped:
+                break
+        if not escaped:
+            unused.append(name)
+
+    assert not unused, (
+        "免除が不要になった op: %s —— どの探針でも [0,1] に収まっている。"
+        "ops.UNIT_RANGE_IS_NOT_THE_CONTRACT から**消すこと**"
+        "(消さないと、将来この op が範囲を破っても門は黙って飛ばす)。"
+        "探針が弱くなって外れ値に届いていない可能性もある —— その場合は"
+        "**台帳ではなく探針を直す**。" % unused)
+
+
 def test_chamfer_distance_of_a_full_region_is_not_minus_one():
     """背景が 1 画素も無い入力に scipy は距離でなく -1 を書く。それを素通ししていた。"""
     out = np.asarray(RT["xsp_chamfer_dist"](np.ones((16, 16)), 0.5, 0.5), np.float64)
