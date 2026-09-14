@@ -566,6 +566,7 @@ pub extern "C" fn fs_gauss(img: *const FsImage, sigma: c_double, out: *mut *mut 
             h: im.h,
             w: im.w,
             px,
+            dtype: im.dtype,
             lo: im.lo,
             hi: im.hi,
         }))

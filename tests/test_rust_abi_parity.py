@@ -59,6 +59,7 @@ def rust():
                     "契約の第 2 実装が無い環境では、この門は何も検査しない")
     lib = C.CDLL(str(p))
     lib.fs_image_create.argtypes = [C.c_void_p, C.c_int32, C.c_int32, C.c_int64,
+                                    C.c_int32,          # ★fs_dtype_t(契約の第 5 引数)
                                     C.c_double, C.c_double, C.POINTER(C.c_void_p)]
     lib.fs_threshold.argtypes = [C.c_void_p, C.c_double, C.c_double, C.POINTER(C.c_void_p)]
     lib.fs_region_area.argtypes = [C.c_void_p, C.POINTER(C.c_int64)]

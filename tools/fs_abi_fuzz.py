@@ -53,6 +53,7 @@ def load_rust():
     lib = C.CDLL(str(LIB))
     p = C.POINTER
     lib.fs_image_create.argtypes = [C.c_void_p, C.c_int32, C.c_int32, C.c_int64,
+                                    C.c_int32,          # ★fs_dtype_t(契約の第 5 引数)
                                     C.c_double, C.c_double, p(C.c_void_p)]
     lib.fs_threshold.argtypes = [C.c_void_p, C.c_double, C.c_double, p(C.c_void_p)]
     lib.fs_gauss.argtypes = [C.c_void_p, C.c_double, p(C.c_void_p)]
