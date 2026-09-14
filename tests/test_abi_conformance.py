@@ -46,7 +46,20 @@ def declared_operators() -> dict[str, dict]:
     for m in re.finditer(r"@fslib\s+(\w+)\b(.*?);", SRC, re.S):
         name, tail = m.group(1), m.group(2)
         decl = re.search(r"fs_status_t\s+fs_(\w+)\s*\((.*)\)\s*$", tail, re.S)
-        assert decl, "malformed declaration after @fslib %s" % name
+        # ★このパーサは「タグから**最初の `;` まで**」を宣言とみなす。だからタグと
+        #   宣言のあいだに `;` を含む散文があると、宣言が見つからず **collection 中に
+        #   死ぬ** —— そして pytest はファイル 1 つの collection エラーで
+        #   **スイート全体を中断**する(2026-09-14 実測: `Interrupted: 1 error during
+        #   collection` で 12,000 件が 1 件も走らず、それでも runner の exit code は 0)。
+        #   [[feedback_test_import_kills_collection]] と同じ族なので、**何が悪くて
+        #   どう直すか**をここで言う。黙って「malformed」とだけ言うと、壊した本人が
+        #   ヘッダの書式規則に気づけない。
+        assert decl, (
+            "@fslib %s のタグの直後に宣言が見つからない。このパーサはタグから最初の "
+            "`;` までを読むので、**タグと宣言のあいだに `;` を含む散文を置けない**。\n"
+            "  直し方: 長い説明は `@fslib` タグより**前**のコメントに書き、タグ自体は\n"
+            "  `/* @fslib %s */` の 1 行にして宣言の直前に置く。\n"
+            "  読んだ範囲: %r" % (name, name, tail[:200]))
         assert decl.group(1) == name, (
             "@fslib %s annotates fs_%s" % (name, decl.group(1)))
         params = [p.strip() for p in decl.group(2).split(",")]
