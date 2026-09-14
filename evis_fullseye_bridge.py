@@ -181,9 +181,12 @@ def perceive_evis_walk(qpos_npy, xml=None, out_gif="out/evis_fullseye.gif", *, w
                    duration=int(1000 / max(1, fps)), loop=0)
     fwd = (float(d.xpos[pel][0]) if pel >= 0 else float(d.qpos[0])) - (fwd0 or 0.0)
     mean_ev = float(np.mean(ev_counts[1:])) if len(ev_counts) > 1 else 0.0
-    stats = {"gif": out_gif, "frames": len(frames), "forward_m": fwd,
+    # ★distances carry the MODEL's unit, not metres: the fly world is cm/g/s, so reporting
+    #   "6.96m" for a 7 cm walk is a lie the caller cannot see. `unit` names it honestly.
+    stats = {"gif": out_gif, "frames": len(frames), "forward": fwd, "unit": unit,
+             "forward_m": fwd if unit == "m" else None,
              "mean_events_per_frame": mean_ev,
-             "depth_near_m": float(np.median(dmins)), "depth_far_m": float(np.median(dmaxs))}
+             "depth_near": float(np.median(dmins)), "depth_far": float(np.median(dmaxs))}
     layout = "3rd-person RGB | robot's-eye RGB | robot's-eye depth | robot's-eye DVS" \
         if ego >= 0 else "RGB | depth | events"
     log(f"Fullseye perceives evis: {out_gif} | frames={len(frames)} rollout_fwd={fwd:.2f}m "
