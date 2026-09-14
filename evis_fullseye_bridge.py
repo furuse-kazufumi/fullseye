@@ -42,7 +42,8 @@ def _dvs(prev_log, cur_log, C=0.18):
 def perceive_evis_walk(qpos_npy, xml=None, out_gif="out/evis_fullseye.gif", *, width=360, height=360,
                        max_frames=110, fps=25, body="pelvis", ego_body=None, ego_h=0.35,
                        ego_dist=2.5, ego_camera=None, third_person_z=0.9,
-                       third_person_distance=3.2, model=None, log=print):
+                       third_person_distance=3.2, model=None, dvs_c=0.18, depth_max=None,
+                       unit="m", log=print):
     """Render the learned evis rollout and perceive it (RGB | depth | DVS). Returns honest stats
     (frames, forward distance in the rollout, mean event rate, depth span).
 
