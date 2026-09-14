@@ -1103,6 +1103,14 @@
 
 - **L330** — backend 横断の一致 —— ★2026-09-14 に実際に壊れていたところ --------------------------------------------------------------------------- #
 
+## `tests/test_fullseye_3dgs.py`
+
+- **L78** — ★**道具の有無と資産の有無は別**。ここは mujoco の有無だけを見ていたので、 Menagerie が無い環境では `scene_registry.resolve()` が返す None を掴んで `TypeError` になった。同ファイルの `test_scene_resolution_via_registry` は 既に資産の skip を持っており、作法が兄弟に適用されていなかった。
+
+## `tests/test_gaits.py`
+
+- **L99** — ★2026-09-14: ここは `resolve()` の戻りを検査せず `spec["xml"]` を引いていた。 `scene_registry` が**実在しない場面に None を返す**設計(資産が無い環境では 正しい振る舞い)なので、資産チェックアウトが無いと `TypeError` で落ちる。 同じファイル群の `test_fullseye_3dgs.py` は**既にこの skip 作法を持っていた** —— 作法が兄弟に適用されていなかった ([[feedback_same_bug_class_recurs_check_siblings]])。
+
 ## `tests/test_glassmirror.py`
 
 - **L91** — ★直感と逆だった: 「銅は金より赤い」と思って cu[2] < au[2] を書いたら落ちた。 公開値でも Au の R(450 nm) ≈ 0.40 に対し Cu ≈ 0.56 で、**青は銅の方が多い** (= 金の方が飽和した黄色)。表ではなくこちらの思い込みが誤りだった。
@@ -1347,6 +1355,10 @@
 ## `visualhull.py`
 
 - **L123** — ★点が **1 つ残らず** カメラ後方 = ほぼ確実に姿勢の規約違い(2026-09-08、 poc_livestock_body_volume が踏んだ)。この関数は OpenCV 規約(+Z 前方)を 要求するが、公開層で ``look_at`` の名を持つのは render3d の gluLookAt 版 (−Z 前方の 4x4)。その ``M[:3,:3], M[:3,3]`` を渡すと全 voxel が後方判定に なり、**例外なく空のシルエット**が返って空の hull になる。黙って空を返すと 「彫り切った」と見分けが付かないので、ここだけは声を上げる(有効な場面 —— 物体が画角の後ろにある —— もあるので raise ではなく警告に留める)。
+
+## `world_render.py`
+
+- **L69** — ★`resolve()` は**実在しない場面に None を返す**(資産が無い環境では正しい)。 検査せずに `spec["xml"]` を引くと `TypeError: 'NoneType' object is not subscriptable` という、原因を何も語らない例外になる —— 呼び手には 「何が無いのか」と「どう直すのか」を返す。
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

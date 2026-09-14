@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 652. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 655. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -1105,6 +1105,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L330** _(ja)_ — backend 横断の一致 —— ★2026-09-14 に実際に壊れていたところ --------------------------------------------------------------------------- #
 
+## `tests/test_fullseye_3dgs.py`
+
+- **L78** _(ja)_ — ★**道具の有無と資産の有無は別**。ここは mujoco の有無だけを見ていたので、 Menagerie が無い環境では `scene_registry.resolve()` が返す None を掴んで `TypeError` になった。同ファイルの `test_scene_resolution_via_registry` は 既に資産の skip を持っており、作法が兄弟に適用されていなかった。
+
+## `tests/test_gaits.py`
+
+- **L99** _(ja)_ — ★2026-09-14: ここは `resolve()` の戻りを検査せず `spec["xml"]` を引いていた。 `scene_registry` が**実在しない場面に None を返す**設計(資産が無い環境では 正しい振る舞い)なので、資産チェックアウトが無いと `TypeError` で落ちる。 同じファイル群の `test_fullseye_3dgs.py` は**既にこの skip 作法を持っていた** —— 作法が兄弟に適用されていなかった ([[feedback_same_bug_class_recurs_check_siblings]])。
+
 ## `tests/test_glassmirror.py`
 
 - **L91** — ★Es war kontraintuitiv: in der Annahme "Kupfer ist röter als Gold" schrieb ich cu[2] < au[2] und es schlug fehl. Selbst nach veröffentlichten Werten liegt gegenüber Aus R(450 nm) ≈ 0.40 Cu bei ≈ 0.56, also **hat Kupfer mehr Blau** (= Gold ist das gesättigtere Gelb). Falsch war diese Vorannahme, nicht die Tabelle.
@@ -1349,6 +1357,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `visualhull.py`
 
 - **L123** — ★ **Ausnahmslos jeder** Punkt hinter der Kamera = fast sicher eine Konventionsabweichung in der Pose (2026-09-08, von poc_livestock_body_volume ausgelöst). Diese Funktion verlangt die OpenCV-Konvention (+Z nach vorn), aber was in der öffentlichen Schicht den Namen ``look_at`` trägt, ist die gluLookAt-Version von render3d (−Z nach vorn, eine 4x4). Übergibt man deren ``M[:3,:3], M[:3,3]``, wird jeder voxel als hinten liegend beurteilt, und **ausnahmslos eine leere Silhouette** wird zurückgegeben, was einen leeren hull ergibt. Stillschweigend leer zurückzugeben ist nicht von "vollständig herausgeschnitzt" zu unterscheiden, also erheben wir allein hier die Stimme (es gibt gültige Fälle —— das Objekt liegt hinter dem Sichtfeld —— daher belassen wir es bei einer Warnung statt einem raise).
+
+## `world_render.py`
+
+- **L69** _(ja)_ — ★`resolve()` は**実在しない場面に None を返す**(資産が無い環境では正しい)。 検査せずに `spec["xml"]` を引くと `TypeError: 'NoneType' object is not subscriptable` という、原因を何も語らない例外になる —— 呼び手には 「何が無いのか」と「どう直すのか」を返す。
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.
