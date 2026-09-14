@@ -3,35 +3,40 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-14 11:51:01
+- **最終更新**: 2026-09-14 19:44:11
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-00d9c766d ハエ記事に「蝿と脊椎動物の対応」図を追記し、LinkedIn キットを置く
-32135d196 auto: qiita_flybrain_closedloop_en.md 編集前 (2026-09-14 08:23)
-5ed785382 auto: qiita_flybrain_closedloop_ja.md 編集前 (2026-09-14 08:23)
-696ff650d auto: LINKEDIN_POST_flybrain.md 編集前 (2026-09-14 08:17)
-064028117 ハエ記事を公開状態に合わせる(可視性と言語リンク)
-e34103387 auto: qiita_flybrain_closedloop_en.md 編集前 (2026-09-14 08:08)
-f9294f943 auto: qiita_flybrain_closedloop_en.md 編集前 (2026-09-14 08:08)
-280283df2 auto: qiita_flybrain_closedloop_ja.md 編集前 (2026-09-14 08:08)
-c33ab8da1 auto: qiita_flybrain_closedloop_ja.md 編集前 (2026-09-14 08:08)
-e1f2d8a6e ハエ記事に図解 3 点を足す(課題の全体像・脳モデルの経路・視葉の柱構造 3D)
+fe36ea24f ハエ視点の知覚(複眼 RGB / 深度 / 疑似イベント)を出して記事に載せる
+ff9feefe3 auto: qiita_flybrain_closedloop_en.md 編集前 (2026-09-14 19:34)
+4725a05c6 auto: qiita_flybrain_closedloop_ja.md 編集前 (2026-09-14 19:34)
+c4720fed0 auto: evis_fullseye_bridge.py 編集前 (2026-09-14 19:33)
+3e16b89e5 auto: fullseye3d.py 編集前 (2026-09-14 19:33)
+a14846798 auto: evis_fullseye_bridge.py 編集前 (2026-09-14 19:32)
+1c3a7cd06 auto: evis_fullseye_bridge.py 編集前 (2026-09-14 19:32)
+7123f5ff4 auto: evis_fullseye_bridge.py 編集前 (2026-09-14 19:32)
+69c728675 auto: evis_fullseye_bridge.py 編集前 (2026-09-14 19:32)
+be8a49ba2 auto: evis_fullseye_bridge.py 編集前 (2026-09-14 19:32)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-11:21 docs/SESSION_SUMMARY.md
+19:40 .pytest_cache/v/cache/nodeids
+19:34 docs/articles/qiita_flybrain_closedloop_en.md
+19:34 docs/articles/qiita_flybrain_closedloop_ja.md
+19:34 docs/articles/assets/fly/fly_pov_perception.gif
+19:33 evis_fullseye_bridge.py
+19:33 fullseye3d.py
 ```
 
 ---
