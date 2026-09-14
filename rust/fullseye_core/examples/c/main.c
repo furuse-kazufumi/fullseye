@@ -14,10 +14,18 @@
  *   cd rust/fullseye_core && cargo build --release
  *   clang -std=c11 -Wall -Wextra -I../.. examples/c/main.c \
  *         target/release/fullseye_core.dll.lib -o examples/c/fs_example.exe
+ *   cp target/release/fullseye_core.dll examples/c/     # ★実行時に必要
+ *   cd examples/c && ./fs_example.exe
+ *
+ *   ★`.lib`(インポートライブラリ)でリンクしても、**実行時は DLL を別に探す**。
+ *     置き忘れると exe は何も印字せずに終わる —— 最初これを「ビルドが通ったから
+ *     動いた」と読みかけた。`EXIT=0` も `head` の終了コードで、exe のものでは
+ *     なかった([[feedback_ran_is_not_meaningful_output]])。
  *
  * Linux / macOS:
  *   clang -std=c11 -Wall -Wextra -I../.. examples/c/main.c \
  *         -Ltarget/release -lfullseye_core -o examples/c/fs_example
+ *   LD_LIBRARY_PATH=target/release ./examples/c/fs_example
  */
 #include <stdio.h>
 #include "fullseye_abi.h"
