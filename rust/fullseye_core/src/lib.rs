@@ -55,6 +55,18 @@ pub struct FsObjectSet {
     objs: Vec<FsRegion>,
 }
 
+/// 制御値のタプル。ヘッダは「int / real / string が混ざりうる」と言っているので
+/// 要素ごとに型を持つ。このスパイクが作るのは real だけ(measure_all の 3 本)。
+pub struct FsTuple {
+    vals: Vec<f64>,
+    elem: Vec<c_int>, // FS_ELEM_*
+}
+
+pub const FS_ELEM_INT: c_int = 1;
+pub const FS_ELEM_REAL: c_int = 2;
+#[allow(dead_code)]
+pub const FS_ELEM_STRING: c_int = 3;
+
 // --- 画像 -------------------------------------------------------------------
 
 /// 画素を借りて画像を作る。`pixels` は f64 の行優先、`row_stride_bytes` は行の間隔。
