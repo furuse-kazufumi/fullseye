@@ -185,8 +185,11 @@ def fly_pov(qpos_npy, xml=None, out_gif="out/fly_fullseye.gif", eye="eye_left", 
     """
     import evis_fullseye_bridge as B
     kw.setdefault("body", "thorax")
-    kw.setdefault("third_person_distance", 4.0)
+    kw.setdefault("third_person_distance", 6.0)
     kw.setdefault("third_person_z", 0.3)
+    kw.setdefault("unit", "cm")        # flybody は cm/g/s 単位系。"m" と書くと 7 cm の散歩が 7 m になる
+    kw.setdefault("depth_max", 30.0)   # 空(実測 998)を色域から外し、歩く先の地面に階調を割く
+    kw.setdefault("dvs_c", 0.08)       # 複眼視点は視野 140° で像が速く流れるので閾値は低めに
     return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, ego_camera=eye, **kw)
 
 
