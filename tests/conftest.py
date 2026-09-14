@@ -212,9 +212,18 @@ def points_bank(m: int = 96) -> dict[str, np.ndarray]:
     plane = np.column_stack([rng.uniform(0, 10, m - half),
                              rng.uniform(0, 10, m - half),
                              np.zeros(m - half)])
+    # ★`normal` は **kNN グラフが連結**でなければならない。最初は球面と平面を
+    #   別々に置いたが、k=8 では 2 つの塊が繋がらず `tb_geodesic_distances` が
+    #   68 個の `inf` を返した —— これは op の欠陥ではなく、docstring が
+    #   「source と繋がっていない連結成分の点は inf」と**明記している正しい答え**。
+    #   非連結は探針の意図として別名(`two_clusters`)で持ち、`normal` は繋げる。
+    #   **op の正解を「非有限を出すな」のゲートで殴らない。**
+    bridge = np.column_stack([np.linspace(0, 5, 12), np.linspace(0, 5, 12),
+                              np.linspace(0, 3, 12)])
     return {
-        "normal": np.vstack([sphere, plane]),
+        "normal": np.vstack([sphere, plane, bridge]),   # 2 領域を橋でつなぐ = 連結
         "plane_only": plane,                       # 法線が一定 = 曲率ゼロ
+        "two_clusters": np.vstack([plane, plane + 500.0]),   # わざと非連結にする探針
         "coincident": np.zeros((8, 3)),            # 全点が同じ場所(距離が全部 0)
         "single": np.zeros((1, 3)),                # 近傍が作れない
         "collinear": np.column_stack([np.arange(8.0), np.zeros(8), np.zeros(8)]),
