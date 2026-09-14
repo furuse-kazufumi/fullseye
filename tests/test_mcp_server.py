@@ -216,6 +216,16 @@ def test_search_can_be_narrowed_to_one_layer(cat):
     assert all("facade" in o["sources"] for o in r["ops"])
 
 
+def test_search_finds_a_ledger_only_op_by_its_unprefixed_name(cat):
+    """`bundle_adjust` は台帳名。レジストリでは `tb_bundle_adjust`。**台帳名で検索して
+    出てくる**ことが 5 層目の存在証明。"""
+    r = call_tool("fullseye_search_ops", {"query": "bundle_adjust", "limit": 10}, cat)["structuredContent"]
+    names = {o["name"]: o for o in r["ops"]}
+    assert "bundle_adjust" in names, [o["name"] for o in r["ops"]]
+    assert "ledger" in names["bundle_adjust"]["sources"], names["bundle_adjust"]
+    assert "note" in names["bundle_adjust"]["sources"]
+
+
 def test_op_help_returns_a_real_note_with_figures(cat):
     res = call_tool("fullseye_op_help", {"name": "gaussian"}, cat)
     h = res["structuredContent"]
