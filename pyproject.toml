@@ -145,6 +145,18 @@ py-modules = [
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
+  # ★2026-09-14: この 12 本が py-modules に無く、**wheel から落ちていた**。
+  # `unified.py` の `_3DGS_OPS`(26 op)は `_lazy_call(module, func)` で
+  # **文字列から importlib で読む**ので、`import X` を探す静的チェックにも、
+  # `UnifiedOp.__call__` の存在だけ見るテストにも映らない —— 2026-09-05 の
+  # 「224 op が黙って消えた」のと同じ族で、登録は見えるのに**呼ぶと
+  # ModuleNotFoundError**(26 op 中 19 op)。11 本は numpy だけの軽い実装で、
+  # 入れれば直る。`gsplat_train_native` は torch/gsplat を top-level で
+  # import するので、同梱しても**その依存が無ければ落ちる**(= optional extra
+  # の話。ファイルが無いのと依存が無いのは別の失敗なので、同梱はする)。
+  "bin_pick", "event_camera", "focus_stack", "gsplat_sugar", "gsplat_train_native",
+  "lidar_sim", "pick_render", "polar_cam", "sensor_fusion", "stereo_sim",
+  "walk_physics", "world_render",
   # ★2026-09-05: この 2 本が py-modules に無く、**wheel から丸ごと落ちていた**。
   # `pip install fullseye` した Linux で op が 855 → 631 になり、
   # **224 op(26%)が黙って消えていた**(hx_* 81 / tb_* 143)。
