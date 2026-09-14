@@ -155,10 +155,10 @@ def render_ct(centre_idx, spheres):
 
 
 def _rigid(pts, shift, rot_deg):
+    """点群を回してから平行移動する(装置間の座標系のずれを作る側)。"""
     t = np.deg2rad(rot_deg)
-    R = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t))]]) if False else \
-        np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
-    return pts @ R.T + np.asarray(shift)
+    R = np.array([[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]])
+    return pts @ R.T + np.asarray(shift, float)
 
 
 def solve_correspondence(a, b):
