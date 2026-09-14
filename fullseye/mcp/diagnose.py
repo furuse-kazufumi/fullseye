@@ -96,8 +96,15 @@ def verdict_of(st: dict, *, op_name: str | None, out_sort: str | None) -> dict:
         return {"verdict": "flat", "reasons": reasons, "escalate": True}
     if st["nonfinite"] > 0 and not nf_ok:
         return {"verdict": "nonfinite", "reasons": reasons, "escalate": True}
-    if range_ok and (st["min"] < 0 or st["max"] > 1):
+    outside = st["min"] < -1e-9 or st["max"] > 1 + 1e-9
+    if outside and range_ok:
         reasons.append("[0,1] の外だがこの op は物理量を運ぶ(%s)" % ops.UNIT_RANGE_IS_NOT_THE_CONTRACT[op_name][:40])
+    elif outside and out_sort in ("image", "region", "color"):
+        # `test_every_image_op_stays_in_the_unit_range` と同じ契約を、実行時にも当てる。
+        # 台帳に無い op が [0,1] を出たら、それは下流で黙って意味を失う値。
+        reasons.append("image を名乗るのに [0,1] の外(min=%.4g max=%.4g)で、台帳に免除が無い"
+                       % (st["min"], st["max"]))
+        return {"verdict": "out_of_range", "reasons": reasons, "escalate": True}
     reasons.append("std=%.3g range=%.3g" % (st["std"], st["range"]))
     return {"verdict": "ok", "reasons": reasons, "escalate": False}
 
