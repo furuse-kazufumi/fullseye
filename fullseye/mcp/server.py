@@ -3,21 +3,22 @@
 
 器は llmesh の ``llmesh/mcp/stdio_server.py`` から借りた(Content-Length フレーミング、
 ``initialize`` / ``tools/list`` / ``tools/call``、protocol ``2025-06-18``)。
-中身は :mod:`fullseye.mcp.catalog`。
+中身は :mod:`fullseye.mcp.catalog`(op と知識層)、:mod:`fullseye.mcp.handles`
+(画像のハンドルとサンドボックス)、:mod:`fullseye.mcp.diagnose`(自己診断と対比図)。
 
 設計の柱(2026-09-15、RAD と TRIZ の結果):
-- **918 op を 918 個の tool にしない。** op はデータで、tool は検索・引き当て・実行の
-  数個だけ(TheMCPCompany: 18,000 tool は retrieval 無しでは使えない)。
-- **fail-closed。** 未知の tool / method / op 名 / 型違い / 範囲外 / 余計なキーは
-  すべて明示的に拒否する。近い名前に黙って倒さない(Function Hijacking への
-  構造的な緩和でもある)。
-- **黙って劣化しない。** ``structuredContent`` が上限を超えたら落とすが、落としたことを
-  本文と ``_meta`` に書く(llmesh の 512 KB と同じ値)。
-- **stdout はプロトコル専用。** ログ・監査は stderr。stdout に 1 バイトでも余計に
-  書くとフレーミングが壊れる。
-
-この PoC は「知識層が LLM に効くか」だけを測る 3 tool(検索 / 引き当て / 被覆)。
-画像を扱う ``apply`` はこの次の段。
+- **918 op を 918 個の tool にしない。** op はデータで、tool は検索・引き当て・読み込み・
+  実行・観察の 7 つだけ(TheMCPCompany: 18,000 tool は retrieval 無しでは使えない)。
+- **fail-closed。** 未知の tool / method / op 名 / ハンドル / 根の外のパス / 型違い /
+  範囲外 / 余計なキー / **in_sort の不一致**はすべて理由つきで拒否する。近い名前に
+  黙って倒さない(Function Hijacking への構造的な緩和でもある)。
+- **黙って劣化しない。** 既定は strict(``on_error="raise"``)。``allow_degraded`` を
+  明示したときだけ fail-soft を許し、**劣化台帳を必ず結果に載せる**(空でも ``[]``)。
+  ``structuredContent`` が上限を超えたら落とすが、落としたことを本文と ``_meta`` に書く。
+- **画像は在らず、必要なときだけ在る。** 返り値は数値 + 判定(必ず併記)。判定が ok で
+  ないときだけ入出力対比の小図を ``resource_link`` で**自動昇格**する(TRIZ 時間分離 /
+  #22 災い転じて福)。``vision`` で強制も抑止もできる。
+- **stdout はプロトコル専用。** ログ・監査は stderr。
 """
 from __future__ import annotations
 
@@ -28,6 +29,8 @@ import sys
 from typing import Any
 
 from .catalog import Catalog, CatalogError, SOURCES
+from .diagnose import side_by_side, stats_of, verdict_of
+from .handles import HandleError, HandleStore
 
 PROTOCOL_VERSION = "2025-06-18"
 SERVER_NAME = "fullseye"
@@ -35,20 +38,25 @@ SERVER_NAME = "fullseye"
 MAX_STRUCTURED_BYTES = 512_000
 #: 検索 1 回で返す上限。文脈経済のため(MCP-Universe: 歩数とともに入力が急増)。
 MAX_SEARCH_LIMIT = 100
+VISION = ("auto", "none", "thumb")
 
 # --------------------------------------------------------------------------- #
 # tool の宣言(入力スキーマは additionalProperties: false で余計なキーを拒む)     #
 # --------------------------------------------------------------------------- #
 _SORT_DESC = ("op の入出力の種別(image / region / points / volume ...)。"
               "既知の種別以外は拒否する")
+_HANDLE = {"type": "string", "maxLength": 64,
+           "description": "fullseye://img/<16 hex>。load_image / apply が返す"}
+_VISION = {"type": "string", "enum": list(VISION),
+           "description": "auto=判定が ok でないときだけ対比の小図を出す / none=出さない / thumb=必ず出す"}
 
 TOOLS: dict[str, dict] = {
     "fullseye_search_ops": {
         "description": (
             "fullseye の op を探す。名前・HALCON 名・カテゴリ・次元の部分一致。"
-            "返り値の sources が出どころ: index=機械可読索引 / registry=fullseye.apply で"
-            "実行できる / note=知識層ノートあり / facade=import fullseye で呼べる関数。"
-            "by_sources に層別の内訳が出る。"),
+            "返り値の sources が出どころ: index=機械可読索引 / registry=fullseye_apply で"
+            "実行できる / ledger=型付き台帳 / note=知識層ノートあり / facade=import fullseye で"
+            "呼べる関数。by_sources に層別の内訳が出る。"),
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -77,9 +85,57 @@ TOOLS: dict[str, dict] = {
     },
     "fullseye_catalog_coverage": {
         "description": (
-            "カタログ 4 層(index / registry / note / facade)の交差を数える。"
+            "カタログ 5 層(index / registry / ledger / note / facade)の交差を数える。"
             "検索がどれだけの機能を見えているか、ノートの無い op はどれかを返す。"),
         "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    "fullseye_list_samples": {
+        "description": "同梱のサンプル画像(来歴・ライセンスつき)。load_image に渡せるパスを返す。",
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+    },
+    "fullseye_load_image": {
+        "description": (
+            "画像を読み込んでハンドルを返す。読めるのはサンドボックス根の下だけ"
+            "(既定は同梱サンプル、FULLSEYE_MCP_ROOT で追加)。画素は返さず、数値統計と判定を返す。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string", "maxLength": 1024},
+                "color": {"type": "boolean", "description": "true なら (H,W,3) の color として読む"},
+                "vision": _VISION,
+            },
+            "required": ["path"],
+            "additionalProperties": False,
+        },
+    },
+    "fullseye_apply": {
+        "description": (
+            "ハンドルの画像に op を 1 つ適用し、出力ハンドル + 数値統計 + 判定 + 劣化台帳を返す。"
+            "既定は strict(op が劣化したら拒否)。allow_degraded=true で fail-soft を許し、"
+            "degraded に何が起きたかを載せる。判定が ok でなければ入出力対比の小図を自動で付ける。"
+            "op の in_sort とハンドルの sort が違えば拒否する。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "handle": _HANDLE,
+                "op": {"type": "string", "maxLength": 120},
+                "a": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                "b": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                "allow_degraded": {"type": "boolean"},
+                "vision": _VISION,
+            },
+            "required": ["handle", "op"],
+            "additionalProperties": False,
+        },
+    },
+    "fullseye_inspect": {
+        "description": "ハンドルの数値統計と判定。vision=thumb で小図(1 枚)を resource_link で返す。",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"handle": _HANDLE, "vision": _VISION},
+            "required": ["handle"],
+            "additionalProperties": False,
+        },
     },
 }
 
@@ -107,14 +163,20 @@ def _validate(schema: dict, args: Any) -> dict:
         t = p.get("type")
         if t == "string" and not isinstance(v, str):
             raise ArgError("%s は文字列でなければならない(%r)" % (k, v))
+        if t == "boolean" and not isinstance(v, bool):
+            raise ArgError("%s は真偽値でなければならない(%r)" % (k, v))
         if t == "integer" and (not isinstance(v, int) or isinstance(v, bool)):
             raise ArgError("%s は整数でなければならない(%r)" % (k, v))
+        if t == "number" and (not isinstance(v, (int, float)) or isinstance(v, bool)):
+            raise ArgError("%s は数でなければならない(%r)" % (k, v))
+        if t == "number" and isinstance(v, float) and v != v:
+            raise ArgError("%s が NaN" % k)
         if "enum" in p and v not in p["enum"]:
             raise ArgError("%s は %s のどれか(%r)" % (k, p["enum"], v))
         if "minimum" in p and v < p["minimum"]:
-            raise ArgError("%s は %d 以上(%r)" % (k, p["minimum"], v))
+            raise ArgError("%s は %g 以上(%r)" % (k, p["minimum"], v))
         if "maximum" in p and v > p["maximum"]:
-            raise ArgError("%s は %d 以下(%r)" % (k, p["maximum"], v))
+            raise ArgError("%s は %g 以下(%r)" % (k, p["maximum"], v))
         if "maxLength" in p and len(v) > p["maxLength"]:
             raise ArgError("%s は %d 文字以下" % (k, p["maxLength"]))
     return args
@@ -202,18 +264,22 @@ def tool_result(text: str, structured: dict | None, *, links: list | None = None
     return result
 
 
-def _tool_error(text: str) -> dict:
-    return {"content": [{"type": "text", "text": text}], "isError": True}
+def _tool_error(text: str, structured: dict | None = None) -> dict:
+    r: dict = {"content": [{"type": "text", "text": text}], "isError": True}
+    if structured is not None:
+        r["structuredContent"] = structured
+    return r
+
+
+def _file_link(path: str, name: str, mime: str, description: str) -> dict:
+    return {"type": "resource_link", "uri": pathlib.Path(path).as_uri(),
+            "name": name, "mimeType": mime, "description": description}
 
 
 def _figure_link(fig: dict) -> dict:
     ext = fig["kind"]
     mime = {"png": "image/png", "jpg": "image/jpeg", "gif": "image/gif"}[ext.rsplit(".", 1)[-1]]
-    return {"type": "resource_link",
-            "uri": pathlib.Path(fig["path"]).as_uri(),
-            "name": os.path.basename(fig["path"]),
-            "mimeType": mime,
-            "description": fig["description"]}
+    return _file_link(fig["path"], os.path.basename(fig["path"]), mime, fig["description"])
 
 
 def _search_text(r: dict) -> str:
@@ -246,6 +312,129 @@ def _coverage_text(c: dict) -> str:
                c["facade_not_in_index"], c["note_only"]))
 
 
+def _stats_line(st: dict, vd: dict) -> str:
+    if st.get("kind") == "array" and "min" in st:
+        nums = "shape=%s min=%.4g max=%.4g mean=%.4g std=%.4g nonfinite=%d" % (
+            st["shape"], st["min"], st["max"], st["mean"], st["std"], st["nonfinite"])
+    elif st.get("kind") == "scalar":
+        nums = "value=%g" % st["value"]
+    else:
+        nums = json.dumps({k: v for k, v in st.items() if k != "kind"}, ensure_ascii=False)[:160]
+    return "判定=%s(%s)  %s" % (vd["verdict"], "; ".join(vd["reasons"]), nums)
+
+
+# --------------------------------------------------------------------------- #
+# 画像を扱う tool の本体                                                         #
+# --------------------------------------------------------------------------- #
+def _describe(meta: dict, arr, *, op_name=None, out_sort=None) -> tuple[dict, dict]:
+    st = stats_of(arr)
+    vd = verdict_of(st, op_name=op_name, out_sort=out_sort or meta.get("sort"))
+    return st, vd
+
+
+def _maybe_thumb(store: HandleStore, meta: dict, inp, out, *, vision: str, escalate: bool,
+                 quantity: bool, tag: str) -> list[dict]:
+    """自動昇格: auto は判定が ok でないときだけ、thumb は必ず、none は出さない。"""
+    if vision == "none" or (vision == "auto" and not escalate):
+        return []
+    rgb = side_by_side(inp, out, out_is_quantity=quantity) if inp is not None else side_by_side(out, None, out_is_quantity=quantity)
+    if rgb is None:
+        return []
+    path = store.write_thumb(meta["handle"], rgb, tag)
+    why = "判定が ok でないので自動で付けた" if vision == "auto" else "要求により付けた"
+    desc = ("入出力の対比(左が入力・右が出力、高さ %d px、%s)。%s"
+            % (rgb.shape[0], "出力は viridis の疑似カラー" if quantity else "グレーのまま", why))
+    return [_file_link(path, os.path.basename(path), "image/png", desc)]
+
+
+def _load_image(a: dict, store: HandleStore) -> dict:
+    meta = store.load(a["path"], color=bool(a.get("color", False)))
+    _, arr = store.get(meta["handle"])
+    st, vd = _describe(meta, arr)
+    links = _maybe_thumb(store, meta, None, arr, vision=a.get("vision", "auto"),
+                         escalate=vd["escalate"], quantity=False, tag="load")
+    structured = {"handle": meta["handle"], "sort": meta["sort"], "shape": meta["shape"],
+                  "dtype": meta["dtype"], "provenance": meta["provenance"],
+                  "stats": st, **vd, "dedup": bool(meta.get("dedup", False))}
+    text = "%s  sort=%s\n%s" % (meta["handle"], meta["sort"], _stats_line(st, vd))
+    return tool_result(text, structured, links=links)
+
+
+def _apply(a: dict, cat: Catalog, store: HandleStore) -> dict:
+    import backend_safe
+    import fullseye
+    import ops
+
+    op_name = a["op"]
+    op = ops._BY_NAME.get(op_name)
+    if op is None:
+        raise ArgError("fullseye_apply で実行できる op ではない: %r(registry 層に無い)。近い名前: %s"
+                       % (op_name, cat.nearest(op_name)))
+    meta, arr = store.get(a["handle"])
+    if op.in_sort not in ("any", meta["sort"]):
+        raise ArgError("型の不一致: %s は %s を受けるが、ハンドル %s は %s(型契約を境界で守る。"
+                       "変換 op を先に挟むこと)" % (op_name, op.in_sort, meta["handle"], meta["sort"]))
+    ka, kb = float(a.get("a", 0.5)), float(a.get("b", 0.5))
+    allow = bool(a.get("allow_degraded", False))
+    backend_safe.clear_fallbacks()
+    try:
+        out = fullseye.apply(arr, op_name, ka, kb, on_error=("fallback" if allow else "raise"))
+    except Exception as exc:                                    # noqa: BLE001
+        degraded = backend_safe.fallbacks()
+        text = ("%s は strict で拒否された: %s: %s\n"
+                "(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
+                % (op_name, type(exc).__name__, str(exc)[:400]))
+        return _tool_error(text, {"op": op_name, "a": ka, "b": kb, "handle_in": meta["handle"],
+                                  "error": {"type": type(exc).__name__, "message": str(exc)[:400]},
+                                  "degraded": degraded, "strict": not allow})
+    degraded = backend_safe.fallbacks()
+    prov = meta["provenance"] + [{"apply": op_name, "a": ka, "b": kb}]
+    st = stats_of(out)
+    vd = verdict_of(st, op_name=op_name, out_sort=op.out_sort)
+    if degraded:
+        vd = dict(vd, escalate=True, reasons=vd["reasons"] + ["劣化 %d 件(degraded を見ること)" % len(degraded)])
+    structured: dict = {"op": op_name, "a": ka, "b": kb, "handle_in": meta["handle"],
+                        "in_sort": op.in_sort, "out_sort": op.out_sort,
+                        "stats": st, **vd, "degraded": degraded, "strict": not allow}
+    links: list[dict] = []
+    import numpy as np
+    if isinstance(out, np.ndarray) or (isinstance(out, dict) and "cs" in out):
+        if isinstance(out, np.ndarray):
+            m2 = store.put(out, sort=op.out_sort, provenance=prov)
+            structured["handle"] = m2["handle"]
+            quantity = op_name in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT
+            links = _maybe_thumb(store, m2, arr, out, vision=a.get("vision", "auto"),
+                                 escalate=vd["escalate"], quantity=quantity, tag=op_name)
+        else:
+            structured["handle"] = None
+            structured["contour"] = {"n": st.get("n_contours"), "points": st.get("n_points")}
+    else:
+        structured["handle"] = None
+        structured["value"] = st.get("value")
+    head = "%s(a=%.2f, b=%.2f) → %s" % (op_name, ka, kb, structured.get("handle") or
+                                        ("value=%s" % structured.get("value")))
+    text = head + "\n" + _stats_line(st, vd)
+    if degraded:
+        text += "\n劣化 %d 件: " % len(degraded) + "; ".join(
+            "%s@%s: %s" % (d["name"], d["source"], d["error"][:80]) for d in degraded[:5])
+    return tool_result(text, structured, links=links)
+
+
+def _inspect(a: dict, store: HandleStore) -> dict:
+    meta, arr = store.get(a["handle"])
+    last_op = next((p["apply"] for p in reversed(meta["provenance"]) if "apply" in p), None)
+    st, vd = _describe(meta, arr, op_name=last_op)
+    import ops
+    quantity = last_op in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT
+    links = _maybe_thumb(store, meta, None, arr, vision=a.get("vision", "auto"),
+                         escalate=vd["escalate"], quantity=quantity, tag="inspect")
+    structured = {**meta, "stats": st, **vd}
+    text = "%s  sort=%s  来歴=%s\n%s" % (meta["handle"], meta["sort"],
+                                          json.dumps(meta["provenance"], ensure_ascii=False)[:200],
+                                          _stats_line(st, vd))
+    return tool_result(text, structured, links=links)
+
+
 # --------------------------------------------------------------------------- #
 # ディスパッチ                                                                  #
 # --------------------------------------------------------------------------- #
@@ -268,12 +457,13 @@ def handle_tools_list(_params: dict) -> dict:
                       for n, t in sorted(TOOLS.items())]}
 
 
-def call_tool(name: str, args: Any, cat: Catalog, *,
+def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = None, *,
               max_structured_bytes: int = MAX_STRUCTURED_BYTES) -> dict:
     """tool 本体。引数違反は ArgError(= -32602)、実行の失敗は isError の結果。"""
     if name not in TOOLS:
         raise ArgError("知らない tool: %r(あるのは %s)" % (name, sorted(TOOLS)))
     a = _validate(TOOLS[name]["inputSchema"], args if args is not None else {})
+    store = store if store is not None else HandleStore()
     if name == "fullseye_search_ops":
         for k in ("in_sort", "out_sort"):
             if a.get(k) and a[k] not in cat.sorts:
@@ -292,10 +482,25 @@ def call_tool(name: str, args: Any, cat: Catalog, *,
     if name == "fullseye_catalog_coverage":
         c = cat.coverage()
         return tool_result(_coverage_text(c), c, max_structured_bytes=max_structured_bytes)
+    if name == "fullseye_list_samples":
+        rows = store.samples()
+        text = "同梱サンプル %d 枚(根: %s)\n" % (len(rows), store.roots) + "\n".join(
+            "- %s  %s  [%s / %s]" % (r["name"], r["path"], r["source"], r["licence"]) for r in rows)
+        return tool_result(text, {"samples": rows, "roots": store.roots},
+                           max_structured_bytes=max_structured_bytes)
+    try:
+        if name == "fullseye_load_image":
+            return _load_image(a, store)
+        if name == "fullseye_apply":
+            return _apply(a, cat, store)
+        if name == "fullseye_inspect":
+            return _inspect(a, store)
+    except HandleError as exc:
+        raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた
 
 
-def dispatch(msg: dict, cat: Catalog) -> dict | None:
+def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict | None:
     """1 メッセージを処理。通知(id 無し)には返さない。"""
     if not isinstance(msg, dict) or msg.get("jsonrpc") != "2.0":
         return _err(msg.get("id") if isinstance(msg, dict) else None, -32600, "JSON-RPC 2.0 でない")
@@ -312,7 +517,7 @@ def dispatch(msg: dict, cat: Catalog) -> dict | None:
             res = handle_tools_list(params)
         elif method == "tools/call":
             name = params.get("name")
-            res = call_tool(name, params.get("arguments"), cat)
+            res = call_tool(name, params.get("arguments"), cat, store)
             _log("tools/call", name, "ok" if not res.get("isError") else "isError")
         elif method in ("notifications/initialized", "notifications/cancelled"):
             return None
@@ -321,19 +526,21 @@ def dispatch(msg: dict, cat: Catalog) -> dict | None:
                 return None
             return _err(req_id, -32601, "知らない method: %r" % method)
     except ArgError as exc:
-        _log("tools/call", params.get("name"), "-32602", str(exc))
+        _log("tools/call", params.get("name"), "-32602", str(exc)[:200])
         return None if is_notification else _err(req_id, -32602, str(exc))
     except CatalogError as exc:
         return None if is_notification else _err(req_id, -32603, "カタログ: %s" % exc)
     return None if is_notification else _ok(req_id, res)
 
 
-def run_stdio_server(stdin=None, stdout=None, *, catalog: Catalog | None = None) -> int:
+def run_stdio_server(stdin=None, stdout=None, *, catalog: Catalog | None = None,
+                     store: HandleStore | None = None) -> int:
     """EOF まで回す。壊れたフレームには -32700 を返して続ける。"""
     stdin = stdin if stdin is not None else sys.stdin.buffer
     stdout = stdout if stdout is not None else sys.stdout.buffer
     cat = catalog if catalog is not None else Catalog.load()
-    _log("ready: %d names, %d sorts" % (len(cat.entries), len(cat.sorts)))
+    store = store if store is not None else HandleStore()
+    _log("ready: %d names, %d sorts, roots=%s" % (len(cat.entries), len(cat.sorts), store.roots))
     while True:
         try:
             msg = read_message(stdin)
@@ -342,7 +549,7 @@ def run_stdio_server(stdin=None, stdout=None, *, catalog: Catalog | None = None)
             continue
         if msg is None:
             return 0
-        resp = dispatch(msg, cat)
+        resp = dispatch(msg, cat, store)
         if resp is not None:
             write_message(stdout, resp)
 
