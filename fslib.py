@@ -37,6 +37,24 @@ __all__ = [
 ]
 
 
+class FsValueError(ValueError):
+    """`FS_E_INVALID_ARG` —— 引数が宣言された定義域の外。
+
+    ★2026-09-14: これが無かった。`fullseye_abi.h` は status を **10 種**宣言して
+    いるのに `fslib` の例外は 2 つ(`FsTypeError` → `FS_E_TYPE` /
+    `FsBackendError` → `FS_E_NO_BACKEND`)しか無く、**種の違う失敗が同じ穴に
+    落ちていた**。実際この日に直した `threshold(lo>hi)` と
+    `select_shape(vmin>vmax)` は、契約では「引数が定義域の外」=
+    `FS_E_INVALID_ARG` なのに `FsTypeError` を投げていた —— Rust 実装は 1 を返し
+    Python は 2 相当を投げる、という**状態コードの食い違い**になる。
+    差分テストが「どちらも拒否した」までしか見ていなかったので素通りしていた
+    ([[feedback_observe_what_the_contract_declares]])。
+
+    `TypeError` ではなく `ValueError` を継承するのは、Python 側の呼び手にとっても
+    「型が違う」と「値が範囲外」は別の失敗だから。
+    """
+
+
 class FsTypeError(TypeError):
     """A value was used where the language's type model forbids it."""
 
