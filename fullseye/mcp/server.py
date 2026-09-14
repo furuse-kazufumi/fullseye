@@ -693,10 +693,68 @@ def run_stdio_server(stdin=None, stdout=None, *, catalog: Catalog | None = None,
             write_message(stdout, resp)
 
 
+def demo() -> int:
+    """自分を subprocess で起動し、samples → load → pipeline → inspect を叩いて表示する。
+
+    docs/MCP.md の Quickstart はこれ。「貼る前に実行」(CONTRIBUTING)を機械化したもので、
+    テストからも呼ぶ。stdout はこの関数の**外**(人向け)にしか書かない。
+    """
+    import subprocess
+    from .catalog import ROOT
+    env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
+    p = subprocess.Popen([sys.executable, "-m", "fullseye.mcp"], stdin=subprocess.PIPE,
+                         stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd=ROOT, env=env)
+    seq = 0
+
+    def call(method, **params):
+        nonlocal seq
+        seq += 1
+        write_message(p.stdin, {"jsonrpc": "2.0", "id": seq, "method": method, "params": params})
+        r = read_message(p.stdout)
+        if r is None or "error" in r:
+            raise RuntimeError("MCP の返事が無いか error: %r" % (r,))
+        return r["result"]
+
+    def tool(name, **a):
+        r = call("tools/call", name=name, arguments=a)
+        text = r["content"][0]["text"]
+        links = [c["name"] for c in r["content"] if c["type"] == "resource_link"]
+        print("--- %s%s" % (name, "  [isError]" if r.get("isError") else ""))
+        print(text if len(text) < 1200 else text[:1200] + " …")
+        if links:
+            print("resource_link:", ", ".join(links))
+        return r
+
+    try:
+        ini = call("initialize", protocolVersion=PROTOCOL_VERSION, capabilities={},
+                   clientInfo={"name": "fullseye-demo", "version": "0"})
+        print("server:", ini["serverInfo"], "protocol:", ini["protocolVersion"])
+        tools = call("tools/list")["tools"]
+        print("tools:", ", ".join(t["name"] for t in tools))
+        s = tool("fullseye_list_samples")
+        coins = next(x for x in s["structuredContent"]["samples"] if x["name"] == "coins")
+        tool("fullseye_search_ops", query="threshold", limit=5)
+        h = tool("fullseye_load_image", path=coins["path"])["structuredContent"]["handle"]
+        pipe = tool("fullseye_pipeline", handle=h,
+                    stages=[{"op": "gaussian", "a": 0.3}, {"op": "otsu"}, {"op": "count_obj"}])
+        seg = pipe["structuredContent"]["handle"]
+        tool("fullseye_inspect", handle=seg, vision="thumb")
+        tool("fullseye_apply", handle=h, op="count_obj")          # 型不一致 → 拒否される見本
+    except RuntimeError as exc:
+        print("(拒否の見本)", str(exc)[:300])
+    finally:
+        p.stdin.close()
+        rc = p.wait(timeout=120)
+    print("server exit:", rc)
+    return 0 if rc == 0 else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     if "--coverage" in argv:
         # 起動せずに被覆だけ標準出力へ(人が読む用。プロトコルではない)
         print(json.dumps(Catalog.load().coverage(), ensure_ascii=False, indent=1))
         return 0
+    if "--demo" in argv:
+        return demo()
     return run_stdio_server()
