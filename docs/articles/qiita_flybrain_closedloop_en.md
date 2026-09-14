@@ -461,12 +461,48 @@ And the interference pattern on the floor in ① and ② is not a rendering defe
 
 Honest notes: the body's trajectory is the real one the closed loop produced, but **the leg motion is a cosmetic tripod gait** — it is not walking by leg dynamics (as the first table in this article says). Depth and events are **synthesised from the render**, not the output of a physical sensor.
 
+### Which layer, when silenced, breaks self-rotation estimation (developmental ladder, 2026-09-15)
+
+Silencing the visual pathway stage by stage, from the bottom up, and lining up where self-rotation estimation (M4, §5) breaks. 34 conditions — a control, photoreceptors R1–R6, lamina L1–L3, nine medulla Mi/Tm types, T4/T5 in four directions each, and six bundled stages. Each condition pins the output of the named cell types to zero and measures 12 scenes on the same stimulus. Eight threads, 3 h 23 min, 34/34 completed.
+
+| Stage silenced | Worst condition | Correlation | Drop from control |
+|---|---|---|---|
+| (control) | `none` | **0.9487** | — |
+| Photoreceptors R1–R6 | R6 | 0.5742 | 0.375 |
+| Lamina L1–L3 | all, bundled | 0.4853 | 0.463 |
+| **Medulla Mi/Tm** | **all, bundled** | **-0.0057** | **0.954** |
+| T4/T5 | T4, bundled | 0.5182 | 0.431 |
+
+**Self-rotation estimation is concentrated in the medulla.** Drop that layer entirely and the correlation falls to **-0.0057** — essentially no correlation. Dropping photoreceptors, lamina or T4/T5 costs only 0.37–0.46 by comparison. Among single cell types, **Mi1 (0.031) and Mi4 (0.064)** matter most — both ON-pathway relays. T4/T5 are the textbook carriers of direction selectivity, yet **for rotation estimation they are not individually decisive**. 24 of the 34 conditions fell at least 0.01 below the control.
+
+**But only half of this experiment measured anything.** Direction selectivity (DSI) was **not measurable in all 34 conditions** — about 4 million of 10.09 million response elements were non-finite. And since **even the control, with nothing silenced, went non-finite**, the cause is not the silencing but the response generation itself. The fix made last time — record a condition as "not measurable" and carry on — **only made the failure report correctly; it did not fix the non-finite values.** A fix landing is not the same as an experiment working.
+
+One lesson. **Ride two metrics on a single run and one metric's failure invalidates every condition.** M4 came back 34/34; DSI was lost 34/34. Metrics should run independently, or at minimum the control condition should establish that the metric itself is sound before the sweep starts.
+
+### Forgetting disappeared when the objective was written differently (2026-09-15)
+
+The previous section reported that a staged curriculum can build direction selectivity but that **the final behavioural stage destroys it** (5/8 → 1/8). The proposed remedy — the **cumulative objective**, where stage *k* is scored as the mean over stages 1…*k* — has now been run from the same starting point, with the same budget and the same tasks.
+
+| Stage | Contrast | ON/OFF | Direction | Selectivity passing |
+|---|---|---|---|---|
+| S1 | 1.000 | 0.372 | 0.123 | 1/8 |
+| S1+S2 | 1.000 | **0.997** | 0.056 | 1/8 |
+| S1+S2+S3 | 0.987 | 0.979 | **0.365** | **4/8** |
+| **S1+S2+S3+S4** | **0.999** | **0.961** | **0.392** | **6/8** |
+
+Rotation estimation at the final stage, on scenes never used: **0.875 / 0.814**.
+
+**The forgetting is gone — and behaviour did not pay for it.** Staging alone (non-cumulative) ended with selectivity at 5/8 → **1/8** and ON/OFF at 0.874 → **0.536**. With the cumulative objective, selectivity goes 4/8 → **6/8** — it *increases* — and ON/OFF holds at 0.979 → 0.961. Rotation estimation matches or beats the earlier run (0.823 / 0.811).
+
+So **the performance-versus-realism trade-off was not a law; it was a way of writing the objective.** The previous section's observation was right as a phenomenon, but I had not read the cause correctly — what broke it was **not keeping the property I wanted in the final stage's objective**.
+
+The cost is explicit. Each evaluation measures every stage, so the final stage takes 239.8 s per generation — about 7× the non-cumulative run, 140 minutes in total against roughly 40. **Evaluation gets heavier in proportion to how many properties you insist on keeping**, which makes "what do we keep" a design decision to be made out loud.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
-- [ ] **Developmental ladder** —— silence cell types stage by stage and line up which function disappears where. A pilot showed that silencing all of T4 drops self-rotation estimation from 0.95 to 0.52, and that of the four T5 types only T5d loses its selectivity. **The full run failed once**: with one cell type silenced the responses went non-finite, and the check refused to compute direction selectivity from them (returning 0 silently is not an option, so stopping was the correct behaviour). It will be re-run once each condition can be recorded as "not measurable" without taking the other 33 down with it.
-- [ ] **Cumulative objective** —— does the forgetting seen above (ON/OFF 0.874 → 0.536, selectivity 5/8 → 1/8) disappear if stage *k*'s objective is the mean over stages 1…*k*?
+- [ ] **Fix the direction-selectivity measurement path** —— in the ladder above, responses went non-finite even in the control condition. That is unrelated to silencing, so the response generation itself has to be traced. Until it is fixed, every direction-selectivity number measured through that path is void.
 - [ ] **Homing with deceleration** —— the 7.4 % that remains even with a perfect compass (§7) comes from constant forward speed circling over the nest. Deceleration interferes with the memory update, so it needs its own experiment.
 
 ### About the author
