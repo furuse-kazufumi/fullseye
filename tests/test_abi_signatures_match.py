@@ -162,6 +162,28 @@ def test_the_header_compiles_as_c(cc_name):
         % (cc_name, (r.stderr or r.stdout)[:2000]))
 
 
+def test_the_header_compiles_under_msvc():
+    """MSVC(`cl.exe`)でも C / C++ として通ること。**無ければ正直に SKIP**。
+
+    MSVC は方言が最も違う処理系で、しかも**顧客の C++ 製品はたいていこれで建つ**。
+    gcc / clang が通っても MSVC が通るとは限らない(`/W4` の警告も別物)。
+    `vcvars64.bat` を通して環境を作らないと `cl` は動かないので、`cmd` 越しに呼ぶ。
+    """
+    import glob
+    import subprocess
+    vcvars = glob.glob(r"C:\Program Files*\Microsoft Visual Studio\*\*\VC\Auxiliary"
+                       r"\Build\vcvars64.bat")
+    if not vcvars:
+        pytest.skip("MSVC(vcvars64.bat)が無い —— 建たなかったことを「通った」と混ぜない")
+    for std, extra in (("c11", ""), ("c++17", "/TP")):
+        cmd = '"%s" >nul 2>&1 && cl /nologo /std:%s /W4 /Zs %s "%s"' % (
+            vcvars[0], std, extra, HEADER)
+        r = subprocess.run(["cmd", "/c", cmd], capture_output=True, text=True)
+        assert r.returncode == 0, (
+            "fullseye_abi.h が MSVC(/std:%s)で通らない:\n%s"
+            % (std, (r.stdout or r.stderr)[:2000]))
+
+
 def test_the_header_compiles_as_cpp_when_a_compiler_is_available():
     """**C++ からも include できること。** ヘッダは `extern "C"` を宣言しているので
     通るはずだが、通ることを誰も確かめていなかった —— 顧客が組み込む先は
