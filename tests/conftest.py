@@ -266,10 +266,12 @@ def matrix_bank(n: int = 6) -> dict[str, np.ndarray]:
     #   ゲートに免除機構は無いので、**正解が非有限になる入力を渡さない**のが筋
     #   (ゲートを緩めると、本当に壊れている非有限まで通ってしまう)。
     #   「特異に近い」は `ill_conditioned` が既に担っている。
+    #   同じ理由で **全ゼロ行列も置けない**(ゼロ行列は特異なので条件数は `inf`)。
+    #   定数入力の探針としての役目は `near_zero`(極小だが可逆)が引き継ぐ。
     return {
         "normal": a,
         "ill_conditioned": ill,
-        "zeros": np.zeros((n, n)),
+        "near_zero": np.eye(n) * 1e-12,             # 定数に近いが可逆(条件数 1)
         "tiny2": np.array([[1.0, 2.0], [3.0, 4.0]]),
         "tall": rng.standard_normal((n * 2, n)),    # 正方でない
     }
