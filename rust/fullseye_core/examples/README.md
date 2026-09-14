@@ -18,9 +18,9 @@
 | 例 | 手元の環境(2026-09-14 実測) | 状態 |
 |---|---|---|
 | `csharp/` | .NET SDK 9.0.318(`winget install Microsoft.DotNet.SDK.9`) | **実行して確認済み** |
-| `luajit_ffi.lua` | LuaJIT 2.1.19907(`winget install DEVCOM.LuaJIT`) | 導入済み・**実行確認は未** |
+| `luajit_ffi.lua` | LuaJIT 2.1.19907(`winget install DEVCOM.LuaJIT`、実体は `%LOCALAPPDATA%\Programs\LuaJIT\bin`) | **実行して確認済み** |
 
-### C# の実際の出力(`dotnet run`)
+### 実際の出力 —— C#(`dotnet run`)と Lua(`luajit`)で**同一**
 
 ```
 ABI 0.1
@@ -28,6 +28,9 @@ ABI 0.1
 契約どおり: 8x8 の市松は 8 連結で 1 個
 逆さの区間 lo>hi は status 1 で拒まれた
 ```
+
+3 つの言語(Python / C# / Lua)が**同じ 1 本の .dll を叩いて同じ答え**を出している。
+これがバインディングを書かずに済む理由であり、「多言語対応」の実体でもある。
 
 確認できる最低線は、どちらの例も **8×8 の市松が 1 個**(8 連結)と
 **`lo > hi` が非ゼロ status** を出すこと —— これが契約の 2 つの要点で、
