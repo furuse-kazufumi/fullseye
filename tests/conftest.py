@@ -306,6 +306,71 @@ def rgbimage_bank(n: int = 32) -> dict[str, np.ndarray]:
     }
 
 
+def video_bank(f: int = 12, n: int = 24) -> dict[str, np.ndarray]:
+    """(F, H, W) のフレーム列。**帯域内で揺れている領域**が本質の sort なので、
+    揺れているもの・揺れていないもの・1 フレームだけ、を分けて置く。"""
+    t = np.arange(f)[:, None, None]
+    base = image_bank(n)["normal"][None, :, :]
+    mask = np.zeros((1, n, n))
+    mask[0, n // 4:n // 4 + n // 2, n // 4:n // 4 + n // 2] = 1.0
+    return {
+        "normal": np.clip(base + 0.2 * mask * np.sin(2 * np.pi * 4.0 * t / f), 0, 1),
+        "static": np.repeat(base, f, axis=0),      # 揺れていない(帯域パワー 0)
+        "const0": np.zeros((f, n, n)),
+        "single_frame": base.copy(),               # 時間方向の差分が取れない
+    }
+
+
+def qimage_bank(n: int = 24) -> dict[str, np.ndarray]:
+    """(H, W, 4) 四元数画像。**ノルム 0 の四元数**は正規化・共役が退化する場所。"""
+    g = image_bank(n)["normal"]
+    q = np.stack([np.ones_like(g), g, 0.5 - g, 0.25 * g], -1)
+    return {
+        "normal": q,
+        "unit": q / np.linalg.norm(q, axis=-1, keepdims=True).clip(1e-12),
+        "const0": np.zeros((n, n, 4)),             # ノルム 0(正規化できない)
+        "real_only": np.stack([np.ones_like(g)] + [np.zeros_like(g)] * 3, -1),
+    }
+
+
+def cimage_bank(n: int = 24) -> dict[str, np.ndarray]:
+    """(H, W) 複素画像。**位相は原点で定義されない**ので 0 を必ず含める。"""
+    g = image_bank(n)["normal"]
+    return {
+        "normal": (g + 1j * (1.0 - g)).astype(np.complex128),
+        "real_only": g.astype(np.complex128),
+        "const0": np.zeros((n, n), np.complex128),  # 位相が未定義
+        "unit_phase": np.exp(2j * np.pi * g),
+    }
+
+
+def lightfield_bank(u: int = 3, v: int = 3, n: int = 16) -> dict[str, np.ndarray]:
+    """(U, V, H, W) の 4-D 光場。視差スロープが 0 の場合(全視点が同じ)を含める。"""
+    g = image_bank(n)["normal"]
+    lf = np.empty((u, v, n, n))
+    for i in range(u):
+        for j in range(v):
+            lf[i, j] = np.roll(g, (i - u // 2, j - v // 2), axis=(0, 1))
+    return {
+        "normal": lf,
+        "no_parallax": np.broadcast_to(g, (u, v, n, n)).copy(),   # スロープ 0
+        "const0": np.zeros((u, v, n, n)),
+        "single_view": g[None, None, :, :],        # 視差が測れない
+    }
+
+
+def beatcube_bank(c: int = 4, n: int = 16) -> dict[str, np.ndarray]:
+    """(C, H, W) 複素のビート立方体(FMCW レーダ)。窓関数・FFT の入口。"""
+    g = image_bank(n)["normal"]
+    k = np.arange(c)[:, None, None]
+    return {
+        "normal": (g[None] * np.exp(2j * np.pi * 0.1 * k)).astype(np.complex128),
+        "const0": np.zeros((c, n, n), np.complex128),
+        "single_chirp": (g[None] + 0j).astype(np.complex128),
+        "real_only": np.repeat(g[None], c, axis=0).astype(np.complex128),
+    }
+
+
 BANKS = {
     "image": image_bank,
     "region": region_bank,
