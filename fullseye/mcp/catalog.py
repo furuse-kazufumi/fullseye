@@ -1,0 +1,261 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""op のカタログと知識層の引き当て(MCP サーバの中身。プロトコルは知らない)。
+
+★**1 つの正本に寄せない。** 2026-09-15 の実測で、``docs/OP_INDEX.json`` は 918 op、
+``ops.REGISTRY`` は 901 op、``docs/ops/**/*.md`` のノートは 1943 枚、そのうち
+索引に無いノートが 1022 枚あり、**541 個は ``fullseye`` facade に実在する関数**だった。
+索引だけを見る検索は、実在する 541 個の機能を LLM から構造的に隠す ——
+[[feedback_registered_only_gates_miss_unregistered]](登録済みを数える門は未登録に
+盲目)と符号が逆の同じ形。だから **4 層(索引 / レジストリ / ノート / facade)を
+別々に数え、返り値に出どころを付ける**。LLM は「索引にあるが facade に無い」
+「ノートだけある」を区別して読める。
+
+知識層のノートは開発 checkout の Markdown(frontmatter つき)を正本にし、無ければ
+wheel に同梱される ``studio_assets/op_help/<op>.html`` に落ちる。**どちらを使ったかは
+返り値に書く**(黙って代替に落ちない)。
+"""
+from __future__ import annotations
+
+import glob
+import json
+import os
+import re
+from dataclasses import dataclass, field
+
+# fullseye/mcp/catalog.py -> fullseye/ -> repo root
+_PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(_PKG)
+DOCS = os.path.join(ROOT, "docs")
+OPS_DOCS = os.path.join(DOCS, "ops")
+FIG_DIR = os.path.join(OPS_DOCS, "_fig")
+OP_INDEX = os.path.join(DOCS, "OP_INDEX.json")
+STUDIO_HELP = os.path.join(ROOT, "studio_assets", "op_help")
+
+#: 図の変種 -> 説明。順序は「見せる価値」の順(入出力対比が最初)。
+FIGURE_KINDS = (
+    (".png", "入力 → 出力(合成入力 128x128、左が入力・右が出力)"),
+    (".a.jpg", "つまみ a の掃引(0.1 / 0.5 / 0.9、b は既定)"),
+    (".b.jpg", "つまみ b の掃引(0.1 / 0.5 / 0.9、a は既定)"),
+    (".inputs.jpg", "別の入力(合成シーン / 写真 / 硬貨)での出力"),
+    (".chain.jpg", "前置きの op と繋いだ段階図"),
+    (".gif", "動画 / 体積 / ライトフィールドの補助アニメーション"),
+)
+
+SOURCES = ("index", "registry", "note", "facade")
+
+_FM_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.S)
+
+
+class CatalogError(RuntimeError):
+    """カタログを組めない(正本が無い等)。黙って空のカタログにしない。"""
+
+
+def _frontmatter(text: str) -> dict[str, str]:
+    m = _FM_RE.match(text)
+    if not m:
+        return {}
+    out: dict[str, str] = {}
+    for line in m.group(1).splitlines():
+        if ":" not in line or line[:1].isspace():
+            continue
+        k, _, v = line.partition(":")
+        # `version: 0.1.11  # fullseye lib version ...` の末尾コメントを落とす
+        v = v.split("#", 1)[0].strip()
+        out[k.strip()] = v
+    return out
+
+
+@dataclass
+class Entry:
+    name: str
+    sources: set = field(default_factory=set)
+    in_sort: str | None = None
+    out_sort: str | None = None
+    category: str | None = None
+    tier: str | None = None
+    halcon: str | None = None
+    dim: str | None = None
+    note_paths: list = field(default_factory=list)
+
+    def row(self) -> dict:
+        return {
+            "name": self.name,
+            "sources": sorted(self.sources),
+            "in_sort": self.in_sort, "out_sort": self.out_sort,
+            "category": self.category, "tier": self.tier,
+            "halcon": self.halcon, "dim": self.dim,
+            "has_note": bool(self.note_paths),
+        }
+
+
+class Catalog:
+    """4 層を合わせた op の一覧。``load()`` で組む。"""
+
+    def __init__(self, entries: dict[str, Entry], sorts: list[str]):
+        self.entries = entries
+        self.sorts = sorts
+
+    # ------------------------------------------------------------------ build
+    @classmethod
+    def load(cls, *, with_facade: bool = True) -> "Catalog":
+        if not os.path.exists(OP_INDEX):
+            raise CatalogError(
+                "docs/OP_INDEX.json が無い(%s)。`py -3.11 imgevolve.py index` で作る。"
+                "無いまま空のカタログを返すと、検索が『該当なし』を正直に見せかける" % OP_INDEX)
+        with open(OP_INDEX, encoding="utf-8") as f:
+            idx = json.load(f)
+        entries: dict[str, Entry] = {}
+
+        def ent(name: str) -> Entry:
+            e = entries.get(name)
+            if e is None:
+                e = entries[name] = Entry(name=name)
+            return e
+
+        # 1. 索引(機械可読。in/out sort と tier の正本)
+        for o in idx["ops"]:
+            e = ent(o["name"])
+            e.sources.add("index")
+            e.in_sort, e.out_sort = o.get("in_sort"), o.get("out_sort")
+            e.category, e.tier, e.halcon = o.get("category"), o.get("tier"), o.get("halcon")
+
+        # 2. レジストリ(`fullseye.apply` が実行できるもの)
+        try:
+            import ops as _ops
+            for o in _ops.REGISTRY:
+                e = ent(o.name)
+                e.sources.add("registry")
+                e.in_sort = e.in_sort or o.in_sort
+                e.out_sort = e.out_sort or o.out_sort
+                e.category = e.category or getattr(o, "category", None)
+        except Exception as exc:                              # noqa: BLE001
+            raise CatalogError("ops.REGISTRY を読めない: %r" % exc) from exc
+
+        # 3. ノート(知識層。frontmatter の `op:` を持つ md だけ。ガイドは除外される)
+        for p in glob.glob(os.path.join(OPS_DOCS, "**", "*.md"), recursive=True):
+            if os.sep + "_fig" + os.sep in p:
+                continue
+            with open(p, encoding="utf-8") as f:
+                fm = _frontmatter(f.read(1200))
+            name = fm.get("op")
+            if not name:
+                continue
+            e = ent(name)
+            e.sources.add("note")
+            e.note_paths.append(p)
+            e.dim = e.dim or fm.get("dim")
+            e.category = e.category or fm.get("category")
+            e.in_sort = e.in_sort or fm.get("in")
+            e.out_sort = e.out_sort or fm.get("out")
+            e.halcon = e.halcon or fm.get("halcon")
+
+        # 4. facade(`import fullseye` で呼べる名前)
+        if with_facade:
+            import fullseye
+            for n in getattr(fullseye, "__all__", ()):
+                if callable(getattr(fullseye, n, None)):
+                    ent(n).sources.add("facade")
+
+        sorts = sorted(set(idx.get("sorts") or []) |
+                       {e.in_sort for e in entries.values() if e.in_sort} |
+                       {e.out_sort for e in entries.values() if e.out_sort})
+        return cls(entries, sorts)
+
+    # ----------------------------------------------------------------- search
+    def search(self, query: str = "", *, in_sort: str | None = None,
+               out_sort: str | None = None, source: str | None = None,
+               limit: int = 20) -> dict:
+        """部分一致検索。完全一致 > 前置き一致 > 部分一致 の順に並べる。
+
+        返り値には**層別の内訳**(``by_sources``)を付ける —— 「該当 5 件」だけでは
+        その 5 件が実行できる op なのかノートだけなのか分からない。
+        """
+        q = (query or "").strip().lower()
+        toks = [t for t in re.split(r"[\s,]+", q) if t]
+        hits = []
+        for e in self.entries.values():
+            if in_sort and e.in_sort != in_sort:
+                continue
+            if out_sort and e.out_sort != out_sort:
+                continue
+            if source and source not in e.sources:
+                continue
+            hay = " ".join(x for x in (e.name, e.halcon, e.category, e.dim, e.tier) if x).lower()
+            if toks and not all(t in hay for t in toks):
+                continue
+            if not toks:
+                rank = 2
+            elif e.name.lower() == q or (e.halcon or "").lower() == q:
+                rank = 0
+            elif e.name.lower().startswith(q):
+                rank = 1
+            else:
+                rank = 2
+            hits.append((rank, e.name, e))
+        hits.sort(key=lambda t: (t[0], t[1]))
+        total = len(hits)
+        rows = [e.row() for _, _, e in hits[:limit]]
+        by_sources: dict[str, int] = {}
+        for _, _, e in hits:
+            k = "+".join(sorted(e.sources))
+            by_sources[k] = by_sources.get(k, 0) + 1
+        return {"query": query, "total": total, "returned": len(rows),
+                "truncated": total > len(rows), "by_sources": by_sources, "ops": rows}
+
+    # ------------------------------------------------------------------- help
+    def help(self, name: str) -> dict:
+        """知識層のノートと図を引く。無ければ**理由つきで** found=False。"""
+        e = self.entries.get(name)
+        if e is None:
+            near = [r["name"] for r in self.search(name, limit=5)["ops"]]
+            return {"found": False, "name": name,
+                    "reason": "どの層にも無い op 名(索引 / レジストリ / ノート / facade)",
+                    "nearest": near}
+        out: dict = {"found": True, **e.row()}
+        body, fmt, src = None, None, None
+        if e.note_paths:
+            p = e.note_paths[0]
+            with open(p, encoding="utf-8") as f:
+                text = f.read()
+            fm = _frontmatter(text)
+            body = _FM_RE.sub("", text, count=1)
+            fmt, src = "markdown", os.path.relpath(p, ROOT).replace(os.sep, "/")
+            out["frontmatter"] = fm
+            if len(e.note_paths) > 1:
+                out["other_notes"] = [os.path.relpath(x, ROOT).replace(os.sep, "/")
+                                      for x in e.note_paths[1:]]
+        else:
+            html = os.path.join(STUDIO_HELP, name + ".html")
+            if os.path.exists(html):
+                with open(html, encoding="utf-8") as f:
+                    body = f.read()
+                fmt, src = "html", os.path.relpath(html, ROOT).replace(os.sep, "/")
+        out["body"] = body
+        out["body_format"] = fmt
+        out["body_source"] = src
+        out["body_chars"] = len(body) if body else 0
+        figs = []
+        for ext, desc in FIGURE_KINDS:
+            p = os.path.join(FIG_DIR, name + ext)
+            if os.path.exists(p):
+                figs.append({"path": p, "kind": ext, "description": desc,
+                             "bytes": os.path.getsize(p)})
+        out["figures"] = figs
+        return out
+
+    # --------------------------------------------------------------- coverage
+    def coverage(self) -> dict:
+        """4 層の交差を数える。**検索がどれだけ信用できるか**を LLM にも見せる。"""
+        by = {s: {e.name for e in self.entries.values() if s in e.sources} for s in SOURCES}
+        idx, reg, note, fac = by["index"], by["registry"], by["note"], by["facade"]
+        note_only = sorted(note - idx - reg - fac)
+        return {
+            "total_names": len(self.entries),
+            "per_source": {s: len(v) for s, v in by.items()},
+            "index_without_note": sorted(idx - note),
+            "registry_not_in_index": sorted(reg - idx),
+            "index_not_in_registry": sorted(idx - reg),
+            "facade_not_in_index": len(fac - idx),
+            "note_only": len(note_only),
+            "note_only_names": note_only,
+        }
