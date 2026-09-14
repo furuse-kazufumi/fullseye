@@ -44,7 +44,10 @@ class HandleStore:
                  thumb_dir: str | None = None):
         self.roots = [os.path.realpath(r) for r in (roots if roots is not None else default_roots())]
         self.max_items = int(max_items)
+        # ★thumb_dir を渡されたときに作っていなかった(mkdtemp のときだけ存在する)。
+        #   小図の保存が FileNotFoundError で落ち、テスト 4 件で発覚(2026-09-15)。
         self.thumb_dir = thumb_dir or tempfile.mkdtemp(prefix="fullseye-mcp-")
+        os.makedirs(self.thumb_dir, exist_ok=True)
         self._meta: OrderedDict[str, dict] = OrderedDict()
         self._arr: dict[str, object] = {}
         self._evicted: set[str] = set()
