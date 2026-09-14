@@ -20,7 +20,9 @@ import os
 
 import numpy as np
 
-_MENAGERIE = "C:/dev/projects/mujoco_menagerie"
+#: MuJoCo Menagerie の置き場。**配布物にローカル絶対パスを焼き込まない**。
+#: `MUJOCO_MENAGERIE` 環境変数で指す(未設定なら呼び出し時に明示する)。
+_MENAGERIE = os.environ.get("MUJOCO_MENAGERIE", "")
 _PANDA_CUBE = f"{_MENAGERIE}/franka_emika_panda/mjx_single_cube.xml"
 
 _GRIP_OPEN, _GRIP_SHUT = 0.04, 0.0
