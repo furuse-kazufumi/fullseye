@@ -390,6 +390,48 @@ def test_select_shape_rejects_an_inverted_interval():
         fslib.select_shape(objs, "area", 20.0, 5.0)
 
 
+def test_connection_orders_objects_by_their_first_run_on_every_backend():
+    """`fs_connection` の並びは契約の一部 —— 最初の run の (row, col) 昇順。
+
+    呼び手は `fs_objectset_region(objs, i)` と**添字で引く**ので、並びが違えば
+    指す物体が変わる。「面積が最大の不良を 1 番目に」のようなレシピが、backend や
+    実装を差し替えた途端に別の物体を指してしまう。
+
+    ここも実際に壊れていた: `ndi.label` も `cv2.connectedComponentsWithStats` も
+    **自分の走査順**でラベル番号を振るだけで、契約の順序ではない。下の盤面は
+    差分ファジングが実際に出した反例(値域 (-1,1)、しきい値を通すと物体は
+    (row=0,col=3) 面積 2 と (row=1,col=1) 面積 1)。
+    """
+    import numpy as np
+    import fslib
+    a = np.array([[0.0, 0.0, 0.0, 1.0, 0.0],
+                  [0.0, 1.0, 0.0, 1.0, 0.0]])
+    img = fslib.FImage(a, value_range=(0.0, 1.0))
+    reg = fslib.threshold(img, 0.5, 1.0)
+    impls = fslib._REGISTRY["connection"]
+    backends = fslib.backends_for("connection")
+    seen = {}
+    for be in backends:
+        if be not in impls:
+            continue
+        objs = impls[be](reg)
+        firsts = []
+        for i, _id in enumerate(objs.ids):
+            rs, cs = np.nonzero(objs.labels == _id)
+            k = np.lexsort((cs, rs))
+            firsts.append((int(rs[k[0]]), int(cs[k[0]])))
+        seen[be] = firsts
+    assert len(seen) == len(backends) >= 2, (
+        "backend を全部引けていない(引けた %s / 在る %s)" % (sorted(seen), backends))
+    for be, firsts in seen.items():
+        assert firsts == sorted(firsts), (
+            "backend %s の物体の並びが契約どおりでない: 最初の run は %s で、"
+            "(row, col) 昇順になっていない" % (be, firsts))
+        assert firsts == [(0, 3), (1, 1)], (
+            "backend %s の並びが期待と違う: %s(契約の昇順なら [(0,3), (1,1)])"
+            % (be, firsts))
+
+
 def test_gauss_agrees_to_the_border_on_every_backend():
     """`fs_gauss` は backend で変わってはいけない —— **端の画素も含めて**。
 
