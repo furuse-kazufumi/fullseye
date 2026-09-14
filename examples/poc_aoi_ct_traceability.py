@@ -205,9 +205,9 @@ def main():
     perm = rng.permutation(n)
     aoi_centres = _rigid(centres, SHIFT_XY, ROT_DEG)[perm]
 
+    # aoi_centres[k] は元の接合部 perm[k] なので、正解の対応は pair[k] == perm[k]。
     pair, resid, rot_est = solve_correspondence(aoi_centres, centres)
-    ok = np.array_equal(np.asarray(pair), perm.argsort()[np.arange(n)][pair * 0 + np.arange(n)]) \
-        if False else np.array_equal(perm[np.arange(n)], np.asarray(pair))
+    ok = np.array_equal(np.asarray(pair), perm)
     print("\n1. 対応づけ: 与えた回転 %.2f° / 解いた回転 %.2f°、残差 %.3f µm、1 対 1 の全復元 %s"
           % (ROT_DEG, -rot_est, resid, "はい" if ok else "いいえ"))
     assert ok, "対応づけが真値と一致しない"
