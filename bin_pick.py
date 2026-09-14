@@ -25,7 +25,10 @@ import os
 
 import numpy as np
 
-_MENAGERIE = "C:/dev/projects/mujoco_menagerie"
+#: MuJoCo Menagerie の置き場。**配布物にローカル絶対パスを焼き込まない**
+#: (環境ごとに違うものを既定値にすると、他人の手元では黙って落ちる)。
+#: `MUJOCO_MENAGERIE` で指すか、`render_bin_pick_gif(..., menagerie=...)` で渡す。
+_MENAGERIE = os.environ.get("MUJOCO_MENAGERIE", "")
 _PANDA_SCENE = f"{_MENAGERIE}/franka_emika_panda/scene.xml"
 
 _HOME_ARM = np.array([0.0, 0.3, 0.0, -1.57079, 0.0, 2.0, -0.7853])
