@@ -112,6 +112,43 @@ def _paint(a: np.ndarray, kind: str, rng: np.random.Generator) -> None:
         a[:, :] = float(rng.choice([0.0, 0.5, 1.0]))
     elif kind == "ramp":
         a[:, :] = np.tile(np.linspace(0.0, 1.0, w), (h, 1))
+    elif kind == "ring":
+        # 穴あき。run-length と dense mask で「穴」の扱いが分かれうる唯一の形
+        yy, xx = np.indices((h, w))
+        cy, cx = (h - 1) / 2.0, (w - 1) / 2.0
+        d = np.hypot(yy - cy, xx - cx)
+        r = max(1.5, min(h, w) / 2.0 - 0.5)
+        a[(d <= r) & (d >= r * 0.55)] = 1.0
+    elif kind == "nested":
+        # 入れ子(枠の中に枠)。`connection` は 2 個と答えるべきで、穴の内側を
+        # 外側と同じ物体にしてしまう実装ならここで割れる
+        for k in range(0, min(h, w) // 2, 2):
+            a[k, k:w - k] = 1.0
+            a[h - 1 - k, k:w - k] = 1.0
+            a[k:h - k, k] = 1.0
+            a[k:h - k, w - 1 - k] = 1.0
+    elif kind == "comb":
+        # 櫛。1 本の背骨から歯が生える = run が多く、連結は 1 個
+        a[0, :] = 1.0
+        a[:, ::2] = 1.0
+    elif kind == "spiral":
+        # 長い 1 本のつながり。union-find の経路圧縮を深く踏ませる
+        r0, r1, c0, c1 = 0, h - 1, 0, w - 1
+        while r0 <= r1 and c0 <= c1:
+            a[r0, c0:c1 + 1] = 1.0
+            a[r0:r1 + 1, c1] = 1.0
+            r0 += 2
+            c1 -= 2
+    elif kind == "hline_pair":
+        # 1 行だけ空けた 2 本の横線 —— 4/8 連結では**どちらでも 2 個**だが、
+        # run の隣接判定を「行差 <= 1」と誤ると 1 個になる
+        if h >= 3:
+            a[0, :] = 1.0
+            a[2, :] = 1.0
+    elif kind == "corner_chain":
+        # 角でつながる階段。8 連結なら 1 個、4 連結なら長さぶんの個数
+        for k in range(min(h, w)):
+            a[k, k] = 1.0
 
 
 def gen_case(rng: np.random.Generator) -> dict:
