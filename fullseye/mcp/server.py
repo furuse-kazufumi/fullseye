@@ -202,6 +202,22 @@ def _validate(schema: dict, args: Any) -> dict:
             raise ArgError("%s は数でなければならない(%r)" % (k, v))
         if t == "number" and isinstance(v, float) and v != v:
             raise ArgError("%s が NaN" % k)
+        if t == "array":
+            if not isinstance(v, list):
+                raise ArgError("%s は配列でなければならない(%s)" % (k, type(v).__name__))
+            # 唯一の配列はパイプラインの段なので「段」と数える
+            if "minItems" in p and len(v) < p["minItems"]:
+                raise ArgError("%s は %d 段以上(いま %d)" % (k, p["minItems"], len(v)))
+            if "maxItems" in p and len(v) > p["maxItems"]:
+                raise ArgError("%s は %d 段以下(いま %d)" % (k, p["maxItems"], len(v)))
+            items = p.get("items")
+            if items and items.get("type") == "object":
+                for i, it in enumerate(v):
+                    try:
+                        _validate(items, it)
+                    except ArgError as exc:
+                        raise ArgError("%s[%d]: %s" % (k, i, exc)) from exc
+            continue
         if "enum" in p and v not in p["enum"]:
             raise ArgError("%s は %s のどれか(%r)" % (k, p["enum"], v))
         if "minimum" in p and v < p["minimum"]:
