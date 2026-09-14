@@ -687,7 +687,38 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
 - **探針の網羅が本当に効いていること**: `PROBELESS_OPS_BUDGET = 0` のまま、
   契約ゲート `test_op_contracts.py` は **3776 passed / 2 skipped**。
 
+- ★**MCP(Model Context Protocol)サーバの PoC**(`fullseye/mcp/`、
+  `py -3.11 -m fullseye.mcp`)。stdio / JSON-RPC 2.0、protocol `2025-06-18`。器は
+  llmesh の stdio サーバから借り、tool は **3 つだけ**(`fullseye_search_ops` /
+  `fullseye_op_help` / `fullseye_catalog_coverage`)—— 918 op を 918 個の tool に
+  しない(RAD: TheMCPCompany は 18,000 tool を生やして「retrieval 無しでは使えない」と
+  実測した)。fail-closed: 未知の tool / method / op 名 / 型違い / 範囲外 / 余計なキーは
+  すべて理由つきで拒否し、近い名前に黙って倒さない。`structuredContent` が 512 KB を
+  超えたら落とすが、**落としたと本文と `_meta` に書く**。
+  検証は **subprocess で本物の stdio を往復**させ(関数直呼びは配線バグを隠す)、
+  stdout にプロトコル以外の 1 バイトも無いことまで見る(27 tests)。
+  ★最初の 23 件緑は**テストのヘルパの引数名衝突で subprocess の往復が 1 度も走って
+  いない**まま緑だった。走らなかった検査は無いのと同じ。
+  ★「近い名前」が typo で必ず空になる欠陥(部分一致の流用)も、実往復で出た。
+- ★**カタログは 5 層**(index 918 / registry 901 / ledger / note 1939 / facade 992)。
+  索引だけ見る検索は **facade に実在する 541 関数を構造的に隠す**。さらに 4 層で
+  「どこにも無いノート」が 480 枚残り、残骸かと思ったら **480 / 480 が
+  `fullseye.ledger` で解決**した(型付き台帳。`tb_project` ↔ `project` のように
+  接頭辞が違う)。「無い」と言う前に全層を引く。被覆は tool で LLM にも見せる。
+- **索引 918 − レジストリ 901 = 17 は n-ary 層**(`abs_diff_image` … `union2`)。
+  `fullseye.apply` はリストを受けて n-ary を走らせるので実行はできる。
+
 ### 分かっているが直していないこと
+
+- ★**別名を共有する op の 50 組が、探針 2 枚 × つまみ 3 点で出力がビット一致**
+  (2026-09-15、MCP カタログの副産物。別名共有は 68 組、例外で測れなかった op は 0)。
+  `gauss_filter` ↔ `gaussian`(別の関数オブジェクト、出力は同一)、`count_obj` は
+  3 op(`blob_count` / `count_contours` / `count_obj`)、`fill_up` も 3 op。
+  2026-09-02 の掃き出しは**同名** 4 組を畳んだもので、**別名・同出力**は対象外だった。
+  `zoom_image_size` の「3 つとも同じ実装」を欠陥として直した前例(`ops.py:730`)は
+  あるが、短い名前(`gaussian` / `median` / `invert`)が進化やサンプルの都合で**意図して
+  残した別名**かは判断が要る。レジストリを触ると候補表・進化の再現性・公開記事に
+  波及するので、**測って報告に留めた**。探針 2 枚での一致は強い兆候だが証明ではない。
 
 - **n-ary 層の 17 op にノートが無い**(`add_image` `sub_image` `mult_image` `div_image`
   `abs_diff_image` `min_image` `max_image` `convol_image` `bit_and` `bit_or`
