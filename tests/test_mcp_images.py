@@ -189,18 +189,41 @@ def test_bad_apply_arguments_are_refused(cat, store, bad, why):
     assert why in str(ei.value), str(ei.value)
 
 
-def _degrading_op(cat):
-    """4x4 の入力で必ず失敗する image→image の op を 1 つ選ぶ(環境にある中から)。"""
+def _degrading_op(cat, store, root):
+    """strict で**実際に例外を出す** (op, 入力ハンドル) を実測で選ぶ。
+
+    ★最初は「xsk_inpaint は 4x4 で劣化するはず」と記憶で書いて外した(4x4 乱数では
+    普通に走った)。劣化する組は環境(optional backend)と入力の両方で決まるので、
+    候補 op × 候補入力を `on_error="raise"` で走らせ、最初に例外を出した組を使う。
+    1 つも無ければ **理由を挙げて skip**(黙って緑にしない)。
+    """
+    import fullseye
+    import imgio
     import ops
-    for n in ("xsk_inpaint", "xsk2_wiener", "xkor_laplacian", "dl_guided_filter", "xwt_mra_component"):
-        if n in ops._BY_NAME and ops._BY_NAME[n].in_sort == "image":
-            return n
-    pytest.skip("4x4 で劣化する候補 op がこの環境に 1 つも無い(optional backend 未導入)")
+    inputs = {"tiny": np.random.default_rng(0).random((4, 4)),
+              "zeros4": np.zeros((4, 4)), "two": np.random.default_rng(1).random((2, 2))}
+    cands = ["xsk_inpaint", "xsk2_wiener", "xsk2_hog", "xkor_laplacian", "xkor_clahe",
+             "dl_guided_filter", "xwt_mra_component", "xsp_savgol", "xsk2_multiotsu"]
+    tried = []
+    for n in cands:
+        op = ops._BY_NAME.get(n)
+        if op is None or op.in_sort != "image" or op.out_sort not in ("image", "region"):
+            continue
+        for iname, iv in inputs.items():
+            try:
+                fullseye.apply(iv.copy(), n, 0.5, 0.5, on_error="raise")
+                tried.append((n, iname, "ok"))
+            except Exception as exc:                            # noqa: BLE001
+                p = root / ("degrade_%s.png" % iname)
+                if not p.exists():
+                    imgio.save(str(p), iv)
+                h = call_tool("fullseye_load_image", {"path": str(p), "vision": "none"}, cat, store)["structuredContent"]["handle"]
+                return n, h
+    pytest.skip("strict で例外を出す (op, 入力) の組が見つからない: %s" % tried[:12])
 
 
 def test_strict_refuses_a_degrading_op_and_says_why(cat, store, root):
-    h = call_tool("fullseye_load_image", {"path": str(root / "tiny.png")}, cat, store)["structuredContent"]["handle"]
-    op = _degrading_op(cat)
+    op, h = _degrading_op(cat, store, root)
     res = call_tool("fullseye_apply", {"handle": h, "op": op}, cat, store)
     assert res["isError"] is True, "strict なのに通った: %s" % res["content"][0]["text"][:200]
     text = res["content"][0]["text"]
