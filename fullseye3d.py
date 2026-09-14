@@ -168,8 +168,7 @@ def evis_rl_perceive(qpos_npy, xml="C:/dev/projects/ms_human_700_jaw/scene_full_
     return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, **kw)
 
 
-def fly_pov(qpos_npy, xml="C:/dev/projects/mujoco_menagerie/flybody/fruitfly.xml",
-            out_gif="out/fly_fullseye.gif", eye="eye_left", **kw):
+def fly_pov(qpos_npy, xml=None, out_gif="out/fly_fullseye.gif", eye="eye_left", **kw):
     """ハエ視点の知覚を 1 行で: **モデル自身が持つ複眼カメラ**(`eye_left` / `eye_right` /
     `eye_front`、fovy 140)から RGB・深度・疑似イベントを出す 4 面 GIF。
 
