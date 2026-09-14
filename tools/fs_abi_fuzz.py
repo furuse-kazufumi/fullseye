@@ -289,13 +289,30 @@ def observe_rust(lib, c: dict, ops: set) -> dict:
     return out
 
 
+#: Python 側の例外 -> 契約の状態コード。ここを表にしておくと、**どちらも拒否した**
+#: で止めずに「同じ理由で拒否したか」まで見られる。
+_EXC_STATUS = [(fslib.FsValueError, 1),      # FS_E_INVALID_ARG
+               (fslib.FsTypeError, 2),       # FS_E_TYPE
+               (fslib.FsBackendError, 5)]    # FS_E_NO_BACKEND
+
+
+def _status_of(exc: BaseException) -> int:
+    for cls, code in _EXC_STATUS:
+        if isinstance(exc, cls):
+            return code
+    return 9                                  # FS_E_INTERNAL
+
+
 def observe_python(c: dict, ops: set) -> dict:
     a = np.ascontiguousarray(c["px"], dtype=np.float64)
     try:
         img = fslib.FImage(a, value_range=c["vrange"])
-    except Exception:
-        return {"image": 1}
-    out: dict = {"image": 0}
+    except Exception as e:
+        return {"image": _status_of(e)}
+    out: dict = {"image": 0, "_span": abs(c["vrange"][1] - c["vrange"][0]) or 1.0}
+    # ★R-3 の相対→絶対の写像そのものを観測する(契約 `fs_image_absolute`)。
+    out["absolute"] = [float(img.absolute(t)) for t in (0.0, 0.25, 0.5, 1.0)]
+    out["shape"] = tuple(int(x) for x in img.shape)
     if "gauss" in ops:
         try:
             out["gauss"] = np.asarray(
