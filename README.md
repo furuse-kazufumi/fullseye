@@ -65,6 +65,13 @@ Every one of them carries a ground truth and prints the null (do-nothing) result
 the method. How far each capability is actually verified is a generated ledger:
 [`docs/MATURITY.md`](docs/MATURITY.md).
 
+Two more doors, both new in 0.1.11 and both honest about their limits:
+
+| Door | For | Run this first | Status |
+|---|---|---|---|
+| **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 8 tools, strict by default, needs a checkout (the knowledge layer is not in the wheel yet). [`docs/MCP.md`](docs/MCP.md) |
+| **From C / C++ / C# / Lua** | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then the examples in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) | A **5-operator C ABI** (`fullseye_abi.h`) with a Rust reference implementation — not the 918-op library. Its job is to find specification bugs by being a second implementation (nine found so far) |
+
 ## Install
 
 ```bash
