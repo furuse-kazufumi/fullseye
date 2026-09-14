@@ -336,8 +336,8 @@ def observe_python(c: dict, ops: set) -> dict:
             out["gauss"] = np.asarray(
                 fslib._REGISTRY["gauss"]["numpy"](img, c["sigma"]).pixels, dtype=np.float64)
             out["gauss_status"] = 0
-        except Exception:
-            out["gauss_status"] = 1
+        except Exception as e:
+            out["gauss_status"] = _status_of(e)
     try:
         reg = fslib.threshold(img, c["lo"], c["hi"])
         out["threshold_status"] = 0
