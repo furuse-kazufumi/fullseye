@@ -102,7 +102,7 @@ Windows で開発している限り、**Linux での動作は誰も見ていな�
 wsl -e bash -lc "python3 -m venv /tmp/fs018 && /tmp/fs018/bin/pip -q install numpy scipy"
 wsl -e bash -lc "/tmp/fs018/bin/pip -q install opencv-python-headless scikit-image pillow PyWavelets"
 # 動作確認(repo のソースを直接読ませる)
-wsl -e bash -lc "PYTHONPATH=/mnt/c/dev/projects/imgevolve /tmp/fs018/bin/python -c 'import fullseye;print(fullseye.__version__)'"
+wsl -e bash -lc "PYTHONPATH=/path/to/imgevolve /tmp/fs018/bin/python -c 'import fullseye;print(fullseye.__version__)'"
 ```
 
 `pip install` した**配布物**の側で確かめたいときは、`PYTHONPATH` を付けずに
