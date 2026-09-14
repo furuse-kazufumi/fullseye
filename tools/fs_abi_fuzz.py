@@ -341,8 +341,13 @@ def observe_python(c: dict, ops: set) -> dict:
     try:
         reg = fslib.threshold(img, c["lo"], c["hi"])
         out["threshold_status"] = 0
-    except Exception:
-        out["threshold_status"] = 1
+    except Exception as e:
+        # ★**種別を捨てない**。ここは長らく固定値 1 だったので、`_status_of` を
+        #   書いて `compare` にコード比較まで足したのに、**Python 側が常に 1 を
+        #   名乗るせいで状態コードの食い違いが構造的に出なかった**(変異 m8 が
+        #   3,000 ケースで殺せなかった正体)。観測を足したつもりで足しきれて
+        #   いない、という [[feedback_gate_computed_a_verdict_then_discarded_it]] の型。
+        out["threshold_status"] = _status_of(e)
         return out
     out["area"], out["n_runs"] = int(reg.area()), int(reg.run_count())
     out["runs"] = [tuple(int(x) for x in r) for r in reg.runs()]   # 上の註を参照
