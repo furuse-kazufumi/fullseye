@@ -101,7 +101,12 @@ def test_real_stdio_roundtrip_through_a_subprocess():
     assert names == set(TOOLS)
     s = msgs[2]["result"]
     assert not s["isError"]
-    assert s["structuredContent"]["ops"][0]["name"] == "gaussian"
+    top = [o["name"] for o in s["structuredContent"]["ops"]]
+    # ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ
+    #   HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。
+    #   検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
+    assert top[0] == "gauss_filter", top
+    assert "gaussian" in top[:3], top
     h = msgs[3]["result"]
     assert not h["isError"]
     assert h["structuredContent"]["found"] is True
