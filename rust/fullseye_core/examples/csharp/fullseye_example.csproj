@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- fullseye_abi.h を C# から直接叩くだけの見本。依存パッケージは無い
+       (cdylib が吐く C ABI がそのままバインディングなので、間に何も要らない)。 -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>fullseye_example</AssemblyName>
+    <RootNamespace>fullseye_example</RootNamespace>
+    <!-- 端末が Shift_JIS だと日本語の出力が化ける -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+</Project>

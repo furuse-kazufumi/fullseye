@@ -146,6 +146,10 @@ void        fs_objectset_release(fs_objectset_t *objs);
  * -------------------------------------------------------------------------- */
 fs_status_t fs_tuple_length(const fs_tuple_t *t, int64_t *out);
 fs_status_t fs_tuple_elem_type(const fs_tuple_t *t, int64_t i, fs_elem_t *out);
+/* The element type is carried by the tuple, not chosen by the caller: fetching
+ * a FS_ELEM_REAL element with `fs_tuple_get_int` is FS_E_TYPE, not a silent
+ * truncation.  This is the same stance `fslib`'s `_require` takes — a sort that
+ * can be coerced away stops being a sort. */
 fs_status_t fs_tuple_get_real(const fs_tuple_t *t, int64_t i, double *out);
 fs_status_t fs_tuple_get_int(const fs_tuple_t *t, int64_t i, int64_t *out);
 void        fs_tuple_release(fs_tuple_t *t);
