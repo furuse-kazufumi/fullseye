@@ -334,6 +334,22 @@ def test_tools_list_declares_the_image_tools_with_closed_schemas(cat):
     assert tl["fullseye_pipeline"]["inputSchema"]["required"] == ["handle", "stages"]
 
 
+def test_the_demo_runs_as_written_and_shows_a_verdict():
+    """docs/MCP.md の Quickstart(`--demo`)が**書いたとおりに走る**こと(CONTRIBUTING:
+    貼る前に実行)。サーバを子プロセスで起動する経路まで通す。"""
+    env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
+    p = subprocess.run([sys.executable, "-m", "fullseye.mcp", "--demo"], capture_output=True,
+                       cwd=ROOT, env=env, timeout=300)
+    out = p.stdout.decode("utf-8", "replace")
+    assert p.returncode == 0, out[-1500:] + p.stderr.decode("utf-8", "replace")[-800:]
+    assert "tools: " in out and "fullseye_pipeline" in out
+    assert "パイプライン 3 段 完走" in out, out[-1200:]
+    assert "判定=ok" in out and "value=" in out
+    assert "resource_link:" in out, "inspect(vision=thumb) の小図が出ていない"
+    assert "型の不一致" in out, "型不一致の拒否の見本が出ていない"
+    assert "server exit: 0" in out
+
+
 # --------------------------------------------------------------------------- #
 # 5. パイプライン(段ごとの記録、失敗した段で止まる、型連鎖)                        #
 # --------------------------------------------------------------------------- #
