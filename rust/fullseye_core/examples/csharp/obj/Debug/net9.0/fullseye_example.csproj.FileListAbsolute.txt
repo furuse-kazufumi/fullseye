@@ -1,0 +1,15 @@
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\bin\Debug\net9.0\fullseye_example.exe
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\bin\Debug\net9.0\fullseye_example.deps.json
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\bin\Debug\net9.0\fullseye_example.runtimeconfig.json
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\bin\Debug\net9.0\fullseye_example.dll
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\bin\Debug\net9.0\fullseye_example.pdb
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.GeneratedMSBuildEditorConfig.editorconfig
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.AssemblyInfoInputs.cache
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.AssemblyInfo.cs
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.csproj.CoreCompileInputs.cache
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.sourcelink.json
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.dll
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\refint\fullseye_example.dll
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.pdb
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\fullseye_example.genruntimeconfig.cache
+C:\dev\projects\imgevolve\rust\fullseye_core\examples\csharp\obj\Debug\net9.0\ref\fullseye_example.dll
