@@ -76,19 +76,36 @@ pub const FS_ELEM_STRING: c_int = 3;
 
 // --- 画像 -------------------------------------------------------------------
 
-/// 画素を借りて画像を作る。`pixels` は f64 の行優先、`row_stride_bytes` は行の間隔。
+/// 画素を借りて画像を作る。`pixels` は行優先、`row_stride_bytes` は行の間隔。
+///
+/// ★2026-09-14: **`dtype` 引数がここに無かった。** ヘッダは 8 引数で宣言しているのに
+/// Rust も ctypes 3 箇所も 7 引数で書いており、**C ABI の引数がずれたまま**
+/// 差分ファジング 60,000 ケース × 3 シードも変異解析 10/10 も全部通っていた。
+/// 見つかったのは **C から `#include` して呼ぶ経路を初めて作ったとき** ——
+/// Python / C# / Lua はどれも FFI で宣言を**書き写して**おり、3 つとも同じ写し
+/// 間違いをしていたので、**互いに一致していることが検証にならなかった**。
+/// (このスパイクは画素を f64 として読む。`dtype` は呼び手の申告として保持し、
+///  `fs_image_dtype` で読み返せる —— 契約がそう宣言している。)
 #[no_mangle]
 pub extern "C" fn fs_image_create(
     pixels: *const c_void,
     height: i32,
     width: i32,
     row_stride_bytes: i64,
+    dtype: c_int,
     range_lo: c_double,
     range_hi: c_double,
     out: *mut *mut FsImage,
 ) -> c_int {
     if pixels.is_null() || out.is_null() || height <= 0 || width <= 0 {
         return FS_E_INVALID_ARG;
+    }
+    if !(FS_DTYPE_U8..=FS_DTYPE_F64).contains(&dtype) {
+        return FS_E_INVALID_ARG; // 宣言された 4 種の外は受けない
+    }
+    if dtype != FS_DTYPE_F64 {
+        // 正直に: このスパイクは f64 の画素しか読まない。黙って誤読しない。
+        return FS_E_UNSUPPORTED;
     }
     if !(range_hi > range_lo) {
         return FS_E_INVALID_ARG; // 値域が潰れている画像は受けない(R-3)
