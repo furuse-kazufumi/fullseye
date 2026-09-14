@@ -349,15 +349,15 @@ def test_connection_is_eight_connected_on_every_backend():
     import fslib
     img = fslib.FImage(_checkerboard(8), value_range=(0.0, 1.0))
     reg = fslib.threshold(img, 0.5, 1.0)
-    counts = {}
-    for be in fslib.backends_for("connection"):
-        fn = fslib._REGISTRY[("connection", be)] if hasattr(fslib, "_REGISTRY") else None
-        if fn is None:
-            fn = globals().get("_skip")
-        if fn is None:
-            continue
-        counts[be] = len(fn(reg).ids)
-    assert counts, "connection の backend が 1 つも引けない"
+    # `_REGISTRY` は {op 名: {backend 名: 実装}} の二段。**片方の backend しか
+    # 引けないまま緑になる**ことがないよう、引けた数も検査する。
+    impls = fslib._REGISTRY["connection"]
+    backends = fslib.backends_for("connection")
+    counts = {be: len(impls[be](reg).ids) for be in backends if be in impls}
+    assert len(counts) == len(backends) >= 2, (
+        "backend を全部引けていない(引けた %s / 在る %s)—— この門は "
+        "**複数の backend を突き合わせること**が目的なので、1 つしか動かないなら無意味"
+        % (sorted(counts), backends))
     assert set(counts.values()) == {1}, (
         "8x8 の市松模様は 8 連結なら 1 個。backend ごとの物体数 %s —— "
         "4 連結の backend が混じっている" % counts)
