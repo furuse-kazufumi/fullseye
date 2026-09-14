@@ -48,9 +48,24 @@ def restore():
 
 # --- 変異 ------------------------------------------------------------------
 def m1_four_connected():
+    """★この変異は 2 度書き直している。失敗の記録ごと残す。
+
+    1 度目: `ndi.label(reg._mask)` で 4 連結を作り `ObjectSet` を素朴に組んだ ——
+      **`ObjectSet` の作り方が不正で `measure_all` が `IndexError`**。ファザーは
+      「15 ケース目で検出」と報告したが、見ていたのは欠陥ではなく**私のバグ**。
+    2 度目: `cv2.connectedComponentsWithStats(mask, 4, CV_32S)` と**位置引数**で
+      書いた —— cv2 5.0.0 では位置引数が connectivity として解釈されず、
+      **4 連結になっていなかった**(5,000 ケースで検出ゼロの正体)。ここから
+      `fslib` 本体も同じ書き方で「既定の 8 に頼っていた」ことが分かった。
+    → 変異が殺されないときは、**まず注入が効いているかを確かめる**。
+    """
+    import cv2
+
     def bad(reg):
-        lbl, k = ndi.label(reg._mask)                     # 既定 = 4 連結
-        return fslib.ObjectSet(lbl.astype(np.int32), np.arange(1, k + 1, dtype=np.int32))
+        k, lbl, stats, cents = cv2.connectedComponentsWithStats(
+            reg._mask.astype(np.uint8), connectivity=4, ltype=cv2.CV_32S)
+        return fslib.ObjectSet(lbl, np.arange(1, k, dtype=np.int32),
+                               {"_cc_stats": stats, "_cc_centroids": cents})
     for be in fslib._REGISTRY["connection"]:
         fslib._REGISTRY["connection"][be] = bad
 
