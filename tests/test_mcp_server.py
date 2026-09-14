@@ -290,6 +290,19 @@ def test_tools_list_declares_closed_schemas(cat):
         assert t["description"].strip()
 
 
+def test_missing_index_refuses_to_build_a_catalog_instead_of_returning_an_empty_one(monkeypatch):
+    """wheel には docs/ が入らない。2026-09-15 に wheel を一時 venv へ入れてリポジトリ外から
+    起動したら、この例外で止まった(黙って空のカタログ = 検索が『該当なし』を正直に
+    見せかける、にはならない)。その経路をここで固定する。"""
+    import fullseye.mcp.catalog as C
+    from fullseye.mcp import CatalogError
+    monkeypatch.setattr(C, "OP_INDEX", os.path.join(ROOT, "docs", "__no_such_index__.json"))
+    with pytest.raises(CatalogError) as ei:
+        C.Catalog.load(with_facade=False)
+    assert "OP_INDEX.json が無い" in str(ei.value)
+    assert "空のカタログ" in str(ei.value), "拒否はしたが、なぜ拒否するのかを言っていない"
+
+
 # --------------------------------------------------------------------------- #
 # 4. 検証器そのものを壊して確かめる                                              #
 # --------------------------------------------------------------------------- #
