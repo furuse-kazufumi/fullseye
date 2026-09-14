@@ -366,8 +366,19 @@ def test_pipeline_refuses_a_broken_sort_chain_before_running_anything(cat, store
 
 
 def test_pipeline_in_strict_mode_stops_at_the_failing_stage_and_says_where(cat, store, root):
-    h = call_tool("fullseye_load_image", {"path": str(root / "tiny.png")}, cat, store)["structuredContent"]["handle"]
-    op = _degrading_op(cat)
+    op, h = _degrading_op(cat, store, root)
+    # 1 段目の gaussian は画素値を変えるので、2 段目に届く入力は探した組と少し違う。
+    # それでも失敗する組か(形と値域は変わらない)を、走らせる前に直接確かめる。
+    import fullseye
+    import ops
+    _, arr = store.get(h)
+    pre = fullseye.apply(arr.copy(), "gaussian", 0.5, 0.5, on_error="raise")
+    try:
+        fullseye.apply(pre, op, 0.5, 0.5, on_error="raise")
+        pytest.skip("%s は gaussian 後の入力では失敗しない(組の選び直しが要る)" % op)
+    except Exception:                                           # noqa: BLE001
+        pass
+    assert ops._BY_NAME[op].out_sort == "image", "3 段目 otsu に image を渡す前提"
     res = call_tool("fullseye_pipeline", {"handle": h, "stages": [{"op": "gaussian"}, {"op": op}, {"op": "otsu"}]}, cat, store)
     assert res["isError"] is True
     sc = res["structuredContent"]
