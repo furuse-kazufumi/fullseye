@@ -74,7 +74,10 @@ def test_op_runs_without_exception(op):
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
 def test_op_output_is_finite(op):
     """No NaN/Inf on ANY battery input — degenerate inputs are the acid test."""
-    for iname, iv in inputs_for(op.in_sort):
+    probes = _probes(op)
+    if not probes:
+        pytest.skip("in_sort '%s' に探針が無い(BANKS 未対応)" % op.in_sort)
+    for iname, iv in probes:
         for a, b in KNOBS:
             out = op.fn(copy_input(iv), a, b)
             for arr in _arrays(out):
