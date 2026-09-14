@@ -632,6 +632,8 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
             return _apply(a, cat, store)
         if name == "fullseye_inspect":
             return _inspect(a, store)
+        if name == "fullseye_pipeline":
+            return _pipeline(a, cat, store)
     except HandleError as exc:
         raise ArgError(str(exc)) from exc
     raise ArgError("未実装の tool: %r" % name)                 # TOOLS に足して本体を忘れた
