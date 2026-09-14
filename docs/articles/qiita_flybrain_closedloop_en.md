@@ -71,6 +71,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Does better behaviour bring biological realism with it? | The opposite. Direction selectivity 3/8 → 1/8; untrained is 0/8 | §6 |
 | Can the visual estimate drive central-complex homing? | Yes, but the limit is readout correlation, not gain | §7 |
 | Does enlarging the eye break it? | No — and the first conclusion here was retracted | §8 |
+| Does shuffling the wiring cost performance? | **Not measurable.** Two shuffles differ from each other 3× more | appendix |
 
 ## Glossary (worth reading first)
 
