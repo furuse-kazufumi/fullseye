@@ -40,9 +40,36 @@ def _read(relpath: str) -> str:
 
 
 def _py_modules() -> set[str]:
-    m = re.search(r"py-modules\s*=\s*\[(.*?)\]", _read("pyproject.toml"), re.DOTALL)
+    """`py-modules` の宣言を読む。**コメントを落としてから**リストを切り出す。
+
+    ★2026-09-15: 非貪欲の ``\\[(.*?)\\]`` はリスト内コメントの ``]`` で止まる。
+    pyproject に ``# ([[feedback_gate_must_stand_where_the_accident_happens]])`` という
+    memory リンクを書いた瞬間、この門は 348 本のうち **50 本しか読めなくなり**、
+    手元では「200 本超が wheel から落ちる」と嘘をつき、CI(コメント追加前の
+    pyproject)では 5 本と言った —— 同じ門が環境で 40 倍違う数を出していた。
+    wheel を実際に開いたら root .py は 347 本入っていた。門を壊したのが「門は事故の
+    起きる場所に立てる」を引用したコメントだったのは皮肉だが、教訓は単純で、
+    **宣言を読む門は TOML として読むか、少なくともコメントを先に落とす**。
+    tomllib は 3.11+ で CI は 3.10 も回すので、ここではコメント除去 + 正規表現。
+    """
+    src = re.sub(r"#[^\n]*", "", _read("pyproject.toml"))
+    m = re.search(r"py-modules\s*=\s*\[(.*?)\]", src, re.DOTALL)
     assert m, "py-modules list not found in pyproject.toml"
-    return set(re.findall(r'"([^"]+)"', m.group(1)))
+    mods = set(re.findall(r'"([^"]+)"', m.group(1)))
+    assert len(mods) > 300, (
+        "py-modules を %d 本しか読めていない —— 切り出しが壊れている(コメント内の ] 等)" % len(mods))
+    return mods
+
+
+def test_the_py_modules_reader_agrees_with_a_real_toml_parser():
+    """門の読み方そのものを検算する。tomllib(3.11+)があるときだけ厳密に。"""
+    try:
+        import tomllib
+    except ImportError:                                       # 3.10
+        pytest.skip("tomllib が無い(3.10)—— 本数の下限だけ _py_modules が見ている")
+    with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
+        truth = set(tomllib.load(f)["tool"]["setuptools"]["py-modules"])
+    assert _py_modules() == truth, "正規表現の読みと TOML の読みが違う: %s" % sorted(_py_modules() ^ truth)[:10]
 
 
 def _all_of(relpath: str) -> set[str]:
