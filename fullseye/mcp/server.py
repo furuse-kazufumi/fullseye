@@ -407,64 +407,154 @@ def _load_image(a: dict, store: HandleStore) -> dict:
     return tool_result(text, structured, links=links)
 
 
-def _apply(a: dict, cat: Catalog, store: HandleStore) -> dict:
+def _resolve_op(name: str, cat: Catalog, *, stage: int | None = None):
+    """registry 層の op に解決する。無ければ近い名前を添えて拒否(黙って倒さない)。"""
+    import ops
+    op = ops._BY_NAME.get(name)
+    if op is None:
+        where = "段 %d: " % stage if stage else ""
+        raise ArgError("%sfullseye_apply で実行できる op ではない: %r(registry 層に無い)。近い名前: %s"
+                       % (where, name, cat.nearest(name)))
+    return op
+
+
+def _check_sort(op, cur_sort: str, *, stage: int | None = None, prev: str = "ハンドル") -> None:
+    """型契約を境界で守る。in_sort が合わなければ走らせない。"""
+    if op.in_sort in ("any", cur_sort):
+        return
+    where = "(段 %d)" % stage if stage else ""
+    raise ArgError("型の不一致%s: %s は %s を受けるが、%s は %s(変換 op を先に挟むこと)"
+                   % (where, op.name, op.in_sort, prev, cur_sort))
+
+
+def _run_op(arr, op, ka: float, kb: float, allow: bool):
+    """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
     import fullseye
-    import ops
-
-    op_name = a["op"]
-    op = ops._BY_NAME.get(op_name)
-    if op is None:
-        raise ArgError("fullseye_apply で実行できる op ではない: %r(registry 層に無い)。近い名前: %s"
-                       % (op_name, cat.nearest(op_name)))
-    meta, arr = store.get(a["handle"])
-    if op.in_sort not in ("any", meta["sort"]):
-        raise ArgError("型の不一致: %s は %s を受けるが、ハンドル %s は %s(型契約を境界で守る。"
-                       "変換 op を先に挟むこと)" % (op_name, op.in_sort, meta["handle"], meta["sort"]))
-    ka, kb = float(a.get("a", 0.5)), float(a.get("b", 0.5))
-    allow = bool(a.get("allow_degraded", False))
     backend_safe.clear_fallbacks()
     try:
-        out = fullseye.apply(arr, op_name, ka, kb, on_error=("fallback" if allow else "raise"))
+        out = fullseye.apply(arr, op.name, ka, kb, on_error=("fallback" if allow else "raise"))
     except Exception as exc:                                    # noqa: BLE001
-        degraded = backend_safe.fallbacks()
-        text = ("%s は strict で拒否された: %s: %s\n"
-                "(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
-                % (op_name, type(exc).__name__, str(exc)[:400]))
-        return _tool_error(text, {"op": op_name, "a": ka, "b": kb, "handle_in": meta["handle"],
-                                  "error": {"type": type(exc).__name__, "message": str(exc)[:400]},
-                                  "degraded": degraded, "strict": not allow})
-    degraded = backend_safe.fallbacks()
-    prov = meta["provenance"] + [{"apply": op_name, "a": ka, "b": kb}]
-    st = stats_of(out)
-    vd = verdict_of(st, op_name=op_name, out_sort=op.out_sort)
-    if degraded:
-        vd = dict(vd, escalate=True, reasons=vd["reasons"] + ["劣化 %d 件(degraded を見ること)" % len(degraded)])
-    structured: dict = {"op": op_name, "a": ka, "b": kb, "handle_in": meta["handle"],
-                        "in_sort": op.in_sort, "out_sort": op.out_sort,
-                        "stats": st, **vd, "degraded": degraded, "strict": not allow}
-    links: list[dict] = []
+        return None, backend_safe.fallbacks(), {"type": type(exc).__name__, "message": str(exc)[:400]}
+    return out, backend_safe.fallbacks(), None
+
+
+def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow: bool, *,
+           vision: str, thumb_allowed: bool, tag: str):
+    """apply 1 段ぶん: 記録(数値 + 判定 + 劣化台帳)と、必要なら小図。
+    返り値 = (record, links, out_meta | None, out_value)。out_meta は配列のときだけ。"""
     import numpy as np
-    if isinstance(out, np.ndarray) or (isinstance(out, dict) and "cs" in out):
-        if isinstance(out, np.ndarray):
-            m2 = store.put(out, sort=op.out_sort, provenance=prov)
-            structured["handle"] = m2["handle"]
-            quantity = op_name in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT
-            links = _maybe_thumb(store, m2, arr, out, vision=a.get("vision", "auto"),
-                                 escalate=vd["escalate"], quantity=quantity, tag=op_name)
-        else:
-            structured["handle"] = None
-            structured["contour"] = {"n": st.get("n_contours"), "points": st.get("n_points")}
-    else:
-        structured["handle"] = None
-        structured["value"] = st.get("value")
-    head = "%s(a=%.2f, b=%.2f) → %s" % (op_name, ka, kb, structured.get("handle") or
-                                        ("value=%s" % structured.get("value")))
-    text = head + "\n" + _stats_line(st, vd)
+    import ops
+    out, degraded, err = _run_op(arr, op, ka, kb, allow)
+    rec: dict = {"op": op.name, "a": ka, "b": kb, "handle_in": meta.get("handle"),
+                 "in_sort": op.in_sort, "out_sort": op.out_sort,
+                 "degraded": degraded, "strict": not allow}
+    if err is not None:
+        rec["error"] = err
+        return rec, [], None, None
+    st = stats_of(out)
+    vd = verdict_of(st, op_name=op.name, out_sort=op.out_sort)
     if degraded:
-        text += "\n劣化 %d 件: " % len(degraded) + "; ".join(
-            "%s@%s: %s" % (d["name"], d["source"], d["error"][:80]) for d in degraded[:5])
-    return tool_result(text, structured, links=links)
+        vd = dict(vd, escalate=True,
+                  reasons=vd["reasons"] + ["劣化 %d 件(degraded を見ること)" % len(degraded)])
+    rec.update({"stats": st, **vd})
+    prov = list(meta.get("provenance", [])) + [{"apply": op.name, "a": ka, "b": kb}]
+    links: list[dict] = []
+    m2 = None
+    if isinstance(out, np.ndarray):
+        m2 = store.put(out, sort=op.out_sort, provenance=prov)
+        rec["handle"] = m2["handle"]
+        if thumb_allowed:
+            links = _maybe_thumb(store, m2, arr, out, vision=vision, escalate=vd["escalate"],
+                                 quantity=op.name in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT, tag=tag)
+    elif isinstance(out, dict) and "cs" in out:
+        rec["handle"] = None
+        rec["contour"] = {"n": st.get("n_contours"), "points": st.get("n_points")}
+        m2 = {"handle": None, "sort": op.out_sort, "provenance": prov}   # 連鎖用の疑似メタ
+    else:
+        rec["handle"] = None
+        rec["value"] = st.get("value")
+    return rec, links, m2, out
+
+
+def _stage_text(rec: dict) -> str:
+    if "error" in rec:
+        return "%s(a=%.2f, b=%.2f) → strict で拒否: %s: %s" % (
+            rec["op"], rec["a"], rec["b"], rec["error"]["type"], rec["error"]["message"][:200])
+    head = "%s(a=%.2f, b=%.2f) → %s" % (
+        rec["op"], rec["a"], rec["b"],
+        rec.get("handle") or ("value=%s" % rec.get("value") if "value" in rec else "contour"))
+    text = head + "\n" + _stats_line(rec["stats"], rec)
+    if rec["degraded"]:
+        text += "\n劣化 %d 件: " % len(rec["degraded"]) + "; ".join(
+            "%s@%s: %s" % (d["name"], d["source"], d["error"][:80]) for d in rec["degraded"][:5])
+    return text
+
+
+def _apply(a: dict, cat: Catalog, store: HandleStore) -> dict:
+    op = _resolve_op(a["op"], cat)
+    meta, arr = store.get(a["handle"])
+    _check_sort(op, meta["sort"], prev="ハンドル %s" % meta["handle"])
+    ka, kb = float(a.get("a", 0.5)), float(a.get("b", 0.5))
+    allow = bool(a.get("allow_degraded", False))
+    rec, links, _, _ = _stage(store, meta, arr, op, ka, kb, allow, vision=a.get("vision", "auto"),
+                              thumb_allowed=True, tag=op.name)
+    if "error" in rec:
+        text = _stage_text(rec) + "\n(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
+        return _tool_error(text, rec)
+    return tool_result(_stage_text(rec), rec, links=links)
+
+
+def _pipeline(a: dict, cat: Catalog, store: HandleStore) -> dict:
+    """段を順に。**走らせる前に**型連鎖を検査し、strict は失敗した段で止まる。"""
+    stages = a["stages"]
+    ops_ = [_resolve_op(s["op"], cat, stage=i) for i, s in enumerate(stages, 1)]
+    meta, arr = store.get(a["handle"])
+    cur, prev = meta["sort"], "ハンドル %s" % meta["handle"]
+    for i, op in enumerate(ops_, 1):
+        _check_sort(op, cur, stage=i, prev=prev)
+        cur, prev = op.out_sort, "前段 %s の出力" % op.name
+    allow = bool(a.get("allow_degraded", False))
+    vision = a.get("vision", "auto")
+    recs: list[dict] = []
+    links: list[dict] = []
+    escalated = False
+    cur_meta, cur_val = meta, arr
+    final_handle, final_value = None, None
+    for i, (s, op) in enumerate(zip(stages, ops_), 1):
+        ka, kb = float(s.get("a", 0.5)), float(s.get("b", 0.5))
+        thumb_ok = vision == "thumb" or (vision == "auto" and not escalated)
+        rec, lk, m2, out = _stage(store, cur_meta, cur_val, op, ka, kb, allow, vision=vision,
+                                  thumb_allowed=thumb_ok, tag="stage%d_%s" % (i, op.name))
+        rec["stage"] = i
+        recs.append(rec)
+        if "error" in rec:
+            text = ("段 %d の %s が strict で拒否された(%d/%d 段まで完了)。\n%s\n"
+                    "(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
+                    % (i, op.name, i - 1, len(stages), _stage_text(rec)))
+            return _tool_error(text, {"handle_in": meta["handle"], "stages": recs,
+                                      "completed": i - 1, "stopped_at": i, "strict": not allow})
+        if lk:
+            for l in lk:
+                l["description"] = "段 %d(%s): " % (i, op.name) + l["description"]
+            links += lk
+            escalated = True
+        if m2 is not None:
+            cur_meta, cur_val = m2, out
+            if m2.get("handle"):
+                final_handle = m2["handle"]
+        else:
+            final_value = rec.get("value")
+            cur_meta, cur_val = {"handle": None, "sort": op.out_sort,
+                                 "provenance": cur_meta.get("provenance", [])}, out
+    structured = {"handle_in": meta["handle"], "stages": recs, "completed": len(recs),
+                  "stopped_at": None, "handle": final_handle, "value": final_value,
+                  "strict": not allow}
+    lines = ["パイプライン %d 段 完走 → %s" % (
+        len(recs), final_handle or ("value=%s" % final_value))]
+    for r in recs:
+        lines.append("[段 %d] " % r["stage"] + _stage_text(r).replace("\n", "\n        "))
+    return tool_result("\n".join(lines), structured, links=links)
 
 
 def _inspect(a: dict, store: HandleStore) -> dict:
