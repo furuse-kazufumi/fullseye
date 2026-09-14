@@ -76,6 +76,24 @@ OPS = declared_operators()
 # --------------------------------------------------------------------------- #
 # The header itself must stay well-formed
 # --------------------------------------------------------------------------- #
+#: 契約の演算子はこれで全部。**数を門にする**理由は 2026-09-14 に踏んだ事故:
+#: ヘッダの散文に `@fslib` タグの綴りをそのまま書いたら、走査は素の正規表現なので
+#: **コメント中の言及が 2 本目の宣言になり**、演算子が 5 -> 6 に増えた。個々の宣言は
+#: 全部 OK に見えるので、**数を数えないと誰も気づけない**
+#: ([[feedback_registered_only_gates_miss_unregistered]] の裏返し: 登録された側を
+#: 数える門は、登録が**増えすぎた**ことにも盲目)。
+_DECLARED_OPERATORS = {"gauss", "threshold", "connection", "measure_all", "select_shape"}
+
+
+def test_the_header_declares_exactly_the_contract_operators():
+    """演算子の数と名前がちょうど一致する(増えても減っても落ちる)。"""
+    assert set(OPS) == _DECLARED_OPERATORS, (
+        "ヘッダが宣言している演算子が契約と違う。宣言 %s / 契約 %s\n"
+        "  増えているなら、散文に `@fslib` タグの綴りを書いていないか疑うこと —— "
+        "走査は素の正規表現なので、言及がそのまま宣言になる。"
+        % (sorted(OPS), sorted(_DECLARED_OPERATORS)))
+
+
 def test_header_declares_the_contract():
     assert "FULLSEYE_ABI_VERSION_MAJOR" in SRC
     assert {"FS_OK", "FS_E_TYPE", "FS_E_NO_BACKEND"} <= status_codes()

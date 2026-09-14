@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-14 21:04:10
+- **最終更新**: 2026-09-14 21:42:37
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-d3a4d86cd auto: README.md 編集前 (2026-09-14 21:03)
-2399f6ce0 auto: fullseye_abi.h 編集前 (2026-09-14 21:00)
-c6aa9b84f auto: fullseye_abi.h 編集前 (2026-09-14 20:59)
-c470c2ecb auto: fullseye_abi.h 編集前 (2026-09-14 20:59)
-95e338842 auto: test_rust_abi_parity.py 編集前 (2026-09-14 20:49)
-1495f15de auto: test_rust_abi_parity.py 編集前 (2026-09-14 20:48)
-b0d5d0623 auto: test_fslib.py 編集前 (2026-09-14 20:48)
-168e4d871 auto: fslib.py 編集前 (2026-09-14 20:47)
-94d671d0b auto: fslib.py 編集前 (2026-09-14 20:47)
-b71a31f6f auto: lib.rs 編集前 (2026-09-14 20:43)
+8f9215eb3 auto: test_abi_conformance.py 編集前 (2026-09-14 21:41)
+cd9236a0b auto: fullseye_abi.h 編集前 (2026-09-14 21:40)
+d7baa3c28 auto: test_abi_conformance.py 編集前 (2026-09-14 21:40)
+2c221dae2 auto: fullseye_abi.h 編集前 (2026-09-14 21:39)
+a47040f01 auto: fullseye_abi.h 編集前 (2026-09-14 21:39)
+0295dfb92 auto: fs_abi_fuzz.py 編集前 (2026-09-14 21:38)
+0249e311c auto: test_public_reachability.py 編集前 (2026-09-14 21:36)
+499e4a162 auto: gsplat_animate.py 編集前 (2026-09-14 21:35)
+644f0cef4 auto: gsplat_cli.py 編集前 (2026-09-14 21:35)
+2304809d4 auto: test_no_local_paths_in_shipped_code.py 編集前 (2026-09-14 21:34)
 ```
 
 ## 現在の git status
 
 ```
-M rust/fullseye_core/examples/README.md
+M tests/test_abi_conformance.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:03 rust/fullseye_core/examples/README.md
-21:03 rust/fullseye_core/examples/csharp/fullseye_example.csproj
-21:02 rust/fullseye_core/examples/luajit_ffi.lua
-21:02 rust/fullseye_core/examples/csharp/Program.cs
-21:01 tools/fs_abi_bench.py
-21:00 fullseye_abi.h
-20:49 .hypothesis/constants/322a80b8998f9191
-20:49 .pytest_cache/v/cache/nodeids
-20:49 tests/test_rust_abi_parity.py
-20:48 tests/test_fslib.py
-20:47 fslib.py
-20:43 rust/fullseye_core/src/lib.rs
-20:38 docs/SESSION_SUMMARY.md
-20:34 rust/fullseye_core/Cargo.lock
-20:34 rust/fullseye_core/.gitignore
+21:41 .pytest_cache/v/cache/nodeids
+21:41 .pytest_cache/v/cache/lastfailed
+21:41 tests/test_abi_conformance.py
+21:40 fullseye_abi.h
+21:38 tools/fs_abi_fuzz.py
+21:37 .hypothesis/constants/d66b16583a6c7fc8
+21:36 tests/test_public_reachability.py
+21:35 gsplat_animate.py
+21:35 gsplat_cli.py
+21:34 tests/test_no_local_paths_in_shipped_code.py
+21:33 scene_registry.py
+21:33 pyproject.toml
+21:32 gsplat_train_native.py
+21:32 walk_physics.py
+21:32 pick_render.py
 ```
 
 ---
