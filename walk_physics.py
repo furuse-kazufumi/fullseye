@@ -13,9 +13,14 @@ plot the body's height / pitch / roll over time as proof the motion is dynamic.
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 
-_GO2 = "C:/dev/projects/mujoco_menagerie/unitree_go2/scene.xml"
+#: Unitree Go2 の scene.xml。**配布物にローカル絶対パスを焼き込まない** ——
+#: `MUJOCO_MENAGERIE` が指す Menagerie の中から組み立てる。
+_MENAGERIE = os.environ.get("MUJOCO_MENAGERIE", "")
+_GO2 = os.path.join(_MENAGERIE, "unitree_go2", "scene.xml") if _MENAGERIE else ""
 _LEGS = {"FL": 0, "FR": 3, "RL": 6, "RR": 9}          # index of each leg's hip joint in the 12-vec
 _PHASE = {"FL": 0.0, "RR": 0.0, "FR": np.pi, "RL": np.pi}   # trot: diagonal pairs in phase
 
