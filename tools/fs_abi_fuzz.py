@@ -302,7 +302,9 @@ def observe_python(c: dict, ops: set) -> dict:
     objs = fslib.connection(reg)
     out["n_comp"] = len(objs.ids)
     ar, ro, co = fslib.measure_all(objs)
-    out["measure"] = sorted(zip(map(float, ar), map(float, ro), map(float, co)))
+    triples = list(zip(map(float, ar), map(float, ro), map(float, co)))
+    out["measure"] = sorted(triples)
+    out["order"] = triples          # 並びも観測する(上の註を参照)
     try:
         sel = fslib.select_shape(objs, c["feature"], c["vmin"], c["vmax"])
         out["select_status"], out["n_select"] = 0, len(sel.ids)
