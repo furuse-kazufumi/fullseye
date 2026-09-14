@@ -1,2 +1,9 @@
 target/
 Cargo.lock
+# 呼び出し例のビルド生成物(ソースだけ追う)
+examples/c/*.exe
+examples/c/*.dll
+examples/c/*.so
+examples/c/*.dylib
+examples/csharp/bin/
+examples/csharp/obj/
