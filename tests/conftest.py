@@ -388,6 +388,12 @@ BANKS = {
     "matrix": matrix_bank,          #  4 op
     "keypoints": keypoints_bank,    #  2 op
     "rgbimage": rgbimage_bank,      #  6 op
+    # 第 2 段(同日): 複素・4-D の 5 sort = 48 op。これで探針なしはゼロになる。
+    "video": video_bank,            # 16 op
+    "qimage": qimage_bank,          # 11 op
+    "cimage": cimage_bank,          #  9 op
+    "lightfield": lightfield_bank,  #  8 op
+    "beatcube": beatcube_bank,      #  4 op
 }
 
 KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85)]
