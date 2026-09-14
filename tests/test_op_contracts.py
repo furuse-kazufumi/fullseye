@@ -162,7 +162,7 @@ def test_probeless_ops_do_not_grow():
 
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
 def test_op_honours_declared_sort(op):
-    iv = next(iter(inputs_for(op.in_sort)), None)
+    iv = next(iter(inputs_for(op.in_sort, op.name)), None)
     if iv is None:
         pytest.skip(f"no input bank for sort {op.in_sort}")
     out = op.fn(copy_input(iv[1]), 0.5, 0.5)
