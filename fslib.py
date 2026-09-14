@@ -682,6 +682,14 @@ def connection(reg: Region) -> ObjectSet:
 
 def select_shape(objs: ObjectSet, feature: str, vmin: float, vmax: float) -> ObjectSet:
     """Filter by a measured feature — on ids, without materialising masks."""
+    # ★契約 R-1: `threshold` で直したのと**同じ欠陥が兄弟に残っていた**。逆さの区間は
+    #   呼び手の間違いであって「空を寄こせ」という指定ではない —— 黙って 0 個を返すと、
+    #   面積の下限と上限を取り違えたレシピが「該当なし = 良品」として通る。
+    #   2026-09-14、Rust 実装が FS_E_INVALID_ARG を返すのにこちらは 0 個を返す差分で発見。
+    if not (float(vmin) <= float(vmax)):
+        raise FsTypeError(
+            "select_shape: vmin (%r) must not exceed vmax (%r) — an inverted interval is "
+            "a caller error, not a way to ask for an empty set (ABI R-1)" % (vmin, vmax))
     areas, rows, cols = region_features(objs)
     values = {"area": areas, "row": rows, "column": cols}.get(feature)
     if values is None:
