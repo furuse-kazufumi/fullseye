@@ -51,6 +51,8 @@ public_id: 638f0b0aa7865e17c67c
 - Even when behaviour improves, **biological realism degrades**. The solution that generalised on 10 scenes had direction selectivity in only 1 of 8 T4/T5 types, down from 3. A behavioural objective alone does not produce neural properties.
 - Driving a **central-complex model** (ring attractor + path integration) with the visually estimated angular velocity does get the agent home, but the dominant error term is not the gain mismatch (3.8 points) — it is the **residual noise behind a correlation of 0.977 (12.4 points)**. No amount of careful calibration removes it.
 
+- **The eye itself is a design, too.** Run the compound-eye optics (inter-ommatidial angle Δφ, acceptance angle Δρ, count) through closed-form operators and you can put a number on things like *a narrow acceptance angle inventing a coarse grating that was never in the input* — predicted 16.1°, measured 16.2°, and 223× smaller at the fly's own acceptance angle. Figure and a few lines of code in **section 0**.
+
 This is not an article about reproducing a fly brain. It is about **where a pretrained model starts lying once you mount it in your own system** — stated in numbers. The same traps appear when you put someone else's pretrained model on your robot or your production line.
 
 ## Experiments so far (this table grows)
