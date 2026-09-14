@@ -168,6 +168,25 @@ def evis_rl_perceive(qpos_npy, xml="C:/dev/projects/ms_human_700_jaw/scene_full_
     return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, **kw)
 
 
+def fly_pov(qpos_npy, xml="C:/dev/projects/mujoco_menagerie/flybody/fruitfly.xml",
+            out_gif="out/fly_fullseye.gif", eye="eye_left", **kw):
+    """ハエ視点の知覚を 1 行で: **モデル自身が持つ複眼カメラ**(`eye_left` / `eye_right` /
+    `eye_front`、fovy 140)から RGB・深度・疑似イベントを出す 4 面 GIF。
+
+    ``robot_pov`` との違いは視点の出どころ —— あちらは body の上にカメラを手で置いて
+    yaw を四元数から推定するが、ハエは**目が公開モデルに含まれている**ので、その取り付けと
+    視野をそのまま使う。世界は cm/g/s 単位系なので三人称カメラの距離と注視高さも小さい。
+
+    honest: qpos は `fly_bake_qpos.py` が焼いた**運動学の再生**(胴の軌跡は視覚の閉ループが
+    決めた本物だが、脚は見た目用の三脚歩容)。物理で歩いた記録ではない。
+    """
+    import evis_fullseye_bridge as B
+    kw.setdefault("body", "thorax")
+    kw.setdefault("third_person_distance", 4.0)
+    kw.setdefault("third_person_z", 0.3)
+    return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, ego_camera=eye, **kw)
+
+
 def robot_pov(qpos_npy, xml, ego_body="torso_link", out_gif="out/robot_pov.gif", **kw):
     """ロボット視点の知覚を1行で: 頭部搭載カメラの RGB|深度|DVS(+三人称)4面 GIF。
     ``ego_body`` にセンサを載せる body 名(G1="torso_link", evis="pelvis" 等)。"""
