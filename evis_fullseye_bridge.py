@@ -90,7 +90,7 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     rgb = mujoco.Renderer(m, height=height, width=width)
     dep = mujoco.Renderer(m, height=height, width=width); dep.enable_depth_rendering()
     cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
-    cam.distance = 3.2; cam.elevation = -10.0; cam.azimuth = 120.0
+    cam.distance = third_person_distance; cam.elevation = -10.0; cam.azimuth = 120.0
     ego = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, ego_body) if ego_body else -1
     if ego_body and ego < 0:
         raise ValueError(f"ego_body {ego_body!r} not found in model")
