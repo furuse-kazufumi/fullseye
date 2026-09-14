@@ -74,26 +74,27 @@ def perceive_evis_walk(qpos_npy, xml=None, out_gif="out/evis_fullseye.gif", *, w
         # An already-assembled world (floor, sky, props, lights) handed over as a compiled
         # MjModel. A bare body XML often carries no floor, no sky and only weak tracking
         # lights — rendering it gives black panels that look like a broken renderer rather
-        # than like a fly walking (measured 2026-09-14 with the Drosophila body alone).
+        # than like a body walking through a world (measured 2026-09-14 with the Drosophila
+        # body alone: every panel came out black except the animal's own legs).
         m = model
-        if qpos.shape[1] != m.nq:
-            raise ValueError(f"qpos nq {qpos.shape[1]} != model nq {m.nq} (wrong model for this rollout)")
-        return _perceive(m, qpos, out_gif, width, height, max_frames, fps, body, ego_body,
-                         ego_h, ego_dist, ego_camera, third_person_z, third_person_distance, log)
-    # Two loading regimes, chosen by inspecting the file (measured, both real):
-    #  * evis scene_full_mjx.xml bakes WSL-absolute asset paths (/mnt/c/...) that Windows
-    #    py311 can't resolve -> rewrite to drive letters and load from the patched STRING;
-    #  * menagerie scenes (G1 etc.) are <include>-based with relative assets, which
-    #    from_xml_string can NEVER resolve -> load by PATH.
-    with open(xml, encoding="utf-8") as f:
-        xml_text = f.read()
-    if "/mnt/" in xml_text:
-        xml_text = xml_text.replace("/mnt/c/", "C:/").replace("/mnt/d/", "D:/")
-        m = mujoco.MjModel.from_xml_string(xml_text)
     else:
-        m = mujoco.MjModel.from_xml_path(xml)
+        if xml is None:
+            raise ValueError("pass either xml= (a path) or model= (a compiled MjModel)")
+        # Two loading regimes, chosen by inspecting the file (measured, both real):
+        #  * evis scene_full_mjx.xml bakes WSL-absolute asset paths (/mnt/c/...) that Windows
+        #    py311 can't resolve -> rewrite to drive letters and load from the patched STRING;
+        #  * menagerie scenes (G1 etc.) are <include>-based with relative assets, which
+        #    from_xml_string can NEVER resolve -> load by PATH.
+        with open(xml, encoding="utf-8") as f:
+            xml_text = f.read()
+        if "/mnt/" in xml_text:
+            xml_text = xml_text.replace("/mnt/c/", "C:/").replace("/mnt/d/", "D:/")
+            m = mujoco.MjModel.from_xml_string(xml_text)
+        else:
+            m = mujoco.MjModel.from_xml_path(xml)
     if qpos.shape[1] != m.nq:
-        raise ValueError(f"qpos nq {qpos.shape[1]} != model nq {m.nq} (wrong xml for this rollout)")
+        raise ValueError(f"qpos nq {qpos.shape[1]} != model nq {m.nq} "
+                         f"({'model=' if model is not None else 'xml='} is wrong for this rollout)")
     d = mujoco.MjData(m)
     pel = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, body)
 
