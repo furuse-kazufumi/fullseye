@@ -11,9 +11,16 @@ static class Fs
 {
     const string L = "fullseye_core";
 
+    // ★fs_dtype_t は契約の第 5 引数。ここが抜けていた(2026-09-14)——
+    //   ヘッダは 8 引数、実装と 3 つの FFI 宣言は 7 引数で、**C ABI がずれたまま**
+    //   どのテストも通っていた。FFI で宣言を書き写す言語どうしを突き合わせても、
+    //   全員が同じ写し間違いをしていれば一致してしまう。
+    internal const int FS_DTYPE_F64 = 4;
+
     [DllImport(L)] internal static extern int fs_image_create(
         double[] pixels, int height, int width, long rowStrideBytes,
-        double rangeLo, double rangeHi, out IntPtr img);
+        int dtype, double rangeLo, double rangeHi, out IntPtr img);
+    [DllImport(L)] internal static extern int fs_image_dtype(IntPtr img, out int dtype);
     [DllImport(L)] internal static extern int fs_threshold(
         IntPtr img, double lo, double hi, out IntPtr reg);
     [DllImport(L)] internal static extern int fs_region_area(IntPtr reg, out long area);
