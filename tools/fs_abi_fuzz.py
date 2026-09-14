@@ -255,7 +255,13 @@ def observe_rust(lib, c: dict, ops: set) -> dict:
             lib.fs_tuple_get_real(t, i, C.byref(v))
             o.append(float(v.value))
         return o
-    out["measure"] = sorted(zip(vals(ta), vals(tr), vals(tc)))
+    triples = list(zip(vals(ta), vals(tr), vals(tc)))
+    out["measure"] = sorted(triples)
+    # ★並びそのものを観測する。`sorted` して比べていたので、**物体の順序を逆にする
+    #   変異が 3,000 ケースで 1 件も殺せなかった**(2026-09-14 の変異解析)。契約は
+    #   「最初の run の (row, col) 昇順」と明記しているのに、門がどこにも無かった ——
+    #   観測していないものは、どれだけケースを撒いても出てこない。
+    out["order"] = triples
     for t in (ta, tr, tc):
         lib.fs_tuple_release(t)
     sel = C.c_void_p()
