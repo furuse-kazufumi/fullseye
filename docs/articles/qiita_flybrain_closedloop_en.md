@@ -360,7 +360,23 @@ None of these are specific to flies. They appear whenever someone else's pretrai
 - **Stone et al. (2017)** —— an anatomically constrained path integration model of the bee central complex; section 7 follows its structure.
 - **Zador (2019)** —— the genomic bottleneck, the basis for folding per cell type in section 5.
 
-The EMD implementation and the image-processing operators come from **Fullseye**, a self-built vision library. Using it as a measurement bench is what made the quantitative comparison in section 4 — the wiring's share — possible at all.
+### What this PoC uses from Fullseye, and what it gives back
+
+The visual front end is built from the `flyvision` family (8 operators) in **Fullseye**, my own vision library. **Every one of them is closed-form and ships with a ground-truth test**:
+
+| op | role | where it appears here |
+|---|---|---|
+| [`fly_hex_lattice`](https://furuse.work/ops/flyvision/lattice/fly_hex_lattice.html) | hexagonal viewing axes (n = 3R(R+1)+1) | §0 panel A — the eye's geometry |
+| [`fly_hex_resample`](https://furuse.work/ops/flyvision/sample/fly_hex_resample.html) | Gaussian acceptance onto the ommatidia | §0 panels C and D (MTF, aliasing) |
+| [`fly_sky_1f`](https://furuse.work/ops/flyvision/stimulus/fly_sky_1f.html) | synthetic sky with a 1/f band | §2, "texture in the distance" |
+| [`fly_emd_response`](https://furuse.work/ops/flyvision/motion/fly_emd_response.html) | Hassenstein–Reichardt correlator | §4, **the zero point** |
+| [`fly_hs_readout`](https://furuse.work/ops/flyvision/integrate/fly_hs_readout.html) | wide-field opponent sum (HS-like) | the shape of the readout |
+| [`fly_dsi`](https://furuse.work/ops/flyvision/tuning/fly_dsi.html) | direction selectivity index | §6, the 8-type test |
+| [`fly_lgmd_eta`](https://furuse.work/ops/flyvision/looming/fly_lgmd_eta.html) / [`fly_tau_from_expansion`](https://furuse.work/ops/flyvision/looming/fly_tau_from_expansion.html) | looming (η and time-to-contact τ) | unused here — measurable from the same eye |
+
+**What goes back into Fullseye** is two things. **(1) A measurement bench**: swap the motion detector and the stimulus, readout and scoring stay identical — which is the only reason section 4's question ("how many points does a connectome-constrained model add over the textbook formula?" → 0.14–0.20) can be answered at all. Existing implementations can *run* a model; they are not built to *line it up against a different detector on the same stimulus*. **(2) Counter-examples**: the aliasing in §0 and the floor flow in §2 come back as a concrete demand — lift the operators' tests from "a static synthetic image" to "measured while walking".
+
+Conversely, **the body, the physics and the connectome model stay external dependencies** (flybody / flyvis), and there is no plan to reimplement them. The value is in the bench you mount them on.
 
 ---
 
