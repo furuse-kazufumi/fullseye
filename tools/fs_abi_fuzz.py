@@ -156,7 +156,8 @@ def observe_rust(lib, c: dict, ops: set) -> dict:
                              a.strides[0], c["vrange"][0], c["vrange"][1], C.byref(img))
     if st != 0:
         return {"image": st}
-    out: dict = {"image": 0}
+    # 許容差を値域相対で取るために、値域の幅を観測に添える(比較専用の私的な鍵)。
+    out: dict = {"image": 0, "_span": abs(c["vrange"][1] - c["vrange"][0]) or 1.0}
     if "gauss" in ops:
         g = C.c_void_p()
         sg = lib.fs_gauss(img, c["sigma"], C.byref(g))
