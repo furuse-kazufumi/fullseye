@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-14 21:42:37
+- **最終更新**: 2026-09-14 21:56:10
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-8f9215eb3 auto: test_abi_conformance.py 編集前 (2026-09-14 21:41)
-cd9236a0b auto: fullseye_abi.h 編集前 (2026-09-14 21:40)
-d7baa3c28 auto: test_abi_conformance.py 編集前 (2026-09-14 21:40)
-2c221dae2 auto: fullseye_abi.h 編集前 (2026-09-14 21:39)
-a47040f01 auto: fullseye_abi.h 編集前 (2026-09-14 21:39)
-0295dfb92 auto: fs_abi_fuzz.py 編集前 (2026-09-14 21:38)
-0249e311c auto: test_public_reachability.py 編集前 (2026-09-14 21:36)
-499e4a162 auto: gsplat_animate.py 編集前 (2026-09-14 21:35)
-644f0cef4 auto: gsplat_cli.py 編集前 (2026-09-14 21:35)
-2304809d4 auto: test_no_local_paths_in_shipped_code.py 編集前 (2026-09-14 21:34)
+70972deaf auto: test_rust_abi_parity.py 編集前 (2026-09-14 21:55)
+76be876a8 auto: test_fslib.py 編集前 (2026-09-14 21:54)
+29a6daa88 auto: fslib.py 編集前 (2026-09-14 21:54)
+cb340fcb0 auto: fslib.py 編集前 (2026-09-14 21:53)
+17c71a526 auto: fslib.py 編集前 (2026-09-14 21:53)
+f48b551a6 auto: README.md 編集前 (2026-09-14 21:52)
+e820873be auto: fs_abi_fuzz.py 編集前 (2026-09-14 21:51)
+72e4a0402 auto: fs_abi_fuzz.py 編集前 (2026-09-14 21:51)
+93b2aad8d auto: fs_abi_fuzz.py 編集前 (2026-09-14 21:51)
+692a0c0ed auto: README.md 編集前 (2026-09-14 21:51)
 ```
 
 ## 現在の git status
 
 ```
-M tests/test_abi_conformance.py
+M tests/test_rust_abi_parity.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:41 .pytest_cache/v/cache/nodeids
-21:41 .pytest_cache/v/cache/lastfailed
-21:41 tests/test_abi_conformance.py
-21:40 fullseye_abi.h
-21:38 tools/fs_abi_fuzz.py
-21:37 .hypothesis/constants/d66b16583a6c7fc8
-21:36 tests/test_public_reachability.py
-21:35 gsplat_animate.py
-21:35 gsplat_cli.py
-21:34 tests/test_no_local_paths_in_shipped_code.py
-21:33 scene_registry.py
-21:33 pyproject.toml
-21:32 gsplat_train_native.py
-21:32 walk_physics.py
-21:32 pick_render.py
+21:55 .pytest_cache/v/cache/nodeids
+21:55 tests/test_rust_abi_parity.py
+21:54 tests/test_fslib.py
+21:54 fslib.py
+21:52 rust/fullseye_core/examples/README.md
+21:51 tools/fs_abi_fuzz.py
+21:50 tools/fs_abi_fuzz_mutation.py
+21:50 rust/fullseye_core/examples/csharp/obj/Debug/net9.0/fullseye_example.csproj.FileListAbsolute.txt
+21:50 rust/fullseye_core/examples/csharp/bin/Debug/net9.0/fullseye_example.runtimeconfig.json
+21:50 rust/fullseye_core/examples/csharp/obj/Debug/net9.0/fullseye_example.genruntimeconfig.cache
+21:50 rust/fullseye_core/examples/csharp/bin/Debug/net9.0/fullseye_example.deps.json
+21:50 rust/fullseye_core/examples/csharp/obj/Debug/net9.0/apphost.exe
+21:50 rust/fullseye_core/examples/csharp/bin/Debug/net9.0/fullseye_example.exe
+21:50 rust/fullseye_core/examples/csharp/obj/Debug/net9.0/refint/fullseye_example.dll
+21:50 rust/fullseye_core/examples/csharp/obj/Debug/net9.0/ref/fullseye_example.dll
 ```
 
 ---

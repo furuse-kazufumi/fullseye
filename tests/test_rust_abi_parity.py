@@ -308,6 +308,44 @@ def test_measure_all_matches(rust):
             "measure_all が違う Rust %s / Python %s" % (g, w))
 
 
+def test_objects_come_back_in_the_declared_order(rust):
+    """物体の並びは契約の一部 —— 最初の run の (row, col) 昇順(`fs_connection`)。
+
+    `measure_all` の三つ組を**ソートせずに**突き合わせる。ソートして比べていた
+    あいだ、差分ファジングは 60,000 ケース撒いても順序の欠陥を 1 件も出さなかった
+    ([[feedback_observe_what_the_contract_declares]])——
+    観測していない性質は、ケース数をいくら増やしても見えない。
+
+    盤面はファザーが実際に出した反例。物体は (row=0,col=3) 面積 2 と
+    (row=1,col=1) 面積 1 で、契約の昇順なら**前者が先**。`fslib` は `ndi.label` /
+    `cv2` が振る走査順のラベル番号で並べていたので、逆になっていた。
+    """
+    a = np.array([[0.0, 0.0, 0.0, 1.0, 0.0],
+                  [0.0, 1.0, 0.0, 1.0, 0.0]])
+    img, reg, objs = _rust_objs(rust, a, 0.5, 1.0)
+    ta, tr, tc = C.c_void_p(), C.c_void_p(), C.c_void_p()
+    assert rust.fs_measure_all(objs, C.byref(ta), C.byref(tr), C.byref(tc)) == 0
+    got = list(zip(_tuple_vals(rust, ta), _tuple_vals(rust, tr), _tuple_vals(rust, tc)))
+    for t in (ta, tr, tc):
+        rust.fs_tuple_release(t)
+    rust.fs_objectset_release(objs)
+    rust.fs_region_release(reg)
+    rust.fs_image_release(img)
+
+    ar, ro, co = fslib.measure_all(fslib.connection(fslib.threshold(
+        fslib.FImage(a, value_range=(0.0, 1.0)), 0.5, 1.0)))
+    want = list(zip(map(float, ar), map(float, ro), map(float, co)))
+    assert len(got) == len(want) == 2, "物体数 Rust %d / Python %d" % (len(got), len(want))
+    for i, (g, w) in enumerate(zip(got, want)):
+        assert all(abs(x - y) < 1e-9 for x, y in zip(g, w)), (
+            "%d 番目が Rust %s / Python %s —— 集合は同じでも**並び**が違う。"
+            "呼び手は添字で引くので、指す物体が変わる" % (i, g, w))
+    # 契約そのものも確かめる(2 実装が仲良く同じ間違いをしている場合を落とす)
+    assert got[0][0] == 2.0 and got[1][0] == 1.0, (
+        "並びが契約と違う: 面積 %s(最初の run が (0,3) の面積 2 が先)"
+        % [t[0] for t in got])
+
+
 @pytest.mark.parametrize("feature,vmin,vmax", [
     ("area", 5.0, 20.0), ("area", 0.0, 1.0), ("area", 0.0, 0.0),
     ("row", 0.0, 5.0), ("column", 100.0, 200.0), ("column", 0.0, 11.0),
