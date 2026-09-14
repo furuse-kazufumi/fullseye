@@ -150,7 +150,9 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
         prev_log = lum; ev_counts.append(ev)
         # composite with thin separators: 3rd-person | (ego) | depth | events
         sep = np.full((height, 3, 3), 60, np.uint8)
-        panels = [rimg] + ([eimg] if ego >= 0 else []) + [dcol, evimg]
+        # ★ego_camera(モデル自身の目)でも eye パネルを出す。ここを ego>=0 だけで見ていたので、
+        #   ハエの複眼から描いたのに複眼の絵がコマに入らなかった(2026-09-14 実測)。
+        panels = [rimg] + ([eimg] if (ego >= 0 or ego_camera is not None) else []) + [dcol, evimg]
         panel = panels[0]
         for pnl in panels[1:]:
             panel = np.concatenate([panel, sep, pnl], axis=1)
