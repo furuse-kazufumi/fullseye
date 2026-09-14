@@ -30,7 +30,7 @@ from scipy import ndimage as ndi
 
 __all__ = [
     "FImage", "Region", "ObjectSet", "Seq", "Scalar", "SORTS", "sort_of",
-    "FsTypeError", "FsBackendError",
+    "FsValueError", "FsTypeError", "FsBackendError",
     "profile", "current_profile", "backends_for", "op",
     "unmet_ops", "readiness_report", "require_ready",
     "gauss", "threshold", "connection", "region_features", "select_shape", "measure_all",
