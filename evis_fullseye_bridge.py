@@ -41,14 +41,22 @@ def _dvs(prev_log, cur_log, C=0.18):
 
 def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=360, height=360,
                        max_frames=110, fps=25, body="pelvis", ego_body=None, ego_h=0.35,
-                       ego_dist=2.5, log=print):
+                       ego_dist=2.5, ego_camera=None, third_person_z=0.9, log=print):
     """Render the learned evis rollout and perceive it (RGB | depth | DVS). Returns honest stats
     (frames, forward distance in the rollout, mean event rate, depth span).
 
     With ``ego_body`` set (e.g. ``"torso_link"`` for the G1), the sensors are MOUNTED ON THE
     ROBOT: a first-person camera rides ``ego_h`` above that body, faces the body's yaw heading,
     and the depth + DVS panels are computed from THAT view — the panel layout becomes
-    third-person RGB | robot's-eye RGB | robot's-eye depth | robot's-eye DVS."""
+    third-person RGB | robot's-eye RGB | robot's-eye depth | robot's-eye DVS.
+
+    ``ego_camera`` names a camera that the MODEL ITSELF defines (e.g. ``"eye_left"`` on the
+    *Drosophila* body, whose XML already carries the two eye cameras at fovy 140). When given it
+    REPLACES the free-camera estimate above: no yaw is recovered from ``qpos[3:7]``, no height
+    offset is applied, and the eye's own mount and field of view are used as authored. This is
+    the right path for any body whose eyes are part of the published model rather than something
+    we place by hand. ``third_person_z`` is the height the tracking camera looks at, in metres —
+    0.9 suits a human-scale robot, a fly needs millimetres."""
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
