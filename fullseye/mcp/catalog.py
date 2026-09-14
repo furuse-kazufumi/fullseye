@@ -257,14 +257,16 @@ class Catalog:
     def coverage(self) -> dict:
         """4 層の交差を数える。**検索がどれだけ信用できるか**を LLM にも見せる。"""
         by = {s: {e.name for e in self.entries.values() if s in e.sources} for s in SOURCES}
-        idx, reg, note, fac = by["index"], by["registry"], by["note"], by["facade"]
-        note_only = sorted(note - idx - reg - fac)
+        idx, reg, led, note, fac = by["index"], by["registry"], by["ledger"], by["note"], by["facade"]
+        callable_ = idx | reg | led | fac
+        note_only = sorted(note - callable_)
         return {
             "total_names": len(self.entries),
             "per_source": {s: len(v) for s, v in by.items()},
             "index_without_note": sorted(idx - note),
             "registry_not_in_index": sorted(reg - idx),
             "index_not_in_registry": sorted(idx - reg),
+            "ledger_without_note": sorted(led - note),
             "facade_not_in_index": len(fac - idx),
             "note_only": len(note_only),
             "note_only_names": note_only,
