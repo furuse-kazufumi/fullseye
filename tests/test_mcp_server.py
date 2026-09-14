@@ -183,14 +183,38 @@ def test_unknown_op_name_is_a_tool_error_with_nearest_candidates(cat):
 
 
 def test_every_declared_tool_has_a_body(cat):
-    """TOOLS に足して本体を忘れると『未実装の tool』で落ちる。それを先に潰す。"""
-    minimal = {"fullseye_search_ops": {"query": "gauss"},
-               "fullseye_op_help": {"name": "gaussian"},
-               "fullseye_catalog_coverage": {}}
-    assert set(minimal) == set(TOOLS), "tool を足したらこの表にも足すこと"
-    for n, a in minimal.items():
-        res = call_tool(n, a, cat)
-        assert res["isError"] is False, (n, res["content"][0]["text"][:200])
+    """TOOLS に足して本体を忘れると『未実装の tool』で落ちる。それを先に潰す。
+
+    画像系 3 tool は順に依存する(samples → load → apply → inspect)ので、
+    1 つの store を通して**実際の返り値から次の引数を作る**。"""
+    from fullseye.mcp.handles import HandleStore
+    store = HandleStore()
+    order = ["fullseye_search_ops", "fullseye_op_help", "fullseye_catalog_coverage",
+             "fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect"]
+    assert set(order) == set(TOOLS), "tool を足したらこの表にも足すこと: %s" % (set(TOOLS) ^ set(order))
+    ctx: dict = {}
+    for n in order:
+        if n == "fullseye_search_ops":
+            a = {"query": "gauss"}
+        elif n == "fullseye_op_help":
+            a = {"name": "gaussian"}
+        elif n == "fullseye_load_image":
+            a = {"path": ctx["sample_path"], "vision": "none"}
+        elif n == "fullseye_apply":
+            a = {"handle": ctx["handle"], "op": "gaussian", "vision": "none"}
+        elif n == "fullseye_inspect":
+            a = {"handle": ctx["handle_out"], "vision": "none"}
+        else:
+            a = {}
+        res = call_tool(n, a, cat, store)
+        assert res["isError"] is False, (n, res["content"][0]["text"][:300])
+        sc = res.get("structuredContent", {})
+        if n == "fullseye_list_samples":
+            ctx["sample_path"] = sc["samples"][0]["path"]
+        elif n == "fullseye_load_image":
+            ctx["handle"] = sc["handle"]
+        elif n == "fullseye_apply":
+            ctx["handle_out"] = sc["handle"]
 
 
 # --------------------------------------------------------------------------- #
