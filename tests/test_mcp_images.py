@@ -302,6 +302,81 @@ def test_evicted_handles_are_refused_not_silently_recreated(root):
 def test_tools_list_declares_the_image_tools_with_closed_schemas(cat):
     from fullseye.mcp.server import handle_tools_list
     tl = {t["name"]: t for t in handle_tools_list({})["tools"]}
-    for n in ("fullseye_list_samples", "fullseye_load_image", "fullseye_apply", "fullseye_inspect"):
+    for n in ("fullseye_list_samples", "fullseye_load_image", "fullseye_apply",
+              "fullseye_inspect", "fullseye_pipeline"):
         assert n in tl and tl[n]["inputSchema"]["additionalProperties"] is False
     assert tl["fullseye_apply"]["inputSchema"]["required"] == ["handle", "op"]
+    assert tl["fullseye_pipeline"]["inputSchema"]["required"] == ["handle", "stages"]
+
+
+# --------------------------------------------------------------------------- #
+# 5. パイプライン(段ごとの記録、失敗した段で止まる、型連鎖)                        #
+# --------------------------------------------------------------------------- #
+def test_pipeline_records_every_stage_and_returns_the_final_handle(cat, store):
+    h = call_tool("fullseye_load_image", {"path": _sample()}, cat, store)["structuredContent"]["handle"]
+    res = call_tool("fullseye_pipeline", {
+        "handle": h,
+        "stages": [{"op": "gaussian", "a": 0.3}, {"op": "otsu"}, {"op": "count_obj"}],
+    }, cat, store)
+    assert res["isError"] is False, res["content"][0]["text"][:300]
+    sc = res["structuredContent"]
+    assert [s["op"] for s in sc["stages"]] == ["gaussian", "otsu", "count_obj"]
+    assert sc["completed"] == 3 and sc["stopped_at"] is None
+    for s in sc["stages"]:
+        assert "verdict" in s and "stats" in s and s["degraded"] == []
+    assert sc["stages"][0]["out_sort"] == "image" and sc["stages"][1]["out_sort"] == "region"
+    assert sc["stages"][2]["handle"] is None and sc["stages"][2]["value"] > 0
+    assert sc["handle"] == sc["stages"][1]["handle"], "最後の配列ハンドルが最終ハンドル"
+    assert sc["value"] == sc["stages"][2]["value"]
+    text = res["content"][0]["text"]
+    assert "gaussian" in text and "otsu" in text and "count_obj" in text
+
+
+def test_pipeline_refuses_a_broken_sort_chain_before_running_anything(cat, store):
+    """2 段目が前段の型を受けられない: 1 段目すら走らせずに拒否(先に検査)。"""
+    h = call_tool("fullseye_load_image", {"path": _sample()}, cat, store)["structuredContent"]["handle"]
+    before = store.stats()["alive"]
+    with pytest.raises(ArgError) as ei:
+        call_tool("fullseye_pipeline", {"handle": h, "stages": [{"op": "otsu"}, {"op": "gaussian"}, {"op": "count_obj"}]}, cat, store)
+    m = str(ei.value)
+    assert "段 2" in m and "gaussian" in m and "region" in m and "image" in m, m
+    assert store.stats()["alive"] == before, "拒否したのに中間ハンドルが増えた = 走っている"
+
+
+def test_pipeline_in_strict_mode_stops_at_the_failing_stage_and_says_where(cat, store, root):
+    h = call_tool("fullseye_load_image", {"path": str(root / "tiny.png")}, cat, store)["structuredContent"]["handle"]
+    op = _degrading_op(cat)
+    res = call_tool("fullseye_pipeline", {"handle": h, "stages": [{"op": "gaussian"}, {"op": op}, {"op": "otsu"}]}, cat, store)
+    assert res["isError"] is True
+    sc = res["structuredContent"]
+    assert sc["completed"] == 1 and sc["stopped_at"] == 2, sc
+    assert sc["stages"][0]["verdict"] and sc["stages"][1]["error"]["message"]
+    assert len(sc["stages"]) == 2, "止まった段より後が記録されている"
+    text = res["content"][0]["text"]
+    assert "段 2" in text and op in text and "strict" in text
+
+
+def test_pipeline_escalates_the_first_bad_stage_not_the_last(cat, store, root):
+    """定数画像を通す: 1 段目から判定が割れる。小図は**最初に割れた段**の 1 枚だけ。"""
+    h = call_tool("fullseye_load_image", {"path": str(root / "const.png"), "vision": "none"}, cat, store)["structuredContent"]["handle"]
+    res = call_tool("fullseye_pipeline", {"handle": h, "stages": [{"op": "gaussian"}, {"op": "invert"}]}, cat, store)
+    assert res["isError"] is False
+    sc = res["structuredContent"]
+    assert sc["stages"][0]["verdict"] == "constant" and sc["stages"][1]["verdict"] == "constant"
+    links = _links(res)
+    assert len(links) == 1 and "段 1" in links[0]["description"], [lk["description"] for lk in links]
+
+
+@pytest.mark.parametrize("bad, why", [
+    ({"stages": []}, "1 段以上"),
+    ({"stages": [{"op": "gaussian", "c": 1}]}, "知らない引数"),
+    ({"stages": [{"a": 0.5}]}, "必須"),
+    ({"stages": [{"op": "gaussian", "a": 2}]}, "以下"),
+    ({"stages": "gaussian,otsu"}, "配列"),
+    ({"stages": [{"op": "gaussian"}] * 65}, "以下"),
+])
+def test_bad_pipeline_arguments_are_refused(cat, store, bad, why):
+    h = call_tool("fullseye_load_image", {"path": _sample()}, cat, store)["structuredContent"]["handle"]
+    with pytest.raises(ArgError) as ei:
+        call_tool("fullseye_pipeline", {"handle": h, **bad}, cat, store)
+    assert why in str(ei.value), str(ei.value)
