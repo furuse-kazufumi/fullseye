@@ -135,14 +135,43 @@ def test_ctypes_declarations_match_the_header(rel):
                           for n, (a, b) in sorted(bad.items()))))
 
 
-def test_the_header_compiles_as_c_when_a_compiler_is_available():
-    """ヘッダ単体が C として通ること。**無ければ正直に SKIP**。"""
+#: C の処理系は 3 系統あり、**顧客は選べない**(既存の C++ 製品に組み込むとき、
+#: その製品がどれで建っているかは向こうの都合)。だから在るものは**全部**試す ——
+#: 1 つ通ったから良し、にすると残り 2 つで落ちる方言が残る。
+_C_COMPILERS = ("clang", "gcc", "cc")
+
+
+@pytest.mark.parametrize("cc_name", _C_COMPILERS)
+def test_the_header_compiles_as_c(cc_name):
+    """ヘッダ単体が C として通ること。**無ければ正直に SKIP**。
+
+    ★「最初に見つかった 1 つだけ」を試していたのを、在る処理系すべてに広げた
+    (2026-09-14)—— clang(MSVC ABI)で通っても gcc(MinGW)で通るとは限らず、
+    その逆もある。**1 つで代表させない**のは探針の話と同じ
+    ([[feedback_one_probe_input_is_not_coverage]])。
+    """
     import shutil
     import subprocess
-    cc = shutil.which("clang") or shutil.which("gcc") or shutil.which("cc")
+    cc = shutil.which(cc_name)
     if cc is None:
-        pytest.skip("C コンパイラが無い —— **建たなかった**ことを「通った」と混ぜない")
+        pytest.skip("%s が無い —— **建たなかった**ことを「通った」と混ぜない" % cc_name)
     r = subprocess.run([cc, "-fsyntax-only", "-std=c11", "-Wall", "-Wextra", HEADER],
                        capture_output=True, text=True)
     assert r.returncode == 0, (
-        "fullseye_abi.h が C として通らない:\n%s" % (r.stderr or r.stdout)[:2000])
+        "fullseye_abi.h が %s で C として通らない:\n%s"
+        % (cc_name, (r.stderr or r.stdout)[:2000]))
+
+
+def test_the_header_compiles_as_cpp_when_a_compiler_is_available():
+    """**C++ からも include できること。** ヘッダは `extern "C"` を宣言しているので
+    通るはずだが、通ることを誰も確かめていなかった —— 顧客が組み込む先は
+    たいてい C ではなく **C++** の製品。"""
+    import shutil
+    import subprocess
+    cxx = shutil.which("clang++") or shutil.which("g++")
+    if cxx is None:
+        pytest.skip("C++ コンパイラが無い")
+    r = subprocess.run([cxx, "-fsyntax-only", "-std=c++17", "-Wall", "-Wextra",
+                        "-x", "c++", HEADER], capture_output=True, text=True)
+    assert r.returncode == 0, (
+        "fullseye_abi.h が C++ として通らない:\n%s" % (r.stderr or r.stdout)[:2000])
