@@ -579,8 +579,16 @@ def _connection_numpy(reg: Region) -> ObjectSet:
 def _connection_cv2(reg: Region) -> ObjectSet:
     """One pass produces the labels *and* the stats — carry both."""
     import cv2
+    # ★2026-09-14: ここは `(mask, 8, cv2.CV_32S)` と**位置引数**で書いてあった。
+    #   読むと「8 連結を明示している」ように見えるが、cv2 5.0.0 で実測すると
+    #   `connectedComponentsWithStats(a, 4, CV_32S)` も `(a, 8, CV_32S)` も**同じ答え**
+    #   を返す —— 位置引数は connectivity として解釈されておらず、**既定の 8 に
+    #   たまたま一致していただけ**。既定が変われば黙って 4 連結になる。
+    #   コードが主張している意図を API が守っていない形なので、キーワードで固定する。
+    #   (差分ファジングの変異解析で 4 連結を注入したのに一切検出されず、掘ったら
+    #    注入のほうが効いていなかった、という経路で見つかった。)
     k, lbl, stats, cents = cv2.connectedComponentsWithStats(
-        reg._mask.astype(np.uint8), 8, cv2.CV_32S)
+        reg._mask.astype(np.uint8), connectivity=8, ltype=cv2.CV_32S)
     return ObjectSet(lbl, np.arange(1, k, dtype=np.int32),
                      {"_cc_stats": stats, "_cc_centroids": cents})
 
