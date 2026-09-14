@@ -201,8 +201,14 @@ class Catalog:
                 rank = 1
             else:
                 rank = 2
-            hits.append((rank, e.name, e))
-        hits.sort(key=lambda t: (t[0], t[1]))
+            # ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき
+            #   `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。
+            #   実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、
+            #   名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+            canonical = 0 if (e.halcon and e.halcon == e.name) else 1
+            hits.append(((rank, canonical, -len(e.sources), e.name), e))
+        hits.sort(key=lambda t: t[0])
+        hits = [(k[0], k[3], e) for k, e in hits]
         total = len(hits)
         rows = [e.row() for _, _, e in hits[:limit]]
         by_sources: dict[str, int] = {}
