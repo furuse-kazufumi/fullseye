@@ -148,8 +148,14 @@ def perceive_evis_walk(qpos_npy, xml=None, out_gif="out/evis_fullseye.gif", *, w
         else:
             dep.update_scene(d, camera=cam); dimg = dep.render().copy()
             sens = rimg
-        # depth: clip to a sensible band around the body, colormap
+        # depth: clip to a sensible band around the body, colormap.
+        # ★The sky is "infinitely" far (measured: 998 in a world whose animal is 0.3 across), and
+        #   with the sky in view the 3rd/92nd percentiles straddle it, so the panel collapses to
+        #   two flat colours — sky and everything-else. depth_max cuts the band at a distance that
+        #   means something for this body, so the *scene* gets the colour range instead of the sky.
         finite = dimg[np.isfinite(dimg)]
+        if depth_max is not None:
+            finite = finite[finite <= depth_max]
         near, far = (np.percentile(finite, 3), np.percentile(finite, 92)) if finite.size else (0.0, 5.0)
         dmins.append(float(near)); dmaxs.append(float(far))
         dcol = _colormap(np.clip(dimg, near, far), near, far)
