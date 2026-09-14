@@ -1266,7 +1266,12 @@ def _b_select_shape(env, objects, feature, vmin, vmax):
         return fslib.select_shape(_as_objectset(objects), feature,
                                   float(_as_number(vmin, "select_shape min")),
                                   float(_as_number(vmax, "select_shape max")))
-    except fslib.FsTypeError as e:
+    # ★2026-09-14: ここは `FsTypeError` だけを捕まえていた。逆さの区間と未知の
+    #   feature を契約どおり `FsValueError`(= FS_E_INVALID_ARG)にした結果、
+    #   **fscript の利用者には Python の生の例外が漏れる**ようになっていた ——
+    #   例外の種類を増やしたら、それを言語境界で受けている場所を必ず一掃する
+    #   ([[feedback_same_bug_class_recurs_check_siblings]])。
+    except (fslib.FsValueError, fslib.FsTypeError) as e:
         raise FScriptError(str(e))
 
 
