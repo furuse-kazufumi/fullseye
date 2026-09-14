@@ -135,8 +135,22 @@ def gen_case(rng: np.random.Generator) -> dict:
     if rng.random() < 0.2:                      # 値域の外に出た画素(R-3: clamp しない)
         a[int(rng.integers(0, h)), int(rng.integers(0, w))] = \
             float(vlo + rng.normal(0.5, 1.5) * (vhi - vlo))
-    lo = float(rng.choice([0.0, 0.25, 0.5, 0.75, 1.0, float(rng.random())]))
-    hi = float(rng.choice([0.0, 0.25, 0.5, 0.75, 1.0, float(rng.random())]))
+    # ★しきい値は**画像に実在する値から**引く。独立に引いていたときは 41% が
+    #   「選択 0 画素」で、物体が 2 個以上あるのは 14% だけだった —— `connection` の
+    #   分岐(斜め接触・入れ子・多数)をほとんど踏んでいない。乱数で撒くと空ばかりに
+    #   なるのは、しきい値も探針の一部だから
+    #   ([[feedback_one_probe_input_is_not_coverage]]: 探針は入力画像だけではない)。
+    #   2 割は「当てずっぽう」のまま残す —— 空・全面・範囲外という端も要る。
+    span = (vhi - vlo) or 1.0
+    rel = np.clip((a[np.isfinite(a)] - vlo) / span, -0.5, 1.5) if np.isfinite(a).any() else None
+    if rel is not None and rel.size and rng.random() < 0.8:
+        q = np.quantile(rel, [float(rng.random()), float(rng.random())])
+        lo, hi = float(min(q)), float(max(q))
+        if rng.random() < 0.5:                  # 幅を持たせて run をつなげる
+            hi = float(hi + rng.random() * 0.3)
+    else:
+        lo = float(rng.choice([0.0, 0.25, 0.5, 0.75, 1.0, float(rng.random())]))
+        hi = float(rng.choice([0.0, 0.25, 0.5, 0.75, 1.0, float(rng.random())]))
     if rng.random() < 0.85 and lo > hi:         # 逆区間は 15% だけ残す
         lo, hi = hi, lo
     return {"px": a, "lo": lo, "hi": hi, "vrange": (float(vlo), float(vhi)),
