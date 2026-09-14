@@ -1357,6 +1357,62 @@ NONFINITE_IS_MEANINGFUL = {
 }
 
 
+#: ``image`` を名乗るが **[0,1] は契約でない** op -> なぜそうなのか。
+#:
+#: ``NONFINITE_IS_MEANINGFUL`` の兄弟。あちらが「inf がこの op の答えだ」を
+#: 記録するように、こちらは「1 を超える値がこの op の答えだ」を記録する。
+#:
+#: 経緯(2026-09-14〜15): 探針バンクを 151 op ぶん広げた結果、
+#: ``test_every_image_op_stays_in_the_unit_range`` が**初めてこれらに届いた**。
+#: 門は正しい場所に立っている —— 露わになったのは、``image`` という 1 つの sort が
+#: **「[0,1] の絵」と「物理量/生の大きさを運ぶ 2 次元配列」の 2 つを兼ねている**
+#: ことのほう。[[feedback_split_types_when_mixing_lies_silently]] の形そのもので、
+#: 419 op が ``image`` を名乗る中にこの 11 本が紛れている。
+#:
+#: **これは免罪符ではなく未決の記録である。** 正しい決着は「物理量の 2 次元配列」に
+#: 別の sort を与えることで、そこまでは下流(閾値・合成・目標画像との差分)が
+#: これらを受け取ると黙って無意味になる。理由は推測で書かず、**各 op の
+#: docstring の一次記述と実測値**を引く(下の数字は探針バンクでの実測)。
+#:
+#: 台帳に**足す前に必ず実装を読むこと** —— 2026-09-15 に ``tb_project`` を
+#: ここへ入れかけたが、読んだら (N,3) → **(N,2) の画素座標**を返す op が
+#: ``image2d`` を名乗っていただけで、値域ではなく**型が嘘**だった
+#: (``ops3d.py`` の同じ嘘は ``project_points`` で 2026-09-02 に直され、
+#: この 1 行が取り残されていた)。台帳行きにしていたら欠陥を隠していた。
+UNIT_RANGE_IS_NOT_THE_CONTRACT = {
+    "tb_project_spherical":
+        "画素値は slant range sqrt(x^2+y^2+z^2)(座標の単位 = メートル)。"
+        "docstring が『画素値は slant range』と明記。実測 0 .. 12.53。",
+    "tb_project_cylindrical":
+        "画素値は z 軸からの水平半径 rho = hypot(x, y)。同上。実測 0 .. 715.0。",
+    "tb_spectrogram":
+        "各列は unnormalised |rfft(frame * hann)|。docstring は 2/win で割るのを"
+        "**誤りと名指し**し(Hann が既に信号の一部を捨てているため)、正しい"
+        "変換は 2/w.sum() だと実測値つきで書いている。実測 0 .. 76.27。",
+    "tb_range_doppler_map":
+        "2 次元 FFT の生の大きさ。``normalize=True`` で振幅に直せるが既定は"
+        "``False`` = 生、と docstring が明記。実測 0 .. 75.2。",
+    "tb_keypoints_to_image2d":
+        "**計数**画像。round(v), round(u) の画素に 1 ずつ加算するので、"
+        "同じ画素に n 点が落ちれば n。0/1 の絵ではない。",
+    "tb_cx_ifft":
+        "逆 FFT の実部(既定 ``real=True``)。負の値が信号を運ぶ。実測 -0.0505 .. 0.295。",
+    "tb_cx_real":
+        "複素場の実部。docstring が『raw, not clamped』と明記。負は意味を持つ。",
+    "tb_cx_imag": "同上(虚部)。",
+    "tb_lf_depth_from_focus":
+        "画素ごとの EPI 傾き s。負 = 手前、正 = 奥で、符号が奥行きの向きを運ぶ。"
+        "既定の掃引範囲は slopes=(-2 .. 2)。",
+    "tb_lf_epi_slope":
+        "同上(構造テンソルの閉形式 s = -(J_ux + J_vy)/(J_xx + J_yy))。"
+        "傾きは符号つきで、範囲は場面次第。",
+    "tb_quat_norm":
+        "画素ごとの四元数の絶対値 |q|。docstring が『**Raw / unnormalised**、"
+        "絶対値は計量量で 1 を日常的に超える(QFT スペクトルの DC 項は巨大)』"
+        "と明記し、表示用は ``imgio.normalize`` を使えと指している。",
+}
+
+
 def _wrap_unguarded() -> int:
     """登録済みで未ガードの op を ``guard`` で包む。包んだ数を返す。"""
     import backend_safe as _bs
