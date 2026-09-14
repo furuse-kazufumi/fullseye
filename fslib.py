@@ -555,7 +555,14 @@ def _threshold_cv2(img: FImage, lo: float, hi: float) -> Region:
 
 @op("connection", "numpy")
 def _connection_numpy(reg: Region) -> ObjectSet:
-    lbl, k = ndi.label(reg._mask)
+    # ★2026-09-14: ここは長らく `ndi.label(mask)` = **4 連結の既定**だった。
+    #   cv2 backend は `connectedComponentsWithStats(..., 8, ...)` で 8 連結なので、
+    #   **同じ op が backend によって違う物体数を返していた** —— 8x8 の市松模様で
+    #   numpy 32 個 / cv2 1 個。レシピの答えが「どちらの backend が選ばれたか」で
+    #   変わるという、いちばん静かな壊れ方。C ABI を Rust で 2 度目に実装して
+    #   突き合わせたときに見つかった(fullseye_abi.h の fs_connection に
+    #   8 連結と明記した)。回帰は tests/test_fslib.py が backend 横断で見る。
+    lbl, k = ndi.label(reg._mask, structure=np.ones((3, 3), dtype=bool))
     return ObjectSet(lbl.astype(np.int32), np.arange(1, k + 1, dtype=np.int32))
 
 
