@@ -175,18 +175,28 @@ def test_the_header_compiles_under_msvc():
                        r"\Build\vcvars64.bat")
     if not vcvars:
         pytest.skip("MSVC(vcvars64.bat)が無い —— 建たなかったことを「通った」と混ぜない")
-    for std, extra in (("c11", ""), ("c++17", "/TP")):
-        cmd = '"%s" >nul 2>&1 && cl /nologo /std:%s /W4 /Zs %s "%s"' % (
-            vcvars[0], std, extra, HEADER)
-        # ★`text=True` にすると **cl の日本語メッセージ(cp932)を UTF-8 で
-        #   デコードしようとして読み手のスレッドが落ち、stdout/stderr が空になる**。
-        #   すると「rc=1 なのに理由が何も出ない」という、いちばん追いにくい失敗に
-        #   なる(2026-09-14 実測)。バイト列で受けて自分で緩く復号する。
-        r = subprocess.run(["cmd", "/c", cmd], capture_output=True)
-        out = (r.stdout or b"").decode("cp932", "replace") + \
-              (r.stderr or b"").decode("cp932", "replace")
-        assert r.returncode == 0, (
-            "fullseye_abi.h が MSVC(/std:%s)で通らない:\n%s" % (std, out[:2000]))
+    import tempfile
+    # ★`cl` に `.h` を直接渡してはいけない —— MSVC は拡張子で言語を決めるので
+    #   「ソースファイルの種類は認識できません」と**警告だけ出して rc=0 を返す**。
+    #   検査が 1 行も走っていないのに緑になる、最悪の形
+    #   ([[feedback_ran_is_not_meaningful_output]]。2026-09-14 に実際そう読みかけた)。
+    #   `#include` する小さな .c / .cpp を作って `/Zs`(構文検査のみ)を掛ける。
+    with tempfile.TemporaryDirectory() as td:
+        for std, ext in (("c11", ".c"), ("c++17", ".cpp")):
+            src = os.path.join(td, "probe" + ext)
+            with open(src, "w", encoding="ascii") as f:
+                f.write('#include "%s"\n' % HEADER.replace("\\", "\\\\"))
+            # cmd の引用は 1 段だけ。`call` を使い、vcvars の出力は捨てずに読む。
+            cmd = 'call "%s" >nul && cl /nologo /std:%s /W4 /WX /Zs "%s"' % (
+                vcvars[0], std, src)
+            # 出力は cp932(日本語)。`text=True` だと UTF-8 復号に失敗して
+            # **stdout/stderr が空になり「rc だけあって理由が無い」**になる。
+            r = subprocess.run(["cmd", "/c", cmd], capture_output=True)
+            out = ((r.stdout or b"") + (r.stderr or b"")).decode("cp932", "replace")
+            assert r.returncode == 0, (
+                "fullseye_abi.h が MSVC(/std:%s)で通らない:\n%s" % (std, out[:2000]))
+            assert "D9024" not in out and "D9021" not in out, (
+                "MSVC がソースを認識していない(= 検査が走っていない):\n%s" % out[:800])
 
 
 def test_the_header_compiles_as_cpp_when_a_compiler_is_available():
