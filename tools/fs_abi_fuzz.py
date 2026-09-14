@@ -251,12 +251,20 @@ def compare(r: dict, p: dict) -> str | None:
             return "%s: Rust %s / Python %s" % (
                 k, "拒否" if rv else "受理", "拒否" if pv else "受理")
     if "gauss" in r and "gauss" in p:
-        d = float(np.nanmax(np.abs(r["gauss"] - p["gauss"]))) if r["gauss"].size else 0.0
         finite = np.isfinite(r["gauss"]) & np.isfinite(p["gauss"])
         if finite.any():
             d = float(np.abs(r["gauss"] - p["gauss"])[finite].max())
-            if d > 1e-5:
-                return "gauss: 最大差 %.3g" % d
+            # ★許容差は**値域に対する相対**で取る。絶対値で 1e-5 と決めていたら、
+            #   値域 (100,300) の画像で 1.04e-05 の差が「食い違い」として報告された ——
+            #   が、切り分けると Rust vs scipy は **float64 のままなら 8.53e-14**、
+            #   float32 を経由した途端 1.04e-05。つまり `fslib` の `astype(np.float32)`
+            #   の丸めで、**欠陥ではなく私の測り方の欠陥**だった(値域比で見ると
+            #   どの値域でも一様に 1.4〜5.2e-08 = float32 の相対精度)。
+            #   [[feedback_second_instance_artifact_not_physics]] と同じ型 ——
+            #   驚く結果は物理(実装の違い)で説明する前に道具を疑う。
+            span = abs(r.get("_span", 1.0)) or 1.0
+            if d / span > 1e-6:
+                return "gauss: 最大差 %.3g(値域比 %.3g)" % (d, d / span)
         if (np.isfinite(r["gauss"]) != np.isfinite(p["gauss"])).any():
             return "gauss: 非有限の位置が違う"
     for k in ("area", "n_runs", "n_comp", "n_select"):
