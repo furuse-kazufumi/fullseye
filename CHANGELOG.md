@@ -588,7 +588,11 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
   **この利得は Python 側でも取れる。** 再現は `tools/fs_abi_bench.py`。
 - **C / C# / Lua / Python が同じ 1 本の .dll を叩いて同じ答えを出す**ことを実測
   (`rust/fullseye_core/examples/`)。cdylib が吐くのはそのまま C ABI なので、
-  **言語ごとのバインディングを書かない**。
+  **言語ごとのバインディングを書かない**。C は **clang(MSVC ABI)と gcc(MinGW)の
+  両方**で建てて実走 —— MinGW から MSVC ABI の DLL を直リンクしても同じ答えになる。
+  ヘッダは **C(`-std=c11`)と C++(`-std=c++17`)の両方**で `-Wall -Wextra` を
+  無警告で通ることも門にした(顧客が組み込む先はたいてい C ではなく C++)。
+  MSVC(`cl.exe`)は Build Tools のインストールが失敗して**未確認**のまま残している。
 - ★★**8 件目 —— `fs_image_create` の引数がヘッダと実装でずれていた。** ヘッダは
   **8 引数**(第 5 が `fs_dtype_t dtype`)を宣言しているのに、Rust 実装も ctypes の
   3 箇所も **7 引数**で書かれていた。**C ABI の引数ずれは実行時に何の兆候も出さず、
