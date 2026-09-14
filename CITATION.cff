@@ -10,7 +10,7 @@ repository-code: "https://github.com/furuse-kazufumi/fullseye"
 url: "https://furuse.work/"
 repository-artifact: "https://pypi.org/project/fullseye/"
 version: 0.1.11
-date-released: "2026-09-09"
+date-released: "2026-09-15"
 abstract: >-
   Fullseye is a numpy-native library of 1,500+ typed classical image-processing and
   geometric-vision operators (2-D and 3-D), with an evolutionary pipeline-design mode
