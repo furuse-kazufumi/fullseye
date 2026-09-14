@@ -103,10 +103,14 @@ def verdict_of(st: dict, *, op_name: str | None, out_sort: str | None) -> dict:
         reasons.append("image を名乗るのに [0,1] の外(min=%.4g max=%.4g)で、台帳に免除が無い"
                        % (st["min"], st["max"]))
         return {"verdict": "out_of_range", "reasons": reasons, "escalate": True}
-    if picture and not range_ok and st["zero_pct"] + st["one_pct"] >= 100.0 * SATURATED:
+    # ★飽和・平坦は **image / color だけ**。region は 0/1 が契約なので「飽和」ではない ——
+    #   リファクタで region を含めてしまい、`--demo` で otsu の出力が「飽和」と判定されて
+    #   小図が昇格した(2026-09-15 実測)。region の定数(空 / 全面)は上で拾う。
+    greyscale = out_sort in ("image", "color")
+    if greyscale and not range_ok and st["zero_pct"] + st["one_pct"] >= 100.0 * SATURATED:
         reasons.append("飽和(0 が %.1f%%、1 が %.1f%%)" % (st["zero_pct"], st["one_pct"]))
         return {"verdict": "saturated", "reasons": reasons, "escalate": True}
-    if picture and not range_ok and st["range"] < LOW_RANGE:
+    if greyscale and not range_ok and st["range"] < LOW_RANGE:
         reasons.append("値域が狭い(range=%.3g < %.1f)" % (st["range"], LOW_RANGE))
         return {"verdict": "flat", "reasons": reasons, "escalate": True}
     reasons.append("std=%.3g range=%.3g" % (st["std"], st["range"]))
