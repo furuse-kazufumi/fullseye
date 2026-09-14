@@ -137,6 +137,37 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_pipeline": {
+        "description": (
+            "op を順に適用する。段ごとに数値統計・判定・劣化台帳を記録し、最終ハンドル(と最後が"
+            "計測なら値)を返す。走らせる前に段間の型連鎖(前段の out_sort = 次段の in_sort)を検査し、"
+            "破れていれば 1 段も走らせず拒否。strict(既定)では劣化した段で止まり、どこまで走ったかを"
+            "返す。判定が最初に割れた段の入出力対比の小図を自動で付ける。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "handle": _HANDLE,
+                "stages": {
+                    "type": "array", "minItems": 1, "maxItems": 64,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "op": {"type": "string", "maxLength": 120},
+                            "a": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                            "b": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                        },
+                        "required": ["op"],
+                        "additionalProperties": False,
+                    },
+                    "description": "[{op, a?, b?}, …]。a/b の既定は 0.5",
+                },
+                "allow_degraded": {"type": "boolean"},
+                "vision": _VISION,
+            },
+            "required": ["handle", "stages"],
+            "additionalProperties": False,
+        },
+    },
 }
 
 
