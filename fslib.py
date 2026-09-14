@@ -572,7 +572,7 @@ def _connection_numpy(reg: Region) -> ObjectSet:
     #   突き合わせたときに見つかった(fullseye_abi.h の fs_connection に
     #   8 連結と明記した)。回帰は tests/test_fslib.py が backend 横断で見る。
     lbl, k = ndi.label(reg._mask, structure=np.ones((3, 3), dtype=bool))
-    return ObjectSet(lbl.astype(np.int32), np.arange(1, k + 1, dtype=np.int32))
+    return ObjectSet(lbl.astype(np.int32), _order_ids(lbl, k))
 
 
 @op("connection", "cv2")
