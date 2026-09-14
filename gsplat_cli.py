@@ -12,11 +12,17 @@ import os
 
 import numpy as np
 
-_BUILTIN = {
-    "go2": "C:/dev/projects/mujoco_menagerie/unitree_go2/scene.xml",
-    "cassie": "C:/dev/projects/mujoco_menagerie/agility_cassie/scene.xml",
-    "apollo": "C:/dev/projects/mujoco_menagerie/apptronik_apollo/scene.xml",
+#: 名前つきの場面。**配布物にローカル絶対パスを焼き込まない** —— 他人が pip install した
+#: 環境では在りもしないパスを既定にしてしまうので、MuJoCo Menagerie の置き場は
+#: `MUJOCO_MENAGERIE` で受ける。未設定なら名前は解決できない(在ると偽らない)。
+_MENAGERIE = os.environ.get("MUJOCO_MENAGERIE", "")
+_BUILTIN_REL = {
+    "go2": ("unitree_go2", "scene.xml"),
+    "cassie": ("agility_cassie", "scene.xml"),
+    "apollo": ("apptronik_apollo", "scene.xml"),
 }
+_BUILTIN = ({k: os.path.join(_MENAGERIE, *v) for k, v in _BUILTIN_REL.items()}
+            if _MENAGERIE else {})
 
 
 def run(scene: str, out_dir: str, *, n_views=36, iters=700, width=128, height=128,
