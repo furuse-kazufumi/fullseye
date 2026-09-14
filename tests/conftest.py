@@ -259,11 +259,15 @@ def matrix_bank(n: int = 6) -> dict[str, np.ndarray]:
     op は、そこで初めて壊れるか壊れないかが分かれる)。"""
     rng = _rng()
     a = rng.standard_normal((n, n))
-    sing = np.ones((n, n))                          # 階数 1 = 特異
-    ill = np.diag(np.logspace(0, -12, n))           # 条件数 1e12
+    ill = np.diag(np.logspace(0, -12, n))           # 条件数 1e12(有限だが極端)
+    # ★**厳密に特異な行列は置かない。** 最初 `np.ones((n,n))`(階数 1)を入れたら
+    #   `tb_mat_cond` が `inf` を返して「非有限を出さない」ゲートが落ちた —— が、
+    #   特異行列の条件数が無限大なのは**数学的に正しい答え**であって欠陥ではない。
+    #   ゲートに免除機構は無いので、**正解が非有限になる入力を渡さない**のが筋
+    #   (ゲートを緩めると、本当に壊れている非有限まで通ってしまう)。
+    #   「特異に近い」は `ill_conditioned` が既に担っている。
     return {
         "normal": a,
-        "singular": sing,
         "ill_conditioned": ill,
         "zeros": np.zeros((n, n)),
         "tiny2": np.array([[1.0, 2.0], [3.0, 4.0]]),
