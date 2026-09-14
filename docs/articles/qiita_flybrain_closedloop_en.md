@@ -137,6 +137,8 @@ So **Δρ/Δφ ≈ 1.8 is not "blurry" — it is the acceptance angle tuned to t
 
 This section comes first because **before blaming the brain for what it could not read, you need to know what the eye already discarded** — which is exactly what section 2 turns on. And none of this is fly-specific: change Δφ and Δρ and the same operators design and measure a bee's eye, or an ant's.
 
+What follows is not a measurement but a **hope**. An event-based camera — a sensor whose pixels report brightness *changes* asynchronously — can be read as a silicon implementation of the very first thing the fly's visual front end does: **drop the DC and send only the change** (skip that step in §2 and the correlation falls from 0.98 to 0.50). If that is right, the part still missing sits one stage earlier, in the **optics**: a sensor whose inter-ommatidial angle and acceptance angle are design parameters, so that **aliasing dies in the device rather than in post-processing**. Today's event cameras are square-gridded, with acceptance treated as an afterthought of the lens. A device that ships with a hexagonal lattice and Δρ/Δφ ≈ 1.8 built in would make the "inventing patterns that were never there" problem of panel D disappear with no downstream computation at all. The fly has shipped that design for half a billion years. If such a sensor appears, the way of measuring in this article moves to real hardware unchanged.
+
 ## 1. It passed every static test, then failed while walking
 
 The first step was to calibrate the optic lobe output by rotating the fly in place. Three tests were built:
