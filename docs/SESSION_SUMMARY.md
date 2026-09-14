@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-15 06:49:33
+- **最終更新**: 2026-09-15 07:07:27
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-029d09224 型の嘘 1 件を直し、image が 2 つの契約を兼ねていることを台帳に出す
-fbb5ef0ab auto: CHANGELOG.md 編集前 (2026-09-15 05:44)
-01cccd070 auto: test_fix_op_name_and_range_2026_09_02.py 編集前 (2026-09-15 05:42)
-057c77dab auto: ops.py 編集前 (2026-09-15 05:41)
-878879cee auto: test_op_contracts.py 編集前 (2026-09-15 05:39)
-6e4797362 auto: test_op_contracts.py 編集前 (2026-09-15 05:39)
-a6a090876 auto: ops.py 編集前 (2026-09-15 05:39)
-f08233aad auto: ops3d.py 編集前 (2026-09-15 05:38)
-8a41725ff auto: test_fix_op_name_and_range_2026_09_02.py 編集前 (2026-09-15 05:38)
-7aa7de9bc auto: test_op_contracts.py 編集前 (2026-09-15 05:38)
+51e2fc259 MCP サーバの PoC(検索 / 引き当て / 被覆の 3 tool)と、それが掘り当てた穴
+acdb7d346 auto: CHANGELOG.md 編集前 (2026-09-15 07:05)
+e185954df auto: test_mcp_server.py 編集前 (2026-09-15 07:05)
+cff9a7780 auto: pyproject.toml 編集前 (2026-09-15 07:03)
+ab5dbc957 auto: CHANGELOG.md 編集前 (2026-09-15 07:02)
+593182a4e auto: test_mcp_server.py 編集前 (2026-09-15 07:00)
+0e139fbf6 auto: catalog.py 編集前 (2026-09-15 06:59)
+cab5282df auto: catalog.py 編集前 (2026-09-15 06:59)
+5bd26ba07 auto: catalog.py 編集前 (2026-09-15 06:59)
+5df4c8190 auto: test_mcp_server.py 編集前 (2026-09-15 06:58)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-06:48 docs/SESSION_SUMMARY.md
-06:16 docs/design_notes.json
-06:16 docs/DESIGN_NOTES.de.md
-06:16 docs/DESIGN_NOTES.zh.md
-06:16 docs/DESIGN_NOTES.tw.md
-06:16 docs/DESIGN_NOTES.md
-06:16 docs/DESIGN_NOTES.ko.md
-06:16 docs/DESIGN_NOTES.en.md
-06:16 docs/OP_INDEX.json
-06:16 fullseye/SENSOR_PLAYBOOK.md
-06:16 docs/SENSOR_PLAYBOOK.md
-06:16 docs/EXAMPLES_3D.md
-06:16 docs/articles/README.md
-06:16 docs/README.de.md
-06:15 docs/README.ko.md
+07:05 .ruff_cache/0.16.0/15563442506313268617
+07:05 CHANGELOG.md
+07:05 tests/test_mcp_server.py
+07:03 fullseye.egg-info/SOURCES.txt
+07:03 fullseye.egg-info/top_level.txt
+07:03 fullseye.egg-info/requires.txt
+07:03 fullseye.egg-info/entry_points.txt
+07:03 fullseye.egg-info/dependency_links.txt
+07:03 fullseye.egg-info/PKG-INFO
+07:03 pyproject.toml
+07:03 tests/test_packaging_subpackages.py
+07:01 .ruff_cache/0.16.0/17073292267110453001
+06:59 fullseye/mcp/catalog.py
+06:55 fullseye/mcp/__main__.py
+06:55 fullseye/mcp/__init__.py
 ```
 
 ---
