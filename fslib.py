@@ -562,6 +562,36 @@ def _threshold_cv2(img: FImage, lo: float, hi: float) -> Region:
     return Region((a >= img.absolute(lo)) & (a <= img.absolute(hi)))
 
 
+def _order_ids(lbl: np.ndarray, k: int) -> np.ndarray:
+    """ラベル id を**契約の並び**に置き換える: 最初の run の (row, col) 昇順。
+
+    ★2026-09-14: ここが無かった。`ndi.label` も `cv2.connectedComponentsWithStats` も
+    **自分の走査順でラベル番号を振る**のであって、`fullseye_abi.h` が
+    `fs_connection` に定めた「最初の run の (row, col) 昇順」とは一致しない。
+    実測の反例(2x5、値域 (-1,1)、しきい値 [-0.520, -0.139]):
+
+        マスク  [[0 0 0 1 0]
+                 [0 1 0 1 0]]
+
+    物体は (row=0, col=3) 面積 2 と (row=1, col=1) 面積 1。契約の昇順なら前者が先だが、
+    `fslib` は後者を 0 番目に返していた。**呼び手が添字で引く以上、並びが違えば
+    指す物体が変わる** —— 「面積が最大の不良を 1 番目に」といったレシピが、
+    実装を差し替えた途端に別の物体を指す。差分ファジングの観測に「並び」を足した
+    瞬間に 3 シードすべてで出た(それまで 60,000 ケース撒いて 0 件だったのは、
+    **並びを観測していなかった**から)。
+    """
+    if k <= 0:
+        return np.zeros(0, dtype=np.int32)
+    ids = np.arange(1, k + 1, dtype=np.int32)
+    # 各ラベルの「最初の画素」= 行優先で最小の平坦添字。run の先頭と一致する。
+    flat = lbl.reshape(-1)
+    first = np.full(k + 1, flat.size, dtype=np.int64)
+    nz = np.nonzero(flat)[0]
+    # 後ろから代入すると、同じラベルについて最小の添字が最後に残る
+    first[flat[nz[::-1]]] = nz[::-1]
+    return ids[np.argsort(first[1:], kind="stable")]
+
+
 @op("connection", "numpy")
 def _connection_numpy(reg: Region) -> ObjectSet:
     # ★2026-09-14: ここは長らく `ndi.label(mask)` = **4 連結の既定**だった。
