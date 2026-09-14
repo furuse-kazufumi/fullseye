@@ -32,10 +32,17 @@ pub const FS_E_UNSUPPORTED: c_int = 4;
 pub struct FsImage {
     h: i32,
     w: i32,
-    px: Vec<f64>, // 行優先。dtype は f64 に正規化して持つ(このスパイクの範囲)
+    px: Vec<f64>, // 行優先。画素は f64 に正規化して持つ(このスパイクの範囲)
+    dtype: c_int, // ★呼び手が**名乗った** dtype。読み返せる(契約 fs_image_dtype)
     lo: f64,
     hi: f64,
 }
+
+// --- R-4: 境界を越える要素型(ヘッダの fs_dtype と同じ値)-------------------
+pub const FS_DTYPE_U8: c_int = 1;
+pub const FS_DTYPE_U16: c_int = 2;
+pub const FS_DTYPE_F32: c_int = 3;
+pub const FS_DTYPE_F64: c_int = 4;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
