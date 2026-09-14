@@ -163,6 +163,9 @@ py-modules = [
   # `gsplat_torch` / `gsplat_train` / `fullseye_3dgs` は torch/gsplat 依存(optional
   # extra の話であって、ファイルが無いのとは別の失敗なので同梱する)。
   "fullseye_3dgs", "gaits", "gsplat_torch", "gsplat_train", "scene_registry",
+  # 第 3 層。1 段塞ぐごとに次の段が見える = 門が**配布物の側から**数えている証拠
+  # ([[feedback_gate_must_stand_where_the_accident_happens]])。
+  "gsplat_animate", "gsplat_cli",
   # ★2026-09-05: この 2 本が py-modules に無く、**wheel から丸ごと落ちていた**。
   # `pip install fullseye` した Linux で op が 855 → 631 になり、
   # **224 op(26%)が黙って消えていた**(hx_* 81 / tb_* 143)。
