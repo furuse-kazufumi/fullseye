@@ -71,8 +71,12 @@ PROBELESS_OPS_BUDGET = 0
 
 
 def _probes(op):
-    """この op に当てられる探針。空なら契約ゲートは何も検査できない。"""
-    return list(inputs_for(op.in_sort))
+    """この op に当てられる探針。空なら契約ゲートは何も検査できない。
+
+    ★``op.name`` を渡すのは ``op_probe.OP_PROBE_OVERRIDE``(op 専用の探針と
+    「なぜ sort 既定では駄目か」の理由)を引かせるため(2026-09-15)。
+    """
+    return list(inputs_for(op.in_sort, op.name))
 
 
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
