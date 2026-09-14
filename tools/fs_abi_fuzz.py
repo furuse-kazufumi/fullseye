@@ -310,6 +310,7 @@ def observe_python(c: dict, ops: set) -> dict:
         out["threshold_status"] = 1
         return out
     out["area"], out["n_runs"] = int(reg.area()), int(reg.run_count())
+    out["runs"] = [tuple(int(x) for x in r) for r in reg.runs()]   # 上の註を参照
     objs = fslib.connection(reg)
     out["n_comp"] = len(objs.ids)
     ar, ro, co = fslib.measure_all(objs)
