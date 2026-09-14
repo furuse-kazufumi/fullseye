@@ -56,6 +56,45 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 - `fs.FullseyeGraph` — a **DAG** (branch + merge, e.g. residual = raw vs blurred, or
   a stereo pair through a 2-input op), same operator catalog.
 
+## From an LLM (MCP server, 0.1.11 PoC)
+
+`py -3.11 -m fullseye.mcp` is a stdio Model Context Protocol server (protocol
+`2025-06-18`). It exposes **8 tools, not 918**: search the catalog, read an operator's
+knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
+load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and
+inspect a handle. Images travel as `fullseye://img/<sha16>` handles; every result carries
+raw statistics **and** a verdict (`ok / constant / flat / saturated / nonfinite /
+out_of_range / empty`), and a small input-vs-output figure is attached automatically only
+when the verdict is not `ok`. The default is strict (`on_error="raise"`): a degraded
+operator is refused with the reason; `allow_degraded=true` opts into fail-soft and then the
+degradation ledger is always in the result. Paths outside the sandbox roots, unknown
+operator names, sort mismatches, out-of-range knobs and unknown arguments are all refused
+explicitly — nothing is coerced to "the nearest thing".
+
+Limit, stated plainly: the catalog reads `docs/OP_INDEX.json` and `docs/ops/**/*.md`, which
+are not in the wheel, so the server needs a checkout; from a `pip install` it stops with
+`CatalogError` rather than serving an empty catalog. Details: [`MCP.md`](MCP.md).
+
+## From other languages (C ABI)
+
+`fullseye_abi.h` is a **specification-only C ABI** — 25 functions, 5 operators
+(`fs_gauss`, `fs_threshold`, `fs_connection`, `fs_measure_all`, `fs_select_shape`) — with a
+Rust `cdylib` reference implementation in `rust/fullseye_core`. Because the library is a
+plain C ABI there are no per-language bindings to maintain: Python (`ctypes`), C#
+(`DllImport`), C / C++ (`#include "fullseye_abi.h"`) and LuaJIT (`ffi.cdef`) all call the
+same `.dll` / `.so` and, in the checked-in examples, print the same output. The examples in
+[`rust/fullseye_core/examples/`](../rust/fullseye_core/examples/README.md) record which
+toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1 as of
+2026-09-14) rather than which ones exist.
+
+What this is **not**: it is not the 918-operator Python library in another language. Its
+purpose is to be a *second implementation* of a small contract, so that a differential
+fuzzer and a header-including C caller can find specification bugs the Python tests cannot
+— nine were found this way in 0.1.11 (connectivity, border mode, object ordering, status
+codes, a missing ABI argument, a header that MSVC read as cp932, …). Speed is not the point:
+the wins measured against Python were representation wins (run-length regions), not
+language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
+
 ## Honest boundary
 
 Fullseye is classical (numpy/scipy, no learned detectors/segmenters/priors). It
