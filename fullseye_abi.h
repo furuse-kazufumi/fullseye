@@ -169,11 +169,15 @@ void        fs_tuple_release(fs_tuple_t *t);
  * IMMEDIATELY precedes its declaration, and nothing between the tag and the
  * declaration may contain a `;` — tests/test_abi_conformance.py reads from the
  * tag to the first semicolon.  Prose that needs semicolons goes ABOVE the tag.
- * (Learned 2026-09-14: a long comment written between `@fslib gauss` and
+ * (Learned 2026-09-14: a long comment written between the gauss tag and
  * `fs_gauss(...)` killed COLLECTION of that test file, which aborted the WHOLE
  * suite — pytest reported `Interrupted: 1 error during collection` and the
  * runner still exited 0.  Same family as [[feedback_test_import_kills_collection]]:
- * one file's parse error silently takes every other test with it.)
+ * one file's parse error silently takes every other test with it.
+ * Do NOT write the tag spelling itself in prose: the scanner is a plain regex
+ * over this file, so a mention in a comment BECOMES a second declaration.
+ * That is what happened while fixing the first problem — the operator count
+ * went 5 -> 6 and nothing noticed, which is why the count is now a gate.)
  *
  * The kernel is the sampled Gaussian truncated at FOUR standard deviations:
  * radius = (int)(4.0 * sigma + 0.5), weights normalised to sum to one, applied
