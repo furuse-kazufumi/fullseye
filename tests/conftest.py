@@ -188,6 +188,106 @@ def volume_bank() -> dict[str, np.ndarray]:
     }
 
 
+# --------------------------------------------------------------------------- #
+# ★2026-09-14 追加。ここまで探針バンクは 6 sort しか無く、**901 op のうち 151 本
+# (16.8 %)が契約ゲート 3 本(例外を投げない / 非有限を出さない / 決定的)を
+# 一度も実行されていなかった** —— `PROBELESS_OPS_BUDGET = 151` というラチェットで
+# 本数だけ凍結し、「本来の直しは BANKS を全 in_sort へ広げること」と自分で書いて
+# あった。その本来の直しをここで入れる。
+#
+# 形の出どころは推測ではない: `backends_bridge._EMPTY_OF` が 12 sort すべての
+# **正準の最小値**を宣言しており(そこが sort の定義そのもの)、`problems.py` の
+# `_points_stack` / `_signal_stack` などが実データの作り方を持っている。
+# 各バンクは既存の作法に合わせ、**普通の値・定数 0・定数 1・退化形**を混ぜる
+# (定数と退化形が「走った」と「意味のある出力」を分ける
+#  —— [[feedback_ran_is_not_meaningful_output]])。
+# --------------------------------------------------------------------------- #
+def points_bank(m: int = 96) -> dict[str, np.ndarray]:
+    """(N, 3) 点群。球面(法線が全方向)+ 平面(法線が一定)= 曲率の異なる 2 領域。"""
+    rng = _rng()
+    half = m // 2
+    v = rng.standard_normal((half, 3))
+    v /= np.linalg.norm(v, axis=1, keepdims=True).clip(1e-12)
+    sphere = v * 3.0 + 5.0
+    plane = np.column_stack([rng.uniform(0, 10, m - half),
+                             rng.uniform(0, 10, m - half),
+                             np.zeros(m - half)])
+    return {
+        "normal": np.vstack([sphere, plane]),
+        "plane_only": plane,                       # 法線が一定 = 曲率ゼロ
+        "coincident": np.zeros((8, 3)),            # 全点が同じ場所(距離が全部 0)
+        "single": np.zeros((1, 3)),                # 近傍が作れない
+        "collinear": np.column_stack([np.arange(8.0), np.zeros(8), np.zeros(8)]),
+    }
+
+
+def signal_bank(m: int = 128) -> dict[str, np.ndarray]:
+    """1-D 波形。減衰振動 + 高調波。"""
+    t = np.linspace(0, 8 * np.pi, m)
+    return {
+        "normal": np.sin(t) * np.exp(-t / (6 * np.pi)) + 0.3 * np.sin(3.1 * t),
+        "const0": np.zeros(m),
+        "const1": np.ones(m),
+        "impulse": np.eye(1, m, m // 2).ravel(),
+        "tiny2": np.array([0.0, 1.0]),             # 差分・平滑の下限
+    }
+
+
+def counts_bank(m: int = 64) -> dict[str, np.ndarray]:
+    """光子計数ヒストグラム(非負整数)。背景 + ピーク。"""
+    k = np.arange(m)
+    peak = np.exp(-((k - m * 0.4) ** 2) / (2 * 3.0 ** 2))
+    return {
+        "normal": (40 * peak + 5).astype(np.int64),
+        "const0": np.zeros(m, np.int64),
+        "flat": np.full(m, 7, np.int64),           # 背景だけ(ピークが無い)
+        "tiny2": np.array([0, 3], np.int64),
+    }
+
+
+def matrix_bank(n: int = 6) -> dict[str, np.ndarray]:
+    """一般の 2-D 数値行列。**特異・不良条件を必ず入れる**(擬似逆行列や条件数の
+    op は、そこで初めて壊れるか壊れないかが分かれる)。"""
+    rng = _rng()
+    a = rng.standard_normal((n, n))
+    sing = np.ones((n, n))                          # 階数 1 = 特異
+    ill = np.diag(np.logspace(0, -12, n))           # 条件数 1e12
+    return {
+        "normal": a,
+        "singular": sing,
+        "ill_conditioned": ill,
+        "zeros": np.zeros((n, n)),
+        "tiny2": np.array([[1.0, 2.0], [3.0, 4.0]]),
+        "tall": rng.standard_normal((n * 2, n)),    # 正方でない
+    }
+
+
+def keypoints_bank() -> dict[str, np.ndarray]:
+    """(N, 2) 像面上の点。**空**が正準の最小値(`_EMPTY_OF` が (0,2))。"""
+    return {
+        "normal": np.array([[3.0, 4.0], [10.0, 12.0], [20.0, 7.0], [31.0, 31.0]]),
+        "empty": np.zeros((0, 2)),
+        "single": np.array([[5.0, 5.0]]),
+        "coincident": np.zeros((4, 2)),
+    }
+
+
+def rgbimage_bank(n: int = 32) -> dict[str, np.ndarray]:
+    """(H, W, 3) の色画像。`color_bank` と同じ形だが、鏡面分離などの op が
+    見るのは**ハイライトの有無**なので、飽和した明点を混ぜる。"""
+    g = image_bank(n)["normal"]
+    base = np.clip(np.stack([g, 0.7 * g + 0.1, 1 - g], -1), 0, 1)
+    hot = base.copy()
+    hot[n // 3:n // 3 + 4, n // 3:n // 3 + 4, :] = 1.0      # 飽和ハイライト
+    return {
+        "normal": base,
+        "highlight": hot,
+        "const0": np.zeros((n, n, 3)),
+        "const1": np.ones((n, n, 3)),
+        "grey": np.repeat(g[:, :, None], 3, axis=2),        # 彩度ゼロ
+    }
+
+
 BANKS = {
     "image": image_bank,
     "region": region_bank,
@@ -195,6 +295,16 @@ BANKS = {
     "contour": contour_bank,
     "volume": volume_bank,
     "any": image_bank,
+    # ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった
+    # 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield /
+    # beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、
+    # **一度に全部入れて切り分け不能にしない**よう次の段で足す。
+    "points": points_bank,          # 56 op
+    "signal": signal_bank,          # 27 op
+    "counts": counts_bank,          #  8 op
+    "matrix": matrix_bank,          #  4 op
+    "keypoints": keypoints_bank,    #  2 op
+    "rgbimage": rgbimage_bank,      #  6 op
 }
 
 KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85)]
