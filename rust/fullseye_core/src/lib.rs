@@ -128,10 +128,21 @@ pub extern "C" fn fs_image_create(
             h: height,
             w: width,
             px,
+            dtype,
             lo: range_lo,
             hi: range_hi,
         }));
     }
+    FS_OK
+}
+
+/// 呼び手が名乗った dtype を読み返す(契約 `fs_image_dtype`)。
+#[no_mangle]
+pub extern "C" fn fs_image_dtype(img: *const FsImage, out: *mut c_int) -> c_int {
+    if img.is_null() || out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    unsafe { *out = (*img).dtype };
     FS_OK
 }
 
