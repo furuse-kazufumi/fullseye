@@ -719,6 +719,17 @@ op 46 -> 51。既定の振る舞いは 1 画素も変えていない(足した�
   あるが、短い名前(`gaussian` / `median` / `invert`)が進化やサンプルの都合で**意図して
   残した別名**かは判断が要る。レジストリを触ると候補表・進化の再現性・公開記事に
   波及するので、**測って報告に留めた**。探針 2 枚での一致は強い兆候だが証明ではない。
+- **MCP サーバは pip 版から起動できない。** カタログの正本 `docs/OP_INDEX.json` と
+  知識層 `docs/ops/**/*.md` は wheel に入っていない(入るのは
+  `studio_assets/op_help/*.html`)。wheel を一時 venv へ入れてリポジトリ外から
+  `-m fullseye.mcp --coverage` を起動したら、`CatalogError: docs/OP_INDEX.json が無い`
+  で**理由つきで止まった**(2026-09-15 実測。黙って空のカタログにはならない)。
+  直すなら、索引と frontmatter だけを小さな JSON にして `fullseye/` の package-data へ
+  同梱し、本文は html に落とす。この PoC は開発 checkout 前提。
+- ★**`fullseye/mcp/` は最初 wheel から落ちていた。** `[tool.setuptools] packages` は
+  明示列挙で、サブパッケージを自動では含めない。修正前に wheel を作ると
+  `fullseye/mcp/*` は **0 エントリ**、`fullseye.mcp` を足すと 4 エントリ(実測)。
+  `tests/test_packaging_subpackages.py` がディスク側から数えて再発を止める。
 
 - **n-ary 層の 17 op にノートが無い**(`add_image` `sub_image` `mult_image` `div_image`
   `abs_diff_image` `min_image` `max_image` `convol_image` `bit_and` `bit_or`
