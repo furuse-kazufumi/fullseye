@@ -283,6 +283,20 @@ def test_a_healthy_output_gets_no_thumbnail_in_auto_but_one_when_forced(cat, sto
     assert float(np.abs(left.mean() - right.mean())) < 0.2, "入力と出力が別物に見える(gaussian a=0.3)"
 
 
+def test_a_binary_region_is_not_called_saturated(cat, store):
+    """★`--demo` で otsu の出力(region)が「飽和」と判定され、小図が昇格した(2026-09-15)。
+    0/1 しか無いのは region の契約であって異常ではない。image の 0/1 は飽和のまま。"""
+    from fullseye.mcp.diagnose import stats_of, verdict_of
+    h = call_tool("fullseye_load_image", {"path": _sample()}, cat, store)["structuredContent"]["handle"]
+    seg = call_tool("fullseye_apply", {"handle": h, "op": "otsu"}, cat, store)
+    sc = seg["structuredContent"]
+    assert sc["out_sort"] == "region" and sc["verdict"] == "ok", sc["reasons"]
+    assert not _links(seg), "健全な region に小図が昇格している"
+    st = stats_of((np.random.default_rng(0).random((32, 32)) > 0.5).astype(float))
+    assert verdict_of(st, op_name="otsu", out_sort="region")["verdict"] == "ok"
+    assert verdict_of(st, op_name="gaussian", out_sort="image")["verdict"] == "saturated"
+
+
 def test_out_of_range_image_output_is_flagged_unless_the_ledger_exempts_it():
     """診断器が今夜の台帳を引いていること: 同じ数値でも op 名で判定が変わる。"""
     from fullseye.mcp.diagnose import stats_of, verdict_of

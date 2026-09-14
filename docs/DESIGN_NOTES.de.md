@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 674. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 675. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -858,6 +858,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `fullseye/mcp/diagnose.py`
 
 - **L87** _(ja)_ — ★順序が答えを変える(2026-09-15 実測): `ones + inf` は有限部の std が 0 なので 「定数」が先に当たり、0..715 の配列は 99.9 % が ≥ 1 なので「飽和」が先に当たった。 より根本的な異常を先に言う: 非有限 → 定数 → 範囲外 → 飽和 → 平坦。
+- **L106** _(ja)_ — ★飽和・平坦は **image / color だけ**。region は 0/1 が契約なので「飽和」ではない —— リファクタで region を含めてしまい、`--demo` で otsu の出力が「飽和」と判定されて 小図が昇格した(2026-09-15 実測)。region の定数(空 / 全面)は上で拾う。
 
 ## `fullseye/mcp/handles.py`
 
@@ -1148,7 +1149,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_mcp_images.py`
 
-- **L298** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
+- **L312** _(ja)_ — ★最初 `ones + inf` にしていて、有限部が定数なので免除 op でも「定数」判定になり 落ちた —— それは診断器が正しい。確かめたいのは「免除 op なら非有限を異常と 言わない」だけなので、有限部に変化のある入力にする。
 
 ## `tests/test_mcp_server.py`
 
