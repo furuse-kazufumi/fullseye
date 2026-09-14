@@ -121,10 +121,20 @@ def gen_case(rng: np.random.Generator) -> dict:
     if rng.random() < 0.15:                     # 非有限を混ぜる
         a[int(rng.integers(0, h)), int(rng.integers(0, w))] = \
             float(rng.choice([np.nan, np.inf, -np.inf]))
-    # 値域は [0,1] とは限らない(R-3: 取得層が名乗るもので、画素からは推測しない)
-    vlo, vhi = rng.choice([(0.0, 1.0), (0.0, 255.0), (100.0, 300.0), (-1.0, 1.0)])
-    if rng.random() < 0.2:                      # 値域の外に出た画素
-        a[int(rng.integers(0, h)), int(rng.integers(0, w))] = float(rng.normal(0, 5))
+    # 値域は [0,1] とは限らない(R-3: 取得層が名乗るもので、画素からは推測しない)。
+    # ★2026-09-14: ここは長らく値域だけを振って**画素は 0..1 のまま**だった。相対しきい値は
+    #   値域を通して解決されるので、値域 (100,300) では絶対値 100〜300 と比べられ、
+    #   **100% が空**になっていた(実測: (100,300) は 780/780 が 0 画素、全体でも 63% が
+    #   物体 0 個)。4000 ケースが 0.6 秒で「食い違いなし」だったのは頑健だからではなく、
+    #   **connection も measure_all もほとんど踏んでいなかった**から
+    #   ([[feedback_zero_findings_may_mean_never_executed]])。値域を名乗らせるなら
+    #   **画素もその値域で描く**。
+    vlo, vhi = [tuple(map(float, t)) for t in
+                [(0.0, 1.0), (0.0, 255.0), (100.0, 300.0), (-1.0, 1.0)]][int(rng.integers(0, 4))]
+    a = vlo + a * (vhi - vlo)
+    if rng.random() < 0.2:                      # 値域の外に出た画素(R-3: clamp しない)
+        a[int(rng.integers(0, h)), int(rng.integers(0, w))] = \
+            float(vlo + rng.normal(0.5, 1.5) * (vhi - vlo))
     lo = float(rng.choice([0.0, 0.25, 0.5, 0.75, 1.0, float(rng.random())]))
     hi = float(rng.choice([0.0, 0.25, 0.5, 0.75, 1.0, float(rng.random())]))
     if rng.random() < 0.85 and lo > hi:         # 逆区間は 15% だけ残す
