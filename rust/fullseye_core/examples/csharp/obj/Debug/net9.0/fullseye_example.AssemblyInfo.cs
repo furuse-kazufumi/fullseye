@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("fullseye_example")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d1a6052e2c47744378abdfebd48c372f5413fc73")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8c7c590e7855ca18f7341ab858451be10b523fd4")]
 [assembly: System.Reflection.AssemblyProductAttribute("fullseye_example")]
 [assembly: System.Reflection.AssemblyTitleAttribute("fullseye_example")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

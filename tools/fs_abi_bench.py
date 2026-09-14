@@ -38,6 +38,10 @@ LIBNAME = {"win32": "fullseye_core.dll", "darwin": "libfullseye_core.dylib"}.get
 LIB = ROOT / "rust" / "fullseye_core" / "target" / "release" / LIBNAME
 
 
+#: `fs_dtype_t`(契約 R-4)。このスパイクは f64 の画素しか読まない。
+FS_DTYPE_F64 = 4
+
+
 def load_rust():
     if not LIB.exists():
         print("Rust 実装が建っていない(%s)。\n"
@@ -116,7 +120,8 @@ def main() -> int:
     def mk():
         img = C.c_void_p()
         assert lib.fs_image_create(a.ctypes.data_as(C.c_void_p), a.shape[0], a.shape[1],
-                                   a.strides[0], vr[0], vr[1], C.byref(img)) == 0
+                                   a.strides[0], FS_DTYPE_F64,
+                                   vr[0], vr[1], C.byref(img)) == 0
         return img
 
     img_r = mk()

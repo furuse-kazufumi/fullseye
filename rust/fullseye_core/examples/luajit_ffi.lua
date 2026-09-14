@@ -55,8 +55,12 @@ for r = 0, N - 1 do
   end
 end
 
+local FS_DTYPE_F64 = 4
 local img = ffi.new("fs_image_t*[1]")
-check(fs.fs_image_create(px, N, N, N * 8, 0.0, 1.0, img), "fs_image_create")
+check(fs.fs_image_create(px, N, N, N * 8, FS_DTYPE_F64, 0.0, 1.0, img), "fs_image_create")
+local dt = ffi.new("int32_t[1]")
+check(fs.fs_image_dtype(img[0], dt), "fs_image_dtype")
+print(("dtype 読み返し: %d (FS_DTYPE_F64 = %d)"):format(dt[0], FS_DTYPE_F64))
 
 -- lo/hi は 0..1 の相対値。画像が名乗る値域を通して解決される(R-3)。
 local reg = ffi.new("fs_region_t*[1]")

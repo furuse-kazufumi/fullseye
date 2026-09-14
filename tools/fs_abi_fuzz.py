@@ -40,6 +40,10 @@ LIBNAME = {"win32": "fullseye_core.dll", "darwin": "libfullseye_core.dylib"}.get
 LIB = ROOT / "rust" / "fullseye_core" / "target" / "release" / LIBNAME
 
 
+#: `fs_dtype_t`(契約 R-4)。このスパイクは f64 の画素しか読まない。
+FS_DTYPE_F64 = 4
+
+
 class FsRun(C.Structure):
     """`fs_run_t` —— 契約が公開する**唯一の**領域表現の窓(row, col_begin, col_end)。"""
     _fields_ = [("row", C.c_int32), ("col_begin", C.c_int32), ("col_end", C.c_int32)]
@@ -223,7 +227,8 @@ def observe_rust(lib, c: dict, ops: set) -> dict:
     a = np.ascontiguousarray(c["px"], dtype=np.float64)
     img = C.c_void_p()
     st = lib.fs_image_create(a.ctypes.data_as(C.c_void_p), a.shape[0], a.shape[1],
-                             a.strides[0], c["vrange"][0], c["vrange"][1], C.byref(img))
+                             a.strides[0], FS_DTYPE_F64,
+                             c["vrange"][0], c["vrange"][1], C.byref(img))
     if st != 0:
         return {"image": st}
     # 許容差を値域相対で取るために、値域の幅を観測に添える(比較専用の私的な鍵)。

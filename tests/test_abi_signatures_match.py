@@ -1,0 +1,138 @@
+# -*- coding: utf-8 -*-
+"""`fullseye_abi.h` の宣言と、それを呼ぶ側の宣言が**引数の数で一致**すること。
+
+★この門が無かったせいで起きたこと(2026-09-14 実測): `fs_image_create` は
+ヘッダで **8 引数**(第 5 が `fs_dtype_t dtype`)なのに、Rust 実装も ctypes の
+3 箇所も **7 引数**で書かれていた。**C ABI の引数がずれたまま**、差分ファジング
+60,000 ケース × 3 シードも変異解析 10/10 も全部緑だった。
+
+なぜ誰も気づけなかったか —— Python(ctypes)/ C#(P/Invoke)/ Lua(FFI)は
+どれも**宣言を書き写す**ので、**全員が同じ写し間違いをしていれば一致してしまう**。
+「2 つの実装を突き合わせる」差分テストは、**両方が同じ写しから出発している**と
+無力になる([[feedback_second_implementation_finds_what_tests_cannot]] の限界)。
+
+見つかったのは **C から `#include` して呼ぶ例を初めて書いたとき**。ヘッダを読む
+呼び手が 1 つあれば、コンパイラがその場で止める。この門はそれを機械化したもの
+で、C コンパイラが無い環境でも効くよう **テキストとして数を突き合わせる**。
+"""
+from __future__ import annotations
+
+import os
+import re
+
+import pytest
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+HEADER = os.path.join(ROOT, "fullseye_abi.h")
+RUST = os.path.join(ROOT, "rust", "fullseye_core", "src", "lib.rs")
+
+#: ヘッダが宣言していて Rust スパイクが**意図的に実装していない**もの。
+#: 実装しない理由を書く —— 空欄にすると「未実装」と「書き忘れ」が混ざる。
+RUST_NOT_IMPLEMENTED = {
+    "fs_image_domain": "処理領域(HALCON モデル)はこのスパイクの範囲外",
+    "fs_image_reduce_domain": "同上",
+    "fs_tuple_elem_type": "real しか作らないので型問い合わせは未実装",
+}
+
+#: Rust 側にあってヘッダに無いもの。**契約ではない**ことを明示する。
+RUST_ONLY = {
+    "fs_abi_version": "版の問い合わせ。ヘッダはマクロで版を持つので関数宣言は無い",
+    "fs_debug_copy_pixels": "テスト専用の抜け道。契約に足すかは別の決定(ヘッダの註を参照)",
+}
+
+
+def header_decls() -> dict[str, int]:
+    """ヘッダの関数宣言 -> 引数の数。"""
+    src = open(HEADER, encoding="utf-8").read()
+    out = {}
+    for m in re.finditer(r"(?:fs_status_t|void)\s+(fs_\w+)\s*\(([^;]*?)\)\s*;", src, re.S):
+        args = [a.strip() for a in m.group(2).split(",") if a.strip()]
+        out[m.group(1)] = len(args)
+    return out
+
+
+def rust_decls() -> dict[str, int]:
+    """Rust の `extern "C"` 関数 -> 引数の数。"""
+    src = open(RUST, encoding="utf-8").read()
+    out = {}
+    for m in re.finditer(r'pub extern "C" fn (fs_\w+)\s*\(([^)]*)\)', src, re.S):
+        args = [a.strip() for a in m.group(2).split(",") if a.strip()]
+        out[m.group(1)] = len(args)
+    return out
+
+
+def ctypes_argtypes() -> dict[str, dict[str, int]]:
+    """ctypes で `argtypes` を宣言している箇所 -> {関数名: 引数の数}。
+
+    リストの要素数を数えるだけ(型までは見ない)。**数のずれがいちばん静かに
+    壊れる**ので、まずそこを固定する。
+    """
+    files = ["tools/fs_abi_fuzz.py", "tools/fs_abi_bench.py",
+             "tests/test_rust_abi_parity.py"]
+    out = {}
+    for rel in files:
+        path = os.path.join(ROOT, rel)
+        if not os.path.exists(path):
+            continue
+        src = open(path, encoding="utf-8").read()
+        # コメントを落としてから括弧の中の要素を数える
+        got = {}
+        for m in re.finditer(r"\.(fs_\w+)\.argtypes\s*=\s*\[(.*?)\]", src, re.S):
+            body = re.sub(r"#[^\n]*", "", m.group(2))
+            got[m.group(1)] = len([x for x in body.split(",") if x.strip()])
+        if got:
+            out[rel] = got
+    return out
+
+
+def test_the_header_and_the_rust_implementation_agree_on_arity():
+    hdr, rs = header_decls(), rust_decls()
+    assert len(hdr) >= 20, "ヘッダの宣言を読めていない(%d 件)" % len(hdr)
+    assert len(rs) >= 20, "Rust の宣言を読めていない(%d 件)" % len(rs)
+
+    bad = {n: (hdr[n], rs[n]) for n in set(hdr) & set(rs) if hdr[n] != rs[n]}
+    assert not bad, (
+        "ヘッダと Rust で**引数の数が違う**: %s\n"
+        "  C ABI の引数ずれは実行時に何の兆候も出さず、黙って別の値を掴む。"
+        % ", ".join("%s(ヘッダ %d / Rust %d)" % (n, a, b) for n, (a, b) in sorted(bad.items())))
+
+    missing = sorted(set(hdr) - set(rs) - set(RUST_NOT_IMPLEMENTED))
+    assert not missing, (
+        "ヘッダにあって Rust に無い関数が増えた: %s —— 実装するか、"
+        "RUST_NOT_IMPLEMENTED に**理由つきで**足すこと" % missing)
+
+    extra = sorted(set(rs) - set(hdr) - set(RUST_ONLY))
+    assert not extra, (
+        "Rust にあってヘッダに無い関数が増えた: %s —— 契約に入れるなら宣言し、"
+        "契約外なら RUST_ONLY に**理由つきで**足すこと(黙って生やさない)" % extra)
+
+
+@pytest.mark.parametrize("rel", sorted(ctypes_argtypes()))
+def test_ctypes_declarations_match_the_header(rel):
+    """FFI で書き写した宣言が、ヘッダと**引数の数で**一致すること。
+
+    書き写しどうしを突き合わせても、全員が同じ間違いをしていれば一致する ——
+    だから**ヘッダと**照合する。
+    """
+    hdr = header_decls()
+    got = ctypes_argtypes()[rel]
+    assert got, "%s に argtypes が 1 つも無い" % rel
+    bad = {n: (hdr[n], k) for n, k in got.items() if n in hdr and hdr[n] != k}
+    assert not bad, (
+        "%s の argtypes がヘッダと合わない: %s"
+        % (rel, ", ".join("%s(ヘッダ %d / ctypes %d)" % (n, a, b)
+                          for n, (a, b) in sorted(bad.items()))))
+
+
+def test_the_header_compiles_as_c_when_a_compiler_is_available():
+    """ヘッダ単体が C として通ること。**無ければ正直に SKIP**。"""
+    import shutil
+    import subprocess
+    cc = shutil.which("clang") or shutil.which("gcc") or shutil.which("cc")
+    if cc is None:
+        pytest.skip("C コンパイラが無い —— **建たなかった**ことを「通った」と混ぜない")
+    r = subprocess.run([cc, "-fsyntax-only", "-std=c11", "-Wall", "-Wextra", HEADER],
+                       capture_output=True, text=True)
+    assert r.returncode == 0, (
+        "fullseye_abi.h が C として通らない:\n%s" % (r.stderr or r.stdout)[:2000])

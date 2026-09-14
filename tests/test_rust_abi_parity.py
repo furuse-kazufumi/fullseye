@@ -34,6 +34,10 @@ LIBNAME = {"win32": "fullseye_core.dll", "darwin": "libfullseye_core.dylib"}.get
     sys.platform, "libfullseye_core.so")
 
 
+#: `fs_dtype_t`(契約 R-4)。このスパイクは f64 の画素しか読まない。
+FS_DTYPE_F64 = 4
+
+
 class FsRun(C.Structure):
     _fields_ = [("row", C.c_int32), ("col_begin", C.c_int32), ("col_end", C.c_int32)]
 
@@ -87,7 +91,7 @@ def _rust_run(lib, px, lo, hi, vrange):
     h, w = a.shape
     img = C.c_void_p()
     st = lib.fs_image_create(a.ctypes.data_as(C.c_void_p), h, w, a.strides[0],
-                             vrange[0], vrange[1], C.byref(img))
+                             FS_DTYPE_F64, vrange[0], vrange[1], C.byref(img))
     assert st == 0, "fs_image_create -> %d" % st
     reg = C.c_void_p()
     st = lib.fs_threshold(img, lo, hi, C.byref(reg))
@@ -207,7 +211,8 @@ def _rust_image(lib, px, vrange):
     a = np.ascontiguousarray(px, dtype=np.float64)
     img = C.c_void_p()
     assert lib.fs_image_create(a.ctypes.data_as(C.c_void_p), a.shape[0], a.shape[1],
-                               a.strides[0], vrange[0], vrange[1], C.byref(img)) == 0
+                               a.strides[0], FS_DTYPE_F64,
+                               vrange[0], vrange[1], C.byref(img)) == 0
     return img, a
 
 
