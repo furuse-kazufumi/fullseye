@@ -91,9 +91,21 @@ def test_trot_travel_advances_root_x():
     """travel>0 で root x が単調前進する(地形横断デモ用)。"""
     import numpy as np
     import mujoco
+    import os
+    import pytest
     import scene_registry as R
     import gaits as G
     spec = R.resolve("go2")
+    # ★2026-09-14: ここは `resolve()` の戻りを検査せず `spec["xml"]` を引いていた。
+    #   `scene_registry` が**実在しない場面に None を返す**設計(資産が無い環境では
+    #   正しい振る舞い)なので、資産チェックアウトが無いと `TypeError` で落ちる。
+    #   同じファイル群の `test_fullseye_3dgs.py` は**既にこの skip 作法を持っていた**
+    #   —— 作法が兄弟に適用されていなかった
+    #   ([[feedback_same_bug_class_recurs_check_siblings]])。
+    if spec is None:
+        pytest.skip("mujoco_menagerie(go2) 未取得 —— 環境変数 MUJOCO_MENAGERIE が "
+                    "指す資産チェックアウトが無い")
+    assert os.path.isfile(spec["xml"])
     m = mujoco.MjModel.from_xml_path(spec["xml"])
     d = mujoco.MjData(m); mujoco.mj_forward(m, d)
     q0 = G.build(m, np.asarray(d.qpos), "trot", n_frames=40, travel=0.0)
