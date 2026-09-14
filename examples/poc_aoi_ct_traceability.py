@@ -288,46 +288,55 @@ def main():
           % (N_SAMPLE, est, true_mean, est - true_mean, se))
     assert abs(est - true_mean) < 3.0 * se + 0.2, "抜き取りの外挿が標準誤差の 3 倍を超えた"
 
-    # --- 図 ---------------------------------------------------------------------
-    fig, axes = figs.subplots(1, 3, figsize=(15.0, 4.4))
-    a0 = axes[0]
-    a0.imshow(img, cmap="gray", origin="lower",
-              extent=[ax[0], ax[-1], ax[0], ax[-1]], vmin=0, vmax=1)
-    a0.scatter(centres[take, 0], centres[take, 1], s=90, facecolors="none",
-               edgecolors="#d97706", linewidths=1.8, label="CT で抜き取った %d 個" % N_SAMPLE)
-    a0.set_title("① 全数 AOI(上から見た像)")
-    a0.set_xlabel("x [µm]")
-    a0.set_ylabel("y [µm]")
-    a0.legend(fontsize=8, loc="upper right")
+    # --- 図(すべて Fullseye 自身の annotate 族で描く)-----------------------------
+    # ① 全数 AOI の像。抜き取った接合部を別パネルの CT 断面と並べて見せる。
+    mid = None
+    for i in take[:3]:
+        vol, pad = render_ct(i, spheres)
+        sl = vol[vol.shape[0] // 2]
+        mid = [sl] if mid is None else mid + [sl]
+    figs.save_grid("aoi_and_ct", [img] + mid,
+                   ["全数 AOI(%d 個を一度に撮る)" % n]
+                   + ["CT 断面 #%d 体積率 %.2f%%" % (i, ct_rate[i]) for i in take[:3]],
+                   title="① 同じロットを 2 つの装置で撮る", ncols=2, gray=True,
+                   caption="AOI は全数・2-D、CT は抜き取り・3-D。番号も座標系も装置ごとに違う。")
 
-    a1 = axes[1]
-    a1.scatter(truth[:, 1], truth[:, 0], s=34, c="#2b6cb0", label="全 %d 個(真値)" % n)
-    a1.scatter(truth[take, 1], ct_rate[take], s=60, marker="x", c="#c53030",
-               label="CT で実測した %d 個" % N_SAMPLE)
-    for k in o1[:5]:
-        a1.annotate(str(k), (truth[k, 1], truth[k, 0]), fontsize=8,
-                    xytext=(3, 3), textcoords="offset points")
-    a1.set_xlabel("AOI の見かけのボイド率(投影面積率)[%]")
-    a1.set_ylabel("CT の体積率 [%]")
-    a1.set_title("② 相関 %.3f でも、比は %.1f 倍ばらつく" % (r, ratio.max() / ratio.min()))
-    a1.legend(fontsize=8)
-    a1.grid(alpha=0.25)
+    # ② 面積率 vs 体積率。ゼロ点(比が一定という素朴な仮定)を直線で置く。
+    k_fit = float(np.sum(truth[:, 0] * truth[:, 1]) / max(np.sum(truth[:, 1] ** 2), 1e-9))
+    xs = np.linspace(0.0, float(truth[:, 1].max()) * 1.05, 2)
+    figs.save_plot("area_vs_volume",
+                   [("全 %d 個(真値)" % n, truth[:, 1], truth[:, 0]),
+                    ("CT で実測した %d 個" % N_SAMPLE, truth[take, 1], ct_rate[take]),
+                    ("比が一定と仮定(ゼロ点)", xs, k_fit * xs)],
+                   kinds=["scatter", "scatter", "line"],
+                   xlabel="AOI の見かけのボイド率(投影面積率)[%]",
+                   ylabel="CT の体積率 [%]",
+                   title="② 相関 %.3f でも比は %.1f 倍ばらつく" % (r, ratio.max() / ratio.min()),
+                   caption="直線は「面積率に比例する」という素朴な仮定。点はそこから両側へ離れる。")
 
-    a2 = axes[2]
-    w = 0.4
-    idx = np.arange(n)
-    a2.bar(idx - w / 2, truth[:, 0], w, color="#2b6cb0", label="体積率(全体)")
-    a2.bar(idx + w / 2, truth[:, 2], w, color="#c53030", label="うち界面に接する")
-    a2.set_xlabel("接合部の番号")
-    a2.set_ylabel("体積率 [%]")
-    a2.set_title("③ 危ない側(界面接触)は AOI と相関 %.3f" % r_if)
-    a2.legend(fontsize=8)
-    a2.grid(alpha=0.25, axis="y")
+    # ③ 危ない側(界面に接するボイド)が AOI からどう見えるか。
+    figs.save_plot("interface_voids",
+                   [("体積率(全体)", np.arange(n), truth[:, 0]),
+                    ("うち界面に接する", np.arange(n), truth[:, 2]),
+                    ("AOI の面積率", np.arange(n), truth[:, 1])],
+                   kinds=["line", "line", "scatter"],
+                   xlabel="接合部の番号", ylabel="率 [%]",
+                   title="③ 界面接触は AOI と相関 %.3f" % r_if,
+                   caption="AOI の面積率が大きい接合部が、界面に接するボイドを持つとは限らない。")
 
-    figs.finish(fig, out / "poc_aoi_ct_traceability.png",
-                "全数 AOI と抜き取り CT を対応づける")
-    print("\n図 -> %s" % (out / "poc_aoi_ct_traceability.png"))
-    print("所要 %.1f s" % (time.perf_counter() - t0))
+    # ④ 数字を持ち出せる形で置く(悪い順の食い違いが主題なので上位だけ)。
+    rows = []
+    for rank, k in enumerate(o1[:8], 1):
+        rows.append([str(rank), str(int(k)), "%.2f" % truth[k, 1], "%.2f" % truth[k, 0],
+                     str(int(np.where(o2 == k)[0][0]) + 1), "%.2f" % truth[k, 2]])
+    figs.save_table("worst_first",
+                    ["AOI 順", "接合部", "面積率 %", "体積率 %", "CT 順", "界面接触 %"],
+                    rows, title="④ AOI の悪い順と CT の悪い順",
+                    caption="同じロットを同じ「悪い順」で並べても、順位は一致しない。")
+
+    if figs.errors():
+        print("図の書き出しで失敗:", "; ".join(figs.errors()))
+    print("\n所要 %.1f s" % (time.perf_counter() - t0))
     print("\n== 道具の穴 ==")
     print(" * 1 対 1 の割当が op に無い(ここでは貪欲で代用。点が離れているので厳密解と一致するが、"
           "密なときは破れる)")
