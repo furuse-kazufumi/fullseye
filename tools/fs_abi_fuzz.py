@@ -59,6 +59,9 @@ def load_rust():
     lib.fs_connection.argtypes = [C.c_void_p, p(C.c_void_p)]
     lib.fs_region_area.argtypes = [C.c_void_p, p(C.c_int64)]
     lib.fs_region_run_count.argtypes = [C.c_void_p, p(C.c_int64)]
+    lib.fs_region_runs.argtypes = [C.c_void_p, p(FsRun), C.c_int64, p(C.c_int64)]
+    lib.fs_image_absolute.argtypes = [C.c_void_p, C.c_double, p(C.c_double)]
+    lib.fs_image_shape.argtypes = [C.c_void_p, p(C.c_int32), p(C.c_int32)]
     lib.fs_objectset_count.argtypes = [C.c_void_p, p(C.c_int64)]
     lib.fs_objectset_region.argtypes = [C.c_void_p, C.c_int64, p(C.c_void_p)]
     lib.fs_measure_all.argtypes = [C.c_void_p] + [p(C.c_void_p)] * 3
