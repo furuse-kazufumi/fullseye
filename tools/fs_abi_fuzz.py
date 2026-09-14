@@ -346,6 +346,12 @@ def compare(r: dict, p: dict) -> str | None:
         for g, w in zip(r["measure"], p["measure"]):
             if any(abs(x - y) > 1e-9 for x, y in zip(g, w)):
                 return "measure: %s / %s" % (g, w)
+    # 並びは契約の一部(最初の run の (row, col) 昇順)。集合が同じでも順序が違えば
+    # 呼び手の添字が指す物体が変わるので、**別の門として**見る。
+    if "order" in r and "order" in p and len(r["order"]) == len(p["order"]):
+        for i, (g, w) in enumerate(zip(r["order"], p["order"])):
+            if any(abs(x - y) > 1e-9 for x, y in zip(g, w)):
+                return "order: %d 番目が Rust %s / Python %s" % (i, g, w)
     return None
 
 
