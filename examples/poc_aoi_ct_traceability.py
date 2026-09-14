@@ -226,19 +226,37 @@ def main():
     print("接合部 %d 個、ボイド合計 %d 個、体積率の真値 %.2f〜%.2f %%"
           % (n, sum(len(s) for s in spheres), truth[:, 0].min(), truth[:, 0].max()))
 
-    # --- 1. AOI を撮って、装置の座標系で重心を出す -------------------------------
+    # --- 1. 対応づけ ------------------------------------------------------------
     img, ax = render_aoi(centres, spheres)
     # AOI 装置は自分の座標系で報告する(並進 + 回転 + 番号の振り直し)
     rng = np.random.default_rng(SEED + 2)
     perm = rng.permutation(n)
     aoi_centres = _rigid(centres, SHIFT_XY, ROT_DEG)[perm]
+    aoi_fid = _rigid(FIDUCIALS, SHIFT_XY, ROT_DEG)
 
-    # aoi_centres[k] は元の接合部 perm[k] なので、正解の対応は pair[k] == perm[k]。
-    pair, resid, rot_est = solve_correspondence(aoi_centres, centres)
+    # ゼロ点: 基準マークを使わず、パッドの配置だけで対応づけようとする。
+    kinds, degen = degeneracy(centres)
+    print("\n1. ★対応づけは剛体変換だけでは一意に決まらない。")
+    print("   パッド %d 個の距離署名は %d 種類しかなく、**%d 個が縮退**する —— "
+          "%d×%d の格子は 180° 回転と 2 つの鏡映で自分自身に重なるので、"
+          "「どの向きで置いたか」が点の配置からは読めない。"
+          % (n, kinds, degen, PAD_NX, PAD_NY))
+    assert degen == n, "格子が縮退していない(この PoC の前提が崩れる): %d" % degen
+
+    # 基準マークを使う。3 点の相互距離がすべて違うので、対応は装置側で決まる。
+    fd = np.sqrt(((FIDUCIALS[:, None, :] - FIDUCIALS[None, :, :]) ** 2).sum(-1))
+    side = np.sort(fd[np.triu_indices(3, 1)])
+    assert len(set(np.round(side, 6))) == 3, "基準マークが二等辺以上に対称(一意に決まらない)"
+    R, ca, cb, fid_resid = solve_from_fiducials(aoi_fid, FIDUCIALS)
+    rot_est = float(np.rad2deg(np.arctan2(R[1, 0], R[0, 0])))
+    pair, resid = apply_and_match(aoi_centres, R, ca, cb, centres)
     ok = np.array_equal(np.asarray(pair), perm)
-    print("\n1. 対応づけ: 与えた回転 %.2f° / 解いた回転 %.2f°、残差 %.3f µm、1 対 1 の全復元 %s"
-          % (ROT_DEG, -rot_est, resid, "はい" if ok else "いいえ"))
-    assert ok, "対応づけが真値と一致しない"
+    print("   基準マーク 3 点(辺長 %.0f / %.0f / %.0f µm、すべて異なる)で解くと: "
+          "与えた回転 %.2f° → 解いた回転 %.2f°、マークの残差 %.3g µm、"
+          "パッドの残差 %.3g µm、1 対 1 の全復元 %s"
+          % (side[0], side[1], side[2], ROT_DEG, rot_est, fid_resid, resid,
+             "はい" if ok else "いいえ"))
+    assert ok, "基準マークを使っても対応が真値と一致しない"
     assert resid < 1e-6, "剛体変換の残差が大きい: %g" % resid
 
     # --- 2. AOI の見かけのボイド率(投影面積率)----------------------------------
