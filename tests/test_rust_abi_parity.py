@@ -199,6 +199,168 @@ def test_rust_and_python_agree(rust, name, make, lo, hi, vrange):
         "%s: 成分ごとの面積 Rust %s / Python %s" % (name, r["comp_areas"], p["comp_areas"]))
 
 
+# --------------------------------------------------------------------------- #
+# 残り 3 演算子 —— gauss / measure_all / select_shape
+# --------------------------------------------------------------------------- #
+def _rust_image(lib, px, vrange):
+    a = np.ascontiguousarray(px, dtype=np.float64)
+    img = C.c_void_p()
+    assert lib.fs_image_create(a.ctypes.data_as(C.c_void_p), a.shape[0], a.shape[1],
+                               a.strides[0], vrange[0], vrange[1], C.byref(img)) == 0
+    return img, a
+
+
+def _rust_objs(lib, px, lo, hi, vrange=(0.0, 1.0)):
+    img, _ = _rust_image(lib, px, vrange)
+    reg = C.c_void_p()
+    assert lib.fs_threshold(img, lo, hi, C.byref(reg)) == 0
+    objs = C.c_void_p()
+    assert lib.fs_connection(reg, C.byref(objs)) == 0
+    return img, reg, objs
+
+
+def _tuple_vals(lib, t):
+    n = C.c_int64()
+    lib.fs_tuple_length(t, C.byref(n))
+    out = []
+    for i in range(int(n.value)):
+        v = C.c_double()
+        lib.fs_tuple_get_real(t, i, C.byref(v))
+        out.append(float(v.value))
+    return out
+
+
+#: 端に構造のある入力を必ず混ぜる —— 折り返しの流儀の違いは**端にしか出ない**。
+GAUSS_CASES = [
+    ("階段(端に構造がある)", lambda: np.tile(np.linspace(0, 1, 32), (32, 1))),
+    ("市松 32x32", lambda: _checker(32)),
+    ("中央の点", _one_pixel),
+    ("枠(端そのものが立っている)", _frame),
+    ("乱数 32x32", lambda: np.random.default_rng(0).random((32, 32))),
+]
+
+
+@pytest.mark.parametrize("sigma", [1.0, 2.5])
+@pytest.mark.parametrize("name,make", GAUSS_CASES, ids=[c[0] for c in GAUSS_CASES])
+def test_gauss_matches_the_python_oracle(rust, name, make, sigma):
+    """`fs_gauss` は**端まで**一致する。
+
+    ヘッダはカーネル半径も端の折り返し方も決めていない。Rust 側は scipy の流儀
+    (`lw = int(4*sigma + 0.5)`、`mode='reflect'`)を明示的に選んだ —— numpy backend が
+    既存レシピのオラクルだから。ここが食い違うなら、**決めるべきはヘッダのほう**。
+    """
+    px = make()
+    img, a = _rust_image(rust, px, (0.0, 1.0))
+    out = C.c_void_p()
+    assert rust.fs_gauss(img, sigma, C.byref(out)) == 0
+    buf = np.empty(a.size, dtype=np.float64)
+    assert rust.fs_debug_copy_pixels(out, buf.ctypes.data_as(C.POINTER(C.c_double)),
+                                     buf.size) == 0
+    rust.fs_image_release(out)
+    rust.fs_image_release(img)
+    got = buf.reshape(a.shape)
+    oracle = np.asarray(
+        fslib._REGISTRY["gauss"]["numpy"](
+            fslib.FImage(a, value_range=(0.0, 1.0)), sigma).pixels, dtype=np.float64)
+    d = np.abs(got - oracle)
+    inner = np.zeros(d.shape, bool)
+    r = int(4.0 * sigma + 0.5) + 1
+    inner[r:-r, r:-r] = True
+    assert d.max() < 1e-5, (
+        "%s sigma=%.1f: Rust と numpy が違う(端 %.3g / 内部 %.3g)—— 端だけ大きいなら "
+        "折り返しの流儀、両方大きいならカーネル半径"
+        % (name, sigma, d[~inner].max(), d[inner].max() if inner.any() else float("nan")))
+
+
+def test_gauss_rejects_a_nonpositive_sigma(rust):
+    """sigma <= 0 は両方が拒む(R-1: 失敗と「何も起きない」を分ける)。"""
+    img, _ = _rust_image(rust, np.full((8, 8), 0.5), (0.0, 1.0))
+    out = C.c_void_p()
+    for s in (0.0, -1.0):
+        assert rust.fs_gauss(img, s, C.byref(out)) != 0, "Rust が sigma=%r を受けた" % s
+        with pytest.raises(Exception):
+            fslib.gauss(fslib.FImage(np.full((8, 8), 0.5), value_range=(0.0, 1.0)), s)
+    rust.fs_image_release(img)
+
+
+def test_measure_all_matches(rust):
+    """面積と重心が一致する。重心は**画素インデックス**(画素の中心が整数)。"""
+    a = np.zeros((12, 12))
+    a[1:4, 1:4] = 1.0      # 面積 9
+    a[6:8, 2:9] = 1.0      # 面積 14
+    a[9, 9] = 1.0          # 面積 1
+    img, reg, objs = _rust_objs(rust, a, 0.5, 1.0)
+    ta, tr, tc = C.c_void_p(), C.c_void_p(), C.c_void_p()
+    assert rust.fs_measure_all(objs, C.byref(ta), C.byref(tr), C.byref(tc)) == 0
+    got = sorted(zip(_tuple_vals(rust, ta), _tuple_vals(rust, tr), _tuple_vals(rust, tc)))
+    for t in (ta, tr, tc):
+        rust.fs_tuple_release(t)
+    rust.fs_objectset_release(objs)
+    rust.fs_region_release(reg)
+    rust.fs_image_release(img)
+
+    ar, ro, co = fslib.measure_all(fslib.connection(fslib.threshold(
+        fslib.FImage(a, value_range=(0.0, 1.0)), 0.5, 1.0)))
+    want = sorted(zip(map(float, ar), map(float, ro), map(float, co)))
+    assert len(got) == len(want), "物体数 Rust %d / Python %d" % (len(got), len(want))
+    for g, w in zip(got, want):
+        assert all(abs(x - y) < 1e-9 for x, y in zip(g, w)), (
+            "measure_all が違う Rust %s / Python %s" % (g, w))
+
+
+@pytest.mark.parametrize("feature,vmin,vmax", [
+    ("area", 5.0, 20.0), ("area", 0.0, 1.0), ("area", 0.0, 0.0),
+    ("row", 0.0, 5.0), ("column", 100.0, 200.0), ("column", 0.0, 11.0),
+])
+def test_select_shape_matches(rust, feature, vmin, vmax):
+    """区間は**両端を含む**(threshold と揃える)。並びは入力の並びを保つ。"""
+    a = np.zeros((12, 12))
+    a[1:4, 1:4] = 1.0
+    a[6:8, 2:9] = 1.0
+    a[9, 9] = 1.0
+    img, reg, objs = _rust_objs(rust, a, 0.5, 1.0)
+    sel = C.c_void_p()
+    st = rust.fs_select_shape(objs, feature.encode(), vmin, vmax, C.byref(sel))
+    assert st == 0
+    cnt = C.c_int64()
+    rust.fs_objectset_count(sel, C.byref(cnt))
+    rust.fs_objectset_release(sel)
+    rust.fs_objectset_release(objs)
+    rust.fs_region_release(reg)
+    rust.fs_image_release(img)
+
+    py = fslib.select_shape(fslib.connection(fslib.threshold(
+        fslib.FImage(a, value_range=(0.0, 1.0)), 0.5, 1.0)), feature, vmin, vmax)
+    assert int(cnt.value) == len(py.ids), (
+        "%s [%s,%s]: Rust %d 個 / Python %d 個"
+        % (feature, vmin, vmax, cnt.value, len(py.ids)))
+
+
+def test_select_shape_rejects_what_the_contract_calls_a_caller_error(rust):
+    """逆さの区間と知らない feature —— **どちらも失敗**であって空ではない。
+
+    2026-09-14 の測定では、逆さの区間を Rust は拒み **`fslib` は黙って 0 個を
+    返していた**。`threshold` で直したのと同じ欠陥が兄弟に残っていた形
+    ([[feedback_same_bug_class_recurs_check_siblings]])。
+    """
+    a = np.zeros((12, 12))
+    a[1:4, 1:4] = 1.0
+    img, reg, objs = _rust_objs(rust, a, 0.5, 1.0)
+    sel = C.c_void_p()
+    assert rust.fs_select_shape(objs, b"area", 20.0, 5.0, C.byref(sel)) != 0
+    assert rust.fs_select_shape(objs, b"perimeter", 0.0, 1.0, C.byref(sel)) != 0
+    rust.fs_objectset_release(objs)
+    rust.fs_region_release(reg)
+    rust.fs_image_release(img)
+
+    py_objs = fslib.connection(fslib.threshold(
+        fslib.FImage(a, value_range=(0.0, 1.0)), 0.5, 1.0))
+    with pytest.raises(fslib.FsTypeError):
+        fslib.select_shape(py_objs, "area", 20.0, 5.0)
+    with pytest.raises(fslib.FsTypeError):
+        fslib.select_shape(py_objs, "perimeter", 0.0, 1.0)
+
+
 def test_abi_version_matches_the_header(rust):
     """第 2 実装が名乗る ABI 版が、ヘッダの版と一致する。"""
     src = (ROOT / "fullseye_abi.h").read_text(encoding="utf-8")
