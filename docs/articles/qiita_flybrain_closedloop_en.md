@@ -401,7 +401,6 @@ This reframes the first half of the article slightly. **Splitting ON from OFF in
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
-- [ ] **Shuffled-connectome control** —— rewire while preserving degree, then evolve from the same initialisation on the same task, to measure the wiring's share (§4) from the evolutionary side too. Running.
 - [ ] **Developmental ladder** —— silence cell types stage by stage and line up which function disappears where. A pilot showed that silencing all of T4 drops self-rotation estimation from 0.95 to 0.52, and that of the four T5 types only T5d loses its selectivity. Running.
 - [ ] **Staged curriculum** (contrast → ON/OFF → direction → rotation) —— the countermeasure to the dissociation in §6. If a behavioural objective alone will not produce direction selectivity, will a task sequence that demands discrimination? A pilot showed **forgetting**: after learning a later stage, earlier-stage scores fell from 0.044 to 0.017.
 - [ ] **Cumulative objective** —— does that forgetting disappear if stage *k*'s objective is the mean over stages 1…*k*?
