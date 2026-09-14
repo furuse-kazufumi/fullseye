@@ -589,7 +589,7 @@ def _connection_cv2(reg: Region) -> ObjectSet:
     #    注入のほうが効いていなかった、という経路で見つかった。)
     k, lbl, stats, cents = cv2.connectedComponentsWithStats(
         reg._mask.astype(np.uint8), connectivity=8, ltype=cv2.CV_32S)
-    return ObjectSet(lbl, np.arange(1, k, dtype=np.int32),
+    return ObjectSet(lbl, _order_ids(lbl, k - 1),
                      {"_cc_stats": stats, "_cc_centroids": cents})
 
 
