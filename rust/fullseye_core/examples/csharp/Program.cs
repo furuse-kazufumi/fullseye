@@ -76,8 +76,10 @@ class Program
             for (int c = 0; c < N; c++)
                 px[r * N + c] = (r + c) % 2;          // 市松
 
-        Check(Fs.fs_image_create(px, N, N, N * sizeof(double), 0.0, 1.0, out var img),
-              "fs_image_create");
+        Check(Fs.fs_image_create(px, N, N, N * sizeof(double), Fs.FS_DTYPE_F64,
+                                 0.0, 1.0, out var img), "fs_image_create");
+        Check(Fs.fs_image_dtype(img, out int dt), "fs_image_dtype");
+        Console.WriteLine($"dtype 読み返し: {dt}(FS_DTYPE_F64 = {Fs.FS_DTYPE_F64})");
         // lo/hi は 0..1 の相対値。画像が名乗る値域を通して解決される(R-3)。
         Check(Fs.fs_threshold(img, 0.5, 1.0, out var reg), "fs_threshold");
         Check(Fs.fs_region_area(reg, out long area), "fs_region_area");
