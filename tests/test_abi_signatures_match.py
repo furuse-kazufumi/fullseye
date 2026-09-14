@@ -178,10 +178,15 @@ def test_the_header_compiles_under_msvc():
     for std, extra in (("c11", ""), ("c++17", "/TP")):
         cmd = '"%s" >nul 2>&1 && cl /nologo /std:%s /W4 /Zs %s "%s"' % (
             vcvars[0], std, extra, HEADER)
-        r = subprocess.run(["cmd", "/c", cmd], capture_output=True, text=True)
+        # ★`text=True` にすると **cl の日本語メッセージ(cp932)を UTF-8 で
+        #   デコードしようとして読み手のスレッドが落ち、stdout/stderr が空になる**。
+        #   すると「rc=1 なのに理由が何も出ない」という、いちばん追いにくい失敗に
+        #   なる(2026-09-14 実測)。バイト列で受けて自分で緩く復号する。
+        r = subprocess.run(["cmd", "/c", cmd], capture_output=True)
+        out = (r.stdout or b"").decode("cp932", "replace") + \
+              (r.stderr or b"").decode("cp932", "replace")
         assert r.returncode == 0, (
-            "fullseye_abi.h が MSVC(/std:%s)で通らない:\n%s"
-            % (std, (r.stdout or r.stderr)[:2000]))
+            "fullseye_abi.h が MSVC(/std:%s)で通らない:\n%s" % (std, out[:2000]))
 
 
 def test_the_header_compiles_as_cpp_when_a_compiler_is_available():
