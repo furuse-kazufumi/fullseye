@@ -654,6 +654,15 @@ def gauss(img: FImage, sigma: float) -> FImage:
 
 def threshold(img: FImage, lo: float, hi: float) -> Region:
     _require(img, FImage, "threshold")
+    # ★契約 R-1(fullseye_abi.h): 失敗した演算子は「何も見つからなかった」演算子と
+    #   区別できなければならない。逆さの区間は呼び手の間違いであって、「空を寄こせ」
+    #   という正当な指定ではない —— 黙って空の Region を返すと、しきい値の計算を
+    #   間違えたレシピが「不良ゼロ」として通る。2026-09-14、同じ契約の Rust 実装が
+    #   FS_E_INVALID_ARG を返すのにこちらは空を返す、という差分で見つかった。
+    if not (float(lo) <= float(hi)):
+        raise FsTypeError(
+            "threshold: lo (%r) must not exceed hi (%r) — an inverted interval is "
+            "a caller error, not a way to ask for an empty region (ABI R-1)" % (lo, hi))
     return _dispatch("threshold", img, lo, hi)
 
 

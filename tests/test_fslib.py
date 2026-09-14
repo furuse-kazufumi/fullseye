@@ -324,3 +324,50 @@ def test_missing_dependency_degrades_studio_but_stops_the_line(monkeypatch):
     with fslib.profile("industrial"):
         with pytest.raises(FsBackendError, match="no backend for profile"):
             fslib.gauss(img, 1.5)                             # refuses to run
+
+
+# --------------------------------------------------------------------------- #
+# backend 横断の一致 —— ★2026-09-14 に実際に壊れていたところ
+# --------------------------------------------------------------------------- #
+def _checkerboard(n: int = 8):
+    """市松模様。**4 連結なら n*n/2 個、8 連結なら 1 個**になる形。
+
+    連結性の取り違えを一発で出す探針で、乱数では絶対に出ない
+    (feedback_random_test_data_hides_structural_defects)。
+    """
+    import numpy as np
+    return (np.indices((n, n)).sum(axis=0) % 2).astype(float)
+
+
+def test_connection_is_eight_connected_on_every_backend():
+    """`fs_connection` は 8 連結(fullseye_abi.h)。backend で変わってはいけない。
+
+    ここは実際に壊れていた: numpy backend が `ndi.label` の既定(4 連結)、
+    cv2 backend が 8 連結で、**同じレシピが backend 次第で 32 個と 1 個を返した**。
+    """
+    import numpy as np
+    import fslib
+    img = fslib.FImage(_checkerboard(8), value_range=(0.0, 1.0))
+    reg = fslib.threshold(img, 0.5, 1.0)
+    counts = {}
+    for be in fslib.backends_for("connection"):
+        fn = fslib._REGISTRY[("connection", be)] if hasattr(fslib, "_REGISTRY") else None
+        if fn is None:
+            fn = globals().get("_skip")
+        if fn is None:
+            continue
+        counts[be] = len(fn(reg).ids)
+    assert counts, "connection の backend が 1 つも引けない"
+    assert set(counts.values()) == {1}, (
+        "8x8 の市松模様は 8 連結なら 1 個。backend ごとの物体数 %s —— "
+        "4 連結の backend が混じっている" % counts)
+
+
+def test_threshold_rejects_an_inverted_interval():
+    """lo > hi は失敗であって「空を寄こせ」ではない(ABI R-1)。"""
+    import numpy as np
+    import pytest
+    import fslib
+    img = fslib.FImage(np.full((4, 4), 0.5), value_range=(0.0, 1.0))
+    with pytest.raises(fslib.FsTypeError):
+        fslib.threshold(img, 0.8, 0.2)
