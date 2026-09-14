@@ -41,7 +41,12 @@ FIGURE_KINDS = (
     (".gif", "動画 / 体積 / ライトフィールドの補助アニメーション"),
 )
 
-SOURCES = ("index", "registry", "note", "facade")
+#: ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が
+#: 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した
+#: (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が
+#: 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する
+#: 480 個の機能を残骸と呼んでいた。
+SOURCES = ("index", "registry", "ledger", "note", "facade")
 
 _FM_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.S)
 
