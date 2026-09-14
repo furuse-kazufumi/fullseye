@@ -726,7 +726,8 @@ def threshold(img: FImage, lo: float, hi: float) -> Region:
     #   間違えたレシピが「不良ゼロ」として通る。2026-09-14、同じ契約の Rust 実装が
     #   FS_E_INVALID_ARG を返すのにこちらは空を返す、という差分で見つかった。
     if not (float(lo) <= float(hi)):
-        raise FsTypeError(
+        # 契約では FS_E_INVALID_ARG(引数が定義域の外)。FS_E_TYPE ではない。
+        raise FsValueError(
             "threshold: lo (%r) must not exceed hi (%r) — an inverted interval is "
             "a caller error, not a way to ask for an empty region (ABI R-1)" % (lo, hi))
     return _dispatch("threshold", img, lo, hi)
