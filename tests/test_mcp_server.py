@@ -255,12 +255,16 @@ def test_structured_content_over_the_cap_is_dropped_and_said_so(cat):
     assert res["_meta"]["fullseye"]["bytes"] > 64
 
 
-def test_coverage_reports_all_four_layers_and_names_the_orphans(cat):
+def test_coverage_reports_all_five_layers_and_there_are_no_orphan_notes(cat):
     c = call_tool("fullseye_catalog_coverage", {}, cat)["structuredContent"]
-    assert set(c["per_source"]) == {"index", "registry", "note", "facade"}
+    assert set(c["per_source"]) == {"index", "registry", "ledger", "note", "facade"}
     assert all(v > 0 for v in c["per_source"].values()), c["per_source"]
     # 2026-09-15 実測: 索引の全 op にノートがある。減ったら知識層の穴。
     assert c["index_without_note"] == [], c["index_without_note"][:20]
+    # ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で
+    #   480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと
+    #   ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+    assert c["note_only"] == 0, "呼べる層のどこにも無いノート: %s" % c["note_only_names"][:20]
     assert len(c["note_only_names"]) == c["note_only"]
 
 
