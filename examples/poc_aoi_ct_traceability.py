@@ -161,20 +161,42 @@ def _rigid(pts, shift, rot_deg):
     return pts @ R.T + np.asarray(shift, float)
 
 
-def solve_correspondence(a, b):
-    """2 つの装置が出した重心配置 a, b を剛体変換で合わせ、1 対 1 に対応づける。
+def degeneracy(pts, tol=1e-6):
+    """点配置だけで対応づけられるか —— 各点の「他の全点への距離を並べたもの」が
+    一意かどうかを数える。
 
-    Kabsch(重心を除いて SVD)で回転を解き、最近傍で対応を決める。装置間の番号の
-    振り直しと座標系のずれを同時に吸収する。返すのは a の各点に対応する b の添字。
+    格子は回転・鏡映に対して自分自身に重なるので、**同じ署名を持つ点が複数できる**。
+    そうなると剛体変換は 1 つに定まらず、対応づけは原理的に一意でない。返すのは
+    (署名の種類, 一意でない点の数)。
     """
-    ca, cb = a.mean(0), b.mean(0)
-    H = (a - ca).T @ (b - cb)
+    d = np.sqrt(((pts[:, None, :] - pts[None, :, :]) ** 2).sum(-1))
+    sig = np.sort(d, axis=1)
+    seen = {}
+    for i, s in enumerate(sig):
+        seen.setdefault(tuple(np.round(s / tol) * tol), []).append(i)
+    return len(seen), sum(len(v) for v in seen.values() if len(v) > 1)
+
+
+def solve_from_fiducials(a_fid, b_fid):
+    """**対応が既知の基準マーク**から剛体変換(回転 R と並進 t)を解く。
+
+    Kabsch は「どの点がどの点に対応するか」が分かっている前提の手法で、番号が
+    振り直された点群どうしには使えない。基準マークは形も配置も非対称に作ってあり、
+    装置が「どれが 1 番のマークか」を返せるので、ここだけは対応が既知になる。
+    """
+    ca, cb = a_fid.mean(0), b_fid.mean(0)
+    H = (a_fid - ca).T @ (b_fid - cb)
     U, _S, Vt = np.linalg.svd(H)
     d = np.sign(np.linalg.det(Vt.T @ U.T))
     R = Vt.T @ np.diag([1.0, d]) @ U.T
+    resid = float(np.sqrt((((a_fid - ca) @ R.T + cb - b_fid) ** 2).sum(1)).max())
+    return R, ca, cb, resid
+
+
+def apply_and_match(a, R, ca, cb, b):
+    """基準マークで解いた変換で a を b の座標系へ運び、最近傍で 1 対 1 に対応づける。"""
     a2 = (a - ca) @ R.T + cb
     d2 = ((a2[:, None, :] - b[None, :, :]) ** 2).sum(-1)
-    # 1 対 1 を保つ貪欲割当(距離の小さい対から確定する)。点が離れているので厳密解と一致する。
     pair = np.full(len(a), -1, int)
     used = np.zeros(len(b), bool)
     for k in np.argsort(d2, axis=None):
@@ -183,7 +205,7 @@ def solve_correspondence(a, b):
             pair[i] = j
             used[j] = True
     resid = float(np.sqrt(((a2 - b[pair]) ** 2).sum(1)).max())
-    return pair, resid, float(np.rad2deg(np.arctan2(R[1, 0], R[0, 0])))
+    return pair, resid
 
 
 def main():
