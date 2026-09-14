@@ -393,8 +393,11 @@ def test_select_shape_rejects_an_inverted_interval():
     a[1:4, 1:4] = 1.0
     objs = fslib.connection(fslib.threshold(
         fslib.FImage(a, value_range=(0.0, 1.0)), 0.5, 1.0))
-    with pytest.raises(fslib.FsTypeError):
+    with pytest.raises(fslib.FsValueError):
         fslib.select_shape(objs, "area", 20.0, 5.0)
+    # 知らない feature も「引数が定義域の外」= FS_E_INVALID_ARG
+    with pytest.raises(fslib.FsValueError):
+        fslib.select_shape(objs, "perimeter", 0.0, 1.0)
 
 
 def test_connection_orders_objects_by_their_first_run_on_every_backend():
