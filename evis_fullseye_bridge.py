@@ -177,8 +177,13 @@ def perceive_evis_walk(qpos_npy, xml=None, out_gif="out/evis_fullseye.gif", *, w
         frames.append(Image.fromarray(panel))
 
     os.makedirs(os.path.dirname(out_gif) or ".", exist_ok=True)
-    frames[0].save(out_gif, save_all=True, append_images=frames[1:],
-                   duration=int(1000 / max(1, fps)), loop=0)
+    # ★drop frame 0: the event panel has no previous frame to difference against, so it is
+    #   blank by construction. Keeping it makes the *first thing a reader sees* a black panel,
+    #   which reads as "the events never fired" (measured: frame 0 has 960 lit pixels, frame 20
+    #   has 35,550). The stats below still count every frame that was rendered.
+    keep = frames[1:] if len(frames) > 1 else frames
+    keep[0].save(out_gif, save_all=True, append_images=keep[1:],
+                 duration=int(1000 / max(1, fps)), loop=0)
     fwd = (float(d.xpos[pel][0]) if pel >= 0 else float(d.qpos[0])) - (fwd0 or 0.0)
     mean_ev = float(np.mean(ev_counts[1:])) if len(ev_counts) > 1 else 0.0
     # ★distances carry the MODEL's unit, not metres: the fly world is cm/g/s, so reporting
