@@ -16,14 +16,33 @@ import は通り、テストは緑、wheel からは丸ごと消える。root �
 from __future__ import annotations
 
 import os
-import tomllib
+import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def _declared_packages() -> list[str]:
-    with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
-        return list(tomllib.load(f)["tool"]["setuptools"]["packages"])
+    """`packages = [...]` を読む。tomllib(3.11+)があればそれで、無ければコメントを
+    落として正規表現で。
+
+    ★2026-09-15: 最初は ``import tomllib`` をモジュール先頭に置いていた。3.11 の手元では
+    通り、**3.10 の CI では収集段階で ModuleNotFoundError → スイート全体が止まる**
+    ([[feedback_test_import_kills_collection]] を自分で再演)。標準ライブラリでも
+    版で無いものがある。
+    """
+    path = os.path.join(ROOT, "pyproject.toml")
+    try:
+        import tomllib
+    except ImportError:                                       # 3.10
+        tomllib = None
+    if tomllib is not None:
+        with open(path, "rb") as f:
+            return list(tomllib.load(f)["tool"]["setuptools"]["packages"])
+    with open(path, encoding="utf-8") as f:
+        src = re.sub(r"#[^\n]*", "", f.read())
+    m = re.search(r"^packages\s*=\s*\[(.*?)\]", src, re.M | re.S)
+    assert m, "packages の宣言が見つからない"
+    return re.findall(r'"([^"]+)"', m.group(1))
 
 
 def _subpackages_on_disk(top: str) -> list[str]:
