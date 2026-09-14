@@ -1406,6 +1406,16 @@ UNIT_RANGE_IS_NOT_THE_CONTRACT = {
     "tb_lf_epi_slope":
         "同上(構造テンソルの閉形式 s = -(J_ux + J_vy)/(J_xx + J_yy))。"
         "傾きは符号つきで、範囲は場面次第。",
+    "tb_monogenic_phase":
+        "局所位相 atan2(|R|, f) の**ラジアン**。docstring が『In [0, pi]』と明記"
+        "(Riesz ベクトルの符号は向きの側が運ぶので半回転)。実測 0.0196 .. 3.1338 "
+        "= ちょうど [0, pi]。**この op は display=True で [0,1] に写す道を持ちながら"
+        "既定を False にしている** —— 理由も docstring にあり、『表示用の倍率が"
+        "黙って計測に紛れ込むと、何も知らせないまま pi 倍になる』。",
+    "tb_monogenic_orientation":
+        "局所方位 atan2(R2, R1) の**ラジアン**。docstring が『Radians in [0, pi)』"
+        "と明記(方位は pi を法として定義される: 10 度の縞と 190 度の縞は同じ縞)。"
+        "実測 0.0004 .. 3.1405。同じく display=True が [0,1] 版を返す。",
     "tb_quat_norm":
         "画素ごとの四元数の絶対値 |q|。docstring が『**Raw / unnormalised**、"
         "絶対値は計量量で 1 を日常的に超える(QFT スペクトルの DC 項は巨大)』"
