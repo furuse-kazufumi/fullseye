@@ -1,0 +1,14 @@
+[package]
+name = "fullseye_core"
+version = "0.1.0"
+edition = "2021"
+description = "fullseye_abi.h の契約を Rust で実装したスパイク(差分テスト用。性能のためではない)"
+
+[lib]
+# cdylib = C ABI の共有ライブラリ。これ 1 本で Python(ctypes)・C#(P/Invoke)・
+# C++(直接)・Lua(LuaJIT FFI)から同じ関数が呼べる。
+crate-type = ["cdylib"]
+
+[profile.release]
+opt-level = 3
+panic = "abort"        # パニックを ABI 境界から漏らさない(契約 R-1: 例外は無い)
