@@ -627,7 +627,17 @@ _CATALOG = {
         # 'table'(list|dict)へ移す。2026-09-02 の到達で判明。
         ("bundle_adjust", "bundle3d", ["pose", "points"], "table", False),
         ("mean_reprojection_error", "bundle3d", ["pose", "points"], "measurement", False),
-        ("project", "bundle3d", ["points"], "image2d", False),
+        # ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは
+        # 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る ——
+        # 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で
+        # 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、
+        # pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、
+        # **この 1 行だけが兄弟一掃から取り残されていた**。
+        # 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、
+        # (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標
+        # (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り
+        # 下流の閾値 op に渡ると意味を失う。
+        ("project", "bundle3d", ["points"], "keypoints", False),
     ],
     "tsdf_fusion": [  # 多フレーム TSDF 体積融合(KinectFusion 核・複数深度→表面)
         ("fuse", "tsdf_fusion", ["depth"], "sdf", False),
