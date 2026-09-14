@@ -357,6 +357,12 @@ def compare(r: dict, p: dict) -> str | None:
     for k in ("area", "n_runs", "n_comp", "n_select"):
         if k in r and k in p and r[k] != p[k]:
             return "%s: Rust %s / Python %s" % (k, r[k], p[k])
+    if "runs" in r and "runs" in p and r["runs"] != p["runs"]:
+        # 本数が同じでも切り方が違うことがあるので、**列そのもの**を突き合わせる
+        for i, (a, b) in enumerate(zip(r["runs"], p["runs"])):
+            if a != b:
+                return "runs: %d 本目が Rust %s / Python %s" % (i, a, b)
+        return "runs: 本数 %d / %d" % (len(r["runs"]), len(p["runs"]))
     if "measure" in r and "measure" in p:
         if len(r["measure"]) != len(p["measure"]):
             return "measure: 個数 %d / %d" % (len(r["measure"]), len(p["measure"]))
