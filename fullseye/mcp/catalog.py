@@ -154,12 +154,17 @@ class Catalog:
             e.out_sort = e.out_sort or fm.get("out")
             e.halcon = e.halcon or fm.get("halcon")
 
-        # 4. facade(`import fullseye` で呼べる名前)
+        # 4. facade(`import fullseye` で呼べる名前)+ 5. 型付き台帳(`fullseye.ledger.<name>`)
         if with_facade:
             import fullseye
             for n in getattr(fullseye, "__all__", ()):
                 if callable(getattr(fullseye, n, None)):
                     ent(n).sources.add("facade")
+            led = getattr(fullseye, "ledger", None)
+            if led is not None:
+                for n in dir(led):
+                    if not n.startswith("_"):
+                        ent(n).sources.add("ledger")
 
         sorts = sorted(set(idx.get("sorts") or []) |
                        {e.in_sort for e in entries.values() if e.in_sort} |
