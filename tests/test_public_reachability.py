@@ -84,48 +84,16 @@ _INTERNAL = {
 #: **出すべきなのに出ていない**。ここは減らしていく側の台帳です。
 #: 「実装はある・動く・テストもある、しかし利用者からは存在しない」もの。
 #: 直したらこの表から**行を消す**こと(消し忘れは 2 番目の検査が落とします)。
-_PENDING_EXPOSURE = {
-    # --- 2-D 幾何とパノラマ。射影変換の推定・合成・束調整が一式ある ---
-    "transforms": 50,       # hom_mat2d_* の代数一式 + projective_trans_point_2d
-    "mosaic": 15,           # gen_projective_mosaic / bundle_adjust_mosaic / RANSAC 対応付け
-    "fit_transform": 5,     # hom_vector_to_proj_hom_mat2d(4 点以上→H)/ Umeyama
-    "tools_geom": 14,
-    "matrix": 33,
-    # --- 形状マッチング・3-D モデル照合 ---
-    "shapematch": 39,
-    "objmodel3d": 35,
-    "matching3d": 12,
-    "matching": 4,
-    # --- カメラ校正(facade に出ていないのは既知の宿題) ---
-    "calib": 12,
-    "caltab": 10,
-    "calibration3d": 4,
-    # --- 2-D の基本演算。領域・輪郭・チャネル・周波数 ---
-    "contours_xld": 16,
-    "contours_xld2": 20,
-    "image_channels": 22,
-    "filters_freq": 18,
-    "filters_flow": 10,
-    "regions_setops": 17,
-    "regions_gen": 5,
-    "region_morph": 3,
-    "morph_minkowski": 6,
-    "segmentation": 9,
-    "image_gen": 11,
-    "image_paint": 9,
-    "misc_vision": 13,
-    "imgops_nary": 4,
-    "scattered": 6,
-    "inspection": 3,
-    "pipeline3d": 6,
-    "watershed3d": 3,
-    "mesh_decimate": 1,
-    "sample_data": 7,       # CLI からは届くが Python API からは届かない
-    # --- 2026-09-06 に見つけた 4 件。テストが 100% 通っているのに不可視だった。
-    #     fourierdesc と imagemorph は opsshape2d 台帳へ、measuring1d は metrology と
-    #     組にして opsmeasure1d 台帳へ載せて解消(いずれも行を消した)。
-    #     残るは scale —— op ではなく実行の道具なので facade へ出すのが筋。
-    "scale": 6,
+_PENDING_EXPOSURE: dict[str, int] = {
+    # ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように
+    #   なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。
+    #   消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch /
+    #   objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld /
+    #   contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops /
+    #   regions_gen / region_morph / morph_minkowski / segmentation / image_gen /
+    #   image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d /
+    #   watershed3d / mesh_decimate / sample_data / scale。
+    #   表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
 }
 
 _LEDGER = dict(_INTERNAL)
