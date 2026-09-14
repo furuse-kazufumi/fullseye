@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 610 / 665 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 610 / 671 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel_match.py`
@@ -850,6 +850,11 @@
 
 - **L531** — ★선언 out 형에 맞추는 adapter 는, 튜플을 반환하는 op 의 **2 번째 이후를 버린다**(``drizzle_resample`` 의 ``wht``, ``piv_cross_correlate`` 의 ``info``). 버려진 쪽이 필요할 때, 대장(ledger)의 입구에서는 닿지 않았다. 2026-09-06, 초해상 PoC 가 ``flow, info = fs.ledger.piv_cross_correlate(...)`` 라고 써서 (2,R,C) 를 첫 축으로 열어, dy 의 2 번째 행을 dx 로 사용하여 어긋남 추정을 0.12 -> 0.74 픽셀로 만들었다(예외는 나지 않는다). ``.raw`` 로 원래 반환에 닿는다: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
 
+## `fullseye/mcp/catalog.py`
+
+- **L44** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L204** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+
 ## `g1_policy_bridge.py`
 
 - **L33** — ★배포물에 로컬 절대 경로를 구워 넣지 않는다(2026-09-05 의 감사에서, 비공개 형제 프로젝트 이름이 PyPI 의 wheel 에 실려 있었다). 기본값은 환경 변수로 준다. Unitree G1 의 씬 XML. MuJoCo Menagerie 의 `unitree_g1/scene.xml` 을 가리킨다.
@@ -1133,6 +1138,12 @@
 
 - **L41** — 「없으면 이유를 말하고 skip」으로 한다 —— ★2026-09-08 의 CI 가 여기서 빨개졌다: 로컬에 있는 것을 CI 에도 있다고 넘겨짚으면 로컬만 초록이 된다(`feedback_gate_computed_a_verdict_then_discarded_it` 와 같은 형태).
 
+## `tests/test_mcp_server.py`
+
+- **L57** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
+- **L105** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
+- **L303** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L22** — ★`tomllib` 은 Python 3.11 부터다. **모듈 최상단에서 맨 import 를 하면 3.10 에서 수집이 중단되어 테스트가 한 건도 돌지 않는다** —— 2026-09-05 에 hypothesis 로 같은 것을 밟은 직후, 이 검사에서 재발시켰다(CI py3.10 collection error). import 실패는 반드시 skip 으로 떨어뜨린다.
@@ -1173,7 +1184,7 @@
 
 ## `tests/test_packaging_foundation.py`
 
-- **L141** — ★2026-09-07: 로컬 wheel 에 sample_sources_ai 가 42 MB 얹혀 있었다(96 MB). 원인은 오래된 build/lib/ 캐시(package-data 에서 빼기 전의 잔해가 다시 채워진다). 설정을 읽는 검사로는 잡히지 않는 사고이므로, wheel 실물 쪽을 tools/ci_wheel_check.py(unshipped_present)와 ci.yml 의 크기 상한이 본다. 디렉터리도 package 밖으로 옮겼다(tools/fops_article/). 여기서는 제외의 명시를 요구한다(보험).
+- **L170** — ★2026-09-07: 로컬 wheel 에 sample_sources_ai 가 42 MB 얹혀 있었다(96 MB). 원인은 오래된 build/lib/ 캐시(package-data 에서 빼기 전의 잔해가 다시 채워진다). 설정을 읽는 검사로는 잡히지 않는 사고이므로, wheel 실물 쪽을 tools/ci_wheel_check.py(unshipped_present)와 ci.yml 의 크기 상한이 본다. 디렉터리도 package 밖으로 옮겼다(tools/fops_article/). 여기서는 제외의 명시를 요구한다(보험).
 
 ## `tests/test_pivops.py`
 
@@ -1190,6 +1201,7 @@
 ## `tests/test_public_reachability.py`
 
 - **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+- **L88** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
 
 ## `tests/test_raster.py`
 

@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 665 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 671 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel_match.py`
@@ -850,6 +850,11 @@
 
 - **L531** — ★與宣告 out 型別對齊的 adapter，會**丟棄回傳元組的 op 的第 2 項及以後**(``drizzle_resample`` 的 ``wht``、``piv_cross_correlate`` 的 ``info``)。當被丟棄的一側需要用到時,從台帳入口就搆不著。2026-09-06,某超解析度 PoC 寫成 ``flow, info = fs.ledger.piv_cross_correlate(...)``,沿第 1 軸拆開 (2,R,C),把 dy 的第 2 列當作 dx 使用,使偏移估計從 0.12 -> 0.74 像素(不拋例外)。用 ``.raw`` 可搆到原始回傳:``fs.ledger.piv_cross_correlate.raw(a, b)``。
 
+## `fullseye/mcp/catalog.py`
+
+- **L44** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L204** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+
 ## `g1_policy_bridge.py`
 
 - **L33** — ★不要把本地絕對路徑燒進發布物(2026-09-05 的稽核中,非公開的兄弟專案名出現在了 PyPI 的 wheel 裡)。預設值透過環境變數給出。Unitree G1 的場景 XML。指向 MuJoCo Menagerie 的 `unitree_g1/scene.xml`。
@@ -1133,6 +1138,12 @@
 
 - **L41** — 改成「沒有就說明理由並 skip」—— ★2026-09-08 的 CI 在這裡變紅：把本地有的東西也當成 CI 裡有，就只有本地變綠（與 `feedback_gate_computed_a_verdict_then_discarded_it` 同型）。
 
+## `tests/test_mcp_server.py`
+
+- **L57** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
+- **L105** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
+- **L303** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L22** — ★`tomllib` 是從 Python 3.11 才有的。**在模組頂部做裸 import 會在 3.10 上中斷收集，一個測試也不跑** —— 2026-09-05 用 hypothesis 踩了同樣的坑之後，緊接著在這項檢查裡又復現了（CI py3.10 collection error）。import 失敗一定降為 skip。
@@ -1173,7 +1184,7 @@
 
 ## `tests/test_packaging_foundation.py`
 
-- **L141** — ★2026-09-07：本地 wheel 上帶著 sample_sources_ai 的 42 MB（共 96 MB）。原因是舊的 build/lib/ 快取（從 package-data 移除前的殘骸被重新打包進去）。這是讀設定的檢查抓不到的事故，所以由 tools/ci_wheel_check.py（unshipped_present）與 ci.yml 的大小上限去看 wheel 實物。目錄也被移到了 package 外（tools/fops_article/）。這裡要求明示排除（作為保險）。
+- **L170** — ★2026-09-07：本地 wheel 上帶著 sample_sources_ai 的 42 MB（共 96 MB）。原因是舊的 build/lib/ 快取（從 package-data 移除前的殘骸被重新打包進去）。這是讀設定的檢查抓不到的事故，所以由 tools/ci_wheel_check.py（unshipped_present）與 ci.yml 的大小上限去看 wheel 實物。目錄也被移到了 package 外（tools/fops_article/）。這裡要求明示排除（作為保險）。
 
 ## `tests/test_pivops.py`
 
@@ -1190,6 +1201,7 @@
 ## `tests/test_public_reachability.py`
 
 - **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+- **L88** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
 
 ## `tests/test_raster.py`
 

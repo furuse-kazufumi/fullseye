@@ -30,19 +30,32 @@ def _declared_packages() -> list[str]:
     ([[feedback_test_import_kills_collection]] を自分で再演)。標準ライブラリでも
     版で無いものがある。
     """
-    path = os.path.join(ROOT, "pyproject.toml")
     try:
         import tomllib
     except ImportError:                                       # 3.10
-        tomllib = None
-    if tomllib is not None:
-        with open(path, "rb") as f:
-            return list(tomllib.load(f)["tool"]["setuptools"]["packages"])
-    with open(path, encoding="utf-8") as f:
+        return _declared_packages_regex()
+    with open(os.path.join(ROOT, "pyproject.toml"), "rb") as f:
+        return list(tomllib.load(f)["tool"]["setuptools"]["packages"])
+
+
+def _declared_packages_regex() -> list[str]:
+    """tomllib が無い版のための読み方。コメントを落としてから切り出す
+    (`test_packaging_foundation._py_modules` がコメント内の `]` で切れていた前科)。"""
+    with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as f:
         src = re.sub(r"#[^\n]*", "", f.read())
     m = re.search(r"^packages\s*=\s*\[(.*?)\]", src, re.M | re.S)
     assert m, "packages の宣言が見つからない"
     return re.findall(r'"([^"]+)"', m.group(1))
+
+
+def test_the_regex_fallback_reads_the_same_packages_as_tomllib():
+    """3.10 が使う経路を、tomllib のある版で検算しておく(3.10 でこの検算は skip)。"""
+    try:
+        import tomllib  # noqa: F401
+    except ImportError:
+        import pytest
+        pytest.skip("tomllib が無い版では正規表現が唯一の経路(検算相手が無い)")
+    assert _declared_packages_regex() == _declared_packages()
 
 
 def _subpackages_on_disk(top: str) -> list[str]:

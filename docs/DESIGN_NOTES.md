@@ -848,6 +848,11 @@
 
 - **L531** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
 
+## `fullseye/mcp/catalog.py`
+
+- **L44** — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L204** — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+
 ## `g1_policy_bridge.py`
 
 - **L33** — ★配布物にローカル絶対パスを焼き込まない(2026-09-05 の監査で、非公開の兄弟 プロジェクト名が PyPI の wheel に載っていた)。既定は環境変数で与える。 Unitree G1 のシーン XML。MuJoCo Menagerie の `unitree_g1/scene.xml` を指す。
@@ -1131,6 +1136,12 @@
 
 - **L41** — 「無ければ理由を言って skip」にする —— ★2026-09-08 の CI がここで赤に なった: 手元にあるものを CI にも在ると思い込むと、手元だけ緑になる (`feedback_gate_computed_a_verdict_then_discarded_it` と同じ型)。
 
+## `tests/test_mcp_server.py`
+
+- **L57** — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
+- **L105** — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
+- **L303** — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L22** — ★`tomllib` は Python 3.11 から。**モジュール先頭で素の import をすると 3.10 で収集が中断し、テストが 1 件も走らない** —— 2026-09-05 に hypothesis で 同じことを踏んだ直後に、この検査で再発させた(CI py3.10 が collection error)。 import 失敗は必ず skip に落とす。
@@ -1171,7 +1182,7 @@
 
 ## `tests/test_packaging_foundation.py`
 
-- **L141** — ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。 原因は古い build/lib/ のキャッシュ(package-data から外す前の残骸が詰め直される)。 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
+- **L170** — ★2026-09-07: 手元の wheel に sample_sources_ai が 42 MB 乗っていた(96 MB)。 原因は古い build/lib/ のキャッシュ(package-data から外す前の残骸が詰め直される)。 設定を読む検査では捕まらない事故なので、wheel 実物の側を tools/ci_wheel_check.py (unshipped_present)と ci.yml のサイズ上限が見る。ディレクトリも package の外へ 移した(tools/fops_article/)。ここでは除外の明示を要求する(保険)。
 
 ## `tests/test_pivops.py`
 
@@ -1188,6 +1199,7 @@
 ## `tests/test_public_reachability.py`
 
 - **L71** — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+- **L88** — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
 
 ## `tests/test_raster.py`
 

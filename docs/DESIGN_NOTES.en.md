@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 665. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 671. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -850,6 +850,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L531** — ★The adapter that conforms to the declared out type **discards everything from the 2nd element onward** of an op that returns a tuple (``wht`` of ``drizzle_resample``, ``info`` of ``piv_cross_correlate``). When the discarded side is needed, it was unreachable through the ledger's entrance. On 2026-09-06, a super-resolution PoC wrote ``flow, info = fs.ledger.piv_cross_correlate(...)``, unpacked the (2,R,C) along the 1st axis, used the 2nd row of dy as dx, and turned the shift estimate from 0.12 -> 0.74 px (no exception raised). Use ``.raw`` to reach the bare return: ``fs.ledger.piv_cross_correlate.raw(a, b)``.
 
+## `fullseye/mcp/catalog.py`
+
+- **L44** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L204** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+
 ## `g1_policy_bridge.py`
 
 - **L33** — ★Do not bake a local absolute path into the distribution (in the 2026-09-05 audit, a private sibling project name was riding in the PyPI wheel). Give the default via an environment variable. The scene XML of the Unitree G1. Points to MuJoCo Menagerie's `unitree_g1/scene.xml`.
@@ -1133,6 +1138,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L41** — Make it "skip with a reason if absent" —— ★the 2026-09-08 CI went red here: assuming what you have locally is also present in CI makes only local green (same pattern as `feedback_gate_computed_a_verdict_then_discarded_it`).
 
+## `tests/test_mcp_server.py`
+
+- **L57** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
+- **L105** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
+- **L303** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L22** — ★`tomllib` is from Python 3.11. **A bare import at the module top aborts collection on 3.10, and not a single test runs** —— right after stepping on the same thing with hypothesis on 2026-09-05, I reproduced it in this check (CI py3.10 collection error). Always drop import failures to skip.
@@ -1173,7 +1184,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_packaging_foundation.py`
 
-- **L141** — ★2026-09-07: the local wheel had sample_sources_ai adding 42 MB (96 MB). The cause was a stale build/lib/ cache (leftovers from before it was removed from package-data get repacked). It is an accident a config-reading check cannot catch, so the actual wheel is checked by tools/ci_wheel_check.py (unshipped_present) and the size cap in ci.yml. The directory was also moved outside the package (tools/fops_article/). Here we require the exclusion to be explicit (as insurance).
+- **L170** — ★2026-09-07: the local wheel had sample_sources_ai adding 42 MB (96 MB). The cause was a stale build/lib/ cache (leftovers from before it was removed from package-data get repacked). It is an accident a config-reading check cannot catch, so the actual wheel is checked by tools/ci_wheel_check.py (unshipped_present) and the size cap in ci.yml. The directory was also moved outside the package (tools/fops_article/). Here we require the exclusion to be explicit (as insurance).
 
 ## `tests/test_pivops.py`
 
@@ -1190,6 +1201,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_public_reachability.py`
 
 - **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+- **L88** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
 
 ## `tests/test_raster.py`
 
