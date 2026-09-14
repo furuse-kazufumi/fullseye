@@ -164,7 +164,7 @@ def perceive_evis_walk(qpos_npy, xml=None, out_gif="out/evis_fullseye.gif", *, w
         if prev_log is None:
             evimg = np.full_like(sens, 22); ev = 0
         else:
-            evimg, ev = _dvs(prev_log, lum)
+            evimg, ev = _dvs(prev_log, lum, C=dvs_c)
         prev_log = lum; ev_counts.append(ev)
         # composite with thin separators: 3rd-person | (ego) | depth | events
         sep = np.full((height, 3, 3), 60, np.uint8)
