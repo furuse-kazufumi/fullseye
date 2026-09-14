@@ -53,8 +53,11 @@ def _req(i, method, **params):
     return {"jsonrpc": "2.0", "id": i, "method": method, "params": params}
 
 
-def _call(i, name, **args):
-    return _req(i, "tools/call", name=name, arguments=args)
+def _call(i, tool, **args):
+    # ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が
+    #   TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま**
+    #   23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
+    return _req(i, "tools/call", name=tool, arguments=args)
 
 
 @pytest.fixture(scope="module")
