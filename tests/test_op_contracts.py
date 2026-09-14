@@ -77,6 +77,21 @@ def test_op_output_is_finite(op):
     probes = _probes(op)
     if not probes:
         pytest.skip("in_sort '%s' に探針が無い(BANKS 未対応)" % op.in_sort)
+    # ★**非有限がその op の意味を運んでいる**ものは、この門の対象外。判断は
+    #   ここで持たず `ops.NONFINITE_IS_MEANINGFUL` を**単一の正本として引く**
+    #   (`test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT` が同じ表の
+    #    写しで、一致は別の検査が見ている。3 つ目の写しを作らない)。
+    #
+    #   2026-09-14: 探針バンクを 6 sort 広げたとき、ここで `tb_mat_cond`(特異行列の
+    #   条件数 = inf)と `tb_geodesic_distances`(不達 = inf)が落ちた。一度
+    #   **探針から特異行列と非連結点群を外して緑にしかけた**が、それは誤り ——
+    #   台帳は「inf が正しい答え」と既に宣言しており、落ちていたのは**門がその
+    #   台帳を見ていない**ことだった。探針を削って緑にするのは欠陥を隠す行為で、
+    #   しかも同じ台帳の註に「自分の probe では特異行列を作っていなかったので
+    #   tb_mat_cond を取りこぼした」という 2026-09-05 の教訓が書いてある。
+    if op.name in ops.NONFINITE_IS_MEANINGFUL:
+        pytest.skip("非有限が契約上の意味を持つ op(ops.NONFINITE_IS_MEANINGFUL): %s"
+                    % ops.NONFINITE_IS_MEANINGFUL[op.name])
     for iname, iv in probes:
         for a, b in KNOBS:
             out = op.fn(copy_input(iv), a, b)
