@@ -16,9 +16,29 @@ import os
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 _CACHE = os.path.join(ROOT, ".scene_cache")
-_MENAGERIE = "C:/dev/projects/mujoco_menagerie"
-_ONO = "C:/dev/projects/onocollo-complete/out/musculo"
-_LOCO_MESHES = "C:/dev/venvs/loco/Lib/site-packages/loco_mujoco/environments/data/humanoid"
+# ★配布物にローカル絶対パスを焼き込まない。ここは**自分のマシンの作業物**を指していた
+#   ので、他人が pip install した環境では黙って落ちる(しかも「場面が無い」ではなく
+#   「その場面だけ静かに欠ける」形で)。環境変数で受け、未設定なら**その場面を登録しない**
+#   = 在ると偽らない。`loco_mujoco` は入っていれば自分で在り処を知っているので探す。
+_MENAGERIE = os.environ.get("MUJOCO_MENAGERIE", "")
+_ONO = os.environ.get("ONOCOLLO_MUSCULO", "")
+
+
+def _loco_humanoid_meshes() -> str:
+    """`loco_mujoco` が入っていればその同梱メッシュの場所。無ければ空。"""
+    env = os.environ.get("LOCO_MUJOCO_HUMANOID_MESHES", "")
+    if env:
+        return env
+    try:
+        import loco_mujoco
+        p = os.path.join(os.path.dirname(os.path.abspath(loco_mujoco.__file__)),
+                         "environments", "data", "humanoid")
+        return p if os.path.isdir(p) else ""
+    except Exception:
+        return ""
+
+
+_LOCO_MESHES = _loco_humanoid_meshes()
 
 _DEMO_XML = (
     '<mujoco><worldbody><light pos="0 0 3" dir="0 0 -1"/>'
