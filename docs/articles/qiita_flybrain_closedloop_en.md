@@ -72,6 +72,7 @@ One experiment = one question. **This article is appended to every time an exper
 | Can the visual estimate drive central-complex homing? | Yes, but the limit is readout correlation, not gain | §7 |
 | Does enlarging the eye break it? | No — and the first conclusion here was retracted | §8 |
 | Does shuffling the wiring cost performance? | **Not measurable.** Two shuffles differ from each other 3× more | appendix |
+| Does a staged curriculum produce direction selectivity? | Yes (0/8 → **5/8**) — and the final behavioural stage destroys it (→ 1/8) | appendix |
 
 ## Glossary (worth reading first)
 
