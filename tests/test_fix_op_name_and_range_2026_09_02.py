@@ -83,7 +83,11 @@ def test_every_image_op_stays_in_the_unit_range(op):
     """
     from conftest import copy_input, inputs_for
 
-    for iname, iv in inputs_for(op.in_sort):
+    if op.name in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT:
+        pytest.skip("物理量/生の大きさを運ぶ image: %s"
+                    % ops.UNIT_RANGE_IS_NOT_THE_CONTRACT[op.name])
+
+    for iname, iv in inputs_for(op.in_sort, op.name):
         for a, b in ((0.2, 0.5), (0.5, 0.5), (0.8, 0.3)):
             out = op.fn(copy_input(iv), a, b)
             if not isinstance(out, np.ndarray) or not out.size or out.dtype.kind not in "fiu":
