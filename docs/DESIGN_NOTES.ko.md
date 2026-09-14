@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 610 / 622 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 610 / 652 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel_match.py`
@@ -106,6 +106,13 @@
 - **L686** — ★2026-09-08 수정(`poc_stockpile_volume` 이 발견). 시선의 표본이 ``np.rint`` 로 **목표 셀 자신**으로 반올림되면, 그 셀의 높이를 「도중의 지형」으로서 자신과 비교하게 된다. t < 1 이므로 분모 dist*t 가 작고, ``(z-eye)/(dist*t) > (z-eye)/dist`` 는 z > eye 이면 반드시 참 —— **시선보다 높은 셀이 죄다 자기 차폐**되고 있었다. 실측(수정 전): 평지에 세운 높이 10 m 의 기둥은 25 m 앞·시선 2 m 에서 「보이지 않는다」고 반환되고, 시선보다 낮은 1 m 의 기둥만 「보인다」. 볼록한 입체의 최고점은 밖에서 반드시 보이므로, 이는 기하로서 틀렸다. 표본이 목표 셀에 올라탄 회는 세지 않는다.
 - **L746** — ★대장의 선언은 ``points`` = (N, 3). 스칼라를 넘기면 (3,) 이 되어 선언과 어긋나므로 항상 (N, 3) 으로 접는다(2026-09-06 에 퍼저의 TYPEMISS 로 드러남. 지심 좌표 6 op 를 추가한 뒤 퍼저를 돌리지 않았다). 격자 그대로 (H, W, 3) 이 필요할 때는 :func:`dem_geocentric_grid` 를 쓴다.
 - **L795** — ★축폐선의 안쪽은 측지 위도가 유일하지 않다 -> 조용히 범위 밖의 위도를 반환하지 않고 거부한다. 타원 x²/a² + z²/b² = 1 의 축폐선은 (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). 등호의 바깥쪽만이 「법선이 하나로 정해지는」 영역(2/3 제곱은 음이 아니므로 부호는 |z|).
+
+## `evis_fullseye_bridge.py`
+
+- **L152** _(ja)_ — ★The sky is "infinitely" far (measured: 998 in a world whose animal is 0.3 across), and with the sky in view the 3rd/92nd percentiles straddle it, so the panel collapses to two flat colours — sky and everything-else. depth_max cuts the band at a distance that means something for this body, so the *scene* gets the colour range instead of the sky.
+- **L171** _(ja)_ — ★ego_camera(モデル自身の目)でも eye パネルを出す。ここを ego>=0 だけで見ていたので、 ハエの複眼から描いたのに複眼の絵がコマに入らなかった(2026-09-14 実測)。
+- **L180** _(ja)_ — ★drop frame 0: the event panel has no previous frame to difference against, so it is blank by construction. Keeping it makes the *first thing a reader sees* a black panel, which reads as "the events never fired" (measured: frame 0 has 960 lit pixels, frame 20 has 35,550). The stats below still count every frame that was rendered.
+- **L189** _(ja)_ — ★distances carry the MODEL's unit, not metres: the fly world is cm/g/s, so reporting "6.96m" for a 7 cm walk is a lie the caller cannot see. `unit` names it honestly.
 
 ## `examplefig.py`
 
@@ -823,6 +830,18 @@
 
 - **L187** _(ja)_ — ★ The cap is on the *product*, not on either factor, because the accident it prevents is the cross term: a modest 900-ommatidium eye and a modest 512x512 image are each unremarkable and together are 236M float64 = 1.9 GB.
 
+## `fscript.py`
+
+- **L1269** _(ja)_ — ★2026-09-14: ここは `FsTypeError` だけを捕まえていた。逆さの区間と未知の feature を契約どおり `FsValueError`(= FS_E_INVALID_ARG)にした結果、 **fscript の利用者には Python の生の例外が漏れる**ようになっていた —— 例外の種類を増やしたら、それを言語境界で受けている場所を必ず一掃する ([[feedback_same_bug_class_recurs_check_siblings]])。
+
+## `fslib.py`
+
+- **L559** _(ja)_ — ★2026-09-14: ここは長らく borderType 既定 = ``BORDER_REFLECT_101`` (``d c b | a b c d`` — 境界の画素を重複させない折り返し)だった。numpy backend の ``ndi.gaussian_filter`` の既定は ``mode='reflect'`` = ``d c b a | a b c d`` (境界の**上**で折り返す)で、**同じ「reflect」という語が別物を指す**。 実測(512x512, sigma=1.0, 乱数): 内部は 4.6e-08 まで一致するのに、**端の画素だけ 最大 0.13 = 値域の 13% ずれていた**。内部しか見ない検査では原理的に出ない。 ``connection`` の 4/8 連結と同じクラスの欠陥(兄弟コードを一掃した 2 件目)。 契約は numpy 側(既存の進化レシピのオラクル)に合わせて ``BORDER_REFLECT``。
+- **L615** _(ja)_ — ★2026-09-14: ここは長らく `ndi.label(mask)` = **4 連結の既定**だった。 cv2 backend は `connectedComponentsWithStats(..., 8, ...)` で 8 連結なので、 **同じ op が backend によって違う物体数を返していた** —— 8x8 の市松模様で numpy 32 個 / cv2 1 個。レシピの答えが「どちらの backend が選ばれたか」で 変わるという、いちばん静かな壊れ方。C ABI を Rust で 2 度目に実装して 突き合わせたときに見つかった(fullseye_abi.h の fs_connection に 8 連結と明記した)。回帰は tests/test_fslib.py が backend 横断で見る。
+- **L630** _(ja)_ — ★2026-09-14: ここは `(mask, 8, cv2.CV_32S)` と**位置引数**で書いてあった。 読むと「8 連結を明示している」ように見えるが、cv2 5.0.0 で実測すると `connectedComponentsWithStats(a, 4, CV_32S)` も `(a, 8, CV_32S)` も**同じ答え** を返す —— 位置引数は connectivity として解釈されておらず、**既定の 8 に たまたま一致していただけ**。既定が変われば黙って 4 連結になる。 コードが主張している意図を API が守っていない形なので、キーワードで固定する。 (差分ファジングの変異解析で 4 連結を注入したのに一切検出されず、掘ったら 注入のほうが効いていなかった、という経路で見つかった。)
+- **L723** _(ja)_ — ★契約 R-1(fullseye_abi.h): 失敗した演算子は「何も見つからなかった」演算子と 区別できなければならない。逆さの区間は呼び手の間違いであって、「空を寄こせ」 という正当な指定ではない —— 黙って空の Region を返すと、しきい値の計算を 間違えたレシピが「不良ゼロ」として通る。2026-09-14、同じ契約の Rust 実装が FS_E_INVALID_ARG を返すのにこちらは空を返す、という差分で見つかった。
+- **L743** _(ja)_ — ★契約 R-1: `threshold` で直したのと**同じ欠陥が兄弟に残っていた**。逆さの区間は 呼び手の間違いであって「空を寄こせ」という指定ではない —— 黙って 0 個を返すと、 面積の下限と上限を取り違えたレシピが「該当なし = 良品」として通る。 2026-09-14、Rust 実装が FS_E_INVALID_ARG を返すのにこちらは 0 個を返す差分で発見。
+
 ## `fsruntime.py`
 
 - **L284** — ★판정 recipe 는 **모든 프로파일**(산업용에 국한되지 않음)에서 엄선된 fslib 기반 builtin **만** 사용할 수 있다. 그 외의 호출은 `fscript._call_registry_op → api.RT` 를 통해 해석되는 650-op 진화 레지스트리 op 이며, 그 `_safe` wrapper 는 **fail-OPEN**(op 실패를 삼키고 무해한 "결함 없음" 값을 반환)이다. 이 표면은 결코 recipe 의 연산자여서는 안 된다 —— studio / 레퍼런스 런타임도 부품을 판정하므로 —— 따라서 그것을 사용하는 recipe 는 로드 시 거부된다(docs/FSCRIPT_DECISION.md 1.6b).
@@ -984,6 +1003,10 @@
 
 - **L147** — ★ 넣은 이유: 전시 111-113에서 "합성은 자신이 아는 고장 방식만 만들 수 있다"(실사 6장에서 9건의 불량이 나온 전례)가 다시 드러났다. PoC는 오프라인으로 닫힌 채, **실데이터로 갈아 끼우는 입구**만 대장에 둔다. commercial="check" 이상은 원본 페이지를 읽고 나서 쓸 것.
 
+## `scene_registry.py`
+
+- **L19** _(ja)_ — ★配布物にローカル絶対パスを焼き込まない。ここは**自分のマシンの作業物**を指していた ので、他人が pip install した環境では黙って落ちる(しかも「場面が無い」ではなく 「その場面だけ静かに欠ける」形で)。環境変数で受け、未設定なら**その場面を登録しない** = 在ると偽らない。`loco_mujoco` は入っていれば自分で在り処を知っているので探す。
+
 ## `sdf_ops.py`
 
 - **L293** — ★ 넣은 이유는 실측: `poc_dfm_thickness_overhang`와 `poc_cad_scan_deviation`가 # "기계 부품은 원통 구멍·모따기·필릿으로 되어 있는데 프리미티브가 구와 # 직육면체밖에 없어 CSG로 조립할 수 없다"고 보고하며, 양쪽 다 면별 해석식을 직접 # 썼다. 여기 있는 4개는 **모두 폐형식이고 엄밀**(바깥쪽은 최근접 표면까지의 # 유클리드 거리, 안쪽은 최근접 면까지의 음수)이므로, 참값을 가진 합성 부품을 # CSG만으로 조립할 수 있게 된다. # --------------------------------------------------------------------------- #
@@ -1003,6 +1026,11 @@
 
 - **L28** — ★ Studio의 설정을 **세션 전체에서** 일회용 ini로 빼돌린다. # --------------------------------------------------------------------------- # `QSettings("Fullseye", "Studio")`는 네이티브 저장소(Windows라면 레지스트리 HKCU\Software\Fullseye\Studio)에 쓴다. 격리를 **개별 테스트 파일**에 두었기 때문에, 빠뜨린 파일에서 사용자의 실제 레지스트리가 오염되었다. 2026-09-05의 감사에서 실해를 확인: `recent_files` 10건 중 8건이 pytest의 임시 경로였고, `system\operator_timeout_ms` 같은 실값도 남아 있었다. (격리는 3개 파일 중 2개에만 있었고, `test_studio_params.py`가 그냥 통과했다.) 개별로 더하는 것을 그만두고, **세션 autouse로 여기에 하나만** 둔다. 환경 변수는 `studio._settings()`가 보는 유일한 입구이므로, 이로써 모든 테스트가 덮인다.
 - **L44** — ★ optional backend가 필요한 테스트의 선언. # --------------------------------------------------------------------------- # CI의 주석에는 오래도록 "torch/kornia는 넣지 않는다(**해당 테스트는 graceful skip**)"고 적혀 있었으나, 2026-09-05의 실측에서 그것은 **사실이 아니었다** —— 대상 테스트는 skip하지 않고 `ImportError: this operator needs the optional 'torch' backend`로 떨어지고 있었다(14건). 주석만 있고, 그것을 기계로 확인하는 구조가 없었다. 여기서 선언을 하나의 입구로 모은다. 노림은 **양방향**: * backend가 없는 환경 → skip(주석을 사실로 만든다) * backend가 **있어야 할** 환경 → skip을 허용하지 않고 실패시킨다(`FULLSEYE_REQUIRE_OPTIONAL=1`. CI의 py3.11 작업이 이를 세운다) 한 방향뿐이면 진짜 회귀가 조용히 skip으로 둔갑한다(`feedback_failsoft_hides_permanently_dead_ops`와 같은 형태).
+
+## `tests/test_abi_conformance.py`
+
+- **L49** _(ja)_ — ★このパーサは「タグから**最初の `;` まで**」を宣言とみなす。だからタグと 宣言のあいだに `;` を含む散文があると、宣言が見つからず **collection 中に 死ぬ** —— そして pytest はファイル 1 つの collection エラーで **スイート全体を中断**する(2026-09-14 実測: `Interrupted: 1 error during collection` で 12,000 件が 1 件も走らず、それでも runner の exit code は 0)。 [[feedback_test_import_kills_collection]] と同じ族なので、**何が悪くて どう直すか**をここで言う。黙って「malformed」とだけ言うと、壊した本人が ヘッダの書式規則に気づけない。
+- **L234** _(ja)_ — ★2026-09-14: `FsValueError` を足した。それまで例外は 2 種しか無く、 **種の違う失敗が同じ status に潰れていた** —— 逆さの区間は契約では `FS_E_INVALID_ARG` なのに `FsTypeError`(= FS_E_TYPE)を投げていた。 差分テストが「どちらも拒否した」までしか見ていなかったので素通りした。
 
 ## `tests/test_annotate_bold_italic.py`
 
@@ -1073,6 +1101,10 @@
 - **L331** _(ja)_ — ★ assert pins that hole so a future "curvature-corrected" resample has a
 - **L332** _(ja)_ — ★ failing test to turn green rather than a silent regression to argue about.
 
+## `tests/test_fslib.py`
+
+- **L330** _(ja)_ — backend 横断の一致 —— ★2026-09-14 に実際に壊れていたところ --------------------------------------------------------------------------- #
+
 ## `tests/test_glassmirror.py`
 
 - **L91** — ★직관과 반대였다: 「구리가 금보다 붉다」고 생각해 cu[2] < au[2] 를 썼더니 실패했다. 공개값으로도 Au 의 R(450 nm) ≈ 0.40 에 비해 Cu ≈ 0.56 로, **파랑은 구리 쪽이 많다**(= 금 쪽이 더 포화된 노랑). 표가 아니라 이쪽의 선입견이 틀렸다.
@@ -1085,10 +1117,15 @@
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
 - **L22** — ★`tomllib` 은 Python 3.11 부터다. **모듈 최상단에서 맨 import 를 하면 3.10 에서 수집이 중단되어 테스트가 한 건도 돌지 않는다** —— 2026-09-05 에 hypothesis 로 같은 것을 밟은 직후, 이 검사에서 재발시켰다(CI py3.10 collection error). import 실패는 반드시 skip 으로 떨어뜨린다.
+- **L53** _(ja)_ — ★2026-09-14 追加: MSVC の標準インストール先。`fullseye_3dgs._find_cl_dir()` が `cl.exe` を**探すための候補**として持っている。これは「私のマシンの作業物を 指している」のではなく「Visual Studio インストーラが決める場所」なので、 環境変数に追い出しても他人の環境で当たりやすくはならない(むしろ探索が 効かなくなる)。glob で実在を確かめてから使い、無ければ None を返す作りに なっていることを確認済み。 ※ `_WIN_ABS` は空白入りの語を 2 つ目までしか拾わないので、切り出される断片は `C:\Program Files\Microsoft` までになる。許可文字列は**実際に切り出される形**に 合わせる —— 正規表現の結果を見ずに「あるべき文字列」を書いて外した(2026-09-14)。
 
 ## `tests/test_op_contract_property.py`
 
 - **L32** — ★hypothesis 가 없는 환경에서는 **이 한 파일의 import 실패가 전체를 멈춘다** —— pytest 는 collection error 로 나머지를 돌리지 않고 중단한다(2026-09-05, CI 가 2 분 만에 죽어 테스트가 한 건도 돌지 않았다). skip 으로 떨어뜨려 다른 것을 끌어들이지 않는다.
+
+## `tests/test_op_contracts.py`
+
+- **L52** _(ja)_ — ★2026-09-14 実測: 901 op 中 **151 本(16.8 %)** がこの状態で、空ループを 1 周 しただけで緑を返していた —— 「門が判定を計算した直後に捨てる」の親戚で、 こちらは **判定を一度も計算しない**。まず skip で見えるようにし、 ``test_probeless_ops_do_not_grow`` で本数を台帳に固定する(減る分には通る)。
 
 ## `tests/test_op_discovery.py`
 
@@ -1129,9 +1166,17 @@
 - **L100** — ★2026-09-07: 여기는 오랫동안 **0 을 반환**하여, 아래의 `assert code == 0` 을 그냥 통과시켰다 —— 합불을 계산한 직후에 버리는 게이트(실측: PASS 를 한 번도 찍지 않는 PoC 가 3 개 —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). -2 를 반환해 실패하도록 한다.
 - **L122** — ★이 게이트는 84 개의 PoC 를 **한꺼번에 한 번** 돌린다(session fixture). 그 시간은 첫 테스트에 계상되므로, pyproject 의 기본 timeout(900 초)으로는 공유 러너에서 실패한다. 여기만 넓힌다 —— 기본을 풀면 다른 테스트의 행 감지까지 둔해진다.
 
+## `tests/test_public_reachability.py`
+
+- **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
+
 ## `tests/test_raster.py`
 
 - **L26** — ★맨 import 는 그것이 없는 환경에서 수집 전체를 중단시킨다(실측 2026-09-05).
+
+## `tests/test_rust_abi_parity.py`
+
+- **L396** _(ja)_ — ★契約では **FS_E_INVALID_ARG**(引数が定義域の外)であって FS_E_TYPE ではない。 `FsValueError` を足すまでは両方 `FsTypeError` で、Rust が 1 を返すのに Python は 2 相当を投げる、という**状態コードの食い違い**が残っていた。
 
 ## `tests/test_shapestats.py`
 
@@ -1172,6 +1217,19 @@
 
 - **L92** — ★여기는 두 번 틀릴 수 있다. fuzzer 의 ``run_chain`` 은 (1) 입력형 ``any`` 를 「항상 갖춰져 있다」로 취급하고(풀에서 임의로 뽑는다), (2) ``OP_ARG_BUILDERS`` 에 등록된 op 는 인자를 스스로 조립한다. 이 두 가지를 세지 않으면, 실제로는 매번 실행되는 op 를 「구조적으로 도달 불가」로 보고해 버린다(실제로 ``fuse_to_voxel`` / ``register_cross`` 에서 오보했다). 도달 가능성은 「형만」으로 결정되지 않는다 -- 도달 경로의 일부는 코드 쪽에 있다.
 
+## `tools/fs_abi_fuzz.py`
+
+- **L84** _(ja)_ — ★2026-09-14 追加。45,000 ケースを 3 秒で「食い違いなし」と言われたとき、 信じるのではなく**自分が printf で挙げた「踏んでいない座標」**を足す。 一致したときこそ探針を疑う([[feedback_one_probe_input_is_not_coverage]])。
+- **L180** _(ja)_ — ★2026-09-14: ここは長らく値域だけを振って**画素は 0..1 のまま**だった。相対しきい値は 値域を通して解決されるので、値域 (100,300) では絶対値 100〜300 と比べられ、 **100% が空**になっていた(実測: (100,300) は 780/780 が 0 画素、全体でも 63% が 物体 0 個)。4000 ケースが 0.6 秒で「食い違いなし」だったのは頑健だからではなく、 **connection も measure_all もほとんど踏んでいなかった**から ([[feedback_zero_findings_may_mean_never_executed]])。値域を名乗らせるなら **画素もその値域で描く**。
+- **L193** _(ja)_ — ★しきい値は**画像に実在する値から**引く。独立に引いていたときは 41% が 「選択 0 画素」で、物体が 2 個以上あるのは 14% だけだった —— `connection` の 分岐(斜め接触・入れ子・多数)をほとんど踏んでいない。乱数で撒くと空ばかりに なるのは、しきい値も探針の一部だから ([[feedback_one_probe_input_is_not_coverage]]: 探針は入力画像だけではない)。 2 割は「当てずっぽう」のまま残す —— 空・全面・範囲外という端も要る。
+- **L230** _(ja)_ — ★R-3 の相対→絶対の写像と画像の形。契約の関数なのに観測していなかった。
+- **L259** _(ja)_ — ★`fs_region_runs` は契約が「領域表現の**唯一の窓**」と呼ぶもの。それを 観測していなかった —— 面積と本数が合っていても、**run の切り方**が違えば run-length と dense mask は別物として振る舞う(隣接 run を結合するか、 行内の並びは昇順か)。観測していない性質はケース数では出ない。
+- **L289** _(ja)_ — ★並びそのものを観測する。`sorted` して比べていたので、**物体の順序を逆にする 変異が 3,000 ケースで 1 件も殺せなかった**(2026-09-14 の変異解析)。契約は 「最初の run の (row, col) 昇順」と明記しているのに、門がどこにも無かった —— 観測していないものは、どれだけケースを撒いても出てこない。
+- **L331** _(ja)_ — ★R-3 の相対→絶対の写像そのものを観測する(契約 `fs_image_absolute`)。
+- **L345** _(ja)_ — ★**種別を捨てない**。ここは長らく固定値 1 だったので、`_status_of` を 書いて `compare` にコード比較まで足したのに、**Python 側が常に 1 を 名乗るせいで状態コードの食い違いが構造的に出なかった**(変異 m8 が 3,000 ケースで殺せなかった正体)。観測を足したつもりで足しきれて いない、という [[feedback_gate_computed_a_verdict_then_discarded_it]] の型。
+- **L375** _(ja)_ — ★**コードの値**まで見る。「どちらも拒否した」で止めていたので、 契約が FS_E_INVALID_ARG(1)と決めている所で Python が FS_E_TYPE(2) 相当を投げていても素通りしていた(2026-09-14 に実際そうだった)。
+- **L384** _(ja)_ — ★許容差は**値域に対する相対**で取る。絶対値で 1e-5 と決めていたら、 値域 (100,300) の画像で 1.04e-05 の差が「食い違い」として報告された —— が、切り分けると Rust vs scipy は **float64 のままなら 8.53e-14**、 float32 を経由した途端 1.04e-05。つまり `fslib` の `astype(np.float32)` の丸めで、**欠陥ではなく私の測り方の欠陥**だった(値域比で見ると どの値域でも一様に 1.4〜5.2e-08 = float32 の相対精度)。 [[feedback_second_instance_artifact_not_physics]] と同じ型 —— 驚く結果は物理(実装の違い)で説明する前に道具を疑う。
+
 ## `tools/gen_blas_article_figs.py`
 
 - **L93** — ★1 스레드가 가장 빨랐던 구간을 반투명으로 깐다. 선을 가리지 않도록 먼저 두고, alpha 를 낮게 유지한다(띠 자체가 너무 주장하면 선의 비교가 읽기 어려워진다).
@@ -1193,6 +1251,8 @@
 - **L280** — ★노트의 집합은 **대장에서** 가져온다(파일을 열거하지 않는다). 2026-09-06 의 적대적 리뷰(Codex)에서, 파일을 glob 하여 stem 을 세는 버전이 `docs/ops/SAMPLES.md`(op 노트가 아님)를 1 개 섞어, 색인은 1,842, RAG 가이드는 1,843 으로 **서로 어긋나는 수를 동시에 공개**하고 있었다. 노트는 records 에서 1:1 로 생성되므로, records 의 이름이 「노트가 있는 이름」의 정의 그 자체. 파일과의 일치는 `tests/test_docs_index_reachable.py` 가 별도로 본다(사라진/남는 것을 검출).
 - **L290** — ★`dir(fullseye)` 가 아니라 `__all__`. dir 은 모듈 속성(os / sys / warnings / annotations)을 포함하고, 게다가 **다른 테스트가 import 한 뒤에는 하나 늘어나므로**(1094 → 1095), 전체 스위트에서만 드리프트 문이 떨어졌다(2026-09-06). 공개면은 파사드가 `__all__` 로 선언하는 1,091 개 이름.
 - **L339** — ★색인은 사람뿐 아니라 **AI 의 검색면**이기도 하다(2026-09-06 사용자의 지적 「색인은 RAG 로도 쓰이는 부분이지?」). op 노트는 AI 코딩 지원의 검색 코퍼스를 겸하므로, **기계가 읽는 진입점**을 색인에 명시한다. 절반밖에 없는 것을 「전 op」라고 쓰면, RAG 는 남은 절반에 대해 자신만만하게 틀린다 -- 그래서 `_honest()` 의 실측 행은 이 절에서 빼지 않는다.
+- **L490** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
+- **L655** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 

@@ -360,8 +360,8 @@ def observe_python(c: dict, ops: set) -> dict:
     try:
         sel = fslib.select_shape(objs, c["feature"], c["vmin"], c["vmax"])
         out["select_status"], out["n_select"] = 0, len(sel.ids)
-    except Exception:
-        out["select_status"] = 1
+    except Exception as e:
+        out["select_status"] = _status_of(e)      # 種別を捨てない(上の註を参照)
     return out
 
 
