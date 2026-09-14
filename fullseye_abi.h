@@ -196,6 +196,8 @@ void        fs_tuple_release(fs_tuple_t *t);
  * `fs_gauss` is observable across the ABI only by thresholding it.  Adding a
  * pixel accessor is a real decision (it fixes a memory layout at the boundary),
  * so it is deliberately NOT made here. */
+
+/* @fslib gauss */
 fs_status_t fs_gauss(const fs_image_t *in, double sigma, fs_image_t **out);
 
 /* @fslib threshold  — lo/hi are RELATIVE (0..1) and resolved through the
