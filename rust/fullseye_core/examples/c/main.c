@@ -85,8 +85,52 @@ int main(void)
     else
         printf("★逆さの区間が通ってしまった\n");
 
+    /* ---- 汎用入口 fs_apply: op 名 + JSON で呼ぶ。どの経路で走ったかが info に必ず出る ----
+     * native 経路(契約の 5 op は Rust 実装がある)。出力の画素は契約の中では読めない
+     * ので、threshold に通して面積で観測する(ヘッダの註のとおり)。 */
+    fs_handle_t in = { FS_KIND_IMAGE, img };
+    fs_handle_t out[4];
+    int n_out = 0;
+    fs_apply_info_t info;
+    fs_status_t st = fs_apply("gauss", &in, 1, "{\"sigma\": 1.0}", FS_ROUTE_AUTO,
+                              out, 4, &n_out, &info);
+    int apply_ok = 0;
+    if (st == FS_OK && n_out == 1 && out[0].kind == FS_KIND_IMAGE) {
+        fs_region_t *r2 = NULL;
+        int64_t a2 = 0;
+        if (fs_threshold((fs_image_t *)out[0].ptr, 0.5, 1.0, &r2) == FS_OK &&
+            fs_region_area(r2, &a2) == FS_OK) {
+            printf("fs_apply gauss: route=%s backend=%s degraded=%d 面積(>=0.5) %lld\n",
+                   info.route, info.backend, info.degraded, (long long)a2);
+            apply_ok = 1;
+        }
+        fs_region_release(r2);
+        fs_image_release((fs_image_t *)out[0].ptr);
+    } else {
+        printf("fs_apply gauss が status %d: %s\n", (int)st, info.message);
+    }
+
+    /* python 経路(レジストリの op。`embed` feature で建てたときだけ動く。無ければ
+     * FS_E_NO_PYTHON と理由が返る —— それは失敗ではなく「この経路は無い」という答え)。 */
+    st = fs_apply("gaussian", &in, 1, "{\"a\": 0.5}", FS_ROUTE_AUTO, out, 4, &n_out, &info);
+    if (st == FS_OK && n_out == 1 && out[0].kind == FS_KIND_IMAGE) {
+        fs_region_t *r3 = NULL;
+        int64_t a3 = 0;
+        if (fs_threshold((fs_image_t *)out[0].ptr, 0.5, 1.0, &r3) == FS_OK &&
+            fs_region_area(r3, &a3) == FS_OK)
+            printf("fs_apply gaussian: route=%s backend=%s degraded=%d 面積(>=0.5) %lld\n",
+                   info.route, info.backend, info.degraded, (long long)a3);
+        fs_region_release(r3);
+        fs_image_release((fs_image_t *)out[0].ptr);
+    } else if (st == FS_E_NO_PYTHON) {
+        printf("fs_apply gaussian: python 経路なし(%s)\n", info.message);
+    } else {
+        printf("fs_apply gaussian が status %d: %s\n", (int)st, info.message);
+        apply_ok = 0;
+    }
+
     fs_objectset_release(objs);
     fs_region_release(reg);
     fs_image_release(img);
-    return (ok && bad != FS_OK) ? 0 : 1;
+    return (ok && bad != FS_OK && apply_ok) ? 0 : 1;
 }

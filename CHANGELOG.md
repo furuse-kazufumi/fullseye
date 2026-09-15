@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**C ABI に汎用入口 `fs_apply` を追加**(`fullseye_abi.h` / `rust/fullseye_core`)。op 名 + JSON
+  パラメータで**全 op** を呼べる。契約の 5 op は Rust のネイティブ経路、それ以外は cargo feature
+  `embed`(既定 off)で埋め込んだ CPython が `fullseye/abi_bridge.py` 経由でレジストリの op を走らせる。
+  どの経路で走ったかは `fs_apply_info_t.route` に必ず出る(`route_pref` で強制でき、1 と 2 の
+  突き合わせが差分の門 = `tests/test_abi_apply.py`)。検証は MCP の検証器 1 か所(fail-closed)。
+  状態コード 10〜13(`FS_E_NO_PYTHON` / `FS_E_UNKNOWN_OP` / `FS_E_BAD_PARAMS` / `FS_E_PY_EXCEPTION`)と
+  `fs_python_init` / `fs_python_available` / `fs_catalog_json` を追加。既存の 25 関数と 0〜9 は不変。
+  ついでに見つけた食い違い: Rust 側の `FS_E_UNSUPPORTED` が **4**(ヘッダでは `FS_E_RANGE` の番号)
+  だった —— 番号の機械照合をテストにした。Python の同梱はまだ(python311.dll は OS の探索頼み)。
 - **Python(`ctypes`)の呼び出し見本**を C ABI の例に追加(`rust/fullseye_core/examples/python_ctypes.py`、
   標準ライブラリだけで動く)。README は前から「C / C# / Lua / Python で同一出力」と書いていたのに
   Python の見本はテストの中にしか無かった。4 言語とも同じ 5 行を印字することを実走で確認。

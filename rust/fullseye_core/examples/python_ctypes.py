@@ -106,10 +106,63 @@ def main() -> int:
     print("逆さの区間 lo>hi は status %d で拒まれた" % bad if bad != FS_OK
           else "★逆さの区間が通ってしまった")
 
+    # ---- 汎用入口 fs_apply: op 名 + JSON で呼ぶ。どの経路で走ったかが info に必ず出る ----
+    apply_ok = apply_example(fs, img)
+
     fs.fs_objectset_release(objs)
     fs.fs_region_release(reg)
     fs.fs_image_release(img)
-    return 0 if (ok and bad != FS_OK) else 1
+    return 0 if (ok and bad != FS_OK and apply_ok) else 1
+
+
+FS_KIND_IMAGE = 1
+FS_ROUTE_AUTO = 0
+FS_E_NO_PYTHON = 10
+
+
+class FsHandle(C.Structure):
+    _fields_ = [("kind", C.c_int), ("ptr", C.c_void_p)]
+
+
+class FsApplyInfo(C.Structure):
+    _fields_ = [("route", C.c_char * 16), ("op", C.c_char * 64), ("backend", C.c_char * 32),
+                ("degraded", C.c_int), ("message", C.c_char * 512)]
+
+
+def apply_example(fs: C.CDLL, img: C.c_void_p) -> bool:
+    """native 経路(契約の gauss)と python 経路(レジストリの gaussian)を 1 回ずつ。
+
+    出力の画素は契約の中では読めないので、threshold に通して面積で観測する。python 経路は
+    `embed` feature で建てたときだけ動き、無ければ FS_E_NO_PYTHON と理由が返る ——
+    それは失敗ではなく「この経路は無い」という答え。
+    """
+    P = C.POINTER
+    fs.fs_apply.argtypes = [C.c_char_p, P(FsHandle), C.c_int, C.c_char_p, C.c_int,
+                            P(FsHandle), C.c_int, P(C.c_int), P(FsApplyInfo)]
+    ins = (FsHandle * 1)(FsHandle(FS_KIND_IMAGE, img))
+    outs = (FsHandle * 4)()
+    n_out = C.c_int()
+    info = FsApplyInfo()
+    ok = True
+    for op, params in (("gauss", b'{"sigma": 1.0}'), ("gaussian", b'{"a": 0.5}')):
+        st = fs.fs_apply(op.encode(), ins, 1, params, FS_ROUTE_AUTO, outs, 4,
+                         C.byref(n_out), C.byref(info))
+        route = info.route.decode()
+        if st == FS_OK and n_out.value == 1 and outs[0].kind == FS_KIND_IMAGE:
+            r2 = C.c_void_p()
+            area = C.c_int64()
+            check(fs.fs_threshold(outs[0].ptr, 0.5, 1.0, C.byref(r2)), "fs_threshold")
+            check(fs.fs_region_area(r2, C.byref(area)), "fs_region_area")
+            print("fs_apply %s: route=%s backend=%s degraded=%d 面積(>=0.5) %d"
+                  % (op, route, info.backend.decode(), info.degraded, area.value))
+            fs.fs_region_release(r2)
+            fs.fs_image_release(outs[0].ptr)
+        elif st == FS_E_NO_PYTHON:
+            print("fs_apply %s: python 経路なし(%s)" % (op, info.message.decode("utf-8", "replace")))
+        else:
+            print("fs_apply %s が status %d: %s" % (op, st, info.message.decode("utf-8", "replace")))
+            ok = False
+    return ok
 
 
 if __name__ == "__main__":
