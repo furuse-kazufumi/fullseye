@@ -35,6 +35,7 @@ __all__ = [
     "skeleton_endpoints3d",
     "skeleton_prune3d",
     "skeleton_branches3d",
+    "skeleton_graph3d",
 ]
 
 
@@ -319,6 +320,361 @@ def skeleton_branches3d(vol, min_length=0):
             keep[1:] = sizes[1:] >= int(min_length)
             branches = keep[lab]
     return branches
+
+
+def _strict_binary_volume(vol, name="skeleton"):
+    """骨格入力を **厳密な二値**として bool 3-D に正規化(fail-closed)。
+
+    ``_as_binary_volume`` は「非ゼロ = 前景」と緩く受けるが、**骨格を食う op に
+    中間値は意味を持たない** —— 0.37 という voxel は「細いのか、確率なのか、
+    スケールし忘れたのか」が区別できず、黙って前景に丸めると**グラフの位相が
+    入力の素性に依って変わる**。だから bool か ``{0, 1}`` だけを受け、それ以外は
+    何が入っていたかを名指しして ``ValueError``(先に閾値処理か
+    ``skeletonize_vol`` を通すのは呼び手の仕事)。
+    """
+    arr = np.asarray(vol)
+    if arr.ndim != 3:
+        raise ValueError(f"{name} must be a 3D voxel array (got ndim={arr.ndim}, shape={arr.shape})")
+    if arr.size == 0:
+        raise ValueError(f"{name} is empty (shape={arr.shape})")
+    if arr.dtype == bool:
+        return np.ascontiguousarray(arr)
+    if (not np.issubdtype(arr.dtype, np.number)
+            or np.issubdtype(arr.dtype, np.complexfloating)):
+        raise ValueError(f"{name} must be a bool or real numeric volume, got dtype {arr.dtype!r}")
+    if np.issubdtype(arr.dtype, np.floating) and not np.all(np.isfinite(arr)):
+        raise ValueError(f"{name} contains NaN/Inf (pass a binary voxel array)")
+    off = (arr != 0) & (arr != 1)
+    if off.any():
+        bad = arr[off]
+        raise ValueError(
+            f"{name} must be binary (bool, or values in {{0, 1}}); "
+            f"{int(off.sum())} voxel(s) are neither 0 nor 1 (e.g. {float(bad.flat[0])!r}). "
+            "Threshold it first, or pass the output of skeletonize_vol.")
+    return np.ascontiguousarray(arr != 0)
+
+
+def _spacing3(spacing, name="spacing"):
+    """``(sz, sy, sx)`` の正の有限値 3 つに正規化(``volio.VolumeMeta`` も受ける)。
+
+    ``volops._spacing_tuple`` と同じ規約。``None`` は等方 ``(1, 1, 1)``。
+    """
+    if spacing is None:
+        return (1.0, 1.0, 1.0)
+    if hasattr(spacing, "spacing_mm"):
+        spacing = spacing.spacing_mm
+    try:
+        sp = tuple(float(s) for s in spacing)
+    except (TypeError, ValueError):
+        raise ValueError(f"{name} must be a length-3 (sz, sy, sx) sequence or a "
+                         f"VolumeMeta, got {spacing!r}") from None
+    if len(sp) != 3 or any((not np.isfinite(s)) or s <= 0.0 for s in sp):
+        raise ValueError(f"{name} must be 3 positive finite values (sz, sy, sx), got {sp!r}")
+    return sp
+
+
+def _graph_neighbourhood(spacing):
+    """26 近傍のオフセットと、**spacing を掛けた実距離**の歩幅。"""
+    sz, sy, sx = spacing
+    offs, steps = [], []
+    for dz in (-1, 0, 1):
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                if dz or dy or dx:
+                    offs.append((dz, dy, dx))
+                    steps.append(float(np.sqrt((dz * sz) ** 2 + (dy * sy) ** 2
+                                               + (dx * sx) ** 2)))
+    return offs, steps
+
+
+def _edge_row(u, v, length, path, dist, component):
+    """枝 1 本の行。半径は経路上(両端のノード voxel を含む)の値から。"""
+    row = {"u": int(min(u, v)), "v": int(max(u, v)),
+           "length": float(length), "n_points": int(len(path)),
+           "component": int(component)}
+    if dist is None:
+        row["radius_mean"] = None
+        row["radius_min"] = None
+    else:
+        vals = np.array([dist[p] for p in path], dtype=np.float64)
+        row["radius_mean"] = float(vals.mean())
+        row["radius_min"] = float(vals.min())
+    return row
+
+
+def _graph_degrees(edges, ids):
+    """ノード id → 接続する枝の本数(自己ループは 2 と数える)。"""
+    deg = {int(i): 0 for i in ids}
+    for e in edges:
+        deg[e["u"]] += 1
+        deg[e["v"]] += 1                 # u == v(自己ループ)なら自動的に +2
+    return deg
+
+
+def skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0):
+    """3D 骨格を **ノード(接合点・端点)と枝(長さ・半径)のグラフ**に組み立てる。
+
+    ``skeleton_junctions3d`` / ``skeleton_endpoints3d`` / ``skeleton_branches3d`` は
+    「どの voxel がノードか/枝か」を **マスク**で返すだけで、**どの枝がどのノードと
+    どのノードを繋ぐか**は返さない。回路にするにはその接続が要る —— 神経形態の
+    ケーブル理論では、区画の軸方向コンダクタンスが **直径と長さ**で決まり、区画同士の
+    **繋がり方**が回路そのものになる。この op はその 1 段を埋める。
+
+    引数:
+        vol: 3-D の骨格(bool か ``{0, 1}``。``skeletonize_vol`` の出力)。中身が
+            塊(6 近傍がすべて前景の interior voxel がある)なら、族の他の op と
+            同じく内部で ``skeletonize_vol`` を先に掛ける。
+        distance: 任意。同形の距離変換ボリューム(``vol_distance_transform`` の
+            出力)。渡すと各ノード・各枝に半径が付く。**単位は渡した距離場に従う**
+            —— 物理単位が要るなら ``vol_distance_transform(mask, spacing)`` を渡す。
+        spacing: ``(sz, sy, sx)``。枝の長さを **実距離**で測る(EM の異方ボクセルが
+            既定の想定)。``VolumeMeta`` も受ける。
+        min_branch_len: これ未満の**末端の枝(ヒゲ)**を刈る(既定 0 = 刈らない)。
+            単位は ``spacing`` の実距離。刈るのは「片端が端点(次数 1)で、もう
+            片端が次数 2 以上」の枝 —— **両端とも端点**の枝は刈らない。それは
+            それ自体が 1 つの連結成分(短い孤立した管)なので、刈ると構造ごと
+            消えてしまう。刈ったぶんは ``n_pruned_branches`` に返す。
+
+    返り値: ``dict``(台帳の宣言 out 型 = ``table``)。
+
+        * ``nodes``: ノード表。``id`` / ``z,y,x``(voxel 添字での重心。実座標は
+          spacing を掛ける)/ ``kind`` / ``degree`` / ``n_voxels`` / ``radius``
+          (``distance`` を渡したとき、そのノードの voxel での最大値 = 内接半径)/
+          ``component``。
+        * ``edges``: 枝表。``u`` / ``v``(ノード id の対)/ ``length``(骨格に沿った
+          実距離、spacing 込み)/ ``radius_mean`` / ``radius_min`` / ``n_points``
+          (経路上の voxel 数、両端のノード voxel を含む)/ ``component``。
+        * ``n_nodes`` / ``n_edges`` / ``n_components`` / ``n_cycles`` /
+          ``n_pruned_branches`` / ``n_skeleton_voxels`` / ``spacing`` / ``has_radius``。
+
+    規約(ここが位相を決める):
+        * 26 近傍次数 **2** の voxel は枝の途中であってノードにしない。次数 **1 以下**
+          が端点(孤立 voxel を含む)、**3 以上**が接合。
+        * 接合 voxel は 1 つとは限らない(離散骨格では分岐が数 voxel の塊になる)。
+          26 連結で塊にまとめて **1 ノード**として数え、座標はその重心。
+        * **連結成分が複数なら黙って繋がない。** ``n_components`` に本数を返し、
+          各ノード・各枝に ``component`` を付ける。
+        * 閉ループだけの成分(ノードになる voxel が 1 つも無い輪)は、その成分の
+          先頭 voxel を 1 つだけ種のノードに立てて自己ループの枝 1 本にする。
+          こうすると **オイラーの関係 ``n_cycles = n_edges - n_nodes +
+          n_components``** が輪でも成り立つ(木だと仮定していない)。
+        * ``kind`` は**刈った後の**次数で決まる: 0 = ``isolated`` / 1 = ``endpoint`` /
+          2 = ``chain``(輪の種ノード、または刈った結果そうなったノード)/
+          3 以上 = ``junction``。刈ると接合が次数 2 に落ちることがあり、その
+          ノードは残る(区画の境界としては正しいが、「次数 2 はノードにしない」
+          という上の規約は**刈る前**の話であることに注意)。
+        * 接合の塊どうしが直接隣接している(間に次数 2 の道が無い)場合は、その
+          対に対して **1 本**の枝を作る(長さ = 隣接する voxel 対の最短)。
+
+    検証(すべて ``ValueError`` で fail-closed): 3-D でない/空配列/NaN・Inf/
+    bool でも ``{0,1}`` でもない値(中間値の「たぶん前景」を黙って丸めない)/
+    前景がゼロ/``distance`` の形が違う・負・非有限/``spacing`` が 3 つの正の
+    有限値でない/``min_branch_len`` が負。細線化が要る入力で scikit-image が
+    無ければ ``ImportError``。
+
+    注意(honest、いずれも実測):
+
+    * 長さは **26 近傍の折れ線**の和なので、曲がった枝は連続曲線より長く出る。
+      半径 14 voxel の閉じた管(真の周長 87.96)で **94.7 = +7.7 %**。
+    * **太い入力は端が縮む。** 自由端の細線化は端の蓋の手前で止まる。長さ 35 の
+      直円柱で実測すると 半径 1・2 は **35.00(縮みゼロ)**、半径 3 は 33、
+      半径 4 は 31 —— 半径が 3 以上になると片端あたり 1〜2 voxel 内側に寄る。
+      長さを真値と比べるなら、**細線化を通らない 1 voxel 幅の骨格**を渡すこと
+      (そのときは厳密に一致する: 31 voxel の直線で 30.0)。
+    * 分岐では、接合の塊(次数 3 以上が 26 連結でまとまったもの)に呑まれたぶん
+      だけ枝が短くなる。**接合より短いヒゲは枝にならず、ノードの ``n_voxels``
+      に含まれて消える**(``min_branch_len`` で刈る対象にすらならない)。
+    * 半径は ``distance`` の値そのもの。端点は端の蓋までの距離で決まるので
+      **管の半径より小さく出る**(半径 3 の円柱で端点 2.0、枝の平均 3.07)。
+      枝の太さを見るなら ``radius_mean`` / ``radius_min`` を使う。
+    * **90 度回転**: 1 voxel 幅の骨格を入れた場合、グラフは同型で長さも厳密に
+      一致する(9 通り実測)。太い塊を渡した場合はノード数・枝数は一致するが、
+      長さは最大 1.41(= 対角 1 歩)ずれる —— ずれているのはこの op ではなく
+      **細線化ヘルパ(skimage Lee)が回転で厳密には同じ骨格を作らない**ため。
+    """
+    from scipy.ndimage import binary_erosion, generate_binary_structure, label
+
+    skel = _strict_binary_volume(vol, "skeleton")
+    if not skel.any():
+        raise ValueError("skeleton has no foreground voxel (all zero) — "
+                         "there is no graph to build (pass a skeleton or a solid shape)")
+    interior = binary_erosion(skel, structure=generate_binary_structure(3, 1),
+                              border_value=0)
+    if interior.any():
+        skel = skeletonize_vol(skel)
+        if not skel.any():
+            raise ValueError("skeletonize_vol produced an empty skeleton from this volume")
+
+    sp = _spacing3(spacing)
+    mbl = float(min_branch_len)
+    if not np.isfinite(mbl) or mbl < 0.0:
+        raise ValueError(f"min_branch_len must be a finite value >= 0, got {min_branch_len!r}")
+
+    dist = None
+    if distance is not None:
+        dist = np.asarray(distance)
+        if dist.shape != skel.shape:
+            raise ValueError(f"distance must have the same shape as the skeleton "
+                             f"{skel.shape!r}, got {dist.shape!r}")
+        if (not np.issubdtype(dist.dtype, np.number)
+                or np.issubdtype(dist.dtype, np.complexfloating)):
+            raise ValueError(f"distance must be a real numeric volume, got dtype {dist.dtype!r}")
+        dist = dist.astype(np.float64)
+        if not np.all(np.isfinite(dist)):
+            raise ValueError("distance contains NaN/Inf")
+        if float(dist.min()) < 0.0:
+            raise ValueError(f"distance must be non-negative (it is a distance "
+                             f"transform), got min {float(dist.min()):.6g}")
+
+    st26 = np.ones((3, 3, 3), dtype=np.int32)
+    deg_vox = _skeleton_degree(skel)
+    node_mask = skel & (deg_vox != 2)
+    node_of, n_node = label(node_mask, structure=st26)
+    node_of = node_of.astype(np.int64)
+    comp_of, n_comp = label(skel, structure=st26)
+
+    # 閉ループだけの成分にはノードになる voxel が 1 つも無い。種を 1 つ立てて
+    # 自己ループの枝にする(立てないと、その成分は**出力から黙って消える**)。
+    if n_comp:
+        has_node = np.zeros(n_comp + 1, dtype=bool)
+        if node_mask.any():
+            has_node[np.unique(comp_of[node_mask])] = True
+        nid = int(n_node)
+        for c in range(1, n_comp + 1):
+            if has_node[c]:
+                continue
+            zz, yy, xx = np.nonzero(comp_of == c)
+            nid += 1
+            node_of[zz[0], yy[0], xx[0]] = nid
+        n_node = nid
+
+    node_vox = {}
+    for z, y, x in np.argwhere(node_of > 0):
+        node_vox.setdefault(int(node_of[z, y, x]), []).append((int(z), int(y), int(x)))
+
+    offs, steps = _graph_neighbourhood(sp)
+    d0, d1, d2 = skel.shape
+    consumed = np.zeros(skel.shape, dtype=bool)
+    edges = []
+    direct = {}
+
+    for nid in sorted(node_vox):
+        for (z, y, x) in node_vox[nid]:
+            for (dz, dy, dx), slen in zip(offs, steps):
+                z1, y1, x1 = z + dz, y + dy, x + dx
+                if not (0 <= z1 < d0 and 0 <= y1 < d1 and 0 <= x1 < d2):
+                    continue
+                if not skel[z1, y1, x1]:
+                    continue
+                other = int(node_of[z1, y1, x1])
+                if other:
+                    if other == nid:
+                        continue
+                    key = (min(nid, other), max(nid, other))
+                    if key not in direct or slen < direct[key][0]:
+                        direct[key] = (slen, [(z, y, x), (z1, y1, x1)])
+                    continue
+                if consumed[z1, y1, x1]:
+                    continue                       # 反対側から既に辿った枝
+                consumed[z1, y1, x1] = True
+                path = [(z, y, x), (z1, y1, x1)]
+                length = slen
+                pz, py, px = z, y, x
+                cz, cy, cx = z1, y1, x1
+                while True:
+                    step = None
+                    for (ez, ey, ex), elen in zip(offs, steps):
+                        z2, y2, x2 = cz + ez, cy + ey, cx + ex
+                        if not (0 <= z2 < d0 and 0 <= y2 < d1 and 0 <= x2 < d2):
+                            continue
+                        if not skel[z2, y2, x2] or (z2, y2, x2) == (pz, py, px):
+                            continue
+                        step = (z2, y2, x2, elen)
+                        break                      # 次数 2 なので候補はこの 1 つだけ
+                    if step is None:
+                        raise ValueError(
+                            "internal: degree-2 skeleton voxel %r has no continuation "
+                            "(the 26-neighbour degree and the walk disagree)"
+                            % ((cz, cy, cx),))
+                    z2, y2, x2, elen = step
+                    length += elen
+                    path.append((z2, y2, x2))
+                    if node_of[z2, y2, x2]:
+                        edges.append(_edge_row(nid, int(node_of[z2, y2, x2]), length,
+                                               path, dist, comp_of[z, y, x]))
+                        break
+                    consumed[z2, y2, x2] = True
+                    pz, py, px = cz, cy, cx
+                    cz, cy, cx = z2, y2, x2
+
+    for (a, b), (slen, path) in sorted(direct.items()):
+        edges.append(_edge_row(a, b, slen, path, dist, comp_of[path[0]]))
+
+    alive = set(node_vox)
+    pruned = 0
+    if mbl > 0.0 and edges:
+        while True:
+            dg = _graph_degrees(edges, alive)
+            drop = None
+            for i, e in enumerate(edges):
+                if e["u"] == e["v"] or e["length"] >= mbl:
+                    continue
+                # 末端(次数 1)の枝を刈る。ただし**両端とも端点**の枝は刈らない
+                # —— それは「短い孤立した管」そのものなので、刈ると構造ごと消える。
+                # ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で
+                #   一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で
+                #   融合して次数 2 になる配置が普通にあり、その場合に素通りしていた
+                #   (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
+                if dg[e["u"]] == 1 and dg[e["v"]] >= 2:
+                    drop = (i, e["u"])
+                    break
+                if dg[e["v"]] == 1 and dg[e["u"]] >= 2:
+                    drop = (i, e["v"])
+                    break
+            if drop is None:
+                break
+            i, leaf = drop
+            edges.pop(i)
+            alive.discard(leaf)
+            pruned += 1
+
+    order = sorted(alive)
+    remap = {old: new for new, old in enumerate(order)}
+    for e in edges:
+        e["u"], e["v"] = remap[e["u"]], remap[e["v"]]
+        if e["u"] > e["v"]:
+            e["u"], e["v"] = e["v"], e["u"]
+    edges.sort(key=lambda e: (e["u"], e["v"], e["length"]))
+    dg = _graph_degrees(edges, remap.values())
+
+    nodes = []
+    for old in order:
+        vox = np.array(node_vox[old], dtype=np.float64)
+        d = int(dg[remap[old]])
+        kind = ("isolated" if d == 0 else "endpoint" if d == 1
+                else "chain" if d == 2 else "junction")
+        nodes.append({
+            "id": int(remap[old]),
+            "z": float(vox[:, 0].mean()), "y": float(vox[:, 1].mean()),
+            "x": float(vox[:, 2].mean()),
+            "kind": kind, "degree": d, "n_voxels": int(len(vox)),
+            "radius": (None if dist is None
+                       else float(max(dist[p] for p in node_vox[old]))),
+            "component": int(comp_of[node_vox[old][0]]),
+        })
+
+    return {
+        "nodes": nodes,
+        "edges": edges,
+        "n_nodes": len(nodes),
+        "n_edges": len(edges),
+        "n_components": int(n_comp),
+        "n_cycles": int(len(edges) - len(nodes) + int(n_comp)),
+        "n_pruned_branches": int(pruned),
+        "n_skeleton_voxels": int(skel.sum()),
+        "spacing": (float(sp[0]), float(sp[1]), float(sp[2])),
+        "has_radius": dist is not None,
+    }
 
 
 def topology_signature(skeleton):
