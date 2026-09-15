@@ -161,7 +161,12 @@ def test_the_venv_really_is_the_wheel_and_not_the_checkout(wheel_python, outside
     assert (seen_docs, seen_index) == ("False", "False"), (
         "wheel の venv から checkout の docs/ が見えている(ROOT=%s)。PYTHONPATH か cwd か "
         "editable install が混ざっている —— この門は配布物を測れていない" % root)
-    assert os.path.abspath(ROOT) not in os.path.abspath(root)
+    # 「checkout の下」だけで判定しない: CI は wheel 用 venv を checkout 内(`.wheelenv/`)に
+    # 作るので site-packages も checkout の下に来る。配布物の印は site-packages にあること。
+    norm = os.path.abspath(root).replace("\\", "/")
+    assert "/site-packages/" in norm + "/", "wheel の venv でなく checkout を測っている: %s" % root
+    assert not norm.lower().startswith(os.path.abspath(ROOT).replace("\\", "/").lower() + "/") \
+        or "/site-packages/" in norm + "/", root
 
 
 def test_the_wheel_carries_the_catalog_data_files(wheel_python, outside):

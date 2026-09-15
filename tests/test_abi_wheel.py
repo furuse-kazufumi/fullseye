@@ -218,6 +218,16 @@ def _under(path: str, root: str) -> bool:
     return os.path.abspath(path).lower().startswith(os.path.abspath(root).lower() + os.sep)
 
 
+def _from_checkout(path: str) -> bool:
+    """checkout のソースを import していたら真。**site-packages の下なら配布物**とみなす。
+
+    CI は wheel 用の venv を checkout の中(`.wheelenv/`)に作るので、「checkout の下に
+    あるか」だけで判定すると venv の site-packages まで checkout 扱いになって門が
+    空振りする(2026-09-15 の run 34974161857 で 4 件が誤って落ちた)。"""
+    norm = os.path.abspath(path).replace("\\", "/")
+    return _under(path, ROOT) and "/site-packages/" not in norm
+
+
 def _meaningful(rec: dict, what: str):
     """「走った」≠「意味のある出力」: 要素数・有限・非定数・入力からの変化を別々に見る。"""
     assert rec["status"] == FS_OK, "%s: status %s — %s" % (what, rec["status"], rec["message"])
@@ -244,7 +254,7 @@ def test_the_wheel_ships_the_bridge_module_with_its_body(wheel_python, outside):
     assert int(size_record) == int(size_disk) == want, (size_record, size_disk, want)
     assert want > 15_000, "abi_bridge.py が小さすぎる(%d バイト)" % want
     where = where.strip()
-    assert not _under(where, ROOT), "ブリッジが checkout から import されている: %s" % where
+    assert not _from_checkout(where), "ブリッジが checkout から import されている: %s" % where
     assert "site-packages" in where.replace("\\", "/"), where
 
 
@@ -254,7 +264,7 @@ def test_the_wheel_ships_the_bridge_module_with_its_body(wheel_python, outside):
 def test_the_bridge_applies_ops_from_the_wheel_outside_the_repo(wheel_python, outside):
     r = _probe(wheel_python, outside, "bridge")
     assert r["FULLSEYE_ROOT"] is None and not _under(r["cwd"], ROOT), (r["FULLSEYE_ROOT"], r["cwd"])
-    assert not _under(r["fullseye_file"], ROOT) and not _under(r["bridge_file"], ROOT), r
+    assert not _from_checkout(r["fullseye_file"]) and not _from_checkout(r["bridge_file"]), r
 
     g = r["gaussian"]
     _meaningful(g, "abi_bridge.apply('gaussian')")
@@ -336,5 +346,5 @@ def test_fs_apply_reaches_the_wheel_through_the_cdylib(wheel_python, outside, em
     assert fc["status"] == FS_OK and fc["chars"] == r["catalog"]["chars"] > 100_000, (fc, r["catalog"]["chars"])
     assert fc["identical_to_bridge"] is True, "fs_catalog_json とブリッジの catalog_json が違う"
 
-    assert not _under(r["bridge_file_after"], ROOT), r["bridge_file_after"]
+    assert not _from_checkout(r["bridge_file_after"]), r["bridge_file_after"]
     assert r["bridge_file_after"] == r["bridge_file"], (r["bridge_file_after"], r["bridge_file"])

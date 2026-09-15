@@ -42,3 +42,7 @@ rust/fullseye_core/examples/c/*.so
 rust/fullseye_core/examples/c/*.dylib
 rust/fullseye_core/examples/csharp/bin/
 rust/fullseye_core/examples/csharp/obj/
+
+# CI が checkout 内に作る wheel 検査用の venv と wheel 置き場(門の再現にも使う)
+.wheelenv/
+dist_check/
