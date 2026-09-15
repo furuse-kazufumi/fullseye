@@ -6,6 +6,11 @@ category: 見せる
 ops: [text_box, annotate_text_path, annotate_text_path_layout, annotate_table, annotate_table_layout, measure_text]
 examples: [annotate_paper_tour]
 version: 0.1.11
+inputs: [image2d, text]
+pipeline: [measure_text, annotate_text_path_layout, annotate_text_path, annotate_table_layout, annotate_table]
+alternatives: [text_box, annotate_panel_label]
+limits: 本文組版ではない(縦中横・句読点寄せ無し)。Bold / Italic は合成。はみ出しと桁数不揃いは黙って切らず例外。
+calibration: 描画のみ。`font_size` は px。実寸校正は不要。
 ---
 
 # 画像の上に、文字と表を置きたい場所へ置く
@@ -41,6 +46,24 @@ img = fs.annotate_text_path(img, "along the edge", [(12.0, 128.0), (300.0, 100.0
                             font_size=13, anchor="center", offset=-8.0, italic=True)
 print('図', np.asarray(img).shape)
 ```
+
+## 推奨パイプライン
+
+`measure_text` → `annotate_text_path_layout` → `annotate_text_path` → `annotate_table_layout` → `annotate_table`
+
+`measure_text` で字の幅・高さを測り → `annotate_text_path_layout` で経路上の置き場所を検算 → `annotate_text_path` で描く → 表は `annotate_table_layout` → `annotate_table`。
+
+## 代替
+
+1 か所の名札なら `text_box`(9 方向アンカー)、パネル記号は `annotate_panel_label`。
+
+## 限界
+
+本文組版ではない(縦中横・句読点寄せ無し)。Bold / Italic は合成。はみ出しと桁数不揃いは黙って切らず例外。
+
+## 実寸校正
+
+描画のみ。`font_size` は px。実寸校正は不要。
 
 ## 裏づけ
 

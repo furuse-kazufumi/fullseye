@@ -6,6 +6,11 @@ category: 形にする
 ops: [radon_transform, fbp_volume, ring_artifact_remove, marching_cubes]
 examples: [poc_ct_fidelity, poc_ct_void_morphology]
 version: 0.1.11
+inputs: [image2d, sinostack]
+pipeline: [radon_transform, ring_artifact_remove, beam_hardening_correct, fbp_volume, vol_rle_components, vol_rle_volume]
+alternatives: [marching_cubes, radon_volume, sinogram_center_of_rotation, ring_artifact_apply]
+limits: iso-value を 1 段変えるだけでボイド体積・肉厚の合否が反転する(`poc_ct_void_morphology`)。投影数を減らすとフィルタ無し逆投影と 24 本で並び 12 本で逆転(`poc_ct_fidelity`)。
+calibration: 体積はボクセルピッチの **3 乗**。ピッチは既知寸法のファントムを再構成して実測する(公称ピッチで 1 % ずれると体積 3 %)。
 ---
 
 # 投影から断面を再構成する(CT)
@@ -34,6 +39,24 @@ sl = np.zeros((64, 64)); sl[24:40, 24:40] = 1.0
 sino = fs.ledger.radon_transform(sl, np.linspace(0, 180, 120, endpoint=False))
 print('サイノグラム', np.asarray(sino).shape)
 ```
+
+## 推奨パイプライン
+
+`radon_transform` → `ring_artifact_remove` → `beam_hardening_correct` → `fbp_volume` → `vol_rle_components` → `vol_rle_volume`
+
+`radon_transform` で順投影(真値つきの検証用)→ `ring_artifact_remove` / `beam_hardening_correct` でサイノグラムを補正 → `fbp_volume` で再構成 → `vol_rle_components` → `vol_rle_volume` で領域の体積。
+
+## 代替
+
+等値面は `marching_cubes`、3-D の順投影は `radon_volume`、回転中心のずれは `sinogram_center_of_rotation`。
+
+## 限界
+
+iso-value を 1 段変えるだけでボイド体積・肉厚の合否が反転する(`poc_ct_void_morphology`)。投影数を減らすとフィルタ無し逆投影と 24 本で並び 12 本で逆転(`poc_ct_fidelity`)。
+
+## 実寸校正
+
+体積はボクセルピッチの **3 乗**。ピッチは既知寸法のファントムを再構成して実測する(公称ピッチで 1 % ずれると体積 3 %)。
 
 ## 裏づけ
 

@@ -6,6 +6,22 @@ Fullseye の推奨運用は「**AI コーディングアシスタントの知識
 
 3 段階の導入方法を用意しています。**Tier 0/1 は外部依存ゼロ**(Fullseye リポジトリだけで完結)。
 
+## 入口は 1 つではない(最初に読む)
+
+文書だけを渡した Codex / Copilot は、どちらも 1 回目に **用途から引く索引を見つけられなかった**
+(2026-09-15)。原因はこのガイドに導線が無かったこと。入口は 4 つある:
+
+1. **用途から** → [`docs/CAPABILITIES.md`](CAPABILITIES.md)。課題 → **推奨パイプライン(順序つき op)/
+   代替 / 限界 / 実寸校正** を 1 課題 1 ファイル(`docs/capabilities/`)で持ち、op 名の実在と
+   **型(in → out)が前段から後段へ繋がる**ことを `tests/test_capabilities.py` が検査する。
+2. **op 名・概念から** → [`docs/ops/INDEX.md`](ops/INDEX.md) → 族の目次 → op ノート。
+3. **機械で引く** → `fs.op_find(query)`(自由語・語幹)/ `fs.op_assist(op)`(仕様・プリセット・
+   次に繋げる先)/ `fs.op_path(from_sort, to_sort)`(型 A → 型 B を繋ぐ op 列)/
+   `fs.op_producers(sort)`(その型を産む op)/ `fs.op_accepts(op)`(実測の受理型)、
+   CLI は `fullseye has <op>`(HALCON 名でも引ける)。
+4. **索引ファイル** → [`docs/OP_INDEX.json`](OP_INDEX.json)(全 op の型契約)、
+   wheel 同梱の `OP_CATALOG.md`。
+
 > **PyPI からの利用**: `pip install fullseye` した環境では console script **`fullseye-rag`** が
 > 使えます。checkout(clone / `pip install -e .`)なら `docs/ops` のフルコーパスを、wheel のみ
 > なら同梱の `OP_CATALOG.md`(AI 向け全 op カタログ)をスキルにピン留めします(フルの
@@ -22,12 +38,20 @@ per-op ノートをそのまま検索・参照できます。コーパスはリ�
 なので、pip インストールのみの場合はリポジトリも clone してください。
 
 ```
-docs/ops/2d/<category>/<op>.md   # 呼び出し形・型契約・HALCON 別名・文献・関連 op
-docs/ops/3d/<category>/<op>.md
-docs/ops/INDEX.md                # フォルダ階層 walk で自動生成の全体目次
-docs/ops/2d/guides/<family>.md   # 13 ファミリの使い方ガイド(数式・図・正典引用)
-docs/OP_INDEX.json               # レジストリの機械可読インデックス
+docs/CAPABILITIES.md                    # 用途 → op 連鎖(推奨パイプライン / 代替 / 限界 / 実寸校正)。ここから入る
+docs/ops/<family>/<category>/<op>.md    # 呼び出し形・型契約・HALCON 別名・文献・関連 op(2d / 3d / optics / piv …)
+docs/ops/INDEX.md                       # フォルダ階層 walk で自動生成の全体目次(34 族)
+docs/ops/<family>/guides/<name>.md      # 使い方ガイド 49 本(34 族。2-D は gallery2d_*、数式・図・正典引用)
+docs/OP_INDEX.json                      # レジストリの機械可読インデックス
 ```
+
+数字(族 34・ガイド 49・ノート枚数)は配布物の側から数えたもので、`tests/test_docs_index_reachable.py`
+がこの行と実ファイルを突き合わせる(自己記述が中身から遅れないように)。
+
+**Windows のシェルから読むときは UTF-8 を明示する** —— ノートは BOM 無しの UTF-8 で、既定の
+コードページで開くと日本語が文字化けし、AI が「読めていない」のに「無い」と判断する(Codex で実際に
+起きた)。PowerShell は `Get-Content -Encoding utf8`、`[Console]::OutputEncoding = [Text.Encoding]::UTF8`
+(または `chcp 65001`)、Python は `PYTHONUTF8=1`。
 
 ## Tier 1: スキルとして常駐させる(推奨・同梱インストーラー)
 
@@ -52,7 +76,7 @@ SKILL.md の `FULLSEYE_REPO =` 行が**この checkout の絶対パスに自動�
 
 ## Tier 2(任意): クラスタ化コーパス — 外部ツールでの発展形
 
-ノート **1,946 枚**をトピッククラスタに階層化し、各クラスタに LLM 要約を付けた
+ノート **1,949 枚**をトピッククラスタに階層化し、各クラスタに LLM 要約を付けた
 「ナビゲーション付きコーパス」も作れます。私たちは内部で
 [RAPTOR](https://github.com/gadievron/raptor) フォークの `corpus2skill`
 (TF-IDF + k-means + LLM 要約)を使っていますが、**これは任意の最適化であって

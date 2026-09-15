@@ -1296,9 +1296,15 @@ def _top_index_lines(lang, fp, dims, dim_counts):
                    .format(a0=dim.upper(), a1=dim, a2=nt, a3=nc))
     top.append(T("- [サンプルデータ カタログ(DL URL / ライセンス)](./SAMPLES.md)", lang))
     top.append(T("- [演算子の来歴・参考文献](../REFERENCES.md)", lang))
+    # ★2026-09-15: 用途から引く索引(docs/CAPABILITIES.md)へ**ここから**送る。文書だけを
+    #   渡した AI が 1 回目に見つけられなかったのは、この目次にも AI_RAG_GUIDE にも
+    #   導線が無かったから。
+    top.append(T("- [用途から引く(推奨パイプライン / 代替 / 限界 / 実寸校正)](../CAPABILITIES.md)", lang))
     top.append("")
     top.append(T("## 使い方(assistant 向け)", lang))
     top.append("")
+    top.append(T("0. 用途が決まっているなら、先に [CAPABILITIES.md](../CAPABILITIES.md) で"
+                 "課題 → op 連鎖(型が繋がることを検査済み)を引く。", lang))
     # ★ここは長く `2d/guides/` だけを指していて、光学・PIV・トモグラフィ等
     #   30 ファミリのガイドへ読み手を一度も送っていなかった(2026-09-09 修正)。
     top.append(T("1. まず上の一覧で**ファミリ**を選ぶ(`2d`/`3d` だけでなく、光学・PIV・"
@@ -1394,6 +1400,11 @@ def skill_corpus_map() -> str:
         "`docs/ops/<family>/<category>/<op>.md` |",
         "| Table of contents, per family | `docs/ops/<family>/INDEX.md` |",
         "| Top-level table of contents (all families, with counts) | `docs/ops/INDEX.md` |",
+        "| **Task → op chain** (recommended pipeline with type-checked chaining, alternatives, "
+        "limits, real-world calibration) — start here when the task is known | "
+        "`docs/CAPABILITIES.md`, one file per task under `docs/capabilities/` |",
+        "| Op discovery API (search / chain / inputs): `fs.op_find`, `fs.op_assist`, `fs.op_path`, "
+        "`fs.op_producers`, `fs.op_accepts`; CLI `fullseye has <op>` | `fullseye` facade |",
         "| Family how-to guides (math + mermaid + citations) | "
         "`docs/ops/<family>/guides/<name>.md` |",
         "| Sample-data catalog (real download URLs, licences) | `docs/ops/SAMPLES.md` |",

@@ -570,3 +570,27 @@ def test_underscore_directories_are_served_by_pages():
     assert not missing, (
         "リンクされているのに Jekyll が配信しない `_` ディレクトリ: %s —— "
         "docs/_config.yml の include に足すこと" % missing)
+
+
+def test_the_rag_guide_family_and_guide_counts_are_current():
+    """★検索層の自己記述は中身とずれる(`feedback_retrieval_layer_must_not_describe_itself`)。
+
+    `AI_RAG_GUIDE.md` は「2D guides は 13 ファミリ」と書いたまま、実ファイルは 16 本、
+    全族のガイドは 49 本になっていた(2026-09-15、Codex / Copilot の指摘)。数字は
+    配布物(`docs/ops/*/guides/*.md` と族ディレクトリ)の側から数え、6 言語すべての
+    同じ行に同じ数が書かれていることを見る。
+    """
+    sys.path.insert(0, str(ROOT / "tools"))
+    import opdocs as OD
+
+    n_guides = len(list(DOCS.glob("ops/*/guides/*.md")))
+    n_fams = len(OD.corpus_families())
+    assert n_guides >= 49 and n_fams >= 34, (n_guides, n_fams)
+    for lang in LANGS:
+        name = "AI_RAG_GUIDE.md" if not lang else "AI_RAG_GUIDE.%s.md" % lang
+        lines = [ln for ln in (DOCS / name).read_text(encoding="utf-8").splitlines()
+                 if "docs/ops/<family>/guides/<name>.md" in ln]
+        assert len(lines) == 1, "%s にガイドの行が %d 本(1 本のはず)" % (name, len(lines))
+        nums = set(re.findall(r"\d+", lines[0]))
+        assert str(n_guides) in nums and str(n_fams) in nums, (
+            "%s のガイド数 / 族数が古い(いまは %d 本 / %d 族): %s" % (name, n_guides, n_fams, lines[0]))

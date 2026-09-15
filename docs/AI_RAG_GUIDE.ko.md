@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 6b4ef1ca57e4 -->
+<!-- i18n-source-sha: b50d12a26df4 -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -6,6 +6,16 @@
 Fullseye의 권장 운용 방식은 "**AI 코딩 어시스턴트의 지식 베이스(RAG)로 사용**"하는 것입니다. 모든 op가 기계가 읽을 수 있는 Markdown 노트(`docs/ops`, 단일 진실 원천)를 가지고 있으므로, 추가적인 벡터 DB나 임베딩 서비스는 **필요하지 않습니다**. grep이 가능한 환경이라면 그 자체가 곧 RAG가 됩니다.
 
 3단계의 도입 방법을 제공합니다. **Tier 0/1은 외부 의존성이 전혀 없습니다**(Fullseye 저장소만으로 완결됩니다).
+
+## 입구는 하나가 아닙니다(먼저 읽을 것)
+
+문서만 받은 Codex와 Copilot은 첫 시도에서 **용도로 찾는 색인을 둘 다 찾지 못했습니다**(2026-09-15). 원인은 이 가이드에 그리로 가는 링크가 없었기 때문입니다. 입구는 네 개입니다.
+
+1. **용도로** → [`docs/CAPABILITIES.md`](CAPABILITIES.md). 과제마다 파일 하나(`docs/capabilities/`)에 **권장 파이프라인(순서 있는 op) / 대안 / 한계 / 실측 보정**을 두고, `tests/test_capabilities.py`가 op 이름의 실재와 **타입(in → out)이 앞 단계에서 뒤 단계로 이어짐**을 검사합니다.
+2. **op 이름·개념으로** → [`docs/ops/INDEX.ko.md`](ops/INDEX.ko.md) → 계열 목차 → op 노트.
+3. **기계로 찾기** → `fs.op_find(query)`(자유어·어간) / `fs.op_assist(op)`(사양·프리셋·다음에 이을 op) / `fs.op_path(from_sort, to_sort)`(타입 A → 타입 B를 잇는 op 열) / `fs.op_producers(sort)`(그 타입을 만드는 op) / `fs.op_accepts(op)`(실측한 수용 타입); 명령줄은 `fullseye has <op>`(HALCON 이름도 가능).
+4. **색인 파일** → [`docs/OP_INDEX.json`](OP_INDEX.json)(전체 op의 타입 계약), wheel에 동봉된 `OP_CATALOG.md`.
+
 
 > **PyPI를 통한 사용**: `pip install fullseye`를 실행한 환경에서는 콘솔 스크립트 **`fullseye-rag`**를 사용할 수 있습니다. checkout(clone / `pip install -e .`)인 경우 `docs/ops`의 전체 코퍼스를 스킬에 고정하고, wheel만 설치한 경우에는 동봉된 `OP_CATALOG.md`(AI를 위한 전체 op 카탈로그)를 스킬에 고정합니다(완전한 개별 op 노트가 필요해지면 저장소를 clone하여 다시 실행하면 됩니다). 업데이트는 `py -3.11 tools/update_fullseye.py`로 수행합니다(dirty 트리 거부 · `--ff-only` · 스킬은 백업 후 업데이트 · Studio 설정은 건드리지 않음 — 환경을 망가뜨리지 않도록 설계됨).
 
@@ -16,12 +26,16 @@ Fullseye의 권장 운용 방식은 "**AI 코딩 어시스턴트의 지식 베�
 Fullseye 저장소의 checkout을 Claude Code에서 열면 `docs/ops/INDEX.md`와 개별 op 노트를 그대로 검색·참조할 수 있습니다. 코퍼스는 저장소 콘텐츠이므로(wheel에는 포함되지 않음), pip 설치만 한 경우에는 저장소도 함께 clone하십시오.
 
 ```
-docs/ops/2d/<category>/<op>.md   # 호출 형식·타입 계약·HALCON 별칭·참고 문헌·관련 op
-docs/ops/3d/<category>/<op>.md
-docs/ops/INDEX.md                # 폴더 계층을 순회하여 자동 생성한 전체 목차
-docs/ops/2d/guides/<family>.md   # 13개 계열의 사용 가이드(수식·그림·정전 인용)
-docs/OP_INDEX.json               # 레지스트리의 기계 판독 가능한 인덱스
+docs/CAPABILITIES.md                    # 용도 → op 연쇄(권장 파이프라인 / 대안 / 한계 / 실측 보정). 여기서 시작
+docs/ops/<family>/<category>/<op>.md    # 호출 형식·타입 계약·HALCON 별칭·참고 문헌·관련 op(2d / 3d / optics / piv …)
+docs/ops/INDEX.md                       # 폴더 계층을 순회하여 자동 생성한 전체 목차(34개 계열)
+docs/ops/<family>/guides/<name>.md      # 사용 가이드 49편(34개 계열. 2-D는 gallery2d_*; 수식·그림·정전 인용)
+docs/OP_INDEX.json                      # 레지스트리의 기계 판독 가능한 인덱스
 ```
+
+숫자(34개 계열·49편의 가이드·노트 수)는 배포되는 파일 쪽에서 센 것이며, `tests/test_docs_index_reachable.py`가 이 줄을 실제 파일과 대조합니다(자기 서술이 내용보다 뒤처지지 않도록).
+
+**Windows 셸에서 읽을 때는 UTF-8을 명시하십시오** —— 노트는 BOM 없는 UTF-8이며, 기본 코드 페이지로 열면 일본어가 깨져서 AI가 "읽지 못한" 것을 "없다"고 판단합니다(Codex에서 실제로 일어났습니다). PowerShell은 `Get-Content -Encoding utf8`, `[Console]::OutputEncoding = [Text.Encoding]::UTF8`(또는 `chcp 65001`), Python은 `PYTHONUTF8=1`.
 
 ## Tier 1: 스킬로 상주시키기(권장 · 동봉 설치 스크립트)
 
@@ -38,7 +52,7 @@ py -3.11 tools/setup_claude_rag.py --uninstall  # 제거
 
 ## Tier 2(선택): 클러스터링된 코퍼스 — 외부 도구를 이용한 발전형
 
-**1,946개**의 노트를 주제 클러스터로 계층화하고, 각 클러스터에 LLM 요약을 붙인 "내비게이션이 있는 코퍼스"도 만들 수 있습니다. 내부적으로는 [RAPTOR](https://github.com/gadievron/raptor) 포크의 `corpus2skill`(TF-IDF + k-means + LLM 요약)을 사용하고 있지만, **이는 어디까지나 선택적인 최적화이며 필수가 아닙니다**. 요구 사항은 "`docs/ops`를 입력으로 클러스터별 SKILL.md 계층을 출력"하는 것뿐이므로, 동등한 도구라면 무엇으로든 대체할 수 있습니다.
+**1,949개**의 노트를 주제 클러스터로 계층화하고, 각 클러스터에 LLM 요약을 붙인 "내비게이션이 있는 코퍼스"도 만들 수 있습니다. 내부적으로는 [RAPTOR](https://github.com/gadievron/raptor) 포크의 `corpus2skill`(TF-IDF + k-means + LLM 요약)을 사용하고 있지만, **이는 어디까지나 선택적인 최적화이며 필수가 아닙니다**. 요구 사항은 "`docs/ops`를 입력으로 클러스터별 SKILL.md 계층을 출력"하는 것뿐이므로, 동등한 도구라면 무엇으로든 대체할 수 있습니다.
 
 재수집(노트 업데이트 후)의 예 — 내부 운용을 그대로 정직하게 기록한 것입니다.
 

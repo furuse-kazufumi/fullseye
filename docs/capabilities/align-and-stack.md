@@ -6,6 +6,11 @@ category: 組み立てる
 ops: [frame_align, drizzle_resample, icp_point2point_3d, interp_scattered]
 examples: [poc_astro_photometry, poc_registration_basin]
 version: 0.1.11
+inputs: [images]
+pipeline: [align_frames, drizzle_resample, frame_quality]
+alternatives: [frame_align, icp_point2point_3d, register_cross, interp_scattered]
+limits: 繰り返し構造(網点・格子)では `frame_align` が `inlier_ratio` 1.00 のまま 80.85 px 外す —— `vote_margin` を併せて見る。合わせすぎると欠陥が消える(`poc_cad_scan_deviation`)。
+calibration: 合わせは px のまま。変位を実寸にするなら既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`。
 ---
 
 # 位置を合わせて重ねる
@@ -36,6 +41,24 @@ b = np.roll(a, (3, -2), axis=(0, 1))
 info = fs.frame_align([a, b])
 print(info)                          # vote_margin も一緒に見る
 ```
+
+## 推奨パイプライン
+
+`align_frames` → `drizzle_resample` → `frame_quality`
+
+`align_frames` で列を平行移動で合わせ(投票、`vote_margin` つき)→ `drizzle_resample` でサブピクセル再標本して 1 枚に重ね → `frame_quality` で重ねた結果の鮮鋭度・雑音を数字にする。
+
+## 代替
+
+1 対の変位だけ要るなら `frame_align`。点群は `icp_point2point_3d` / `register_cross`。欠測を埋めるなら `interp_scattered`(外挿率つき)。
+
+## 限界
+
+繰り返し構造(網点・格子)では `frame_align` が `inlier_ratio` 1.00 のまま 80.85 px 外す —— `vote_margin` を併せて見る。合わせすぎると欠陥が消える(`poc_cad_scan_deviation`)。
+
+## 実寸校正
+
+合わせは px のまま。変位を実寸にするなら既知寸法の的を同じ光学系で測り `mm_per_px_from_reference` → `pixel_to_world`。
 
 ## 裏づけ
 

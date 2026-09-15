@@ -6,6 +6,11 @@ category: 光と色
 ops: [rgb_to_lab, xyz_to_lab, delta_e_2000, cie_xyz_from_wavelength]
 examples: [poc_white_balance, poc_pigment_unmixing]
 version: 0.1.11
+inputs: [rgbimage]
+pipeline: [rgb_to_lab, delta_e_2000]
+alternatives: [rgb_to_xyz, xyz_to_lab, delta_e_76, delta_e_map, cie_xyz_from_wavelength, srgb_to_linear]
+limits: 符号化 RGB を線形として扱うと全部ずれる。白色点(D50 / D65)の違う Lab を直接比べない。色恒常性に勝ち続ける手法は無い(`poc_white_balance`)。
+calibration: 画素 → mm は関係しない。校正は**線形化**(`srgb_to_linear`)と**白色点**で、色差 ΔE は無次元。
 ---
 
 # 色を測る(XYZ / Lab / 色差)
@@ -33,6 +38,24 @@ lab_a = fs.ledger.rgb_to_lab((0.80, 0.20, 0.20))
 lab_b = fs.ledger.rgb_to_lab((0.78, 0.24, 0.19))
 print('dE2000 =', fs.ledger.delta_e_2000(lab_a, lab_b))
 ```
+
+## 推奨パイプライン
+
+`rgb_to_lab` → `delta_e_2000`
+
+`rgb_to_lab` で基準と被測定の RGB(線形)を Lab に → `delta_e_2000` で画素ごとの色差地図(または 1 色ずつ)。
+
+## 代替
+
+XYZ を経由して白色点を扱うなら `rgb_to_xyz` → `xyz_to_lab`。CIE76 なら `delta_e_76`、RGB から直接なら `delta_e_map`。分光からは `cie_xyz_from_wavelength`。
+
+## 限界
+
+符号化 RGB を線形として扱うと全部ずれる。白色点(D50 / D65)の違う Lab を直接比べない。色恒常性に勝ち続ける手法は無い(`poc_white_balance`)。
+
+## 実寸校正
+
+画素 → mm は関係しない。校正は**線形化**(`srgb_to_linear`)と**白色点**で、色差 ΔE は無次元。
 
 ## 裏づけ
 

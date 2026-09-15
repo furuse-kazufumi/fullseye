@@ -6,6 +6,11 @@ category: 測る
 ops: [mesh_volume, vol_rle_volume, interp_scattered, dem_slope]
 examples: [poc_stockpile_volume, poc_lidar_terrain_change]
 version: 0.1.11
+inputs: [voxel, mesh]
+pipeline: [vol_rle_components, vol_rle_volume, mesh_volume]
+alternatives: [interp_scattered, dem_slope, dem_fill_sinks, marching_cubes]
+limits: 底面が測れていない場面 —— 5 cm の仮定違いで 1.269 %(72.5 t)。外周平均の底面は誤差が打ち消して見えなくなる(`poc_stockpile_volume`)。
+calibration: 格子間隔 [m] と高さ [m] の単位を揃える。ボクセル数はピッチの 3 乗。底面は**実際に見えた点だけ**で決める。
 ---
 
 # 3-D スキャンから体積・土量を出す
@@ -35,6 +40,24 @@ gx, gy = np.meshgrid(xs, xs)
 surf = np.maximum(0.0, 12.0 - 0.4 * np.hypot(gx - 30, gy - 30))   # 円錐
 print('体積 =', float(surf.sum()) * 1.0 * 1.0, 'm^3')             # ΔV = Σh·A
 ```
+
+## 推奨パイプライン
+
+`vol_rle_components` → `vol_rle_volume` → `mesh_volume`
+
+`vol_rle_components` で voxel 領域を分け → `vol_rle_volume` で体積 → 閉メッシュがあるなら `mesh_volume` で符号つき体積と突き合わせる。
+
+## 代替
+
+欠測は `interp_scattered`(外挿率を必ず見る)、高さ格子の傾きは `dem_slope`、窪地は `dem_fill_sinks`、等値面は `marching_cubes`。
+
+## 限界
+
+底面が測れていない場面 —— 5 cm の仮定違いで 1.269 %(72.5 t)。外周平均の底面は誤差が打ち消して見えなくなる(`poc_stockpile_volume`)。
+
+## 実寸校正
+
+格子間隔 [m] と高さ [m] の単位を揃える。ボクセル数はピッチの 3 乗。底面は**実際に見えた点だけ**で決める。
 
 ## 裏づけ
 

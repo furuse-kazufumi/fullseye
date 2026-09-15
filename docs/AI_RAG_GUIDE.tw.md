@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 6b4ef1ca57e4 -->
+<!-- i18n-source-sha: b50d12a26df4 -->
 # 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · **繁體中文** · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -6,6 +6,16 @@
 Fullseye 建議的用法是「**作為 AI 程式設計助理的知識庫（RAG）使用**」。由於所有 op 都擁有機器可讀的 Markdown 筆記（`docs/ops`，單一真實來源），因此**不需要**額外的向量資料庫或嵌入服務。只要環境能夠 grep，本身就是一個 RAG。
 
 我們提供三個階段的導入方式。**Tier 0/1 沒有任何外部相依性**（僅靠 Fullseye 儲存庫本身即可完成）。
+
+## 入口不只一個（請先讀這一節）
+
+只拿到文件的 Codex 與 Copilot，第一次嘗試時**都沒能找到依用途查找的索引**（2026-09-15）。原因正是本指南沒有指向它的連結。入口有四個：
+
+1. **依用途** → [`docs/CAPABILITIES.md`](CAPABILITIES.md)。每個課題一個檔案（`docs/capabilities/`），提供**建議流程（有序 op）/ 替代 / 限制 / 實際尺寸校正**；`tests/test_capabilities.py` 會檢查 op 名稱確實存在，且**型別（in → out）在前後步驟之間銜接**。
+2. **依 op 名稱或概念** → [`docs/ops/INDEX.tw.md`](ops/INDEX.tw.md) → 家族目錄 → op 筆記。
+3. **由機器查找** → `fs.op_find(query)`（自由詞·詞幹）/ `fs.op_assist(op)`（規格·預設·下一步可接什麼）/ `fs.op_path(from_sort, to_sort)`（把型別 A 接到型別 B 的 op 序列）/ `fs.op_producers(sort)`（產生該型別的 op）/ `fs.op_accepts(op)`（實測的可接受型別）；命令列用 `fullseye has <op>`（HALCON 名稱亦可）。
+4. **索引檔案** → [`docs/OP_INDEX.json`](OP_INDEX.json)（全部 op 的型別契約）、wheel 隨附的 `OP_CATALOG.md`。
+
 
 > **從 PyPI 使用**：在執行過 `pip install fullseye` 的環境中，可以使用主控台指令 **`fullseye-rag`**。若是 checkout（clone / `pip install -e .`），會將 `docs/ops` 的完整語料庫固定到技能中；若僅為 wheel 安裝，則會將隨附的 `OP_CATALOG.md`（面向 AI 的全 op 目錄）固定為技能（之後若需要完整的逐 op 筆記，只要 clone 儲存庫後重新執行即可）。更新方式為 `py -3.11 tools/update_fullseye.py`（拒絕在 dirty 樹上執行 · `--ff-only` · 在備份基礎上更新技能 · 不觸碰 Studio 設定——設計上不會破壞你的環境）。
 
@@ -16,12 +26,16 @@ Fullseye 建議的用法是「**作為 AI 程式設計助理的知識庫（RAG�
 在 Claude Code 中開啟 Fullseye 儲存庫的 checkout，即可直接檢索並參照 `docs/ops/INDEX.md` 與各 op 筆記。語料庫屬於儲存庫內容（wheel 中不包含），因此若只做了 pip 安裝，也請一併 clone 儲存庫。
 
 ```
-docs/ops/2d/<category>/<op>.md   # 呼叫形式·型別契約·HALCON 別名·參考文獻·相關 op
-docs/ops/3d/<category>/<op>.md
-docs/ops/INDEX.md                # 走訪資料夾階層自動產生的整體目錄
-docs/ops/2d/guides/<family>.md   # 13 個家族的使用指南(公式·圖示·經典文獻引用)
-docs/OP_INDEX.json               # 登錄庫的機器可讀索引
+docs/CAPABILITIES.md                    # 用途 → op 鏈(建議流程 / 替代 / 限制 / 實際尺寸校正)。從這裡進入
+docs/ops/<family>/<category>/<op>.md    # 呼叫形式·型別契約·HALCON 別名·參考文獻·相關 op(2d / 3d / optics / piv …)
+docs/ops/INDEX.md                       # 走訪資料夾階層自動產生的整體目錄(34 個家族)
+docs/ops/<family>/guides/<name>.md      # 使用指南 49 篇(34 個家族。2-D 的是 gallery2d_*;公式·圖示·經典文獻引用)
+docs/OP_INDEX.json                      # 登錄庫的機器可讀索引
 ```
+
+這些數字（34 個家族、49 篇指南、筆記數）都是從發布的檔案這一側數出來的，`tests/test_docs_index_reachable.py` 會將這一行與實際檔案比對（避免自我描述落後於內容）。
+
+**從 Windows 的 shell 讀取時請明確指定 UTF-8** —— 筆記是不帶 BOM 的 UTF-8，以預設字碼頁開啟會讓日文變成亂碼，AI 明明是「沒讀到」卻判斷成「不存在」（在 Codex 上實際發生過）。PowerShell 用 `Get-Content -Encoding utf8`、`[Console]::OutputEncoding = [Text.Encoding]::UTF8`（或 `chcp 65001`），Python 用 `PYTHONUTF8=1`。
 
 ## Tier 1：作為技能常駐（建議 · 內建安裝指令碼）
 
@@ -38,7 +52,7 @@ py -3.11 tools/setup_claude_rag.py --uninstall  # 解除安裝
 
 ## Tier 2（選用）：叢集化語料庫——藉助外部工具的進階型態
 
-也可以把 **1,946 篇**筆記依主題分層叢集，並為每個叢集附上 LLM 摘要，做成「附導覽的語料庫」。我們內部使用的是 [RAPTOR](https://github.com/gadievron/raptor) 分支的 `corpus2skill`（TF-IDF + k-means + LLM 摘要），但**這只是一種選用的最佳化，並非必要**。要求僅僅是「以 `docs/ops` 為輸入，輸出依叢集劃分的 SKILL.md 階層」，因此任何具同等功能的工具都可以替代。
+也可以把 **1,949 篇**筆記依主題分層叢集，並為每個叢集附上 LLM 摘要，做成「附導覽的語料庫」。我們內部使用的是 [RAPTOR](https://github.com/gadievron/raptor) 分支的 `corpus2skill`（TF-IDF + k-means + LLM 摘要），但**這只是一種選用的最佳化，並非必要**。要求僅僅是「以 `docs/ops` 為輸入，輸出依叢集劃分的 SKILL.md 階層」，因此任何具同等功能的工具都可以替代。
 
 重新匯入（筆記更新後）的範例——如實記錄內部的運作方式：
 

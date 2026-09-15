@@ -491,6 +491,20 @@
    "tw": "4. 行為不確定時,執行該說明中**可執行的範例**,用真值輸出核對。",
    "ko": "4. 동작이 불확실하면 그 노트의 **실행 가능한 예제**를 돌려 GT 출력으로 확인합니다.",
    "de": "4. Wenn das Verhalten unklar ist, führen Sie das **lauffähige Beispiel** der Notiz aus und prüfen Sie es gegen die Ground-Truth-Ausgabe."
+  },
+  "- [用途から引く(推奨パイプライン / 代替 / 限界 / 実寸校正)](../CAPABILITIES.md)": {
+   "en": "- [Look up by task (recommended pipeline / alternatives / limits / real-world calibration)](../CAPABILITIES.en.md)",
+   "zh": "- [按用途查找(推荐流水线 / 替代 / 局限 / 实际尺寸标定)](../CAPABILITIES.md)",
+   "tw": "- [依用途查找(建議流程 / 替代 / 限制 / 實際尺寸校正)](../CAPABILITIES.md)",
+   "ko": "- [용도로 찾기(권장 파이프라인 / 대안 / 한계 / 실측 보정)](../CAPABILITIES.md)",
+   "de": "- [Nach Aufgabe suchen (empfohlene Pipeline / Alternativen / Grenzen / Kalibrierung auf reale Maße)](../CAPABILITIES.en.md)"
+  },
+  "0. 用途が決まっているなら、先に [CAPABILITIES.md](../CAPABILITIES.md) で課題 → op 連鎖(型が繋がることを検査済み)を引く。": {
+   "en": "0. If the task is already known, start at [CAPABILITIES.en.md](../CAPABILITIES.en.md): task → op chain (type connections are gate-checked).",
+   "zh": "0. 如果用途已经明确,先在 [CAPABILITIES.md](../CAPABILITIES.md) 中查找 课题 → op 链(类型衔接已经过门检查)。",
+   "tw": "0. 如果用途已經明確,先在 [CAPABILITIES.md](../CAPABILITIES.md) 中查找 課題 → op 鏈(型別銜接已通過門檢查)。",
+   "ko": "0. 용도가 정해져 있다면 먼저 [CAPABILITIES.md](../CAPABILITIES.md)에서 과제 → op 연쇄(타입 연결은 게이트로 검사됨)를 찾는다.",
+   "de": "0. Steht die Aufgabe schon fest, zuerst in [CAPABILITIES.en.md](../CAPABILITIES.en.md) nachschlagen: Aufgabe → Op-Kette (Typverkettung wird per Gate geprüft)."
   }
  }
 }

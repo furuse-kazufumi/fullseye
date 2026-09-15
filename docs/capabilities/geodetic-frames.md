@@ -6,6 +6,11 @@ category: 測る
 ops: [dem_geodetic_to_ecef, dem_ecef_to_geodetic]
 examples: [poc_geodetic_height_frames, dem_geodesy_tour]
 version: 0.1.11
+inputs: []
+pipeline: [dem_geodetic_to_ecef, dem_ecef_to_geodetic]
+alternatives: [dem_geodetic_slope]
+limits: ジオイド高・正標高・局所 ENU・datum・epoch は**未実装**(2026-09-08 実測 0 件)。楕円体高と標高の取り違えは日本付近で 30〜40 m 静かにずれる(`poc_geodetic_height_frames`)。
+calibration: 画素は関係しない。高さの基準面(楕円体か標高か)を必ず明示し、`H = h - N` の N は外部のジオイドモデルから持ち込む。
 ---
 
 # 地球規模の座標に載せる(ECEF と測地座標)
@@ -34,6 +39,24 @@ xyz = np.asarray(fs.ledger.dem_geodetic_to_ecef(35.68, 139.77, 40.0))
 back = np.asarray(fs.ledger.dem_ecef_to_geodetic(xyz))
 print(back.ravel())                       # 35.68, 139.77, 40.0 に戻る
 ```
+
+## 推奨パイプライン
+
+`dem_geodetic_to_ecef` → `dem_ecef_to_geodetic`
+
+`dem_geodetic_to_ecef` で緯度・経度・楕円体高を ECEF [m] に → 計算 → `dem_ecef_to_geodetic` で戻す(往復の床 緯度 6.4e-12 度 / 高さ 8.5e-07 m)。
+
+## 代替
+
+地図上の傾斜を測地座標で出すなら `dem_geodetic_slope`。
+
+## 限界
+
+ジオイド高・正標高・局所 ENU・datum・epoch は**未実装**(2026-09-08 実測 0 件)。楕円体高と標高の取り違えは日本付近で 30〜40 m 静かにずれる(`poc_geodetic_height_frames`)。
+
+## 実寸校正
+
+画素は関係しない。高さの基準面(楕円体か標高か)を必ず明示し、`H = h - N` の N は外部のジオイドモデルから持ち込む。
 
 ## 裏づけ
 

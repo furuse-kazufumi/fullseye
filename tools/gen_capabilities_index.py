@@ -15,11 +15,34 @@
 op 名を 4 層に、例をファイルの実在に照らして落とす)。
 
 生成物は **コミットして門で突き合わせる**(docs の他の生成物と同じ drift 検査)。
+
+## 2026-09-15: 用途 → op 連鎖のレシピ欄
+
+文書だけを渡した Codex / Copilot に op を選ばせたところ、両方が同じ所で迷った —
+「ノート単体は正確だが、**用途から op へ辿る地図が無い**」。この索引がその地図の
+はずだったのに、1 回目は両 AI とも**見つけられなかった**(`AI_RAG_GUIDE` から
+辿れていなかった)。見つけた 2 回目でも、能力ノートには「使う op」の集合しか無く、
+**どの順で繋ぐか・何に差し替えられるか・どこで壊れるか・画素を mm にどう戻すか**が
+書かれていなかった。だから並行する新索引を作らず、**この様式に欄を足す**:
+
+    inputs        利用者が最初に持っている型(sort)
+    pipeline      **順序つき**の op 名。全部 `docs/OP_INDEX.json` に在り、型が繋がること
+    alternatives  差し替え候補(実在は検査、型連鎖は検査しない)
+    limits        1 行の限界(本文の ``## 限界`` 節に実測つきの詳細)
+    calibration   1 行の実寸校正(本文の ``## 実寸校正`` 節に詳細。不要ならその理由)
+
+型連鎖は :func:`pipeline_errors` が見る —— 各 op の宣言 in が、``inputs`` +
+前段までの out から全部埋まること。族ごとに型名がずれる 4 組だけ
+:data:`SORT_ALIASES` で同一視し、それ以外は「繋がらない」と判定する。
+引数で渡す量(照合結果の row/col を測定線の位置に入れる等)は型連鎖の外なので、
+生成 op(入力ゼロ)は前段が何であれ置ける。
 """
 from __future__ import annotations
 
 import argparse
+import glob
 import io
+import json
 import os
 import re
 import sys
@@ -28,6 +51,18 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_DIR = os.path.join(_ROOT, "docs", "capabilities")
 OUT_JA = os.path.join(_ROOT, "docs", "CAPABILITIES.md")
 OUT_EN = os.path.join(_ROOT, "docs", "CAPABILITIES.en.md")
+OP_INDEX = os.path.join(_ROOT, "docs", "OP_INDEX.json")
+DOCS_OPS = os.path.join(_ROOT, "docs", "ops")
+
+#: 族をまたぐと同じ物に別の名が付いている型。**この 4 組だけ**同一視する
+#: (それ以外の型名の違いは「繋がらない」。黙って緩めない)。
+#:   * 2-D レジストリの ``image`` と台帳の ``image2d``(どちらも (H, W) float)
+#:   * 2-D レジストリの ``region``(0/1 の (H, W))と blob 族の ``mask``
+#:     (``blob_label`` が 2-D の ``otsu`` の返りをそのまま受ける —— 実測 2026-09-15)
+#:   * 2-D レジストリの ``feature``(有限スカラ)と台帳の ``measurement``(float)と
+#:     ``scalar``(int の index)—— 連鎖の中では「数 1 個」
+SORT_ALIASES = {"image2d": "image", "mask": "region",
+                "measurement": "scalar", "feature": "scalar"}
 
 #: 索引での並び順。ここに無いカテゴリは後ろに五十音で続く(落とさない)。
 CATEGORY_ORDER = [
@@ -44,8 +79,12 @@ CATEGORY_EN = {
     "組み立てる": "Compose", "見せる": "Show",
 }
 
-REQUIRED_KEYS = ("id", "title", "title_en", "category", "ops", "examples", "version")
-REQUIRED_HEADINGS = ("## できること", "## 向くところ / 向かないところ", "## 最初の 1 本")
+REQUIRED_KEYS = ("id", "title", "title_en", "category", "ops", "examples", "version",
+                 "inputs", "pipeline", "alternatives", "limits", "calibration")
+REQUIRED_HEADINGS = ("## できること", "## 向くところ / 向かないところ", "## 最初の 1 本",
+                     "## 推奨パイプライン", "## 代替", "## 限界", "## 実寸校正")
+#: 空でよい欄(``inputs`` は生成 op から始まる連鎖なら空、``alternatives`` は無くてもよい)。
+MAY_BE_EMPTY = ("inputs", "alternatives")
 
 
 class CapabilityError(RuntimeError):
@@ -95,6 +134,12 @@ def load_all() -> list[dict]:
         missing = [k for k in REQUIRED_KEYS if k not in meta]
         if missing:
             raise CapabilityError("%s: front matter に %s が無い" % (path, missing))
+        empty = [k for k in REQUIRED_KEYS if not meta[k] and k not in MAY_BE_EMPTY]
+        if empty:
+            raise CapabilityError("%s: front matter の %s が空" % (path, empty))
+        for k in ("inputs", "pipeline", "alternatives", "ops", "examples"):
+            if not isinstance(meta[k], list):
+                raise CapabilityError("%s: %s は [a, b] のリストで書く" % (path, k))
         if meta["id"] != os.path.splitext(name)[0]:
             raise CapabilityError("%s: id %r とファイル名が違う" % (path, meta["id"]))
         for head in REQUIRED_HEADINGS:
@@ -125,6 +170,83 @@ def _first_paragraph(body: str, heading: str, path: str, required: bool = True) 
     if not para:
         raise CapabilityError("%s: %r の直下が空" % (path, heading))
     return re.sub(r"\s+", " ", para.replace("\n", " ")).strip()
+
+
+# --------------------------------------------------------------------------- #
+# 型連鎖(配布物 docs/OP_INDEX.json の側から引く)                             #
+# --------------------------------------------------------------------------- #
+_INDEX = None
+
+
+def op_index() -> dict:
+    """``{op 名: 行}``。登録ではなく**配布物**(``docs/OP_INDEX.json``)を正本にする。"""
+    global _INDEX
+    if _INDEX is None:
+        with io.open(OP_INDEX, encoding="utf-8") as f:
+            _INDEX = {r["name"]: r for r in json.load(f)["ops"]}
+    return _INDEX
+
+
+def canonical(sort: str) -> str:
+    return SORT_ALIASES.get(sort, sort)
+
+
+def op_ins(rec: dict) -> list:
+    if rec.get("tier") == "ledger":
+        return list(rec.get("in_sorts") or [])
+    return [rec["in_sort"]] if rec.get("in_sort") else []
+
+
+def op_dim(rec: dict) -> str:
+    return rec.get("dim") or "2d"
+
+
+def note_rel(name: str, base: str = DOCS_OPS) -> str | None:
+    """``docs/ops/<dim>/<category>/<op>.md`` への、``base`` からの相対パス(無ければ None)。"""
+    rec = op_index().get(name)
+    if rec is None:
+        return None
+    hits = sorted(glob.glob(os.path.join(DOCS_OPS, op_dim(rec), "*", name + ".md")))
+    hits = [h for h in hits if os.path.basename(os.path.dirname(h)) != "guides"]
+    if not hits:
+        return None
+    return os.path.relpath(hits[0], base).replace(os.sep, "/")
+
+
+def pipeline_errors(cap: dict) -> list:
+    """レシピ欄の誤りを列挙する(空なら合格)。
+
+    * ``pipeline`` の op は全部 ``docs/OP_INDEX.json`` に在ること(型の宣言が要るので、
+      ファサードだけの関数は ``alternatives`` / ``ops`` に書く)。
+    * 各 op の宣言 in が、``inputs`` + 前段までの out から全部埋まること。
+    * 各 op のノートが ``docs/ops`` に在ること(索引からリンクするので)。
+    """
+    idx = op_index()
+    errs = []
+    cid = cap["id"]
+    pool = {canonical(s) for s in cap.get("inputs", [])}
+    for i, name in enumerate(cap.get("pipeline", []), 1):
+        rec = idx.get(name)
+        if rec is None:
+            errs.append("%s: pipeline の %r は docs/OP_INDEX.json に無い(型が宣言されて"
+                        "いない op は pipeline に置けない。alternatives か ops へ)" % (cid, name))
+            continue
+        if note_rel(name) is None:
+            errs.append("%s: pipeline の %r のノートが docs/ops に無い" % (cid, name))
+        for s in op_ins(rec):
+            if s != "any" and canonical(s) not in pool:
+                errs.append("%s: step %d %s の入力 %r がそれまでの型 %s に無い"
+                            % (cid, i, name, s, sorted(pool)))
+        if rec.get("out_sort"):
+            pool.add(canonical(rec["out_sort"]))
+    return errs
+
+
+def all_pipeline_errors(caps: list[dict]) -> list:
+    out = []
+    for c in caps:
+        out += pipeline_errors(c)
+    return out
 
 
 def _ordered_categories(caps: list[dict]) -> list[str]:
@@ -182,6 +304,28 @@ def _render(caps: list[dict], lang: str) -> str:
         ]
     L += ["**%s %d %s**" % ("収録" if ja else "Currently", len(caps),
                             "項目" if ja else "capabilities"), ""]
+    # 課題名で引く表 —— 「用途 → op 連鎖」を 1 行ずつ。型連鎖は門が検査済み。
+    if ja:
+        L += ["## 課題から引く(推奨パイプライン)", "",
+              "op 名は全部レジストリに実在し、**型(in → out)が前段から後段へ繋がる**ことを "
+              "`tests/test_capabilities.py` が検査する。型の同一視は 4 組だけ "
+              "(`image2d`=`image`、`mask`=`region`、`measurement`=`feature`=`scalar`)。"
+              "引数で渡す量は型連鎖の外。詳細(代替・限界・実寸校正)は各項目へ。", "",
+              "| 課題 | 推奨パイプライン(順序つき) | 動く例 |", "|---|---|---|"]
+    else:
+        L += ["## Look up by task (recommended pipeline)", "",
+              "Every operator exists in the registry and the types connect from one step "
+              "to the next (`tests/test_capabilities.py` checks both; only four sort "
+              "names are treated as synonyms: `image2d`=`image`, `mask`=`region`, "
+              "`measurement`=`feature`=`scalar`). Values passed as arguments are outside "
+              "the type chain. Alternatives, limits and calibration are in each entry.", "",
+              "| Task | Recommended pipeline (in order) | Runnable |", "|---|---|---|"]
+    for c in sorted(caps, key=lambda x: x["id"]):
+        title = c["title"] if ja else c["title_en"]
+        L.append("| [%s](capabilities/%s) | %s | `%s` |"
+                 % (title, c["_file"], " → ".join("`%s`" % o for o in c["pipeline"]),
+                    c["examples"][0]))
+    L.append("")
     for cat in _ordered_categories(caps):
         rows = [c for c in caps if c["category"] == cat]
         head = cat if ja else CATEGORY_EN.get(cat, cat)
@@ -189,17 +333,39 @@ def _render(caps: list[dict], lang: str) -> str:
         for c in sorted(rows, key=lambda x: x["id"]):
             title = c["title"] if ja else c["title_en"]
             summary = c["_summary_ja"] if ja else (c["_summary_en"] or c["_summary_ja"])
+            chain = " → ".join(_op_link(o, "docs") for o in c["pipeline"])
+            alts = ", ".join(_op_link(o, "docs") for o in c["alternatives"]) or "—"
             L += ["### [%s](capabilities/%s)" % (title, c["_file"]), "",
                   summary, "",
                   "%s %s" % ("使う op:" if ja else "Operators:",
                              ", ".join("`%s`" % o for o in c["ops"])), "",
-                  "%s %s" % ("動く例:" if ja else "Runnable:",
+                  "%s %s" % ("推奨パイプライン:" if ja else "Pipeline:", chain), "",
+                  "%s %s" % ("代替:" if ja else "Alternatives:", alts), ""]
+            if ja:
+                L += ["限界: %s" % c["limits"], "", "実寸校正: %s" % c["calibration"], ""]
+            else:
+                # 英語の索引に日本語を混ぜない —— 訳がある欄だけ出す(無ければ項目へ)。
+                if c.get("limits_en"):
+                    L += ["Limits: %s" % c["limits_en"], ""]
+                if c.get("calibration_en"):
+                    L += ["Calibration: %s" % c["calibration_en"], ""]
+            L += ["%s %s" % ("動く例:" if ja else "Runnable:",
                              ", ".join("`%s`" % e for e in c["examples"])), ""]
     return "\n".join(L).rstrip("\n") + "\n"
 
 
+def _op_link(name: str, base_dir: str) -> str:
+    """索引(docs/ 直下)から op ノートへのリンク。ノートが無い(ファサードだけの
+    関数)ならコードスパンのまま。"""
+    rel = note_rel(name, os.path.join(_ROOT, base_dir))
+    return "[`%s`](%s)" % (name, rel) if rel else "`%s`" % name
+
+
 def build() -> dict:
     caps = load_all()
+    errs = all_pipeline_errors(caps)
+    if errs:
+        raise CapabilityError("レシピ欄の誤り %d 件:\n  " % len(errs) + "\n  ".join(errs))
     return {OUT_JA: _render(caps, "ja"), OUT_EN: _render(caps, "en")}
 
 
