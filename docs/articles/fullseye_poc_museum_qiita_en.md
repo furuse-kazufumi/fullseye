@@ -19,6 +19,13 @@
 
 ## Version updates (newest first)
 
+**2026-09-16 — Fullseye 0.2.0 is out** (`pip install -U fullseye`). Three things concern this museum, and **two of them retract something written for the previous version**.
+
+- **The DOI to cite an exhibit's numbers has changed.** The version DOI for 0.2.0 is [10.5281/zenodo.22772164](https://doi.org/10.5281/zenodo.22772164); the concept DOI [10.5281/zenodo.22761195](https://doi.org/10.5281/zenodo.22761195) still resolves to the newest version. Always state the version you ran.
+- **Retraction (1): the MCP server now runs from a plain `pip install`.** The previous entry said it "needs a checkout; the pip build stops with a stated reason". The cause was that the index and the op notes were read relative to the repository. All 28 checkout tests stayed green throughout — **the gate stood where the accident could not happen**, which is exactly the failure mode this museum keeps documenting. The index and the notes' frontmatter now ship inside the distribution, and a new gate **actually starts the server from a virtualenv holding nothing but the wheel** and round-trips through it.
+- **Retraction (2): the door from other languages is no longer five ops.** The previous entry said "a five-operator C ABI". In this version one shared-library function, `fs_apply`, takes an op name and JSON parameters and reaches **the 901 single-input ops of the 2-D registry** from C, C++, C#, Lua and Python. The five contract ops run through the Rust native path, the rest through a CPython embedded in the DLL, and **every result states which path it took**. The 1,024 typed-ledger ops and the 17 multi-input ops cannot be carried by a single image / region handle, so they are refused with a reason (next version's work).
+- **The searchable catalog grew from 918 to 1,942 ops**, as the machine-readable index began counting the 33 typed-ledger families (optics, 3-D, signal, acoustics, tomography and others). The "Ops used" line under each exhibit now reaches further. No existing op's pixel behaviour changed.
+
 **2026-09-15 — Fullseye 0.1.11 is out** (`pip install -U fullseye`). Four things in it concern this museum.
 
 - **From this version on there is a Zenodo archive, so the library can be cited by DOI.** Version DOI [10.5281/zenodo.22761196](https://doi.org/10.5281/zenodo.22761196), concept DOI [10.5281/zenodo.22761195](https://doi.org/10.5281/zenodo.22761195) (always resolves to the newest version). When you quote an exhibit's numbers in a report or a paper, give the version you ran and this DOI. Versions up to 0.1.10 exist only as git tags and on PyPI.
