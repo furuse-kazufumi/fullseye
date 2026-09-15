@@ -19,7 +19,7 @@ CI では core-minimal ジョブが既に建てた wheel と venv を ``FULLSEYE
     $env:FULLSEYE_WHEEL_GATE = "1"; py -3.11 -m pytest tests/test_mcp_wheel.py -q
 
     # 既に建てた wheel / venv を使い回す
-    $env:FULLSEYE_WHEEL_FILE = "dist\\fullseye-0.1.12-py3-none-any.whl"
+    $env:FULLSEYE_WHEEL_FILE = "dist\\fullseye-0.2.0-py3-none-any.whl"
     $env:FULLSEYE_WHEEL_PYTHON = "C:\\scratch\\wv\\Scripts\\python.exe"
 """
 from __future__ import annotations
@@ -103,9 +103,12 @@ def _clean_env() -> dict:
 # --------------------------------------------------------------------------- #
 # wheel を建てて別 venv に入れる(module で 1 回)                                 #
 # --------------------------------------------------------------------------- #
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def wheel_python(tmp_path_factory) -> str:
-    """wheel だけを入れた venv の python。``FULLSEYE_WHEEL_PYTHON`` があればそれを使う。"""
+    """wheel だけを入れた venv の python。``FULLSEYE_WHEEL_PYTHON`` があればそれを使う。
+
+    session scope: ``tests/test_abi_wheel.py`` が同じ fixture を import して使い回す
+    (wheel の build と venv は 1 回でよい —— venv は読むだけで書き換えない)。"""
     given = os.environ.get("FULLSEYE_WHEEL_PYTHON")
     if given:
         given = os.path.abspath(given)
@@ -130,7 +133,7 @@ def wheel_python(tmp_path_factory) -> str:
     return vpy
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def outside(tmp_path_factory) -> str:
     """リポジトリの外の cwd。"""
     return str(tmp_path_factory.mktemp("outside_repo"))

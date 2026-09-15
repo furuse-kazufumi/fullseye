@@ -74,11 +74,16 @@ jobs:
       # CatalogError で止まった。上で建てた wheel と .wheelenv をそのまま使い(建て直さない)、
       # リポジトリの外の cwd から実 stdio を往復して、索引 / ノートの件数を checkout と
       # 突き合わせる(tests/test_mcp_wheel.py、FULLSEYE_WHEEL_GATE=1 で有効)。
-      - name: MCP from the wheel (索引と知識層が配布物に入っているか)
+      # ★同じ wheel / venv で `fs_apply` の python 経路も配布物の側から通す
+      # (tests/test_abi_wheel.py)。`fullseye.abi_bridge` が wheel に入っていて、
+      # リポジトリの外の cwd・FULLSEYE_ROOT 無しで意味のある出力を返すこと。cdylib
+      # (embed feature)は target/embed に無ければ cargo で建て、cargo が無ければその
+      # 1 件だけ理由つきで skip する(-ra で見える)。
+      - name: MCP + fs_apply bridge from the wheel (索引・知識層・ブリッジが配布物に入っているか)
         env:
           FULLSEYE_WHEEL_GATE: "1"
           FULLSEYE_WHEEL_PYTHON: .wheelenv/bin/python
-        run: pytest tests/test_mcp_wheel.py -q -ra
+        run: pytest tests/test_mcp_wheel.py tests/test_abi_wheel.py -q -ra
 
   lint:
     # 静的解析。**様式を揃えるためではなく、実害のあるバグを止めるため**に入れている。
