@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import ast
 import os
+import re
 
 import pytest
 
@@ -32,7 +33,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
 #: 検査対象外。``docs/`` は出典表記が許可される場所、``build/`` は生成物。
-_SKIP_DIRS = {"build", "dist", ".git", "docs", "out", "__pycache__", ".pytest_cache"}
+#: **第三者のコードは対象外**: この規律は「fullseye が自分のものに他社名を付けていないか」
+#: を見るものであって、依存パッケージの命名を裁くものではない。2026-09-15、wheel の門が
+#: 作った ``.wheelenv``(site-packages 入りの venv)を走査してしまい、numpy / pip / scipy の
+#: ``writelines`` ``whitelist`` ``RateLimiter`` が 4 文字の禁止語に**部分一致**して 10 件の偽陽性で
+#: 落ちた —— 門が**事故の起きない場所に立っていた**。
+_SKIP_DIRS = {"build", "dist", ".git", "docs", "out", "__pycache__", ".pytest_cache",
+              "node_modules", ".mypy_cache", ".ruff_cache", ".eggs", "site-packages"}
 
 #: 小文字で保持する。マシンビジョンの機材・製品ベンダとして本 repo の調査記録
 #: (``docs/INDUSTRY_SIGNALS.md``)に登場したもの + 一般的な MV ベンダ。
@@ -80,10 +87,19 @@ _INTEROP_ALLOWLIST = {
 }
 
 
+def _is_virtualenv(path: str) -> bool:
+    """``pyvenv.cfg`` があれば仮想環境。**名前でなく実体のマーカーで判定する** ——
+    ``.venv`` ``.wheelenv`` ``.venv-gsplat`` のように名前は幾らでも増えるので、
+    名前の一覧で弾くと必ず漏れる(実際 ``.wheelenv`` で漏れた)。"""
+    return os.path.exists(os.path.join(path, "pyvenv.cfg"))
+
+
 def _py_files():
-    """検査対象の .py を repo 相対パスで列挙する。"""
+    """検査対象の .py を repo 相対パスで列挙する(fullseye 自身の面だけ)。"""
     for dirpath, dirnames, filenames in os.walk(ROOT):
-        dirnames[:] = [d for d in dirnames if d not in _SKIP_DIRS]
+        dirnames[:] = [d for d in dirnames
+                       if d not in _SKIP_DIRS
+                       and not _is_virtualenv(os.path.join(dirpath, d))]
         for fn in filenames:
             if fn.endswith(".py"):
                 rel = os.path.relpath(os.path.join(dirpath, fn), ROOT)
@@ -100,9 +116,50 @@ def _allowed(word: str, relpath: str) -> bool:
     return any(p in relpath for p in prefixes)
 
 
+#: 識別子・散文を語に割る。``snake_case`` / ``camelCase`` / 数字の境界で切る。
+_TOKEN_RE = re.compile(r"[A-Z]+(?![a-z])|[A-Z][a-z]*|[a-z]+|\d+")
+
+
+def _tokens(text: str) -> list[str]:
+    return [t.lower() for t in _TOKEN_RE.findall(text)]
+
+
+def _contains_vendor(text: str, vendor: str) -> bool:
+    """``text`` にベンダ名が**語として**現れるか。
+
+    素の部分文字列照合は使えない。禁止語のうち 4 文字の短いものは ``whitelist``
+    ``writelines`` ``RateLimiter`` のような**普通の英単語の内側**にそのまま入って
+    いて、片端から引っかかる。逆に語境界だけで見ると、大文字で連結した社名表記を
+    取り逃がす。そこで**連続するトークンの連結**が禁止語(英数字だけに正規化した
+    もの)と一致するかで見る:
+
+      * 社名 + 名詞の camelCase -> [社名, 名詞] -> 社名に一致(捕まえる)
+      * 社名を大文字連結した表記 -> [mv, tec] のように割れても連結すれば一致(捕まえる)
+      * ハイフン社名 -> [語, 語] -> 連結が一致(捕まえる)
+      * ``whitelist`` -> [whitelist] -> どの連結も禁止語にならない(通す)
+      * ``RateLimiter`` -> [rate, limiter] -> 同上(通す)
+
+    具体的な綴りは下の自己検査に実データとして置く(ここに実名を書くと、この
+    docstring 自身が規律違反になる —— 実際 2026-09-15 にそれで落ちた)。
+    """
+    target = re.sub(r"[^a-z0-9]", "", vendor.lower())
+    if not target:
+        return False
+    toks = _tokens(text)
+    for i in range(len(toks)):
+        joined = ""
+        for j in range(i, len(toks)):
+            joined += toks[j]
+            if joined == target:
+                return True
+            if len(joined) > len(target):
+                break
+    return False
+
+
 def _hits(text: str, relpath: str):
-    low = text.lower()
-    return [w for w in _BANNED if w in low and not _allowed(w, relpath)]
+    return [w for w in _BANNED
+            if _contains_vendor(text, w) and not _allowed(w, relpath)]
 
 
 # --------------------------------------------------------------------------- #
@@ -196,6 +253,53 @@ def test_the_check_actually_catches_a_violation():
     # 免除は経路つき: 同じ語でも許可パス外なら失格になる
     assert _allowed("basler", "acquire.py")
     assert not _allowed("basler", "lightfield.py")
+
+
+def test_the_check_catches_vendor_names_however_they_are_spelled():
+    """語の切れ目が見えない綴り方でも捕まえること。
+
+    ``camelCase`` の連結や ``snake_case``、区切り記号つきで書かれても、
+    ベンダ名はベンダ名である(綴りはコード側の実データで与える)。
+    """
+    for name in ("TeliCamera", "toshiba_teli", "MVTecStyleCatalog",
+                 "MicroEpsilonProbe", "prophesee_sensor"):
+        assert _contains_vendor(name, _vendor_of(name)), name
+
+
+def _vendor_of(name: str) -> str:
+    """上のテスト用: その綴りが当たるはずの禁止語を返す。"""
+    for w in _BANNED:
+        if _contains_vendor(name, w):
+            return w
+    return "(なし)"
+
+
+def test_the_check_does_not_fire_on_ordinary_english_words():
+    """**偽陽性で落ちない**こと。
+
+    2026-09-15、4 文字の禁止語が ``writelines`` ``whitelist`` ``RateLimiter``
+    ``InfiniteLimits`` の内側に部分一致し、第三者パッケージで 10 件の偽陽性を
+    出して門が赤くなった。**門が誤って鳴る**のは
+    門が鳴らないのと同じくらい悪い —— 人は鳴りっぱなしの門を無視するようになる。
+    """
+    for word in ("writelines", "whitelist", "RateLimiter", "_InfiniteLimitsTransform",
+                 "IntelItaniumCCompiler", "DEFAULT_METHOD_WHITELIST", "satellite",
+                 "delete_line", "rate_limit"):
+        assert not _hits(word, "somemod.py"), f"偽陽性: {word}"
+
+
+def test_third_party_virtualenvs_are_not_scanned():
+    """検査対象は **fullseye 自身の面**だけであること。
+
+    ``.wheelenv`` は wheel の門が建てる venv で、中身は numpy / pip / scipy。
+    ここを走査すると他社パッケージの命名を裁くことになり、偽陽性しか生まない。
+    判定は名前でなく ``pyvenv.cfg`` の有無(名前の一覧は必ず漏れる)。
+    """
+    scanned = list(_py_files())
+    assert scanned, "走査結果が空(門が何も見ていない)"
+    intruders = [p for p in scanned if "site-packages" in p or "/.wheelenv/" in p
+                 or p.startswith(".wheelenv/")]
+    assert not intruders, "第三者パッケージを走査している: " + ", ".join(intruders[:10])
 
 
 if __name__ == "__main__":  # pragma: no cover
