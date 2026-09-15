@@ -519,7 +519,7 @@ The cost is explicit. Each evaluation measures every stage, so the final stage t
 | Raw visual estimate | 23.5 % (not home) | **2.1 %** (home) |
 | Amplitude corrected by gain 1.54 | 19.8 % | **12.4 %** (worse than raw) |
 
-![Homing after calibration](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_flyvis_link.png)
+![Homing after calibration](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_flyvis_link.png?v=2)
 
 *↑ §7 after calibration. The raw visual estimate gets home (middle). The amplitude correction throws the homeward leg off (right).*
 

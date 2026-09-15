@@ -517,7 +517,7 @@ honest な注記: 胴の軌跡は視覚の閉ループが決めた本物です�
 | 視覚推定そのまま | 23.5 %(帰れない) | **2.1 %**(帰れた) |
 | 利得 1.54 で振幅補正 | 19.8 % | **12.4 %**(視覚推定そのままより悪い) |
 
-![較正後の帰巣](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_flyvis_link.png)
+![較正後の帰巣](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_flyvis_link.png?v=2)
 
 *↑ 較正後の §7。視覚推定をそのまま繋いでも帰れる(中央)。振幅補正は帰路を大きく外す(右)。*
 
