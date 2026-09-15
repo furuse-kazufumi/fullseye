@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(204 例)
+### 2-D 画像/信号/幾何(207 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -26,6 +26,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **metrology**
 - **全数の 2-D 検査と抜き取りの 3-D 検査を対応づける(格子は自分に重なる)** — 規則正しく並んだ接合部は点の配置だけでは装置間で一対一に対応づかない(6x5 の格子は 30 点すべての距離署名が縮退し、署名は 9 種類しかない)。3 辺が異なる基準マークを入れると対応が厳密に決まる。そのうえで AOI の見かけのボイド率は CT の体積率と相関 0.973、悪い順 5 個も 5/5 一致するのに、寿命に効く界面接触ボイド 27 個のうちその 5 個で拾えるのは 19 % だけ —— 順位が合うことは危ない個体を拾えることを意味しない。 `py -3.11 examples/poc_aoi_ct_traceability.py`
 - **白色干渉によるナノメートルの段差計測(どこまで測れるか)** — 既知の段差 50-500 nm を合成し、コヒーレンス走査で測り返す。偏りと散らばりを分け、走査ステップと雑音を振って測れなくなる境目を出す。最大サンプルというゼロ点に対しサブサンプル推定がどれだけ稼ぐかも測る。 `py -3.11 examples/poc_interferometry_step.py`
+- **微細スクラッチの検出と幅計測(幅 1〜3 px は measure_pairs の危険域)** — 被覆率で描いた幅 1〜5 px の暗い傷(ぼけ σ=0.7)を真値に、`lines_gauss` の検出、`measure_pairs` の幅、輝度欠損の積分を並べる。★`lines_gauss` は暗線も明線も同じ輪郭にし(極性も幅も返さない)、`tophat` は暗線に 0 を返す(`bothat` が応答)。★`measure_pairs` は細いほど大きい側へ偏る —— 幅 1 px で +2.25 px(σ=1.0)/ +1.67 px(σ=0.5)、3 px で +0.78 / +0.35、5 px で +0.06 / +0.01 —— しかも失敗を返さない。積分法は全幅で 1e-4 px 以内。mm は基準帯(40 px = 2.000 mm)を同じ op で測った校正値を通すだけ。 `py -3.11 examples/example_scratch_width.py`
+- **円形部品の内径を mm まで(校正 1 個がサブピクセル精度の 500 倍効く)** — Ø10.000 mm の的(半径 100 px)と Ø6.130 mm の穴(61.3 px)を同じ画素ピッチ 0.050 mm/px で合成し、`otsu` → `area_center` の粗い中心 → `add_metrology_object_circle_measure` → `apply_metrology_model` → `mm_per_px_from_reference` → `pixel_to_world` で内径を mm に。★半径の偏り −0.012 px、内径 −0.5 µm。★公称倍率(作動距離 4 % ずれ)で換算すると −246 µm。★円周の 25 % が欠けても半径は返り(−5.0 px)、欠けは `rms`(0.067 → 1.90)と縁の点数(128 → 54)で見張る。 `py -3.11 examples/example_inner_diameter_mm.py`
 - **部品の寸法検査(サブピクセル計測と、埋もれていた実装の実地評価)** — SDF から解析的に部品を作り、既知の PSF と画素積分で合成して真値を握る。ゼロ点(大津の整数幅)比 **41 倍**、スロット幅の偏り -0.5000 → -0.0113 px、合成不確かさ 0.0196 px = 0.245 um。★壊れるのは「ぼけ」ではなく**エッジ間距離 / PSF 幅**で、3.09 を切ると偏り 0.05 px 超 —— しかも 1.58 まで「対が見つかった」と答え続ける(失敗を返さない)。★**縁の定義を宣言しないと16 px = 200 um 動く**(サブピクセルの 3 桁上)。丸い縁は必ず小さく出る(直径誤差 ≈ -σ²/ρ を実測で確認)。真値をきりの良い整数に置くと副画素の周期誤差が消えることも示す。 `py -3.11 examples/poc_dimensional_inspection.py`
 - **星の位置を測る(理論下限を下回ったら、それは推定できていない印)** — 既知の天球座標に星を置き、既知の投影と PSF で合成するのでプレート定数まで真値が既知。**理論下限(Fisher)を下回った手法はゼロ**で、暗い端で下回って見えるゼロ点は真のずれへの感度 0.038 = 初期値を返しているだけ(散らばり0.2790 px は 1/√12 = 0.2887 と一致)。★予想が外れた 2 件: 既知 PSF の相関は標本化不足に**弱く**(FWHM 1.0 で 4 手法中最悪)、飽和画素を捨てる処置は**捨て方で符号が変わる**(重心なら 10 倍悪化、当てはめなら 121 倍改善)。偽解は 4000 回で 0 件でも「起きない」ではなく「測れていない」—— 総当たり通り数を掛けて初めて期待 5.77 件という使える数字になる。 `py -3.11 examples/poc_star_astrometry.py`
 - **表面粗さ(同じデータで Sa は合格・Sz は不合格になる標本間隔がある)** — PSD を指定して高さ場を合成するので Sq の真値が解析的に分かる。標本間隔 8 µm で**Sa は -3.5%(合格)なのに Sz は -19.8%(不合格)**。Sz は評価領域を広げると単調に増える = 「どれだけ長く見たか」を測っている。**最も頑健なのは Sa ではなくSq**(予想が外れた。折り返しは 2 次モーメントを保つ)。 `py -3.11 examples/poc_surface_roughness.py`
@@ -113,6 +115,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **separation**
 - **偏光による鏡面分離(分けた「拡散」は本当に拡散か)** — 拡散と鏡面を自分で決めて偏光子 4 枚を合成し、分離を測り返す。返る拡散は常に真値より **R_p·E** だけ高いという閉形式の偏りを実測 (差 3.5e-18)。ブリュースター角が最良なのは R_p が消えるからで、**最適角は評価指標で動く**。飽和だけが例外を出さずに壊す。 `py -3.11 examples/poc_polarization_specular.py`
+- **偏光 4 方向の鏡面除去は金属では効かない(残る量を閉形式で当てる)** — 鏡面の偏光度 p を `fresnel_dielectric` / `fresnel_conductor` の s/p 反射率から出し、部分偏光の掃引を `polarization_render(D + (1-p)S, pS)` で描いて `polarization_separate` に戻す。★誘電体 n=1.5 の Brewster 角 56.3° では p=1、残り 0(3e-16)。30° では p=0.39 で鏡面の 61 % が「拡散」に残る。★アルミ相当(n=1.2, k=7.3)は p=0.05 で **94.8 % が残る** —— 道具は閉形式と 3e-16 で一致し、外れているのは『鏡面 = 完全偏光』の仮定。DoLP 地図も pS/(D+S) と一致。 `py -3.11 examples/example_polarization_metal.py`
 - **多波長で彩色層を剥がす(勝ったのは「多波長」ではなく「近赤外」だった)** — 層構造を Kubelka–Munk で合成して真値を握り、下絵検出・顔料存在量・褪色前の色の復元を 9 手法で比べる。**可視だけ 16 バンドに割っても RGB と同じ**(再現率 0.118 対 0.119)。近赤外 1 枚は面ごとには完璧(AUC 1.000)なのに全体では 1 本も閾値が引けない —— 絵具ごとの近赤外反射率の差が下絵の信号より大きいため。近赤外の差分は逆に**剥落部で盲目**(0.013)になる。★MNF が PCA に負けた: 雑音共分散を横隣との差で作るので、下絵の上での横差分エネルギー(他所の 3.9 倍)を雑音として白色化していた。 `py -3.11 examples/poc_pigment_unmixing.py`
 - **海氷密接度(混合画素をどう数えるかで答えが変わる)** — ★ゼロ点(1 本のしきい値で 2 値化)は密接度 0.35・相関長 3 セルで **-4.2 ポイント**外し、線形混合分解は +0.02。対照群(標本化そのものの誤差 +0.01)が効いていて、**偏りは標本化ではなく数え方**だと分かる。★★同じしきい値・同じ真値でも塊の大きさで偏りが変わり(-4.2 → -0.2 ポイント)、**周長率で説明がつく**(偏り = -0.80 × 周長率 + 0.015、R² = 0.984)。第 3 成分(薄氷)は必ず配分され、同じ数字が真値の定義で -4.4 / +2.7 ポイントに化ける。 `py -3.11 examples/poc_sea_ice_concentration.py`
 - **蛍光の共局在と漏れ込み(Pearson と Manders は別の場所で壊れる)** — 2 色の小胞画像を真の共局在率 0〜100 % で合成し、漏れ込み [[1,α],[β,1]]・PSF・光子雑音を掛けて Pearson r と Otsu-Manders を測る。★無関係な 2 色が α=β=10 % で r=0.203 / M1=0.133、対称漏れ込みなら r=2α/(1+α²) で 0.5 を超える崖は α=0.282(予想 2−√3=0.268、片側なら 30 % でも 0.289)。★★単染色対照から分離すると r は戻る(0.007)が **Manders は戻らない** —— Otsu より下の裾が落ちて 100 % でも 0.705(閉形式の予想 0.756)。生の M1 が真値を横切る α=0.222 は裾落ちと漏れ込みの相殺。★★ぼけは Pearson を動かさず(0.011→0.089)Manders だけ 0.044→0.946 に押し、σ=2.5 px で Otsu の前景が小胞から細胞体へ飛び移る段差。★Costes のシャッフル検定は漏れ込みだけの r を p=0.000 で有意と言い、Costes 自動しきい値は漏れ込みで台まで落ちて M2=1.000 に崩壊する。 `py -3.11 examples/poc_colocalization_crosstalk.py`
@@ -1117,7 +1120,7 @@ _計 901 ops / 48 categories。_
 - `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`, `quickstart`
 - `sk_find_contours` `image → contour` · 例: `gallery2d_contour_measure`
 - `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
-- `lines_gauss` (halcon: `lines_gauss`) `image → contour` · 例: `gallery2d_contour_measure`, `poc_solar_el_inspection`, `poc_weld_bead_scan_angle`
+- `lines_gauss` (halcon: `lines_gauss`) `image → contour` · 例: `example_scratch_width`, `gallery2d_contour_measure`, `poc_solar_el_inspection`, `poc_weld_bead_scan_angle`
 - `select_contours_xld` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
 - `smooth_contours_xld` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
 - `gen_region_contour_xld` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`
@@ -1242,7 +1245,7 @@ _計 901 ops / 48 categories。_
 - `cv_hough_lines` (halcon: `hough_lines`) `image → feature` · 例: `gallery2d_features`
 - `cv_hough_circles` (halcon: `hough_circles`) `image → feature` · 例: `gallery2d_features`
 - `cv_good_features` `image → feature` · 例: `gallery2d_features`
-- `area_center` (halcon: `area_center`) `region → match` · 例: `gallery2d_features`
+- `area_center` (halcon: `area_center`) `region → match` · 例: `example_inner_diameter_mm`, `gallery2d_features`
 - `count_obj` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`
 - `circularity` (halcon: `circularity`) `region → feature` · 例: `draw_annotate`, `gallery2d_features`, `poc_cell_counting`, `poc_particle_sizing`, `poc_real_coin_metrology`, `poc_rotation_invariance_audit`
 - `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`
@@ -1510,8 +1513,8 @@ _計 901 ops / 48 categories。_
 - `gdilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
 - `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
 - `gclose` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
-- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_search_sweep_width`
-- `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
+- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `example_scratch_width`, `gallery2d_morphology`, `poc_search_sweep_width`
+- `bothat` (halcon: `gray_bothat`) `image → image` · 例: `example_scratch_width`, `gallery2d_morphology`, `poc_metal_grain_size`
 - `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
 - `sk_area_opening` `image → image` · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`, `poc_fresco_craquelure`
 - `cv_open` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
@@ -1691,7 +1694,7 @@ _計 901 ops / 48 categories。_
 
 ### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `example_inner_diameter_mm`, `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
 - `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`
@@ -1749,7 +1752,7 @@ _計 901 ops / 48 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `video_streaming`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `color_transport`, `ct_inspection`, `example_inner_diameter_mm`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `poc_bone_trabecular_thickness`, `poc_dtof_ranging`, `poc_interferometry_step`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_solar_el_inspection`, `poc_solar_limb_darkening`, `poc_star_astrometry`, `poc_wound_area_tracking`, `quickstart`, `video_streaming`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
