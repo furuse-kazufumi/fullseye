@@ -69,7 +69,8 @@ One experiment = one question. **This article is appended to every time an exper
 | What if the search is compressed to 260 per-cell-type dims? | Wins on little data (+0.71), ties on plenty (+0.91) | §5 |
 | What if the readout is solved by regression instead? | Same shape: 80 weights ≫ 5768 weights | §5 |
 | Does better behaviour bring biological realism with it? | The opposite. Direction selectivity 3/8 → 1/8; untrained is 0/8 | §6 |
-| Can the visual estimate drive central-complex homing? | Yes, but the limit is readout correlation, not gain | §7 |
+| Can the visual estimate drive central-complex homing? | Yes. **The first numbers were retracted — the compass had not been calibrated** (second entry in §8). Calibrated: the raw estimate homes at 2.1 %, amplitude correction makes it worse (12.4 %) | §7 → appendix |
+| Does deceleration interfere with the memory update? | No. The two things that looked like interference were something else: a 10.8 % compass gain error, and an unstable equilibrium of a rule in which steering and speed both vanish with \|H\| | appendix |
 | Does enlarging the eye break it? | No — and the first conclusion here was retracted | §8 |
 | Does shuffling the wiring cost performance? | **Not measurable.** Two shuffles differ from each other 3× more | appendix |
 | Does a staged curriculum produce direction selectivity? | Yes (0/8 → **5/8**) — and the final behavioural stage destroys it (→ 1/8) | appendix |
@@ -315,9 +316,11 @@ For completeness, the untrained network (wiring only, parameters from the initia
 
 Finally, the visual estimate was connected to **navigation**. The insect central complex contains a ring attractor representing heading (a bump travelling around a circle) and a path integrator accumulating the home vector. Both were implemented with closed-form checks (bound on phase error, closed-loop residual, monotonic approach on the homeward leg), and the flyvis angular velocity estimate was fed into the compass.
 
-![Homing from the visual pathway through the central complex](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_flyvis_link.png)
+> **Correction (2026-09-15)**: the numbers in this section (7.4 / 23.5 / 19.8 %), the "error decomposition" and the "circling" explanation are **retracted**. The ring attractor had been used without calibration (second entry in §8). The calibrated numbers and the deceleration experiment are in the appendix, "Homing with deceleration". The original text and figure are left as they were.
 
-*↑ Left: a ground-truth compass (zero visual error). Middle: the raw visual estimate. Right: the visual estimate with its amplitude corrected by a walking calibration. Grey is the outbound path, colour is the homeward path, the star is the nest. Labels are in Japanese; the error percentages are in the text.*
+![Homing from the visual pathway through the central complex (first version, uncalibrated)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_flyvis_link_uncalibrated.png)
+
+*↑ The first-version figure (uncalibrated compass). Left: a ground-truth compass (zero visual error). Middle: the raw visual estimate. Right: the visual estimate with its amplitude corrected by a walking calibration. Grey is the outbound path, colour is the homeward path, the star is the nest. Labels are in Japanese; the error percentages are in the text.*
 
 - **Ground-truth compass**: homing error 7.4 % (closest approach relative to a 28.8 cm outbound path)
 - **Raw visual estimate**: 23.5 % (does not get home)
@@ -343,6 +346,10 @@ The cause was not optics. It was a **tooling defect in which the second eye cons
 What actually holds: **enlarging the eye does not break anything even without retraining; it improves slightly and saturates** (0.98 → 0.98–0.99). Shrinking (331 ommatidia) does hurt. Acceptance-angle co-adaptation does not matter over this range.
 
 > **When a result surprises you, suspect tool ordering before you reach for physics.** The second object built in one process, the second call to a function, the second run that hit a cache — reproduce it in isolation before interpreting it.
+
+**Second retraction (2026-09-15).** The homing numbers in §7 (ground truth 7.4 % / raw visual 23.5 % / amplitude-corrected 19.8 %) and what was drawn from them — "the error splits into 3.8 points of amplitude and 12.4 points of residual" and "the 7.4 % is the agent circling at constant speed" — are withdrawn. The ring attractor had been used without calibration, and its **bump travelled 10.8 % faster than the angular velocity**. Calibrated, the numbers are 1.7 % / 2.1 % / 12.4 %: the raw visual estimate gets home on its own, and the amplitude correction makes things worse (appendix, "Homing with deceleration"). The direction of the conclusion — the residual is what limits homing — survived, but every number that supported it has been replaced. It was found by the deceleration experiment: the agent stopped 9 cm from the nest, I almost called that "interference", and the cause turned out to be calibration.
+
+> **Check that a component was calibrated on the caller's side, not the component's.** A calibration function existing and being called on this path are two different things. §7 used a calibratable part without calibrating it.
 
 ## What to take away
 
@@ -479,6 +486,8 @@ Silencing the visual pathway stage by stage, from the bottom up, and lining up w
 
 One lesson. **Ride two metrics on a single run and one metric's failure invalidates every condition.** M4 came back 34/34; DSI was lost 34/34. Metrics should run independently, or at minimum the control condition should establish that the metric itself is sound before the sweep starts.
 
+**Addendum (same day, afternoon) — what the non-finite values were.** The smallest reproduction (model 000, nothing silenced, no hook registered, just two speeds, 19 and 25) shows the speed-25 responses going non-finite **from frame 465 on**, with zero non-finite values inside the frames where the stimulus itself is finite. The primary source is flyvis's `moving_bar.py`, `_resample`: stimuli of different lengths per speed are **padded to the slowest one's length with NaN** (the code says so in a comment), and the network carries the NaN forward with the layer delays. At six speeds that is 62,616 elements per column, structurally — matching the control's 4,057,080 of 10,090,080 in the full run, and explaining why silenced conditions had exactly 62,616 fewer. flyvis's own DSI reads only its time window and is unaffected; what was broken was the ladder's "every element finite" gate. A smoke test at speed 19 alone has no padding, so it could never have found this. The gate now checks only frames where the stimulus is finite; the selftest matches the stored references for all eight cell types with ΔDSI 0.0000. The 34-condition ladder goes back into the queue, DSI included. Lesson: **a "must be finite" gate raises false alarms unless it knows where the tool uses NaN on purpose.**
+
 ### Forgetting disappeared when the objective was written differently (2026-09-15)
 
 The previous section reported that a staged curriculum can build direction selectivity but that **the final behavioural stage destroys it** (5/8 → 1/8). The proposed remedy — the **cumulative objective**, where stage *k* is scored as the mean over stages 1…*k* — has now been run from the same starting point, with the same budget and the same tasks.
@@ -498,12 +507,37 @@ So **the performance-versus-realism trade-off was not a law; it was a way of wri
 
 The cost is explicit. Each evaluation measures every stage, so the final stage takes 239.8 s per generation — about 7× the non-cumulative run, 140 minutes in total against roughly 40. **Evaluation gets heavier in proportion to how many properties you insist on keeping**, which makes "what do we keep" a design decision to be made out loud.
 
+### Homing with deceleration — both things that looked like "interference" were something else (2026-09-15)
+
+§7 ended with "adding deceleration interferes with the memory update, so that needs its own experiment". Running that experiment showed not interference but that **the numbers in §7 were wrong**.
+
+**First: the compass had not been calibrated.** With deceleration (forward speed = v0 · |H| / r_slow, where |H| is the length of the home vector the memory decodes — nothing the brain does not have), even the ground-truth compass stopped 31–41 % of the outbound distance from the nest (worse than the constant-speed 7.4 %), while the memory said "home" and the true position was 9 cm away. Tracing it back: the ring attractor in §7 had been used with its default gain (g = 1), and **its bump travelled 10.8 % faster than the angular velocity** (1.000 after calibration; the pure time lag is 0.002 rad). The first homeward turn of ≈ π rad puts it 0.34 rad off. Re-measuring §7 with the compass calibrated:
+
+| Condition | §7 as first published (uncalibrated) | Calibrated |
+|---|---|---|
+| Ground-truth compass | 7.4 % | **1.7 %** (home) |
+| Raw visual estimate | 23.5 % (not home) | **2.1 %** (home) |
+| Amplitude corrected by gain 1.54 | 19.8 % | **12.4 %** (worse than raw) |
+
+![Homing after calibration](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_flyvis_link.png)
+
+*↑ §7 after calibration. The raw visual estimate gets home (middle). The amplitude correction throws the homeward leg off (right).*
+
+§7's "3.8 points amplitude + 12.4 points residual", "the lever is correlation, not calibration" and "the 7.4 % is circling" were all products of that missing calibration and are retracted (second entry in §8). The calibrated reading: the 0.63× amplitude only matters through the **net rotation** (−0.26 rad on this outbound path, against 4.6 rad of total turning), whereas the least-squares gain of 1.54 also amplifies the part of the noise that accumulates into heading: the instantaneous residual (std) *falls* from 0.226 to 0.119 rad/s, but the integrated heading error ∫(ŵ − ω)dt *rises* from 0.124 to 0.210 rad rms, and the memory error at the turning point from 2.8 cm to 5.3 cm. Path integration only cares about the latter. **What decides homing is the residual that accumulates into heading, not the amplitude** — the conclusion points the same way, but the numbers behind it are different ones.
+
+**Second: an unstable equilibrium in the rule.** With the compass calibrated, deceleration ran away at exactly r_slow = 2 cm, stopping 6.9 cm out. Not a measurement hole but a hole in the rule: steering w = k |H| sin ε (ε the angle to the nest from the heading) and speed both scale with |H|, so the path curvature w / v does not depend on |H| at all — **the moment the agent comes to rest facing away from the nest (sin ε ≈ 0) it does not turn, walks straight off at the speed its residual memory error dictates, and the further it walks the larger |H| gets and the faster it goes** (exponential, time constant r_slow / v0). Which r_slow triggers it depends only on the heading at the moment of stopping; 2 cm was luck. Adding "walk only while the nest is ahead" (multiply v by max(0, cos ε) — the fly's body saccade: no walking mid-turn) stops it at every r_slow: 0.03 cm for the ground-truth compass, arrival time monotonic in r_slow (10.8 → 25.1 s), and for the visual conditions the stopping error, 0.59 cm (raw) / 3.81 cm (gain-corrected), **coincides exactly with the error the memory holds at the moment of stopping**.
+
+![Homing with deceleration](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fly/poc_cx_homing_brake.png)
+
+*↑ Left: sweep of the deceleration radius r_slow. Dotted (no gate) runs away at 2 cm; solid (walk only while the nest is ahead) stops everywhere. Dashed lines: distance after 30 s at constant speed. Middle: stopping error against the memory's own error at the stop (on the identity line). Right: the homeward leg at r_slow = 2 cm (markers are the stopping points). Labels are in Japanese.*
+
+Deceleration does not interfere with the memory update. **Deceleration hides nothing: it writes the error accumulated in memory straight into the stopping position** — and since the constant-speed "closest approach" was an optimistic number (the track happened to pass near the nest), deceleration is the more honest metric. The experiment ran four times and three of its pre-registered predictions failed; the record is kept in the script's docstring.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
-- [ ] **Fix the direction-selectivity measurement path** —— in the ladder above, responses went non-finite even in the control condition. That is unrelated to silencing, so the response generation itself has to be traced. Until it is fixed, every direction-selectivity number measured through that path is void.
-- [ ] **Homing with deceleration** —— the 7.4 % that remains even with a perfect compass (§7) comes from constant forward speed circling over the nest. Deceleration interferes with the memory update, so it needs its own experiment.
+- [ ] **Re-run the developmental ladder with DSI** —— the non-finite values were flyvis's NaN padding of the stimulus; the gate is fixed (addendum above). 34 conditions × 6 speeds, about 3.5 hours.
 
 ### About the author
 
