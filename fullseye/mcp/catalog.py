@@ -9,6 +9,9 @@
 盲目)と符号が逆の同じ形。だから **4 層(索引 / レジストリ / ノート / facade)を
 別々に数え、返り値に出どころを付ける**。LLM は「索引にあるが facade に無い」
 「ノートだけある」を区別して読める。
+(同日の続き: 索引の生成器が台帳 33 族を数えるようになり、索引は 1,939 op。
+ノートを持つ名前は全部索引に入った。層を分けて数える設計はそのまま —— 索引に
+無い facade 関数がまだ 448 ある。)
 
 知識層のノートは開発 checkout の Markdown(frontmatter つき)を正本にし、無ければ
 wheel に同梱される ``studio_assets/op_help/<op>.html`` に落ちる。**どちらを使ったかは
@@ -81,6 +84,19 @@ class Entry:
     halcon: str | None = None
     dim: str | None = None
     note_paths: list = field(default_factory=list)
+
+    def quality(self) -> int:
+        """並べ替えに使う「揃っている性質」の数(0..3): 索引に載る / ノートがある /
+        呼べる(registry か ledger か facade のどれか)。
+
+        ★以前は ``len(sources)`` だった。索引が台帳 33 族を数えるようになった
+        2026-09-15、"gauss" で `gaussian_beam`(facade+index+ledger+note の 4 層)が
+        `gaussian`(index+note+registry の 3 層)を追い越した —— 台帳 op は facade にも
+        出ているので**呼べる層が 2 重に数えられる**。呼べるかどうかは 1 つの性質。
+        """
+        s = self.sources
+        return (("index" in s) + ("note" in s)
+                + (bool(s & {"registry", "ledger", "facade"})))
 
     def row(self) -> dict:
         return {
@@ -206,7 +222,7 @@ class Catalog:
             #   実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、
             #   名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
             canonical = 0 if (e.halcon and e.halcon == e.name) else 1
-            hits.append(((rank, canonical, -len(e.sources), e.name), e))
+            hits.append(((rank, canonical, -e.quality(), e.name), e))
         hits.sort(key=lambda t: t[0])
         hits = [(k[0], k[3], e) for k, e in hits]
         total = len(hits)

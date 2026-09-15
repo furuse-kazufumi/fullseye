@@ -28,10 +28,10 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## tool は 8 つ(op は 918 あるが tool にはしない)
+## tool は 8 つ(op は 1,939 あるが tool にはしない)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
-tool を 918 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
+tool を 1,939 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
 retrieval 無しでは使えない)。
 
 | tool | 何をするか |

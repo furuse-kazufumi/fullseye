@@ -233,13 +233,23 @@ def test_search_hit_carries_its_provenance(cat):
 
 
 def test_search_finds_a_facade_only_function_the_index_does_not_know(cat):
-    """★索引だけ見る検索なら**構造的に出てこない** op。4 層にした理由そのもの。"""
-    r = call_tool("fullseye_search_ops", {"query": "vol_boundary", "limit": 10}, cat)["structuredContent"]
+    """★索引だけ見る検索なら**構造的に出てこない** op。4 層にした理由そのもの。
+
+    最初の被験者は `vol_boundary`(facade + note、索引に無い)だった。2026-09-15 に
+    索引が台帳 33 族を数えるようになり、**ノートを持つ名前は全部索引に入った**
+    (facade+note だけの名前は 0)。残る「索引に無い facade」は 448 で、ノートも無い
+    純粋な facade 関数 —— `census_transform`(ステレオの前処理)をここの被験者にする。
+    """
+    r = call_tool("fullseye_search_ops", {"query": "census_transform", "limit": 10}, cat)["structuredContent"]
     names = {o["name"]: o for o in r["ops"]}
-    assert "vol_boundary" in names, r["ops"]
-    o = names["vol_boundary"]
-    assert "facade" in o["sources"] and "note" in o["sources"], o
+    assert "census_transform" in names, r["ops"]
+    o = names["census_transform"]
+    assert "facade" in o["sources"], o
     assert "index" not in o["sources"], "索引に入ったなら、この検査は別の facade-only op に移すこと"
+    # ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
+    r2 = call_tool("fullseye_search_ops", {"query": "vol_boundary", "limit": 5}, cat)["structuredContent"]
+    v = {o["name"]: o for o in r2["ops"]}["vol_boundary"]
+    assert {"index", "ledger", "note"} <= set(v["sources"]), v
 
 
 def test_search_can_be_narrowed_to_one_layer(cat):
