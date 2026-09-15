@@ -180,7 +180,10 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 1235
+#: 2026-09-15: 1235 -> 1239。opsaoi 台帳の内部 API(list_ops/categories/get/call/info/
+#: missing のうち公開経路に出ない分、実測 +4)。op 自身(flat_field_correct/register_image/
+#: tiled_map)は typed_catalog と `fs.ledger` から引けるので、ここには数えられていない。
+_HIDDEN_FUNCTIONS_TODAY = 1239
 
 
 def _hidden_total():
