@@ -1,11 +1,12 @@
 {
-  "op": "mean_box",
-  "note": "docs/ops/2d/smoothing/mean_box.md",
-  "note_sha256_16": "1b84ef47581c4630",
+  "op": "cv_box",
+  "note": "docs/ops/2d/smoothing/cv_box.md",
+  "note_sha256_16": "237f9acf15a4e6a1",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T07:43:15",
-  "c_path": "impl2/c/mean_box.c",
-  "reused_existing_c": true,
+  "generated_at": "2026-09-16T07:47:18",
+  "c_path": "impl2/c/cv_box.c",
+  "prompt_sha256_16": "a6b5e6b2bd7a86db",
+  "gen_seconds": 20.8,
   "compiled": true,
   "probes": [
     {
@@ -29,7 +30,7 @@
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.01111111111111111,
+      "max_abs_diff": 0.011111111111111113,
       "non_finite": false
     },
     {
@@ -58,6 +59,14 @@
     },
     {
       "probe": "impulse_corner",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.1388888888888889,
+      "non_finite": false
+    },
+    {
+      "probe": "frame",
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
@@ -65,19 +74,11 @@
       "non_finite": false
     },
     {
-      "probe": "frame",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.16666666666666663,
-      "non_finite": false
-    },
-    {
       "probe": "diagonal",
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.055555555555555566,
+      "max_abs_diff": 0.05555555555555558,
       "non_finite": false
     },
     {
@@ -85,7 +86,7 @@
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.015151515151515155,
+      "max_abs_diff": 0.015151515151515145,
       "non_finite": false
     },
     {
@@ -93,7 +94,7 @@
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.015151515151515152,
+      "max_abs_diff": 0.01515151515151536,
       "non_finite": false
     },
     {
@@ -109,7 +110,7 @@
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.08055200569731275,
+      "max_abs_diff": 0.09018104414760997,
       "non_finite": false
     },
     {
@@ -117,7 +118,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.010204081632653128,
+      "max_abs_diff": 0.03555555555555556,
       "non_finite": false
     },
     {
@@ -125,7 +126,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.028571428571428803,
+      "max_abs_diff": 0.01333333333333342,
       "non_finite": false
     },
     {
@@ -133,7 +134,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.028571428571428803,
+      "max_abs_diff": 0.01333333333333342,
       "non_finite": false
     },
     {
@@ -165,7 +166,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.05385487528344671,
+      "max_abs_diff": 0.0711111111111111,
       "non_finite": false
     },
     {
@@ -173,7 +174,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.1842403628117913,
+      "max_abs_diff": 0.1955555555555556,
       "non_finite": false
     },
     {
@@ -181,7 +182,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.024489795918367356,
+      "max_abs_diff": 0.030000000000000027,
       "non_finite": false
     },
     {
@@ -189,7 +190,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.038961038961038974,
+      "max_abs_diff": 0.018181818181818188,
       "non_finite": false
     },
     {
@@ -197,7 +198,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.038961038961039,
+      "max_abs_diff": 0.018181818181818202,
       "non_finite": false
     },
     {
@@ -213,7 +214,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.10078391968582079,
+      "max_abs_diff": 0.055522291725126904,
       "non_finite": false
     },
     {
@@ -221,7 +222,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.013827160493827206,
+      "max_abs_diff": 0.010204081632653073,
       "non_finite": false
     },
     {
@@ -229,7 +230,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.03703703703703709,
+      "max_abs_diff": 0.014285714285714457,
       "non_finite": false
     },
     {
@@ -237,7 +238,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.037037037037037535,
+      "max_abs_diff": 0.014285714285714568,
       "non_finite": false
     },
     {
@@ -245,7 +246,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.0,
+      "max_abs_diff": 5.551115123125783e-17,
       "non_finite": false
     },
     {
@@ -261,7 +262,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.0032793209876543217,
+      "max_abs_diff": 0.0,
       "non_finite": false
     },
     {
@@ -269,7 +270,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.03375771604938271,
+      "max_abs_diff": 0.04209183673469388,
       "non_finite": false
     },
     {
@@ -277,7 +278,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.16068672839506176,
+      "max_abs_diff": 0.17219387755102045,
       "non_finite": false
     },
     {
@@ -285,7 +286,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.018518518518518573,
+      "max_abs_diff": 0.024489795918367308,
       "non_finite": false
     },
     {
@@ -293,7 +294,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.05050505050505061,
+      "max_abs_diff": 0.019480519480519765,
       "non_finite": false
     },
     {
@@ -301,7 +302,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.0505050505050505,
+      "max_abs_diff": 0.019480519480519543,
       "non_finite": false
     },
     {
@@ -317,7 +318,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.08679036074083168,
+      "max_abs_diff": 0.06113991110262473,
       "non_finite": false
     },
     {
@@ -325,7 +326,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.010204081632653128,
+      "max_abs_diff": 0.03555555555555556,
       "non_finite": false
     },
     {
@@ -333,7 +334,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.028571428571428803,
+      "max_abs_diff": 0.01333333333333342,
       "non_finite": false
     },
     {
@@ -341,7 +342,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.028571428571428803,
+      "max_abs_diff": 0.01333333333333342,
       "non_finite": false
     },
     {
@@ -373,7 +374,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.05385487528344671,
+      "max_abs_diff": 0.0711111111111111,
       "non_finite": false
     },
     {
@@ -381,7 +382,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.1842403628117913,
+      "max_abs_diff": 0.1955555555555556,
       "non_finite": false
     },
     {
@@ -389,7 +390,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.024489795918367356,
+      "max_abs_diff": 0.030000000000000027,
       "non_finite": false
     },
     {
@@ -397,7 +398,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.038961038961038974,
+      "max_abs_diff": 0.018181818181818188,
       "non_finite": false
     },
     {
@@ -405,7 +406,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.038961038961039,
+      "max_abs_diff": 0.018181818181818202,
       "non_finite": false
     },
     {
@@ -421,11 +422,11 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.10078391968582079,
+      "max_abs_diff": 0.055522291725126904,
       "non_finite": false
     }
   ],
-  "worst_max_abs_diff": 0.19444444444444442,
+  "worst_max_abs_diff": 0.1955555555555556,
   "agrees": false,
   "tol": 1e-09,
   "status": "diverges"
