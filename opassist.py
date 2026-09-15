@@ -1049,7 +1049,8 @@ def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
     return result, notes
 
 
-def path(from_sort: str, to_sort: str, max_len: int = 4) -> list[list[str]]:
+def path(from_sort: str, to_sort: str, max_len: int = 4,
+         include_registry: bool = True) -> list[list[str]]:
     """型 A から型 B へ**繋ぐ op の列**を探す(型グラフ上の最短路)。
 
     ``path("coordgrid", "mesh")`` → ``[["sphere_sdf", "marching_cubes"], ...]``
@@ -1057,6 +1058,20 @@ def path(from_sort: str, to_sort: str, max_len: int = 4) -> list[list[str]]:
     ライブラリなので、これが UI で一番効く導線になる(手順を知らなくても辿れる)。
 
     max_len: 段数の上限(既定 4)。同じ長さの経路は op 名の辞書順で返す。
+
+    ## 2-D レジストリも型グラフに入れる(2026-09-15)
+
+    それまで辺は**台帳 33 族だけ**から組んでいたので、``path("image", "region")``
+    が **``[]``** を返していた —— `otsu` を筆頭に image→region の 2-D レジストリ op
+    は実測 **83 本**ある。呼ぶ側からは「繋がらない」と「**この入口からは見えない**」
+    が区別できない形で、[[feedback_registered_only_gates_miss_unregistered]] と
+    同じ「登録済みだけを数える門」の型。``op_find`` は最初から両方を見ているのに、
+    ``op_path`` だけが台帳しか見ていなかった。
+
+    段ごとの**呼び方は層で違う**(台帳 = :func:`run` / ``fullseye.<名前>``、
+    レジストリ = ``fullseye.apply(img, 名前, a, b)``)。どちらかは
+    ``find(名前)[0]["call"]`` か ``imgevolve.py ops describe <名前>`` で分かる。
+    ``include_registry=False`` で従来どおり台帳だけの経路に戻せる。
     """
     if not isinstance(from_sort, str) or not isinstance(to_sort, str):
         raise ValueError("opassist.path: sorts must be strings")
@@ -1078,6 +1093,13 @@ def path(from_sort: str, to_sort: str, max_len: int = 4) -> list[list[str]]:
                 continue
             for src in ins:
                 edges.setdefault(src, []).append((name, out))
+    if include_registry:
+        # 宣言された in_sort からだけ辺を張る(``any`` を「どの型からでも」に
+        # 広げない —— 広げると存在しない近道が生えて、経路の主張が嘘になる)。
+        for o in _registry_ops():
+            src, out = getattr(o, "in_sort", None), getattr(o, "out_sort", None)
+            if src and out:
+                edges.setdefault(src, []).append((o.name, out))
     # 幅優先。同じ段数の解を全部集めてから返す(最短だけを見せる)
     frontier = [(from_sort, [])]
     seen = {from_sort}

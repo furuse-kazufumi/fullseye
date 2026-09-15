@@ -4,8 +4,12 @@ A future Claude Code session should be able to *use* this HALCON-parity library
 without re-reading the source. Discover and invoke everything from here:
 
     py -3.11 imgevolve.py ops                    # list every implemented operator
-    py -3.11 imgevolve.py ops --search edge      # search by name / halcon / category
+    py -3.11 imgevolve.py ops --search edge      # search (registry + typed ledgers)
     py -3.11 imgevolve.py ops --sort region      # filter by input sort
+    py -3.11 imgevolve.py ops find icp           # cross-layer search == fullseye.op_find
+    py -3.11 imgevolve.py ops describe otsu      # one op, same shape in every tier
+    py -3.11 imgevolve.py ops path image region  # chain types A -> B (== fullseye.op_path)
+    py -3.11 imgevolve.py ops find icp --json    # stdout is JSON only (notes go to stderr)
     py -3.11 imgevolve.py has gauss_filter       # is a HALCON op implemented? how to call it
     py -3.11 imgevolve.py apply gauss_filter in.png out.png --a 0.6
     py -3.11 imgevolve.py pipeline in.png out.png --ops "gauss_filter,sobel_amp,otsu"
@@ -87,19 +91,335 @@ def _imwrite(path, v):
 
 
 # ---- subcommands ----------------------------------------------------------- #
+# ★入口の統一(2026-09-15)。それまで CLI は **レジストリ + HALCON 名しか見て
+# いなかった**ので、`ops --search icp` は 0 件、`has frame_align` は exit 1 だった
+# —— どちらも台帳(33 族 1,024 op)には**在る**。一方 `fullseye.op_find` は最初から
+# 全層を横断している。つまり「無い」ではなく「**この入口からは見えない**」で、
+# 呼ぶ側にその 2 つは区別できない([[feedback_registered_only_gates_miss_unregistered]])。
+# `ops find|describe|path` は `fs.op_find` / `fs.op_assist` / `fs.op_path` と
+# **同じ集合**を CLI から出す。どの層から来た情報かは必ず `tier` で言う。
+def _note(msg, a):
+    """人向けの注記。``--json`` のときは stdout を汚さないよう stderr へ。"""
+    print(msg, file=sys.stderr if getattr(a, "json", False) else sys.stdout)
+
+
+def _emit(obj):
+    """``--json``: stdout は JSON だけ。"""
+    json.dump(obj, sys.stdout, ensure_ascii=False, indent=1)
+    sys.stdout.write("\n")
+
+
+def _frontmatter(path):
+    """op ノートの frontmatter を最小限だけ読む(YAML 依存を持たない)。"""
+    if not path or not os.path.exists(path):
+        return {}
+    out = {}
+    with open(path, encoding="utf-8") as fh:
+        lines = fh.read().splitlines()
+    if not lines or lines[0].strip() != "---":
+        return {}
+    for ln in lines[1:]:
+        if ln.strip() == "---":
+            break
+        k, sep, v = ln.partition(":")
+        if not sep:
+            continue
+        v = v.split("#")[0].strip()
+        if v.startswith("[") and v.endswith("]"):
+            v = [t.strip() for t in v[1:-1].split(",") if t.strip()]
+        out[k.strip()] = v
+    return out
+
+
+def _op_rows():
+    """索引の全行を ``name -> 行`` で(registry / color / nary / ledger の 4 層)。"""
+    return {r["name"]: r for r in _build_op_index()["ops"]}
+
+
+def _note_record(name):
+    """``fullseye/data/OP_NOTES.json`` から op ノートの 1 件目(無ければ None)。"""
+    p = os.path.join(HERE, "fullseye", "data", "OP_NOTES.json")
+    if not os.path.exists(p):
+        return None
+    try:
+        with open(p, encoding="utf-8") as fh:
+            recs = json.load(fh).get("notes", {}).get(name)
+    except (OSError, ValueError):
+        return None
+    return recs[0] if recs else None
+
+
+def _call_form(row):
+    """その op の**呼び方**。層で違うことを黙らせない。"""
+    tier, name = (row or {}).get("tier"), (row or {}).get("name", "?")
+    if tier == "ledger":
+        return 'fullseye.op_run("%s", ...) / fullseye.%s(...)' % (name, name)
+    if tier == "nary":
+        return "imgops_nary.build_nary() —— %d 入力" % (row.get("arity") or 2)
+    if tier in ("registry", "color"):
+        return 'fullseye.apply(img, "%s", a, b) / imgevolve.py apply %s <in> <out>' % (name, name)
+    return "(不明)"
+
+
+def _layer_census():
+    """いま**実際に見た**層の内訳(「0 件」と「見ていない」を区別するため)。"""
+    idx = _build_op_index()
+    return {"n_ops": idx["n_ops"], "tiers": idx["tiers"], "n_sorts": len(idx["sorts"])}
+
+
+def _census_line(c):
+    return ("見た層: " + " / ".join("%s %d" % (k, v) for k, v in sorted(c["tiers"].items()))
+            + " = %d op(型語彙 %d)" % (c["n_ops"], c["n_sorts"]))
+
+
+def _describe_op(name):
+    """どの層の op でも**同じ形**で返す(見つからなければ None)。例外は投げない。
+
+    台帳 op は :func:`fullseye.op_assist` そのもの。レジストリ側(`op_assist` が
+    ``ValueError`` を投げる op)は**索引 + ノートの frontmatter**から同じキーに
+    整える —— 呼ぶ側が層ごとに分岐しなくて済むように。
+    """
+    import opassist
+    row = _op_rows().get(name)
+    try:
+        d = opassist.assist(name)
+        d["tier"] = (row or {}).get("tier", "ledger")
+        d["source"] = "opassist.assist(型付き台帳)"
+    except ValueError:
+        if row is None:
+            return None
+        rec = _note_record(name) or {}
+        fm = _frontmatter(os.path.join(HERE, rec["path"].replace("/", os.sep))) if rec.get("path") else {}
+        doc = ""
+        if row["tier"] in ("registry", "color"):
+            op = _find_op(_load_registry(), name)
+            doc = ((getattr(op, "fn", None).__doc__ or "").strip().splitlines() or [""])[0] if op else ""
+        params = [{"name": "image", "kind": "data", "sort": row.get("in_sort"), "required": True}]
+        if row["tier"] in ("registry", "color"):
+            params += [{"name": k, "kind": "number", "default": 0.5, "required": False,
+                        "doc": "つまみ %s ∈ [0,1](2-D レジストリは 1 画像 + 2 スカラ)" % k}
+                       for k in ("a", "b")]
+        d = {"op": name, "ledger": "ops", "module": row.get("ledger") or "ops",
+             "category": row.get("category"), "doc": doc or fm.get("op", ""),
+             "params": params, "presets": {}, "inputs": {}, "next": [],
+             "preflight": [], "accepts": {},
+             "tier": row["tier"],
+             "source": "docs/OP_INDEX.json + ノートの frontmatter(op_assist は台帳専用)"}
+        # 「その型を作れる op / 受け取れる op」は台帳側の知識。引けなくても
+        # describe は落とさない(補助情報であって、この op の仕様ではない)。
+        in_sort, out_sort = row.get("in_sort"), row.get("out_sort")
+        try:
+            d["inputs"] = {in_sort: opassist.producers(in_sort)} if in_sort else {}
+        except Exception:                                # noqa: BLE001 — 補助情報
+            d["inputs"] = {}
+        try:
+            d["next"] = opassist.consumers(out_sort) if out_sort else []
+        except Exception:                                # noqa: BLE001 — 補助情報
+            d["next"] = []
+        d["note"] = rec.get("path")
+        d["examples"] = fm.get("examples", [])
+    row = row or {"tier": d.get("tier"), "name": name}
+    row.setdefault("name", name)
+    d["dim"] = row.get("dim") or ("2d" if row.get("tier") in ("registry", "color", "nary") else "")
+    d["in_sort"], d["out_sort"] = row.get("in_sort"), row.get("out_sort")
+    d["halcon"] = row.get("halcon") or ""
+    d["call"] = _call_form(row)
+    return d
+
+
+def _cmd_ops_find(a):
+    """`fs.op_find` の横断検索(registry / color / nary / 台帳 33 族)をそのまま出す。"""
+    import opassist
+    q = " ".join(a.args).strip()
+    if not q:
+        _note("find は探す語が要る: imgevolve.py ops find icp", a)
+        return 2
+    lim = max(int(a.limit), 1)
+    idx = _op_rows()
+    rows = []
+    # 絞り込み(--dim/--in/--out)で落ちる分を見越して広めに引いてから切る。
+    for h in opassist.find(q, limit=lim * 8 if (a.dim or a.in_sort or a.out_sort) else lim):
+        r = idx.get(h["op"], {})
+        tier = r.get("tier") or ("registry" if h["ledger"] == "ops" else "ledger")
+        row = {"op": h["op"], "tier": tier, "ledger": h["ledger"], "module": h["module"],
+               "dim": r.get("dim") or ("2d" if tier in ("registry", "color", "nary") else ""),
+               "category": h["category"], "in_sort": r.get("in_sort"), "out_sort": r.get("out_sort"),
+               "halcon": r.get("halcon") or "", "call": h["call"], "score": h["score"],
+               "doc": h["doc"]}
+        if a.dim and row["dim"] != a.dim:
+            continue
+        if a.in_sort and row["in_sort"] != a.in_sort:
+            continue
+        if a.out_sort and row["out_sort"] != a.out_sort:
+            continue
+        rows.append(row)
+    rows = rows[:lim]
+    if a.json:
+        _emit(rows)
+        return 0
+    for r in rows:
+        print("%-26s %-9s->%-9s [%s/%s] score=%-3d %s"
+              % (r["op"], r["in_sort"] or "-", r["out_sort"] or "-", r["tier"],
+                 r["dim"] or r["category"] or "-", r["score"], (r["doc"] or "")[:60]))
+    c = _layer_census()
+    print("--- %d hits for %r ---" % (len(rows), q))
+    print(_census_line(c))
+    return 0
+
+
+def _cmd_ops_describe(a):
+    """1 op の仕様を層に関係なく同じ形で。**どの層から来たかを必ず言う**。"""
+    import opassist
+    if len(a.args) != 1:
+        _note("describe は op 名を 1 つ: imgevolve.py ops describe otsu", a)
+        return 2
+    name = a.args[0]
+    d = _describe_op(name)
+    if d is None:
+        near = [h["op"] for h in opassist.find(name, limit=8)]
+        c = _layer_census()
+        if a.json:
+            _emit({"op": name, "error": "unknown op", "near": near, "searched": c})
+        else:
+            print("unknown op: %s —— どの層にも無い" % name)
+            print(_census_line(c))
+            if near:
+                print("  近い: " + ", ".join(near))
+        return 1
+    if a.json:
+        _emit(d)
+        return 0
+    print("%s  [tier=%s]  %s -> %s" % (d["op"], d["tier"], d["in_sort"] or "-", d["out_sort"] or "-"))
+    print("  出どころ: %s" % d["source"])
+    print("  呼び方  : %s" % d["call"])
+    if d.get("doc"):
+        print("  説明    : %s" % d["doc"])
+    if d.get("halcon"):
+        print("  HALCON  : %s" % d["halcon"])
+    for spec in d.get("params", []):
+        print("  param   : %-14s %-7s %s" % (spec.get("name"), spec.get("kind"),
+                                             spec.get("sort") or spec.get("doc") or ""))
+    if d.get("presets"):
+        print("  presets : %s" % ", ".join(sorted(d["presets"])))
+    if d.get("next"):
+        print("  次に繋ぐ: %s" % ", ".join(d["next"][:12]))
+    if d.get("preflight"):
+        for w in d["preflight"]:
+            print("  注意    : %s" % w)
+    if d.get("note"):
+        print("  ノート  : %s" % d["note"])
+    return 0
+
+
+def _cmd_ops_path(a):
+    """型 A → 型 B の op 列。空なら**どの層を見たか**と近い候補を必ず出す。"""
+    import difflib
+
+    import opassist
+    if len(a.args) != 2:
+        _note("path は型を 2 つ: imgevolve.py ops path image region", a)
+        return 2
+    src, dst = a.args
+    idx = _build_op_index()
+    rows = {r["name"]: r for r in idx["ops"]}
+    known = set(idx["sorts"])
+    c = _layer_census()
+    unknown = [s for s in (src, dst) if s not in known]
+    if unknown:
+        near = {s: difflib.get_close_matches(s, sorted(known), n=5, cutoff=0.5) for s in unknown}
+        if a.json:
+            _emit({"from": src, "to": dst, "chains": [], "error": "unknown sort",
+                   "unknown": unknown, "near": near, "searched": c})
+        else:
+            print("型語彙に無い: %s" % ", ".join(unknown))
+            print(_census_line(c))
+            for s, n in near.items():
+                print("  %s に近い型: %s" % (s, ", ".join(n) or "(無し)"))
+        return 1
+    chains = opassist.path(src, dst)
+    lim = max(int(a.limit), 1)
+    if a.json:
+        _emit({"from": src, "to": dst, "n_chains": len(chains), "chains": chains[:lim],
+               "steps": [[{"op": n, "tier": (rows.get(n) or {}).get("tier"),
+                           "call": _call_form(rows.get(n) or {"name": n})} for n in ch]
+                         for ch in chains[:lim]],
+               "searched": c})
+        return 0
+    if not chains:
+        print("%s -> %s: 4 段以内に経路なし" % (src, dst))
+        print(_census_line(c))
+        print("  %s を出す op: %s" % (dst, ", ".join(
+            sorted(n for n, r in rows.items() if r.get("out_sort") == dst)[:10]) or "(無し)"))
+        print("  %s を受ける op: %s" % (src, ", ".join(
+            sorted(n for n, r in rows.items() if r.get("in_sort") == src)[:10]) or "(無し)"))
+        return 0
+    print("%s -> %s: %d 本(最短 %d 段)" % (src, dst, len(chains), len(chains[0])))
+    for ch in chains[:lim]:
+        print("  " + " → ".join(ch))
+        for n in ch:
+            r = rows.get(n) or {"name": n}
+            print("      %-24s [%s] %s" % (n, r.get("tier") or "?", _call_form(r)))
+    if len(chains) > lim:
+        print("  …ほか %d 本(--limit で増やす)" % (len(chains) - lim))
+    print(_census_line(c))
+    return 0
+
+
 def cmd_ops(a):
+    """`ops` / `ops find` / `ops describe` / `ops path`。"""
+    act = getattr(a, "action", None)
+    if act == "find":
+        return _cmd_ops_find(a)
+    if act == "describe":
+        return _cmd_ops_describe(a)
+    if act == "path":
+        return _cmd_ops_path(a)
+    return _cmd_ops_list(a)
+
+
+def _cmd_ops_list(a):
+    """一覧 / `--search`。★`--search` は **既定で横断**(旧挙動は `--registry-only`)。
+
+    行の書式は前と同じ(レジストリ行は 1 文字も変えていない)。変えたのは
+    **見える範囲**と末尾の内訳行 —— `--search icp` が 0 件を返す入口は、
+    「無い」と「見えない」を混同させるので既定にしておけない。
+    """
     rows = _all_ops()
     kw = (a.search or "").lower()
+
+    def _hit(r):
+        return (not a.sort or r["in_sort"] == a.sort) and (
+            not kw or kw in (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower())
+
     for r in sorted(rows, key=lambda r: (r["tier"], r["in_sort"], r["name"])):
-        if a.sort and r["in_sort"] != a.sort:
-            continue
-        if kw and kw not in (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower():
+        if not _hit(r):
             continue
         print("%-26s %-8s->%-8s  halcon=%-24s [%s/%s]"
               % (r["name"], r["in_sort"], r["out_sort"], r["halcon"] or "-", r["tier"], r["category"]))
-    print("--- %d ops match ---" % sum(
-        1 for r in rows if (not a.sort or r["in_sort"] == a.sort)
-        and (not kw or kw in (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower())))
+    n_reg = sum(1 for r in rows if _hit(r))
+    if not kw or getattr(a, "registry_only", False):
+        print("--- %d ops match ---" % n_reg)
+        return 0
+    import opassist
+    idx = _op_rows()
+    extra = []
+    for h in opassist.find(kw, limit=200):
+        r = idx.get(h["op"])
+        if not r or r["tier"] in ("registry", "color", "nary") or h["op"] in {x["op"] for x in extra}:
+            continue
+        if a.sort and r.get("in_sort") != a.sort:
+            continue
+        extra.append({"op": h["op"], "row": r, "doc": h["doc"]})
+    for e in extra[:50]:
+        r = e["row"]
+        print("%-26s %-8s->%-8s  ledger=%-24s [%s/%s]"
+              % (r["name"], r.get("in_sort") or "-", r.get("out_sort") or "-",
+                 r.get("ledger") or "-", r["tier"], r.get("dim") or r.get("category") or "-"))
+    print("--- %d ops match (registry+nary %d / 台帳 %d) ---"
+          % (n_reg + len(extra), n_reg, len(extra)))
+    if extra:
+        print("台帳 op の詳細は `imgevolve.py ops describe <名前>`、"
+              "横断検索は `imgevolve.py ops find %s`(採点つき)" % kw)
     return 0
 
 
@@ -115,6 +435,17 @@ def cmd_has(a):
     q = a.op.lower()
     hits = [r for r in rows if q in (r["name"].lower(), (r["halcon"] or "").lower())]
     if not hits:
+        # ★台帳(33 族 1,024 op)を見てから「無い」と言う(2026-09-15)。それまで
+        #   `has frame_align` は exit 1 で「HALCON リファレンスに無い」と答えて
+        #   いたが、`frame_align` は opsvideostream に**実装済み**だった。
+        led = _op_rows().get(a.op)
+        if led is not None and led["tier"] == "ledger":
+            print("IMPLEMENTED: name=%s  %s->%s  tier=ledger (%s)"
+                  % (led["name"], led.get("in_sort") or "-", led.get("out_sort") or "-",
+                     led.get("ledger")))
+            print("  call: %s" % _call_form(led))
+            print("  detail: py -3.11 imgevolve.py ops describe %s" % led["name"])
+            return 0
         # Every one of the 2313 real ops still gets a truthful response.
         d = _disposition(a.op)
         if d:
@@ -492,9 +823,19 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    p = sub.add_parser("ops", help="list/search implemented operators")
-    p.add_argument("--search", default="")
-    p.add_argument("--sort", default="")
+    p = sub.add_parser("ops", help="list/search operators; find|describe|path で全層を横断")
+    p.add_argument("action", nargs="?", default=None, choices=["find", "describe", "path"],
+                   help="find <語> / describe <op> / path <in_sort> <out_sort>(省略で一覧)")
+    p.add_argument("args", nargs="*", help="action の引数")
+    p.add_argument("--search", default="", help="一覧を語で絞る(既定で台帳も横断)")
+    p.add_argument("--registry-only", action="store_true", dest="registry_only",
+                   help="--search を旧挙動(レジストリ + HALCON 名だけ)に戻す")
+    p.add_argument("--sort", default="", help="in_sort で絞る")
+    p.add_argument("--limit", type=int, default=20, help="find / path の表示件数")
+    p.add_argument("--dim", default="", help="find: 族で絞る(2d / 3d / optics …)")
+    p.add_argument("--in", dest="in_sort", default="", help="find: in_sort で絞る")
+    p.add_argument("--out", dest="out_sort", default="", help="find: out_sort で絞る")
+    p.add_argument("--json", action="store_true", help="stdout を JSON だけにする(注記は stderr)")
     p.set_defaults(fn=cmd_ops)
 
     p = sub.add_parser("has", help="is a HALCON op implemented + how to call it")
