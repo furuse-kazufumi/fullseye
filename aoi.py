@@ -167,7 +167,8 @@ def flat_field_correct(image, flat, dark=None, target=None, min_response=None, c
     Args:
         image: 検査画像 ``(H, W)``。
         flat: フラット画像 ``(H, W)``。``image`` と同じ形。
-        dark: 暗画像 ``(H, W)`` か ``None``(= 暗電流 0 として扱う)。
+        dark: 暗画像 ``(H, W)``、一様な暗電流を表す実数 1 つ、または ``None``
+            (= 暗電流 0 として扱う。**その仮定が誤りなら補正は戻らない** —— 下の門を参照)。
         target: 補正後の基準レベル。``None`` なら ``mean(flat - dark)``。
         min_response: ``flat - dark`` の下限(正)。``None`` なら 0 以下を拒否する。
         clip: ``True``(既定)なら結果を ``[0, 1]``(この library の画像の約束)へ丸める。
