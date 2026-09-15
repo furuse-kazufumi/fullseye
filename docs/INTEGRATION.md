@@ -59,7 +59,7 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 ## From an LLM (MCP server, 0.1.11 PoC)
 
 `py -3.11 -m fullseye.mcp` is a stdio Model Context Protocol server (protocol
-`2025-06-18`). It exposes **8 tools, not 918**: search the catalog, read an operator's
+`2025-06-18`). It exposes **8 tools, not 1,939**: search the catalog, read an operator's
 knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
 load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and
 inspect a handle. Images travel as `fullseye://img/<sha16>` handles; every result carries
@@ -71,9 +71,20 @@ degradation ledger is always in the result. Paths outside the sandbox roots, unk
 operator names, sort mismatches, out-of-range knobs and unknown arguments are all refused
 explicitly — nothing is coerced to "the nearest thing".
 
-Limit, stated plainly: the catalog reads `docs/OP_INDEX.json` and `docs/ops/**/*.md`, which
-are not in the wheel, so the server needs a checkout; from a `pip install` it stops with
-`CatalogError` rather than serving an empty catalog. Details: [`MCP.md`](MCP.md).
+It runs from the wheel (0.1.12+). The catalog's sources of truth are `docs/OP_INDEX.json`
+and the front matter of `docs/ops/**/*.md`, which are not inside the package; so
+`tools/gen_mcp_data.py` copies the index and the six front-matter keys the server reads
+(op / dim / category / in / out / halcon, plus the note's relative path — not the bodies)
+into `fullseye/data/OP_INDEX.json` and `fullseye/data/OP_NOTES.json`, which ship as
+package data (about 0.8 MB). Resolution order: index = package copy, then a repo `docs/`
+if present, else `CatalogError`; notes = repo `docs/ops` (bodies available), then the
+packaged front matter, else `CatalogError`. It never serves an empty catalog. From a
+`pip install`, `fullseye_op_help` returns the shipped Studio help HTML instead of the
+note body and says so (`note_body_unavailable`), and `fullseye_catalog_coverage` reports
+`index_source` / `notes_source`. Regenerate the copies with `py -3.11 tools/gen_mcp_data.py`
+(part of `tools/regen_all.py`); `tests/test_mcp_wheel.py` (`FULLSEYE_WHEEL_GATE=1`) builds
+the wheel, installs it into a fresh venv and counts the catalog from outside the repo.
+Details: [`MCP.md`](MCP.md).
 
 ## From other languages (C ABI)
 
@@ -88,7 +99,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the 918-operator Python library in another language. Its
+What this is **not**: it is not the 1,939-operator Python library in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
 — nine were found this way in 0.1.11 (connectivity, border mode, object ordering, status

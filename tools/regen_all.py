@@ -54,6 +54,8 @@ CHAIN = [
     # ★`tools/` の外にある唯一の生成物。だから取りこぼしていた ——
     # 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
+    # 索引の後(複製するので)。ノートは opdocs の後なら何番目でもよい。
+    (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
     (["tools/conversion_matrix.py"], "docs/CONVERSION_MATRIX.md(表現の変換表)"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
 ]

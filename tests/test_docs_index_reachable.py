@@ -329,10 +329,57 @@ def test_the_machine_readable_index_is_current():
         "OP_INDEX.json の中身が %d 件ずれている(型やカテゴリが古い)。例: %s "
         "—— `py -3.11 imgevolve.py index`"
         % (len(diff), [(n, by_name_json[n], by_name_live[n]) for n in diff[:2]]))
-    live_sorts = sorted({r["in_sort"] for r in live} | {r["out_sort"] for r in live})
+    # 台帳 op は入力ゼロのものがあり in_sort が None(語彙に混ぜない)。
+    live_sorts = sorted({r["in_sort"] for r in live if r["in_sort"]}
+                        | {r["out_sort"] for r in live if r["out_sort"]})
     assert got["sorts"] == live_sorts, (
         "OP_INDEX.json の sort 一覧が古い: %s ではなく %s"
         % (got["sorts"], live_sorts))
+
+
+def test_the_machine_readable_index_counts_every_ledger_family():
+    """★★索引は**配布物の側から**数える —— レジストリと一致していても台帳が丸ごと
+    抜けていれば「一致」は空を通す門になる。
+
+    2026-09-15 実測: 索引 918 op はレジストリ 901 + n-ary 17 と一致して緑だったが、
+    `fullseye.op_find` / `fullseye.ledger` から届く台帳 33 族 1,025 op が **1 つも
+    載っていなかった**(optics 124 / 3d 357 / annotate 51 …)。ここでは台帳の側
+    (`opassist._LEDGERS`)から数え、族ごとに索引へ入っていることを見る。
+    """
+    import importlib
+    import json
+
+    requires_full_registry()
+    sys.path.insert(0, str(ROOT))
+    import opassist
+
+    got = json.loads((DOCS / "OP_INDEX.json").read_text(encoding="utf-8"))
+    names = {r["name"] for r in got["ops"]}
+    by_ledger = {}
+    for r in got["ops"]:
+        if r["tier"] == "ledger":
+            by_ledger.setdefault(r["ledger"], set()).add(r["name"])
+    assert got["tiers"].get("ledger", 0) == sum(len(v) for v in by_ledger.values()) > 900
+    missing_family, missing_ops = [], {}
+    for mod_name, table in opassist._LEDGERS:
+        entries = getattr(importlib.import_module(mod_name), table)
+        assert entries, "%s.%s が空" % (mod_name, table)
+        if mod_name not in by_ledger:
+            missing_family.append(mod_name)
+            continue
+        # 同名は先に来た族 / 2-D レジストリが勝つので「名前が索引に在る」で見る
+        lost = sorted(n for n in entries if n not in names)
+        if lost:
+            missing_ops[mod_name] = lost
+    assert not missing_family, (
+        "索引に 1 op も載っていない台帳の族: %s —— `py -3.11 imgevolve.py index`"
+        % missing_family)
+    assert not missing_ops, "索引に無い台帳 op: %s" % {k: v[:5] for k, v in missing_ops.items()}
+    for r in got["ops"]:
+        if r["tier"] == "ledger":
+            assert r["ledger"] and r["dim"] and isinstance(r["in_sorts"], list), r
+            assert (DOCS / "ops" / r["dim"]).is_dir(), (
+                "台帳 op %s の dim=%s に docs/ops のディレクトリが無い" % (r["name"], r["dim"]))
 
 
 def test_the_rag_guide_note_count_is_current():

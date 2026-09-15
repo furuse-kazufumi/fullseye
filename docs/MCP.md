@@ -9,10 +9,23 @@ py -3.11 -m fullseye.mcp --demo      # 自分を起動して一通り叩く(下�
 py -3.11 -m fullseye.mcp --coverage  # カタログ 5 層の被覆を JSON で
 ```
 
-**前提(正直に)**: いまは**開発 checkout 前提**。カタログの正本 `docs/OP_INDEX.json` と
-知識層 `docs/ops/**/*.md` は wheel に入っていないので、`pip install fullseye` した環境から
-起動すると `CatalogError: docs/OP_INDEX.json が無い` で**理由つきで止まる**(黙って空の
-カタログにはならない)。wheel 対応は次の版。
+**wheel から動く(0.1.12〜)**。0.1.11 はカタログの正本 `docs/OP_INDEX.json` と知識層
+`docs/ops/**/*.md` をリポジトリ相対で読んでいたので、`pip install fullseye` した環境からは
+`CatalogError` で止まっていた(理由つきで止まるのは正しいが、動かない)。いまは
+`tools/gen_mcp_data.py` が **索引の複製**と**ノートの frontmatter だけ**(op / dim /
+category / in / out / halcon + 相対パス、本文は入れない)を `fullseye/data/OP_INDEX.json` /
+`fullseye/data/OP_NOTES.json` に書き、package-data として wheel に入る(約 0.8 MB)。
+読む順は 索引 = パッケージ内 → リポジトリ `docs/` → **無ければ `CatalogError`**、
+ノート = リポジトリ `docs/ops`(正本、本文も読める)→ パッケージ内の frontmatter → `CatalogError`。
+どこから読んだかは `fullseye_catalog_coverage` の `index_source` / `notes_source` に出る。
+wheel ではノート本文の代わりに同梱の Studio help HTML(`studio_assets/op_help/`)を返し、
+返り値の `note_body_unavailable` にそう書く(黙って代替に落ちない)。図は「入力 → 出力」の
+1 枚(`op_help/fig/`)だけになり、つまみの掃引図(`docs/ops/_fig/`)は checkout でだけ付く。
+
+複製なので**ずれる**。`py -3.11 tools/regen_all.py --check`(CI で回る)と
+`tests/test_mcp_server.py` が「複製 = 正本」を件数ごと数え、`tests/test_mcp_wheel.py`
+(`FULLSEYE_WHEEL_GATE=1` で有効)が wheel を建てて別 venv に入れ、リポジトリの外の cwd から
+起動して索引 1,939 / ノート 1,939 が返ることを配布物の側で数える。
 
 ## Claude Code への登録
 
@@ -20,18 +33,18 @@ py -3.11 -m fullseye.mcp --coverage  # カタログ 5 層の被覆を JSON で
 claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 ```
 
-リポジトリの外から起動するときは作業ディレクトリを checkout に向ける
-(`--cwd` 相当の設定はクライアントに従う)。読み込める画像は既定で**同梱サンプルだけ**。
-自分の画像を読ませるには根を足す:
+`pip install fullseye` した環境でも checkout でも同じ。checkout なら `docs/ops` の
+ノート本文と掃引図まで届く(cwd は問わない —— パッケージの位置から解決する)。
+読み込める画像は既定で**同梱サンプルだけ**。自分の画像を読ませるには根を足す:
 
 ```
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## tool は 8 つ(op は 918 あるが tool にはしない)
+## tool は 8 つ(op は 1,939 あるが tool にはしない)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
-tool を 918 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
+tool を 1,939 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
 retrieval 無しでは使えない)。
 
 | tool | 何をするか |

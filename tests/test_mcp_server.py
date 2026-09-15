@@ -233,13 +233,23 @@ def test_search_hit_carries_its_provenance(cat):
 
 
 def test_search_finds_a_facade_only_function_the_index_does_not_know(cat):
-    """★索引だけ見る検索なら**構造的に出てこない** op。4 層にした理由そのもの。"""
-    r = call_tool("fullseye_search_ops", {"query": "vol_boundary", "limit": 10}, cat)["structuredContent"]
+    """★索引だけ見る検索なら**構造的に出てこない** op。4 層にした理由そのもの。
+
+    最初の被験者は `vol_boundary`(facade + note、索引に無い)だった。2026-09-15 に
+    索引が台帳 33 族を数えるようになり、**ノートを持つ名前は全部索引に入った**
+    (facade+note だけの名前は 0)。残る「索引に無い facade」は 448 で、ノートも無い
+    純粋な facade 関数 —— `census_transform`(ステレオの前処理)をここの被験者にする。
+    """
+    r = call_tool("fullseye_search_ops", {"query": "census_transform", "limit": 10}, cat)["structuredContent"]
     names = {o["name"]: o for o in r["ops"]}
-    assert "vol_boundary" in names, r["ops"]
-    o = names["vol_boundary"]
-    assert "facade" in o["sources"] and "note" in o["sources"], o
+    assert "census_transform" in names, r["ops"]
+    o = names["census_transform"]
+    assert "facade" in o["sources"], o
     assert "index" not in o["sources"], "索引に入ったなら、この検査は別の facade-only op に移すこと"
+    # ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
+    r2 = call_tool("fullseye_search_ops", {"query": "vol_boundary", "limit": 5}, cat)["structuredContent"]
+    v = {o["name"]: o for o in r2["ops"]}["vol_boundary"]
+    assert {"index", "ledger", "note"} <= set(v["sources"]), v
 
 
 def test_search_can_be_narrowed_to_one_layer(cat):
@@ -318,16 +328,82 @@ def test_tools_list_declares_closed_schemas(cat):
 
 
 def test_missing_index_refuses_to_build_a_catalog_instead_of_returning_an_empty_one(monkeypatch):
-    """wheel には docs/ が入らない。2026-09-15 に wheel を一時 venv へ入れてリポジトリ外から
-    起動したら、この例外で止まった(黙って空のカタログ = 検索が『該当なし』を正直に
-    見せかける、にはならない)。その経路をここで固定する。"""
+    """索引が**どこにも**無ければ止まる。0.1.11 の wheel は docs/ を持たずこの例外で止まった
+    (黙って空のカタログ = 検索が『該当なし』を正直に見せかける、にはならない)。
+    0.1.12 で索引はパッケージ内にも入ったので、両方を消して同じ経路が残っていることを見る。"""
     import fullseye.mcp.catalog as C
     from fullseye.mcp import CatalogError
+    monkeypatch.setattr(C, "_packaged", lambda name: None)
     monkeypatch.setattr(C, "OP_INDEX", os.path.join(ROOT, "docs", "__no_such_index__.json"))
     with pytest.raises(CatalogError) as ei:
         C.Catalog.load(with_facade=False)
     assert "OP_INDEX.json が無い" in str(ei.value)
     assert "空のカタログ" in str(ei.value), "拒否はしたが、なぜ拒否するのかを言っていない"
+
+
+def test_missing_notes_refuse_to_build_a_catalog(monkeypatch):
+    """索引があってもノート層がどこにも無ければ止まる —— 黙って note=0 で動くと、被覆 tool が
+    「索引の全 op にノートが無い」という嘘を正直に見せかける。"""
+    import fullseye.mcp.catalog as C
+    from fullseye.mcp import CatalogError
+    monkeypatch.setattr(C, "_packaged", lambda name: None)
+    monkeypatch.setattr(C, "OPS_DOCS", os.path.join(ROOT, "docs", "__no_such_ops__"))
+    with pytest.raises(CatalogError) as ei:
+        C.Catalog.load(with_facade=False)
+    assert "ノートが無い" in str(ei.value)
+
+
+def test_the_catalog_says_where_it_read_the_index_and_the_notes_from(cat):
+    """checkout では索引はパッケージ内の複製、ノートは docs/ops の正本(本文つき)。"""
+    assert cat.index_source.startswith("package:") and cat.index_source.endswith("OP_INDEX.json")
+    assert cat.notes_source.startswith("docs:")
+    c = call_tool("fullseye_catalog_coverage", {}, cat)["structuredContent"]
+    assert c["index_source"] == cat.index_source and c["notes_source"] == cat.notes_source
+
+
+def test_the_packaged_catalog_data_equals_the_docs_it_was_copied_from():
+    """★wheel が読む複製(fullseye/data/)が正本(docs/)と一致していること。
+
+    2 か所に同じものを持つ以上、ずれは必ず起きる。`tools/regen_all.py --check` が CI で
+    回すが、テストでも数える —— **中身の件数まで**(一致の門は空を通す)。"""
+    import fullseye.mcp.catalog as C
+    pkg_idx = json.load(open(os.path.join(ROOT, "fullseye", "data", C.PKG_INDEX), encoding="utf-8"))
+    doc_idx = json.load(open(os.path.join(ROOT, "docs", "OP_INDEX.json"), encoding="utf-8"))
+    assert pkg_idx == doc_idx, "fullseye/data/OP_INDEX.json が docs/OP_INDEX.json と違う —— `py -3.11 tools/gen_mcp_data.py`"
+    assert pkg_idx["n_ops"] == len(pkg_idx["ops"]) > 1900
+    pkg_notes = json.load(open(os.path.join(ROOT, "fullseye", "data", C.PKG_NOTES), encoding="utf-8"))
+    fresh = C.scan_notes(C.OPS_DOCS)
+    assert pkg_notes["notes"] == fresh, "fullseye/data/OP_NOTES.json が docs/ops と違う —— `py -3.11 tools/gen_mcp_data.py`"
+    assert pkg_notes["n_ops"] == len(fresh) > 1900
+    assert pkg_notes["n_notes"] == sum(len(v) for v in fresh.values()) >= pkg_notes["n_ops"]
+    # MCP が読む項目だけが入っていること(本文・examples・author は入れない)
+    for metas in list(fresh.values())[:200]:
+        for m in metas:
+            assert set(m) <= set(C.NOTE_KEYS) | {"path"}, m
+            assert m["path"].startswith("docs/ops/") and not os.path.isabs(m["path"]), m
+    # 索引の全 op が複製側のノートでも引けること(wheel でも index_without_note == [])
+    missing = sorted(o["name"] for o in pkg_idx["ops"] if o["name"] not in pkg_notes["notes"])
+    assert not missing, missing[:10]
+
+
+def test_help_falls_back_to_the_shipped_html_when_the_note_body_is_absent(cat, monkeypatch):
+    """wheel ではノート本文が無い。同梱 HTML に落ち、**落ちたことと本文の在り処**を書くこと
+    (2-D op は op_help/ 直下、台帳族は op_help/<dim>/)。"""
+    import fullseye.mcp.catalog as C
+    for name, where in (("gaussian", "studio_assets/op_help/gaussian.html"),
+                        ("abcd_matrix", "studio_assets/op_help/optics/abcd_matrix.html")):
+        e = cat.entries[name]
+        monkeypatch.setattr(e, "note_paths", [])
+        h = cat.help(name)
+        assert h["found"] and h["body_format"] == "html", h.get("body_source")
+        assert h["body_source"] == where
+        assert h["body_chars"] > 500
+        assert h["has_note"] is True and h["note_refs"][0].startswith("docs/ops/")
+        assert "note_body_unavailable" in h
+    # 図: docs/ops/_fig が無い環境では同梱の Studio 図に落ちる
+    monkeypatch.setattr(C, "FIG_DIR", os.path.join(ROOT, "docs", "__no_fig__"))
+    h = cat.help("gaussian")
+    assert h["figures"] and h["figures"][0]["source"] == "studio_assets/op_help/fig", h["figures"]
 
 
 # --------------------------------------------------------------------------- #

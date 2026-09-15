@@ -16,6 +16,62 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `fs_python_init` / `fs_python_available` / `fs_catalog_json` を追加。既存の 25 関数と 0〜9 は不変。
   ついでに見つけた食い違い: Rust 側の `FS_E_UNSUPPORTED` が **4**(ヘッダでは `FS_E_RANGE` の番号)
   だった —— 番号の機械照合をテストにした。Python の同梱はまだ(python311.dll は OS の探索頼み)。
+
+- ★**MCP サーバが wheel から動く**(`pip install fullseye` → `claude mcp add fullseye -- py -3.11 -m fullseye.mcp`)。
+  0.1.11 は `fullseye/mcp/catalog.py` が索引 `docs/OP_INDEX.json`・知識層 `docs/ops/**/*.md`
+  (frontmatter)・掃引図 `docs/ops/_fig/` をリポジトリ相対(`ROOT = パッケージの親`)で
+  読んでいて、checkout のテスト 28 件は全部緑のまま、wheel からは `CatalogError` で止まった
+  (門が事故の起きない場所にだけ立っていた)。直し:
+  - `tools/gen_mcp_data.py`(`regen_all` の CHAIN に追加)が **索引の複製**
+    `fullseye/data/OP_INDEX.json`(381 KB)と **ノートの frontmatter だけ**
+    `fullseye/data/OP_NOTES.json`(417 KB、MCP が読む 6 項目 op / dim / category / in /
+    out / halcon + 相対パス。本文 140 MB は入れない)を書き、`pyproject.toml` の package-data
+    で wheel に入る(計 0.8 MB。wheel は 60 MB のまま上限 70 MB 内)。
+  - 読む順は 索引 = パッケージ内(`importlib.resources`)→ リポジトリ `docs/` →
+    **無ければ `CatalogError`**、ノート = リポジトリ `docs/ops`(正本、本文つき)→
+    パッケージ内 frontmatter → `CatalogError`。**黙って空の層で動かない**(索引 0 件・
+    ノート 0 枚も拒否)。どこから読んだかは `Catalog.index_source` / `notes_source` と
+    `fullseye_catalog_coverage` の返り値に出る。
+  - wheel ではノート本文の代わりに同梱の Studio help HTML(2-D は `op_help/<op>.html`、
+    台帳族は `op_help/<dim>/<op>.html`)を返し、`note_body_unavailable` にそう書く。図は
+    同梱の「入力 → 出力」1 枚(`op_help/fig/`)に落ち、`source` を付ける。
+  - 門 `tests/test_mcp_wheel.py`(**`FULLSEYE_WHEEL_GATE=1` で opt-in**、重い): wheel を
+    建てて別 venv に wheel + numpy/scipy だけ入れ、**リポジトリの外の cwd** から実 stdio で
+    initialize → tools/list → 検索(2-D の `gauss` と台帳の `abcd_matrix`)→ 引き当て →
+    被覆 を往復し、索引 1,939 / ノート 1,939 を checkout の正本と件数ごと突き合わせる。
+    先に「venv から docs/ が見えない」ことを壊して確かめる(見えていたら checkout を測って
+    いる)。CI は core-minimal ジョブが建てた wheel と `.wheelenv` を `FULLSEYE_WHEEL_PYTHON`
+    で使い回す(建て直さない)。手元の実測: 3 passed / 44 s、venv の起動ログ
+    `ready: 2387 names, 92 sorts`、`index_source=package:…/fullseye/data/OP_INDEX.json`。
+  - checkout 側にも門を足した: 複製 = 正本(件数ごと)/ 索引もノートも無ければ拒否 /
+    本文不在時の HTML 代替と在り処の明示(`tests/test_mcp_server.py`、28 → 32 件)。
+
+- ★**機械可読索引 `docs/OP_INDEX.json` が型付き台帳 33 族を数えるようになった**
+  (918 → **1,939 op**、+1,021)。0.1.11 まで索引は `ops.REGISTRY` + n-ary だけで、
+  `fullseye.op_find` / `fullseye.ledger` から届く台帳 op —— optics 124 / 3d 356 /
+  annotate 51 / reprconv 41 / oned 37 / gfx2d 32 / math 27 / piv 26 / imgmetrics 24 /
+  acoustics 20 / dem 19 / quat 19 / photon 17 / tomography 17 / lightfield 17 /
+  videostream 16 / imgforensics 16 / shapestat 16 / measure1d 14 / astrostack 14 /
+  shape2d 13 / specular 13 / profile 12 / colortransport 11 / volcolor 11 / blob 10 /
+  motionmag 9 / interferometry 9 / rangedoppler 8 / flyvision 8 / roughness 6 /
+  cadmap 4 / spc 4 —— が **1 つも載っていなかった**。索引の鮮度の門は「レジストリと
+  一致」を見ていたので、この欠落に構造的に盲目だった(登録済みを数える門は未登録に
+  盲目、の再演)。生成器(`imgevolve.py index`)は族の一覧を `opassist._LEDGERS`
+  (= `op_find` / `ledger` が引く集合)から取り、行に `tier: "ledger"` / `ledger`
+  (台帳モジュール)/ `dim`(ノートの置き場)/ `in_sorts`(宣言入力の全部)を付ける。
+  同名は 2-D レジストリ → 先に来た族の順で 1 行(`ops1d` 2 件・`ops3d` 1 件・
+  `gaussians_to_voxel` の 1 件が畳まれる = 1,025 − 4)。sort の語彙は台帳の型語
+  (`table` / `pairs` / `image2d` …)がそのまま 19 → 92 語に増える。
+  門は**台帳の側から**数える形を足した(`test_the_machine_readable_index_counts_every_ledger_family`:
+  族ごとに索引へ入っていること、`dim` のディレクトリが実在すること)。索引の全 op に
+  ノートがあること(`test_every_op_in_the_machine_index_has_a_note`)は 1,939 / 1,939 で緑。
+  MCP の検索は同じ索引を読むので、`fullseye_search_ops("abcd_matrix")` が索引の層から
+  出るようになった。順位の同点処理は「層の数」から「索引に載る / ノートがある / 呼べる」の
+  3 性質に変えた —— 台帳 op は facade にも出るので層を数えると呼べる性質が 2 重に数えられ、
+  "gauss" で `gaussian_beam` が `gaussian` を追い越した(実 stdio 往復の検査で発覚)。
+  公開文書の「918 op」は 1,939 に直した(README / docs/INTEGRATION.md / docs/MCP.md)。
+  `docs/README*.md` の `2d | 918` は 2-D ノートの枚数で、そのまま正しい。
+
 - **Python(`ctypes`)の呼び出し見本**を C ABI の例に追加(`rust/fullseye_core/examples/python_ctypes.py`、
   標準ライブラリだけで動く)。README は前から「C / C# / Lua / Python で同一出力」と書いていたのに
   Python の見本はテストの中にしか無かった。4 言語とも同じ 5 行を印字することを実走で確認。

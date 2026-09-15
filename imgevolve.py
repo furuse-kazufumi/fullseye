@@ -292,13 +292,67 @@ def _build_op_index():
     for r in rows:
         if r["halcon"] in col:
             r["tier"] = "color"
+    rows += _ledger_rows({r["name"] for r in rows})
     return {
         "n_ops": len(rows),
         "tiers": {t: sum(1 for r in rows if r["tier"] == t) for t in
                   sorted({r["tier"] for r in rows})},
-        "sorts": sorted({r["in_sort"] for r in rows} | {r["out_sort"] for r in rows}),
+        # 台帳 op には入力ゼロ(カタログを返すだけ)のものがあり in_sort が None。
+        # None を sort の語彙に混ぜない(MCP が in_sort の enum に使う)。
+        "sorts": sorted({r["in_sort"] for r in rows if r["in_sort"]}
+                        | {r["out_sort"] for r in rows if r["out_sort"]}),
         "ops": sorted(rows, key=lambda r: (r["tier"], r["name"])),
     }
+
+
+def _ledger_rows(taken):
+    """型付き台帳(``opassist._LEDGERS`` の 33 族)を索引の行にする。
+
+    ★2026-09-15 まで索引は ``ops.REGISTRY`` + n-ary の 918 op だけで、**台帳の
+    1,025 op(optics 124 / 3d 357 / annotate 51 / reprconv 42 …)が 1 つも載って
+    いなかった**。台帳は ``fullseye.op_find``(語幹検索)と ``fullseye.ledger``
+    (属性呼び出し)から届くのに、機械可読の入口からは構造的に見えない ——
+    [[feedback_registered_only_gates_miss_unregistered]] と同じ形で、索引の
+    件数の門は「レジストリと一致」を見ていたので欠落に盲目だった。
+
+    族の一覧は **``opassist._LEDGERS`` を正本にする**(``fs.op_find`` /
+    ``fs.ledger`` が引く集合と同じ)。ここに別の表を持つと、族を足したときに
+    片方だけ増える。
+
+    * ``tier`` は ``"ledger"``、``ledger`` に台帳モジュール名、``dim`` に
+      ノートの置き場(``docs/ops/<dim>/``)、``in_sorts`` に宣言入力の全部。
+    * ``in_sort`` は宣言入力の先頭(無ければ None)。台帳の型語彙(``table`` /
+      ``pairs`` / ``image2d`` …)はそのまま —— 2-D の語彙に翻訳すると
+      「繋がる鎖」を偽る。
+    * 同名は**先に来た族が勝つ**(``fullseye.ledger`` と同じ規則。実測の重複は
+      ``gaussians_to_voxel`` の ops3d / opsreprconv だけ)。2-D レジストリと同名の
+      台帳 op(``ops1d`` の 2 件、``ops3d`` の 1 件)は 2-D 側の行を残す ——
+      その名前で ``fullseye.apply`` が動くのはそちらだから。
+    * 族の import 失敗は**握らない**。台帳は numpy/scipy だけで組める一次モジュール
+      なので、失敗は「壊れた checkout」であって「無い機能」ではない。
+    """
+    import importlib
+
+    import opassist
+    rows = []
+    seen = set(taken)
+    for mod_name, table in opassist._LEDGERS:
+        mod = importlib.import_module(mod_name)
+        entries = getattr(mod, table)
+        assert isinstance(entries, dict) and entries, "%s.%s が空" % (mod_name, table)
+        dim = "3d" if mod_name == "ops3d" else ("oned" if mod_name == "ops1d"
+                                                 else mod_name[len("ops"):])
+        for name, info in entries.items():
+            if name in seen:
+                continue
+            seen.add(name)
+            ins = list(info.get("in") or [])
+            rows.append({"name": name, "halcon": "", "in_sort": ins[0] if ins else None,
+                         "out_sort": info.get("out"), "category": info.get("category"),
+                         "tier": "ledger", "ledger": mod_name, "dim": dim,
+                         "in_sorts": ins})
+    assert rows, "台帳層が空(opassist._LEDGERS が 1 op も返さない)"
+    return rows
 
 
 def cmd_index(a):
