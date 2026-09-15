@@ -270,7 +270,11 @@ py-modules = [
               # read these; the root-level data/ dir is only a dev-cache fallback
               # and never ships).
               "data/halcon_facade_map.json", "data/halcon_stubs.json",
-              "data/halcon_graph.json"]
+              "data/halcon_graph.json",
+              # MCP サーバ(fullseye.mcp)が wheel から読むカタログ: 索引の複製と
+              # ノートの frontmatter(tools/gen_mcp_data.py が書く)。0.1.11 は docs/ を
+              # リポジトリ相対で読んでいて pip install からは CatalogError で止まった。
+              "data/OP_INDEX.json", "data/OP_NOTES.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

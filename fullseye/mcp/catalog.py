@@ -16,6 +16,20 @@
 知識層のノートは開発 checkout の Markdown(frontmatter つき)を正本にし、無ければ
 wheel に同梱される ``studio_assets/op_help/<op>.html`` に落ちる。**どちらを使ったかは
 返り値に書く**(黙って代替に落ちない)。
+
+**wheel から動く(0.1.12)。** 0.1.11 までは索引 ``docs/OP_INDEX.json`` とノートを
+リポジトリ相対で読んでいたので、``pip install fullseye`` した環境からは
+``CatalogError`` で止まった(理由つきで止まるのは正しいが、動かない)。いまは
+``tools/gen_mcp_data.py`` が索引の複製と**ノートの frontmatter だけ**(MCP が読む
+6 項目)を ``fullseye/data/`` に書き、package-data として wheel に入れる。読む順は
+
+* 索引: パッケージ内(``importlib.resources``)→ リポジトリの ``docs/OP_INDEX.json``
+  → **無ければ CatalogError**(黙って空の索引で動かない)。
+* ノート: リポジトリの ``docs/ops/**/*.md``(正本、本文も読める)→ パッケージ内の
+  frontmatter 複製(本文は ``studio_assets/op_help`` の HTML に落ちる)→ CatalogError。
+
+どちらを使ったかは ``Catalog.index_source`` / ``notes_source`` に残り、
+``coverage()`` の返り値にも出る。
 """
 from __future__ import annotations
 
@@ -33,6 +47,49 @@ OPS_DOCS = os.path.join(DOCS, "ops")
 FIG_DIR = os.path.join(OPS_DOCS, "_fig")
 OP_INDEX = os.path.join(DOCS, "OP_INDEX.json")
 STUDIO_HELP = os.path.join(ROOT, "studio_assets", "op_help")
+#: wheel に同梱する図(2-D op の「入力 → 出力」だけ。docs/ops/_fig の掃引図は入らない)
+STUDIO_FIG = os.path.join(STUDIO_HELP, "fig")
+
+#: package-data の名前(``fullseye/data/`` 直下。生成は ``tools/gen_mcp_data.py``)
+PKG_INDEX = "OP_INDEX.json"
+PKG_NOTES = "OP_NOTES.json"
+
+#: ノートの frontmatter のうち MCP が読む項目(これだけを package-data に写す)
+NOTE_KEYS = ("op", "dim", "category", "in", "out", "halcon")
+
+
+def _packaged(name: str) -> str | None:
+    """``fullseye/data/<name>`` の実パス。無ければ None(例外は握らず None に写す:
+    「無い」は正当な状態で、呼ぶ側が次の候補へ進む)。"""
+    try:
+        from importlib.resources import files
+        p = files("fullseye") / "data" / name
+        return str(p) if p.is_file() else None
+    except Exception:                                   # noqa: BLE001
+        return None
+
+
+def scan_notes(ops_docs: str = OPS_DOCS) -> dict[str, list[dict]]:
+    """``docs/ops/**/*.md`` の frontmatter を ``{op: [meta, ...]}`` に。
+
+    ``meta`` は :data:`NOTE_KEYS` + ``path``(リポジトリ相対、``/`` 区切り)。
+    frontmatter に ``op:`` の無い md(ガイド・INDEX)は入らない。生成器
+    (``tools/gen_mcp_data.py``)と実行時(checkout)で**同じ関数**を使う ——
+    別々に書くと wheel だけ違う集合になる。
+    """
+    out: dict[str, list[dict]] = {}
+    for p in sorted(glob.glob(os.path.join(ops_docs, "**", "*.md"), recursive=True)):
+        if os.sep + "_fig" + os.sep in p:
+            continue
+        with open(p, encoding="utf-8") as f:
+            fm = _frontmatter(f.read(1200))
+        name = fm.get("op")
+        if not name:
+            continue
+        meta = {k: fm.get(k) for k in NOTE_KEYS if fm.get(k)}
+        meta["path"] = os.path.relpath(p, os.path.dirname(os.path.dirname(ops_docs))).replace(os.sep, "/")
+        out.setdefault(name, []).append(meta)
+    return out
 
 #: 図の変種 -> 説明。順序は「見せる価値」の順(入出力対比が最初)。
 FIGURE_KINDS = (
@@ -83,7 +140,10 @@ class Entry:
     tier: str | None = None
     halcon: str | None = None
     dim: str | None = None
+    #: ノートの実ファイル(絶対パス。checkout でだけ埋まる = 本文が読める)
     note_paths: list = field(default_factory=list)
+    #: ノートの所在(リポジトリ相対 ``docs/ops/...``。wheel でも埋まる = 在ることは分かる)
+    note_refs: list = field(default_factory=list)
 
     def quality(self) -> int:
         """並べ替えに使う「揃っている性質」の数(0..3): 索引に載る / ノートがある /
@@ -105,26 +165,66 @@ class Entry:
             "in_sort": self.in_sort, "out_sort": self.out_sort,
             "category": self.category, "tier": self.tier,
             "halcon": self.halcon, "dim": self.dim,
-            "has_note": bool(self.note_paths),
+            "has_note": bool(self.note_refs),
         }
 
 
 class Catalog:
-    """4 層を合わせた op の一覧。``load()`` で組む。"""
+    """5 層を合わせた op の一覧。``load()`` で組む。"""
 
-    def __init__(self, entries: dict[str, Entry], sorts: list[str]):
+    def __init__(self, entries: dict[str, Entry], sorts: list[str], *,
+                 index_source: str = "", notes_source: str = ""):
         self.entries = entries
         self.sorts = sorts
+        #: 索引をどこから読んだか(``package:<path>`` / ``docs:<path>``)
+        self.index_source = index_source
+        #: ノートをどこから読んだか(``docs:<dir>`` = 本文あり / ``package:<path>`` = frontmatter のみ)
+        self.notes_source = notes_source
 
     # ------------------------------------------------------------------ build
+    @staticmethod
+    def _load_index() -> tuple[dict, str]:
+        """索引: パッケージ内 → リポジトリの docs → CatalogError。"""
+        pkg = _packaged(PKG_INDEX)
+        if pkg:
+            with open(pkg, encoding="utf-8") as f:
+                return json.load(f), "package:" + pkg
+        if os.path.exists(OP_INDEX):
+            with open(OP_INDEX, encoding="utf-8") as f:
+                return json.load(f), "docs:" + OP_INDEX
+        raise CatalogError(
+            "OP_INDEX.json が無い(パッケージ内 fullseye/data/%s にも、リポジトリの %s にも)。"
+            "checkout なら `py -3.11 imgevolve.py index` と `py -3.11 tools/gen_mcp_data.py` で作る。"
+            "無いまま空のカタログを返すと、検索が『該当なし』を正直に見せかける"
+            % (PKG_INDEX, OP_INDEX))
+
+    @staticmethod
+    def _load_notes() -> tuple[dict[str, list[dict]], str]:
+        """ノート: リポジトリの docs/ops(正本、本文あり)→ パッケージ内の frontmatter 複製
+        → CatalogError。索引だけあってノート層が黙って空だと、被覆 tool が
+        「索引の全 op にノートが無い」という嘘を正直に見せかける。"""
+        if os.path.isdir(OPS_DOCS):
+            notes = scan_notes(OPS_DOCS)
+            if notes:
+                return notes, "docs:" + OPS_DOCS
+        pkg = _packaged(PKG_NOTES)
+        if pkg:
+            with open(pkg, encoding="utf-8") as f:
+                data = json.load(f)
+            notes = data.get("notes") or {}
+            if not notes:
+                raise CatalogError("パッケージ内の %s にノートが 0 枚(生成が壊れている)" % pkg)
+            return notes, "package:" + pkg
+        raise CatalogError(
+            "知識層のノートが無い(リポジトリの %s にも、パッケージ内 fullseye/data/%s にも)。"
+            "checkout なら `py -3.11 tools/opdocs.py all` と `py -3.11 tools/gen_mcp_data.py` で作る"
+            % (OPS_DOCS, PKG_NOTES))
+
     @classmethod
     def load(cls, *, with_facade: bool = True) -> "Catalog":
-        if not os.path.exists(OP_INDEX):
-            raise CatalogError(
-                "docs/OP_INDEX.json が無い(%s)。`py -3.11 imgevolve.py index` で作る。"
-                "無いまま空のカタログを返すと、検索が『該当なし』を正直に見せかける" % OP_INDEX)
-        with open(OP_INDEX, encoding="utf-8") as f:
-            idx = json.load(f)
+        idx, index_source = cls._load_index()
+        if not idx.get("ops"):
+            raise CatalogError("索引 %s の ops が空(生成が壊れている)" % index_source)
         entries: dict[str, Entry] = {}
 
         def ent(name: str) -> Entry:
@@ -153,22 +253,20 @@ class Catalog:
             raise CatalogError("ops.REGISTRY を読めない: %r" % exc) from exc
 
         # 3. ノート(知識層。frontmatter の `op:` を持つ md だけ。ガイドは除外される)
-        for p in glob.glob(os.path.join(OPS_DOCS, "**", "*.md"), recursive=True):
-            if os.sep + "_fig" + os.sep in p:
-                continue
-            with open(p, encoding="utf-8") as f:
-                fm = _frontmatter(f.read(1200))
-            name = fm.get("op")
-            if not name:
-                continue
+        notes, notes_source = cls._load_notes()
+        for name, metas in notes.items():
             e = ent(name)
             e.sources.add("note")
-            e.note_paths.append(p)
-            e.dim = e.dim or fm.get("dim")
-            e.category = e.category or fm.get("category")
-            e.in_sort = e.in_sort or fm.get("in")
-            e.out_sort = e.out_sort or fm.get("out")
-            e.halcon = e.halcon or fm.get("halcon")
+            for fm in metas:
+                e.note_refs.append(fm["path"])
+                p = os.path.join(ROOT, *fm["path"].split("/"))
+                if os.path.isfile(p):
+                    e.note_paths.append(p)
+                e.dim = e.dim or fm.get("dim")
+                e.category = e.category or fm.get("category")
+                e.in_sort = e.in_sort or fm.get("in")
+                e.out_sort = e.out_sort or fm.get("out")
+                e.halcon = e.halcon or fm.get("halcon")
 
         # 4. facade(`import fullseye` で呼べる名前)+ 5. 型付き台帳(`fullseye.ledger.<name>`)
         if with_facade:
@@ -185,7 +283,7 @@ class Catalog:
         sorts = sorted(set(idx.get("sorts") or []) |
                        {e.in_sort for e in entries.values() if e.in_sort} |
                        {e.out_sort for e in entries.values() if e.out_sort})
-        return cls(entries, sorts)
+        return cls(entries, sorts, index_source=index_source, notes_source=notes_source)
 
     # ----------------------------------------------------------------- search
     def search(self, query: str = "", *, in_sort: str | None = None,
@@ -278,11 +376,20 @@ class Catalog:
                 out["other_notes"] = [os.path.relpath(x, ROOT).replace(os.sep, "/")
                                       for x in e.note_paths[1:]]
         else:
+            # wheel: ノート本文は同梱されない。同梱の Studio help HTML(2-D は直下、
+            # 台帳族は op_help/<dim>/)に落ち、**落ちたことと本文の在り処**を書く。
             html = os.path.join(STUDIO_HELP, name + ".html")
+            if not os.path.exists(html) and e.dim:
+                html = os.path.join(STUDIO_HELP, e.dim, name + ".html")
             if os.path.exists(html):
                 with open(html, encoding="utf-8") as f:
                     body = f.read()
                 fmt, src = "html", os.path.relpath(html, ROOT).replace(os.sep, "/")
+            if e.note_refs:
+                out["note_refs"] = list(e.note_refs)
+                out["note_body_unavailable"] = (
+                    "ノート本文(%s)はこの環境に無い(wheel には frontmatter だけ同梱)。"
+                    "本文は同名の HTML か、公開 docs / リポジトリの docs/ops で読む" % e.note_refs[0])
         out["body"] = body
         out["body_format"] = fmt
         out["body_source"] = src
@@ -293,6 +400,12 @@ class Catalog:
             if os.path.exists(p):
                 figs.append({"path": p, "kind": ext, "description": desc,
                              "bytes": os.path.getsize(p)})
+        if not figs and not os.path.isdir(FIG_DIR):
+            # wheel: docs/ops/_fig は入らない。同梱の Studio 図(入力 → 出力の 1 枚だけ)へ
+            p = os.path.join(STUDIO_FIG, name + ".png")
+            if os.path.exists(p):
+                figs.append({"path": p, "kind": ".png", "description": FIGURE_KINDS[0][1],
+                             "bytes": os.path.getsize(p), "source": "studio_assets/op_help/fig"})
         out["figures"] = figs
         return out
 
@@ -305,6 +418,8 @@ class Catalog:
         note_only = sorted(note - callable_)
         return {
             "total_names": len(self.entries),
+            "index_source": self.index_source,
+            "notes_source": self.notes_source,
             "per_source": {s: len(v) for s, v in by.items()},
             "index_without_note": sorted(idx - note),
             "registry_not_in_index": sorted(reg - idx),

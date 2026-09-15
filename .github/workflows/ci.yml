@@ -69,6 +69,16 @@ jobs:
         run: |
           pip install pytest
           pytest tests/test_unified_packaging.py tests/test_packaging_foundation.py -q
+      # ★MCP サーバを**配布物の側から**起動する。0.1.11 は索引と知識層をリポジトリ相対で
+      # 読んでいて、checkout のテストは全部緑のまま `pip install fullseye` からは
+      # CatalogError で止まった。上で建てた wheel と .wheelenv をそのまま使い(建て直さない)、
+      # リポジトリの外の cwd から実 stdio を往復して、索引 / ノートの件数を checkout と
+      # 突き合わせる(tests/test_mcp_wheel.py、FULLSEYE_WHEEL_GATE=1 で有効)。
+      - name: MCP from the wheel (索引と知識層が配布物に入っているか)
+        env:
+          FULLSEYE_WHEEL_GATE: "1"
+          FULLSEYE_WHEEL_PYTHON: .wheelenv/bin/python
+        run: pytest tests/test_mcp_wheel.py -q -ra
 
   lint:
     # 静的解析。**様式を揃えるためではなく、実害のあるバグを止めるため**に入れている。

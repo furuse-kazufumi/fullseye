@@ -7,6 +7,35 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**MCP サーバが wheel から動く**(`pip install fullseye` → `claude mcp add fullseye -- py -3.11 -m fullseye.mcp`)。
+  0.1.11 は `fullseye/mcp/catalog.py` が索引 `docs/OP_INDEX.json`・知識層 `docs/ops/**/*.md`
+  (frontmatter)・掃引図 `docs/ops/_fig/` をリポジトリ相対(`ROOT = パッケージの親`)で
+  読んでいて、checkout のテスト 28 件は全部緑のまま、wheel からは `CatalogError` で止まった
+  (門が事故の起きない場所にだけ立っていた)。直し:
+  - `tools/gen_mcp_data.py`(`regen_all` の CHAIN に追加)が **索引の複製**
+    `fullseye/data/OP_INDEX.json`(381 KB)と **ノートの frontmatter だけ**
+    `fullseye/data/OP_NOTES.json`(417 KB、MCP が読む 6 項目 op / dim / category / in /
+    out / halcon + 相対パス。本文 140 MB は入れない)を書き、`pyproject.toml` の package-data
+    で wheel に入る(計 0.8 MB。wheel は 60 MB のまま上限 70 MB 内)。
+  - 読む順は 索引 = パッケージ内(`importlib.resources`)→ リポジトリ `docs/` →
+    **無ければ `CatalogError`**、ノート = リポジトリ `docs/ops`(正本、本文つき)→
+    パッケージ内 frontmatter → `CatalogError`。**黙って空の層で動かない**(索引 0 件・
+    ノート 0 枚も拒否)。どこから読んだかは `Catalog.index_source` / `notes_source` と
+    `fullseye_catalog_coverage` の返り値に出る。
+  - wheel ではノート本文の代わりに同梱の Studio help HTML(2-D は `op_help/<op>.html`、
+    台帳族は `op_help/<dim>/<op>.html`)を返し、`note_body_unavailable` にそう書く。図は
+    同梱の「入力 → 出力」1 枚(`op_help/fig/`)に落ち、`source` を付ける。
+  - 門 `tests/test_mcp_wheel.py`(**`FULLSEYE_WHEEL_GATE=1` で opt-in**、重い): wheel を
+    建てて別 venv に wheel + numpy/scipy だけ入れ、**リポジトリの外の cwd** から実 stdio で
+    initialize → tools/list → 検索(2-D の `gauss` と台帳の `abcd_matrix`)→ 引き当て →
+    被覆 を往復し、索引 1,939 / ノート 1,939 を checkout の正本と件数ごと突き合わせる。
+    先に「venv から docs/ が見えない」ことを壊して確かめる(見えていたら checkout を測って
+    いる)。CI は core-minimal ジョブが建てた wheel と `.wheelenv` を `FULLSEYE_WHEEL_PYTHON`
+    で使い回す(建て直さない)。手元の実測: 3 passed / 44 s、venv の起動ログ
+    `ready: 2387 names, 92 sorts`、`index_source=package:…/fullseye/data/OP_INDEX.json`。
+  - checkout 側にも門を足した: 複製 = 正本(件数ごと)/ 索引もノートも無ければ拒否 /
+    本文不在時の HTML 代替と在り処の明示(`tests/test_mcp_server.py`、28 → 32 件)。
+
 - ★**機械可読索引 `docs/OP_INDEX.json` が型付き台帳 33 族を数えるようになった**
   (918 → **1,939 op**、+1,021)。0.1.11 まで索引は `ops.REGISTRY` + n-ary だけで、
   `fullseye.op_find` / `fullseye.ledger` から届く台帳 op —— optics 124 / 3d 356 /
