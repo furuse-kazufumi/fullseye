@@ -420,7 +420,9 @@ def _reg_close(v, a, b):
 def _fill_holes(v, a, b):
     """領域内の穴埋め。HALCON の ``fill_up``（Fill up holes in regions.）に相当。
 
-``a``, ``b`` は未使用。前景に完全に囲まれた背景画素（穴）をすべて前景に変える（``scipy.ndimage.binary_fill_holes``）。画像端に接する背景は穴とみなされないため埋まらない。"""
+``a``, ``b`` は未使用。前景に完全に囲まれた背景画素（穴）をすべて前景に変える（``scipy.ndimage.binary_fill_holes``）。画像端に接する背景は穴とみなされないため埋まらない。
+
+**連結性**: 穴の判定に使う**背景は 4 連結**(``scipy.ndimage.binary_fill_holes`` の既定)。斜めだけで繋がった背景は繋がっているとみなさないので、市松模様では内側の背景画素がすべて穴として埋まる(8x8 で 32 -> 50 画素。実測して scipy の 4 連結参照と位置まで一致、8 連結とは不一致)。第 2 実装がここで別の連結性を選び、差分検査で露見した。"""
     return ndimage.binary_fill_holes(_bin(v)).astype(np.float64)
 
 

@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a``, ``b`` は未使用。
 
+**画像の縁**: 領域が画像の端に接する場合、**縁の側も境界に含まれる**(外側を背景とみなして収縮するため)。全面が領域の入力では、出力は画像の外周 1 画素の枠になる(8x8 で 28 画素。実測)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)
