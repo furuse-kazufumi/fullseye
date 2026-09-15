@@ -8,7 +8,7 @@ halcon: mult_image
 examples: []
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.11  # fullseye lib version this note was generated for
+version: 0.2.0  # fullseye lib version this note was generated for
 ---
 
 # mult_image — 2D `nary` op

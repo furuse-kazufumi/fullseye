@@ -330,7 +330,7 @@ def test_tools_list_declares_closed_schemas(cat):
 def test_missing_index_refuses_to_build_a_catalog_instead_of_returning_an_empty_one(monkeypatch):
     """索引が**どこにも**無ければ止まる。0.1.11 の wheel は docs/ を持たずこの例外で止まった
     (黙って空のカタログ = 検索が『該当なし』を正直に見せかける、にはならない)。
-    0.1.12 で索引はパッケージ内にも入ったので、両方を消して同じ経路が残っていることを見る。"""
+    0.2.0 で索引はパッケージ内にも入ったので、両方を消して同じ経路が残っていることを見る。"""
     import fullseye.mcp.catalog as C
     from fullseye.mcp import CatalogError
     monkeypatch.setattr(C, "_packaged", lambda name: None)

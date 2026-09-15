@@ -71,7 +71,7 @@ degradation ledger is always in the result. Paths outside the sandbox roots, unk
 operator names, sort mismatches, out-of-range knobs and unknown arguments are all refused
 explicitly — nothing is coerced to "the nearest thing".
 
-It runs from the wheel (0.1.12+). The catalog's sources of truth are `docs/OP_INDEX.json`
+It runs from the wheel (0.2.0+). The catalog's sources of truth are `docs/OP_INDEX.json`
 and the front matter of `docs/ops/**/*.md`, which are not inside the package; so
 `tools/gen_mcp_data.py` copies the index and the six front-matter keys the server reads
 (op / dim / category / in / out / halcon, plus the note's relative path — not the bodies)
@@ -88,8 +88,9 @@ Details: [`MCP.md`](MCP.md).
 
 ## From other languages (C ABI)
 
-`fullseye_abi.h` is a **specification-only C ABI** — 25 functions, 5 operators
-(`fs_gauss`, `fs_threshold`, `fs_connection`, `fs_measure_all`, `fs_select_shape`) — with a
+`fullseye_abi.h` is a **specification-only C ABI** — 25 typed functions around 5 contract
+operators (`fs_gauss`, `fs_threshold`, `fs_connection`, `fs_measure_all`, `fs_select_shape`),
+plus the generic `fs_apply` (0.2.0, below) that reaches the 2-D registry by name — with a
 Rust `cdylib` reference implementation in `rust/fullseye_core`. Because the library is a
 plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 `python_ctypes.py`), C# (`DllImport`, `csharp/Program.cs`), C / C++ (`#include
@@ -99,7 +100,8 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the 1,942-operator Python library in another language. Its
+What this is **not**: it is not the Python library (1,942 operators in the machine-readable
+index) in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
 — nine were found this way in 0.1.11 (connectivity, border mode, object ordering, status
@@ -109,8 +111,12 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 
 ### Every operator through one function: `fs_apply`
 
-**All operators are reachable through `fs_apply`; the five contract operators also have a
-native route. Look at `route`.** `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
+**Every operator of the 2-D registry (901 single-input operators; the 918 2-D operators of the
+index minus the 17 n-ary ones; those whose backend is installed) is reachable through
+`fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
+ledgers (1,024 operators whose inputs are point clouds, signals, tables …) and the n-ary
+operators cannot be carried by one image / region handle and are refused with a status code and
+a reason — a later stage, not a silent gap. `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
 out_cap, n_out, info)` names the operator as a string and takes its parameters as a JSON
 object. Behind it are two routes — `"native"` (the Rust implementation of the five contract
 operators) and `"python"` (an embedded CPython running the Python registry, present only when
@@ -129,10 +135,14 @@ Runtime requirements, stated plainly (nothing is bundled yet): `python311.dll` m
 by the OS loader (next to the executable or on `PATH`) — it is a static import, because pyo3
 imports data symbols and `/DELAYLOAD` cannot link them; the standard library location is
 resolved from `FULLSEYE_PYTHON_HOME`, then the PEP 514 registry, then the loaded DLL's
-directory; the checkout is found through `FULLSEYE_ROOT` (or automatically when the DLL lives
-under the checkout's `target/`). A `pip install fullseye` wheel on the same machine does not
-provide the bridge, so `FULLSEYE_ROOT` must point at a checkout. When the host process already
-is CPython (`ctypes`), nothing is started and the host's interpreter is used; a host running a
+directory; the bridge (`fullseye/abi_bridge.py`) is imported from that interpreter's
+`site-packages` — since 0.2.0 the wheel ships it (`tests/test_abi_wheel.py` installs the wheel
+into a fresh venv and drives `fs_apply` from outside the repo) — or from a checkout named by
+`FULLSEYE_ROOT` (found automatically when the DLL lives under the checkout's `target/`). Note
+that `FULLSEYE_PYTHON_HOME` names an *installation*, not a venv, so a non-Python host uses that
+installation's `site-packages`. When the host process already
+is CPython (`ctypes`), nothing is started and the host's interpreter — a venv included — is
+used; a host running a
 different CPython version is refused. Arrays cross the boundary by copy (measured on a
 512×512 float64 Gaussian, σ=2, warm: native 7.0 ms; python route 4.8 ms of which the cv2 kernel
 is 1.6 ms — the rest is the copy and the dictionary round trip).

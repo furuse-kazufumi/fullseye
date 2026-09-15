@@ -65,7 +65,7 @@ typedef enum fs_status {
     FS_E_OUT_OF_MEMORY    = 7,
     FS_E_DEADLINE         = 8,  /* the cycle budget expired                     */
     FS_E_INTERNAL         = 9,
-    /* Added with the generic entry point `fs_apply` (0.1.12).  The numbers
+    /* Added with the generic entry point `fs_apply` (0.2.0).  The numbers
      * above are frozen; these continue the sequence and are never renumbered. */
     FS_E_NO_PYTHON        = 10, /* the Python route is not built in, or the      */
                                 /*   interpreter could not be found / started   */

@@ -9,7 +9,7 @@ py -3.11 -m fullseye.mcp --demo      # 自分を起動して一通り叩く(下�
 py -3.11 -m fullseye.mcp --coverage  # カタログ 5 層の被覆を JSON で
 ```
 
-**wheel から動く(0.1.12〜)**。0.1.11 はカタログの正本 `docs/OP_INDEX.json` と知識層
+**wheel から動く(0.2.0〜)**。0.1.11 はカタログの正本 `docs/OP_INDEX.json` と知識層
 `docs/ops/**/*.md` をリポジトリ相対で読んでいたので、`pip install fullseye` した環境からは
 `CatalogError` で止まっていた(理由つきで止まるのは正しいが、動かない)。いまは
 `tools/gen_mcp_data.py` が **索引の複製**と**ノートの frontmatter だけ**(op / dim /

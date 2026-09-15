@@ -5,10 +5,23 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
-## Unreleased
+## 0.2.0 — 2026-09-15
 
-- **統合(0.1.12 の準備)**: `abi/generic-apply`(汎用 `fs_apply`)・`release/0.1.12-mcp-wheel`
-  (索引の台帳 33 族 + MCP の package data)・`genshiken/cuttlefish-w-pupil`(optics の瞳形状 PSF
+**要旨**: (1) C ABI に汎用入口 **`fs_apply`** —— op 名 + JSON で **2-D レジストリの全 op**(単入力の
+901 = 索引の 2-D 918 − n-ary 17)を呼べ、契約の 5 op は Rust ネイティブ、それ以外は埋め込み
+CPython(`fullseye.abi_bridge`、wheel に同梱 = `tests/test_abi_wheel.py`)が走らせる(台帳 op
+1,024 と n-ary 17 は image / region のハンドル 1 つで運べないので理由つきで拒む、次段)。
+(2) **MCP サーバが wheel から動く**(索引とノートの frontmatter を package data に)。
+(3) 機械可読索引 `docs/OP_INDEX.json` が型付き台帳 33 族を数え **918 → 1,942 op**。
+(4) optics に**瞳形状 PSF 3 op**(124 → 127)。minor を上げたのは、機械可読索引が運ぶ型付き
+契約の語彙(sort 名)が 19 → 92 語に変わったため —— `CONTRIBUTING.md` "Versioning" の
+「typed registry contract(sort names …)が変わったら 0.2.0」に当たる。既存 op の既定の
+振る舞い(画素)は変えていない。version DOI は Release 公開後に Zenodo が発行する
+(`CITATION.cff` の `doi:` は concept DOI のまま)。
+
+- **統合(3 本の枝を 1 本に)**: `abi/generic-apply`(汎用 `fs_apply`)・`release/0.1.12-mcp-wheel`
+  (索引の台帳 33 族 + MCP の package data。枝名の 0.1.12 は出さず、この 0.2.0 に畳んだ)・
+  `genshiken/cuttlefish-w-pupil`(optics の瞳形状 PSF
   3 op)を 1 本に畳んだ。生成物は `tools/regen_all.py` で作り直した実数: 機械可読索引
   `docs/OP_INDEX.json` **1,942 op**(1,939 + コウイカの 3)、optics 台帳 **127 op**(124 + 3)、
   op ノート **1,946 枚**(1,943 + 3)。公開文書の件数(README / `docs/INTEGRATION.md` /

@@ -17,7 +17,7 @@
 wheel に同梱される ``studio_assets/op_help/<op>.html`` に落ちる。**どちらを使ったかは
 返り値に書く**(黙って代替に落ちない)。
 
-**wheel から動く(0.1.12)。** 0.1.11 までは索引 ``docs/OP_INDEX.json`` とノートを
+**wheel から動く(0.2.0)。** 0.1.11 までは索引 ``docs/OP_INDEX.json`` とノートを
 リポジトリ相対で読んでいたので、``pip install fullseye`` した環境からは
 ``CatalogError`` で止まった(理由つきで止まるのは正しいが、動かない)。いまは
 ``tools/gen_mcp_data.py`` が索引の複製と**ノートの frontmatter だけ**(MCP が読む
