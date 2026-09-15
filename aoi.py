@@ -356,8 +356,11 @@ def register_image(reference, moving, upsample=20, method="phase", window="hann"
         a = a * win
         b = b * win
 
+    # ★積の向きが符号を決める。``fb * conj(fa)`` の山は「``moving`` が ``reference``
+    #   に対してどれだけずれているか」に立つ(逆にすると符号が反転し、残差を測る
+    #   ときに**逆向きへ戻して**しまうので、完全に一致する対でも残差が 1 を超える)。
     fa, fb = np.fft.fft2(a), np.fft.fft2(b)
-    prod = fa * np.conj(fb)
+    prod = fb * np.conj(fa)
     if method == "phase":
         mag = np.abs(prod)
         # 0 で割らない。振幅が消えている周波数は情報が無いので 0 のまま残す。
