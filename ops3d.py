@@ -460,6 +460,13 @@ _CATALOG = {
         ("skeleton_endpoints3d", "medial", ["voxel"], "voxel", False),
         ("skeleton_prune3d", "medial", ["voxel"], "voxel", False),
         ("skeleton_branches3d", "medial", ["voxel"], "voxel", False),
+        # 骨格 → **ノードと枝のグラフ**(接合点・端点 = ノード、間の次数 2 の道 = 枝)。
+        # 返りは {"nodes": [...], "edges": [...], ...} の dict = **table**。
+        # ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、
+        # タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる**
+        # (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に
+        # 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+        ("skeleton_graph3d", "medial", ["voxel"], "table", False),
         # spacing 対応の物理距離 EDT(edt_jfa は torch 必須の SDF、こちらは scipy 経路)
         ("vol_distance_transform", "volops", ["voxel"], "voxel", False),
     ],

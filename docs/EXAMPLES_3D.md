@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 357 の型付き op)を、**実問題を解く実行可能な事例**（全 117 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 358 の型付き op)を、**実問題を解く実行可能な事例**（全 117 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -85,7 +85,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### 形状解析
 
 - **CT の管・粒・肉厚を Hessian 特徴と物理量で計測** (`vessel_metrology`, synthetic) — vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。
-- **中軸骨格と位相署名で形状を区別** (`medial_topology`, synthetic) — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。
+- **中軸骨格と位相署名で形状を区別** (`medial_topology`, synthetic) — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。skeleton_graph3d でノードと枝のグラフに組み(半径の違う枝を区別、輪はオイラー式で検査、異方 spacing、成分は繋がない)。
 - **曲面上の測地距離と最遠点サンプリング** (`geodesic_distance`, synthetic) — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** (`space_curve`, synthetic) — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。
 - **円柱点群の前処理と測地距離・中心軸復元(SOR/radius/MLS + kNN/測地/距離リッジ)** (`pcl_geodesic`, synthetic) — 円柱(半径R=1, 高さ2)を「側面点群」と「中身入りvoxel」の2通りで合成し、6つのopを鎖にして数値的真値で検証する。側面点群(面2400点+遠方の飛び点40点)に対し statistical_outlier_removal と radius_outlier_removal がいずれも飛び点40/40を除去し面の点2400を1つも誤除去せず(SOR→radius合成で面のみ2400点が残存)。mls_smooth が各点の軸までの距離の真値Rからの…

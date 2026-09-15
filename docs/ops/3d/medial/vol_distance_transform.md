@@ -4,7 +4,7 @@ dim: 3d
 category: medial
 in: voxel
 out: voxel
-examples: [molecule_atom_count, vessel_metrology]
+examples: [medial_topology, molecule_atom_count, vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ Reference: Felzenszwalb & Huttenlocher, Theory of Computing 2012.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [medial_topology](../../../../examples_3d/medial_topology.py) — `py -3.11 examples_3d/medial_topology.py`
 - [molecule_atom_count](../../../../examples_3d/molecule_atom_count.py) — `py -3.11 examples_3d/molecule_atom_count.py`
 - [vessel_metrology](../../../../examples_3d/vessel_metrology.py) — `py -3.11 examples_3d/vessel_metrology.py`
 

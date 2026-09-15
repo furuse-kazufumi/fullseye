@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 679 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 681 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel_match.py`
@@ -898,6 +898,10 @@
 - **L2866** — ★2026-09-07：出于与 polar_unwrap 相同的理由,替换为 map_coordinates(双线性、范围外 0)。无 torch 也能跑。实测差异最大为 7.6e-06。
 - **L3117** — ★2026-09-07：把 affine_grid + grid_sample(align_corners=False, zeros padding)替换为 numpy 的坐标计算 + scipy 的 map_coordinates(order=1)。torch 仅用于双线性重采样,在不装 torch 的环境(CI 的 py3.10 / 3.12)中这个 op 会变成 ImportError。约定原样照抄:输出体素 (d,h,w) 的归一化坐标为 ((i+0.5)/N)*2-1,旋转后用 (g+1)/2*N-0.5 换回输入的像素坐标(align_corners=False 的定义)。grid 的最末轴为 (x, y, z) = (W, H, D) 的顺序。与 torch 版的实测差异最大为 7.6e-06。
 
+## `medial.py`
+
+- **L624** _(ja)_ — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
+
 ## `occupancy.py`
 
 - **L223** — ★2026-09-07：让 ``res`` 接受**逐轴**的值(也可长度 3)。若限定为立方,则像鸟瞰格(薄 z x 宽 xy)这样扁平的体积,连不需要的轴也被强制用同一步进(`poc_bev_sensor_fusion` 实测:409.6 万体素中只用了 8.1 %)。同族的 `grid_coords` 一开始就接受逐轴的 res -- 对齐了**入口与出口契约宽度不同**的问题。传入标量的既有调用方不变。
@@ -923,11 +927,12 @@
 ## `ops3d.py`
 
 - **L375** — ★out 不是 image2d 而是 **rgbimage**(2026-09-02 实测)。docstring 与实现都是「RGB (size, size, 3) float [0,1]」,唯独这一行自称是 2-D 的亮度图。直到放入 mesh 的种子,这个 op 才被执行,类型谓词以 TYPEMISS「declared 'image2d' but returned ndarray(512,512,3)」将其暴露(在此之前,因把 (V,F) 拆成 2 个位置参数的形式,它**一次都没被执行过**)。其余 3 个 render_* op(ambient_occlusion / cast_shadow / supersample_mesh)如实测为 2-D,故保持 image2d 即可 -- 撒谎的仅此一行。
-- **L609** — ★2026-09-08 追加。此前用于雕刻的位姿辅助(visualhull.look_at)从任何公开层都引不到,而抓到同名的 render3d.look_at(gluLookAt、-Z 朝前)就会**无一例外地得到空的 hull**(poc_livestock_body_volume)。
-- **L630** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L720** — ★曾搁置的理由(a)「points 候选列表变短而悄悄改写既有 champion」,已随 backends_typed.TYPE_TO_SORT 把 coordgrid -> points 折叠而消失:2-D 桥的 tb_sphere_sdf / tb_box_sdf 带有 INPUT_ADAPTERS._points_to_grid,**确实会从点云生成坐标场**,所以那边的 "points" 声明并非谎言(实测:传入 (64,3) 会返回 (16,16,16) = 是活的)。撒谎的只是 3-D 台账那一侧。
-- **L875** — ★axis=1。`pairs` 的正典是 **(N,2)**(实测:消费侧 6 个 op 明确拒绝 (2,N))。当谓词还是 `lambda v: True` 时,这里生成的是 (2,n),把「任何消费侧都无法接收的形状」当作声明类型来自称
-- **L913** — ★position 的正典是 **[z, y, x] 的 3 个分量**。不是靠多数表决,而是**运行消费侧**来定的:refine_translation_lk / refine_lm 在传入 4 个分量时,会以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(实测)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 返回 **[score, d, h, w] 的 4 个分量**,若声明 out 仍为 "position" 就放行,后段的精化 op 会全军覆没 = 类型的谎言。由于 score 本身是诚实信息,**函数一侧不删**(get() 保持 4 分量),而在自称台账类型的 call() 一侧只取出坐标(与 project_points 同样处理)。
+- **L465** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L616** — ★2026-09-08 追加。此前用于雕刻的位姿辅助(visualhull.look_at)从任何公开层都引不到,而抓到同名的 render3d.look_at(gluLookAt、-Z 朝前)就会**无一例外地得到空的 hull**(poc_livestock_body_volume)。
+- **L637** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L727** — ★曾搁置的理由(a)「points 候选列表变短而悄悄改写既有 champion」,已随 backends_typed.TYPE_TO_SORT 把 coordgrid -> points 折叠而消失:2-D 桥的 tb_sphere_sdf / tb_box_sdf 带有 INPUT_ADAPTERS._points_to_grid,**确实会从点云生成坐标场**,所以那边的 "points" 声明并非谎言(实测:传入 (64,3) 会返回 (16,16,16) = 是活的)。撒谎的只是 3-D 台账那一侧。
+- **L882** — ★axis=1。`pairs` 的正典是 **(N,2)**(实测:消费侧 6 个 op 明确拒绝 (2,N))。当谓词还是 `lambda v: True` 时,这里生成的是 (2,n),把「任何消费侧都无法接收的形状」当作声明类型来自称
+- **L920** — ★position 的正典是 **[z, y, x] 的 3 个分量**。不是靠多数表决,而是**运行消费侧**来定的:refine_translation_lk / refine_lm 在传入 4 个分量时,会以 "init_pos must have exactly 3 components [z, y, x] (got 4)" fail-closed(实测)。生成器也是 (8.0, 8.0, 8.0) 的 3 分量。然而 match_* 系列按 docstring 返回 **[score, d, h, w] 的 4 个分量**,若声明 out 仍为 "position" 就放行,后段的精化 op 会全军覆没 = 类型的谎言。由于 score 本身是诚实信息,**函数一侧不删**(get() 保持 4 分量),而在自称台账类型的 call() 一侧只取出坐标(与 project_points 同样处理)。
 
 ## `opsastrostack.py`
 

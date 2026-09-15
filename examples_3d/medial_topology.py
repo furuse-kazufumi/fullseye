@@ -38,6 +38,7 @@ from medial import (
     skeleton_endpoints3d,
     skeleton_prune3d,
     skeleton_branches3d,
+    skeleton_graph3d,
 )
 
 
@@ -183,6 +184,80 @@ def main():
     assert y_pruned.sum() > 0.5 * y_skel.sum()
     print("\n[骨格グラフ] Y字チューブ: 分岐クラスタ 1 / 端点 3 / 枝 3、"
           "prune がヒゲのみ除去 — すべて機械検証 OK")
+
+    # --- (5) マスクから「回路」へ: skeleton_graph3d でノードと枝のグラフに組む ---
+    # junctions/endpoints/branches は「どの voxel がノードか/枝か」までしか返さない。
+    # どの枝がどのノードとどのノードを繋ぐか(= 回路)を返すのが skeleton_graph3d。
+    from volops import vol_distance_transform
+
+    graph = skeleton_graph3d(y_vol, distance=vol_distance_transform(y_vol))
+    print("\n[グラフ化] Y字チューブ -> ノードと枝")
+    print(f"  ノード {graph['n_nodes']} / 枝 {graph['n_edges']} / 連結成分 "
+          f"{graph['n_components']} / 閉路 {graph['n_cycles']}")
+    for nd in graph["nodes"]:
+        print(f"    node {nd['id']}: {nd['kind']:9s} 次数 {nd['degree']} "
+              f"(z,y,x)=({nd['z']:.1f},{nd['y']:.1f},{nd['x']:.1f}) 半径 {nd['radius']:.2f}")
+    for e in graph["edges"]:
+        print(f"    edge {e['u']}-{e['v']}: 長さ {e['length']:.2f} "
+              f"平均半径 {e['radius_mean']:.2f} 経路 {e['n_points']} 点")
+    assert (graph["n_nodes"], graph["n_edges"]) == (4, 3), graph["n_nodes"]
+    assert sorted(n["kind"] for n in graph["nodes"]) == \
+        ["endpoint", "endpoint", "endpoint", "junction"]
+    assert graph["n_cycles"] == 0            # Y 字は木
+
+    # 太さの違う枝を見分ける(神経の太い幹と細い枝)。骨格は 1 voxel 幅で作り、
+    # 距離場だけを枝ごとに変える = 半径の真値が厳密に分かる。
+    sk = np.zeros((41, 41, 41), bool)
+    sk[20, 20, 5:21] = True                  # 幹
+    sk[20, 5:21, 20] = True                  # 中くらいの枝
+    sk[5:21, 20, 20] = True                  # 細い枝
+    radius_field = np.zeros(sk.shape)
+    radius_field[20, 20, 5:21] = 3.0
+    radius_field[20, 5:21, 20] = 2.0
+    radius_field[5:21, 20, 20] = 1.0
+    radius_field[20, 20, 20] = 3.0
+    g_thin = skeleton_graph3d(sk, distance=radius_field)
+    radii = sorted(e["radius_mean"] for e in g_thin["edges"])
+    lengths = sorted(e["length"] for e in g_thin["edges"])
+    print(f"  太さの違う 3 枝の平均半径 : {radii}  (真値 [1.0, 2.0, 3.0])")
+    print(f"  枝の長さ(1 voxel 幅なら厳密): {lengths}  (真値 [14, 14, 14])")
+    assert radii == [1.0, 2.0, 3.0], radii
+    assert lengths == [14.0, 14.0, 14.0], lengths
+
+    # 輪は木ではない: オイラーの関係 閉路 = 枝 - ノード + 成分 で検査する
+    n_t = 48
+    c_t = (n_t - 1) / 2.0
+    zt, yt, xt = np.mgrid[0:n_t, 0:n_t, 0:n_t]
+    rho_t = np.sqrt((yt - c_t) ** 2 + (xt - c_t) ** 2)
+    ring = (rho_t - 14.0) ** 2 + (zt - c_t) ** 2 <= 3.0 ** 2
+    g_ring = skeleton_graph3d(ring)
+    print(f"  閉じた管: ノード {g_ring['n_nodes']} 枝 {g_ring['n_edges']} "
+          f"閉路 {g_ring['n_cycles']} (E-N+C)、周長 {g_ring['edges'][0]['length']:.1f} "
+          f"vs 2πR {2 * np.pi * 14.0:.1f}")
+    assert g_ring["n_cycles"] == (g_ring["n_edges"] - g_ring["n_nodes"]
+                                  + g_ring["n_components"]) == 1
+
+    # 異方ボクセル(EM は異方が普通): z だけ 2 倍粗い格子 + spacing で長さが一致
+    fine = np.zeros((41, 21, 21), bool)
+    fine[5:36, 10, 10] = True                # 31 層 = 30 歩
+    coarse = np.zeros((21, 21, 21), bool)
+    coarse[2:18, 10, 10] = True              # 16 層 x 2 = 同じ物理長
+    l_fine = skeleton_graph3d(fine)["edges"][0]["length"]
+    l_sp = skeleton_graph3d(coarse, spacing=(2.0, 1.0, 1.0))["edges"][0]["length"]
+    l_no = skeleton_graph3d(coarse)["edges"][0]["length"]
+    print(f"  異方 spacing: 等方 {l_fine} / 粗い格子+spacing {l_sp} / spacing 無し {l_no}")
+    assert l_sp == l_fine == 30.0
+    assert l_no != l_fine                    # 渡さなければ外れる(門が効いている証拠)
+
+    # 離れたものは黙って繋がない
+    sep = np.zeros((40, 40, 40), bool)
+    sep[4:35, 12, 12] = True
+    sep[4:35, 28, 28] = True
+    g_sep = skeleton_graph3d(sep)
+    comp_of = {n["id"]: n["component"] for n in g_sep["nodes"]}
+    assert g_sep["n_components"] == 2 and g_sep["n_edges"] == 2
+    assert all(comp_of[e["u"]] == comp_of[e["v"]] for e in g_sep["edges"])
+    print(f"  離れた 2 本: 成分 {g_sep['n_components']} と報告し、成分をまたぐ枝は 0 本")
 
     print(
         f"\nPASS: 円柱の芯が既知軸上(最大半径距離 {max_radial:.3f})、"

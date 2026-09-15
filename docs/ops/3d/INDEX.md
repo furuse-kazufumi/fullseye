@@ -1,4 +1,4 @@
-# 3D operator help — 357 ops in 66 categories
+# 3D operator help — 358 ops in 66 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -117,9 +117,9 @@
 
 [match_logpolar_z](match_pose/match_logpolar_z.md) · [match_pca](match_pose/match_pca.md) · [match_phase_3d](match_pose/match_phase_3d.md) · [moment_axes](match_pose/moment_axes.md)
 
-### medial (10)
+### medial (11)
 
-[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md) · [vol_distance_transform](medial/vol_distance_transform.md)
+[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_graph3d](medial/skeleton_graph3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md) · [vol_distance_transform](medial/vol_distance_transform.md)
 
 ### mesh_process (10)
 

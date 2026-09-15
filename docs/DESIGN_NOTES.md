@@ -896,6 +896,10 @@
 - **L2866** — ★2026-09-07: polar_unwrap と同じ理由で map_coordinates に置き換え(双線形・ 範囲外 0)。torch 不在でも走る。実測差は最大 7.6e-06。
 - **L3117** — ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)を numpy の座標計算 + scipy の map_coordinates(order=1)に置き換えた。torch は 双線形の再標本化にしか使われておらず、torch を入れない環境(CI の py3.10 / 3.12)でこの op が ImportError になっていた。規約はそのまま写した: 出力ボクセル (d,h,w) の正規化座標は ((i+0.5)/N)*2-1、回転後に (g+1)/2*N-0.5 で入力の画素座標へ戻す(align_corners=False の定義)。 grid の最終軸は (x, y, z) = (W, H, D) の順。torch 版との実測差は最大 7.6e-06。
 
+## `medial.py`
+
+- **L624** — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
+
 ## `occupancy.py`
 
 - **L223** — ★2026-09-07: ``res`` は**軸ごと**を受けるようにした(長さ 3 も可)。立方限定だと 鳥瞰格子(薄い z × 広い xy)のような扁平な体積で、要らない軸まで同じ刻みを 強いられる(`poc_bev_sensor_fusion` の実測: 409.6 万ボクセルのうち使うのは 8.1 %)。 同じ族の `grid_coords` は最初から軸ごとの res を受けていた —— **入口と出口で 契約の広さが違う**のを合わせた。スカラを渡す既存の呼び手は不変。
@@ -921,11 +925,12 @@
 ## `ops3d.py`
 
 - **L375** — ★ out は image2d ではなく **rgbimage**(2026-09-02 実測)。docstring も 実装も「RGB (size, size, 3) float [0,1]」で、この行だけが 2-D の 輝度画像を名乗っていた。mesh の種を入れて初めてこの op が実行され、 型述語が「declared 'image2d' but returned ndarray(512,512,3)」と TYPEMISS を出して顕在化した(それまでは (V,F) を 2 位置引数に割る 形のせいで**一度も実行されていなかった**)。他の render_* 3 op (ambient_occlusion / cast_shadow / supersample_mesh)は実測どおり 2-D なので image2d のままでよい ― 嘘だったのはここ 1 行だけ。
-- **L609** — ★2026-09-08 追加。それまで彫刻用の姿勢ヘルパ(visualhull.look_at)は どの公開層からも引けず、同名の render3d.look_at(gluLookAt・−Z 前方)を 掴むと **例外なく空の hull** になった(poc_livestock_body_volume)。
-- **L630** — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L720** — ★ 保留していた理由(a)「points 候補リストが短くなり既存 champion を黙って 書き換える」は、backends_typed.TYPE_TO_SORT で coordgrid → points へ畳む ことで消えている: 2-D 橋の tb_sphere_sdf / tb_box_sdf には INPUT_ADAPTERS._points_to_grid が付いていて **点群から座標場を実際に作って いる**ので、あちらの "points" 宣言は嘘ではない(実測: (64,3) を渡すと (16,16,16) が返る = 生きている)。嘘だったのは 3-D 台帳の側だけだった。
-- **L875** — ★ axis=1。`pairs` の正典は **(N,2)**(消費側 6 op が (2,N) を名指しで 拒否することを実測)。述語が `lambda v: True` だった間、ここは (2,n) を 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
-- **L913** — ★ position の正典は **[z, y, x] の 3 成分**。多数決ではなく**消費側を実行 して**決めた: refine_translation_lk / refine_lm は 4 成分を渡すと "init_pos must have exactly 3 components [z, y, x] (got 4)" で fail-closed する(実測)。生成器も (8.0, 8.0, 8.0) の 3 成分。ところが match_* 系は docstring どおり **[score, d, h, w] の 4 成分**を返しており、宣言 out が "position" のまま流すと後段の精緻化 op が全滅する = 型の嘘。 score 自体は正直な情報なので**関数側は削らず**(get() は 4 成分のまま)、 台帳の型を名乗る call() 側で座標だけを取り出す(project_points と同じ扱い)。
+- **L465** — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L616** — ★2026-09-08 追加。それまで彫刻用の姿勢ヘルパ(visualhull.look_at)は どの公開層からも引けず、同名の render3d.look_at(gluLookAt・−Z 前方)を 掴むと **例外なく空の hull** になった(poc_livestock_body_volume)。
+- **L637** — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L727** — ★ 保留していた理由(a)「points 候補リストが短くなり既存 champion を黙って 書き換える」は、backends_typed.TYPE_TO_SORT で coordgrid → points へ畳む ことで消えている: 2-D 橋の tb_sphere_sdf / tb_box_sdf には INPUT_ADAPTERS._points_to_grid が付いていて **点群から座標場を実際に作って いる**ので、あちらの "points" 宣言は嘘ではない(実測: (64,3) を渡すと (16,16,16) が返る = 生きている)。嘘だったのは 3-D 台帳の側だけだった。
+- **L882** — ★ axis=1。`pairs` の正典は **(N,2)**(消費側 6 op が (2,N) を名指しで 拒否することを実測)。述語が `lambda v: True` だった間、ここは (2,n) を 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
+- **L920** — ★ position の正典は **[z, y, x] の 3 成分**。多数決ではなく**消費側を実行 して**決めた: refine_translation_lk / refine_lm は 4 成分を渡すと "init_pos must have exactly 3 components [z, y, x] (got 4)" で fail-closed する(実測)。生成器も (8.0, 8.0, 8.0) の 3 成分。ところが match_* 系は docstring どおり **[score, d, h, w] の 4 成分**を返しており、宣言 out が "position" のまま流すと後段の精緻化 op が全滅する = 型の嘘。 score 自体は正直な情報なので**関数側は削らず**(get() は 4 成分のまま)、 台帳の型を名乗る call() 側で座標だけを取り出す(project_points と同じ扱い)。
 
 ## `opsastrostack.py`
 

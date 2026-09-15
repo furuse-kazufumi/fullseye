@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1942,
- "n_notes": 1946,
+ "n_ops": 1943,
+ "n_notes": 1947,
  "notes": {
   "vol_dilate": [
    {
@@ -11084,6 +11084,16 @@
     "in": "voxel",
     "out": "voxel",
     "path": "docs/ops/3d/medial/skeleton_endpoints3d.md"
+   }
+  ],
+  "skeleton_graph3d": [
+   {
+    "op": "skeleton_graph3d",
+    "dim": "3d",
+    "category": "medial",
+    "in": "voxel",
+    "out": "table",
+    "path": "docs/ops/3d/medial/skeleton_graph3d.md"
    }
   ],
   "skeleton_junctions3d": [

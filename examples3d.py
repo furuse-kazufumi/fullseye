@@ -183,7 +183,7 @@ EXAMPLES = [
      "summary": "vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。"},
     {"id": "medial_topology", "task": "shape_analysis", "data": "synthetic",
      "name": "中軸骨格と位相署名で形状を区別",
-     "summary": "中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。"},
+     "summary": "中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。skeleton_graph3d でノードと枝のグラフに組み(半径の違う枝を区別、輪はオイラー式で検査、異方 spacing、成分は繋がない)。"},
     # -- surface from contours(表現変換 2D輪郭→3D)------------------------------ #
     {"id": "contours_to_surface", "task": "reconstruction", "data": "synthetic",
      "name": "複数断層の2D輪郭を積層して3D曲面(メッシュ)に",

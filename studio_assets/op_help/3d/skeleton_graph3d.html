@@ -1,0 +1,88 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">skeleton_graph3d — 3D <code style="color:#22d3bf">medial</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import medial; medial.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;skeleton_graph3d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>3D 骨格を <b>ノード(接合点・端点)と枝(長さ・半径)のグラフ</b>に組み立てる。</p>
+<p>`<code style="color:#22d3bf">skeleton_junctions3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">skeleton_endpoints3d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">skeleton_branches3d</code>` は</p>
+<p>「どの voxel がノードか/枝か」を <b>マスク</b>で返すだけで、**どの枝がどのノードと</p>
+<p>どのノードを繋ぐか**は返さない。回路にするにはその接続が要る —— 神経形態の</p>
+<p>ケーブル理論では、区画の軸方向コンダクタンスが <b>直径と長さ</b>で決まり、区画同士の</p>
+<p><b>繋がり方</b>が回路そのものになる。この op はその 1 段を埋める。</p>
+<p>引数:</p>
+<p>vol: 3-D の骨格(bool か `<code style="color:#22d3bf">{0, 1}</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">skeletonize_vol</code>` の出力)。中身が</p>
+<p>塊(6 近傍がすべて前景の interior voxel がある)なら、族の他の op と</p>
+<p>同じく内部で `<code style="color:#22d3bf">skeletonize_vol</code>` を先に掛ける。</p>
+<p>distance: 任意。同形の距離変換ボリューム(`<code style="color:#22d3bf">vol_distance_transform</code>` の</p>
+<p>出力)。渡すと各ノード・各枝に半径が付く。<b>単位は渡した距離場に従う</b></p>
+<p>—— 物理単位が要るなら `<code style="color:#22d3bf">vol_distance_transform(mask, spacing)</code>` を渡す。</p>
+<p>spacing: `<code style="color:#22d3bf">(sz, sy, sx)</code>`。枝の長さを <b>実距離</b>で測る(EM の異方ボクセルが</p>
+<p>既定の想定)。`<code style="color:#22d3bf">VolumeMeta</code>` も受ける。</p>
+<p>min_branch_len: これ未満の<b>末端の枝(ヒゲ)</b>を刈る(既定 0 = 刈らない)。</p>
+<p>単位は `<code style="color:#22d3bf">spacing</code>` の実距離。刈るのは「片端が端点(次数 1)で、もう</p>
+<p>片端が次数 2 以上」の枝 —— <b>両端とも端点</b>の枝は刈らない。それは</p>
+<p>それ自体が 1 つの連結成分(短い孤立した管)なので、刈ると構造ごと</p>
+<p>消えてしまう。刈ったぶんは `<code style="color:#22d3bf">n_pruned_branches</code>` に返す。</p>
+<p>返り値: `<code style="color:#22d3bf">dict</code><code style="color:#22d3bf">(台帳の宣言 out 型 = </code><code style="color:#22d3bf">table</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nodes</code><code style="color:#22d3bf">: ノード表。</code><code style="color:#22d3bf">id</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">z,y,x</code>`(voxel 添字での重心。実座標は</p>
+<p>spacing を掛ける)/ `<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">degree</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_voxels</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">radius</code>`</p>
+<p>(`<code style="color:#22d3bf">distance</code>` を渡したとき、そのノードの voxel での最大値 = 内接半径)/</p>
+<p>`<code style="color:#22d3bf">component</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">edges</code><code style="color:#22d3bf">: 枝表。</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">(ノード id の対)/ </code><code style="color:#22d3bf">length</code>`(骨格に沿った</p>
+<p>実距離、spacing 込み)/ `<code style="color:#22d3bf">radius_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">radius_min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_points</code>`</p>
+<p>(経路上の voxel 数、両端のノード voxel を含む)/ `<code style="color:#22d3bf">component</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_nodes</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_edges</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_components</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_cycles</code>` /</p>
+<p>`<code style="color:#22d3bf">n_pruned_branches</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_skeleton_voxels</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">spacing</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">has_radius</code>`。</p>
+<p>規約(ここが位相を決める):</p>
+<p style="margin:2px 0 2px 12px">• 26 近傍次数 <b>2</b> の voxel は枝の途中であってノードにしない。次数 <b>1 以下</b></p>
+<p>が端点(孤立 voxel を含む)、<b>3 以上</b>が接合。</p>
+<p style="margin:2px 0 2px 12px">• 接合 voxel は 1 つとは限らない(離散骨格では分岐が数 voxel の塊になる)。</p>
+<p>26 連結で塊にまとめて <b>1 ノード</b>として数え、座標はその重心。</p>
+<p style="margin:2px 0 2px 12px">• <b>連結成分が複数なら黙って繋がない。</b> `<code style="color:#22d3bf">n_components</code>` に本数を返し、</p>
+<p>各ノード・各枝に `<code style="color:#22d3bf">component</code>` を付ける。</p>
+<p style="margin:2px 0 2px 12px">• 閉ループだけの成分(ノードになる voxel が 1 つも無い輪)は、その成分の</p>
+<p>先頭 voxel を 1 つだけ種のノードに立てて自己ループの枝 1 本にする。</p>
+<p>こうすると **オイラーの関係 ``n_cycles = n_edges - n_nodes +</p>
+<p>n_components``** が輪でも成り立つ(木だと仮定していない)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> は**刈った後の**次数で決まる: 0 = </code><code style="color:#22d3bf">isolated</code><code style="color:#22d3bf"> / 1 = </code><code style="color:#22d3bf">endpoint</code>` /</p>
+<p>2 = `<code style="color:#22d3bf">chain</code>`(輪の種ノード、または刈った結果そうなったノード)/</p>
+<p>3 以上 = `<code style="color:#22d3bf">junction</code>`。刈ると接合が次数 2 に落ちることがあり、その</p>
+<p>ノードは残る(区画の境界としては正しいが、「次数 2 はノードにしない」</p>
+<p>という上の規約は<b>刈る前</b>の話であることに注意)。</p>
+<p style="margin:2px 0 2px 12px">• 接合の塊どうしが直接隣接している(間に次数 2 の道が無い)場合は、その</p>
+<p>対に対して <b>1 本</b>の枝を作る(長さ = 隣接する voxel 対の最短)。</p>
+<p>検証(すべて `<code style="color:#22d3bf">ValueError</code>` で fail-closed): 3-D でない/空配列/NaN・Inf/</p>
+<p>bool でも `<code style="color:#22d3bf">{0,1}</code>` でもない値(中間値の「たぶん前景」を黙って丸めない)/</p>
+<p>前景がゼロ/`<code style="color:#22d3bf">distance</code><code style="color:#22d3bf"> の形が違う・負・非有限/</code><code style="color:#22d3bf">spacing</code>` が 3 つの正の</p>
+<p>有限値でない/`<code style="color:#22d3bf">min_branch_len</code>` が負。細線化が要る入力で scikit-image が</p>
+<p>無ければ `<code style="color:#22d3bf">ImportError</code>`。</p>
+<p>注意(honest、いずれも実測):</p>
+<p style="margin:2px 0 2px 12px">• 長さは <b>26 近傍の折れ線</b>の和なので、曲がった枝は連続曲線より長く出る。</p>
+<p>半径 14 voxel の閉じた管(真の周長 87.96)で <b>94.7 = +7.7 %</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>太い入力は端が縮む。</b> 自由端の細線化は端の蓋の手前で止まる。長さ 35 の</p>
+<p>直円柱で実測すると 半径 1・2 は <b>35.00(縮みゼロ)</b>、半径 3 は 33、</p>
+<p>半径 4 は 31 —— 半径が 3 以上になると片端あたり 1〜2 voxel 内側に寄る。</p>
+<p>長さを真値と比べるなら、<b>細線化を通らない 1 voxel 幅の骨格</b>を渡すこと</p>
+<p>(そのときは厳密に一致する: 31 voxel の直線で 30.0)。</p>
+<p style="margin:2px 0 2px 12px">• 分岐では、接合の塊(次数 3 以上が 26 連結でまとまったもの)に呑まれたぶん</p>
+<p>だけ枝が短くなる。**接合より短いヒゲは枝にならず、ノードの `<code style="color:#22d3bf">n_voxels</code>`</p>
+<p>に含まれて消える**(`<code style="color:#22d3bf">min_branch_len</code>` で刈る対象にすらならない)。</p>
+<p style="margin:2px 0 2px 12px">• 半径は `<code style="color:#22d3bf">distance</code>` の値そのもの。端点は端の蓋までの距離で決まるので</p>
+<p><b>管の半径より小さく出る</b>(半径 3 の円柱で端点 2.0、枝の平均 3.07)。</p>
+<p>枝の太さを見るなら `<code style="color:#22d3bf">radius_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">radius_min</code>` を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>90 度回転</b>: 1 voxel 幅の骨格を入れた場合、グラフは同型で長さも厳密に</p>
+<p>一致する(9 通り実測)。太い塊を渡した場合はノード数・枝数は一致するが、</p>
+<p>長さは最大 1.41(= 対角 1 歩)ずれる —— ずれているのはこの op ではなく</p>
+<p><b>細線化ヘルパ(skimage Lee)が回転で厳密には同じ骨格を作らない</b>ため。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:medial_topology">medial_topology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/medial_topology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">medial</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:distance_ridge">distance_ridge</a> · <a style="color:#22d3bf" href="op3d:skeletonize_vol">skeletonize_vol</a> · <a style="color:#22d3bf" href="op3d:medial_axis_points">medial_axis_points</a> · <a style="color:#22d3bf" href="op3d:topology_signature">topology_signature</a> · <a style="color:#22d3bf" href="op3d:medial_match">medial_match</a> · <a style="color:#22d3bf" href="op3d:skeleton_junctions3d">skeleton_junctions3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_endpoints3d">skeleton_endpoints3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_prune3d">skeleton_prune3d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: medial.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

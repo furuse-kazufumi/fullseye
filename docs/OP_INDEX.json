@@ -1,8 +1,8 @@
 {
- "n_ops": 1942,
+ "n_ops": 1943,
  "tiers": {
   "color": 12,
-  "ledger": 1024,
+  "ledger": 1025,
   "nary": 17,
   "registry": 889
  },
@@ -11070,6 +11070,19 @@
    "halcon": "",
    "in_sort": "voxel",
    "out_sort": "voxel",
+   "category": "medial",
+   "tier": "ledger",
+   "ledger": "ops3d",
+   "dim": "3d",
+   "in_sorts": [
+    "voxel"
+   ]
+  },
+  {
+   "name": "skeleton_graph3d",
+   "halcon": "",
+   "in_sort": "voxel",
+   "out_sort": "table",
    "category": "medial",
    "tier": "ledger",
    "ledger": "ops3d",

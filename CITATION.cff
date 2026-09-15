@@ -15,10 +15,7 @@ doi: 10.5281/zenodo.22761195
 identifiers:
   - type: doi
     value: 10.5281/zenodo.22761195
-    description: "Concept DOI (always resolves to the newest archived version)"
-  - type: doi
-    value: 10.5281/zenodo.22772164
-    description: "Version DOI for 0.2.0 (this release)"
+    description: "Concept DOI (resolves to the newest archived version; the 0.2.0 version DOI is minted by Zenodo when the GitHub Release is published)"
   - type: doi
     value: 10.5281/zenodo.22761196
     description: "Version DOI for 0.1.11 (the previous release)"

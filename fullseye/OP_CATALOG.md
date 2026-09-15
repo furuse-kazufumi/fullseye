@@ -406,7 +406,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **shape_analysis**
 - **CT の管・粒・肉厚を Hessian 特徴と物理量で計測** — vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。 `py -3.11 examples_3d/vessel_metrology.py`
-- **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。 `py -3.11 examples_3d/medial_topology.py`
+- **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。skeleton_graph3d でノードと枝のグラフに組み(半径の違う枝を区別、輪はオイラー式で検査、異方 spacing、成分は繋がない)。 `py -3.11 examples_3d/medial_topology.py`
 - **曲面上の測地距離と最遠点サンプリング** — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。 `py -3.11 examples_3d/geodesic_distance.py`
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。 `py -3.11 examples_3d/space_curve.py`
 - **円柱点群の前処理と測地距離・中心軸復元(SOR/radius/MLS + kNN/測地/距離リッジ)** — 円柱(半径R=1, 高さ2)を「側面点群」と「中身入りvoxel」の2通りで合成し、6つのopを鎖にして数値的真値で検証する。側面点群(面2400点+遠方の飛び点40点)に対し statistical_outlier_removal と radius_outlier_removal がいずれも飛び点40/40を除去し面の点2400を1つも誤除去せず(SOR→radius合成で面のみ2400点が残存)。mls_smooth が各点の軸までの距離の真値Rからの… `py -3.11 examples_3d/pcl_geodesic.py`
@@ -525,7 +525,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 357 ops / 66 categories。_
+_計 358 ops / 66 categories。_
 
 
 ### annotate3d(7)
@@ -714,7 +714,7 @@ _計 357 ops / 66 categories。_
 - `moment_axes` (`points → axes`) — 点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。 · 例: `itokawa_pose_canonical`
 - `match_logpolar_z` (`voxel, voxel → rot_scale`) — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
 
-### medial(10)
+### medial(11)
 - `distance_ridge` (`voxel → voxel`) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`
 - `skeletonize_vol` (`voxel → voxel`) — 3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。 · 例: `medial_topology`
 - `medial_axis_points` (`voxel → points`) — medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。 · 例: `medial_topology`
@@ -724,7 +724,8 @@ _計 357 ops / 66 categories。_
 - `skeleton_endpoints3d` (`voxel → voxel`) — 3D 骨格の端点(26 近傍に骨格 voxel が 1 個以下)を voxel マスクで返す。 · 例: `medial_topology`
 - `skeleton_prune3d` (`voxel → voxel`) — 3D 骨格のヒゲ(短い枝)を刈る。端点除去を length 回反復 = 枝長 <=length を除去。 · 例: `medial_topology`
 - `skeleton_branches3d` (`voxel → voxel`) — 3D 骨格を分岐点で切って枝(線分)に分割する。2D の `r2_split_skeleton_lines` の 3D 版。 · 例: `medial_topology`
-- `vol_distance_transform` (`voxel → voxel`) — Exact Euclidean distance transform of a binary volume. · 例: `molecule_atom_count`, `vessel_metrology`
+- `skeleton_graph3d` (`voxel → table`) — 3D 骨格を **ノード(接合点・端点)と枝(長さ・半径)のグラフ**に組み立てる。 · 例: `medial_topology`
+- `vol_distance_transform` (`voxel → voxel`) — Exact Euclidean distance transform of a binary volume. · 例: `medial_topology`, `molecule_atom_count`, `vessel_metrology`
 
 ### mesh_process(10)
 - `laplacian_smooth` (`mesh → mesh`) — umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。 · 例: `mesh_smooth`

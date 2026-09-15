@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 610 / 679 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 610 / 681 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel_match.py`
@@ -898,6 +898,10 @@
 - **L2866** — ★2026-09-07: polar_unwrap 과 같은 이유로 map_coordinates 로 교체(이중선형·범위 밖 0). torch 가 없어도 돈다. 실측 차이는 최대 7.6e-06.
 - **L3117** — ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)를 numpy 의 좌표 계산 + scipy 의 map_coordinates(order=1)로 교체했다. torch 는 이중선형 재표본화에만 쓰였고, torch 를 넣지 않은 환경(CI 의 py3.10 / 3.12)에서 이 op 가 ImportError 가 되어 있었다. 규약은 그대로 옮겼다: 출력 복셀 (d,h,w) 의 정규화 좌표는 ((i+0.5)/N)*2-1, 회전 후에 (g+1)/2*N-0.5 로 입력의 픽셀 좌표로 되돌린다(align_corners=False 의 정의). grid 의 마지막 축은 (x, y, z) = (W, H, D) 순. torch 버전과의 실측 차이는 최대 7.6e-06.
 
+## `medial.py`
+
+- **L624** _(ja)_ — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
+
 ## `occupancy.py`
 
 - **L223** — ★2026-09-07: ``res`` 가 **축마다** 받도록 했다(길이 3 도 가능). 정육면체 한정이면 조감 격자(얇은 z x 넓은 xy)처럼 납작한 체적에서, 필요 없는 축까지 같은 간격을 강요받는다(`poc_bev_sensor_fusion` 의 실측: 409.6 만 복셀 중 쓰는 것은 8.1 %). 같은 계열의 `grid_coords` 는 처음부터 축마다의 res 를 받고 있었다 -- **입구와 출구에서 계약의 넓이가 다른** 것을 맞췄다. 스칼라를 넘기는 기존 호출자는 불변.
@@ -923,11 +927,12 @@
 ## `ops3d.py`
 
 - **L375** — ★out 은 image2d 가 아니라 **rgbimage**(2026-09-02 실측). docstring 도 구현도 'RGB (size, size, 3) float [0,1]' 인데, 이 줄만 2-D 의 휘도 이미지를 자처하고 있었다. mesh 의 씨앗을 넣고 나서야 이 op 가 실행되어, 타입 술어가 TYPEMISS 「declared 'image2d' but returned ndarray(512,512,3)」로 드러냈다(그전까지는 (V,F) 를 2 개의 위치 인자로 나누는 형태 탓에 **한 번도 실행되지 않았다**). 다른 render_* 3 op(ambient_occlusion / cast_shadow / supersample_mesh)는 실측대로 2-D 이므로 image2d 그대로 두어도 된다 -- 거짓이었던 것은 이 한 줄뿐.
-- **L609** — ★2026-09-08 추가. 그전까지 조각용 자세 헬퍼(visualhull.look_at)는 어느 공개 층에서도 조회할 수 없었고, 같은 이름의 render3d.look_at(gluLookAt·-Z 전방)을 잡으면 **예외 없이 빈 hull** 이 되었다(poc_livestock_body_volume).
-- **L630** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
-- **L720** — ★보류했던 이유 (a)「points 후보 리스트가 짧아져 기존 champion 을 조용히 덮어쓴다」는, backends_typed.TYPE_TO_SORT 로 coordgrid -> points 로 접음으로써 사라졌다: 2-D 다리인 tb_sphere_sdf / tb_box_sdf 에는 INPUT_ADAPTERS._points_to_grid 가 붙어 있어 **점군에서 좌표장을 실제로 만들고 있으므로**, 그쪽의 "points" 선언은 거짓이 아니다(실측: (64,3) 을 넘기면 (16,16,16) 이 반환된다 = 살아 있다). 거짓이었던 것은 3-D 대장 쪽뿐이었다.
-- **L875** — ★axis=1. `pairs` 의 정전은 **(N,2)**(실측: 소비 쪽 6 op 가 (2,N) 을 명시적으로 거부한다). 술어가 `lambda v: True` 였던 동안, 여기는 (2,n) 을 만들고 있어 '어떤 소비 쪽도 받을 수 없는 형태'를 선언 타입으로 자처하고 있었다
-- **L913** — ★position 의 정전은 **[z, y, x] 의 3 성분**. 다수결이 아니라 **소비 쪽을 실행하여** 정했다: refine_translation_lk / refine_lm 은 4 성분을 넘기면 "init_pos must have exactly 3 components [z, y, x] (got 4)" 로 fail-closed 한다(실측). 생성기도 (8.0, 8.0, 8.0) 의 3 성분. 그런데 match_* 계열은 docstring 대로 **[score, d, h, w] 의 4 성분**을 반환하고 있어, 선언 out 이 "position" 인 채로 흘리면 후단의 정밀화 op 가 전멸한다 = 타입의 거짓말. score 자체는 정직한 정보이므로 **함수 쪽은 깎지 않고**(get() 은 4 성분 그대로), 대장의 타입을 자처하는 call() 쪽에서 좌표만 꺼낸다(project_points 와 같은 취급).
+- **L465** _(ja)_ — ★新しい sort は作らない: ノード表と枝表は「単位も意味も違う 2 つの表」で、 タプルで返して adapter に `r[0]` と書くと **枝表を黙って捨てる** (`pose_error` / `m3c2_distance` で繰り返した失敗の型)。1 つの dict に 両方を入れれば宣言 'table' が実返りと一致し、捨てるものが無い。
+- **L616** — ★2026-09-08 추가. 그전까지 조각용 자세 헬퍼(visualhull.look_at)는 어느 공개 층에서도 조회할 수 없었고, 같은 이름의 render3d.look_at(gluLookAt·-Z 전방)을 잡으면 **예외 없이 빈 hull** 이 되었다(poc_livestock_body_volume).
+- **L637** _(ja)_ — ★ out は image2d ではなく **keypoints**(2026-09-15 実測)。実返りは 像面上の (N,2) 画素座標で、入力 (160,3) に対し (160,2) が出る —— 画像ではない。同じ型の嘘を "render" 節の ``project_points`` で 2026-09-02 に既に直しているのに(「旧宣言 'image2d' は型の嘘で、 pnp3d 側の 'image2d' 宣言と噛み合って PnP を壊していた」)、 **この 1 行だけが兄弟一掃から取り残されていた**。 例外にならないのは ``_sort_ok`` が image に ndim == 2 しか求めず、 (N,2) が「幅 2 の画像」として黙って通るから。値域も画素座標 (実測 16.0 .. 47.9)で [0,1] ではなく、image を名乗る限り 下流の閾値 op に渡ると意味を失う。
+- **L727** — ★보류했던 이유 (a)「points 후보 리스트가 짧아져 기존 champion 을 조용히 덮어쓴다」는, backends_typed.TYPE_TO_SORT 로 coordgrid -> points 로 접음으로써 사라졌다: 2-D 다리인 tb_sphere_sdf / tb_box_sdf 에는 INPUT_ADAPTERS._points_to_grid 가 붙어 있어 **점군에서 좌표장을 실제로 만들고 있으므로**, 그쪽의 "points" 선언은 거짓이 아니다(실측: (64,3) 을 넘기면 (16,16,16) 이 반환된다 = 살아 있다). 거짓이었던 것은 3-D 대장 쪽뿐이었다.
+- **L882** — ★axis=1. `pairs` 의 정전은 **(N,2)**(실측: 소비 쪽 6 op 가 (2,N) 을 명시적으로 거부한다). 술어가 `lambda v: True` 였던 동안, 여기는 (2,n) 을 만들고 있어 '어떤 소비 쪽도 받을 수 없는 형태'를 선언 타입으로 자처하고 있었다
+- **L920** — ★position 의 정전은 **[z, y, x] 의 3 성분**. 다수결이 아니라 **소비 쪽을 실행하여** 정했다: refine_translation_lk / refine_lm 은 4 성분을 넘기면 "init_pos must have exactly 3 components [z, y, x] (got 4)" 로 fail-closed 한다(실측). 생성기도 (8.0, 8.0, 8.0) 의 3 성분. 그런데 match_* 계열은 docstring 대로 **[score, d, h, w] 의 4 성분**을 반환하고 있어, 선언 out 이 "position" 인 채로 흘리면 후단의 정밀화 op 가 전멸한다 = 타입의 거짓말. score 자체는 정직한 정보이므로 **함수 쪽은 깎지 않고**(get() 은 4 성분 그대로), 대장의 타입을 자처하는 call() 쪽에서 좌표만 꺼낸다(project_points 와 같은 취급).
 
 ## `opsastrostack.py`
 
