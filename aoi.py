@@ -187,6 +187,16 @@ def flat_field_correct(image, flat, dark=None, target=None, min_response=None, c
     _same_shape(img, flt, "image", "flat", op)
     if dark is None:
         drk = np.zeros_like(img)
+    elif np.ndim(dark) == 0 and not isinstance(dark, (str, bytes)):
+        # 暗電流が一様(遮光した平均値 1 つ)という、現場でいちばん多い渡し方。
+        if isinstance(dark, bool) or not isinstance(dark, (int, float, np.integer,
+                                                           np.floating)):
+            raise ValueError("%s: dark must be a 2-D image or a real number, got %r"
+                             % (op, dark))
+        dval = float(dark)
+        if not np.isfinite(dval):
+            raise ValueError("%s: dark must be finite, got %r" % (op, dark))
+        drk = np.full_like(img, dval)
     else:
         drk = _require_image(dark, "dark", op)
         _same_shape(img, drk, "image", "dark", op)
