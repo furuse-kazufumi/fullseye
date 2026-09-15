@@ -2020,62 +2020,11 @@ _計 901 ops / 48 categories。_
 - `xg_gen_polygons` (halcon: `gen_polygons_xld`) `contour → contour` · 例: `gallery2d_geometry`
 - `xg_crop_contours` `contour → contour` · 例: `gallery2d_geometry`
 
-## 1-D operators(ops1d)by category
-_計 39 ops / 3 categories。_
-
-
-プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
-
-### function(23)
-- `create_funct_1d_array` (`signal → signal`) — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``).
-- `create_funct_1d_pairs` (`signal, signal → signal`) — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an
-- `smooth_funct_1d_gauss` (`signal → signal`) — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``).
-- `smooth_funct_1d_mean` (`signal → signal`) — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``).
-- `derivate_funct_1d` (`signal → signal`) — First derivative by central differences (HALCON ``derivate_funct_1d``).
-- `integrate_funct_1d` (`signal → signal`) — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``).
-- `zero_crossings_funct_1d` (`signal → indices`) — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``).
-- `local_min_max_funct_1d` (`signal → table`) — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``).
-- `abs_funct_1d` (`signal → signal`) — Absolute value of the y-values (HALCON ``abs_funct_1d``).
-- `negate_funct_1d` (`signal → signal`) — Sign-flipped y-values (HALCON ``negate_funct_1d``).
-- `invert_funct_1d` (`signal → pairs`) — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).
-- `scale_y_funct_1d` (`signal → signal`) — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).
-- `transform_funct_1d` (`signal → pairs`) — Independent affine transform of x and y (HALCON ``transform_funct_1d``).
-- `compose_funct_1d` (`signal, signal → signal`) — Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
-- `sample_funct_1d` (`signal → signal`) — Every *step*-th sample (HALCON ``sample_funct_1d``).
-- `match_funct_1d_trans` (`signal, signal → table`) — Best integer translation between two functions by correlation
-- `distance_funct_1d` (`signal, signal → measurement`) — Distance between two functions on the same grid (HALCON ``distance_funct_1d``).
-- `num_points_funct_1d` (`signal → measurement`) — Number of samples (HALCON ``num_points_funct_1d``).
-- `x_range_funct_1d` (`signal → pairs`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
-- `y_range_funct_1d` (`signal → pairs`) — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``).
-- `get_pair_funct_1d` (`signal → pairs`) — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``).
-- `get_y_value_funct_1d` (`signal → measurement`) — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``).
-- `funct_1d_to_pairs` (`signal → pairs`) — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``).
-
-### io(3)
-- `read_wav` (`file → signal`) — Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is
-- `write_wav` (`signal → file`) — Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
-- `read_audio` (`file → signal`) — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
-
-### signal(13)
-- `lowpass` (`signal → signal`) — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
-- `highpass` (`signal → signal`) — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.
-- `bandpass` (`signal → signal`) — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
-- `envelope` (`signal → signal`) — Amplitude envelope via the analytic (Hilbert) signal — the shape of a
-- `rms` (`signal → measurement`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
-- `resample` (`signal → signal`) — Resample a signal to *new_rate* (Fourier method).
-- `spectrum` (`signal → pairs`) — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``).
-- `spectrogram` (`signal → image2d`) — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
-- `zero_crossing_rate` (`signal → measurement`) — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
-- `find_peaks` (`signal → indices`) — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
-- `peak_subbin` (`signal, indices → measurement`) — Peak position **between** samples — the vertex of a fit through 3 points.
-- `point_spectrum` (`positions → table`) — Periodogram of **event positions** — defects, impacts, counts, arrivals.
-- `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
-
 ## Math operators(opsmath)by category
+
+視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
+
 _計 27 ops / 4 categories。_
-
-
-視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
 
 ### complex(10)
 - `cplx_contour_circle` (` → cpoints`) — Sample a circle as a closed contour — the standard integration path.
@@ -2113,10 +2062,10 @@ _計 27 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
+
+レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場。
+
 _計 127 ops / 16 categories。_
-
-
-レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
 
 ### appearance(7)
 - `cie_xyz_from_wavelength` (`signal → points`) — 波長 [nm] → CIE 1931 2° 等色関数 (x̄, ȳ, z̄)。入力形状 + 末尾 3 の配列を返す。
@@ -2276,6 +2225,1010 @@ _計 127 ops / 16 categories。_
 - `defocus_from_shift` (` → measurement`) — Defocus wavefront error (waves at the pupil edge) of an axial focus shift.
 - `pupil_psf` (`image2d → image2d`) — Diffraction PSF of an **arbitrary pupil shape** with defocus (sums to 1).
 - `pupil_blur` (`image2d, image2d → image2d`) — Blur an image with the PSF of a pupil shape at one wavelength band.
+
+## fullseye ライトフィールド(plenoptic)op の統一レジストリ(opslightfield)by category
+
+_計 17 ops / 5 categories。_
+
+### decode(3)
+- `lf_from_mla` (`image2d → lightfield`) — Decode a microlens-array raw frame into a ``(V, U, H, W)`` light field.
+- `lf_to_mla` (`lightfield → image2d`) — Re-interleave a light field into a microlens-array raw frame (exact inverse).
+- `lf_stats` (`lightfield → table`) — Describe a light field: shape, angular centre, and the slope range it can carry.
+
+### depth(5)
+- `lf_depth_from_focus` (`lightfield → image2d`) — Per-pixel slope from the **sharpness peak** across the refocus sweep.
+- `lf_epi_slope` (`lightfield → image2d`) — Per-pixel slope from the **EPI line orientation** (structure tensor, one pass).
+- `lf_disparity_to_depth` (`image2d → depth`) — Slope (px per angular step) -> metric depth, the camera-array model.
+- `lf_all_in_focus` (`lightfield, image2d → image2d`) — Composite one everywhere-sharp image by refocusing each pixel at its own slope.
+- `lf_plenoptic_design` (` → table`) — Size a plenoptic camera: what angular/spatial resolution and depth range you buy.
+
+### refocus(4)
+- `lf_refocus` (`lightfield → image2d`) — Shift-and-add refocus: the synthetic-aperture image focused at *slope*.
+- `lf_focal_stack` (`lightfield → images`) — Refocus at every slope in *slopes* — a focal stack from one exposure.
+- `lf_aperture_mask` (` → image2d`) — Angular weighting mask — the synthetic aperture you stop down or shape.
+- `lf_synthetic_aperture` (`lightfield → image2d`) — Refocus through a shaped aperture — and, with ``reduce="median"``, through occluders.
+
+### synthesis(1)
+- `lf_synthesize` (` → lightfield`) — Build a light field of textured layers at **known** slopes (the test bed).
+
+### views(4)
+- `lf_subaperture` (`lightfield → image2d`) — One sub-aperture view — the image seen through one point of the pupil.
+- `lf_center_view` (`lightfield → image2d`) — The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives.
+- `lf_views` (`lightfield → images`) — The whole angular grid as a plain list of 2-D images (row-major over ``(v, u)``).
+- `lf_epi` (`lightfield → image2d`) — Epipolar-plane image — the slice whose **line slope is the disparity**.
+
+## fullseye 光子計数・時間分解 op の統一レジストリ(opsphoton)by category
+
+_計 17 ops / 6 categories。_
+
+### counting(3)
+- `photon_sample` (`image2d → image2d`) — Poisson-sample an expected-photon image into an actual photon count image.
+- `photon_statistics` (`image2d → table`) — Poisson statistics of a photon-count frame: is it really shot-noise limited?
+- `photon_uncertainty` (`image2d → image2d`) — Per-pixel Poisson error bar of a photon-count frame.
+
+### dtof(3)
+- `dtof_depth` (`counts → measurement`) — Distance from a photon arrival-time histogram: ``d = c*t/2``.
+- `dtof_cube_simulate` (`depth → histcube`) — Synthesise the ``(H, W, T)`` photon histogram cube a SPAD array produces.
+- `dtof_cube_depth` (`histcube → depth`) — Depth map from a ``(H, W, T)`` photon histogram cube — the dToF inversion.
+
+### lifetime(2)
+- `lifetime_fit` (`counts → table`) — Mono-exponential fluorescence lifetime from a TCSPC decay histogram.
+- `lifetime_phasor` (`counts → table`) — Phasor (frequency-domain) representation of a decay — the fit-free view.
+
+### spad(3)
+- `spad_deadtime_apply` (`countrate → countrate`) — Distort a true photon rate by the detector's dead time (counts lost).
+- `spad_deadtime_correct` (`countrate → countrate`) — Recover the true photon rate from a dead-time-distorted measured rate.
+- `tcspc_coates_correct` (`counts → counts`) — Undo TCSPC pile-up exactly (Coates's estimator) — the early-photon bias.
+
+### tcspc(4)
+- `tcspc_simulate` (` → counts`) — Synthesise a single-pixel photon arrival-time histogram with a known answer.
+- `tcspc_irf_convolve` (`counts → counts`) — Blur an arrival-time histogram by the instrument response (timing jitter).
+- `tcspc_background_subtract` (`counts → counts`) — Remove the ambient-light / dark-count floor from an arrival-time histogram.
+- `tcspc_stats` (`counts → table`) — Descriptors of an arrival-time histogram: peak, centroid, width, background.
+
+### transform(2)
+- `anscombe_transform` (`image2d → image2d`) — Anscombe variance-stabilising transform: Poisson counts -> ~unit-variance.
+- `anscombe_inverse` (`image2d → image2d`) — Invert :func:`anscombe_transform` — algebraically, or without bias.
+
+## 鏡面反射の分離と頑健フォトメトリックステレオの統一レジストリ(opsspecular)by category
+
+_計 13 ops / 4 categories。_
+
+### dichromatic(4)
+- `specular_diffuse_split` (`rgbimage → rgbimage`) — Split a linear-RGB image into its diffuse (body) and specular (interface) parts. → (diffuse, specular), both (H, W, 3).
+- `specular_coefficient_map` (`rgbimage → image2d`) — The scalar interface (specular) coefficient of the dichromatic model. → (H, W).
+- `specular_free_transform` (`rgbimage → rgbimage`) — Project out the illuminant direction: the part of the image a highlight cannot touch. → (H, W, 3).
+- `illuminant_from_dichromatic_planes` (`rgbimage, labels → vector`) — Recover the illuminant colour from two or more materials. → unit 3-vector.
+
+### photometric(2)
+- `photometric_stereo_robust` (`images → normalmap`) — Photometric stereo that survives shadows and highlights. → (normals, albedo, inliers).
+- `photometric_residual` (`images → image2d`) — How badly the Lambertian model fails, per pixel. → (H, W) RMS residual.
+
+### polarization(4)
+- `polarization_render` (`image2d, image2d → polsweep`) — Forward model of a polariser sweep: turn a known split into the frames a polarisation camera would record. → (N, H, W).
+- `polarization_separate` (`polsweep → image2d`) — Split a polariser sweep into its unpolarised and linearly polarised radiance. → (diffuse, specular), both (H, W).
+- `polarization_dolp_map` (`polsweep → image2d`) — Degree of linear polarisation, per pixel. → (H, W) in [0, 1].
+- `polarization_stokes` (`polsweep → stokes`) — The scene-integrated Stokes vector of a polariser sweep. → (4,), ready for :func:`optics.stokes_analyze`.
+
+### reflectance(3)
+- `brdf_blinn_phong` (`normalmap → image2d`) — Blinn's half-vector specular lobe. → (H, W) in [0, 1].
+- `brdf_microfacet` (`normalmap → image2d`) — GGX / Trowbridge-Reitz microfacet specular BRDF. → (H, W), units 1/sr.
+- `dichromatic_render` (`normalmap → rgbimage`) — Forward dichromatic model: render a known highlight so a separation can be checked against it. → (H, W, 3).
+
+## fullseye モーション増幅・位相変位計測 op の統一レジストリ(opsmotionmag)by category
+
+_計 9 ops / 5 categories。_
+
+### decompose(2)
+- `complex_steerable_decompose` (`image2d → table`) — Complex oriented sub-band decomposition of one frame -> ``dict``.
+- `complex_steerable_reconstruct` (`table → image2d`) — Invert :func:`complex_steerable_decompose` -> ``(H, W)`` real image.
+
+### magnify(1)
+- `motion_magnify` (`video → table`) — Scale the in-band motion of a clip by *alpha* -> ``dict``.
+
+### measure(2)
+- `phase_displacement` (`video → table`) — Sub-pixel displacement field from local phase -> ``dict``.
+- `displacement_series` (`video → pairs`) — Whole-frame displacement waveform -> ``(T, 2)`` array of ``(dx, dy)``.
+
+### synthesis(1)
+- `synthesize_translation` (` → video`) — A clip whose displacement is known in closed form -> ``(T, H, W)`` video.
+
+### temporal(3)
+- `temporal_bandpass` (`video → video`) — Ideal temporal band-pass of every pixel's time series -> ``(T, H, W)``.
+- `temporal_band_power` (`video → image2d`) — Per-pixel mean-square power inside a temporal band -> ``(H, W)`` map.
+- `band_snr` (`video → table`) — Measure what a clip's temporal band contains, and what it costs -> ``dict``.
+
+## fullseye 四元数画像 op の統一レジストリ(opsquat)by category
+
+_計 19 ops / 7 categories。_
+
+### algebra(3)
+- `quat_conjugate_image` (`qimage → qimage`) — Per-pixel quaternion conjugate ``(w, -x, -y, -z)``. → (H, W, 4).
+- `quat_normalize_image` (`qimage → qimage`) — Per-pixel normalisation to unit modulus. → (H, W, 4).
+- `quat_image_multiply` (`qimage, qimage → qimage`) — Hamilton product of a quaternion image with a quaternion or a field. → (H, W, 4).
+
+### color(2)
+- `quat_color_rotate` (`qimage → qimage`) — Rotate every pixel's colour about an RGB axis: ``q x conj(q)``. → (H, W, 4).
+- `quat_color_filter` (`qimage → qimage`) — Keep or remove one colour direction, exactly. → (H, W, 4).
+
+### convert(3)
+- `rgb_to_quaternion` (`rgbimage → qimage`) — Embed a colour image as pure quaternions ``0 + R i + G j + B k``. → (H, W, 4).
+- `quaternion_to_rgb` (`qimage → rgbimage`) — Vector part of a quaternion image, as linear RGB. → (H, W, 3).
+- `quat_norm` (`qimage → image2d`) — Per-pixel quaternion modulus ``|q| = sqrt(w^2+x^2+y^2+z^2)``. → (H, W).
+
+### fourier(2)
+- `qft2` (`qimage → qimage`) — Quaternion (hypercomplex) 2-D Fourier transform. → (H, W, 4) centred spectrum.
+- `iqft2` (`qimage → qimage`) — Inverse quaternion Fourier transform of a **centred** spectrum. → (H, W, 4).
+
+### match(1)
+- `quat_correlate` (`qimage, qimage → qimage`) — Quaternion cross-correlation ``sum_s conj(a(s)) * b(s+t)``. → (H, W, 4).
+
+### motion(3)
+- `riesz_motion_magnify` (`video → table`) — Scale a clip's in-band motion by *alpha*, by the Riesz route. → dict.
+- `riesz_displacement` (`video → table`) — Sub-pixel displacement field from the monogenic phase. → dict.
+- `riesz_displacement_series` (`video → pairs`) — Whole-frame displacement waveform from the monogenic phase. → (T, 2).
+
+### riesz(5)
+- `riesz_transform` (`image2d → qimage`) — The 2-D Riesz transform of an image, as a pure quaternion field. → (H, W, 4).
+- `monogenic_signal` (`image2d → qimage`) — The monogenic signal of an image at one scale. → (H, W, 4).
+- `monogenic_amplitude` (`qimage → image2d`) — Local amplitude ``sqrt(f^2 + R1^2 + R2^2)`` of a monogenic signal. → (H, W).
+- `monogenic_phase` (`qimage → image2d`) — Local phase ``atan2(|R|, f)`` of a monogenic signal. → (H, W).
+- `monogenic_orientation` (`qimage → image2d`) — Local orientation ``atan2(R2, R1)`` of a monogenic signal. → (H, W).
+
+## fullseye コヒーレント測距 op の統一レジストリ(opsrangedoppler)by category
+
+_計 8 ops / 4 categories。_
+
+### beamform(2)
+- `beamform_delay_sum` (`beatcube → signal`) — Delay-and-sum (Bartlett) angle spectrum for one range-Doppler cell.
+- `beamform_doa` (`beatcube → table`) — Direction(s) of arrival for one range-Doppler cell, in degrees.
+
+### design(1)
+- `fmcw_design` (` → table`) — Bin widths, resolutions and aliasing limits of an FMCW configuration.
+
+### process(4)
+- `fmcw_window_apply` (`beatcube → beatcube`) — Apply a periodic window along the range and/or Doppler axis of a beat cube.
+- `range_doppler_map` (`beatcube → image2d`) — The 2-D FFT of a beat cube -> a ``(n_doppler, n_range)`` magnitude map.
+- `range_doppler_peaks` (`image2d → table`) — Detections from a range-Doppler map: bin indices back to metres and m/s.
+- `fmcw_range_profile` (`beatcube → signal`) — Range-only profile: the fast-time FFT magnitude, averaged over the rest.
+
+### simulate(1)
+- `fmcw_beat_simulate` (` → beatcube`) — Synthesise the complex ``(A, C, S)`` beat cube for known targets.
+
+## fullseye 音響状態監視・音響指標 op の統一レジストリ(opsacoustics)by category
+
+_計 20 ops / 6 categories。_
+
+### bearing(4)
+- `envelope_spectrum` (`signal → table`) — Band-pass, demodulate, transform — where a bearing defect actually shows.
+- `bearing_defect_frequencies` (` → table`) — The four characteristic rates of a rolling-element bearing, from geometry.
+- `spectral_kurtosis` (`signal → table`) — Which frequency band is impulsive — i.e. where to demodulate.
+- `cepstrum` (`signal → table`) — The spectrum of the log spectrum — periodic structure *in frequency*.
+
+### dual(3)
+- `coherence` (`signal, signal → table`) — Ordinary coherence: how much of ``y`` is linearly explained by ``x``.
+- `transfer_function` (`signal, signal → table`) — Estimate ``H(f)`` with ``x`` in and ``y`` out, with its coherence.
+- `gcc_delay` (`signal, signal → measurement`) — 2 チャンネルの**到達時間差**を一般化相互相関(GCC)で測る。→ ``(delay, table)``。
+
+### level(6)
+- `octave_bands` (` → table`) — Fractional-octave band centres and edges, from the defining construction.
+- `octave_spectrum` (`signal → table`) — Band levels in dB, summed over fractional-octave bands by Parseval.
+- `weighting_response` (`signal → signal`) — The A / C / Z frequency-weighting curve, in dB, at the given frequencies.
+- `apply_weighting` (`signal → signal`) — Apply an A / C / Z frequency weighting to a signal, zero-phase.
+- `equivalent_level` (`signal → measurement`) — The energy-equivalent level of a record, in dB relative to ``ref``.
+- `percentile_level` (`signal → table`) — Statistical levels: ``L_N`` is the level exceeded ``N`` % of the time.
+
+### order(2)
+- `angular_resample` (`signal → table`) — Resample a time record onto the shaft-angle axis (computed order tracking).
+- `order_spectrum` (`signal → table`) — Amplitude against shaft order — the spectrum a run-up should be read in.
+
+### synthesis(2)
+- `synthesize_bearing_signal` (` → signal`) — A resonance amplitude-modulated at a known defect rate — the ground truth.
+- `synthesize_speed_ramp` (` → table`) — A run-up: components locked to shaft *order*, optionally one fixed in Hz.
+
+### transform(3)
+- `stft` (`signal → table`) — Short-time Fourier transform that keeps the phase and can be inverted.
+- `istft` (`table → signal`) — Invert :func:`stft` by weighted overlap-add — exactly.
+- `stft_cola_check` (` → table`) — Does this (window, hop) pair satisfy COLA, and how exactly?
+
+## fullseye コヒーレンス走査干渉・クロマティック共焦点 op の統一レジストリ(opsinterferometry)by category
+
+_計 9 ops / 6 categories。_
+
+### chromatic(1)
+- `chromatic_confocal_height` (`sweep → measurement`) — Surface height from one confocal return spectrum — the wavelength *is* the height.
+
+### design(1)
+- `csi_design` (` → table`) — The axial limits of a coherence-scanning setup, from the source spectrum.
+
+### envelope(1)
+- `csi_envelope` (`sweep → signal`) — Coherence envelope of a z-scan interferogram (analytic-signal magnitude).
+
+### locate(1)
+- `csi_peak_position` (`sweep → measurement`) — Surface height from one z-scan: the position of the coherence envelope peak.
+
+### simulate(3)
+- `csi_signal_simulate` (` → sweep`) — Synthesise the z-scan interferogram of one pixel over a known surface height.
+- `csi_stack_simulate` (`depth → zscan`) — Synthesise the ``(Z, H, W)`` scan stack an interference microscope records.
+- `chromatic_confocal_simulate` (` → sweep`) — Synthesise the confocal return spectrum of a surface at a known height.
+
+### surface(2)
+- `csi_height_map` (`zscan → depth`) — Height map from a ``(Z, H, W)`` coherence-scanning stack — the CSI inversion.
+- `csi_contrast_map` (`zscan → image2d`) — Peak fringe modulation per pixel — the contrast (and validity) map.
+
+## fullseye ハエ視覚経路(視葉)op の統一レジストリ(opsflyvision)by category
+
+_計 8 ops / 7 categories。_
+
+### integrate(1)
+- `fly_hs_readout` (`matrix, table → measurement`) — Horizontal-system wide-field readout: opponent sum over the upper field.
+
+### lattice(1)
+- `fly_hex_lattice` (` → table`) — Hexagonal ommatidial lattice: viewing directions of a compound eye.
+
+### looming(2)
+- `fly_lgmd_eta` (`signal → signal`) — LGMD/eta looming response from an expanding subtended angle.
+- `fly_tau_from_expansion` (`signal → signal`) — Time-to-contact from optical expansion — the tau margin.
+
+### motion(1)
+- `fly_emd_response` (`signal, signal → signal`) — Hassenstein-Reichardt correlator between two adjacent ommatidial signals.
+
+### sample(1)
+- `fly_hex_resample` (`image2d, table → signal`) — Resample a pinhole image onto an ommatidial lattice (the eye's view).
+
+### stimulus(1)
+- `fly_sky_1f` (` → image2d`) — Synthetic equirectangular sky panorama with a banded 1/f azimuthal texture.
+
+### tuning(1)
+- `fly_dsi` (`signal → table`) — Direction-selectivity index and preferred direction from tuning responses.
+
+## fullseye statistical-process-control op registry.(opsspc)by category
+
+_計 4 ops / 4 categories。_
+
+### capability(1)
+- `spc_capability` (`signal → table`) — Process capability indices Cp and Cpk from measurements and spec limits.
+
+### change(1)
+- `spc_cusum` (`signal → table`) — Tabular CUSUM chart for individual measurements.
+
+### chart(1)
+- `spc_xbar_r` (`matrix → table`) — Shewhart Xbar-R control chart from subgroup measurements.
+
+### multivariate(1)
+- `spc_hotelling_t2` (`matrix → table`) — Multivariate SPC by Hotelling's T² with an F-distributed control limit.
+
+## fullseye 断層撮影(平行ビーム CT)op の統一レジストリ(opstomography)by category
+
+_計 17 ops / 6 categories。_
+
+### artifact(5)
+- `beam_hardening_apply` (`sinogram → sinogram`) — Turn a monochromatic sinogram into a **polychromatic** one — cupping.
+- `beam_hardening_correct` (`sinogram → sinogram`) — Undo cupping — either the exact model inverse, or a calibrated polynomial.
+- `ring_artifact_apply` (`sinogram → sinogram`) — Give the detector a per-bin gain error — the source of ring artefacts.
+- `ring_artifact_remove` (`sinogram → sinogram`) — Remove per-detector-bin offsets by flattening the angle-averaged profile.
+- `metal_trace_interpolate` (`sinogram → sinogram`) — Linear-interpolation metal artefact reduction (LI-MAR).
+
+### forward(3)
+- `ellipse_phantom` (` → image2d`) — Rasterise a sum of uniform ellipses onto a *size* x *size* slice.
+- `ellipse_sinogram` (` → sinogram`) — The **closed-form** Radon transform of a sum of uniform ellipses.
+- `radon_transform` (`image2d → sinogram`) — Forward parallel-beam projection: a slice in, a **sinogram** out.
+
+### geometry(2)
+- `sinogram_center_of_rotation` (`sinogram → measurement`) — Where the axis of rotation actually is, in detector bins from the centre.
+- `sinogram_center_shift` (`sinogram → sinogram`) — Re-centre a sinogram on its axis of rotation.
+
+### layout(2)
+- `projection_angles` (` → signal`) — The angle sequence of a scan, in **degrees**, as a 1-D float64 array.
+- `sinogram_design` (` → table`) — What a scan geometry can and cannot resolve — **before** anything is built.
+
+### reconstruct(3)
+- `backproject_sinogram` (`sinogram → image2d`) — Plain, **un-filtered** back-projection — the blurred baseline.
+- `filtered_backprojection` (`sinogram → image2d`) — Filtered back-projection (FBP) — the standard CT reconstruction.
+- `sart_reconstruct` (`sinogram → image2d`) — SART — simultaneous algebraic reconstruction, one angle at a time.
+
+### volume(2)
+- `radon_volume` (`voxel → sinostack`) — Project every slice of a ``(Z, H, W)`` volume -> a ``(Z, A, D)`` stack.
+- `fbp_volume` (`sinostack → voxel`) — Reconstruct every sinogram of a ``(Z, A, D)`` stack -> a ``(Z, S, S)`` volume.
+
+## fullseye **ボクセルのラベル色分け** op の統一レジストリ(opsvolcolor)by category
+
+_計 11 ops / 7 categories。_
+
+### colorize(2)
+- `vol_colorize_labels` (`labels → rgbvolume`) — 3-D ラベルボリューム -> ``(D, H, W, 3)`` float64 の RGB ボリューム。
+- `vol_label_overlay` (`voxel, labels → rgbvolume`) — 元のグレーボリュームに色ラベルを重ねた ``(D, H, W, 3)`` を返す。
+
+### diagnose(1)
+- `vol_label_color_flicker` (`voxel → table`) — 「切ってから色を付ける」と「色を付けてから切る」の差を**数える**。
+
+### measure(2)
+- `vol_label_shape_stats` (`labels → table`) — 成分ごとの**線形時間で出せる**定量値(体積・重心・箱・主成分形状指標)。
+- `vol_label_legend` (`labels → table`) — 「どの色がどの成分で、その計測値は幾つか」の凡例表を返す。
+
+### palette(1)
+- `vol_label_palette` (` → matrix`) — ラベル ``0..n_labels`` の RGB パレット ``(n_labels + 1, 3)`` float64。
+
+### render(2)
+- `vol_labels_to_meshes` (`labels → table`) — 成分ごとに marching cubes をかけ、**色付きメッシュの集合**にする。
+- `vol_label_volume_render` (`labels → rgbimage`) — 色付きラベルの**合成投影** ``(H, W, 3)`` を numpy だけで作る。
+
+### select(1)
+- `vol_select_labels` (`labels → labels`) — 3-D の特徴で成分をふるいにかける(2-D のブロブ選別の 3-D 版)。
+
+### slice(2)
+- `vol_label_slice_rgb` (`rgbvolume → rgbimage`) — 色付きボリュームから 1 枚の断面 RGB を取り出す(axial / coronal / sagittal)。
+- `vol_label_mpr_rgb` (`rgbvolume → rgbimage`) — 色付きボリュームの直交 3 断面を **1 枚の RGB** に並べた図を返す。
+
+## fullseye 表現変換 op の統一レジストリ(reprconv.py の台帳)(opsreprconv)by category
+
+_計 42 ops / 10 categories。_
+
+### algebra(11)
+- `angle_to_matrix` (`angle → matrix`) — 角度 **[度]** → z 軸まわりの回転行列 ``matrix (3,3)``。``angle`` の出口。
+- `matrix_to_angle` (`matrix → angle`) — z 軸まわりの回転行列 → 角度 **[度]**。:func:`angle_to_matrix` の逆。
+- `rot_scale_to_matrix` (`rot_scale → matrix`) — ``(角度[度], 倍率)`` → 2-D 相似変換 ``matrix (2,2)``。``rot_scale`` の出口。
+- `matrix_to_rot_scale` (`matrix → rot_scale`) — 2-D 相似変換 ``(2,2)`` → ``(角度[度], 倍率)``。:func:`rot_scale_to_matrix` の逆。
+- `shift_to_vector` (`shift → vector`) — 整数シフト ``(dz, dy, dx)`` → ``vector (3,)``。``shift`` の出口(**可逆**)。
+- `vector_to_shift` (`vector → shift`) — ``vector (3,)`` → 整数シフト ``(dz, dy, dx)``。:func:`shift_to_vector` の逆向き。
+- `cscalar_to_polar` (`cscalar → pairs`) — 複素スカラ → 極形式 ``pairs (1,2) = [|z|, arg z[度]]``。``cscalar`` の出口。
+- `polar_to_cscalar` (`pairs → cscalar`) — 極形式 ``pairs (1,2) = [r, theta[度]]`` → 複素スカラ。:func:`cscalar_to_polar` の逆。
+- `countrate_to_counts` (`countrate → counts`) — 計数レート ``[Hz]`` → 計数 ``counts``。``countrate`` の出口(**可逆**)。
+- `counts_to_countrate` (`counts → countrate`) — 計数 → 計数レート ``[Hz]``。:func:`countrate_to_counts` の逆。
+- `deformation_to_points` (`deformation → points`) — TPS 変形 ``deformation`` → 制御点 ``points (N,3)``。``deformation`` の出口。
+
+### curvature(3)
+- `curvature_to_shape_index` (`curvature → pairs`) — 主曲率 ``(N,2)`` → 形状指数と曲がり ``(N,2)`` の ``pairs``。``curvature`` の出口。
+- `shape_index_to_curvature` (`pairs → curvature`) — 形状指数と曲がり ``(N,2)`` → 主曲率 ``(N,2)``。:func:`curvature_to_shape_index` の逆。
+- `curvature_to_table` (`curvature → table`) — 曲率 → 分布の要約 ``table``。**一方向**(統計は情報を捨てるのが仕事)。
+
+### descriptor(3)
+- `descriptor_to_matrix` (`descriptor → matrix`) — 記述子 → ``matrix``。``descriptor`` の出口(**可逆**)。
+- `matrix_to_descriptor` (`matrix → descriptor`) — ``matrix`` → 記述子。:func:`descriptor_to_matrix` の逆。
+- `descriptor_to_table` (`descriptor → table`) — 記述子 → 要約 ``table``。**一方向**。
+
+### direction(3)
+- `normals_to_angles` (`normals → pairs`) — 法線 ``(N,3)`` → 方位・仰角の対 ``(N,2)`` **[度]**。``normals`` の出口。
+- `angles_to_normals` (`pairs → normals`) — 方位・仰角の対 ``(N,2)`` **[度]** → 単位法線 ``(N,3)``。``pairs`` の出口。
+- `normals_to_egi` (`normals → image2d`) — 法線 ``(N,3)`` → 拡張ガウス像 ``(n_el, n_az)`` の ``image2d``。
+
+### flow(4)
+- `flow_magnitude` (`flow_dense → voxel`) — 密なシーンフロー ``(3,D,H,W)`` → 速さの体積 ``voxel (D,H,W)``。``flow`` の出口。
+- `flow_to_rgbimage` (`flow_dense → rgbimage`) — 密なシーンフローの 1 スライス → 色相=向き・明度=速さの ``rgbimage``。
+- `flow_speed` (`flow_scattered → signal`) — 散在フロー ``(N,3)`` → 速さの ``signal`` ``(N,)``。散在 ``flow`` の出口。
+- `flow_apply` (`points, flow_scattered → points`) — 点群 ``(N,3)`` に散在フロー ``(N,3)`` を足す → ``points``。``flow`` の消費側。
+
+### gaussians(3)
+- `points_to_gaussians` (`points → gaussians`) — 点群 ``(N,3)`` → 等方ガウシアン ``gaussians``。**この型の唯一の入口**。
+- `gaussians_to_points` (`gaussians → points`) — ``gaussians`` → 中心の点群 ``(N,3)``。``gaussians`` の出口(**中心は可逆**)。
+- `gaussians_to_voxel` (`gaussians → voxel`) — ``gaussians`` → 密度 ``voxel (D,H,W)``。``gaussians`` の 2 つ目の出口。
+
+### index(3)
+- `indices_to_labels` (`indices → labels`) — 添字 ``(N,)`` → 選択マスク ``labels``。``indices`` の出口(**可逆**)。
+- `labels_to_indices` (`labels → indices`) — ``labels`` → 非背景の添字 ``(N,)``。:func:`indices_to_labels` の逆向き。
+- `select_points` (`points, indices → points`) — 点群 ``(N,3)`` と添字 ``(M,)`` → 部分点群 ``(M,3)``。``indices`` の消費側。
+
+### keypoint(6)
+- `keypoints_uv_to_points` (`keypoints → points`) — 画像座標 ``(N,2) = (u, v)`` → 点群 ``(N,3) = (z, y, x)``。``keypoints`` の出口。
+- `points_zyx_to_keypoints_uv` (`points → keypoints`) — 点群 ``(N,3) = (z, y, x)`` → 画像座標 ``(N,2) = (u, v)``。
+- `keypoints_to_image2d` (`keypoints → image2d`) — 画像座標 ``(N,2) = (u, v)`` → 計数画像 ``(H, W)``。``keypoints`` の 2 つ目の出口。
+- `keypoints_from_image2d` (`image2d → keypoints`) — 計数/応答画像 ``(H, W)`` → 画像座標 ``(N,2) = (u, v)``。往復の戻り路。
+- `position_to_points` (`position → points`) — 位置 ``(z, y, x)`` → 1 点の点群 ``(1, 3)``。``position`` の出口(**可逆**)。
+- `points_to_position` (`points → position`) — 点群 ``(N,3)`` → 重心 ``(z, y, x)``。**不可逆**(分布を捨てる)。
+
+### pairs(3)
+- `pairs_to_signal` (`pairs → signal`) — 対 ``(N,2)`` → 従属変数の ``signal`` ``(N,)``。``pairs`` の 2 つ目の出口。
+- `pairs_to_image2d` (`pairs → image2d`) — 対 ``(N,2)`` → 散布密度画像 ``(H, W)``。``pairs`` の 3 つ目の出口。
+- `pairs_to_table` (`pairs → table`) — 対 ``(N,2)`` → 要約 ``table``。**一方向**。
+
+### score(3)
+- `correlation_score` (`voxel, voxel → score`) — 2 つの ``voxel`` → 正規化相互相関の ``score`` volume。**この型の唯一の入口**。
+- `score_to_position` (`score → position`) — ``score`` volume → 最大値の位置 ``position (z, y, x)``。``score`` の出口。
+- `score_to_image2d` (`score → image2d`) — ``score`` volume → 最大値投影 ``image2d``。``score`` の 2 つ目の出口。
+
+## fullseye「画像 → CAD 面」逆写像 op の統一レジストリ(opscadmap)by category
+
+_計 4 ops / 4 categories。_
+
+### defect(1)
+- `cad_defect_to_cad` (`mesh, labels → table`) — 2-D の欠陥ラベル画像 → **CAD 面上の表**(面 ID / 面上の面積 / 3-D 重心)。
+
+### project(1)
+- `cad_surface_to_pixel` (`mesh, points → table`) — 3-D 点 (N,3) → 画素 + **可視性**(遮蔽・背面・画枠外を区別して返す)。
+
+### raycast(1)
+- `cad_pixel_to_surface` (`mesh, keypoints → table`) — 画素 (N,2) → CAD 面上の ``(face_id, 重心座標, 3-D 点)``(閉形式)。
+
+### visibility(1)
+- `cad_visible_faces` (`mesh → indices`) — このカメラから**実際に見えている**面の ID(昇順、``indices`` sort)。
+
+## 図注(annotate)op の統一レジストリ(台帳)(opsannotate)by category
+
+_計 51 ops / 8 categories。_
+
+### compose(3)
+- `zoom_inset` (`image2d → image2d`) — 拡大の差し込み ―― 元図に**枠**と**引き出し線**を付ける。
+- `compare_frame` (`image2d, image2d → image2d`) — 2 枚を並べ、境界に**仕切り**と**ラベル**を置く。
+- `panel_grid` (`image2d → image2d`) — パネルを格子に並べ、各枠の下にラベルを敷く(montage / contact sheet)。
+
+### furniture(3)
+- `legend_box` (`image2d, entries → image2d`) — 色 × 説明の凡例。**箱の高さは要素数から閉形式で決まる**。
+- `color_bar` (`image2d, lut → image2d`) — LUT の凡例(カラーバー)。最小・最大・単位のラベルつき。
+- `scale_bar` (`image2d → image2d`) — 物理長のスケールバー。**画素↔物理の換算は引数で受ける**(勝手に決めない)。
+
+### overlay(5)
+- `overlay_mask` (`image2d, mask → image2d`) — 2 値マスクを α で重ねる。**厳密に ``a*f + (1-a)*b``**。
+- `overlay_labels` (`image2d, labels → image2d`) — 色ラベル図を α で重ねる。**同じラベル番号には常に同じ色**。
+- `annotate_invert_visibility` (`image2d, mask → table`) — 反転色が**その地の上で本当に見えるか**を、描く前に測る。
+- `annotate_invert` (`image2d, mask → image2d`) — 領域(region)を**反転色**で塗る/縁取る。
+- `annotate_invert_path` (`image2d, pairs → image2d`) — 折れ線(line)を**反転色**で描く。アンチエイリアスつき。
+
+### paper(23)
+- `annotate_leader_layout` (` → table`) — table(dict)を返す: 引き出し線の配置(肘・文字位置・板の矩形)を閉形式で決める。
+- `annotate_leader` (`image2d → image2d`) — 画像(image2d)を返す: 肘つき引き出し線 + 文字(複数点の衝突回避つき)。
+- `annotate_markers` (`image2d → image2d`) — 画像(image2d)を返す: 番号(または短い文字)入りの丸いマーカーを各点に置く。
+- `annotate_legend` (`image2d → image2d`) — 画像(image2d)を返す: 番号つき丸マーカー × 説明の凡例(:func:`annotate_markers` の対)。
+- `annotate_dimension_layout` (` → table`) — table(dict)を返す: 寸法線の幾何(寸法線・補助線・文字位置)を閉形式で決める。
+- `annotate_dimension` (`image2d → image2d`) — 画像(image2d)を返す: 寸法線(両端矢じり + 補助線 + 値と単位)。
+- `annotate_angle_layout` (` → table`) — table(dict)を返す: 3 点 ``a, vertex, b`` のなす角(小さい方)の弧と文字位置。
+- `annotate_angle` (`image2d → image2d`) — 画像(image2d)を返す: 3 点のなす角を弧と値で示す(必要なら 2 本の腕も)。
+- `annotate_scale_bar_layout` (` → table`) — table(dict)を返す: 画像幅の ``target_fraction`` 以下で**切りのよい**長さのバー。
+- `annotate_scale_bar` (`image2d → image2d`) — 画像(image2d)を返す: 隅に置く切りのよい長さのスケールバー(値と単位つき)。
+- `annotate_orientation` (`image2d → image2d`) — 画像(image2d)を返す: 方位(北)や向きを示す矢印 + 文字。
+- `annotate_inset_layout` (` → table`) — table(dict)を返す: 拡大差し込みの置き場所と倍率を閉形式で決める。
+- `annotate_inset` (`image2d → image2d`) — 画像(image2d)を返す: 元枠の拡大を隅に差し込み、対応する角を線で結ぶ。
+- `annotate_outline_layout` (`mask → table`) — table(dict)を返す: 2 値マスクの境界ループ(画素の辺に沿う閉多角形)と重心。
+- `annotate_outline` (`image2d, mask → image2d`) — 画像(image2d)を返す: マスクの輪郭を(AA の)閉折れ線で描き、重心に文字を置く。
+- `annotate_text_path_layout` (`text → table`) — table(dict)を返す: 折れ線に沿って 1 文字ずつ置く位置と傾き(弧長で決める)。
+- `annotate_text_path` (`image2d, text → image2d`) — 画像(image2d)を返す: 折れ線に沿って文字を置く(各字を接線角に回転)。
+- `annotate_table_layout` (`text → table`) — table(dict)を返す: タブ区切りの文字列を**表**として置く桁と行の位置。
+- `annotate_table` (`image2d, text → image2d`) — 画像(image2d)を返す: タブ区切りの文字列を**表**として描く(半透明の板つき)。
+- `annotate_colorbar` (`image2d, image2d → image2d`) — 画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。
+- `annotate_panel_label` (`image2d → image2d`) — 画像(image2d)を返す: パネル文字 ``(a)``/``(b)`` を隅に置く。
+- `annotate_figure_grid_layout` (` → table`) — table(dict)を返す: 多パネル図の組版(セル・パネル・見出し帯の矩形)を閉形式で。
+- `annotate_figure_grid` (`images → image2d`) — 画像(image2d)を返す: 画像 + 見出しを一枚の図に組む(余白一定・パネル文字つき)。
+
+### plot(7)
+- `axes_transform` (` → axes`) — データ座標 → 画素座標の対応(**閉形式**)を作る。
+- `data_to_pixel` (`axes, signal, signal → pairs`) — :func:`axes_transform` の対応でデータ点を画素 (x,y) に写す。
+- `nice_ticks` (` → signal`) — [lo, hi] を覆う「切りのよい」目盛り値(1/2/5 × 10^k、**閉形式**)。
+- `axes_frame` (`image2d, axes → image2d`) — 軸の枠(``box=True`` で四辺、False で左と下の 2 辺だけ)。
+- `grid_lines` (`image2d, axes → image2d`) — 格子。目盛り値を渡さなければ :func:`nice_ticks` が決める。
+- `ticks` (`image2d, axes → image2d`) — 目盛りとその数値。**位置は閉形式**(:func:`data_to_pixel` そのもの)。
+- `plot_series` (`image2d, axes, signal, signal → image2d`) — 折れ線・散布・棒を描く。**データ座標**で受ける(画素は axes が決める)。
+
+### pointer(4)
+- `arrow` (`image2d → image2d`) — ``p0`` から ``p1`` へ矢印(軸は :func:`imagedraw.draw_line`、矢じりは塗り)。
+- `leader_line` (`image2d, text → image2d`) — 引き出し線 —— 注記の位置(``anchor_xy``)から対象(``target_xy``)へ。
+- `label_points` (`image2d, pairs → image2d`) — 点群に番号や値を振る。**重なりを避けて置く**(避けられなければ例外)。
+- `crosshair` (`image2d → image2d`) — 断面の交差線(MPR で使う)。``gap`` だけ中心を空けて視点を隠さない。
+
+### shape(4)
+- `rounded_rect` (`image2d → image2d`) — 角丸の矩形(``fill=True`` で塗り)。下敷きや囲みに使う。
+- `filled_polygon` (`image2d, pairs → image2d`) — 多角形の塗り(偶奇規則の交差判定 ―― :mod:`imagedraw` は輪郭のみ)。
+- `arc` (`image2d → image2d`) — 円弧。角度は**画面の x 軸から時計回り**(row が下向きだから)で度。
+- `ellipse` (`image2d → image2d`) — 楕円(``angle_deg`` で回転、``fill=True`` で塗り)。
+
+### text(2)
+- `measure_text` (`text → table`) — 文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。
+- `text_box` (`image2d, text → image2d`) — 下敷き(半透明の板)つきの文字。**はみ出しは黙って切らず例外**。
+
+## fullseye リアルタイム 2-D グラフィックス op の統一レジストリ(opsgfx2d)by category
+
+_計 32 ops / 8 categories。_
+
+### camera(1)
+- `viewport` (`rgb → rgb`) — Crop the rectangle at ``(x, y, width, height)`` and resample it by ``scale``.
+
+### colorspace(2)
+- `srgb_to_linear` (`rgb → rgb`) — sRGB-encoded values to linear light (IEC 61966-2-1).
+- `linear_to_srgb` (`rgb → rgb`) — Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`.
+
+### composite(6)
+- `premultiply` (`rgba → rgba_premul`) — Straight-alpha ``rgba`` to **premultiplied** ``rgba``: ``(C*A, A)``.
+- `unpremultiply` (`rgba_premul → rgba`) — **Premultiplied** ``rgba`` back to straight alpha: ``(C/A, A)``.
+- `alpha_composite` (`rgba, rgba → rgba`) — Porter–Duff **over** on straight-alpha ``rgba`` (Porter & Duff 1984).
+- `alpha_composite_premul` (`rgba_premul, rgba_premul → rgba_premul`) — Porter–Duff **over** on premultiplied colour: ``src + dst*(1 - src.a)``.
+- `blend_mode` (`rgb, rgb → rgb`) — Blend two opaque ``rgb`` images with a named mode (W3C Level 1).
+- `layer_stack` (`table → rgba`) — Composite a z-ordered list of ``rgba`` layers, bottom first.
+
+### light(5)
+- `radial_light` (` → rgb`) — A radial light map, ``rgb`` ``(H, W, 3)``, centred on ``(x, y)``.
+- `light_mask` (`rgb, rgb → rgb`) — Modulate an ``rgb`` image by an ``rgb`` light map: ``base * (ambient + light)``.
+- `normal_map_decode` (`rgb → normalmap`) — Tangent-space normal map ``rgb`` in ``[0, 1]`` to unit vectors ``(H, W, 3)``.
+- `normal_map_shade` (`normalmap → rgb`) — Shade a 2-D normal map with one directional light (Lambert + Blinn 1977).
+- `shadow_cast_2d` (`image2d → image2d`) — Visibility of every pixel from a point light at ``(x, y)``, as ``image2d``.
+
+### particle(3)
+- `particle_emit` (` → table`) — Emit ``count`` particles from ``origin``, deterministically from ``seed``.
+- `particle_step` (`table → table`) — Advance a particle state by ``dt`` seconds. Returns a **new** dict.
+- `particle_render` (`table → rgba`) — Splat a particle state into an ``rgba`` image.
+
+### post(8)
+- `bloom` (`rgb → rgb`) — Bleed the bright parts of an image into their neighbourhood.
+- `vignette` (`rgb → rgb`) — Darken towards the corners: ``out = rgb * (1 - strength * t**power)``.
+- `chromatic_aberration` (`rgb → rgb`) — Scale the red and blue channels about the image centre, green fixed.
+- `film_grain` (`rgb → rgb`) — Add zero-mean Gaussian grain, deterministically from ``seed``.
+- `color_lut` (` → lut`) — Build a 3-D colour LUT, ``(n, n, n, 3)`` indexed ``[r, g, b]``.
+- `color_grade` (`rgb, lut → rgb`) — Apply a 3-D colour LUT to an ``rgb`` image by trilinear interpolation.
+- `dither` (`image2d → image2d`) — Quantise to ``levels`` values per channel while preserving the local mean.
+- `palette_quantize` (`rgb → rgb`) — Map every pixel to its nearest palette colour in Euclidean RGB.
+
+### sprite(5)
+- `sprite_synthesize` (` → rgba`) — A deterministic anti-aliased test sprite, ``rgba`` ``(size, size, 4)``.
+- `sprite_blit` (`rgba, rgba → rgba`) — Composite ``sprite`` onto a copy of ``dst`` at integer ``(x, y)``.
+- `sprite_transform` (`rgba → rgba`) — Rotate and/or scale an ``rgba`` sprite about its centre.
+- `sprite_sheet_slice` (`rgba → sprites`) — Cut a sprite atlas into a list of equal ``rgba`` frames, row-major.
+- `nine_slice` (`rgba → rgba`) — Stretch a frame to a new size without deforming its corners.
+
+### tile(2)
+- `tilemap_render` (`sprites → rgba`) — Paint a grid of tile indices into one ``rgba`` image.
+- `parallax_layers` (`sprites → rgba`) — Scroll a set of ``rgba`` layers at different rates and composite them.
+
+## **2 枚の絵の差を測る** op の統一レジストリ(opsimgmetrics)by category
+
+_計 24 ops / 6 categories。_
+
+### colordiff(3)
+- `delta_e_2000` (`lab, lab → image2d`) — 
+- `delta_e_76` (`lab, lab → image2d`) — 
+- `delta_e_map` (`rgbimage, rgbimage → image2d`) — 
+
+### colorspace(4)
+- `rgb_to_lab` (`rgbimage → lab`) — 
+- `lab_to_rgb` (`lab → rgbimage`) — 
+- `rgb_to_xyz` (`rgbimage → rgb`) — 
+- `xyz_to_lab` (`rgb → lab`) — 
+
+### compression(2)
+- `compressed_size` (`image2d → scalar`) — 
+- `ncd` (`image2d, image2d → scalar`) — 
+
+### fidelity(6)
+- `mse` (`image2d, image2d → scalar`) — 
+- `rmse` (`image2d, image2d → scalar`) — 
+- `psnr` (`image2d, image2d → scalar`) — 
+- `ssim` (`image2d, image2d → scalar`) — 
+- `ms_ssim` (`image2d, image2d → scalar`) — 
+- `ssim_map` (`image2d, image2d → image2d`) — 
+
+### information(5)
+- `image_entropy` (`image2d → scalar`) — 
+- `joint_entropy` (`image2d, image2d → scalar`) — 
+- `mutual_information` (`image2d, image2d → scalar`) — 
+- `normalized_mutual_information` (`image2d, image2d → scalar`) — 
+- `joint_histogram` (`image2d, image2d → image2d`) — 
+
+### report(4)
+- `compare_images` (`image2d, image2d → metrics`) — 
+- `measure_with` (`metrics, image2d, image2d → metrics`) — 
+- `metrics_table` (`metrics → table`) — 
+- `data_range_of` (`image2d → scalar`) — 
+
+## **分布を運ぶ** op の統一レジストリ(opscolortransport)by category
+
+_計 11 ops / 4 categories。_
+
+### blend(1)
+- `poisson_blend` (`image2d, image2d, mask → image2d`) — 
+
+### matching(3)
+- `histogram_match` (`image2d, image2d → image2d`) — 
+- `color_transfer` (`rgbimage, rgbimage → rgbimage`) — 
+- `gaussian_transport_map` (`points, points → matrix`) — 
+
+### plan_use(2)
+- `transport_cost` (`transport_plan, matrix → scalar`) — 
+- `apply_transport` (`transport_plan, signal → signal`) — 
+
+### transport(5)
+- `wasserstein_1d` (`signal, signal → scalar`) — 
+- `transport_plan_1d` (`signal, signal → transport_plan`) — 
+- `sinkhorn` (`signal, signal, matrix → transport_plan`) — 
+- `sinkhorn_distance` (`signal, signal, matrix → scalar`) — 
+- `sinkhorn_divergence` (`signal, signal, matrix → scalar`) — 
+
+## fullseye **画像フォレンジック** op の統一レジストリ(:mod:`imgforensics` の台帳)(opsimgforensics)by category
+
+_計 16 ops / 7 categories。_
+
+### calibration(2)
+- `null_distribution` (`signal → table`) — **改竄が無い**と分かっている標本から、証拠量の帰無分布をまとめる。
+- `evidence_quantile` (`measurement, table → table`) — 証拠量が、清浄な分布の**どのあたりに座るか**を返す。判定は返さない。
+
+### compression(4)
+- `error_level_map` (`image2d → image2d`) — ELA(誤差レベル解析)。指定品質で **再圧縮した差分**の地図を返す。``image2d``。
+- `jpeg_quality_estimate` (`image2d → table`) — デコード済み画像から **量子化表と JPEG 品質をブラインド推定**する。``table``。
+- `jpeg_ghost_map` (`image2d → images`) — JPEG ゴースト(Farid 2009)。品質を掃引した **再圧縮残差の地図の列**。``images``。
+- `jpeg_ghost_quality` (`images → image2d`) — ゴースト地図の列 → 画素ごとに **残差が最小になる品質** の地図。``image2d``。
+
+### copy_move(1)
+- `copy_move_regions` (`image2d → table`) — 1 枚の画像の中の **コピー&ムーブ**(自己複製)領域の対を返す。``table``。
+
+### hash(2)
+- `perceptual_hash` (`image2d → phash`) — 知覚ハッシュ(perceptual hash)。**bool の 1-D ビット列**を返す。
+- `hash_distance` (`phash, phash → measurement`) — 2 つの知覚ハッシュのハミング距離(異なるビット数)。
+
+### noise(1)
+- `noise_inconsistency_map` (`image2d → image2d`) — ブロックごとの **雑音標準偏差** を並べた地図。``image2d``。
+
+### sensor(3)
+- `sensor_fingerprint` (`images → fingerprint`) — 複数枚から **PRNU センサ指紋** K を最尤推定する(Chen et al. 2008)。
+- `fingerprint_correlate` (`image2d, fingerprint → table`) — 1 枚の画像を指紋に照合する。**判定は返さない** —— 証拠量と注意書きを返す。
+- `fingerprint_strength_map` (`fingerprint → image2d`) — 指紋の **ブロックごとの実効強度**(標準偏差)を並べた地図。``image2d``。
+
+### watermark(3)
+- `watermark_embed` (`image2d, phash → image2d`) — DWT-DCT **電子透かし**の埋め込み。透かし入り画像 ``(H, W)`` を返す。``image2d``。
+- `watermark_extract` (`image2d → phash`) — 透かしの **ブラインド抽出**。bool の 1-D(``phash`` 語彙)を返す。
+- `watermark_capacity` (`image2d, phash → table`) — 埋め込み強度と **PSNR / BER** のトレードオフを掃引して返す。``table``。
+
+## fullseye 天体写真スタッキング op の統一レジストリ(opsastrostack)by category
+
+_計 14 ops / 6 categories。_
+
+### align(2)
+- `frame_align` (`image2d, image2d → matrix`) — 星の対応から ``frame`` → ``reference`` の 2-D 変換を推定する。
+- `align_frames` (`images → images`) — フレーム列を 1 枚の基準へ重ね合わせる。
+
+### cosmic(2)
+- `cosmic_ray_reject` (`image2d → image2d`) — 単一フレームの宇宙線除去(ラプラシアン鋭度)。
+- `cosmic_ray_reject_stack` (`images → images`) — フレーム間比較による宇宙線除去 —— **同じ場所に二度は当たらない**。
+
+### photometry(3)
+- `star_detect` (`image2d → keypoints`) — 星を検出して ``(row, col)`` の重心列を返す。
+- `psf_fit` (`image2d, keypoints → table`) — 星像に PSF を当てはめて中心と FWHM を出す。
+- `aperture_photometry` (`image2d, keypoints → table`) — 円形開口 + 環状背景の測光(古典的な CCD 測光)。
+
+### quality(3)
+- `frame_quality` (`image2d → table`) — 1 枚の品質を数える —— 鋭さ・FWHM・背景・真円度、そして選別用の点。
+- `lucky_select` (`images → indices`) — 品質点の上位 ``keep_fraction`` だけを採る —— lucky imaging の選別。
+- `noise_sigma` (`image2d → measurement`) — 背景の雑音 sigma を頑健に推定する(星に汚されない一つの実数)。
+
+### stack(2)
+- `sigma_clip_stack` (`images → image2d`) — フレーム列を合成する(平均 / 中央値 / κ-σ クリップ)。採否マスクつき。
+- `drizzle_resample` (`images → image2d`) — Drizzle —— 副画素でずれた複数フレームから細かい格子を作る(面積保存)。
+
+### synth(2)
+- `synth_starfield` (` → image2d`) — 既知の星野を 1 枚合成する —— **この族の正解の供給源**。
+- `synth_frame_series` (` → images`) — 同じ星野を ``n_frames`` 枚、**別々のノイズと別々のディザ**で撮り直す。
+
+## fullseye ストリーミング動画処理 op の統一レジストリ(opsvideostream)by category
+
+_計 16 ops / 8 categories。_
+
+### analysis(1)
+- `scene_cut_detection` (`video → table`) — Shot-boundary chi-square histogram distance over a clip → ``{"distance", "cut", "n"}`` (``table``).
+
+### background(2)
+- `running_gaussian_foreground` (`video → video`) — Adaptive single-Gaussian foreground masks per frame → 0/1 ``(T, H, W)`` (``video``).
+- `running_gaussian_background` (`video → video`) — Adaptive single-Gaussian background (the running mean) per frame → ``(T, H, W)`` (``video``).
+
+### denoise(1)
+- `temporal_bilateral` (`video → video`) — Causal temporal bilateral denoise per frame → ``(T, H, W)`` (``video``).
+
+### flow(1)
+- `optical_flow_magnitude_stream` (`video → video`) — Per-frame dense flow speed against the previous frame → ``(T, H, W)`` (``video``).
+
+### motion(3)
+- `motion_history_image` (`video → video`) — Bobick–Davis Motion History Image per frame → ``(T, H, W)`` in ``[0, 1]`` (``video``).
+- `motion_energy_image` (`video → video`) — Bobick–Davis Motion Energy Image per frame → 0/1 ``(T, H, W)`` (``video``).
+- `three_frame_difference` (`video → video`) — Collins three-frame-difference motion mask per frame → 0/1 ``(T, H, W)`` (``video``).
+
+### recursive(4)
+- `frame_difference_causal` (`video → video`) — ``|frame t − frame t−1|`` with a zero first frame → ``(T, H, W)`` (``video``).
+- `exponential_background` (`video → video`) — Recursive background ``bg ← (1−α)·bg + α·frame`` per frame → ``(T, H, W)`` (``video``).
+- `exponential_foreground` (`video → video`) — Foreground masks ``|frame − exponential background| > threshold`` → 0/1 ``(T, H, W)`` (``video``).
+- `running_mean_std` (`video → table`) — Welford per-pixel mean / population std over the clip → ``{"mean", "std", "n"}`` (``table``).
+
+### restore(1)
+- `deflicker` (`video → video`) — Luminance deflicker per frame → ``(T, H, W)`` (``video``).
+
+### window(3)
+- `temporal_median_window` (`video → video`) — Causal per-pixel median over the last *window* frames → ``(T, H, W)`` (``video``).
+- `moving_average_window` (`video → video`) — Causal per-pixel mean over the last *window* frames → ``(T, H, W)`` (``video``).
+- `background_subtraction_window` (`video → video`) — Causal window-median background → per-frame 0/1 foreground masks ``(T, H, W)`` (``video``).
+
+## fullseye の数値標高モデル(DEM)解析 op の統一レジストリ(opsdem)by category
+
+_計 19 ops / 5 categories。_
+
+### geodesy(6)
+- `dem_geodetic_to_ecef` (` → points`) — 測地座標(緯度・経度・楕円体高)→ **地心直交座標 ECEF** [m]。
+- `dem_ecef_to_geodetic` (`points → points`) — ECEF → 測地座標。返りは ``(..., 3)`` の ``(緯度[度], 経度[度], 高さ[m])``。
+- `dem_geocentric_grid` (`depth → pointmap`) — DEM の各セルを**地球中心から見た座標**にする。
+- `dem_earth_curvature_drop` (` → measurement`) — 見通し計算の**地球曲率落ち** [m]。``(1 - k) d^2 / (2 R)``。
+- `dem_cell_size_webmercator` (` → measurement`) — Web メルカトルのタイルの地上分解能 [m/px]。**緯度で変わる**。
+- `dem_geodetic_slope` (`depth → image2d`) — **緯度経度の格子**(等角度間隔)の DEM の傾斜。セル寸法が緯度で変わる。
+
+### hydrology(4)
+- `dem_fill_sinks` (`depth → depth`) — 窪地を埋めた DEM。Barnes, Lehman & Mulla (2014) の priority-flood。
+- `dem_flow_direction` (`depth → labels`) — D8 流向。O'Callaghan & Mark (1984)。
+- `dem_flow_accumulation` (`depth → image2d`) — 集水セル数。各セルへ流れ込む上流セルの個数(自セルを 1 と数える)。
+- `dem_stream_network` (`depth → image2d`) — 集水量が閾値を超えたセルを河道とみなす二値マスク。
+
+### shading(1)
+- `dem_hillshade` (`depth → image2d`) — 陰影起伏 [0,1]。``azimuth_deg`` は光源の方位(北 0 度・東回り)。
+
+### surface(5)
+- `dem_slope` (`depth → image2d`) — 傾斜角。``units`` は ``"degrees"`` / ``"radians"`` / ``"percent"``。
+- `dem_aspect` (`depth → image2d`) — 斜面方位 [度]。**北 0 度・東回り**。平坦なセルは :data:`ASPECT_FLAT`。
+- `dem_curvature` (`depth → image2d`) — 曲率 [1/m]。``kind`` は ``"profile"``(断面) / ``"planform"``(平面) / ``"total"``。
+- `dem_roughness` (`depth → image2d`) — 地形起伏指数 TRI —— 8 近傍との標高差の二乗平均平方根 [m]。
+- `dem_tpi` (`depth → image2d`) — 地形位置指数 TPI —— 自セルと 8 近傍平均の差 [m]。正が尾根、負が谷。
+
+### visibility(3)
+- `dem_horizon_angle` (`depth → image2d`) — 指定方位の地平線仰角 [度]。0 は水平、90 は真上が塞がれている状態。
+- `dem_sky_view_factor` (`depth → image2d`) — 天空率 [0,1]。空がどれだけ見えているか。
+- `dem_viewshed` (`depth → image2d`) — 1 点からの可視領域(1 = 見える)。視線が地形に遮られるかを判定する。
+
+## 粒子画像流速測定(PIV)op の統一レジストリ(opspiv)by category
+
+_計 26 ops / 7 categories。_
+
+### assess(4)
+- `piv_sample_at_windows` (`flow2d → flow2d`) — 画素ごとの場 ``(2, H, W)`` を窓中心の格子へ落とす(最近傍)。
+- `piv_error_stats` (`flow2d, flow2d → table`) — 真値との差の内訳。**偏りと散らばりを分けて**返す。
+- `piv_peak_locking` (`flow2d → table`) — ピークロッキングの強さ。小数部の分布が一様からどれだけ外れているか。
+- `piv_time_statistics` (`images → table`) — 画像列 → 時間平均・変動の RMS・レイノルズ応力。
+
+### estimate(4)
+- `piv_cross_correlate` (`image2d, image2d → flow2d`) — 窓ごとの相互相関で変位場を出す。返りは ``(flow, info)``。
+- `piv_multipass` (`image2d, image2d → flow2d`) — 粗い窓から細かい窓へ段を下げる多段 PIV。返りは ``(flow, info)``。
+- `piv_deform_pass` (`image2d, image2d, flow2d → flow2d`) — 窓変形つきの 1 段。予測変位で**画像そのものを歪めてから**相関を取る。
+- `piv_ensemble_correlate` (`images → flow2d`) — 相関マップを**足してから**ピークを探す(アンサンブル相関)。
+
+### field(8)
+- `piv_vorticity` (`flow2d → image2d`) — 渦度 ``d(dx)/dy - d(dy)/dx``。**反時計回りが正**(画像座標での定義)。
+- `piv_divergence` (`flow2d → image2d`) — 発散 ``d(dy)/dy + d(dx)/dx``。**非圧縮なら 0** —— 独立な検算に使える。
+- `piv_flow_magnitude` (`flow2d → image2d`) — ``sqrt(dy^2 + dx^2)``。向きを捨てる**一方向**の変換。
+- `piv_to_velocity` (`flow2d → flow2d`) — 画素/フレーム → m/s。**両方とも必須引数**(既定値を置かない)。
+- `piv_velocity_gradient` (`flow2d → table`) — 速度勾配テンソルの成分と、そこから出る量をまとめて返す。
+- `piv_q_criterion` (`flow2d → image2d`) — Q 基準 ``-tr(J^2)/2``。**回転がひずみを上回る**場所が正になる。
+- `piv_swirling_strength` (`flow2d → image2d`) — 渦回転強度 λ_ci —— 速度勾配テンソルの複素固有値の虚部の大きさ。
+- `piv_strain_rate` (`flow2d → image2d`) — ひずみ速度の大きさ ``sqrt(2 e_ij e_ij)``。剛体回転では 0 になる。
+
+### solid(3)
+- `strain_from_displacement` (`image2d, image2d → image2d`) — 変位場からひずみ場を出す。``(exx, eyy, exy)`` を返す。
+- `correlation_quality` (`image2d, image2d, flow2d → image2d`) — 与えられた変位場が**どれだけ合っているか**を点ごとに返す ZNCC マップ。
+- `speckle_quality` (`image2d → table`) — 撮ったスペックルが DIC に向いているかを 4 つの数字で返す。
+
+### synth(3)
+- `piv_synth_particles` (` → image2d`) — トレーサ粒子を撒いた 1 枚を作る。返りは ``(image, positions)``。
+- `piv_synth_pair` (` → image2d`) — 既知の変位場を持つ画像対を作る。返りは ``(image_a, image_b, truth)``。
+- `piv_synth_sequence` (` → images`) — 同じ粒子を繰り返し動かした画像列。返りは ``(frames, truth)``。
+
+### validate(2)
+- `piv_outlier_mask` (`flow2d → mask`) — 正規化中央値検定(Westerweel & Scarano 2005)で外れベクトルを見つける。
+- `piv_replace_outliers` (`flow2d, mask → flow2d`) — 外れ値を近傍で埋める。``method="nan"`` なら**埋めずに欠測にする**。
+
+### visualise(2)
+- `piv_flow_to_rgbimage` (`flow2d → rgb`) — 色相 = 向き、明度 = 速さの標準的なフロー可視化。返りは ``(h, w, 3)``。
+- `piv_line_integral_convolution` (`flow2d → image2d`) — 線積分畳み込み(LIC)—— 流れに沿って白色雑音をぼかした模様の画像。
+
+## 断面形状(profile)計測 op の統一レジストリ(opsprofile)by category
+
+_計 12 ops / 4 categories。_
+
+### compare(2)
+- `profile_align` (`pairs, pairs → pairs`) — 測った輪郭を設計輪郭へ合わせる。返りは ``(aligned, info)``。
+- `profile_deviation` (`pairs, pairs → table`) — 設計形状からの**符号つき法線方向のずれ**。返りは dict。
+
+### frame(3)
+- `profile_chord_frame` (`pairs → table`) — 弦(最も離れた 2 点)を見つける。返りは dict。
+- `profile_normalise` (`pairs → pairs`) — 弦長 1・前縁が原点・弦が +x になるよう回転と並進で正規化する。
+- `profile_resample` (`pairs → pairs`) — 輪郭を等間隔に取り直す。``kind`` は ``"arclength"`` のみ(現状)。
+
+### measure(5)
+- `profile_sides` (`pairs → table`) — 上面・下面を弦方向の関数として取り出す。返りは dict。
+- `profile_thickness` (`pairs → pairs`) — 厚み分布 ``t(x)``。返りは ``(n, 2)`` の ``(x, t)``。
+- `profile_camber` (`pairs → pairs`) — キャンバー線(上下面の中線)。返りは ``(n, 2)`` の ``(x, yc)``。
+- `profile_leading_edge_radius` (`pairs → measurement`) — 前縁半径(翼弦比)。前縁近傍の点に円を当てはめる。
+- `profile_trailing_edge_gap` (`pairs → measurement`) — 後縁の開き(翼弦比)。上面と下面の後縁端の距離。
+
+### synth(2)
+- `profile_synth_naca4` (` → pairs`) — NACA 4 桁翼型を閉形式で生成する。返りは ``(N, 2)`` の一筆書き。
+- `profile_perturb` (`pairs → pairs`) — 既知の量の欠陥を入れた輪郭を返す。:data:`PERTURB_KINDS`。
+
+## fullseye の形態統計 op の統一レジストリ(opsshapestat)by category
+
+_計 16 ops / 5 categories。_
+
+### deviation(1)
+- `signed_surface_distance` (`points, points → signal`) — 問い合わせ点から面までの**符号つき**距離。→ ``(N,)``。
+
+### model(6)
+- `shape_pca` (`shapeset → shapemodel`) — 形態 PCA(統計形状モデル)。→ dict(``shapemodel``)。
+- `shape_project` (`shapemodel, points → signal`) — 形をモデルの座標(主成分スコア)へ。→ ``(k,)``。
+- `shape_reconstruct` (`shapemodel, signal → points`) — スコアから形を戻す。→ ``(N, 3)``。
+- `shape_mahalanobis` (`shapemodel, points → measurement`) — モデルから見てその形がどれだけ**異常**か。→ float。
+- `shape_explained_variance` (`shapemodel → signal`) — 各主成分の寄与率(合計 1)。→ ``(k,)``。
+- `shape_synthesize` (`shapemodel → points`) — モデルから**もっともらしい新しい形**を 1 つ作る。→ ``(N, 3)``。
+
+### procrustes(5)
+- `procrustes_fit` (`points, points → matrix`) — *source* を *target* へ重ねる相似変換。→ ``(4, 4)`` の同次行列。
+- `procrustes_align` (`points, points → points`) — *source* を *target* に重ねた点。→ ``(N, 3)``(:func:`procrustes_fit` の適用)。
+- `procrustes_distance` (`points, points → measurement`) — Procrustes 距離 = 重ねたあとの点ごと RMS。→ float。
+- `generalized_procrustes` (`shapeset → shapeset`) — 一般化 Procrustes(GPA)。全個体を共通の枠へ。→ ``(K, N, 3)``。
+- `shape_mean` (`shapeset → points`) — GPA で揃えたあとの平均形状。→ ``(N, 3)``。
+
+### symmetry(2)
+- `mirror_plane_from_pairs` (`points → matrix`) — 左右の対応ランドマークから正中面を出す。→ ``(2, 3)``(1 行目 = 点、2 行目 = 法線)。
+- `landmark_asymmetry` (`points → signal`) — 左右の対ごとの**符号つき**非対称量。→ ``(M,)``。
+
+### synth(2)
+- `shape_synth_family` (` → shapeset`) — 既知の変形モードを持つ形の群を作る。→ ``(n_shapes, n_points, 3)``。
+- `shape_perturb` (`points → points`) — 形に**既知の**変形を 1 つ入れる。→ ``(N, 3)``。
+
+## 2-D の形を**記述して写す** op の統一レジストリ(opsshape2d)by category
+
+_計 13 ops / 2 categories。_
+
+### descriptor(7)
+- `elliptic_fourier` (`pairs → efdmodel`) — 閉輪郭の楕円フーリエ係数を Kuhl–Giardina 閉形式で求める。
+- `reconstruct` (`efdmodel → pairs`) — EFD 係数から輪郭を再構成する((M,2))。
+- `invariants` (`efdmodel → pairs`) — 回転・平行移動・始点・(任意で)スケールに不変な形状記述子((N,2))。
+- `normalize` (`efdmodel → matrix`) — EFD 係数を「正準ポーズ」の係数へ変換する(第1高調波を基準に整列)。
+- `descriptor_distance` (`efdmodel, efdmodel → measurement`) — 2 つの形状間の距離(小さいほど似た形)。回転/平行移動/始点/(任意で)スケール不変。
+- `fourier_smooth` (`pairs → pairs`) — 輪郭を複素 FFT で帯域制限して平滑化する。
+- `from_xld` (`table → pairs`) — XLD 輪郭 dict(``{"shape", "cs":[Nx2,...]}``)から i 番目の輪郭を取り出す。
+
+### morph(6)
+- `add_frame_corners` (`pairs → pairs`) — 点群に画像の四隅(+辺の中点)を固定点として足す。
+- `warp_tps_image` (`image2d, pairs, pairs → image2d`) — 薄板スプラインで img の src_pts を dst_pts へ動かす滑らかなワープ。
+- `warp_piecewise_affine` (`image2d, pairs, pairs → image2d`) — img の src_pts にある内容を dst_pts へ動かす区分アフィンワープ。
+- `blend` (`image2d, image2d → image2d`) — クロスディゾルブ (1-alpha)·a + alpha·b(a,b は同 shape・[0,1])。
+- `morph` (`image2d, image2d, pairs, pairs → image2d`) — 2 枚の画像 A, B を対応点でモーフし、比率 alpha の中間画像を作る。
+- `morph_sequence` (`image2d, image2d, pairs, pairs → images`) — alpha を 0→1 に n 段で振ったモーフ列(A から B へ滑らかに変わる各フレーム)。
+
+## 表面粗さの統一レジストリ(opsroughness)by category
+
+_計 6 ops / 3 categories。_
+
+### measure(3)
+- `surface_params` (`depth → table`) — 面の粗さパラメータ Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr(ISO 25178-2)。
+- `profile_params` (`signal → table`) — 断面の粗さパラメータ Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku(ISO 4287)。
+- `surface_psd` (`depth → pairs`) — 高さ場のパワースペクトル密度。``(q, C)`` を返す。**規約を引数で明示する。**
+
+### prepare(2)
+- `surface_form_remove` (`depth → depth`) — 格子のまま平面 / 二次曲面を除く。``(residual, coeffs)`` を返す。
+- `surface_filter` (`depth → depth`) — 高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。
+
+### synth(1)
+- `surface_synth_psd` (` → depth`) — 指定した PSD から高さ場を合成する。``(z, sq_analytic)`` を返す。
+
+## 測定線・測定モデルによるサブピクセル計測の統一レジストリ(opsmeasure1d)by category
+
+_計 14 ops / 3 categories。_
+
+### apply(2)
+- `align_metrology_model` (`metrologymodel → metrologymodel`) — 計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。
+- `apply_metrology_model` (`metrologymodel, image2d → table`) — 各計測オブジェクトの参照形状の法線に沿ってサブピクセルエッジを測り、形状を
+
+### caliper(6)
+- `gen_measure_rectangle2` (` → measurehandle`) — 回転測定矩形(長軸 ``phi`` 方向に 1 px 間隔でプロファイルを取る)を定義
+- `gen_measure_arc` (` → measurehandle`) — 測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。
+- `translate_measure` (`measurehandle → measurehandle`) — 測定オブジェクトを平行移動(translate_measure)。
+- `measure_pos` (`image2d, measurehandle → table`) — 測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。
+- `measure_pairs` (`image2d, measurehandle → table`) — 立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。
+- `fuzzy_measure_pairing` (`image2d, measurehandle → table`) — ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。
+
+### model(6)
+- `create_metrology_model` (` → metrologymodel`) — 空の計測モデルを作る(create_metrology_model)。
+- `add_metrology_object_line_measure` (`metrologymodel → scalar`) — 直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。
+- `add_metrology_object_circle_measure` (`metrologymodel → scalar`) — 円計測オブジェクトを追加(add_metrology_object_circle_measure)。
+- `add_metrology_object_rectangle2_measure` (`metrologymodel → scalar`) — 矩形計測オブジェクトを追加(add_metrology_object_rectangle2_measure)。
+- `add_metrology_object_ellipse_measure` (`metrologymodel → scalar`) — 楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。
+- `add_metrology_object_generic` (`metrologymodel → scalar`) — 汎用計測オブジェクトを追加(add_metrology_object_generic)。
+
+## 1-D operators(ops1d)by category
+
+プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
+
+_計 39 ops / 3 categories。_
+
+### function(23)
+- `create_funct_1d_array` (`signal → signal`) — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``).
+- `create_funct_1d_pairs` (`signal, signal → signal`) — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an
+- `smooth_funct_1d_gauss` (`signal → signal`) — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``).
+- `smooth_funct_1d_mean` (`signal → signal`) — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``).
+- `derivate_funct_1d` (`signal → signal`) — First derivative by central differences (HALCON ``derivate_funct_1d``).
+- `integrate_funct_1d` (`signal → signal`) — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``).
+- `zero_crossings_funct_1d` (`signal → indices`) — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``).
+- `local_min_max_funct_1d` (`signal → table`) — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``).
+- `abs_funct_1d` (`signal → signal`) — Absolute value of the y-values (HALCON ``abs_funct_1d``).
+- `negate_funct_1d` (`signal → signal`) — Sign-flipped y-values (HALCON ``negate_funct_1d``).
+- `invert_funct_1d` (`signal → pairs`) — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).
+- `scale_y_funct_1d` (`signal → signal`) — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).
+- `transform_funct_1d` (`signal → pairs`) — Independent affine transform of x and y (HALCON ``transform_funct_1d``).
+- `compose_funct_1d` (`signal, signal → signal`) — Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
+- `sample_funct_1d` (`signal → signal`) — Every *step*-th sample (HALCON ``sample_funct_1d``).
+- `match_funct_1d_trans` (`signal, signal → table`) — Best integer translation between two functions by correlation
+- `distance_funct_1d` (`signal, signal → measurement`) — Distance between two functions on the same grid (HALCON ``distance_funct_1d``).
+- `num_points_funct_1d` (`signal → measurement`) — Number of samples (HALCON ``num_points_funct_1d``).
+- `x_range_funct_1d` (`signal → pairs`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
+- `y_range_funct_1d` (`signal → pairs`) — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``).
+- `get_pair_funct_1d` (`signal → pairs`) — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``).
+- `get_y_value_funct_1d` (`signal → measurement`) — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``).
+- `funct_1d_to_pairs` (`signal → pairs`) — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``).
+
+### io(3)
+- `read_wav` (`file → signal`) — Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is
+- `write_wav` (`signal → file`) — Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
+- `read_audio` (`file → signal`) — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
+
+### signal(13)
+- `lowpass` (`signal → signal`) — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
+- `highpass` (`signal → signal`) — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.
+- `bandpass` (`signal → signal`) — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
+- `envelope` (`signal → signal`) — Amplitude envelope via the analytic (Hilbert) signal — the shape of a
+- `rms` (`signal → measurement`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
+- `resample` (`signal → signal`) — Resample a signal to *new_rate* (Fourier method).
+- `spectrum` (`signal → pairs`) — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``).
+- `spectrogram` (`signal → image2d`) — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
+- `zero_crossing_rate` (`signal → measurement`) — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
+- `find_peaks` (`signal → indices`) — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
+- `peak_subbin` (`signal, indices → measurement`) — Peak position **between** samples — the vertex of a fit through 3 points.
+- `point_spectrum` (`positions → table`) — Periodogram of **event positions** — defects, impacts, counts, arrivals.
+- `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
+
+## 2-D の連結成分解析(blob analysis)op の統一レジストリ(opsblob)by category
+
+_計 10 ops / 5 categories。_
+
+### connect(1)
+- `blob_label` (`mask → labels2d`) — 二値領域を連結成分に分け、``int32`` のラベル画像(背景 0、物体 1..n)を返す。
+
+### extract(3)
+- `blob_region` (`labels2d → mask`) — 物体 1 個を二値領域(bool)として抜く。``index`` は **1 起点**。
+- `blob_boundaries` (`labels2d → mask`) — 物体の輪郭(1 画素幅、bool)。**隣り合う物体の境目も残る**。
+- `blob_overlay` (`image2d, labels2d → rgb`) — 元画像の上に物体を色分けして重ね、``(H, W, 3)`` の float RGB を返す。
+
+### measure(1)
+- `blob_features` (`labels2d → table`) — 物体ごとの形の特徴量を、**鍵ごとに 1 本の配列**で返す。
+
+### select(2)
+- `blob_select` (`labels2d → labels2d`) — 特徴量が ``[vmin, vmax]`` に入る物体だけ残す(**番号は 1 から振り直す**)。
+- `blob_select_largest` (`labels2d → labels2d`) — 面積の大きい順に ``count`` 個だけ残す(**番号は面積の降順に振り直す**)。
+
+### split(3)
+- `blob_distance` (`mask → image2d`) — 前景の各画素から**いちばん近い背景まで**の距離。単位は ``spacing`` 倍。
+- `blob_seeds` (`image2d → labels2d`) — h-maxima の種。**``h`` は ``distance`` と同じ単位の絶対値**。
+- `blob_split` (`labels2d, labels2d, image2d → labels2d`) — 種から**高いところ順に**領域を広げて、融合した塊を割る(分水嶺)。
+
+## カメラ校正・平面写像・対応点からの変換推定 op の統一レジストリ(opscalib)by category
+
+_計 21 ops / 5 categories。_
+
+### calibrate(3)
+- `camera_calibration` (`points → table`) — Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。
+- `find_marks_and_pose` (`image2d → table`) — マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。
+- `hand_eye_calibration` (`pose → pose`) — 一連の運動対から AX=XB を解き X(4x4)を推定(hand_eye_calibration)。
+
+### fit(4)
+- `vector_to_rigid` (`points → matrix`) — 対応点から 2D 剛体変換(回転+並進、Kabsch)を求める(vector_to_rigid)。
+- `vector_to_similarity` (`points → matrix`) — 対応点から 2D 相似変換(回転+スケール+並進、Umeyama)を求める(vector_to_similarity)。
+- `vector_angle_to_rigid` (` → matrix`) — 1 組の (点, 角度) から 2D 剛体変換を求める(vector_angle_to_rigid)。
+- `hom_vector_to_proj_hom_mat2d` (`points → matrix`) — 4 点以上の対応から射影変換(homography, DLT)3x3 を求める(hom_vector_to_proj_hom_mat2d)。
+
+### plane(5)
+- `image_to_world_plane` (`points → points`) — 画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。
+- `image_points_to_world_plane` (`points → points`) — カメラ内部/外部から画素を world 平面 z=0 へ逆投影(image_points_to_world_plane)。
+- `contour_to_world_plane_xld` (`contour → contour`) — XLD 輪郭(dict {cs:[Nx2]})を world 平面へ写す(contour_to_world_plane_xld)。
+- `gen_image_to_world_plane_map` (` → table`) — 画像→ワールド平面(z=0)の写像テーブルを生成(gen_image_to_world_plane_map)。
+- `gen_radial_distortion_map` (` → table`) — 半径歪みの逆マップ(row_map, col_map)を生成(gen_radial_distortion_map)。
+
+### project(3)
+- `project_3d_point` (`points → points`) — 3D 点をカメラへ透視投影し画素 (row, col) を返す(project_3d_point)。
+- `project_point_hom_mat3d` (`points → points`) — 4x4 or 3x4 射影行列 P=K[R|t] で 3D 点を投影し画素 (row, col) を返す
+- `project_hom_point_hom_mat3d` (`points → points`) — 同次 3D 点 (4,) を 3x4/4x4 射影行列で投影し画素 (row, col) を返す
+
+### target(6)
+- `caltab_points` (` → points`) — 校正板の理想マーク座標(ワールド, mm; 原点=最初のマーク)を (y, x) で返す(caltab_points)。
+- `create_caltab` (` → table`) — 校正板の記述(理想点、板中心が原点)を作る(create_caltab)。
+- `gen_caltab` (` → table`) — 円マーク格子の校正板画像を生成(gen_caltab)。
+- `sim_caltab` (`table → table`) — 校正板を指定カメラ姿勢で投影した画像をシミュレート(sim_caltab)。
+- `disp_caltab` (`table → image2d`) — 校正板画像を返す(表示用)(disp_caltab)。
+- `find_caltab` (`image2d → points`) — 画像から校正板の円マーク中心を検出(連結成分の重心)(find_caltab)。
 
 ## References(アルゴリズムの一次情報・further reading)
 

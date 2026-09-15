@@ -10,7 +10,25 @@
     3. スタンドアロン幾何/数学モジュールの関数 API(署名+一行説明)。
     4. 3D op 一覧(カテゴリ別、in→out と説明)。
     5. 2D パイプライン op 一覧(カテゴリ別、HALCON別名 と in→out)。
-    6. 参照(アルゴリズムの一次情報・further reading の URL)。
+    6. **型つき台帳の全族**(カテゴリ別、in→out と説明)。
+    7. 参照(アルゴリズムの一次情報・further reading の URL)。
+
+## 族は数えて出す(2026-09-16)
+
+★この生成器は長らく **ops3d / ops2d / ops1d / opsmath / opsoptics の 5 節しか
+出していなかった**。ところが台帳は 33 族あり、**28 族 436 op が 1 行も載らない
+まま**「AI 向けの全 op カタログ」を名乗っていた —— カメラ校正も blob 解析も
+tomography も、この台帳を読む LLM からは**存在しないのと同じ**だった。
+
+原因は「出す族を手で書いていた」こと。だから走査する集合は
+:data:`opassist._LEDGERS`(``fs.op_find`` / ``fs.ledger`` が引くのと同じ正本)
+から取り、**手書きの族リストは持たない**。族を足した人が
+この生成器を直し忘れても、次に回した時点で必ず載る。
+説明文(:data:`_LEDGER_INTROS`)は任意で、無ければ docstring 先頭行を使う。
+
+門は ``tests/test_op_catalog_covers_every_ledger.py`` が**配布物側の
+``fullseye/OP_CATALOG.md`` から**数える(「登録済みを数える門」は未登録に
+盲目なので、数えるのは配布されるファイルの側から)。
 
 設計: 内省は全て try/except で囲み、1 つの op/モジュールの失敗が台帳全体を壊さない
 (壊れた項目は "(introspection failed)" と明示し、握り潰さない)。
@@ -177,104 +195,94 @@ def _ops3d_section() -> list[str]:
     return out
 
 
-def _ops1d_section() -> list[str]:
-    out = ["## 1-D operators(ops1d)by category", "",
-           "プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・"
-           "音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。", ""]
+#: 族ごとの導入文。**族の一覧ではない** —— 走査する集合は
+#: :data:`opassist._LEDGERS`(``fs.op_find`` / ``fs.ledger`` が引くのと同じ集合)
+#: から取る。ここに無い族も必ず出力され、見出しの説明はモジュールの docstring
+#: 先頭行から取る。手書きの族リストを作らないのは、2026-09-16 にこの生成器が
+#: **5 節しか出しておらず、28 族 436 op が「AI 向けの全 op カタログ」を名乗る
+#: 台帳から丸ごと欠けていた**ため —— 自己記述が探索範囲を決めてしまう形
+#: ([[feedback_retrieval_layer_must_not_describe_itself]])。
+_LEDGER_INTROS = {
+    "ops1d": ("1-D operators", "プロファイル/信号の 1-D op。源流は 2-D の measure1d・"
+              "3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を "
+              "funct1d/dsp で加工して測る。"),
+    "opsmath": ("Math operators", "視覚計測を支える数学 op(線形代数/統計/補間・多項式)"
+                "+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・"
+                "Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。FFT/複素画像は "
+                "complexops・volfreq、1-D 関数は funct1d を参照。"),
+    "opsoptics": ("Optics operators", "レンズより上・画素より下の層。幾何光学(薄レンズ結像・"
+                  "ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・"
+                  "角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質"
+                  "(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・"
+                  "Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と "
+                  "Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、"
+                  "FFT は complexops、位相シフト干渉法は fringe が持ち場。"),
+}
+
+
+def _ledger_label(mod, mod_name: str) -> str:
+    """族の見出しラベル。手書きがあればそれ、無ければ docstring 先頭行から。"""
+    if mod_name in _LEDGER_INTROS:
+        return _LEDGER_INTROS[mod_name][0]
+    doc = _doc1(mod)
+    # "opsblob —— 2-D の連結成分解析(blob analysis)op の統一レジストリ。" の
+    # ような書き出しから、モジュール名と区切りを落として説明だけ残す。
+    for sep in ("——", "—", "--", ":"):
+        if sep in doc:
+            head, _, tail = doc.partition(sep)
+            if head.strip().rstrip(" -—:") in (mod_name, mod_name + " "):
+                doc = tail
+                break
+    return doc.strip().rstrip("。") or mod_name
+
+
+def _ledger_section(mod_name: str, table: str) -> list[str]:
+    """1 つの型つき台帳の節。全族で同じ体裁(カテゴリ別・in → out・一行説明)。"""
     try:
-        import ops1d
-        cats = ops1d.categories()
-        catalog = getattr(ops1d, "_CATALOG", {})
+        mod = __import__(mod_name)
     except Exception as e:
-        return out + [f"- (ops1d を読めませんでした: {e})", ""]
+        return [f"## {mod_name} operators by category", "",
+                f"- ({mod_name} を読めませんでした: {e})", ""]
+    label = _ledger_label(mod, mod_name)
+    out = [f"## {label}({mod_name})by category", ""]
+    intro = _LEDGER_INTROS.get(mod_name, (None, None))[1]
+    if intro:
+        out += [intro, ""]
+    try:
+        cats = mod.categories()
+        catalog = getattr(mod, "_CATALOG", {})
+    except Exception as e:
+        return out + [f"- ({mod_name} のカタログを読めませんでした: {e})", ""]
     total = 0
+    body: list[str] = []
     for cat in sorted(cats):
         entries = catalog.get(cat, [])
         if not entries:
             continue
-        out.append(f"### {cat}({len(entries)})")
+        body.append(f"### {cat}({len(entries)})")
         for entry in entries:
             try:
                 name = entry[0]
-                info = ops1d.info(name)
-                io = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
-                doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io}`) — {doc}")
-                total += 1
-            except Exception as ex:
-                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
-        out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
-    return out
-
-
-def _opsmath_section() -> list[str]:
-    out = ["## Math operators(opsmath)by category", "",
-           "視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の"
-           "計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/"
-           "留数・等角写像・Cauchy-Riemann 残差)。北極星は"
-           "「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・"
-           "volfreq、1-D 関数は funct1d を参照。", ""]
-    try:
-        import opsmath
-        cats = opsmath.categories()
-        catalog = getattr(opsmath, "_CATALOG", {})
-    except Exception as e:
-        return out + [f"- (opsmath を読めませんでした: {e})", ""]
-    total = 0
-    for cat in sorted(cats):
-        entries = catalog.get(cat, [])
-        if not entries:
-            continue
-        out.append(f"### {cat}({len(entries)})")
-        for entry in entries:
-            try:
-                name = entry[0]
-                info = opsmath.info(name)
+                info = mod.info(name)
                 io_ = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
                 doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io_}`) — {doc}")
+                body.append(f"- `{name}` (`{io_}`) — {doc}")
                 total += 1
             except Exception as ex:
-                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
-        out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
-    return out
+                body.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
+        body.append("")
+    out.append(f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
+    return out + body
 
 
-def _opsoptics_section() -> list[str]:
-    out = ["## Optics operators(opsoptics)by category", "",
-           "レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・"
-           "被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・"
-           "Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・"
-           "Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用"
-           "(reflect / refract / fresnel_reflectance)と Zernike フィット"
-           "(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、"
-           "位相シフト干渉法は fringe が持ち場なので重複させていない。", ""]
-    try:
-        import opsoptics
-        cats = opsoptics.categories()
-        catalog = getattr(opsoptics, "_CATALOG", {})
-    except Exception as e:
-        return out + [f"- (opsoptics を読めませんでした: {e})", ""]
-    total = 0
-    for cat in sorted(cats):
-        entries = catalog.get(cat, [])
-        if not entries:
-            continue
-        out.append(f"### {cat}({len(entries)})")
-        for entry in entries:
-            try:
-                name = entry[0]
-                info = opsoptics.info(name)
-                io_ = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
-                doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io_}`) — {doc}")
-                total += 1
-            except Exception as ex:
-                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
-        out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
+def _ledger_sections() -> list[str]:
+    """**すべての**型つき台帳の節(``ops3d`` は例リンク付きの専用節が出す)。"""
+    import opassist
+    out: list[str] = []
+    for mod_name, table in opassist._LEDGERS:
+        if mod_name == "ops3d":
+            continue                       # _ops3d_section が worked-example 付きで出す
+        out += _ledger_section(mod_name, table)
     return out
 
 
@@ -342,8 +350,7 @@ def _references_section() -> list[str]:
 def build_catalog() -> str:
     lines: list[str] = []
     for section in (_preamble, _examples_section, _modules_section,
-                    _ops3d_section, _ops2d_section, _ops1d_section, _opsmath_section,
-                    _opsoptics_section,
+                    _ops3d_section, _ops2d_section, _ledger_sections,
                     _references_section):
         try:
             lines += section()
