@@ -60,6 +60,28 @@ CHAIN = [
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
 ]
 
+#: ★**`imgevolve.py coverage` を CHAIN に入れていない理由**(2026-09-16)。
+#:
+#: `docs/HALCON_PARITY.md` は `imgevolve.py coverage`(= `honest_summary.main()`)が
+#: 書く生成物なのに、長らくこの表のどこにも現れていなかった。`imgevolve.py` は
+#: `index` サブコマンドで CHAIN に載っているので `unclassified()` の照合
+#: (`args[0]` = ファイル名)を**素通りしてしまい**、別サブコマンドの生成物が
+#: あることに誰も気づけなかった。実際 2026-09-16 時点で
+#: `registry ops: 899` と書かれたまま、実際のレジストリは **901** に増えていた。
+#:
+#: ではなぜ CHAIN に足さないか —— **この生成器は CI と新しい clone では動かない**。
+#: `honest_summary` は `data/halcon_operators.json`(549 KB、MVTec のリファレンスを
+#: 写した外部由来のコーパス)を読むが、`.gitignore` が `data/*` を落としており
+#: **リポジトリに入っていない**。CHAIN に足すと `regen_all --check` は生成器の
+#: 非ゼロ終了でそこで停止し、表が無い環境(= CI、fresh clone、この worktree)では
+#: **必ず exit 1** になる。門にできないものを門にすると、門ごと無視されるようになる。
+#:
+#: 代わりに `tests/test_docs_index_numbers.py` の
+#: `test_the_parity_ledger_registry_count_is_current` が、**コミット済みの
+#: HALCON_PARITY.md に書かれた数**と生きたレジストリを突き合わせる。外部コーパスが
+#: 要るのは「作り直す」側だけで、「古びていないか見る」側は committed な生成物と
+#: 実装だけで判定できる —— drift を見るのに生成器を回す必要はない。
+#:
 #: **CHAIN に入れないものと、その理由**(2026-09-09)。
 #:
 #: この表が無いと CHAIN は「人が思い出せた生成器の集合」に逆戻りする ——

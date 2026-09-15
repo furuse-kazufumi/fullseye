@@ -138,3 +138,42 @@ def test_the_examples_readme_matches_the_registry():
     assert got == want, (
         "examples/README.md が台帳とずれている —— "
         "`py -3.11 tools/gen_examples_readme.py` で再生成すること")
+
+
+# --------------------------------------------------------------------------- #
+# HALCON_PARITY.md —— 生成器を回せない環境でも drift を見る門(2026-09-16)      #
+# --------------------------------------------------------------------------- #
+def _parity_registry_ops() -> int:
+    """`docs/HALCON_PARITY.md` が書いている「registry ops: N」の N。"""
+    md = (ROOT / "docs" / "HALCON_PARITY.md").read_text(encoding="utf-8")
+    m = re.search(r"registry ops:\s*(\d+)", md)
+    assert m, "HALCON_PARITY.md の registry ops 行が読めない(生成器が変わった?)"
+    return int(m.group(1))
+
+
+def test_the_parity_ledger_registry_count_is_current():
+    """★`docs/HALCON_PARITY.md` は `imgevolve.py coverage` の生成物なのに、
+    `tools/regen_all.py` の `--check` が**構造的に見られない**位置にある。
+
+    `imgevolve.py` は `index` サブコマンドで CHAIN に載っているため、
+    生成器を**ファイル名で**照合する `regen_all.unclassified()` は
+    「`imgevolve.py` は分類済み」と判断して素通しする。別サブコマンドが書く
+    生成物は、その照合からは永久に見えない —— この repo が繰り返している
+    「記録も門も在るのに、判定に使う位置が違う」の型
+    ([[feedback_gate_must_stand_where_the_accident_happens]])。
+    実際 2026-09-16 に `registry ops: 899` のまま実測は **901** だった。
+
+    生成器自体は `data/halcon_operators.json`(非同梱の外部コーパス)を要るので
+    CHAIN には入れられない。だがこの門は**コミット済みの生成物に書かれた数**を
+    読むだけなので、外部コーパスが無い環境でも drift を検出できる。
+
+    落ちたら `py -3.11 imgevolve.py coverage` で数え直してコミットすること
+    (門の側を緩めるのではない)。
+    """
+    requires_full_registry()
+    got, want = _parity_registry_ops(), _registry_ops()
+    assert got == want, (
+        "docs/HALCON_PARITY.md の registry ops が古い: 書いてあるのは %d、"
+        "いまのレジストリは %d —— `py -3.11 imgevolve.py coverage` で数え直して "
+        "コミットすること(この生成物は regen_all --check の対象外なので、"
+        "手で回す必要がある)。" % (got, want))
