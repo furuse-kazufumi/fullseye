@@ -70,7 +70,7 @@ Two more doors, both new in 0.1.11 and both honest about their limits:
 | Door | For | Run this first | Status |
 |---|---|---|---|
 | **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 8 tools, strict by default, needs a checkout (the knowledge layer is not in the wheel yet). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then the examples in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) | A **5-operator C ABI** (`fullseye_abi.h`) with a Rust reference implementation — not the 918-op library. Its job is to find specification bugs by being a second implementation (nine found so far) |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A **5-operator C ABI** (`fullseye_abi.h`) with a Rust reference implementation — not the 918-op library. Its job is to find specification bugs by being a second implementation (nine found so far) |
 
 ## Install
 
@@ -227,11 +227,13 @@ registry fingerprint with a CI drift test, and evaluation follows the honest
 held-out discipline above. If you use it in academic work, please cite via
 `CITATION.cff`.
 
-**Archival status, stated plainly:** no DOI has been minted yet. The Zenodo
-archival metadata is committed (`.zenodo.json`, kept in step with `CITATION.cff`
-and `pyproject.toml` by a CI gate), and the first version and concept DOIs will be
-issued with the next release — see "Zenodo" in `CONTRIBUTING.md`. Until then, cite
-the version and the git tag; a DOI that does not resolve is worse than none.
+**Archival status, stated plainly:** archived on Zenodo from v0.1.11 onwards.
+Concept DOI (always resolves to the newest version):
+[10.5281/zenodo.22761195](https://doi.org/10.5281/zenodo.22761195); the v0.1.11
+version DOI is 10.5281/zenodo.22761196. Each GitHub Release mints a new version
+DOI (`.zenodo.json` describes the record and is kept in step with `CITATION.cff`
+and `pyproject.toml` by a CI gate — see "Zenodo" in `CONTRIBUTING.md`). Versions
+before 0.1.11 exist only as git tags and on PyPI, not as Zenodo records.
 
 ## Documentation map
 

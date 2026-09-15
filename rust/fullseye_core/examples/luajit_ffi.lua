@@ -1,8 +1,8 @@
 -- fullseye_abi.h を LuaJIT の FFI から直接叩く見本。**バインディング層は無い。**
 --
--- ★この例は **手元に LuaJIT が無いため未実行**(2026-09-14)。宣言は
---   `fullseye_abi.h` から機械的に書き写したもので、動作は確認していない。
---   「書いた」と「走った」を混ぜないために、ここに明記しておく。
+-- 宣言は `fullseye_abi.h` から書き写したもの。LuaJIT 2.1 で実行して C の見本と
+-- 同じ 5 行が出ることを確認済み(2026-09-14、再確認 2026-09-15)。書き写しが正しい
+-- ことの根拠はこの一致であって、この見本自身ではない(README を参照)。
 --
 -- 実行: luajit rust/fullseye_core/examples/luajit_ffi.lua
 -- 先に: cd rust/fullseye_core && cargo build --release

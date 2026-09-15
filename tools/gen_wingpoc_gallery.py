@@ -324,6 +324,10 @@ def build(lang: str, cap: dict, byid: dict) -> tuple[str, str]:
         hero_line, "", hero_cap, "",
         funnel, "",
         "## TL;DR" , "", tldr, "",
+        # 版の更新(任意キー news_<lang>、新しい順の本文をそのまま貼る)。展示の数字を引く
+        # 読者が「どの版の話か」「引用に使う DOI は何か」を TL;DR の直後で知れるように。
+        *(([("## 版の更新(新しい順)" if lang == "ja" else "## Version updates (newest first)"), "",
+            ent["news_" + lang].strip(), ""]) if "news_" + lang in ent else []),
         ("> 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。"
          if lang == "ja" else
          "> The \"Ops used\" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html)."),

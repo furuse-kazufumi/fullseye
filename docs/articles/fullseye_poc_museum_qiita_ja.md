@@ -17,6 +17,17 @@
 - 各スクリプトには実写へ差し替える口(`EXTEND` の印)があり、合成器 1 関数を差し替えれば採点の枠組みはそのまま自分のデータで動きます。使っている op はすべて docs サイトのノートに図つきで載っています。
 - PoC を書くことでライブラリ側の穴(公開経路に出ていない実装、既定値が寛容側の op、窓が固定の op)も多数見つかりました。直したもの・直していないものを分けて末尾に書きます。
 
+## 版の更新(新しい順)
+
+**2026-09-15 — Fullseye 0.1.11 を公開しました**(`pip install -U fullseye`)。この展示館に関わる中身は 4 つです。
+
+- **この版から Zenodo に書庫があり、DOI で引けます。** version DOI [10.5281/zenodo.22761196](https://doi.org/10.5281/zenodo.22761196)、concept DOI [10.5281/zenodo.22761195](https://doi.org/10.5281/zenodo.22761195)(常に最新版へ解決)。展示の数字を報告や論文に引くときは、走らせた版とこの DOI を添えてください。0.1.10 以前は git のタグと PyPI にしかありません。
+- **数を数える op の食い違いを直しました。** `connection` が numpy 側で 4 連結、OpenCV 側で 8 連結になっていて、8×8 の市松が **32 個と 1 個**に分かれていました(契約は 8 連結)。同じ仕様を Rust でもう一度実装して初めて見つかった欠陥で、単一実装のテストでは原理的に捕まりません。ほかに `frame_align` の網点状の繰り返しでの誤整列、`normals_from_depth` が画素ピッチを 1 と決め打ちしていた件、`polar_unwrap` / `cylinder_unwrap` が環が視野外のとき黙って通していた件、`voxel_to_mesh` の面の向きと `mesh_volume` の符号、そして**この展示館の門そのものが合否を計算した直後に捨てていた**件を直しました。詳細は [CHANGELOG](https://github.com/furuse-kazufumi/fullseye/blob/master/CHANGELOG.md) の 0.1.11。
+- **LLM から直接使える入口(MCP サーバ)が付きました。** Claude Code なら `claude mcp add fullseye -- py -3.11 -m fullseye.mcp` で登録でき、op の検索・ノートの閲覧・画像の読み込み・パイプラインの実行までを AI 側から呼べます。返り値は必ず**数値統計 + 判定(空 / 定数 / 非有限 / 範囲外 / 飽和)+ 劣化台帳**で、判定が ok でないときだけ入出力を並べた 96 px の小図が付きます —— この展示館が繰り返してきた「走った ≠ 意味のある出力が出た」を、機械の側が言う仕組みです。今は checkout 限定で、pip 版からは理由つきで止まります([docs/MCP.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md))。
+- **他の言語からの入口。** 5 op だけの C ABI(`fullseye_abi.h`)と Rust の参照実装を置き、C / C# / LuaJIT / Python(ctypes)の見本が**同じ 1 本の .dll を叩いて同じ 5 行を印字**します。918 op のライブラリを別言語に移したものではなく、上の連結数の食い違いを見つけた「第 2 実装」がその正体です。
+
+手元の全テストは 13,073 件が通っています(3.11、全 extras)。
+
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ## 用語(先に読むと楽)

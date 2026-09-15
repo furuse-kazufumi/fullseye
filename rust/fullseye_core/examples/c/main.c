@@ -20,7 +20,7 @@
  *   ★`.lib`(インポートライブラリ)でリンクしても、**実行時は DLL を別に探す**。
  *     置き忘れると exe は何も印字せずに終わる —— 最初これを「ビルドが通ったから
  *     動いた」と読みかけた。`EXIT=0` も `head` の終了コードで、exe のものでは
- *     なかった([[feedback_ran_is_not_meaningful_output]])。
+ *     なかった。「走った」と「意味のある出力が出た」は別に数える。
  *
  * Linux / macOS:
  *   clang -std=c11 -Wall -Wextra -I../.. examples/c/main.c \

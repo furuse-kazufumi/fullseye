@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 675. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 676. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -1013,6 +1013,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L149** — ★ For conversion to an integer dtype, inspect the raw value **before the cast**. A hole found by adversarial inspection (2026-09-02): ``np.asarray(nan, dtype=int64)`` raises no exception and returns INT_MIN, and after the cast ``dtype.kind == 'i'`` so it slips past the non-finite check below. A non-integer like 3.7 is also silently truncated to 3 —— **a result off by 1 in the index is returned with no exception**. This is exactly the lie of a conversion op.
 - **L1080** — ★ Regression point of a real bug. At first this was ``np.maximum(sigma, finfo.tiny)``. At a duplicate point sigma = 2.2e-308, and ``sigma ** 3`` in ``gaussians_to_voxel`` **underflows to 0**, causing division by zero -> NaN. What was meant to "avoid 0" was replaced with a value that produces NaN downstream (part of the volume becomes NaN with no exception = the textbook silent error). Since a duplicate point means "the spacing cannot be measured", fail-closed instead of padding with a sentinel.
+
+## `rust/fullseye_core/examples/python_ctypes.py`
+
+- **L42** _(ja)_ — ★第 5 引数 fs_dtype_t。2026-09-14 までヘッダにだけ在って実装と FFI 宣言に 無かった引数。ctypes は引数の数を検査しないので、抜けても黙って動く。
 
 ## `sample_data.py`
 

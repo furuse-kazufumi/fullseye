@@ -5,6 +5,19 @@ Versions follow the git tags; a tag push publishes to PyPI (`.github/workflows/r
 What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ("Versioning") — the minor slot is our breaking signal.
 
+## Unreleased
+
+- **Python(`ctypes`)の呼び出し見本**を C ABI の例に追加(`rust/fullseye_core/examples/python_ctypes.py`、
+  標準ライブラリだけで動く)。README は前から「C / C# / Lua / Python で同一出力」と書いていたのに
+  Python の見本はテストの中にしか無かった。4 言語とも同じ 5 行を印字することを実走で確認。
+- 例の README の表が MSVC の注記で途中で切れて C# / Lua の行が表の外に落ちていたのを直し、
+  C / C++ と Python の建て方・走らせ方の節を足した。Lua の見本の冒頭にあった「手元に LuaJIT が
+  無いため未実行」は README の「実行して確認済み」と矛盾していた(古い方が残っていた)ので、
+  再実行して直した。
+- **Zenodo の DOI を記録**: 0.1.11 の Release 公開で version DOI 10.5281/zenodo.22761196 と
+  concept DOI 10.5281/zenodo.22761195 が発行された(公開から約 30 秒)。`CITATION.cff` に
+  `doi:` と `identifiers:` を、README の「未取得」を実際の DOI に置き換えた。
+
 ## 0.1.11 — 2026-09-15
 
 **図注の層に「置き場所」と「表」と「反転色」を足した回**(著者の要望、2026-09-08)。

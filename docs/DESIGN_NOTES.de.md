@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 675. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 676. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -1013,6 +1013,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L149** — ★ Zur Konvertierung in einen Integer-dtype prüfe den rohen Wert **vor dem Cast**. Ein durch adversariale Prüfung gefundenes Loch (2026-09-02): ``np.asarray(nan, dtype=int64)`` löst keine Ausnahme aus und gibt INT_MIN zurück, und nach dem Cast ist ``dtype.kind == 'i'``, sodass es an der Nicht-endlich-Prüfung unten vorbeischlüpft. Ein Nicht-Integer wie 3.7 wird ebenfalls stillschweigend auf 3 abgeschnitten —— **ein um 1 verschobenes Ergebnis im Index wird ohne Ausnahme zurückgegeben**. Dies ist genau die Lüge eines Konvertierungs-Ops.
 - **L1080** — ★ Regressionspunkt eines echten Bugs. Zunächst war dies ``np.maximum(sigma, finfo.tiny)``. An einem Duplikatpunkt ist sigma = 2.2e-308, und ``sigma ** 3`` in ``gaussians_to_voxel`` **läuft auf 0 unter**, was eine Division durch null -> NaN verursacht. Was "0 vermeiden" sollte, wurde durch einen Wert ersetzt, der stromabwärts NaN erzeugt (ein Teil des Volumens wird ohne Ausnahme zu NaN = der Lehrbuch-stille-Fehler). Da ein Duplikatpunkt bedeutet "der Abstand kann nicht gemessen werden", fail-closed statt mit einem Sentinel aufzufüllen.
+
+## `rust/fullseye_core/examples/python_ctypes.py`
+
+- **L42** _(ja)_ — ★第 5 引数 fs_dtype_t。2026-09-14 までヘッダにだけ在って実装と FFI 宣言に 無かった引数。ctypes は引数の数を検査しないので、抜けても黙って動く。
 
 ## `sample_data.py`
 

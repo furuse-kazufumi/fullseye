@@ -153,6 +153,20 @@ Two limits worth writing down: only releases published **after** the toggle are 
 takes the repository *as of the tag*, so anything uncommitted at that moment is not in
 the DOI.
 
+**First run, as observed (v0.1.11, 2026-09-15).** `gh release create` fired three webhook
+deliveries within 50 ms: `release/created` and `release/published` came back **409** and
+`release/released` **202** — the 409s are Zenodo refusing the duplicate notifications of
+the same release, not a failure, so do not redeliver them. The record existed 30 s after
+the Release was published (version DOI 10.5281/zenodo.22761196, concept DOI
+10.5281/zenodo.22761195). Two things to know before trusting the record: Zenodo's API and
+badge endpoints answered nothing from the author's network for several minutes while the
+record already existed (a plain `https://zenodo.org/api/records?q=fullseye` query timed
+out; a fetch through a different route succeeded) — an API timeout is not "no DOI yet";
+and the archived file is the whole repository snapshot (585 MB for v0.1.11, because
+`docs/` carries the operator notes and figures), which is what the DOI points at. The
+`related_identifiers` on the record are exactly the two from `.zenodo.json`; the GitHub
+tag is shown on the record page but is not among them.
+
 ## Dev quickstart
 
 ```bash

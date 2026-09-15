@@ -80,12 +80,13 @@ are not in the wheel, so the server needs a checkout; from a `pip install` it st
 `fullseye_abi.h` is a **specification-only C ABI** — 25 functions, 5 operators
 (`fs_gauss`, `fs_threshold`, `fs_connection`, `fs_measure_all`, `fs_select_shape`) — with a
 Rust `cdylib` reference implementation in `rust/fullseye_core`. Because the library is a
-plain C ABI there are no per-language bindings to maintain: Python (`ctypes`), C#
-(`DllImport`), C / C++ (`#include "fullseye_abi.h"`) and LuaJIT (`ffi.cdef`) all call the
-same `.dll` / `.so` and, in the checked-in examples, print the same output. The examples in
+plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
+`python_ctypes.py`), C# (`DllImport`, `csharp/Program.cs`), C / C++ (`#include
+"fullseye_abi.h"`, `c/main.c`) and LuaJIT (`ffi.cdef`, `luajit_ffi.lua`) all call the same
+`.dll` / `.so` and, in the checked-in examples, print the same five lines. The examples in
 [`rust/fullseye_core/examples/`](../rust/fullseye_core/examples/README.md) record which
-toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1 as of
-2026-09-14) rather than which ones exist.
+toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
+as of 2026-09-15) rather than which ones exist.
 
 What this is **not**: it is not the 918-operator Python library in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential

@@ -9,23 +9,31 @@
 * Lua … LuaJIT の `ffi.cdef`
 
 は **どれも同じ 1 本の .dll / .so を直接叩く**。言語ごとにラッパ層を作ると、
-その層の数だけ「仕様の解釈」が増える —— それは
-[[feedback_second_implementation_finds_what_tests_cannot]] が言う「解釈が分かれる場所」を
-**わざと増やす**行為で、堅牢さの逆を行く。ここに置くのは**呼び出し方の見本 1 つずつ**だけ。
+その層の数だけ「仕様の解釈」が増える —— 同じ仕様を 2 度実装して初めて見つかる欠陥が
+あるのは事実だが、それは**解釈が分かれる場所をわざと増やす**理由にはならず、堅牢さの
+逆を行く。ここに置くのは**呼び出し方の見本 1 つずつ**だけ。
+
+| 言語 | ファイル | 呼び方 |
+|---|---|---|
+| C / C++ | [`c/main.c`](c/main.c) | `#include "fullseye_abi.h"` して直接リンク。C++ からも同じヘッダをそのまま include できる(`extern "C"` はヘッダ側にある) |
+| C# | [`csharp/Program.cs`](csharp/Program.cs) | `DllImport`(P/Invoke) |
+| Lua | [`luajit_ffi.lua`](luajit_ffi.lua) | LuaJIT の `ffi.cdef` |
+| Python | [`python_ctypes.py`](python_ctypes.py) | `ctypes`(標準ライブラリだけ。numpy も fullseye 本体も使わない) |
 
 ## 実行したかどうか(正直に)
 
-| 例 | 手元の環境(2026-09-14 実測) | 状態 |
+| 例 | 手元の環境(2026-09-14 実測、Python は 2026-09-15) | 状態 |
 |---|---|---|
 | `c/`(clang) | clang 22.1.8 / target `x86_64-pc-windows-msvc`(`winget install LLVM.LLVM`)。`target/release/fullseye_core.dll.lib` をリンク | **実行して確認済み** |
 | `c/`(gcc) | gcc 16.1.0 MinGW-W64 ucrt-posix-seh(`winget install BrechtSanders.WinLibs.POSIX.UCRT`、実体は `%LOCALAPPDATA%\Microsoft\WinGet\Packages\BrechtSanders...\mingw64\bin`)。**`.dll` を直リンク** | **実行して確認済み** |
 | MSVC(`cl.exe`) | MSVC 14.44.35207(Build Tools 2022)。`winget` の一発インストールは **失敗**(`Installer failed with exit code: 1` を返すのに **winget 自体は exit 0**)—— 本体は入っていて **C++ ワークロードだけが欠けていた**ので、`setup.exe modify --add Microsoft.VisualStudio.Workload.VCTools` で追加した | **ヘッダ検査は C / C++ とも通過** |
-
-★ MSVC の件は今日 3 度目の「**exit 0 なのに失敗**」だった(あとの 2 つは
-pytest の collection 中断と、`head` にパイプした `$?` の読み違い)。
-**終了コードを信じず、成果物の実在で確かめる。**
 | `csharp/` | .NET SDK 9.0.318(`winget install Microsoft.DotNet.SDK.9`) | **実行して確認済み** |
 | `luajit_ffi.lua` | LuaJIT 2.1.19907(`winget install DEVCOM.LuaJIT`、実体は `%LOCALAPPDATA%\Programs\LuaJIT\bin`) | **実行して確認済み** |
+| `python_ctypes.py` | CPython 3.11(標準ライブラリのみ) | **実行して確認済み** |
+
+★ MSVC の件は同じ日に 3 度目の「**exit 0 なのに失敗**」だった(あとの 2 つは
+pytest の collection 中断と、`head` にパイプした `$?` の読み違い)。
+**終了コードを信じず、成果物の実在で確かめる。**
 
 ### 実際の出力 —— C / C# / Lua / Python で**同一**
 
@@ -62,8 +70,8 @@ C ABI の引数ずれは実行時に何の兆候も出さず、黙って別の�
 
 最初、`which dotnet` が当たったのを見て「C# は確認済み」と書きかけた。
 実際は **ランタイムだけで SDK が無く、`dotnet run` はビルドできなかった**。
-**実行ファイルが在ることと、それでビルドできることは別**
-([[feedback_ran_is_not_meaningful_output]])。SDK を入れて初めて上の出力が得られた。
+**実行ファイルが在ることと、それでビルドできることは別**(「走った」と「意味のある
+出力が出た」を混ぜない)。SDK を入れて初めて上の出力が得られた。
 未実行のものを「対応済み」と数えない —— 表は**走らせたその時に**更新する。
 
 ## 先に建てること
@@ -71,6 +79,25 @@ C ABI の引数ずれは実行時に何の兆候も出さず、黙って別の�
 ```
 cd rust/fullseye_core
 cargo build --release
+```
+
+## C / C++
+
+```
+cd rust/fullseye_core
+clang -std=c11 -Wall -Wextra -I../.. examples/c/main.c target/release/fullseye_core.dll.lib -o examples/c/fs_example.exe
+cp target/release/fullseye_core.dll examples/c/
+cd examples/c && ./fs_example.exe
+```
+
+Linux / macOS は `-Ltarget/release -lfullseye_core` でリンクし、`LD_LIBRARY_PATH=target/release`
+で実行する(gcc / MSVC の行は `c/main.c` 冒頭のコメントにある)。★インポートライブラリで
+リンクしても**実行時は DLL を別に探す** —— 置き忘れると exe は何も印字せずに終わる。
+
+## Python (ctypes)
+
+```
+py -3.11 rust/fullseye_core/examples/python_ctypes.py
 ```
 
 ## C#

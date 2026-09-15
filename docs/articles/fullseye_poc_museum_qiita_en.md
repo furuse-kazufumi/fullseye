@@ -17,6 +17,17 @@
 - Each script has a marked `EXTEND` entry point for swapping in real data: replace the one synthesis function and the scoring framework runs unchanged. Every op used is documented, with figures, on the docs site.
 - Writing the PoCs also exposed holes in the library itself (implementations missing from the public path, ops whose defaults sit on the permissive side, ops with fixed windows). The closing section separates what was fixed from what was not.
 
+## Version updates (newest first)
+
+**2026-09-15 — Fullseye 0.1.11 is out** (`pip install -U fullseye`). Four things in it concern this museum.
+
+- **From this version on there is a Zenodo archive, so the library can be cited by DOI.** Version DOI [10.5281/zenodo.22761196](https://doi.org/10.5281/zenodo.22761196), concept DOI [10.5281/zenodo.22761195](https://doi.org/10.5281/zenodo.22761195) (always resolves to the newest version). When you quote an exhibit's numbers in a report or a paper, give the version you ran and this DOI. Versions up to 0.1.10 exist only as git tags and on PyPI.
+- **A disagreement in the counting ops is fixed.** `connection` was 4-connected on the numpy backend and 8-connected on the OpenCV one, so an 8×8 checkerboard came out as **32 objects or 1** depending on which was loaded (the contract is 8). It was found only by implementing the same specification a second time, in Rust; a test suite over a single implementation cannot catch it in principle. Also fixed: `frame_align` mis-registering halftone-like repetition, `normals_from_depth` assuming a pixel pitch of 1, `polar_unwrap` / `cylinder_unwrap` passing silently when the ring lies outside the view, `voxel_to_mesh` winding versus the sign of `mesh_volume`, and **this museum's own gate, which computed a verdict and then discarded it**. Details under 0.1.11 in the [CHANGELOG](https://github.com/furuse-kazufumi/fullseye/blob/master/CHANGELOG.md).
+- **An LLM can now drive the library directly (an MCP server).** In Claude Code, `claude mcp add fullseye -- py -3.11 -m fullseye.mcp` registers it; the AI can then search ops, read their notes, load images and run pipelines. Every result carries **numeric statistics + a verdict (empty / constant / non-finite / out of range / saturated) + the degradation ledger**, and only when the verdict is not ok does a 96 px input-versus-output thumbnail come along — the machine saying, on its own, what this museum keeps repeating: 'it ran' is not 'it produced a meaningful output'. For now it needs a checkout; the pip build stops with a stated reason ([docs/MCP.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/MCP.md)).
+- **Doors from other languages.** A five-operator C ABI (`fullseye_abi.h`) with a Rust reference implementation, and examples in C, C#, LuaJIT and Python (ctypes) that **call the same single .dll and print the same five lines**. This is not the 918-op library ported to another language; it is the 'second implementation' that found the connectivity disagreement above.
+
+The full local test suite passes at 13,073 tests (Python 3.11, all extras).
+
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ## Glossary (read this first)
