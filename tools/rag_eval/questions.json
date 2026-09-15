@@ -1,0 +1,320 @@
+{
+ "version": "2026-09-15",
+ "rules": {
+  "required_ops": "群のリスト。各群は代替の集合で、回答が群のどれか 1 つを実在 op 名で挙げれば充足。全部の群を満たして op 網羅 100 %。",
+  "required_terms": "op ではない鍵語(MCP の tool 名・環境変数・診断の語)の群。substring 一致。",
+  "optional_ops": "挙げれば加点はしないが表に出す(妥当な補助 op)。",
+  "expected_evidence": "質問側が想定する根拠ノート/ガイド(どれか 1 つを挙げれば +10)。",
+  "forbidden": "全問共通: 実在しない op 名を作らない(op でも文書語彙でもない snake_case は減点)。",
+  "human_check": "検証済みの事実。採点器は見ない —— 人が回答を読んで照合する(外部 AI の指摘は一次情報で検証してから採用)。",
+  "gate": "required_ops / optional_ops の全名は tests/test_rag_eval.py が fs.find_op → fs.ledger → ノートで実在確認する。"
+ },
+ "questions": [
+  {
+   "id": "q01",
+   "domain": "2D 欠陥",
+   "question": "金属の平面に付いた微細なスクラッチ(幅 1〜3 画素の線状の傷)を検出したい。前処理から検出、計測までどの op をどの順に使うか。",
+   "required_ops": [
+    ["lines_gauss", "tophat", "gray_tophat", "sk_frangi", "sk_meijering", "xsk_sato", "lines_facet"],
+    ["measure_pairs", "fuzzy_measure_pairing", "m1_measure_pairs"]
+   ],
+   "optional_ops": ["gaussian", "select_contours", "length_xld", "count_contours", "gen_measure_rectangle2", "measure_pos", "binary_threshold", "otsu"],
+   "expected_evidence": ["docs/ops/2d/contour/lines_gauss.md", "docs/ops/2d/morphology/tophat.md", "docs/ops/measure1d/caliper/measure_pairs.md", "docs/ops/2d/guides/gallery2d_contour_measure.md", "docs/ops/measure1d/guides/subpixel_measuring.md"],
+   "human_check": [
+    "lines_gauss は Frangi 応答の二値化で、幅も極性も返さない(ノートに明記)。",
+    "傷の幅は measure1d 族の measure_pairs(測定矩形上の立ち上がり/立ち下がり対)で測れる —— 2026-09-15 の回では Copilot が正、Codex は見落とし。",
+    "gaussian の a→σ は曖昧ではない(ノートに σ = 0.3 + 2.7a)。"
+   ]
+  },
+  {
+   "id": "q02",
+   "domain": "偏光",
+   "question": "偏光カメラ(4 方向)で撮った画像から、鏡面反射を除いた拡散成分だけを取り出したい。どの op を使うか。",
+   "required_ops": [["polarization_separate"]],
+   "optional_ops": ["polarization_dolp_map", "polarization_stokes", "specular_diffuse_split", "polarization_render"],
+   "expected_evidence": ["docs/ops/specular/polarization/polarization_separate.md", "docs/ops/specular/guides/specular_photometric.md"],
+   "human_check": [
+    "polarization_separate は「無偏光 = 拡散、直線偏光 = 鏡面」の仮定。法線入射では偽、金属では信頼できない(ノートに警告)。",
+    "max_violation_frac の既定 0 は fail-closed。推奨値はノートに無い(「無い」と言えたら正直)。"
+   ]
+  },
+  {
+   "id": "q03",
+   "domain": "計測",
+   "question": "円形部品の内径を画像から測る手順(エッジ検出から円のあてはめ、寸法の換算まで)。",
+   "required_ops": [
+    ["edges_sub_pix", "threshold_sub_pix"],
+    ["create_metrology_model"],
+    ["add_metrology_object_circle_measure"],
+    ["apply_metrology_model"]
+   ],
+   "optional_ops": ["align_metrology_model", "gaussian", "hx_fit_circle_contour", "gen_measure_arc", "measure_pos"],
+   "expected_evidence": ["docs/ops/measure1d/model/add_metrology_object_circle_measure.md", "docs/ops/measure1d/apply/apply_metrology_model.md", "docs/ops/measure1d/guides/subpixel_measuring.md", "docs/ops/2d/contour/edges_sub_pix.md"],
+   "human_check": [
+    "px→mm を換算する専用 op は無い(既知の mm/px を掛ける)。作っていないか。",
+    "apply_metrology_model の params は円なら row, col, radius。フィット不能なら params=None, rms=inf。",
+    "hx_fit_circle_contour は正規化 RMS しか返さない(円パラメータは返さない)。"
+   ]
+  },
+  {
+   "id": "q04",
+   "domain": "2D 欠陥",
+   "question": "照明ムラのある金属面で、周囲より暗い斑点状の欠陥(数画素〜数十画素)を抽出し、個数と面積を出したい。どの op をどの順に使うか。",
+   "required_ops": [
+    ["dyn_threshold", "bothat", "gray_bothat", "cv_blackhat", "tophat", "gray_tophat", "local_threshold", "adaptive_gauss_thresh"],
+    ["blob_label", "select_shape", "sk_area_opening", "cv_cc_count"],
+    ["blob_features", "area_center", "blob_select"]
+   ],
+   "optional_ops": ["gaussian", "median_image", "otsu", "blob_overlay"],
+   "expected_evidence": ["docs/ops/2d/segmentation/dyn_threshold.md", "docs/ops/2d/morphology/bothat.md", "docs/ops/blob/guides/blob_analysis.md", "docs/ops/blob/connect/blob_label.md", "docs/ops/blob/measure/blob_features.md"],
+   "human_check": [
+    "blob_features の spacing(単位/px)で面積を物理単位にできる(既定 1.0 = 画素)。",
+    "select_shape(2-D レジストリ)は面積の足切り 1 種類に固定した近似。HALCON 流の任意特徴選別は blob_select。"
+   ]
+  },
+  {
+   "id": "q05",
+   "domain": "計測",
+   "question": "矩形部品の幅をサブピクセル精度で測りたい。測定矩形の定義からエッジ対の抽出まで、どの op を使うか。斜めの測定線や近接エッジでの注意点も。",
+   "required_ops": [["gen_measure_rectangle2"], ["measure_pairs", "fuzzy_measure_pairing"]],
+   "optional_ops": ["measure_pos", "translate_measure", "gaussian"],
+   "expected_evidence": ["docs/ops/measure1d/caliper/gen_measure_rectangle2.md", "docs/ops/measure1d/caliper/measure_pairs.md", "docs/ops/measure1d/guides/subpixel_measuring.md"],
+   "human_check": [
+    "斜めの測定線に cos 補正は入っていない(呼ぶ側が掛ける)。",
+    "エッジ間距離 / PSF 幅が 3 を切ると幅は必ず大きく出て、しかも失敗を返さない(ガイドの落とし穴 2)。",
+    "measure_pairs は極性の順序を問わない。"
+   ]
+  },
+  {
+   "id": "q06",
+   "domain": "偏光",
+   "question": "被写体に偏光子を付ける価値があるかを判断したい。偏光カメラの 4 方向画像から画素ごとの直線偏光度(DoLP)を出し、シーン全体の Stokes ベクトルも読みたい。どの op か。",
+   "required_ops": [["polarization_dolp_map"], ["polarization_stokes", "stokes_analyze"]],
+   "optional_ops": ["polarization_separate", "polarization_render"],
+   "expected_evidence": ["docs/ops/specular/polarization/polarization_dolp_map.md", "docs/ops/specular/polarization/polarization_stokes.md", "docs/ops/optics/polarization/stokes_analyze.md"],
+   "human_check": [
+    "polarization_stokes はシーン積分の (4,) Stokes を返し、stokes_analyze(optics 族)がそれを読む —— 族をまたぐ導線を見つけられたか。"
+   ]
+  },
+  {
+   "id": "q07",
+   "domain": "光学",
+   "question": "直線偏光子と 1/4 波長板を通したあとの偏光状態(偏光度・方位角・楕円率)を計算したい。Jones または Mueller 行列でどの op を組み合わせるか。",
+   "required_ops": [["mueller_element", "jones_element"], ["mueller_apply", "jones_apply"], ["stokes_analyze", "stokes_from_jones"]],
+   "optional_ops": [],
+   "expected_evidence": ["docs/ops/optics/polarization/mueller_element.md", "docs/ops/optics/polarization/jones_element.md", "docs/ops/optics/polarization/stokes_analyze.md", "docs/ops/optics/guides/optics_imaging.md"],
+   "human_check": ["Mueller は Stokes に、Jones は電場ベクトルに作用する —— 型(stokes / jones)が繋がる組み合わせで書けたか。"]
+  },
+  {
+   "id": "q08",
+   "domain": "光学",
+   "question": "F 値と波長から回折限界の MTF と PSF(エアリーパターン)を出し、実測 PSF から MTF を求めたい。どの op か。",
+   "required_ops": [["mtf_diffraction"], ["airy_pattern", "airy_radius_um", "pupil_psf"], ["psf_to_mtf"]],
+   "optional_ops": ["fraunhofer_pattern", "wavefront_stats"],
+   "expected_evidence": ["docs/ops/optics/imaging/mtf_diffraction.md", "docs/ops/optics/wave/airy_pattern.md", "docs/ops/optics/imaging/psf_to_mtf.md"],
+   "human_check": ["mtf_diffraction は円形瞳の閉形式(上限)。airy_radius_um = 1.22·λ·N [µm]。"]
+  },
+  {
+   "id": "q09",
+   "domain": "レンズ",
+   "question": "2 枚玉レンズの処方(曲率半径・厚み・屈折率)から、実効焦点距離・バックフォーカスと 3 次(Seidel)収差を出したい。どの op をどの順に使うか。",
+   "required_ops": [["lens_system"], ["paraxial_trace", "thick_lens"], ["seidel_coefficients"]],
+   "optional_ops": ["spot_diagram", "ray_fan", "spot_stats", "glass", "glass_catalog", "sellmeier"],
+   "expected_evidence": ["docs/ops/optics/design/lens_system.md", "docs/ops/optics/design/paraxial_trace.md", "docs/ops/optics/design/seidel_coefficients.md", "docs/ops/optics/guides/optics_imaging.md"],
+   "human_check": ["lens_system が他の全 op が消費する table(処方)を作る入口 —— 先頭に置けたか。"]
+  },
+  {
+   "id": "q10",
+   "domain": "レンズ",
+   "question": "設計したレンズの製造公差(曲率・厚み・屈折率・偏心・傾き)がスポット径に与える影響をモンテカルロで見積もりたい。どの op か。",
+   "required_ops": [["lens_system"], ["tolerance_analysis"]],
+   "optional_ops": ["spot_stats", "spot_diagram", "paraxial_trace"],
+   "expected_evidence": ["docs/ops/optics/design/tolerance_analysis.md", "docs/ops/optics/design/lens_system.md"],
+   "human_check": ["tolerance_analysis の tolerances 辞書の鍵(radius_pct / thickness_mm / index / decenter_mm / tilt_deg)を読めたか。"]
+  },
+  {
+   "id": "q11",
+   "domain": "照明設計",
+   "question": "金属面の打痕(表面の傾き=トポグラフィ欠陥)を写すのに、リング(低角/高角)・ドーム・同軸のどの照明族が効くかを比較したい。どの op か。",
+   "required_ops": [["illumination_design", "lighting_sweep", "defect_contrast"]],
+   "optional_ops": ["light_source", "irradiance_map"],
+   "expected_evidence": ["docs/ops/optics/illumination/illumination_design.md", "docs/ops/optics/illumination/lighting_sweep.md", "docs/ops/optics/guides/mv_illumination_practice.md"],
+   "human_check": ["illumination_design は照明族を順位付けする table を返す。lighting_sweep はリング仰角に対する欠陥コントラストの pairs。"]
+  },
+  {
+   "id": "q12",
+   "domain": "照明設計",
+   "question": "リングライトの高さを変えたとき、部品面の照度分布とその均一性(中央部の min/max・CV・端の落ち込み)を評価したい。どの op をどの順に使うか。",
+   "required_ops": [["light_source"], ["irradiance_map"], ["illumination_uniformity"]],
+   "optional_ops": ["lighting_sweep"],
+   "expected_evidence": ["docs/ops/optics/illumination/light_source.md", "docs/ops/optics/illumination/irradiance_map.md", "docs/ops/optics/illumination/illumination_uniformity.md"],
+   "human_check": ["irradiance_map の単位は intensity/mm²、+y が上(row 0 が上)。"]
+  },
+  {
+   "id": "q13",
+   "domain": "3D",
+   "question": "深度カメラの点群から床面(平面)を除き、残った物体を塊ごとに分けたい。前処理から平面除去、クラスタリングまでどの op か。",
+   "required_ops": [["ransac_plane", "plane_segmentation"], ["euclidean_cluster"]],
+   "optional_ops": ["statistical_outlier_removal", "radius_outlier_removal", "voxel_grid_downsample", "depth_to_organized_points"],
+   "expected_evidence": ["docs/ops/3d/robust_fit/ransac_plane.md", "docs/ops/3d/segment/plane_segmentation.md", "docs/ops/3d/segment/euclidean_cluster.md"],
+   "human_check": ["euclidean_cluster は -1 = ノイズ、min_size 未満を捨てる。plane_segmentation は残差点を -1 で返す。"]
+  },
+  {
+   "id": "q14",
+   "domain": "3D",
+   "question": "縞投影(N-step 位相シフト)の画像列から巻き込み位相を求め、展開して絶対位相にし、投影機コラムから深度を三角測量したい。どの op をどの順に使うか。",
+   "required_ops": [["wrapped_phase", "decode_fringe"], ["unwrap_phase_2d", "absolute_phase", "graycode_decode"], ["triangulate_column"]],
+   "optional_ops": ["synthesize_fringes"],
+   "expected_evidence": ["docs/ops/3d/structured_light/wrapped_phase.md", "docs/ops/3d/structured_light/unwrap_phase_2d.md", "docs/ops/3d/structured_light/absolute_phase.md", "docs/ops/3d/structured_light/triangulate_column.md"],
+   "human_check": ["wrapped_phase は N ≥ 3 の等間隔シフトを仮定。graycode_decode は MSB first。"]
+  },
+  {
+   "id": "q15",
+   "domain": "1-D 信号",
+   "question": "打音・振動の 1-D 信号から衝撃のピーク位置を検出し、サンプル間(サブビン)精度で位置を決めたい。どの op か。帯域制限の前処理も含めて。",
+   "required_ops": [["find_peaks", "local_min_max_funct_1d"], ["peak_subbin"]],
+   "optional_ops": ["bandpass", "envelope", "lowpass", "highpass", "spectrum", "rms"],
+   "expected_evidence": ["docs/ops/oned/signal/find_peaks.md", "docs/ops/oned/signal/peak_subbin.md", "docs/ops/oned/signal/bandpass.md"],
+   "human_check": ["find_peaks は整数 index、peak_subbin が 3 点の頂点で間を補う。bandpass の両端は (0, rate/2) の内側でないと落ちる。"]
+  },
+  {
+   "id": "q16",
+   "domain": "1-D 信号",
+   "question": "HALCON の funct_1d 流に、等間隔サンプルの 1-D 関数を作り、ガウス平滑化して 1 階微分し、ゼロ交差の位置を取りたい。どの op をどの順に使うか。",
+   "required_ops": [["create_funct_1d_array", "create_funct_1d_pairs"], ["smooth_funct_1d_gauss", "smooth_funct_1d_mean"], ["derivate_funct_1d"], ["zero_crossings_funct_1d"]],
+   "optional_ops": ["local_min_max_funct_1d", "sample_funct_1d"],
+   "expected_evidence": ["docs/ops/oned/function/create_funct_1d_array.md", "docs/ops/oned/function/smooth_funct_1d_gauss.md", "docs/ops/oned/function/derivate_funct_1d.md", "docs/ops/oned/function/zero_crossings_funct_1d.md"],
+   "human_check": ["derivate_funct_1d の単位は y per sample(x 軸は index)。"]
+  },
+  {
+   "id": "q17",
+   "domain": "音響",
+   "question": "回転機械の音から転がり軸受の外輪傷を見つけたい。傷の特徴周波数の計算、復調する帯域の選び方、包絡線スペクトルまで、どの op をどの順に使うか。",
+   "required_ops": [["bearing_defect_frequencies"], ["spectral_kurtosis"], ["envelope_spectrum"]],
+   "optional_ops": ["cepstrum", "bandpass", "envelope", "synthesize_bearing_signal"],
+   "expected_evidence": ["docs/ops/acoustics/bearing/bearing_defect_frequencies.md", "docs/ops/acoustics/bearing/spectral_kurtosis.md", "docs/ops/acoustics/bearing/envelope_spectrum.md", "docs/ops/acoustics/guides/acoustic_condition_monitoring.md"],
+   "human_check": ["帯域を目で選ぶと一番大きい帯域(歯車噛合や電源高調波)を選んでしまう —— spectral_kurtosis が「衝撃的な帯域」を選ぶ理由を読めたか。"]
+  },
+  {
+   "id": "q18",
+   "domain": "音響",
+   "question": "回転数が変わる立ち上がり(run-up)の音で、軸に同期した成分と構造共振を分けたい。次数分析(order tracking)はどの op で行うか。",
+   "required_ops": [["angular_resample"], ["order_spectrum"]],
+   "optional_ops": ["synthesize_speed_ramp", "stft", "spectrogram"],
+   "expected_evidence": ["docs/ops/acoustics/order/angular_resample.md", "docs/ops/acoustics/order/order_spectrum.md", "docs/ops/acoustics/guides/acoustic_condition_monitoring.md"],
+   "human_check": ["order_spectrum は整数回転数ぶんに切ってから rFFT。定速では次数分析に意味が無い(synthesize_speed_ramp のノート)。"]
+  },
+  {
+   "id": "q19",
+   "domain": "SPC",
+   "question": "サブグループ(n=5)で採った寸法データから Xbar-R 管理図を作り、規格限界に対する工程能力 Cp/Cpk を出したい。どの op か。",
+   "required_ops": [["spc_xbar_r"], ["spc_capability"]],
+   "optional_ops": ["spc_cusum"],
+   "expected_evidence": ["docs/ops/spc/chart/spc_xbar_r.md", "docs/ops/spc/capability/spc_capability.md"],
+   "human_check": ["spc_xbar_r は 2 ≤ n ≤ 10(R 管理図の定数がその範囲)。"]
+  },
+  {
+   "id": "q20",
+   "domain": "SPC",
+   "question": "相関する複数の特徴量をまとめて監視して異常を検出し、さらに単一計測値の小さな平均シフトも早く捉えたい。それぞれどの op か。",
+   "required_ops": [["spc_hotelling_t2"], ["spc_cusum"]],
+   "optional_ops": ["spc_xbar_r"],
+   "expected_evidence": ["docs/ops/spc/multivariate/spc_hotelling_t2.md", "docs/ops/spc/change/spc_cusum.md"],
+   "human_check": ["spc_cusum の k(slack)は測定値と同じ単位で、捉えたいシフトの半分が通例。"]
+  },
+  {
+   "id": "q21",
+   "domain": "トモグラフィ",
+   "question": "CT のサイノグラムで回転中心がずれている。ずれの推定、補正、FBP 再構成までどの op をどの順に使うか。",
+   "required_ops": [["sinogram_center_of_rotation"], ["sinogram_center_shift"], ["filtered_backprojection", "sart_reconstruct"]],
+   "optional_ops": ["projection_angles", "backproject_sinogram", "ellipse_sinogram"],
+   "expected_evidence": ["docs/ops/tomography/geometry/sinogram_center_of_rotation.md", "docs/ops/tomography/geometry/sinogram_center_shift.md", "docs/ops/tomography/reconstruct/filtered_backprojection.md"],
+   "human_check": ["sinogram_center_of_rotation は重心の恒等式で再構成無しに出る。単位は検出器ビン。"]
+  },
+  {
+   "id": "q22",
+   "domain": "トモグラフィ",
+   "question": "再構成像にリング状の筋と、中心が暗くなる cupping が出る。サイノグラム段階でそれぞれ何の op で直すか。金属インプラントがある場合は。",
+   "required_ops": [["ring_artifact_remove"], ["beam_hardening_correct"], ["metal_trace_interpolate"]],
+   "optional_ops": ["ring_artifact_apply", "beam_hardening_apply"],
+   "expected_evidence": ["docs/ops/tomography/artifact/ring_artifact_remove.md", "docs/ops/tomography/artifact/beam_hardening_correct.md", "docs/ops/tomography/artifact/metal_trace_interpolate.md"],
+   "human_check": ["beam_hardening_correct は模型の逆(既定)と較正多項式の 2 経路で、主張できることが違う(ノート)。"]
+  },
+  {
+   "id": "q23",
+   "domain": "天体スタック",
+   "question": "多数の短時間露光フレームを位置合わせし、良いフレームだけ選び、宇宙線を除いて 1 枚に合成したい。どの op をどの順に使うか。",
+   "required_ops": [["align_frames", "frame_align"], ["lucky_select", "frame_quality"], ["sigma_clip_stack", "cosmic_ray_reject_stack"]],
+   "optional_ops": ["star_detect", "cosmic_ray_reject", "noise_sigma", "drizzle_resample"],
+   "expected_evidence": ["docs/ops/astrostack/align/align_frames.md", "docs/ops/astrostack/quality/lucky_select.md", "docs/ops/astrostack/stack/sigma_clip_stack.md"],
+   "human_check": ["sigma_clip_stack の mean は外れ値が必ず残り、median は雑音が 1.25 倍しか下がらない —— κ-σ クリップを選ぶ理由。lucky_select は必ず 1 枚残す。"]
+  },
+  {
+   "id": "q24",
+   "domain": "天体スタック",
+   "question": "合成した星野画像で星を検出し、開口測光(背景は環状)で明るさを測り、PSF 当てはめで FWHM も出したい。どの op か。",
+   "required_ops": [["star_detect"], ["aperture_photometry"], ["psf_fit"]],
+   "optional_ops": ["noise_sigma", "frame_quality"],
+   "expected_evidence": ["docs/ops/astrostack/photometry/star_detect.md", "docs/ops/astrostack/photometry/aperture_photometry.md", "docs/ops/astrostack/photometry/psf_fit.md"],
+   "human_check": ["aperture_photometry は副画素で重み付けするので半径が整数でなくても面積が階段状に飛ばない。背景は環の中央値。"]
+  },
+  {
+   "id": "q25",
+   "domain": "法医",
+   "question": "1 枚の画像がコピー&ムーブで改竄されていないか、また一部だけ別の JPEG 品質で貼られていないかを調べたい。どの op か。判定(改竄/非改竄)は返るか。",
+   "required_ops": [["copy_move_regions"], ["jpeg_ghost_map", "error_level_map", "jpeg_quality_estimate", "noise_inconsistency_map"]],
+   "optional_ops": ["null_distribution", "evidence_quantile", "perceptual_hash", "hash_distance"],
+   "expected_evidence": ["docs/ops/imgforensics/copy_move/copy_move_regions.md", "docs/ops/imgforensics/compression/jpeg_ghost_map.md", "docs/ops/imgforensics/compression/error_level_map.md"],
+   "human_check": ["この族は一貫して判定を返さない(証拠量だけ)。しきい値は同梱せず、null_distribution / evidence_quantile で利用者の清浄データから分布を測る。"]
+  },
+  {
+   "id": "q26",
+   "domain": "法医",
+   "question": "同じカメラで撮った複数枚からセンサ指紋(PRNU)を推定し、別の 1 枚がそのカメラ由来かを照合したい。どの op か。「このカメラ由来」と言えるしきい値はどこにあるか。",
+   "required_ops": [["sensor_fingerprint"], ["fingerprint_correlate"], ["null_distribution", "evidence_quantile"]],
+   "optional_ops": ["fingerprint_strength_map"],
+   "expected_evidence": ["docs/ops/imgforensics/sensor/sensor_fingerprint.md", "docs/ops/imgforensics/sensor/fingerprint_correlate.md", "docs/ops/imgforensics/calibration/null_distribution.md"],
+   "human_check": ["fingerprint_correlate は PCE を返すがしきい値は同梱しない(枚数・解像度・圧縮率で動く)。しきい値の「測り方」が null_distribution。"]
+  },
+  {
+   "id": "q27",
+   "domain": "MCP の使い方",
+   "question": "Claude Code から MCP で fullseye を使いたい。サーバの登録コマンド、op を探す tool、画像に op を 1 つ適用する tool、返り値の「判定」の読み方を説明せよ。",
+   "required_ops": [],
+   "required_terms": [["claude mcp add"], ["fullseye_search_ops"], ["fullseye_apply", "fullseye_pipeline"], ["判定", "ok", "constant", "flat"]],
+   "optional_ops": [],
+   "expected_evidence": ["docs/MCP.md"],
+   "human_check": ["tool は 8 つで op(1,942)は tool にしない。画像はハンドル fullseye://img/<sha16> でやり取りし、判定は必ず生の数値と併記される。"]
+  },
+  {
+   "id": "q28",
+   "domain": "MCP の使い方",
+   "question": "MCP サーバに自分の画像フォルダを読ませたい。また pip install だけの環境(wheel)で op のノート本文が返らないのはなぜで、どの tool で出どころを確かめられるか。",
+   "required_ops": [],
+   "required_terms": [["FULLSEYE_MCP_ROOT"], ["note_body_unavailable", "op_help"], ["fullseye_catalog_coverage", "index_source", "notes_source"]],
+   "optional_ops": [],
+   "expected_evidence": ["docs/MCP.md"],
+   "human_check": ["wheel には索引の複製とノートの frontmatter だけが入り、本文の代わりに Studio help HTML を返して note_body_unavailable にそう書く(黙って代替に落ちない)。"]
+  },
+  {
+   "id": "q29",
+   "domain": "失敗の原因診断",
+   "question": "apply_metrology_model が円オブジェクトについて params=None, rms=inf を返した。ノートに書かれた失敗条件は何で、どの引数を見直すべきか。",
+   "required_ops": [["apply_metrology_model"]],
+   "required_terms": [["measure_length", "threshold", "sigma"], ["エッジ点", "edge_points", "エッジが足りず", "足りず"]],
+   "optional_ops": ["add_metrology_object_circle_measure", "align_metrology_model"],
+   "expected_evidence": ["docs/ops/measure1d/apply/apply_metrology_model.md", "docs/ops/measure1d/guides/subpixel_measuring.md"],
+   "human_check": ["エッジ点が足りずフィットできないと params=None, rms=inf, error に理由(他オブジェクトは続行)。見直す引数は measure_length(法線方向の探索半幅)・threshold(最小グレー差)・sigma、そして参照円の位置・半径。"]
+  },
+  {
+   "id": "q30",
+   "domain": "失敗の原因診断",
+   "question": "polarization_separate が実カメラの 4 方向画像で例外(負の最小放射輝度)を出して止まる。ノートに書かれた理由と、止めずに走らせる引数、その引数を上げるときの注意は。",
+   "required_ops": [["polarization_separate"]],
+   "required_terms": [["max_violation_frac"], ["fail-closed", "負", "negative", "雑音", "ノイズ", "noise"]],
+   "optional_ops": ["polarization_dolp_map", "polarization_render"],
+   "expected_evidence": ["docs/ops/specular/polarization/polarization_separate.md"],
+   "human_check": ["max_violation_frac は負の最小放射輝度を許す画素の割合。既定 0 は fail-closed(変調が平均を超える = 物理的にあり得ない)。推奨値はノートに無い —— センサ雑音で起きるので小さな値から、と自分で言えたら正直。"]
+  }
+ ]
+}

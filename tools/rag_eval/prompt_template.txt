@@ -1,0 +1,10 @@
+あなたは画像処理ライブラリ fullseye(このリポジトリ、`import fullseye as fs`)を初めて使う開発者です。コードは書かず、リポジトリ内のドキュメント(まず docs/AI_RAG_GUIDE.md、次に docs/ops/INDEX.md、docs/ops/**/*.md、docs/OP_CATALOG.md、docs/MCP.md などガイドが指すもの)だけを使って、次の質問に答えてください。ファイルは UTF-8 として読んでください(PowerShell なら `Get-Content -Encoding utf8`)。
+
+各答えには必ず次を添えてください:
+- 使った op 名(バッククォートで `op_name` の形。推測で op 名を作らないこと。見つからなければ「見つからなかった」と書く)
+- 根拠にしたファイルのリポジトリ相対パス(例 docs/ops/measure1d/caliper/measure_pairs.md)
+- 迷った点(ノートに無くて困った情報、類似 op との使い分け、限界)
+
+答えは問ごとに `### 問N` の見出し(N は下の番号)で始めてください。日本語で、1 問あたり 600 字以内。
+
+{questions}
