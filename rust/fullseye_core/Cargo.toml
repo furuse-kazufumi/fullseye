@@ -9,6 +9,26 @@ description = "fullseye_abi.h の契約を Rust で実装したスパイク(差�
 # C++(直接)・Lua(LuaJIT FFI)から同じ関数が呼べる。
 crate-type = ["cdylib"]
 
+[features]
+default = []
+# `embed` = CPython を埋め込み、`fs_apply` の python 経路(全 op)を有効にする。
+# 既定 off: そのとき python 経路は FS_E_NO_PYTHON を理由つきで返し、native 経路
+# (契約の 5 op)だけが動く —— 軽い C ABI をそのまま保つ。
+# ビルド: `PYO3_PYTHON=<python.exe> cargo build --release --features embed`
+embed = ["dep:pyo3", "dep:pyo3-build-config"]
+
+[dependencies]
+# params_json の構文検査(RFC 8259: NaN / Infinity は JSON ではないので弾く)と
+# native 経路の必須キーの読み取りだけに使う。既定値の表は持たない(正本は Python 側)。
+serde_json = "1"
+# 埋め込み用。`auto-initialize` は付けない(初期化は自前で PyConfig を組む:
+# home を指定できるようにするため)。`extension-module` も付けない(埋め込みと両立しない)。
+pyo3 = { version = "0.29", optional = true }
+
+[build-dependencies]
+# build.rs で python3XY.dll の名前を知るためだけ(Windows の遅延ロード指定に使う)。
+pyo3-build-config = { version = "0.29", optional = true, features = ["resolve-config"] }
+
 [profile.release]
 opt-level = 3
 panic = "abort"        # パニックを ABI 境界から漏らさない(契約 R-1: 例外は無い)

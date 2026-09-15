@@ -13,12 +13,50 @@
 あるのは事実だが、それは**解釈が分かれる場所をわざと増やす**理由にはならず、堅牢さの
 逆を行く。ここに置くのは**呼び出し方の見本 1 つずつ**だけ。
 
-| 言語 | ファイル | 呼び方 |
-|---|---|---|
-| C / C++ | [`c/main.c`](c/main.c) | `#include "fullseye_abi.h"` して直接リンク。C++ からも同じヘッダをそのまま include できる(`extern "C"` はヘッダ側にある) |
-| C# | [`csharp/Program.cs`](csharp/Program.cs) | `DllImport`(P/Invoke) |
-| Lua | [`luajit_ffi.lua`](luajit_ffi.lua) | LuaJIT の `ffi.cdef` |
-| Python | [`python_ctypes.py`](python_ctypes.py) | `ctypes`(標準ライブラリだけ。numpy も fullseye 本体も使わない) |
+| 言語 | ファイル | 呼び方 | `fs_apply` の見本 |
+|---|---|---|---|
+| C / C++ | [`c/main.c`](c/main.c) | `#include "fullseye_abi.h"` して直接リンク。C++ からも同じヘッダをそのまま include できる(`extern "C"` はヘッダ側にある) | あり(native と python の 1 回ずつ) |
+| C# | [`csharp/Program.cs`](csharp/Program.cs) | `DllImport`(P/Invoke) | 未(同じ関数。`fs_handle_t` / `fs_apply_info_t` を `StructLayout(Sequential)` で写せば呼べる。次段) |
+| Lua | [`luajit_ffi.lua`](luajit_ffi.lua) | LuaJIT の `ffi.cdef` | 未(同じ関数。`ffi.cdef` に 2 つの struct と宣言を足せば呼べる。次段) |
+| Python | [`python_ctypes.py`](python_ctypes.py) | `ctypes`(標準ライブラリだけ。numpy も fullseye 本体も使わない) | あり(native と python の 1 回ずつ) |
+
+## 全 op は `fs_apply`、5 op はネイティブ経路もある。`route` を見よ
+
+契約の 5 演算子(`fs_gauss` / `fs_threshold` / `fs_connection` / `fs_measure_all` /
+`fs_select_shape`)は型つきの関数として呼べる。それ以外の **~900 op は汎用入口
+`fs_apply(op 名, ハンドル群, パラメータ JSON, route_pref, 出力ハンドル群, info)`** から呼ぶ。
+中に CPython を埋め込み(cargo feature `embed`、既定 off)、Python レジストリの op を走らせる。
+5 op はネイティブ(Rust)経路もあり、`route_pref` で強制できる:
+
+| `route_pref` | 意味 |
+|---|---|
+| `0` auto | ネイティブ実装があればネイティブ、無ければ python |
+| `1` native | ネイティブだけ。無い op は `FS_E_UNSUPPORTED` |
+| `2` python | python だけ。埋め込みが無ければ `FS_E_NO_PYTHON` + 理由 |
+
+**どの経路で走ったかは `fs_apply_info_t.route`("native" / "python")に必ず入る**。
+`backend` には Python 側で実際に走った実装(`numpy` / `cv2` / `ops` …)、`degraded` には
+劣化台帳に何か載ったか、`message` には失敗の理由(成功時は解決後のパラメータを型つきで —
+`5` と `5.0` が別物として届いたことを読める)。1 と 2 で同じ op を走らせて突き合わせるのが
+差分テストの門で、`tests/test_abi_apply.py` がそれをやっている。
+
+```
+cd rust/fullseye_core
+set PYO3_PYTHON=C:\Path\To\Python311\python.exe      # 埋め込む CPython(3.11)
+cargo build --release --features embed
+```
+
+実行時の前提(**同梱していない**、正直に): `python311.dll` が OS の DLL 探索(exe と同じ dir /
+PATH)で見つかること、`fullseye` の checkout が `FULLSEYE_ROOT` で指せること(DLL が checkout の
+`target/` の中に居るなら自動で見つける)。標準ライブラリの所在(`PyConfig.home`)は
+`FULLSEYE_PYTHON_HOME` → PEP 514 レジストリ → ロード済み DLL の dir の順。ホストが既に CPython
+(`ctypes`)なら何も起動せず、その解釈系をそのまま使う(版が違えば拒否)。
+
+`/DELAYLOAD` で「python311.dll が無くてもライブラリ自体はロードできる」形にしようとしたが、
+pyo3 がデータシンボル(`PyBytes_Type` 等)を import するので**リンクできない**(LNK1194)。
+DLL が無いときは `fullseye_core.dll` のロード自体が OS のエラー 126 で失敗する。
+python-build-standalone(`install_only_stripped`、約 24 MB)を cdylib の隣に置く同梱が次段の解で、
+手順は `docs/INTEGRATION.md` に書いてある。
 
 ## 実行したかどうか(正直に)
 
@@ -47,6 +85,19 @@ dtype 読み返し: 4 (FS_DTYPE_F64 = 4)
 
 4 つの言語が**同じ 1 本の .dll を叩いて同じ答え**を出している。
 これがバインディングを書かずに済む理由であり、「多言語対応」の実体でもある。
+
+C と Python の見本は続けて `fs_apply` を 2 回呼ぶ(2026-09-15 実走、`--features embed`):
+
+```
+fs_apply gauss: route=native backend=rust degraded=0 面積(>=0.5) 32
+fs_apply gaussian: route=python backend=ops degraded=0 面積(>=0.5) 32
+```
+
+`embed` 無しで建てると 2 行目は `fs_apply gaussian: python 経路なし(python 経路はこのビルドに
+入っていない…)` になり、見本は**それでも exit 0** —— 経路が無いのは失敗ではなく答えだから。
+C の見本は pytest からも建てて走らせる(`tests/test_abi_apply.py`、clang があるとき)。ホストが
+Python ではないので、home の探索・`Py_InitializeFromConfig`・`fullseye.abi_bridge` の import が
+**そこで初めて**検査される —— ctypes からの呼び出しではホストが既に CPython で、この経路は走らない。
 
 ### ★ C の例だけが持っている役目
 

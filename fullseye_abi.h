@@ -64,7 +64,17 @@ typedef enum fs_status {
     FS_E_UNSUPPORTED      = 6,  /* declared in the ABI, not implemented here    */
     FS_E_OUT_OF_MEMORY    = 7,
     FS_E_DEADLINE         = 8,  /* the cycle budget expired                     */
-    FS_E_INTERNAL         = 9
+    FS_E_INTERNAL         = 9,
+    /* Added with the generic entry point `fs_apply` (0.1.12).  The numbers
+     * above are frozen; these continue the sequence and are never renumbered. */
+    FS_E_NO_PYTHON        = 10, /* the Python route is not built in, or the      */
+                                /*   interpreter could not be found / started   */
+    FS_E_UNKNOWN_OP       = 11, /* no operator of that name on any route        */
+    FS_E_BAD_PARAMS       = 12, /* params_json is not RFC 8259, or the Python   */
+                                /*   validator refused it (unknown key, wrong   */
+                                /*   type, out of range, NaN)                   */
+    FS_E_PY_EXCEPTION     = 13  /* the operator raised something the bridge did */
+                                /*   not classify; the message carries the text */
 } fs_status_t;
 
 /* --------------------------------------------------------------------------
@@ -258,6 +268,114 @@ fs_status_t fs_measure_all(const fs_objectset_t *in,
  * "area", "row" and "column" -- the three `fs_measure_all` produces. */
 fs_status_t fs_select_shape(const fs_objectset_t *in, const char *feature,
                             double vmin, double vmax, fs_objectset_t **out);
+
+/* --------------------------------------------------------------------------
+ * GENERIC ENTRY POINT -- every Fullseye operator through one function.
+ *
+ * The five operators above are the CONTRACT: named, typed, frozen.  Everything
+ * else in the Python library (the ~900-operator registry) is reachable through
+ * `fs_apply`, which names the operator as a string and takes its parameters as
+ * a JSON object.  Two routes exist behind it:
+ *
+ *   "native"  -- the Rust implementation of the five contract operators.
+ *   "python"  -- an embedded CPython running the Python registry.  Present only
+ *                when the library was built with the `embed` feature; otherwise
+ *                the route answers FS_E_NO_PYTHON with the reason in `message`.
+ *
+ * The route that actually ran is ALWAYS reported (`fs_apply_info_t.route`).
+ * That is the point of having both: running the same operator on both routes
+ * and comparing is how the specification bugs listed in CHANGELOG 0.1.11 were
+ * found, and `route_pref` lets a differential test force either side.
+ *
+ * Rules that carry over unchanged: R-1 (status codes, no benign fallbacks --
+ * a degraded Python operator is reported in `degraded` and never silently
+ * substituted), R-2 (handles stay opaque; pixels are copied across the
+ * boundary, never aliased), R-5 (every handle written to `outputs` is owned by
+ * the caller and released with the matching fs_*_release).
+ *
+ * Where parameters are validated: in ONE place, the Python registry.  The JSON
+ * is checked for RFC 8259 syntax on the Rust side (NaN / Infinity are not JSON
+ * and are refused), then handed to the Python validator, which knows each
+ * operator's parameter names, types, ranges and defaults; `5` and `5.0` reach
+ * Python as int and float respectively.  The native route reads only the keys
+ * the five contract operators require (they have no defaults) and refuses
+ * anything else -- it does NOT keep a second copy of the parameter tables.
+ * `fs_catalog_json` returns those tables so a caller can discover them.
+ * -------------------------------------------------------------------------- */
+
+/* What a slot in `inputs` / `outputs` holds.  `ptr` is the same pointer the
+ * typed functions above take and return (fs_image_t* etc.). */
+typedef enum fs_kind {
+    FS_KIND_NONE      = 0,   /* an empty slot                                */
+    FS_KIND_IMAGE     = 1,   /* fs_image_t*                                  */
+    FS_KIND_REGION    = 2,   /* fs_region_t*                                 */
+    FS_KIND_OBJECTSET = 3,   /* fs_objectset_t*                              */
+    FS_KIND_TUPLE     = 4    /* fs_tuple_t*                                  */
+} fs_kind_t;
+
+typedef struct fs_handle {
+    int   kind;              /* fs_kind_t                                    */
+    void *ptr;
+} fs_handle_t;
+
+/* Provenance of one `fs_apply` call.  Filled on every return, success or not,
+ * so a caller can always answer "which implementation produced this?". */
+typedef struct fs_apply_info {
+    char route[16];          /* "native" | "python" | "" (refused before any  */
+                             /*   route ran, e.g. malformed JSON)             */
+    char op[64];             /* the operator name as given                    */
+    char backend[32];        /* python: the implementation that ran (e.g.     */
+                             /*   "numpy", "cv2", "backends_sk"); native:     */
+                             /*   "rust"                                      */
+    int  degraded;           /* 1 if the Python fallback ledger recorded an   */
+                             /*   event during this call (the result is then  */
+                             /*   a sort-valid substitute, NOT the operator's  */
+                             /*   answer); 0 otherwise                        */
+    char message[512];       /* UTF-8, NUL-ended.  On failure: the reason.    */
+                             /*   On success: the parameters as resolved,     */
+                             /*   with the type each reached the operator as  */
+                             /*   ("params: sigma=2(int)") -- so a caller can */
+                             /*   see that 2 and 2.0 were kept apart.  Any    */
+                             /*   degradation events are appended.            */
+} fs_apply_info_t;
+
+/* Route preference for `fs_apply`. */
+#define FS_ROUTE_AUTO    0   /* native if the operator has it, else python   */
+#define FS_ROUTE_NATIVE  1   /* native only; FS_E_UNSUPPORTED if it has none */
+#define FS_ROUTE_PYTHON  2   /* python only; FS_E_NO_PYTHON if not embedded  */
+
+/* Apply operator `op` to `inputs[0..n_in)` with parameters `params_json` (a
+ * JSON object; "{}" or NULL for none).  On FS_OK, `*n_out` handles have been
+ * written to `outputs` (capacity `out_cap`; if too small, `*n_out` is set to
+ * the required count and FS_E_INVALID_ARG is returned without writing).  `info`
+ * may be NULL.  Handles in `inputs` are borrowed for the duration of the call. */
+fs_status_t fs_apply(const char *op,
+                     const fs_handle_t *inputs, int n_in,
+                     const char *params_json,
+                     int route_pref,
+                     fs_handle_t *outputs, int out_cap, int *n_out,
+                     fs_apply_info_t *info);
+
+/* Start the embedded interpreter (once per process; later calls are no-ops).
+ * `python_home_or_null`: the Python installation to use, or NULL to search
+ * FULLSEYE_PYTHON_HOME, then the PEP 514 registry (Windows), and fail closed.
+ * When the host process already IS a Python interpreter (ctypes), nothing is
+ * started and the host's interpreter is used.  `fs_apply` calls this itself on
+ * the first python-route call; calling it early only moves the cost. */
+fs_status_t fs_python_init(const char *python_home_or_null);
+
+/* FS_OK if the python route can run now; otherwise FS_E_NO_PYTHON with the
+ * reason written to `why` (UTF-8, NUL-ended, truncated to `why_len`). */
+fs_status_t fs_python_available(char *why, int why_len);
+
+/* The operator catalogue as JSON: every name `fs_apply` accepts, which route(s)
+ * it has, the kinds of its inputs, and its parameters with types, ranges and
+ * defaults -- straight from the Python registry (the native route has no
+ * table of its own).  The string is owned by the library and stays valid until
+ * the next call to this function.  FS_E_NO_PYTHON if the python route is not
+ * available (the native five are then not listed either: the catalogue is a
+ * Python artefact, and a partial one would be a benign fallback). */
+fs_status_t fs_catalog_json(const char **out);
 
 #ifdef __cplusplus
 }

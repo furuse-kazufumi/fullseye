@@ -96,6 +96,44 @@ codes, a missing ABI argument, a header that MSVC read as cp932, …). Speed is 
 the wins measured against Python were representation wins (run-length regions), not
 language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 
+### Every operator through one function: `fs_apply`
+
+**All operators are reachable through `fs_apply`; the five contract operators also have a
+native route. Look at `route`.** `fs_apply(op, inputs, n_in, params_json, route_pref, outputs,
+out_cap, n_out, info)` names the operator as a string and takes its parameters as a JSON
+object. Behind it are two routes — `"native"` (the Rust implementation of the five contract
+operators) and `"python"` (an embedded CPython running the Python registry, present only when
+the cdylib is built with `cargo build --release --features embed`; otherwise that route
+answers `FS_E_NO_PYTHON` with the reason). `route_pref` is `0` auto / `1` native only /
+`2` python only, and `fs_apply_info_t.route` always reports which one ran, `backend` which
+Python implementation ran (`numpy`, `cv2`, …), `degraded` whether the fallback ledger recorded
+anything, `message` the reason on failure or the resolved parameters (typed — `5` and `5.0`
+are kept apart) on success. Parameters are validated in one place, the Python registry, with
+the same fail-closed validator the MCP server uses (unknown key, wrong type, out-of-range, NaN
+are refused; JSON must be RFC 8259). `fs_catalog_json` returns every name, its routes, input
+kinds and parameter table. Forcing route 1 and 2 on the same input is the differential gate
+(`tests/test_abi_apply.py`); the Python side is `fullseye/abi_bridge.py`.
+
+Runtime requirements, stated plainly (nothing is bundled yet): `python311.dll` must be found
+by the OS loader (next to the executable or on `PATH`) — it is a static import, because pyo3
+imports data symbols and `/DELAYLOAD` cannot link them; the standard library location is
+resolved from `FULLSEYE_PYTHON_HOME`, then the PEP 514 registry, then the loaded DLL's
+directory; the checkout is found through `FULLSEYE_ROOT` (or automatically when the DLL lives
+under the checkout's `target/`). A `pip install fullseye` wheel on the same machine does not
+provide the bridge, so `FULLSEYE_ROOT` must point at a checkout. When the host process already
+is CPython (`ctypes`), nothing is started and the host's interpreter is used; a host running a
+different CPython version is refused. Arrays cross the boundary by copy (measured on a
+512×512 float64 Gaussian, σ=2, warm: native 7.0 ms; python route 4.8 ms of which the cv2 kernel
+is 1.6 ms — the rest is the copy and the dictionary round trip).
+
+Next stage, not done: bundle a CPython so the cdylib is self-contained. The plan is
+python-build-standalone (`cpython-3.11.*-x86_64-pc-windows-msvc-install_only_stripped`,
+about 24 MB) unpacked next to the cdylib, `fs_python_init("<that dir>")` as the home, and the
+`fullseye` package plus its numpy/scipy/cv2 wheels installed into it; zero-copy arrays are a
+separate step (a borrowed numpy view must not outlive the Rust buffer it wraps —
+`borrow_from_array` and friends make that easy to get wrong, so the copy stays until a test
+pins the lifetime).
+
 ## Honest boundary
 
 Fullseye is classical (numpy/scipy, no learned detectors/segmenters/priors). It

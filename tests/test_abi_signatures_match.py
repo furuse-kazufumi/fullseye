@@ -69,7 +69,8 @@ def ctypes_argtypes() -> dict[str, dict[str, int]]:
     壊れる**ので、まずそこを固定する。
     """
     files = ["tools/fs_abi_fuzz.py", "tools/fs_abi_bench.py",
-             "tests/test_rust_abi_parity.py"]
+             "tests/test_rust_abi_parity.py", "tests/test_abi_apply.py",
+             "rust/fullseye_core/examples/python_ctypes.py"]
     out = {}
     for rel in files:
         path = os.path.join(ROOT, rel)
