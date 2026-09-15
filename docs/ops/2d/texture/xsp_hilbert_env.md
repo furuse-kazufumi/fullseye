@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 「包絡線」を強調するのに向き、位相情報は捨てて振幅だけを残す。列方向
 には掛からないため、結果は水平方向の変化にのみ反応する。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

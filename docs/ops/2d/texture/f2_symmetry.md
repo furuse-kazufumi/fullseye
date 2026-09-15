@@ -41,6 +41,8 @@ a low response means the neighbourhood is left-right symmetric about that
 column. ``a`` sets the radius r (1..6); ``b`` is ignored. Output is the
 asymmetry response normalised to [0,1].
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

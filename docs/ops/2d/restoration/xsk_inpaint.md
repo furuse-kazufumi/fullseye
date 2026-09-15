@@ -41,6 +41,8 @@ skimage の biharmonic inpainting(調和方程式に基づく補間)で周囲か
 ``b`` は未使用。しきい値が固定なので、本来ハイライト/シャドウとして
 意味のある画素まで「欠損」扱いされ埋められてしまう場合がある。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

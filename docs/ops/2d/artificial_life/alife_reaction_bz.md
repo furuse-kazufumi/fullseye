@@ -47,6 +47,8 @@ initial state (>2/3 excited, 1/3..2/3 refractory, else rest). ``a`` sets the
 excitation threshold thr = 1 + int(3a) neighbours, ``b`` the step count
 1 + int(20b). Returns state/2.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

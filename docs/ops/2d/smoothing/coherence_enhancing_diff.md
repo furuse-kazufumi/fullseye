@@ -49,6 +49,8 @@ an image.）の代役。
 
 ``a`` が反復回数、``b`` が伝導度閾値 K を振る。両方が使われる。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

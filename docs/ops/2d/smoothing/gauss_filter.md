@@ -43,6 +43,8 @@ functions.）の代役 ―― HALCON は離散ガウス核(整数演算)、こ�
 ``a`` がシグマを 0.3〜3.0 の範囲で振る。``b`` は未使用。実装は
 ``gauss_image`` と同一。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

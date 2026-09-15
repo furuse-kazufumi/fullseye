@@ -46,6 +46,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 ``a`` が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。
 ``b`` は未使用。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

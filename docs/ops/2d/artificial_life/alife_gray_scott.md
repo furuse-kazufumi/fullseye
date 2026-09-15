@@ -46,6 +46,8 @@ which spots / stripes / labyrinths grow. ``a`` sets the feed rate
 F = 0.02 + 0.06a *and* the number of integration steps T = 8 + int(20a);
 ``b`` sets the kill rate K = 0.05 + 0.02b. Returns the normalised v field.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

@@ -44,6 +44,8 @@ torus this self-organises the initial field into rotating spiral waves and
 demons. ``a`` sets the state count N, ``b`` the step count 1 + int(15b).
 Returns state/(N-1) so the full [0,1] range is used.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

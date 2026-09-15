@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 **a, b は未使用**（共通ヘルパー ``_resp`` が a, b を受け取るだけで捨てる）。
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

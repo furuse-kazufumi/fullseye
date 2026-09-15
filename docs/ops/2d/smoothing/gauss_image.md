@@ -43,6 +43,8 @@ discrete Gaussian functions.）の代役。
 
 ``a`` がシグマを 0.3〜3.0 の範囲で振る。``b`` は未使用。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

@@ -47,6 +47,8 @@ to its own curvature: small blobs and boundary wiggles vanish, straight edges
 stay put. ``a`` sets the number of steps 1 + int(29a), ``b`` the time step
 dt = 0.05 + 0.2b.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

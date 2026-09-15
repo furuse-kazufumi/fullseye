@@ -542,6 +542,46 @@ def result_adapter_hints():
 _PSEUDOLINK = re.compile(r"\]\((?P<t>[^)\n]*)\)")
 
 
+#: 端の規約の**実測結果**(`tools/impl2/border_probe.py` の出力)。
+#: 近傍窓を使う op の 93% がこの規約を書いていなかった —— そして端の規約は答えを
+#: 値域の 2 割動かす(`impl2/FINDINGS.md`)。**推測では書かない**ので、測って
+#: 確定したものだけをここから差し込む。判定できなかった op には何も足さない。
+_BORDER_JSON = os.path.join(_ROOT, "docs", "op_border.json")
+_BORDER_JA = {
+    "constant0": "外側を 0 とみなす",
+    "edge": "端の画素を複製する(最近傍)",
+    "reflect": "端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)",
+    "symmetric": "端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)",
+    "wrap": "反対側へ巻き付ける(周期)",
+}
+_BORDER_CACHE = None
+
+
+def _border_map() -> dict:
+    global _BORDER_CACHE
+    if _BORDER_CACHE is None:
+        _BORDER_CACHE = {}
+        if os.path.exists(_BORDER_JSON):
+            with open(_BORDER_JSON, encoding="utf-8") as _f:
+                _rows = json.load(_f)
+            for r in _rows:
+                if r.get("status") == "determined" and r.get("border") in _BORDER_JA:
+                    _BORDER_CACHE[r["op"]] = r["border"]
+    return _BORDER_CACHE
+
+
+_BORDER_ALREADY = re.compile(r"境界|端の扱い|端は|BORDER_|パディング")
+
+
+def _with_border(name: str, doc: str) -> str:
+    """実測した端の規約を本文に足す。**既に書いてある op には触らない**。"""
+    mode = _border_map().get(name)
+    if not mode or (doc and _BORDER_ALREADY.search(doc)):
+        return doc
+    line = f"**端の扱い**: {_BORDER_JA[mode]}(実測。`tools/impl2/border_probe.py`)。"
+    return (doc + chr(10) + chr(10) + line) if doc else line
+
+
 def _defuse_pseudolinks(doc: str) -> str:
     """docstring 内の「リンクに見える括弧」を無害化する(2026-09-07、3-D 12 本で実測)。
 
@@ -584,7 +624,8 @@ def _records():
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": _defuse_pseudolinks(inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip()),
+            "doc": _with_border(o.name, _defuse_pseudolinks(
+                inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip())),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),

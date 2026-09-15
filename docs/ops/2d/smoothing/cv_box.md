@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `mean_image`(Smooth by averaging.)に相当。実装は ``cv2.blur(v, (k,k))``、``k=3+2*int(a*3)`` —— a はカーネルサイズを 3, 5, 7, 9 に振る。b は未使用。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

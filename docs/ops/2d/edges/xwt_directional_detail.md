@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``b`` でどの方向を見るか選ぶ(``min(2,int(b*3))`` で cH→cV→cD の 3 択)。``a`` は未使用。サブバンドは元画像の半分の解像度なのでブロック状に拡大されることに注意(滑らかな拡大ではない)。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

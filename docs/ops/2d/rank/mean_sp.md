@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``mean_sp``（ソルト&ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

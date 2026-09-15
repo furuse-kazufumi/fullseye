@@ -46,6 +46,8 @@ anisotropic diffusion of an image.）に相当。
 ``a`` が反復回数を 2〜10 回の範囲で、``b`` が伝導度の閾値 K を 0.05〜0.3
 の範囲で振る。両方が使われる。K が小さいほどエッジを厳しく保護する。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

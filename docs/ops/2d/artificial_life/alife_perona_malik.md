@@ -46,6 +46,8 @@ is what makes the edges sharpen rather than merely survive. ``a`` sets the
 edge scale kappa = 0.02 + 0.2a, ``b`` the iteration count 1 + int(15b);
 lambda is fixed at 0.2 (<= 0.25, the explicit-scheme stability bound).
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

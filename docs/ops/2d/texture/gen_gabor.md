@@ -49,6 +49,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 ``a`` が向き θ(0〜180°)を、``b`` が空間周波数(0.1〜0.4)を振る。両方が
 使われる。``a=0`` が縦縞、``a=0.5``(90°)が横縞に応答する規約。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

@@ -41,6 +41,8 @@ using the Frei-Chen operator.）に相当。
 ``a``, ``b`` は未使用。固定カーネル 2 本のみ(Frei-Chen 本来の全 9 基底の
 一部だけを使った近似)。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `median_image` に相当。実装は ``cv2.medianBlur(_u8(v), ksize=3+2*int(a*3))`` —— a はカーネルサイズを 3, 5, 7, 9(奇数)に振る。b は未使用。8 bit に量子化してから処理するため、元画像の微妙な階調は失われる。sk_median_disk と違い正方形カーネル。
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

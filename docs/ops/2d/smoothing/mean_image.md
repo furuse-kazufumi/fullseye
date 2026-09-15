@@ -42,6 +42,8 @@ averaging.）に相当する近似で、注目画素を一辺 k の窓の平均�
 未使用。ガウシアンより速いが、エッジがぼやけずに角ばったブロック状の
 アーティファクトを残しやすい。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

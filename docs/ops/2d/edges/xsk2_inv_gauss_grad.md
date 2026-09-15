@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 a がエッジ感度 alpha（``50 + 150*a``、範囲 50〜200。大きいほど弱いエッジでも停止関数の値が下がる＝止まりやすくなる）を振る。b は未使用。値はエッジで小さく（0 に近く）平坦部で 1 に近い——geodesic activecontour 系のセグメンテーションでエッジ停止項として使うことを想定した出力で、そのまま見た目のエッジ画像として使うと通常のエッジ検出とは明暗が逆に見える。
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

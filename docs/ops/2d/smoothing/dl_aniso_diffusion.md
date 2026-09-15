@@ -48,6 +48,8 @@ Perona-Malik 型の異方性拡散フィルタ（torch 実装、GPU があれば
 ``anisotropic_diffusion``（画像の異方性拡散を行う）に相当するが、同じ結果になる
 とは限らない近似実装。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

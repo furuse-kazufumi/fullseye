@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `emphasize`(Enhance contrast of the image.)に相当(近似)。実装は ``cv2.filter2D(v, kernel)`` を ``[0,1]`` へ clip したもの —— a はカーネルの強さ(鮮鋭化の度合い)を 0〜1 に振る。b は未使用。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

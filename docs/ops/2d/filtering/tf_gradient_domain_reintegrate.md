@@ -44,6 +44,8 @@ and the original image is recovered (up to a constant); with ``a > 0`` flat
 regions are flattened while edges survive -- an edge-preserving gradient-domain
 filter. ``b`` is unused. Output rescaled to [0,1].
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

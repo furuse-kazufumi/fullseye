@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``dual_rank``（円形または矩形マスクでオープニング・中央値・クロージングを組み合わせて行う演算）とは異なり、この実装は単一の順位フィルタのみで、開閉処理の組み合わせは再現しない簡略近似。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

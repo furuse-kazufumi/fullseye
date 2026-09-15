@@ -46,6 +46,8 @@ Gaussian).）に相当。
 が使われ、``b`` の方を大きくとることで帯域幅が決まる。応答は絶対値を取って
 から正規化しているため符号情報は失われる。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

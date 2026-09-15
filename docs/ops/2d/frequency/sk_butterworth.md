@@ -37,6 +37,8 @@ Butterworth フィルタ(周波数領域)。画像を FFT した上で、指定�
 
 HALCON に直接対応するものは無い(空欄)。実装は ``filters.butterworth(v, cutoff_frequency_ratio=0.05+0.3*a)`` を ``[0,1]`` に clip しただけ —— a はカットオフ比を 0.05〜0.35 に振る(小さいほど低周波まで削られ、応答が強く/広く出る)。b は未使用。ハイパスなので低コントラストな平坦領域は 0 付近に落ち、直流成分(平均輝度)の情報は失われる。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

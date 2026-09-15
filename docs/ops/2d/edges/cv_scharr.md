@@ -37,6 +37,8 @@ Scharr 勾配の大きさ(OpenCV 実装)。水平・垂直それぞれの Scharr
 
 HALCON の `edges_image` に相当(近似)。実装は ``|cv2.Scharr(v,CV_64F,1,0)| + |cv2.Scharr(v,CV_64F,0,1)|`` を正規化したもの。a, b は未使用。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

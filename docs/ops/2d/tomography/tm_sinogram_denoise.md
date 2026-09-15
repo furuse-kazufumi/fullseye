@@ -42,6 +42,8 @@ preserving the sinusoidal traces. ``a`` sets the angle-axis Gaussian sigma
 (``a*4``), ``b`` adds a gentle detector-axis sigma (``b*1.5``). Output stays
 a same-shape sinogram in [0,1].
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

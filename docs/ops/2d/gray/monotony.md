@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 エッジの向き（明→暗か暗→明か）を区別できる非対称なエッジ検出に使う。HALCON の ``monotony``（単調性演算の計算）に相当。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

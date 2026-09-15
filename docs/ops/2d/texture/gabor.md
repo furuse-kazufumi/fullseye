@@ -55,6 +55,8 @@ Gabor energy |v * g| — an oriented band-pass texture response.
 ``|v| <= 1`` なら ``|v * g| <= sum|g|`` なので L1 で割れば値域 [0,1] を保ったまま
 **op を跨いで比較できる絶対スケール**になる。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

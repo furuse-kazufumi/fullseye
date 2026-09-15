@@ -40,6 +40,8 @@ high-pass (image minus its Gaussian blur) back to the image. ``a`` sets the
 iteration count n = 1 + round(a*5) (1..6); ``b`` sets the per-pass amount
 amt = 0.4 + b (0.4..1.4). More iterations / larger amount -> sharper.
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

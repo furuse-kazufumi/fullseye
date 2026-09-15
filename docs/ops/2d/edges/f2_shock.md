@@ -42,6 +42,8 @@ edge) and erodes where it is positive (dark/concave side); the two flows
 collide at the zero-crossing, forming a shock that sharpens blurred edges.
 ``a`` sets the number of iterations; ``b`` is ignored.
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

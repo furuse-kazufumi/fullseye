@@ -40,6 +40,8 @@ a はシグマを 0.3〜3.0 の範囲で振る（``0.3 + 2.7 * a``）。b は未
 CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く
 実装。``IMGEVOLVE_KORNIA_DEVICE=cuda`` で GPU に乗る）。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

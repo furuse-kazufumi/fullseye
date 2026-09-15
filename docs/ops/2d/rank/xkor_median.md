@@ -39,6 +39,8 @@ a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ
 （``(3,5,7,9)[min(3, int(a*4))]``）。b は未使用。ごま塩ノイズなど
 外れ値ノイズに強く、ガウシアンぼかしよりエッジを保ちやすい。
 
+**端の扱い**: 外側を 0 とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

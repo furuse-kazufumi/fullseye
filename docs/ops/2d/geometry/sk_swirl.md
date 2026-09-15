@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `polar_trans_image`(Transform an image to polar coordinates)に相当(近似。極座標画像そのものではなく、渦状に歪ませた直交座標画像を返す)。実装は ``transform.swirl(v, strength=1+4*a, radius=30)`` を ``[0,1]`` へ clip したもの —— a は渦の強さを 1〜5 に振る。渦の半径は 30 画素に固定。b は未使用。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_geometry ファミリ ガイド](../guides/gallery2d_geometry.md)

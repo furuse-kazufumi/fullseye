@@ -43,6 +43,8 @@ binomial filter.）が使う核と同じ発想の実装。
 ``a`` が核サイズを ``{3,5,7,9}`` の 4 段階(``_k(a)``)で振る。``b`` は
 未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

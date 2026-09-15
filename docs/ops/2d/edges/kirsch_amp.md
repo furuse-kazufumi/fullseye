@@ -41,6 +41,8 @@ operator.）に相当。
 ``a``, ``b`` は未使用。8 方向を総当たりするため Sobel/Prewitt より計算量は
 多いが、斜め方向のエッジも同等の感度で拾える。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

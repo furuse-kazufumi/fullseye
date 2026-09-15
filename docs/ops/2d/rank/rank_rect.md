@@ -45,6 +45,8 @@ HALCON の ``rank_rect``（Compute a rank filter with rectangular masks.）
 
 ``a`` が窓の一辺、``b`` がパーセンタイル(5〜95%)を振る。両方が使われる。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

@@ -41,6 +41,8 @@ Gabor フィルタの応答強度。正弦波で変調したガウスカーネ�
 
 HALCON の `gen_gabor`(Generate a Gabor filter.)に相当(近似。カーネル生成ではなく畳み込み結果を返す)。実装は ``filters.gabor(v, frequency=0.1+0.3*a)`` の実部(戻り値の 1 番目、虚部は捨てている)を絶対値化して正規化したもの —— a は周波数を 0.1〜0.4 に振る。方向 ``theta`` は既定の 0(水平方向のしま模様に最も反応)に固定されており、b は未使用。方向を振りたい場合は本 op ではできないので注意。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

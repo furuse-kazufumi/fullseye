@@ -45,6 +45,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 半分に落ちる)。どちらのフィールドを残すかは選べない(常に偶数行が生き残る)。行方向の縞が疑われるときの
 前処理として、``hx_nonmax_dir`` など微分系 op の前に置く。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

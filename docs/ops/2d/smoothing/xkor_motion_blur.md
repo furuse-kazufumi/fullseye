@@ -45,6 +45,8 @@ a がカーネル長とブラー角度の**両方**を振る
 `image` は [0,1] 契約なので出口で clip する（`ops._apply` が段間で
 掛けている clip と同じで、パイプライン全体の結果は変わらない）。
 
+**端の扱い**: 外側を 0 とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `gauss_filter`(Smooth using discrete Gauss functions.)に相当。実装は ``cv2.GaussianBlur(v, (0,0), sigmaX=0.3+2.7*a)`` —— カーネルサイズを指定せず ``(0,0)`` にすることで OpenCV に σ から自動算出させている。a は σ を0.3〜3.0 に振る。b は未使用。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

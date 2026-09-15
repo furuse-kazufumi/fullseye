@@ -40,6 +40,8 @@ PSF. ``a`` sets the assumed blur sigma in (0, ``WIENER_SIGMA_MAX``] to invert
 (larger a -> stronger sharpening); ``b`` sets the noise-to-signal ratio nsr =
 1e-3 + b*0.15 (larger b -> gentler, more regularized restoration).
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

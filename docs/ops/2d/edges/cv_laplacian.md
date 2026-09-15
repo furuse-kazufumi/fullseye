@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `laplace`(Calculate the Laplace operator by using finite differences.)に相当。実装は ``|cv2.Laplacian(v, CV_64F)|`` を正規化したもの —— カーネルサイズは既定の 1(3x3 の基本 4 近傍ラプラシアンカーネル)に固定。a, b は未使用。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

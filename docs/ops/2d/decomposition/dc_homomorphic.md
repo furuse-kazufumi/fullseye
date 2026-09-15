@@ -40,6 +40,8 @@ Homomorphic filter: high-emphasis of log(I) in the Fourier domain -> [0,1].
 Attenuates low frequencies (illumination) and boosts high frequencies
 (reflectance detail).  a sets the cutoff radius; b the high/low gain spread.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

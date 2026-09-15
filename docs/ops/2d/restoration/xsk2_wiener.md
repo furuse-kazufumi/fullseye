@@ -45,6 +45,8 @@ PSF はガウシアン形状を仮定して自前生成し、a が PSF の広が
 PSF と一致している場合にのみ有効**で、PSF の形が違うとリンギングや
 復元失敗が出る。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

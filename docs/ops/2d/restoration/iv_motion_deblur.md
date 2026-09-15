@@ -40,6 +40,8 @@ length L = 3 + round(a*10) (3..13 px); ``b`` sets the blur angle theta =
 b*180 deg (b=0 -> horizontal). The op builds that motion PSF and inverts it,
 narrowing a bar that was smeared along the motion direction.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

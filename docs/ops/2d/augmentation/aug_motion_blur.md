@@ -42,6 +42,8 @@ clamped so the kernel never exceeds the image), ``b`` sets the streak angle
 ``b*180`` degrees. Border handling is ``reflect`` so the frame edge does not
 darken. Energy-preserving (kernel sums to 1).
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)

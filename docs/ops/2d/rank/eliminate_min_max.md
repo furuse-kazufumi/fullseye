@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``eliminate_min_max``（最小値・最大値の画素だけを周辺の平均値等で置き換えてノイズを抑える演算）とは異なり、この実装は最小・最大画素を選別せず窓全体を単純な中央値フィルタにかけているだけの近似（本来の「外れ値だけを直す」性質は再現しない）。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

@@ -47,6 +47,8 @@ log-Gabor filters carry no DC, the result is invariant to affine illumination
 change. ``a`` is a noise threshold (fraction of mean energy); ``b`` scales the
 base wavelength. Peaks at edges/lines where the phases align.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

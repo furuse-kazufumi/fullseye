@@ -45,6 +45,8 @@ frequency components from an image.）に相当。
 ``> 0.5`` で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は
 ``_sh_freq`` の docstring)。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

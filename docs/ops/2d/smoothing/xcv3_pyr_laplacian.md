@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` は強調係数(``0.5+2.5*a`` で 0.5〜3.0)を振る —— 大きいほど強くシャープになる(オーバーシュートも増える)。``b`` は未使用。結果は [0,1] にクリップ。
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

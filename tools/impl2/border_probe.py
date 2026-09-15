@@ -114,6 +114,8 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--ops", help="カンマ区切りの op 名")
     ap.add_argument("--category", help="この category の op をまとめて測る")
+    ap.add_argument("--all", action="store_true",
+                    help="registry/color の image->image op を全部測る")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--json", help="結果をこのファイルに書く")
     a = ap.parse_args()
@@ -126,6 +128,12 @@ def main() -> int:
         names += [o["name"] for o in idx["ops"]
                   if o.get("category") == a.category and o["tier"] in ("registry", "color")
                   and o["in_sort"] == "image" and o["out_sort"] == "image"]
+    if a.all:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color")
+                  and o["in_sort"] == "image" and o["out_sort"] == "image"]
+    names = list(dict.fromkeys(names))
     if a.limit:
         names = names[:a.limit]
     if not names:

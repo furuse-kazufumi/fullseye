@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` はガウシアンの sigma を 0.5〜3.0 に振る（``sigma = 0.5 + 2.5*a``、大きいほど太い/滑らかなエッジになる）。``b`` は未使用。Sobel と違い先にガウシアンで平滑化してから勾配を取るのでノイズに強いが、sigma を大きくすると細部が失われる。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

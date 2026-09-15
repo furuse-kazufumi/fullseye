@@ -42,6 +42,8 @@ Deriche/Gauss/Mean など複数のフィルタ種別を選べる万能演算子�
 
 ``a`` がシグマを 0.5〜2.5 の範囲で振る。``b`` は未使用。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

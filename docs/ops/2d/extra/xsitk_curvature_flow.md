@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` は反復回数(``1+int(a*8)`` で 1〜9 回)を振る —— 増やすほど強く平滑化される。時間刻みは 0.0625 固定。``b`` は未使用。出力は [0,1] にクリップ。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)

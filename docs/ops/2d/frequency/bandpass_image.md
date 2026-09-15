@@ -46,6 +46,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 帯域(``b`` 側の上限)を下限より下に設定すると通過域が空になり出力はほぼ
 0.5(ゼロ)一色になる。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

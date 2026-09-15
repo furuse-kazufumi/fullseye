@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` はどの段を見るか(1〜3 段目、``min(3,1+int(a*3))``。近似成分[0 段目]は選ばれない)を振る。``b`` は未使用。段が大きいほど粗いスケールのディテールになる。
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

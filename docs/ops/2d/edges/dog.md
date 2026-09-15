@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` が細かい方のぼかし σ₁ を ``0.5〜2.5`` に、``b`` が粗い方のぼかし σ₂ を ``1.0〜5.0`` に振る（``|gauss(σ₁) - gauss(σ₂)|`` を ``_norm`` で正規化）。2 つのスケールの中間の大きさを持つ斑点・エッジを強調する、LoG の近似。σ₁ と σ₂ が近いほど応答は弱くなる。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

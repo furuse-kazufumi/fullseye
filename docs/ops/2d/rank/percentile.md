@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に、``b`` が抽出するパーセンタイルを ``5〜95%``（``int(5+90b)``）に振る。``b`` が 0 に近いほど ``_min_filter``、1 に近いほど ``_max_filter``、中間で ``_median`` に近づく——3 op を 1 つに統合した一般形。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

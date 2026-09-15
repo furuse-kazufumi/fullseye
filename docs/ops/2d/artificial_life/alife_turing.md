@@ -46,6 +46,8 @@ inhibitor range Dh = 0.15 + 1.05a (with Da fixed at 0.02, so a controls the
 diffusion-ratio that decides the pattern wavelength); ``b`` sets the number of
 steps T = 5 + int(25b). Returns the normalised activator field.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

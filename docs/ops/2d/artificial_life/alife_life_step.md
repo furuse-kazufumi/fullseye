@@ -45,6 +45,8 @@ preset -- Conway B3/S23, HighLife B36/S23, Day&Night B3678/S34678, Seeds B2/S
 -- and ``b`` sets the generation count 1 + int(9b). Returns the live-cell
 field as 0.0/1.0.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

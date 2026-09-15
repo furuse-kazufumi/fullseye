@@ -44,6 +44,8 @@ comparison is on ordering only, the signature is invariant to a global gain
 the robustness-to-gain property that makes census matching useful for stereo.
 Uses the raw (non-luma-collapsed) reflected border.
 
+**端の扱い**: 端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

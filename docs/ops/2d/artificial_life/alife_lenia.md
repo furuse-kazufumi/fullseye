@@ -50,6 +50,8 @@ number of steps 1 + int(19b). The output is deliberately **not** binarised
 -- keeping intermediate values is exactly what separates Lenia from a
 discrete Life rule.
 
+**端の扱い**: 反対側へ巻き付ける(周期)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

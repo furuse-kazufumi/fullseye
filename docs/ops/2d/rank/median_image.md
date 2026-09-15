@@ -43,6 +43,8 @@ various masks.）に相当(HALCON は円形・八角形等の任意マスクを�
 
 ``a`` が窓の一辺を ``{3,5,7,9}``(``_k(a)``)で振る。``b`` は未使用。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

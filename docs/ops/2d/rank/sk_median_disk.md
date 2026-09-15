@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `median_image`(Compute a median filter with various masks.)に相当。実装は ``filters.median(v, footprint=disk(1+int(a*3)))`` —— a は円盤の半径を 1〜4 に振る(半径が大きいほど強く滑らかになるが細部も消える)。b は未使用。
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

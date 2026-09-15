@@ -37,6 +37,8 @@ Prewitt フィルタによる勾配強度（エッジ検出）。HALCON の ``pr
 
 縦横それぞれの Prewitt 応答のユークリッドノルムを取り、``_norm`` で正規化する。``a``, ``b`` は未使用。Sobel と同系統だが平均カーネル（重み無し）を使うぶんノイズにはやや弱い。
 
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_edges ファミリ ガイド](../guides/gallery2d_edges.md)

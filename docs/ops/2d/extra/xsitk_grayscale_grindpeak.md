@@ -35,6 +35,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 パラメータは無く、``a``, ``b`` は未使用。出力は [0,1] にクリップ。
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)
