@@ -29,6 +29,8 @@ docs/ops/2d/guides/<family>.md   # 13 ファミリの使い方ガイド(数式�
 docs/OP_INDEX.json               # レジストリの機械可読インデックス
 ```
 
+CLI からも同じ集合を引けます: `py -3.11 imgevolve.py ops find <語>` が全層横断の検索(`ops describe <op>` は op がどの層にあっても同じ形で返し、`ops path <型> <型>` は型を繋ぐ op 列を返します。`--json` を付けると stdout は JSON だけになります)。
+
 ## Tier 1: スキルとして常駐させる(推奨・同梱インストーラー)
 
 自分のプロジェクト側で作業しながら Fullseye を引きたい場合は、同梱のセットアップ

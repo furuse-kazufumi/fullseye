@@ -874,7 +874,9 @@
 
 ## `imgevolve.py`
 
-- **L50** — ★握り潰さない(2026-09-06 の敵対的レビュー)。`imgops_nary` は numpy と scipy しか要らない一次モジュールなので、import に失敗するのは「壊れた checkout」であって「その環境には無い機能」ではない。以前は `except Exception: pass` で、**この関数が生成器と検査の両方を兼ねている** ため、17 op が丸ごと消えた索引を CI が緑のまま公開できた。
+- **L54** — ★握り潰さない(2026-09-06 の敵対的レビュー)。`imgops_nary` は numpy と scipy しか要らない一次モジュールなので、import に失敗するのは「壊れた checkout」であって「その環境には無い機能」ではない。以前は `except Exception: pass` で、**この関数が生成器と検査の両方を兼ねている** ため、17 op が丸ごと消えた索引を CI が緑のまま公開できた。
+- **L94** — ★入口の統一(2026-09-15)。それまで CLI は **レジストリ + HALCON 名しか見て いなかった**ので、`ops --search icp` は 0 件、`has frame_align` は exit 1 だった —— どちらも台帳(33 族 1,024 op)には**在る**。一方 `fullseye.op_find` は最初から 全層を横断している。つまり「無い」ではなく「**この入口からは見えない**」で、 呼ぶ側にその 2 つは区別できない([[feedback_registered_only_gates_miss_unregistered]])。 `ops find|describe|path` は `fs.op_find` / `fs.op_assist` / `fs.op_path` と **同じ集合**を CLI から出す。どの層から来た情報かは必ず `tier` で言う。
+- **L438** — ★台帳(33 族 1,024 op)を見てから「無い」と言う(2026-09-15)。それまで `has frame_align` は exit 1 で「HALCON リファレンスに無い」と答えて いたが、`frame_align` は opsvideostream に**実装済み**だった。
 
 ## `imgio.py`
 
@@ -1387,8 +1389,8 @@
 ## `tools/regen_all.py`
 
 - **L54** — ★`tools/` の外にある唯一の生成物。だから取りこぼしていた —— 生成器を `tools/*.py` で探す限り、これは永久に見つからない。
-- **L77** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
-- **L167** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
+- **L79** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
+- **L169** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
 
 ## `typed_catalog.py`
 

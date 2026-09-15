@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 679. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 681. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -876,7 +876,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `imgevolve.py`
 
-- **L50** — ★Nicht verschlucken (adversariales Review 2026-09-06). `imgops_nary` ist ein primaeres Modul, das nur numpy und scipy braucht, daher bedeutet ein fehlgeschlagener Import einen 'kaputten checkout', nicht 'eine in dieser Umgebung fehlende Funktion'. Zuvor war es `except Exception: pass`, und weil **diese Funktion zugleich Generator und Pruefer ist**, konnte CI einen Index mit komplett verschwundenen 17 ops gruen veroeffentlichen.
+- **L54** — ★Nicht verschlucken (adversariales Review 2026-09-06). `imgops_nary` ist ein primaeres Modul, das nur numpy und scipy braucht, daher bedeutet ein fehlgeschlagener Import einen 'kaputten checkout', nicht 'eine in dieser Umgebung fehlende Funktion'. Zuvor war es `except Exception: pass`, und weil **diese Funktion zugleich Generator und Pruefer ist**, konnte CI einen Index mit komplett verschwundenen 17 ops gruen veroeffentlichen.
+- **L94** _(ja)_ — ★入口の統一(2026-09-15)。それまで CLI は **レジストリ + HALCON 名しか見て いなかった**ので、`ops --search icp` は 0 件、`has frame_align` は exit 1 だった —— どちらも台帳(33 族 1,024 op)には**在る**。一方 `fullseye.op_find` は最初から 全層を横断している。つまり「無い」ではなく「**この入口からは見えない**」で、 呼ぶ側にその 2 つは区別できない([[feedback_registered_only_gates_miss_unregistered]])。 `ops find|describe|path` は `fs.op_find` / `fs.op_assist` / `fs.op_path` と **同じ集合**を CLI から出す。どの層から来た情報かは必ず `tier` で言う。
+- **L438** _(ja)_ — ★台帳(33 族 1,024 op)を見てから「無い」と言う(2026-09-15)。それまで `has frame_align` は exit 1 で「HALCON リファレンスに無い」と答えて いたが、`frame_align` は opsvideostream に**実装済み**だった。
 
 ## `imgio.py`
 
@@ -1389,8 +1391,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/regen_all.py`
 
 - **L54** — ★Das einzige generierte Artefakt außerhalb von `tools/`. Genau deshalb wurde es übersehen — wer Generatoren unter `tools/*.py` sucht, findet dieses nie.
-- **L77** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L167** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L79** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
+- **L169** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `typed_catalog.py`
 

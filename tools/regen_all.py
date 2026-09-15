@@ -56,6 +56,8 @@ CHAIN = [
     (["imgevolve.py", "index"], "docs/OP_INDEX.json(レジストリの機械可読索引)"),
     # 索引の後(複製するので)。ノートは opdocs の後なら何番目でもよい。
     (["tools/gen_mcp_data.py"], "fullseye/data/OP_INDEX.json + OP_NOTES.json(MCP が wheel から読む複製)"),
+    # 索引の後(層ごとの件数を索引から数えて埋めるので)。
+    (["tools/gen_agent_files.py"], "AI 向け指示書 3 本(AGENTS.md / copilot / GEMINI、原稿は 1 つ)"),
     (["tools/conversion_matrix.py"], "docs/CONVERSION_MATRIX.md(表現の変換表)"),
     (["tools/gen_design_notes.py"], "設計判断集(ソースの ★ から 6 言語)"),
 ]

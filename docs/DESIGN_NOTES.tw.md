@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 679 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 681 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel_match.py`
@@ -876,7 +876,9 @@
 
 ## `imgevolve.py`
 
-- **L50** — ★不要吞掉它(2026-09-06 的對抗性評審)。`imgops_nary` 是只需 numpy 和 scipy 的一級 module，因此 import 失敗意味著「損壞的 checkout」,而非「該環境沒有的功能」。以前是 `except Exception: pass`，又因為**這個函數同時兼任生成器和檢查器**，CI 可以在保持綠色的情況下發布一個整整消失了 17 個 op 的索引。
+- **L54** — ★不要吞掉它(2026-09-06 的對抗性評審)。`imgops_nary` 是只需 numpy 和 scipy 的一級 module，因此 import 失敗意味著「損壞的 checkout」,而非「該環境沒有的功能」。以前是 `except Exception: pass`，又因為**這個函數同時兼任生成器和檢查器**，CI 可以在保持綠色的情況下發布一個整整消失了 17 個 op 的索引。
+- **L94** _(ja)_ — ★入口の統一(2026-09-15)。それまで CLI は **レジストリ + HALCON 名しか見て いなかった**ので、`ops --search icp` は 0 件、`has frame_align` は exit 1 だった —— どちらも台帳(33 族 1,024 op)には**在る**。一方 `fullseye.op_find` は最初から 全層を横断している。つまり「無い」ではなく「**この入口からは見えない**」で、 呼ぶ側にその 2 つは区別できない([[feedback_registered_only_gates_miss_unregistered]])。 `ops find|describe|path` は `fs.op_find` / `fs.op_assist` / `fs.op_path` と **同じ集合**を CLI から出す。どの層から来た情報かは必ず `tier` で言う。
+- **L438** _(ja)_ — ★台帳(33 族 1,024 op)を見てから「無い」と言う(2026-09-15)。それまで `has frame_align` は exit 1 で「HALCON リファレンスに無い」と答えて いたが、`frame_align` は opsvideostream に**実装済み**だった。
 
 ## `imgio.py`
 
@@ -1389,8 +1391,8 @@
 ## `tools/regen_all.py`
 
 - **L54** — ★唯一位於 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找產生器，就永遠找不到它。
-- **L77** — * ★而且危險：剛生成的文章用**相對路徑**寫圖像。公開版是改成 `raw.githubusercontent.com` 絕對 URL 後的（Qiita 用相對路徑不顯示圖像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些絕對 URL 會回退 42 行。**要跑就一直跑到文章的公開步驟為止。** 排除項要**按檔名**寫。用散文歸納（"wing*_gallery 的 10 本"）機器無法比對，下面的 `unclassified()` 就不工作了。
-- **L167** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L79** — * ★而且危險：剛生成的文章用**相對路徑**寫圖像。公開版是改成 `raw.githubusercontent.com` 絕對 URL 後的（Qiita 用相對路徑不顯示圖像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些絕對 URL 會回退 42 行。**要跑就一直跑到文章的公開步驟為止。** 排除項要**按檔名**寫。用散文歸納（"wing*_gallery 的 10 本"）機器無法比對，下面的 `unclassified()` 就不工作了。
+- **L169** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `typed_catalog.py`
 

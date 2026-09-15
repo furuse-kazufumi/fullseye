@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 6b4ef1ca57e4 -->
+<!-- i18n-source-sha: 2667ac7c1592 -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -22,6 +22,8 @@ docs/ops/INDEX.md                # 폴더 계층을 순회하여 자동 생성�
 docs/ops/2d/guides/<family>.md   # 13개 계열의 사용 가이드(수식·그림·정전 인용)
 docs/OP_INDEX.json               # 레지스트리의 기계 판독 가능한 인덱스
 ```
+
+같은 집합은 CLI에서도 조회할 수 있습니다: `py -3.11 imgevolve.py ops find <단어>`는 모든 계층을 횡단하는 검색이며(`ops describe <op>`는 op가 어느 계층에 있든 같은 형식으로 반환하고, `ops path <타입> <타입>`은 타입을 잇는 op 열을 반환합니다. `--json`을 붙이면 stdout에는 JSON만 출력됩니다).
 
 ## Tier 1: 스킬로 상주시키기(권장 · 동봉 설치 스크립트)
 

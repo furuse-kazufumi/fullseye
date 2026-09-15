@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 679 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 681 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel_match.py`
@@ -876,7 +876,9 @@
 
 ## `imgevolve.py`
 
-- **L50** — ★不要吞掉它(2026-09-06 的对抗性评审)。`imgops_nary` 是只需 numpy 和 scipy 的一级 module，因此 import 失败意味着「损坏的 checkout」,而非「该环境没有的功能」。以前是 `except Exception: pass`，又因为**这个函数同时兼任生成器和检查器**，CI 可以在保持绿色的情况下发布一个整整消失了 17 个 op 的索引。
+- **L54** — ★不要吞掉它(2026-09-06 的对抗性评审)。`imgops_nary` 是只需 numpy 和 scipy 的一级 module，因此 import 失败意味着「损坏的 checkout」,而非「该环境没有的功能」。以前是 `except Exception: pass`，又因为**这个函数同时兼任生成器和检查器**，CI 可以在保持绿色的情况下发布一个整整消失了 17 个 op 的索引。
+- **L94** _(ja)_ — ★入口の統一(2026-09-15)。それまで CLI は **レジストリ + HALCON 名しか見て いなかった**ので、`ops --search icp` は 0 件、`has frame_align` は exit 1 だった —— どちらも台帳(33 族 1,024 op)には**在る**。一方 `fullseye.op_find` は最初から 全層を横断している。つまり「無い」ではなく「**この入口からは見えない**」で、 呼ぶ側にその 2 つは区別できない([[feedback_registered_only_gates_miss_unregistered]])。 `ops find|describe|path` は `fs.op_find` / `fs.op_assist` / `fs.op_path` と **同じ集合**を CLI から出す。どの層から来た情報かは必ず `tier` で言う。
+- **L438** _(ja)_ — ★台帳(33 族 1,024 op)を見てから「無い」と言う(2026-09-15)。それまで `has frame_align` は exit 1 で「HALCON リファレンスに無い」と答えて いたが、`frame_align` は opsvideostream に**実装済み**だった。
 
 ## `imgio.py`
 
@@ -1389,8 +1391,8 @@
 ## `tools/regen_all.py`
 
 - **L54** — ★唯一位于 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找生成器，就永远找不到它。
-- **L77** — * ★而且危险：刚生成的文章用**相对路径**写图像。公开版是改成 `raw.githubusercontent.com` 绝对 URL 后的（Qiita 用相对路径不显示图像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些绝对 URL 会回退 42 行。**要跑就一直跑到文章的公开步骤为止。** 排除项要**按文件名**写。用散文归纳（"wing*_gallery 的 10 本"）机器无法比对，下面的 `unclassified()` 就不工作了。
-- **L167** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L79** — * ★而且危险：刚生成的文章用**相对路径**写图像。公开版是改成 `raw.githubusercontent.com` 绝对 URL 后的（Qiita 用相对路径不显示图像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些绝对 URL 会回退 42 行。**要跑就一直跑到文章的公开步骤为止。** 排除项要**按文件名**写。用散文归纳（"wing*_gallery 的 10 本"）机器无法比对，下面的 `unclassified()` 就不工作了。
+- **L169** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `typed_catalog.py`
 

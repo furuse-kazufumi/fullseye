@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 6b4ef1ca57e4 -->
+<!-- i18n-source-sha: 2667ac7c1592 -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch**
@@ -22,6 +22,8 @@ docs/ops/INDEX.md                # Gesamtinhaltsverzeichnis, automatisch durch T
 docs/ops/2d/guides/<family>.md   # Anleitungen für 13 Familien (Formeln, Diagramme, Zitate kanonischer Quellen)
 docs/OP_INDEX.json               # maschinenlesbarer Index der Registry
 ```
+
+Dieselbe Menge ist auch über die CLI erreichbar: `py -3.11 imgevolve.py ops find <Wort>` durchsucht alle Schichten (`ops describe <op>` liefert einen Op unabhängig von seiner Schicht in derselben Form, `ops path <Sort> <Sort>` liefert eine Op-Kette, die die Typen verbindet; mit `--json` enthält stdout ausschließlich JSON).
 
 ## Tier 1: Als residentes Skill halten (empfohlen · mitgeliefertes Installationsskript)
 

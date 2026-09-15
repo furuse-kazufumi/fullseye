@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 679. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 681. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -876,7 +876,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `imgevolve.py`
 
-- **L50** — ★Do not swallow it (adversarial review 2026-09-06). `imgops_nary` is a primary module needing only numpy and scipy, so a failed import means a 'broken checkout', not 'a feature absent in that environment'. Previously it was `except Exception: pass`, and because **this function serves as both generator and checker**, CI could publish an index with all 17 ops vanished while staying green.
+- **L54** — ★Do not swallow it (adversarial review 2026-09-06). `imgops_nary` is a primary module needing only numpy and scipy, so a failed import means a 'broken checkout', not 'a feature absent in that environment'. Previously it was `except Exception: pass`, and because **this function serves as both generator and checker**, CI could publish an index with all 17 ops vanished while staying green.
+- **L94** _(ja)_ — ★入口の統一(2026-09-15)。それまで CLI は **レジストリ + HALCON 名しか見て いなかった**ので、`ops --search icp` は 0 件、`has frame_align` は exit 1 だった —— どちらも台帳(33 族 1,024 op)には**在る**。一方 `fullseye.op_find` は最初から 全層を横断している。つまり「無い」ではなく「**この入口からは見えない**」で、 呼ぶ側にその 2 つは区別できない([[feedback_registered_only_gates_miss_unregistered]])。 `ops find|describe|path` は `fs.op_find` / `fs.op_assist` / `fs.op_path` と **同じ集合**を CLI から出す。どの層から来た情報かは必ず `tier` で言う。
+- **L438** _(ja)_ — ★台帳(33 族 1,024 op)を見てから「無い」と言う(2026-09-15)。それまで `has frame_align` は exit 1 で「HALCON リファレンスに無い」と答えて いたが、`frame_align` は opsvideostream に**実装済み**だった。
 
 ## `imgio.py`
 
@@ -1389,8 +1391,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/regen_all.py`
 
 - **L54** — ★The only generated artifact outside `tools/`. That is exactly why it was missed — as long as you look for generators under `tools/*.py`, this one is never found.
-- **L77** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
-- **L167** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
+- **L79** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
+- **L169** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `typed_catalog.py`
 

@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 6b4ef1ca57e4 -->
+<!-- i18n-source-sha: 2667ac7c1592 -->
 # 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · **繁體中文** · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -22,6 +22,8 @@ docs/ops/INDEX.md                # 走訪資料夾階層自動產生的整體目
 docs/ops/2d/guides/<family>.md   # 13 個家族的使用指南(公式·圖示·經典文獻引用)
 docs/OP_INDEX.json               # 登錄庫的機器可讀索引
 ```
+
+同樣的集合也可以從 CLI 取得：`py -3.11 imgevolve.py ops find <詞>` 是橫跨所有層的搜尋（`ops describe <op>` 無論 op 位於哪一層都以相同形式回傳，`ops path <型別> <型別>` 回傳以型別串接的 op 序列；加上 `--json` 時 stdout 只輸出 JSON）。
 
 ## Tier 1：作為技能常駐（建議 · 內建安裝指令碼）
 
