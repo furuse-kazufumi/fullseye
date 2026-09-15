@@ -350,6 +350,171 @@ def test_fraunhofer_refuses_an_opaque_or_negative_aperture():
         O.fraunhofer_pattern(-np.ones((8, 8)))
 
 
+# --------------------------------------------------------------------------- #
+# wave: pupil-shape PSF (any aperture + defocus), added 2026-09-15             #
+# --------------------------------------------------------------------------- #
+def _disc(n, frac=1.0):
+    c = (n - 1) / 2.0
+    y, x = np.mgrid[0:n, 0:n]
+    return (np.hypot(y - c, x - c) <= frac * n / 2.0).astype(float)
+
+
+def _w_band(n, thickness=0.18, amp=0.22, y0=0.15):
+    """A W-shaped horizontal band inside the grid — the cuttlefish bright-light
+    pupil (Mäthger et al., Vision Res. 83:19, 2013) as a structural, asymmetric
+    test pupil: mirror-symmetric left/right, not top/bottom."""
+    c = (n - 1) / 2.0
+    y, x = np.mgrid[0:n, 0:n]
+    u = (x - c) / (n / 2.0)
+    v = (y - c) / (n / 2.0)
+    tri = np.abs(np.abs(u) - 0.5) * 2.0
+    top = y0 + amp * tri
+    return ((v <= top) & (v >= top - thickness) & (np.hypot(u, v) <= 1.0)).astype(float)
+
+
+def _first_radial_min_um(psf, dx_um):
+    """First local minimum along the centre row, parabolically interpolated (the
+    integer-sample search alone is 2.5 % coarse at oversample 8 — measured)."""
+    c = psf.shape[0] // 2
+    row = psf[c, c:]
+    i = next(k for k in range(1, len(row) - 1) if row[k] < row[k - 1] and row[k] < row[k + 1])
+    a, b, d = row[i - 1], row[i], row[i + 1]
+    off = 0.5 * (a - d) / (a - 2.0 * b + d)
+    return (i + off) * dx_um
+
+
+@pytest.mark.parametrize("lam,fn", [(0.55, 5.6), (0.4, 11.0), (1.064, 2.8)])
+def test_pupil_psf_of_a_full_circle_is_the_airy_pattern(lam, fn):
+    """A circle filling the grid puts the first dark ring at 1.2197 lambda N, both
+    on the fine grid (spacing lambda N n / M) and — the units check — after
+    binning to a pixel pitch given in micrometres."""
+    n, ov = 64, 16                 # ring at 19.5 samples: the parabolic minimum is
+    psf = O.pupil_psf(_disc(n), 0.0, lam, fn, ov)   # exact here, 1.5 % biased at 8 (measured)
+    assert psf.shape == (n * ov, n * ov) and psf.sum() == pytest.approx(1.0, abs=1e-12)
+    dx = lam * fn * n / psf.shape[0]
+    expect = 1.2197 * lam * fn
+    assert _first_radial_min_um(psf, dx) == pytest.approx(expect, rel=0.005)
+    pitch = lam * fn / 8.0
+    binned = O.pupil_psf(_disc(n), 0.0, lam, fn, ov, pixel_pitch_um=pitch)
+    assert binned.shape[0] % 2 == 1 and binned.sum() == pytest.approx(1.0, abs=1e-12)
+    # the parabolic minimum on a 9.8-pixel ring is 2.1 % coarse (measured) — a
+    # sampling effect, not a unit error (a unit slip is 10x+)
+    assert _first_radial_min_um(binned, pitch) == pytest.approx(expect, rel=0.05)
+    assert np.abs(binned - binned[::-1, ::-1]).max() < 1e-15     # area binning is symmetric
+    # and it agrees with the closed-form Airy op at the same sampling
+    airy = O.airy_pattern(binned.shape[0], lam, fn, pitch)
+    assert np.corrcoef(airy.ravel(), binned.ravel())[0, 1] > 0.999
+
+
+@pytest.mark.parametrize("w20,strehl", [(0.25, 0.8106), (0.5, 0.4053), (0.75, 0.0901), (1.0, 0.0)])
+def test_pupil_psf_defocus_on_axis_intensity_is_sinc_squared(w20, strehl):
+    """Pure defocus W20 rho^2 on a circular pupil: I(0)/I_unaberrated(0) =
+    [sin(pi W20)/(pi W20)]^2 — 0 at exactly one wave (the dark-centred spot)."""
+    ref = O.pupil_psf(_disc(64), 0.0, 0.55, 5.6, 8)
+    out = O.pupil_psf(_disc(64), w20, 0.55, 5.6, 8)
+    c = ref.shape[0] // 2
+    assert out[c, c] / ref[c, c] == pytest.approx(strehl, abs=0.01)
+
+
+def test_defocus_from_shift_is_the_seidel_w20_and_scales_correctly():
+    lam, fn = 0.55, 5.6
+    assert O.defocus_from_shift(8.0 * lam * fn * fn, lam, fn) == pytest.approx(1.0, rel=1e-12)
+    assert O.defocus_from_shift(-8.0 * lam * fn * fn, lam, fn) == pytest.approx(-1.0, rel=1e-12)
+    w = O.defocus_from_shift(100.0, lam, fn)
+    assert O.defocus_from_shift(200.0, lam, fn) == pytest.approx(2.0 * w, rel=1e-12)
+    assert O.defocus_from_shift(100.0, 2.0 * lam, fn) == pytest.approx(0.5 * w, rel=1e-12)
+    assert O.defocus_from_shift(100.0, lam, 2.0 * fn) == pytest.approx(0.25 * w, rel=1e-12)
+    assert O.defocus_from_shift(250.0, 0.55, 1.5) == pytest.approx(25.2525, rel=1e-4)
+    with pytest.raises(ValueError, match="shift_um must be finite"):
+        O.defocus_from_shift(float("nan"))
+    with pytest.raises(ValueError, match="f_number must be > 0"):
+        O.defocus_from_shift(10.0, 0.55, 0.0)
+
+
+def test_pupil_psf_sign_of_defocus_mirrors_an_asymmetric_pupil_psf():
+    """PSF(-W)(x) == PSF(+W)(-x) exactly (conjugate pupil function); for the W
+    band the two differ (the blur shows which way the focus is off), for a
+    circle they are identical (a symmetric pupil cannot tell). The grid centre
+    is sample M//2, so the mirror is about that sample (index 0 has no partner)."""
+    lam, fn = 0.55, 5.6
+    wp = _w_band(128)
+    plus = O.pupil_psf(wp, 2.0, lam, fn, 4)
+    minus = O.pupil_psf(wp, -2.0, lam, fn, 4)
+    assert np.abs(plus[1:, 1:] - minus[1:, 1:][::-1, ::-1]).max() < 1e-12
+    assert np.abs(plus - minus).max() > 1e-6 * plus.max()
+    cp = O.pupil_psf(_disc(128), 2.0, lam, fn, 4)
+    cm = O.pupil_psf(_disc(128), -2.0, lam, fn, 4)
+    assert np.abs(cp - cm).max() < 1e-15
+    # the W is left/right symmetric, so its PSF is too; and not top/bottom
+    assert np.abs(plus[1:, 1:] - plus[1:, 1:][:, ::-1]).max() < 1e-12
+    assert np.abs(plus[1:, 1:] - plus[1:, 1:][::-1, :]).max() > 1e-6 * plus.max()
+
+
+@pytest.mark.parametrize("k", [1, 2, 3])
+def test_pupil_psf_rotating_the_pupil_rotates_the_psf(k):
+    """Rotation gate (the asymmetry must be the pupil's, not the grid's): a
+    90-degree rotation of the W pupil rotates its PSF by the same angle."""
+    wp = _w_band(96)
+    base = O.pupil_psf(wp, 1.5, 0.55, 5.6, 4)
+    rot = O.pupil_psf(np.rot90(wp, k), 1.5, 0.55, 5.6, 4)
+    assert np.abs(rot[1:, 1:] - np.rot90(base[1:, 1:], k)).max() < 1e-12
+
+
+def test_pupil_psf_refuses_what_it_cannot_mean():
+    with pytest.raises(ValueError, match="must be square"):
+        O.pupil_psf(np.ones((8, 16)))
+    with pytest.raises(ValueError, match="negative value"):
+        O.pupil_psf(-np.ones((8, 8)))
+    with pytest.raises(ValueError, match="entirely opaque"):
+        O.pupil_psf(np.zeros((8, 8)))
+    with pytest.raises(ValueError, match="aliased"):
+        O.pupil_psf(_disc(32), 20.0)                 # 2.3 waves per sample at the edge
+    with pytest.raises(ValueError, match="coarser than the pixel pitch"):
+        O.pupil_psf(_disc(32), 0.0, 0.55, 5.6, 1, pixel_pitch_um=0.5)   # dx 3.08 um
+    with pytest.raises(ValueError, match="MAX_PUPIL_FFT"):
+        O.pupil_psf(_disc(512), 0.0, 0.55, 5.6, 64)
+    with pytest.raises(ValueError, match="opd_waves must have the pupil's shape"):
+        O.pupil_psf(_disc(16), 0.0, opd_waves=np.zeros((8, 8)))
+    with pytest.raises(ValueError, match="defocus_waves must be finite"):
+        O.pupil_psf(_disc(16), float("inf"))
+    with pytest.raises(ValueError, match="oversample must be in"):
+        O.pupil_psf(_disc(16), 0.0, oversample=0)
+    # an OPD map is accepted and is what defocus_waves does by hand
+    n = 32
+    c = (n - 1) / 2.0
+    ax = (np.arange(n) - c) * (2.0 / n)
+    opd = 0.5 * (ax[:, None] ** 2 + ax[None, :] ** 2)
+    a = O.pupil_psf(_disc(n), 0.5, 0.55, 5.6, 4)
+    b = O.pupil_psf(_disc(n), 0.0, 0.55, 5.6, 4, opd_waves=opd)
+    assert np.abs(a - b).max() < 1e-15
+
+
+def test_pupil_blur_is_the_identity_at_focus_and_the_psf_for_a_delta():
+    lam, fn, pitch, ov = 0.55, 1.5, 5.0, 8          # lambda N = 0.8 um on a 5 um pixel
+    edge = np.zeros((40, 40))
+    edge[:, 20:] = 1.0
+    out = O.pupil_blur(edge, _disc(64), 0.0, lam, fn, pitch, ov)
+    assert out.shape == edge.shape
+    assert np.abs(out - edge).max() < 0.03                 # measured 0.021 (Airy tails)
+    assert out.sum() == pytest.approx(edge.sum(), rel=1e-9)
+    const = np.full((30, 30), 3.0)
+    assert np.abs(O.pupil_blur(const, _disc(64), 3.0, lam, fn, pitch, ov) - 3.0).max() < 1e-12
+    delta = np.zeros((41, 41))
+    delta[20, 20] = 1.0
+    kern = O.pupil_psf(_disc(64), 3.0, lam, fn, ov, pixel_pitch_um=pitch)
+    resp = O.pupil_blur(delta, _disc(64), 3.0, lam, fn, pitch, ov)
+    h = kern.shape[0] // 2
+    assert h < 20
+    assert np.abs(resp[20 - h:21 + h, 20 - h:21 + h] - kern).max() < 1e-12
+    # defocus really blurs: the edge is no longer a step
+    blurred = O.pupil_blur(edge, _disc(64), 3.0, lam, fn, pitch, ov)
+    assert 0.2 < np.abs(np.diff(blurred[20])).max() < 0.9
+    with pytest.raises(ValueError, match="non-finite"):
+        O.pupil_blur(np.full((8, 8), np.nan), _disc(16))
+    with pytest.raises(ValueError, match="entirely opaque"):
+        O.pupil_blur(edge, np.zeros((8, 8)))
+
+
 @pytest.mark.parametrize("w0,lam,n", [(100.0, 1.064, 1.0), (25.0, 0.633, 1.33)])
 def test_gaussian_beam_rayleigh_range_identities(w0, lam, n):
     """At z = zR: spot sqrt(2)*w0, wavefront radius 2*zR, Gouy exactly 45 deg."""
@@ -667,6 +832,7 @@ def _ledger_args():
         "depth_of_field": (), "relative_illumination": (),
         "airy_pattern": (16,), "angular_spectrum_propagate": (field,),
         "fraunhofer_pattern": (ap,), "gaussian_beam": (),
+        "defocus_from_shift": (), "pupil_psf": (ap,), "pupil_blur": (psf, ap),
         "psf_to_mtf": (psf,), "mtf_diffraction": (),
         "wavefront_stats": ({(2, 0): 0.05},),
         "jones_element": (), "jones_apply": (O.jones_element("polarizer", 30.0),
@@ -686,7 +852,10 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-09-05: optscene "scene" 44 op を追加(80 → 124)。物理空間にシーンを組んで
     # 撮る層で、これで「レンダラを持てないので画像でなく限界を返す」線引きが外れた。
     # センサー/レンズ/光源/レイアウトの 4 オブジェクトもここに入る。
-    assert len(opsoptics.OPSOPTICS) == 124
+    # 2026-09-15: optics "wave" に瞳形状 PSF の 3 op(defocus_from_shift / pupil_psf /
+    # pupil_blur)を追加(124 → 127)。
+    assert len(opsoptics.OPSOPTICS) == 127
+    assert len(opsoptics.list_ops("wave")) == 7
     # 2026-09-04: 見え方の 5 族(33 op)を追加 —— matappear "appearance" 7 /
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
@@ -711,7 +880,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # half lives in raytrace (its own ledger checks are in tests/test_raytrace.py)
     from_optics = {n for n, m in opsoptics.OPSOPTICS.items() if m["module"] == "optics"}
     assert from_optics == set(O.OPTICS) == set(O.__all__) & set(O.OPTICS)
-    assert len(from_optics) == 18
+    assert len(from_optics) == 21                       # 18 + the 3 pupil-shape ops (2026-09-15)
     assert all(m["module"] == "raytrace" for n, m in opsoptics.OPSOPTICS.items()
                if m["category"] == "design")
     assert all(m["module"] == "lensimage" for n, m in opsoptics.OPSOPTICS.items()

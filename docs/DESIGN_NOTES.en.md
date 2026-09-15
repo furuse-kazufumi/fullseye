@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 676. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 677. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -25,7 +25,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `api.py`
 
 - **L587** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
-- **L1345** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L1346** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
@@ -957,7 +957,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `opsoptics.py`
 
-- **L129** — ★ Not normals (the (N,3) normals of a point cloud) but normalmap. The two are similar in shape, but passing (N,3) is rejected by _normal_map with ValueError. Declaring it normals here would be a lie that "you may pass point-cloud normals", and the chained fuzzer would end in CONTRACT every time and **never execute this family** (= it turns into zero findings).
+- **L125** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
+- **L140** — ★ Not normals (the (N,3) normals of a point cloud) but normalmap. The two are similar in shape, but passing (N,3) is rejected by _normal_map with ValueError. Declaring it normals here would be a lie that "you may pass point-cloud normals", and the chained fuzzer would end in CONTRACT every time and **never execute this family** (= it turns into zero findings).
 
 ## `opsphoton.py`
 
@@ -1197,7 +1198,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03: since every backend's _safe was consolidated into backend_safe.guard, judge by the structured marker the guard raises, not by string match on qualname (the guard also leaves "_safe(...)" in qualname, but that is for display).
-- **L1177** — ★Why it was not found: `ops.REGISTRY` (899) and the 2-D notes (899) agree, so **as long as you count from the registry side it looks like "zero missing"**. I once concluded that and was wrong. So this gate counts from the tier-spanning index side (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
+- **L1178** — ★Why it was not found: `ops.REGISTRY` (899) and the 2-D notes (899) agree, so **as long as you count from the registry side it looks like "zero missing"**. I once concluded that and was wrong. So this gate counts from the tier-spanning index side (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 

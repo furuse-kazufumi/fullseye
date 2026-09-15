@@ -1,0 +1,57 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">defocus_from_shift — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">measurement</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.defocus_from_shift(shift_um=10.0, wavelength_um=0.55, f_number=5.6)</code> (to call the implementation directly, <code style="color:#22d3bf">import optics; optics.defocus_from_shift(shift_um=10.0, wavelength_um=0.55, f_number=5.6)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;defocus_from_shift&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Defocus wavefront error (waves at the pupil edge) of an axial focus shift.</p>
+<p>Moving the detector (or, equivalently, the focus) by `<code style="color:#22d3bf">shift_um</code>` along the</p>
+<p>axis of an `<code style="color:#22d3bf">f/N</code>` beam adds the quadratic wavefront error</p>
+<p>`<code style="color:#22d3bf">W(rho) = W20 * rho^2</code>` with</p>
+<p>`<code style="color:#22d3bf">W20 = shift / (8 * lambda * N^2)</code>`  [waves]</p>
+<p>— the paraxial Seidel defocus term, `<code style="color:#22d3bf">rho</code>` the normalised pupil radius</p>
+<p>(1 at the edge). This is the number :func:<code style="color:#22d3bf">pupil_psf</code> takes as</p>
+<p>`<code style="color:#22d3bf">defocus_waves</code>`, so the two compose: a longitudinal chromatic aberration</p>
+<p>(focal shift versus wavelength, e.g. from `<code style="color:#22d3bf">raytrace.chromatic_shift</code>` or a</p>
+<p>published `<code style="color:#22d3bf">df/f(lambda)</code><code style="color:#22d3bf">) becomes a per-band </code><code style="color:#22d3bf">defocus_waves</code>` here and a</p>
+<p>per-band PSF there.</p>
+<p>Returns a float (a `<code style="color:#22d3bf">measurement</code>`). The sign is the sign of *shift_um*:</p>
+<p><b>positive = the detector sits beyond the focus</b> (the beam has converged</p>
+<p>and is diverging again). For a symmetric pupil the PSF does not depend on</p>
+<p>the sign; for an asymmetric one (a slit, a W, an off-axis hole) the sign</p>
+<p><b>flips the PSF through the centre</b> — that is exactly the handle a</p>
+<p>one-photoreceptor eye can read the direction of defocus from.</p>
+<p>Ground truth (closed form, `<code style="color:#22d3bf">tests/test_optics.py</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">shift = 8 lambda N^2</code>`</p>
+<p>is exactly one wave; the function is linear in *shift_um* and inverse in</p>
+<p>*wavelength_um* and in `<code style="color:#22d3bf">N^2</code><code style="color:#22d3bf"> (checked at two of each). At </code><code style="color:#22d3bf">N = 1.5</code>`,</p>
+<p>`<code style="color:#22d3bf">lambda = 0.55 um</code><code style="color:#22d3bf"> (a cephalopod-scale </code><code style="color:#22d3bf">f/1.5</code>` eye) a 250 um focus shift</p>
+<p>is 25.3 waves.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite *shift_um*; non-positive or non-finite</p>
+<p>*wavelength_um* / *f_number*.</p>
+<p>Paraxial: `<code style="color:#22d3bf">W20 = shift/(8 N^2)</code>` is the small-angle expansion of the exact</p>
+<p>`<code style="color:#22d3bf">shift * (1 - cos theta)</code><code style="color:#22d3bf"> sag; at </code><code style="color:#22d3bf">f/1.5</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">sin theta = 1/3</code>`) the exact</p>
+<p>edge value is 5.7 % below the paraxial one — the number is a *defocus</p>
+<p>convention*, not a high-NA wavefront.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
+<p>Every optics op validates its input before computing (nothing slips through silently):</p>
+<p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>
+<p style="margin:2px 0 2px 12px">• **Strings raise <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> succeeds, so an unparsed configuration value would slip through as a length (measured: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> returned a plausible 66.667 mm). bool is refused too, as the implicit promotion <code style="color:#22d3bf">True == 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked arrays raise <code style="color:#22d3bf">ValueError</code><b> (real-valued slots only; silently dropping the imaginary part or peeling off the mask is refused). </b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input.**</p>
+<p style="margin:2px 0 2px 12px">• <b>Division by zero and its relatives are refused by name</b>: focal length 0, radius of curvature 0, refractive index &lt;= 0, a fully opaque aperture (all zeros, so the normalisation is 0/0), a PSF whose sum is &lt;= 0, a Stokes vector with S0 = 0, and an object sitting at the front focal point (the image is at infinity).</p>
+<p style="margin:2px 0 2px 12px">• <b>Only two ops return a non-finite value, and both state it as a contract</b>: <code style="color:#22d3bf">depth_of_field</code> returns <code style="color:#22d3bf">far_mm = inf</code> beyond the hyperfocal distance (that is what the hyperfocal distance means), and <code style="color:#22d3bf">gaussian_beam</code> returns <code style="color:#22d3bf">wavefront_radius_mm = inf</code> at the waist (the radius of curvature of a plane wavefront). Both also return a finite companion (<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>). **Any other silent NaN/Inf is detected internally and raises <code style="color:#22d3bf">ValueError</code>** — &quot;float64 overflowed&quot; and &quot;the answer is infinite&quot; are different claims, so the first is never returned wearing the face of the second.</p>
+<p style="margin:2px 0 2px 12px">• <b>Size caps</b>: generated grids are capped by <code style="color:#22d3bf">optics.MAX_GRID</code> (4096); supplied fields/PSFs/apertures by <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code> (2^24); ABCD element chains by <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code> (1024); Zernike by <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code> (512) / <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code> (40) / <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code> (2^25). This closes, fail-closed, the paths where a small argument triggers a huge internal allocation (measured: n_max=40 × 4096² needs 108 GB).</p>
+<p style="margin:2px 0 2px 12px">• <b>Physically impossible states are refused too</b>: a Stokes vector with degree of polarisation &gt; 1, negative transmittance, negative intensity, and invalid Zernike indices such as n-|m| odd.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">measurement</code> as input)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:airy_pattern">airy_pattern</a> · <a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:gaussian_beam">gaussian_beam</a> · <a style="color:#22d3bf" href="opoptics:pupil_psf">pupil_psf</a> · <a style="color:#22d3bf" href="opoptics:pupil_blur">pupil_blur</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

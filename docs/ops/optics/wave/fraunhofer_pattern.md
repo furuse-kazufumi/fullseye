@@ -83,11 +83,11 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[psf_to_mtf](../imaging/psf_to_mtf.md) · [illumination_uniformity](../illumination/illumination_uniformity.md) · [render_through_lens](../imaging_sim/render_through_lens.md) · [surface_defect](../scene/surface_defect.md) · [defocus_blur](../scene/defocus_blur.md)
+[pupil_psf](pupil_psf.md) · [pupil_blur](pupil_blur.md) · [psf_to_mtf](../imaging/psf_to_mtf.md) · [illumination_uniformity](../illumination/illumination_uniformity.md) · [render_through_lens](../imaging_sim/render_through_lens.md) · [surface_defect](../scene/surface_defect.md) · [defocus_blur](../scene/defocus_blur.md)
 
 ## 同カテゴリ(`wave`)
 
-[airy_pattern](airy_pattern.md) · [angular_spectrum_propagate](angular_spectrum_propagate.md) · [gaussian_beam](gaussian_beam.md)
+[airy_pattern](airy_pattern.md) · [angular_spectrum_propagate](angular_spectrum_propagate.md) · [gaussian_beam](gaussian_beam.md) · [defocus_from_shift](defocus_from_shift.md) · [pupil_psf](pupil_psf.md) · [pupil_blur](pupil_blur.md)
 
 ---
 *Provenance: optics.py — OPTICS operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

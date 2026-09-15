@@ -17,6 +17,9 @@
     両方で組み、同じ Stokes ベクトルに一致することを確かめる。
 (6) 波動: 開口の遠方回折像と、角スペクトル法による自由空間伝搬の
     可逆性(往復で元に戻る)を確かめる。
+(7) 瞳形状: 任意の瞳マスク + デフォーカスの回折 PSF(円形なら Airy、
+    1 波のデフォーカスで軸上が暗くなる、非対称な瞳は符号で中心反転)と、
+    その PSF を画素ピッチに面積積分して画像をぼかす op(合焦なら恒等)。
 
 【グラウンドトゥルース(数値で嘘を弾く)】
 1. thin_lens: 1/f = 1/s + 1/s' が機械精度。倍率 m = -s'/s。
@@ -29,6 +32,9 @@
    直交偏光板で透過ちょうど 0。
 6. 角スペクトル: 距離 0 は恒等、+z → -z の往復で相対誤差 < 1e-12、
    伝搬でパワー保存。
+7. pupil_psf: 円形瞳の第 1 暗環が 1.2197 λN(3 % 以内)、defocus_from_shift の
+   8λN² がちょうど 1 波で軸上強度 0、半円瞳で PSF(−W)(x) = PSF(+W)(−x) が 1e-12。
+   pupil_blur: 合焦のエッジは元と 3 % 以内、総和は 1e-9 で保存。
 """
 from __future__ import annotations
 
@@ -215,7 +221,40 @@ def main():
     print(f"   画面端の照度比(半画角 15 deg, cos^4)= {ri[-1, 1]:.4f}")
     assert abs(ri[0, 1] - 1.0) < 1e-15
 
-    print("PASS: optics 18 op すべてが閉形式のグラウンドトゥルースと一致")
+    # ------------------------------------------------------------------ #
+    # 7) 瞳形状: 任意の瞳マスク + デフォーカスの PSF と、帯ごとの像ぼかし    #
+    # ------------------------------------------------------------------ #
+    n, ov = 64, 8
+    c = (n - 1) / 2.0
+    yy, xx = np.mgrid[0:n, 0:n]
+    disc = (np.hypot(yy - c, xx - c) <= n / 2.0).astype(float)
+    psf = O.pupil_psf(disc, 0.0, lam_um, 5.6, ov)                # 円形瞳 = Airy
+    dx = lam_um * 5.6 * n / psf.shape[0]                         # 像面の標本間隔 [µm]
+    row = psf[psf.shape[0] // 2, psf.shape[0] // 2:]
+    first_min = next(i for i in range(1, 60) if row[i] < row[i - 1] and row[i] < row[i + 1]) * dx
+    w20 = O.defocus_from_shift(8.0 * lam_um * 5.6 ** 2, lam_um, 5.6)   # ちょうど 1 波
+    dark = O.pupil_psf(disc, w20, lam_um, 5.6, ov)
+    m = psf.shape[0] // 2
+    print(f"7) 瞳形状: 円形瞳の第 1 暗環 {first_min:.3f} µm(Airy 1.2197λN={1.2197 * lam_um * 5.6:.3f})  "
+          f"1 波デフォーカスの軸上強度/無収差 = {dark[m, m] / psf[m, m]:.1e}(閉形式 0)")
+    assert abs(first_min / (1.2197 * lam_um * 5.6) - 1.0) < 0.03
+    assert dark[m, m] / psf[m, m] < 1e-3
+    # 非対称な瞳(片側だけ開けた半円)は焦点ずれの符号で PSF が中心反転する(厳密な恒等式)
+    half_pupil = disc * (xx > c)
+    plus = O.pupil_psf(half_pupil, 2.0, lam_um, 5.6, 4)
+    minus = O.pupil_psf(half_pupil, -2.0, lam_um, 5.6, 4)
+    mirror = np.abs(plus[1:, 1:] - minus[1:, 1:][::-1, ::-1]).max()
+    print(f"   半円瞳: PSF(−W)(x) と PSF(+W)(−x) の差 {mirror:.1e}  "
+          f"PSF(+W) と PSF(−W) の差 {np.abs(plus - minus).max():.1e}(非対称なので 0 でない)")
+    assert mirror < 1e-12 and np.abs(plus - minus).max() > 1e-6
+    edge = np.zeros((32, 32))
+    edge[:, 16:] = 1.0
+    blurred = O.pupil_blur(edge, disc, 0.0, lam_um, 1.5, 5.0, ov)  # 5 µm 画素に λN=0.8 µm の点像
+    print(f"   pupil_blur: 合焦(defocus 0)で 5 µm 画素のエッジは元と最大 {np.abs(blurred - edge).max():.3f} 差、"
+          f"総和比 {blurred.sum() / edge.sum():.12f}")
+    assert np.abs(blurred - edge).max() < 0.03 and abs(blurred.sum() / edge.sum() - 1.0) < 1e-9
+
+    print("PASS: optics 21 op すべてが閉形式のグラウンドトゥルースと一致")
     return ok
 
 

@@ -1,0 +1,90 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pupil_psf — OPTICS <code style="color:#22d3bf">wave</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pupil_psf(pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6, oversample=4, pixel_pitch_um=None, opd_waves=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import optics; optics.pupil_psf(pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6, oversample=4, pixel_pitch_um=None, opd_waves=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsoptics.get(&quot;pupil_psf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Diffraction PSF of an <b>arbitrary pupil shape</b> with defocus (sums to 1).</p>
+<p>*pupil* is a square `<code style="color:#22d3bf">(n, n)</code>` amplitude transmittance (0 = opaque, 1 =</p>
+<p>clear; a binary mask is the usual case) drawn on a grid whose **full width</p>
+<p>is the pupil&#x27;s clear diameter** `<code style="color:#22d3bf">D</code>` — so a circle filling the grid is a</p>
+<p>conventional round stop, a W-shaped band or an off-axis hole inside the</p>
+<p>grid is just a different mask, and `<code style="color:#22d3bf">f_number = f / D</code>` refers to that</p>
+<p>full width in every case. The wavefront over the grid is</p>
+<p>`<code style="color:#22d3bf">W(rho) = defocus_waves * rho^2 (+ opd_waves)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">rho</code>` the radius</p>
+<p>from the grid centre normalised to `<code style="color:#22d3bf">1</code>` at the grid half-width (the Seidel</p>
+<p>defocus `<code style="color:#22d3bf">W20</code><code style="color:#22d3bf">; :func:</code>defocus_from_shift` converts an axial shift to it),</p>
+<p>and the PSF is the Fraunhofer intensity of the pupil function</p>
+<p>`<code style="color:#22d3bf">PSF = | FFT{ pupil * exp(i 2 pi W) } |^2</code>`</p>
+<p>on a zero-padded `<code style="color:#22d3bf">M x M</code><code style="color:#22d3bf"> grid, </code><code style="color:#22d3bf">M = n * oversample</code>` (rounded up to</p>
+<p>even), centred on sample `<code style="color:#22d3bf">M//2</code>` and normalised to unit sum. The image</p>
+<p>plane sample spacing is</p>
+<p>`<code style="color:#22d3bf">dx = lambda * N * n / M  ~= lambda * N / oversample</code>`  [um]</p>
+<p>— with *pixel_pitch_um* the fine PSF is <b>area-integrated</b> onto detector</p>
+<p>pixels of that pitch (odd `<code style="color:#22d3bf">(K, K)</code>`, centred on a pixel, unit sum), which</p>
+<p>is what an image convolution needs; the pitch must not be finer than</p>
+<p>`<code style="color:#22d3bf">dx</code><code style="color:#22d3bf">. Without it the fine PSF is returned and </code><code style="color:#22d3bf">dx</code>` is yours to compute</p>
+<p>from the formula (an image cannot carry it).</p>
+<p>Returns a float64 `<code style="color:#22d3bf">image2d</code>`.</p>
+<p>Ground truth it reproduces (measured, `<code style="color:#22d3bf">tests/test_optics.py</code>`):</p>
+<p style="margin:2px 0 2px 12px">• a circle filling a 64-sample grid, `<code style="color:#22d3bf">oversample = 16</code>`: the first dark</p>
+<p>ring at `<code style="color:#22d3bf">1.2197 lambda N</code>` within 0.5 % of the Airy value (three</p>
+<p>wavelength / f-number pairs), and the same ring at the same</p>
+<p>*micrometre* radius within 5 % after binning to a pixel pitch of</p>
+<p>`<code style="color:#22d3bf">lambda N / 8</code>` (2.1 % measured — the parabolic minimum on a 9.8-pixel</p>
+<p>ring, not the binning) — so the pitch bookkeeping is right in physical</p>
+<p>units, not only in samples; the binned spot is centro-symmetric to</p>
+<p>1e-17 and correlates with :func:<code style="color:#22d3bf">airy_pattern</code> sampled at the same</p>
+<p>pitch at 0.99999 (0.9999 at `<code style="color:#22d3bf">lambda N / 4</code><code style="color:#22d3bf">, 0.9997 at </code><code style="color:#22d3bf">lambda N / 3</code>`);</p>
+<p style="margin:2px 0 2px 12px">• pure defocus of a circular pupil: the on-axis intensity relative to the</p>
+<p>unaberrated peak is the closed-form `<code style="color:#22d3bf">[sin(pi W20)/(pi W20)]^2</code>`</p>
+<p>(`<code style="color:#22d3bf">0.405</code><code style="color:#22d3bf"> at half a wave, </code><code style="color:#22d3bf">0</code>` at one wave — the dark centre of the</p>
+<p>one-wave defocused Airy spot), within 1 %;</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">defocus_waves = 0</code>` and a clear circular pupil is the Airy pattern of</p>
+<p>:func:<code style="color:#22d3bf">airy_pattern</code> to the sampling of the disc edge;</p>
+<p style="margin:2px 0 2px 12px">• <b>the sign identity</b>: for a real pupil, `<code style="color:#22d3bf">-W</code>` is the complex</p>
+<p>conjugate of `<code style="color:#22d3bf">+W</code><code style="color:#22d3bf">, so </code><code style="color:#22d3bf">PSF(-W)(x) = PSF(+W)(-x)</code>` exactly. The test</p>
+<p>pins it on a W-shaped band: the two PSFs are mirror images through the</p>
+<p>centre to 1e-12, and they are *not* equal to each other (the W pupil</p>
+<p>is asymmetric, so the direction of defocus is visible in the blur),</p>
+<p>while for the circle they are equal (a symmetric pupil cannot tell</p>
+<p>the sign). Rotating the W pupil by 90/180/270 degrees rotates the PSF</p>
+<p>the same way (checked, so the asymmetry is the pupil&#x27;s, not the grid&#x27;s).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *pupil* is not 2-D, not square, smaller than 2x2,</p>
+<p>over the size cap, complex, masked or non-finite; negative transmittance;</p>
+<p>an all-opaque pupil (nothing to diffract, the normalisation would be</p>
+<p>0/0); *opd_waves* not the same shape as *pupil*; non-finite</p>
+<p>*defocus_waves*; non-positive or non-finite *wavelength_um* /</p>
+<p>*f_number* / *pixel_pitch_um*; *oversample* outside `<code style="color:#22d3bf">[1, 64]</code>`; an FFT</p>
+<p>side over :data:<code style="color:#22d3bf">MAX_PUPIL_FFT</code>; <b>an aliased phase</b> — more than</p>
+<p>:data:<code style="color:#22d3bf">MAX_WAVES_PER_SAMPLE</code> waves between neighbouring pupil samples (the</p>
+<p>message says how many samples the grid needs); a pixel pitch finer than</p>
+<p>the fine sample spacing (raise *oversample*).</p>
+<p>Scalar Fraunhofer optics: no polarisation, no high-NA obliquity, no</p>
+<p>pupil apodisation by the lens itself. The defocus term is the paraxial</p>
+<p>`<code style="color:#22d3bf">rho^2</code><code style="color:#22d3bf"> (see :func:</code>defocus_from_shift`). A pupil that reaches the grid</p>
+<p>edge is fine (the zero padding is the field stop); a pupil *larger* than</p>
+<p>the grid cannot be expressed — widen the grid and lower `<code style="color:#22d3bf">f_number</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• **文字列は <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array は <code style="color:#22d3bf">ValueError</code><b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。</b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。**それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code>** —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:pupil_blur">pupil_blur</a> · <a style="color:#22d3bf" href="opoptics:psf_to_mtf">psf_to_mtf</a> · <a style="color:#22d3bf" href="opoptics:illumination_uniformity">illumination_uniformity</a> · <a style="color:#22d3bf" href="opoptics:render_through_lens">render_through_lens</a> · <a style="color:#22d3bf" href="opoptics:surface_defect">surface_defect</a> · <a style="color:#22d3bf" href="opoptics:defocus_blur">defocus_blur</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">wave</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:airy_pattern">airy_pattern</a> · <a style="color:#22d3bf" href="opoptics:angular_spectrum_propagate">angular_spectrum_propagate</a> · <a style="color:#22d3bf" href="opoptics:fraunhofer_pattern">fraunhofer_pattern</a> · <a style="color:#22d3bf" href="opoptics:gaussian_beam">gaussian_beam</a> · <a style="color:#22d3bf" href="opoptics:defocus_from_shift">defocus_from_shift</a> · <a style="color:#22d3bf" href="opoptics:pupil_blur">pupil_blur</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

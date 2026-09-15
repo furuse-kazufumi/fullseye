@@ -11,10 +11,10 @@ version: 0.1.0
 
 ## この族は何をする道具箱か
 
-**レンズより上、画素より下**の層です。産業ビジョン(検査ライン)でも Physical AI(ロボット知覚)でも、画像処理を始める前に誰も撮っていない決定があります — どの焦点距離か、絞りはどこか、被写界深度はどれだけか、回折で潰れる最小欠陥は何 µm か、偏光板でテカりは消えるか。それらは全部**閉形式の計算**で、この族はそれを第一級の op にしたものです。18 op / 4 カテゴリ(numpy + scipy のみ、台帳は `opsoptics.py`、実体は `optics.py`):
+**レンズより上、画素より下**の層です。産業ビジョン(検査ライン)でも Physical AI(ロボット知覚)でも、画像処理を始める前に誰も撮っていない決定があります — どの焦点距離か、絞りはどこか、被写界深度はどれだけか、回折で潰れる最小欠陥は何 µm か、偏光板でテカりは消えるか。それらは全部**閉形式の計算**で、この族はそれを第一級の op にしたものです。21 op / 4 カテゴリ(numpy + scipy のみ、台帳は `opsoptics.py`、実体は `optics.py`):
 
 - **geometric(5)** — `thin_lens` / `abcd_matrix` / `abcd_trace` / `depth_of_field` / `relative_illumination`: ガウス結像、近軸光線伝達(系全体を 1 つの 2x2 に畳む ABCD 代数)、被写界深度の三点セット(近限界・遠限界・過焦点距離)、cos⁴ の自然口径食。
-- **wave(4)** — `airy_pattern` / `angular_spectrum_propagate` / `fraunhofer_pattern` / `gaussian_beam`: 円形瞳の回折限界 PSF、角スペクトル法による**厳密な**自由空間伝搬(近軸近似をしない)、開口の遠方回折像、ガウシアンビームの q パラメータ伝搬。
+- **wave(7)** — `airy_pattern` / `angular_spectrum_propagate` / `fraunhofer_pattern` / `gaussian_beam` / `defocus_from_shift` / `pupil_psf` / `pupil_blur`: 円形瞳の回折限界 PSF、角スペクトル法による**厳密な**自由空間伝搬(近軸近似をしない)、開口の遠方回折像、ガウシアンビームの q パラメータ伝搬。後の 3 つ(2026-09-15、動物の目の標本シリーズ「げんしけん」第 1 標本のコウイカから)は**任意形状の瞳**の回折 PSF: 軸方向の焦点ずれを Seidel デフォーカス `W20 = Δz/(8λN²)` [波] に直す閉じた式、W 字・スリット・軸外の穴など**どんな瞳マスクでも** `|FFT(pupil·e^{i2πW})|²` で PSF を作り検出器ピッチへ面積積分する op、それで画像を 1 帯ずつぼかす op。円形瞳なら Airy(第 1 暗環 1.22λN)、デフォーカスの軸上強度は閉形式 `[sin(πW20)/(πW20)]²`、**非対称な瞳は焦点ずれの符号で PSF が中心反転する**(`PSF(−W)(x) = PSF(+W)(−x)`、厳密)ので、色収差 + 調節で「色盲の目が色を推定する」仮説(Stubbs & Stubbs, *PNAS* 2016)の光学がこの 3 op だけで組める。
 - **imaging(3)** — `psf_to_mtf` / `mtf_diffraction` / `wavefront_stats`: 測った点像を分解能曲線に変える PSF → OTF → MTF の鎖、それと突き合わせる回折限界の閉形式、Zernike フィットから出す波面統計(RMS / PV / Strehl)。
 - **polarization(6)** — `jones_element` / `jones_apply` / `stokes_from_jones` / `mueller_element` / `mueller_apply` / `stokes_analyze`: 完全偏光を扱う Jones 計算と、**部分偏光**まで運べる Stokes/Mueller 計算(偏光カメラが実際に測るのは後者)。
 - **design(15、実体は `raytrace.py`)** — `lens_system` / `thick_lens` / `glass` / `example_system` / `glass_catalog` / `sellmeier` / `paraxial_trace` / `spot_diagram` / `spot_stats` / `ray_fan` / `opd_map` / `wavefront_from_opd` / `seidel_coefficients` / `tolerance_analysis` / `chromatic_shift`: 上の 4 カテゴリが**近軸・閉形式**なのに対し、こちらは球面/円錐面/非球面の逐次処方に**実光線**を通す設計層(下の「設計(design)」節)。

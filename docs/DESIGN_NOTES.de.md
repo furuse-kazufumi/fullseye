@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 676. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 677. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -25,7 +25,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `api.py`
 
 - **L587** — ★``annotate.overlay_mask`` wird **bewusst nicht auf oberster Ebene exponiert**. Das gleichnamige ``imgio.overlay_mask`` ist bereits als ``fs.overlay_mask`` öffentlich, und Argumente wie Bedeutung unterscheiden sich (imgio = rohes RGB, mask>0.5, fill/margin / annotate = Rollenname-Farbe, Gewichte [0,1] erlaubt, lehnt Form-Fehlanpassung ab). Legt man dem gleichen Namen ein anderes Versprechen auf, erhält der Aufrufer keine Ausnahme, sondern **ein plausibel anderes Bild**. Breaking Changes an der öffentlichen API machen wir nicht im Alleingang, daher die rollentragende Variante über ``fs.annotate.overlay_mask`` beziehen.
-- **L1345** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
+- **L1346** — ★ **Für Farbbilder gibt es derzeit keinen korrekten Aufruf**: Übergibt man sie gemeinsam, vermischen sich die Farben, und ruft man pro Kanal dreimal auf, teilt ein selbstnormalisierender op jeden Kanal durch sein eigenes Maximum und zerstört die Verhältnisse zwischen den Kanälen (der Winkelfehler der Grey-Edge-Methode steigt von 1.03 Grad mit unserem eigenen Sobel -> 4.17 Grad pro Bild -> 27.86 Grad pro Kanal, 29.14 Grad am Nullpunkt). Wohin man sich neigt, ist eine **Vertragsentscheidung**, deshalb ändern wir hier keinen einzigen Standardwert, verweigern nur bei `on_error="raise"` und protokollieren es standardmäßig im Register, damit es sichtbar bleibt. Details und Optionen in docs/KNOWN_ISSUES.md.
 
 ## `astrostack.py`
 
@@ -957,7 +957,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `opsoptics.py`
 
-- **L129** — ★ Nicht normals (die (N,3)-Normalen einer Punktwolke), sondern normalmap. Beide sind in der Form ähnlich, aber die Übergabe von (N,3) wird von _normal_map mit ValueError zurückgewiesen. Es hier als normals zu deklarieren wäre die Lüge, "man dürfe Punktwolken-Normalen übergeben", und der verkettete Fuzzer würde jedes Mal in CONTRACT enden und **diese Familie nie ausführen** (= verwandelt sich in null Funde).
+- **L125** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
+- **L140** — ★ Nicht normals (die (N,3)-Normalen einer Punktwolke), sondern normalmap. Beide sind in der Form ähnlich, aber die Übergabe von (N,3) wird von _normal_map mit ValueError zurückgewiesen. Es hier als normals zu deklarieren wäre die Lüge, "man dürfe Punktwolken-Normalen übergeben", und der verkettete Fuzzer würde jedes Mal in CONTRACT enden und **diese Familie nie ausführen** (= verwandelt sich in null Funde).
 
 ## `opsphoton.py`
 
@@ -1197,7 +1198,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03: da das _safe jedes Backends in backend_safe.guard zusammengefasst wurde, nach dem strukturierten Marker urteilen, den der guard setzt, nicht nach String-Abgleich auf qualname (der guard lässt auch "_safe(...)" im qualname, das ist aber zur Anzeige).
-- **L1177** — ★Warum es nicht gefunden wurde: `ops.REGISTRY` (899) und die 2-D-Notizen (899) stimmen überein, sodass es **solange man von der Registerseite zählt wie "null fehlend" aussieht**. Ich habe das einmal geschlossen und lag falsch. Daher zählt dieses Gate von der tier-übergreifenden Index-Seite (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
+- **L1178** — ★Warum es nicht gefunden wurde: `ops.REGISTRY` (899) und die 2-D-Notizen (899) stimmen überein, sodass es **solange man von der Registerseite zählt wie "null fehlend" aussieht**. Ich habe das einmal geschlossen und lag falsch. Daher zählt dieses Gate von der tier-übergreifenden Index-Seite (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 
