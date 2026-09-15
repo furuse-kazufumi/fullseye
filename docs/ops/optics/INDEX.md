@@ -1,4 +1,4 @@
-# OPTICS operator help — 124 ops in 16 categories
+# OPTICS operator help — 127 ops in 16 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -78,9 +78,9 @@
 
 [corrosion_mask](surface/corrosion_mask.md) · [metallic_flake_normals](surface/metallic_flake_normals.md) · [rough_transmission](surface/rough_transmission.md) · [weave_normals](surface/weave_normals.md) · [wood_grain](surface/wood_grain.md)
 
-### wave (4)
+### wave (7)
 
-[airy_pattern](wave/airy_pattern.md) · [angular_spectrum_propagate](wave/angular_spectrum_propagate.md) · [fraunhofer_pattern](wave/fraunhofer_pattern.md) · [gaussian_beam](wave/gaussian_beam.md)
+[airy_pattern](wave/airy_pattern.md) · [angular_spectrum_propagate](wave/angular_spectrum_propagate.md) · [defocus_from_shift](wave/defocus_from_shift.md) · [fraunhofer_pattern](wave/fraunhofer_pattern.md) · [gaussian_beam](wave/gaussian_beam.md) · [pupil_blur](wave/pupil_blur.md) · [pupil_psf](wave/pupil_psf.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

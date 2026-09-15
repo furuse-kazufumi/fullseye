@@ -14,10 +14,16 @@ in four families:
     photographic depth-of-field triple (near / far / hyperfocal) and the
     cos^4 natural-vignetting falloff.
   * **wave** — ``airy_pattern`` / ``angular_spectrum_propagate`` /
-    ``fraunhofer_pattern`` / ``gaussian_beam``: the diffraction-limited PSF of
+    ``fraunhofer_pattern`` / ``gaussian_beam`` / ``defocus_from_shift`` /
+    ``pupil_psf`` / ``pupil_blur``: the diffraction-limited PSF of
     a circular pupil, exact scalar free-space propagation by the angular
-    spectrum, the far-field pattern of an aperture, and Gaussian-beam
-    ``q``-parameter propagation (waist / wavefront radius / Gouy phase).
+    spectrum, the far-field pattern of an aperture, Gaussian-beam
+    ``q``-parameter propagation (waist / wavefront radius / Gouy phase), and
+    — added 2026-09-15 for the animal-eye series — the PSF of an **arbitrary
+    pupil shape** (a W, a slit, an off-axis hole) with Seidel defocus, binned
+    to a detector pitch, the axial-shift-to-waves conversion that feeds it,
+    and the per-band image blur that composes the two into a chromatic
+    imaging model.
   * **imaging** — ``psf_to_mtf`` / ``mtf_diffraction`` / ``wavefront_stats``:
     the PSF -> OTF -> MTF chain that turns a measured spot into a resolution
     curve, the closed-form diffraction MTF to compare it against, and the
@@ -40,9 +46,15 @@ re-implemented):
     ``{(n, m): coefficient}``). :func:`wavefront_stats` consumes exactly that
     dict and reports the statistics — it re-uses ``match3d``'s own basis
     builder, so the two cannot drift apart in convention.
-  * **PSF blur / deconvolution** is :mod:`volrestore` (``vol_gaussian_psf``,
+  * **PSF deconvolution** is :mod:`volrestore` (``vol_gaussian_psf``,
     ``vol_richardson_lucy``) and :mod:`complexops` (``cx_wiener_deconvolve``).
-    :func:`psf_to_mtf` only *characterises* a PSF; it does not deblur.
+    :func:`psf_to_mtf` only *characterises* a PSF; it does not deblur. The
+    one *forward* blur that lives here, :func:`pupil_blur`, is here because
+    its trap is optical, not numerical: the PSF's sample spacing is
+    ``lambda N / oversample`` and must be binned to the detector pitch before
+    it touches an image — that bookkeeping belongs next to the PSF maker.
+    A generic image-times-kernel convolution it is not (that is
+    ``filters_freq.convol_fft``).
   * **FFT and complex-image plumbing** is :mod:`complexops` (``cx_fft`` and
     friends, ``phase_unwrap``). :func:`angular_spectrum_propagate` uses numpy's
     FFT internally but its input/output are *fields*, not spectra.
@@ -121,12 +133,13 @@ __all__ = [
     "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
-    "gaussian_beam",
+    "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "OPTICS", "MAX_GRID", "MAX_FIELD_ELEMENTS", "MAX_SYSTEM_ELEMENTS",
     "MAX_ZERNIKE_TERMS", "MAX_ZERNIKE_ORDER", "MAX_ZERNIKE_BASIS",
+    "MAX_PUPIL_FFT", "MAX_WAVES_PER_SAMPLE",
     "JONES_KINDS", "MUELLER_KINDS",
 ]
 
@@ -135,7 +148,7 @@ OPTICS = [
     "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
-    "gaussian_beam",
+    "gaussian_beam", "defocus_from_shift", "pupil_psf", "pupil_blur",
     "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
@@ -838,6 +851,294 @@ def fraunhofer_pattern(aperture, wavelength_um=0.55, distance_mm=100.0,
                       "(use angular_spectrum_propagate)"
                       % (nf, rad, z_um * 1e-3), RuntimeWarning, stacklevel=2)
     return np.ascontiguousarray(inten / peak, dtype=np.float64)
+
+
+# --------------------------------------------------------------------------- #
+# pupil-shape PSF: any aperture, with defocus, on a detector pitch             #
+# --------------------------------------------------------------------------- #
+#: Largest FFT side (``n * oversample``) :func:`pupil_psf` will allocate. A
+#: 8192^2 complex128 grid is 1 GB per temporary — already past a design aid.
+MAX_PUPIL_FFT = 8192
+
+#: Largest optical-path step (waves) between neighbouring pupil samples that
+#: :func:`pupil_psf` accepts. Past half a wave per sample the phase is aliased
+#: and the FFT returns a PSF that looks plausible and is wrong (same limit as
+#: ``lensimage.psf_from_opd``).
+MAX_WAVES_PER_SAMPLE = 0.5
+
+
+def defocus_from_shift(shift_um=10.0, wavelength_um=0.55, f_number=5.6):
+    """Defocus wavefront error (waves at the pupil edge) of an axial focus shift.
+
+    Moving the detector (or, equivalently, the focus) by ``shift_um`` along the
+    axis of an ``f/N`` beam adds the quadratic wavefront error
+    ``W(rho) = W20 * rho^2`` with
+
+        ``W20 = shift / (8 * lambda * N^2)``  [waves]
+
+    — the paraxial Seidel defocus term, ``rho`` the normalised pupil radius
+    (1 at the edge). This is the number :func:`pupil_psf` takes as
+    ``defocus_waves``, so the two compose: a longitudinal chromatic aberration
+    (focal shift versus wavelength, e.g. from ``raytrace.chromatic_shift`` or a
+    published ``df/f(lambda)``) becomes a per-band ``defocus_waves`` here and a
+    per-band PSF there.
+
+    Returns a float (a ``measurement``). The sign is the sign of *shift_um*:
+    **positive = the detector sits beyond the focus** (the beam has converged
+    and is diverging again). For a symmetric pupil the PSF does not depend on
+    the sign; for an asymmetric one (a slit, a W, an off-axis hole) the sign
+    **flips the PSF through the centre** — that is exactly the handle a
+    one-photoreceptor eye can read the direction of defocus from.
+
+    Ground truth (closed form, ``tests/test_optics.py``): ``shift = 8 lambda N^2``
+    is exactly one wave; the function is linear in *shift_um* and inverse in
+    *wavelength_um* and in ``N^2`` (checked at two of each). At ``N = 1.5``,
+    ``lambda = 0.55 um`` (a cephalopod-scale ``f/1.5`` eye) a 250 um focus shift
+    is 25.3 waves.
+
+    **Raises** ``ValueError``: non-finite *shift_um*; non-positive or non-finite
+    *wavelength_um* / *f_number*.
+
+    Paraxial: ``W20 = shift/(8 N^2)`` is the small-angle expansion of the exact
+    ``shift * (1 - cos theta)`` sag; at ``f/1.5`` (``sin theta = 1/3``) the exact
+    edge value is 5.7 % below the paraxial one — the number is a *defocus
+    convention*, not a high-NA wavefront.
+    """
+    dz = _finite_scalar(shift_um, "shift_um")
+    lam = _positive(wavelength_um, "wavelength_um")
+    fn = _positive(f_number, "f_number")
+    return float(dz / (8.0 * lam * fn * fn))
+
+
+def _pupil_phase_step(inside, W):
+    """Largest |dW| (waves) between neighbouring samples that are both inside."""
+    both_x = inside[:, 1:] & inside[:, :-1]
+    both_y = inside[1:, :] & inside[:-1, :]
+    dx = np.abs(W[:, 1:] - W[:, :-1])[both_x]
+    dy = np.abs(W[1:, :] - W[:-1, :])[both_y]
+    return float(max(dx.max() if dx.size else 0.0, dy.max() if dy.size else 0.0))
+
+
+def _bin_to_pixels(psf, dx_um, pitch_um):
+    """Area-integrate a fine, centred (DC at ``M//2``) PSF onto detector pixels.
+
+    Each fine sample stands for the interval ``[x - dx/2, x + dx/2]`` and its
+    energy is split between the (at most two, since ``dx <= pitch``) pixels
+    that interval overlaps, in proportion to the overlap. ★ Nearest-pixel
+    binning (``floor(x/pitch + 0.5)``) is *not* symmetric when samples land on
+    pixel boundaries — at 2 samples per pixel every second sample does, pixel
+    0 got the samples at ``-pitch/2`` and ``0`` and the whole PSF slid by a
+    quarter pixel (measured 2026-09-15: correlation with the closed-form Airy
+    0.968 instead of > 0.999). The overlap split is exact and symmetric for
+    any ratio, and separable, so it is two sparse matrix products.
+    """
+    from scipy.sparse import csr_matrix                   # scipy is a hard dependency
+    m = psf.shape[0]
+    x = (np.arange(m, dtype=np.float64) - m // 2) * dx_um
+    lo = x - 0.5 * dx_um
+    hi = x + 0.5 * dx_um
+    k_lo = np.floor(lo / pitch_um + 0.5).astype(int)      # pixel holding the interval start
+    k_hi = np.floor(hi / pitch_um + 0.5).astype(int)      # pixel holding the interval end
+    edge = (k_lo + 0.5) * pitch_um                        # boundary between k_lo and k_lo + 1
+    w_hi = np.where(k_hi > k_lo, (hi - edge) / dx_um, 0.0)
+    w_hi = np.clip(w_hi, 0.0, 1.0)
+    w_lo = 1.0 - w_hi
+    half = int(max(abs(int(k_lo.min())), abs(int(k_hi.max()))))
+    size = 2 * half + 1
+    rows = np.concatenate([k_lo + half, k_hi + half])
+    cols = np.concatenate([np.arange(m), np.arange(m)])
+    vals = np.concatenate([w_lo, w_hi])
+    b = csr_matrix((vals, (rows, cols)), shape=(size, m))
+    out = np.ascontiguousarray((b @ (b @ psf).T).T, dtype=np.float64)   # rows, then columns
+    return out / out.sum()
+
+
+def pupil_psf(pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6,
+              oversample=4, pixel_pitch_um=None, opd_waves=None):
+    """Diffraction PSF of an **arbitrary pupil shape** with defocus (sums to 1).
+
+    *pupil* is a square ``(n, n)`` amplitude transmittance (0 = opaque, 1 =
+    clear; a binary mask is the usual case) drawn on a grid whose **full width
+    is the pupil's clear diameter** ``D`` — so a circle filling the grid is a
+    conventional round stop, a W-shaped band or an off-axis hole inside the
+    grid is just a different mask, and ``f_number = f / D`` refers to that
+    full width in every case. The wavefront over the grid is
+    ``W(rho) = defocus_waves * rho^2 (+ opd_waves)`` with ``rho`` the radius
+    from the grid centre normalised to ``1`` at the grid half-width (the Seidel
+    defocus ``W20``; :func:`defocus_from_shift` converts an axial shift to it),
+    and the PSF is the Fraunhofer intensity of the pupil function
+
+        ``PSF = | FFT{ pupil * exp(i 2 pi W) } |^2``
+
+    on a zero-padded ``M x M`` grid, ``M = n * oversample`` (rounded up to
+    even), centred on sample ``M//2`` and normalised to unit sum. The image
+    plane sample spacing is
+
+        ``dx = lambda * N * n / M  ~= lambda * N / oversample``  [um]
+
+    — with *pixel_pitch_um* the fine PSF is **area-integrated** onto detector
+    pixels of that pitch (odd ``(K, K)``, centred on a pixel, unit sum), which
+    is what an image convolution needs; the pitch must not be finer than
+    ``dx``. Without it the fine PSF is returned and ``dx`` is yours to compute
+    from the formula (an image cannot carry it).
+
+    Returns a float64 ``image2d``.
+
+    Ground truth it reproduces (measured, ``tests/test_optics.py``):
+
+      * a circle filling a 64-sample grid, ``oversample = 16``: the first dark
+        ring at ``1.2197 lambda N`` within 0.5 % of the Airy value (three
+        wavelength / f-number pairs), and the same ring at the same
+        *micrometre* radius within 5 % after binning to a pixel pitch of
+        ``lambda N / 8`` (2.1 % measured — the parabolic minimum on a 9.8-pixel
+        ring, not the binning) — so the pitch bookkeeping is right in physical
+        units, not only in samples; the binned spot is centro-symmetric to
+        1e-17 and correlates with :func:`airy_pattern` sampled at the same
+        pitch at 0.99999 (0.9999 at ``lambda N / 4``, 0.9997 at ``lambda N / 3``);
+      * pure defocus of a circular pupil: the on-axis intensity relative to the
+        unaberrated peak is the closed-form ``[sin(pi W20)/(pi W20)]^2``
+        (``0.405`` at half a wave, ``0`` at one wave — the dark centre of the
+        one-wave defocused Airy spot), within 1 %;
+      * ``defocus_waves = 0`` and a clear circular pupil is the Airy pattern of
+        :func:`airy_pattern` to the sampling of the disc edge;
+      * **the sign identity**: for a real pupil, ``-W`` is the complex
+        conjugate of ``+W``, so ``PSF(-W)(x) = PSF(+W)(-x)`` exactly. The test
+        pins it on a W-shaped band: the two PSFs are mirror images through the
+        centre to 1e-12, and they are *not* equal to each other (the W pupil
+        is asymmetric, so the direction of defocus is visible in the blur),
+        while for the circle they are equal (a symmetric pupil cannot tell
+        the sign). Rotating the W pupil by 90/180/270 degrees rotates the PSF
+        the same way (checked, so the asymmetry is the pupil's, not the grid's).
+
+    **Raises** ``ValueError``: *pupil* is not 2-D, not square, smaller than 2x2,
+    over the size cap, complex, masked or non-finite; negative transmittance;
+    an all-opaque pupil (nothing to diffract, the normalisation would be
+    0/0); *opd_waves* not the same shape as *pupil*; non-finite
+    *defocus_waves*; non-positive or non-finite *wavelength_um* /
+    *f_number* / *pixel_pitch_um*; *oversample* outside ``[1, 64]``; an FFT
+    side over :data:`MAX_PUPIL_FFT`; **an aliased phase** — more than
+    :data:`MAX_WAVES_PER_SAMPLE` waves between neighbouring pupil samples (the
+    message says how many samples the grid needs); a pixel pitch finer than
+    the fine sample spacing (raise *oversample*).
+
+    Scalar Fraunhofer optics: no polarisation, no high-NA obliquity, no
+    pupil apodisation by the lens itself. The defocus term is the paraxial
+    ``rho^2`` (see :func:`defocus_from_shift`). A pupil that reaches the grid
+    edge is fine (the zero padding is the field stop); a pupil *larger* than
+    the grid cannot be expressed — widen the grid and lower ``f_number``.
+    """
+    p = _require_image(pupil, "pupil", "pupil_psf")
+    n = int(p.shape[0])
+    if p.shape[0] != p.shape[1]:
+        raise ValueError("pupil_psf: pupil must be square (its full width is the "
+                         "pupil diameter D that f_number refers to), got %dx%d"
+                         % (p.shape[0], p.shape[1]))
+    if (p < 0.0).any():
+        raise ValueError("pupil_psf: pupil has %d negative value(s) — an amplitude "
+                         "transmittance is >= 0 (a signed mask is a phase, use "
+                         "opd_waves)" % (int((p < 0.0).sum()),))
+    if not p.any():
+        raise ValueError("pupil_psf: the pupil is entirely opaque (all zeros) — "
+                         "nothing diffracts and the unit-sum normalisation would "
+                         "be 0/0")
+    d = _finite_scalar(defocus_waves, "defocus_waves")
+    lam = _positive(wavelength_um, "wavelength_um")
+    fn = _positive(f_number, "f_number")
+    ov = _count(oversample, "oversample", 1, 64)
+    m = n * ov
+    if m % 2:
+        m += 1
+    if m > MAX_PUPIL_FFT:
+        raise ValueError("pupil_psf: FFT side %d (= %d samples x oversample %d) is "
+                         "over the %d cap (optics.MAX_PUPIL_FFT) — reduce the pupil "
+                         "grid or the oversample" % (m, n, ov, MAX_PUPIL_FFT))
+    c = (n - 1) / 2.0
+    ax = (np.arange(n, dtype=np.float64) - c) * (2.0 / n)   # rho = 1 at half-width
+    W = d * (ax[:, None] ** 2 + ax[None, :] ** 2)
+    if opd_waves is not None:
+        o = _require_image(opd_waves, "opd_waves", "pupil_psf")
+        if o.shape != p.shape:
+            raise ValueError("pupil_psf: opd_waves must have the pupil's shape %r, "
+                             "got %r" % (tuple(p.shape), tuple(o.shape)))
+        W = W + o
+    inside = p > 0.0
+    step = _pupil_phase_step(inside, W)
+    if step > MAX_WAVES_PER_SAMPLE:
+        need = int(np.ceil(n * step / (0.4))) + 1
+        raise ValueError("pupil_psf: the wavefront changes %.2f waves between "
+                         "neighbouring pupil samples (aliased; the cap is %.1f) — "
+                         "sample the pupil on a grid of about %d samples or more "
+                         "(or reduce defocus_waves)" % (step, MAX_WAVES_PER_SAMPLE, need))
+    pad = np.zeros((m, m), dtype=np.complex128)
+    pad[:n, :n] = p * np.exp(2j * np.pi * W)
+    with np.errstate(over="ignore", invalid="ignore"):
+        psf = np.abs(np.fft.fftshift(np.fft.fft2(pad))) ** 2
+        total = float(psf.sum())
+    if not np.isfinite(total) or total <= 0.0 or not np.isfinite(psf).all():
+        raise ValueError("pupil_psf: the transform overflowed float64 (sum %r) — "
+                         "the pupil's dynamic range is beyond what an FFT of this "
+                         "size can carry; rescale the transmittance" % (total,))
+    psf /= total
+    if pixel_pitch_um is None:
+        return np.ascontiguousarray(psf, dtype=np.float64)
+    pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
+    dx = lam * fn * n / m
+    if dx > pitch * (1.0 + 1e-9):
+        raise ValueError("pupil_psf: the PSF sample spacing %.4g um (lambda N n/M) "
+                         "is coarser than the pixel pitch %.4g um — raise "
+                         "oversample to at least %d" % (dx, pitch, int(np.ceil(lam * fn / pitch))))
+    return _bin_to_pixels(psf, dx, pitch)
+
+
+def pupil_blur(image, pupil, defocus_waves=0.0, wavelength_um=0.55, f_number=5.6,
+               pixel_pitch_um=5.0, oversample=4, opd_waves=None):
+    """Blur an image with the PSF of a pupil shape at one wavelength band.
+
+    The forward imaging model of *one* spectral band: the PSF of
+    :func:`pupil_psf` (same pupil / defocus / wavelength / f-number
+    arguments), **binned to the image's pixel pitch** so the blur is in the
+    image's own units, convolved with the image (FFT, reflect-padded borders so
+    a flat field stays flat and nothing wraps around). Call it once per band
+    with that band's ``defocus_waves`` (from :func:`defocus_from_shift` and a
+    focal shift versus wavelength) and you have the polychromatic image of a
+    lens with longitudinal chromatic aberration seen through any pupil — the
+    ingredient of the "colour from chromatic blur" hypothesis for
+    single-photoreceptor eyes (Stubbs & Stubbs, *PNAS* 113:8206, 2016).
+
+    Returns a float64 ``image2d`` of the image's shape. Linear: no clipping,
+    no re-normalisation of the image (the PSF sums to 1, so a constant image
+    is returned unchanged to rounding).
+
+    Ground truth it reproduces (measured, ``tests/test_optics.py``): a constant
+    image is unchanged to 1e-12; a delta image returns the binned PSF itself
+    (the impulse response, to 1e-12 where the kernel fits); with
+    ``defocus_waves = 0`` and a diffraction spot much smaller than the pixel
+    (``lambda N = 0.8 um`` on a 5 um pitch) a sharp edge is unchanged to
+    within 1 % — the *identity at focus*; the blurred image's total is the
+    input's total to 1e-9 (flux is conserved by the reflect padding).
+
+    **Raises** ``ValueError``: everything :func:`pupil_psf` raises, plus
+    *image* not 2-D / smaller than 2x2 / over the size cap / complex / masked
+    / non-finite, and a non-finite result (an FFT overflow).
+
+    Shift-invariant: one PSF for the whole field. Field-dependent blur
+    (vignetting, off-axis aberration) is ``lensimage.render_through_lens``.
+    """
+    img = _require_image(image, "image", "pupil_blur")
+    pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
+    psf = pupil_psf(pupil, defocus_waves, wavelength_um, f_number, oversample,
+                    pitch, opd_waves)
+    from scipy.signal import fftconvolve                  # scipy is a hard dependency
+    half = psf.shape[0] // 2
+    h, w = img.shape
+    padded = np.pad(img, half, mode="reflect") if half > 0 else img
+    with np.errstate(over="ignore", invalid="ignore"):
+        out = fftconvolve(padded, psf, mode="same")[half:half + h, half:half + w]
+    if not np.isfinite(out).all():
+        raise ValueError("pupil_blur: the convolution overflowed float64 — the "
+                         "image's dynamic range is beyond what an FFT of this size "
+                         "can carry; rescale it")
+    return np.ascontiguousarray(out, dtype=np.float64)
 
 
 def gaussian_beam(waist_um=100.0, wavelength_um=1.064, distance_mm=0.0,

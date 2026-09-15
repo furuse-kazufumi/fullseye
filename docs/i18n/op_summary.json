@@ -11800,6 +11800,14 @@
    "ko": "깊이 정답으로부터 **피사계 심도 흐림**을 입힙니다(이상적 핀홀 상 → 실제 렌즈의 상).",
    "de": "Legt aus der Ground-Truth-Tiefe die **Schärfentiefe-Unschärfe** auf (ideales Lochkamerabild → Bild eines realen Objektivs)."
   },
+  "optics/defocus_from_shift": {
+   "fp": "551ea0ea7165",
+   "ja": "軸方向の焦点ずれをデフォーカス波面誤差(瞳の縁での波数)に直す。",
+   "zh": "把轴向焦点偏移换算为离焦波前误差(光瞳边缘处的波数)。",
+   "tw": "把軸向焦點偏移換算為離焦波前誤差(光瞳邊緣處的波數)。",
+   "ko": "축방향 초점 이동을 디포커스 파면 오차(동공 가장자리에서의 파장 수)로 바꿉니다.",
+   "de": "Defokus-Wellenfrontfehler (in Wellen am Pupillenrand) einer axialen Fokusverschiebung."
+  },
   "optics/depth_of_field": {
    "fp": "931d34f58aed",
    "ja": "写真的な被写界深度: 前側限界・後側限界・過焦点距離。",
@@ -12239,6 +12247,22 @@
    "tw": "稜鏡的最小偏向角 [deg]。因**實際玻璃的色散**隨波長變化 = 出現彩虹的原因。",
    "ko": "프리즘의 최소 편각 [deg]. **실제 유리의 분산**으로 파장마다 달라집니다 = 무지개가 나오는 이유.",
    "de": "Der Winkel minimaler Ablenkung eines Prismas [Grad]. Er ändert sich mit der Wellenlänge über die **Dispersion echten Glases** — daher der Regenbogen."
+  },
+  "optics/pupil_blur": {
+   "fp": "c090c6eac567",
+   "ja": "1 つの波長帯について、瞳形状の PSF で画像をぼかす。",
+   "zh": "用某一波长带的光瞳形状 PSF 模糊图像。",
+   "tw": "用某一波長帶的光瞳形狀 PSF 模糊影像。",
+   "ko": "한 파장 대역에 대해 동공 형상의 PSF로 영상을 흐립니다.",
+   "de": "Verwischt ein Bild mit der PSF einer Pupillenform bei einem Wellenlängenband."
+  },
+  "optics/pupil_psf": {
+   "fp": "fb9a283a03c5",
+   "ja": "**任意形状の瞳**とデフォーカスの回折 PSF(総和 1)。",
+   "zh": "**任意形状光瞳**加离焦的衍射 PSF(总和为 1)。",
+   "tw": "**任意形狀光瞳**加離焦的繞射 PSF(總和為 1)。",
+   "ko": "**임의 형상의 동공**과 디포커스의 회절 PSF(총합 1).",
+   "de": "Beugungs-PSF einer **beliebigen Pupillenform** mit Defokus (Summe 1)."
   },
   "optics/psf_from_opd": {
    "fp": "907655aafbe1",

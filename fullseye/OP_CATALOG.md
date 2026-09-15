@@ -2113,7 +2113,7 @@ _計 27 ops / 4 categories。_
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## Optics operators(opsoptics)by category
-_計 124 ops / 16 categories。_
+_計 127 ops / 16 categories。_
 
 
 レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
@@ -2268,11 +2268,14 @@ _計 124 ops / 16 categories。_
 - `corrosion_mask` (` → image2d`) — 錆・緑青・汚れの**むら**(0–1 のマスク)。
 - `rough_transmission` (`signal → pairs`) — すりガラスの透過を「直進成分」と「拡散成分」に分ける。
 
-### wave(4)
+### wave(7)
 - `airy_pattern` (` → image2d`) — The diffraction-limited PSF of a circular pupil (Airy pattern).
 - `angular_spectrum_propagate` (`cimage → cimage`) — Exact scalar free-space propagation of a complex field (angular spectrum).
 - `fraunhofer_pattern` (`image2d → image2d`) — Far-field (Fraunhofer) diffraction intensity of an aperture.
 - `gaussian_beam` (` → table`) — Gaussian-beam propagation: spot size, wavefront curvature and Gouy phase.
+- `defocus_from_shift` (` → measurement`) — Defocus wavefront error (waves at the pupil edge) of an axial focus shift.
+- `pupil_psf` (`image2d → image2d`) — Diffraction PSF of an **arbitrary pupil shape** with defocus (sums to 1).
+- `pupil_blur` (`image2d, image2d → image2d`) — Blur an image with the PSF of a pupil shape at one wavelength band.
 
 ## References(アルゴリズムの一次情報・further reading)
 

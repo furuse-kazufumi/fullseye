@@ -5,8 +5,9 @@
 fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知覚)の両方に
 足場があり、その**手前**にあるのがレンズ・回折・偏光の計算 — 「どの焦点距離
 か」「被写界深度はどれだけか」「回折で潰れる最小欠陥は何 µm か」「偏光板で
-テカりは消えるか」。本レジストリはその台帳(optics.py 18 op + raytrace.py 15 op
-+ lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 47 op / 8 カテゴリ)。
+テカりは消えるか」。本レジストリはその台帳(optics.py 21 op + raytrace.py 15 op
++ lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 50 op / 8 カテゴリ、
+optics の wave に 2026-09-15 の瞳形状 PSF 3 op を含む)。
 
 optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
 raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
@@ -117,6 +118,16 @@ _CATALOG = {
         ("angular_spectrum_propagate", "optics", ["cimage"], "cimage"),
         ("fraunhofer_pattern", "optics", ["image2d"], "image2d"),
         ("gaussian_beam", "optics", [], "table"),
+        # 2026-09-15 追加(げんしけん = 動物の目の標本シリーズ、第 1 標本コウイカ):
+        # 任意形状の瞳(W 字・スリット・軸外の穴)+ Seidel デフォーカスの回折 PSF、
+        # 軸方向の焦点ずれ → 波数の閉じた式、帯ごとの像ぼかし。入力は既存語彙のまま
+        # (pupil = image2d の振幅透過率、返りは image2d / measurement)。
+        # ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft)
+        #   ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して
+        #   から畳む、その単位合わせが本体。だから PSF を作る側に置く。
+        ("defocus_from_shift", "optics", [], "measurement"),
+        ("pupil_psf", "optics", ["image2d"], "image2d"),
+        ("pupil_blur", "optics", ["image2d", "image2d"], "image2d"),
     ],
     "imaging": [
         ("psf_to_mtf", "optics", ["image2d"], "pairs"),
