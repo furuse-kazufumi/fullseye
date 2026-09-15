@@ -817,6 +817,13 @@ def catalog():
         # mask を blob_features に渡すと 2 個の細胞が 1 物体として測られ
         # 「2 つの中心のあいだ」に重心が出る = 静かに嘘をつく側。
         ("opsblob", "OPSBLOB", "blob"),
+        # 2026-09-15: AOI の前段 3 op。**新しい型語彙を 1 つも作らない**判断:
+        # 入出力は既存の image2d(画像)と table(dict)にそのまま収まる。
+        # register_image が table を返すのは意図的 —— 並進だけを返すと
+        # 「その答えが当てになるか」(peak_ratio / residual)が捨てられ、
+        # 台帳の adapter はタプルの 2 番目以降を落とすので info へ届かなくなる
+        # (piv_cross_correlate で実際に起きた事故)。dict 1 つなら量が揃って出る。
+        ("opsaoi", "OPSAOI", "aoi"),
     ):
         _m = __import__(_mod)
         for n, m in getattr(_m, _tbl).items():
