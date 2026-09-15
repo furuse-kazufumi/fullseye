@@ -97,6 +97,67 @@ def probes() -> list[tuple[str, np.ndarray]]:
     return out
 
 
+def region_probes() -> list[tuple[str, np.ndarray]]:
+    """**二値マスク**の探針。region を食う op / 返す op はここを使う。
+
+    画素の連続値でなく **離散の決定**(連結性・境界の開閉・物体の並び・空集合の扱い)が
+    答えを変える層なので、探針もそこを分けるものにする。とりわけ **斜めだけで触れる 2 つの
+    塊**は 4 連結なら 2 個、8 連結なら 1 個になり、`connection` の 4/8 食い違い
+    (0.1.11 で直した実物)を一発で分ける。乱数では絶対に出ない。
+    """
+    out: list[tuple[str, np.ndarray]] = []
+    n = 16
+
+    chk = (np.indices((8, 8)).sum(axis=0) % 2).astype(np.float64)
+    out.append(("checkerboard8", chk))                      # 4 連結なら 32 個、8 連結なら 1 個
+
+    diag = np.zeros((n, n))
+    diag[3, 3] = diag[4, 4] = 1.0                           # 斜めだけで触れる 2 画素
+    out.append(("corner_touch2", diag))
+
+    two = np.zeros((n, n))
+    two[2:6, 2:6] = 1.0; two[8:12, 8:12] = 1.0              # 離れた 2 つの塊
+    out.append(("two_blobs", two))
+
+    ring = np.zeros((n, n))
+    ring[4:12, 4:12] = 1.0; ring[6:10, 6:10] = 0.0          # 穴あき(充填・オイラー数)
+    out.append(("ring_with_hole", ring))
+
+    touch = np.zeros((n, n))
+    touch[2:7, 2:7] = 1.0; touch[7:12, 7:12] = 1.0          # 角で接する 2 つの矩形
+    out.append(("corner_touch_blocks", touch))
+
+    edgeblob = np.zeros((n, n))
+    edgeblob[0:4, 0:4] = 1.0                                # 端で切れる塊
+    out.append(("blob_at_corner", edgeblob))
+
+    full = np.ones((n, n))
+    out.append(("all_ones", full))
+    out.append(("all_zeros", np.zeros((n, n))))             # 空集合の扱い
+
+    one = np.zeros((n, n)); one[7, 7] = 1.0
+    out.append(("single_pixel_on", one))
+
+    line = np.zeros((n, n)); line[8, :] = 1.0
+    out.append(("horizontal_line", line))
+    thin = np.zeros((n, n)); thin[:, 8] = 1.0
+    out.append(("vertical_line", thin))
+
+    out.append(("row_1xN", (np.arange(12) % 2).reshape(1, 12).astype(np.float64)))
+    return out
+
+
+def op_sorts(op: str) -> tuple[str, str]:
+    """索引から in/out の型を引く(探針の選び方を決めるため)。"""
+    global _SORTS
+    if _SORTS is None:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        _SORTS = {o["name"]: (o["in_sort"], o["out_sort"]) for o in idx["ops"]}
+    return _SORTS.get(op, ("image", "image"))
+
+
+_SORTS = None
+
 KNOBS = [(0.1, 0.5), (0.5, 0.5), (0.9, 0.5), (0.5, 0.9)]
 
 
@@ -108,7 +169,14 @@ def find_note(op: str) -> Path | None:
     return hits[0] if hits else None
 
 
-def build_prompt(op: str, note: str) -> str:
+def build_prompt(op: str, note: str, in_sort: str = "image", out_sort: str = "image") -> str:
+    extra = ""
+    if in_sort == "region":
+        extra = (chr(10) + "  ※ この op の入力は **領域(region)** です。``in`` の各要素は "
+                 "0.0 か 1.0 の二値で、1.0 が領域に属する画素を表します。")
+    if out_sort == "region":
+        extra += (chr(10) + "  ※ この op の出力は **領域(region)** です。``out`` には "
+                  "0.0 か 1.0 だけを書いてください(中間値を書かない)。")
     return f"""あなたは C の実装者です。以下は画像処理オペレータ `{op}` の**仕様書**です。
 
 仕様書以外の情報(参照実装・テスト・期待値)は与えられません。**仕様書だけから**
@@ -120,7 +188,7 @@ C99 の関数を 1 つ書いてください。
 
 満たすべき C の契約:
 
-{C_CONTRACT}
+{C_CONTRACT}{extra}
 
 厳守:
 - C99 のみ。標準ヘッダ(math.h / stdlib.h / string.h)以外に依存しない。
@@ -278,7 +346,7 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
            "c_path": str(csrc.relative_to(ROOT)).replace("\\", "/")}
 
     if generate or not csrc.exists():
-        prompt = build_prompt(op, note)
+        prompt = build_prompt(op, note, *op_sorts(op))
         rec["prompt_sha256_16"] = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16]
         t0 = time.time()
         try:
@@ -303,9 +371,14 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
         return rec
     rec["compiled"] = True
 
+    in_sort, out_sort = op_sorts(op)
+    probe_set = region_probes() if in_sort == "region" else probes()
+    rec["in_sort"], rec["out_sort"] = in_sort, out_sort
+    rec["probe_set"] = "region" if in_sort == "region" else "image"
+
     rows, worst = [], 0.0
     for a, b in KNOBS:
-        for pname, img in probes():
+        for pname, img in probe_set:
             try:
                 ref = np.asarray(fs.apply(img.copy(), op, a=a, b=b), np.float64)
             except Exception as e:                      # op が拒む入力は比較対象外
@@ -340,10 +413,16 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--ops", required=True, help="カンマ区切りの op 名")
+    ap.add_argument("--ops", help="カンマ区切りの op 名")
     ap.add_argument("--model", default="qwen2.5-coder:32b")
     ap.add_argument("--tol", type=float, default=1e-9)
     ap.add_argument("--no-generate", action="store_true", help="既存の C を再検査するだけ")
+    ap.add_argument("--skip-existing", action="store_true",
+                    help="そのエンジンの C が既にある op は生成をやり直さない(長時間の無人実行用)")
+    ap.add_argument("--all-image", action="store_true",
+                    help="registry/color の image->image op を全部回す")
+    ap.add_argument("--all-region", action="store_true",
+                    help="region を食う/返す op(image->region / region->region)を全部回す")
     a = ap.parse_args()
 
     from algo_difftest import compiler_label, find_c_compiler
@@ -353,9 +432,26 @@ def main() -> int:
         return 2
     print(f"compiler: {compiler_label(cc)} | model: {a.model}")
 
+    names = [o.strip() for o in (a.ops or "").split(",") if o.strip()]
+    if a.all_image:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color")
+                  and o["in_sort"] == "image" and o["out_sort"] == "image"]
+    if a.all_region:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color") and o["out_sort"] == "region"
+                  and o["in_sort"] in ("image", "region")]
+    names = list(dict.fromkeys(names))
+
     results = []
-    for op in [o.strip() for o in a.ops.split(",") if o.strip()]:
-        r = run_op(op, a.model, not a.no_generate, cc, a.tol)
+    for op in names:
+        if a.skip_existing and (IMPL2 / "c" / engine_tag(a.model) / f"{op}.c").exists():
+            gen = False
+        else:
+            gen = not a.no_generate
+        r = run_op(op, a.model, gen, cc, a.tol)
         results.append(r)
         w = r.get("worst_max_abs_diff")
         print(f"[{r['status']:14s}] {op:20s} "
