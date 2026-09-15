@@ -21,12 +21,32 @@
 
 use std::os::raw::{c_char, c_double, c_int, c_void};
 
+mod apply;
+mod embed;
+pub use apply::{FsApplyInfo, FsHandle};
+
 // --- R-1: 状態コード(ヘッダの fs_status と同じ値) -------------------------
+//
+// ★2026-09-15: ここは長らく `FS_E_ALLOC = 3` / `FS_E_UNSUPPORTED = 4` だった。ヘッダは
+//   3 = FS_E_SHAPE / 4 = FS_E_RANGE / 6 = FS_E_UNSUPPORTED と宣言しているので、
+//   `fs_image_create` が f64 以外の dtype に返していた 4 は **FS_E_RANGE の番号**だった。
+//   差分テストは「非ゼロを返した」までしか見ていなかったので素通り —— 2026-09-14 に
+//   `fslib` 側で見つけた「状態コードの取り違え」と同じ型が、こちら側にも在った。
+//   `fs_apply` を足すときにヘッダの番号を機械で照合して発覚(tests/test_abi_apply.py)。
 pub const FS_OK: c_int = 0;
 pub const FS_E_INVALID_ARG: c_int = 1;
 pub const FS_E_TYPE: c_int = 2;
-pub const FS_E_ALLOC: c_int = 3;
-pub const FS_E_UNSUPPORTED: c_int = 4;
+pub const FS_E_SHAPE: c_int = 3;
+pub const FS_E_RANGE: c_int = 4;
+pub const FS_E_NO_BACKEND: c_int = 5;
+pub const FS_E_UNSUPPORTED: c_int = 6;
+pub const FS_E_OUT_OF_MEMORY: c_int = 7;
+pub const FS_E_DEADLINE: c_int = 8;
+pub const FS_E_INTERNAL: c_int = 9;
+pub const FS_E_NO_PYTHON: c_int = 10;
+pub const FS_E_UNKNOWN_OP: c_int = 11;
+pub const FS_E_BAD_PARAMS: c_int = 12;
+pub const FS_E_PY_EXCEPTION: c_int = 13;
 
 // --- 不透明ハンドルの中身(外からは見えない) ------------------------------
 pub struct FsImage {
@@ -715,5 +735,88 @@ pub extern "C" fn fs_abi_version(major: *mut i32, minor: *mut i32) -> c_int {
         *major = 0;
         *minor = 1;
     }
+    FS_OK
+}
+
+// --- 汎用入口(ヘッダの GENERIC ENTRY POINT 節) -------------------------------
+//
+// 契約の 5 op は上の typed な関数が正本。`fs_apply` は **op 名 + JSON** で同じ 5 op
+// (native 経路)と、Python レジストリの ~900 op(python 経路、feature `embed`)を
+// 1 つの関数から呼ぶ。どの経路で走ったかは `info.route` に必ず書く。中身は
+// `apply.rs`(経路の選択・native)と `embed.rs`(CPython の埋め込み)。
+
+/// `fs_apply` —— op 名で任意の演算子を呼ぶ。`params_json` は JSON オブジェクト
+/// (NULL = "{}")。`outputs` に書いたハンドルは呼び手の所有(R-5)。
+#[no_mangle]
+pub extern "C" fn fs_apply(
+    op: *const c_char,
+    inputs: *const FsHandle,
+    n_in: c_int,
+    params_json: *const c_char,
+    route_pref: c_int,
+    outputs: *mut FsHandle,
+    out_cap: c_int,
+    n_out: *mut c_int,
+    info: *mut FsApplyInfo,
+) -> c_int {
+    let mut inf = FsApplyInfo::blank();
+    let st = apply::run(op, inputs, n_in, params_json, route_pref, outputs, out_cap, n_out, &mut inf);
+    if !info.is_null() {
+        unsafe { std::ptr::write(info, inf) };
+    }
+    st
+}
+
+/// 埋め込み CPython を起動する(プロセスで 1 回)。NULL なら探索(env → PEP 514 → 失敗)。
+#[no_mangle]
+pub extern "C" fn fs_python_init(python_home_or_null: *const c_char) -> c_int {
+    let home: Option<String> = if python_home_or_null.is_null() {
+        None
+    } else {
+        match unsafe { std::ffi::CStr::from_ptr(python_home_or_null) }.to_str() {
+            Ok(s) => Some(s.to_string()),
+            Err(_) => return FS_E_INVALID_ARG,
+        }
+    };
+    match embed::ensure(home.as_deref()) {
+        Ok(()) => FS_OK,
+        Err(_) => FS_E_NO_PYTHON,
+    }
+}
+
+/// python 経路が今使えるか。使えなければ理由を `why` に書いて FS_E_NO_PYTHON。
+#[no_mangle]
+pub extern "C" fn fs_python_available(why: *mut c_char, why_len: c_int) -> c_int {
+    let r = embed::ensure(None);
+    if !why.is_null() && why_len > 0 {
+        let buf = unsafe { std::slice::from_raw_parts_mut(why, why_len as usize) };
+        apply::put_str(buf, r.as_ref().err().map(|s| s.as_str()).unwrap_or(""));
+    }
+    match r {
+        Ok(()) => FS_OK,
+        Err(_) => FS_E_NO_PYTHON,
+    }
+}
+
+static CATALOG: std::sync::Mutex<Option<std::ffi::CString>> = std::sync::Mutex::new(None);
+
+/// op のカタログ(JSON)。文字列はライブラリの所有で、次の呼び出しまで有効。
+#[no_mangle]
+pub extern "C" fn fs_catalog_json(out: *mut *const c_char) -> c_int {
+    if out.is_null() {
+        return FS_E_INVALID_ARG;
+    }
+    unsafe { *out = std::ptr::null() };
+    let s = match embed::catalog() {
+        Ok(s) => s,
+        Err(f) => return f.code,
+    };
+    let c = match std::ffi::CString::new(s) {
+        Ok(c) => c,
+        Err(_) => return FS_E_INTERNAL,
+    };
+    let mut g = CATALOG.lock().unwrap_or_else(|e| e.into_inner());
+    *g = Some(c);
+    unsafe { *out = g.as_ref().map(|c| c.as_ptr()).unwrap_or(std::ptr::null()) };
     FS_OK
 }
