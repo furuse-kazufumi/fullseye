@@ -52,6 +52,13 @@ _LEDGERS = (
     #   「引ける」は別。opdocs に足したら、この門が引けない側を鳴らした。
     ("ops1d", "OPS1D"),
     ("opsblob", "OPSBLOB"),
+    # ★2026-09-16: カメラ校正(calib / caltab / fit_transform)。**実装は 2026-08 から
+    #   あり試験も 30 本超あったのに、台帳が無いので op ノートが 1 枚も無く、
+    #   op_find / OP_INDEX.json / fs.ledger のどこからも引けなかった**。
+    #   HALCON facade(fs.vision_ops)からだけは呼べたので「配布されている」
+    #   検査はすべて緑 —— 外部 AI 2 体が独立に「カメラ校正 op は確認できなかった」
+    #   と報告して初めて見えた。「登録済みを数える門は未登録に盲目」の再演。
+    ("opscalib", "OPSCALIB"),
 )
 
 #: 進化する 2-D op のレジストリ(``ops.REGISTRY``、882 op)。**台帳ではない** ——

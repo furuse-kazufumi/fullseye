@@ -17,9 +17,17 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 16 capabilities**
+**Currently 17 capabilities**
 
-## Measure (4)
+## Measure (5)
+
+### [Tie pixels to real-world units (camera calibration)](capabilities/camera-calibration.md)
+
+Recover a camera's intrinsics (`fx`, `fy`, `cx`, `cy`) and the 6-DoF pose of a planar target from several views of a calibration plate, using Zhang's method. With those in hand, image points and XLD contours map to real-world units on the z=0 plane. Hand-eye calibration (`AX = XB`, Tsai-Lenz) solves the rigid transform between a robot flange and the camera from pairs of motions.
+
+Operators: `camera_calibration`, `find_marks_and_pose`, `create_caltab`, `find_caltab`, `image_points_to_world_plane`, `hand_eye_calibration`
+
+Runnable: `poc_camera_calibration`, `lens_calibration_loop_demo`
 
 ### [Put measurements on the Earth (ECEF and geodetic)](capabilities/geodetic-frames.md)
 

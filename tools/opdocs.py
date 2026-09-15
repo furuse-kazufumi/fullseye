@@ -150,6 +150,13 @@ LEDGER_DIMS = {
     # 依存は無く、入力は既存の `depth` 種をそのまま使う。
     "dem": {"registry": "opsdem", "table": "OPSDEM",
             "module": "demops", "family": "dem_terrain_analysis"},
+    # 2026-09-16: カメラ校正・平面写像・対応点からの変換推定。実装(calib /
+    # caltab / fit_transform)は 2026-08 から在り、tests も 30 本超あったのに、
+    # **台帳が無いので docs/ops にノートが 1 枚も無く**、RAG コーパスからも
+    # op_find からも丸ごと欠けていた。新しい型語彙は 1 つも作らない
+    # (points / pose / matrix / table / contour / image2d の既存語彙に収まる)。
+    "calib": {"registry": "opscalib", "table": "OPSCALIB",
+              "module": "calib", "family": "camera_calibration"},
 }
 
 

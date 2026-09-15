@@ -16,9 +16,17 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 16 項目**
+**収録 17 項目**
 
-## 測る (4)
+## 測る (5)
+
+### [画素を実寸に結びつける(カメラ校正)](capabilities/camera-calibration.md)
+
+校正板を撮った複数枚の画像から、カメラの内部パラメータ(焦点距離 `fx`/`fy`、主点 `cx`/`cy`)と、板の 6 自由度の姿勢を求めます。求まった値を使うと、画像上の点や輪郭を**ワールド平面(z=0)の実寸**へ写せます。ロボットの手先とカメラの関係(ハンドアイ)も、運動の対から `AX = XB` として解けます。
+
+使う op: `camera_calibration`, `find_marks_and_pose`, `create_caltab`, `find_caltab`, `image_points_to_world_plane`, `hand_eye_calibration`
+
+動く例: `poc_camera_calibration`, `lens_calibration_loop_demo`
 
 ### [地球規模の座標に載せる(ECEF と測地座標)](capabilities/geodetic-frames.md)
 

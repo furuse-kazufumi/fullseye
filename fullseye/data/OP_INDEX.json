@@ -1,8 +1,8 @@
 {
- "n_ops": 1942,
+ "n_ops": 1963,
  "tiers": {
   "color": 12,
-  "ledger": 1024,
+  "ledger": 1045,
   "nary": 17,
   "registry": 889
  },
@@ -1707,6 +1707,30 @@
    ]
   },
   {
+   "name": "caltab_points",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "points",
+   "category": "target",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": []
+  },
+  {
+   "name": "camera_calibration",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "calibrate",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "camera_rays",
    "halcon": "",
    "in_sort": "table",
@@ -2065,6 +2089,19 @@
    ]
   },
   {
+   "name": "contour_to_world_plane_xld",
+   "halcon": "",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "plane",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "contour"
+   ]
+  },
+  {
    "name": "convex_hull",
    "halcon": "",
    "in_sort": "points",
@@ -2328,6 +2365,17 @@
    "in_sorts": [
     "cpoints"
    ]
+  },
+  {
+   "name": "create_caltab",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "target",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": []
   },
   {
    "name": "create_funct_1d_array",
@@ -3178,6 +3226,19 @@
    ]
   },
   {
+   "name": "disp_caltab",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "image2d",
+   "category": "target",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "displacement_band_weights",
    "halcon": "",
    "in_sort": "mesh",
@@ -3896,6 +3957,32 @@
    "dim": "tomography",
    "in_sorts": [
     "sinogram"
+   ]
+  },
+  {
+   "name": "find_caltab",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "points",
+   "category": "target",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "find_marks_and_pose",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "calibrate",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -4709,6 +4796,28 @@
    ]
   },
   {
+   "name": "gen_caltab",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "target",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": []
+  },
+  {
+   "name": "gen_image_to_world_plane_map",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "plane",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": []
+  },
+  {
    "name": "gen_measure_arc",
    "halcon": "",
    "in_sort": null,
@@ -4728,6 +4837,17 @@
    "tier": "ledger",
    "ledger": "opsmeasure1d",
    "dim": "measure1d",
+   "in_sorts": []
+  },
+  {
+   "name": "gen_radial_distortion_map",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "plane",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
    "in_sorts": []
   },
   {
@@ -4907,6 +5027,19 @@
    ]
   },
   {
+   "name": "hand_eye_calibration",
+   "halcon": "",
+   "in_sort": "pose",
+   "out_sort": "pose",
+   "category": "calibrate",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "pose"
+   ]
+  },
+  {
    "name": "harris3d_keypoints",
    "halcon": "",
    "in_sort": "voxel",
@@ -4972,6 +5105,19 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "hom_vector_to_proj_hom_mat2d",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "matrix",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
    ]
   },
   {
@@ -5093,6 +5239,32 @@
    "dim": "imgmetrics",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "image_points_to_world_plane",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "plane",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "image_to_world_plane",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "plane",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
    ]
   },
   {
@@ -9033,6 +9205,19 @@
    ]
   },
   {
+   "name": "project_3d_point",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "project",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "project_cylindrical",
    "halcon": "",
    "in_sort": "points",
@@ -9041,6 +9226,32 @@
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "project_hom_point_hom_mat3d",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "project",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
+   "name": "project_point_hom_mat3d",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "points",
+   "category": "project",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
    "in_sorts": [
     "points"
    ]
@@ -10971,6 +11182,19 @@
    ]
   },
   {
+   "name": "sim_caltab",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "target",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "sinkhorn",
    "halcon": "",
    "in_sort": "signal",
@@ -12482,6 +12706,30 @@
    ]
   },
   {
+   "name": "vector_angle_to_rigid",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "matrix",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": []
+  },
+  {
+   "name": "vector_to_rigid",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "matrix",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
+   ]
+  },
+  {
    "name": "vector_to_shift",
    "halcon": "",
    "in_sort": "vector",
@@ -12492,6 +12740,19 @@
    "dim": "reprconv",
    "in_sorts": [
     "vector"
+   ]
+  },
+  {
+   "name": "vector_to_similarity",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "matrix",
+   "category": "fit",
+   "tier": "ledger",
+   "ledger": "opscalib",
+   "dim": "calib",
+   "in_sorts": [
+    "points"
    ]
   },
   {

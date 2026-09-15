@@ -66,11 +66,11 @@
 
 ## オペレータを探す
 
-**1,946 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **49 本の族ガイド**があります。次元ごとの入口:
+**1,967 本の op ノート**(呼び出し方・型の契約・HALCON 対応・文献・来歴)と **50 本の族ガイド**があります。次元ごとの入口:
 
 **網羅の実測**: 進化 op 901/901、型つき台帳 1024/1036、1 行ファサード `fullseye.<名前>` 547/1122。**ファサード側はまだ半分**(残りは補助関数・クラス・再輸出モジュール)。
 
-**ノートの中身の実測**: 1951 本のうち、実行できる例が付いているのは **1911 本**(40 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1932 本**(19 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1951 本すべてにある。
+**ノートの中身の実測**: 1972 本のうち、実行できる例が付いているのは **1916 本**(56 本は例ゼロ)、使い方の説明が 120 字以上あるのは **1937 本**(35 本は 1 行の要約だけ)。構造(呼び出し・型・次に繋がる op)は 1972 本すべてにある。
 
 | 次元 | op 数 | 入口 |
 |---|---:|---|
@@ -84,6 +84,7 @@
 | `math` — 数値・線形代数 | 27 | [INDEX](ops/math/INDEX.md) · [ガイド](ops/math/guides/math_metrology.md) |
 | `piv` — 粒子画像流速測定 + DIC | 26 | [INDEX](ops/piv/INDEX.md) · [ガイド](ops/piv/guides/piv_displacement.md) |
 | `imgmetrics` — 画質の指標 | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [ガイド](ops/imgmetrics/guides/image_difference_metrics.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [ガイド](ops/calib/guides/camera_calibration.md) |
 | `acoustics` — 音響 | 20 | [INDEX](ops/acoustics/INDEX.md) · [ガイド](ops/acoustics/guides/acoustic_condition_monitoring.md) |
 | `dem` — 地形 | 19 | [INDEX](ops/dem/INDEX.md) · [ガイド](ops/dem/guides/dem_terrain_analysis.md) |
 | `quat` — 四元数・単元信号 | 19 | [INDEX](ops/quat/INDEX.md) · [ガイド](ops/quat/guides/quaternion_monogenic.md) |
@@ -205,9 +206,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 160 本
+## ドキュメント地図 — 全 162 本
 
-**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,946 本と族ガイド 49 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
+**索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 1,967 本と族ガイド 50 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
 **はじめに・使い方**(12)
 
@@ -331,7 +332,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(88)
+**そのほか**(90)
 
 | 文書 | 内容 |
 |---|---|
@@ -389,6 +390,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 |
 | [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) |
+| [`MATURITY_INTERNAL.md`](MATURITY_INTERNAL.md) | 内部用にとどめる実装(公開しない理由の台帳) |
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う |
 | [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
@@ -402,6 +404,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
 | [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |
 | [`capabilities/blob-and-region.md`](capabilities/blob-and-region.md) | id: blob-and-region |
+| [`capabilities/camera-calibration.md`](capabilities/camera-calibration.md) | id: camera-calibration |
 | [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | id: colour-and-delta-e |
 | [`capabilities/figures-and-annotation.md`](capabilities/figures-and-annotation.md) | id: figures-and-annotation |
 | [`capabilities/geodetic-frames.md`](capabilities/geodetic-frames.md) | id: geodetic-frames |

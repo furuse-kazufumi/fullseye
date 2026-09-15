@@ -63,11 +63,11 @@
 
 ## 查找算子
 
-共有 **1,946 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **49 篇族指南**。按维度的入口:
+共有 **1,967 篇算子说明**(调用形式、类型契约、HALCON 对应、参考文献、来源)与 **50 篇族指南**。按维度的入口:
 
 **实测覆盖**: 演化算子 901/901、类型化台账 1024/1036、单行门面 `fullseye.<名称>` 547/1122 —— **门面侧仅覆盖一半**。
 
-**内容实测**: 1951 篇中，附有可运行示例的 **1911** 篇(40 篇没有)，用法说明 120 字以上的 **1932** 篇(19 篇仅一行)。结构(调用形式、类型、可衔接算子)1951 篇全有。
+**内容实测**: 1972 篇中，附有可运行示例的 **1916** 篇(56 篇没有)，用法说明 120 字以上的 **1937** 篇(35 篇仅一行)。结构(调用形式、类型、可衔接算子)1972 篇全有。
 
 | 维度 | 算子数 | 入口 |
 |---|---:|---|
@@ -81,6 +81,7 @@
 | `math` | 27 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `imgmetrics` | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [guide](ops/calib/guides/camera_calibration.md) |
 | `acoustics` | 20 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
 | `dem` | 19 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
@@ -202,9 +203,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 文档地图 — 共 160 篇
+## 文档地图 — 共 162 篇
 
-完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 1,946 篇算子说明与 49 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
+完整地图，确保**没有任何文档无法从索引到达**(`docs/ops/` 下的 1,967 篇算子说明与 50 篇族群指南从上面的「查找算子」进入; 文章见 [articles/](articles/README.md))。**正文多为日语。**
 
 **Getting started**(12)
 
@@ -328,7 +329,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(88)
+**Other**(90)
 
 | 文档 | 内容 |
 |---|---|
@@ -386,6 +387,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 _(ja)_ |
 | [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) _(ja)_ |
+| [`MATURITY_INTERNAL.md`](MATURITY_INTERNAL.md) | 内部用にとどめる実装(公開しない理由の台帳) _(ja)_ |
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う _(ja)_ |
 | [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
@@ -399,6 +401,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
 | [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |
 | [`capabilities/blob-and-region.md`](capabilities/blob-and-region.md) | id: blob-and-region |
+| [`capabilities/camera-calibration.md`](capabilities/camera-calibration.md) | id: camera-calibration |
 | [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | id: colour-and-delta-e |
 | [`capabilities/figures-and-annotation.md`](capabilities/figures-and-annotation.md) | id: figures-and-annotation |
 | [`capabilities/geodetic-frames.md`](capabilities/geodetic-frames.md) | id: geodetic-frames |

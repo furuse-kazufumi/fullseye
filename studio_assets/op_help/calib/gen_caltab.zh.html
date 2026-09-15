@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gen_caltab — CALIB <code style="color:#22d3bf">target</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_caltab(rows=7, cols=7, spacing=1.0, radius=0.3, image_size=256)</code>(要直接调用实现,<code style="color:#22d3bf">import caltab; caltab.gen_caltab(rows=7, cols=7, spacing=1.0, radius=0.3, image_size=256)</code>;从台账取用则 <code style="color:#22d3bf">opscalib.get(&quot;gen_caltab&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>円マーク格子の校正板画像を生成(gen_caltab)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">camera_calibration 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">target</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:caltab_points">caltab_points</a> · <a style="color:#22d3bf" href="opcalib:create_caltab">create_caltab</a> · <a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a> · <a style="color:#22d3bf" href="opcalib:find_caltab">find_caltab</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: caltab.py — CALIB 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

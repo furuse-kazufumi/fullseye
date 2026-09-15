@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">camera_calibration — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_calibration(object_points, image_points_list)</code> (die Implementierung direkt: <code style="color:#22d3bf">import calib; calib.camera_calibration(object_points, image_points_list)</code>; aus dem Register: <code style="color:#22d3bf">opscalib.get(&quot;camera_calibration&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>Zhang 法で平面ターゲット多視点から内部行列 K を推定(camera_calibration)。</p>
+<p>`<code style="color:#22d3bf">object_points</code>`: (N,2) 平面ターゲット座標 <b>(x, y)</b>(z=0 平面、ワールド単位)。</p>
+<p>`<code style="color:#22d3bf">image_points_list</code>`: 各視点の (N,2) 画素対応。<b>(row, col)</b> — このモジュールの</p>
+<p>他 API(`<code style="color:#22d3bf">project_3d_point</code><code style="color:#22d3bf"> の戻り値、</code><code style="color:#22d3bf">image_points_to_world_plane</code>` の入力)と</p>
+<p>同じ規約。内部で (x=col, y=row) に並べ替えてから解くので、`<code style="color:#22d3bf">fx</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">cx</code>` は</p>
+<p>col 軸、`<code style="color:#22d3bf">fy</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">cy</code>` は row 軸の値になる(2026-09-02 以前は (x,y) として</p>
+<p>扱っており fx↔fy, cx↔cy が入れ替わっていた)。</p>
+<p>fail-closed: 視点が 3 未満、すべての視点が正面平行(回転不足)で解が定まらない、</p>
+<p>または K が非有限/非正になる場合は `<code style="color:#22d3bf">ValueError</code>`(NaN を返さない)。戻り値の</p>
+<p>`<code style="color:#22d3bf">homographies</code><code style="color:#22d3bf"> は (x,y)→(x=col,y=row) の 3x3、</code><code style="color:#22d3bf">reproj_rms</code>` は各視点の</p>
+<p>ホモグラフィ再投影 RMS [px] (対応づけの健全性チェックに使う)。</p>
+<p>`<code style="color:#22d3bf">orientation_rank_ratio</code>` は視点の向きが内部パラメータをどれだけ拘束して</p>
+<p>いるか(`<code style="color:#22d3bf">sv[-2]/sv[0]</code>`、大きいほど良い)。**再投影誤差は配置の良し悪しを</p>
+<p>映さない** —— 2026-09-06 の実測で、同じ 10 視点・同じ雑音 0.05 px で板の</p>
+<p>傾きだけを 32 度から 2 度に変えると、再投影 RMS は 0.0690 と 0.0688 で</p>
+<p>比 1.00 倍のまま、fx の誤差は 0.026 % から <b>7.33 %(281 倍)</b>になった。</p>
+<p>この比のほうは 129 倍動く。ただし<b>歪み補正前の点では意味を持たない</b></p>
+<p>(下の門の注記を見よ)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">Leitfaden zur Familie camera_calibration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lens_calibration_loop_demo">lens_calibration_loop_demo</a> — <code style="color:#22d3bf">py -3.11 examples/lens_calibration_loop_demo.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_camera_calibration">poc_camera_calibration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_camera_calibration.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">calibrate</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:find_marks_and_pose">find_marks_and_pose</a> · <a style="color:#22d3bf" href="opcalib:hand_eye_calibration">hand_eye_calibration</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: calib.py — CALIB Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

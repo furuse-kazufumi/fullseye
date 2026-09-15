@@ -1,0 +1,84 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南僅有日文版(它是人寫的散文,這裡不做機械替換)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">カメラ校正(画素を実寸に結びつける) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>画素の座標を、実世界の長さと向きに結びつける</b>層です。ここが決まらないと、</p>
+<p>どんなに精密にエッジを測っても答えは「画素」のままで、mm になりません。</p>
+<p>21 op / 5 カテゴリ(numpy と scipy のみ。台帳は <code style="color:#22d3bf">opscalib.py</code>、実体は</p>
+<p><code style="color:#22d3bf">calib.py</code> / <code style="color:#22d3bf">caltab.py</code> / <code style="color:#22d3bf">fit_transform.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>project(3)</b> — <code style="color:#22d3bf">project_3d_point</code> / <code style="color:#22d3bf">project_point_hom_mat3d</code> /</p>
+<p><code style="color:#22d3bf">project_hom_point_hom_mat3d</code>: 3-D 点 → 画素 <code style="color:#22d3bf">(row, col)</code>。校正結果の<b>検算</b>に使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>plane(5)</b> — <code style="color:#22d3bf">image_to_world_plane</code> / <code style="color:#22d3bf">image_points_to_world_plane</code> /</p>
+<p><code style="color:#22d3bf">contour_to_world_plane_xld</code> / <code style="color:#22d3bf">gen_image_to_world_plane_map</code> /</p>
+<p><code style="color:#22d3bf">gen_radial_distortion_map</code>: 画素 ↔ ワールド平面(z=0)。平面上の寸法を実寸で読む。</p>
+<p style="margin:2px 0 2px 12px">• <b>target(6)</b> — <code style="color:#22d3bf">caltab_points</code> / <code style="color:#22d3bf">create_caltab</code> / <code style="color:#22d3bf">gen_caltab</code> / <code style="color:#22d3bf">sim_caltab</code> /</p>
+<p><code style="color:#22d3bf">disp_caltab</code> / <code style="color:#22d3bf">find_caltab</code>: 校正板を作る・描く・投影をシミュレートする・見つける。</p>
+<p style="margin:2px 0 2px 12px">• <b>calibrate(3)</b> — <code style="color:#22d3bf">camera_calibration</code>(Zhang 法で内部行列)/</p>
+<p><code style="color:#22d3bf">find_marks_and_pose</code>(板の 6 自由度姿勢)/ <code style="color:#22d3bf">hand_eye_calibration</code>(Tsai-Lenz、AX=XB)。</p>
+<p style="margin:2px 0 2px 12px">• <b>fit(4)</b> — <code style="color:#22d3bf">vector_to_rigid</code> / <code style="color:#22d3bf">vector_to_similarity</code> / <code style="color:#22d3bf">vector_angle_to_rigid</code> /</p>
+<p><code style="color:#22d3bf">hom_vector_to_proj_hom_mat2d</code>: 対応点から 2-D 変換(Kabsch / Umeyama / DLT)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">座標規約 —— ここを外すと例外なしに間違う</h3>
+<p>**画素は <code style="color:#22d3bf">(row, col)</code>、ワールド平面の点は <code style="color:#22d3bf">(x, y)</code>。**</p>
+<p><code style="color:#22d3bf">camera_calibration</code> の <code style="color:#22d3bf">object_points</code> は <code style="color:#22d3bf">(x, y)</code>、<code style="color:#22d3bf">image_points_list</code> は</p>
+<p><code style="color:#22d3bf">(row, col)</code> です。入れ替えて渡すと <code style="color:#22d3bf">fx</code> と <code style="color:#22d3bf">fy</code>、<code style="color:#22d3bf">cx</code> と <code style="color:#22d3bf">cy</code> が**そのまま</p>
+<p>入れ替わった K<b> が返り、</b>再投影誤差は小さいまま**なので気づけません</p>
+<p>(<code style="color:#22d3bf">tests/test_calib.py::test_xy_image_points_would_swap_axes</code> がその結果を固定しています)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    CT[&quot;create_caltab&lt;br/&gt;板の理想点(板中心が原点)&quot;]
+    CT --&gt; SIM[&quot;sim_caltab&lt;br/&gt;指定姿勢での見え方を合成&quot;]
+    SIM --&gt; IMG[&quot;image2d&lt;br/&gt;校正板の画像&quot;]
+    IMG --&gt; FC[&quot;find_caltab&lt;br/&gt;マーク中心(重心)&quot;]
+    FC --&gt; PTS[&quot;points (N,2)&lt;br/&gt;(row, col)&quot;]
+    PTS --&gt; CAL[&quot;camera_calibration&lt;br/&gt;Zhang 法・3 視点以上&quot;]
+    CAL --&gt; K[&quot;table&lt;br/&gt;fx, fy, cx, cy, reproj_rms,&lt;br/&gt;orientation_rank_ratio&quot;]
+    IMG --&gt; FMP[&quot;find_marks_and_pose&lt;br/&gt;対応づけ + 6-DoF 精密化&quot;]
+    K --&gt; FMP
+    CT --&gt; FMP
+    FMP --&gt; POSE[&quot;table(pose 4x4 を含む)&quot;]
+    K --&gt; PROJ[&quot;project_3d_point&lt;br/&gt;検算: 3-D 点 → 画素&quot;]
+    POSE --&gt; PROJ
+    POSE --&gt; W2P[&quot;image_points_to_world_plane&lt;br/&gt;画素 → mm(z=0 平面)&quot;]
+    W2P --&gt; MM[&quot;points (N,2)&lt;br/&gt;ワールド平面 [mm]&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最初の 1 本</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+K = {&quot;fx&quot;: 500.0, &quot;fy&quot;: 500.0, &quot;cx&quot;: 128.0, &quot;cy&quot;: 128.0}
+board = fs.ledger.create_caltab(7, 7, 10.0)          # 7x7、10 mm ピッチ
+
+pose = np.eye(4)                                      # 板を傾けて置く
+pose[:3, :3] = np.array([[1, 0, 0], [0, 0.98, -0.2], [0, 0.2, 0.98]])
+pose[:3, 3] = [0.0, 0.0, 600.0]
+
+sim = fs.ledger.sim_caltab(board, K, pose, 256)       # 見え方を合成
+found = fs.ledger.find_marks_and_pose(sim[&quot;image&quot;], K, board)
+
+print(found[&quot;n_marks&quot;], found[&quot;reproj_rms&quot;])          # 49, 0.1 px 未満
+print(found[&quot;pose&quot;][:3, 3])                           # ≈ [0, 0, 600]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">落とし穴(実測に基づく)</h3>
+<p>1. <b>再投影誤差は配置の良し悪しを映さない。</b> 2026-09-06 の実測で、同じ 10 視点・</p>
+<p>同じ雑音 0.05 px のまま板の傾きだけを 32 度から 2 度に変えると、再投影 RMS は</p>
+<p>0.0690 → 0.0688(比 1.00 倍)なのに <code style="color:#22d3bf">fx</code> の誤差は 0.026 % → <b>7.33 %(281 倍)</b>に</p>
+<p>なりました。配置を見たいなら <code style="color:#22d3bf">camera_calibration</code> が返す</p>
+<p><code style="color:#22d3bf">orientation_rank_ratio</code>(大きいほど良い)を読んでください。</p>
+<p>2. <b>退化検出の門は、歪みのあるレンズでは鳴りません。</b> 歪みが無ければ設計どおり</p>
+<p>働きます(傾き 0 度で比 3.8e-14 を拒否)。しかし樽型歪み <code style="color:#22d3bf">k1=-0.18</code> を入れると</p>
+<p>比が傾きに関係なく 1.9e-06 前後に張り付き、分ける線が引けません。</p>
+<p>しきい値では直せないので、<b>比を返して判断材料を渡す</b>形にしてあります。</p>
+<p>3. **平面 1 枚では <code style="color:#22d3bf">fx</code>/<code style="color:#22d3bf">fy</code> の比を検証できません**(Zhang 2000: 平面 1 枚の</p>
+<p>ホモグラフィは内部パラメータに 2 つしか拘束を与えない)。誤った <code style="color:#22d3bf">fy</code> は</p>
+<p>姿勢 6 自由度にほとんど吸収されます。内部パラメータを確かめたいなら</p>
+<p><b>視点を 3 枚以上</b>取るか、非平面のターゲットを使ってください。</p>
+<p>4. **<code style="color:#22d3bf">camera_calibration</code> は歪みを推定しません。** 閉形式は歪みを無視するので、</p>
+<p><code style="color:#22d3bf">k1=-0.18</code> のレンズでは傾き 5 度で <code style="color:#22d3bf">fx</code> を 41 % 誤ります。初期値としては</p>
+<p>使えますが、そのまま K として使わないこと。</p>
+<p>くわしい実測は <a style="color:#22d3bf" href="example2d:poc_camera_calibration"><code style="color:#22d3bf">examples/poc_camera_calibration.py</code></a></p>
+<p>が章立てで示します(「再投影誤差 0.05 px は何も保証しない」)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族に<b>入れなかった</b>もの</h3>
+<p><code style="color:#22d3bf">mosaic.py</code> の歪み込み RANSAC・球面モザイク・バンドル調整、</p>
+<p><code style="color:#22d3bf">caltab.binocular_calibration</code>、<code style="color:#22d3bf">calib.vector_to_hom_mat2d</code> などは、</p>
+<p>名乗りと中身が食い違うか同名で規約が違うため台帳に載せていません。</p>
+<p>理由は <a style="color:#22d3bf" href="op:MATURITY_INTERNAL"><code style="color:#22d3bf">docs/MATURITY_INTERNAL.md</code></a> に並べてあります。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0.</p>

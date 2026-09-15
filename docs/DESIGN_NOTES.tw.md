@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 679 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 682 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel_match.py`
@@ -906,14 +906,15 @@
 ## `opassist.py`
 
 - **L50** — ★2026-09-08：ops1d(dsp 16 + funct1d 23)已註冊,卻既未出現在 docs,也未出現在 op_run / op_assist / op_find -- 「註冊了」和「查得到」是兩回事。加入 opdocs 後,這道門便對查不到的一側鳴響。
-- **L242** — ★設計(2026-09-04,使用者「能處理各種容器類型固然更好,但統一感也很重要」):最初在 `kind` 裡混入了 "seq" 和 "matrix" -- 即**值的類型**(數值、整數還是選項)與**容器的形狀**(1 個、向量還是矩陣)在同一個欄位裡相互競爭。從 UI 看,「int 的 3 向量」無法表達,而唯獨矩陣的結構位於 `seq` 鍵之下,處理各不相同。將此處正交化,`kind` 只放值類型,容器一律放入 `container`。純量也不作例外(`{"form": "scalar", "shape": ()}`),因此 UI 可以把分支寫成一條。
-- **L357** — ★最長匹配。若按從短到長看,`sigma_per_mm` 會命中 `_mm` 而變成 "mm"(實際是 1/mm)。單位一錯,UI 的數字就會悄悄變成別的東西。
-- **L454** — ★要點在此:有些參數**其預設值並非以 tuple 給出**。`center=None`(可省略的 (row,col))、必需的 `trans`(3 向量)、`k_cam`(3x3 矩陣)... 只看預設值就會看成「一個數值」,UI 便只出一個 spin box 而崩潰。用名字補足結構。
-- **L610** — ★實測發現:向 `prism_min_deviation_deg` 的波長輸入傳入 0..1 的通用 signal,會被「波長須為正值」拒絕,變成一個**範例跑不動的 op**。若已知單位,以該量的合理範圍作種,更接近「一按就動」。
-- **L730** — 日文(CJK)的連綴。★``_WORD_RE`` 為 ``[a-z0-9]+``,因此日語查詢**一個詞都取不到**(對日語輸入而言 ``_WORD_RE.findall(...) == []``)。詞幹那一段失效,而部分匹配是連空白一起去找字串,所以**日語的多詞查詢在結構上必定 0 命中** -- 在一款 docstring 大半為日語、以 6 種語言分發的產品裡。2026-09-08 由 `poc_search_sweep_width` 踩到而查明(經 ``op_find`` 查「點檢出」/「光斑檢出」/「小目標」的日語查詢均為 0 命中,而帶次像素質心的點目標檢出只有 ``star_detect``,卻無法從日語抵達)。
-- **L783** — 視為詞幹一致的公共前綴長度。★取 4 會把 "median"/"medial" 及 "contrast"/"contour" 連到一起;切在 5,則 "correlation"/"correlate"(8)、"segmentation"/"segment"(7)、"rotation"/"rotate"(5)、"gaussian"/"gauss"(5) 能被拾取,而上述兩組不會。
-- **L793** — 公共前綴**之後允許的詞尾**。★僅憑前綴長度判定會把 "median"/"medial" 連起來(共有 5 個字元的 "media")。看詞尾是否像屈折詞尾,則 "correlation"/"correlate"(ion / e)通過,而 "median"/"medial"(n / l)與 "corner"/"cornea"(r / a)落選。
-- **L889** — ★下限。沒有它時,"zzz-nothing-matches" 會回傳 `histogram_match`(因為 "matches" 與 `match_*` 詞幹一致)。若命中詞的權重不足整條查詢的 15 %,則視為「未命中」。實測:"digital image correlation" 為 0.19(通過),"zzz-nothing-matches" 為 0.10(丟棄)。
+- **L55** _(ja)_ — ★2026-09-16: カメラ校正(calib / caltab / fit_transform)。**実装は 2026-08 から あり試験も 30 本超あったのに、台帳が無いので op ノートが 1 枚も無く、 op_find / OP_INDEX.json / fs.ledger のどこからも引けなかった**。 HALCON facade(fs.vision_ops)からだけは呼べたので「配布されている」 検査はすべて緑 —— 外部 AI 2 体が独立に「カメラ校正 op は確認できなかった」 と報告して初めて見えた。「登録済みを数える門は未登録に盲目」の再演。
+- **L249** — ★設計(2026-09-04,使用者「能處理各種容器類型固然更好,但統一感也很重要」):最初在 `kind` 裡混入了 "seq" 和 "matrix" -- 即**值的類型**(數值、整數還是選項)與**容器的形狀**(1 個、向量還是矩陣)在同一個欄位裡相互競爭。從 UI 看,「int 的 3 向量」無法表達,而唯獨矩陣的結構位於 `seq` 鍵之下,處理各不相同。將此處正交化,`kind` 只放值類型,容器一律放入 `container`。純量也不作例外(`{"form": "scalar", "shape": ()}`),因此 UI 可以把分支寫成一條。
+- **L364** — ★最長匹配。若按從短到長看,`sigma_per_mm` 會命中 `_mm` 而變成 "mm"(實際是 1/mm)。單位一錯,UI 的數字就會悄悄變成別的東西。
+- **L461** — ★要點在此:有些參數**其預設值並非以 tuple 給出**。`center=None`(可省略的 (row,col))、必需的 `trans`(3 向量)、`k_cam`(3x3 矩陣)... 只看預設值就會看成「一個數值」,UI 便只出一個 spin box 而崩潰。用名字補足結構。
+- **L617** — ★實測發現:向 `prism_min_deviation_deg` 的波長輸入傳入 0..1 的通用 signal,會被「波長須為正值」拒絕,變成一個**範例跑不動的 op**。若已知單位,以該量的合理範圍作種,更接近「一按就動」。
+- **L737** — 日文(CJK)的連綴。★``_WORD_RE`` 為 ``[a-z0-9]+``,因此日語查詢**一個詞都取不到**(對日語輸入而言 ``_WORD_RE.findall(...) == []``)。詞幹那一段失效,而部分匹配是連空白一起去找字串,所以**日語的多詞查詢在結構上必定 0 命中** -- 在一款 docstring 大半為日語、以 6 種語言分發的產品裡。2026-09-08 由 `poc_search_sweep_width` 踩到而查明(經 ``op_find`` 查「點檢出」/「光斑檢出」/「小目標」的日語查詢均為 0 命中,而帶次像素質心的點目標檢出只有 ``star_detect``,卻無法從日語抵達)。
+- **L790** — 視為詞幹一致的公共前綴長度。★取 4 會把 "median"/"medial" 及 "contrast"/"contour" 連到一起;切在 5,則 "correlation"/"correlate"(8)、"segmentation"/"segment"(7)、"rotation"/"rotate"(5)、"gaussian"/"gauss"(5) 能被拾取,而上述兩組不會。
+- **L800** — 公共前綴**之後允許的詞尾**。★僅憑前綴長度判定會把 "median"/"medial" 連起來(共有 5 個字元的 "media")。看詞尾是否像屈折詞尾,則 "correlation"/"correlate"(ion / e)通過,而 "median"/"medial"(n / l)與 "corner"/"cornea"(r / a)落選。
+- **L896** — ★下限。沒有它時,"zzz-nothing-matches" 會回傳 `histogram_match`(因為 "matches" 與 `match_*` 詞幹一致)。若命中詞的權重不足整條查詢的 15 %,則視為「未命中」。實測:"digital image correlation" 為 0.19(通過),"zzz-nothing-matches" 為 0.10(丟棄)。
 
 ## `ops.py`
 
@@ -1224,7 +1225,8 @@
 ## `tests/test_public_reachability.py`
 
 - **L71** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.op.<名前>` 経由で届く。ここに残る 1〜6 本は各モジュールのデモ入口 (`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
-- **L88** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
+- **L88** _(ja)_ — ★★2026-09-16: **この表を空にしたのは誤りだった。** 2026-09-15 に「33 行すべてが 公開経路に届くようになった」と判断して消したが、実際には 1 つも届いて いなかった —— 同日の実測で `fs.op_find("caltab")` は **0 件**、 `camera_calibration` は `dir(fullseye)` にも `fs.ledger` にも `ops.REGISTRY` にも無い。 なぜ「届いた」と読めたか: `_shipped_modules()` の正規表現が **py-modules を 348 本中 50 本しか読めていなかった**(配列内コメントの `[[...]]` の `]` で切れていた。詳しくは同関数の docstring)。母集団から 外れたモジュールは「不可視」と判定される機会が無く、静かに表から消えた。 門は在ったが、**見ている範囲が現実の 14 % しか無かった**。 いま(読み取りを直したあと)の実測: 配布 349 本 / 島 102 本 / 隠れ関数 1,256 本。 下の 31 行 403 関数が「1 本も公開経路に届かない」モジュール。 `calib` / `caltab` / `fit_transform` はこの回で `opscalib` 台帳に載せたので 表から外れている(= この表は実際に減る側として機能している)。
+- **L105** _(ja)_ — ★`mosaic` と `filters_freq` は**出さないと決めた**もので、理由は `docs/MATURITY_INTERNAL.md` に書いた(名乗りと中身が食い違う実装が 混ざっている / 属する族がまだ無い)。決めたものも隠さずここに並べる。
 
 ## `tests/test_raster.py`
 
@@ -1373,13 +1375,13 @@
 ## `tools/opdocs.py`
 
 - **L105** — ★2026-09-08: ops1d（dsp 16 + funct1d 23）雖已註冊，卻 **在 docs/ops 下沒有一張筆記** —— 它出現在 OP_CATALOG 中，但因為沒有每個 op 的筆記（型別契約、陷阱、相關 op），從 RAG 語料庫中整個缺失。是在 `poc_web_roll_periodicity` 給 dsp 添了 2 個時發現的。
-- **L592** — ★n 元（多輸入）層。到 2026-09-09 為止**有 17 個運算子連一份說明都沒有**（`add_image`、`sub_image`、`bit_and`、`reduce_domain`、`union2`…）。它們以 tier=`nary` 出現在 `OP_INDEX.json`，但 `docs/ops/` 下沒有說明，因此**永遠無法從 RAG 語料中檢索到**。漏掉的原因很清楚：這裡只走訪 `ops.REGISTRY`，而 `ops.REGISTRY`（899）與 2-D 說明數（899）相等，從註冊表一側數就顯得毫無缺漏。只有跨層去數才會暴露。
-- **L634** — ★2026-09-07: ``OPS3D[...]["doc"]`` 是註冊時**只切出 docstring 的第 1 行**的產物（ops3d._build）。在筆記的"用法"裡用它，無論實作寫了幾段都會變成一行 —— "用法只有一行的 op 494 本"中的 3-D 部分正是這個截斷造成的（docstring 本身很長的 op 很多）。和臺帳 dim 一樣，把函式的 docstring 整個讀進來。
-- **L657** — ★ 橋接 op（``tb_<name>``）與臺帳的 ``<name>`` 實作相同，範例以臺帳名書寫。到 2026-09-06 為止有 147 本是"零範例"，但那只是沒有數到**以別名存在、呼叫同一實作的範例**而已。繼承臺帳一側的範例，並在筆記中明確寫上"原 op 的範例"（以免說謊）。
-- **L877** — ★n 元運算子無法透過 `fullseye.apply` 呼叫——那是單張影像的模型。在這裡寫單圖的呼叫方式會**讓說明說謊**：說明唯一的職責就是告訴別人怎麼呼叫，所以錯誤的呼叫方式比沒有更糟。公開入口是 `fullseye.FullseyeGraph`。
-- **L896** — ★2026-09-07: **先寫公開路徑**。這裡只寫了實作模組的直接 import，沒有出現使用者實際使用的 `fullseye.ledger.<名>`（除 2-D 以外的全部 1,244 op）。PoC 反覆報告"fs.<名> 裡沒有"，問題不在於名字缺失，而在於**入口沒有寫**。
-- **L1257** — ★ 入口用 6 種語言呈現（2026-09-09）。葉子（Studio 的 op 說明）有 6 種語言 10,191 頁，然而**通往那裡的索引卻只有日語** —— 譯文存在卻到不了，這種形式的缺失。框架的文案放在 `T()` 上，所以對照翻譯的空洞由既有的門（test_chrome_translation_table_has_no_holes）來看守。
-- **L1302** — ★ 這裡長期只指向 `2d/guides/`，從未把讀者引向光學、PIV、斷層成像等 30 個族的指南（2026-09-09 修正）。
+- **L599** — ★n 元（多輸入）層。到 2026-09-09 為止**有 17 個運算子連一份說明都沒有**（`add_image`、`sub_image`、`bit_and`、`reduce_domain`、`union2`…）。它們以 tier=`nary` 出現在 `OP_INDEX.json`，但 `docs/ops/` 下沒有說明，因此**永遠無法從 RAG 語料中檢索到**。漏掉的原因很清楚：這裡只走訪 `ops.REGISTRY`，而 `ops.REGISTRY`（899）與 2-D 說明數（899）相等，從註冊表一側數就顯得毫無缺漏。只有跨層去數才會暴露。
+- **L641** — ★2026-09-07: ``OPS3D[...]["doc"]`` 是註冊時**只切出 docstring 的第 1 行**的產物（ops3d._build）。在筆記的"用法"裡用它，無論實作寫了幾段都會變成一行 —— "用法只有一行的 op 494 本"中的 3-D 部分正是這個截斷造成的（docstring 本身很長的 op 很多）。和臺帳 dim 一樣，把函式的 docstring 整個讀進來。
+- **L664** — ★ 橋接 op（``tb_<name>``）與臺帳的 ``<name>`` 實作相同，範例以臺帳名書寫。到 2026-09-06 為止有 147 本是"零範例"，但那只是沒有數到**以別名存在、呼叫同一實作的範例**而已。繼承臺帳一側的範例，並在筆記中明確寫上"原 op 的範例"（以免說謊）。
+- **L884** — ★n 元運算子無法透過 `fullseye.apply` 呼叫——那是單張影像的模型。在這裡寫單圖的呼叫方式會**讓說明說謊**：說明唯一的職責就是告訴別人怎麼呼叫，所以錯誤的呼叫方式比沒有更糟。公開入口是 `fullseye.FullseyeGraph`。
+- **L903** — ★2026-09-07: **先寫公開路徑**。這裡只寫了實作模組的直接 import，沒有出現使用者實際使用的 `fullseye.ledger.<名>`（除 2-D 以外的全部 1,244 op）。PoC 反覆報告"fs.<名> 裡沒有"，問題不在於名字缺失，而在於**入口沒有寫**。
+- **L1264** — ★ 入口用 6 種語言呈現（2026-09-09）。葉子（Studio 的 op 說明）有 6 種語言 10,191 頁，然而**通往那裡的索引卻只有日語** —— 譯文存在卻到不了，這種形式的缺失。框架的文案放在 `T()` 上，所以對照翻譯的空洞由既有的門（test_chrome_translation_table_has_no_holes）來看守。
+- **L1309** — ★ 這裡長期只指向 `2d/guides/`，從未把讀者引向光學、PIV、斷層成像等 30 個族的指南（2026-09-09 修正）。
 
 ## `tools/preflight.py`
 
@@ -1389,8 +1391,9 @@
 ## `tools/regen_all.py`
 
 - **L54** — ★唯一位於 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找產生器，就永遠找不到它。
-- **L77** — * ★而且危險：剛生成的文章用**相對路徑**寫圖像。公開版是改成 `raw.githubusercontent.com` 絕對 URL 後的（Qiita 用相對路徑不顯示圖像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些絕對 URL 會回退 42 行。**要跑就一直跑到文章的公開步驟為止。** 排除項要**按檔名**寫。用散文歸納（"wing*_gallery 的 10 本"）機器無法比對，下面的 `unclassified()` 就不工作了。
-- **L167** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L63** _(ja)_ — ★**`imgevolve.py coverage` を CHAIN に入れていない理由**(2026-09-16)。 `docs/HALCON_PARITY.md` は `imgevolve.py coverage`(= `honest_summary.main()`)が 書く生成物なのに、長らくこの表のどこにも現れていなかった。`imgevolve.py` は `index` サブコマンドで CHAIN に載っているので `unclassified()` の照合 (`args[0]` = ファイル名)を**素通りしてしまい**、別サブコマンドの生成物が あることに誰も気づけなかった。実際 2026-09-16 時点で `registry ops: 899` と書かれたまま、実際のレジストリは **901** に増えていた。 ではなぜ CHAIN に足さないか —— **この生成器は CI と新しい clone では動かない**。 `honest_summary` は `data/halcon_operators.json`(549 KB、MVTec のリファレンスを 写した外部由来のコーパス)を読むが、`.gitignore` が `data/*` を落としており **リポジトリに入っていない**。CHAIN に足すと `regen_all --check` は生成器の 非ゼロ終了でそこで停止し、表が無い環境(= CI、fresh clone、この worktree)では **必ず exit 1** になる。門にできないものを門にすると、門ごと無視されるようになる。 代わりに `tests/test_docs_index_numbers.py` の `test_the_parity_ledger_registry_count_is_current` が、**コミット済みの HALCON_PARITY.md に書かれた数**と生きたレジストリを突き合わせる。外部コーパスが 要るのは「作り直す」側だけで、「古びていないか見る」側は committed な生成物と 実装だけで判定できる —— drift を見るのに生成器を回す必要はない。 **CHAIN に入れないものと、その理由**(2026-09-09)。 この表が無いと CHAIN は「人が思い出せた生成器の集合」に逆戻りする —— それはこの道具が潰したはずの失敗そのもの。実際、初版の CHAIN は手で選ばれて いて `gen_examples3d_doc` が漏れており、`docs/EXAMPLES_3D.md` は **`ops3d = 347 op` と書いたまま古びていた**(実際は 357)。 除外は「回さなくてよい」ではなく「**--check の門にできない**」の意味。 記事の生成器は回すたびに出力が変わるので、drift 検査に混ぜると毎回赤になる: * 図と GIF を描き直す → 同じ入力でもバイトが変わる(SHA-256 も、kB 表示も)。 実測: `wing1d_aliasing.gif` は 1,135,171 → 1,130,583 バイト。 * ベンチ由来の数値を書き込む(`_wing2d_meta.json` の `seconds_per_search` 2.383 → 2.395)。これは**測定値**なので一致するはずがない。
+- **L99** — * ★而且危險：剛生成的文章用**相對路徑**寫圖像。公開版是改成 `raw.githubusercontent.com` 絕對 URL 後的（Qiita 用相對路徑不顯示圖像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些絕對 URL 會回退 42 行。**要跑就一直跑到文章的公開步驟為止。** 排除項要**按檔名**寫。用散文歸納（"wing*_gallery 的 10 本"）機器無法比對，下面的 `unclassified()` 就不工作了。
+- **L189** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `typed_catalog.py`
 

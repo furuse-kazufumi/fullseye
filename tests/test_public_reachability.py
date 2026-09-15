@@ -85,15 +85,35 @@ _INTERNAL = {
 #: 「実装はある・動く・テストもある、しかし利用者からは存在しない」もの。
 #: 直したらこの表から**行を消す**こと(消し忘れは 2 番目の検査が落とします)。
 _PENDING_EXPOSURE: dict[str, int] = {
-    # ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように
-    #   なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。
-    #   消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch /
-    #   objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld /
-    #   contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops /
-    #   regions_gen / region_morph / morph_minkowski / segmentation / image_gen /
-    #   image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d /
-    #   watershed3d / mesh_decimate / sample_data / scale。
-    #   表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
+    # ★★2026-09-16: **この表を空にしたのは誤りだった。** 2026-09-15 に「33 行すべてが
+    #   公開経路に届くようになった」と判断して消したが、実際には 1 つも届いて
+    #   いなかった —— 同日の実測で `fs.op_find("caltab")` は **0 件**、
+    #   `camera_calibration` は `dir(fullseye)` にも `fs.ledger` にも
+    #   `ops.REGISTRY` にも無い。
+    #
+    #   なぜ「届いた」と読めたか: `_shipped_modules()` の正規表現が
+    #   **py-modules を 348 本中 50 本しか読めていなかった**(配列内コメントの
+    #   `[[...]]` の `]` で切れていた。詳しくは同関数の docstring)。母集団から
+    #   外れたモジュールは「不可視」と判定される機会が無く、静かに表から消えた。
+    #   門は在ったが、**見ている範囲が現実の 14 % しか無かった**。
+    #
+    #   いま(読み取りを直したあと)の実測: 配布 349 本 / 島 102 本 / 隠れ関数 1,256 本。
+    #   下の 31 行 403 関数が「1 本も公開経路に届かない」モジュール。
+    #   `calib` / `caltab` / `fit_transform` はこの回で `opscalib` 台帳に載せたので
+    #   表から外れている(= この表は実際に減る側として機能している)。
+    #
+    #   ★`mosaic` と `filters_freq` は**出さないと決めた**もので、理由は
+    #   `docs/MATURITY_INTERNAL.md` に書いた(名乗りと中身が食い違う実装が
+    #   混ざっている / 属する族がまだ無い)。決めたものも隠さずここに並べる。
+    "calibration3d": 4, "contours_xld": 16, "contours_xld2": 20,
+    "filters_flow": 10, "filters_freq": 18, "gsplat_cli": 2,
+    "image_channels": 22, "image_gen": 11, "image_paint": 9,
+    "imgops_nary": 4, "inspection": 3, "matching": 4, "matching3d": 12,
+    "matrix": 33, "mesh_decimate": 1, "misc_vision": 13, "morph_minkowski": 6,
+    "mosaic": 15, "objmodel3d": 35, "pipeline3d": 6, "region_morph": 3,
+    "regions_gen": 5, "regions_setops": 17, "sample_data": 7, "scale": 6,
+    "scattered": 6, "segmentation": 9, "shapematch": 39, "tools_geom": 14,
+    "transforms": 50, "watershed3d": 3,
 }
 
 _LEDGER = dict(_INTERNAL)
@@ -105,11 +125,46 @@ def _shipped_modules():
 
     リポジトリの `*.py` を走査すると spikes/ や tools/ まで拾ってしまう。
     門は「利用者の手元に届くもの」の上に立てる。
+
+    ★**2026-09-16: この関数自身が門を盲目にしていた。** 以前はこう書いていた::
+
+        body = re.search(r"py-modules\\s*=\\s*\\[(.*?)\\]", src, re.S)
+
+    非貪欲な ``(.*?)\\]`` は**最初の ``]`` で止まる**。ところが py-modules の
+    配列の中にはコメントがあり、その 1 つが memory を
+    ``[[feedback_gate_must_stand_where_the_accident_happens]]`` の形で引用して
+    いた。``]]`` がそこで配列を閉じたことになり、**348 個あるはずの配布モジュールが
+    50 個しか読まれていなかった**(pyproject の 171 行目で切れていた)。
+
+    結果として:
+
+    * `calib` / `caltab` / `mosaic` / `fit_transform` / `filters_freq` は
+      **一度も検査されていなかった**(母集団に入らないので「不可視」と判定される
+      機会が無い)。
+    * 隠れ関数の総数は実測 1,273 本なのに 141 本と出ていた。ラチェットは
+      ``<=`` なので**常に緑**。
+    * 2026-09-15 に「33 モジュールすべてが公開経路に届くようになった」と判断して
+      ``_PENDING_EXPOSURE`` を空にしたのは、この 50 件の標本を見てのことだった。
+      実際には 1 つも届いていない(同日の実測で ``fs.op_find("caltab")`` は 0 件)。
+
+    門が「事故の起きる場所」に立っていても、**読む範囲が狭ければ空を通す** ——
+    引用した memory がまさにその失敗の名前だったのは偶然ではない。
+    いまは**コメントを落としてから**配列を読む。
     """
     src = io.open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8").read()
-    body = re.search(r"py-modules\s*=\s*\[(.*?)\]", src, re.S)
-    assert body, "pyproject.toml に py-modules が無い"
-    return re.findall(r'"([A-Za-z_][A-Za-z0-9_]*)"', body.group(1))
+    after = src.split("py-modules", 1)
+    assert len(after) == 2, "pyproject.toml に py-modules が無い"
+    # 行コメントを落とす(コメント中の `]` で配列が閉じたことにしない)
+    stripped = "\n".join(line.split("#", 1)[0] for line in after[1].splitlines())
+    body = re.search(r"\s*=\s*\[(.*?)\]", stripped, re.S)
+    assert body, "pyproject.toml の py-modules が配列として読めない"
+    mods = re.findall(r'"([A-Za-z_][A-Za-z0-9_]*)"', body.group(1))
+    # **空/やせた読み取りを通さない。** 上の事故は「読めた気になっていた」形なので、
+    # 実測の下限を置く(2026-09-16 実測 348 本)。
+    assert len(mods) >= 300, (
+        "py-modules を %d 本しか読めていない —— 配列の読み取りが壊れていないか"
+        "(コメント中の `]` で切れる事故が 2026-09-16 にあった)" % len(mods))
+    return mods
 
 
 def _public_names():
@@ -180,7 +235,12 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 1235
+#: 2026-09-16: 1235 -> **1256**。増えたのではなく、**それまで正しく測れていなかった**
+#: (`_shipped_modules()` が 348 本中 50 本しか読めず、総数は 141 本と出ていた ——
+#: ラチェットは `<=` なので永久に緑だった)。読み取りを直したうえで、この回に
+#: `opscalib` で 21 op を公開経路へ出した後の実測が 1,256 本。
+#: 数字を上げたのは妥協ではなく、**嘘の床を実測の床に置き換えた**もの。
+_HIDDEN_FUNCTIONS_TODAY = 1256
 
 
 def _hidden_total():

@@ -63,11 +63,11 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 ## Find an operator
 
-**1,946 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **49 family guides**. Entry points by dimension:
+**1,967 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **50 family guides**. Entry points by dimension:
 
 **Measured coverage**: evolvable ops 901/901, typed ledger 1024/1036, one-line facade `fullseye.<name>` 547/1122 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
-**Measured substance**: of 1951 notes, **1911** link at least one runnable example (40 have none) and **1932** have a usage section of 120+ characters (19 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 1951.
+**Measured substance**: of 1972 notes, **1916** link at least one runnable example (56 have none) and **1937** have a usage section of 120+ characters (35 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 1972.
 
 | dimension | ops | entry |
 |---|---:|---|
@@ -81,6 +81,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 | `math` | 27 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
 | `imgmetrics` | 24 | [INDEX](ops/imgmetrics/INDEX.md) · [guide](ops/imgmetrics/guides/image_difference_metrics.md) |
+| `calib` | 21 | [INDEX](ops/calib/INDEX.md) · [guide](ops/calib/guides/camera_calibration.md) |
 | `acoustics` | 20 | [INDEX](ops/acoustics/INDEX.md) · [guide](ops/acoustics/guides/acoustic_condition_monitoring.md) |
 | `dem` | 19 | [INDEX](ops/dem/INDEX.md) · [guide](ops/dem/guides/dem_terrain_analysis.md) |
 | `quat` | 19 | [INDEX](ops/quat/INDEX.md) · [guide](ops/quat/guides/quaternion_monogenic.md) |
@@ -202,9 +203,9 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 160
+## Document map — all 162
 
-The complete map, so that **no document is unreachable from this index** (the 1,946 per-op notes and 49 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
+The complete map, so that **no document is unreachable from this index** (the 1,967 per-op notes and 50 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
 **Getting started**(12)
 
@@ -328,7 +329,7 @@ The complete map, so that **no document is unreachable from this index** (the 1,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(88)
+**Other**(90)
 
 | document | what it covers |
 |---|---|
@@ -386,6 +387,7 @@ The complete map, so that **no document is unreachable from this index** (the 1,
 | [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 _(ja)_ |
 | [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) _(ja)_ |
+| [`MATURITY_INTERNAL.md`](MATURITY_INTERNAL.md) | 内部用にとどめる実装(公開しない理由の台帳) _(ja)_ |
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う _(ja)_ |
 | [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) |
 | [`SAMPLE_IMAGE_REFERENCES.en.md`](SAMPLE_IMAGE_REFERENCES.en.md) | Sample images — provenance, source papers & public repositories |
@@ -399,6 +401,7 @@ The complete map, so that **no document is unreachable from this index** (the 1,
 | [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
 | [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |
 | [`capabilities/blob-and-region.md`](capabilities/blob-and-region.md) | id: blob-and-region |
+| [`capabilities/camera-calibration.md`](capabilities/camera-calibration.md) | id: camera-calibration |
 | [`capabilities/colour-and-delta-e.md`](capabilities/colour-and-delta-e.md) | id: colour-and-delta-e |
 | [`capabilities/figures-and-annotation.md`](capabilities/figures-and-annotation.md) | id: figures-and-annotation |
 | [`capabilities/geodetic-frames.md`](capabilities/geodetic-frames.md) | id: geodetic-frames |

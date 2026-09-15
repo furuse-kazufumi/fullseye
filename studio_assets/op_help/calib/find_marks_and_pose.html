@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">find_marks_and_pose — CALIB <code style="color:#22d3bf">calibrate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import caltab; caltab.find_marks_and_pose(image, cam_par, caltab, thresh=0.5, max_reproj_rms=3.0)</code>、台帳から引くなら <code style="color:#22d3bf">opscalib.get(&quot;find_marks_and_pose&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>マーク検出 + 校正板の姿勢推定(平面ホモグラフィ → pose)(find_marks_and_pose)。</p>
+<p>対応づけは行優先ソートではなく <b>ホモグラフィ誘導</b>: 検出マークと理想格子の 4 隅</p>
+<p>(row±col の極値)から初期 H を作り、理想点を投影して最近傍マークを 1 対 1 に</p>
+<p>割り当て、全対応で H を再推定(2 反復)。板の面内回転が ±45° 未満なら傾き</p>
+<p>(rx, ry)の大きさに関係なく正しく対応する(2026-09-02 以前は少しの傾きで</p>
+<p>行が交錯し、深度が数百 mm ずれても無警告だった)。</p>
+<p>fail-closed: マークが 4 個未満/対応が 4 組未満/再投影 RMS が</p>
+<p>`<code style="color:#22d3bf">max_reproj_rms</code><code style="color:#22d3bf"> [px] を超えるときは </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">None</code>` で無効化可)。</p>
+<p>戻り値: `<code style="color:#22d3bf">marks</code><code style="color:#22d3bf"> (M,2) 対応づいた検出マーク(</code><code style="color:#22d3bf">ideal_index</code><code style="color:#22d3bf"> の順)、</code><code style="color:#22d3bf">pose</code>` 4x4、</p>
+<p>`<code style="color:#22d3bf">homography</code><code style="color:#22d3bf"> (x,y)→(col,row)、</code><code style="color:#22d3bf">reproj_rms</code><code style="color:#22d3bf"> [px]、</code><code style="color:#22d3bf">residuals</code><code style="color:#22d3bf"> (M,)、</code><code style="color:#22d3bf">n_marks</code>`。</p>
+<p>world は `<code style="color:#22d3bf">caltab[&quot;points&quot;]</code>` の (y, x) をそのまま (x, y, 0) とする。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">camera_calibration ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opcalib:sim_caltab">sim_caltab</a> · <a style="color:#22d3bf" href="opcalib:disp_caltab">disp_caltab</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">calibrate</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:camera_calibration">camera_calibration</a> · <a style="color:#22d3bf" href="opcalib:hand_eye_calibration">hand_eye_calibration</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: caltab.py — CALIB operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

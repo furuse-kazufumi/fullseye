@@ -118,6 +118,34 @@
    ]
   },
   {
+   "id": "camera-calibration",
+   "title": "画素を実寸に結びつける(カメラ校正)",
+   "title_en": "Tie pixels to real-world units (camera calibration)",
+   "category": "測る",
+   "note": "docs/capabilities/camera-calibration.md",
+   "status": "verified-synthetic",
+   "ops_total": 6,
+   "ops_named_in_tests": 6,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_camera_calibration",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "lens_calibration_loop_demo",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "colour-and-delta-e",
    "title": "色を測る(XYZ / Lab / 色差)",
    "title_en": "Measure colour (XYZ / Lab / colour difference)",

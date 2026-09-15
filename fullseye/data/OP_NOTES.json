@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1942,
- "n_notes": 1946,
+ "n_ops": 1963,
+ "n_notes": 1967,
  "notes": {
   "vol_dilate": [
    {
@@ -14266,6 +14266,210 @@
     "in": "mesh",
     "out": "indices",
     "path": "docs/ops/cadmap/visibility/cad_visible_faces.md"
+   }
+  ],
+  "camera_calibration": [
+   {
+    "op": "camera_calibration",
+    "dim": "calib",
+    "category": "calibrate",
+    "in": "points",
+    "out": "table",
+    "path": "docs/ops/calib/calibrate/camera_calibration.md"
+   }
+  ],
+  "find_marks_and_pose": [
+   {
+    "op": "find_marks_and_pose",
+    "dim": "calib",
+    "category": "calibrate",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/calib/calibrate/find_marks_and_pose.md"
+   }
+  ],
+  "hand_eye_calibration": [
+   {
+    "op": "hand_eye_calibration",
+    "dim": "calib",
+    "category": "calibrate",
+    "in": "pose",
+    "out": "pose",
+    "path": "docs/ops/calib/calibrate/hand_eye_calibration.md"
+   }
+  ],
+  "hom_vector_to_proj_hom_mat2d": [
+   {
+    "op": "hom_vector_to_proj_hom_mat2d",
+    "dim": "calib",
+    "category": "fit",
+    "in": "points",
+    "out": "matrix",
+    "path": "docs/ops/calib/fit/hom_vector_to_proj_hom_mat2d.md"
+   }
+  ],
+  "vector_angle_to_rigid": [
+   {
+    "op": "vector_angle_to_rigid",
+    "dim": "calib",
+    "category": "fit",
+    "out": "matrix",
+    "path": "docs/ops/calib/fit/vector_angle_to_rigid.md"
+   }
+  ],
+  "vector_to_rigid": [
+   {
+    "op": "vector_to_rigid",
+    "dim": "calib",
+    "category": "fit",
+    "in": "points",
+    "out": "matrix",
+    "path": "docs/ops/calib/fit/vector_to_rigid.md"
+   }
+  ],
+  "vector_to_similarity": [
+   {
+    "op": "vector_to_similarity",
+    "dim": "calib",
+    "category": "fit",
+    "in": "points",
+    "out": "matrix",
+    "path": "docs/ops/calib/fit/vector_to_similarity.md"
+   }
+  ],
+  "contour_to_world_plane_xld": [
+   {
+    "op": "contour_to_world_plane_xld",
+    "dim": "calib",
+    "category": "plane",
+    "in": "contour",
+    "out": "contour",
+    "path": "docs/ops/calib/plane/contour_to_world_plane_xld.md"
+   }
+  ],
+  "gen_image_to_world_plane_map": [
+   {
+    "op": "gen_image_to_world_plane_map",
+    "dim": "calib",
+    "category": "plane",
+    "out": "table",
+    "path": "docs/ops/calib/plane/gen_image_to_world_plane_map.md"
+   }
+  ],
+  "gen_radial_distortion_map": [
+   {
+    "op": "gen_radial_distortion_map",
+    "dim": "calib",
+    "category": "plane",
+    "out": "table",
+    "path": "docs/ops/calib/plane/gen_radial_distortion_map.md"
+   }
+  ],
+  "image_points_to_world_plane": [
+   {
+    "op": "image_points_to_world_plane",
+    "dim": "calib",
+    "category": "plane",
+    "in": "points",
+    "out": "points",
+    "path": "docs/ops/calib/plane/image_points_to_world_plane.md"
+   }
+  ],
+  "image_to_world_plane": [
+   {
+    "op": "image_to_world_plane",
+    "dim": "calib",
+    "category": "plane",
+    "in": "points",
+    "out": "points",
+    "path": "docs/ops/calib/plane/image_to_world_plane.md"
+   }
+  ],
+  "project_3d_point": [
+   {
+    "op": "project_3d_point",
+    "dim": "calib",
+    "category": "project",
+    "in": "points",
+    "out": "points",
+    "path": "docs/ops/calib/project/project_3d_point.md"
+   }
+  ],
+  "project_hom_point_hom_mat3d": [
+   {
+    "op": "project_hom_point_hom_mat3d",
+    "dim": "calib",
+    "category": "project",
+    "in": "points",
+    "out": "points",
+    "path": "docs/ops/calib/project/project_hom_point_hom_mat3d.md"
+   }
+  ],
+  "project_point_hom_mat3d": [
+   {
+    "op": "project_point_hom_mat3d",
+    "dim": "calib",
+    "category": "project",
+    "in": "points",
+    "out": "points",
+    "path": "docs/ops/calib/project/project_point_hom_mat3d.md"
+   }
+  ],
+  "caltab_points": [
+   {
+    "op": "caltab_points",
+    "dim": "calib",
+    "category": "target",
+    "out": "points",
+    "path": "docs/ops/calib/target/caltab_points.md"
+   }
+  ],
+  "create_caltab": [
+   {
+    "op": "create_caltab",
+    "dim": "calib",
+    "category": "target",
+    "out": "table",
+    "path": "docs/ops/calib/target/create_caltab.md"
+   }
+  ],
+  "disp_caltab": [
+   {
+    "op": "disp_caltab",
+    "dim": "calib",
+    "category": "target",
+    "in": "table",
+    "out": "image2d",
+    "path": "docs/ops/calib/target/disp_caltab.md"
+   }
+  ],
+  "find_caltab": [
+   {
+    "op": "find_caltab",
+    "dim": "calib",
+    "category": "target",
+    "in": "image2d",
+    "out": "points",
+    "path": "docs/ops/calib/target/find_caltab.md"
+   }
+  ],
+  "gen_caltab": [
+   {
+    "op": "gen_caltab",
+    "dim": "calib",
+    "category": "target",
+    "out": "table",
+    "path": "docs/ops/calib/target/gen_caltab.md"
+   }
+  ],
+  "sim_caltab": [
+   {
+    "op": "sim_caltab",
+    "dim": "calib",
+    "category": "target",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/calib/target/sim_caltab.md"
    }
   ],
   "poisson_blend": [

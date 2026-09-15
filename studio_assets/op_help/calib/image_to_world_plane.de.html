@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">image_to_world_plane — CALIB <code style="color:#22d3bf">plane</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_to_world_plane(image_points, homography)</code> (die Implementierung direkt: <code style="color:#22d3bf">import calib; calib.image_to_world_plane(image_points, homography)</code>; aus dem Register: <code style="color:#22d3bf">opscalib.get(&quot;image_to_world_plane&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>画像点を平面ホモグラフィで world 平面(z=0)へ写す(image_to_world_plane)。</p>
+<p>規約に依らず `<code style="color:#22d3bf">homography</code>` を点に <b>そのまま</b> 適用する: H を (x=col, y=row)</p>
+<p>で推定したなら点も (col, row) で渡す(`<code style="color:#22d3bf">camera_calibration</code>` の</p>
+<p>`<code style="color:#22d3bf">homographies</code>` は (x,y)→(col,row) なので、その逆行列をこの向きで使う)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecalib:camera_calibration">Leitfaden zur Familie camera_calibration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_document_scan">poc_document_scan</a> — <code style="color:#22d3bf">py -3.11 examples/poc_document_scan.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_matrix_code_reading">poc_matrix_code_reading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_matrix_code_reading.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_wound_area_tracking">poc_wound_area_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_wound_area_tracking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">points</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opcalib:project_3d_point">project_3d_point</a> · <a style="color:#22d3bf" href="opcalib:project_point_hom_mat3d">project_point_hom_mat3d</a> · <a style="color:#22d3bf" href="opcalib:project_hom_point_hom_mat3d">project_hom_point_hom_mat3d</a> · <a style="color:#22d3bf" href="opcalib:image_points_to_world_plane">image_points_to_world_plane</a> · <a style="color:#22d3bf" href="opcalib:camera_calibration">camera_calibration</a> · <a style="color:#22d3bf" href="opcalib:vector_to_rigid">vector_to_rigid</a> · <a style="color:#22d3bf" href="opcalib:vector_to_similarity">vector_to_similarity</a> · <a style="color:#22d3bf" href="opcalib:hom_vector_to_proj_hom_mat2d">hom_vector_to_proj_hom_mat2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">plane</code>)</h3>
+<p><a style="color:#22d3bf" href="opcalib:image_points_to_world_plane">image_points_to_world_plane</a> · <a style="color:#22d3bf" href="opcalib:contour_to_world_plane_xld">contour_to_world_plane_xld</a> · <a style="color:#22d3bf" href="opcalib:gen_image_to_world_plane_map">gen_image_to_world_plane_map</a> · <a style="color:#22d3bf" href="opcalib:gen_radial_distortion_map">gen_radial_distortion_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: calib.py — CALIB Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
