@@ -146,6 +146,9 @@ py-modules = [
   # blob2d: 2-D の連結成分解析。閾値のあとの定番の連鎖(切る→測る→選ぶ)が
   # 3 層のどこにも無かった(3-D 版だけ在った)ため新設(2026-09-06)。
   "blob2d", "opsblob",
+  # aoi: 自動外観検査の前段(フラットフィールド補正 / 平行移動の位置合わせ /
+  # タイルごとの量の地図)。測る層の手前が 4 層のどこにも無かった(2026-09-15 追加)。
+  "aoi", "opsaoi",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
