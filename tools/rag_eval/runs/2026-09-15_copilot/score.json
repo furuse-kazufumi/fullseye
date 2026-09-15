@@ -1,0 +1,150 @@
+{
+ "run": "2026-09-15_copilot",
+ "ai": "copilot",
+ "n_questions": 3,
+ "mean_score": 95.5,
+ "unknown_identifiers_total": 0,
+ "questions": [
+  {
+   "id": "q01",
+   "domain": "2D 欠陥",
+   "score": 93.3,
+   "coverage": 1.0,
+   "groups_satisfied": 2,
+   "groups_total": 2,
+   "required_hits": [
+    [
+     "tophat"
+    ],
+    [
+     "measure_pairs"
+    ]
+   ],
+   "term_hits": [],
+   "optional_hits": [
+    "binary_threshold",
+    "gaussian",
+    "measure_pos",
+    "otsu"
+   ],
+   "cited_ops": [
+    "gaussian",
+    "tophat",
+    "binary_threshold",
+    "otsu",
+    "gen_measure_arc",
+    "measure_pos",
+    "measure_pairs"
+   ],
+   "aliases_resolved": {},
+   "documented_non_ops": [],
+   "unknown_identifiers": [],
+   "paths_cited": [
+    "docs/ops/2d/morphology/tophat.md",
+    "docs/examples/poc_real_defect_floor.py",
+    "docs/ops/measure1d/guides/subpixel_measuring.md"
+   ],
+   "paths_missing": [
+    "docs/examples/poc_real_defect_floor.py"
+   ],
+   "path_exist_rate": 0.667,
+   "expected_evidence_hit": [
+    "docs/ops/2d/morphology/tophat.md",
+    "docs/ops/measure1d/guides/subpixel_measuring.md"
+   ]
+  },
+  {
+   "id": "q02",
+   "domain": "偏光",
+   "score": 100.0,
+   "coverage": 1.0,
+   "groups_satisfied": 1,
+   "groups_total": 1,
+   "required_hits": [
+    [
+     "polarization_separate"
+    ]
+   ],
+   "term_hits": [],
+   "optional_hits": [],
+   "cited_ops": [
+    "polarization_separate"
+   ],
+   "aliases_resolved": {},
+   "documented_non_ops": [
+    "diffuse",
+    "specular",
+    "max_violation_frac"
+   ],
+   "unknown_identifiers": [],
+   "paths_cited": [
+    "docs/ops/specular/polarization/polarization_separate.md"
+   ],
+   "paths_missing": [],
+   "path_exist_rate": 1.0,
+   "expected_evidence_hit": [
+    "docs/ops/specular/polarization/polarization_separate.md"
+   ]
+  },
+  {
+   "id": "q03",
+   "domain": "計測",
+   "score": 93.3,
+   "coverage": 1.0,
+   "groups_satisfied": 4,
+   "groups_total": 4,
+   "required_hits": [
+    [
+     "edges_sub_pix"
+    ],
+    [
+     "create_metrology_model"
+    ],
+    [
+     "add_metrology_object_circle_measure"
+    ],
+    [
+     "apply_metrology_model"
+    ]
+   ],
+   "term_hits": [],
+   "optional_hits": [
+    "align_metrology_model",
+    "gaussian",
+    "gen_measure_arc"
+   ],
+   "cited_ops": [
+    "gaussian",
+    "edges_sub_pix",
+    "create_metrology_model",
+    "add_metrology_object_circle_measure",
+    "align_metrology_model",
+    "apply_metrology_model",
+    "xpil_find_edges",
+    "gen_measure_arc"
+   ],
+   "aliases_resolved": {},
+   "documented_non_ops": [
+    "image",
+    "metrologymodel",
+    "table",
+    "params",
+    "n"
+   ],
+   "unknown_identifiers": [],
+   "paths_cited": [
+    "docs/ops/measure1d/model/add_metrology_object_circle_measure.md",
+    "docs/ops/measure1d/guides/subpixel_measuring.md",
+    "docs/examples/poc_dimensional_inspection.py"
+   ],
+   "paths_missing": [
+    "docs/examples/poc_dimensional_inspection.py"
+   ],
+   "path_exist_rate": 0.667,
+   "expected_evidence_hit": [
+    "docs/ops/measure1d/guides/subpixel_measuring.md",
+    "docs/ops/measure1d/model/add_metrology_object_circle_measure.md"
+   ]
+  }
+ ]
+}

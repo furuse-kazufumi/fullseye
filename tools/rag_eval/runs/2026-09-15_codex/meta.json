@@ -1,0 +1,26 @@
+{
+ "model": "gpt-5.6-sol",
+ "exec_blocks": 27,
+ "rejected_commands": 5,
+ "tokens_used": 90819,
+ "ai": "codex",
+ "date": "2026-09-15",
+ "source": "transcript imported by tools/rag_eval/ingest.py",
+ "transcript_bytes": 387593,
+ "questions": [
+  "q01",
+  "q02",
+  "q03"
+ ],
+ "mode": "batch (all questions in one prompt)",
+ "files_opened_self_reported": 20,
+ "encoding_note": "PowerShell Get-Content が BOM 無し UTF-8 を文字化け。-Encoding utf8 での再読 1 回、[Console]::OutputEncoding 変更は read-only 方針で拒否",
+ "interview": {
+  "model": "gpt-5.6-sol",
+  "exec_blocks": 25,
+  "rejected_commands": 18,
+  "tokens_used": 65358,
+  "transcript_bytes": 335243,
+  "prompt": "ai_interview_prompt(7 項目、共通)"
+ }
+}

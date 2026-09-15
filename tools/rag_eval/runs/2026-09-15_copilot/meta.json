@@ -1,0 +1,20 @@
+{
+ "narration_steps": 21,
+ "ai": "copilot",
+ "date": "2026-09-15",
+ "source": "transcript imported by tools/rag_eval/ingest.py",
+ "transcript_bytes": 7744,
+ "questions": [
+  "q01",
+  "q02",
+  "q03"
+ ],
+ "mode": "batch (all questions in one prompt)",
+ "model": "copilot default",
+ "tool_calls_note": "-s(quiet)では tool 呼び出しが出ない。narration_steps = 語りの行数(≈ファイルを開いた回数の近似)",
+ "interview": {
+  "narration_steps": 0,
+  "transcript_bytes": 4076,
+  "prompt": "ai_interview_prompt(7 項目、共通)"
+ }
+}
