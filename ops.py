@@ -172,7 +172,9 @@ def _gaussian(v, a, b):
 def _mean_box(v, a, b):
     """矩形窓の単純平均（box）フィルタ。HALCON の ``mean_image``（Smooth by averaging.）に相当。
 
-``a`` が窓の一辺を ``3,5,7,9`` の4段階（``_k(a)``、``a`` を4分割して丸める）に切り替える。``b`` は未使用。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。"""
+``a`` が窓の一辺を ``3,5,7,9`` の4段階（``_k(a)``、``a`` を4分割して丸める）に切り替える。``b`` は未使用。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。
+
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(2026-09-16 に実測して記録)。"""
     return ndimage.uniform_filter(v, size=_k(a))
 def _median(v, a, b):
     """メディアン（中央値）フィルタ。HALCON の ``median_image``（Compute a median filter with various masks.）に相当。
@@ -307,7 +309,9 @@ def _sigmoid(v, a, b):
 def _bilateral(v, a, b):
     """エッジ保存平滑化（bilateral filter）。HALCON の ``bilateral_filter``（bilateral filtering of an image.）に相当。
 
-``a`` が空間方向の広がり ``σ_s = 1.0 + 3.0a`` を、``b`` が明るさ方向の許容差 ``σ_r = 0.05 + 0.4b`` を振る。近傍窓は半径 ``r=2``（5×5）固定で ``a`` では変わらない。近傍の重みは ``exp(-距離²/2σ_s²) × exp(-明度差²/2σ_r²)`` の積で、明度差が大きい（=エッジをまたぐ）画素は重みが小さくなるため、平滑化しつつ輪郭を保てる。窓内を Python の二重ループで回すため他の平滑化 op より遅い。"""
+``a`` が空間方向の広がり ``σ_s = 1.0 + 3.0a`` を、``b`` が明るさ方向の許容差 ``σ_r = 0.05 + 0.4b`` を振る。近傍窓は半径 ``r=2``（5×5）固定で ``a`` では変わらない。近傍の重みは ``exp(-距離²/2σ_s²) × exp(-明度差²/2σ_r²)`` の積で、明度差が大きい（=エッジをまたぐ）画素は重みが小さくなるため、平滑化しつつ輪郭を保てる。窓内を Python の二重ループで回すため他の平滑化 op より遅い。
+
+**端の扱い**: 端の画素を複製する(最近傍)(2026-09-16 に実測して記録)。"""
     ss, sr, r = 1.0 + 3.0 * a, 0.05 + 0.4 * b, 2
     out = np.zeros_like(v, np.float64); wsum = np.zeros_like(v, np.float64)
     for dy in range(-r, r + 1):
@@ -350,7 +354,9 @@ def _unsharp(v, a, b):
     max=+1.1499)。`_apply` は段間で同じ clip を掛けるので **パイプライン結果は
     ビット不変**だが、`fullseye.apply` を単発で呼ぶ経路だけは生値が出ていて、
     `image` の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側
-    (`accel._unsharp`)も同じ clip を持つ。"""
+    (`accel._unsharp`)も同じ clip を持つ。
+
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(2026-09-16 に実測して記録)。"""
     return np.clip(v + (1.5 * a) * (v - ndimage.gaussian_filter(v, 0.5 + 1.5 * b)), 0, 1)
 
 

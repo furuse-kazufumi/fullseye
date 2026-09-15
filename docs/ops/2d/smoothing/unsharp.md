@@ -39,11 +39,13 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。
 
-``v + k*(v - blur)`` は定義上オーバーシュートする(実測 min=-0.1499 /
-max=+1.1499)。`_apply` は段間で同じ clip を掛けるので **パイプライン結果は
-ビット不変**だが、`fullseye.apply` を単発で呼ぶ経路だけは生値が出ていて、
-`image` の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側
-(`accel._unsharp`)も同じ clip を持つ。
+    ``v + k*(v - blur)`` は定義上オーバーシュートする(実測 min=-0.1499 /
+    max=+1.1499)。`_apply` は段間で同じ clip を掛けるので **パイプライン結果は
+    ビット不変**だが、`fullseye.apply` を単発で呼ぶ経路だけは生値が出ていて、
+    `image` の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側
+    (`accel._unsharp`)も同じ clip を持つ。
+
+**端の扱い**: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)(2026-09-16 に実測して記録)。
 
 ## 詳しい使い方ガイド
 

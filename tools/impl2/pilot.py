@@ -32,6 +32,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -132,6 +133,48 @@ C99 の関数を 1 つ書いてください。
 関数名は必ず `fs2_apply` にしてください。"""
 
 
+def engine_tag(engine: str) -> str:
+    """成果物の置き場に使う安全な名前。**モデルごとに別々に残す** —— 同じ op を
+    別のモデルに書かせたものを並べて持つこと自体が N-version の実体で、
+    書き手を変えることが相関故障を下げる唯一の直接的な手段だから。"""
+    return re.sub(r"[^A-Za-z0-9._-]", "-", engine)
+
+
+def ask_cli(prompt: str, engine: str, timeout: int = 900) -> str:
+    """外部 AI の CLI に**読み取り専用**で聞く。ワークスペースを触らせない。"""
+    # Windows では ``codex`` の実体が ``codex.CMD`` で、``shutil.which`` で解決しないと
+    # ``CreateProcess`` が見つけられない(WinError 2)。拡張子を自分で決め打ちしない。
+    if engine.startswith("codex"):
+        exe = shutil.which("codex")
+        if not exe:
+            raise RuntimeError("codex CLI が PATH に無い")
+        # プロンプトは **stdin** で渡す。argv で渡すと codex が仕様書を受け取り切れず
+        # 「仕様書の続きを送ってください」と返した(実測。プロンプトは 3,257 文字で
+        # cmd.exe の長さ上限には達していないので、原因は長さではなく多行引数の扱い)。
+        # codex 自身が "Reading additional input from stdin..." と言うとおり stdin が正路。
+        cmd = [exe, "exec", "-s", "read-only"]
+        stdin_text = prompt
+    elif engine.startswith("copilot"):
+        exe = shutil.which("copilot")
+        if not exe:
+            raise RuntimeError("copilot CLI が PATH に無い")
+        cmd = [exe, "-p", prompt, "--allow-all-tools"]
+        stdin_text = None
+    else:
+        raise ValueError(f"未知の CLI エンジン: {engine}")
+    # ``codex exec`` は argv のプロンプトに加えて stdin も読もうとする
+    # ("Reading additional input from stdin...")。DEVNULL で即 EOF を返さないと止まる。
+    if stdin_text is None:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout,
+                           stdin=subprocess.DEVNULL, encoding="utf-8", errors="replace")
+    else:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout,
+                           input=stdin_text, encoding="utf-8", errors="replace")
+    if r.returncode != 0:
+        raise RuntimeError((r.stderr or r.stdout or "")[-600:])
+    return r.stdout
+
+
 def ask_model(prompt: str, model: str, timeout: int = 600) -> str:
     body = json.dumps({
         "model": model, "prompt": prompt, "stream": False,
@@ -216,6 +259,7 @@ def finite_maxdiff(ref, got) -> float:
 
 # --------------------------------------------------------------------------- #
 def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> dict:
+    tag = engine_tag(model)
     import fullseye as fs
 
     note_p = find_note(op)
@@ -224,9 +268,9 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
     note = note_p.read_text(encoding="utf-8")
     note_sha = hashlib.sha256(note.encode("utf-8")).hexdigest()[:16]
 
-    (IMPL2 / "c").mkdir(parents=True, exist_ok=True)
-    (IMPL2 / "meta").mkdir(parents=True, exist_ok=True)
-    csrc = IMPL2 / "c" / f"{op}.c"
+    (IMPL2 / "c" / tag).mkdir(parents=True, exist_ok=True)
+    (IMPL2 / "meta" / tag).mkdir(parents=True, exist_ok=True)
+    csrc = IMPL2 / "c" / tag / f"{op}.c"
 
     rec = {"op": op, "note": str(note_p.relative_to(ROOT)).replace("\\", "/"),
            "note_sha256_16": note_sha, "model": model,
@@ -238,16 +282,20 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
         rec["prompt_sha256_16"] = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16]
         t0 = time.time()
         try:
-            raw = ask_model(prompt, model)
-        except (urllib.error.URLError, TimeoutError, OSError) as e:
-            rec.update(status="model_error", reason=str(e)[:300])
+            if model.startswith(("codex", "copilot")):
+                raw = ask_cli(prompt, model)
+            else:
+                raw = ask_model(prompt, model)
+        except (urllib.error.URLError, TimeoutError, OSError, RuntimeError,
+                subprocess.SubprocessError, ValueError) as e:
+            rec.update(status="model_error", reason=str(e)[:400])
             return rec
         rec["gen_seconds"] = round(time.time() - t0, 1)
         csrc.write_text(extract_c(raw), encoding="utf-8")
     else:
         rec["reused_existing_c"] = True
 
-    workdir = IMPL2 / "_work" / op
+    workdir = IMPL2 / "_work" / tag / op
     workdir.mkdir(parents=True, exist_ok=True)
     exe, err = compile_c(csrc, workdir, cc)
     if exe is None:
@@ -285,7 +333,7 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
     rec["tol"] = tol
     # 一致は成果ではなく **警告**。探針が弱いだけかもしれない。
     rec["status"] = "agrees" if rec["agrees"] else "diverges"
-    (IMPL2 / "meta" / f"{op}.json").write_text(json.dumps(rec, indent=2, ensure_ascii=False),
+    (IMPL2 / "meta" / tag / f"{op}.json").write_text(json.dumps(rec, indent=2, ensure_ascii=False),
                                                encoding="utf-8")
     return rec
 
