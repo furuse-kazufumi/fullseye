@@ -55,7 +55,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
-—
+[table_px_to_mm](../scale/table_px_to_mm.md)
 
 ## 同カテゴリ(`caliper`)
 

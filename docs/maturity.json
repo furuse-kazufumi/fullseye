@@ -202,6 +202,41 @@
    ]
   },
   {
+   "id": "inner-diameter-in-mm",
+   "title": "円形部品の内径を mm まで測る",
+   "title_en": "Inner diameter of a round part, all the way to millimetres",
+   "category": "測る",
+   "note": "docs/capabilities/inner-diameter-in-mm.md",
+   "status": "validated-public-real-data",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "example_inner_diameter_mm",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_dimensional_inspection",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_real_coin_metrology",
+     "data": "real",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "inverted-colour-overlays",
    "title": "地の色を知らずに線と領域を描く(反転色)",
    "title_en": "Draw lines and regions without knowing the background colour",
@@ -215,6 +250,44 @@
    "examples": [
     {
      "id": "annotate_paper_tour",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "ocr-preprocessing",
+   "title": "OCR の前処理(傾き補正・局所 2 値化・行の切り出し)",
+   "title_en": "OCR pre-processing (deskew, local binarisation, line extraction)",
+   "category": "見つける",
+   "note": "docs/capabilities/ocr-preprocessing.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 2,
+   "ops_not_named_in_tests": [
+    "dilation_rectangle1",
+    "sk_sauvola"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "gallery2d_segmentation",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_matrix_code_reading",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "gallery2d_region",
      "data": "synthetic",
      "gate": "tests/test_example_scripts_run.py",
      "executed": true,
@@ -251,6 +324,76 @@
    ]
   },
   {
+   "id": "periodic-defects-in-1d-signals",
+   "title": "1-D 信号の周期欠陥を見つける",
+   "title_en": "Periodic defects in a 1-D signal",
+   "category": "波と信号",
+   "note": "docs/capabilities/periodic-defects-in-1d-signals.md",
+   "status": "verified-synthetic",
+   "ops_total": 5,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_web_roll_periodicity",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_rail_corrugation",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_bearing_diagnosis",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "planarity-from-point-cloud",
+   "title": "3-D 点群から平面度を出す",
+   "title_en": "Flatness of a surface from a 3-D point cloud",
+   "category": "測る",
+   "note": "docs/capabilities/planarity-from-point-cloud.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "geometry_metrology",
+     "data": "synthetic",
+     "gate": "examples3d.py (suite runs a smoke subset)",
+     "executed": true,
+     "registry": "examples3d"
+    },
+    {
+     "id": "poc_bump_coplanarity",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_scan_to_bim_asbuilt",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "point-target-detection",
    "title": "小さな点状の目標を見つけて、副画素で位置を出す",
    "title_en": "Find small point-like targets and locate them below the pixel",
@@ -279,6 +422,78 @@
    ]
   },
   {
+   "id": "polarisation-specular-removal",
+   "title": "偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)",
+   "title_en": "Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals)",
+   "category": "光と色",
+   "note": "docs/capabilities/polarisation-specular-removal.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "example_polarization_metal",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_polarization_specular",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "specular_photometric",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "scratch-detection-and-width",
+   "title": "微細スクラッチを見つけて、幅を測る",
+   "title_en": "Detect fine scratches and measure their width",
+   "category": "測る",
+   "note": "docs/capabilities/scratch-detection-and-width.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 3,
+   "ops_not_named_in_tests": [
+    "lines_gauss"
+   ],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "example_scratch_width",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_crack_width",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_solar_el_inspection",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
    "id": "subpixel-2d-metrology",
    "title": "画像から寸法をサブピクセルで測る",
    "title_en": "Measure dimensions from an image, below the pixel",
@@ -299,6 +514,76 @@
     },
     {
      "id": "poc_screw_thread_metrology",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "surface-defects-with-lighting",
+   "title": "表面の凹凸欠陥を、照明の設計から検出まで",
+   "title_en": "Surface relief defects, from lighting design to detection",
+   "category": "見つける",
+   "note": "docs/capabilities/surface-defects-with-lighting.md",
+   "status": "verified-synthetic",
+   "ops_total": 5,
+   "ops_named_in_tests": 5,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "illumination_design_demo",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "photometric_stereo",
+     "data": "synthetic",
+     "gate": "examples3d.py (suite runs a smoke subset)",
+     "executed": true,
+     "registry": "examples3d"
+    },
+    {
+     "id": "poc_bump_coplanarity",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    }
+   ]
+  },
+  {
+   "id": "template-alignment",
+   "title": "位置決め(テンプレート照合で測定線を追従させる)",
+   "title_en": "Locate a part by template matching and move the measurement model with it",
+   "category": "見つける",
+   "note": "docs/capabilities/template-alignment.md",
+   "status": "verified-synthetic",
+   "ops_total": 4,
+   "ops_named_in_tests": 4,
+   "ops_not_named_in_tests": [],
+   "ops_count_is_a_lower_bound": "tests/ に op 名が literal で現れるかだけを見ている(台帳を舐める掃引型の試験は数えない)",
+   "examples": [
+    {
+     "id": "poc_template_tracking",
+     "data": "synthetic",
+     "gate": "tests/test_poc_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "gallery2d_contour_measure",
+     "data": "synthetic",
+     "gate": "tests/test_example_scripts_run.py",
+     "executed": true,
+     "registry": "examples2d"
+    },
+    {
+     "id": "poc_search_sweep_width",
      "data": "synthetic",
      "gate": "tests/test_poc_scripts_run.py",
      "executed": true,
@@ -473,9 +758,9 @@
   }
  ],
  "example_execution": {
-  "examples2d_total": 204,
+  "examples2d_total": 207,
   "run_by_the_poc_gate": 121,
-  "run_by_the_example_gate": 83,
+  "run_by_the_example_gate": 86,
   "not_run_by_any_gate": 0,
   "gates": [
    "tests/test_poc_scripts_run.py",

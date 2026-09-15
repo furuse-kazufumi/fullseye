@@ -1,4 +1,4 @@
-# MEASURE1D operator help — 14 ops in 3 categories
+# MEASURE1D operator help — 17 ops in 4 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/measure1d/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### model (6)
 
 [add_metrology_object_circle_measure](model/add_metrology_object_circle_measure.md) · [add_metrology_object_ellipse_measure](model/add_metrology_object_ellipse_measure.md) · [add_metrology_object_generic](model/add_metrology_object_generic.md) · [add_metrology_object_line_measure](model/add_metrology_object_line_measure.md) · [add_metrology_object_rectangle2_measure](model/add_metrology_object_rectangle2_measure.md) · [create_metrology_model](model/create_metrology_model.md)
+
+### scale (3)
+
+[mm_per_px_from_reference](scale/mm_per_px_from_reference.md) · [pixel_to_world](scale/pixel_to_world.md) · [table_px_to_mm](scale/table_px_to_mm.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

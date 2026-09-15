@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">table_px_to_mm — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.table_px_to_mm(table, mm_per_px, keys=(&#x27;width&#x27;, &#x27;radius&#x27;, &#x27;dist&#x27;, &#x27;rms&#x27;, &#x27;ra&#x27;, &#x27;rb&#x27;, &#x27;l1&#x27;, &#x27;l2&#x27;))</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.table_px_to_mm(table, mm_per_px, keys=(&#x27;width&#x27;, &#x27;radius&#x27;, &#x27;dist&#x27;, &#x27;rms&#x27;, &#x27;ra&#x27;, &#x27;rb&#x27;, &#x27;l1&#x27;, &#x27;l2&#x27;))</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;table_px_to_mm&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>計測結果の表(`<code style="color:#22d3bf">measure_pairs</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">apply_metrology_model</code>` の返り)に mm 列を足す。</p>
+<p>`<code style="color:#22d3bf">keys</code><code style="color:#22d3bf"> にある数値の列 </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf"> ごとに </code><code style="color:#22d3bf">k_mm = k * mm_per_px</code>` を <b>追加</b>する</p>
+<p>(px の列は残す。消すと来歴が切れる)。`<code style="color:#22d3bf">apply_metrology_model</code>` の各行は</p>
+<p>`<code style="color:#22d3bf">params</code><code style="color:#22d3bf"> dict の中に </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">l1</code>` … を持つので、そこも見る。</p>
+<p>入力は list[dict] か dict 1 個。<b>浅い複製</b>を返し、入力は変えない。</p>
+<p style="margin:2px 0 2px 12px">• 数値でない列・無い列は黙って飛ばす(換算できたかは `<code style="color:#22d3bf">k_mm</code>` の有無で分かる)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mm_per_px</code><code style="color:#22d3bf"> は有限で正(</code><code style="color:#22d3bf">mm_per_px_from_reference</code>` の値)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">rms</code>` は当てはめ残差 [px] なので mm にしておくと公差と直接比べられる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">scale</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:mm_per_px_from_reference">mm_per_px_from_reference</a> · <a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

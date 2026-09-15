@@ -67,6 +67,31 @@
 <p>照合系は先に <code style="color:#22d3bf">ops.set_match_template(t)</code> で探すテンプレート(<code style="color:#22d3bf">[0,1]</code> の 2 次元 float)を <b>同じスレッドで</b> 設定してから呼びます。未設定なら 0 スコアの配列を返します(fail-safe)。</p>
 <p style="margin:2px 0 2px 12px">• <b>ncc_locate</b> — 正規化相互相関(NCC)の最大位置を <code style="color:#22d3bf">[score, row, col]</code> で返す。<code style="color:#22d3bf">row, col</code> はテンプレート中心(*HALCON: find_ncc_model*)。<code style="color:#22d3bf">ops.set_match_template(t); fullseye.apply(img, &quot;ncc_locate&quot;, 0.5, 0.5)</code></p>
 <p style="margin:2px 0 2px 12px">• <b>shape_locate</b> — テンプレートを 30° 刻みで回して各回転の NCC 最大を取り、最良の <code style="color:#22d3bf">[score, row, col, angle]</code> を返す(回転不変)(*HALCON: find_shape_model*)。<code style="color:#22d3bf">ops.set_match_template(t); fullseye.apply(img, &quot;shape_locate&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">線状欠陥の op の使い分け(tophat / bothat / laplace_of_gauss / lines_gauss / measure_pairs)</h3>
+<p>文書だけを渡した AI は「傷の幅」で <code style="color:#22d3bf">lines_gauss</code> に辿り着いて止まった(幅を返さない op)。</p>
+<p>同じ「線状のもの」に見える 5 つの op は<b>返すものが違う</b>。合成の暗い傷(地 0.6、傷 0.1、</p>
+<p>幅 w、ぼけ σ=0.7 px)で実測した表(<code style="color:#22d3bf">examples/example_scratch_width.py</code>、2026-09-15):</p>
+<p>| op | 型 | 返すもの | 暗線 | 明線 | 幅 | 使いどころ |</p>
+<p>|---|---|---|---|---|---|---|</p>
+<p>| <code style="color:#22d3bf">tophat</code>(白トップハット) | image → image | 地より<b>明るい</b>細部だけ | <b>0</b>(応答なし) | 応答 | 返さない | 明るい傷・輝点を浮かせる前処理 |</p>
+<p>| <code style="color:#22d3bf">bothat</code>(黒トップハット) | image → image | 地より<b>暗い</b>細部だけ | 応答 | 0 | 返さない | 暗い傷・溝を浮かせる前処理 |</p>
+<p>| <code style="color:#22d3bf">laplace_of_gauss</code> | image → image | 2 階微分(0.5 がゼロ交差) | 0.92(正) | 負側 | 返さない(σ の目安だけ) | ブロブ・線の<b>スケール</b>の当たり、ゼロ交差の下地 |</p>
+<p>| <code style="color:#22d3bf">lines_gauss</code> | image → contour | Frangi 応答を二値化した<b>輪郭</b> | 3 輪郭 | 3 輪郭 | <b>返さない</b> | 「どこに線があるか」。極性は区別しない(HALCON の同名 op と違う) |</p>
+<p>| <code style="color:#22d3bf">measure_pairs</code>(measure1d 族) | image2d × measurehandle → table | 測定線上の極性の違うエッジ対と<b>幅 [px]</b> | 対 | 対 | <b>返す</b> | 線に直交する測定線を張ってから。極性の順序は問わない |</p>
+<p>幅の偏り(真値 w に対する <code style="color:#22d3bf">measure_pairs</code> の返り、σ は平滑化):</p>
+<p>| 真値 w [px] | w / σ_psf | σ=1.0 | σ=0.5 | 輝度欠損の積分 |</p>
+<p>|---|---|---|---|---|</p>
+<p>| 1.0 | 1.43 | 3.251(<b>+2.251</b>) | 2.671(+1.671) | 1.0000 |</p>
+<p>| 1.5 | 2.14 | 3.249(+1.749) | 2.667(+1.167) | 1.5000 |</p>
+<p>| 2.0 | 2.86 | 3.329(+1.329) | 2.745(+0.745) | 2.0000 |</p>
+<p>| 3.0 | 4.29 | 3.784(+0.784) | 3.348(+0.348) | 3.0000 |</p>
+<p>| 5.0 | 7.14 | 5.058(+0.058) | 5.005(+0.005) | 5.0000 |</p>
+<p>読み方: <b>検出と計測は別の op</b>。検出は <code style="color:#22d3bf">lines_gauss</code>(または極性を決めて <code style="color:#22d3bf">bothat</code> / <code style="color:#22d3bf">tophat</code>)、</p>
+<p>幅 ≳ 5 px は <code style="color:#22d3bf">measure_pairs</code>、それより細い幅は輝度欠損の積分(<code style="color:#22d3bf">poc_crack_width</code>)。</p>
+<p><code style="color:#22d3bf">measure_pairs</code> はどの幅でも「対が見つかった」と答える(失敗を返さない ——</p>
+<p><a style="color:#22d3bf" href="guide2d:subpixel_measuring"><code style="color:#22d3bf">measure1d/guides/subpixel_measuring.md</code> §2</a>)。</p>
+<p>mm にするのは校正値(<code style="color:#22d3bf">mm_per_px_from_reference</code>)を <code style="color:#22d3bf">table_px_to_mm</code> に通すだけ。</p>
+<p>用途からの導線は <a style="color:#22d3bf" href="op:scratch-detection-and-width"><code style="color:#22d3bf">docs/capabilities/scratch-detection-and-width.md</code></a>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_contour_measure から)</h3>
 <p>repo 直下で <code style="color:#22d3bf">py -3.11</code> で実行すると <code style="color:#22d3bf">PASS</code> を出力します(輪郭パイプライン・計測・照合の 3 系統を、既知の真値で確認する自己完結テスト)。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np

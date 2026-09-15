@@ -166,7 +166,14 @@ def measure_pos(image, measure, sigma=1.0, threshold=0.1, transition="all"):
 def measure_pairs(image, measure, sigma=1.0, threshold=0.1):
     """立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。
     ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、
-    ``first_point``/``second_point`` = (row, col)。"""
+    ``first_point``/``second_point`` = (row, col)。
+
+    **失敗と信頼度は返さない**(対が無ければ空 list、危険域でも対を返す)。
+    エッジ間距離 / PSF 幅が 3.09 を切ると幅は必ず大きい側へ偏り(2.06 で +2.43 px)、
+    1.58 まで「対が見つかった」と答え続ける —— 実測と見張り方は
+    ``docs/ops/measure1d/guides/subpixel_measuring.md`` の「落とし穴 2」。極性の
+    順序も問わない(暗い構造の幅が返ることがある。同 §4)。単位は px なので、
+    mm が要るときは ``table_px_to_mm`` / ``pixel_to_world`` に渡す。"""
     edges = measure_pos(image, measure, sigma, threshold)
     spacing = float(measure.get("spacing", 1.0))
     pairs = []
@@ -244,3 +251,111 @@ def translate_measure(measure, drow, dcol):
     if "center" in m:
         m["center"] = (m["center"][0] + drow, m["center"][1] + dcol)
     return m
+
+
+# --------------------------------------------------------------------------- #
+# 画素 → 実寸(2026-09-15)                                                      #
+# --------------------------------------------------------------------------- #
+# なぜ要るか: 文書だけを渡した AI が内径を測る導線を辿ると、``measure_pairs`` /
+# ``apply_metrology_model`` で **px のまま終わっていた**。``op_find`` で calib /
+# pixel_size / mm を当たっても該当が無く、4 層(fs. / fs.ledger. / fs.op. / op_find)
+# 全部で「画素を mm にする op」は 0 本だった(annotate_scale_bar は描くだけ、
+# sensor_diagonal_mm はセンサの物理寸法)。換算は 1 行の掛け算だが、**校正の取り方
+# (既知寸法の的から mm/px を出す)とセットで op にしておく**ことに意味がある ——
+# 「mm/px は必ず実測で決める」(``poc_crack_width`` の注記)を型連鎖の中に置ける。
+
+def _real_scalar(x, name, op):
+    """有限 float に落とす。文字列・bool・配列は受けない(表の列を取り違えた印なので)。"""
+    if isinstance(x, (str, bytes, bool)) or np.ndim(x) != 0:
+        raise ValueError("%s: %s must be a real scalar, got %r" % (op, name, type(x).__name__))
+    try:
+        v = float(x)
+    except (TypeError, ValueError):
+        raise ValueError("%s: %s must be a real scalar, got %r" % (op, name, type(x).__name__)) from None
+    if not np.isfinite(v):
+        raise ValueError("%s: %s must be finite, got %r" % (op, name, x))
+    return v
+
+
+def _finite_positive(x, name, op):
+    v = _real_scalar(x, name, op)
+    if v <= 0.0:
+        raise ValueError("%s: %s must be > 0, got %r" % (op, name, x))
+    return v
+
+
+def mm_per_px_from_reference(measured_px, known_mm):
+    """既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。
+
+    ``mm_per_px = known_mm / measured_px``。``measured_px`` は同じ光学系・同じ
+    作動距離で **この族の op が実際に測った**値(``measure_pairs`` の ``width``、
+    ``apply_metrology_model`` の ``radius`` の 2 倍など)を渡す。図面値や公称の
+    倍率から置くと、作動距離が 10 % ずれれば全部の寸法が 10 % ずれる。
+
+    - ``measured_px``, ``known_mm``: 有限で正のスカラ(それ以外は ``ValueError``)。
+    - 返り値: mm/px(float、``measurement`` 型)。``pixel_to_world`` /
+      ``table_px_to_mm`` に渡す。
+    - 透視の効く斜め撮影では場所ごとに mm/px が変わる。この op は**平面視・一定
+      倍率**の前提で 1 個の値を返すだけで、それを検証はしない。
+    """
+    op = "mm_per_px_from_reference"
+    px = _finite_positive(measured_px, "measured_px", op)
+    mm = _finite_positive(known_mm, "known_mm", op)
+    return mm / px
+
+
+def pixel_to_world(value_px, mm_per_px):
+    """画素で測った長さ 1 個を実寸 mm にする(``value_px * mm_per_px``)。
+
+    ``mm_per_px`` は ``mm_per_px_from_reference`` で**実測**したものを渡す。
+    ``value_px`` は 0 や負でもよい(差分・偏りをそのまま換算できる)が、有限で
+    あること。``mm_per_px`` は有限で正。どちらも違えば ``ValueError``。
+    返り値は float(``measurement`` 型)。面積は mm/px を 2 乗して自分で掛ける
+    (この op は長さだけ)。
+    """
+    op = "pixel_to_world"
+    v = _real_scalar(value_px, "value_px", op)
+    k = _finite_positive(mm_per_px, "mm_per_px", op)
+    return v * k
+
+
+#: ``table_px_to_mm`` が既定で換算する列。この族の結果表に現れる **長さ [px]** だけ
+#: (位置 ``pos`` / ``row`` / ``col`` / 角度 ``phi`` は換算しない)。
+PX_LENGTH_KEYS = ("width", "radius", "dist", "rms", "ra", "rb", "l1", "l2")
+
+
+def table_px_to_mm(table, mm_per_px, keys=PX_LENGTH_KEYS):
+    """計測結果の表(``measure_pairs`` / ``apply_metrology_model`` の返り)に mm 列を足す。
+
+    ``keys`` にある数値の列 ``k`` ごとに ``k_mm = k * mm_per_px`` を **追加**する
+    (px の列は残す。消すと来歴が切れる)。``apply_metrology_model`` の各行は
+    ``params`` dict の中に ``radius`` / ``l1`` … を持つので、そこも見る。
+    入力は list[dict] か dict 1 個。**浅い複製**を返し、入力は変えない。
+
+    - 数値でない列・無い列は黙って飛ばす(換算できたかは ``k_mm`` の有無で分かる)。
+    - ``mm_per_px`` は有限で正(``mm_per_px_from_reference`` の値)。
+    - ``rms`` は当てはめ残差 [px] なので mm にしておくと公差と直接比べられる。
+    """
+    op = "table_px_to_mm"
+    k = _finite_positive(mm_per_px, "mm_per_px", op)
+    keys = tuple(keys)
+
+    def _conv(d):
+        if not isinstance(d, dict):
+            raise ValueError("%s: each row must be a dict, got %r" % (op, type(d).__name__))
+        out = dict(d)
+        for key in keys:
+            v = d.get(key)
+            if isinstance(v, (int, float, np.integer, np.floating)) and not isinstance(v, bool):
+                out[key + "_mm"] = float(v) * k
+        p = d.get("params")
+        if isinstance(p, dict):
+            out["params"] = _conv(p)
+        return out
+
+    if isinstance(table, dict):
+        return _conv(table)
+    if isinstance(table, (list, tuple)):
+        return [_conv(d) for d in table]
+    raise ValueError("%s: table must be a dict or a list of dicts, got %r"
+                     % (op, type(table).__name__))

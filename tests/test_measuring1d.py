@@ -166,3 +166,80 @@ def test_non_2d_image_raises():
     ms = m1.gen_measure_rectangle2(20, 15, 0.0, 10, 3, (41, 41))
     with pytest.raises(ValueError):
         m1.measure_pos(np.zeros((41, 41, 3)), ms)
+
+
+# --------------------------------------------------------------------------- #
+# 画素 → mm(2026-09-15)。構造データ: 既知寸法の円板を描いて、校正 → 換算で往復する。
+# --------------------------------------------------------------------------- #
+def _disk(size, cy, cx, r, ss=8):
+    """被覆率で描いた暗い円板(真値 r [px])。"""
+    n = size * ss
+    yy = (np.arange(n) + 0.5) / ss - 0.5
+    inside = ((yy[:, None] - cy) ** 2 + (yy[None, :] - cx) ** 2) <= r * r
+    cov = inside.reshape(size, ss, size, ss).mean(axis=(1, 3))
+    return 0.8 - 0.6 * cov
+
+
+def test_pixel_to_world_round_trips_a_known_disk_through_calibration():
+    """基準の的(直径 10.00 mm を 200 px に写す)で mm/px を出し、被測定の円板の
+    直径が mm で真値に戻ること。校正と測定を同じ op 族で取る(公称倍率は使わない)。"""
+    import metrology as mt
+
+    mm_per_px_true = 0.05
+    ref_r_px, dut_r_px = 100.0, 61.3                      # 的 10.00 mm、被測定 6.13 mm
+    for r_px, name in ((ref_r_px, "ref"), (dut_r_px, "dut")):
+        img = _disk(int(2 * r_px + 40), r_px + 20.37, r_px + 20.11, r_px)
+        model = mt.create_metrology_model()
+        mt.add_metrology_object_circle_measure(model, r_px + 20.37, r_px + 20.11, r_px + 1.0, n=72)
+        res = mt.apply_metrology_model(model, img, measure_length=6.0, sigma=1.0, threshold=0.1)[0]
+        assert res["params"] is not None
+        if name == "ref":
+            k = m1.mm_per_px_from_reference(2.0 * res["params"]["radius"], 10.0)
+            assert abs(k - mm_per_px_true) < 1e-4 * mm_per_px_true * 10   # 0.1 %
+        else:
+            d_mm = m1.pixel_to_world(2.0 * res["params"]["radius"], k)
+            assert abs(d_mm - 2 * dut_r_px * mm_per_px_true) < 0.01       # 10 µm
+            rows = m1.table_px_to_mm([res], k)
+            assert abs(rows[0]["params"]["radius_mm"] - dut_r_px * mm_per_px_true) < 0.005
+            assert "rms_mm" in rows[0] and "radius" in rows[0]["params"]   # px 列は残る
+            assert "params" in res and "radius_mm" not in res["params"]    # 入力は変えない
+
+
+def test_table_px_to_mm_converts_measure_pairs_rows_and_skips_positions():
+    bar = np.clip(_area_step(41, 10.37) - _area_step(41, 17.82), 0, 1)
+    im = _img(bar)
+    ms = m1.gen_measure_rectangle2(20, 15, 0.0, 10, 3, im.shape)
+    pr = m1.table_px_to_mm(m1.measure_pairs(im, ms, sigma=1.0, threshold=0.05), 0.02)
+    assert len(pr) == 1
+    assert abs(pr[0]["width_mm"] - 7.45 * 0.02) < 0.1 * 0.02
+    assert "first_mm" not in pr[0] and "first_point_mm" not in pr[0]       # 位置は換算しない
+    single = m1.table_px_to_mm({"width": 5.0, "note": "x"}, 2.0)
+    assert single["width_mm"] == 10.0 and "note_mm" not in single
+
+
+@pytest.mark.parametrize("fn,args", [
+    (m1.mm_per_px_from_reference, (0.0, 10.0)),
+    (m1.mm_per_px_from_reference, (100.0, -1.0)),
+    (m1.mm_per_px_from_reference, (float("inf"), 1.0)),
+    (m1.pixel_to_world, (1.0, 0.0)),
+    (m1.pixel_to_world, (float("nan"), 1.0)),
+    (m1.pixel_to_world, ("12", 1.0)),
+    (m1.table_px_to_mm, ([{"width": 1.0}], 0.0)),
+    (m1.table_px_to_mm, ("not a table", 1.0)),
+    (m1.table_px_to_mm, ([1.0, 2.0], 1.0)),
+])
+def test_scale_ops_fail_closed(fn, args):
+    with pytest.raises(ValueError):
+        fn(*args)
+
+
+def test_scale_ops_are_in_the_ledger_and_reach_the_public_tiers():
+    """登録面: 台帳(scale カテゴリ)と fs.ledger の両方から届くこと。"""
+    import fullseye as fs
+    import opsmeasure1d as M
+
+    assert M.list_ops("scale") == ["mm_per_px_from_reference", "pixel_to_world", "table_px_to_mm"]
+    assert M.info("pixel_to_world")["in"] == ["measurement"]
+    assert M.info("table_px_to_mm")["out"] == "table"
+    assert fs.ledger.pixel_to_world(200.0, 0.05) == 10.0
+    assert any(h["op"] == "mm_per_px_from_reference" for h in fs.op_find("mm per px"))

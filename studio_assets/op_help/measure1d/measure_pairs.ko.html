@@ -7,6 +7,12 @@
 <p>立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。</p>
 <p>`<code style="color:#22d3bf">first</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">second</code><code style="color:#22d3bf"> = 各エッジの </code><code style="color:#22d3bf">pos</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">width</code>` = 幅 [px]、</p>
 <p>`<code style="color:#22d3bf">first_point</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">second_point</code>` = (row, col)。</p>
+<p><b>失敗と信頼度は返さない</b>(対が無ければ空 list、危険域でも対を返す)。</p>
+<p>エッジ間距離 / PSF 幅が 3.09 を切ると幅は必ず大きい側へ偏り(2.06 で +2.43 px)、</p>
+<p>1.58 まで「対が見つかった」と答え続ける —— 実測と見張り方は</p>
+<p>`<code style="color:#22d3bf">docs/ops/measure1d/guides/subpixel_measuring.md</code>` の「落とし穴 2」。極性の</p>
+<p>順序も問わない(暗い構造の幅が返ることがある。同 §4)。単位は px なので、</p>
+<p>mm が要るときは `<code style="color:#22d3bf">table_px_to_mm</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pixel_to_world</code>` に渡す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
@@ -14,10 +20,11 @@
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_radiograph_porosity">poc_weld_radiograph_porosity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_radiograph_porosity.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
-<p>—</p>
+<p><a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">caliper</code>)</h3>
 <p><a style="color:#22d3bf" href="opmeasure1d:gen_measure_rectangle2">gen_measure_rectangle2</a> · <a style="color:#22d3bf" href="opmeasure1d:gen_measure_arc">gen_measure_arc</a> · <a style="color:#22d3bf" href="opmeasure1d:translate_measure">translate_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:measure_pos">measure_pos</a> · <a style="color:#22d3bf" href="opmeasure1d:fuzzy_measure_pairing">fuzzy_measure_pairing</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

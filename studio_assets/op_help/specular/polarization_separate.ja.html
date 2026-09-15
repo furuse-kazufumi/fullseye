@@ -33,6 +33,23 @@
 <p>analyser can produce, and it usually means the frames and *angles_deg* are</p>
 <p>out of order. Raise it to clamp sensor-noise-level violations to zero as a</p>
 <p>deliberate, recorded choice.</p>
+<p><b>What value to raise it to (measured 2026-09-15).</b> Violations come from</p>
+<p>pixels whose *unpolarised* radiance sits at the noise floor, not from the</p>
+<p>noise level as such: uniform scenes with unpolarised fraction ≥ 0.2 show</p>
+<p>0.0000 violations at 0.5–5 % noise, and only a scene that is almost fully</p>
+<p>polarised (unpolarised fraction 0.05) fails (2 % noise → 0.0018, 5 % →</p>
+<p>0.13). On a gradient scene (unpolarised radiance 0 → 0.6, absolute noise</p>
+<p>σ, four angles) the violation fraction tracks the share of pixels with</p>
+<p>`<code style="color:#22d3bf">D &lt; 2σ</code>`: σ=0.005 → 0.0076 (2σ share 0.023), σ=0.01 → 0.015 (0.039),</p>
+<p>σ=0.02 → 0.025 (0.070), σ=0.05 → 0.058 (0.172). So estimate the share of</p>
+<p>pixels darker than 2–3 σ and set *max_violation_frac* to that; the full</p>
+<p>table is in `<code style="color:#22d3bf">docs/ops/specular/guides/specular_photometric.md</code>`. The</p>
+<p>frame-order claim above is weaker than it reads: with <b>equally spaced</b></p>
+<p>angles (0/45/90/135, 0/60/120, and also 0/30/90/135 and 0/20/45/90/160)</p>
+<p>every permutation of a noise-free sweep still fits a non-negative minimum</p>
+<p>(all permutations measured, violation 0.0000) — a wrong order looks like</p>
+<p>a correct sweep at another azimuth, so the order is metadata this check</p>
+<p>cannot recover.</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *images* is not an </code><code style="color:#22d3bf">(N, H, W)</code>` stack of at</p>
 <p>least 3 frames, or exceeds :data:<code style="color:#22d3bf">MAX_LIGHTS</code> / :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>;</p>
 <p>*angles_deg* does not match the frame count or leaves the fit</p>

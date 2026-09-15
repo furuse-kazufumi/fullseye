@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">サブピクセル計測(測定線と計測モデル) — 使い方ガイド</h2>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
-<p><b>画像のどこを、どの向きに見るかを先に決めてから測る</b>層です。14 op / 3 カテゴリ:</p>
+<p><b>画像のどこを、どの向きに見るかを先に決めてから測る</b>層です。17 op / 4 カテゴリ:</p>
 <p style="margin:2px 0 2px 12px">• <b>caliper(6)</b> — <code style="color:#22d3bf">gen_measure_rectangle2</code> / <code style="color:#22d3bf">gen_measure_arc</code> /</p>
 <p><code style="color:#22d3bf">translate_measure</code> / <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code> /</p>
 <p><code style="color:#22d3bf">fuzzy_measure_pairing</code>: 測定線に沿ってエッジをサブピクセルで取り、対にして幅を出す。</p>
@@ -9,6 +9,14 @@
 <p>直線・円・矩形・楕円をモデルに登録する。</p>
 <p style="margin:2px 0 2px 12px">• <b>apply(2)</b> — <code style="color:#22d3bf">align_metrology_model</code> / <code style="color:#22d3bf">apply_metrology_model</code>:</p>
 <p>モデルを画像へ当てて、当てはめ結果をまとめて返す。</p>
+<p style="margin:2px 0 2px 12px">• <b>scale(3、2026-09-15)</b> — <code style="color:#22d3bf">mm_per_px_from_reference</code> / <code style="color:#22d3bf">pixel_to_world</code> /</p>
+<p><code style="color:#22d3bf">table_px_to_mm</code>: 画素を mm にする。文書だけを渡した AI の導線が <b>px で止まり</b>、</p>
+<p>4 層(<code style="color:#22d3bf">fs.</code> / <code style="color:#22d3bf">fs.ledger.</code> / <code style="color:#22d3bf">fs.op.</code> / <code style="color:#22d3bf">op_find</code>)のどこにも換算 op が無かったので足した。</p>
+<p>校正は「既知寸法の的を<b>同じ op で</b>測る」に固定する(公称倍率は使わない)。</p>
+<p>用途からの導線(推奨パイプライン / 代替 / 限界 / 実寸校正)は</p>
+<p><a style="color:#22d3bf" href="op:subpixel-2d-metrology"><code style="color:#22d3bf">docs/capabilities/subpixel-2d-metrology.md</code></a>、</p>
+<p><a style="color:#22d3bf" href="op:inner-diameter-in-mm"><code style="color:#22d3bf">inner-diameter-in-mm.md</code></a>、</p>
+<p><a style="color:#22d3bf" href="op:scratch-detection-and-width"><code style="color:#22d3bf">scratch-detection-and-width.md</code></a>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ台帳に載せたか —— 見えていなかったから、ただし測ってから</h3>
 <p>2026-09-06、この 2 モジュールが<b>公開経路のどこからも呼べない</b>ことが分かりました</p>
 <p>(<code style="color:#22d3bf">fs.</code> / <code style="color:#22d3bf">fs.ledger.</code> / <code style="color:#22d3bf">fs.op.</code> のいずれからも <b>0/14</b>)。</p>
@@ -51,7 +59,9 @@ print(pairs[0][&quot;width&quot;])       # 40.0000</pre>
 <p>| 2.06 | <b>+2.43 px</b> |</p>
 <p>| 1.58 | それでも「対が見つかった」と 100 % 答える |</p>
 <p>対が互いを押し広げるので<b>必ず大きい側</b>へ偏ります。<code style="color:#22d3bf">measure_pairs</code> は</p>
-<p>信頼度を返さないので、危険域かどうかは呼ぶ側が見張るしかありません。</p>
+<p>信頼度を返さないので、危険域かどうかは呼ぶ側が見張るしかありません</p>
+<p>(op ノートからもここへ辿れるよう docstring に書いてあります)。細い傷での実測</p>
+<p>(幅 1 px で +2.25 px)は <code style="color:#22d3bf">2d/guides/gallery2d_contour_measure.md</code> の使い分け表。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">3. 縁の定義を宣言しないと 16 px 動く</h3>
 <p>面取りや丸みのある実際の縁では「どこがエッジか」が定義依存です。実測:</p>
 <p>| 縁の形 | 測定値 |</p>
@@ -77,6 +87,33 @@ print(pairs[0][&quot;width&quot;])       # 40.0000</pre>
 <p>1 点を 1.5 px 外へ動かすだけで幅が <b>+1.50 px</b> 動きます(最小二乗なら</p>
 <p>0.050 px)。ただし rms が 0.022 → 0.734 に上がるので、**rms を必ずゲートに</p>
 <p>してください**。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">円計測の <code style="color:#22d3bf">n</code>(円周の標本数)の目安 — 実測</h3>
+<p><code style="color:#22d3bf">add_metrology_object_circle_measure(..., n=40)</code> の既定 40 に根拠が書かれていなかったので、</p>
+<p>被覆率で描いた円板(ぼけ σ=1 px)で測りました(2026-09-15)。</p>
+<p><b>偏りは n に依らない</b>(雑音なし、半径の偏り [px]):</p>
+<p>| R [px] | n=6 | n=8 | n=16 | n=40 | n=120 | n=240 |</p>
+<p>|---|---|---|---|---|---|---|</p>
+<p>| 8 | −0.098 | −0.087 | −0.088 | −0.088 | −0.090 | −0.090 |</p>
+<p>| 32 | −0.027 | −0.015 | −0.020 | −0.020 | −0.022 | −0.022 |</p>
+<p>| 128 | −0.008 | −0.008 | −0.004 | −0.008 | −0.006 | −0.006 |</p>
+<p>(偏り自体は縁の丸みで −σ²/ρ の側に出る光学の偏り。n を増やしても消えない。)</p>
+<p><b>効くのは散らばりで、円周の標本間隔 2πR/n が約 3 px を切ると頭打ち</b>(雑音 σ=0.03、100 試行、半径の std [px]。std·√n が一定なら標本が独立):</p>
+<p>| R=16: n | 8 | 16 | 24 | 40 | 72 | 120 | 240 | 480 |</p>
+<p>|---|---|---|---|---|---|---|---|---|</p>
+<p>| 間隔 [px] | 12.6 | 6.3 | 4.2 | 2.5 | 1.4 | 0.84 | 0.42 | 0.21 |</p>
+<p>| std | 0.043 | 0.029 | 0.024 | 0.017 | 0.017 | 0.016 | 0.016 | 0.015 |</p>
+<p>| std·√n | 0.12 | 0.11 | 0.12 | 0.11 | <b>0.14</b> | 0.17 | 0.25 | 0.33 |</p>
+<p>| R=64: n | 8 | 16 | 24 | 40 | 72 | 120 | 240 | 480 |</p>
+<p>|---|---|---|---|---|---|---|---|---|</p>
+<p>| 間隔 [px] | 50 | 25 | 17 | 10 | 5.6 | 3.4 | 1.7 | 0.84 |</p>
+<p>| std | 0.042 | 0.032 | 0.022 | 0.019 | 0.013 | 0.012 | 0.008 | 0.008 |</p>
+<p>| std·√n | 0.12 | 0.13 | 0.11 | 0.12 | 0.11 | 0.14 | 0.12 | <b>0.18</b> |</p>
+<p>目安: <b>n ≈ 2πR / 3</b>(R=20 で 40 = 既定、R=64 で 130、R=128 で 270)。それ以上は</p>
+<p>時間が増えるだけ(n=1000 で 22 ms)。ほかに実測した 2 つ:</p>
+<p style="margin:2px 0 2px 12px">• 参照半径のずれは <code style="color:#22d3bf">measure_length</code>(既定 ±6 px)が上限。+5.5 px は通り、+6.5 px で <code style="color:#22d3bf">params=None</code>。</p>
+<p style="margin:2px 0 2px 12px">• 円周の 25 % が欠けると n を増やしても偏りは直らない(−0.005 → −0.020 px)。欠けた側で</p>
+<p>縁が見つからないだけなら <code style="color:#22d3bf">rms</code> は<b>下がり</b>(0.051 → 0.018)、境界で偽の縁を拾えば跳ねる ——</p>
+<p>rms だけでは見えないので <code style="color:#22d3bf">edge_points</code> の本数も門にする(<code style="color:#22d3bf">examples/example_inner_diameter_mm.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">窓の置き方が精度より効く</h3>
 <p>外形幅を測る列がボルト穴を踏むと 220.45 → <b>186.75</b>(−33.75 px)。</p>
 <p>エラーも警告も出ません。サブピクセルの議論より前に、測定線がどこを通るかです。</p>

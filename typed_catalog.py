@@ -258,6 +258,11 @@ OP_PARAM_HINTS = {
     ("add_metrology_object_ellipse_measure", "rb"): lambda rng: 6.0,
     ("add_metrology_object_generic", "otype"): lambda rng: "circle",
     ("add_metrology_object_generic", "params"): lambda rng: (16.0, 16.0, 8.0),
+    # 2026-09-15: 画素 → mm。第 1 引数は measurement / table の種で束縛されるが、
+    # 校正値には既定が無い(置くと「公称倍率で換算する」事故そのものになる)。
+    ("mm_per_px_from_reference", "known_mm"): lambda rng: 10.0,
+    ("pixel_to_world", "mm_per_px"): lambda rng: 0.05,
+    ("table_px_to_mm", "mm_per_px"): lambda rng: 0.05,
     ("surface_synth_psd", "n"): lambda rng: 64,
     ("surface_synth_psd", "dx"): lambda rng: 1.0,
     ("surface_synth_psd", "hurst"): lambda rng: 0.8,

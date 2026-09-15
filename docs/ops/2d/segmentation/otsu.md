@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [ct_inspection, gallery2d_segmentation, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify]
+examples: [ct_inspection, example_inner_diameter_mm, gallery2d_segmentation, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -58,6 +58,7 @@ otsu 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [ct_inspection](../../../../examples/ct_inspection.py) — `py -3.11 examples/ct_inspection.py`
+- [example_inner_diameter_mm](../../../../examples/example_inner_diameter_mm.py) — `py -3.11 examples/example_inner_diameter_mm.py`
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [poc_bone_trabecular_thickness](../../../../examples/poc_bone_trabecular_thickness.py) — `py -3.11 examples/poc_bone_trabecular_thickness.py`
 - [poc_colocalization_crosstalk](../../../../examples/poc_colocalization_crosstalk.py) — `py -3.11 examples/poc_colocalization_crosstalk.py`

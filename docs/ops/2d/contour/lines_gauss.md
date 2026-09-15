@@ -5,7 +5,7 @@ category: contour
 in: image
 out: contour
 halcon: lines_gauss
-examples: [gallery2d_contour_measure, poc_solar_el_inspection, poc_weld_bead_scan_angle]
+examples: [example_scratch_width, gallery2d_contour_measure, poc_solar_el_inspection, poc_weld_bead_scan_angle]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -44,6 +44,16 @@ version: 0.2.0  # fullseye lib version this note was generated for
 ``a`` がリッジ検出のしきい値を振る。``b`` は未使用。skimage が無い環境
 ではこの分岐は呼べない。
 
+**極性も返さない**(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と
+暗い地の明線(0.6 の地に 1.0)を同じ ``a`` で通すと、どちらも輪郭が出て
+(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが
+要るなら ``bothat``(白トップハット ``tophat`` は暗線に 0 を返す)、明線だけなら
+``tophat`` を先に掛ける。**幅を測る道は別の op**: 線に直交する測定線を
+``gen_measure_rectangle2`` で張って ``measure_pairs``(measure1d 族)で両縁を取る。
+ただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 < 3.09 で大きい側に
+偏る)なので、画素以下の幅は輝度欠損の積分で測る(``examples/example_scratch_width.py``、
+``poc_crack_width``)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_contour_measure ファミリ ガイド](../guides/gallery2d_contour_measure.md)
@@ -64,6 +74,7 @@ lines_gauss 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [example_scratch_width](../../../../examples/example_scratch_width.py) — `py -3.11 examples/example_scratch_width.py`
 - [gallery2d_contour_measure](../../../../examples/gallery2d_contour_measure.py) — `py -3.11 examples/gallery2d_contour_measure.py`
 - [poc_solar_el_inspection](../../../../examples/poc_solar_el_inspection.py) — `py -3.11 examples/poc_solar_el_inspection.py`
 - [poc_weld_bead_scan_angle](../../../../examples/poc_weld_bead_scan_angle.py) — `py -3.11 examples/poc_weld_bead_scan_angle.py`

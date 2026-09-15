@@ -16,6 +16,15 @@
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がリッジ検出のしきい値を振る。</code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境</p>
 <p>ではこの分岐は呼べない。</p>
+<p><b>極性も返さない</b>(2026-09-15 実測): 明るい地の暗線(0.6 の地に 0.1、幅 2 px)と</p>
+<p>暗い地の明線(0.6 の地に 1.0)を同じ `<code style="color:#22d3bf">a</code>` で通すと、どちらも輪郭が出て</p>
+<p>(a=0.5 で 3 本 / 280 点と 3 本 / 276 点)返り値からは区別できない。暗線だけが</p>
+<p>要るなら `<code style="color:#22d3bf">bothat</code><code style="color:#22d3bf">(白トップハット </code><code style="color:#22d3bf">tophat</code>` は暗線に 0 を返す)、明線だけなら</p>
+<p>`<code style="color:#22d3bf">tophat</code>` を先に掛ける。<b>幅を測る道は別の op</b>: 線に直交する測定線を</p>
+<p>`<code style="color:#22d3bf">gen_measure_rectangle2</code><code style="color:#22d3bf"> で張って </code><code style="color:#22d3bf">measure_pairs</code>`(measure1d 族)で両縁を取る。</p>
+<p>ただし幅 1〜3 px はその op の危険域(エッジ間距離 / PSF 幅 &lt; 3.09 で大きい側に</p>
+<p>偏る)なので、画素以下の幅は輝度欠損の積分で測る(`<code style="color:#22d3bf">examples/example_scratch_width.py</code>`、</p>
+<p>`<code style="color:#22d3bf">poc_crack_width</code>`)。使い分けの表は 2d/guides/gallery2d_contour_measure.md。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
@@ -26,6 +35,7 @@
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">lines_gauss 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:lines_gauss%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:lines_gauss%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_contour_measure">gallery2d_contour_measure</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_contour_measure.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solar_el_inspection">poc_solar_el_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solar_el_inspection.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_bead_scan_angle">poc_weld_bead_scan_angle</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_bead_scan_angle.py</code></p>

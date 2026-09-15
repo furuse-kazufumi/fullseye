@@ -4,7 +4,7 @@ dim: optics
 category: interface
 in: signal
 out: signal
-examples: [glass_and_mirror_optics]
+examples: [example_polarization_metal, glass_and_mirror_optics]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -52,6 +52,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [example_polarization_metal](../../../../examples/example_polarization_metal.py) — `py -3.11 examples/example_polarization_metal.py`
 - [glass_and_mirror_optics](../../../../examples/glass_and_mirror_optics.py) — `py -3.11 examples/glass_and_mirror_optics.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)

@@ -4,7 +4,7 @@ dim: measure1d
 category: model
 in: metrologymodel
 out: scalar
-examples: [poc_dimensional_inspection]
+examples: [example_inner_diameter_mm, poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -33,6 +33,20 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 穴径・ピン径の検査、円形部品の中心出しに使う。
 
+**``n`` の目安(2026-09-15 実測、ぼけ σ=1 px の合成円板)**: 偏りは n に依らない
+(R=8〜128 px、n=6〜240 で ±0.005 px 以内で一定。偏り自体は縁の丸みで −0.09 →
+−0.006 px と R に依る)。効くのは散らばりで、雑音 σ=0.03 のとき std·√n は
+円周の標本間隔 2πR/n が **約 3 px 以上**なら一定(= 標本が独立、std ∝ 1/√n)、
+それより密にしても下がらない(R=16: n=40 で 0.0174、n=240 で 0.0164 px)。
+つまり ``n ≈ 2πR / 3``(R=20 で 40 = 既定、R=64 で 130、R=128 で 270)より
+多くしても時間が増えるだけ(n=1000 で 22 ms)。円周の 25 % が欠けていると
+n を増やしても偏りは直らない(−0.005 → −0.020 px)。欠けた側で縁が見つからない
+だけなら ``rms`` はむしろ下がり(0.051 → 0.018)、欠けの境界で偽の縁を拾えば
+rms が跳ねる —— **欠けは rms だけでは見えない**ので ``edge_points`` の本数も
+門にする(``examples/example_inner_diameter_mm.py``)。参照半径のずれは
+``measure_length``(既定 ±6 px)が上限で、+5.5 px は通り +6.5 px で
+``params=None``。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)
@@ -45,6 +59,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [example_inner_diameter_mm](../../../../examples/example_inner_diameter_mm.py) — `py -3.11 examples/example_inner_diameter_mm.py`
 - [poc_dimensional_inspection](../../../../examples/poc_dimensional_inspection.py) — `py -3.11 examples/poc_dimensional_inspection.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

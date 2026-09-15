@@ -30,10 +30,18 @@
 | [色を測る(XYZ / Lab / 色差)](capabilities/colour-and-delta-e.md) | Measure colour (XYZ / Lab / colour difference) | 光と色 | `verified-synthetic` | 4/4 | `poc_white_balance` synthetic → tests/test_poc_scripts_run.py<br>`poc_pigment_unmixing` synthetic → tests/test_poc_scripts_run.py |
 | [結果を人が読める図にする](capabilities/figures-and-annotation.md) | Turn results into figures people can read | 見せる | `verified-synthetic` | 3/3 | `poc_colormap_readability` synthetic → tests/test_poc_scripts_run.py<br>`poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py |
 | [地球規模の座標に載せる(ECEF と測地座標)](capabilities/geodetic-frames.md) | Put measurements on the Earth (ECEF and geodetic) | 測る | `verified-synthetic` | 2/2 | `poc_geodetic_height_frames` synthetic → tests/test_poc_scripts_run.py<br>`dem_geodesy_tour` synthetic → tests/test_example_scripts_run.py |
+| [円形部品の内径を mm まで測る](capabilities/inner-diameter-in-mm.md) | Inner diameter of a round part, all the way to millimetres | 測る | `validated-public-real-data` | 4/4 | `example_inner_diameter_mm` synthetic → tests/test_example_scripts_run.py<br>`poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_real_coin_metrology` real → tests/test_poc_scripts_run.py |
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | Draw lines and regions without knowing the background colour | 見せる | `verified-synthetic` | 3/3 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
+| [OCR の前処理(傾き補正・局所 2 値化・行の切り出し)](capabilities/ocr-preprocessing.md) | OCR pre-processing (deskew, local binarisation, line extraction) | 見つける | `verified-synthetic` | 2/4 | `gallery2d_segmentation` synthetic → tests/test_example_scripts_run.py<br>`poc_matrix_code_reading` synthetic → tests/test_poc_scripts_run.py<br>`gallery2d_region` synthetic → tests/test_example_scripts_run.py |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | Compute reflection, refraction and interference | 光と色 | `verified-synthetic` | 4/4 | `glass_and_mirror_optics` synthetic → tests/test_example_scripts_run.py<br>`appearance_structural_colour` synthetic → tests/test_example_scripts_run.py |
+| [1-D 信号の周期欠陥を見つける](capabilities/periodic-defects-in-1d-signals.md) | Periodic defects in a 1-D signal | 波と信号 | `verified-synthetic` | 5/5 | `poc_web_roll_periodicity` synthetic → tests/test_poc_scripts_run.py<br>`poc_rail_corrugation` synthetic → tests/test_poc_scripts_run.py<br>`poc_bearing_diagnosis` synthetic → tests/test_poc_scripts_run.py |
+| [3-D 点群から平面度を出す](capabilities/planarity-from-point-cloud.md) | Flatness of a surface from a 3-D point cloud | 測る | `verified-synthetic` | 4/4 | `geometry_metrology` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py<br>`poc_scan_to_bim_asbuilt` synthetic → tests/test_poc_scripts_run.py |
 | [小さな点状の目標を見つけて、副画素で位置を出す](capabilities/point-target-detection.md) | Find small point-like targets and locate them below the pixel | 見つける | `verified-synthetic` | 4/4 | `poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_astro_photometry` synthetic → tests/test_poc_scripts_run.py |
+| [偏光 4 方向で鏡面反射を除く(誘電体と金属で分ける)](capabilities/polarisation-specular-removal.md) | Remove specular reflection from a four-angle polariser sweep (dielectrics vs metals) | 光と色 | `verified-synthetic` | 4/4 | `example_polarization_metal` synthetic → tests/test_example_scripts_run.py<br>`poc_polarization_specular` synthetic → tests/test_poc_scripts_run.py<br>`specular_photometric` synthetic → tests/test_example_scripts_run.py |
+| [微細スクラッチを見つけて、幅を測る](capabilities/scratch-detection-and-width.md) | Detect fine scratches and measure their width | 測る | `verified-synthetic` | 3/4 | `example_scratch_width` synthetic → tests/test_example_scripts_run.py<br>`poc_crack_width` synthetic → tests/test_poc_scripts_run.py<br>`poc_solar_el_inspection` synthetic → tests/test_poc_scripts_run.py |
 | [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md) | Measure dimensions from an image, below the pixel | 測る | `verified-synthetic` | 4/4 | `poc_dimensional_inspection` synthetic → tests/test_poc_scripts_run.py<br>`poc_screw_thread_metrology` synthetic → tests/test_poc_scripts_run.py |
+| [表面の凹凸欠陥を、照明の設計から検出まで](capabilities/surface-defects-with-lighting.md) | Surface relief defects, from lighting design to detection | 見つける | `verified-synthetic` | 5/5 | `illumination_design_demo` synthetic → tests/test_example_scripts_run.py<br>`photometric_stereo` synthetic → examples3d.py (suite runs a smoke subset)<br>`poc_bump_coplanarity` synthetic → tests/test_poc_scripts_run.py |
+| [位置決め(テンプレート照合で測定線を追従させる)](capabilities/template-alignment.md) | Locate a part by template matching and move the measurement model with it | 見つける | `verified-synthetic` | 4/4 | `poc_template_tracking` synthetic → tests/test_poc_scripts_run.py<br>`gallery2d_contour_measure` synthetic → tests/test_example_scripts_run.py<br>`poc_search_sweep_width` synthetic → tests/test_poc_scripts_run.py |
 | [地形の傾き・水の流れ・見通しを測る](capabilities/terrain-and-visibility.md) | Slope, flow and line of sight on a terrain | 測る | `verified-synthetic` | 4/4 | `poc_dem_terrain` synthetic → tests/test_poc_scripts_run.py<br>`dem_terrain_analysis_tour` synthetic → tests/test_example_scripts_run.py |
 | [画像の上に、文字と表を置きたい場所へ置く](capabilities/text-and-tables-on-images.md) | Put text and tables exactly where you want them on an image | 見せる | `verified-synthetic` | 6/6 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [投影から断面を再構成する(CT)](capabilities/tomography-reconstruction.md) | Reconstruct slices from projections (CT) | 形にする | `verified-synthetic` | 3/4 | `poc_ct_fidelity` synthetic → tests/test_poc_scripts_run.py<br>`poc_ct_void_morphology` synthetic → tests/test_poc_scripts_run.py |
@@ -45,9 +53,9 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 204 |
+| 2-D 台帳の例 | 207 |
 | `tests/test_poc_scripts_run.py` が走らせる | 121 |
-| `tests/test_example_scripts_run.py` が走らせる | 83 |
+| `tests/test_example_scripts_run.py` が走らせる | 86 |
 | **どの門も走らせていない** | **0** |
 
 走らせない門は、実行時の壊れに盲目です。2026-09-06 に PoC 側で穴が見つかり

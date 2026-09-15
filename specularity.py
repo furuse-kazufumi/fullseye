@@ -1631,6 +1631,24 @@ def polarization_separate(images, angles_deg=_DEFAULT_ANGLES,
     out of order. Raise it to clamp sensor-noise-level violations to zero as a
     deliberate, recorded choice.
 
+    **What value to raise it to (measured 2026-09-15).** Violations come from
+    pixels whose *unpolarised* radiance sits at the noise floor, not from the
+    noise level as such: uniform scenes with unpolarised fraction ≥ 0.2 show
+    0.0000 violations at 0.5–5 % noise, and only a scene that is almost fully
+    polarised (unpolarised fraction 0.05) fails (2 % noise → 0.0018, 5 % →
+    0.13). On a gradient scene (unpolarised radiance 0 → 0.6, absolute noise
+    σ, four angles) the violation fraction tracks the share of pixels with
+    ``D < 2σ``: σ=0.005 → 0.0076 (2σ share 0.023), σ=0.01 → 0.015 (0.039),
+    σ=0.02 → 0.025 (0.070), σ=0.05 → 0.058 (0.172). So estimate the share of
+    pixels darker than 2–3 σ and set *max_violation_frac* to that; the full
+    table is in ``docs/ops/specular/guides/specular_photometric.md``. The
+    frame-order claim above is weaker than it reads: with **equally spaced**
+    angles (0/45/90/135, 0/60/120, and also 0/30/90/135 and 0/20/45/90/160)
+    every permutation of a noise-free sweep still fits a non-negative minimum
+    (all permutations measured, violation 0.0000) — a wrong order looks like
+    a correct sweep at another azimuth, so the order is metadata this check
+    cannot recover.
+
     **Raises** ``ValueError``: *images* is not an ``(N, H, W)`` stack of at
     least 3 frames, or exceeds :data:`MAX_LIGHTS` / :data:`MAX_STACK_ELEMENTS`;
     *angles_deg* does not match the frame count or leaves the fit

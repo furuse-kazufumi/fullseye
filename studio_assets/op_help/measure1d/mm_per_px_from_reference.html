@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mm_per_px_from_reference — MEASURE1D <code style="color:#22d3bf">scale</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mm_per_px_from_reference(measured_px, known_mm)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import measuring1d; measuring1d.mm_per_px_from_reference(measured_px, known_mm)</code>、台帳から引くなら <code style="color:#22d3bf">opsmeasure1d.get(&quot;mm_per_px_from_reference&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>既知寸法の的(スケールバー・基準穴・ゲージ)から画素ピッチ mm/px を出す(校正)。</p>
+<p>`<code style="color:#22d3bf">mm_per_px = known_mm / measured_px</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">measured_px</code>` は同じ光学系・同じ</p>
+<p>作動距離で <b>この族の op が実際に測った</b>値(`<code style="color:#22d3bf">measure_pairs</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">width</code>`、</p>
+<p>`<code style="color:#22d3bf">apply_metrology_model</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">radius</code>` の 2 倍など)を渡す。図面値や公称の</p>
+<p>倍率から置くと、作動距離が 10 % ずれれば全部の寸法が 10 % ずれる。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">measured_px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">known_mm</code><code style="color:#22d3bf">: 有限で正のスカラ(それ以外は </code><code style="color:#22d3bf">ValueError</code>`)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: mm/px(float、`<code style="color:#22d3bf">measurement</code><code style="color:#22d3bf"> 型)。</code><code style="color:#22d3bf">pixel_to_world</code>` /</p>
+<p>`<code style="color:#22d3bf">table_px_to_mm</code>` に渡す。</p>
+<p style="margin:2px 0 2px 12px">• 透視の効く斜め撮影では場所ごとに mm/px が変わる。この op は**平面視・一定</p>
+<p>倍率**の前提で 1 個の値を返すだけで、それを検証はしない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_scratch_width">example_scratch_width</a> — <code style="color:#22d3bf">py -3.11 examples/example_scratch_width.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">scale</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:pixel_to_world">pixel_to_world</a> · <a style="color:#22d3bf" href="opmeasure1d:table_px_to_mm">table_px_to_mm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

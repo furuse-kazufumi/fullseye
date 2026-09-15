@@ -15,6 +15,19 @@
 <p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。`<code style="color:#22d3bf">apply</code><code style="color:#22d3bf"> 結果の </code><code style="color:#22d3bf">params</code>` は</p>
 <p>`<code style="color:#22d3bf">row / col / radius</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rms</code>` は円からの半径方向残差 [px]。</p>
 <p>穴径・ピン径の検査、円形部品の中心出しに使う。</p>
+<p>**`<code style="color:#22d3bf">n</code>` の目安(2026-09-15 実測、ぼけ σ=1 px の合成円板)**: 偏りは n に依らない</p>
+<p>(R=8〜128 px、n=6〜240 で ±0.005 px 以内で一定。偏り自体は縁の丸みで −0.09 →</p>
+<p>−0.006 px と R に依る)。効くのは散らばりで、雑音 σ=0.03 のとき std·√n は</p>
+<p>円周の標本間隔 2πR/n が <b>約 3 px 以上</b>なら一定(= 標本が独立、std ∝ 1/√n)、</p>
+<p>それより密にしても下がらない(R=16: n=40 で 0.0174、n=240 で 0.0164 px)。</p>
+<p>つまり `<code style="color:#22d3bf">n ≈ 2πR / 3</code>`(R=20 で 40 = 既定、R=64 で 130、R=128 で 270)より</p>
+<p>多くしても時間が増えるだけ(n=1000 で 22 ms)。円周の 25 % が欠けていると</p>
+<p>n を増やしても偏りは直らない(−0.005 → −0.020 px)。欠けた側で縁が見つからない</p>
+<p>だけなら `<code style="color:#22d3bf">rms</code>` はむしろ下がり(0.051 → 0.018)、欠けの境界で偽の縁を拾えば</p>
+<p>rms が跳ねる —— <b>欠けは rms だけでは見えない</b>ので `<code style="color:#22d3bf">edge_points</code>` の本数も</p>
+<p>門にする(`<code style="color:#22d3bf">examples/example_inner_diameter_mm.py</code>`)。参照半径のずれは</p>
+<p>`<code style="color:#22d3bf">measure_length</code>`(既定 ±6 px)が上限で、+5.5 px は通り +6.5 px で</p>
+<p>`<code style="color:#22d3bf">params=None</code>`。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -22,6 +35,7 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:example_inner_diameter_mm">example_inner_diameter_mm</a> — <code style="color:#22d3bf">py -3.11 examples/example_inner_diameter_mm.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">scalar</code> を入力に取れる)</h3>
 <p>—</p>

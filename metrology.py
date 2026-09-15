@@ -79,6 +79,20 @@ def add_metrology_object_circle_measure(model, row, col, radius, n: int = 40) ->
       ``row / col / radius``、``rms`` は円からの半径方向残差 [px]。
 
     穴径・ピン径の検査、円形部品の中心出しに使う。
+
+    **``n`` の目安(2026-09-15 実測、ぼけ σ=1 px の合成円板)**: 偏りは n に依らない
+    (R=8〜128 px、n=6〜240 で ±0.005 px 以内で一定。偏り自体は縁の丸みで −0.09 →
+    −0.006 px と R に依る)。効くのは散らばりで、雑音 σ=0.03 のとき std·√n は
+    円周の標本間隔 2πR/n が **約 3 px 以上**なら一定(= 標本が独立、std ∝ 1/√n)、
+    それより密にしても下がらない(R=16: n=40 で 0.0174、n=240 で 0.0164 px)。
+    つまり ``n ≈ 2πR / 3``(R=20 で 40 = 既定、R=64 で 130、R=128 で 270)より
+    多くしても時間が増えるだけ(n=1000 で 22 ms)。円周の 25 % が欠けていると
+    n を増やしても偏りは直らない(−0.005 → −0.020 px)。欠けた側で縁が見つからない
+    だけなら ``rms`` はむしろ下がり(0.051 → 0.018)、欠けの境界で偽の縁を拾えば
+    rms が跳ねる —— **欠けは rms だけでは見えない**ので ``edge_points`` の本数も
+    門にする(``examples/example_inner_diameter_mm.py``)。参照半径のずれは
+    ``measure_length``(既定 ±6 px)が上限で、+5.5 px は通り +6.5 px で
+    ``params=None``。
     """
     model["objects"].append({"type": "circle", "p": (row, col, radius), "n": n})
     return len(model["objects"]) - 1

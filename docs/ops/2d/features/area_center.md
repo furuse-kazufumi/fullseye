@@ -5,7 +5,7 @@ category: features
 in: region
 out: match
 halcon: area_center
-examples: [gallery2d_features]
+examples: [example_inner_diameter_mm, gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.2.0  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ area_center 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [example_inner_diameter_mm](../../../../examples/example_inner_diameter_mm.py) — `py -3.11 examples/example_inner_diameter_mm.py`
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 
 ## 型が繋がる次の op(`match` を入力に取れる)
