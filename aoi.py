@@ -412,9 +412,15 @@ def register_image(reference, moving, upsample=20, method="phase", window="hann"
     base = float(np.sqrt(np.mean(ra * ra)))
     residual = float(np.sqrt(np.mean((ra - rb) ** 2)) / base) if base > 1e-15 else float("inf")
 
-    # 正規化した山の高さ(相関係数と同じ尺度)。method によらず比べられるようにする。
-    norm = float(np.sqrt(np.mean(a * a) * np.mean(b * b))) * a.size
-    peak_norm = float(peak_val / norm) if norm > 1e-15 else 0.0
+    # 山の高さを ``[0, 1]`` の尺度へ。**method で正規化が違う** —— 位相相関は振幅を
+    # 捨てているので山の高さがそのまま「どれだけの周波数が同じずれに賛成したか」に
+    # なり、素の相互相関は ``sum(a^2) sum(b^2)`` で割って相関係数にする必要がある
+    # (``ifft2`` の 1/N をここで戻す。忘れると完全一致でも 0.009 のような値が出る)。
+    if method == "phase":
+        peak_norm = float(peak_val)
+    else:
+        norm = float(np.sqrt(np.sum(a * a) * np.sum(b * b)))
+        peak_norm = float(peak_val * a.size / norm) if norm > 1e-15 else 0.0
 
     return {
         "dy": dy, "dx": dx,
