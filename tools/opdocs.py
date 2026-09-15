@@ -150,6 +150,10 @@ LEDGER_DIMS = {
     # 依存は無く、入力は既存の `depth` 種をそのまま使う。
     "dem": {"registry": "opsdem", "table": "OPSDEM",
             "module": "demops", "family": "dem_terrain_analysis"},
+    # 2026-09-15: AOI の前段(照明の落ちを戻す / 基準画像へ合わせる / タイルごとの
+    # 量を地図にする)。新しい型語彙は 1 つも作らない(既存の image2d と table)。
+    "aoi": {"registry": "opsaoi", "table": "OPSAOI",
+            "module": "aoi", "family": "aoi_frontend"},
 }
 
 
