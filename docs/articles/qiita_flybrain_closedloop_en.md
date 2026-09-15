@@ -74,6 +74,8 @@ One experiment = one question. **This article is appended to every time an exper
 | Does enlarging the eye break it? | No — and the first conclusion here was retracted | §8 |
 | Does shuffling the wiring cost performance? | **Not measurable.** Two shuffles differ from each other 3× more | appendix |
 | Does a staged curriculum produce direction selectivity? | Yes (0/8 → **5/8**) — and the final behavioural stage destroys it (→ 1/8) | appendix |
+| Does damage follow the path of light? | No. Silencing all six photoreceptor types leaves 0.869; silencing the single medulla type Mi1 leaves 0.031 (**11.5×**) | appendix |
+| Does averaging eleven brains beat the best single one? | Yes — but it **ties the best individual chosen in hindsight** (0.9766). The gain is repaired selection | appendix |
 
 ## Glossary (worth reading first)
 
@@ -533,11 +535,39 @@ The cost is explicit. Each evaluation measures every stage, so the final stage t
 
 Deceleration does not interfere with the memory update. **Deceleration hides nothing: it writes the error accumulated in memory straight into the stopping position** — and since the constant-speed "closest approach" was an optimistic number (the track happened to pass near the nest), deceleration is the more honest metric. The experiment ran four times and three of its pre-registered predictions failed; the record is kept in the script's docstring.
 
+### What broke was the junction, not the depth (developmental ladder, production run, 2026-09-15)
+
+With the gate fixed, the 34 conditions ran again (control correlation 0.9487, 3 h 27 min). This time **all 34 conditions yield direction selectivity as well** — zero non-finite values inside the frames where the stimulus is valid.
+
+The expectation was that damage would follow the path of light. It did not.
+
+| Silenced | Correlation | vs control |
+|---|---|---|
+| Whole medulla | −0.006 | −0.954 |
+| Mi1 alone (one medulla type) | 0.031 | −0.918 |
+| Mi4 + Mi9 | 0.083 | −0.866 |
+| All four T4 (ON direction-selective) | 0.518 | −0.431 |
+| L3 alone (one lamina type) | 0.485 | −0.463 |
+| All six photoreceptors | 0.869 | −0.080 |
+| All four T5 (OFF direction-selective) | 0.915 | −0.034 |
+
+**Removing one relay type costs 11.5 times more than removing every photoreceptor.** The estimate survives the loss of all six receptors partly because R7 / R8 remain in this network, but the contrast between a redundant input stage and a fragile junction is the point: the vulnerable place is where many types converge, not how deep it sits.
+
+The ON and OFF pathways also mattered very differently. The readout treats them symmetrically, yet the dependence is lopsided toward ON (T4: −0.431 versus T5: −0.034). And L1 and L2 — the textbook ON and OFF channels — changed nothing at all when silenced individually (±0.000); only L3 mattered. This trained individual routes the computation differently from the textbook picture.
+
+### Does stacking eleven brains make them smarter? (2026-09-15)
+
+Averaging the estimates of eleven separately evolved brains gives 0.9749 at held-out locations. The best single brain, chosen on training score, gives 0.9235 — so the ensemble wins.
+
+But **the best individual chosen in hindsight scores 0.9766**, which ties the ensemble. What happened is not that the group exceeded the individual; it is that **picking one brain by training score is an unreliable judgement, and averaging spares you that mistake.** The brain chosen on training score ranked third of eleven at the held-out locations.
+
+The curve flattens at K=2, earlier than the predicted 4–8. Adding a brain whose estimate is anti-correlated at held-out locations (−0.246) did not drag the average down.
+
 ### What we measure next
 
 When a result lands, it gains a row in "Experiments so far" and loses its line here.
 
-- [ ] **Re-run the developmental ladder with DSI** —— the non-finite values were flyvis's NaN padding of the stimulus; the gate is fixed (addendum above). 34 conditions × 6 speeds, about 3.5 hours.
+- [ ] **Division of labour instead of redundancy** —— instead of every brain estimating the same quantity, give each one a different quantity and combine.
 
 ### About the author
 
