@@ -59,7 +59,7 @@ be reorganised. Everything a consumer needs is re-exported from `fullseye`.
 ## From an LLM (MCP server, 0.1.11 PoC)
 
 `py -3.11 -m fullseye.mcp` is a stdio Model Context Protocol server (protocol
-`2025-06-18`). It exposes **8 tools, not 1,939**: search the catalog, read an operator's
+`2025-06-18`). It exposes **8 tools, not 1,942**: search the catalog, read an operator's
 knowledge-layer note (with its pre-rendered, gate-verified figures as `resource_link`s),
 load a sample or a sandboxed image into a handle, apply one operator or a pipeline, and
 inspect a handle. Images travel as `fullseye://img/<sha16>` handles; every result carries
@@ -99,7 +99,7 @@ plain C ABI there are no per-language bindings to maintain: Python (`ctypes`,
 toolchains were actually run (clang, gcc/MinGW, MSVC, .NET SDK 9, LuaJIT 2.1, CPython 3.11
 as of 2026-09-15) rather than which ones exist.
 
-What this is **not**: it is not the 1,939-operator Python library in another language. Its
+What this is **not**: it is not the 1,942-operator Python library in another language. Its
 purpose is to be a *second implementation* of a small contract, so that a differential
 fuzzer and a header-including C caller can find specification bugs the Python tests cannot
 — nine were found this way in 0.1.11 (connectivity, border mode, object ordering, status

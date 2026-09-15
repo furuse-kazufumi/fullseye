@@ -25,7 +25,7 @@ wheel ではノート本文の代わりに同梱の Studio help HTML(`studio_ass
 複製なので**ずれる**。`py -3.11 tools/regen_all.py --check`(CI で回る)と
 `tests/test_mcp_server.py` が「複製 = 正本」を件数ごと数え、`tests/test_mcp_wheel.py`
 (`FULLSEYE_WHEEL_GATE=1` で有効)が wheel を建てて別 venv に入れ、リポジトリの外の cwd から
-起動して索引 1,939 / ノート 1,939 が返ることを配布物の側で数える。
+起動して索引 1,942 / ノート 1,942 が返ることを配布物の側で数える。
 
 ## Claude Code への登録
 
@@ -41,10 +41,10 @@ claude mcp add fullseye -- py -3.11 -m fullseye.mcp
 set FULLSEYE_MCP_ROOT=C:\path\to\images;D:\more   (PowerShell: $env:FULLSEYE_MCP_ROOT = "...")
 ```
 
-## tool は 8 つ(op は 1,939 あるが tool にはしない)
+## tool は 8 つ(op は 1,942 あるが tool にはしない)
 
 op はデータで、tool は「探す・読む・読み込む・走らせる・観察する」の数個だけ。
-tool を 1,939 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
+tool を 1,942 個並べると LLM の文脈を食い潰す(TheMCPCompany の実測: 18,000 tool は
 retrieval 無しでは使えない)。
 
 | tool | 何をするか |

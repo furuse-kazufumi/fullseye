@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 677. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 679. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel_match.py`
@@ -852,8 +852,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `fullseye/mcp/catalog.py`
 
-- **L44** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
-- **L204** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+- **L104** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L318** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
 ## `fullseye/mcp/diagnose.py`
 
@@ -1051,6 +1051,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L263** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
 - **L381** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
 
+## `tests/test_abi_apply.py`
+
+- **L78** _(ja)_ — ★target dir は **別に切る**。最初は `target/release`(既定)に建ててそこから直接ロードして いたが、同じプロセスで後に走る `test_rust_abi_parity.py` が `cargo build --release` (feature なし)で同じ DLL を書き換えようとし、ロード済みでロックされているので ビルドに失敗 → **36 件が黙って SKIP** になった([[feedback_zero_findings_may_mean_never_executed]])。 建てる場所を分け、ロードは tmp へのコピーから行う。
+
 ## `tests/test_abi_conformance.py`
 
 - **L49** _(ja)_ — ★このパーサは「タグから**最初の `;` まで**」を宣言とみなす。だからタグと 宣言のあいだに `;` を含む散文があると、宣言が見つからず **collection 中に 死ぬ** —— そして pytest はファイル 1 つの collection エラーで **スイート全体を中断**する(2026-09-14 実測: `Interrupted: 1 error during collection` で 12,000 件が 1 件も走らず、それでも runner の exit code は 0)。 [[feedback_test_import_kills_collection]] と同じ族なので、**何が悪くて どう直すか**をここで言う。黙って「malformed」とだけ言うと、壊した本人が ヘッダの書式規則に気づけない。
@@ -1058,9 +1062,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_abi_signatures_match.py`
 
-- **L81** _(ja)_ — ★`[A] + [B] * 3` のような**式**で書かれた argtypes がある。最初この形を 数えられず `fs_measure_all` を「1 引数」と誤読して門が 3 件赤になった —— **門のパーサが弱いのを実装の欠陥と読まない。** 行末までを 1 宣言として 取り、`[...]` の各塊の要素数に `* N` の倍数を掛けて合計する。
-- **L179** _(ja)_ — ★`cl` に `.h` を直接渡してはいけない —— MSVC は拡張子で言語を決めるので 「ソースファイルの種類は認識できません」と**警告だけ出して rc=0 を返す**。 検査が 1 行も走っていないのに緑になる、最悪の形 ([[feedback_ran_is_not_meaningful_output]]。2026-09-14 に実際そう読みかけた)。 `#include` する小さな .c / .cpp を作って `/Zs`(構文検査のみ)を掛ける。
-- **L189** _(ja)_ — ★引用は **1 段も挟まない**。`subprocess` にリストで渡すと Python が 引数を再クォートし、内側の `"` が `\"` に化けて cmd に届く (実測のエラー: `'\"C:\Program Files...\vcvars64.bat\"' は認識されて いません`)。バッチファイルに書き出して、それを叩くのが確実。
+- **L82** _(ja)_ — ★`[A] + [B] * 3` のような**式**で書かれた argtypes がある。最初この形を 数えられず `fs_measure_all` を「1 引数」と誤読して門が 3 件赤になった —— **門のパーサが弱いのを実装の欠陥と読まない。** 行末までを 1 宣言として 取り、`[...]` の各塊の要素数に `* N` の倍数を掛けて合計する。
+- **L180** _(ja)_ — ★`cl` に `.h` を直接渡してはいけない —— MSVC は拡張子で言語を決めるので 「ソースファイルの種類は認識できません」と**警告だけ出して rc=0 を返す**。 検査が 1 行も走っていないのに緑になる、最悪の形 ([[feedback_ran_is_not_meaningful_output]]。2026-09-14 に実際そう読みかけた)。 `#include` する小さな .c / .cpp を作って `/Zs`(構文検査のみ)を掛ける。
+- **L190** _(ja)_ — ★引用は **1 段も挟まない**。`subprocess` にリストで渡すと Python が 引数を再クォートし、内側の `"` が `\"` に化けて cmd に届く (実測のエラー: `'\"C:\Program Files...\vcvars64.bat\"' は認識されて いません`)。バッチファイルに書き出して、それを叩くのが確実。
 
 ## `tests/test_annotate_bold_italic.py`
 
@@ -1112,7 +1116,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L210** — ★Früher genügte "es gibt 20 Zeilen und 4 Dimensionsnamen sind sichtbar", aber das wird grün, selbst wenn Hunderte ops wegfallen (Codex' adversariales Review, 2026-09-06). Gegen die **tatsächliche Zahl je Dimension** abgleichen, bis auf den letzten Eintrag.
 - **L249** — ★Ausgeben, wo sie sich unterscheiden. Ohne das lassen sich reihenfolgeabhängige Fehler (etwa Register-Verschmutzung), die nur in der Gesamt-Suite auftreten, nicht verfolgen.
 - **L312** — ★Mit nur Anzahl und Namen bleiben der Typvertrag (in_sort/out_sort), die Kategorie, die HALCON-Entsprechung und der tier komplett veraltet und werden trotzdem grün (Codex' adversariales Review, 2026-09-06). RAG liest in_sort/out_sort, um typverknüpfbare ops zu wählen; ist das veraltet, **schlägt es voller Zuversicht eine Kette vor, die nicht verbindet**. Samt Inhalt abgleichen.
-- **L410** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
+- **L457** — ★Prüfen, dass die Ausgabe "Inhalt hat" —— ein Gate, das nur die Übereinstimmung prüft, wird grün, selbst wenn beide leer sind # --------------------------------------------------------------------------- # Gemessen 2026-09-06. **Unterschreitet man es, schlägt es fehl** (Anheben ist erlaubt).
 
 ## `tests/test_dsp.py`
 
@@ -1160,7 +1164,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L57** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
 - **L105** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
-- **L306** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L249** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
+- **L316** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
 
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
@@ -1384,8 +1389,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tools/regen_all.py`
 
 - **L54** — ★Das einzige generierte Artefakt außerhalb von `tools/`. Genau deshalb wurde es übersehen — wer Generatoren unter `tools/*.py` sucht, findet dieses nie.
-- **L75** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
-- **L165** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
+- **L77** — * ★ Und gefährlich: ein Artikel unmittelbar nach der Generierung schreibt Bilder mit **relativen Pfaden**. Die veröffentlichte Version hat sie auf absolute URLs auf `raw.githubusercontent.com` umgestellt (mit einem relativen Pfad zeigt Qiita keine Bilder —— memory `feedback_qiita_svg_path_and_cache`). Läuft nur der Generator, werden diese absoluten URLs um 42 Zeilen zurückgesetzt. **Wenn du ihn laufen lässt, führe es bis zu den Veröffentlichungsschritten des Artikels durch.** Schreibe Ausschlüsse **nach Dateiname**. Fasst man sie in Prosa zusammen ("die 10 von wing*_gallery"), lässt sich das maschinell nicht abgleichen, und das `unclassified()` unten funktioniert nicht.
+- **L167** — ★Ein generiertes Artefakt außerhalb von `tools/`. Wer nur `tools/*.py` durchläuft, findet es nie — `docs/OP_INDEX.json` wurde tatsächlich übersehen.
 
 ## `typed_catalog.py`
 

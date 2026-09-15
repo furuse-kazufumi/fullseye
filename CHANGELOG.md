@@ -7,6 +7,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- **統合(0.1.12 の準備)**: `abi/generic-apply`(汎用 `fs_apply`)・`release/0.1.12-mcp-wheel`
+  (索引の台帳 33 族 + MCP の package data)・`genshiken/cuttlefish-w-pupil`(optics の瞳形状 PSF
+  3 op)を 1 本に畳んだ。生成物は `tools/regen_all.py` で作り直した実数: 機械可読索引
+  `docs/OP_INDEX.json` **1,942 op**(1,939 + コウイカの 3)、optics 台帳 **127 op**(124 + 3)、
+  op ノート **1,946 枚**(1,943 + 3)。公開文書の件数(README / `docs/INTEGRATION.md` /
+  `docs/MCP.md` / `docs/AI_RAG_GUIDE*.md`)はこの実数に揃えた。
+
 - ★**C ABI に汎用入口 `fs_apply` を追加**(`fullseye_abi.h` / `rust/fullseye_core`)。op 名 + JSON
   パラメータで**全 op** を呼べる。契約の 5 op は Rust のネイティブ経路、それ以外は cargo feature
   `embed`(既定 off)で埋め込んだ CPython が `fullseye/abi_bridge.py` 経由でレジストリの op を走らせる。

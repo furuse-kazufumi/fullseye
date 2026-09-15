@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 677. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 679. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -852,8 +852,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fullseye/mcp/catalog.py`
 
-- **L44** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
-- **L204** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
+- **L104** _(ja)_ — ★5 層。最初は 4 層で組み、「索引にもレジストリにも facade にも無いノート」が 480 枚残った。残骸かと思ったら **480 / 480 が ``fullseye.ledger`` で解決**した (型付き台帳。レジストリでは ``tb_project``、台帳では ``project`` のように接頭辞が 違う)。「無い」と言う前に全層を引く —— 4 層目まで引いて止めていたら、実在する 480 個の機能を残骸と呼んでいた。
+- **L318** _(ja)_ — ★同点の割り方は `api.find_op` と同じにする: 別名を複数 op が共有するとき `name == halcon` の**正典**を先に。次に層が多い(実行もノートもある)方。 実測 2026-09-15: "gauss" で `gauss_filter`(正典)と `gaussian` が同点になり、 名前順だと `_` < `i` で前者が先に来た —— 偶然そうなっていたのを規則にした。
 
 ## `fullseye/mcp/diagnose.py`
 
@@ -1051,6 +1051,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L263** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
 - **L381** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
 
+## `tests/test_abi_apply.py`
+
+- **L78** _(ja)_ — ★target dir は **別に切る**。最初は `target/release`(既定)に建ててそこから直接ロードして いたが、同じプロセスで後に走る `test_rust_abi_parity.py` が `cargo build --release` (feature なし)で同じ DLL を書き換えようとし、ロード済みでロックされているので ビルドに失敗 → **36 件が黙って SKIP** になった([[feedback_zero_findings_may_mean_never_executed]])。 建てる場所を分け、ロードは tmp へのコピーから行う。
+
 ## `tests/test_abi_conformance.py`
 
 - **L49** _(ja)_ — ★このパーサは「タグから**最初の `;` まで**」を宣言とみなす。だからタグと 宣言のあいだに `;` を含む散文があると、宣言が見つからず **collection 中に 死ぬ** —— そして pytest はファイル 1 つの collection エラーで **スイート全体を中断**する(2026-09-14 実測: `Interrupted: 1 error during collection` で 12,000 件が 1 件も走らず、それでも runner の exit code は 0)。 [[feedback_test_import_kills_collection]] と同じ族なので、**何が悪くて どう直すか**をここで言う。黙って「malformed」とだけ言うと、壊した本人が ヘッダの書式規則に気づけない。
@@ -1058,9 +1062,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_abi_signatures_match.py`
 
-- **L81** _(ja)_ — ★`[A] + [B] * 3` のような**式**で書かれた argtypes がある。最初この形を 数えられず `fs_measure_all` を「1 引数」と誤読して門が 3 件赤になった —— **門のパーサが弱いのを実装の欠陥と読まない。** 行末までを 1 宣言として 取り、`[...]` の各塊の要素数に `* N` の倍数を掛けて合計する。
-- **L179** _(ja)_ — ★`cl` に `.h` を直接渡してはいけない —— MSVC は拡張子で言語を決めるので 「ソースファイルの種類は認識できません」と**警告だけ出して rc=0 を返す**。 検査が 1 行も走っていないのに緑になる、最悪の形 ([[feedback_ran_is_not_meaningful_output]]。2026-09-14 に実際そう読みかけた)。 `#include` する小さな .c / .cpp を作って `/Zs`(構文検査のみ)を掛ける。
-- **L189** _(ja)_ — ★引用は **1 段も挟まない**。`subprocess` にリストで渡すと Python が 引数を再クォートし、内側の `"` が `\"` に化けて cmd に届く (実測のエラー: `'\"C:\Program Files...\vcvars64.bat\"' は認識されて いません`)。バッチファイルに書き出して、それを叩くのが確実。
+- **L82** _(ja)_ — ★`[A] + [B] * 3` のような**式**で書かれた argtypes がある。最初この形を 数えられず `fs_measure_all` を「1 引数」と誤読して門が 3 件赤になった —— **門のパーサが弱いのを実装の欠陥と読まない。** 行末までを 1 宣言として 取り、`[...]` の各塊の要素数に `* N` の倍数を掛けて合計する。
+- **L180** _(ja)_ — ★`cl` に `.h` を直接渡してはいけない —— MSVC は拡張子で言語を決めるので 「ソースファイルの種類は認識できません」と**警告だけ出して rc=0 を返す**。 検査が 1 行も走っていないのに緑になる、最悪の形 ([[feedback_ran_is_not_meaningful_output]]。2026-09-14 に実際そう読みかけた)。 `#include` する小さな .c / .cpp を作って `/Zs`(構文検査のみ)を掛ける。
+- **L190** _(ja)_ — ★引用は **1 段も挟まない**。`subprocess` にリストで渡すと Python が 引数を再クォートし、内側の `"` が `\"` に化けて cmd に届く (実測のエラー: `'\"C:\Program Files...\vcvars64.bat\"' は認識されて いません`)。バッチファイルに書き出して、それを叩くのが確実。
 
 ## `tests/test_annotate_bold_italic.py`
 
@@ -1112,7 +1116,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L210** — ★It used to pass on "there are 20 lines and 4 dimension names are visible", but that goes green even if hundreds of ops drop (Codex's adversarial review, 2026-09-06). Reconcile against the **actual count per dimension**, down to the last one.
 - **L249** — ★Output where they differ. Without it, you cannot chase order-dependent failures (like registry pollution) that only fail in the full suite.
 - **L312** — ★With only counts and names, the type contract (in_sort/out_sort), category, HALCON correspondence, and tier all stay stale while going green (Codex's adversarial review, 2026-09-06). RAG reads in_sort/out_sort to pick type-connectable ops, so if that is stale it **confidently proposes a chain that does not connect**. Reconcile including the contents.
-- **L410** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
+- **L457** — ★Check that the output "has content" —— a gate that only checks agreement goes green even when both are empty # --------------------------------------------------------------------------- # Measured 2026-09-06. **Falls below it and it fails** (raising it is fine).
 
 ## `tests/test_dsp.py`
 
@@ -1160,7 +1164,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L57** _(ja)_ — ★引数名を `name` にしていて `_call(4, "fullseye_op_help", name="gaussian")` が TypeError になり、**subprocess の実 stdio 往復が 1 度も走らないまま** 23 件が緑だった(2026-09-15)。走らなかった検査は無いのと同じ。
 - **L105** _(ja)_ — ★最初 `gaussian` が先頭と決めつけて落ちた。`gauss_filter` と `gaussian` は同じ HALCON 別名を共有する別 op で、`api.find_op` は `name == halcon` の正典を優先する。 検索もその規約に揃えたので、正典が先頭・`gaussian` が上位に居ることを見る。
-- **L306** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
+- **L249** _(ja)_ — ★以前の被験者は台帳経由で索引に入ったこと(= 索引が台帳を数えている)も見る
+- **L316** _(ja)_ — ★同日実測: 4 層で 480 枚が「どこにも無いノート」に見えたが、5 層目(ledger)で 480 / 480 が解決した。ここが 0 でなくなったら、まず**引き忘れた層**を疑うこと ([[feedback_search_all_tiers_before_declaring_a_gap]])。ノートの残骸と決めつけない。
 
 ## `tests/test_no_local_paths_in_shipped_code.py`
 
@@ -1384,8 +1389,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tools/regen_all.py`
 
 - **L54** — ★The only generated artifact outside `tools/`. That is exactly why it was missed — as long as you look for generators under `tools/*.py`, this one is never found.
-- **L75** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
-- **L165** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
+- **L77** — * ★ And dangerous: an article right after generation writes images with **relative paths**. The published version has them changed to absolute URLs on `raw.githubusercontent.com` (with a relative path Qiita does not show images —— memory `feedback_qiita_svg_path_and_cache`). Running only the generator rolls those absolute URLs back by 42 lines. **If you run it, carry it all the way through the article's publishing steps.** Write exclusions **by file name**. Summarizing them in prose ("the 10 of wing*_gallery") cannot be matched by machine, and the `unclassified()` below stops working.
+- **L167** — ★A generated artifact outside `tools/`. Walking `tools/*.py` can never find it, and in fact `docs/OP_INDEX.json` was being missed.
 
 ## `typed_catalog.py`
 

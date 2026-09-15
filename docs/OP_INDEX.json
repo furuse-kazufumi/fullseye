@@ -1,8 +1,8 @@
 {
- "n_ops": 1939,
+ "n_ops": 1942,
  "tiers": {
   "color": 12,
-  "ledger": 1021,
+  "ledger": 1024,
   "nary": 17,
   "registry": 889
  },
@@ -2713,6 +2713,17 @@
     "image2d",
     "table"
    ]
+  },
+  {
+   "name": "defocus_from_shift",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "measurement",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": []
   },
   {
    "name": "deformation_to_points",
@@ -9122,6 +9133,33 @@
    "dim": "imgmetrics",
    "in_sorts": [
     "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "pupil_blur",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "pupil_psf",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "wave",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
     "image2d"
    ]
   },

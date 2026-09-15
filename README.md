@@ -70,7 +70,7 @@ Two more doors, both new in 0.1.11 and both honest about their limits:
 | Door | For | Run this first | Status |
 |---|---|---|---|
 | **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 8 tools, strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A **5-operator C ABI** (`fullseye_abi.h`) with a Rust reference implementation — not the 1,939-op library. Its job is to find specification bugs by being a second implementation (nine found so far) |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A **5-operator C ABI** (`fullseye_abi.h`) with a Rust reference implementation — not the 1,942-op library. Its job is to find specification bugs by being a second implementation (nine found so far) |
 
 ## Install
 

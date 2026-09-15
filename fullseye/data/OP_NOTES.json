@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1939,
- "n_notes": 1943,
+ "n_ops": 1942,
+ "n_notes": 1946,
  "notes": {
   "vol_dilate": [
    {
@@ -17653,6 +17653,15 @@
     "path": "docs/ops/optics/wave/angular_spectrum_propagate.md"
    }
   ],
+  "defocus_from_shift": [
+   {
+    "op": "defocus_from_shift",
+    "dim": "optics",
+    "category": "wave",
+    "out": "measurement",
+    "path": "docs/ops/optics/wave/defocus_from_shift.md"
+   }
+  ],
   "fraunhofer_pattern": [
    {
     "op": "fraunhofer_pattern",
@@ -17670,6 +17679,26 @@
     "category": "wave",
     "out": "table",
     "path": "docs/ops/optics/wave/gaussian_beam.md"
+   }
+  ],
+  "pupil_blur": [
+   {
+    "op": "pupil_blur",
+    "dim": "optics",
+    "category": "wave",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/wave/pupil_blur.md"
+   }
+  ],
+  "pupil_psf": [
+   {
+    "op": "pupil_psf",
+    "dim": "optics",
+    "category": "wave",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/wave/pupil_psf.md"
    }
   ],
   "photon_sample": [
