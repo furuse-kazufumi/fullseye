@@ -207,12 +207,13 @@
   },
   {
     "op": "boundary",
-    "verdict": "spec_gap_border",
+    "verdict": "spec_gap_border_documented",
     "note": "端に触れる探針でだけ分かれ、内部では一致。端の規約が未記載",
     "probes_bad": [
       "all_ones",
       "blob_at_corner"
-    ]
+    ],
+    "resolved_by_sweep": true
   },
   {
     "op": "clahe",
@@ -345,6 +346,63 @@
     ]
   },
   {
+    "op": "cv_gradient",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "cv_laplacian",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "cv_median",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "cv_min_eigen",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
     "op": "cv_otsu",
     "verdict": "needs_human",
     "note": "規則で振り分けられない。人が見る",
@@ -355,8 +413,23 @@
     ]
   },
   {
+    "op": "cv_precorner",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
     "op": "cv_scharr",
-    "verdict": "spec_gap_normalisation",
+    "verdict": "spec_gap_normalisation_documented",
     "note": "出力が値域を大きく超える(最大 25)。正規化の定義が書かれていない疑い",
     "probes_bad": [
       "col_Nx1",
@@ -368,7 +441,46 @@
       "ramp_y",
       "random",
       "row_1xN"
+    ],
+    "resolved_by_sweep": true
+  },
+  {
+    "op": "cv_sharpen",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "ramp_x",
+      "ramp_y",
+      "random"
     ]
+  },
+  {
+    "op": "cv_tophat",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "frame",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "cv_trunc",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "dc_local_contrast_norm",
+    "verdict": "impl2_defect",
+    "note": "どちらかの出力に非有限が出た(fail-closed で inf 扱い)"
   },
   {
     "op": "dilation_circle",
@@ -411,12 +523,13 @@
   },
   {
     "op": "erosion_circle",
-    "verdict": "spec_gap_border",
+    "verdict": "spec_gap_border_documented",
     "note": "端に触れる探針でだけ分かれ、内部では一致。端の規約が未記載",
     "probes_bad": [
       "all_ones",
       "blob_at_corner"
-    ]
+    ],
+    "resolved_by_sweep": true
   },
   {
     "op": "erosion_golay",
@@ -442,12 +555,13 @@
   },
   {
     "op": "fill_holes",
-    "verdict": "spec_gap_connectivity",
+    "verdict": "spec_gap_connectivity_documented",
     "note": "連結性の探針でだけ分かれる。4/8 連結の別が未記載",
     "probes_bad": [
       "checkerboard8",
       "ring_with_hole"
-    ]
+    ],
+    "resolved_by_sweep": true
   },
   {
     "op": "fill_up",
@@ -482,6 +596,137 @@
     "op": "gdilate",
     "verdict": "agrees",
     "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "get_region_contour",
+    "verdict": "spec_gap_connectivity",
+    "note": "連結性の探針でだけ分かれる。4/8 連結の別が未記載",
+    "probes_bad": [
+      "ring_with_hole"
+    ]
+  },
+  {
+    "op": "get_region_convex",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "single_pixel_on",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "h_threshold",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
+  },
+  {
+    "op": "hx_char_threshold",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_clip_region_rel",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_closing",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "checkerboard8",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "row_1xN"
+    ]
+  },
+  {
+    "op": "hx_dilation2",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "horizontal_line",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs",
+      "vertical_line"
+    ]
+  },
+  {
+    "op": "hx_erosion1",
+    "verdict": "spec_gap_connectivity",
+    "note": "連結性の探針でだけ分かれる。4/8 連結の別が未記載",
+    "probes_bad": [
+      "ring_with_hole"
+    ]
+  },
+  {
+    "op": "hx_expand_region",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "blob_at_corner",
+      "corner_touch2",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "single_pixel_on",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "hx_full_domain",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_gen_checker_region",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x"
+    ]
+  },
+  {
+    "op": "hx_gen_circle",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "constant_half",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y"
+    ]
   },
   {
     "op": "mean_box",

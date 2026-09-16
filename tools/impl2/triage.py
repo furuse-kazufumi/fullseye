@@ -35,6 +35,8 @@ from __future__ import annotations
 import argparse
 import collections
 import json
+import os
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -48,6 +50,30 @@ CONNECT_PROBES = {"checkerboard8", "corner_touch2", "corner_touch_blocks",
 #: 端でも連結性でも説明できない「どこでも効く」入力。ここで分かれたら意味の取り違え。
 INTERIOR_PROBES = {"constant_half", "zeros", "all_zeros", "ramp_x", "ramp_y",
                    "single_pixel_on", "horizontal_line", "vertical_line"}
+
+
+#: 振り分けた穴が **もう塞がっているか** をノートで確かめる。掃き出し
+#: (`border_probe` / `knob_probe` / `norm_probe`)が先回りして書き込んでいることが
+#: 実際に起きる —— そのとき「未解決の穴」として出し続けると、**同じものを何度も
+#: 調べ直す**ことになる。
+_FACT_PATTERNS = {
+    "spec_gap_border": re.compile(r"端の扱い|画像の縁|BORDER_|パディング"),
+    "spec_gap_connectivity": re.compile(r"連結|connectivity|4 連結|8 連結"),
+    "spec_gap_normalisation": re.compile(r"値の比較可能性|画像ごと|最大値で割"),
+}
+
+
+def _note_text(op: str) -> str:
+    base = Path(__file__).resolve().parents[2] / "docs" / "ops"
+    for dirpath, _d, filenames in os.walk(base):
+        if f"{op}.md" in filenames:
+            return (Path(dirpath) / f"{op}.md").read_text(encoding="utf-8")
+    return ""
+
+
+def _already_documented(op: str, verdict: str) -> bool:
+    pat = _FACT_PATTERNS.get(verdict)
+    return bool(pat and pat.search(_note_text(op)))
 
 
 def classify(rec: dict) -> dict:
@@ -131,7 +157,11 @@ def main() -> int:
         print(f"{d} が無い"); return 2
     out = []
     for p in sorted(d.glob("*.json")):
-        out.append(classify(json.loads(p.read_text(encoding="utf-8"))))
+        r = classify(json.loads(p.read_text(encoding="utf-8")))
+        if r["verdict"].startswith("spec_gap_") and _already_documented(r["op"], r["verdict"]):
+            r["resolved_by_sweep"] = True
+            r["verdict"] = r["verdict"] + "_documented"
+        out.append(r)
 
     tally = collections.Counter(r["verdict"] for r in out)
     print(f"=== {a.engine}: {len(out)} op を振り分けた ===")
