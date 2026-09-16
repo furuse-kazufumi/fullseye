@@ -326,13 +326,26 @@ def finite_maxdiff(ref, got) -> float:
 
 
 # --------------------------------------------------------------------------- #
+def _save(rec: dict, tag: str) -> dict:
+    """**判定に関わらず記録を残す。** 最初の版は成功経路の末尾でしか書いていなかったので、
+    コンパイル失敗やモデル失敗の op が**記録ごと消えて**いた —— 統計から落ちるだけでなく、
+    `--skip-existing` で再実行しても C が在るので二度と判定されない。
+    「失敗が不可視になる」のは「発見ゼロ」と同じ形の事故。"""
+    d = IMPL2 / "meta" / tag
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f"{rec['op']}.json").write_text(json.dumps(rec, indent=2, ensure_ascii=False),
+                                         encoding="utf-8")
+    return rec
+
+
 def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> dict:
     tag = engine_tag(model)
     import fullseye as fs
 
     note_p = find_note(op)
     if note_p is None:
-        return {"op": op, "status": "no_note", "reason": "docs/ops に <op>.md が無い"}
+        return _save({"op": op, "status": "no_note", "reason": "docs/ops に <op>.md が無い"},
+                     engine_tag(model))
     note = note_p.read_text(encoding="utf-8")
     note_sha = hashlib.sha256(note.encode("utf-8")).hexdigest()[:16]
 
@@ -357,7 +370,7 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
         except (urllib.error.URLError, TimeoutError, OSError, RuntimeError,
                 subprocess.SubprocessError, ValueError) as e:
             rec.update(status="model_error", reason=str(e)[:400])
-            return rec
+            return _save(rec, tag)
         rec["gen_seconds"] = round(time.time() - t0, 1)
         csrc.write_text(extract_c(raw), encoding="utf-8")
     else:
@@ -368,7 +381,7 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
     exe, err = compile_c(csrc, workdir, cc)
     if exe is None:
         rec.update(status="compile_error", compile_error=err)
-        return rec
+        return _save(rec, tag)
     rec["compiled"] = True
 
     in_sort, out_sort = op_sorts(op)
@@ -406,9 +419,7 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
     rec["tol"] = tol
     # 一致は成果ではなく **警告**。探針が弱いだけかもしれない。
     rec["status"] = "agrees" if rec["agrees"] else "diverges"
-    (IMPL2 / "meta" / tag / f"{op}.json").write_text(json.dumps(rec, indent=2, ensure_ascii=False),
-                                               encoding="utf-8")
-    return rec
+    return _save(rec, tag)
 
 
 def main() -> int:
@@ -421,6 +432,9 @@ def main() -> int:
                     help="そのエンジンの C が既にある op は生成をやり直さない(長時間の無人実行用)")
     ap.add_argument("--all-image", action="store_true",
                     help="registry/color の image->image op を全部回す")
+    ap.add_argument("--shard", default=None,
+                    help="k/n 形式。op を n 本に分け k 番目だけを回す(0 始まり)。"
+                         "複数ワーカーを衝突させずに走らせるため")
     ap.add_argument("--reverse", action="store_true",
                     help="op を逆順に回す。**同じモデルで 2 本目**を走らせ両端から詰めるため"
                          "(モデルを変えると ollama が載せ替えるので並走が逆効果になる)")
@@ -447,6 +461,9 @@ def main() -> int:
                   if o["tier"] in ("registry", "color") and o["out_sort"] == "region"
                   and o["in_sort"] in ("image", "region")]
     names = list(dict.fromkeys(names))
+    if a.shard:
+        k, n = (int(x) for x in a.shard.split("/"))
+        names = [nm for i, nm in enumerate(names) if i % n == k]
     if a.reverse:
         names.reverse()
 
