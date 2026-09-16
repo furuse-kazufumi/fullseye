@@ -303,7 +303,17 @@ def run_c(exe: Path, workdir: Path, img: np.ndarray, a: float, b: float) -> np.n
         np.array([h, w], np.int32).tofile(f)
         np.array([a, b], np.float64).tofile(f)
         np.ascontiguousarray(img, np.float64).tofile(f)
-    r = subprocess.run([str(exe), str(fin), str(fout)], capture_output=True, timeout=60)
+    try:
+        r = subprocess.run([str(exe), str(fin), str(fout)], capture_output=True, timeout=8)
+    except subprocess.TimeoutExpired:
+        # 探針は 16x16 程度なので 8 秒でも桁違いに余裕がある。60 秒にしていたら、
+        # 止まらない C 1 本で **52 回 x 60 秒 = 52 分**を 1 op に費やしていた。
+        # **生成された C が止まらないことがある**(無限ループ)。捕まえないと
+        # 例外が上まで抜けて、1 本の不良 C が**無人実行全体を殺す**。実際それで
+        # 15 分間気づかず走っていないことになっていた。落ちた op は crashed 扱い。
+        return None
+    except OSError:
+        return None
     if r.returncode != 0 or not fout.exists():
         return None
     got = np.fromfile(fout, np.float64)
@@ -389,8 +399,10 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
     rec["in_sort"], rec["out_sort"] = in_sort, out_sort
     rec["probe_set"] = "region" if in_sort == "region" else "image"
 
-    rows, worst = [], 0.0
+    rows, worst, crashes = [], 0.0, 0
     for a, b in KNOBS:
+        if rec.get("aborted_after_crashes"):
+            break
         for pname, img in probe_set:
             try:
                 ref = np.asarray(fs.apply(img.copy(), op, a=a, b=b), np.float64)
@@ -402,6 +414,12 @@ def run_op(op: str, model: str, generate: bool, cc: list[str], tol: float) -> di
             if got is None:
                 rows.append({"probe": pname, "a": a, "b": b, "status": "impl2_crashed"})
                 worst = float("inf")
+                crashes += 1
+                if crashes >= 3:
+                    # **3 回落ちたら見切る。** 止まらない C に 52 回付き合う必要はない ——
+                    # 判定はもう「第 2 実装の欠陥」で確定している。
+                    rec["aborted_after_crashes"] = crashes
+                    break
                 continue
             if ref.shape != got.shape:
                 rows.append({"probe": pname, "a": a, "b": b, "status": "shape_differs",
@@ -469,11 +487,16 @@ def main() -> int:
 
     results = []
     for op in names:
+        # 1 op の想定外の失敗で無人実行を落とさない(記録して次へ)
         if a.skip_existing and (IMPL2 / "c" / engine_tag(a.model) / f"{op}.c").exists():
             gen = False
         else:
             gen = not a.no_generate
-        r = run_op(op, a.model, gen, cc, a.tol)
+        try:
+            r = run_op(op, a.model, gen, cc, a.tol)
+        except Exception as e:                       # noqa: BLE001 — 無人実行を止めない
+            r = _save({"op": op, "status": "runner_error",
+                       "reason": f"{type(e).__name__}: {e}"[:300]}, engine_tag(a.model))
         results.append(r)
         w = r.get("worst_max_abs_diff")
         print(f"[{r['status']:14s}] {op:20s} "
