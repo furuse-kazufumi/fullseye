@@ -1,4 +1,4 @@
-# ONED operator help — 39 ops in 3 categories
+# ONED operator help — 42 ops in 3 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/oned/<category>/<op>.md` を走査。
 
@@ -12,9 +12,9 @@
 
 [read_audio](io/read_audio.md) · [read_wav](io/read_wav.md) · [write_wav](io/write_wav.md)
 
-### signal (13)
+### signal (16)
 
-[bandpass](signal/bandpass.md) · [envelope](signal/envelope.md) · [find_peaks](signal/find_peaks.md) · [highpass](signal/highpass.md) · [lowpass](signal/lowpass.md) · [peak_subbin](signal/peak_subbin.md) · [point_spectrum](signal/point_spectrum.md) · [resample](signal/resample.md) · [rms](signal/rms.md) · [signal_features](signal/signal_features.md) · [spectrogram](signal/spectrogram.md) · [spectrum](signal/spectrum.md) · [zero_crossing_rate](signal/zero_crossing_rate.md)
+[bandpass](signal/bandpass.md) · [companding_mu_law](signal/companding_mu_law.md) · [envelope](signal/envelope.md) · [find_peaks](signal/find_peaks.md) · [highpass](signal/highpass.md) · [local_std](signal/local_std.md) · [lowpass](signal/lowpass.md) · [peak_subbin](signal/peak_subbin.md) · [point_spectrum](signal/point_spectrum.md) · [quantize](signal/quantize.md) · [resample](signal/resample.md) · [rms](signal/rms.md) · [signal_features](signal/signal_features.md) · [spectrogram](signal/spectrogram.md) · [spectrum](signal/spectrum.md) · [zero_crossing_rate](signal/zero_crossing_rate.md)
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

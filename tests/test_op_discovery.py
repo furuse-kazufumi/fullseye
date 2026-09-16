@@ -188,8 +188,40 @@ def test_ledger_namespace_is_fail_closed_and_points_at_the_other_tier():
         _ = fs.ledger.definitely_not_a_ledger_op
 
 
-def test_the_two_namespaces_overlap_in_exactly_three_names():
-    """台帳と 2-D レジストリで同名なのは ``fill_holes`` / ``lowpass`` / ``highpass``。
+
+def _check_new_pair_mixups():
+    """``local_std`` / ``companding_mu_law`` を取り違えたときに何が起きるか。
+
+    ★**`fs.op.companding_mu_law` に双極性の信号を渡すと、負の側がまるごと 0 に
+    潰れる** —— 例外も警告も出ない。2-D 版は入力が ``[0,1]`` である前提で clip
+    するためで、出力は「正しく圧伸された信号」の形をしている。実測で信号の
+    46.9 % を占める負の半分が **100 % 0 になった**。1-D 版(`fs.ledger`)は
+    符号を保つ。名前が同じで挙動が違うので、ここで数値ごと固定する。
+    """
+    import warnings
+    bipolar = np.sin(np.linspace(0.0, 20.0, 256))
+    assert bipolar.min() < -0.9 and bipolar.max() > 0.9
+
+    one_d = np.asarray(fs.ledger.companding_mu_law(bipolar))
+    assert one_d.min() < -0.5, "1-D 版が符号を保っていない"
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        two_d = np.asarray(fs.op.companding_mu_law(bipolar))
+    neg = bipolar < 0.0
+    assert float((two_d[neg] == 0.0).mean()) == 1.0, (
+        "2-D 版が負の側を潰さなくなった —— 挙動が変わったなら、この門と "
+        "docstring の警告を書き直すこと(直ったのなら歓迎すべき変化)")
+
+    # 逆向き(1-D 実装に 2-D を渡す)は両方とも正しく鳴る
+    img2 = np.zeros((32, 32))
+    for name in ("local_std", "companding_mu_law"):
+        with pytest.raises(ValueError):
+            getattr(fs.ledger, name)(img2)
+
+def test_the_two_namespaces_overlap_in_exactly_five_names():
+    """台帳と 2-D レジストリで同名なのは 5 件
+    (``fill_holes`` / ``lowpass`` / ``highpass`` / ``local_std`` / ``companding_mu_law``)。
 
     ★2026-09-08 に 1 -> 3 へ増えた。``ops1d``(dsp 16 + funct1d 23)を台帳へ
     繋いだためで、**衝突そのものは前からあった** —— `fs.lowpass` は以前から
@@ -207,9 +239,15 @@ def test_the_two_namespaces_overlap_in_exactly_three_names():
       方針が変わったら気づけるようにする。
     """
     both = _ledger_names() & {o.name for o in ops.REGISTRY}
-    assert both == {"fill_holes", "lowpass", "highpass"}, sorted(both)
+    assert both == {"fill_holes", "lowpass", "highpass",
+                    "local_std", "companding_mu_law"}, sorted(both)
     assert fs.ledger.fill_holes is not fs.op.fill_holes
     assert fs.ledger.lowpass is not fs.op.lowpass
+
+    # ★2026-09-17 に 3 -> 5。1-D の局所標準偏差と mu 則圧伸を足したため。
+    #   新しい 2 件は **1-D 実装に 2-D を渡すと ValueError で鳴る**(既存の
+    #   `lowpass` と同じ、正しい向き)。危ないのは逆で、下でその 1 つを固定する。
+    _check_new_pair_mixups()
 
     img = np.zeros((32, 32))
     sig = np.sin(np.linspace(0.0, 20.0, 256))

@@ -39,7 +39,7 @@ names the exact minimum) instead of silently coming back unfiltered.
 
 ## 同カテゴリ(`signal`)
 
-[highpass](highpass.md) · [bandpass](bandpass.md) · [envelope](envelope.md) · [rms](rms.md) · [resample](resample.md) · [spectrum](spectrum.md) · [spectrogram](spectrogram.md) · [zero_crossing_rate](zero_crossing_rate.md)
+[highpass](highpass.md) · [bandpass](bandpass.md) · [envelope](envelope.md) · [rms](rms.md) · [local_std](local_std.md) · [quantize](quantize.md) · [companding_mu_law](companding_mu_law.md) · [resample](resample.md)
 
 ---
 *Provenance: dsp.py — ONED operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

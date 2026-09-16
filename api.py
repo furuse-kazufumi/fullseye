@@ -404,6 +404,8 @@ import dsp  # noqa: E402  (1-D signal / acoustic / vibration)
 from dsp import (  # noqa: E402,F401
     read_wav, write_wav, read_audio, spectrum, spectrogram, lowpass,
     highpass, bandpass, envelope, rms, find_peaks, peak_subbin,
+    local_std as signal_local_std, quantize as signal_quantize,
+    companding_mu_law as signal_companding_mu_law,
     point_spectrum, signal_features,
     resample, zero_crossing_rate,
 )
@@ -856,6 +858,7 @@ __all__ = [
     "dsp",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
+    "signal_local_std", "signal_quantize", "signal_companding_mu_law",
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",

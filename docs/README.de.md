@@ -9,7 +9,7 @@
 
 *Sechs Akte, ausschließlich echte Operator-Ausgaben: Kantenorientierung, Blob-Auswahl, Subpixel-Messung, SDF zu Mesh, LiDAR-Clustering, Objektiv-Defokus.*
 
-**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **917** Operatoren (gezählt in der Registry), bietet für **979/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
+**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **920** Operatoren (gezählt in der Registry), bietet für **979/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
 
 ★ **Selten für eine Bildverarbeitungsbibliothek, bringt Fullseye auch virtuelles optisches Design mit** — dünne/dicke Linsen, Raytracing, Seidel-Aberrationen und PSF/MTF, dazu eine Damped-Least-Squares-Optimierung (Levenberg–Marquardt) der Linsenverordnung selbst (`optimize_lens`). Man kann **das abbildende System entwerfen und sein Bild dann mit den obigen Operatoren prüfen — durchgängig**, ein Unterscheidungsmerkmal für Halbleiter und Präzisionsmesstechnik.
 
@@ -63,20 +63,20 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 ## Einen Operator finden
 
-**1,968 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
+**1,974 Operator-Notizen** (Aufrufform, Typvertrag, HALCON-Pendant, Literatur, Provenienz) und **49 Familien-Leitfäden**. Einstiegspunkte nach Dimension:
 
-**Gemessene Abdeckung**: evolvierbare Ops 917/917, typisiertes Ledger 1030/1042, Fassade `fullseye.<name>` 552/1127 — **die Fassade ist erst zur Hälfte abgedeckt**.
+**Gemessene Abdeckung**: evolvierbare Ops 920/920, typisiertes Ledger 1033/1045, Fassade `fullseye.<name>` 552/1130 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 1973 Notizen verweisen **1933** auf mindestens ein lauffähiges Beispiel (40 ohne), **1954** haben einen Nutzungsabschnitt ab 120 Zeichen (19 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1973.
+**Gemessener Inhalt**: von 1979 Notizen verweisen **1939** auf mindestens ein lauffähiges Beispiel (40 ohne), **1960** haben einen Nutzungsabschnitt ab 120 Zeichen (19 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 1979.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|
-| `2d` | 934 | [INDEX](ops/2d/INDEX.md) |
+| `2d` | 937 | [INDEX](ops/2d/INDEX.md) |
 | `3d` | 363 | [INDEX](ops/3d/INDEX.md) |
 | `optics` | 127 | [INDEX](ops/optics/INDEX.md) · [guide](ops/optics/guides/optics_imaging.md) |
 | `annotate` | 51 | [INDEX](ops/annotate/INDEX.md) · [guide](ops/annotate/guides/figure_annotation.md) |
+| `oned` | 42 | [INDEX](ops/oned/INDEX.md) |
 | `reprconv` | 42 | [INDEX](ops/reprconv/INDEX.md) |
-| `oned` | 39 | [INDEX](ops/oned/INDEX.md) |
 | `gfx2d` | 32 | [INDEX](ops/gfx2d/INDEX.md) |
 | `math` | 27 | [INDEX](ops/math/INDEX.md) · [guide](ops/math/guides/math_metrology.md) |
 | `piv` | 26 | [INDEX](ops/piv/INDEX.md) · [guide](ops/piv/guides/piv_displacement.md) |
@@ -204,7 +204,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 ## Dokumentkarte — alle 160
 
-Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 1,968 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
+Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 1,974 Operator-Notizen und 49 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
 **Getting started**(12)
 

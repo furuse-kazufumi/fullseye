@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_companding_mu_law — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_companding_mu_law&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tb_companding_mu_law.png" alt="tb_companding_mu_law: input → output"></p>
+<p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
+<p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.a.jpg">tb_companding_mu_law: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.b.jpg">tb_companding_mu_law: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.chain.jpg">tb_companding_mu_law: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.inputs.jpg">tb_companding_mu_law: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>μ 律压扩 —— 把 G.711 的曲线用于任意一维信号。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
+<p>Compress with `<code style="color:#22d3bf">F(v) = sign(v) * ln(1 + mu|v|) / ln(1 + mu)</code>` on the signal</p>
+<p>scaled to `<code style="color:#22d3bf">[-1, 1]</code>`, quantise uniformly, expand back. The steps end up fine</p>
+<p>near zero and coarse near full scale, which is the right allocation when the</p>
+<p>interesting part of the signal is small compared with its peaks — speech,</p>
+<p>vibration, anything with a large crest factor.</p>
+<p><b>This is where mu-law comes from</b>: the image operator</p>
+<p>`<code style="color:#22d3bf">companding_mu_law</code>` is the same curve applied to intensity. Reporting both</p>
+<p>keeps the family honest about which dimension the technique was designed for.</p>
+<p><b>Applicability — it is the crest factor that decides.</b> Measured on a sine</p>
+<p>of amplitude *A* with one sample pinned at full scale, so the crest factor is</p>
+<p>exactly `<code style="color:#22d3bf">1/A</code>` (mean square error relative to a uniform quantiser):</p>
+<p>crest 50    4 bit 0.011   6 bit 0.014     (about 90x better)</p>
+<p>crest 20    4 bit 0.122   6 bit 0.101</p>
+<p>crest 6.7   4 bit 0.613   6 bit 0.616</p>
+<p>crest 2.0   4 bit 4.22    6 bit 6.03      (several times WORSE)</p>
+<p>So the rule is <b>crest factor above roughly 7</b> — speech, vibration, impact.</p>
+<p>Below that, a plain uniform quantiser wins and mu-law actively hurts.</p>
+<p>★Note the peak is a <b>single sample</b>: on random signals of the same family</p>
+<p>the advantage swung between 0.55 and 0.87 purely with the seed, because the</p>
+<p>largest excursion sets the scale. Measure the crest factor of *your* signal,</p>
+<p>do not assume it from the distribution.</p>
+<p>Other limits: `<code style="color:#22d3bf">mu</code>` near 0 degenerates to uniform quantisation (that is how</p>
+<p>you check the curve is doing anything), and the curve is fixed — unlike a</p>
+<p>Lloyd-Max codebook fitted to the signal — which is the point when values must</p>
+<p>stay comparable across recordings.</p>
+<p>Typed bridge of the 1d op `<code style="color:#22d3bf">companding_mu_law</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> (default 255) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">bits</code>` (default 8).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
+<p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
+tb_companding_mu_law 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_companding_mu_law%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_companding_mu_law%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p>下面的示例调用的是底层账本算子 <code style="color:#22d3bf">companding_mu_law</code>。此桥接算子只是把同一实现适配为 <code style="color:#22d3bf">fn(v, a, b)</code> 约定，行为完全相同(只是调用形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

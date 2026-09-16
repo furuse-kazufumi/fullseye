@@ -80,7 +80,7 @@ factor twice when comparing their output with this one.
 
 ## 同カテゴリ(`signal`)
 
-[lowpass](lowpass.md) · [highpass](highpass.md) · [bandpass](bandpass.md) · [envelope](envelope.md) · [rms](rms.md) · [resample](resample.md) · [spectrogram](spectrogram.md) · [zero_crossing_rate](zero_crossing_rate.md)
+[lowpass](lowpass.md) · [highpass](highpass.md) · [bandpass](bandpass.md) · [envelope](envelope.md) · [rms](rms.md) · [local_std](local_std.md) · [quantize](quantize.md) · [companding_mu_law](companding_mu_law.md)
 
 ---
 *Provenance: dsp.py — ONED operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

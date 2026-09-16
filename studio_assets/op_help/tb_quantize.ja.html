@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_quantize — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_quantize&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p><img src="fig/tb_quantize.png" alt="tb_quantize: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quantize.a.jpg">tb_quantize: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quantize.chain.jpg">tb_quantize: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quantize.inputs.jpg">tb_quantize: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>誤差モデルを明示したスカラー量子化器(ディザも選べる)。</p>
+<p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
+<p>*bits* sets the number of levels `<code style="color:#22d3bf">L = 2**bits</code>` over the signal&#x27;s own</p>
+<p>min..max range. *mode* is `<code style="color:#22d3bf">&quot;round&quot;</code><code style="color:#22d3bf"> (mid-tread, unbiased) or </code><code style="color:#22d3bf">&quot;truncate&quot;</code>`</p>
+<p>(floor, the convention PIL&#x27;s posterize and most fixed-point casts use).</p>
+<p><b>The two differ by more than a rounding convention.</b> With step</p>
+<p>`<code style="color:#22d3bf">Delta = range/(L-1)</code><code style="color:#22d3bf"> both have error variance </code><code style="color:#22d3bf">Delta**2/12</code>`, but</p>
+<p>truncation also carries a mean of `<code style="color:#22d3bf">-Delta/2</code>`, so its mean square error is</p>
+<p>truncate:  Delta<b>2/12 + (Delta/2)</b>2 = Delta**2/3</p>
+<p>round:     Delta**2/12</p>
+<p>— a factor of <b>4</b>. Anything that measures a level (not just displays it)</p>
+<p>must round.</p>
+<p>*dither* adds noise <b>before</b> quantising so the error stops being a function</p>
+<p>of the signal: `<code style="color:#22d3bf">&quot;tpdf&quot;</code>` (triangular, the audio standard — two uniform draws</p>
+<p>summed, so the error&#x27;s variance no longer depends on the sample value) or</p>
+<p>`<code style="color:#22d3bf">&quot;rpdf&quot;</code>` (one uniform draw). Dither raises the total error power but removes</p>
+<p>the correlation that makes quantisation audible as distortion rather than as</p>
+<p>hiss. `<code style="color:#22d3bf">seed</code>` fixes the draw so the op stays deterministic.</p>
+<p><b>Applicability.</b> (1) The range is taken from *this* signal, so two signals</p>
+<p>quantised separately do not share a scale. (2) `<code style="color:#22d3bf">bits=1</code>` with no dither is a</p>
+<p>comparator, not a quantiser — the error model does not apply. (3) The error</p>
+<p>model assumes the signal moves by more than a step between samples; on a flat</p>
+<p>stretch the error is a constant offset, not noise.</p>
+<p>Typed bridge of the 1d op `<code style="color:#22d3bf">quantize</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">bits</code><code style="color:#22d3bf"> (default 8); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
+tb_quantize 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_quantize%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_quantize%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p>次の例は元の台帳 op <code style="color:#22d3bf">quantize</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cold_chain_excursion">poc_cold_chain_excursion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cold_chain_excursion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

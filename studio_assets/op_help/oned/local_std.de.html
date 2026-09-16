@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">local_std — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.local_std(x, window=9)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.local_std(x, window=9)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;local_std&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Gleitende Standardabweichung mit angegebener Fehlerschranke.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>The 1-D counterpart of the image operator `<code style="color:#22d3bf">local_std</code>` (HALCON&#x27;s</p>
+<p>`<code style="color:#22d3bf">deviation_image</code>`): the variance is taken after subtracting the mean</p>
+<p>(`<code style="color:#22d3bf">E[x^2] - E[x]^2</code>` loses its significant digits on a signal that sits far</p>
+<p>from zero), unbiased by `<code style="color:#22d3bf">n/(n-1)</code>`, and the residual bias of the square root</p>
+<p>removed by `<code style="color:#22d3bf">c4(n)</code><code style="color:#22d3bf">, so the estimate of </code><code style="color:#22d3bf">sigma</code>` itself is unbiased.</p>
+<p>*window* is the number of samples in the sliding window, **rounded up to the</p>
+<p>next odd number** so the window can be centred (10 becomes 11). The error</p>
+<p>bound below is computed from the window actually used, so the number quoted</p>
+<p>stays true. The 2-D side does the same thing — `<code style="color:#22d3bf">_k(a)</code>` snaps the knob to</p>
+<p>3/5/7/9 — and the typed bridge that exposes this op as `<code style="color:#22d3bf">tb_local_std</code>`</p>
+<p>scales the knob continuously, so an even value arrives whenever the knob</p>
+<p>lands between two odd ones.</p>
+<p>**The relative standard error of each estimate is `<code style="color:#22d3bf">1/sqrt(2(n-1))</code>`** —</p>
+<p>35 % for a 5-sample window, 11 % for 41. Quote it next to any noise figure:</p>
+<p>a rolling sigma over 9 samples is +- 25 %, which is wider than most of the</p>
+<p>changes people try to read off it.</p>
+<p>Returns an array the same length as *x* (the ends are reflected).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">signal</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:quantize">quantize</a> · <a style="color:#22d3bf" href="oponed:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

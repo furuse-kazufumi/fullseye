@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_local_std — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_local_std&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tb_local_std.png" alt="tb_local_std: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_local_std.a.jpg">tb_local_std: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_local_std.chain.jpg">tb_local_std: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_local_std.inputs.jpg">tb_local_std: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>帶誤差界的移動標準差。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>The 1-D counterpart of the image operator `<code style="color:#22d3bf">local_std</code>` (HALCON&#x27;s</p>
+<p>`<code style="color:#22d3bf">deviation_image</code>`): the variance is taken after subtracting the mean</p>
+<p>(`<code style="color:#22d3bf">E[x^2] - E[x]^2</code>` loses its significant digits on a signal that sits far</p>
+<p>from zero), unbiased by `<code style="color:#22d3bf">n/(n-1)</code>`, and the residual bias of the square root</p>
+<p>removed by `<code style="color:#22d3bf">c4(n)</code><code style="color:#22d3bf">, so the estimate of </code><code style="color:#22d3bf">sigma</code>` itself is unbiased.</p>
+<p>*window* is the number of samples in the sliding window, **rounded up to the</p>
+<p>next odd number** so the window can be centred (10 becomes 11). The error</p>
+<p>bound below is computed from the window actually used, so the number quoted</p>
+<p>stays true. The 2-D side does the same thing — `<code style="color:#22d3bf">_k(a)</code>` snaps the knob to</p>
+<p>3/5/7/9 — and the typed bridge that exposes this op as `<code style="color:#22d3bf">tb_local_std</code>`</p>
+<p>scales the knob continuously, so an even value arrives whenever the knob</p>
+<p>lands between two odd ones.</p>
+<p>**The relative standard error of each estimate is `<code style="color:#22d3bf">1/sqrt(2(n-1))</code>`** —</p>
+<p>35 % for a 5-sample window, 11 % for 41. Quote it next to any noise figure:</p>
+<p>a rolling sigma over 9 samples is +- 25 %, which is wider than most of the</p>
+<p>changes people try to read off it.</p>
+<p>Returns an array the same length as *x* (the ends are reflected).</p>
+<p>Typed bridge of the 1d op `<code style="color:#22d3bf">local_std</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf"> (default 9); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
+tb_local_std 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_local_std%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_local_std%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">local_std</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">signal</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

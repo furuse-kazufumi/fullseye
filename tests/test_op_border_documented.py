@@ -152,9 +152,12 @@ def test_name_collisions_resolve_to_the_two_dimensional_note():
 
     「手元で緑」は直った証拠にならない(手元は元から緑だった)。解決先そのものを
     ここで固定する。衝突しているのは `highpass` / `lowpass` / `fill_holes` /
-    `gaussians_to_voxel` の 4 件。
+    `gaussians_to_voxel` / `local_std` / `companding_mu_law`。
     """
-    for op in ("highpass", "lowpass", "fill_holes"):
+    # 2026-09-17: 1-D 版を足したので `local_std` / `companding_mu_law` も衝突する。
+    # 名前が衝突した瞬間に門へ足すこと —— 足し忘れると、また CI でだけ落ちる。
+    for op in ("highpass", "lowpass", "fill_holes",
+               "local_std", "companding_mu_law"):
         p = _note_path(op)
         if p is None:
             continue

@@ -63,7 +63,12 @@ _CATALOG = {
         ("highpass", "dsp", ["signal"], "signal"),
         ("bandpass", "dsp", ["signal"], "signal"),
         ("envelope", "dsp", ["signal"], "signal"),
-        ("rms", "dsp", ["signal"], "measurement"),   # frame= で framewise 配列
+        ("rms", "dsp", ["signal"], "measurement"),
+        # 2-D の同名 op と一族。名前が衝突するので、ノートの解決先は
+        # tests/test_op_border_documented.py の衝突門で 2-D 側に固定してある。
+        ("local_std", "dsp", ["signal"], "signal"),
+        ("quantize", "dsp", ["signal"], "signal"),
+        ("companding_mu_law", "dsp", ["signal"], "signal"),   # frame= で framewise 配列
         ("resample", "dsp", ["signal"], "signal"),
         ("spectrum", "dsp", ["signal"], "pairs"),
         ("spectrogram", "dsp", ["signal"], "image2d"),

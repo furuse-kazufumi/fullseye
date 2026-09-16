@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">local_std — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.local_std(x, window=9)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dsp; dsp.local_std(x, window=9)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;local_std&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>오차 한계를 함께 제시하는 이동 표준편차.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>The 1-D counterpart of the image operator `<code style="color:#22d3bf">local_std</code>` (HALCON&#x27;s</p>
+<p>`<code style="color:#22d3bf">deviation_image</code>`): the variance is taken after subtracting the mean</p>
+<p>(`<code style="color:#22d3bf">E[x^2] - E[x]^2</code>` loses its significant digits on a signal that sits far</p>
+<p>from zero), unbiased by `<code style="color:#22d3bf">n/(n-1)</code>`, and the residual bias of the square root</p>
+<p>removed by `<code style="color:#22d3bf">c4(n)</code><code style="color:#22d3bf">, so the estimate of </code><code style="color:#22d3bf">sigma</code>` itself is unbiased.</p>
+<p>*window* is the number of samples in the sliding window, **rounded up to the</p>
+<p>next odd number** so the window can be centred (10 becomes 11). The error</p>
+<p>bound below is computed from the window actually used, so the number quoted</p>
+<p>stays true. The 2-D side does the same thing — `<code style="color:#22d3bf">_k(a)</code>` snaps the knob to</p>
+<p>3/5/7/9 — and the typed bridge that exposes this op as `<code style="color:#22d3bf">tb_local_std</code>`</p>
+<p>scales the knob continuously, so an even value arrives whenever the knob</p>
+<p>lands between two odd ones.</p>
+<p>**The relative standard error of each estimate is `<code style="color:#22d3bf">1/sqrt(2(n-1))</code>`** —</p>
+<p>35 % for a 5-sample window, 11 % for 41. Quote it next to any noise figure:</p>
+<p>a rolling sigma over 9 samples is +- 25 %, which is wider than most of the</p>
+<p>changes people try to read off it.</p>
+<p>Returns an array the same length as *x* (the ends are reflected).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">signal</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:quantize">quantize</a> · <a style="color:#22d3bf" href="oponed:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

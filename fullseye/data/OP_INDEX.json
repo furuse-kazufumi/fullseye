@@ -1,10 +1,10 @@
 {
- "n_ops": 1964,
+ "n_ops": 1968,
  "tiers": {
   "color": 12,
-  "ledger": 1030,
+  "ledger": 1031,
   "nary": 17,
-  "registry": 905
+  "registry": 908
  },
  "sorts": [
   "angle",
@@ -9174,6 +9174,19 @@
    "dim": "quat",
    "in_sorts": [
     "qimage"
+   ]
+  },
+  {
+   "name": "quantize",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "signal",
+   "tier": "ledger",
+   "ledger": "ops1d",
+   "dim": "oned",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -18544,6 +18557,14 @@
    "tier": "registry"
   },
   {
+   "name": "tb_companding_mu_law",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "typed",
+   "tier": "registry"
+  },
+  {
    "name": "tb_countrate_to_counts",
    "halcon": "",
    "in_sort": "counts",
@@ -19008,6 +19029,14 @@
    "tier": "registry"
   },
   {
+   "name": "tb_local_std",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "typed",
+   "tier": "registry"
+  },
+  {
    "name": "tb_lowpass",
    "halcon": "",
    "in_sort": "signal",
@@ -19236,6 +19265,14 @@
    "halcon": "",
    "in_sort": "qimage",
    "out_sort": "qimage",
+   "category": "typed",
+   "tier": "registry"
+  },
+  {
+   "name": "tb_quantize",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
    "category": "typed",
    "tier": "registry"
   },

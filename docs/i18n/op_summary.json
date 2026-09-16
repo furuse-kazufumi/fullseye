@@ -4608,6 +4608,14 @@
    "ko": "축 정렬 직육면체의 **정확한** 부호 있는 거리장(내부는 음수, 외부는 양수).",
    "de": "**Exaktes** vorzeichenbehaftetes Distanzfeld eines achsenausgerichteten Quaders (innen negativ, außen positiv)."
   },
+  "2d/tb_companding_mu_law": {
+   "fp": "b11de34c11ae",
+   "ja": "μ 則の圧伸 —— G.711 の曲線を、任意の 1 次元信号に当てる。",
+   "zh": "μ 律压扩 —— 把 G.711 的曲线用于任意一维信号。",
+   "tw": "μ 律壓擴 —— 把 G.711 的曲線用於任意一維訊號。",
+   "ko": "μ-법칙 압신 —— G.711 곡선을 임의의 1차원 신호에 적용.",
+   "de": "mu-law-Kompandierung — die G.711-Kurve, hier auf beliebige 1-D-Signale angewandt."
+  },
   "2d/tb_countrate_to_counts": {
    "fp": "44bf3886eca8",
    "en": "Count rate ``[Hz]`` -> counts ``counts``. An exit of ``countrate`` (**reversible**).",
@@ -5040,6 +5048,14 @@
    "ko": "라이트 필드를 마이크로렌즈 어레이 원시 프레임으로 다시 인터리빙(정확한 역변환).",
    "de": "Reinterleaving eines Lichtfelds in einen Mikrolinsenarray-Rohframe (exakte Umkehrung)."
   },
+  "2d/tb_local_std": {
+   "fp": "c5051677ef4e",
+   "ja": "誤差限界つきの移動標準偏差。",
+   "zh": "带误差界的滑动标准差。",
+   "tw": "帶誤差界的移動標準差。",
+   "ko": "오차 한계를 함께 제시하는 이동 표준편차.",
+   "de": "Gleitende Standardabweichung mit angegebener Fehlerschranke."
+  },
   "2d/tb_lowpass": {
    "fp": "3ad5efd11b87",
    "ja": "バターワース・ローパスフィルタ（scipy、ゼロ位相 filtfilt）。*cutoff* は ``(0, rate/2)`` の範囲内でなければならない。ナイキスト周波数の範囲外のカットオフを指定すると、信号をそのまま通過させるのではなく例外を送出する。ゼロ位相 filtfilt を行うには短すぎる信号についても、フィルタを適用しないまま無言で返すのではなく例外を送出する（メッセージ中に正確な最小長を明記）。",
@@ -5255,6 +5271,14 @@
    "tw": "四元數（超複數）二維傅立葉變換。→ (H, W, 4) 置中頻譜。",
    "ko": "사원수(초복소수) 2차원 푸리에 변환. → (H, W, 4) 중심 정렬된 스펙트럼.",
    "de": "Quaternionen- (hyperkomplexe) 2-D-Fourier-Transformation. → (H, W, 4), zentriertes Spektrum."
+  },
+  "2d/tb_quantize": {
+   "fp": "e554e41e39cd",
+   "ja": "誤差モデルを明示したスカラー量子化器(ディザも選べる)。",
+   "zh": "给出误差模型的标量量化器(可选抖动)。",
+   "tw": "給出誤差模型的純量量化器(可選抖動)。",
+   "ko": "오차 모델을 명시한 스칼라 양자화기(디더 선택 가능).",
+   "de": "Skalarer Quantisierer mit angegebenem Fehlermodell, optional mit Dither."
   },
   "2d/tb_quat_color_filter": {
    "fp": "13acc840fe45",
@@ -11828,6 +11852,14 @@
    "fp": "8760397dbd2c",
    "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。"
   },
+  "oned/companding_mu_law": {
+   "fp": "b11de34c11ae",
+   "ja": "μ 則の圧伸 —— G.711 の曲線を、任意の 1 次元信号に当てる。",
+   "zh": "μ 律压扩 —— 把 G.711 的曲线用于任意一维信号。",
+   "tw": "μ 律壓擴 —— 把 G.711 的曲線用於任意一維訊號。",
+   "ko": "μ-법칙 압신 —— G.711 곡선을 임의의 1차원 신호에 적용.",
+   "de": "mu-law-Kompandierung — die G.711-Kurve, hier auf beliebige 1-D-Signale angewandt."
+  },
   "oned/compose_funct_1d": {
    "fp": "26abe882531c",
    "ja": "合成 ``y1(y2)`` —— *y2* の値を *y1* への位置として使う(HALCON ``compose_funct_1d``)。"
@@ -11884,6 +11916,14 @@
    "fp": "77fe88b63165",
    "ja": "厳密な極大・極小の添字(HALCON ``local_min_max_funct_1d``)。"
   },
+  "oned/local_std": {
+   "fp": "c5051677ef4e",
+   "ja": "誤差限界つきの移動標準偏差。",
+   "zh": "带误差界的滑动标准差。",
+   "tw": "帶誤差界的移動標準差。",
+   "ko": "오차 한계를 함께 제시하는 이동 표준편차.",
+   "de": "Gleitende Standardabweichung mit angegebener Fehlerschranke."
+  },
   "oned/lowpass": {
    "fp": "3ad5efd11b87",
    "ja": "バターワース低域通過(scipy、零位相 filtfilt)。*cutoff* は ``(0, rate/2)`` の内側でなければならず、ナイキストの外を指定すると**信号を素通しせずに例外**を上げる。零位相 filtfilt に対して短すぎる信号も同様に例外(必要な最小長をメッセージに書く)—— 黙って未フィルタのまま返らない。"
@@ -11907,6 +11947,14 @@
   "oned/point_spectrum": {
    "fp": "ad6ca2731439",
    "ja": "**事象の位置**の周期図 —— 欠陥・打痕・計数・到着。"
+  },
+  "oned/quantize": {
+   "fp": "e554e41e39cd",
+   "ja": "誤差モデルを明示したスカラー量子化器(ディザも選べる)。",
+   "zh": "给出误差模型的标量量化器(可选抖动)。",
+   "tw": "給出誤差模型的純量量化器(可選抖動)。",
+   "ko": "오차 모델을 명시한 스칼라 양자화기(디더 선택 가능).",
+   "de": "Skalarer Quantisierer mit angegebenem Fehlermodell, optional mit Dither."
   },
   "oned/read_audio": {
    "fp": "5fd7396c4066",

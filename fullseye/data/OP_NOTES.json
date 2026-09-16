@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1964,
- "n_notes": 1968,
+ "n_ops": 1968,
+ "n_notes": 1974,
  "notes": {
   "vol_dilate": [
    {
@@ -3207,6 +3207,14 @@
     "in": "image",
     "out": "image",
     "path": "docs/ops/2d/gray/companding_mu_law.md"
+   },
+   {
+    "op": "companding_mu_law",
+    "dim": "oned",
+    "category": "signal",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/oned/signal/companding_mu_law.md"
    }
   ],
   "cv_clahe": [
@@ -7970,6 +7978,14 @@
     "in": "image",
     "out": "image",
     "path": "docs/ops/2d/texture/local_std.md"
+   },
+   {
+    "op": "local_std",
+    "dim": "oned",
+    "category": "signal",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/oned/signal/local_std.md"
    }
   ],
   "scale_select_std": [
@@ -8367,6 +8383,16 @@
     "in": "points",
     "out": "volume",
     "path": "docs/ops/2d/typed/tb_capsule_sdf.md"
+   }
+  ],
+  "tb_companding_mu_law": [
+   {
+    "op": "tb_companding_mu_law",
+    "dim": "2d",
+    "category": "typed",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/2d/typed/tb_companding_mu_law.md"
    }
   ],
   "tb_countrate_to_counts": [
@@ -8949,6 +8975,16 @@
     "path": "docs/ops/2d/typed/tb_lf_to_mla.md"
    }
   ],
+  "tb_local_std": [
+   {
+    "op": "tb_local_std",
+    "dim": "2d",
+    "category": "typed",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/2d/typed/tb_local_std.md"
+   }
+  ],
   "tb_lowpass": [
    {
     "op": "tb_lowpass",
@@ -9237,6 +9273,16 @@
     "in": "qimage",
     "out": "qimage",
     "path": "docs/ops/2d/typed/tb_qft2.md"
+   }
+  ],
+  "tb_quantize": [
+   {
+    "op": "tb_quantize",
+    "dim": "2d",
+    "category": "typed",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/2d/typed/tb_quantize.md"
    }
   ],
   "tb_quat_color_filter": [
@@ -16636,6 +16682,16 @@
     "in": "positions",
     "out": "table",
     "path": "docs/ops/oned/signal/point_spectrum.md"
+   }
+  ],
+  "quantize": [
+   {
+    "op": "quantize",
+    "dim": "oned",
+    "category": "signal",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/oned/signal/quantize.md"
    }
   ],
   "resample": [

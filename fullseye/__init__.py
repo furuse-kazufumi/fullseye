@@ -352,6 +352,12 @@ with warnings.catch_warnings():
     from dsp import (  # noqa: E402,F401  (1-D signal / acoustic / vibration — beyond images)
         read_wav, write_wav, read_audio, spectrum, spectrogram,
         lowpass, highpass, bandpass, envelope, rms, find_peaks, peak_subbin,
+        # ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと
+        #   `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す ——
+        #   既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、
+        #   同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
+        local_std as signal_local_std, quantize as signal_quantize,
+        companding_mu_law as signal_companding_mu_law,
         point_spectrum, signal_features,
         resample, zero_crossing_rate,
     )
@@ -690,6 +696,7 @@ __all__ = [
     "DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
+    "signal_local_std", "signal_quantize", "signal_companding_mu_law",
     "peak_subbin", "point_spectrum", "signal_features",
     "algo", "algo_ops", "algo_categories", "find_algo", "run_algo",
     "algo_to_python", "algo_to_c", "algo_difftest",

@@ -360,3 +360,125 @@ def test_point_spectrum_does_not_peak_at_zero_for_a_uniform_process():
     r = dsp.point_spectrum(pos, extent=5000.0, f_max=0.05, method="direct")
     lo = r["power"][:20].mean()                 # いちばん低い周波数側
     assert lo < 3.0 * float(np.median(r["power"]))
+
+
+# --------------------------------------------------------------------------- #
+# 2-D で入れた族の 1 次元版(局所標準偏差 / 量子化 / 圧伸)
+#
+# ★どれも閉形式の真値を持つので、「動いた」でなく「理論値と合う」で検査する。
+# --------------------------------------------------------------------------- #
+
+def test_local_std_recovers_sigma_and_matches_its_error_bound():
+    """既知の sigma を返し、ばらつきが 1/sqrt(2(n-1)) と合うこと。
+
+    ★値を 1000 に載せて測る —— ``E[x^2]-E[x]^2`` をそのまま計算すると、0 から
+    遠いほど桁落ちが効いて一様な区間に偽のばらつきが残る。平均を引いてから
+    分散を取っているのが効いているかは、**オフセットを付けないと見えない**。
+    """
+    rng = np.random.default_rng(11)
+    for sigma_true in (0.01, 0.05):
+        x = 1000.0 + rng.normal(0, sigma_true, 20000)
+        for n in (9, 41):
+            s = dsp.local_std(x, n)
+            assert s.shape == x.shape
+            assert abs(float(s.mean()) - sigma_true) < 0.02 * sigma_true, \
+                f"sigma を復元できていない: 真={sigma_true} 窓={n} 推定={s.mean():.5g}"
+            predicted = 1.0 / np.sqrt(2.0 * (n - 1))
+            measured = float(s.std() / s.mean())
+            assert abs(measured - predicted) < 0.15 * predicted, \
+                f"ばらつきが閉形式と合わない: 窓={n} 実測={measured:.4g} 理論={predicted:.4g}"
+
+
+def test_local_std_is_exactly_zero_on_a_constant_signal():
+    """定数信号では偽のばらつきが出ないこと(どの水準でも)。"""
+    for level in (0.0, 1.0, 1000.0):
+        assert float(dsp.local_std(np.full(500, level), 9).max()) == 0.0, \
+            f"定数信号(={level})に偽の分散"
+    # 偶数窓は**次の奇数に丸める**(中心が取れないため)。橋がノブを連続に振るので
+    # 偶数は必ず来る —— 拒否すると tb_local_std の図が作れない(実際に落ちた)。
+    x_even = np.random.default_rng(3).normal(0, 0.05, 500)
+    assert np.array_equal(dsp.local_std(x_even, 8), dsp.local_std(x_even, 9)),         "偶数窓が次の奇数に丸められていない"
+    with pytest.raises(ValueError, match=">= 3"):
+        dsp.local_std(np.zeros(100), 2)              # 3 未満は拒否
+    with pytest.raises(ValueError, match="shorter"):
+        dsp.local_std(np.zeros(5), 9)                # 信号より長い窓は拒否
+
+
+def test_quantize_round_is_unbiased_and_truncate_costs_four_times_the_mse():
+    """丸めと切り捨ての差は**平均**に出る。二乗誤差で 4 倍ちがう。
+
+    分散はどちらも Delta^2/12 なので、分散だけ見ると同じに見える —— そこが
+    「丸めでなければならない」理由が伝わらなくなる分かれ目。
+    """
+    x = np.random.default_rng(11).random(20000)
+    for bits in (3, 6):
+        er = dsp.quantize(x, bits, "round") - x
+        et = dsp.quantize(x, bits, "truncate") - x
+        step = (x.max() - x.min()) / float((1 << bits) - 1)
+        assert abs(float(er.mean())) < 0.05 * step, \
+            f"round に偏りがある: bits={bits} 平均={er.mean():+.5g}"
+        assert float(et.mean()) < -0.4 * step, \
+            f"truncate が切り捨てになっていない: bits={bits} 平均={et.mean():+.5g}"
+        ratio = float(np.mean(et ** 2) / np.mean(er ** 2))
+        assert 3.5 < ratio < 4.5, f"MSE 比が 4 から外れた: bits={bits} 比={ratio:.2f}"
+    with pytest.raises(ValueError, match="bits"):
+        dsp.quantize(x, 0)
+    with pytest.raises(ValueError, match="mode"):
+        dsp.quantize(x, 4, "floor")
+    with pytest.raises(ValueError, match="dither"):
+        dsp.quantize(x, 4, "round", dither="gaussian")
+
+
+def test_dither_trades_more_error_for_less_correlation_with_the_signal():
+    """ディザは**誤差を増やして、誤差と信号の相関を減らす**。両方見て初めて取引。
+
+    片方(MSE)だけ見ると「悪化した」で終わる。量子化雑音が歪みでなく雑音として
+    聞こえる/見えるのは相関が切れるからなので、そちらを数値で押さえる。
+    """
+    ramp = np.linspace(0.0, 1.0, 4000)
+    stats = {}
+    for mode in (None, "rpdf", "tpdf"):
+        q = dsp.quantize(ramp, 3, "round", dither=mode)
+        e = q - ramp
+        stats[mode] = (float(np.mean(e ** 2)), abs(float(np.corrcoef(ramp, e)[0, 1])))
+    assert stats["rpdf"][0] > stats[None][0] and stats["tpdf"][0] > stats["rpdf"][0], \
+        f"ディザで誤差が増えていない: {stats}"
+    assert stats["tpdf"][1] < 0.5 * stats[None][1], \
+        f"TPDF で信号との相関が半分以下になっていない: {stats}"
+    # 決定的であること(種を固定してある)
+    a = dsp.quantize(ramp, 3, "round", dither="tpdf")
+    b = dsp.quantize(ramp, 3, "round", dither="tpdf")
+    assert np.array_equal(a, b), "ディザが決定的でない"
+
+
+def test_mu_law_is_decided_by_the_crest_factor():
+    """mu 則の効きは**波高率**で決まる。効く側と損をする側の両方を測る。
+
+    ★乱数で測ってはいけない —— ピークは**たった 1 標本**なので、同じ分布でも
+    種を変えるだけで比が 0.55〜0.87 と揺れる(実測)。ここでは振幅 A の正弦波に
+    フルスケールの 1 標本を刺して、波高率をちょうど ``1/A`` に固定する。
+    """
+    t = np.arange(8000) / 8000.0
+    for amp, want_better in ((0.02, True), (0.05, True), (0.50, False)):
+        sig = amp * np.sin(2 * np.pi * 11 * t)
+        sig[0] = 1.0
+        for bits in (4, 6):
+            e_uniform = float(np.mean((dsp.quantize(sig, bits, "round") - sig) ** 2))
+            e_mu = float(np.mean((dsp.companding_mu_law(sig, 255.0, bits) - sig) ** 2))
+            ratio = e_mu / e_uniform
+            if want_better:
+                assert ratio < 0.3, (
+                    "波高率 %.0f で mu 則が効いていない: bits=%d 比=%.3f"
+                    % (1 / amp, bits, ratio))
+            else:
+                assert ratio > 2.0, (
+                    "波高率 %.0f で mu 則が損をしていない: bits=%d 比=%.3f —— "
+                    "適用条件の記述が嘘になる" % (1 / amp, bits, ratio))
+    # mu=0 は一様量子化そのものに落ちる(曲線が効いていないときの見分け方)
+    sig = 0.05 * np.sin(2 * np.pi * 11 * t)
+    sig[0] = 1.0
+    peak = float(np.max(np.abs(sig)))
+    assert np.allclose(dsp.companding_mu_law(sig, 0.0, 6),
+                       dsp.quantize(sig / peak, 6, "round") * peak)
+    with pytest.raises(ValueError, match="mu"):
+        dsp.companding_mu_law(sig, -1.0, 6)

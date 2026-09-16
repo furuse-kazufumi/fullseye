@@ -1027,7 +1027,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 917 ops / 48 categories。_
+_計 920 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1880,7 +1880,7 @@ _計 917 ops / 48 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(151)
+### typed(154)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
@@ -1946,6 +1946,9 @@ _計 917 ops / 48 categories。_
 - `tb_bandpass` `signal → signal` · 例: なし
 - `tb_envelope` `signal → signal` · 例: なし
 - `tb_rms` `signal → feature` · 例: なし
+- `tb_local_std` `signal → signal` · 例: なし
+- `tb_quantize` `signal → signal` · 例: なし
+- `tb_companding_mu_law` `signal → signal` · 例: なし
 - `tb_resample` `signal → signal` · 例: なし
 - `tb_spectrogram` `signal → image` · 例: なし
 - `tb_zero_crossing_rate` `signal → feature` · 例: なし
@@ -2046,7 +2049,7 @@ _計 917 ops / 48 categories。_
 - `xg_crop_contours` `contour → contour` · 例: `gallery2d_geometry`
 
 ## 1-D operators(ops1d)by category
-_計 39 ops / 3 categories。_
+_計 42 ops / 3 categories。_
 
 
 プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
@@ -2081,12 +2084,15 @@ _計 39 ops / 3 categories。_
 - `write_wav` (`signal → file`) — Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
 - `read_audio` (`file → signal`) — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
 
-### signal(13)
+### signal(16)
 - `lowpass` (`signal → signal`) — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
 - `highpass` (`signal → signal`) — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.
 - `bandpass` (`signal → signal`) — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
 - `envelope` (`signal → signal`) — Amplitude envelope via the analytic (Hilbert) signal — the shape of a
 - `rms` (`signal → measurement`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
+- `local_std` (`signal → signal`) — Rolling standard deviation with a stated error bound.
+- `quantize` (`signal → signal`) — Scalar quantiser with the error model stated, plus optional dither.
+- `companding_mu_law` (`signal → signal`) — mu-law companding — the G.711 curve, used here on any 1-D signal.
 - `resample` (`signal → signal`) — Resample a signal to *new_rate* (Fourier method).
 - `spectrum` (`signal → pairs`) — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``).
 - `spectrogram` (`signal → image2d`) — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape

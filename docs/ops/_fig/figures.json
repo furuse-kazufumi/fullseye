@@ -1,5 +1,5 @@
 {
- "generated_for": 917,
+ "generated_for": 920,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -13726,6 +13726,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_companding_mu_law": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_companding_mu_law.a.jpg",
+    "b": "tb_companding_mu_law.b.jpg",
+    "chain": "tb_companding_mu_law.chain.jpg",
+    "inputs": "tb_companding_mu_law.inputs.jpg"
+   },
+   "fig": "tb_companding_mu_law.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_companding_mu_law 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_countrate_to_counts": {
    "color_ok": false,
    "extra": {
@@ -15114,6 +15139,32 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "tb_local_std": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_local_std.a.jpg",
+    "chain": "tb_local_std.chain.jpg",
+    "inputs": "tb_local_std.inputs.jpg"
+   },
+   "fig": "tb_local_std.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_local_std 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "tb_lowpass": {
    "color_ok": false,
    "extra": {
@@ -15844,6 +15895,32 @@
    ],
    "out_kind": "ndarray",
    "program": "img_to_rgb 0.50 0.50\ntb_rgb_to_quaternion 0.50 0.50\ntb_qft2 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "tb_quantize": {
+   "color_ok": false,
+   "extra": {
+    "a": "tb_quantize.a.jpg",
+    "chain": "tb_quantize.chain.jpg",
+    "inputs": "tb_quantize.inputs.jpg"
+   },
+   "fig": "tb_quantize.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_signal 0.50 0.50\ntb_quantize 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21495,10 +21572,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 913,
+  "ok": 916,
   "unreachable": 0,
-  "with_chain": 366,
+  "with_chain": 369,
   "with_gif": 40,
-  "with_sweep": 562
+  "with_sweep": 565
  }
 }
