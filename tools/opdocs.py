@@ -612,6 +612,42 @@ def _with_normalisation(name: str, doc: str) -> str:
     return (doc + chr(10) + chr(10) + line) if doc else line
 
 
+#: **内部で 8 bit に落としている op** の実測(`tools/impl2/quant_probe.py`)。
+#: 出力が k/255 の格子にぴったり載り、かつその格子を 20 段以上使っている op は、
+#: 途中で uint8 に量子化している。利用者は float64 の画像を渡すので**渡した精度が
+#: そのまま出てくると思う**が、実際には 255 段に潰れる —— 16-bit カメラの階調は
+#: 意味を失い、1/255 より小さい差しか無い欠陥は消える。実測した 29 本のうち
+#: **21 本(72%)が黙っていた**。
+_QUANT_JSON = os.path.join(_ROOT, "docs", "op_quantisation.json")
+_QUANT_CACHE = None
+_SAYS_8BIT = re.compile(r"uint8|8 ?bit|8-bit|256 段|1/255|量子化")
+
+
+def _quant_set() -> set:
+    global _QUANT_CACHE
+    if _QUANT_CACHE is None:
+        _QUANT_CACHE = set()
+        if os.path.exists(_QUANT_JSON):
+            with open(_QUANT_JSON, encoding="utf-8") as _f:
+                for r in json.load(_f):
+                    if r.get("quantises_to_8bit"):
+                        _QUANT_CACHE.add(r["op"])
+    return _QUANT_CACHE
+
+
+def _with_quantisation(name: str, doc: str) -> str:
+    """8 bit への量子化を明示する。**測る道具では、精度の黙った目減りは誤用を生む**。"""
+    if name not in _quant_set() or (doc and _SAYS_8BIT.search(doc)):
+        return doc
+    line = ("**精度(実測)**: 内部で **8 bit(256 段)に量子化**している"
+            "(出力が k/255 の格子にちょうど載る)。float64 で渡しても"
+            "**その精度は保たれない** —— 16-bit カメラの階調(約 1.5e-5)は 1/255 ="
+            "約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。"
+            "微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では"
+            "量子化の段差が出るので、8 bit を経由しない op を選ぶこと。")
+    return (doc + chr(10) + chr(10) + line) if doc else line
+
+
 _KNOB_JSON = os.path.join(_ROOT, "docs", "op_knob.json")
 _KNOB_CACHE = None
 _SAYS_A_UNUSED = re.compile(r"``a``, ``b`` は未使用|``a`` は未使用|a は未使用|a, b は未使用|つまみは未使用")
@@ -702,9 +738,9 @@ def _records():
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": _with_normalisation(o.name, _with_knob(o.name, _with_border(
+            "doc": _with_quantisation(o.name, _with_normalisation(o.name, _with_knob(o.name, _with_border(
                 o.name, _defuse_pseudolinks(
-                    inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip())))),
+                    inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip()))))),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),

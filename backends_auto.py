@@ -347,7 +347,7 @@ def _sh_edge(p):
         if kind == "kirsch":
             return _norm(_compass(x, _KIRSCH))
         if kind == "kirsch_dir":
-            resp = np.stack([ndimage.convolve(x, k) for k in _KIRSCH])
+            resp = _kill_dust(np.stack([ndimage.convolve(x, k) for k in _KIRSCH]), x)
             return np.argmax(resp, 0).astype(np.float64) / (len(_KIRSCH) - 1)
         if kind == "frei":
             return _norm(np.hypot(ndimage.convolve(x, _FREI[0]), ndimage.convolve(x, _FREI[1])))
@@ -355,15 +355,17 @@ def _sh_edge(p):
             # _FREI[0] is the horizontal-edge kernel (row/y gradient), _FREI[1] the
             # vertical-edge kernel (col/x gradient); arctan2(gy, gx) matches the
             # sobel_dir / prewitt_dir convention.
-            return (np.arctan2(ndimage.convolve(x, _FREI[0]),
-                               ndimage.convolve(x, _FREI[1])) + np.pi) / (2 * np.pi)
+            return (np.arctan2(_kill_dust(ndimage.convolve(x, _FREI[0]), x),
+                               _kill_dust(ndimage.convolve(x, _FREI[1]), x))
+                    + np.pi) / (2 * np.pi)
         if kind == "robinson":
             r0 = [np.rot90(_ROBINSON[0], i) for i in range(4)]
             r1 = [np.rot90(_ROBINSON[1], i) for i in range(4)]
             return _norm(_compass(x, r0 + r1))
         if kind == "robinson_dir":
             r = [np.rot90(_ROBINSON[0], i) for i in range(4)] + [np.rot90(_ROBINSON[1], i) for i in range(4)]
-            return np.argmax(np.stack([ndimage.convolve(x, k) for k in r]), 0).astype(np.float64) / (len(r) - 1)
+            resp = _kill_dust(np.stack([ndimage.convolve(x, k) for k in r]), x)
+            return np.argmax(resp, 0).astype(np.float64) / (len(r) - 1)
         if kind == "laplace":
             return _norm(np.abs(ndimage.laplace(x)))
         raise ValueError(kind)
@@ -500,20 +502,44 @@ def _sh_diffusion(p):
 
 
 # ---- image -> image : texture ---------------------------------------------- #
+#: **勾配が無い場所で方向を決めるのは、丸め屑に決めさせること。**
+#: 一様な面ではコンパス応答も Frei-Chen 応答も数学的に厳密に 0 になるが、浮動小数では
+#: 2e-15 級の屑が残る。``argmax`` / ``arctan2`` はその屑の大小で勝者を決めるので、
+#: **明るさを 0.49 から 0.51 に変えただけで方向マップが別物になる**(実測 2026-09-16:
+#: `kirsch_dir` が 0.4286 -> 0 -> 0.2857)。方向の意味は変えず、**同点を決定的にする**
+#: ために屑を 0 に落とす —— ``argmax`` は全 0 なら 0、``arctan2(0,0)`` は 0 を返すので、
+#: どちらも「勾配なし」の既定値に落ち着く。
+#: 床は入力の大きさに対する相対量。屑(2e-15)の 500 倍あり、16-bit の量子化幅を
+#: 畳み込んだ実信号(2e-4)より 8 桁下なので実エッジは削らない。
+_DIR_DUST = 1e-12
+
+
+def _kill_dust(arr, ref):
+    """``ref`` の大きさに対して屑としか言えない成分を 0 にする。"""
+    floor = _DIR_DUST * max(float(np.max(np.abs(np.asarray(ref, np.float64)))), 1e-12)
+    a = np.asarray(arr, np.float64)
+    return np.where(np.abs(a) > floor, a, 0.0)
+
+
 def _sh_texture(p):
     kind = p["kind"]
 
     def fn(v, a, b):
         x = np.asarray(v, np.float64)
         k = _k(a)
-        if kind == "deviation":
-            m = ndimage.uniform_filter(x, k)
-            m2 = ndimage.uniform_filter(x * x, k)
-            return _norm(np.sqrt(np.maximum(m2 - m * m, 0)))
-        if kind == "variance":
-            m = ndimage.uniform_filter(x, k)
-            m2 = ndimage.uniform_filter(x * x, k)
-            return _norm(np.maximum(m2 - m * m, 0))
+        if kind in ("deviation", "variance"):
+            # 平均を引いてから分散を取る。``E[x^2]-E[x]^2`` は桁落ちし、**完全に一様な画像
+            # でも 1e-15 級の偽分散が残る**。``sqrt`` がそれを 3e-8 まで 8 桁持ち上げ、
+            # ``_norm`` の素通し閾値 (1e-8) を越えてフルスケール化する —— 空フレームが
+            # 「全面が最大テクスチャ」として返る(実測 2026-09-16: 一様 0.51 で全画素 1.0、
+            # 一様 0.50 では 0.0)。GPU 経路 ``accel.py:_std_filter`` は既にこれを閾値で
+            # 回避していたが、CPU 経路は直っていなかった。定数を引けば一様画像で厳密に
+            # 0 になるので、閾値を置くより素性が良い。
+            x0 = x - float(np.mean(x))
+            m = ndimage.uniform_filter(x0, k)
+            m2 = ndimage.uniform_filter(x0 * x0, k)
+            var = np.maximum(m2 - m * m, 0.0)
+            return _norm(np.sqrt(var) if kind == "deviation" else var)
         if kind == "entropy" and _HAS_SK:
             return _norm(skfilters.rank.entropy(_u8(x), skmorph.disk(_rad(a))).astype(np.float64))
         if kind == "gabor":
@@ -659,6 +685,14 @@ def _sh_geom(p):
 
 
 # ---- image -> region : thresholding / segmentation ------------------------- #
+#: **平坦な面を「差がある」と言わないための許容差**(``ops.py`` の ``_FLAT_TOL`` と同値)。
+#: ``x > filter(x)`` はオフセットが 0 のとき「1 ULP でも明るければ真」になる。一様な面
+#: でも平滑化の積算順序で結果が最下位 1 ビット下に丸まることがあり、そのとき**面の全画素
+#: が前景**になる(実測 2026-09-16: c=0.05 の一様画像で 576/576、c=0.06 で 0/576)。
+#: 同じ式が ``ops.py`` 側にも別実装として在り、**片方だけ直すと分岐したまま残る**。
+_FLAT_TOL = 1e-9
+
+
 def _sh_threshold(p):
     method = p["method"]
 
@@ -686,9 +720,11 @@ def _sh_threshold(p):
         if method == "niblack":
             return (x > skfilters.threshold_niblack(x, window_size=2 * int(a * 6) + 3)).astype(np.float64)
         if method == "dyn":
-            return (x > ndimage.uniform_filter(x, _k(a)) + (b - 0.5) * 0.4).astype(np.float64)
+            return (x - ndimage.uniform_filter(x, _k(a))
+                    > (b - 0.5) * 0.4 + _FLAT_TOL).astype(np.float64)
         if method == "local_gauss":
-            return (x > ndimage.gaussian_filter(x, 1 + 3 * a) + (b - 0.5) * 0.3).astype(np.float64)
+            return (x - ndimage.gaussian_filter(x, 1 + 3 * a)
+                    > (b - 0.5) * 0.3 + _FLAT_TOL).astype(np.float64)
         if method == "hysteresis" and _HAS_SK:
             return skfilters.apply_hysteresis_threshold(x, 0.2 + 0.3 * a, 0.5 + 0.3 * b).astype(np.float64)
         if method == "dual":                         # signed threshold: |x-0.5| > t (dual_threshold)
@@ -1296,7 +1332,7 @@ SEED: list[tuple] = [
      '``arctan(x) / (π/2)`` で [0,1] を [0,1] に写す逆正接 LUT。中心付近\n(x≈0.5)で傾きが最大、両端に近づくほど傾きが緩やかになる ―― ``asin_image``\nとは逆に**両端でなく中間のコントラストを強調する**S字カーブ。HALCON の\n``atan_image``（Calculate the arctangent of an image.）の代役。\n\n``a``, ``b`` は未使用。傾きの急峻さを変える調整点は無い固定カーブ。'),
     # ---- Filters/Image: gray LUT -----------------------------------------
     ("gamma_image", "gray", IMG, IMG, "lut", {"kind": "gamma"},
-     'ガンマ補正 ``x ** (0.3 + 2.5*a)``。``a`` が 0 に近いほど指数は 0.3 に\n近づき暗部を持ち上げ、``a`` が 1 に近いほど指数は 2.8 に近づき暗部を潰して\nコントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or\ndecoding of an image.）の代役。\n\n``a`` はガンマ指数を 0.3〜2.8 の範囲で振る。``b`` は未使用。HALCON の実装は\nEncode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは\n単純なべき乗写像 1 本に単純化している(近似)。'),
+     'ガンマ補正 ``x ** (0.3 + 2.5*a)``。``a`` が 0 に近いほど指数は 0.3 に\n近づき暗部を持ち上げ、``a`` が 1 に近いほど指数は 2.8 に近づき暗部を潰して\nコントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or\ndecoding of an image.）の代役。\n\n``a`` はガンマ指数を 0.3〜2.8 の範囲で**線形に**振る（既定の ``a=0.5`` は γ=1.55 であって素通しではない。γ=1 が要るなら ``a=0.28``）。``b`` は未使用。HALCON の実装は\nEncode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは\n単純なべき乗写像 1 本に単純化している(近似)。'),
     ("pow_image", "gray", IMG, IMG, "lut", {"kind": "gamma"},
      '実装は ``gamma_image`` と**まったく同じ関数**(``_sh_lut`` の ``kind:\n"gamma"`` 分岐)を指す。つまり ``pow_image`` と ``gamma_image`` は\nこのバックエンド上では計算結果が一致する ―― HALCON では別の演算子(指数を\n明示的に指定する ``pow_image`` と符号化/復号を意図した ``gamma_image``)\nだが、ここでは代役の実体が重複している(近似の限界として明記)。\n\n``a`` がべき指数を 0.3〜2.8 の範囲で振る。``b`` は未使用。HALCON の\n``pow_image``（Raise an image to a power.）の代役。'),
     ("invert_image", "gray", IMG, IMG, "lut", {"kind": "invert"},

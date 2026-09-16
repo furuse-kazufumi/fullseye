@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `scale_image_max`(Maximum gray value spreading in the value range 0 to 255.)に相当(近似。HALCON 版は画像全体、こちらは局所窓ごと)。実装は ``filters.rank.autolevel(_u8s(v), disk(1+int(a*3)))`` を 255 で割ったもの —— a は円盤半径を 1〜4 に振る。b は未使用。ほぼ一様な領域ではノイズまで強く引き伸ばされる点に注意。
 
+**精度(実測)**: 内部で **8 bit(256 段)に量子化**している(出力が k/255 の格子にちょうど載る)。float64 で渡しても**その精度は保たれない** —— 16-bit カメラの階調(約 1.5e-5)は 1/255 =約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では量子化の段差が出るので、8 bit を経由しない op を選ぶこと。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

@@ -1,0 +1,6470 @@
+[
+  {
+    "op": "abs_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "acos_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "add_noise_distribution",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "add_noise_white",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "affine_trans_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "affine_trans_image_size",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "affine_warp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "alife_curvature_flow",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "alife_cyclic_ca",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "alife_dla",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.0,
+          0.01
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "alife_gray_scott",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.524057967145,
+    "jumps": [
+      {
+        "between": [
+          0.0,
+          0.01
+        ],
+        "from": 0.0,
+        "to": 0.524057967145
+      }
+    ]
+  },
+  {
+    "op": "alife_langton_ant",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "alife_lenia",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.383780427215,
+    "jumps": [
+      {
+        "between": [
+          0.14,
+          0.15
+        ],
+        "from": 0.0,
+        "to": 0.326342233122
+      }
+    ]
+  },
+  {
+    "op": "alife_life_step",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.5,
+          0.51
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "alife_perona_malik",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "alife_reaction_bz",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "alife_sandpile",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.35,
+      0.36,
+      0.37,
+      0.38,
+      0.39,
+      0.4,
+      0.41,
+      0.42,
+      0.43,
+      0.44,
+      0.45,
+      0.46
+    ],
+    "n_non_constant": 66,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.05,
+          0.06
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "alife_turing",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.456814490116,
+    "out_max": 0.936681313393,
+    "jumps": []
+  },
+  {
+    "op": "alife_wolfram1d",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "anisotropic_diffusion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "asin_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "atan_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "aug_barrel",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "aug_chromatic",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "aug_cutout",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "aug_fixed_pattern",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "aug_jpeg_blocks",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.998529411765,
+    "jumps": []
+  },
+  {
+    "op": "aug_motion_blur",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "aug_read_noise",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "aug_rolling_shutter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "aug_shot_noise",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "aug_vignette",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "bandpass_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "bilateral",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "bilateral_filter",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.51,
+      0.65,
+      0.71,
+      0.75,
+      0.93
+    ],
+    "n_non_constant": 5,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "binomial_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "bit_not",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "bothat",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "clahe",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.059331054688,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "coherence_enhancing_diff",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "corner_response",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "cos_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_bilateral",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.51,
+      0.65,
+      0.71,
+      0.75,
+      0.93
+    ],
+    "n_non_constant": 5,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_blackhat",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_box",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_clahe",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.223529411765,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_close",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_corner_harris",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "cv_dilate",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_erode",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_gaussian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_gradient",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_laplacian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_median",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_min_eigen",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_nlmeans",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_open",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_precorner",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_scharr",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_sharpen",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_tophat",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "cv_trunc",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "dc_homomorphic",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "dc_local_contrast_norm",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "dc_retinex",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "dc_rpca_lowrank",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "dc_rpca_sparse",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "dc_structure_texture",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "dc_texture_residual",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "deform_ffd",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "deform_mls",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "deform_tps",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "derivate_gauss",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "deviation_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "diff_of_gauss",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "dl_aniso_diffusion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "dl_guided_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "dog",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "dots_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.5,
+    "jumps": [
+      {
+        "between": [
+          0.0,
+          0.01
+        ],
+        "from": 0.5,
+        "to": 0.0
+      }
+    ]
+  },
+  {
+    "op": "dual_rank",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "eliminate_min_max",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "eliminate_sp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "entropy_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "equ_histo_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.5,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.01,
+          0.02
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.02,
+          0.03
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.03,
+          0.04
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.04,
+          0.05
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.08,
+          0.09
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.09,
+          0.1
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.1,
+          0.11
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.11,
+          0.12
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.17,
+          0.18
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.18,
+          0.19
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.19,
+          0.2
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.2,
+          0.21
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.24,
+          0.25
+        ],
+        "from": 0.94,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.25,
+          0.26
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.26,
+          0.27
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.27,
+          0.28
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.28,
+          0.29
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.29,
+          0.3
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.33,
+          0.34
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.34,
+          0.35
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.35,
+          0.36
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.36,
+          0.37
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.42,
+          0.43
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.43,
+          0.44
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.44,
+          0.45
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.45,
+          0.46
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.49,
+          0.5
+        ],
+        "from": 0.94,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.5,
+          0.51
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.51,
+          0.52
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.52,
+          0.53
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.53,
+          0.54
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.54,
+          0.55
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.58,
+          0.59
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.59,
+          0.6
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.6,
+          0.61
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.61,
+          0.62
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.67,
+          0.68
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.68,
+          0.69
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.69,
+          0.7
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.7,
+          0.71
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.74,
+          0.75
+        ],
+        "from": 0.94,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.75,
+          0.76
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.76,
+          0.77
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.77,
+          0.78
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.78,
+          0.79
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.79,
+          0.8
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.83,
+          0.84
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.84,
+          0.85
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.85,
+          0.86
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.86,
+          0.87
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.92,
+          0.93
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.93,
+          0.94
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.94,
+          0.95
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.95,
+          0.96
+        ],
+        "from": 0.7,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "equ_histo_image_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.5,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.04,
+          0.05
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.05,
+          0.06
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.07,
+          0.08
+        ],
+        "from": 0.98,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.08,
+          0.09
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.1,
+          0.11
+        ],
+        "from": 0.9,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.11,
+          0.12
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.15,
+          0.16
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.16,
+          0.17
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.18,
+          0.19
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.19,
+          0.2
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.21,
+          0.22
+        ],
+        "from": 0.94,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.22,
+          0.23
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.24,
+          0.25
+        ],
+        "from": 0.86,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.25,
+          0.26
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.29,
+          0.3
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.3,
+          0.31
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.32,
+          0.33
+        ],
+        "from": 0.98,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.33,
+          0.34
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.35,
+          0.36
+        ],
+        "from": 0.9,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.36,
+          0.37
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.4,
+          0.41
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.41,
+          0.42
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.43,
+          0.44
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.44,
+          0.45
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.46,
+          0.47
+        ],
+        "from": 0.94,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.47,
+          0.48
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.49,
+          0.5
+        ],
+        "from": 0.86,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.5,
+          0.51
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.54,
+          0.55
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.55,
+          0.56
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.57,
+          0.58
+        ],
+        "from": 0.98,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.58,
+          0.59
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.6,
+          0.61
+        ],
+        "from": 0.9,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.61,
+          0.62
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.65,
+          0.66
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.66,
+          0.67
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.68,
+          0.69
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.69,
+          0.7
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.71,
+          0.72
+        ],
+        "from": 0.94,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.72,
+          0.73
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.74,
+          0.75
+        ],
+        "from": 0.86,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.75,
+          0.76
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.79,
+          0.8
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.8,
+          0.81
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.82,
+          0.83
+        ],
+        "from": 0.98,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.83,
+          0.84
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.85,
+          0.86
+        ],
+        "from": 0.9,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.86,
+          0.87
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.9,
+          0.91
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.91,
+          0.92
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.93,
+          0.94
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.94,
+          0.95
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.96,
+          0.97
+        ],
+        "from": 0.94,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.97,
+          0.98
+        ],
+        "from": 0.58,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "equalize",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.5,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.01,
+          0.02
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.02,
+          0.03
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.03,
+          0.04
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.04,
+          0.05
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.08,
+          0.09
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.09,
+          0.1
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.1,
+          0.11
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.11,
+          0.12
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.17,
+          0.18
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.18,
+          0.19
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.19,
+          0.2
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.2,
+          0.21
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.24,
+          0.25
+        ],
+        "from": 0.94,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.25,
+          0.26
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.26,
+          0.27
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.27,
+          0.28
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.28,
+          0.29
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.29,
+          0.3
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.33,
+          0.34
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.34,
+          0.35
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.35,
+          0.36
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.36,
+          0.37
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.42,
+          0.43
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.43,
+          0.44
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.44,
+          0.45
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.45,
+          0.46
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.49,
+          0.5
+        ],
+        "from": 0.94,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.5,
+          0.51
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.51,
+          0.52
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.52,
+          0.53
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.53,
+          0.54
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.54,
+          0.55
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.58,
+          0.59
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.59,
+          0.6
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.6,
+          0.61
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.61,
+          0.62
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.67,
+          0.68
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.68,
+          0.69
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.69,
+          0.7
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.7,
+          0.71
+        ],
+        "from": 0.7,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.74,
+          0.75
+        ],
+        "from": 0.94,
+        "to": 0.5
+      },
+      {
+        "between": [
+          0.75,
+          0.76
+        ],
+        "from": 0.5,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.76,
+          0.77
+        ],
+        "from": 1.0,
+        "to": 0.62
+      },
+      {
+        "between": [
+          0.77,
+          0.78
+        ],
+        "from": 0.62,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.78,
+          0.79
+        ],
+        "from": 1.0,
+        "to": 0.74
+      },
+      {
+        "between": [
+          0.79,
+          0.8
+        ],
+        "from": 0.74,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.83,
+          0.84
+        ],
+        "from": 0.98,
+        "to": 0.54
+      },
+      {
+        "between": [
+          0.84,
+          0.85
+        ],
+        "from": 0.54,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.85,
+          0.86
+        ],
+        "from": 1.0,
+        "to": 0.66
+      },
+      {
+        "between": [
+          0.86,
+          0.87
+        ],
+        "from": 0.66,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.92,
+          0.93
+        ],
+        "from": 1.0,
+        "to": 0.58
+      },
+      {
+        "between": [
+          0.93,
+          0.94
+        ],
+        "from": 0.58,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.94,
+          0.95
+        ],
+        "from": 1.0,
+        "to": 0.7
+      },
+      {
+        "between": [
+          0.95,
+          0.96
+        ],
+        "from": 0.7,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "exp_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_bit_slice",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.06,
+          0.07
+        ],
+        "from": 0.0,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.12,
+          0.13
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.18,
+          0.19
+        ],
+        "from": 0.0,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.24,
+          0.25
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.31,
+          0.32
+        ],
+        "from": 0.0,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.37,
+          0.38
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.43,
+          0.44
+        ],
+        "from": 0.0,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.49,
+          0.5
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.56,
+          0.57
+        ],
+        "from": 0.0,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.62,
+          0.63
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.68,
+          0.69
+        ],
+        "from": 0.0,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.75,
+          0.76
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.81,
+          0.82
+        ],
+        "from": 0.0,
+        "to": 1.0
+      },
+      {
+        "between": [
+          0.87,
+          0.88
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.93,
+          0.94
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "f2_expand_domain",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_gauss_pyramid",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_gray_inside",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_gray_skeleton",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.45,
+      0.46,
+      0.47,
+      0.48,
+      0.49,
+      0.5,
+      0.51,
+      0.52,
+      0.53,
+      0.54,
+      0.55,
+      0.56
+    ],
+    "n_non_constant": 56,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_lut_trans",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_shock",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_symmetry",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "f2_topographic",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "fft_generic",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "fft_image",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "fft_image_inv",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "frei_amp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "frei_dir",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "gabor",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "gamma",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gamma_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gauss_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gauss_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gaussian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gclose",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gdilate",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gen_gabor",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "gerode",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gopen",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "grad_dir",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "gray_bothat",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_closing",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_closing_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_closing_shape",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_dilation",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_dilation_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_dilation_shape",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_erosion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_erosion_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_erosion_shape",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_opening",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_opening_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_opening_shape",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_range_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "gray_tophat",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "guided_filter",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.51,
+      0.65,
+      0.71,
+      0.75,
+      0.93
+    ],
+    "n_non_constant": 5,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "highpass",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "highpass_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "hough_circle_trans",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hough_line_trans",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_close_edges",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.51,
+      0.52,
+      0.53,
+      0.54,
+      0.55,
+      0.56,
+      0.57,
+      0.58,
+      0.59,
+      0.6,
+      0.61,
+      0.62
+    ],
+    "n_non_constant": 50,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_close_edges_length",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.51,
+      0.52,
+      0.53,
+      0.54,
+      0.55,
+      0.56,
+      0.57,
+      0.58,
+      0.59,
+      0.6,
+      0.61,
+      0.62
+    ],
+    "n_non_constant": 50,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_disparity_to_xyz",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_fill_interlace",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_fit_surface1",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.1,
+      0.11,
+      0.12,
+      0.13
+    ],
+    "n_non_constant": 83,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_fit_surface2",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_gabor",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_gen_bandfilter",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "hx_gen_bandpass",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "hx_gen_derivative_filter",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "hx_gen_highpass",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "hx_gen_image_proto",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "hx_gen_lowpass",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "hx_mean_shape",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_nonmax_dir",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_plane_deviation",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_region_to_label",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.5,
+          0.51
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "hx_region_to_mean",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "hx_shade_height_field",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "illuminate",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "invert",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "invert_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "isotropic_diffusion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "it_add_image_border",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "it_bit_lshift",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.941176470588,
+    "jumps": [
+      {
+        "between": [
+          0.06,
+          0.07
+        ],
+        "from": 0.941176470588,
+        "to": 0.125490196078
+      },
+      {
+        "between": [
+          0.12,
+          0.13
+        ],
+        "from": 0.941176470588,
+        "to": 0.062745098039
+      },
+      {
+        "between": [
+          0.18,
+          0.19
+        ],
+        "from": 0.878431372549,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.24,
+          0.25
+        ],
+        "from": 0.81568627451,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.31,
+          0.32
+        ],
+        "from": 0.941176470588,
+        "to": 0.125490196078
+      },
+      {
+        "between": [
+          0.37,
+          0.38
+        ],
+        "from": 0.878431372549,
+        "to": 0.062745098039
+      },
+      {
+        "between": [
+          0.43,
+          0.44
+        ],
+        "from": 0.878431372549,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.49,
+          0.5
+        ],
+        "from": 0.81568627451,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.56,
+          0.57
+        ],
+        "from": 0.941176470588,
+        "to": 0.062745098039
+      },
+      {
+        "between": [
+          0.62,
+          0.63
+        ],
+        "from": 0.878431372549,
+        "to": 0.062745098039
+      },
+      {
+        "between": [
+          0.68,
+          0.69
+        ],
+        "from": 0.81568627451,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.75,
+          0.76
+        ],
+        "from": 0.941176470588,
+        "to": 0.125490196078
+      },
+      {
+        "between": [
+          0.81,
+          0.82
+        ],
+        "from": 0.941176470588,
+        "to": 0.062745098039
+      },
+      {
+        "between": [
+          0.87,
+          0.88
+        ],
+        "from": 0.878431372549,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.93,
+          0.94
+        ],
+        "from": 0.81568627451,
+        "to": 0.0
+      }
+    ]
+  },
+  {
+    "op": "it_bit_mask",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.501960784314,
+    "jumps": [
+      {
+        "between": [
+          0.49,
+          0.5
+        ],
+        "from": 0.0,
+        "to": 0.501960784314
+      }
+    ]
+  },
+  {
+    "op": "it_bit_rshift",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.058823529412,
+    "jumps": []
+  },
+  {
+    "op": "it_change_format",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "it_convert_image_type",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "it_crop_domain",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "it_crop_part",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "it_crop_rectangle1",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "it_full_domain",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "it_region_to_bin",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.25,
+    "out_max": 0.75,
+    "jumps": [
+      {
+        "between": [
+          0.5,
+          0.51
+        ],
+        "from": 0.25,
+        "to": 0.75
+      }
+    ]
+  },
+  {
+    "op": "iv_backproject_superres",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "iv_gradient_inpaint",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "iv_motion_deblur",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.990099009901,
+    "jumps": []
+  },
+  {
+    "op": "iv_richardson_lucy",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "iv_unsharp_deblur",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "iv_wiener_deconv_spatial",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.92936802974,
+    "jumps": []
+  },
+  {
+    "op": "kirsch_amp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "kirsch_dir",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "laplace",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "laplace_of_gauss",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.5,
+    "jumps": [
+      {
+        "between": [
+          0.0,
+          0.01
+        ],
+        "from": 0.5,
+        "to": 0.0
+      }
+    ]
+  },
+  {
+    "op": "log",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.0,
+          0.01
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "log_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "lowpass",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "macro_binarize",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "macro_denoise",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "max_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "mean_box",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "mean_curvature_flow",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "mean_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "mean_sp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "median",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "median_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "median_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "median_separate",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "median_weighted",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "min_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "mirror_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "monotony",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "morph_grad",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "percentile",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "ph_coherence_enhancing_diffusion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "ph_heat_flow",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "ph_mean_curvature_motion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "ph_perona_malik",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "ph_reaction_diffusion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.0,
+          0.01
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "ph_total_variation_flow",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "phase_deg",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "phase_rad",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "points_foerstner",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "points_harris_binomial",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "polar_trans_image",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "polar_trans_image_ext",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "polar_trans_image_inv",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "pow_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "power_byte",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "power_ln",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "power_real",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "prewitt_amp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "prewitt_dir",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "prewitt_mag",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "projective_trans_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "projective_trans_image_size",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "rank_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "rank_rect",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "rescale_img",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "rft_generic",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "roberts",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "roberts_mag",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "robinson_amp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "robinson_dir",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "rotate_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "rotate_img",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "scale_clip",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "scale_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "scale_image_max",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sigma_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sigmoid",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.006692850924,
+    "out_max": 0.993307149076,
+    "jumps": []
+  },
+  {
+    "op": "simulate_defocus",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "simulate_motion",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sin_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_adapthist",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_adjust_log",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_area_opening",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_autolevel",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_butterworth",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_corner_harris",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "sk_dog",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_enhance_contrast",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_entropy",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_farid",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_frangi",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_gabor",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.0,
+          0.01
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "sk_hessian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_hessian_det",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "sk_lbp",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_median_disk",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_meijering",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_nlm",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_rolling_ball",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_scharr",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_shape_index",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "sk_swirl",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_tv",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_tv_bregman",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sk_wavelet",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "smooth_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "sobel_amp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sobel_dir",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "sobel_mag",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "sqrt_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "std_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tac_height_from_shading",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tac_pressure_proxy",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tac_shear_field",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tac_surface_normal",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "tan_image",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "texture_laws",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tf_census_transform",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tf_gradient_domain_reintegrate",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tf_log_polar",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "tf_phase_congruency",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tf_radon_sinogram",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tf_rank_transform",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tf_steerable_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "tm_backproject_unfiltered",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tm_fbp_reconstruct",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tm_radon_forward",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tm_sart_reconstruct",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "tm_sinogram_denoise",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "tophat",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "trimmed_mean",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "unsharp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv2_meanshift",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv2_warp_logpolar",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv3_denoise_tvl1",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv3_inpaint_ns",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv3_pyr_laplacian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv_detail_enhance",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv_edge_preserving",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv_inpaint",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xcv_pencil_sketch",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "xcv_stylization",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_bilateral",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_clahe",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.121568627656,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_dog",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_gaussian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.999999880791,
+    "jumps": []
+  },
+  {
+    "op": "xkor_gftt",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_harris",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "xkor_hessian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_laplacian",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_median",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_motion_blur",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xkor_unsharp",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xmh_daubechies",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xmh_haar",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xmh_selfmatch",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xmh_soft",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.75,
+    "jumps": []
+  },
+  {
+    "op": "xpil_autocontrast",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_contour",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_contrast",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_detail",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_edge_enhance",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_emboss",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11
+    ],
+    "n_non_constant": 101,
+    "status": "non_constant_output",
+    "reason": "どの定数画像でも出力が一様にならない(位置依存か乱数)"
+  },
+  {
+    "op": "xpil_find_edges",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_mode_filter",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_offset",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_posterize",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.941176470588,
+    "jumps": []
+  },
+  {
+    "op": "xpil_smooth_more",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xpil_solarize",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.556862745098,
+    "jumps": []
+  },
+  {
+    "op": "xpil_unsharp_mask",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_closing_by_recon",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_curv_aniso_diff",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_curvature_flow",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_grayscale_fillhole",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_grayscale_grindpeak",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_laplacian_sharpen",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_minmax_curv_flow",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsitk_opening_by_recon",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_corner_kr",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_diameter_opening",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_hog",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_inv_gauss_grad",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_multiotsu",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_radon",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_rank_geomean",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_reconstruction",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.825,
+    "jumps": []
+  },
+  {
+    "op": "xsk2_wiener",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_area_closing",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_corner_fast",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_corner_moravec",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_diameter_closing",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_integral_image",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_rank_equalize",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_rank_mean_bilateral",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk3_rank_subtract_mean",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.498039215686,
+    "jumps": []
+  },
+  {
+    "op": "xsk_hessian_eig",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk_inpaint",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk_meijering",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk_richardson_lucy",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk_sato",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk_struct_coherence",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsk_unwrap_phase",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsp_cspline_smooth",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsp_dct",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsp_dct_denoise",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsp_dct_lowpass",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsp_detrend_flatten",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "xsp_gauss_grad_mag",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xsp_hilbert_env",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": [
+      {
+        "between": [
+          0.49,
+          0.5
+        ],
+        "from": 1.0,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.5,
+          0.51
+        ],
+        "from": 0.0,
+        "to": 1.0
+      }
+    ]
+  },
+  {
+    "op": "xsp_morph_laplace",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.5,
+    "jumps": []
+  },
+  {
+    "op": "xsp_savgol",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xsp_wiener",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xwt_directional_detail",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.000194251288,
+    "jumps": [
+      {
+        "between": [
+          0.53,
+          0.54
+        ],
+        "from": 9.7135079e-05,
+        "to": 0.0
+      },
+      {
+        "between": [
+          0.84,
+          0.85
+        ],
+        "from": 2.7754805e-05,
+        "to": 0.000138758621
+      },
+      {
+        "between": [
+          0.87,
+          0.88
+        ],
+        "from": 0.000194251288,
+        "to": 8.3259794e-05
+      }
+    ]
+  },
+  {
+    "op": "xwt_firm_denoise",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 0.999999999999,
+    "jumps": []
+  },
+  {
+    "op": "xwt_hf_reconstruct",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xwt_lf_reconstruct",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "xwt_mra_component",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xwt_subband_tile",
+    "steps": 101,
+    "non_constant_output_at": [
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12
+    ],
+    "n_non_constant": 100,
+    "status": "determined",
+    "constant_in_c": true,
+    "value": 0.0,
+    "jumps": []
+  },
+  {
+    "op": "xwt_visushrink",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "zoom_image_factor",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  },
+  {
+    "op": "zoom_image_size",
+    "steps": 101,
+    "non_constant_output_at": [],
+    "n_non_constant": 0,
+    "status": "determined",
+    "constant_in_c": false,
+    "out_min": 0.0,
+    "out_max": 1.0,
+    "jumps": []
+  }
+]

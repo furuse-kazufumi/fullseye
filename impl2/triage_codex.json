@@ -1,0 +1,222 @@
+[
+  {
+    "op": "abs_image",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "alife_dla",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "diagonal",
+      "frame",
+      "impulse_center",
+      "impulse_corner",
+      "random",
+      "zeros"
+    ]
+  },
+  {
+    "op": "alife_langton_ant",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half"
+    ]
+  },
+  {
+    "op": "auto_threshold",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "constant_half",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "bin_threshold",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "bothat",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "cv_dilate",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "cv_erode",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "cv_median",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "cv_otsu",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "cv_tophat",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "random"
+    ]
+  },
+  {
+    "op": "dyn_threshold",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "ramp_x",
+      "ramp_y",
+      "random",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "erosion_rectangle1",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "fast_threshold",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "gamma",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "get_region_contour",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "get_region_convex",
+    "verdict": "impl2_defect",
+    "note": "第 2 実装が落ちた / 出力の形が違う"
+  },
+  {
+    "op": "hx_erosion1",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_expand_region",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "hx_histo_to_thresh",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "col_Nx1",
+      "constant_half",
+      "row_1xN",
+      "single_pixel"
+    ]
+  },
+  {
+    "op": "hysteresis_threshold",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "invert_region",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "junctions_skeleton",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "all_ones",
+      "blob_at_corner",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "two_blobs"
+    ]
+  },
+  {
+    "op": "local_max",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "random"
+    ]
+  },
+  {
+    "op": "local_min",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "mean_box",
+    "verdict": "impl2_semantics",
+    "note": "定数・空・傾斜でも分かれる = 端でも連結性でも説明できない。意味の取り違えの疑い",
+    "probes_bad": [
+      "checkerboard8",
+      "col_Nx1",
+      "diagonal",
+      "frame",
+      "impulse_corner",
+      "ramp_x",
+      "ramp_y",
+      "random"
+    ]
+  },
+  {
+    "op": "r3_partition_dynamic",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "xsk_flood",
+    "verdict": "agrees",
+    "note": "一致。探針が弱いだけかもしれないので、後で探針を足して再確認する"
+  },
+  {
+    "op": "xsk_random_walker",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "random"
+    ]
+  },
+  {
+    "op": "zoom_region",
+    "verdict": "needs_human",
+    "note": "規則で振り分けられない。人が見る",
+    "probes_bad": [
+      "checkerboard8",
+      "corner_touch_blocks",
+      "ring_with_hole",
+      "row_1xN",
+      "two_blobs"
+    ]
+  }
+]

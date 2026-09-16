@@ -261,7 +261,7 @@ def _dog(v, a, b):
 def _gamma(v, a, b):
     """ガンマ補正（べき乗変換）。HALCON の ``pow_image``（Raise an image to a power.）に相当。
 
-``a`` が指数 γ を ``0.5〜2.0`` に振る（``v**γ``、入力は先に ``[0,1]`` へ clip）。``b`` は未使用。γ<1 で暗部を持ち上げ（明るくする）、γ>1 で暗部をさらに沈める（コントラストを付ける）。"""
+``a`` が指数 γ を ``0.5〜2.0`` に**線形に**振る（``γ = 0.5 + 1.5a``、``v**γ``、入力は先に ``[0,1]`` へ clip）。**既定の ``a=0.5`` は γ=1.25 であって素通しではない** —— 何もしない設定（γ=1）が要るなら ``a=1/3`` を渡す。``b`` は未使用。γ<1 で暗部を持ち上げ（明るくする）、γ>1 で暗部をさらに沈める（コントラストを付ける）。"""
     return np.clip(v, 0, 1) ** (0.5 + 1.5 * a)
 def _invert(v, a, b):
     """階調反転（ネガポジ反転）。HALCON の ``invert_image``（Invert an image.）に相当。
@@ -326,7 +326,16 @@ def _std_filter(v, a, b):
     """局所窓内の標準偏差（テクスチャの粗さの指標）。HALCON の ``deviation_image``（Calculate the standard deviation of gray values within rectangular windows.）に相当。
 
 ``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。``E[v²]-E[v]²`` を窓ごとに求めて平方根を取り（負の丸め誤差は 0 にクランプ）、``_norm`` で正規化する。値が大きいほどその窓内の階調が激しく変化している（テクスチャがある/エッジが多い）ことを示す。"""
-    k = _k(a); m = ndimage.uniform_filter(v, k); m2 = ndimage.uniform_filter(v * v, k)
+    k = _k(a)
+    # 平均を引いてから分散を取る。``E[x^2]-E[x]^2`` は桁落ちし、**完全に一様な画像
+    # でも 1e-15 級の偽分散が残る**。``sqrt`` がそれを 3e-8 まで 8 桁持ち上げ、
+    # ``_norm`` の素通し閾値 (1e-8) を越えてフルスケール化する —— 空フレームが
+    # 「全面が最大テクスチャ」として返る(実測 2026-09-16: 一様 0.51 で全画素 1.0、
+    # 一様 0.50 では 0.0)。GPU 経路 ``accel.py:_std_filter`` は既にこれを閾値で
+    # 回避していたが、CPU 経路は直っていなかった。定数を引けば一様画像で厳密に
+    # 0 になるので、閾値を置くより素性が良い。
+    v0 = np.asarray(v, np.float64) - float(np.mean(v))
+    m = ndimage.uniform_filter(v0, k); m2 = ndimage.uniform_filter(v0 * v0, k)
     return _norm(np.sqrt(np.maximum(m2 - m * m, 0.0)))
 
 
@@ -392,8 +401,22 @@ def _otsu(v, a, b):
     return (x > mids[int(np.argmax(sb))]).astype(np.float64)
 
 
+#: **平坦な面を「差がある」と言わないための許容差。**
+#: 適応的しきい値は「画素が周囲より明るいか」を見るが、オフセットが 0 のとき
+#: ``v > filter(v)`` は「1 ULP でも明るければ真」という意味になる。完全に一様な
+#: 面でも ``uniform_filter`` / ``gaussian_filter`` の積算順序によっては結果が
+#: 最下位 1 ビットだけ下に丸まり、**面の全画素が前景になる**(実測 2026-09-16:
+#: c=0.05 の一様画像で filter が ``-6.939e-18`` = ``spacing(0.05)`` ちょうど
+#: ずれ、576 画素すべてが前景になった。c=0.06 では 0 画素)。検査では「再現しない
+#: 全面欠陥」として出る。
+#: 1e-9 は 16-bit 画像の量子化幅(1.5e-5)より 4 桁小さく実信号を削らない一方、
+#: 丸め屑(1e-17)より 8 桁大きいので確実に切れる。
+_FLAT_TOL = 1e-9
+
+
 def _dyn_threshold(v, a, b):
-    return (v > ndimage.uniform_filter(v, size=_k(a)) + (b - 0.5) * 0.4).astype(np.float64)
+    return (v - ndimage.uniform_filter(v, size=_k(a))
+            > (b - 0.5) * 0.4 + _FLAT_TOL).astype(np.float64)
 
 
 # --- region -> region -------------------------------------------------------- #
@@ -925,8 +948,9 @@ def _corner_response(v, a, b):
 def _adaptive_gauss_thresh(v, a, b):
     """ガウシアン平滑化した局所平均を基準にした適応的しきい値処理。HALCON の ``local_threshold``（Segment an image using local thresholding.）に相当。
 
-``a`` が基準を作るガウシアンの σ を ``1.0〜4.0`` に、``b`` がオフセットを ``-0.15〜+0.15``（``(b-0.5)*0.3``）に振る。``v > gaussian_filter(v, σ) + offset`` を満たす画素を前景にする。照明ムラがある画像で大域しきい値（``_threshold``/``_otsu``）より安定する。近い op に ``_dyn_threshold`` があるが、そちらは箱型平均（``uniform_filter``）を基準にし、オフセット幅も異なる（``±0.2``）——同じ「適応的しきい値」でも基準の平滑化方式とパラメータ範囲が違う別実装。"""
-    return (v > ndimage.gaussian_filter(v, 1.0 + 3.0 * a) + (b - 0.5) * 0.3).astype(np.float64)
+``a`` が基準を作るガウシアンの σ を ``1.0〜4.0`` に、``b`` がオフセットを ``-0.15〜+0.15``（``(b-0.5)*0.3``）に振る。``v - gaussian_filter(v, σ) > offset`` を満たす画素を前景にする。**完全に平坦な面は(オフセットが 0 でも)前景にならない** —— 差が ``1e-9`` を超えたときだけ前景とするので、一様な面で平滑化が最下位 1 ビットずれても全面が前景に反転しない。照明ムラがある画像で大域しきい値（``_threshold``/``_otsu``）より安定する。近い op に ``_dyn_threshold`` があるが、そちらは箱型平均（``uniform_filter``）を基準にし、オフセット幅も異なる（``±0.2``）——同じ「適応的しきい値」でも基準の平滑化方式とパラメータ範囲が違う別実装。"""
+    return (v - ndimage.gaussian_filter(v, 1.0 + 3.0 * a)
+            > (b - 0.5) * 0.3 + _FLAT_TOL).astype(np.float64)
 
 
 # --- shape-based matching (rotation invariant; image -> match) --------------- #

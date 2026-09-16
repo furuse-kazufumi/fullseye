@@ -1,0 +1,3404 @@
+[
+  {
+    "op": "abs_image",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "acos_image",
+    "status": "determined",
+    "worst_off_grid": 0.4996368495,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "add_noise_distribution",
+    "status": "determined",
+    "worst_off_grid": 0.499788122483,
+    "distinct_levels": 546,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "add_noise_white",
+    "status": "determined",
+    "worst_off_grid": 0.499788122483,
+    "distinct_levels": 546,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "affine_trans_image",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "affine_trans_image_size",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "affine_warp",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_curvature_flow",
+    "status": "determined",
+    "worst_off_grid": 0.499838429844,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_cyclic_ca",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 7,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_dla",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_gray_scott",
+    "status": "determined",
+    "worst_off_grid": 0.499839512844,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_langton_ant",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_lenia",
+    "status": "determined",
+    "worst_off_grid": 0.498860666744,
+    "distinct_levels": 306,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_life_step",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_perona_malik",
+    "status": "determined",
+    "worst_off_grid": 0.498599051229,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_reaction_bz",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 3,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_sandpile",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 11,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_turing",
+    "status": "determined",
+    "worst_off_grid": 0.499845772564,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "alife_wolfram1d",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "anisotropic_diffusion",
+    "status": "determined",
+    "worst_off_grid": 0.499671017326,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "asin_image",
+    "status": "determined",
+    "worst_off_grid": 0.499727919016,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "atan_image",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_barrel",
+    "status": "determined",
+    "worst_off_grid": 0.499851919662,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_chromatic",
+    "status": "determined",
+    "worst_off_grid": 0.498955459003,
+    "distinct_levels": 570,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_cutout",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 433,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_fixed_pattern",
+    "status": "determined",
+    "worst_off_grid": 0.499874491852,
+    "distinct_levels": 558,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_jpeg_blocks",
+    "status": "determined",
+    "worst_off_grid": 0.499958631392,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_motion_blur",
+    "status": "determined",
+    "worst_off_grid": 0.499696818816,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_read_noise",
+    "status": "determined",
+    "worst_off_grid": 0.499992996851,
+    "distinct_levels": 566,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_rolling_shutter",
+    "status": "determined",
+    "worst_off_grid": 0.499703458662,
+    "distinct_levels": 574,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_shot_noise",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 128,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "aug_vignette",
+    "status": "determined",
+    "worst_off_grid": 0.499751922048,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "bandpass_image",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "bilateral",
+    "status": "determined",
+    "worst_off_grid": 0.499825193146,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "bilateral_filter",
+    "status": "determined",
+    "worst_off_grid": 0.49859970808,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "binomial_filter",
+    "status": "determined",
+    "worst_off_grid": 0.499560477717,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "bit_not",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "bothat",
+    "status": "determined",
+    "worst_off_grid": 0.49948660808,
+    "distinct_levels": 541,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "clahe",
+    "status": "determined",
+    "worst_off_grid": 0.498708097611,
+    "distinct_levels": 561,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "coherence_enhancing_diff",
+    "status": "determined",
+    "worst_off_grid": 0.499671017326,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "corner_response",
+    "status": "determined",
+    "worst_off_grid": 0.499411391509,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cos_image",
+    "status": "determined",
+    "worst_off_grid": 0.499945945638,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_bilateral",
+    "status": "determined",
+    "worst_off_grid": 0.49859970808,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_blackhat",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 486,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_box",
+    "status": "determined",
+    "worst_off_grid": 0.499923448005,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_clahe",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 182,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "cv_close",
+    "status": "determined",
+    "worst_off_grid": 0.49903851628,
+    "distinct_levels": 197,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_corner_harris",
+    "status": "determined",
+    "worst_off_grid": 0.499815162286,
+    "distinct_levels": 529,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_dilate",
+    "status": "determined",
+    "worst_off_grid": 0.49903851628,
+    "distinct_levels": 197,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_erode",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 203,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_gaussian",
+    "status": "determined",
+    "worst_off_grid": 0.498935409397,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_gradient",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 408,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_laplacian",
+    "status": "determined",
+    "worst_off_grid": 0.499578980075,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_median",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 173,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "cv_min_eigen",
+    "status": "determined",
+    "worst_off_grid": 0.499755084515,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_nlmeans",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 232,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "cv_open",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 203,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_precorner",
+    "status": "determined",
+    "worst_off_grid": 0.499724721536,
+    "distinct_levels": 573,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_scharr",
+    "status": "determined",
+    "worst_off_grid": 0.499694442702,
+    "distinct_levels": 573,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_sharpen",
+    "status": "determined",
+    "worst_off_grid": 0.499470781305,
+    "distinct_levels": 536,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_tophat",
+    "status": "determined",
+    "worst_off_grid": 0.499999999999,
+    "distinct_levels": 485,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "cv_trunc",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 289,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dc_homomorphic",
+    "status": "determined",
+    "worst_off_grid": 0.49976751469,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dc_local_contrast_norm",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dc_retinex",
+    "status": "determined",
+    "worst_off_grid": 0.499981782892,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dc_rpca_lowrank",
+    "status": "determined",
+    "worst_off_grid": 0.499676006398,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dc_rpca_sparse",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 216,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dc_structure_texture",
+    "status": "determined",
+    "worst_off_grid": 0.499673954265,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dc_texture_residual",
+    "status": "determined",
+    "worst_off_grid": 0.499970392436,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "deform_ffd",
+    "status": "determined",
+    "worst_off_grid": 0.499053034627,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "deform_mls",
+    "status": "determined",
+    "worst_off_grid": 0.499908690419,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "deform_tps",
+    "status": "determined",
+    "worst_off_grid": 0.499841487039,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "derivate_gauss",
+    "status": "determined",
+    "worst_off_grid": 0.499944056353,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "deviation_image",
+    "status": "determined",
+    "worst_off_grid": 0.499708997699,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "diff_of_gauss",
+    "status": "determined",
+    "worst_off_grid": 0.499237441535,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dl_aniso_diffusion",
+    "status": "determined",
+    "worst_off_grid": 0.499480515718,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dl_guided_filter",
+    "status": "determined",
+    "worst_off_grid": 0.499758005142,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dog",
+    "status": "determined",
+    "worst_off_grid": 0.499237441535,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dots_image",
+    "status": "determined",
+    "worst_off_grid": 0.499732465689,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "dual_rank",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "eliminate_min_max",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "eliminate_sp",
+    "status": "determined",
+    "worst_off_grid": 0.499880042725,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "entropy_image",
+    "status": "determined",
+    "worst_off_grid": 0.495494207842,
+    "distinct_levels": 34,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "equ_histo_image",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 569,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "equ_histo_image_rect",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 512,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "equalize",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 569,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "exp_image",
+    "status": "determined",
+    "worst_off_grid": 0.499992884881,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_bit_slice",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_expand_domain",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_gauss_pyramid",
+    "status": "determined",
+    "worst_off_grid": 0.4996439806,
+    "distinct_levels": 317,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_gray_inside",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 536,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_gray_skeleton",
+    "status": "determined",
+    "worst_off_grid": 0.499605412535,
+    "distinct_levels": 249,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_lut_trans",
+    "status": "determined",
+    "worst_off_grid": 0.498117025602,
+    "distinct_levels": 232,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_shock",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 129,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_symmetry",
+    "status": "determined",
+    "worst_off_grid": 0.499635519762,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "f2_topographic",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 6,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "fft_generic",
+    "status": "determined",
+    "worst_off_grid": 0.499745803448,
+    "distinct_levels": 455,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "fft_image",
+    "status": "determined",
+    "worst_off_grid": 0.499745803448,
+    "distinct_levels": 455,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "fft_image_inv",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 294,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "frei_amp",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "frei_dir",
+    "status": "determined",
+    "worst_off_grid": 0.499765386104,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gabor",
+    "status": "determined",
+    "worst_off_grid": 0.499421371284,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gamma",
+    "status": "determined",
+    "worst_off_grid": 0.498590846209,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gamma_image",
+    "status": "determined",
+    "worst_off_grid": 0.499920589489,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gauss_filter",
+    "status": "determined",
+    "worst_off_grid": 0.499917442168,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gauss_image",
+    "status": "determined",
+    "worst_off_grid": 0.499917442168,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gaussian",
+    "status": "determined",
+    "worst_off_grid": 0.499917442168,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gclose",
+    "status": "determined",
+    "worst_off_grid": 0.498918975794,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gdilate",
+    "status": "determined",
+    "worst_off_grid": 0.498918975794,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gen_gabor",
+    "status": "determined",
+    "worst_off_grid": 0.499421371284,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gerode",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gopen",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "grad_dir",
+    "status": "determined",
+    "worst_off_grid": 0.499622040024,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_bothat",
+    "status": "determined",
+    "worst_off_grid": 0.49948660808,
+    "distinct_levels": 541,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_closing",
+    "status": "determined",
+    "worst_off_grid": 0.498918975794,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_closing_rect",
+    "status": "determined",
+    "worst_off_grid": 0.498918975794,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_closing_shape",
+    "status": "determined",
+    "worst_off_grid": 0.49903851628,
+    "distinct_levels": 216,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_dilation",
+    "status": "determined",
+    "worst_off_grid": 0.498918975794,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_dilation_rect",
+    "status": "determined",
+    "worst_off_grid": 0.498918975794,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_dilation_shape",
+    "status": "determined",
+    "worst_off_grid": 0.49903851628,
+    "distinct_levels": 216,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_erosion",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_erosion_rect",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_erosion_shape",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 215,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_opening",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_opening_rect",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_opening_shape",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 215,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_range_rect",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 352,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "gray_tophat",
+    "status": "determined",
+    "worst_off_grid": 0.499144717569,
+    "distinct_levels": 544,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "guided_filter",
+    "status": "determined",
+    "worst_off_grid": 0.49859970808,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "highpass",
+    "status": "determined",
+    "worst_off_grid": 0.499294210716,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "highpass_image",
+    "status": "determined",
+    "worst_off_grid": 0.499294210716,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hough_circle_trans",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 70,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hough_line_trans",
+    "status": "determined",
+    "worst_off_grid": 0.498337765957,
+    "distinct_levels": 232,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_close_edges",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_close_edges_length",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_disparity_to_xyz",
+    "status": "determined",
+    "worst_off_grid": 0.499759146983,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_fill_interlace",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_fit_surface1",
+    "status": "determined",
+    "worst_off_grid": 0.497035693099,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_fit_surface2",
+    "status": "determined",
+    "worst_off_grid": 0.498742076474,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_gabor",
+    "status": "determined",
+    "worst_off_grid": 0.499823849194,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_gen_bandfilter",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_gen_bandpass",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_gen_derivative_filter",
+    "status": "determined",
+    "worst_off_grid": 0.498914976435,
+    "distinct_levels": 87,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_gen_highpass",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_gen_image_proto",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 1,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_gen_lowpass",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_mean_shape",
+    "status": "determined",
+    "worst_off_grid": 0.49992096474,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_nonmax_dir",
+    "status": "determined",
+    "worst_off_grid": 0.499204320764,
+    "distinct_levels": 201,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_plane_deviation",
+    "status": "determined",
+    "worst_off_grid": 0.499973825956,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_region_to_label",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 8,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_region_to_mean",
+    "status": "determined",
+    "worst_off_grid": 0.48853402638,
+    "distinct_levels": 50,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "hx_shade_height_field",
+    "status": "determined",
+    "worst_off_grid": 0.497667546713,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "illuminate",
+    "status": "determined",
+    "worst_off_grid": 0.499582571287,
+    "distinct_levels": 494,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "invert",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "invert_image",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "isotropic_diffusion",
+    "status": "determined",
+    "worst_off_grid": 0.499766881492,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_add_image_border",
+    "status": "determined",
+    "worst_off_grid": 0.49996757634,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_bit_lshift",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 16,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_bit_mask",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_bit_rshift",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 16,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_change_format",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_convert_image_type",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 127,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_crop_domain",
+    "status": "determined",
+    "worst_off_grid": 0.499605412535,
+    "distinct_levels": 145,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_crop_part",
+    "status": "determined",
+    "worst_off_grid": 0.499669965,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_crop_rectangle1",
+    "status": "determined",
+    "worst_off_grid": 0.49977693841,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_full_domain",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "it_region_to_bin",
+    "status": "determined",
+    "worst_off_grid": 0.25,
+    "distinct_levels": 2,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "iv_backproject_superres",
+    "status": "determined",
+    "worst_off_grid": 0.499741681144,
+    "distinct_levels": 563,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "iv_gradient_inpaint",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "iv_motion_deblur",
+    "status": "determined",
+    "worst_off_grid": 0.499892672454,
+    "distinct_levels": 488,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "iv_richardson_lucy",
+    "status": "determined",
+    "worst_off_grid": 0.49924176479,
+    "distinct_levels": 569,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "iv_unsharp_deblur",
+    "status": "determined",
+    "worst_off_grid": 0.498282958677,
+    "distinct_levels": 473,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "iv_wiener_deconv_spatial",
+    "status": "determined",
+    "worst_off_grid": 0.499270615903,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "kirsch_amp",
+    "status": "determined",
+    "worst_off_grid": 0.499750479246,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "kirsch_dir",
+    "status": "determined",
+    "worst_off_grid": 0.428571428571,
+    "distinct_levels": 8,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "laplace",
+    "status": "determined",
+    "worst_off_grid": 0.499578980075,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "laplace_of_gauss",
+    "status": "determined",
+    "worst_off_grid": 0.499732465689,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "log",
+    "status": "determined",
+    "worst_off_grid": 0.499667104466,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "log_image",
+    "status": "determined",
+    "worst_off_grid": 0.49981962197,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "lowpass",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "macro_binarize",
+    "status": "determined",
+    "worst_off_grid": 0.499564478862,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "macro_denoise",
+    "status": "determined",
+    "worst_off_grid": 0.49896842678,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "max_filter",
+    "status": "determined",
+    "worst_off_grid": 0.498918975794,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "mean_box",
+    "status": "determined",
+    "worst_off_grid": 0.499952686465,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "mean_curvature_flow",
+    "status": "determined",
+    "worst_off_grid": 0.499860482348,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "mean_image",
+    "status": "determined",
+    "worst_off_grid": 0.499952686465,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "mean_sp",
+    "status": "determined",
+    "worst_off_grid": 0.499822074807,
+    "distinct_levels": 545,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "median",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "median_image",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "median_rect",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "median_separate",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "median_weighted",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "min_filter",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "mirror_image",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "monotony",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 9,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "morph_grad",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 352,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "percentile",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "ph_coherence_enhancing_diffusion",
+    "status": "determined",
+    "worst_off_grid": 0.499403233587,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "ph_heat_flow",
+    "status": "determined",
+    "worst_off_grid": 0.499921035149,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "ph_mean_curvature_motion",
+    "status": "determined",
+    "worst_off_grid": 0.498806347597,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "ph_perona_malik",
+    "status": "determined",
+    "worst_off_grid": 0.499858073891,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "ph_reaction_diffusion",
+    "status": "determined",
+    "worst_off_grid": 0.499676032559,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "ph_total_variation_flow",
+    "status": "determined",
+    "worst_off_grid": 0.499817554149,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "phase_deg",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 575,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "phase_rad",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 575,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "points_foerstner",
+    "status": "determined",
+    "worst_off_grid": 0.49949940728,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "points_harris_binomial",
+    "status": "determined",
+    "worst_off_grid": 0.499905357755,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "polar_trans_image",
+    "status": "determined",
+    "worst_off_grid": 0.49967494607,
+    "distinct_levels": 240,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "polar_trans_image_ext",
+    "status": "determined",
+    "worst_off_grid": 0.49967494607,
+    "distinct_levels": 240,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "polar_trans_image_inv",
+    "status": "determined",
+    "worst_off_grid": 0.498952180147,
+    "distinct_levels": 324,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "pow_image",
+    "status": "determined",
+    "worst_off_grid": 0.499920589489,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "power_byte",
+    "status": "determined",
+    "worst_off_grid": 0.499745803448,
+    "distinct_levels": 455,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "power_ln",
+    "status": "determined",
+    "worst_off_grid": 0.499745803448,
+    "distinct_levels": 455,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "power_real",
+    "status": "determined",
+    "worst_off_grid": 0.499632094312,
+    "distinct_levels": 509,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "prewitt_amp",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "prewitt_dir",
+    "status": "determined",
+    "worst_off_grid": 0.499910488408,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "prewitt_mag",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "projective_trans_image",
+    "status": "determined",
+    "worst_off_grid": 0.499483525753,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "projective_trans_image_size",
+    "status": "determined",
+    "worst_off_grid": 0.499483525753,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "rank_image",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "rank_rect",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 354,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "rescale_img",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "rft_generic",
+    "status": "determined",
+    "worst_off_grid": 0.499632094312,
+    "distinct_levels": 509,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "roberts",
+    "status": "determined",
+    "worst_off_grid": 0.499708735899,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "roberts_mag",
+    "status": "determined",
+    "worst_off_grid": 0.499708735899,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "robinson_amp",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "robinson_dir",
+    "status": "determined",
+    "worst_off_grid": 0.428571428571,
+    "distinct_levels": 8,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "rotate_image",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "rotate_img",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "scale_clip",
+    "status": "determined",
+    "worst_off_grid": 0.499815322339,
+    "distinct_levels": 480,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "scale_image",
+    "status": "determined",
+    "worst_off_grid": 0.499815322339,
+    "distinct_levels": 480,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "scale_image_max",
+    "status": "determined",
+    "worst_off_grid": 0.499454121336,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sigma_image",
+    "status": "determined",
+    "worst_off_grid": 0.499880042725,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sigmoid",
+    "status": "determined",
+    "worst_off_grid": 0.499025465054,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "simulate_defocus",
+    "status": "determined",
+    "worst_off_grid": 0.499952686465,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "simulate_motion",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 552,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sin_image",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_adapthist",
+    "status": "determined",
+    "worst_off_grid": 0.498424077622,
+    "distinct_levels": 87,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_adjust_log",
+    "status": "determined",
+    "worst_off_grid": 0.499922344707,
+    "distinct_levels": 440,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_area_opening",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 363,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_autolevel",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 215,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "sk_butterworth",
+    "status": "determined",
+    "worst_off_grid": 0.494930053359,
+    "distinct_levels": 294,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_corner_harris",
+    "status": "determined",
+    "worst_off_grid": 0.499992532083,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_dog",
+    "status": "determined",
+    "worst_off_grid": 0.49995538218,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_enhance_contrast",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 163,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "sk_entropy",
+    "status": "determined",
+    "worst_off_grid": 0.495494207842,
+    "distinct_levels": 34,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_farid",
+    "status": "determined",
+    "worst_off_grid": 0.499911848525,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_frangi",
+    "status": "determined",
+    "worst_off_grid": 0.499595733066,
+    "distinct_levels": 417,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_gabor",
+    "status": "determined",
+    "worst_off_grid": 0.499819224336,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_hessian",
+    "status": "determined",
+    "worst_off_grid": 0.434139640246,
+    "distinct_levels": 417,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_hessian_det",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_lbp",
+    "status": "determined",
+    "worst_off_grid": 0.49377593361,
+    "distinct_levels": 158,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_median_disk",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 381,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_meijering",
+    "status": "determined",
+    "worst_off_grid": 0.499933166033,
+    "distinct_levels": 415,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_nlm",
+    "status": "determined",
+    "worst_off_grid": 0.499862981878,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_rolling_ball",
+    "status": "determined",
+    "worst_off_grid": 0.499406262906,
+    "distinct_levels": 494,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_scharr",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_shape_index",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_swirl",
+    "status": "determined",
+    "worst_off_grid": 0.499913034966,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_tv",
+    "status": "determined",
+    "worst_off_grid": 0.499669039111,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_tv_bregman",
+    "status": "determined",
+    "worst_off_grid": 0.499967357731,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sk_wavelet",
+    "status": "determined",
+    "worst_off_grid": 0.498893833917,
+    "distinct_levels": 144,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "smooth_image",
+    "status": "determined",
+    "worst_off_grid": 0.499348563048,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sobel_amp",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sobel_dir",
+    "status": "determined",
+    "worst_off_grid": 0.499622040024,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sobel_mag",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "sqrt_image",
+    "status": "determined",
+    "worst_off_grid": 0.499950497073,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "std_filter",
+    "status": "determined",
+    "worst_off_grid": 0.499708997699,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tac_height_from_shading",
+    "status": "determined",
+    "worst_off_grid": 0.499935077086,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tac_pressure_proxy",
+    "status": "determined",
+    "worst_off_grid": 0.498470762251,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tac_shear_field",
+    "status": "determined",
+    "worst_off_grid": 0.499875775966,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tac_surface_normal",
+    "status": "determined",
+    "worst_off_grid": 0.49974987179,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tan_image",
+    "status": "determined",
+    "worst_off_grid": 0.499925570147,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "texture_laws",
+    "status": "determined",
+    "worst_off_grid": 0.499583716401,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tf_census_transform",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 158,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "tf_gradient_domain_reintegrate",
+    "status": "determined",
+    "worst_off_grid": 0.498873813916,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tf_log_polar",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tf_phase_congruency",
+    "status": "determined",
+    "worst_off_grid": 0.499695938867,
+    "distinct_levels": 538,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tf_radon_sinogram",
+    "status": "determined",
+    "worst_off_grid": 0.49971077086,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tf_rank_transform",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 25,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tf_steerable_filter",
+    "status": "determined",
+    "worst_off_grid": 0.499407506664,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tm_backproject_unfiltered",
+    "status": "determined",
+    "worst_off_grid": 0.499924195614,
+    "distinct_levels": 440,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tm_fbp_reconstruct",
+    "status": "determined",
+    "worst_off_grid": 0.499975246727,
+    "distinct_levels": 440,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tm_radon_forward",
+    "status": "determined",
+    "worst_off_grid": 0.499869641768,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tm_sart_reconstruct",
+    "status": "determined",
+    "worst_off_grid": 0.49979003806,
+    "distinct_levels": 462,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tm_sinogram_denoise",
+    "status": "determined",
+    "worst_off_grid": 0.499826685459,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "tophat",
+    "status": "determined",
+    "worst_off_grid": 0.499144717569,
+    "distinct_levels": 544,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "trimmed_mean",
+    "status": "determined",
+    "worst_off_grid": 0.499822074807,
+    "distinct_levels": 545,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "unsharp",
+    "status": "determined",
+    "worst_off_grid": 0.499741953696,
+    "distinct_levels": 562,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xcv2_meanshift",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 151,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xcv2_warp_logpolar",
+    "status": "determined",
+    "worst_off_grid": 0.49997857213,
+    "distinct_levels": 553,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xcv3_denoise_tvl1",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 203,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xcv3_inpaint_ns",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 199,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xcv3_pyr_laplacian",
+    "status": "determined",
+    "worst_off_grid": 0.499736140283,
+    "distinct_levels": 539,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xcv_detail_enhance",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 208,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xcv_edge_preserving",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 228,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xcv_inpaint",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 200,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xcv_pencil_sketch",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 10,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xcv_stylization",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 142,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xkor_bilateral",
+    "status": "determined",
+    "worst_off_grid": 0.49974155426,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_clahe",
+    "status": "determined",
+    "worst_off_grid": 0.444463312626,
+    "distinct_levels": 141,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_dog",
+    "status": "determined",
+    "worst_off_grid": 0.499630163179,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_gaussian",
+    "status": "determined",
+    "worst_off_grid": 0.499742269516,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_gftt",
+    "status": "determined",
+    "worst_off_grid": 0.499852781431,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_harris",
+    "status": "determined",
+    "worst_off_grid": 0.499829561772,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_hessian",
+    "status": "determined",
+    "worst_off_grid": 0.499606473341,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_laplacian",
+    "status": "determined",
+    "worst_off_grid": 0.499998790209,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_median",
+    "status": "determined",
+    "worst_off_grid": 0.49967494607,
+    "distinct_levels": 337,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_motion_blur",
+    "status": "determined",
+    "worst_off_grid": 0.499993979931,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xkor_unsharp",
+    "status": "determined",
+    "worst_off_grid": 0.498683512211,
+    "distinct_levels": 557,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xmh_daubechies",
+    "status": "determined",
+    "worst_off_grid": 0.499777631787,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xmh_haar",
+    "status": "determined",
+    "worst_off_grid": 0.499951601322,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xmh_selfmatch",
+    "status": "determined",
+    "worst_off_grid": 0.499923230111,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xmh_soft",
+    "status": "determined",
+    "worst_off_grid": 0.49986144371,
+    "distinct_levels": 531,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xpil_autocontrast",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 208,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_contour",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 177,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_contrast",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 232,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_detail",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 215,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_edge_enhance",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 203,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_emboss",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 210,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_find_edges",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 177,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_mode_filter",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 231,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_offset",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 232,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_posterize",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 16,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xpil_smooth_more",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 203,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_solarize",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 141,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xpil_unsharp_mask",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 208,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xsitk_closing_by_recon",
+    "status": "determined",
+    "worst_off_grid": 0.499032497406,
+    "distinct_levels": 394,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsitk_curv_aniso_diff",
+    "status": "determined",
+    "worst_off_grid": 0.499952733517,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsitk_curvature_flow",
+    "status": "determined",
+    "worst_off_grid": 0.499836172545,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsitk_grayscale_fillhole",
+    "status": "determined",
+    "worst_off_grid": 0.49967494607,
+    "distinct_levels": 476,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsitk_grayscale_grindpeak",
+    "status": "determined",
+    "worst_off_grid": 0.49967494607,
+    "distinct_levels": 463,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsitk_laplacian_sharpen",
+    "status": "determined",
+    "worst_off_grid": 0.498214229941,
+    "distinct_levels": 511,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsitk_minmax_curv_flow",
+    "status": "determined",
+    "worst_off_grid": 0.499600708485,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsitk_opening_by_recon",
+    "status": "determined",
+    "worst_off_grid": 0.49967494607,
+    "distinct_levels": 383,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_corner_kr",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_diameter_opening",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 333,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_hog",
+    "status": "determined",
+    "worst_off_grid": 0.499677785318,
+    "distinct_levels": 127,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_inv_gauss_grad",
+    "status": "determined",
+    "worst_off_grid": 0.499354557122,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_multiotsu",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 3,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": false,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_radon",
+    "status": "determined",
+    "worst_off_grid": 0.499994478168,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_rank_geomean",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 201,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xsk2_reconstruction",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 477,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk2_wiener",
+    "status": "determined",
+    "worst_off_grid": 0.499199564962,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk3_area_closing",
+    "status": "determined",
+    "worst_off_grid": 0.499605412535,
+    "distinct_levels": 350,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk3_corner_fast",
+    "status": "determined",
+    "worst_off_grid": 0.455366319919,
+    "distinct_levels": 34,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk3_corner_moravec",
+    "status": "determined",
+    "worst_off_grid": 0.498744492564,
+    "distinct_levels": 120,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk3_diameter_closing",
+    "status": "determined",
+    "worst_off_grid": 0.499605412535,
+    "distinct_levels": 279,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk3_integral_image",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk3_rank_equalize",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 211,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xsk3_rank_mean_bilateral",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 217,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xsk3_rank_subtract_mean",
+    "status": "determined",
+    "worst_off_grid": 0.0,
+    "distinct_levels": 134,
+    "output_on_8bit_grid": true,
+    "uses_many_levels": true,
+    "quantises_to_8bit": true
+  },
+  {
+    "op": "xsk_hessian_eig",
+    "status": "determined",
+    "worst_off_grid": 0.498915009641,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk_inpaint",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 574,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk_meijering",
+    "status": "determined",
+    "worst_off_grid": 0.499933166033,
+    "distinct_levels": 415,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk_richardson_lucy",
+    "status": "determined",
+    "worst_off_grid": 0.499883438987,
+    "distinct_levels": 516,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk_sato",
+    "status": "determined",
+    "worst_off_grid": 0.499827266004,
+    "distinct_levels": 551,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk_struct_coherence",
+    "status": "determined",
+    "worst_off_grid": 0.499681399917,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsk_unwrap_phase",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_cspline_smooth",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_dct",
+    "status": "determined",
+    "worst_off_grid": 0.498597639762,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_dct_denoise",
+    "status": "determined",
+    "worst_off_grid": 0.499823219996,
+    "distinct_levels": 564,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_dct_lowpass",
+    "status": "determined",
+    "worst_off_grid": 0.499865111194,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_detrend_flatten",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_gauss_grad_mag",
+    "status": "determined",
+    "worst_off_grid": 0.499944056353,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_hilbert_env",
+    "status": "determined",
+    "worst_off_grid": 0.499469690057,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_morph_laplace",
+    "status": "determined",
+    "worst_off_grid": 0.5,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_savgol",
+    "status": "determined",
+    "worst_off_grid": 0.499968286652,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xsp_wiener",
+    "status": "determined",
+    "worst_off_grid": 0.499923448005,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xwt_directional_detail",
+    "status": "determined",
+    "worst_off_grid": 0.498640384071,
+    "distinct_levels": 144,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xwt_firm_denoise",
+    "status": "determined",
+    "worst_off_grid": 0.499953204808,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xwt_hf_reconstruct",
+    "status": "determined",
+    "worst_off_grid": 0.499656635497,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xwt_lf_reconstruct",
+    "status": "determined",
+    "worst_off_grid": 0.499198098759,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xwt_mra_component",
+    "status": "determined",
+    "worst_off_grid": 0.499999999636,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xwt_subband_tile",
+    "status": "determined",
+    "worst_off_grid": 0.499635084107,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "xwt_visushrink",
+    "status": "determined",
+    "worst_off_grid": 0.499542313623,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "zoom_image_factor",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  },
+  {
+    "op": "zoom_image_size",
+    "status": "determined",
+    "worst_off_grid": 0.499675206071,
+    "distinct_levels": 576,
+    "output_on_8bit_grid": false,
+    "uses_many_levels": true,
+    "quantises_to_8bit": false
+  }
+]

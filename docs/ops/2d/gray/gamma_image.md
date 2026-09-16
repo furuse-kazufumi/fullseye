@@ -40,7 +40,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 コントラストを強める。HALCON の ``gamma_image``（Perform a gamma encoding or
 decoding of an image.）の代役。
 
-``a`` はガンマ指数を 0.3〜2.8 の範囲で振る。``b`` は未使用。HALCON の実装は
+``a`` はガンマ指数を 0.3〜2.8 の範囲で**線形に**振る（既定の ``a=0.5`` は γ=1.55 であって素通しではない。γ=1 が要るなら ``a=0.28``）。``b`` は未使用。HALCON の実装は
 Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは
 単純なべき乗写像 1 本に単純化している(近似)。
 

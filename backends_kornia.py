@@ -84,10 +84,25 @@ def _np(t):
     return t.detach().cpu().numpy()[0, 0].astype(np.float64)
 
 
-def _norm(x):
+def _norm(x, ref=None):
+    """最大絶対値で正規化する。ただし **応答が丸め屑しか無いときは正規化しない**。
+
+    kornia は float32 で計算するので、一様な画像にゼロ和カーネル(ラプラシアン・
+    DoG)を当てても厳密に 0 にはならず 1e-7 級の屑が残る。その屑を屑自身の最大値で
+    割ると **全画素が 1.0 になり、空フレームが「全面が最大エッジ」として返る**
+    (実測 2026-09-16: 一様 0.09 の画像で ``xkor_laplacian`` が全画素 1.0、一様 0.08
+    では 3.6e-9)。従来の床 ``1e-8`` は **float32 の屑より下**にあり、屑が床を跨ぐ
+    たびに出力が 0 と全面 1.0 の間で反転していた。
+
+    床は入力の大きさに対する相対量で決める。固定値にすると、暗い画像(最大 1e-3
+    など)で本物の弱い応答まで消える。``1e-5 x |入力|max`` は float32 の相対誤差
+    (1.2e-7)にカーネルの L1(9x9 で最大 16 程度)を掛けた屑の 5 倍以上あり、かつ
+    16-bit 画像の量子化幅(1.5e-5)より下なので実信号は削らない。
+    """
     x = np.asarray(x, np.float64)
     mx = float(np.max(np.abs(x)))
-    return x / mx if mx > 1e-8 else x
+    scale = 1.0 if ref is None else max(float(np.max(np.abs(np.asarray(ref, np.float64)))), 1e-12)
+    return x / mx if mx > 1e-5 * scale else np.zeros_like(x)
 
 
 def _k(a):
@@ -234,10 +249,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ（``_k(a)``、``_median``
         と同じ量子化）。b は未使用。
         """
-        return _norm(np.abs(_np(_m()["KF"].laplacian(_t(v), _k(a)))))
+        return _norm(np.abs(_np(_m()["KF"].laplacian(_t(v), _k(a)))), v)
 
     def _resp(*attrs):
-        return lambda v, a, b: _norm(np.abs(_np(_feat(*attrs)(_t(v)))))
+        return lambda v, a, b: _norm(np.abs(_np(_feat(*attrs)(_t(v)))), v)
 
     defs = [
         ("xkor_gaussian", "smoothing", IMAGE, IMAGE, _gauss),
