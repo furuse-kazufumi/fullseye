@@ -47,6 +47,8 @@ within a rectangular window.）に相当(HALCON は矩形窓、ここでは円�
 ``a`` が窓の半径を 1〜4 の範囲(``_rad(a)``)で振る。``b`` は未使用。skimage
 が無い環境ではこの分岐は呼べない。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.33、0.67、0.99(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

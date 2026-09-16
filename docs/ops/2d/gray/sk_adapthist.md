@@ -37,6 +37,8 @@ CLAHE(Contrast Limited Adaptive Histogram Equalization、コントラスト制�
 
 HALCON に直接対応するものは無い。実装は ``exposure.equalize_adapthist(clip(v,0,1), clip_limit=0.01+0.05*a)`` —— a は clip_limit(コントラスト制限の強さ)を 0.01〜0.06 に振る(大きいほど強くコントラストが上がりノイズも増幅されやすい)。b は未使用。タイル分割数はskimage の既定値(8x8)のまま。
 
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

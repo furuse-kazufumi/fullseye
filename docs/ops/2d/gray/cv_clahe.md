@@ -37,6 +37,8 @@ CLAHE(コントラスト制限付き適応ヒストグラム均等化、OpenCV �
 
 HALCON に直接対応するものは無い。実装は ``cv2.createCLAHE(clipLimit=1.0+4.0*a).apply(_u8(v))`` を 255 で割ったもの —— a は clipLimit(コントラスト制限の強さ)を 1.0〜5.0 に振る。タイルグリッドサイズは既定の 8x8 のまま。b は未使用。
 
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

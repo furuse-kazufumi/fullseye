@@ -44,6 +44,8 @@ linearization within a rectangluar mask.）に相当。
 
 ``a`` がブロック分割数を 2〜6 の範囲で振る。``b`` は未使用。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75、0.99(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

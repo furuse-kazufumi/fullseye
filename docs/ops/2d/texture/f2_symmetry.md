@@ -43,6 +43,8 @@ asymmetry response normalised to [0,1].
 
 **端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.11、0.29、0.51、0.69、0.91(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_texture_freq ファミリ ガイド](../guides/gallery2d_texture_freq.md)

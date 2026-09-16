@@ -37,6 +37,8 @@ Expand the domain of the image (the non-zero region) outward by a margin
 and set the new pixels to the nearest existing gray value. ``a`` sets the
 margin width (1..7 px); ``b`` is ignored.
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.09、0.25(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_gray_arith ファミリ ガイド](../guides/gallery2d_gray_arith.md)

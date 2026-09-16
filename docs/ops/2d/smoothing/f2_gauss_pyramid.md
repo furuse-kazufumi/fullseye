@@ -40,6 +40,8 @@ times (blur + decimate) and then up-sampled back to the original HxW so the
 result is a band-limited (low-pass) version at reduced resolution. ``a``
 selects the level (1..4); ``b`` is ignored.
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.17、0.49、0.83(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)

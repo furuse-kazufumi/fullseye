@@ -570,6 +570,46 @@ def _border_map() -> dict:
     return _BORDER_CACHE
 
 
+#: つまみの**実測結果**(`tools/impl2/knob_probe.py` の出力)。
+#: 「``a`` が窓を 3,5,7,9 に振る」と書いてあっても**どこで切り替わるか**は書かれて
+#: いないことが多く、``a`` が実測で効かないのにそう書いていない op もあった。
+#: 測った事実だけを、**ノートが黙っている場合に限って**差し込む。
+_KNOB_JSON = os.path.join(_ROOT, "docs", "op_knob.json")
+_KNOB_CACHE = None
+_SAYS_A_UNUSED = re.compile(r"``a``, ``b`` は未使用|``a`` は未使用|a は未使用|a, b は未使用|つまみは未使用")
+_SAYS_STEPS = re.compile(r"int\(|floor|round|丸め|切り捨て|段階|閾値|以上|未満")
+
+
+def _knob_map() -> dict:
+    global _KNOB_CACHE
+    if _KNOB_CACHE is None:
+        _KNOB_CACHE = {}
+        if os.path.exists(_KNOB_JSON):
+            with open(_KNOB_JSON, encoding="utf-8") as _f:
+                for r in json.load(_f):
+                    if r.get("status") == "determined":
+                        _KNOB_CACHE[r["op"]] = r
+    return _KNOB_CACHE
+
+
+def _with_knob(name: str, doc: str) -> str:
+    """実測したつまみの挙動を足す。**ノートが既に言っていることは繰り返さない**。"""
+    r = _knob_map().get(name)
+    if not r:
+        return doc
+    bits = []
+    if r.get("a_kind") == "unused" and not _SAYS_A_UNUSED.search(doc or ""):
+        bits.append("``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)")
+    elif r.get("a_kind") == "discrete" and r.get("breakpoints") and not _SAYS_STEPS.search(doc or ""):
+        pts = "、".join("%.2f" % x for x in r["breakpoints"])
+        bits.append("``a`` は**段階的**に効き、切り替わるのは a ≈ %s(実測。刻み %.2f の掃きで測った位置)"
+                    % (pts, r.get("breakpoint_resolution", 0.02)))
+    if not bits:
+        return doc
+    line = "**つまみ(実測)**: " + "。".join(bits) + "。"
+    return (doc + chr(10) + chr(10) + line) if doc else line
+
+
 _BORDER_ALREADY = re.compile(r"境界|端の扱い|端は|BORDER_|パディング")
 
 
@@ -624,8 +664,8 @@ def _records():
             # cleandoc: 関数 docstring の 2 行目以降には定義位置ぶんの字下げが
             # 付いていて、そのまま出すと Markdown が**コードブロックと読む**
             # (3-D / ledger 側は最初からこれを通していた)。
-            "doc": _with_border(o.name, _defuse_pseudolinks(
-                inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip())),
+            "doc": _with_knob(o.name, _with_border(o.name, _defuse_pseudolinks(
+                inspect.cleandoc(getattr(o, "doc", "") or fn.__doc__ or "").strip()))),
             "module": "ops", "sig": sig,
             "examples": sorted(idx2d.get(o.name, [])),
             "family": op_fam.get(o.name),

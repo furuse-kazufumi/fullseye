@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-16 08:13:30
+- **最終更新**: 2026-09-16 08:28:43
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+9a459edd9 端の規約を image->image の全 378 op で実測し、確定した 106 本を 97 枚のノートへ書き戻した
 d6992d99a 外部 AI を第 2 実装者に立て、端の規約をカーネル非依存に実測して書き戻し始めた
 8c86884c6 第 2 実装との突き合わせ 7 op: 仕様の穴を 4 件見つけ、同クラスを台帳全体で数えた
 0ac83453e 第 2 実装の差分検査を op 単位で回す道具を入れ、1 op 目で仕様の穴を 1 件見つけた
@@ -19,33 +20,42 @@ be0e56b2b medial: 3D 骨格をノードと枝のグラフに組み立てる skel
 37c72ca6e 展示館記事の投稿台帳を 0.2.0 の版ニュース反映後の実物に更新
 144ac6744 展示館記事に 0.2.0 の版ニュースを足す —— 前の版で書いた 2 つを訂正する
 e73df07b2 ハエ記事に #18c(発生の梯子・本番)と #24(11 体の重ね合わせ)を追記し、CITATION に 0.2.0 の版 DOI を入れる
-eaa16576c wheel の門: 「checkout の下」でなく「site-packages 由来か」で配布物を判定する(CI の repo 内 venv で誤って落ちた)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M tools/impl2/pilot.py
+?? impl2/c/qwen2.5-coder-32b/abs_image.c
+?? impl2/c/qwen2.5-coder-32b/acos_image.c
+?? impl2/c/qwen2.5-coder-32b/add_noise_distribution.c
+?? impl2/c/qwen2.5-coder-32b/add_noise_white.c
+?? impl2/c/qwen2.5-coder-32b/affine_trans_image.c
+?? impl2/c/qwen2.5-coder-32b/affine_trans_image_size.c
+?? impl2/c/qwen2.5-coder-32b/affine_warp.c
+?? impl2/c/qwen2.5-coder-32b/alife_curvature_flow.c
+?? impl2/c/qwen2.5-coder-32b/alife_cyclic_ca.c
+?? impl2/meta/qwen2.5-coder-32b/abs_image.json
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:12 impl2/FINDINGS.md
-08:07 docs/ops/dem/visibility/dem_viewshed.md
-08:07 docs/ops/dem/visibility/dem_sky_view_factor.md
-08:07 docs/ops/dem/visibility/dem_horizon_angle.md
-08:07 docs/ops/dem/hydrology/dem_stream_network.md
-08:07 docs/ops/dem/hydrology/dem_flow_direction.md
-08:07 docs/ops/dem/hydrology/dem_flow_accumulation.md
-08:07 docs/ops/dem/hydrology/dem_fill_sinks.md
-08:07 docs/ops/dem/geodesy/dem_geodetic_to_ecef.md
-08:07 docs/ops/dem/geodesy/dem_geodetic_slope.md
-08:07 docs/ops/dem/geodesy/dem_geocentric_grid.md
-08:07 docs/ops/dem/geodesy/dem_ecef_to_geodetic.md
-08:07 docs/ops/dem/geodesy/dem_earth_curvature_drop.md
-08:07 docs/ops/dem/geodesy/dem_cell_size_webmercator.md
-08:07 docs/ops/dem/surface/dem_tpi.md
+08:28 impl2/c/qwen2.5-coder-32b/alife_cyclic_ca.c
+08:28 impl2/_work/qwen2.5-coder-32b/alife_cyclic_ca/driver.c
+08:27 impl2/c/qwen2.5-coder-32b/alife_curvature_flow.c
+08:27 impl2/_work/qwen2.5-coder-32b/alife_curvature_flow/driver.c
+08:26 impl2/_work/qwen2.5-coder-32b/affine_warp/driver.c
+08:26 impl2/c/qwen2.5-coder-32b/affine_warp.c
+08:26 impl2/_work/qwen2.5-coder-32b/affine_trans_image_size/driver.c
+08:26 impl2/c/qwen2.5-coder-32b/affine_trans_image_size.c
+08:25 impl2/c/qwen2.5-coder-32b/affine_trans_image.c
+08:25 impl2/_work/qwen2.5-coder-32b/affine_trans_image/driver.c
+08:24 impl2/_work/qwen2.5-coder-32b/add_noise_white/driver.c
+08:24 impl2/c/qwen2.5-coder-32b/add_noise_white.c
+08:24 impl2/_work/qwen2.5-coder-32b/add_noise_distribution/driver.c
+08:24 impl2/c/qwen2.5-coder-32b/add_noise_distribution.c
+08:23 impl2/_work/qwen2.5-coder-32b/acos_image/driver.c
 ```
 
 ---

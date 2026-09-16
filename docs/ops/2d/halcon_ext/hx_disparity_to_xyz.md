@@ -53,6 +53,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 視差最小(``v = 0``)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の
 量子化が粗くなるので、``v`` が小さい領域の値は不安定。
 
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

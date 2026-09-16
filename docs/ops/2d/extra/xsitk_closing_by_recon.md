@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` は構造要素の半径(1〜5)を振る。``b`` は未使用。出力は [0,1] にクリップ。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.49(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_color_artistic ファミリ ガイド](../guides/gallery2d_color_artistic.md)

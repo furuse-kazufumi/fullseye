@@ -47,6 +47,8 @@ zero. ``a`` = gradient gain (0.25..4.25x), ``b`` = pre-smoothing sigma of the
 gradient field (0..3). Output is min-max normalised to [0,1] and refit to
 HxW; a constant frame integrates to a flat (all-zero) relief.
 
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

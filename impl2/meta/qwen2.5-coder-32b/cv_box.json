@@ -1,12 +1,11 @@
 {
   "op": "cv_box",
   "note": "docs/ops/2d/smoothing/cv_box.md",
-  "note_sha256_16": "237f9acf15a4e6a1",
+  "note_sha256_16": "3bcaea72896dedf1",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T07:47:18",
-  "c_path": "impl2/c/cv_box.c",
-  "prompt_sha256_16": "a6b5e6b2bd7a86db",
-  "gen_seconds": 20.8,
+  "generated_at": "2026-09-16T09:03:57",
+  "c_path": "impl2/c/qwen2.5-coder-32b/cv_box.c",
+  "reused_existing_c": true,
   "compiled": true,
   "probes": [
     {

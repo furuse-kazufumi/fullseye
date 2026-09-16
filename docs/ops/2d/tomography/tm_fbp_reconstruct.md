@@ -40,6 +40,8 @@ b >= 0.5 -> Shepp-Logan. ``a`` is unused (the filter is the meaningful knob).
 Uses ``skimage.transform.iradon`` when available, else the NumPy
 FFT-ramp-filtered back-projection. Output refit to HxW.
 
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

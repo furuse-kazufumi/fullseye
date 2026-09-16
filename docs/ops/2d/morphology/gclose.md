@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` が構造要素の一辺を ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。暗い小さな欠け（ノイズ状の暗点）を埋めつつ、大きな暗域の形はほぼ保つ。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_morphology ファミリ ガイド](../guides/gallery2d_morphology.md)

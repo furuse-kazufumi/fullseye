@@ -35,6 +35,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a``, ``b`` は凍結済みで未使用。binarize 課題（IoU）でロック済みホールドアウト 0.75、手作りベースライン 0.62 を上回るが、train 0.91 / holdout0.95 に対し locked_holdout は 0.75 まで落ちる —— 分割ごとの差を隠さず書く（feedback_benchmark_honest_disclosure）。HALCON に対応する単一オペレータは無い。
 
+**つまみ(実測)**: ``a`` を 0 から 1 まで振っても**出力は変わらない**(実測。4 種類の入力で確認)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_physics_alife_3d ファミリ ガイド](../guides/gallery2d_physics_alife_3d.md)

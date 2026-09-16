@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` が窓サイズを ``3,5,7,9``（``_k(a)``）に振る。``b`` は未使用。明るい小さな構造（点状の輝点等）を消し、暗い領域を広げる。
 
+**つまみ(実測)**: ``a`` は**段階的**に効き、切り替わるのは a ≈ 0.25、0.49、0.75(実測。刻み 0.02 の掃きで測った位置)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_smoothing_rank ファミリ ガイド](../guides/gallery2d_smoothing_rank.md)
