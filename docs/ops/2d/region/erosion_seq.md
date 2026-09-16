@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``erosion_seq``（構造要素を繰り返し適用して逐次的に収縮する演算）に相当する近似。円形やユーザー定義の構造要素ではなく scipy 既定の十字形要素を使う点が簡略化されている。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

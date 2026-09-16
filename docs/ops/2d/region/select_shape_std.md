@@ -43,6 +43,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 ``a``, ``b`` は未使用。複数領域が同面積の場合は ``argmax`` の実装依存で
 どれか 1 つが選ばれる。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

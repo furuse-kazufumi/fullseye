@@ -51,6 +51,8 @@ region をその外接矩形に対し相対的にクリップ(各辺から a の
 region 全体で 1 つ(成分ごとではない)ため、離れた小成分が並ぶ場合は端の成分がまるごと消えることがある。
 画像基準の中央矩形で切るなら ``hx_rectangle1_domain`` との論理積を使う。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

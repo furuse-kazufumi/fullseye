@@ -37,7 +37,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 a が直径しきい値（``4 + int(a*30)``、範囲 4〜34）を振る。この直径未満の明るい連結成分を潰す。b は未使用。
 
-**端の扱い**: 外側を 0 とみなす(実測。`tools/impl2/border_probe.py`)。
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
 
 ## 詳しい使い方ガイド
 

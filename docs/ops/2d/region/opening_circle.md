@@ -44,6 +44,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` が構造要素の半径を 1〜4 の範囲で振る。``b`` は未使用。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

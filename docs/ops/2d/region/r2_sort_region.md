@@ -52,6 +52,8 @@ Keep the k-th largest connected component; k = round(a*(n-1)).
 斜め接続だけでつながった画素は別成分として数えられる(4 連結)。前段に
 ``opening_circle`` でくびれを切っておくと成分単位の選択が安定する。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

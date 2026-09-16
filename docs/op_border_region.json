@@ -1,0 +1,1568 @@
+[
+  {
+    "op": "affine_trans_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "boundary",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "closing_circle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "closing_golay",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "closing_rectangle1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "convex_fill",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "dilation_circle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "dilation_golay",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "dilation_rectangle1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "dilation_seq",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "em_skeleton",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "erosion_circle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "erosion_golay",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "erosion_rectangle1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "wrap"
+    ]
+  },
+  {
+    "op": "erosion_seq",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "fill_holes",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge"
+    ]
+  },
+  {
+    "op": "fill_up",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge"
+    ]
+  },
+  {
+    "op": "fill_up_shape",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "get_region_contour",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "get_region_convex",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "hx_clip_region_rel",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "hx_closing",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "hx_dilation1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "hx_dilation2",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "hx_erosion1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "wrap"
+    ]
+  },
+  {
+    "op": "hx_expand_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "hx_move_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "hx_opening",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "wrap"
+    ]
+  },
+  {
+    "op": "hx_split_skeleton_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "invert_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "junctions_skeleton",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "mirror_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "morph_skeleton",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "opening_circle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "opening_golay",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "opening_rectangle1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "wrap"
+    ]
+  },
+  {
+    "op": "polar_trans_region_inv",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "projective_trans_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "pruning",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_endpoints_skeleton",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_inner_circle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "r2_inner_rectangle1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_partition_rectangle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_smallest_circle",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_smallest_rectangle1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge"
+    ]
+  },
+  {
+    "op": "r2_smallest_rectangle2",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_sort_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_split_skeleton_lines",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r2_union1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "r3_background_seg",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "wrap"
+    ]
+  },
+  {
+    "op": "r3_clip_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "r3_eliminate_runs",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "wrap"
+    ]
+  },
+  {
+    "op": "r3_label_to_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "r3_partition_dynamic",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r3_polar_trans_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "r3_rank_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "r3_select_region_point",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "reg_close",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "reg_dilate",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "reg_erode",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "reg_open",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "region_boundary",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "remove_noise_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "remove_small",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "select_largest",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "select_shape",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "wrap"
+    ]
+  },
+  {
+    "op": "select_shape_std",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "shape_trans",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "sk_clear_border",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "edge",
+    "border_ja": "端の画素を複製する(最近傍)",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "sk_convex",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "sk_find_boundaries",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "edge",
+    "border_ja": "端の画素を複製する(最近傍)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "sk_medial",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "sk_remove_holes",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "sk_skeleton",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "sk_thin",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "skeleton",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "smallest_rectangle1",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge"
+    ]
+  },
+  {
+    "op": "thinning",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "thinning_golay",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "thinning_seq",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "determined",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 1.0
+  },
+  {
+    "op": "transpose_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  },
+  {
+    "op": "xcv2_hitmiss",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 0.0,
+      "symmetric": 1.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "reflect",
+    "border_ja": "端画素を重複させずに折り返す (d c b | a b c d)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "reflect",
+      "wrap"
+    ]
+  },
+  {
+    "op": "xmh_bwperim",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "edge",
+    "border_ja": "端の画素を複製する(最近傍)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect",
+      "symmetric"
+    ]
+  },
+  {
+    "op": "xmh_majority",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xsk2_isotropic_close",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 1.0,
+      "reflect": 1.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "undetermined",
+    "closest": "constant0",
+    "closest_diff": 1.0
+  },
+  {
+    "op": "xsk3_rank_majority",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 1.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 1.0,
+      "wrap": 1.0
+    },
+    "status": "ambiguous",
+    "border": "edge",
+    "border_ja": "端の画素を複製する(最近傍)",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "edge",
+      "reflect"
+    ]
+  },
+  {
+    "op": "zoom_region",
+    "pad": 12,
+    "tol": 1e-09,
+    "scores": {
+      "constant0": 0.0,
+      "edge": 0.0,
+      "reflect": 0.0,
+      "symmetric": 0.0,
+      "wrap": 0.0
+    },
+    "status": "ambiguous",
+    "border": "constant0",
+    "border_ja": "外側は 0 とみなす",
+    "second_best_diff": 0.0,
+    "candidates": [
+      "constant0",
+      "edge",
+      "reflect",
+      "symmetric",
+      "wrap"
+    ]
+  }
+]

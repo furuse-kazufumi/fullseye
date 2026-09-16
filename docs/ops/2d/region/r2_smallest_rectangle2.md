@@ -54,6 +54,8 @@ Minimum-area ORIENTED bounding rectangle as a mask (rotating calipers).
 軸並行でよければ ``r2_smallest_rectangle1`` の方が軽い。細長い部品の向きを
 見る前処理や、``r2_inner_rectangle1`` との面積比で矩形らしさを見る用途に。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

@@ -47,6 +47,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 分かれた枝を個別に扱うには後段で ``hx_region_to_label`` を掛ける。分岐点の隣接画素は除かないので、
 多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に ``r2_split_skeleton_lines``。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

@@ -41,6 +41,8 @@ Thin the region to a skeleton, then break it at junctions (>=3 neighbours).
 
 ``a`` drops resulting segments shorter than ``a*8`` pixels (a=0 keeps all).
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

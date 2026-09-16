@@ -43,6 +43,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``sz x sz``（``sz`` は 3, 5, 7 のいずれかを ``a`` で選ぶ）の窓の中で、領域に属する画素が ``number`` 個以上あれば出力を立てる。``number`` は``b``（0〜1）を窓面積に対する割合として決める（``number = sz*sz`` で収縮相当、``number = 1`` で膨張相当、中間ではランク/メディアンフィルタ相当の挙動になる）。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

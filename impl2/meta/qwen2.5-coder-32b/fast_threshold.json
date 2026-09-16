@@ -1,12 +1,16 @@
 {
-  "op": "cv_erode",
-  "note": "docs/ops/2d/morphology/cv_erode.md",
-  "note_sha256_16": "e9972d11b842e8d1",
+  "op": "fast_threshold",
+  "note": "docs/ops/2d/segmentation/fast_threshold.md",
+  "note_sha256_16": "cd4d2655dd89b2fe",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:08:53",
-  "c_path": "impl2/c/qwen2.5-coder-32b/cv_erode.c",
-  "reused_existing_c": true,
+  "generated_at": "2026-09-16T09:08:06",
+  "c_path": "impl2/c/qwen2.5-coder-32b/fast_threshold.c",
+  "prompt_sha256_16": "efc3d401ece5a42e",
+  "gen_seconds": 23.9,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "region",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",
@@ -69,82 +73,82 @@
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "diagonal",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "row_1xN",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "col_Nx1",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "single_pixel",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "random",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "checkerboard8",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_x",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_y",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "constant_half",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
       "max_abs_diff": 1.0,
       "non_finite": false
     },
     {
-      "probe": "diagonal",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "row_1xN",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "random",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.5436900727247322,
-      "non_finite": false
-    },
-    {
-      "probe": "checkerboard8",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "ramp_x",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "ramp_y",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "constant_half",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
       "probe": "zeros",
       "a": 0.5,
       "b": 0.5,
@@ -213,7 +217,7 @@
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.6057292106182802,
+      "max_abs_diff": 0.0,
       "non_finite": false
     },
     {
@@ -317,7 +321,7 @@
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
-      "max_abs_diff": 0.3091669767701739,
+      "max_abs_diff": 0.0,
       "non_finite": false
     },
     {
@@ -349,7 +353,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.0,
+      "max_abs_diff": 1.0,
       "non_finite": false
     },
     {
@@ -421,7 +425,7 @@
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
-      "max_abs_diff": 0.6057292106182802,
+      "max_abs_diff": 0.0,
       "non_finite": false
     }
   ],

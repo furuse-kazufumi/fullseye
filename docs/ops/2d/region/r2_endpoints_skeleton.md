@@ -40,6 +40,8 @@ fullseye の `junctions_skeleton` は分岐点のみなので、端点側をこ�
 入力が骨格でない場合は em_skeleton で細線化してから端点を取る。
 孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

@@ -49,8 +49,18 @@ MODES = {
 }
 
 #: 端が効く入力。**定数や対称な画像では規約が分かれない**ので、端の近くに構造を置く。
+_REGION_MODE = False
+
+
 def _inputs(n: int = 24) -> list[tuple[str, np.ndarray]]:
     rng = np.random.default_rng(20260916)
+    if _REGION_MODE:
+        # region は {0,1} の二値。**端に構造が無いと規約が分かれない**ので、
+        # 端に接する塊・角で接する塊・市松を入れる。
+        a = np.zeros((n, n)); a[0:6, 0:6] = 1.0; a[10:16, 10:18] = 1.0
+        b = np.zeros((n, n)); b[:, :3] = 1.0; b[n - 3:, :] = 1.0
+        c = (np.indices((n, n)).sum(axis=0) % 2).astype(np.float64)
+        return [("blobs_touching_edge", a), ("bands_on_edge", b), ("checker", c)]
     ramp = np.tile(np.linspace(0.05, 0.95, n), (n, 1))
     return [
         ("ramp_x", ramp),
@@ -116,6 +126,8 @@ def main() -> int:
     ap.add_argument("--category", help="この category の op をまとめて測る")
     ap.add_argument("--all", action="store_true",
                     help="registry/color の image->image op を全部測る")
+    ap.add_argument("--all-region", action="store_true",
+                    help="region->region op を全部測る(入力は二値マスク)")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--json", help="結果をこのファイルに書く")
     a = ap.parse_args()
@@ -133,6 +145,12 @@ def main() -> int:
         names += [o["name"] for o in idx["ops"]
                   if o["tier"] in ("registry", "color")
                   and o["in_sort"] == "image" and o["out_sort"] == "image"]
+    if a.all_region:
+        idx = json.loads((ROOT / "docs" / "OP_INDEX.json").read_text(encoding="utf-8"))
+        names += [o["name"] for o in idx["ops"]
+                  if o["tier"] in ("registry", "color")
+                  and o["in_sort"] == "region" and o["out_sort"] == "region"]
+        globals()["_REGION_MODE"] = True
     names = list(dict.fromkeys(names))
     if a.limit:
         names = names[:a.limit]

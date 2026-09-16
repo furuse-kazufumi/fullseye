@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `thinning`(Remove the result of a hit-or-miss operation from a region.)に相当。実装は ``morphology.thin(binm(v))``。a, b は未使用。sk_skeleton / sk_medial と 3 通りの細線化を並べ、対象形状に合うものを選べるようにしてある。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

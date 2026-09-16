@@ -56,6 +56,8 @@ Minimum enclosing circle as a mask (Welzl); a inflates radius (>=0).
 半径の数値は返さない。内接円 ``r2_inner_circle`` との半径比が真円度の粗い
 指標になり、向きを持つ外接形は ``r2_smallest_rectangle2``。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

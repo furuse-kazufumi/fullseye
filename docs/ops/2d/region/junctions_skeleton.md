@@ -43,6 +43,8 @@ end points in a skeleton.）に相当(HALCON は端点も同時に返すが、�
 
 ``a``, ``b`` は未使用。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

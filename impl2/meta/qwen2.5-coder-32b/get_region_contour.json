@@ -1,12 +1,16 @@
 {
-  "op": "cv_erode",
-  "note": "docs/ops/2d/morphology/cv_erode.md",
-  "note_sha256_16": "e9972d11b842e8d1",
+  "op": "get_region_contour",
+  "note": "docs/ops/2d/region/get_region_contour.md",
+  "note_sha256_16": "5bd93bb2376e14b7",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:08:53",
-  "c_path": "impl2/c/qwen2.5-coder-32b/cv_erode.c",
-  "reused_existing_c": true,
+  "generated_at": "2026-09-16T09:09:42",
+  "c_path": "impl2/c/qwen2.5-coder-32b/get_region_contour.c",
+  "prompt_sha256_16": "f3eaa17eb4d892bd",
+  "gen_seconds": 44.8,
   "compiled": true,
+  "in_sort": "region",
+  "out_sort": "region",
+  "probe_set": "region",
   "probes": [
     {
       "probe": "checkerboard8",
@@ -17,7 +21,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_x",
+      "probe": "corner_touch2",
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
@@ -25,7 +29,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_y",
+      "probe": "two_blobs",
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
@@ -33,39 +37,7 @@
       "non_finite": false
     },
     {
-      "probe": "constant_half",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "zeros",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "impulse_center",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "impulse_corner",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "frame",
+      "probe": "ring_with_hole",
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
@@ -73,7 +45,55 @@
       "non_finite": false
     },
     {
-      "probe": "diagonal",
+      "probe": "corner_touch_blocks",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "blob_at_corner",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "all_ones",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "all_zeros",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "single_pixel_on",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "horizontal_line",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "vertical_line",
       "a": 0.1,
       "b": 0.5,
       "status": "compared",
@@ -86,30 +106,6 @@
       "b": 0.5,
       "status": "compared",
       "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "random",
-      "a": 0.1,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.5436900727247322,
       "non_finite": false
     },
     {
@@ -121,7 +117,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_x",
+      "probe": "corner_touch2",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -129,7 +125,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_y",
+      "probe": "two_blobs",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -137,7 +133,15 @@
       "non_finite": false
     },
     {
-      "probe": "constant_half",
+      "probe": "ring_with_hole",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 1.0,
+      "non_finite": false
+    },
+    {
+      "probe": "corner_touch_blocks",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -145,7 +149,7 @@
       "non_finite": false
     },
     {
-      "probe": "zeros",
+      "probe": "blob_at_corner",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -153,7 +157,7 @@
       "non_finite": false
     },
     {
-      "probe": "impulse_center",
+      "probe": "all_ones",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -161,7 +165,7 @@
       "non_finite": false
     },
     {
-      "probe": "impulse_corner",
+      "probe": "all_zeros",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -169,7 +173,7 @@
       "non_finite": false
     },
     {
-      "probe": "frame",
+      "probe": "single_pixel_on",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -177,7 +181,15 @@
       "non_finite": false
     },
     {
-      "probe": "diagonal",
+      "probe": "horizontal_line",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "vertical_line",
       "a": 0.5,
       "b": 0.5,
       "status": "compared",
@@ -190,30 +202,6 @@
       "b": 0.5,
       "status": "compared",
       "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "random",
-      "a": 0.5,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.6057292106182802,
       "non_finite": false
     },
     {
@@ -225,7 +213,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_x",
+      "probe": "corner_touch2",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -233,7 +221,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_y",
+      "probe": "two_blobs",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -241,7 +229,15 @@
       "non_finite": false
     },
     {
-      "probe": "constant_half",
+      "probe": "ring_with_hole",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 1.0,
+      "non_finite": false
+    },
+    {
+      "probe": "corner_touch_blocks",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -249,7 +245,7 @@
       "non_finite": false
     },
     {
-      "probe": "zeros",
+      "probe": "blob_at_corner",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -257,7 +253,7 @@
       "non_finite": false
     },
     {
-      "probe": "impulse_center",
+      "probe": "all_ones",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -265,7 +261,7 @@
       "non_finite": false
     },
     {
-      "probe": "impulse_corner",
+      "probe": "all_zeros",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -273,7 +269,7 @@
       "non_finite": false
     },
     {
-      "probe": "frame",
+      "probe": "single_pixel_on",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -281,7 +277,15 @@
       "non_finite": false
     },
     {
-      "probe": "diagonal",
+      "probe": "horizontal_line",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "vertical_line",
       "a": 0.9,
       "b": 0.5,
       "status": "compared",
@@ -294,30 +298,6 @@
       "b": 0.5,
       "status": "compared",
       "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "random",
-      "a": 0.9,
-      "b": 0.5,
-      "status": "compared",
-      "max_abs_diff": 0.3091669767701739,
       "non_finite": false
     },
     {
@@ -329,7 +309,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_x",
+      "probe": "corner_touch2",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -337,7 +317,7 @@
       "non_finite": false
     },
     {
-      "probe": "ramp_y",
+      "probe": "two_blobs",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -345,7 +325,15 @@
       "non_finite": false
     },
     {
-      "probe": "constant_half",
+      "probe": "ring_with_hole",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 1.0,
+      "non_finite": false
+    },
+    {
+      "probe": "corner_touch_blocks",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -353,7 +341,7 @@
       "non_finite": false
     },
     {
-      "probe": "zeros",
+      "probe": "blob_at_corner",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -361,7 +349,7 @@
       "non_finite": false
     },
     {
-      "probe": "impulse_center",
+      "probe": "all_ones",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -369,7 +357,7 @@
       "non_finite": false
     },
     {
-      "probe": "impulse_corner",
+      "probe": "all_zeros",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -377,7 +365,7 @@
       "non_finite": false
     },
     {
-      "probe": "frame",
+      "probe": "single_pixel_on",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -385,7 +373,15 @@
       "non_finite": false
     },
     {
-      "probe": "diagonal",
+      "probe": "horizontal_line",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "vertical_line",
       "a": 0.5,
       "b": 0.9,
       "status": "compared",
@@ -398,30 +394,6 @@
       "b": 0.9,
       "status": "compared",
       "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "col_Nx1",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "single_pixel",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.0,
-      "non_finite": false
-    },
-    {
-      "probe": "random",
-      "a": 0.5,
-      "b": 0.9,
-      "status": "compared",
-      "max_abs_diff": 0.6057292106182802,
       "non_finite": false
     }
   ],

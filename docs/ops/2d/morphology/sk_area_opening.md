@@ -37,7 +37,7 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON に直接対応するものは無い。実装は ``morphology.area_opening(v, area_threshold=int(16+a*100))`` —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。
 
-**端の扱い**: 外側を 0 とみなす(実測。`tools/impl2/border_probe.py`)。
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
 
 ## 詳しい使い方ガイド
 

@@ -39,7 +39,7 @@ Thinning of a gray-value image: skeletonise the bright region (threshold
 set by ``a``) and lift the 1-px medial ridge back to the original gray
 values. ``b`` is ignored.
 
-**端の扱い**: 外側を 0 とみなす(実測。`tools/impl2/border_probe.py`)。
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
 
 ## 詳しい使い方ガイド
 

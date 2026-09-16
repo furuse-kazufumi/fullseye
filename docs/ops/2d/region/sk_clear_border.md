@@ -37,6 +37,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON に直接対応するものは無い。実装は ``segmentation.clear_border(binm(v))``。a, b は未使用 —— 除去判定に使う縁の幅(buffer_size)は既定の 0(画像端そのものに触れている成分のみ対象)。
 
+**端の扱い**: 端の画素を複製する(最近傍)(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `skeleton`(Compute the skeleton of a region.)に相当(近似。アルゴリズムは Zhang-Suen 系)。実装は ``morphology.skeletonize(binm(v))`` —— 入力はまず ``binm``(> 0.5 のしきい値)で真偽値化される。a, b は未使用。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

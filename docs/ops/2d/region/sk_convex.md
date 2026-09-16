@@ -39,6 +39,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の `shape_trans`(Transform the shape of a region.)に相当(近似。``shape_trans`` は他の変形モードも持つ汎用命令だが、ここでは凸包のみ)。実装は ``morphology.convex_hull_image(binm(v))``。a, b は未使用。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

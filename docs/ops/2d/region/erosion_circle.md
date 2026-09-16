@@ -46,6 +46,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 バックエンドの二値モルフォロジー op(erosion/dilation/opening/closing の
 円形・矩形いずれも)に共通して**未使用**。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。構造要素は ``scipy.ndimage.binary_erosion`` の既定（十字形、4近傍相当）で、HALCON の円形構造要素とは形が異なる（近似）。入力は ``v > 0.5`` で二値化してから処理する。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

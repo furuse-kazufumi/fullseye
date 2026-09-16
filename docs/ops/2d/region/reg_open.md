@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 ``a`` が反復回数を ``1〜4``（``_it(a)``）に振る。``b`` は未使用。細い突起や小さな孤立領域を除去する。構造要素は scipy 既定の十字形。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

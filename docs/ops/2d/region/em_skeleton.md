@@ -60,6 +60,8 @@ simple を標準の (8,4) 単純点にした本実装が参照出力とビット
 比較表で EM が対称・枝多である性格と整合)。ヒゲは `pruning` で後処理する
 流儀も HALCON と同じ。つまみ a, b は未使用。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

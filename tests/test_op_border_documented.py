@@ -25,22 +25,29 @@ import pytest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-BORDER_JSON = os.path.join(ROOT, "docs", "op_border.json")
+#: image->image と region->region の 2 本。**片方だけ見る門は、もう片方の差し込みが
+#: 剥がれても緑のまま**になる。
+BORDER_JSONS = (os.path.join(ROOT, "docs", "op_border.json"),
+                os.path.join(ROOT, "docs", "op_border_region.json"))
 OPS_DIR = os.path.join(ROOT, "docs", "ops")
 
 #: 2026-09-16 の実測値。**下振れしたら知らせる**ための床であって、上げるのは自由。
 #: (op を足して確定数が増えるのは歓迎。減るのは「測れなくなった」か「台帳が壊れた」)
-MEASURED_DETERMINED = 106
-FLOOR = 90
+MEASURED_DETERMINED = 144   # image->image 106 + region->region 38
+FLOOR = 120
 
 _MENTIONS_BORDER = re.compile(r"端の扱い|境界|端は|BORDER_|パディング")
 
 
 def _rows():
-    if not os.path.exists(BORDER_JSON):
-        pytest.skip("docs/op_border.json が無い(tools/impl2/border_probe.py --all で作る)")
-    with open(BORDER_JSON, encoding="utf-8") as f:
-        return json.load(f)
+    rows = []
+    for path in BORDER_JSONS:
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                rows.extend(json.load(f))
+    if not rows:
+        pytest.skip("端の規約の台帳が無い(tools/impl2/border_probe.py で作る)")
+    return rows
 
 
 def _note_path(op: str) -> str | None:

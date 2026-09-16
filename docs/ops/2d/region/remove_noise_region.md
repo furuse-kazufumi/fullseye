@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``remove_noise_region``（小さな孤立領域=ノイズをフィルタ処理で除去する演算）に相当。円形構造要素のサイズだけがノイズ除去の強さを決める近似。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

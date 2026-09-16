@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 HALCON の ``opening_golay``（Golay アルファベットから選んだ要素でオープニングする演算）とは異なり、この実装は Golay アルファベットの特定要素ではなく単純な円板構造要素で近似する。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

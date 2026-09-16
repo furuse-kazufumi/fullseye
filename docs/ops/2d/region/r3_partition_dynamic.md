@@ -41,6 +41,8 @@ version: 0.2.0  # fullseye lib version this note was generated for
 
 各列の前景画素数（密度）を数え、``0 < 密度 <= a * 最大密度`` を満たす列（くびれ）をゼロに潰して領域を分断する。``a``（0〜1）がくびれと判定するしきい値の割合。``b`` は未使用。密度が一様な領域には分断対象の列が無く、そのまま返る。
 
+**端の扱い**: 画像の外側は背景(0)とみなす(実測。`tools/impl2/border_probe.py`)。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_region ファミリ ガイド](../guides/gallery2d_region.md)

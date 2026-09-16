@@ -546,9 +546,12 @@ _PSEUDOLINK = re.compile(r"\]\((?P<t>[^)\n]*)\)")
 #: 近傍窓を使う op の 93% がこの規約を書いていなかった —— そして端の規約は答えを
 #: 値域の 2 割動かす(`impl2/FINDINGS.md`)。**推測では書かない**ので、測って
 #: 確定したものだけをここから差し込む。判定できなかった op には何も足さない。
-_BORDER_JSON = os.path.join(_ROOT, "docs", "op_border.json")
+#: image->image と region->region の 2 本。region 側は入力が二値マスクなので探針が違う。
+_BORDER_JSONS = (os.path.join(_ROOT, "docs", "op_border.json"),
+                 os.path.join(_ROOT, "docs", "op_border_region.json"))
+_BORDER_JSON = _BORDER_JSONS[0]
 _BORDER_JA = {
-    "constant0": "外側を 0 とみなす",
+    "constant0": "画像の外側は背景(0)とみなす",
     "edge": "端の画素を複製する(最近傍)",
     "reflect": "端画素を重複させずに折り返す (d c b | a b c d、OpenCV の ``BORDER_REFLECT_101``)",
     "symmetric": "端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 ``reflect``)",
@@ -561,8 +564,10 @@ def _border_map() -> dict:
     global _BORDER_CACHE
     if _BORDER_CACHE is None:
         _BORDER_CACHE = {}
-        if os.path.exists(_BORDER_JSON):
-            with open(_BORDER_JSON, encoding="utf-8") as _f:
+        for _path in _BORDER_JSONS:
+            if not os.path.exists(_path):
+                continue
+            with open(_path, encoding="utf-8") as _f:
                 _rows = json.load(_f)
             for r in _rows:
                 if r.get("status") == "determined" and r.get("border") in _BORDER_JA:
