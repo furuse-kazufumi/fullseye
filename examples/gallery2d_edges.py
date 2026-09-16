@@ -99,7 +99,7 @@ OPS = [
     "xpil_find_edges", "xsp_morph_laplace", "xsp_gauss_grad_mag", "xsk2_corner_kr",
     "xsk2_inv_gauss_grad", "xwt_hf_reconstruct", "xwt_directional_detail",
     "xsk3_corner_moravec", "xsk3_corner_fast", "xkor_laplacian", "xkor_harris",
-    "xkor_gftt", "xkor_hessian", "xkor_dog", "f2_shock", "f2_topographic",
+    "xkor_gftt", "xkor_hessian", "xkor_dog", "f2_shock", "f2_shock_diffuse", "f2_topographic",
     "tf_steerable_filter", "tf_phase_congruency",
 ]
 
@@ -187,6 +187,48 @@ def _ground_truth_checks(BY) -> int:
     flat = float(o[22:27, 22:27].mean())     # 内部平坦
     assert corner > straight + 0.2 and corner > flat + 0.2, (
         f"GT cv_corner_harris: 角 {corner:.4f} が直線 {straight:.4f} / 平坦 {flat:.4f} を上回らない")
+    checks += 1
+
+    # 拡散と収縮の反復(f2_shock_diffuse)—— 素の衝撃との違いを数字で。
+    # ★null を破るのは「雑音の扱い」: 素の衝撃は雑音を構造に化かすので、
+    #   段差が**真値を超える**。超えたら鮮鋭化ではなく増幅である。
+    from scipy import ndimage as _nd
+    n2 = 128
+    _, xx2 = np.mgrid[0:n2, 0:n2]
+    true_step = 0.5
+    blurred = _nd.gaussian_filter(np.where(xx2 < n2 // 2, 0.25, 0.75).astype(float), 3.0)
+    noisy = np.clip(blurred + np.random.default_rng(5).normal(0, 0.02, (n2, n2)), 0.0, 1.0)
+
+    def _step_of(m):
+        return float(np.abs(np.diff(np.asarray(m)[n2 // 2, :])).max())
+
+    def _flat_noise(m):
+        return float(np.asarray(m)[:, :40].std())
+
+    in_step, in_noise = _step_of(noisy), _flat_noise(noisy)
+    plain = BY["f2_shock"].fn(noisy.copy(), 0.5, 0.0)
+    assert _step_of(plain) > true_step, (
+        "f2_shock が真の段差 %.3f を超えていない(%.3f)—— 雑音を構造に化かす性質が"
+        "消えたなら、2 つの op を分けている根拠がなくなる" % (true_step, _step_of(plain)))
+    assert _flat_noise(plain) > 2.0 * in_noise,         "f2_shock が平坦部の雑音を増幅していない(%.4f -> %.4f)" % (in_noise, _flat_noise(plain))
+    # 交互版: b を上げるほど雑音が減り、鋭さは落ちる(取引が単調であること)
+    steps, noises = [], []
+    for bb in (0.0, 0.25, 0.5, 1.0):
+        o = BY["f2_shock_diffuse"].fn(noisy.copy(), 0.5, bb)
+        steps.append(_step_of(o))
+        noises.append(_flat_noise(o))
+    assert all(noises[i] > noises[i + 1] for i in range(len(noises) - 1)),         "b を上げても雑音が単調に減らない: %s" % [round(x, 4) for x in noises]
+    assert all(steps[i] > steps[i + 1] for i in range(len(steps) - 1)),         "b を上げても鋭さが単調に落ちない(取引になっていない): %s" % [round(x, 3) for x in steps]
+    # 存在理由そのもの: 弱い拡散(b=0.10)で「雑音を減らしながら段差を 2 倍以上」。
+    # 実測 段差 0.112 -> 0.272(2.4 倍) / 雑音 0.0201 -> 0.0091(0.45 倍)。
+    # b を上げると雑音はさらに減るが段差も落ちるので、この主張が言えるのは弱い側。
+    o10 = BY["f2_shock_diffuse"].fn(noisy.copy(), 0.5, 0.10)
+    s10, n10 = _step_of(o10), _flat_noise(o10)
+    assert n10 < 0.6 * in_noise and s10 > 2.0 * in_step, (
+        "f2_shock_diffuse(b=0.10)が『雑音を減らしつつ鋭くする』になっていない: "
+        "雑音 %.4f (入力 %.4f) / 段差 %.3f (入力 %.3f)" % (n10, in_noise, s10, in_step))
+    # どの b でも真値を超えない(超えたら増幅している)
+    assert max(steps) <= true_step + 1e-9,         "f2_shock_diffuse が真の段差を超えた(増幅している): %s" % [round(x, 3) for x in steps]
     checks += 1
 
     return checks

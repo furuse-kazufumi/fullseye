@@ -73,7 +73,7 @@ morph_grad 0.35 0.50
 
 ## 同カテゴリ(`morphology`)
 
-[gerode](gerode.md) · [gdilate](gdilate.md) · [gopen](gopen.md) · [gclose](gclose.md) · [tophat](tophat.md) · [bothat](bothat.md) · [local_thickness](local_thickness.md) · [sk_area_opening](sk_area_opening.md)
+[gerode](gerode.md) · [gdilate](gdilate.md) · [gopen](gopen.md) · [gclose](gclose.md) · [tophat](tophat.md) · [bothat](bothat.md) · [persistence_map](persistence_map.md) · [local_thickness](local_thickness.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

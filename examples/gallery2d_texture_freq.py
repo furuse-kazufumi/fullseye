@@ -105,6 +105,7 @@ OPS = [
     "dc_rpca_sparse", "dc_retinex", "dc_local_contrast_norm", "dc_homomorphic",
     "tf_census_transform", "tf_rank_transform", "local_std",
     "structure_tensor_orientation", "structure_tensor_coherence",
+    "scale_select_std", "bootstrap_std_error",
 ]
 
 KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85)]
@@ -262,6 +263,48 @@ def run_ground_truth() -> int:
     # (c) 等方雑音 —— 理想縞(~1.0)とはっきり差がつくこと。
     iso = np.clip(np.random.default_rng(7).normal(0.5, 0.05, (96, 96)), 0.0, 1.0)
     assert float(np.median(BY["structure_tensor_coherence"].fn(iso, 0.2, 0.5))) < 0.5,         "coherence should be low on isotropic noise"
+    checks += 1
+
+    # GT3d: scale_select_std は「窓を 1 つ選ぶと損をする」矛盾を、場所ごとに窓を
+    #       選ぶことで解く。だから検証も**両側**が要る —— 平坦部の精度が大窓に
+    #       負けないこと、かつ縁の幅が小窓と同じであること。片方だけなら
+    #       local_std を置き換えるだけで通ってしまう。
+    sigma_gt = 0.03
+    step_img = np.zeros((160, 160))
+    step_img[:, 80:] = 0.6
+    step_img = step_img + np.random.default_rng(3).normal(0, sigma_gt, step_img.shape)
+    f3 = BY["local_std"].fn(step_img.copy(), 0.0, 0.0)          # 3x3
+    f9 = BY["local_std"].fn(step_img.copy(), 1.0, 1.0)          # 9x9
+    ad = BY["scale_select_std"].fn(step_img.copy(), 1.0, 0.5)
+
+    def _flat_err(m):
+        return abs(float(np.asarray(m)[20:60, 20:60].mean()) - sigma_gt) / sigma_gt
+
+    def _edge_w(m):
+        col = np.asarray(m)[80, :]
+        return int((col > col.max() * 0.5).sum())
+
+    assert _flat_err(ad) <= _flat_err(f9),         "scale_select_std の平坦部が 9x9 に負けた(%.4f vs %.4f)" % (_flat_err(ad), _flat_err(f9))
+    assert _edge_w(ad) <= _edge_w(f3),         "scale_select_std の縁が 3x3 より太い(%d vs %d px)" % (_edge_w(ad), _edge_w(f3))
+    # null を破る: 9x9 は実際に縁がにじんでいる(そうでなければ矛盾自体が無い)
+    assert _edge_w(f9) > 2 * _edge_w(f3),         "9x9 が 3x3 より縁が太くない —— 解くべき矛盾が存在しないことになる"
+    checks += 1
+
+    # GT3e: bootstrap_std_error は**仮定を置かない**誤差。正規なら閉形式より
+    #       やや低く出て(小標本の性質)、外れ値が混ざるとはっきり跳ねる。
+    #       跳ねなければ「仮定を外したことの価値」が無い。
+    rng_bs = np.random.default_rng(3)
+    gauss = 0.5 + rng_bs.normal(0, 0.05, (128, 128))
+    heavy = gauss.copy()
+    heavy[rng_bs.random(heavy.shape) < 0.02] = 1.0              # 外れ値 2 %
+    # ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると
+    #   閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
+    k_bs = ops._k(0.5)
+    closed = 1.0 / np.sqrt(2.0 * (k_bs * k_bs - 1))
+    r_g = float(np.median(np.asarray(BY["bootstrap_std_error"].fn(gauss.copy(), 0.5, 1.0))))
+    r_h = float(np.median(np.asarray(BY["bootstrap_std_error"].fn(heavy.copy(), 0.5, 1.0))))
+    assert 0.7 * closed < r_g < 1.1 * closed,         "正規雑音で閉形式から離れすぎ: 窓 %dx%d 実測 %.4f / 閉形式 %.4f" % (k_bs, k_bs, r_g, closed)
+    assert r_h > 1.5 * r_g,         "外れ値を混ぜても跳ねない(%.4f -> %.4f)—— 仮定を外した意味が無い" % (r_g, r_h)
     checks += 1
 
     # GT4: rank_transform is invariant to a positive gain (ordinal), but NOT to

@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">bootstrap_std_error — 2D <code style="color:#22d3bf">texture</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;bootstrap_std_error&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/bootstrap_std_error.png" alt="bootstrap_std_error: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*The output is shown in a viridis-like pseudo-colour (dark purple = low, yellow = high) so that a field of quantities — distance, phase, orientation, depth — can be read.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bootstrap_std_error.a.jpg">bootstrap_std_error: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bootstrap_std_error.b.jpg">bootstrap_std_error: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bootstrap_std_error.inputs.jpg">bootstrap_std_error: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>局所標準偏差の<b>標準誤差</b>を、分布を仮定せずに測る(ブートストラップ)。</p>
+<p>`<code style="color:#22d3bf">local_std</code><code style="color:#22d3bf"> が併記する誤差 </code><code style="color:#22d3bf">1/sqrt(2(n-1))</code>` は<b>雑音が正規分布</b>という仮定の</p>
+<p>上に立っている。外れ値や二峰性があると、その式は本当のばらつきを過小に言う。</p>
+<p>ここでは窓の中の値を<b>そこから重複ありで取り直して</b>統計量を作り直し、その散らばり</p>
+<p>そのものを誤差とする —— 仮定が要らない代わりに計算で買う。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が窓(3〜9 画素)、</code><code style="color:#22d3bf">b</code>` が取り直しの回数(8〜64)。出力は窓内の標準偏差に</p>
+<p>対する<b>相対</b>標準誤差で、`<code style="color:#22d3bf">1.0</code>` が「100 % ぶれる」。</p>
+<p><b>読み方</b>: <b>絶対値ではなく、場所ごとの比で読む</b>。正規分布の白色雑音に当てると</p>
+<p>閉形式 `<code style="color:#22d3bf">1/sqrt(2(n-1))</code>` より<b>低めに出る</b>(ブートストラップは小標本で標準偏差の</p>
+<p>ばらつきを過小に言う)。実測(`<code style="color:#22d3bf">b=1.0</code>`、取り直し 64 回):</p>
+<p>窓 3x3 (n=9)  実測 0.216 / 閉形式 0.250 = 0.86</p>
+<p>窓 5x5 (n=25) 実測 0.133 / 閉形式 0.144 = 0.92</p>
+<p>窓 7x7 (n=49) 実測 0.096 / 閉形式 0.102 = 0.94</p>
+<p>窓 9x9 (n=81) 実測 0.076 / 閉形式 0.079 = 0.96</p>
+<p>つまり窓が大きくなるほど近づく。<b>読みどころは「どこが周りより高いか」</b>で、</p>
+<p>そこは分布が正規から外れている(傷・外れ値・二つの材質の境目)。外れ値を 2 % 混ぜた</p>
+<p>画像では中央値が閉形式の <b>1.8 倍</b>まで跳ね上がり、正規の場合(0.9 倍前後)と</p>
+<p>はっきり分かれる —— この差が使いどころ。`<code style="color:#22d3bf">local_std</code>` と並べて、「ばらつきの</p>
+<p>大きさ」と「その数字の信用できなさ」を同時に見る。</p>
+<p><b>適用条件</b>: (1) 窓が小さいとブートストラップ自体がぶれるうえ、上のとおり</p>
+<p>系統的に低く出る。(2) 取り直し回数(`<code style="color:#22d3bf">b</code>`)を増やすと地図は滑らかになるが、</p>
+<p>真の誤差が下がるわけではない。(3) 決定的にするため種は固定してある —— 同じ入力なら</p>
+<p>必ず同じ出力を返す。(4) <b>仮定を計算で買う op</b>なので遅い: 実測で 128x128 が</p>
+<p>0.26 秒、256x256 が 1.27 秒(`<code style="color:#22d3bf">b=1.0</code>`、64 回)。閉形式で足りる場面では</p>
+<p>`<code style="color:#22d3bf">local_std</code>` の誤差限界を使うこと —— この op は「その閉形式が信用できるか」を</p>
+<p>確かめたいときの道具。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">bootstrap_std_error 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:bootstrap_std_error%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:bootstrap_std_error%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">texture</code>)</h3>
+<p><a style="color:#22d3bf" href="op:std_filter">std_filter</a> · <a style="color:#22d3bf" href="op:local_std">local_std</a> · <a style="color:#22d3bf" href="op:scale_select_std">scale_select_std</a> · <a style="color:#22d3bf" href="op:structure_tensor_orientation">structure_tensor_orientation</a> · <a style="color:#22d3bf" href="op:structure_tensor_coherence">structure_tensor_coherence</a> · <a style="color:#22d3bf" href="op:gabor">gabor</a> · <a style="color:#22d3bf" href="op:sk_frangi">sk_frangi</a> · <a style="color:#22d3bf" href="op:sk_meijering">sk_meijering</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

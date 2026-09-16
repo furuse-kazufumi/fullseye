@@ -1027,7 +1027,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 913 ops / 48 categories。_
+_計 917 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1164,7 +1164,7 @@ _計 913 ops / 48 categories。_
 - `it_full_domain` `image → image` · 例: `gallery2d_gray_arith`
 - `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: `gallery2d_gray_arith`
 
-### edges(56)
+### edges(57)
 - `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`
 - `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`
 - `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
@@ -1218,6 +1218,7 @@ _計 913 ops / 48 categories。_
 - `xkor_hessian` `image → image` · 例: `gallery2d_edges`
 - `xkor_dog` `image → image` · 例: `gallery2d_edges`
 - `f2_shock` (halcon: `shock_filter`) `image → image` · 例: `gallery2d_edges`
+- `f2_shock_diffuse` `image → image` · 例: `gallery2d_edges`
 - `f2_topographic` (halcon: `topographic_sketch`) `image → image` · 例: `gallery2d_edges`
 - `tf_steerable_filter` `image → image` · 例: `gallery2d_edges`
 - `tf_phase_congruency` `image → image` · 例: `gallery2d_edges`
@@ -1522,7 +1523,7 @@ _計 913 ops / 48 categories。_
 ### misc(1)
 - `identity` (halcon: `copy_image`) `any → any` · 例: なし
 
-### morphology(34)
+### morphology(35)
 - `gerode` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
 - `gdilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
 - `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
@@ -1530,6 +1531,7 @@ _計 913 ops / 48 categories。_
 - `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`, `poc_search_sweep_width`
 - `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
+- `persistence_map` `image → image` · 例: `gallery2d_morphology`
 - `local_thickness` `image → image` · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`
 - `sk_area_opening` `image → image` · 例: `gallery2d_morphology`, `poc_bone_trabecular_thickness`, `poc_fresco_craquelure`
 - `cv_open` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
@@ -1831,9 +1833,11 @@ _計 913 ops / 48 categories。_
 - `tac_pressure_proxy` `image → image` · 例: `sim2real_and_alife`
 - `tac_shear_field` `image → image` · 例: `sim2real_and_alife`
 
-### texture(25)
+### texture(27)
 - `std_filter` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `local_std` `image → image` · 例: `gallery2d_texture_freq`
+- `scale_select_std` `image → image` · 例: `gallery2d_texture_freq`
+- `bootstrap_std_error` `image → image` · 例: `gallery2d_texture_freq`
 - `structure_tensor_orientation` `image → image` · 例: `gallery2d_texture_freq`
 - `structure_tensor_coherence` `image → image` · 例: `gallery2d_texture_freq`
 - `gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`

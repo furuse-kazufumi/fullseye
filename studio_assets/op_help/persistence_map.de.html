@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">persistence_map — 2D <code style="color:#22d3bf">morphology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;persistence_map&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/persistence_map.png" alt="persistence_map: input → output"></p>
+<p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
+<p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/persistence_map.a.jpg">persistence_map: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/persistence_map.b.jpg">persistence_map: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/persistence_map.inputs.jpg">persistence_map: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p><b>閾値を選ばずに</b>「山の目立ち具合」を測る(0 次元パーシステンス)。</p>
+<p>閾値を 1 つ選ぶと適用範囲が狭まる —— という矛盾は「**全部の閾値を試して、結果が</p>
+<p>変わらない所だけ残す**」ことで解ける。高い方から水位を下げていき、新しい山が現れた</p>
+<p>高さ(誕生)と、その山がより高い山に飲まれた高さ(消滅)の差を、その山の</p>
+<p><b>persistence(目立ち具合)</b> とする。地形でいう「突出度(prominence)」そのもの。</p>
+<p>出力は各画素に「その画素が属する山の persistence」を入れた地図。`<code style="color:#22d3bf">a</code>` は残す下限</p>
+<p>(これ未満の山は 0 にする)、`<code style="color:#22d3bf">b</code>` は連結の仕方(0.5 未満で 4 近傍、以上で 8 近傍)。</p>
+<p>**`<code style="color:#22d3bf">h_maxima</code><code style="color:#22d3bf"> / MSER との違い**: </code><code style="color:#22d3bf">xsk2_h_maxima</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">h</code>` をひとつ選んで</p>
+<p>「それ以上の山」を返す —— つまり閾値を 1 つ選んでいる。こちらは**全部の h に</p>
+<p>ついての答えを 1 枚に畳んだもの**なので、後から好きな水準で切れる。MSER は</p>
+<p>「面積が安定な領域」を探すので似た発想だが、あちらは領域の形、こちらは高さ。</p>
+<p><b>適用条件</b>: (1) 画像全体で一番高い山は消滅しないので、`<code style="color:#22d3bf">最大値 - 最小値</code>` を</p>
+<p>persistence とする(慣例)。<b>そのため背景は全体最大の値(1.0)を持つ</b> ——</p>
+<p>背景は一番最後に処理され、そのときには成分がすべて併合されているので、位相的には</p>
+<p>確かに全体成分に属する。<b>山の高さを読む地図であって、背景を 0 にする地図ではない</b>。</p>
+<p>背景を落としたいなら閾値 op と掛けるか、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で下限を上げること(</code><code style="color:#22d3bf">a=0.45</code>` で</p>
+<p>高さ 0.3 の山だけが消え、1.0 と 0.6 は残ることを実測した)。(2) 平坦な台地(同じ値が続く)は 1 つの山として</p>
+<p>扱われる。(3) 計算は画素を降順に走査する union-find なので、大きな画像では</p>
+<p>`<code style="color:#22d3bf">h_maxima</code>` より遅い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">Leitfaden zur Familie gallery2d_morphology</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
+<p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">persistence_map 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:persistence_map%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:persistence_map%200.35%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_morphology">gallery2d_morphology</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_morphology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">morphology</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gerode">gerode</a> · <a style="color:#22d3bf" href="op:gdilate">gdilate</a> · <a style="color:#22d3bf" href="op:gopen">gopen</a> · <a style="color:#22d3bf" href="op:gclose">gclose</a> · <a style="color:#22d3bf" href="op:tophat">tophat</a> · <a style="color:#22d3bf" href="op:bothat">bothat</a> · <a style="color:#22d3bf" href="op:morph_grad">morph_grad</a> · <a style="color:#22d3bf" href="op:local_thickness">local_thickness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

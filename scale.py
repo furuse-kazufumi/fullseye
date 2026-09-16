@@ -61,6 +61,7 @@ _NOT_TILE_SAFE = frozenset({
     'xsk2_diameter_opening', 'xsk3_diameter_closing', 'xsk_struct_coherence',  # 0.076 / 0.073 / 0.061
     'dither_ordered', 'dither_floyd_steinberg', 'quantize_lloyd_max',     # 0.14 / 0.14 / 0.13
     'cv_nlmeans', 'xpil_unsharp_mask',    # ハロー 8 では支持長が足りない(0.0078)
+    'persistence_map', 'f2_shock_diffuse',    # 1.0 / 0.064(2026-09-17 実測)
     'f2_gauss_pyramid', 'f2_gray_inside', 'f2_gray_skeleton', 'f2_symmetry', 'f2_topographic', 'fill_up_shape',
     'structure_tensor_orientation', 'structure_tensor_coherence',
     'frei_amp', 'get_region_convex', 'gray_bothat', 'gray_range_rect', 'gray_tophat', 'illuminate',
@@ -115,6 +116,17 @@ _NOT_TILE_SAFE_OP_REASON = {
         "global",
         "the codebook is fitted to the WHOLE image's histogram; per-tile fitting gives "
         "each tile its own levels. Fit once, then apply."),
+    "persistence_map": (
+        "global",
+        "0-dimensional persistence: a peak's prominence is set by where it merges with a "
+        "HIGHER peak, which may be anywhere in the image. Cutting the image cuts the "
+        "merge tree, so every tile invents its own global maximum (measured error 1.0). "
+        "No halo fixes this - run it once on the full image."),
+    "f2_shock_diffuse": (
+        "global_reduce",
+        "each diffuse/shock pair widens the receptive field by about sigma, so 10 "
+        "iterations reach far past any fixed halo. Either run it whole, or use a halo "
+        "of at least iterations x sigma."),
 }
 
 _NOT_TILE_SAFE_REASON = {

@@ -5,6 +5,7 @@ Every operator here implements the GENUINE algorithm named by its HALCON operato
 (the ``Op.halcon`` field is the real, previously-uncovered MVTec operator name):
 
   f2_shock            shock_filter        Osher-Rudin morphological shock filter
+  f2_shock_diffuse    -                   diffuse/shock alternation (Alvarez-Mazorra)
   f2_gray_skeleton    gray_skeleton       thinning of a gray image (bright-region
                                           skeleton lifted back to gray values)
   f2_lut_trans        lut_trans           gray-value look-up-table transform
@@ -96,6 +97,61 @@ def f2_shock(v, a, b):
         dil = ndimage.grey_dilation(x, size=3, mode="nearest")
         ero = ndimage.grey_erosion(x, size=3, mode="nearest")
         x = np.where(lap < 0, dil, np.where(lap > 0, ero, x))
+    return np.clip(x, 0.0, 1.0)
+
+
+def f2_shock_diffuse(v, a, b):
+    """Regularised shock filter: diffuse, then shock, repeated (Alvarez-Mazorra).
+
+    ``f2_shock`` is the pure Osher-Rudin shock — *contraction only*. It takes the
+    sign of the Laplacian of the raw image, so every noise bump is a zero crossing
+    and becomes its own shock: on a blurred edge with sigma 0.02 noise it raises
+    the flat-area noise from 0.020 to 0.050 (**2.5x**) and pushes the edge step to
+    0.539 — **past the true step of 0.500**, which is the noise being promoted to
+    structure rather than the edge being recovered.
+
+    The remedy is to alternate the two flows: **expand** (a Gaussian diffusion)
+    and **contract** (the shock), taking both the sign *and* the dilation/erosion
+    from the smoothed copy, so the contraction can only act on structure the
+    diffusion left standing.
+
+    ``a`` sets the number of diffuse/shock pairs (1..10); ``b`` sets the diffusion
+    width sigma (0.4..2.0) and is **the trade-off knob**. Measured on that same
+    blurred noisy edge (input: step 0.112, flat noise 0.0201):
+
+        b = 0.00 (sigma 0.40)   step 0.407   noise 0.0245  (x1.2)
+        b = 0.10 (sigma 0.56)   step 0.272   noise 0.0091  (x0.45 - noise falls)
+        b = 0.25 (sigma 0.80)   step 0.218   noise 0.0054
+        b = 0.50 (sigma 1.20)   step 0.187   noise 0.0032
+        b = 1.00 (sigma 2.00)   step 0.099   noise 0.0016
+
+    So ``b`` near 0 keeps most of the sharpening with almost none of the noise
+    amplification; from ``b`` about 0.1 upward the filter **removes** noise while
+    still more than doubling the input's edge step.
+
+    **Applicability.** (1) It sharpens what is already there — it cannot recover
+    detail the blur destroyed, and the step never reaches the true 0.500 here.
+    (2) Every iteration is a morphological max/min, so thin bright lines thicken
+    and thin dark lines are eaten; count the iterations you can afford.
+    (3) With ``b`` large the diffusion dominates and the result approaches a plain
+    Gaussian blur — check that the step is still above the input's.
+    """
+    x = _img(v)
+    if x.size < 4:
+        return x
+    steps = 1 + int(round(float(np.clip(a, 0.0, 1.0)) * 9))          # 1..10
+    sigma = 0.4 + 1.6 * float(np.clip(b, 0.0, 1.0))                  # 0.4..2.0
+    for _ in range(steps):
+        # 拡散(広げる)—— 判定も膨張/収縮も**ぼかした像**の上で行う。生の像に
+        # 当てると、雑音の凹凸がそのまま衝撃になる(素の f2_shock がそれ)。
+        s = ndimage.gaussian_filter(x, sigma)
+        lap = ndimage.laplace(s)
+        dil = ndimage.grey_dilation(s, size=3, mode="nearest")
+        ero = ndimage.grey_erosion(s, size=3, mode="nearest")
+        # 収縮(締める)
+        x = np.where(lap < 0, dil, np.where(lap > 0, ero, x))
+        # 次の周回へ渡す前に軽く広げる —— これで「拡散と収縮の反復」になる
+        x = ndimage.gaussian_filter(x, 0.5 * sigma)
     return np.clip(x, 0.0, 1.0)
 
 
@@ -297,6 +353,7 @@ def _safe(fn):
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     defs = [
         ("f2_shock", "edges", "shock_filter", f2_shock),
+        ("f2_shock_diffuse", "edges", None, f2_shock_diffuse),
         ("f2_gray_skeleton", "morphology", "gray_skeleton", f2_gray_skeleton),
         ("f2_lut_trans", "gray", "lut_trans", f2_lut_trans),
         ("f2_topographic", "edges", "topographic_sketch", f2_topographic),

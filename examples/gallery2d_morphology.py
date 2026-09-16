@@ -94,7 +94,7 @@ OPS = [
     "gray_tophat", "gray_bothat", "gray_erosion_shape", "gray_dilation_shape",
     "gray_opening_rect", "gray_closing_rect", "xsk2_reconstruction",
     "xsk2_diameter_opening", "xsk3_area_closing", "xsk3_diameter_closing",
-    "f2_gray_skeleton", "f2_gray_inside", "local_thickness",
+    "f2_gray_skeleton", "f2_gray_inside", "local_thickness", "persistence_map",
 ]
 
 
@@ -207,6 +207,26 @@ def main() -> int:
     # (b) 上限 a を下げる -> 直径 22 の円は頭打ちになり、出力の最大が 1.0 に貼りつく
     lt_small = np.asarray(BY["local_thickness"].fn(lt_img.copy(), 0.3, 0.5))
     assert lt_small.max() >= 0.999,         "local_thickness: 上限を下げても飽和しない(上限が効いていない)"
+    gt_checks += 1
+
+    # 8. persistence_map: 山の**目立ち具合**が高さの差と一致すること。
+    #    ★閾値を選ばない op なので、検証も「閾値を選ばずに 3 つの山を同時に当てる」
+    #      形にする。高さ 1.0 / 0.6 / 0.3 の山を置いて、そのまま返るかを見る。
+    py_, px_ = np.mgrid[0:96, 0:96]
+    peaks = ((24, 24, 1.0), (24, 72, 0.6), (72, 24, 0.3))
+    hills = np.zeros((96, 96))
+    for cy, cx, amp in peaks:
+        hills = np.maximum(hills, amp * np.exp(-((py_ - cy) ** 2 + (px_ - cx) ** 2) / 60.0))
+    pm = np.asarray(BY["persistence_map"].fn(hills.copy(), 0.0, 1.0))
+    for cy, cx, amp in peaks:
+        # 許容 1e-3 —— 山どうしが併合する鞍点は厳密に 0 ではない(ガウスの裾が
+        # 残るので ~1e-8)。persistence = 誕生 - 消滅 なのでその分だけ低く出る。
+        # 厳密一致を要求すると「正しい実装が落ちる」ことを実測して緩めた(0.5999)。
+        assert abs(pm[cy, cx] - amp) < 1e-3,             f"persistence_map: 山の目立ち具合が高さと合わない(真={amp} 推定={pm[cy, cx]:.4g})"
+    # null を破る: 下限 a を上げると**低い山だけ**が消える(閾値を後から選べる)
+    pm_hi = np.asarray(BY["persistence_map"].fn(hills.copy(), 0.45, 1.0))
+    assert pm_hi[72, 24] == 0.0, "下限 0.45 で高さ 0.3 の山が消えていない"
+    assert pm_hi[24, 24] > 0.9 and pm_hi[24, 72] > 0.5, "下限 0.45 で高い山まで消えた"
     gt_checks += 1
 
     print(f"PASS: {len(OPS)} ops exercised, all finite/typed/deterministic; {gt_checks} GT checks")

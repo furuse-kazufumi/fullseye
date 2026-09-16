@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1960,
- "n_notes": 1964,
+ "n_ops": 1964,
+ "n_notes": 1968,
  "notes": {
   "vol_dilate": [
    {
@@ -1247,6 +1247,16 @@
     "out": "image",
     "halcon": "shock_filter",
     "path": "docs/ops/2d/edges/f2_shock.md"
+   }
+  ],
+  "f2_shock_diffuse": [
+   {
+    "op": "f2_shock_diffuse",
+    "dim": "2d",
+    "category": "edges",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/edges/f2_shock_diffuse.md"
    }
   ],
   "f2_topographic": [
@@ -4999,6 +5009,16 @@
     "path": "docs/ops/2d/morphology/morph_grad.md"
    }
   ],
+  "persistence_map": [
+   {
+    "op": "persistence_map",
+    "dim": "2d",
+    "category": "morphology",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/morphology/persistence_map.md"
+   }
+  ],
   "sk_area_opening": [
    {
     "op": "sk_area_opening",
@@ -7866,6 +7886,16 @@
     "path": "docs/ops/2d/tactile/tac_surface_normal.md"
    }
   ],
+  "bootstrap_std_error": [
+   {
+    "op": "bootstrap_std_error",
+    "dim": "2d",
+    "category": "texture",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/texture/bootstrap_std_error.md"
+   }
+  ],
   "cooc_feature_matrix": [
    {
     "op": "cooc_feature_matrix",
@@ -7940,6 +7970,16 @@
     "in": "image",
     "out": "image",
     "path": "docs/ops/2d/texture/local_std.md"
+   }
+  ],
+  "scale_select_std": [
+   {
+    "op": "scale_select_std",
+    "dim": "2d",
+    "category": "texture",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/texture/scale_select_std.md"
    }
   ],
   "sk_entropy": [

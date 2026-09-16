@@ -1344,6 +1344,14 @@
    "ko": "Osher-Rudin 충격 필터: I_t = -sign(Lap I)*|grad I|, 형태학적 형태.",
    "de": "Osher-Rudin-Schockfilter: I_t = -sign(Lap I)*|grad I|, morphologische Form."
   },
+  "2d/f2_shock_diffuse": {
+   "fp": "2535a6af3aa1",
+   "ja": "正則化した衝撃フィルタ —— 拡散してから衝撃、を繰り返す(Alvarez–Mazorra)。",
+   "zh": "正则化的冲击滤波 —— 先扩散再冲击，如此反复（Alvarez–Mazorra）。",
+   "tw": "正則化的衝擊濾波 —— 先擴散再衝擊，如此反覆（Alvarez–Mazorra）。",
+   "ko": "정규화된 충격 필터 —— 확산한 뒤 충격, 이를 반복(Alvarez–Mazorra).",
+   "de": "Regularisierter Schockfilter: diffundieren, dann schocken, wiederholt (Alvarez-Mazorra)."
+  },
   "2d/f2_symmetry": {
    "fp": "232f0d6fbb31",
    "ja": "行方向に沿ったグレー値の局所的な鏡映対称性（reflective symmetry）。各画素について、d=1..r の範囲で重み付き非対称度 sum_d (1/d)|I(i,j-d) - I(i,j+d)| を測定する。応答が低いほど、その列を中心に近傍が左右対称であることを意味する。``a`` は半径 r（1〜6）を設定し、``b`` は無視される。出力は [0,1] に正規化された非対称度の応答。",

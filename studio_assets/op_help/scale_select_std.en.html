@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">scale_select_std — 2D <code style="color:#22d3bf">texture</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;scale_select_std&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/scale_select_std.png" alt="scale_select_std: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*The output is shown in a viridis-like pseudo-colour (dark purple = low, yellow = high) so that a field of quantities — distance, phase, orientation, depth — can be read.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/scale_select_std.a.jpg">scale_select_std: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/scale_select_std.b.jpg">scale_select_std: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/scale_select_std.inputs.jpg">scale_select_std: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>画素ごとに<b>窓の大きさを選ぶ</b>局所標準偏差(Lepski / ICI 規則)。</p>
+<p>窓を広げるほど推定は安定するが(相対標準誤差 `<code style="color:#22d3bf">1/sqrt(2(n-1))</code>`)、縁がにじんで</p>
+<p>分解能が落ちる —— <b>大きさを 1 つ選ぶ限りこの矛盾は解けない</b>。解き方は「時間でも</p>
+<p>場所でもなく<b>場所ごとに別の答えを持つ</b>」こと: 小さい窓から順に、推定値の信頼区間が</p>
+<p>交わり続ける間だけ窓を広げ、交わらなくなった 1 つ手前で止める。平坦な所では大きな窓</p>
+<p>(安定)、縁の近くでは小さな窓(にじまない)が自動で選ばれる。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が試す窓の上限(</code><code style="color:#22d3bf">3,5,7,9,11,13,15</code><code style="color:#22d3bf"> のどこまでか)、</code><code style="color:#22d3bf">b</code>` が信頼区間の倍率</p>
+<p>`<code style="color:#22d3bf">gamma</code><code style="color:#22d3bf">(1.0〜3.0)。</code><code style="color:#22d3bf">gamma</code>` を大きくすると窓が伸びやすくなる(安定寄り)。</p>
+<p>**`<code style="color:#22d3bf">local_std</code><code style="color:#22d3bf"> との関係**: </code><code style="color:#22d3bf">local_std</code>` は窓を固定する。平坦部の推定を締めたくて</p>
+<p>窓を広げると縁がにじむ、という取引をこちらは場所ごとに解く。**縁の鋭さを保ったまま</p>
+<p>平坦部の誤差だけ下げられる**のが取り柄で、代わりに計算量が窓の数だけ増える。</p>
+<p><b>適用条件</b>: (1) 「交わるか」の判定は誤差限界が正しいことに依存する —— 白色雑音</p>
+<p>でない(空間相関のある)雑音では窓が伸びすぎる。(2) `<code style="color:#22d3bf">gamma</code>` が小さすぎると常に</p>
+<p>最小窓が選ばれ、`<code style="color:#22d3bf">local_std</code>` の 3x3 と同じになる(効いていないときの見分け方)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">scale_select_std 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:scale_select_std%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:scale_select_std%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">texture</code>)</h3>
+<p><a style="color:#22d3bf" href="op:std_filter">std_filter</a> · <a style="color:#22d3bf" href="op:local_std">local_std</a> · <a style="color:#22d3bf" href="op:bootstrap_std_error">bootstrap_std_error</a> · <a style="color:#22d3bf" href="op:structure_tensor_orientation">structure_tensor_orientation</a> · <a style="color:#22d3bf" href="op:structure_tensor_coherence">structure_tensor_coherence</a> · <a style="color:#22d3bf" href="op:gabor">gabor</a> · <a style="color:#22d3bf" href="op:sk_frangi">sk_frangi</a> · <a style="color:#22d3bf" href="op:sk_meijering">sk_meijering</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

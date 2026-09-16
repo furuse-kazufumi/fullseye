@@ -1,5 +1,5 @@
 {
- "generated_for": 913,
+ "generated_for": 917,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -1190,6 +1190,30 @@
    "out_kind": "float",
    "program": "threshold 0.50 0.50\nblob_count 0.50 0.50",
    "pseudocolor": false,
+   "status": "ok"
+  },
+  "bootstrap_std_error": {
+   "color_ok": true,
+   "extra": {
+    "a": "bootstrap_std_error.a.jpg",
+    "b": "bootstrap_std_error.b.jpg",
+    "inputs": "bootstrap_std_error.inputs.jpg"
+   },
+   "fig": "bootstrap_std_error.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "bootstrap_std_error 0.50 0.50",
+   "pseudocolor": true,
    "status": "ok"
   },
   "bothat": {
@@ -3881,6 +3905,30 @@
    ],
    "out_kind": "ndarray",
    "program": "f2_shock 0.40 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "f2_shock_diffuse": {
+   "color_ok": true,
+   "extra": {
+    "a": "f2_shock_diffuse.a.jpg",
+    "b": "f2_shock_diffuse.b.jpg",
+    "inputs": "f2_shock_diffuse.inputs.jpg"
+   },
+   "fig": "f2_shock_diffuse.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "f2_shock_diffuse 0.40 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -9153,6 +9201,30 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "persistence_map": {
+   "color_ok": true,
+   "extra": {
+    "a": "persistence_map.a.jpg",
+    "b": "persistence_map.b.jpg",
+    "inputs": "persistence_map.inputs.jpg"
+   },
+   "fig": "persistence_map.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "persistence_map 0.35 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "ph_coherence_enhancing_diffusion": {
    "color_ok": true,
    "extra": {
@@ -11099,6 +11171,30 @@
    "out_kind": "ndarray",
    "program": "scale_image_max 0.50 0.50",
    "pseudocolor": false,
+   "status": "ok"
+  },
+  "scale_select_std": {
+   "color_ok": true,
+   "extra": {
+    "a": "scale_select_std.a.jpg",
+    "b": "scale_select_std.b.jpg",
+    "inputs": "scale_select_std.inputs.jpg"
+   },
+   "fig": "scale_select_std.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "scale_select_std 0.50 0.50",
+   "pseudocolor": true,
    "status": "ok"
   },
   "segment_image_mser": {
@@ -21399,10 +21495,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 909,
+  "ok": 913,
   "unreachable": 0,
   "with_chain": 366,
   "with_gif": 40,
-  "with_sweep": 558
+  "with_sweep": 562
  }
 }

@@ -1,0 +1,60 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">f2_shock_diffuse — 2D <code style="color:#22d3bf">edges</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;f2_shock_diffuse&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/f2_shock_diffuse.png" alt="f2_shock_diffuse: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_shock_diffuse.a.jpg">f2_shock_diffuse: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_shock_diffuse.b.jpg">f2_shock_diffuse: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/f2_shock_diffuse.inputs.jpg">f2_shock_diffuse: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>Regularised shock filter: diffuse, then shock, repeated (Alvarez-Mazorra).</p>
+<p>`<code style="color:#22d3bf">f2_shock</code>` is the pure Osher-Rudin shock — *contraction only*. It takes the</p>
+<p>sign of the Laplacian of the raw image, so every noise bump is a zero crossing</p>
+<p>and becomes its own shock: on a blurred edge with sigma 0.02 noise it raises</p>
+<p>the flat-area noise from 0.020 to 0.050 (<b>2.5x</b>) and pushes the edge step to</p>
+<p>0.539 — <b>past the true step of 0.500</b>, which is the noise being promoted to</p>
+<p>structure rather than the edge being recovered.</p>
+<p>The remedy is to alternate the two flows: <b>expand</b> (a Gaussian diffusion)</p>
+<p>and <b>contract</b> (the shock), taking both the sign *and* the dilation/erosion</p>
+<p>from the smoothed copy, so the contraction can only act on structure the</p>
+<p>diffusion left standing.</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the number of diffuse/shock pairs (1..10); </code><code style="color:#22d3bf">b</code>` sets the diffusion</p>
+<p>width sigma (0.4..2.0) and is <b>the trade-off knob</b>. Measured on that same</p>
+<p>blurred noisy edge (input: step 0.112, flat noise 0.0201):</p>
+<p>b = 0.00 (sigma 0.40)   step 0.407   noise 0.0245  (x1.2)</p>
+<p>b = 0.10 (sigma 0.56)   step 0.272   noise 0.0091  (x0.45 - noise falls)</p>
+<p>b = 0.25 (sigma 0.80)   step 0.218   noise 0.0054</p>
+<p>b = 0.50 (sigma 1.20)   step 0.187   noise 0.0032</p>
+<p>b = 1.00 (sigma 2.00)   step 0.099   noise 0.0016</p>
+<p>So `<code style="color:#22d3bf">b</code>` near 0 keeps most of the sharpening with almost none of the noise</p>
+<p>amplification; from `<code style="color:#22d3bf">b</code>` about 0.1 upward the filter <b>removes</b> noise while</p>
+<p>still more than doubling the input&#x27;s edge step.</p>
+<p><b>Applicability.</b> (1) It sharpens what is already there — it cannot recover</p>
+<p>detail the blur destroyed, and the step never reaches the true 0.500 here.</p>
+<p>(2) Every iteration is a morphological max/min, so thin bright lines thicken</p>
+<p>and thin dark lines are eaten; count the iterations you can afford.</p>
+<p>(3) With `<code style="color:#22d3bf">b</code>` large the diffusion dominates and the result approaches a plain</p>
+<p>Gaussian blur — check that the step is still above the input&#x27;s.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">f2_shock_diffuse 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:f2_shock_diffuse%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:f2_shock_diffuse%200.40%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_edges">gallery2d_edges</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_edges.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">edges</code>)</h3>
+<p><a style="color:#22d3bf" href="op:sobel_mag">sobel_mag</a> · <a style="color:#22d3bf" href="op:prewitt_mag">prewitt_mag</a> · <a style="color:#22d3bf" href="op:roberts_mag">roberts_mag</a> · <a style="color:#22d3bf" href="op:dog">dog</a> · <a style="color:#22d3bf" href="op:grad_dir">grad_dir</a> · <a style="color:#22d3bf" href="op:log">log</a> · <a style="color:#22d3bf" href="op:corner_response">corner_response</a> · <a style="color:#22d3bf" href="op:sk_scharr">sk_scharr</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

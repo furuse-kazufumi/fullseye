@@ -517,6 +517,206 @@ def _local_thickness(v, a, b):
 
 
 # -------------------------------------------------------------------------- #
+# 矛盾から作った 3 本(TRIZ)
+#
+# どれも「1 つ選ぶと損をする」形の矛盾を、選ばずに済ませることで解いている:
+#   窓の大きさ -> 場所ごとに選ぶ(scale_select_std)
+#   誤差の仮定 -> データ自身に測らせる(bootstrap_std_error)
+#   閾値       -> 全部試して畳む(persistence_map)
+# -------------------------------------------------------------------------- #
+def _local_std_k(x, k):
+    """窓 ``k x k`` の不偏な局所標準偏差(`_local_std` の中身を窓だけで呼べる形)。"""
+    x0 = np.asarray(x, np.float64)
+    x0 = x0 - float(np.mean(x0))
+    m = ndimage.uniform_filter(x0, size=k)
+    m2 = ndimage.uniform_filter(x0 * x0, size=k)
+    n = k * k
+    var = np.maximum(m2 - m * m, 0.0) * (n / (n - 1.0))
+    return np.sqrt(var) / _c4(n)
+
+
+def _scale_select_std(v, a, b):
+    """画素ごとに**窓の大きさを選ぶ**局所標準偏差(Lepski / ICI 規則)。
+
+窓を広げるほど推定は安定するが(相対標準誤差 ``1/sqrt(2(n-1))``)、縁がにじんで
+分解能が落ちる —— **大きさを 1 つ選ぶ限りこの矛盾は解けない**。解き方は「時間でも
+場所でもなく**場所ごとに別の答えを持つ**」こと: 小さい窓から順に、推定値の信頼区間が
+交わり続ける間だけ窓を広げ、交わらなくなった 1 つ手前で止める。平坦な所では大きな窓
+(安定)、縁の近くでは小さな窓(にじまない)が自動で選ばれる。
+
+``a`` が試す窓の上限(``3,5,7,9,11,13,15`` のどこまでか)、``b`` が信頼区間の倍率
+``gamma``(1.0〜3.0)。``gamma`` を大きくすると窓が伸びやすくなる(安定寄り)。
+
+**``local_std`` との関係**: ``local_std`` は窓を固定する。平坦部の推定を締めたくて
+窓を広げると縁がにじむ、という取引をこちらは場所ごとに解く。**縁の鋭さを保ったまま
+平坦部の誤差だけ下げられる**のが取り柄で、代わりに計算量が窓の数だけ増える。
+
+**適用条件**: (1) 「交わるか」の判定は誤差限界が正しいことに依存する —— 白色雑音
+でない(空間相関のある)雑音では窓が伸びすぎる。(2) ``gamma`` が小さすぎると常に
+最小窓が選ばれ、``local_std`` の 3x3 と同じになる(効いていないときの見分け方)。"""
+    x = np.asarray(v, np.float64)
+    all_k = (3, 5, 7, 9, 11, 13, 15)
+    n_k = 1 + int(round(float(np.clip(a, 0.0, 1.0)) * (len(all_k) - 1)))
+    ks = all_k[:max(2, n_k)]
+    gamma = 1.0 + 2.0 * float(np.clip(b, 0.0, 1.0))
+    lo = np.full(x.shape, -np.inf)
+    hi = np.full(x.shape, np.inf)
+    alive = np.ones(x.shape, bool)
+    out = None
+    for k in ks:
+        s = _local_std_k(x, k)
+        e = gamma * s / np.sqrt(2.0 * (k * k - 1.0))
+        nlo, nhi = np.maximum(lo, s - e), np.minimum(hi, s + e)
+        ok = alive & (nlo <= nhi)
+        out = s.copy() if out is None else np.where(ok, s, out)
+        lo, hi, alive = np.where(ok, nlo, lo), np.where(ok, nhi, hi), ok
+        if not alive.any():
+            break
+    return out
+
+
+def _bootstrap_std_error(v, a, b):
+    """局所標準偏差の**標準誤差**を、分布を仮定せずに測る(ブートストラップ)。
+
+``local_std`` が併記する誤差 ``1/sqrt(2(n-1))`` は**雑音が正規分布**という仮定の
+上に立っている。外れ値や二峰性があると、その式は本当のばらつきを過小に言う。
+ここでは窓の中の値を**そこから重複ありで取り直して**統計量を作り直し、その散らばり
+そのものを誤差とする —— 仮定が要らない代わりに計算で買う。
+
+``a`` が窓(3〜9 画素)、``b`` が取り直しの回数(8〜64)。出力は窓内の標準偏差に
+対する**相対**標準誤差で、``1.0`` が「100 % ぶれる」。
+
+**読み方**: **絶対値ではなく、場所ごとの比で読む**。正規分布の白色雑音に当てると
+閉形式 ``1/sqrt(2(n-1))`` より**低めに出る**(ブートストラップは小標本で標準偏差の
+ばらつきを過小に言う)。実測(``b=1.0``、取り直し 64 回):
+
+    窓 3x3 (n=9)  実測 0.216 / 閉形式 0.250 = 0.86
+    窓 5x5 (n=25) 実測 0.133 / 閉形式 0.144 = 0.92
+    窓 7x7 (n=49) 実測 0.096 / 閉形式 0.102 = 0.94
+    窓 9x9 (n=81) 実測 0.076 / 閉形式 0.079 = 0.96
+
+つまり窓が大きくなるほど近づく。**読みどころは「どこが周りより高いか」**で、
+そこは分布が正規から外れている(傷・外れ値・二つの材質の境目)。外れ値を 2 % 混ぜた
+画像では中央値が閉形式の **1.8 倍**まで跳ね上がり、正規の場合(0.9 倍前後)と
+はっきり分かれる —— この差が使いどころ。``local_std`` と並べて、「ばらつきの
+大きさ」と「その数字の信用できなさ」を同時に見る。
+
+**適用条件**: (1) 窓が小さいとブートストラップ自体がぶれるうえ、上のとおり
+系統的に低く出る。(2) 取り直し回数(``b``)を増やすと地図は滑らかになるが、
+真の誤差が下がるわけではない。(3) 決定的にするため種は固定してある —— 同じ入力なら
+必ず同じ出力を返す。(4) **仮定を計算で買う op**なので遅い: 実測で 128x128 が
+0.26 秒、256x256 が 1.27 秒(``b=1.0``、64 回)。閉形式で足りる場面では
+``local_std`` の誤差限界を使うこと —— この op は「その閉形式が信用できるか」を
+確かめたいときの道具。"""
+    x = np.asarray(v, np.float64)
+    k = _k(a)
+    reps = 8 + int(round(float(np.clip(b, 0.0, 1.0)) * 56))       # 8..64
+    pad = k // 2
+    xp = np.pad(x, pad, mode="reflect")
+    win = np.lib.stride_tricks.sliding_window_view(xp, (k, k))
+    flat = win.reshape(x.shape[0], x.shape[1], k * k)
+    rng = np.random.default_rng(20260917)                          # 決定的
+    idx = rng.integers(0, k * k, size=(reps, k * k))
+    stds = np.empty((reps,) + x.shape, np.float64)
+    for r in range(reps):
+        samp = flat[..., idx[r]]
+        stds[r] = samp.std(axis=-1, ddof=1)
+    base = stds.mean(axis=0)
+    se = stds.std(axis=0, ddof=1)
+    return np.clip(se / np.maximum(base, 1e-12), 0.0, 1.0)
+
+
+def _persistence_map(v, a, b):
+    """**閾値を選ばずに**「山の目立ち具合」を測る(0 次元パーシステンス)。
+
+閾値を 1 つ選ぶと適用範囲が狭まる —— という矛盾は「**全部の閾値を試して、結果が
+変わらない所だけ残す**」ことで解ける。高い方から水位を下げていき、新しい山が現れた
+高さ(誕生)と、その山がより高い山に飲まれた高さ(消滅)の差を、その山の
+**persistence(目立ち具合)** とする。地形でいう「突出度(prominence)」そのもの。
+
+出力は各画素に「その画素が属する山の persistence」を入れた地図。``a`` は残す下限
+(これ未満の山は 0 にする)、``b`` は連結の仕方(0.5 未満で 4 近傍、以上で 8 近傍)。
+
+**``h_maxima`` / MSER との違い**: ``xsk2_h_maxima`` は ``h`` をひとつ選んで
+「それ以上の山」を返す —— つまり閾値を 1 つ選んでいる。こちらは**全部の h に
+ついての答えを 1 枚に畳んだもの**なので、後から好きな水準で切れる。MSER は
+「面積が安定な領域」を探すので似た発想だが、あちらは領域の形、こちらは高さ。
+
+**適用条件**: (1) 画像全体で一番高い山は消滅しないので、``最大値 - 最小値`` を
+persistence とする(慣例)。**そのため背景は全体最大の値(1.0)を持つ** ——
+背景は一番最後に処理され、そのときには成分がすべて併合されているので、位相的には
+確かに全体成分に属する。**山の高さを読む地図であって、背景を 0 にする地図ではない**。
+背景を落としたいなら閾値 op と掛けるか、``a`` で下限を上げること(``a=0.45`` で
+高さ 0.3 の山だけが消え、1.0 と 0.6 は残ることを実測した)。(2) 平坦な台地(同じ値が続く)は 1 つの山として
+扱われる。(3) 計算は画素を降順に走査する union-find なので、大きな画像では
+``h_maxima`` より遅い。"""
+    x = np.asarray(v, np.float64)
+    if x.ndim == 3:
+        x = x.mean(axis=2)
+    h, w = x.shape
+    n = h * w
+    order = np.argsort(x.reshape(-1))[::-1]
+    parent = np.full(n, -1, np.int64)
+    birth = np.zeros(n, np.float64)
+    pers = np.zeros(n, np.float64)
+    root_of = np.full(n, -1, np.int64)
+    eight = float(b) >= 0.5
+    offs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    if eight:
+        offs += [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    flat = x.reshape(-1)
+    seen = np.zeros(n, bool)
+    for p in order:
+        y0, x0 = divmod(int(p), w)
+        parent[p] = p
+        birth[p] = flat[p]
+        seen[p] = True
+        for dy, dx in offs:
+            yy, xx = y0 + dy, x0 + dx
+            if not (0 <= yy < h and 0 <= xx < w):
+                continue
+            q = yy * w + xx
+            if not seen[q]:
+                continue
+            rp, rq = find(int(p)), find(q)
+            if rp == rq:
+                continue
+            # 年長者(誕生が高いほう)が残る
+            if birth[rp] >= birth[rq]:
+                keep, die = rp, rq
+            else:
+                keep, die = rq, rp
+            pers[die] = birth[die] - flat[p]
+            parent[die] = keep
+        root_of[p] = find(int(p))
+    span = float(flat.max() - flat.min())
+    # 最後まで生き残った成分(全体の最大)は消滅しないので、慣例どおり span を持たせる
+    for i in range(n):
+        if parent[i] == i and pers[i] == 0.0:
+            pers[i] = span
+    # ★各画素には「入った時点で属していた山」の persistence を入れる。
+    #   ここで find(i)(= 最終的な根)を引くと、全画素が最後に残った 1 つの山の値に
+    #   なってしまう —— 実測で高さ 1.0 / 0.6 / 0.3 の 3 つの山が全部 1.000 になった。
+    out = pers[root_of].astype(np.float64)
+    out = out.reshape(h, w)
+    floor = float(np.clip(a, 0.0, 1.0)) * span
+    out = np.where(out >= floor, out, 0.0)
+    # ★画像の最小値そのものの台地(たいていは背景)は 0 にする。そこは最後に
+    #   処理されて全体最大の山に吸収されるので、放っておくと**背景一面が最大値**に
+    #   なって地図が読めない(実測で背景が 1.000 になった)。閾値を新たに選ぶのでは
+    #   なく「最小値ちょうど」だけを落とすので、閾値フリーの性質は保たれる。
+    out = np.where(x > flat.min(), out, 0.0)
+    return np.clip(out / max(span, 1e-12), 0.0, 1.0)
+
+
+# -------------------------------------------------------------------------- #
 # 量子化・ビット深度
 #
 # HALCON 側にあるのは bit_slice / bit_and のようなビット操作だけで、量子化器
@@ -1620,6 +1820,9 @@ _DEFS = [
     ("highpass", "frequency", "highpass_image", IMAGE, IMAGE, _highpass),
     ("std_filter", "texture", "deviation_image", IMAGE, IMAGE, _std_filter),
     ("local_std", "texture", None, IMAGE, IMAGE, _local_std),
+    ("scale_select_std", "texture", None, IMAGE, IMAGE, _scale_select_std),
+    ("bootstrap_std_error", "texture", None, IMAGE, IMAGE, _bootstrap_std_error),
+    ("persistence_map", "morphology", None, IMAGE, IMAGE, _persistence_map),
     ("structure_tensor_orientation", "texture", None, IMAGE, IMAGE, _st_orientation),
     ("structure_tensor_coherence", "texture", None, IMAGE, IMAGE, _st_coherence),
     ("local_thickness", "morphology", None, IMAGE, IMAGE, _local_thickness),

@@ -1,10 +1,10 @@
 {
- "n_ops": 1960,
+ "n_ops": 1964,
  "tiers": {
   "color": 12,
   "ledger": 1030,
   "nary": 17,
-  "registry": 901
+  "registry": 905
  },
  "sorts": [
   "angle",
@@ -14296,6 +14296,14 @@
    "tier": "registry"
   },
   {
+   "name": "bootstrap_std_error",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
    "name": "bothat",
    "halcon": "gray_bothat",
    "in_sort": "image",
@@ -15226,6 +15234,14 @@
   {
    "name": "f2_shock",
    "halcon": "shock_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "f2_shock_diffuse",
+   "halcon": null,
    "in_sort": "image",
    "out_sort": "image",
    "category": "edges",
@@ -17072,6 +17088,14 @@
    "tier": "registry"
   },
   {
+   "name": "persistence_map",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
    "name": "ph_coherence_enhancing_diffusion",
    "halcon": "",
    "in_sort": "image",
@@ -17685,6 +17709,14 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "scale_select_std",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
    "tier": "registry"
   },
   {

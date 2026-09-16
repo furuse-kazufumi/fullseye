@@ -60,14 +60,25 @@ def _image_bank():
 # --------------------------------------------------------------------------- #
 # structural sanity                                                           #
 # --------------------------------------------------------------------------- #
+#: HALCON に対応 op が**無い**もの。このモジュールは元々「HALCON 名を持つ filters」
+#: だったが、2026-09-17 に `f2_shock_diffuse`(拡散と収縮の交互反復)を足した ——
+#: HALCON は `coherence_enhancing_diff` で構造テンソルを内部に持つが、衝撃フィルタの
+#: 正則化版は持たない。**空文字でごまかさず None を置き、ここに名前を書く**
+#: (推測の名前を入れると「対応がある」という嘘が台帳に残る)。
+NO_HALCON_COUNTERPART = {"f2_shock_diffuse"}
+
+
 def test_registry_shape_and_unique_names():
-    assert len(OPS) == 9
+    assert len(OPS) == 10
     names = [o.name for o in OPS]
     assert len(set(names)) == len(names)
     for o in OPS:
         assert o.name.startswith("f2_")
         assert o.in_sort == "image" and o.out_sort == "image"
-        assert o.halcon and " " not in o.halcon
+        if o.name in NO_HALCON_COUNTERPART:
+            assert o.halcon is None, f"{o.name}: 対応が無いなら None(空文字でない)"
+        else:
+            assert o.halcon and " " not in o.halcon
 
 
 def test_halcon_names_are_the_assigned_real_operators():
@@ -82,6 +93,7 @@ def test_halcon_names_are_the_assigned_real_operators():
         "f2_gauss_pyramid": "gen_gauss_pyramid",
         "f2_gray_inside": "gray_inside",
         "f2_bit_slice": "bit_slice",
+        "f2_shock_diffuse": None,          # HALCON に相当する op が無い
     }
 
 
