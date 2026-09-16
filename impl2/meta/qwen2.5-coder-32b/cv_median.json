@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/rank/cv_median.md",
   "note_sha256_16": "fb21be104344db25",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:11:28",
+  "generated_at": "2026-09-16T09:43:25",
   "c_path": "impl2/c/qwen2.5-coder-32b/cv_median.c",
-  "prompt_sha256_16": "7e69ddf4b89da370",
-  "gen_seconds": 116.8,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

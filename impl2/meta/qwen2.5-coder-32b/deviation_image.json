@@ -1,0 +1,436 @@
+{
+  "op": "deviation_image",
+  "note": "docs/ops/2d/texture/deviation_image.md",
+  "note_sha256_16": "b9e68e6fbcbbae36",
+  "model": "qwen2.5-coder:32b",
+  "generated_at": "2026-09-16T09:43:40",
+  "c_path": "impl2/c/qwen2.5-coder-32b/deviation_image.c",
+  "prompt_sha256_16": "71c9812a302e6ecc",
+  "gen_seconds": 106.0,
+  "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
+  "probes": [
+    {
+      "probe": "checkerboard8",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.006192010000093506,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_x",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.03502216650622714,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_y",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.035022166506175845,
+      "non_finite": false
+    },
+    {
+      "probe": "constant_half",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "zeros",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_center",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_corner",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.09331920656874726,
+      "non_finite": false
+    },
+    {
+      "probe": "frame",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.23356987175076271,
+      "non_finite": false
+    },
+    {
+      "probe": "diagonal",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.11290046046625402,
+      "non_finite": false
+    },
+    {
+      "probe": "row_1xN",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0350221665061744,
+      "non_finite": false
+    },
+    {
+      "probe": "col_Nx1",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.03502216650617962,
+      "non_finite": false
+    },
+    {
+      "probe": "single_pixel",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 1.0,
+      "non_finite": false
+    },
+    {
+      "probe": "random",
+      "a": 0.1,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.09086819050730888,
+      "non_finite": false
+    },
+    {
+      "probe": "checkerboard8",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.000800320256256315,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_x",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.04959533907528979,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_y",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.04959533907529745,
+      "non_finite": false
+    },
+    {
+      "probe": "constant_half",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "zeros",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_center",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_corner",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.32109989704357933,
+      "non_finite": false
+    },
+    {
+      "probe": "frame",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.15244788768971596,
+      "non_finite": false
+    },
+    {
+      "probe": "diagonal",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.10831512096125429,
+      "non_finite": false
+    },
+    {
+      "probe": "row_1xN",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.04959533907529168,
+      "non_finite": false
+    },
+    {
+      "probe": "col_Nx1",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.049595339075287015,
+      "non_finite": false
+    },
+    {
+      "probe": "single_pixel",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "random",
+      "a": 0.5,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.08612061009537364,
+      "non_finite": false
+    },
+    {
+      "probe": "checkerboard8",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.000800320256256315,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_x",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.051460484725183164,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_y",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.051460484725182054,
+      "non_finite": false
+    },
+    {
+      "probe": "constant_half",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "zeros",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_center",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.10963173164403195,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_corner",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.3671151661711074,
+      "non_finite": false
+    },
+    {
+      "probe": "frame",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.16142232701435744,
+      "non_finite": false
+    },
+    {
+      "probe": "diagonal",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.10889335231293235,
+      "non_finite": false
+    },
+    {
+      "probe": "row_1xN",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.05146048472517328,
+      "non_finite": false
+    },
+    {
+      "probe": "col_Nx1",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.05146048472517373,
+      "non_finite": false
+    },
+    {
+      "probe": "single_pixel",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "random",
+      "a": 0.9,
+      "b": 0.5,
+      "status": "compared",
+      "max_abs_diff": 0.06995532555584316,
+      "non_finite": false
+    },
+    {
+      "probe": "checkerboard8",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.000800320256256315,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_x",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.04959533907528979,
+      "non_finite": false
+    },
+    {
+      "probe": "ramp_y",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.04959533907529745,
+      "non_finite": false
+    },
+    {
+      "probe": "constant_half",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "zeros",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_center",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "impulse_corner",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.32109989704357933,
+      "non_finite": false
+    },
+    {
+      "probe": "frame",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.15244788768971596,
+      "non_finite": false
+    },
+    {
+      "probe": "diagonal",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.10831512096125429,
+      "non_finite": false
+    },
+    {
+      "probe": "row_1xN",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.04959533907529168,
+      "non_finite": false
+    },
+    {
+      "probe": "col_Nx1",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.049595339075287015,
+      "non_finite": false
+    },
+    {
+      "probe": "single_pixel",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.0,
+      "non_finite": false
+    },
+    {
+      "probe": "random",
+      "a": 0.5,
+      "b": 0.9,
+      "status": "compared",
+      "max_abs_diff": 0.08612061009537364,
+      "non_finite": false
+    }
+  ],
+  "worst_max_abs_diff": 1.0,
+  "agrees": false,
+  "tol": 1e-09,
+  "status": "diverges"
+}

@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/augmentation/aug_shot_noise.md",
   "note_sha256_16": "3d1f1d870daa9eff",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:48:17",
+  "generated_at": "2026-09-16T09:45:14",
   "c_path": "impl2/c/qwen2.5-coder-32b/aug_shot_noise.c",
-  "prompt_sha256_16": "155e8433cd6c2a3c",
-  "gen_seconds": 34.7,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/edges/cv_precorner.md",
   "note_sha256_16": "f21dce6784ca29eb",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:16:52",
+  "generated_at": "2026-09-16T09:43:26",
   "c_path": "impl2/c/qwen2.5-coder-32b/cv_precorner.c",
-  "prompt_sha256_16": "5c6c2fe834bdc616",
-  "gen_seconds": 92.1,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

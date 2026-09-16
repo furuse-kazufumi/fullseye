@@ -1,0 +1,11 @@
+{
+  "op": "acos_image",
+  "note": "docs/ops/2d/arithmetic/acos_image.md",
+  "note_sha256_16": "d89abfa230e94d9c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:51:58",
+  "c_path": "impl2/c/qwen2.5-14b/acos_image.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "\\c\\qwen2.5-14b\\acos_image.c:18:24: error: implicit declaration of function 'acos' [-Wimplicit-function-declaration]\n   18 |             out[idx] = acos(value) / M_PI;\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\acos_image.c:1:1: note: include '<math.h>' or provide a declaration of 'acos'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\acos_image.c:18:24: warning: incompatible implicit declaration of built-in function 'acos' [-Wbuiltin-declaration-mismatch]\n   18 |             out[idx] = acos(value) / M_PI;\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\acos_image.c:18:24: note: include '<math.h>' or provide a declaration of 'acos'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\acos_image.c:18:38: error: 'M_PI' undeclared (first use in this function)\n   18 |             out[idx] = acos(value) / M_PI;\n      |                                      ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\acos_image.c:18:38: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

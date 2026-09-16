@@ -1,0 +1,12 @@
+{
+  "op": "aug_jpeg_blocks",
+  "note": "docs/ops/2d/augmentation/aug_jpeg_blocks.md",
+  "note_sha256_16": "d361917ce276a2be",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:56:51",
+  "c_path": "impl2/c/qwen2.5-14b/aug_jpeg_blocks.c",
+  "prompt_sha256_16": "b81605d831d21bb0",
+  "gen_seconds": 13.2,
+  "status": "compile_error",
+  "compile_error": "nt')\n   46 |                             int yi = (y + i + 7 * b) % padded_h;\n      |                                      ~~~~~~~~~~~~~~~ ^\n      |                                             |\n      |                                             double\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_jpeg_blocks.c:47:54: error: invalid operands to binary % (have 'double' and 'int')\n   47 |                             int xi = (x + j + 7 * b) % padded_w;\n      |                                      ~~~~~~~~~~~~~~~ ^\n      |                                             |\n      |                                             double\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_jpeg_blocks.c:50:105: error: 'M_PI' undeclared (first use in this function)\n   50 |                             dct[i][j] += c * s * padded_in[yi * padded_w + xi] * cos(((2 * u + 1) * i * M_PI) / 16) * cos(((2 * v + 1) * j * M_PI) / 16);\n      |                                                                                                         ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_jpeg_blocks.c:50:105: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

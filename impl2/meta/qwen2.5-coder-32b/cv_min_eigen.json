@@ -1,13 +1,15 @@
 {
   "op": "cv_min_eigen",
   "note": "docs/ops/2d/edges/cv_min_eigen.md",
-  "note_sha256_16": "bc981fc0a48b35ac",
+  "note_sha256_16": "c51c3b3e3a5afdcc",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:13:26",
+  "generated_at": "2026-09-16T09:45:43",
   "c_path": "impl2/c/qwen2.5-coder-32b/cv_min_eigen.c",
-  "prompt_sha256_16": "ea20087f025b8886",
-  "gen_seconds": 58.7,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/artificial_life/alife_wolfram1d.md",
   "note_sha256_16": "47b70950f10a5fce",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:35:04",
+  "generated_at": "2026-09-16T09:43:21",
   "c_path": "impl2/c/qwen2.5-coder-32b/alife_wolfram1d.c",
-  "prompt_sha256_16": "900c65da09cea1ec",
-  "gen_seconds": 42.5,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

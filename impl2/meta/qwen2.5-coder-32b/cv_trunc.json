@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/gray/cv_trunc.md",
   "note_sha256_16": "86e0dce31f45581b",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:20:11",
+  "generated_at": "2026-09-16T09:43:27",
   "c_path": "impl2/c/qwen2.5-coder-32b/cv_trunc.c",
-  "prompt_sha256_16": "3539bc00cb00a6b7",
-  "gen_seconds": 17.0,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

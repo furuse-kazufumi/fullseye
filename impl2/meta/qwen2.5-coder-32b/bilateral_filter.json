@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/smoothing/bilateral_filter.md",
   "note_sha256_16": "b3def585f7f0c00a",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:52:52",
+  "generated_at": "2026-09-16T09:45:14",
   "c_path": "impl2/c/qwen2.5-coder-32b/bilateral_filter.c",
-  "prompt_sha256_16": "03c1e5e3a74cc73e",
-  "gen_seconds": 70.1,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

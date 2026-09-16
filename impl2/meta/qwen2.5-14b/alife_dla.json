@@ -1,0 +1,11 @@
+{
+  "op": "alife_dla",
+  "note": "docs/ops/2d/artificial_life/alife_dla.md",
+  "note_sha256_16": "e6a5af7eeec1d164",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:52:55",
+  "c_path": "impl2/c/qwen2.5-14b/alife_dla.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_dla.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_dla.c:9:48: error: 'M_PI' undeclared (first use in this function)\n    9 |     const double gaussian_coeff = 1.0 / (2.0 * M_PI * gaussian_sigma * gaussian_sigma); // ガウシアン係数\n      |                                                ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_dla.c:9:48: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

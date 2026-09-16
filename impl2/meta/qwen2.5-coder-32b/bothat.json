@@ -1,13 +1,15 @@
 {
   "op": "bothat",
   "note": "docs/ops/2d/morphology/bothat.md",
-  "note_sha256_16": "86ff81abd94e737c",
+  "note_sha256_16": "a8ac3baddde8c5cf",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:55:18",
+  "generated_at": "2026-09-16T09:43:24",
   "c_path": "impl2/c/qwen2.5-coder-32b/bothat.c",
-  "prompt_sha256_16": "1bc325c6dbd64ce0",
-  "gen_seconds": 50.2,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

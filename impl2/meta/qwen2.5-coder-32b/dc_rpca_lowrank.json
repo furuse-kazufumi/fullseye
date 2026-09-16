@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/decomposition/dc_rpca_lowrank.md",
   "note_sha256_16": "d47268f1e9c675da",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:24:15",
+  "generated_at": "2026-09-16T09:43:27",
   "c_path": "impl2/c/qwen2.5-coder-32b/dc_rpca_lowrank.c",
-  "prompt_sha256_16": "59c99879cd26fd35",
-  "gen_seconds": 231.1,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

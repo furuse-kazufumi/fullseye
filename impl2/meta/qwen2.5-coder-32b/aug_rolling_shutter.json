@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/augmentation/aug_rolling_shutter.md",
   "note_sha256_16": "818c4e53612eb696",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:47:28",
+  "generated_at": "2026-09-16T09:43:23",
   "c_path": "impl2/c/qwen2.5-coder-32b/aug_rolling_shutter.c",
-  "prompt_sha256_16": "9b25b13447b12dff",
-  "gen_seconds": 48.5,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

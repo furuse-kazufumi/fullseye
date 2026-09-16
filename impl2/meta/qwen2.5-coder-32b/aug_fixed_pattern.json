@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/augmentation/aug_fixed_pattern.md",
   "note_sha256_16": "ca775eb408fedd73",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:41:56",
+  "generated_at": "2026-09-16T09:43:22",
   "c_path": "impl2/c/qwen2.5-coder-32b/aug_fixed_pattern.c",
-  "prompt_sha256_16": "d5b40626b16519ad",
-  "gen_seconds": 53.8,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

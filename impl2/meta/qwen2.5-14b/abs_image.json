@@ -1,0 +1,11 @@
+{
+  "op": "abs_image",
+  "note": "docs/ops/2d/arithmetic/abs_image.md",
+  "note_sha256_16": "79f05a6f7825330a",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:51:58",
+  "c_path": "impl2/c/qwen2.5-14b/abs_image.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\abs_image.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\abs_image.c:7:24: error: implicit declaration of function 'fabs' [-Wimplicit-function-declaration]\n    7 |             out[idx] = fabs(in[idx]);  // 画素値の絶対値を計算\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\abs_image.c:1:1: note: include '<math.h>' or provide a declaration of 'fabs'\n  +++ |+#include <math.h>\n    1 | void fs2_apply(const double* in, int h, int w, double a, double b, double* out) {\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\abs_image.c:7:24: warning: incompatible implicit declaration of built-in function 'fabs' [-Wbuiltin-declaration-mismatch]\n    7 |             out[idx] = fabs(in[idx]);  // 画素値の絶対値を計算\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\abs_image.c:7:24: note: include '<math.h>' or provide a declaration of 'fabs'\n"
+}

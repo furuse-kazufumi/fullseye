@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/gray/clahe.md",
   "note_sha256_16": "50e1360e48a7ca59",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:56:09",
+  "generated_at": "2026-09-16T09:45:15",
   "c_path": "impl2/c/qwen2.5-coder-32b/clahe.c",
-  "prompt_sha256_16": "c5d4f71466e8b6d9",
-  "gen_seconds": 103.0,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

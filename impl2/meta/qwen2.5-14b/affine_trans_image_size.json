@@ -1,0 +1,11 @@
+{
+  "op": "affine_trans_image_size",
+  "note": "docs/ops/2d/geometry/affine_trans_image_size.md",
+  "note_sha256_16": "c32ac784f459e057",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:52:55",
+  "c_path": "impl2/c/qwen2.5-14b/affine_trans_image_size.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_trans_image_size.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_trans_image_size.c:5:39: error: 'M_PI' undeclared (first use in this function)\n    5 |     double angle = (a - 0.5) * 40.0 * M_PI / 180.0; // -20°〜+20°\n      |                                       ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_trans_image_size.c:5:39: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

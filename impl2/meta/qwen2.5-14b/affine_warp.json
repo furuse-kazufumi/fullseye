@@ -1,0 +1,11 @@
+{
+  "op": "affine_warp",
+  "note": "docs/ops/2d/geometry/affine_warp.md",
+  "note_sha256_16": "6047177832547bb6",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:52:55",
+  "c_path": "impl2/c/qwen2.5-14b/affine_warp.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_warp.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_warp.c:5:24: error: 'M_PI' undeclared (first use in this function)\n    5 |     double rad_a = a * M_PI / 180.0; // 0.5 は 20° に相当\n      |                        ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\affine_warp.c:5:24: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

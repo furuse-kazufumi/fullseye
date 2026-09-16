@@ -3,10 +3,13 @@
   "note": "docs/ops/2d/edges/cv_scharr.md",
   "note_sha256_16": "c5407eb4fb07b2a4",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T09:18:25",
+  "generated_at": "2026-09-16T09:45:44",
   "c_path": "impl2/c/qwen2.5-coder-32b/cv_scharr.c",
   "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

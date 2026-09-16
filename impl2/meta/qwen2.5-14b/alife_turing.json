@@ -1,0 +1,12 @@
+{
+  "op": "alife_turing",
+  "note": "docs/ops/2d/artificial_life/alife_turing.md",
+  "note_sha256_16": "80147ba4ae00253b",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:55:38",
+  "c_path": "impl2/c/qwen2.5-14b/alife_turing.c",
+  "prompt_sha256_16": "7503f1c6b999a4d4",
+  "gen_seconds": 9.4,
+  "status": "compile_error",
+  "compile_error": "<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_turing.c:45:56: error: subscripted value is neither array nor pointer nor vector\n   45 |                 double lap_A = laplacian(A, temp, h, w)[idx];\n      |                                                        ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_turing.c:54:56: error: subscripted value is neither array nor pointer nor vector\n   54 |                 double lap_H = laplacian(H, temp, h, w)[idx];\n      |                                                        ^\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_turing.c:66:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   66 |     free(A);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_turing.c:66:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_turing.c:66:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_turing.c:66:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}

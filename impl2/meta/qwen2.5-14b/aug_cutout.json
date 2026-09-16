@@ -1,0 +1,12 @@
+{
+  "op": "aug_cutout",
+  "note": "docs/ops/2d/augmentation/aug_cutout.md",
+  "note_sha256_16": "f5ae5849b711966c",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:56:38",
+  "c_path": "impl2/c/qwen2.5-14b/aug_cutout.c",
+  "prompt_sha256_16": "46ed7e98cc2551a8",
+  "gen_seconds": 6.4,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_cutout.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_cutout.c:6:22: error: implicit declaration of function 'max'; did you mean 'fmax'? [-Wimplicit-function-declaration]\n    6 |     int patch_size = max(1, (int)(a * min_dim)); // パッチのサイズを計算\n      |                      ^~~\n      |                      fmax\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\aug_cutout.c:9:19: error: implicit declaration of function 'rand' [-Wimplicit-function-declaration]\n    9 |     int patch_x = rand() % (w - patch_size + 1);\n      |                   ^~~~\n"
+}

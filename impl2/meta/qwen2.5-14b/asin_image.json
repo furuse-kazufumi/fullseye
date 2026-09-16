@@ -1,0 +1,12 @@
+{
+  "op": "asin_image",
+  "note": "docs/ops/2d/arithmetic/asin_image.md",
+  "note_sha256_16": "03d3bcb76efa54f1",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:56:06",
+  "c_path": "impl2/c/qwen2.5-14b/asin_image.c",
+  "prompt_sha256_16": "ba545ca6194ef72e",
+  "gen_seconds": 4.7,
+  "status": "compile_error",
+  "compile_error": "C:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\asin_image.c: In function 'fs2_apply':\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\asin_image.c:20:38: error: 'M_PI_2' undeclared (first use in this function)\n   20 |             out[idx] = asin(value) / M_PI_2;\n      |                                      ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\asin_image.c:20:38: note: each undeclared identifier is reported only once for each function it appears in\n"
+}

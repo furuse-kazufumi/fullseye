@@ -3,11 +3,13 @@
   "note": "docs/ops/2d/augmentation/aug_barrel.md",
   "note_sha256_16": "09fa43f8d0e21874",
   "model": "qwen2.5-coder:32b",
-  "generated_at": "2026-09-16T08:37:14",
+  "generated_at": "2026-09-16T09:43:22",
   "c_path": "impl2/c/qwen2.5-coder-32b/aug_barrel.c",
-  "prompt_sha256_16": "3fcad574039fed73",
-  "gen_seconds": 64.4,
+  "reused_existing_c": true,
   "compiled": true,
+  "in_sort": "image",
+  "out_sort": "image",
+  "probe_set": "image",
   "probes": [
     {
       "probe": "checkerboard8",

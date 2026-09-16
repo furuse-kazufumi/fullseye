@@ -1,0 +1,11 @@
+{
+  "op": "alife_curvature_flow",
+  "note": "docs/ops/2d/artificial_life/alife_curvature_flow.md",
+  "note_sha256_16": "fb9b0e2e57fe6a71",
+  "model": "qwen2.5:14b",
+  "generated_at": "2026-09-16T09:52:55",
+  "c_path": "impl2/c/qwen2.5-14b/alife_curvature_flow.c",
+  "reused_existing_c": true,
+  "status": "compile_error",
+  "compile_error": "ote: include '<stdlib.h>' or provide a declaration of 'malloc'\n    1 | #include <math.h>\n  +++ |+#include <stdlib.h>\n    2 | \nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_curvature_flow.c:10:26: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]\n   10 |     double *u = (double*)malloc(h * w * sizeof(double));\n      |                          ^~~~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_curvature_flow.c:10:26: note: include '<stdlib.h>' or provide a declaration of 'malloc'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_curvature_flow.c:77:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]\n   77 |     free(u);\n      |     ^~~~\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_curvature_flow.c:77:5: note: include '<stdlib.h>' or provide a declaration of 'free'\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_curvature_flow.c:77:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]\nC:\\dev\\projects\\imgevolve\\impl2\\c\\qwen2.5-14b\\alife_curvature_flow.c:77:5: note: include '<stdlib.h>' or provide a declaration of 'free'\n"
+}
