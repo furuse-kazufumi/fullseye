@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dither_floyd_steinberg — 2D <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;dither_floyd_steinberg&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/dither_floyd_steinberg.png" alt="dither_floyd_steinberg: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dither_floyd_steinberg.a.jpg">dither_floyd_steinberg: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dither_floyd_steinberg.inputs.jpg">dither_floyd_steinberg: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>誤差拡散ディザ(Floyd–Steinberg)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がビット数 1〜8、</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>各画素を丸めたあと、出た誤差を右 7/16・左下 3/16・下 5/16・右下 1/16 に配る。</p>
+<p><b>平均は保たれる</b>(局所的に足し引きが釣り合う)ので、平坦な階調が縞にならずに</p>
+<p>点の密度で表現される。1 ビットまで落としても絵として読めるのはこれのため。</p>
+<p><b>適用条件</b>: (1) 走査順に依存するので、<b>画像を切り出す位置を変えると結果が変わる</b></p>
+<p>—— タイル処理や並列化には向かない(そちらは `<code style="color:#22d3bf">dither_ordered</code>`)。(2) 誤差を隣へ</p>
+<p>送るので、細い線の周りに尾を引く。(3) ここでは素直な逐次実装なので、大きな画像では</p>
+<p>`<code style="color:#22d3bf">dither_ordered</code>` よりずっと遅い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dither_floyd_steinberg 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:dither_floyd_steinberg%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:dither_floyd_steinberg%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gamma">gamma</a> · <a style="color:#22d3bf" href="op:quantize_uniform">quantize_uniform</a> · <a style="color:#22d3bf" href="op:quantize_lloyd_max">quantize_lloyd_max</a> · <a style="color:#22d3bf" href="op:quantization_error">quantization_error</a> · <a style="color:#22d3bf" href="op:dither_ordered">dither_ordered</a> · <a style="color:#22d3bf" href="op:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="op:banding_map">banding_map</a> · <a style="color:#22d3bf" href="op:invert">invert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

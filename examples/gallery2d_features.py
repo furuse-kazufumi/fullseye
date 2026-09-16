@@ -52,6 +52,7 @@ CATS = ["features", "texture-feature", "texture/shape-feature",
 
 OPS = [
     "blob_count", "area_frac", "count_contours", "total_length", "classify_shape",
+    "effective_bit_depth",
     "vol_count", "sk_euler", "sk_entropy_feat", "sk_blur_effect", "cv_cc_count",
     "cv_hough_lines", "cv_hough_circles", "cv_good_features", "area_center", "count_obj",
     "circularity", "compactness", "convexity", "rectangularity", "eccentricity",
@@ -244,6 +245,22 @@ def main() -> int:
               "cs": [np.column_stack([n / 2 + half * np.sin(t), n / 2 + half * np.cos(t)]).astype(np.float64)]}
     xc_circle, xc_square = _feat("circularity_xld", circ_c), _feat("circularity_xld", sq_c)
     assert xc_circle > 0.98 and xc_circle > xc_square + 0.1, f"circle {xc_circle} vs square {xc_square}"
+    gt += 1
+
+    # effective_bit_depth: 実際に量子化したビット数を当てること。
+    # ★返り値は bits/16 なので 16 倍して読む。上限は**画素数**で決まる —— 連続値の
+    #   画像では最小の刻みが ~1/N になるので推定は log2(N) 付近で頭打ちになり、
+    #   16 には届かない(256x256 = 65536 画素で 16 前後、128x128 では 13.7 と実測)。
+    #   「測れない線」を画素数から先に引いておくための注意書きで、門もそう書く。
+    rng_b = np.random.default_rng(20260917)
+    cont = rng_b.random((256, 256))
+    BYF = {o.name: o for o in ops.REGISTRY}
+    for bits in (3, 5, 8):
+        q = np.asarray(BYF["quantize_uniform"].fn(cont.copy(), (bits - 1) / 7.0, 0.5))
+        est = float(BYF["effective_bit_depth"].fn(q, 0.5, 0.5)) * 16.0
+        assert abs(est - bits) < 0.25, f"実効ビット数が合わない: 真={bits} 推定={est:.2f}"
+    est_cont = float(BYF["effective_bit_depth"].fn(cont.copy(), 0.5, 0.5)) * 16.0
+    assert est_cont > 12.0, f"連続値の画像で低く出すぎ: {est_cont:.2f}"
     gt += 1
 
     print(f"PASS: {len(OPS)} ops exercised, all finite/typed/deterministic; {gt} GT checks")

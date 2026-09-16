@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">effective_bit_depth — 2D <code style="color:#22d3bf">features</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;effective_bit_depth&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/effective_bit_depth.png" alt="effective_bit_depth: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>画像が<b>実際に</b>使っているビット数を推定して `<code style="color:#22d3bf">[0,1]</code>` に写して返す(feature)。</p>
+<p>`<code style="color:#22d3bf">8</code><code style="color:#22d3bf"> ビットの器に入っていても、中身が </code><code style="color:#22d3bf">6</code>` ビット相当しかないことはよくある ——</p>
+<p>低ビットのセンサを引き伸ばした、一度 JPEG を通した、ガンマを掛けた、など。</p>
+<p>ここでは占有している階調の<b>実際の間隔</b>から実効ビット数を推定する:</p>
+<p>出現した画素値を並べ、隣り合う値の差の<b>最頻値</b>を刻み `<code style="color:#22d3bf">Δ</code>` とみて</p>
+<p>`<code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code><code style="color:#22d3bf">。返り値は </code><code style="color:#22d3bf">bits / 16</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` は未使用)。</p>
+<p><b>適用条件と外れ方</b>: (1) ★<b>画素数が上限を決める</b>。階調がほぼ連続(浮動小数の</p>
+<p>まま処理した画像)では、最小の刻みは「値が N 個あるときの平均間隔 ~1/N」なので、</p>
+<p>推定は `<code style="color:#22d3bf">log2(N)</code>` 付近で頭打ちになる —— 128x128(N=16384)の連続画像で実測</p>
+<p><b>13.7 bit</b>。16 に飽和するわけではないので、**「これ以上は測れない」線を</p>
+<p>画素数から先に引いておくこと**(小さな切り抜きで測ると低く出る)。(2) 非線形な変換(ガンマ・対数)を通った後は</p>
+<p>刻みが場所によって違うので、最頻値は「代表的な刻み」であって一様な刻みではない。</p>
+<p>(3) ディザが掛かっている画像では階調が埋まるので、実効ビット数は<b>高く</b>出る ——</p>
+<p>それは「情報として何ビット分あるか」ではなく「何段使っているか」の答え。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">effective_bit_depth 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:effective_bit_depth%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:effective_bit_depth%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">feature</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">features</code>)</h3>
+<p><a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a> · <a style="color:#22d3bf" href="op:sk_blur_effect">sk_blur_effect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

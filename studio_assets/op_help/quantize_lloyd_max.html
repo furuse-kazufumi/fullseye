@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quantize_lloyd_max — 2D <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;quantize_lloyd_max&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p><img src="fig/quantize_lloyd_max.png" alt="quantize_lloyd_max: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_lloyd_max.a.jpg">quantize_lloyd_max: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_lloyd_max.b.jpg">quantize_lloyd_max: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_lloyd_max.inputs.jpg">quantize_lloyd_max: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>入力の分布に合わせた<b>最適な</b>量子化(Lloyd–Max、1-D の k-means)。</p>
+<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が段数のビット数 1〜8、</code><code style="color:#22d3bf">b</code>` は反復回数(1〜20)。一様量子化が刻みを等間隔に</p>
+<p>置くのに対し、こちらは<b>画素値が混んでいる所に刻みを細かく置く</b>。代表値は各区間の</p>
+<p>重心、区間の境は隣り合う代表値の中点 —— この 2 つを交互に当てるのが Lloyd の反復で、</p>
+<p><b>二乗誤差は単調に減る</b>(増えることはない)。</p>
+<p><b>一様量子化との差が出る条件</b>: 入力のヒストグラムが偏っているとき。一様分布を</p>
+<p>入れると一様量子化と一致するので、<b>差が出ないこと自体が正しさの確認になる</b>。</p>
+<p>暗部に画素が集中した画像(影の多い検査画像、蛍光像)では同じビット数で誤差が下がる。</p>
+<p><b>適用条件</b>: (1) 出力は入力に依存した代表値の集合なので、<b>画像ごとに符号表が違う</b></p>
+<p>—— 別の画像と画素値を直接比べられない(比べたいなら一様量子化)。(2) 空いた区間は</p>
+<p>そのまま残る(代表値が動かない)。(3) 反復は局所解に落ちうるが、1-D では初期値を</p>
+<p>分位点に取れば実用上安定する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">quantize_lloyd_max 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:quantize_lloyd_max%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:quantize_lloyd_max%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gamma">gamma</a> · <a style="color:#22d3bf" href="op:quantize_uniform">quantize_uniform</a> · <a style="color:#22d3bf" href="op:quantization_error">quantization_error</a> · <a style="color:#22d3bf" href="op:dither_ordered">dither_ordered</a> · <a style="color:#22d3bf" href="op:dither_floyd_steinberg">dither_floyd_steinberg</a> · <a style="color:#22d3bf" href="op:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="op:banding_map">banding_map</a> · <a style="color:#22d3bf" href="op:invert">invert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

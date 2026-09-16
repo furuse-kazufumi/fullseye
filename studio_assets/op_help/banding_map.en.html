@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">banding_map — 2D <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;banding_map&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/banding_map.png" alt="banding_map: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/banding_map.a.jpg">banding_map: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/banding_map.inputs.jpg">banding_map: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>階調の<b>段差(バンディング)が見えている場所</b>を返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がビット数、</code><code style="color:#22d3bf">b</code>` が窓。</p>
+<p>段差が「見える」条件は 3 つそろったときで、この op はその 3 つを順に掛ける。</p>
+<p>1. <b>刻みの上に乗っている</b> —— 値が `<code style="color:#22d3bf">k*Δ</code>` の格子にある。量子化していない画像に</p>
+<p>バンディングは無い(浮動小数の雑音はここで落ちる)。</p>
+<p>2. <b>窓の中がちょうど 1 刻みだけ動く</b> —— 窓内の最大と最小の差(peak-to-peak)が</p>
+<p>`<code style="color:#22d3bf">Δ</code>` の 1 倍。0 倍(平坦)でも 2 倍以上(本物の輪郭)でもない。</p>
+<p>3. <b>まばらな線である</b> —— 段差は等高線に沿った細い線として出る。広い範囲が一斉に</p>
+<p>反応しているなら、それは段差ではなく<b>ディザや細かい模様</b>。</p>
+<p>`<code style="color:#22d3bf">a</code>` は量子化のビット数 1〜8(入力が既に量子化済みなら、その段数を指定する)。</p>
+<p>`<code style="color:#22d3bf">b</code>` は窓の広さ(3〜9 画素)。</p>
+<p><b>この 3 段にした理由(実測)</b>: peak-to-peak だけで判定したところ、白色雑音で</p>
+<p>画素の <b>41.7 %</b>、順序ディザ済みの画像で <b>97.7 %</b> が「段差」と出た —— 局所の</p>
+<p>ptp がたまたま `<code style="color:#22d3bf">Δ</code>` になるだけで条件を満たしてしまうため。条件 1 が雑音を、</p>
+<p>条件 3 がディザを落とす。3-bit に量子化した傾斜では <b>7.0 %</b>(段差の線そのもの)</p>
+<p>が残る。</p>
+<p><b>適用条件</b>: (1) 入力のビット数を間違えると全く効かない —— 分からないときは</p>
+<p>`<code style="color:#22d3bf">effective_bit_depth</code>` で先に測る。(2) 入力が一度でも滑らかに補間・再標本化</p>
+<p>されていると条件 1 が崩れる(格子から外れる)。段差を測るなら**量子化した直後の</p>
+<p>画像に当てる**こと。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">banding_map 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:banding_map%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:banding_map%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">image</code> as input)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gamma">gamma</a> · <a style="color:#22d3bf" href="op:quantize_uniform">quantize_uniform</a> · <a style="color:#22d3bf" href="op:quantize_lloyd_max">quantize_lloyd_max</a> · <a style="color:#22d3bf" href="op:quantization_error">quantization_error</a> · <a style="color:#22d3bf" href="op:dither_ordered">dither_ordered</a> · <a style="color:#22d3bf" href="op:dither_floyd_steinberg">dither_floyd_steinberg</a> · <a style="color:#22d3bf" href="op:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="op:invert">invert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

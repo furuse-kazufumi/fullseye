@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">effective_bit_depth — 2D <code style="color:#22d3bf">features</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;effective_bit_depth&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/effective_bit_depth.png" alt="effective_bit_depth: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>画像が<b>実際に</b>使っているビット数を推定して `<code style="color:#22d3bf">[0,1]</code>` に写して返す(feature)。</p>
+<p>`<code style="color:#22d3bf">8</code><code style="color:#22d3bf"> ビットの器に入っていても、中身が </code><code style="color:#22d3bf">6</code>` ビット相当しかないことはよくある ——</p>
+<p>低ビットのセンサを引き伸ばした、一度 JPEG を通した、ガンマを掛けた、など。</p>
+<p>ここでは占有している階調の<b>実際の間隔</b>から実効ビット数を推定する:</p>
+<p>出現した画素値を並べ、隣り合う値の差の<b>最頻値</b>を刻み `<code style="color:#22d3bf">Δ</code>` とみて</p>
+<p>`<code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code><code style="color:#22d3bf">。返り値は </code><code style="color:#22d3bf">bits / 16</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` は未使用)。</p>
+<p><b>適用条件と外れ方</b>: (1) ★<b>画素数が上限を決める</b>。階調がほぼ連続(浮動小数の</p>
+<p>まま処理した画像)では、最小の刻みは「値が N 個あるときの平均間隔 ~1/N」なので、</p>
+<p>推定は `<code style="color:#22d3bf">log2(N)</code>` 付近で頭打ちになる —— 128x128(N=16384)の連続画像で実測</p>
+<p><b>13.7 bit</b>。16 に飽和するわけではないので、**「これ以上は測れない」線を</p>
+<p>画素数から先に引いておくこと**(小さな切り抜きで測ると低く出る)。(2) 非線形な変換(ガンマ・対数)を通った後は</p>
+<p>刻みが場所によって違うので、最頻値は「代表的な刻み」であって一様な刻みではない。</p>
+<p>(3) ディザが掛かっている画像では階調が埋まるので、実効ビット数は<b>高く</b>出る ——</p>
+<p>それは「情報として何ビット分あるか」ではなく「何段使っているか」の答え。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">effective_bit_depth 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:effective_bit_depth%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:effective_bit_depth%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">features</code>)</h3>
+<p><a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a> · <a style="color:#22d3bf" href="op:sk_blur_effect">sk_blur_effect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

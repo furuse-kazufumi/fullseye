@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quantize_uniform — 2D <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;quantize_uniform&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/quantize_uniform.png" alt="quantize_uniform: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_uniform.a.jpg">quantize_uniform: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_uniform.inputs.jpg">quantize_uniform: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>一様量子化器(<b>丸め</b>)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がビット数 1〜8、</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>`<code style="color:#22d3bf">round(x * (L-1)) / (L-1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">L = 2**bits</code><code style="color:#22d3bf">。刻みは </code><code style="color:#22d3bf">Δ = 1/(L-1)</code>`。</p>
+<p>**`<code style="color:#22d3bf">xpil_posterize</code>` との違いはここで、無視できない**: あちらは PIL の実装で</p>
+<p><b>下位ビットを切り捨てる</b>ので、出力の平均が入力より `<code style="color:#22d3bf">Δ/2</code>` だけ低い。</p>
+<p>一様分布の入力で実測すると、bits=4 で平均誤差 `<code style="color:#22d3bf">-0.0312</code><code style="color:#22d3bf">(理論 </code><code style="color:#22d3bf">-Δ/2 = -0.03125</code>`)。</p>
+<p>分散はどちらも `<code style="color:#22d3bf">Δ²/12</code>` で同じだが、偏りがある分だけ二乗誤差が</p>
+<p>切り捨て: Δ²/12 + (Δ/2)² = Δ²/3     丸め: Δ²/12</p>
+<p>と <b>4 倍</b>ちがう。明るさを測る前段に置くなら丸めでなければならない。</p>
+<p><b>適用条件と誤差(閉形式)</b>: 入力が刻みに対して十分ばらついている(量子化雑音が</p>
+<p>入力と無相関とみなせる)とき、誤差は `<code style="color:#22d3bf">[-Δ/2, +Δ/2]</code>` の一様分布で、平均 0・</p>
+<p>分散 `<code style="color:#22d3bf">Δ²/12</code>`。<b>この仮定が崩れるのは平坦部</b>で、そこでは誤差が信号と相関して</p>
+<p>縞(バンディング)になる —— 誤差を雑音として扱いたいなら `<code style="color:#22d3bf">dither_ordered</code>` か</p>
+<p>`<code style="color:#22d3bf">dither_floyd_steinberg</code><code style="color:#22d3bf"> を通すこと。段差が見えているかは </code><code style="color:#22d3bf">banding_map</code>` で測れる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">quantize_uniform 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:quantize_uniform%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:quantize_uniform%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gamma">gamma</a> · <a style="color:#22d3bf" href="op:quantize_lloyd_max">quantize_lloyd_max</a> · <a style="color:#22d3bf" href="op:quantization_error">quantization_error</a> · <a style="color:#22d3bf" href="op:dither_ordered">dither_ordered</a> · <a style="color:#22d3bf" href="op:dither_floyd_steinberg">dither_floyd_steinberg</a> · <a style="color:#22d3bf" href="op:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="op:banding_map">banding_map</a> · <a style="color:#22d3bf" href="op:invert">invert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

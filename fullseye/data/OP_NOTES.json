@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 1952,
- "n_notes": 1956,
+ "n_ops": 1960,
+ "n_notes": 1964,
  "notes": {
   "vol_dilate": [
    {
@@ -2116,6 +2116,16 @@
     "path": "docs/ops/2d/features/eccentricity_xld.md"
    }
   ],
+  "effective_bit_depth": [
+   {
+    "op": "effective_bit_depth",
+    "dim": "2d",
+    "category": "features",
+    "in": "image",
+    "out": "feature",
+    "path": "docs/ops/2d/features/effective_bit_depth.md"
+   }
+  ],
   "elliptic_axis": [
    {
     "op": "elliptic_axis",
@@ -3148,6 +3158,16 @@
     "path": "docs/ops/2d/geometry/zoom_region.md"
    }
   ],
+  "banding_map": [
+   {
+    "op": "banding_map",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/banding_map.md"
+   }
+  ],
   "bit_not": [
    {
     "op": "bit_not",
@@ -3169,6 +3189,16 @@
     "path": "docs/ops/2d/gray/clahe.md"
    }
   ],
+  "companding_mu_law": [
+   {
+    "op": "companding_mu_law",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/companding_mu_law.md"
+   }
+  ],
   "cv_clahe": [
    {
     "op": "cv_clahe",
@@ -3188,6 +3218,26 @@
     "out": "image",
     "halcon": "scale_image",
     "path": "docs/ops/2d/gray/cv_trunc.md"
+   }
+  ],
+  "dither_floyd_steinberg": [
+   {
+    "op": "dither_floyd_steinberg",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/dither_floyd_steinberg.md"
+   }
+  ],
+  "dither_ordered": [
+   {
+    "op": "dither_ordered",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/dither_ordered.md"
    }
   ],
   "equ_histo_image": [
@@ -3375,6 +3425,36 @@
     "out": "image",
     "halcon": "pow_image",
     "path": "docs/ops/2d/gray/pow_image.md"
+   }
+  ],
+  "quantization_error": [
+   {
+    "op": "quantization_error",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/quantization_error.md"
+   }
+  ],
+  "quantize_lloyd_max": [
+   {
+    "op": "quantize_lloyd_max",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/quantize_lloyd_max.md"
+   }
+  ],
+  "quantize_uniform": [
+   {
+    "op": "quantize_uniform",
+    "dim": "2d",
+    "category": "gray",
+    "in": "image",
+    "out": "image",
+    "path": "docs/ops/2d/gray/quantize_uniform.md"
    }
   ],
   "scale_clip": [

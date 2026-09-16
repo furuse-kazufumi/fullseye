@@ -72,6 +72,10 @@ KNOWN_DEAD_KNOBS = {
     # 「ノブが効かない」が本物の指摘として見えるようになった 2 件
     ("tb_specular_coefficient_map", "a"), ("tb_specular_coefficient_map", "b"),
     ("tb_tcspc_background_subtract", "a"),
+    # banding_map の b(窓の広さ)—— 探針が量子化されていないので出力が全 0 になり、
+    # 窓をどう変えても 0 のまま。**op ではなく探針の側の理由**で、3 bit に量子化した
+    # 入力では窓が効く(gallery2d_gray_arith の GT 12 が数値で押さえている)。
+    ("banding_map", "b"),
 }
 
 

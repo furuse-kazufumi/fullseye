@@ -516,6 +516,275 @@ def _local_thickness(v, a, b):
     return np.clip(out / (2.0 * rmax), 0.0, 1.0)
 
 
+# -------------------------------------------------------------------------- #
+# 量子化・ビット深度
+#
+# HALCON 側にあるのは bit_slice / bit_and のようなビット操作だけで、量子化器
+# そのもの(丸め・ディザ・最適量子化・圧伸)と、その誤差を測る道具は 1 本も無い。
+# ここは閉形式の誤差(刻み Δ に対して分散 Δ²/12)を持つので、「数理解析で
+# ルールベースを強化する」という方針にそのまま乗る領域。
+# -------------------------------------------------------------------------- #
+def _levels(a) -> int:
+    """``a`` を量子化の段数 ``2**bits`` に振る(bits = 1..8)。"""
+    return 1 << (1 + int(round(float(np.clip(a, 0.0, 1.0)) * 7)))
+
+
+def _quantize_uniform(v, a, b):
+    """一様量子化器(**丸め**)。``a`` がビット数 1〜8、``b`` は未使用。
+
+``round(x * (L-1)) / (L-1)``、``L = 2**bits``。刻みは ``Δ = 1/(L-1)``。
+
+**``xpil_posterize`` との違いはここで、無視できない**: あちらは PIL の実装で
+**下位ビットを切り捨てる**ので、出力の平均が入力より ``Δ/2`` だけ低い。
+一様分布の入力で実測すると、bits=4 で平均誤差 ``-0.0312``(理論 ``-Δ/2 = -0.03125``)。
+分散はどちらも ``Δ²/12`` で同じだが、偏りがある分だけ二乗誤差が
+
+    切り捨て: Δ²/12 + (Δ/2)² = Δ²/3     丸め: Δ²/12
+
+と **4 倍**ちがう。明るさを測る前段に置くなら丸めでなければならない。
+
+**適用条件と誤差(閉形式)**: 入力が刻みに対して十分ばらついている(量子化雑音が
+入力と無相関とみなせる)とき、誤差は ``[-Δ/2, +Δ/2]`` の一様分布で、平均 0・
+分散 ``Δ²/12``。**この仮定が崩れるのは平坦部**で、そこでは誤差が信号と相関して
+縞(バンディング)になる —— 誤差を雑音として扱いたいなら ``dither_ordered`` か
+``dither_floyd_steinberg`` を通すこと。段差が見えているかは ``banding_map`` で測れる。"""
+    x = np.asarray(v, np.float64)
+    L = _levels(a)
+    q = float(L - 1)
+    return np.clip(np.round(np.clip(x, 0.0, 1.0) * q) / q, 0.0, 1.0)
+
+
+def _quantization_error(v, a, b):
+    """量子化で失われた量 ``|x - Q(x)|`` を ``Δ/2`` で割って ``[0,1]`` にした地図。
+
+``a`` がビット数 1〜8(``_quantize_uniform`` と同じ振り方)、``b`` は未使用。
+``1.0`` が「その画素で取りうる最大の誤差(``Δ/2``)」にあたる。
+
+**何のために見るのか**: 誤差が一様に散っていれば量子化雑音として扱ってよい。
+**特定の等高線に沿って揃っていたら、そこがバンディングの出る場所**。数字で言うと、
+正しく振る舞っているとき地図の平均は ``0.5`` 付近(一様分布の平均)に来る。"""
+    x = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    L = _levels(a)
+    delta = 1.0 / float(L - 1)
+    return np.clip(np.abs(x - _quantize_uniform(x, a, b)) / (0.5 * delta), 0.0, 1.0)
+
+
+def _dither_ordered(v, a, b):
+    """順序ディザ(Bayer 行列)で量子化する。``a`` がビット数 1〜8、``b`` が行列の大きさ。
+
+量子化の**前に**、画素位置で決まる決まった量(Bayer 行列、``b`` が 2x2 / 4x4 / 8x8 を
+振る)を足してから丸める。平坦部の誤差が画素ごとに散るので、段差が細かい市松に化けて
+**縞が見えなくなる**。誤差そのものは減らない —— 見え方を変えているだけで、
+平均二乗誤差はむしろ ``_quantize_uniform`` よりわずかに大きい。
+
+**誤差拡散(``dither_floyd_steinberg``)との使い分け**: 順序ディザは
+**画素ごとに独立**なので、タイル分割しても継ぎ目が出ず、並列化も自由、
+同じ入力に必ず同じ出力を返す。誤差拡散のほうが見た目は滑らかだが、
+走査順に依存するので**切り出す位置を変えると結果が変わる**。"""
+    x = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    L = _levels(a)
+    delta = 1.0 / float(L - 1)
+    n = (2, 4, 8)[min(2, int(float(np.clip(b, 0.0, 1.0)) * 3))]
+    m = _bayer(n)
+    H, W = x.shape[:2]
+    tile = np.tile(m, (H // n + 1, W // n + 1))[:H, :W]
+    if x.ndim == 3:
+        tile = tile[..., None]
+    q = float(L - 1)
+    return np.clip(np.round(np.clip(x + (tile - 0.5) * delta, 0.0, 1.0) * q) / q, 0.0, 1.0)
+
+
+def _bayer(n: int) -> np.ndarray:
+    """``n x n`` の Bayer 行列を ``[0,1)`` に正規化して返す(n は 2 の冪)。"""
+    m = np.array([[0.0]])
+    while m.shape[0] < n:
+        k = m.shape[0]
+        m = np.block([[4 * m, 4 * m + 2], [4 * m + 3, 4 * m + 1]])
+    # ★``m / n**2`` ではなく ``(m + 0.5) / n**2``。前者は値が {0, 1/4, 1/2, 3/4} と
+    #   なって平均が 0.375 にしかならず、ディザ全体が暗い側へ偏る(1 ビットの傾斜で
+    #   平均が 0.031 ずれるのを実測した)。閾値は刻みの**真ん中**に並べる。
+    return (m + 0.5) / float(n * n)
+
+
+def _dither_floyd_steinberg(v, a, b):
+    """誤差拡散ディザ(Floyd–Steinberg)。``a`` がビット数 1〜8、``b`` は未使用。
+
+各画素を丸めたあと、出た誤差を右 7/16・左下 3/16・下 5/16・右下 1/16 に配る。
+**平均は保たれる**(局所的に足し引きが釣り合う)ので、平坦な階調が縞にならずに
+点の密度で表現される。1 ビットまで落としても絵として読めるのはこれのため。
+
+**適用条件**: (1) 走査順に依存するので、**画像を切り出す位置を変えると結果が変わる**
+—— タイル処理や並列化には向かない(そちらは ``dither_ordered``)。(2) 誤差を隣へ
+送るので、細い線の周りに尾を引く。(3) ここでは素直な逐次実装なので、大きな画像では
+``dither_ordered`` よりずっと遅い。"""
+    x = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    if x.ndim != 2:
+        x = x.mean(axis=2)
+    L = _levels(a)
+    q = float(L - 1)
+    out = x.copy()
+    H, W = out.shape
+    for y in range(H):
+        for xi in range(W):
+            old = out[y, xi]
+            new = round(old * q) / q
+            out[y, xi] = new
+            err = old - new
+            if xi + 1 < W:
+                out[y, xi + 1] += err * (7.0 / 16.0)
+            if y + 1 < H:
+                if xi > 0:
+                    out[y + 1, xi - 1] += err * (3.0 / 16.0)
+                out[y + 1, xi] += err * (5.0 / 16.0)
+                if xi + 1 < W:
+                    out[y + 1, xi + 1] += err * (1.0 / 16.0)
+    return np.clip(out, 0.0, 1.0)
+
+
+def _quantize_lloyd_max(v, a, b):
+    """入力の分布に合わせた**最適な**量子化(Lloyd–Max、1-D の k-means)。
+
+``a`` が段数のビット数 1〜8、``b`` は反復回数(1〜20)。一様量子化が刻みを等間隔に
+置くのに対し、こちらは**画素値が混んでいる所に刻みを細かく置く**。代表値は各区間の
+重心、区間の境は隣り合う代表値の中点 —— この 2 つを交互に当てるのが Lloyd の反復で、
+**二乗誤差は単調に減る**(増えることはない)。
+
+**一様量子化との差が出る条件**: 入力のヒストグラムが偏っているとき。一様分布を
+入れると一様量子化と一致するので、**差が出ないこと自体が正しさの確認になる**。
+暗部に画素が集中した画像(影の多い検査画像、蛍光像)では同じビット数で誤差が下がる。
+
+**適用条件**: (1) 出力は入力に依存した代表値の集合なので、**画像ごとに符号表が違う**
+—— 別の画像と画素値を直接比べられない(比べたいなら一様量子化)。(2) 空いた区間は
+そのまま残る(代表値が動かない)。(3) 反復は局所解に落ちうるが、1-D では初期値を
+分位点に取れば実用上安定する。"""
+    x = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    L = _levels(a)
+    iters = 1 + int(round(float(np.clip(b, 0.0, 1.0)) * 19))
+    flat = x.reshape(-1)
+    # 初期値は分位点 —— 等間隔から始めると空の区間が残りやすい
+    c = np.quantile(flat, (np.arange(L) + 0.5) / L)
+    c = np.unique(c)
+    if c.size < 2:
+        return np.full_like(x, float(c[0]) if c.size else 0.0)
+    for _ in range(iters):
+        edges = 0.5 * (c[1:] + c[:-1])
+        idx = np.searchsorted(edges, flat)
+        tot = np.bincount(idx, weights=flat, minlength=c.size)
+        cnt = np.bincount(idx, minlength=c.size)
+        moved = cnt > 0
+        c = np.where(moved, tot / np.maximum(cnt, 1), c)
+        c = np.sort(c)
+    edges = 0.5 * (c[1:] + c[:-1])
+    return np.clip(c[np.searchsorted(edges, x)], 0.0, 1.0)
+
+
+def _companding_mu_law(v, a, b):
+    """μ 則の圧伸(compand = compress + expand)。``a`` が μ、``b`` がビット数。
+
+``F(x) = ln(1 + mu*x) / ln(1 + mu)`` で暗部を伸ばしてから量子化し、逆変換で戻す。
+結果として**刻みが暗部で細かく明部で粗くなる** —— 目も撮像系も暗部の差に敏感なので、
+同じビット数で見た目の劣化が小さい。電話の音声符号化(G.711)と同じ原理で、
+画像では対数的な階調割り当てにあたる。
+
+``a`` は ``mu = 1 + 254*a``(1〜255、``a=0`` で実質そのまま)、``b`` がビット数 1〜8。
+
+**Lloyd–Max との違い**: あちらは**その画像の分布**に合わせるので符号表が画像ごとに
+変わる。こちらは**固定の曲線**なので、別の画像・別の装置と値をそのまま比べられる。
+分布が対数的に偏っているという仮定が当たっていれば近い性能が出て、外れていれば
+Lloyd–Max のほうが良い。
+
+**適用条件(実測つき)**: 入力が ``[0,1]`` で、**0 付近に画素が集中している**とき。
+指数分布の合成画像で一様量子化と比べると、暗部集中なら二乗誤差は ``0.57`` 倍
+(3 bit)・``0.51`` 倍(5 bit)に下がる。**明部集中では逆に ``7.7`` 倍(3 bit)・
+``18`` 倍(5 bit)悪化する** —— 白地に暗い傷、という検査画像はまさにこれなので、
+そのときは ``1 - x`` を通してから当てること。段数が非常に少ないとき(2 bit)は
+曲線が強すぎて偏った分布でも一様量子化に負ける(実測 1.17 倍)。"""
+    x = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    mu = 1.0 + 254.0 * float(np.clip(a, 0.0, 1.0))
+    L = _levels(b)
+    q = float(L - 1)
+    y = np.log1p(mu * x) / np.log1p(mu)          # 圧縮
+    y = np.round(y * q) / q                       # 量子化
+    return np.clip((np.expm1(y * np.log1p(mu))) / mu, 0.0, 1.0)   # 伸張
+
+
+def _banding_map(v, a, b):
+    """階調の**段差(バンディング)が見えている場所**を返す。``a`` がビット数、``b`` が窓。
+
+段差が「見える」条件は 3 つそろったときで、この op はその 3 つを順に掛ける。
+
+1. **刻みの上に乗っている** —— 値が ``k*Δ`` の格子にある。量子化していない画像に
+   バンディングは無い(浮動小数の雑音はここで落ちる)。
+2. **窓の中がちょうど 1 刻みだけ動く** —— 窓内の最大と最小の差(peak-to-peak)が
+   ``Δ`` の 1 倍。0 倍(平坦)でも 2 倍以上(本物の輪郭)でもない。
+3. **まばらな線である** —— 段差は等高線に沿った細い線として出る。広い範囲が一斉に
+   反応しているなら、それは段差ではなく**ディザや細かい模様**。
+
+``a`` は量子化のビット数 1〜8(入力が既に量子化済みなら、その段数を指定する)。
+``b`` は窓の広さ(3〜9 画素)。
+
+**この 3 段にした理由(実測)**: peak-to-peak だけで判定したところ、白色雑音で
+画素の **41.7 %**、順序ディザ済みの画像で **97.7 %** が「段差」と出た —— 局所の
+ptp がたまたま ``Δ`` になるだけで条件を満たしてしまうため。条件 1 が雑音を、
+条件 3 がディザを落とす。3-bit に量子化した傾斜では **7.0 %**(段差の線そのもの)
+が残る。
+
+**適用条件**: (1) 入力のビット数を間違えると全く効かない —— 分からないときは
+``effective_bit_depth`` で先に測る。(2) 入力が一度でも滑らかに補間・再標本化
+されていると条件 1 が崩れる(格子から外れる)。段差を測るなら**量子化した直後の
+画像に当てる**こと。"""
+    x = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    if x.ndim == 3:
+        x = x.mean(axis=2)
+    L = _levels(a)
+    delta = 1.0 / float(L - 1)
+    k = _k(b)
+    # 1. 刻みの格子に乗っているか(窓内の全画素が格子の近くにあること)
+    off = np.abs(x * (L - 1) - np.round(x * (L - 1)))          # 0..0.5
+    on_ladder = ndimage.maximum_filter(off, size=k) < 0.05
+    # 2. 窓内の peak-to-peak がちょうど 1 刻み
+    ptp = ndimage.maximum_filter(x, size=k) - ndimage.minimum_filter(x, size=k)
+    one_step = np.clip(1.0 - np.abs(ptp / delta - 1.0), 0.0, 1.0)
+    hot = np.where(on_ladder, one_step, 0.0)
+    # 3. まばらであること —— 広い窓の半分以上が反応していたら段差ではない
+    dense = ndimage.uniform_filter(hot, size=3 * k)
+    return np.clip(hot * np.clip(2.0 * (1.0 - dense), 0.0, 1.0), 0.0, 1.0)
+
+
+def _effective_bit_depth(v, a, b):
+    """画像が**実際に**使っているビット数を推定して ``[0,1]`` に写して返す(feature)。
+
+``8`` ビットの器に入っていても、中身が ``6`` ビット相当しかないことはよくある ——
+低ビットのセンサを引き伸ばした、一度 JPEG を通した、ガンマを掛けた、など。
+ここでは占有している階調の**実際の間隔**から実効ビット数を推定する:
+出現した画素値を並べ、隣り合う値の差の**最頻値**を刻み ``Δ`` とみて
+``bits = log2(1 + 1/Δ)``。返り値は ``bits / 16`` (``a``/``b`` は未使用)。
+
+**適用条件と外れ方**: (1) ★**画素数が上限を決める**。階調がほぼ連続(浮動小数の
+まま処理した画像)では、最小の刻みは「値が N 個あるときの平均間隔 ~1/N」なので、
+推定は ``log2(N)`` 付近で頭打ちになる —— 128x128(N=16384)の連続画像で実測
+**13.7 bit**。16 に飽和するわけではないので、**「これ以上は測れない」線を
+画素数から先に引いておくこと**(小さな切り抜きで測ると低く出る)。(2) 非線形な変換(ガンマ・対数)を通った後は
+刻みが場所によって違うので、最頻値は「代表的な刻み」であって一様な刻みではない。
+(3) ディザが掛かっている画像では階調が埋まるので、実効ビット数は**高く**出る ——
+それは「情報として何ビット分あるか」ではなく「何段使っているか」の答え。"""
+    x = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    u = np.unique(x)
+    if u.size < 3:
+        return 1.0 / 16.0
+    d = np.diff(u)
+    d = d[d > 1e-12]
+    if d.size == 0:
+        return 1.0 / 16.0
+    # 最頻の刻み: 差を対数ビンに落として一番混んでいる所の中央値を取る
+    lo = float(d.min())
+    bins = np.round(np.log2(d / lo) * 4.0).astype(int)
+    vals, cnt = np.unique(bins, return_counts=True)
+    step = float(np.median(d[bins == vals[int(np.argmax(cnt))]]))
+    bits = float(np.log2(1.0 + 1.0 / max(step, 1e-12)))
+    return float(np.clip(bits, 1.0, 16.0) / 16.0)
+
+
 def _fft_mask(v, cutoff, high):
     H, W = v.shape
     rad = np.sqrt(np.fft.fftfreq(H)[:, None] ** 2 + np.fft.fftfreq(W)[None, :] ** 2)
@@ -1335,6 +1604,14 @@ _DEFS = [
     ("roberts_mag", "edges", "roberts", IMAGE, IMAGE, _roberts_mag),
     ("dog", "edges", "diff_of_gauss", IMAGE, IMAGE, _dog),
     ("gamma", "gray", "pow_image", IMAGE, IMAGE, _gamma),
+    ("quantize_uniform", "gray", None, IMAGE, IMAGE, _quantize_uniform),
+    ("quantize_lloyd_max", "gray", None, IMAGE, IMAGE, _quantize_lloyd_max),
+    ("quantization_error", "gray", None, IMAGE, IMAGE, _quantization_error),
+    ("dither_ordered", "gray", None, IMAGE, IMAGE, _dither_ordered),
+    ("dither_floyd_steinberg", "gray", None, IMAGE, IMAGE, _dither_floyd_steinberg),
+    ("companding_mu_law", "gray", None, IMAGE, IMAGE, _companding_mu_law),
+    ("banding_map", "gray", None, IMAGE, IMAGE, _banding_map),
+    ("effective_bit_depth", "features", None, IMAGE, FEATURE, _effective_bit_depth),
     ("invert", "gray", "invert_image", IMAGE, IMAGE, _invert),
     ("scale_clip", "gray", "scale_image", IMAGE, IMAGE, _scale_clip),
     ("equalize", "gray", "equ_histo_image", IMAGE, IMAGE, _equalize),

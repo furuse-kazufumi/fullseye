@@ -1027,7 +1027,7 @@ _計 363 ops / 66 categories。_
 - `sampson_distance` (`image2d, image2d → signal`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 905 ops / 48 categories。_
+_計 913 ops / 48 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -1238,7 +1238,8 @@ _計 905 ops / 48 categories。_
 - `xsitk_moments_thresh` `image → region` · 例: `gallery2d_color_artistic`
 - `xsitk_huang_thresh` `image → region` · 例: `gallery2d_color_artistic`
 
-### features(71)
+### features(72)
+- `effective_bit_depth` `image → feature` · 例: `gallery2d_features`
 - `blob_count` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`, `poc_real_coin_metrology`, `quickstart`
 - `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`
 - `count_contours` (halcon: `count_obj`) `contour → feature` · 例: `gallery2d_features`
@@ -1365,8 +1366,15 @@ _計 905 ops / 48 categories。_
 - `it_change_format` (halcon: `change_format`) `image → image` · 例: `gallery2d_geometry`
 - `tf_log_polar` `image → image` · 例: `gallery2d_geometry`
 
-### gray(41)
+### gray(48)
 - `gamma` (halcon: `pow_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `quantize_uniform` `image → image` · 例: `gallery2d_features`, `gallery2d_gray_arith`
+- `quantize_lloyd_max` `image → image` · 例: `gallery2d_gray_arith`
+- `quantization_error` `image → image` · 例: `gallery2d_gray_arith`
+- `dither_ordered` `image → image` · 例: `gallery2d_gray_arith`
+- `dither_floyd_steinberg` `image → image` · 例: `gallery2d_gray_arith`
+- `companding_mu_law` `image → image` · 例: `gallery2d_gray_arith`
+- `banding_map` `image → image` · 例: `gallery2d_gray_arith`
 - `invert` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `scale_clip` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `equalize` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_dehazing`

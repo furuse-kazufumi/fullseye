@@ -1,5 +1,5 @@
 {
- "generated_for": 905,
+ "generated_for": 913,
  "ops": {
   "abs_image": {
    "color_ok": true,
@@ -981,6 +981,31 @@
    "pseudocolor": false,
    "status": "ok"
   },
+  "banding_map": {
+   "color_ok": true,
+   "extra": {
+    "a": "banding_map.a.jpg",
+    "inputs": "banding_map.inputs.jpg"
+   },
+   "fig": "banding_map.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "banding_map 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "bandpass_image": {
    "color_ok": true,
    "extra": {
@@ -1512,6 +1537,30 @@
    ],
    "out_kind": "float",
    "program": "threshold 0.50 0.50\nsk_find_contours 0.50 0.50\ncompactness_xld 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "companding_mu_law": {
+   "color_ok": true,
+   "extra": {
+    "a": "companding_mu_law.a.jpg",
+    "b": "companding_mu_law.b.jpg",
+    "inputs": "companding_mu_law.inputs.jpg"
+   },
+   "fig": "companding_mu_law.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "companding_mu_law 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -2930,6 +2979,55 @@
    "pseudocolor": true,
    "status": "ok"
   },
+  "dither_floyd_steinberg": {
+   "color_ok": true,
+   "extra": {
+    "a": "dither_floyd_steinberg.a.jpg",
+    "inputs": "dither_floyd_steinberg.inputs.jpg"
+   },
+   "fig": "dither_floyd_steinberg.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "dither_floyd_steinberg 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "dither_ordered": {
+   "color_ok": true,
+   "extra": {
+    "a": "dither_ordered.a.jpg",
+    "b": "dither_ordered.b.jpg",
+    "inputs": "dither_ordered.inputs.jpg"
+   },
+   "fig": "dither_ordered.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "dither_ordered 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
   "dl_aniso_diffusion": {
    "color_ok": true,
    "extra": {
@@ -3227,6 +3325,18 @@
    ],
    "out_kind": "dict",
    "program": "edges_sub_pix 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "effective_bit_depth": {
+   "extra": {},
+   "fig": "effective_bit_depth.png",
+   "knob_dead": [
+    "a",
+    "b"
+   ],
+   "out_kind": "float",
+   "program": "effective_bit_depth 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -9763,6 +9873,80 @@
    ],
    "out_kind": "ndarray",
    "program": "threshold 0.50 0.50\npruning 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "quantization_error": {
+   "color_ok": true,
+   "extra": {
+    "a": "quantization_error.a.jpg",
+    "inputs": "quantization_error.inputs.jpg"
+   },
+   "fig": "quantization_error.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "quantization_error 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "quantize_lloyd_max": {
+   "color_ok": true,
+   "extra": {
+    "a": "quantize_lloyd_max.a.jpg",
+    "b": "quantize_lloyd_max.b.jpg",
+    "inputs": "quantize_lloyd_max.inputs.jpg"
+   },
+   "fig": "quantize_lloyd_max.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [],
+   "out_kind": "ndarray",
+   "program": "quantize_lloyd_max 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
+  },
+  "quantize_uniform": {
+   "color_ok": true,
+   "extra": {
+    "a": "quantize_uniform.a.jpg",
+    "inputs": "quantize_uniform.inputs.jpg"
+   },
+   "fig": "quantize_uniform.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "quantize_uniform 0.50 0.50",
    "pseudocolor": false,
    "status": "ok"
   },
@@ -21215,10 +21399,10 @@
   "domain": 3,
   "empty": 1,
   "failed": 0,
-  "ok": 901,
+  "ok": 909,
   "unreachable": 0,
   "with_chain": 366,
   "with_gif": 40,
-  "with_sweep": 551
+  "with_sweep": 558
  }
 }

@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quantize_uniform — 2D <code style="color:#22d3bf">gray</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;quantize_uniform&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p><img src="fig/quantize_uniform.png" alt="quantize_uniform: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_uniform.a.jpg">quantize_uniform: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_uniform.inputs.jpg">quantize_uniform: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>一様量子化器(<b>丸め</b>)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がビット数 1〜8、</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>`<code style="color:#22d3bf">round(x * (L-1)) / (L-1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">L = 2**bits</code><code style="color:#22d3bf">。刻みは </code><code style="color:#22d3bf">Δ = 1/(L-1)</code>`。</p>
+<p>**`<code style="color:#22d3bf">xpil_posterize</code>` との違いはここで、無視できない**: あちらは PIL の実装で</p>
+<p><b>下位ビットを切り捨てる</b>ので、出力の平均が入力より `<code style="color:#22d3bf">Δ/2</code>` だけ低い。</p>
+<p>一様分布の入力で実測すると、bits=4 で平均誤差 `<code style="color:#22d3bf">-0.0312</code><code style="color:#22d3bf">(理論 </code><code style="color:#22d3bf">-Δ/2 = -0.03125</code>`)。</p>
+<p>分散はどちらも `<code style="color:#22d3bf">Δ²/12</code>` で同じだが、偏りがある分だけ二乗誤差が</p>
+<p>切り捨て: Δ²/12 + (Δ/2)² = Δ²/3     丸め: Δ²/12</p>
+<p>と <b>4 倍</b>ちがう。明るさを測る前段に置くなら丸めでなければならない。</p>
+<p><b>適用条件と誤差(閉形式)</b>: 入力が刻みに対して十分ばらついている(量子化雑音が</p>
+<p>入力と無相関とみなせる)とき、誤差は `<code style="color:#22d3bf">[-Δ/2, +Δ/2]</code>` の一様分布で、平均 0・</p>
+<p>分散 `<code style="color:#22d3bf">Δ²/12</code>`。<b>この仮定が崩れるのは平坦部</b>で、そこでは誤差が信号と相関して</p>
+<p>縞(バンディング)になる —— 誤差を雑音として扱いたいなら `<code style="color:#22d3bf">dither_ordered</code>` か</p>
+<p>`<code style="color:#22d3bf">dither_floyd_steinberg</code><code style="color:#22d3bf"> を通すこと。段差が見えているかは </code><code style="color:#22d3bf">banding_map</code>` で測れる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">quantize_uniform 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:quantize_uniform%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:quantize_uniform%200.50%200.50">Load &amp; run</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">gray</code>)</h3>
+<p><a style="color:#22d3bf" href="op:gamma">gamma</a> · <a style="color:#22d3bf" href="op:quantize_lloyd_max">quantize_lloyd_max</a> · <a style="color:#22d3bf" href="op:quantization_error">quantization_error</a> · <a style="color:#22d3bf" href="op:dither_ordered">dither_ordered</a> · <a style="color:#22d3bf" href="op:dither_floyd_steinberg">dither_floyd_steinberg</a> · <a style="color:#22d3bf" href="op:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="op:banding_map">banding_map</a> · <a style="color:#22d3bf" href="op:invert">invert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

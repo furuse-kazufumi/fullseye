@@ -31,7 +31,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # repo root first
 
 import warnings  # noqa: E402
 
-import numpy as np  # noqa: E402
+import numpy as np
+from scipy import ndimage  # noqa: E402
 
 import ops  # noqa: E402
 
@@ -49,6 +50,9 @@ TARGET_CATS = {"gray", "intensity-transform", "arithmetic", "domain"}
 OPS = [
     # gray / intensity-transform(階調曲線・コントラスト強調)
     "gamma", "invert", "scale_clip", "equalize", "sigmoid", "clahe",
+    # 量子化・ビット深度(閉形式の誤差 Δ²/12 を持つ族)
+    "quantize_uniform", "quantize_lloyd_max", "quantization_error",
+    "dither_ordered", "dither_floyd_steinberg", "companding_mu_law", "banding_map",
     "sk_adapthist", "sk_enhance_contrast", "sk_autolevel", "sk_adjust_log",
     "cv_clahe", "cv_trunc",
     # arithmetic(画素値への数学関数・ビット演算)
@@ -201,6 +205,91 @@ def ground_truth_checks() -> int:
     assert o.min() < 0.01 and o.max() > 0.99, "scale_clip がフルレンジに達していない"
     assert (o.max() - o.min()) > (float(img.max()) - float(img.min())) + 1e-6, \
         "scale_clip がレンジを広げていない(beat-null)"
+    k += 1
+
+    # ---- 量子化・ビット深度 --------------------------------------------- #
+    # 真値が閉形式で出る族なので、「動いた」でなく「理論値と一致する」で見る。
+    rng_q = np.random.default_rng(20260917)
+    u = rng_q.random((256, 256))
+
+    # 7. quantize_uniform は **丸め** なので偏りが無い。相棒の xpil_posterize は
+    #    PIL の実装で **切り捨て** なので平均が -Δ/2 ずれる。分散はどちらも Δ²/12 で
+    #    同じなので、**平均で見ないと違いが見えない** —— null を破るのはこの一点。
+    for bits in (2, 4, 6):
+        a_bits = (bits - 1) / 7.0
+        delta = 1.0 / float((1 << bits) - 1)
+        err = np.asarray(BY["quantize_uniform"].fn(u.copy(), a_bits, 0.5)) - u
+        assert abs(float(err.mean())) < 0.02 * delta,             f"quantize_uniform に偏りがある: bits={bits} 平均誤差={err.mean():+.5g}"
+        ratio = float(err.var()) / (delta * delta / 12.0)
+        assert 0.9 < ratio < 1.1,             f"量子化誤差の分散が Δ²/12 と合わない: bits={bits} 比={ratio:.3f}"
+    # 相棒(切り捨て)は同じ bits で -Δ/2 だけ偏る
+    bits_p = 4
+    delta_p = 1.0 / float((1 << bits_p) - 1)
+    err_p = np.asarray(BY["xpil_posterize"].fn(u.copy(), (bits_p - 1) / 6.0, 0.5)) - u
+    assert float(err_p.mean()) < -0.4 * delta_p,         "xpil_posterize が切り捨てでなくなった —— 2 つの op を分けている根拠が消える"
+    k += 1
+
+    # 8. quantization_error は Δ/2 で割った地図。誤差が一様分布なら平均は 0.5。
+    qe = np.asarray(BY["quantization_error"].fn(u.copy(), 3 / 7.0, 0.5))
+    assert 0.45 < float(qe.mean()) < 0.55, f"誤差地図の平均が 0.5 から外れた: {qe.mean():.3f}"
+    assert float(qe.max()) <= 1.0 + 1e-12
+    k += 1
+
+    # 9. ディザは**画素ごとの MSE を悪くして、局所平均を良くする**取引。
+    #    そこが分からないと「MSE が増えたから劣化」と読み違える。数字で出す。
+    ramp = np.linspace(0.0, 1.0, 256)[None, :].repeat(256, 0)
+    a3 = 2 / 7.0                                   # 3 bit
+    plain = np.asarray(BY["quantize_uniform"].fn(ramp.copy(), a3, 0.5))
+    e_plain = float(((plain - ramp) ** 2).mean())
+    for name in ("dither_ordered", "dither_floyd_steinberg"):
+        d = np.asarray(BY[name].fn(ramp.copy(), a3, 0.5))
+        assert float(((d - ramp) ** 2).mean()) > e_plain,             f"{name}: 画素ごとの MSE が丸めより良い —— ディザになっていない"
+        sm_d = ndimage.uniform_filter(d, size=8)
+        sm_p = ndimage.uniform_filter(plain, size=8)
+        rmse_d = float(np.sqrt(((sm_d - ramp) ** 2).mean()))
+        rmse_p = float(np.sqrt(((sm_p - ramp) ** 2).mean()))
+        assert rmse_d < 0.2 * rmse_p,             f"{name}: 8x8 平均後も丸めに勝てていない({rmse_d:.4g} vs {rmse_p:.4g})"
+        assert abs(float(d.mean()) - float(ramp.mean())) < 0.01,             f"{name}: 平均が保たれていない(ディザの閾値が刻みの中心に無い)"
+    k += 1
+
+    # 10. Lloyd-Max は一様分布に対して**理論上の最適**を見つける。
+    #     quantize_uniform は 0 と 1 を端点に取る規約のぶん最適から
+    #     ((L-1)/L)² だけ損をするので、比がその値に一致すること自体が検証になる
+    #     ——「一致する」より強い。
+    for bits in (2, 3, 4):
+        a_bits = (bits - 1) / 7.0
+        L = 1 << bits
+        e_u = float(((np.asarray(BY["quantize_uniform"].fn(u.copy(), a_bits, 0.5)) - u) ** 2).mean())
+        e_l = float(((np.asarray(BY["quantize_lloyd_max"].fn(u.copy(), a_bits, 1.0)) - u) ** 2).mean())
+        want = ((L - 1.0) / L) ** 2
+        assert abs(e_l / e_u - want) < 0.05,             f"Lloyd-Max が最適に届いていない: bits={bits} 比={e_l / e_u:.3f} 理論={want:.3f}"
+    k += 1
+
+    # 11. mu 則は**当たれば効き、外れれば大きく損をする**。両側を測って初めて
+    #     「適用条件つきの道具」と言える。
+    dark = np.clip(rng_q.exponential(0.1, (200, 200)), 0.0, 1.0)
+    bright = 1.0 - dark
+    a5 = 4 / 7.0                                    # 5 bit
+    for label, src, better in (("暗部集中", dark, True), ("明部集中", bright, False)):
+        e_u = float(((np.asarray(BY["quantize_uniform"].fn(src.copy(), a5, 0.5)) - src) ** 2).mean())
+        e_m = float(((np.asarray(BY["companding_mu_law"].fn(src.copy(), 0.5, a5)) - src) ** 2).mean())
+        if better:
+            assert e_m < 0.7 * e_u, f"{label}: mu 則が効いていない({e_m / e_u:.2f} 倍)"
+        else:
+            assert e_m > 3.0 * e_u,                 f"{label}: mu 則が損をしていない({e_m / e_u:.2f} 倍) —— 適用条件の記述が嘘になる"
+    k += 1
+
+    # 12. banding_map は**段差だけ**に反応する。3 つの null を破る:
+    #     量子化していない傾斜・本物の輪郭・白色雑音・ディザ済み、のどれにも出ない。
+    grad_ramp = np.linspace(0.3, 0.7, 256)[None, :].repeat(128, 0)
+    q3 = np.asarray(BY["quantize_uniform"].fn(grad_ramp.copy(), a3, 0.5))
+    hot = lambda im: float((np.asarray(BY["banding_map"].fn(im, a3, 0.5)) > 0.5).mean())
+    assert hot(q3.copy()) > 0.02, "banding_map が本物の段差を拾っていない"
+    for label, im in (("量子化していない傾斜", grad_ramp),
+                      ("本物の輪郭", np.where(np.arange(256)[None, :].repeat(128, 0) < 128, 0.3, 0.7)),
+                      ("白色雑音", np.clip(rng_q.normal(0.5, 0.05, (128, 256)), 0.0, 1.0)),
+                      ("ディザ済み", np.asarray(BY["dither_ordered"].fn(grad_ramp.copy(), a3, 0.5)))):
+        assert hot(np.asarray(im, float).copy()) < 0.005,             f"banding_map が {label} を段差と誤判定している"
     k += 1
 
     return k

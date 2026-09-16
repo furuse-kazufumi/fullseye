@@ -60,20 +60,60 @@ def _probes():
     a[20:60, 20:120] = 0.9; a[120:170, 60:150] = 0.1; a[:8, :8] = 1.0
     b = np.zeros((160, 160)); b[40:120, 40:120] = 1.0; b[70:90, 70:90] = 0.3; b[:6, -6:] = 0.8
     c = np.sin(np.mgrid[:176, :176][1] / 9.0) * 0.4 + 0.5; c[10:30, 10:30] = 1.0
-    return [a, b, c]
+    # ★d: **穴がタイル境界を跨ぐ**画像。これが無いと領域 op(fill_holes /
+    #   select_shape / fill_up …)がタイル分割で壊れることを検出できない ——
+    #   b の穴(70:90)はどのタイルにも収まっているので、埋めた結果が一致して
+    #   しまう。2026-09-17 にこの探針を足して、tile_safe と宣言されていた
+    #   6 本が誤差 1.0(全く別の結果)で割れることが分かった。
+    #   穴は 45..95 にとり、tile=64 の境界(64)と tile=60 の境界(60)の両方を跨ぐ。
+    d = np.zeros((192, 192)); d[20:170, 20:170] = 1.0; d[45:95, 45:95] = 0.0
+    d[110:140, 50:150] = 0.0                     # 横長の穴 —— halo をいくら広げても届かない
+    # ★e: **細かい周期**を持つ画像。変換ドメイン(ウェーブレット)・非局所平均・
+    #   LBP はここで初めて割れる。乱数でなく決まった模様にしてあるのは、
+    #   乱数だと対称性の破れが隠れるため。
+    yy2, xx2 = np.mgrid[:192, :192]
+    e = (((yy2 // 3 + xx2 // 3) % 2) * 0.6 + 0.2 + 0.2 * xx2 / 192.0)
+    e[80:112, 80:112] = 1.0
+    # ★f: **小さな粒と穴が多数**ある画像。面積で選ぶ op(remove_small_holes /
+    #   select_shape / diameter_opening)は、粒がタイル境界で切られて面積が変わる
+    #   ことでしか壊れない —— 大きな構造しか無い探針では 0.0 のまま通る。
+    #   種を固定してあるので実行ごとに同じ(乱数そのものを検査対象にはしない)。
+    #   ★種は 2 つ持つ。1 つの種は「構造の 1 標本」でしかない ——
+    #   ``xsk2_isotropic_close`` は種 0 と 7 で誤差 1.0(全く別の結果)、種 1 と
+    #   20260917 では 0.0 だった。半分の種で割れる op を「タイル安全」と呼ばない
+    #   ために、当たり外れのある探針は複数枚そろえる。
+    f = np.clip(np.random.default_rng(20260917).normal(0.5, 0.15, (192, 192)), 0.0, 1.0)
+    f[30:60, 30:60] = 1.0
+    g = np.clip(np.random.default_rng(0).normal(0.5, 0.15, (192, 192)), 0.0, 1.0)
+    g[100:140, 20:60] = 1.0
+    return [a, b, c, d, e, f, g]
+
+
+#: (tile, halo) の組。★**64/16 だけで測ってはいけない** —— どちらも 8 の倍数なので、
+#: 8x8 の周期を持つ処理(順序ディザの Bayer 行列など)はタイルの位相がそろって
+#: たまたま一致する。実測で ``dither_ordered`` は 64/16 で誤差 0.0000、60/12 でも
+#: 50/10 でも 37/7 でも 0.1429 だった。**整列していない幅を必ず 1 つ混ぜる。**
+#: これを入れた 2026-09-17 に、tile_safe と宣言された 168 本のうち **16 本**が
+#: 割れることが分かった(``fill_holes`` など 6 本は誤差 1.0 = 全く別の結果)。
+#: 3 組目 ``(50, 8)`` は**ハローが狭い**設定。「支持長がハローを超えるか」で決まる
+#: op(ウェーブレット再構成・大きな構造要素のモルフォロジー)は、広いハローでは
+#: たまたま一致するので、狭い側も試さないと分類が甘くなる。halo は利用者が選ぶ値
+#: なので、「ある halo でだけ安全」は tile_safe と呼べない。
+_TILINGS = ((64, 16), (60, 12), (50, 8))
 
 
 def _worst_tiling_error(op):
-    """Max tiling_error over the probes x two param settings (-1.0 if it never ran)."""
+    """Max tiling_error over the probes x two param settings x two tilings (-1.0 if it never ran)."""
     mx, ran = 0.0, False
     for im in _probes():
         for a, b in ((0.5, 0.5), (0.3, 0.7)):
-            try:
-                e = scale.tiling_error(op.fn, im, a, b, tile=64, halo=16)
-            except Exception:                                # noqa: BLE001 - optional backend / shape
-                continue
-            if np.isfinite(e):
-                mx, ran = max(mx, e), True
+            for tile, halo in _TILINGS:
+                try:
+                    e = scale.tiling_error(op.fn, im, a, b, tile=tile, halo=halo)
+                except Exception:                            # noqa: BLE001 - optional backend / shape
+                    continue
+                if np.isfinite(e):
+                    mx, ran = max(mx, e), True
     return mx if ran else -1.0
 
 

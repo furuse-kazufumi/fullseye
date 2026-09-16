@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 619 of 692. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 619 of 700. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel_match.py`
@@ -156,6 +156,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L46** — ★Unless the repository root is on the path, ``demops`` is not found (this example does not import `fullseye`, so the path hook does not kick in).
 - **L59** — ★EXTEND: cell size [m]. For real data, obtain it via dem_cell_size_webmercator(zoom, latitude).
 - **L158** — ★Honest observation: when there is a no-data cell partway down a slope, its northern neighbour, even as an outlet, does not drain into the no-data but goes south-west (the direction with a finite drop). The implementation is "drain into no-data only when there is nowhere else to descend", narrower than the docstring's "allows flow toward no-data". Here we only print and do not assert.
+
+## `examples/gallery2d_features.py`
+
+- **L251** _(ja)_ — ★返り値は bits/16 なので 16 倍して読む。上限は**画素数**で決まる —— 連続値の 画像では最小の刻みが ~1/N になるので推定は log2(N) 付近で頭打ちになり、 16 には届かない(256x256 = 65536 画素で 16 前後、128x128 では 13.7 と実測)。 「測れない線」を画素数から先に引いておくための注意書きで、門もそう書く。
 
 ## `examples/gallery2d_morphology.py`
 
@@ -931,8 +935,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L407** _(ja)_ — ★一様な面では勾配が丸め屑しか残らず、``arctan2`` はその屑の符号で**任意の角度**を 返す —— 明るさを 0.01 変えただけで向きが一斉に変わる。絶対値の床では画像の 明るさに依存してしまうので、必ず**相対量**で切る。
 - **L511** _(ja)_ — ★膨張は前景をはみ出す。連続の世界では半径 r の円は収まっているが、**離散の 円板**で膨らませると境界の外の画素まで塗る —— 実測で前景 197 画素の円に 対し外へ 48 画素(24%)漏れ、そのせいで粒度分布の生存率が 1.0 を超えた。 太さは前景の量なので、必ず前景で切る。
-- **L788** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
-- **L1662** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
+- **L603** _(ja)_ — ★``m / n**2`` ではなく ``(m + 0.5) / n**2``。前者は値が {0, 1/4, 1/2, 3/4} と なって平均が 0.375 にしかならず、ディザ全体が暗い側へ偏る(1 ビットの傾斜で 平均が 0.031 ずれるのを実測した)。閾値は刻みの**真ん中**に並べる。
+- **L1057** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
+- **L1939** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
 
 ## `ops3d.py`
 
@@ -1037,6 +1042,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `sample_data.py`
 
 - **L147** — ★ Reason for adding it: in exhibits 111-113 it re-emerged that "synthesis can only produce the breakage it already knows" (a precedent where 9 defects appeared in 6 real shots). The PoC stays closed offline, and we place only **the entry that swaps in real data** in the ledger. For commercial="check" and above, read the source's page before using.
+
+## `scale.py`
+
+- **L54** _(ja)_ — ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、 tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の 倍数なので、周期 8 の処理と、たまたま境界が穴に掛からない領域処理が すり抜けていた。以下はそのとき測って落ちたもの(誤差は 60/12 での実測)。
 
 ## `scene_registry.py`
 
@@ -1253,6 +1262,14 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tests/test_sample_data.py`
 
 - **L125** _(ja)_ — ★台帳は前からあったのに、**人が読む `docs/ops/SAMPLES.md` には出ていなかった** (2026-09-16)。表の列は id / 種別 / アクセス / URL だけで、ライセンスと商用可否は ソースを読まないと分からなかった —— 看板(「DL URL / ライセンス」)と中身がずれて いた。出す側を直したので、ここでは**台帳が空欄を作らないこと**を固定する。 --------------------------------------------------------------------------- #
+
+## `tests/test_scale.py`
+
+- **L63** _(ja)_ — ★d: **穴がタイル境界を跨ぐ**画像。これが無いと領域 op(fill_holes / select_shape / fill_up …)がタイル分割で壊れることを検出できない —— b の穴(70:90)はどのタイルにも収まっているので、埋めた結果が一致して しまう。2026-09-17 にこの探針を足して、tile_safe と宣言されていた 6 本が誤差 1.0(全く別の結果)で割れることが分かった。 穴は 45..95 にとり、tile=64 の境界(64)と tile=60 の境界(60)の両方を跨ぐ。
+- **L71** _(ja)_ — ★e: **細かい周期**を持つ画像。変換ドメイン(ウェーブレット)・非局所平均・ LBP はここで初めて割れる。乱数でなく決まった模様にしてあるのは、 乱数だと対称性の破れが隠れるため。
+- **L77** _(ja)_ — ★f: **小さな粒と穴が多数**ある画像。面積で選ぶ op(remove_small_holes / select_shape / diameter_opening)は、粒がタイル境界で切られて面積が変わる ことでしか壊れない —— 大きな構造しか無い探針では 0.0 のまま通る。 種を固定してあるので実行ごとに同じ(乱数そのものを検査対象にはしない)。
+- **L81** _(ja)_ — ★種は 2 つ持つ。1 つの種は「構造の 1 標本」でしかない —— ``xsk2_isotropic_close`` は種 0 と 7 で誤差 1.0(全く別の結果)、種 1 と 20260917 では 0.0 だった。半分の種で割れる op を「タイル安全」と呼ばない ために、当たり外れのある探針は複数枚そろえる。
+- **L92** _(ja)_ — (tile, halo) の組。★**64/16 だけで測ってはいけない** —— どちらも 8 の倍数なので、 8x8 の周期を持つ処理(順序ディザの Bayer 行列など)はタイルの位相がそろって たまたま一致する。実測で ``dither_ordered`` は 64/16 で誤差 0.0000、60/12 でも 50/10 でも 37/7 でも 0.1429 だった。**整列していない幅を必ず 1 つ混ぜる。** これを入れた 2026-09-17 に、tile_safe と宣言された 168 本のうち **16 本**が 割れることが分かった(``fill_holes`` など 6 本は誤差 1.0 = 全く別の結果)。 3 組目 ``(50, 8)`` は**ハローが狭い**設定。「支持長がハローを超えるか」で決まる op(ウェーブレット再構成・大きな構造要素のモルフォロジー)は、広いハローでは たまたま一致するので、狭い側も試さないと分類が甘くなる。halo は利用者が選ぶ値 なので、「ある halo でだけ安全」は tile_safe と呼べない。
 
 ## `tests/test_shapestats.py`
 

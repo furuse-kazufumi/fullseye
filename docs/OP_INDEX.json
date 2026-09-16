@@ -1,10 +1,10 @@
 {
- "n_ops": 1952,
+ "n_ops": 1960,
  "tiers": {
   "color": 12,
   "ledger": 1030,
   "nary": 17,
-  "registry": 893
+  "registry": 901
  },
  "sorts": [
   "angle",
@@ -14224,6 +14224,14 @@
    "tier": "registry"
   },
   {
+   "name": "banding_map",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
    "name": "bandpass_image",
    "halcon": "bandpass_image",
    "in_sort": "image",
@@ -14405,6 +14413,14 @@
    "in_sort": "contour",
    "out_sort": "feature",
    "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "companding_mu_law",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
    "tier": "registry"
   },
   {
@@ -14912,6 +14928,22 @@
    "tier": "registry"
   },
   {
+   "name": "dither_floyd_steinberg",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "dither_ordered",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
    "name": "dl_aniso_diffusion",
    "halcon": "anisotropic_diffusion",
    "in_sort": "image",
@@ -14997,6 +15029,14 @@
    "in_sort": "image",
    "out_sort": "contour",
    "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "effective_bit_depth",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
    "tier": "registry"
   },
   {
@@ -17253,6 +17293,30 @@
    "in_sort": "region",
    "out_sort": "region",
    "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "quantization_error",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "quantize_lloyd_max",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "quantize_uniform",
+   "halcon": null,
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
    "tier": "registry"
   },
   {

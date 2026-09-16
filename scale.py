@@ -51,6 +51,16 @@ _NOT_TILE_SAFE = frozenset({
     'cv_min_eigen', 'cv_precorner', 'cv_scharr', 'cv_tophat', 'derivate_gauss', 'deviation_image',
     'diff_of_gauss', 'dist_transform', 'distance_transform', 'dl_aniso_diffusion', 'dog', 'dots_image',
     'edges_color', 'em_skeleton', 'entropy_image', 'equ_histo_image', 'equ_histo_image_rect', 'equalize',
+    # ★2026-09-17: 検査のタイル幅を 64/16 だけから 60/12 も見るように広げたら、
+    #   tile_safe と宣言されていた 168 本のうち 16 本が割れた。64 も 16 も 8 の
+    #   倍数なので、周期 8 の処理と、たまたま境界が穴に掛からない領域処理が
+    #   すり抜けていた。以下はそのとき測って落ちたもの(誤差は 60/12 での実測)。
+    'fill_holes', 'sk_remove_holes', 'fill_up', 'select_shape',           # 1.0 = 全く別の結果
+    'xsk2_isotropic_close', 'r3_background_seg',                          # 1.0
+    'sk_lbp', 'sk_wavelet', 'xwt_lf_reconstruct', 'sk_nlm',               # 0.88 / 0.27 / 0.17 / 0.015
+    'xsk2_diameter_opening', 'xsk3_diameter_closing', 'xsk_struct_coherence',  # 0.076 / 0.073 / 0.061
+    'dither_ordered', 'dither_floyd_steinberg', 'quantize_lloyd_max',     # 0.14 / 0.14 / 0.13
+    'cv_nlmeans', 'xpil_unsharp_mask',    # ハロー 8 では支持長が足りない(0.0078)
     'f2_gauss_pyramid', 'f2_gray_inside', 'f2_gray_skeleton', 'f2_symmetry', 'f2_topographic', 'fill_up_shape',
     'structure_tensor_orientation', 'structure_tensor_coherence',
     'frei_amp', 'get_region_convex', 'gray_bothat', 'gray_range_rect', 'gray_tophat', 'illuminate',
@@ -88,6 +98,23 @@ _NOT_TILE_SAFE_OP_REASON = {
     "structure_tensor_coherence": (
         "global_reduce",
         "same whole-image floor as structure_tensor_orientation; run once on the full image."),
+    "xsk_struct_coherence": (
+        "global_reduce",
+        "structure-tensor coherence: local derivatives followed by a whole-image "
+        "normalisation; run once on the full image."),
+    "dither_ordered": (
+        "global",
+        "the Bayer threshold is chosen by ABSOLUTE pixel position, so a tile that does "
+        "not start on a multiple of the matrix size gets a different phase. Not a halo "
+        "problem - no halo fixes it. Dither the whole image, or tile on multiples of 8."),
+    "dither_floyd_steinberg": (
+        "global",
+        "error diffusion carries each pixel's error to its neighbours in scan order, so "
+        "the result depends on where the scan starts. Use dither_ordered when you must tile."),
+    "quantize_lloyd_max": (
+        "global",
+        "the codebook is fitted to the WHOLE image's histogram; per-tile fitting gives "
+        "each tile its own levels. Fit once, then apply."),
 }
 
 _NOT_TILE_SAFE_REASON = {
