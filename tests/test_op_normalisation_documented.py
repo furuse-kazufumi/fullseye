@@ -40,10 +40,19 @@ def _rows():
 
 
 def _note(op):
-    for dirpath, _d, filenames in os.walk(OPS_DIR):
-        if f"{op}.md" in filenames:
-            with open(os.path.join(dirpath, f"{op}.md"), encoding="utf-8") as f:
-                return f.read()
+    """**2-D を先に見て、列挙順は整列する。** `highpass` / `lowpass` / `fill_holes` /
+    `gaussians_to_voxel` は次元をまたいで名前が衝突しており、素の ``os.walk`` は
+    Windows(整列)と Linux(ハッシュ順)で違うほうを掴む —— 実際 2026-09-16 に
+    この探し方の門が **CI でだけ落ちた**(手元は緑)。台帳はすべて 2-D の op。
+    """
+    for base in (os.path.join(OPS_DIR, "2d"), OPS_DIR):
+        if not os.path.isdir(base):
+            continue
+        for dirpath, dirnames, filenames in os.walk(base):
+            dirnames.sort()
+            if f"{op}.md" in sorted(filenames):
+                with open(os.path.join(dirpath, f"{op}.md"), encoding="utf-8") as f:
+                    return f.read()
     return None
 
 

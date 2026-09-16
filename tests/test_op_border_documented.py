@@ -51,9 +51,24 @@ def _rows():
 
 
 def _note_path(op: str) -> str | None:
-    for dirpath, _dirnames, filenames in os.walk(OPS_DIR):
-        if f"{op}.md" in filenames:
-            return os.path.join(dirpath, f"{op}.md")
+    """op のノートを探す。**2-D を先に見て、列挙順は必ず整列する。**
+
+    2026-09-16、この門が **CI でだけ落ちた**(手元は緑)。`highpass` / `lowpass` は
+    `docs/ops/2d/frequency/` と `docs/ops/oned/signal/` の **両方に同名のノートがある**
+    (別の op だが名前が衝突している)。素の ``os.walk`` は ``os.scandir`` の順で歩くので、
+    Windows(整列される)では 2-D 側を、Linux(ハッシュ順)では 1-D 側を掴んでいた。
+    ここで見る台帳はすべて 2-D の op なので、2-D を優先する。整列するのは、
+    **同じ木に対して同じ答えを返させる**ため —— 順序に依存する門は、落ちる環境を
+    選ぶぶん、落ちないほうが嘘になる。
+    衝突しているのは `highpass` / `lowpass` / `fill_holes` / `gaussians_to_voxel` の 4 件。
+    """
+    for base in (os.path.join(OPS_DIR, "2d"), OPS_DIR):
+        if not os.path.isdir(base):
+            continue
+        for dirpath, dirnames, filenames in os.walk(base):
+            dirnames.sort()
+            if f"{op}.md" in sorted(filenames):
+                return os.path.join(dirpath, f"{op}.md")
     return None
 
 
@@ -106,3 +121,25 @@ def test_the_ledger_only_names_ops_that_exist():
         known = {o["name"] for o in json.load(f)["ops"]}
     gone = [r["op"] for r in _rows() if r["op"] not in known]
     assert not gone, f"台帳が存在しない op を指している(古い): {gone[:10]}"
+
+
+def test_name_collisions_resolve_to_the_two_dimensional_note():
+    """**次元をまたいで名前が衝突している op を、2-D 側に解決すること。**
+
+    2026-09-16、この門が **CI でだけ落ちた**。`highpass` / `lowpass` は
+    `docs/ops/2d/frequency/` と `docs/ops/oned/signal/` の両方にノートがあり(別の op
+    だが名前が同じ)、素の ``os.walk`` は ``os.scandir`` の順に歩く —— Windows は整列、
+    Linux はハッシュ順なので、**同じ木に対して環境ごとに違う答え**を返していた。
+
+    「手元で緑」は直った証拠にならない(手元は元から緑だった)。解決先そのものを
+    ここで固定する。衝突しているのは `highpass` / `lowpass` / `fill_holes` /
+    `gaussians_to_voxel` の 4 件。
+    """
+    for op in ("highpass", "lowpass", "fill_holes"):
+        p = _note_path(op)
+        if p is None:
+            continue
+        rel = os.path.relpath(p, OPS_DIR).replace(os.sep, "/")
+        assert rel.startswith("2d/"), (
+            f"{op}: 2-D でないノート({rel})に解決した。台帳は 2-D の op を指しているので、"
+            f"別次元の同名ノートを掴むと環境によって門の結果が変わる")

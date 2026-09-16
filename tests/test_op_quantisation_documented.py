@@ -52,9 +52,24 @@ def _rows():
 
 
 def _note_path(op: str) -> str | None:
-    for dirpath, _dirnames, filenames in os.walk(OPS_DIR):
-        if f"{op}.md" in filenames:
-            return os.path.join(dirpath, f"{op}.md")
+    """op のノートを探す。**2-D を先に見て、列挙順は必ず整列する。**
+
+    2026-09-16、この門が **CI でだけ落ちた**(手元は緑)。`highpass` / `lowpass` は
+    `docs/ops/2d/frequency/` と `docs/ops/oned/signal/` の **両方に同名のノートがある**
+    (別の op だが名前が衝突している)。素の ``os.walk`` は ``os.scandir`` の順で歩くので、
+    Windows(整列される)では 2-D 側を、Linux(ハッシュ順)では 1-D 側を掴んでいた。
+    ここで見る台帳はすべて 2-D の op なので、2-D を優先する。整列するのは、
+    **同じ木に対して同じ答えを返させる**ため —— 順序に依存する門は、落ちる環境を
+    選ぶぶん、落ちないほうが嘘になる。
+    衝突しているのは `highpass` / `lowpass` / `fill_holes` / `gaussians_to_voxel` の 4 件。
+    """
+    for base in (os.path.join(OPS_DIR, "2d"), OPS_DIR):
+        if not os.path.isdir(base):
+            continue
+        for dirpath, dirnames, filenames in os.walk(base):
+            dirnames.sort()
+            if f"{op}.md" in sorted(filenames):
+                return os.path.join(dirpath, f"{op}.md")
     return None
 
 

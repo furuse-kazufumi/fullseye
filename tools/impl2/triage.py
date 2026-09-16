@@ -112,10 +112,19 @@ def _quantising_ops() -> set:
 
 
 def _note_text(op: str) -> str:
-    base = Path(__file__).resolve().parents[2] / "docs" / "ops"
-    for dirpath, _d, filenames in os.walk(base):
-        if f"{op}.md" in filenames:
-            return (Path(dirpath) / f"{op}.md").read_text(encoding="utf-8")
+    """**2-D を先に見て、列挙順は整列する。** `highpass` / `lowpass` / `fill_holes` /
+    `gaussians_to_voxel` は次元をまたいで名前が衝突しており、素の ``os.walk`` は
+    Windows(整列)と Linux(ハッシュ順)で違うほうを掴む —— 実際 2026-09-16 に
+    この探し方の門が **CI でだけ落ちた**(手元は緑)。ここで見る op はすべて 2-D。
+    """
+    root = Path(__file__).resolve().parents[2] / "docs" / "ops"
+    for base in (root / "2d", root):
+        if not base.is_dir():
+            continue
+        for dirpath, dirnames, filenames in os.walk(base):
+            dirnames.sort()
+            if f"{op}.md" in sorted(filenames):
+                return (Path(dirpath) / f"{op}.md").read_text(encoding="utf-8")
     return ""
 
 
